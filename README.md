@@ -14,4 +14,34 @@ LinkRest defines a simple communication protocol between client and server based
 
 Getting Started
 -----------
-TODO
+
+What's required:
+
+* Java 1.7 or newer
+* A Maven Java "war" project that will serve your REST requests. You don't have to use Maven. But the docs here are assuming you are.
+* Cayenne 3.2M2 or newer. Since M2 is not officially released as of this writing, LinkRest itself references an unofficial build from ObjectStyle repo. Mapping your database and starting Cayenne ServerRuntime is outside the scope of this document. Please refer to the [corresponding Cayenne docs](http://cayenne.apache.org/docs/3.1/cayenne-guide/index.html).
+
+Setup steps: 
+
+Declare ObjectStyle repository in your pom.xml (unless you have your own repo proxy, in which 
+case add this repo to the proxy):
+
+    <repositories>
+        <repository>
+            <id>lr-repo</id>
+            <name>ObjectStyle LinkRest Repo</name>
+            <url>http://maven.objectstyle.org/nexus/content/repositories/linkrestreleases</url>
+        </repository>
+    </repositories>
+	
+Add LinkRest dependency:
+
+    <dependency>
+        <groupId>com.nhl.link.rest</groupId>
+        <artifactId>link-rest</artifactId>
+        <version>1.0</version>
+    </dependency>
+
+
+
+On application startup assemble LinkRest stack and bootstrap LinkRest JAX RS "feature": 
