@@ -10,7 +10,7 @@ LinkRest is open source and is distributed under the terms of [BSD license](http
 
 LinkRest Protocol
 -------------
-LinkRest defines a simple protocol for writing REST endpoints. The protocol is based on HTTP and JSON. Client applications use it to read or modify data entities. The main feature of LinkRest Protocol is the ability of the client to customize fine details of the response JSON. The clients can explicitly request inclusion in response of any given set of attributes (including related entities and their attributes), specify filtering criteria, sort ordering, pagination, etc. This allows to implement general purpose REST API with very little to no effort.
+LinkRest defines a simple communication protocol between client and server based on HTTP and JSON. Client applications use it to read or modify data entities. The main feature of LinkRest Protocol is the ability of the client to customize fine details of the response JSON. The clients can explicitly request inclusion in response of any given set of attributes (including related entities and their attributes), specify filtering criteria, sort ordering, pagination, etc. This allows to implement general purpose REST API with very little to no effort.
 
 Getting Started
 -----------
