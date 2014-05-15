@@ -18,12 +18,13 @@ Getting Started
 What's required:
 
 * Java 1.7 or newer
+* A JAX-RS 2.0 container, such as Jersey 2.x.
 * A Maven Java "war" project that will serve your REST requests. You don't have to use Maven. But the docs here are assuming you are.
 * Cayenne 3.2M2 or newer. Since M2 is not officially released as of this writing, LinkRest itself references an unofficial build from ObjectStyle repo. Mapping your database and starting Cayenne ServerRuntime is outside the scope of this document. Please refer to the [corresponding Cayenne docs](http://cayenne.apache.org/docs/3.1/cayenne-guide/index.html).
 
-Setup steps: 
+Bootstrap LinkRest:
 
-Declare ObjectStyle repository in your pom.xml (unless you have your own repo proxy, in which 
+Declare LinkRest Maven repository in your pom.xml (unless you have your own repo proxy, in which 
 case add this repo to the proxy):
 
     <repositories>
@@ -33,6 +34,8 @@ case add this repo to the proxy):
             <url>http://maven.objectstyle.org/nexus/content/repositories/linkrestreleases</url>
         </repository>
     </repositories>
+    
+_TODO: eventually we'll publish LinkRest in Central so the step above will be optional_
 	
 Add LinkRest dependency:
 
@@ -42,6 +45,23 @@ Add LinkRest dependency:
         <version>1.0</version>
     </dependency>
 
+On application startup assemble LinkRest stack and bootstrap LinkRest JAX RS "feature". A good place to do that is inside your JAX RS Application class. E.g. if your are using Jersey 2 JAX container:
 
+    import org.glassfish.jersey.server.ResourceConfig;
 
-On application startup assemble LinkRest stack and bootstrap LinkRest JAX RS "feature": 
+    public class MyApp extends ResourceConfig {
+    
+        public MyApp() {
+            // bootstrap Cayenne
+            ServerRuntime cayenneRuntime  = new ServerRuntime("my-cayenne.xml");
+    
+            // bootstrap LinkRest with the minimal set of options
+            LinkRestRuntime lrRuntime = new LinkRestBuilder().cayenneRuntime(cayenneRuntime).build();
+            
+            // register LinkRest as a JAX RS "feature"
+            register(lrRuntime.getFeature());
+        }
+    }
+    
+    
+    
