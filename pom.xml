@@ -37,7 +37,7 @@
 			<uniqueVersion>false</uniqueVersion>
 			<id>linkrest-releases</id>
 			<name>Deployment Repository</name>
-			<url>http://maven.objectstyle.org/nexus/content/groups/linkrestreleases</url>
+			<url>http://maven.objectstyle.org/nexus/content/repositories/linkrestreleases</url>
 		</repository>
 	</distributionManagement>
 
