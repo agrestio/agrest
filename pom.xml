@@ -25,6 +25,34 @@
 		<jersey-version>2.7</jersey-version>
 	</properties>
 
+	<scm>
+		<connection>https://github.com/nhl/link-rest.git</connection>
+		<developerConnection>scm:git:ssh://git@github.com:nhl/link-rest.git</developerConnection>
+		<url>https://github.com/nhl/link-rest</url>
+		<tag>HEAD</tag>
+	</scm>
+
+	<repositories>
+		<repository>
+			<id>linkrest-dependencies</id>
+			<name>Link Rest Dependencies Repo</name>
+			<url>http://maven.objectstyle.org/nexus/content/groups/linkrest</url>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</repository>
+	</repositories>
+	<pluginRepositories>
+		<pluginRepository>
+			<id>linkrest-dependencies</id>
+			<name>Link Rest Dependencies Repo</name>
+			<url>http://maven.objectstyle.org/nexus/content/groups/linkrest</url>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</pluginRepository>
+	</pluginRepositories>
+
 	<dependencyManagement>
 		<dependencies>
 			<dependency>
