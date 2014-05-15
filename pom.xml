@@ -4,7 +4,7 @@
 
 	<groupId>com.nhl.link.rest</groupId>
 	<artifactId>link-rest</artifactId>
-	<version>1.0</version>
+	<version>1.0-SNAPSHOT</version>
 
 	<name>Library: link-rest</name>
 	<description>Link Server-side REST Service Framework built with Sencha/ExtJS client in mind.</description>
