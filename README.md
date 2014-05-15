@@ -19,7 +19,9 @@ TODO: protocol details
 * Java 1.7 or newer
 * A JAX-RS 2.0 container, such as Jersey 2.x.
 * A Maven Java "war" project that will serve your REST requests. You don't have to use Maven. But the docs here are assuming you are.
-* Cayenne 3.2M2 or newer. Since M2 is not officially released as of this writing, LinkRest itself references an unofficial build from ObjectStyle repo. Mapping your database and starting Cayenne ServerRuntime is outside the scope of this document. Please refer to the [corresponding Cayenne docs](http://cayenne.apache.org/docs/3.1/cayenne-guide/index.html).
+* Cayenne 3.2M2 or newer. Mapping your database and starting Cayenne ServerRuntime is outside the scope of this document. Please refer to the [corresponding Cayenne docs](http://cayenne.apache.org/docs/3.1/cayenne-guide/index.html).
+
+_TODO: Since M2 is not officially released as of this writing, LinkRest itself references an unofficial build from ObjectStyle repo. If you configure custom Maven repository per instructions below, you should be able to get it._
 
 ## Bootstrap LinkRest
 
@@ -34,7 +36,7 @@ case add this repo to the proxy):
         </repository>
     </repositories>
     
-_TODO: eventually we'll publish LinkRest in Central so the step above will be optional_
+_TODO: eventually we'll publish LinkRest in Central so the step above will not be needed_
 	
 Add LinkRest dependency:
 
