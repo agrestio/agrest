@@ -4,7 +4,7 @@ LinkRest is a server-side Java REST framework for easy access of backend data st
 
 LinkRest was originally written with Sencha/ExtJS clients in mind, but it is not specific to a any single client technology. It can be used from iOS and Android applications, jQuery, etc.
 
-LinkRest is written on top of [Apache Cayenne ORM](http://cayenne.apache.org/) and supports any relational data store. Alternative data stores can be provided with relative ease for NoSQL databases, flat files, etc.
+LinkRest is written on top of [Apache Cayenne ORM](http://cayenne.apache.org/) and supports any relational data store, such as MySQL or Oracle. Alternative data stores can be provided with relative ease for NoSQL databases, flat files, etc. Users can also use LinkRest as "protocol adapter" and provide their own data.
 
 LinkRest is open source and is distributed under the terms of [BSD license](https://github.com/nhl/link-rest/blob/master/LICENSE.txt).
 
