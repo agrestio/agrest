@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<data-map xmlns="http://cayenne.apache.org/schema/3.0/modelMap"
+	 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	 xsi:schemaLocation="http://cayenne.apache.org/schema/3.0/modelMap http://cayenne.apache.org/schema/3.0/modelMap.xsd"
+	 project-version="6">
+	<property name="defaultPackage" value="com.nhl.link.rest.unit.cayenne"/>
+	<property name="defaultSchema" value="utest"/>
+	<db-entity name="e1" schema="utest">
+		<db-attribute name="age" type="INTEGER"/>
+		<db-attribute name="description" type="VARCHAR" length="100"/>
+		<db-attribute name="id" type="INTEGER" isPrimaryKey="true" isGenerated="true" isMandatory="true"/>
+		<db-attribute name="name" type="VARCHAR" length="100"/>
+	</db-entity>
+	<db-entity name="e2" schema="utest">
+		<db-attribute name="address" type="VARCHAR" length="255"/>
+		<db-attribute name="id" type="INTEGER" isPrimaryKey="true" isGenerated="true" isMandatory="true"/>
+		<db-attribute name="name" type="VARCHAR" length="100"/>
+	</db-entity>
+	<db-entity name="e3" schema="utest">
+		<db-attribute name="e2_id" type="INTEGER"/>
+		<db-attribute name="e5_id" type="INTEGER"/>
+		<db-attribute name="id" type="INTEGER" isPrimaryKey="true" isGenerated="true" isMandatory="true"/>
+		<db-attribute name="name" type="VARCHAR" length="200"/>
+		<db-attribute name="phone_number" type="VARCHAR" length="12"/>
+	</db-entity>
+	<db-entity name="e4" schema="utest">
+		<db-attribute name="c_boolean" type="BOOLEAN"/>
+		<db-attribute name="c_date" type="DATE"/>
+		<db-attribute name="c_decimal" type="DECIMAL" length="10" scale="2"/>
+		<db-attribute name="c_int" type="INTEGER"/>
+		<db-attribute name="c_time" type="TIME"/>
+		<db-attribute name="c_timestamp" type="TIMESTAMP"/>
+		<db-attribute name="c_varchar" type="VARCHAR" length="100"/>
+		<db-attribute name="id" type="INTEGER" isPrimaryKey="true" isGenerated="true" isMandatory="true"/>
+	</db-entity>
+	<db-entity name="e5" schema="utest">
+		<db-attribute name="date" type="DATE"/>
+		<db-attribute name="id" type="INTEGER" isPrimaryKey="true" isMandatory="true"/>
+		<db-attribute name="name" type="VARCHAR" length="50"/>
+	</db-entity>
+	<obj-entity name="E1" className="com.nhl.link.rest.unit.cayenne.E1" dbEntityName="e1">
+		<obj-attribute name="age" type="java.lang.Integer" db-attribute-path="age"/>
+		<obj-attribute name="description" type="java.lang.String" db-attribute-path="description"/>
+		<obj-attribute name="name" type="java.lang.String" db-attribute-path="name"/>
+	</obj-entity>
+	<obj-entity name="E2" className="com.nhl.link.rest.unit.cayenne.E2" dbEntityName="e2">
+		<obj-attribute name="address" type="java.lang.String" db-attribute-path="address"/>
+		<obj-attribute name="name" type="java.lang.String" db-attribute-path="name"/>
+	</obj-entity>
+	<obj-entity name="E3" className="com.nhl.link.rest.unit.cayenne.E3" dbEntityName="e3">
+		<obj-attribute name="name" type="java.lang.String" db-attribute-path="name"/>
+		<obj-attribute name="phoneNumber" type="java.lang.String" db-attribute-path="phone_number"/>
+	</obj-entity>
+	<obj-entity name="E4" className="com.nhl.link.rest.unit.cayenne.E4" dbEntityName="e4">
+		<obj-attribute name="cBoolean" type="java.lang.Boolean" db-attribute-path="c_boolean"/>
+		<obj-attribute name="cDate" type="java.util.Date" db-attribute-path="c_date"/>
+		<obj-attribute name="cDecimal" type="java.math.BigDecimal" db-attribute-path="c_decimal"/>
+		<obj-attribute name="cInt" type="java.lang.Integer" db-attribute-path="c_int"/>
+		<obj-attribute name="cTime" type="java.util.Date" db-attribute-path="c_time"/>
+		<obj-attribute name="cTimestamp" type="java.util.Date" db-attribute-path="c_timestamp"/>
+		<obj-attribute name="cVarchar" type="java.lang.String" db-attribute-path="c_varchar"/>
+	</obj-entity>
+	<obj-entity name="E5" className="com.nhl.link.rest.unit.cayenne.E5" dbEntityName="e5">
+		<obj-attribute name="date" type="java.util.Date" db-attribute-path="date"/>
+		<obj-attribute name="name" type="java.lang.String" db-attribute-path="name"/>
+	</obj-entity>
+	<db-relationship name="e3s" source="e2" target="e3" toMany="true">
+		<db-attribute-pair source="id" target="e2_id"/>
+	</db-relationship>
+	<db-relationship name="e2" source="e3" target="e2" toMany="false">
+		<db-attribute-pair source="e2_id" target="id"/>
+	</db-relationship>
+	<db-relationship name="e5" source="e3" target="e5" toMany="false">
+		<db-attribute-pair source="e5_id" target="id"/>
+	</db-relationship>
+	<db-relationship name="e2s" source="e5" target="e3" toMany="true">
+		<db-attribute-pair source="id" target="e5_id"/>
+	</db-relationship>
+	<obj-relationship name="e3s" source="E2" target="E3" deleteRule="Deny" db-relationship-path="e3s"/>
+	<obj-relationship name="e2" source="E3" target="E2" deleteRule="Nullify" db-relationship-path="e2"/>
+	<obj-relationship name="e5" source="E3" target="E5" deleteRule="Nullify" db-relationship-path="e5"/>
+	<obj-relationship name="e2s" source="E5" target="E3" deleteRule="Deny" db-relationship-path="e2s"/>
+</data-map>
