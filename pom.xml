@@ -26,11 +26,20 @@
 	</properties>
 
 	<scm>
-		<connection>https://github.com/nhl/link-rest.git</connection>
+		<connection>scm:git:https://github.com/nhl/link-rest.git</connection>
 		<developerConnection>scm:git:ssh://git@github.com:nhl/link-rest.git</developerConnection>
 		<url>https://github.com/nhl/link-rest</url>
 		<tag>HEAD</tag>
 	</scm>
+	
+	<distributionManagement>
+		<repository>
+			<uniqueVersion>false</uniqueVersion>
+			<id>linkrest-releases</id>
+			<name>Deployment Repository</name>
+			<url>http://maven.objectstyle.org/nexus/content/groups/linkrestreleases</url>
+		</repository>
+	</distributionManagement>
 
 	<repositories>
 		<repository>
