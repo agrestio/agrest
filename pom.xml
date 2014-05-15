@@ -26,8 +26,8 @@
 	</properties>
 
 	<scm>
-		<connection>scm:git:https://github.com/nhl/link-rest.git</connection>
-		<developerConnection>scm:git:ssh://git@github.com:nhl/link-rest.git</developerConnection>
+		<connection>scm:git:https://github.com/nhl/link-rest</connection>
+		<developerConnection>scm:git:ssh://git@github.com/nhl/link-rest</developerConnection>
 		<url>https://github.com/nhl/link-rest</url>
 		<tag>HEAD</tag>
 	</scm>
