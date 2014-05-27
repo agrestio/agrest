@@ -1,15 +1,14 @@
 package com.nhl.link.rest.runtime;
 
+import java.util.Collection;
+
 import javax.ws.rs.core.Feature;
 import javax.ws.rs.core.FeatureContext;
 
 import org.apache.cayenne.di.Injector;
 
-import com.nhl.link.rest.provider.CayenneRuntimeExceptionMapper;
 import com.nhl.link.rest.provider.DataResponseWriter;
-import com.nhl.link.rest.provider.LinkRestExceptionMapper;
 import com.nhl.link.rest.provider.SimpleResponseWriter;
-import com.nhl.link.rest.provider.ValidationExceptionMapper;
 
 /**
  * A JAX RS "feature" that bootstraps LinkRest in an app.
@@ -17,9 +16,11 @@ import com.nhl.link.rest.provider.ValidationExceptionMapper;
 class LinkRestFeature implements Feature {
 
 	private Injector injector;
+	private Collection<Class<?>> extraComponents;
 
-	LinkRestFeature(Injector injector) {
+	LinkRestFeature(Injector injector, Collection<Class<?>> extraComponents) {
 		this.injector = injector;
+		this.extraComponents = extraComponents;
 	}
 
 	@Override
@@ -30,9 +31,10 @@ class LinkRestFeature implements Feature {
 
 		context.register(SimpleResponseWriter.class);
 		context.register(DataResponseWriter.class);
-		context.register(CayenneRuntimeExceptionMapper.class);
-		context.register(LinkRestExceptionMapper.class);
-		context.register(ValidationExceptionMapper.class);
+
+		for (Class<?> c : extraComponents) {
+			context.register(c);
+		}
 
 		return true;
 	}

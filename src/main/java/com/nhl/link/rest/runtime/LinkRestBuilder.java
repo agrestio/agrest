@@ -1,19 +1,30 @@
 package com.nhl.link.rest.runtime;
 
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.ws.rs.core.Feature;
+import javax.ws.rs.ext.ExceptionMapper;
 
+import org.apache.cayenne.CayenneRuntimeException;
 import org.apache.cayenne.configuration.server.ServerRuntime;
 import org.apache.cayenne.di.Binder;
 import org.apache.cayenne.di.DIBootstrap;
 import org.apache.cayenne.di.Injector;
 import org.apache.cayenne.di.Module;
 import org.apache.cayenne.map.DataMap;
+import org.apache.cayenne.validation.ValidationException;
 
+import com.nhl.link.rest.LinkRestException;
 import com.nhl.link.rest.encoder.EncoderFilter;
+import com.nhl.link.rest.provider.CayenneRuntimeExceptionMapper;
+import com.nhl.link.rest.provider.LinkRestExceptionMapper;
+import com.nhl.link.rest.provider.ValidationExceptionMapper;
 import com.nhl.link.rest.runtime.cayenne.CayennePersister;
 import com.nhl.link.rest.runtime.cayenne.ICayennePersister;
 import com.nhl.link.rest.runtime.cayenne.NoCayennePersister;
@@ -45,12 +56,52 @@ public class LinkRestBuilder {
 
 	private List<EncoderFilter> encoderFilters;
 	private List<DataMap> nonPersistentEntities;
+	private Map<Class<?>, Class<?>> exceptionMappers;
 
 	public LinkRestBuilder() {
 		this.nonPersistentEntities = new ArrayList<>();
 		this.encoderFilters = new ArrayList<>();
 		this.linkRestServiceType = EntityDaoLinkRestService.class;
 		this.cayenneService = NoCayennePersister.instance();
+
+		this.exceptionMappers = mapDefaultExceptions();
+	}
+
+	protected Map<Class<?>, Class<?>> mapDefaultExceptions() {
+
+		Map<Class<?>, Class<?>> map = new HashMap<>();
+		map.put(CayenneRuntimeException.class, CayenneRuntimeExceptionMapper.class);
+		map.put(LinkRestException.class, LinkRestExceptionMapper.class);
+		map.put(ValidationException.class, ValidationExceptionMapper.class);
+
+		return map;
+	}
+
+	/**
+	 * Maps an ExceptionMapper for a given type of Exceptions. While this method
+	 * can be used for arbitrary exceptions, it is most useful to override the
+	 * default exception handlers defined in LinkRest for the following
+	 * exceptions: {@link LinkRestException}, {@link CayenneRuntimeException},
+	 * {@link ValidationException}.
+	 * 
+	 * @since 1.1
+	 */
+	public <E extends Throwable> LinkRestBuilder mapException(Class<? extends ExceptionMapper<E>> mapper) {
+
+		for (Type t : mapper.getGenericInterfaces()) {
+
+			if (t instanceof ParameterizedType) {
+				ParameterizedType pt = (ParameterizedType) t;
+				if (ExceptionMapper.class.equals(pt.getRawType())) {
+					Type[] args = pt.getActualTypeArguments();
+					exceptionMappers.put((Class<?>) args[0], mapper);
+					return this;
+				}
+			}
+
+		}
+
+		throw new IllegalArgumentException("Failed to register ExceptionMapper: " + mapper.getName());
 	}
 
 	public LinkRestBuilder linkRestService(ILinkRestService linkRestService) {
@@ -92,8 +143,13 @@ public class LinkRestBuilder {
 
 	public LinkRestRuntime build() {
 		Injector i = createInjector();
-		Feature f = new LinkRestFeature(i);
+		Feature f = new LinkRestFeature(i, createExtraComponents());
 		return new LinkRestRuntime(f, i);
+	}
+
+	private Collection<Class<?>> createExtraComponents() {
+		// for now the only extra components are exception mappers
+		return exceptionMappers.values();
 	}
 
 	private Injector createInjector() {
