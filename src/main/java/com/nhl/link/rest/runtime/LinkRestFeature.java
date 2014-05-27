@@ -9,6 +9,7 @@ import com.nhl.link.rest.provider.CayenneRuntimeExceptionMapper;
 import com.nhl.link.rest.provider.DataResponseWriter;
 import com.nhl.link.rest.provider.LinkRestExceptionMapper;
 import com.nhl.link.rest.provider.SimpleResponseWriter;
+import com.nhl.link.rest.provider.ValidationExceptionMapper;
 
 /**
  * A JAX RS "feature" that bootstraps LinkRest in an app.
@@ -31,6 +32,7 @@ class LinkRestFeature implements Feature {
 		context.register(DataResponseWriter.class);
 		context.register(CayenneRuntimeExceptionMapper.class);
 		context.register(LinkRestExceptionMapper.class);
+		context.register(ValidationExceptionMapper.class);
 
 		return true;
 	}
