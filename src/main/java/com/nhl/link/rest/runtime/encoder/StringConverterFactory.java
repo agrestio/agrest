@@ -30,9 +30,6 @@ public class StringConverterFactory implements IStringConverterFactory {
 		this.convertersByPath = new ConcurrentHashMap<String, StringConverter>();
 	}
 
-	/**
-	 * @since 6.5
-	 */
 	@Override
 	public StringConverter getConverter(Class<?> entityType, Property<?> attribute) {
 		ObjEntity entity = metadataService.getObjEntity(entityType);

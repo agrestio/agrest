@@ -9,13 +9,7 @@ import com.nhl.link.rest.ClientProperty;
  */
 public interface IAttributeEncoderFactory {
 
-	/**
-	 * @since 6.8
-	 */
 	ClientProperty getAttributeProperty(ClientEntity<?> entity, String attributeName);
 
-	/**
-	 * @since 6.8
-	 */
 	ClientProperty getIdProperty(ClientEntity<?> entity);
 }

@@ -5,9 +5,6 @@ import java.util.List;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 
-/**
- * @since 6.9
- */
 public class RootListEncoder implements Encoder {
 
 	private Encoder elementEncoder;

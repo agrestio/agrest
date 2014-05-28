@@ -7,8 +7,6 @@ import com.nhl.link.rest.UpdateResponse;
 
 /**
  * A common interface of a data access object for a single entity.
- * 
- * @since 6.9
  */
 public interface EntityDao<T> {
 

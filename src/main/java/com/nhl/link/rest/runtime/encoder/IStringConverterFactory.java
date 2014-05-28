@@ -10,8 +10,6 @@ public interface IStringConverterFactory {
 	/**
 	 * Returns a {@link StringConverter} for a given entity object. Normally the
 	 * returned converter is some kind of ID converter.
-	 * 
-	 * @since 6.5
 	 */
 	StringConverter getConverter(Class<?> entityType, Property<?> attribute);
 

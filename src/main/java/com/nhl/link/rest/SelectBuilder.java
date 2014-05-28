@@ -16,9 +16,6 @@ public interface SelectBuilder<T> {
 
 	SelectBuilder<T> with(UriInfo uriInfo);
 	
-	/**
-	 * @since 6.5
-	 */
 	SelectBuilder<T> withDataEncoder(Encoder encoder);
 
 	SelectBuilder<T> withAutocompleteOn(Property<?> autocompleteProperty);

@@ -23,8 +23,6 @@ import com.nhl.link.rest.runtime.parser.IRequestParser;
  * Cayenne backend is automatically configured for all known Cayenne entities.
  * Other backends, e.g. for LDAP objects, etc. are contributed in an
  * {@link EntityDao} collection.
- * 
- * @since 6.9
  */
 public class EntityDaoLinkRestService extends BaseLinkRestService {
 
@@ -48,7 +46,7 @@ public class EntityDaoLinkRestService extends BaseLinkRestService {
 				entityDaos.put(e.getName(), dao);
 			}
 		}
-	} 
+	}
 
 	private <T> EntityDao<T> daoForType(Class<T> type) {
 		return dao(metadataService.getObjEntity(type).getName());

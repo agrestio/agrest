@@ -25,9 +25,6 @@ public class DataResponse<T> extends SimpleResponse {
 	private List<T> objects;
 	private Encoder encoder;
 
-	/**
-	 * @since 6.9
-	 */
 	@SuppressWarnings({ "unchecked" })
 	public static <T> DataResponse<T> forObject(T object) {
 
@@ -39,9 +36,6 @@ public class DataResponse<T> extends SimpleResponse {
 		return new DataResponse<>(type).withObjects(Collections.singletonList(object));
 	}
 
-	/**
-	 * @since 6.9
-	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public static <T> DataResponse<T> forObjects(List<T> objects) {
 
@@ -53,9 +47,6 @@ public class DataResponse<T> extends SimpleResponse {
 		}
 	}
 
-	/**
-	 * @since 6.9
-	 */
 	public static <T> DataResponse<T> forType(Class<T> type) {
 		return new DataResponse<>(type);
 	}
@@ -68,17 +59,11 @@ public class DataResponse<T> extends SimpleResponse {
 		this.objects = Collections.emptyList();
 	}
 
-	/**
-	 * @since 6.9
-	 */
 	public DataResponse<T> withMessage(String message) {
 		this.message = message;
 		return this;
 	}
 
-	/**
-	 * @since 6.9
-	 */
 	public Class<T> getType() {
 		return type;
 	}
@@ -118,25 +103,16 @@ public class DataResponse<T> extends SimpleResponse {
 		return this;
 	}
 
-	/**
-	 * @since 6.9
-	 */
 	public DataResponse<T> withClientEntity(ClientEntity<T> rootEntity) {
 		this.entity = rootEntity;
 		return this;
 	}
 
-	/**
-	 * @since 6.9
-	 */
 	public DataResponse<T> withObjects(List<T> objects) {
 		this.objects = objects;
 		return this;
 	}
 
-	/**
-	 * @since 6.9
-	 */
 	public DataResponse<T> withObject(T object) {
 		this.objects = Collections.singletonList(object);
 		return this;
@@ -144,16 +120,11 @@ public class DataResponse<T> extends SimpleResponse {
 
 	/**
 	 * Returns all objects returned from DB.
-	 * 
-	 * @since 6.9
 	 */
 	public List<T> getObjects() {
 		return objects;
 	}
 
-	/**
-	 * @since 6.9
-	 */
 	public DataResponse<T> withEncoder(Encoder encoder) {
 		this.encoder = encoder;
 		return this;
@@ -162,8 +133,6 @@ public class DataResponse<T> extends SimpleResponse {
 	/**
 	 * Writes internal state to the provided JSON stream using the internal
 	 * {@link Encoder}.
-	 * 
-	 * @since 6.9
 	 */
 	public void writeData(JsonGenerator out) throws IOException {
 		encoder.encode("data", getObjects(), out);

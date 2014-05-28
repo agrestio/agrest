@@ -47,9 +47,6 @@ public abstract class BaseSelectBuilder<T> implements SelectBuilder<T> {
 		return this;
 	}
 
-	/**
-	 * @since 6.5
-	 */
 	@Override
 	public SelectBuilder<T> withDataEncoder(Encoder dataEncoder) {
 		this.dataEncoder = dataEncoder;

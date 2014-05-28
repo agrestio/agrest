@@ -22,7 +22,6 @@ public interface Encoder {
 	 *            object to encode
 	 * @param out
 	 *            output object where encoded JSON should be written.
-	 * @since 6.9 this method returns boolean instead of void.
 	 */
 	boolean encode(String propertyName, Object object, JsonGenerator out) throws IOException;
 
@@ -30,9 +29,7 @@ public interface Encoder {
 	 * Allows to check whether a given object will be encoded or skipped by the
 	 * current encoder. This is the same as
 	 * {@link #encode(String, Object, JsonGenerator)}, only without actually
-	 * encoding the object. performing
-	 * 
-	 * @since 6.9
+	 * encoding the object.
 	 */
 	boolean willEncode(String propertyName, Object object);
 }

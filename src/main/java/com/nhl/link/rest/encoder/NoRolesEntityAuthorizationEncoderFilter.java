@@ -11,8 +11,6 @@ import com.nhl.link.rest.runtime.meta.IMetadataService;
 /**
  * A superclass of authorizing {@link EncoderFilter}s that performs filter
  * matching based on the entity name.
- * 
- * @since 6.10
  */
 public abstract class NoRolesEntityAuthorizationEncoderFilter<T> implements EncoderFilter {
 

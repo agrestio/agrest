@@ -10,8 +10,6 @@ import com.nhl.link.rest.ClientEntity;
  * application may define a filter that suppresses certain objects based on
  * security constraints. Another application may provide an alternative Encoder
  * for a given object, etc.
- * 
- * @since 6.4
  */
 public interface EncoderFilter {
 
@@ -22,10 +20,7 @@ public interface EncoderFilter {
 	boolean matches(ClientEntity<?> entity);
 
 	boolean encode(String propertyName, Object object, JsonGenerator out, Encoder delegate) throws IOException;
-	
-	/**
-	 * @since 6.9
-	 */
+
 	boolean willEncode(String propertyName, Object object, Encoder delegate);
 
 }

@@ -5,13 +5,11 @@ import org.apache.cayenne.query.Select;
 
 /**
  * Provides entity metadata in Cayenne format. Although the actual ObjEntities
- * may describe Cayenne entities, as well as POJOs or any other objects.
- * 
- * @since 6.8
+ * may describe Cayenne entities, as well as POJOs or any other objects. 
  */
 public interface IMetadataService {
 
 	ObjEntity getObjEntity(Class<?> type);
-	
+
 	ObjEntity getObjEntity(Select<?> select);
 }

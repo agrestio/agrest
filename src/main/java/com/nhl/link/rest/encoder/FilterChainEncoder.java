@@ -24,9 +24,6 @@ public class FilterChainEncoder implements Encoder {
 		return new ChainEncoder().encode(propertyName, object, out);
 	}
 
-	/**
-	 * @since 6.9
-	 */
 	@Override
 	public boolean willEncode(String propertyName, Object object) {
 		return new ChainEncoder().willEncode(propertyName, object);

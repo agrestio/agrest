@@ -5,9 +5,7 @@ import org.apache.cayenne.map.DataMap;
 /**
  * A helper class to build Cayenne DataMap containing arbitrary application
  * POJOs, such as LDAP "entities", etc. Such DataMap allows LinkRest to obtain
- * metadata for Cayenne and non-Cayenne entities in a uniform way.
- * 
- * @since 6.8
+ * metadata for Cayenne and non-Cayenne entities in a uniform way. 
  */
 public abstract class DataMapBuilder {
 

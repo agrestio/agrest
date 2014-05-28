@@ -22,8 +22,6 @@ public abstract class AbstractEncoder implements Encoder {
 
 	/**
 	 * Always returns true.
-	 * 
-	 * @since 6.9
 	 */
 	@Override
 	public boolean willEncode(String propertyName, Object object) {

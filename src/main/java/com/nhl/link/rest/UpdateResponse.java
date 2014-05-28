@@ -3,9 +3,6 @@ package com.nhl.link.rest;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * @since 6.9 supersedes UpdateRequest object.
- */
 public class UpdateResponse<T> extends DataResponse<T> {
 
 	private Map<String, Object> values;

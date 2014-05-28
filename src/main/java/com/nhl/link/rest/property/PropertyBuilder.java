@@ -28,9 +28,6 @@ public class PropertyBuilder implements ClientProperty {
 	private Encoder encoder;
 	private PropertyReader reader;
 
-	/**
-	 * @since 6.8
-	 */
 	public static ClientProperty doNothingProperty() {
 		return DO_NOTHING_PROPERTY;
 	}
