@@ -92,8 +92,18 @@ public class RequestParser implements IRequestParser {
 		return response;
 	}
 
+	/**
+	 * @deprecated since 1.1 as the corresponding interface method is
+	 *             deprecated.
+	 */
+	@Deprecated
 	@Override
 	public <T> UpdateResponse<T> insertRequest(UpdateResponse<T> response, String requestBody) {
+		return parseInsert(response, requestBody);
+	}
+
+	@Override
+	public <T> UpdateResponse<T> parseInsert(UpdateResponse<T> response, String requestBody) {
 		return parseUpdate(response, null, requestBody);
 	}
 

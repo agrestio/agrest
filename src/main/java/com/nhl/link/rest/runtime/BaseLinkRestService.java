@@ -60,7 +60,7 @@ public abstract class BaseLinkRestService implements ILinkRestService {
 
 	@Override
 	public <T> DataResponse<T> insert(Class<T> root, String objectData) {
-		UpdateResponse<T> response = requestParser.insertRequest(new UpdateResponse<>(root), objectData);
+		UpdateResponse<T> response = requestParser.parseInsert(new UpdateResponse<>(root), objectData);
 
 		T object = doInsert(response);
 
