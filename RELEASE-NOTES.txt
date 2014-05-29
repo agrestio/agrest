@@ -1,3 +1,4 @@
 Release 1.1
 
 #1 Intercept Cayenne ValidationException
+#4 Responses for inserts should return '201 Created' instead of 200
