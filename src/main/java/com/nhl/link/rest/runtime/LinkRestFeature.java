@@ -8,6 +8,7 @@ import javax.ws.rs.core.FeatureContext;
 import org.apache.cayenne.di.Injector;
 
 import com.nhl.link.rest.provider.DataResponseWriter;
+import com.nhl.link.rest.provider.ResponseStatusDynamicFeature;
 import com.nhl.link.rest.provider.SimpleResponseWriter;
 
 /**
@@ -31,6 +32,8 @@ class LinkRestFeature implements Feature {
 
 		context.register(SimpleResponseWriter.class);
 		context.register(DataResponseWriter.class);
+
+		context.register(ResponseStatusDynamicFeature.class);
 
 		for (Class<?> c : extraComponents) {
 			context.register(c);

@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 
+import javax.ws.rs.core.Response.Status;
+
 import org.apache.cayenne.query.PrefetchTreeNode;
 
 import com.fasterxml.jackson.core.JsonGenerator;
@@ -24,6 +26,7 @@ public class DataResponse<T> extends SimpleResponse {
 	private int prefetchSemantics;
 	private List<T> objects;
 	private Encoder encoder;
+	private Status status;
 
 	@SuppressWarnings({ "unchecked" })
 	public static <T> DataResponse<T> forObject(T object) {
@@ -62,6 +65,10 @@ public class DataResponse<T> extends SimpleResponse {
 	public DataResponse<T> withMessage(String message) {
 		this.message = message;
 		return this;
+	}
+	
+	public Status getStatus() {
+		return status;
 	}
 
 	public Class<T> getType() {
@@ -129,7 +136,15 @@ public class DataResponse<T> extends SimpleResponse {
 		this.encoder = encoder;
 		return this;
 	}
-
+	
+	/**
+	 * @since 1.1
+	 */
+	public DataResponse<T> withStatus(Status status) {
+		this.status = status;
+		return this;
+	}
+	
 	/**
 	 * Writes internal state to the provided JSON stream using the internal
 	 * {@link Encoder}.
@@ -137,4 +152,6 @@ public class DataResponse<T> extends SimpleResponse {
 	public void writeData(JsonGenerator out) throws IOException {
 		encoder.encode("data", getObjects(), out);
 	}
+	
+	
 }

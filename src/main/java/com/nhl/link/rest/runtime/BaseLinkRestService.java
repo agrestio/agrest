@@ -1,5 +1,6 @@
 package com.nhl.link.rest.runtime;
 
+import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriInfo;
 
 import org.apache.cayenne.query.SelectQuery;
@@ -64,7 +65,7 @@ public abstract class BaseLinkRestService implements ILinkRestService {
 
 		T object = doInsert(response);
 
-		return encoderService.makeEncoder(response.withObject(object));
+		return encoderService.makeEncoder(response.withObject(object)).withStatus(Status.CREATED);
 	}
 
 	@Override

@@ -42,7 +42,7 @@ public class LinkRestService_InContainer_POST_Test extends JerseyTestOnDerby {
 
 		Response response1 = target("/lr").request().post(
 				Entity.entity("{\"cVarchar\":\"zzz\"}", MediaType.APPLICATION_JSON));
-		assertEquals(Status.OK.getStatusCode(), response1.getStatus());
+		assertEquals(Status.CREATED.getStatusCode(), response1.getStatus());
 
 		E4 e41 = (E4) Cayenne.objectForQuery(context, new SelectQuery<E4>(E4.class));
 		assertEquals("zzz", e41.getCVarchar());
@@ -56,7 +56,7 @@ public class LinkRestService_InContainer_POST_Test extends JerseyTestOnDerby {
 		Response response2 = target("/lr").request().post(
 				Entity.entity("{\"cVarchar\":\"TTTT\"}", MediaType.APPLICATION_JSON));
 
-		assertEquals(Status.OK.getStatusCode(), response2.getStatus());
+		assertEquals(Status.CREATED.getStatusCode(), response2.getStatus());
 
 		List<E4> e4s = context.select(new SelectQuery<E4>(E4.class));
 		assertEquals(2, e4s.size());
@@ -82,7 +82,7 @@ public class LinkRestService_InContainer_POST_Test extends JerseyTestOnDerby {
 		Response response1 = target("/lr/e3").request().post(
 				Entity.entity("{\"e2_id\":8,\"name\":\"MM\"}", MediaType.APPLICATION_JSON));
 
-		assertEquals(Status.OK.getStatusCode(), response1.getStatus());
+		assertEquals(Status.CREATED.getStatusCode(), response1.getStatus());
 
 		E3 e3 = (E3) Cayenne.objectForQuery(context, new SelectQuery<E3>(E3.class));
 		int id = Cayenne.intPKForObject(e3);
@@ -105,7 +105,7 @@ public class LinkRestService_InContainer_POST_Test extends JerseyTestOnDerby {
 		Response response1 = target("/lr/e3").request().post(
 				Entity.entity("{\"e2_id\":null,\"name\":\"MM\"}", MediaType.APPLICATION_JSON));
 
-		assertEquals(Status.OK.getStatusCode(), response1.getStatus());
+		assertEquals(Status.CREATED.getStatusCode(), response1.getStatus());
 
 		E3 e3 = (E3) Cayenne.objectForQuery(context, new SelectQuery<E3>(E3.class));
 		int id = Cayenne.intPKForObject(e3);
