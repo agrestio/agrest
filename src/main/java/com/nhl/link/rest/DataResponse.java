@@ -20,7 +20,7 @@ import com.nhl.link.rest.encoder.GenericEncoder;
 public class DataResponse<T> extends SimpleResponse {
 
 	private Class<T> type;
-	private ClientEntity<T> entity;
+	private Entity<T> entity;
 	private int fetchOffset;
 	private int fetchLimit;
 	private int prefetchSemantics;
@@ -79,7 +79,7 @@ public class DataResponse<T> extends SimpleResponse {
 		return encoder;
 	}
 
-	public ClientEntity<T> getEntity() {
+	public Entity<T> getEntity() {
 		return entity;
 	}
 
@@ -110,7 +110,7 @@ public class DataResponse<T> extends SimpleResponse {
 		return this;
 	}
 
-	public DataResponse<T> withClientEntity(ClientEntity<T> rootEntity) {
+	public DataResponse<T> withClientEntity(Entity<T> rootEntity) {
 		this.entity = rootEntity;
 		return this;
 	}

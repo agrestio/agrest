@@ -10,7 +10,7 @@ import org.apache.cayenne.map.ObjEntity;
 import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.nhl.link.rest.ClientEntity;
+import com.nhl.link.rest.Entity;
 import com.nhl.link.rest.LinkRestException;
 
 class FilterProcessor {
@@ -27,7 +27,7 @@ class FilterProcessor {
 		this.pathCache = pathCache;
 	}
 
-	void process(ClientEntity<?> clientEntity, String filtersJson) {
+	void process(Entity<?> clientEntity, String filtersJson) {
 		if (filtersJson == null || filtersJson.length() == 0) {
 			return;
 		}

@@ -13,8 +13,8 @@ import javax.ws.rs.core.Response.Status;
 import org.apache.cayenne.di.Inject;
 import org.apache.cayenne.map.ObjRelationship;
 
-import com.nhl.link.rest.ClientEntity;
-import com.nhl.link.rest.ClientProperty;
+import com.nhl.link.rest.Entity;
+import com.nhl.link.rest.EntityProperty;
 import com.nhl.link.rest.DataResponse;
 import com.nhl.link.rest.LinkRestException;
 import com.nhl.link.rest.encoder.Encoder;
@@ -54,7 +54,7 @@ public class EncoderService implements IEncoderService {
 
 	private <T> Encoder rootEncoder(DataResponse<T> response) {
 
-		ClientEntity<T> entity = response.getEntity();
+		Entity<T> entity = response.getEntity();
 
 		// TODO: in theory we can support this actually, but leaving it for
 		// another day, as fetch limit/offset and other filtering is
@@ -81,7 +81,7 @@ public class EncoderService implements IEncoderService {
 				.withLimit(response.getFetchLimit());
 	}
 
-	private Encoder nestedToManyEncoder(ClientEntity<?> clientEntity) {
+	private Encoder nestedToManyEncoder(Entity<?> clientEntity) {
 
 		Encoder elementEncoder = collectionElementEncoder(clientEntity);
 
@@ -99,12 +99,12 @@ public class EncoderService implements IEncoderService {
 		}
 	}
 
-	private Encoder collectionElementEncoder(ClientEntity<?> clientEntity) {
+	private Encoder collectionElementEncoder(Entity<?> clientEntity) {
 		Encoder encoder = entityEncoder(clientEntity);
 		return filteredEncoder(encoder, clientEntity);
 	}
 
-	private Encoder toOneEncoder(ClientEntity<?> clientEntity, final ObjRelationship relationship) {
+	private Encoder toOneEncoder(Entity<?> clientEntity, final ObjRelationship relationship) {
 
 		// to-one encoder is made of the following decorator layers (from outer
 		// to inner):
@@ -113,7 +113,7 @@ public class EncoderService implements IEncoderService {
 		// different structure from to-many, so building it differently
 
 		Encoder valueEncoder = entityEncoder(clientEntity);
-		ClientProperty idEncoder = attributeEncoderFactory.getIdProperty(clientEntity);
+		EntityProperty idEncoder = attributeEncoderFactory.getIdProperty(clientEntity);
 		Encoder compositeValueEncoder = new EntityToOneEncoder(valueEncoder, idEncoder) {
 
 			// we know that created encoder will only be used for encoding a
@@ -130,18 +130,18 @@ public class EncoderService implements IEncoderService {
 		return filteredEncoder(compositeValueEncoder, clientEntity);
 	}
 
-	private Encoder entityEncoder(ClientEntity<?> clientEntity) {
+	private Encoder entityEncoder(Entity<?> clientEntity) {
 
 		// ensure we sort property encoders alphabetically for cleaner JSON
 		// output
-		Map<String, ClientProperty> properties = new TreeMap<String, ClientProperty>();
+		Map<String, EntityProperty> properties = new TreeMap<String, EntityProperty>();
 
 		for (String attribute : clientEntity.getAttributes()) {
-			ClientProperty property = attributeEncoderFactory.getAttributeProperty(clientEntity, attribute);
+			EntityProperty property = attributeEncoderFactory.getAttributeProperty(clientEntity, attribute);
 			properties.put(attribute, property);
 		}
 
-		for (Entry<String, ClientEntity<?>> e : clientEntity.getRelationships().entrySet()) {
+		for (Entry<String, Entity<?>> e : clientEntity.getRelationships().entrySet()) {
 			ObjRelationship relationship = (ObjRelationship) clientEntity.getEntity().getRelationship(e.getKey());
 
 			Encoder encoder = relationship.isToMany() ? nestedToManyEncoder(e.getValue()) : toOneEncoder(e.getValue(),
@@ -152,12 +152,12 @@ public class EncoderService implements IEncoderService {
 
 		properties.putAll(clientEntity.getExtraProperties());
 
-		ClientProperty idEncoder = clientEntity.isIdIncluded() ? attributeEncoderFactory.getIdProperty(clientEntity)
+		EntityProperty idEncoder = clientEntity.isIdIncluded() ? attributeEncoderFactory.getIdProperty(clientEntity)
 				: PropertyBuilder.doNothingProperty();
 		return new EntityEncoder(idEncoder, properties);
 	}
 
-	private Encoder filteredEncoder(Encoder encoder, ClientEntity<?> clientEntity) {
+	private Encoder filteredEncoder(Encoder encoder, Entity<?> clientEntity) {
 		List<EncoderFilter> matchingFilters = null;
 
 		for (EncoderFilter filter : filters) {

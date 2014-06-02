@@ -13,8 +13,8 @@ import org.apache.cayenne.exp.Property;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.nhl.link.rest.ClientEntity;
-import com.nhl.link.rest.ClientProperty;
+import com.nhl.link.rest.Entity;
+import com.nhl.link.rest.EntityProperty;
 import com.nhl.link.rest.DataResponse;
 import com.nhl.link.rest.DataResponseConfig;
 import com.nhl.link.rest.LinkRestException;
@@ -35,7 +35,7 @@ public abstract class BaseSelectBuilder<T> implements SelectBuilder<T> {
 	private IEncoderService encoderService;
 	private IRequestParser requestParser;
 	private IConfigMerger configMerger;
-	private Map<String, ClientProperty> extraProperties;
+	private Map<String, EntityProperty> extraProperties;
 	private Encoder dataEncoder;
 	private DataResponseConfig config;
 
@@ -77,12 +77,12 @@ public abstract class BaseSelectBuilder<T> implements SelectBuilder<T> {
 	}
 
 	@Override
-	public SelectBuilder<T> withProperty(String name, ClientProperty clientProperty) {
+	public SelectBuilder<T> withProperty(String name, EntityProperty clientProperty) {
 		if (extraProperties == null) {
 			extraProperties = new HashMap<>();
 		}
 
-		ClientProperty oldProperty = extraProperties.put(name, clientProperty);
+		EntityProperty oldProperty = extraProperties.put(name, clientProperty);
 		if (oldProperty != null) {
 			logger.info("Overriding existing custom property '" + name + "', ignoring...");
 		}
@@ -126,7 +126,7 @@ public abstract class BaseSelectBuilder<T> implements SelectBuilder<T> {
 		fetchObjects(response);
 
 		List<T> objects = response.getObjects();
-		ClientEntity<T> rootEntity = response.getEntity();
+		Entity<T> rootEntity = response.getEntity();
 
 		if (isById() && objects.size() != 1) {
 

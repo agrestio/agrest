@@ -11,7 +11,7 @@ import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.nhl.link.rest.ClientEntity;
+import com.nhl.link.rest.Entity;
 import com.nhl.link.rest.LinkRestException;
 
 class IncludeProcessor {
@@ -33,7 +33,7 @@ class IncludeProcessor {
 		this.expProcessor = expProcessor;
 	}
 
-	void process(ClientEntity<?> clientEntity, List<String> includes) {
+	void process(Entity<?> clientEntity, List<String> includes) {
 		for (String include : includes) {
 
 			if (include.startsWith("[")) {
@@ -49,7 +49,7 @@ class IncludeProcessor {
 		processDefaultIncludes(clientEntity);
 	}
 
-	private void processIncludeArray(ClientEntity<?> clientEntity, String include) {
+	private void processIncludeArray(Entity<?> clientEntity, String include) {
 		JsonNode root = jsonParser.parseJSON(include, new ObjectMapper());
 
 		if (root != null && root.isArray()) {
@@ -67,11 +67,11 @@ class IncludeProcessor {
 		}
 	}
 
-	private void processIncludeObject(ClientEntity<?> rootEntity, JsonNode root) {
+	private void processIncludeObject(Entity<?> rootEntity, JsonNode root) {
 
 		if (root != null) {
 
-			ClientEntity<?> includeEntity;
+			Entity<?> includeEntity;
 
 			JsonNode pathNode = root.get(PATH);
 			if (pathNode == null || !pathNode.isTextual()) {
@@ -112,7 +112,7 @@ class IncludeProcessor {
 		}
 	}
 
-	private <T> void processMapBy(ClientEntity<T> descriptor, String mapByPath) {
+	private <T> void processMapBy(Entity<T> descriptor, String mapByPath) {
 
 		if (descriptor == null) {
 			LOGGER.info("Ignoring 'mapBy:" + mapByPath + "' for non-relationship property");
@@ -122,7 +122,7 @@ class IncludeProcessor {
 		// either root list, or to-many relationship
 		if (descriptor.getIncoming() == null || descriptor.getIncoming().isToMany()) {
 
-			ClientEntity<T> mapByRoot = new ClientEntity<T>(descriptor.getType(), descriptor.getEntity());
+			Entity<T> mapByRoot = new Entity<T>(descriptor.getType(), descriptor.getEntity());
 			processIncludePath(mapByRoot, mapByPath);
 			descriptor.setMapByPath(mapByPath);
 			descriptor.setMapBy(mapByRoot);
@@ -134,12 +134,12 @@ class IncludeProcessor {
 
 	/**
 	 * Records include path, returning null for the path corresponding to an
-	 * attribute, and a child {@link ClientEntity} for the path corresponding to
+	 * attribute, and a child {@link Entity} for the path corresponding to
 	 * relationship.
 	 */
 	// see TODO below
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	private ClientEntity<?> processIncludePath(ClientEntity<?> parent, String path) {
+	private Entity<?> processIncludePath(Entity<?> parent, String path) {
 
 		ExcludeProcessor.checkTooLong(path);
 
@@ -168,11 +168,11 @@ class IncludeProcessor {
 		ObjRelationship relationship = (ObjRelationship) parent.getEntity().getRelationship(property);
 		if (relationship != null) {
 
-			ClientEntity<?> childEntity = parent.getRelationships().get(property);
+			Entity<?> childEntity = parent.getRelationships().get(property);
 			if (childEntity == null) {
 				// TODO: use ClassDescriptors to figure out the type of related
 				// entity..
-				childEntity = new ClientEntity(relationship.getTargetEntity().getJavaClass(), relationship);
+				childEntity = new Entity(relationship.getTargetEntity().getJavaClass(), relationship);
 				parent.getRelationships().put(property, childEntity);
 			}
 
@@ -195,7 +195,7 @@ class IncludeProcessor {
 		throw new LinkRestException(Status.BAD_REQUEST, "Invalid include path: " + path);
 	}
 
-	private void processDefaultIncludes(ClientEntity<?> clientEntity) {
+	private void processDefaultIncludes(Entity<?> clientEntity) {
 		// either there are no includes (taking into account Id) or all includes
 		// are relationships
 		if (!clientEntity.isIdIncluded() && clientEntity.getAttributes().isEmpty()) {

@@ -9,12 +9,12 @@ import org.apache.cayenne.exp.ExpressionFactory;
 import org.apache.cayenne.map.ObjAttribute;
 import org.apache.cayenne.map.ObjEntity;
 
-import com.nhl.link.rest.ClientEntity;
+import com.nhl.link.rest.Entity;
 import com.nhl.link.rest.LinkRestException;
 
 class QueryProcessor {
 
-	void process(ClientEntity<?> clientEntity, String query, String queryProperty) {
+	void process(Entity<?> clientEntity, String query, String queryProperty) {
 
 		if (query == null || query.length() == 0) {
 			return;

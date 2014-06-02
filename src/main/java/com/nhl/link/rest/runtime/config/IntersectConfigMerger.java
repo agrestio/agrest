@@ -8,7 +8,7 @@ import javax.ws.rs.core.Response.Status;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.nhl.link.rest.ClientEntity;
+import com.nhl.link.rest.Entity;
 import com.nhl.link.rest.DataResponse;
 import com.nhl.link.rest.DataResponseConfig;
 import com.nhl.link.rest.EntityConfig;
@@ -52,7 +52,7 @@ public class IntersectConfigMerger implements IConfigMerger {
 		}
 	}
 
-	protected void mergeEntity(EntityConfig source, ClientEntity<?> target) {
+	protected void mergeEntity(EntityConfig source, Entity<?> target) {
 
 		if (!source.isIdIncluded()) {
 			target.setIdIncluded(false);
@@ -68,10 +68,10 @@ public class IntersectConfigMerger implements IConfigMerger {
 			}
 		}
 
-		Iterator<Entry<String, ClientEntity<?>>> rit = target.getRelationships().entrySet().iterator();
+		Iterator<Entry<String, Entity<?>>> rit = target.getRelationships().entrySet().iterator();
 		while (rit.hasNext()) {
 
-			Entry<String, ClientEntity<?>> e = rit.next();
+			Entry<String, Entity<?>> e = rit.next();
 			EntityConfig sourceChild = source.getChild(e.getKey());
 			if (sourceChild != null) {
 

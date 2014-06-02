@@ -8,7 +8,7 @@ import org.apache.cayenne.map.ObjEntity;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.nhl.link.rest.ClientEntity;
+import com.nhl.link.rest.Entity;
 import com.nhl.link.rest.runtime.parser.converter.UtcDateConverter;
 import com.nhl.link.rest.runtime.parser.converter.ValueConverter;
 
@@ -26,7 +26,7 @@ class CayenneExpProcessor {
 		this.converters.put(Date.class.getName(), new UtcDateConverter());
 	}
 
-	void process(ClientEntity<?> clientEntity, String cayenneExpJson) {
+	void process(Entity<?> clientEntity, String cayenneExpJson) {
 		if (cayenneExpJson == null || cayenneExpJson.length() == 0) {
 			return;
 		}
@@ -37,7 +37,7 @@ class CayenneExpProcessor {
 		}
 	}
 
-	void process(ClientEntity<?> clientEntity, JsonNode expNode) {
+	void process(Entity<?> clientEntity, JsonNode expNode) {
 		ObjEntity entity = clientEntity.getEntity();
 
 		EntityPathCache entityPathCache = pathCache.entityPathCache(entity);

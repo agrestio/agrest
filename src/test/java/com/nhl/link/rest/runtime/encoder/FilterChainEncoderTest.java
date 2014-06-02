@@ -13,7 +13,7 @@ import java.util.Collections;
 import org.junit.Test;
 
 import com.fasterxml.jackson.core.JsonGenerator;
-import com.nhl.link.rest.ClientEntity;
+import com.nhl.link.rest.Entity;
 import com.nhl.link.rest.encoder.Encoder;
 import com.nhl.link.rest.encoder.EncoderFilter;
 import com.nhl.link.rest.encoder.FilterChainEncoder;
@@ -37,7 +37,7 @@ public class FilterChainEncoderTest {
 		EncoderFilter filter = new EncoderFilter() {
 
 			@Override
-			public boolean matches(ClientEntity<?> clientEntity) {
+			public boolean matches(Entity<?> clientEntity) {
 				return true;
 			}
 
@@ -79,7 +79,7 @@ public class FilterChainEncoderTest {
 		EncoderFilter filter1 = new EncoderFilter() {
 			
 			@Override
-			public boolean matches(ClientEntity<?> clientEntity) {
+			public boolean matches(Entity<?> clientEntity) {
 				return true;
 			}
 

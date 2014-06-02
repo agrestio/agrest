@@ -15,7 +15,7 @@ import org.apache.cayenne.DataObject;
 import org.apache.cayenne.query.SelectQuery;
 
 import com.fasterxml.jackson.core.JsonGenerator;
-import com.nhl.link.rest.ClientProperty;
+import com.nhl.link.rest.EntityProperty;
 import com.nhl.link.rest.DataResponse;
 import com.nhl.link.rest.property.PropertyReader;
 import com.nhl.link.rest.runtime.ILinkRestService;
@@ -55,7 +55,7 @@ public class LinkRestResource_CustomProperties {
 
 		SelectQuery<E4> query = new SelectQuery<E4>(E4.class);
 
-		ClientProperty xProperty = new ClientProperty() {
+		EntityProperty xProperty = new EntityProperty() {
 
 			@Override
 			public void encode(Object root, String propertyName, JsonGenerator out) throws IOException {

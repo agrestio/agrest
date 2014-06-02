@@ -14,7 +14,7 @@ import org.apache.cayenne.map.ObjRelationship;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.nhl.link.rest.ClientEntity;
+import com.nhl.link.rest.Entity;
 import com.nhl.link.rest.DataResponse;
 import com.nhl.link.rest.DataResponseConfig;
 
@@ -116,11 +116,11 @@ public class IntersectConfigMergerTest {
 		DataResponseConfig s1 = new DataResponseConfig(entity);
 		s1.getEntity().attributes("a", "b");
 
-		ClientEntity<Object> te1 = new ClientEntity<>(Object.class);
+		Entity<Object> te1 = new Entity<>(Object.class);
 		te1.getAttributes().add("c");
 		te1.getAttributes().add("b");
 
-		ClientEntity<?> te11 = new ClientEntity<>(Object.class);
+		Entity<?> te11 = new Entity<>(Object.class);
 		te11.getAttributes().add("a1");
 		te11.getAttributes().add("b1");
 		te1.getRelationships().put("d", te11);
@@ -141,16 +141,16 @@ public class IntersectConfigMergerTest {
 		s1.getEntity().getOrMakeChild("r1").attributes("n", "m").getOrMakeChild("r11").attributes("p", "r");
 		s1.getEntity().getOrMakeChild("r2").attributes("k", "l");
 
-		ClientEntity<Object> te1 = new ClientEntity<>(Object.class);
+		Entity<Object> te1 = new Entity<>(Object.class);
 		te1.getAttributes().add("c");
 		te1.getAttributes().add("b");
 
-		ClientEntity<?> te11 = new ClientEntity<>(Object.class);
+		Entity<?> te11 = new Entity<>(Object.class);
 		te11.getAttributes().add("m");
 		te11.getAttributes().add("z");
 		te1.getRelationships().put("r1", te11);
 
-		ClientEntity<?> te21 = new ClientEntity<>(Object.class);
+		Entity<?> te21 = new Entity<>(Object.class);
 		te21.getAttributes().add("p");
 		te21.getAttributes().add("z");
 		te1.getRelationships().put("r3", te21);
@@ -162,7 +162,7 @@ public class IntersectConfigMergerTest {
 		assertTrue(t1.getEntity().getAttributes().contains("b"));
 		assertEquals(1, t1.getEntity().getRelationships().size());
 
-		ClientEntity<?> mergedTe11 = t1.getEntity().getRelationships().get("r1");
+		Entity<?> mergedTe11 = t1.getEntity().getRelationships().get("r1");
 		assertNotNull(mergedTe11);
 		assertTrue(mergedTe11.getRelationships().isEmpty());
 		assertEquals(1, mergedTe11.getAttributes().size());
@@ -178,19 +178,19 @@ public class IntersectConfigMergerTest {
 		DataResponseConfig s2 = new DataResponseConfig(entity);
 		s2.getEntity().includeId();
 
-		ClientEntity<Object> te1 = new ClientEntity<>(Object.class);
+		Entity<Object> te1 = new Entity<>(Object.class);
 		te1.setIdIncluded(true);
 		DataResponse<?> t1 = DataResponse.forType(Object.class).withClientEntity(te1);
 		merger.merge(s1, t1);
 		assertFalse(t1.getEntity().isIdIncluded());
 
-		ClientEntity<Object> te2 = new ClientEntity<>(Object.class);
+		Entity<Object> te2 = new Entity<>(Object.class);
 		te2.setIdIncluded(true);
 		DataResponse<?> t2 = DataResponse.forType(Object.class).withClientEntity(te2);
 		merger.merge(s2, t2);
 		assertTrue(t2.getEntity().isIdIncluded());
 
-		ClientEntity<Object> te3 = new ClientEntity<>(Object.class);
+		Entity<Object> te3 = new Entity<>(Object.class);
 		te3.setIdIncluded(false);
 		DataResponse<?> t3 = DataResponse.forType(Object.class).withClientEntity(te3);
 		merger.merge(s2, t3);
@@ -205,12 +205,12 @@ public class IntersectConfigMergerTest {
 		DataResponseConfig s1 = new DataResponseConfig(entity);
 		s1.getEntity().andQualifier(q1);
 
-		ClientEntity<Object> te1 = new ClientEntity<>(Object.class);
+		Entity<Object> te1 = new Entity<>(Object.class);
 		DataResponse<?> t1 = DataResponse.forType(Object.class).withClientEntity(te1);
 		merger.merge(s1, t1);
 		assertEquals(Expression.fromString("a = 5"), t1.getEntity().getQualifier());
 
-		ClientEntity<Object> te2 = new ClientEntity<>(Object.class);
+		Entity<Object> te2 = new Entity<>(Object.class);
 		te2.andQualifier(Expression.fromString("b = 'd'"));
 		DataResponse<?> t2 = DataResponse.forType(Object.class).withClientEntity(te2);
 		merger.merge(s1, t2);
@@ -223,13 +223,13 @@ public class IntersectConfigMergerTest {
 		DataResponseConfig s1 = new DataResponseConfig(entity);
 		s1.getEntity().getOrMakeChild("r1").attribute("a");
 
-		ClientEntity<Object> te1MapByTarget = new ClientEntity<>(Object.class);
+		Entity<Object> te1MapByTarget = new Entity<>(Object.class);
 		te1MapByTarget.getAttributes().add("b");
 
-		ClientEntity<Object> te1MapBy = new ClientEntity<>(Object.class);
+		Entity<Object> te1MapBy = new Entity<>(Object.class);
 		te1MapBy.getRelationships().put("r1", te1MapByTarget);
 
-		ClientEntity<Object> te1 = new ClientEntity<>(Object.class);
+		Entity<Object> te1 = new Entity<>(Object.class);
 		te1.setMapByPath("r1.b");
 		te1.setMapBy(te1MapBy);
 
@@ -238,13 +238,13 @@ public class IntersectConfigMergerTest {
 		assertNull(t1.getEntity().getMapBy());
 		assertNull(t1.getEntity().getMapByPath());
 
-		ClientEntity<Object> te2MapByTarget = new ClientEntity<>(Object.class);
+		Entity<Object> te2MapByTarget = new Entity<>(Object.class);
 		te2MapByTarget.getAttributes().add("a");
 
-		ClientEntity<Object> te2MapBy = new ClientEntity<>(Object.class);
+		Entity<Object> te2MapBy = new Entity<>(Object.class);
 		te1MapBy.getRelationships().put("r1", te2MapByTarget);
 
-		ClientEntity<Object> te2 = new ClientEntity<>(Object.class);
+		Entity<Object> te2 = new Entity<>(Object.class);
 		te2.setMapByPath("r1.a");
 		te2.setMapBy(te2MapBy);
 
@@ -260,13 +260,13 @@ public class IntersectConfigMergerTest {
 		DataResponseConfig s1 = new DataResponseConfig(entity);
 		s1.getEntity().getOrMakeChild("r1").excludeId();
 
-		ClientEntity<Object> te1MapByTarget = new ClientEntity<>(Object.class);
+		Entity<Object> te1MapByTarget = new Entity<>(Object.class);
 		te1MapByTarget.setIdIncluded(true);
 
-		ClientEntity<Object> te1MapBy = new ClientEntity<>(Object.class);
+		Entity<Object> te1MapBy = new Entity<>(Object.class);
 		te1MapBy.getRelationships().put("r1", te1MapByTarget);
 
-		ClientEntity<Object> te1 = new ClientEntity<>(Object.class);
+		Entity<Object> te1 = new Entity<>(Object.class);
 		te1.setMapByPath("r1");
 		te1.setMapBy(te1MapBy);
 
@@ -283,13 +283,13 @@ public class IntersectConfigMergerTest {
 		DataResponseConfig s1 = new DataResponseConfig(entity);
 		s1.getEntity().getOrMakeChild("r1").includeId();
 
-		ClientEntity<Object> te1MapByTarget = new ClientEntity<>(Object.class);
+		Entity<Object> te1MapByTarget = new Entity<>(Object.class);
 		te1MapByTarget.setIdIncluded(true);
 
-		ClientEntity<Object> te1MapBy = new ClientEntity<>(Object.class);
+		Entity<Object> te1MapBy = new Entity<>(Object.class);
 		te1MapBy.getRelationships().put("r1", te1MapByTarget);
 
-		ClientEntity<Object> te1 = new ClientEntity<>(Object.class);
+		Entity<Object> te1 = new Entity<>(Object.class);
 		te1.setMapByPath("r1");
 		te1.setMapBy(te1MapBy);
 

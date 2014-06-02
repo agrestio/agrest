@@ -3,7 +3,7 @@ package com.nhl.link.rest.encoder;
 import java.io.IOException;
 
 import com.fasterxml.jackson.core.JsonGenerator;
-import com.nhl.link.rest.ClientEntity;
+import com.nhl.link.rest.Entity;
 
 /**
  * Defines API of an interceptor for encoding specific entities. E.g. an
@@ -15,9 +15,9 @@ public interface EncoderFilter {
 
 	/**
 	 * Returns whether the filter should be applied for a given
-	 * {@link ClientEntity}.
+	 * {@link Entity}.
 	 */
-	boolean matches(ClientEntity<?> entity);
+	boolean matches(Entity<?> entity);
 
 	boolean encode(String propertyName, Object object, JsonGenerator out, Encoder delegate) throws IOException;
 

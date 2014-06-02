@@ -15,7 +15,7 @@ import org.apache.cayenne.map.ObjRelationship;
 import org.apache.cayenne.util.CayenneMapEntry;
 
 /**
- * Stores parameters pertaining to the {@link ClientEntity} configuration in a
+ * Stores parameters pertaining to the {@link Entity} configuration in a
  * {@link DataResponse}.
  * 
  * @since 1.1

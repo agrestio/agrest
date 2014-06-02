@@ -17,7 +17,7 @@ import org.apache.cayenne.map.DataMap;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.nhl.link.rest.ClientEntity;
+import com.nhl.link.rest.Entity;
 import com.nhl.link.rest.DataResponse;
 import com.nhl.link.rest.runtime.cayenne.ICayennePersister;
 import com.nhl.link.rest.runtime.jackson.JacksonService;
@@ -60,7 +60,7 @@ public class RequestParser_IncludeObjectTest extends TestWithCayenneMapping {
 		parser.parseSelect(dataRequest, urlInfo, null);
 
 		assertNotNull(dataRequest);
-		ClientEntity<E2> clientEntity = dataRequest.getEntity();
+		Entity<E2> clientEntity = dataRequest.getEntity();
 		assertNotNull(clientEntity);
 		assertTrue(clientEntity.isIdIncluded());
 
@@ -82,10 +82,10 @@ public class RequestParser_IncludeObjectTest extends TestWithCayenneMapping {
 		parser.parseSelect(dataRequest, urlInfo, null);
 
 		assertNotNull(dataRequest);
-		ClientEntity<E2> clientEntity = dataRequest.getEntity();
+		Entity<E2> clientEntity = dataRequest.getEntity();
 		assertNotNull(clientEntity);
 
-		ClientEntity<?> mapBy = clientEntity.getRelationships().get(E2.E3S.getName()).getMapBy();
+		Entity<?> mapBy = clientEntity.getRelationships().get(E2.E3S.getName()).getMapBy();
 		assertNotNull(mapBy);
 		assertNotNull(mapBy.getRelationships().get(E3.E5.getName()));
 	}

@@ -1,7 +1,7 @@
 package com.nhl.link.rest.runtime.encoder;
 
-import com.nhl.link.rest.ClientEntity;
-import com.nhl.link.rest.ClientProperty;
+import com.nhl.link.rest.Entity;
+import com.nhl.link.rest.EntityProperty;
 
 /**
  * Provides an extension point for building custom attribute encoders if the
@@ -9,7 +9,7 @@ import com.nhl.link.rest.ClientProperty;
  */
 public interface IAttributeEncoderFactory {
 
-	ClientProperty getAttributeProperty(ClientEntity<?> entity, String attributeName);
+	EntityProperty getAttributeProperty(Entity<?> entity, String attributeName);
 
-	ClientProperty getIdProperty(ClientEntity<?> entity);
+	EntityProperty getIdProperty(Entity<?> entity);
 }

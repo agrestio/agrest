@@ -10,7 +10,7 @@ import org.junit.Test;
 
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.nhl.link.rest.ClientEntity;
+import com.nhl.link.rest.Entity;
 import com.nhl.link.rest.LinkRestException;
 import com.nhl.link.rest.runtime.parser.FilterProcessor;
 import com.nhl.link.rest.runtime.parser.PathCache;
@@ -20,7 +20,7 @@ import com.nhl.link.rest.unit.cayenne.E4;
 
 public class FilterProcessorTest extends TestWithCayenneMapping {
 
-	private ClientEntity<E4> e4Descriptor;
+	private Entity<E4> e4Descriptor;
 	private FilterProcessor processor;
 
 	@Before

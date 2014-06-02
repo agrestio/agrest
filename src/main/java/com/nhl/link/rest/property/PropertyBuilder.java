@@ -3,20 +3,20 @@ package com.nhl.link.rest.property;
 import java.io.IOException;
 
 import com.fasterxml.jackson.core.JsonGenerator;
-import com.nhl.link.rest.ClientProperty;
+import com.nhl.link.rest.EntityProperty;
 import com.nhl.link.rest.encoder.Encoder;
 import com.nhl.link.rest.encoder.GenericEncoder;
 
 /**
- * A {@link ClientProperty} implementation that provides fluent builder methods
+ * A {@link EntityProperty} implementation that provides fluent builder methods
  * for the manual property assembly.
  */
-public class PropertyBuilder implements ClientProperty {
+public class PropertyBuilder implements EntityProperty {
 
-	private static final ClientProperty DO_NOTHING_PROPERTY;
+	private static final EntityProperty DO_NOTHING_PROPERTY;
 
 	static {
-		DO_NOTHING_PROPERTY = new ClientProperty() {
+		DO_NOTHING_PROPERTY = new EntityProperty() {
 
 			@Override
 			public void encode(Object root, String propertyName, JsonGenerator out) throws IOException {
@@ -28,7 +28,7 @@ public class PropertyBuilder implements ClientProperty {
 	private Encoder encoder;
 	private PropertyReader reader;
 
-	public static ClientProperty doNothingProperty() {
+	public static EntityProperty doNothingProperty() {
 		return DO_NOTHING_PROPERTY;
 	}
 

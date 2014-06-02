@@ -15,8 +15,8 @@ import org.apache.cayenne.Persistent;
 import org.apache.cayenne.map.ObjAttribute;
 import org.apache.cayenne.map.ObjEntity;
 
-import com.nhl.link.rest.ClientEntity;
-import com.nhl.link.rest.ClientProperty;
+import com.nhl.link.rest.Entity;
+import com.nhl.link.rest.EntityProperty;
 import com.nhl.link.rest.LinkRestException;
 import com.nhl.link.rest.encoder.Encoder;
 import com.nhl.link.rest.encoder.GenericEncoder;
@@ -36,8 +36,8 @@ public class AttributeEncoderFactory implements IAttributeEncoderFactory {
 	static final String SQL_TIMESTAMP = Timestamp.class.getName();
 
 	// these are explicit overrides for named attributes
-	private Map<String, ClientProperty> attributePropertiesByPath;
-	private Map<String, ClientProperty> idPropertiesByEntity;
+	private Map<String, EntityProperty> attributePropertiesByPath;
+	private Map<String, EntityProperty> idPropertiesByEntity;
 
 	public AttributeEncoderFactory() {
 		this.attributePropertiesByPath = new ConcurrentHashMap<>();
@@ -45,10 +45,10 @@ public class AttributeEncoderFactory implements IAttributeEncoderFactory {
 	}
 
 	@Override
-	public ClientProperty getAttributeProperty(ClientEntity<?> entity, String attributeName) {
+	public EntityProperty getAttributeProperty(Entity<?> entity, String attributeName) {
 		String key = entity.getEntity().getName() + "." + attributeName;
 
-		ClientProperty property = attributePropertiesByPath.get(key);
+		EntityProperty property = attributePropertiesByPath.get(key);
 		if (property == null) {
 			property = buildAttributeProperty(entity, attributeName);
 			attributePropertiesByPath.put(key, property);
@@ -58,11 +58,11 @@ public class AttributeEncoderFactory implements IAttributeEncoderFactory {
 	}
 
 	@Override
-	public ClientProperty getIdProperty(ClientEntity<?> entity) {
+	public EntityProperty getIdProperty(Entity<?> entity) {
 
 		String key = entity.getEntity().getName();
 
-		ClientProperty property = idPropertiesByEntity.get(key);
+		EntityProperty property = idPropertiesByEntity.get(key);
 		if (property == null) {
 			property = buildIdProperty(entity);
 			idPropertiesByEntity.put(key, property);
@@ -71,7 +71,7 @@ public class AttributeEncoderFactory implements IAttributeEncoderFactory {
 		return property;
 	}
 
-	protected ClientProperty buildAttributeProperty(ClientEntity<?> entity, String attributeName) {
+	protected EntityProperty buildAttributeProperty(Entity<?> entity, String attributeName) {
 
 		Encoder encoder = buildEncoder(entity.getEntity(), attributeName);
 		if (DataObject.class.isAssignableFrom(entity.getType())) {
@@ -81,7 +81,7 @@ public class AttributeEncoderFactory implements IAttributeEncoderFactory {
 		}
 	}
 
-	protected ClientProperty buildIdProperty(ClientEntity<?> entity) {
+	protected EntityProperty buildIdProperty(Entity<?> entity) {
 		if (Persistent.class.isAssignableFrom(entity.getType())) {
 			// ignoring compound PK entities; ignoring non-numeric PK entities
 			return PropertyBuilder.property(PersistentObjectIdPropertyReader.reader()).encodedWith(

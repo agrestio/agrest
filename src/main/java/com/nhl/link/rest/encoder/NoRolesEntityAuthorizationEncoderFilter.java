@@ -5,7 +5,7 @@ import java.io.IOException;
 import org.apache.cayenne.map.ObjEntity;
 
 import com.fasterxml.jackson.core.JsonGenerator;
-import com.nhl.link.rest.ClientEntity;
+import com.nhl.link.rest.Entity;
 import com.nhl.link.rest.runtime.meta.IMetadataService;
 
 /**
@@ -25,7 +25,7 @@ public abstract class NoRolesEntityAuthorizationEncoderFilter<T> implements Enco
 	protected abstract boolean authorize(T object);
 
 	@Override
-	public boolean matches(ClientEntity<?> clientEntity) {
+	public boolean matches(Entity<?> clientEntity) {
 		return entity == clientEntity.getEntity();
 	}
 

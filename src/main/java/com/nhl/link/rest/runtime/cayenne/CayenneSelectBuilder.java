@@ -10,7 +10,7 @@ import org.apache.cayenne.query.Ordering;
 import org.apache.cayenne.query.PrefetchTreeNode;
 import org.apache.cayenne.query.SelectQuery;
 
-import com.nhl.link.rest.ClientEntity;
+import com.nhl.link.rest.Entity;
 import com.nhl.link.rest.DataResponse;
 import com.nhl.link.rest.LinkRestException;
 import com.nhl.link.rest.SelectBuilder;
@@ -100,8 +100,8 @@ class CayenneSelectBuilder<T> extends BaseSelectBuilder<T> implements SelectBuil
 		return select;
 	}
 
-	private void appendPrefetches(PrefetchTreeNode root, ClientEntity<?> entity, int prefetchSemantics) {
-		for (Entry<String, ClientEntity<?>> e : entity.getRelationships().entrySet()) {
+	private void appendPrefetches(PrefetchTreeNode root, Entity<?> entity, int prefetchSemantics) {
+		for (Entry<String, Entity<?>> e : entity.getRelationships().entrySet()) {
 
 			PrefetchTreeNode child = root.addPath(e.getKey());
 

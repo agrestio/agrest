@@ -31,13 +31,13 @@ public interface SelectBuilder<T> {
 	/**
 	 * Adds a custom property that is appended to the root ClientEntity.
 	 */
-	SelectBuilder<T> withProperty(String name, ClientProperty clientProperty);
+	SelectBuilder<T> withProperty(String name, EntityProperty clientProperty);
 
 	/**
 	 * Adds a custom property that is appended to the root ClientEntity.
 	 * Property is read as a regular JavaBean "property", and default encoder is
 	 * used. For more control over property access and encoding use
-	 * {@link #withProperty(String, ClientProperty)}.
+	 * {@link #withProperty(String, EntityProperty)}.
 	 */
 	SelectBuilder<T> withProperty(String name);
 

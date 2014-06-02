@@ -15,7 +15,7 @@ import org.apache.cayenne.DataObject;
 import org.apache.cayenne.exp.Expression;
 
 import com.fasterxml.jackson.core.JsonGenerator;
-import com.nhl.link.rest.ClientEntity;
+import com.nhl.link.rest.Entity;
 import com.nhl.link.rest.LinkRestException;
 import com.nhl.link.rest.converter.StringConverter;
 import com.nhl.link.rest.runtime.encoder.IStringConverterFactory;
@@ -28,7 +28,7 @@ public class MapByEncoder extends AbstractEncoder {
 	private StringConverter fieldNameConverter;
 	private Expression filter;
 
-	public MapByEncoder(String mapByPath, Expression filter, ClientEntity<?> mapBy, Encoder listEncoder,
+	public MapByEncoder(String mapByPath, Expression filter, Entity<?> mapBy, Encoder listEncoder,
 			IStringConverterFactory converterFactory) {
 
 		if (mapBy == null) {
@@ -43,7 +43,7 @@ public class MapByEncoder extends AbstractEncoder {
 		config(converterFactory, mapBy);
 	}
 
-	private void config(IStringConverterFactory converterFactory, ClientEntity<?> mapBy) {
+	private void config(IStringConverterFactory converterFactory, Entity<?> mapBy) {
 
 		if (mapBy.isIdIncluded()) {
 			validateLeafMapBy(mapBy);
@@ -82,7 +82,7 @@ public class MapByEncoder extends AbstractEncoder {
 				}
 			});
 
-			ClientEntity<?> childMapBy = mapBy.getRelationships().get(property);
+			Entity<?> childMapBy = mapBy.getRelationships().get(property);
 			config(converterFactory, childMapBy);
 			return;
 		}
@@ -91,7 +91,7 @@ public class MapByEncoder extends AbstractEncoder {
 		mapByReaders.add(IdReader.idReader);
 	}
 
-	private void validateLeafMapBy(ClientEntity<?> mapBy) {
+	private void validateLeafMapBy(Entity<?> mapBy) {
 
 		if (!mapBy.getRelationships().isEmpty()) {
 

@@ -3,14 +3,14 @@ package com.nhl.link.rest.encoder;
 import java.io.IOException;
 
 import com.fasterxml.jackson.core.JsonGenerator;
-import com.nhl.link.rest.ClientProperty;
+import com.nhl.link.rest.EntityProperty;
 
 public abstract class EntityToOneEncoder implements Encoder {
 
-	private ClientProperty idEncoder;
+	private EntityProperty idEncoder;
 	private Encoder objectEncoder;
 
-	public EntityToOneEncoder(Encoder objectEncoder, ClientProperty idEncoder) {
+	public EntityToOneEncoder(Encoder objectEncoder, EntityProperty idEncoder) {
 		this.idEncoder = idEncoder;
 		this.objectEncoder = objectEncoder;
 	}

@@ -18,11 +18,10 @@ import org.apache.cayenne.util.ToStringBuilder;
  * filtering and extending its properties to describe the data structure to be
  * returned to the client.
  * <p>
- * Unlike Cayenne ObjEntity, ClientEntity scope is usually a single JAX RS
- * resource, or more often - just a single request. I.e. it is built on the fly
- * by the framework or by the application code.
+ * ClientEntity scope is usually a single request. It is built on the fly by the
+ * framework or by the application code.
  */
-public class ClientEntity<T> {
+public class Entity<T> {
 
 	private boolean idIncluded;
 
@@ -31,14 +30,14 @@ public class ClientEntity<T> {
 	private Collection<String> attributes;
 
 	private String mapByPath;
-	private ClientEntity<?> mapBy;
-	private Map<String, ClientEntity<?>> relationships;
+	private Entity<?> mapBy;
+	private Map<String, Entity<?>> relationships;
 	private ObjRelationship incoming;
 	private Collection<Ordering> orderings;
 	private Expression qualifier;
-	private Map<String, ClientProperty> extraProperties;
+	private Map<String, EntityProperty> extraProperties;
 
-	public ClientEntity(Class<T> type) {
+	public Entity(Class<T> type) {
 		this.idIncluded = false;
 		this.attributes = new ArrayList<>();
 		this.relationships = new HashMap<>();
@@ -47,12 +46,12 @@ public class ClientEntity<T> {
 		this.type = type;
 	}
 
-	public ClientEntity(Class<T> type, ObjEntity entity) {
+	public Entity(Class<T> type, ObjEntity entity) {
 		this(type);
 		this.entity = entity;
 	}
 
-	public ClientEntity(Class<T> type, ObjRelationship incoming) {
+	public Entity(Class<T> type, ObjRelationship incoming) {
 		this(type, incoming.getTargetEntity());
 		this.incoming = incoming;
 	}
@@ -85,11 +84,11 @@ public class ClientEntity<T> {
 		return attributes;
 	}
 
-	public Map<String, ClientEntity<?>> getRelationships() {
+	public Map<String, Entity<?>> getRelationships() {
 		return relationships;
 	}
 
-	public Map<String, ClientProperty> getExtraProperties() {
+	public Map<String, EntityProperty> getExtraProperties() {
 		return extraProperties;
 	}
 
@@ -101,11 +100,11 @@ public class ClientEntity<T> {
 		this.idIncluded = idIncluded;
 	}
 
-	public ClientEntity<?> getMapBy() {
+	public Entity<?> getMapBy() {
 		return mapBy;
 	}
 
-	public void setMapBy(ClientEntity<?> mapBy) {
+	public void setMapBy(Entity<?> mapBy) {
 		this.mapBy = mapBy;
 	}
 

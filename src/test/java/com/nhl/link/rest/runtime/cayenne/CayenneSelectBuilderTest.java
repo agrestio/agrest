@@ -16,7 +16,7 @@ import org.apache.cayenne.query.SelectQuery;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.nhl.link.rest.ClientEntity;
+import com.nhl.link.rest.Entity;
 import com.nhl.link.rest.DataResponse;
 import com.nhl.link.rest.encoder.EncoderFilter;
 import com.nhl.link.rest.runtime.config.IConfigMerger;
@@ -78,9 +78,9 @@ public class CayenneSelectBuilderTest extends TestWithCayenneMapping {
 	public void testBuildQuery_Prefetches() {
 		SelectQuery<E2> query = new SelectQuery<E2>(E2.class);
 
-		ClientEntity<E2> resultFilter = getClientEntity(E2.class);
+		Entity<E2> resultFilter = getClientEntity(E2.class);
 		ObjRelationship incoming = (ObjRelationship) resultFilter.getEntity().getRelationship(E2.E3S.getName());
-		resultFilter.getRelationships().put(E2.E3S.getName(), new ClientEntity<E3>(E3.class, incoming));
+		resultFilter.getRelationships().put(E2.E3S.getName(), new Entity<E3>(E3.class, incoming));
 
 		DataResponse<E2> request = DataResponse.forType(E2.class).withClientEntity(resultFilter);
 

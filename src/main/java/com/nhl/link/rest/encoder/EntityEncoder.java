@@ -5,15 +5,15 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import com.fasterxml.jackson.core.JsonGenerator;
-import com.nhl.link.rest.ClientProperty;
+import com.nhl.link.rest.EntityProperty;
 import com.nhl.link.rest.runtime.parser.PathConstants;
 
 public class EntityEncoder extends AbstractEncoder {
 
-	private ClientProperty idEncoder;
-	private Map<String, ClientProperty> propertyEncoders;
+	private EntityProperty idEncoder;
+	private Map<String, EntityProperty> propertyEncoders;
 
-	public EntityEncoder(ClientProperty idEncoder, Map<String, ClientProperty> propertyEncoders) {
+	public EntityEncoder(EntityProperty idEncoder, Map<String, EntityProperty> propertyEncoders) {
 		this.idEncoder = idEncoder;
 		this.propertyEncoders = propertyEncoders;
 	}
@@ -25,7 +25,7 @@ public class EntityEncoder extends AbstractEncoder {
 
 		idEncoder.encode(object, PathConstants.ID_PK_ATTRIBUTE, out);
 
-		for (Entry<String, ClientProperty> e : propertyEncoders.entrySet()) {
+		for (Entry<String, EntityProperty> e : propertyEncoders.entrySet()) {
 			e.getValue().encode(object, e.getKey(), out);
 		}
 

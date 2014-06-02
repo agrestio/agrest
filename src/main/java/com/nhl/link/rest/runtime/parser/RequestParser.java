@@ -9,7 +9,7 @@ import javax.ws.rs.core.UriInfo;
 import org.apache.cayenne.di.Inject;
 import org.apache.cayenne.map.ObjEntity;
 
-import com.nhl.link.rest.ClientEntity;
+import com.nhl.link.rest.Entity;
 import com.nhl.link.rest.DataResponse;
 import com.nhl.link.rest.LinkRestException;
 import com.nhl.link.rest.UpdateResponse;
@@ -61,7 +61,7 @@ public class RequestParser implements IRequestParser {
 			throw new LinkRestException(Status.NOT_FOUND, "No entity for class: " + response.getType().getName());
 		}
 
-		ClientEntity<T> rootDescriptor = new ClientEntity<T>(response.getType(), entity);
+		Entity<T> rootDescriptor = new Entity<T>(response.getType(), entity);
 		response.withClientEntity(rootDescriptor);
 
 		// selectById can send us a null uriInfo; still we want to run through
@@ -121,7 +121,7 @@ public class RequestParser implements IRequestParser {
 			throw new LinkRestException(Status.NOT_FOUND, "No entity for class: " + response.getType().getName());
 		}
 
-		ClientEntity<T> clientEntity = new ClientEntity<T>(response.getType(), entity);
+		Entity<T> clientEntity = new Entity<T>(response.getType(), entity);
 		response.withClientEntity(clientEntity);
 
 		includeProcessor.process(clientEntity, Collections.<String> emptyList());
