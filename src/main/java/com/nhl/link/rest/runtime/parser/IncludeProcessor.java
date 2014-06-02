@@ -167,7 +167,7 @@ class IncludeProcessor {
 		ObjRelationship relationship = (ObjRelationship) parent.getCayenneEntity().getRelationship(property);
 		if (relationship != null) {
 
-			Entity<?> childEntity = parent.getChildren().get(property);
+			Entity<?> childEntity = parent.getChild(property);
 			if (childEntity == null) {
 				// TODO: use ClassDescriptors to figure out the type of related
 				// entity..

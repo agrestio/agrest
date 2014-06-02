@@ -82,7 +82,7 @@ public class ExcludeProcessor {
 		ObjRelationship relationship = (ObjRelationship) clientEntity.getCayenneEntity().getRelationship(property);
 		if (relationship != null) {
 
-			Entity<?> relatedFilter = clientEntity.getChildren().get(property);
+			Entity<?> relatedFilter = clientEntity.getChild(property);
 			if (relatedFilter == null) {
 				// valid path, but not included... ignoring
 				return;

@@ -90,6 +90,13 @@ public class Entity<T> {
 	public Map<String, Entity<?>> getChildren() {
 		return children;
 	}
+	
+	/**
+	 * @since 1.1
+	 */
+	public Entity<?> getChild(String name) {
+		return children.get(name);
+	}
 
 	public Map<String, EntityProperty> getExtraProperties() {
 		return extraProperties;
