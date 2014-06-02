@@ -8,25 +8,35 @@ import org.apache.cayenne.di.Inject;
 import org.apache.cayenne.query.SelectQuery;
 import org.apache.cayenne.reflect.PropertyUtils;
 
+import com.nhl.link.rest.DataResponseConfig;
 import com.nhl.link.rest.LinkRestException;
 import com.nhl.link.rest.SelectBuilder;
 import com.nhl.link.rest.UpdateResponse;
 import com.nhl.link.rest.runtime.BaseLinkRestService;
+import com.nhl.link.rest.runtime.config.IConfigMerger;
 import com.nhl.link.rest.runtime.encoder.IEncoderService;
 import com.nhl.link.rest.runtime.parser.IRequestParser;
 
 public class PojoLinkRestService extends BaseLinkRestService {
 
 	private PojoDB db;
+	private IConfigMerger configMerger;
 
-	public PojoLinkRestService(@Inject IRequestParser requestParser, @Inject IEncoderService encoderService) {
+	public PojoLinkRestService(@Inject IRequestParser requestParser, @Inject IEncoderService encoderService,
+			@Inject IConfigMerger configMerger) {
 		super(requestParser, encoderService);
 		this.db = JerseyTestOnPojo.pojoDB;
+		this.configMerger = configMerger;
+	}
+
+	@Override
+	public DataResponseConfig newConfig(Class<?> root) {
+		throw new UnsupportedOperationException("TODO");
 	}
 
 	@Override
 	public <T> SelectBuilder<T> forSelect(Class<T> root) {
-		return new PojoSelectBuilder<>(root, encoderService, requestParser, db.bucketForType(root));
+		return new PojoSelectBuilder<>(root, encoderService, requestParser, configMerger, db.bucketForType(root));
 	}
 
 	@Override

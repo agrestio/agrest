@@ -119,7 +119,13 @@ public class ClientEntity<T> {
 
 	@Override
 	public String toString() {
-		return new ToStringBuilder(this).append("name", entity.getName()).toString();
+
+		ToStringBuilder tsb = new ToStringBuilder(this);
+		if (entity != null) {
+			tsb.append("name", entity.getName());
+		}
+
+		return tsb.toString();
 	}
 
 	public Class<T> getType() {

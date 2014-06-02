@@ -5,6 +5,7 @@ import javax.ws.rs.core.UriInfo;
 import org.apache.cayenne.query.SelectQuery;
 
 import com.nhl.link.rest.DataResponse;
+import com.nhl.link.rest.DataResponseConfig;
 import com.nhl.link.rest.SelectBuilder;
 import com.nhl.link.rest.SimpleResponse;
 
@@ -12,6 +13,16 @@ import com.nhl.link.rest.SimpleResponse;
  * A facade to the ExtJS query processing pipeline.
  */
 public interface ILinkRestService {
+
+	/**
+	 * Creates and returns a new {@link DataResponseConfig}. The initial state
+	 * of the returned config is to include all attributes of the root entity
+	 * plus the id. It can be further customized by the caller and then used
+	 * repeatedly to configure DataResponses.
+	 * 
+	 * @since 1.1
+	 */
+	DataResponseConfig newConfig(Class<?> root);
 
 	/**
 	 * Selects a single object by ID.

@@ -16,9 +16,11 @@ import org.slf4j.LoggerFactory;
 import com.nhl.link.rest.ClientEntity;
 import com.nhl.link.rest.ClientProperty;
 import com.nhl.link.rest.DataResponse;
+import com.nhl.link.rest.DataResponseConfig;
 import com.nhl.link.rest.LinkRestException;
 import com.nhl.link.rest.SelectBuilder;
 import com.nhl.link.rest.encoder.Encoder;
+import com.nhl.link.rest.runtime.config.IConfigMerger;
 import com.nhl.link.rest.runtime.encoder.IEncoderService;
 import com.nhl.link.rest.runtime.parser.IRequestParser;
 
@@ -32,13 +34,23 @@ public abstract class BaseSelectBuilder<T> implements SelectBuilder<T> {
 	private String autocompleteProperty;
 	private IEncoderService encoderService;
 	private IRequestParser requestParser;
+	private IConfigMerger configMerger;
 	private Map<String, ClientProperty> extraProperties;
 	private Encoder dataEncoder;
+	private DataResponseConfig config;
 
-	public BaseSelectBuilder(Class<T> type, IEncoderService encoderService, IRequestParser requestParser) {
+	public BaseSelectBuilder(Class<T> type, IEncoderService encoderService, IRequestParser requestParser,
+			IConfigMerger configMerger) {
 		this.type = type;
 		this.encoderService = encoderService;
 		this.requestParser = requestParser;
+		this.configMerger = configMerger;
+	}
+
+	@Override
+	public SelectBuilder<T> withConfig(DataResponseConfig config) {
+		this.config = config;
+		return this;
 	}
 
 	@Override
@@ -94,20 +106,27 @@ public abstract class BaseSelectBuilder<T> implements SelectBuilder<T> {
 	@Override
 	public DataResponse<T> select() {
 
-		DataResponse<T> responseBuilder = DataResponse.forType(getType());
+		DataResponse<T> response = DataResponse.forType(getType());
 
 		// parse request
-		requestParser.parseSelect(responseBuilder, uriInfo, autocompleteProperty);
+		requestParser.parseSelect(response, uriInfo, autocompleteProperty);
+
+		// apply server-side config *after* all the client settings were loaded.
+		// Those client settings that are not allowed will be blocked and
+		// reported at this step
+		if (config != null) {
+			configMerger.merge(config, response);
+		}
 
 		if (extraProperties != null) {
-			responseBuilder.getEntity().getExtraProperties().putAll(extraProperties);
+			response.getEntity().getExtraProperties().putAll(extraProperties);
 		}
 
 		// get data from DB
-		fetchObjects(responseBuilder);
+		fetchObjects(response);
 
-		List<T> objects = responseBuilder.getObjects();
-		ClientEntity<T> rootEntity = responseBuilder.getEntity();
+		List<T> objects = response.getObjects();
+		ClientEntity<T> rootEntity = response.getEntity();
 
 		if (isById() && objects.size() != 1) {
 
@@ -123,14 +142,14 @@ public abstract class BaseSelectBuilder<T> implements SelectBuilder<T> {
 		// build response encoder
 
 		if (dataEncoder != null) {
-			responseBuilder.withEncoder(dataEncoder);
+			response.withEncoder(dataEncoder);
 		} else {
 			// make sure we create encode, even for the empty list, as we need
 			// to encode the totals...
-			encoderService.makeEncoder(responseBuilder);
+			encoderService.makeEncoder(response);
 		}
 
-		return responseBuilder;
+		return response;
 	}
 
 	protected boolean isById() {

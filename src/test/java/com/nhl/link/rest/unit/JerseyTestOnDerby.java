@@ -18,6 +18,7 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 
 import com.nhl.link.rest.runtime.LinkRestBuilder;
+import com.nhl.link.rest.unit.resource.LinkRestResource_Config;
 import com.nhl.link.rest.unit.resource.LinkRestResource_CustomProperties;
 import com.nhl.link.rest.unit.resource.LinkRestServiceResource;
 
@@ -72,6 +73,7 @@ public class JerseyTestOnDerby extends JerseyTest {
 			public boolean configure(FeatureContext context) {
 				context.register(LinkRestServiceResource.class);
 				context.register(LinkRestResource_CustomProperties.class);
+				context.register(LinkRestResource_Config.class);
 				return true;
 			}
 		};

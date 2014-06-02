@@ -15,6 +15,7 @@ import com.nhl.link.rest.DataResponse;
 import com.nhl.link.rest.LinkRestException;
 import com.nhl.link.rest.SelectBuilder;
 import com.nhl.link.rest.runtime.BaseSelectBuilder;
+import com.nhl.link.rest.runtime.config.IConfigMerger;
 import com.nhl.link.rest.runtime.encoder.IEncoderService;
 import com.nhl.link.rest.runtime.parser.IRequestParser;
 
@@ -24,14 +25,14 @@ class CayenneSelectBuilder<T> extends BaseSelectBuilder<T> implements SelectBuil
 	private ICayennePersister cayenneService;
 
 	CayenneSelectBuilder(SelectQuery<T> select, Class<T> type, ICayennePersister cayenneService,
-			IEncoderService encoderService, IRequestParser requestParser) {
-		this(type, cayenneService, encoderService, requestParser);
+			IEncoderService encoderService, IRequestParser requestParser, IConfigMerger configMerger) {
+		this(type, cayenneService, encoderService, requestParser, configMerger);
 		this.select = select;
 	}
 
 	CayenneSelectBuilder(Class<T> type, ICayennePersister cayenneService, IEncoderService encoderService,
-			IRequestParser requestParser) {
-		super(type, encoderService, requestParser);
+			IRequestParser requestParser, IConfigMerger configMerger) {
+		super(type, encoderService, requestParser, configMerger);
 		this.cayenneService = cayenneService;
 	}
 

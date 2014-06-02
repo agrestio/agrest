@@ -35,7 +35,6 @@ public class LinkRestService_InContainer_GET_EncoderFilters_Test extends JerseyT
 
 	@Override
 	protected LinkRestBuilder doConfigure() {
-		// TODO Auto-generated method stub
 		return super.doConfigure().encoderFilter(new E4OddFilter());
 	}
 

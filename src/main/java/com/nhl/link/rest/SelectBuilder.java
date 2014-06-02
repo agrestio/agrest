@@ -15,7 +15,7 @@ import com.nhl.link.rest.encoder.Encoder;
 public interface SelectBuilder<T> {
 
 	SelectBuilder<T> with(UriInfo uriInfo);
-	
+
 	SelectBuilder<T> withDataEncoder(Encoder encoder);
 
 	SelectBuilder<T> withAutocompleteOn(Property<?> autocompleteProperty);
@@ -40,6 +40,16 @@ public interface SelectBuilder<T> {
 	 * {@link #withProperty(String, ClientProperty)}.
 	 */
 	SelectBuilder<T> withProperty(String name);
+
+	/**
+	 * Applies a server-side config to the SelectBuilder. Providing an explicit
+	 * config gives the server-side code an ability to "shape" the response
+	 * format, as well as limit what a client can request, thus providing better
+	 * security.
+	 * 
+	 * @since 1.1
+	 */
+	SelectBuilder<T> withConfig(DataResponseConfig config);
 
 	/**
 	 * Runs the query corresponding to the state of this builder, returning
