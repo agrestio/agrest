@@ -13,12 +13,12 @@ import org.apache.cayenne.util.ToStringBuilder;
 
 /**
  * A facade to Cayenne ObjEntity that defines the format of a data structure
- * that should be sent to the client via LinkRest. Connected ClientEntities form
- * a tree-like structure that overlays a certain Cayenne mapping subgraph,
+ * that should be sent to the client via LinkRest. Connected Entities form a
+ * tree-like structure that overlays a certain Cayenne mapping subgraph,
  * filtering and extending its properties to describe the data structure to be
  * returned to the client.
  * <p>
- * ClientEntity scope is usually a single request. It is built on the fly by the
+ * Entity scope is usually a single request. It is built on the fly by the
  * framework or by the application code.
  */
 public class Entity<T> {
@@ -26,12 +26,12 @@ public class Entity<T> {
 	private boolean idIncluded;
 
 	private Class<T> type;
-	private ObjEntity entity;
+	private ObjEntity cayenneEntity;
 	private Collection<String> attributes;
 
 	private String mapByPath;
 	private Entity<?> mapBy;
-	private Map<String, Entity<?>> relationships;
+	private Map<String, Entity<?>> children;
 	private ObjRelationship incoming;
 	private Collection<Ordering> orderings;
 	private Expression qualifier;
@@ -40,7 +40,7 @@ public class Entity<T> {
 	public Entity(Class<T> type) {
 		this.idIncluded = false;
 		this.attributes = new ArrayList<>();
-		this.relationships = new HashMap<>();
+		this.children = new HashMap<>();
 		this.orderings = new ArrayList<>(2);
 		this.extraProperties = new HashMap<>();
 		this.type = type;
@@ -48,7 +48,7 @@ public class Entity<T> {
 
 	public Entity(Class<T> type, ObjEntity entity) {
 		this(type);
-		this.entity = entity;
+		this.cayenneEntity = entity;
 	}
 
 	public Entity(Class<T> type, ObjRelationship incoming) {
@@ -56,8 +56,11 @@ public class Entity<T> {
 		this.incoming = incoming;
 	}
 
-	public ObjEntity getEntity() {
-		return entity;
+	/**
+	 * @since 1.1
+	 */
+	public ObjEntity getCayenneEntity() {
+		return cayenneEntity;
 	}
 
 	public ObjRelationship getIncoming() {
@@ -84,8 +87,8 @@ public class Entity<T> {
 		return attributes;
 	}
 
-	public Map<String, Entity<?>> getRelationships() {
-		return relationships;
+	public Map<String, Entity<?>> getChildren() {
+		return children;
 	}
 
 	public Map<String, EntityProperty> getExtraProperties() {
@@ -96,32 +99,44 @@ public class Entity<T> {
 		return idIncluded;
 	}
 
-	public void setIdIncluded(boolean idIncluded) {
-		this.idIncluded = idIncluded;
+	public Entity<T> includeId(boolean include) {
+		this.idIncluded = include;
+		return this;
+	}
+
+	public Entity<T> includeId() {
+		this.idIncluded = true;
+		return this;
+	}
+
+	public Entity<T> excludeId() {
+		this.idIncluded = false;
+		return this;
 	}
 
 	public Entity<?> getMapBy() {
 		return mapBy;
 	}
 
-	public void setMapBy(Entity<?> mapBy) {
+	/**
+	 * @since 1.1
+	 */
+	public Entity<T> mapBy(Entity<?> mapBy, String mapByPath) {
+		this.mapByPath = mapByPath;
 		this.mapBy = mapBy;
+		return this;
 	}
 
 	public String getMapByPath() {
 		return mapByPath;
 	}
 
-	public void setMapByPath(String mapByPath) {
-		this.mapByPath = mapByPath;
-	}
-
 	@Override
 	public String toString() {
 
 		ToStringBuilder tsb = new ToStringBuilder(this);
-		if (entity != null) {
-			tsb.append("name", entity.getName());
+		if (cayenneEntity != null) {
+			tsb.append("name", cayenneEntity.getName());
 		}
 
 		return tsb.toString();

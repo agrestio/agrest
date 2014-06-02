@@ -97,7 +97,7 @@ public class LinkRestService_InContainer_GET_EncoderFilters_Test extends JerseyT
 	private final class E4OddFilter implements EncoderFilter {
 		@Override
 		public boolean matches(Entity<?> entity) {
-			return entity.getEntity().getName().equals("E4");
+			return entity.getCayenneEntity().getName().equals("E4");
 		}
 
 		@Override

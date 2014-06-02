@@ -61,7 +61,7 @@ public class EncoderServiceTest extends TestWithCayenneMapping {
 	public void testGetRootEncoder_ExcludedAttributes() throws IOException {
 		// empty filter - must only include id
 		Entity<E1> descriptor = getClientEntity(E1.class);
-		descriptor.setIdIncluded(true);
+		descriptor.includeId();
 
 		E1 e1 = new E1();
 		e1.setObjectId(new ObjectId("E1", E1.ID_PK_COLUMN, 777));
@@ -80,12 +80,12 @@ public class EncoderServiceTest extends TestWithCayenneMapping {
 	@Test
 	public void testGetRootEncoder_ExcludedRelationshipAttributes() throws IOException {
 		Entity<E3> e3Descriptor = getClientEntity(E3.class);
-		e3Descriptor.setIdIncluded(true);
+		e3Descriptor.includeId();
 		e3Descriptor.getAttributes().add(E3.NAME.getName());
 
 		Entity<E2> descriptor = getClientEntity(E2.class);
-		descriptor.setIdIncluded(true);
-		descriptor.getRelationships().put(E2.E3S.getName(), e3Descriptor);
+		descriptor.includeId();
+		descriptor.getChildren().put(E2.E3S.getName(), e3Descriptor);
 
 		ObjectContext context = cayenneService.newContext();
 		E2 e2 = new E2();
@@ -151,7 +151,7 @@ public class EncoderServiceTest extends TestWithCayenneMapping {
 		});
 
 		Entity<E2> descriptor = getClientEntity(E2.class);
-		descriptor.setIdIncluded(true);
+		descriptor.includeId();
 
 		ObjectContext context = cayenneService.newContext();
 		E2 e21 = new E2();
@@ -220,11 +220,11 @@ public class EncoderServiceTest extends TestWithCayenneMapping {
 		});
 
 		Entity<E2> e2Descriptor = getClientEntity(E2.class);
-		e2Descriptor.setIdIncluded(true);
+		e2Descriptor.includeId();
 
 		Entity<E3> e3Descriptor = getClientEntity(E3.class);
-		e3Descriptor.setIdIncluded(true);
-		e3Descriptor.getRelationships().put(E3.E2.getName(), e2Descriptor);
+		e3Descriptor.includeId();
+		e3Descriptor.getChildren().put(E3.E2.getName(), e2Descriptor);
 
 		ObjectContext context = cayenneService.newContext();
 
@@ -283,7 +283,7 @@ public class EncoderServiceTest extends TestWithCayenneMapping {
 		});
 
 		Entity<E2> descriptor = getClientEntity(E2.class);
-		descriptor.setIdIncluded(true);
+		descriptor.includeId();
 
 		DataResponse<E2> builder = DataResponse.forType(E2.class).withClientEntity(descriptor);
 		encoderService.makeEncoder(builder);

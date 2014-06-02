@@ -38,7 +38,7 @@ class CayenneExpProcessor {
 	}
 
 	void process(Entity<?> clientEntity, JsonNode expNode) {
-		ObjEntity entity = clientEntity.getEntity();
+		ObjEntity entity = clientEntity.getCayenneEntity();
 
 		EntityPathCache entityPathCache = pathCache.entityPathCache(entity);
 

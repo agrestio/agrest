@@ -122,10 +122,9 @@ class IncludeProcessor {
 		// either root list, or to-many relationship
 		if (descriptor.getIncoming() == null || descriptor.getIncoming().isToMany()) {
 
-			Entity<T> mapByRoot = new Entity<T>(descriptor.getType(), descriptor.getEntity());
+			Entity<T> mapByRoot = new Entity<T>(descriptor.getType(), descriptor.getCayenneEntity());
 			processIncludePath(mapByRoot, mapByPath);
-			descriptor.setMapByPath(mapByPath);
-			descriptor.setMapBy(mapByRoot);
+			descriptor.mapBy(mapByRoot, mapByPath);
 
 		} else {
 			LOGGER.info("Ignoring 'mapBy:" + mapByPath + "' for to-one relationship property");
@@ -154,7 +153,7 @@ class IncludeProcessor {
 		}
 
 		String property = dot > 0 ? path.substring(0, dot) : path;
-		ObjAttribute attribute = (ObjAttribute) parent.getEntity().getAttribute(property);
+		ObjAttribute attribute = (ObjAttribute) parent.getCayenneEntity().getAttribute(property);
 		if (attribute != null) {
 
 			if (dot > 0) {
@@ -165,15 +164,15 @@ class IncludeProcessor {
 			return null;
 		}
 
-		ObjRelationship relationship = (ObjRelationship) parent.getEntity().getRelationship(property);
+		ObjRelationship relationship = (ObjRelationship) parent.getCayenneEntity().getRelationship(property);
 		if (relationship != null) {
 
-			Entity<?> childEntity = parent.getRelationships().get(property);
+			Entity<?> childEntity = parent.getChildren().get(property);
 			if (childEntity == null) {
 				// TODO: use ClassDescriptors to figure out the type of related
 				// entity..
 				childEntity = new Entity(relationship.getTargetEntity().getJavaClass(), relationship);
-				parent.getRelationships().put(property, childEntity);
+				parent.getChildren().put(property, childEntity);
 			}
 
 			if (dot > 0) {
@@ -181,14 +180,14 @@ class IncludeProcessor {
 			} else {
 				processDefaultIncludes(childEntity);
 				// Id should be included implicitly
-				childEntity.setIdIncluded(true);
+				childEntity.includeId();
 				return childEntity;
 			}
 		}
 
 		// this is root entity id and it's included explicitly
 		if (property.equals(PathConstants.ID_PK_ATTRIBUTE)) {
-			parent.setIdIncluded(true);
+			parent.includeId();
 			return null;
 		}
 
@@ -199,11 +198,11 @@ class IncludeProcessor {
 		// either there are no includes (taking into account Id) or all includes
 		// are relationships
 		if (!clientEntity.isIdIncluded() && clientEntity.getAttributes().isEmpty()) {
-			for (ObjAttribute oa : clientEntity.getEntity().getAttributes()) {
+			for (ObjAttribute oa : clientEntity.getCayenneEntity().getAttributes()) {
 				clientEntity.getAttributes().add(oa.getName());
 			}
 			// Id should be included by default
-			clientEntity.setIdIncluded(true);
+			clientEntity.includeId();
 		}
 	}
 

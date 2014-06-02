@@ -66,7 +66,7 @@ public class RequestParser_WithPojoTest extends TestWithCayenneMapping {
 		assertNotNull(ce1);
 		assertTrue(ce1.isIdIncluded());
 		assertEquals(1, ce1.getAttributes().size());
-		assertTrue(ce1.getRelationships().isEmpty());
+		assertTrue(ce1.getChildren().isEmpty());
 
 		DataResponse<P2> req2 = DataResponse.forType(P2.class);
 		parser.parseSelect(req2, urlInfo, null);
@@ -76,7 +76,7 @@ public class RequestParser_WithPojoTest extends TestWithCayenneMapping {
 		assertNotNull(ce2);
 		assertTrue(ce2.isIdIncluded());
 		assertEquals(1, ce2.getAttributes().size());
-		assertEquals(0, ce2.getRelationships().size());
+		assertEquals(0, ce2.getChildren().size());
 	}
 
 	@Test
@@ -97,9 +97,9 @@ public class RequestParser_WithPojoTest extends TestWithCayenneMapping {
 		assertNotNull(ce2);
 		assertTrue(ce2.isIdIncluded());
 		assertEquals(1, ce2.getAttributes().size());
-		assertEquals(1, ce2.getRelationships().size());
+		assertEquals(1, ce2.getChildren().size());
 
-		assertTrue(ce2.getRelationships().keySet().contains("p1"));
+		assertTrue(ce2.getChildren().keySet().contains("p1"));
 
 	}
 

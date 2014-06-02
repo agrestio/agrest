@@ -82,7 +82,7 @@ public class EntityConfig {
 	public EntityConfig path(Property<?> path) {
 		return path(path.getName());
 	}
-	
+
 	public EntityConfig path(String path) {
 		return path(entity.resolvePathComponents(path));
 	}
@@ -118,6 +118,11 @@ public class EntityConfig {
 		}
 
 		return child;
+	}
+
+	public EntityConfig includeId(boolean include) {
+		this.idIncluded = include;
+		return this;
 	}
 
 	public EntityConfig includeId() {

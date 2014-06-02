@@ -95,7 +95,7 @@ public class CayenneDao<T> implements EntityDao<T> {
 		// to-one relationships
 		if (!response.getRelatedIds().isEmpty()) {
 
-			ObjEntity rootEntity = response.getEntity().getEntity();
+			ObjEntity rootEntity = response.getEntity().getCayenneEntity();
 			ObjectContext context = dataObject.getObjectContext();
 
 			for (Entry<String, Object> e : response.getRelatedIds().entrySet()) {

@@ -26,7 +26,7 @@ public abstract class NoRolesEntityAuthorizationEncoderFilter<T> implements Enco
 
 	@Override
 	public boolean matches(Entity<?> clientEntity) {
-		return entity == clientEntity.getEntity();
+		return entity == clientEntity.getCayenneEntity();
 	}
 
 	@SuppressWarnings("unchecked")

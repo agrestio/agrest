@@ -55,7 +55,7 @@ public class IntersectConfigMerger implements IConfigMerger {
 	protected void mergeEntity(EntityConfig source, Entity<?> target) {
 
 		if (!source.isIdIncluded()) {
-			target.setIdIncluded(false);
+			target.excludeId();
 		}
 
 		Iterator<String> ait = target.getAttributes().iterator();
@@ -68,7 +68,7 @@ public class IntersectConfigMerger implements IConfigMerger {
 			}
 		}
 
-		Iterator<Entry<String, Entity<?>>> rit = target.getRelationships().entrySet().iterator();
+		Iterator<Entry<String, Entity<?>>> rit = target.getChildren().entrySet().iterator();
 		while (rit.hasNext()) {
 
 			Entry<String, Entity<?>> e = rit.next();
@@ -96,8 +96,7 @@ public class IntersectConfigMerger implements IConfigMerger {
 
 		if (target.getMapByPath() != null && !allowedMapBy(source, target.getMapByPath())) {
 			LOGGER.info("'mapBy' not allowed, removing: " + target.getMapByPath());
-			target.setMapByPath(null);
-			target.setMapBy(null);
+			target.mapBy(null, null);
 		}
 	}
 

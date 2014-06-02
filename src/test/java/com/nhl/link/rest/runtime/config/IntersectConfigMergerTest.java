@@ -123,14 +123,14 @@ public class IntersectConfigMergerTest {
 		Entity<?> te11 = new Entity<>(Object.class);
 		te11.getAttributes().add("a1");
 		te11.getAttributes().add("b1");
-		te1.getRelationships().put("d", te11);
+		te1.getChildren().put("d", te11);
 
 		DataResponse<?> t1 = DataResponse.forType(Object.class).withClientEntity(te1);
 
 		merger.merge(s1, t1);
 		assertEquals(1, t1.getEntity().getAttributes().size());
 		assertTrue(t1.getEntity().getAttributes().contains("b"));
-		assertTrue(t1.getEntity().getRelationships().isEmpty());
+		assertTrue(t1.getEntity().getChildren().isEmpty());
 	}
 
 	@Test
@@ -148,23 +148,23 @@ public class IntersectConfigMergerTest {
 		Entity<?> te11 = new Entity<>(Object.class);
 		te11.getAttributes().add("m");
 		te11.getAttributes().add("z");
-		te1.getRelationships().put("r1", te11);
+		te1.getChildren().put("r1", te11);
 
 		Entity<?> te21 = new Entity<>(Object.class);
 		te21.getAttributes().add("p");
 		te21.getAttributes().add("z");
-		te1.getRelationships().put("r3", te21);
+		te1.getChildren().put("r3", te21);
 
 		DataResponse<?> t1 = DataResponse.forType(Object.class).withClientEntity(te1);
 
 		merger.merge(s1, t1);
 		assertEquals(1, t1.getEntity().getAttributes().size());
 		assertTrue(t1.getEntity().getAttributes().contains("b"));
-		assertEquals(1, t1.getEntity().getRelationships().size());
+		assertEquals(1, t1.getEntity().getChildren().size());
 
-		Entity<?> mergedTe11 = t1.getEntity().getRelationships().get("r1");
+		Entity<?> mergedTe11 = t1.getEntity().getChildren().get("r1");
 		assertNotNull(mergedTe11);
-		assertTrue(mergedTe11.getRelationships().isEmpty());
+		assertTrue(mergedTe11.getChildren().isEmpty());
 		assertEquals(1, mergedTe11.getAttributes().size());
 		assertTrue(mergedTe11.getAttributes().contains("m"));
 	}
@@ -179,19 +179,19 @@ public class IntersectConfigMergerTest {
 		s2.getEntity().includeId();
 
 		Entity<Object> te1 = new Entity<>(Object.class);
-		te1.setIdIncluded(true);
+		te1.includeId();
 		DataResponse<?> t1 = DataResponse.forType(Object.class).withClientEntity(te1);
 		merger.merge(s1, t1);
 		assertFalse(t1.getEntity().isIdIncluded());
 
 		Entity<Object> te2 = new Entity<>(Object.class);
-		te2.setIdIncluded(true);
+		te2.includeId();
 		DataResponse<?> t2 = DataResponse.forType(Object.class).withClientEntity(te2);
 		merger.merge(s2, t2);
 		assertTrue(t2.getEntity().isIdIncluded());
 
 		Entity<Object> te3 = new Entity<>(Object.class);
-		te3.setIdIncluded(false);
+		te3.excludeId();
 		DataResponse<?> t3 = DataResponse.forType(Object.class).withClientEntity(te3);
 		merger.merge(s2, t3);
 		assertFalse(t3.getEntity().isIdIncluded());
@@ -227,11 +227,10 @@ public class IntersectConfigMergerTest {
 		te1MapByTarget.getAttributes().add("b");
 
 		Entity<Object> te1MapBy = new Entity<>(Object.class);
-		te1MapBy.getRelationships().put("r1", te1MapByTarget);
+		te1MapBy.getChildren().put("r1", te1MapByTarget);
 
 		Entity<Object> te1 = new Entity<>(Object.class);
-		te1.setMapByPath("r1.b");
-		te1.setMapBy(te1MapBy);
+		te1.mapBy(te1MapBy, "r1.b");
 
 		DataResponse<?> t1 = DataResponse.forType(Object.class).withClientEntity(te1);
 		merger.merge(s1, t1);
@@ -242,11 +241,10 @@ public class IntersectConfigMergerTest {
 		te2MapByTarget.getAttributes().add("a");
 
 		Entity<Object> te2MapBy = new Entity<>(Object.class);
-		te1MapBy.getRelationships().put("r1", te2MapByTarget);
+		te1MapBy.getChildren().put("r1", te2MapByTarget);
 
 		Entity<Object> te2 = new Entity<>(Object.class);
-		te2.setMapByPath("r1.a");
-		te2.setMapBy(te2MapBy);
+		te2.mapBy(te2MapBy, "r1.a");
 
 		DataResponse<?> t2 = DataResponse.forType(Object.class).withClientEntity(te2);
 		merger.merge(s1, t2);
@@ -261,14 +259,13 @@ public class IntersectConfigMergerTest {
 		s1.getEntity().getOrMakeChild("r1").excludeId();
 
 		Entity<Object> te1MapByTarget = new Entity<>(Object.class);
-		te1MapByTarget.setIdIncluded(true);
+		te1MapByTarget.includeId();
 
 		Entity<Object> te1MapBy = new Entity<>(Object.class);
-		te1MapBy.getRelationships().put("r1", te1MapByTarget);
+		te1MapBy.getChildren().put("r1", te1MapByTarget);
 
 		Entity<Object> te1 = new Entity<>(Object.class);
-		te1.setMapByPath("r1");
-		te1.setMapBy(te1MapBy);
+		te1.mapBy(te1MapBy, "r1");
 
 		DataResponse<?> t1 = DataResponse.forType(Object.class).withClientEntity(te1);
 		merger.merge(s1, t1);
@@ -284,14 +281,13 @@ public class IntersectConfigMergerTest {
 		s1.getEntity().getOrMakeChild("r1").includeId();
 
 		Entity<Object> te1MapByTarget = new Entity<>(Object.class);
-		te1MapByTarget.setIdIncluded(true);
+		te1MapByTarget.includeId();
 
 		Entity<Object> te1MapBy = new Entity<>(Object.class);
-		te1MapBy.getRelationships().put("r1", te1MapByTarget);
+		te1MapBy.getChildren().put("r1", te1MapByTarget);
 
 		Entity<Object> te1 = new Entity<>(Object.class);
-		te1.setMapByPath("r1");
-		te1.setMapBy(te1MapBy);
+		te1.mapBy(te1MapBy, "r1");
 
 		DataResponse<?> t1 = DataResponse.forType(Object.class).withClientEntity(te1);
 		merger.merge(s1, t1);

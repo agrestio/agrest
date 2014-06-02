@@ -48,7 +48,7 @@ public class MapByEncoder extends AbstractEncoder {
 		if (mapBy.isIdIncluded()) {
 			validateLeafMapBy(mapBy);
 			this.mapByReaders.add(IdReader.idReader);
-			this.fieldNameConverter = converterFactory.getConverter(mapBy.getEntity());
+			this.fieldNameConverter = converterFactory.getConverter(mapBy.getCayenneEntity());
 			return;
 		}
 
@@ -66,13 +66,13 @@ public class MapByEncoder extends AbstractEncoder {
 				}
 			});
 
-			this.fieldNameConverter = converterFactory.getConverter(mapBy.getEntity(), property);
+			this.fieldNameConverter = converterFactory.getConverter(mapBy.getCayenneEntity(), property);
 			return;
 		}
 
-		if (!mapBy.getRelationships().isEmpty()) {
+		if (!mapBy.getChildren().isEmpty()) {
 
-			final String property = mapBy.getRelationships().keySet().iterator().next();
+			final String property = mapBy.getChildren().keySet().iterator().next();
 
 			this.mapByReaders.add(new PropertyReader() {
 
@@ -82,7 +82,7 @@ public class MapByEncoder extends AbstractEncoder {
 				}
 			});
 
-			Entity<?> childMapBy = mapBy.getRelationships().get(property);
+			Entity<?> childMapBy = mapBy.getChildren().get(property);
 			config(converterFactory, childMapBy);
 			return;
 		}
@@ -93,7 +93,7 @@ public class MapByEncoder extends AbstractEncoder {
 
 	private void validateLeafMapBy(Entity<?> mapBy) {
 
-		if (!mapBy.getRelationships().isEmpty()) {
+		if (!mapBy.getChildren().isEmpty()) {
 
 			StringBuilder message = new StringBuilder("'mapBy' path segment '");
 			message.append(mapBy.getIncoming().getName()).append(

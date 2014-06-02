@@ -64,8 +64,8 @@ public class RequestParser_IncludeObjectTest extends TestWithCayenneMapping {
 		assertNotNull(clientEntity);
 		assertTrue(clientEntity.isIdIncluded());
 
-		assertEquals(1, clientEntity.getRelationships().size());
-		assertTrue(clientEntity.getRelationships().containsKey(E2.E3S.getName()));
+		assertEquals(1, clientEntity.getChildren().size());
+		assertTrue(clientEntity.getChildren().containsKey(E2.E3S.getName()));
 	}
 
 	@Test
@@ -85,8 +85,8 @@ public class RequestParser_IncludeObjectTest extends TestWithCayenneMapping {
 		Entity<E2> clientEntity = dataRequest.getEntity();
 		assertNotNull(clientEntity);
 
-		Entity<?> mapBy = clientEntity.getRelationships().get(E2.E3S.getName()).getMapBy();
+		Entity<?> mapBy = clientEntity.getChildren().get(E2.E3S.getName()).getMapBy();
 		assertNotNull(mapBy);
-		assertNotNull(mapBy.getRelationships().get(E3.E5.getName()));
+		assertNotNull(mapBy.getChildren().get(E3.E5.getName()));
 	}
 }

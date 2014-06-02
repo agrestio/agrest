@@ -141,8 +141,8 @@ public class EncoderService implements IEncoderService {
 			properties.put(attribute, property);
 		}
 
-		for (Entry<String, Entity<?>> e : clientEntity.getRelationships().entrySet()) {
-			ObjRelationship relationship = (ObjRelationship) clientEntity.getEntity().getRelationship(e.getKey());
+		for (Entry<String, Entity<?>> e : clientEntity.getChildren().entrySet()) {
+			ObjRelationship relationship = (ObjRelationship) clientEntity.getCayenneEntity().getRelationship(e.getKey());
 
 			Encoder encoder = relationship.isToMany() ? nestedToManyEncoder(e.getValue()) : toOneEncoder(e.getValue(),
 					relationship);

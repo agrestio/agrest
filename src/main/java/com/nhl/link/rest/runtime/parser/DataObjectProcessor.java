@@ -47,7 +47,7 @@ class DataObjectProcessor {
 			throw new LinkRestException(Status.BAD_REQUEST, "No JSON in the body");
 		}
 
-		ObjEntity entity = response.getEntity().getEntity();
+		ObjEntity entity = response.getEntity().getCayenneEntity();
 
 		Iterator<String> it = objectNode.fieldNames();
 		while (it.hasNext()) {

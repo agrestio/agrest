@@ -46,7 +46,7 @@ public class AttributeEncoderFactory implements IAttributeEncoderFactory {
 
 	@Override
 	public EntityProperty getAttributeProperty(Entity<?> entity, String attributeName) {
-		String key = entity.getEntity().getName() + "." + attributeName;
+		String key = entity.getCayenneEntity().getName() + "." + attributeName;
 
 		EntityProperty property = attributePropertiesByPath.get(key);
 		if (property == null) {
@@ -60,7 +60,7 @@ public class AttributeEncoderFactory implements IAttributeEncoderFactory {
 	@Override
 	public EntityProperty getIdProperty(Entity<?> entity) {
 
-		String key = entity.getEntity().getName();
+		String key = entity.getCayenneEntity().getName();
 
 		EntityProperty property = idPropertiesByEntity.get(key);
 		if (property == null) {
@@ -73,7 +73,7 @@ public class AttributeEncoderFactory implements IAttributeEncoderFactory {
 
 	protected EntityProperty buildAttributeProperty(Entity<?> entity, String attributeName) {
 
-		Encoder encoder = buildEncoder(entity.getEntity(), attributeName);
+		Encoder encoder = buildEncoder(entity.getCayenneEntity(), attributeName);
 		if (DataObject.class.isAssignableFrom(entity.getType())) {
 			return PropertyBuilder.dataObjectProperty().encodedWith(encoder);
 		} else {
@@ -88,12 +88,12 @@ public class AttributeEncoderFactory implements IAttributeEncoderFactory {
 					NumericObjectIdEncoder.encoder());
 		}
 
-		Collection<String> pks = entity.getEntity().getPrimaryKeyNames();
+		Collection<String> pks = entity.getCayenneEntity().getPrimaryKeyNames();
 
 		// compound PK entities and entities with no PK are not supported...
 		if (pks.size() != 1) {
 			throw new IllegalStateException(String.format("Unexpected PK size of %s for entity '%s'", entity
-					.getEntity().getName(), pks.size()));
+					.getCayenneEntity().getName(), pks.size()));
 		}
 
 		String pkName = pks.iterator().next();

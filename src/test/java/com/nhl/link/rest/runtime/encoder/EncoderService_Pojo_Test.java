@@ -74,7 +74,7 @@ public class EncoderService_Pojo_Test {
 
 		Entity<P6> descriptor = getClientEntity(P6.class);
 		descriptor.getAttributes().add("intProp");
-		descriptor.setIdIncluded(true);
+		descriptor.includeId();
 		DataResponse<P6> builder = DataResponse.forObjects(Collections.singletonList(p6)).withClientEntity(descriptor);
 		encoderService.makeEncoder(builder);
 

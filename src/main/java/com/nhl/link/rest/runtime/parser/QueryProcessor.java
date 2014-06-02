@@ -24,7 +24,7 @@ class QueryProcessor {
 			throw new LinkRestException(Status.BAD_REQUEST, "'query' parameter is not supported by this service");
 		}
 
-		validateAttribute(clientEntity.getEntity(), queryProperty);
+		validateAttribute(clientEntity.getCayenneEntity(), queryProperty);
 
 		query = FilterProcessor.escapeValueForLike(query) + "%";
 

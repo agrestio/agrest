@@ -55,7 +55,7 @@ class CayenneSelectBuilder<T> extends BaseSelectBuilder<T> implements SelectBuil
 			query.addOrdering(o);
 		}
 
-		if (request.getEntity() != null && !request.getEntity().getRelationships().isEmpty()) {
+		if (request.getEntity() != null && !request.getEntity().getChildren().isEmpty()) {
 			PrefetchTreeNode root = new PrefetchTreeNode();
 
 			int prefetchSemantics = request.getPrefetchSemantics();
@@ -80,7 +80,7 @@ class CayenneSelectBuilder<T> extends BaseSelectBuilder<T> implements SelectBuil
 
 			Class<T> root = getType();
 
-			ObjEntity entity = request.getEntity().getEntity();
+			ObjEntity entity = request.getEntity().getCayenneEntity();
 
 			// sanity checking...
 			if (entity == null) {
@@ -101,7 +101,7 @@ class CayenneSelectBuilder<T> extends BaseSelectBuilder<T> implements SelectBuil
 	}
 
 	private void appendPrefetches(PrefetchTreeNode root, Entity<?> entity, int prefetchSemantics) {
-		for (Entry<String, Entity<?>> e : entity.getRelationships().entrySet()) {
+		for (Entry<String, Entity<?>> e : entity.getChildren().entrySet()) {
 
 			PrefetchTreeNode child = root.addPath(e.getKey());
 

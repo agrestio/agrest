@@ -64,7 +64,7 @@ class FilterProcessor {
 			}
 
 			// validate property path
-			ObjEntity rootEntity = clientEntity.getEntity();
+			ObjEntity rootEntity = clientEntity.getCayenneEntity();
 			PathDescriptor pd = pathCache.entityPathCache(rootEntity).getPathDescriptor(
 					(ASTObjPath) qualifier.getOperand(0));
 

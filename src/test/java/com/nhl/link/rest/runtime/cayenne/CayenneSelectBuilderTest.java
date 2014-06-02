@@ -79,8 +79,8 @@ public class CayenneSelectBuilderTest extends TestWithCayenneMapping {
 		SelectQuery<E2> query = new SelectQuery<E2>(E2.class);
 
 		Entity<E2> resultFilter = getClientEntity(E2.class);
-		ObjRelationship incoming = (ObjRelationship) resultFilter.getEntity().getRelationship(E2.E3S.getName());
-		resultFilter.getRelationships().put(E2.E3S.getName(), new Entity<E3>(E3.class, incoming));
+		ObjRelationship incoming = (ObjRelationship) resultFilter.getCayenneEntity().getRelationship(E2.E3S.getName());
+		resultFilter.getChildren().put(E2.E3S.getName(), new Entity<E3>(E3.class, incoming));
 
 		DataResponse<E2> request = DataResponse.forType(E2.class).withClientEntity(resultFilter);
 

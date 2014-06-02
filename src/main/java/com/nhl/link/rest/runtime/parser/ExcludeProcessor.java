@@ -68,7 +68,7 @@ public class ExcludeProcessor {
 		}
 
 		String property = dot > 0 ? path.substring(0, dot) : path;
-		ObjAttribute attribute = (ObjAttribute) clientEntity.getEntity().getAttribute(property);
+		ObjAttribute attribute = (ObjAttribute) clientEntity.getCayenneEntity().getAttribute(property);
 		if (attribute != null) {
 
 			if (dot > 0) {
@@ -79,10 +79,10 @@ public class ExcludeProcessor {
 			return;
 		}
 
-		ObjRelationship relationship = (ObjRelationship) clientEntity.getEntity().getRelationship(property);
+		ObjRelationship relationship = (ObjRelationship) clientEntity.getCayenneEntity().getRelationship(property);
 		if (relationship != null) {
 
-			Entity<?> relatedFilter = clientEntity.getRelationships().get(property);
+			Entity<?> relatedFilter = clientEntity.getChildren().get(property);
 			if (relatedFilter == null) {
 				// valid path, but not included... ignoring
 				return;
@@ -96,7 +96,7 @@ public class ExcludeProcessor {
 
 		// this is an entity id and it's excluded explicitly
 		if (property.equals(PathConstants.ID_PK_ATTRIBUTE)) {
-			clientEntity.setIdIncluded(false);
+			clientEntity.excludeId();
 			return;
 		}
 

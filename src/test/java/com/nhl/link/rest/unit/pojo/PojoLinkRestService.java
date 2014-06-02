@@ -78,7 +78,7 @@ public class PojoLinkRestService extends BaseLinkRestService {
 	}
 
 	private <T> Object getId(UpdateResponse<T> response, T pojo) {
-		String pkProperty = response.getEntity().getEntity().getPrimaryKeyNames().iterator().next();
+		String pkProperty = response.getEntity().getCayenneEntity().getPrimaryKeyNames().iterator().next();
 		return PropertyUtils.getProperty(pojo, pkProperty);
 	}
 
