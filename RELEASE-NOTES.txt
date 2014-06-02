@@ -1,4 +1,7 @@
 Release 1.1
 
 #1 Intercept Cayenne ValidationException
+#3 DataResponseConfig - a server-side request template
 #4 Responses for inserts should return '201 Created' instead of 200
+#5 Rename ClientEntity to Entity, ClientProperty to EntityProperty
+#6 Entity: convert setters to builder methods similar to EntityConfig
