@@ -38,7 +38,7 @@ public class EntityConfig {
 	}
 
 	/**
-	 * Excludes all previously included attribites.
+	 * Excludes all previously included attributes.
 	 */
 	public EntityConfig excludeAttributes() {
 		attributes.clear();
