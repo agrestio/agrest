@@ -2,10 +2,15 @@ package com.nhl.link.rest;
 
 import org.apache.cayenne.map.ObjEntity;
 
+import com.nhl.link.rest.runtime.ILinkRestService;
+
 /**
- * Stores parameters pertaining to a DataResponse. Configs can be built from
- * client parameters or created manually via API on the server. Multiple configs
- * can be merged in one and applied to a single DataResponse.
+ * Stores parameters pertaining to a DataResponse. DataResponseConfig objects
+ * are normally created via {@link ILinkRestService#newConfig(Class)} and then
+ * customized in the code to describe a response structure desired by the server
+ * application. During each request LinkRest would merge DataResponseConfig with
+ * client configs, normally not allowing the client to request more data than
+ * the config specifies (a client can request *less* data of course).
  * 
  * @since 1.1
  */
