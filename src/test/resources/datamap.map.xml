@@ -38,6 +38,10 @@
 		<db-attribute name="id" type="INTEGER" isPrimaryKey="true" isMandatory="true"/>
 		<db-attribute name="name" type="VARCHAR" length="50"/>
 	</db-entity>
+	<db-entity name="e6" schema="utest">
+		<db-attribute name="char_column" type="VARCHAR" length="100"/>
+		<db-attribute name="char_id" type="VARCHAR" isPrimaryKey="true" isMandatory="true" length="100"/>
+	</db-entity>
 	<obj-entity name="E1" className="com.nhl.link.rest.unit.cayenne.E1" dbEntityName="e1">
 		<obj-attribute name="age" type="java.lang.Integer" db-attribute-path="age"/>
 		<obj-attribute name="description" type="java.lang.String" db-attribute-path="description"/>
@@ -63,6 +67,9 @@
 	<obj-entity name="E5" className="com.nhl.link.rest.unit.cayenne.E5" dbEntityName="e5">
 		<obj-attribute name="date" type="java.util.Date" db-attribute-path="date"/>
 		<obj-attribute name="name" type="java.lang.String" db-attribute-path="name"/>
+	</obj-entity>
+	<obj-entity name="E6" className="com.nhl.link.rest.unit.cayenne.E6" dbEntityName="e6">
+		<obj-attribute name="charColumn" type="java.lang.String" db-attribute-path="char_column"/>
 	</obj-entity>
 	<db-relationship name="e3s" source="e2" target="e3" toMany="true">
 		<db-attribute-pair source="id" target="e2_id"/>
