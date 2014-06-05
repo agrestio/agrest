@@ -9,6 +9,7 @@ import javax.ws.rs.core.Application;
 import javax.ws.rs.core.Feature;
 import javax.ws.rs.core.FeatureContext;
 
+import com.nhl.link.rest.unit.resource.CharPkResources;
 import org.apache.cayenne.configuration.server.ServerRuntime;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.test.JerseyTest;
@@ -74,6 +75,7 @@ public class JerseyTestOnDerby extends JerseyTest {
 				context.register(LinkRestServiceResource.class);
 				context.register(LinkRestResource_CustomProperties.class);
 				context.register(LinkRestResource_Config.class);
+                context.register(CharPkResources.class);
 				return true;
 			}
 		};

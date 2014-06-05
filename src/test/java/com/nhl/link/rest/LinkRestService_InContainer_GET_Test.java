@@ -31,7 +31,8 @@ public class LinkRestService_InContainer_GET_Test extends JerseyTestOnDerby {
 		runtime.newContext().performGenericQuery(new EJBQLQuery("delete from E3"));
 		runtime.newContext().performGenericQuery(new EJBQLQuery("delete from E2"));
 		runtime.newContext().performGenericQuery(new EJBQLQuery("delete from E5"));
-	}
+        runtime.newContext().performGenericQuery(new EJBQLQuery("delete from E6"));
+    }
 
 	@Test
 	public void testResponse() throws WebApplicationException, IOException {
@@ -374,5 +375,19 @@ public class LinkRestService_InContainer_GET_Test extends JerseyTestOnDerby {
 				"{\"success\":true,\"data\":[{\"id\":8,\"e2\":{\"id\":1},\"e2_id\":1},{\"id\":9,\"e2\":null,\"e2_id\":null}],\"total\":2}",
 				response1.readEntity(String.class));
 	}
+
+    @Test
+    public void test_SelectCharPK() throws WebApplicationException, IOException {
+
+        runtime.newContext().performGenericQuery(
+                new SQLTemplate(E2.class, "INSERT INTO utest.e6 (char_id, char_column) values ('a', 'aaa')"));
+
+        Response response1 = target("/charpk/a").request().get();
+
+        assertEquals(Status.OK.getStatusCode(), response1.getStatus());
+        assertEquals(
+                "{\"success\":true,\"data\":[{\"id\":\"a\",\"charColumn\":\"aaa\"}],\"total\":1}",
+                response1.readEntity(String.class));
+    }
 
 }
