@@ -56,4 +56,19 @@ public interface SelectBuilder<T> {
 	 * response that can be serialized by the framework.
 	 */
 	DataResponse<T> select();
+
+	/**
+	 * Runs the query corresponding to the state of this builder, returning
+	 * response that can be serialized by the framework. The difference with
+	 * {@link #select()} is that the framework ensures that one and only one
+	 * record is returned in response. Zero records result in 404 response, 2 or
+	 * more records - in 500 response.
+	 * <p>
+	 * Note that "by id" selects are routing to "selectOne" internally even if
+	 * query is invoked as "select". This is for backwards compatibility with
+	 * 1.1. Should change that eventuall.y
+	 * 
+	 * @since 1.2
+	 */
+	DataResponse<T> selectOne();
 }

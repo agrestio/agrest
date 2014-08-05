@@ -102,9 +102,20 @@ public abstract class BaseSelectBuilder<T> implements SelectBuilder<T> {
 		this.id = id;
 		return this;
 	}
-
+	
 	@Override
 	public DataResponse<T> select() {
+		// 'byId' behaving as "selectOne" is really legacy behavior of 1.1...
+		// should deprecate eventually
+		return doSelect(isById());
+	}
+
+	@Override
+	public DataResponse<T> selectOne() {
+		return doSelect(true);
+	}
+	
+	protected DataResponse<T> doSelect(boolean oneObject) {
 
 		DataResponse<T> response = DataResponse.forType(getType());
 
@@ -128,7 +139,7 @@ public abstract class BaseSelectBuilder<T> implements SelectBuilder<T> {
 		List<T> objects = response.getObjects();
 		Entity<T> rootEntity = response.getEntity();
 
-		if (isById() && objects.size() != 1) {
+		if (oneObject && objects.size() != 1) {
 
 			if (objects.isEmpty()) {
 				throw new LinkRestException(Status.NOT_FOUND, "No object for ID '" + id + "' and entity '"
