@@ -21,7 +21,14 @@ public class DataResponseConfig {
 	private EntityConfig entity;
 
 	public DataResponseConfig(ObjEntity rootEntity) {
-		this.entity = new EntityConfig(rootEntity);
+		this(new EntityConfig(rootEntity));
+	}
+
+	/**
+	 * @since 1.2
+	 */
+	public DataResponseConfig(EntityConfig entity) {
+		this.entity = entity;
 	}
 
 	public DataResponseConfig fetchOffset(int fetchOffset) {
@@ -44,5 +51,18 @@ public class DataResponseConfig {
 
 	public int getFetchLimit() {
 		return fetchLimit;
+	}
+
+	/**
+	 * @since 1.2
+	 */
+	public DataResponseConfig deepCopy() {
+
+		EntityConfig entityCopy = entity.deepCopy();
+		DataResponseConfig copy = new DataResponseConfig(entityCopy);
+
+		copy.fetchLimit(fetchLimit);
+		copy.fetchOffset(fetchOffset);
+		return copy;
 	}
 }

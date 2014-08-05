@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -26,7 +27,7 @@ public class EntityConfig {
 	private Collection<String> attributes;
 	private ConcurrentMap<String, EntityConfig> children;
 	private Expression qualifier;
-	private ObjEntity entity;
+	ObjEntity entity;
 
 	public EntityConfig(ObjEntity entity) {
 		this.idIncluded = false;
@@ -87,6 +88,40 @@ public class EntityConfig {
 		return path(entity.resolvePathComponents(path));
 	}
 
+	/**
+	 * @since 1.2
+	 */
+	public EntityConfig[] paths(Property<?>... paths) {
+		if (paths == null) {
+			throw new NullPointerException("Null paths");
+		}
+
+		int len = paths.length;
+		EntityConfig[] configs = new EntityConfig[len];
+		for (int i = 0; i < len; i++) {
+			configs[i] = path(paths[i].getName());
+		}
+
+		return configs;
+	}
+
+	/**
+	 * @since 1.2
+	 */
+	public EntityConfig[] paths(String... paths) {
+		if (paths == null) {
+			throw new NullPointerException("Null paths");
+		}
+
+		int len = paths.length;
+		EntityConfig[] configs = new EntityConfig[len];
+		for (int i = 0; i < len; i++) {
+			configs[i] = path(paths[i]);
+		}
+
+		return configs;
+	}
+
 	private EntityConfig path(Iterator<CayenneMapEntry> it) {
 
 		if (it.hasNext()) {
@@ -135,11 +170,37 @@ public class EntityConfig {
 		return this;
 	}
 
+	/**
+	 * @deprecated since 1.2 use {@link #and(Expression)}.
+	 * @param qualifier
+	 * @return
+	 */
+	@Deprecated
 	public EntityConfig andQualifier(Expression qualifier) {
+		return and(qualifier);
+	}
+
+	/**
+	 * @since 1.2
+	 */
+	public EntityConfig and(Expression qualifier) {
 		if (this.qualifier == null) {
 			this.qualifier = qualifier;
 		} else {
 			this.qualifier = this.qualifier.andExp(qualifier);
+		}
+
+		return this;
+	}
+
+	/**
+	 * @since 1.2
+	 */
+	public EntityConfig or(Expression qualifier) {
+		if (this.qualifier == null) {
+			this.qualifier = qualifier;
+		} else {
+			this.qualifier = this.qualifier.orExp(qualifier);
 		}
 
 		return this;
@@ -173,4 +234,23 @@ public class EntityConfig {
 		return qualifier;
 	}
 
+	/**
+	 * @since 1.2
+	 */
+	public EntityConfig deepCopy() {
+		EntityConfig copy = new EntityConfig(entity);
+
+		copy.attributes.addAll(attributes);
+		copy.idIncluded = idIncluded;
+
+		if (qualifier != null) {
+			copy.qualifier = qualifier.deepCopy();
+		}
+
+		for (Entry<String, EntityConfig> e : children.entrySet()) {
+			copy.children.put(e.getKey(), e.getValue().deepCopy());
+		}
+
+		return copy;
+	}
 }

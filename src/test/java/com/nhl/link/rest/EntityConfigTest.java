@@ -1,5 +1,6 @@
 package com.nhl.link.rest;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
@@ -27,5 +28,21 @@ public class EntityConfigTest extends TestWithCayenneMapping {
 
 		assertSame(config02, config01.path(E3.E5));
 		assertTrue(config02.getAttributes().contains(E5.DATE.getName()));
+	}
+
+	@Test
+	public void testDeepCopy() {
+
+		EntityConfig e = new EntityConfig(getEntity(E2.class));
+
+		e.attributes(E2.ADDRESS, E2.NAME);
+
+		EntityConfig ecCopy = e.deepCopy();
+		assertNotSame(e, ecCopy);
+		assertSame(e.entity, ecCopy.entity);
+
+		assertEquals(2, ecCopy.getAttributes().size());
+		assertTrue(ecCopy.getAttributes().contains("address"));
+		assertTrue(ecCopy.getAttributes().contains("name"));
 	}
 }

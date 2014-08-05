@@ -203,7 +203,7 @@ public class IntersectConfigMergerTest {
 		Expression q1 = Expression.fromString("a = 5");
 
 		DataResponseConfig s1 = new DataResponseConfig(entity);
-		s1.getEntity().andQualifier(q1);
+		s1.getEntity().and(q1);
 
 		Entity<Object> te1 = new Entity<>(Object.class);
 		DataResponse<?> t1 = DataResponse.forType(Object.class).withClientEntity(te1);
