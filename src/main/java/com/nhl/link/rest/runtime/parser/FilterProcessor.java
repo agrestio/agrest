@@ -16,6 +16,7 @@ import com.nhl.link.rest.LinkRestException;
 class FilterProcessor {
 
 	private static final int MAX_VALUE_LENGTH = 1024;
+	private static final String EXACT_MATCH = "exactMatch";
 	private static final String PROPERTY = "property";
 	private static final String VALUE = "value";
 
@@ -52,10 +53,18 @@ class FilterProcessor {
 
 			Object valueUnescaped = extractValue(valueNode);
 
+			boolean exactMatch = false;
+			JsonNode exactMatchNode = filterNode.get(EXACT_MATCH);
+			if (exactMatchNode != null) {
+				exactMatch = exactMatchNode.asBoolean();
+			}
+
 			Expression qualifier;
 			if (valueUnescaped == null) {
 				qualifier = ExpressionFactory.matchExp(property, null);
 			} else if (valueUnescaped instanceof Boolean) {
+				qualifier = ExpressionFactory.matchExp(property, valueUnescaped);
+			} else if (exactMatch) {
 				qualifier = ExpressionFactory.matchExp(property, valueUnescaped);
 			} else {
 				checkValueLength((String) valueUnescaped);
@@ -65,13 +74,7 @@ class FilterProcessor {
 
 			// validate property path
 			ObjEntity rootEntity = clientEntity.getCayenneEntity();
-			PathDescriptor pd = pathCache.entityPathCache(rootEntity).getPathDescriptor(
-					(ASTObjPath) qualifier.getOperand(0));
-
-			if (!pd.isAttribute()) {
-				throw new LinkRestException(Status.BAD_REQUEST, "filter 'property' points to a relationship'"
-						+ property + "'. Can't filter on relationships");
-			}
+			pathCache.entityPathCache(rootEntity).getPathDescriptor((ASTObjPath) qualifier.getOperand(0));
 
 			clientEntity.andQualifier(qualifier);
 		}
@@ -91,6 +94,10 @@ class FilterProcessor {
 			return false;
 		case VALUE_TRUE:
 			return true;
+		case VALUE_NUMBER_INT:
+			return valueNode.asInt();
+		case VALUE_NUMBER_FLOAT:
+			return valueNode.asDouble();
 		default:
 			return valueNode.asText();
 		}
