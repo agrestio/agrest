@@ -1,6 +1,6 @@
 package com.nhl.link.rest.unit.resource;
 
-import static com.nhl.link.rest.EntityConfigBuilder.entityConfig;
+import static com.nhl.link.rest.EntityConfigBuilder.config;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -27,7 +27,7 @@ public class LinkRestResource_Config {
 	@Path("limit_attributes")
 	public DataResponse<E4> getObjects_LimitAttributes(@Context UriInfo uriInfo) {
 
-		return getService().forSelect(E4.class).withEntity(entityConfig().excludeAttributes().attributes(E4.C_INT))
+		return getService().forSelect(E4.class).withEntity(config().excludeAttributes().attributes(E4.C_INT))
 				.select();
 	}
 

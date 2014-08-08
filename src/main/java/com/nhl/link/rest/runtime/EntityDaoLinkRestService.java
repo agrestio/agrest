@@ -97,7 +97,7 @@ public class EntityDaoLinkRestService extends BaseLinkRestService {
 		// navigate through DbRelationships ... there may be no reverse ObjRel..
 		// Reverse DB should always be there
 		Expression qualifier = ExpressionFactory.matchDbExp(objRelationship.getReverseDbRelationshipPath(), rootId);
-		EntityConfigBuilder entityConfig = EntityConfigBuilder.entityConfig().and(qualifier);
+		EntityConfigBuilder entityConfig = EntityConfigBuilder.config().and(qualifier);
 		return dao(objRelationship.getTargetEntityName()).forSelect().withEntity(entityConfig);
 	}
 

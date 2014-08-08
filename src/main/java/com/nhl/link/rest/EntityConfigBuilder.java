@@ -23,8 +23,12 @@ public class EntityConfigBuilder {
 	private Collection<Runnable> ops;
 	private ThreadLocal<EntityConfig> config;
 
-	public static EntityConfigBuilder entityConfig() {
+	public static EntityConfigBuilder config() {
 		return new EntityConfigBuilder();
+	}
+
+	public static EntityConfigBuilder emptyConfig() {
+		return config().excludeAttributes().excludeChildren();
 	}
 
 	private EntityConfigBuilder() {
@@ -47,7 +51,7 @@ public class EntityConfigBuilder {
 			this.config.set(null);
 		}
 	}
-	
+
 	private EntityConfig getConfig() {
 		return config.get();
 	}
