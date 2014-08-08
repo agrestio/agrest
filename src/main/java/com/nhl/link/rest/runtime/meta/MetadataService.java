@@ -4,12 +4,15 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import javax.ws.rs.core.Response.Status;
+
 import org.apache.cayenne.di.Inject;
 import org.apache.cayenne.map.DataMap;
 import org.apache.cayenne.map.EntityResolver;
 import org.apache.cayenne.map.ObjEntity;
 import org.apache.cayenne.query.Select;
 
+import com.nhl.link.rest.LinkRestException;
 import com.nhl.link.rest.runtime.cayenne.ICayennePersister;
 
 public class MetadataService implements IMetadataService {
@@ -37,12 +40,33 @@ public class MetadataService implements IMetadataService {
 
 	@Override
 	public ObjEntity getObjEntity(Class<?> type) {
-		return entityResolver.getObjEntity(type);
+
+		if (type == null) {
+			throw new NullPointerException("Null type");
+		}
+
+		ObjEntity e = entityResolver.getObjEntity(type);
+
+		if (e == null) {
+			throw new LinkRestException(Status.BAD_REQUEST, "Invalid entity: " + type.getName());
+		}
+
+		return e;
 	}
 
 	@Override
 	public ObjEntity getObjEntity(Select<?> select) {
-		return select.getMetaData(entityResolver).getObjEntity();
+		if (select == null) {
+			throw new NullPointerException("Null type");
+		}
+
+		ObjEntity e = select.getMetaData(entityResolver).getObjEntity();
+
+		if (e == null) {
+			throw new LinkRestException(Status.BAD_REQUEST, "No entity for select");
+		}
+
+		return e;
 	}
 
 }

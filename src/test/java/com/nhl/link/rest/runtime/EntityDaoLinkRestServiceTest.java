@@ -6,7 +6,10 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import java.util.Collections;
+
 import org.apache.cayenne.ObjectContext;
+import org.apache.cayenne.map.DataMap;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -15,6 +18,7 @@ import com.nhl.link.rest.runtime.cayenne.ICayennePersister;
 import com.nhl.link.rest.runtime.config.IConfigMerger;
 import com.nhl.link.rest.runtime.encoder.IEncoderService;
 import com.nhl.link.rest.runtime.meta.IMetadataService;
+import com.nhl.link.rest.runtime.meta.MetadataService;
 import com.nhl.link.rest.runtime.parser.IRequestParser;
 import com.nhl.link.rest.unit.TestWithCayenneMapping;
 import com.nhl.link.rest.unit.cayenne.E5;
@@ -25,27 +29,28 @@ public class EntityDaoLinkRestServiceTest extends TestWithCayenneMapping {
 	private IConfigMerger mockConfigMerger;
 	private IEncoderService mockEncoderService;
 	private ICayennePersister mockCayennePersister;
-	private IMetadataService mockMetadataService;
+	private IMetadataService metadataService;
 
 	@Before
 	public void before() {
 		this.mockRequestParser = mock(IRequestParser.class);
 		this.mockConfigMerger = mock(IConfigMerger.class);
 		this.mockEncoderService = mock(IEncoderService.class);
-		this.mockMetadataService = mock(IMetadataService.class);
 
 		ObjectContext sharedContext = runtime.newContext();
 		mockCayennePersister = mock(ICayennePersister.class);
 		when(mockCayennePersister.sharedContext()).thenReturn(sharedContext);
 		when(mockCayennePersister.newContext()).thenReturn(runtime.newContext());
 		when(mockCayennePersister.entityResolver()).thenReturn(sharedContext.getEntityResolver());
+
+		this.metadataService = new MetadataService(Collections.<DataMap> emptyList(), mockCayennePersister);
 	}
 
 	@Test
 	public void testNewConfig() {
 
 		EntityDaoLinkRestService service = new EntityDaoLinkRestService(mockRequestParser, mockEncoderService,
-				mockMetadataService, mockCayennePersister, mockConfigMerger);
+				metadataService, mockCayennePersister, mockConfigMerger);
 
 		DataResponseConfig defaultConfig = service.newConfig(E5.class);
 		assertNotNull(defaultConfig);

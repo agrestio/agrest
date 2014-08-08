@@ -33,10 +33,6 @@ public class StringConverterFactory implements IStringConverterFactory {
 	@Override
 	public StringConverter getConverter(Class<?> entityType, Property<?> attribute) {
 		ObjEntity entity = metadataService.getObjEntity(entityType);
-		if (entity == null) {
-			throw new IllegalArgumentException("Not a persistent class: " + entityType);
-		}
-
 		return getConverter(entity, attribute.getName());
 	}
 

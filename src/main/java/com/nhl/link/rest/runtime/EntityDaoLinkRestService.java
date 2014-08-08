@@ -3,6 +3,8 @@ package com.nhl.link.rest.runtime;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.ws.rs.core.Response.Status;
+
 import org.apache.cayenne.di.Inject;
 import org.apache.cayenne.map.EntityResolver;
 import org.apache.cayenne.map.ObjAttribute;
@@ -12,6 +14,7 @@ import org.apache.cayenne.reflect.ClassDescriptor;
 
 import com.nhl.link.rest.DataResponseConfig;
 import com.nhl.link.rest.EntityConfig;
+import com.nhl.link.rest.LinkRestException;
 import com.nhl.link.rest.SelectBuilder;
 import com.nhl.link.rest.UpdateResponse;
 import com.nhl.link.rest.runtime.cayenne.CayenneDao;
@@ -32,7 +35,6 @@ public class EntityDaoLinkRestService extends BaseLinkRestService {
 
 	private Map<String, EntityDao<?>> entityDaos;
 	private IMetadataService metadataService;
-	private EntityResolver entityResolver;
 
 	public EntityDaoLinkRestService(@Inject IRequestParser requestParser, @Inject IEncoderService encoderService,
 			@Inject IMetadataService metadataService, @Inject ICayennePersister cayenneService,
@@ -42,12 +44,12 @@ public class EntityDaoLinkRestService extends BaseLinkRestService {
 		this.metadataService = metadataService;
 		this.entityDaos = new HashMap<>();
 
-		this.entityResolver = cayenneService.entityResolver();
-		for (ObjEntity e : entityResolver.getObjEntities()) {
+		EntityResolver resolver = cayenneService.entityResolver();
+		for (ObjEntity e : resolver.getObjEntities()) {
 
 			if (!entityDaos.containsKey(e.getName())) {
 
-				ClassDescriptor cd = entityResolver.getClassDescriptor(e.getName());
+				ClassDescriptor cd = resolver.getClassDescriptor(e.getName());
 				EntityDao<?> dao = new CayenneDao<>(cd.getObjectClass(), requestParser, encoderService, cayenneService,
 						configMerger);
 				entityDaos.put(e.getName(), dao);
@@ -66,10 +68,7 @@ public class EntityDaoLinkRestService extends BaseLinkRestService {
 	@Override
 	public DataResponseConfig newConfig(Class<?> root) {
 
-		ObjEntity entity = entityResolver.getObjEntity(root);
-		if (entity == null) {
-			throw new IllegalArgumentException("Unsupported entity type: " + root.getName());
-		}
+		ObjEntity entity = metadataService.getObjEntity(root);
 
 		// TODO: here we might start with a clone of default config, either for
 		// the entire project or the entity.
@@ -90,7 +89,7 @@ public class EntityDaoLinkRestService extends BaseLinkRestService {
 		EntityDao<?> dao = entityDaos.get(entityName);
 
 		if (dao == null) {
-			throw new IllegalArgumentException("Unsupported entity: " + entityName);
+			throw new LinkRestException(Status.BAD_REQUEST, "Unsupported entity: " + entityName);
 		}
 
 		return (EntityDao<T>) dao;
