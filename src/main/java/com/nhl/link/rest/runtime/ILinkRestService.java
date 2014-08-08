@@ -10,7 +10,8 @@ import com.nhl.link.rest.SelectBuilder;
 import com.nhl.link.rest.SimpleResponse;
 
 /**
- * A facade to the ExtJS query processing pipeline.
+ * An entry point to LinkRest backend services. Used from the user REST resource
+ * classes to process requests.
  */
 public interface ILinkRestService {
 
