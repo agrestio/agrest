@@ -36,7 +36,11 @@ public class EntityConfigBuilder {
 		this.config = new ThreadLocal<>();
 	}
 
-	public void apply(EntityConfig config) {
+	/**
+	 * A builder method that applies configuration to the provided EntityConfig
+	 * instance in the same order it was applied to the builder.
+	 */
+	public void build(EntityConfig config) {
 
 		// since EntityConfigBuilder is reusable across threads, we must take
 		// care to avoid race conditions on apply...
@@ -196,7 +200,7 @@ public class EntityConfigBuilder {
 
 			@Override
 			public void run() {
-				subentityBuilder.apply(getConfig().path(path));
+				subentityBuilder.build(getConfig().path(path));
 			}
 		});
 
@@ -209,7 +213,7 @@ public class EntityConfigBuilder {
 
 			@Override
 			public void run() {
-				subentityBuilder.apply(getConfig().path(path));
+				subentityBuilder.build(getConfig().path(path));
 			}
 		});
 

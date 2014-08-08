@@ -67,7 +67,7 @@ public abstract class BaseSelectBuilder<T> implements SelectBuilder<T> {
 
 	@Override
 	public SelectBuilder<T> withEntity(EntityConfigBuilder builder) {
-		builder.apply(getConfig().getEntity());
+		builder.build(getConfig().getEntity());
 		return this;
 	}
 	
