@@ -15,11 +15,12 @@ import org.apache.cayenne.map.ObjEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.nhl.link.rest.Entity;
-import com.nhl.link.rest.EntityConfig;
-import com.nhl.link.rest.EntityProperty;
 import com.nhl.link.rest.DataResponse;
 import com.nhl.link.rest.DataResponseConfig;
+import com.nhl.link.rest.Entity;
+import com.nhl.link.rest.EntityConfig;
+import com.nhl.link.rest.EntityConfigBuilder;
+import com.nhl.link.rest.EntityProperty;
 import com.nhl.link.rest.LinkRestException;
 import com.nhl.link.rest.SelectBuilder;
 import com.nhl.link.rest.encoder.Encoder;
@@ -56,13 +57,30 @@ public abstract class BaseSelectBuilder<T> implements SelectBuilder<T> {
 	/**
 	 * @since 1.2
 	 */
-	@Override
-	public DataResponseConfig getConfig() {
+	protected DataResponseConfig getConfig() {
 		if (config == null) {
 			config = createConfig();
 		}
 
 		return config;
+	}
+
+	@Override
+	public SelectBuilder<T> withEntity(EntityConfigBuilder builder) {
+		builder.apply(getConfig().getEntity());
+		return this;
+	}
+	
+	@Override
+	public SelectBuilder<T> fetchLimit(int limit) {
+		getConfig().fetchLimit(limit);
+		return this;
+	}
+	
+	@Override
+	public SelectBuilder<T> fetchOffset(int offset) {
+		getConfig().fetchOffset(offset);
+		return this;
 	}
 
 	/**

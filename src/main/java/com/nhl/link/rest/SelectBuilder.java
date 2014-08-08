@@ -42,15 +42,21 @@ public interface SelectBuilder<T> {
 	SelectBuilder<T> withProperty(String name);
 
 	/**
-	 * Returns a new {@link DataResponseConfig} associated with this
-	 * SelectBuilder. The initial state of the returned config depends on the
-	 * type of SelectBuilder. Normally it is setup to include all attributes of
-	 * the root entity plus the id. It can be further customized by the caller
-	 * and then used repeatedly to configure DataResponses.
+	 * Applies entity config to the SelectBuilder.
 	 * 
 	 * @since 1.2
 	 */
-	DataResponseConfig getConfig();
+	SelectBuilder<T> withEntity(EntityConfigBuilder builder);
+	
+	/**
+	 * @since 1.2
+	 */
+	SelectBuilder<T> fetchOffset(int offset);
+	
+	/**
+	 * @since 1.2
+	 */
+	SelectBuilder<T> fetchLimit(int limit);
 
 	/**
 	 * Runs the query corresponding to the state of this builder, returning
