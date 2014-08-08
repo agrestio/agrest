@@ -20,6 +20,7 @@ import com.nhl.link.rest.UpdateResponse;
 import com.nhl.link.rest.runtime.config.IConfigMerger;
 import com.nhl.link.rest.runtime.dao.EntityDao;
 import com.nhl.link.rest.runtime.encoder.IEncoderService;
+import com.nhl.link.rest.runtime.meta.IMetadataService;
 import com.nhl.link.rest.runtime.parser.IRequestParser;
 
 public class CayenneDao<T> implements EntityDao<T> {
@@ -29,14 +30,16 @@ public class CayenneDao<T> implements EntityDao<T> {
 	private IEncoderService encoderService;
 	private IRequestParser requestParser;
 	private IConfigMerger configMerger;
+	private IMetadataService metadataService;
 
 	public CayenneDao(Class<T> type, IRequestParser requestParser, IEncoderService encoderService,
-			ICayennePersister cayenneService, IConfigMerger configMerger) {
+			ICayennePersister cayenneService, IConfigMerger configMerger, IMetadataService metadataService) {
 		this.type = type;
 		this.requestParser = requestParser;
 		this.encoderService = encoderService;
 		this.cayenneService = cayenneService;
 		this.configMerger = configMerger;
+		this.metadataService = metadataService;
 	}
 
 	@Override
@@ -46,12 +49,14 @@ public class CayenneDao<T> implements EntityDao<T> {
 
 	@Override
 	public SelectBuilder<T> forSelect() {
-		return new CayenneSelectBuilder<T>(type, cayenneService, encoderService, requestParser, configMerger);
+		return new CayenneSelectBuilder<T>(type, cayenneService, encoderService, requestParser, configMerger,
+				metadataService);
 	}
 
 	@Override
 	public SelectBuilder<T> forSelect(SelectQuery<T> query) {
-		return new CayenneSelectBuilder<T>(query, type, cayenneService, encoderService, requestParser, configMerger);
+		return new CayenneSelectBuilder<T>(query, type, cayenneService, encoderService, requestParser, configMerger,
+				metadataService);
 	}
 
 	@Override

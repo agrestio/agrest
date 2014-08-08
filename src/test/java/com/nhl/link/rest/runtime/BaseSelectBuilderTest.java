@@ -2,6 +2,7 @@ package com.nhl.link.rest.runtime;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -13,6 +14,7 @@ import org.apache.cayenne.map.DataMap;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.nhl.link.rest.DataResponse;
 import com.nhl.link.rest.DataResponseConfig;
 import com.nhl.link.rest.runtime.cayenne.ICayennePersister;
 import com.nhl.link.rest.runtime.config.IConfigMerger;
@@ -23,7 +25,7 @@ import com.nhl.link.rest.runtime.parser.IRequestParser;
 import com.nhl.link.rest.unit.TestWithCayenneMapping;
 import com.nhl.link.rest.unit.cayenne.E5;
 
-public class EntityDaoLinkRestServiceTest extends TestWithCayenneMapping {
+public class BaseSelectBuilderTest extends TestWithCayenneMapping {
 
 	private IRequestParser mockRequestParser;
 	private IConfigMerger mockConfigMerger;
@@ -47,22 +49,28 @@ public class EntityDaoLinkRestServiceTest extends TestWithCayenneMapping {
 	}
 
 	@Test
-	public void testNewConfig() {
+	public void testGetConfig() {
 
-		EntityDaoLinkRestService service = new EntityDaoLinkRestService(mockRequestParser, mockEncoderService,
-				metadataService, mockCayennePersister, mockConfigMerger);
+		BaseSelectBuilder<E5> builder = new BaseSelectBuilder<E5>(E5.class, mockEncoderService, mockRequestParser,
+				mockConfigMerger, metadataService) {
+			@Override
+			protected void fetchObjects(DataResponse<E5> responseBuilder) {
+				throw new UnsupportedOperationException();
+			}
+		};
 
-		DataResponseConfig defaultConfig = service.newConfig(E5.class);
-		assertNotNull(defaultConfig);
+		DataResponseConfig config = builder.getConfig();
+		assertNotNull(config);
+		assertSame(config, builder.getConfig());
 
-		assertEquals(0, defaultConfig.getFetchOffset());
-		assertEquals(0, defaultConfig.getFetchLimit());
+		assertEquals(0, config.getFetchOffset());
+		assertEquals(0, config.getFetchLimit());
 
-		assertTrue(defaultConfig.getEntity().isIdIncluded());
-		assertTrue(defaultConfig.getEntity().getChildren().isEmpty());
-		assertEquals(2, defaultConfig.getEntity().getAttributes().size());
-		assertTrue(defaultConfig.getEntity().getAttributes().contains(E5.DATE.getName()));
-		assertTrue(defaultConfig.getEntity().getAttributes().contains(E5.NAME.getName()));
+		assertTrue(config.getEntity().isIdIncluded());
+		assertTrue(config.getEntity().getChildren().isEmpty());
+		assertEquals(2, config.getEntity().getAttributes().size());
+		assertTrue(config.getEntity().getAttributes().contains(E5.DATE.getName()));
+		assertTrue(config.getEntity().getAttributes().contains(E5.NAME.getName()));
 
 	}
 

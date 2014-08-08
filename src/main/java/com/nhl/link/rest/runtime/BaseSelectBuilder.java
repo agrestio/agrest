@@ -10,10 +10,13 @@ import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriInfo;
 
 import org.apache.cayenne.exp.Property;
+import org.apache.cayenne.map.ObjAttribute;
+import org.apache.cayenne.map.ObjEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.nhl.link.rest.Entity;
+import com.nhl.link.rest.EntityConfig;
 import com.nhl.link.rest.EntityProperty;
 import com.nhl.link.rest.DataResponse;
 import com.nhl.link.rest.DataResponseConfig;
@@ -22,6 +25,7 @@ import com.nhl.link.rest.SelectBuilder;
 import com.nhl.link.rest.encoder.Encoder;
 import com.nhl.link.rest.runtime.config.IConfigMerger;
 import com.nhl.link.rest.runtime.encoder.IEncoderService;
+import com.nhl.link.rest.runtime.meta.IMetadataService;
 import com.nhl.link.rest.runtime.parser.IRequestParser;
 
 public abstract class BaseSelectBuilder<T> implements SelectBuilder<T> {
@@ -35,22 +39,51 @@ public abstract class BaseSelectBuilder<T> implements SelectBuilder<T> {
 	private IEncoderService encoderService;
 	private IRequestParser requestParser;
 	private IConfigMerger configMerger;
+	private IMetadataService metadataService;
 	private Map<String, EntityProperty> extraProperties;
 	private Encoder dataEncoder;
 	private DataResponseConfig config;
 
 	public BaseSelectBuilder(Class<T> type, IEncoderService encoderService, IRequestParser requestParser,
-			IConfigMerger configMerger) {
+			IConfigMerger configMerger, IMetadataService metadataService) {
 		this.type = type;
 		this.encoderService = encoderService;
 		this.requestParser = requestParser;
 		this.configMerger = configMerger;
+		this.metadataService = metadataService;
 	}
 
+	/**
+	 * @since 1.2
+	 */
 	@Override
-	public SelectBuilder<T> withConfig(DataResponseConfig config) {
-		this.config = config;
-		return this;
+	public DataResponseConfig getConfig() {
+		if (config == null) {
+			config = createConfig();
+		}
+
+		return config;
+	}
+
+	/**
+	 * @since 1.2
+	 */
+	protected DataResponseConfig createConfig() {
+
+		ObjEntity entity = metadataService.getObjEntity(type);
+
+		// TODO: here we might start with a clone of default config, either for
+		// the entire project or the entity.
+
+		DataResponseConfig config = new DataResponseConfig(entity);
+
+		// apply defaults:
+		EntityConfig entityConfig = config.getEntity().includeId();
+		for (ObjAttribute a : entity.getAttributes()) {
+			entityConfig.attribute(a.getName());
+		}
+
+		return config;
 	}
 
 	@Override
@@ -102,7 +135,7 @@ public abstract class BaseSelectBuilder<T> implements SelectBuilder<T> {
 		this.id = id;
 		return this;
 	}
-	
+
 	@Override
 	public DataResponse<T> select() {
 		// 'byId' behaving as "selectOne" is really legacy behavior of 1.1...
@@ -114,7 +147,7 @@ public abstract class BaseSelectBuilder<T> implements SelectBuilder<T> {
 	public DataResponse<T> selectOne() {
 		return doSelect(true);
 	}
-	
+
 	protected DataResponse<T> doSelect(boolean oneObject) {
 
 		DataResponse<T> response = DataResponse.forType(getType());

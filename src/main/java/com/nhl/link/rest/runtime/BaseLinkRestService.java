@@ -6,7 +6,6 @@ import javax.ws.rs.core.UriInfo;
 import org.apache.cayenne.query.SelectQuery;
 
 import com.nhl.link.rest.DataResponse;
-import com.nhl.link.rest.DataResponseConfig;
 import com.nhl.link.rest.SelectBuilder;
 import com.nhl.link.rest.SimpleResponse;
 import com.nhl.link.rest.UpdateResponse;
@@ -26,9 +25,6 @@ public abstract class BaseLinkRestService implements ILinkRestService {
 		this.requestParser = requestParser;
 		this.encoderService = encoderService;
 	}
-	
-	@Override
-	public abstract DataResponseConfig newConfig(Class<?> root);
 
 	@Override
 	public <T> DataResponse<T> selectById(Class<T> root, Object id) {

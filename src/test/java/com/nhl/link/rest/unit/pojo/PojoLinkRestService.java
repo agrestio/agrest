@@ -8,35 +8,33 @@ import org.apache.cayenne.di.Inject;
 import org.apache.cayenne.query.SelectQuery;
 import org.apache.cayenne.reflect.PropertyUtils;
 
-import com.nhl.link.rest.DataResponseConfig;
 import com.nhl.link.rest.LinkRestException;
 import com.nhl.link.rest.SelectBuilder;
 import com.nhl.link.rest.UpdateResponse;
 import com.nhl.link.rest.runtime.BaseLinkRestService;
 import com.nhl.link.rest.runtime.config.IConfigMerger;
 import com.nhl.link.rest.runtime.encoder.IEncoderService;
+import com.nhl.link.rest.runtime.meta.IMetadataService;
 import com.nhl.link.rest.runtime.parser.IRequestParser;
 
 public class PojoLinkRestService extends BaseLinkRestService {
 
 	private PojoDB db;
 	private IConfigMerger configMerger;
+	private IMetadataService metadataService;
 
 	public PojoLinkRestService(@Inject IRequestParser requestParser, @Inject IEncoderService encoderService,
-			@Inject IConfigMerger configMerger) {
+			@Inject IConfigMerger configMerger, @Inject IMetadataService metadataService) {
 		super(requestParser, encoderService);
 		this.db = JerseyTestOnPojo.pojoDB;
 		this.configMerger = configMerger;
-	}
-
-	@Override
-	public DataResponseConfig newConfig(Class<?> root) {
-		throw new UnsupportedOperationException("TODO");
+		this.metadataService = metadataService;
 	}
 
 	@Override
 	public <T> SelectBuilder<T> forSelect(Class<T> root) {
-		return new PojoSelectBuilder<>(root, encoderService, requestParser, configMerger, db.bucketForType(root));
+		return new PojoSelectBuilder<>(root, encoderService, requestParser, configMerger, db.bucketForType(root),
+				metadataService);
 	}
 
 	@Override

@@ -42,14 +42,15 @@ public interface SelectBuilder<T> {
 	SelectBuilder<T> withProperty(String name);
 
 	/**
-	 * Applies a server-side config to the SelectBuilder. Providing an explicit
-	 * config gives the server-side code an ability to "shape" the response
-	 * format, as well as limit what a client can request, thus providing better
-	 * security.
+	 * Returns a new {@link DataResponseConfig} associated with this
+	 * SelectBuilder. The initial state of the returned config depends on the
+	 * type of SelectBuilder. Normally it is setup to include all attributes of
+	 * the root entity plus the id. It can be further customized by the caller
+	 * and then used repeatedly to configure DataResponses.
 	 * 
-	 * @since 1.1
+	 * @since 1.2
 	 */
-	SelectBuilder<T> withConfig(DataResponseConfig config);
+	DataResponseConfig getConfig();
 
 	/**
 	 * Runs the query corresponding to the state of this builder, returning

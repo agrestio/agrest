@@ -7,13 +7,10 @@ import javax.ws.rs.core.Response.Status;
 
 import org.apache.cayenne.di.Inject;
 import org.apache.cayenne.map.EntityResolver;
-import org.apache.cayenne.map.ObjAttribute;
 import org.apache.cayenne.map.ObjEntity;
 import org.apache.cayenne.query.SelectQuery;
 import org.apache.cayenne.reflect.ClassDescriptor;
 
-import com.nhl.link.rest.DataResponseConfig;
-import com.nhl.link.rest.EntityConfig;
 import com.nhl.link.rest.LinkRestException;
 import com.nhl.link.rest.SelectBuilder;
 import com.nhl.link.rest.UpdateResponse;
@@ -51,7 +48,7 @@ public class EntityDaoLinkRestService extends BaseLinkRestService {
 
 				ClassDescriptor cd = resolver.getClassDescriptor(e.getName());
 				EntityDao<?> dao = new CayenneDao<>(cd.getObjectClass(), requestParser, encoderService, cayenneService,
-						configMerger);
+						configMerger, metadataService);
 				entityDaos.put(e.getName(), dao);
 			}
 		}
@@ -63,25 +60,6 @@ public class EntityDaoLinkRestService extends BaseLinkRestService {
 
 	private <T> EntityDao<T> daoForQuery(SelectQuery<T> query) {
 		return dao(metadataService.getObjEntity(query).getName());
-	}
-
-	@Override
-	public DataResponseConfig newConfig(Class<?> root) {
-
-		ObjEntity entity = metadataService.getObjEntity(root);
-
-		// TODO: here we might start with a clone of default config, either for
-		// the entire project or the entity.
-
-		DataResponseConfig config = new DataResponseConfig(entity);
-
-		// apply defaults:
-		EntityConfig entityConfig = config.getEntity().includeId();
-		for (ObjAttribute a : entity.getAttributes()) {
-			entityConfig.attribute(a.getName());
-		}
-
-		return config;
 	}
 
 	@SuppressWarnings("unchecked")
