@@ -5,11 +5,13 @@ import java.util.Map.Entry;
 import javax.ws.rs.core.Response.Status;
 
 import org.apache.cayenne.di.Inject;
+import org.apache.cayenne.exp.Property;
 import org.apache.cayenne.query.SelectQuery;
 import org.apache.cayenne.reflect.PropertyUtils;
 
 import com.nhl.link.rest.LinkRestException;
 import com.nhl.link.rest.SelectBuilder;
+import com.nhl.link.rest.SimpleResponse;
 import com.nhl.link.rest.UpdateResponse;
 import com.nhl.link.rest.runtime.BaseLinkRestService;
 import com.nhl.link.rest.runtime.config.IConfigMerger;
@@ -43,8 +45,38 @@ public class PojoLinkRestService extends BaseLinkRestService {
 	}
 
 	@Override
+	public <T> SelectBuilder<T> forSelectRelated(Class<?> root, Object rootId, Property<T> relationship) {
+		throw new UnsupportedOperationException("TODO");
+	}
+
+	@Override
+	public SelectBuilder<?> forSelectRelated(Class<?> root, Object rootId, String relationship) {
+		throw new UnsupportedOperationException("TODO");
+	}
+
+	@Override
 	protected void doDelete(Class<?> root, Object id) {
 		db.bucketForType(root).remove(id);
+	}
+
+	@Override
+	public SimpleResponse relateNew(Class<?> sourceType, Object sourceId, String relationship, String targetData) {
+		throw new UnsupportedOperationException("TODO");
+	}
+
+	@Override
+	public SimpleResponse relate(Class<?> sourceType, Object sourceId, String relationship, Object targetId) {
+		throw new UnsupportedOperationException("TODO");
+	}
+
+	@Override
+	public SimpleResponse unrelate(Class<?> root, Object sourceId, String relationship) {
+		throw new UnsupportedOperationException("TODO");
+	}
+
+	@Override
+	public SimpleResponse unrelate(Class<?> root, Object sourceId, String relationship, Object targetId) {
+		throw new UnsupportedOperationException("TODO");
 	}
 
 	@Override

@@ -10,7 +10,9 @@ import org.apache.cayenne.di.Inject;
 import org.apache.cayenne.map.DataMap;
 import org.apache.cayenne.map.EntityResolver;
 import org.apache.cayenne.map.ObjEntity;
+import org.apache.cayenne.map.ObjRelationship;
 import org.apache.cayenne.query.Select;
+import org.apache.cayenne.reflect.ClassDescriptor;
 
 import com.nhl.link.rest.LinkRestException;
 import com.nhl.link.rest.runtime.cayenne.ICayennePersister;
@@ -69,4 +71,24 @@ public class MetadataService implements IMetadataService {
 		return e;
 	}
 
+	@Override
+	public ObjRelationship getObjRelationship(Class<?> type, String relationship) {
+		ObjEntity e = getObjEntity(type);
+		ObjRelationship r = e.getRelationship(relationship);
+		if (r == null) {
+			throw new LinkRestException(Status.BAD_REQUEST, "Invalid relationship: '" + relationship + "'");
+		}
+
+		return r;
+	}
+
+	@Override
+	public Class<?> getType(String entity) {
+		ClassDescriptor cd = entityResolver.getClassDescriptor(entity);
+		if (cd == null) {
+			throw new LinkRestException(Status.BAD_REQUEST, "Invalid entity: " + entity);
+		}
+
+		return cd.getObjectClass();
+	}
 }

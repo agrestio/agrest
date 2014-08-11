@@ -1,0 +1,72 @@
+package com.nhl.link.rest;
+
+import static org.junit.Assert.assertEquals;
+
+import javax.ws.rs.client.Entity;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
+
+import org.apache.cayenne.DataRow;
+import org.apache.cayenne.ObjectContext;
+import org.apache.cayenne.query.EJBQLQuery;
+import org.apache.cayenne.query.SQLSelect;
+import org.apache.cayenne.query.SQLTemplate;
+import org.junit.Before;
+import org.junit.Test;
+
+import com.nhl.link.rest.unit.JerseyTestOnDerby;
+import com.nhl.link.rest.unit.cayenne.E2;
+import com.nhl.link.rest.unit.cayenne.E3;
+
+public class LinkRestService_InContainer_POST_Related_Test extends JerseyTestOnDerby {
+
+	private ObjectContext context;
+
+	@Before
+	public void before() {
+
+		context = runtime.newContext();
+
+		context.performGenericQuery(new EJBQLQuery("delete from E4"));
+		context.performGenericQuery(new EJBQLQuery("delete from E3"));
+		context.performGenericQuery(new EJBQLQuery("delete from E2"));
+		context.performGenericQuery(new EJBQLQuery("delete from E5"));
+		context.performGenericQuery(new EJBQLQuery("delete from E6"));
+	}
+
+	@Test
+	public void testRelate_ValidRel_ToMany_New() {
+
+		context.performGenericQuery(new SQLTemplate(E2.class, "INSERT INTO utest.e2 (id, name) values (24, 'xxx')"));
+
+		Response r1 = target("/lr/related/e2/24/e3s").request().post(
+				Entity.entity("{\"name\":\"zzz\"}", MediaType.APPLICATION_JSON));
+
+		assertEquals(Status.OK.getStatusCode(), r1.getStatus());
+		assertEquals("{\"success\":true}", r1.readEntity(String.class));
+
+		assertEquals(1, SQLSelect.scalarQuery(E3.class, "SELECT count(1) FROM utest.e3").selectOne(context));
+
+		DataRow row = SQLSelect.dataRowQuery("SELECT e2_id, name FROM utest.e3").lowerColumnNames().selectOne(context);
+		assertEquals("zzz", row.get("name"));
+		assertEquals(24, row.get("e2_id"));
+	}
+
+	@Test
+	public void testRelate_ValidRel_ToOne_Existing() {
+
+		context.performGenericQuery(new SQLTemplate(E2.class, "INSERT INTO utest.e2 (id, name) values (24, 'xxx')"));
+		context.performGenericQuery(new SQLTemplate(E3.class, "INSERT INTO utest.e3 (id, name) values (7, 'zzz')"));
+		context.performGenericQuery(new SQLTemplate(E3.class, "INSERT INTO utest.e3 (id, name) values (8, 'yyy')"));
+
+		// POST with empty body ... how bad is that?
+		Response r1 = target("/lr/related/e3/8/e2/24").request().post(Entity.entity("", MediaType.APPLICATION_JSON));
+
+		assertEquals(Status.OK.getStatusCode(), r1.getStatus());
+		assertEquals("{\"success\":true}", r1.readEntity(String.class));
+
+		assertEquals("yyy", SQLSelect.scalarQuery(String.class, "SELECT name FROM utest.e3 WHERE e2_id = 24")
+				.selectOne(context));
+	}
+}

@@ -3,6 +3,7 @@ package com.nhl.link.rest.runtime;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriInfo;
 
+import org.apache.cayenne.exp.Property;
 import org.apache.cayenne.query.SelectQuery;
 
 import com.nhl.link.rest.DataResponse;
@@ -47,11 +48,45 @@ public abstract class BaseLinkRestService implements ILinkRestService {
 	@Override
 	public abstract <T> SelectBuilder<T> forSelect(SelectQuery<T> query);
 
+	@Override
+	public abstract <T> SelectBuilder<T> forSelectRelated(Class<?> root, Object rootId, Property<T> relationship);
+
+	@Override
+	public abstract SelectBuilder<?> forSelectRelated(Class<?> root, Object rootId, String relationship);
+
 	protected abstract void doDelete(Class<?> root, Object id);
 
 	protected abstract <T> T doInsert(UpdateResponse<T> request);
 
 	protected abstract <T> T doUpdate(UpdateResponse<T> request);
+
+	/**
+	 * @since 1.2
+	 */
+	@Override
+	public SimpleResponse unrelate(Class<?> root, Object sourceId, Property<?> relationship) {
+		return unrelate(root, sourceId, relationship.getName());
+	}
+
+	/**
+	 * @since 1.2
+	 */
+	@Override
+	public abstract SimpleResponse unrelate(Class<?> root, Object sourceId, String relationship);
+
+	/**
+	 * @since 1.2
+	 */
+	@Override
+	public SimpleResponse unrelate(Class<?> root, Object sourceId, Property<?> relationship, Object targetId) {
+		return unrelate(root, sourceId, relationship.getName(), targetId);
+	}
+
+	/**
+	 * @since 1.2
+	 */
+	@Override
+	public abstract SimpleResponse unrelate(Class<?> root, Object sourceId, String relationship, Object targetId);
 
 	@Override
 	public SimpleResponse delete(Class<?> root, Object id) {
@@ -82,5 +117,22 @@ public abstract class BaseLinkRestService implements ILinkRestService {
 
 		return encoderService.makeEncoder(response.withObject(object));
 	}
+
+	@Override
+	public SimpleResponse relateNew(Class<?> sourceType, Object sourceId, Property<?> relationship, String targetData) {
+		return relateNew(sourceType, sourceId, relationship.getName(), targetData);
+	}
+
+	@Override
+	public abstract SimpleResponse relateNew(Class<?> sourceType, Object sourceId, String relationship, String targetData);
+
+	@Override
+	public SimpleResponse relate(Class<?> sourceType, Object sourceId, Property<?> relationship, Object targetId) {
+		return relate(sourceType, sourceId, relationship.getName(), targetId);
+	}
+
+	@Override
+	public abstract SimpleResponse relate(Class<?> sourceType, Object sourceId, String relationship,
+			Object targetId);
 
 }

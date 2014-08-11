@@ -6,13 +6,19 @@ import java.util.Map;
 import javax.ws.rs.core.Response.Status;
 
 import org.apache.cayenne.di.Inject;
+import org.apache.cayenne.exp.Expression;
+import org.apache.cayenne.exp.ExpressionFactory;
+import org.apache.cayenne.exp.Property;
 import org.apache.cayenne.map.EntityResolver;
 import org.apache.cayenne.map.ObjEntity;
+import org.apache.cayenne.map.ObjRelationship;
 import org.apache.cayenne.query.SelectQuery;
 import org.apache.cayenne.reflect.ClassDescriptor;
 
+import com.nhl.link.rest.EntityConfigBuilder;
 import com.nhl.link.rest.LinkRestException;
 import com.nhl.link.rest.SelectBuilder;
+import com.nhl.link.rest.SimpleResponse;
 import com.nhl.link.rest.UpdateResponse;
 import com.nhl.link.rest.runtime.cayenne.CayenneDao;
 import com.nhl.link.rest.runtime.cayenne.ICayennePersister;
@@ -78,6 +84,23 @@ public class EntityDaoLinkRestService extends BaseLinkRestService {
 		return daoForType(root).forSelect();
 	}
 
+	@SuppressWarnings("unchecked")
+	@Override
+	public <T> SelectBuilder<T> forSelectRelated(Class<?> root, Object rootId, Property<T> relationship) {
+		return (SelectBuilder<T>) forSelectRelated(root, rootId, relationship.getName());
+	}
+
+	@Override
+	public SelectBuilder<?> forSelectRelated(Class<?> root, Object rootId, String relationship) {
+		ObjRelationship objRelationship = metadataService.getObjRelationship(root, relationship);
+
+		// navigate through DbRelationships ... there may be no reverse ObjRel..
+		// Reverse DB should always be there
+		Expression qualifier = ExpressionFactory.matchDbExp(objRelationship.getReverseDbRelationshipPath(), rootId);
+		EntityConfigBuilder entityConfig = EntityConfigBuilder.entityConfig().and(qualifier);
+		return dao(objRelationship.getTargetEntityName()).forSelect().withEntity(entityConfig);
+	}
+
 	@Override
 	public <T> SelectBuilder<T> forSelect(SelectQuery<T> query) {
 		return daoForQuery(query).forSelect(query);
@@ -89,6 +112,18 @@ public class EntityDaoLinkRestService extends BaseLinkRestService {
 	}
 
 	@Override
+	public SimpleResponse unrelate(Class<?> root, Object sourceId, String relationship) {
+		daoForType(root).unrelate(sourceId, relationship);
+		return new SimpleResponse(true);
+	}
+
+	@Override
+	public SimpleResponse unrelate(Class<?> root, Object sourceId, String relationship, Object targetId) {
+		daoForType(root).unrelate(sourceId, relationship, targetId);
+		return new SimpleResponse(true);
+	}
+
+	@Override
 	protected <T> T doInsert(UpdateResponse<T> response) {
 		return daoForType(response.getType()).insert(response);
 	}
@@ -96,6 +131,23 @@ public class EntityDaoLinkRestService extends BaseLinkRestService {
 	@Override
 	protected <T> T doUpdate(UpdateResponse<T> response) {
 		return daoForType(response.getEntity().getType()).update(response);
+	}
+
+	@Override
+	public SimpleResponse relateNew(Class<?> sourceType, Object sourceId, String relationship, String targetData) {
+
+		ObjRelationship objRelationship = metadataService.getObjRelationship(sourceType, relationship);
+		Class<?> targetType = metadataService.getType(objRelationship.getTargetEntityName());
+
+		UpdateResponse<?> targetUpdate = requestParser.parseInsert(new UpdateResponse<>(targetType), targetData);
+		daoForType(sourceType).relateNew(sourceId, relationship, targetUpdate);
+		return new SimpleResponse(true);
+	}
+
+	@Override
+	public SimpleResponse relate(Class<?> sourceType, Object sourceId, String relationship, Object targetId) {
+		daoForType(sourceType).relate(sourceId, relationship, targetId);
+		return new SimpleResponse(true);
 	}
 
 }
