@@ -84,7 +84,7 @@ public class EntityDaoLinkRestService extends BaseLinkRestService {
 	}
 
 	@Override
-	protected <T> void doDelete(Class<T> root, Object id) {
+	protected void doDelete(Class<?> root, Object id) {
 		daoForType(root).delete(id);
 	}
 

@@ -47,14 +47,14 @@ public abstract class BaseLinkRestService implements ILinkRestService {
 	@Override
 	public abstract <T> SelectBuilder<T> forSelect(SelectQuery<T> query);
 
-	protected abstract <T> void doDelete(Class<T> root, Object id);
+	protected abstract void doDelete(Class<?> root, Object id);
 
 	protected abstract <T> T doInsert(UpdateResponse<T> request);
 
 	protected abstract <T> T doUpdate(UpdateResponse<T> request);
 
 	@Override
-	public <T> SimpleResponse delete(Class<T> root, Object id) {
+	public SimpleResponse delete(Class<?> root, Object id) {
 		doDelete(root, id);
 		return new SimpleResponse(true);
 	}

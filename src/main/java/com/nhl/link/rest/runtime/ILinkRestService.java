@@ -56,6 +56,6 @@ public interface ILinkRestService {
 
 	<T> DataResponse<T> update(Class<T> root, Object id, String objectData);
 
-	<T> SimpleResponse delete(Class<T> root, Object id);
+	SimpleResponse delete(Class<?> root, Object id);
 
 }
