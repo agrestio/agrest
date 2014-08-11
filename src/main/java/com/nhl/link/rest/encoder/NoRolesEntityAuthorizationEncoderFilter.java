@@ -1,48 +1,21 @@
 package com.nhl.link.rest.encoder;
 
-import java.io.IOException;
-
-import org.apache.cayenne.map.ObjEntity;
-
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.nhl.link.rest.Entity;
 import com.nhl.link.rest.runtime.meta.IMetadataService;
 
 /**
- * A superclass of authorizing {@link EncoderFilter}s that performs filter
- * matching based on the entity name.
+ * @deprecated since 1.2 use {@link EntityEncoderFilter} and override
+ *             {@link #willEncode(Object)}.
  */
-public abstract class NoRolesEntityAuthorizationEncoderFilter<T> implements EncoderFilter {
-
-	private ObjEntity entity;
+public abstract class NoRolesEntityAuthorizationEncoderFilter<T> extends EntityEncoderFilter<T> {
 
 	public NoRolesEntityAuthorizationEncoderFilter(IMetadataService metadataService) {
-		this.entity = metadataService.getObjEntity(getType());
+		super(metadataService);
 	}
-
-	protected abstract Class<T> getType();
 
 	protected abstract boolean authorize(T object);
 
 	@Override
-	public boolean matches(Entity<?> clientEntity) {
-		return entity == clientEntity.getCayenneEntity();
-	}
-
-	@SuppressWarnings("unchecked")
-	@Override
-	public boolean encode(String propertyName, Object object, JsonGenerator out, Encoder delegate) throws IOException {
-
-		if (authorize((T) object)) {
-			return delegate.encode(propertyName, object, out);
-		} else {
-			return false;
-		}
-	}
-
-	@SuppressWarnings("unchecked")
-	@Override
-	public boolean willEncode(String propertyName, Object object, Encoder delegate) {
-		return authorize((T) object);
+	protected boolean willEncode(T object) {
+		return authorize(object);
 	}
 }
