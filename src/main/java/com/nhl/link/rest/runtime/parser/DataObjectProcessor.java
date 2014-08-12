@@ -43,8 +43,10 @@ class DataObjectProcessor {
 	void process(UpdateResponse<?> response, String json) {
 
 		JsonNode objectNode = jsonParser.parseJSON(json, new ObjectMapper());
-		if(objectNode == null) {
-			throw new LinkRestException(Status.BAD_REQUEST, "No JSON in the body");
+		if (objectNode == null) {
+
+			// empty requests are fine. we just do nothing...
+			return;
 		}
 
 		ObjEntity entity = response.getEntity().getCayenneEntity();

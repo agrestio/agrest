@@ -9,6 +9,7 @@ import org.apache.cayenne.exp.Property;
 import org.apache.cayenne.query.SelectQuery;
 import org.apache.cayenne.reflect.PropertyUtils;
 
+import com.nhl.link.rest.DataResponse;
 import com.nhl.link.rest.LinkRestException;
 import com.nhl.link.rest.SelectBuilder;
 import com.nhl.link.rest.SimpleResponse;
@@ -60,12 +61,13 @@ public class PojoLinkRestService extends BaseLinkRestService {
 	}
 
 	@Override
-	public SimpleResponse relateNew(Class<?> sourceType, Object sourceId, String relationship, String targetData) {
+	public DataResponse<?> relateNew(Class<?> sourceType, Object sourceId, String relationship, String targetData) {
 		throw new UnsupportedOperationException("TODO");
 	}
 
 	@Override
-	public SimpleResponse relate(Class<?> sourceType, Object sourceId, String relationship, Object targetId) {
+	public DataResponse<?> relate(Class<?> sourceType, Object sourceId, String relationship, Object targetId,
+			String targetData) {
 		throw new UnsupportedOperationException("TODO");
 	}
 

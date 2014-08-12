@@ -118,21 +118,38 @@ public abstract class BaseLinkRestService implements ILinkRestService {
 		return encoderService.makeEncoder(response.withObject(object));
 	}
 
+	/**
+	 * @since 1.2
+	 */
+	@SuppressWarnings("unchecked")
 	@Override
-	public SimpleResponse relateNew(Class<?> sourceType, Object sourceId, Property<?> relationship, String targetData) {
-		return relateNew(sourceType, sourceId, relationship.getName(), targetData);
+	public <T> DataResponse<T> relateNew(Class<?> sourceType, Object sourceId, Property<T> relationship,
+			String targetData) {
+		return (DataResponse<T>) relateNew(sourceType, sourceId, relationship.getName(), targetData);
 	}
 
+	/**
+	 * @since 1.2
+	 */
 	@Override
-	public abstract SimpleResponse relateNew(Class<?> sourceType, Object sourceId, String relationship, String targetData);
+	public abstract DataResponse<?> relateNew(Class<?> sourceType, Object sourceId, String relationship,
+			String targetData);
 
+	/**
+	 * @since 1.2
+	 */
+	@SuppressWarnings("unchecked")
 	@Override
-	public SimpleResponse relate(Class<?> sourceType, Object sourceId, Property<?> relationship, Object targetId) {
-		return relate(sourceType, sourceId, relationship.getName(), targetId);
+	public <T> DataResponse<T> relate(Class<?> sourceType, Object sourceId, Property<T> relationship, Object targetId,
+			String targetData) {
+		return (DataResponse<T>) relate(sourceType, sourceId, relationship.getName(), targetId, targetData);
 	}
 
+	/**
+	 * @since 1.2
+	 */
 	@Override
-	public abstract SimpleResponse relate(Class<?> sourceType, Object sourceId, String relationship,
-			Object targetId);
+	public abstract DataResponse<?> relate(Class<?> sourceType, Object sourceId, String relationship, Object targetId,
+			String targetData);
 
 }

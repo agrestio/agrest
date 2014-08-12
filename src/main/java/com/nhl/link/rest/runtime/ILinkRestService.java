@@ -110,32 +110,37 @@ public interface ILinkRestService {
 	SimpleResponse unrelate(Class<?> root, Object sourceId, Property<?> relationship, Object targetId);
 
 	/**
-	 * Creates a relationship between source and target, creating a new target
-	 * object if needed.
+	 * Creates a new target object and a relationship between source and target.
 	 * 
 	 * @since 1.2
 	 */
-	SimpleResponse relateNew(Class<?> sourceType, Object sourceId, String relationship, String targetData);
+	DataResponse<?> relateNew(Class<?> sourceType, Object sourceId, String relationship, String targetData);
 
 	/**
-	 * Creates a relationship between source and target, creating a new target
-	 * object if needed.
+	 * Creates a new target object and a relationship between source and target.
 	 * 
 	 * @since 1.2
 	 */
-	SimpleResponse relateNew(Class<?> sourceType, Object sourceId, Property<?> relationship, String targetData);
+	<T> DataResponse<T> relateNew(Class<?> sourceType, Object sourceId, Property<T> relationship, String targetData);
 
 	/**
-	 * Creates a relationship between existing source and target objects.
+	 * Creates or updates a target object with known id, and ensures there's a
+	 * relationship between source and target.
 	 * 
 	 * @since 1.2
+	 * @return {@link DataResponse} containing target entity with any new
+	 *         changes.
 	 */
-	SimpleResponse relate(Class<?> sourceType, Object sourceId, String relationship, Object targetId);
+	DataResponse<?> relate(Class<?> sourceType, Object sourceId, String relationship, Object targetId, String targetData);
 
 	/**
-	 * Creates a relationship between existing source and target objects.
+	 * Creates or updates a target object with known id, and ensures there's a
+	 * relationship between source and target.
 	 * 
 	 * @since 1.2
+	 * @return {@link DataResponse} containing target entity with any new
+	 *         changes.
 	 */
-	SimpleResponse relate(Class<?> sourceType, Object sourceId, Property<?> relationship, Object targetId);
+	<T> DataResponse<T> relate(Class<?> sourceType, Object sourceId, Property<T> relationship, Object targetId,
+			String targetData);
 }

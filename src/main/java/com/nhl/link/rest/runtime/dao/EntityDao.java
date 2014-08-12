@@ -35,14 +35,5 @@ public interface EntityDao<T> {
 	/**
 	 * @since 1.2
 	 */
-	// TODO: the use of UpdateResponse is out of place here, as we send a
-	// different response back. Refactor UpdateResponse to contain a
-	// reusable object that stores update data and that can be used here as
-	// well
-	void relateNew(Object sourceId, String relationship, UpdateResponse<?> newTargetData);
-
-	/**
-	 * @since 1.2
-	 */
-	void relate(Object sourceId, String relationship, Object targetId);
+	<A> A relate(Object sourceId, String relationship, UpdateResponse<A> targetData);
 }

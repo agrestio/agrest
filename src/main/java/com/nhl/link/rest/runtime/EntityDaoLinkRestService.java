@@ -15,6 +15,7 @@ import org.apache.cayenne.map.ObjRelationship;
 import org.apache.cayenne.query.SelectQuery;
 import org.apache.cayenne.reflect.ClassDescriptor;
 
+import com.nhl.link.rest.DataResponse;
 import com.nhl.link.rest.EntityConfigBuilder;
 import com.nhl.link.rest.LinkRestException;
 import com.nhl.link.rest.SelectBuilder;
@@ -134,20 +135,32 @@ public class EntityDaoLinkRestService extends BaseLinkRestService {
 	}
 
 	@Override
-	public SimpleResponse relateNew(Class<?> sourceType, Object sourceId, String relationship, String targetData) {
+	public DataResponse<?> relateNew(Class<?> sourceType, Object sourceId, String relationship, String targetData) {
 
 		ObjRelationship objRelationship = metadataService.getObjRelationship(sourceType, relationship);
 		Class<?> targetType = metadataService.getType(objRelationship.getTargetEntityName());
 
-		UpdateResponse<?> targetUpdate = requestParser.parseInsert(new UpdateResponse<>(targetType), targetData);
-		daoForType(sourceType).relateNew(sourceId, relationship, targetUpdate);
-		return new SimpleResponse(true);
+		@SuppressWarnings("unchecked")
+		UpdateResponse<Object> targetInsert = (UpdateResponse<Object>) requestParser.parseInsert(new UpdateResponse<>(
+				targetType), targetData);
+
+		Object target = daoForType(sourceType).relate(sourceId, relationship, targetInsert);
+		return encoderService.makeEncoder(targetInsert.withObject(target));
 	}
 
 	@Override
-	public SimpleResponse relate(Class<?> sourceType, Object sourceId, String relationship, Object targetId) {
-		daoForType(sourceType).relate(sourceId, relationship, targetId);
-		return new SimpleResponse(true);
-	}
+	public DataResponse<?> relate(Class<?> sourceType, Object sourceId, String relationship, Object targetId,
+			String targetData) {
 
+		ObjRelationship objRelationship = metadataService.getObjRelationship(sourceType, relationship);
+		Class<?> targetType = metadataService.getType(objRelationship.getTargetEntityName());
+
+		@SuppressWarnings("unchecked")
+		UpdateResponse<Object> targetUpdate = (UpdateResponse<Object>) requestParser.parseUpdate(new UpdateResponse<>(
+				targetType), targetId, targetData);
+
+		Object target = daoForType(sourceType).relate(sourceId, relationship, targetUpdate);
+
+		return encoderService.makeEncoder(targetUpdate.withObject(target));
+	}
 }

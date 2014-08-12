@@ -3,6 +3,7 @@ package com.nhl.link.rest.unit.resource;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Configuration;
@@ -71,9 +72,9 @@ public class LinkRestResource_Related {
 		return getService().unrelate(E3.class, id, E3.E2);
 	}
 
-	@POST
+	@PUT
 	@Path("e3/{id}/e2/{tid}")
-	public SimpleResponse relateToOneExisting(@PathParam("id") int id, @PathParam("tid") int tid) {
-		return getService().relate(E3.class, id, E3.E2, tid);
+	public SimpleResponse relateToOneExisting(@PathParam("id") int id, @PathParam("tid") int tid, String targetData) {
+		return getService().relate(E3.class, id, E3.E2, tid, targetData);
 	}
 }

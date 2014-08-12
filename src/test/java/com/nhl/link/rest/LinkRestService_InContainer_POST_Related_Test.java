@@ -44,7 +44,8 @@ public class LinkRestService_InContainer_POST_Related_Test extends JerseyTestOnD
 				Entity.entity("{\"name\":\"zzz\"}", MediaType.APPLICATION_JSON));
 
 		assertEquals(Status.OK.getStatusCode(), r1.getStatus());
-		assertEquals("{\"success\":true}", r1.readEntity(String.class));
+		assertEquals("{\"success\":true,\"data\":[{\"id\":1,\"name\":\"zzz\",\"phoneNumber\":null}],\"total\":1}",
+				r1.readEntity(String.class));
 
 		assertEquals(1, SQLSelect.scalarQuery(E3.class, "SELECT count(1) FROM utest.e3").selectOne(context));
 
@@ -53,20 +54,4 @@ public class LinkRestService_InContainer_POST_Related_Test extends JerseyTestOnD
 		assertEquals(24, row.get("e2_id"));
 	}
 
-	@Test
-	public void testRelate_ValidRel_ToOne_Existing() {
-
-		context.performGenericQuery(new SQLTemplate(E2.class, "INSERT INTO utest.e2 (id, name) values (24, 'xxx')"));
-		context.performGenericQuery(new SQLTemplate(E3.class, "INSERT INTO utest.e3 (id, name) values (7, 'zzz')"));
-		context.performGenericQuery(new SQLTemplate(E3.class, "INSERT INTO utest.e3 (id, name) values (8, 'yyy')"));
-
-		// POST with empty body ... how bad is that?
-		Response r1 = target("/lr/related/e3/8/e2/24").request().post(Entity.entity("", MediaType.APPLICATION_JSON));
-
-		assertEquals(Status.OK.getStatusCode(), r1.getStatus());
-		assertEquals("{\"success\":true}", r1.readEntity(String.class));
-
-		assertEquals("yyy", SQLSelect.scalarQuery(String.class, "SELECT name FROM utest.e3 WHERE e2_id = 24")
-				.selectOne(context));
-	}
 }
