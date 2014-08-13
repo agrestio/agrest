@@ -42,6 +42,17 @@
 		<db-attribute name="char_column" type="VARCHAR" length="100"/>
 		<db-attribute name="char_id" type="VARCHAR" isPrimaryKey="true" isMandatory="true" length="100"/>
 	</db-entity>
+	<db-entity name="e7" schema="utest">
+		<db-attribute name="e8_id" type="INTEGER"/>
+		<db-attribute name="id" type="INTEGER" isPrimaryKey="true" isMandatory="true"/>
+	</db-entity>
+	<db-entity name="e8" schema="utest">
+		<db-attribute name="id" type="INTEGER" isPrimaryKey="true" isMandatory="true"/>
+		<db-attribute name="name" type="VARCHAR" length="100"/>
+	</db-entity>
+	<db-entity name="e9" schema="utest">
+		<db-attribute name="e8_id" type="INTEGER" isPrimaryKey="true" isMandatory="true"/>
+	</db-entity>
 	<obj-entity name="E1" className="com.nhl.link.rest.unit.cayenne.E1" dbEntityName="e1">
 		<obj-attribute name="age" type="java.lang.Integer" db-attribute-path="age"/>
 		<obj-attribute name="description" type="java.lang.String" db-attribute-path="description"/>
@@ -71,6 +82,13 @@
 	<obj-entity name="E6" className="com.nhl.link.rest.unit.cayenne.E6" dbEntityName="e6">
 		<obj-attribute name="charColumn" type="java.lang.String" db-attribute-path="char_column"/>
 	</obj-entity>
+	<obj-entity name="E7" className="com.nhl.link.rest.unit.cayenne.E7" dbEntityName="e7">
+	</obj-entity>
+	<obj-entity name="E8" className="com.nhl.link.rest.unit.cayenne.E8" dbEntityName="e8">
+		<obj-attribute name="name" type="java.lang.String" db-attribute-path="name"/>
+	</obj-entity>
+	<obj-entity name="E9" className="com.nhl.link.rest.unit.cayenne.E9" dbEntityName="e9">
+	</obj-entity>
 	<db-relationship name="e3s" source="e2" target="e3" toMany="true">
 		<db-attribute-pair source="id" target="e2_id"/>
 	</db-relationship>
@@ -83,8 +101,24 @@
 	<db-relationship name="e2s" source="e5" target="e3" toMany="true">
 		<db-attribute-pair source="id" target="e5_id"/>
 	</db-relationship>
+	<db-relationship name="e8" source="e7" target="e8" toMany="false">
+		<db-attribute-pair source="e8_id" target="id"/>
+	</db-relationship>
+	<db-relationship name="e7s" source="e8" target="e7" toMany="true">
+		<db-attribute-pair source="id" target="e8_id"/>
+	</db-relationship>
+	<db-relationship name="e9" source="e8" target="e9" toDependentPK="true" toMany="false">
+		<db-attribute-pair source="id" target="e8_id"/>
+	</db-relationship>
+	<db-relationship name="e8" source="e9" target="e8" toMany="false">
+		<db-attribute-pair source="e8_id" target="id"/>
+	</db-relationship>
 	<obj-relationship name="e3s" source="E2" target="E3" deleteRule="Deny" db-relationship-path="e3s"/>
 	<obj-relationship name="e2" source="E3" target="E2" deleteRule="Nullify" db-relationship-path="e2"/>
 	<obj-relationship name="e5" source="E3" target="E5" deleteRule="Nullify" db-relationship-path="e5"/>
 	<obj-relationship name="e2s" source="E5" target="E3" deleteRule="Deny" db-relationship-path="e2s"/>
+	<obj-relationship name="e8" source="E7" target="E8" deleteRule="Nullify" db-relationship-path="e8"/>
+	<obj-relationship name="e7s" source="E8" target="E7" deleteRule="Deny" db-relationship-path="e7s"/>
+	<obj-relationship name="e9" source="E8" target="E9" deleteRule="Nullify" db-relationship-path="e9"/>
+	<obj-relationship name="e8" source="E9" target="E8" deleteRule="Nullify" db-relationship-path="e8"/>
 </data-map>

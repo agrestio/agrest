@@ -15,6 +15,8 @@ import com.nhl.link.rest.unit.cayenne.E3;
  */
 public abstract class _E2 extends CayenneDataObject {
 
+    private static final long serialVersionUID = 1L; 
+
     @Deprecated
     public static final String ADDRESS_PROPERTY = "address";
     @Deprecated
