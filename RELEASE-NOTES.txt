@@ -1,3 +1,14 @@
+Release 1.2
+
+#8 EntityConfig API improvements 
+#10 Support for char PK
+#11 Refactoring: rename NoRolesEntityAuthorizationEncoderFilter to EntityEncoderFilter
+#12 Add 'SelectBuilder.selectOne' method
+#13 'filter' processor improvements
+#14 ILinkRestService API for managing relationship operations
+#15 IMetadataService must throw LinkRestException on bad entities
+#16 DataResponseConfig should be attached to SelectBuilder
+
 Release 1.1
 
 #1 Intercept Cayenne ValidationException
