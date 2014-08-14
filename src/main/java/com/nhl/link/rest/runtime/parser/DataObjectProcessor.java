@@ -76,9 +76,14 @@ class DataObjectProcessor {
 		while (it.hasNext()) {
 			String key = it.next();
 
-			// Ignore ID key. It is there, but we don't need it.
-			// On INSERT it may contain some dummy value, like "0"
+			// Note that n INSERT ID may contain a dummy value, like "0" or
+			// "ext-123"... need to make sure upstream code can handle such
+			// garbage
 			if (PathConstants.ID_PK_ATTRIBUTE.equals(key)) {
+				JsonNode valueNode = objectNode.get(key);
+				Object value = extractValue(valueNode);
+
+				update.setId(value);
 				continue;
 			}
 

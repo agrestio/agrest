@@ -110,37 +110,92 @@ public interface ILinkRestService {
 	SimpleResponse unrelate(Class<?> root, Object sourceId, Property<?> relationship, Object targetId);
 
 	/**
-	 * Creates a new target object and a relationship between source and target.
+	 * Creates one or more objects with a relationship from a given root object.
 	 * 
+	 * @since 1.3
+	 */
+	DataResponse<?> insertRelated(Class<?> sourceType, Object sourceId, String relationship, String targetData);
+
+	/**
+	 * Creates one or more objects with a relationship from a given root object.
+	 * 
+	 * @since 1.3
+	 */
+	<T> DataResponse<T> insertRelated(Class<?> sourceType, Object sourceId, Property<T> relationship, String targetData);
+
+	/**
+	 * Creates or updates one or more objects with a relationship from a given
+	 * root object.
+	 * 
+	 * @since 1.3
+	 * @return {@link DataResponse} containing target entity with any new
+	 *         changes.
+	 */
+	DataResponse<?> insertOrUpdateRelated(Class<?> sourceType, Object sourceId, String relationship, String targetData);
+
+	/**
+	 * Creates or updates one or more objects with a relationship from a given
+	 * root object.
+	 * 
+	 * @since 1.3
+	 * @return {@link DataResponse} containing target entity with any new
+	 *         changes.
+	 */
+	<T> DataResponse<T> insertOrUpdateRelated(Class<?> sourceType, Object sourceId, Property<T> relationship,
+			String targetData);
+
+	/**
+	 * Creates or updates a target object with known id, and ensures there's a
+	 * relationship between source and target.
+	 * 
+	 * @since 1.3
+	 * @return {@link DataResponse} containing target entity with any new
+	 *         changes.
+	 */
+	DataResponse<?> insertOrUpdateRelated(Class<?> sourceType, Object sourceId, String relationship, Object targetId,
+			String targetData);
+
+	/**
+	 * Creates or updates a target object with known id, and ensures there's a
+	 * relationship between source and target.
+	 * 
+	 * @since 1.3
+	 * @return {@link DataResponse} containing target entity with any new
+	 *         changes.
+	 */
+	<T> DataResponse<T> insertOrUpdateRelated(Class<?> sourceType, Object sourceId, Property<T> relationship,
+			Object targetId, String targetData);
+
+/**
+	 * @deprecated since 1.3 use
+	 *             {@link #insertRelated(Class, Object, String, String)
 	 * @since 1.2
 	 */
+	@Deprecated
 	DataResponse<?> relateNew(Class<?> sourceType, Object sourceId, String relationship, String targetData);
 
 	/**
-	 * Creates a new target object and a relationship between source and target.
-	 * 
+	 * @deprecated since 1.3 use
+	 *             {@link #insertRelated(Class, Object, Property, String)}.
 	 * @since 1.2
 	 */
+	@Deprecated
 	<T> DataResponse<T> relateNew(Class<?> sourceType, Object sourceId, Property<T> relationship, String targetData);
 
 	/**
-	 * Creates or updates a target object with known id, and ensures there's a
-	 * relationship between source and target.
-	 * 
+	 * @deprecated since 1.3 use
+	 *             {@link #insertOrUpdateRelated(Class, Object, String, Object, String)}
 	 * @since 1.2
-	 * @return {@link DataResponse} containing target entity with any new
-	 *         changes.
 	 */
+	@Deprecated
 	DataResponse<?> relate(Class<?> sourceType, Object sourceId, String relationship, Object targetId, String targetData);
 
 	/**
-	 * Creates or updates a target object with known id, and ensures there's a
-	 * relationship between source and target.
-	 * 
+	 * @deprecated since 1.3 use
+	 *             {@link #insertOrUpdateRelated(Class, Object, Property, Object, String)}
 	 * @since 1.2
-	 * @return {@link DataResponse} containing target entity with any new
-	 *         changes.
 	 */
+	@Deprecated
 	<T> DataResponse<T> relate(Class<?> sourceType, Object sourceId, Property<T> relationship, Object targetId,
 			String targetData);
 }

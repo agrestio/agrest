@@ -49,8 +49,14 @@ public class LinkRestResource_Related {
 
 	@POST
 	@Path("e2/{id}/{rel}")
-	public SimpleResponse relateToMany(@PathParam("id") int id, @PathParam("rel") String relationship, String targetData) {
-		return getService().relateNew(E2.class, id, relationship, targetData);
+	public SimpleResponse e2CreateRelated(@PathParam("id") int id, @PathParam("rel") String relationship, String targetData) {
+		return getService().insertRelated(E2.class, id, relationship, targetData);
+	}
+	
+	@PUT
+	@Path("e2/{id}/{rel}")
+	public SimpleResponse e2CreateOrUpdateE3s(@PathParam("id") int id, @PathParam("rel") String relationship, String targetData) {
+		return getService().insertOrUpdateRelated(E2.class, id, relationship, targetData);
 	}
 
 	/**
@@ -77,13 +83,13 @@ public class LinkRestResource_Related {
 	@PUT
 	@Path("e3/{id}/e2/{tid}")
 	public SimpleResponse e3RelateToOneExisting(@PathParam("id") int id, @PathParam("tid") int tid, String targetData) {
-		return getService().relate(E3.class, id, E3.E2, tid, targetData);
+		return getService().insertOrUpdateRelated(E3.class, id, E3.E2, tid, targetData);
 	}
 
 	@PUT
 	@Path("e7/{id}/e8/{tid}")
 	public SimpleResponse e7RelateToOneExisting(@PathParam("id") int id, @PathParam("tid") int tid, String targetData) {
-		return getService().relate(E7.class, id, E7.E8, tid, targetData);
+		return getService().insertOrUpdateRelated(E7.class, id, E7.E8, tid, targetData);
 	}
 
 	@PUT
@@ -91,6 +97,6 @@ public class LinkRestResource_Related {
 	public SimpleResponse e8RelateToOneDependent(@PathParam("id") int id, String targetData) {
 
 		// target ID should be the same as source, so reusing source id
-		return getService().relate(E8.class, id, E8.E9, id, targetData);
+		return getService().insertOrUpdateRelated(E8.class, id, E8.E9, id, targetData);
 	}
 }

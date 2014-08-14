@@ -33,7 +33,14 @@ public interface EntityDao<T> {
 	void unrelate(Object sourceId, String relationship, Object targetId);
 
 	/**
+	 * @deprecated unused since 1.3
 	 * @since 1.2
 	 */
+	@Deprecated
 	<A> A relate(Object sourceId, String relationship, UpdateResponse<A> targetData);
+
+	/**
+	 * @since 1.3
+	 */
+	void insertOrUpdateRelated(Object sourceId, String relationship, UpdateResponse<?> targetData);
 }

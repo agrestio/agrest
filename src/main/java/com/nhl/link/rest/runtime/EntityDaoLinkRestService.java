@@ -135,7 +135,7 @@ public class EntityDaoLinkRestService extends BaseLinkRestService {
 	}
 
 	@Override
-	public DataResponse<?> relateNew(Class<?> sourceType, Object sourceId, String relationship, String targetData) {
+	public DataResponse<?> insertRelated(Class<?> sourceType, Object sourceId, String relationship, String targetData) {
 
 		ObjRelationship objRelationship = metadataService.getObjRelationship(sourceType, relationship);
 		Class<?> targetType = metadataService.getType(objRelationship.getTargetEntityName());
@@ -144,13 +144,14 @@ public class EntityDaoLinkRestService extends BaseLinkRestService {
 		UpdateResponse<Object> targetInsert = (UpdateResponse<Object>) requestParser.parseInsert(new UpdateResponse<>(
 				targetType), targetData);
 
+		// TODO: change...
 		Object target = daoForType(sourceType).relate(sourceId, relationship, targetInsert);
 		return encoderService.makeEncoder(targetInsert.withObject(target));
 	}
 
 	@Override
-	public DataResponse<?> relate(Class<?> sourceType, Object sourceId, String relationship, Object targetId,
-			String targetData) {
+	public DataResponse<?> insertOrUpdateRelated(Class<?> sourceType, Object sourceId, String relationship,
+			Object targetId, String targetData) {
 
 		ObjRelationship objRelationship = metadataService.getObjRelationship(sourceType, relationship);
 		Class<?> targetType = metadataService.getType(objRelationship.getTargetEntityName());
@@ -159,8 +160,23 @@ public class EntityDaoLinkRestService extends BaseLinkRestService {
 		UpdateResponse<Object> targetUpdate = (UpdateResponse<Object>) requestParser.parseUpdate(new UpdateResponse<>(
 				targetType), targetId, targetData);
 
-		Object target = daoForType(sourceType).relate(sourceId, relationship, targetUpdate);
+		daoForType(sourceType).insertOrUpdateRelated(sourceId, relationship, targetUpdate);
 
-		return encoderService.makeEncoder(targetUpdate.withObject(target));
+		return encoderService.makeEncoder(targetUpdate);
+	}
+
+	@Override
+	public DataResponse<?> insertOrUpdateRelated(Class<?> sourceType, Object sourceId, String relationship,
+			String targetData) {
+		ObjRelationship objRelationship = metadataService.getObjRelationship(sourceType, relationship);
+		Class<?> targetType = metadataService.getType(objRelationship.getTargetEntityName());
+
+		@SuppressWarnings("unchecked")
+		UpdateResponse<Object> targetUpdate = (UpdateResponse<Object>) requestParser.parseUpdate(new UpdateResponse<>(
+				targetType), targetData);
+
+		daoForType(sourceType).insertOrUpdateRelated(sourceId, relationship, targetUpdate);
+
+		return encoderService.makeEncoder(targetUpdate);
 	}
 }

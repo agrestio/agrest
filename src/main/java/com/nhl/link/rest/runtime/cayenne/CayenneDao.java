@@ -2,6 +2,7 @@ package com.nhl.link.rest.runtime.cayenne;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map.Entry;
 
 import javax.ws.rs.core.Response.Status;
@@ -267,8 +268,100 @@ public class CayenneDao<T> implements EntityDao<T> {
 		return dbRelationship.isToDependentPK();
 	}
 
+	/**
+	 * @since 1.3
+	 */
 	@SuppressWarnings("unchecked")
 	@Override
+	public void insertOrUpdateRelated(Object sourceId, String relationship, UpdateResponse<?> targetData) {
+
+		// validate relationship before doing anything else
+		ObjRelationship objRelationship = metadataService.getObjRelationship(type, relationship);
+
+		// make sure source object exists before creating target
+		ObjectContext context = cayenneService.newContext();
+		DataObject src = (DataObject) getExistingObject(getType(), context, sourceId);
+
+		ObjEntity targetEntity = targetData.getEntity().getCayenneEntity();
+		Class<?> targetType = metadataService.getType(objRelationship.getTargetEntityName());
+
+		List<Object> objects = new ArrayList<>(targetData.getUpdates().size());
+
+		for (EntityUpdate eu : targetData.getUpdates()) {
+
+			DataObject target;
+
+			Object targetId = eu.getId();
+
+			// create or update target
+			if (targetId != null) {
+				target = (DataObject) getOptionalExistingObject(targetType, context, targetId);
+				if (target == null) {
+					target = (DataObject) context.newObject(targetType);
+
+					Collection<DbAttribute> pks = targetEntity.getDbEntity().getPrimaryKeys();
+					if (pks.size() != 1) {
+						throw new IllegalStateException(String.format("Unexpected PK size of %s for entity '%s'",
+								objRelationship.getTargetEntityName(), pks.size()));
+					}
+
+					DbAttribute pk = pks.iterator().next();
+
+					// reuse the ID...
+
+					// 1. meaningful ID
+
+					ObjAttribute opk = targetEntity.getAttributeForDbAttribute(pk);
+					if (opk != null) {
+						target.writeProperty(opk.getName(), targetId);
+					}
+					// 2. PK is propagated from the parent
+					// else if () {}
+					// TODO: we
+					// need to check that sourceId == targetId and do nothing
+					// beyond
+					// it
+
+					// 3. PK is auto-generated ... I guess this is sorta
+					// expected to fail - generated meaningless PK should not be
+					// pushed from the client
+					else if (pk.isGenerated()) {
+						throw new LinkRestException(Status.BAD_REQUEST, "Can't create '"
+								+ objRelationship.getTargetEntityName() + "' with fixed id");
+					}
+					// 4. just some ID desired by the client...
+					else {
+						// TODO: hopefully this works..
+						target.getObjectId().getReplacementIdMap().put(pk.getName(), targetId);
+					}
+
+				}
+			} else {
+				target = (DataObject) context.newObject(targetType);
+			}
+
+			mergeChanges(targetEntity, eu, target);
+
+			if (objRelationship.isToMany()) {
+				src.addToManyTarget(relationship, target, true);
+			} else {
+				src.setToOneTarget(relationship, target, true);
+			}
+
+			objects.add(target);
+		}
+
+		context.commitChanges();
+
+		((UpdateResponse<Object>) targetData).withObjects(objects);
+	}
+
+	/**
+	 * @since 1.2
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	@Deprecated
 	public <A> A relate(Object sourceId, String relationship, UpdateResponse<A> targetData) {
 		// validate relationship before doing anything else
 		ObjRelationship objRelationship = metadataService.getObjRelationship(type, relationship);
@@ -280,7 +373,7 @@ public class CayenneDao<T> implements EntityDao<T> {
 		Class<?> targetType = metadataService.getType(objRelationship.getTargetEntityName());
 
 		DataObject target;
-		
+
 		Object targetId = targetData.getFirst().getId();
 
 		// create or update target

@@ -118,38 +118,82 @@ public abstract class BaseLinkRestService implements ILinkRestService {
 		return encoderService.makeEncoder(response.withObject(object));
 	}
 
-	/**
-	 * @since 1.2
-	 */
-	@SuppressWarnings("unchecked")
 	@Override
-	public <T> DataResponse<T> relateNew(Class<?> sourceType, Object sourceId, Property<T> relationship,
-			String targetData) {
-		return (DataResponse<T>) relateNew(sourceType, sourceId, relationship.getName(), targetData);
-	}
-
-	/**
-	 * @since 1.2
-	 */
-	@Override
-	public abstract DataResponse<?> relateNew(Class<?> sourceType, Object sourceId, String relationship,
-			String targetData);
-
-	/**
-	 * @since 1.2
-	 */
-	@SuppressWarnings("unchecked")
-	@Override
+	@Deprecated
 	public <T> DataResponse<T> relate(Class<?> sourceType, Object sourceId, Property<T> relationship, Object targetId,
 			String targetData) {
-		return (DataResponse<T>) relate(sourceType, sourceId, relationship.getName(), targetId, targetData);
+		return insertOrUpdateRelated(sourceType, sourceId, relationship, targetId, targetData);
+	}
+
+	@Override
+	@Deprecated
+	public DataResponse<?> relate(Class<?> sourceType, Object sourceId, String relationship, Object targetId,
+			String targetData) {
+		return insertOrUpdateRelated(sourceType, sourceId, relationship, targetId, targetData);
+	}
+
+	@Override
+	@Deprecated
+	public <T> DataResponse<T> relateNew(Class<?> sourceType, Object sourceId, Property<T> relationship,
+			String targetData) {
+		return insertRelated(sourceType, sourceId, relationship, targetData);
+	}
+
+	@Override
+	@Deprecated
+	public DataResponse<?> relateNew(Class<?> sourceType, Object sourceId, String relationship, String targetData) {
+		return insertRelated(sourceType, sourceId, relationship, targetData);
 	}
 
 	/**
-	 * @since 1.2
+	 * @since 1.3
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public <T> DataResponse<T> insertRelated(Class<?> sourceType, Object sourceId, Property<T> relationship,
+			String targetData) {
+		return (DataResponse<T>) insertRelated(sourceType, sourceId, relationship.getName(), targetData);
+	}
+
+	/**
+	 * @since 1.3
 	 */
 	@Override
-	public abstract DataResponse<?> relate(Class<?> sourceType, Object sourceId, String relationship, Object targetId,
+	public abstract DataResponse<?> insertRelated(Class<?> sourceType, Object sourceId, String relationship,
 			String targetData);
 
+	/**
+	 * @since 1.3
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public <T> DataResponse<T> insertOrUpdateRelated(Class<?> sourceType, Object sourceId, Property<T> relationship,
+			Object targetId, String targetData) {
+		return (DataResponse<T>) insertOrUpdateRelated(sourceType, sourceId, relationship.getName(), targetId,
+				targetData);
+	}
+
+	/**
+	 * @since 1.3
+	 */
+	@Override
+	public abstract DataResponse<?> insertOrUpdateRelated(Class<?> sourceType, Object sourceId, String relationship,
+			Object targetId, String targetData);
+
+	/**
+	 * @since 1.3
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public <T> DataResponse<T> insertOrUpdateRelated(Class<?> sourceType, Object sourceId, Property<T> relationship,
+			String targetData) {
+		return (DataResponse<T>) insertOrUpdateRelated(sourceType, sourceId, relationship.getName(), targetData);
+	}
+
+	/**
+	 * @since 1.3
+	 */
+	@Override
+	public abstract DataResponse<?> insertOrUpdateRelated(Class<?> sourceType, Object sourceId, String relationship,
+			String targetData);
 }

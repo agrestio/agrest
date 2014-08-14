@@ -61,12 +61,18 @@ public class PojoLinkRestService extends BaseLinkRestService {
 	}
 
 	@Override
-	public DataResponse<?> relateNew(Class<?> sourceType, Object sourceId, String relationship, String targetData) {
+	public DataResponse<?> insertRelated(Class<?> sourceType, Object sourceId, String relationship, String targetData) {
 		throw new UnsupportedOperationException("TODO");
 	}
 
 	@Override
-	public DataResponse<?> relate(Class<?> sourceType, Object sourceId, String relationship, Object targetId,
+	public DataResponse<?> insertOrUpdateRelated(Class<?> sourceType, Object sourceId, String relationship,
+			Object targetId, String targetData) {
+		throw new UnsupportedOperationException("TODO");
+	}
+
+	@Override
+	public DataResponse<?> insertOrUpdateRelated(Class<?> sourceType, Object sourceId, String relationship,
 			String targetData) {
 		throw new UnsupportedOperationException("TODO");
 	}

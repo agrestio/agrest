@@ -135,6 +135,7 @@ public class RequestParser implements IRequestParser {
 		Entity<T> clientEntity = new Entity<T>(response.getType(), entity);
 		response.withClientEntity(clientEntity);
 
+		// TODO: support response includes
 		includeProcessor.process(clientEntity, Collections.<String> emptyList());
 
 		dataObjectProcessor.process(response, requestBody);
