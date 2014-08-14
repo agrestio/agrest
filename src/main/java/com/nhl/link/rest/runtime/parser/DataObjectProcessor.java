@@ -16,6 +16,7 @@ import org.slf4j.LoggerFactory;
 import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.nhl.link.rest.EntityUpdate;
 import com.nhl.link.rest.LinkRestException;
 import com.nhl.link.rest.UpdateResponse;
 import com.nhl.link.rest.runtime.parser.converter.UtcDateConverter;
@@ -42,14 +43,34 @@ class DataObjectProcessor {
 
 	void process(UpdateResponse<?> response, String json) {
 
-		JsonNode objectNode = jsonParser.parseJSON(json, new ObjectMapper());
-		if (objectNode == null) {
-
+		JsonNode node = jsonParser.parseJSON(json, new ObjectMapper());
+		if (node == null) {
 			// empty requests are fine. we just do nothing...
 			return;
+		} else if (node.isArray()) {
+			processArray(response, node);
+		} else if (node.isObject()) {
+			processObject(response, node);
+		} else {
+			throw new LinkRestException(Status.BAD_REQUEST, "Expected Object or Array. Got: " + node.asText());
 		}
+	}
 
+	private void processArray(UpdateResponse<?> response, JsonNode arrayNode) {
+
+		for (JsonNode node : arrayNode) {
+			if (node.isObject()) {
+				processObject(response, node);
+			} else {
+				throw new LinkRestException(Status.BAD_REQUEST, "Expected Object, got: " + node.asText());
+			}
+		}
+	}
+
+	private void processObject(UpdateResponse<?> response, JsonNode objectNode) {
 		ObjEntity entity = response.getEntity().getCayenneEntity();
+
+		EntityUpdate update = new EntityUpdate();
 
 		Iterator<String> it = objectNode.fieldNames();
 		while (it.hasNext()) {
@@ -65,7 +86,7 @@ class DataObjectProcessor {
 			if (attribute != null) {
 				JsonNode valueNode = objectNode.get(key);
 				Object value = extractValue(valueNode, attribute);
-				response.getValues().put(key, value);
+				update.getValues().put(key, value);
 				continue;
 			}
 
@@ -73,12 +94,15 @@ class DataObjectProcessor {
 			if (relationship != null) {
 				JsonNode valueNode = objectNode.get(key);
 				Object value = extractValue(valueNode);
-				response.getRelatedIds().put(relationship.getName(), value);
+				update.getRelatedIds().put(relationship.getName(), value);
 				continue;
 			}
 
 			LOGGER.info("Skipping unknown attribute '" + key + "'");
 		}
+
+		// not excluding for empty updates ... we may still need them...
+		response.getUpdates().add(update);
 	}
 
 	private Object extractValue(JsonNode valueNode) {

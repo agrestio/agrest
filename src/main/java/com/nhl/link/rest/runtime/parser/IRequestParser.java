@@ -12,8 +12,19 @@ public interface IRequestParser {
 
 	<T> DataResponse<T> parseSelect(DataResponse<T> response, UriInfo uriInfo, String autocompleteProperty);
 
+	/**
+	 * Parses an update to a single object with known ID.
+	 */
 	<T> UpdateResponse<T> parseUpdate(UpdateResponse<T> response, Object id, String requestBody);
 
+	/**
+	 * Parses an update that may contain zero or more objects of a single kind.
+	 * IDs are taken from the request body.
+	 * 
+	 * @since 1.3
+	 */
+	<T> UpdateResponse<T> parseUpdate(UpdateResponse<T> response, String requestBody);
+	
 	/**
 	 * @deprecated since 1.1 - renamed to
 	 *             {@link #parseInsert(UpdateResponse, String)} for consistency.
@@ -25,5 +36,7 @@ public interface IRequestParser {
 	 * @since 1.1
 	 */
 	<T> UpdateResponse<T> parseInsert(UpdateResponse<T> response, String requestBody);
+
+
 
 }

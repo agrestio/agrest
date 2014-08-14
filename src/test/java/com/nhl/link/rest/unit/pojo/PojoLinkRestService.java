@@ -98,10 +98,11 @@ public class PojoLinkRestService extends BaseLinkRestService {
 
 	@Override
 	protected <T> T doUpdate(UpdateResponse<T> response) {
-		T object = db.bucketForType(response.getType()).get(response.getId());
+		T object = db.bucketForType(response.getType()).get(response.getFirst().getId());
 
 		if (object == null) {
-			throw new LinkRestException(Status.NOT_FOUND, "Object  with ID '" + response.getId() + "' is not found");
+			throw new LinkRestException(Status.NOT_FOUND, "Object  with ID '" + response.getFirst().getId()
+					+ "' is not found");
 		}
 
 		mergeChanges(response, object);
@@ -117,7 +118,7 @@ public class PojoLinkRestService extends BaseLinkRestService {
 	private <T> void mergeChanges(UpdateResponse<T> response, T object) {
 
 		// attributes
-		for (Entry<String, Object> e : response.getValues().entrySet()) {
+		for (Entry<String, Object> e : response.getFirst().getValues().entrySet()) {
 			PropertyUtils.setProperty(object, e.getKey(), e.getValue());
 		}
 	}

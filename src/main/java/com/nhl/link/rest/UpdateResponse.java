@@ -1,39 +1,46 @@
 package com.nhl.link.rest;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.Collection;
+
+import javax.ws.rs.core.Response.Status;
 
 public class UpdateResponse<T> extends DataResponse<T> {
 
-	private Map<String, Object> values;
-	private Map<String, Object> relatedIds;
-	private Object id;
+	private Collection<EntityUpdate> updates;
 
 	public UpdateResponse(Class<T> type) {
 		super(type);
 
-		this.values = new HashMap<>();
-		this.relatedIds = new HashMap<>();
-	}
-
-	public UpdateResponse<T> withId(Object id) {
-		this.id = id;
-		return this;
+		this.updates = new ArrayList<>();
 	}
 
 	public boolean hasChanges() {
-		return !values.isEmpty() || !relatedIds.isEmpty();
+
+		for (EntityUpdate u : updates) {
+			if (u.hasChanges()) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 
-	public Map<String, Object> getValues() {
-		return values;
+	public Collection<EntityUpdate> getUpdates() {
+		return updates;
 	}
 
-	public Map<String, Object> getRelatedIds() {
-		return relatedIds;
-	}
+	/**
+	 * Returns first update object. Throws unless this response contains exactly
+	 * one update.
+	 */
+	public EntityUpdate getFirst() {
 
-	public Object getId() {
-		return id;
+		if (updates.size() != 1) {
+			throw new LinkRestException(Status.INTERNAL_SERVER_ERROR, "Expected one object in update. Actual: "
+					+ updates.size());
+		}
+
+		return updates.iterator().next();
 	}
 }

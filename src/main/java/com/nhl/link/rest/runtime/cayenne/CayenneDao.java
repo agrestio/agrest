@@ -19,6 +19,7 @@ import org.apache.cayenne.query.ObjectIdQuery;
 import org.apache.cayenne.query.SelectQuery;
 import org.apache.cayenne.reflect.ClassDescriptor;
 
+import com.nhl.link.rest.EntityUpdate;
 import com.nhl.link.rest.LinkRestException;
 import com.nhl.link.rest.SelectBuilder;
 import com.nhl.link.rest.UpdateResponse;
@@ -76,8 +77,11 @@ public class CayenneDao<T> implements EntityDao<T> {
 
 	@Override
 	public T update(UpdateResponse<T> response) {
+
+		EntityUpdate update = response.getFirst();
+
 		ObjectContext context = cayenneService.newContext();
-		T object = getExistingObject(type, context, response.getId());
+		T object = getExistingObject(type, context, update.getId());
 
 		mergeChanges(response, (DataObject) object);
 		context.commitChanges();
@@ -94,26 +98,30 @@ public class CayenneDao<T> implements EntityDao<T> {
 	}
 
 	private void mergeChanges(UpdateResponse<?> response, DataObject object) {
+		ObjEntity entity = response.getEntity().getCayenneEntity();
+		mergeChanges(entity, response.getFirst(), object);
+	}
+
+	private void mergeChanges(ObjEntity entity, EntityUpdate entityUpdate, DataObject object) {
 
 		// attributes
-		for (Entry<String, Object> e : response.getValues().entrySet()) {
+		for (Entry<String, Object> e : entityUpdate.getValues().entrySet()) {
 			object.writeProperty(e.getKey(), e.getValue());
 		}
 
 		// to-one relationships
-		if (!response.getRelatedIds().isEmpty()) {
+		if (!entityUpdate.getRelatedIds().isEmpty()) {
 
-			ObjEntity rootEntity = response.getEntity().getCayenneEntity();
 			ObjectContext context = object.getObjectContext();
 
-			for (Entry<String, Object> e : response.getRelatedIds().entrySet()) {
+			for (Entry<String, Object> e : entityUpdate.getRelatedIds().entrySet()) {
 
 				if (e.getValue() == null) {
 					object.setToOneTarget(e.getKey(), null, true);
 					continue;
 				}
 
-				ObjRelationship relationship = (ObjRelationship) rootEntity.getRelationship(e.getKey());
+				ObjRelationship relationship = (ObjRelationship) entity.getRelationship(e.getKey());
 
 				ClassDescriptor relatedDescriptor = context.getEntityResolver().getClassDescriptor(
 						relationship.getTargetEntityName());
@@ -272,10 +280,12 @@ public class CayenneDao<T> implements EntityDao<T> {
 		Class<?> targetType = metadataService.getType(objRelationship.getTargetEntityName());
 
 		DataObject target;
+		
+		Object targetId = targetData.getFirst().getId();
 
 		// create or update target
-		if (targetData.getId() != null) {
-			target = (DataObject) getOptionalExistingObject(targetType, context, targetData.getId());
+		if (targetId != null) {
+			target = (DataObject) getOptionalExistingObject(targetType, context, targetId);
 			if (target == null) {
 				target = (DataObject) context.newObject(targetType);
 
@@ -295,7 +305,7 @@ public class CayenneDao<T> implements EntityDao<T> {
 
 				ObjAttribute opk = targetEntity.getAttributeForDbAttribute(pk);
 				if (opk != null) {
-					target.writeProperty(opk.getName(), targetData.getId());
+					target.writeProperty(opk.getName(), targetId);
 				}
 				// 2. PK is propagated from the parent
 				// else if () {}
@@ -313,7 +323,7 @@ public class CayenneDao<T> implements EntityDao<T> {
 				// 4. just some ID desired by the client...
 				else {
 					// TODO: hopefully this works..
-					target.getObjectId().getReplacementIdMap().put(pk.getName(), targetData.getId());
+					target.getObjectId().getReplacementIdMap().put(pk.getName(), targetId);
 				}
 
 			}

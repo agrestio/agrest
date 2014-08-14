@@ -11,6 +11,7 @@ import org.apache.cayenne.map.ObjEntity;
 
 import com.nhl.link.rest.DataResponse;
 import com.nhl.link.rest.Entity;
+import com.nhl.link.rest.EntityUpdate;
 import com.nhl.link.rest.LinkRestException;
 import com.nhl.link.rest.UpdateResponse;
 import com.nhl.link.rest.runtime.jackson.IJacksonService;
@@ -107,11 +108,28 @@ public class RequestParser implements IRequestParser {
 	@Override
 	public <T> UpdateResponse<T> parseUpdate(UpdateResponse<T> response, Object id, String requestBody) {
 
+		parseUpdate(response, requestBody);
+
+		// id was specified explicitly ... so reset whatever ID was in the
+		// body. Moreover if no updates were present in the body, create an
+		// empty update that will be attached to the ID.
+
+		if (response.getUpdates().isEmpty()) {
+			response.getUpdates().add(new EntityUpdate());
+		}
+
+		response.getFirst().setId(id);
+		return response;
+	}
+
+	/**
+	 * @since 1.3
+	 */
+	@Override
+	public <T> UpdateResponse<T> parseUpdate(UpdateResponse<T> response, String requestBody) {
 		if (response == null) {
 			throw new LinkRestException(Status.INTERNAL_SERVER_ERROR, "Null response");
 		}
-
-		response.withId(id);
 
 		ObjEntity entity = metadataService.getObjEntity(response.getType());
 		Entity<T> clientEntity = new Entity<T>(response.getType(), entity);

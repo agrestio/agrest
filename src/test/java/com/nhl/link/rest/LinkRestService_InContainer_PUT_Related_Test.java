@@ -37,6 +37,24 @@ public class LinkRestService_InContainer_PUT_Related_Test extends JerseyTestOnDe
 		context.performGenericQuery(new EJBQLQuery("delete from E9"));
 		context.performGenericQuery(new EJBQLQuery("delete from E8"));
 	}
+	
+	@Test
+	public void testRelate_EmptyPutWithID() {
+
+		context.performGenericQuery(new SQLTemplate(E2.class, "INSERT INTO utest.e2 (id, name) values (24, 'xxx')"));
+		context.performGenericQuery(new SQLTemplate(E3.class, "INSERT INTO utest.e3 (id, name) values (7, 'zzz')"));
+		context.performGenericQuery(new SQLTemplate(E3.class, "INSERT INTO utest.e3 (id, name) values (8, 'yyy')"));
+
+		// POST with empty body ... how bad is that?
+		Response r1 = target("/lr/related/e3/8/e2/24").request().put(Entity.entity("", MediaType.APPLICATION_JSON));
+
+		assertEquals(Status.OK.getStatusCode(), r1.getStatus());
+		assertEquals("{\"success\":true,\"data\":[{\"id\":24,\"address\":null,\"name\":\"xxx\"}],\"total\":1}",
+				r1.readEntity(String.class));
+
+		assertEquals("yyy", SQLSelect.scalarQuery(String.class, "SELECT name FROM utest.e3 WHERE e2_id = 24")
+				.selectOne(context));
+	}
 
 	@Test
 	public void testRelate_ValidRel_ToOne_Existing() {
@@ -46,7 +64,7 @@ public class LinkRestService_InContainer_PUT_Related_Test extends JerseyTestOnDe
 		context.performGenericQuery(new SQLTemplate(E3.class, "INSERT INTO utest.e3 (id, name) values (8, 'yyy')"));
 
 		// POST with empty body ... how bad is that?
-		Response r1 = target("/lr/related/e3/8/e2/24").request().put(Entity.entity("", MediaType.APPLICATION_JSON));
+		Response r1 = target("/lr/related/e3/8/e2/24").request().put(Entity.entity("{}", MediaType.APPLICATION_JSON));
 
 		assertEquals(Status.OK.getStatusCode(), r1.getStatus());
 		assertEquals("{\"success\":true,\"data\":[{\"id\":24,\"address\":null,\"name\":\"xxx\"}],\"total\":1}",
