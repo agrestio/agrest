@@ -100,7 +100,7 @@ public abstract class BaseLinkRestService implements ILinkRestService {
 
 		T object = doInsert(response);
 
-		return encoderService.makeEncoder(response.withObject(object)).withStatus(Status.CREATED);
+		return response.withObject(object).withEncoder(encoderService.makeEncoder(response)).withStatus(Status.CREATED);
 	}
 
 	@Override
@@ -115,7 +115,7 @@ public abstract class BaseLinkRestService implements ILinkRestService {
 
 		T object = doUpdate(response);
 
-		return encoderService.makeEncoder(response.withObject(object));
+		return response.withObject(object).withEncoder(encoderService.makeEncoder(response));
 	}
 
 	@Override

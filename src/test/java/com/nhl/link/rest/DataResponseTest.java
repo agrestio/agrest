@@ -44,7 +44,7 @@ public class DataResponseTest extends TestWithCayenneMapping {
 			o1.add(new E1());
 		}
 
-		DataResponse<E1> r1 = encoderService.makeEncoder(request).withObjects(o1);
+		DataResponse<E1> r1 = request.withObjects(o1).withEncoder(encoderService.makeEncoder(request));
 
 		assertNotNull(r1);
 		assertEquals(o1, r1.getObjects());

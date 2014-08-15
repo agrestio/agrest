@@ -70,13 +70,13 @@ public abstract class BaseSelectBuilder<T> implements SelectBuilder<T> {
 		builder.build(getConfig().getEntity());
 		return this;
 	}
-	
+
 	@Override
 	public SelectBuilder<T> fetchLimit(int limit) {
 		getConfig().fetchLimit(limit);
 		return this;
 	}
-	
+
 	@Override
 	public SelectBuilder<T> fetchOffset(int offset) {
 		getConfig().fetchOffset(offset);
@@ -201,17 +201,9 @@ public abstract class BaseSelectBuilder<T> implements SelectBuilder<T> {
 			}
 		}
 
-		// build response encoder
-
-		if (dataEncoder != null) {
-			response.withEncoder(dataEncoder);
-		} else {
-			// make sure we create encode, even for the empty list, as we need
-			// to encode the totals...
-			encoderService.makeEncoder(response);
-		}
-
-		return response;
+		// make sure we create encode, even for the empty list, as we need
+		// to encode the totals...
+		return response.withEncoder(dataEncoder != null ? dataEncoder : encoderService.makeEncoder(response));
 	}
 
 	protected boolean isById() {

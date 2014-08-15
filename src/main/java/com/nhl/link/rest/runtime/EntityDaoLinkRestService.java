@@ -146,7 +146,7 @@ public class EntityDaoLinkRestService extends BaseLinkRestService {
 
 		// TODO: change...
 		Object target = daoForType(sourceType).relate(sourceId, relationship, targetInsert);
-		return encoderService.makeEncoder(targetInsert.withObject(target));
+		return targetInsert.withObject(target).withEncoder(encoderService.makeEncoder(targetInsert));
 	}
 
 	@Override
@@ -162,7 +162,7 @@ public class EntityDaoLinkRestService extends BaseLinkRestService {
 
 		daoForType(sourceType).insertOrUpdateRelated(sourceId, relationship, targetUpdate);
 
-		return encoderService.makeEncoder(targetUpdate);
+		return targetUpdate.withEncoder(encoderService.makeEncoder(targetUpdate));
 	}
 
 	@Override
@@ -177,6 +177,6 @@ public class EntityDaoLinkRestService extends BaseLinkRestService {
 
 		daoForType(sourceType).insertOrUpdateRelated(sourceId, relationship, targetUpdate);
 
-		return encoderService.makeEncoder(targetUpdate);
+		return targetUpdate.withEncoder(encoderService.makeEncoder(targetUpdate));
 	}
 }

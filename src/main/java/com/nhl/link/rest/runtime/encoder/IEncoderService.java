@@ -1,14 +1,14 @@
 package com.nhl.link.rest.runtime.encoder;
 
-import javax.ws.rs.core.Response.ResponseBuilder;
-
 import com.nhl.link.rest.DataResponse;
+import com.nhl.link.rest.encoder.Encoder;
 
 public interface IEncoderService {
 
 	/**
-	 * Builds a hierarchical encoder based on the specified
-	 * {@link ResponseBuilder} and initializes the builder with this encoder.
+	 * Builds a hierarchical encoder for a given response.
+	 * 
+	 * @since 1.3
 	 */
-	<T> DataResponse<T> makeEncoder(DataResponse<T> response);
+	Encoder makeEncoder(DataResponse<?> response);
 }

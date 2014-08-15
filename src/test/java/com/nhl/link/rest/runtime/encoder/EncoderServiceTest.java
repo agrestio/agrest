@@ -19,15 +19,11 @@ import org.junit.Test;
 
 import com.fasterxml.jackson.core.JsonEncoding;
 import com.fasterxml.jackson.core.JsonGenerator;
-import com.nhl.link.rest.Entity;
 import com.nhl.link.rest.DataResponse;
+import com.nhl.link.rest.Entity;
 import com.nhl.link.rest.encoder.Encoder;
 import com.nhl.link.rest.encoder.EncoderFilter;
 import com.nhl.link.rest.runtime.cayenne.ICayennePersister;
-import com.nhl.link.rest.runtime.encoder.AttributeEncoderFactory;
-import com.nhl.link.rest.runtime.encoder.EncoderService;
-import com.nhl.link.rest.runtime.encoder.IAttributeEncoderFactory;
-import com.nhl.link.rest.runtime.encoder.IStringConverterFactory;
 import com.nhl.link.rest.runtime.jackson.JacksonService;
 import com.nhl.link.rest.runtime.semantics.RelationshipMapper;
 import com.nhl.link.rest.unit.TestWithCayenneMapping;
@@ -72,8 +68,6 @@ public class EncoderServiceTest extends TestWithCayenneMapping {
 		DataResponse<E1> builder = DataResponse.forType(E1.class).withClientEntity(descriptor)
 				.withObjects(Collections.singletonList(e1));
 
-		encoderService.makeEncoder(builder);
-
 		assertEquals("[{\"id\":777}]", toJson(builder));
 	}
 
@@ -110,7 +104,6 @@ public class EncoderServiceTest extends TestWithCayenneMapping {
 
 		DataResponse<E2> builder = DataResponse.forType(E2.class).withClientEntity(descriptor)
 				.withObjects(Collections.singletonList(e2));
-		encoderService.makeEncoder(builder);
 
 		assertEquals("[{\"id\":7,\"e3s\":[{\"id\":5,\"name\":\"31\"},{\"id\":6,\"name\":\"32\"}]}]", toJson(builder));
 	}
@@ -162,7 +155,6 @@ public class EncoderServiceTest extends TestWithCayenneMapping {
 
 		DataResponse<E2> builder = DataResponse.forType(E2.class).withClientEntity(descriptor).withObject(e21);
 
-		encoderService.makeEncoder(builder);
 		assertEquals("[{\"id\":7}]", toJson(builder));
 
 		E2 e22 = new E2();
@@ -172,7 +164,6 @@ public class EncoderServiceTest extends TestWithCayenneMapping {
 		context.registerNewObject(e22);
 
 		builder.withObject(e22);
-		encoderService.makeEncoder(builder);
 
 		assertEquals("[]", toJson(builder));
 	}
@@ -203,7 +194,7 @@ public class EncoderServiceTest extends TestWithCayenneMapping {
 					return true;
 				}
 			}
-			
+
 			@Override
 			public boolean willEncode(String propertyName, Object object, Encoder delegate) {
 				if (object instanceof E2) {
@@ -239,8 +230,6 @@ public class EncoderServiceTest extends TestWithCayenneMapping {
 
 		DataResponse<E3> builder = DataResponse.forType(E3.class).withClientEntity(e3Descriptor).withObject(e31);
 
-		encoderService.makeEncoder(builder);
-
 		assertEquals("[{\"id\":5,\"e2\":{\"id\":7},\"e2_id\":7}]", toJson(builder));
 
 		E2 e22 = new E2();
@@ -274,7 +263,7 @@ public class EncoderServiceTest extends TestWithCayenneMapping {
 				fail("Non matching filter was not supposed to be invoked");
 				return false;
 			}
-			
+
 			@Override
 			public boolean willEncode(String propertyName, Object object, Encoder delegate) {
 				fail("Non matching filter was not supposed to be invoked");
@@ -286,7 +275,6 @@ public class EncoderServiceTest extends TestWithCayenneMapping {
 		descriptor.includeId();
 
 		DataResponse<E2> builder = DataResponse.forType(E2.class).withClientEntity(descriptor);
-		encoderService.makeEncoder(builder);
 
 		ObjectContext context = cayenneService.newContext();
 		E2 e21 = new E2();
@@ -298,13 +286,15 @@ public class EncoderServiceTest extends TestWithCayenneMapping {
 		builder.getEncoder().encode(null, Collections.singletonList(e21), mock(JsonGenerator.class));
 	}
 
-	private static String toJson(DataResponse<?> builder) throws IOException {
+	private String toJson(DataResponse<?> builder) throws IOException {
+
+		Encoder encoder = encoderService.makeEncoder(builder);
 
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 
 		try (JsonGenerator generator = new JacksonService().getJsonFactory()
 				.createJsonGenerator(out, JsonEncoding.UTF8)) {
-			builder.getEncoder().encode(null, builder.getObjects(), generator);
+			encoder.encode(null, builder.getObjects(), generator);
 		}
 
 		return new String(out.toByteArray(), "UTF-8");

@@ -16,13 +16,10 @@ import org.junit.Test;
 
 import com.fasterxml.jackson.core.JsonEncoding;
 import com.fasterxml.jackson.core.JsonGenerator;
-import com.nhl.link.rest.Entity;
 import com.nhl.link.rest.DataResponse;
+import com.nhl.link.rest.Entity;
+import com.nhl.link.rest.encoder.Encoder;
 import com.nhl.link.rest.encoder.EncoderFilter;
-import com.nhl.link.rest.runtime.encoder.AttributeEncoderFactory;
-import com.nhl.link.rest.runtime.encoder.EncoderService;
-import com.nhl.link.rest.runtime.encoder.IAttributeEncoderFactory;
-import com.nhl.link.rest.runtime.encoder.IStringConverterFactory;
 import com.nhl.link.rest.runtime.jackson.JacksonService;
 import com.nhl.link.rest.runtime.meta.DataMapBuilder;
 import com.nhl.link.rest.runtime.semantics.RelationshipMapper;
@@ -58,7 +55,6 @@ public class EncoderService_Pojo_Test {
 		descriptor.getAttributes().add("name");
 
 		DataResponse<P1> builder = DataResponse.forType(P1.class).withClientEntity(descriptor);
-		encoderService.makeEncoder(builder);
 
 		P1 p1 = new P1();
 		p1.setName("XYZ");
@@ -76,12 +72,13 @@ public class EncoderService_Pojo_Test {
 		descriptor.getAttributes().add("intProp");
 		descriptor.includeId();
 		DataResponse<P6> builder = DataResponse.forObjects(Collections.singletonList(p6)).withClientEntity(descriptor);
-		encoderService.makeEncoder(builder);
 
 		assertEquals("[{\"id\":\"myid\",\"intProp\":4}]", toJson(p6, builder));
 	}
 
-	private static String toJson(Object object, DataResponse<?> builder) throws IOException {
+	private String toJson(Object object, DataResponse<?> builder) throws IOException {
+
+		Encoder encoder = encoderService.makeEncoder(builder);
 
 		// wrap in collection... root encoder expects a list...
 		object = Collections.singletonList(object);
@@ -90,7 +87,7 @@ public class EncoderService_Pojo_Test {
 
 		try (JsonGenerator generator = new JacksonService().getJsonFactory()
 				.createJsonGenerator(out, JsonEncoding.UTF8)) {
-			builder.getEncoder().encode(null, object, generator);
+			encoder.encode(null, object, generator);
 		}
 
 		return new String(out.toByteArray(), "UTF-8");

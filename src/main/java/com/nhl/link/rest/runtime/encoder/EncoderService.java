@@ -13,9 +13,9 @@ import javax.ws.rs.core.Response.Status;
 import org.apache.cayenne.di.Inject;
 import org.apache.cayenne.map.ObjRelationship;
 
+import com.nhl.link.rest.DataResponse;
 import com.nhl.link.rest.Entity;
 import com.nhl.link.rest.EntityProperty;
-import com.nhl.link.rest.DataResponse;
 import com.nhl.link.rest.LinkRestException;
 import com.nhl.link.rest.encoder.Encoder;
 import com.nhl.link.rest.encoder.EncoderFilter;
@@ -46,10 +46,10 @@ public class EncoderService implements IEncoderService {
 		this.stringConverterFactory = stringConverterFactory;
 		this.filters = filters;
 	}
-
+	
 	@Override
-	public <T> DataResponse<T> makeEncoder(DataResponse<T> response) {
-		return response.withEncoder(rootEncoder(response));
+	public Encoder makeEncoder(DataResponse<?> response) {
+		return rootEncoder(response);
 	}
 
 	private <T> Encoder rootEncoder(DataResponse<T> response) {
