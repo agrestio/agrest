@@ -45,6 +45,7 @@
 	<db-entity name="e7" schema="utest">
 		<db-attribute name="e8_id" type="INTEGER"/>
 		<db-attribute name="id" type="INTEGER" isPrimaryKey="true" isMandatory="true"/>
+		<db-attribute name="name" type="VARCHAR" length="100"/>
 	</db-entity>
 	<db-entity name="e8" schema="utest">
 		<db-attribute name="id" type="INTEGER" isPrimaryKey="true" isMandatory="true"/>
@@ -83,6 +84,7 @@
 		<obj-attribute name="charColumn" type="java.lang.String" db-attribute-path="char_column"/>
 	</obj-entity>
 	<obj-entity name="E7" className="com.nhl.link.rest.unit.cayenne.E7" dbEntityName="e7">
+		<obj-attribute name="name" type="java.lang.String" db-attribute-path="name"/>
 	</obj-entity>
 	<obj-entity name="E8" className="com.nhl.link.rest.unit.cayenne.E8" dbEntityName="e8">
 		<obj-attribute name="name" type="java.lang.String" db-attribute-path="name"/>

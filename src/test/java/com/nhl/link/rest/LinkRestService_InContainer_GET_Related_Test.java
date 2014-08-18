@@ -73,10 +73,10 @@ public class LinkRestService_InContainer_GET_Related_Test extends JerseyTestOnDe
 
 	@Test
 	public void testGet_InvalidRel() {
-		Response r1 = target("/lr/related/e2/1/dummyRel").request().get();
+		Response r1 = target("/lr/related/e2/1/dummyrel").request().get();
 
 		assertEquals(Status.BAD_REQUEST.getStatusCode(), r1.getStatus());
-		assertEquals("{\"success\":false,\"message\":\"Invalid relationship: 'dummyRel'\"}",
+		assertEquals("{\"success\":false,\"message\":\"Invalid relationship: 'dummyrel'\"}",
 				r1.readEntity(String.class));
 	}
 

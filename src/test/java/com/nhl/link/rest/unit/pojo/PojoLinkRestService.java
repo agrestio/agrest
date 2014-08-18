@@ -1,20 +1,14 @@
 package com.nhl.link.rest.unit.pojo;
 
-import java.util.Map.Entry;
-
-import javax.ws.rs.core.Response.Status;
-
 import org.apache.cayenne.di.Inject;
 import org.apache.cayenne.exp.Property;
 import org.apache.cayenne.query.SelectQuery;
-import org.apache.cayenne.reflect.PropertyUtils;
 
-import com.nhl.link.rest.DataResponse;
-import com.nhl.link.rest.LinkRestException;
+import com.nhl.link.rest.CreateOrUpdateBuilder;
 import com.nhl.link.rest.SelectBuilder;
 import com.nhl.link.rest.SimpleResponse;
-import com.nhl.link.rest.UpdateResponse;
 import com.nhl.link.rest.runtime.BaseLinkRestService;
+import com.nhl.link.rest.runtime.CreateOrUpdateOperation;
 import com.nhl.link.rest.runtime.config.IConfigMerger;
 import com.nhl.link.rest.runtime.encoder.IEncoderService;
 import com.nhl.link.rest.runtime.meta.IMetadataService;
@@ -61,23 +55,6 @@ public class PojoLinkRestService extends BaseLinkRestService {
 	}
 
 	@Override
-	public DataResponse<?> insertRelated(Class<?> sourceType, Object sourceId, String relationship, String targetData) {
-		throw new UnsupportedOperationException("TODO");
-	}
-
-	@Override
-	public DataResponse<?> insertOrUpdateRelated(Class<?> sourceType, Object sourceId, String relationship,
-			Object targetId, String targetData) {
-		throw new UnsupportedOperationException("TODO");
-	}
-
-	@Override
-	public DataResponse<?> insertOrUpdateRelated(Class<?> sourceType, Object sourceId, String relationship,
-			String targetData) {
-		throw new UnsupportedOperationException("TODO");
-	}
-
-	@Override
 	public SimpleResponse unrelate(Class<?> root, Object sourceId, String relationship) {
 		throw new UnsupportedOperationException("TODO");
 	}
@@ -88,45 +65,26 @@ public class PojoLinkRestService extends BaseLinkRestService {
 	}
 
 	@Override
-	protected <T> T doInsert(UpdateResponse<T> response) {
-
-		T object;
-		try {
-			object = response.getType().newInstance();
-		} catch (InstantiationException | IllegalAccessException e) {
-			throw new RuntimeException("Error creating entity", e);
-		}
-
-		mergeChanges(response, object);
-		db.bucketForType(response.getType()).put(getId(response, object), object);
-		return object;
+	public <T> CreateOrUpdateBuilder<T> create(Class<T> type) {
+		return new PojoCreateOrUpdateBuilder<>(db.bucketForType(type), type, CreateOrUpdateOperation.create,
+				encoderService, requestParser, metadataService);
 	}
 
 	@Override
-	protected <T> T doUpdate(UpdateResponse<T> response) {
-		T object = db.bucketForType(response.getType()).get(response.getFirst().getId());
-
-		if (object == null) {
-			throw new LinkRestException(Status.NOT_FOUND, "Object  with ID '" + response.getFirst().getId()
-					+ "' is not found");
-		}
-
-		mergeChanges(response, object);
-
-		return object;
+	public <T> CreateOrUpdateBuilder<T> createOrUpdate(Class<T> type) {
+		return new PojoCreateOrUpdateBuilder<>(db.bucketForType(type), type, CreateOrUpdateOperation.createOrUpdate,
+				encoderService, requestParser, metadataService);
 	}
 
-	private <T> Object getId(UpdateResponse<T> response, T pojo) {
-		String pkProperty = response.getEntity().getCayenneEntity().getPrimaryKeyNames().iterator().next();
-		return PropertyUtils.getProperty(pojo, pkProperty);
+	@Override
+	public <T> CreateOrUpdateBuilder<T> idempotentCreateOrUpdate(Class<T> type) {
+		return new PojoCreateOrUpdateBuilder<>(db.bucketForType(type), type,
+				CreateOrUpdateOperation.idempotentCreateOrUpdate, encoderService, requestParser, metadataService);
 	}
 
-	private <T> void mergeChanges(UpdateResponse<T> response, T object) {
-
-		// attributes
-		for (Entry<String, Object> e : response.getFirst().getValues().entrySet()) {
-			PropertyUtils.setProperty(object, e.getKey(), e.getValue());
-		}
+	@Override
+	public <T> CreateOrUpdateBuilder<T> update(Class<T> type) {
+		return new PojoCreateOrUpdateBuilder<>(db.bucketForType(type), type, CreateOrUpdateOperation.update,
+				encoderService, requestParser, metadataService);
 	}
-
 }

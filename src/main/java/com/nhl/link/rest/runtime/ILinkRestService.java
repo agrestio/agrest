@@ -5,6 +5,7 @@ import javax.ws.rs.core.UriInfo;
 import org.apache.cayenne.exp.Property;
 import org.apache.cayenne.query.SelectQuery;
 
+import com.nhl.link.rest.CreateOrUpdateBuilder;
 import com.nhl.link.rest.DataResponse;
 import com.nhl.link.rest.SelectBuilder;
 import com.nhl.link.rest.SimpleResponse;
@@ -69,6 +70,9 @@ public interface ILinkRestService {
 	 */
 	<T> SelectBuilder<T> forSelect(SelectQuery<T> query);
 
+	/**
+	 * @deprecated since 1.3 use {@link #create(Class)}.
+	 */
 	<T> DataResponse<T> insert(Class<T> root, String objectData);
 
 	<T> DataResponse<T> update(Class<T> root, Object id, String objectData);
@@ -110,92 +114,30 @@ public interface ILinkRestService {
 	SimpleResponse unrelate(Class<?> root, Object sourceId, Property<?> relationship, Object targetId);
 
 	/**
-	 * Creates one or more objects with a relationship from a given root object.
+	 * @since 1.3
+	 */
+	<T> CreateOrUpdateBuilder<T> update(Class<T> type);
+
+	/**
+	 * @since 1.3
+	 */
+	<T> CreateOrUpdateBuilder<T> create(Class<T> type);
+
+	/**
+	 * @since 1.3
+	 */
+	<T> CreateOrUpdateBuilder<T> createOrUpdate(Class<T> type);
+
+	/**
+	 * 
+	 * Returns a CreateOrUpdateBuilder that would perform an idempotent
+	 * create-or-update operation on the request objects. The operation will
+	 * fail if it can't be executed as idempotent. The condition is usually that
+	 * all object's ID should be passed explicitly in request or can be implied
+	 * from a relationship. Otherwise the server will have no way of mapping
+	 * update data to an existing object and the update can't be idempotent.
 	 * 
 	 * @since 1.3
 	 */
-	DataResponse<?> insertRelated(Class<?> sourceType, Object sourceId, String relationship, String targetData);
-
-	/**
-	 * Creates one or more objects with a relationship from a given root object.
-	 * 
-	 * @since 1.3
-	 */
-	<T> DataResponse<T> insertRelated(Class<?> sourceType, Object sourceId, Property<T> relationship, String targetData);
-
-	/**
-	 * Creates or updates one or more objects with a relationship from a given
-	 * root object.
-	 * 
-	 * @since 1.3
-	 * @return {@link DataResponse} containing target entity with any new
-	 *         changes.
-	 */
-	DataResponse<?> insertOrUpdateRelated(Class<?> sourceType, Object sourceId, String relationship, String targetData);
-
-	/**
-	 * Creates or updates one or more objects with a relationship from a given
-	 * root object.
-	 * 
-	 * @since 1.3
-	 * @return {@link DataResponse} containing target entity with any new
-	 *         changes.
-	 */
-	<T> DataResponse<T> insertOrUpdateRelated(Class<?> sourceType, Object sourceId, Property<T> relationship,
-			String targetData);
-
-	/**
-	 * Creates or updates a target object with known id, and ensures there's a
-	 * relationship between source and target.
-	 * 
-	 * @since 1.3
-	 * @return {@link DataResponse} containing target entity with any new
-	 *         changes.
-	 */
-	DataResponse<?> insertOrUpdateRelated(Class<?> sourceType, Object sourceId, String relationship, Object targetId,
-			String targetData);
-
-	/**
-	 * Creates or updates a target object with known id, and ensures there's a
-	 * relationship between source and target.
-	 * 
-	 * @since 1.3
-	 * @return {@link DataResponse} containing target entity with any new
-	 *         changes.
-	 */
-	<T> DataResponse<T> insertOrUpdateRelated(Class<?> sourceType, Object sourceId, Property<T> relationship,
-			Object targetId, String targetData);
-
-/**
-	 * @deprecated since 1.3 use
-	 *             {@link #insertRelated(Class, Object, String, String)
-	 * @since 1.2
-	 */
-	@Deprecated
-	DataResponse<?> relateNew(Class<?> sourceType, Object sourceId, String relationship, String targetData);
-
-	/**
-	 * @deprecated since 1.3 use
-	 *             {@link #insertRelated(Class, Object, Property, String)}.
-	 * @since 1.2
-	 */
-	@Deprecated
-	<T> DataResponse<T> relateNew(Class<?> sourceType, Object sourceId, Property<T> relationship, String targetData);
-
-	/**
-	 * @deprecated since 1.3 use
-	 *             {@link #insertOrUpdateRelated(Class, Object, String, Object, String)}
-	 * @since 1.2
-	 */
-	@Deprecated
-	DataResponse<?> relate(Class<?> sourceType, Object sourceId, String relationship, Object targetId, String targetData);
-
-	/**
-	 * @deprecated since 1.3 use
-	 *             {@link #insertOrUpdateRelated(Class, Object, Property, Object, String)}
-	 * @since 1.2
-	 */
-	@Deprecated
-	<T> DataResponse<T> relate(Class<?> sourceType, Object sourceId, Property<T> relationship, Object targetId,
-			String targetData);
+	<T> CreateOrUpdateBuilder<T> idempotentCreateOrUpdate(Class<T> type);
 }

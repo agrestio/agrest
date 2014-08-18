@@ -11,7 +11,6 @@ import org.apache.cayenne.map.ObjEntity;
 
 import com.nhl.link.rest.DataResponse;
 import com.nhl.link.rest.Entity;
-import com.nhl.link.rest.EntityUpdate;
 import com.nhl.link.rest.LinkRestException;
 import com.nhl.link.rest.UpdateResponse;
 import com.nhl.link.rest.runtime.jackson.IJacksonService;
@@ -87,38 +86,6 @@ public class RequestParser implements IRequestParser {
 		filterProcessor.process(rootDescriptor, RequestParams.filter.string(parameters));
 		queryProcessor.process(rootDescriptor, RequestParams.query.string(parameters), autocompleteProperty);
 
-		return response;
-	}
-
-	/**
-	 * @deprecated since 1.1 as the corresponding interface method is
-	 *             deprecated.
-	 */
-	@Deprecated
-	@Override
-	public <T> UpdateResponse<T> insertRequest(UpdateResponse<T> response, String requestBody) {
-		return parseInsert(response, requestBody);
-	}
-
-	@Override
-	public <T> UpdateResponse<T> parseInsert(UpdateResponse<T> response, String requestBody) {
-		return parseUpdate(response, null, requestBody);
-	}
-
-	@Override
-	public <T> UpdateResponse<T> parseUpdate(UpdateResponse<T> response, Object id, String requestBody) {
-
-		parseUpdate(response, requestBody);
-
-		// id was specified explicitly ... so reset whatever ID was in the
-		// body. Moreover if no updates were present in the body, create an
-		// empty update that will be attached to the ID.
-
-		if (response.getUpdates().isEmpty()) {
-			response.getUpdates().add(new EntityUpdate());
-		}
-
-		response.getFirst().setId(id);
 		return response;
 	}
 

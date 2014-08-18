@@ -15,12 +15,11 @@ import org.apache.cayenne.map.ObjRelationship;
 import org.apache.cayenne.query.SelectQuery;
 import org.apache.cayenne.reflect.ClassDescriptor;
 
-import com.nhl.link.rest.DataResponse;
+import com.nhl.link.rest.CreateOrUpdateBuilder;
 import com.nhl.link.rest.EntityConfigBuilder;
 import com.nhl.link.rest.LinkRestException;
 import com.nhl.link.rest.SelectBuilder;
 import com.nhl.link.rest.SimpleResponse;
-import com.nhl.link.rest.UpdateResponse;
 import com.nhl.link.rest.runtime.cayenne.CayenneDao;
 import com.nhl.link.rest.runtime.cayenne.ICayennePersister;
 import com.nhl.link.rest.runtime.config.IConfigMerger;
@@ -125,58 +124,22 @@ public class EntityDaoLinkRestService extends BaseLinkRestService {
 	}
 
 	@Override
-	protected <T> T doInsert(UpdateResponse<T> response) {
-		return daoForType(response.getType()).insert(response);
+	public <T> CreateOrUpdateBuilder<T> create(Class<T> type) {
+		return daoForType(type).create();
 	}
 
 	@Override
-	protected <T> T doUpdate(UpdateResponse<T> response) {
-		return daoForType(response.getEntity().getType()).update(response);
+	public <T> CreateOrUpdateBuilder<T> createOrUpdate(Class<T> type) {
+		return daoForType(type).createOrUpdate();
 	}
 
 	@Override
-	public DataResponse<?> insertRelated(Class<?> sourceType, Object sourceId, String relationship, String targetData) {
-
-		ObjRelationship objRelationship = metadataService.getObjRelationship(sourceType, relationship);
-		Class<?> targetType = metadataService.getType(objRelationship.getTargetEntityName());
-
-		@SuppressWarnings("unchecked")
-		UpdateResponse<Object> targetInsert = (UpdateResponse<Object>) requestParser.parseInsert(new UpdateResponse<>(
-				targetType), targetData);
-
-		// TODO: change...
-		Object target = daoForType(sourceType).relate(sourceId, relationship, targetInsert);
-		return targetInsert.withObject(target).withEncoder(encoderService.makeEncoder(targetInsert));
+	public <T> CreateOrUpdateBuilder<T> idempotentCreateOrUpdate(Class<T> type) {
+		return daoForType(type).idempotentCreateOrUpdate();
 	}
 
 	@Override
-	public DataResponse<?> insertOrUpdateRelated(Class<?> sourceType, Object sourceId, String relationship,
-			Object targetId, String targetData) {
-
-		ObjRelationship objRelationship = metadataService.getObjRelationship(sourceType, relationship);
-		Class<?> targetType = metadataService.getType(objRelationship.getTargetEntityName());
-
-		@SuppressWarnings("unchecked")
-		UpdateResponse<Object> targetUpdate = (UpdateResponse<Object>) requestParser.parseUpdate(new UpdateResponse<>(
-				targetType), targetId, targetData);
-
-		daoForType(sourceType).insertOrUpdateRelated(sourceId, relationship, targetUpdate);
-
-		return targetUpdate.withEncoder(encoderService.makeEncoder(targetUpdate));
-	}
-
-	@Override
-	public DataResponse<?> insertOrUpdateRelated(Class<?> sourceType, Object sourceId, String relationship,
-			String targetData) {
-		ObjRelationship objRelationship = metadataService.getObjRelationship(sourceType, relationship);
-		Class<?> targetType = metadataService.getType(objRelationship.getTargetEntityName());
-
-		@SuppressWarnings("unchecked")
-		UpdateResponse<Object> targetUpdate = (UpdateResponse<Object>) requestParser.parseUpdate(new UpdateResponse<>(
-				targetType), targetData);
-
-		daoForType(sourceType).insertOrUpdateRelated(sourceId, relationship, targetUpdate);
-
-		return targetUpdate.withEncoder(encoderService.makeEncoder(targetUpdate));
+	public <T> CreateOrUpdateBuilder<T> update(Class<T> type) {
+		return daoForType(type).update();
 	}
 }

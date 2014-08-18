@@ -18,6 +18,7 @@ import com.nhl.link.rest.unit.cayenne.E2;
 import com.nhl.link.rest.unit.cayenne.E3;
 import com.nhl.link.rest.unit.cayenne.E7;
 import com.nhl.link.rest.unit.cayenne.E8;
+import com.nhl.link.rest.unit.cayenne.E9;
 
 @Path("lr/related")
 public class LinkRestResource_Related {
@@ -28,16 +29,24 @@ public class LinkRestResource_Related {
 	private ILinkRestService getService() {
 		return LinkRestRuntime.service(ILinkRestService.class, config);
 	}
-
-	/**
-	 * A generic relationship method that can read any relationship of the E2
-	 * entity.
-	 */
+	
 	@GET
-	@Path("e2/{id}/{rel}")
-	public DataResponse<?> getAnyRelationship(@PathParam("id") int id, @PathParam("rel") String relationship,
-			@Context UriInfo uriInfo) {
-		return getService().forSelectRelated(E2.class, id, relationship).with(uriInfo).select();
+	@Path("e2/{id}/dummyrel")
+	public DataResponse<?> getE2_Dummyrel(@PathParam("id") int id, @Context UriInfo uriInfo) {
+		return getService().forSelectRelated(E2.class, id, "dummyrel").with(uriInfo).select();
+	}
+
+	@SuppressWarnings("unchecked")
+	@GET
+	@Path("e2/{id}/e3s")
+	public DataResponse<E3> getE2_E3s(@PathParam("id") int id, @Context UriInfo uriInfo) {
+		return (DataResponse<E3>) getService().forSelectRelated(E2.class, id, "e3s").with(uriInfo).select();
+	}
+
+	@GET
+	@Path("e3/{id}/e2")
+	public DataResponse<E2> getE3_E2(@PathParam("id") int id, @Context UriInfo uriInfo) {
+		return getService().forSelectRelated(E3.class, id, E3.E2).with(uriInfo).select();
 	}
 
 	@DELETE
@@ -45,27 +54,6 @@ public class LinkRestResource_Related {
 	public SimpleResponse deleteToMany(@PathParam("id") int id, @PathParam("rel") String relationship,
 			@PathParam("tid") int tid) {
 		return getService().unrelate(E2.class, id, relationship, tid);
-	}
-
-	@POST
-	@Path("e2/{id}/{rel}")
-	public SimpleResponse e2CreateRelated(@PathParam("id") int id, @PathParam("rel") String relationship, String targetData) {
-		return getService().insertRelated(E2.class, id, relationship, targetData);
-	}
-	
-	@PUT
-	@Path("e2/{id}/{rel}")
-	public SimpleResponse e2CreateOrUpdateE3s(@PathParam("id") int id, @PathParam("rel") String relationship, String targetData) {
-		return getService().insertOrUpdateRelated(E2.class, id, relationship, targetData);
-	}
-
-	/**
-	 * A specific relationship method that reads e2.e3 to-one relationship.
-	 */
-	@GET
-	@Path("e3/{id}/e2")
-	public DataResponse<?> getSpecificRelationship(@PathParam("id") int id, @Context UriInfo uriInfo) {
-		return getService().forSelectRelated(E3.class, id, E3.E2).with(uriInfo).select();
 	}
 
 	@DELETE
@@ -80,23 +68,42 @@ public class LinkRestResource_Related {
 		return getService().unrelate(E3.class, id, E3.E2);
 	}
 
+	@POST
+	@Path("e2/{id}/e3s")
+	public DataResponse<E3> e3_Related_CreateOrUpdate(@PathParam("id") int id, String targetData) {
+		return getService().createOrUpdate(E3.class).toManyParent(E2.class, id, E2.E3S).process(targetData);
+	}
+
+	@PUT
+	@Path("e2/{id}/e3s")
+	public DataResponse<E3> e3_Related_CreateOrUpdate_Idempotent(@PathParam("id") int id, String entityData) {
+		return getService().idempotentCreateOrUpdate(E3.class).toManyParent(E2.class, id, E2.E3S).process(entityData);
+	}
+
 	@PUT
 	@Path("e3/{id}/e2/{tid}")
-	public SimpleResponse e3RelateToOneExisting(@PathParam("id") int id, @PathParam("tid") int tid, String targetData) {
-		return getService().insertOrUpdateRelated(E3.class, id, E3.E2, tid, targetData);
+	public DataResponse<E2> e2_Related_CreateOrUpdate_Idempotent(@PathParam("id") int parentId,
+			@PathParam("tid") int id, String entityData) {
+		return getService().idempotentCreateOrUpdate(E2.class).id(id).parent(E3.class, parentId, E3.E2)
+				.process(entityData);
 	}
 
 	@PUT
 	@Path("e7/{id}/e8/{tid}")
-	public SimpleResponse e7RelateToOneExisting(@PathParam("id") int id, @PathParam("tid") int tid, String targetData) {
-		return getService().insertOrUpdateRelated(E7.class, id, E7.E8, tid, targetData);
+	public DataResponse<E8> e7RelateToOneExisting(@PathParam("id") int parentId, @PathParam("tid") int id, String data) {
+		return getService().idempotentCreateOrUpdate(E8.class).id(id).parent(E7.class, parentId, E7.E8).process(data);
 	}
 
 	@PUT
 	@Path("e8/{id}/e9")
-	public SimpleResponse e8RelateToOneDependent(@PathParam("id") int id, String targetData) {
+	public DataResponse<E9> e8RelateToOneDependent(@PathParam("id") int id, String entityData) {
+		// this will test support for ID propagation in a 1..1
+		return getService().idempotentCreateOrUpdate(E9.class).parent(E8.class, id, E8.E9).process(entityData);
+	}
 
-		// target ID should be the same as source, so reusing source id
-		return getService().insertOrUpdateRelated(E8.class, id, E8.E9, id, targetData);
+	@PUT
+	@Path("e8/{id}/e7s")
+	public DataResponse<E7> e8CreateOrUpdateE7s(@PathParam("id") int id, String entityData) {
+		return getService().idempotentCreateOrUpdate(E7.class).toManyParent(E8.class, id, E8.E7S).process(entityData);
 	}
 }

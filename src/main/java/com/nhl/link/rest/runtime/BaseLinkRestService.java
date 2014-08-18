@@ -1,15 +1,14 @@
 package com.nhl.link.rest.runtime;
 
-import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriInfo;
 
 import org.apache.cayenne.exp.Property;
 import org.apache.cayenne.query.SelectQuery;
 
+import com.nhl.link.rest.CreateOrUpdateBuilder;
 import com.nhl.link.rest.DataResponse;
 import com.nhl.link.rest.SelectBuilder;
 import com.nhl.link.rest.SimpleResponse;
-import com.nhl.link.rest.UpdateResponse;
 import com.nhl.link.rest.runtime.encoder.IEncoderService;
 import com.nhl.link.rest.runtime.parser.IRequestParser;
 
@@ -56,10 +55,6 @@ public abstract class BaseLinkRestService implements ILinkRestService {
 
 	protected abstract void doDelete(Class<?> root, Object id);
 
-	protected abstract <T> T doInsert(UpdateResponse<T> request);
-
-	protected abstract <T> T doUpdate(UpdateResponse<T> request);
-
 	/**
 	 * @since 1.2
 	 */
@@ -94,106 +89,39 @@ public abstract class BaseLinkRestService implements ILinkRestService {
 		return new SimpleResponse(true);
 	}
 
+	@Deprecated
 	@Override
 	public <T> DataResponse<T> insert(Class<T> root, String objectData) {
-		UpdateResponse<T> response = requestParser.parseInsert(new UpdateResponse<>(root), objectData);
-
-		T object = doInsert(response);
-
-		return response.withObject(object).withEncoder(encoderService.makeEncoder(response)).withStatus(Status.CREATED);
+		return create(root).process(objectData);
 	}
 
+	@Deprecated
 	@Override
 	public <T> DataResponse<T> update(Class<T> root, Object id, String objectData) {
-
-		UpdateResponse<T> response = requestParser.parseUpdate(new UpdateResponse<>(root), id, objectData);
-
-		// don't bother with processing if we didn't get any changes..
-		if (!response.hasChanges()) {
-			return response.withMessage("No changes");
-		}
-
-		T object = doUpdate(response);
-
-		return response.withObject(object).withEncoder(encoderService.makeEncoder(response));
-	}
-
-	@Override
-	@Deprecated
-	public <T> DataResponse<T> relate(Class<?> sourceType, Object sourceId, Property<T> relationship, Object targetId,
-			String targetData) {
-		return insertOrUpdateRelated(sourceType, sourceId, relationship, targetId, targetData);
-	}
-
-	@Override
-	@Deprecated
-	public DataResponse<?> relate(Class<?> sourceType, Object sourceId, String relationship, Object targetId,
-			String targetData) {
-		return insertOrUpdateRelated(sourceType, sourceId, relationship, targetId, targetData);
-	}
-
-	@Override
-	@Deprecated
-	public <T> DataResponse<T> relateNew(Class<?> sourceType, Object sourceId, Property<T> relationship,
-			String targetData) {
-		return insertRelated(sourceType, sourceId, relationship, targetData);
-	}
-
-	@Override
-	@Deprecated
-	public DataResponse<?> relateNew(Class<?> sourceType, Object sourceId, String relationship, String targetData) {
-		return insertRelated(sourceType, sourceId, relationship, targetData);
-	}
-
-	/**
-	 * @since 1.3
-	 */
-	@SuppressWarnings("unchecked")
-	@Override
-	public <T> DataResponse<T> insertRelated(Class<?> sourceType, Object sourceId, Property<T> relationship,
-			String targetData) {
-		return (DataResponse<T>) insertRelated(sourceType, sourceId, relationship.getName(), targetData);
+		return update(root).id(id).process(objectData);
 	}
 
 	/**
 	 * @since 1.3
 	 */
 	@Override
-	public abstract DataResponse<?> insertRelated(Class<?> sourceType, Object sourceId, String relationship,
-			String targetData);
-
-	/**
-	 * @since 1.3
-	 */
-	@SuppressWarnings("unchecked")
-	@Override
-	public <T> DataResponse<T> insertOrUpdateRelated(Class<?> sourceType, Object sourceId, Property<T> relationship,
-			Object targetId, String targetData) {
-		return (DataResponse<T>) insertOrUpdateRelated(sourceType, sourceId, relationship.getName(), targetId,
-				targetData);
-	}
+	public abstract <T> CreateOrUpdateBuilder<T> create(Class<T> type);
 
 	/**
 	 * @since 1.3
 	 */
 	@Override
-	public abstract DataResponse<?> insertOrUpdateRelated(Class<?> sourceType, Object sourceId, String relationship,
-			Object targetId, String targetData);
-
-	/**
-	 * @since 1.3
-	 */
-	@SuppressWarnings("unchecked")
-	@Override
-	public <T> DataResponse<T> insertOrUpdateRelated(Class<?> sourceType, Object sourceId, Property<T> relationship,
-			String targetData) {
-		return (DataResponse<T>) insertOrUpdateRelated(sourceType, sourceId, relationship.getName(), targetData);
-	}
+	public abstract <T> CreateOrUpdateBuilder<T> createOrUpdate(Class<T> type);
 
 	/**
 	 * @since 1.3
 	 */
 	@Override
-	public abstract DataResponse<?> insertOrUpdateRelated(Class<?> sourceType, Object sourceId, String relationship,
-			String targetData);
+	public abstract <T> CreateOrUpdateBuilder<T> idempotentCreateOrUpdate(Class<T> type);
+
+	/**
+	 * @since 1.3
+	 */
+	@Override
+	public abstract <T> CreateOrUpdateBuilder<T> update(Class<T> type);
 }

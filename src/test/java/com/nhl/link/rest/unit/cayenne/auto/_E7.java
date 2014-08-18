@@ -16,11 +16,21 @@ public abstract class _E7 extends CayenneDataObject {
     private static final long serialVersionUID = 1L; 
 
     @Deprecated
+    public static final String NAME_PROPERTY = "name";
+    @Deprecated
     public static final String E8_PROPERTY = "e8";
 
-    public static final String EXPOSED_ID_PK_COLUMN = "exposed_id";
+    public static final String ID_PK_COLUMN = "id";
 
+    public static final Property<String> NAME = new Property<String>("name");
     public static final Property<E8> E8 = new Property<E8>("e8");
+
+    public void setName(String name) {
+        writeProperty("name", name);
+    }
+    public String getName() {
+        return (String)readProperty("name");
+    }
 
     public void setE8(E8 e8) {
         setToOneTarget("e8", e8, true);
