@@ -82,7 +82,7 @@ public class LinkRestService_InContainer_POST_Related_Test extends JerseyTestOnD
 
 		// testing non-idempotency
 
-		Response r2 = target("/lr/related/e2/15/e3s").request().put(
+		Response r2 = target("/lr/related/e2/15/e3s").request().post(
 				Entity.entity("[ {\"id\":8,\"name\":\"123\"}, {\"name\":\"newname\"} ]", MediaType.APPLICATION_JSON));
 
 		assertEquals(Status.OK.getStatusCode(), r2.getStatus());

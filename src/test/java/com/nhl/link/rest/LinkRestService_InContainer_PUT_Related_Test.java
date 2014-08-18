@@ -207,4 +207,34 @@ public class LinkRestService_InContainer_PUT_Related_Test extends JerseyTestOnDe
 		assertEquals(8, SQLSelect.scalarQuery(Integer.class, "SELECT e8_id FROM utest.e9").selectOne(context)
 				.intValue());
 	}
+
+	@Test
+	public void testRelate_ToMany_NoIds() {
+
+		context.performGenericQuery(new SQLTemplate(E2.class, "INSERT INTO utest.e2 (id, name) values (15, 'xxx')"));
+		context.performGenericQuery(new SQLTemplate(E2.class, "INSERT INTO utest.e2 (id, name) values (16, 'xxx')"));
+
+		context.performGenericQuery(new SQLTemplate(E3.class,
+				"INSERT INTO utest.e3 (id, name, e2_id) values (7, 'zzz', 16)"));
+		context.performGenericQuery(new SQLTemplate(E3.class,
+				"INSERT INTO utest.e3 (id, name, e2_id) values (8, 'yyy', 15)"));
+		context.performGenericQuery(new SQLTemplate(E3.class,
+				"INSERT INTO utest.e3 (id, name, e2_id) values (9, 'aaa', 15)"));
+
+		assertEquals(3, SQLSelect.scalarQuery(String.class, "SELECT count(1) FROM utest.e3").selectOne(context));
+		assertEquals(2, SQLSelect.scalarQuery(String.class, "SELECT count(1) FROM utest.e3 WHERE e2_id = 15")
+				.selectOne(context));
+
+		// we can't PUT an object with generated ID , as the request is
+		// non-repeatable
+		Response r1 = target("/lr/related/e2/15/e3s").request().put(
+				Entity.entity("[ {\"name\":\"newname\"} ]", MediaType.APPLICATION_JSON));
+
+		assertEquals(Status.BAD_REQUEST.getStatusCode(), r1.getStatus());
+		assertEquals("{\"success\":false,\"message\":\"Request is not idempotent. At least one update has no id\"}",
+				r1.readEntity(String.class));
+		assertEquals(3, SQLSelect.scalarQuery(String.class, "SELECT count(1) FROM utest.e3").selectOne(context));
+		assertEquals(2, SQLSelect.scalarQuery(String.class, "SELECT count(1) FROM utest.e3 WHERE e2_id = 15")
+				.selectOne(context));
+	}
 }

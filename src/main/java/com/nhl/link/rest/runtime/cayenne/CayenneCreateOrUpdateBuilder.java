@@ -142,10 +142,13 @@ class CayenneCreateOrUpdateBuilder<T> extends BaseCreateOrUpdateBuilder<T> {
 
 			@Override
 			public T locate(EntityUpdate u, ObjectContext c, ObjEntity entity) {
-				// TODO: check for idempotency - all IDs must be present or must
-				// be derivable
 
-				T o = u.getId() != null ? getOptionalExistingObject(type, c, u.getId()) : null;
+				if (u.getId() == null) {
+					throw new LinkRestException(Status.BAD_REQUEST,
+							"Request is not idempotent. At least one update has no id");
+				}
+
+				T o = getOptionalExistingObject(type, c, u.getId());
 				return o != null ? o : createObject(c, entity, u.getId());
 			}
 		});
