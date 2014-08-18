@@ -44,15 +44,23 @@ public interface SelectBuilder<T> {
 	/**
 	 * Applies entity config to the SelectBuilder.
 	 * 
+	 * @since 1.3
+	 */
+	SelectBuilder<T> canRead(EntityConfigBuilder builder);
+
+	/**
+	 * Applies entity config to the SelectBuilder.
+	 * 
 	 * @since 1.2
+	 * @deprecated since 1.3 use {@link #canRead(EntityConfigBuilder)}.
 	 */
 	SelectBuilder<T> withEntity(EntityConfigBuilder builder);
-	
+
 	/**
 	 * @since 1.2
 	 */
 	SelectBuilder<T> fetchOffset(int offset);
-	
+
 	/**
 	 * @since 1.2
 	 */
