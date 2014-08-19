@@ -30,8 +30,7 @@ public class PojoLinkRestService extends BaseLinkRestService {
 
 	@Override
 	public <T> SelectBuilder<T> forSelect(Class<T> root) {
-		return new PojoSelectBuilder<>(root, encoderService, requestParser, configMerger, db.bucketForType(root),
-				metadataService);
+		return new PojoSelectBuilder<>(root, encoderService, requestParser, configMerger, db.bucketForType(root));
 	}
 
 	@Override

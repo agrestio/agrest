@@ -25,7 +25,6 @@ import com.nhl.link.rest.runtime.encoder.EncoderService;
 import com.nhl.link.rest.runtime.encoder.IAttributeEncoderFactory;
 import com.nhl.link.rest.runtime.encoder.IEncoderService;
 import com.nhl.link.rest.runtime.encoder.IStringConverterFactory;
-import com.nhl.link.rest.runtime.meta.IMetadataService;
 import com.nhl.link.rest.runtime.parser.IRequestParser;
 import com.nhl.link.rest.runtime.semantics.RelationshipMapper;
 import com.nhl.link.rest.unit.TestWithCayenneMapping;
@@ -39,7 +38,6 @@ public class CayenneSelectBuilderTest extends TestWithCayenneMapping {
 	private ICayennePersister cayenneServiceMock;
 	private IRequestParser requestParserMock;
 	private IConstraintsHandler configMergerMock;
-	private IMetadataService mockMetadataService;
 
 	@Before
 	public void setUp() {
@@ -47,7 +45,6 @@ public class CayenneSelectBuilderTest extends TestWithCayenneMapping {
 		IAttributeEncoderFactory attributeEncoderFactory = new AttributeEncoderFactory();
 		IStringConverterFactory stringConverterFactory = mock(IStringConverterFactory.class);
 
-		this.mockMetadataService = mock(IMetadataService.class);
 		this.cayenneServiceMock = mock(ICayennePersister.class);
 		this.requestParserMock = mock(IRequestParser.class);
 		this.encoderService = new EncoderService(Collections.<EncoderFilter> emptyList(), attributeEncoderFactory,
@@ -68,7 +65,7 @@ public class CayenneSelectBuilderTest extends TestWithCayenneMapping {
 		request.getEntity().getOrderings().add(o2);
 
 		CayenneSelectBuilder<E1> builder = new CayenneSelectBuilder<>(query, E1.class, cayenneServiceMock,
-				encoderService, requestParserMock, configMergerMock, mockMetadataService);
+				encoderService, requestParserMock, configMergerMock);
 
 		SelectQuery<E1> amended = builder.buildQuery(request);
 		assertSame(query, amended);
@@ -88,7 +85,7 @@ public class CayenneSelectBuilderTest extends TestWithCayenneMapping {
 		DataResponse<E2> request = DataResponse.forType(E2.class).withClientEntity(resultFilter);
 
 		CayenneSelectBuilder<E2> builder = new CayenneSelectBuilder<>(query, E2.class, cayenneServiceMock,
-				encoderService, requestParserMock, configMergerMock, mockMetadataService);
+				encoderService, requestParserMock, configMergerMock);
 
 		SelectQuery<E2> amended = builder.buildQuery(request);
 		assertSame(query, amended);
@@ -109,7 +106,7 @@ public class CayenneSelectBuilderTest extends TestWithCayenneMapping {
 		request.withFetchLimit(10);
 		request.withFetchOffset(0);
 		SelectQuery<E1> q1 = new CayenneSelectBuilder<>(E1.class, cayenneServiceMock, encoderService,
-				requestParserMock, configMergerMock, mockMetadataService).buildQuery(request);
+				requestParserMock, configMergerMock).buildQuery(request);
 
 		assertEquals("No pagination in the query for paginated request is expected", 0, q1.getPageSize());
 		assertEquals(0, q1.getFetchOffset());
@@ -118,7 +115,7 @@ public class CayenneSelectBuilderTest extends TestWithCayenneMapping {
 		request.withFetchLimit(0);
 		request.withFetchOffset(0);
 		SelectQuery<E1> q2 = new CayenneSelectBuilder<>(E1.class, cayenneServiceMock, encoderService,
-				requestParserMock, configMergerMock, mockMetadataService).buildQuery(request);
+				requestParserMock, configMergerMock).buildQuery(request);
 		assertEquals(0, q2.getPageSize());
 		assertEquals(0, q2.getFetchOffset());
 		assertEquals(0, q2.getFetchLimit());
@@ -126,7 +123,7 @@ public class CayenneSelectBuilderTest extends TestWithCayenneMapping {
 		request.withFetchLimit(0);
 		request.withFetchOffset(5);
 		SelectQuery<E1> q3 = new CayenneSelectBuilder<>(E1.class, cayenneServiceMock, encoderService,
-				requestParserMock, configMergerMock, mockMetadataService).buildQuery(request);
+				requestParserMock, configMergerMock).buildQuery(request);
 		assertEquals(0, q3.getPageSize());
 		assertEquals(0, q3.getFetchOffset());
 		assertEquals(0, q3.getFetchLimit());
@@ -139,14 +136,14 @@ public class CayenneSelectBuilderTest extends TestWithCayenneMapping {
 		request.getEntity().andQualifier(extraQualifier);
 
 		SelectQuery<E1> query = new CayenneSelectBuilder<>(E1.class, cayenneServiceMock, encoderService,
-				requestParserMock, configMergerMock, mockMetadataService).buildQuery(request);
+				requestParserMock, configMergerMock).buildQuery(request);
 		assertEquals(extraQualifier, query.getQualifier());
 
 		SelectQuery<E1> query2 = new SelectQuery<E1>(E1.class);
 		query2.setQualifier(E1.NAME.in("a", "b"));
 
 		SelectQuery<E1> query2Amended = new CayenneSelectBuilder<>(query2, E1.class, cayenneServiceMock,
-				encoderService, requestParserMock, configMergerMock, mockMetadataService).buildQuery(request);
+				encoderService, requestParserMock, configMergerMock).buildQuery(request);
 		assertEquals(E1.NAME.in("a", "b").andExp(E1.NAME.eq("X")), query2Amended.getQualifier());
 	}
 
@@ -154,12 +151,12 @@ public class CayenneSelectBuilderTest extends TestWithCayenneMapping {
 	public void testFactoryMethods() {
 
 		CayenneSelectBuilder<E1> b1 = new CayenneSelectBuilder<>(E1.class, cayenneServiceMock, encoderService,
-				requestParserMock, configMergerMock, mockMetadataService);
+				requestParserMock, configMergerMock);
 		assertSame(E1.class, b1.getType());
 
 		SelectQuery<E1> select = new SelectQuery<E1>(E1.class);
 		CayenneSelectBuilder<E1> b2 = new CayenneSelectBuilder<>(select, E1.class, cayenneServiceMock, encoderService,
-				requestParserMock, configMergerMock, mockMetadataService);
+				requestParserMock, configMergerMock);
 		assertSame(select, b2.basicSelect(DataResponse.forType(E1.class).withClientEntity(getClientEntity(E1.class))));
 		assertSame(E1.class, b2.getType());
 	}
@@ -168,7 +165,7 @@ public class CayenneSelectBuilderTest extends TestWithCayenneMapping {
 	public void testById() {
 
 		CayenneSelectBuilder<E1> b1 = new CayenneSelectBuilder<E1>(E1.class, cayenneServiceMock, encoderService,
-				requestParserMock, configMergerMock, mockMetadataService);
+				requestParserMock, configMergerMock);
 		b1.byId(1);
 		assertSame(E1.class, b1.getType());
 		SelectQuery<E1> s1 = b1.basicSelect(DataResponse.forType(E1.class).withClientEntity(getClientEntity(E1.class)));
@@ -177,7 +174,7 @@ public class CayenneSelectBuilderTest extends TestWithCayenneMapping {
 
 		SelectQuery<E1> select = new SelectQuery<E1>(E1.class);
 		CayenneSelectBuilder<E1> b2 = new CayenneSelectBuilder<E1>(select, E1.class, cayenneServiceMock,
-				encoderService, requestParserMock, configMergerMock, mockMetadataService);
+				encoderService, requestParserMock, configMergerMock);
 		b2.byId(1);
 		SelectQuery<E1> s2 = b2.basicSelect(DataResponse.forType(E1.class).withClientEntity(getClientEntity(E1.class)));
 		assertNotNull(s2);

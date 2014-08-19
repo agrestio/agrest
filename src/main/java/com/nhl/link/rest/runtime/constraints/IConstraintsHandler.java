@@ -12,4 +12,6 @@ public interface IConstraintsHandler {
 	 * Applies constraints to the {@link DataResponse}.
 	 */
 	void apply(DataResponseConstraints constraints, DataResponse<?> target);
+
+	DataResponseConstraints newDefaultConstraints(Class<?> type);
 }

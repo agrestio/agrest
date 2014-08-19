@@ -17,7 +17,6 @@ import com.nhl.link.rest.SelectBuilder;
 import com.nhl.link.rest.runtime.BaseSelectBuilder;
 import com.nhl.link.rest.runtime.constraints.IConstraintsHandler;
 import com.nhl.link.rest.runtime.encoder.IEncoderService;
-import com.nhl.link.rest.runtime.meta.IMetadataService;
 import com.nhl.link.rest.runtime.parser.IRequestParser;
 
 class CayenneSelectBuilder<T> extends BaseSelectBuilder<T> implements SelectBuilder<T> {
@@ -26,15 +25,14 @@ class CayenneSelectBuilder<T> extends BaseSelectBuilder<T> implements SelectBuil
 	private ICayennePersister cayenneService;
 
 	CayenneSelectBuilder(SelectQuery<T> select, Class<T> type, ICayennePersister cayenneService,
-			IEncoderService encoderService, IRequestParser requestParser, IConstraintsHandler configMerger,
-			IMetadataService metadataService) {
-		this(type, cayenneService, encoderService, requestParser, configMerger, metadataService);
+			IEncoderService encoderService, IRequestParser requestParser, IConstraintsHandler configMerger) {
+		this(type, cayenneService, encoderService, requestParser, configMerger);
 		this.select = select;
 	}
 
 	CayenneSelectBuilder(Class<T> type, ICayennePersister cayenneService, IEncoderService encoderService,
-			IRequestParser requestParser, IConstraintsHandler configMerger, IMetadataService metadataService) {
-		super(type, encoderService, requestParser, configMerger, metadataService);
+			IRequestParser requestParser, IConstraintsHandler configMerger) {
+		super(type, encoderService, requestParser, configMerger);
 		this.cayenneService = cayenneService;
 	}
 

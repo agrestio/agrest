@@ -51,14 +51,12 @@ public class CayenneDao<T> implements EntityDao<T> {
 
 	@Override
 	public SelectBuilder<T> forSelect() {
-		return new CayenneSelectBuilder<T>(type, persister, encoderService, requestParser, configMerger,
-				metadataService);
+		return new CayenneSelectBuilder<T>(type, persister, encoderService, requestParser, configMerger);
 	}
 
 	@Override
 	public SelectBuilder<T> forSelect(SelectQuery<T> query) {
-		return new CayenneSelectBuilder<T>(query, type, persister, encoderService, requestParser, configMerger,
-				metadataService);
+		return new CayenneSelectBuilder<T>(query, type, persister, encoderService, requestParser, configMerger);
 	}
 
 	@Override

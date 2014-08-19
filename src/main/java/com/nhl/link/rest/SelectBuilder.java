@@ -49,14 +49,6 @@ public interface SelectBuilder<T> {
 	SelectBuilder<T> constraints(EntityConstraintsBuilder builder);
 
 	/**
-	 * Applies entity constraints to the SelectBuilder.
-	 * 
-	 * @since 1.2
-	 * @deprecated since 1.3 use {@link #constraints(EntityConstraintsBuilder)}.
-	 */
-	SelectBuilder<T> withEntity(EntityConstraintsBuilder builder);
-
-	/**
 	 * @since 1.2
 	 */
 	SelectBuilder<T> fetchOffset(int offset);

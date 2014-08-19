@@ -13,7 +13,6 @@ import com.nhl.link.rest.DataResponse;
 import com.nhl.link.rest.runtime.BaseSelectBuilder;
 import com.nhl.link.rest.runtime.constraints.IConstraintsHandler;
 import com.nhl.link.rest.runtime.encoder.IEncoderService;
-import com.nhl.link.rest.runtime.meta.IMetadataService;
 import com.nhl.link.rest.runtime.parser.IRequestParser;
 
 class PojoSelectBuilder<T> extends BaseSelectBuilder<T> {
@@ -21,8 +20,8 @@ class PojoSelectBuilder<T> extends BaseSelectBuilder<T> {
 	private Map<Object, T> typeBucket;
 
 	public PojoSelectBuilder(Class<T> type, IEncoderService encoderService, IRequestParser requestParser,
-			IConstraintsHandler configMerger, Map<Object, T> typeBucket, IMetadataService metadataService) {
-		super(type, encoderService, requestParser, configMerger, metadataService);
+			IConstraintsHandler configMerger, Map<Object, T> typeBucket) {
+		super(type, encoderService, requestParser, configMerger);
 		this.typeBucket = typeBucket;
 	}
 

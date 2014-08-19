@@ -12,6 +12,7 @@ import com.nhl.link.rest.DataResponse;
 import com.nhl.link.rest.DataResponseConstraints;
 import com.nhl.link.rest.Entity;
 import com.nhl.link.rest.EntityConstraints;
+import com.nhl.link.rest.EntityConstraintsBuilder;
 import com.nhl.link.rest.LinkRestException;
 import com.nhl.link.rest.runtime.parser.PathConstants;
 
@@ -24,6 +25,14 @@ import com.nhl.link.rest.runtime.parser.PathConstants;
 public class DefaultConstraintsHandler implements IConstraintsHandler {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(DefaultConstraintsHandler.class);
+
+	@Override
+	public DataResponseConstraints newDefaultConstraints(Class<?> type) {
+
+		// using generic no-constraints config here, whihc is type-agnostic
+		EntityConstraintsBuilder entityConstraints = EntityConstraintsBuilder.constraints();
+		return new DataResponseConstraints(entityConstraints);
+	}
 
 	@Override
 	public void apply(DataResponseConstraints source, DataResponse<?> target) {
