@@ -4,6 +4,7 @@ Release 1.3
 #19 Backend support for batch updates of a single entity
 #20 IEncoderService to return Encoder instead of DataResponse
 #21 SelectBuilder.withEntity - rename to SelectBuilder.canRead.
+#23 Refactor EntityConfig and friends into 'constraints'
 
 Release 1.2 2013-08-01
 
