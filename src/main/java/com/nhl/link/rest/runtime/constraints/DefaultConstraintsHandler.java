@@ -5,6 +5,8 @@ import java.util.Map.Entry;
 
 import javax.ws.rs.core.Response.Status;
 
+import org.apache.cayenne.di.Inject;
+import org.apache.cayenne.map.ObjAttribute;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,6 +16,7 @@ import com.nhl.link.rest.Entity;
 import com.nhl.link.rest.EntityConstraints;
 import com.nhl.link.rest.EntityConstraintsBuilder;
 import com.nhl.link.rest.LinkRestException;
+import com.nhl.link.rest.runtime.meta.IMetadataService;
 import com.nhl.link.rest.runtime.parser.PathConstants;
 
 /**
@@ -26,11 +29,24 @@ public class DefaultConstraintsHandler implements IConstraintsHandler {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(DefaultConstraintsHandler.class);
 
+	private IMetadataService metadataService;
+
+	public DefaultConstraintsHandler(@Inject IMetadataService metadataService) {
+		this.metadataService = metadataService;
+	}
+
 	@Override
 	public DataResponseConstraints newDefaultConstraints(Class<?> type) {
 
-		// using generic no-constraints config here, whihc is type-agnostic
-		EntityConstraintsBuilder entityConstraints = EntityConstraintsBuilder.constraints();
+		// add all entity attributes and ID as default "allow"
+		// TODO: cache per-entity default EntityConstraintsBuilder's
+
+		EntityConstraintsBuilder entityConstraints = EntityConstraintsBuilder.constraints().includeId();
+
+		for (ObjAttribute a : metadataService.getObjEntity(type).getAttributes()) {
+			entityConstraints.attribute(a.getName());
+		}
+
 		return new DataResponseConstraints(entityConstraints);
 	}
 

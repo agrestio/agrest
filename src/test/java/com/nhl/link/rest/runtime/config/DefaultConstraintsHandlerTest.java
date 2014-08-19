@@ -7,6 +7,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
 
 import org.apache.cayenne.exp.Expression;
 import org.apache.cayenne.map.DataMap;
@@ -20,10 +21,11 @@ import com.nhl.link.rest.DataResponseConstraints;
 import com.nhl.link.rest.Entity;
 import com.nhl.link.rest.EntityConstraintsBuilder;
 import com.nhl.link.rest.runtime.constraints.DefaultConstraintsHandler;
+import com.nhl.link.rest.runtime.meta.IMetadataService;
 
 public class DefaultConstraintsHandlerTest {
 
-	private DefaultConstraintsHandler merger;
+	private DefaultConstraintsHandler constraintHandler;
 	private ObjEntity e0;
 	private ObjEntity e1;
 	private ObjEntity e2;
@@ -31,7 +33,7 @@ public class DefaultConstraintsHandlerTest {
 
 	@Before
 	public void before() {
-		this.merger = new DefaultConstraintsHandler();
+		this.constraintHandler = new DefaultConstraintsHandler(mock(IMetadataService.class));
 
 		DataMap dm = new DataMap();
 
@@ -67,22 +69,22 @@ public class DefaultConstraintsHandlerTest {
 		DataResponseConstraints s2 = new DataResponseConstraints(constraints()).fetchOffset(0);
 
 		DataResponse<?> t1 = DataResponse.forType(Object.class).withFetchOffset(0);
-		merger.apply(s1, t1);
+		constraintHandler.apply(s1, t1);
 		assertEquals(0, t1.getFetchOffset());
 		assertEquals(5, s1.getFetchOffset());
 
 		DataResponse<?> t2 = DataResponse.forType(Object.class).withFetchOffset(3);
-		merger.apply(s1, t2);
+		constraintHandler.apply(s1, t2);
 		assertEquals(3, t2.getFetchOffset());
 		assertEquals(5, s1.getFetchOffset());
 
 		DataResponse<?> t3 = DataResponse.forType(Object.class).withFetchOffset(6);
-		merger.apply(s1, t3);
+		constraintHandler.apply(s1, t3);
 		assertEquals(5, t3.getFetchOffset());
 		assertEquals(5, s1.getFetchOffset());
 
 		DataResponse<?> t4 = DataResponse.forType(Object.class).withFetchOffset(6);
-		merger.apply(s2, t4);
+		constraintHandler.apply(s2, t4);
 		assertEquals(6, t4.getFetchOffset());
 		assertEquals(0, s2.getFetchOffset());
 	}
@@ -94,22 +96,22 @@ public class DefaultConstraintsHandlerTest {
 		DataResponseConstraints s2 = new DataResponseConstraints(constraints()).fetchLimit(0);
 
 		DataResponse<?> t1 = DataResponse.forType(Object.class).withFetchLimit(0);
-		merger.apply(s1, t1);
+		constraintHandler.apply(s1, t1);
 		assertEquals(0, t1.getFetchLimit());
 		assertEquals(5, s1.getFetchLimit());
 
 		DataResponse<?> t2 = DataResponse.forType(Object.class).withFetchLimit(3);
-		merger.apply(s1, t2);
+		constraintHandler.apply(s1, t2);
 		assertEquals(3, t2.getFetchLimit());
 		assertEquals(5, s1.getFetchLimit());
 
 		DataResponse<?> t3 = DataResponse.forType(Object.class).withFetchLimit(6);
-		merger.apply(s1, t3);
+		constraintHandler.apply(s1, t3);
 		assertEquals(5, t3.getFetchLimit());
 		assertEquals(5, s1.getFetchLimit());
 
 		DataResponse<?> t4 = DataResponse.forType(Object.class).withFetchLimit(6);
-		merger.apply(s2, t4);
+		constraintHandler.apply(s2, t4);
 		assertEquals(6, t4.getFetchLimit());
 		assertEquals(0, s2.getFetchLimit());
 	}
@@ -131,7 +133,7 @@ public class DefaultConstraintsHandlerTest {
 
 		DataResponse<?> t1 = DataResponse.forType(Object.class).withClientEntity(te1);
 
-		merger.apply(s1, t1);
+		constraintHandler.apply(s1, t1);
 		assertEquals(1, t1.getEntity().getAttributes().size());
 		assertTrue(t1.getEntity().getAttributes().contains("b"));
 		assertTrue(t1.getEntity().getChildren().isEmpty());
@@ -162,7 +164,7 @@ public class DefaultConstraintsHandlerTest {
 
 		DataResponse<?> t1 = DataResponse.forType(Object.class).withClientEntity(te1);
 
-		merger.apply(s1, t1);
+		constraintHandler.apply(s1, t1);
 		assertEquals(1, t1.getEntity().getAttributes().size());
 		assertTrue(t1.getEntity().getAttributes().contains("b"));
 		assertEquals(1, t1.getEntity().getChildren().size());
@@ -186,19 +188,19 @@ public class DefaultConstraintsHandlerTest {
 		Entity<Object> te1 = new Entity<>(Object.class, e0);
 		te1.includeId();
 		DataResponse<?> t1 = DataResponse.forType(Object.class).withClientEntity(te1);
-		merger.apply(s1, t1);
+		constraintHandler.apply(s1, t1);
 		assertFalse(t1.getEntity().isIdIncluded());
 
 		Entity<Object> te2 = new Entity<>(Object.class, e0);
 		te2.includeId();
 		DataResponse<?> t2 = DataResponse.forType(Object.class).withClientEntity(te2);
-		merger.apply(s2, t2);
+		constraintHandler.apply(s2, t2);
 		assertTrue(t2.getEntity().isIdIncluded());
 
 		Entity<Object> te3 = new Entity<>(Object.class, e0);
 		te3.excludeId();
 		DataResponse<?> t3 = DataResponse.forType(Object.class).withClientEntity(te3);
-		merger.apply(s2, t3);
+		constraintHandler.apply(s2, t3);
 		assertFalse(t3.getEntity().isIdIncluded());
 	}
 
@@ -212,13 +214,13 @@ public class DefaultConstraintsHandlerTest {
 
 		Entity<Object> te1 = new Entity<>(Object.class, e0);
 		DataResponse<?> t1 = DataResponse.forType(Object.class).withClientEntity(te1);
-		merger.apply(s1, t1);
+		constraintHandler.apply(s1, t1);
 		assertEquals(Expression.fromString("a = 5"), t1.getEntity().getQualifier());
 
 		Entity<Object> te2 = new Entity<>(Object.class, e0);
 		te2.andQualifier(Expression.fromString("b = 'd'"));
 		DataResponse<?> t2 = DataResponse.forType(Object.class).withClientEntity(te2);
-		merger.apply(s1, t2);
+		constraintHandler.apply(s1, t2);
 		assertEquals(Expression.fromString("b = 'd' and a = 5"), t2.getEntity().getQualifier());
 	}
 
@@ -240,7 +242,7 @@ public class DefaultConstraintsHandlerTest {
 		te1.mapBy(te1MapBy, "r1.b");
 
 		DataResponse<?> t1 = DataResponse.forType(Object.class).withClientEntity(te1);
-		merger.apply(s1, t1);
+		constraintHandler.apply(s1, t1);
 		assertNull(t1.getEntity().getMapBy());
 		assertNull(t1.getEntity().getMapByPath());
 
@@ -254,7 +256,7 @@ public class DefaultConstraintsHandlerTest {
 		te2.mapBy(te2MapBy, "r1.a");
 
 		DataResponse<?> t2 = DataResponse.forType(Object.class).withClientEntity(te2);
-		merger.apply(s1, t2);
+		constraintHandler.apply(s1, t2);
 		assertSame(te2MapBy, t2.getEntity().getMapBy());
 		assertEquals("r1.a", t2.getEntity().getMapByPath());
 	}
@@ -275,7 +277,7 @@ public class DefaultConstraintsHandlerTest {
 		te1.mapBy(te1MapBy, "r1");
 
 		DataResponse<?> t1 = DataResponse.forType(Object.class).withClientEntity(te1);
-		merger.apply(s1, t1);
+		constraintHandler.apply(s1, t1);
 		assertNull(t1.getEntity().getMapBy());
 		assertNull(t1.getEntity().getMapByPath());
 
@@ -297,7 +299,7 @@ public class DefaultConstraintsHandlerTest {
 		te1.mapBy(te1MapBy, "r1");
 
 		DataResponse<?> t1 = DataResponse.forType(Object.class).withClientEntity(te1);
-		merger.apply(s1, t1);
+		constraintHandler.apply(s1, t1);
 		assertSame(te1MapBy, t1.getEntity().getMapBy());
 		assertEquals("r1", t1.getEntity().getMapByPath());
 
