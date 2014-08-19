@@ -51,14 +51,6 @@ public class EntityConstraints {
 		return attributes.contains(name);
 	}
 
-	public Collection<String> getAttributes() {
-		return attributes;
-	}
-
-	public Map<String, EntityConstraints> getChildren() {
-		return children;
-	}
-
 	public EntityConstraints getChild(String name) {
 		return children.get(name);
 	}
@@ -133,7 +125,7 @@ public class EntityConstraints {
 			EntityConstraints child = parent.getChild(r.getName());
 			if (child == null) {
 				child = new EntityConstraints(r.getTargetEntity());
-				parent.getChildren().put(r.getName(), child);
+				parent.children.put(r.getName(), child);
 			}
 
 			return child;
