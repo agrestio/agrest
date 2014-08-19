@@ -9,27 +9,25 @@ import java.util.Map;
 
 import org.apache.cayenne.exp.Expression;
 import org.apache.cayenne.exp.Property;
+import org.apache.cayenne.map.ObjAttribute;
 import org.apache.cayenne.map.ObjEntity;
 import org.apache.cayenne.map.ObjRelationship;
 import org.apache.cayenne.util.CayenneMapEntry;
 
 /**
- * An immutable object that defines read or write constraints on a given entity.
- * Constraints are predefined on the server side and are applied to each
- * request, ensuring a client can't read or write more data than she is allowed
- * to.
+ * An immutable snapshot of {@link TreeConstraints}.
  * 
  * @since 1.3
  */
-public class EntityConstraints {
+public class ImmutableTreeConstraints {
 
 	private boolean idIncluded;
 	private Collection<String> attributes;
-	private Map<String, EntityConstraints> children;
+	private Map<String, ImmutableTreeConstraints> children;
 	private Expression qualifier;
 	ObjEntity entity;
 
-	EntityConstraints(ObjEntity entity) {
+	ImmutableTreeConstraints(ObjEntity entity) {
 
 		if (entity == null) {
 			throw new NullPointerException("Null entity");
@@ -51,7 +49,7 @@ public class EntityConstraints {
 		return attributes.contains(name);
 	}
 
-	public EntityConstraints getChild(String name) {
+	public ImmutableTreeConstraints getChild(String name) {
 		return children.get(name);
 	}
 
@@ -77,6 +75,12 @@ public class EntityConstraints {
 
 	void attribute(Property<?> attribute) {
 		this.attributes.add(attribute.getName());
+	}
+
+	void allAttributes() {
+		for (ObjAttribute a : entity.getAttributes()) {
+			this.attributes.add(a.getName());
+		}
 	}
 
 	void attributes(Property<?>... attributes) {
@@ -105,10 +109,10 @@ public class EntityConstraints {
 		this.idIncluded = false;
 	}
 
-	EntityConstraints ensurePath(String path) {
+	ImmutableTreeConstraints ensurePath(String path) {
 
 		Iterator<CayenneMapEntry> it = entity.resolvePathComponents(path);
-		EntityConstraints c = this;
+		ImmutableTreeConstraints c = this;
 		while (it.hasNext()) {
 			c = ensurePath(c, it.next());
 		}
@@ -116,15 +120,15 @@ public class EntityConstraints {
 		return c;
 	}
 
-	private EntityConstraints ensurePath(EntityConstraints parent, CayenneMapEntry e) {
+	private ImmutableTreeConstraints ensurePath(ImmutableTreeConstraints parent, CayenneMapEntry e) {
 
 		if (e instanceof ObjRelationship) {
 
 			ObjRelationship r = (ObjRelationship) e;
 
-			EntityConstraints child = parent.getChild(r.getName());
+			ImmutableTreeConstraints child = parent.getChild(r.getName());
 			if (child == null) {
-				child = new EntityConstraints(r.getTargetEntity());
+				child = new ImmutableTreeConstraints(r.getTargetEntity());
 				parent.children.put(r.getName(), child);
 			}
 

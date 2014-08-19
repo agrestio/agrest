@@ -14,12 +14,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.nhl.link.rest.DataResponse;
-import com.nhl.link.rest.DataResponseConstraints;
 import com.nhl.link.rest.Entity;
-import com.nhl.link.rest.EntityConstraintsBuilder;
 import com.nhl.link.rest.EntityProperty;
 import com.nhl.link.rest.LinkRestException;
 import com.nhl.link.rest.SelectBuilder;
+import com.nhl.link.rest.SizeConstraints;
+import com.nhl.link.rest.TreeConstraints;
 import com.nhl.link.rest.encoder.Encoder;
 import com.nhl.link.rest.runtime.constraints.IConstraintsHandler;
 import com.nhl.link.rest.runtime.encoder.IEncoderService;
@@ -38,7 +38,8 @@ public abstract class BaseSelectBuilder<T> implements SelectBuilder<T> {
 	private IConstraintsHandler constraintsHandler;
 	private Map<String, EntityProperty> extraProperties;
 	private Encoder dataEncoder;
-	private DataResponseConstraints constraints;
+	private SizeConstraints sizeConstraints;
+	private TreeConstraints treeConstraints;
 
 	public BaseSelectBuilder(Class<T> type, IEncoderService encoderService, IRequestParser requestParser,
 			IConstraintsHandler constraintsHandler) {
@@ -46,25 +47,32 @@ public abstract class BaseSelectBuilder<T> implements SelectBuilder<T> {
 		this.encoderService = encoderService;
 		this.requestParser = requestParser;
 		this.constraintsHandler = constraintsHandler;
-		this.constraints = constraintsHandler.newDefaultConstraints(type);
 	}
 
 	@Override
-	public SelectBuilder<T> constraints(EntityConstraintsBuilder constraints) {
-		this.constraints.getEntityConstraints().append(constraints);
+	public SelectBuilder<T> constraints(TreeConstraints constraints) {
+		this.treeConstraints = constraints;
 		return this;
 	}
 
 	@Override
 	public SelectBuilder<T> fetchLimit(int limit) {
-		constraints.fetchLimit(limit);
+		getOrCreateSizeConstraints().fetchLimit(limit);
 		return this;
 	}
 
 	@Override
 	public SelectBuilder<T> fetchOffset(int offset) {
-		constraints.fetchOffset(offset);
+		getOrCreateSizeConstraints().fetchOffset(offset);
 		return this;
+	}
+
+	private SizeConstraints getOrCreateSizeConstraints() {
+		if (sizeConstraints == null) {
+			sizeConstraints = new SizeConstraints();
+		}
+
+		return sizeConstraints;
 	}
 
 	@Override
@@ -137,7 +145,7 @@ public abstract class BaseSelectBuilder<T> implements SelectBuilder<T> {
 		requestParser.parseSelect(response, uriInfo, autocompleteProperty);
 
 		// apply constraints
-		constraintsHandler.apply(constraints, response);
+		constraintsHandler.apply(response, sizeConstraints, treeConstraints);
 
 		if (extraProperties != null) {
 			response.getEntity().getExtraProperties().putAll(extraProperties);

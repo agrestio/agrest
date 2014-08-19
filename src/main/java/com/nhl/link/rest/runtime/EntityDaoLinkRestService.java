@@ -16,7 +16,7 @@ import org.apache.cayenne.query.SelectQuery;
 import org.apache.cayenne.reflect.ClassDescriptor;
 
 import com.nhl.link.rest.CreateOrUpdateBuilder;
-import com.nhl.link.rest.EntityConstraintsBuilder;
+import com.nhl.link.rest.TreeConstraints;
 import com.nhl.link.rest.LinkRestException;
 import com.nhl.link.rest.SelectBuilder;
 import com.nhl.link.rest.SimpleResponse;
@@ -97,7 +97,10 @@ public class EntityDaoLinkRestService extends BaseLinkRestService {
 		// navigate through DbRelationships ... there may be no reverse ObjRel..
 		// Reverse DB should always be there
 		Expression qualifier = ExpressionFactory.matchDbExp(objRelationship.getReverseDbRelationshipPath(), rootId);
-		EntityConstraintsBuilder entityConfig = EntityConstraintsBuilder.constraints().and(qualifier);
+		
+		// TODO: hardcoded constraint
+		TreeConstraints entityConfig = TreeConstraints.idAndAttributes().and(qualifier);
+		
 		return dao(objRelationship.getTargetEntityName()).forSelect().constraints(entityConfig);
 	}
 

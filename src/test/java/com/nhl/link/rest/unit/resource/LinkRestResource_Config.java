@@ -1,6 +1,6 @@
 package com.nhl.link.rest.unit.resource;
 
-import static com.nhl.link.rest.EntityConstraintsBuilder.excludeAll;
+import static com.nhl.link.rest.TreeConstraints.idOnly;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -27,7 +27,7 @@ public class LinkRestResource_Config {
 	@Path("limit_attributes")
 	public DataResponse<E4> getObjects_LimitAttributes(@Context UriInfo uriInfo) {
 
-		return getService().forSelect(E4.class).constraints(excludeAll().attributes(E4.C_INT)).select();
+		return getService().forSelect(E4.class).constraints(idOnly().attributes(E4.C_INT)).select();
 	}
 
 }
