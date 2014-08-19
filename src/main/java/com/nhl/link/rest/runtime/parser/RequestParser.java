@@ -1,7 +1,5 @@
 package com.nhl.link.rest.runtime.parser;
 
-import java.util.Collections;
-
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriInfo;
@@ -93,7 +91,7 @@ public class RequestParser implements IRequestParser {
 	 * @since 1.3
 	 */
 	@Override
-	public <T> UpdateResponse<T> parseUpdate(UpdateResponse<T> response, String requestBody) {
+	public <T> UpdateResponse<T> parseUpdate(UpdateResponse<T> response, UriInfo uriInfo, String requestBody) {
 		if (response == null) {
 			throw new LinkRestException(Status.INTERNAL_SERVER_ERROR, "Null response");
 		}
@@ -102,8 +100,11 @@ public class RequestParser implements IRequestParser {
 		Entity<T> clientEntity = new Entity<T>(response.getType(), entity);
 		response.withClientEntity(clientEntity);
 
-		// TODO: support response includes
-		includeProcessor.process(clientEntity, Collections.<String> emptyList());
+		MultivaluedMap<String, String> parameters = uriInfo != null ? uriInfo.getQueryParameters()
+				: EmptyMultiValuedMap.map();
+		
+		includeProcessor.process(clientEntity, RequestParams.include.strings(parameters));
+		excludeProcessor.process(clientEntity, RequestParams.exclude.strings(parameters));
 
 		dataObjectProcessor.process(response, requestBody);
 

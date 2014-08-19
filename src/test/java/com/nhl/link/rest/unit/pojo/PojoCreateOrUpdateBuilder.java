@@ -13,6 +13,7 @@ import com.nhl.link.rest.LinkRestException;
 import com.nhl.link.rest.UpdateResponse;
 import com.nhl.link.rest.runtime.BaseCreateOrUpdateBuilder;
 import com.nhl.link.rest.runtime.CreateOrUpdateOperation;
+import com.nhl.link.rest.runtime.constraints.IConstraintsHandler;
 import com.nhl.link.rest.runtime.encoder.IEncoderService;
 import com.nhl.link.rest.runtime.meta.IMetadataService;
 import com.nhl.link.rest.runtime.parser.IRequestParser;
@@ -22,8 +23,9 @@ public class PojoCreateOrUpdateBuilder<T> extends BaseCreateOrUpdateBuilder<T> {
 	private Map<Object, T> typeBucket;
 
 	public PojoCreateOrUpdateBuilder(Map<Object, T> typeBucket, Class<T> type, CreateOrUpdateOperation op,
-			IEncoderService encoderService, IRequestParser requestParser, IMetadataService metadataService) {
-		super(type, op, encoderService, requestParser, metadataService);
+			IEncoderService encoderService, IRequestParser requestParser, IMetadataService metadataService,
+			IConstraintsHandler constraintsHandler) {
+		super(type, op, encoderService, requestParser, metadataService, constraintsHandler);
 		this.typeBucket = typeBucket;
 	}
 

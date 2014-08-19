@@ -17,20 +17,20 @@ import com.nhl.link.rest.runtime.parser.IRequestParser;
 public class PojoLinkRestService extends BaseLinkRestService {
 
 	private PojoDB db;
-	private IConstraintsHandler configMerger;
+	private IConstraintsHandler constraintsHandler;
 	private IMetadataService metadataService;
 
 	public PojoLinkRestService(@Inject IRequestParser requestParser, @Inject IEncoderService encoderService,
 			@Inject IConstraintsHandler configMerger, @Inject IMetadataService metadataService) {
 		super(requestParser, encoderService);
 		this.db = JerseyTestOnPojo.pojoDB;
-		this.configMerger = configMerger;
+		this.constraintsHandler = configMerger;
 		this.metadataService = metadataService;
 	}
 
 	@Override
 	public <T> SelectBuilder<T> forSelect(Class<T> root) {
-		return new PojoSelectBuilder<>(root, encoderService, requestParser, configMerger, db.bucketForType(root));
+		return new PojoSelectBuilder<>(root, encoderService, requestParser, constraintsHandler, db.bucketForType(root));
 	}
 
 	@Override
@@ -66,24 +66,25 @@ public class PojoLinkRestService extends BaseLinkRestService {
 	@Override
 	public <T> CreateOrUpdateBuilder<T> create(Class<T> type) {
 		return new PojoCreateOrUpdateBuilder<>(db.bucketForType(type), type, CreateOrUpdateOperation.create,
-				encoderService, requestParser, metadataService);
+				encoderService, requestParser, metadataService, constraintsHandler);
 	}
 
 	@Override
 	public <T> CreateOrUpdateBuilder<T> createOrUpdate(Class<T> type) {
 		return new PojoCreateOrUpdateBuilder<>(db.bucketForType(type), type, CreateOrUpdateOperation.createOrUpdate,
-				encoderService, requestParser, metadataService);
+				encoderService, requestParser, metadataService, constraintsHandler);
 	}
 
 	@Override
 	public <T> CreateOrUpdateBuilder<T> idempotentCreateOrUpdate(Class<T> type) {
 		return new PojoCreateOrUpdateBuilder<>(db.bucketForType(type), type,
-				CreateOrUpdateOperation.idempotentCreateOrUpdate, encoderService, requestParser, metadataService);
+				CreateOrUpdateOperation.idempotentCreateOrUpdate, encoderService, requestParser, metadataService,
+				constraintsHandler);
 	}
 
 	@Override
 	public <T> CreateOrUpdateBuilder<T> update(Class<T> type) {
 		return new PojoCreateOrUpdateBuilder<>(db.bucketForType(type), type, CreateOrUpdateOperation.update,
-				encoderService, requestParser, metadataService);
+				encoderService, requestParser, metadataService, constraintsHandler);
 	}
 }

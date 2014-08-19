@@ -14,6 +14,7 @@ import org.apache.cayenne.query.SelectQuery;
 
 import com.nhl.link.rest.DataResponse;
 import com.nhl.link.rest.SimpleResponse;
+import com.nhl.link.rest.TreeConstraints;
 import com.nhl.link.rest.runtime.ILinkRestService;
 import com.nhl.link.rest.runtime.LinkRestRuntime;
 import com.nhl.link.rest.unit.cayenne.E2;
@@ -63,7 +64,7 @@ public class LinkRestServiceResource {
 
 	@POST
 	public DataResponse<E4> insertE4(String requestBody) {
-		return getLinkRestService().insert(E4.class, requestBody);
+		return getLinkRestService().create(E4.class).process(requestBody);
 	}
 
 	@PUT
@@ -75,7 +76,14 @@ public class LinkRestServiceResource {
 	@POST
 	@Path("e3")
 	public DataResponse<E3> insertE3(String requestBody) {
-		return getLinkRestService().insert(E3.class, requestBody);
+		return getLinkRestService().create(E3.class).process(requestBody);
+	}
+
+	@POST
+	@Path("constrained/e3")
+	public DataResponse<E3> insertConstrainedE3(@Context UriInfo uriInfo, String requestBody) {
+		TreeConstraints tc = TreeConstraints.idOnly().attribute(E3.NAME);
+		return getLinkRestService().create(E3.class).with(uriInfo).readConstraints(tc).process(requestBody);
 	}
 
 	@GET

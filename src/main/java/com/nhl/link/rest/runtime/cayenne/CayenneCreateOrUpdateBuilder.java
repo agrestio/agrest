@@ -24,6 +24,7 @@ import com.nhl.link.rest.LinkRestException;
 import com.nhl.link.rest.UpdateResponse;
 import com.nhl.link.rest.runtime.BaseCreateOrUpdateBuilder;
 import com.nhl.link.rest.runtime.CreateOrUpdateOperation;
+import com.nhl.link.rest.runtime.constraints.IConstraintsHandler;
 import com.nhl.link.rest.runtime.encoder.IEncoderService;
 import com.nhl.link.rest.runtime.meta.IMetadataService;
 import com.nhl.link.rest.runtime.parser.IRequestParser;
@@ -36,8 +37,9 @@ class CayenneCreateOrUpdateBuilder<T> extends BaseCreateOrUpdateBuilder<T> {
 	private ICayennePersister persister;
 
 	public CayenneCreateOrUpdateBuilder(Class<T> type, CreateOrUpdateOperation op, ICayennePersister persister,
-			IEncoderService encoderService, IRequestParser requestParser, IMetadataService metadataService) {
-		super(type, op, encoderService, requestParser, metadataService);
+			IEncoderService encoderService, IRequestParser requestParser, IMetadataService metadataService,
+			IConstraintsHandler constraintsHandler) {
+		super(type, op, encoderService, requestParser, metadataService, constraintsHandler);
 
 		this.persister = persister;
 		this.metadataService = metadataService;

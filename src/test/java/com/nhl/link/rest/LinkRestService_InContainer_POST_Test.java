@@ -16,6 +16,7 @@ import javax.ws.rs.core.Response.Status;
 import org.apache.cayenne.Cayenne;
 import org.apache.cayenne.ObjectContext;
 import org.apache.cayenne.query.EJBQLQuery;
+import org.apache.cayenne.query.SQLSelect;
 import org.apache.cayenne.query.SQLTemplate;
 import org.apache.cayenne.query.SelectQuery;
 import org.junit.Before;
@@ -70,6 +71,60 @@ public class LinkRestService_InContainer_POST_Test extends JerseyTestOnDerby {
 				+ ",\"cBoolean\":null,\"cDate\":null,\"cDecimal\":null,\"cInt\":null,"
 				+ "\"cTime\":null,\"cTimestamp\":null,\"cVarchar\":\"TTTT\"}],\"total\":1}",
 				response2.readEntity(String.class));
+	}
+
+	@Test
+	public void testPost_ReadConstraints1() throws WebApplicationException, IOException {
+
+		ObjectContext context = runtime.newContext();
+
+		Response r1 = target("/lr/constrained/e3").request().post(
+				Entity.entity("{\"name\":\"zzz\"}", MediaType.APPLICATION_JSON));
+		assertEquals(Status.CREATED.getStatusCode(), r1.getStatus());
+
+		assertEquals(Integer.valueOf(1), SQLSelect.scalarQuery(Integer.class, "SELECT count(1) FROM utest.e3")
+				.selectOne(context));
+		assertEquals("zzz", SQLSelect.scalarQuery(String.class, "SELECT name FROM utest.e3").selectOne(context));
+		int id1 = SQLSelect.scalarQuery(Integer.class, "SELECT id FROM utest.e3").selectOne(context);
+
+		assertEquals("{\"success\":true,\"data\":[{\"id\":" + id1 + ",\"name\":\"zzz\"}],\"total\":1}",
+				r1.readEntity(String.class));
+	}
+
+	@Test
+	public void testPost_ReadConstraints2() throws WebApplicationException, IOException {
+
+		ObjectContext context = runtime.newContext();
+
+		Response r2 = target("/lr/constrained/e3").queryParam("include", "name").queryParam("include", "phoneNumber")
+				.request().post(Entity.entity("{\"name\":\"yyy\"}", MediaType.APPLICATION_JSON));
+		assertEquals(Status.CREATED.getStatusCode(), r2.getStatus());
+
+		assertEquals(
+				Integer.valueOf(1),
+				SQLSelect.scalarQuery(Integer.class, "SELECT count(1) FROM utest.e3 WHERE name = 'yyy'").selectOne(
+						context));
+
+		assertEquals("{\"success\":true,\"data\":[{\"name\":\"yyy\"}],\"total\":1}", r2.readEntity(String.class));
+	}
+
+	@Test
+	public void testPost_ReadConstraints3() throws WebApplicationException, IOException {
+
+		ObjectContext context = runtime.newContext();
+
+		Response r2 = target("/lr/constrained/e3").queryParam("include", E3.E2.getName()).request()
+				.post(Entity.entity("{\"name\":\"yyy\"}", MediaType.APPLICATION_JSON));
+		assertEquals(Status.CREATED.getStatusCode(), r2.getStatus());
+
+		assertEquals(
+				Integer.valueOf(1),
+				SQLSelect.scalarQuery(Integer.class, "SELECT count(1) FROM utest.e3 WHERE name = 'yyy'").selectOne(
+						context));
+		int id2 = SQLSelect.scalarQuery(Integer.class, "SELECT id FROM utest.e3 WHERE name = 'yyy'").selectOne(context);
+
+		assertEquals("{\"success\":true,\"data\":[{\"id\":" + id2 + ",\"name\":\"yyy\"}],\"total\":1}",
+				r2.readEntity(String.class));
 	}
 
 	@Test

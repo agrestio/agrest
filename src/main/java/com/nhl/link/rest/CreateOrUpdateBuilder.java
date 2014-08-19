@@ -2,6 +2,8 @@ package com.nhl.link.rest;
 
 import java.util.Collection;
 
+import javax.ws.rs.core.UriInfo;
+
 import org.apache.cayenne.exp.Property;
 
 /**
@@ -38,6 +40,13 @@ public interface CreateOrUpdateBuilder<T> {
 	 */
 	CreateOrUpdateBuilder<T> toManyParent(Class<?> parentType, Object parentId,
 			Property<? extends Collection<T>> relationshipFromParent);
+
+	/**
+	 * Sets request {@link UriInfo} that will be used to shape response.
+	 */
+	CreateOrUpdateBuilder<T> with(UriInfo uriInfo);
+
+	CreateOrUpdateBuilder<T> readConstraints(TreeConstraints constraints);
 
 	UpdateResponse<T> process(String entityData);
 }

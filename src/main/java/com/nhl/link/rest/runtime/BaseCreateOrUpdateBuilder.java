@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.List;
 
 import javax.ws.rs.core.Response.Status;
+import javax.ws.rs.core.UriInfo;
 
 import org.apache.cayenne.exp.Property;
 import org.apache.cayenne.map.ObjRelationship;
@@ -11,18 +12,21 @@ import org.apache.cayenne.map.ObjRelationship;
 import com.nhl.link.rest.CreateOrUpdateBuilder;
 import com.nhl.link.rest.EntityUpdate;
 import com.nhl.link.rest.LinkRestException;
+import com.nhl.link.rest.TreeConstraints;
 import com.nhl.link.rest.UpdateResponse;
+import com.nhl.link.rest.runtime.constraints.IConstraintsHandler;
 import com.nhl.link.rest.runtime.encoder.IEncoderService;
 import com.nhl.link.rest.runtime.meta.IMetadataService;
 import com.nhl.link.rest.runtime.parser.IRequestParser;
 
 /**
- * @since 3.1
+ * @since 1.3
  */
 public abstract class BaseCreateOrUpdateBuilder<T> implements CreateOrUpdateBuilder<T> {
 
 	protected CreateOrUpdateOperation operation;
 	protected Class<T> type;
+	private UriInfo uriInfo;
 	protected Object id;
 
 	protected Class<?> parentType;
@@ -32,14 +36,24 @@ public abstract class BaseCreateOrUpdateBuilder<T> implements CreateOrUpdateBuil
 	private IRequestParser requestParser;
 	private IEncoderService encoderService;
 	protected IMetadataService metadataService;
+	private IConstraintsHandler constraintsHandler;
+
+	private TreeConstraints readConstraints;
 
 	public BaseCreateOrUpdateBuilder(Class<T> type, CreateOrUpdateOperation op, IEncoderService encoderService,
-			IRequestParser requestParser, IMetadataService metadataService) {
+			IRequestParser requestParser, IMetadataService metadataService, IConstraintsHandler constraintsHandler) {
 		this.type = type;
 		this.operation = op;
 		this.requestParser = requestParser;
 		this.encoderService = encoderService;
 		this.metadataService = metadataService;
+		this.constraintsHandler = constraintsHandler;
+	}
+
+	@Override
+	public CreateOrUpdateBuilder<T> with(UriInfo uriInfo) {
+		this.uriInfo = uriInfo;
+		return this;
 	}
 
 	@Override
@@ -71,14 +85,27 @@ public abstract class BaseCreateOrUpdateBuilder<T> implements CreateOrUpdateBuil
 	}
 
 	@Override
+	public CreateOrUpdateBuilder<T> readConstraints(TreeConstraints constraints) {
+		this.readConstraints = constraints;
+		return this;
+	}
+
+	@Override
 	public UpdateResponse<T> process(String entityData) {
 
 		validateParent();
 
-		UpdateResponse<T> response = requestParser.parseUpdate(new UpdateResponse<>(type), entityData);
+		UpdateResponse<T> response = new UpdateResponse<>(type);
+
+		// parse request
+		requestParser.parseUpdate(response, uriInfo, entityData);
 
 		// this handles single object update (or insert?)...
 		processExplicitId(response);
+
+		// apply read constraints (TODO: should we only care about response
+		// constraints after the commit?)
+		constraintsHandler.apply(response, null, readConstraints);
 
 		switch (operation) {
 		case create:

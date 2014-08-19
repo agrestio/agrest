@@ -31,16 +31,16 @@ public class CayenneDao<T> implements EntityDao<T> {
 	private ICayennePersister persister;
 	private IEncoderService encoderService;
 	private IRequestParser requestParser;
-	private IConstraintsHandler configMerger;
+	private IConstraintsHandler constraintsHandler;
 	private IMetadataService metadataService;
 
 	public CayenneDao(Class<T> type, IRequestParser requestParser, IEncoderService encoderService,
-			ICayennePersister cayenneService, IConstraintsHandler configMerger, IMetadataService metadataService) {
+			ICayennePersister cayenneService, IConstraintsHandler constraintsHandler, IMetadataService metadataService) {
 		this.type = type;
 		this.requestParser = requestParser;
 		this.encoderService = encoderService;
 		this.persister = cayenneService;
-		this.configMerger = configMerger;
+		this.constraintsHandler = constraintsHandler;
 		this.metadataService = metadataService;
 	}
 
@@ -51,36 +51,36 @@ public class CayenneDao<T> implements EntityDao<T> {
 
 	@Override
 	public SelectBuilder<T> forSelect() {
-		return new CayenneSelectBuilder<T>(type, persister, encoderService, requestParser, configMerger);
+		return new CayenneSelectBuilder<T>(type, persister, encoderService, requestParser, constraintsHandler);
 	}
 
 	@Override
 	public SelectBuilder<T> forSelect(SelectQuery<T> query) {
-		return new CayenneSelectBuilder<T>(query, type, persister, encoderService, requestParser, configMerger);
+		return new CayenneSelectBuilder<T>(query, type, persister, encoderService, requestParser, constraintsHandler);
 	}
 
 	@Override
 	public CreateOrUpdateBuilder<T> create() {
 		return new CayenneCreateOrUpdateBuilder<>(type, CreateOrUpdateOperation.create, persister, encoderService,
-				requestParser, metadataService);
+				requestParser, metadataService, constraintsHandler);
 	}
 
 	@Override
 	public CreateOrUpdateBuilder<T> createOrUpdate() {
 		return new CayenneCreateOrUpdateBuilder<>(type, CreateOrUpdateOperation.createOrUpdate, persister,
-				encoderService, requestParser, metadataService);
+				encoderService, requestParser, metadataService, constraintsHandler);
 	}
 
 	@Override
 	public CreateOrUpdateBuilder<T> idempotentCreateOrUpdate() {
 		return new CayenneCreateOrUpdateBuilder<>(type, CreateOrUpdateOperation.idempotentCreateOrUpdate, persister,
-				encoderService, requestParser, metadataService);
+				encoderService, requestParser, metadataService, constraintsHandler);
 	}
 
 	@Override
 	public CreateOrUpdateBuilder<T> update() {
 		return new CayenneCreateOrUpdateBuilder<>(type, CreateOrUpdateOperation.update, persister, encoderService,
-				requestParser, metadataService);
+				requestParser, metadataService, constraintsHandler);
 	}
 
 	@SuppressWarnings("unchecked")

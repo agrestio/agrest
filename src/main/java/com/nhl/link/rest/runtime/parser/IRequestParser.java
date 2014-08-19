@@ -18,6 +18,6 @@ public interface IRequestParser {
 	 * 
 	 * @since 1.3
 	 */
-	<T> UpdateResponse<T> parseUpdate(UpdateResponse<T> response, String entityData);
+	<T> UpdateResponse<T> parseUpdate(UpdateResponse<T> response, UriInfo uriInfo, String entityData);
 
 }
