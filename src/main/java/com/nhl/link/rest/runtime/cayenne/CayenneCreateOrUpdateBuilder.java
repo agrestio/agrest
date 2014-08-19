@@ -102,13 +102,13 @@ class CayenneCreateOrUpdateBuilder<T> extends BaseCreateOrUpdateBuilder<T> {
 	}
 
 	@Override
-	protected List<T> create(UpdateResponse<T> response) {
+	protected List<T> create(final UpdateResponse<T> response) {
 
 		return process(response, new ObjectLocator<T>() {
 
 			@Override
 			public T locate(EntityUpdate u, ObjectContext c, ObjEntity entity) {
-				return createObject(c, entity, u.getId());
+				return createObject(c, entity, u.getId(), response.idUpdatesDisallowed());
 			}
 
 		});
@@ -127,19 +127,19 @@ class CayenneCreateOrUpdateBuilder<T> extends BaseCreateOrUpdateBuilder<T> {
 	}
 
 	@Override
-	protected List<T> createOrUpdate(UpdateResponse<T> response) {
+	protected List<T> createOrUpdate(final UpdateResponse<T> response) {
 		return process(response, new ObjectLocator<T>() {
 
 			@Override
 			public T locate(EntityUpdate u, ObjectContext c, ObjEntity entity) {
 				T o = u.getId() != null ? getOptionalExistingObject(type, c, u.getId()) : null;
-				return o != null ? o : createObject(c, entity, u.getId());
+				return o != null ? o : createObject(c, entity, u.getId(), response.idUpdatesDisallowed());
 			}
 		});
 	}
 
 	@Override
-	protected List<T> idempotentCreateOrUpdate(UpdateResponse<T> response) {
+	protected List<T> idempotentCreateOrUpdate(final UpdateResponse<T> response) {
 		return process(response, new ObjectLocator<T>() {
 
 			@Override
@@ -151,17 +151,21 @@ class CayenneCreateOrUpdateBuilder<T> extends BaseCreateOrUpdateBuilder<T> {
 				}
 
 				T o = getOptionalExistingObject(type, c, u.getId());
-				return o != null ? o : createObject(c, entity, u.getId());
+				return o != null ? o : createObject(c, entity, u.getId(), response.idUpdatesDisallowed());
 			}
 		});
 	}
 
-	private T createObject(ObjectContext context, ObjEntity entity, Object id) {
+	private T createObject(ObjectContext context, ObjEntity entity, Object id, boolean disallowExplicitIds) {
 
 		T o = context.newObject(type);
 
 		// set explicit ID
 		if (id != null) {
+
+			if (disallowExplicitIds) {
+				throw new LinkRestException(Status.BAD_REQUEST, "Setting ID explicitly is not allowed: " + id);
+			}
 
 			// TODO: compile ID strategy to avoid recalculating metadata all the
 			// time...

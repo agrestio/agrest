@@ -7,6 +7,7 @@ import javax.ws.rs.core.Response.Status;
 
 public class UpdateResponse<T> extends DataResponse<T> {
 
+	private boolean idUpdatesDisallowed;
 	private Collection<EntityUpdate> updates;
 
 	public UpdateResponse(Class<T> type) {
@@ -42,5 +43,14 @@ public class UpdateResponse<T> extends DataResponse<T> {
 		}
 
 		return updates.iterator().next();
+	}
+
+	public boolean idUpdatesDisallowed() {
+		return idUpdatesDisallowed;
+	}
+
+	public UpdateResponse<T> disallowIdUpdates() {
+		this.idUpdatesDisallowed = true;
+		return this;
 	}
 }

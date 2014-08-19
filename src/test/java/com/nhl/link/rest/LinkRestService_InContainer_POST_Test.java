@@ -28,18 +28,25 @@ import com.nhl.link.rest.unit.cayenne.E4;
 
 public class LinkRestService_InContainer_POST_Test extends JerseyTestOnDerby {
 
+	private ObjectContext context;
+
 	@Before
 	public void before() {
-		runtime.newContext().performGenericQuery(new EJBQLQuery("delete from E4"));
-		runtime.newContext().performGenericQuery(new EJBQLQuery("delete from E3"));
-		runtime.newContext().performGenericQuery(new EJBQLQuery("delete from E2"));
-		runtime.newContext().performGenericQuery(new EJBQLQuery("delete from E5"));
+
+		context = runtime.newContext();
+
+		context.performGenericQuery(new EJBQLQuery("delete from E4"));
+		context.performGenericQuery(new EJBQLQuery("delete from E3"));
+		context.performGenericQuery(new EJBQLQuery("delete from E2"));
+		context.performGenericQuery(new EJBQLQuery("delete from E5"));
+		context.performGenericQuery(new EJBQLQuery("delete from E6"));
+		context.performGenericQuery(new EJBQLQuery("delete from E7"));
+		context.performGenericQuery(new EJBQLQuery("delete from E9"));
+		context.performGenericQuery(new EJBQLQuery("delete from E8"));
 	}
 
 	@Test
 	public void testPost() throws WebApplicationException, IOException {
-
-		ObjectContext context = runtime.newContext();
 
 		Response response1 = target("/lr").request().post(
 				Entity.entity("{\"cVarchar\":\"zzz\"}", MediaType.APPLICATION_JSON));
@@ -74,9 +81,32 @@ public class LinkRestService_InContainer_POST_Test extends JerseyTestOnDerby {
 	}
 
 	@Test
-	public void testPost_WriteConstraints1() throws WebApplicationException, IOException {
+	public void testPost_WriteConstraints_Id_Allowed() throws WebApplicationException, IOException {
 
-		ObjectContext context = runtime.newContext();
+		Response r1 = target("/lr/w/constrainedid/e8/578").request().post(
+				Entity.entity("{\"name\":\"zzz\"}", MediaType.APPLICATION_JSON));
+		assertEquals(Status.CREATED.getStatusCode(), r1.getStatus());
+
+		assertEquals(Integer.valueOf(1), SQLSelect.scalarQuery(Integer.class, "SELECT count(1) FROM utest.e8")
+				.selectOne(context));
+		assertEquals("zzz", SQLSelect.scalarQuery(String.class, "SELECT name FROM utest.e8").selectOne(context));
+		int id1 = SQLSelect.scalarQuery(Integer.class, "SELECT id FROM utest.e8").selectOne(context);
+		assertEquals(578, id1);
+	}
+
+	@Test
+	public void testPost_WriteConstraints_Id_Blocked() throws WebApplicationException, IOException {
+
+		Response r1 = target("/lr/w/constrainedidblocked/e8/578").request().post(
+				Entity.entity("{\"name\":\"zzz\"}", MediaType.APPLICATION_JSON));
+		assertEquals(Status.BAD_REQUEST.getStatusCode(), r1.getStatus());
+
+		assertEquals(Integer.valueOf(0), SQLSelect.scalarQuery(Integer.class, "SELECT count(1) FROM utest.e8")
+				.selectOne(context));
+	}
+
+	@Test
+	public void testPost_WriteConstraints1() throws WebApplicationException, IOException {
 
 		Response r1 = target("/lr/w/constrained/e3").request().post(
 				Entity.entity("{\"name\":\"zzz\"}", MediaType.APPLICATION_JSON));
@@ -93,8 +123,6 @@ public class LinkRestService_InContainer_POST_Test extends JerseyTestOnDerby {
 
 	@Test
 	public void testPost_WriteConstraints2() throws WebApplicationException, IOException {
-
-		ObjectContext context = runtime.newContext();
 
 		Response r2 = target("/lr/w/constrained/e3").request().post(
 				Entity.entity("{\"name\":\"yyy\",\"phoneNumber\":\"12345\"}", MediaType.APPLICATION_JSON));
@@ -114,8 +142,6 @@ public class LinkRestService_InContainer_POST_Test extends JerseyTestOnDerby {
 	@Test
 	public void testPost_ReadConstraints1() throws WebApplicationException, IOException {
 
-		ObjectContext context = runtime.newContext();
-
 		Response r1 = target("/lr/constrained/e3").request().post(
 				Entity.entity("{\"name\":\"zzz\"}", MediaType.APPLICATION_JSON));
 		assertEquals(Status.CREATED.getStatusCode(), r1.getStatus());
@@ -132,8 +158,6 @@ public class LinkRestService_InContainer_POST_Test extends JerseyTestOnDerby {
 	@Test
 	public void testPost_ReadConstraints2() throws WebApplicationException, IOException {
 
-		ObjectContext context = runtime.newContext();
-
 		Response r2 = target("/lr/constrained/e3").queryParam("include", "name").queryParam("include", "phoneNumber")
 				.request().post(Entity.entity("{\"name\":\"yyy\"}", MediaType.APPLICATION_JSON));
 		assertEquals(Status.CREATED.getStatusCode(), r2.getStatus());
@@ -148,8 +172,6 @@ public class LinkRestService_InContainer_POST_Test extends JerseyTestOnDerby {
 
 	@Test
 	public void testPost_ReadConstraints3() throws WebApplicationException, IOException {
-
-		ObjectContext context = runtime.newContext();
 
 		Response r2 = target("/lr/constrained/e3").queryParam("include", E3.E2.getName()).request()
 				.post(Entity.entity("{\"name\":\"yyy\"}", MediaType.APPLICATION_JSON));
@@ -168,7 +190,6 @@ public class LinkRestService_InContainer_POST_Test extends JerseyTestOnDerby {
 	@Test
 	public void testPost_ToOne() throws WebApplicationException, IOException {
 
-		ObjectContext context = runtime.newContext();
 		context.performGenericQuery(new SQLTemplate(E4.class, "INSERT INTO utest.e2 (id, name) values (1, 'xxx')"));
 		context.performGenericQuery(new SQLTemplate(E4.class, "INSERT INTO utest.e2 (id, name) values (8, 'yyy')"));
 
@@ -191,7 +212,6 @@ public class LinkRestService_InContainer_POST_Test extends JerseyTestOnDerby {
 	@Test
 	public void testPost_ToOne_Null() throws WebApplicationException, IOException {
 
-		ObjectContext context = runtime.newContext();
 		context.performGenericQuery(new SQLTemplate(E4.class, "INSERT INTO utest.e2 (id, name) values (1, 'xxx')"));
 		context.performGenericQuery(new SQLTemplate(E4.class, "INSERT INTO utest.e2 (id, name) values (8, 'yyy')"));
 
@@ -214,7 +234,6 @@ public class LinkRestService_InContainer_POST_Test extends JerseyTestOnDerby {
 	@Test
 	public void testPost_ToOne_BadFK() throws WebApplicationException, IOException {
 
-		ObjectContext context = runtime.newContext();
 		context.performGenericQuery(new SQLTemplate(E4.class, "INSERT INTO utest.e2 (id, name) values (1, 'xxx')"));
 		context.performGenericQuery(new SQLTemplate(E4.class, "INSERT INTO utest.e2 (id, name) values (8, 'yyy')"));
 

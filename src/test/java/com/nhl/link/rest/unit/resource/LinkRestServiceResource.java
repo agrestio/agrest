@@ -20,6 +20,7 @@ import com.nhl.link.rest.runtime.LinkRestRuntime;
 import com.nhl.link.rest.unit.cayenne.E2;
 import com.nhl.link.rest.unit.cayenne.E3;
 import com.nhl.link.rest.unit.cayenne.E4;
+import com.nhl.link.rest.unit.cayenne.E8;
 
 @Path("lr")
 public class LinkRestServiceResource {
@@ -85,12 +86,28 @@ public class LinkRestServiceResource {
 		TreeConstraints tc = TreeConstraints.idOnly().attribute(E3.NAME);
 		return getLinkRestService().create(E3.class).with(uriInfo).readConstraints(tc).process(requestBody);
 	}
-	
+
 	@POST
 	@Path("w/constrained/e3")
-	public DataResponse<E3> inserWriteConstrainedE3(@Context UriInfo uriInfo, String requestBody) {
+	public DataResponse<E3> insertWriteConstrainedE3(@Context UriInfo uriInfo, String requestBody) {
 		TreeConstraints tc = TreeConstraints.idOnly().attribute(E3.NAME);
 		return getLinkRestService().create(E3.class).with(uriInfo).writeConstraints(tc).process(requestBody);
+	}
+
+	@POST
+	@Path("w/constrainedid/e8/{id}")
+	public DataResponse<E8> insertWriteConstrainedIdE8(@PathParam("id") int id, @Context UriInfo uriInfo,
+			String requestBody) {
+		TreeConstraints tc = TreeConstraints.idOnly().attribute(E8.NAME);
+		return getLinkRestService().create(E8.class).with(uriInfo).id(id).writeConstraints(tc).process(requestBody);
+	}
+
+	@POST
+	@Path("w/constrainedidblocked/e8/{id}")
+	public DataResponse<E8> insertWriteConstrainedIdBlockedE8(@PathParam("id") int id, @Context UriInfo uriInfo,
+			String requestBody) {
+		TreeConstraints tc = TreeConstraints.excludeAll().attribute(E8.NAME);
+		return getLinkRestService().create(E8.class).with(uriInfo).id(id).writeConstraints(tc).process(requestBody);
 	}
 
 	@GET

@@ -122,12 +122,14 @@ public class DefaultConstraintsHandler implements IConstraintsHandler {
 
 	protected void applyWriteTreeConstraints(UpdateResponse<?> response, ImmutableTreeConstraints constraints) {
 
+		if (!constraints.isIdIncluded()) {
+			response.disallowIdUpdates();
+		}
+
 		// updates are not hierarchical yet, so simply check attributes...
 		// TODO: updates may contain FKs ... need to handle that
 
 		for (EntityUpdate u : response.getUpdates()) {
-
-			// TODO: check for disallowed attempts at setting ID on INSERT
 
 			// exclude disallowed attributes
 			Iterator<Entry<String, Object>> it = u.getValues().entrySet().iterator();
