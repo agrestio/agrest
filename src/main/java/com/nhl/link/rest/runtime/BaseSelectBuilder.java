@@ -136,9 +136,7 @@ public abstract class BaseSelectBuilder<T> implements SelectBuilder<T> {
 		// parse request
 		requestParser.parseSelect(response, uriInfo, autocompleteProperty);
 
-		// apply server-side config *after* all the client settings were loaded.
-		// Client settings that are not allowed will be blocked and
-		// reported at this step
+		// apply constraints
 		constraintsHandler.apply(constraints, response);
 
 		if (extraProperties != null) {
