@@ -19,7 +19,7 @@ import com.nhl.link.rest.CreateOrUpdateBuilder;
 import com.nhl.link.rest.LinkRestException;
 import com.nhl.link.rest.SelectBuilder;
 import com.nhl.link.rest.runtime.CreateOrUpdateOperation;
-import com.nhl.link.rest.runtime.config.IConfigMerger;
+import com.nhl.link.rest.runtime.constraints.IConstraintsHandler;
 import com.nhl.link.rest.runtime.dao.EntityDao;
 import com.nhl.link.rest.runtime.encoder.IEncoderService;
 import com.nhl.link.rest.runtime.meta.IMetadataService;
@@ -31,11 +31,11 @@ public class CayenneDao<T> implements EntityDao<T> {
 	private ICayennePersister persister;
 	private IEncoderService encoderService;
 	private IRequestParser requestParser;
-	private IConfigMerger configMerger;
+	private IConstraintsHandler configMerger;
 	private IMetadataService metadataService;
 
 	public CayenneDao(Class<T> type, IRequestParser requestParser, IEncoderService encoderService,
-			ICayennePersister cayenneService, IConfigMerger configMerger, IMetadataService metadataService) {
+			ICayennePersister cayenneService, IConstraintsHandler configMerger, IMetadataService metadataService) {
 		this.type = type;
 		this.requestParser = requestParser;
 		this.encoderService = encoderService;

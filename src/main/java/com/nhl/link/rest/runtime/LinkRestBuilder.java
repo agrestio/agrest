@@ -28,8 +28,8 @@ import com.nhl.link.rest.provider.ValidationExceptionMapper;
 import com.nhl.link.rest.runtime.cayenne.CayennePersister;
 import com.nhl.link.rest.runtime.cayenne.ICayennePersister;
 import com.nhl.link.rest.runtime.cayenne.NoCayennePersister;
-import com.nhl.link.rest.runtime.config.IConfigMerger;
-import com.nhl.link.rest.runtime.config.IntersectConfigMerger;
+import com.nhl.link.rest.runtime.constraints.IConstraintsHandler;
+import com.nhl.link.rest.runtime.constraints.DefaultConstraintsHandler;
 import com.nhl.link.rest.runtime.encoder.AttributeEncoderFactory;
 import com.nhl.link.rest.runtime.encoder.EncoderService;
 import com.nhl.link.rest.runtime.encoder.IAttributeEncoderFactory;
@@ -180,7 +180,7 @@ public class LinkRestBuilder {
 				binder.bind(IEncoderService.class).to(EncoderService.class);
 				binder.bind(IRelationshipMapper.class).to(RelationshipMapper.class);
 				binder.bind(IMetadataService.class).to(MetadataService.class);
-				binder.bind(IConfigMerger.class).to(IntersectConfigMerger.class);
+				binder.bind(IConstraintsHandler.class).to(DefaultConstraintsHandler.class);
 
 				binder.bind(IJacksonService.class).to(JacksonService.class);
 				binder.bind(ICayennePersister.class).toInstance(cayenneService);

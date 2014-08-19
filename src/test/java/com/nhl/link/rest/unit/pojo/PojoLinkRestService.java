@@ -9,7 +9,7 @@ import com.nhl.link.rest.SelectBuilder;
 import com.nhl.link.rest.SimpleResponse;
 import com.nhl.link.rest.runtime.BaseLinkRestService;
 import com.nhl.link.rest.runtime.CreateOrUpdateOperation;
-import com.nhl.link.rest.runtime.config.IConfigMerger;
+import com.nhl.link.rest.runtime.constraints.IConstraintsHandler;
 import com.nhl.link.rest.runtime.encoder.IEncoderService;
 import com.nhl.link.rest.runtime.meta.IMetadataService;
 import com.nhl.link.rest.runtime.parser.IRequestParser;
@@ -17,11 +17,11 @@ import com.nhl.link.rest.runtime.parser.IRequestParser;
 public class PojoLinkRestService extends BaseLinkRestService {
 
 	private PojoDB db;
-	private IConfigMerger configMerger;
+	private IConstraintsHandler configMerger;
 	private IMetadataService metadataService;
 
 	public PojoLinkRestService(@Inject IRequestParser requestParser, @Inject IEncoderService encoderService,
-			@Inject IConfigMerger configMerger, @Inject IMetadataService metadataService) {
+			@Inject IConstraintsHandler configMerger, @Inject IMetadataService metadataService) {
 		super(requestParser, encoderService);
 		this.db = JerseyTestOnPojo.pojoDB;
 		this.configMerger = configMerger;

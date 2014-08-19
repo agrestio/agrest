@@ -42,19 +42,19 @@ public interface SelectBuilder<T> {
 	SelectBuilder<T> withProperty(String name);
 
 	/**
-	 * Applies entity config to the SelectBuilder.
+	 * Applies entity constraints to the SelectBuilder.
 	 * 
 	 * @since 1.3
 	 */
-	SelectBuilder<T> canRead(EntityConfigBuilder builder);
+	SelectBuilder<T> constraints(EntityConstraintsBuilder builder);
 
 	/**
-	 * Applies entity config to the SelectBuilder.
+	 * Applies entity constraints to the SelectBuilder.
 	 * 
 	 * @since 1.2
-	 * @deprecated since 1.3 use {@link #canRead(EntityConfigBuilder)}.
+	 * @deprecated since 1.3 use {@link #constraints(EntityConstraintsBuilder)}.
 	 */
-	SelectBuilder<T> withEntity(EntityConfigBuilder builder);
+	SelectBuilder<T> withEntity(EntityConstraintsBuilder builder);
 
 	/**
 	 * @since 1.2

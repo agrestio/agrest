@@ -19,7 +19,7 @@ import org.junit.Test;
 import com.nhl.link.rest.DataResponse;
 import com.nhl.link.rest.Entity;
 import com.nhl.link.rest.encoder.EncoderFilter;
-import com.nhl.link.rest.runtime.config.IConfigMerger;
+import com.nhl.link.rest.runtime.constraints.IConstraintsHandler;
 import com.nhl.link.rest.runtime.encoder.AttributeEncoderFactory;
 import com.nhl.link.rest.runtime.encoder.EncoderService;
 import com.nhl.link.rest.runtime.encoder.IAttributeEncoderFactory;
@@ -38,7 +38,7 @@ public class CayenneSelectBuilderTest extends TestWithCayenneMapping {
 	private IEncoderService encoderService;
 	private ICayennePersister cayenneServiceMock;
 	private IRequestParser requestParserMock;
-	private IConfigMerger configMergerMock;
+	private IConstraintsHandler configMergerMock;
 	private IMetadataService mockMetadataService;
 
 	@Before
@@ -52,7 +52,7 @@ public class CayenneSelectBuilderTest extends TestWithCayenneMapping {
 		this.requestParserMock = mock(IRequestParser.class);
 		this.encoderService = new EncoderService(Collections.<EncoderFilter> emptyList(), attributeEncoderFactory,
 				stringConverterFactory, new RelationshipMapper());
-		this.configMergerMock = mock(IConfigMerger.class);
+		this.configMergerMock = mock(IConstraintsHandler.class);
 	}
 
 	@Test

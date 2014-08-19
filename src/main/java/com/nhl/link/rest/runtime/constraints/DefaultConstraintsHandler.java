@@ -1,4 +1,4 @@
-package com.nhl.link.rest.runtime.config;
+package com.nhl.link.rest.runtime.constraints;
 
 import java.util.Iterator;
 import java.util.Map.Entry;
@@ -8,25 +8,25 @@ import javax.ws.rs.core.Response.Status;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.nhl.link.rest.Entity;
 import com.nhl.link.rest.DataResponse;
-import com.nhl.link.rest.DataResponseConfig;
-import com.nhl.link.rest.EntityConfig;
+import com.nhl.link.rest.DataResponseConstraints;
+import com.nhl.link.rest.Entity;
+import com.nhl.link.rest.EntityConstraints;
 import com.nhl.link.rest.LinkRestException;
 import com.nhl.link.rest.runtime.parser.PathConstants;
 
 /**
- * An {@link IConfigMerger} that ensures that no target attributes exceed the
- * bounds defined in the source config.
+ * An {@link IConstraintsHandler} that ensures that no target attributes exceed
+ * the bounds defined in the source config.
  * 
  * @since 1.1
  */
-public class IntersectConfigMerger implements IConfigMerger {
+public class DefaultConstraintsHandler implements IConstraintsHandler {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(IntersectConfigMerger.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(DefaultConstraintsHandler.class);
 
 	@Override
-	public void merge(DataResponseConfig source, DataResponse<?> target) {
+	public void apply(DataResponseConstraints source, DataResponse<?> target) {
 
 		// fetchOffset - do not exceed source offset
 		int upperOffset = source.getFetchOffset();
@@ -45,14 +45,15 @@ public class IntersectConfigMerger implements IConfigMerger {
 		}
 
 		// entity - ensure attribute/relationship tree span of source is not
-		// exceeded in target. Null source means we don't need to worry about
+		// exceeded in target. Null target means we don't need to worry about
 		// unauthorized attributes and relationships
 		if (target.getEntity() != null) {
-			mergeEntity(source.getEntity(), target.getEntity());
+			EntityConstraints constraints = source.getEntityConstraints().build(target.getEntity().getCayenneEntity());
+			mergeEntity(constraints, target.getEntity());
 		}
 	}
 
-	protected void mergeEntity(EntityConfig source, Entity<?> target) {
+	protected void mergeEntity(EntityConstraints source, Entity<?> target) {
 
 		if (!source.isIdIncluded()) {
 			target.excludeId();
@@ -72,7 +73,7 @@ public class IntersectConfigMerger implements IConfigMerger {
 		while (rit.hasNext()) {
 
 			Entry<String, Entity<?>> e = rit.next();
-			EntityConfig sourceChild = source.getChild(e.getKey());
+			EntityConstraints sourceChild = source.getChild(e.getKey());
 			if (sourceChild != null) {
 
 				// removing recursively ... the depth or recursion depends on
@@ -100,7 +101,7 @@ public class IntersectConfigMerger implements IConfigMerger {
 		}
 	}
 
-	protected boolean allowedMapBy(EntityConfig source, String path) {
+	protected boolean allowedMapBy(EntityConstraints source, String path) {
 
 		int dot = path.indexOf(PathConstants.DOT);
 
@@ -115,7 +116,7 @@ public class IntersectConfigMerger implements IConfigMerger {
 		if (dot > 0) {
 			// process intermediate component
 			String property = path.substring(0, dot);
-			EntityConfig child = source.getChild(property);
+			EntityConstraints child = source.getChild(property);
 			return child != null && allowedMapBy(child, path.substring(dot + 1));
 
 		} else {
@@ -123,7 +124,7 @@ public class IntersectConfigMerger implements IConfigMerger {
 		}
 	}
 
-	protected boolean allowedMapBy_LastComponent(EntityConfig source, String path) {
+	protected boolean allowedMapBy_LastComponent(EntityConstraints source, String path) {
 
 		// process last component
 		String property = path;
@@ -136,7 +137,7 @@ public class IntersectConfigMerger implements IConfigMerger {
 			return true;
 		}
 
-		EntityConfig child = source.getChild(property);
+		EntityConstraints child = source.getChild(property);
 		return child != null && allowedMapBy_LastComponent(child, null);
 	}
 }

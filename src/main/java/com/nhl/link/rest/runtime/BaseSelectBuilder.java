@@ -16,15 +16,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.nhl.link.rest.DataResponse;
-import com.nhl.link.rest.DataResponseConfig;
+import com.nhl.link.rest.DataResponseConstraints;
 import com.nhl.link.rest.Entity;
-import com.nhl.link.rest.EntityConfig;
-import com.nhl.link.rest.EntityConfigBuilder;
+import com.nhl.link.rest.EntityConstraintsBuilder;
 import com.nhl.link.rest.EntityProperty;
 import com.nhl.link.rest.LinkRestException;
 import com.nhl.link.rest.SelectBuilder;
 import com.nhl.link.rest.encoder.Encoder;
-import com.nhl.link.rest.runtime.config.IConfigMerger;
+import com.nhl.link.rest.runtime.constraints.IConstraintsHandler;
 import com.nhl.link.rest.runtime.encoder.IEncoderService;
 import com.nhl.link.rest.runtime.meta.IMetadataService;
 import com.nhl.link.rest.runtime.parser.IRequestParser;
@@ -39,14 +38,14 @@ public abstract class BaseSelectBuilder<T> implements SelectBuilder<T> {
 	private String autocompleteProperty;
 	private IEncoderService encoderService;
 	private IRequestParser requestParser;
-	private IConfigMerger configMerger;
+	private IConstraintsHandler configMerger;
 	private IMetadataService metadataService;
 	private Map<String, EntityProperty> extraProperties;
 	private Encoder dataEncoder;
-	private DataResponseConfig config;
+	private DataResponseConstraints config;
 
 	public BaseSelectBuilder(Class<T> type, IEncoderService encoderService, IRequestParser requestParser,
-			IConfigMerger configMerger, IMetadataService metadataService) {
+			IConstraintsHandler configMerger, IMetadataService metadataService) {
 		this.type = type;
 		this.encoderService = encoderService;
 		this.requestParser = requestParser;
@@ -57,7 +56,7 @@ public abstract class BaseSelectBuilder<T> implements SelectBuilder<T> {
 	/**
 	 * @since 1.2
 	 */
-	protected DataResponseConfig getConfig() {
+	protected DataResponseConstraints getConfig() {
 		if (config == null) {
 			config = createConfig();
 		}
@@ -66,14 +65,14 @@ public abstract class BaseSelectBuilder<T> implements SelectBuilder<T> {
 	}
 
 	@Override
-	public SelectBuilder<T> canRead(EntityConfigBuilder builder) {
-		builder.build(getConfig().getEntity());
+	public SelectBuilder<T> constraints(EntityConstraintsBuilder constraints) {
+		getConfig().getEntityConstraints().append(constraints);
 		return this;
 	}
-	
+
 	@Override
-	public SelectBuilder<T> withEntity(EntityConfigBuilder builder) {
-		return canRead(builder);
+	public SelectBuilder<T> withEntity(EntityConstraintsBuilder builder) {
+		return constraints(builder);
 	}
 
 	@Override
@@ -91,22 +90,19 @@ public abstract class BaseSelectBuilder<T> implements SelectBuilder<T> {
 	/**
 	 * @since 1.2
 	 */
-	protected DataResponseConfig createConfig() {
+	protected DataResponseConstraints createConfig() {
 
 		ObjEntity entity = metadataService.getObjEntity(type);
 
-		// TODO: here we might start with a clone of default config, either for
-		// the entire project or the entity.
-
-		DataResponseConfig config = new DataResponseConfig(entity);
+		EntityConstraintsBuilder constraints = EntityConstraintsBuilder.constraints();
 
 		// apply defaults:
-		EntityConfig entityConfig = config.getEntity().includeId();
+		constraints.includeId();
 		for (ObjAttribute a : entity.getAttributes()) {
-			entityConfig.attribute(a.getName());
+			constraints.attribute(a.getName());
 		}
 
-		return config;
+		return new DataResponseConstraints(constraints);
 	}
 
 	@Override
@@ -182,7 +178,7 @@ public abstract class BaseSelectBuilder<T> implements SelectBuilder<T> {
 		// Those client settings that are not allowed will be blocked and
 		// reported at this step
 		if (config != null) {
-			configMerger.merge(config, response);
+			configMerger.apply(config, response);
 		}
 
 		if (extraProperties != null) {

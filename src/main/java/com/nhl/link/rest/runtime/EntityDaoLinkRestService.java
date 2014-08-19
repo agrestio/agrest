@@ -16,13 +16,13 @@ import org.apache.cayenne.query.SelectQuery;
 import org.apache.cayenne.reflect.ClassDescriptor;
 
 import com.nhl.link.rest.CreateOrUpdateBuilder;
-import com.nhl.link.rest.EntityConfigBuilder;
+import com.nhl.link.rest.EntityConstraintsBuilder;
 import com.nhl.link.rest.LinkRestException;
 import com.nhl.link.rest.SelectBuilder;
 import com.nhl.link.rest.SimpleResponse;
 import com.nhl.link.rest.runtime.cayenne.CayenneDao;
 import com.nhl.link.rest.runtime.cayenne.ICayennePersister;
-import com.nhl.link.rest.runtime.config.IConfigMerger;
+import com.nhl.link.rest.runtime.constraints.IConstraintsHandler;
 import com.nhl.link.rest.runtime.dao.EntityDao;
 import com.nhl.link.rest.runtime.encoder.IEncoderService;
 import com.nhl.link.rest.runtime.meta.IMetadataService;
@@ -41,7 +41,7 @@ public class EntityDaoLinkRestService extends BaseLinkRestService {
 
 	public EntityDaoLinkRestService(@Inject IRequestParser requestParser, @Inject IEncoderService encoderService,
 			@Inject IMetadataService metadataService, @Inject ICayennePersister cayenneService,
-			@Inject IConfigMerger configMerger) {
+			@Inject IConstraintsHandler configMerger) {
 		super(requestParser, encoderService);
 
 		this.metadataService = metadataService;
@@ -97,8 +97,8 @@ public class EntityDaoLinkRestService extends BaseLinkRestService {
 		// navigate through DbRelationships ... there may be no reverse ObjRel..
 		// Reverse DB should always be there
 		Expression qualifier = ExpressionFactory.matchDbExp(objRelationship.getReverseDbRelationshipPath(), rootId);
-		EntityConfigBuilder entityConfig = EntityConfigBuilder.config().and(qualifier);
-		return dao(objRelationship.getTargetEntityName()).forSelect().canRead(entityConfig);
+		EntityConstraintsBuilder entityConfig = EntityConstraintsBuilder.constraints().and(qualifier);
+		return dao(objRelationship.getTargetEntityName()).forSelect().constraints(entityConfig);
 	}
 
 	@Override
