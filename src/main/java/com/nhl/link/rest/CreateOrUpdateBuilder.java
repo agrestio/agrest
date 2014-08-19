@@ -48,5 +48,7 @@ public interface CreateOrUpdateBuilder<T> {
 
 	CreateOrUpdateBuilder<T> readConstraints(TreeConstraints constraints);
 
+	CreateOrUpdateBuilder<T> writeConstraints(TreeConstraints constraints);
+
 	UpdateResponse<T> process(String entityData);
 }

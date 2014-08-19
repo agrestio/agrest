@@ -39,6 +39,7 @@ public abstract class BaseCreateOrUpdateBuilder<T> implements CreateOrUpdateBuil
 	private IConstraintsHandler constraintsHandler;
 
 	private TreeConstraints readConstraints;
+	private TreeConstraints writeConstraints;
 
 	public BaseCreateOrUpdateBuilder(Class<T> type, CreateOrUpdateOperation op, IEncoderService encoderService,
 			IRequestParser requestParser, IMetadataService metadataService, IConstraintsHandler constraintsHandler) {
@@ -91,6 +92,12 @@ public abstract class BaseCreateOrUpdateBuilder<T> implements CreateOrUpdateBuil
 	}
 
 	@Override
+	public CreateOrUpdateBuilder<T> writeConstraints(TreeConstraints constraints) {
+		this.writeConstraints = constraints;
+		return this;
+	}
+
+	@Override
 	public UpdateResponse<T> process(String entityData) {
 
 		validateParent();
@@ -103,9 +110,11 @@ public abstract class BaseCreateOrUpdateBuilder<T> implements CreateOrUpdateBuil
 		// this handles single object update (or insert?)...
 		processExplicitId(response);
 
+		constraintsHandler.constrainUpdate(response, writeConstraints);
+
 		// apply read constraints (TODO: should we only care about response
 		// constraints after the commit?)
-		constraintsHandler.apply(response, null, readConstraints);
+		constraintsHandler.constrainResponse(response, null, readConstraints);
 
 		switch (operation) {
 		case create:

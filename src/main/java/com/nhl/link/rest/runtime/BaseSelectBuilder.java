@@ -145,7 +145,7 @@ public abstract class BaseSelectBuilder<T> implements SelectBuilder<T> {
 		requestParser.parseSelect(response, uriInfo, autocompleteProperty);
 
 		// apply constraints
-		constraintsHandler.apply(response, sizeConstraints, treeConstraints);
+		constraintsHandler.constrainResponse(response, sizeConstraints, treeConstraints);
 
 		if (extraProperties != null) {
 			response.getEntity().getExtraProperties().putAll(extraProperties);

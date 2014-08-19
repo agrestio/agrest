@@ -74,6 +74,44 @@ public class LinkRestService_InContainer_POST_Test extends JerseyTestOnDerby {
 	}
 
 	@Test
+	public void testPost_WriteConstraints1() throws WebApplicationException, IOException {
+
+		ObjectContext context = runtime.newContext();
+
+		Response r1 = target("/lr/w/constrained/e3").request().post(
+				Entity.entity("{\"name\":\"zzz\"}", MediaType.APPLICATION_JSON));
+		assertEquals(Status.CREATED.getStatusCode(), r1.getStatus());
+
+		assertEquals(Integer.valueOf(1), SQLSelect.scalarQuery(Integer.class, "SELECT count(1) FROM utest.e3")
+				.selectOne(context));
+		assertEquals("zzz", SQLSelect.scalarQuery(String.class, "SELECT name FROM utest.e3").selectOne(context));
+		int id1 = SQLSelect.scalarQuery(Integer.class, "SELECT id FROM utest.e3").selectOne(context);
+
+		assertEquals("{\"success\":true,\"data\":[{\"id\":" + id1
+				+ ",\"name\":\"zzz\",\"phoneNumber\":null}],\"total\":1}", r1.readEntity(String.class));
+	}
+
+	@Test
+	public void testPost_WriteConstraints2() throws WebApplicationException, IOException {
+
+		ObjectContext context = runtime.newContext();
+
+		Response r2 = target("/lr/w/constrained/e3").request().post(
+				Entity.entity("{\"name\":\"yyy\",\"phoneNumber\":\"12345\"}", MediaType.APPLICATION_JSON));
+		assertEquals(Status.CREATED.getStatusCode(), r2.getStatus());
+
+		assertEquals(
+				Integer.valueOf(1),
+				SQLSelect.scalarQuery(Integer.class, "SELECT count(1) FROM utest.e3 WHERE name = 'yyy'").selectOne(
+						context));
+		int id1 = SQLSelect.scalarQuery(Integer.class, "SELECT id FROM utest.e3  WHERE name = 'yyy'")
+				.selectOne(context);
+
+		assertEquals("{\"success\":true,\"data\":[{\"id\":" + id1
+				+ ",\"name\":\"yyy\",\"phoneNumber\":null}],\"total\":1}", r2.readEntity(String.class));
+	}
+
+	@Test
 	public void testPost_ReadConstraints1() throws WebApplicationException, IOException {
 
 		ObjectContext context = runtime.newContext();

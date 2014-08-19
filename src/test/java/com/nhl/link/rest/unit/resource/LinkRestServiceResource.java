@@ -81,9 +81,16 @@ public class LinkRestServiceResource {
 
 	@POST
 	@Path("constrained/e3")
-	public DataResponse<E3> insertConstrainedE3(@Context UriInfo uriInfo, String requestBody) {
+	public DataResponse<E3> insertReadConstrainedE3(@Context UriInfo uriInfo, String requestBody) {
 		TreeConstraints tc = TreeConstraints.idOnly().attribute(E3.NAME);
 		return getLinkRestService().create(E3.class).with(uriInfo).readConstraints(tc).process(requestBody);
+	}
+	
+	@POST
+	@Path("w/constrained/e3")
+	public DataResponse<E3> inserWriteConstrainedE3(@Context UriInfo uriInfo, String requestBody) {
+		TreeConstraints tc = TreeConstraints.idOnly().attribute(E3.NAME);
+		return getLinkRestService().create(E3.class).with(uriInfo).writeConstraints(tc).process(requestBody);
 	}
 
 	@GET

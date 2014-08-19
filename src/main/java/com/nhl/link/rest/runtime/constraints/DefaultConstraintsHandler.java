@@ -10,10 +10,12 @@ import org.slf4j.LoggerFactory;
 
 import com.nhl.link.rest.DataResponse;
 import com.nhl.link.rest.Entity;
+import com.nhl.link.rest.EntityUpdate;
+import com.nhl.link.rest.ImmutableTreeConstraints;
 import com.nhl.link.rest.LinkRestException;
 import com.nhl.link.rest.SizeConstraints;
-import com.nhl.link.rest.ImmutableTreeConstraints;
 import com.nhl.link.rest.TreeConstraints;
+import com.nhl.link.rest.UpdateResponse;
 import com.nhl.link.rest.runtime.parser.PathConstants;
 
 /**
@@ -27,10 +29,20 @@ public class DefaultConstraintsHandler implements IConstraintsHandler {
 	private static final Logger LOGGER = LoggerFactory.getLogger(DefaultConstraintsHandler.class);
 
 	@Override
-	public void apply(DataResponse<?> target, SizeConstraints sizeConstraints, TreeConstraints treeConstraints) {
+	public void constrainUpdate(UpdateResponse<?> response, TreeConstraints writeConstraints) {
+
+		if (writeConstraints != null && !response.getUpdates().isEmpty()) {
+			ImmutableTreeConstraints constraints = writeConstraints.build(response.getEntity().getCayenneEntity());
+			applyWriteTreeConstraints(response, constraints);
+		}
+	}
+
+	@Override
+	public void constrainResponse(DataResponse<?> target, SizeConstraints sizeConstraints,
+			TreeConstraints treeConstraints) {
 
 		if (sizeConstraints != null) {
-			applySizeConstraints(target, sizeConstraints);
+			applyReadSizeConstraints(target, sizeConstraints);
 		}
 
 		// entity - ensure attribute/relationship tree span of source is not
@@ -38,11 +50,11 @@ public class DefaultConstraintsHandler implements IConstraintsHandler {
 		// unauthorized attributes and relationships
 		if (treeConstraints != null && target.getEntity() != null) {
 			ImmutableTreeConstraints constraints = treeConstraints.build(target.getEntity().getCayenneEntity());
-			applyTreeConstraints(target.getEntity(), constraints);
+			applyReadTreeConstraints(target.getEntity(), constraints);
 		}
 	}
 
-	protected void applySizeConstraints(DataResponse<?> target, SizeConstraints constraints) {
+	protected void applyReadSizeConstraints(DataResponse<?> target, SizeConstraints constraints) {
 		// fetchOffset - do not exceed source offset
 		int upperOffset = constraints.getFetchOffset();
 		if (upperOffset > 0 && target.getFetchOffset() > upperOffset) {
@@ -60,7 +72,7 @@ public class DefaultConstraintsHandler implements IConstraintsHandler {
 		}
 	}
 
-	protected void applyTreeConstraints(Entity<?> target, ImmutableTreeConstraints constraints) {
+	protected void applyReadTreeConstraints(Entity<?> target, ImmutableTreeConstraints constraints) {
 
 		if (!constraints.isIdIncluded()) {
 			target.excludeId();
@@ -86,7 +98,7 @@ public class DefaultConstraintsHandler implements IConstraintsHandler {
 				// removing recursively ... the depth or recursion depends on
 				// the depth of target, which is server-controlled. So it should
 				// be a reasonably safe operation in regard to stack overflow
-				applyTreeConstraints(e.getValue(), sourceChild);
+				applyReadTreeConstraints(e.getValue(), sourceChild);
 			} else {
 				LOGGER.info("Relationship not allowed, removing: " + e.getKey());
 				rit.remove();
@@ -105,6 +117,27 @@ public class DefaultConstraintsHandler implements IConstraintsHandler {
 		if (target.getMapByPath() != null && !allowedMapBy(constraints, target.getMapByPath())) {
 			LOGGER.info("'mapBy' not allowed, removing: " + target.getMapByPath());
 			target.mapBy(null, null);
+		}
+	}
+
+	protected void applyWriteTreeConstraints(UpdateResponse<?> response, ImmutableTreeConstraints constraints) {
+
+		// updates are not hierarchical yet, so simply check attributes...
+		// TODO: updates may contain FKs ... need to handle that
+
+		for (EntityUpdate u : response.getUpdates()) {
+
+			// TODO: check for disallowed attempts at setting ID on INSERT
+
+			// exclude disallowed attributes
+			Iterator<Entry<String, Object>> it = u.getValues().entrySet().iterator();
+			while (it.hasNext()) {
+				Entry<String, Object> e = it.next();
+				if (!constraints.hasAttribute(e.getKey())) {
+					LOGGER.info("Attribute not allowed, removing: " + e.getKey() + " for id " + u.getId());
+					it.remove();
+				}
+			}
 		}
 	}
 
