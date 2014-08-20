@@ -101,7 +101,7 @@ class IncludeProcessor {
 				if (sortNode.isTextual()) {
 					sortProcessor.process(includeEntity, sortNode.asText(), null);
 				} else {
-					sortProcessor.processSorter(includeEntity, sortNode);
+					sortProcessor.processSorterArray(includeEntity, sortNode);
 				}
 			}
 

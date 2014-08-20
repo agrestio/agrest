@@ -39,7 +39,10 @@ class SortProcessor {
 		}
 
 		if (sort.startsWith("[")) {
-			processSorter(clientEntity, sort);
+			processSorterArray(clientEntity, sort);
+		} else if (sort.startsWith("{")) {
+			JsonNode root = jsonParser.parseJSON(sort, new ObjectMapper());
+			processSorterObject(clientEntity, root);
 		} else {
 			processSimpleSorter(clientEntity, sort, direction);
 		}
@@ -73,40 +76,44 @@ class SortProcessor {
 		clientEntity.getOrderings().add(new Ordering(sort, so));
 	}
 
-	void processSorter(Entity<?> clientEntity, String sort) {
+	void processSorterArray(Entity<?> clientEntity, String sort) {
 		JsonNode root = jsonParser.parseJSON(sort, new ObjectMapper());
 
 		if (root != null) {
-			processSorter(clientEntity, root);
+			processSorterArray(clientEntity, root);
 		}
 	}
 
-	void processSorter(Entity<?> clientEntity, JsonNode root) {
+	void processSorterArray(Entity<?> clientEntity, JsonNode root) {
 		for (JsonNode sortNode : root) {
-			JsonNode propertyNode = sortNode.get(PROPERTY);
-			if (propertyNode == null || !propertyNode.isTextual()) {
-
-				// this is a hack for Sencha bug, passing us null sorters
-				// per LF-189...
-				// So allowing for lax property name checking as a result
-				if (propertyNode != null && propertyNode.isNull()) {
-					LOGGER.info("ignoring NULL sort property");
-					continue;
-				}
-
-				throw new LinkRestException(Status.BAD_REQUEST, "Bad sort spec: " + root);
-			}
-
-			String property = propertyNode.asText();
-			String direction = ASC;
-
-			JsonNode directionNode = sortNode.get(DIRECTION);
-			if (directionNode != null) {
-				direction = directionNode.asText();
-			}
-
-			processSimpleSorter(clientEntity, property, direction);
+			processSorterObject(clientEntity, sortNode);
 		}
+	}
+
+	void processSorterObject(Entity<?> clientEntity, JsonNode sortNode) {
+		JsonNode propertyNode = sortNode.get(PROPERTY);
+		if (propertyNode == null || !propertyNode.isTextual()) {
+
+			// this is a hack for Sencha bug, passing us null sorters
+			// per LF-189...
+			// So allowing for lax property name checking as a result
+			if (propertyNode != null && propertyNode.isNull()) {
+				LOGGER.info("ignoring NULL sort property");
+				return;
+			}
+
+			throw new LinkRestException(Status.BAD_REQUEST, "Bad sort spec: " + sortNode);
+		}
+
+		String property = propertyNode.asText();
+		String direction = ASC;
+
+		JsonNode directionNode = sortNode.get(DIRECTION);
+		if (directionNode != null) {
+			direction = directionNode.asText();
+		}
+
+		processSimpleSorter(clientEntity, property, direction);
 	}
 
 	private static void checkInvalidDirection(String direction) {
