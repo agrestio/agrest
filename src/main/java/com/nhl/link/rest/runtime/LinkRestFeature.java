@@ -18,9 +18,11 @@ class LinkRestFeature implements Feature {
 
 	private Injector injector;
 	private Collection<Class<?>> extraComponents;
+	private Collection<Feature> extraFeatures;
 
-	LinkRestFeature(Injector injector, Collection<Class<?>> extraComponents) {
+	LinkRestFeature(Injector injector, Collection<Feature> extraFeatures, Collection<Class<?>> extraComponents) {
 		this.injector = injector;
+		this.extraFeatures = extraFeatures;
 		this.extraComponents = extraComponents;
 	}
 
@@ -37,6 +39,10 @@ class LinkRestFeature implements Feature {
 
 		for (Class<?> c : extraComponents) {
 			context.register(c);
+		}
+
+		for (Feature f : extraFeatures) {
+			f.configure(context);
 		}
 
 		return true;

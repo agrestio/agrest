@@ -4,6 +4,7 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -25,11 +26,12 @@ import com.nhl.link.rest.encoder.EncoderFilter;
 import com.nhl.link.rest.provider.CayenneRuntimeExceptionMapper;
 import com.nhl.link.rest.provider.LinkRestExceptionMapper;
 import com.nhl.link.rest.provider.ValidationExceptionMapper;
+import com.nhl.link.rest.runtime.adapter.LinkRestAdapter;
 import com.nhl.link.rest.runtime.cayenne.CayennePersister;
 import com.nhl.link.rest.runtime.cayenne.ICayennePersister;
 import com.nhl.link.rest.runtime.cayenne.NoCayennePersister;
-import com.nhl.link.rest.runtime.constraints.IConstraintsHandler;
 import com.nhl.link.rest.runtime.constraints.DefaultConstraintsHandler;
+import com.nhl.link.rest.runtime.constraints.IConstraintsHandler;
 import com.nhl.link.rest.runtime.encoder.AttributeEncoderFactory;
 import com.nhl.link.rest.runtime.encoder.EncoderService;
 import com.nhl.link.rest.runtime.encoder.IAttributeEncoderFactory;
@@ -59,6 +61,7 @@ public class LinkRestBuilder {
 	private List<EncoderFilter> encoderFilters;
 	private List<DataMap> nonPersistentEntities;
 	private Map<Class<?>, Class<?>> exceptionMappers;
+	private Collection<LinkRestAdapter> adapters;
 
 	public LinkRestBuilder() {
 		this.nonPersistentEntities = new ArrayList<>();
@@ -67,6 +70,7 @@ public class LinkRestBuilder {
 		this.cayenneService = NoCayennePersister.instance();
 
 		this.exceptionMappers = mapDefaultExceptions();
+		this.adapters = new ArrayList<>();
 	}
 
 	protected Map<Class<?>, Class<?>> mapDefaultExceptions() {
@@ -143,15 +147,40 @@ public class LinkRestBuilder {
 		return this;
 	}
 
+	/**
+	 * Adds an adapter that may contribute custom configuration to
+	 * {@link LinkRestRuntime}.
+	 * 
+	 * @since 1.3
+	 */
+	public LinkRestBuilder adapter(LinkRestAdapter adapter) {
+		this.adapters.add(adapter);
+		return this;
+	}
+
 	public LinkRestRuntime build() {
 		Injector i = createInjector();
-		Feature f = new LinkRestFeature(i, createExtraComponents());
+		Feature f = new LinkRestFeature(i, createExtraFeatures(), createExtraComponents());
 		return new LinkRestRuntime(f, i);
 	}
 
 	private Collection<Class<?>> createExtraComponents() {
 		// for now the only extra components are exception mappers
 		return exceptionMappers.values();
+	}
+
+	private Collection<Feature> createExtraFeatures() {
+
+		if (adapters.isEmpty()) {
+			return Collections.emptyList();
+		}
+
+		Collection<Feature> features = new ArrayList<>(adapters.size());
+		for (LinkRestAdapter a : adapters) {
+			a.contributeToJaxRs(features);
+		}
+
+		return features;
 	}
 
 	private Injector createInjector() {
@@ -184,6 +213,11 @@ public class LinkRestBuilder {
 
 				binder.bind(IJacksonService.class).to(JacksonService.class);
 				binder.bind(ICayennePersister.class).toInstance(cayenneService);
+				
+				// apply adapter-contributed bindings
+				for(LinkRestAdapter a : adapters) {
+					a.contributeToRuntime(binder);
+				}
 			}
 		};
 
