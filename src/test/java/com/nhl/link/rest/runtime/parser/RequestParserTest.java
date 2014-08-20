@@ -36,6 +36,7 @@ import com.nhl.link.rest.unit.TestWithCayenneMapping;
 import com.nhl.link.rest.unit.cayenne.E1;
 import com.nhl.link.rest.unit.cayenne.E2;
 import com.nhl.link.rest.unit.cayenne.E3;
+import com.nhl.link.rest.update.UpdateFilter;
 
 public class RequestParserTest extends TestWithCayenneMapping {
 
@@ -50,7 +51,7 @@ public class RequestParserTest extends TestWithCayenneMapping {
 		when(cayenneService.sharedContext()).thenReturn(sharedContext);
 		when(cayenneService.newContext()).thenReturn(runtime.newContext());
 		IMetadataService metadataService = new MetadataService(Collections.<DataMap> emptyList(), cayenneService);
-		parser = new RequestParser(metadataService, new JacksonService(), new RelationshipMapper());
+		parser = new RequestParser(Collections.<UpdateFilter> emptyList(), metadataService, new JacksonService(), new RelationshipMapper());
 	}
 
 	@Test

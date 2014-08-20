@@ -1,5 +1,7 @@
 package com.nhl.link.rest.runtime.parser;
 
+import java.util.List;
+
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriInfo;
@@ -14,8 +16,11 @@ import com.nhl.link.rest.UpdateResponse;
 import com.nhl.link.rest.runtime.jackson.IJacksonService;
 import com.nhl.link.rest.runtime.meta.IMetadataService;
 import com.nhl.link.rest.runtime.semantics.IRelationshipMapper;
+import com.nhl.link.rest.update.UpdateFilter;
 
 public class RequestParser implements IRequestParser {
+
+	public static final String UPDATE_FILTER_LIST = "linkrest.update.filter.list";
 
 	private IncludeProcessor includeProcessor;
 	private ExcludeProcessor excludeProcessor;
@@ -26,9 +31,13 @@ public class RequestParser implements IRequestParser {
 	private DataObjectProcessor dataObjectProcessor;
 	private QueryProcessor queryProcessor;
 
-	public RequestParser(@Inject IMetadataService metadataService, @Inject IJacksonService jacksonService,
+	private List<UpdateFilter> updateFilters;
+
+	public RequestParser(@Inject(UPDATE_FILTER_LIST) List<UpdateFilter> updateFilters,
+			@Inject IMetadataService metadataService, @Inject IJacksonService jacksonService,
 			@Inject IRelationshipMapper associationHandler) {
 
+		this.updateFilters = updateFilters;
 		this.metadataService = metadataService;
 
 		RequestJsonParser jsonParser = new RequestJsonParser(jacksonService.getJsonFactory());
@@ -102,11 +111,15 @@ public class RequestParser implements IRequestParser {
 
 		MultivaluedMap<String, String> parameters = uriInfo != null ? uriInfo.getQueryParameters()
 				: EmptyMultiValuedMap.map();
-		
+
 		includeProcessor.process(clientEntity, RequestParams.include.strings(parameters));
 		excludeProcessor.process(clientEntity, RequestParams.exclude.strings(parameters));
 
 		dataObjectProcessor.process(response, requestBody);
+
+		for (UpdateFilter f : updateFilters) {
+			response = f.afterParse(response);
+		}
 
 		return response;
 	}

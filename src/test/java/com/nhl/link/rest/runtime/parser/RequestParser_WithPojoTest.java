@@ -17,19 +17,18 @@ import org.apache.cayenne.map.DataMap;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.nhl.link.rest.Entity;
 import com.nhl.link.rest.DataResponse;
+import com.nhl.link.rest.Entity;
 import com.nhl.link.rest.runtime.cayenne.ICayennePersister;
 import com.nhl.link.rest.runtime.jackson.JacksonService;
 import com.nhl.link.rest.runtime.meta.DataMapBuilder;
 import com.nhl.link.rest.runtime.meta.IMetadataService;
 import com.nhl.link.rest.runtime.meta.MetadataService;
-import com.nhl.link.rest.runtime.parser.RequestParams;
-import com.nhl.link.rest.runtime.parser.RequestParser;
 import com.nhl.link.rest.runtime.semantics.RelationshipMapper;
 import com.nhl.link.rest.unit.TestWithCayenneMapping;
 import com.nhl.link.rest.unit.pojo.model.P1;
 import com.nhl.link.rest.unit.pojo.model.P2;
+import com.nhl.link.rest.update.UpdateFilter;
 
 public class RequestParser_WithPojoTest extends TestWithCayenneMapping {
 
@@ -47,7 +46,8 @@ public class RequestParser_WithPojoTest extends TestWithCayenneMapping {
 		DataMap map = DataMapBuilder.newBuilder("_t_").addEntities(P1.class, P2.class).toDataMap();
 
 		IMetadataService metadataService = new MetadataService(Collections.singletonList(map), cayenneService);
-		parser = new RequestParser(metadataService, new JacksonService(), new RelationshipMapper());
+		parser = new RequestParser(Collections.<UpdateFilter> emptyList(), metadataService, new JacksonService(),
+				new RelationshipMapper());
 	}
 
 	@Test
@@ -91,7 +91,7 @@ public class RequestParser_WithPojoTest extends TestWithCayenneMapping {
 
 		DataResponse<P2> req2 = DataResponse.forType(P2.class);
 		parser.parseSelect(req2, urlInfo, null);
-		
+
 		assertNotNull(req2);
 		Entity<P2> ce2 = req2.getEntity();
 		assertNotNull(ce2);

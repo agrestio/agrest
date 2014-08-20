@@ -46,6 +46,7 @@ import com.nhl.link.rest.runtime.parser.IRequestParser;
 import com.nhl.link.rest.runtime.parser.RequestParser;
 import com.nhl.link.rest.runtime.semantics.IRelationshipMapper;
 import com.nhl.link.rest.runtime.semantics.RelationshipMapper;
+import com.nhl.link.rest.update.UpdateFilter;
 
 /**
  * A builder of LinkRest runtime that can be loaded into JAX-RS 2 container as a
@@ -194,6 +195,7 @@ public class LinkRestBuilder {
 			@Override
 			public void configure(Binder binder) {
 
+				binder.<UpdateFilter> bindList(RequestParser.UPDATE_FILTER_LIST);
 				binder.<EncoderFilter> bindList(EncoderService.ENCODER_FILTER_LIST).addAll(encoderFilters);
 				binder.<DataMap> bindList(MetadataService.NON_PERSISTENT_ENTITIES_LIST).addAll(nonPersistentEntities);
 
@@ -213,9 +215,9 @@ public class LinkRestBuilder {
 
 				binder.bind(IJacksonService.class).to(JacksonService.class);
 				binder.bind(ICayennePersister.class).toInstance(cayenneService);
-				
+
 				// apply adapter-contributed bindings
-				for(LinkRestAdapter a : adapters) {
+				for (LinkRestAdapter a : adapters) {
 					a.contributeToRuntime(binder);
 				}
 			}

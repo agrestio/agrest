@@ -17,18 +17,17 @@ import org.apache.cayenne.map.DataMap;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.nhl.link.rest.Entity;
 import com.nhl.link.rest.DataResponse;
+import com.nhl.link.rest.Entity;
 import com.nhl.link.rest.runtime.cayenne.ICayennePersister;
 import com.nhl.link.rest.runtime.jackson.JacksonService;
 import com.nhl.link.rest.runtime.meta.IMetadataService;
 import com.nhl.link.rest.runtime.meta.MetadataService;
-import com.nhl.link.rest.runtime.parser.RequestParams;
-import com.nhl.link.rest.runtime.parser.RequestParser;
 import com.nhl.link.rest.runtime.semantics.RelationshipMapper;
 import com.nhl.link.rest.unit.TestWithCayenneMapping;
 import com.nhl.link.rest.unit.cayenne.E2;
 import com.nhl.link.rest.unit.cayenne.E3;
+import com.nhl.link.rest.update.UpdateFilter;
 
 public class RequestParser_IncludeObjectTest extends TestWithCayenneMapping {
 
@@ -43,7 +42,8 @@ public class RequestParser_IncludeObjectTest extends TestWithCayenneMapping {
 		when(cayenneService.sharedContext()).thenReturn(sharedContext);
 		when(cayenneService.newContext()).thenReturn(runtime.newContext());
 		IMetadataService metadataService = new MetadataService(Collections.<DataMap> emptyList(), cayenneService);
-		parser = new RequestParser(metadataService, new JacksonService(), new RelationshipMapper());
+		parser = new RequestParser(Collections.<UpdateFilter> emptyList(), metadataService, new JacksonService(),
+				new RelationshipMapper());
 	}
 
 	@Test
@@ -55,7 +55,7 @@ public class RequestParser_IncludeObjectTest extends TestWithCayenneMapping {
 
 		UriInfo urlInfo = mock(UriInfo.class);
 		when(urlInfo.getQueryParameters()).thenReturn(params);
-		
+
 		DataResponse<E2> dataRequest = DataResponse.forType(E2.class);
 		parser.parseSelect(dataRequest, urlInfo, null);
 
