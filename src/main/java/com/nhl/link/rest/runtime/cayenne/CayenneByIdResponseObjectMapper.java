@@ -42,7 +42,7 @@ public class CayenneByIdResponseObjectMapper<T> implements ResponseObjectMapper<
 
 	@Override
 	public Object findParent() {
-		return findById(response.getParentType(), response.getParentId());
+		return findById(response.getParent().getType(), response.getParent().getId());
 	}
 
 	@SuppressWarnings("unchecked")

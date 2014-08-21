@@ -41,7 +41,9 @@ class CayenneCreateOrUpdateBuilder<T> extends BaseCreateOrUpdateBuilder<T> {
 
 	@Override
 	protected CayenneUpdateResponse<T> createResponse() {
-		return new CayenneUpdateResponse<>(type, persister.newContext());
+		CayenneUpdateResponse<T> response = new CayenneUpdateResponse<>(type, persister.newContext());
+		response.parent(parent);
+		return response;
 	}
 
 	@Override
@@ -166,7 +168,7 @@ class CayenneCreateOrUpdateBuilder<T> extends BaseCreateOrUpdateBuilder<T> {
 
 	protected ObjectRelator<T> createRelator(ResponseObjectMapper<T> mapper) {
 
-		if (parentType == null) {
+		if (parent == null) {
 			return new ObjectRelator<T>() {
 
 				@Override
@@ -176,26 +178,26 @@ class CayenneCreateOrUpdateBuilder<T> extends BaseCreateOrUpdateBuilder<T> {
 			};
 		}
 
-		final DataObject parent = (DataObject) mapper.findParent();
-		if (parent == null) {
-			ObjEntity entity = metadataService.getObjEntity(parentType);
-			throw new LinkRestException(Status.NOT_FOUND, "No parent object for ID '" + parentId + "' and entity '"
-					+ entity.getName() + "'");
+		final DataObject parentObject = (DataObject) mapper.findParent();
+		if (parentObject == null) {
+			ObjEntity entity = metadataService.getObjEntity(parent.getType());
+			throw new LinkRestException(Status.NOT_FOUND, "No parent object for ID '" + parent.getId()
+					+ "' and entity '" + entity.getName() + "'");
 		}
 
 		// TODO: check that relationship target is the same as <T> ??
-		if (metadataService.getObjRelationship(parentType, relationshipFromParent).isToMany()) {
+		if (metadataService.getObjRelationship(parent).isToMany()) {
 			return new ObjectRelator<T>() {
 				@Override
 				public void relate(T object) {
-					parent.addToManyTarget(relationshipFromParent, (DataObject) object, true);
+					parentObject.addToManyTarget(parent.getRelationship(), (DataObject) object, true);
 				}
 			};
 		} else {
 			return new ObjectRelator<T>() {
 				@Override
 				public void relate(T object) {
-					parent.setToOneTarget(relationshipFromParent, (DataObject) object, true);
+					parentObject.setToOneTarget(parent.getRelationship(), (DataObject) object, true);
 				}
 			};
 		}

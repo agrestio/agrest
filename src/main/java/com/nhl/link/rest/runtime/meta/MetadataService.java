@@ -14,6 +14,7 @@ import org.apache.cayenne.map.ObjRelationship;
 import org.apache.cayenne.query.Select;
 import org.apache.cayenne.reflect.ClassDescriptor;
 
+import com.nhl.link.rest.EntityParent;
 import com.nhl.link.rest.LinkRestException;
 import com.nhl.link.rest.runtime.cayenne.ICayennePersister;
 
@@ -80,6 +81,14 @@ public class MetadataService implements IMetadataService {
 		}
 
 		return r;
+	}
+	
+	/**
+	 * @since 1.4
+	 */
+	@Override
+	public ObjRelationship getObjRelationship(EntityParent<?> parent) {
+		return getObjRelationship(parent.getType(), parent.getRelationship());
 	}
 
 	@Override

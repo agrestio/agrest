@@ -10,8 +10,8 @@ import org.apache.cayenne.exp.Property;
 import org.apache.cayenne.map.ObjRelationship;
 
 import com.nhl.link.rest.CreateOrUpdateBuilder;
+import com.nhl.link.rest.EntityParent;
 import com.nhl.link.rest.EntityUpdate;
-import com.nhl.link.rest.LinkRestException;
 import com.nhl.link.rest.ObjectMapper;
 import com.nhl.link.rest.TreeConstraints;
 import com.nhl.link.rest.UpdateResponse;
@@ -30,9 +30,7 @@ public abstract class BaseCreateOrUpdateBuilder<T> implements CreateOrUpdateBuil
 	private UriInfo uriInfo;
 	protected Object id;
 
-	protected Class<?> parentType;
-	protected Object parentId;
-	protected String relationshipFromParent;
+	protected EntityParent<?> parent;
 
 	private IRequestParser requestParser;
 	private IEncoderService encoderService;
@@ -68,17 +66,13 @@ public abstract class BaseCreateOrUpdateBuilder<T> implements CreateOrUpdateBuil
 
 	@Override
 	public CreateOrUpdateBuilder<T> parent(Class<?> parentType, Object parentId, Property<T> relationshipFromParent) {
-		this.parentType = parentType;
-		this.parentId = parentId;
-		this.relationshipFromParent = relationshipFromParent.getName();
+		this.parent = new EntityParent<>(parentType, parentId, relationshipFromParent.getName());
 		return this;
 	}
 
 	@Override
 	public CreateOrUpdateBuilder<T> parent(Class<?> parentType, Object parentId, String relationshipFromParent) {
-		this.parentType = parentType;
-		this.parentId = parentId;
-		this.relationshipFromParent = relationshipFromParent;
+		this.parent = new EntityParent<>(parentType, parentId, relationshipFromParent);
 		return this;
 	}
 
@@ -117,8 +111,6 @@ public abstract class BaseCreateOrUpdateBuilder<T> implements CreateOrUpdateBuil
 		// parse request
 		requestParser.parseUpdate(response, uriInfo, entityData);
 
-		processParent(response);
-
 		// this handles single object update (or insert?)...
 		processExplicitId(response);
 
@@ -146,45 +138,21 @@ public abstract class BaseCreateOrUpdateBuilder<T> implements CreateOrUpdateBuil
 	 * @since 1.4
 	 */
 	protected UpdateResponse<T> createResponse() {
-		return new UpdateResponse<>(type);
-	}
-
-	private void processParent(UpdateResponse<T> response) {
-
-		if (parentType != null || parentId != null || relationshipFromParent != null) {
-
-			if (parentType == null) {
-				throw new LinkRestException(Status.INTERNAL_SERVER_ERROR, "Related parent type is missing");
-			}
-
-			if (parentId == null) {
-				throw new LinkRestException(Status.INTERNAL_SERVER_ERROR, "Related parent ID is missing");
-			}
-
-			if (relationshipFromParent == null) {
-				throw new LinkRestException(Status.INTERNAL_SERVER_ERROR, "Related parent relationship is missing");
-			}
-
-			response.parent(parentType, parentId, relationshipFromParent);
-		}
+		return new UpdateResponse<>(type).parent(parent);
 	}
 
 	protected ObjRelationship relationshipFromParent() {
-		if (parentType == null || relationshipFromParent == null) {
-			return null;
-		}
-
-		return metadataService.getObjRelationship(parentType, relationshipFromParent);
+		return parent != null ? metadataService.getObjRelationship(parent) : null;
 	}
 
 	protected void processExplicitId(UpdateResponse<T> response) {
 
 		if (id != null) {
 			processExplicitId(response, id);
-		} else if (parentId != null) {
+		} else if (parent != null) {
 			ObjRelationship fromParent = relationshipFromParent();
 			if (fromParent != null && fromParent.isToDependentEntity()) {
-				processExplicitId(response, parentId);
+				processExplicitId(response, parent.getId());
 			}
 		}
 	}

@@ -9,10 +9,7 @@ public class UpdateResponse<T> extends DataResponse<T> {
 
 	private boolean idUpdatesDisallowed;
 	private Collection<EntityUpdate> updates;
-
-	private Class<?> parentType;
-	private Object parentId;
-	private String relationshipFromParent;
+	private EntityParent<?> parent;
 
 	public UpdateResponse(Class<T> type) {
 		super(type);
@@ -23,10 +20,8 @@ public class UpdateResponse<T> extends DataResponse<T> {
 	/**
 	 * @since 1.4
 	 */
-	public UpdateResponse<T> parent(Class<?> parentType, Object parentId, String relationshipFromParent) {
-		this.parentId = parentId;
-		this.parentType = parentType;
-		this.relationshipFromParent = relationshipFromParent;
+	public UpdateResponse<T> parent(EntityParent<?> parent) {
+		this.parent = parent;
 		return this;
 	}
 
@@ -75,22 +70,8 @@ public class UpdateResponse<T> extends DataResponse<T> {
 	/**
 	 * @since 1.4
 	 */
-	public Class<?> getParentType() {
-		return parentType;
-	}
-
-	/**
-	 * @since 1.4
-	 */
-	public Object getParentId() {
-		return parentId;
-	}
-
-	/**
-	 * @since 1.4
-	 */
-	public String getRelationshipFromParent() {
-		return relationshipFromParent;
+	public EntityParent<?> getParent() {
+		return parent;
 	}
 
 }
