@@ -50,5 +50,13 @@ public interface CreateOrUpdateBuilder<T> {
 
 	CreateOrUpdateBuilder<T> writeConstraints(TreeConstraints constraints);
 
+	/**
+	 * Sets a custom mapper that locates existing objects based on request data.
+	 * If not set, objects will be located by their ID.
+	 * 
+	 * @since 1.4
+	 */
+	CreateOrUpdateBuilder<T> mapper(ObjectMapper mapper);
+
 	UpdateResponse<T> process(String entityData);
 }

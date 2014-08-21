@@ -12,6 +12,7 @@ import org.apache.cayenne.map.ObjRelationship;
 import com.nhl.link.rest.CreateOrUpdateBuilder;
 import com.nhl.link.rest.EntityUpdate;
 import com.nhl.link.rest.LinkRestException;
+import com.nhl.link.rest.ObjectMapper;
 import com.nhl.link.rest.TreeConstraints;
 import com.nhl.link.rest.UpdateResponse;
 import com.nhl.link.rest.runtime.constraints.IConstraintsHandler;
@@ -40,6 +41,8 @@ public abstract class BaseCreateOrUpdateBuilder<T> implements CreateOrUpdateBuil
 
 	private TreeConstraints readConstraints;
 	private TreeConstraints writeConstraints;
+
+	protected ObjectMapper mapper;
 
 	public BaseCreateOrUpdateBuilder(Class<T> type, CreateOrUpdateOperation op, IEncoderService encoderService,
 			IRequestParser requestParser, IMetadataService metadataService, IConstraintsHandler constraintsHandler) {
@@ -97,15 +100,24 @@ public abstract class BaseCreateOrUpdateBuilder<T> implements CreateOrUpdateBuil
 		return this;
 	}
 
+	/**
+	 * @since 1.4
+	 */
+	@Override
+	public CreateOrUpdateBuilder<T> mapper(ObjectMapper mapper) {
+		this.mapper = mapper;
+		return this;
+	}
+
 	@Override
 	public UpdateResponse<T> process(String entityData) {
 
-		validateParent();
-
-		UpdateResponse<T> response = new UpdateResponse<>(type);
+		UpdateResponse<T> response = createResponse();
 
 		// parse request
 		requestParser.parseUpdate(response, uriInfo, entityData);
+
+		processParent(response);
 
 		// this handles single object update (or insert?)...
 		processExplicitId(response);
@@ -130,7 +142,14 @@ public abstract class BaseCreateOrUpdateBuilder<T> implements CreateOrUpdateBuil
 		}
 	}
 
-	private void validateParent() {
+	/**
+	 * @since 1.4
+	 */
+	protected UpdateResponse<T> createResponse() {
+		return new UpdateResponse<>(type);
+	}
+
+	private void processParent(UpdateResponse<T> response) {
 
 		if (parentType != null || parentId != null || relationshipFromParent != null) {
 
@@ -145,6 +164,8 @@ public abstract class BaseCreateOrUpdateBuilder<T> implements CreateOrUpdateBuil
 			if (relationshipFromParent == null) {
 				throw new LinkRestException(Status.INTERNAL_SERVER_ERROR, "Related parent relationship is missing");
 			}
+
+			response.parent(parentType, parentId, relationshipFromParent);
 		}
 	}
 

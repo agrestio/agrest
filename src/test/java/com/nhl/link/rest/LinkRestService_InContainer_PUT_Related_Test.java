@@ -231,8 +231,7 @@ public class LinkRestService_InContainer_PUT_Related_Test extends JerseyTestOnDe
 				Entity.entity("[ {\"name\":\"newname\"} ]", MediaType.APPLICATION_JSON));
 
 		assertEquals(Status.BAD_REQUEST.getStatusCode(), r1.getStatus());
-		assertEquals("{\"success\":false,\"message\":\"Request is not idempotent. At least one update has no id\"}",
-				r1.readEntity(String.class));
+		assertEquals("{\"success\":false,\"message\":\"Request is not idempotent.\"}", r1.readEntity(String.class));
 		assertEquals(3, SQLSelect.scalarQuery(String.class, "SELECT count(1) FROM utest.e3").selectOne(context));
 		assertEquals(2, SQLSelect.scalarQuery(String.class, "SELECT count(1) FROM utest.e3 WHERE e2_id = 15")
 				.selectOne(context));
