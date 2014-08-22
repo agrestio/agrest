@@ -21,14 +21,14 @@ import com.nhl.link.rest.UpdateResponse;
 /**
  * @since 1.4
  */
-public class CayenneByIdResponseObjectMapper<T> implements ResponseObjectMapper<T> {
+public class ByIdResponseObjectMapper<T> implements ResponseObjectMapper<T> {
 
-	private ObjectContext context;
-	private Class<T> type;
-	private ObjEntity entity;
-	private UpdateResponse<T> response;
+	protected ObjectContext context;
+	protected Class<T> type;
+	protected ObjEntity entity;
+	protected UpdateResponse<T> response;
 
-	public CayenneByIdResponseObjectMapper(UpdateResponse<T> response, ObjectContext context) {
+	public ByIdResponseObjectMapper(UpdateResponse<T> response, ObjectContext context) {
 		this.type = response.getType();
 		this.entity = response.getEntity().getCayenneEntity();
 		this.context = context;

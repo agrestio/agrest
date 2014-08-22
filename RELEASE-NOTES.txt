@@ -1,5 +1,7 @@
 Release 1.4
 
+#27 ID that is not a PK can't be used in idempotent requests
+
 Release 1.3 2014-08-20
 
 #7 Allow TreeConstraints to be applied to insert/update requests 

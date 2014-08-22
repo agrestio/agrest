@@ -7,14 +7,14 @@ import com.nhl.link.rest.ResponseObjectMapper;
 import com.nhl.link.rest.UpdateResponse;
 
 /**
- * A default implementation of the {@link ObjectMapper} that maps objects based
- * on their IDs.
+ * A default singleton implementation of the {@link ObjectMapper} that looks up
+ * objects based on their IDs.
  * 
  * @since 1.4
  */
-public class CayenneByIdObjectMapper extends CayenneObjectMapper {
+public class ByIdObjectMapper extends CayenneObjectMapper {
 
-	private static final ObjectMapper instance = new CayenneByIdObjectMapper();
+	private static final ObjectMapper instance = new ByIdObjectMapper();
 
 	public static ObjectMapper mapper() {
 		return instance;
@@ -22,6 +22,6 @@ public class CayenneByIdObjectMapper extends CayenneObjectMapper {
 
 	@Override
 	protected <T> ResponseObjectMapper<T> create(UpdateResponse<T> response, ObjectContext context) {
-		return new CayenneByIdResponseObjectMapper<>(response, context);
+		return new ByIdResponseObjectMapper<>(response, context);
 	}
 }

@@ -137,7 +137,7 @@ class CayenneCreateOrUpdateBuilder<T> extends BaseCreateOrUpdateBuilder<T> {
 	}
 
 	protected ResponseObjectMapper<T> createObjectMapper(UpdateResponse<T> response) {
-		ObjectMapper mapper = this.mapper != null ? this.mapper : CayenneByIdObjectMapper.mapper();
+		ObjectMapper mapper = this.mapper != null ? this.mapper : ByIdObjectMapper.mapper();
 		return mapper.forResponse(response);
 	}
 

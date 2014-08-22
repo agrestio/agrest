@@ -14,6 +14,7 @@ import com.nhl.link.rest.DataResponse;
 import com.nhl.link.rest.SimpleResponse;
 import com.nhl.link.rest.runtime.ILinkRestService;
 import com.nhl.link.rest.runtime.LinkRestRuntime;
+import com.nhl.link.rest.runtime.cayenne.ByKeyAndParentObjectMapper;
 import com.nhl.link.rest.unit.cayenne.E2;
 import com.nhl.link.rest.unit.cayenne.E3;
 import com.nhl.link.rest.unit.cayenne.E7;
@@ -29,7 +30,7 @@ public class LinkRestResource_Related {
 	private ILinkRestService getService() {
 		return LinkRestRuntime.service(ILinkRestService.class, config);
 	}
-	
+
 	@GET
 	@Path("e2/{id}/dummyrel")
 	public DataResponse<?> getE2_Dummyrel(@PathParam("id") int id, @Context UriInfo uriInfo) {
@@ -105,5 +106,13 @@ public class LinkRestResource_Related {
 	@Path("e8/{id}/e7s")
 	public DataResponse<E7> e8CreateOrUpdateE7s(@PathParam("id") int id, String entityData) {
 		return getService().idempotentCreateOrUpdate(E7.class).toManyParent(E8.class, id, E8.E7S).process(entityData);
+	}
+
+	@PUT
+	@Path("bykey/e8/{id}/e7s")
+	public DataResponse<E7> e8CreateOrUpdateE7sByKey_Idempotent(@PathParam("id") int id, String entityData) {
+		return getService().idempotentCreateOrUpdate(E7.class)
+				.mapper(ByKeyAndParentObjectMapper.byKeyAndParent(E7.NAME)).toManyParent(E8.class, id, E8.E7S)
+				.process(entityData);
 	}
 }

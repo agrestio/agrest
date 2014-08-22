@@ -7,5 +7,8 @@ package com.nhl.link.rest;
  */
 public interface ObjectMapper {
 
+	/**
+	 * Creates and returns a mapper tied to a specific response.
+	 */
 	<T> ResponseObjectMapper<T> forResponse(UpdateResponse<T> response);
 }
