@@ -9,7 +9,6 @@ import org.apache.cayenne.Cayenne;
 import org.apache.cayenne.DataObject;
 import org.apache.cayenne.ObjectContext;
 import org.apache.cayenne.ObjectId;
-import org.apache.cayenne.map.DbRelationship;
 import org.apache.cayenne.map.ObjEntity;
 import org.apache.cayenne.map.ObjRelationship;
 import org.apache.cayenne.query.ObjectIdQuery;
@@ -131,8 +130,6 @@ public class CayenneDao<T> implements EntityDao<T> {
 		ObjectContext context = persister.newContext();
 		DataObject src = (DataObject) getExistingObject(getType(), context, sourceId);
 
-		boolean deleteTarget = mustDeleteTarget(objRelationship);
-
 		if (objRelationship.isToMany()) {
 
 			// clone relationship before we start deleting to avoid concurrent
@@ -146,19 +143,12 @@ public class CayenneDao<T> implements EntityDao<T> {
 				src.removeToManyTarget(relationship, o, true);
 			}
 
-			if (deleteTarget) {
-				context.deleteObjects(relatedCollection);
-			}
-
 		} else {
 
 			DataObject target = (DataObject) src.readProperty(relationship);
 			if (target != null) {
 				src.setToOneTarget(relationship, null, true);
 
-				if (deleteTarget) {
-					context.deleteObjects(target);
-				}
 			}
 		}
 
@@ -175,7 +165,6 @@ public class CayenneDao<T> implements EntityDao<T> {
 
 		DataObject src = (DataObject) getExistingObject(getType(), context, sourceId);
 
-		boolean deleteTarget = mustDeleteTarget(objRelationship);
 		Class<?> targetType = metadataService.getType(objRelationship.getTargetEntityName());
 
 		// among other things this call checks that the target exists
@@ -200,24 +189,6 @@ public class CayenneDao<T> implements EntityDao<T> {
 			src.setToOneTarget(relationship, null, true);
 		}
 
-		if (deleteTarget) {
-			context.deleteObjects(target);
-		}
-
 		context.commitChanges();
 	}
-
-	protected boolean mustDeleteTarget(ObjRelationship relationship) {
-
-		// a rather vague algorithm for determining when a target can't exist
-		// without source and should be deleted when relationship is broken
-
-		if (relationship.isToMany() || relationship.isFlattened()) {
-			return false;
-		}
-
-		DbRelationship dbRelationship = relationship.getDbRelationships().get(0);
-		return dbRelationship.isToDependentPK();
-	}
-
 }

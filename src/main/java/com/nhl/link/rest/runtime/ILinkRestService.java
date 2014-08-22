@@ -65,34 +65,28 @@ public interface ILinkRestService {
 	SimpleResponse delete(Class<?> root, Object id);
 
 	/**
-	 * Breaks the relationship between source and all its target objects. If a
-	 * target object can't exist without source, the target object itself is
-	 * deleted.
+	 * Breaks the relationship between source and all its target objects.
 	 * 
 	 * @since 1.2
 	 */
 	SimpleResponse unrelate(Class<?> root, Object sourceId, String relationship);
 
 	/**
-	 * Breaks the relationship between source and all its target objects. If a
-	 * target object can't exist without source, the target object itself is
-	 * deleted.
+	 * Breaks the relationship between source and all its target objects.
 	 * 
 	 * @since 1.2
 	 */
 	SimpleResponse unrelate(Class<?> root, Object sourceId, Property<?> relationship);
 
 	/**
-	 * Breaks the relationship between source and a target object. If the target
-	 * object can't exist without source, the target object itself is deleted.
+	 * Breaks the relationship between source and a target object.
 	 * 
 	 * @since 1.2
 	 */
 	SimpleResponse unrelate(Class<?> root, Object sourceId, String relationship, Object targetId);
 
 	/**
-	 * Breaks the relationship between source and a target object. If the target
-	 * object can't exist without source, the target object itself is deleted.
+	 * Breaks the relationship between source and a target object.
 	 * 
 	 * @since 1.2
 	 */
