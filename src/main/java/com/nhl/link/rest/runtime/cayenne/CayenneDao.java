@@ -16,6 +16,7 @@ import org.apache.cayenne.query.ObjectIdQuery;
 import org.apache.cayenne.query.SelectQuery;
 
 import com.nhl.link.rest.CreateOrUpdateBuilder;
+import com.nhl.link.rest.DeleteBuilder;
 import com.nhl.link.rest.LinkRestException;
 import com.nhl.link.rest.SelectBuilder;
 import com.nhl.link.rest.runtime.CreateOrUpdateOperation;
@@ -83,15 +84,12 @@ public class CayenneDao<T> implements EntityDao<T> {
 				requestParser, metadataService, constraintsHandler);
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
-	public void delete(Object id) {
-		ObjectContext context = persister.newContext();
-		T object = getExistingObject(type, context, id);
-		context.deleteObjects(object);
-		context.commitChanges();
+	public DeleteBuilder<T> delete() {
+		return new CayenneDeleteBuilder<>(type, persister);
 	}
 
+	// TODO: use ObjectMapper
 	private <A> A getExistingObject(Class<A> type, ObjectContext context, Object id) {
 
 		A object = getOptionalExistingObject(type, context, id);
@@ -104,6 +102,7 @@ public class CayenneDao<T> implements EntityDao<T> {
 		return object;
 	}
 
+	// TODO: use ObjectMapper
 	@SuppressWarnings("unchecked")
 	private <A> A getOptionalExistingObject(Class<A> type, ObjectContext context, Object id) {
 

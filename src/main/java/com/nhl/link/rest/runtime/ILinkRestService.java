@@ -7,6 +7,7 @@ import org.apache.cayenne.query.SelectQuery;
 
 import com.nhl.link.rest.CreateOrUpdateBuilder;
 import com.nhl.link.rest.DataResponse;
+import com.nhl.link.rest.DeleteBuilder;
 import com.nhl.link.rest.SelectBuilder;
 import com.nhl.link.rest.SimpleResponse;
 
@@ -124,4 +125,9 @@ public interface ILinkRestService {
 	 * @since 1.3
 	 */
 	<T> CreateOrUpdateBuilder<T> idempotentCreateOrUpdate(Class<T> type);
+
+	/**
+	 * @since 1.4
+	 */
+	<T> DeleteBuilder<T> delete(Class<T> root);
 }

@@ -4,8 +4,10 @@ import org.apache.cayenne.di.Inject;
 import org.apache.cayenne.query.SelectQuery;
 
 import com.nhl.link.rest.CreateOrUpdateBuilder;
+import com.nhl.link.rest.DeleteBuilder;
 import com.nhl.link.rest.SelectBuilder;
 import com.nhl.link.rest.SimpleResponse;
+import com.nhl.link.rest.runtime.BaseDeleteBuilder;
 import com.nhl.link.rest.runtime.BaseLinkRestService;
 import com.nhl.link.rest.runtime.CreateOrUpdateOperation;
 import com.nhl.link.rest.runtime.constraints.IConstraintsHandler;
@@ -38,8 +40,14 @@ public class PojoLinkRestService extends BaseLinkRestService {
 	}
 
 	@Override
-	protected void doDelete(Class<?> root, Object id) {
-		db.bucketForType(root).remove(id);
+	public <T> DeleteBuilder<T> delete(Class<T> root) {
+		return new BaseDeleteBuilder<T>(root) {
+			@Override
+			public SimpleResponse delete() {
+				db.bucketForType(type).remove(id);
+				return new SimpleResponse(true);
+			}
+		};
 	}
 
 	@Override

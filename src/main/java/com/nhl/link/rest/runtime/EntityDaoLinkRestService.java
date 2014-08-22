@@ -12,6 +12,7 @@ import org.apache.cayenne.query.SelectQuery;
 import org.apache.cayenne.reflect.ClassDescriptor;
 
 import com.nhl.link.rest.CreateOrUpdateBuilder;
+import com.nhl.link.rest.DeleteBuilder;
 import com.nhl.link.rest.LinkRestException;
 import com.nhl.link.rest.SelectBuilder;
 import com.nhl.link.rest.SimpleResponse;
@@ -84,9 +85,12 @@ public class EntityDaoLinkRestService extends BaseLinkRestService {
 		return daoForQuery(query).forSelect(query);
 	}
 
+	/**
+	 * @since 1.4
+	 */
 	@Override
-	protected void doDelete(Class<?> root, Object id) {
-		daoForType(root).delete(id);
+	public <T> DeleteBuilder<T> delete(Class<T> root) {
+		return daoForType(root).delete();
 	}
 
 	@Override

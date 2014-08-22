@@ -7,6 +7,7 @@ import org.apache.cayenne.query.SelectQuery;
 
 import com.nhl.link.rest.CreateOrUpdateBuilder;
 import com.nhl.link.rest.DataResponse;
+import com.nhl.link.rest.DeleteBuilder;
 import com.nhl.link.rest.SelectBuilder;
 import com.nhl.link.rest.SimpleResponse;
 import com.nhl.link.rest.runtime.encoder.IEncoderService;
@@ -47,8 +48,6 @@ public abstract class BaseLinkRestService implements ILinkRestService {
 	@Override
 	public abstract <T> SelectBuilder<T> forSelect(SelectQuery<T> query);
 
-	protected abstract void doDelete(Class<?> root, Object id);
-
 	/**
 	 * @since 1.2
 	 */
@@ -79,8 +78,7 @@ public abstract class BaseLinkRestService implements ILinkRestService {
 
 	@Override
 	public SimpleResponse delete(Class<?> root, Object id) {
-		doDelete(root, id);
-		return new SimpleResponse(true);
+		return delete(root).id(id).delete();
 	}
 
 	@Deprecated
@@ -118,4 +116,10 @@ public abstract class BaseLinkRestService implements ILinkRestService {
 	 */
 	@Override
 	public abstract <T> CreateOrUpdateBuilder<T> update(Class<T> type);
+
+	/**
+	 * @since 1.4
+	 */
+	@Override
+	public abstract <T> DeleteBuilder<T> delete(Class<T> root);
 }
