@@ -12,6 +12,7 @@ import javax.ws.rs.core.UriInfo;
 
 import com.nhl.link.rest.DataResponse;
 import com.nhl.link.rest.SimpleResponse;
+import com.nhl.link.rest.TreeConstraints;
 import com.nhl.link.rest.runtime.ILinkRestService;
 import com.nhl.link.rest.runtime.LinkRestRuntime;
 import com.nhl.link.rest.runtime.cayenne.ByKeyAndParentObjectMapper;
@@ -42,6 +43,14 @@ public class LinkRestResource_Related {
 	@Path("e2/{id}/e3s")
 	public DataResponse<E3> getE2_E3s(@PathParam("id") int id, @Context UriInfo uriInfo) {
 		return (DataResponse<E3>) getService().forSelectRelated(E2.class, id, "e3s").with(uriInfo).select();
+	}
+
+	@SuppressWarnings("unchecked")
+	@GET
+	@Path("constraints/e2/{id}/e3s")
+	public DataResponse<E3> getE2_E3s_Constrained(@PathParam("id") int id, @Context UriInfo uriInfo) {
+		return (DataResponse<E3>) getService().forSelectRelated(E2.class, id, "e3s").with(uriInfo)
+				.constraints(TreeConstraints.idOnly()).select();
 	}
 
 	@GET

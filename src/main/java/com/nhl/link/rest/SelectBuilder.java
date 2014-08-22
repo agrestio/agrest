@@ -46,7 +46,7 @@ public interface SelectBuilder<T> {
 	 * 
 	 * @since 1.3
 	 */
-	SelectBuilder<T> constraints(TreeConstraints builder);
+	SelectBuilder<T> constraints(TreeConstraints constraints);
 
 	/**
 	 * @since 1.2
