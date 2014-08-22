@@ -1,4 +1,4 @@
-Release 1.4
+Release 1.4 2014-08-22
 
 #25 forSelectRelated/constraints causes unqualified fetch ; 
 #26 Refactor delete operation to DeleteBuilder with "delete by id" and "delete by parent" options.
