@@ -48,22 +48,6 @@ public interface ILinkRestService {
 	<T> SelectBuilder<T> forSelect(Class<T> root);
 
 	/**
-	 * Creates a {@link SelectBuilder} to select objects related to a given root
-	 * entity via specified relationship.
-	 * 
-	 * @since 1.2
-	 */
-	<T> SelectBuilder<T> forSelectRelated(Class<?> root, Object sourceId, Property<T> relationship);
-
-	/**
-	 * Creates a {@link SelectBuilder} to select objects related to a given root
-	 * entity via specified relationship.
-	 * 
-	 * @since 1.2
-	 */
-	SelectBuilder<?> forSelectRelated(Class<?> root, Object sourceId, String relationship);
-
-	/**
 	 * Creates a {@link SelectBuilder} to customize data retrieval. This is the
 	 * most generic and customizable way to select data. It can be used as a
 	 * replacement of any other select.

@@ -47,12 +47,6 @@ public abstract class BaseLinkRestService implements ILinkRestService {
 	@Override
 	public abstract <T> SelectBuilder<T> forSelect(SelectQuery<T> query);
 
-	@Override
-	public abstract <T> SelectBuilder<T> forSelectRelated(Class<?> root, Object rootId, Property<T> relationship);
-
-	@Override
-	public abstract SelectBuilder<?> forSelectRelated(Class<?> root, Object rootId, String relationship);
-
 	protected abstract void doDelete(Class<?> root, Object id);
 
 	/**

@@ -1,7 +1,6 @@
 package com.nhl.link.rest.unit.pojo;
 
 import org.apache.cayenne.di.Inject;
-import org.apache.cayenne.exp.Property;
 import org.apache.cayenne.query.SelectQuery;
 
 import com.nhl.link.rest.CreateOrUpdateBuilder;
@@ -36,16 +35,6 @@ public class PojoLinkRestService extends BaseLinkRestService {
 	@Override
 	public <T> SelectBuilder<T> forSelect(SelectQuery<T> query) {
 		throw new UnsupportedOperationException("Can't select with Cayenne query");
-	}
-
-	@Override
-	public <T> SelectBuilder<T> forSelectRelated(Class<?> root, Object rootId, Property<T> relationship) {
-		throw new UnsupportedOperationException("TODO");
-	}
-
-	@Override
-	public SelectBuilder<?> forSelectRelated(Class<?> root, Object rootId, String relationship) {
-		throw new UnsupportedOperationException("TODO");
 	}
 
 	@Override
@@ -87,4 +76,5 @@ public class PojoLinkRestService extends BaseLinkRestService {
 		return new PojoCreateOrUpdateBuilder<>(db.bucketForType(type), type, CreateOrUpdateOperation.update,
 				encoderService, requestParser, metadataService, constraintsHandler);
 	}
+
 }

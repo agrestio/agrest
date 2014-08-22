@@ -6,17 +6,12 @@ import java.util.Map;
 import javax.ws.rs.core.Response.Status;
 
 import org.apache.cayenne.di.Inject;
-import org.apache.cayenne.exp.Expression;
-import org.apache.cayenne.exp.ExpressionFactory;
-import org.apache.cayenne.exp.Property;
 import org.apache.cayenne.map.EntityResolver;
 import org.apache.cayenne.map.ObjEntity;
-import org.apache.cayenne.map.ObjRelationship;
 import org.apache.cayenne.query.SelectQuery;
 import org.apache.cayenne.reflect.ClassDescriptor;
 
 import com.nhl.link.rest.CreateOrUpdateBuilder;
-import com.nhl.link.rest.TreeConstraints;
 import com.nhl.link.rest.LinkRestException;
 import com.nhl.link.rest.SelectBuilder;
 import com.nhl.link.rest.SimpleResponse;
@@ -82,26 +77,6 @@ public class EntityDaoLinkRestService extends BaseLinkRestService {
 	@Override
 	public <T> SelectBuilder<T> forSelect(Class<T> root) {
 		return daoForType(root).forSelect();
-	}
-
-	@SuppressWarnings("unchecked")
-	@Override
-	public <T> SelectBuilder<T> forSelectRelated(Class<?> root, Object rootId, Property<T> relationship) {
-		return (SelectBuilder<T>) forSelectRelated(root, rootId, relationship.getName());
-	}
-
-	@Override
-	public SelectBuilder<?> forSelectRelated(Class<?> root, Object rootId, String relationship) {
-		ObjRelationship objRelationship = metadataService.getObjRelationship(root, relationship);
-
-		// navigate through DbRelationships ... there may be no reverse ObjRel..
-		// Reverse DB should always be there
-		Expression qualifier = ExpressionFactory.matchDbExp(objRelationship.getReverseDbRelationshipPath(), rootId);
-		
-		// TODO: hardcoded constraint
-		TreeConstraints entityConfig = TreeConstraints.idAndAttributes().and(qualifier);
-		
-		return dao(objRelationship.getTargetEntityName()).forSelect().constraints(entityConfig);
 	}
 
 	@Override

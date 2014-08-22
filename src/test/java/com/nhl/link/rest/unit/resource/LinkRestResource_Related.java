@@ -34,29 +34,27 @@ public class LinkRestResource_Related {
 
 	@GET
 	@Path("e2/{id}/dummyrel")
-	public DataResponse<?> getE2_Dummyrel(@PathParam("id") int id, @Context UriInfo uriInfo) {
-		return getService().forSelectRelated(E2.class, id, "dummyrel").with(uriInfo).select();
+	public DataResponse<E3> getE2_Dummyrel(@PathParam("id") int id, @Context UriInfo uriInfo) {
+		return getService().forSelect(E3.class).parent(E2.class, id, "dummyrel").with(uriInfo).select();
 	}
 
-	@SuppressWarnings("unchecked")
 	@GET
 	@Path("e2/{id}/e3s")
 	public DataResponse<E3> getE2_E3s(@PathParam("id") int id, @Context UriInfo uriInfo) {
-		return (DataResponse<E3>) getService().forSelectRelated(E2.class, id, "e3s").with(uriInfo).select();
+		return (DataResponse<E3>) getService().forSelect(E3.class).parent(E2.class, id, "e3s").with(uriInfo).select();
 	}
 
-	@SuppressWarnings("unchecked")
 	@GET
 	@Path("constraints/e2/{id}/e3s")
 	public DataResponse<E3> getE2_E3s_Constrained(@PathParam("id") int id, @Context UriInfo uriInfo) {
-		return (DataResponse<E3>) getService().forSelectRelated(E2.class, id, "e3s").with(uriInfo)
+		return (DataResponse<E3>) getService().forSelect(E3.class).parent(E2.class, id, "e3s").with(uriInfo)
 				.constraints(TreeConstraints.idOnly()).select();
 	}
 
 	@GET
 	@Path("e3/{id}/e2")
 	public DataResponse<E2> getE3_E2(@PathParam("id") int id, @Context UriInfo uriInfo) {
-		return getService().forSelectRelated(E3.class, id, E3.E2).with(uriInfo).select();
+		return getService().forSelect(E2.class).parent(E3.class, id, E3.E2).with(uriInfo).select();
 	}
 
 	@DELETE

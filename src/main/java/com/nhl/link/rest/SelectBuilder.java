@@ -49,6 +49,16 @@ public interface SelectBuilder<T> {
 	SelectBuilder<T> constraints(TreeConstraints constraints);
 
 	/**
+	 * @since 1.4
+	 */
+	SelectBuilder<T> parent(Class<?> parentType, Object parentId, String relationshipFromParent);
+
+	/**
+	 * @since 1.4
+	 */
+	SelectBuilder<T> parent(Class<?> parentType, Object parentId, Property<T> relationshipFromParent);
+
+	/**
 	 * @since 1.2
 	 */
 	SelectBuilder<T> fetchOffset(int offset);
