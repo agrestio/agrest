@@ -102,6 +102,12 @@ public class LinkRestResource_Related {
 		return getService().idempotentCreateOrUpdate(E8.class).id(id).parent(E7.class, parentId, E7.E8).process(data);
 	}
 
+	@DELETE
+	@Path("e8/{id}/e7s")
+	public SimpleResponse e8DeleteE7s(@PathParam("id") int id, String entityData) {
+		return getService().delete(E7.class).toManyParent(E8.class, id, E8.E7S).delete();
+	}
+
 	@PUT
 	@Path("e8/{id}/e9")
 	public DataResponse<E9> e8RelateToOneDependent(@PathParam("id") int id, String entityData) {

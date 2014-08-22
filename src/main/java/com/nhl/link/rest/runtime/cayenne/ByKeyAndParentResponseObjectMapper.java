@@ -6,7 +6,6 @@ import org.apache.cayenne.ObjectContext;
 import org.apache.cayenne.exp.Expression;
 import org.apache.cayenne.exp.ExpressionFactory;
 import org.apache.cayenne.map.ObjEntity;
-import org.apache.cayenne.map.ObjRelationship;
 import org.apache.cayenne.query.SelectQuery;
 
 import com.nhl.link.rest.EntityUpdate;
@@ -33,15 +32,7 @@ class ByKeyAndParentResponseObjectMapper<T> extends ByIdResponseObjectMapper<T> 
 		// precompile parent qualifier - it is the same for all updates within
 		// the response
 
-		// no injection inside object mapper for now, so resolve relationships
-		// via Cayenne instead of metadat service
-		ObjEntity parentEntity = context.getEntityResolver().getObjEntity(response.getParent().getType());
-		ObjRelationship objRelationship = parentEntity.getRelationship(response.getParent().getRelationship());
-
-		// navigate through DbRelationships ... there may be no reverse ObjRel..
-		// Reverse DB should always be there
-		this.parentQualifier = ExpressionFactory.matchDbExp(objRelationship.getReverseDbRelationshipPath(), response
-				.getParent().getId());
+		this.parentQualifier = response.getParent().qualifier(context.getEntityResolver());
 	}
 
 	@Override

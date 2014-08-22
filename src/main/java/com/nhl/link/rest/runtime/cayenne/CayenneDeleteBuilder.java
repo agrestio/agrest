@@ -1,9 +1,14 @@
 package com.nhl.link.rest.runtime.cayenne;
 
+import java.util.List;
+
 import javax.ws.rs.core.Response.Status;
 
 import org.apache.cayenne.ObjectContext;
+import org.apache.cayenne.exp.Expression;
 import org.apache.cayenne.map.ObjEntity;
+import org.apache.cayenne.query.EJBQLQuery;
+import org.apache.cayenne.query.SelectQuery;
 
 import com.nhl.link.rest.Entity;
 import com.nhl.link.rest.EntityUpdate;
@@ -29,7 +34,6 @@ class CayenneDeleteBuilder<T> extends BaseDeleteBuilder<T> {
 		this.mapper = ByIdObjectMapper.mapper();
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public SimpleResponse delete() {
 
@@ -40,6 +44,24 @@ class CayenneDeleteBuilder<T> extends BaseDeleteBuilder<T> {
 		// and EntityUpdate .. TODO: somehow need to adapt ObjectMapper to
 		// delete responses
 
+		// delete by id
+		if (id != null) {
+			deleteById(context);
+		}
+		// delete by parent
+		else if (parent != null) {
+			deleteByParent(context);
+		}
+		// delete all !!
+		else {
+			deleteAll(context);
+		}
+
+		return new SimpleResponse(true);
+	}
+
+	@SuppressWarnings("unchecked")
+	private void deleteById(ObjectContext context) {
 		ResponseObjectMapper<T> responseMapper = mapper.forResponse(createResponse(context));
 		EntityUpdate u = new EntityUpdate();
 		u.setId(id);
@@ -53,8 +75,35 @@ class CayenneDeleteBuilder<T> extends BaseDeleteBuilder<T> {
 
 		context.deleteObjects(object);
 		context.commitChanges();
+	}
 
-		return new SimpleResponse(true);
+	private void deleteByParent(ObjectContext context) {
+
+		ResponseObjectMapper<T> responseMapper = mapper.forResponse(createResponse(context));
+		Object parentObject = responseMapper.findParent();
+
+		if (parentObject == null) {
+			ObjEntity entity = context.getEntityResolver().getObjEntity(parent.getType());
+			throw new LinkRestException(Status.NOT_FOUND, "No parent object for ID '" + parent.getId()
+					+ "' and entity '" + entity.getName() + "'");
+		}
+
+		Expression qualifier = parent.qualifier(context.getEntityResolver());
+		SelectQuery<T> select = SelectQuery.query(type);
+		select.andQualifier(qualifier);
+
+		List<T> objects = context.select(select);
+
+		context.deleteObjects(objects);
+		context.commitChanges();
+	}
+
+	private void deleteAll(ObjectContext context) {
+		ObjEntity e = context.getEntityResolver().getObjEntity(type);
+
+		// TODO: is this kosher? All other deletes are done via Cayenne and
+		// hence process all delete rules. This one does not
+		context.performQuery(new EJBQLQuery("delete from " + e.getName()));
 	}
 
 	private CayenneUpdateResponse<T> createResponse(ObjectContext context) {
