@@ -1,5 +1,7 @@
 package com.nhl.link.rest;
 
+import java.util.Collection;
+
 import javax.ws.rs.core.UriInfo;
 
 import org.apache.cayenne.exp.Property;
@@ -57,6 +59,12 @@ public interface SelectBuilder<T> {
 	 * @since 1.4
 	 */
 	SelectBuilder<T> parent(Class<?> parentType, Object parentId, Property<T> relationshipFromParent);
+
+	/**
+	 * @since 1.4
+	 */
+	CreateOrUpdateBuilder<T> toManyParent(Class<?> parentType, Object parentId,
+			Property<? extends Collection<T>> relationshipFromParent);
 
 	/**
 	 * @since 1.2

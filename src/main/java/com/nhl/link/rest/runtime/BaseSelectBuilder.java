@@ -2,6 +2,7 @@ package com.nhl.link.rest.runtime;
 
 import static com.nhl.link.rest.property.PropertyBuilder.property;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -13,6 +14,7 @@ import org.apache.cayenne.exp.Property;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.nhl.link.rest.CreateOrUpdateBuilder;
 import com.nhl.link.rest.DataResponse;
 import com.nhl.link.rest.Entity;
 import com.nhl.link.rest.EntityParent;
@@ -67,6 +69,13 @@ public abstract class BaseSelectBuilder<T> implements SelectBuilder<T> {
 	public SelectBuilder<T> parent(Class<?> parentType, Object parentId, String relationshipFromParent) {
 		this.parent = new EntityParent<>(parentType, parentId, relationshipFromParent);
 		return this;
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public CreateOrUpdateBuilder<T> toManyParent(Class<?> parentType, Object parentId,
+			Property<? extends Collection<T>> relationshipFromParent) {
+		return (CreateOrUpdateBuilder<T>) parent(parentType, parentId, relationshipFromParent.getName());
 	}
 
 	@Override
