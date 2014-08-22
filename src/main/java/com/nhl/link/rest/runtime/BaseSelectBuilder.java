@@ -15,6 +15,7 @@ import org.slf4j.LoggerFactory;
 
 import com.nhl.link.rest.DataResponse;
 import com.nhl.link.rest.Entity;
+import com.nhl.link.rest.EntityParent;
 import com.nhl.link.rest.EntityProperty;
 import com.nhl.link.rest.LinkRestException;
 import com.nhl.link.rest.SelectBuilder;
@@ -40,6 +41,7 @@ public abstract class BaseSelectBuilder<T> implements SelectBuilder<T> {
 	private Encoder dataEncoder;
 	private SizeConstraints sizeConstraints;
 	private TreeConstraints treeConstraints;
+	protected EntityParent<?> parent;
 
 	public BaseSelectBuilder(Class<T> type, IEncoderService encoderService, IRequestParser requestParser,
 			IConstraintsHandler constraintsHandler) {
@@ -47,6 +49,24 @@ public abstract class BaseSelectBuilder<T> implements SelectBuilder<T> {
 		this.encoderService = encoderService;
 		this.requestParser = requestParser;
 		this.constraintsHandler = constraintsHandler;
+	}
+
+	/**
+	 * @since 1.4
+	 */
+	@Override
+	public SelectBuilder<T> parent(Class<?> parentType, Object parentId, Property<T> relationshipFromParent) {
+		this.parent = new EntityParent<>(parentType, parentId, relationshipFromParent.getName());
+		return this;
+	}
+
+	/**
+	 * @since 1.4
+	 */
+	@Override
+	public SelectBuilder<T> parent(Class<?> parentType, Object parentId, String relationshipFromParent) {
+		this.parent = new EntityParent<>(parentType, parentId, relationshipFromParent);
+		return this;
 	}
 
 	@Override

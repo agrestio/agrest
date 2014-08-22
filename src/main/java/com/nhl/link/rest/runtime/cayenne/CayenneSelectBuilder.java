@@ -4,8 +4,10 @@ import java.util.Map.Entry;
 
 import javax.ws.rs.core.Response.Status;
 
+import org.apache.cayenne.exp.Expression;
 import org.apache.cayenne.exp.ExpressionFactory;
 import org.apache.cayenne.map.ObjEntity;
+import org.apache.cayenne.map.ObjRelationship;
 import org.apache.cayenne.query.Ordering;
 import org.apache.cayenne.query.PrefetchTreeNode;
 import org.apache.cayenne.query.SelectQuery;
@@ -47,6 +49,8 @@ class CayenneSelectBuilder<T> extends BaseSelectBuilder<T> implements SelectBuil
 
 		SelectQuery<T> query = basicSelect(request);
 
+		applyParentQualifier(query);
+
 		if (request.getEntity().getQualifier() != null) {
 			query.andQualifier(request.getEntity().getQualifier());
 		}
@@ -71,6 +75,27 @@ class CayenneSelectBuilder<T> extends BaseSelectBuilder<T> implements SelectBuil
 		}
 
 		return query;
+	}
+
+	protected void applyParentQualifier(SelectQuery<T> query) {
+		if (parent != null) {
+
+			// TODO: inject and use IMetadataService?
+			ObjEntity parentEntity = cayenneService.entityResolver().getObjEntity(parent.getType());
+			ObjRelationship objRelationship = parentEntity.getRelationship(parent.getRelationship());
+
+			if (objRelationship == null) {
+				throw new LinkRestException(Status.BAD_REQUEST, "Invalid relationship: '" + parent.getRelationship()
+						+ "'");
+			}
+
+			// navigate through DbRelationships ... there may be no reverse
+			// ObjRel.. Reverse DB should always be there
+			Expression qualifier = ExpressionFactory.matchDbExp(objRelationship.getReverseDbRelationshipPath(),
+					parent.getId());
+
+			query.andQualifier(qualifier);
+		}
 	}
 
 	protected SelectQuery<T> basicSelect(DataResponse<T> request) {
