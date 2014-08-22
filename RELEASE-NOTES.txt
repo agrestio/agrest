@@ -1,7 +1,8 @@
 Release 1.4
 
-#27 ID that is not a PK can't be used in idempotent requests
 #25 forSelectRelated/constraints causes unqualified fetch ; 
+#26 Refactor delete operation to DeleteBuilder with "delete by id" and "delete by parent" options.
+#27 ID that is not a PK can't be used in idempotent requests
 	Refactor 'forSelectRelated' to be setup inside SelectBuilder 
 
 Release 1.3 2014-08-20
