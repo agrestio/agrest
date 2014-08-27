@@ -1,10 +1,12 @@
 package com.nhl.link.rest.runtime.constraints;
 
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Map.Entry;
 
 import javax.ws.rs.core.Response.Status;
 
+import org.apache.cayenne.di.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,17 +24,35 @@ import com.nhl.link.rest.runtime.parser.PathConstants;
  * An {@link IConstraintsHandler} that ensures that no target attributes exceed
  * the defined bounds.
  * 
- * @since 1.3
+ * @since 1.5
  */
-public class DefaultConstraintsHandler implements IConstraintsHandler {
+public class ConstraintsHandler implements IConstraintsHandler {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(DefaultConstraintsHandler.class);
+	public static final String DEFAULT_READ_CONSTRAINTS_MAP = "linkrest.constraints.read.map";
+	public static final String DEFAULT_WRITE_CONSTRAINTS_MAP = "linkrest.constraints.write.map";
+
+	private static final Logger LOGGER = LoggerFactory.getLogger(ConstraintsHandler.class);
+
+	private Map<String, TreeConstraints<?>> defaultReadConstraints;
+	private Map<String, TreeConstraints<?>> defaultWriteConstraints;
+
+	public ConstraintsHandler(
+			@Inject(DEFAULT_READ_CONSTRAINTS_MAP) Map<String, TreeConstraints<?>> defaultReadConstraints,
+			@Inject(DEFAULT_WRITE_CONSTRAINTS_MAP) Map<String, TreeConstraints<?>> defaultWriteConstraints) {
+		this.defaultReadConstraints = defaultReadConstraints;
+		this.defaultWriteConstraints = defaultWriteConstraints;
+	}
 
 	@Override
 	public <T> void constrainUpdate(UpdateResponse<T> response, TreeConstraints<T> writeConstraints) {
-		if (writeConstraints != null && !response.getUpdates().isEmpty()) {
-			ImmutableTreeConstraints constraints = writeConstraints.build(response);
-			applyWriteTreeConstraints(response, constraints);
+
+		@SuppressWarnings("unchecked")
+		TreeConstraints<T> c = writeConstraints != null ? writeConstraints
+				: (TreeConstraints<T>) defaultWriteConstraints.get(response.getType().getName());
+
+		if (c != null && !response.getUpdates().isEmpty()) {
+			ImmutableTreeConstraints compiled = c.build(response);
+			applyWriteTreeConstraints(response, compiled);
 		}
 	}
 
@@ -44,11 +64,15 @@ public class DefaultConstraintsHandler implements IConstraintsHandler {
 			applyReadSizeConstraints(response, sizeConstraints);
 		}
 
+		@SuppressWarnings("unchecked")
+		TreeConstraints<T> c = readConstraints != null ? readConstraints : (TreeConstraints<T>) defaultReadConstraints
+				.get(response.getType().getName());
+
 		// entity - ensure attribute/relationship tree span of source is not
 		// exceeded in target. Null target means we don't need to worry about
 		// unauthorized attributes and relationships
-		if (readConstraints != null && response.getEntity() != null) {
-			ImmutableTreeConstraints constraints = readConstraints.build(response);
+		if (c != null && response.getEntity() != null) {
+			ImmutableTreeConstraints constraints = c.build(response);
 			applyReadTreeConstraints(response.getEntity(), constraints);
 		}
 	}

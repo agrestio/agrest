@@ -22,6 +22,7 @@ import org.apache.cayenne.map.DataMap;
 import org.apache.cayenne.validation.ValidationException;
 
 import com.nhl.link.rest.LinkRestException;
+import com.nhl.link.rest.TreeConstraints;
 import com.nhl.link.rest.encoder.EncoderFilter;
 import com.nhl.link.rest.provider.CayenneRuntimeExceptionMapper;
 import com.nhl.link.rest.provider.LinkRestExceptionMapper;
@@ -30,7 +31,7 @@ import com.nhl.link.rest.runtime.adapter.LinkRestAdapter;
 import com.nhl.link.rest.runtime.cayenne.CayennePersister;
 import com.nhl.link.rest.runtime.cayenne.ICayennePersister;
 import com.nhl.link.rest.runtime.cayenne.NoCayennePersister;
-import com.nhl.link.rest.runtime.constraints.DefaultConstraintsHandler;
+import com.nhl.link.rest.runtime.constraints.ConstraintsHandler;
 import com.nhl.link.rest.runtime.constraints.IConstraintsHandler;
 import com.nhl.link.rest.runtime.encoder.AttributeEncoderFactory;
 import com.nhl.link.rest.runtime.encoder.EncoderService;
@@ -206,6 +207,8 @@ public class LinkRestBuilder {
 				binder.<UpdateFilter> bindList(RequestParser.UPDATE_FILTER_LIST);
 				binder.<EncoderFilter> bindList(EncoderService.ENCODER_FILTER_LIST).addAll(encoderFilters);
 				binder.<DataMap> bindList(MetadataService.NON_PERSISTENT_ENTITIES_LIST).addAll(nonPersistentEntities);
+				binder.<TreeConstraints<?>> bindMap(ConstraintsHandler.DEFAULT_READ_CONSTRAINTS_MAP);
+				binder.<TreeConstraints<?>> bindMap(ConstraintsHandler.DEFAULT_WRITE_CONSTRAINTS_MAP);
 
 				if (linkRestServiceType != null) {
 					binder.bind(ILinkRestService.class).to(linkRestServiceType);
@@ -219,11 +222,11 @@ public class LinkRestBuilder {
 				binder.bind(IEncoderService.class).to(EncoderService.class);
 				binder.bind(IRelationshipMapper.class).to(RelationshipMapper.class);
 				binder.bind(IMetadataService.class).to(MetadataService.class);
-				binder.bind(IConstraintsHandler.class).to(DefaultConstraintsHandler.class);
+				binder.bind(IConstraintsHandler.class).to(ConstraintsHandler.class);
 
 				binder.bind(IJacksonService.class).to(JacksonService.class);
 				binder.bind(ICayennePersister.class).toInstance(cayenneService);
-				
+
 				binder.bind(IPathCache.class).to(PathCache.class);
 				binder.bind(IFilterProcessor.class).to(FilterProcessor.class);
 				binder.bind(ISortProcessor.class).to(SortProcessor.class);

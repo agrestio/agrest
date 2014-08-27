@@ -8,6 +8,9 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
+import java.util.Collections;
+import java.util.Map;
+
 import org.apache.cayenne.exp.Expression;
 import org.apache.cayenne.map.DataMap;
 import org.apache.cayenne.map.ObjEntity;
@@ -19,11 +22,11 @@ import com.nhl.link.rest.DataResponse;
 import com.nhl.link.rest.Entity;
 import com.nhl.link.rest.SizeConstraints;
 import com.nhl.link.rest.TreeConstraints;
-import com.nhl.link.rest.runtime.constraints.DefaultConstraintsHandler;
+import com.nhl.link.rest.runtime.constraints.ConstraintsHandler;
 
-public class DefaultConstraintsHandlerTest {
+public class ConstraintsHandlerTest {
 
-	private DefaultConstraintsHandler constraintHandler;
+	private ConstraintsHandler constraintHandler;
 	private ObjEntity e0;
 	private ObjEntity e1;
 	private ObjEntity e2;
@@ -31,7 +34,9 @@ public class DefaultConstraintsHandlerTest {
 
 	@Before
 	public void before() {
-		this.constraintHandler = new DefaultConstraintsHandler();
+		Map<String, TreeConstraints<?>> r = Collections.emptyMap();
+		Map<String, TreeConstraints<?>> w = Collections.emptyMap();
+		this.constraintHandler = new ConstraintsHandler(r, w);
 
 		DataMap dm = new DataMap();
 
