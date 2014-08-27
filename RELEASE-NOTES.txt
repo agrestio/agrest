@@ -3,6 +3,7 @@ Release 1.5
 #30 Add type generic parameter to TreeConstraint
 #31 Customizable request chain
 #32 Support for default per-entity constraints
+#32 EncoderService: Do not include related_id property by default
 
 Release 1.4 2014-08-22
 
