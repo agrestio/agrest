@@ -8,13 +8,10 @@ import org.apache.cayenne.exp.Expression;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.fasterxml.jackson.core.JsonFactory;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nhl.link.rest.Entity;
 import com.nhl.link.rest.LinkRestException;
-import com.nhl.link.rest.runtime.parser.FilterProcessor;
-import com.nhl.link.rest.runtime.parser.PathCache;
-import com.nhl.link.rest.runtime.parser.RequestJsonParser;
+import com.nhl.link.rest.runtime.jackson.IJacksonService;
+import com.nhl.link.rest.runtime.jackson.JacksonService;
 import com.nhl.link.rest.unit.TestWithCayenneMapping;
 import com.nhl.link.rest.unit.cayenne.E4;
 
@@ -26,8 +23,7 @@ public class FilterProcessorTest extends TestWithCayenneMapping {
 	@Before
 	public void setUp() {
 
-		JsonFactory jsonFactory = new ObjectMapper().getJsonFactory();
-		RequestJsonParser jsonParser = new RequestJsonParser(jsonFactory);
+		IJacksonService jsonParser = new JacksonService();
 
 		PathCache pathCache = new PathCache();
 		e4Descriptor = getClientEntity(E4.class);

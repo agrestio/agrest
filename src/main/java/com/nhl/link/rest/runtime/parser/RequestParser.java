@@ -40,19 +40,17 @@ public class RequestParser implements IRequestParser {
 		this.updateFilters = updateFilters;
 		this.metadataService = metadataService;
 
-		RequestJsonParser jsonParser = new RequestJsonParser(jacksonService.getJsonFactory());
-
 		// cache parsed paths as we have a finite number of valid paths in each
 		// app model, and not having to parse them every time should save a few
 		// cycles
 		PathCache pathCache = new PathCache();
 
-		this.cayenneExpProcessor = new CayenneExpProcessor(jsonParser, pathCache);
-		this.sortProcessor = new SortProcessor(jsonParser, pathCache);
-		this.includeProcessor = new IncludeProcessor(jsonParser, sortProcessor, cayenneExpProcessor);
-		this.excludeProcessor = new ExcludeProcessor(jsonParser);
-		this.filterProcessor = new FilterProcessor(jsonParser, pathCache);
-		this.dataObjectProcessor = new DataObjectProcessor(jsonParser, associationHandler);
+		this.cayenneExpProcessor = new CayenneExpProcessor(jacksonService, pathCache);
+		this.sortProcessor = new SortProcessor(jacksonService, pathCache);
+		this.includeProcessor = new IncludeProcessor(jacksonService, sortProcessor, cayenneExpProcessor);
+		this.excludeProcessor = new ExcludeProcessor(jacksonService);
+		this.filterProcessor = new FilterProcessor(jacksonService, pathCache);
+		this.dataObjectProcessor = new DataObjectProcessor(jacksonService, associationHandler);
 		this.queryProcessor = new QueryProcessor();
 	}
 

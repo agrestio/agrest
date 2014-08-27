@@ -9,9 +9,9 @@ import org.apache.cayenne.map.ObjEntity;
 
 import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nhl.link.rest.Entity;
 import com.nhl.link.rest.LinkRestException;
+import com.nhl.link.rest.runtime.jackson.IJacksonService;
 
 class FilterProcessor {
 
@@ -20,10 +20,10 @@ class FilterProcessor {
 	private static final String PROPERTY = "property";
 	private static final String VALUE = "value";
 
-	private RequestJsonParser jsonParser;
+	private IJacksonService jsonParser;
 	private PathCache pathCache;
 
-	FilterProcessor(RequestJsonParser jsonParser, PathCache pathCache) {
+	FilterProcessor(IJacksonService jsonParser, PathCache pathCache) {
 		this.jsonParser = jsonParser;
 		this.pathCache = pathCache;
 	}
@@ -33,7 +33,7 @@ class FilterProcessor {
 			return;
 		}
 
-		JsonNode rootNode = jsonParser.parseJSON(filtersJson, new ObjectMapper());
+		JsonNode rootNode = jsonParser.parseJson(filtersJson);
 		if (rootNode == null) {
 			return;
 		}

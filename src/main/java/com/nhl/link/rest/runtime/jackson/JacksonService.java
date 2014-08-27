@@ -3,12 +3,17 @@ package com.nhl.link.rest.runtime.jackson;
 import java.io.IOException;
 import java.io.OutputStream;
 
+import javax.ws.rs.core.Response.Status;
+
 import com.fasterxml.jackson.core.JsonEncoding;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonGenerator.Feature;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.nhl.link.rest.LinkRestException;
 
 public class JacksonService implements IJacksonService {
 
@@ -41,6 +46,23 @@ public class JacksonService implements IJacksonService {
 		// TODO: UTF-8 is hardcoded, it is likely we may have alt. encodings
 		try (JsonGenerator generator = sharedFactory.createJsonGenerator(out, JsonEncoding.UTF8)) {
 			processor.generateJSON(generator);
+		}
+	}
+
+	/**
+	 * @since 1.5
+	 */
+	@Override
+	public JsonNode parseJson(String json) {
+		if (json == null) {
+			return null;
+		}
+
+		try {
+			JsonParser parser = getJsonFactory().createJsonParser(json);
+			return new ObjectMapper().readTree(parser);
+		} catch (IOException ioex) {
+			throw new LinkRestException(Status.BAD_REQUEST, "Error parsing JSON");
 		}
 	}
 }

@@ -8,15 +8,15 @@ import org.apache.cayenne.map.ObjAttribute;
 import org.apache.cayenne.map.ObjRelationship;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nhl.link.rest.Entity;
 import com.nhl.link.rest.LinkRestException;
+import com.nhl.link.rest.runtime.jackson.IJacksonService;
 
 public class ExcludeProcessor {
 
-	private RequestJsonParser jsonParser;
+	private IJacksonService jsonParser;
 
-	ExcludeProcessor(RequestJsonParser jsonParser) {
+	ExcludeProcessor(IJacksonService jsonParser) {
 		this.jsonParser = jsonParser;
 	}
 
@@ -40,7 +40,7 @@ public class ExcludeProcessor {
 	}
 
 	private void processExcludeArray(Entity<?> clientEntity, String exclude) {
-		JsonNode root = jsonParser.parseJSON(exclude, new ObjectMapper());
+		JsonNode root = jsonParser.parseJson(exclude);
 
 		if (root != null && root.isArray()) {
 

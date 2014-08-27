@@ -10,9 +10,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nhl.link.rest.Entity;
 import com.nhl.link.rest.LinkRestException;
+import com.nhl.link.rest.runtime.jackson.IJacksonService;
 
 class IncludeProcessor {
 
@@ -23,11 +23,11 @@ class IncludeProcessor {
 	private static final String SORT = "sort";
 	private static final String CAYENNE_EXP = "cayenneExp";
 
-	private RequestJsonParser jsonParser;
+	private IJacksonService jsonParser;
 	private SortProcessor sortProcessor;
 	private CayenneExpProcessor expProcessor;
 
-	IncludeProcessor(RequestJsonParser jsonParser, SortProcessor sortProcessor, CayenneExpProcessor expProcessor) {
+	IncludeProcessor(IJacksonService jsonParser, SortProcessor sortProcessor, CayenneExpProcessor expProcessor) {
 		this.jsonParser = jsonParser;
 		this.sortProcessor = sortProcessor;
 		this.expProcessor = expProcessor;
@@ -39,7 +39,7 @@ class IncludeProcessor {
 			if (include.startsWith("[")) {
 				processIncludeArray(clientEntity, include);
 			} else if (include.startsWith("{")) {
-				JsonNode root = jsonParser.parseJSON(include, new ObjectMapper());
+				JsonNode root = jsonParser.parseJson(include);
 				processIncludeObject(clientEntity, root);
 			} else {
 				processIncludePath(clientEntity, include);
@@ -50,7 +50,7 @@ class IncludeProcessor {
 	}
 
 	private void processIncludeArray(Entity<?> clientEntity, String include) {
-		JsonNode root = jsonParser.parseJSON(include, new ObjectMapper());
+		JsonNode root = jsonParser.parseJson(include);
 
 		if (root != null && root.isArray()) {
 

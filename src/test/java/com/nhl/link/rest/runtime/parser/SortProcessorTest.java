@@ -23,8 +23,7 @@ public class SortProcessorTest extends TestWithCayenneMapping {
 	@Before
 	public void before() {
 		JacksonService jacksonService = new JacksonService();
-		RequestJsonParser jsonParser = new RequestJsonParser(jacksonService.getJsonFactory());
-		this.processor = new SortProcessor(jsonParser, new PathCache());
+		this.processor = new SortProcessor(jacksonService, new PathCache());
 
 		ObjEntity oEntity = runtime.getChannel().getEntityResolver().getObjEntity(E2.class);
 		this.entity = new Entity<>(Object.class, oEntity);

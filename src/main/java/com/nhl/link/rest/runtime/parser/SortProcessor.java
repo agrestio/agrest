@@ -10,9 +10,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nhl.link.rest.Entity;
 import com.nhl.link.rest.LinkRestException;
+import com.nhl.link.rest.runtime.jackson.IJacksonService;
 
 class SortProcessor {
 
@@ -24,10 +24,10 @@ class SortProcessor {
 	private static final String PROPERTY = "property";
 	private static final String DIRECTION = "direction";
 
-	private RequestJsonParser jsonParser;
+	private IJacksonService jsonParser;
 	private PathCache pathCache;
 
-	SortProcessor(RequestJsonParser jsonParser, PathCache pathCache) {
+	SortProcessor(IJacksonService jsonParser, PathCache pathCache) {
 		this.jsonParser = jsonParser;
 		this.pathCache = pathCache;
 	}
@@ -41,7 +41,7 @@ class SortProcessor {
 		if (sort.startsWith("[")) {
 			processSorterArray(clientEntity, sort);
 		} else if (sort.startsWith("{")) {
-			JsonNode root = jsonParser.parseJSON(sort, new ObjectMapper());
+			JsonNode root = jsonParser.parseJson(sort);
 			processSorterObject(clientEntity, root);
 		} else {
 			processSimpleSorter(clientEntity, sort, direction);
@@ -77,7 +77,7 @@ class SortProcessor {
 	}
 
 	void processSorterArray(Entity<?> clientEntity, String sort) {
-		JsonNode root = jsonParser.parseJSON(sort, new ObjectMapper());
+		JsonNode root = jsonParser.parseJson(sort);
 
 		if (root != null) {
 			processSorterArray(clientEntity, root);

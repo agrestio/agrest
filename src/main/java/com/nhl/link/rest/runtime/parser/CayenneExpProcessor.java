@@ -7,18 +7,18 @@ import java.util.Map;
 import org.apache.cayenne.map.ObjEntity;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nhl.link.rest.Entity;
+import com.nhl.link.rest.runtime.jackson.IJacksonService;
 import com.nhl.link.rest.runtime.parser.converter.UtcDateConverter;
 import com.nhl.link.rest.runtime.parser.converter.ValueConverter;
 
 class CayenneExpProcessor {
 
-	private RequestJsonParser jsonParser;
+	private IJacksonService jsonParser;
 	private Map<String, ValueConverter> converters;
 	private PathCache pathCache;
 
-	CayenneExpProcessor(RequestJsonParser jsonParser, PathCache pathCache) {
+	CayenneExpProcessor(IJacksonService jsonParser, PathCache pathCache) {
 		this.jsonParser = jsonParser;
 		this.pathCache = pathCache;
 
@@ -31,7 +31,7 @@ class CayenneExpProcessor {
 			return;
 		}
 
-		JsonNode expNode = jsonParser.parseJSON(cayenneExpJson, new ObjectMapper());
+		JsonNode expNode = jsonParser.parseJson(cayenneExpJson);
 		if (expNode != null) {
 			process(clientEntity, expNode);
 		}

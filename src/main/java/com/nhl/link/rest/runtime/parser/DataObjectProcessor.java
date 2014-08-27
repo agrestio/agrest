@@ -15,10 +15,10 @@ import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nhl.link.rest.EntityUpdate;
 import com.nhl.link.rest.LinkRestException;
 import com.nhl.link.rest.UpdateResponse;
+import com.nhl.link.rest.runtime.jackson.IJacksonService;
 import com.nhl.link.rest.runtime.parser.converter.UtcDateConverter;
 import com.nhl.link.rest.runtime.parser.converter.ValueConverter;
 import com.nhl.link.rest.runtime.semantics.IRelationshipMapper;
@@ -27,11 +27,11 @@ class DataObjectProcessor {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(DataObjectProcessor.class);
 
-	private RequestJsonParser jsonParser;
+	private IJacksonService jsonParser;
 	private Map<String, ValueConverter> converters;
 	private IRelationshipMapper relationshipMapper;
 
-	DataObjectProcessor(RequestJsonParser jsonParser, IRelationshipMapper relationshipMapper) {
+	DataObjectProcessor(IJacksonService jsonParser, IRelationshipMapper relationshipMapper) {
 		this.jsonParser = jsonParser;
 		this.relationshipMapper = relationshipMapper;
 
@@ -43,7 +43,7 @@ class DataObjectProcessor {
 
 	void process(UpdateResponse<?> response, String json) {
 
-		JsonNode node = jsonParser.parseJSON(json, new ObjectMapper());
+		JsonNode node = jsonParser.parseJson(json);
 		if (node == null) {
 			// empty requests are fine. we just do nothing...
 			return;
