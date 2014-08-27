@@ -53,8 +53,9 @@ public class LinkRestService_InContainer_GET_ObjectInclude_Test extends JerseyTe
 				.queryParam("include", "id").request().get();
 
 		assertEquals(Status.OK.getStatusCode(), response1.getStatus());
-		assertEquals("{\"success\":true,\"data\":[{\"id\":8,\"e2\":{\"id\":1,\"address\":null,\"name\":\"xxx\"},"
-				+ "\"e2_id\":1}],\"total\":1}", response1.readEntity(String.class));
+		assertEquals(
+				"{\"success\":true,\"data\":[{\"id\":8,\"e2\":{\"id\":1,\"address\":null,\"name\":\"xxx\"}}],\"total\":1}",
+				response1.readEntity(String.class));
 	}
 
 	@Test
@@ -72,8 +73,7 @@ public class LinkRestService_InContainer_GET_ObjectInclude_Test extends JerseyTe
 
 		// no support for MapBy for to-one... simply ignoring it...
 		assertEquals("{\"success\":true,\"data\":[{\"id\":8,\"e2\":{"
-				+ "\"id\":1,\"address\":null,\"name\":\"xxx\"},\"e2_id\":1}],\"total\":1}",
-				response1.readEntity(String.class));
+				+ "\"id\":1,\"address\":null,\"name\":\"xxx\"}}],\"total\":1}", response1.readEntity(String.class));
 	}
 
 	@Test
@@ -332,8 +332,9 @@ public class LinkRestService_InContainer_GET_ObjectInclude_Test extends JerseyTe
 				new SQLTemplate(E3.class, "INSERT INTO utest.e3 (id, e2_id, name) "
 						+ "values (8, 1, 'a'),(9, 1, 'z'),(7, 1, 'm')"));
 
-		Response response1 = target("/lr/e2").queryParam("include", urlEnc("{\"path\":\"e3s\"}")).queryParam("include", "id")
-				.queryParam("exclude", "e3s.id").queryParam("exclude", "e3s.phoneNumber").request().get();
+		Response response1 = target("/lr/e2").queryParam("include", urlEnc("{\"path\":\"e3s\"}"))
+				.queryParam("include", "id").queryParam("exclude", "e3s.id").queryParam("exclude", "e3s.phoneNumber")
+				.request().get();
 
 		assertEquals(Status.OK.getStatusCode(), response1.getStatus());
 		assertEquals("{\"success\":true,\"data\":[{\"id\":1,\"e3s\":[{\"name\":\"a\"}," + "{\"name\":\"z\"},"
@@ -350,15 +351,13 @@ public class LinkRestService_InContainer_GET_ObjectInclude_Test extends JerseyTe
 				new SQLTemplate(E3.class, "INSERT INTO utest.e3 (id, e2_id, e5_id, name) "
 						+ "values (8, 1, 345, 'a'),(9, 1, 345, 'z'),(7, 1, 346, 'm')"));
 
-		Response response1 = target("/lr/e2").queryParam("include", urlEnc("{\"path\":\"e3s\"}")).queryParam("include", "id")
-				.queryParam("exclude", "e3s.id").queryParam("exclude", "e3s.phoneNumber")
+		Response response1 = target("/lr/e2").queryParam("include", urlEnc("{\"path\":\"e3s\"}"))
+				.queryParam("include", "id").queryParam("exclude", "e3s.id").queryParam("exclude", "e3s.phoneNumber")
 				.queryParam("include", "e3s.e5.name").request().get();
 
 		assertEquals(Status.OK.getStatusCode(), response1.getStatus());
-		assertEquals(
-				"{\"success\":true,\"data\":[{\"id\":1,\"e3s\":[{\"e5\":{\"name\":\"B\"},\"e5_id\":345,\"name\":\"a\"},"
-						+ "{\"e5\":{\"name\":\"B\"},\"e5_id\":345,\"name\":\"z\"},"
-						+ "{\"e5\":{\"name\":\"A\"},\"e5_id\":346,\"name\":\"m\"}]}],\"total\":1}",
-				response1.readEntity(String.class));
+		assertEquals("{\"success\":true,\"data\":[{\"id\":1,\"e3s\":[{\"e5\":{\"name\":\"B\"},\"name\":\"a\"},"
+				+ "{\"e5\":{\"name\":\"B\"},\"name\":\"z\"},"
+				+ "{\"e5\":{\"name\":\"A\"},\"name\":\"m\"}]}],\"total\":1}", response1.readEntity(String.class));
 	}
 }
