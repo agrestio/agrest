@@ -46,9 +46,9 @@ public interface CreateOrUpdateBuilder<T> {
 	 */
 	CreateOrUpdateBuilder<T> with(UriInfo uriInfo);
 
-	CreateOrUpdateBuilder<T> readConstraints(TreeConstraints constraints);
+	CreateOrUpdateBuilder<T> readConstraints(TreeConstraints<T> constraints);
 
-	CreateOrUpdateBuilder<T> writeConstraints(TreeConstraints constraints);
+	CreateOrUpdateBuilder<T> writeConstraints(TreeConstraints<T> constraints);
 
 	/**
 	 * Sets a custom mapper that locates existing objects based on request data.

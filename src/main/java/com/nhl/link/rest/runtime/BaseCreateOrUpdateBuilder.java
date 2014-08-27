@@ -37,8 +37,8 @@ public abstract class BaseCreateOrUpdateBuilder<T> implements CreateOrUpdateBuil
 	protected IMetadataService metadataService;
 	private IConstraintsHandler constraintsHandler;
 
-	private TreeConstraints readConstraints;
-	private TreeConstraints writeConstraints;
+	private TreeConstraints<T> readConstraints;
+	private TreeConstraints<T> writeConstraints;
 
 	protected ObjectMapper mapper;
 
@@ -83,13 +83,13 @@ public abstract class BaseCreateOrUpdateBuilder<T> implements CreateOrUpdateBuil
 	}
 
 	@Override
-	public CreateOrUpdateBuilder<T> readConstraints(TreeConstraints constraints) {
+	public CreateOrUpdateBuilder<T> readConstraints(TreeConstraints<T> constraints) {
 		this.readConstraints = constraints;
 		return this;
 	}
 
 	@Override
-	public CreateOrUpdateBuilder<T> writeConstraints(TreeConstraints constraints) {
+	public CreateOrUpdateBuilder<T> writeConstraints(TreeConstraints<T> constraints) {
 		this.writeConstraints = constraints;
 		return this;
 	}

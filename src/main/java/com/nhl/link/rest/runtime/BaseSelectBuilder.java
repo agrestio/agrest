@@ -42,7 +42,7 @@ public abstract class BaseSelectBuilder<T> implements SelectBuilder<T> {
 	private Map<String, EntityProperty> extraProperties;
 	private Encoder dataEncoder;
 	private SizeConstraints sizeConstraints;
-	private TreeConstraints treeConstraints;
+	private TreeConstraints<T> treeConstraints;
 	protected EntityParent<?> parent;
 
 	public BaseSelectBuilder(Class<T> type, IEncoderService encoderService, IRequestParser requestParser,
@@ -79,7 +79,7 @@ public abstract class BaseSelectBuilder<T> implements SelectBuilder<T> {
 	}
 
 	@Override
-	public SelectBuilder<T> constraints(TreeConstraints constraints) {
+	public SelectBuilder<T> constraints(TreeConstraints<T> constraints) {
 		this.treeConstraints = constraints;
 		return this;
 	}

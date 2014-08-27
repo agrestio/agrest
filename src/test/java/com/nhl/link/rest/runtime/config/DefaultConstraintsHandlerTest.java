@@ -117,7 +117,7 @@ public class DefaultConstraintsHandlerTest {
 	@Test
 	public void testApply_ClientEntity_NoTargetRel() {
 
-		TreeConstraints tc1 = TreeConstraints.excludeAll().attributes("a", "b");
+		TreeConstraints<Object> tc1 = TreeConstraints.excludeAll(Object.class).attributes("a", "b");
 
 		Entity<Object> te1 = new Entity<>(Object.class, e0);
 		te1.getAttributes().add("c");
@@ -128,7 +128,7 @@ public class DefaultConstraintsHandlerTest {
 		te11.getAttributes().add("b1");
 		te1.getChildren().put("d", te11);
 
-		DataResponse<?> t1 = DataResponse.forType(Object.class).withClientEntity(te1);
+		DataResponse<Object> t1 = DataResponse.forType(Object.class).withClientEntity(te1);
 
 		constraintHandler.constrainResponse(t1, null, tc1);
 		assertEquals(1, t1.getEntity().getAttributes().size());
@@ -139,10 +139,10 @@ public class DefaultConstraintsHandlerTest {
 	@Test
 	public void testApply_ClientEntity_TargetRel() {
 
-		TreeConstraints tc1 = TreeConstraints.excludeAll().attributes("a", "b")
-				.path("r1", TreeConstraints.excludeAll().attributes("n", "m"))
-				.path("r1.r11", TreeConstraints.excludeAll().attributes("p", "r"))
-				.path("r2", TreeConstraints.excludeAll().attributes("k", "l"));
+		TreeConstraints<Object> tc1 = TreeConstraints.excludeAll(Object.class).attributes("a", "b")
+				.path("r1", TreeConstraints.excludeAll(Object.class).attributes("n", "m"))
+				.path("r1.r11", TreeConstraints.excludeAll(Object.class).attributes("p", "r"))
+				.path("r2", TreeConstraints.excludeAll(Object.class).attributes("k", "l"));
 
 		Entity<Object> te1 = new Entity<>(Object.class, e0);
 		te1.getAttributes().add("c");
@@ -158,7 +158,7 @@ public class DefaultConstraintsHandlerTest {
 		te21.getAttributes().add("z");
 		te1.getChildren().put("r3", te21);
 
-		DataResponse<?> t1 = DataResponse.forType(Object.class).withClientEntity(te1);
+		DataResponse<Object> t1 = DataResponse.forType(Object.class).withClientEntity(te1);
 
 		constraintHandler.constrainResponse(t1, null, tc1);
 		assertEquals(1, t1.getEntity().getAttributes().size());
@@ -175,24 +175,24 @@ public class DefaultConstraintsHandlerTest {
 	@Test
 	public void testMerge_ClientEntity_Id() {
 
-		TreeConstraints tc1 = TreeConstraints.excludeAll().excludeId();
-		TreeConstraints tc2 = TreeConstraints.excludeAll().includeId();
+		TreeConstraints<Object> tc1 = TreeConstraints.excludeAll(Object.class).excludeId();
+		TreeConstraints<Object> tc2 = TreeConstraints.excludeAll(Object.class).includeId();
 
 		Entity<Object> te1 = new Entity<>(Object.class, e0);
 		te1.includeId();
-		DataResponse<?> t1 = DataResponse.forType(Object.class).withClientEntity(te1);
+		DataResponse<Object> t1 = DataResponse.forType(Object.class).withClientEntity(te1);
 		constraintHandler.constrainResponse(t1, null, tc1);
 		assertFalse(t1.getEntity().isIdIncluded());
 
 		Entity<Object> te2 = new Entity<>(Object.class, e0);
 		te2.includeId();
-		DataResponse<?> t2 = DataResponse.forType(Object.class).withClientEntity(te2);
+		DataResponse<Object> t2 = DataResponse.forType(Object.class).withClientEntity(te2);
 		constraintHandler.constrainResponse(t2, null, tc2);
 		assertTrue(t2.getEntity().isIdIncluded());
 
 		Entity<Object> te3 = new Entity<>(Object.class, e0);
 		te3.excludeId();
-		DataResponse<?> t3 = DataResponse.forType(Object.class).withClientEntity(te3);
+		DataResponse<Object> t3 = DataResponse.forType(Object.class).withClientEntity(te3);
 		constraintHandler.constrainResponse(t3, null, tc2);
 		assertFalse(t3.getEntity().isIdIncluded());
 	}
@@ -202,16 +202,16 @@ public class DefaultConstraintsHandlerTest {
 
 		Expression q1 = Expression.fromString("a = 5");
 
-		TreeConstraints tc1 = TreeConstraints.excludeAll().and(q1);
+		TreeConstraints<Object> tc1 = TreeConstraints.excludeAll(Object.class).and(q1);
 
 		Entity<Object> te1 = new Entity<>(Object.class, e0);
-		DataResponse<?> t1 = DataResponse.forType(Object.class).withClientEntity(te1);
+		DataResponse<Object> t1 = DataResponse.forType(Object.class).withClientEntity(te1);
 		constraintHandler.constrainResponse(t1, null, tc1);
 		assertEquals(Expression.fromString("a = 5"), t1.getEntity().getQualifier());
 
 		Entity<Object> te2 = new Entity<>(Object.class, e0);
 		te2.andQualifier(Expression.fromString("b = 'd'"));
-		DataResponse<?> t2 = DataResponse.forType(Object.class).withClientEntity(te2);
+		DataResponse<Object> t2 = DataResponse.forType(Object.class).withClientEntity(te2);
 		constraintHandler.constrainResponse(t2, null, tc1);
 		assertEquals(Expression.fromString("b = 'd' and a = 5"), t2.getEntity().getQualifier());
 	}
@@ -219,7 +219,8 @@ public class DefaultConstraintsHandlerTest {
 	@Test
 	public void testMerge_MapBy() {
 
-		TreeConstraints tc1 = excludeAll().path("r1", TreeConstraints.excludeAll().attribute("a"));
+		TreeConstraints<Object> tc1 = excludeAll(Object.class).path("r1",
+				TreeConstraints.excludeAll(Object.class).attribute("a"));
 
 		Entity<Object> te1MapByTarget = new Entity<>(Object.class, e0);
 		te1MapByTarget.getAttributes().add("b");
@@ -230,7 +231,7 @@ public class DefaultConstraintsHandlerTest {
 		Entity<Object> te1 = new Entity<>(Object.class, e0);
 		te1.mapBy(te1MapBy, "r1.b");
 
-		DataResponse<?> t1 = DataResponse.forType(Object.class).withClientEntity(te1);
+		DataResponse<Object> t1 = DataResponse.forType(Object.class).withClientEntity(te1);
 		constraintHandler.constrainResponse(t1, null, tc1);
 		assertNull(t1.getEntity().getMapBy());
 		assertNull(t1.getEntity().getMapByPath());
@@ -244,7 +245,7 @@ public class DefaultConstraintsHandlerTest {
 		Entity<Object> te2 = new Entity<>(Object.class, e0);
 		te2.mapBy(te2MapBy, "r1.a");
 
-		DataResponse<?> t2 = DataResponse.forType(Object.class).withClientEntity(te2);
+		DataResponse<Object> t2 = DataResponse.forType(Object.class).withClientEntity(te2);
 		constraintHandler.constrainResponse(t2, null, tc1);
 		assertSame(te2MapBy, t2.getEntity().getMapBy());
 		assertEquals("r1.a", t2.getEntity().getMapByPath());
@@ -253,7 +254,7 @@ public class DefaultConstraintsHandlerTest {
 	@Test
 	public void testMerge_MapById_Exclude() {
 
-		TreeConstraints tc1 = excludeAll().path("r1", excludeAll().excludeId());
+		TreeConstraints<Object> tc1 = excludeAll(Object.class).path("r1", excludeAll(Object.class).excludeId());
 
 		Entity<Object> te1MapByTarget = new Entity<>(Object.class, e0);
 		te1MapByTarget.includeId();
@@ -264,7 +265,7 @@ public class DefaultConstraintsHandlerTest {
 		Entity<Object> te1 = new Entity<>(Object.class, e0);
 		te1.mapBy(te1MapBy, "r1");
 
-		DataResponse<?> t1 = DataResponse.forType(Object.class).withClientEntity(te1);
+		DataResponse<Object> t1 = DataResponse.forType(Object.class).withClientEntity(te1);
 		constraintHandler.constrainResponse(t1, null, tc1);
 		assertNull(t1.getEntity().getMapBy());
 		assertNull(t1.getEntity().getMapByPath());
@@ -274,7 +275,7 @@ public class DefaultConstraintsHandlerTest {
 	@Test
 	public void testMerge_MapById_Include() {
 
-		TreeConstraints tc1 = excludeAll().path("r1", excludeAll().includeId());
+		TreeConstraints<Object> tc1 = excludeAll(Object.class).path("r1", excludeAll(Object.class).includeId());
 
 		Entity<Object> te1MapByTarget = new Entity<>(Object.class, e1);
 		te1MapByTarget.includeId();
@@ -285,7 +286,7 @@ public class DefaultConstraintsHandlerTest {
 		Entity<Object> te1 = new Entity<>(Object.class, e0);
 		te1.mapBy(te1MapBy, "r1");
 
-		DataResponse<?> t1 = DataResponse.forType(Object.class).withClientEntity(te1);
+		DataResponse<Object> t1 = DataResponse.forType(Object.class).withClientEntity(te1);
 		constraintHandler.constrainResponse(t1, null, tc1);
 		assertSame(te1MapBy, t1.getEntity().getMapBy());
 		assertEquals("r1", t1.getEntity().getMapByPath());

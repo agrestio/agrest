@@ -48,7 +48,7 @@ public class LinkRestResource_Related {
 	@Path("constraints/e2/{id}/e3s")
 	public DataResponse<E3> getE2_E3s_Constrained(@PathParam("id") int id, @Context UriInfo uriInfo) {
 		return (DataResponse<E3>) getService().forSelect(E3.class).parent(E2.class, id, "e3s").with(uriInfo)
-				.constraints(TreeConstraints.idOnly()).select();
+				.constraints(TreeConstraints.idOnly(E3.class)).select();
 	}
 
 	@GET

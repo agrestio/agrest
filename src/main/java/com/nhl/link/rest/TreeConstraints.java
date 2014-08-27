@@ -5,7 +5,6 @@ import java.util.Collection;
 
 import org.apache.cayenne.exp.Expression;
 import org.apache.cayenne.exp.Property;
-import org.apache.cayenne.map.ObjEntity;
 
 /**
  * Defines read or write constraints on a given entity. Constraints are
@@ -17,20 +16,29 @@ import org.apache.cayenne.map.ObjEntity;
  * 
  * @since 1.3
  */
-public class TreeConstraints {
+public class TreeConstraints<T> {
 
 	private Collection<Constraint> ops;
 
-	public static TreeConstraints excludeAll() {
-		return new TreeConstraints();
+	/**
+	 * @since 1.5
+	 */
+	public static <T> TreeConstraints<T> excludeAll(Class<T> type) {
+		return new TreeConstraints<>();
 	}
 
-	public static TreeConstraints idOnly() {
-		return excludeAll().includeId();
+	/**
+	 * @since 1.5
+	 */
+	public static <T> TreeConstraints<T> idOnly(Class<T> type) {
+		return excludeAll(type).includeId();
 	}
 
-	public static TreeConstraints idAndAttributes() {
-		return excludeAll().includeId();
+	/**
+	 * @since 1.5
+	 */
+	public static <T> TreeConstraints<T> idAndAttributes(Class<T> type) {
+		return excludeAll(type).includeId();
 	}
 
 	private TreeConstraints() {
@@ -41,8 +49,8 @@ public class TreeConstraints {
 	 * Creates a new {@link ImmutableTreeConstraints} instance based on the
 	 * builder configuration.
 	 */
-	public ImmutableTreeConstraints build(ObjEntity entity) {
-		return build(new ImmutableTreeConstraints(entity));
+	public ImmutableTreeConstraints build(DataResponse<T> response) {
+		return build(new ImmutableTreeConstraints(response.getEntity().getCayenneEntity()));
 	}
 
 	ImmutableTreeConstraints build(ImmutableTreeConstraints constraints) {
@@ -57,7 +65,7 @@ public class TreeConstraints {
 	/**
 	 * Excludes all previously included attributes.
 	 */
-	public TreeConstraints excludeAttributes() {
+	public TreeConstraints<T> excludeAttributes() {
 
 		ops.add(new Constraint() {
 
@@ -73,7 +81,7 @@ public class TreeConstraints {
 	/**
 	 * Excludes all previously included child configs.
 	 */
-	public TreeConstraints excludeChildren() {
+	public TreeConstraints<T> excludeChildren() {
 		ops.add(new Constraint() {
 
 			@Override
@@ -85,7 +93,7 @@ public class TreeConstraints {
 		return this;
 	}
 
-	public TreeConstraints attribute(final String attribute) {
+	public TreeConstraints<T> attribute(final String attribute) {
 		ops.add(new Constraint() {
 
 			@Override
@@ -97,7 +105,7 @@ public class TreeConstraints {
 		return this;
 	}
 
-	public TreeConstraints attribute(final Property<?> attribute) {
+	public TreeConstraints<T> attribute(final Property<?> attribute) {
 		ops.add(new Constraint() {
 
 			@Override
@@ -107,8 +115,8 @@ public class TreeConstraints {
 		});
 		return this;
 	}
-	
-	public TreeConstraints allAttributes() {
+
+	public TreeConstraints<T> allAttributes() {
 		ops.add(new Constraint() {
 
 			@Override
@@ -119,7 +127,7 @@ public class TreeConstraints {
 		return this;
 	}
 
-	public TreeConstraints attributes(final Property<?>... attributes) {
+	public TreeConstraints<T> attributes(final Property<?>... attributes) {
 		ops.add(new Constraint() {
 
 			@Override
@@ -130,7 +138,7 @@ public class TreeConstraints {
 		return this;
 	}
 
-	public TreeConstraints attributes(final String... attributes) {
+	public TreeConstraints<T> attributes(final String... attributes) {
 		ops.add(new Constraint() {
 
 			@Override
@@ -142,7 +150,7 @@ public class TreeConstraints {
 		return this;
 	}
 
-	public TreeConstraints includeId(final boolean include) {
+	public TreeConstraints<T> includeId(final boolean include) {
 		ops.add(new Constraint() {
 
 			@Override
@@ -153,7 +161,7 @@ public class TreeConstraints {
 		return this;
 	}
 
-	public TreeConstraints includeId() {
+	public TreeConstraints<T> includeId() {
 		ops.add(new Constraint() {
 
 			@Override
@@ -164,7 +172,7 @@ public class TreeConstraints {
 		return this;
 	}
 
-	public TreeConstraints excludeId() {
+	public TreeConstraints<T> excludeId() {
 		ops.add(new Constraint() {
 
 			@Override
@@ -176,7 +184,7 @@ public class TreeConstraints {
 		return this;
 	}
 
-	public TreeConstraints and(final Expression qualifier) {
+	public TreeConstraints<T> and(final Expression qualifier) {
 		ops.add(new Constraint() {
 
 			@Override
@@ -187,7 +195,7 @@ public class TreeConstraints {
 		return this;
 	}
 
-	public TreeConstraints or(final Expression qualifier) {
+	public TreeConstraints<T> or(final Expression qualifier) {
 		ops.add(new Constraint() {
 
 			@Override
@@ -199,11 +207,11 @@ public class TreeConstraints {
 		return this;
 	}
 
-	public TreeConstraints path(Property<?> path, TreeConstraints subentityBuilder) {
+	public <S> TreeConstraints<T> path(Property<S> path, TreeConstraints<S> subentityBuilder) {
 		return path(path.getName(), subentityBuilder);
 	}
 
-	public TreeConstraints path(final String path, final TreeConstraints subentityBuilder) {
+	public TreeConstraints<T> path(final String path, final TreeConstraints<?> subentityBuilder) {
 
 		ops.add(new Constraint() {
 

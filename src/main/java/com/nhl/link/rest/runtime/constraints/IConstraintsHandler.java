@@ -14,11 +14,12 @@ public interface IConstraintsHandler {
 	 * Applies constraints to the {@link DataResponse}, potentially filtering
 	 * out some properties from the response.
 	 */
-	void constrainResponse(DataResponse<?> response, SizeConstraints sizeConstraints, TreeConstraints readConstraints);
+	<T> void constrainResponse(DataResponse<T> response, SizeConstraints sizeConstraints,
+			TreeConstraints<T> readConstraints);
 
 	/**
 	 * Applies constraints to the {@link UpdateResponse}, potentially filtering
 	 * out updates for certain properties.
 	 */
-	void constrainUpdate(UpdateResponse<?> response, TreeConstraints writeConstraints);
+	<T> void constrainUpdate(UpdateResponse<T> response, TreeConstraints<T> writeConstraints);
 }

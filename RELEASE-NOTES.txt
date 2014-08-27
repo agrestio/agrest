@@ -1,5 +1,6 @@
 Release 1.5
 
+#30 Add type generic parameter to TreeConstraint
 #31 Customizable request chain
 
 Release 1.4 2014-08-22

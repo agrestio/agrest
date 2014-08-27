@@ -27,7 +27,7 @@ public class LinkRestResource_Config {
 	@Path("limit_attributes")
 	public DataResponse<E4> getObjects_LimitAttributes(@Context UriInfo uriInfo) {
 
-		return getService().forSelect(E4.class).constraints(idOnly().attributes(E4.C_INT)).select();
+		return getService().forSelect(E4.class).constraints(idOnly(E4.class).attributes(E4.C_INT)).select();
 	}
 
 }

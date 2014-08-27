@@ -83,14 +83,14 @@ public class LinkRestServiceResource {
 	@POST
 	@Path("constrained/e3")
 	public DataResponse<E3> insertReadConstrainedE3(@Context UriInfo uriInfo, String requestBody) {
-		TreeConstraints tc = TreeConstraints.idOnly().attribute(E3.NAME);
+		TreeConstraints<E3> tc = TreeConstraints.idOnly(E3.class).attribute(E3.NAME);
 		return getLinkRestService().create(E3.class).with(uriInfo).readConstraints(tc).process(requestBody);
 	}
 
 	@POST
 	@Path("w/constrained/e3")
 	public DataResponse<E3> insertWriteConstrainedE3(@Context UriInfo uriInfo, String requestBody) {
-		TreeConstraints tc = TreeConstraints.idOnly().attribute(E3.NAME);
+		TreeConstraints<E3> tc = TreeConstraints.idOnly(E3.class).attribute(E3.NAME);
 		return getLinkRestService().create(E3.class).with(uriInfo).writeConstraints(tc).process(requestBody);
 	}
 
@@ -98,7 +98,7 @@ public class LinkRestServiceResource {
 	@Path("w/constrainedid/e8/{id}")
 	public DataResponse<E8> insertWriteConstrainedIdE8(@PathParam("id") int id, @Context UriInfo uriInfo,
 			String requestBody) {
-		TreeConstraints tc = TreeConstraints.idOnly().attribute(E8.NAME);
+		TreeConstraints<E8> tc = TreeConstraints.idOnly(E8.class).attribute(E8.NAME);
 		return getLinkRestService().create(E8.class).with(uriInfo).id(id).writeConstraints(tc).process(requestBody);
 	}
 
@@ -106,7 +106,7 @@ public class LinkRestServiceResource {
 	@Path("w/constrainedidblocked/e8/{id}")
 	public DataResponse<E8> insertWriteConstrainedIdBlockedE8(@PathParam("id") int id, @Context UriInfo uriInfo,
 			String requestBody) {
-		TreeConstraints tc = TreeConstraints.excludeAll().attribute(E8.NAME);
+		TreeConstraints<E8> tc = TreeConstraints.excludeAll(E8.class).attribute(E8.NAME);
 		return getLinkRestService().create(E8.class).with(uriInfo).id(id).writeConstraints(tc).process(requestBody);
 	}
 

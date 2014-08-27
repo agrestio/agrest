@@ -29,46 +29,45 @@ public class DefaultConstraintsHandler implements IConstraintsHandler {
 	private static final Logger LOGGER = LoggerFactory.getLogger(DefaultConstraintsHandler.class);
 
 	@Override
-	public void constrainUpdate(UpdateResponse<?> response, TreeConstraints writeConstraints) {
-
+	public <T> void constrainUpdate(UpdateResponse<T> response, TreeConstraints<T> writeConstraints) {
 		if (writeConstraints != null && !response.getUpdates().isEmpty()) {
-			ImmutableTreeConstraints constraints = writeConstraints.build(response.getEntity().getCayenneEntity());
+			ImmutableTreeConstraints constraints = writeConstraints.build(response);
 			applyWriteTreeConstraints(response, constraints);
 		}
 	}
 
 	@Override
-	public void constrainResponse(DataResponse<?> target, SizeConstraints sizeConstraints,
-			TreeConstraints treeConstraints) {
+	public <T> void constrainResponse(DataResponse<T> response, SizeConstraints sizeConstraints,
+			TreeConstraints<T> readConstraints) {
 
 		if (sizeConstraints != null) {
-			applyReadSizeConstraints(target, sizeConstraints);
+			applyReadSizeConstraints(response, sizeConstraints);
 		}
 
 		// entity - ensure attribute/relationship tree span of source is not
 		// exceeded in target. Null target means we don't need to worry about
 		// unauthorized attributes and relationships
-		if (treeConstraints != null && target.getEntity() != null) {
-			ImmutableTreeConstraints constraints = treeConstraints.build(target.getEntity().getCayenneEntity());
-			applyReadTreeConstraints(target.getEntity(), constraints);
+		if (readConstraints != null && response.getEntity() != null) {
+			ImmutableTreeConstraints constraints = readConstraints.build(response);
+			applyReadTreeConstraints(response.getEntity(), constraints);
 		}
 	}
 
-	protected void applyReadSizeConstraints(DataResponse<?> target, SizeConstraints constraints) {
+	protected void applyReadSizeConstraints(DataResponse<?> response, SizeConstraints constraints) {
 		// fetchOffset - do not exceed source offset
 		int upperOffset = constraints.getFetchOffset();
-		if (upperOffset > 0 && target.getFetchOffset() > upperOffset) {
-			LOGGER.info("Reducing fetch offset from " + target.getFetchOffset() + " to max allowed value of "
+		if (upperOffset > 0 && response.getFetchOffset() > upperOffset) {
+			LOGGER.info("Reducing fetch offset from " + response.getFetchOffset() + " to max allowed value of "
 					+ upperOffset);
-			target.withFetchOffset(upperOffset);
+			response.withFetchOffset(upperOffset);
 		}
 
 		// fetchLimit - do not exceed source limit
 		int upperLimit = constraints.getFetchLimit();
-		if (upperLimit > 0 && target.getFetchLimit() > upperLimit) {
-			LOGGER.info("Reducing fetch limit from " + target.getFetchLimit() + " to max allowed value of "
+		if (upperLimit > 0 && response.getFetchLimit() > upperLimit) {
+			LOGGER.info("Reducing fetch limit from " + response.getFetchLimit() + " to max allowed value of "
 					+ upperLimit);
-			target.withFetchLimit(upperLimit);
+			response.withFetchLimit(upperLimit);
 		}
 	}
 
