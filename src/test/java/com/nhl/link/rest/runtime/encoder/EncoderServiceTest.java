@@ -38,7 +38,7 @@ public class EncoderServiceTest extends TestWithCayenneMapping {
 	private List<EncoderFilter> filters;
 
 	@Before
-	public void setUp() {
+	public void before() {
 
 		ObjectContext sharedContext = runtime.newContext();
 		cayenneService = mock(ICayennePersister.class);
@@ -230,7 +230,7 @@ public class EncoderServiceTest extends TestWithCayenneMapping {
 
 		DataResponse<E3> builder = DataResponse.forType(E3.class).withClientEntity(e3Descriptor).withObject(e31);
 
-		assertEquals("[{\"id\":5,\"e2\":{\"id\":7},\"e2_id\":7}]", toJson(builder));
+		assertEquals("[{\"id\":5,\"e2\":{\"id\":7}}]", toJson(builder));
 
 		E2 e22 = new E2();
 		e22.setObjectId(new ObjectId("E2", E2.ID_PK_COLUMN, 8));

@@ -33,9 +33,9 @@ public class EncoderService implements IEncoderService {
 
 	public static final String ENCODER_FILTER_LIST = "linkrest.encoder.filter.list";
 
-	private IAttributeEncoderFactory attributeEncoderFactory;
+	protected IAttributeEncoderFactory attributeEncoderFactory;
 	private IStringConverterFactory stringConverterFactory;
-	private IRelationshipMapper relationshipMapper;
+	protected IRelationshipMapper relationshipMapper;
 	private List<EncoderFilter> filters;
 
 	public EncoderService(@Inject(ENCODER_FILTER_LIST) List<EncoderFilter> filters,
@@ -46,7 +46,7 @@ public class EncoderService implements IEncoderService {
 		this.stringConverterFactory = stringConverterFactory;
 		this.filters = filters;
 	}
-	
+
 	@Override
 	public Encoder makeEncoder(DataResponse<?> response) {
 		return rootEncoder(response);
@@ -104,33 +104,20 @@ public class EncoderService implements IEncoderService {
 		return filteredEncoder(encoder, clientEntity);
 	}
 
-	private Encoder toOneEncoder(Entity<?> clientEntity, final ObjRelationship relationship) {
+	protected Encoder toOneEncoder(Entity<?> clientEntity, final ObjRelationship relationship) {
 
 		// to-one encoder is made of the following decorator layers (from outer
 		// to inner):
 		// (1) custom filters ->
-		// (2) composite [value + id encoder]
+		// (2) value encoder
 		// different structure from to-many, so building it differently
 
 		Encoder valueEncoder = entityEncoder(clientEntity);
-		EntityProperty idEncoder = attributeEncoderFactory.getIdProperty(clientEntity);
-		Encoder compositeValueEncoder = new EntityToOneEncoder(valueEncoder, idEncoder) {
-
-			// we know that created encoder will only be used for encoding a
-			// single known property, so hardcode the ID property to avoid
-			// relationshipMapper lookups in a loop
-			final String idPropertyName = relationshipMapper.toRelatedIdName(relationship);
-
-			@Override
-			protected String idPropertyName(String propertyName) {
-				return idPropertyName;
-			}
-		};
-
+		Encoder compositeValueEncoder = new EntityToOneEncoder(valueEncoder);
 		return filteredEncoder(compositeValueEncoder, clientEntity);
 	}
 
-	private Encoder entityEncoder(Entity<?> clientEntity) {
+	protected Encoder entityEncoder(Entity<?> clientEntity) {
 
 		// ensure we sort property encoders alphabetically for cleaner JSON
 		// output
@@ -142,7 +129,8 @@ public class EncoderService implements IEncoderService {
 		}
 
 		for (Entry<String, Entity<?>> e : clientEntity.getChildren().entrySet()) {
-			ObjRelationship relationship = (ObjRelationship) clientEntity.getCayenneEntity().getRelationship(e.getKey());
+			ObjRelationship relationship = (ObjRelationship) clientEntity.getCayenneEntity()
+					.getRelationship(e.getKey());
 
 			Encoder encoder = relationship.isToMany() ? nestedToManyEncoder(e.getValue()) : toOneEncoder(e.getValue(),
 					relationship);
@@ -157,7 +145,7 @@ public class EncoderService implements IEncoderService {
 		return new EntityEncoder(idEncoder, properties);
 	}
 
-	private Encoder filteredEncoder(Encoder encoder, Entity<?> clientEntity) {
+	protected Encoder filteredEncoder(Encoder encoder, Entity<?> clientEntity) {
 		List<EncoderFilter> matchingFilters = null;
 
 		for (EncoderFilter filter : filters) {
