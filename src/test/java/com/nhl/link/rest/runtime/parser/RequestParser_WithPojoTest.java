@@ -20,10 +20,19 @@ import org.junit.Test;
 import com.nhl.link.rest.DataResponse;
 import com.nhl.link.rest.Entity;
 import com.nhl.link.rest.runtime.cayenne.ICayennePersister;
+import com.nhl.link.rest.runtime.jackson.IJacksonService;
 import com.nhl.link.rest.runtime.jackson.JacksonService;
 import com.nhl.link.rest.runtime.meta.DataMapBuilder;
 import com.nhl.link.rest.runtime.meta.IMetadataService;
 import com.nhl.link.rest.runtime.meta.MetadataService;
+import com.nhl.link.rest.runtime.parser.cache.IPathCache;
+import com.nhl.link.rest.runtime.parser.cache.PathCache;
+import com.nhl.link.rest.runtime.parser.filter.FilterProcessor;
+import com.nhl.link.rest.runtime.parser.filter.IFilterProcessor;
+import com.nhl.link.rest.runtime.parser.sort.ISortProcessor;
+import com.nhl.link.rest.runtime.parser.sort.SortProcessor;
+import com.nhl.link.rest.runtime.parser.tree.ITreeProcessor;
+import com.nhl.link.rest.runtime.parser.tree.IncludeExcludeProcessor;
 import com.nhl.link.rest.runtime.semantics.RelationshipMapper;
 import com.nhl.link.rest.unit.TestWithCayenneMapping;
 import com.nhl.link.rest.unit.pojo.model.P1;
@@ -46,8 +55,15 @@ public class RequestParser_WithPojoTest extends TestWithCayenneMapping {
 		DataMap map = DataMapBuilder.newBuilder("_t_").addEntities(P1.class, P2.class).toDataMap();
 
 		IMetadataService metadataService = new MetadataService(Collections.singletonList(map), cayenneService);
-		parser = new RequestParser(Collections.<UpdateFilter> emptyList(), metadataService, new JacksonService(),
-				new RelationshipMapper());
+
+		IPathCache pathCache = new PathCache();
+		IJacksonService jacksonService = new JacksonService();
+		ISortProcessor sortProcessor = new SortProcessor(jacksonService, pathCache);
+		IFilterProcessor filterProcessor = new FilterProcessor(jacksonService, pathCache);
+		ITreeProcessor treeProcessor = new IncludeExcludeProcessor(jacksonService, sortProcessor, filterProcessor);
+
+		parser = new RequestParser(Collections.<UpdateFilter> emptyList(), metadataService, jacksonService,
+				new RelationshipMapper(), treeProcessor, sortProcessor, filterProcessor);
 	}
 
 	@Test
@@ -85,7 +101,7 @@ public class RequestParser_WithPojoTest extends TestWithCayenneMapping {
 		UriInfo urlInfo = mock(UriInfo.class);
 		@SuppressWarnings("unchecked")
 		MultivaluedMap<String, String> params = mock(MultivaluedMap.class);
-		when(params.get(RequestParams.include.name())).thenReturn(Arrays.asList("p1"));
+		when(params.get("include")).thenReturn(Arrays.asList("p1"));
 
 		when(urlInfo.getQueryParameters()).thenReturn(params);
 

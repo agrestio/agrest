@@ -27,6 +27,7 @@ public class DataResponse<T> extends SimpleResponse {
 	private List<T> objects;
 	private Encoder encoder;
 	private Status status;
+	private String queryProperty;
 
 	@SuppressWarnings({ "unchecked" })
 	public static <T> DataResponse<T> forObject(T object) {
@@ -94,6 +95,18 @@ public class DataResponse<T> extends SimpleResponse {
 
 	public int getFetchLimit() {
 		return fetchLimit;
+	}
+	
+	/**
+	 * @since 1.5
+	 */
+	public String getQueryProperty() {
+		return queryProperty;
+	}
+	
+	public DataResponse<T> withQueryProperty(String property) {
+		this.queryProperty = property;
+		return this;
 	}
 
 	public DataResponse<T> withFetchLimit(int fetchLimit) {

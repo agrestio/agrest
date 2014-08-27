@@ -1,4 +1,4 @@
-package com.nhl.link.rest.runtime.parser;
+package com.nhl.link.rest.runtime.parser.tree;
 
 import java.util.List;
 
@@ -13,10 +13,13 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.nhl.link.rest.Entity;
 import com.nhl.link.rest.LinkRestException;
 import com.nhl.link.rest.runtime.jackson.IJacksonService;
+import com.nhl.link.rest.runtime.parser.PathConstants;
+import com.nhl.link.rest.runtime.parser.filter.IFilterProcessor;
+import com.nhl.link.rest.runtime.parser.sort.ISortProcessor;
 
-class IncludeProcessor {
+class IncludeWorker {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(IncludeProcessor.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(IncludeWorker.class);
 
 	private static final String PATH = "path";
 	private static final String MAP_BY = "mapBy";
@@ -24,10 +27,10 @@ class IncludeProcessor {
 	private static final String CAYENNE_EXP = "cayenneExp";
 
 	private IJacksonService jsonParser;
-	private SortProcessor sortProcessor;
-	private CayenneExpProcessor expProcessor;
+	private ISortProcessor sortProcessor;
+	private IFilterProcessor expProcessor;
 
-	IncludeProcessor(IJacksonService jsonParser, SortProcessor sortProcessor, CayenneExpProcessor expProcessor) {
+	IncludeWorker(IJacksonService jsonParser, ISortProcessor sortProcessor, IFilterProcessor expProcessor) {
 		this.jsonParser = jsonParser;
 		this.sortProcessor = sortProcessor;
 		this.expProcessor = expProcessor;
@@ -97,12 +100,7 @@ class IncludeProcessor {
 
 			JsonNode sortNode = root.get(SORT);
 			if (sortNode != null) {
-
-				if (sortNode.isTextual()) {
-					sortProcessor.process(includeEntity, sortNode.asText(), null);
-				} else {
-					sortProcessor.processSorterArray(includeEntity, sortNode);
-				}
+				sortProcessor.process(includeEntity, sortNode);
 			}
 
 			JsonNode expNode = root.get(CAYENNE_EXP);
@@ -140,7 +138,7 @@ class IncludeProcessor {
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	private Entity<?> processIncludePath(Entity<?> parent, String path) {
 
-		ExcludeProcessor.checkTooLong(path);
+		ExcludeWorker.checkTooLong(path);
 
 		int dot = path.indexOf(PathConstants.DOT);
 

@@ -1,4 +1,4 @@
-package com.nhl.link.rest.runtime.parser;
+package com.nhl.link.rest.runtime.adapter.sencha;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -10,8 +10,10 @@ import org.junit.Test;
 
 import com.nhl.link.rest.Entity;
 import com.nhl.link.rest.LinkRestException;
+import com.nhl.link.rest.runtime.adapter.sencha.FilterProcessor;
 import com.nhl.link.rest.runtime.jackson.IJacksonService;
 import com.nhl.link.rest.runtime.jackson.JacksonService;
+import com.nhl.link.rest.runtime.parser.cache.PathCache;
 import com.nhl.link.rest.unit.TestWithCayenneMapping;
 import com.nhl.link.rest.unit.cayenne.E4;
 

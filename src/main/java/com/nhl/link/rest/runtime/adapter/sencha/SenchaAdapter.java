@@ -8,6 +8,8 @@ import org.apache.cayenne.di.Binder;
 
 import com.nhl.link.rest.runtime.adapter.LinkRestAdapter;
 import com.nhl.link.rest.runtime.parser.RequestParser;
+import com.nhl.link.rest.runtime.parser.filter.IFilterProcessor;
+import com.nhl.link.rest.runtime.parser.sort.ISortProcessor;
 import com.nhl.link.rest.update.UpdateFilter;
 
 /**
@@ -22,6 +24,9 @@ public class SenchaAdapter implements LinkRestAdapter {
 
 		// "dashId" filter is hardcoded... should that be configurable?
 		binder.<UpdateFilter> bindList(RequestParser.UPDATE_FILTER_LIST).add(SenchaTempIdCleaner.dashId());
+
+		binder.bind(ISortProcessor.class).to(SenchaSortProcessor.class);
+		binder.bind(IFilterProcessor.class).to(SenchaFilterProcessor.class);
 	}
 
 	@Override

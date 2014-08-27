@@ -44,6 +44,14 @@ import com.nhl.link.rest.runtime.meta.IMetadataService;
 import com.nhl.link.rest.runtime.meta.MetadataService;
 import com.nhl.link.rest.runtime.parser.IRequestParser;
 import com.nhl.link.rest.runtime.parser.RequestParser;
+import com.nhl.link.rest.runtime.parser.cache.IPathCache;
+import com.nhl.link.rest.runtime.parser.cache.PathCache;
+import com.nhl.link.rest.runtime.parser.filter.FilterProcessor;
+import com.nhl.link.rest.runtime.parser.filter.IFilterProcessor;
+import com.nhl.link.rest.runtime.parser.sort.ISortProcessor;
+import com.nhl.link.rest.runtime.parser.sort.SortProcessor;
+import com.nhl.link.rest.runtime.parser.tree.ITreeProcessor;
+import com.nhl.link.rest.runtime.parser.tree.IncludeExcludeProcessor;
 import com.nhl.link.rest.runtime.semantics.IRelationshipMapper;
 import com.nhl.link.rest.runtime.semantics.RelationshipMapper;
 import com.nhl.link.rest.update.UpdateFilter;
@@ -215,6 +223,11 @@ public class LinkRestBuilder {
 
 				binder.bind(IJacksonService.class).to(JacksonService.class);
 				binder.bind(ICayennePersister.class).toInstance(cayenneService);
+				
+				binder.bind(IPathCache.class).to(PathCache.class);
+				binder.bind(IFilterProcessor.class).to(FilterProcessor.class);
+				binder.bind(ISortProcessor.class).to(SortProcessor.class);
+				binder.bind(ITreeProcessor.class).to(IncludeExcludeProcessor.class);
 
 				// apply adapter-contributed bindings
 				for (LinkRestAdapter a : adapters) {

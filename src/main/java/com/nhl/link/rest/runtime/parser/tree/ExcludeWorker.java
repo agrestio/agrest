@@ -1,4 +1,4 @@
-package com.nhl.link.rest.runtime.parser;
+package com.nhl.link.rest.runtime.parser.tree;
 
 import java.util.List;
 
@@ -11,12 +11,13 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.nhl.link.rest.Entity;
 import com.nhl.link.rest.LinkRestException;
 import com.nhl.link.rest.runtime.jackson.IJacksonService;
+import com.nhl.link.rest.runtime.parser.PathConstants;
 
-public class ExcludeProcessor {
+class ExcludeWorker {
 
 	private IJacksonService jsonParser;
 
-	ExcludeProcessor(IJacksonService jsonParser) {
+	ExcludeWorker(IJacksonService jsonParser) {
 		this.jsonParser = jsonParser;
 	}
 

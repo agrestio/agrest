@@ -1,4 +1,4 @@
-package com.nhl.link.rest.runtime.parser;
+package com.nhl.link.rest.runtime.adapter.sencha;
 
 import javax.ws.rs.core.Response.Status;
 
@@ -12,6 +12,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.nhl.link.rest.Entity;
 import com.nhl.link.rest.LinkRestException;
 import com.nhl.link.rest.runtime.jackson.IJacksonService;
+import com.nhl.link.rest.runtime.parser.cache.IPathCache;
+import com.nhl.link.rest.runtime.parser.filter.FilterUtil;
 
 class FilterProcessor {
 
@@ -21,9 +23,9 @@ class FilterProcessor {
 	private static final String VALUE = "value";
 
 	private IJacksonService jsonParser;
-	private PathCache pathCache;
+	private IPathCache pathCache;
 
-	FilterProcessor(IJacksonService jsonParser, PathCache pathCache) {
+	FilterProcessor(IJacksonService jsonParser, IPathCache pathCache) {
 		this.jsonParser = jsonParser;
 		this.pathCache = pathCache;
 	}
@@ -68,13 +70,13 @@ class FilterProcessor {
 				qualifier = ExpressionFactory.matchExp(property, valueUnescaped);
 			} else {
 				checkValueLength((String) valueUnescaped);
-				String value = escapeValueForLike((String) valueUnescaped) + "%";
+				String value = FilterUtil.escapeValueForLike((String) valueUnescaped) + "%";
 				qualifier = ExpressionFactory.likeIgnoreCaseExp(property, value);
 			}
 
 			// validate property path
 			ObjEntity rootEntity = clientEntity.getCayenneEntity();
-			pathCache.entityPathCache(rootEntity).getPathDescriptor((ASTObjPath) qualifier.getOperand(0));
+			pathCache.getPathDescriptor(rootEntity, (ASTObjPath) qualifier.getOperand(0));
 
 			clientEntity.andQualifier(qualifier);
 		}
@@ -101,22 +103,6 @@ class FilterProcessor {
 		default:
 			return valueNode.asText();
 		}
-	}
-
-	static String escapeValueForLike(String value) {
-		int len = value.length();
-
-		StringBuilder out = new StringBuilder(len);
-		for (int i = 0; i < len; i++) {
-			char c = value.charAt(i);
-			if (c == '_' || c == '%') {
-				out.append('\\');
-			}
-
-			out.append(c);
-		}
-
-		return out.toString();
 	}
 
 	private void checkValueLength(String value) {

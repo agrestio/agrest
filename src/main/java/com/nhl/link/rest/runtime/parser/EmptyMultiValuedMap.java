@@ -9,7 +9,10 @@ import java.util.Set;
 
 import javax.ws.rs.core.MultivaluedMap;
 
-class EmptyMultiValuedMap extends AbstractMap<String, List<String>> implements MultivaluedMap<String, String> {
+/**
+ * @since 1.5
+ */
+public class EmptyMultiValuedMap extends AbstractMap<String, List<String>> implements MultivaluedMap<String, String> {
 
 	private static EmptyMultiValuedMap EMPTY_MAP = new EmptyMultiValuedMap();
 
@@ -17,42 +20,52 @@ class EmptyMultiValuedMap extends AbstractMap<String, List<String>> implements M
 		return EMPTY_MAP;
 	}
 
+	@Override
 	public int size() {
 		return 0;
 	}
 
+	@Override
 	public boolean isEmpty() {
 		return true;
 	}
 
+	@Override
 	public boolean containsKey(Object key) {
 		return false;
 	}
 
+	@Override
 	public boolean containsValue(Object value) {
 		return false;
 	}
 
+	@Override
 	public List<String> get(Object key) {
 		return null;
 	}
 
+	@Override
 	public Set<String> keySet() {
 		return Collections.emptySet();
 	}
 
+	@Override
 	public Collection<List<String>> values() {
 		return Collections.emptySet();
 	}
 
+	@Override
 	public Set<Map.Entry<String, List<String>>> entrySet() {
 		return Collections.emptySet();
 	}
 
+	@Override
 	public boolean equals(Object o) {
 		return (o instanceof Map) && ((Map<?, ?>) o).isEmpty();
 	}
 
+	@Override
 	public int hashCode() {
 		return 0;
 	}

@@ -1,4 +1,4 @@
-package com.nhl.link.rest.runtime.parser;
+package com.nhl.link.rest.runtime.parser.sort;
 
 import javax.ws.rs.core.Response.Status;
 
@@ -13,10 +13,11 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.nhl.link.rest.Entity;
 import com.nhl.link.rest.LinkRestException;
 import com.nhl.link.rest.runtime.jackson.IJacksonService;
+import com.nhl.link.rest.runtime.parser.cache.IPathCache;
 
-class SortProcessor {
+class SortWorker {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(SortProcessor.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(SortWorker.class);
 
 	private static final String ASC = "ASC";
 	private static final String DESC = "DESC";
@@ -25,9 +26,9 @@ class SortProcessor {
 	private static final String DIRECTION = "direction";
 
 	private IJacksonService jsonParser;
-	private PathCache pathCache;
+	private IPathCache pathCache;
 
-	SortProcessor(IJacksonService jsonParser, PathCache pathCache) {
+	SortWorker(IJacksonService jsonParser, IPathCache pathCache) {
 		this.jsonParser = jsonParser;
 		this.pathCache = pathCache;
 	}
@@ -56,7 +57,7 @@ class SortProcessor {
 		// note using "toString" instead of "getPath" to convert ASTPath to
 		// String representation. This ensures "db:" prefix is preserved if
 		// present
-		sort = pathCache.entityPathCache(entity).getPathDescriptor(new ASTObjPath(sort)).getPathExp().toString();
+		sort = pathCache.getPathDescriptor(entity, new ASTObjPath(sort)).getPathExp().toString();
 
 		// check for dupes...
 		for (Ordering o : clientEntity.getOrderings()) {

@@ -1,8 +1,8 @@
-package com.nhl.link.rest.runtime.parser;
+package com.nhl.link.rest.runtime.parser.cache;
 
 import org.apache.cayenne.exp.parser.ASTPath;
 
-interface PathDescriptor {
+public interface PathDescriptor {
 
 	boolean isAttribute();
 

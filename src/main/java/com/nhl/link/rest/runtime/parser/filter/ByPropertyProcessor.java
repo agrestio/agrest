@@ -1,4 +1,4 @@
-package com.nhl.link.rest.runtime.parser;
+package com.nhl.link.rest.runtime.parser.filter;
 
 import java.sql.Types;
 
@@ -12,7 +12,7 @@ import org.apache.cayenne.map.ObjEntity;
 import com.nhl.link.rest.Entity;
 import com.nhl.link.rest.LinkRestException;
 
-class QueryProcessor {
+class ByPropertyProcessor {
 
 	void process(Entity<?> clientEntity, String query, String queryProperty) {
 
@@ -26,7 +26,7 @@ class QueryProcessor {
 
 		validateAttribute(clientEntity.getCayenneEntity(), queryProperty);
 
-		query = FilterProcessor.escapeValueForLike(query) + "%";
+		query = FilterUtil.escapeValueForLike(query) + "%";
 
 		Expression exp = ExpressionFactory.likeIgnoreCaseExp(queryProperty, query);
 		clientEntity.andQualifier(exp);

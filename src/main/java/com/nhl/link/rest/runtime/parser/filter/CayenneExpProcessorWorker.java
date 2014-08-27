@@ -1,4 +1,4 @@
-package com.nhl.link.rest.runtime.parser;
+package com.nhl.link.rest.runtime.parser.filter;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -16,10 +16,13 @@ import org.apache.cayenne.exp.parser.ASTObjPath;
 import org.apache.cayenne.exp.parser.ASTPath;
 import org.apache.cayenne.exp.parser.ConditionNode;
 import org.apache.cayenne.exp.parser.SimpleNode;
+import org.apache.cayenne.map.ObjEntity;
 
 import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.nhl.link.rest.LinkRestException;
+import com.nhl.link.rest.runtime.parser.cache.IPathCache;
+import com.nhl.link.rest.runtime.parser.cache.PathDescriptor;
 import com.nhl.link.rest.runtime.parser.converter.ValueConverter;
 
 class CayenneExpProcessorWorker {
@@ -30,16 +33,19 @@ class CayenneExpProcessorWorker {
 
 	private JsonNode expNode;
 	private JsonNode paramsNode;
-	private EntityPathCache entityPathCache;
+	
+	private IPathCache pathCache;
+	private ObjEntity entity;
 	private Map<String, ValueConverter> converters;
 	private TraversalHandler expressionPostProcessor;
 
-	CayenneExpProcessorWorker(JsonNode rootNode, Map<String, ValueConverter> converters, EntityPathCache entityPathCache) {
+	CayenneExpProcessorWorker(JsonNode rootNode, Map<String, ValueConverter> converters, IPathCache pathCache, ObjEntity entity) {
 
 		this.expNode = rootNode.get(EXP);
 		this.paramsNode = rootNode.get(PARAMS);
 		this.converters = converters;
-		this.entityPathCache = entityPathCache;
+		this.entity = entity;
+		this.pathCache = pathCache;
 		this.expressionPostProcessor = new ExpressionPostProcessor();
 	}
 
@@ -82,7 +88,7 @@ class CayenneExpProcessorWorker {
 		// 'expressionPostProcessor'. If it happens to be "id", it will be
 		// converted to "db:id".
 		if (exp instanceof ASTObjPath) {
-			exp = entityPathCache.getPathDescriptor((ASTObjPath) exp).getPathExp();
+			exp = pathCache.getPathDescriptor(entity, (ASTObjPath) exp).getPathExp();
 		}
 
 		return exp;
@@ -94,7 +100,7 @@ class CayenneExpProcessorWorker {
 
 		if (peerPath != null) {
 
-			PathDescriptor pd = entityPathCache.getPathDescriptor(peerPath);
+			PathDescriptor pd = pathCache.getPathDescriptor(entity, peerPath);
 			if (pd.isAttribute()) {
 				ValueConverter converter = converters.get(pd.getType());
 				if (converter != null) {
@@ -228,7 +234,7 @@ class CayenneExpProcessorWorker {
 				// validate and replace if needed ... note that we can only
 				// replace non-root nodes during the traversal. Root node is
 				// validated and replaced explicitly by the caller.
-				ASTPath replacement = entityPathCache.getPathDescriptor((ASTObjPath) childNode).getPathExp();
+				ASTPath replacement = pathCache.getPathDescriptor(entity, (ASTObjPath) childNode).getPathExp();
 				if (replacement != childNode) {
 					parentNode.setOperand(childIndex, replacement);
 				}

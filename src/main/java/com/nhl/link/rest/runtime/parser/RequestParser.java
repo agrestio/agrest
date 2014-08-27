@@ -15,6 +15,9 @@ import com.nhl.link.rest.LinkRestException;
 import com.nhl.link.rest.UpdateResponse;
 import com.nhl.link.rest.runtime.jackson.IJacksonService;
 import com.nhl.link.rest.runtime.meta.IMetadataService;
+import com.nhl.link.rest.runtime.parser.filter.IFilterProcessor;
+import com.nhl.link.rest.runtime.parser.sort.ISortProcessor;
+import com.nhl.link.rest.runtime.parser.tree.ITreeProcessor;
 import com.nhl.link.rest.runtime.semantics.IRelationshipMapper;
 import com.nhl.link.rest.update.UpdateFilter;
 
@@ -22,36 +25,29 @@ public class RequestParser implements IRequestParser {
 
 	public static final String UPDATE_FILTER_LIST = "linkrest.update.filter.list";
 
-	private IncludeProcessor includeProcessor;
-	private ExcludeProcessor excludeProcessor;
+	static final String START = "start";
+	static final String LIMIT = "limit";
+
+	private ITreeProcessor treeProcessor;
 	private IMetadataService metadataService;
-	private SortProcessor sortProcessor;
-	private CayenneExpProcessor cayenneExpProcessor;
-	private FilterProcessor filterProcessor;
+	private ISortProcessor sortProcessor;
+	private IFilterProcessor filterProcessor;
+
 	private DataObjectProcessor dataObjectProcessor;
-	private QueryProcessor queryProcessor;
 
 	private List<UpdateFilter> updateFilters;
 
 	public RequestParser(@Inject(UPDATE_FILTER_LIST) List<UpdateFilter> updateFilters,
 			@Inject IMetadataService metadataService, @Inject IJacksonService jacksonService,
-			@Inject IRelationshipMapper associationHandler) {
+			@Inject IRelationshipMapper associationHandler, @Inject ITreeProcessor treeProcessor,
+			@Inject ISortProcessor sortProcessor, @Inject IFilterProcessor filterProcessor) {
 
 		this.updateFilters = updateFilters;
 		this.metadataService = metadataService;
-
-		// cache parsed paths as we have a finite number of valid paths in each
-		// app model, and not having to parse them every time should save a few
-		// cycles
-		PathCache pathCache = new PathCache();
-
-		this.cayenneExpProcessor = new CayenneExpProcessor(jacksonService, pathCache);
-		this.sortProcessor = new SortProcessor(jacksonService, pathCache);
-		this.includeProcessor = new IncludeProcessor(jacksonService, sortProcessor, cayenneExpProcessor);
-		this.excludeProcessor = new ExcludeProcessor(jacksonService);
-		this.filterProcessor = new FilterProcessor(jacksonService, pathCache);
+		this.filterProcessor = filterProcessor;
+		this.sortProcessor = sortProcessor;
+		this.treeProcessor = treeProcessor;
 		this.dataObjectProcessor = new DataObjectProcessor(jacksonService, associationHandler);
-		this.queryProcessor = new QueryProcessor();
 	}
 
 	@Override
@@ -65,6 +61,7 @@ public class RequestParser implements IRequestParser {
 
 		Entity<T> rootDescriptor = new Entity<T>(response.getType(), entity);
 		response.withClientEntity(rootDescriptor);
+		response.withQueryProperty(autocompleteProperty);
 
 		// selectById can send us a null uriInfo; still we want to run through
 		// the processors in this case to init the defaults
@@ -72,24 +69,13 @@ public class RequestParser implements IRequestParser {
 		MultivaluedMap<String, String> parameters = uriInfo != null ? uriInfo.getQueryParameters()
 				: EmptyMultiValuedMap.map();
 
-		response.withFetchOffset(RequestParams.start.integer(parameters));
-		response.withFetchLimit(RequestParams.limit.integer(parameters));
+		// TODO: "ISizeProcessor"
+		response.withFetchOffset(BaseRequestProcessor.integer(parameters, START));
+		response.withFetchLimit(BaseRequestProcessor.integer(parameters, LIMIT));
 
-		includeProcessor.process(rootDescriptor, RequestParams.include.strings(parameters));
-		excludeProcessor.process(rootDescriptor, RequestParams.exclude.strings(parameters));
-
-		// groupers go before sorters (?)
-		sortProcessor.process(rootDescriptor, RequestParams.group.string(parameters),
-				RequestParams.groupDir.string(parameters));
-		sortProcessor.process(rootDescriptor, RequestParams.sort.string(parameters),
-				RequestParams.dir.string(parameters));
-
-		// filter, cayenneExp, query keys all append to the qualifier... we
-		// are
-		// chaining them with AND, so the order is not relevant
-		cayenneExpProcessor.process(rootDescriptor, RequestParams.cayenneExp.string(parameters));
-		filterProcessor.process(rootDescriptor, RequestParams.filter.string(parameters));
-		queryProcessor.process(rootDescriptor, RequestParams.query.string(parameters), autocompleteProperty);
+		treeProcessor.process(response, uriInfo);
+		sortProcessor.process(response, uriInfo);
+		filterProcessor.process(response, uriInfo);
 
 		return response;
 	}
@@ -107,11 +93,7 @@ public class RequestParser implements IRequestParser {
 		Entity<T> clientEntity = new Entity<T>(response.getType(), entity);
 		response.withClientEntity(clientEntity);
 
-		MultivaluedMap<String, String> parameters = uriInfo != null ? uriInfo.getQueryParameters()
-				: EmptyMultiValuedMap.map();
-
-		includeProcessor.process(clientEntity, RequestParams.include.strings(parameters));
-		excludeProcessor.process(clientEntity, RequestParams.exclude.strings(parameters));
+		treeProcessor.process(response, uriInfo);
 
 		dataObjectProcessor.process(response, requestBody);
 

@@ -22,15 +22,22 @@ import org.apache.cayenne.query.SortOrder;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.nhl.link.rest.Entity;
 import com.nhl.link.rest.DataResponse;
+import com.nhl.link.rest.Entity;
 import com.nhl.link.rest.LinkRestException;
 import com.nhl.link.rest.runtime.cayenne.ICayennePersister;
+import com.nhl.link.rest.runtime.jackson.IJacksonService;
 import com.nhl.link.rest.runtime.jackson.JacksonService;
 import com.nhl.link.rest.runtime.meta.IMetadataService;
 import com.nhl.link.rest.runtime.meta.MetadataService;
-import com.nhl.link.rest.runtime.parser.RequestParams;
-import com.nhl.link.rest.runtime.parser.RequestParser;
+import com.nhl.link.rest.runtime.parser.cache.IPathCache;
+import com.nhl.link.rest.runtime.parser.cache.PathCache;
+import com.nhl.link.rest.runtime.parser.filter.FilterProcessor;
+import com.nhl.link.rest.runtime.parser.filter.IFilterProcessor;
+import com.nhl.link.rest.runtime.parser.sort.ISortProcessor;
+import com.nhl.link.rest.runtime.parser.sort.SortProcessor;
+import com.nhl.link.rest.runtime.parser.tree.ITreeProcessor;
+import com.nhl.link.rest.runtime.parser.tree.IncludeExcludeProcessor;
 import com.nhl.link.rest.runtime.semantics.RelationshipMapper;
 import com.nhl.link.rest.unit.TestWithCayenneMapping;
 import com.nhl.link.rest.unit.cayenne.E1;
@@ -51,7 +58,15 @@ public class RequestParserTest extends TestWithCayenneMapping {
 		when(cayenneService.sharedContext()).thenReturn(sharedContext);
 		when(cayenneService.newContext()).thenReturn(runtime.newContext());
 		IMetadataService metadataService = new MetadataService(Collections.<DataMap> emptyList(), cayenneService);
-		parser = new RequestParser(Collections.<UpdateFilter> emptyList(), metadataService, new JacksonService(), new RelationshipMapper());
+
+		IPathCache pathCache = new PathCache();
+		IJacksonService jacksonService = new JacksonService();
+		ISortProcessor sortProcessor = new SortProcessor(jacksonService, pathCache);
+		IFilterProcessor filterProcessor = new FilterProcessor(jacksonService, pathCache);
+		ITreeProcessor treeProcessor = new IncludeExcludeProcessor(jacksonService, sortProcessor, filterProcessor);
+
+		parser = new RequestParser(Collections.<UpdateFilter> emptyList(), metadataService, jacksonService,
+				new RelationshipMapper(), treeProcessor, sortProcessor, filterProcessor);
 	}
 
 	@Test
@@ -78,7 +93,7 @@ public class RequestParserTest extends TestWithCayenneMapping {
 
 		@SuppressWarnings("unchecked")
 		MultivaluedMap<String, String> params = mock(MultivaluedMap.class);
-		when(params.get(RequestParams.include.name())).thenReturn(Arrays.asList("description", "age"));
+		when(params.get("include")).thenReturn(Arrays.asList("description", "age"));
 
 		UriInfo urlInfo = mock(UriInfo.class);
 		when(urlInfo.getQueryParameters()).thenReturn(params);
@@ -103,7 +118,7 @@ public class RequestParserTest extends TestWithCayenneMapping {
 
 		@SuppressWarnings("unchecked")
 		MultivaluedMap<String, String> params = mock(MultivaluedMap.class);
-		when(params.get(RequestParams.include.name())).thenReturn(Arrays.asList("[\"description\", \"age\"]"));
+		when(params.get("include")).thenReturn(Arrays.asList("[\"description\", \"age\"]"));
 
 		UriInfo urlInfo = mock(UriInfo.class);
 		when(urlInfo.getQueryParameters()).thenReturn(params);
@@ -128,7 +143,7 @@ public class RequestParserTest extends TestWithCayenneMapping {
 
 		@SuppressWarnings("unchecked")
 		MultivaluedMap<String, String> params = mock(MultivaluedMap.class);
-		when(params.get(RequestParams.exclude.name())).thenReturn(Arrays.asList("description", "age"));
+		when(params.get("exclude")).thenReturn(Arrays.asList("description", "age"));
 
 		UriInfo urlInfo = mock(UriInfo.class);
 		when(urlInfo.getQueryParameters()).thenReturn(params);
@@ -151,7 +166,7 @@ public class RequestParserTest extends TestWithCayenneMapping {
 
 		@SuppressWarnings("unchecked")
 		MultivaluedMap<String, String> params = mock(MultivaluedMap.class);
-		when(params.get(RequestParams.exclude.name())).thenReturn(Arrays.asList("[\"description\", \"age\"]"));
+		when(params.get("exclude")).thenReturn(Arrays.asList("[\"description\", \"age\"]"));
 
 		UriInfo urlInfo = mock(UriInfo.class);
 		when(urlInfo.getQueryParameters()).thenReturn(params);
@@ -174,8 +189,8 @@ public class RequestParserTest extends TestWithCayenneMapping {
 
 		@SuppressWarnings("unchecked")
 		MultivaluedMap<String, String> params = mock(MultivaluedMap.class);
-		when(params.get(RequestParams.include.name())).thenReturn(Arrays.asList("description", "age", "id"));
-		when(params.get(RequestParams.exclude.name())).thenReturn(Arrays.asList("description", "name"));
+		when(params.get("include")).thenReturn(Arrays.asList("description", "age", "id"));
+		when(params.get("exclude")).thenReturn(Arrays.asList("description", "name"));
 
 		UriInfo urlInfo = mock(UriInfo.class);
 		when(urlInfo.getQueryParameters()).thenReturn(params);
@@ -198,7 +213,7 @@ public class RequestParserTest extends TestWithCayenneMapping {
 
 		@SuppressWarnings("unchecked")
 		MultivaluedMap<String, String> params = mock(MultivaluedMap.class);
-		when(params.get(RequestParams.include.name())).thenReturn(Arrays.asList("e3s"));
+		when(params.get("include")).thenReturn(Arrays.asList("e3s"));
 
 		UriInfo urlInfo = mock(UriInfo.class);
 		when(urlInfo.getQueryParameters()).thenReturn(params);
@@ -231,7 +246,7 @@ public class RequestParserTest extends TestWithCayenneMapping {
 
 		@SuppressWarnings("unchecked")
 		MultivaluedMap<String, String> params = mock(MultivaluedMap.class);
-		when(params.get(RequestParams.include.name())).thenReturn(Arrays.asList("name", "e3s.name"));
+		when(params.get("include")).thenReturn(Arrays.asList("name", "e3s.name"));
 
 		UriInfo urlInfo = mock(UriInfo.class);
 		when(urlInfo.getQueryParameters()).thenReturn(params);
@@ -263,8 +278,8 @@ public class RequestParserTest extends TestWithCayenneMapping {
 
 		@SuppressWarnings("unchecked")
 		MultivaluedMap<String, String> params = mock(MultivaluedMap.class);
-		when(params.get(RequestParams.include.name())).thenReturn(Arrays.asList("e3s.name"));
-		when(params.get(RequestParams.exclude.name())).thenReturn(Arrays.asList("name"));
+		when(params.get("include")).thenReturn(Arrays.asList("e3s.name"));
+		when(params.get("exclude")).thenReturn(Arrays.asList("name"));
 
 		UriInfo urlInfo = mock(UriInfo.class);
 		when(urlInfo.getQueryParameters()).thenReturn(params);
@@ -296,8 +311,8 @@ public class RequestParserTest extends TestWithCayenneMapping {
 
 		@SuppressWarnings("unchecked")
 		MultivaluedMap<String, String> params = mock(MultivaluedMap.class);
-		when(params.get(RequestParams.include.name())).thenReturn(Arrays.asList("e3s"));
-		when(params.get(RequestParams.exclude.name())).thenReturn(Arrays.asList("address", "e3s.name"));
+		when(params.get("include")).thenReturn(Arrays.asList("e3s"));
+		when(params.get("exclude")).thenReturn(Arrays.asList("address", "e3s.name"));
 
 		UriInfo urlInfo = mock(UriInfo.class);
 		when(urlInfo.getQueryParameters()).thenReturn(params);
@@ -329,7 +344,7 @@ public class RequestParserTest extends TestWithCayenneMapping {
 
 		@SuppressWarnings("unchecked")
 		MultivaluedMap<String, String> params = mock(MultivaluedMap.class);
-		when(params.get(RequestParams.include.name())).thenReturn(Arrays.asList("id", "e3s.id"));
+		when(params.get("include")).thenReturn(Arrays.asList("id", "e3s.id"));
 
 		UriInfo urlInfo = mock(UriInfo.class);
 		when(urlInfo.getQueryParameters()).thenReturn(params);
@@ -358,7 +373,7 @@ public class RequestParserTest extends TestWithCayenneMapping {
 
 		@SuppressWarnings("unchecked")
 		MultivaluedMap<String, String> params = mock(MultivaluedMap.class);
-		when(params.getFirst(RequestParams.sort.name())).thenReturn(E2.NAME.getName());
+		when(params.getFirst("sort")).thenReturn(E2.NAME.getName());
 
 		UriInfo urlInfo = mock(UriInfo.class);
 		when(urlInfo.getQueryParameters()).thenReturn(params);
@@ -379,8 +394,8 @@ public class RequestParserTest extends TestWithCayenneMapping {
 
 		@SuppressWarnings("unchecked")
 		MultivaluedMap<String, String> params = mock(MultivaluedMap.class);
-		when(params.getFirst(RequestParams.sort.name())).thenReturn(E2.NAME.getName());
-		when(params.getFirst(RequestParams.dir.name())).thenReturn("ASC");
+		when(params.getFirst("sort")).thenReturn(E2.NAME.getName());
+		when(params.getFirst("dir")).thenReturn("ASC");
 
 		UriInfo urlInfo = mock(UriInfo.class);
 		when(urlInfo.getQueryParameters()).thenReturn(params);
@@ -401,8 +416,8 @@ public class RequestParserTest extends TestWithCayenneMapping {
 
 		@SuppressWarnings("unchecked")
 		MultivaluedMap<String, String> params = mock(MultivaluedMap.class);
-		when(params.getFirst(RequestParams.sort.name())).thenReturn(E2.NAME.getName());
-		when(params.getFirst(RequestParams.dir.name())).thenReturn("DESC");
+		when(params.getFirst("sort")).thenReturn(E2.NAME.getName());
+		when(params.getFirst("dir")).thenReturn("DESC");
 
 		UriInfo urlInfo = mock(UriInfo.class);
 		when(urlInfo.getQueryParameters()).thenReturn(params);
@@ -423,8 +438,8 @@ public class RequestParserTest extends TestWithCayenneMapping {
 
 		@SuppressWarnings("unchecked")
 		MultivaluedMap<String, String> params = mock(MultivaluedMap.class);
-		when(params.getFirst(RequestParams.sort.name())).thenReturn("s1");
-		when(params.getFirst(RequestParams.dir.name())).thenReturn("XYZ");
+		when(params.getFirst("sort")).thenReturn("s1");
+		when(params.getFirst("dir")).thenReturn("XYZ");
 
 		UriInfo urlInfo = mock(UriInfo.class);
 		when(urlInfo.getQueryParameters()).thenReturn(params);
@@ -438,7 +453,7 @@ public class RequestParserTest extends TestWithCayenneMapping {
 
 		@SuppressWarnings("unchecked")
 		MultivaluedMap<String, String> params = mock(MultivaluedMap.class);
-		when(params.getFirst(RequestParams.sort.name())).thenReturn(
+		when(params.getFirst("sort")).thenReturn(
 				"[{\"property\":\"name\",\"direction\":\"DESC\"},{\"property\":\"address\",\"direction\":\"ASC\"}]");
 
 		UriInfo urlInfo = mock(UriInfo.class);
@@ -464,7 +479,7 @@ public class RequestParserTest extends TestWithCayenneMapping {
 
 		@SuppressWarnings("unchecked")
 		MultivaluedMap<String, String> params = mock(MultivaluedMap.class);
-		when(params.getFirst(RequestParams.sort.name())).thenReturn(
+		when(params.getFirst("sort")).thenReturn(
 				"[{\"property\":\"name\",\"direction\":\"DESC\"},{\"property\":\"name\",\"direction\":\"ASC\"}]");
 
 		UriInfo urlInfo = mock(UriInfo.class);
@@ -487,7 +502,7 @@ public class RequestParserTest extends TestWithCayenneMapping {
 
 		@SuppressWarnings("unchecked")
 		MultivaluedMap<String, String> params = mock(MultivaluedMap.class);
-		when(params.getFirst(RequestParams.sort.name())).thenReturn(
+		when(params.getFirst("sort")).thenReturn(
 				"[{\"property\":\"p1\",\"direction\":\"DESC\"},{\"property\":\"p2\",\"direction\":\"XXX\"}]");
 
 		UriInfo urlInfo = mock(UriInfo.class);
@@ -497,44 +512,12 @@ public class RequestParserTest extends TestWithCayenneMapping {
 		parser.parseSelect(dataRequest, urlInfo, null);
 	}
 
-	@Test
-	public void testSelectRequest_Sort_Group() {
-
-		@SuppressWarnings("unchecked")
-		MultivaluedMap<String, String> params = mock(MultivaluedMap.class);
-		when(params.getFirst(RequestParams.sort.name())).thenReturn(
-				"[{\"property\":\"name\",\"direction\":\"DESC\"},{\"property\":\"address\",\"direction\":\"ASC\"}]");
-		when(params.getFirst(RequestParams.group.name())).thenReturn(
-				"[{\"property\":\"id\",\"direction\":\"DESC\"},{\"property\":\"address\",\"direction\":\"ASC\"}]");
-
-		UriInfo urlInfo = mock(UriInfo.class);
-		when(urlInfo.getQueryParameters()).thenReturn(params);
-
-		DataResponse<E2> dataRequest = DataResponse.forType(E2.class);
-		parser.parseSelect(dataRequest, urlInfo, null);
-
-		assertNotNull(dataRequest);
-
-		assertEquals(3, dataRequest.getEntity().getOrderings().size());
-		Iterator<Ordering> it = dataRequest.getEntity().getOrderings().iterator();
-		Ordering o1 = it.next();
-		Ordering o2 = it.next();
-		Ordering o3 = it.next();
-
-		assertEquals(SortOrder.DESCENDING, o1.getSortOrder());
-		assertEquals("db:id", o1.getSortSpecString());
-		assertEquals(SortOrder.ASCENDING, o2.getSortOrder());
-		assertEquals("address", o2.getSortSpecString());
-		assertEquals(SortOrder.DESCENDING, o3.getSortOrder());
-		assertEquals("name", o3.getSortSpecString());
-	}
-
 	@Test(expected = LinkRestException.class)
 	public void testSelectRequest_CayenneExp_BadSpec() {
 
 		@SuppressWarnings("unchecked")
 		MultivaluedMap<String, String> params = mock(MultivaluedMap.class);
-		when(params.getFirst(RequestParams.cayenneExp.name())).thenReturn(
+		when(params.getFirst("cayenneExp")).thenReturn(
 				"{exp : \"numericProp = 12345 and stringProp = 'John Smith' and booleanProp = true\"}");
 
 		UriInfo urlInfo = mock(UriInfo.class);
@@ -549,7 +532,7 @@ public class RequestParserTest extends TestWithCayenneMapping {
 
 		@SuppressWarnings("unchecked")
 		MultivaluedMap<String, String> params = mock(MultivaluedMap.class);
-		when(params.getFirst(RequestParams.cayenneExp.name())).thenReturn("{\"exp\" : \"name = 'John Smith'\"}");
+		when(params.getFirst("cayenneExp")).thenReturn("{\"exp\" : \"name = 'John Smith'\"}");
 
 		UriInfo urlInfo = mock(UriInfo.class);
 		when(urlInfo.getQueryParameters()).thenReturn(params);
@@ -562,45 +545,11 @@ public class RequestParserTest extends TestWithCayenneMapping {
 	}
 
 	@Test
-	public void testSelectRequest_Filter() {
-
-		@SuppressWarnings("unchecked")
-		MultivaluedMap<String, String> params = mock(MultivaluedMap.class);
-		when(params.getFirst(RequestParams.filter.name())).thenReturn("[{\"property\":\"name\",\"value\":\"xyz\"}]");
-
-		UriInfo urlInfo = mock(UriInfo.class);
-		when(urlInfo.getQueryParameters()).thenReturn(params);
-
-		DataResponse<E2> dataRequest = DataResponse.forType(E2.class);
-		parser.parseSelect(dataRequest, urlInfo, null);
-		assertNotNull(dataRequest.getEntity().getQualifier());
-		assertEquals(Expression.fromString("name likeIgnoreCase 'xyz%'"), dataRequest.getEntity().getQualifier());
-	}
-
-	@Test
-	public void testSelectRequest_Filter_CayenneExp() {
-
-		@SuppressWarnings("unchecked")
-		MultivaluedMap<String, String> params = mock(MultivaluedMap.class);
-		when(params.getFirst(RequestParams.cayenneExp.name())).thenReturn("{\"exp\" : \"address = '1 Main Street'\"}");
-		when(params.getFirst(RequestParams.filter.name())).thenReturn("[{\"property\":\"name\",\"value\":\"xyz\"}]");
-
-		UriInfo urlInfo = mock(UriInfo.class);
-		when(urlInfo.getQueryParameters()).thenReturn(params);
-
-		DataResponse<E2> dataRequest = DataResponse.forType(E2.class);
-		parser.parseSelect(dataRequest, urlInfo, null);
-		assertNotNull(dataRequest.getEntity().getQualifier());
-		assertEquals(Expression.fromString("address = '1 Main Street' and name likeIgnoreCase 'xyz%'"), dataRequest
-				.getEntity().getQualifier());
-	}
-
-	@Test
 	public void testSelectRequest_Query() {
 
 		@SuppressWarnings("unchecked")
 		MultivaluedMap<String, String> params = mock(MultivaluedMap.class);
-		when(params.getFirst(RequestParams.query.name())).thenReturn("Bla");
+		when(params.getFirst("query")).thenReturn("Bla");
 
 		UriInfo urlInfo = mock(UriInfo.class);
 		when(urlInfo.getQueryParameters()).thenReturn(params);
@@ -611,31 +560,12 @@ public class RequestParserTest extends TestWithCayenneMapping {
 		assertEquals(Expression.fromString("name likeIgnoreCase 'Bla%'"), dataRequest.getEntity().getQualifier());
 	}
 
-	@Test
-	public void testSelectRequest_Query_Filter() {
-
-		@SuppressWarnings("unchecked")
-		MultivaluedMap<String, String> params = mock(MultivaluedMap.class);
-		when(params.getFirst(RequestParams.query.name())).thenReturn("Bla");
-		when(params.getFirst(RequestParams.filter.name())).thenReturn("[{\"property\":\"name\",\"value\":\"xyz\"}]");
-
-		UriInfo urlInfo = mock(UriInfo.class);
-		when(urlInfo.getQueryParameters()).thenReturn(params);
-
-		DataResponse<E2> dataRequest = DataResponse.forType(E2.class);
-		parser.parseSelect(dataRequest, urlInfo, E2.NAME.getName());
-
-		assertNotNull(dataRequest.getEntity().getQualifier());
-		assertEquals(Expression.fromString("name likeIgnoreCase 'xyz%' and name likeIgnoreCase 'Bla%'"), dataRequest
-				.getEntity().getQualifier());
-	}
-
 	@Test(expected = LinkRestException.class)
 	public void testSelectRequest_Query_Unsupported() {
 
 		@SuppressWarnings("unchecked")
 		MultivaluedMap<String, String> params = mock(MultivaluedMap.class);
-		when(params.getFirst(RequestParams.query.name())).thenReturn("Bla");
+		when(params.getFirst("query")).thenReturn("Bla");
 
 		UriInfo urlInfo = mock(UriInfo.class);
 		when(urlInfo.getQueryParameters()).thenReturn(params);

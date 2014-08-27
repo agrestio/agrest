@@ -20,9 +20,18 @@ import org.junit.Test;
 import com.nhl.link.rest.DataResponse;
 import com.nhl.link.rest.Entity;
 import com.nhl.link.rest.runtime.cayenne.ICayennePersister;
+import com.nhl.link.rest.runtime.jackson.IJacksonService;
 import com.nhl.link.rest.runtime.jackson.JacksonService;
 import com.nhl.link.rest.runtime.meta.IMetadataService;
 import com.nhl.link.rest.runtime.meta.MetadataService;
+import com.nhl.link.rest.runtime.parser.cache.IPathCache;
+import com.nhl.link.rest.runtime.parser.cache.PathCache;
+import com.nhl.link.rest.runtime.parser.filter.FilterProcessor;
+import com.nhl.link.rest.runtime.parser.filter.IFilterProcessor;
+import com.nhl.link.rest.runtime.parser.sort.ISortProcessor;
+import com.nhl.link.rest.runtime.parser.sort.SortProcessor;
+import com.nhl.link.rest.runtime.parser.tree.ITreeProcessor;
+import com.nhl.link.rest.runtime.parser.tree.IncludeExcludeProcessor;
 import com.nhl.link.rest.runtime.semantics.RelationshipMapper;
 import com.nhl.link.rest.unit.TestWithCayenneMapping;
 import com.nhl.link.rest.unit.cayenne.E2;
@@ -42,8 +51,15 @@ public class RequestParser_IncludeObjectTest extends TestWithCayenneMapping {
 		when(cayenneService.sharedContext()).thenReturn(sharedContext);
 		when(cayenneService.newContext()).thenReturn(runtime.newContext());
 		IMetadataService metadataService = new MetadataService(Collections.<DataMap> emptyList(), cayenneService);
-		parser = new RequestParser(Collections.<UpdateFilter> emptyList(), metadataService, new JacksonService(),
-				new RelationshipMapper());
+
+		IPathCache pathCache = new PathCache();
+		IJacksonService jacksonService = new JacksonService();
+		ISortProcessor sortProcessor = new SortProcessor(jacksonService, pathCache);
+		IFilterProcessor filterProcessor = new FilterProcessor(jacksonService, pathCache);
+		ITreeProcessor treeProcessor = new IncludeExcludeProcessor(jacksonService, sortProcessor, filterProcessor);
+
+		parser = new RequestParser(Collections.<UpdateFilter> emptyList(), metadataService, jacksonService,
+				new RelationshipMapper(), treeProcessor, sortProcessor, filterProcessor);
 	}
 
 	@Test
@@ -51,7 +67,7 @@ public class RequestParser_IncludeObjectTest extends TestWithCayenneMapping {
 
 		@SuppressWarnings("unchecked")
 		MultivaluedMap<String, String> params = mock(MultivaluedMap.class);
-		when(params.get(RequestParams.include.name())).thenReturn(Arrays.asList("{\"path\":\"e3s\"}"));
+		when(params.get("include")).thenReturn(Arrays.asList("{\"path\":\"e3s\"}"));
 
 		UriInfo urlInfo = mock(UriInfo.class);
 		when(urlInfo.getQueryParameters()).thenReturn(params);
@@ -73,7 +89,7 @@ public class RequestParser_IncludeObjectTest extends TestWithCayenneMapping {
 
 		@SuppressWarnings("unchecked")
 		MultivaluedMap<String, String> params = mock(MultivaluedMap.class);
-		when(params.get(RequestParams.include.name())).thenReturn(Arrays.asList("{\"path\":\"e3s\",\"mapBy\":\"e5\"}"));
+		when(params.get("include")).thenReturn(Arrays.asList("{\"path\":\"e3s\",\"mapBy\":\"e5\"}"));
 
 		UriInfo urlInfo = mock(UriInfo.class);
 		when(urlInfo.getQueryParameters()).thenReturn(params);

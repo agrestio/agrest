@@ -1,4 +1,4 @@
-package com.nhl.link.rest.runtime.parser;
+package com.nhl.link.rest.runtime.parser.cache;
 
 import java.util.Collections;
 import java.util.Map;
@@ -16,6 +16,7 @@ import org.apache.cayenne.map.ObjRelationship;
 import org.apache.cayenne.map.PathComponent;
 
 import com.nhl.link.rest.LinkRestException;
+import com.nhl.link.rest.runtime.parser.PathConstants;
 
 class EntityPathCache {
 

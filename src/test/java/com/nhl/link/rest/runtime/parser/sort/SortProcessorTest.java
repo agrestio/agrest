@@ -1,4 +1,4 @@
-package com.nhl.link.rest.runtime.parser;
+package com.nhl.link.rest.runtime.parser.sort;
 
 import static org.junit.Assert.assertEquals;
 
@@ -11,19 +11,21 @@ import org.junit.Test;
 
 import com.nhl.link.rest.Entity;
 import com.nhl.link.rest.runtime.jackson.JacksonService;
+import com.nhl.link.rest.runtime.parser.cache.PathCache;
+import com.nhl.link.rest.runtime.parser.sort.SortWorker;
 import com.nhl.link.rest.unit.TestWithCayenneMapping;
 import com.nhl.link.rest.unit.cayenne.E2;
 import com.nhl.link.rest.unit.cayenne.auto._E2;
 
 public class SortProcessorTest extends TestWithCayenneMapping {
 
-	private SortProcessor processor;
+	private SortWorker processor;
 	private Entity<?> entity;
 
 	@Before
 	public void before() {
 		JacksonService jacksonService = new JacksonService();
-		this.processor = new SortProcessor(jacksonService, new PathCache());
+		this.processor = new SortWorker(jacksonService, new PathCache());
 
 		ObjEntity oEntity = runtime.getChannel().getEntityResolver().getObjEntity(E2.class);
 		this.entity = new Entity<>(Object.class, oEntity);
