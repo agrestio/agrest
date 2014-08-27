@@ -1,5 +1,6 @@
 Release 1.5
 
+#31 Customizable request chain
 
 Release 1.4 2014-08-22
 
