@@ -1,4 +1,4 @@
-package com.nhl.link.rest;
+package com.nhl.link.rest.incontainer;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
@@ -26,7 +26,7 @@ import com.nhl.link.rest.unit.JerseyTestOnDerby;
 import com.nhl.link.rest.unit.cayenne.E3;
 import com.nhl.link.rest.unit.cayenne.E4;
 
-public class LinkRestService_InContainer_POST_Test extends JerseyTestOnDerby {
+public class POST_Test extends JerseyTestOnDerby {
 
 	private ObjectContext context;
 

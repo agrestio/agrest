@@ -1,4 +1,4 @@
-package com.nhl.link.rest;
+package com.nhl.link.rest.incontainer;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -23,7 +23,7 @@ import com.nhl.link.rest.unit.cayenne.E2;
 import com.nhl.link.rest.unit.cayenne.E3;
 import com.nhl.link.rest.unit.cayenne.E4;
 
-public class LinkRestService_InContainer_GET_Test extends JerseyTestOnDerby {
+public class GET_Test extends JerseyTestOnDerby {
 
 	@Before
 	public void before() {

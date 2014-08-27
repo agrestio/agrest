@@ -1,4 +1,4 @@
-package com.nhl.link.rest.sencha;
+package com.nhl.link.rest.incontainer.sencha;
 
 import static org.junit.Assert.assertEquals;
 
@@ -19,7 +19,7 @@ import com.nhl.link.rest.unit.JerseyTestOnDerby;
 import com.nhl.link.rest.unit.cayenne.E2;
 import com.nhl.link.rest.unit.cayenne.E3;
 
-public class SenchaLinkRestService_InContainer_GET_Test extends JerseyTestOnDerby {
+public class Sencha_GET_Test extends JerseyTestOnDerby {
 
 	@Before
 	public void before() {

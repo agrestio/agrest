@@ -1,4 +1,4 @@
-package com.nhl.link.rest;
+package com.nhl.link.rest.incontainer;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
@@ -19,9 +19,9 @@ import org.junit.Test;
 import com.nhl.link.rest.runtime.LinkRestBuilder;
 import com.nhl.link.rest.unit.resource.LinkRestExceptionResource;
 
-public class LinkRestException_InContainerTest extends JerseyTest {
+public class ExceptionTest extends JerseyTest {
 
-	public LinkRestException_InContainerTest() {
+	public ExceptionTest() {
 		super(new InMemoryTestContainerFactory());
 	}
 

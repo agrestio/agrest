@@ -1,4 +1,4 @@
-package com.nhl.link.rest;
+package com.nhl.link.rest.incontainer;
 
 import static org.junit.Assert.assertEquals;
 
@@ -16,7 +16,7 @@ import org.junit.Test;
 import com.nhl.link.rest.unit.JerseyTestOnDerby;
 import com.nhl.link.rest.unit.cayenne.E4;
 
-public class LinkRestService_InContainer_DELETE_Test extends JerseyTestOnDerby {
+public class DELETE_Test extends JerseyTestOnDerby {
 
 	@Before
 	public void before() {

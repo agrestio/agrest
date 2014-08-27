@@ -1,10 +1,7 @@
-package com.nhl.link.rest;
+package com.nhl.link.rest.incontainer;
 
 import static org.junit.Assert.assertEquals;
 
-import java.io.IOException;
-
-import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
@@ -14,9 +11,9 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.nhl.link.rest.unit.JerseyTestOnDerby;
-import com.nhl.link.rest.unit.cayenne.E4;
+import com.nhl.link.rest.unit.cayenne.E3;
 
-public class LinkRestService_InContainer_GET_Config_Test extends JerseyTestOnDerby {
+public class GET_CustomProperties_Test extends JerseyTestOnDerby {
 
 	@Before
 	public void before() {
@@ -27,17 +24,16 @@ public class LinkRestService_InContainer_GET_Config_Test extends JerseyTestOnDer
 	}
 
 	@Test
-	public void test_PathAttribute() throws WebApplicationException, IOException {
+	public void testRootExtrasEncoder() {
 
-		SQLTemplate insert = new SQLTemplate(E4.class,
-				"INSERT INTO utest.e4 (id, c_varchar, c_int) values (1, 'xxx', 5)");
-		runtime.newContext().performGenericQuery(insert);
+		runtime.newContext()
+				.performGenericQuery(new SQLTemplate(E3.class, "INSERT INTO utest.e4 (id) values (1), (2)"));
 
-		Response response1 = target("/lrc/limit_attributes").request().get();
+		Response response1 = target("/lr/custom_properties/e4/calc_property").queryParam("include", "id")
+				.queryParam("sort", "id").request().get();
 		assertEquals(Status.OK.getStatusCode(), response1.getStatus());
-		assertEquals("{\"success\":true,\"data\":[{\"id\":1,\"cInt\":5}],\"total\":1}",
+		assertEquals(
+				"{\"success\":true,\"data\":[{\"id\":1,\"x\":\"y_1\"}," + "{\"id\":2,\"x\":\"y_2\"}],\"total\":2}",
 				response1.readEntity(String.class));
-
 	}
-
 }

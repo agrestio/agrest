@@ -1,4 +1,4 @@
-package com.nhl.link.rest;
+package com.nhl.link.rest.incontainer;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
@@ -21,9 +21,9 @@ import org.junit.Test;
 import com.nhl.link.rest.runtime.LinkRestBuilder;
 import com.nhl.link.rest.unit.resource.SimpleResponseResource;
 
-public class SimpleResponse_InContainerTest extends JerseyTest {
+public class SimpleResponseTest extends JerseyTest {
 
-	public SimpleResponse_InContainerTest() {
+	public SimpleResponseTest() {
 		super(new InMemoryTestContainerFactory());
 	}
 
