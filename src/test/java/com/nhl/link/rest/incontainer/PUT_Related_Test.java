@@ -4,38 +4,31 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
 import javax.ws.rs.client.Entity;
+import javax.ws.rs.core.FeatureContext;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
-import org.apache.cayenne.ObjectContext;
-import org.apache.cayenne.query.EJBQLQuery;
 import org.apache.cayenne.query.SQLSelect;
 import org.apache.cayenne.query.SQLTemplate;
-import org.junit.Before;
 import org.junit.Test;
 
 import com.nhl.link.rest.unit.JerseyTestOnDerby;
 import com.nhl.link.rest.unit.cayenne.E2;
 import com.nhl.link.rest.unit.cayenne.E3;
+import com.nhl.link.rest.unit.resource.E2Resource;
+import com.nhl.link.rest.unit.resource.E3Resource;
+import com.nhl.link.rest.unit.resource.E7Resource;
+import com.nhl.link.rest.unit.resource.E8Resource;
 
 public class PUT_Related_Test extends JerseyTestOnDerby {
 
-	private ObjectContext context;
-
-	@Before
-	public void before() {
-
-		context = runtime.newContext();
-
-		context.performGenericQuery(new EJBQLQuery("delete from E4"));
-		context.performGenericQuery(new EJBQLQuery("delete from E3"));
-		context.performGenericQuery(new EJBQLQuery("delete from E2"));
-		context.performGenericQuery(new EJBQLQuery("delete from E5"));
-		context.performGenericQuery(new EJBQLQuery("delete from E6"));
-		context.performGenericQuery(new EJBQLQuery("delete from E7"));
-		context.performGenericQuery(new EJBQLQuery("delete from E9"));
-		context.performGenericQuery(new EJBQLQuery("delete from E8"));
+	@Override
+	protected void doAddResources(FeatureContext context) {
+		context.register(E2Resource.class);
+		context.register(E3Resource.class);
+		context.register(E7Resource.class);
+		context.register(E8Resource.class);
 	}
 
 	@Test
@@ -46,7 +39,7 @@ public class PUT_Related_Test extends JerseyTestOnDerby {
 		context.performGenericQuery(new SQLTemplate(E3.class, "INSERT INTO utest.e3 (id, name) values (8, 'yyy')"));
 
 		// POST with empty body ... how bad is that?
-		Response r1 = target("/lr/related/e3/8/e2/24").request().put(Entity.entity("", MediaType.APPLICATION_JSON));
+		Response r1 = target("/e3/8/e2/24").request().put(Entity.entity("", MediaType.APPLICATION_JSON));
 
 		assertEquals(Status.OK.getStatusCode(), r1.getStatus());
 		assertEquals("{\"success\":true,\"data\":[{\"id\":24,\"address\":null,\"name\":\"xxx\"}],\"total\":1}",
@@ -63,7 +56,7 @@ public class PUT_Related_Test extends JerseyTestOnDerby {
 		context.performGenericQuery(new SQLTemplate(E3.class, "INSERT INTO utest.e3 (id, name) values (7, 'zzz')"));
 		context.performGenericQuery(new SQLTemplate(E3.class, "INSERT INTO utest.e3 (id, name) values (8, 'yyy')"));
 
-		Response r1 = target("/lr/related/e3/8/e2/24").request().put(Entity.entity("{}", MediaType.APPLICATION_JSON));
+		Response r1 = target("/e3/8/e2/24").request().put(Entity.entity("{}", MediaType.APPLICATION_JSON));
 
 		assertEquals(Status.OK.getStatusCode(), r1.getStatus());
 		assertEquals("{\"success\":true,\"data\":[{\"id\":24,\"address\":null,\"name\":\"xxx\"}],\"total\":1}",
@@ -80,7 +73,7 @@ public class PUT_Related_Test extends JerseyTestOnDerby {
 		context.performGenericQuery(new SQLTemplate(E3.class, "INSERT INTO utest.e3 (id, name) values (7, 'zzz')"));
 		context.performGenericQuery(new SQLTemplate(E3.class, "INSERT INTO utest.e3 (id, name) values (8, 'yyy')"));
 
-		Response r1 = target("/lr/related/e3/8/e2/24").request().put(
+		Response r1 = target("/e3/8/e2/24").request().put(
 				Entity.entity("{\"name\":\"123\"}", MediaType.APPLICATION_JSON));
 
 		assertEquals(Status.OK.getStatusCode(), r1.getStatus());
@@ -106,7 +99,7 @@ public class PUT_Related_Test extends JerseyTestOnDerby {
 		context.performGenericQuery(new SQLTemplate(E3.class,
 				"INSERT INTO utest.e7 (id, name, e8_id) values (9, 'aaa', 15)"));
 
-		Response r1 = target("/lr/related/e8/15/e7s").request().put(
+		Response r1 = target("/e8/15/e7s").request().put(
 				Entity.entity("[  {\"id\":1,\"name\":\"newname\"}, {\"id\":8,\"name\":\"123\"} ]",
 						MediaType.APPLICATION_JSON));
 
@@ -117,7 +110,7 @@ public class PUT_Related_Test extends JerseyTestOnDerby {
 
 		// testing idempotency
 
-		Response r2 = target("/lr/related/e8/15/e7s").request().put(
+		Response r2 = target("/e8/15/e7s").request().put(
 				Entity.entity("[  {\"id\":1,\"name\":\"newname\"}, {\"id\":8,\"name\":\"123\"} ]",
 						MediaType.APPLICATION_JSON));
 
@@ -133,7 +126,7 @@ public class PUT_Related_Test extends JerseyTestOnDerby {
 		context.performGenericQuery(new SQLTemplate(E3.class, "INSERT INTO utest.e3 (id, name) values (7, 'zzz')"));
 		context.performGenericQuery(new SQLTemplate(E3.class, "INSERT INTO utest.e3 (id, name) values (8, 'yyy')"));
 
-		Response r1 = target("/lr/related/e3/8/e2/24").request().put(
+		Response r1 = target("/e3/8/e2/24").request().put(
 				Entity.entity("{\"name\":\"123\"}", MediaType.APPLICATION_JSON));
 
 		assertEquals(Status.BAD_REQUEST.getStatusCode(), r1.getStatus());
@@ -148,7 +141,7 @@ public class PUT_Related_Test extends JerseyTestOnDerby {
 		context.performGenericQuery(new SQLTemplate(E3.class, "INSERT INTO utest.e7 (id) values (7)"));
 		context.performGenericQuery(new SQLTemplate(E3.class, "INSERT INTO utest.e7 (id) values (8)"));
 
-		Response r1 = target("/lr/related/e7/8/e8/24").request().put(
+		Response r1 = target("/e7/8/e8/24").request().put(
 				Entity.entity("{\"name\":\"aaa\"}", MediaType.APPLICATION_JSON));
 
 		assertEquals(Status.OK.getStatusCode(), r1.getStatus());
@@ -165,7 +158,7 @@ public class PUT_Related_Test extends JerseyTestOnDerby {
 
 		// PUT is idempotent... doing another update should not change the
 		// picture
-		Response r2 = target("/lr/related/e7/8/e8/24").request().put(
+		Response r2 = target("/e7/8/e8/24").request().put(
 				Entity.entity("{\"name\":\"aaa\"}", MediaType.APPLICATION_JSON));
 
 		assertEquals(Status.OK.getStatusCode(), r2.getStatus());
@@ -187,7 +180,7 @@ public class PUT_Related_Test extends JerseyTestOnDerby {
 		context.performGenericQuery(new SQLTemplate(E3.class, "INSERT INTO utest.e8 (id) values (7)"));
 		context.performGenericQuery(new SQLTemplate(E3.class, "INSERT INTO utest.e8 (id) values (8)"));
 
-		Response r1 = target("/lr/related/e8/8/e9").request().put(Entity.entity("{}", MediaType.APPLICATION_JSON));
+		Response r1 = target("/e8/8/e9").request().put(Entity.entity("{}", MediaType.APPLICATION_JSON));
 
 		assertEquals(Status.OK.getStatusCode(), r1.getStatus());
 		assertEquals("{\"success\":true,\"data\":[{\"id\":8}],\"total\":1}", r1.readEntity(String.class));
@@ -198,7 +191,7 @@ public class PUT_Related_Test extends JerseyTestOnDerby {
 
 		// PUT is idempotent... doing another update should not change the
 		// picture
-		Response r2 = target("/lr/related/e8/8/e9").request().put(Entity.entity("{}", MediaType.APPLICATION_JSON));
+		Response r2 = target("/e8/8/e9").request().put(Entity.entity("{}", MediaType.APPLICATION_JSON));
 
 		assertEquals(Status.OK.getStatusCode(), r2.getStatus());
 		assertEquals("{\"success\":true,\"data\":[{\"id\":8}],\"total\":1}", r2.readEntity(String.class));
@@ -227,7 +220,7 @@ public class PUT_Related_Test extends JerseyTestOnDerby {
 
 		// we can't PUT an object with generated ID , as the request is
 		// non-repeatable
-		Response r1 = target("/lr/related/e2/15/e3s").request().put(
+		Response r1 = target("/e2/15/e3s").request().put(
 				Entity.entity("[ {\"name\":\"newname\"} ]", MediaType.APPLICATION_JSON));
 
 		assertEquals(Status.BAD_REQUEST.getStatusCode(), r1.getStatus());

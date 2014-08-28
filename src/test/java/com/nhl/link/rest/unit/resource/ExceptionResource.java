@@ -8,7 +8,7 @@ import javax.ws.rs.core.Response.Status;
 import com.nhl.link.rest.LinkRestException;
 
 @Path("nodata")
-public class LinkRestExceptionResource {
+public class ExceptionResource {
 
 	@GET
 	public Response get() {

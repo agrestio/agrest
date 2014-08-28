@@ -2,35 +2,25 @@ package com.nhl.link.rest.incontainer;
 
 import static org.junit.Assert.assertEquals;
 
+import javax.ws.rs.core.FeatureContext;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
-import org.apache.cayenne.ObjectContext;
-import org.apache.cayenne.query.EJBQLQuery;
 import org.apache.cayenne.query.SQLTemplate;
-import org.junit.Before;
 import org.junit.Test;
 
 import com.nhl.link.rest.unit.JerseyTestOnDerby;
 import com.nhl.link.rest.unit.cayenne.E2;
 import com.nhl.link.rest.unit.cayenne.E3;
+import com.nhl.link.rest.unit.resource.E2Resource;
+import com.nhl.link.rest.unit.resource.E3Resource;
 
 public class GET_Related_Test extends JerseyTestOnDerby {
 
-	private ObjectContext context;
-
-	@Before
-	public void before() {
-
-		context = runtime.newContext();
-		context.performGenericQuery(new EJBQLQuery("delete from E4"));
-		context.performGenericQuery(new EJBQLQuery("delete from E3"));
-		context.performGenericQuery(new EJBQLQuery("delete from E2"));
-		context.performGenericQuery(new EJBQLQuery("delete from E5"));
-		context.performGenericQuery(new EJBQLQuery("delete from E6"));
-		context.performGenericQuery(new EJBQLQuery("delete from E7"));
-		context.performGenericQuery(new EJBQLQuery("delete from E9"));
-		context.performGenericQuery(new EJBQLQuery("delete from E8"));
+	@Override
+	protected void doAddResources(FeatureContext context) {
+		context.register(E2Resource.class);
+		context.register(E3Resource.class);
 	}
 
 	@Test
@@ -49,7 +39,7 @@ public class GET_Related_Test extends JerseyTestOnDerby {
 		context.performGenericQuery(new SQLTemplate(E3.class,
 				"INSERT INTO utest.e3 (id, e2_id, name) values (9, 1, 'zzz')"));
 
-		Response r1 = target("/lr/related/constraints/e2/1/e3s").request().get();
+		Response r1 = target("/e2/constraints/1/e3s").request().get();
 
 		assertEquals(Status.OK.getStatusCode(), r1.getStatus());
 		assertEquals("{\"success\":true,\"data\":[{\"id\":8},{\"id\":9}],\"total\":2}", r1.readEntity(String.class));
@@ -70,7 +60,7 @@ public class GET_Related_Test extends JerseyTestOnDerby {
 		context.performGenericQuery(new SQLTemplate(E3.class,
 				"INSERT INTO utest.e3 (id, e2_id, name) values (9, 1, 'zzz')"));
 
-		Response r1 = target("/lr/related/e2/1/e3s").queryParam("include", "id").request().get();
+		Response r1 = target("/e2/1/e3s").queryParam("include", "id").request().get();
 
 		assertEquals(Status.OK.getStatusCode(), r1.getStatus());
 		assertEquals("{\"success\":true,\"data\":[{\"id\":8},{\"id\":9}],\"total\":2}", r1.readEntity(String.class));
@@ -91,7 +81,7 @@ public class GET_Related_Test extends JerseyTestOnDerby {
 		context.performGenericQuery(new SQLTemplate(E3.class,
 				"INSERT INTO utest.e3 (id, e2_id, name) values (9, 1, 'zzz')"));
 
-		Response r1 = target("/lr/related/e3/7/e2").queryParam("include", "id").request().get();
+		Response r1 = target("/e3/7/e2").queryParam("include", "id").request().get();
 
 		assertEquals(Status.OK.getStatusCode(), r1.getStatus());
 		assertEquals("{\"success\":true,\"data\":[{\"id\":2}],\"total\":1}", r1.readEntity(String.class));
@@ -99,7 +89,7 @@ public class GET_Related_Test extends JerseyTestOnDerby {
 
 	@Test
 	public void testGet_InvalidRel() {
-		Response r1 = target("/lr/related/e2/1/dummyrel").request().get();
+		Response r1 = target("/e2/1/dummyrel").request().get();
 
 		assertEquals(Status.BAD_REQUEST.getStatusCode(), r1.getStatus());
 		assertEquals("{\"success\":false,\"message\":\"Invalid relationship: 'dummyrel'\"}",

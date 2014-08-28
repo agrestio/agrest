@@ -17,7 +17,7 @@ import org.glassfish.jersey.test.inmemory.InMemoryTestContainerFactory;
 import org.junit.Test;
 
 import com.nhl.link.rest.runtime.LinkRestBuilder;
-import com.nhl.link.rest.unit.resource.LinkRestExceptionResource;
+import com.nhl.link.rest.unit.resource.ExceptionResource;
 
 public class ExceptionTest extends JerseyTest {
 
@@ -34,7 +34,7 @@ public class ExceptionTest extends JerseyTest {
 
 			@Override
 			public boolean configure(FeatureContext context) {
-				context.register(LinkRestExceptionResource.class);
+				context.register(ExceptionResource.class);
 				return true;
 			}
 		};

@@ -4,13 +4,12 @@ import static org.junit.Assert.assertEquals;
 
 import java.io.IOException;
 
+import javax.ws.rs.core.FeatureContext;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
 import org.apache.cayenne.Cayenne;
-import org.apache.cayenne.query.EJBQLQuery;
 import org.apache.cayenne.query.SQLTemplate;
-import org.junit.Before;
 import org.junit.Test;
 
 import com.fasterxml.jackson.core.JsonGenerator;
@@ -21,16 +20,13 @@ import com.nhl.link.rest.runtime.LinkRestBuilder;
 import com.nhl.link.rest.unit.JerseyTestOnDerby;
 import com.nhl.link.rest.unit.cayenne.E3;
 import com.nhl.link.rest.unit.cayenne.E4;
+import com.nhl.link.rest.unit.resource.E4Resource;
 
 public class GET_EncoderFilters_Test extends JerseyTestOnDerby {
 
-	@Before
-	public void before() {
-
-		runtime.newContext().performGenericQuery(new EJBQLQuery("delete from E4"));
-		runtime.newContext().performGenericQuery(new EJBQLQuery("delete from E3"));
-		runtime.newContext().performGenericQuery(new EJBQLQuery("delete from E2"));
-		runtime.newContext().performGenericQuery(new EJBQLQuery("delete from E5"));
+	@Override
+	protected void doAddResources(FeatureContext context) {
+		context.register(E4Resource.class);
 	}
 
 	@Override
@@ -44,7 +40,7 @@ public class GET_EncoderFilters_Test extends JerseyTestOnDerby {
 		runtime.newContext()
 				.performGenericQuery(new SQLTemplate(E3.class, "INSERT INTO utest.e4 (id) values (1), (2)"));
 
-		Response response1 = target("/lr/e4").queryParam("include", "id").queryParam("sort", "id").request().get();
+		Response response1 = target("/e4").queryParam("include", "id").queryParam("sort", "id").request().get();
 		assertEquals(Status.OK.getStatusCode(), response1.getStatus());
 		assertEquals("{\"success\":true,\"data\":[{\"id\":2}],\"total\":1}", response1.readEntity(String.class));
 	}
@@ -56,7 +52,7 @@ public class GET_EncoderFilters_Test extends JerseyTestOnDerby {
 				new SQLTemplate(E3.class, "INSERT INTO utest.e4 (id) "
 						+ "values (1), (2), (3), (4), (5), (6), (7), (8), (9), (10)"));
 
-		Response response1 = target("/lr/e4").queryParam("include", "id").queryParam("sort", "id")
+		Response response1 = target("/e4").queryParam("include", "id").queryParam("sort", "id")
 				.queryParam("start", "0").queryParam("limit", "2").request().get();
 
 		assertEquals(Status.OK.getStatusCode(), response1.getStatus());
@@ -71,7 +67,7 @@ public class GET_EncoderFilters_Test extends JerseyTestOnDerby {
 				new SQLTemplate(E3.class, "INSERT INTO utest.e4 (id) "
 						+ "values (1), (2), (3), (4), (5), (6), (7), (8), (9), (10)"));
 
-		Response response1 = target("/lr/e4").queryParam("include", "id").queryParam("sort", "id")
+		Response response1 = target("/e4").queryParam("include", "id").queryParam("sort", "id")
 				.queryParam("start", "2").queryParam("limit", "3").request().get();
 
 		assertEquals(Status.OK.getStatusCode(), response1.getStatus());
@@ -86,7 +82,7 @@ public class GET_EncoderFilters_Test extends JerseyTestOnDerby {
 				new SQLTemplate(E3.class, "INSERT INTO utest.e4 (id) "
 						+ "values (1), (2), (3), (4), (5), (6), (7), (8), (9), (10)"));
 
-		Response response1 = target("/lr/e4").queryParam("include", "id").queryParam("sort", "id")
+		Response response1 = target("/e4").queryParam("include", "id").queryParam("sort", "id")
 				.queryParam("start", "2").queryParam("limit", "10").request().get();
 
 		assertEquals(Status.OK.getStatusCode(), response1.getStatus());

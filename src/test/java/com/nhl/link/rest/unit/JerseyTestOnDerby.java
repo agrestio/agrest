@@ -9,26 +9,24 @@ import javax.ws.rs.core.Application;
 import javax.ws.rs.core.Feature;
 import javax.ws.rs.core.FeatureContext;
 
+import org.apache.cayenne.ObjectContext;
 import org.apache.cayenne.configuration.server.ServerRuntime;
+import org.apache.cayenne.query.EJBQLQuery;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.test.JerseyTest;
 import org.glassfish.jersey.test.inmemory.InMemoryTestContainerFactory;
 import org.glassfish.jersey.test.spi.TestContainerException;
 import org.junit.AfterClass;
+import org.junit.Before;
 import org.junit.BeforeClass;
 
 import com.nhl.link.rest.runtime.LinkRestBuilder;
-import com.nhl.link.rest.unit.resource.CharPkResources;
-import com.nhl.link.rest.unit.resource.LinkRestResource_Config;
-import com.nhl.link.rest.unit.resource.LinkRestResource_CustomProperties;
-import com.nhl.link.rest.unit.resource.LinkRestResource_Related;
-import com.nhl.link.rest.unit.resource.LinkRestServiceResource;
 
 /**
  * A main superclass of LinkRest unit tests that require full stack Jersey
  * container.
  */
-public class JerseyTestOnDerby extends JerseyTest {
+public abstract class JerseyTestOnDerby extends JerseyTest {
 
 	protected static ServerRuntime runtime;
 	protected static DerbyManager derbyAssembly;
@@ -46,6 +44,22 @@ public class JerseyTestOnDerby extends JerseyTest {
 
 		derbyAssembly.shutdown();
 		derbyAssembly = null;
+	}
+
+	protected ObjectContext context;
+
+	@Before
+	public void before() {
+		this.context = runtime.newContext();
+
+		context.performGenericQuery(new EJBQLQuery("delete from E4"));
+		context.performGenericQuery(new EJBQLQuery("delete from E3"));
+		context.performGenericQuery(new EJBQLQuery("delete from E2"));
+		context.performGenericQuery(new EJBQLQuery("delete from E5"));
+		context.performGenericQuery(new EJBQLQuery("delete from E6"));
+		context.performGenericQuery(new EJBQLQuery("delete from E7"));
+		context.performGenericQuery(new EJBQLQuery("delete from E9"));
+		context.performGenericQuery(new EJBQLQuery("delete from E8"));
 	}
 
 	public JerseyTestOnDerby() throws TestContainerException {
@@ -85,11 +99,5 @@ public class JerseyTestOnDerby extends JerseyTest {
 		return new LinkRestBuilder().cayenneRuntime(runtime);
 	}
 
-	protected void doAddResources(FeatureContext context) {
-		context.register(LinkRestServiceResource.class);
-		context.register(LinkRestResource_Related.class);
-		context.register(LinkRestResource_CustomProperties.class);
-		context.register(LinkRestResource_Config.class);
-		context.register(CharPkResources.class);
-	}
+	protected abstract void doAddResources(FeatureContext context);
 }

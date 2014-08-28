@@ -5,27 +5,28 @@ import static org.junit.Assert.assertEquals;
 import java.io.IOException;
 
 import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.FeatureContext;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
-import org.apache.cayenne.query.EJBQLQuery;
 import org.apache.cayenne.query.SQLTemplate;
-import org.junit.Before;
 import org.junit.Test;
 
 import com.nhl.link.rest.unit.JerseyTestOnDerby;
 import com.nhl.link.rest.unit.cayenne.E2;
 import com.nhl.link.rest.unit.cayenne.E3;
 import com.nhl.link.rest.unit.cayenne.E4;
+import com.nhl.link.rest.unit.resource.E2Resource;
+import com.nhl.link.rest.unit.resource.E3Resource;
+import com.nhl.link.rest.unit.resource.E4Resource;
 
 public class GET_ObjectInclude_Test extends JerseyTestOnDerby {
 
-	@Before
-	public void before() {
-		runtime.newContext().performGenericQuery(new EJBQLQuery("delete from E4"));
-		runtime.newContext().performGenericQuery(new EJBQLQuery("delete from E3"));
-		runtime.newContext().performGenericQuery(new EJBQLQuery("delete from E2"));
-		runtime.newContext().performGenericQuery(new EJBQLQuery("delete from E5"));
+	@Override
+	protected void doAddResources(FeatureContext context) {
+		context.register(E2Resource.class);
+		context.register(E3Resource.class);
+		context.register(E4Resource.class);
 	}
 
 	@Test
@@ -34,7 +35,7 @@ public class GET_ObjectInclude_Test extends JerseyTestOnDerby {
 		SQLTemplate insert = new SQLTemplate(E4.class, "INSERT INTO utest.e4 (c_int) values (55)");
 		runtime.newContext().performGenericQuery(insert);
 
-		Response response1 = target("/lr/all").queryParam("include", urlEnc("{\"path\":\"cInt\"}")).request().get();
+		Response response1 = target("/e4").queryParam("include", urlEnc("{\"path\":\"cInt\"}")).request().get();
 		assertEquals(Status.BAD_REQUEST.getStatusCode(), response1.getStatus());
 		assertEquals(
 				"{\"success\":false,\"message\":\"Bad include spec, non-relationship 'path' in include object: cInt\"}",
@@ -49,7 +50,7 @@ public class GET_ObjectInclude_Test extends JerseyTestOnDerby {
 		runtime.newContext().performGenericQuery(
 				new SQLTemplate(E3.class, "INSERT INTO utest.e3 (id, e2_id, name) values (8, 1, 'yyy')"));
 
-		Response response1 = target("/lr/e3").queryParam("include", urlEnc("{\"path\":\"e2\"}"))
+		Response response1 = target("/e3").queryParam("include", urlEnc("{\"path\":\"e2\"}"))
 				.queryParam("include", "id").request().get();
 
 		assertEquals(Status.OK.getStatusCode(), response1.getStatus());
@@ -66,7 +67,7 @@ public class GET_ObjectInclude_Test extends JerseyTestOnDerby {
 		runtime.newContext().performGenericQuery(
 				new SQLTemplate(E3.class, "INSERT INTO utest.e3 (id, e2_id, name) values (8, 1, 'yyy')"));
 
-		Response response1 = target("/lr/e3").queryParam("include", urlEnc("{\"path\":\"e2\",\"mapBy\":\"name\"}"))
+		Response response1 = target("/e3").queryParam("include", urlEnc("{\"path\":\"e2\",\"mapBy\":\"name\"}"))
 				.queryParam("include", "id").request().get();
 
 		assertEquals(Status.OK.getStatusCode(), response1.getStatus());
@@ -88,7 +89,7 @@ public class GET_ObjectInclude_Test extends JerseyTestOnDerby {
 		runtime.newContext().performGenericQuery(
 				new SQLTemplate(E3.class, "INSERT INTO utest.e3 (id, e2_id, name) values (7, 1, 'aaa')"));
 
-		Response response1 = target("/lr/e2").queryParam("include", urlEnc("{\"path\":\"e3s\",\"mapBy\":\"name\"}"))
+		Response response1 = target("/e2").queryParam("include", urlEnc("{\"path\":\"e3s\",\"mapBy\":\"name\"}"))
 				.queryParam("include", "id").request().get();
 
 		assertEquals(Status.OK.getStatusCode(), response1.getStatus());
@@ -111,7 +112,7 @@ public class GET_ObjectInclude_Test extends JerseyTestOnDerby {
 		runtime.newContext().performGenericQuery(
 				new SQLTemplate(E3.class, "INSERT INTO utest.e3 (id, e2_id, name) values (7, 1, 'aaa')"));
 
-		Response response1 = target("/lr/e2").queryParam("include", urlEnc("{\"path\":\"e3s\",\"mapBy\":\"id\"}"))
+		Response response1 = target("/e2").queryParam("include", urlEnc("{\"path\":\"e3s\",\"mapBy\":\"id\"}"))
 				.queryParam("include", "id").request().get();
 
 		assertEquals(Status.OK.getStatusCode(), response1.getStatus());
@@ -133,7 +134,7 @@ public class GET_ObjectInclude_Test extends JerseyTestOnDerby {
 				new SQLTemplate(E3.class, "INSERT INTO utest.e3 (id, e2_id, e5_id, name) "
 						+ "values (8, 1, 45, 'aaa'),(9, 1, 45, 'zzz'),(7, 1, 46, 'aaa')"));
 
-		Response response1 = target("/lr/e2").queryParam("include", urlEnc("{\"path\":\"e3s\",\"mapBy\":\"e5.id\"}"))
+		Response response1 = target("/e2").queryParam("include", urlEnc("{\"path\":\"e3s\",\"mapBy\":\"e5.id\"}"))
 				.queryParam("include", "id").request().get();
 
 		assertEquals(Status.OK.getStatusCode(), response1.getStatus());
@@ -155,7 +156,7 @@ public class GET_ObjectInclude_Test extends JerseyTestOnDerby {
 				new SQLTemplate(E3.class, "INSERT INTO utest.e3 (id, e2_id, e5_id, name) "
 						+ "values (8, 1, 45, 'aaa'),(9, 1, 45, 'zzz'),(7, 1, 46, 'aaa')"));
 
-		Response response1 = target("/lr/e2").queryParam("include", urlEnc("{\"path\":\"e3s\",\"mapBy\":\"e5.name\"}"))
+		Response response1 = target("/e2").queryParam("include", urlEnc("{\"path\":\"e3s\",\"mapBy\":\"e5.name\"}"))
 				.queryParam("include", "id").request().get();
 
 		assertEquals(Status.OK.getStatusCode(), response1.getStatus());
@@ -178,7 +179,7 @@ public class GET_ObjectInclude_Test extends JerseyTestOnDerby {
 				new SQLTemplate(E3.class, "INSERT INTO utest.e3 (id, e2_id, e5_id, name) "
 						+ "values (8, 1, 45, 'aaa'),(9, 1, 45, 'zzz'),(7, 1, 46, 'aaa')"));
 
-		Response response1 = target("/lr/e2").queryParam("include", urlEnc("{\"path\":\"e3s\",\"mapBy\":\"e5.date\"}"))
+		Response response1 = target("/e2").queryParam("include", urlEnc("{\"path\":\"e3s\",\"mapBy\":\"e5.date\"}"))
 				.queryParam("include", "id").request().get();
 
 		assertEquals(Status.OK.getStatusCode(), response1.getStatus());
@@ -205,7 +206,7 @@ public class GET_ObjectInclude_Test extends JerseyTestOnDerby {
 		runtime.newContext().performGenericQuery(
 				new SQLTemplate(E3.class, "INSERT INTO utest.e3 (id, e2_id, name) values (6, 1, NULL)"));
 
-		Response response1 = target("/lr/e2")
+		Response response1 = target("/e2")
 				.queryParam("include",
 						urlEnc("{\"path\":\"e3s\",\"mapBy\":\"name\", \"cayenneExp\":{\"exp\":\"name != NULL\"}}"))
 				.queryParam("include", "id").request().get();
@@ -227,7 +228,7 @@ public class GET_ObjectInclude_Test extends JerseyTestOnDerby {
 				new SQLTemplate(E3.class, "INSERT INTO utest.e3 (id, e2_id, name) values "
 						+ "(8, 1, 'z'),(9, 1, 's'),(7, 1, 'b')"));
 
-		Response response1 = target("/lr/e2").queryParam("include", urlEnc("{\"path\":\"e3s\",\"sort\":\"name\"}"))
+		Response response1 = target("/e2").queryParam("include", urlEnc("{\"path\":\"e3s\",\"sort\":\"name\"}"))
 				.queryParam("include", "id").request().get();
 
 		assertEquals(Status.OK.getStatusCode(), response1.getStatus());
@@ -247,7 +248,7 @@ public class GET_ObjectInclude_Test extends JerseyTestOnDerby {
 				new SQLTemplate(E3.class, "INSERT INTO utest.e3 (id, e2_id, e5_id, name) "
 						+ "values (18, 11, 145, 's'),(19, 11, 145, 'z'),(17, 11, 146, 'b')"));
 
-		Response response1 = target("/lr/e2")
+		Response response1 = target("/e2")
 				.queryParam("include", urlEnc("{\"path\":\"e3s\",\"sort\":[{\"property\":\"e5.name\"}]}"))
 				.queryParam("include", "id").request().get();
 
@@ -269,7 +270,7 @@ public class GET_ObjectInclude_Test extends JerseyTestOnDerby {
 				new SQLTemplate(E3.class, "INSERT INTO utest.e3 (id, e2_id, e5_id, name) "
 						+ "values (28, 21, 245, 's'),(29, 21, 245, 'z'),(27, 21, 246, 'b')"));
 
-		Response response1 = target("/lr/e2")
+		Response response1 = target("/e2")
 				.queryParam(
 						"include",
 						urlEnc("{\"path\":\"e3s\",\"sort\":[{\"property\":\"e5.name\", \"direction\":\"DESC\"},{\"property\":\"name\", \"direction\":\"DESC\"}]}"))
@@ -291,7 +292,7 @@ public class GET_ObjectInclude_Test extends JerseyTestOnDerby {
 				new SQLTemplate(E3.class, "INSERT INTO utest.e3 (id, e2_id, name) "
 						+ "values (8, 1, 'a'),(9, 1, 'z'),(7, 1, 'a')"));
 
-		Response response1 = target("/lr/e2")
+		Response response1 = target("/e2")
 				.queryParam("include",
 						urlEnc("{\"path\":\"e3s\",\"cayenneExp\":{\"exp\":\"name = $n\", \"params\":{\"n\":\"a\"}}}"))
 				.queryParam("include", "id").request().get();
@@ -313,7 +314,7 @@ public class GET_ObjectInclude_Test extends JerseyTestOnDerby {
 				new SQLTemplate(E3.class, "INSERT INTO utest.e3 (id, e2_id, e5_id, name) "
 						+ "values (58, 51, 545, 's'),(59, 51, 545, 'z'),(57, 51, 546, 'b')"));
 
-		Response response1 = target("/lr/e2")
+		Response response1 = target("/e2")
 				.queryParam("include",
 						urlEnc("{\"path\":\"e3s\",\"cayenneExp\":{\"exp\":\"e5 = $id\", \"params\":{\"id\":546}}}"))
 				.queryParam("include", "id").request().get();
@@ -332,7 +333,7 @@ public class GET_ObjectInclude_Test extends JerseyTestOnDerby {
 				new SQLTemplate(E3.class, "INSERT INTO utest.e3 (id, e2_id, name) "
 						+ "values (8, 1, 'a'),(9, 1, 'z'),(7, 1, 'm')"));
 
-		Response response1 = target("/lr/e2").queryParam("include", urlEnc("{\"path\":\"e3s\"}"))
+		Response response1 = target("/e2").queryParam("include", urlEnc("{\"path\":\"e3s\"}"))
 				.queryParam("include", "id").queryParam("exclude", "e3s.id").queryParam("exclude", "e3s.phoneNumber")
 				.request().get();
 
@@ -351,7 +352,7 @@ public class GET_ObjectInclude_Test extends JerseyTestOnDerby {
 				new SQLTemplate(E3.class, "INSERT INTO utest.e3 (id, e2_id, e5_id, name) "
 						+ "values (8, 1, 345, 'a'),(9, 1, 345, 'z'),(7, 1, 346, 'm')"));
 
-		Response response1 = target("/lr/e2").queryParam("include", urlEnc("{\"path\":\"e3s\"}"))
+		Response response1 = target("/e2").queryParam("include", urlEnc("{\"path\":\"e3s\"}"))
 				.queryParam("include", "id").queryParam("exclude", "e3s.id").queryParam("exclude", "e3s.phoneNumber")
 				.queryParam("include", "e3s.e5.name").request().get();
 

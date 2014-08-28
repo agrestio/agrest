@@ -3,38 +3,25 @@ package com.nhl.link.rest.incontainer;
 import static org.junit.Assert.assertEquals;
 
 import javax.ws.rs.client.Entity;
+import javax.ws.rs.core.FeatureContext;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
-import org.apache.cayenne.ObjectContext;
-import org.apache.cayenne.query.EJBQLQuery;
 import org.apache.cayenne.query.SQLSelect;
 import org.apache.cayenne.query.SQLTemplate;
-import org.junit.Before;
 import org.junit.Test;
 
 import com.nhl.link.rest.unit.JerseyTestOnDerby;
 import com.nhl.link.rest.unit.cayenne.E2;
 import com.nhl.link.rest.unit.cayenne.E3;
+import com.nhl.link.rest.unit.resource.E8Resource;
 
 public class PUT_Related_ByKey_Test extends JerseyTestOnDerby {
 
-	private ObjectContext context;
-
-	@Before
-	public void before() {
-
-		context = runtime.newContext();
-
-		context.performGenericQuery(new EJBQLQuery("delete from E4"));
-		context.performGenericQuery(new EJBQLQuery("delete from E3"));
-		context.performGenericQuery(new EJBQLQuery("delete from E2"));
-		context.performGenericQuery(new EJBQLQuery("delete from E5"));
-		context.performGenericQuery(new EJBQLQuery("delete from E6"));
-		context.performGenericQuery(new EJBQLQuery("delete from E7"));
-		context.performGenericQuery(new EJBQLQuery("delete from E9"));
-		context.performGenericQuery(new EJBQLQuery("delete from E8"));
+	@Override
+	protected void doAddResources(FeatureContext context) {
+		context.register(E8Resource.class);
 	}
 
 	@Test
@@ -50,7 +37,7 @@ public class PUT_Related_ByKey_Test extends JerseyTestOnDerby {
 		context.performGenericQuery(new SQLTemplate(E3.class,
 				"INSERT INTO utest.e7 (id, name, e8_id) values (9, 'aaa', 15)"));
 
-		Response r1 = target("/lr/related/bykey/e8/15/e7s").request().put(
+		Response r1 = target("/e8/bykey/15/e7s").request().put(
 				Entity.entity("[  {\"name\":\"newname\"}, {\"name\":\"aaa\"} ]", MediaType.APPLICATION_JSON));
 
 		assertEquals(Status.OK.getStatusCode(), r1.getStatus());
@@ -63,7 +50,7 @@ public class PUT_Related_ByKey_Test extends JerseyTestOnDerby {
 
 		// testing idempotency
 
-		Response r2 = target("/lr/related/bykey/e8/15/e7s").request().put(
+		Response r2 = target("/e8/bykey/15/e7s").request().put(
 				Entity.entity("[  {\"name\":\"newname\"}, {\"name\":\"aaa\"} ]", MediaType.APPLICATION_JSON));
 
 		assertEquals(Status.OK.getStatusCode(), r2.getStatus());

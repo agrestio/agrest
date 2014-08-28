@@ -9,46 +9,37 @@ import java.util.List;
 
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.client.Entity;
+import javax.ws.rs.core.FeatureContext;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
 import org.apache.cayenne.Cayenne;
-import org.apache.cayenne.ObjectContext;
-import org.apache.cayenne.query.EJBQLQuery;
 import org.apache.cayenne.query.SQLSelect;
 import org.apache.cayenne.query.SQLTemplate;
 import org.apache.cayenne.query.SelectQuery;
-import org.junit.Before;
 import org.junit.Test;
 
 import com.nhl.link.rest.unit.JerseyTestOnDerby;
 import com.nhl.link.rest.unit.cayenne.E3;
 import com.nhl.link.rest.unit.cayenne.E4;
+import com.nhl.link.rest.unit.resource.E3Resource;
+import com.nhl.link.rest.unit.resource.E4Resource;
+import com.nhl.link.rest.unit.resource.E8Resource;
 
 public class POST_Test extends JerseyTestOnDerby {
 
-	private ObjectContext context;
-
-	@Before
-	public void before() {
-
-		context = runtime.newContext();
-
-		context.performGenericQuery(new EJBQLQuery("delete from E4"));
-		context.performGenericQuery(new EJBQLQuery("delete from E3"));
-		context.performGenericQuery(new EJBQLQuery("delete from E2"));
-		context.performGenericQuery(new EJBQLQuery("delete from E5"));
-		context.performGenericQuery(new EJBQLQuery("delete from E6"));
-		context.performGenericQuery(new EJBQLQuery("delete from E7"));
-		context.performGenericQuery(new EJBQLQuery("delete from E9"));
-		context.performGenericQuery(new EJBQLQuery("delete from E8"));
+	@Override
+	protected void doAddResources(FeatureContext context) {
+		context.register(E3Resource.class);
+		context.register(E4Resource.class);
+		context.register(E8Resource.class);
 	}
 
 	@Test
 	public void testPost() throws WebApplicationException, IOException {
 
-		Response response1 = target("/lr").request().post(
+		Response response1 = target("/e4").request().post(
 				Entity.entity("{\"cVarchar\":\"zzz\"}", MediaType.APPLICATION_JSON));
 		assertEquals(Status.CREATED.getStatusCode(), response1.getStatus());
 
@@ -61,7 +52,7 @@ public class POST_Test extends JerseyTestOnDerby {
 				+ "\"cTime\":null,\"cTimestamp\":null,\"cVarchar\":\"zzz\"}],\"total\":1}",
 				response1.readEntity(String.class));
 
-		Response response2 = target("/lr").request().post(
+		Response response2 = target("/e4").request().post(
 				Entity.entity("{\"cVarchar\":\"TTTT\"}", MediaType.APPLICATION_JSON));
 
 		assertEquals(Status.CREATED.getStatusCode(), response2.getStatus());
@@ -83,7 +74,7 @@ public class POST_Test extends JerseyTestOnDerby {
 	@Test
 	public void testPost_WriteConstraints_Id_Allowed() throws WebApplicationException, IOException {
 
-		Response r1 = target("/lr/w/constrainedid/e8/578").request().post(
+		Response r1 = target("/e8/w/constrainedid/578").request().post(
 				Entity.entity("{\"name\":\"zzz\"}", MediaType.APPLICATION_JSON));
 		assertEquals(Status.CREATED.getStatusCode(), r1.getStatus());
 
@@ -97,7 +88,7 @@ public class POST_Test extends JerseyTestOnDerby {
 	@Test
 	public void testPost_WriteConstraints_Id_Blocked() throws WebApplicationException, IOException {
 
-		Response r1 = target("/lr/w/constrainedidblocked/e8/578").request().post(
+		Response r1 = target("/e8/w/constrainedidblocked/578").request().post(
 				Entity.entity("{\"name\":\"zzz\"}", MediaType.APPLICATION_JSON));
 		assertEquals(Status.BAD_REQUEST.getStatusCode(), r1.getStatus());
 
@@ -108,7 +99,7 @@ public class POST_Test extends JerseyTestOnDerby {
 	@Test
 	public void testPost_WriteConstraints1() throws WebApplicationException, IOException {
 
-		Response r1 = target("/lr/w/constrained/e3").request().post(
+		Response r1 = target("/e3/w/constrained").request().post(
 				Entity.entity("{\"name\":\"zzz\"}", MediaType.APPLICATION_JSON));
 		assertEquals(Status.CREATED.getStatusCode(), r1.getStatus());
 
@@ -124,7 +115,7 @@ public class POST_Test extends JerseyTestOnDerby {
 	@Test
 	public void testPost_WriteConstraints2() throws WebApplicationException, IOException {
 
-		Response r2 = target("/lr/w/constrained/e3").request().post(
+		Response r2 = target("/e3/w/constrained").request().post(
 				Entity.entity("{\"name\":\"yyy\",\"phoneNumber\":\"12345\"}", MediaType.APPLICATION_JSON));
 		assertEquals(Status.CREATED.getStatusCode(), r2.getStatus());
 
@@ -142,7 +133,7 @@ public class POST_Test extends JerseyTestOnDerby {
 	@Test
 	public void testPost_ReadConstraints1() throws WebApplicationException, IOException {
 
-		Response r1 = target("/lr/constrained/e3").request().post(
+		Response r1 = target("/e3/constrained").request().post(
 				Entity.entity("{\"name\":\"zzz\"}", MediaType.APPLICATION_JSON));
 		assertEquals(Status.CREATED.getStatusCode(), r1.getStatus());
 
@@ -158,7 +149,7 @@ public class POST_Test extends JerseyTestOnDerby {
 	@Test
 	public void testPost_ReadConstraints2() throws WebApplicationException, IOException {
 
-		Response r2 = target("/lr/constrained/e3").queryParam("include", "name").queryParam("include", "phoneNumber")
+		Response r2 = target("/e3/constrained").queryParam("include", "name").queryParam("include", "phoneNumber")
 				.request().post(Entity.entity("{\"name\":\"yyy\"}", MediaType.APPLICATION_JSON));
 		assertEquals(Status.CREATED.getStatusCode(), r2.getStatus());
 
@@ -173,7 +164,7 @@ public class POST_Test extends JerseyTestOnDerby {
 	@Test
 	public void testPost_ReadConstraints3() throws WebApplicationException, IOException {
 
-		Response r2 = target("/lr/constrained/e3").queryParam("include", E3.E2.getName()).request()
+		Response r2 = target("/e3/constrained").queryParam("include", E3.E2.getName()).request()
 				.post(Entity.entity("{\"name\":\"yyy\"}", MediaType.APPLICATION_JSON));
 		assertEquals(Status.CREATED.getStatusCode(), r2.getStatus());
 
@@ -193,7 +184,7 @@ public class POST_Test extends JerseyTestOnDerby {
 		context.performGenericQuery(new SQLTemplate(E4.class, "INSERT INTO utest.e2 (id, name) values (1, 'xxx')"));
 		context.performGenericQuery(new SQLTemplate(E4.class, "INSERT INTO utest.e2 (id, name) values (8, 'yyy')"));
 
-		Response response1 = target("/lr/e3").request().post(
+		Response response1 = target("/e3").request().post(
 				Entity.entity("{\"e2_id\":8,\"name\":\"MM\"}", MediaType.APPLICATION_JSON));
 
 		assertEquals(Status.CREATED.getStatusCode(), response1.getStatus());
@@ -215,7 +206,7 @@ public class POST_Test extends JerseyTestOnDerby {
 		context.performGenericQuery(new SQLTemplate(E4.class, "INSERT INTO utest.e2 (id, name) values (1, 'xxx')"));
 		context.performGenericQuery(new SQLTemplate(E4.class, "INSERT INTO utest.e2 (id, name) values (8, 'yyy')"));
 
-		Response response1 = target("/lr/e3").request().post(
+		Response response1 = target("/e3").request().post(
 				Entity.entity("{\"e2_id\":null,\"name\":\"MM\"}", MediaType.APPLICATION_JSON));
 
 		assertEquals(Status.CREATED.getStatusCode(), response1.getStatus());
@@ -237,7 +228,7 @@ public class POST_Test extends JerseyTestOnDerby {
 		context.performGenericQuery(new SQLTemplate(E4.class, "INSERT INTO utest.e2 (id, name) values (1, 'xxx')"));
 		context.performGenericQuery(new SQLTemplate(E4.class, "INSERT INTO utest.e2 (id, name) values (8, 'yyy')"));
 
-		Response response1 = target("/lr/e3").request().post(
+		Response response1 = target("/e3").request().post(
 				Entity.entity("{\"e2_id\":15,\"name\":\"MM\"}", MediaType.APPLICATION_JSON));
 
 		assertEquals(Status.NOT_FOUND.getStatusCode(), response1.getStatus());
