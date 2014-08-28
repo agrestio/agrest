@@ -2,6 +2,7 @@ package com.nhl.link.rest;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import org.apache.cayenne.exp.Expression;
 import org.apache.cayenne.exp.Property;
@@ -217,6 +218,10 @@ public class TreeConstraints<T> {
 	}
 
 	public <S> TreeConstraints<T> path(Property<S> path, TreeConstraints<S> subentityBuilder) {
+		return path(path.getName(), subentityBuilder);
+	}
+	
+	public <S> TreeConstraints<T> toManyPath(Property<List<S>> path, TreeConstraints<S> subentityBuilder) {
 		return path(path.getName(), subentityBuilder);
 	}
 
