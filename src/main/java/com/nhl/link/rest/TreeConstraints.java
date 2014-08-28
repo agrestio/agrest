@@ -40,7 +40,7 @@ public class TreeConstraints<T> {
 	 * @since 1.5
 	 */
 	public static <T> TreeConstraints<T> idAndAttributes(Class<T> type) {
-		return excludeAll(type).includeId();
+		return excludeAll(type).includeId().allAttributes();
 	}
 
 	private TreeConstraints(Class<T> type) {
