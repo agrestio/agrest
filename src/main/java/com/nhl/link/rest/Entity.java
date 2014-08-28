@@ -3,6 +3,7 @@ package com.nhl.link.rest;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 
 import org.apache.cayenne.exp.Expression;
@@ -28,6 +29,7 @@ public class Entity<T> {
 	private Class<T> type;
 	private ObjEntity cayenneEntity;
 	private Collection<String> attributes;
+	private Collection<String> defaultProperties;
 
 	private String mapByPath;
 	private Entity<?> mapBy;
@@ -40,6 +42,7 @@ public class Entity<T> {
 	public Entity(Class<T> type) {
 		this.idIncluded = false;
 		this.attributes = new ArrayList<>();
+		this.defaultProperties = new HashSet<>();
 		this.children = new HashMap<>();
 		this.orderings = new ArrayList<>(2);
 		this.extraProperties = new HashMap<>();
@@ -87,10 +90,24 @@ public class Entity<T> {
 		return attributes;
 	}
 
+	/**
+	 * @since 1.5
+	 */
+	public Collection<String> getDefaultProperties() {
+		return defaultProperties;
+	}
+
+	/**
+	 * @since 1.5
+	 */
+	public boolean isDefault(String propertyName) {
+		return defaultProperties.contains(propertyName);
+	}
+
 	public Map<String, Entity<?>> getChildren() {
 		return children;
 	}
-	
+
 	/**
 	 * @since 1.1
 	 */

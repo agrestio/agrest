@@ -24,7 +24,7 @@ public class GET_Constraints_Test extends JerseyTestOnDerby {
 	}
 
 	@Test
-	public void test_PathAttribute() throws WebApplicationException, IOException {
+	public void test_Implicit() throws WebApplicationException, IOException {
 
 		SQLTemplate insert = new SQLTemplate(E4.class,
 				"INSERT INTO utest.e4 (id, c_varchar, c_int) values (1, 'xxx', 5)");
@@ -37,4 +37,17 @@ public class GET_Constraints_Test extends JerseyTestOnDerby {
 
 	}
 
+	@Test
+	public void test_Explicit() throws WebApplicationException, IOException {
+
+		SQLTemplate insert = new SQLTemplate(E4.class,
+				"INSERT INTO utest.e4 (id, c_varchar, c_int) values (1, 'xxx', 5)");
+		runtime.newContext().performGenericQuery(insert);
+
+		Response response1 = target("/e4/limit_attributes").queryParam("include", E4.C_BOOLEAN.getName())
+				.queryParam("include", E4.C_INT.getName()).request().get();
+		assertEquals(Status.OK.getStatusCode(), response1.getStatus());
+		assertEquals("{\"success\":true,\"data\":[{\"cInt\":5}],\"total\":1}", response1.readEntity(String.class));
+
+	}
 }

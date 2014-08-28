@@ -198,6 +198,7 @@ class IncludeWorker {
 		if (!clientEntity.isIdIncluded() && clientEntity.getAttributes().isEmpty()) {
 			for (ObjAttribute oa : clientEntity.getCayenneEntity().getAttributes()) {
 				clientEntity.getAttributes().add(oa.getName());
+				clientEntity.getDefaultProperties().add(oa.getName());
 			}
 			// Id should be included by default
 			clientEntity.includeId();

@@ -106,7 +106,13 @@ public class ConstraintsHandler implements IConstraintsHandler {
 
 			String a = ait.next();
 			if (!constraints.hasAttribute(a)) {
-				LOGGER.info("Attribute not allowed, removing: " + a);
+
+				// do not report default properties, as this wasn't a client's
+				// fault it go there..
+				if (!target.isDefault(a)) {
+					LOGGER.info("Attribute not allowed, removing: " + a);
+				}
+
 				ait.remove();
 			}
 		}
@@ -123,7 +129,13 @@ public class ConstraintsHandler implements IConstraintsHandler {
 				// be a reasonably safe operation in regard to stack overflow
 				applyReadTreeConstraints(e.getValue(), sourceChild);
 			} else {
-				LOGGER.info("Relationship not allowed, removing: " + e.getKey());
+
+				// do not report default properties, as this wasn't a client's
+				// fault it go there..
+				if (!target.isDefault(e.getKey())) {
+					LOGGER.info("Relationship not allowed, removing: " + e.getKey());
+				}
+
 				rit.remove();
 			}
 		}
@@ -159,7 +171,13 @@ public class ConstraintsHandler implements IConstraintsHandler {
 			while (it.hasNext()) {
 				Entry<String, Object> e = it.next();
 				if (!constraints.hasAttribute(e.getKey())) {
-					LOGGER.info("Attribute not allowed, removing: " + e.getKey() + " for id " + u.getId());
+
+					// do not report default properties, as this wasn't a
+					// client's fault it go there..
+					if (!response.getEntity().isDefault(e.getKey())) {
+						LOGGER.info("Attribute not allowed, removing: " + e.getKey() + " for id " + u.getId());
+					}
+
 					it.remove();
 				}
 			}
