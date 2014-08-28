@@ -6,6 +6,7 @@ Release 1.5
 #32 Support for default per-entity constraints
 #33 EncoderService: Do not include related_id property by default
 #34 Remove @AnyRole annotation
+#35 Annotations for default constraints
 
 Release 1.4 2014-08-22
 

@@ -13,7 +13,9 @@ import org.apache.cayenne.query.SQLTemplate;
 import org.junit.Test;
 
 import com.nhl.link.rest.unit.JerseyTestOnDerby;
+import com.nhl.link.rest.unit.cayenne.E10;
 import com.nhl.link.rest.unit.cayenne.E4;
+import com.nhl.link.rest.unit.resource.E10Resource;
 import com.nhl.link.rest.unit.resource.E4Resource;
 
 public class GET_Constraints_Test extends JerseyTestOnDerby {
@@ -21,6 +23,7 @@ public class GET_Constraints_Test extends JerseyTestOnDerby {
 	@Override
 	protected void doAddResources(FeatureContext context) {
 		context.register(E4Resource.class);
+		context.register(E10Resource.class);
 	}
 
 	@Test
@@ -48,6 +51,36 @@ public class GET_Constraints_Test extends JerseyTestOnDerby {
 				.queryParam("include", E4.C_INT.getName()).request().get();
 		assertEquals(Status.OK.getStatusCode(), response1.getStatus());
 		assertEquals("{\"success\":true,\"data\":[{\"cInt\":5}],\"total\":1}", response1.readEntity(String.class));
+
+	}
+
+	@Test
+	public void test_Annotated() throws WebApplicationException, IOException {
+
+		SQLTemplate insert = new SQLTemplate(E10.class,
+				"INSERT INTO utest.e10 (id, c_varchar, c_int, c_boolean, c_date) values (1, 'xxx', 5, true, '2014-01-02')");
+		context.performGenericQuery(insert);
+
+		Response response1 = target("/e10").request().get();
+		assertEquals(Status.OK.getStatusCode(), response1.getStatus());
+		assertEquals("{\"success\":true,\"data\":[{\"id\":1,\"cBoolean\":true,\"cInt\":5}],\"total\":1}",
+				response1.readEntity(String.class));
+
+	}
+
+	@Test
+	public void test_Annotated_Relationship() throws WebApplicationException, IOException {
+
+		context.performGenericQuery(new SQLTemplate(E10.class,
+				"INSERT INTO utest.e10 (id, c_varchar, c_int, c_boolean, c_date) values (1, 'xxx', 5, true, '2014-01-02')"));
+		context.performGenericQuery(new SQLTemplate(E4.class,
+				"INSERT INTO utest.e11 (id, e10_id, address, name) values (15, 1, 'aaa', 'nnn')"));
+
+		Response response1 = target("/e10").queryParam("include", E10.E11S.getName()).request().get();
+		assertEquals(Status.OK.getStatusCode(), response1.getStatus());
+		assertEquals(
+				"{\"success\":true,\"data\":[{\"id\":1,\"cBoolean\":true,\"cInt\":5,\"e11s\":{\"address\":\"aaa\"}}],\"total\":1}",
+				response1.readEntity(String.class));
 
 	}
 }

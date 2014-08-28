@@ -1,14 +1,17 @@
 package com.nhl.link.rest.runtime.constraints;
 
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Map.Entry;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 import javax.ws.rs.core.Response.Status;
 
 import org.apache.cayenne.di.Inject;
+import org.apache.cayenne.map.ObjAttribute;
+import org.apache.cayenne.map.ObjEntity;
+import org.apache.cayenne.map.ObjRelationship;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,6 +23,9 @@ import com.nhl.link.rest.LinkRestException;
 import com.nhl.link.rest.SizeConstraints;
 import com.nhl.link.rest.TreeConstraints;
 import com.nhl.link.rest.UpdateResponse;
+import com.nhl.link.rest.annotation.ClientReadable;
+import com.nhl.link.rest.annotation.ClientWritable;
+import com.nhl.link.rest.runtime.cayenne.ICayennePersister;
 import com.nhl.link.rest.runtime.parser.PathConstants;
 
 /**
@@ -33,30 +39,118 @@ public class ConstraintsHandler implements IConstraintsHandler {
 	public static final String DEFAULT_READ_CONSTRAINTS_LIST = "linkrest.constraints.read.list";
 	public static final String DEFAULT_WRITE_CONSTRAINTS_LIST = "linkrest.constraints.write.list";
 
+	private static final TreeConstraints<Object> NO_CONSTRAINTS = TreeConstraints.excludeAll(Object.class);
+
 	private static final Logger LOGGER = LoggerFactory.getLogger(ConstraintsHandler.class);
 
-	private Map<Class<?>, TreeConstraints<?>> defaultReadConstraints;
-	private Map<Class<?>, TreeConstraints<?>> defaultWriteConstraints;
+	private ICayennePersister persister;
+	private ConcurrentMap<Class<?>, TreeConstraints<?>> readDefault;
+	private ConcurrentMap<Class<?>, TreeConstraints<?>> writeDefault;
 
-	public ConstraintsHandler(@Inject(DEFAULT_READ_CONSTRAINTS_LIST) List<TreeConstraints<?>> defaultReadConstraints,
+	public ConstraintsHandler(@Inject ICayennePersister persister,
+			@Inject(DEFAULT_READ_CONSTRAINTS_LIST) List<TreeConstraints<?>> defaultReadConstraints,
 			@Inject(DEFAULT_WRITE_CONSTRAINTS_LIST) List<TreeConstraints<?>> defaultWriteConstraints) {
-		this.defaultReadConstraints = new HashMap<>();
+
+		this.persister = persister;
+
+		// note that explicit defaults override annotations
+		this.readDefault = new ConcurrentHashMap<>();
 		for (TreeConstraints<?> c : defaultReadConstraints) {
-			this.defaultReadConstraints.put(c.getType(), c);
+			this.readDefault.put(c.getType(), c);
 		}
 
-		this.defaultWriteConstraints = new HashMap<>();
+		this.writeDefault = new ConcurrentHashMap<>();
 		for (TreeConstraints<?> c : defaultWriteConstraints) {
-			this.defaultWriteConstraints.put(c.getType(), c);
+			this.writeDefault.put(c.getType(), c);
 		}
+	}
+
+	@SuppressWarnings("unchecked")
+	private <T> TreeConstraints<T> readDefault(Class<T> type) {
+
+		TreeConstraints<?> c = readDefault.get(type);
+
+		if (c == null) {
+			// no synchronization.. hopefully compiling a single type of
+			// constraints multiple times is not very expensive
+			TreeConstraints<?> newC = compileRead(type);
+			TreeConstraints<?> oldC = readDefault.putIfAbsent(type, newC);
+			c = oldC != null ? oldC : newC;
+		}
+
+		return (TreeConstraints<T>) (c == NO_CONSTRAINTS ? null : c);
+	}
+
+	@SuppressWarnings("unchecked")
+	private <T> TreeConstraints<T> writeDefault(Class<T> type) {
+
+		TreeConstraints<?> c = writeDefault.get(type);
+
+		if (c == null) {
+			// no synchronization.. hopefully compiling a single type of
+			// constraints multiple times is not very expensive
+			TreeConstraints<?> newC = compileWrite(type);
+			TreeConstraints<?> oldC = writeDefault.putIfAbsent(type, newC);
+			c = oldC != null ? oldC : newC;
+		}
+
+		return (TreeConstraints<T>) (c == NO_CONSTRAINTS ? null : c);
+	}
+
+	private TreeConstraints<?> compileRead(Class<?> type) {
+		ClientReadable a = type.getAnnotation(ClientReadable.class);
+		return a != null ? compile(type, a.value(), a.id(), true) : NO_CONSTRAINTS;
+	}
+
+	private TreeConstraints<?> compileWrite(Class<?> type) {
+		ClientWritable a = type.getAnnotation(ClientWritable.class);
+		return a != null ? compile(type, a.value(), a.id(), false) : NO_CONSTRAINTS;
+	}
+
+	private TreeConstraints<?> compile(Class<?> type, String[] properties, boolean id, boolean read) {
+
+		ObjEntity e = persister.entityResolver().getObjEntity(type);
+		if (e == null) {
+			throw new LinkRestException(Status.BAD_REQUEST, "Invalid entity: " + type.getName());
+		}
+
+		TreeConstraints<?> c = TreeConstraints.excludeAll(type).includeId(id);
+
+		for (String p : properties) {
+			ObjAttribute a = e.getAttribute(p);
+			if (a != null) {
+				c.attribute(p);
+				continue;
+			}
+
+			ObjRelationship r = e.getRelationship(p);
+			if (r != null) {
+
+				Class<?> childType = r.getTargetEntity().getJavaClass();
+
+				// TODO: java 8: instead of 'read' we need to use a lambda
+				TreeConstraints<?> childC = read ? compileRead(childType) : compileWrite(childType);
+
+				// no annotation - allow all attributes...
+				if (childC == NO_CONSTRAINTS) {
+					childC = TreeConstraints.idAndAttributes(childType);
+				}
+
+				c.path(p, childC);
+
+				continue;
+			}
+
+			throw new LinkRestException(Status.INTERNAL_SERVER_ERROR, "Invalid property: " + e.getName() + "." + a);
+
+		}
+		return c;
 	}
 
 	@Override
 	public <T> void constrainUpdate(UpdateResponse<T> response, TreeConstraints<T> writeConstraints) {
 
-		@SuppressWarnings("unchecked")
-		TreeConstraints<T> c = writeConstraints != null ? writeConstraints
-				: (TreeConstraints<T>) defaultWriteConstraints.get(response.getType());
+		TreeConstraints<T> c = writeConstraints != null ? writeConstraints : writeDefault(response.getType());
 
 		if (c != null && !response.getUpdates().isEmpty()) {
 			ImmutableTreeConstraints compiled = c.build(response);
@@ -72,9 +166,7 @@ public class ConstraintsHandler implements IConstraintsHandler {
 			applyReadSizeConstraints(response, sizeConstraints);
 		}
 
-		@SuppressWarnings("unchecked")
-		TreeConstraints<T> c = readConstraints != null ? readConstraints : (TreeConstraints<T>) defaultReadConstraints
-				.get(response.getType());
+		TreeConstraints<T> c = readConstraints != null ? readConstraints : readDefault(response.getType());
 
 		// entity - ensure attribute/relationship tree span of source is not
 		// exceeded in target. Null target means we don't need to worry about

@@ -2,6 +2,7 @@ package com.nhl.link.rest.runtime.config;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,6 +14,7 @@ import org.junit.Test;
 import com.nhl.link.rest.DataResponse;
 import com.nhl.link.rest.Entity;
 import com.nhl.link.rest.TreeConstraints;
+import com.nhl.link.rest.runtime.cayenne.ICayennePersister;
 import com.nhl.link.rest.runtime.constraints.ConstraintsHandler;
 import com.nhl.link.rest.unit.TestWithCayenneMapping;
 import com.nhl.link.rest.unit.cayenne.E1;
@@ -26,13 +28,16 @@ public class ConstraintsHandlerWithDefaultsTest extends TestWithCayenneMapping {
 
 	@Before
 	public void before() {
+
+		ICayennePersister persister = mock(ICayennePersister.class);
+
 		List<TreeConstraints<?>> r = new ArrayList<>();
 		r.add(TreeConstraints.idOnly(E1.class).attribute(E1.AGE));
 
 		List<TreeConstraints<?>> w = new ArrayList<>();
 		w.add(TreeConstraints.idOnly(E2.class).attribute(E2.ADDRESS));
 
-		this.constraintHandler = new ConstraintsHandler(r, w);
+		this.constraintHandler = new ConstraintsHandler(persister, r, w);
 
 		e1 = runtime.getChannel().getEntityResolver().getObjEntity(E1.class);
 		e2 = runtime.getChannel().getEntityResolver().getObjEntity(E2.class);

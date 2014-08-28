@@ -57,9 +57,13 @@ public abstract class JerseyTestOnDerby extends JerseyTest {
 		context.performGenericQuery(new EJBQLQuery("delete from E2"));
 		context.performGenericQuery(new EJBQLQuery("delete from E5"));
 		context.performGenericQuery(new EJBQLQuery("delete from E6"));
+		
 		context.performGenericQuery(new EJBQLQuery("delete from E7"));
 		context.performGenericQuery(new EJBQLQuery("delete from E9"));
 		context.performGenericQuery(new EJBQLQuery("delete from E8"));
+		
+		context.performGenericQuery(new EJBQLQuery("delete from E11"));
+		context.performGenericQuery(new EJBQLQuery("delete from E10"));
 	}
 
 	public JerseyTestOnDerby() throws TestContainerException {
