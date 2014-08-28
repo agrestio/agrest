@@ -148,16 +148,16 @@ public abstract class BaseCreateOrUpdateBuilder<T> implements CreateOrUpdateBuil
 	protected void processExplicitId(UpdateResponse<T> response) {
 
 		if (id != null) {
-			processExplicitId(response, id);
+			processExplicitId(response, id, false);
 		} else if (parent != null) {
 			ObjRelationship fromParent = relationshipFromParent();
 			if (fromParent != null && fromParent.isToDependentEntity()) {
-				processExplicitId(response, parent.getId());
+				processExplicitId(response, parent.getId(), true);
 			}
 		}
 	}
 
-	private void processExplicitId(UpdateResponse<T> response, Object id) {
+	private void processExplicitId(UpdateResponse<T> response, Object id, boolean propagated) {
 
 		// id was specified explicitly ... this means a few things:
 		// * we expect zero or one object
@@ -168,7 +168,11 @@ public abstract class BaseCreateOrUpdateBuilder<T> implements CreateOrUpdateBuil
 			response.getUpdates().add(new EntityUpdate());
 		}
 
-		response.getFirst().setId(id);
+		if (propagated) {
+			response.getFirst().setPropagatedId(id);
+		} else {
+			response.getFirst().setId(id);
+		}
 	}
 
 	protected UpdateResponse<T> withObjects(UpdateResponse<T> response, List<T> objects) {

@@ -13,6 +13,7 @@ public class EntityUpdate {
 	private Map<String, Object> values;
 	private Map<String, Object> relatedIds;
 	private Object id;
+	private boolean idPropagated;
 
 	public EntityUpdate() {
 		this.values = new HashMap<>();
@@ -37,6 +38,21 @@ public class EntityUpdate {
 
 	public void setId(Object id) {
 		this.id = id;
+	}
+
+	/**
+	 * @since 1.5
+	 */
+	public void setPropagatedId(Object id) {
+		this.id = id;
+		this.idPropagated = true;
+	}
+
+	/**
+	 * @since 1.5
+	 */
+	public boolean isIdPropagated() {
+		return idPropagated;
 	}
 
 }

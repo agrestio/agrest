@@ -65,7 +65,7 @@ public class ByIdResponseObjectMapper<T> implements ResponseObjectMapper<T> {
 		// set explicit ID
 		if (id != null) {
 
-			if (response.isIdUpdatesDisallowed()) {
+			if (response.isIdUpdatesDisallowed() && !u.isIdPropagated()) {
 				throw new LinkRestException(Status.BAD_REQUEST, "Setting ID explicitly is not allowed: " + id);
 			}
 

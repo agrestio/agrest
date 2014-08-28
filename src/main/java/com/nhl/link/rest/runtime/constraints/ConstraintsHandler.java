@@ -141,7 +141,7 @@ public class ConstraintsHandler implements IConstraintsHandler {
 				continue;
 			}
 
-			throw new LinkRestException(Status.INTERNAL_SERVER_ERROR, "Invalid property: " + e.getName() + "." + a);
+			throw new LinkRestException(Status.INTERNAL_SERVER_ERROR, "Invalid property: " + e.getName() + "." + p);
 
 		}
 		return c;
