@@ -1,6 +1,8 @@
 package com.nhl.link.rest.runtime.constraints;
 
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -28,19 +30,25 @@ import com.nhl.link.rest.runtime.parser.PathConstants;
  */
 public class ConstraintsHandler implements IConstraintsHandler {
 
-	public static final String DEFAULT_READ_CONSTRAINTS_MAP = "linkrest.constraints.read.map";
-	public static final String DEFAULT_WRITE_CONSTRAINTS_MAP = "linkrest.constraints.write.map";
+	public static final String DEFAULT_READ_CONSTRAINTS_LIST = "linkrest.constraints.read.list";
+	public static final String DEFAULT_WRITE_CONSTRAINTS_LIST = "linkrest.constraints.write.list";
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(ConstraintsHandler.class);
 
-	private Map<String, TreeConstraints<?>> defaultReadConstraints;
-	private Map<String, TreeConstraints<?>> defaultWriteConstraints;
+	private Map<Class<?>, TreeConstraints<?>> defaultReadConstraints;
+	private Map<Class<?>, TreeConstraints<?>> defaultWriteConstraints;
 
-	public ConstraintsHandler(
-			@Inject(DEFAULT_READ_CONSTRAINTS_MAP) Map<String, TreeConstraints<?>> defaultReadConstraints,
-			@Inject(DEFAULT_WRITE_CONSTRAINTS_MAP) Map<String, TreeConstraints<?>> defaultWriteConstraints) {
-		this.defaultReadConstraints = defaultReadConstraints;
-		this.defaultWriteConstraints = defaultWriteConstraints;
+	public ConstraintsHandler(@Inject(DEFAULT_READ_CONSTRAINTS_LIST) List<TreeConstraints<?>> defaultReadConstraints,
+			@Inject(DEFAULT_WRITE_CONSTRAINTS_LIST) List<TreeConstraints<?>> defaultWriteConstraints) {
+		this.defaultReadConstraints = new HashMap<>();
+		for (TreeConstraints<?> c : defaultReadConstraints) {
+			this.defaultReadConstraints.put(c.getType(), c);
+		}
+
+		this.defaultWriteConstraints = new HashMap<>();
+		for (TreeConstraints<?> c : defaultWriteConstraints) {
+			this.defaultWriteConstraints.put(c.getType(), c);
+		}
 	}
 
 	@Override
@@ -48,7 +56,7 @@ public class ConstraintsHandler implements IConstraintsHandler {
 
 		@SuppressWarnings("unchecked")
 		TreeConstraints<T> c = writeConstraints != null ? writeConstraints
-				: (TreeConstraints<T>) defaultWriteConstraints.get(response.getType().getName());
+				: (TreeConstraints<T>) defaultWriteConstraints.get(response.getType());
 
 		if (c != null && !response.getUpdates().isEmpty()) {
 			ImmutableTreeConstraints compiled = c.build(response);
@@ -66,7 +74,7 @@ public class ConstraintsHandler implements IConstraintsHandler {
 
 		@SuppressWarnings("unchecked")
 		TreeConstraints<T> c = readConstraints != null ? readConstraints : (TreeConstraints<T>) defaultReadConstraints
-				.get(response.getType().getName());
+				.get(response.getType());
 
 		// entity - ensure attribute/relationship tree span of source is not
 		// exceeded in target. Null target means we don't need to worry about

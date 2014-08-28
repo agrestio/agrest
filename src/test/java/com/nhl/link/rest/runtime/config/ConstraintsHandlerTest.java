@@ -9,7 +9,7 @@ import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Collections;
-import java.util.Map;
+import java.util.List;
 
 import org.apache.cayenne.exp.Expression;
 import org.apache.cayenne.map.DataMap;
@@ -34,8 +34,8 @@ public class ConstraintsHandlerTest {
 
 	@Before
 	public void before() {
-		Map<String, TreeConstraints<?>> r = Collections.emptyMap();
-		Map<String, TreeConstraints<?>> w = Collections.emptyMap();
+		List<TreeConstraints<?>> r = Collections.emptyList();
+		List<TreeConstraints<?>> w = Collections.emptyList();
 		this.constraintHandler = new ConstraintsHandler(r, w);
 
 		DataMap dm = new DataMap();

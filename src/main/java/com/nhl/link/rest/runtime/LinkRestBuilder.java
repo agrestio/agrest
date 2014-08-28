@@ -72,6 +72,8 @@ public class LinkRestBuilder {
 	private List<DataMap> nonPersistentEntities;
 	private Map<Class<?>, Class<?>> exceptionMappers;
 	private Collection<LinkRestAdapter> adapters;
+	private Collection<TreeConstraints<?>> readConstraints;
+	private Collection<TreeConstraints<?>> writeConstraints;
 
 	public LinkRestBuilder() {
 		this.nonPersistentEntities = new ArrayList<>();
@@ -81,6 +83,8 @@ public class LinkRestBuilder {
 
 		this.exceptionMappers = mapDefaultExceptions();
 		this.adapters = new ArrayList<>();
+		this.readConstraints = new ArrayList<>();
+		this.writeConstraints = new ArrayList<>();
 	}
 
 	protected Map<Class<?>, Class<?>> mapDefaultExceptions() {
@@ -139,6 +143,38 @@ public class LinkRestBuilder {
 
 	public LinkRestBuilder cayenneService(ICayennePersister cayenneService) {
 		this.cayenneService = cayenneService;
+		return this;
+	}
+
+	/**
+	 * @since 1.5
+	 */
+	public LinkRestBuilder readConstraint(TreeConstraints<?> c) {
+		this.readConstraints.add(c);
+		return this;
+	}
+
+	/**
+	 * @since 1.5
+	 */
+	public LinkRestBuilder readConstraints(Collection<TreeConstraints<?>> constraints) {
+		this.readConstraints.addAll(constraints);
+		return this;
+	}
+
+	/**
+	 * @since 1.5
+	 */
+	public LinkRestBuilder writeConstraint(TreeConstraints<?> c) {
+		this.writeConstraints.add(c);
+		return this;
+	}
+
+	/**
+	 * @since 1.5
+	 */
+	public LinkRestBuilder writeConstraints(Collection<TreeConstraints<?>> constraints) {
+		this.writeConstraints.addAll(constraints);
 		return this;
 	}
 
@@ -207,8 +243,10 @@ public class LinkRestBuilder {
 				binder.<UpdateFilter> bindList(RequestParser.UPDATE_FILTER_LIST);
 				binder.<EncoderFilter> bindList(EncoderService.ENCODER_FILTER_LIST).addAll(encoderFilters);
 				binder.<DataMap> bindList(MetadataService.NON_PERSISTENT_ENTITIES_LIST).addAll(nonPersistentEntities);
-				binder.<TreeConstraints<?>> bindMap(ConstraintsHandler.DEFAULT_READ_CONSTRAINTS_MAP);
-				binder.<TreeConstraints<?>> bindMap(ConstraintsHandler.DEFAULT_WRITE_CONSTRAINTS_MAP);
+				binder.<TreeConstraints<?>> bindList(ConstraintsHandler.DEFAULT_READ_CONSTRAINTS_LIST).addAll(
+						readConstraints);
+				binder.<TreeConstraints<?>> bindList(ConstraintsHandler.DEFAULT_WRITE_CONSTRAINTS_LIST).addAll(
+						writeConstraints);
 
 				if (linkRestServiceType != null) {
 					binder.bind(ILinkRestService.class).to(linkRestServiceType);

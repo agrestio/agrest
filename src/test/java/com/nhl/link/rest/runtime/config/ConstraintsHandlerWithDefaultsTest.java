@@ -3,8 +3,8 @@ package com.nhl.link.rest.runtime.config;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.cayenne.map.ObjEntity;
 import org.junit.Before;
@@ -26,11 +26,11 @@ public class ConstraintsHandlerWithDefaultsTest extends TestWithCayenneMapping {
 
 	@Before
 	public void before() {
-		Map<String, TreeConstraints<?>> r = new HashMap<>();
-		r.put(E1.class.getName(), TreeConstraints.idOnly(E1.class).attribute(E1.AGE));
+		List<TreeConstraints<?>> r = new ArrayList<>();
+		r.add(TreeConstraints.idOnly(E1.class).attribute(E1.AGE));
 
-		Map<String, TreeConstraints<?>> w = new HashMap<>();
-		w.put(E2.class.getName(), TreeConstraints.idOnly(E2.class).attribute(E2.ADDRESS));
+		List<TreeConstraints<?>> w = new ArrayList<>();
+		w.add(TreeConstraints.idOnly(E2.class).attribute(E2.ADDRESS));
 
 		this.constraintHandler = new ConstraintsHandler(r, w);
 

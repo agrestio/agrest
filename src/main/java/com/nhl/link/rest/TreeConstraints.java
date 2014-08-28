@@ -18,13 +18,14 @@ import org.apache.cayenne.exp.Property;
  */
 public class TreeConstraints<T> {
 
+	private Class<T> type;
 	private Collection<Constraint> ops;
 
 	/**
 	 * @since 1.5
 	 */
 	public static <T> TreeConstraints<T> excludeAll(Class<T> type) {
-		return new TreeConstraints<>();
+		return new TreeConstraints<>(type);
 	}
 
 	/**
@@ -41,8 +42,16 @@ public class TreeConstraints<T> {
 		return excludeAll(type).includeId();
 	}
 
-	private TreeConstraints() {
+	private TreeConstraints(Class<T> type) {
 		this.ops = new ArrayList<>();
+		this.type = type;
+	}
+	
+	/**
+	 * @since 1.5
+	 */
+	public Class<T> getType() {
+		return type;
 	}
 
 	/**
