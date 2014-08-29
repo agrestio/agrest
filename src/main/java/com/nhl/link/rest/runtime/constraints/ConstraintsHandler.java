@@ -73,7 +73,8 @@ public class ConstraintsHandler implements IConstraintsHandler {
 		if (c == null) {
 			// no synchronization.. hopefully compiling a single type of
 			// constraints multiple times is not very expensive
-			TreeConstraints<?> newC = compileRead(type);
+			ClientReadable a = type.getAnnotation(ClientReadable.class);
+			TreeConstraints<?> newC = a != null ? compile(type, a.value(), a.id(), true) : NO_CONSTRAINTS;
 			TreeConstraints<?> oldC = readDefault.putIfAbsent(type, newC);
 			c = oldC != null ? oldC : newC;
 		}
@@ -89,22 +90,13 @@ public class ConstraintsHandler implements IConstraintsHandler {
 		if (c == null) {
 			// no synchronization.. hopefully compiling a single type of
 			// constraints multiple times is not very expensive
-			TreeConstraints<?> newC = compileWrite(type);
+			ClientWritable a = type.getAnnotation(ClientWritable.class);
+			TreeConstraints<?> newC = a != null ? compile(type, a.value(), a.id(), false) : NO_CONSTRAINTS;
 			TreeConstraints<?> oldC = writeDefault.putIfAbsent(type, newC);
 			c = oldC != null ? oldC : newC;
 		}
 
 		return (TreeConstraints<T>) (c == NO_CONSTRAINTS ? null : c);
-	}
-
-	private TreeConstraints<?> compileRead(Class<?> type) {
-		ClientReadable a = type.getAnnotation(ClientReadable.class);
-		return a != null ? compile(type, a.value(), a.id(), true) : NO_CONSTRAINTS;
-	}
-
-	private TreeConstraints<?> compileWrite(Class<?> type) {
-		ClientWritable a = type.getAnnotation(ClientWritable.class);
-		return a != null ? compile(type, a.value(), a.id(), false) : NO_CONSTRAINTS;
 	}
 
 	private TreeConstraints<?> compile(Class<?> type, String[] properties, boolean id, boolean read) {
@@ -129,7 +121,7 @@ public class ConstraintsHandler implements IConstraintsHandler {
 				Class<?> childType = r.getTargetEntity().getJavaClass();
 
 				// TODO: java 8: instead of 'read' we need to use a lambda
-				TreeConstraints<?> childC = read ? compileRead(childType) : compileWrite(childType);
+				TreeConstraints<?> childC = read ? readDefault(childType) : writeDefault(childType);
 
 				// no annotation - allow all attributes...
 				if (childC == NO_CONSTRAINTS) {
