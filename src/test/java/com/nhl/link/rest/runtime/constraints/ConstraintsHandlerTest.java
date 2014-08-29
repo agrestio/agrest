@@ -1,4 +1,4 @@
-package com.nhl.link.rest.runtime.config;
+package com.nhl.link.rest.runtime.constraints;
 
 import static com.nhl.link.rest.TreeConstraints.excludeAll;
 import static org.junit.Assert.assertEquals;
@@ -21,6 +21,7 @@ import org.junit.Test;
 
 import com.nhl.link.rest.DataResponse;
 import com.nhl.link.rest.Entity;
+import com.nhl.link.rest.EntityConstraint;
 import com.nhl.link.rest.SizeConstraints;
 import com.nhl.link.rest.TreeConstraints;
 import com.nhl.link.rest.runtime.cayenne.ICayennePersister;
@@ -36,10 +37,10 @@ public class ConstraintsHandlerTest {
 
 	@Before
 	public void before() {
-		
+
 		ICayennePersister persister = mock(ICayennePersister.class);
-		List<TreeConstraints<?>> r = Collections.emptyList();
-		List<TreeConstraints<?>> w = Collections.emptyList();
+		List<EntityConstraint> r = Collections.emptyList();
+		List<EntityConstraint> w = Collections.emptyList();
 		this.constraintHandler = new ConstraintsHandler(persister, r, w);
 
 		DataMap dm = new DataMap();

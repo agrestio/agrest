@@ -21,8 +21,8 @@ import org.apache.cayenne.di.Module;
 import org.apache.cayenne.map.DataMap;
 import org.apache.cayenne.validation.ValidationException;
 
+import com.nhl.link.rest.EntityConstraint;
 import com.nhl.link.rest.LinkRestException;
-import com.nhl.link.rest.TreeConstraints;
 import com.nhl.link.rest.encoder.EncoderFilter;
 import com.nhl.link.rest.provider.CayenneRuntimeExceptionMapper;
 import com.nhl.link.rest.provider.LinkRestExceptionMapper;
@@ -72,8 +72,6 @@ public class LinkRestBuilder {
 	private List<DataMap> nonPersistentEntities;
 	private Map<Class<?>, Class<?>> exceptionMappers;
 	private Collection<LinkRestAdapter> adapters;
-	private Collection<TreeConstraints<?>> readConstraints;
-	private Collection<TreeConstraints<?>> writeConstraints;
 
 	public LinkRestBuilder() {
 		this.nonPersistentEntities = new ArrayList<>();
@@ -83,8 +81,6 @@ public class LinkRestBuilder {
 
 		this.exceptionMappers = mapDefaultExceptions();
 		this.adapters = new ArrayList<>();
-		this.readConstraints = new ArrayList<>();
-		this.writeConstraints = new ArrayList<>();
 	}
 
 	protected Map<Class<?>, Class<?>> mapDefaultExceptions() {
@@ -143,38 +139,6 @@ public class LinkRestBuilder {
 
 	public LinkRestBuilder cayenneService(ICayennePersister cayenneService) {
 		this.cayenneService = cayenneService;
-		return this;
-	}
-
-	/**
-	 * @since 1.5
-	 */
-	public LinkRestBuilder readConstraint(TreeConstraints<?> c) {
-		this.readConstraints.add(c);
-		return this;
-	}
-
-	/**
-	 * @since 1.5
-	 */
-	public LinkRestBuilder readConstraints(Collection<TreeConstraints<?>> constraints) {
-		this.readConstraints.addAll(constraints);
-		return this;
-	}
-
-	/**
-	 * @since 1.5
-	 */
-	public LinkRestBuilder writeConstraint(TreeConstraints<?> c) {
-		this.writeConstraints.add(c);
-		return this;
-	}
-
-	/**
-	 * @since 1.5
-	 */
-	public LinkRestBuilder writeConstraints(Collection<TreeConstraints<?>> constraints) {
-		this.writeConstraints.addAll(constraints);
 		return this;
 	}
 
@@ -243,10 +207,8 @@ public class LinkRestBuilder {
 				binder.<UpdateFilter> bindList(RequestParser.UPDATE_FILTER_LIST);
 				binder.<EncoderFilter> bindList(EncoderService.ENCODER_FILTER_LIST).addAll(encoderFilters);
 				binder.<DataMap> bindList(MetadataService.NON_PERSISTENT_ENTITIES_LIST).addAll(nonPersistentEntities);
-				binder.<TreeConstraints<?>> bindList(ConstraintsHandler.DEFAULT_READ_CONSTRAINTS_LIST).addAll(
-						readConstraints);
-				binder.<TreeConstraints<?>> bindList(ConstraintsHandler.DEFAULT_WRITE_CONSTRAINTS_LIST).addAll(
-						writeConstraints);
+				binder.<EntityConstraint> bindList(ConstraintsHandler.DEFAULT_READ_CONSTRAINTS_LIST);
+				binder.<EntityConstraint> bindList(ConstraintsHandler.DEFAULT_WRITE_CONSTRAINTS_LIST);
 
 				if (linkRestServiceType != null) {
 					binder.bind(ILinkRestService.class).to(linkRestServiceType);

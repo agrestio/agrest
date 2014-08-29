@@ -1,4 +1,7 @@
-Release 1.5
+Release 1.5 2014-08-28
+
+#36 StackOverflow on compiling circular constraint annotations
+#37 Redesign default constraints as EntityConstraint's
 
 #9 Chatty merging of config
 #30 Add type generic parameter to TreeConstraint

@@ -1,10 +1,11 @@
-package com.nhl.link.rest.runtime.config;
+package com.nhl.link.rest.runtime.constraints;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.cayenne.map.ObjEntity;
@@ -13,9 +14,9 @@ import org.junit.Test;
 
 import com.nhl.link.rest.DataResponse;
 import com.nhl.link.rest.Entity;
+import com.nhl.link.rest.EntityConstraint;
 import com.nhl.link.rest.TreeConstraints;
 import com.nhl.link.rest.runtime.cayenne.ICayennePersister;
-import com.nhl.link.rest.runtime.constraints.ConstraintsHandler;
 import com.nhl.link.rest.unit.TestWithCayenneMapping;
 import com.nhl.link.rest.unit.cayenne.E1;
 import com.nhl.link.rest.unit.cayenne.E2;
@@ -31,11 +32,13 @@ public class ConstraintsHandlerWithDefaultsTest extends TestWithCayenneMapping {
 
 		ICayennePersister persister = mock(ICayennePersister.class);
 
-		List<TreeConstraints<?>> r = new ArrayList<>();
-		r.add(TreeConstraints.idOnly(E1.class).attribute(E1.AGE));
+		List<EntityConstraint> r = new ArrayList<>();
+		r.add(new DefaultEntityConstraint("E1", true, false, Collections.singleton(E1.AGE.getName()), Collections
+				.<String> emptySet()));
 
-		List<TreeConstraints<?>> w = new ArrayList<>();
-		w.add(TreeConstraints.idOnly(E2.class).attribute(E2.ADDRESS));
+		List<EntityConstraint> w = new ArrayList<>();
+		w.add(new DefaultEntityConstraint("E2", false, false, Collections.singleton(E2.ADDRESS.getName()), Collections
+				.<String> emptySet()));
 
 		this.constraintHandler = new ConstraintsHandler(persister, r, w);
 
