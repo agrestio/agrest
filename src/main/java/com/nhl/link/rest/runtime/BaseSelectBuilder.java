@@ -14,7 +14,7 @@ import org.apache.cayenne.exp.Property;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.nhl.link.rest.CreateOrUpdateBuilder;
+import com.nhl.link.rest.UpdateBuilder;
 import com.nhl.link.rest.DataResponse;
 import com.nhl.link.rest.Entity;
 import com.nhl.link.rest.EntityParent;
@@ -73,9 +73,9 @@ public abstract class BaseSelectBuilder<T> implements SelectBuilder<T> {
 	
 	@SuppressWarnings("unchecked")
 	@Override
-	public CreateOrUpdateBuilder<T> toManyParent(Class<?> parentType, Object parentId,
+	public UpdateBuilder<T> toManyParent(Class<?> parentType, Object parentId,
 			Property<? extends Collection<T>> relationshipFromParent) {
-		return (CreateOrUpdateBuilder<T>) parent(parentType, parentId, relationshipFromParent.getName());
+		return (UpdateBuilder<T>) parent(parentType, parentId, relationshipFromParent.getName());
 	}
 
 	@Override

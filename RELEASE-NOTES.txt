@@ -1,7 +1,13 @@
-Release 1.5 2014-08-28
+Release 1.7 
+
+#41 rename CreateOrUpdateBuilder to just UpdateBuilder
+
+Release 1.6 2014-08-29
 
 #36 StackOverflow on compiling circular constraint annotations
 #37 Redesign default constraints as EntityConstraint's
+
+Release 1.5 2014-08-28
 
 #9 Chatty merging of config
 #30 Add type generic parameter to TreeConstraint

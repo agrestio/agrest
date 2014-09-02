@@ -3,7 +3,7 @@ package com.nhl.link.rest.unit.pojo;
 import org.apache.cayenne.di.Inject;
 import org.apache.cayenne.query.SelectQuery;
 
-import com.nhl.link.rest.CreateOrUpdateBuilder;
+import com.nhl.link.rest.UpdateBuilder;
 import com.nhl.link.rest.DeleteBuilder;
 import com.nhl.link.rest.SelectBuilder;
 import com.nhl.link.rest.SimpleResponse;
@@ -61,27 +61,27 @@ public class PojoLinkRestService extends BaseLinkRestService {
 	}
 
 	@Override
-	public <T> CreateOrUpdateBuilder<T> create(Class<T> type) {
-		return new PojoCreateOrUpdateBuilder<>(db.bucketForType(type), type, CreateOrUpdateOperation.create,
+	public <T> UpdateBuilder<T> create(Class<T> type) {
+		return new PojoUpdateBuilder<>(db.bucketForType(type), type, CreateOrUpdateOperation.create,
 				encoderService, requestParser, metadataService, constraintsHandler);
 	}
 
 	@Override
-	public <T> CreateOrUpdateBuilder<T> createOrUpdate(Class<T> type) {
-		return new PojoCreateOrUpdateBuilder<>(db.bucketForType(type), type, CreateOrUpdateOperation.createOrUpdate,
+	public <T> UpdateBuilder<T> createOrUpdate(Class<T> type) {
+		return new PojoUpdateBuilder<>(db.bucketForType(type), type, CreateOrUpdateOperation.createOrUpdate,
 				encoderService, requestParser, metadataService, constraintsHandler);
 	}
 
 	@Override
-	public <T> CreateOrUpdateBuilder<T> idempotentCreateOrUpdate(Class<T> type) {
-		return new PojoCreateOrUpdateBuilder<>(db.bucketForType(type), type,
+	public <T> UpdateBuilder<T> idempotentCreateOrUpdate(Class<T> type) {
+		return new PojoUpdateBuilder<>(db.bucketForType(type), type,
 				CreateOrUpdateOperation.idempotentCreateOrUpdate, encoderService, requestParser, metadataService,
 				constraintsHandler);
 	}
 
 	@Override
-	public <T> CreateOrUpdateBuilder<T> update(Class<T> type) {
-		return new PojoCreateOrUpdateBuilder<>(db.bucketForType(type), type, CreateOrUpdateOperation.update,
+	public <T> UpdateBuilder<T> update(Class<T> type) {
+		return new PojoUpdateBuilder<>(db.bucketForType(type), type, CreateOrUpdateOperation.update,
 				encoderService, requestParser, metadataService, constraintsHandler);
 	}
 

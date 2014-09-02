@@ -2,7 +2,7 @@ package com.nhl.link.rest.runtime.dao;
 
 import org.apache.cayenne.query.SelectQuery;
 
-import com.nhl.link.rest.CreateOrUpdateBuilder;
+import com.nhl.link.rest.UpdateBuilder;
 import com.nhl.link.rest.DeleteBuilder;
 import com.nhl.link.rest.SelectBuilder;
 
@@ -20,22 +20,22 @@ public interface EntityDao<T> {
 	/**
 	 * @since 1.3
 	 */
-	CreateOrUpdateBuilder<T> update();
+	UpdateBuilder<T> update();
 
 	/**
 	 * @since 1.3
 	 */
-	CreateOrUpdateBuilder<T> create();
+	UpdateBuilder<T> create();
 
 	/**
 	 * @since 1.3
 	 */
-	CreateOrUpdateBuilder<T> createOrUpdate();
+	UpdateBuilder<T> createOrUpdate();
 
 	/**
 	 * @since 1.3
 	 */
-	CreateOrUpdateBuilder<T> idempotentCreateOrUpdate();
+	UpdateBuilder<T> idempotentCreateOrUpdate();
 	
 	DeleteBuilder<T> delete();
 

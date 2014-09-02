@@ -14,7 +14,7 @@ import org.apache.cayenne.exp.Property;
  * 
  * @since 1.3
  */
-public interface CreateOrUpdateBuilder<T> {
+public interface UpdateBuilder<T> {
 
 	// TODO:
 	// CreateOrUpdateBuilder<T> responseEncoder(Encoder encoder);
@@ -23,32 +23,32 @@ public interface CreateOrUpdateBuilder<T> {
 	 * Set an explicit id for the update. In this case only a single object is
 	 * allowed in the update.
 	 */
-	CreateOrUpdateBuilder<T> id(Object id);
+	UpdateBuilder<T> id(Object id);
 
 	/**
 	 * Sets up a relationship clause for all objects in this update.
 	 */
-	CreateOrUpdateBuilder<T> parent(Class<?> parentType, Object parentId, String relationshipFromParent);
+	UpdateBuilder<T> parent(Class<?> parentType, Object parentId, String relationshipFromParent);
 
 	/**
 	 * Sets up a relationship clause for all objects in this update.
 	 */
-	CreateOrUpdateBuilder<T> parent(Class<?> parentType, Object parentId, Property<T> relationshipFromParent);
+	UpdateBuilder<T> parent(Class<?> parentType, Object parentId, Property<T> relationshipFromParent);
 
 	/**
 	 * Sets up a relationship clause for all objects in this update.
 	 */
-	CreateOrUpdateBuilder<T> toManyParent(Class<?> parentType, Object parentId,
+	UpdateBuilder<T> toManyParent(Class<?> parentType, Object parentId,
 			Property<? extends Collection<T>> relationshipFromParent);
 
 	/**
 	 * Sets request {@link UriInfo} that will be used to shape response.
 	 */
-	CreateOrUpdateBuilder<T> with(UriInfo uriInfo);
+	UpdateBuilder<T> with(UriInfo uriInfo);
 
-	CreateOrUpdateBuilder<T> readConstraints(TreeConstraints<T> constraints);
+	UpdateBuilder<T> readConstraints(TreeConstraints<T> constraints);
 
-	CreateOrUpdateBuilder<T> writeConstraints(TreeConstraints<T> constraints);
+	UpdateBuilder<T> writeConstraints(TreeConstraints<T> constraints);
 
 	/**
 	 * Sets a custom mapper that locates existing objects based on request data.
@@ -56,7 +56,7 @@ public interface CreateOrUpdateBuilder<T> {
 	 * 
 	 * @since 1.4
 	 */
-	CreateOrUpdateBuilder<T> mapper(ObjectMapper mapper);
+	UpdateBuilder<T> mapper(ObjectMapper mapper);
 
 	UpdateResponse<T> process(String entityData);
 }

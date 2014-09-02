@@ -63,7 +63,7 @@ public interface SelectBuilder<T> {
 	/**
 	 * @since 1.4
 	 */
-	CreateOrUpdateBuilder<T> toManyParent(Class<?> parentType, Object parentId,
+	UpdateBuilder<T> toManyParent(Class<?> parentType, Object parentId,
 			Property<? extends Collection<T>> relationshipFromParent);
 
 	/**

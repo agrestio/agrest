@@ -5,7 +5,7 @@ import javax.ws.rs.core.UriInfo;
 import org.apache.cayenne.exp.Property;
 import org.apache.cayenne.query.SelectQuery;
 
-import com.nhl.link.rest.CreateOrUpdateBuilder;
+import com.nhl.link.rest.UpdateBuilder;
 import com.nhl.link.rest.DataResponse;
 import com.nhl.link.rest.DeleteBuilder;
 import com.nhl.link.rest.SelectBuilder;
@@ -97,25 +97,25 @@ public abstract class BaseLinkRestService implements ILinkRestService {
 	 * @since 1.3
 	 */
 	@Override
-	public abstract <T> CreateOrUpdateBuilder<T> create(Class<T> type);
+	public abstract <T> UpdateBuilder<T> create(Class<T> type);
 
 	/**
 	 * @since 1.3
 	 */
 	@Override
-	public abstract <T> CreateOrUpdateBuilder<T> createOrUpdate(Class<T> type);
+	public abstract <T> UpdateBuilder<T> createOrUpdate(Class<T> type);
 
 	/**
 	 * @since 1.3
 	 */
 	@Override
-	public abstract <T> CreateOrUpdateBuilder<T> idempotentCreateOrUpdate(Class<T> type);
+	public abstract <T> UpdateBuilder<T> idempotentCreateOrUpdate(Class<T> type);
 
 	/**
 	 * @since 1.3
 	 */
 	@Override
-	public abstract <T> CreateOrUpdateBuilder<T> update(Class<T> type);
+	public abstract <T> UpdateBuilder<T> update(Class<T> type);
 
 	/**
 	 * @since 1.4

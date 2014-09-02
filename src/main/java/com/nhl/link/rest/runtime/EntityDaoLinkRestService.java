@@ -11,7 +11,7 @@ import org.apache.cayenne.map.ObjEntity;
 import org.apache.cayenne.query.SelectQuery;
 import org.apache.cayenne.reflect.ClassDescriptor;
 
-import com.nhl.link.rest.CreateOrUpdateBuilder;
+import com.nhl.link.rest.UpdateBuilder;
 import com.nhl.link.rest.DeleteBuilder;
 import com.nhl.link.rest.LinkRestException;
 import com.nhl.link.rest.SelectBuilder;
@@ -106,22 +106,22 @@ public class EntityDaoLinkRestService extends BaseLinkRestService {
 	}
 
 	@Override
-	public <T> CreateOrUpdateBuilder<T> create(Class<T> type) {
+	public <T> UpdateBuilder<T> create(Class<T> type) {
 		return daoForType(type).create();
 	}
 
 	@Override
-	public <T> CreateOrUpdateBuilder<T> createOrUpdate(Class<T> type) {
+	public <T> UpdateBuilder<T> createOrUpdate(Class<T> type) {
 		return daoForType(type).createOrUpdate();
 	}
 
 	@Override
-	public <T> CreateOrUpdateBuilder<T> idempotentCreateOrUpdate(Class<T> type) {
+	public <T> UpdateBuilder<T> idempotentCreateOrUpdate(Class<T> type) {
 		return daoForType(type).idempotentCreateOrUpdate();
 	}
 
 	@Override
-	public <T> CreateOrUpdateBuilder<T> update(Class<T> type) {
+	public <T> UpdateBuilder<T> update(Class<T> type) {
 		return daoForType(type).update();
 	}
 }

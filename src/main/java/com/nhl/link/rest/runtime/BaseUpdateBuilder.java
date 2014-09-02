@@ -9,7 +9,7 @@ import javax.ws.rs.core.UriInfo;
 import org.apache.cayenne.exp.Property;
 import org.apache.cayenne.map.ObjRelationship;
 
-import com.nhl.link.rest.CreateOrUpdateBuilder;
+import com.nhl.link.rest.UpdateBuilder;
 import com.nhl.link.rest.EntityParent;
 import com.nhl.link.rest.EntityUpdate;
 import com.nhl.link.rest.ObjectMapper;
@@ -23,7 +23,7 @@ import com.nhl.link.rest.runtime.parser.IRequestParser;
 /**
  * @since 1.3
  */
-public abstract class BaseCreateOrUpdateBuilder<T> implements CreateOrUpdateBuilder<T> {
+public abstract class BaseUpdateBuilder<T> implements UpdateBuilder<T> {
 
 	protected CreateOrUpdateOperation operation;
 	protected Class<T> type;
@@ -42,7 +42,7 @@ public abstract class BaseCreateOrUpdateBuilder<T> implements CreateOrUpdateBuil
 
 	protected ObjectMapper mapper;
 
-	public BaseCreateOrUpdateBuilder(Class<T> type, CreateOrUpdateOperation op, IEncoderService encoderService,
+	public BaseUpdateBuilder(Class<T> type, CreateOrUpdateOperation op, IEncoderService encoderService,
 			IRequestParser requestParser, IMetadataService metadataService, IConstraintsHandler constraintsHandler) {
 		this.type = type;
 		this.operation = op;
@@ -53,43 +53,43 @@ public abstract class BaseCreateOrUpdateBuilder<T> implements CreateOrUpdateBuil
 	}
 
 	@Override
-	public CreateOrUpdateBuilder<T> with(UriInfo uriInfo) {
+	public UpdateBuilder<T> with(UriInfo uriInfo) {
 		this.uriInfo = uriInfo;
 		return this;
 	}
 
 	@Override
-	public CreateOrUpdateBuilder<T> id(Object id) {
+	public UpdateBuilder<T> id(Object id) {
 		this.id = id;
 		return this;
 	}
 
 	@Override
-	public CreateOrUpdateBuilder<T> parent(Class<?> parentType, Object parentId, Property<T> relationshipFromParent) {
+	public UpdateBuilder<T> parent(Class<?> parentType, Object parentId, Property<T> relationshipFromParent) {
 		this.parent = new EntityParent<>(parentType, parentId, relationshipFromParent.getName());
 		return this;
 	}
 
 	@Override
-	public CreateOrUpdateBuilder<T> parent(Class<?> parentType, Object parentId, String relationshipFromParent) {
+	public UpdateBuilder<T> parent(Class<?> parentType, Object parentId, String relationshipFromParent) {
 		this.parent = new EntityParent<>(parentType, parentId, relationshipFromParent);
 		return this;
 	}
 
 	@Override
-	public CreateOrUpdateBuilder<T> toManyParent(Class<?> parentType, Object parentId,
+	public UpdateBuilder<T> toManyParent(Class<?> parentType, Object parentId,
 			Property<? extends Collection<T>> relationshipFromParent) {
 		return parent(parentType, parentId, relationshipFromParent.getName());
 	}
 
 	@Override
-	public CreateOrUpdateBuilder<T> readConstraints(TreeConstraints<T> constraints) {
+	public UpdateBuilder<T> readConstraints(TreeConstraints<T> constraints) {
 		this.readConstraints = constraints;
 		return this;
 	}
 
 	@Override
-	public CreateOrUpdateBuilder<T> writeConstraints(TreeConstraints<T> constraints) {
+	public UpdateBuilder<T> writeConstraints(TreeConstraints<T> constraints) {
 		this.writeConstraints = constraints;
 		return this;
 	}
@@ -98,7 +98,7 @@ public abstract class BaseCreateOrUpdateBuilder<T> implements CreateOrUpdateBuil
 	 * @since 1.4
 	 */
 	@Override
-	public CreateOrUpdateBuilder<T> mapper(ObjectMapper mapper) {
+	public UpdateBuilder<T> mapper(ObjectMapper mapper) {
 		this.mapper = mapper;
 		return this;
 	}
