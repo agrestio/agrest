@@ -1,9 +1,11 @@
 package com.nhl.link.rest.runtime;
 
 /**
- * @since 1.3
+ * Defines a flavor of update operation.
+ * 
+ * @since 1.7
  */
-public enum CreateOrUpdateOperation {
+public enum UpdateOperation {
 
 	create, update, createOrUpdate, idempotentCreateOrUpdate
 }

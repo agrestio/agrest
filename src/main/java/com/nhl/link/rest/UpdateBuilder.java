@@ -12,7 +12,7 @@ import org.apache.cayenne.exp.Property;
  * invoked after configuring the options : {@link #create()}, {@link #update()}
  * {@link #createOrUpdate()}, {@link #createOrUpdateIdempotent()}.
  * 
- * @since 1.3
+ * @since 1.7
  */
 public interface UpdateBuilder<T> {
 

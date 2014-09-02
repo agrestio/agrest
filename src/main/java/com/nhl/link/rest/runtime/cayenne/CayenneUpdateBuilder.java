@@ -20,7 +20,7 @@ import com.nhl.link.rest.ObjectMapper;
 import com.nhl.link.rest.ResponseObjectMapper;
 import com.nhl.link.rest.UpdateResponse;
 import com.nhl.link.rest.runtime.BaseUpdateBuilder;
-import com.nhl.link.rest.runtime.CreateOrUpdateOperation;
+import com.nhl.link.rest.runtime.UpdateOperation;
 import com.nhl.link.rest.runtime.constraints.IConstraintsHandler;
 import com.nhl.link.rest.runtime.encoder.IEncoderService;
 import com.nhl.link.rest.runtime.meta.IMetadataService;
@@ -30,7 +30,7 @@ class CayenneUpdateBuilder<T> extends BaseUpdateBuilder<T> {
 
 	private ICayennePersister persister;
 
-	public CayenneUpdateBuilder(Class<T> type, CreateOrUpdateOperation op, ICayennePersister persister,
+	public CayenneUpdateBuilder(Class<T> type, UpdateOperation op, ICayennePersister persister,
 			IEncoderService encoderService, IRequestParser requestParser, IMetadataService metadataService,
 			IConstraintsHandler constraintsHandler) {
 		super(type, op, encoderService, requestParser, metadataService, constraintsHandler);

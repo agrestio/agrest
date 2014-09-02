@@ -14,11 +14,11 @@ import org.apache.cayenne.map.ObjRelationship;
 import org.apache.cayenne.query.ObjectIdQuery;
 import org.apache.cayenne.query.SelectQuery;
 
-import com.nhl.link.rest.UpdateBuilder;
 import com.nhl.link.rest.DeleteBuilder;
 import com.nhl.link.rest.LinkRestException;
 import com.nhl.link.rest.SelectBuilder;
-import com.nhl.link.rest.runtime.CreateOrUpdateOperation;
+import com.nhl.link.rest.UpdateBuilder;
+import com.nhl.link.rest.runtime.UpdateOperation;
 import com.nhl.link.rest.runtime.constraints.IConstraintsHandler;
 import com.nhl.link.rest.runtime.dao.EntityDao;
 import com.nhl.link.rest.runtime.encoder.IEncoderService;
@@ -61,25 +61,25 @@ public class CayenneDao<T> implements EntityDao<T> {
 
 	@Override
 	public UpdateBuilder<T> create() {
-		return new CayenneUpdateBuilder<>(type, CreateOrUpdateOperation.create, persister, encoderService,
+		return new CayenneUpdateBuilder<>(type, UpdateOperation.create, persister, encoderService,
 				requestParser, metadataService, constraintsHandler);
 	}
 
 	@Override
 	public UpdateBuilder<T> createOrUpdate() {
-		return new CayenneUpdateBuilder<>(type, CreateOrUpdateOperation.createOrUpdate, persister,
+		return new CayenneUpdateBuilder<>(type, UpdateOperation.createOrUpdate, persister,
 				encoderService, requestParser, metadataService, constraintsHandler);
 	}
 
 	@Override
 	public UpdateBuilder<T> idempotentCreateOrUpdate() {
-		return new CayenneUpdateBuilder<>(type, CreateOrUpdateOperation.idempotentCreateOrUpdate, persister,
+		return new CayenneUpdateBuilder<>(type, UpdateOperation.idempotentCreateOrUpdate, persister,
 				encoderService, requestParser, metadataService, constraintsHandler);
 	}
 
 	@Override
 	public UpdateBuilder<T> update() {
-		return new CayenneUpdateBuilder<>(type, CreateOrUpdateOperation.update, persister, encoderService,
+		return new CayenneUpdateBuilder<>(type, UpdateOperation.update, persister, encoderService,
 				requestParser, metadataService, constraintsHandler);
 	}
 

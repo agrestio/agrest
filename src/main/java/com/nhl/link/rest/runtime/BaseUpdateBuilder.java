@@ -9,11 +9,11 @@ import javax.ws.rs.core.UriInfo;
 import org.apache.cayenne.exp.Property;
 import org.apache.cayenne.map.ObjRelationship;
 
-import com.nhl.link.rest.UpdateBuilder;
 import com.nhl.link.rest.EntityParent;
 import com.nhl.link.rest.EntityUpdate;
 import com.nhl.link.rest.ObjectMapper;
 import com.nhl.link.rest.TreeConstraints;
+import com.nhl.link.rest.UpdateBuilder;
 import com.nhl.link.rest.UpdateResponse;
 import com.nhl.link.rest.runtime.constraints.IConstraintsHandler;
 import com.nhl.link.rest.runtime.encoder.IEncoderService;
@@ -25,7 +25,7 @@ import com.nhl.link.rest.runtime.parser.IRequestParser;
  */
 public abstract class BaseUpdateBuilder<T> implements UpdateBuilder<T> {
 
-	protected CreateOrUpdateOperation operation;
+	protected UpdateOperation operation;
 	protected Class<T> type;
 	private UriInfo uriInfo;
 	protected Object id;
@@ -42,7 +42,7 @@ public abstract class BaseUpdateBuilder<T> implements UpdateBuilder<T> {
 
 	protected ObjectMapper mapper;
 
-	public BaseUpdateBuilder(Class<T> type, CreateOrUpdateOperation op, IEncoderService encoderService,
+	public BaseUpdateBuilder(Class<T> type, UpdateOperation op, IEncoderService encoderService,
 			IRequestParser requestParser, IMetadataService metadataService, IConstraintsHandler constraintsHandler) {
 		this.type = type;
 		this.operation = op;
