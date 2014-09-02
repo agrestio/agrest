@@ -1,6 +1,7 @@
 package com.nhl.link.rest.runtime.cayenne;
 
 import java.util.List;
+import java.util.Map;
 
 import javax.ws.rs.core.Response.Status;
 
@@ -62,18 +63,25 @@ class CayenneDeleteBuilder<T> extends BaseDeleteBuilder<T> {
 
 	@SuppressWarnings("unchecked")
 	private void deleteById(ObjectContext context) {
-		ResponseObjectMapper<T> responseMapper = mapper.forResponse(createResponse(context));
+
+		CayenneUpdateResponse<T> response = createResponse(context);
 		EntityUpdate u = new EntityUpdate();
 		u.setId(id);
-		T object = responseMapper.find(u);
+		response.getUpdates().add(u);
 
-		if (object == null) {
+		ResponseObjectMapper<T> responseMapper = mapper.forResponse(response);
+
+		Map<EntityUpdate, T> map = responseMapper.find();
+
+		T o = map.get(u);
+
+		if (o == null) {
 			ObjEntity entity = context.getEntityResolver().getObjEntity(type);
 			throw new LinkRestException(Status.NOT_FOUND, "No object for ID '" + id + "' and entity '"
 					+ entity.getName() + "'");
 		}
 
-		context.deleteObjects(object);
+		context.deleteObjects(o);
 		context.commitChanges();
 	}
 

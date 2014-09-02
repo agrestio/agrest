@@ -3,6 +3,7 @@ package com.nhl.link.rest.runtime.cayenne;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 
 import javax.ws.rs.core.Response.Status;
@@ -48,63 +49,23 @@ class CayenneUpdateBuilder<T> extends BaseUpdateBuilder<T> {
 
 	@Override
 	protected List<T> create(final UpdateResponse<T> response) {
-
-		return process(response, new ObjectLocator<T>() {
-
-			@Override
-			public T locate(ResponseObjectMapper<T> mapper, EntityUpdate u) {
-				return mapper.create(u);
-			}
-		});
+		return process(response, CreateObjectLocator.instance());
 	}
 
 	@Override
 	protected List<T> update(UpdateResponse<T> response) {
-		return process(response, new ObjectLocator<T>() {
-
-			@Override
-			public T locate(ResponseObjectMapper<T> mapper, EntityUpdate u) {
-				T o = mapper.find(u);
-				if (o == null) {
-					ObjEntity entity = metadataService.getObjEntity(type);
-					throw new LinkRestException(Status.NOT_FOUND, "No object for ID '" + id + "' and entity '"
-							+ entity.getName() + "'");
-				}
-
-				return o;
-			}
-		});
+		return process(response, UpdateObjectLocator.instance());
 	}
 
 	@Override
 	protected List<T> createOrUpdate(final UpdateResponse<T> response) {
-
-		return process(response, new ObjectLocator<T>() {
-
-			@Override
-			public T locate(ResponseObjectMapper<T> mapper, EntityUpdate u) {
-				T o = mapper.find(u);
-				return o != null ? o : mapper.create(u);
-			}
-		});
+		return process(response, CreateOrUpdateObjectLocator.instance());
 	}
 
 	@Override
 	protected List<T> idempotentCreateOrUpdate(final UpdateResponse<T> response) {
 
-		return process(response, new ObjectLocator<T>() {
-
-			@Override
-			public T locate(ResponseObjectMapper<T> mapper, EntityUpdate u) {
-
-				if (!mapper.isIdempotent(u)) {
-					throw new LinkRestException(Status.BAD_REQUEST, "Request is not idempotent.");
-				}
-
-				T o = mapper.find(u);
-				return o != null ? o : mapper.create(u);
-			}
-		});
+		return process(response, IdempotentCreateOrUpdateObjectLocator.instance());
 	}
 
 	private void mergeChanges(ObjEntity entity, EntityUpdate entityUpdate, DataObject object) {
@@ -141,7 +102,7 @@ class CayenneUpdateBuilder<T> extends BaseUpdateBuilder<T> {
 		return mapper.forResponse(response);
 	}
 
-	protected List<T> process(UpdateResponse<T> response, ObjectLocator<T> locator) {
+	protected List<T> process(UpdateResponse<T> response, ObjectLocator locator) {
 
 		int len = response.getUpdates().size();
 		if (len == 0) {
@@ -153,10 +114,17 @@ class CayenneUpdateBuilder<T> extends BaseUpdateBuilder<T> {
 		ResponseObjectMapper<T> mapper = createObjectMapper(response);
 		ObjectRelator<T> relator = createRelator(mapper);
 
+		Map<EntityUpdate, T> objects = locator.locate(response, mapper);
+
 		List<T> created = new ArrayList<>(len);
 
 		for (EntityUpdate u : response.getUpdates()) {
-			T o = locator.locate(mapper, u);
+			T o = objects.get(u);
+
+			if (o == null) {
+				throw new LinkRestException(Status.INTERNAL_SERVER_ERROR, "Unmapped object: " + u.getId());
+			}
+
 			mergeChanges(entity, u, (DataObject) o);
 			relator.relate(o);
 			created.add(o);
@@ -201,10 +169,6 @@ class CayenneUpdateBuilder<T> extends BaseUpdateBuilder<T> {
 				}
 			};
 		}
-	}
-
-	interface ObjectLocator<T> {
-		T locate(ResponseObjectMapper<T> mapper, EntityUpdate u);
 	}
 
 	interface ObjectRelator<T> {

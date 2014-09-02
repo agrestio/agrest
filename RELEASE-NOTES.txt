@@ -1,5 +1,6 @@
 Release 1.7 
 
+#29 Batch lookup of relationship objects.
 #41 rename CreateOrUpdateBuilder to just UpdateBuilder
 
 Release 1.6 2014-08-29
