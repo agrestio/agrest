@@ -11,7 +11,7 @@ import org.apache.cayenne.map.ObjRelationship;
 
 import com.nhl.link.rest.EntityParent;
 import com.nhl.link.rest.EntityUpdate;
-import com.nhl.link.rest.ObjectMapper;
+import com.nhl.link.rest.ObjectMapperFactory;
 import com.nhl.link.rest.TreeConstraints;
 import com.nhl.link.rest.UpdateBuilder;
 import com.nhl.link.rest.UpdateResponse;
@@ -21,7 +21,7 @@ import com.nhl.link.rest.runtime.meta.IMetadataService;
 import com.nhl.link.rest.runtime.parser.IRequestParser;
 
 /**
- * @since 1.3
+ * @since 1.7
  */
 public abstract class BaseUpdateBuilder<T> implements UpdateBuilder<T> {
 
@@ -40,7 +40,7 @@ public abstract class BaseUpdateBuilder<T> implements UpdateBuilder<T> {
 	private TreeConstraints<T> readConstraints;
 	private TreeConstraints<T> writeConstraints;
 
-	protected ObjectMapper mapper;
+	protected ObjectMapperFactory mapper;
 
 	public BaseUpdateBuilder(Class<T> type, UpdateOperation op, IEncoderService encoderService,
 			IRequestParser requestParser, IMetadataService metadataService, IConstraintsHandler constraintsHandler) {
@@ -98,7 +98,7 @@ public abstract class BaseUpdateBuilder<T> implements UpdateBuilder<T> {
 	 * @since 1.4
 	 */
 	@Override
-	public UpdateBuilder<T> mapper(ObjectMapper mapper) {
+	public UpdateBuilder<T> mapper(ObjectMapperFactory mapper) {
 		this.mapper = mapper;
 		return this;
 	}
@@ -123,6 +123,8 @@ public abstract class BaseUpdateBuilder<T> implements UpdateBuilder<T> {
 		switch (operation) {
 		case create:
 			return withObjects(response, create(response), Status.CREATED);
+		case idempotentFullSync:
+			return withObjects(response, idempotentFullSync(response));
 		case createOrUpdate:
 			return withObjects(response, createOrUpdate(response));
 		case idempotentCreateOrUpdate:
@@ -189,6 +191,8 @@ public abstract class BaseUpdateBuilder<T> implements UpdateBuilder<T> {
 	protected abstract List<T> createOrUpdate(UpdateResponse<T> response);
 
 	protected abstract List<T> idempotentCreateOrUpdate(UpdateResponse<T> response);
+
+	protected abstract List<T> idempotentFullSync(UpdateResponse<T> response);
 
 	protected abstract List<T> update(UpdateResponse<T> response);
 

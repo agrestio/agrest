@@ -1,7 +1,6 @@
 package com.nhl.link.rest.runtime.cayenne;
 
 import java.util.List;
-import java.util.Map;
 
 import javax.ws.rs.core.Response.Status;
 
@@ -11,11 +10,7 @@ import org.apache.cayenne.map.ObjEntity;
 import org.apache.cayenne.query.EJBQLQuery;
 import org.apache.cayenne.query.SelectQuery;
 
-import com.nhl.link.rest.Entity;
-import com.nhl.link.rest.EntityUpdate;
 import com.nhl.link.rest.LinkRestException;
-import com.nhl.link.rest.ObjectMapper;
-import com.nhl.link.rest.ResponseObjectMapper;
 import com.nhl.link.rest.SimpleResponse;
 import com.nhl.link.rest.runtime.BaseDeleteBuilder;
 
@@ -25,14 +20,10 @@ import com.nhl.link.rest.runtime.BaseDeleteBuilder;
 class CayenneDeleteBuilder<T> extends BaseDeleteBuilder<T> {
 
 	private ICayennePersister persister;
-	private ObjectMapper mapper;
 
 	public CayenneDeleteBuilder(Class<T> type, ICayennePersister persister) {
 		super(type);
 		this.persister = persister;
-
-		// TODO: should setting the mapper be a part of the builder API
-		this.mapper = ByIdObjectMapper.mapper();
 	}
 
 	@Override
@@ -64,16 +55,7 @@ class CayenneDeleteBuilder<T> extends BaseDeleteBuilder<T> {
 	@SuppressWarnings("unchecked")
 	private void deleteById(ObjectContext context) {
 
-		CayenneUpdateResponse<T> response = createResponse(context);
-		EntityUpdate u = new EntityUpdate();
-		u.setId(id);
-		response.getUpdates().add(u);
-
-		ResponseObjectMapper<T> responseMapper = mapper.forResponse(response);
-
-		Map<EntityUpdate, T> map = responseMapper.find();
-
-		T o = map.get(u);
+		T o = Util.findById(context, type, id);
 
 		if (o == null) {
 			ObjEntity entity = context.getEntityResolver().getObjEntity(type);
@@ -87,8 +69,7 @@ class CayenneDeleteBuilder<T> extends BaseDeleteBuilder<T> {
 
 	private void deleteByParent(ObjectContext context) {
 
-		ResponseObjectMapper<T> responseMapper = mapper.forResponse(createResponse(context));
-		Object parentObject = responseMapper.findParent();
+		Object parentObject = Util.findById(context, parent.getType(), parent.getId());
 
 		if (parentObject == null) {
 			ObjEntity entity = context.getEntityResolver().getObjEntity(parent.getType());
@@ -113,15 +94,4 @@ class CayenneDeleteBuilder<T> extends BaseDeleteBuilder<T> {
 		// hence process all delete rules. This one does not
 		context.performQuery(new EJBQLQuery("delete from " + e.getName()));
 	}
-
-	private CayenneUpdateResponse<T> createResponse(ObjectContext context) {
-
-		ObjEntity entity = context.getEntityResolver().getObjEntity(type);
-		Entity<T> clientEntity = new Entity<T>(type, entity);
-
-		CayenneUpdateResponse<T> response = new CayenneUpdateResponse<>(type, context);
-		response.parent(parent).withClientEntity(clientEntity);
-		return response;
-	}
-
 }

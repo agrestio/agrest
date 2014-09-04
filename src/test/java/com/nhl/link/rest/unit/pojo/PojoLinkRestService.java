@@ -3,10 +3,10 @@ package com.nhl.link.rest.unit.pojo;
 import org.apache.cayenne.di.Inject;
 import org.apache.cayenne.query.SelectQuery;
 
-import com.nhl.link.rest.UpdateBuilder;
 import com.nhl.link.rest.DeleteBuilder;
 import com.nhl.link.rest.SelectBuilder;
 import com.nhl.link.rest.SimpleResponse;
+import com.nhl.link.rest.UpdateBuilder;
 import com.nhl.link.rest.runtime.BaseDeleteBuilder;
 import com.nhl.link.rest.runtime.BaseLinkRestService;
 import com.nhl.link.rest.runtime.UpdateOperation;
@@ -75,6 +75,12 @@ public class PojoLinkRestService extends BaseLinkRestService {
 	@Override
 	public <T> UpdateBuilder<T> idempotentCreateOrUpdate(Class<T> type) {
 		return new PojoUpdateBuilder<>(db.bucketForType(type), type, UpdateOperation.idempotentCreateOrUpdate,
+				encoderService, requestParser, metadataService, constraintsHandler);
+	}
+
+	@Override
+	public <T> UpdateBuilder<T> idempotentFullSync(Class<T> type) {
+		return new PojoUpdateBuilder<>(db.bucketForType(type), type, UpdateOperation.idempotentFullSync,
 				encoderService, requestParser, metadataService, constraintsHandler);
 	}
 

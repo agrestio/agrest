@@ -1,24 +1,16 @@
 package com.nhl.link.rest.runtime.cayenne;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 
 import javax.ws.rs.core.Response.Status;
 
-import org.apache.cayenne.Cayenne;
 import org.apache.cayenne.DataObject;
-import org.apache.cayenne.ObjectContext;
 import org.apache.cayenne.map.ObjEntity;
-import org.apache.cayenne.map.ObjRelationship;
-import org.apache.cayenne.reflect.ClassDescriptor;
 
-import com.nhl.link.rest.EntityUpdate;
+import com.nhl.link.rest.EntityParent;
 import com.nhl.link.rest.LinkRestException;
 import com.nhl.link.rest.ObjectMapper;
-import com.nhl.link.rest.ResponseObjectMapper;
+import com.nhl.link.rest.ObjectMapperFactory;
 import com.nhl.link.rest.UpdateResponse;
 import com.nhl.link.rest.runtime.BaseUpdateBuilder;
 import com.nhl.link.rest.runtime.UpdateOperation;
@@ -49,92 +41,49 @@ class CayenneUpdateBuilder<T> extends BaseUpdateBuilder<T> {
 
 	@Override
 	protected List<T> create(final UpdateResponse<T> response) {
-		return process(response, CreateObjectLocator.instance());
+		ObjectRelator<T> relator = createRelator(response);
+		return new CreateStrategy<T>((CayenneUpdateResponse<T>) response, relator).sync();
 	}
 
 	@Override
 	protected List<T> update(UpdateResponse<T> response) {
-		return process(response, UpdateObjectLocator.instance());
+		ResourceReader reader = new ResourceReader();
+		ObjectMapper<T> mapper = createObjectMapper(response);
+		ObjectRelator<T> relator = createRelator(response);
+		return new UpdateStrategy<>((CayenneUpdateResponse<T>) response, relator, reader, mapper).sync();
 	}
 
 	@Override
 	protected List<T> createOrUpdate(final UpdateResponse<T> response) {
-		return process(response, CreateOrUpdateObjectLocator.instance());
+		ResourceReader reader = new ResourceReader();
+		ObjectMapper<T> mapper = createObjectMapper(response);
+		ObjectRelator<T> relator = createRelator(response);
+		return new CreateOrUpdateStrategy<>((CayenneUpdateResponse<T>) response, relator, reader, mapper, false).sync();
 	}
 
 	@Override
 	protected List<T> idempotentCreateOrUpdate(final UpdateResponse<T> response) {
-
-		return process(response, IdempotentCreateOrUpdateObjectLocator.instance());
+		ResourceReader reader = new ResourceReader();
+		ObjectMapper<T> mapper = createObjectMapper(response);
+		ObjectRelator<T> relator = createRelator(response);
+		return new CreateOrUpdateStrategy<>((CayenneUpdateResponse<T>) response, relator, reader, mapper, true).sync();
 	}
 
-	private void mergeChanges(ObjEntity entity, EntityUpdate entityUpdate, DataObject object) {
-
-		// attributes
-		for (Entry<String, Object> e : entityUpdate.getValues().entrySet()) {
-			object.writeProperty(e.getKey(), e.getValue());
-		}
-
-		// to-one relationships
-		if (!entityUpdate.getRelatedIds().isEmpty()) {
-			ObjectContext context = object.getObjectContext();
-			for (Entry<String, Object> e : entityUpdate.getRelatedIds().entrySet()) {
-				if (e.getValue() == null) {
-					object.setToOneTarget(e.getKey(), null, true);
-					continue;
-				}
-				ObjRelationship relationship = (ObjRelationship) entity.getRelationship(e.getKey());
-				ClassDescriptor relatedDescriptor = context.getEntityResolver().getClassDescriptor(
-						relationship.getTargetEntityName());
-				DataObject related = (DataObject) Cayenne.objectForPK(context, relatedDescriptor.getObjectClass(),
-						e.getValue());
-				if (related == null) {
-					throw new LinkRestException(Status.NOT_FOUND, "Related object '"
-							+ relationship.getTargetEntityName() + "' with ID '" + e.getValue() + "' is not found");
-				}
-				object.setToOneTarget(e.getKey(), related, true);
-			}
-		}
+	@Override
+	protected List<T> idempotentFullSync(UpdateResponse<T> response) {
+		ResourceReader reader = new ResourceReader();
+		ObjectMapper<T> mapper = createObjectMapper(response);
+		ObjectRelator<T> relator = createRelator(response);
+		return new FullSyncStrategy<>((CayenneUpdateResponse<T>) response, relator, reader, mapper, true).sync();
 	}
 
-	protected ResponseObjectMapper<T> createObjectMapper(UpdateResponse<T> response) {
-		ObjectMapper mapper = this.mapper != null ? this.mapper : ByIdObjectMapper.mapper();
+	protected ObjectMapper<T> createObjectMapper(UpdateResponse<T> response) {
+		ObjectMapperFactory mapper = this.mapper != null ? this.mapper : ByIdObjectMapperFactory.mapper();
 		return mapper.forResponse(response);
 	}
 
-	protected List<T> process(UpdateResponse<T> response, ObjectLocator locator) {
-
-		int len = response.getUpdates().size();
-		if (len == 0) {
-			return Collections.emptyList();
-		}
-
-		ObjEntity entity = response.getEntity().getCayenneEntity();
-
-		ResponseObjectMapper<T> mapper = createObjectMapper(response);
-		ObjectRelator<T> relator = createRelator(mapper);
-
-		Map<EntityUpdate, T> objects = locator.locate(response, mapper);
-
-		List<T> created = new ArrayList<>(len);
-
-		for (EntityUpdate u : response.getUpdates()) {
-			T o = objects.get(u);
-
-			if (o == null) {
-				throw new LinkRestException(Status.INTERNAL_SERVER_ERROR, "Unmapped object: " + u.getId());
-			}
-
-			mergeChanges(entity, u, (DataObject) o);
-			relator.relate(o);
-			created.add(o);
-		}
-
-		((CayenneUpdateResponse<T>) response).getUpdateContext().commitChanges();
-		return created;
-	}
-
-	protected ObjectRelator<T> createRelator(ResponseObjectMapper<T> mapper) {
+	protected ObjectRelator<T> createRelator(UpdateResponse<T> response) {
+		final EntityParent<?> parent = response.getParent();
 
 		if (parent == null) {
 			return new ObjectRelator<T>() {
@@ -146,7 +95,9 @@ class CayenneUpdateBuilder<T> extends BaseUpdateBuilder<T> {
 			};
 		}
 
-		final DataObject parentObject = (DataObject) mapper.findParent();
+		final DataObject parentObject = (DataObject) Util.findById(
+				((CayenneUpdateResponse<T>) response).getUpdateContext(), parent.getType(), parent.getId());
+
 		if (parentObject == null) {
 			ObjEntity entity = metadataService.getObjEntity(parent.getType());
 			throw new LinkRestException(Status.NOT_FOUND, "No parent object for ID '" + parent.getId()

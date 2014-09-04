@@ -11,7 +11,7 @@ import javax.ws.rs.core.UriInfo;
 import com.nhl.link.rest.DataResponse;
 import com.nhl.link.rest.SimpleResponse;
 import com.nhl.link.rest.TreeConstraints;
-import com.nhl.link.rest.runtime.cayenne.ByKeyAndParentObjectMapper;
+import com.nhl.link.rest.runtime.cayenne.ByKeyObjectMapperFactory;
 import com.nhl.link.rest.unit.cayenne.E7;
 import com.nhl.link.rest.unit.cayenne.E8;
 import com.nhl.link.rest.unit.cayenne.E9;
@@ -49,16 +49,21 @@ public class E8Resource extends LrResource {
 	}
 
 	@PUT
-	@Path("{id}/e7s")
+	@Path("createorupdate/{id}/e7s")
 	public DataResponse<E7> createOrUpdateE7s(@PathParam("id") int id, String entityData) {
 		return getService().idempotentCreateOrUpdate(E7.class).toManyParent(E8.class, id, E8.E7S).process(entityData);
 	}
 
 	@PUT
+	@Path("{id}/e7s")
+	public DataResponse<E7> fullSyncE7s(@PathParam("id") int id, String entityData) {
+		return getService().idempotentFullSync(E7.class).toManyParent(E8.class, id, E8.E7S).process(entityData);
+	}
+
+	@PUT
 	@Path("bykey/{id}/e7s")
 	public DataResponse<E7> e8CreateOrUpdateE7sByKey_Idempotent(@PathParam("id") int id, String entityData) {
-		return getService().idempotentCreateOrUpdate(E7.class)
-				.mapper(ByKeyAndParentObjectMapper.byKeyAndParent(E7.NAME)).toManyParent(E8.class, id, E8.E7S)
-				.process(entityData);
+		return getService().idempotentCreateOrUpdate(E7.class).mapper(ByKeyObjectMapperFactory.byKey(E7.NAME))
+				.toManyParent(E8.class, id, E8.E7S).process(entityData);
 	}
 }

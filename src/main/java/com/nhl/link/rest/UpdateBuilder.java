@@ -16,9 +16,6 @@ import org.apache.cayenne.exp.Property;
  */
 public interface UpdateBuilder<T> {
 
-	// TODO:
-	// CreateOrUpdateBuilder<T> responseEncoder(Encoder encoder);
-
 	/**
 	 * Set an explicit id for the update. In this case only a single object is
 	 * allowed in the update.
@@ -56,7 +53,7 @@ public interface UpdateBuilder<T> {
 	 * 
 	 * @since 1.4
 	 */
-	UpdateBuilder<T> mapper(ObjectMapper mapper);
+	UpdateBuilder<T> mapper(ObjectMapperFactory mapper);
 
 	UpdateResponse<T> process(String entityData);
 }

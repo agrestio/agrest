@@ -48,7 +48,10 @@ class CayenneSelectBuilder<T> extends BaseSelectBuilder<T> implements SelectBuil
 
 		SelectQuery<T> query = basicSelect(request);
 
-		applyParentQualifier(query);
+		if (parent != null) {
+			Expression qualifier = parent.qualifier(cayenneService.entityResolver());
+			query.andQualifier(qualifier);
+		}
 
 		if (request.getEntity().getQualifier() != null) {
 			query.andQualifier(request.getEntity().getQualifier());
@@ -74,13 +77,6 @@ class CayenneSelectBuilder<T> extends BaseSelectBuilder<T> implements SelectBuil
 		}
 
 		return query;
-	}
-
-	protected void applyParentQualifier(SelectQuery<T> query) {
-		if (parent != null) {
-			Expression qualifier = parent.qualifier(cayenneService.entityResolver());
-			query.andQualifier(qualifier);
-		}
 	}
 
 	protected SelectQuery<T> basicSelect(DataResponse<T> request) {

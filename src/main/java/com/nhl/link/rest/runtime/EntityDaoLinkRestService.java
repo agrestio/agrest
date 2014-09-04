@@ -11,11 +11,11 @@ import org.apache.cayenne.map.ObjEntity;
 import org.apache.cayenne.query.SelectQuery;
 import org.apache.cayenne.reflect.ClassDescriptor;
 
-import com.nhl.link.rest.UpdateBuilder;
 import com.nhl.link.rest.DeleteBuilder;
 import com.nhl.link.rest.LinkRestException;
 import com.nhl.link.rest.SelectBuilder;
 import com.nhl.link.rest.SimpleResponse;
+import com.nhl.link.rest.UpdateBuilder;
 import com.nhl.link.rest.runtime.cayenne.CayenneDao;
 import com.nhl.link.rest.runtime.cayenne.ICayennePersister;
 import com.nhl.link.rest.runtime.constraints.IConstraintsHandler;
@@ -118,6 +118,14 @@ public class EntityDaoLinkRestService extends BaseLinkRestService {
 	@Override
 	public <T> UpdateBuilder<T> idempotentCreateOrUpdate(Class<T> type) {
 		return daoForType(type).idempotentCreateOrUpdate();
+	}
+	
+	/**
+	 * @since 1.7
+	 */
+	@Override
+	public <T> UpdateBuilder<T> idempotentFullSync(Class<T> type) {
+		return daoForType(type).idempotentFullSync();
 	}
 
 	@Override

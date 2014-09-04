@@ -45,8 +45,8 @@ public class PUT_Related_ByKey_Test extends JerseyTestOnDerby {
 		assertEquals(4, SQLSelect.scalarQuery(String.class, "SELECT count(1) FROM utest.e7").selectOne(context));
 		int id = SQLSelect.scalarQuery(Integer.class, "SELECT id FROM utest.e7 WHERE name = 'newname'").selectOne(
 				context);
-		assertEquals("{\"success\":true,\"data\":[{\"id\":" + id + ",\"name\":\"newname\"},"
-				+ "{\"id\":9,\"name\":\"aaa\"}],\"total\":2}", r1.readEntity(String.class));
+		assertEquals("{\"success\":true,\"data\":[{\"id\":9,\"name\":\"aaa\"}," + "{\"id\":" + id
+				+ ",\"name\":\"newname\"}],\"total\":2}", r1.readEntity(String.class));
 
 		// testing idempotency
 
@@ -54,8 +54,8 @@ public class PUT_Related_ByKey_Test extends JerseyTestOnDerby {
 				Entity.entity("[  {\"name\":\"newname\"}, {\"name\":\"aaa\"} ]", MediaType.APPLICATION_JSON));
 
 		assertEquals(Status.OK.getStatusCode(), r2.getStatus());
-		assertEquals("{\"success\":true,\"data\":[{\"id\":" + id + ",\"name\":\"newname\"},"
-				+ "{\"id\":9,\"name\":\"aaa\"}],\"total\":2}", r2.readEntity(String.class));
+		assertEquals("{\"success\":true,\"data\":[{\"id\":9,\"name\":\"aaa\"}," + "{\"id\":" + id
+				+ ",\"name\":\"newname\"}],\"total\":2}", r2.readEntity(String.class));
 		assertEquals(4, SQLSelect.scalarQuery(String.class, "SELECT count(1) FROM utest.e7").selectOne(context));
 	}
 

@@ -2,9 +2,9 @@ package com.nhl.link.rest.runtime.dao;
 
 import org.apache.cayenne.query.SelectQuery;
 
-import com.nhl.link.rest.UpdateBuilder;
 import com.nhl.link.rest.DeleteBuilder;
 import com.nhl.link.rest.SelectBuilder;
+import com.nhl.link.rest.UpdateBuilder;
 
 /**
  * A common interface of a data access object for a single entity.
@@ -36,7 +36,12 @@ public interface EntityDao<T> {
 	 * @since 1.3
 	 */
 	UpdateBuilder<T> idempotentCreateOrUpdate();
-	
+
+	/**
+	 * @since 1.7
+	 */
+	UpdateBuilder<T> idempotentFullSync();
+
 	DeleteBuilder<T> delete();
 
 	/**

@@ -5,11 +5,11 @@ import javax.ws.rs.core.UriInfo;
 import org.apache.cayenne.exp.Property;
 import org.apache.cayenne.query.SelectQuery;
 
-import com.nhl.link.rest.UpdateBuilder;
 import com.nhl.link.rest.DataResponse;
 import com.nhl.link.rest.DeleteBuilder;
 import com.nhl.link.rest.SelectBuilder;
 import com.nhl.link.rest.SimpleResponse;
+import com.nhl.link.rest.UpdateBuilder;
 import com.nhl.link.rest.runtime.encoder.IEncoderService;
 import com.nhl.link.rest.runtime.parser.IRequestParser;
 
@@ -111,6 +111,12 @@ public abstract class BaseLinkRestService implements ILinkRestService {
 	@Override
 	public abstract <T> UpdateBuilder<T> idempotentCreateOrUpdate(Class<T> type);
 
+	/**
+	 * @since 1.7
+	 */
+	@Override
+	public abstract <T> UpdateBuilder<T> idempotentFullSync(Class<T> type);
+	
 	/**
 	 * @since 1.3
 	 */

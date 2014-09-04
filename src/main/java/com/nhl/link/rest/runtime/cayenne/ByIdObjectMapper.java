@@ -1,41 +1,46 @@
 package com.nhl.link.rest.runtime.cayenne;
 
-import javax.ws.rs.core.Response.Status;
+import org.apache.cayenne.Cayenne;
+import org.apache.cayenne.Persistent;
+import org.apache.cayenne.exp.Expression;
+import org.apache.cayenne.exp.parser.ASTEqual;
+import org.apache.cayenne.exp.parser.ASTPath;
 
-import org.apache.cayenne.ObjectContext;
-import org.apache.cayenne.map.ObjEntity;
-
-import com.nhl.link.rest.LinkRestException;
+import com.nhl.link.rest.EntityUpdate;
 import com.nhl.link.rest.ObjectMapper;
-import com.nhl.link.rest.ResponseObjectMapper;
-import com.nhl.link.rest.UpdateResponse;
 
 /**
- * A default singleton implementation of the {@link ObjectMapper} that looks up
- * objects based on their IDs.
- * 
- * @since 1.4
+ * @since 1.7
  */
-public class ByIdObjectMapper extends CayenneObjectMapper {
+class ByIdObjectMapper<T> implements ObjectMapper<T> {
 
-	private static final ObjectMapper instance = new ByIdObjectMapper();
+	private ASTPath keyPath;
 
-	public static ObjectMapper mapper() {
-		return instance;
+	ByIdObjectMapper(ASTPath keyPath) {
+		// this can be a "db:" or "obj:" expression, so treating it as an opaque
+		// Expression, letting Cayenne to figure out the difference
+		this.keyPath = keyPath;
 	}
 
 	@Override
-	protected <T> ResponseObjectMapper<T> create(UpdateResponse<T> response, ObjectContext context) {
+	public Expression expressionForKey(Object key) {
 
-		ObjEntity entity = response.getEntity().getCayenneEntity();
-		// sanity checking...
-		if (entity == null) {
-			throw new LinkRestException(Status.INTERNAL_SERVER_ERROR, "Unknown entity class: " + response.getType());
+		// can't match by NULL id
+		if (key == null) {
+			return null;
 		}
 
-		String keyPath = "db:" + entity.getPrimaryKeyNames().iterator().next();
-		// TODO: multi-column ids
-
-		return new ByIdResponseObjectMapper<>(response, context, keyPath);
+		return new ASTEqual(keyPath, key);
 	}
+
+	@Override
+	public Object keyForObject(T object) {
+		return Cayenne.pkForObject((Persistent) object);
+	}
+
+	@Override
+	public Object keyForUpdate(EntityUpdate update) {
+		return update.getId();
+	}
+
 }

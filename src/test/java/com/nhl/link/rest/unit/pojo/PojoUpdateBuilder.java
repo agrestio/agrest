@@ -60,13 +60,18 @@ public class PojoUpdateBuilder<T> extends BaseUpdateBuilder<T> {
 
 	@Override
 	protected List<T> createOrUpdate(UpdateResponse<T> response) {
-		throw new UnsupportedOperationException("TODO4");
+		throw new UnsupportedOperationException("TODO");
 
 	}
 
 	@Override
 	protected List<T> idempotentCreateOrUpdate(UpdateResponse<T> response) {
-		throw new UnsupportedOperationException("TODO4");
+		throw new UnsupportedOperationException("TODO");
+	}
+	
+	@Override
+	protected List<T> idempotentFullSync(UpdateResponse<T> response) {
+		throw new UnsupportedOperationException("TODO");
 	}
 
 	private Object getId(UpdateResponse<T> response, T pojo) {

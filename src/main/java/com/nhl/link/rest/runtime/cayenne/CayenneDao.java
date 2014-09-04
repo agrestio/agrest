@@ -61,26 +61,32 @@ public class CayenneDao<T> implements EntityDao<T> {
 
 	@Override
 	public UpdateBuilder<T> create() {
-		return new CayenneUpdateBuilder<>(type, UpdateOperation.create, persister, encoderService,
-				requestParser, metadataService, constraintsHandler);
+		return new CayenneUpdateBuilder<>(type, UpdateOperation.create, persister, encoderService, requestParser,
+				metadataService, constraintsHandler);
 	}
 
 	@Override
 	public UpdateBuilder<T> createOrUpdate() {
-		return new CayenneUpdateBuilder<>(type, UpdateOperation.createOrUpdate, persister,
-				encoderService, requestParser, metadataService, constraintsHandler);
+		return new CayenneUpdateBuilder<>(type, UpdateOperation.createOrUpdate, persister, encoderService,
+				requestParser, metadataService, constraintsHandler);
 	}
 
 	@Override
 	public UpdateBuilder<T> idempotentCreateOrUpdate() {
-		return new CayenneUpdateBuilder<>(type, UpdateOperation.idempotentCreateOrUpdate, persister,
-				encoderService, requestParser, metadataService, constraintsHandler);
+		return new CayenneUpdateBuilder<>(type, UpdateOperation.idempotentCreateOrUpdate, persister, encoderService,
+				requestParser, metadataService, constraintsHandler);
+	}
+
+	@Override
+	public UpdateBuilder<T> idempotentFullSync() {
+		return new CayenneUpdateBuilder<>(type, UpdateOperation.idempotentFullSync, persister, encoderService, requestParser,
+				metadataService, constraintsHandler);
 	}
 
 	@Override
 	public UpdateBuilder<T> update() {
-		return new CayenneUpdateBuilder<>(type, UpdateOperation.update, persister, encoderService,
-				requestParser, metadataService, constraintsHandler);
+		return new CayenneUpdateBuilder<>(type, UpdateOperation.update, persister, encoderService, requestParser,
+				metadataService, constraintsHandler);
 	}
 
 	@Override

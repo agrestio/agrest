@@ -7,5 +7,10 @@ package com.nhl.link.rest.runtime;
  */
 public enum UpdateOperation {
 
-	create, update, createOrUpdate, idempotentCreateOrUpdate
+	create, update, createOrUpdate, idempotentCreateOrUpdate,
+
+	/**
+	 * @since 1.7
+	 */
+	idempotentFullSync
 }

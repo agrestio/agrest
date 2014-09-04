@@ -5,11 +5,11 @@ import javax.ws.rs.core.UriInfo;
 import org.apache.cayenne.exp.Property;
 import org.apache.cayenne.query.SelectQuery;
 
-import com.nhl.link.rest.UpdateBuilder;
 import com.nhl.link.rest.DataResponse;
 import com.nhl.link.rest.DeleteBuilder;
 import com.nhl.link.rest.SelectBuilder;
 import com.nhl.link.rest.SimpleResponse;
+import com.nhl.link.rest.UpdateBuilder;
 
 /**
  * An entry point to LinkRest backend services. Used from the user REST resource
@@ -108,8 +108,7 @@ public interface ILinkRestService {
 	<T> UpdateBuilder<T> createOrUpdate(Class<T> type);
 
 	/**
-	 * 
-	 * Returns a CreateOrUpdateBuilder that would perform an idempotent
+	 * Returns an UpdateBuilder that would perform an idempotent
 	 * create-or-update operation on the request objects. The operation will
 	 * fail if it can't be executed as idempotent. The condition is usually that
 	 * all object's ID should be passed explicitly in request or can be implied
@@ -119,6 +118,19 @@ public interface ILinkRestService {
 	 * @since 1.3
 	 */
 	<T> UpdateBuilder<T> idempotentCreateOrUpdate(Class<T> type);
+
+	/**
+	 * Returns an UpdateBuilder that would perform create/update/delete
+	 * operations as needed to synchronize backend data with the state of the
+	 * request collection. The operation will fail if it can't be executed as
+	 * idempotent. The condition is usually that all object's ID should be
+	 * passed explicitly in request or can be implied from a relationship.
+	 * Otherwise the server will have no way of mapping update data to an
+	 * existing object and the update can't be idempotent.
+	 * 
+	 * @since 1.7
+	 */
+	<T> UpdateBuilder<T> idempotentFullSync(Class<T> type);
 
 	/**
 	 * @since 1.4
