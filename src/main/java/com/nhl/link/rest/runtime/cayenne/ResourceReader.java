@@ -59,7 +59,8 @@ class ResourceReader {
 			query.andQualifier(response.getEntity().getQualifier());
 		}
 
-		// TODO: fetch limit / offset ?
+		// TODO: use SelectBuilder to get Cayenne relresentaion of the resource,
+		// instead of duplicating this here...
 
 		return response.getUpdateContext().select(query);
 	}
