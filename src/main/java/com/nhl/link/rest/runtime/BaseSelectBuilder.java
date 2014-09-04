@@ -14,7 +14,6 @@ import org.apache.cayenne.exp.Property;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.nhl.link.rest.UpdateBuilder;
 import com.nhl.link.rest.DataResponse;
 import com.nhl.link.rest.Entity;
 import com.nhl.link.rest.EntityParent;
@@ -70,12 +69,23 @@ public abstract class BaseSelectBuilder<T> implements SelectBuilder<T> {
 		this.parent = new EntityParent<>(parentType, parentId, relationshipFromParent);
 		return this;
 	}
-	
-	@SuppressWarnings("unchecked")
+
+	/**
+	 * @since 1.7
+	 */
 	@Override
-	public UpdateBuilder<T> toManyParent(Class<?> parentType, Object parentId,
+	public SelectBuilder<T> parent(EntityParent<?> parent) {
+		this.parent = parent;
+		return this;
+	}
+
+	/**
+	 * @since 1.7
+	 */
+	@Override
+	public SelectBuilder<T> toManyParent(Class<?> parentType, Object parentId,
 			Property<? extends Collection<T>> relationshipFromParent) {
-		return (UpdateBuilder<T>) parent(parentType, parentId, relationshipFromParent.getName());
+		return parent(parentType, parentId, relationshipFromParent.getName());
 	}
 
 	@Override

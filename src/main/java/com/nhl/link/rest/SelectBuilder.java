@@ -61,9 +61,14 @@ public interface SelectBuilder<T> {
 	SelectBuilder<T> parent(Class<?> parentType, Object parentId, Property<T> relationshipFromParent);
 
 	/**
-	 * @since 1.4
+	 * @since 1.7
 	 */
-	UpdateBuilder<T> toManyParent(Class<?> parentType, Object parentId,
+	SelectBuilder<T> parent(EntityParent<?> parent);
+
+	/**
+	 * @since 1.7
+	 */
+	SelectBuilder<T> toManyParent(Class<?> parentType, Object parentId,
 			Property<? extends Collection<T>> relationshipFromParent);
 
 	/**
