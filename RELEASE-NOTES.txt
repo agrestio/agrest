@@ -1,4 +1,6 @@
-Release 1.7 
+Release 1.8
+
+Release 1.7 2014-09-05
 
 #29 Batch lookup of relationship objects.
 #38 'idempotentFullSync' method to synchronize collections
