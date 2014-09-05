@@ -5,11 +5,15 @@ import java.util.Collection;
 
 import javax.ws.rs.core.Response.Status;
 
+/**
+ * @since 1.7
+ */
 public class UpdateResponse<T> extends DataResponse<T> {
 
 	private boolean idUpdatesDisallowed;
 	private Collection<EntityUpdate> updates;
 	private EntityParent<?> parent;
+	private boolean includeData;
 
 	public UpdateResponse(Class<T> type) {
 		super(type);
@@ -67,11 +71,21 @@ public class UpdateResponse<T> extends DataResponse<T> {
 		return idUpdatesDisallowed;
 	}
 
-	/**
-	 * @since 1.4
-	 */
 	public EntityParent<?> getParent() {
 		return parent;
 	}
 
+	public boolean isIncludeData() {
+		return includeData;
+	}
+
+	public UpdateResponse<T> includeData() {
+		this.includeData = true;
+		return this;
+	}
+
+	public UpdateResponse<T> excludeData() {
+		this.includeData = false;
+		return this;
+	}
 }

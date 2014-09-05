@@ -67,7 +67,7 @@ public class DataResponse<T> extends SimpleResponse {
 		this.message = message;
 		return this;
 	}
-	
+
 	public Status getStatus() {
 		return status;
 	}
@@ -96,14 +96,14 @@ public class DataResponse<T> extends SimpleResponse {
 	public int getFetchLimit() {
 		return fetchLimit;
 	}
-	
+
 	/**
 	 * @since 1.5
 	 */
 	public String getQueryProperty() {
 		return queryProperty;
 	}
-	
+
 	public DataResponse<T> withQueryProperty(String property) {
 		this.queryProperty = property;
 		return this;
@@ -149,7 +149,7 @@ public class DataResponse<T> extends SimpleResponse {
 		this.encoder = encoder;
 		return this;
 	}
-	
+
 	/**
 	 * @since 1.1
 	 */
@@ -157,7 +157,7 @@ public class DataResponse<T> extends SimpleResponse {
 		this.status = status;
 		return this;
 	}
-	
+
 	/**
 	 * Writes internal state to the provided JSON stream using the internal
 	 * {@link Encoder}.
@@ -165,6 +165,4 @@ public class DataResponse<T> extends SimpleResponse {
 	public void writeData(JsonGenerator out) throws IOException {
 		encoder.encode("data", getObjects(), out);
 	}
-	
-	
 }

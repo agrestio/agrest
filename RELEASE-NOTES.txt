@@ -2,6 +2,7 @@ Release 1.7
 
 #29 Batch lookup of relationship objects.
 #38 'idempotentFullSync' method to synchronize collections
+#40 Optionally suppress entity bodies on update requests
 #41 rename CreateOrUpdateBuilder to just UpdateBuilder
 
 Release 1.6 2014-08-29

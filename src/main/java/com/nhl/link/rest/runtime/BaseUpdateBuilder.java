@@ -40,6 +40,8 @@ public abstract class BaseUpdateBuilder<T> implements UpdateBuilder<T> {
 	private TreeConstraints<T> readConstraints;
 	private TreeConstraints<T> writeConstraints;
 
+	private boolean includeData;
+
 	protected ObjectMapperFactory mapper;
 
 	public BaseUpdateBuilder(Class<T> type, UpdateOperation op, IEncoderService encoderService,
@@ -108,8 +110,16 @@ public abstract class BaseUpdateBuilder<T> implements UpdateBuilder<T> {
 
 		UpdateResponse<T> response = createResponse();
 
+		if (includeData) {
+			response.includeData();
+		} else {
+			response.excludeData();
+		}
+
 		// parse request
 		requestParser.parseUpdate(response, uriInfo, entityData);
+
+		// after filters were applied, we can override
 
 		// this handles single object update (or insert?)...
 		processExplicitId(response);
@@ -139,9 +149,7 @@ public abstract class BaseUpdateBuilder<T> implements UpdateBuilder<T> {
 	/**
 	 * @since 1.4
 	 */
-	protected UpdateResponse<T> createResponse() {
-		return new UpdateResponse<>(type).parent(parent);
-	}
+	protected abstract UpdateResponse<T> createResponse();
 
 	protected ObjRelationship relationshipFromParent() {
 		return parent != null ? metadataService.getObjRelationship(parent) : null;
@@ -184,6 +192,18 @@ public abstract class BaseUpdateBuilder<T> implements UpdateBuilder<T> {
 	protected UpdateResponse<T> withObjects(UpdateResponse<T> response, List<T> objects, Status status) {
 		return (UpdateResponse<T>) response.withObjects(objects).withEncoder(encoderService.makeEncoder(response))
 				.withStatus(status);
+	}
+
+	@Override
+	public UpdateBuilder<T> excludeData() {
+		this.includeData = false;
+		return this;
+	}
+
+	@Override
+	public UpdateBuilder<T> includeData() {
+		this.includeData = true;
+		return this;
 	}
 
 	protected abstract List<T> create(UpdateResponse<T> response);

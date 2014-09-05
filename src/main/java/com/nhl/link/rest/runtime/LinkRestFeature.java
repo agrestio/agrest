@@ -10,6 +10,7 @@ import org.apache.cayenne.di.Injector;
 import com.nhl.link.rest.provider.DataResponseWriter;
 import com.nhl.link.rest.provider.ResponseStatusDynamicFeature;
 import com.nhl.link.rest.provider.SimpleResponseWriter;
+import com.nhl.link.rest.provider.UpdateResponseWriter;
 
 /**
  * A JAX RS "feature" that bootstraps LinkRest in an app.
@@ -34,6 +35,7 @@ class LinkRestFeature implements Feature {
 
 		context.register(SimpleResponseWriter.class);
 		context.register(DataResponseWriter.class);
+		context.register(UpdateResponseWriter.class);
 
 		context.register(ResponseStatusDynamicFeature.class);
 

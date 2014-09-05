@@ -60,12 +60,14 @@ public class E2Resource extends LrResource {
 	@POST
 	@Path("{id}/e3s")
 	public DataResponse<E3> createOrUpdateE3s(@PathParam("id") int id, String targetData) {
-		return getService().createOrUpdate(E3.class).toManyParent(E2.class, id, E2.E3S).process(targetData);
+		return getService().createOrUpdate(E3.class).toManyParent(E2.class, id, E2.E3S).includeData()
+				.process(targetData);
 	}
 
 	@PUT
 	@Path("{id}/e3s")
 	public DataResponse<E3> createOrUpdate_Idempotent_E3s(@PathParam("id") int id, String entityData) {
-		return getService().idempotentCreateOrUpdate(E3.class).toManyParent(E2.class, id, E2.E3S).process(entityData);
+		return getService().idempotentCreateOrUpdate(E3.class).toManyParent(E2.class, id, E2.E3S).includeData()
+				.process(entityData);
 	}
 }

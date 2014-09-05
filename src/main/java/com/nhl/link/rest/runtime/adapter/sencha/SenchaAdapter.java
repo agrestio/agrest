@@ -6,6 +6,7 @@ import javax.ws.rs.core.Feature;
 
 import org.apache.cayenne.di.Binder;
 
+import com.nhl.link.rest.runtime.ILinkRestService;
 import com.nhl.link.rest.runtime.adapter.LinkRestAdapter;
 import com.nhl.link.rest.runtime.encoder.IEncoderService;
 import com.nhl.link.rest.runtime.parser.RequestParser;
@@ -29,6 +30,7 @@ public class SenchaAdapter implements LinkRestAdapter {
 		binder.bind(ISortProcessor.class).to(SenchaSortProcessor.class);
 		binder.bind(IFilterProcessor.class).to(SenchaFilterProcessor.class);
 		binder.bind(IEncoderService.class).to(SenchaEncoderService.class);
+		binder.decorate(ILinkRestService.class).after(SenchaLinkRestService.class);
 	}
 
 	@Override

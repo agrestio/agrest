@@ -32,7 +32,8 @@ public class E8Resource extends LrResource {
 	public DataResponse<E8> create_WriteConstrainedIdBlocked(@PathParam("id") int id, @Context UriInfo uriInfo,
 			String requestBody) {
 		TreeConstraints<E8> tc = TreeConstraints.excludeAll(E8.class).attribute(E8.NAME);
-		return getService().create(E8.class).with(uriInfo).id(id).writeConstraints(tc).process(requestBody);
+		return getService().create(E8.class).with(uriInfo).id(id).writeConstraints(tc).includeData()
+				.process(requestBody);
 	}
 
 	@DELETE
@@ -45,25 +46,28 @@ public class E8Resource extends LrResource {
 	@Path("{id}/e9")
 	public DataResponse<E9> relateToOneDependent(@PathParam("id") int id, String entityData) {
 		// this will test support for ID propagation in a 1..1
-		return getService().idempotentCreateOrUpdate(E9.class).parent(E8.class, id, E8.E9).process(entityData);
+		return getService().idempotentCreateOrUpdate(E9.class).parent(E8.class, id, E8.E9).includeData()
+				.process(entityData);
 	}
 
 	@PUT
 	@Path("createorupdate/{id}/e7s")
 	public DataResponse<E7> createOrUpdateE7s(@PathParam("id") int id, String entityData) {
-		return getService().idempotentCreateOrUpdate(E7.class).toManyParent(E8.class, id, E8.E7S).process(entityData);
+		return getService().idempotentCreateOrUpdate(E7.class).toManyParent(E8.class, id, E8.E7S).includeData()
+				.process(entityData);
 	}
 
 	@PUT
 	@Path("{id}/e7s")
 	public DataResponse<E7> fullSyncE7s(@PathParam("id") int id, String entityData) {
-		return getService().idempotentFullSync(E7.class).toManyParent(E8.class, id, E8.E7S).process(entityData);
+		return getService().idempotentFullSync(E7.class).toManyParent(E8.class, id, E8.E7S).includeData()
+				.process(entityData);
 	}
 
 	@PUT
 	@Path("bykey/{id}/e7s")
 	public DataResponse<E7> e8CreateOrUpdateE7sByKey_Idempotent(@PathParam("id") int id, String entityData) {
 		return getService().idempotentCreateOrUpdate(E7.class).mapper(ByKeyObjectMapperFactory.byKey(E7.NAME))
-				.toManyParent(E8.class, id, E8.E7S).process(entityData);
+				.toManyParent(E8.class, id, E8.E7S).includeData().process(entityData);
 	}
 }

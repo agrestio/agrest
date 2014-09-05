@@ -72,6 +72,18 @@ public class POST_Test extends JerseyTestOnDerby {
 	}
 
 	@Test
+	public void testPost_Default_NoData() throws WebApplicationException, IOException {
+
+		Response response1 = target("/e4/defaultdata").request().post(
+				Entity.entity("{\"cVarchar\":\"zzz\"}", MediaType.APPLICATION_JSON));
+		assertEquals(Status.CREATED.getStatusCode(), response1.getStatus());
+		assertEquals("{\"success\":true}", response1.readEntity(String.class));
+
+		E4 e41 = (E4) Cayenne.objectForQuery(context, new SelectQuery<E4>(E4.class));
+		assertEquals("zzz", e41.getCVarchar());
+	}
+
+	@Test
 	public void testPost_WriteConstraints_Id_Allowed() throws WebApplicationException, IOException {
 
 		Response r1 = target("/e8/w/constrainedid/578").request().post(

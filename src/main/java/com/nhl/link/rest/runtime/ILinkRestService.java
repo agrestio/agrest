@@ -60,6 +60,9 @@ public interface ILinkRestService {
 	 */
 	<T> DataResponse<T> insert(Class<T> root, String objectData);
 
+	/**
+	 * @deprecated since 1.7 use {@link #update(Class)} and configure the returned builder.
+	 */
 	<T> DataResponse<T> update(Class<T> root, Object id, String objectData);
 
 	SimpleResponse delete(Class<?> root, Object id);

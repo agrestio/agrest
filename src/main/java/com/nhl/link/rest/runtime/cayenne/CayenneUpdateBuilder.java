@@ -23,7 +23,7 @@ class CayenneUpdateBuilder<T> extends BaseUpdateBuilder<T> {
 
 	private ICayennePersister persister;
 
-	public CayenneUpdateBuilder(Class<T> type, UpdateOperation op, ICayennePersister persister,
+	CayenneUpdateBuilder(Class<T> type, UpdateOperation op, ICayennePersister persister,
 			IEncoderService encoderService, IRequestParser requestParser, IMetadataService metadataService,
 			IConstraintsHandler constraintsHandler) {
 		super(type, op, encoderService, requestParser, metadataService, constraintsHandler);

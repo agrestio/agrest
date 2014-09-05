@@ -28,7 +28,7 @@ public class E3Resource extends LrResource {
 
 	@POST
 	public DataResponse<E3> create(String requestBody) {
-		return getService().create(E3.class).process(requestBody);
+		return getService().create(E3.class).includeData().process(requestBody);
 	}
 
 	@GET
@@ -40,21 +40,21 @@ public class E3Resource extends LrResource {
 	@PUT
 	@Path("{id}")
 	public DataResponse<E3> updateE3(@PathParam("id") int id, String requestBody) {
-		return getService().update(E3.class, id, requestBody);
+		return getService().update(E3.class).id(id).includeData().process(requestBody);
 	}
 
 	@POST
 	@Path("constrained")
 	public DataResponse<E3> insertReadConstrained(@Context UriInfo uriInfo, String requestBody) {
 		TreeConstraints<E3> tc = TreeConstraints.idOnly(E3.class).attribute(E3.NAME);
-		return getService().create(E3.class).with(uriInfo).readConstraints(tc).process(requestBody);
+		return getService().create(E3.class).with(uriInfo).readConstraints(tc).includeData().process(requestBody);
 	}
 
 	@POST
 	@Path("w/constrained")
 	public DataResponse<E3> insertWriteConstrained(@Context UriInfo uriInfo, String requestBody) {
 		TreeConstraints<E3> tc = TreeConstraints.idOnly(E3.class).attribute(E3.NAME);
-		return getService().create(E3.class).with(uriInfo).writeConstraints(tc).process(requestBody);
+		return getService().create(E3.class).with(uriInfo).writeConstraints(tc).includeData().process(requestBody);
 	}
 
 	@GET
@@ -73,7 +73,7 @@ public class E3Resource extends LrResource {
 	@Path("{id}/e2/{tid}")
 	public DataResponse<E2> createOrUpdate_Idempotent_E2(@PathParam("id") int parentId, @PathParam("tid") int id,
 			String entityData) {
-		return getService().idempotentCreateOrUpdate(E2.class).id(id).parent(E3.class, parentId, E3.E2)
+		return getService().idempotentCreateOrUpdate(E2.class).id(id).includeData().parent(E3.class, parentId, E3.E2)
 				.process(entityData);
 	}
 

@@ -87,6 +87,12 @@ public class E4Resource extends LrResource {
 
 	@POST
 	public DataResponse<E4> create(String requestBody) {
+		return getService().create(E4.class).includeData().process(requestBody);
+	}
+
+	@POST
+	@Path("defaultdata")
+	public DataResponse<E4> create_DefaultData(String requestBody) {
 		return getService().create(E4.class).process(requestBody);
 	}
 
@@ -105,7 +111,7 @@ public class E4Resource extends LrResource {
 	@PUT
 	@Path("{id}")
 	public DataResponse<E4> update(@PathParam("id") int id, String requestBody) {
-		return getService().update(E4.class, id, requestBody);
+		return getService().update(E4.class).id(id).includeData().process(requestBody);
 	}
 
 }

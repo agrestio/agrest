@@ -8,9 +8,8 @@ import org.apache.cayenne.exp.Property;
 
 /**
  * A builder for create (insert) or update operations for a single entity type.
- * The builder has a number of flavors of the resulting operation that are
- * invoked after configuring the options : {@link #create()}, {@link #update()}
- * {@link #createOrUpdate()}, {@link #createOrUpdateIdempotent()}.
+ * Depending on how the builder was created, it will performs one of the flavors
+ * of update: create, update, createOrUpdate, fullSync.
  * 
  * @since 1.7
  */
@@ -50,10 +49,19 @@ public interface UpdateBuilder<T> {
 	/**
 	 * Sets a custom mapper that locates existing objects based on request data.
 	 * If not set, objects will be located by their ID.
-	 * 
-	 * @since 1.4
 	 */
 	UpdateBuilder<T> mapper(ObjectMapperFactory mapper);
+
+	/**
+	 * Results in a 'data' key included in response with the updated state of
+	 * the collection.
+	 */
+	UpdateBuilder<T> includeData();
+
+	/**
+	 * Suppresses 'data' key in response.
+	 */
+	UpdateBuilder<T> excludeData();
 
 	UpdateResponse<T> process(String entityData);
 }

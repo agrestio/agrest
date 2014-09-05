@@ -14,6 +14,7 @@ public class E7Resource extends LrResource {
 	@PUT
 	@Path("{id}/e8/{tid}")
 	public DataResponse<E8> relateToOneExisting(@PathParam("id") int parentId, @PathParam("tid") int id, String data) {
-		return getService().idempotentCreateOrUpdate(E8.class).id(id).parent(E7.class, parentId, E7.E8).process(data);
+		return getService().idempotentCreateOrUpdate(E8.class).id(id).includeData().parent(E7.class, parentId, E7.E8)
+				.process(data);
 	}
 }

@@ -29,6 +29,10 @@ public class PojoUpdateBuilder<T> extends BaseUpdateBuilder<T> {
 		this.typeBucket = typeBucket;
 	}
 
+	protected UpdateResponse<T> createResponse() {
+		return new UpdateResponse<>(type).parent(parent);
+	}
+
 	@Override
 	protected List<T> create(UpdateResponse<T> response) {
 
@@ -68,7 +72,7 @@ public class PojoUpdateBuilder<T> extends BaseUpdateBuilder<T> {
 	protected List<T> idempotentCreateOrUpdate(UpdateResponse<T> response) {
 		throw new UnsupportedOperationException("TODO");
 	}
-	
+
 	@Override
 	protected List<T> idempotentFullSync(UpdateResponse<T> response) {
 		throw new UnsupportedOperationException("TODO");
