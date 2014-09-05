@@ -16,7 +16,6 @@ import com.nhl.link.rest.EntityUpdate;
 import com.nhl.link.rest.UpdateResponse;
 import com.nhl.link.rest.annotation.ClientReadable;
 import com.nhl.link.rest.annotation.ClientWritable;
-import com.nhl.link.rest.runtime.cayenne.ICayennePersister;
 
 /**
  * @since 1.6
@@ -25,13 +24,11 @@ class EntityConstraintHandler {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(EntityConstraintHandler.class);
 
-	private ICayennePersister persister;
 	private EntityConstraintSource forRead;
 	private EntityConstraintSource forWrite;
 
-	EntityConstraintHandler(ICayennePersister persister, List<EntityConstraint> defaultReadConstraints,
+	EntityConstraintHandler(List<EntityConstraint> defaultReadConstraints,
 			List<EntityConstraint> defaultWriteConstraints) {
-		this.persister = persister;
 
 		// note that explicit defaults override annotations
 		// annotation-based constraints will be compiled dynamically

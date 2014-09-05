@@ -7,7 +7,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
 
 import java.util.Collections;
 import java.util.List;
@@ -24,8 +23,6 @@ import com.nhl.link.rest.Entity;
 import com.nhl.link.rest.EntityConstraint;
 import com.nhl.link.rest.SizeConstraints;
 import com.nhl.link.rest.TreeConstraints;
-import com.nhl.link.rest.runtime.cayenne.ICayennePersister;
-import com.nhl.link.rest.runtime.constraints.ConstraintsHandler;
 
 public class ConstraintsHandlerTest {
 
@@ -38,10 +35,9 @@ public class ConstraintsHandlerTest {
 	@Before
 	public void before() {
 
-		ICayennePersister persister = mock(ICayennePersister.class);
 		List<EntityConstraint> r = Collections.emptyList();
 		List<EntityConstraint> w = Collections.emptyList();
-		this.constraintHandler = new ConstraintsHandler(persister, r, w);
+		this.constraintHandler = new ConstraintsHandler(r, w);
 
 		DataMap dm = new DataMap();
 
