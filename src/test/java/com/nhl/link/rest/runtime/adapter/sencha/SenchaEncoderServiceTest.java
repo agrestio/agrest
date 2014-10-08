@@ -26,7 +26,7 @@ import com.nhl.link.rest.runtime.encoder.AttributeEncoderFactory;
 import com.nhl.link.rest.runtime.encoder.IAttributeEncoderFactory;
 import com.nhl.link.rest.runtime.encoder.IStringConverterFactory;
 import com.nhl.link.rest.runtime.jackson.JacksonService;
-import com.nhl.link.rest.runtime.semantics.RelationshipMapper;
+import com.nhl.link.rest.runtime.semantics.IRelationshipMapper;
 import com.nhl.link.rest.unit.TestWithCayenneMapping;
 import com.nhl.link.rest.unit.cayenne.E2;
 import com.nhl.link.rest.unit.cayenne.E3;
@@ -48,9 +48,10 @@ public class SenchaEncoderServiceTest extends TestWithCayenneMapping {
 		this.filters = new ArrayList<>();
 		IAttributeEncoderFactory attributeEncoderFactory = new AttributeEncoderFactory();
 		IStringConverterFactory stringConverterFactory = mock(IStringConverterFactory.class);
+		IRelationshipMapper relationshipMapper = new SenchaRelationshipMapper();
 
 		encoderService = new SenchaEncoderService(this.filters, attributeEncoderFactory, stringConverterFactory,
-				new RelationshipMapper());
+				relationshipMapper);
 	}
 
 	@Test

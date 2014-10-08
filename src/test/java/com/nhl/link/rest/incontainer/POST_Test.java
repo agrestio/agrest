@@ -197,7 +197,7 @@ public class POST_Test extends JerseyTestOnDerby {
 		context.performGenericQuery(new SQLTemplate(E4.class, "INSERT INTO utest.e2 (id, name) values (8, 'yyy')"));
 
 		Response response1 = target("/e3").request().post(
-				Entity.entity("{\"e2_id\":8,\"name\":\"MM\"}", MediaType.APPLICATION_JSON));
+				Entity.entity("{\"e2\":8,\"name\":\"MM\"}", MediaType.APPLICATION_JSON));
 
 		assertEquals(Status.CREATED.getStatusCode(), response1.getStatus());
 
@@ -241,7 +241,7 @@ public class POST_Test extends JerseyTestOnDerby {
 		context.performGenericQuery(new SQLTemplate(E4.class, "INSERT INTO utest.e2 (id, name) values (8, 'yyy')"));
 
 		Response response1 = target("/e3").request().post(
-				Entity.entity("{\"e2_id\":15,\"name\":\"MM\"}", MediaType.APPLICATION_JSON));
+				Entity.entity("{\"e2\":15,\"name\":\"MM\"}", MediaType.APPLICATION_JSON));
 
 		assertEquals(Status.NOT_FOUND.getStatusCode(), response1.getStatus());
 

@@ -12,6 +12,7 @@ import com.nhl.link.rest.runtime.encoder.IEncoderService;
 import com.nhl.link.rest.runtime.parser.RequestParser;
 import com.nhl.link.rest.runtime.parser.filter.IFilterProcessor;
 import com.nhl.link.rest.runtime.parser.sort.ISortProcessor;
+import com.nhl.link.rest.runtime.semantics.IRelationshipMapper;
 import com.nhl.link.rest.update.UpdateFilter;
 
 /**
@@ -30,6 +31,7 @@ public class SenchaAdapter implements LinkRestAdapter {
 		binder.bind(ISortProcessor.class).to(SenchaSortProcessor.class);
 		binder.bind(IFilterProcessor.class).to(SenchaFilterProcessor.class);
 		binder.bind(IEncoderService.class).to(SenchaEncoderService.class);
+		binder.bind(IRelationshipMapper.class).to(SenchaRelationshipMapper.class);
 		binder.decorate(ILinkRestService.class).after(SenchaLinkRestService.class);
 	}
 

@@ -1,6 +1,7 @@
 Release 1.8
 
 #43 upgrade to Jersey 2.12, jackson 2.4.2
+#49 IRelationshipMapper should use relationship name by default
 
 Release 1.7 2014-09-05
 
