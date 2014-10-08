@@ -6,7 +6,7 @@ import com.nhl.link.rest.UpdateBuilder;
 import com.nhl.link.rest.runtime.ILinkRestService;
 
 /**
- * Customizes some defaults of the stick {@link ILinkRestService} to follow
+ * Customizes some defaults of the stock {@link ILinkRestService} to follow
  * Sencha conventions.
  * 
  * @since 1.7
