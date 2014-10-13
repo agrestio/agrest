@@ -1,6 +1,7 @@
 Release 1.8
 
 #43 upgrade to Jersey 2.12, jackson 2.4.2
+#46 Sencha: update objects order is important on bulk updates
 #48 Support for implicit propagated ids on create/update
 #49 IRelationshipMapper should use relationship name by default
 
