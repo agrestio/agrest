@@ -27,6 +27,16 @@
 		<db-attribute name="id" type="INTEGER" isPrimaryKey="true" isGenerated="true" isMandatory="true"/>
 		<db-attribute name="name" type="VARCHAR" length="100"/>
 	</db-entity>
+	<db-entity name="e12" schema="utest">
+		<db-attribute name="id" type="INTEGER" isPrimaryKey="true" isMandatory="true"/>
+	</db-entity>
+	<db-entity name="e12_e13" schema="utest">
+		<db-attribute name="e12_id" type="INTEGER" isPrimaryKey="true" isMandatory="true"/>
+		<db-attribute name="e13_id" type="INTEGER" isPrimaryKey="true" isMandatory="true"/>
+	</db-entity>
+	<db-entity name="e13" schema="utest">
+		<db-attribute name="id" type="INTEGER" isPrimaryKey="true" isMandatory="true"/>
+	</db-entity>
 	<db-entity name="e2" schema="utest">
 		<db-attribute name="address" type="VARCHAR" length="255"/>
 		<db-attribute name="id" type="INTEGER" isPrimaryKey="true" isGenerated="true" isMandatory="true"/>
@@ -88,6 +98,12 @@
 		<obj-attribute name="address" type="java.lang.String" db-attribute-path="address"/>
 		<obj-attribute name="name" type="java.lang.String" db-attribute-path="name"/>
 	</obj-entity>
+	<obj-entity name="E12" className="com.nhl.link.rest.unit.cayenne.E12" dbEntityName="e12">
+	</obj-entity>
+	<obj-entity name="E12E13" className="com.nhl.link.rest.unit.cayenne.E12E13" dbEntityName="e12_e13">
+	</obj-entity>
+	<obj-entity name="E13" className="com.nhl.link.rest.unit.cayenne.E13" dbEntityName="e13">
+	</obj-entity>
 	<obj-entity name="E2" className="com.nhl.link.rest.unit.cayenne.E2" dbEntityName="e2">
 		<obj-attribute name="address" type="java.lang.String" db-attribute-path="address"/>
 		<obj-attribute name="name" type="java.lang.String" db-attribute-path="name"/>
@@ -126,6 +142,18 @@
 	<db-relationship name="e10" source="e11" target="e10" toMany="true">
 		<db-attribute-pair source="e10_id" target="id"/>
 	</db-relationship>
+	<db-relationship name="e1213" source="e12" target="e12_e13" toDependentPK="true" toMany="true">
+		<db-attribute-pair source="id" target="e12_id"/>
+	</db-relationship>
+	<db-relationship name="e12" source="e12_e13" target="e12" toMany="false">
+		<db-attribute-pair source="e12_id" target="id"/>
+	</db-relationship>
+	<db-relationship name="e13" source="e12_e13" target="e13" toMany="false">
+		<db-attribute-pair source="e13_id" target="id"/>
+	</db-relationship>
+	<db-relationship name="e1213" source="e13" target="e12_e13" toDependentPK="true" toMany="true">
+		<db-attribute-pair source="id" target="e13_id"/>
+	</db-relationship>
 	<db-relationship name="e3s" source="e2" target="e3" toMany="true">
 		<db-attribute-pair source="id" target="e2_id"/>
 	</db-relationship>
@@ -152,6 +180,10 @@
 	</db-relationship>
 	<obj-relationship name="e11s" source="E10" target="E11" deleteRule="Nullify" db-relationship-path="e11s"/>
 	<obj-relationship name="e10" source="E11" target="E10" deleteRule="Deny" db-relationship-path="e10"/>
+	<obj-relationship name="e1213" source="E12" target="E12E13" deleteRule="Deny" db-relationship-path="e1213"/>
+	<obj-relationship name="e12" source="E12E13" target="E12" deleteRule="Nullify" db-relationship-path="e12"/>
+	<obj-relationship name="e13" source="E12E13" target="E13" deleteRule="Nullify" db-relationship-path="e13"/>
+	<obj-relationship name="e1213" source="E13" target="E12E13" deleteRule="Deny" db-relationship-path="e1213"/>
 	<obj-relationship name="e3s" source="E2" target="E3" deleteRule="Deny" db-relationship-path="e3s"/>
 	<obj-relationship name="e2" source="E3" target="E2" deleteRule="Nullify" db-relationship-path="e2"/>
 	<obj-relationship name="e5" source="E3" target="E5" deleteRule="Nullify" db-relationship-path="e5"/>

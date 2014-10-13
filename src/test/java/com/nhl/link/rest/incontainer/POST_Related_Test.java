@@ -14,8 +14,11 @@ import org.apache.cayenne.query.SQLTemplate;
 import org.junit.Test;
 
 import com.nhl.link.rest.unit.JerseyTestOnDerby;
+import com.nhl.link.rest.unit.cayenne.E12;
+import com.nhl.link.rest.unit.cayenne.E12E13;
 import com.nhl.link.rest.unit.cayenne.E2;
 import com.nhl.link.rest.unit.cayenne.E3;
+import com.nhl.link.rest.unit.resource.E12Resource;
 import com.nhl.link.rest.unit.resource.E2Resource;
 
 public class POST_Related_Test extends JerseyTestOnDerby {
@@ -23,6 +26,7 @@ public class POST_Related_Test extends JerseyTestOnDerby {
 	@Override
 	protected void doAddResources(FeatureContext context) {
 		context.register(E2Resource.class);
+		context.register(E12Resource.class);
 	}
 
 	@Test
@@ -78,6 +82,29 @@ public class POST_Related_Test extends JerseyTestOnDerby {
 		assertEquals(5, SQLSelect.scalarQuery(String.class, "SELECT count(1) FROM utest.e3").selectOne(context));
 		assertEquals(4, SQLSelect.scalarQuery(String.class, "SELECT count(1) FROM utest.e3 WHERE e2_id = 15")
 				.selectOne(context));
+	}
+
+	@Test
+	public void testPOST_ToManyJoin() {
+
+		context.performGenericQuery(new SQLTemplate(E12.class, "INSERT INTO utest.e12 (id) values (11)"));
+		context.performGenericQuery(new SQLTemplate(E12.class, "INSERT INTO utest.e12 (id) values (12)"));
+		context.performGenericQuery(new SQLTemplate(E12.class, "INSERT INTO utest.e13 (id) values (14)"));
+		context.performGenericQuery(new SQLTemplate(E12.class, "INSERT INTO utest.e13 (id) values (15)"));
+		context.performGenericQuery(new SQLTemplate(E12.class, "INSERT INTO utest.e13 (id) values (16)"));
+
+		Response r1 = target("/e12/12/e1213").queryParam("exclude", "id").request()
+				.post(Entity.entity("[{\"e13\":15},{\"e13\":14}]", MediaType.APPLICATION_JSON));
+
+		assertEquals(Status.CREATED.getStatusCode(), r1.getStatus());
+		assertEquals("{\"success\":true,\"data\":[{},{}],\"total\":2}",
+				r1.readEntity(String.class));
+
+		assertEquals(2, SQLSelect.scalarQuery(E12E13.class, "SELECT count(1) FROM utest.e12_e13").selectOne(context));
+		assertEquals(1, SQLSelect.scalarQuery(E12E13.class,
+				"SELECT count(1) FROM utest.e12_e13 " + "WHERE e12_id = 12 AND e13_id = 14").selectOne(context));
+		assertEquals(1, SQLSelect.scalarQuery(E12E13.class,
+				"SELECT count(1) FROM utest.e12_e13 " + "WHERE e12_id = 12 AND e13_id = 15").selectOne(context));
 	}
 
 }

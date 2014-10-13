@@ -10,8 +10,10 @@ import org.apache.cayenne.query.SQLTemplate;
 import org.junit.Test;
 
 import com.nhl.link.rest.unit.JerseyTestOnDerby;
+import com.nhl.link.rest.unit.cayenne.E12;
 import com.nhl.link.rest.unit.cayenne.E2;
 import com.nhl.link.rest.unit.cayenne.E3;
+import com.nhl.link.rest.unit.resource.E12Resource;
 import com.nhl.link.rest.unit.resource.E2Resource;
 import com.nhl.link.rest.unit.resource.E3Resource;
 
@@ -21,6 +23,7 @@ public class GET_Related_Test extends JerseyTestOnDerby {
 	protected void doAddResources(FeatureContext context) {
 		context.register(E2Resource.class);
 		context.register(E3Resource.class);
+		context.register(E12Resource.class);
 	}
 
 	@Test
@@ -96,17 +99,26 @@ public class GET_Related_Test extends JerseyTestOnDerby {
 				r1.readEntity(String.class));
 	}
 
-	// TODO: it would be nice if we catch invalid root ids.. the way the query
-	// is built now, there's no easy way to tell an empty relationship from an
-	// invalid ID ... Should we do an unconditional select by ID before the
-	// relationship query?
+	@Test
+	public void testGET_ToManyJoin() {
 
-	// @Test
-	// public void testGet_NoSuchId() {
-	// Response r1 = target("/lr/related/e2/1/e3s").queryParam("include",
-	// "id").request().get();
-	// assertEquals(Status.NOT_FOUND.getStatusCode(), r1.getStatus());
-	// assertEquals("{\"success\":false,\"message\":\"No object for ID '1' and entity 'E2'\"}",
-	// r1.readEntity(String.class));
-	// }
+		context.performGenericQuery(new SQLTemplate(E12.class, "INSERT INTO utest.e12 (id) values (11)"));
+		context.performGenericQuery(new SQLTemplate(E12.class, "INSERT INTO utest.e12 (id) values (12)"));
+		context.performGenericQuery(new SQLTemplate(E12.class, "INSERT INTO utest.e13 (id) values (14)"));
+		context.performGenericQuery(new SQLTemplate(E12.class, "INSERT INTO utest.e13 (id) values (15)"));
+		context.performGenericQuery(new SQLTemplate(E12.class, "INSERT INTO utest.e13 (id) values (16)"));
+
+		context.performGenericQuery(new SQLTemplate(E12.class,
+				"INSERT INTO utest.e12_e13 (e12_id, e13_id) values (11, 14)"));
+		context.performGenericQuery(new SQLTemplate(E12.class,
+				"INSERT INTO utest.e12_e13 (e12_id, e13_id) values (12, 16)"));
+
+		// excluding ID - can't render multi-column IDs yet
+		Response r1 = target("/e12/12/e1213").queryParam("exclude", "id").queryParam("include", "e12")
+				.queryParam("include", "e13").request().get();
+
+		assertEquals(Status.OK.getStatusCode(), r1.getStatus());
+		assertEquals("{\"success\":true,\"data\":[{\"e12\":{\"id\":12},\"e13\":{\"id\":16}}],\"total\":1}",
+				r1.readEntity(String.class));
+	}
 }

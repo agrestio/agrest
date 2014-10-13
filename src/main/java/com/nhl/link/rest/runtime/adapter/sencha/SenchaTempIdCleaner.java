@@ -1,5 +1,7 @@
 package com.nhl.link.rest.runtime.adapter.sencha;
 
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.regex.Pattern;
 
 import com.nhl.link.rest.EntityUpdate;
@@ -32,13 +34,18 @@ public class SenchaTempIdCleaner implements UpdateFilter {
 
 		for (EntityUpdate u : response.getUpdates()) {
 
-			Object id = u.getId();
+			Map<String, Object> idMap = u.getId();
+			if (idMap == null || idMap.size() != 1) {
+				continue;
+			}
 
-			if (id instanceof String) {
+			Entry<String, Object> id = idMap.entrySet().iterator().next();
 
-				String idString = (String) id;
+			if (id.getValue() instanceof String) {
+
+				String idString = (String) id.getValue();
 				if (tempIdPattern.matcher(idString).find()) {
-					u.setId(null);
+					idMap.remove(id.getKey());
 				}
 			}
 		}

@@ -12,8 +12,8 @@ public class EntityUpdate {
 
 	private Map<String, Object> values;
 	private Map<String, Object> relatedIds;
-	private Object id;
-	private boolean idPropagated;
+	private Map<String, Object> id;
+	private boolean explicitId;
 
 	public EntityUpdate() {
 		this.values = new HashMap<>();
@@ -32,27 +32,36 @@ public class EntityUpdate {
 		return relatedIds;
 	}
 
-	public Object getId() {
+	/**
+	 * @since 1.8
+	 */
+	public Map<String, Object> getId() {
 		return id;
 	}
 
-	public void setId(Object id) {
-		this.id = id;
+	/**
+	 * @since 1.8
+	 */
+	public Map<String, Object> getOrCreateId() {
+		if (id == null) {
+			id = new HashMap<>();
+		}
+
+		return id;
+	}
+
+	/**
+	 * @since 1.8
+	 */
+	public void setExplicitId() {
+		this.explicitId = true;
 	}
 
 	/**
 	 * @since 1.5
 	 */
-	public void setPropagatedId(Object id) {
-		this.id = id;
-		this.idPropagated = true;
-	}
-
-	/**
-	 * @since 1.5
-	 */
-	public boolean isIdPropagated() {
-		return idPropagated;
+	public boolean isExplicitId() {
+		return explicitId;
 	}
 
 }

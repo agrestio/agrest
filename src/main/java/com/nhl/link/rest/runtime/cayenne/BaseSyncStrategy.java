@@ -2,6 +2,7 @@ package com.nhl.link.rest.runtime.cayenne;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 
 import javax.ws.rs.core.Response.Status;
@@ -107,46 +108,43 @@ abstract class BaseSyncStrategy<T> implements SyncStrategy<T> {
 	private T doCreate(EntityUpdate u) {
 
 		T o = response.getUpdateContext().newObject(response.getType());
-		Object id = u.getId();
+		Map<String, Object> idMap = u.getId();
 
 		// set explicit ID
-		if (id != null) {
+		if (idMap != null) {
 
-			if (response.isIdUpdatesDisallowed() && !u.isIdPropagated()) {
-				throw new LinkRestException(Status.BAD_REQUEST, "Setting ID explicitly is not allowed: " + id);
-			}
-
-			// TODO: compile ID strategy to avoid recalculating metadata all the
-			// time...
-
-			Collection<DbAttribute> pks = entity.getDbEntity().getPrimaryKeys();
-			if (pks.size() != 1) {
-				throw new IllegalStateException(String.format("Unexpected PK size of %s for entity '%s'",
-						entity.getName(), pks.size()));
+			if (response.isIdUpdatesDisallowed() && u.isExplicitId()) {
+				throw new LinkRestException(Status.BAD_REQUEST, "Setting ID explicitly is not allowed: " + idMap);
 			}
 
 			DataObject dataObject = (DataObject) o;
 
-			DbAttribute pk = pks.iterator().next();
-			// reuse the ID...
-			// 1. meaningful ID
-			ObjAttribute opk = entity.getAttributeForDbAttribute(pk);
-			if (opk != null) {
-				dataObject.writeProperty(opk.getName(), id);
-			}
-			// 2. PK is propagated from the parent
-			// else if () {}
-			//
-			// 3. PK is auto-generated ... I guess this is sorta
-			// expected to fail - generated meaningless PK should not be
-			// pushed from the client
-			else if (pk.isGenerated()) {
-				throw new LinkRestException(Status.BAD_REQUEST, "Can't create '" + entity.getName() + "' with fixed id");
-			}
-			// 4. just some ID desired by the client...
-			else {
-				// TODO: hopefully this works..
-				dataObject.getObjectId().getReplacementIdMap().put(pk.getName(), id);
+			for (DbAttribute pk : entity.getDbEntity().getPrimaryKeys()) {
+
+				Object id = idMap.get(pk.getName());
+				if (id == null) {
+					continue;
+				}
+
+				// 1. meaningful ID
+				// TODO: must compile all this... figuring this on the fly is
+				// slow
+				ObjAttribute opk = entity.getAttributeForDbAttribute(pk);
+				if (opk != null) {
+					dataObject.writeProperty(opk.getName(), id);
+				}
+				// 2. PK is auto-generated ... I guess this is sorta
+				// expected to fail - generated meaningless PK should not be
+				// pushed from the client
+				else if (pk.isGenerated()) {
+					throw new LinkRestException(Status.BAD_REQUEST, "Can't create '" + entity.getName()
+							+ "' with fixed id");
+				}
+				// 3. probably a propagated ID.
+				else {
+					// TODO: hopefully this works..
+					dataObject.getObjectId().getReplacementIdMap().put(pk.getName(), id);
+				}
 			}
 		}
 

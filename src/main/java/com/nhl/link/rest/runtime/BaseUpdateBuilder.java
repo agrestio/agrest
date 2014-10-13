@@ -7,10 +7,14 @@ import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriInfo;
 
 import org.apache.cayenne.exp.Property;
+import org.apache.cayenne.map.DbRelationship;
+import org.apache.cayenne.map.ObjAttribute;
+import org.apache.cayenne.map.ObjEntity;
 import org.apache.cayenne.map.ObjRelationship;
 
 import com.nhl.link.rest.EntityParent;
 import com.nhl.link.rest.EntityUpdate;
+import com.nhl.link.rest.LinkRestException;
 import com.nhl.link.rest.ObjectMapperFactory;
 import com.nhl.link.rest.TreeConstraints;
 import com.nhl.link.rest.UpdateBuilder;
@@ -119,10 +123,8 @@ public abstract class BaseUpdateBuilder<T> implements UpdateBuilder<T> {
 		// parse request
 		requestParser.parseUpdate(response, uriInfo, entityData);
 
-		// after filters were applied, we can override
-
-		// this handles single object update (or insert?)...
 		processExplicitId(response);
+		processParentId(response);
 
 		constraintsHandler.constrainUpdate(response, writeConstraints);
 
@@ -155,33 +157,57 @@ public abstract class BaseUpdateBuilder<T> implements UpdateBuilder<T> {
 		return parent != null ? metadataService.getObjRelationship(parent) : null;
 	}
 
-	protected void processExplicitId(UpdateResponse<T> response) {
+	private void processExplicitId(UpdateResponse<T> response) {
 
 		if (id != null) {
-			processExplicitId(response, id, false);
-		} else if (parent != null) {
-			ObjRelationship fromParent = relationshipFromParent();
-			if (fromParent != null && fromParent.isToDependentEntity()) {
-				processExplicitId(response, parent.getId(), true);
+
+			// id was specified explicitly ... this means a few things:
+			// * we expect zero or one object in the body
+			// * if zero, create an empty update that will be attached to the
+			// ID.
+			// * if more than one - throw...
+
+			if (response.getUpdates().isEmpty()) {
+				response.getUpdates().add(new EntityUpdate());
 			}
+
+			// TODO: duplicate code from DataObjectProcessor - unify in a single
+			// place
+			ObjEntity entity = response.getEntity().getCayenneEntity();
+			Collection<ObjAttribute> pks = entity.getPrimaryKeys();
+			if (pks.size() != 1) {
+				throw new IllegalStateException(String.format(
+						"Compound ID should't be specified explicitly for entity '%s'", entity.getName()));
+			}
+
+			ObjAttribute pk = pks.iterator().next();
+
+			EntityUpdate u = response.getFirst();
+			u.getOrCreateId().put(pk.getDbAttributeName(), id);
+			u.setExplicitId();
 		}
 	}
 
-	private void processExplicitId(UpdateResponse<T> response, Object id, boolean propagated) {
+	private void processParentId(UpdateResponse<T> response) {
 
-		// id was specified explicitly ... this means a few things:
-		// * we expect zero or one object
-		// * if zero - create an empty update that will be attached to the ID.
-		// * if more than one - throw...
+		if (parent != null && parent.getId() != null) {
+			ObjRelationship fromParent = relationshipFromParent();
+			if (fromParent != null && fromParent.isToDependentEntity()) {
+				List<DbRelationship> dbRelationships = fromParent.getDbRelationships();
 
-		if (response.getUpdates().isEmpty()) {
-			response.getUpdates().add(new EntityUpdate());
-		}
+				DbRelationship last = dbRelationships.get(dbRelationships.size() - 1);
 
-		if (propagated) {
-			response.getFirst().setPropagatedId(id);
-		} else {
-			response.getFirst().setId(id);
+				if (last.getJoins().size() != 1) {
+					throw new LinkRestException(Status.BAD_REQUEST,
+							"Multi-join relationship propagation is not supported yet: "
+									+ response.getEntity().getCayenneEntity().getName());
+				}
+
+				String parentIdKey = last.getJoins().get(0).getTargetName();
+				for (EntityUpdate u : response.getUpdates()) {
+					u.getOrCreateId().put(parentIdKey, parent.getId());
+				}
+			}
 		}
 	}
 

@@ -15,12 +15,12 @@ public class SenchaTempIdCleanerTest {
 	public void testDashId() {
 
 		EntityUpdate u1 = new EntityUpdate();
-		u1.setId(1);
+		u1.getOrCreateId().put("x", 1);
 		EntityUpdate u2 = new EntityUpdate();
-		u2.setId("My-123");
+		u2.getOrCreateId().put("x", "My-123");
 		
 		EntityUpdate u3 = new EntityUpdate();
-		u3.setId("My-My");
+		u3.getOrCreateId().put("x", "My-My");
 
 		UpdateResponse<Object> r = new UpdateResponse<>(Object.class);
 		r.getUpdates().add(u1);
@@ -30,8 +30,8 @@ public class SenchaTempIdCleanerTest {
 		UpdateResponse<Object> ro = cleaner.afterParse(r);
 		assertSame(r, ro);
 
-		assertEquals(1, u1.getId());
-		assertNull(u2.getId());
-		assertEquals("My-My", u3.getId());
+		assertEquals(1, u1.getId().get("x"));
+		assertNull(u2.getId().get("x"));
+		assertEquals("My-My", u3.getId().get("x"));
 	}
 }

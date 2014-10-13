@@ -1,12 +1,16 @@
 package com.nhl.link.rest.runtime.parser;
 
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import javax.ws.rs.core.Response.Status;
 
+import org.apache.cayenne.map.DbJoin;
+import org.apache.cayenne.map.DbRelationship;
 import org.apache.cayenne.map.ObjAttribute;
 import org.apache.cayenne.map.ObjEntity;
 import org.apache.cayenne.map.ObjRelationship;
@@ -69,6 +73,8 @@ class DataObjectProcessor {
 
 	private void processObject(UpdateResponse<?> response, JsonNode objectNode) {
 		ObjEntity entity = response.getEntity().getCayenneEntity();
+		Collection<ObjAttribute> pks = entity.getPrimaryKeys();
+		ObjAttribute pk = pks.size() == 1 ? pks.iterator().next() : null;
 
 		EntityUpdate update = new EntityUpdate();
 
@@ -76,14 +82,17 @@ class DataObjectProcessor {
 		while (it.hasNext()) {
 			String key = it.next();
 
-			// Note that n INSERT ID may contain a dummy value, like "0" or
-			// "ext-123"... need to make sure upstream code can handle such
-			// garbage
 			if (PathConstants.ID_PK_ATTRIBUTE.equals(key)) {
+
+				if (pk == null) {
+					throw new IllegalStateException(String.format(
+							"Compound ID should't be specified explicitly for entity '%s'", entity.getName()));
+				}
+
 				JsonNode valueNode = objectNode.get(key);
 				Object value = extractValue(valueNode);
 
-				update.setId(value);
+				update.getOrCreateId().put(pk.getDbAttributeName(), value);
 				continue;
 			}
 
@@ -97,9 +106,25 @@ class DataObjectProcessor {
 
 			ObjRelationship relationship = relationshipMapper.toRelationship(entity, key);
 			if (relationship != null) {
+
 				JsonNode valueNode = objectNode.get(key);
 				Object value = extractValue(valueNode);
+
+				// record FK, whether it is a PK or not
 				update.getRelatedIds().put(relationship.getName(), value);
+
+				// record FK that is also a PK
+				DbRelationship dbRleationship = relationship.getDbRelationships().get(0).getReverseRelationship();
+				if (dbRleationship.isToDependentPK()) {
+					List<DbJoin> joins = dbRleationship.getJoins();
+					if (joins.size() != 1) {
+						throw new LinkRestException(Status.BAD_REQUEST,
+								"Multi-join relationship propagation is not supported yet: " + entity.getName());
+					}
+
+					update.getOrCreateId().put(joins.get(0).getTargetName(), value);
+				}
+
 				continue;
 			}
 

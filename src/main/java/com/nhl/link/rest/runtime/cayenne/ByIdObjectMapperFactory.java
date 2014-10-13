@@ -1,5 +1,8 @@
 package com.nhl.link.rest.runtime.cayenne;
 
+import java.util.Collection;
+import java.util.Iterator;
+
 import javax.ws.rs.core.Response.Status;
 
 import org.apache.cayenne.exp.parser.ASTDbPath;
@@ -36,8 +39,15 @@ public class ByIdObjectMapperFactory extends CayenneObjectMapperFactory {
 		}
 
 		// TODO: multi-column ids
-		ASTPath keyPath = new ASTDbPath(entity.getPrimaryKeyNames().iterator().next());
+		Collection<String> pks = entity.getPrimaryKeyNames();
 
-		return new ByIdObjectMapper<>(keyPath);
+		int len = pks.size();
+		ASTPath[] keyPaths = new ASTDbPath[len];
+		Iterator<String> it = pks.iterator();
+		for (int i = 0; i < len; i++) {
+			keyPaths[i] = new ASTDbPath(it.next());
+		}
+
+		return new ByIdObjectMapper<>(keyPaths);
 	}
 }
