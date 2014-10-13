@@ -36,13 +36,12 @@ abstract class BaseSyncStrategy<T> implements SyncStrategy<T> {
 	}
 
 	@Override
-	public List<T> sync() {
-		List<T> list = doSync();
+	public void sync() {
+		doSync();
 		response.getUpdateContext().commitChanges();
-		return list;
 	}
 
-	protected abstract List<T> doSync();
+	protected abstract void doSync();
 
 	protected T create(Collection<EntityUpdate> updates) {
 
@@ -103,6 +102,9 @@ abstract class BaseSyncStrategy<T> implements SyncStrategy<T> {
 			}
 		}
 
+		// record this for the benefit of the downstream code that may want to
+		// order the results, etc...
+		entityUpdate.setMergedTo(dataO);
 	}
 
 	private T doCreate(EntityUpdate u) {

@@ -22,13 +22,11 @@ class FullSyncStrategy<T> extends CreateOrUpdateStrategy<T> {
 	}
 
 	@Override
-	protected List<T> doSync() {
+	protected void doSync() {
 
 		Map<Object, Collection<EntityUpdate>> keyMap = mutableKeyMap();
 		List<T> allObjects = reader.allItems(response);
 
-		// can only guess the capacity of 'remainingObjects'..
-		List<T> remainingObjects = new ArrayList<>(allObjects.size());
 		List<DataObject> deletedObjects = new ArrayList<>();
 
 		for (T o : allObjects) {
@@ -40,7 +38,6 @@ class FullSyncStrategy<T> extends CreateOrUpdateStrategy<T> {
 				deletedObjects.add((DataObject) o);
 			} else {
 				update(updates, o);
-				remainingObjects.add(o);
 			}
 		}
 
@@ -50,7 +47,7 @@ class FullSyncStrategy<T> extends CreateOrUpdateStrategy<T> {
 
 		// check leftovers - those correspond to objects missing in the DB or
 		// objects with no keys
-		return afterUpdatesMerge(keyMap, remainingObjects);
+		afterUpdatesMerge(keyMap);
 	}
 
 }

@@ -14,6 +14,7 @@ public class EntityUpdate {
 	private Map<String, Object> relatedIds;
 	private Map<String, Object> id;
 	private boolean explicitId;
+	private Object mergedTo;
 
 	public EntityUpdate() {
 		this.values = new HashMap<>();
@@ -62,6 +63,24 @@ public class EntityUpdate {
 	 */
 	public boolean isExplicitId() {
 		return explicitId;
+	}
+
+	/**
+	 * Returns an object that was used to merge this update to.
+	 * 
+	 * @since 1.8
+	 */
+	public Object getMergedTo() {
+		return mergedTo;
+	}
+
+	/**
+	 * Sets an object that was used to merge this update to.
+	 * 
+	 * @since 1.8
+	 */
+	public void setMergedTo(Object mergedTo) {
+		this.mergedTo = mergedTo;
 	}
 
 }

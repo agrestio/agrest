@@ -1,7 +1,5 @@
 package com.nhl.link.rest.unit.pojo;
 
-import java.util.Collections;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -34,7 +32,7 @@ public class PojoUpdateBuilder<T> extends BaseUpdateBuilder<T> {
 	}
 
 	@Override
-	protected List<T> create(UpdateResponse<T> response) {
+	protected void create(UpdateResponse<T> response) {
 
 		T object;
 		try {
@@ -45,12 +43,10 @@ public class PojoUpdateBuilder<T> extends BaseUpdateBuilder<T> {
 
 		mergeChanges(response, object);
 		typeBucket.put(getId(response, object), object);
-
-		return Collections.singletonList(object);
 	}
 
 	@Override
-	protected List<T> update(UpdateResponse<T> response) {
+	protected void update(UpdateResponse<T> response) {
 		T object = typeBucket.get(response.getFirst().getId());
 
 		if (object == null) {
@@ -59,22 +55,21 @@ public class PojoUpdateBuilder<T> extends BaseUpdateBuilder<T> {
 		}
 
 		mergeChanges(response, object);
-		return Collections.singletonList(object);
 	}
 
 	@Override
-	protected List<T> createOrUpdate(UpdateResponse<T> response) {
+	protected void createOrUpdate(UpdateResponse<T> response) {
 		throw new UnsupportedOperationException("TODO");
 
 	}
 
 	@Override
-	protected List<T> idempotentCreateOrUpdate(UpdateResponse<T> response) {
+	protected void idempotentCreateOrUpdate(UpdateResponse<T> response) {
 		throw new UnsupportedOperationException("TODO");
 	}
 
 	@Override
-	protected List<T> idempotentFullSync(UpdateResponse<T> response) {
+	protected void idempotentFullSync(UpdateResponse<T> response) {
 		throw new UnsupportedOperationException("TODO");
 	}
 
@@ -89,5 +84,7 @@ public class PojoUpdateBuilder<T> extends BaseUpdateBuilder<T> {
 		for (Entry<String, Object> e : response.getFirst().getValues().entrySet()) {
 			PropertyUtils.setProperty(object, e.getKey(), e.getValue());
 		}
+
+		response.getFirst().setMergedTo(object);
 	}
 }

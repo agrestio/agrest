@@ -1,7 +1,5 @@
 package com.nhl.link.rest.runtime.cayenne;
 
-import java.util.List;
-
 import javax.ws.rs.core.Response.Status;
 
 import org.apache.cayenne.DataObject;
@@ -40,41 +38,41 @@ class CayenneUpdateBuilder<T> extends BaseUpdateBuilder<T> {
 	}
 
 	@Override
-	protected List<T> create(final UpdateResponse<T> response) {
+	protected void create(final UpdateResponse<T> response) {
 		ObjectRelator<T> relator = createRelator(response);
-		return new CreateStrategy<T>((CayenneUpdateResponse<T>) response, relator).sync();
+		new CreateStrategy<T>((CayenneUpdateResponse<T>) response, relator).sync();
 	}
 
 	@Override
-	protected List<T> update(UpdateResponse<T> response) {
+	protected void update(UpdateResponse<T> response) {
 		ResourceReader reader = new ResourceReader();
 		ObjectMapper<T> mapper = createObjectMapper(response);
 		ObjectRelator<T> relator = createRelator(response);
-		return new UpdateStrategy<>((CayenneUpdateResponse<T>) response, relator, reader, mapper).sync();
+		new UpdateStrategy<>((CayenneUpdateResponse<T>) response, relator, reader, mapper).sync();
 	}
 
 	@Override
-	protected List<T> createOrUpdate(final UpdateResponse<T> response) {
+	protected void createOrUpdate(final UpdateResponse<T> response) {
 		ResourceReader reader = new ResourceReader();
 		ObjectMapper<T> mapper = createObjectMapper(response);
 		ObjectRelator<T> relator = createRelator(response);
-		return new CreateOrUpdateStrategy<>((CayenneUpdateResponse<T>) response, relator, reader, mapper, false).sync();
+		new CreateOrUpdateStrategy<>((CayenneUpdateResponse<T>) response, relator, reader, mapper, false).sync();
 	}
 
 	@Override
-	protected List<T> idempotentCreateOrUpdate(final UpdateResponse<T> response) {
+	protected void idempotentCreateOrUpdate(final UpdateResponse<T> response) {
 		ResourceReader reader = new ResourceReader();
 		ObjectMapper<T> mapper = createObjectMapper(response);
 		ObjectRelator<T> relator = createRelator(response);
-		return new CreateOrUpdateStrategy<>((CayenneUpdateResponse<T>) response, relator, reader, mapper, true).sync();
+		new CreateOrUpdateStrategy<>((CayenneUpdateResponse<T>) response, relator, reader, mapper, true).sync();
 	}
 
 	@Override
-	protected List<T> idempotentFullSync(UpdateResponse<T> response) {
+	protected void idempotentFullSync(UpdateResponse<T> response) {
 		ResourceReader reader = new ResourceReader();
 		ObjectMapper<T> mapper = createObjectMapper(response);
 		ObjectRelator<T> relator = createRelator(response);
-		return new FullSyncStrategy<>((CayenneUpdateResponse<T>) response, relator, reader, mapper, true).sync();
+		new FullSyncStrategy<>((CayenneUpdateResponse<T>) response, relator, reader, mapper, true).sync();
 	}
 
 	protected ObjectMapper<T> createObjectMapper(UpdateResponse<T> response) {

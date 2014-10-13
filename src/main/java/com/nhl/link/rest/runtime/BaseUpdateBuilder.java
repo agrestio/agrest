@@ -1,11 +1,16 @@
 package com.nhl.link.rest.runtime;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriInfo;
 
+import org.apache.cayenne.ObjectId;
+import org.apache.cayenne.Persistent;
 import org.apache.cayenne.exp.Property;
 import org.apache.cayenne.map.DbRelationship;
 import org.apache.cayenne.map.ObjAttribute;
@@ -134,15 +139,20 @@ public abstract class BaseUpdateBuilder<T> implements UpdateBuilder<T> {
 
 		switch (operation) {
 		case create:
-			return withObjects(response, create(response), Status.CREATED);
+			create(response);
+			return withObjects(response, Status.CREATED);
 		case idempotentFullSync:
-			return withObjects(response, idempotentFullSync(response));
+			idempotentFullSync(response);
+			return withObjects(response);
 		case createOrUpdate:
-			return withObjects(response, createOrUpdate(response));
+			createOrUpdate(response);
+			return withObjects(response);
 		case idempotentCreateOrUpdate:
-			return withObjects(response, idempotentCreateOrUpdate(response));
+			idempotentCreateOrUpdate(response);
+			return withObjects(response);
 		case update:
-			return withObjects(response, update(response));
+			update(response);
+			return withObjects(response);
 		default:
 			throw new UnsupportedOperationException("Unsupported operation: " + operation);
 		}
@@ -211,13 +221,42 @@ public abstract class BaseUpdateBuilder<T> implements UpdateBuilder<T> {
 		}
 	}
 
-	protected UpdateResponse<T> withObjects(UpdateResponse<T> response, List<T> objects) {
-		return withObjects(response, objects, Status.OK);
+	protected UpdateResponse<T> withObjects(UpdateResponse<T> response) {
+		return withObjects(response, Status.OK);
 	}
 
-	protected UpdateResponse<T> withObjects(UpdateResponse<T> response, List<T> objects, Status status) {
-		return (UpdateResponse<T>) response.withObjects(objects).withEncoder(encoderService.makeEncoder(response))
-				.withStatus(status);
+	@SuppressWarnings("unchecked")
+	protected UpdateResponse<T> withObjects(UpdateResponse<T> response, Status status) {
+
+		// response objects are attached to EntityUpdate instances ... if
+		// 'includeData' is true create a list of unique updated objects in the
+		// order corresponding to their initial appearance in the update.
+		// We do not have to guarantee the order of objects in response (and
+		// only Sencha seems to care - see #46), but there's not much overhead
+		// involved, so we are doing it for all clients, not just Sencha
+
+		if (includeData) {
+
+			// if there are dupes, the list size will be smaller... sizing it
+			// pessimistically
+			List<T> objects = new ArrayList<>(response.getUpdates().size());
+
+			// 'seen' is for a less common case of multiple updates per object
+			// in a request
+			Set<ObjectId> seen = new HashSet<>();
+
+			for (EntityUpdate u : response.getUpdates()) {
+
+				Persistent o = (Persistent) u.getMergedTo();
+				if (o != null && seen.add(o.getObjectId())) {
+					objects.add((T) o);
+				}
+			}
+
+			response = (UpdateResponse<T>) response.withObjects(objects);
+		}
+
+		return (UpdateResponse<T>) response.withEncoder(encoderService.makeEncoder(response)).withStatus(status);
 	}
 
 	@Override
@@ -232,14 +271,14 @@ public abstract class BaseUpdateBuilder<T> implements UpdateBuilder<T> {
 		return this;
 	}
 
-	protected abstract List<T> create(UpdateResponse<T> response);
+	protected abstract void create(UpdateResponse<T> response);
 
-	protected abstract List<T> createOrUpdate(UpdateResponse<T> response);
+	protected abstract void createOrUpdate(UpdateResponse<T> response);
 
-	protected abstract List<T> idempotentCreateOrUpdate(UpdateResponse<T> response);
+	protected abstract void idempotentCreateOrUpdate(UpdateResponse<T> response);
 
-	protected abstract List<T> idempotentFullSync(UpdateResponse<T> response);
+	protected abstract void idempotentFullSync(UpdateResponse<T> response);
 
-	protected abstract List<T> update(UpdateResponse<T> response);
+	protected abstract void update(UpdateResponse<T> response);
 
 }

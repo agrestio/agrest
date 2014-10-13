@@ -1,9 +1,7 @@
 package com.nhl.link.rest.runtime.cayenne;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -28,19 +26,11 @@ class CreateOrUpdateStrategy<T> extends UpdateStrategy<T> {
 	}
 
 	@Override
-	protected List<T> afterUpdatesMerge(Map<Object, Collection<EntityUpdate>> keyMap, List<T> result) {
+	protected void afterUpdatesMerge(Map<Object, Collection<EntityUpdate>> keyMap) {
 
 		if (keyMap.isEmpty()) {
-			return result;
+			return;
 		}
-
-		// must clone result, the original came from Cayenne and can be cached,
-		// or can be an immutable list, etc.
-
-		// initial capacity is just a guess.. each 'keyMap' entry may resolve to
-		// multiple objects
-		List<T> amendedResult = new ArrayList<>(result.size() + keyMap.size());
-		amendedResult.addAll(result);
 
 		for (Entry<Object, Collection<EntityUpdate>> e : keyMap.entrySet()) {
 
@@ -54,14 +44,11 @@ class CreateOrUpdateStrategy<T> extends UpdateStrategy<T> {
 				}
 
 				for (EntityUpdate u : e.getValue()) {
-					amendedResult.add(create(Collections.singletonList(u)));
+					create(Collections.singletonList(u));
 				}
 			} else {
-				T o = create(e.getValue());
-				amendedResult.add(o);
+				create(e.getValue());
 			}
 		}
-
-		return amendedResult;
 	}
 }

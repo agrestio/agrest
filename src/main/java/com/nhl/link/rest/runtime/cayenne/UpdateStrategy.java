@@ -31,7 +31,7 @@ class UpdateStrategy<T> extends BaseSyncStrategy<T> {
 	}
 
 	@Override
-	protected List<T> doSync() {
+	protected void doSync() {
 
 		Map<Object, Collection<EntityUpdate>> keyMap = mutableKeyMap();
 		List<T> objectsToUpdate = reader.itemsForKeys(response, keyMap.keySet(), mapper);
@@ -51,10 +51,10 @@ class UpdateStrategy<T> extends BaseSyncStrategy<T> {
 
 		// check leftovers - those correspond to objects missing in the DB or
 		// objects with no keys
-		return afterUpdatesMerge(keyMap, objectsToUpdate);
+		afterUpdatesMerge(keyMap);
 	}
 
-	protected List<T> afterUpdatesMerge(Map<Object, Collection<EntityUpdate>> keyMap, List<T> result) {
+	protected void afterUpdatesMerge(Map<Object, Collection<EntityUpdate>> keyMap) {
 		if (!keyMap.isEmpty()) {
 			Object firstKey = keyMap.keySet().iterator().next();
 
@@ -66,8 +66,6 @@ class UpdateStrategy<T> extends BaseSyncStrategy<T> {
 			throw new LinkRestException(Status.NOT_FOUND, "No object for ID '" + firstKey + "' and entity '"
 					+ entity.getName() + "'");
 		}
-		
-		return result;
 	}
 
 	protected Map<Object, Collection<EntityUpdate>> mutableKeyMap() {
