@@ -34,7 +34,7 @@ class CreateOrUpdateStrategy<T> extends UpdateStrategy<T> {
 			return result;
 		}
 
-		// must clone result, tne original came from Cayenne and can be cached,
+		// must clone result, the original came from Cayenne and can be cached,
 		// or can be an immutable list, etc.
 
 		// initial capacity is just a guess.. each 'keyMap' entry may resolve to

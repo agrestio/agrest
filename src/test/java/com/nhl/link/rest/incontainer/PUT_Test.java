@@ -126,4 +126,31 @@ public class PUT_Test extends JerseyTestOnDerby {
 		runtime.newContext().invalidateObjects(e3);
 		assertEquals(8, Cayenne.intPKForObject(e3.getE2()));
 	}
+
+	@Test
+	public void testPUT_Bulk() throws WebApplicationException, IOException {
+
+		runtime.newContext().performGenericQuery(
+				new SQLTemplate(E3.class, "INSERT INTO utest.e3 (id, name) values (5, 'aaa')"));
+		runtime.newContext().performGenericQuery(
+				new SQLTemplate(E3.class, "INSERT INTO utest.e3 (id, name) values (4, 'zzz')"));
+		runtime.newContext().performGenericQuery(
+				new SQLTemplate(E3.class, "INSERT INTO utest.e3 (id, name) values (2, 'bbb')"));
+		runtime.newContext().performGenericQuery(
+				new SQLTemplate(E3.class, "INSERT INTO utest.e3 (id, name) values (6, 'yyy')"));
+
+		Response r2 = target("/e3/")
+				.queryParam("exclude", "id")
+				.queryParam("include", E3.NAME.getName())
+				.request()
+				.put(Entity
+						.entity("[{\"id\":6,\"name\":\"yyy\"},{\"id\":4,\"name\":\"zzz\"},{\"id\":5,\"name\":\"111\"},{\"id\":2,\"name\":\"333\"}]",
+								MediaType.APPLICATION_JSON));
+		assertEquals(Status.OK.getStatusCode(), r2.getStatus());
+
+		// update: ordering must be preserved...
+		assertEquals(
+				"{\"success\":true,\"data\":[{\"name\":\"yyy\"},{\"name\":\"zzz\"},{\"name\":\"111\"},{\"name\":\"333\"}],\"total\":4}",
+				r2.readEntity(String.class));
+	}
 }

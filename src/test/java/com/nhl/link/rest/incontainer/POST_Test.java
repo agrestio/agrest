@@ -247,4 +247,21 @@ public class POST_Test extends JerseyTestOnDerby {
 
 		assertEquals(0, context.select(new SelectQuery<E3>(E3.class)).size());
 	}
+
+	@Test
+	public void testPost_Bulk() throws WebApplicationException, IOException {
+
+		Response r2 = target("/e3/")
+				.queryParam("exclude", "id")
+				.queryParam("include", E3.NAME.getName())
+				.request()
+				.post(Entity.entity("[{\"name\":\"aaa\"},{\"name\":\"zzz\"},{\"name\":\"bbb\"},{\"name\":\"yyy\"}]",
+						MediaType.APPLICATION_JSON));
+		assertEquals(Status.CREATED.getStatusCode(), r2.getStatus());
+
+		// ordering must be preserved...
+		assertEquals(
+				"{\"success\":true,\"data\":[{\"name\":\"aaa\"},{\"name\":\"zzz\"},{\"name\":\"bbb\"},{\"name\":\"yyy\"}],\"total\":4}",
+				r2.readEntity(String.class));
+	}
 }

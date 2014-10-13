@@ -27,8 +27,13 @@ public class E3Resource extends LrResource {
 	}
 
 	@POST
-	public DataResponse<E3> create(String requestBody) {
-		return getService().create(E3.class).includeData().process(requestBody);
+	public DataResponse<E3> create(@Context UriInfo uriInfo, String requestBody) {
+		return getService().create(E3.class).with(uriInfo).includeData().process(requestBody);
+	}
+	
+	@PUT
+	public DataResponse<E3> sync(@Context UriInfo uriInfo, String requestBody) {
+		return getService().idempotentFullSync(E3.class).with(uriInfo).includeData().process(requestBody);
 	}
 
 	@GET
