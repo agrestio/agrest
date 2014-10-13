@@ -14,8 +14,11 @@ import org.apache.cayenne.query.SQLTemplate;
 import org.junit.Test;
 
 import com.nhl.link.rest.unit.JerseyTestOnDerby;
+import com.nhl.link.rest.unit.cayenne.E12;
+import com.nhl.link.rest.unit.cayenne.E12E13;
 import com.nhl.link.rest.unit.cayenne.E2;
 import com.nhl.link.rest.unit.cayenne.E3;
+import com.nhl.link.rest.unit.resource.E12Resource;
 import com.nhl.link.rest.unit.resource.E2Resource;
 import com.nhl.link.rest.unit.resource.E3Resource;
 import com.nhl.link.rest.unit.resource.E7Resource;
@@ -29,6 +32,7 @@ public class PUT_Related_Test extends JerseyTestOnDerby {
 		context.register(E3Resource.class);
 		context.register(E7Resource.class);
 		context.register(E8Resource.class);
+		context.register(E12Resource.class);
 	}
 
 	@Test
@@ -269,5 +273,62 @@ public class PUT_Related_Test extends JerseyTestOnDerby {
 		assertEquals(3, SQLSelect.scalarQuery(String.class, "SELECT count(1) FROM utest.e3").selectOne(context));
 		assertEquals(2, SQLSelect.scalarQuery(String.class, "SELECT count(1) FROM utest.e3 WHERE e2_id = 15")
 				.selectOne(context));
+	}
+
+	@Test
+	public void testPUT_ToMany_Join() {
+
+		context.performGenericQuery(new SQLTemplate(E12.class, "INSERT INTO utest.e12 (id) values (11)"));
+		context.performGenericQuery(new SQLTemplate(E12.class, "INSERT INTO utest.e12 (id) values (12)"));
+
+		context.performGenericQuery(new SQLTemplate(E12.class, "INSERT INTO utest.e13 (id) values (14)"));
+		context.performGenericQuery(new SQLTemplate(E12.class, "INSERT INTO utest.e13 (id) values (15)"));
+		context.performGenericQuery(new SQLTemplate(E12.class, "INSERT INTO utest.e13 (id) values (16)"));
+
+		Response r1 = target("/e12/12/e1213").queryParam("exclude", "id").request()
+				.put(Entity.entity("[{\"e13\":15},{\"e13\":14}]", MediaType.APPLICATION_JSON));
+
+		assertEquals(Status.OK.getStatusCode(), r1.getStatus());
+		assertEquals("{\"success\":true,\"data\":[{},{}],\"total\":2}", r1.readEntity(String.class));
+
+		assertEquals(2, SQLSelect.scalarQuery(E12E13.class, "SELECT count(1) FROM utest.e12_e13").selectOne(context));
+		assertEquals(1, SQLSelect.scalarQuery(E12E13.class,
+				"SELECT count(1) FROM utest.e12_e13 " + "WHERE e12_id = 12 AND e13_id = 14").selectOne(context));
+		assertEquals(1, SQLSelect.scalarQuery(E12E13.class,
+				"SELECT count(1) FROM utest.e12_e13 " + "WHERE e12_id = 12 AND e13_id = 15").selectOne(context));
+
+		// testing idempotency
+		Response r2 = target("/e12/12/e1213").queryParam("exclude", "id").request()
+				.put(Entity.entity("[{\"e13\":15},{\"e13\":14}]", MediaType.APPLICATION_JSON));
+
+		assertEquals(Status.OK.getStatusCode(), r2.getStatus());
+		assertEquals("{\"success\":true,\"data\":[{},{}],\"total\":2}", r2.readEntity(String.class));
+
+		assertEquals(2, SQLSelect.scalarQuery(E12E13.class, "SELECT count(1) FROM utest.e12_e13").selectOne(context));
+		assertEquals(
+				1,
+				SQLSelect.scalarQuery(E12E13.class,
+						"SELECT count(1) FROM utest.e12_e13 WHERE e12_id = 12 AND e13_id = 14").selectOne(context));
+		assertEquals(
+				1,
+				SQLSelect.scalarQuery(E12E13.class,
+						"SELECT count(1) FROM utest.e12_e13 WHERE e12_id = 12 AND e13_id = 15").selectOne(context));
+
+		// add one and delete another record
+		Response r3 = target("/e12/12/e1213").queryParam("exclude", "id").request()
+				.put(Entity.entity("[{\"e13\":16},{\"e13\":14}]", MediaType.APPLICATION_JSON));
+
+		assertEquals(Status.OK.getStatusCode(), r3.getStatus());
+		assertEquals("{\"success\":true,\"data\":[{},{}],\"total\":2}", r3.readEntity(String.class));
+
+		assertEquals(2, SQLSelect.scalarQuery(E12E13.class, "SELECT count(1) FROM utest.e12_e13").selectOne(context));
+		assertEquals(
+				1,
+				SQLSelect.scalarQuery(E12E13.class,
+						"SELECT count(1) FROM utest.e12_e13 WHERE e12_id = 12 AND e13_id = 14").selectOne(context));
+		assertEquals(
+				1,
+				SQLSelect.scalarQuery(E12E13.class,
+						"SELECT count(1) FROM utest.e12_e13 WHERE e12_id = 12 AND e13_id = 16").selectOne(context));
 	}
 }

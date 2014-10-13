@@ -2,6 +2,7 @@ package com.nhl.link.rest.unit.resource;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Context;
@@ -25,5 +26,12 @@ public class E12Resource extends LrResource {
 	public DataResponse<E12E13> create_Joins(@PathParam("id") int id, @Context UriInfo info, String entityData) {
 		return getService().create(E12E13.class).toManyParent(E12.class, id, E12.E1213).with(info).includeData()
 				.process(entityData);
+	}
+
+	@PUT
+	@Path("{id}/e1213")
+	public DataResponse<E12E13> fullSync_Joins(@PathParam("id") int id, @Context UriInfo info, String entityData) {
+		return getService().idempotentFullSync(E12E13.class).toManyParent(E12.class, id, E12.E1213).with(info)
+				.includeData().process(entityData);
 	}
 }
