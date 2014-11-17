@@ -1,13 +1,11 @@
 package com.nhl.link.rest.runtime.parser.filter;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
-import javax.ws.rs.core.Response.Status;
-
+import com.fasterxml.jackson.core.JsonToken;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.nhl.link.rest.LinkRestException;
+import com.nhl.link.rest.runtime.parser.cache.IPathCache;
+import com.nhl.link.rest.runtime.parser.cache.PathDescriptor;
+import com.nhl.link.rest.runtime.parser.converter.ValueConverter;
 import org.apache.cayenne.exp.Expression;
 import org.apache.cayenne.exp.TraversalHandler;
 import org.apache.cayenne.exp.TraversalHelper;
@@ -18,18 +16,18 @@ import org.apache.cayenne.exp.parser.ConditionNode;
 import org.apache.cayenne.exp.parser.SimpleNode;
 import org.apache.cayenne.map.ObjEntity;
 
-import com.fasterxml.jackson.core.JsonToken;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.nhl.link.rest.LinkRestException;
-import com.nhl.link.rest.runtime.parser.cache.IPathCache;
-import com.nhl.link.rest.runtime.parser.cache.PathDescriptor;
-import com.nhl.link.rest.runtime.parser.converter.ValueConverter;
+import javax.ws.rs.core.Response.Status;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 class CayenneExpProcessorWorker {
 
 	private static final String EXP = "exp";
 	private static final String PARAMS = "params";
-	private static final int MAX_EXP_LENGTH = 1024;
+	private static final int MAX_EXP_LENGTH = 10240;
 
 	private JsonNode expNode;
 	private JsonNode paramsNode;
@@ -201,7 +199,7 @@ class CayenneExpProcessorWorker {
 
 	private static void checkExpressionLength(String exp) {
 		if (exp.length() > MAX_EXP_LENGTH) {
-			throw new LinkRestException(Status.BAD_REQUEST, "cayenneExp.exp is to long: " + exp);
+			throw new LinkRestException(Status.BAD_REQUEST, "cayenneExp.exp is too long: " + exp);
 		}
 	}
 
