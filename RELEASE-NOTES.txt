@@ -1,6 +1,6 @@
 Release 1.9
 
-#52 Increase limit for 'cayenneExp' string length
+#52 Removing hard size limit for 'cayenneExp'
 
 Release 1.8
 
