@@ -138,8 +138,6 @@ class IncludeWorker {
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	private Entity<?> processIncludePath(Entity<?> parent, String path) {
 
-		ExcludeWorker.checkTooLong(path);
-
 		int dot = path.indexOf(PathConstants.DOT);
 
 		if (dot == 0) {

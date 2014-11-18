@@ -21,15 +21,6 @@ class ExcludeWorker {
 		this.jsonParser = jsonParser;
 	}
 
-	/**
-	 * Sanity check. We don't want to get a stack overflow.
-	 */
-	static void checkTooLong(String path) {
-		if (path != null && path.length() > PathConstants.MAX_PATH_LENGTH) {
-			throw new LinkRestException(Status.BAD_REQUEST, "Include/exclude path too long: " + path);
-		}
-	}
-
 	void process(Entity<?> clientEntity, List<String> excludes) {
 		for (String exclude : excludes) {
 			if (exclude.startsWith("[")) {
@@ -57,7 +48,6 @@ class ExcludeWorker {
 
 	void processExcludePath(Entity<?> clientEntity, String path) {
 
-		checkTooLong(path);
 		int dot = path.indexOf(PathConstants.DOT);
 
 		if (dot == 0) {

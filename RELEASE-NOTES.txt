@@ -1,3 +1,7 @@
+Release 1.9
+
+#52 Increase limit for 'cayenneExp' string length
+
 Release 1.8
 
 #43 upgrade to Jersey 2.12, jackson 2.4.2

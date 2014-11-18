@@ -29,17 +29,17 @@ class CayenneExpProcessorWorker {
 
 	private static final String EXP = "exp";
 	private static final String PARAMS = "params";
-	private static final int MAX_EXP_LENGTH = 1024;
 
 	private JsonNode expNode;
 	private JsonNode paramsNode;
-	
+
 	private IPathCache pathCache;
 	private ObjEntity entity;
 	private Map<String, ValueConverter> converters;
 	private TraversalHandler expressionPostProcessor;
 
-	CayenneExpProcessorWorker(JsonNode rootNode, Map<String, ValueConverter> converters, IPathCache pathCache, ObjEntity entity) {
+	CayenneExpProcessorWorker(JsonNode rootNode, Map<String, ValueConverter> converters, IPathCache pathCache,
+			ObjEntity entity) {
 
 		this.expNode = rootNode.get(EXP);
 		this.paramsNode = rootNode.get(PARAMS);
@@ -55,9 +55,6 @@ class CayenneExpProcessorWorker {
 		}
 
 		String expString = expNode.asText();
-
-		// sanity check before parsing...
-		checkExpressionLength(expString);
 
 		Expression exp = Expression.fromString(expString);
 		return validateAndBindParams(exp);
@@ -199,12 +196,6 @@ class CayenneExpProcessorWorker {
 		return values;
 	}
 
-	private static void checkExpressionLength(String exp) {
-		if (exp.length() > MAX_EXP_LENGTH) {
-			throw new LinkRestException(Status.BAD_REQUEST, "cayenneExp.exp is to long: " + exp);
-		}
-	}
-
 	private static class DeferredConvertionWrapper {
 		private String value;
 
@@ -230,7 +221,7 @@ class CayenneExpProcessorWorker {
 
 			Object childNode = parentNode.getOperand(childIndex);
 			if (childNode instanceof ASTObjPath) {
-				
+
 				// validate and replace if needed ... note that we can only
 				// replace non-root nodes during the traversal. Root node is
 				// validated and replaced explicitly by the caller.
