@@ -1,10 +1,10 @@
 package com.nhl.link.rest.runtime.parser.filter;
 
+import static org.apache.cayenne.exp.ExpressionFactory.exp;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
-import java.util.Collections;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.TimeZone;
@@ -43,8 +43,7 @@ public class CayenneExpProcessorTest extends TestWithCayenneMapping {
 		processor.process(e4Descriptor, "{\"exp\" : \"cInt = 12345 and cVarchar = 'John Smith' and cBoolean = true\"}");
 
 		assertNotNull(e4Descriptor.getQualifier());
-		assertEquals(Expression.fromString("cInt = 12345 and cVarchar = 'John Smith' and cBoolean = true"),
-				e4Descriptor.getQualifier());
+		assertEquals(exp("cInt = 12345 and cVarchar = 'John Smith' and cBoolean = true"), e4Descriptor.getQualifier());
 	}
 
 	@Test
@@ -54,7 +53,7 @@ public class CayenneExpProcessorTest extends TestWithCayenneMapping {
 		processor.process(e4Descriptor, "{\"exp\" : \"cVarchar=$s\", \"params\":{\"s\":\"x\"}}");
 
 		assertNotNull(e4Descriptor.getQualifier());
-		assertEquals(Expression.fromString("cVarchar='x'"), e4Descriptor.getQualifier());
+		assertEquals(exp("cVarchar='x'"), e4Descriptor.getQualifier());
 	}
 
 	@Test
@@ -64,7 +63,7 @@ public class CayenneExpProcessorTest extends TestWithCayenneMapping {
 		processor.process(e4Descriptor, "{\"exp\" : \"cInt=$n\", \"params\":{\"n\":453}}");
 
 		assertNotNull(e4Descriptor.getQualifier());
-		assertEquals(Expression.fromString("cInt=453"), e4Descriptor.getQualifier());
+		assertEquals(exp("cInt=453"), e4Descriptor.getQualifier());
 	}
 
 	@Test
@@ -74,7 +73,7 @@ public class CayenneExpProcessorTest extends TestWithCayenneMapping {
 		processor.process(e4Descriptor, "{\"exp\" : \"cDecimal=$n\", \"params\":{\"n\":4.4009}}");
 
 		assertNotNull(e4Descriptor.getQualifier());
-		assertEquals(Expression.fromString("cDecimal=4.4009"), e4Descriptor.getQualifier());
+		assertEquals(exp("cDecimal=4.4009"), e4Descriptor.getQualifier());
 	}
 
 	@Test
@@ -98,7 +97,7 @@ public class CayenneExpProcessorTest extends TestWithCayenneMapping {
 		processor.process(e4Descriptor, "{\"exp\" : \"cBoolean=$b\", \"params\":{\"b\": true}}");
 
 		assertNotNull(e4Descriptor.getQualifier());
-		assertEquals(Expression.fromString("cBoolean=true"), e4Descriptor.getQualifier());
+		assertEquals(exp("cBoolean=true"), e4Descriptor.getQualifier());
 	}
 
 	@Test
@@ -108,7 +107,7 @@ public class CayenneExpProcessorTest extends TestWithCayenneMapping {
 		processor.process(e4Descriptor, "{\"exp\" : \"cBoolean=$b\", \"params\":{\"b\": false}}");
 
 		assertNotNull(e4Descriptor.getQualifier());
-		assertEquals(Expression.fromString("cBoolean=false"), e4Descriptor.getQualifier());
+		assertEquals(exp("cBoolean=false"), e4Descriptor.getQualifier());
 	}
 
 	@Test(expected = LinkRestException.class)
@@ -125,7 +124,7 @@ public class CayenneExpProcessorTest extends TestWithCayenneMapping {
 		processor.process(e4Descriptor, "{\"exp\" : \"cBoolean=$b\", \"params\":{\"b\": null}}");
 
 		assertNotNull(e4Descriptor.getQualifier());
-		assertEquals(Expression.fromString("cBoolean=null"), e4Descriptor.getQualifier());
+		assertEquals(exp("cBoolean=null"), e4Descriptor.getQualifier());
 	}
 
 	@Test(expected = LinkRestException.class)
@@ -145,8 +144,7 @@ public class CayenneExpProcessorTest extends TestWithCayenneMapping {
 		cal.setTimeZone(TimeZone.getDefault());
 		Date date = cal.getTime();
 
-		Expression expected = Expression.fromString("cTimestamp=$d").expWithParameters(
-				Collections.singletonMap("d", date));
+		Expression expected = exp("cTimestamp=$d", date);
 		assertEquals(expected, e4Descriptor.getQualifier());
 	}
 
@@ -162,8 +160,7 @@ public class CayenneExpProcessorTest extends TestWithCayenneMapping {
 		cal.setTimeZone(TimeZone.getTimeZone("America/Los_Angeles"));
 		Date date = cal.getTime();
 
-		Expression expected = Expression.fromString("cTimestamp=$d").expWithParameters(
-				Collections.singletonMap("d", date));
+		Expression expected = exp("cTimestamp=$d", date);
 		assertEquals(expected, e4Descriptor.getQualifier());
 	}
 
@@ -179,8 +176,7 @@ public class CayenneExpProcessorTest extends TestWithCayenneMapping {
 		cal.setTimeZone(TimeZone.getDefault());
 		Date date = cal.getTime();
 
-		Expression expected = Expression.fromString("cTimestamp=$d").expWithParameters(
-				Collections.singletonMap("d", date));
+		Expression expected = exp("cTimestamp=$d", date);
 		assertEquals(expected, e4Descriptor.getQualifier());
 	}
 
@@ -196,8 +192,7 @@ public class CayenneExpProcessorTest extends TestWithCayenneMapping {
 		cal.setTimeZone(TimeZone.getTimeZone("America/Los_Angeles"));
 		Date date = cal.getTime();
 
-		Expression expected = Expression.fromString("cTimestamp=$d").expWithParameters(
-				Collections.singletonMap("d", date));
+		Expression expected = exp("cTimestamp=$d", date);
 		assertEquals(expected, e4Descriptor.getQualifier());
 	}
 
@@ -213,7 +208,7 @@ public class CayenneExpProcessorTest extends TestWithCayenneMapping {
 
 		assertNull(e4Descriptor.getQualifier());
 		processor.process(e4Descriptor, "{\"exp\" : \"id=$i\", \"params\":{\"i\": 5}}");
-		Expression expected = Expression.fromString("db:id=$i").expWithParameters(Collections.singletonMap("i", 5));
+		Expression expected = exp("db:id=$i", 5);
 		assertEquals(expected, e4Descriptor.getQualifier());
 	}
 }

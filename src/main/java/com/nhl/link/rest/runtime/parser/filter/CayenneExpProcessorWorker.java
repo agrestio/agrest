@@ -9,6 +9,7 @@ import java.util.Map;
 import javax.ws.rs.core.Response.Status;
 
 import org.apache.cayenne.exp.Expression;
+import org.apache.cayenne.exp.ExpressionFactory;
 import org.apache.cayenne.exp.TraversalHandler;
 import org.apache.cayenne.exp.TraversalHelper;
 import org.apache.cayenne.exp.parser.ASTDbPath;
@@ -56,7 +57,7 @@ class CayenneExpProcessorWorker {
 
 		String expString = expNode.asText();
 
-		Expression exp = Expression.fromString(expString);
+		Expression exp = ExpressionFactory.exp(expString);
 		return validateAndBindParams(exp);
 	}
 
@@ -73,7 +74,7 @@ class CayenneExpProcessorWorker {
 				parsedParams.put(key, value);
 			}
 
-			exp = exp.expWithParameters(parsedParams);
+			exp = exp.params(parsedParams);
 		}
 
 		// change expression in-place
