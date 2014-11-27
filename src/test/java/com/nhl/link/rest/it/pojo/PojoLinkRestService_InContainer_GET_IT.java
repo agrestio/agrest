@@ -1,4 +1,4 @@
-package com.nhl.link.rest.pojo;
+package com.nhl.link.rest.it.pojo;
 
 import static org.junit.Assert.assertEquals;
 
@@ -13,7 +13,7 @@ import org.junit.Test;
 import com.nhl.link.rest.unit.pojo.JerseyTestOnPojo;
 import com.nhl.link.rest.unit.pojo.model.P6;
 
-public class PojoLinkRestService_InContainer_GET_Test extends JerseyTestOnPojo {
+public class PojoLinkRestService_InContainer_GET_IT extends JerseyTestOnPojo {
 
 	@Test
 	public void test_SelectById() throws WebApplicationException, IOException {
