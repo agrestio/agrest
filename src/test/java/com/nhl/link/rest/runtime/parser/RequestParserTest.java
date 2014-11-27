@@ -1,5 +1,6 @@
 package com.nhl.link.rest.runtime.parser;
 
+import static org.apache.cayenne.exp.ExpressionFactory.exp;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -15,7 +16,6 @@ import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.UriInfo;
 
 import org.apache.cayenne.ObjectContext;
-import org.apache.cayenne.exp.Expression;
 import org.apache.cayenne.map.DataMap;
 import org.apache.cayenne.query.Ordering;
 import org.apache.cayenne.query.SortOrder;
@@ -541,7 +541,7 @@ public class RequestParserTest extends TestWithCayenneMapping {
 		parser.parseSelect(dataRequest, urlInfo, null);
 
 		assertNotNull(dataRequest.getEntity().getQualifier());
-		assertEquals(Expression.fromString("name = 'John Smith'"), dataRequest.getEntity().getQualifier());
+		assertEquals(exp("name = 'John Smith'"), dataRequest.getEntity().getQualifier());
 	}
 
 	@Test
@@ -557,7 +557,7 @@ public class RequestParserTest extends TestWithCayenneMapping {
 		DataResponse<E2> dataRequest = DataResponse.forType(E2.class);
 		parser.parseSelect(dataRequest, urlInfo, E2.NAME.getName());
 		assertNotNull(dataRequest.getEntity().getQualifier());
-		assertEquals(Expression.fromString("name likeIgnoreCase 'Bla%'"), dataRequest.getEntity().getQualifier());
+		assertEquals(exp("name likeIgnoreCase 'Bla%'"), dataRequest.getEntity().getQualifier());
 	}
 
 	@Test(expected = LinkRestException.class)
