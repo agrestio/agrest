@@ -13,6 +13,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.nhl.link.rest.Entity;
 import com.nhl.link.rest.LinkRestException;
 import com.nhl.link.rest.runtime.jackson.IJacksonService;
+import com.nhl.link.rest.runtime.meta.IMetadataService;
 import com.nhl.link.rest.runtime.parser.PathConstants;
 import com.nhl.link.rest.runtime.parser.filter.IFilterProcessor;
 import com.nhl.link.rest.runtime.parser.sort.ISortProcessor;
@@ -29,11 +30,14 @@ class IncludeWorker {
 	private IJacksonService jsonParser;
 	private ISortProcessor sortProcessor;
 	private IFilterProcessor expProcessor;
+	private IMetadataService metadataService;
 
-	IncludeWorker(IJacksonService jsonParser, ISortProcessor sortProcessor, IFilterProcessor expProcessor) {
+	IncludeWorker(IJacksonService jsonParser, ISortProcessor sortProcessor, IFilterProcessor expProcessor,
+			IMetadataService metadataService) {
 		this.jsonParser = jsonParser;
 		this.sortProcessor = sortProcessor;
 		this.expProcessor = expProcessor;
+		this.metadataService = metadataService;
 	}
 
 	void process(Entity<?> clientEntity, List<String> includes) {
@@ -169,7 +173,7 @@ class IncludeWorker {
 			if (childEntity == null) {
 				// TODO: use ClassDescriptors to figure out the type of related
 				// entity..
-				childEntity = new Entity(relationship.getTargetEntity().getJavaClass(), relationship);
+				childEntity = new Entity(metadataService.getType(relationship.getTargetEntityName()), relationship);
 				parent.getChildren().put(property, childEntity);
 			}
 

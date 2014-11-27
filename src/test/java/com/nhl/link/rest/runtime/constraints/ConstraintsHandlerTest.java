@@ -7,12 +7,15 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.util.Collections;
 import java.util.List;
 
 import org.apache.cayenne.exp.Expression;
 import org.apache.cayenne.map.DataMap;
+import org.apache.cayenne.map.EntityResolver;
 import org.apache.cayenne.map.ObjEntity;
 import org.apache.cayenne.map.ObjRelationship;
 import org.junit.Before;
@@ -23,8 +26,12 @@ import com.nhl.link.rest.Entity;
 import com.nhl.link.rest.EntityConstraint;
 import com.nhl.link.rest.SizeConstraints;
 import com.nhl.link.rest.TreeConstraints;
+import com.nhl.link.rest.runtime.cayenne.ICayennePersister;
+import com.nhl.link.rest.runtime.meta.IMetadataService;
+import com.nhl.link.rest.runtime.meta.MetadataService;
+import com.nhl.link.rest.unit.TestWithCayenneMapping;
 
-public class ConstraintsHandlerTest {
+public class ConstraintsHandlerTest extends TestWithCayenneMapping {
 
 	private ConstraintsHandler constraintHandler;
 	private ObjEntity e0;
@@ -35,9 +42,14 @@ public class ConstraintsHandlerTest {
 	@Before
 	public void before() {
 
+		EntityResolver resolver = runtime.getChannel().getEntityResolver();
+		ICayennePersister cayenneService = mock(ICayennePersister.class);
+		when(cayenneService.entityResolver()).thenReturn(resolver);
+		IMetadataService metadataService = new MetadataService(Collections.<DataMap> emptyList(), cayenneService);
+
 		List<EntityConstraint> r = Collections.emptyList();
 		List<EntityConstraint> w = Collections.emptyList();
-		this.constraintHandler = new ConstraintsHandler(r, w);
+		this.constraintHandler = new ConstraintsHandler(r, w, metadataService);
 
 		DataMap dm = new DataMap();
 

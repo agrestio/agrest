@@ -2,11 +2,15 @@ package com.nhl.link.rest.runtime.constraints;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.apache.cayenne.map.DataMap;
+import org.apache.cayenne.map.EntityResolver;
 import org.apache.cayenne.map.ObjEntity;
 import org.junit.Before;
 import org.junit.Test;
@@ -15,6 +19,9 @@ import com.nhl.link.rest.DataResponse;
 import com.nhl.link.rest.Entity;
 import com.nhl.link.rest.EntityConstraint;
 import com.nhl.link.rest.TreeConstraints;
+import com.nhl.link.rest.runtime.cayenne.ICayennePersister;
+import com.nhl.link.rest.runtime.meta.IMetadataService;
+import com.nhl.link.rest.runtime.meta.MetadataService;
 import com.nhl.link.rest.unit.TestWithCayenneMapping;
 import com.nhl.link.rest.unit.cayenne.E1;
 import com.nhl.link.rest.unit.cayenne.E2;
@@ -28,6 +35,11 @@ public class ConstraintsHandlerWithDefaultsTest extends TestWithCayenneMapping {
 	@Before
 	public void before() {
 
+		EntityResolver resolver = runtime.getChannel().getEntityResolver();
+		ICayennePersister cayenneService = mock(ICayennePersister.class);
+		when(cayenneService.entityResolver()).thenReturn(resolver);
+		IMetadataService metadataService = new MetadataService(Collections.<DataMap> emptyList(), cayenneService);
+
 		List<EntityConstraint> r = new ArrayList<>();
 		r.add(new DefaultEntityConstraint("E1", true, false, Collections.singleton(E1.AGE.getName()), Collections
 				.<String> emptySet()));
@@ -36,7 +48,7 @@ public class ConstraintsHandlerWithDefaultsTest extends TestWithCayenneMapping {
 		w.add(new DefaultEntityConstraint("E2", false, false, Collections.singleton(E2.ADDRESS.getName()), Collections
 				.<String> emptySet()));
 
-		this.constraintHandler = new ConstraintsHandler(r, w);
+		this.constraintHandler = new ConstraintsHandler(r, w, metadataService);
 
 		e1 = runtime.getChannel().getEntityResolver().getObjEntity(E1.class);
 		e2 = runtime.getChannel().getEntityResolver().getObjEntity(E2.class);

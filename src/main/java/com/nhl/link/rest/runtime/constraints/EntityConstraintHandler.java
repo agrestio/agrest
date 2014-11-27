@@ -16,6 +16,7 @@ import com.nhl.link.rest.EntityUpdate;
 import com.nhl.link.rest.UpdateResponse;
 import com.nhl.link.rest.annotation.ClientReadable;
 import com.nhl.link.rest.annotation.ClientWritable;
+import com.nhl.link.rest.runtime.meta.IMetadataService;
 
 /**
  * @since 1.6
@@ -28,7 +29,7 @@ class EntityConstraintHandler {
 	private EntityConstraintSource forWrite;
 
 	EntityConstraintHandler(List<EntityConstraint> defaultReadConstraints,
-			List<EntityConstraint> defaultWriteConstraints) {
+			List<EntityConstraint> defaultWriteConstraints, IMetadataService metadataService) {
 
 		// note that explicit defaults override annotations
 		// annotation-based constraints will be compiled dynamically
@@ -42,7 +43,7 @@ class EntityConstraintHandler {
 			writeMap.put(c.getEntityName(), c);
 		}
 
-		this.forRead = new EntityConstraintSource(readMap) {
+		this.forRead = new EntityConstraintSource(readMap, metadataService) {
 			@Override
 			protected AnnotationData processAnnotation(Class<?> type) {
 				ClientReadable a = type.getAnnotation(ClientReadable.class);
@@ -54,7 +55,7 @@ class EntityConstraintHandler {
 			}
 		};
 
-		this.forWrite = new EntityConstraintSource(writeMap) {
+		this.forWrite = new EntityConstraintSource(writeMap, metadataService) {
 			@Override
 			protected AnnotationData processAnnotation(Class<?> type) {
 				ClientWritable a = type.getAnnotation(ClientWritable.class);

@@ -11,6 +11,7 @@ import com.nhl.link.rest.EntityConstraint;
 import com.nhl.link.rest.SizeConstraints;
 import com.nhl.link.rest.TreeConstraints;
 import com.nhl.link.rest.UpdateResponse;
+import com.nhl.link.rest.runtime.meta.IMetadataService;
 
 /**
  * An {@link IConstraintsHandler} that ensures that no target attributes exceed
@@ -29,10 +30,11 @@ public class ConstraintsHandler implements IConstraintsHandler {
 	private EntityConstraintHandler entityConstraintHandler;
 
 	public ConstraintsHandler(@Inject(DEFAULT_READ_CONSTRAINTS_LIST) List<EntityConstraint> readConstraints,
-			@Inject(DEFAULT_WRITE_CONSTRAINTS_LIST) List<EntityConstraint> writeConstraints) {
+			@Inject(DEFAULT_WRITE_CONSTRAINTS_LIST) List<EntityConstraint> writeConstraints,
+			@Inject IMetadataService metadataService) {
 
 		this.treeConstraintsHandler = new TreeConstraintsHandler();
-		this.entityConstraintHandler = new EntityConstraintHandler(readConstraints, writeConstraints);
+		this.entityConstraintHandler = new EntityConstraintHandler(readConstraints, writeConstraints, metadataService);
 	}
 
 	@Override

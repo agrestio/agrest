@@ -7,6 +7,7 @@ import org.apache.cayenne.di.Inject;
 
 import com.nhl.link.rest.DataResponse;
 import com.nhl.link.rest.runtime.jackson.IJacksonService;
+import com.nhl.link.rest.runtime.meta.IMetadataService;
 import com.nhl.link.rest.runtime.parser.BaseRequestProcessor;
 import com.nhl.link.rest.runtime.parser.EmptyMultiValuedMap;
 import com.nhl.link.rest.runtime.parser.filter.IFilterProcessor;
@@ -24,8 +25,8 @@ public class IncludeExcludeProcessor extends BaseRequestProcessor implements ITr
 	private ExcludeWorker excludeWorker;
 
 	public IncludeExcludeProcessor(@Inject IJacksonService jacksonService, @Inject ISortProcessor sortProcessor,
-			@Inject IFilterProcessor filterProcessor) {
-		this.includeWorker = new IncludeWorker(jacksonService, sortProcessor, filterProcessor);
+			@Inject IFilterProcessor filterProcessor, @Inject IMetadataService metadataService) {
+		this.includeWorker = new IncludeWorker(jacksonService, sortProcessor, filterProcessor, metadataService);
 		this.excludeWorker = new ExcludeWorker(jacksonService);
 	}
 

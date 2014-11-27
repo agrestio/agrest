@@ -12,16 +12,19 @@ import org.apache.cayenne.map.ObjRelationship;
 
 import com.nhl.link.rest.EntityConstraint;
 import com.nhl.link.rest.LinkRestException;
+import com.nhl.link.rest.runtime.meta.IMetadataService;
 
 /**
  * @since 1.6
  */
 abstract class EntityConstraintSource {
 
+	private IMetadataService metadataService;
 	private ConcurrentMap<String, EntityConstraint> constraints;
 
-	EntityConstraintSource(ConcurrentMap<String, EntityConstraint> constraints) {
+	EntityConstraintSource(ConcurrentMap<String, EntityConstraint> constraints, IMetadataService metadataService) {
 		this.constraints = constraints;
+		this.metadataService = metadataService;
 	}
 
 	EntityConstraint getOrCreate(ObjEntity entity) {
@@ -49,7 +52,7 @@ abstract class EntityConstraintSource {
 	protected abstract AnnotationData processAnnotation(Class<?> type);
 
 	private EntityConstraint create(ObjEntity entity) {
-		AnnotationData ad = processAnnotation(entity.getJavaClass());
+		AnnotationData ad = processAnnotation(metadataService.getType(entity.getName()));
 
 		if (ad == null) {
 			return AllowAllEntityConstraint.instance();

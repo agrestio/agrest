@@ -63,7 +63,7 @@ public class RequestParserTest extends TestWithCayenneMapping {
 		IJacksonService jacksonService = new JacksonService();
 		ISortProcessor sortProcessor = new SortProcessor(jacksonService, pathCache);
 		IFilterProcessor filterProcessor = new FilterProcessor(jacksonService, pathCache);
-		ITreeProcessor treeProcessor = new IncludeExcludeProcessor(jacksonService, sortProcessor, filterProcessor);
+		ITreeProcessor treeProcessor = new IncludeExcludeProcessor(jacksonService, sortProcessor, filterProcessor, metadataService);
 
 		parser = new RequestParser(Collections.<UpdateFilter> emptyList(), metadataService, jacksonService,
 				new RelationshipMapper(), treeProcessor, sortProcessor, filterProcessor);
