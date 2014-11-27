@@ -22,9 +22,9 @@ import org.apache.cayenne.map.ObjEntity;
 import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.nhl.link.rest.LinkRestException;
+import com.nhl.link.rest.parser.converter.JsonValueConverter;
 import com.nhl.link.rest.runtime.parser.cache.IPathCache;
 import com.nhl.link.rest.runtime.parser.cache.PathDescriptor;
-import com.nhl.link.rest.runtime.parser.converter.ValueConverter;
 
 class CayenneExpProcessorWorker {
 
@@ -36,10 +36,10 @@ class CayenneExpProcessorWorker {
 
 	private IPathCache pathCache;
 	private ObjEntity entity;
-	private Map<String, ValueConverter> converters;
+	private Map<String, JsonValueConverter> converters;
 	private TraversalHandler expressionPostProcessor;
 
-	CayenneExpProcessorWorker(JsonNode rootNode, Map<String, ValueConverter> converters, IPathCache pathCache,
+	CayenneExpProcessorWorker(JsonNode rootNode, Map<String, JsonValueConverter> converters, IPathCache pathCache,
 			ObjEntity entity) {
 
 		this.expNode = rootNode.get(EXP);
@@ -92,28 +92,28 @@ class CayenneExpProcessorWorker {
 		return exp;
 	}
 
-	private Object convert(SimpleNode parentExp, DeferredConvertionWrapper wrapper) {
+	private Object convert(SimpleNode parentExp, JsonNode node) {
 
-		ASTObjPath peerPath = findPeerPath(parentExp, wrapper);
+		ASTObjPath peerPath = findPeerPath(parentExp, node);
 
 		if (peerPath != null) {
 
 			PathDescriptor pd = pathCache.getPathDescriptor(entity, peerPath);
 			if (pd.isAttribute()) {
-				ValueConverter converter = converters.get(pd.getType());
+				JsonValueConverter converter = converters.get(pd.getType());
 				if (converter != null) {
 
 					try {
-						return converter.value(wrapper.value);
+						return converter.value(node);
 					} catch (Exception e) {
 						throw new LinkRestException(Status.BAD_REQUEST,
-								"cayenneExp.params contains an incorrectly formatted value: '" + wrapper.value + "'");
+								"cayenneExp.params contains an incorrectly formatted value: '" + node.asText() + "'");
 					}
 				}
 			}
 		}
 
-		return wrapper.value;
+		return node.asText();
 	}
 
 	private ASTObjPath findPeerPath(SimpleNode exp, Object child) {
@@ -183,7 +183,7 @@ class CayenneExpProcessorWorker {
 		default:
 			// String parameters may need to be parsed further. Defer parsing
 			// until it is placed in the context of an expression...
-			return new DeferredConvertionWrapper(valueNode.asText());
+			return valueNode;
 		}
 	}
 
@@ -195,14 +195,6 @@ class CayenneExpProcessorWorker {
 		}
 
 		return values;
-	}
-
-	private static class DeferredConvertionWrapper {
-		private String value;
-
-		DeferredConvertionWrapper(String value) {
-			this.value = value;
-		}
 	}
 
 	private class ExpressionPostProcessor extends TraversalHelper {
@@ -235,10 +227,10 @@ class CayenneExpProcessorWorker {
 
 		@Override
 		public void objectNode(Object leaf, Expression parentNode) {
-			if (leaf instanceof DeferredConvertionWrapper) {
+			if (leaf instanceof JsonNode) {
 				for (int i = 0; i < parentNode.getOperandCount(); i++) {
 					if (leaf == parentNode.getOperand(i)) {
-						parentNode.setOperand(i, convert((SimpleNode) parentNode, (DeferredConvertionWrapper) leaf));
+						parentNode.setOperand(i, convert((SimpleNode) parentNode, (JsonNode) leaf));
 					}
 				}
 			}
@@ -247,8 +239,8 @@ class CayenneExpProcessorWorker {
 
 				Object[] array = (Object[]) leaf;
 				for (int i = 0; i < array.length; i++) {
-					if (array[i] instanceof DeferredConvertionWrapper) {
-						array[i] = convert((SimpleNode) parentNode, (DeferredConvertionWrapper) array[i]);
+					if (array[i] instanceof JsonNode) {
+						array[i] = convert((SimpleNode) parentNode, (JsonNode) array[i]);
 					}
 				}
 			}

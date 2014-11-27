@@ -1,11 +1,8 @@
 package com.nhl.link.rest.runtime.parser;
 
 import java.util.Collection;
-import java.util.Date;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import javax.ws.rs.core.Response.Status;
 
@@ -17,14 +14,13 @@ import org.apache.cayenne.map.ObjRelationship;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.nhl.link.rest.EntityUpdate;
 import com.nhl.link.rest.LinkRestException;
 import com.nhl.link.rest.UpdateResponse;
+import com.nhl.link.rest.parser.converter.JsonValueConverter;
 import com.nhl.link.rest.runtime.jackson.IJacksonService;
-import com.nhl.link.rest.runtime.parser.converter.UtcDateConverter;
-import com.nhl.link.rest.runtime.parser.converter.ValueConverter;
+import com.nhl.link.rest.runtime.parser.converter.IJsonValueConverterFactory;
 import com.nhl.link.rest.runtime.semantics.IRelationshipMapper;
 
 class DataObjectProcessor {
@@ -32,17 +28,14 @@ class DataObjectProcessor {
 	private static final Logger LOGGER = LoggerFactory.getLogger(DataObjectProcessor.class);
 
 	private IJacksonService jsonParser;
-	private Map<String, ValueConverter> converters;
+	private IJsonValueConverterFactory converterFactory;
 	private IRelationshipMapper relationshipMapper;
 
-	DataObjectProcessor(IJacksonService jsonParser, IRelationshipMapper relationshipMapper) {
+	DataObjectProcessor(IJacksonService jsonParser, IRelationshipMapper relationshipMapper,
+			IJsonValueConverterFactory converterFactory) {
 		this.jsonParser = jsonParser;
 		this.relationshipMapper = relationshipMapper;
-
-		// TODO: unify converters between CayenneExpProcessor and
-		// DataObjectProcessor
-		this.converters = new HashMap<>();
-		this.converters.put(Date.class.getName(), new UtcDateConverter());
+		this.converterFactory = converterFactory;
 	}
 
 	void process(UpdateResponse<?> response, String json) {
@@ -107,14 +100,17 @@ class DataObjectProcessor {
 			ObjRelationship relationship = relationshipMapper.toRelationship(entity, key);
 			if (relationship != null) {
 
+				DbRelationship dbRelationship = relationship.getDbRelationships().get(0);
+				int type = dbRelationship.getJoins().get(0).getSource().getType();
+
 				JsonNode valueNode = objectNode.get(key);
-				Object value = extractValue(valueNode);
+				Object value = converterFactory.converter(type).value(valueNode);
 
 				// record FK, whether it is a PK or not
 				update.getRelatedIds().put(relationship.getName(), value);
 
 				// record FK that is also a PK
-				DbRelationship dbRleationship = relationship.getDbRelationships().get(0).getReverseRelationship();
+				DbRelationship dbRleationship = dbRelationship.getReverseRelationship();
 				if (dbRleationship.isToDependentPK()) {
 					List<DbJoin> joins = dbRleationship.getJoins();
 					if (joins.size() != 1) {
@@ -135,51 +131,14 @@ class DataObjectProcessor {
 		response.getUpdates().add(update);
 	}
 
-	private Object extractValue(JsonNode valueNode) {
-		JsonToken type = valueNode.asToken();
-
-		switch (type) {
-		case VALUE_NUMBER_INT:
-			return valueNode.asInt();
-		case VALUE_NUMBER_FLOAT:
-			return valueNode.asDouble();
-		case VALUE_TRUE:
-			return Boolean.TRUE;
-		case VALUE_FALSE:
-			return Boolean.FALSE;
-		case VALUE_NULL:
-			return null;
-		default:
-			return valueNode.asText();
-		}
-	}
-
 	private Object extractValue(JsonNode valueNode, ObjAttribute attribute) {
-		JsonToken type = valueNode.asToken();
 
-		switch (type) {
-		case VALUE_NUMBER_INT:
-			return valueNode.asInt();
-		case VALUE_NUMBER_FLOAT:
-			return valueNode.asDouble();
-		case VALUE_TRUE:
-			return Boolean.TRUE;
-		case VALUE_FALSE:
-			return Boolean.FALSE;
-		case VALUE_NULL:
-			return null;
-		default:
-			String text = valueNode.asText();
-			ValueConverter converter = converters.get(attribute.getType());
-			if (converter == null) {
-				return text;
-			}
+		JsonValueConverter converter = converterFactory.converter(attribute.getType());
 
-			try {
-				return converter.value(text);
-			} catch (Exception e) {
-				throw new LinkRestException(Status.BAD_REQUEST, "Incorrectly formatted value: '" + text + "'");
-			}
+		try {
+			return converter.value(valueNode);
+		} catch (Exception e) {
+			throw new LinkRestException(Status.BAD_REQUEST, "Incorrectly formatted value: '" + valueNode.asText() + "'");
 		}
 	}
 

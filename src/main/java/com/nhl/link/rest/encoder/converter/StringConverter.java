@@ -1,7 +1,7 @@
-package com.nhl.link.rest.converter;
+package com.nhl.link.rest.encoder.converter;
 
 /**
- * An object that converts objects to Strings. JSON field names can only be
+ * A converter that converts objects to Strings. JSON field names can only be
  * Strings. So this converter is useful when generating JSON with field names
  * mapped to arbitrary objects.
  */

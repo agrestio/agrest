@@ -1,4 +1,4 @@
-package com.nhl.link.rest.converter;
+package com.nhl.link.rest.encoder.converter;
 
 import java.util.Date;
 

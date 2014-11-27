@@ -3,7 +3,7 @@ package com.nhl.link.rest.runtime.encoder;
 import org.apache.cayenne.exp.Property;
 import org.apache.cayenne.map.ObjEntity;
 
-import com.nhl.link.rest.converter.StringConverter;
+import com.nhl.link.rest.encoder.converter.StringConverter;
 
 public interface IStringConverterFactory {
 

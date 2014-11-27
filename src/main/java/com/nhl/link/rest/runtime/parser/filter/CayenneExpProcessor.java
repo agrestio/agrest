@@ -8,20 +8,26 @@ import org.apache.cayenne.map.ObjEntity;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.nhl.link.rest.Entity;
+import com.nhl.link.rest.parser.converter.JsonValueConverter;
+import com.nhl.link.rest.parser.converter.UtcDateConverter;
 import com.nhl.link.rest.runtime.jackson.IJacksonService;
 import com.nhl.link.rest.runtime.parser.cache.IPathCache;
-import com.nhl.link.rest.runtime.parser.converter.UtcDateConverter;
-import com.nhl.link.rest.runtime.parser.converter.ValueConverter;
 
 class CayenneExpProcessor {
 
 	private IJacksonService jsonParser;
-	private Map<String, ValueConverter> converters;
+	private Map<String, JsonValueConverter> converters;
 	private IPathCache pathCache;
 
 	CayenneExpProcessor(IJacksonService jsonParser, IPathCache pathCache) {
 		this.jsonParser = jsonParser;
 		this.pathCache = pathCache;
+
+		// TODO: instead of manually assembling converters we must switch to
+		// IJsonValueConverterFactory already used by DataObjectProcessor.
+		// The tricky part is the "id" attribute that is converted to DbPath
+		// during CayenneExpProcessorWorker traversal, so its type can not be
+		// mapped with existing tools
 
 		this.converters = new HashMap<>();
 		this.converters.put(Date.class.getName(), new UtcDateConverter());

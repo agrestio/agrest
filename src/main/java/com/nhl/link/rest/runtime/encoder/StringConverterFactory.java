@@ -12,11 +12,11 @@ import org.apache.cayenne.map.ObjAttribute;
 import org.apache.cayenne.map.ObjEntity;
 
 import com.nhl.link.rest.LinkRestException;
-import com.nhl.link.rest.converter.GenericConverter;
-import com.nhl.link.rest.converter.ISODateConverter;
-import com.nhl.link.rest.converter.ISODateTimeConverter;
-import com.nhl.link.rest.converter.ISOTimeConverter;
-import com.nhl.link.rest.converter.StringConverter;
+import com.nhl.link.rest.encoder.converter.GenericConverter;
+import com.nhl.link.rest.encoder.converter.ISODateConverter;
+import com.nhl.link.rest.encoder.converter.ISODateTimeConverter;
+import com.nhl.link.rest.encoder.converter.ISOTimeConverter;
+import com.nhl.link.rest.encoder.converter.StringConverter;
 import com.nhl.link.rest.runtime.meta.IMetadataService;
 
 public class StringConverterFactory implements IStringConverterFactory {

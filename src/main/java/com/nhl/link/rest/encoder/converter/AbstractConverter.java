@@ -1,4 +1,4 @@
-package com.nhl.link.rest.converter;
+package com.nhl.link.rest.encoder.converter;
 
 
 public abstract class AbstractConverter implements StringConverter {

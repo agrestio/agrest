@@ -15,6 +15,7 @@ import com.nhl.link.rest.LinkRestException;
 import com.nhl.link.rest.UpdateResponse;
 import com.nhl.link.rest.runtime.jackson.IJacksonService;
 import com.nhl.link.rest.runtime.meta.IMetadataService;
+import com.nhl.link.rest.runtime.parser.converter.IJsonValueConverterFactory;
 import com.nhl.link.rest.runtime.parser.filter.IFilterProcessor;
 import com.nhl.link.rest.runtime.parser.sort.ISortProcessor;
 import com.nhl.link.rest.runtime.parser.tree.ITreeProcessor;
@@ -40,14 +41,16 @@ public class RequestParser implements IRequestParser {
 	public RequestParser(@Inject(UPDATE_FILTER_LIST) List<UpdateFilter> updateFilters,
 			@Inject IMetadataService metadataService, @Inject IJacksonService jacksonService,
 			@Inject IRelationshipMapper associationHandler, @Inject ITreeProcessor treeProcessor,
-			@Inject ISortProcessor sortProcessor, @Inject IFilterProcessor filterProcessor) {
+			@Inject ISortProcessor sortProcessor, @Inject IFilterProcessor filterProcessor,
+			@Inject IJsonValueConverterFactory jsonValueConverterFactory) {
 
 		this.updateFilters = updateFilters;
 		this.metadataService = metadataService;
 		this.filterProcessor = filterProcessor;
 		this.sortProcessor = sortProcessor;
 		this.treeProcessor = treeProcessor;
-		this.dataObjectProcessor = new DataObjectProcessor(jacksonService, associationHandler);
+		this.dataObjectProcessor = new DataObjectProcessor(jacksonService, associationHandler,
+				jsonValueConverterFactory);
 	}
 
 	@Override

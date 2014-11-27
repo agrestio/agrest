@@ -47,6 +47,8 @@ import com.nhl.link.rest.runtime.parser.IRequestParser;
 import com.nhl.link.rest.runtime.parser.RequestParser;
 import com.nhl.link.rest.runtime.parser.cache.IPathCache;
 import com.nhl.link.rest.runtime.parser.cache.PathCache;
+import com.nhl.link.rest.runtime.parser.converter.DefaultJsonValueConverterFactory;
+import com.nhl.link.rest.runtime.parser.converter.IJsonValueConverterFactory;
 import com.nhl.link.rest.runtime.parser.filter.FilterProcessor;
 import com.nhl.link.rest.runtime.parser.filter.IFilterProcessor;
 import com.nhl.link.rest.runtime.parser.sort.ISortProcessor;
@@ -217,6 +219,7 @@ public class LinkRestBuilder {
 				}
 
 				binder.bind(IRequestParser.class).to(RequestParser.class);
+				binder.bind(IJsonValueConverterFactory.class).to(DefaultJsonValueConverterFactory.class);
 				binder.bind(IAttributeEncoderFactory.class).to(AttributeEncoderFactory.class);
 				binder.bind(IStringConverterFactory.class).to(StringConverterFactory.class);
 				binder.bind(IEncoderService.class).to(EncoderService.class);

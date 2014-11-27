@@ -29,6 +29,8 @@ import com.nhl.link.rest.runtime.meta.IMetadataService;
 import com.nhl.link.rest.runtime.meta.MetadataService;
 import com.nhl.link.rest.runtime.parser.cache.IPathCache;
 import com.nhl.link.rest.runtime.parser.cache.PathCache;
+import com.nhl.link.rest.runtime.parser.converter.DefaultJsonValueConverterFactory;
+import com.nhl.link.rest.runtime.parser.converter.IJsonValueConverterFactory;
 import com.nhl.link.rest.runtime.parser.filter.FilterProcessor;
 import com.nhl.link.rest.runtime.parser.filter.IFilterProcessor;
 import com.nhl.link.rest.runtime.parser.sort.ISortProcessor;
@@ -55,6 +57,7 @@ public class RequestParser_WithPojoTest extends TestWithCayenneMapping {
 		DataMap map = DataMapBuilder.newBuilder("_t_").addEntities(P1.class, P2.class).toDataMap();
 
 		IMetadataService metadataService = new MetadataService(Collections.singletonList(map), cayenneService);
+		IJsonValueConverterFactory converterFactory = new DefaultJsonValueConverterFactory();
 
 		IPathCache pathCache = new PathCache();
 		IJacksonService jacksonService = new JacksonService();
@@ -64,7 +67,7 @@ public class RequestParser_WithPojoTest extends TestWithCayenneMapping {
 				metadataService);
 
 		parser = new RequestParser(Collections.<UpdateFilter> emptyList(), metadataService, jacksonService,
-				new RelationshipMapper(), treeProcessor, sortProcessor, filterProcessor);
+				new RelationshipMapper(), treeProcessor, sortProcessor, filterProcessor, converterFactory);
 	}
 
 	@Test

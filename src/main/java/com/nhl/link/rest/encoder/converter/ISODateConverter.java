@@ -1,13 +1,13 @@
-package com.nhl.link.rest.converter;
+package com.nhl.link.rest.encoder.converter;
 
 import java.util.Date;
 
 import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.ISODateTimeFormat;
 
-public class ISODateTimeConverter extends AbstractConverter {
+public class ISODateConverter extends AbstractConverter {
 
-	private static final StringConverter instance = new ISODateTimeConverter();
+	private static final StringConverter instance = new ISODateConverter();
 
 	public static StringConverter converter() {
 		return instance;
@@ -15,8 +15,8 @@ public class ISODateTimeConverter extends AbstractConverter {
 
 	private DateTimeFormatter format;
 
-	private ISODateTimeConverter() {
-		this.format = ISODateTimeFormat.dateTimeNoMillis().withZoneUTC();
+	private ISODateConverter() {
+		this.format = ISODateTimeFormat.date();
 	}
 
 	@Override

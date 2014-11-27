@@ -17,7 +17,7 @@ import org.apache.cayenne.exp.Expression;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.nhl.link.rest.Entity;
 import com.nhl.link.rest.LinkRestException;
-import com.nhl.link.rest.converter.StringConverter;
+import com.nhl.link.rest.encoder.converter.StringConverter;
 import com.nhl.link.rest.runtime.encoder.IStringConverterFactory;
 
 public class MapByEncoder extends AbstractEncoder {
