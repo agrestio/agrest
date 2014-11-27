@@ -16,7 +16,7 @@ import org.glassfish.jersey.test.JerseyTest;
 import org.glassfish.jersey.test.inmemory.InMemoryTestContainerFactory;
 import org.junit.Test;
 
-import com.nhl.link.rest.it.fixture.ExceptionResource;
+import com.nhl.link.rest.it.fixture.resource.ExceptionResource;
 import com.nhl.link.rest.runtime.LinkRestBuilder;
 
 public class GET_ExceptionIT extends JerseyTest {

@@ -1,4 +1,4 @@
-package com.nhl.link.rest.unit;
+package com.nhl.link.rest.it.fixture;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;

@@ -17,14 +17,14 @@ import org.joda.time.DateTime;
 import org.joda.time.LocalTime;
 import org.junit.Test;
 
-import com.nhl.link.rest.it.fixture.E2Resource;
-import com.nhl.link.rest.it.fixture.E3Resource;
-import com.nhl.link.rest.it.fixture.E4Resource;
-import com.nhl.link.rest.it.fixture.E6Resource;
+import com.nhl.link.rest.it.fixture.JerseyTestOnDerby;
 import com.nhl.link.rest.it.fixture.cayenne.E2;
 import com.nhl.link.rest.it.fixture.cayenne.E3;
 import com.nhl.link.rest.it.fixture.cayenne.E4;
-import com.nhl.link.rest.unit.JerseyTestOnDerby;
+import com.nhl.link.rest.it.fixture.resource.E2Resource;
+import com.nhl.link.rest.it.fixture.resource.E3Resource;
+import com.nhl.link.rest.it.fixture.resource.E4Resource;
+import com.nhl.link.rest.it.fixture.resource.E6Resource;
 
 public class GET_IT extends JerseyTestOnDerby {
 

@@ -13,16 +13,16 @@ import org.apache.cayenne.query.SQLSelect;
 import org.apache.cayenne.query.SQLTemplate;
 import org.junit.Test;
 
-import com.nhl.link.rest.it.fixture.E12Resource;
-import com.nhl.link.rest.it.fixture.E2Resource;
-import com.nhl.link.rest.it.fixture.E3Resource;
-import com.nhl.link.rest.it.fixture.E7Resource;
-import com.nhl.link.rest.it.fixture.E8Resource;
+import com.nhl.link.rest.it.fixture.JerseyTestOnDerby;
 import com.nhl.link.rest.it.fixture.cayenne.E12;
 import com.nhl.link.rest.it.fixture.cayenne.E12E13;
 import com.nhl.link.rest.it.fixture.cayenne.E2;
 import com.nhl.link.rest.it.fixture.cayenne.E3;
-import com.nhl.link.rest.unit.JerseyTestOnDerby;
+import com.nhl.link.rest.it.fixture.resource.E12Resource;
+import com.nhl.link.rest.it.fixture.resource.E2Resource;
+import com.nhl.link.rest.it.fixture.resource.E3Resource;
+import com.nhl.link.rest.it.fixture.resource.E7Resource;
+import com.nhl.link.rest.it.fixture.resource.E8Resource;
 
 public class PUT_Related_IT extends JerseyTestOnDerby {
 

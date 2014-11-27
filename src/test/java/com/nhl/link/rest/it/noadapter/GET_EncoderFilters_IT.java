@@ -16,11 +16,11 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import com.nhl.link.rest.Entity;
 import com.nhl.link.rest.encoder.Encoder;
 import com.nhl.link.rest.encoder.EncoderFilter;
-import com.nhl.link.rest.it.fixture.E4Resource;
+import com.nhl.link.rest.it.fixture.JerseyTestOnDerby;
 import com.nhl.link.rest.it.fixture.cayenne.E3;
 import com.nhl.link.rest.it.fixture.cayenne.E4;
+import com.nhl.link.rest.it.fixture.resource.E4Resource;
 import com.nhl.link.rest.runtime.LinkRestBuilder;
-import com.nhl.link.rest.unit.JerseyTestOnDerby;
 
 public class GET_EncoderFilters_IT extends JerseyTestOnDerby {
 

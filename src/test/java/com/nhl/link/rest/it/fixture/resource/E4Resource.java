@@ -1,4 +1,4 @@
-package com.nhl.link.rest.it.fixture;
+package com.nhl.link.rest.it.fixture.resource;
 
 import static com.nhl.link.rest.TreeConstraints.idOnly;
 import static com.nhl.link.rest.property.PropertyBuilder.property;

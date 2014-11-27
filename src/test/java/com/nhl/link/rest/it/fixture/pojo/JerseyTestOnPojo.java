@@ -17,18 +17,16 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 
-import com.nhl.link.rest.it.fixture.PojoResource;
 import com.nhl.link.rest.it.fixture.pojo.model.P1;
 import com.nhl.link.rest.it.fixture.pojo.model.P2;
 import com.nhl.link.rest.it.fixture.pojo.model.P3;
 import com.nhl.link.rest.it.fixture.pojo.model.P4;
 import com.nhl.link.rest.it.fixture.pojo.model.P6;
+import com.nhl.link.rest.it.fixture.resource.PojoResource;
 import com.nhl.link.rest.runtime.LinkRestBuilder;
 import com.nhl.link.rest.runtime.meta.DataMapBuilder;
-import com.nhl.link.rest.unit.DerbyManager;
 
 public class JerseyTestOnPojo extends JerseyTest {
-	protected static DerbyManager derbyAssembly;
 	protected static ServerRuntime runtime;
 	protected static DataMap pojosMap;
 
@@ -37,7 +35,6 @@ public class JerseyTestOnPojo extends JerseyTest {
 
 	@BeforeClass
 	public static void setUpClass() throws IOException, SQLException {
-		derbyAssembly = new DerbyManager("target/derby");
 
 		runtime = new ServerRuntime("cayenne-linkrest-tests.xml");
 		pojosMap = DataMapBuilder.newBuilder("__").addEntities(P1.class, P2.class, P3.class, P4.class)
@@ -50,8 +47,6 @@ public class JerseyTestOnPojo extends JerseyTest {
 		runtime.shutdown();
 		runtime = null;
 
-		derbyAssembly.shutdown();
-		derbyAssembly = null;
 	}
 
 	public JerseyTestOnPojo() throws TestContainerException {

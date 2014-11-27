@@ -13,9 +13,9 @@ import org.apache.cayenne.query.EJBQLQuery;
 import org.apache.cayenne.query.SQLTemplate;
 import org.junit.Test;
 
-import com.nhl.link.rest.it.fixture.E4Resource;
+import com.nhl.link.rest.it.fixture.JerseyTestOnDerby;
 import com.nhl.link.rest.it.fixture.cayenne.E4;
-import com.nhl.link.rest.unit.JerseyTestOnDerby;
+import com.nhl.link.rest.it.fixture.resource.E4Resource;
 
 public class DELETE_IT extends JerseyTestOnDerby {
 

@@ -1,4 +1,4 @@
-package com.nhl.link.rest.unit;
+package com.nhl.link.rest.it.fixture;
 
 import java.io.File;
 import java.io.IOException;
@@ -8,7 +8,7 @@ import java.sql.SQLException;
 
 import org.apache.commons.io.FileUtils;
 
-public class DerbyManager {
+class DerbyManager {
 
 	public static final OutputStream DEV_NULL = new OutputStream() {
 
@@ -17,7 +17,7 @@ public class DerbyManager {
 		}
 	};
 
-	public DerbyManager(String location) {
+	DerbyManager(String location) {
 
 		System.setProperty("derby.stream.error.field", DerbyManager.class.getName() + ".DEV_NULL");
 
@@ -31,7 +31,7 @@ public class DerbyManager {
 		}
 	}
 
-	public void shutdown() {
+	void shutdown() {
 		try {
 			DriverManager.getConnection("jdbc:derby:;shutdown=true");
 		} catch (SQLException e) {

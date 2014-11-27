@@ -1,4 +1,4 @@
-package com.nhl.link.rest.it.fixture;
+package com.nhl.link.rest.it.fixture.resource;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
