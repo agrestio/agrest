@@ -90,7 +90,7 @@ class DataObjectProcessor {
 				}
 
 				JsonNode valueNode = objectNode.get(key);
-				Object value = extractValue(valueNode);
+				Object value = extractValue(valueNode, pk);
 
 				update.getOrCreateId().put(pk.getDbAttributeName(), value);
 				continue;

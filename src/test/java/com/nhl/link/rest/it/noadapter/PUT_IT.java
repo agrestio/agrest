@@ -158,7 +158,7 @@ public class PUT_IT extends JerseyTestOnDerby {
 	}
 
 	@Test
-	public void testPUT_Bulk_LongId() throws WebApplicationException, IOException {
+	public void testPUT_Bulk_LongId_Small() throws WebApplicationException, IOException {
 
 		runtime.newContext().performGenericQuery(
 				new SQLTemplate(E3.class, "INSERT INTO utest.e14 (long_id, name) values (5, 'aaa')"));
@@ -188,5 +188,41 @@ public class PUT_IT extends JerseyTestOnDerby {
 		assertEquals(4,
 				SQLSelect.scalarQuery(Integer.class, "SELECT count(1) FROM utest.e14 WHERE long_id IN (2,4,6,5)")
 						.selectOne(context).intValue());
+	}
+
+	@Test
+	public void testPUT_Bulk_LongId() throws WebApplicationException, IOException {
+
+		runtime.newContext().performGenericQuery(
+				new SQLTemplate(E3.class, "INSERT INTO utest.e14 (long_id, name) values (8147483647, 'aaa')"));
+		runtime.newContext().performGenericQuery(
+				new SQLTemplate(E3.class, "INSERT INTO utest.e14 (long_id, name) values (8147483648, 'zzz')"));
+		runtime.newContext().performGenericQuery(
+				new SQLTemplate(E3.class, "INSERT INTO utest.e14 (long_id, name) values (8147483649, 'bbb')"));
+		runtime.newContext().performGenericQuery(
+				new SQLTemplate(E3.class, "INSERT INTO utest.e14 (long_id, name) values (3147483646, 'yyy')"));
+
+		Response r1 = target("/e14/")
+				.queryParam("exclude", "id")
+				.queryParam("include", E3.NAME.getName())
+				.request()
+				.put(Entity.entity("[{\"id\":3147483646,\"name\":\"yyy\"},{\"id\":8147483648,\"name\":\"zzz\"}"
+						+ ",{\"id\":8147483647,\"name\":\"111\"},{\"id\":8147483649,\"name\":\"333\"}]",
+						MediaType.APPLICATION_JSON));
+		assertEquals(Status.OK.getStatusCode(), r1.getStatus());
+
+		// update: ordering must be preserved...
+		assertEquals(
+				"{\"success\":true,\"data\":[{\"name\":\"yyy\"},{\"name\":\"zzz\"},{\"name\":\"111\"},{\"name\":\"333\"}],\"total\":4}",
+				r1.readEntity(String.class));
+
+		assertEquals(4, SQLSelect.scalarQuery(Integer.class, "SELECT count(1) FROM utest.e14").selectOne(context)
+				.intValue());
+		assertEquals(4, SQLSelect
+				.scalarQuery(
+						Integer.class,
+						"SELECT count(1) FROM utest.e14 WHERE "
+								+ "long_id IN (3147483646, 8147483648, 8147483647, 8147483649)").selectOne(context)
+				.intValue());
 	}
 }
