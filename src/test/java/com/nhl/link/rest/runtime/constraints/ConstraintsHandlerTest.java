@@ -1,6 +1,7 @@
 package com.nhl.link.rest.runtime.constraints;
 
 import static com.nhl.link.rest.TreeConstraints.excludeAll;
+import static org.apache.cayenne.exp.ExpressionFactory.exp;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -218,20 +219,20 @@ public class ConstraintsHandlerTest extends TestWithCayenneMapping {
 	@Test
 	public void testMerge_CayenneExp() {
 
-		Expression q1 = Expression.fromString("a = 5");
+		Expression q1 = exp("a = 5");
 
 		TreeConstraints<Object> tc1 = TreeConstraints.excludeAll(Object.class).and(q1);
 
 		Entity<Object> te1 = new Entity<>(Object.class, e0);
 		DataResponse<Object> t1 = DataResponse.forType(Object.class).withClientEntity(te1);
 		constraintHandler.constrainResponse(t1, null, tc1);
-		assertEquals(Expression.fromString("a = 5"), t1.getEntity().getQualifier());
+		assertEquals(exp("a = 5"), t1.getEntity().getQualifier());
 
 		Entity<Object> te2 = new Entity<>(Object.class, e0);
-		te2.andQualifier(Expression.fromString("b = 'd'"));
+		te2.andQualifier(exp("b = 'd'"));
 		DataResponse<Object> t2 = DataResponse.forType(Object.class).withClientEntity(te2);
 		constraintHandler.constrainResponse(t2, null, tc1);
-		assertEquals(Expression.fromString("b = 'd' and a = 5"), t2.getEntity().getQualifier());
+		assertEquals(exp("b = 'd' and a = 5"), t2.getEntity().getQualifier());
 	}
 
 	@Test

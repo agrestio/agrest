@@ -57,7 +57,7 @@ public class GET_Test extends JerseyTestOnDerby {
 
 		SQLTemplate insert = new SQLTemplate(E4.class,
 				"INSERT INTO utest.e4 (c_timestamp) values (#bind($ts 'TIMESTAMP'))");
-		insert.setParameters(Collections.singletonMap("ts", ts.toDate()));
+		insert.setParams(Collections.singletonMap("ts", ts.toDate()));
 		runtime.newContext().performGenericQuery(insert);
 
 		Response response1 = target("/e4").queryParam("include", E4.C_TIMESTAMP.getName()).request().get();
@@ -73,7 +73,7 @@ public class GET_Test extends JerseyTestOnDerby {
 		DateTime date = new DateTime("2012-02-03");
 
 		SQLTemplate insert = new SQLTemplate(E4.class, "INSERT INTO utest.e4 (c_date) values (#bind($date 'DATE'))");
-		insert.setParameters(Collections.singletonMap("date", date.toDate()));
+		insert.setParams(Collections.singletonMap("date", date.toDate()));
 		runtime.newContext().performGenericQuery(insert);
 
 		Response response1 = target("/e4").queryParam("include", E4.C_DATE.getName()).request().get();
@@ -92,7 +92,7 @@ public class GET_Test extends JerseyTestOnDerby {
 		Time time = new Time(lt.toDateTimeToday().getMillis());
 
 		SQLTemplate insert = new SQLTemplate(E4.class, "INSERT INTO utest.e4 (c_time) values (#bind($time 'TIME'))");
-		insert.setParameters(Collections.singletonMap("time", time));
+		insert.setParams(Collections.singletonMap("time", time));
 		runtime.newContext().performGenericQuery(insert);
 
 		Response response1 = target("/e4").queryParam("include", E4.C_TIME.getName()).request().get();

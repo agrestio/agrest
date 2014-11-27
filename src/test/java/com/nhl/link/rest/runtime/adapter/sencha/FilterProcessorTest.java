@@ -1,10 +1,10 @@
 package com.nhl.link.rest.runtime.adapter.sencha;
 
+import static org.apache.cayenne.exp.ExpressionFactory.exp;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
-import org.apache.cayenne.exp.Expression;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -38,7 +38,7 @@ public class FilterProcessorTest extends TestWithCayenneMapping {
 		processor.process(e4Descriptor, "[{\"property\":\"cVarchar\",\"value\":\"xyz\"}]");
 
 		assertNotNull(e4Descriptor.getQualifier());
-		assertEquals(Expression.fromString("cVarchar likeIgnoreCase 'xyz%'"), e4Descriptor.getQualifier());
+		assertEquals(exp("cVarchar likeIgnoreCase 'xyz%'"), e4Descriptor.getQualifier());
 	}
 
 	@Test
@@ -48,7 +48,7 @@ public class FilterProcessorTest extends TestWithCayenneMapping {
 				"[{\"property\":\"cVarchar\",\"value\":\"xyz\"}, {\"property\":\"cVarchar\",\"value\":\"123\"}]");
 
 		assertNotNull(e4Descriptor.getQualifier());
-		assertEquals(Expression.fromString("cVarchar likeIgnoreCase 'xyz%' and cVarchar likeIgnoreCase '123%'"),
+		assertEquals(exp("cVarchar likeIgnoreCase 'xyz%' and cVarchar likeIgnoreCase '123%'"),
 				e4Descriptor.getQualifier());
 	}
 
@@ -82,43 +82,44 @@ public class FilterProcessorTest extends TestWithCayenneMapping {
 		processor.process(e4Descriptor, "[{\"property\":\"cVarchar\",\"value\":\"xyz\",\"exactMatch\":true}]");
 
 		assertNotNull(e4Descriptor.getQualifier());
-		assertEquals(Expression.fromString("cVarchar = 'xyz'"), e4Descriptor.getQualifier());
+		assertEquals(exp("cVarchar = 'xyz'"), e4Descriptor.getQualifier());
 	}
-	
+
 	@Test
 	public void testProcess_Equal() {
 		assertNull(e4Descriptor.getQualifier());
 		processor.process(e4Descriptor, "[{\"property\":\"cVarchar\",\"value\":\"xyz\",\"operator\":\"=\"}]");
 
 		assertNotNull(e4Descriptor.getQualifier());
-		assertEquals(Expression.fromString("cVarchar = 'xyz'"), e4Descriptor.getQualifier());
+		assertEquals(exp("cVarchar = 'xyz'"), e4Descriptor.getQualifier());
 	}
-	
+
 	@Test
 	public void testProcess_NotEqual() {
 		assertNull(e4Descriptor.getQualifier());
 		processor.process(e4Descriptor, "[{\"property\":\"cVarchar\",\"value\":\"xyz\",\"operator\":\"!=\"}]");
 
 		assertNotNull(e4Descriptor.getQualifier());
-		assertEquals(Expression.fromString("cVarchar != 'xyz'"), e4Descriptor.getQualifier());
+		assertEquals(exp("cVarchar != 'xyz'"), e4Descriptor.getQualifier());
 	}
-	
+
 	@Test
 	public void testProcess_Like() {
 		assertNull(e4Descriptor.getQualifier());
 		processor.process(e4Descriptor, "[{\"property\":\"cVarchar\",\"value\":\"xyz\",\"operator\":\"like\"}]");
 
 		assertNotNull(e4Descriptor.getQualifier());
-		assertEquals(Expression.fromString("cVarchar likeIgnoreCase 'xyz%'"), e4Descriptor.getQualifier());
+		assertEquals(exp("cVarchar likeIgnoreCase 'xyz%'"), e4Descriptor.getQualifier());
 	}
-	
+
 	@Test
 	public void testProcess_In() {
 		assertNull(e4Descriptor.getQualifier());
-		processor.process(e4Descriptor, "[{\"property\":\"cVarchar\",\"value\":[\"xyz\",\"abc\"],\"operator\":\"in\"}]");
+		processor
+				.process(e4Descriptor, "[{\"property\":\"cVarchar\",\"value\":[\"xyz\",\"abc\"],\"operator\":\"in\"}]");
 
 		assertNotNull(e4Descriptor.getQualifier());
-		assertEquals(Expression.fromString("cVarchar in ('xyz', 'abc')"), e4Descriptor.getQualifier());
+		assertEquals(exp("cVarchar in ('xyz', 'abc')"), e4Descriptor.getQualifier());
 	}
 
 	@Test
@@ -127,25 +128,25 @@ public class FilterProcessorTest extends TestWithCayenneMapping {
 		processor.process(e4Descriptor, "[{\"property\":\"cVarchar\",\"value\":6,\"operator\":\">\"}]");
 
 		assertNotNull(e4Descriptor.getQualifier());
-		assertEquals(Expression.fromString("cVarchar > 6"), e4Descriptor.getQualifier());
+		assertEquals(exp("cVarchar > 6"), e4Descriptor.getQualifier());
 	}
-	
+
 	@Test
 	public void testProcess_Greater_Null() {
 		assertNull(e4Descriptor.getQualifier());
 		processor.process(e4Descriptor, "[{\"property\":\"cVarchar\",\"value\":null,\"operator\":\">\"}]");
 
 		assertNotNull(e4Descriptor.getQualifier());
-		assertEquals(Expression.fromString("false"), e4Descriptor.getQualifier());
+		assertEquals(exp("false"), e4Descriptor.getQualifier());
 	}
-	
+
 	@Test
 	public void testProcess_GreaterOrEqual() {
 		assertNull(e4Descriptor.getQualifier());
 		processor.process(e4Descriptor, "[{\"property\":\"cVarchar\",\"value\":5,\"operator\":\">=\"}]");
 
 		assertNotNull(e4Descriptor.getQualifier());
-		assertEquals(Expression.fromString("cVarchar >= 5"), e4Descriptor.getQualifier());
+		assertEquals(exp("cVarchar >= 5"), e4Descriptor.getQualifier());
 	}
 
 	@Test
@@ -154,16 +155,16 @@ public class FilterProcessorTest extends TestWithCayenneMapping {
 		processor.process(e4Descriptor, "[{\"property\":\"cVarchar\",\"value\":7,\"operator\":\"<\"}]");
 
 		assertNotNull(e4Descriptor.getQualifier());
-		assertEquals(Expression.fromString("cVarchar < 7"), e4Descriptor.getQualifier());
+		assertEquals(exp("cVarchar < 7"), e4Descriptor.getQualifier());
 	}
-	
+
 	@Test
 	public void testProcess_LessOrEqual() {
 		assertNull(e4Descriptor.getQualifier());
 		processor.process(e4Descriptor, "[{\"property\":\"cVarchar\",\"value\":\"xyz\",\"operator\":\"<=\"}]");
 
 		assertNotNull(e4Descriptor.getQualifier());
-		assertEquals(Expression.fromString("cVarchar <= 'xyz'"), e4Descriptor.getQualifier());
+		assertEquals(exp("cVarchar <= 'xyz'"), e4Descriptor.getQualifier());
 	}
 
 }

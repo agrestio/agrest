@@ -1,5 +1,6 @@
 package com.nhl.link.rest.runtime.adapter.sencha;
 
+import static org.apache.cayenne.exp.ExpressionFactory.exp;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.mock;
@@ -12,7 +13,6 @@ import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.UriInfo;
 
 import org.apache.cayenne.ObjectContext;
-import org.apache.cayenne.exp.Expression;
 import org.apache.cayenne.map.DataMap;
 import org.apache.cayenne.query.Ordering;
 import org.apache.cayenne.query.SortOrder;
@@ -75,7 +75,7 @@ public class SenchaRequestParserTest extends TestWithCayenneMapping {
 		DataResponse<E2> dataRequest = DataResponse.forType(E2.class);
 		parser.parseSelect(dataRequest, urlInfo, null);
 		assertNotNull(dataRequest.getEntity().getQualifier());
-		assertEquals(Expression.fromString("name likeIgnoreCase 'xyz%'"), dataRequest.getEntity().getQualifier());
+		assertEquals(exp("name likeIgnoreCase 'xyz%'"), dataRequest.getEntity().getQualifier());
 	}
 
 	@Test
@@ -93,8 +93,8 @@ public class SenchaRequestParserTest extends TestWithCayenneMapping {
 		parser.parseSelect(dataRequest, urlInfo, E2.NAME.getName());
 
 		assertNotNull(dataRequest.getEntity().getQualifier());
-		assertEquals(Expression.fromString("name likeIgnoreCase 'Bla%' and name likeIgnoreCase 'xyz%'"), dataRequest
-				.getEntity().getQualifier());
+		assertEquals(exp("name likeIgnoreCase 'Bla%' and name likeIgnoreCase 'xyz%'"), dataRequest.getEntity()
+				.getQualifier());
 	}
 
 	@Test
@@ -111,8 +111,8 @@ public class SenchaRequestParserTest extends TestWithCayenneMapping {
 		DataResponse<E2> dataRequest = DataResponse.forType(E2.class);
 		parser.parseSelect(dataRequest, urlInfo, null);
 		assertNotNull(dataRequest.getEntity().getQualifier());
-		assertEquals(Expression.fromString("address = '1 Main Street' and name likeIgnoreCase 'xyz%'"), dataRequest
-				.getEntity().getQualifier());
+		assertEquals(exp("address = '1 Main Street' and name likeIgnoreCase 'xyz%'"), dataRequest.getEntity()
+				.getQualifier());
 	}
 
 	@Test
