@@ -10,12 +10,12 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.nhl.link.rest.Entity;
+import com.nhl.link.rest.it.fixture.cayenne.E2;
+import com.nhl.link.rest.it.fixture.cayenne.auto._E2;
 import com.nhl.link.rest.runtime.jackson.JacksonService;
 import com.nhl.link.rest.runtime.parser.cache.PathCache;
 import com.nhl.link.rest.runtime.parser.sort.SortWorker;
 import com.nhl.link.rest.unit.TestWithCayenneMapping;
-import com.nhl.link.rest.unit.cayenne.E2;
-import com.nhl.link.rest.unit.cayenne.auto._E2;
 
 public class SortProcessorTest extends TestWithCayenneMapping {
 

@@ -7,8 +7,8 @@ import org.apache.cayenne.map.ObjEntity;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.nhl.link.rest.it.fixture.cayenne.E4;
 import com.nhl.link.rest.unit.TestWithCayenneMapping;
-import com.nhl.link.rest.unit.cayenne.E4;
 
 public class TreeConstraintsTest extends TestWithCayenneMapping {
 

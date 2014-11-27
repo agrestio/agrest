@@ -20,14 +20,14 @@ import com.nhl.link.rest.DataResponse;
 import com.nhl.link.rest.Entity;
 import com.nhl.link.rest.encoder.Encoder;
 import com.nhl.link.rest.encoder.EncoderFilter;
+import com.nhl.link.rest.it.fixture.pojo.model.P1;
+import com.nhl.link.rest.it.fixture.pojo.model.P2;
+import com.nhl.link.rest.it.fixture.pojo.model.P3;
+import com.nhl.link.rest.it.fixture.pojo.model.P4;
+import com.nhl.link.rest.it.fixture.pojo.model.P6;
 import com.nhl.link.rest.runtime.jackson.JacksonService;
 import com.nhl.link.rest.runtime.meta.DataMapBuilder;
 import com.nhl.link.rest.runtime.semantics.RelationshipMapper;
-import com.nhl.link.rest.unit.pojo.model.P1;
-import com.nhl.link.rest.unit.pojo.model.P2;
-import com.nhl.link.rest.unit.pojo.model.P3;
-import com.nhl.link.rest.unit.pojo.model.P4;
-import com.nhl.link.rest.unit.pojo.model.P6;
 
 public class EncoderService_Pojo_Test {
 

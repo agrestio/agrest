@@ -9,13 +9,13 @@ import javax.ws.rs.core.Response.Status;
 import org.apache.cayenne.query.SQLTemplate;
 import org.junit.Test;
 
-import com.nhl.link.rest.it.resource.E12Resource;
-import com.nhl.link.rest.it.resource.E2Resource;
-import com.nhl.link.rest.it.resource.E3Resource;
+import com.nhl.link.rest.it.fixture.E12Resource;
+import com.nhl.link.rest.it.fixture.E2Resource;
+import com.nhl.link.rest.it.fixture.E3Resource;
+import com.nhl.link.rest.it.fixture.cayenne.E12;
+import com.nhl.link.rest.it.fixture.cayenne.E2;
+import com.nhl.link.rest.it.fixture.cayenne.E3;
 import com.nhl.link.rest.unit.JerseyTestOnDerby;
-import com.nhl.link.rest.unit.cayenne.E12;
-import com.nhl.link.rest.unit.cayenne.E2;
-import com.nhl.link.rest.unit.cayenne.E3;
 
 public class GET_Related_IT extends JerseyTestOnDerby {
 

@@ -19,6 +19,9 @@ import org.junit.Test;
 import com.nhl.link.rest.DataResponse;
 import com.nhl.link.rest.Entity;
 import com.nhl.link.rest.encoder.EncoderFilter;
+import com.nhl.link.rest.it.fixture.cayenne.E1;
+import com.nhl.link.rest.it.fixture.cayenne.E2;
+import com.nhl.link.rest.it.fixture.cayenne.E3;
 import com.nhl.link.rest.runtime.constraints.IConstraintsHandler;
 import com.nhl.link.rest.runtime.encoder.AttributeEncoderFactory;
 import com.nhl.link.rest.runtime.encoder.EncoderService;
@@ -28,9 +31,6 @@ import com.nhl.link.rest.runtime.encoder.IStringConverterFactory;
 import com.nhl.link.rest.runtime.parser.IRequestParser;
 import com.nhl.link.rest.runtime.semantics.RelationshipMapper;
 import com.nhl.link.rest.unit.TestWithCayenneMapping;
-import com.nhl.link.rest.unit.cayenne.E1;
-import com.nhl.link.rest.unit.cayenne.E2;
-import com.nhl.link.rest.unit.cayenne.E3;
 
 public class CayenneSelectBuilderTest extends TestWithCayenneMapping {
 

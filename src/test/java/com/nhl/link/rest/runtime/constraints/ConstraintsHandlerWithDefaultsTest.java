@@ -19,12 +19,12 @@ import com.nhl.link.rest.DataResponse;
 import com.nhl.link.rest.Entity;
 import com.nhl.link.rest.EntityConstraint;
 import com.nhl.link.rest.TreeConstraints;
+import com.nhl.link.rest.it.fixture.cayenne.E1;
+import com.nhl.link.rest.it.fixture.cayenne.E2;
 import com.nhl.link.rest.runtime.cayenne.ICayennePersister;
 import com.nhl.link.rest.runtime.meta.IMetadataService;
 import com.nhl.link.rest.runtime.meta.MetadataService;
 import com.nhl.link.rest.unit.TestWithCayenneMapping;
-import com.nhl.link.rest.unit.cayenne.E1;
-import com.nhl.link.rest.unit.cayenne.E2;
 
 public class ConstraintsHandlerWithDefaultsTest extends TestWithCayenneMapping {
 

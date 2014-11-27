@@ -13,6 +13,7 @@ import org.junit.Test;
 
 import com.nhl.link.rest.DataResponse;
 import com.nhl.link.rest.encoder.EncoderFilter;
+import com.nhl.link.rest.it.fixture.cayenne.E1;
 import com.nhl.link.rest.runtime.encoder.AttributeEncoderFactory;
 import com.nhl.link.rest.runtime.encoder.EncoderService;
 import com.nhl.link.rest.runtime.encoder.IAttributeEncoderFactory;
@@ -20,7 +21,6 @@ import com.nhl.link.rest.runtime.encoder.IEncoderService;
 import com.nhl.link.rest.runtime.encoder.IStringConverterFactory;
 import com.nhl.link.rest.runtime.semantics.RelationshipMapper;
 import com.nhl.link.rest.unit.TestWithCayenneMapping;
-import com.nhl.link.rest.unit.cayenne.E1;
 
 public class DataResponseTest extends TestWithCayenneMapping {
 

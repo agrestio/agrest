@@ -12,10 +12,10 @@ import org.apache.cayenne.query.SQLSelect;
 import org.apache.cayenne.query.SQLTemplate;
 import org.junit.Test;
 
-import com.nhl.link.rest.it.resource.E8Resource;
+import com.nhl.link.rest.it.fixture.E8Resource;
+import com.nhl.link.rest.it.fixture.cayenne.E2;
+import com.nhl.link.rest.it.fixture.cayenne.E3;
 import com.nhl.link.rest.unit.JerseyTestOnDerby;
-import com.nhl.link.rest.unit.cayenne.E2;
-import com.nhl.link.rest.unit.cayenne.E3;
 
 public class PUT_Related_ByKey_IT extends JerseyTestOnDerby {
 

@@ -3,7 +3,7 @@
 	 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	 xsi:schemaLocation="http://cayenne.apache.org/schema/7/modelMap http://cayenne.apache.org/schema/7/modelMap.xsd"
 	 project-version="7">
-	<property name="defaultPackage" value="com.nhl.link.rest.unit.cayenne"/>
+	<property name="defaultPackage" value="com.nhl.link.rest.it.fixture.cayenne"/>
 	<property name="defaultSchema" value="utest"/>
 	<db-entity name="e1" schema="utest">
 		<db-attribute name="age" type="INTEGER"/>
@@ -80,12 +80,12 @@
 	<db-entity name="e9" schema="utest">
 		<db-attribute name="e8_id" type="INTEGER" isPrimaryKey="true" isMandatory="true"/>
 	</db-entity>
-	<obj-entity name="E1" className="com.nhl.link.rest.unit.cayenne.E1" dbEntityName="e1">
+	<obj-entity name="E1" className="com.nhl.link.rest.it.fixture.cayenne.E1" dbEntityName="e1">
 		<obj-attribute name="age" type="java.lang.Integer" db-attribute-path="age"/>
 		<obj-attribute name="description" type="java.lang.String" db-attribute-path="description"/>
 		<obj-attribute name="name" type="java.lang.String" db-attribute-path="name"/>
 	</obj-entity>
-	<obj-entity name="E10" className="com.nhl.link.rest.unit.cayenne.E10" dbEntityName="e10">
+	<obj-entity name="E10" className="com.nhl.link.rest.it.fixture.cayenne.E10" dbEntityName="e10">
 		<obj-attribute name="cBoolean" type="java.lang.Boolean" db-attribute-path="c_boolean"/>
 		<obj-attribute name="cDate" type="java.util.Date" db-attribute-path="c_date"/>
 		<obj-attribute name="cDecimal" type="java.math.BigDecimal" db-attribute-path="c_decimal"/>
@@ -94,25 +94,25 @@
 		<obj-attribute name="cTimestamp" type="java.util.Date" db-attribute-path="c_timestamp"/>
 		<obj-attribute name="cVarchar" type="java.lang.String" db-attribute-path="c_varchar"/>
 	</obj-entity>
-	<obj-entity name="E11" className="com.nhl.link.rest.unit.cayenne.E11" dbEntityName="e11">
+	<obj-entity name="E11" className="com.nhl.link.rest.it.fixture.cayenne.E11" dbEntityName="e11">
 		<obj-attribute name="address" type="java.lang.String" db-attribute-path="address"/>
 		<obj-attribute name="name" type="java.lang.String" db-attribute-path="name"/>
 	</obj-entity>
-	<obj-entity name="E12" className="com.nhl.link.rest.unit.cayenne.E12" dbEntityName="e12">
+	<obj-entity name="E12" className="com.nhl.link.rest.it.fixture.cayenne.E12" dbEntityName="e12">
 	</obj-entity>
-	<obj-entity name="E12E13" className="com.nhl.link.rest.unit.cayenne.E12E13" dbEntityName="e12_e13">
+	<obj-entity name="E12E13" className="com.nhl.link.rest.it.fixture.cayenne.E12E13" dbEntityName="e12_e13">
 	</obj-entity>
-	<obj-entity name="E13" className="com.nhl.link.rest.unit.cayenne.E13" dbEntityName="e13">
+	<obj-entity name="E13" className="com.nhl.link.rest.it.fixture.cayenne.E13" dbEntityName="e13">
 	</obj-entity>
-	<obj-entity name="E2" className="com.nhl.link.rest.unit.cayenne.E2" dbEntityName="e2">
+	<obj-entity name="E2" className="com.nhl.link.rest.it.fixture.cayenne.E2" dbEntityName="e2">
 		<obj-attribute name="address" type="java.lang.String" db-attribute-path="address"/>
 		<obj-attribute name="name" type="java.lang.String" db-attribute-path="name"/>
 	</obj-entity>
-	<obj-entity name="E3" className="com.nhl.link.rest.unit.cayenne.E3" dbEntityName="e3">
+	<obj-entity name="E3" className="com.nhl.link.rest.it.fixture.cayenne.E3" dbEntityName="e3">
 		<obj-attribute name="name" type="java.lang.String" db-attribute-path="name"/>
 		<obj-attribute name="phoneNumber" type="java.lang.String" db-attribute-path="phone_number"/>
 	</obj-entity>
-	<obj-entity name="E4" className="com.nhl.link.rest.unit.cayenne.E4" dbEntityName="e4">
+	<obj-entity name="E4" className="com.nhl.link.rest.it.fixture.cayenne.E4" dbEntityName="e4">
 		<obj-attribute name="cBoolean" type="java.lang.Boolean" db-attribute-path="c_boolean"/>
 		<obj-attribute name="cDate" type="java.util.Date" db-attribute-path="c_date"/>
 		<obj-attribute name="cDecimal" type="java.math.BigDecimal" db-attribute-path="c_decimal"/>
@@ -121,20 +121,20 @@
 		<obj-attribute name="cTimestamp" type="java.util.Date" db-attribute-path="c_timestamp"/>
 		<obj-attribute name="cVarchar" type="java.lang.String" db-attribute-path="c_varchar"/>
 	</obj-entity>
-	<obj-entity name="E5" className="com.nhl.link.rest.unit.cayenne.E5" dbEntityName="e5">
+	<obj-entity name="E5" className="com.nhl.link.rest.it.fixture.cayenne.E5" dbEntityName="e5">
 		<obj-attribute name="date" type="java.util.Date" db-attribute-path="date"/>
 		<obj-attribute name="name" type="java.lang.String" db-attribute-path="name"/>
 	</obj-entity>
-	<obj-entity name="E6" className="com.nhl.link.rest.unit.cayenne.E6" dbEntityName="e6">
+	<obj-entity name="E6" className="com.nhl.link.rest.it.fixture.cayenne.E6" dbEntityName="e6">
 		<obj-attribute name="charColumn" type="java.lang.String" db-attribute-path="char_column"/>
 	</obj-entity>
-	<obj-entity name="E7" className="com.nhl.link.rest.unit.cayenne.E7" dbEntityName="e7">
+	<obj-entity name="E7" className="com.nhl.link.rest.it.fixture.cayenne.E7" dbEntityName="e7">
 		<obj-attribute name="name" type="java.lang.String" db-attribute-path="name"/>
 	</obj-entity>
-	<obj-entity name="E8" className="com.nhl.link.rest.unit.cayenne.E8" dbEntityName="e8">
+	<obj-entity name="E8" className="com.nhl.link.rest.it.fixture.cayenne.E8" dbEntityName="e8">
 		<obj-attribute name="name" type="java.lang.String" db-attribute-path="name"/>
 	</obj-entity>
-	<obj-entity name="E9" className="com.nhl.link.rest.unit.cayenne.E9" dbEntityName="e9">
+	<obj-entity name="E9" className="com.nhl.link.rest.it.fixture.cayenne.E9" dbEntityName="e9">
 	</obj-entity>
 	<db-relationship name="e11s" source="e10" target="e11" toMany="false">
 		<db-attribute-pair source="id" target="e10_id"/>

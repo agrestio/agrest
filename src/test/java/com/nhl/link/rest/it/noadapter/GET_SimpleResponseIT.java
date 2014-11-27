@@ -18,7 +18,7 @@ import org.glassfish.jersey.test.JerseyTest;
 import org.glassfish.jersey.test.inmemory.InMemoryTestContainerFactory;
 import org.junit.Test;
 
-import com.nhl.link.rest.it.resource.SimpleResponseResource;
+import com.nhl.link.rest.it.fixture.SimpleResponseResource;
 import com.nhl.link.rest.runtime.LinkRestBuilder;
 
 public class GET_SimpleResponseIT extends JerseyTest {

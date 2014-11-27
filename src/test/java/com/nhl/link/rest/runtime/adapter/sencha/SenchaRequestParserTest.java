@@ -20,6 +20,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.nhl.link.rest.DataResponse;
+import com.nhl.link.rest.it.fixture.cayenne.E2;
 import com.nhl.link.rest.runtime.cayenne.ICayennePersister;
 import com.nhl.link.rest.runtime.jackson.IJacksonService;
 import com.nhl.link.rest.runtime.jackson.JacksonService;
@@ -34,7 +35,6 @@ import com.nhl.link.rest.runtime.parser.tree.ITreeProcessor;
 import com.nhl.link.rest.runtime.parser.tree.IncludeExcludeProcessor;
 import com.nhl.link.rest.runtime.semantics.RelationshipMapper;
 import com.nhl.link.rest.unit.TestWithCayenneMapping;
-import com.nhl.link.rest.unit.cayenne.E2;
 import com.nhl.link.rest.update.UpdateFilter;
 
 public class SenchaRequestParserTest extends TestWithCayenneMapping {

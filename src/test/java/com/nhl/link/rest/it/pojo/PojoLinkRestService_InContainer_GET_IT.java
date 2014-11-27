@@ -10,8 +10,8 @@ import javax.ws.rs.core.Response.Status;
 
 import org.junit.Test;
 
-import com.nhl.link.rest.unit.pojo.JerseyTestOnPojo;
-import com.nhl.link.rest.unit.pojo.model.P6;
+import com.nhl.link.rest.it.fixture.pojo.JerseyTestOnPojo;
+import com.nhl.link.rest.it.fixture.pojo.model.P6;
 
 public class PojoLinkRestService_InContainer_GET_IT extends JerseyTestOnPojo {
 

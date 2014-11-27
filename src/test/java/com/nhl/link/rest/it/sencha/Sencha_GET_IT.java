@@ -12,13 +12,13 @@ import javax.ws.rs.core.Response.Status;
 import org.apache.cayenne.query.SQLTemplate;
 import org.junit.Test;
 
-import com.nhl.link.rest.it.resource.E2Resource;
-import com.nhl.link.rest.it.resource.E3Resource;
+import com.nhl.link.rest.it.fixture.E2Resource;
+import com.nhl.link.rest.it.fixture.E3Resource;
+import com.nhl.link.rest.it.fixture.cayenne.E2;
+import com.nhl.link.rest.it.fixture.cayenne.E3;
 import com.nhl.link.rest.runtime.LinkRestBuilder;
 import com.nhl.link.rest.runtime.adapter.sencha.SenchaAdapter;
 import com.nhl.link.rest.unit.JerseyTestOnDerby;
-import com.nhl.link.rest.unit.cayenne.E2;
-import com.nhl.link.rest.unit.cayenne.E3;
 
 public class Sencha_GET_IT extends JerseyTestOnDerby {
 

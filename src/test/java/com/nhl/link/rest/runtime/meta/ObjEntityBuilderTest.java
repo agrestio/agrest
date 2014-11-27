@@ -12,11 +12,11 @@ import org.apache.cayenne.map.ObjEntity;
 import org.apache.cayenne.map.ObjRelationship;
 import org.junit.Test;
 
+import com.nhl.link.rest.it.fixture.pojo.model.P3;
+import com.nhl.link.rest.it.fixture.pojo.model.P4;
+import com.nhl.link.rest.it.fixture.pojo.model.P5;
 import com.nhl.link.rest.runtime.meta.ObjEntityBuilder;
 import com.nhl.link.rest.runtime.meta.RootDataMapBuilder;
-import com.nhl.link.rest.unit.pojo.model.P3;
-import com.nhl.link.rest.unit.pojo.model.P4;
-import com.nhl.link.rest.unit.pojo.model.P5;
 
 public class ObjEntityBuilderTest {
 
