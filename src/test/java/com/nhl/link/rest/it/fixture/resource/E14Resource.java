@@ -10,7 +10,7 @@ import com.nhl.link.rest.it.fixture.cayenne.E14;
 public class E14Resource extends LrResource {
 
 	@PUT
-	public DataResponse<E14> relateToOneExisting(String data) {
+	public DataResponse<E14> sync(String data) {
 		return getService().idempotentFullSync(E14.class).includeData().process(data);
 	}
 }
