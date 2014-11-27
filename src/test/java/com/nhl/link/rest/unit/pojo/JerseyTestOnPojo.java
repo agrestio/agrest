@@ -17,6 +17,7 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 
+import com.nhl.link.rest.it.resource.PojoResource;
 import com.nhl.link.rest.runtime.LinkRestBuilder;
 import com.nhl.link.rest.runtime.meta.DataMapBuilder;
 import com.nhl.link.rest.unit.DerbyManager;
@@ -25,7 +26,6 @@ import com.nhl.link.rest.unit.pojo.model.P2;
 import com.nhl.link.rest.unit.pojo.model.P3;
 import com.nhl.link.rest.unit.pojo.model.P4;
 import com.nhl.link.rest.unit.pojo.model.P6;
-import com.nhl.link.rest.unit.resource.PojoResource;
 
 public class JerseyTestOnPojo extends JerseyTest {
 	protected static DerbyManager derbyAssembly;
