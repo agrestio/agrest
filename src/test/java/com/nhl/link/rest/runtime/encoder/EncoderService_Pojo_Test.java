@@ -85,8 +85,7 @@ public class EncoderService_Pojo_Test {
 
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 
-		try (JsonGenerator generator = new JacksonService().getJsonFactory()
-				.createJsonGenerator(out, JsonEncoding.UTF8)) {
+		try (JsonGenerator generator = new JacksonService().getJsonFactory().createGenerator(out, JsonEncoding.UTF8)) {
 			encoder.encode(null, object, generator);
 		}
 
