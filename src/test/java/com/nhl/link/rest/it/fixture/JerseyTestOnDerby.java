@@ -12,6 +12,7 @@ import javax.ws.rs.core.FeatureContext;
 import org.apache.cayenne.ObjectContext;
 import org.apache.cayenne.configuration.server.ServerRuntime;
 import org.apache.cayenne.query.EJBQLQuery;
+import org.apache.cayenne.query.QueryChain;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.test.JerseyTest;
 import org.glassfish.jersey.test.inmemory.InMemoryTestContainerFactory;
@@ -52,23 +53,24 @@ public abstract class JerseyTestOnDerby extends JerseyTest {
 	public void before() {
 		this.context = runtime.newContext();
 
-		context.performGenericQuery(new EJBQLQuery("delete from E4"));
-		context.performGenericQuery(new EJBQLQuery("delete from E3"));
-		context.performGenericQuery(new EJBQLQuery("delete from E2"));
-		context.performGenericQuery(new EJBQLQuery("delete from E5"));
-		context.performGenericQuery(new EJBQLQuery("delete from E6"));
-		
-		context.performGenericQuery(new EJBQLQuery("delete from E7"));
-		context.performGenericQuery(new EJBQLQuery("delete from E9"));
-		context.performGenericQuery(new EJBQLQuery("delete from E8"));
-		
-		context.performGenericQuery(new EJBQLQuery("delete from E11"));
-		context.performGenericQuery(new EJBQLQuery("delete from E10"));
-		
-		context.performGenericQuery(new EJBQLQuery("delete from E12E13"));
-		context.performGenericQuery(new EJBQLQuery("delete from E12"));
-		context.performGenericQuery(new EJBQLQuery("delete from E13"));
+		QueryChain chain = new QueryChain();
 
+		// ordering is important to avoid FK constraint failures on delete
+		chain.addQuery(new EJBQLQuery("delete from E4"));
+		chain.addQuery(new EJBQLQuery("delete from E3"));
+		chain.addQuery(new EJBQLQuery("delete from E2"));
+		chain.addQuery(new EJBQLQuery("delete from E5"));
+		chain.addQuery(new EJBQLQuery("delete from E6"));
+		chain.addQuery(new EJBQLQuery("delete from E7"));
+		chain.addQuery(new EJBQLQuery("delete from E9"));
+		chain.addQuery(new EJBQLQuery("delete from E8"));
+		chain.addQuery(new EJBQLQuery("delete from E11"));
+		chain.addQuery(new EJBQLQuery("delete from E10"));
+		chain.addQuery(new EJBQLQuery("delete from E12E13"));
+		chain.addQuery(new EJBQLQuery("delete from E12"));
+		chain.addQuery(new EJBQLQuery("delete from E13"));
+
+		context.performGenericQuery(chain);
 	}
 
 	public JerseyTestOnDerby() throws TestContainerException {
