@@ -13,12 +13,14 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
 import org.apache.cayenne.Cayenne;
+import org.apache.cayenne.query.SQLSelect;
 import org.apache.cayenne.query.SQLTemplate;
 import org.junit.Test;
 
 import com.nhl.link.rest.it.fixture.JerseyTestOnDerby;
 import com.nhl.link.rest.it.fixture.cayenne.E3;
 import com.nhl.link.rest.it.fixture.cayenne.E4;
+import com.nhl.link.rest.it.fixture.resource.E14Resource;
 import com.nhl.link.rest.it.fixture.resource.E3Resource;
 import com.nhl.link.rest.it.fixture.resource.E4Resource;
 
@@ -28,6 +30,7 @@ public class PUT_IT extends JerseyTestOnDerby {
 	protected void doAddResources(FeatureContext context) {
 		context.register(E3Resource.class);
 		context.register(E4Resource.class);
+		context.register(E14Resource.class);
 	}
 
 	@Test
@@ -152,5 +155,38 @@ public class PUT_IT extends JerseyTestOnDerby {
 		assertEquals(
 				"{\"success\":true,\"data\":[{\"name\":\"yyy\"},{\"name\":\"zzz\"},{\"name\":\"111\"},{\"name\":\"333\"}],\"total\":4}",
 				r2.readEntity(String.class));
+	}
+
+	@Test
+	public void testPUT_Bulk_LongId() throws WebApplicationException, IOException {
+
+		runtime.newContext().performGenericQuery(
+				new SQLTemplate(E3.class, "INSERT INTO utest.e14 (long_id, name) values (5, 'aaa')"));
+		runtime.newContext().performGenericQuery(
+				new SQLTemplate(E3.class, "INSERT INTO utest.e14 (long_id, name) values (4, 'zzz')"));
+		runtime.newContext().performGenericQuery(
+				new SQLTemplate(E3.class, "INSERT INTO utest.e14 (long_id, name) values (2, 'bbb')"));
+		runtime.newContext().performGenericQuery(
+				new SQLTemplate(E3.class, "INSERT INTO utest.e14 (long_id, name) values (6, 'yyy')"));
+
+		Response r1 = target("/e14/")
+				.queryParam("exclude", "id")
+				.queryParam("include", E3.NAME.getName())
+				.request()
+				.put(Entity
+						.entity("[{\"id\":6,\"name\":\"yyy\"},{\"id\":4,\"name\":\"zzz\"},{\"id\":5,\"name\":\"111\"},{\"id\":2,\"name\":\"333\"}]",
+								MediaType.APPLICATION_JSON));
+		assertEquals(Status.OK.getStatusCode(), r1.getStatus());
+
+		// update: ordering must be preserved...
+		assertEquals(
+				"{\"success\":true,\"data\":[{\"name\":\"yyy\"},{\"name\":\"zzz\"},{\"name\":\"111\"},{\"name\":\"333\"}],\"total\":4}",
+				r1.readEntity(String.class));
+
+		assertEquals(4, SQLSelect.scalarQuery(Integer.class, "SELECT count(1) FROM utest.e14").selectOne(context)
+				.intValue());
+		assertEquals(4,
+				SQLSelect.scalarQuery(Integer.class, "SELECT count(1) FROM utest.e14 WHERE long_id IN (2,4,6,5)")
+						.selectOne(context).intValue());
 	}
 }

@@ -37,6 +37,10 @@
 	<db-entity name="e13" schema="utest">
 		<db-attribute name="id" type="INTEGER" isPrimaryKey="true" isMandatory="true"/>
 	</db-entity>
+	<db-entity name="e14" schema="utest">
+		<db-attribute name="long_id" type="BIGINT" isPrimaryKey="true" isMandatory="true"/>
+		<db-attribute name="name" type="VARCHAR" length="100"/>
+	</db-entity>
 	<db-entity name="e2" schema="utest">
 		<db-attribute name="address" type="VARCHAR" length="255"/>
 		<db-attribute name="id" type="INTEGER" isPrimaryKey="true" isGenerated="true" isMandatory="true"/>
@@ -103,6 +107,9 @@
 	<obj-entity name="E12E13" className="com.nhl.link.rest.it.fixture.cayenne.E12E13" dbEntityName="e12_e13">
 	</obj-entity>
 	<obj-entity name="E13" className="com.nhl.link.rest.it.fixture.cayenne.E13" dbEntityName="e13">
+	</obj-entity>
+	<obj-entity name="E14" className="com.nhl.link.rest.it.fixture.cayenne.E14" dbEntityName="e14">
+		<obj-attribute name="name" type="java.lang.String" db-attribute-path="name"/>
 	</obj-entity>
 	<obj-entity name="E2" className="com.nhl.link.rest.it.fixture.cayenne.E2" dbEntityName="e2">
 		<obj-attribute name="address" type="java.lang.String" db-attribute-path="address"/>
