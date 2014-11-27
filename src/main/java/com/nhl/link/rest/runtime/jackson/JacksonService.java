@@ -25,7 +25,7 @@ public class JacksonService implements IJacksonService {
 		// fun Jackson API with circular dependencies ... so we create a mapper
 		// first, and grab implicitly created factory from it
 		this.sharedMapper = new ObjectMapper();
-		this.sharedFactory = sharedMapper.getJsonFactory();
+		this.sharedFactory = sharedMapper.getFactory();
 
 		// make sure mapper does not attempt closing streams it does not
 		// manage... why is this even a default in jackson?
@@ -44,7 +44,7 @@ public class JacksonService implements IJacksonService {
 	@Override
 	public void outputJson(JsonConvertable processor, OutputStream out) throws IOException {
 		// TODO: UTF-8 is hardcoded, it is likely we may have alt. encodings
-		try (JsonGenerator generator = sharedFactory.createJsonGenerator(out, JsonEncoding.UTF8)) {
+		try (JsonGenerator generator = sharedFactory.createGenerator(out, JsonEncoding.UTF8)) {
 			processor.generateJSON(generator);
 		}
 	}
@@ -59,7 +59,7 @@ public class JacksonService implements IJacksonService {
 		}
 
 		try {
-			JsonParser parser = getJsonFactory().createJsonParser(json);
+			JsonParser parser = getJsonFactory().createParser(json);
 			return new ObjectMapper().readTree(parser);
 		} catch (IOException ioex) {
 			throw new LinkRestException(Status.BAD_REQUEST, "Error parsing JSON");
