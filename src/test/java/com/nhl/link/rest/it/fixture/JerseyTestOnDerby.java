@@ -5,15 +5,18 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.sql.SQLException;
 
+import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.Application;
 import javax.ws.rs.core.Feature;
 import javax.ws.rs.core.FeatureContext;
+import javax.ws.rs.core.MediaType;
 
 import org.apache.cayenne.ObjectContext;
 import org.apache.cayenne.configuration.server.ServerRuntime;
 import org.apache.cayenne.query.EJBQLQuery;
 import org.apache.cayenne.query.QueryChain;
 import org.apache.cayenne.query.SQLSelect;
+import org.apache.cayenne.query.SQLTemplate;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.test.JerseyTest;
 import org.glassfish.jersey.test.inmemory.InMemoryTestContainerFactory;
@@ -22,6 +25,7 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 
+import com.nhl.link.rest.it.fixture.cayenne.E1;
 import com.nhl.link.rest.runtime.LinkRestBuilder;
 
 /**
@@ -118,5 +122,14 @@ public abstract class JerseyTestOnDerby extends JerseyTest {
 
 	protected int intForQuery(String querySql) {
 		return SQLSelect.scalarQuery(Integer.class, querySql).selectOne(context).intValue();
+	}
+
+	protected void insert(String table, String columns, String values) {
+		String insertSql = "INSERT INTO utest." + table + " (" + columns + ") VALUES (" + values + ")";
+ 		context.performGenericQuery(new SQLTemplate(E1.class, insertSql));
+	}
+
+	protected Entity<String> jsonEntity(String data) {
+		return Entity.entity(data, MediaType.APPLICATION_JSON);
 	}
 }
