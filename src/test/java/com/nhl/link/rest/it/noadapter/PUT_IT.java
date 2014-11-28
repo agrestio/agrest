@@ -149,12 +149,9 @@ public class PUT_IT extends JerseyTestOnDerby {
 				.put(Entity
 						.entity("[{\"id\":6,\"name\":\"yyy\"},{\"id\":4,\"name\":\"zzz\"},{\"id\":5,\"name\":\"111\"},{\"id\":2,\"name\":\"333\"}]",
 								MediaType.APPLICATION_JSON));
-		assertEquals(Status.OK.getStatusCode(), r2.getStatus());
 
 		// update: ordering must be preserved...
-		assertEquals(
-				"{\"success\":true,\"data\":[{\"name\":\"yyy\"},{\"name\":\"zzz\"},{\"name\":\"111\"},{\"name\":\"333\"}],\"total\":4}",
-				r2.readEntity(String.class));
+		assertLR(r2, 4, "[{\"name\":\"yyy\"},{\"name\":\"zzz\"},{\"name\":\"111\"},{\"name\":\"333\"}]");
 	}
 
 	@Test
@@ -176,11 +173,10 @@ public class PUT_IT extends JerseyTestOnDerby {
 				.put(Entity
 						.entity("[{\"id\":6,\"name\":\"yyy\"},{\"id\":4,\"name\":\"zzz\"},{\"id\":5,\"name\":\"111\"},{\"id\":2,\"name\":\"333\"}]",
 								MediaType.APPLICATION_JSON));
-		assertEquals(Status.OK.getStatusCode(), r1.getStatus());
 
 		// update: ordering must be preserved...
-		assertEquals("{\"success\":true,\"data\":[{\"id\":6,\"name\":\"yyy\"},{\"id\":4,\"name\":\"zzz\"},"
-				+ "{\"id\":5,\"name\":\"111\"},{\"id\":2,\"name\":\"333\"}],\"total\":4}", r1.readEntity(String.class));
+		assertLR(r1, 4, "[{\"id\":6,\"name\":\"yyy\"},{\"id\":4,\"name\":\"zzz\"},"
+				+ "{\"id\":5,\"name\":\"111\"},{\"id\":2,\"name\":\"333\"}]");
 
 		assertEquals(4, SQLSelect.scalarQuery(Integer.class, "SELECT count(1) FROM utest.e14").selectOne(context)
 				.intValue());
@@ -201,17 +197,14 @@ public class PUT_IT extends JerseyTestOnDerby {
 		runtime.newContext().performGenericQuery(
 				new SQLTemplate(E3.class, "INSERT INTO utest.e14 (long_id, name) values (3147483646, 'yyy')"));
 
-		Response r1 = target("/e14/").request().put(
-				Entity.entity("[{\"id\":3147483646,\"name\":\"yyy\"},{\"id\":8147483648,\"name\":\"zzz\"}"
+		Entity<String> putE = Entity.entity(
+				"[{\"id\":3147483646,\"name\":\"yyy\"},{\"id\":8147483648,\"name\":\"zzz\"}"
 						+ ",{\"id\":8147483647,\"name\":\"111\"},{\"id\":8147483649,\"name\":\"333\"}]",
-						MediaType.APPLICATION_JSON));
-		assertEquals(Status.OK.getStatusCode(), r1.getStatus());
+				MediaType.APPLICATION_JSON);
+		Response r1 = target("/e14/").request().put(putE);
 
 		// update: ordering must be preserved...
-		assertEquals(
-				"{\"success\":true,\"data\":[{\"id\":3147483646,\"name\":\"yyy\"},{\"id\":8147483648,\"name\":\"zzz\"}"
-						+ ",{\"id\":8147483647,\"name\":\"111\"},{\"id\":8147483649,\"name\":\"333\"}],\"total\":4}",
-				r1.readEntity(String.class));
+		assertLR(r1, 4, putE);
 
 		assertEquals(4, SQLSelect.scalarQuery(Integer.class, "SELECT count(1) FROM utest.e14").selectOne(context)
 				.intValue());
