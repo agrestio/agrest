@@ -19,6 +19,12 @@ public class E7Resource extends LrResource {
 	}
 
 	@PUT
+	@Path("{id}")
+	public DataResponse<E7> syncOne(@PathParam("id") int id, @Context UriInfo uriInfo, String data) {
+		return getService().idempotentFullSync(E7.class).id(id).with(uriInfo).includeData().process(data);
+	}
+
+	@PUT
 	@Path("{id}/e8/{tid}")
 	public DataResponse<E8> relateToOneExisting(@PathParam("id") int parentId, @PathParam("tid") int id, String data) {
 		return getService().idempotentCreateOrUpdate(E8.class).id(id).includeData().parent(E7.class, parentId, E7.E8)

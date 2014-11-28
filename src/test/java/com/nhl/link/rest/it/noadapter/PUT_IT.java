@@ -207,4 +207,20 @@ public class PUT_IT extends JerseyTestOnDerby {
 		assertThat(response1, okAndHasData(2, "[{\"id\":6,\"e7s\":[{\"name\":\"me\"}]},"
 				+ "{\"id\":5,\"e7s\":[{\"name\":\"her\"},{\"name\":\"him\"}]}]"));
 	}
+
+	@Test
+	public void testPUT_Single_ResponseToOneRelationshipFilter() throws WebApplicationException, IOException {
+
+		insert("e8", "id, name", "5, 'aaa'");
+		insert("e8", "id, name", "6, 'ert'");
+
+		insert("e9", "e8_id", "5");
+		insert("e9", "e8_id", "6");
+
+		Entity<String> entity1 = jsonEntity("[{\"name\":\"yyy\",\"e8\":6}]");
+		Response response1 = target("/e7/6").queryParam("include", "id").queryParam("exclude", E7.NAME.getName())
+				.queryParam("include", E7.E8.dot(E8.E9).getName()).request().put(entity1);
+
+		assertThat(response1, okAndHasData(1, "[{\"id\":6,\"e8\":{\"e9\":{\"id\":6}}}]"));
+	}
 }
