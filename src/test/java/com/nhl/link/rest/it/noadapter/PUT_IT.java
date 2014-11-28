@@ -15,9 +15,13 @@ import org.junit.Test;
 
 import com.nhl.link.rest.it.fixture.JerseyTestOnDerby;
 import com.nhl.link.rest.it.fixture.cayenne.E3;
+import com.nhl.link.rest.it.fixture.cayenne.E7;
+import com.nhl.link.rest.it.fixture.cayenne.E8;
 import com.nhl.link.rest.it.fixture.resource.E14Resource;
 import com.nhl.link.rest.it.fixture.resource.E3Resource;
 import com.nhl.link.rest.it.fixture.resource.E4Resource;
+import com.nhl.link.rest.it.fixture.resource.E7Resource;
+import com.nhl.link.rest.it.fixture.resource.E8Resource;
 
 public class PUT_IT extends JerseyTestOnDerby {
 
@@ -25,6 +29,8 @@ public class PUT_IT extends JerseyTestOnDerby {
 	protected void doAddResources(FeatureContext context) {
 		context.register(E3Resource.class);
 		context.register(E4Resource.class);
+		context.register(E7Resource.class);
+		context.register(E8Resource.class);
 		context.register(E14Resource.class);
 	}
 
@@ -111,8 +117,6 @@ public class PUT_IT extends JerseyTestOnDerby {
 		Response response = target("/e14/").queryParam("exclude", "id").queryParam("include", E3.NAME.getName())
 				.request().put(entity);
 
-		// ordering must be preserved in response, so comparing with request
-		// entity
 		assertThat(response, okAndHasData(4, entity));
 
 		assertEquals(4, intForQuery("SELECT COUNT(1) FROM utest.e14"));
@@ -131,12 +135,76 @@ public class PUT_IT extends JerseyTestOnDerby {
 				+ ",{\"id\":8147483647,\"name\":\"111\"},{\"id\":8147483649,\"name\":\"333\"}]");
 		Response response = target("/e14/").request().put(putEntity);
 
-		// ordering must be preserved in response, so comparing with request
-		// entity
 		assertThat(response, okAndHasData(4, putEntity));
 
 		assertEquals(4, intForQuery("SELECT COUNT(1) FROM utest.e14"));
 		assertEquals(4, intForQuery("SELECT count(1) FROM utest.e14 WHERE "
 				+ "long_id IN (3147483646, 8147483648, 8147483647, 8147483649)"));
+	}
+
+	@Test
+	public void testPUT_Bulk_ResponseAttributesFilter() throws WebApplicationException, IOException {
+
+		Entity<String> entity1 = jsonEntity("[{\"id\":6,\"name\":\"yyy\"},{\"id\":4,\"name\":\"zzz\"}]");
+		Response response1 = target("/e7").queryParam("exclude", "id").queryParam("include", E7.NAME.getName())
+				.request().put(entity1);
+		assertThat(response1, okAndHasData(2, "[{\"name\":\"yyy\"},{\"name\":\"zzz\"}]"));
+
+		Entity<String> entity2 = jsonEntity("[{\"id\":6,\"name\":\"123\"},{\"id\":4}]");
+		Response response2 = target("/e7").queryParam("include", "id").queryParam("exclude", E7.NAME.getName())
+				.request().put(entity2);
+		assertThat(response2, okAndHasData(2, "[{\"id\":6},{\"id\":4}]"));
+	}
+
+	@Test
+	public void testPUT_Bulk_ResponseToOneRelationshipFilter() throws WebApplicationException, IOException {
+
+		insert("e8", "id, name", "5, 'aaa'");
+		insert("e8", "id, name", "6, 'ert'");
+
+		insert("e9", "e8_id", "5");
+		insert("e9", "e8_id", "6");
+
+		Entity<String> entity1 = jsonEntity("[{\"id\":6,\"name\":\"yyy\"},{\"id\":4,\"name\":\"zzz\"}]");
+		Response response1 = target("/e7").queryParam("include", "id").queryParam("exclude", E7.NAME.getName())
+				.queryParam("include", E7.E8.getName()).request().put(entity1);
+
+		assertThat(response1, okAndHasData(2, "[{\"id\":6,\"e8\":null},{\"id\":4,\"e8\":null}]"));
+
+		Entity<String> entity2 = jsonEntity("[{\"id\":6,\"name\":\"123\",\"e8\":6},{\"id\":4,\"name\":\"zzz\",\"e8\":5}]");
+		Response response2 = target("/e7").queryParam("include", "id").queryParam("exclude", E7.NAME.getName())
+				.queryParam("include", E7.E8.getName()).request().put(entity2);
+		assertThat(response2, okAndHasData(2, "[{\"id\":6,\"e8\":{\"id\":6,\"name\":\"ert\"}},"
+				+ "{\"id\":4,\"e8\":{\"id\":5,\"name\":\"aaa\"}}]"));
+
+		Entity<String> entity3 = jsonEntity("[{\"id\":6,\"name\":\"123\",\"e8\":6},{\"id\":4,\"name\":\"zzz\",\"e8\":5}]");
+		Response response3 = target("/e7").queryParam("include", "id").queryParam("exclude", E7.NAME.getName())
+				.queryParam("include", E7.E8.dot(E8.NAME).getName()).request().put(entity3);
+		assertThat(response3, okAndHasData(2, "[{\"id\":6,\"e8\":{\"name\":\"ert\"}},"
+				+ "{\"id\":4,\"e8\":{\"name\":\"aaa\"}}]"));
+
+		Entity<String> entity4 = jsonEntity("[{\"id\":6,\"name\":\"123\",\"e8\":6},{\"id\":4,\"name\":\"zzz\",\"e8\":5}]");
+		Response response4 = target("/e7").queryParam("include", "id").queryParam("exclude", E7.NAME.getName())
+				.queryParam("include", E7.E8.dot(E8.E9).getName()).request().put(entity4);
+		assertThat(response4, okAndHasData(2, "[{\"id\":6,\"e8\":{\"e9\":{\"id\":6}}},"
+				+ "{\"id\":4,\"e8\":{\"e9\":{\"id\":5}}}]"));
+	}
+
+	@Test
+	public void testPUT_Bulk_ResponseToManyRelationshipFilter() throws WebApplicationException, IOException {
+
+		insert("e8", "id, name", "5, 'aaa'");
+		insert("e8", "id, name", "6, 'ert'");
+
+		insert("e7", "id, e8_id, name", "45, 6, 'me'");
+		insert("e7", "id, e8_id, name", "78, 5, 'her'");
+		insert("e7", "id, e8_id, name", "81, 5, 'him'");
+
+		Entity<String> entity1 = jsonEntity("[{\"id\":6,\"name\":\"yyy\"},{\"id\":5,\"name\":\"zzz\"}]");
+		Response response1 = target("/e8").queryParam("include", "id").queryParam("exclude", E8.NAME.getName())
+				.queryParam("include", E8.E7S.dot(E7.NAME).getName()).request().put(entity1);
+
+		assertThat(response1, okAndHasData(2, "[{\"id\":6,\"e7s\":[{\"name\":\"me\"}]},"
+				+ "{\"id\":5,\"e7s\":[{\"name\":\"her\"},{\"name\":\"him\"}]}]"));
 	}
 }

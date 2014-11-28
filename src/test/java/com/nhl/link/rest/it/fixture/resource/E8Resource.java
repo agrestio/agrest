@@ -18,6 +18,11 @@ import com.nhl.link.rest.runtime.cayenne.ByKeyObjectMapperFactory;
 
 @Path("e8")
 public class E8Resource extends LrResource {
+	
+	@PUT
+	public DataResponse<E8> sync(@Context UriInfo uriInfo, String data) {
+		return getService().idempotentFullSync(E8.class).with(uriInfo).includeData().process(data);
+	}
 
 	@POST
 	@Path("w/constrainedid/{id}")

@@ -20,8 +20,13 @@ public class StatusMatcher extends BaseMatcher<Response> {
 	}
 
 	@Override
+	public void describeMismatch(Object item, Description description) {
+		description.appendText("was status(" + ((Response) item).getStatus() + ")");
+	}
+
+	@Override
 	public void describeTo(Description description) {
-		description.appendText("status(\"" + expectedStatus.getStatusCode() + "\")");
+		description.appendText("status(" + expectedStatus.getStatusCode() + ")");
 	}
 
 }

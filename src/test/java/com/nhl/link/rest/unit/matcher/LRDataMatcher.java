@@ -7,6 +7,7 @@ import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 
+// TODO: split "total" and "data" matchers in 2 classes for cleaner error reporting
 public class LRDataMatcher extends BaseMatcher<Response> {
 
 	private static String toEntityString(String expectedData, int expectedTotal) {
