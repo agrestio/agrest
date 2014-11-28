@@ -15,6 +15,7 @@ import org.apache.cayenne.ObjectContext;
 import org.apache.cayenne.configuration.server.ServerRuntime;
 import org.apache.cayenne.query.EJBQLQuery;
 import org.apache.cayenne.query.QueryChain;
+import org.apache.cayenne.query.RefreshQuery;
 import org.apache.cayenne.query.SQLSelect;
 import org.apache.cayenne.query.SQLTemplate;
 import org.glassfish.jersey.server.ResourceConfig;
@@ -57,6 +58,10 @@ public abstract class JerseyTestOnDerby extends JerseyTest {
 	@Before
 	public void before() {
 		this.context = runtime.newContext();
+
+		// this is to prevent shared caches from returning bogus data between
+		// test runs
+		context.performQuery(new RefreshQuery());
 
 		QueryChain chain = new QueryChain();
 
@@ -126,7 +131,7 @@ public abstract class JerseyTestOnDerby extends JerseyTest {
 
 	protected void insert(String table, String columns, String values) {
 		String insertSql = "INSERT INTO utest." + table + " (" + columns + ") VALUES (" + values + ")";
- 		context.performGenericQuery(new SQLTemplate(E1.class, insertSql));
+		context.performGenericQuery(new SQLTemplate(E1.class, insertSql));
 	}
 
 	protected Entity<String> jsonEntity(String data) {
