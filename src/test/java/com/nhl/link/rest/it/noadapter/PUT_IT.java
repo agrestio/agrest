@@ -11,7 +11,6 @@ import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.FeatureContext;
 import javax.ws.rs.core.Response;
 
-import org.apache.cayenne.query.SQLTemplate;
 import org.junit.Test;
 
 import com.nhl.link.rest.it.fixture.JerseyTestOnDerby;
@@ -89,9 +88,9 @@ public class PUT_IT extends JerseyTestOnDerby {
 		insert("e3", "id, name", "2, 'bbb'");
 		insert("e3", "id, name", "6, 'yyy'");
 
-		Entity<String> putEntity = jsonEntity("[{\"id\":6,\"name\":\"yyy\"},{\"id\":4,\"name\":\"zzz\"},{\"id\":5,\"name\":\"111\"},{\"id\":2,\"name\":\"333\"}]");
+		Entity<String> entity = jsonEntity("[{\"id\":6,\"name\":\"yyy\"},{\"id\":4,\"name\":\"zzz\"},{\"id\":5,\"name\":\"111\"},{\"id\":2,\"name\":\"333\"}]");
 		Response response = target("/e3/").queryParam("exclude", "id").queryParam("include", E3.NAME.getName())
-				.request().put(putEntity);
+				.request().put(entity);
 
 		// ordering must be preserved in response, so comparing with request
 		// entity
@@ -102,14 +101,10 @@ public class PUT_IT extends JerseyTestOnDerby {
 	@Test
 	public void testPUT_Bulk_LongId_Small() throws WebApplicationException, IOException {
 
-		runtime.newContext().performGenericQuery(
-				new SQLTemplate(E3.class, "INSERT INTO utest.e14 (long_id, name) values (5, 'aaa')"));
-		runtime.newContext().performGenericQuery(
-				new SQLTemplate(E3.class, "INSERT INTO utest.e14 (long_id, name) values (4, 'zzz')"));
-		runtime.newContext().performGenericQuery(
-				new SQLTemplate(E3.class, "INSERT INTO utest.e14 (long_id, name) values (2, 'bbb')"));
-		runtime.newContext().performGenericQuery(
-				new SQLTemplate(E3.class, "INSERT INTO utest.e14 (long_id, name) values (6, 'yyy')"));
+		insert("e14", "long_id, name", "5, 'aaa'");
+		insert("e14", "long_id, name", "4, 'zzz'");
+		insert("e14", "long_id, name", "2, 'bbb'");
+		insert("e14", "long_id, name", "6, 'yyy'");
 
 		Entity<String> entity = jsonEntity("[{\"id\":6,\"name\":\"yyy\"},{\"id\":4,\"name\":\"zzz\"},"
 				+ "{\"id\":5,\"name\":\"111\"},{\"id\":2,\"name\":\"333\"}]");
@@ -127,14 +122,10 @@ public class PUT_IT extends JerseyTestOnDerby {
 	@Test
 	public void testPUT_Bulk_LongId() throws WebApplicationException, IOException {
 
-		runtime.newContext().performGenericQuery(
-				new SQLTemplate(E3.class, "INSERT INTO utest.e14 (long_id, name) values (8147483647, 'aaa')"));
-		runtime.newContext().performGenericQuery(
-				new SQLTemplate(E3.class, "INSERT INTO utest.e14 (long_id, name) values (8147483648, 'zzz')"));
-		runtime.newContext().performGenericQuery(
-				new SQLTemplate(E3.class, "INSERT INTO utest.e14 (long_id, name) values (8147483649, 'bbb')"));
-		runtime.newContext().performGenericQuery(
-				new SQLTemplate(E3.class, "INSERT INTO utest.e14 (long_id, name) values (3147483646, 'yyy')"));
+		insert("e14", "long_id, name", "8147483647, 'aaa'");
+		insert("e14", "long_id, name", "8147483648, 'zzz'");
+		insert("e14", "long_id, name", "8147483649, 'bbb'");
+		insert("e14", "long_id, name", "3147483646, 'yyy'");
 
 		Entity<String> putEntity = jsonEntity("[{\"id\":3147483646,\"name\":\"yyy\"},{\"id\":8147483648,\"name\":\"zzz\"}"
 				+ ",{\"id\":8147483647,\"name\":\"111\"},{\"id\":8147483649,\"name\":\"333\"}]");
