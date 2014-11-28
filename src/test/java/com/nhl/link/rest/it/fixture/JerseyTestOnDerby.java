@@ -1,23 +1,19 @@
 package com.nhl.link.rest.it.fixture;
 
-import static org.junit.Assert.assertEquals;
-
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.sql.SQLException;
 
-import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.Application;
 import javax.ws.rs.core.Feature;
 import javax.ws.rs.core.FeatureContext;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
 
 import org.apache.cayenne.ObjectContext;
 import org.apache.cayenne.configuration.server.ServerRuntime;
 import org.apache.cayenne.query.EJBQLQuery;
 import org.apache.cayenne.query.QueryChain;
+import org.apache.cayenne.query.SQLSelect;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.test.JerseyTest;
 import org.glassfish.jersey.test.inmemory.InMemoryTestContainerFactory;
@@ -97,43 +93,6 @@ public abstract class JerseyTestOnDerby extends JerseyTest {
 		}
 	}
 
-	/**
-	 * Asserts that response status and body match the expectations.
-	 */
-	protected void assertStatus(Response response, Status expectedStatus, String expectedBody) {
-		assertEquals("Wrong status:", expectedStatus.getStatusCode(), response.getStatus());
-		assertEquals("Wrong entity:", expectedBody, response.readEntity(String.class));
-	}
-
-	/**
-	 * Asserts that response body matches the expectations and the status is
-	 * {@link Status#OK}.
-	 */
-	protected void assertOk(Response response, String expectedBody) {
-		assertStatus(response, Status.OK, expectedBody);
-	}
-
-	/**
-	 * Asserts that standard LinkRest response data section and update count
-	 * match the expectations and the status is {@link Status#OK}.
-	 */
-	protected void assertLR(Response response, int total, String expectedData) {
-
-		StringBuilder body = new StringBuilder();
-		body.append("{\"success\":true,\"data\":").append(expectedData).append(",\"total\":").append(total)
-				.append("}");
-
-		assertOk(response, body.toString());
-	}
-
-	/**
-	 * Asserts that standard LinkRest response data section and update count
-	 * match the expectations and the status is {@link Status#OK}.
-	 */
-	protected void assertLR(Response response, int total, Entity<String> expectedData) {
-		assertLR(response, total, expectedData.getEntity());
-	}
-
 	@Override
 	public Application configure() {
 
@@ -156,4 +115,8 @@ public abstract class JerseyTestOnDerby extends JerseyTest {
 	}
 
 	protected abstract void doAddResources(FeatureContext context);
+
+	protected int intForQuery(String querySql) {
+		return SQLSelect.scalarQuery(Integer.class, querySql).selectOne(context).intValue();
+	}
 }

@@ -1,7 +1,9 @@
 package com.nhl.link.rest.it.noadapter;
 
+import static com.nhl.link.rest.unit.matcher.LRMatchers.okAndHasData;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertThat;
 
 import java.io.IOException;
 
@@ -119,11 +121,9 @@ public class PUT_IT extends JerseyTestOnDerby {
 		runtime.newContext().invalidateObjects(e3);
 		assertNull(e3.getE2());
 
-		Response response1 = target("/e3/3").request().put(
-				Entity.entity("{\"id\":3,\"e2\":8}", MediaType.APPLICATION_JSON));
-		assertEquals(Status.OK.getStatusCode(), response1.getStatus());
-		assertEquals("{\"success\":true,\"data\":[{\"id\":3,\"name\":\"zzz\",\"phoneNumber\":null}],\"total\":1}",
-				response1.readEntity(String.class));
+		Entity<String> entity = Entity.entity("{\"id\":3,\"e2\":8}", MediaType.APPLICATION_JSON);
+		Response response = target("/e3/3").request().put(entity);
+		assertThat(response, okAndHasData(1, "[{\"id\":3,\"name\":\"zzz\",\"phoneNumber\":null}]"));
 
 		e3 = Cayenne.objectForPK(runtime.newContext(), E3.class, 3);
 		runtime.newContext().invalidateObjects(e3);
@@ -142,16 +142,16 @@ public class PUT_IT extends JerseyTestOnDerby {
 		runtime.newContext().performGenericQuery(
 				new SQLTemplate(E3.class, "INSERT INTO utest.e3 (id, name) values (6, 'yyy')"));
 
-		Response r2 = target("/e3/")
-				.queryParam("exclude", "id")
-				.queryParam("include", E3.NAME.getName())
-				.request()
-				.put(Entity
-						.entity("[{\"id\":6,\"name\":\"yyy\"},{\"id\":4,\"name\":\"zzz\"},{\"id\":5,\"name\":\"111\"},{\"id\":2,\"name\":\"333\"}]",
-								MediaType.APPLICATION_JSON));
+		Entity<String> putEntity = Entity
+				.entity("[{\"id\":6,\"name\":\"yyy\"},{\"id\":4,\"name\":\"zzz\"},{\"id\":5,\"name\":\"111\"},{\"id\":2,\"name\":\"333\"}]",
+						MediaType.APPLICATION_JSON);
+		Response response = target("/e3/").queryParam("exclude", "id").queryParam("include", E3.NAME.getName())
+				.request().put(putEntity);
 
-		// update: ordering must be preserved...
-		assertLR(r2, 4, "[{\"name\":\"yyy\"},{\"name\":\"zzz\"},{\"name\":\"111\"},{\"name\":\"333\"}]");
+		// ordering must be preserved in response, so comparing with request
+		// entity
+		assertThat(response,
+				okAndHasData(4, "[{\"name\":\"yyy\"},{\"name\":\"zzz\"},{\"name\":\"111\"},{\"name\":\"333\"}]"));
 	}
 
 	@Test
@@ -166,23 +166,18 @@ public class PUT_IT extends JerseyTestOnDerby {
 		runtime.newContext().performGenericQuery(
 				new SQLTemplate(E3.class, "INSERT INTO utest.e14 (long_id, name) values (6, 'yyy')"));
 
-		Response r1 = target("/e14/")
-				.queryParam("exclude", "id")
-				.queryParam("include", E3.NAME.getName())
-				.request()
-				.put(Entity
-						.entity("[{\"id\":6,\"name\":\"yyy\"},{\"id\":4,\"name\":\"zzz\"},{\"id\":5,\"name\":\"111\"},{\"id\":2,\"name\":\"333\"}]",
-								MediaType.APPLICATION_JSON));
+		Entity<String> putEntity = Entity
+				.entity("[{\"id\":6,\"name\":\"yyy\"},{\"id\":4,\"name\":\"zzz\"},{\"id\":5,\"name\":\"111\"},{\"id\":2,\"name\":\"333\"}]",
+						MediaType.APPLICATION_JSON);
+		Response response = target("/e14/").queryParam("exclude", "id").queryParam("include", E3.NAME.getName())
+				.request().put(putEntity);
 
-		// update: ordering must be preserved...
-		assertLR(r1, 4, "[{\"id\":6,\"name\":\"yyy\"},{\"id\":4,\"name\":\"zzz\"},"
-				+ "{\"id\":5,\"name\":\"111\"},{\"id\":2,\"name\":\"333\"}]");
+		// ordering must be preserved in response, so comparing with request
+		// entity
+		assertThat(response, okAndHasData(4, putEntity));
 
-		assertEquals(4, SQLSelect.scalarQuery(Integer.class, "SELECT count(1) FROM utest.e14").selectOne(context)
-				.intValue());
-		assertEquals(4,
-				SQLSelect.scalarQuery(Integer.class, "SELECT count(1) FROM utest.e14 WHERE long_id IN (2,4,6,5)")
-						.selectOne(context).intValue());
+		assertEquals(4, intForQuery("SELECT COUNT(1) FROM utest.e14"));
+		assertEquals(4, intForQuery("SELECT COUNT(1) FROM utest.e14 WHERE long_id IN (2,4,6,5)"));
 	}
 
 	@Test
@@ -197,22 +192,18 @@ public class PUT_IT extends JerseyTestOnDerby {
 		runtime.newContext().performGenericQuery(
 				new SQLTemplate(E3.class, "INSERT INTO utest.e14 (long_id, name) values (3147483646, 'yyy')"));
 
-		Entity<String> putE = Entity.entity(
+		Entity<String> putEntity = Entity.entity(
 				"[{\"id\":3147483646,\"name\":\"yyy\"},{\"id\":8147483648,\"name\":\"zzz\"}"
 						+ ",{\"id\":8147483647,\"name\":\"111\"},{\"id\":8147483649,\"name\":\"333\"}]",
 				MediaType.APPLICATION_JSON);
-		Response r1 = target("/e14/").request().put(putE);
+		Response response = target("/e14/").request().put(putEntity);
 
-		// update: ordering must be preserved...
-		assertLR(r1, 4, putE);
+		// ordering must be preserved in response, so comparing with request
+		// entity
+		assertThat(response, okAndHasData(4, putEntity));
 
-		assertEquals(4, SQLSelect.scalarQuery(Integer.class, "SELECT count(1) FROM utest.e14").selectOne(context)
-				.intValue());
-		assertEquals(4, SQLSelect
-				.scalarQuery(
-						Integer.class,
-						"SELECT count(1) FROM utest.e14 WHERE "
-								+ "long_id IN (3147483646, 8147483648, 8147483647, 8147483649)").selectOne(context)
-				.intValue());
+		assertEquals(4, intForQuery("SELECT COUNT(1) FROM utest.e14"));
+		assertEquals(4, intForQuery("SELECT count(1) FROM utest.e14 WHERE "
+				+ "long_id IN (3147483646, 8147483648, 8147483647, 8147483649)"));
 	}
 }
