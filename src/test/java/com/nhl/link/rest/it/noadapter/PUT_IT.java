@@ -35,7 +35,7 @@ public class PUT_IT extends JerseyTestOnDerby {
 	}
 
 	@Test
-	public void testPut() throws WebApplicationException, IOException {
+	public void test_PUT() throws WebApplicationException, IOException {
 		insert("e4", "id, c_varchar", "1, 'xxx'");
 		insert("e4", "id, c_varchar", "8, 'yyy'");
 
