@@ -1,4 +1,6 @@
-Release 1.10
+Release 1.11
+
+Release 1.10 2014-12-08
 
 #55 Object matching fails when callers do not use correct implicit ID type 
 #57 Support for Long IDs in updates
