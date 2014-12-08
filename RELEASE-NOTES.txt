@@ -5,12 +5,12 @@ Release 1.10
 #60 Ignore 'query' parameter when no property to match is specified
 #61 Upgrade to to Cayenne 4.0.M2.1ab1caa
 
-Release 1.9
+Release 1.9 2014-11-24
 
 #52 Removing hard size limit for 'cayenneExp'
 #56 Upgrade to to Cayenne 4.0.M2.fba700d
 
-Release 1.8
+Release 1.8 2014-10-14
 
 #43 upgrade to Jersey 2.12, jackson 2.4.2
 #46 Sencha: update objects order is important on bulk updates
