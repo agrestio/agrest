@@ -1,5 +1,6 @@
 Release 1.10
 
+#55 Object matching fails when callers do not use correct implicit ID type 
 #57 Support for Long IDs in updates
 #60 Ignore 'query' parameter when no property to match is specified
 #61 Upgrade to to Cayenne 4.0.M2.1ab1caa
