@@ -64,7 +64,7 @@ public class FilterProcessorTest extends TestWithCayenneMapping {
 		processor.process(e4Descriptor, "[{\"property\":\"cVarchar\",\"value\":\"x_%\"}]");
 
 		assertNotNull(e4Descriptor.getQualifier());
-		assertEquals(E4.C_VARCHAR.likeInsensitive("x\\_\\%%"), e4Descriptor.getQualifier());
+		assertEquals(E4.C_VARCHAR.likeIgnoreCase("x\\_\\%%"), e4Descriptor.getQualifier());
 	}
 
 	@Test
