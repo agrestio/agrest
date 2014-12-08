@@ -4,6 +4,7 @@ import static org.apache.cayenne.exp.ExpressionFactory.exp;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -564,8 +565,8 @@ public class RequestParserTest extends TestWithCayenneMapping {
 		assertEquals(exp("name likeIgnoreCase 'Bla%'"), dataRequest.getEntity().getQualifier());
 	}
 
-	@Test(expected = LinkRestException.class)
-	public void testSelectRequest_Query_Unsupported() {
+	@Test
+	public void testSelectRequest_Query_Ignored() {
 
 		@SuppressWarnings("unchecked")
 		MultivaluedMap<String, String> params = mock(MultivaluedMap.class);
@@ -575,7 +576,11 @@ public class RequestParserTest extends TestWithCayenneMapping {
 		when(urlInfo.getQueryParameters()).thenReturn(params);
 
 		DataResponse<E2> dataRequest = DataResponse.forType(E2.class);
+
+		// if "query" parameter exists, but no property to match against is
+		// passed, it should be ignored per #60
 		parser.parseSelect(dataRequest, urlInfo, null);
+		assertNull(dataRequest.getEntity().getQualifier());
 	}
 
 }

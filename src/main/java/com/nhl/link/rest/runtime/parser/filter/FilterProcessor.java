@@ -39,8 +39,14 @@ public class FilterProcessor extends BaseRequestProcessor implements IFilterProc
 			// filters are chained to SelectQuery using AND, so the order is not
 			// important...
 			cayenneExpWorker.process(response.getEntity(), string(parameters, CAYENNE_EXP));
-			byPropertyWorker
-					.process(response.getEntity(), string(parameters, BY_PROPERTY), response.getQueryProperty());
+
+			// if no property is specified, then we don't care about 'query'
+			// parameter... E.g. query may have been processed by a custom code
+			// outside linkrest
+			if (response.getQueryProperty() != null) {
+				byPropertyWorker.process(response.getEntity(), string(parameters, BY_PROPERTY),
+						response.getQueryProperty());
+			}
 
 		}
 	}

@@ -3,6 +3,7 @@ Release 1.9
 #52 Removing hard size limit for 'cayenneExp'
 #56 Upgrade to to Cayenne 4.0.M2.fba700d
 #57 Support for Long IDs in updates
+#60 Ignore 'query' parameter when no property to match is specified
 
 Release 1.8
 
