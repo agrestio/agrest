@@ -101,7 +101,7 @@ class ExcludeWorker {
 			return;
 		}
 
-		throw new LinkRestException(Status.BAD_REQUEST, "Invalid include path: " + path);
+		throw new LinkRestException(Status.BAD_REQUEST, "Invalid exclude path: " + path);
 	}
 
 }
