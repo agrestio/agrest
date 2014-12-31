@@ -1,5 +1,7 @@
 Release 1.11
 
+#66 LinkRestExceptionMapper should log exception stack traces at DEBUG level
+
 Release 1.10 2014-12-08
 
 #55 Object matching fails when callers do not use correct implicit ID type 

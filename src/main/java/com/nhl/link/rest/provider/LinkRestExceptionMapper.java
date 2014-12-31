@@ -31,7 +31,12 @@ public class LinkRestExceptionMapper implements ExceptionMapper<LinkRestExceptio
 				log.append(" (").append(message).append(")");
 			}
 
-			LOGGER.info(log.toString());
+			// include stack trace in debug mode...
+			if (LOGGER.isDebugEnabled()) {
+				LOGGER.debug(log.toString(), exception);
+			} else {
+				LOGGER.info(log.toString());
+			}
 		}
 
 		SimpleResponse body = new SimpleResponse(false, message);
