@@ -101,10 +101,9 @@ class DataObjectProcessor {
 			if (relationship != null) {
 
 				DbRelationship dbRelationship = relationship.getDbRelationships().get(0);
-				int type = dbRelationship.getJoins().get(0).getSource().getType();
 
 				JsonNode valueNode = objectNode.get(key);
-				Object value = converterFactory.converter(type).value(valueNode);
+				Object value = extractValue(valueNode, dbRelationship);
 
 				// record FK, whether it is a PK or not
 				update.getRelatedIds().put(relationship.getName(), value);
@@ -134,6 +133,18 @@ class DataObjectProcessor {
 	private Object extractValue(JsonNode valueNode, ObjAttribute attribute) {
 
 		JsonValueConverter converter = converterFactory.converter(attribute.getType());
+
+		try {
+			return converter.value(valueNode);
+		} catch (Exception e) {
+			throw new LinkRestException(Status.BAD_REQUEST, "Incorrectly formatted value: '" + valueNode.asText() + "'");
+		}
+	}
+
+	private Object extractValue(JsonNode valueNode, DbRelationship dbRelationship) {
+		int type = dbRelationship.getJoins().get(0).getSource().getType();
+
+		JsonValueConverter converter = converterFactory.converter(type);
 
 		try {
 			return converter.value(valueNode);
