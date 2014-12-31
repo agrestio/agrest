@@ -49,8 +49,12 @@ public class RequestParser implements IRequestParser {
 		this.filterProcessor = filterProcessor;
 		this.sortProcessor = sortProcessor;
 		this.treeProcessor = treeProcessor;
-		this.dataObjectProcessor = new DataObjectProcessor(jacksonService, associationHandler,
-				jsonValueConverterFactory);
+		this.dataObjectProcessor = createObjectProcessor(jacksonService, associationHandler, jsonValueConverterFactory);
+	}
+
+	protected DataObjectProcessor createObjectProcessor(IJacksonService jacksonService,
+			IRelationshipMapper associationHandler, IJsonValueConverterFactory jsonValueConverterFactory) {
+		return new DataObjectProcessor(jacksonService, associationHandler, jsonValueConverterFactory);
 	}
 
 	@Override

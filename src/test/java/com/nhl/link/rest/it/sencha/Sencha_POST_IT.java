@@ -1,8 +1,7 @@
 package com.nhl.link.rest.it.sencha;
 
-import static com.nhl.link.rest.unit.matcher.LRMatchers.okAndHasData;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 
@@ -97,11 +96,13 @@ public class Sencha_POST_IT extends JerseyTestOnDerby {
 	@Test
 	public void testPOST_Bulk_LongId() throws WebApplicationException, IOException {
 
-		Entity<String> putEntity = jsonEntity("[{\"id\":\"ext-record-6881\",\"name\":\"yyy\"}"
+		Entity<String> entity = jsonEntity("[{\"id\":\"ext-record-6881\",\"name\":\"yyy\"}"
 				+ ",{\"id\":\"ext-record-6882\",\"name\":\"zzz\"}]");
-		Response response = target("/e14/").request().put(putEntity);
+		Response response = target("/e14/").request().post(entity);
+		assertEquals(Status.CREATED.getStatusCode(), response.getStatus());
 
-		assertThat(response, okAndHasData(4, putEntity));
+		String data = response.readEntity(String.class);
+		assertTrue(data.contains("\"total\":2"));
 
 		assertEquals(2, intForQuery("SELECT COUNT(1) FROM utest.e14"));
 	}

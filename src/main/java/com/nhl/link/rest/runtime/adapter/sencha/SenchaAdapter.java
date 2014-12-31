@@ -9,11 +9,10 @@ import org.apache.cayenne.di.Binder;
 import com.nhl.link.rest.runtime.ILinkRestService;
 import com.nhl.link.rest.runtime.adapter.LinkRestAdapter;
 import com.nhl.link.rest.runtime.encoder.IEncoderService;
-import com.nhl.link.rest.runtime.parser.RequestParser;
+import com.nhl.link.rest.runtime.parser.IRequestParser;
 import com.nhl.link.rest.runtime.parser.filter.IFilterProcessor;
 import com.nhl.link.rest.runtime.parser.sort.ISortProcessor;
 import com.nhl.link.rest.runtime.semantics.IRelationshipMapper;
-import com.nhl.link.rest.update.UpdateFilter;
 
 /**
  * A collection of Sencha-specific extensions to LinkRest.
@@ -25,9 +24,7 @@ public class SenchaAdapter implements LinkRestAdapter {
 	@Override
 	public void contributeToRuntime(Binder binder) {
 
-		// "dashId" filter is hardcoded... should that be configurable?
-		binder.<UpdateFilter> bindList(RequestParser.UPDATE_FILTER_LIST).add(SenchaTempIdCleaner.dashId());
-
+		binder.bind(IRequestParser.class).to(SenchaRequestParser.class);
 		binder.bind(ISortProcessor.class).to(SenchaSortProcessor.class);
 		binder.bind(IFilterProcessor.class).to(SenchaFilterProcessor.class);
 		binder.bind(IEncoderService.class).to(SenchaEncoderService.class);

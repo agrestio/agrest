@@ -26,7 +26,6 @@ import com.nhl.link.rest.runtime.jackson.IJacksonService;
 import com.nhl.link.rest.runtime.jackson.JacksonService;
 import com.nhl.link.rest.runtime.meta.IMetadataService;
 import com.nhl.link.rest.runtime.meta.MetadataService;
-import com.nhl.link.rest.runtime.parser.RequestParser;
 import com.nhl.link.rest.runtime.parser.cache.IPathCache;
 import com.nhl.link.rest.runtime.parser.cache.PathCache;
 import com.nhl.link.rest.runtime.parser.converter.DefaultJsonValueConverterFactory;
@@ -41,7 +40,7 @@ import com.nhl.link.rest.update.UpdateFilter;
 
 public class SenchaRequestParserTest extends TestWithCayenneMapping {
 
-	private RequestParser parser;
+	private SenchaRequestParser parser;
 
 	@Before
 	public void before() {
@@ -61,7 +60,7 @@ public class SenchaRequestParserTest extends TestWithCayenneMapping {
 		ITreeProcessor treeProcessor = new IncludeExcludeProcessor(jacksonService, sortProcessor, filterProcessor,
 				metadataService);
 
-		parser = new RequestParser(Collections.<UpdateFilter> emptyList(), metadataService, jacksonService,
+		parser = new SenchaRequestParser(Collections.<UpdateFilter> emptyList(), metadataService, jacksonService,
 				new RelationshipMapper(), treeProcessor, sortProcessor, filterProcessor, converterFactory);
 	}
 

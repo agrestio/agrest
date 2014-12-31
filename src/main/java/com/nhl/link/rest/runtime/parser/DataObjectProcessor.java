@@ -23,22 +23,25 @@ import com.nhl.link.rest.runtime.jackson.IJacksonService;
 import com.nhl.link.rest.runtime.parser.converter.IJsonValueConverterFactory;
 import com.nhl.link.rest.runtime.semantics.IRelationshipMapper;
 
-class DataObjectProcessor {
+/**
+ * @since 1.11 made public
+ */
+public class DataObjectProcessor {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(DataObjectProcessor.class);
 
-	private IJacksonService jsonParser;
-	private IJsonValueConverterFactory converterFactory;
-	private IRelationshipMapper relationshipMapper;
+	protected IJacksonService jsonParser;
+	protected IJsonValueConverterFactory converterFactory;
+	protected IRelationshipMapper relationshipMapper;
 
-	DataObjectProcessor(IJacksonService jsonParser, IRelationshipMapper relationshipMapper,
+	public DataObjectProcessor(IJacksonService jsonParser, IRelationshipMapper relationshipMapper,
 			IJsonValueConverterFactory converterFactory) {
 		this.jsonParser = jsonParser;
 		this.relationshipMapper = relationshipMapper;
 		this.converterFactory = converterFactory;
 	}
 
-	void process(UpdateResponse<?> response, String json) {
+	public void process(UpdateResponse<?> response, String json) {
 
 		JsonNode node = jsonParser.parseJson(json);
 		if (node == null) {
@@ -66,8 +69,6 @@ class DataObjectProcessor {
 
 	private void processObject(UpdateResponse<?> response, JsonNode objectNode) {
 		ObjEntity entity = response.getEntity().getCayenneEntity();
-		Collection<ObjAttribute> pks = entity.getPrimaryKeys();
-		ObjAttribute pk = pks.size() == 1 ? pks.iterator().next() : null;
 
 		EntityUpdate update = new EntityUpdate();
 
@@ -76,16 +77,8 @@ class DataObjectProcessor {
 			String key = it.next();
 
 			if (PathConstants.ID_PK_ATTRIBUTE.equals(key)) {
-
-				if (pk == null) {
-					throw new IllegalStateException(String.format(
-							"Compound ID should't be specified explicitly for entity '%s'", entity.getName()));
-				}
-
 				JsonNode valueNode = objectNode.get(key);
-				Object value = extractValue(valueNode, pk);
-
-				update.getOrCreateId().put(pk.getDbAttributeName(), value);
+				extractPK(update, entity, valueNode);
 				continue;
 			}
 
@@ -130,7 +123,20 @@ class DataObjectProcessor {
 		response.getUpdates().add(update);
 	}
 
-	private Object extractValue(JsonNode valueNode, ObjAttribute attribute) {
+	protected void extractPK(EntityUpdate update, ObjEntity entity, JsonNode valueNode) {
+
+		Collection<ObjAttribute> pks = entity.getPrimaryKeys();
+		ObjAttribute pk = pks.size() == 1 ? pks.iterator().next() : null;
+		if (pk == null) {
+			throw new IllegalStateException(String.format(
+					"Compound ID should't be specified explicitly for entity '%s'", entity.getName()));
+		}
+
+		Object value = extractValue(valueNode, pk);
+		update.getOrCreateId().put(pk.getDbAttributeName(), value);
+	}
+
+	protected Object extractValue(JsonNode valueNode, ObjAttribute attribute) {
 
 		JsonValueConverter converter = converterFactory.converter(attribute.getType());
 
@@ -141,7 +147,7 @@ class DataObjectProcessor {
 		}
 	}
 
-	private Object extractValue(JsonNode valueNode, DbRelationship dbRelationship) {
+	protected Object extractValue(JsonNode valueNode, DbRelationship dbRelationship) {
 		int type = dbRelationship.getJoins().get(0).getSource().getType();
 
 		JsonValueConverter converter = converterFactory.converter(type);
