@@ -1,6 +1,8 @@
 package com.nhl.link.rest.it.sencha;
 
+import static com.nhl.link.rest.unit.matcher.LRMatchers.okAndHasData;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
 
 import java.io.IOException;
 
@@ -19,6 +21,7 @@ import org.junit.Test;
 import com.nhl.link.rest.it.fixture.JerseyTestOnDerby;
 import com.nhl.link.rest.it.fixture.cayenne.E3;
 import com.nhl.link.rest.it.fixture.cayenne.E4;
+import com.nhl.link.rest.it.fixture.resource.E14Resource;
 import com.nhl.link.rest.it.fixture.resource.E3Resource;
 import com.nhl.link.rest.it.fixture.resource.E4Resource;
 import com.nhl.link.rest.runtime.LinkRestBuilder;
@@ -30,6 +33,7 @@ public class Sencha_POST_IT extends JerseyTestOnDerby {
 	protected void doAddResources(FeatureContext context) {
 		context.register(E3Resource.class);
 		context.register(E4Resource.class);
+		context.register(E14Resource.class);
 	}
 
 	@Override
@@ -53,7 +57,7 @@ public class Sencha_POST_IT extends JerseyTestOnDerby {
 				+ "\"cTime\":null,\"cTimestamp\":null,\"cVarchar\":\"zzz\"}],\"total\":1}",
 				response1.readEntity(String.class));
 	}
-	
+
 	@Test
 	public void testPost_ToOne() throws WebApplicationException, IOException {
 
@@ -75,7 +79,7 @@ public class Sencha_POST_IT extends JerseyTestOnDerby {
 		assertEquals("MM", e3.getName());
 		assertEquals(8, Cayenne.intPKForObject(e3.getE2()));
 	}
-	
+
 	@Test
 	public void testPost_ToOne_BadFK() throws WebApplicationException, IOException {
 
@@ -88,6 +92,18 @@ public class Sencha_POST_IT extends JerseyTestOnDerby {
 		assertEquals(Status.NOT_FOUND.getStatusCode(), response1.getStatus());
 
 		assertEquals(0, context.select(new SelectQuery<E3>(E3.class)).size());
+	}
+
+	@Test
+	public void testPOST_Bulk_LongId() throws WebApplicationException, IOException {
+
+		Entity<String> putEntity = jsonEntity("[{\"id\":\"ext-record-6881\",\"name\":\"yyy\"}"
+				+ ",{\"id\":\"ext-record-6882\",\"name\":\"zzz\"}]");
+		Response response = target("/e14/").request().put(putEntity);
+
+		assertThat(response, okAndHasData(4, putEntity));
+
+		assertEquals(2, intForQuery("SELECT COUNT(1) FROM utest.e14"));
 	}
 
 }
