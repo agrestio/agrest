@@ -15,11 +15,14 @@ public interface LrEntity<T> {
 
 	Class<T> getType();
 
+	ObjEntity getObjEntity();
+
 	LrAttribute getAttribute(String name);
 
 	LrRelationship getRelationship(String name);
 
 	Collection<LrAttribute> getAttributes();
 
-	ObjEntity getObjEntity();
+	Collection<LrRelationship> getRelationships();
+
 }

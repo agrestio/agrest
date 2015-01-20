@@ -1,6 +1,8 @@
 package com.nhl.link.rest.runtime.parser.sort;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.util.Iterator;
 
@@ -12,9 +14,9 @@ import org.junit.Test;
 import com.nhl.link.rest.ResourceEntity;
 import com.nhl.link.rest.it.fixture.cayenne.E2;
 import com.nhl.link.rest.it.fixture.cayenne.auto._E2;
+import com.nhl.link.rest.meta.LrEntity;
 import com.nhl.link.rest.runtime.jackson.JacksonService;
 import com.nhl.link.rest.runtime.parser.cache.PathCache;
-import com.nhl.link.rest.runtime.parser.sort.SortWorker;
 import com.nhl.link.rest.unit.TestWithCayenneMapping;
 
 public class SortProcessorTest extends TestWithCayenneMapping {
@@ -28,7 +30,13 @@ public class SortProcessorTest extends TestWithCayenneMapping {
 		this.processor = new SortWorker(jacksonService, new PathCache());
 
 		ObjEntity oEntity = runtime.getChannel().getEntityResolver().getObjEntity(E2.class);
-		this.entity = new ResourceEntity<>(Object.class, oEntity);
+		
+		@SuppressWarnings("unchecked")
+		LrEntity<Object> lre2 = mock(LrEntity.class);
+		when(lre2.getObjEntity()).thenReturn(oEntity);
+		when(lre2.getType()).thenReturn(Object.class);
+		
+		this.entity = new ResourceEntity<>(lre2);
 	}
 
 	@Test

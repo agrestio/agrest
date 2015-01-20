@@ -17,6 +17,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.nhl.link.rest.EntityUpdate;
 import com.nhl.link.rest.LinkRestException;
 import com.nhl.link.rest.UpdateResponse;
+import com.nhl.link.rest.meta.LrAttribute;
 import com.nhl.link.rest.meta.LrEntity;
 import com.nhl.link.rest.meta.LrRelationship;
 import com.nhl.link.rest.parser.converter.JsonValueConverter;
@@ -83,10 +84,10 @@ public class DataObjectProcessor {
 				continue;
 			}
 
-			ObjAttribute attribute = (ObjAttribute) entity.getAttribute(key);
+			LrAttribute attribute = entity.getAttribute(key);
 			if (attribute != null) {
 				JsonNode valueNode = objectNode.get(key);
-				Object value = extractValue(valueNode, attribute);
+				Object value = extractValue(valueNode, attribute.getObjAttribute());
 				update.getValues().put(key, value);
 				continue;
 			}

@@ -41,6 +41,8 @@ public class MetadataService implements IMetadataService {
 			dataMaps.addAll(nonPersistentEntities);
 			this.entityResolver = new EntityResolver(dataMaps);
 		}
+
+		this.dataMap = new LazyLrDataMap(entityResolver);
 	}
 
 	/**

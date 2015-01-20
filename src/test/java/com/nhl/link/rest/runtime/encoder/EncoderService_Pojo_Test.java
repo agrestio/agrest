@@ -6,10 +6,12 @@ import static org.mockito.Mockito.mock;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
 import org.apache.cayenne.map.DataMap;
+import org.apache.cayenne.map.EntityResolver;
 import org.apache.cayenne.map.ObjEntity;
 import org.junit.Before;
 import org.junit.Test;
@@ -25,8 +27,11 @@ import com.nhl.link.rest.it.fixture.pojo.model.P2;
 import com.nhl.link.rest.it.fixture.pojo.model.P3;
 import com.nhl.link.rest.it.fixture.pojo.model.P4;
 import com.nhl.link.rest.it.fixture.pojo.model.P6;
+import com.nhl.link.rest.meta.LrDataMap;
+import com.nhl.link.rest.meta.LrEntity;
 import com.nhl.link.rest.runtime.jackson.JacksonService;
 import com.nhl.link.rest.runtime.meta.DataMapBuilder;
+import com.nhl.link.rest.runtime.meta.LazyLrDataMap;
 import com.nhl.link.rest.runtime.semantics.RelationshipMapper;
 
 public class EncoderService_Pojo_Test {
@@ -34,6 +39,7 @@ public class EncoderService_Pojo_Test {
 	private EncoderService encoderService;
 	private List<EncoderFilter> filters;
 	private DataMap dataMap;
+	private LrDataMap lrDataMap;
 
 	@Before
 	public void setUp() {
@@ -47,6 +53,8 @@ public class EncoderService_Pojo_Test {
 
 		this.encoderService = new EncoderService(this.filters, attributeEncoderFactory, stringConverterFactory,
 				new RelationshipMapper());
+
+		lrDataMap = new LazyLrDataMap(new EntityResolver(Arrays.asList(dataMap)));
 	}
 
 	@Test
@@ -92,11 +100,15 @@ public class EncoderService_Pojo_Test {
 		return new String(out.toByteArray(), "UTF-8");
 	}
 
+	protected <T> LrEntity<T> getLrEntity(Class<T> type) {
+		return lrDataMap.getEntity(type);
+	}
+
 	protected ObjEntity getEntity(Class<?> type) {
 		return dataMap.getObjEntity(type);
 	}
 
 	protected <T> ResourceEntity<T> getClientEntity(Class<T> type) {
-		return new ResourceEntity<T>(type, getEntity(type));
+		return new ResourceEntity<T>(lrDataMap.getEntity(type));
 	}
 }

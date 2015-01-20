@@ -16,11 +16,12 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.nhl.link.rest.DataResponse;
-import com.nhl.link.rest.ResourceEntity;
 import com.nhl.link.rest.EntityConstraint;
+import com.nhl.link.rest.ResourceEntity;
 import com.nhl.link.rest.TreeConstraints;
 import com.nhl.link.rest.it.fixture.cayenne.E1;
 import com.nhl.link.rest.it.fixture.cayenne.E2;
+import com.nhl.link.rest.meta.LrEntity;
 import com.nhl.link.rest.runtime.cayenne.ICayennePersister;
 import com.nhl.link.rest.runtime.meta.IMetadataService;
 import com.nhl.link.rest.runtime.meta.MetadataService;
@@ -29,9 +30,10 @@ import com.nhl.link.rest.unit.TestWithCayenneMapping;
 public class ConstraintsHandlerWithDefaultsTest extends TestWithCayenneMapping {
 
 	private ConstraintsHandler constraintHandler;
-	private ObjEntity e1;
-	private ObjEntity e2;
+	private LrEntity<E1> lre1;
+	private LrEntity<E2> lre2;
 
+	@SuppressWarnings("unchecked")
 	@Before
 	public void before() {
 
@@ -50,8 +52,18 @@ public class ConstraintsHandlerWithDefaultsTest extends TestWithCayenneMapping {
 
 		this.constraintHandler = new ConstraintsHandler(r, w, metadataService);
 
-		e1 = runtime.getChannel().getEntityResolver().getObjEntity(E1.class);
-		e2 = runtime.getChannel().getEntityResolver().getObjEntity(E2.class);
+		ObjEntity e1 = runtime.getChannel().getEntityResolver().getObjEntity(E1.class);
+		ObjEntity e2 = runtime.getChannel().getEntityResolver().getObjEntity(E2.class);
+		
+		lre1 = mock(LrEntity.class);
+		when(lre1.getObjEntity()).thenReturn(e1);
+		when(lre1.getType()).thenReturn(E1.class);
+		when(lre1.getName()).thenReturn(e1.getName());
+
+		lre2 = mock(LrEntity.class);
+		when(lre2.getObjEntity()).thenReturn(e2);
+		when(lre2.getType()).thenReturn(E2.class);
+		when(lre2.getName()).thenReturn(e2.getName());
 	}
 
 	@Test
@@ -59,7 +71,7 @@ public class ConstraintsHandlerWithDefaultsTest extends TestWithCayenneMapping {
 
 		TreeConstraints<E1> tc1 = TreeConstraints.excludeAll(E1.class).attributes(E1.DESCRIPTION);
 
-		ResourceEntity<E1> te1 = new ResourceEntity<>(E1.class, e1);
+		ResourceEntity<E1> te1 = new ResourceEntity<>(lre1);
 		te1.getAttributes().add(E1.AGE.getName());
 		te1.getAttributes().add(E1.DESCRIPTION.getName());
 
@@ -74,7 +86,7 @@ public class ConstraintsHandlerWithDefaultsTest extends TestWithCayenneMapping {
 	@Test
 	public void testConstrainResponse_Default() {
 
-		ResourceEntity<E1> te1 = new ResourceEntity<>(E1.class, e1);
+		ResourceEntity<E1> te1 = new ResourceEntity<>(lre1);
 		te1.getAttributes().add(E1.AGE.getName());
 		te1.getAttributes().add(E1.DESCRIPTION.getName());
 
@@ -89,7 +101,7 @@ public class ConstraintsHandlerWithDefaultsTest extends TestWithCayenneMapping {
 	@Test
 	public void testConstrainResponse_None() {
 
-		ResourceEntity<E2> te1 = new ResourceEntity<>(E2.class, e2);
+		ResourceEntity<E2> te1 = new ResourceEntity<>(lre2);
 		te1.getAttributes().add(E2.ADDRESS.getName());
 		te1.getAttributes().add(E2.NAME.getName());
 
