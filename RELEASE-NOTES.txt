@@ -2,6 +2,7 @@ Release 1.11
 
 #24 Sencha fake ids and Longs
 #66 LinkRestExceptionMapper should log exception stack traces at DEBUG level
+#68 Rename Entity to ResourceEntity
 
 Release 1.10 2014-12-08
 

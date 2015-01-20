@@ -13,7 +13,7 @@ import org.apache.cayenne.query.SQLTemplate;
 import org.junit.Test;
 
 import com.fasterxml.jackson.core.JsonGenerator;
-import com.nhl.link.rest.Entity;
+import com.nhl.link.rest.ResourceEntity;
 import com.nhl.link.rest.encoder.Encoder;
 import com.nhl.link.rest.encoder.EncoderFilter;
 import com.nhl.link.rest.it.fixture.JerseyTestOnDerby;
@@ -92,7 +92,7 @@ public class GET_EncoderFilters_IT extends JerseyTestOnDerby {
 
 	private final class E4OddFilter implements EncoderFilter {
 		@Override
-		public boolean matches(Entity<?> entity) {
+		public boolean matches(ResourceEntity<?> entity) {
 			return entity.getCayenneEntity().getName().equals("E4");
 		}
 

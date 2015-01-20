@@ -10,7 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.nhl.link.rest.Entity;
+import com.nhl.link.rest.ResourceEntity;
 import com.nhl.link.rest.LinkRestException;
 import com.nhl.link.rest.runtime.jackson.IJacksonService;
 import com.nhl.link.rest.runtime.parser.cache.IPathCache;
@@ -33,7 +33,7 @@ class SortWorker {
 		this.pathCache = pathCache;
 	}
 
-	void process(Entity<?> clientEntity, String sort, String direction) {
+	void process(ResourceEntity<?> clientEntity, String sort, String direction) {
 
 		if (sort == null || sort.length() == 0) {
 			return;
@@ -49,7 +49,7 @@ class SortWorker {
 		}
 	}
 
-	void processSimpleSorter(Entity<?> clientEntity, String sort, String direction) {
+	void processSimpleSorter(ResourceEntity<?> clientEntity, String sort, String direction) {
 
 		// TODO: do we need to support nested ID?
 		ObjEntity entity = clientEntity.getCayenneEntity();
@@ -77,7 +77,7 @@ class SortWorker {
 		clientEntity.getOrderings().add(new Ordering(sort, so));
 	}
 
-	void processSorterArray(Entity<?> clientEntity, String sort) {
+	void processSorterArray(ResourceEntity<?> clientEntity, String sort) {
 		JsonNode root = jsonParser.parseJson(sort);
 
 		if (root != null) {
@@ -85,13 +85,13 @@ class SortWorker {
 		}
 	}
 
-	void processSorterArray(Entity<?> clientEntity, JsonNode root) {
+	void processSorterArray(ResourceEntity<?> clientEntity, JsonNode root) {
 		for (JsonNode sortNode : root) {
 			processSorterObject(clientEntity, sortNode);
 		}
 	}
 
-	void processSorterObject(Entity<?> clientEntity, JsonNode sortNode) {
+	void processSorterObject(ResourceEntity<?> clientEntity, JsonNode sortNode) {
 		JsonNode propertyNode = sortNode.get(PROPERTY);
 		if (propertyNode == null || !propertyNode.isTextual()) {
 

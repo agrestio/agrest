@@ -13,16 +13,16 @@ import org.apache.cayenne.query.Ordering;
 import org.apache.cayenne.util.ToStringBuilder;
 
 /**
- * A facade to Cayenne ObjEntity that defines the format of a data structure
- * that should be sent to the client via LinkRest. Connected Entities form a
- * tree-like structure that overlays a certain Cayenne mapping subgraph,
+ * A metadata object that describes a data structure of a given REST resource.
+ * Connected ResourceEntities form a tree-like structure that usually overlays a
+ * certain Cayenne mapping subgraph (unless this is a non-persistent entity),
  * filtering and extending its properties to describe the data structure to be
  * returned to the client.
  * <p>
- * Entity scope is usually a single request. It is built on the fly by the
- * framework or by the application code.
+ * ResourceEntity scope is usually a single request. It is built on the fly by
+ * the framework or by the application code.
  */
-public class Entity<T> {
+public class ResourceEntity<T> {
 
 	private boolean idIncluded;
 
@@ -32,14 +32,14 @@ public class Entity<T> {
 	private Collection<String> defaultProperties;
 
 	private String mapByPath;
-	private Entity<?> mapBy;
-	private Map<String, Entity<?>> children;
+	private ResourceEntity<?> mapBy;
+	private Map<String, ResourceEntity<?>> children;
 	private ObjRelationship incoming;
 	private Collection<Ordering> orderings;
 	private Expression qualifier;
 	private Map<String, EntityProperty> extraProperties;
 
-	public Entity(Class<T> type) {
+	public ResourceEntity(Class<T> type) {
 		this.idIncluded = false;
 		this.attributes = new ArrayList<>();
 		this.defaultProperties = new HashSet<>();
@@ -49,12 +49,12 @@ public class Entity<T> {
 		this.type = type;
 	}
 
-	public Entity(Class<T> type, ObjEntity entity) {
+	public ResourceEntity(Class<T> type, ObjEntity entity) {
 		this(type);
 		this.cayenneEntity = entity;
 	}
 
-	public Entity(Class<T> type, ObjRelationship incoming) {
+	public ResourceEntity(Class<T> type, ObjRelationship incoming) {
 		this(type, incoming.getTargetEntity());
 		this.incoming = incoming;
 	}
@@ -104,14 +104,14 @@ public class Entity<T> {
 		return defaultProperties.contains(propertyName);
 	}
 
-	public Map<String, Entity<?>> getChildren() {
+	public Map<String, ResourceEntity<?>> getChildren() {
 		return children;
 	}
 
 	/**
 	 * @since 1.1
 	 */
-	public Entity<?> getChild(String name) {
+	public ResourceEntity<?> getChild(String name) {
 		return children.get(name);
 	}
 
@@ -123,29 +123,29 @@ public class Entity<T> {
 		return idIncluded;
 	}
 
-	public Entity<T> includeId(boolean include) {
+	public ResourceEntity<T> includeId(boolean include) {
 		this.idIncluded = include;
 		return this;
 	}
 
-	public Entity<T> includeId() {
+	public ResourceEntity<T> includeId() {
 		this.idIncluded = true;
 		return this;
 	}
 
-	public Entity<T> excludeId() {
+	public ResourceEntity<T> excludeId() {
 		this.idIncluded = false;
 		return this;
 	}
 
-	public Entity<?> getMapBy() {
+	public ResourceEntity<?> getMapBy() {
 		return mapBy;
 	}
 
 	/**
 	 * @since 1.1
 	 */
-	public Entity<T> mapBy(Entity<?> mapBy, String mapByPath) {
+	public ResourceEntity<T> mapBy(ResourceEntity<?> mapBy, String mapByPath) {
 		this.mapByPath = mapByPath;
 		this.mapBy = mapBy;
 		return this;

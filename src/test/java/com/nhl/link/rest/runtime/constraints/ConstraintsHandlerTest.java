@@ -23,7 +23,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.nhl.link.rest.DataResponse;
-import com.nhl.link.rest.Entity;
+import com.nhl.link.rest.ResourceEntity;
 import com.nhl.link.rest.EntityConstraint;
 import com.nhl.link.rest.SizeConstraints;
 import com.nhl.link.rest.TreeConstraints;
@@ -138,11 +138,11 @@ public class ConstraintsHandlerTest extends TestWithCayenneMapping {
 
 		TreeConstraints<Object> tc1 = TreeConstraints.excludeAll(Object.class).attributes("a", "b");
 
-		Entity<Object> te1 = new Entity<>(Object.class, e0);
+		ResourceEntity<Object> te1 = new ResourceEntity<>(Object.class, e0);
 		te1.getAttributes().add("c");
 		te1.getAttributes().add("b");
 
-		Entity<?> te11 = new Entity<>(Object.class, e2);
+		ResourceEntity<?> te11 = new ResourceEntity<>(Object.class, e2);
 		te11.getAttributes().add("a1");
 		te11.getAttributes().add("b1");
 		te1.getChildren().put("d", te11);
@@ -163,16 +163,16 @@ public class ConstraintsHandlerTest extends TestWithCayenneMapping {
 				.path("r1.r11", TreeConstraints.excludeAll(Object.class).attributes("p", "r"))
 				.path("r2", TreeConstraints.excludeAll(Object.class).attributes("k", "l"));
 
-		Entity<Object> te1 = new Entity<>(Object.class, e0);
+		ResourceEntity<Object> te1 = new ResourceEntity<>(Object.class, e0);
 		te1.getAttributes().add("c");
 		te1.getAttributes().add("b");
 
-		Entity<?> te11 = new Entity<>(Object.class, e1);
+		ResourceEntity<?> te11 = new ResourceEntity<>(Object.class, e1);
 		te11.getAttributes().add("m");
 		te11.getAttributes().add("z");
 		te1.getChildren().put("r1", te11);
 
-		Entity<?> te21 = new Entity<>(Object.class);
+		ResourceEntity<?> te21 = new ResourceEntity<>(Object.class);
 		te21.getAttributes().add("p");
 		te21.getAttributes().add("z");
 		te1.getChildren().put("r3", te21);
@@ -184,7 +184,7 @@ public class ConstraintsHandlerTest extends TestWithCayenneMapping {
 		assertTrue(t1.getEntity().getAttributes().contains("b"));
 		assertEquals(1, t1.getEntity().getChildren().size());
 
-		Entity<?> mergedTe11 = t1.getEntity().getChildren().get("r1");
+		ResourceEntity<?> mergedTe11 = t1.getEntity().getChildren().get("r1");
 		assertNotNull(mergedTe11);
 		assertTrue(mergedTe11.getChildren().isEmpty());
 		assertEquals(1, mergedTe11.getAttributes().size());
@@ -197,19 +197,19 @@ public class ConstraintsHandlerTest extends TestWithCayenneMapping {
 		TreeConstraints<Object> tc1 = TreeConstraints.excludeAll(Object.class).excludeId();
 		TreeConstraints<Object> tc2 = TreeConstraints.excludeAll(Object.class).includeId();
 
-		Entity<Object> te1 = new Entity<>(Object.class, e0);
+		ResourceEntity<Object> te1 = new ResourceEntity<>(Object.class, e0);
 		te1.includeId();
 		DataResponse<Object> t1 = DataResponse.forType(Object.class).withClientEntity(te1);
 		constraintHandler.constrainResponse(t1, null, tc1);
 		assertFalse(t1.getEntity().isIdIncluded());
 
-		Entity<Object> te2 = new Entity<>(Object.class, e0);
+		ResourceEntity<Object> te2 = new ResourceEntity<>(Object.class, e0);
 		te2.includeId();
 		DataResponse<Object> t2 = DataResponse.forType(Object.class).withClientEntity(te2);
 		constraintHandler.constrainResponse(t2, null, tc2);
 		assertTrue(t2.getEntity().isIdIncluded());
 
-		Entity<Object> te3 = new Entity<>(Object.class, e0);
+		ResourceEntity<Object> te3 = new ResourceEntity<>(Object.class, e0);
 		te3.excludeId();
 		DataResponse<Object> t3 = DataResponse.forType(Object.class).withClientEntity(te3);
 		constraintHandler.constrainResponse(t3, null, tc2);
@@ -223,12 +223,12 @@ public class ConstraintsHandlerTest extends TestWithCayenneMapping {
 
 		TreeConstraints<Object> tc1 = TreeConstraints.excludeAll(Object.class).and(q1);
 
-		Entity<Object> te1 = new Entity<>(Object.class, e0);
+		ResourceEntity<Object> te1 = new ResourceEntity<>(Object.class, e0);
 		DataResponse<Object> t1 = DataResponse.forType(Object.class).withClientEntity(te1);
 		constraintHandler.constrainResponse(t1, null, tc1);
 		assertEquals(exp("a = 5"), t1.getEntity().getQualifier());
 
-		Entity<Object> te2 = new Entity<>(Object.class, e0);
+		ResourceEntity<Object> te2 = new ResourceEntity<>(Object.class, e0);
 		te2.andQualifier(exp("b = 'd'"));
 		DataResponse<Object> t2 = DataResponse.forType(Object.class).withClientEntity(te2);
 		constraintHandler.constrainResponse(t2, null, tc1);
@@ -241,13 +241,13 @@ public class ConstraintsHandlerTest extends TestWithCayenneMapping {
 		TreeConstraints<Object> tc1 = excludeAll(Object.class).path("r1",
 				TreeConstraints.excludeAll(Object.class).attribute("a"));
 
-		Entity<Object> te1MapByTarget = new Entity<>(Object.class, e0);
+		ResourceEntity<Object> te1MapByTarget = new ResourceEntity<>(Object.class, e0);
 		te1MapByTarget.getAttributes().add("b");
 
-		Entity<Object> te1MapBy = new Entity<>(Object.class, e1);
+		ResourceEntity<Object> te1MapBy = new ResourceEntity<>(Object.class, e1);
 		te1MapBy.getChildren().put("r1", te1MapByTarget);
 
-		Entity<Object> te1 = new Entity<>(Object.class, e0);
+		ResourceEntity<Object> te1 = new ResourceEntity<>(Object.class, e0);
 		te1.mapBy(te1MapBy, "r1.b");
 
 		DataResponse<Object> t1 = DataResponse.forType(Object.class).withClientEntity(te1);
@@ -255,13 +255,13 @@ public class ConstraintsHandlerTest extends TestWithCayenneMapping {
 		assertNull(t1.getEntity().getMapBy());
 		assertNull(t1.getEntity().getMapByPath());
 
-		Entity<Object> te2MapByTarget = new Entity<>(Object.class, e1);
+		ResourceEntity<Object> te2MapByTarget = new ResourceEntity<>(Object.class, e1);
 		te2MapByTarget.getAttributes().add("a");
 
-		Entity<Object> te2MapBy = new Entity<>(Object.class, e0);
+		ResourceEntity<Object> te2MapBy = new ResourceEntity<>(Object.class, e0);
 		te1MapBy.getChildren().put("r1", te2MapByTarget);
 
-		Entity<Object> te2 = new Entity<>(Object.class, e0);
+		ResourceEntity<Object> te2 = new ResourceEntity<>(Object.class, e0);
 		te2.mapBy(te2MapBy, "r1.a");
 
 		DataResponse<Object> t2 = DataResponse.forType(Object.class).withClientEntity(te2);
@@ -275,13 +275,13 @@ public class ConstraintsHandlerTest extends TestWithCayenneMapping {
 
 		TreeConstraints<Object> tc1 = excludeAll(Object.class).path("r1", excludeAll(Object.class).excludeId());
 
-		Entity<Object> te1MapByTarget = new Entity<>(Object.class, e0);
+		ResourceEntity<Object> te1MapByTarget = new ResourceEntity<>(Object.class, e0);
 		te1MapByTarget.includeId();
 
-		Entity<Object> te1MapBy = new Entity<>(Object.class, e1);
+		ResourceEntity<Object> te1MapBy = new ResourceEntity<>(Object.class, e1);
 		te1MapBy.getChildren().put("r1", te1MapByTarget);
 
-		Entity<Object> te1 = new Entity<>(Object.class, e0);
+		ResourceEntity<Object> te1 = new ResourceEntity<>(Object.class, e0);
 		te1.mapBy(te1MapBy, "r1");
 
 		DataResponse<Object> t1 = DataResponse.forType(Object.class).withClientEntity(te1);
@@ -296,13 +296,13 @@ public class ConstraintsHandlerTest extends TestWithCayenneMapping {
 
 		TreeConstraints<Object> tc1 = excludeAll(Object.class).path("r1", excludeAll(Object.class).includeId());
 
-		Entity<Object> te1MapByTarget = new Entity<>(Object.class, e1);
+		ResourceEntity<Object> te1MapByTarget = new ResourceEntity<>(Object.class, e1);
 		te1MapByTarget.includeId();
 
-		Entity<Object> te1MapBy = new Entity<>(Object.class, e0);
+		ResourceEntity<Object> te1MapBy = new ResourceEntity<>(Object.class, e0);
 		te1MapBy.getChildren().put("r1", te1MapByTarget);
 
-		Entity<Object> te1 = new Entity<>(Object.class, e0);
+		ResourceEntity<Object> te1 = new ResourceEntity<>(Object.class, e0);
 		te1.mapBy(te1MapBy, "r1");
 
 		DataResponse<Object> t1 = DataResponse.forType(Object.class).withClientEntity(te1);

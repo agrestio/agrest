@@ -9,7 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.nhl.link.rest.DataResponse;
-import com.nhl.link.rest.Entity;
+import com.nhl.link.rest.ResourceEntity;
 import com.nhl.link.rest.EntityUpdate;
 import com.nhl.link.rest.ImmutableTreeConstraints;
 import com.nhl.link.rest.LinkRestException;
@@ -87,7 +87,7 @@ class TreeConstraintsHandler {
 		}
 	}
 
-	private void applyForRead(Entity<?> target, ImmutableTreeConstraints constraints) {
+	private void applyForRead(ResourceEntity<?> target, ImmutableTreeConstraints constraints) {
 
 		if (!constraints.isIdIncluded()) {
 			target.excludeId();
@@ -109,10 +109,10 @@ class TreeConstraintsHandler {
 			}
 		}
 
-		Iterator<Entry<String, Entity<?>>> rit = target.getChildren().entrySet().iterator();
+		Iterator<Entry<String, ResourceEntity<?>>> rit = target.getChildren().entrySet().iterator();
 		while (rit.hasNext()) {
 
-			Entry<String, Entity<?>> e = rit.next();
+			Entry<String, ResourceEntity<?>> e = rit.next();
 			ImmutableTreeConstraints sourceChild = constraints.getChild(e.getKey());
 			if (sourceChild != null) {
 

@@ -1,6 +1,6 @@
 package com.nhl.link.rest.runtime.encoder;
 
-import com.nhl.link.rest.Entity;
+import com.nhl.link.rest.ResourceEntity;
 import com.nhl.link.rest.EntityProperty;
 
 /**
@@ -9,7 +9,7 @@ import com.nhl.link.rest.EntityProperty;
  */
 public interface IAttributeEncoderFactory {
 
-	EntityProperty getAttributeProperty(Entity<?> entity, String attributeName);
+	EntityProperty getAttributeProperty(ResourceEntity<?> entity, String attributeName);
 
-	EntityProperty getIdProperty(Entity<?> entity);
+	EntityProperty getIdProperty(ResourceEntity<?> entity);
 }

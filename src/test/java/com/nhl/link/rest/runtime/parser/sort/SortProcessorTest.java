@@ -9,7 +9,7 @@ import org.apache.cayenne.query.Ordering;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.nhl.link.rest.Entity;
+import com.nhl.link.rest.ResourceEntity;
 import com.nhl.link.rest.it.fixture.cayenne.E2;
 import com.nhl.link.rest.it.fixture.cayenne.auto._E2;
 import com.nhl.link.rest.runtime.jackson.JacksonService;
@@ -20,7 +20,7 @@ import com.nhl.link.rest.unit.TestWithCayenneMapping;
 public class SortProcessorTest extends TestWithCayenneMapping {
 
 	private SortWorker processor;
-	private Entity<?> entity;
+	private ResourceEntity<?> entity;
 
 	@Before
 	public void before() {
@@ -28,7 +28,7 @@ public class SortProcessorTest extends TestWithCayenneMapping {
 		this.processor = new SortWorker(jacksonService, new PathCache());
 
 		ObjEntity oEntity = runtime.getChannel().getEntityResolver().getObjEntity(E2.class);
-		this.entity = new Entity<>(Object.class, oEntity);
+		this.entity = new ResourceEntity<>(Object.class, oEntity);
 	}
 
 	@Test

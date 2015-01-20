@@ -18,7 +18,7 @@ import org.junit.Test;
 import com.fasterxml.jackson.core.JsonEncoding;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.nhl.link.rest.DataResponse;
-import com.nhl.link.rest.Entity;
+import com.nhl.link.rest.ResourceEntity;
 import com.nhl.link.rest.encoder.Encoder;
 import com.nhl.link.rest.encoder.EncoderFilter;
 import com.nhl.link.rest.it.fixture.cayenne.E2;
@@ -60,7 +60,7 @@ public class SenchaEncoderServiceTest extends TestWithCayenneMapping {
 		filters.add(new EncoderFilter() {
 
 			@Override
-			public boolean matches(Entity<?> clientEntity) {
+			public boolean matches(ResourceEntity<?> clientEntity) {
 				return true;
 			}
 
@@ -96,10 +96,10 @@ public class SenchaEncoderServiceTest extends TestWithCayenneMapping {
 			}
 		});
 
-		Entity<E2> e2Descriptor = getClientEntity(E2.class);
+		ResourceEntity<E2> e2Descriptor = getClientEntity(E2.class);
 		e2Descriptor.includeId();
 
-		Entity<E3> e3Descriptor = getClientEntity(E3.class);
+		ResourceEntity<E3> e3Descriptor = getClientEntity(E3.class);
 		e3Descriptor.includeId();
 		e3Descriptor.getChildren().put(E3.E2.getName(), e2Descriptor);
 

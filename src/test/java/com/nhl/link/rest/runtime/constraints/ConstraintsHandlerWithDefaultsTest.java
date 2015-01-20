@@ -16,7 +16,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.nhl.link.rest.DataResponse;
-import com.nhl.link.rest.Entity;
+import com.nhl.link.rest.ResourceEntity;
 import com.nhl.link.rest.EntityConstraint;
 import com.nhl.link.rest.TreeConstraints;
 import com.nhl.link.rest.it.fixture.cayenne.E1;
@@ -59,7 +59,7 @@ public class ConstraintsHandlerWithDefaultsTest extends TestWithCayenneMapping {
 
 		TreeConstraints<E1> tc1 = TreeConstraints.excludeAll(E1.class).attributes(E1.DESCRIPTION);
 
-		Entity<E1> te1 = new Entity<>(E1.class, e1);
+		ResourceEntity<E1> te1 = new ResourceEntity<>(E1.class, e1);
 		te1.getAttributes().add(E1.AGE.getName());
 		te1.getAttributes().add(E1.DESCRIPTION.getName());
 
@@ -74,7 +74,7 @@ public class ConstraintsHandlerWithDefaultsTest extends TestWithCayenneMapping {
 	@Test
 	public void testConstrainResponse_Default() {
 
-		Entity<E1> te1 = new Entity<>(E1.class, e1);
+		ResourceEntity<E1> te1 = new ResourceEntity<>(E1.class, e1);
 		te1.getAttributes().add(E1.AGE.getName());
 		te1.getAttributes().add(E1.DESCRIPTION.getName());
 
@@ -89,7 +89,7 @@ public class ConstraintsHandlerWithDefaultsTest extends TestWithCayenneMapping {
 	@Test
 	public void testConstrainResponse_None() {
 
-		Entity<E2> te1 = new Entity<>(E2.class, e2);
+		ResourceEntity<E2> te1 = new ResourceEntity<>(E2.class, e2);
 		te1.getAttributes().add(E2.ADDRESS.getName());
 		te1.getAttributes().add(E2.NAME.getName());
 

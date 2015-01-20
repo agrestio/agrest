@@ -10,7 +10,7 @@ import org.apache.cayenne.di.Inject;
 import org.apache.cayenne.map.ObjEntity;
 
 import com.nhl.link.rest.DataResponse;
-import com.nhl.link.rest.Entity;
+import com.nhl.link.rest.ResourceEntity;
 import com.nhl.link.rest.LinkRestException;
 import com.nhl.link.rest.UpdateResponse;
 import com.nhl.link.rest.runtime.jackson.IJacksonService;
@@ -66,7 +66,7 @@ public class RequestParser implements IRequestParser {
 
 		ObjEntity entity = metadataService.getObjEntity(response.getType());
 
-		Entity<T> rootDescriptor = new Entity<T>(response.getType(), entity);
+		ResourceEntity<T> rootDescriptor = new ResourceEntity<T>(response.getType(), entity);
 		response.withClientEntity(rootDescriptor);
 		response.withQueryProperty(autocompleteProperty);
 
@@ -97,7 +97,7 @@ public class RequestParser implements IRequestParser {
 		}
 
 		ObjEntity entity = metadataService.getObjEntity(response.getType());
-		Entity<T> clientEntity = new Entity<T>(response.getType(), entity);
+		ResourceEntity<T> clientEntity = new ResourceEntity<T>(response.getType(), entity);
 		response.withClientEntity(clientEntity);
 
 		treeProcessor.process(response, uriInfo);

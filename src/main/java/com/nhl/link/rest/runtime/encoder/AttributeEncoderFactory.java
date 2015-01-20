@@ -1,6 +1,6 @@
 package com.nhl.link.rest.runtime.encoder;
 
-import com.nhl.link.rest.Entity;
+import com.nhl.link.rest.ResourceEntity;
 import com.nhl.link.rest.EntityProperty;
 import com.nhl.link.rest.LinkRestException;
 import com.nhl.link.rest.encoder.*;
@@ -38,7 +38,7 @@ public class AttributeEncoderFactory implements IAttributeEncoderFactory {
     }
 
     @Override
-    public EntityProperty getAttributeProperty(Entity<?> entity, String attributeName) {
+    public EntityProperty getAttributeProperty(ResourceEntity<?> entity, String attributeName) {
         String key = entity.getCayenneEntity().getName() + "." + attributeName;
 
         EntityProperty property = attributePropertiesByPath.get(key);
@@ -51,7 +51,7 @@ public class AttributeEncoderFactory implements IAttributeEncoderFactory {
     }
 
     @Override
-    public EntityProperty getIdProperty(Entity<?> entity) {
+    public EntityProperty getIdProperty(ResourceEntity<?> entity) {
 
         String key = entity.getCayenneEntity().getName();
 
@@ -64,7 +64,7 @@ public class AttributeEncoderFactory implements IAttributeEncoderFactory {
         return property;
     }
 
-    protected EntityProperty buildAttributeProperty(Entity<?> entity, String attributeName) {
+    protected EntityProperty buildAttributeProperty(ResourceEntity<?> entity, String attributeName) {
 
         Encoder encoder = buildEncoder(entity.getCayenneEntity(), attributeName);
         if (DataObject.class.isAssignableFrom(entity.getType())) {
@@ -74,7 +74,7 @@ public class AttributeEncoderFactory implements IAttributeEncoderFactory {
         }
     }
 
-    protected EntityProperty buildIdProperty(Entity<?> entity) {
+    protected EntityProperty buildIdProperty(ResourceEntity<?> entity) {
 
         // Cayenne object - PK is an ObjectId
         if (Persistent.class.isAssignableFrom(entity.getType())) {

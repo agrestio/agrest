@@ -5,7 +5,7 @@ import java.util.List;
 import org.apache.cayenne.di.Inject;
 import org.apache.cayenne.map.ObjRelationship;
 
-import com.nhl.link.rest.Entity;
+import com.nhl.link.rest.ResourceEntity;
 import com.nhl.link.rest.EntityProperty;
 import com.nhl.link.rest.encoder.Encoder;
 import com.nhl.link.rest.encoder.EncoderFilter;
@@ -26,7 +26,7 @@ public class SenchaEncoderService extends EncoderService {
 	}
 
 	@Override
-	protected Encoder toOneEncoder(Entity<?> clientEntity, final ObjRelationship relationship) {
+	protected Encoder toOneEncoder(ResourceEntity<?> clientEntity, final ObjRelationship relationship) {
 		// to-one encoder is made of the following decorator layers (from outer
 		// to inner):
 		// (1) custom filters ->

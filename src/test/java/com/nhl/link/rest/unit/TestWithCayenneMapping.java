@@ -10,7 +10,7 @@ import org.apache.cayenne.map.ObjEntity;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 
-import com.nhl.link.rest.Entity;
+import com.nhl.link.rest.ResourceEntity;
 
 /**
  * A superclass of Cayenne-aware test cases that do not need to access the DB,
@@ -44,8 +44,8 @@ public class TestWithCayenneMapping {
 		return runtime.getChannel().getEntityResolver().getObjEntity(type);
 	}
 
-	protected <T> Entity<T> getClientEntity(Class<T> type) {
-		return new Entity<T>(type, getEntity(type));
+	protected <T> ResourceEntity<T> getClientEntity(Class<T> type) {
+		return new ResourceEntity<T>(type, getEntity(type));
 	}
 
 }

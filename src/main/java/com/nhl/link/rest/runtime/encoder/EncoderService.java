@@ -14,7 +14,7 @@ import org.apache.cayenne.di.Inject;
 import org.apache.cayenne.map.ObjRelationship;
 
 import com.nhl.link.rest.DataResponse;
-import com.nhl.link.rest.Entity;
+import com.nhl.link.rest.ResourceEntity;
 import com.nhl.link.rest.EntityProperty;
 import com.nhl.link.rest.LinkRestException;
 import com.nhl.link.rest.encoder.Encoder;
@@ -54,7 +54,7 @@ public class EncoderService implements IEncoderService {
 
 	private <T> Encoder rootEncoder(DataResponse<T> response) {
 
-		Entity<T> entity = response.getEntity();
+		ResourceEntity<T> entity = response.getEntity();
 
 		// TODO: in theory we can support this actually, but leaving it for
 		// another day, as fetch limit/offset and other filtering is
@@ -81,7 +81,7 @@ public class EncoderService implements IEncoderService {
 				.withLimit(response.getFetchLimit());
 	}
 
-	private Encoder nestedToManyEncoder(Entity<?> clientEntity) {
+	private Encoder nestedToManyEncoder(ResourceEntity<?> clientEntity) {
 
 		Encoder elementEncoder = collectionElementEncoder(clientEntity);
 
@@ -99,12 +99,12 @@ public class EncoderService implements IEncoderService {
 		}
 	}
 
-	private Encoder collectionElementEncoder(Entity<?> clientEntity) {
+	private Encoder collectionElementEncoder(ResourceEntity<?> clientEntity) {
 		Encoder encoder = entityEncoder(clientEntity);
 		return filteredEncoder(encoder, clientEntity);
 	}
 
-	protected Encoder toOneEncoder(Entity<?> clientEntity, final ObjRelationship relationship) {
+	protected Encoder toOneEncoder(ResourceEntity<?> clientEntity, final ObjRelationship relationship) {
 
 		// to-one encoder is made of the following decorator layers (from outer
 		// to inner):
@@ -117,7 +117,7 @@ public class EncoderService implements IEncoderService {
 		return filteredEncoder(compositeValueEncoder, clientEntity);
 	}
 
-	protected Encoder entityEncoder(Entity<?> clientEntity) {
+	protected Encoder entityEncoder(ResourceEntity<?> clientEntity) {
 
 		// ensure we sort property encoders alphabetically for cleaner JSON
 		// output
@@ -128,7 +128,7 @@ public class EncoderService implements IEncoderService {
 			properties.put(attribute, property);
 		}
 
-		for (Entry<String, Entity<?>> e : clientEntity.getChildren().entrySet()) {
+		for (Entry<String, ResourceEntity<?>> e : clientEntity.getChildren().entrySet()) {
 			ObjRelationship relationship = (ObjRelationship) clientEntity.getCayenneEntity()
 					.getRelationship(e.getKey());
 
@@ -145,7 +145,7 @@ public class EncoderService implements IEncoderService {
 		return new EntityEncoder(idEncoder, properties);
 	}
 
-	protected Encoder filteredEncoder(Encoder encoder, Entity<?> clientEntity) {
+	protected Encoder filteredEncoder(Encoder encoder, ResourceEntity<?> clientEntity) {
 		List<EncoderFilter> matchingFilters = null;
 
 		for (EncoderFilter filter : filters) {

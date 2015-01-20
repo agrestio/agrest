@@ -15,7 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.nhl.link.rest.DataResponse;
-import com.nhl.link.rest.Entity;
+import com.nhl.link.rest.ResourceEntity;
 import com.nhl.link.rest.EntityParent;
 import com.nhl.link.rest.EntityProperty;
 import com.nhl.link.rest.LinkRestException;
@@ -194,7 +194,7 @@ public abstract class BaseSelectBuilder<T> implements SelectBuilder<T> {
 		fetchObjects(response);
 
 		List<T> objects = response.getObjects();
-		Entity<T> rootEntity = response.getEntity();
+		ResourceEntity<T> rootEntity = response.getEntity();
 
 		if (oneObject && objects.size() != 1) {
 

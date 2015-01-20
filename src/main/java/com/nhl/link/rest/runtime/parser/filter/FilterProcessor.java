@@ -7,7 +7,7 @@ import org.apache.cayenne.di.Inject;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.nhl.link.rest.DataResponse;
-import com.nhl.link.rest.Entity;
+import com.nhl.link.rest.ResourceEntity;
 import com.nhl.link.rest.runtime.jackson.IJacksonService;
 import com.nhl.link.rest.runtime.parser.BaseRequestProcessor;
 import com.nhl.link.rest.runtime.parser.cache.IPathCache;
@@ -52,7 +52,7 @@ public class FilterProcessor extends BaseRequestProcessor implements IFilterProc
 	}
 
 	@Override
-	public void process(Entity<?> entity, JsonNode expNode) {
+	public void process(ResourceEntity<?> entity, JsonNode expNode) {
 		cayenneExpWorker.process(entity, expNode);
 	}
 

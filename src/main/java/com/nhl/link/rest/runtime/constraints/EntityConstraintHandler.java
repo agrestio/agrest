@@ -10,7 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.nhl.link.rest.DataResponse;
-import com.nhl.link.rest.Entity;
+import com.nhl.link.rest.ResourceEntity;
 import com.nhl.link.rest.EntityConstraint;
 import com.nhl.link.rest.EntityUpdate;
 import com.nhl.link.rest.UpdateResponse;
@@ -105,7 +105,7 @@ class EntityConstraintHandler {
 		}
 	}
 
-	void constrainForRead(Entity<?> entity) {
+	void constrainForRead(ResourceEntity<?> entity) {
 
 		EntityConstraint c = forRead.getOrCreate(entity.getCayenneEntity());
 
@@ -131,10 +131,10 @@ class EntityConstraintHandler {
 			}
 		}
 
-		Iterator<Entry<String, Entity<?>>> rit = entity.getChildren().entrySet().iterator();
+		Iterator<Entry<String, ResourceEntity<?>>> rit = entity.getChildren().entrySet().iterator();
 		while (rit.hasNext()) {
 
-			Entry<String, Entity<?>> e = rit.next();
+			Entry<String, ResourceEntity<?>> e = rit.next();
 
 			if (c.allowsRelationship(e.getKey())) {
 				constrainForRead(e.getValue());

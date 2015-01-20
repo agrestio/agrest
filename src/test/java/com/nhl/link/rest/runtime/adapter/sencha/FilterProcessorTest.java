@@ -8,7 +8,7 @@ import static org.junit.Assert.assertNull;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.nhl.link.rest.Entity;
+import com.nhl.link.rest.ResourceEntity;
 import com.nhl.link.rest.LinkRestException;
 import com.nhl.link.rest.it.fixture.cayenne.E4;
 import com.nhl.link.rest.runtime.jackson.IJacksonService;
@@ -18,7 +18,7 @@ import com.nhl.link.rest.unit.TestWithCayenneMapping;
 
 public class FilterProcessorTest extends TestWithCayenneMapping {
 
-	private Entity<E4> e4Descriptor;
+	private ResourceEntity<E4> e4Descriptor;
 	private FilterProcessor processor;
 
 	@Before

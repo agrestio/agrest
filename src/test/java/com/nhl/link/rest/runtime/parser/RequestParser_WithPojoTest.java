@@ -18,7 +18,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.nhl.link.rest.DataResponse;
-import com.nhl.link.rest.Entity;
+import com.nhl.link.rest.ResourceEntity;
 import com.nhl.link.rest.it.fixture.pojo.model.P1;
 import com.nhl.link.rest.it.fixture.pojo.model.P2;
 import com.nhl.link.rest.runtime.cayenne.ICayennePersister;
@@ -82,7 +82,7 @@ public class RequestParser_WithPojoTest extends TestWithCayenneMapping {
 		parser.parseSelect(req1, urlInfo, null);
 
 		assertNotNull(req1);
-		Entity<P1> ce1 = req1.getEntity();
+		ResourceEntity<P1> ce1 = req1.getEntity();
 		assertNotNull(ce1);
 		assertTrue(ce1.isIdIncluded());
 		assertEquals(1, ce1.getAttributes().size());
@@ -92,7 +92,7 @@ public class RequestParser_WithPojoTest extends TestWithCayenneMapping {
 		parser.parseSelect(req2, urlInfo, null);
 
 		assertNotNull(req2);
-		Entity<P2> ce2 = req2.getEntity();
+		ResourceEntity<P2> ce2 = req2.getEntity();
 		assertNotNull(ce2);
 		assertTrue(ce2.isIdIncluded());
 		assertEquals(1, ce2.getAttributes().size());
@@ -113,7 +113,7 @@ public class RequestParser_WithPojoTest extends TestWithCayenneMapping {
 		parser.parseSelect(req2, urlInfo, null);
 
 		assertNotNull(req2);
-		Entity<P2> ce2 = req2.getEntity();
+		ResourceEntity<P2> ce2 = req2.getEntity();
 		assertNotNull(ce2);
 		assertTrue(ce2.isIdIncluded());
 		assertEquals(1, ce2.getAttributes().size());

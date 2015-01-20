@@ -8,7 +8,7 @@ import org.apache.cayenne.map.ObjAttribute;
 import org.apache.cayenne.map.ObjRelationship;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.nhl.link.rest.Entity;
+import com.nhl.link.rest.ResourceEntity;
 import com.nhl.link.rest.LinkRestException;
 import com.nhl.link.rest.runtime.jackson.IJacksonService;
 import com.nhl.link.rest.runtime.parser.PathConstants;
@@ -30,7 +30,7 @@ class ExcludeWorker {
 		}
 	}
 
-	void process(Entity<?> clientEntity, List<String> excludes) {
+	void process(ResourceEntity<?> clientEntity, List<String> excludes) {
 		for (String exclude : excludes) {
 			if (exclude.startsWith("[")) {
 				processExcludeArray(clientEntity, exclude);
@@ -40,7 +40,7 @@ class ExcludeWorker {
 		}
 	}
 
-	private void processExcludeArray(Entity<?> clientEntity, String exclude) {
+	private void processExcludeArray(ResourceEntity<?> clientEntity, String exclude) {
 		JsonNode root = jsonParser.parseJson(exclude);
 
 		if (root != null && root.isArray()) {
@@ -55,7 +55,7 @@ class ExcludeWorker {
 		}
 	}
 
-	void processExcludePath(Entity<?> clientEntity, String path) {
+	void processExcludePath(ResourceEntity<?> clientEntity, String path) {
 
 		checkTooLong(path);
 		int dot = path.indexOf(PathConstants.DOT);
@@ -83,7 +83,7 @@ class ExcludeWorker {
 		ObjRelationship relationship = (ObjRelationship) clientEntity.getCayenneEntity().getRelationship(property);
 		if (relationship != null) {
 
-			Entity<?> relatedFilter = clientEntity.getChild(property);
+			ResourceEntity<?> relatedFilter = clientEntity.getChild(property);
 			if (relatedFilter == null) {
 				// valid path, but not included... ignoring
 				return;

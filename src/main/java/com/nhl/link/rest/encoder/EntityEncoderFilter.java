@@ -5,7 +5,7 @@ import java.io.IOException;
 import org.apache.cayenne.map.ObjEntity;
 
 import com.fasterxml.jackson.core.JsonGenerator;
-import com.nhl.link.rest.Entity;
+import com.nhl.link.rest.ResourceEntity;
 import com.nhl.link.rest.runtime.meta.IMetadataService;
 
 /**
@@ -27,7 +27,7 @@ public abstract class EntityEncoderFilter<T> implements EncoderFilter {
 	protected abstract boolean willEncode(T object);
 
 	@Override
-	public boolean matches(Entity<?> clientEntity) {
+	public boolean matches(ResourceEntity<?> clientEntity) {
 		return entity == clientEntity.getCayenneEntity();
 	}
 

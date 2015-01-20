@@ -17,7 +17,7 @@ import org.junit.Test;
 import com.fasterxml.jackson.core.JsonEncoding;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.nhl.link.rest.DataResponse;
-import com.nhl.link.rest.Entity;
+import com.nhl.link.rest.ResourceEntity;
 import com.nhl.link.rest.encoder.Encoder;
 import com.nhl.link.rest.encoder.EncoderFilter;
 import com.nhl.link.rest.it.fixture.pojo.model.P1;
@@ -51,7 +51,7 @@ public class EncoderService_Pojo_Test {
 
 	@Test
 	public void testEncode_SimplePojo_noId() throws IOException {
-		Entity<P1> descriptor = getClientEntity(P1.class);
+		ResourceEntity<P1> descriptor = getClientEntity(P1.class);
 		descriptor.getAttributes().add("name");
 
 		DataResponse<P1> builder = DataResponse.forType(P1.class).withClientEntity(descriptor);
@@ -68,7 +68,7 @@ public class EncoderService_Pojo_Test {
 		p6.setStringId("myid");
 		p6.setIntProp(4);
 
-		Entity<P6> descriptor = getClientEntity(P6.class);
+		ResourceEntity<P6> descriptor = getClientEntity(P6.class);
 		descriptor.getAttributes().add("intProp");
 		descriptor.includeId();
 		DataResponse<P6> builder = DataResponse.forObjects(Collections.singletonList(p6)).withClientEntity(descriptor);
@@ -96,7 +96,7 @@ public class EncoderService_Pojo_Test {
 		return dataMap.getObjEntity(type);
 	}
 
-	protected <T> Entity<T> getClientEntity(Class<T> type) {
-		return new Entity<T>(type, getEntity(type));
+	protected <T> ResourceEntity<T> getClientEntity(Class<T> type) {
+		return new ResourceEntity<T>(type, getEntity(type));
 	}
 }
