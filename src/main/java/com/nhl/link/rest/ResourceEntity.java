@@ -7,10 +7,11 @@ import java.util.HashSet;
 import java.util.Map;
 
 import org.apache.cayenne.exp.Expression;
-import org.apache.cayenne.map.ObjEntity;
-import org.apache.cayenne.map.ObjRelationship;
 import org.apache.cayenne.query.Ordering;
 import org.apache.cayenne.util.ToStringBuilder;
+
+import com.nhl.link.rest.meta.LrEntity;
+import com.nhl.link.rest.meta.LrRelationship;
 
 /**
  * A metadata object that describes a data structure of a given REST resource.
@@ -26,47 +27,41 @@ public class ResourceEntity<T> {
 
 	private boolean idIncluded;
 
-	private Class<T> type;
-	private ObjEntity cayenneEntity;
+	private LrEntity<T> lrEntity;
 	private Collection<String> attributes;
 	private Collection<String> defaultProperties;
 
 	private String mapByPath;
 	private ResourceEntity<?> mapBy;
 	private Map<String, ResourceEntity<?>> children;
-	private ObjRelationship incoming;
+	private LrRelationship incoming;
 	private Collection<Ordering> orderings;
 	private Expression qualifier;
 	private Map<String, EntityProperty> extraProperties;
 
-	public ResourceEntity(Class<T> type) {
+	public ResourceEntity(LrEntity<T> lrEntity) {
 		this.idIncluded = false;
 		this.attributes = new ArrayList<>();
 		this.defaultProperties = new HashSet<>();
 		this.children = new HashMap<>();
 		this.orderings = new ArrayList<>(2);
 		this.extraProperties = new HashMap<>();
-		this.type = type;
+		this.lrEntity = lrEntity;
 	}
 
-	public ResourceEntity(Class<T> type, ObjEntity entity) {
-		this(type);
-		this.cayenneEntity = entity;
-	}
-
-	public ResourceEntity(Class<T> type, ObjRelationship incoming) {
-		this(type, incoming.getTargetEntity());
+	public ResourceEntity(LrEntity<T> lrEntity, LrRelationship incoming) {
+		this(lrEntity);
 		this.incoming = incoming;
 	}
 
 	/**
-	 * @since 1.1
+	 * @since 1.12
 	 */
-	public ObjEntity getCayenneEntity() {
-		return cayenneEntity;
+	public LrEntity<T> getLrEntity() {
+		return lrEntity;
 	}
 
-	public ObjRelationship getIncoming() {
+	public LrRelationship getIncoming() {
 		return incoming;
 	}
 
@@ -159,14 +154,14 @@ public class ResourceEntity<T> {
 	public String toString() {
 
 		ToStringBuilder tsb = new ToStringBuilder(this);
-		if (cayenneEntity != null) {
-			tsb.append("name", cayenneEntity.getName());
+		if (lrEntity != null) {
+			tsb.append("name", lrEntity.getName());
 		}
 
 		return tsb.toString();
 	}
 
 	public Class<T> getType() {
-		return type;
+		return lrEntity.getType();
 	}
 }

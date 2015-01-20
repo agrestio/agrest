@@ -47,7 +47,7 @@ public class TreeConstraints<T> {
 		this.ops = new ArrayList<>();
 		this.type = type;
 	}
-	
+
 	/**
 	 * @since 1.5
 	 */
@@ -60,7 +60,7 @@ public class TreeConstraints<T> {
 	 * builder configuration.
 	 */
 	public ImmutableTreeConstraints build(DataResponse<T> response) {
-		return build(new ImmutableTreeConstraints(response.getEntity().getCayenneEntity()));
+		return build(new ImmutableTreeConstraints(response.getEntity().getLrEntity().getObjEntity()));
 	}
 
 	ImmutableTreeConstraints build(ImmutableTreeConstraints constraints) {
@@ -220,7 +220,7 @@ public class TreeConstraints<T> {
 	public <S> TreeConstraints<T> path(Property<S> path, TreeConstraints<S> subentityBuilder) {
 		return path(path.getName(), subentityBuilder);
 	}
-	
+
 	public <S> TreeConstraints<T> toManyPath(Property<List<S>> path, TreeConstraints<S> subentityBuilder) {
 		return path(path.getName(), subentityBuilder);
 	}

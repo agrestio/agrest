@@ -6,12 +6,11 @@ import java.util.concurrent.ConcurrentMap;
 
 import javax.ws.rs.core.Response.Status;
 
-import org.apache.cayenne.map.ObjAttribute;
-import org.apache.cayenne.map.ObjEntity;
-import org.apache.cayenne.map.ObjRelationship;
-
 import com.nhl.link.rest.EntityConstraint;
 import com.nhl.link.rest.LinkRestException;
+import com.nhl.link.rest.meta.LrAttribute;
+import com.nhl.link.rest.meta.LrEntity;
+import com.nhl.link.rest.meta.LrRelationship;
 import com.nhl.link.rest.runtime.meta.IMetadataService;
 
 /**
@@ -27,7 +26,7 @@ abstract class EntityConstraintSource {
 		this.metadataService = metadataService;
 	}
 
-	EntityConstraint getOrCreate(ObjEntity entity) {
+	EntityConstraint getOrCreate(LrEntity<?> entity) {
 
 		EntityConstraint c = constraints.get(entity.getName());
 
@@ -51,7 +50,7 @@ abstract class EntityConstraintSource {
 
 	protected abstract AnnotationData processAnnotation(Class<?> type);
 
-	private EntityConstraint create(ObjEntity entity) {
+	private EntityConstraint create(LrEntity<?> entity) {
 		AnnotationData ad = processAnnotation(metadataService.getType(entity.getName()));
 
 		if (ad == null) {
@@ -62,13 +61,13 @@ abstract class EntityConstraintSource {
 		Set<String> relationships = new HashSet<>();
 
 		for (String p : ad.properties) {
-			ObjAttribute a = entity.getAttribute(p);
+			LrAttribute a = entity.getAttribute(p);
 			if (a != null) {
 				attributes.add(p);
 				continue;
 			}
 
-			ObjRelationship r = entity.getRelationship(p);
+			LrRelationship r = entity.getRelationship(p);
 			if (r != null) {
 				relationships.add(p);
 				continue;

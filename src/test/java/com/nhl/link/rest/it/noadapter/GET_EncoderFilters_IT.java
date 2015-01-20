@@ -93,7 +93,7 @@ public class GET_EncoderFilters_IT extends JerseyTestOnDerby {
 	private final class E4OddFilter implements EncoderFilter {
 		@Override
 		public boolean matches(ResourceEntity<?> entity) {
-			return entity.getCayenneEntity().getName().equals("E4");
+			return entity.getLrEntity().getName().equals("E4");
 		}
 
 		@Override

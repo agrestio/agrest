@@ -57,8 +57,7 @@ public class SenchaRequestParserTest extends TestWithCayenneMapping {
 		IJacksonService jacksonService = new JacksonService();
 		ISortProcessor sortProcessor = new SenchaSortProcessor(jacksonService, pathCache);
 		IFilterProcessor filterProcessor = new SenchaFilterProcessor(jacksonService, pathCache);
-		ITreeProcessor treeProcessor = new IncludeExcludeProcessor(jacksonService, sortProcessor, filterProcessor,
-				metadataService);
+		ITreeProcessor treeProcessor = new IncludeExcludeProcessor(jacksonService, sortProcessor, filterProcessor);
 
 		parser = new SenchaRequestParser(Collections.<UpdateFilter> emptyList(), metadataService, jacksonService,
 				new RelationshipMapper(), treeProcessor, sortProcessor, filterProcessor, converterFactory);

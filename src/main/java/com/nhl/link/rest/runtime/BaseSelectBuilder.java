@@ -200,10 +200,10 @@ public abstract class BaseSelectBuilder<T> implements SelectBuilder<T> {
 
 			if (objects.isEmpty()) {
 				throw new LinkRestException(Status.NOT_FOUND, "No object for ID '" + id + "' and entity '"
-						+ rootEntity.getCayenneEntity().getName() + "'");
+						+ rootEntity.getLrEntity().getName() + "'");
 			} else {
 				throw new LinkRestException(Status.INTERNAL_SERVER_ERROR, "Found more than one object for ID '" + id
-						+ "' and entity '" + rootEntity.getCayenneEntity().getName() + "'");
+						+ "' and entity '" + rootEntity.getLrEntity().getName() + "'");
 			}
 		}
 

@@ -9,7 +9,6 @@ import static org.mockito.Mockito.mock;
 import java.util.Collections;
 
 import org.apache.cayenne.exp.Expression;
-import org.apache.cayenne.map.ObjRelationship;
 import org.apache.cayenne.query.Ordering;
 import org.apache.cayenne.query.PrefetchTreeNode;
 import org.apache.cayenne.query.SelectQuery;
@@ -22,6 +21,8 @@ import com.nhl.link.rest.encoder.EncoderFilter;
 import com.nhl.link.rest.it.fixture.cayenne.E1;
 import com.nhl.link.rest.it.fixture.cayenne.E2;
 import com.nhl.link.rest.it.fixture.cayenne.E3;
+import com.nhl.link.rest.meta.LrEntity;
+import com.nhl.link.rest.meta.LrRelationship;
 import com.nhl.link.rest.runtime.constraints.IConstraintsHandler;
 import com.nhl.link.rest.runtime.encoder.AttributeEncoderFactory;
 import com.nhl.link.rest.runtime.encoder.EncoderService;
@@ -79,8 +80,10 @@ public class CayenneSelectBuilderTest extends TestWithCayenneMapping {
 		SelectQuery<E2> query = new SelectQuery<E2>(E2.class);
 
 		ResourceEntity<E2> resultFilter = getClientEntity(E2.class);
-		ObjRelationship incoming = (ObjRelationship) resultFilter.getCayenneEntity().getRelationship(E2.E3S.getName());
-		resultFilter.getChildren().put(E2.E3S.getName(), new ResourceEntity<E3>(E3.class, incoming));
+		LrRelationship incoming = resultFilter.getLrEntity().getRelationship(E2.E3S.getName());
+		@SuppressWarnings("unchecked")
+		LrEntity<E3> target = mock(LrEntity.class);
+		resultFilter.getChildren().put(E2.E3S.getName(), new ResourceEntity<E3>(target, incoming));
 
 		DataResponse<E2> request = DataResponse.forType(E2.class).withClientEntity(resultFilter);
 

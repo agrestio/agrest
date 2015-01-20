@@ -4,16 +4,15 @@ import java.util.List;
 
 import javax.ws.rs.core.Response.Status;
 
-import org.apache.cayenne.map.ObjAttribute;
-import org.apache.cayenne.map.ObjRelationship;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.nhl.link.rest.ResourceEntity;
 import com.nhl.link.rest.LinkRestException;
+import com.nhl.link.rest.ResourceEntity;
+import com.nhl.link.rest.meta.LrAttribute;
+import com.nhl.link.rest.meta.LrRelationship;
 import com.nhl.link.rest.runtime.jackson.IJacksonService;
-import com.nhl.link.rest.runtime.meta.IMetadataService;
 import com.nhl.link.rest.runtime.parser.PathConstants;
 import com.nhl.link.rest.runtime.parser.filter.IFilterProcessor;
 import com.nhl.link.rest.runtime.parser.sort.ISortProcessor;
@@ -30,14 +29,11 @@ class IncludeWorker {
 	private IJacksonService jsonParser;
 	private ISortProcessor sortProcessor;
 	private IFilterProcessor expProcessor;
-	private IMetadataService metadataService;
 
-	IncludeWorker(IJacksonService jsonParser, ISortProcessor sortProcessor, IFilterProcessor expProcessor,
-			IMetadataService metadataService) {
+	IncludeWorker(IJacksonService jsonParser, ISortProcessor sortProcessor, IFilterProcessor expProcessor) {
 		this.jsonParser = jsonParser;
 		this.sortProcessor = sortProcessor;
 		this.expProcessor = expProcessor;
-		this.metadataService = metadataService;
 	}
 
 	void process(ResourceEntity<?> clientEntity, List<String> includes) {
@@ -124,7 +120,7 @@ class IncludeWorker {
 		// either root list, or to-many relationship
 		if (descriptor.getIncoming() == null || descriptor.getIncoming().isToMany()) {
 
-			ResourceEntity<T> mapByRoot = new ResourceEntity<T>(descriptor.getType(), descriptor.getCayenneEntity());
+			ResourceEntity<T> mapByRoot = new ResourceEntity<T>(descriptor.getLrEntity());
 			processIncludePath(mapByRoot, mapByPath);
 			descriptor.mapBy(mapByRoot, mapByPath);
 
@@ -135,10 +131,9 @@ class IncludeWorker {
 
 	/**
 	 * Records include path, returning null for the path corresponding to an
-	 * attribute, and a child {@link ResourceEntity} for the path corresponding to
-	 * relationship.
+	 * attribute, and a child {@link ResourceEntity} for the path corresponding
+	 * to relationship.
 	 */
-	// see TODO below
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	private ResourceEntity<?> processIncludePath(ResourceEntity<?> parent, String path) {
 
@@ -155,7 +150,7 @@ class IncludeWorker {
 		}
 
 		String property = dot > 0 ? path.substring(0, dot) : path;
-		ObjAttribute attribute = (ObjAttribute) parent.getCayenneEntity().getAttribute(property);
+		LrAttribute attribute = parent.getLrEntity().getAttribute(property);
 		if (attribute != null) {
 
 			if (dot > 0) {
@@ -166,14 +161,12 @@ class IncludeWorker {
 			return null;
 		}
 
-		ObjRelationship relationship = (ObjRelationship) parent.getCayenneEntity().getRelationship(property);
+		LrRelationship relationship = parent.getLrEntity().getRelationship(property);
 		if (relationship != null) {
 
 			ResourceEntity<?> childEntity = parent.getChild(property);
 			if (childEntity == null) {
-				// TODO: use ClassDescriptors to figure out the type of related
-				// entity..
-				childEntity = new ResourceEntity(metadataService.getType(relationship.getTargetEntityName()), relationship);
+				childEntity = new ResourceEntity(relationship.getTargetEntity(), relationship);
 				parent.getChildren().put(property, childEntity);
 			}
 
@@ -200,7 +193,7 @@ class IncludeWorker {
 		// either there are no includes (taking into account Id) or all includes
 		// are relationships
 		if (!clientEntity.isIdIncluded() && clientEntity.getAttributes().isEmpty()) {
-			for (ObjAttribute oa : clientEntity.getCayenneEntity().getAttributes()) {
+			for (LrAttribute oa : clientEntity.getLrEntity().getAttributes()) {
 				clientEntity.getAttributes().add(oa.getName());
 				clientEntity.getDefaultProperties().add(oa.getName());
 			}

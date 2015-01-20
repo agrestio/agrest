@@ -2,17 +2,20 @@ package com.nhl.link.rest;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
+import static org.mockito.Mockito.mock;
 
 import org.apache.cayenne.exp.ExpressionFactory;
 import org.junit.Test;
 
 import com.nhl.link.rest.it.fixture.cayenne.E2;
+import com.nhl.link.rest.meta.LrEntity;
 
 public class ResourceEntityTest {
 
 	@Test
 	public void testQualifier() {
-		ResourceEntity<E2> e2 = new ResourceEntity<>(E2.class);
+		@SuppressWarnings("unchecked")
+		ResourceEntity<E2> e2 = new ResourceEntity<>(mock(LrEntity.class));
 		assertNull(e2.getQualifier());
 
 		e2.andQualifier(ExpressionFactory.exp("a = 1"));

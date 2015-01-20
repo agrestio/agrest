@@ -1,27 +1,23 @@
 package com.nhl.link.rest.runtime.encoder;
 
-import org.apache.cayenne.exp.Property;
-import org.apache.cayenne.map.ObjEntity;
-
 import com.nhl.link.rest.encoder.converter.StringConverter;
+import com.nhl.link.rest.meta.LrEntity;
 
 public interface IStringConverterFactory {
 
 	/**
 	 * Returns a {@link StringConverter} for a given entity object. Normally the
 	 * returned converter is some kind of ID converter.
+	 * 
+	 * @since 1.12
 	 */
-	StringConverter getConverter(Class<?> entityType, Property<?> attribute);
+	StringConverter getConverter(LrEntity<?> entity);
 
 	/**
-	 * Returns a {@link StringConverter} for a given entity object. Normally the
-	 * returned converter is some kind of ID converter.
+	 * Returns a {@link StringConverter} for a given attribute.
+	 * 
+	 * @since 1.12
 	 */
-	StringConverter getConverter(ObjEntity entity);
-
-	/**
-	 * Returns a {@link StringConverter} for a given ObjAttribute.
-	 */
-	StringConverter getConverter(ObjEntity entity, String attributeName);
+	StringConverter getConverter(LrEntity<?> entity, String attributeName);
 
 }

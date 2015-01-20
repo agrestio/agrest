@@ -1,8 +1,7 @@
 package com.nhl.link.rest.runtime.adapter.sencha;
 
-import org.apache.cayenne.map.ObjEntity;
-import org.apache.cayenne.map.ObjRelationship;
-
+import com.nhl.link.rest.meta.LrEntity;
+import com.nhl.link.rest.meta.LrRelationship;
 import com.nhl.link.rest.runtime.semantics.IRelationshipMapper;
 
 /**
@@ -13,16 +12,16 @@ public class SenchaRelationshipMapper implements IRelationshipMapper {
 	private static final String SUFFIX = "_id";
 
 	@Override
-	public String toRelatedIdName(ObjRelationship relationship) {
+	public String toRelatedIdName(LrRelationship relationship) {
 		return relationship.getName() + SUFFIX;
 	}
 
 	@Override
-	public ObjRelationship toRelationship(ObjEntity root, String relatedIdName) {
+	public LrRelationship toRelationship(LrEntity<?> root, String relatedIdName) {
 
 		if (relatedIdName.length() > SUFFIX.length() && relatedIdName.endsWith(SUFFIX)) {
 			String baseName = relatedIdName.substring(0, relatedIdName.length() - SUFFIX.length());
-			return (ObjRelationship) root.getRelationship(baseName);
+			return root.getRelationship(baseName);
 		}
 
 		return null;

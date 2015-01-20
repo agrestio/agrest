@@ -63,8 +63,7 @@ public class RequestParser_WithPojoTest extends TestWithCayenneMapping {
 		IJacksonService jacksonService = new JacksonService();
 		ISortProcessor sortProcessor = new SortProcessor(jacksonService, pathCache);
 		IFilterProcessor filterProcessor = new FilterProcessor(jacksonService, pathCache);
-		ITreeProcessor treeProcessor = new IncludeExcludeProcessor(jacksonService, sortProcessor, filterProcessor,
-				metadataService);
+		ITreeProcessor treeProcessor = new IncludeExcludeProcessor(jacksonService, sortProcessor, filterProcessor);
 
 		parser = new RequestParser(Collections.<UpdateFilter> emptyList(), metadataService, jacksonService,
 				new RelationshipMapper(), treeProcessor, sortProcessor, filterProcessor, converterFactory);

@@ -31,7 +31,7 @@ abstract class BaseSyncStrategy<T> implements SyncStrategy<T> {
 	BaseSyncStrategy(CayenneUpdateResponse<T> response, ObjectRelator<T> relator) {
 		this.response = response;
 		this.relator = relator;
-		this.entity = response.getEntity().getCayenneEntity();
+		this.entity = response.getEntity().getLrEntity().getObjEntity();
 	}
 
 	@Override

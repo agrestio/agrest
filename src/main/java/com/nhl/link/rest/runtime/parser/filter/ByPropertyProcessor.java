@@ -6,11 +6,11 @@ import javax.ws.rs.core.Response.Status;
 
 import org.apache.cayenne.exp.Expression;
 import org.apache.cayenne.exp.ExpressionFactory;
-import org.apache.cayenne.map.ObjAttribute;
-import org.apache.cayenne.map.ObjEntity;
 
-import com.nhl.link.rest.ResourceEntity;
 import com.nhl.link.rest.LinkRestException;
+import com.nhl.link.rest.ResourceEntity;
+import com.nhl.link.rest.meta.LrAttribute;
+import com.nhl.link.rest.meta.LrEntity;
 
 class ByPropertyProcessor {
 
@@ -24,7 +24,7 @@ class ByPropertyProcessor {
 			throw new LinkRestException(Status.BAD_REQUEST, "'query' parameter is not supported by this service");
 		}
 
-		validateAttribute(clientEntity.getCayenneEntity(), queryProperty);
+		validateAttribute(clientEntity.getLrEntity(), queryProperty);
 
 		query = FilterUtil.escapeValueForLike(query) + "%";
 
@@ -36,14 +36,14 @@ class ByPropertyProcessor {
 	 * Checks that the user picked a valid property to compare against. Since
 	 * any bad args were selected by the server-side code, return 500 response.
 	 */
-	private void validateAttribute(ObjEntity entity, String queryProperty) {
-		ObjAttribute attribute = (ObjAttribute) entity.getAttribute(queryProperty);
+	private void validateAttribute(LrEntity<?> entity, String queryProperty) {
+		LrAttribute attribute = entity.getAttribute(queryProperty);
 		if (attribute == null) {
 			throw new LinkRestException(Status.INTERNAL_SERVER_ERROR, "No such property '" + queryProperty
 					+ "' for entity '" + entity.getName() + "'");
 		}
 
-		int jdbcType = attribute.getDbAttribute().getType();
+		int jdbcType = attribute.getJdbcType();
 		switch (jdbcType) {
 		case Types.VARCHAR:
 		case Types.CHAR:

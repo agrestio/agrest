@@ -86,7 +86,7 @@ class CayenneSelectBuilder<T> extends BaseSelectBuilder<T> implements SelectBuil
 
 			Class<T> root = getType();
 
-			ObjEntity entity = request.getEntity().getCayenneEntity();
+			ObjEntity entity = request.getEntity().getLrEntity().getObjEntity();
 
 			// sanity checking...
 			if (entity == null) {

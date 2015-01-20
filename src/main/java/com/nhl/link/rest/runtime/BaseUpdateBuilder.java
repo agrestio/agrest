@@ -164,7 +164,7 @@ public abstract class BaseUpdateBuilder<T> implements UpdateBuilder<T> {
 	protected abstract UpdateResponse<T> createResponse();
 
 	protected ObjRelationship relationshipFromParent() {
-		return parent != null ? metadataService.getObjRelationship(parent) : null;
+		return parent != null ? metadataService.getLrRelationship(parent).getObjRelationship() : null;
 	}
 
 	private void processExplicitId(UpdateResponse<T> response) {
@@ -183,7 +183,7 @@ public abstract class BaseUpdateBuilder<T> implements UpdateBuilder<T> {
 
 			// TODO: duplicate code from DataObjectProcessor - unify in a single
 			// place
-			ObjEntity entity = response.getEntity().getCayenneEntity();
+			ObjEntity entity = response.getEntity().getLrEntity().getObjEntity();
 			Collection<ObjAttribute> pks = entity.getPrimaryKeys();
 			if (pks.size() != 1) {
 				throw new IllegalStateException(String.format(
@@ -210,7 +210,7 @@ public abstract class BaseUpdateBuilder<T> implements UpdateBuilder<T> {
 				if (last.getJoins().size() != 1) {
 					throw new LinkRestException(Status.BAD_REQUEST,
 							"Multi-join relationship propagation is not supported yet: "
-									+ response.getEntity().getCayenneEntity().getName());
+									+ response.getEntity().getLrEntity().getName());
 				}
 
 				String parentIdKey = last.getJoins().get(0).getTargetName();

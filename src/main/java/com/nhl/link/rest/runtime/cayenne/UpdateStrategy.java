@@ -8,11 +8,10 @@ import java.util.Map;
 
 import javax.ws.rs.core.Response.Status;
 
-import org.apache.cayenne.map.ObjEntity;
-
 import com.nhl.link.rest.EntityUpdate;
 import com.nhl.link.rest.LinkRestException;
 import com.nhl.link.rest.ObjectMapper;
+import com.nhl.link.rest.meta.LrEntity;
 import com.nhl.link.rest.runtime.cayenne.CayenneUpdateBuilder.ObjectRelator;
 
 /**
@@ -62,7 +61,7 @@ class UpdateStrategy<T> extends BaseSyncStrategy<T> {
 				throw new LinkRestException(Status.BAD_REQUEST, "Can't update. No id for object");
 			}
 
-			ObjEntity entity = response.getEntity().getCayenneEntity();
+			LrEntity<T> entity = response.getEntity().getLrEntity();
 			throw new LinkRestException(Status.NOT_FOUND, "No object for ID '" + firstKey + "' and entity '"
 					+ entity.getName() + "'");
 		}

@@ -4,12 +4,9 @@ import java.util.List;
 
 import javax.ws.rs.core.Response.Status;
 
-import org.apache.cayenne.map.ObjAttribute;
-import org.apache.cayenne.map.ObjRelationship;
-
 import com.fasterxml.jackson.databind.JsonNode;
-import com.nhl.link.rest.ResourceEntity;
 import com.nhl.link.rest.LinkRestException;
+import com.nhl.link.rest.ResourceEntity;
 import com.nhl.link.rest.runtime.jackson.IJacksonService;
 import com.nhl.link.rest.runtime.parser.PathConstants;
 
@@ -69,8 +66,7 @@ class ExcludeWorker {
 		}
 
 		String property = dot > 0 ? path.substring(0, dot) : path;
-		ObjAttribute attribute = (ObjAttribute) clientEntity.getCayenneEntity().getAttribute(property);
-		if (attribute != null) {
+		if (clientEntity.getLrEntity().getAttribute(property) != null) {
 
 			if (dot > 0) {
 				throw new LinkRestException(Status.BAD_REQUEST, "Invalid exclude path: " + path);
@@ -80,8 +76,7 @@ class ExcludeWorker {
 			return;
 		}
 
-		ObjRelationship relationship = (ObjRelationship) clientEntity.getCayenneEntity().getRelationship(property);
-		if (relationship != null) {
+		if (clientEntity.getLrEntity().getRelationship(property) != null) {
 
 			ResourceEntity<?> relatedFilter = clientEntity.getChild(property);
 			if (relatedFilter == null) {

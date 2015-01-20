@@ -31,7 +31,7 @@ public class ByIdObjectMapperFactory extends CayenneObjectMapperFactory {
 	@Override
 	protected <T> ObjectMapper<T> mapper(UpdateResponse<T> response) {
 
-		ObjEntity entity = response.getEntity().getCayenneEntity();
+		ObjEntity entity = response.getEntity().getLrEntity().getObjEntity();
 
 		// sanity checking...
 		if (entity == null) {

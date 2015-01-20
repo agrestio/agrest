@@ -45,7 +45,7 @@ class CayenneExpProcessor {
 	}
 
 	void process(ResourceEntity<?> clientEntity, JsonNode expNode) {
-		ObjEntity entity = clientEntity.getCayenneEntity();
+		ObjEntity entity = clientEntity.getLrEntity().getObjEntity();
 		CayenneExpProcessorWorker worker = new CayenneExpProcessorWorker(expNode, converters, pathCache, entity);
 		clientEntity.andQualifier(worker.exp());
 	}

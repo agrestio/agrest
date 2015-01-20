@@ -57,11 +57,11 @@ public class EntityDaoLinkRestService extends BaseLinkRestService {
 	}
 
 	private <T> EntityDao<T> daoForType(Class<T> type) {
-		return dao(metadataService.getObjEntity(type).getName());
+		return dao(metadataService.getLrEntity(type).getName());
 	}
 
 	private <T> EntityDao<T> daoForQuery(SelectQuery<T> query) {
-		return dao(metadataService.getObjEntity(query).getName());
+		return dao(metadataService.getLrEntity(query).getName());
 	}
 
 	@SuppressWarnings("unchecked")

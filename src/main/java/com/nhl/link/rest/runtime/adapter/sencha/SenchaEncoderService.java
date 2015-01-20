@@ -3,12 +3,12 @@ package com.nhl.link.rest.runtime.adapter.sencha;
 import java.util.List;
 
 import org.apache.cayenne.di.Inject;
-import org.apache.cayenne.map.ObjRelationship;
 
-import com.nhl.link.rest.ResourceEntity;
 import com.nhl.link.rest.EntityProperty;
+import com.nhl.link.rest.ResourceEntity;
 import com.nhl.link.rest.encoder.Encoder;
 import com.nhl.link.rest.encoder.EncoderFilter;
+import com.nhl.link.rest.meta.LrRelationship;
 import com.nhl.link.rest.runtime.encoder.EncoderService;
 import com.nhl.link.rest.runtime.encoder.IAttributeEncoderFactory;
 import com.nhl.link.rest.runtime.encoder.IStringConverterFactory;
@@ -26,7 +26,7 @@ public class SenchaEncoderService extends EncoderService {
 	}
 
 	@Override
-	protected Encoder toOneEncoder(ResourceEntity<?> clientEntity, final ObjRelationship relationship) {
+	protected Encoder toOneEncoder(ResourceEntity<?> clientEntity, final LrRelationship relationship) {
 		// to-one encoder is made of the following decorator layers (from outer
 		// to inner):
 		// (1) custom filters ->

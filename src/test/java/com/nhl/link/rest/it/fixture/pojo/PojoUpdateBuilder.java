@@ -74,7 +74,7 @@ public class PojoUpdateBuilder<T> extends BaseUpdateBuilder<T> {
 	}
 
 	private Object getId(UpdateResponse<T> response, T pojo) {
-		String pkProperty = response.getEntity().getCayenneEntity().getPrimaryKeyNames().iterator().next();
+		String pkProperty = response.getEntity().getLrEntity().getObjEntity().getPrimaryKeyNames().iterator().next();
 		return PropertyUtils.getProperty(pojo, pkProperty);
 	}
 

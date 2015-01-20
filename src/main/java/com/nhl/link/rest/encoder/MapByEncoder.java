@@ -48,7 +48,7 @@ public class MapByEncoder extends AbstractEncoder {
 		if (mapBy.isIdIncluded()) {
 			validateLeafMapBy(mapBy);
 			this.mapByReaders.add(IdReader.idReader);
-			this.fieldNameConverter = converterFactory.getConverter(mapBy.getCayenneEntity());
+			this.fieldNameConverter = converterFactory.getConverter(mapBy.getLrEntity());
 			return;
 		}
 
@@ -66,7 +66,7 @@ public class MapByEncoder extends AbstractEncoder {
 				}
 			});
 
-			this.fieldNameConverter = converterFactory.getConverter(mapBy.getCayenneEntity(), property);
+			this.fieldNameConverter = converterFactory.getConverter(mapBy.getLrEntity(), property);
 			return;
 		}
 

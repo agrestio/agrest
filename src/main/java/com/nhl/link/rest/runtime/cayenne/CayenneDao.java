@@ -10,7 +10,6 @@ import org.apache.cayenne.DataObject;
 import org.apache.cayenne.ObjectContext;
 import org.apache.cayenne.ObjectId;
 import org.apache.cayenne.map.ObjEntity;
-import org.apache.cayenne.map.ObjRelationship;
 import org.apache.cayenne.query.ObjectIdQuery;
 import org.apache.cayenne.query.SelectQuery;
 
@@ -18,6 +17,7 @@ import com.nhl.link.rest.DeleteBuilder;
 import com.nhl.link.rest.LinkRestException;
 import com.nhl.link.rest.SelectBuilder;
 import com.nhl.link.rest.UpdateBuilder;
+import com.nhl.link.rest.meta.LrRelationship;
 import com.nhl.link.rest.runtime.UpdateOperation;
 import com.nhl.link.rest.runtime.constraints.IConstraintsHandler;
 import com.nhl.link.rest.runtime.dao.EntityDao;
@@ -131,12 +131,12 @@ public class CayenneDao<T> implements EntityDao<T> {
 	public void unrelate(Object sourceId, String relationship) {
 
 		// validate relationship before doing anything else
-		ObjRelationship objRelationship = metadataService.getObjRelationship(type, relationship);
+		LrRelationship lrRelationship = metadataService.getLrRelationship(type, relationship);
 
 		ObjectContext context = persister.newContext();
 		DataObject src = (DataObject) getExistingObject(getType(), context, sourceId);
 
-		if (objRelationship.isToMany()) {
+		if (lrRelationship.isToMany()) {
 
 			// clone relationship before we start deleting to avoid concurrent
 			// modification of the iterator, and to be able to batch-delete
@@ -154,7 +154,6 @@ public class CayenneDao<T> implements EntityDao<T> {
 			DataObject target = (DataObject) src.readProperty(relationship);
 			if (target != null) {
 				src.setToOneTarget(relationship, null, true);
-
 			}
 		}
 
@@ -165,18 +164,18 @@ public class CayenneDao<T> implements EntityDao<T> {
 	public void unrelate(Object sourceId, String relationship, Object targetId) {
 
 		// validate relationship before doing anything else
-		ObjRelationship objRelationship = metadataService.getObjRelationship(type, relationship);
+		LrRelationship lrRelationship = metadataService.getLrRelationship(type, relationship);
 
 		ObjectContext context = persister.newContext();
 
 		DataObject src = (DataObject) getExistingObject(getType(), context, sourceId);
 
-		Class<?> targetType = metadataService.getType(objRelationship.getTargetEntityName());
+		Class<?> targetType = lrRelationship.getTargetEntity().getType();
 
 		// among other things this call checks that the target exists
 		DataObject target = (DataObject) getExistingObject(targetType, context, targetId);
 
-		if (objRelationship.isToMany()) {
+		if (lrRelationship.isToMany()) {
 
 			// sanity check...
 			Collection<?> relatedCollection = (Collection<?>) src.readProperty(relationship);

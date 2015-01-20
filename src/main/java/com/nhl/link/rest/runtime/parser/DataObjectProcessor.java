@@ -10,7 +10,6 @@ import org.apache.cayenne.map.DbJoin;
 import org.apache.cayenne.map.DbRelationship;
 import org.apache.cayenne.map.ObjAttribute;
 import org.apache.cayenne.map.ObjEntity;
-import org.apache.cayenne.map.ObjRelationship;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,6 +17,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.nhl.link.rest.EntityUpdate;
 import com.nhl.link.rest.LinkRestException;
 import com.nhl.link.rest.UpdateResponse;
+import com.nhl.link.rest.meta.LrEntity;
+import com.nhl.link.rest.meta.LrRelationship;
 import com.nhl.link.rest.parser.converter.JsonValueConverter;
 import com.nhl.link.rest.runtime.jackson.IJacksonService;
 import com.nhl.link.rest.runtime.parser.converter.IJsonValueConverterFactory;
@@ -68,7 +69,7 @@ public class DataObjectProcessor {
 	}
 
 	private void processObject(UpdateResponse<?> response, JsonNode objectNode) {
-		ObjEntity entity = response.getEntity().getCayenneEntity();
+		LrEntity<?> entity = response.getEntity().getLrEntity();
 
 		EntityUpdate update = new EntityUpdate();
 
@@ -78,7 +79,7 @@ public class DataObjectProcessor {
 
 			if (PathConstants.ID_PK_ATTRIBUTE.equals(key)) {
 				JsonNode valueNode = objectNode.get(key);
-				extractPK(update, entity, valueNode);
+				extractPK(update, entity.getObjEntity(), valueNode);
 				continue;
 			}
 
@@ -90,10 +91,10 @@ public class DataObjectProcessor {
 				continue;
 			}
 
-			ObjRelationship relationship = relationshipMapper.toRelationship(entity, key);
+			LrRelationship relationship = relationshipMapper.toRelationship(entity, key);
 			if (relationship != null) {
 
-				DbRelationship dbRelationship = relationship.getDbRelationships().get(0);
+				DbRelationship dbRelationship = relationship.getObjRelationship().getDbRelationships().get(0);
 
 				JsonNode valueNode = objectNode.get(key);
 				Object value = extractValue(valueNode, dbRelationship);

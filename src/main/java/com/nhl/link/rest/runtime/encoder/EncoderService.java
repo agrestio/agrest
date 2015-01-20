@@ -11,12 +11,11 @@ import java.util.TreeMap;
 import javax.ws.rs.core.Response.Status;
 
 import org.apache.cayenne.di.Inject;
-import org.apache.cayenne.map.ObjRelationship;
 
 import com.nhl.link.rest.DataResponse;
-import com.nhl.link.rest.ResourceEntity;
 import com.nhl.link.rest.EntityProperty;
 import com.nhl.link.rest.LinkRestException;
+import com.nhl.link.rest.ResourceEntity;
 import com.nhl.link.rest.encoder.Encoder;
 import com.nhl.link.rest.encoder.EncoderFilter;
 import com.nhl.link.rest.encoder.EntityEncoder;
@@ -26,6 +25,7 @@ import com.nhl.link.rest.encoder.GenericEncoder;
 import com.nhl.link.rest.encoder.ListEncoder;
 import com.nhl.link.rest.encoder.MapByEncoder;
 import com.nhl.link.rest.encoder.RootListEncoder;
+import com.nhl.link.rest.meta.LrRelationship;
 import com.nhl.link.rest.property.PropertyBuilder;
 import com.nhl.link.rest.runtime.semantics.IRelationshipMapper;
 
@@ -104,7 +104,7 @@ public class EncoderService implements IEncoderService {
 		return filteredEncoder(encoder, clientEntity);
 	}
 
-	protected Encoder toOneEncoder(ResourceEntity<?> clientEntity, final ObjRelationship relationship) {
+	protected Encoder toOneEncoder(ResourceEntity<?> clientEntity, LrRelationship relationship) {
 
 		// to-one encoder is made of the following decorator layers (from outer
 		// to inner):
@@ -129,8 +129,7 @@ public class EncoderService implements IEncoderService {
 		}
 
 		for (Entry<String, ResourceEntity<?>> e : clientEntity.getChildren().entrySet()) {
-			ObjRelationship relationship = (ObjRelationship) clientEntity.getCayenneEntity()
-					.getRelationship(e.getKey());
+			LrRelationship relationship = clientEntity.getLrEntity().getRelationship(e.getKey());
 
 			Encoder encoder = relationship.isToMany() ? nestedToManyEncoder(e.getValue()) : toOneEncoder(e.getValue(),
 					relationship);

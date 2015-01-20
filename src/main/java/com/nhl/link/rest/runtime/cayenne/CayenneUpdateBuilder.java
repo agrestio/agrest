@@ -3,13 +3,13 @@ package com.nhl.link.rest.runtime.cayenne;
 import javax.ws.rs.core.Response.Status;
 
 import org.apache.cayenne.DataObject;
-import org.apache.cayenne.map.ObjEntity;
 
 import com.nhl.link.rest.EntityParent;
 import com.nhl.link.rest.LinkRestException;
 import com.nhl.link.rest.ObjectMapper;
 import com.nhl.link.rest.ObjectMapperFactory;
 import com.nhl.link.rest.UpdateResponse;
+import com.nhl.link.rest.meta.LrEntity;
 import com.nhl.link.rest.runtime.BaseUpdateBuilder;
 import com.nhl.link.rest.runtime.UpdateOperation;
 import com.nhl.link.rest.runtime.constraints.IConstraintsHandler;
@@ -97,13 +97,13 @@ class CayenneUpdateBuilder<T> extends BaseUpdateBuilder<T> {
 				((CayenneUpdateResponse<T>) response).getUpdateContext(), parent.getType(), parent.getId());
 
 		if (parentObject == null) {
-			ObjEntity entity = metadataService.getObjEntity(parent.getType());
+			LrEntity<?> entity = metadataService.getLrEntity(parent.getType());
 			throw new LinkRestException(Status.NOT_FOUND, "No parent object for ID '" + parent.getId()
 					+ "' and entity '" + entity.getName() + "'");
 		}
 
 		// TODO: check that relationship target is the same as <T> ??
-		if (metadataService.getObjRelationship(parent).isToMany()) {
+		if (metadataService.getLrRelationship(parent).isToMany()) {
 			return new ObjectRelator<T>() {
 				@Override
 				public void relate(T object) {

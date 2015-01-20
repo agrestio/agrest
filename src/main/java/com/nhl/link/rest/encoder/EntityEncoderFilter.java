@@ -2,10 +2,9 @@ package com.nhl.link.rest.encoder;
 
 import java.io.IOException;
 
-import org.apache.cayenne.map.ObjEntity;
-
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.nhl.link.rest.ResourceEntity;
+import com.nhl.link.rest.meta.LrEntity;
 import com.nhl.link.rest.runtime.meta.IMetadataService;
 
 /**
@@ -16,10 +15,10 @@ import com.nhl.link.rest.runtime.meta.IMetadataService;
  */
 public abstract class EntityEncoderFilter<T> implements EncoderFilter {
 
-	private ObjEntity entity;
+	private LrEntity<T> entity;
 
 	public EntityEncoderFilter(IMetadataService metadataService) {
-		this.entity = metadataService.getObjEntity(getType());
+		this.entity = metadataService.getLrEntity(getType());
 	}
 
 	protected abstract Class<T> getType();
@@ -28,7 +27,7 @@ public abstract class EntityEncoderFilter<T> implements EncoderFilter {
 
 	@Override
 	public boolean matches(ResourceEntity<?> clientEntity) {
-		return entity == clientEntity.getCayenneEntity();
+		return entity == clientEntity.getLrEntity();
 	}
 
 	@SuppressWarnings("unchecked")

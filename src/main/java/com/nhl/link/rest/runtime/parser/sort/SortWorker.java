@@ -52,7 +52,7 @@ class SortWorker {
 	void processSimpleSorter(ResourceEntity<?> clientEntity, String sort, String direction) {
 
 		// TODO: do we need to support nested ID?
-		ObjEntity entity = clientEntity.getCayenneEntity();
+		ObjEntity entity = clientEntity.getLrEntity().getObjEntity();
 
 		// note using "toString" instead of "getPath" to convert ASTPath to
 		// String representation. This ensures "db:" prefix is preserved if

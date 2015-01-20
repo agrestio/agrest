@@ -10,9 +10,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.nhl.link.rest.DataResponse;
-import com.nhl.link.rest.ResourceEntity;
 import com.nhl.link.rest.EntityConstraint;
 import com.nhl.link.rest.EntityUpdate;
+import com.nhl.link.rest.ResourceEntity;
 import com.nhl.link.rest.UpdateResponse;
 import com.nhl.link.rest.annotation.ClientReadable;
 import com.nhl.link.rest.annotation.ClientWritable;
@@ -74,7 +74,7 @@ class EntityConstraintHandler {
 
 	void constrainUpdate(UpdateResponse<?> response) {
 
-		EntityConstraint c = forWrite.getOrCreate(response.getEntity().getCayenneEntity());
+		EntityConstraint c = forWrite.getOrCreate(response.getEntity().getLrEntity());
 
 		if (!c.allowsId()) {
 			response.disallowIdUpdates();
@@ -107,7 +107,7 @@ class EntityConstraintHandler {
 
 	void constrainForRead(ResourceEntity<?> entity) {
 
-		EntityConstraint c = forRead.getOrCreate(entity.getCayenneEntity());
+		EntityConstraint c = forRead.getOrCreate(entity.getLrEntity());
 
 		if (!c.allowsId()) {
 			entity.excludeId();

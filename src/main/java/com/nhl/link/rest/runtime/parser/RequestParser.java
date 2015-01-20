@@ -7,12 +7,12 @@ import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriInfo;
 
 import org.apache.cayenne.di.Inject;
-import org.apache.cayenne.map.ObjEntity;
 
 import com.nhl.link.rest.DataResponse;
-import com.nhl.link.rest.ResourceEntity;
 import com.nhl.link.rest.LinkRestException;
+import com.nhl.link.rest.ResourceEntity;
 import com.nhl.link.rest.UpdateResponse;
+import com.nhl.link.rest.meta.LrEntity;
 import com.nhl.link.rest.runtime.jackson.IJacksonService;
 import com.nhl.link.rest.runtime.meta.IMetadataService;
 import com.nhl.link.rest.runtime.parser.converter.IJsonValueConverterFactory;
@@ -64,9 +64,9 @@ public class RequestParser implements IRequestParser {
 			throw new LinkRestException(Status.INTERNAL_SERVER_ERROR, "Null response");
 		}
 
-		ObjEntity entity = metadataService.getObjEntity(response.getType());
+		LrEntity<T> entity = metadataService.getLrEntity(response.getType());
 
-		ResourceEntity<T> rootDescriptor = new ResourceEntity<T>(response.getType(), entity);
+		ResourceEntity<T> rootDescriptor = new ResourceEntity<T>(entity);
 		response.withClientEntity(rootDescriptor);
 		response.withQueryProperty(autocompleteProperty);
 
@@ -96,8 +96,8 @@ public class RequestParser implements IRequestParser {
 			throw new LinkRestException(Status.INTERNAL_SERVER_ERROR, "Null response");
 		}
 
-		ObjEntity entity = metadataService.getObjEntity(response.getType());
-		ResourceEntity<T> clientEntity = new ResourceEntity<T>(response.getType(), entity);
+		LrEntity<T> entity = metadataService.getLrEntity(response.getType());
+		ResourceEntity<T> clientEntity = new ResourceEntity<T>(entity);
 		response.withClientEntity(clientEntity);
 
 		treeProcessor.process(response, uriInfo);

@@ -1,11 +1,11 @@
 package com.nhl.link.rest.runtime.semantics;
 
-import org.apache.cayenne.map.ObjEntity;
-import org.apache.cayenne.map.ObjRelationship;
+import com.nhl.link.rest.meta.LrEntity;
+import com.nhl.link.rest.meta.LrRelationship;
 
 public interface IRelationshipMapper {
 
-	ObjRelationship toRelationship(ObjEntity root, String relatedIdName);
+	LrRelationship toRelationship(LrEntity<?> root, String relatedIdName);
 
-	String toRelatedIdName(ObjRelationship relationship);
+	String toRelatedIdName(LrRelationship relationship);
 }
