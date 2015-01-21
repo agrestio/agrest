@@ -27,7 +27,7 @@ public class FilterProcessorTest extends TestWithCayenneMapping {
 		IJacksonService jsonParser = new JacksonService();
 
 		PathCache pathCache = new PathCache();
-		e4Descriptor = getClientEntity(E4.class);
+		e4Descriptor = getResourceEntity(E4.class);
 
 		this.processor = new FilterProcessor(jsonParser, pathCache);
 	}

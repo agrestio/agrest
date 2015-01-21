@@ -149,7 +149,7 @@ public class ConstraintsHandlerTest {
 	}
 
 	@Test
-	public void testApply_ClientEntity_NoTargetRel() {
+	public void testApply_ResourceEntity_NoTargetRel() {
 
 		TreeConstraints<Object> tc1 = TreeConstraints.excludeAll(Object.class).attributes("a", "b");
 
@@ -162,7 +162,7 @@ public class ConstraintsHandlerTest {
 		appendAttribute(te11, "b1");
 		te1.getChildren().put("d", te11);
 
-		DataResponse<Object> t1 = DataResponse.forType(Object.class).withClientEntity(te1);
+		DataResponse<Object> t1 = DataResponse.forType(Object.class).resourceEntity(te1);
 
 		constraintHandler.constrainResponse(t1, null, tc1);
 		assertEquals(1, t1.getEntity().getAttributes().size());
@@ -171,7 +171,7 @@ public class ConstraintsHandlerTest {
 	}
 
 	@Test
-	public void testApply_ClientEntity_TargetRel() {
+	public void testApply_ResourceEntity_TargetRel() {
 
 		TreeConstraints<Object> tc1 = TreeConstraints.excludeAll(Object.class).attributes("a", "b")
 				.path("r1", TreeConstraints.excludeAll(Object.class).attributes("n", "m"))
@@ -192,7 +192,7 @@ public class ConstraintsHandlerTest {
 		appendAttribute(te21, "z");
 		te1.getChildren().put("r3", te21);
 
-		DataResponse<Object> t1 = DataResponse.forType(Object.class).withClientEntity(te1);
+		DataResponse<Object> t1 = DataResponse.forType(Object.class).resourceEntity(te1);
 
 		constraintHandler.constrainResponse(t1, null, tc1);
 		assertEquals(1, t1.getEntity().getAttributes().size());
@@ -207,26 +207,26 @@ public class ConstraintsHandlerTest {
 	}
 
 	@Test
-	public void testMerge_ClientEntity_Id() {
+	public void testMerge_ResourceEntity_Id() {
 
 		TreeConstraints<Object> tc1 = TreeConstraints.excludeAll(Object.class).excludeId();
 		TreeConstraints<Object> tc2 = TreeConstraints.excludeAll(Object.class).includeId();
 
 		ResourceEntity<Object> te1 = new ResourceEntity<>(lre0);
 		te1.includeId();
-		DataResponse<Object> t1 = DataResponse.forType(Object.class).withClientEntity(te1);
+		DataResponse<Object> t1 = DataResponse.forType(Object.class).resourceEntity(te1);
 		constraintHandler.constrainResponse(t1, null, tc1);
 		assertFalse(t1.getEntity().isIdIncluded());
 
 		ResourceEntity<Object> te2 = new ResourceEntity<>(lre0);
 		te2.includeId();
-		DataResponse<Object> t2 = DataResponse.forType(Object.class).withClientEntity(te2);
+		DataResponse<Object> t2 = DataResponse.forType(Object.class).resourceEntity(te2);
 		constraintHandler.constrainResponse(t2, null, tc2);
 		assertTrue(t2.getEntity().isIdIncluded());
 
 		ResourceEntity<Object> te3 = new ResourceEntity<>(lre0);
 		te3.excludeId();
-		DataResponse<Object> t3 = DataResponse.forType(Object.class).withClientEntity(te3);
+		DataResponse<Object> t3 = DataResponse.forType(Object.class).resourceEntity(te3);
 		constraintHandler.constrainResponse(t3, null, tc2);
 		assertFalse(t3.getEntity().isIdIncluded());
 	}
@@ -239,13 +239,13 @@ public class ConstraintsHandlerTest {
 		TreeConstraints<Object> tc1 = TreeConstraints.excludeAll(Object.class).and(q1);
 
 		ResourceEntity<Object> te1 = new ResourceEntity<>(lre0);
-		DataResponse<Object> t1 = DataResponse.forType(Object.class).withClientEntity(te1);
+		DataResponse<Object> t1 = DataResponse.forType(Object.class).resourceEntity(te1);
 		constraintHandler.constrainResponse(t1, null, tc1);
 		assertEquals(exp("a = 5"), t1.getEntity().getQualifier());
 
 		ResourceEntity<Object> te2 = new ResourceEntity<>(lre0);
 		te2.andQualifier(exp("b = 'd'"));
-		DataResponse<Object> t2 = DataResponse.forType(Object.class).withClientEntity(te2);
+		DataResponse<Object> t2 = DataResponse.forType(Object.class).resourceEntity(te2);
 		constraintHandler.constrainResponse(t2, null, tc1);
 		assertEquals(exp("b = 'd' and a = 5"), t2.getEntity().getQualifier());
 	}
@@ -265,7 +265,7 @@ public class ConstraintsHandlerTest {
 		ResourceEntity<Object> te1 = new ResourceEntity<>(lre0);
 		te1.mapBy(te1MapBy, "r1.b");
 
-		DataResponse<Object> t1 = DataResponse.forType(Object.class).withClientEntity(te1);
+		DataResponse<Object> t1 = DataResponse.forType(Object.class).resourceEntity(te1);
 		constraintHandler.constrainResponse(t1, null, tc1);
 		assertNull(t1.getEntity().getMapBy());
 		assertNull(t1.getEntity().getMapByPath());
@@ -279,7 +279,7 @@ public class ConstraintsHandlerTest {
 		ResourceEntity<Object> te2 = new ResourceEntity<>(lre0);
 		te2.mapBy(te2MapBy, "r1.a");
 
-		DataResponse<Object> t2 = DataResponse.forType(Object.class).withClientEntity(te2);
+		DataResponse<Object> t2 = DataResponse.forType(Object.class).resourceEntity(te2);
 		constraintHandler.constrainResponse(t2, null, tc1);
 		assertSame(te2MapBy, t2.getEntity().getMapBy());
 		assertEquals("r1.a", t2.getEntity().getMapByPath());
@@ -299,7 +299,7 @@ public class ConstraintsHandlerTest {
 		ResourceEntity<Object> te1 = new ResourceEntity<>(lre0);
 		te1.mapBy(te1MapBy, "r1");
 
-		DataResponse<Object> t1 = DataResponse.forType(Object.class).withClientEntity(te1);
+		DataResponse<Object> t1 = DataResponse.forType(Object.class).resourceEntity(te1);
 		constraintHandler.constrainResponse(t1, null, tc1);
 		assertNull(t1.getEntity().getMapBy());
 		assertNull(t1.getEntity().getMapByPath());
@@ -320,7 +320,7 @@ public class ConstraintsHandlerTest {
 		ResourceEntity<Object> te1 = new ResourceEntity<>(lre0);
 		te1.mapBy(te1MapBy, "r1");
 
-		DataResponse<Object> t1 = DataResponse.forType(Object.class).withClientEntity(te1);
+		DataResponse<Object> t1 = DataResponse.forType(Object.class).resourceEntity(te1);
 		constraintHandler.constrainResponse(t1, null, tc1);
 		assertSame(te1MapBy, t1.getEntity().getMapBy());
 		assertEquals("r1", t1.getEntity().getMapByPath());

@@ -31,15 +31,16 @@ public interface SelectBuilder<T> {
 	SelectBuilder<T> byId(Object id);
 
 	/**
-	 * Adds a custom property that is appended to the root ClientEntity.
+	 * Adds a custom property that is appended to the root
+	 * {@link ResourceEntity}.
 	 */
 	SelectBuilder<T> withProperty(String name, EntityProperty clientProperty);
 
 	/**
-	 * Adds a custom property that is appended to the root ClientEntity.
-	 * Property is read as a regular JavaBean "property", and default encoder is
-	 * used. For more control over property access and encoding use
-	 * {@link #withProperty(String, EntityProperty)}.
+	 * Adds a custom property that is appended to the root
+	 * {@link ResourceEntity}. Property is read as a regular JavaBean
+	 * "property", and default encoder is used. For more control over property
+	 * access and encoding use {@link #withProperty(String, EntityProperty)}.
 	 */
 	SelectBuilder<T> withProperty(String name);
 

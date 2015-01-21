@@ -123,7 +123,17 @@ public class DataResponse<T> extends SimpleResponse {
 		return this;
 	}
 
+	/**
+	 * @deprecated since 1.12 in favor of {@link #resourceEntity(ResourceEntity)}.
+	 */
 	public DataResponse<T> withClientEntity(ResourceEntity<T> rootEntity) {
+		return resourceEntity(rootEntity);
+	}
+
+	/**
+	 * @since 1.12
+	 */
+	public DataResponse<T> resourceEntity(ResourceEntity<T> rootEntity) {
 		this.entity = rootEntity;
 		return this;
 	}

@@ -65,7 +65,7 @@ public class ConstraintsHandlerWithDefaultsTest extends TestWithCayenneMapping {
 		appendAttribute(te1, E1.AGE, Integer.class);
 		appendAttribute(te1, E1.DESCRIPTION, String.class);
 
-		DataResponse<E1> t1 = DataResponse.forType(E1.class).withClientEntity(te1);
+		DataResponse<E1> t1 = DataResponse.forType(E1.class).resourceEntity(te1);
 
 		constraintHandler.constrainResponse(t1, null, tc1);
 		assertEquals(1, t1.getEntity().getAttributes().size());
@@ -80,7 +80,7 @@ public class ConstraintsHandlerWithDefaultsTest extends TestWithCayenneMapping {
 		appendAttribute(te1, E1.AGE, Integer.class);
 		appendAttribute(te1, E1.DESCRIPTION, String.class);
 
-		DataResponse<E1> t1 = DataResponse.forType(E1.class).withClientEntity(te1);
+		DataResponse<E1> t1 = DataResponse.forType(E1.class).resourceEntity(te1);
 
 		constraintHandler.constrainResponse(t1, null, null);
 		assertEquals(1, t1.getEntity().getAttributes().size());
@@ -95,7 +95,7 @@ public class ConstraintsHandlerWithDefaultsTest extends TestWithCayenneMapping {
 		appendAttribute(te1, E2.ADDRESS, String.class);
 		appendAttribute(te1, E2.NAME, String.class);
 
-		DataResponse<E2> t1 = DataResponse.forType(E2.class).withClientEntity(te1);
+		DataResponse<E2> t1 = DataResponse.forType(E2.class).resourceEntity(te1);
 
 		constraintHandler.constrainResponse(t1, null, null);
 		assertEquals(2, t1.getEntity().getAttributes().size());

@@ -81,12 +81,12 @@ public class RequestParser_IncludeObjectTest extends TestWithCayenneMapping {
 		parser.parseSelect(dataRequest, urlInfo, null);
 
 		assertNotNull(dataRequest);
-		ResourceEntity<E2> clientEntity = dataRequest.getEntity();
-		assertNotNull(clientEntity);
-		assertTrue(clientEntity.isIdIncluded());
+		ResourceEntity<E2> resourceEntity = dataRequest.getEntity();
+		assertNotNull(resourceEntity);
+		assertTrue(resourceEntity.isIdIncluded());
 
-		assertEquals(1, clientEntity.getChildren().size());
-		assertTrue(clientEntity.getChildren().containsKey(E2.E3S.getName()));
+		assertEquals(1, resourceEntity.getChildren().size());
+		assertTrue(resourceEntity.getChildren().containsKey(E2.E3S.getName()));
 	}
 
 	@Test
@@ -103,10 +103,10 @@ public class RequestParser_IncludeObjectTest extends TestWithCayenneMapping {
 		parser.parseSelect(dataRequest, urlInfo, null);
 
 		assertNotNull(dataRequest);
-		ResourceEntity<E2> clientEntity = dataRequest.getEntity();
-		assertNotNull(clientEntity);
+		ResourceEntity<E2> resourceEntity = dataRequest.getEntity();
+		assertNotNull(resourceEntity);
 
-		ResourceEntity<?> mapBy = clientEntity.getChildren().get(E2.E3S.getName()).getMapBy();
+		ResourceEntity<?> mapBy = resourceEntity.getChildren().get(E2.E3S.getName()).getMapBy();
 		assertNotNull(mapBy);
 		assertNotNull(mapBy.getChildren().get(E3.E5.getName()));
 	}

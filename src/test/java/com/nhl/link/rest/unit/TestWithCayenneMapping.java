@@ -65,7 +65,7 @@ public class TestWithCayenneMapping {
 		return runtime.getChannel().getEntityResolver().getObjEntity(type);
 	}
 
-	protected <T> ResourceEntity<T> getClientEntity(Class<T> type) {
+	protected <T> ResourceEntity<T> getResourceEntity(Class<T> type) {
 		return new ResourceEntity<>(getLrEntity(type));
 	}
 

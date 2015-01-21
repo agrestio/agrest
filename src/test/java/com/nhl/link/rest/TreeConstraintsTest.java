@@ -27,7 +27,7 @@ public class TreeConstraintsTest extends TestWithCayenneMapping {
 		when(lrEntity.getObjEntity()).thenReturn(e4e);
 		
 		ResourceEntity<E4> e4lre = new ResourceEntity<>(lrEntity);
-		e4r = new DataResponse<>(E4.class).withClientEntity(e4lre);
+		e4r = new DataResponse<>(E4.class).resourceEntity(e4lre);
 	}
 
 	@Test

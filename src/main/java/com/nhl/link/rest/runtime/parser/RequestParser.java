@@ -67,7 +67,7 @@ public class RequestParser implements IRequestParser {
 		LrEntity<T> entity = metadataService.getLrEntity(response.getType());
 
 		ResourceEntity<T> rootDescriptor = new ResourceEntity<T>(entity);
-		response.withClientEntity(rootDescriptor);
+		response.resourceEntity(rootDescriptor);
 		response.withQueryProperty(autocompleteProperty);
 
 		// selectById can send us a null uriInfo; still we want to run through
@@ -97,8 +97,8 @@ public class RequestParser implements IRequestParser {
 		}
 
 		LrEntity<T> entity = metadataService.getLrEntity(response.getType());
-		ResourceEntity<T> clientEntity = new ResourceEntity<T>(entity);
-		response.withClientEntity(clientEntity);
+		ResourceEntity<T> resourceEntity = new ResourceEntity<T>(entity);
+		response.resourceEntity(resourceEntity);
 
 		treeProcessor.process(response, uriInfo);
 

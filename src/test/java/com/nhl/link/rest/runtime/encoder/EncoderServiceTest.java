@@ -56,7 +56,7 @@ public class EncoderServiceTest extends TestWithCayenneMapping {
 	@Test
 	public void testGetRootEncoder_ExcludedAttributes() throws IOException {
 		// empty filter - must only include id
-		ResourceEntity<E1> descriptor = getClientEntity(E1.class);
+		ResourceEntity<E1> descriptor = getResourceEntity(E1.class);
 		descriptor.includeId();
 
 		E1 e1 = new E1();
@@ -65,7 +65,7 @@ public class EncoderServiceTest extends TestWithCayenneMapping {
 		e1.setAge(30);
 		e1.setDescription("test");
 
-		DataResponse<E1> builder = DataResponse.forType(E1.class).withClientEntity(descriptor)
+		DataResponse<E1> builder = DataResponse.forType(E1.class).resourceEntity(descriptor)
 				.withObjects(Collections.singletonList(e1));
 
 		assertEquals("[{\"id\":777}]", toJson(builder));
@@ -73,12 +73,12 @@ public class EncoderServiceTest extends TestWithCayenneMapping {
 
 	@Test
 	public void testGetRootEncoder_ExcludedRelationshipAttributes() throws IOException {
-		ResourceEntity<E3> e3Descriptor = getClientEntity(E3.class);
+		ResourceEntity<E3> e3Descriptor = getResourceEntity(E3.class);
 		e3Descriptor.includeId();
-		
+
 		appendAttribute(e3Descriptor, E3.NAME, String.class);
 
-		ResourceEntity<E2> descriptor = getClientEntity(E2.class);
+		ResourceEntity<E2> descriptor = getResourceEntity(E2.class);
 		descriptor.includeId();
 		descriptor.getChildren().put(E2.E3S.getName(), e3Descriptor);
 
@@ -103,7 +103,7 @@ public class EncoderServiceTest extends TestWithCayenneMapping {
 		context.registerNewObject(e32);
 		e2.addToE3s(e32);
 
-		DataResponse<E2> builder = DataResponse.forType(E2.class).withClientEntity(descriptor)
+		DataResponse<E2> builder = DataResponse.forType(E2.class).resourceEntity(descriptor)
 				.withObjects(Collections.singletonList(e2));
 
 		assertEquals("[{\"id\":7,\"e3s\":[{\"id\":5,\"name\":\"31\"},{\"id\":6,\"name\":\"32\"}]}]", toJson(builder));
@@ -115,7 +115,7 @@ public class EncoderServiceTest extends TestWithCayenneMapping {
 		filters.add(new EncoderFilter() {
 
 			@Override
-			public boolean matches(ResourceEntity<?> clientEntity) {
+			public boolean matches(ResourceEntity<?> entity) {
 				return true;
 			}
 
@@ -144,7 +144,7 @@ public class EncoderServiceTest extends TestWithCayenneMapping {
 			}
 		});
 
-		ResourceEntity<E2> descriptor = getClientEntity(E2.class);
+		ResourceEntity<E2> descriptor = getResourceEntity(E2.class);
 		descriptor.includeId();
 
 		ObjectContext context = cayenneService.newContext();
@@ -154,7 +154,7 @@ public class EncoderServiceTest extends TestWithCayenneMapping {
 		e21.setAddress("bla bla street");
 		context.registerNewObject(e21);
 
-		DataResponse<E2> builder = DataResponse.forType(E2.class).withClientEntity(descriptor).withObject(e21);
+		DataResponse<E2> builder = DataResponse.forType(E2.class).resourceEntity(descriptor).withObject(e21);
 
 		assertEquals("[{\"id\":7}]", toJson(builder));
 
@@ -175,7 +175,7 @@ public class EncoderServiceTest extends TestWithCayenneMapping {
 		filters.add(new EncoderFilter() {
 
 			@Override
-			public boolean matches(ResourceEntity<?> clientEntity) {
+			public boolean matches(ResourceEntity<?> entity) {
 				return true;
 			}
 
@@ -211,10 +211,10 @@ public class EncoderServiceTest extends TestWithCayenneMapping {
 			}
 		});
 
-		ResourceEntity<E2> e2Descriptor = getClientEntity(E2.class);
+		ResourceEntity<E2> e2Descriptor = getResourceEntity(E2.class);
 		e2Descriptor.includeId();
 
-		ResourceEntity<E3> e3Descriptor = getClientEntity(E3.class);
+		ResourceEntity<E3> e3Descriptor = getResourceEntity(E3.class);
 		e3Descriptor.includeId();
 		e3Descriptor.getChildren().put(E3.E2.getName(), e2Descriptor);
 
@@ -229,7 +229,7 @@ public class EncoderServiceTest extends TestWithCayenneMapping {
 		context.registerNewObject(e31);
 		e31.setE2(e21);
 
-		DataResponse<E3> builder = DataResponse.forType(E3.class).withClientEntity(e3Descriptor).withObject(e31);
+		DataResponse<E3> builder = DataResponse.forType(E3.class).resourceEntity(e3Descriptor).withObject(e31);
 
 		assertEquals("[{\"id\":5,\"e2\":{\"id\":7}}]", toJson(builder));
 
@@ -253,7 +253,7 @@ public class EncoderServiceTest extends TestWithCayenneMapping {
 		filters.add(new EncoderFilter() {
 
 			@Override
-			public boolean matches(ResourceEntity<?> clientEntity) {
+			public boolean matches(ResourceEntity<?> entity) {
 				return false;
 			}
 
@@ -272,10 +272,10 @@ public class EncoderServiceTest extends TestWithCayenneMapping {
 			}
 		});
 
-		ResourceEntity<E2> descriptor = getClientEntity(E2.class);
+		ResourceEntity<E2> descriptor = getResourceEntity(E2.class);
 		descriptor.includeId();
 
-		DataResponse<E2> builder = DataResponse.forType(E2.class).withClientEntity(descriptor);
+		DataResponse<E2> builder = DataResponse.forType(E2.class).resourceEntity(descriptor);
 
 		ObjectContext context = cayenneService.newContext();
 		E2 e21 = new E2();

@@ -43,7 +43,7 @@ class FilterProcessor {
 		this.pathCache = pathCache;
 	}
 
-	void process(ResourceEntity<?> clientEntity, String filtersJson) {
+	void process(ResourceEntity<?> resourceEntity, String filtersJson) {
 		if (filtersJson == null || filtersJson.length() == 0) {
 			return;
 		}
@@ -111,11 +111,11 @@ class FilterProcessor {
 
 			// validate property path
 			if (qualifier.getOperandCount() == 2) {
-				ObjEntity rootEntity = clientEntity.getLrEntity().getObjEntity();
+				ObjEntity rootEntity = resourceEntity.getLrEntity().getObjEntity();
 				pathCache.getPathDescriptor(rootEntity, (ASTObjPath) qualifier.getOperand(0));
 			}
 
-			clientEntity.andQualifier(qualifier);
+			resourceEntity.andQualifier(qualifier);
 		}
 	}
 

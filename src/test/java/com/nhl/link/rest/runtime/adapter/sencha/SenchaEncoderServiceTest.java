@@ -60,7 +60,7 @@ public class SenchaEncoderServiceTest extends TestWithCayenneMapping {
 		filters.add(new EncoderFilter() {
 
 			@Override
-			public boolean matches(ResourceEntity<?> clientEntity) {
+			public boolean matches(ResourceEntity<?> entity) {
 				return true;
 			}
 
@@ -96,10 +96,10 @@ public class SenchaEncoderServiceTest extends TestWithCayenneMapping {
 			}
 		});
 
-		ResourceEntity<E2> e2Descriptor = getClientEntity(E2.class);
+		ResourceEntity<E2> e2Descriptor = getResourceEntity(E2.class);
 		e2Descriptor.includeId();
 
-		ResourceEntity<E3> e3Descriptor = getClientEntity(E3.class);
+		ResourceEntity<E3> e3Descriptor = getResourceEntity(E3.class);
 		e3Descriptor.includeId();
 		e3Descriptor.getChildren().put(E3.E2.getName(), e2Descriptor);
 
@@ -114,7 +114,7 @@ public class SenchaEncoderServiceTest extends TestWithCayenneMapping {
 		context.registerNewObject(e31);
 		e31.setE2(e21);
 
-		DataResponse<E3> builder = DataResponse.forType(E3.class).withClientEntity(e3Descriptor).withObject(e31);
+		DataResponse<E3> builder = DataResponse.forType(E3.class).resourceEntity(e3Descriptor).withObject(e31);
 
 		assertEquals("[{\"id\":5,\"e2\":{\"id\":7},\"e2_id\":7}]", toJson(builder));
 

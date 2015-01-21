@@ -82,30 +82,30 @@ public class EncoderService implements IEncoderService {
 				.withLimit(response.getFetchLimit());
 	}
 
-	private Encoder nestedToManyEncoder(ResourceEntity<?> clientEntity) {
+	private Encoder nestedToManyEncoder(ResourceEntity<?> resourceEntity) {
 
-		Encoder elementEncoder = collectionElementEncoder(clientEntity);
+		Encoder elementEncoder = collectionElementEncoder(resourceEntity);
 
-		if ((clientEntity.getMapBy() != null)) {
+		if ((resourceEntity.getMapBy() != null)) {
 
 			// if mapBy is involved, apply filters at MapBy level, not inside
 			// sublists...
-			Encoder listEncoder = new ListEncoder(elementEncoder, null, clientEntity.getOrderings());
+			Encoder listEncoder = new ListEncoder(elementEncoder, null, resourceEntity.getOrderings());
 
-			return new MapByEncoder(clientEntity.getMapByPath(), clientEntity.getQualifier(), clientEntity.getMapBy(),
+			return new MapByEncoder(resourceEntity.getMapByPath(), resourceEntity.getQualifier(), resourceEntity.getMapBy(),
 					listEncoder, stringConverterFactory);
 
 		} else {
-			return new ListEncoder(elementEncoder, clientEntity.getQualifier(), clientEntity.getOrderings());
+			return new ListEncoder(elementEncoder, resourceEntity.getQualifier(), resourceEntity.getOrderings());
 		}
 	}
 
-	private Encoder collectionElementEncoder(ResourceEntity<?> clientEntity) {
-		Encoder encoder = entityEncoder(clientEntity);
-		return filteredEncoder(encoder, clientEntity);
+	private Encoder collectionElementEncoder(ResourceEntity<?> resourceEntity) {
+		Encoder encoder = entityEncoder(resourceEntity);
+		return filteredEncoder(encoder, resourceEntity);
 	}
 
-	protected Encoder toOneEncoder(ResourceEntity<?> clientEntity, LrRelationship relationship) {
+	protected Encoder toOneEncoder(ResourceEntity<?> resourceEntity, LrRelationship relationship) {
 
 		// to-one encoder is made of the following decorator layers (from outer
 		// to inner):
@@ -113,24 +113,24 @@ public class EncoderService implements IEncoderService {
 		// (2) value encoder
 		// different structure from to-many, so building it differently
 
-		Encoder valueEncoder = entityEncoder(clientEntity);
+		Encoder valueEncoder = entityEncoder(resourceEntity);
 		Encoder compositeValueEncoder = new EntityToOneEncoder(valueEncoder);
-		return filteredEncoder(compositeValueEncoder, clientEntity);
+		return filteredEncoder(compositeValueEncoder, resourceEntity);
 	}
 
-	protected Encoder entityEncoder(ResourceEntity<?> clientEntity) {
+	protected Encoder entityEncoder(ResourceEntity<?> resourceEntity) {
 
 		// ensure we sort property encoders alphabetically for cleaner JSON
 		// output
 		Map<String, EntityProperty> properties = new TreeMap<String, EntityProperty>();
 
-		for (LrAttribute attribute : clientEntity.getAttributes().values()) {
-			EntityProperty property = attributeEncoderFactory.getAttributeProperty(clientEntity, attribute);
+		for (LrAttribute attribute : resourceEntity.getAttributes().values()) {
+			EntityProperty property = attributeEncoderFactory.getAttributeProperty(resourceEntity, attribute);
 			properties.put(attribute.getName(), property);
 		}
 
-		for (Entry<String, ResourceEntity<?>> e : clientEntity.getChildren().entrySet()) {
-			LrRelationship relationship = clientEntity.getLrEntity().getRelationship(e.getKey());
+		for (Entry<String, ResourceEntity<?>> e : resourceEntity.getChildren().entrySet()) {
+			LrRelationship relationship = resourceEntity.getLrEntity().getRelationship(e.getKey());
 
 			Encoder encoder = relationship.isToMany() ? nestedToManyEncoder(e.getValue()) : toOneEncoder(e.getValue(),
 					relationship);
@@ -138,18 +138,18 @@ public class EncoderService implements IEncoderService {
 			properties.put(e.getKey(), dataObjectProperty().encodedWith(encoder));
 		}
 
-		properties.putAll(clientEntity.getExtraProperties());
+		properties.putAll(resourceEntity.getExtraProperties());
 
-		EntityProperty idEncoder = clientEntity.isIdIncluded() ? attributeEncoderFactory.getIdProperty(clientEntity)
+		EntityProperty idEncoder = resourceEntity.isIdIncluded() ? attributeEncoderFactory.getIdProperty(resourceEntity)
 				: PropertyBuilder.doNothingProperty();
 		return new EntityEncoder(idEncoder, properties);
 	}
 
-	protected Encoder filteredEncoder(Encoder encoder, ResourceEntity<?> clientEntity) {
+	protected Encoder filteredEncoder(Encoder encoder, ResourceEntity<?> resourceEntity) {
 		List<EncoderFilter> matchingFilters = null;
 
 		for (EncoderFilter filter : filters) {
-			if (filter.matches(clientEntity)) {
+			if (filter.matches(resourceEntity)) {
 				if (matchingFilters == null) {
 					matchingFilters = new ArrayList<>(3);
 				}

@@ -37,7 +37,7 @@ public class FilterChainEncoderTest {
 		EncoderFilter filter = new EncoderFilter() {
 
 			@Override
-			public boolean matches(ResourceEntity<?> clientEntity) {
+			public boolean matches(ResourceEntity<?> entity) {
 				return true;
 			}
 
@@ -79,7 +79,7 @@ public class FilterChainEncoderTest {
 		EncoderFilter filter1 = new EncoderFilter() {
 			
 			@Override
-			public boolean matches(ResourceEntity<?> clientEntity) {
+			public boolean matches(ResourceEntity<?> entity) {
 				return true;
 			}
 

@@ -34,8 +34,8 @@ public class SortProcessor extends BaseRequestProcessor implements ISortProcesso
 		}
 	}
 
-	protected void process(ResourceEntity<?> clientEntity, String sort, String direction) {
-		worker.process(clientEntity, sort, direction);
+	protected void process(ResourceEntity<?> resourceEntity, String sort, String direction) {
+		worker.process(resourceEntity, sort, direction);
 	}
 
 	@Override

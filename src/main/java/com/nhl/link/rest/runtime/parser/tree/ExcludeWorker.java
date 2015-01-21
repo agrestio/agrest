@@ -27,24 +27,24 @@ class ExcludeWorker {
 		}
 	}
 
-	void process(ResourceEntity<?> clientEntity, List<String> excludes) {
+	void process(ResourceEntity<?> resourceEntity, List<String> excludes) {
 		for (String exclude : excludes) {
 			if (exclude.startsWith("[")) {
-				processExcludeArray(clientEntity, exclude);
+				processExcludeArray(resourceEntity, exclude);
 			} else {
-				processExcludePath(clientEntity, exclude);
+				processExcludePath(resourceEntity, exclude);
 			}
 		}
 	}
 
-	private void processExcludeArray(ResourceEntity<?> clientEntity, String exclude) {
+	private void processExcludeArray(ResourceEntity<?> resourceEntity, String exclude) {
 		JsonNode root = jsonParser.parseJson(exclude);
 
 		if (root != null && root.isArray()) {
 
 			for (JsonNode child : root) {
 				if (child.isTextual()) {
-					processExcludePath(clientEntity, child.asText());
+					processExcludePath(resourceEntity, child.asText());
 				} else {
 					throw new LinkRestException(Status.BAD_REQUEST, "Bad exclude spec: " + child);
 				}
@@ -52,7 +52,7 @@ class ExcludeWorker {
 		}
 	}
 
-	void processExcludePath(ResourceEntity<?> clientEntity, String path) {
+	void processExcludePath(ResourceEntity<?> resourceEntity, String path) {
 
 		checkTooLong(path);
 		int dot = path.indexOf(PathConstants.DOT);
@@ -66,19 +66,19 @@ class ExcludeWorker {
 		}
 
 		String property = dot > 0 ? path.substring(0, dot) : path;
-		if (clientEntity.getLrEntity().getPersistentAttribute(property) != null) {
+		if (resourceEntity.getLrEntity().getPersistentAttribute(property) != null) {
 
 			if (dot > 0) {
 				throw new LinkRestException(Status.BAD_REQUEST, "Invalid exclude path: " + path);
 			}
 
-			clientEntity.getAttributes().remove(property);
+			resourceEntity.getAttributes().remove(property);
 			return;
 		}
 
-		if (clientEntity.getLrEntity().getRelationship(property) != null) {
+		if (resourceEntity.getLrEntity().getRelationship(property) != null) {
 
-			ResourceEntity<?> relatedFilter = clientEntity.getChild(property);
+			ResourceEntity<?> relatedFilter = resourceEntity.getChild(property);
 			if (relatedFilter == null) {
 				// valid path, but not included... ignoring
 				return;
@@ -92,7 +92,7 @@ class ExcludeWorker {
 
 		// this is an entity id and it's excluded explicitly
 		if (property.equals(PathConstants.ID_PK_ATTRIBUTE)) {
-			clientEntity.excludeId();
+			resourceEntity.excludeId();
 			return;
 		}
 

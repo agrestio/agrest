@@ -36,20 +36,20 @@ class CayenneExpProcessor {
 		this.converters.put(java.sql.Timestamp.class.getName(), new UtcDateConverter());
 	}
 
-	void process(ResourceEntity<?> clientEntity, String cayenneExpJson) {
+	void process(ResourceEntity<?> resourceEntity, String cayenneExpJson) {
 		if (cayenneExpJson == null || cayenneExpJson.length() == 0) {
 			return;
 		}
 
 		JsonNode expNode = jsonParser.parseJson(cayenneExpJson);
 		if (expNode != null) {
-			process(clientEntity, expNode);
+			process(resourceEntity, expNode);
 		}
 	}
 
-	void process(ResourceEntity<?> clientEntity, JsonNode expNode) {
-		ObjEntity entity = clientEntity.getLrEntity().getObjEntity();
+	void process(ResourceEntity<?> resourceEntity, JsonNode expNode) {
+		ObjEntity entity = resourceEntity.getLrEntity().getObjEntity();
 		CayenneExpProcessorWorker worker = new CayenneExpProcessorWorker(expNode, converters, pathCache, entity);
-		clientEntity.andQualifier(worker.exp());
+		resourceEntity.andQualifier(worker.exp());
 	}
 }

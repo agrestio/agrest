@@ -32,7 +32,7 @@ public class CayenneExpProcessorTest extends TestWithCayenneMapping {
 		IJacksonService jsonParser = new JacksonService();
 
 		PathCache pathCache = new PathCache();
-		this.e4Descriptor = getClientEntity(E4.class);
+		this.e4Descriptor = getResourceEntity(E4.class);
 		this.processor = new CayenneExpProcessor(jsonParser, pathCache);
 	}
 

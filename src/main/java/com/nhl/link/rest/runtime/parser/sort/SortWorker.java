@@ -33,26 +33,26 @@ class SortWorker {
 		this.pathCache = pathCache;
 	}
 
-	void process(ResourceEntity<?> clientEntity, String sort, String direction) {
+	void process(ResourceEntity<?> resourceEntity, String sort, String direction) {
 
 		if (sort == null || sort.length() == 0) {
 			return;
 		}
 
 		if (sort.startsWith("[")) {
-			processSorterArray(clientEntity, sort);
+			processSorterArray(resourceEntity, sort);
 		} else if (sort.startsWith("{")) {
 			JsonNode root = jsonParser.parseJson(sort);
-			processSorterObject(clientEntity, root);
+			processSorterObject(resourceEntity, root);
 		} else {
-			processSimpleSorter(clientEntity, sort, direction);
+			processSimpleSorter(resourceEntity, sort, direction);
 		}
 	}
 
-	void processSimpleSorter(ResourceEntity<?> clientEntity, String sort, String direction) {
+	void processSimpleSorter(ResourceEntity<?> resourceEntity, String sort, String direction) {
 
 		// TODO: do we need to support nested ID?
-		ObjEntity entity = clientEntity.getLrEntity().getObjEntity();
+		ObjEntity entity = resourceEntity.getLrEntity().getObjEntity();
 
 		// note using "toString" instead of "getPath" to convert ASTPath to
 		// String representation. This ensures "db:" prefix is preserved if
@@ -60,7 +60,7 @@ class SortWorker {
 		sort = pathCache.getPathDescriptor(entity, new ASTObjPath(sort)).getPathExp().toString();
 
 		// check for dupes...
-		for (Ordering o : clientEntity.getOrderings()) {
+		for (Ordering o : resourceEntity.getOrderings()) {
 			if (sort.equals(o.getSortSpecString())) {
 				return;
 			}
@@ -74,24 +74,24 @@ class SortWorker {
 
 		SortOrder so = direction.equals(ASC) ? SortOrder.ASCENDING : SortOrder.DESCENDING;
 
-		clientEntity.getOrderings().add(new Ordering(sort, so));
+		resourceEntity.getOrderings().add(new Ordering(sort, so));
 	}
 
-	void processSorterArray(ResourceEntity<?> clientEntity, String sort) {
+	void processSorterArray(ResourceEntity<?> resourceEntity, String sort) {
 		JsonNode root = jsonParser.parseJson(sort);
 
 		if (root != null) {
-			processSorterArray(clientEntity, root);
+			processSorterArray(resourceEntity, root);
 		}
 	}
 
-	void processSorterArray(ResourceEntity<?> clientEntity, JsonNode root) {
+	void processSorterArray(ResourceEntity<?> resourceEntity, JsonNode root) {
 		for (JsonNode sortNode : root) {
-			processSorterObject(clientEntity, sortNode);
+			processSorterObject(resourceEntity, sortNode);
 		}
 	}
 
-	void processSorterObject(ResourceEntity<?> clientEntity, JsonNode sortNode) {
+	void processSorterObject(ResourceEntity<?> resourceEntity, JsonNode sortNode) {
 		JsonNode propertyNode = sortNode.get(PROPERTY);
 		if (propertyNode == null || !propertyNode.isTextual()) {
 
@@ -114,7 +114,7 @@ class SortWorker {
 			direction = directionNode.asText();
 		}
 
-		processSimpleSorter(clientEntity, property, direction);
+		processSimpleSorter(resourceEntity, property, direction);
 	}
 
 	private static void checkInvalidDirection(String direction) {

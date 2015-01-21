@@ -62,7 +62,7 @@ public class CayenneSelectBuilderTest extends TestWithCayenneMapping {
 		SelectQuery<E1> query = new SelectQuery<E1>(E1.class);
 		query.addOrdering(o1);
 
-		DataResponse<E1> request = DataResponse.forType(E1.class).withClientEntity(getClientEntity(E1.class));
+		DataResponse<E1> request = DataResponse.forType(E1.class).resourceEntity(getResourceEntity(E1.class));
 		request.getEntity().getOrderings().add(o2);
 
 		CayenneSelectBuilder<E1> builder = new CayenneSelectBuilder<>(query, E1.class, cayenneServiceMock,
@@ -79,13 +79,13 @@ public class CayenneSelectBuilderTest extends TestWithCayenneMapping {
 	public void testBuildQuery_Prefetches() {
 		SelectQuery<E2> query = new SelectQuery<E2>(E2.class);
 
-		ResourceEntity<E2> resultFilter = getClientEntity(E2.class);
+		ResourceEntity<E2> resultFilter = getResourceEntity(E2.class);
 		LrRelationship incoming = resultFilter.getLrEntity().getRelationship(E2.E3S.getName());
 		@SuppressWarnings("unchecked")
 		LrEntity<E3> target = mock(LrEntity.class);
 		resultFilter.getChildren().put(E2.E3S.getName(), new ResourceEntity<E3>(target, incoming));
 
-		DataResponse<E2> request = DataResponse.forType(E2.class).withClientEntity(resultFilter);
+		DataResponse<E2> request = DataResponse.forType(E2.class).resourceEntity(resultFilter);
 
 		CayenneSelectBuilder<E2> builder = new CayenneSelectBuilder<>(query, E2.class, cayenneServiceMock,
 				encoderService, requestParserMock, configMergerMock);
@@ -104,7 +104,7 @@ public class CayenneSelectBuilderTest extends TestWithCayenneMapping {
 	@Test
 	public void testBuildQuery_Pagination() {
 
-		DataResponse<E1> request = DataResponse.forType(E1.class).withClientEntity(getClientEntity(E1.class));
+		DataResponse<E1> request = DataResponse.forType(E1.class).resourceEntity(getResourceEntity(E1.class));
 
 		request.withFetchLimit(10);
 		request.withFetchOffset(0);
@@ -135,7 +135,7 @@ public class CayenneSelectBuilderTest extends TestWithCayenneMapping {
 	@Test
 	public void testBuildQuery_Qualfier() {
 		Expression extraQualifier = E1.NAME.eq("X");
-		DataResponse<E1> request = DataResponse.forType(E1.class).withClientEntity(getClientEntity(E1.class));
+		DataResponse<E1> request = DataResponse.forType(E1.class).resourceEntity(getResourceEntity(E1.class));
 		request.getEntity().andQualifier(extraQualifier);
 
 		SelectQuery<E1> query = new CayenneSelectBuilder<>(E1.class, cayenneServiceMock, encoderService,
@@ -160,7 +160,7 @@ public class CayenneSelectBuilderTest extends TestWithCayenneMapping {
 		SelectQuery<E1> select = new SelectQuery<E1>(E1.class);
 		CayenneSelectBuilder<E1> b2 = new CayenneSelectBuilder<>(select, E1.class, cayenneServiceMock, encoderService,
 				requestParserMock, configMergerMock);
-		assertSame(select, b2.basicSelect(DataResponse.forType(E1.class).withClientEntity(getClientEntity(E1.class))));
+		assertSame(select, b2.basicSelect(DataResponse.forType(E1.class).resourceEntity(getResourceEntity(E1.class))));
 		assertSame(E1.class, b2.getType());
 	}
 
@@ -171,7 +171,7 @@ public class CayenneSelectBuilderTest extends TestWithCayenneMapping {
 				requestParserMock, configMergerMock);
 		b1.byId(1);
 		assertSame(E1.class, b1.getType());
-		SelectQuery<E1> s1 = b1.basicSelect(DataResponse.forType(E1.class).withClientEntity(getClientEntity(E1.class)));
+		SelectQuery<E1> s1 = b1.basicSelect(DataResponse.forType(E1.class).resourceEntity(getResourceEntity(E1.class)));
 		assertNotNull(s1);
 		assertSame(E1.class, s1.getRoot());
 
@@ -179,7 +179,7 @@ public class CayenneSelectBuilderTest extends TestWithCayenneMapping {
 		CayenneSelectBuilder<E1> b2 = new CayenneSelectBuilder<E1>(select, E1.class, cayenneServiceMock,
 				encoderService, requestParserMock, configMergerMock);
 		b2.byId(1);
-		SelectQuery<E1> s2 = b2.basicSelect(DataResponse.forType(E1.class).withClientEntity(getClientEntity(E1.class)));
+		SelectQuery<E1> s2 = b2.basicSelect(DataResponse.forType(E1.class).resourceEntity(getResourceEntity(E1.class)));
 		assertNotNull(s2);
 		assertNotSame(select, s2);
 		assertSame(E1.class, s2.getRoot());

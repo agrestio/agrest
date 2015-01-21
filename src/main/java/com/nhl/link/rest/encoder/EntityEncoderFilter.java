@@ -15,10 +15,10 @@ import com.nhl.link.rest.runtime.meta.IMetadataService;
  */
 public abstract class EntityEncoderFilter<T> implements EncoderFilter {
 
-	private LrEntity<T> entity;
+	private LrEntity<T> lrEntity;
 
 	public EntityEncoderFilter(IMetadataService metadataService) {
-		this.entity = metadataService.getLrEntity(getType());
+		this.lrEntity = metadataService.getLrEntity(getType());
 	}
 
 	protected abstract Class<T> getType();
@@ -26,8 +26,8 @@ public abstract class EntityEncoderFilter<T> implements EncoderFilter {
 	protected abstract boolean willEncode(T object);
 
 	@Override
-	public boolean matches(ResourceEntity<?> clientEntity) {
-		return entity == clientEntity.getLrEntity();
+	public boolean matches(ResourceEntity<?> resourceEntity) {
+		return lrEntity == resourceEntity.getLrEntity();
 	}
 
 	@SuppressWarnings("unchecked")

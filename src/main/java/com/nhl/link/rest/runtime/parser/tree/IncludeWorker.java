@@ -38,23 +38,23 @@ class IncludeWorker {
 		this.expProcessor = expProcessor;
 	}
 
-	void process(ResourceEntity<?> clientEntity, List<String> includes) {
+	void process(ResourceEntity<?> resourceEntity, List<String> includes) {
 		for (String include : includes) {
 
 			if (include.startsWith("[")) {
-				processIncludeArray(clientEntity, include);
+				processIncludeArray(resourceEntity, include);
 			} else if (include.startsWith("{")) {
 				JsonNode root = jsonParser.parseJson(include);
-				processIncludeObject(clientEntity, root);
+				processIncludeObject(resourceEntity, root);
 			} else {
-				processIncludePath(clientEntity, include);
+				processIncludePath(resourceEntity, include);
 			}
 		}
 
-		processDefaultIncludes(clientEntity);
+		processDefaultIncludes(resourceEntity);
 	}
 
-	private void processIncludeArray(ResourceEntity<?> clientEntity, String include) {
+	private void processIncludeArray(ResourceEntity<?> resourceEntity, String include) {
 		JsonNode root = jsonParser.parseJson(include);
 
 		if (root != null && root.isArray()) {
@@ -62,9 +62,9 @@ class IncludeWorker {
 			for (JsonNode child : root) {
 
 				if (child.isObject()) {
-					processIncludeObject(clientEntity, child);
+					processIncludeObject(resourceEntity, child);
 				} else if (child.isTextual()) {
-					processIncludePath(clientEntity, child.asText());
+					processIncludePath(resourceEntity, child.asText());
 				} else {
 					throw new LinkRestException(Status.BAD_REQUEST, "Bad include spec: " + child);
 				}
@@ -203,16 +203,16 @@ class IncludeWorker {
 		throw new LinkRestException(Status.BAD_REQUEST, "Invalid include path: " + path);
 	}
 
-	private void processDefaultIncludes(ResourceEntity<?> clientEntity) {
+	private void processDefaultIncludes(ResourceEntity<?> resourceEntity) {
 		// either there are no includes (taking into account Id) or all includes
 		// are relationships
-		if (!clientEntity.isIdIncluded() && clientEntity.getAttributes().isEmpty()) {
-			for (LrPersistentAttribute oa : clientEntity.getLrEntity().getPersistentAttributes()) {
-				clientEntity.getAttributes().put(oa.getName(), oa);
-				clientEntity.getDefaultProperties().add(oa.getName());
+		if (!resourceEntity.isIdIncluded() && resourceEntity.getAttributes().isEmpty()) {
+			for (LrPersistentAttribute oa : resourceEntity.getLrEntity().getPersistentAttributes()) {
+				resourceEntity.getAttributes().put(oa.getName(), oa);
+				resourceEntity.getDefaultProperties().add(oa.getName());
 			}
 			// Id should be included by default
-			clientEntity.includeId();
+			resourceEntity.includeId();
 		}
 	}
 

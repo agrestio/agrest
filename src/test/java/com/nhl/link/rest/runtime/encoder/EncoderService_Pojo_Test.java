@@ -62,10 +62,10 @@ public class EncoderService_Pojo_Test {
 
 	@Test
 	public void testEncode_SimplePojo_noId() throws IOException {
-		ResourceEntity<P1> descriptor = getClientEntity(P1.class);
+		ResourceEntity<P1> descriptor = getResourceEntity(P1.class);
 		descriptor.getAttributes().put("name", new DefaultLrAttribute("name", String.class.getName()));
 
-		DataResponse<P1> builder = DataResponse.forType(P1.class).withClientEntity(descriptor);
+		DataResponse<P1> builder = DataResponse.forType(P1.class).resourceEntity(descriptor);
 
 		P1 p1 = new P1();
 		p1.setName("XYZ");
@@ -79,10 +79,10 @@ public class EncoderService_Pojo_Test {
 		p6.setStringId("myid");
 		p6.setIntProp(4);
 
-		ResourceEntity<P6> descriptor = getClientEntity(P6.class);
+		ResourceEntity<P6> descriptor = getResourceEntity(P6.class);
 		descriptor.getAttributes().put("intProp", new DefaultLrAttribute("intProp", Integer.class.getName()));
 		descriptor.includeId();
-		DataResponse<P6> builder = DataResponse.forObjects(Collections.singletonList(p6)).withClientEntity(descriptor);
+		DataResponse<P6> builder = DataResponse.forObjects(Collections.singletonList(p6)).resourceEntity(descriptor);
 
 		assertEquals("[{\"id\":\"myid\",\"intProp\":4}]", toJson(p6, builder));
 	}
@@ -111,7 +111,7 @@ public class EncoderService_Pojo_Test {
 		return dataMap.getObjEntity(type);
 	}
 
-	protected <T> ResourceEntity<T> getClientEntity(Class<T> type) {
+	protected <T> ResourceEntity<T> getResourceEntity(Class<T> type) {
 		return new ResourceEntity<T>(lrDataMap.getEntity(type));
 	}
 }

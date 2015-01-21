@@ -26,15 +26,15 @@ public class SenchaEncoderService extends EncoderService {
 	}
 
 	@Override
-	protected Encoder toOneEncoder(ResourceEntity<?> clientEntity, final LrRelationship relationship) {
+	protected Encoder toOneEncoder(ResourceEntity<?> resourceEntity, final LrRelationship relationship) {
 		// to-one encoder is made of the following decorator layers (from outer
 		// to inner):
 		// (1) custom filters ->
 		// (2) composite [value + id encoder]
 		// different structure from to-many, so building it differently
 
-		Encoder valueEncoder = entityEncoder(clientEntity);
-		EntityProperty idEncoder = attributeEncoderFactory.getIdProperty(clientEntity);
+		Encoder valueEncoder = entityEncoder(resourceEntity);
+		EntityProperty idEncoder = attributeEncoderFactory.getIdProperty(resourceEntity);
 		Encoder compositeValueEncoder = new SenchaEntityToOneEncoder(valueEncoder, idEncoder) {
 
 			// we know that created encoder will only be used for encoding a
@@ -48,7 +48,7 @@ public class SenchaEncoderService extends EncoderService {
 			}
 		};
 
-		return filteredEncoder(compositeValueEncoder, clientEntity);
+		return filteredEncoder(compositeValueEncoder, resourceEntity);
 	}
 
 }

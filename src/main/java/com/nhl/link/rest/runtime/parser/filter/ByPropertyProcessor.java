@@ -14,7 +14,7 @@ import com.nhl.link.rest.meta.LrEntity;
 
 class ByPropertyProcessor {
 
-	void process(ResourceEntity<?> clientEntity, String query, String queryProperty) {
+	void process(ResourceEntity<?> resourceEntity, String query, String queryProperty) {
 
 		if (query == null || query.length() == 0) {
 			return;
@@ -24,12 +24,12 @@ class ByPropertyProcessor {
 			throw new LinkRestException(Status.BAD_REQUEST, "'query' parameter is not supported by this service");
 		}
 
-		validateAttribute(clientEntity.getLrEntity(), queryProperty);
+		validateAttribute(resourceEntity.getLrEntity(), queryProperty);
 
 		query = FilterUtil.escapeValueForLike(query) + "%";
 
 		Expression exp = ExpressionFactory.likeIgnoreCaseExp(queryProperty, query);
-		clientEntity.andQualifier(exp);
+		resourceEntity.andQualifier(exp);
 	}
 
 	/**
