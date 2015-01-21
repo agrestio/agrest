@@ -31,6 +31,9 @@ class CayenneExpProcessor {
 
 		this.converters = new HashMap<>();
 		this.converters.put(Date.class.getName(), new UtcDateConverter());
+		this.converters.put(java.sql.Date.class.getName(), new UtcDateConverter());
+		this.converters.put(java.sql.Time.class.getName(), new UtcDateConverter());
+		this.converters.put(java.sql.Timestamp.class.getName(), new UtcDateConverter());
 	}
 
 	void process(Entity<?> clientEntity, String cayenneExpJson) {
