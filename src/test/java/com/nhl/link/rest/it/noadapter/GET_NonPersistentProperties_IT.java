@@ -18,7 +18,7 @@ public class GET_NonPersistentProperties_IT extends JerseyTestOnDerby {
 
 	@Override
 	protected LinkRestBuilder doConfigure() {
-		return super.doConfigure().nonPersistentProperty(E14.class, "prettyName");
+		return super.doConfigure().transientProperty(E14.class, "prettyName");
 	}
 
 	@Override

@@ -166,13 +166,13 @@ public class LinkRestBuilder {
 	}
 
 	/**
-	 * Declares a non-persistent property of a persistent type in LinkRest
-	 * runtime. If the runtime is configured with this property, it can be
-	 * rendered in responses, referenced in include/exclude keys, etc.
+	 * Exposes a non-persistent property of a persistent type. Once declared
+	 * such property can be rendered in responses, referenced in include/exclude
+	 * keys, etc.
 	 * 
 	 * @since 1.12
 	 */
-	public LinkRestBuilder nonPersistentProperty(Class<?> type, String propertyName) {
+	public LinkRestBuilder transientProperty(Class<?> type, String propertyName) {
 
 		LrEntityOverlay<?> overlay = entityOverlays.get(type.getName());
 		if (overlay == null) {
