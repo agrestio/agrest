@@ -56,7 +56,7 @@ public class MapByEncoder extends AbstractEncoder {
 
 			validateLeafMapBy(mapBy);
 
-			final String property = mapBy.getAttributes().iterator().next();
+			final String property = mapBy.getAttributes().keySet().iterator().next();
 
 			this.mapByReaders.add(new PropertyReader() {
 

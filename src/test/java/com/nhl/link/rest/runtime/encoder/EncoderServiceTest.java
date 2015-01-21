@@ -75,7 +75,8 @@ public class EncoderServiceTest extends TestWithCayenneMapping {
 	public void testGetRootEncoder_ExcludedRelationshipAttributes() throws IOException {
 		ResourceEntity<E3> e3Descriptor = getClientEntity(E3.class);
 		e3Descriptor.includeId();
-		e3Descriptor.getAttributes().add(E3.NAME.getName());
+		
+		appendAttribute(e3Descriptor, E3.NAME, String.class);
 
 		ResourceEntity<E2> descriptor = getClientEntity(E2.class);
 		descriptor.includeId();

@@ -15,6 +15,7 @@ import com.nhl.link.rest.ImmutableTreeConstraints;
 import com.nhl.link.rest.LinkRestException;
 import com.nhl.link.rest.TreeConstraints;
 import com.nhl.link.rest.UpdateResponse;
+import com.nhl.link.rest.meta.LrAttribute;
 import com.nhl.link.rest.runtime.parser.PathConstants;
 
 /**
@@ -93,15 +94,15 @@ class TreeConstraintsHandler {
 			target.excludeId();
 		}
 
-		Iterator<String> ait = target.getAttributes().iterator();
+		Iterator<LrAttribute> ait = target.getAttributes().values().iterator();
 		while (ait.hasNext()) {
 
-			String a = ait.next();
-			if (!constraints.hasAttribute(a)) {
+			LrAttribute a = ait.next();
+			if (!constraints.hasAttribute(a.getName())) {
 
 				// do not report default properties, as this wasn't a client's
 				// fault it go there..
-				if (!target.isDefault(a)) {
+				if (!target.isDefault(a.getName())) {
 					LOGGER.info("Attribute not allowed, removing: " + a);
 				}
 

@@ -8,22 +8,19 @@ import javax.ws.rs.core.Response.Status;
 
 import com.nhl.link.rest.EntityConstraint;
 import com.nhl.link.rest.LinkRestException;
-import com.nhl.link.rest.meta.LrAttribute;
+import com.nhl.link.rest.meta.LrPersistentAttribute;
 import com.nhl.link.rest.meta.LrEntity;
 import com.nhl.link.rest.meta.LrRelationship;
-import com.nhl.link.rest.runtime.meta.IMetadataService;
 
 /**
  * @since 1.6
  */
 abstract class EntityConstraintSource {
 
-	private IMetadataService metadataService;
 	private ConcurrentMap<String, EntityConstraint> constraints;
 
-	EntityConstraintSource(ConcurrentMap<String, EntityConstraint> constraints, IMetadataService metadataService) {
+	EntityConstraintSource(ConcurrentMap<String, EntityConstraint> constraints) {
 		this.constraints = constraints;
-		this.metadataService = metadataService;
 	}
 
 	EntityConstraint getOrCreate(LrEntity<?> entity) {
@@ -51,7 +48,7 @@ abstract class EntityConstraintSource {
 	protected abstract AnnotationData processAnnotation(Class<?> type);
 
 	private EntityConstraint create(LrEntity<?> entity) {
-		AnnotationData ad = processAnnotation(metadataService.getType(entity.getName()));
+		AnnotationData ad = processAnnotation(entity.getType());
 
 		if (ad == null) {
 			return AllowAllEntityConstraint.instance();
@@ -61,7 +58,7 @@ abstract class EntityConstraintSource {
 		Set<String> relationships = new HashSet<>();
 
 		for (String p : ad.properties) {
-			LrAttribute a = entity.getAttribute(p);
+			LrPersistentAttribute a = entity.getPersistentAttribute(p);
 			if (a != null) {
 				attributes.add(p);
 				continue;
@@ -77,7 +74,7 @@ abstract class EntityConstraintSource {
 
 		}
 
-		boolean allowsAllAttributes = attributes.size() == entity.getAttributes().size();
+		boolean allowsAllAttributes = attributes.size() == entity.getPersistentAttributes().size();
 		return new DefaultEntityConstraint(entity.getName(), ad.id, allowsAllAttributes, attributes, relationships);
 	}
 

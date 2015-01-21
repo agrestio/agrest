@@ -10,6 +10,7 @@ import org.apache.cayenne.exp.Expression;
 import org.apache.cayenne.query.Ordering;
 import org.apache.cayenne.util.ToStringBuilder;
 
+import com.nhl.link.rest.meta.LrAttribute;
 import com.nhl.link.rest.meta.LrEntity;
 import com.nhl.link.rest.meta.LrRelationship;
 
@@ -28,7 +29,7 @@ public class ResourceEntity<T> {
 	private boolean idIncluded;
 
 	private LrEntity<T> lrEntity;
-	private Collection<String> attributes;
+	private Map<String, LrAttribute> attributes;
 	private Collection<String> defaultProperties;
 
 	private String mapByPath;
@@ -41,7 +42,7 @@ public class ResourceEntity<T> {
 
 	public ResourceEntity(LrEntity<T> lrEntity) {
 		this.idIncluded = false;
-		this.attributes = new ArrayList<>();
+		this.attributes = new HashMap<>();
 		this.defaultProperties = new HashSet<>();
 		this.children = new HashMap<>();
 		this.orderings = new ArrayList<>(2);
@@ -81,7 +82,10 @@ public class ResourceEntity<T> {
 		return orderings;
 	}
 
-	public Collection<String> getAttributes() {
+	/**
+	 * @since 1.12
+	 */
+	public Map<String, LrAttribute> getAttributes() {
 		return attributes;
 	}
 

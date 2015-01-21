@@ -11,6 +11,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.nhl.link.rest.LinkRestException;
 import com.nhl.link.rest.ResourceEntity;
 import com.nhl.link.rest.meta.LrAttribute;
+import com.nhl.link.rest.meta.LrEntity;
+import com.nhl.link.rest.meta.LrPersistentAttribute;
 import com.nhl.link.rest.meta.LrRelationship;
 import com.nhl.link.rest.runtime.jackson.IJacksonService;
 import com.nhl.link.rest.runtime.parser.PathConstants;
@@ -150,18 +152,30 @@ class IncludeWorker {
 		}
 
 		String property = dot > 0 ? path.substring(0, dot) : path;
-		LrAttribute attribute = parent.getLrEntity().getAttribute(property);
+		LrEntity<?> lrEntity = parent.getLrEntity();
+		LrPersistentAttribute attribute = lrEntity.getPersistentAttribute(property);
 		if (attribute != null) {
 
 			if (dot > 0) {
 				throw new LinkRestException(Status.BAD_REQUEST, "Invalid include path: " + path);
 			}
 
-			parent.getAttributes().add(property);
+			parent.getAttributes().put(property, attribute);
 			return null;
+		} else {
+			LrAttribute transientAttribute = lrEntity.getTransientAttribute(property);
+			if (transientAttribute != null) {
+
+				if (dot > 0) {
+					throw new LinkRestException(Status.BAD_REQUEST, "Invalid include path: " + path);
+				}
+
+				parent.getAttributes().put(property, transientAttribute);
+				return null;
+			}
 		}
 
-		LrRelationship relationship = parent.getLrEntity().getRelationship(property);
+		LrRelationship relationship = lrEntity.getRelationship(property);
 		if (relationship != null) {
 
 			ResourceEntity<?> childEntity = parent.getChild(property);
@@ -193,8 +207,8 @@ class IncludeWorker {
 		// either there are no includes (taking into account Id) or all includes
 		// are relationships
 		if (!clientEntity.isIdIncluded() && clientEntity.getAttributes().isEmpty()) {
-			for (LrAttribute oa : clientEntity.getLrEntity().getAttributes()) {
-				clientEntity.getAttributes().add(oa.getName());
+			for (LrPersistentAttribute oa : clientEntity.getLrEntity().getPersistentAttributes()) {
+				clientEntity.getAttributes().put(oa.getName(), oa);
 				clientEntity.getDefaultProperties().add(oa.getName());
 			}
 			// Id should be included by default

@@ -1,8 +1,11 @@
 package com.nhl.link.rest.it.fixture.resource;
 
+import javax.ws.rs.GET;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.UriInfo;
 
 import com.nhl.link.rest.DataResponse;
 import com.nhl.link.rest.it.fixture.cayenne.E14;
@@ -10,6 +13,11 @@ import com.nhl.link.rest.it.fixture.cayenne.E15;
 
 @Path("e15")
 public class E15Resource extends LrResource {
+
+	@GET
+	public DataResponse<E15> get(@Context UriInfo uriInfo) {
+		return getService().forSelect(E15.class).with(uriInfo).select();
+	}
 
 	@PUT
 	@Path("{id}/e14s")

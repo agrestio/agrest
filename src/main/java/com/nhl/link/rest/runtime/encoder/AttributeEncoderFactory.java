@@ -1,18 +1,5 @@
 package com.nhl.link.rest.runtime.encoder;
 
-import com.nhl.link.rest.ResourceEntity;
-import com.nhl.link.rest.EntityProperty;
-import com.nhl.link.rest.LinkRestException;
-import com.nhl.link.rest.encoder.*;
-import com.nhl.link.rest.property.BeanPropertyReader;
-import com.nhl.link.rest.property.PersistentObjectIdPropertyReader;
-import com.nhl.link.rest.property.PropertyBuilder;
-import org.apache.cayenne.DataObject;
-import org.apache.cayenne.Persistent;
-import org.apache.cayenne.map.ObjAttribute;
-import org.apache.cayenne.map.ObjEntity;
-
-import javax.ws.rs.core.Response.Status;
 import java.sql.Time;
 import java.sql.Timestamp;
 import java.sql.Types;
@@ -20,6 +7,24 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+
+import org.apache.cayenne.DataObject;
+import org.apache.cayenne.Persistent;
+import org.apache.cayenne.map.ObjAttribute;
+
+import com.nhl.link.rest.EntityProperty;
+import com.nhl.link.rest.ResourceEntity;
+import com.nhl.link.rest.encoder.Encoder;
+import com.nhl.link.rest.encoder.GenericEncoder;
+import com.nhl.link.rest.encoder.ISODateEncoder;
+import com.nhl.link.rest.encoder.ISODateTimeEncoder;
+import com.nhl.link.rest.encoder.ISOTimeEncoder;
+import com.nhl.link.rest.encoder.ObjectIdEncoder;
+import com.nhl.link.rest.meta.LrAttribute;
+import com.nhl.link.rest.meta.LrPersistentAttribute;
+import com.nhl.link.rest.property.BeanPropertyReader;
+import com.nhl.link.rest.property.PersistentObjectIdPropertyReader;
+import com.nhl.link.rest.property.PropertyBuilder;
 
 public class AttributeEncoderFactory implements IAttributeEncoderFactory {
 
@@ -38,12 +43,12 @@ public class AttributeEncoderFactory implements IAttributeEncoderFactory {
 	}
 
 	@Override
-	public EntityProperty getAttributeProperty(ResourceEntity<?> entity, String attributeName) {
-		String key = entity.getLrEntity().getName() + "." + attributeName;
+	public EntityProperty getAttributeProperty(ResourceEntity<?> entity, LrAttribute attribute) {
+		String key = entity.getLrEntity().getName() + "." + attribute.getName();
 
 		EntityProperty property = attributePropertiesByPath.get(key);
 		if (property == null) {
-			property = buildAttributeProperty(entity, attributeName);
+			property = buildAttributeProperty(entity, attribute);
 			attributePropertiesByPath.put(key, property);
 		}
 
@@ -64,10 +69,14 @@ public class AttributeEncoderFactory implements IAttributeEncoderFactory {
 		return property;
 	}
 
-	protected EntityProperty buildAttributeProperty(ResourceEntity<?> entity, String attributeName) {
+	protected EntityProperty buildAttributeProperty(ResourceEntity<?> entity, LrAttribute attribute) {
+		
+		boolean persistent = attribute instanceof LrPersistentAttribute;
+		
+		int jdbcType = persistent ? ((LrPersistentAttribute) attribute).getJdbcType() : Integer.MIN_VALUE;
 
-		Encoder encoder = buildEncoder(entity.getLrEntity().getObjEntity(), attributeName);
-		if (DataObject.class.isAssignableFrom(entity.getType())) {
+		Encoder encoder = buildEncoder(attribute.getJavaType(), jdbcType);
+		if (persistent && DataObject.class.isAssignableFrom(entity.getType())) {
 			return PropertyBuilder.dataObjectProperty().encodedWith(encoder);
 		} else {
 			return PropertyBuilder.property().encodedWith(encoder);
@@ -84,8 +93,10 @@ public class AttributeEncoderFactory implements IAttributeEncoderFactory {
 				String message = pks.size() == 0 ? "No pk columns" : "Multi-column PK is not supported";
 				throw new IllegalArgumentException(message);
 			}
-
-			Encoder valueEncoder = buildEncoder(pks.iterator().next());
+			
+			ObjAttribute attribute = pks.iterator().next();
+			int dbType = attribute.getDbAttribute() != null ? attribute.getDbAttribute().getType() : Integer.MIN_VALUE;
+			Encoder valueEncoder = buildEncoder(attribute.getType(), dbType);
 
 			return PropertyBuilder.property(PersistentObjectIdPropertyReader.reader()).encodedWith(
 					new ObjectIdEncoder(valueEncoder));
@@ -104,30 +115,16 @@ public class AttributeEncoderFactory implements IAttributeEncoderFactory {
 		return PropertyBuilder.property(BeanPropertyReader.reader(pkName));
 	}
 
-	protected Encoder buildEncoder(ObjEntity entity, String attributeName) {
-
-		ObjAttribute attribute = (ObjAttribute) entity.getAttribute(attributeName);
-
-		if (attribute == null) {
-			throw new LinkRestException(Status.BAD_REQUEST, "Invalid attribute: '" + entity.getName() + "."
-					+ attributeName + "'");
-		}
-
-		return buildEncoder(attribute);
-	}
-
 	/**
-	 * @since 1.2
+	 * @since 1.12
 	 */
-	protected Encoder buildEncoder(ObjAttribute attribute) {
+	protected Encoder buildEncoder(String javaType, int jdbcType) {
 
-		if (UTIL_DATE.equals(attribute.getType())) {
-
-			int dbType = attribute.getDbAttribute().getType();
-			if (dbType == Types.DATE) {
+		if (UTIL_DATE.equals(javaType)) {
+			if (jdbcType == Types.DATE) {
 				return ISODateEncoder.encoder();
 			}
-			if (dbType == Types.TIME) {
+			if (jdbcType == Types.TIME) {
 				return ISOTimeEncoder.encoder();
 			} else {
 				// JDBC TIMESTAMP or something entirely unrecognized
@@ -135,11 +132,11 @@ public class AttributeEncoderFactory implements IAttributeEncoderFactory {
 			}
 		}
 		// less common cases of mapping to java.sql.* types...
-		else if (SQL_TIMESTAMP.equals(attribute.getType())) {
+		else if (SQL_TIMESTAMP.equals(javaType)) {
 			return ISODateTimeEncoder.encoder();
-		} else if (SQL_DATE.equals(attribute.getType())) {
+		} else if (SQL_DATE.equals(javaType)) {
 			return ISODateEncoder.encoder();
-		} else if (SQL_TIME.equals(attribute.getType())) {
+		} else if (SQL_TIME.equals(javaType)) {
 			return ISOTimeEncoder.encoder();
 		}
 

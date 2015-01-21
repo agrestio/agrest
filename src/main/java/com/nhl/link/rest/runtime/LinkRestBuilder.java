@@ -24,6 +24,7 @@ import org.apache.cayenne.validation.ValidationException;
 import com.nhl.link.rest.EntityConstraint;
 import com.nhl.link.rest.LinkRestException;
 import com.nhl.link.rest.encoder.EncoderFilter;
+import com.nhl.link.rest.meta.LrEntityOverlay;
 import com.nhl.link.rest.provider.CayenneRuntimeExceptionMapper;
 import com.nhl.link.rest.provider.LinkRestExceptionMapper;
 import com.nhl.link.rest.provider.ValidationExceptionMapper;
@@ -72,11 +73,13 @@ public class LinkRestBuilder {
 
 	private List<EncoderFilter> encoderFilters;
 	private List<DataMap> nonPersistentEntities;
+	private Map<String, LrEntityOverlay<?>> entityOverlays;
 	private Map<Class<?>, Class<?>> exceptionMappers;
 	private Collection<LinkRestAdapter> adapters;
 
 	public LinkRestBuilder() {
 		this.nonPersistentEntities = new ArrayList<>();
+		this.entityOverlays = new HashMap<>();
 		this.encoderFilters = new ArrayList<>();
 		this.linkRestServiceType = EntityDaoLinkRestService.class;
 		this.cayenneService = NoCayennePersister.instance();
@@ -154,8 +157,31 @@ public class LinkRestBuilder {
 		return this;
 	}
 
+	/**
+	 * Adds a model to LinkRest runtime containing non-persistent entities.
+	 */
 	public LinkRestBuilder nonPersistentEntities(DataMap dataMap) {
 		this.nonPersistentEntities.add(dataMap);
+		return this;
+	}
+
+	/**
+	 * Declares a non-persistent property of a persistent type in LinkRest
+	 * runtime. If the runtime is configured with this property, it can be
+	 * rendered in responses, referenced in include/exclude keys, etc.
+	 * 
+	 * @since 1.12
+	 */
+	public LinkRestBuilder nonPersistentProperty(Class<?> type, String propertyName) {
+
+		LrEntityOverlay<?> overlay = entityOverlays.get(type.getName());
+		if (overlay == null) {
+			overlay = new LrEntityOverlay<>(type);
+			entityOverlays.put(type.getName(), overlay);
+		}
+
+		overlay.getTransientAttributes().add(propertyName);
+
 		return this;
 	}
 
@@ -209,6 +235,8 @@ public class LinkRestBuilder {
 				binder.<UpdateFilter> bindList(RequestParser.UPDATE_FILTER_LIST);
 				binder.<EncoderFilter> bindList(EncoderService.ENCODER_FILTER_LIST).addAll(encoderFilters);
 				binder.<DataMap> bindList(MetadataService.NON_PERSISTENT_ENTITIES_LIST).addAll(nonPersistentEntities);
+				binder.<LrEntityOverlay<?>> bindMap(MetadataService.ENTITY_OVERLAY_MAP).putAll(entityOverlays);
+
 				binder.<EntityConstraint> bindList(ConstraintsHandler.DEFAULT_READ_CONSTRAINTS_LIST);
 				binder.<EntityConstraint> bindList(ConstraintsHandler.DEFAULT_WRITE_CONSTRAINTS_LIST);
 

@@ -15,7 +15,7 @@ public interface IMetadataService {
 	 * @since 1.12
 	 */
 	<T> LrEntity<T> getLrEntity(Class<T> type);
-	
+
 	/**
 	 * @since 1.12
 	 */
@@ -37,9 +37,4 @@ public interface IMetadataService {
 	 * @since 1.12
 	 */
 	LrRelationship getLrRelationship(EntityParent<?> parent);
-
-	/**
-	 * @since 1.2
-	 */
-	Class<?> getType(String entity);
 }

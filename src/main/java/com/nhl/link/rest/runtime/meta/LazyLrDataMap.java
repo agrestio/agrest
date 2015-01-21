@@ -1,5 +1,6 @@
 package com.nhl.link.rest.runtime.meta;
 
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -13,6 +14,7 @@ import org.apache.cayenne.map.ObjRelationship;
 import com.nhl.link.rest.LinkRestException;
 import com.nhl.link.rest.meta.LrDataMap;
 import com.nhl.link.rest.meta.LrEntity;
+import com.nhl.link.rest.meta.LrEntityOverlay;
 
 /**
  * A {@link LrDataMap} that lazily creates its entities, improving startup time
@@ -26,10 +28,12 @@ public class LazyLrDataMap implements LrDataMap {
 
 	private EntityResolver resolver;
 	private ConcurrentMap<Class<?>, LrEntity<?>> entities;
+	private Map<String, LrEntityOverlay<?>> entityOverlays;
 
-	public LazyLrDataMap(EntityResolver resolver) {
-		this.entities = new ConcurrentHashMap<>();
+	public LazyLrDataMap(EntityResolver resolver, Map<String, LrEntityOverlay<?>> entityOverlays) {
 		this.resolver = resolver;
+		this.entities = new ConcurrentHashMap<>();
+		this.entityOverlays = entityOverlays;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -58,7 +62,7 @@ public class LazyLrDataMap implements LrDataMap {
 
 		for (ObjAttribute a : objEntity.getAttributes()) {
 			CayenneLrAttribute lrAttribute = new CayenneLrAttribute(a);
-			lrEntity.addAttribute(lrAttribute);
+			lrEntity.addPersistentAttribute(lrAttribute);
 		}
 
 		for (ObjRelationship r : objEntity.getRelationships()) {
@@ -66,6 +70,16 @@ public class LazyLrDataMap implements LrDataMap {
 			Class<?> targetEntityType = resolver.getClassDescriptor(r.getTargetEntityName()).getObjectClass();
 			CayenneLrRelationship lrRelationship = new CayenneLrRelationship(r, targetEntityType, this);
 			lrEntity.addRelationship(lrRelationship);
+		}
+
+		LrEntityOverlay<?> overlay = entityOverlays.get(type.getName());
+		if (overlay != null) {
+
+			for (String a : overlay.getTransientAttributes()) {
+				// TODO: figure out the type
+				DefaultLrAttribute lrAttribute = new DefaultLrAttribute(a, "java.lang.Object");
+				lrEntity.addTransientAttribute(lrAttribute);
+			}
 		}
 
 		return lrEntity;

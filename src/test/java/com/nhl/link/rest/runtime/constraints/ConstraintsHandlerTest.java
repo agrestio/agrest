@@ -16,7 +16,6 @@ import java.util.List;
 
 import org.apache.cayenne.exp.Expression;
 import org.apache.cayenne.map.DataMap;
-import org.apache.cayenne.map.EntityResolver;
 import org.apache.cayenne.map.ObjEntity;
 import org.apache.cayenne.map.ObjRelationship;
 import org.junit.Before;
@@ -28,16 +27,12 @@ import com.nhl.link.rest.ResourceEntity;
 import com.nhl.link.rest.SizeConstraints;
 import com.nhl.link.rest.TreeConstraints;
 import com.nhl.link.rest.meta.LrEntity;
-import com.nhl.link.rest.runtime.cayenne.ICayennePersister;
-import com.nhl.link.rest.runtime.meta.IMetadataService;
-import com.nhl.link.rest.runtime.meta.MetadataService;
-import com.nhl.link.rest.unit.TestWithCayenneMapping;
+import com.nhl.link.rest.runtime.meta.DefaultLrAttribute;
 
-public class ConstraintsHandlerTest extends TestWithCayenneMapping {
+public class ConstraintsHandlerTest {
 
 	private ConstraintsHandler constraintHandler;
 
-	
 	private LrEntity<Object> lre0;
 	private LrEntity<Object> lre1;
 	private LrEntity<Object> lre2;
@@ -48,14 +43,9 @@ public class ConstraintsHandlerTest extends TestWithCayenneMapping {
 	@Before
 	public void before() {
 
-		EntityResolver resolver = runtime.getChannel().getEntityResolver();
-		ICayennePersister cayenneService = mock(ICayennePersister.class);
-		when(cayenneService.entityResolver()).thenReturn(resolver);
-		IMetadataService metadataService = new MetadataService(Collections.<DataMap> emptyList(), cayenneService);
-
 		List<EntityConstraint> r = Collections.emptyList();
 		List<EntityConstraint> w = Collections.emptyList();
-		this.constraintHandler = new ConstraintsHandler(r, w, metadataService);
+		this.constraintHandler = new ConstraintsHandler(r, w);
 
 		DataMap dm = new DataMap();
 
@@ -86,7 +76,7 @@ public class ConstraintsHandlerTest extends TestWithCayenneMapping {
 		lre0 = mock(LrEntity.class);
 		when(lre0.getObjEntity()).thenReturn(e0);
 		when(lre0.getType()).thenReturn(Object.class);
-		
+
 		lre1 = mock(LrEntity.class);
 		when(lre1.getObjEntity()).thenReturn(e1);
 		when(lre1.getType()).thenReturn(Object.class);
@@ -94,11 +84,11 @@ public class ConstraintsHandlerTest extends TestWithCayenneMapping {
 		lre2 = mock(LrEntity.class);
 		when(lre2.getObjEntity()).thenReturn(e2);
 		when(lre2.getType()).thenReturn(Object.class);
-		
+
 		lre3 = mock(LrEntity.class);
 		when(lre3.getObjEntity()).thenReturn(e3);
 		when(lre3.getType()).thenReturn(Object.class);
-		
+
 		lre4 = mock(LrEntity.class);
 		when(lre4.getObjEntity()).thenReturn(null);
 		when(lre4.getType()).thenReturn(Object.class);
@@ -164,19 +154,19 @@ public class ConstraintsHandlerTest extends TestWithCayenneMapping {
 		TreeConstraints<Object> tc1 = TreeConstraints.excludeAll(Object.class).attributes("a", "b");
 
 		ResourceEntity<Object> te1 = new ResourceEntity<>(lre0);
-		te1.getAttributes().add("c");
-		te1.getAttributes().add("b");
+		appendAttribute(te1, "c");
+		appendAttribute(te1, "b");
 
 		ResourceEntity<?> te11 = new ResourceEntity<>(lre2);
-		te11.getAttributes().add("a1");
-		te11.getAttributes().add("b1");
+		appendAttribute(te11, "a1");
+		appendAttribute(te11, "b1");
 		te1.getChildren().put("d", te11);
 
 		DataResponse<Object> t1 = DataResponse.forType(Object.class).withClientEntity(te1);
 
 		constraintHandler.constrainResponse(t1, null, tc1);
 		assertEquals(1, t1.getEntity().getAttributes().size());
-		assertTrue(t1.getEntity().getAttributes().contains("b"));
+		assertTrue(t1.getEntity().getAttributes().containsKey("b"));
 		assertTrue(t1.getEntity().getChildren().isEmpty());
 	}
 
@@ -189,31 +179,31 @@ public class ConstraintsHandlerTest extends TestWithCayenneMapping {
 				.path("r2", TreeConstraints.excludeAll(Object.class).attributes("k", "l"));
 
 		ResourceEntity<Object> te1 = new ResourceEntity<>(lre0);
-		te1.getAttributes().add("c");
-		te1.getAttributes().add("b");
+		appendAttribute(te1, "c");
+		appendAttribute(te1, "b");
 
 		ResourceEntity<?> te11 = new ResourceEntity<>(lre1);
-		te11.getAttributes().add("m");
-		te11.getAttributes().add("z");
+		appendAttribute(te11, "m");
+		appendAttribute(te11, "z");
 		te1.getChildren().put("r1", te11);
 
 		ResourceEntity<?> te21 = new ResourceEntity<>(lre4);
-		te21.getAttributes().add("p");
-		te21.getAttributes().add("z");
+		appendAttribute(te21, "p");
+		appendAttribute(te21, "z");
 		te1.getChildren().put("r3", te21);
 
 		DataResponse<Object> t1 = DataResponse.forType(Object.class).withClientEntity(te1);
 
 		constraintHandler.constrainResponse(t1, null, tc1);
 		assertEquals(1, t1.getEntity().getAttributes().size());
-		assertTrue(t1.getEntity().getAttributes().contains("b"));
+		assertTrue(t1.getEntity().getAttributes().containsKey("b"));
 		assertEquals(1, t1.getEntity().getChildren().size());
 
 		ResourceEntity<?> mergedTe11 = t1.getEntity().getChildren().get("r1");
 		assertNotNull(mergedTe11);
 		assertTrue(mergedTe11.getChildren().isEmpty());
 		assertEquals(1, mergedTe11.getAttributes().size());
-		assertTrue(mergedTe11.getAttributes().contains("m"));
+		assertTrue(mergedTe11.getAttributes().containsKey("m"));
 	}
 
 	@Test
@@ -267,7 +257,7 @@ public class ConstraintsHandlerTest extends TestWithCayenneMapping {
 				TreeConstraints.excludeAll(Object.class).attribute("a"));
 
 		ResourceEntity<Object> te1MapByTarget = new ResourceEntity<>(lre0);
-		te1MapByTarget.getAttributes().add("b");
+		appendAttribute(te1MapByTarget, "b");
 
 		ResourceEntity<Object> te1MapBy = new ResourceEntity<>(lre1);
 		te1MapBy.getChildren().put("r1", te1MapByTarget);
@@ -281,7 +271,7 @@ public class ConstraintsHandlerTest extends TestWithCayenneMapping {
 		assertNull(t1.getEntity().getMapByPath());
 
 		ResourceEntity<Object> te2MapByTarget = new ResourceEntity<>(lre1);
-		te2MapByTarget.getAttributes().add("a");
+		appendAttribute(te2MapByTarget, "a");
 
 		ResourceEntity<Object> te2MapBy = new ResourceEntity<>(lre0);
 		te1MapBy.getChildren().put("r1", te2MapByTarget);
@@ -334,6 +324,9 @@ public class ConstraintsHandlerTest extends TestWithCayenneMapping {
 		constraintHandler.constrainResponse(t1, null, tc1);
 		assertSame(te1MapBy, t1.getEntity().getMapBy());
 		assertEquals("r1", t1.getEntity().getMapByPath());
+	}
 
+	protected void appendAttribute(ResourceEntity<?> entity, String name) {
+		entity.getAttributes().put(name, new DefaultLrAttribute(name, String.class.getName()));
 	}
 }

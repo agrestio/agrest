@@ -5,7 +5,7 @@ import java.util.Collection;
 import org.apache.cayenne.map.ObjEntity;
 
 /**
- * An entity model shared by LinkRest stack.
+ * An entity model shared across LinkRest stack.
  * 
  * @since 1.12
  */
@@ -17,12 +17,16 @@ public interface LrEntity<T> {
 
 	ObjEntity getObjEntity();
 
-	LrAttribute getAttribute(String name);
+	LrPersistentAttribute getPersistentAttribute(String name);
 
 	LrRelationship getRelationship(String name);
 
-	Collection<LrAttribute> getAttributes();
+	LrAttribute getTransientAttribute(String name);
+
+	Collection<LrPersistentAttribute> getPersistentAttributes();
 
 	Collection<LrRelationship> getRelationships();
+	
+	Collection<LrAttribute> getTransientAttributes();
 
 }

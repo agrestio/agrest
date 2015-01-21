@@ -29,8 +29,10 @@ import com.nhl.link.rest.it.fixture.pojo.model.P4;
 import com.nhl.link.rest.it.fixture.pojo.model.P6;
 import com.nhl.link.rest.meta.LrDataMap;
 import com.nhl.link.rest.meta.LrEntity;
+import com.nhl.link.rest.meta.LrEntityOverlay;
 import com.nhl.link.rest.runtime.jackson.JacksonService;
 import com.nhl.link.rest.runtime.meta.DataMapBuilder;
+import com.nhl.link.rest.runtime.meta.DefaultLrAttribute;
 import com.nhl.link.rest.runtime.meta.LazyLrDataMap;
 import com.nhl.link.rest.runtime.semantics.RelationshipMapper;
 
@@ -54,13 +56,14 @@ public class EncoderService_Pojo_Test {
 		this.encoderService = new EncoderService(this.filters, attributeEncoderFactory, stringConverterFactory,
 				new RelationshipMapper());
 
-		lrDataMap = new LazyLrDataMap(new EntityResolver(Arrays.asList(dataMap)));
+		lrDataMap = new LazyLrDataMap(new EntityResolver(Arrays.asList(dataMap)),
+				Collections.<String, LrEntityOverlay<?>> emptyMap());
 	}
 
 	@Test
 	public void testEncode_SimplePojo_noId() throws IOException {
 		ResourceEntity<P1> descriptor = getClientEntity(P1.class);
-		descriptor.getAttributes().add("name");
+		descriptor.getAttributes().put("name", new DefaultLrAttribute("name", String.class.getName()));
 
 		DataResponse<P1> builder = DataResponse.forType(P1.class).withClientEntity(descriptor);
 
@@ -77,7 +80,7 @@ public class EncoderService_Pojo_Test {
 		p6.setIntProp(4);
 
 		ResourceEntity<P6> descriptor = getClientEntity(P6.class);
-		descriptor.getAttributes().add("intProp");
+		descriptor.getAttributes().put("intProp", new DefaultLrAttribute("intProp", Integer.class.getName()));
 		descriptor.includeId();
 		DataResponse<P6> builder = DataResponse.forObjects(Collections.singletonList(p6)).withClientEntity(descriptor);
 

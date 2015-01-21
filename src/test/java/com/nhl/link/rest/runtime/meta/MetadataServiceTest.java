@@ -16,6 +16,7 @@ import org.junit.Test;
 import com.nhl.link.rest.it.fixture.cayenne.E4;
 import com.nhl.link.rest.it.fixture.cayenne.E5;
 import com.nhl.link.rest.meta.LrEntity;
+import com.nhl.link.rest.meta.LrEntityOverlay;
 import com.nhl.link.rest.runtime.cayenne.ICayennePersister;
 import com.nhl.link.rest.unit.TestWithCayenneMapping;
 
@@ -32,7 +33,8 @@ public class MetadataServiceTest extends TestWithCayenneMapping {
 		when(cayenneService.sharedContext()).thenReturn(sharedContext);
 		when(cayenneService.newContext()).thenReturn(runtime.newContext());
 
-		this.metadataService = new MetadataService(Collections.<DataMap> emptyList(), cayenneService);
+		this.metadataService = new MetadataService(Collections.<DataMap> emptyList(),
+				Collections.<String, LrEntityOverlay<?>> emptyMap(), cayenneService);
 	}
 
 	@Test
@@ -45,14 +47,14 @@ public class MetadataServiceTest extends TestWithCayenneMapping {
 
 		assertNotNull(e4.getObjEntity());
 		assertEquals("E4", e4.getObjEntity().getName());
-		
-		assertEquals(7, e4.getAttributes().size());
+
+		assertEquals(7, e4.getPersistentAttributes().size());
 		assertEquals(0, e4.getRelationships().size());
-		
-		assertNotNull(e4.getAttribute(E4.C_BOOLEAN.getName()));
-		assertNotNull(e4.getAttribute(E4.C_DATE.getName()));
+
+		assertNotNull(e4.getPersistentAttribute(E4.C_BOOLEAN.getName()));
+		assertNotNull(e4.getPersistentAttribute(E4.C_DATE.getName()));
 	}
-	
+
 	@Test
 	public void testGetLrEntity_Relationships() {
 
@@ -63,12 +65,12 @@ public class MetadataServiceTest extends TestWithCayenneMapping {
 
 		assertNotNull(e5.getObjEntity());
 		assertEquals("E5", e5.getObjEntity().getName());
-		
-		assertEquals(2, e5.getAttributes().size());
+
+		assertEquals(2, e5.getPersistentAttributes().size());
 		assertEquals(1, e5.getRelationships().size());
-		
-		assertNotNull(e5.getAttribute(E5.NAME.getName()));
-		assertNotNull(e5.getAttribute(E5.DATE.getName()));
+
+		assertNotNull(e5.getPersistentAttribute(E5.NAME.getName()));
+		assertNotNull(e5.getPersistentAttribute(E5.DATE.getName()));
 		assertNotNull(e5.getRelationship(E5.E2S.getName()));
 	}
 }

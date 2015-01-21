@@ -66,7 +66,7 @@ class ExcludeWorker {
 		}
 
 		String property = dot > 0 ? path.substring(0, dot) : path;
-		if (clientEntity.getLrEntity().getAttribute(property) != null) {
+		if (clientEntity.getLrEntity().getPersistentAttribute(property) != null) {
 
 			if (dot > 0) {
 				throw new LinkRestException(Status.BAD_REQUEST, "Invalid exclude path: " + path);

@@ -2,10 +2,13 @@ package com.nhl.link.rest.unit;
 
 import static org.mockito.Mockito.mock;
 
+import java.util.Collections;
+
 import org.apache.cayenne.configuration.server.DataSourceFactory;
 import org.apache.cayenne.configuration.server.ServerRuntime;
 import org.apache.cayenne.di.Binder;
 import org.apache.cayenne.di.Module;
+import org.apache.cayenne.exp.Property;
 import org.apache.cayenne.map.ObjEntity;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -14,6 +17,8 @@ import org.junit.BeforeClass;
 import com.nhl.link.rest.ResourceEntity;
 import com.nhl.link.rest.meta.LrDataMap;
 import com.nhl.link.rest.meta.LrEntity;
+import com.nhl.link.rest.meta.LrEntityOverlay;
+import com.nhl.link.rest.runtime.meta.DefaultLrAttribute;
 import com.nhl.link.rest.runtime.meta.LazyLrDataMap;
 
 /**
@@ -48,7 +53,8 @@ public class TestWithCayenneMapping {
 
 	@Before
 	public void initLrDataMap() {
-		lrDataMap = new LazyLrDataMap(runtime.getChannel().getEntityResolver());
+		lrDataMap = new LazyLrDataMap(runtime.getChannel().getEntityResolver(),
+				Collections.<String, LrEntityOverlay<?>> emptyMap());
 	}
 
 	protected <T> LrEntity<T> getLrEntity(Class<T> type) {
@@ -61,6 +67,14 @@ public class TestWithCayenneMapping {
 
 	protected <T> ResourceEntity<T> getClientEntity(Class<T> type) {
 		return new ResourceEntity<>(getLrEntity(type));
+	}
+
+	protected <T> void appendAttribute(ResourceEntity<?> entity, Property<T> property, Class<T> type) {
+		appendAttribute(entity, property.getName(), type);
+	}
+
+	protected void appendAttribute(ResourceEntity<?> entity, String name, Class<?> type) {
+		entity.getAttributes().put(name, new DefaultLrAttribute(name, type.getName()));
 	}
 
 }

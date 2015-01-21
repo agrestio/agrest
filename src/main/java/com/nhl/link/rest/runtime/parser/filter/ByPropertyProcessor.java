@@ -9,7 +9,7 @@ import org.apache.cayenne.exp.ExpressionFactory;
 
 import com.nhl.link.rest.LinkRestException;
 import com.nhl.link.rest.ResourceEntity;
-import com.nhl.link.rest.meta.LrAttribute;
+import com.nhl.link.rest.meta.LrPersistentAttribute;
 import com.nhl.link.rest.meta.LrEntity;
 
 class ByPropertyProcessor {
@@ -37,7 +37,7 @@ class ByPropertyProcessor {
 	 * any bad args were selected by the server-side code, return 500 response.
 	 */
 	private void validateAttribute(LrEntity<?> entity, String queryProperty) {
-		LrAttribute attribute = entity.getAttribute(queryProperty);
+		LrPersistentAttribute attribute = entity.getPersistentAttribute(queryProperty);
 		if (attribute == null) {
 			throw new LinkRestException(Status.INTERNAL_SERVER_ERROR, "No such property '" + queryProperty
 					+ "' for entity '" + entity.getName() + "'");

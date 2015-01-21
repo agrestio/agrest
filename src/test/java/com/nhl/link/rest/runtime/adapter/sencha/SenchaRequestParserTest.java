@@ -21,6 +21,7 @@ import org.junit.Test;
 
 import com.nhl.link.rest.DataResponse;
 import com.nhl.link.rest.it.fixture.cayenne.E2;
+import com.nhl.link.rest.meta.LrEntityOverlay;
 import com.nhl.link.rest.runtime.cayenne.ICayennePersister;
 import com.nhl.link.rest.runtime.jackson.IJacksonService;
 import com.nhl.link.rest.runtime.jackson.JacksonService;
@@ -50,7 +51,8 @@ public class SenchaRequestParserTest extends TestWithCayenneMapping {
 		when(cayenneService.entityResolver()).thenReturn(runtime.getChannel().getEntityResolver());
 		when(cayenneService.sharedContext()).thenReturn(sharedContext);
 		when(cayenneService.newContext()).thenReturn(runtime.newContext());
-		IMetadataService metadataService = new MetadataService(Collections.<DataMap> emptyList(), cayenneService);
+		IMetadataService metadataService = new MetadataService(Collections.<DataMap> emptyList(),
+				Collections.<String, LrEntityOverlay<?>> emptyMap(), cayenneService);
 		IJsonValueConverterFactory converterFactory = new DefaultJsonValueConverterFactory();
 
 		IPathCache pathCache = new PathCache();

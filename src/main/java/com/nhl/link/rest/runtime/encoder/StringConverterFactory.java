@@ -12,7 +12,7 @@ import com.nhl.link.rest.encoder.converter.ISODateConverter;
 import com.nhl.link.rest.encoder.converter.ISODateTimeConverter;
 import com.nhl.link.rest.encoder.converter.ISOTimeConverter;
 import com.nhl.link.rest.encoder.converter.StringConverter;
-import com.nhl.link.rest.meta.LrAttribute;
+import com.nhl.link.rest.meta.LrPersistentAttribute;
 import com.nhl.link.rest.meta.LrEntity;
 
 public class StringConverterFactory implements IStringConverterFactory {
@@ -49,7 +49,7 @@ public class StringConverterFactory implements IStringConverterFactory {
 			return GenericConverter.converter();
 		}
 
-		LrAttribute attribute = entity.getAttribute(attributeName);
+		LrPersistentAttribute attribute = entity.getPersistentAttribute(attributeName);
 
 		if (attribute == null) {
 			throw new LinkRestException(Status.BAD_REQUEST, "Invalid attribute: '" + entity.getName() + "."

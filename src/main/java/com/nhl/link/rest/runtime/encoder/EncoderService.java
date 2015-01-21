@@ -25,6 +25,7 @@ import com.nhl.link.rest.encoder.GenericEncoder;
 import com.nhl.link.rest.encoder.ListEncoder;
 import com.nhl.link.rest.encoder.MapByEncoder;
 import com.nhl.link.rest.encoder.RootListEncoder;
+import com.nhl.link.rest.meta.LrAttribute;
 import com.nhl.link.rest.meta.LrRelationship;
 import com.nhl.link.rest.property.PropertyBuilder;
 import com.nhl.link.rest.runtime.semantics.IRelationshipMapper;
@@ -123,9 +124,9 @@ public class EncoderService implements IEncoderService {
 		// output
 		Map<String, EntityProperty> properties = new TreeMap<String, EntityProperty>();
 
-		for (String attribute : clientEntity.getAttributes()) {
+		for (LrAttribute attribute : clientEntity.getAttributes().values()) {
 			EntityProperty property = attributeEncoderFactory.getAttributeProperty(clientEntity, attribute);
-			properties.put(attribute, property);
+			properties.put(attribute.getName(), property);
 		}
 
 		for (Entry<String, ResourceEntity<?>> e : clientEntity.getChildren().entrySet()) {

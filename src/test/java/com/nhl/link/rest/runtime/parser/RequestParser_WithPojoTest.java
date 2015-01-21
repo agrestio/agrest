@@ -21,6 +21,7 @@ import com.nhl.link.rest.DataResponse;
 import com.nhl.link.rest.ResourceEntity;
 import com.nhl.link.rest.it.fixture.pojo.model.P1;
 import com.nhl.link.rest.it.fixture.pojo.model.P2;
+import com.nhl.link.rest.meta.LrEntityOverlay;
 import com.nhl.link.rest.runtime.cayenne.ICayennePersister;
 import com.nhl.link.rest.runtime.jackson.IJacksonService;
 import com.nhl.link.rest.runtime.jackson.JacksonService;
@@ -56,7 +57,8 @@ public class RequestParser_WithPojoTest extends TestWithCayenneMapping {
 
 		DataMap map = DataMapBuilder.newBuilder("_t_").addEntities(P1.class, P2.class).toDataMap();
 
-		IMetadataService metadataService = new MetadataService(Collections.singletonList(map), cayenneService);
+		IMetadataService metadataService = new MetadataService(Collections.singletonList(map),
+				Collections.<String, LrEntityOverlay<?>> emptyMap(), cayenneService);
 		IJsonValueConverterFactory converterFactory = new DefaultJsonValueConverterFactory();
 
 		IPathCache pathCache = new PathCache();

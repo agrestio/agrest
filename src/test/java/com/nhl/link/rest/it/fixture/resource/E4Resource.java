@@ -3,8 +3,6 @@ package com.nhl.link.rest.it.fixture.resource;
 import static com.nhl.link.rest.TreeConstraints.idOnly;
 import static com.nhl.link.rest.property.PropertyBuilder.property;
 
-import java.io.IOException;
-
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -18,9 +16,7 @@ import org.apache.cayenne.Cayenne;
 import org.apache.cayenne.DataObject;
 import org.apache.cayenne.query.SelectQuery;
 
-import com.fasterxml.jackson.core.JsonGenerator;
 import com.nhl.link.rest.DataResponse;
-import com.nhl.link.rest.EntityProperty;
 import com.nhl.link.rest.SimpleResponse;
 import com.nhl.link.rest.it.fixture.cayenne.E4;
 import com.nhl.link.rest.property.PropertyReader;
@@ -55,28 +51,6 @@ public class E4Resource extends LrResource {
 		};
 
 		return getService().forSelect(query).with(uriInfo).withProperty("x", property(xReader)).select();
-	}
-
-	@GET
-	@Path("manual_property")
-	public DataResponse<E4> property_Object(@Context UriInfo uriInfo) {
-
-		SelectQuery<E4> query = new SelectQuery<E4>(E4.class);
-
-		EntityProperty xProperty = new EntityProperty() {
-
-			@Override
-			public void encode(Object root, String propertyName, JsonGenerator out) throws IOException {
-				out.writeStartObject();
-
-				out.writeStringField("f1", "y_" + Cayenne.intPKForObject((DataObject) root));
-				out.writeNumberField("f2", 1.15d);
-
-				out.writeEndObject();
-			}
-		};
-
-		return getService().forSelect(query).with(uriInfo).withProperty("x", xProperty).select();
 	}
 
 	@GET

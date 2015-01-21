@@ -24,11 +24,12 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.nhl.link.rest.DataResponse;
-import com.nhl.link.rest.ResourceEntity;
 import com.nhl.link.rest.LinkRestException;
+import com.nhl.link.rest.ResourceEntity;
 import com.nhl.link.rest.it.fixture.cayenne.E1;
 import com.nhl.link.rest.it.fixture.cayenne.E2;
 import com.nhl.link.rest.it.fixture.cayenne.E3;
+import com.nhl.link.rest.meta.LrEntityOverlay;
 import com.nhl.link.rest.runtime.cayenne.ICayennePersister;
 import com.nhl.link.rest.runtime.jackson.IJacksonService;
 import com.nhl.link.rest.runtime.jackson.JacksonService;
@@ -60,7 +61,8 @@ public class RequestParserTest extends TestWithCayenneMapping {
 		when(cayenneService.entityResolver()).thenReturn(runtime.getChannel().getEntityResolver());
 		when(cayenneService.sharedContext()).thenReturn(sharedContext);
 		when(cayenneService.newContext()).thenReturn(runtime.newContext());
-		IMetadataService metadataService = new MetadataService(Collections.<DataMap> emptyList(), cayenneService);
+		IMetadataService metadataService = new MetadataService(Collections.<DataMap> emptyList(),
+				Collections.<String, LrEntityOverlay<?>> emptyMap(), cayenneService);
 		IJsonValueConverterFactory converterFactory = new DefaultJsonValueConverterFactory();
 
 		IPathCache pathCache = new PathCache();
@@ -111,8 +113,8 @@ public class RequestParserTest extends TestWithCayenneMapping {
 		assertFalse(clientEntity.isIdIncluded());
 
 		assertEquals(2, clientEntity.getAttributes().size());
-		assertTrue(clientEntity.getAttributes().contains(E1.DESCRIPTION.getName()));
-		assertTrue(clientEntity.getAttributes().contains(E1.AGE.getName()));
+		assertTrue(clientEntity.getAttributes().containsKey(E1.DESCRIPTION.getName()));
+		assertTrue(clientEntity.getAttributes().containsKey(E1.AGE.getName()));
 
 		assertTrue(clientEntity.getChildren().isEmpty());
 	}
@@ -136,9 +138,8 @@ public class RequestParserTest extends TestWithCayenneMapping {
 		assertFalse(clientEntity.isIdIncluded());
 
 		assertEquals(2, clientEntity.getAttributes().size());
-		assertTrue(clientEntity.getAttributes().contains(E1.DESCRIPTION.getName()));
-		assertTrue(clientEntity.getAttributes().contains(E1.AGE.getName()));
-
+		assertTrue(clientEntity.getAttributes().containsKey(E1.DESCRIPTION.getName()));
+		assertTrue(clientEntity.getAttributes().containsKey(E1.AGE.getName()));
 		assertTrue(clientEntity.getChildren().isEmpty());
 	}
 
@@ -161,7 +162,7 @@ public class RequestParserTest extends TestWithCayenneMapping {
 		assertTrue(clientEntity.isIdIncluded());
 
 		assertEquals(1, clientEntity.getAttributes().size());
-		assertTrue(clientEntity.getAttributes().contains(E1.NAME.getName()));
+		assertTrue(clientEntity.getAttributes().containsKey(E1.NAME.getName()));
 		assertTrue(clientEntity.getChildren().isEmpty());
 	}
 
@@ -184,7 +185,7 @@ public class RequestParserTest extends TestWithCayenneMapping {
 		assertTrue(clientEntity.isIdIncluded());
 
 		assertEquals(1, clientEntity.getAttributes().size());
-		assertTrue(clientEntity.getAttributes().contains(E1.NAME.getName()));
+		assertTrue(clientEntity.getAttributes().containsKey(E1.NAME.getName()));
 		assertTrue(clientEntity.getChildren().isEmpty());
 	}
 
@@ -207,7 +208,7 @@ public class RequestParserTest extends TestWithCayenneMapping {
 		assertNotNull(clientEntity);
 		assertTrue(clientEntity.isIdIncluded());
 		assertEquals(1, clientEntity.getAttributes().size());
-		assertTrue(clientEntity.getAttributes().contains(E1.AGE.getName()));
+		assertTrue(clientEntity.getAttributes().containsKey(E1.AGE.getName()));
 
 		assertTrue(clientEntity.getChildren().isEmpty());
 	}
@@ -230,8 +231,8 @@ public class RequestParserTest extends TestWithCayenneMapping {
 		assertNotNull(clientEntity);
 		assertTrue(clientEntity.isIdIncluded());
 		assertEquals(2, clientEntity.getAttributes().size());
-		assertTrue(clientEntity.getAttributes().contains(E2.NAME.getName()));
-		assertTrue(clientEntity.getAttributes().contains(E2.ADDRESS.getName()));
+		assertTrue(clientEntity.getAttributes().containsKey(E2.NAME.getName()));
+		assertTrue(clientEntity.getAttributes().containsKey(E2.ADDRESS.getName()));
 
 		assertEquals(1, clientEntity.getChildren().size());
 		assertEquals(1, clientEntity.getChildren().entrySet().size());
@@ -240,8 +241,9 @@ public class RequestParserTest extends TestWithCayenneMapping {
 		ResourceEntity<?> e3ClientEntity = clientEntity.getChildren().get(E2.E3S.getName());
 		assertTrue(e3ClientEntity.isIdIncluded());
 		assertEquals(2, e3ClientEntity.getAttributes().size());
-		assertTrue(e3ClientEntity.getAttributes().contains(E3.NAME.getName()));
-		assertTrue(e3ClientEntity.getAttributes().contains(E3.PHONE_NUMBER.getName()));
+
+		assertTrue(e3ClientEntity.getAttributes().containsKey(E3.NAME.getName()));
+		assertTrue(e3ClientEntity.getAttributes().containsKey(E3.PHONE_NUMBER.getName()));
 		assertTrue(e3ClientEntity.getChildren().isEmpty());
 	}
 
@@ -263,7 +265,7 @@ public class RequestParserTest extends TestWithCayenneMapping {
 		assertNotNull(clientEntity);
 		assertFalse(clientEntity.isIdIncluded());
 		assertEquals(1, clientEntity.getAttributes().size());
-		assertTrue(clientEntity.getAttributes().contains(E2.NAME.getName()));
+		assertTrue(clientEntity.getAttributes().containsKey(E2.NAME.getName()));
 
 		assertEquals(1, clientEntity.getChildren().size());
 		assertEquals(1, clientEntity.getChildren().entrySet().size());
@@ -273,7 +275,7 @@ public class RequestParserTest extends TestWithCayenneMapping {
 		assertFalse(e3ClientEntity.isIdIncluded());
 		assertEquals(1, e3ClientEntity.getAttributes().size());
 
-		assertTrue(e3ClientEntity.getAttributes().contains(E3.NAME.getName()));
+		assertTrue(e3ClientEntity.getAttributes().containsKey(E3.NAME.getName()));
 		assertTrue(e3ClientEntity.getChildren().isEmpty());
 	}
 
@@ -296,7 +298,7 @@ public class RequestParserTest extends TestWithCayenneMapping {
 		assertNotNull(clientEntity);
 		assertTrue(clientEntity.isIdIncluded());
 		assertEquals(1, clientEntity.getAttributes().size());
-		assertTrue(clientEntity.getAttributes().contains(E2.ADDRESS.getName()));
+		assertTrue(clientEntity.getAttributes().containsKey(E2.ADDRESS.getName()));
 
 		assertEquals(1, clientEntity.getChildren().size());
 		assertEquals(1, clientEntity.getChildren().entrySet().size());
@@ -306,7 +308,7 @@ public class RequestParserTest extends TestWithCayenneMapping {
 		assertFalse(e3ClientEntity.isIdIncluded());
 		assertEquals(1, e3ClientEntity.getAttributes().size());
 
-		assertTrue(e3ClientEntity.getAttributes().contains(E3.NAME.getName()));
+		assertTrue(e3ClientEntity.getAttributes().containsKey(E3.NAME.getName()));
 		assertTrue(e3ClientEntity.getChildren().isEmpty());
 	}
 
@@ -329,7 +331,7 @@ public class RequestParserTest extends TestWithCayenneMapping {
 		assertNotNull(clientEntity);
 		assertTrue(clientEntity.isIdIncluded());
 		assertEquals(1, clientEntity.getAttributes().size());
-		assertTrue(clientEntity.getAttributes().contains(E2.NAME.getName()));
+		assertTrue(clientEntity.getAttributes().containsKey(E2.NAME.getName()));
 
 		assertEquals(1, clientEntity.getChildren().size());
 		assertEquals(1, clientEntity.getChildren().entrySet().size());
@@ -339,7 +341,7 @@ public class RequestParserTest extends TestWithCayenneMapping {
 		assertTrue(e3ClientEntity.isIdIncluded());
 		assertEquals(1, e3ClientEntity.getAttributes().size());
 
-		assertTrue(e3ClientEntity.getAttributes().contains(E3.PHONE_NUMBER.getName()));
+		assertTrue(e3ClientEntity.getAttributes().containsKey(E3.PHONE_NUMBER.getName()));
 		assertTrue(e3ClientEntity.getChildren().isEmpty());
 	}
 
