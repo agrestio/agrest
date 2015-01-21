@@ -2,8 +2,6 @@ package com.nhl.link.rest.runtime.meta;
 
 import org.apache.cayenne.map.ObjRelationship;
 
-import com.nhl.link.rest.meta.LrDataMap;
-import com.nhl.link.rest.meta.LrEntity;
 import com.nhl.link.rest.meta.LrRelationship;
 
 /**
@@ -13,12 +11,10 @@ class CayenneLrRelationship implements LrRelationship {
 
 	private ObjRelationship objRelationship;
 	private Class<?> targetEntityType;
-	private LrDataMap dataMap;
 
-	CayenneLrRelationship(ObjRelationship objRelationship, Class<?> targetEntityType, LrDataMap dataMap) {
+	CayenneLrRelationship(ObjRelationship objRelationship, Class<?> targetEntityType) {
 		this.objRelationship = objRelationship;
 		this.targetEntityType = targetEntityType;
-		this.dataMap = dataMap;
 	}
 
 	@Override
@@ -27,9 +23,8 @@ class CayenneLrRelationship implements LrRelationship {
 	}
 
 	@Override
-	public LrEntity<?> getTargetEntity() {
-		// potentially deferred resolution of target entity from DataMap
-		return dataMap.getEntity(targetEntityType);
+	public Class<?> getTargetEntityType() {
+		return targetEntityType;
 	}
 
 	@Override

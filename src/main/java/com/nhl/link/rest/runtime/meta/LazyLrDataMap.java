@@ -68,7 +68,7 @@ public class LazyLrDataMap implements LrDataMap {
 		for (ObjRelationship r : objEntity.getRelationships()) {
 
 			Class<?> targetEntityType = resolver.getClassDescriptor(r.getTargetEntityName()).getObjectClass();
-			CayenneLrRelationship lrRelationship = new CayenneLrRelationship(r, targetEntityType, this);
+			CayenneLrRelationship lrRelationship = new CayenneLrRelationship(r, targetEntityType);
 			lrEntity.addRelationship(lrRelationship);
 		}
 

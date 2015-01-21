@@ -79,8 +79,8 @@ public class CayenneDao<T> implements EntityDao<T> {
 
 	@Override
 	public UpdateBuilder<T> idempotentFullSync() {
-		return new CayenneUpdateBuilder<>(type, UpdateOperation.idempotentFullSync, persister, encoderService, requestParser,
-				metadataService, constraintsHandler);
+		return new CayenneUpdateBuilder<>(type, UpdateOperation.idempotentFullSync, persister, encoderService,
+				requestParser, metadataService, constraintsHandler);
 	}
 
 	@Override
@@ -170,7 +170,7 @@ public class CayenneDao<T> implements EntityDao<T> {
 
 		DataObject src = (DataObject) getExistingObject(getType(), context, sourceId);
 
-		Class<?> targetType = lrRelationship.getTargetEntity().getType();
+		Class<?> targetType = metadataService.getLrEntity(lrRelationship.getTargetEntityType()).getType();
 
 		// among other things this call checks that the target exists
 		DataObject target = (DataObject) getExistingObject(targetType, context, targetId);

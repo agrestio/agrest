@@ -9,7 +9,7 @@ public interface LrRelationship {
 
 	String getName();
 
-	LrEntity<?> getTargetEntity();
+	Class<?> getTargetEntityType();
 
 	boolean isToMany();
 
