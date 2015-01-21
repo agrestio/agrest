@@ -212,10 +212,17 @@ class IncludeWorker {
 		// either there are no includes (taking into account Id) or all includes
 		// are relationships
 		if (!resourceEntity.isIdIncluded() && resourceEntity.getAttributes().isEmpty()) {
-			for (LrPersistentAttribute oa : resourceEntity.getLrEntity().getPersistentAttributes()) {
-				resourceEntity.getAttributes().put(oa.getName(), oa);
-				resourceEntity.getDefaultProperties().add(oa.getName());
+			
+			for (LrPersistentAttribute a : resourceEntity.getLrEntity().getPersistentAttributes()) {
+				resourceEntity.getAttributes().put(a.getName(), a);
+				resourceEntity.getDefaultProperties().add(a.getName());
 			}
+			
+			for(LrAttribute a : resourceEntity.getLrEntity().getTransientAttributes()) {
+				resourceEntity.getAttributes().put(a.getName(), a);
+				resourceEntity.getDefaultProperties().add(a.getName());
+			}
+			
 			// Id should be included by default
 			resourceEntity.includeId();
 		}
