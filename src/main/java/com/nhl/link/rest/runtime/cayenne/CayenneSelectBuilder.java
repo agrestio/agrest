@@ -2,19 +2,16 @@ package com.nhl.link.rest.runtime.cayenne;
 
 import java.util.Map.Entry;
 
-import javax.ws.rs.core.Response.Status;
-
 import org.apache.cayenne.exp.Expression;
 import org.apache.cayenne.exp.ExpressionFactory;
-import org.apache.cayenne.map.ObjEntity;
 import org.apache.cayenne.query.Ordering;
 import org.apache.cayenne.query.PrefetchTreeNode;
 import org.apache.cayenne.query.SelectQuery;
 
 import com.nhl.link.rest.DataResponse;
 import com.nhl.link.rest.ResourceEntity;
-import com.nhl.link.rest.LinkRestException;
 import com.nhl.link.rest.SelectBuilder;
+import com.nhl.link.rest.meta.LrPersistentAttribute;
 import com.nhl.link.rest.runtime.BaseSelectBuilder;
 import com.nhl.link.rest.runtime.constraints.IConstraintsHandler;
 import com.nhl.link.rest.runtime.encoder.IEncoderService;
@@ -86,16 +83,10 @@ class CayenneSelectBuilder<T> extends BaseSelectBuilder<T> implements SelectBuil
 
 			Class<T> root = getType();
 
-			ObjEntity entity = request.getEntity().getLrEntity().getObjEntity();
+			LrPersistentAttribute idAttribute = (LrPersistentAttribute) request.getEntity().getLrEntity().getId();
 
-			// sanity checking...
-			if (entity == null) {
-				throw new LinkRestException(Status.INTERNAL_SERVER_ERROR, "Unknown entity class: " + root);
-			}
-
-			String idName = entity.getPrimaryKeyNames().iterator().next();
 			SelectQuery<T> query = new SelectQuery<T>(root);
-			query.andQualifier(ExpressionFactory.matchDbExp(idName, id));
+			query.andQualifier(ExpressionFactory.matchDbExp(idAttribute.getDbAttribute().getName(), id));
 			return query;
 		}
 

@@ -12,6 +12,7 @@ public class DefaultLrEntity<T> implements LrEntity<T> {
 	private String name;
 	private Class<T> type;
 
+	private LrAttribute id;
 	private Map<String, LrAttribute> attributes;
 	private Map<String, LrRelationship> relationships;
 
@@ -35,6 +36,11 @@ public class DefaultLrEntity<T> implements LrEntity<T> {
 	@Override
 	public Class<T> getType() {
 		return type;
+	}
+
+	@Override
+	public LrAttribute getId() {
+		return id;
 	}
 
 	@Override
@@ -65,4 +71,7 @@ public class DefaultLrEntity<T> implements LrEntity<T> {
 		attributes.put(attribute.getName(), attribute);
 	}
 
+	public void setId(LrAttribute id) {
+		this.id = id;
+	}
 }

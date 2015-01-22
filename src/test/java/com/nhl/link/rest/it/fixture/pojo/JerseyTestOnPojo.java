@@ -25,13 +25,13 @@ import com.nhl.link.rest.it.fixture.pojo.model.P3;
 import com.nhl.link.rest.it.fixture.pojo.model.P4;
 import com.nhl.link.rest.it.fixture.pojo.model.P6;
 import com.nhl.link.rest.it.fixture.resource.PojoResource;
-import com.nhl.link.rest.meta.LrPersistentEntity;
+import com.nhl.link.rest.meta.LrEntity;
 import com.nhl.link.rest.meta.LrEntityBuilder;
 import com.nhl.link.rest.runtime.LinkRestBuilder;
 
 public class JerseyTestOnPojo extends JerseyTest {
 	protected static ServerRuntime runtime;
-	protected static List<LrPersistentEntity<?>> pojoModels;
+	protected static List<LrEntity<?>> pojoModels;
 
 	// using in-memory key/value "database" to store POJOs
 	protected static PojoDB pojoDB;

@@ -3,14 +3,11 @@ package com.nhl.link.rest.runtime.encoder;
 import java.sql.Time;
 import java.sql.Timestamp;
 import java.sql.Types;
-import java.util.Collection;
 import java.util.Date;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.cayenne.DataObject;
-import org.apache.cayenne.Persistent;
-import org.apache.cayenne.map.ObjAttribute;
 
 import com.nhl.link.rest.EntityProperty;
 import com.nhl.link.rest.ResourceEntity;
@@ -70,9 +67,9 @@ public class AttributeEncoderFactory implements IAttributeEncoderFactory {
 	}
 
 	protected EntityProperty buildAttributeProperty(ResourceEntity<?> entity, LrAttribute attribute) {
-		
+
 		boolean persistent = attribute instanceof LrPersistentAttribute;
-		
+
 		int jdbcType = persistent ? ((LrPersistentAttribute) attribute).getJdbcType() : Integer.MIN_VALUE;
 
 		Encoder encoder = buildEncoder(attribute.getJavaType(), jdbcType);
@@ -85,34 +82,24 @@ public class AttributeEncoderFactory implements IAttributeEncoderFactory {
 
 	protected EntityProperty buildIdProperty(ResourceEntity<?> entity) {
 
-		// Cayenne object - PK is an ObjectId
-		if (Persistent.class.isAssignableFrom(entity.getType())) {
+		LrAttribute id = entity.getLrEntity().getId();
 
-			Collection<ObjAttribute> pks = entity.getLrEntity().getObjEntity().getPrimaryKeys();
-			if (pks.size() != 1) {
-				String message = pks.size() == 0 ? "No pk columns" : "Multi-column PK is not supported";
-				throw new IllegalArgumentException(message);
-			}
-			
-			ObjAttribute attribute = pks.iterator().next();
-			int dbType = attribute.getDbAttribute() != null ? attribute.getDbAttribute().getType() : Integer.MIN_VALUE;
-			Encoder valueEncoder = buildEncoder(attribute.getType(), dbType);
+		if (id instanceof LrPersistentAttribute) {
 
+			// Cayenne object - PK is an ObjectId (even if it is also a
+			// meaningful object property)
+
+			LrPersistentAttribute persistentId = (LrPersistentAttribute) id;
+			Encoder valueEncoder = buildEncoder(persistentId.getJavaType(), persistentId.getJdbcType());
 			return PropertyBuilder.property(PersistentObjectIdPropertyReader.reader()).encodedWith(
 					new ObjectIdEncoder(valueEncoder));
+
+		} else {
+
+			// POJO - PK is an object property
+
+			return PropertyBuilder.property(BeanPropertyReader.reader(id.getName()));
 		}
-
-		// POJO - PK is an object property
-		Collection<String> pks = entity.getLrEntity().getObjEntity().getPrimaryKeyNames();
-
-		// compound PK entities and entities with no PK are not supported...
-		if (pks.size() != 1) {
-			throw new IllegalStateException(String.format("Unexpected PK size of %s for entity '%s'", entity
-					.getLrEntity().getName(), pks.size()));
-		}
-
-		String pkName = pks.iterator().next();
-		return PropertyBuilder.property(BeanPropertyReader.reader(pkName));
 	}
 
 	/**

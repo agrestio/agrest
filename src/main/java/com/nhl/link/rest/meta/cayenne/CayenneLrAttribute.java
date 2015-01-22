@@ -1,5 +1,8 @@
 package com.nhl.link.rest.meta.cayenne;
 
+import org.apache.cayenne.exp.parser.ASTObjPath;
+import org.apache.cayenne.exp.parser.ASTPath;
+import org.apache.cayenne.map.DbAttribute;
 import org.apache.cayenne.map.ObjAttribute;
 import org.apache.cayenne.util.ToStringBuilder;
 
@@ -22,8 +25,18 @@ public class CayenneLrAttribute implements LrPersistentAttribute {
 	}
 
 	@Override
+	public ASTPath getPathExp() {
+		return new ASTObjPath(getName());
+	}
+
+	@Override
 	public ObjAttribute getObjAttribute() {
 		return objAttribute;
+	}
+
+	@Override
+	public DbAttribute getDbAttribute() {
+		return objAttribute.getDbAttribute();
 	}
 
 	@Override

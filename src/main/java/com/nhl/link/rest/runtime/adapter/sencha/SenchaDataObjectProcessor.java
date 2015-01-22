@@ -2,10 +2,9 @@ package com.nhl.link.rest.runtime.adapter.sencha;
 
 import java.util.regex.Pattern;
 
-import org.apache.cayenne.map.ObjEntity;
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.nhl.link.rest.EntityUpdate;
+import com.nhl.link.rest.meta.LrEntity;
 import com.nhl.link.rest.parser.converter.GenericConverter;
 import com.nhl.link.rest.runtime.jackson.IJacksonService;
 import com.nhl.link.rest.runtime.parser.DataObjectProcessor;
@@ -31,7 +30,7 @@ public class SenchaDataObjectProcessor extends DataObjectProcessor {
 	}
 
 	@Override
-	protected void extractPK(EntityUpdate update, ObjEntity entity, JsonNode valueNode) {
+	protected void extractPK(EntityUpdate update, LrEntity<?> entity, JsonNode valueNode) {
 		Object value = GenericConverter.converter().value(valueNode);
 
 		// if PK is a Sencha temporary value, completely ignore it...

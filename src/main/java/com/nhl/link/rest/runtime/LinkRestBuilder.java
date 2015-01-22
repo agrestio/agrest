@@ -23,7 +23,7 @@ import org.apache.cayenne.validation.ValidationException;
 import com.nhl.link.rest.EntityConstraint;
 import com.nhl.link.rest.LinkRestException;
 import com.nhl.link.rest.encoder.EncoderFilter;
-import com.nhl.link.rest.meta.LrPersistentEntity;
+import com.nhl.link.rest.meta.LrEntity;
 import com.nhl.link.rest.meta.LrEntityBuilder;
 import com.nhl.link.rest.meta.LrEntityOverlay;
 import com.nhl.link.rest.provider.CayenneRuntimeExceptionMapper;
@@ -73,7 +73,7 @@ public class LinkRestBuilder {
 	private ILinkRestService linkRestService;
 
 	private List<EncoderFilter> encoderFilters;
-	private List<LrPersistentEntity<?>> extraEntities;
+	private List<LrEntity<?>> extraEntities;
 	private Map<String, LrEntityOverlay<?>> entityOverlays;
 	private Map<Class<?>, Class<?>> exceptionMappers;
 	private Collection<LinkRestAdapter> adapters;
@@ -166,7 +166,7 @@ public class LinkRestBuilder {
 	 * @since 1.12
 	 * @see LrEntityBuilder
 	 */
-	public LinkRestBuilder extraEntity(LrPersistentEntity<?> entity) {
+	public LinkRestBuilder extraEntity(LrEntity<?> entity) {
 		this.extraEntities.add(entity);
 		return this;
 	}
@@ -179,7 +179,7 @@ public class LinkRestBuilder {
 	 * @since 1.12
 	 * @see LrEntityBuilder
 	 */
-	public LinkRestBuilder extraEntities(Collection<? extends LrPersistentEntity<?>> entities) {
+	public LinkRestBuilder extraEntities(Collection<? extends LrEntity<?>> entities) {
 		this.extraEntities.addAll(entities);
 		return this;
 	}
@@ -253,7 +253,7 @@ public class LinkRestBuilder {
 
 				binder.<UpdateFilter> bindList(RequestParser.UPDATE_FILTER_LIST);
 				binder.<EncoderFilter> bindList(EncoderService.ENCODER_FILTER_LIST).addAll(encoderFilters);
-				binder.<LrPersistentEntity<?>> bindList(MetadataService.EXTRA_ENTITIES_LIST).addAll(extraEntities);
+				binder.<LrEntity<?>> bindList(MetadataService.EXTRA_ENTITIES_LIST).addAll(extraEntities);
 				binder.<LrEntityOverlay<?>> bindMap(MetadataService.ENTITY_OVERLAY_MAP).putAll(entityOverlays);
 
 				binder.<EntityConstraint> bindList(ConstraintsHandler.DEFAULT_READ_CONSTRAINTS_LIST);

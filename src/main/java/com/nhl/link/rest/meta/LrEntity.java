@@ -13,11 +13,13 @@ public interface LrEntity<T> {
 
 	Class<T> getType();
 
-	LrRelationship getRelationship(String name);
+	LrAttribute getId();
+
+	Collection<LrAttribute> getAttributes();
 
 	LrAttribute getAttribute(String name);
 
 	Collection<LrRelationship> getRelationships();
 
-	Collection<LrAttribute> getAttributes();
+	LrRelationship getRelationship(String name);
 }

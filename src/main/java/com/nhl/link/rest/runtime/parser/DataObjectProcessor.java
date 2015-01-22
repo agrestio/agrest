@@ -1,6 +1,5 @@
 package com.nhl.link.rest.runtime.parser;
 
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
@@ -8,8 +7,6 @@ import javax.ws.rs.core.Response.Status;
 
 import org.apache.cayenne.map.DbJoin;
 import org.apache.cayenne.map.DbRelationship;
-import org.apache.cayenne.map.ObjAttribute;
-import org.apache.cayenne.map.ObjEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,7 +14,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.nhl.link.rest.EntityUpdate;
 import com.nhl.link.rest.LinkRestException;
 import com.nhl.link.rest.UpdateResponse;
-import com.nhl.link.rest.meta.LrPersistentEntity;
+import com.nhl.link.rest.meta.LrAttribute;
+import com.nhl.link.rest.meta.LrEntity;
 import com.nhl.link.rest.meta.LrPersistentAttribute;
 import com.nhl.link.rest.meta.LrPersistentRelationship;
 import com.nhl.link.rest.meta.LrRelationship;
@@ -71,7 +69,7 @@ public class DataObjectProcessor {
 	}
 
 	private void processObject(UpdateResponse<?> response, JsonNode objectNode) {
-		LrPersistentEntity<?> entity = response.getEntity().getLrEntity();
+		LrEntity<?> entity = response.getEntity().getLrEntity();
 
 		EntityUpdate update = new EntityUpdate();
 
@@ -81,14 +79,14 @@ public class DataObjectProcessor {
 
 			if (PathConstants.ID_PK_ATTRIBUTE.equals(key)) {
 				JsonNode valueNode = objectNode.get(key);
-				extractPK(update, entity.getObjEntity(), valueNode);
+				extractPK(update, entity, valueNode);
 				continue;
 			}
 
-			LrPersistentAttribute attribute = entity.getPersistentAttribute(key);
+			LrAttribute attribute = entity.getAttribute(key);
 			if (attribute != null) {
 				JsonNode valueNode = objectNode.get(key);
-				Object value = extractValue(valueNode, attribute.getObjAttribute());
+				Object value = extractValue(valueNode, attribute.getJavaType());
 				update.getValues().put(key, value);
 				continue;
 			}
@@ -127,22 +125,17 @@ public class DataObjectProcessor {
 		response.getUpdates().add(update);
 	}
 
-	protected void extractPK(EntityUpdate update, ObjEntity entity, JsonNode valueNode) {
+	protected void extractPK(EntityUpdate update, LrEntity<?> entity, JsonNode valueNode) {
 
-		Collection<ObjAttribute> pks = entity.getPrimaryKeys();
-		ObjAttribute pk = pks.size() == 1 ? pks.iterator().next() : null;
-		if (pk == null) {
-			throw new IllegalStateException(String.format(
-					"Compound ID should't be specified explicitly for entity '%s'", entity.getName()));
-		}
+		LrPersistentAttribute id = (LrPersistentAttribute) entity.getId();
 
-		Object value = extractValue(valueNode, pk);
-		update.getOrCreateId().put(pk.getDbAttributeName(), value);
+		Object value = extractValue(valueNode, id.getJavaType());
+		update.getOrCreateId().put(id.getDbAttribute().getName(), value);
 	}
 
-	protected Object extractValue(JsonNode valueNode, ObjAttribute attribute) {
+	protected Object extractValue(JsonNode valueNode, String javaType) {
 
-		JsonValueConverter converter = converterFactory.converter(attribute.getType());
+		JsonValueConverter converter = converterFactory.converter(javaType);
 
 		try {
 			return converter.value(valueNode);

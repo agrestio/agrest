@@ -33,6 +33,7 @@ public class LrEntityBuilder<T> {
 	private Class<T> type;
 	private PropertyDescriptor[] propertyDescriptors;
 	private Package entityPackage;
+	private String idProperty;
 
 	LrEntityBuilder(Class<T> type) {
 		this.type = type;
@@ -46,6 +47,11 @@ public class LrEntityBuilder<T> {
 		DefaultLrEntity<T> e = new DefaultLrEntity<>(type);
 		appendProperties(e);
 		return e;
+	}
+
+	public LrEntityBuilder<T> id(String idProperty) {
+		this.idProperty = idProperty;
+		return this;
 	}
 
 	private void appendProperties(DefaultLrEntity<T> entity) {
@@ -80,9 +86,13 @@ public class LrEntityBuilder<T> {
 		}
 
 		DefaultLrAttribute a = new DefaultLrAttribute(pd.getName(), targetType.getName());
-		// TODO: set ID flag
 
-		entity.addAttribute(a);
+		if (a.getName().equals(idProperty)) {
+			entity.setId(a);
+		} else {
+			entity.addAttribute(a);
+		}
+		
 		return true;
 	}
 

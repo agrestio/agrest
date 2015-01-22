@@ -1,5 +1,7 @@
 package com.nhl.link.rest.meta;
 
+import org.apache.cayenne.exp.parser.ASTPath;
+
 /**
  * Represents an entity "simple" property.
  * 
@@ -10,4 +12,6 @@ public interface LrAttribute {
 	String getName();
 
 	String getJavaType();
+	
+	ASTPath getPathExp();
 }

@@ -5,10 +5,8 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import javax.ws.rs.core.Response.Status;
 
-import org.apache.cayenne.exp.parser.ASTDbPath;
 import org.apache.cayenne.exp.parser.ASTObjPath;
 import org.apache.cayenne.exp.parser.ASTPath;
-import org.apache.cayenne.map.ObjAttribute;
 
 import com.nhl.link.rest.LinkRestException;
 import com.nhl.link.rest.meta.LrAttribute;
@@ -23,17 +21,15 @@ class EntityPathCache {
 	private Map<String, PathDescriptor> pathCache;
 	private IMetadataService metadataService;
 
-	EntityPathCache(LrEntity<?> entity, IMetadataService metadataService) {
+	EntityPathCache(final LrEntity<?> entity, IMetadataService metadataService) {
 		this.entity = entity;
 		this.metadataService = metadataService;
 		this.pathCache = new ConcurrentHashMap<>();
 
 		// immediately cache a special entry matching "id" constant
-
-		final ObjAttribute pk = entity.getObjEntity().getPrimaryKeys().iterator().next();
-		final ASTPath dbPath = new ASTDbPath(pk.getDbAttributeName());
-
 		pathCache.put(PathConstants.ID_PK_ATTRIBUTE, new PathDescriptor() {
+
+			LrAttribute id = entity.getId();
 
 			@Override
 			public boolean isAttribute() {
@@ -42,12 +38,12 @@ class EntityPathCache {
 
 			@Override
 			public String getType() {
-				return pk.getType();
+				return id.getJavaType();
 			}
 
 			@Override
 			public ASTPath getPathExp() {
-				return dbPath;
+				return id.getPathExp();
 			}
 		});
 	}

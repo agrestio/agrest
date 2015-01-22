@@ -1,5 +1,6 @@
 package com.nhl.link.rest.meta.cayenne;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -7,6 +8,7 @@ import java.util.concurrent.ConcurrentMap;
 
 import javax.ws.rs.core.Response.Status;
 
+import org.apache.cayenne.map.DbAttribute;
 import org.apache.cayenne.map.EntityResolver;
 import org.apache.cayenne.map.ObjAttribute;
 import org.apache.cayenne.map.ObjEntity;
@@ -14,10 +16,12 @@ import org.apache.cayenne.map.ObjRelationship;
 
 import com.nhl.link.rest.LinkRestException;
 import com.nhl.link.rest.meta.DefaultLrAttribute;
+import com.nhl.link.rest.meta.LrAttribute;
 import com.nhl.link.rest.meta.LrDataMap;
 import com.nhl.link.rest.meta.LrEntity;
 import com.nhl.link.rest.meta.LrEntityOverlay;
 import com.nhl.link.rest.meta.LrPersistentEntity;
+import com.nhl.link.rest.runtime.parser.PathConstants;
 
 /**
  * An {@link LrDataMap} that can resolve metadata from Cayenne mapping,
@@ -57,7 +61,7 @@ public class CayenneAwareLrDataMap implements LrDataMap {
 			e = existingEntity != null ? existingEntity : newEntity;
 		}
 
-		return (LrPersistentEntity<T>) e;
+		return (LrEntity<T>) e;
 	}
 
 	private <T> LrPersistentEntity<T> createCayenneEntity(Class<T> type) {
@@ -81,6 +85,8 @@ public class CayenneAwareLrDataMap implements LrDataMap {
 			lrEntity.addRelationship(lrRelationship);
 		}
 
+		lrEntity.setId(createIdAttribute(objEntity));
+
 		LrEntityOverlay<?> overlay = entityOverlays.get(type.getName());
 		if (overlay != null) {
 
@@ -92,6 +98,20 @@ public class CayenneAwareLrDataMap implements LrDataMap {
 		}
 
 		return lrEntity;
+	}
+
+	private LrAttribute createIdAttribute(ObjEntity objEntity) {
+
+		Collection<DbAttribute> pks = objEntity.getDbEntity().getPrimaryKeys();
+		if (pks.size() > 1) {
+			throw new IllegalStateException("TODO: Multi-column pk is yet unsupported. Entity: " + objEntity.getName());
+		}
+
+		DbAttribute pk = pks.iterator().next();
+
+		ObjAttribute attribute = objEntity.getAttributeForDbAttribute(pk);
+		return attribute != null ? new CayenneLrAttribute(attribute) : new CayenneLrDbAttribute(
+				PathConstants.ID_PK_ATTRIBUTE, pk);
 	}
 
 }

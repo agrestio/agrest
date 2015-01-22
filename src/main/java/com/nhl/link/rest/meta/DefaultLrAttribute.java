@@ -1,5 +1,7 @@
 package com.nhl.link.rest.meta;
 
+import org.apache.cayenne.exp.parser.ASTObjPath;
+import org.apache.cayenne.exp.parser.ASTPath;
 import org.apache.cayenne.util.ToStringBuilder;
 
 /**
@@ -18,6 +20,11 @@ public class DefaultLrAttribute implements LrAttribute {
 	@Override
 	public String getName() {
 		return name;
+	}
+	
+	@Override
+	public ASTPath getPathExp() {
+		return new ASTObjPath(name);
 	}
 
 	@Override

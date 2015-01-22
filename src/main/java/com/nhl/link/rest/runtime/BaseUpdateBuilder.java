@@ -13,8 +13,6 @@ import org.apache.cayenne.ObjectId;
 import org.apache.cayenne.Persistent;
 import org.apache.cayenne.exp.Property;
 import org.apache.cayenne.map.DbRelationship;
-import org.apache.cayenne.map.ObjAttribute;
-import org.apache.cayenne.map.ObjEntity;
 import org.apache.cayenne.map.ObjRelationship;
 
 import com.nhl.link.rest.EntityParent;
@@ -24,6 +22,8 @@ import com.nhl.link.rest.ObjectMapperFactory;
 import com.nhl.link.rest.UpdateBuilder;
 import com.nhl.link.rest.UpdateResponse;
 import com.nhl.link.rest.constraints.ConstraintsBuilder;
+import com.nhl.link.rest.meta.LrEntity;
+import com.nhl.link.rest.meta.LrPersistentAttribute;
 import com.nhl.link.rest.meta.LrPersistentRelationship;
 import com.nhl.link.rest.meta.LrRelationship;
 import com.nhl.link.rest.runtime.constraints.IConstraintsHandler;
@@ -193,19 +193,12 @@ public abstract class BaseUpdateBuilder<T> implements UpdateBuilder<T> {
 				response.getUpdates().add(new EntityUpdate());
 			}
 
-			// TODO: duplicate code from DataObjectProcessor - unify in a single
-			// place
-			ObjEntity entity = response.getEntity().getLrEntity().getObjEntity();
-			Collection<ObjAttribute> pks = entity.getPrimaryKeys();
-			if (pks.size() != 1) {
-				throw new IllegalStateException(String.format(
-						"Compound ID should't be specified explicitly for entity '%s'", entity.getName()));
-			}
+			LrEntity<T> entity = response.getEntity().getLrEntity();
 
-			ObjAttribute pk = pks.iterator().next();
+			LrPersistentAttribute pk = (LrPersistentAttribute) entity.getId();
 
 			EntityUpdate u = response.getFirst();
-			u.getOrCreateId().put(pk.getDbAttributeName(), id);
+			u.getOrCreateId().put(pk.getDbAttribute().getName(), id);
 			u.setExplicitId();
 		}
 	}
