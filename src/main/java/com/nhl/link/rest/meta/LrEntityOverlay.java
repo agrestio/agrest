@@ -4,8 +4,9 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * A model of entity properties that can not be derived from persistent
- * metadata.
+ * A collection of entity properties that are not derived from persistent
+ * metadata. An {@link LrEntityOverlay} is provided to LinkRest by the app, and
+ * are merged into a corresponding {@link LrPersistentEntity}.
  * 
  * @since 1.12
  */

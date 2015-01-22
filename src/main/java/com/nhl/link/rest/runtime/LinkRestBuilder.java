@@ -18,12 +18,13 @@ import org.apache.cayenne.di.Binder;
 import org.apache.cayenne.di.DIBootstrap;
 import org.apache.cayenne.di.Injector;
 import org.apache.cayenne.di.Module;
-import org.apache.cayenne.map.DataMap;
 import org.apache.cayenne.validation.ValidationException;
 
 import com.nhl.link.rest.EntityConstraint;
 import com.nhl.link.rest.LinkRestException;
 import com.nhl.link.rest.encoder.EncoderFilter;
+import com.nhl.link.rest.meta.LrPersistentEntity;
+import com.nhl.link.rest.meta.LrEntityBuilder;
 import com.nhl.link.rest.meta.LrEntityOverlay;
 import com.nhl.link.rest.provider.CayenneRuntimeExceptionMapper;
 import com.nhl.link.rest.provider.LinkRestExceptionMapper;
@@ -72,13 +73,13 @@ public class LinkRestBuilder {
 	private ILinkRestService linkRestService;
 
 	private List<EncoderFilter> encoderFilters;
-	private List<DataMap> nonPersistentEntities;
+	private List<LrPersistentEntity<?>> extraEntities;
 	private Map<String, LrEntityOverlay<?>> entityOverlays;
 	private Map<Class<?>, Class<?>> exceptionMappers;
 	private Collection<LinkRestAdapter> adapters;
 
 	public LinkRestBuilder() {
-		this.nonPersistentEntities = new ArrayList<>();
+		this.extraEntities = new ArrayList<>();
 		this.entityOverlays = new HashMap<>();
 		this.encoderFilters = new ArrayList<>();
 		this.linkRestServiceType = EntityDaoLinkRestService.class;
@@ -158,10 +159,28 @@ public class LinkRestBuilder {
 	}
 
 	/**
-	 * Adds a model to LinkRest runtime containing non-persistent entities.
+	 * Adds a user-configured entity to the LinkRest runtime model. Usually used
+	 * for POJOs, as Cayenne entities are all automatically loaded from
+	 * CayenneRuntime.
+	 * 
+	 * @since 1.12
+	 * @see LrEntityBuilder
 	 */
-	public LinkRestBuilder nonPersistentEntities(DataMap dataMap) {
-		this.nonPersistentEntities.add(dataMap);
+	public LinkRestBuilder extraEntity(LrPersistentEntity<?> entity) {
+		this.extraEntities.add(entity);
+		return this;
+	}
+
+	/**
+	 * Adds a list of user-configured entities to the LinkRest runtime model.
+	 * Usually used for POJOs, as Cayenne entities are all automatically loaded
+	 * from CayenneRuntime.
+	 * 
+	 * @since 1.12
+	 * @see LrEntityBuilder
+	 */
+	public LinkRestBuilder extraEntities(Collection<? extends LrPersistentEntity<?>> entities) {
+		this.extraEntities.addAll(entities);
 		return this;
 	}
 
@@ -234,7 +253,7 @@ public class LinkRestBuilder {
 
 				binder.<UpdateFilter> bindList(RequestParser.UPDATE_FILTER_LIST);
 				binder.<EncoderFilter> bindList(EncoderService.ENCODER_FILTER_LIST).addAll(encoderFilters);
-				binder.<DataMap> bindList(MetadataService.NON_PERSISTENT_ENTITIES_LIST).addAll(nonPersistentEntities);
+				binder.<LrPersistentEntity<?>> bindList(MetadataService.EXTRA_ENTITIES_LIST).addAll(extraEntities);
 				binder.<LrEntityOverlay<?>> bindMap(MetadataService.ENTITY_OVERLAY_MAP).putAll(entityOverlays);
 
 				binder.<EntityConstraint> bindList(ConstraintsHandler.DEFAULT_READ_CONSTRAINTS_LIST);

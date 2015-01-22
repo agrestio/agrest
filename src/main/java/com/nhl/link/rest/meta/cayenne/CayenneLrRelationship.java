@@ -1,18 +1,18 @@
-package com.nhl.link.rest.runtime.meta;
+package com.nhl.link.rest.meta.cayenne;
 
 import org.apache.cayenne.map.ObjRelationship;
 
-import com.nhl.link.rest.meta.LrRelationship;
+import com.nhl.link.rest.meta.LrPersistentRelationship;
 
 /**
  * @since 1.12
  */
-class CayenneLrRelationship implements LrRelationship {
+public class CayenneLrRelationship implements LrPersistentRelationship {
 
 	private ObjRelationship objRelationship;
 	private Class<?> targetEntityType;
 
-	CayenneLrRelationship(ObjRelationship objRelationship, Class<?> targetEntityType) {
+	public CayenneLrRelationship(ObjRelationship objRelationship, Class<?> targetEntityType) {
 		this.objRelationship = objRelationship;
 		this.targetEntityType = targetEntityType;
 	}

@@ -6,13 +6,9 @@ import static org.mockito.Mockito.mock;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import org.apache.cayenne.map.DataMap;
-import org.apache.cayenne.map.EntityResolver;
-import org.apache.cayenne.map.ObjEntity;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -23,31 +19,21 @@ import com.nhl.link.rest.ResourceEntity;
 import com.nhl.link.rest.encoder.Encoder;
 import com.nhl.link.rest.encoder.EncoderFilter;
 import com.nhl.link.rest.it.fixture.pojo.model.P1;
-import com.nhl.link.rest.it.fixture.pojo.model.P2;
-import com.nhl.link.rest.it.fixture.pojo.model.P3;
-import com.nhl.link.rest.it.fixture.pojo.model.P4;
 import com.nhl.link.rest.it.fixture.pojo.model.P6;
-import com.nhl.link.rest.meta.LrDataMap;
+import com.nhl.link.rest.meta.DefaultLrAttribute;
 import com.nhl.link.rest.meta.LrEntity;
-import com.nhl.link.rest.meta.LrEntityOverlay;
+import com.nhl.link.rest.meta.LrEntityBuilder;
 import com.nhl.link.rest.runtime.jackson.JacksonService;
-import com.nhl.link.rest.runtime.meta.DataMapBuilder;
-import com.nhl.link.rest.runtime.meta.DefaultLrAttribute;
-import com.nhl.link.rest.runtime.meta.LazyLrDataMap;
 import com.nhl.link.rest.runtime.semantics.RelationshipMapper;
 
 public class EncoderService_Pojo_Test {
 
 	private EncoderService encoderService;
 	private List<EncoderFilter> filters;
-	private DataMap dataMap;
-	private LrDataMap lrDataMap;
 
 	@Before
 	public void setUp() {
 
-		this.dataMap = DataMapBuilder.newBuilder("__").addEntities(P1.class, P2.class, P3.class, P4.class)
-				.addEntity(P6.class).withId("stringId").toDataMap();
 		this.filters = new ArrayList<>();
 
 		IAttributeEncoderFactory attributeEncoderFactory = new AttributeEncoderFactory();
@@ -56,13 +42,12 @@ public class EncoderService_Pojo_Test {
 		this.encoderService = new EncoderService(this.filters, attributeEncoderFactory, stringConverterFactory,
 				new RelationshipMapper());
 
-		lrDataMap = new LazyLrDataMap(new EntityResolver(Arrays.asList(dataMap)),
-				Collections.<String, LrEntityOverlay<?>> emptyMap());
 	}
 
 	@Test
 	public void testEncode_SimplePojo_noId() throws IOException {
-		ResourceEntity<P1> descriptor = getResourceEntity(P1.class);
+		LrEntity<P1> p1lre = LrEntityBuilder.build(P1.class);
+		ResourceEntity<P1> descriptor = new ResourceEntity<P1>(p1lre);
 		descriptor.getAttributes().put("name", new DefaultLrAttribute("name", String.class.getName()));
 
 		DataResponse<P1> builder = DataResponse.forType(P1.class).resourceEntity(descriptor);
@@ -79,7 +64,8 @@ public class EncoderService_Pojo_Test {
 		p6.setStringId("myid");
 		p6.setIntProp(4);
 
-		ResourceEntity<P6> descriptor = getResourceEntity(P6.class);
+		LrEntity<P6> p6lre = LrEntityBuilder.builder(P6.class).id("stringId").build();
+		ResourceEntity<P6> descriptor = new ResourceEntity<P6>(p6lre);
 		descriptor.getAttributes().put("intProp", new DefaultLrAttribute("intProp", Integer.class.getName()));
 		descriptor.includeId();
 		DataResponse<P6> builder = DataResponse.forObjects(Collections.singletonList(p6)).resourceEntity(descriptor);
@@ -103,15 +89,4 @@ public class EncoderService_Pojo_Test {
 		return new String(out.toByteArray(), "UTF-8");
 	}
 
-	protected <T> LrEntity<T> getLrEntity(Class<T> type) {
-		return lrDataMap.getEntity(type);
-	}
-
-	protected ObjEntity getEntity(Class<?> type) {
-		return dataMap.getObjEntity(type);
-	}
-
-	protected <T> ResourceEntity<T> getResourceEntity(Class<T> type) {
-		return new ResourceEntity<T>(lrDataMap.getEntity(type));
-	}
 }

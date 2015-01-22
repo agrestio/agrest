@@ -21,7 +21,7 @@ import com.nhl.link.rest.encoder.EncoderFilter;
 import com.nhl.link.rest.it.fixture.cayenne.E1;
 import com.nhl.link.rest.it.fixture.cayenne.E2;
 import com.nhl.link.rest.it.fixture.cayenne.E3;
-import com.nhl.link.rest.meta.LrEntity;
+import com.nhl.link.rest.meta.LrPersistentEntity;
 import com.nhl.link.rest.meta.LrRelationship;
 import com.nhl.link.rest.runtime.constraints.IConstraintsHandler;
 import com.nhl.link.rest.runtime.encoder.AttributeEncoderFactory;
@@ -80,7 +80,7 @@ public class CayenneSelectBuilderTest extends TestWithCayenneMapping {
 		ResourceEntity<E2> resultFilter = getResourceEntity(E2.class);
 		LrRelationship incoming = resultFilter.getLrEntity().getRelationship(E2.E3S.getName());
 		@SuppressWarnings("unchecked")
-		LrEntity<E3> target = mock(LrEntity.class);
+		LrPersistentEntity<E3> target = mock(LrPersistentEntity.class);
 		resultFilter.getChildren().put(E2.E3S.getName(), new ResourceEntity<E3>(target, incoming));
 
 		DataResponse<E2> request = DataResponse.forType(E2.class).resourceEntity(resultFilter);

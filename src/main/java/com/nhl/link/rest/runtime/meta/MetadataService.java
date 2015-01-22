@@ -1,14 +1,11 @@
 package com.nhl.link.rest.runtime.meta;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
 import javax.ws.rs.core.Response.Status;
 
 import org.apache.cayenne.di.Inject;
-import org.apache.cayenne.map.DataMap;
 import org.apache.cayenne.map.EntityResolver;
 import org.apache.cayenne.query.Select;
 
@@ -18,13 +15,23 @@ import com.nhl.link.rest.meta.LrDataMap;
 import com.nhl.link.rest.meta.LrEntity;
 import com.nhl.link.rest.meta.LrEntityOverlay;
 import com.nhl.link.rest.meta.LrRelationship;
+import com.nhl.link.rest.meta.cayenne.CayenneAwareLrDataMap;
 import com.nhl.link.rest.runtime.cayenne.ICayennePersister;
 
 public class MetadataService implements IMetadataService {
 
-	public static final String NON_PERSISTENT_ENTITIES_LIST = "linkrest.meta.nonpersistent.list";
+	/**
+	 * A DI key that allows loading arbitrary user-provided entities into
+	 * LinkRest metadata store. Usually used to map POJO entities.
+	 * 
+	 * @since 1.12
+	 */
+	public static final String EXTRA_ENTITIES_LIST = "linkrest.meta.entity.extras.list";
 
 	/**
+	 * A DI key that allows to expand the model of persistent entities coming
+	 * form Cayenne.
+	 * 
 	 * @since 1.12
 	 */
 	public static final String ENTITY_OVERLAY_MAP = "linkrest.meta.entity.overlay.map";
@@ -32,27 +39,12 @@ public class MetadataService implements IMetadataService {
 	private EntityResolver entityResolver;
 	private LrDataMap dataMap;
 
-	public MetadataService(@Inject(NON_PERSISTENT_ENTITIES_LIST) List<DataMap> nonPersistentEntities,
+	public MetadataService(@Inject(EXTRA_ENTITIES_LIST) List<LrEntity<?>> extraEntities,
 			@Inject(ENTITY_OVERLAY_MAP) Map<String, LrEntityOverlay<?>> entityOverlays,
 			@Inject ICayennePersister cayenneService) {
 
-		EntityResolver cayenneResolver = cayenneService.entityResolver();
-		if (nonPersistentEntities.isEmpty()) {
-			this.entityResolver = cayenneResolver;
-		} else {
-
-			// clone Cayenne resolver to avoid polluting Cayenne stack with
-			// POJOs
-
-			// TODO: what do we do with POJOs under the new LrDataMap design?
-			// Should those be their own LrEntities?
-
-			Collection<DataMap> dataMaps = new ArrayList<>(cayenneResolver.getDataMaps());
-			dataMaps.addAll(nonPersistentEntities);
-			this.entityResolver = new EntityResolver(dataMaps);
-		}
-
-		this.dataMap = new LazyLrDataMap(entityResolver, entityOverlays);
+		this.entityResolver = cayenneService.entityResolver();
+		this.dataMap = new CayenneAwareLrDataMap(entityResolver, extraEntities, entityOverlays);
 	}
 
 	/**

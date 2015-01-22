@@ -8,7 +8,7 @@ import javax.ws.rs.core.Response.Status;
 
 import com.nhl.link.rest.EntityConstraint;
 import com.nhl.link.rest.LinkRestException;
-import com.nhl.link.rest.meta.LrPersistentAttribute;
+import com.nhl.link.rest.meta.LrAttribute;
 import com.nhl.link.rest.meta.LrEntity;
 import com.nhl.link.rest.meta.LrRelationship;
 
@@ -58,7 +58,7 @@ abstract class EntityConstraintSource {
 		Set<String> relationships = new HashSet<>();
 
 		for (String p : ad.properties) {
-			LrPersistentAttribute a = entity.getPersistentAttribute(p);
+			LrAttribute a = entity.getAttribute(p);
 			if (a != null) {
 				attributes.add(p);
 				continue;
@@ -74,7 +74,7 @@ abstract class EntityConstraintSource {
 
 		}
 
-		boolean allowsAllAttributes = attributes.size() == entity.getPersistentAttributes().size();
+		boolean allowsAllAttributes = attributes.size() == entity.getAttributes().size();
 		return new DefaultEntityConstraint(entity.getName(), ad.id, allowsAllAttributes, attributes, relationships);
 	}
 

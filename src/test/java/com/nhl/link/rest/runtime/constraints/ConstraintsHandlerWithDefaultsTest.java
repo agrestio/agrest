@@ -19,15 +19,15 @@ import com.nhl.link.rest.ResourceEntity;
 import com.nhl.link.rest.constraints.ConstraintsBuilder;
 import com.nhl.link.rest.it.fixture.cayenne.E1;
 import com.nhl.link.rest.it.fixture.cayenne.E2;
-import com.nhl.link.rest.meta.LrEntity;
+import com.nhl.link.rest.meta.LrPersistentEntity;
 import com.nhl.link.rest.runtime.meta.IMetadataService;
 import com.nhl.link.rest.unit.TestWithCayenneMapping;
 
 public class ConstraintsHandlerWithDefaultsTest extends TestWithCayenneMapping {
 
 	private ConstraintsHandler constraintHandler;
-	private LrEntity<E1> lre1;
-	private LrEntity<E2> lre2;
+	private LrPersistentEntity<E1> lre1;
+	private LrPersistentEntity<E2> lre2;
 
 	@SuppressWarnings("unchecked")
 	@Before
@@ -44,12 +44,12 @@ public class ConstraintsHandlerWithDefaultsTest extends TestWithCayenneMapping {
 		ObjEntity e1 = runtime.getChannel().getEntityResolver().getObjEntity(E1.class);
 		ObjEntity e2 = runtime.getChannel().getEntityResolver().getObjEntity(E2.class);
 
-		lre1 = mock(LrEntity.class);
+		lre1 = mock(LrPersistentEntity.class);
 		when(lre1.getObjEntity()).thenReturn(e1);
 		when(lre1.getType()).thenReturn(E1.class);
 		when(lre1.getName()).thenReturn(e1.getName());
 
-		lre2 = mock(LrEntity.class);
+		lre2 = mock(LrPersistentEntity.class);
 		when(lre2.getObjEntity()).thenReturn(e2);
 		when(lre2.getType()).thenReturn(E2.class);
 		when(lre2.getName()).thenReturn(e2.getName());

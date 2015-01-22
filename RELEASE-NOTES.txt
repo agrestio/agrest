@@ -2,7 +2,7 @@ Release 1.12
 
 #67 Support for per-entity non-persistent properties
 #68 Rename Entity to ResourceEntity
-#69 Own metadata layer #69 
+#69 Own metadata layer
 #70 Added JSON converters for java.sql date/time types
 #72 Refactor TreeConstraints into visitor-based ConstraintsBuilder
 

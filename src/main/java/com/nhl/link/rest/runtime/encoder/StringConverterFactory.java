@@ -12,8 +12,9 @@ import com.nhl.link.rest.encoder.converter.ISODateConverter;
 import com.nhl.link.rest.encoder.converter.ISODateTimeConverter;
 import com.nhl.link.rest.encoder.converter.ISOTimeConverter;
 import com.nhl.link.rest.encoder.converter.StringConverter;
-import com.nhl.link.rest.meta.LrPersistentAttribute;
+import com.nhl.link.rest.meta.LrAttribute;
 import com.nhl.link.rest.meta.LrEntity;
+import com.nhl.link.rest.meta.LrPersistentAttribute;
 
 public class StringConverterFactory implements IStringConverterFactory {
 
@@ -49,7 +50,7 @@ public class StringConverterFactory implements IStringConverterFactory {
 			return GenericConverter.converter();
 		}
 
-		LrPersistentAttribute attribute = entity.getPersistentAttribute(attributeName);
+		LrAttribute attribute = entity.getAttribute(attributeName);
 
 		if (attribute == null) {
 			throw new LinkRestException(Status.BAD_REQUEST, "Invalid attribute: '" + entity.getName() + "."
@@ -58,16 +59,21 @@ public class StringConverterFactory implements IStringConverterFactory {
 
 		if (AttributeEncoderFactory.UTIL_DATE.equals(attribute.getJavaType())) {
 
-			int dbType = attribute.getJdbcType();
-			if (dbType == Types.DATE) {
-				return ISODateConverter.converter();
+			if (attribute instanceof LrPersistentAttribute) {
+				LrPersistentAttribute persistentAttribute = (LrPersistentAttribute) attribute;
+				int dbType = persistentAttribute.getJdbcType();
+
+				if (dbType == Types.DATE) {
+					return ISODateConverter.converter();
+				}
+
+				if (dbType == Types.TIME) {
+					return ISOTimeConverter.converter();
+				}
 			}
-			if (dbType == Types.TIME) {
-				return ISOTimeConverter.converter();
-			} else {
-				// JDBC TIMESTAMP or something entirely unrecognized
-				return ISODateTimeConverter.converter();
-			}
+
+			// JDBC TIMESTAMP or something entirely unrecognized
+			return ISODateTimeConverter.converter();
 		}
 		// less common cases of mapping to java.sql.* types...
 		else if (AttributeEncoderFactory.SQL_TIMESTAMP.equals(attribute.getJavaType())) {

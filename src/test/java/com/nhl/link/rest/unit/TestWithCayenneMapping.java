@@ -11,20 +11,19 @@ import org.apache.cayenne.configuration.server.ServerRuntime;
 import org.apache.cayenne.di.Binder;
 import org.apache.cayenne.di.Module;
 import org.apache.cayenne.exp.Property;
-import org.apache.cayenne.map.DataMap;
 import org.apache.cayenne.map.ObjEntity;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 
 import com.nhl.link.rest.ResourceEntity;
+import com.nhl.link.rest.meta.DefaultLrAttribute;
 import com.nhl.link.rest.meta.LrDataMap;
 import com.nhl.link.rest.meta.LrEntity;
 import com.nhl.link.rest.meta.LrEntityOverlay;
+import com.nhl.link.rest.meta.cayenne.CayenneAwareLrDataMap;
 import com.nhl.link.rest.runtime.cayenne.ICayennePersister;
-import com.nhl.link.rest.runtime.meta.DefaultLrAttribute;
 import com.nhl.link.rest.runtime.meta.IMetadataService;
-import com.nhl.link.rest.runtime.meta.LazyLrDataMap;
 import com.nhl.link.rest.runtime.meta.MetadataService;
 
 /**
@@ -61,8 +60,8 @@ public class TestWithCayenneMapping {
 
 	@Before
 	public void initLrDataMap() {
-		lrDataMap = new LazyLrDataMap(runtime.getChannel().getEntityResolver(),
-				Collections.<String, LrEntityOverlay<?>> emptyMap());
+		lrDataMap = new CayenneAwareLrDataMap(runtime.getChannel().getEntityResolver(),
+				Collections.<LrEntity<?>> emptyList(), Collections.<String, LrEntityOverlay<?>> emptyMap());
 
 		ObjectContext sharedContext = runtime.newContext();
 
@@ -75,7 +74,7 @@ public class TestWithCayenneMapping {
 	}
 
 	protected IMetadataService createMetadataService() {
-		return new MetadataService(Collections.<DataMap> emptyList(),
+		return new MetadataService(Collections.<LrEntity<?>> emptyList(),
 				Collections.<String, LrEntityOverlay<?>> emptyMap(), mockCayennePersister);
 	}
 

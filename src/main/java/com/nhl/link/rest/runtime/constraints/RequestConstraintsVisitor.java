@@ -87,11 +87,7 @@ public class RequestConstraintsVisitor implements ConstraintVisitor {
 
 	@Override
 	public void visitIncludeAllAttributesConstraint() {
-		for (LrAttribute a : entity.getPersistentAttributes()) {
-			this.attributes.add(a.getName());
-		}
-
-		for (LrAttribute a : entity.getTransientAttributes()) {
+		for (LrAttribute a : entity.getAttributes()) {
 			this.attributes.add(a.getName());
 		}
 	}

@@ -8,14 +8,14 @@ import org.apache.cayenne.exp.ExpressionFactory;
 import org.junit.Test;
 
 import com.nhl.link.rest.it.fixture.cayenne.E2;
-import com.nhl.link.rest.meta.LrEntity;
+import com.nhl.link.rest.meta.LrPersistentEntity;
 
 public class ResourceEntityTest {
 
 	@Test
 	public void testQualifier() {
 		@SuppressWarnings("unchecked")
-		ResourceEntity<E2> e2 = new ResourceEntity<>(mock(LrEntity.class));
+		ResourceEntity<E2> e2 = new ResourceEntity<>(mock(LrPersistentEntity.class));
 		assertNull(e2.getQualifier());
 
 		e2.andQualifier(ExpressionFactory.exp("a = 1"));

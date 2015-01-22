@@ -1,8 +1,6 @@
-package com.nhl.link.rest.runtime.meta;
+package com.nhl.link.rest.meta;
 
 import org.apache.cayenne.util.ToStringBuilder;
-
-import com.nhl.link.rest.meta.LrAttribute;
 
 /**
  * @since 1.12

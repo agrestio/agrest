@@ -17,8 +17,9 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.nhl.link.rest.EntityUpdate;
 import com.nhl.link.rest.LinkRestException;
 import com.nhl.link.rest.UpdateResponse;
+import com.nhl.link.rest.meta.LrPersistentEntity;
 import com.nhl.link.rest.meta.LrPersistentAttribute;
-import com.nhl.link.rest.meta.LrEntity;
+import com.nhl.link.rest.meta.LrPersistentRelationship;
 import com.nhl.link.rest.meta.LrRelationship;
 import com.nhl.link.rest.parser.converter.JsonValueConverter;
 import com.nhl.link.rest.runtime.jackson.IJacksonService;
@@ -70,7 +71,7 @@ public class DataObjectProcessor {
 	}
 
 	private void processObject(UpdateResponse<?> response, JsonNode objectNode) {
-		LrEntity<?> entity = response.getEntity().getLrEntity();
+		LrPersistentEntity<?> entity = response.getEntity().getLrEntity();
 
 		EntityUpdate update = new EntityUpdate();
 
@@ -93,9 +94,10 @@ public class DataObjectProcessor {
 			}
 
 			LrRelationship relationship = relationshipMapper.toRelationship(entity, key);
-			if (relationship != null) {
+			if (relationship instanceof LrPersistentRelationship) {
 
-				DbRelationship dbRelationship = relationship.getObjRelationship().getDbRelationships().get(0);
+				DbRelationship dbRelationship = ((LrPersistentRelationship) relationship).getObjRelationship()
+						.getDbRelationships().get(0);
 
 				JsonNode valueNode = objectNode.get(key);
 				Object value = extractValue(valueNode, dbRelationship);

@@ -1,5 +1,6 @@
-package com.nhl.link.rest.runtime.meta;
+package com.nhl.link.rest.meta.cayenne;
 
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -12,28 +13,34 @@ import org.apache.cayenne.map.ObjEntity;
 import org.apache.cayenne.map.ObjRelationship;
 
 import com.nhl.link.rest.LinkRestException;
+import com.nhl.link.rest.meta.DefaultLrAttribute;
 import com.nhl.link.rest.meta.LrDataMap;
 import com.nhl.link.rest.meta.LrEntity;
 import com.nhl.link.rest.meta.LrEntityOverlay;
+import com.nhl.link.rest.meta.LrPersistentEntity;
 
 /**
- * A {@link LrDataMap} that lazily creates its entities, improving startup time
- * and decreasing memory footprint. Memory savings come from the fact that the
- * entire Cayenne mapping does not need to be converted to {@link LrDataMap}
- * immediately.
+ * An {@link LrDataMap} that can resolve metadata from Cayenne mapping,
+ * combining it with application-provided entities and metadata extensions.
  * 
  * @since 1.12
  */
-public class LazyLrDataMap implements LrDataMap {
+public class CayenneAwareLrDataMap implements LrDataMap {
 
 	private EntityResolver resolver;
 	private ConcurrentMap<Class<?>, LrEntity<?>> entities;
 	private Map<String, LrEntityOverlay<?>> entityOverlays;
 
-	public LazyLrDataMap(EntityResolver resolver, Map<String, LrEntityOverlay<?>> entityOverlays) {
+	public CayenneAwareLrDataMap(EntityResolver resolver, List<LrEntity<?>> extraEntities,
+			Map<String, LrEntityOverlay<?>> entityOverlays) {
+
 		this.resolver = resolver;
-		this.entities = new ConcurrentHashMap<>();
 		this.entityOverlays = entityOverlays;
+		this.entities = new ConcurrentHashMap<>();
+
+		for (LrEntity<?> e : extraEntities) {
+			entities.put(e.getType(), e);
+		}
 	}
 
 	@SuppressWarnings("unchecked")
@@ -41,17 +48,19 @@ public class LazyLrDataMap implements LrDataMap {
 	public <T> LrEntity<T> getEntity(Class<T> type) {
 		LrEntity<?> e = entities.get(type);
 
+		// lazily create Cayenne-based entities, improving startup time
+		// and decreasing memory footprint.
 		if (e == null) {
 
-			LrEntity<?> newEntity = createEntity(type);
+			LrEntity<?> newEntity = createCayenneEntity(type);
 			LrEntity<?> existingEntity = entities.putIfAbsent(type, newEntity);
 			e = existingEntity != null ? existingEntity : newEntity;
 		}
 
-		return (LrEntity<T>) e;
+		return (LrPersistentEntity<T>) e;
 	}
 
-	private <T> LrEntity<T> createEntity(Class<T> type) {
+	private <T> LrPersistentEntity<T> createCayenneEntity(Class<T> type) {
 
 		ObjEntity objEntity = resolver.getObjEntity(type);
 		if (objEntity == null) {
@@ -78,7 +87,7 @@ public class LazyLrDataMap implements LrDataMap {
 			for (String a : overlay.getTransientAttributes()) {
 				// TODO: figure out the type
 				DefaultLrAttribute lrAttribute = new DefaultLrAttribute(a, "java.lang.Object");
-				lrEntity.addTransientAttribute(lrAttribute);
+				lrEntity.addAttribute(lrAttribute);
 			}
 		}
 

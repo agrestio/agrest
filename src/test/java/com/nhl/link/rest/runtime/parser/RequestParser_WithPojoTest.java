@@ -8,11 +8,11 @@ import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.UriInfo;
 
-import org.apache.cayenne.map.DataMap;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -20,10 +20,11 @@ import com.nhl.link.rest.DataResponse;
 import com.nhl.link.rest.ResourceEntity;
 import com.nhl.link.rest.it.fixture.pojo.model.P1;
 import com.nhl.link.rest.it.fixture.pojo.model.P2;
+import com.nhl.link.rest.meta.LrEntity;
+import com.nhl.link.rest.meta.LrEntityBuilder;
 import com.nhl.link.rest.meta.LrEntityOverlay;
 import com.nhl.link.rest.runtime.jackson.IJacksonService;
 import com.nhl.link.rest.runtime.jackson.JacksonService;
-import com.nhl.link.rest.runtime.meta.DataMapBuilder;
 import com.nhl.link.rest.runtime.meta.IMetadataService;
 import com.nhl.link.rest.runtime.meta.MetadataService;
 import com.nhl.link.rest.runtime.parser.cache.IPathCache;
@@ -62,9 +63,8 @@ public class RequestParser_WithPojoTest extends TestWithCayenneMapping {
 
 	@Override
 	protected IMetadataService createMetadataService() {
-		DataMap map = DataMapBuilder.newBuilder("_t_").addEntities(P1.class, P2.class).toDataMap();
-		return new MetadataService(Collections.singletonList(map), Collections.<String, LrEntityOverlay<?>> emptyMap(),
-				mockCayennePersister);
+		List<LrEntity<?>> pojos = Arrays.asList(LrEntityBuilder.build(P1.class), LrEntityBuilder.build(P2.class));
+		return new MetadataService(pojos, Collections.<String, LrEntityOverlay<?>> emptyMap(), mockCayennePersister);
 	}
 
 	@Test

@@ -17,6 +17,7 @@ import org.apache.cayenne.reflect.ClassDescriptor;
 
 import com.nhl.link.rest.EntityUpdate;
 import com.nhl.link.rest.LinkRestException;
+import com.nhl.link.rest.meta.LrPersistentEntity;
 import com.nhl.link.rest.runtime.cayenne.CayenneUpdateBuilder.ObjectRelator;
 
 /**
@@ -31,7 +32,9 @@ abstract class BaseSyncStrategy<T> implements SyncStrategy<T> {
 	BaseSyncStrategy(CayenneUpdateResponse<T> response, ObjectRelator<T> relator) {
 		this.response = response;
 		this.relator = relator;
-		this.entity = response.getEntity().getLrEntity().getObjEntity();
+
+		LrPersistentEntity<T> persistentEntity = (LrPersistentEntity<T>) response.getEntity().getLrEntity();
+		this.entity = persistentEntity.getObjEntity();
 	}
 
 	@Override

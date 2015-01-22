@@ -12,8 +12,6 @@ import java.util.Iterator;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.UriInfo;
 
-import org.apache.cayenne.ObjectContext;
-import org.apache.cayenne.map.DataMap;
 import org.apache.cayenne.query.Ordering;
 import org.apache.cayenne.query.SortOrder;
 import org.junit.Before;
@@ -21,12 +19,8 @@ import org.junit.Test;
 
 import com.nhl.link.rest.DataResponse;
 import com.nhl.link.rest.it.fixture.cayenne.E2;
-import com.nhl.link.rest.meta.LrEntityOverlay;
-import com.nhl.link.rest.runtime.cayenne.ICayennePersister;
 import com.nhl.link.rest.runtime.jackson.IJacksonService;
 import com.nhl.link.rest.runtime.jackson.JacksonService;
-import com.nhl.link.rest.runtime.meta.IMetadataService;
-import com.nhl.link.rest.runtime.meta.MetadataService;
 import com.nhl.link.rest.runtime.parser.cache.IPathCache;
 import com.nhl.link.rest.runtime.parser.cache.PathCache;
 import com.nhl.link.rest.runtime.parser.converter.DefaultJsonValueConverterFactory;
@@ -46,13 +40,6 @@ public class SenchaRequestParserTest extends TestWithCayenneMapping {
 	@Before
 	public void before() {
 
-		ObjectContext sharedContext = runtime.newContext();
-		ICayennePersister cayenneService = mock(ICayennePersister.class);
-		when(cayenneService.entityResolver()).thenReturn(runtime.getChannel().getEntityResolver());
-		when(cayenneService.sharedContext()).thenReturn(sharedContext);
-		when(cayenneService.newContext()).thenReturn(runtime.newContext());
-		IMetadataService metadataService = new MetadataService(Collections.<DataMap> emptyList(),
-				Collections.<String, LrEntityOverlay<?>> emptyMap(), cayenneService);
 		IJsonValueConverterFactory converterFactory = new DefaultJsonValueConverterFactory();
 
 		IPathCache pathCache = new PathCache(metadataService);

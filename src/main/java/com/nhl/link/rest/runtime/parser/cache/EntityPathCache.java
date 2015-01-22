@@ -132,12 +132,7 @@ class EntityPathCache {
 		}
 
 		// can be a relationship or an attribute
-		LrAttribute persistentAttribute = entity.getPersistentAttribute(path);
-		if (persistentAttribute != null) {
-			return persistentAttribute;
-		}
-
-		LrAttribute attribute = entity.getTransientAttribute(path);
+		LrAttribute attribute = entity.getAttribute(path);
 		if (attribute != null) {
 			return attribute;
 		}

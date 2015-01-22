@@ -1,4 +1,4 @@
-package com.nhl.link.rest.runtime.meta;
+package com.nhl.link.rest.meta.cayenne;
 
 import org.apache.cayenne.map.ObjAttribute;
 import org.apache.cayenne.util.ToStringBuilder;
@@ -8,11 +8,11 @@ import com.nhl.link.rest.meta.LrPersistentAttribute;
 /**
  * @since 1.12
  */
-class CayenneLrAttribute implements LrPersistentAttribute {
+public class CayenneLrAttribute implements LrPersistentAttribute {
 
 	private ObjAttribute objAttribute;
 
-	CayenneLrAttribute(ObjAttribute objAttribute) {
+	public CayenneLrAttribute(ObjAttribute objAttribute) {
 		this.objAttribute = objAttribute;
 	}
 

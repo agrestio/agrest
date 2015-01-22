@@ -2,13 +2,15 @@ package com.nhl.link.rest.it.fixture.pojo;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import javax.ws.rs.core.Application;
 import javax.ws.rs.core.Feature;
 import javax.ws.rs.core.FeatureContext;
 
 import org.apache.cayenne.configuration.server.ServerRuntime;
-import org.apache.cayenne.map.DataMap;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.test.JerseyTest;
 import org.glassfish.jersey.test.inmemory.InMemoryTestContainerFactory;
@@ -23,12 +25,13 @@ import com.nhl.link.rest.it.fixture.pojo.model.P3;
 import com.nhl.link.rest.it.fixture.pojo.model.P4;
 import com.nhl.link.rest.it.fixture.pojo.model.P6;
 import com.nhl.link.rest.it.fixture.resource.PojoResource;
+import com.nhl.link.rest.meta.LrPersistentEntity;
+import com.nhl.link.rest.meta.LrEntityBuilder;
 import com.nhl.link.rest.runtime.LinkRestBuilder;
-import com.nhl.link.rest.runtime.meta.DataMapBuilder;
 
 public class JerseyTestOnPojo extends JerseyTest {
 	protected static ServerRuntime runtime;
-	protected static DataMap pojosMap;
+	protected static List<LrPersistentEntity<?>> pojoModels;
 
 	// using in-memory key/value "database" to store POJOs
 	protected static PojoDB pojoDB;
@@ -37,8 +40,10 @@ public class JerseyTestOnPojo extends JerseyTest {
 	public static void setUpClass() throws IOException, SQLException {
 
 		runtime = new ServerRuntime("cayenne-linkrest-tests.xml");
-		pojosMap = DataMapBuilder.newBuilder("__").addEntities(P1.class, P2.class, P3.class, P4.class)
-				.addEntity(P6.class).withId("stringId").toDataMap();
+		pojoModels = new ArrayList<>();
+		pojoModels = Arrays.asList(LrEntityBuilder.build(P1.class), LrEntityBuilder.build(P2.class),
+				LrEntityBuilder.build(P3.class), LrEntityBuilder.build(P4.class),
+				LrEntityBuilder.builder(P6.class).id("stringId").build());
 		pojoDB = new PojoDB();
 	}
 
@@ -61,8 +66,8 @@ public class JerseyTestOnPojo extends JerseyTest {
 	@Override
 	public Application configure() {
 
-		Feature lrFeature = new LinkRestBuilder().linkRestService(PojoLinkRestService.class)
-				.nonPersistentEntities(pojosMap).build().getFeature();
+		Feature lrFeature = new LinkRestBuilder().linkRestService(PojoLinkRestService.class).extraEntities(pojoModels)
+				.build().getFeature();
 
 		Feature unitFeature = new Feature() {
 

@@ -24,6 +24,8 @@ import com.nhl.link.rest.ObjectMapperFactory;
 import com.nhl.link.rest.UpdateBuilder;
 import com.nhl.link.rest.UpdateResponse;
 import com.nhl.link.rest.constraints.ConstraintsBuilder;
+import com.nhl.link.rest.meta.LrPersistentRelationship;
+import com.nhl.link.rest.meta.LrRelationship;
 import com.nhl.link.rest.runtime.constraints.IConstraintsHandler;
 import com.nhl.link.rest.runtime.encoder.IEncoderService;
 import com.nhl.link.rest.runtime.meta.IMetadataService;
@@ -164,7 +166,17 @@ public abstract class BaseUpdateBuilder<T> implements UpdateBuilder<T> {
 	protected abstract UpdateResponse<T> createResponse();
 
 	protected ObjRelationship relationshipFromParent() {
-		return parent != null ? metadataService.getLrRelationship(parent).getObjRelationship() : null;
+
+		if (parent == null) {
+			return null;
+		}
+
+		LrRelationship r = metadataService.getLrRelationship(parent);
+		if (r instanceof LrPersistentRelationship) {
+			return ((LrPersistentRelationship) r).getObjRelationship();
+		}
+
+		return null;
 	}
 
 	private void processExplicitId(UpdateResponse<T> response) {

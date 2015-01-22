@@ -12,7 +12,6 @@ import com.nhl.link.rest.LinkRestException;
 import com.nhl.link.rest.ResourceEntity;
 import com.nhl.link.rest.meta.LrAttribute;
 import com.nhl.link.rest.meta.LrEntity;
-import com.nhl.link.rest.meta.LrPersistentAttribute;
 import com.nhl.link.rest.meta.LrRelationship;
 import com.nhl.link.rest.runtime.jackson.IJacksonService;
 import com.nhl.link.rest.runtime.meta.IMetadataService;
@@ -157,7 +156,7 @@ class IncludeWorker {
 
 		String property = dot > 0 ? path.substring(0, dot) : path;
 		LrEntity<?> lrEntity = parent.getLrEntity();
-		LrPersistentAttribute attribute = lrEntity.getPersistentAttribute(property);
+		LrAttribute attribute = lrEntity.getAttribute(property);
 		if (attribute != null) {
 
 			if (dot > 0) {
@@ -166,17 +165,6 @@ class IncludeWorker {
 
 			parent.getAttributes().put(property, attribute);
 			return null;
-		} else {
-			LrAttribute transientAttribute = lrEntity.getTransientAttribute(property);
-			if (transientAttribute != null) {
-
-				if (dot > 0) {
-					throw new LinkRestException(Status.BAD_REQUEST, "Invalid include path: " + path);
-				}
-
-				parent.getAttributes().put(property, transientAttribute);
-				return null;
-			}
 		}
 
 		LrRelationship relationship = lrEntity.getRelationship(property);
@@ -212,17 +200,12 @@ class IncludeWorker {
 		// either there are no includes (taking into account Id) or all includes
 		// are relationships
 		if (!resourceEntity.isIdIncluded() && resourceEntity.getAttributes().isEmpty()) {
-			
-			for (LrPersistentAttribute a : resourceEntity.getLrEntity().getPersistentAttributes()) {
+
+			for (LrAttribute a : resourceEntity.getLrEntity().getAttributes()) {
 				resourceEntity.getAttributes().put(a.getName(), a);
 				resourceEntity.getDefaultProperties().add(a.getName());
 			}
-			
-			for(LrAttribute a : resourceEntity.getLrEntity().getTransientAttributes()) {
-				resourceEntity.getAttributes().put(a.getName(), a);
-				resourceEntity.getDefaultProperties().add(a.getName());
-			}
-			
+
 			// Id should be included by default
 			resourceEntity.includeId();
 		}

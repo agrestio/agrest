@@ -30,9 +30,9 @@ import com.nhl.link.rest.it.fixture.cayenne.E2;
 import com.nhl.link.rest.it.fixture.cayenne.E3;
 import com.nhl.link.rest.it.fixture.cayenne.E4;
 import com.nhl.link.rest.it.fixture.cayenne.E5;
+import com.nhl.link.rest.meta.DefaultLrAttribute;
 import com.nhl.link.rest.meta.LrEntity;
 import com.nhl.link.rest.meta.LrRelationship;
-import com.nhl.link.rest.runtime.meta.DefaultLrAttribute;
 import com.nhl.link.rest.runtime.meta.IMetadataService;
 
 public class ConstraintsHandlerTest {
@@ -44,6 +44,7 @@ public class ConstraintsHandlerTest {
 	private LrEntity<E3> lre2;
 	private LrEntity<E4> lre3;
 	private LrEntity<E5> lre4;
+
 
 	@SuppressWarnings("unchecked")
 	@Before
