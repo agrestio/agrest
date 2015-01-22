@@ -15,6 +15,7 @@ import com.nhl.link.rest.ResourceEntity;
 import com.nhl.link.rest.it.fixture.cayenne.E2;
 import com.nhl.link.rest.it.fixture.cayenne.auto._E2;
 import com.nhl.link.rest.meta.LrEntity;
+import com.nhl.link.rest.meta.LrPersistentAttribute;
 import com.nhl.link.rest.runtime.jackson.JacksonService;
 import com.nhl.link.rest.runtime.parser.cache.PathCache;
 import com.nhl.link.rest.unit.TestWithCayenneMapping;
@@ -27,15 +28,18 @@ public class SortProcessorTest extends TestWithCayenneMapping {
 	@Before
 	public void before() {
 		JacksonService jacksonService = new JacksonService();
-		this.processor = new SortWorker(jacksonService, new PathCache());
+		this.processor = new SortWorker(jacksonService, new PathCache(metadataService));
 
 		ObjEntity oEntity = runtime.getChannel().getEntityResolver().getObjEntity(E2.class);
-		
+
 		@SuppressWarnings("unchecked")
-		LrEntity<Object> lre2 = mock(LrEntity.class);
+		LrEntity<E2> lre2 = mock(LrEntity.class);
 		when(lre2.getObjEntity()).thenReturn(oEntity);
-		when(lre2.getType()).thenReturn(Object.class);
-		
+		when(lre2.getType()).thenReturn(E2.class);
+		when(lre2.getName()).thenReturn("E2");
+		when(lre2.getPersistentAttribute("name")).thenReturn(mock(LrPersistentAttribute.class));
+		when(lre2.getPersistentAttribute("address")).thenReturn(mock(LrPersistentAttribute.class));
+
 		this.entity = new ResourceEntity<>(lre2);
 	}
 

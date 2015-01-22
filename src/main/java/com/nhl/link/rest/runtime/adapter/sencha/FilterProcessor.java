@@ -17,12 +17,12 @@ import javax.ws.rs.core.Response.Status;
 
 import org.apache.cayenne.exp.Expression;
 import org.apache.cayenne.exp.parser.ASTObjPath;
-import org.apache.cayenne.map.ObjEntity;
 
 import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.nhl.link.rest.ResourceEntity;
 import com.nhl.link.rest.LinkRestException;
+import com.nhl.link.rest.ResourceEntity;
+import com.nhl.link.rest.meta.LrEntity;
 import com.nhl.link.rest.runtime.jackson.IJacksonService;
 import com.nhl.link.rest.runtime.parser.cache.IPathCache;
 import com.nhl.link.rest.runtime.parser.filter.FilterUtil;
@@ -111,7 +111,7 @@ class FilterProcessor {
 
 			// validate property path
 			if (qualifier.getOperandCount() == 2) {
-				ObjEntity rootEntity = resourceEntity.getLrEntity().getObjEntity();
+				LrEntity<?> rootEntity = resourceEntity.getLrEntity();
 				pathCache.getPathDescriptor(rootEntity, (ASTObjPath) qualifier.getOperand(0));
 			}
 

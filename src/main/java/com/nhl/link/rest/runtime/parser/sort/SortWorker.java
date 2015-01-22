@@ -3,15 +3,15 @@ package com.nhl.link.rest.runtime.parser.sort;
 import javax.ws.rs.core.Response.Status;
 
 import org.apache.cayenne.exp.parser.ASTObjPath;
-import org.apache.cayenne.map.ObjEntity;
 import org.apache.cayenne.query.Ordering;
 import org.apache.cayenne.query.SortOrder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.nhl.link.rest.ResourceEntity;
 import com.nhl.link.rest.LinkRestException;
+import com.nhl.link.rest.ResourceEntity;
+import com.nhl.link.rest.meta.LrEntity;
 import com.nhl.link.rest.runtime.jackson.IJacksonService;
 import com.nhl.link.rest.runtime.parser.cache.IPathCache;
 
@@ -52,7 +52,7 @@ class SortWorker {
 	void processSimpleSorter(ResourceEntity<?> resourceEntity, String sort, String direction) {
 
 		// TODO: do we need to support nested ID?
-		ObjEntity entity = resourceEntity.getLrEntity().getObjEntity();
+		LrEntity<?> entity = resourceEntity.getLrEntity();
 
 		// note using "toString" instead of "getPath" to convert ASTPath to
 		// String representation. This ensures "db:" prefix is preserved if

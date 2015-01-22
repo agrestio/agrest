@@ -55,7 +55,7 @@ public class SenchaRequestParserTest extends TestWithCayenneMapping {
 				Collections.<String, LrEntityOverlay<?>> emptyMap(), cayenneService);
 		IJsonValueConverterFactory converterFactory = new DefaultJsonValueConverterFactory();
 
-		IPathCache pathCache = new PathCache();
+		IPathCache pathCache = new PathCache(metadataService);
 		IJacksonService jacksonService = new JacksonService();
 		ISortProcessor sortProcessor = new SenchaSortProcessor(jacksonService, pathCache);
 		IFilterProcessor filterProcessor = new SenchaFilterProcessor(jacksonService, pathCache);

@@ -3,7 +3,6 @@ package com.nhl.link.rest.runtime.encoder;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -26,7 +25,6 @@ import com.nhl.link.rest.encoder.EncoderFilter;
 import com.nhl.link.rest.it.fixture.cayenne.E1;
 import com.nhl.link.rest.it.fixture.cayenne.E2;
 import com.nhl.link.rest.it.fixture.cayenne.E3;
-import com.nhl.link.rest.runtime.cayenne.ICayennePersister;
 import com.nhl.link.rest.runtime.jackson.JacksonService;
 import com.nhl.link.rest.runtime.semantics.RelationshipMapper;
 import com.nhl.link.rest.unit.TestWithCayenneMapping;
@@ -34,16 +32,10 @@ import com.nhl.link.rest.unit.TestWithCayenneMapping;
 public class EncoderServiceTest extends TestWithCayenneMapping {
 
 	private EncoderService encoderService;
-	private ICayennePersister cayenneService;
 	private List<EncoderFilter> filters;
 
 	@Before
 	public void before() {
-
-		ObjectContext sharedContext = runtime.newContext();
-		cayenneService = mock(ICayennePersister.class);
-		when(cayenneService.sharedContext()).thenReturn(sharedContext);
-		when(cayenneService.newContext()).thenReturn(runtime.newContext());
 
 		this.filters = new ArrayList<>();
 		IAttributeEncoderFactory attributeEncoderFactory = new AttributeEncoderFactory();
@@ -82,7 +74,7 @@ public class EncoderServiceTest extends TestWithCayenneMapping {
 		descriptor.includeId();
 		descriptor.getChildren().put(E2.E3S.getName(), e3Descriptor);
 
-		ObjectContext context = cayenneService.newContext();
+		ObjectContext context = mockCayennePersister.newContext();
 		E2 e2 = new E2();
 		e2.setObjectId(new ObjectId("E2", E2.ID_PK_COLUMN, 7));
 		e2.setName("XYZ");
@@ -147,7 +139,7 @@ public class EncoderServiceTest extends TestWithCayenneMapping {
 		ResourceEntity<E2> descriptor = getResourceEntity(E2.class);
 		descriptor.includeId();
 
-		ObjectContext context = cayenneService.newContext();
+		ObjectContext context = mockCayennePersister.newContext();
 		E2 e21 = new E2();
 		e21.setObjectId(new ObjectId("E2", E2.ID_PK_COLUMN, 7));
 		e21.setName("XYZ");
@@ -218,7 +210,7 @@ public class EncoderServiceTest extends TestWithCayenneMapping {
 		e3Descriptor.includeId();
 		e3Descriptor.getChildren().put(E3.E2.getName(), e2Descriptor);
 
-		ObjectContext context = cayenneService.newContext();
+		ObjectContext context = mockCayennePersister.newContext();
 
 		E2 e21 = new E2();
 		e21.setObjectId(new ObjectId("E2", E2.ID_PK_COLUMN, 7));
@@ -277,7 +269,7 @@ public class EncoderServiceTest extends TestWithCayenneMapping {
 
 		DataResponse<E2> builder = DataResponse.forType(E2.class).resourceEntity(descriptor);
 
-		ObjectContext context = cayenneService.newContext();
+		ObjectContext context = mockCayennePersister.newContext();
 		E2 e21 = new E2();
 		e21.setObjectId(new ObjectId("E2", E2.ID_PK_COLUMN, 7));
 		e21.setName("XYZ");

@@ -3,39 +3,15 @@ package com.nhl.link.rest.runtime.meta;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertSame;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
-import java.util.Collections;
-
-import org.apache.cayenne.ObjectContext;
-import org.apache.cayenne.map.DataMap;
-import org.junit.Before;
 import org.junit.Test;
 
 import com.nhl.link.rest.it.fixture.cayenne.E4;
 import com.nhl.link.rest.it.fixture.cayenne.E5;
 import com.nhl.link.rest.meta.LrEntity;
-import com.nhl.link.rest.meta.LrEntityOverlay;
-import com.nhl.link.rest.runtime.cayenne.ICayennePersister;
 import com.nhl.link.rest.unit.TestWithCayenneMapping;
 
 public class MetadataServiceTest extends TestWithCayenneMapping {
-
-	private MetadataService metadataService;
-
-	@Before
-	public void before() {
-		ObjectContext sharedContext = runtime.newContext();
-
-		ICayennePersister cayenneService = mock(ICayennePersister.class);
-		when(cayenneService.entityResolver()).thenReturn(runtime.getChannel().getEntityResolver());
-		when(cayenneService.sharedContext()).thenReturn(sharedContext);
-		when(cayenneService.newContext()).thenReturn(runtime.newContext());
-
-		this.metadataService = new MetadataService(Collections.<DataMap> emptyList(),
-				Collections.<String, LrEntityOverlay<?>> emptyMap(), cayenneService);
-	}
 
 	@Test
 	public void testGetLrEntity_NoRelationships() {

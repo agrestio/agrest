@@ -17,11 +17,11 @@ import org.apache.cayenne.exp.parser.ASTObjPath;
 import org.apache.cayenne.exp.parser.ASTPath;
 import org.apache.cayenne.exp.parser.ConditionNode;
 import org.apache.cayenne.exp.parser.SimpleNode;
-import org.apache.cayenne.map.ObjEntity;
 
 import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.nhl.link.rest.LinkRestException;
+import com.nhl.link.rest.meta.LrEntity;
 import com.nhl.link.rest.parser.converter.JsonValueConverter;
 import com.nhl.link.rest.runtime.parser.cache.IPathCache;
 import com.nhl.link.rest.runtime.parser.cache.PathDescriptor;
@@ -35,12 +35,12 @@ class CayenneExpProcessorWorker {
 	private JsonNode paramsNode;
 
 	private IPathCache pathCache;
-	private ObjEntity entity;
+	private LrEntity<?> entity;
 	private Map<String, JsonValueConverter> converters;
 	private TraversalHandler expressionPostProcessor;
 
 	CayenneExpProcessorWorker(JsonNode rootNode, Map<String, JsonValueConverter> converters, IPathCache pathCache,
-			ObjEntity entity) {
+			LrEntity<?> entity) {
 
 		this.expNode = rootNode.get(EXP);
 		this.paramsNode = rootNode.get(PARAMS);

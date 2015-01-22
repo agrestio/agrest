@@ -1,7 +1,8 @@
 package com.nhl.link.rest.runtime.parser.cache;
 
 import org.apache.cayenne.exp.parser.ASTObjPath;
-import org.apache.cayenne.map.ObjEntity;
+
+import com.nhl.link.rest.meta.LrEntity;
 
 /**
  * Caches parsed paths. There is a finite number of valid paths in each app
@@ -11,5 +12,5 @@ import org.apache.cayenne.map.ObjEntity;
  */
 public interface IPathCache {
 
-	PathDescriptor getPathDescriptor(ObjEntity entity, ASTObjPath path);
+	PathDescriptor getPathDescriptor(LrEntity<?> entity, ASTObjPath path);
 }

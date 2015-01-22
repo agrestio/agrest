@@ -12,7 +12,6 @@ import java.util.Collections;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.UriInfo;
 
-import org.apache.cayenne.ObjectContext;
 import org.apache.cayenne.map.DataMap;
 import org.junit.Before;
 import org.junit.Test;
@@ -22,7 +21,6 @@ import com.nhl.link.rest.ResourceEntity;
 import com.nhl.link.rest.it.fixture.pojo.model.P1;
 import com.nhl.link.rest.it.fixture.pojo.model.P2;
 import com.nhl.link.rest.meta.LrEntityOverlay;
-import com.nhl.link.rest.runtime.cayenne.ICayennePersister;
 import com.nhl.link.rest.runtime.jackson.IJacksonService;
 import com.nhl.link.rest.runtime.jackson.JacksonService;
 import com.nhl.link.rest.runtime.meta.DataMapBuilder;
@@ -49,19 +47,9 @@ public class RequestParser_WithPojoTest extends TestWithCayenneMapping {
 	@Before
 	public void setUp() {
 
-		ObjectContext sharedContext = runtime.newContext();
-		ICayennePersister cayenneService = mock(ICayennePersister.class);
-		when(cayenneService.entityResolver()).thenReturn(runtime.getChannel().getEntityResolver());
-		when(cayenneService.sharedContext()).thenReturn(sharedContext);
-		when(cayenneService.newContext()).thenReturn(runtime.newContext());
-
-		DataMap map = DataMapBuilder.newBuilder("_t_").addEntities(P1.class, P2.class).toDataMap();
-
-		IMetadataService metadataService = new MetadataService(Collections.singletonList(map),
-				Collections.<String, LrEntityOverlay<?>> emptyMap(), cayenneService);
 		IJsonValueConverterFactory converterFactory = new DefaultJsonValueConverterFactory();
 
-		IPathCache pathCache = new PathCache();
+		IPathCache pathCache = new PathCache(metadataService);
 		IJacksonService jacksonService = new JacksonService();
 		ISortProcessor sortProcessor = new SortProcessor(jacksonService, pathCache);
 		IFilterProcessor filterProcessor = new FilterProcessor(jacksonService, pathCache);
@@ -70,6 +58,13 @@ public class RequestParser_WithPojoTest extends TestWithCayenneMapping {
 
 		parser = new RequestParser(Collections.<UpdateFilter> emptyList(), metadataService, jacksonService,
 				new RelationshipMapper(), treeProcessor, sortProcessor, filterProcessor, converterFactory);
+	}
+
+	@Override
+	protected IMetadataService createMetadataService() {
+		DataMap map = DataMapBuilder.newBuilder("_t_").addEntities(P1.class, P2.class).toDataMap();
+		return new MetadataService(Collections.singletonList(map), Collections.<String, LrEntityOverlay<?>> emptyMap(),
+				mockCayennePersister);
 	}
 
 	@Test

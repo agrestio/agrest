@@ -48,16 +48,9 @@ public class RequestParser_IncludeObjectTest extends TestWithCayenneMapping {
 	@Before
 	public void setUp() {
 
-		ObjectContext sharedContext = runtime.newContext();
-		ICayennePersister cayenneService = mock(ICayennePersister.class);
-		when(cayenneService.entityResolver()).thenReturn(runtime.getChannel().getEntityResolver());
-		when(cayenneService.sharedContext()).thenReturn(sharedContext);
-		when(cayenneService.newContext()).thenReturn(runtime.newContext());
-		IMetadataService metadataService = new MetadataService(Collections.<DataMap> emptyList(),
-				Collections.<String, LrEntityOverlay<?>> emptyMap(), cayenneService);
 		IJsonValueConverterFactory converterFactory = new DefaultJsonValueConverterFactory();
 
-		IPathCache pathCache = new PathCache();
+		IPathCache pathCache = new PathCache(metadataService);
 		IJacksonService jacksonService = new JacksonService();
 		ISortProcessor sortProcessor = new SortProcessor(jacksonService, pathCache);
 		IFilterProcessor filterProcessor = new FilterProcessor(jacksonService, pathCache);

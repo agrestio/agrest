@@ -1,14 +1,17 @@
 package com.nhl.link.rest.unit;
 
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.util.Collections;
 
+import org.apache.cayenne.ObjectContext;
 import org.apache.cayenne.configuration.server.DataSourceFactory;
 import org.apache.cayenne.configuration.server.ServerRuntime;
 import org.apache.cayenne.di.Binder;
 import org.apache.cayenne.di.Module;
 import org.apache.cayenne.exp.Property;
+import org.apache.cayenne.map.DataMap;
 import org.apache.cayenne.map.ObjEntity;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -18,8 +21,11 @@ import com.nhl.link.rest.ResourceEntity;
 import com.nhl.link.rest.meta.LrDataMap;
 import com.nhl.link.rest.meta.LrEntity;
 import com.nhl.link.rest.meta.LrEntityOverlay;
+import com.nhl.link.rest.runtime.cayenne.ICayennePersister;
 import com.nhl.link.rest.runtime.meta.DefaultLrAttribute;
+import com.nhl.link.rest.runtime.meta.IMetadataService;
 import com.nhl.link.rest.runtime.meta.LazyLrDataMap;
+import com.nhl.link.rest.runtime.meta.MetadataService;
 
 /**
  * A superclass of Cayenne-aware test cases that do not need to access the DB,
@@ -50,11 +56,27 @@ public class TestWithCayenneMapping {
 	}
 
 	protected LrDataMap lrDataMap;
+	protected ICayennePersister mockCayennePersister;
+	protected IMetadataService metadataService;
 
 	@Before
 	public void initLrDataMap() {
 		lrDataMap = new LazyLrDataMap(runtime.getChannel().getEntityResolver(),
 				Collections.<String, LrEntityOverlay<?>> emptyMap());
+
+		ObjectContext sharedContext = runtime.newContext();
+
+		this.mockCayennePersister = mock(ICayennePersister.class);
+		when(mockCayennePersister.entityResolver()).thenReturn(runtime.getChannel().getEntityResolver());
+		when(mockCayennePersister.sharedContext()).thenReturn(sharedContext);
+		when(mockCayennePersister.newContext()).thenReturn(runtime.newContext());
+
+		this.metadataService = createMetadataService();
+	}
+
+	protected IMetadataService createMetadataService() {
+		return new MetadataService(Collections.<DataMap> emptyList(),
+				Collections.<String, LrEntityOverlay<?>> emptyMap(), mockCayennePersister);
 	}
 
 	protected <T> LrEntity<T> getLrEntity(Class<T> type) {
