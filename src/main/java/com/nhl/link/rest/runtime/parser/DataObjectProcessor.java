@@ -127,7 +127,7 @@ public class DataObjectProcessor {
 
 	protected void extractPK(EntityUpdate update, LrEntity<?> entity, JsonNode valueNode) {
 
-		LrPersistentAttribute id = (LrPersistentAttribute) entity.getId();
+		LrPersistentAttribute id = (LrPersistentAttribute) entity.getSingleId();
 
 		Object value = extractValue(valueNode, id.getJavaType());
 		update.getOrCreateId().put(id.getDbAttribute().getName(), value);

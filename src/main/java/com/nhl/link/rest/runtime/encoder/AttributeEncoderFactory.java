@@ -82,7 +82,7 @@ public class AttributeEncoderFactory implements IAttributeEncoderFactory {
 
 	protected EntityProperty buildIdProperty(ResourceEntity<?> entity) {
 
-		LrAttribute id = entity.getLrEntity().getId();
+		LrAttribute id = entity.getLrEntity().getSingleId();
 
 		if (id instanceof LrPersistentAttribute) {
 

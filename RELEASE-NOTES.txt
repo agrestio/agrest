@@ -4,6 +4,7 @@ Release 1.12
 #68 Rename Entity to ResourceEntity
 #69 Own metadata layer
 #70 Added JSON converters for java.sql date/time types
+#71 POJOs should be modeled as LrEntities, not ObjEntities
 #72 Refactor TreeConstraints into visitor-based ConstraintsBuilder
 
 Release 1.11 2015-01-20

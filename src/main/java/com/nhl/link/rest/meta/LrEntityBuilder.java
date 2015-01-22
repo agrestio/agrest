@@ -88,7 +88,7 @@ public class LrEntityBuilder<T> {
 		DefaultLrAttribute a = new DefaultLrAttribute(pd.getName(), targetType.getName());
 
 		if (a.getName().equals(idProperty)) {
-			entity.setId(a);
+			entity.addId(a);
 		} else {
 			entity.addAttribute(a);
 		}

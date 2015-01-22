@@ -195,7 +195,7 @@ public abstract class BaseUpdateBuilder<T> implements UpdateBuilder<T> {
 
 			LrEntity<T> entity = response.getEntity().getLrEntity();
 
-			LrPersistentAttribute pk = (LrPersistentAttribute) entity.getId();
+			LrPersistentAttribute pk = (LrPersistentAttribute) entity.getSingleId();
 
 			EntityUpdate u = response.getFirst();
 			u.getOrCreateId().put(pk.getDbAttribute().getName(), id);

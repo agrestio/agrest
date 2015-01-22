@@ -1,5 +1,7 @@
 package com.nhl.link.rest.runtime.cayenne;
 
+import java.util.Collection;
+
 import org.apache.cayenne.exp.parser.ASTPath;
 
 import com.nhl.link.rest.ObjectMapper;
@@ -24,9 +26,14 @@ public class ByIdObjectMapperFactory extends CayenneObjectMapperFactory {
 	@Override
 	protected <T> ObjectMapper<T> mapper(UpdateResponse<T> response) {
 
-		LrAttribute id = response.getEntity().getLrEntity().getId();
+		Collection<LrAttribute> ids = response.getEntity().getLrEntity().getIds();
+		ASTPath[] paths = new ASTPath[ids.size()];
 
-		// TODO: multi-column ids
-		return new ByIdObjectMapper<>(new ASTPath[] { id.getPathExp() });
+		int i = 0;
+		for (LrAttribute id : ids) {
+			paths[i++] = id.getPathExp();
+		}
+
+		return new ByIdObjectMapper<>(paths);
 	}
 }

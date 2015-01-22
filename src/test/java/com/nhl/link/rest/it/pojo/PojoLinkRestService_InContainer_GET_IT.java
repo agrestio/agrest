@@ -29,8 +29,7 @@ public class PojoLinkRestService_InContainer_GET_IT extends JerseyTestOnPojo {
 
 		Response response1 = target("/pojo/p6/o2id").request().get();
 		assertEquals(Status.OK.getStatusCode(), response1.getStatus());
-		assertEquals(
-				"{\"success\":true,\"data\":[{\"id\":\"o2id\",\"intProp\":16,\"stringId\":\"o2id\"}],\"total\":1}",
+		assertEquals("{\"success\":true,\"data\":[{\"id\":\"o2id\",\"intProp\":16}],\"total\":1}",
 				response1.readEntity(String.class));
 	}
 
@@ -48,8 +47,7 @@ public class PojoLinkRestService_InContainer_GET_IT extends JerseyTestOnPojo {
 
 		Response response1 = target("/pojo/p6").request().get();
 		assertEquals(Status.OK.getStatusCode(), response1.getStatus());
-		assertEquals("{\"success\":true,\"data\":[{\"id\":\"o1id\",\"intProp\":15,\"stringId\":\"o1id\"},"
-				+ "{\"id\":\"o2id\",\"intProp\":16,\"stringId\":\"o2id\"}],\"total\":2}",
-				response1.readEntity(String.class));
+		assertEquals("{\"success\":true,\"data\":[{\"id\":\"o1id\",\"intProp\":15},"
+				+ "{\"id\":\"o2id\",\"intProp\":16}],\"total\":2}", response1.readEntity(String.class));
 	}
 }

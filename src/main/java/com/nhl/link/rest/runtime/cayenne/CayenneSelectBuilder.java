@@ -83,7 +83,8 @@ class CayenneSelectBuilder<T> extends BaseSelectBuilder<T> implements SelectBuil
 
 			Class<T> root = getType();
 
-			LrPersistentAttribute idAttribute = (LrPersistentAttribute) request.getEntity().getLrEntity().getId();
+			// TODO: compound PK
+			LrPersistentAttribute idAttribute = (LrPersistentAttribute) request.getEntity().getLrEntity().getSingleId();
 
 			SelectQuery<T> query = new SelectQuery<T>(root);
 			query.andQualifier(ExpressionFactory.matchDbExp(idAttribute.getDbAttribute().getName(), id));

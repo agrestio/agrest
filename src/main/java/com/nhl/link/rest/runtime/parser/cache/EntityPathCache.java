@@ -29,7 +29,7 @@ class EntityPathCache {
 		// immediately cache a special entry matching "id" constant
 		pathCache.put(PathConstants.ID_PK_ATTRIBUTE, new PathDescriptor() {
 
-			LrAttribute id = entity.getId();
+			LrAttribute id = entity.getSingleId();
 
 			@Override
 			public boolean isAttribute() {

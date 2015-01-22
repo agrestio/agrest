@@ -5,6 +5,10 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.ws.rs.core.Response.Status;
+
+import com.nhl.link.rest.LinkRestException;
+
 /**
  * @since 1.12
  */
@@ -43,6 +47,20 @@ public class DefaultLrEntity<T> implements LrEntity<T> {
 	@Override
 	public Collection<LrAttribute> getIds() {
 		return ids;
+	}
+
+	@Override
+	public LrAttribute getSingleId() {
+		if (ids.isEmpty()) {
+			throw new LinkRestException(Status.INTERNAL_SERVER_ERROR, "No id attribute in entity " + name);
+		}
+
+		if (ids.size() > 1) {
+			throw new LinkRestException(Status.INTERNAL_SERVER_ERROR, "Unsupported multi-attribute id in entity "
+					+ name);
+		}
+
+		return ids.iterator().next();
 	}
 
 	@Override
