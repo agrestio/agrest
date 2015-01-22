@@ -11,19 +11,25 @@ import org.slf4j.LoggerFactory;
 import com.nhl.link.rest.DataResponse;
 import com.nhl.link.rest.ResourceEntity;
 import com.nhl.link.rest.EntityUpdate;
-import com.nhl.link.rest.ImmutableTreeConstraints;
 import com.nhl.link.rest.LinkRestException;
 import com.nhl.link.rest.UpdateResponse;
 import com.nhl.link.rest.constraints.ConstraintsBuilder;
 import com.nhl.link.rest.meta.LrAttribute;
+import com.nhl.link.rest.runtime.meta.IMetadataService;
 import com.nhl.link.rest.runtime.parser.PathConstants;
 
 /**
  * @since 1.6
  */
-class TreeConstraintsHandler {
+class RequestConstraintsHandler {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(TreeConstraintsHandler.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(RequestConstraintsHandler.class);
+
+	private IMetadataService metadataService;
+
+	RequestConstraintsHandler(IMetadataService metadataService) {
+		this.metadataService = metadataService;
+	}
 
 	<T> boolean constrainResponse(DataResponse<T> response, ConstraintsBuilder<T> c) {
 
@@ -37,9 +43,7 @@ class TreeConstraintsHandler {
 			return false;
 		}
 
-		ImmutableTreeConstraints constraints = c.build(response);
-		applyForRead(response.getEntity(), constraints);
-
+		applyForRead(response.getEntity(), extract(response, c));
 		return true;
 	}
 
@@ -53,13 +57,18 @@ class TreeConstraintsHandler {
 			return false;
 		}
 
-		ImmutableTreeConstraints compiled = c.build(response);
-		applyForWrite(response, compiled);
-
+		applyForWrite(response, extract(response, c));
 		return true;
 	}
 
-	private void applyForWrite(UpdateResponse<?> response, ImmutableTreeConstraints constraints) {
+	private RequestConstraintsVisitor extract(DataResponse<?> response, ConstraintsBuilder<?> c) {
+		RequestConstraintsVisitor constraintVisitor = new RequestConstraintsVisitor(response.getEntity().getLrEntity(),
+				metadataService);
+		c.accept(constraintVisitor);
+		return constraintVisitor;
+	}
+
+	private void applyForWrite(UpdateResponse<?> response, RequestConstraintsVisitor constraints) {
 
 		if (!constraints.isIdIncluded()) {
 			response.disallowIdUpdates();
@@ -88,7 +97,7 @@ class TreeConstraintsHandler {
 		}
 	}
 
-	private void applyForRead(ResourceEntity<?> target, ImmutableTreeConstraints constraints) {
+	private void applyForRead(ResourceEntity<?> target, RequestConstraintsVisitor constraints) {
 
 		if (!constraints.isIdIncluded()) {
 			target.excludeId();
@@ -114,7 +123,7 @@ class TreeConstraintsHandler {
 		while (rit.hasNext()) {
 
 			Entry<String, ResourceEntity<?>> e = rit.next();
-			ImmutableTreeConstraints sourceChild = constraints.getChild(e.getKey());
+			RequestConstraintsVisitor sourceChild = constraints.getChild(e.getKey());
 			if (sourceChild != null) {
 
 				// removing recursively ... the depth or recursion depends on
@@ -148,7 +157,7 @@ class TreeConstraintsHandler {
 		}
 	}
 
-	private boolean allowedMapBy(ImmutableTreeConstraints source, String path) {
+	private boolean allowedMapBy(RequestConstraintsVisitor source, String path) {
 
 		int dot = path.indexOf(PathConstants.DOT);
 
@@ -163,7 +172,7 @@ class TreeConstraintsHandler {
 		if (dot > 0) {
 			// process intermediate component
 			String property = path.substring(0, dot);
-			ImmutableTreeConstraints child = source.getChild(property);
+			RequestConstraintsVisitor child = source.getChild(property);
 			return child != null && allowedMapBy(child, path.substring(dot + 1));
 
 		} else {
@@ -171,7 +180,7 @@ class TreeConstraintsHandler {
 		}
 	}
 
-	private boolean allowedMapBy_LastComponent(ImmutableTreeConstraints source, String path) {
+	private boolean allowedMapBy_LastComponent(RequestConstraintsVisitor source, String path) {
 
 		// process last component
 		String property = path;
@@ -184,7 +193,7 @@ class TreeConstraintsHandler {
 			return true;
 		}
 
-		ImmutableTreeConstraints child = source.getChild(property);
+		RequestConstraintsVisitor child = source.getChild(property);
 		return child != null && allowedMapBy_LastComponent(child, null);
 	}
 }

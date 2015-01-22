@@ -5,5 +5,5 @@ package com.nhl.link.rest.constraints;
  */
 public interface Constraint {
 
-	void accept(ConstraintsVisitor visitor);
+	void accept(ConstraintVisitor visitor);
 }

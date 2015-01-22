@@ -4,6 +4,7 @@ Release 1.12
 #68 Rename Entity to ResourceEntity
 #69 Own metadata layer #69 
 #70 Added JSON converters for java.sql date/time types
+#72 Refactor TreeConstraints into visitor-based ConstraintsBuilder
 
 Release 1.11 2015-01-20
 

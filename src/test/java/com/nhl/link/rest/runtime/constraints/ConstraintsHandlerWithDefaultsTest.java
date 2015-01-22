@@ -20,6 +20,7 @@ import com.nhl.link.rest.constraints.ConstraintsBuilder;
 import com.nhl.link.rest.it.fixture.cayenne.E1;
 import com.nhl.link.rest.it.fixture.cayenne.E2;
 import com.nhl.link.rest.meta.LrEntity;
+import com.nhl.link.rest.runtime.meta.IMetadataService;
 import com.nhl.link.rest.unit.TestWithCayenneMapping;
 
 public class ConstraintsHandlerWithDefaultsTest extends TestWithCayenneMapping {
@@ -40,8 +41,6 @@ public class ConstraintsHandlerWithDefaultsTest extends TestWithCayenneMapping {
 		w.add(new DefaultEntityConstraint("E2", false, false, Collections.singleton(E2.ADDRESS.getName()), Collections
 				.<String> emptySet()));
 
-		this.constraintHandler = new ConstraintsHandler(r, w);
-
 		ObjEntity e1 = runtime.getChannel().getEntityResolver().getObjEntity(E1.class);
 		ObjEntity e2 = runtime.getChannel().getEntityResolver().getObjEntity(E2.class);
 
@@ -54,6 +53,9 @@ public class ConstraintsHandlerWithDefaultsTest extends TestWithCayenneMapping {
 		when(lre2.getObjEntity()).thenReturn(e2);
 		when(lre2.getType()).thenReturn(E2.class);
 		when(lre2.getName()).thenReturn(e2.getName());
+
+		IMetadataService mockMDService = mock(IMetadataService.class);
+		this.constraintHandler = new ConstraintsHandler(r, w, mockMDService);
 	}
 
 	@Test

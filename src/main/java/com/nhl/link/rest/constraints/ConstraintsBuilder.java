@@ -7,7 +7,7 @@ import java.util.List;
 import org.apache.cayenne.exp.Expression;
 import org.apache.cayenne.exp.Property;
 
-import com.nhl.link.rest.ImmutableTreeConstraints;
+import com.nhl.link.rest.runtime.constraints.RequestConstraintsVisitor;
 
 /**
  * Defines read or write constraints on a given entity. Constraints are
@@ -15,7 +15,7 @@ import com.nhl.link.rest.ImmutableTreeConstraints;
  * client can't read or write more data than she is allowed to.
  * <p>
  * {@link ConstraintsBuilder} is transformed into
- * {@link ImmutableTreeConstraints} that is later consumed by LinkRest.
+ * {@link RequestConstraintsVisitor} that is later consumed by LinkRest.
  * 
  * @since 1.3
  */
@@ -61,7 +61,7 @@ public class ConstraintsBuilder<T> implements Constraint {
 	 * Applies visitor to all collected constraints.
 	 */
 	@Override
-	public void accept(ConstraintsVisitor visitor) {
+	public void accept(ConstraintVisitor visitor) {
 		for (Constraint c : ops) {
 			c.accept(visitor);
 		}
@@ -74,8 +74,8 @@ public class ConstraintsBuilder<T> implements Constraint {
 
 		ops.add(new Constraint() {
 			@Override
-			public void accept(ConstraintsVisitor visitor) {
-				visitor.visitExcludeAllConstraint();
+			public void accept(ConstraintVisitor visitor) {
+				visitor.visitExcludeAllAttributesConstraint();
 			}
 		});
 
@@ -89,8 +89,8 @@ public class ConstraintsBuilder<T> implements Constraint {
 		ops.add(new Constraint() {
 
 			@Override
-			public void accept(ConstraintsVisitor visitor) {
-				visitor.visitExcludeChildrenConstraint();
+			public void accept(ConstraintVisitor visitor) {
+				visitor.visitExcludeAllChildrenConstraint();
 			}
 		});
 
@@ -101,8 +101,8 @@ public class ConstraintsBuilder<T> implements Constraint {
 		ops.add(new Constraint() {
 
 			@Override
-			public void accept(ConstraintsVisitor visitor) {
-				visitor.visitAttributesConstraint(attribute);
+			public void accept(ConstraintVisitor visitor) {
+				visitor.visitIncludeAttributesConstraint(attribute);
 			}
 		});
 
@@ -113,8 +113,8 @@ public class ConstraintsBuilder<T> implements Constraint {
 		ops.add(new Constraint() {
 
 			@Override
-			public void accept(ConstraintsVisitor visitor) {
-				visitor.visitAttributesConstraint(attribute.getName());
+			public void accept(ConstraintVisitor visitor) {
+				visitor.visitIncludeAttributesConstraint(attribute.getName());
 			}
 		});
 		return this;
@@ -123,8 +123,8 @@ public class ConstraintsBuilder<T> implements Constraint {
 	public ConstraintsBuilder<T> allAttributes() {
 		ops.add(new Constraint() {
 			@Override
-			public void accept(ConstraintsVisitor visitor) {
-				visitor.visitAllAttributesConstraint();
+			public void accept(ConstraintVisitor visitor) {
+				visitor.visitIncludeAllAttributesConstraint();
 			}
 		});
 		return this;
@@ -134,14 +134,14 @@ public class ConstraintsBuilder<T> implements Constraint {
 		ops.add(new Constraint() {
 
 			@Override
-			public void accept(ConstraintsVisitor visitor) {
+			public void accept(ConstraintVisitor visitor) {
 
 				String[] names = new String[attributes.length];
 				for (int i = 0; i < attributes.length; i++) {
 					names[i] = attributes[i].getName();
 				}
 
-				visitor.visitAttributesConstraint(names);
+				visitor.visitIncludeAttributesConstraint(names);
 			}
 		});
 		return this;
@@ -151,8 +151,8 @@ public class ConstraintsBuilder<T> implements Constraint {
 		ops.add(new Constraint() {
 
 			@Override
-			public void accept(ConstraintsVisitor visitor) {
-				visitor.visitAttributesConstraint(attributes);
+			public void accept(ConstraintVisitor visitor) {
+				visitor.visitIncludeAttributesConstraint(attributes);
 			}
 		});
 
@@ -163,7 +163,7 @@ public class ConstraintsBuilder<T> implements Constraint {
 		ops.add(new Constraint() {
 
 			@Override
-			public void accept(ConstraintsVisitor visitor) {
+			public void accept(ConstraintVisitor visitor) {
 				visitor.visitIncludeIdConstraint(include);
 			}
 		});
@@ -174,7 +174,7 @@ public class ConstraintsBuilder<T> implements Constraint {
 		ops.add(new Constraint() {
 
 			@Override
-			public void accept(ConstraintsVisitor visitor) {
+			public void accept(ConstraintVisitor visitor) {
 				visitor.visitIncludeIdConstraint(true);
 			}
 		});
@@ -185,7 +185,7 @@ public class ConstraintsBuilder<T> implements Constraint {
 		ops.add(new Constraint() {
 
 			@Override
-			public void accept(ConstraintsVisitor visitor) {
+			public void accept(ConstraintVisitor visitor) {
 				visitor.visitIncludeIdConstraint(false);
 			}
 		});
@@ -197,7 +197,7 @@ public class ConstraintsBuilder<T> implements Constraint {
 		ops.add(new Constraint() {
 
 			@Override
-			public void accept(ConstraintsVisitor visitor) {
+			public void accept(ConstraintVisitor visitor) {
 				visitor.visitAndQualifierConstraint(qualifier);
 			}
 		});
@@ -208,7 +208,7 @@ public class ConstraintsBuilder<T> implements Constraint {
 		ops.add(new Constraint() {
 
 			@Override
-			public void accept(ConstraintsVisitor visitor) {
+			public void accept(ConstraintVisitor visitor) {
 				visitor.visitOrQualifierConstraint(qualifier);
 			}
 		});
@@ -229,7 +229,7 @@ public class ConstraintsBuilder<T> implements Constraint {
 		ops.add(new Constraint() {
 
 			@Override
-			public void accept(ConstraintsVisitor visitor) {
+			public void accept(ConstraintVisitor visitor) {
 				subentityBuilder.accept(visitor.subtreeVisitor(path));
 			}
 

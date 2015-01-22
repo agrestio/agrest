@@ -15,83 +15,94 @@ import java.util.Collections;
 import java.util.List;
 
 import org.apache.cayenne.exp.Expression;
-import org.apache.cayenne.map.DataMap;
-import org.apache.cayenne.map.ObjEntity;
-import org.apache.cayenne.map.ObjRelationship;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 
 import com.nhl.link.rest.DataResponse;
 import com.nhl.link.rest.EntityConstraint;
 import com.nhl.link.rest.ResourceEntity;
 import com.nhl.link.rest.SizeConstraints;
 import com.nhl.link.rest.constraints.ConstraintsBuilder;
+import com.nhl.link.rest.it.fixture.cayenne.E1;
+import com.nhl.link.rest.it.fixture.cayenne.E2;
+import com.nhl.link.rest.it.fixture.cayenne.E3;
+import com.nhl.link.rest.it.fixture.cayenne.E4;
+import com.nhl.link.rest.it.fixture.cayenne.E5;
 import com.nhl.link.rest.meta.LrEntity;
+import com.nhl.link.rest.meta.LrRelationship;
 import com.nhl.link.rest.runtime.meta.DefaultLrAttribute;
+import com.nhl.link.rest.runtime.meta.IMetadataService;
 
 public class ConstraintsHandlerTest {
 
 	private ConstraintsHandler constraintHandler;
 
-	private LrEntity<Object> lre0;
-	private LrEntity<Object> lre1;
-	private LrEntity<Object> lre2;
-	private LrEntity<Object> lre3;
-	private LrEntity<Object> lre4;
+	private LrEntity<E1> lre0;
+	private LrEntity<E2> lre1;
+	private LrEntity<E3> lre2;
+	private LrEntity<E4> lre3;
+	private LrEntity<E5> lre4;
 
 	@SuppressWarnings("unchecked")
 	@Before
 	public void before() {
 
-		List<EntityConstraint> r = Collections.emptyList();
-		List<EntityConstraint> w = Collections.emptyList();
-		this.constraintHandler = new ConstraintsHandler(r, w);
-
-		DataMap dm = new DataMap();
-
-		ObjEntity e0 = new ObjEntity("Test");
-		dm.addObjEntity(e0);
-
-		ObjEntity e1 = new ObjEntity("Test1");
-		dm.addObjEntity(e1);
-
-		ObjEntity e2 = new ObjEntity("Test2");
-		dm.addObjEntity(e2);
-
-		ObjEntity e3 = new ObjEntity("Test3");
-		dm.addObjEntity(e3);
-
-		ObjRelationship r01 = new ObjRelationship("r1");
-		r01.setTargetEntityName(e1.getName());
-		e0.addRelationship(r01);
-
-		ObjRelationship r12 = new ObjRelationship("r11");
-		r12.setTargetEntityName(e2.getName());
-		e1.addRelationship(r12);
-
-		ObjRelationship r03 = new ObjRelationship("r2");
-		r03.setTargetEntityName(e3.getName());
-		e0.addRelationship(r03);
-
 		lre0 = mock(LrEntity.class);
-		when(lre0.getObjEntity()).thenReturn(e0);
-		when(lre0.getType()).thenReturn(Object.class);
+		when(lre0.getType()).thenReturn(E1.class);
+		LrRelationship r1 = mock(LrRelationship.class);
+		when(lre0.getRelationship("r1")).thenReturn(r1);
+		when(r1.getName()).thenReturn("r1");
+		when(r1.getTargetEntityType()).then(new Answer<Object>() {
+			@Override
+			public Object answer(InvocationOnMock invocation) throws Throwable {
+				return E2.class;
+			}
+		});
+
+		LrRelationship r2 = mock(LrRelationship.class);
+		when(lre0.getRelationship("r2")).thenReturn(r2);
+		when(r2.getName()).thenReturn("r2");
+		when(r2.getTargetEntityType()).then(new Answer<Object>() {
+			@Override
+			public Object answer(InvocationOnMock invocation) throws Throwable {
+				return E4.class;
+			}
+		});
 
 		lre1 = mock(LrEntity.class);
-		when(lre1.getObjEntity()).thenReturn(e1);
-		when(lre1.getType()).thenReturn(Object.class);
+		when(lre1.getType()).thenReturn(E2.class);
+
+		LrRelationship r11 = mock(LrRelationship.class);
+		when(lre1.getRelationship("r11")).thenReturn(r11);
+		when(r11.getName()).thenReturn("r11");
+		when(r11.getTargetEntityType()).then(new Answer<Object>() {
+			@Override
+			public Object answer(InvocationOnMock invocation) throws Throwable {
+				return E3.class;
+			}
+		});
 
 		lre2 = mock(LrEntity.class);
-		when(lre2.getObjEntity()).thenReturn(e2);
-		when(lre2.getType()).thenReturn(Object.class);
+		when(lre2.getType()).thenReturn(E3.class);
 
 		lre3 = mock(LrEntity.class);
-		when(lre3.getObjEntity()).thenReturn(e3);
-		when(lre3.getType()).thenReturn(Object.class);
+		when(lre3.getType()).thenReturn(E4.class);
 
 		lre4 = mock(LrEntity.class);
-		when(lre4.getObjEntity()).thenReturn(null);
-		when(lre4.getType()).thenReturn(Object.class);
+		when(lre4.getType()).thenReturn(E5.class);
+
+		IMetadataService mockMDService = mock(IMetadataService.class);
+		when(mockMDService.getLrEntity(E1.class)).thenReturn(lre0);
+		when(mockMDService.getLrEntity(E2.class)).thenReturn(lre1);
+		when(mockMDService.getLrEntity(E3.class)).thenReturn(lre2);
+		when(mockMDService.getLrEntity(E4.class)).thenReturn(lre3);
+		when(mockMDService.getLrEntity(E5.class)).thenReturn(lre4);
+
+		List<EntityConstraint> r = Collections.emptyList();
+		List<EntityConstraint> w = Collections.emptyList();
+		this.constraintHandler = new ConstraintsHandler(r, w, mockMDService);
 	}
 
 	@Test
@@ -151,9 +162,9 @@ public class ConstraintsHandlerTest {
 	@Test
 	public void testApply_ResourceEntity_NoTargetRel() {
 
-		ConstraintsBuilder<Object> tc1 = ConstraintsBuilder.excludeAll(Object.class).attributes("a", "b");
+		ConstraintsBuilder<E1> tc1 = ConstraintsBuilder.excludeAll(E1.class).attributes("a", "b");
 
-		ResourceEntity<Object> te1 = new ResourceEntity<>(lre0);
+		ResourceEntity<E1> te1 = new ResourceEntity<>(lre0);
 		appendAttribute(te1, "c");
 		appendAttribute(te1, "b");
 
@@ -162,7 +173,7 @@ public class ConstraintsHandlerTest {
 		appendAttribute(te11, "b1");
 		te1.getChildren().put("d", te11);
 
-		DataResponse<Object> t1 = DataResponse.forType(Object.class).resourceEntity(te1);
+		DataResponse<E1> t1 = DataResponse.forType(E1.class).resourceEntity(te1);
 
 		constraintHandler.constrainResponse(t1, null, tc1);
 		assertEquals(1, t1.getEntity().getAttributes().size());
@@ -173,12 +184,12 @@ public class ConstraintsHandlerTest {
 	@Test
 	public void testApply_ResourceEntity_TargetRel() {
 
-		ConstraintsBuilder<Object> tc1 = ConstraintsBuilder.excludeAll(Object.class).attributes("a", "b")
-				.path("r1", ConstraintsBuilder.excludeAll(Object.class).attributes("n", "m"))
-				.path("r1.r11", ConstraintsBuilder.excludeAll(Object.class).attributes("p", "r"))
-				.path("r2", ConstraintsBuilder.excludeAll(Object.class).attributes("k", "l"));
+		ConstraintsBuilder<E1> tc1 = ConstraintsBuilder.excludeAll(E1.class).attributes("a", "b")
+				.path("r1", ConstraintsBuilder.excludeAll(E2.class).attributes("n", "m"))
+				.path("r1.r11", ConstraintsBuilder.excludeAll(E3.class).attributes("p", "r"))
+				.path("r2", ConstraintsBuilder.excludeAll(E4.class).attributes("k", "l"));
 
-		ResourceEntity<Object> te1 = new ResourceEntity<>(lre0);
+		ResourceEntity<E1> te1 = new ResourceEntity<>(lre0);
 		appendAttribute(te1, "c");
 		appendAttribute(te1, "b");
 
@@ -192,7 +203,7 @@ public class ConstraintsHandlerTest {
 		appendAttribute(te21, "z");
 		te1.getChildren().put("r3", te21);
 
-		DataResponse<Object> t1 = DataResponse.forType(Object.class).resourceEntity(te1);
+		DataResponse<E1> t1 = DataResponse.forType(E1.class).resourceEntity(te1);
 
 		constraintHandler.constrainResponse(t1, null, tc1);
 		assertEquals(1, t1.getEntity().getAttributes().size());
@@ -209,24 +220,24 @@ public class ConstraintsHandlerTest {
 	@Test
 	public void testMerge_ResourceEntity_Id() {
 
-		ConstraintsBuilder<Object> tc1 = ConstraintsBuilder.excludeAll(Object.class).excludeId();
-		ConstraintsBuilder<Object> tc2 = ConstraintsBuilder.excludeAll(Object.class).includeId();
+		ConstraintsBuilder<E1> tc1 = ConstraintsBuilder.excludeAll(E1.class).excludeId();
+		ConstraintsBuilder<E1> tc2 = ConstraintsBuilder.excludeAll(E1.class).includeId();
 
-		ResourceEntity<Object> te1 = new ResourceEntity<>(lre0);
+		ResourceEntity<E1> te1 = new ResourceEntity<>(lre0);
 		te1.includeId();
-		DataResponse<Object> t1 = DataResponse.forType(Object.class).resourceEntity(te1);
+		DataResponse<E1> t1 = DataResponse.forType(E1.class).resourceEntity(te1);
 		constraintHandler.constrainResponse(t1, null, tc1);
 		assertFalse(t1.getEntity().isIdIncluded());
 
-		ResourceEntity<Object> te2 = new ResourceEntity<>(lre0);
+		ResourceEntity<E1> te2 = new ResourceEntity<>(lre0);
 		te2.includeId();
-		DataResponse<Object> t2 = DataResponse.forType(Object.class).resourceEntity(te2);
+		DataResponse<E1> t2 = DataResponse.forType(E1.class).resourceEntity(te2);
 		constraintHandler.constrainResponse(t2, null, tc2);
 		assertTrue(t2.getEntity().isIdIncluded());
 
-		ResourceEntity<Object> te3 = new ResourceEntity<>(lre0);
+		ResourceEntity<E1> te3 = new ResourceEntity<>(lre0);
 		te3.excludeId();
-		DataResponse<Object> t3 = DataResponse.forType(Object.class).resourceEntity(te3);
+		DataResponse<E1> t3 = DataResponse.forType(E1.class).resourceEntity(te3);
 		constraintHandler.constrainResponse(t3, null, tc2);
 		assertFalse(t3.getEntity().isIdIncluded());
 	}
@@ -236,16 +247,16 @@ public class ConstraintsHandlerTest {
 
 		Expression q1 = exp("a = 5");
 
-		ConstraintsBuilder<Object> tc1 = ConstraintsBuilder.excludeAll(Object.class).and(q1);
+		ConstraintsBuilder<E1> tc1 = ConstraintsBuilder.excludeAll(E1.class).and(q1);
 
-		ResourceEntity<Object> te1 = new ResourceEntity<>(lre0);
-		DataResponse<Object> t1 = DataResponse.forType(Object.class).resourceEntity(te1);
+		ResourceEntity<E1> te1 = new ResourceEntity<>(lre0);
+		DataResponse<E1> t1 = DataResponse.forType(E1.class).resourceEntity(te1);
 		constraintHandler.constrainResponse(t1, null, tc1);
 		assertEquals(exp("a = 5"), t1.getEntity().getQualifier());
 
-		ResourceEntity<Object> te2 = new ResourceEntity<>(lre0);
+		ResourceEntity<E1> te2 = new ResourceEntity<>(lre0);
 		te2.andQualifier(exp("b = 'd'"));
-		DataResponse<Object> t2 = DataResponse.forType(Object.class).resourceEntity(te2);
+		DataResponse<E1> t2 = DataResponse.forType(E1.class).resourceEntity(te2);
 		constraintHandler.constrainResponse(t2, null, tc1);
 		assertEquals(exp("b = 'd' and a = 5"), t2.getEntity().getQualifier());
 	}
@@ -253,33 +264,33 @@ public class ConstraintsHandlerTest {
 	@Test
 	public void testMerge_MapBy() {
 
-		ConstraintsBuilder<Object> tc1 = excludeAll(Object.class).path("r1",
-				ConstraintsBuilder.excludeAll(Object.class).attribute("a"));
+		ConstraintsBuilder<E1> tc1 = excludeAll(E1.class).path("r1",
+				ConstraintsBuilder.excludeAll(E2.class).attribute("a"));
 
-		ResourceEntity<Object> te1MapByTarget = new ResourceEntity<>(lre0);
+		ResourceEntity<E1> te1MapByTarget = new ResourceEntity<>(lre0);
 		appendAttribute(te1MapByTarget, "b");
 
-		ResourceEntity<Object> te1MapBy = new ResourceEntity<>(lre1);
+		ResourceEntity<E2> te1MapBy = new ResourceEntity<>(lre1);
 		te1MapBy.getChildren().put("r1", te1MapByTarget);
 
-		ResourceEntity<Object> te1 = new ResourceEntity<>(lre0);
+		ResourceEntity<E1> te1 = new ResourceEntity<>(lre0);
 		te1.mapBy(te1MapBy, "r1.b");
 
-		DataResponse<Object> t1 = DataResponse.forType(Object.class).resourceEntity(te1);
+		DataResponse<E1> t1 = DataResponse.forType(E1.class).resourceEntity(te1);
 		constraintHandler.constrainResponse(t1, null, tc1);
 		assertNull(t1.getEntity().getMapBy());
 		assertNull(t1.getEntity().getMapByPath());
 
-		ResourceEntity<Object> te2MapByTarget = new ResourceEntity<>(lre1);
+		ResourceEntity<E2> te2MapByTarget = new ResourceEntity<>(lre1);
 		appendAttribute(te2MapByTarget, "a");
 
-		ResourceEntity<Object> te2MapBy = new ResourceEntity<>(lre0);
+		ResourceEntity<E1> te2MapBy = new ResourceEntity<>(lre0);
 		te1MapBy.getChildren().put("r1", te2MapByTarget);
 
-		ResourceEntity<Object> te2 = new ResourceEntity<>(lre0);
+		ResourceEntity<E1> te2 = new ResourceEntity<>(lre0);
 		te2.mapBy(te2MapBy, "r1.a");
 
-		DataResponse<Object> t2 = DataResponse.forType(Object.class).resourceEntity(te2);
+		DataResponse<E1> t2 = DataResponse.forType(E1.class).resourceEntity(te2);
 		constraintHandler.constrainResponse(t2, null, tc1);
 		assertSame(te2MapBy, t2.getEntity().getMapBy());
 		assertEquals("r1.a", t2.getEntity().getMapByPath());
@@ -288,18 +299,18 @@ public class ConstraintsHandlerTest {
 	@Test
 	public void testMerge_MapById_Exclude() {
 
-		ConstraintsBuilder<Object> tc1 = excludeAll(Object.class).path("r1", excludeAll(Object.class).excludeId());
+		ConstraintsBuilder<E1> tc1 = excludeAll(E1.class).path("r1", excludeAll(E2.class).excludeId());
 
-		ResourceEntity<Object> te1MapByTarget = new ResourceEntity<>(lre0);
+		ResourceEntity<E1> te1MapByTarget = new ResourceEntity<>(lre0);
 		te1MapByTarget.includeId();
 
-		ResourceEntity<Object> te1MapBy = new ResourceEntity<>(lre1);
+		ResourceEntity<E2> te1MapBy = new ResourceEntity<>(lre1);
 		te1MapBy.getChildren().put("r1", te1MapByTarget);
 
-		ResourceEntity<Object> te1 = new ResourceEntity<>(lre0);
+		ResourceEntity<E1> te1 = new ResourceEntity<>(lre0);
 		te1.mapBy(te1MapBy, "r1");
 
-		DataResponse<Object> t1 = DataResponse.forType(Object.class).resourceEntity(te1);
+		DataResponse<E1> t1 = DataResponse.forType(E1.class).resourceEntity(te1);
 		constraintHandler.constrainResponse(t1, null, tc1);
 		assertNull(t1.getEntity().getMapBy());
 		assertNull(t1.getEntity().getMapByPath());
@@ -309,18 +320,18 @@ public class ConstraintsHandlerTest {
 	@Test
 	public void testMerge_MapById_Include() {
 
-		ConstraintsBuilder<Object> tc1 = excludeAll(Object.class).path("r1", excludeAll(Object.class).includeId());
+		ConstraintsBuilder<E1> tc1 = excludeAll(E1.class).path("r1", excludeAll(E2.class).includeId());
 
-		ResourceEntity<Object> te1MapByTarget = new ResourceEntity<>(lre1);
+		ResourceEntity<E2> te1MapByTarget = new ResourceEntity<>(lre1);
 		te1MapByTarget.includeId();
 
-		ResourceEntity<Object> te1MapBy = new ResourceEntity<>(lre0);
+		ResourceEntity<E1> te1MapBy = new ResourceEntity<>(lre0);
 		te1MapBy.getChildren().put("r1", te1MapByTarget);
 
-		ResourceEntity<Object> te1 = new ResourceEntity<>(lre0);
+		ResourceEntity<E1> te1 = new ResourceEntity<>(lre0);
 		te1.mapBy(te1MapBy, "r1");
 
-		DataResponse<Object> t1 = DataResponse.forType(Object.class).resourceEntity(te1);
+		DataResponse<E1> t1 = DataResponse.forType(E1.class).resourceEntity(te1);
 		constraintHandler.constrainResponse(t1, null, tc1);
 		assertSame(te1MapBy, t1.getEntity().getMapBy());
 		assertEquals("r1", t1.getEntity().getMapByPath());
