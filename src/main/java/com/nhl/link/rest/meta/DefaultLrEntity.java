@@ -1,5 +1,6 @@
 package com.nhl.link.rest.meta;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -12,7 +13,7 @@ public class DefaultLrEntity<T> implements LrEntity<T> {
 	private String name;
 	private Class<T> type;
 
-	private LrAttribute id;
+	private Collection<LrAttribute> ids;
 	private Map<String, LrAttribute> attributes;
 	private Map<String, LrRelationship> relationships;
 
@@ -22,6 +23,7 @@ public class DefaultLrEntity<T> implements LrEntity<T> {
 		this.type = type;
 		this.relationships = new HashMap<>();
 		this.attributes = new HashMap<>();
+		this.ids = new ArrayList<>();
 	}
 
 	@Override
@@ -39,8 +41,8 @@ public class DefaultLrEntity<T> implements LrEntity<T> {
 	}
 
 	@Override
-	public LrAttribute getId() {
-		return id;
+	public Collection<LrAttribute> getIds() {
+		return ids;
 	}
 
 	@Override
@@ -71,7 +73,7 @@ public class DefaultLrEntity<T> implements LrEntity<T> {
 		attributes.put(attribute.getName(), attribute);
 	}
 
-	public void setId(LrAttribute id) {
-		this.id = id;
+	public void addId(LrAttribute id) {
+		ids.add(id);
 	}
 }

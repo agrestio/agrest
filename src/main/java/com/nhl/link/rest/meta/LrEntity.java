@@ -13,7 +13,7 @@ public interface LrEntity<T> {
 
 	Class<T> getType();
 
-	LrAttribute getId();
+	Collection<LrAttribute> getIds();
 
 	Collection<LrAttribute> getAttributes();
 

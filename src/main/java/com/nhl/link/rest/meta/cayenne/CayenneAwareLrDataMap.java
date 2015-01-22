@@ -1,6 +1,5 @@
 package com.nhl.link.rest.meta.cayenne;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -85,7 +84,12 @@ public class CayenneAwareLrDataMap implements LrDataMap {
 			lrEntity.addRelationship(lrRelationship);
 		}
 
-		lrEntity.setId(createIdAttribute(objEntity));
+		for (DbAttribute pk : objEntity.getDbEntity().getPrimaryKeys()) {
+			ObjAttribute attribute = objEntity.getAttributeForDbAttribute(pk);
+			LrAttribute id = attribute != null ? new CayenneLrAttribute(attribute) : new CayenneLrDbAttribute(
+					PathConstants.ID_PK_ATTRIBUTE, pk);
+			lrEntity.addId(id);
+		}
 
 		LrEntityOverlay<?> overlay = entityOverlays.get(type.getName());
 		if (overlay != null) {
@@ -98,20 +102,6 @@ public class CayenneAwareLrDataMap implements LrDataMap {
 		}
 
 		return lrEntity;
-	}
-
-	private LrAttribute createIdAttribute(ObjEntity objEntity) {
-
-		Collection<DbAttribute> pks = objEntity.getDbEntity().getPrimaryKeys();
-		if (pks.size() > 1) {
-			throw new IllegalStateException("TODO: Multi-column pk is yet unsupported. Entity: " + objEntity.getName());
-		}
-
-		DbAttribute pk = pks.iterator().next();
-
-		ObjAttribute attribute = objEntity.getAttributeForDbAttribute(pk);
-		return attribute != null ? new CayenneLrAttribute(attribute) : new CayenneLrDbAttribute(
-				PathConstants.ID_PK_ATTRIBUTE, pk);
 	}
 
 }
