@@ -16,7 +16,7 @@ import org.junit.Test;
 import com.nhl.link.rest.DataResponse;
 import com.nhl.link.rest.EntityConstraint;
 import com.nhl.link.rest.ResourceEntity;
-import com.nhl.link.rest.TreeConstraints;
+import com.nhl.link.rest.constraints.ConstraintsBuilder;
 import com.nhl.link.rest.it.fixture.cayenne.E1;
 import com.nhl.link.rest.it.fixture.cayenne.E2;
 import com.nhl.link.rest.meta.LrEntity;
@@ -59,7 +59,7 @@ public class ConstraintsHandlerWithDefaultsTest extends TestWithCayenneMapping {
 	@Test
 	public void testConstrainResponse_PerRequest() {
 
-		TreeConstraints<E1> tc1 = TreeConstraints.excludeAll(E1.class).attributes(E1.DESCRIPTION);
+		ConstraintsBuilder<E1> tc1 = ConstraintsBuilder.excludeAll(E1.class).attributes(E1.DESCRIPTION);
 
 		ResourceEntity<E1> te1 = new ResourceEntity<>(lre1);
 		appendAttribute(te1, E1.AGE, Integer.class);

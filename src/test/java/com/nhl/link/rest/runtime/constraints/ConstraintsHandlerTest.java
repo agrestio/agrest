@@ -1,6 +1,6 @@
 package com.nhl.link.rest.runtime.constraints;
 
-import static com.nhl.link.rest.TreeConstraints.excludeAll;
+import static com.nhl.link.rest.constraints.ConstraintsBuilder.excludeAll;
 import static org.apache.cayenne.exp.ExpressionFactory.exp;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -25,7 +25,7 @@ import com.nhl.link.rest.DataResponse;
 import com.nhl.link.rest.EntityConstraint;
 import com.nhl.link.rest.ResourceEntity;
 import com.nhl.link.rest.SizeConstraints;
-import com.nhl.link.rest.TreeConstraints;
+import com.nhl.link.rest.constraints.ConstraintsBuilder;
 import com.nhl.link.rest.meta.LrEntity;
 import com.nhl.link.rest.runtime.meta.DefaultLrAttribute;
 
@@ -151,7 +151,7 @@ public class ConstraintsHandlerTest {
 	@Test
 	public void testApply_ResourceEntity_NoTargetRel() {
 
-		TreeConstraints<Object> tc1 = TreeConstraints.excludeAll(Object.class).attributes("a", "b");
+		ConstraintsBuilder<Object> tc1 = ConstraintsBuilder.excludeAll(Object.class).attributes("a", "b");
 
 		ResourceEntity<Object> te1 = new ResourceEntity<>(lre0);
 		appendAttribute(te1, "c");
@@ -173,10 +173,10 @@ public class ConstraintsHandlerTest {
 	@Test
 	public void testApply_ResourceEntity_TargetRel() {
 
-		TreeConstraints<Object> tc1 = TreeConstraints.excludeAll(Object.class).attributes("a", "b")
-				.path("r1", TreeConstraints.excludeAll(Object.class).attributes("n", "m"))
-				.path("r1.r11", TreeConstraints.excludeAll(Object.class).attributes("p", "r"))
-				.path("r2", TreeConstraints.excludeAll(Object.class).attributes("k", "l"));
+		ConstraintsBuilder<Object> tc1 = ConstraintsBuilder.excludeAll(Object.class).attributes("a", "b")
+				.path("r1", ConstraintsBuilder.excludeAll(Object.class).attributes("n", "m"))
+				.path("r1.r11", ConstraintsBuilder.excludeAll(Object.class).attributes("p", "r"))
+				.path("r2", ConstraintsBuilder.excludeAll(Object.class).attributes("k", "l"));
 
 		ResourceEntity<Object> te1 = new ResourceEntity<>(lre0);
 		appendAttribute(te1, "c");
@@ -209,8 +209,8 @@ public class ConstraintsHandlerTest {
 	@Test
 	public void testMerge_ResourceEntity_Id() {
 
-		TreeConstraints<Object> tc1 = TreeConstraints.excludeAll(Object.class).excludeId();
-		TreeConstraints<Object> tc2 = TreeConstraints.excludeAll(Object.class).includeId();
+		ConstraintsBuilder<Object> tc1 = ConstraintsBuilder.excludeAll(Object.class).excludeId();
+		ConstraintsBuilder<Object> tc2 = ConstraintsBuilder.excludeAll(Object.class).includeId();
 
 		ResourceEntity<Object> te1 = new ResourceEntity<>(lre0);
 		te1.includeId();
@@ -236,7 +236,7 @@ public class ConstraintsHandlerTest {
 
 		Expression q1 = exp("a = 5");
 
-		TreeConstraints<Object> tc1 = TreeConstraints.excludeAll(Object.class).and(q1);
+		ConstraintsBuilder<Object> tc1 = ConstraintsBuilder.excludeAll(Object.class).and(q1);
 
 		ResourceEntity<Object> te1 = new ResourceEntity<>(lre0);
 		DataResponse<Object> t1 = DataResponse.forType(Object.class).resourceEntity(te1);
@@ -253,8 +253,8 @@ public class ConstraintsHandlerTest {
 	@Test
 	public void testMerge_MapBy() {
 
-		TreeConstraints<Object> tc1 = excludeAll(Object.class).path("r1",
-				TreeConstraints.excludeAll(Object.class).attribute("a"));
+		ConstraintsBuilder<Object> tc1 = excludeAll(Object.class).path("r1",
+				ConstraintsBuilder.excludeAll(Object.class).attribute("a"));
 
 		ResourceEntity<Object> te1MapByTarget = new ResourceEntity<>(lre0);
 		appendAttribute(te1MapByTarget, "b");
@@ -288,7 +288,7 @@ public class ConstraintsHandlerTest {
 	@Test
 	public void testMerge_MapById_Exclude() {
 
-		TreeConstraints<Object> tc1 = excludeAll(Object.class).path("r1", excludeAll(Object.class).excludeId());
+		ConstraintsBuilder<Object> tc1 = excludeAll(Object.class).path("r1", excludeAll(Object.class).excludeId());
 
 		ResourceEntity<Object> te1MapByTarget = new ResourceEntity<>(lre0);
 		te1MapByTarget.includeId();
@@ -309,7 +309,7 @@ public class ConstraintsHandlerTest {
 	@Test
 	public void testMerge_MapById_Include() {
 
-		TreeConstraints<Object> tc1 = excludeAll(Object.class).path("r1", excludeAll(Object.class).includeId());
+		ConstraintsBuilder<Object> tc1 = excludeAll(Object.class).path("r1", excludeAll(Object.class).includeId());
 
 		ResourceEntity<Object> te1MapByTarget = new ResourceEntity<>(lre1);
 		te1MapByTarget.includeId();

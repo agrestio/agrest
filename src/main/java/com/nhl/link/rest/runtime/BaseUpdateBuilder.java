@@ -21,9 +21,9 @@ import com.nhl.link.rest.EntityParent;
 import com.nhl.link.rest.EntityUpdate;
 import com.nhl.link.rest.LinkRestException;
 import com.nhl.link.rest.ObjectMapperFactory;
-import com.nhl.link.rest.TreeConstraints;
 import com.nhl.link.rest.UpdateBuilder;
 import com.nhl.link.rest.UpdateResponse;
+import com.nhl.link.rest.constraints.ConstraintsBuilder;
 import com.nhl.link.rest.runtime.constraints.IConstraintsHandler;
 import com.nhl.link.rest.runtime.encoder.IEncoderService;
 import com.nhl.link.rest.runtime.meta.IMetadataService;
@@ -46,8 +46,8 @@ public abstract class BaseUpdateBuilder<T> implements UpdateBuilder<T> {
 	protected IMetadataService metadataService;
 	private IConstraintsHandler constraintsHandler;
 
-	private TreeConstraints<T> readConstraints;
-	private TreeConstraints<T> writeConstraints;
+	private ConstraintsBuilder<T> readConstraints;
+	private ConstraintsBuilder<T> writeConstraints;
 
 	private boolean includeData;
 
@@ -94,13 +94,13 @@ public abstract class BaseUpdateBuilder<T> implements UpdateBuilder<T> {
 	}
 
 	@Override
-	public UpdateBuilder<T> readConstraints(TreeConstraints<T> constraints) {
+	public UpdateBuilder<T> readConstraints(ConstraintsBuilder<T> constraints) {
 		this.readConstraints = constraints;
 		return this;
 	}
 
 	@Override
-	public UpdateBuilder<T> writeConstraints(TreeConstraints<T> constraints) {
+	public UpdateBuilder<T> writeConstraints(ConstraintsBuilder<T> constraints) {
 		this.writeConstraints = constraints;
 		return this;
 	}

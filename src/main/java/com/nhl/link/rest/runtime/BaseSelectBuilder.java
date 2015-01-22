@@ -21,7 +21,7 @@ import com.nhl.link.rest.EntityProperty;
 import com.nhl.link.rest.LinkRestException;
 import com.nhl.link.rest.SelectBuilder;
 import com.nhl.link.rest.SizeConstraints;
-import com.nhl.link.rest.TreeConstraints;
+import com.nhl.link.rest.constraints.ConstraintsBuilder;
 import com.nhl.link.rest.encoder.Encoder;
 import com.nhl.link.rest.runtime.constraints.IConstraintsHandler;
 import com.nhl.link.rest.runtime.encoder.IEncoderService;
@@ -41,7 +41,7 @@ public abstract class BaseSelectBuilder<T> implements SelectBuilder<T> {
 	private Map<String, EntityProperty> extraProperties;
 	private Encoder dataEncoder;
 	private SizeConstraints sizeConstraints;
-	private TreeConstraints<T> treeConstraints;
+	private ConstraintsBuilder<T> treeConstraints;
 	protected EntityParent<?> parent;
 
 	public BaseSelectBuilder(Class<T> type, IEncoderService encoderService, IRequestParser requestParser,
@@ -89,7 +89,7 @@ public abstract class BaseSelectBuilder<T> implements SelectBuilder<T> {
 	}
 
 	@Override
-	public SelectBuilder<T> constraints(TreeConstraints<T> constraints) {
+	public SelectBuilder<T> constraints(ConstraintsBuilder<T> constraints) {
 		this.treeConstraints = constraints;
 		return this;
 	}

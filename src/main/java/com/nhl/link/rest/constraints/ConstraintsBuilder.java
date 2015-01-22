@@ -1,0 +1,240 @@
+package com.nhl.link.rest.constraints;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
+import org.apache.cayenne.exp.Expression;
+import org.apache.cayenne.exp.Property;
+
+import com.nhl.link.rest.ImmutableTreeConstraints;
+
+/**
+ * Defines read or write constraints on a given entity. Constraints are
+ * predefined on the server side and are applied to each request, ensuring a
+ * client can't read or write more data than she is allowed to.
+ * <p>
+ * {@link ConstraintsBuilder} is transformed into
+ * {@link ImmutableTreeConstraints} that is later consumed by LinkRest.
+ * 
+ * @since 1.3
+ */
+public class ConstraintsBuilder<T> implements Constraint {
+
+	private Class<T> type;
+	private Collection<Constraint> ops;
+
+	/**
+	 * @since 1.5
+	 */
+	public static <T> ConstraintsBuilder<T> excludeAll(Class<T> type) {
+		return new ConstraintsBuilder<>(type);
+	}
+
+	/**
+	 * @since 1.5
+	 */
+	public static <T> ConstraintsBuilder<T> idOnly(Class<T> type) {
+		return excludeAll(type).includeId();
+	}
+
+	/**
+	 * @since 1.5
+	 */
+	public static <T> ConstraintsBuilder<T> idAndAttributes(Class<T> type) {
+		return excludeAll(type).includeId().allAttributes();
+	}
+
+	protected ConstraintsBuilder(Class<T> type) {
+		this.ops = new ArrayList<>();
+		this.type = type;
+	}
+
+	/**
+	 * @since 1.5
+	 */
+	public Class<T> getType() {
+		return type;
+	}
+
+	/**
+	 * Applies visitor to all collected constraints.
+	 */
+	@Override
+	public void accept(ConstraintsVisitor visitor) {
+		for (Constraint c : ops) {
+			c.accept(visitor);
+		}
+	}
+
+	/**
+	 * Excludes all previously included attributes.
+	 */
+	public ConstraintsBuilder<T> excludeAttributes() {
+
+		ops.add(new Constraint() {
+			@Override
+			public void accept(ConstraintsVisitor visitor) {
+				visitor.visitExcludeAllConstraint();
+			}
+		});
+
+		return this;
+	}
+
+	/**
+	 * Excludes all previously included child configs.
+	 */
+	public ConstraintsBuilder<T> excludeChildren() {
+		ops.add(new Constraint() {
+
+			@Override
+			public void accept(ConstraintsVisitor visitor) {
+				visitor.visitExcludeChildrenConstraint();
+			}
+		});
+
+		return this;
+	}
+
+	public ConstraintsBuilder<T> attribute(final String attribute) {
+		ops.add(new Constraint() {
+
+			@Override
+			public void accept(ConstraintsVisitor visitor) {
+				visitor.visitAttributesConstraint(attribute);
+			}
+		});
+
+		return this;
+	}
+
+	public ConstraintsBuilder<T> attribute(final Property<?> attribute) {
+		ops.add(new Constraint() {
+
+			@Override
+			public void accept(ConstraintsVisitor visitor) {
+				visitor.visitAttributesConstraint(attribute.getName());
+			}
+		});
+		return this;
+	}
+
+	public ConstraintsBuilder<T> allAttributes() {
+		ops.add(new Constraint() {
+			@Override
+			public void accept(ConstraintsVisitor visitor) {
+				visitor.visitAllAttributesConstraint();
+			}
+		});
+		return this;
+	}
+
+	public ConstraintsBuilder<T> attributes(final Property<?>... attributes) {
+		ops.add(new Constraint() {
+
+			@Override
+			public void accept(ConstraintsVisitor visitor) {
+
+				String[] names = new String[attributes.length];
+				for (int i = 0; i < attributes.length; i++) {
+					names[i] = attributes[i].getName();
+				}
+
+				visitor.visitAttributesConstraint(names);
+			}
+		});
+		return this;
+	}
+
+	public ConstraintsBuilder<T> attributes(final String... attributes) {
+		ops.add(new Constraint() {
+
+			@Override
+			public void accept(ConstraintsVisitor visitor) {
+				visitor.visitAttributesConstraint(attributes);
+			}
+		});
+
+		return this;
+	}
+
+	public ConstraintsBuilder<T> includeId(final boolean include) {
+		ops.add(new Constraint() {
+
+			@Override
+			public void accept(ConstraintsVisitor visitor) {
+				visitor.visitIncludeIdConstraint(include);
+			}
+		});
+		return this;
+	}
+
+	public ConstraintsBuilder<T> includeId() {
+		ops.add(new Constraint() {
+
+			@Override
+			public void accept(ConstraintsVisitor visitor) {
+				visitor.visitIncludeIdConstraint(true);
+			}
+		});
+		return this;
+	}
+
+	public ConstraintsBuilder<T> excludeId() {
+		ops.add(new Constraint() {
+
+			@Override
+			public void accept(ConstraintsVisitor visitor) {
+				visitor.visitIncludeIdConstraint(false);
+			}
+		});
+
+		return this;
+	}
+
+	public ConstraintsBuilder<T> and(final Expression qualifier) {
+		ops.add(new Constraint() {
+
+			@Override
+			public void accept(ConstraintsVisitor visitor) {
+				visitor.visitAndQualifierConstraint(qualifier);
+			}
+		});
+		return this;
+	}
+
+	public ConstraintsBuilder<T> or(final Expression qualifier) {
+		ops.add(new Constraint() {
+
+			@Override
+			public void accept(ConstraintsVisitor visitor) {
+				visitor.visitOrQualifierConstraint(qualifier);
+			}
+		});
+
+		return this;
+	}
+
+	public <S> ConstraintsBuilder<T> path(Property<S> path, ConstraintsBuilder<S> subentityBuilder) {
+		return path(path.getName(), subentityBuilder);
+	}
+
+	public <S> ConstraintsBuilder<T> toManyPath(Property<List<S>> path, ConstraintsBuilder<S> subentityBuilder) {
+		return path(path.getName(), subentityBuilder);
+	}
+
+	public ConstraintsBuilder<T> path(final String path, final ConstraintsBuilder<?> subentityBuilder) {
+
+		ops.add(new Constraint() {
+
+			@Override
+			public void accept(ConstraintsVisitor visitor) {
+				subentityBuilder.accept(visitor.subtreeVisitor(path));
+			}
+
+		});
+
+		return this;
+	}
+}

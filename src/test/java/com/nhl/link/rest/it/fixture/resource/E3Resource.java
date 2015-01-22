@@ -13,7 +13,7 @@ import org.apache.cayenne.query.SelectQuery;
 
 import com.nhl.link.rest.DataResponse;
 import com.nhl.link.rest.SimpleResponse;
-import com.nhl.link.rest.TreeConstraints;
+import com.nhl.link.rest.constraints.ConstraintsBuilder;
 import com.nhl.link.rest.it.fixture.cayenne.E2;
 import com.nhl.link.rest.it.fixture.cayenne.E3;
 
@@ -51,14 +51,14 @@ public class E3Resource extends LrResource {
 	@POST
 	@Path("constrained")
 	public DataResponse<E3> insertReadConstrained(@Context UriInfo uriInfo, String requestBody) {
-		TreeConstraints<E3> tc = TreeConstraints.idOnly(E3.class).attribute(E3.NAME);
+		ConstraintsBuilder<E3> tc = ConstraintsBuilder.idOnly(E3.class).attribute(E3.NAME);
 		return getService().create(E3.class).with(uriInfo).readConstraints(tc).includeData().process(requestBody);
 	}
 
 	@POST
 	@Path("w/constrained")
 	public DataResponse<E3> insertWriteConstrained(@Context UriInfo uriInfo, String requestBody) {
-		TreeConstraints<E3> tc = TreeConstraints.idOnly(E3.class).attribute(E3.NAME);
+		ConstraintsBuilder<E3> tc = ConstraintsBuilder.idOnly(E3.class).attribute(E3.NAME);
 		return getService().create(E3.class).with(uriInfo).writeConstraints(tc).includeData().process(requestBody);
 	}
 

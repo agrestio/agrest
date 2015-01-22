@@ -9,6 +9,7 @@ import org.apache.cayenne.map.ObjEntity;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.nhl.link.rest.constraints.ConstraintsBuilder;
 import com.nhl.link.rest.it.fixture.cayenne.E4;
 import com.nhl.link.rest.meta.LrEntity;
 import com.nhl.link.rest.unit.TestWithCayenneMapping;
@@ -33,7 +34,7 @@ public class TreeConstraintsTest extends TestWithCayenneMapping {
 	@Test
 	public void testExcludeAll() {
 
-		TreeConstraints<E4> tc = TreeConstraints.excludeAll(E4.class);
+		ConstraintsBuilder<E4> tc = ConstraintsBuilder.excludeAll(E4.class);
 		ImmutableTreeConstraints itc = tc.build(e4r);
 		assertFalse(itc.isIdIncluded());
 
@@ -49,7 +50,7 @@ public class TreeConstraintsTest extends TestWithCayenneMapping {
 	@Test
 	public void testIdOnly() {
 
-		TreeConstraints<E4> tc = TreeConstraints.idOnly(E4.class);
+		ConstraintsBuilder<E4> tc = ConstraintsBuilder.idOnly(E4.class);
 		ImmutableTreeConstraints itc = tc.build(e4r);
 		assertTrue(itc.isIdIncluded());
 
@@ -65,7 +66,7 @@ public class TreeConstraintsTest extends TestWithCayenneMapping {
 	@Test
 	public void testIdAndAttributes() {
 
-		TreeConstraints<E4> tc = TreeConstraints.idAndAttributes(E4.class);
+		ConstraintsBuilder<E4> tc = ConstraintsBuilder.idAndAttributes(E4.class);
 		ImmutableTreeConstraints itc = tc.build(e4r);
 		assertTrue(itc.isIdIncluded());
 

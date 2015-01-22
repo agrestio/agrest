@@ -13,7 +13,7 @@ import org.apache.cayenne.query.SelectQuery;
 
 import com.nhl.link.rest.DataResponse;
 import com.nhl.link.rest.SimpleResponse;
-import com.nhl.link.rest.TreeConstraints;
+import com.nhl.link.rest.constraints.ConstraintsBuilder;
 import com.nhl.link.rest.it.fixture.cayenne.E2;
 import com.nhl.link.rest.it.fixture.cayenne.E3;
 
@@ -47,7 +47,7 @@ public class E2Resource extends LrResource {
 	@Path("constraints/{id}/e3s")
 	public DataResponse<E3> getE2_E3s_Constrained(@PathParam("id") int id, @Context UriInfo uriInfo) {
 		return (DataResponse<E3>) getService().forSelect(E3.class).parent(E2.class, id, "e3s").with(uriInfo)
-				.constraints(TreeConstraints.idOnly(E3.class)).select();
+				.constraints(ConstraintsBuilder.idOnly(E3.class)).select();
 	}
 
 	@DELETE

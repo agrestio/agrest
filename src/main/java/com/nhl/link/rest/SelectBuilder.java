@@ -6,6 +6,7 @@ import javax.ws.rs.core.UriInfo;
 
 import org.apache.cayenne.exp.Property;
 
+import com.nhl.link.rest.constraints.ConstraintsBuilder;
 import com.nhl.link.rest.encoder.Encoder;
 
 /**
@@ -49,7 +50,7 @@ public interface SelectBuilder<T> {
 	 * 
 	 * @since 1.3
 	 */
-	SelectBuilder<T> constraints(TreeConstraints<T> constraints);
+	SelectBuilder<T> constraints(ConstraintsBuilder<T> constraints);
 
 	/**
 	 * @since 1.4

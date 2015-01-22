@@ -13,8 +13,8 @@ import com.nhl.link.rest.ResourceEntity;
 import com.nhl.link.rest.EntityUpdate;
 import com.nhl.link.rest.ImmutableTreeConstraints;
 import com.nhl.link.rest.LinkRestException;
-import com.nhl.link.rest.TreeConstraints;
 import com.nhl.link.rest.UpdateResponse;
+import com.nhl.link.rest.constraints.ConstraintsBuilder;
 import com.nhl.link.rest.meta.LrAttribute;
 import com.nhl.link.rest.runtime.parser.PathConstants;
 
@@ -25,7 +25,7 @@ class TreeConstraintsHandler {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(TreeConstraintsHandler.class);
 
-	<T> boolean constrainResponse(DataResponse<T> response, TreeConstraints<T> c) {
+	<T> boolean constrainResponse(DataResponse<T> response, ConstraintsBuilder<T> c) {
 
 		// Null entity means we don't need to worry about unauthorized
 		// attributes and relationships
@@ -43,7 +43,7 @@ class TreeConstraintsHandler {
 		return true;
 	}
 
-	<T> boolean constrainUpdate(UpdateResponse<T> response, TreeConstraints<T> c) {
+	<T> boolean constrainUpdate(UpdateResponse<T> response, ConstraintsBuilder<T> c) {
 
 		if (response.getUpdates().isEmpty()) {
 			return true;

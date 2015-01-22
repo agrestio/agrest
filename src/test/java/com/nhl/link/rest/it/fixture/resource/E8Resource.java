@@ -10,7 +10,7 @@ import javax.ws.rs.core.UriInfo;
 
 import com.nhl.link.rest.DataResponse;
 import com.nhl.link.rest.SimpleResponse;
-import com.nhl.link.rest.TreeConstraints;
+import com.nhl.link.rest.constraints.ConstraintsBuilder;
 import com.nhl.link.rest.it.fixture.cayenne.E7;
 import com.nhl.link.rest.it.fixture.cayenne.E8;
 import com.nhl.link.rest.it.fixture.cayenne.E9;
@@ -28,7 +28,7 @@ public class E8Resource extends LrResource {
 	@Path("w/constrainedid/{id}")
 	public DataResponse<E8> create_WriteConstrainedId(@PathParam("id") int id, @Context UriInfo uriInfo,
 			String requestBody) {
-		TreeConstraints<E8> tc = TreeConstraints.idOnly(E8.class).attribute(E8.NAME);
+		ConstraintsBuilder<E8> tc = ConstraintsBuilder.idOnly(E8.class).attribute(E8.NAME);
 		return getService().create(E8.class).with(uriInfo).id(id).writeConstraints(tc).process(requestBody);
 	}
 
@@ -36,7 +36,7 @@ public class E8Resource extends LrResource {
 	@Path("w/constrainedidblocked/{id}")
 	public DataResponse<E8> create_WriteConstrainedIdBlocked(@PathParam("id") int id, @Context UriInfo uriInfo,
 			String requestBody) {
-		TreeConstraints<E8> tc = TreeConstraints.excludeAll(E8.class).attribute(E8.NAME);
+		ConstraintsBuilder<E8> tc = ConstraintsBuilder.excludeAll(E8.class).attribute(E8.NAME);
 		return getService().create(E8.class).with(uriInfo).id(id).writeConstraints(tc).includeData()
 				.process(requestBody);
 	}

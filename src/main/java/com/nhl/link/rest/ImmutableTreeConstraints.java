@@ -14,8 +14,13 @@ import org.apache.cayenne.map.ObjEntity;
 import org.apache.cayenne.map.ObjRelationship;
 import org.apache.cayenne.util.CayenneMapEntry;
 
+import com.nhl.link.rest.constraints.ConstraintsBuilder;
+import com.nhl.link.rest.meta.LrAttribute;
+import com.nhl.link.rest.meta.LrEntity;
+import com.nhl.link.rest.meta.LrRelationship;
+
 /**
- * An immutable snapshot of {@link TreeConstraints}.
+ * An immutable snapshot of {@link ConstraintsBuilder}.
  * 
  * @since 1.3
  */
@@ -25,9 +30,9 @@ public class ImmutableTreeConstraints {
 	private Collection<String> attributes;
 	private Map<String, ImmutableTreeConstraints> children;
 	private Expression qualifier;
-	ObjEntity entity;
+	LrEntity<?> entity;
 
-	ImmutableTreeConstraints(ObjEntity entity) {
+	ImmutableTreeConstraints(LrEntity<?> entity) {
 
 		if (entity == null) {
 			throw new NullPointerException("Null entity");
@@ -78,7 +83,11 @@ public class ImmutableTreeConstraints {
 	}
 
 	void allAttributes() {
-		for (ObjAttribute a : entity.getAttributes()) {
+		for (LrAttribute a : entity.getPersistentAttributes()) {
+			this.attributes.add(a.getName());
+		}
+
+		for (LrAttribute a : entity.getTransientAttributes()) {
 			this.attributes.add(a.getName());
 		}
 	}
@@ -120,11 +129,11 @@ public class ImmutableTreeConstraints {
 		return c;
 	}
 
-	private ImmutableTreeConstraints ensurePath(ImmutableTreeConstraints parent, CayenneMapEntry e) {
+	private ImmutableTreeConstraints ensurePath(ImmutableTreeConstraints parent, Object pathComponent) {
 
-		if (e instanceof ObjRelationship) {
+		if (pathComponent instanceof LrRelationship) {
 
-			ObjRelationship r = (ObjRelationship) e;
+			LrRelationship r = (LrRelationship) pathComponent;
 
 			ImmutableTreeConstraints child = parent.getChild(r.getName());
 			if (child == null) {
@@ -135,7 +144,7 @@ public class ImmutableTreeConstraints {
 			return child;
 
 		} else {
-			throw new IllegalArgumentException("Path contains non-relationship component: " + e);
+			throw new IllegalArgumentException("Path contains non-relationship component: " + pathComponent);
 		}
 	}
 

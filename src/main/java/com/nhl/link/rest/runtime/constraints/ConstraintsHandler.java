@@ -9,8 +9,8 @@ import org.slf4j.LoggerFactory;
 import com.nhl.link.rest.DataResponse;
 import com.nhl.link.rest.EntityConstraint;
 import com.nhl.link.rest.SizeConstraints;
-import com.nhl.link.rest.TreeConstraints;
 import com.nhl.link.rest.UpdateResponse;
+import com.nhl.link.rest.constraints.ConstraintsBuilder;
 
 /**
  * An {@link IConstraintsHandler} that ensures that no target attributes exceed
@@ -36,7 +36,7 @@ public class ConstraintsHandler implements IConstraintsHandler {
 	}
 
 	@Override
-	public <T> void constrainUpdate(UpdateResponse<T> response, TreeConstraints<T> c) {
+	public <T> void constrainUpdate(UpdateResponse<T> response, ConstraintsBuilder<T> c) {
 
 		if (!treeConstraintsHandler.constrainUpdate(response, c)) {
 			entityConstraintHandler.constrainUpdate(response);
@@ -44,7 +44,7 @@ public class ConstraintsHandler implements IConstraintsHandler {
 	}
 
 	@Override
-	public <T> void constrainResponse(DataResponse<T> response, SizeConstraints sizeConstraints, TreeConstraints<T> c) {
+	public <T> void constrainResponse(DataResponse<T> response, SizeConstraints sizeConstraints, ConstraintsBuilder<T> c) {
 
 		if (sizeConstraints != null) {
 			applySizeConstraintsForRead(response, sizeConstraints);

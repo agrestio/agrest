@@ -6,6 +6,8 @@ import javax.ws.rs.core.UriInfo;
 
 import org.apache.cayenne.exp.Property;
 
+import com.nhl.link.rest.constraints.ConstraintsBuilder;
+
 /**
  * A builder for create (insert) or update operations for a single entity type.
  * Depending on how the builder was created, it will performs one of the flavors
@@ -42,9 +44,9 @@ public interface UpdateBuilder<T> {
 	 */
 	UpdateBuilder<T> with(UriInfo uriInfo);
 
-	UpdateBuilder<T> readConstraints(TreeConstraints<T> constraints);
+	UpdateBuilder<T> readConstraints(ConstraintsBuilder<T> constraints);
 
-	UpdateBuilder<T> writeConstraints(TreeConstraints<T> constraints);
+	UpdateBuilder<T> writeConstraints(ConstraintsBuilder<T> constraints);
 
 	/**
 	 * Sets a custom mapper that locates existing objects based on request data.
