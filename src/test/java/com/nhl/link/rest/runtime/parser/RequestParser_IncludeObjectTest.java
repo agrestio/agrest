@@ -12,7 +12,6 @@ import java.util.Collections;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.UriInfo;
 
-import org.apache.cayenne.ObjectContext;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -20,13 +19,8 @@ import com.nhl.link.rest.DataResponse;
 import com.nhl.link.rest.ResourceEntity;
 import com.nhl.link.rest.it.fixture.cayenne.E2;
 import com.nhl.link.rest.it.fixture.cayenne.E3;
-import com.nhl.link.rest.meta.LrPersistentEntity;
-import com.nhl.link.rest.meta.LrEntityOverlay;
-import com.nhl.link.rest.runtime.cayenne.ICayennePersister;
 import com.nhl.link.rest.runtime.jackson.IJacksonService;
 import com.nhl.link.rest.runtime.jackson.JacksonService;
-import com.nhl.link.rest.runtime.meta.IMetadataService;
-import com.nhl.link.rest.runtime.meta.MetadataService;
 import com.nhl.link.rest.runtime.parser.cache.IPathCache;
 import com.nhl.link.rest.runtime.parser.cache.PathCache;
 import com.nhl.link.rest.runtime.parser.converter.DefaultJsonValueConverterFactory;
