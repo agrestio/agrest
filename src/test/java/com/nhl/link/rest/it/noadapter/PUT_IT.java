@@ -14,6 +14,7 @@ import javax.ws.rs.core.Response;
 import org.junit.Test;
 
 import com.nhl.link.rest.it.fixture.JerseyTestOnDerby;
+import com.nhl.link.rest.it.fixture.cayenne.E14;
 import com.nhl.link.rest.it.fixture.cayenne.E3;
 import com.nhl.link.rest.it.fixture.cayenne.E7;
 import com.nhl.link.rest.it.fixture.cayenne.E8;
@@ -105,6 +106,21 @@ public class PUT_IT extends JerseyTestOnDerby {
 	}
 
 	@Test
+	public void testPUT_Single_LongId_Small() throws WebApplicationException, IOException {
+
+		insert("e14", "long_id, name", "5, 'aaa'");
+
+		Entity<String> entity = jsonEntity("[{\"id\":5,\"name\":\"bbb\"}]");
+		Response response = target("/e14/5/").queryParam("exclude", "id").queryParam("include", E14.NAME.getName())
+				.request().put(entity);
+
+		assertThat(response, okAndHasData(1, entity));
+
+		assertEquals(1, intForQuery("SELECT COUNT(1) FROM utest.e14"));
+		assertEquals(1, intForQuery("SELECT COUNT(1) FROM utest.e14 WHERE long_id = 5 AND NAME = 'bbb'"));
+	}
+
+	@Test
 	public void testPUT_Bulk_LongId_Small() throws WebApplicationException, IOException {
 
 		insert("e14", "long_id, name", "5, 'aaa'");
@@ -114,7 +130,7 @@ public class PUT_IT extends JerseyTestOnDerby {
 
 		Entity<String> entity = jsonEntity("[{\"id\":6,\"name\":\"yyy\"},{\"id\":4,\"name\":\"zzz\"},"
 				+ "{\"id\":5,\"name\":\"111\"},{\"id\":2,\"name\":\"333\"}]");
-		Response response = target("/e14/").queryParam("exclude", "id").queryParam("include", E3.NAME.getName())
+		Response response = target("/e14/").queryParam("exclude", "id").queryParam("include", E14.NAME.getName())
 				.request().put(entity);
 
 		assertThat(response, okAndHasData(4, entity));

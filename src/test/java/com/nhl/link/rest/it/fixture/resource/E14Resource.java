@@ -4,6 +4,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.UriInfo;
 
@@ -26,6 +27,12 @@ public class E14Resource extends LrResource {
 	@PUT
 	public DataResponse<E14> sync(String data) {
 		return getService().idempotentFullSync(E14.class).includeData().process(data);
+	}
+
+	@PUT
+	@Path("{id}")
+	public DataResponse<E14> update(@PathParam("id") int id, String data) {
+		return getService().update(E14.class).id(id).includeData().process(data);
 	}
 
 }
