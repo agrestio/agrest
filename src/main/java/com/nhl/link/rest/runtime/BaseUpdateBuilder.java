@@ -26,6 +26,7 @@ import com.nhl.link.rest.meta.LrEntity;
 import com.nhl.link.rest.meta.LrPersistentAttribute;
 import com.nhl.link.rest.meta.LrPersistentRelationship;
 import com.nhl.link.rest.meta.LrRelationship;
+import com.nhl.link.rest.parser.converter.Normalizer;
 import com.nhl.link.rest.runtime.constraints.IConstraintsHandler;
 import com.nhl.link.rest.runtime.encoder.IEncoderService;
 import com.nhl.link.rest.runtime.meta.IMetadataService;
@@ -198,7 +199,7 @@ public abstract class BaseUpdateBuilder<T> implements UpdateBuilder<T> {
 			LrPersistentAttribute pk = (LrPersistentAttribute) entity.getSingleId();
 
 			EntityUpdate u = response.getFirst();
-			u.getOrCreateId().put(pk.getDbAttribute().getName(), id);
+			u.getOrCreateId().put(pk.getDbAttribute().getName(), Normalizer.normalize(id, pk.getJavaType()));
 			u.setExplicitId();
 		}
 	}
