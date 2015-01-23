@@ -1,5 +1,6 @@
 Release 1.12
 
+#63 Object matching with explicit ID fails when callers do not use correct ID type
 #67 Support for per-entity non-persistent properties
 #68 Rename Entity to ResourceEntity
 #69 Own metadata layer
