@@ -116,8 +116,10 @@ class EntityPathCache {
 		if (dot > 0) {
 			String segment = path.substring(0, dot);
 
+			String pathSegment = segment.endsWith("+") ? segment.substring(0, segment.length() - 1) : segment;
+
 			// must be a relationship ..
-			LrRelationship relationship = entity.getRelationship(segment);
+			LrRelationship relationship = entity.getRelationship(pathSegment);
 			if (relationship == null) {
 				throw new LinkRestException(Status.BAD_REQUEST, "Invalid path '" + path + "' for '" + entity.getName()
 						+ "'. Not a relationship");
