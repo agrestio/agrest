@@ -1,4 +1,8 @@
-Release 1.12
+Release 1.13
+
+#73 cayenneExp with paths containing plus signs (outer joins) are reportedly broken in 1.12
+
+Release 1.12 2015-01-22
 
 #63 Object matching with explicit ID fails when callers do not use correct ID type
 #67 Support for per-entity non-persistent properties
