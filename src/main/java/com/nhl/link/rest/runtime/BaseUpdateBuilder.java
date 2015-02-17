@@ -53,6 +53,7 @@ public abstract class BaseUpdateBuilder<T> implements UpdateBuilder<T> {
 	private ConstraintsBuilder<T> writeConstraints;
 
 	private boolean includeData;
+	protected boolean onDeleteUnrelate;
 
 	protected ObjectMapperFactory mapper;
 
@@ -119,6 +120,9 @@ public abstract class BaseUpdateBuilder<T> implements UpdateBuilder<T> {
 
 	@Override
 	public UpdateResponse<T> process(String entityData) {
+		if (onDeleteUnrelate && parent == null) {
+			throw new LinkRestException(Status.BAD_REQUEST, "onDeleteUnrelate option is set to true, while parent is not specified");
+		}
 
 		UpdateResponse<T> response = createResponse();
 
@@ -274,6 +278,12 @@ public abstract class BaseUpdateBuilder<T> implements UpdateBuilder<T> {
 	@Override
 	public UpdateBuilder<T> includeData() {
 		this.includeData = true;
+		return this;
+	}
+
+	@Override
+	public UpdateBuilder<T> onDeleteUnrelate() {
+		this.onDeleteUnrelate = true;
 		return this;
 	}
 

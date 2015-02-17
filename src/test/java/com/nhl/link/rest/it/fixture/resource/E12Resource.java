@@ -32,6 +32,6 @@ public class E12Resource extends LrResource {
 	@Path("{id}/e1213")
 	public DataResponse<E12E13> fullSync_Joins(@PathParam("id") int id, @Context UriInfo info, String entityData) {
 		return getService().idempotentFullSync(E12E13.class).toManyParent(E12.class, id, E12.E1213).with(info)
-				.includeData().process(entityData);
+				.onDeleteUnrelate().includeData().process(entityData);
 	}
 }
