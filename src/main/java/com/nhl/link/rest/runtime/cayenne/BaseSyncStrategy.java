@@ -4,9 +4,12 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import com.nhl.link.rest.EntityParent;
 import org.apache.cayenne.Cayenne;
+import org.apache.cayenne.CayenneRuntimeException;
 import org.apache.cayenne.DataObject;
 import org.apache.cayenne.ObjectContext;
 import org.apache.cayenne.map.DbAttribute;
@@ -72,6 +75,36 @@ abstract class BaseSyncStrategy<T> implements SyncStrategy<T> {
 		}
 
 		relator.relate(o);
+	}
+
+	protected void delete(Collection<T> deletedObjects) {
+		response.getUpdateContext().deleteObjects(deletedObjects);
+	}
+
+	protected void unrelate(Collection<T> deletedObjects) {
+		ObjectContext ctx = response.getUpdateContext();
+		EntityParent parent = response.getParent();
+		// sanity check; this should be checked by caller
+		if (parent != null) {
+			ObjEntity parentEntity = ctx.getEntityResolver().getObjEntity(parent.getType());
+			ObjRelationship objRelationship = parentEntity.getRelationship(parent.getRelationship());
+			if (!objRelationship.isToMany() && deletedObjects.size() > 1) {
+				throw new CayenneRuntimeException(
+						String.format(
+								"Can't remove more than one object from to-one relationship: %s",
+								objRelationship.getName()
+						)
+				);
+			}
+			for (T o : deletedObjects) {
+				relator.unrelate(o);
+			}
+		} else {
+			throw new LinkRestException(
+					Response.Status.BAD_REQUEST,
+					"onDeleteUnrelate option is set to true, while parent is not specified"
+			);
+		}
 	}
 
 	private void mergeChanges(EntityUpdate entityUpdate, T o) {

@@ -12,6 +12,8 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import com.nhl.link.rest.it.fixture.cayenne.E15;
+import com.nhl.link.rest.it.fixture.resource.E15Resource;
 import org.apache.cayenne.Cayenne;
 import org.apache.cayenne.query.SQLTemplate;
 import org.junit.Test;
@@ -28,6 +30,7 @@ public class Sencha_PUT_IT extends JerseyTestOnDerby {
 	@Override
 	protected void doAddResources(FeatureContext context) {
 		context.register(E3Resource.class);
+		context.register(E15Resource.class);
 	}
 
 	@Override
@@ -109,5 +112,30 @@ public class Sencha_PUT_IT extends JerseyTestOnDerby {
 		e3 = Cayenne.objectForPK(runtime.newContext(), E3.class, 3);
 		runtime.newContext().invalidateObjects(e3);
 		assertEquals(1, Cayenne.intPKForObject(e3.getE2()));
+	}
+
+	@Test
+	public void testPut_onDeleteUnrelate() {
+		runtime.newContext().performGenericQuery(
+				new SQLTemplate(E4.class, "INSERT INTO utest.e15 (long_id, name) values (1, 'parent')"));
+
+		runtime.newContext().performGenericQuery(
+				new SQLTemplate(E4.class, "INSERT INTO utest.e14 (long_id, name, e15_id) values (1, 'child1', 1)"));
+		runtime.newContext().performGenericQuery(
+				new SQLTemplate(E4.class, "INSERT INTO utest.e14 (long_id, name, e15_id) values (2, 'child2', 1)"));
+		runtime.newContext().performGenericQuery(
+				new SQLTemplate(E4.class, "INSERT INTO utest.e14 (long_id, name, e15_id) values (3, 'child3', 1)"));
+
+		Response response = target("/e15/1/e14s").request().put(
+				Entity.entity(
+						"[{\"id\":1}]",
+						MediaType.APPLICATION_JSON
+				)
+		);
+		assertEquals(Status.OK.getStatusCode(), response.getStatus());
+		assertEquals(response.readEntity(String.class), "{\"success\":true,\"data\":[{\"id\":1,\"name\":\"child1\"}],\"total\":1}");
+
+		E15 parent = Cayenne.objectForPK(runtime.newContext(), E15.class, 1);
+		assertEquals(parent.getE14s().size(), 1);
 	}
 }
