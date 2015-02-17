@@ -22,8 +22,8 @@ class CayenneUpdateBuilder<T> extends BaseUpdateBuilder<T> {
 	private ICayennePersister persister;
 
 	CayenneUpdateBuilder(Class<T> type, UpdateOperation op, ICayennePersister persister,
-			IEncoderService encoderService, IRequestParser requestParser, IMetadataService metadataService,
-			IConstraintsHandler constraintsHandler) {
+						 IEncoderService encoderService, IRequestParser requestParser, IMetadataService metadataService,
+						 IConstraintsHandler constraintsHandler) {
 		super(type, op, encoderService, requestParser, metadataService, constraintsHandler);
 
 		this.persister = persister;
@@ -72,7 +72,7 @@ class CayenneUpdateBuilder<T> extends BaseUpdateBuilder<T> {
 		ResourceReader reader = new ResourceReader();
 		ObjectMapper<T> mapper = createObjectMapper(response);
 		ObjectRelator<T> relator = createRelator(response);
-		new FullSyncStrategy<>((CayenneUpdateResponse<T>) response, relator, reader, mapper, true).sync();
+		new FullSyncStrategy<>((CayenneUpdateResponse<T>) response, relator, reader, mapper, true, onDeleteUnrelate).sync();
 	}
 
 	protected ObjectMapper<T> createObjectMapper(UpdateResponse<T> response) {
@@ -88,6 +88,11 @@ class CayenneUpdateBuilder<T> extends BaseUpdateBuilder<T> {
 
 				@Override
 				public void relate(T object) {
+					// do nothing..
+				}
+
+				@Override
+				public void unrelate(T object) {
 					// do nothing..
 				}
 			};
@@ -109,6 +114,11 @@ class CayenneUpdateBuilder<T> extends BaseUpdateBuilder<T> {
 				public void relate(T object) {
 					parentObject.addToManyTarget(parent.getRelationship(), (DataObject) object, true);
 				}
+
+				@Override
+				public void unrelate(T object) {
+					parentObject.removeToManyTarget(parent.getRelationship(), (DataObject) object, true);
+				}
 			};
 		} else {
 			return new ObjectRelator<T>() {
@@ -116,11 +126,18 @@ class CayenneUpdateBuilder<T> extends BaseUpdateBuilder<T> {
 				public void relate(T object) {
 					parentObject.setToOneTarget(parent.getRelationship(), (DataObject) object, true);
 				}
+
+				@Override
+				public void unrelate(T object) {
+					parentObject.setToOneTarget(parent.getRelationship(), null, true);
+				}
+
 			};
 		}
 	}
 
 	interface ObjectRelator<T> {
 		void relate(T object);
+		void unrelate(T object);
 	}
 }

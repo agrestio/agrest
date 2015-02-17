@@ -25,6 +25,6 @@ public class E15Resource extends LrResource {
 	// is intentional
 	public DataResponse<E14> relateToOneExisting(@PathParam("id") int id, String data) {
 		return getService().idempotentFullSync(E14.class).toManyParent(E15.class, id, E15.E14S).includeData()
-				.process(data);
+				.onDeleteUnrelate().process(data);
 	}
 }

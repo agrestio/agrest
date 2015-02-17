@@ -53,11 +53,12 @@ public abstract class BaseUpdateBuilder<T> implements UpdateBuilder<T> {
 	private ConstraintsBuilder<T> writeConstraints;
 
 	private boolean includeData;
+	protected boolean onDeleteUnrelate;
 
 	protected ObjectMapperFactory mapper;
 
 	public BaseUpdateBuilder(Class<T> type, UpdateOperation op, IEncoderService encoderService,
-			IRequestParser requestParser, IMetadataService metadataService, IConstraintsHandler constraintsHandler) {
+							 IRequestParser requestParser, IMetadataService metadataService, IConstraintsHandler constraintsHandler) {
 		this.type = type;
 		this.operation = op;
 		this.requestParser = requestParser;
@@ -92,7 +93,7 @@ public abstract class BaseUpdateBuilder<T> implements UpdateBuilder<T> {
 
 	@Override
 	public UpdateBuilder<T> toManyParent(Class<?> parentType, Object parentId,
-			Property<? extends Collection<T>> relationshipFromParent) {
+										 Property<? extends Collection<T>> relationshipFromParent) {
 		return parent(parentType, parentId, relationshipFromParent.getName());
 	}
 
@@ -119,6 +120,9 @@ public abstract class BaseUpdateBuilder<T> implements UpdateBuilder<T> {
 
 	@Override
 	public UpdateResponse<T> process(String entityData) {
+		if (onDeleteUnrelate && parent == null) {
+			throw new LinkRestException(Status.BAD_REQUEST, "onDeleteUnrelate option is set to true, while parent is not specified");
+		}
 
 		UpdateResponse<T> response = createResponse();
 
@@ -141,23 +145,23 @@ public abstract class BaseUpdateBuilder<T> implements UpdateBuilder<T> {
 		constraintsHandler.constrainResponse(response, null, readConstraints);
 
 		switch (operation) {
-		case create:
-			create(response);
-			return withObjects(response, Status.CREATED);
-		case idempotentFullSync:
-			idempotentFullSync(response);
-			return withObjects(response);
-		case createOrUpdate:
-			createOrUpdate(response);
-			return withObjects(response);
-		case idempotentCreateOrUpdate:
-			idempotentCreateOrUpdate(response);
-			return withObjects(response);
-		case update:
-			update(response);
-			return withObjects(response);
-		default:
-			throw new UnsupportedOperationException("Unsupported operation: " + operation);
+			case create:
+				create(response);
+				return withObjects(response, Status.CREATED);
+			case idempotentFullSync:
+				idempotentFullSync(response);
+				return withObjects(response);
+			case createOrUpdate:
+				createOrUpdate(response);
+				return withObjects(response);
+			case idempotentCreateOrUpdate:
+				idempotentCreateOrUpdate(response);
+				return withObjects(response);
+			case update:
+				update(response);
+				return withObjects(response);
+			default:
+				throw new UnsupportedOperationException("Unsupported operation: " + operation);
 		}
 	}
 
@@ -274,6 +278,12 @@ public abstract class BaseUpdateBuilder<T> implements UpdateBuilder<T> {
 	@Override
 	public UpdateBuilder<T> includeData() {
 		this.includeData = true;
+		return this;
+	}
+
+	@Override
+	public UpdateBuilder<T> onDeleteUnrelate() {
+		this.onDeleteUnrelate = true;
 		return this;
 	}
 

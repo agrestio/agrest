@@ -12,7 +12,7 @@ import com.nhl.link.rest.constraints.ConstraintsBuilder;
  * A builder for create (insert) or update operations for a single entity type.
  * Depending on how the builder was created, it will performs one of the flavors
  * of update: create, update, createOrUpdate, fullSync.
- * 
+ *
  * @since 1.7
  */
 public interface UpdateBuilder<T> {
@@ -37,7 +37,7 @@ public interface UpdateBuilder<T> {
 	 * Sets up a relationship clause for all objects in this update.
 	 */
 	UpdateBuilder<T> toManyParent(Class<?> parentType, Object parentId,
-			Property<? extends Collection<T>> relationshipFromParent);
+								  Property<? extends Collection<T>> relationshipFromParent);
 
 	/**
 	 * Sets request {@link UriInfo} that will be used to shape response.
@@ -66,4 +66,11 @@ public interface UpdateBuilder<T> {
 	UpdateBuilder<T> excludeData();
 
 	UpdateResponse<T> process(String entityData);
+
+	/**
+	 * Unlink objects from parent instead of deleting them.
+	 *
+	 * @since 1.14
+	 */
+	UpdateBuilder<T> onDeleteUnrelate();
 }
