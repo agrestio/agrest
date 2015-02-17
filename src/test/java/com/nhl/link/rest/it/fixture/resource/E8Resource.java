@@ -65,8 +65,8 @@ public class E8Resource extends LrResource {
 	@PUT
 	@Path("{id}/e7s")
 	public DataResponse<E7> fullSyncE7s(@PathParam("id") int id, String entityData) {
-		return getService().idempotentFullSync(E7.class).toManyParent(E8.class, id, E8.E7S)
-				.includeData().process(entityData);
+		return getService().idempotentFullSync(E7.class).toManyParent(E8.class, id, E8.E7S).includeData()
+				.process(entityData);
 	}
 
 	@PUT
