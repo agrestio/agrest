@@ -1,26 +1,6 @@
 package com.nhl.link.rest.runtime;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
-import javax.ws.rs.core.Response.Status;
-import javax.ws.rs.core.UriInfo;
-
-import org.apache.cayenne.ObjectId;
-import org.apache.cayenne.Persistent;
-import org.apache.cayenne.exp.Property;
-import org.apache.cayenne.map.DbRelationship;
-import org.apache.cayenne.map.ObjRelationship;
-
-import com.nhl.link.rest.EntityParent;
-import com.nhl.link.rest.EntityUpdate;
-import com.nhl.link.rest.LinkRestException;
-import com.nhl.link.rest.ObjectMapperFactory;
-import com.nhl.link.rest.UpdateBuilder;
-import com.nhl.link.rest.UpdateResponse;
+import com.nhl.link.rest.*;
 import com.nhl.link.rest.constraints.ConstraintsBuilder;
 import com.nhl.link.rest.meta.LrEntity;
 import com.nhl.link.rest.meta.LrPersistentAttribute;
@@ -31,6 +11,15 @@ import com.nhl.link.rest.runtime.constraints.IConstraintsHandler;
 import com.nhl.link.rest.runtime.encoder.IEncoderService;
 import com.nhl.link.rest.runtime.meta.IMetadataService;
 import com.nhl.link.rest.runtime.parser.IRequestParser;
+import org.apache.cayenne.ObjectId;
+import org.apache.cayenne.Persistent;
+import org.apache.cayenne.exp.Property;
+import org.apache.cayenne.map.DbRelationship;
+import org.apache.cayenne.map.ObjRelationship;
+
+import javax.ws.rs.core.Response.Status;
+import javax.ws.rs.core.UriInfo;
+import java.util.*;
 
 /**
  * @since 1.7
@@ -251,12 +240,22 @@ public abstract class BaseUpdateBuilder<T> implements UpdateBuilder<T> {
 			// in a request
 			Set<ObjectId> seen = new HashSet<>();
 
+			boolean relatedObjects = false;
 			for (EntityUpdate u : response.getUpdates()) {
 
 				Persistent o = (Persistent) u.getMergedTo();
+
+				if (!relatedObjects) {
+					relatedObjects = (u.getRelatedIds().size() > 0);
+				}
+
 				if (o != null && seen.add(o.getObjectId())) {
 					objects.add((T) o);
 				}
+			}
+
+			if (relatedObjects) {
+				objects = fetchObjects(response);
 			}
 
 			response = (UpdateResponse<T>) response.withObjects(objects);
@@ -264,6 +263,8 @@ public abstract class BaseUpdateBuilder<T> implements UpdateBuilder<T> {
 
 		return (UpdateResponse<T>) response.withEncoder(encoderService.makeEncoder(response)).withStatus(status);
 	}
+
+	protected abstract List<T> fetchObjects(UpdateResponse<T> responseBuilder);
 
 	@Override
 	public UpdateBuilder<T> excludeData() {

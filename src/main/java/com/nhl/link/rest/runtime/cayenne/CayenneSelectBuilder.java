@@ -1,21 +1,17 @@
 package com.nhl.link.rest.runtime.cayenne;
 
-import java.util.Map.Entry;
-
-import org.apache.cayenne.exp.Expression;
-import org.apache.cayenne.exp.ExpressionFactory;
-import org.apache.cayenne.query.Ordering;
-import org.apache.cayenne.query.PrefetchTreeNode;
-import org.apache.cayenne.query.SelectQuery;
-
 import com.nhl.link.rest.DataResponse;
-import com.nhl.link.rest.ResourceEntity;
 import com.nhl.link.rest.SelectBuilder;
 import com.nhl.link.rest.meta.LrPersistentAttribute;
 import com.nhl.link.rest.runtime.BaseSelectBuilder;
 import com.nhl.link.rest.runtime.constraints.IConstraintsHandler;
 import com.nhl.link.rest.runtime.encoder.IEncoderService;
 import com.nhl.link.rest.runtime.parser.IRequestParser;
+import org.apache.cayenne.exp.Expression;
+import org.apache.cayenne.exp.ExpressionFactory;
+import org.apache.cayenne.query.Ordering;
+import org.apache.cayenne.query.PrefetchTreeNode;
+import org.apache.cayenne.query.SelectQuery;
 
 class CayenneSelectBuilder<T> extends BaseSelectBuilder<T> implements SelectBuilder<T> {
 
@@ -59,8 +55,6 @@ class CayenneSelectBuilder<T> extends BaseSelectBuilder<T> implements SelectBuil
 		}
 
 		if (request.getEntity() != null && !request.getEntity().getChildren().isEmpty()) {
-			PrefetchTreeNode root = new PrefetchTreeNode();
-
 			int prefetchSemantics = request.getPrefetchSemantics();
 			if (prefetchSemantics <= 0) {
 				// it makes more sense to use joint prefetches for single object
@@ -69,8 +63,9 @@ class CayenneSelectBuilder<T> extends BaseSelectBuilder<T> implements SelectBuil
 						: PrefetchTreeNode.DISJOINT_PREFETCH_SEMANTICS;
 			}
 
-			appendPrefetches(root, request.getEntity(), prefetchSemantics);
-			query.setPrefetchTree(root);
+			query.setPrefetchTree(
+					Util.createPrefetch(request.getEntity(), prefetchSemantics)
+			);
 		}
 
 		return query;
@@ -96,23 +91,5 @@ class CayenneSelectBuilder<T> extends BaseSelectBuilder<T> implements SelectBuil
 		}
 
 		return select;
-	}
-
-	private void appendPrefetches(PrefetchTreeNode root, ResourceEntity<?> entity, int prefetchSemantics) {
-		for (Entry<String, ResourceEntity<?>> e : entity.getChildren().entrySet()) {
-
-			PrefetchTreeNode child = root.addPath(e.getKey());
-
-			// always full prefetch related entities... we can't use phantom as
-			// this will hit object cache and hence won't be cache controlled
-			// via query cache anymore...
-			child.setPhantom(false);
-			child.setSemantics(prefetchSemantics);
-			appendPrefetches(child, e.getValue(), prefetchSemantics);
-		}
-
-		if (entity.getMapBy() != null) {
-			appendPrefetches(root, entity.getMapBy(), prefetchSemantics);
-		}
 	}
 }

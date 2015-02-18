@@ -1,14 +1,6 @@
 package com.nhl.link.rest.runtime.cayenne;
 
-import javax.ws.rs.core.Response.Status;
-
-import org.apache.cayenne.DataObject;
-
-import com.nhl.link.rest.EntityParent;
-import com.nhl.link.rest.LinkRestException;
-import com.nhl.link.rest.ObjectMapper;
-import com.nhl.link.rest.ObjectMapperFactory;
-import com.nhl.link.rest.UpdateResponse;
+import com.nhl.link.rest.*;
 import com.nhl.link.rest.meta.LrEntity;
 import com.nhl.link.rest.runtime.BaseUpdateBuilder;
 import com.nhl.link.rest.runtime.UpdateOperation;
@@ -16,6 +8,16 @@ import com.nhl.link.rest.runtime.constraints.IConstraintsHandler;
 import com.nhl.link.rest.runtime.encoder.IEncoderService;
 import com.nhl.link.rest.runtime.meta.IMetadataService;
 import com.nhl.link.rest.runtime.parser.IRequestParser;
+import org.apache.cayenne.DataObject;
+import org.apache.cayenne.query.Ordering;
+import org.apache.cayenne.query.PrefetchTreeNode;
+import org.apache.cayenne.query.SelectQuery;
+
+import javax.ws.rs.core.Response.Status;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 class CayenneUpdateBuilder<T> extends BaseUpdateBuilder<T> {
 
@@ -35,6 +37,29 @@ class CayenneUpdateBuilder<T> extends BaseUpdateBuilder<T> {
 		CayenneUpdateResponse<T> response = new CayenneUpdateResponse<>(type, persister.newContext());
 		response.parent(parent);
 		return response;
+	}
+
+	@Override
+	protected List<T> fetchObjects(UpdateResponse<T> responseBuilder) {
+		Set<String> relatedPaths = new HashSet<>();
+		for (EntityUpdate u : responseBuilder.getUpdates()) {
+			if (u.getRelatedIds().size() > 0) {
+				for (Map.Entry<String, ?> e : u.getRelatedIds().entrySet()) {
+					relatedPaths.add(e.getKey());
+				}
+			}
+		}
+
+		SelectQuery<T> query = new SelectQuery<>(type);
+		for (Ordering o : responseBuilder.getEntity().getOrderings()) {
+			query.addOrdering(o);
+		}
+		for (String path : relatedPaths) {
+			query.addPrefetch(Util.createPrefetch(
+					responseBuilder.getEntity().getChild(path), PrefetchTreeNode.DISJOINT_PREFETCH_SEMANTICS, path
+			));
+		}
+		return persister.sharedContext().select(query);
 	}
 
 	@Override

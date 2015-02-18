@@ -1,5 +1,6 @@
 package com.nhl.link.rest.it.fixture.pojo;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -29,6 +30,11 @@ public class PojoUpdateBuilder<T> extends BaseUpdateBuilder<T> {
 
 	protected UpdateResponse<T> createResponse() {
 		return new UpdateResponse<>(type).parent(parent);
+	}
+
+	@Override
+	protected List<T> fetchObjects(UpdateResponse<T> responseBuilder) {
+		throw new UnsupportedOperationException("TODO");
 	}
 
 	@Override
