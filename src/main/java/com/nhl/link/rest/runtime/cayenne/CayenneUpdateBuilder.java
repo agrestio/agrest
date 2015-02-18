@@ -16,7 +16,6 @@ import org.apache.cayenne.query.SelectQuery;
 import javax.ws.rs.core.Response.Status;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 class CayenneUpdateBuilder<T> extends BaseUpdateBuilder<T> {
@@ -41,24 +40,24 @@ class CayenneUpdateBuilder<T> extends BaseUpdateBuilder<T> {
 
 	@Override
 	protected List<T> fetchObjects(UpdateResponse<T> responseBuilder) {
-		Set<String> relatedPaths = new HashSet<>();
-		for (EntityUpdate u : responseBuilder.getUpdates()) {
-			if (u.getRelatedIds().size() > 0) {
-				for (Map.Entry<String, ?> e : u.getRelatedIds().entrySet()) {
-					relatedPaths.add(e.getKey());
-				}
-			}
-		}
-
 		SelectQuery<T> query = new SelectQuery<>(type);
 		for (Ordering o : responseBuilder.getEntity().getOrderings()) {
 			query.addOrdering(o);
 		}
-		for (String path : relatedPaths) {
-			query.addPrefetch(Util.createPrefetch(
-					responseBuilder.getEntity().getChild(path), PrefetchTreeNode.DISJOINT_PREFETCH_SEMANTICS, path
-			));
+
+		Set<String> seen = new HashSet<>();
+		for (EntityUpdate u : responseBuilder.getUpdates()) {
+			if (u.getRelatedIds().size() > 0) {
+				for (String path : u.getRelatedIds().keySet()) {
+					if (seen.add(path)) {
+						query.addPrefetch(Util.createPrefetch(
+							responseBuilder.getEntity().getChild(path), PrefetchTreeNode.DISJOINT_PREFETCH_SEMANTICS, path
+						));
+					}
+				}
+			}
 		}
+
 		return persister.sharedContext().select(query);
 	}
 

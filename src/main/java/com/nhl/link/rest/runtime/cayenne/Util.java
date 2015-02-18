@@ -47,7 +47,11 @@ class Util {
 	 * @since 1.14
 	 */
 	static PrefetchTreeNode createPrefetch(ResourceEntity<?> entity, int prefetchSemantics, String path) {
-        return createPrefetches(PrefetchTreeNode.withPath(path, prefetchSemantics).getNode(path), entity, prefetchSemantics);
+        return createPrefetches(
+				PrefetchTreeNode.withPath(path, prefetchSemantics).getNode(path),
+				entity,
+				prefetchSemantics
+		).getRoot();
     }
 
 	/**
@@ -58,6 +62,10 @@ class Util {
     }
 
     private static PrefetchTreeNode createPrefetches(PrefetchTreeNode root, ResourceEntity<?> entity, int prefetchSemantics) {
+		if (entity == null) {
+			return root;
+		}
+
 		for (Map.Entry<String, ResourceEntity<?>> e : entity.getChildren().entrySet()) {
 			PrefetchTreeNode child = root.addPath(e.getKey());
 
