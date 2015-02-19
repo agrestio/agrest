@@ -23,7 +23,16 @@ public class E15Resource extends LrResource {
 	@Path("{id}/e14s")
 	// note that parent id is "int" here , but is BIGINT (long) in the DB. This
 	// is intentional
-	public DataResponse<E14> relateToOneExisting(@PathParam("id") int id, String data) {
+	public DataResponse<E14> relateOrDeleteToOneExisting(@PathParam("id") int id, String data) {
+		return getService().idempotentFullSync(E14.class).toManyParent(E15.class, id, E15.E14S).includeData()
+				.process(data);
+	}
+
+	@PUT
+	@Path("{id}/e14s_2")
+	// note that parent id is "int" here , but is BIGINT (long) in the DB. This
+	// is intentional
+	public DataResponse<E14> relateOrUnrelateToOneExisting(@PathParam("id") int id, String data) {
 		return getService().idempotentFullSync(E14.class).toManyParent(E15.class, id, E15.E14S).includeData()
 				.onDeleteUnrelate().process(data);
 	}
