@@ -1,8 +1,20 @@
 package com.nhl.link.rest.it.noadapter;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import com.nhl.link.rest.it.fixture.JerseyTestOnDerby;
+import com.nhl.link.rest.it.fixture.cayenne.E12;
+import com.nhl.link.rest.it.fixture.cayenne.E12E13;
+import com.nhl.link.rest.it.fixture.cayenne.E2;
+import com.nhl.link.rest.it.fixture.cayenne.E3;
+import com.nhl.link.rest.it.fixture.cayenne.E4;
+import com.nhl.link.rest.it.fixture.resource.E12Resource;
+import com.nhl.link.rest.it.fixture.resource.E15Resource;
+import com.nhl.link.rest.it.fixture.resource.E2Resource;
+import com.nhl.link.rest.it.fixture.resource.E3Resource;
+import com.nhl.link.rest.it.fixture.resource.E7Resource;
+import com.nhl.link.rest.it.fixture.resource.E8Resource;
+import org.apache.cayenne.query.SQLSelect;
+import org.apache.cayenne.query.SQLTemplate;
+import org.junit.Test;
 
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.FeatureContext;
@@ -10,14 +22,8 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
-import com.nhl.link.rest.it.fixture.cayenne.*;
-import com.nhl.link.rest.it.fixture.resource.*;
-import org.apache.cayenne.Cayenne;
-import org.apache.cayenne.query.SQLSelect;
-import org.apache.cayenne.query.SQLTemplate;
-import org.junit.Test;
-
-import com.nhl.link.rest.it.fixture.JerseyTestOnDerby;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 public class PUT_Related_IT extends JerseyTestOnDerby {
 
@@ -107,16 +113,11 @@ public class PUT_Related_IT extends JerseyTestOnDerby {
 		assertEquals(Status.OK.getStatusCode(), response.getStatus());
 		assertEquals(response.readEntity(String.class), "{\"success\":true,\"data\":[{\"id\":1,\"name\":\"child1\"}],\"total\":1}");
 
-		E15 parent = Cayenne.objectForPK(runtime.newContext(), E15.class, 1);
-		assertEquals(parent.getE14s().size(), 1);
+		assertEquals(3, SQLSelect.scalarQuery(String.class, "SELECT count(1) FROM utest.e14 WHERE long_id IN (1,2,3)").selectOne(context));
 
-		E14 child2 = Cayenne.objectForPK(runtime.newContext(), E14.class, 2);
-		assertNotNull(child2);
-		assertNull(child2.getE15());
+		assertEquals(1, SQLSelect.scalarQuery(String.class, "SELECT count(1) FROM utest.e14 WHERE e15_id = 1").selectOne(context));
 
-		E14 child3 = Cayenne.objectForPK(runtime.newContext(), E14.class, 3);
-		assertNotNull(child3);
-		assertNull(child3.getE15());
+		assertEquals(2, SQLSelect.scalarQuery(String.class, "SELECT count(1) FROM utest.e14 WHERE long_id IN (2,3) AND e15_id IS NULL").selectOne(context));
 	}
 
 	@Test
