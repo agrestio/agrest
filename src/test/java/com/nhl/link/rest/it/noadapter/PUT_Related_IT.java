@@ -1,7 +1,19 @@
 package com.nhl.link.rest.it.noadapter;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import com.nhl.link.rest.it.fixture.JerseyTestOnDerby;
+import com.nhl.link.rest.it.fixture.cayenne.E12;
+import com.nhl.link.rest.it.fixture.cayenne.E12E13;
+import com.nhl.link.rest.it.fixture.cayenne.E2;
+import com.nhl.link.rest.it.fixture.cayenne.E3;
+import com.nhl.link.rest.it.fixture.cayenne.E5;
+import com.nhl.link.rest.it.fixture.resource.E12Resource;
+import com.nhl.link.rest.it.fixture.resource.E2Resource;
+import com.nhl.link.rest.it.fixture.resource.E3Resource;
+import com.nhl.link.rest.it.fixture.resource.E7Resource;
+import com.nhl.link.rest.it.fixture.resource.E8Resource;
+import org.apache.cayenne.query.SQLSelect;
+import org.apache.cayenne.query.SQLTemplate;
+import org.junit.Test;
 
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.FeatureContext;
@@ -9,20 +21,8 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
-import org.apache.cayenne.query.SQLSelect;
-import org.apache.cayenne.query.SQLTemplate;
-import org.junit.Test;
-
-import com.nhl.link.rest.it.fixture.JerseyTestOnDerby;
-import com.nhl.link.rest.it.fixture.cayenne.E12;
-import com.nhl.link.rest.it.fixture.cayenne.E12E13;
-import com.nhl.link.rest.it.fixture.cayenne.E2;
-import com.nhl.link.rest.it.fixture.cayenne.E3;
-import com.nhl.link.rest.it.fixture.resource.E12Resource;
-import com.nhl.link.rest.it.fixture.resource.E2Resource;
-import com.nhl.link.rest.it.fixture.resource.E3Resource;
-import com.nhl.link.rest.it.fixture.resource.E7Resource;
-import com.nhl.link.rest.it.fixture.resource.E8Resource;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 public class PUT_Related_IT extends JerseyTestOnDerby {
 
@@ -333,5 +333,53 @@ public class PUT_Related_IT extends JerseyTestOnDerby {
 				1,
 				SQLSelect.scalarQuery(E12E13.class,
 						"SELECT count(1) FROM utest.e12_e13 WHERE e12_id = 12 AND e13_id = 16").selectOne(context));
+	}
+
+	@Test
+	public void testPUT_ToMany_FetchOnUpdate() {
+		context.performGenericQuery(new SQLTemplate(E2.class, "INSERT INTO utest.e2 (id, name) values (1, 'e2_1')"));
+		context.performGenericQuery(new SQLTemplate(E2.class, "INSERT INTO utest.e2 (id, name) values (2, 'e2_2')"));
+		context.performGenericQuery(new SQLTemplate(E2.class, "INSERT INTO utest.e2 (id, name) values (3, 'e2_3')"));
+
+		context.performGenericQuery(new SQLTemplate(E5.class, "INSERT INTO utest.e5 (id, name) values (1, 'e2_1')"));
+		context.performGenericQuery(new SQLTemplate(E5.class, "INSERT INTO utest.e5 (id, name) values (2, 'e2_1')"));
+
+		context.performGenericQuery(new SQLTemplate(E3.class, "INSERT INTO utest.e3 (id, name, e2_id, e5_id) values (1, 'e3_1', 1, 1)"));
+		context.performGenericQuery(new SQLTemplate(E3.class, "INSERT INTO utest.e3 (id, name, e2_id, e5_id) values (2, 'e3_2', 2, 2)"));
+		context.performGenericQuery(new SQLTemplate(E3.class, "INSERT INTO utest.e3 (id, name) values (3, 'e3_3')"));
+		context.performGenericQuery(new SQLTemplate(E3.class, "INSERT INTO utest.e3 (id, name) values (4, 'e3_4')"));
+		context.performGenericQuery(new SQLTemplate(E3.class, "INSERT INTO utest.e3 (id, name) values (5, 'e3_5')"));
+		context.performGenericQuery(new SQLTemplate(E3.class, "INSERT INTO utest.e3 (id, name) values (6, 'e3_6')"));
+
+		// populate object cache
+		Response r1 = target("/e2")
+				.request().get();
+
+		// simulate changes in different context that for some reason don't get in cache
+		context.performGenericQuery(new SQLTemplate(E2.class, "UPDATE utest.e2 SET name = 'oops' WHERE id = 2"));
+
+		Response r2 = target("/e3")
+				.queryParam("include", "e2")
+//				.queryParam("include", "e2.e3s")
+				.queryParam("exclude", E3.PHONE_NUMBER.getName())
+				.queryParam("exclude", "e2." + E2.ADDRESS.getName())
+				.request().put(Entity.entity(
+						"[ {\"id\":1,\"name\":\"newname\",\"e2\":2},{\"id\":3},{\"id\":2,\"name\":\"foo\"}," +
+								"{\"id\":5},{\"id\":4} ]",
+						MediaType.APPLICATION_JSON)
+				);
+
+		assertEquals(Status.OK.getStatusCode(), r2.getStatus());
+		// test that order of returned objects is the same as in request
+		//   and that related objects were fetched from DB
+		assertEquals("{\"success\":true,\"data\":[" +
+						"{\"id\":1,\"e2\":{\"id\":2,\"name\":\"oops\"},\"name\":\"newname\"}," +
+						"{\"id\":3,\"e2\":null,\"name\":\"e3_3\"}," +
+						"{\"id\":2,\"e2\":{\"id\":2,\"name\":\"oops\"},\"name\":\"foo\"}," +
+						"{\"id\":5,\"e2\":null,\"name\":\"e3_5\"}," +
+						"{\"id\":4,\"e2\":null,\"name\":\"e3_4\"}" +
+						"],\"total\":5}",
+				r2.readEntity(String.class));
+
 	}
 }

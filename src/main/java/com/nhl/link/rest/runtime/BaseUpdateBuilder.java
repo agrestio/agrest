@@ -1,6 +1,11 @@
 package com.nhl.link.rest.runtime;
 
-import com.nhl.link.rest.*;
+import com.nhl.link.rest.EntityParent;
+import com.nhl.link.rest.EntityUpdate;
+import com.nhl.link.rest.LinkRestException;
+import com.nhl.link.rest.ObjectMapperFactory;
+import com.nhl.link.rest.UpdateBuilder;
+import com.nhl.link.rest.UpdateResponse;
 import com.nhl.link.rest.constraints.ConstraintsBuilder;
 import com.nhl.link.rest.meta.LrEntity;
 import com.nhl.link.rest.meta.LrPersistentAttribute;
@@ -19,7 +24,11 @@ import org.apache.cayenne.map.ObjRelationship;
 
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriInfo;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * @since 1.7
@@ -254,17 +263,17 @@ public abstract class BaseUpdateBuilder<T> implements UpdateBuilder<T> {
 				}
 			}
 
-			if (relatedObjects) {
-				objects = fetchObjects(response);
-			}
+			response.withObjects(objects);
 
-			response = (UpdateResponse<T>) response.withObjects(objects);
+			if (relatedObjects) {
+				fetchObjects(response);
+			}
 		}
 
 		return (UpdateResponse<T>) response.withEncoder(encoderService.makeEncoder(response)).withStatus(status);
 	}
 
-	protected abstract List<T> fetchObjects(UpdateResponse<T> responseBuilder);
+	protected abstract void fetchObjects(UpdateResponse<T> responseBuilder);
 
 	@Override
 	public UpdateBuilder<T> excludeData() {

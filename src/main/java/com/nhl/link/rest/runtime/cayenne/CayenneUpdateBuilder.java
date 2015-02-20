@@ -1,6 +1,11 @@
 package com.nhl.link.rest.runtime.cayenne;
 
-import com.nhl.link.rest.*;
+import com.nhl.link.rest.EntityParent;
+import com.nhl.link.rest.EntityUpdate;
+import com.nhl.link.rest.LinkRestException;
+import com.nhl.link.rest.ObjectMapper;
+import com.nhl.link.rest.ObjectMapperFactory;
+import com.nhl.link.rest.UpdateResponse;
 import com.nhl.link.rest.meta.LrEntity;
 import com.nhl.link.rest.runtime.BaseUpdateBuilder;
 import com.nhl.link.rest.runtime.UpdateOperation;
@@ -9,16 +14,19 @@ import com.nhl.link.rest.runtime.encoder.IEncoderService;
 import com.nhl.link.rest.runtime.meta.IMetadataService;
 import com.nhl.link.rest.runtime.parser.IRequestParser;
 import org.apache.cayenne.DataObject;
-import org.apache.cayenne.query.Ordering;
+import org.apache.cayenne.Persistent;
+import org.apache.cayenne.map.ObjEntity;
 import org.apache.cayenne.query.PrefetchTreeNode;
 import org.apache.cayenne.query.SelectQuery;
 
 import javax.ws.rs.core.Response.Status;
+import java.util.Collection;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 class CayenneUpdateBuilder<T> extends BaseUpdateBuilder<T> {
+
+	protected final ObjEntity entity;
 
 	private ICayennePersister persister;
 
@@ -29,6 +37,10 @@ class CayenneUpdateBuilder<T> extends BaseUpdateBuilder<T> {
 
 		this.persister = persister;
 		this.metadataService = metadataService;
+
+		if ((this.entity = persister.entityResolver().getObjEntity(type)) == null) {
+			throw new LinkRestException(Status.INTERNAL_SERVER_ERROR, "ObjEntity not found for class: " + type.getName());
+		}
 	}
 
 	@Override
@@ -39,11 +51,21 @@ class CayenneUpdateBuilder<T> extends BaseUpdateBuilder<T> {
 	}
 
 	@Override
-	protected List<T> fetchObjects(UpdateResponse<T> responseBuilder) {
+	protected void fetchObjects(UpdateResponse<T> responseBuilder) {
 		SelectQuery<T> query = new SelectQuery<>(type);
-		for (Ordering o : responseBuilder.getEntity().getOrderings()) {
-			query.addOrdering(o);
+
+		if (responseBuilder.getEntity().getQualifier() != null) {
+			query.andQualifier(responseBuilder.getEntity().getQualifier());
 		}
+
+		Collection<T> objects = responseBuilder.getObjects();
+		IdExpressionBuilder builder = IdExpressionBuilder.forEntity(entity, objects.size());
+		for (T o : objects) {
+			builder.appendId(
+					((Persistent)o).getObjectId()
+			);
+		}
+		query.andQualifier(builder.buildExpression());
 
 		Set<String> seen = new HashSet<>();
 		for (EntityUpdate u : responseBuilder.getUpdates()) {
@@ -51,14 +73,14 @@ class CayenneUpdateBuilder<T> extends BaseUpdateBuilder<T> {
 				for (String path : u.getRelatedIds().keySet()) {
 					if (seen.add(path)) {
 						query.addPrefetch(Util.createPrefetch(
-							responseBuilder.getEntity().getChild(path), PrefetchTreeNode.DISJOINT_PREFETCH_SEMANTICS, path
+								responseBuilder.getEntity().getChild(path), PrefetchTreeNode.JOINT_PREFETCH_SEMANTICS, path
 						));
 					}
 				}
 			}
 		}
 
-		return persister.sharedContext().select(query);
+		persister.sharedContext().select(query);
 	}
 
 	@Override
