@@ -13,17 +13,6 @@ public class LinkRestRuntime {
 	private Injector injector;
 
 	/**
-	 * Returns {@link ILinkRestService} stored in JAX RS Configuration. This is
-	 * an easy way to obtain ILinkRestService in an environment without
-	 * injection support.
-	 * 
-	 * @since 1.14
-	 */
-	public static ILinkRestService service(Configuration config) {
-		return service(ILinkRestService.class, config);
-	}
-
-	/**
 	 * Returns a service of a specified type present in LinkRest container that
 	 * is stored in JAX RS Configuration.
 	 */
