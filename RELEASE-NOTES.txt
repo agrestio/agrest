@@ -1,6 +1,6 @@
 Release 1.14
 
-#79 Simplified API to get a hold of ILinkRestService in an environment without injection
+#79 Simplified API to start request processor builders
 
 Release 1.13
 
