@@ -12,6 +12,6 @@ public abstract class LrResource {
 	private Configuration config;
 
 	protected ILinkRestService getService() {
-		return LinkRestRuntime.service(ILinkRestService.class, config);
+		return LinkRestRuntime.service(config);
 	}
 }

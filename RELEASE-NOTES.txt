@@ -1,3 +1,7 @@
+Release 1.14
+
+#79 Simplified API to get a hold of ILinkRestService in an environment without injection
+
 Release 1.13
 
 #73 cayenneExp with paths containing plus signs (outer joins) are reportedly broken in 1.12

@@ -12,8 +12,8 @@ import com.nhl.link.rest.SimpleResponse;
 import com.nhl.link.rest.UpdateBuilder;
 
 /**
- * An entry point to LinkRest backend services. Used from the user REST resource
- * classes to process requests.
+ * The main entry point to LinkRest stack. Used from the user REST resource
+ * classes to build request processors.
  */
 public interface ILinkRestService {
 
@@ -61,7 +61,8 @@ public interface ILinkRestService {
 	<T> DataResponse<T> insert(Class<T> root, String objectData);
 
 	/**
-	 * @deprecated since 1.7 use {@link #update(Class)} and configure the returned builder.
+	 * @deprecated since 1.7 use {@link #update(Class)} and configure the
+	 *             returned builder.
 	 */
 	<T> DataResponse<T> update(Class<T> root, Object id, String objectData);
 
