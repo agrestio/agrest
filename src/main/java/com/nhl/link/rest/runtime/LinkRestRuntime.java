@@ -17,6 +17,10 @@ public class LinkRestRuntime {
 	 * is stored in JAX RS Configuration.
 	 */
 	public static <T> T service(Class<T> type, Configuration config) {
+		
+		if(config == null) {
+			throw new NullPointerException("Null config");
+		}
 
 		Injector injector = (Injector) config.getProperty(LINK_REST_CONTAINER_PROPERTY);
 		if (injector == null) {
