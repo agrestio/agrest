@@ -21,7 +21,7 @@ public class E14Resource {
 
 	@GET
 	public DataResponse<E14> get(@Context UriInfo uriInfo) {
-		return LinkRest.select(E14.class, config).with(uriInfo).select();
+		return LinkRest.select(E14.class, config).uri(uriInfo).select();
 	}
 
 	@POST

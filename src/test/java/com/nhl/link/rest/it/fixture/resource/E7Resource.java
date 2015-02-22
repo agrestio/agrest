@@ -20,13 +20,13 @@ public class E7Resource {
 
 	@PUT
 	public DataResponse<E7> sync(@Context UriInfo uriInfo, String data) {
-		return LinkRest.idempotentFullSync(E7.class, config).with(uriInfo).includeData().process(data);
+		return LinkRest.idempotentFullSync(E7.class, config).uri(uriInfo).includeData().process(data);
 	}
 
 	@PUT
 	@Path("{id}")
 	public DataResponse<E7> syncOne(@PathParam("id") int id, @Context UriInfo uriInfo, String data) {
-		return LinkRest.idempotentFullSync(E7.class, config).id(id).with(uriInfo).includeData().process(data);
+		return LinkRest.idempotentFullSync(E7.class, config).id(id).uri(uriInfo).includeData().process(data);
 	}
 
 	@PUT

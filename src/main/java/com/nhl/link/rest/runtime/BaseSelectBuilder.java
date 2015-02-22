@@ -1,7 +1,5 @@
 package com.nhl.link.rest.runtime;
 
-import static com.nhl.link.rest.property.PropertyBuilder.property;
-
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -15,14 +13,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.nhl.link.rest.DataResponse;
-import com.nhl.link.rest.ResourceEntity;
 import com.nhl.link.rest.EntityParent;
 import com.nhl.link.rest.EntityProperty;
 import com.nhl.link.rest.LinkRestException;
+import com.nhl.link.rest.ResourceEntity;
 import com.nhl.link.rest.SelectBuilder;
 import com.nhl.link.rest.SizeConstraints;
 import com.nhl.link.rest.constraints.ConstraintsBuilder;
 import com.nhl.link.rest.encoder.Encoder;
+import com.nhl.link.rest.property.PropertyBuilder;
 import com.nhl.link.rest.runtime.constraints.IConstraintsHandler;
 import com.nhl.link.rest.runtime.encoder.IEncoderService;
 import com.nhl.link.rest.runtime.parser.IRequestParser;
@@ -114,31 +113,70 @@ public abstract class BaseSelectBuilder<T> implements SelectBuilder<T> {
 		return sizeConstraints;
 	}
 
+	/**
+	 * @since 1.14
+	 */
 	@Override
-	public SelectBuilder<T> with(UriInfo uriInfo) {
+	public SelectBuilder<T> uri(UriInfo uriInfo) {
 		this.uriInfo = uriInfo;
 		return this;
 	}
 
+	@Deprecated
 	@Override
-	public SelectBuilder<T> withDataEncoder(Encoder dataEncoder) {
+	public SelectBuilder<T> with(UriInfo uriInfo) {
+		return uri(uriInfo);
+	}
+
+	/**
+	 * @since 1.14
+	 */
+	@Override
+	public SelectBuilder<T> dataEncoder(Encoder dataEncoder) {
 		this.dataEncoder = dataEncoder;
 		return this;
 	}
 
+	@Deprecated
 	@Override
-	public SelectBuilder<T> withAutocompleteOn(Property<?> autocompleteProperty) {
+	public SelectBuilder<T> withDataEncoder(Encoder encoder) {
+		return dataEncoder(encoder);
+	}
+
+	/**
+	 * @since 1.14
+	 */
+	@Override
+	public SelectBuilder<T> autocompleteOn(Property<?> autocompleteProperty) {
 		this.autocompleteProperty = autocompleteProperty != null ? autocompleteProperty.getName() : null;
 		return this;
 	}
 
+	@Deprecated
 	@Override
-	public SelectBuilder<T> withProperty(String name) {
-		return withProperty(name, property());
+	public SelectBuilder<T> withAutocompleteOn(Property<?> autocompleteProperty) {
+		return autocompleteOn(autocompleteProperty);
 	}
 
+	/**
+	 * @since 1.14
+	 */
 	@Override
-	public SelectBuilder<T> withProperty(String name, EntityProperty clientProperty) {
+	public SelectBuilder<T> property(String name) {
+		return property(name, PropertyBuilder.property());
+	}
+
+	@Deprecated
+	@Override
+	public SelectBuilder<T> withProperty(String name) {
+		return property(name);
+	}
+
+	/**
+	 * @since 1.14
+	 */
+	@Override
+	public SelectBuilder<T> property(String name, EntityProperty clientProperty) {
 		if (extraProperties == null) {
 			extraProperties = new HashMap<>();
 		}
@@ -149,6 +187,12 @@ public abstract class BaseSelectBuilder<T> implements SelectBuilder<T> {
 		}
 
 		return this;
+	}
+
+	@Deprecated
+	@Override
+	public SelectBuilder<T> withProperty(String name, EntityProperty clientProperty) {
+		return property(name, clientProperty);
 	}
 
 	@Override

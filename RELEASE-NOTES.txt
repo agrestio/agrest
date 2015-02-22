@@ -1,6 +1,7 @@
 Release 1.14
 
 #79 Simplified API to start request processor builders
+#80 ILinkRestService and related builders API refactoring for consistency
 
 Release 1.13
 

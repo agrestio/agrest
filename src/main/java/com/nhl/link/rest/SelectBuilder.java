@@ -8,6 +8,7 @@ import org.apache.cayenne.exp.Property;
 
 import com.nhl.link.rest.constraints.ConstraintsBuilder;
 import com.nhl.link.rest.encoder.Encoder;
+import com.nhl.link.rest.runtime.LinkRestBuilder;
 
 /**
  * An object that allows to customize/extend LinkRest request processing.
@@ -17,10 +18,47 @@ import com.nhl.link.rest.encoder.Encoder;
  */
 public interface SelectBuilder<T> {
 
+	/**
+	 * Sets request {@link UriInfo} that is a source of various request
+	 * parameters.
+	 * 
+	 * @since 1.14
+	 */
+	SelectBuilder<T> uri(UriInfo uriInfo);
+
+	/**
+	 * @deprecated since 1.14 rename to {@link #uri(UriInfo)} for clarity.
+	 */
+	@Deprecated
 	SelectBuilder<T> with(UriInfo uriInfo);
 
+	/**
+	 * Sets the encoder for the entities under the "data" key in the response
+	 * collection.
+	 * 
+	 * @since 1.14
+	 */
+	SelectBuilder<T> dataEncoder(Encoder encoder);
+
+	/**
+	 * @deprecated since 1.14 renamed to {@link #dataEncoder(Encoder)}.
+	 */
+	@Deprecated
 	SelectBuilder<T> withDataEncoder(Encoder encoder);
 
+	/**
+	 * Configures SelectBuilder for a common scenario of "autocomplete" request,
+	 * allowing the server-side code to choose which object property to use for
+	 * selecting matching objects.
+	 * 
+	 * @since 1.14
+	 */
+	SelectBuilder<T> autocompleteOn(Property<?> autocompleteProperty);
+
+	/**
+	 * @deprecated since 1.14 renamed to {@link #autocompleteOn(Property)}.
+	 */
+	@Deprecated
 	SelectBuilder<T> withAutocompleteOn(Property<?> autocompleteProperty);
 
 	/**
@@ -34,15 +72,33 @@ public interface SelectBuilder<T> {
 	/**
 	 * Adds a custom property that is appended to the root
 	 * {@link ResourceEntity}.
+	 * 
+	 * @since 1.14
 	 */
+	SelectBuilder<T> property(String name, EntityProperty clientProperty);
+
+	/**
+	 * @deprecated since 1.14 renamed to
+	 *             {@link #withProperty(String, EntityProperty)}.
+	 */
+	@Deprecated
 	SelectBuilder<T> withProperty(String name, EntityProperty clientProperty);
 
 	/**
 	 * Adds a custom property that is appended to the root
 	 * {@link ResourceEntity}. Property is read as a regular JavaBean
 	 * "property", and default encoder is used. For more control over property
-	 * access and encoding use {@link #withProperty(String, EntityProperty)}.
+	 * access and encoding use {@link #property(String, EntityProperty)}. Also
+	 * see {@link LinkRestBuilder#transientProperty(Class, String)}.
+	 * 
+	 * @since 1.14
 	 */
+	SelectBuilder<T> property(String name);
+
+	/**
+	 * @deprecated since 1.14 renamed to {@link #property(String)}.
+	 */
+	@Deprecated
 	SelectBuilder<T> withProperty(String name);
 
 	/**

@@ -39,19 +39,19 @@ public class E2Resource {
 	@GET
 	@Path("{id}/dummyrel")
 	public DataResponse<E3> getE2_Dummyrel(@PathParam("id") int id, @Context UriInfo uriInfo) {
-		return LinkRest.select(E3.class, config).parent(E2.class, id, "dummyrel").with(uriInfo).select();
+		return LinkRest.select(E3.class, config).parent(E2.class, id, "dummyrel").uri(uriInfo).select();
 	}
 
 	@GET
 	@Path("{id}/e3s")
 	public DataResponse<E3> getE2_E3s(@PathParam("id") int id, @Context UriInfo uriInfo) {
-		return LinkRest.select(E3.class, config).parent(E2.class, id, "e3s").with(uriInfo).select();
+		return LinkRest.select(E3.class, config).parent(E2.class, id, "e3s").uri(uriInfo).select();
 	}
 
 	@GET
 	@Path("constraints/{id}/e3s")
 	public DataResponse<E3> getE2_E3s_Constrained(@PathParam("id") int id, @Context UriInfo uriInfo) {
-		return LinkRest.select(E3.class, config).parent(E2.class, id, "e3s").with(uriInfo)
+		return LinkRest.select(E3.class, config).parent(E2.class, id, "e3s").uri(uriInfo)
 				.constraints(ConstraintsBuilder.idOnly(E3.class)).select();
 	}
 

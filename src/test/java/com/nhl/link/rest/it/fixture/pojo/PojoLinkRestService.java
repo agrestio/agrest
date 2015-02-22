@@ -30,12 +30,12 @@ public class PojoLinkRestService extends BaseLinkRestService {
 	}
 
 	@Override
-	public <T> SelectBuilder<T> forSelect(Class<T> root) {
+	public <T> SelectBuilder<T> select(Class<T> root) {
 		return new PojoSelectBuilder<>(root, encoderService, requestParser, constraintsHandler, db.bucketForType(root));
 	}
 
 	@Override
-	public <T> SelectBuilder<T> forSelect(SelectQuery<T> query) {
+	public <T> SelectBuilder<T> select(SelectQuery<T> query) {
 		throw new UnsupportedOperationException("Can't select with Cayenne query");
 	}
 

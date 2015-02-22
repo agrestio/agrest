@@ -17,11 +17,11 @@ import com.nhl.link.rest.runtime.LinkRestRuntime;
 public class LinkRest {
 
 	public static <T> SelectBuilder<T> select(Class<T> root, Configuration config) {
-		return service(config).forSelect(root);
+		return service(config).select(root);
 	}
 
 	public static <T> SelectBuilder<T> select(SelectQuery<T> query, Configuration config) {
-		return service(config).forSelect(query);
+		return service(config).select(query);
 	}
 
 	public static <T> UpdateBuilder<T> create(Class<T> type, Configuration config) {

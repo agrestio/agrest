@@ -29,24 +29,36 @@ public abstract class BaseLinkRestService implements ILinkRestService {
 
 	@Override
 	public <T> DataResponse<T> selectById(Class<T> root, Object id) {
-		return forSelect(root).byId(id).select();
+		return select(root).byId(id).select();
 	}
 
 	@Override
 	public <T> DataResponse<T> selectById(Class<T> root, Object id, UriInfo uriInfo) {
-		return forSelect(root).with(uriInfo).byId(id).select();
+		return select(root).uri(uriInfo).byId(id).select();
 	}
 
 	@Override
 	public <T> DataResponse<T> select(SelectQuery<T> query, UriInfo uriInfo) {
-		return forSelect(query).with(uriInfo).select();
+		return select(query).uri(uriInfo).select();
 	}
 
 	@Override
-	public abstract <T> SelectBuilder<T> forSelect(Class<T> root);
+	public abstract <T> SelectBuilder<T> select(Class<T> root);
+	
+	@Deprecated
+	@Override
+	public <T> SelectBuilder<T> forSelect(Class<T> root) {
+		return select(root);
+	}
 
 	@Override
-	public abstract <T> SelectBuilder<T> forSelect(SelectQuery<T> query);
+	public abstract <T> SelectBuilder<T> select(SelectQuery<T> query);
+	
+	@Deprecated
+	@Override
+	public <T> SelectBuilder<T> forSelect(SelectQuery<T> query) {
+		return select(query);
+	}
 
 	/**
 	 * @since 1.2
@@ -81,18 +93,6 @@ public abstract class BaseLinkRestService implements ILinkRestService {
 		return delete(root).id(id).delete();
 	}
 
-	@Deprecated
-	@Override
-	public <T> DataResponse<T> insert(Class<T> root, String objectData) {
-		return create(root).process(objectData);
-	}
-
-	@Deprecated
-	@Override
-	public <T> DataResponse<T> update(Class<T> root, Object id, String objectData) {
-		return update(root).id(id).process(objectData);
-	}
-
 	/**
 	 * @since 1.3
 	 */
@@ -116,7 +116,7 @@ public abstract class BaseLinkRestService implements ILinkRestService {
 	 */
 	@Override
 	public abstract <T> UpdateBuilder<T> idempotentFullSync(Class<T> type);
-	
+
 	/**
 	 * @since 1.3
 	 */

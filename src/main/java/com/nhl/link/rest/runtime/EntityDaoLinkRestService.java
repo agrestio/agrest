@@ -76,12 +76,12 @@ public class EntityDaoLinkRestService extends BaseLinkRestService {
 	}
 
 	@Override
-	public <T> SelectBuilder<T> forSelect(Class<T> root) {
+	public <T> SelectBuilder<T> select(Class<T> root) {
 		return daoForType(root).forSelect();
 	}
 
 	@Override
-	public <T> SelectBuilder<T> forSelect(SelectQuery<T> query) {
+	public <T> SelectBuilder<T> select(SelectQuery<T> query) {
 		return daoForQuery(query).forSelect(query);
 	}
 

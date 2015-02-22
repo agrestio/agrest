@@ -26,7 +26,7 @@ public class E8Resource {
 
 	@PUT
 	public DataResponse<E8> sync(@Context UriInfo uriInfo, String data) {
-		return LinkRest.idempotentFullSync(E8.class, config).with(uriInfo).includeData().process(data);
+		return LinkRest.idempotentFullSync(E8.class, config).uri(uriInfo).includeData().process(data);
 	}
 
 	@POST
@@ -34,7 +34,7 @@ public class E8Resource {
 	public DataResponse<E8> create_WriteConstrainedId(@PathParam("id") int id, @Context UriInfo uriInfo,
 			String requestBody) {
 		ConstraintsBuilder<E8> tc = ConstraintsBuilder.idOnly(E8.class).attribute(E8.NAME);
-		return LinkRest.create(E8.class, config).with(uriInfo).id(id).writeConstraints(tc).process(requestBody);
+		return LinkRest.create(E8.class, config).uri(uriInfo).id(id).writeConstraints(tc).process(requestBody);
 	}
 
 	@POST
@@ -42,7 +42,7 @@ public class E8Resource {
 	public DataResponse<E8> create_WriteConstrainedIdBlocked(@PathParam("id") int id, @Context UriInfo uriInfo,
 			String requestBody) {
 		ConstraintsBuilder<E8> tc = ConstraintsBuilder.excludeAll(E8.class).attribute(E8.NAME);
-		return LinkRest.create(E8.class, config).with(uriInfo).id(id).writeConstraints(tc).includeData()
+		return LinkRest.create(E8.class, config).uri(uriInfo).id(id).writeConstraints(tc).includeData()
 				.process(requestBody);
 	}
 

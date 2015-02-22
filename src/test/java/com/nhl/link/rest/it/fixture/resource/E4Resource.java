@@ -37,7 +37,7 @@ public class E4Resource {
 	@GET
 	@Path("limit_attributes")
 	public DataResponse<E4> getObjects_LimitAttributes(@Context UriInfo uriInfo) {
-		return LinkRest.select(E4.class, config).with(uriInfo).constraints(idOnly(E4.class).attributes(E4.C_INT))
+		return LinkRest.select(E4.class, config).uri(uriInfo).constraints(idOnly(E4.class).attributes(E4.C_INT))
 				.select();
 	}
 
@@ -55,7 +55,7 @@ public class E4Resource {
 			}
 		};
 
-		return LinkRest.select(query, config).with(uriInfo).withProperty("x", property(xReader)).select();
+		return LinkRest.select(query, config).uri(uriInfo).property("x", property(xReader)).select();
 	}
 
 	@GET

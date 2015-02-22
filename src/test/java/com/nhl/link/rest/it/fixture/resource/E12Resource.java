@@ -23,20 +23,20 @@ public class E12Resource {
 	@GET
 	@Path("{id}/e1213")
 	public DataResponse<E12E13> get_Joins_NoId(@PathParam("id") int id, @Context UriInfo info) {
-		return LinkRest.select(E12E13.class, config).toManyParent(E12.class, id, E12.E1213).with(info).select();
+		return LinkRest.select(E12E13.class, config).toManyParent(E12.class, id, E12.E1213).uri(info).select();
 	}
 
 	@POST
 	@Path("{id}/e1213")
 	public DataResponse<E12E13> create_Joins(@PathParam("id") int id, @Context UriInfo info, String entityData) {
-		return LinkRest.create(E12E13.class, config).toManyParent(E12.class, id, E12.E1213).with(info).includeData()
+		return LinkRest.create(E12E13.class, config).toManyParent(E12.class, id, E12.E1213).uri(info).includeData()
 				.process(entityData);
 	}
 
 	@PUT
 	@Path("{id}/e1213")
 	public DataResponse<E12E13> fullSync_Joins(@PathParam("id") int id, @Context UriInfo info, String entityData) {
-		return LinkRest.idempotentFullSync(E12E13.class, config).toManyParent(E12.class, id, E12.E1213).with(info)
+		return LinkRest.idempotentFullSync(E12E13.class, config).toManyParent(E12.class, id, E12.E1213).uri(info)
 				.includeData().process(entityData);
 	}
 }

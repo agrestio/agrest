@@ -18,6 +18,6 @@ public class E10Resource {
 
 	@GET
 	public DataResponse<E10> get(@Context UriInfo uriInfo) {
-		return LinkRest.select(E10.class, config).with(uriInfo).select();
+		return LinkRest.select(E10.class, config).uri(uriInfo).select();
 	}
 }

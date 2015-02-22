@@ -33,12 +33,12 @@ public class E3Resource {
 
 	@POST
 	public DataResponse<E3> create(@Context UriInfo uriInfo, String requestBody) {
-		return LinkRest.create(E3.class, config).with(uriInfo).includeData().process(requestBody);
+		return LinkRest.create(E3.class, config).uri(uriInfo).includeData().process(requestBody);
 	}
 
 	@PUT
 	public DataResponse<E3> sync(@Context UriInfo uriInfo, String requestBody) {
-		return LinkRest.idempotentFullSync(E3.class, config).with(uriInfo).includeData().process(requestBody);
+		return LinkRest.idempotentFullSync(E3.class, config).uri(uriInfo).includeData().process(requestBody);
 	}
 
 	@GET
@@ -57,20 +57,20 @@ public class E3Resource {
 	@Path("constrained")
 	public DataResponse<E3> insertReadConstrained(@Context UriInfo uriInfo, String requestBody) {
 		ConstraintsBuilder<E3> tc = ConstraintsBuilder.idOnly(E3.class).attribute(E3.NAME);
-		return LinkRest.create(E3.class, config).with(uriInfo).readConstraints(tc).includeData().process(requestBody);
+		return LinkRest.create(E3.class, config).uri(uriInfo).readConstraints(tc).includeData().process(requestBody);
 	}
 
 	@POST
 	@Path("w/constrained")
 	public DataResponse<E3> insertWriteConstrained(@Context UriInfo uriInfo, String requestBody) {
 		ConstraintsBuilder<E3> tc = ConstraintsBuilder.idOnly(E3.class).attribute(E3.NAME);
-		return LinkRest.create(E3.class, config).with(uriInfo).writeConstraints(tc).includeData().process(requestBody);
+		return LinkRest.create(E3.class, config).uri(uriInfo).writeConstraints(tc).includeData().process(requestBody);
 	}
 
 	@GET
 	@Path("{id}/e2")
 	public DataResponse<E2> getE2(@PathParam("id") int id, @Context UriInfo uriInfo) {
-		return LinkRest.select(E2.class, config).parent(E3.class, id, E3.E2).with(uriInfo).select();
+		return LinkRest.select(E2.class, config).parent(E3.class, id, E3.E2).uri(uriInfo).select();
 	}
 
 	@DELETE

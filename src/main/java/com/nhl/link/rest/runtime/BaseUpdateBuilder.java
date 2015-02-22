@@ -67,9 +67,15 @@ public abstract class BaseUpdateBuilder<T> implements UpdateBuilder<T> {
 	}
 
 	@Override
-	public UpdateBuilder<T> with(UriInfo uriInfo) {
+	public UpdateBuilder<T> uri(UriInfo uriInfo) {
 		this.uriInfo = uriInfo;
 		return this;
+	}
+
+	@Deprecated
+	@Override
+	public UpdateBuilder<T> with(UriInfo uriInfo) {
+		return uri(uriInfo);
 	}
 
 	@Override

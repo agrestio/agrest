@@ -20,7 +20,7 @@ public class PojoResource {
 	@GET
 	@Path("p6")
 	public DataResponse<P6> p6All(@Context UriInfo uriInfo) {
-		return LinkRest.select(P6.class, config).with(uriInfo).select();
+		return LinkRest.select(P6.class, config).uri(uriInfo).select();
 	}
 
 	@GET

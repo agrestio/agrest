@@ -41,7 +41,15 @@ public interface UpdateBuilder<T> {
 
 	/**
 	 * Sets request {@link UriInfo} that will be used to shape response.
+	 * 
+	 * @since 1.14
 	 */
+	UpdateBuilder<T> uri(UriInfo uriInfo);
+	
+	/**
+	 * @deprecated since 1.14 in favor of better named {@link #uri(UriInfo)}.
+	 */
+	@Deprecated
 	UpdateBuilder<T> with(UriInfo uriInfo);
 
 	UpdateBuilder<T> readConstraints(ConstraintsBuilder<T> constraints);
