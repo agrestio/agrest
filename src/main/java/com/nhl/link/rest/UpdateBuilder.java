@@ -66,4 +66,11 @@ public interface UpdateBuilder<T> {
 	UpdateBuilder<T> excludeData();
 
 	UpdateResponse<T> process(String entityData);
+
+	/**
+	 * Unlink objects from parent instead of deleting them.
+	 *
+	 * @since 1.14
+	 */
+	UpdateBuilder<T> onDeleteUnrelate();
 }

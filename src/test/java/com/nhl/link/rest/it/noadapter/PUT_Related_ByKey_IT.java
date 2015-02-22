@@ -96,12 +96,12 @@ public class PUT_Related_ByKey_IT extends JerseyTestOnDerby {
 
 		assertEquals(2, SQLSelect.scalarQuery(Integer.class, "SELECT count(1) FROM utest.e14 WHERE e15_id = 44")
 				.selectOne(context).intValue());
-		assertEquals(
-				2,
-				SQLSelect
-						.scalarQuery(Integer.class,
-								"SELECT count(1) FROM utest.e14 WHERE e15_id = 44 and long_id IN (4,11)")
-						.selectOne(context).intValue());
+
+		assertEquals(2, SQLSelect.scalarQuery(Integer.class, "SELECT count(1) FROM utest.e14 WHERE e15_id = 44 and long_id IN (4,11)")
+				.selectOne(context).intValue());
+
+		assertEquals(0, SQLSelect.scalarQuery(Integer.class, "SELECT count(1) FROM utest.e14 WHERE long_id = 2")
+				.selectOne(context).intValue());
 	}
 
 }

@@ -1,7 +1,20 @@
 package com.nhl.link.rest.it.noadapter;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import com.nhl.link.rest.it.fixture.JerseyTestOnDerby;
+import com.nhl.link.rest.it.fixture.cayenne.E12;
+import com.nhl.link.rest.it.fixture.cayenne.E12E13;
+import com.nhl.link.rest.it.fixture.cayenne.E2;
+import com.nhl.link.rest.it.fixture.cayenne.E3;
+import com.nhl.link.rest.it.fixture.cayenne.E4;
+import com.nhl.link.rest.it.fixture.resource.E12Resource;
+import com.nhl.link.rest.it.fixture.resource.E15Resource;
+import com.nhl.link.rest.it.fixture.resource.E2Resource;
+import com.nhl.link.rest.it.fixture.resource.E3Resource;
+import com.nhl.link.rest.it.fixture.resource.E7Resource;
+import com.nhl.link.rest.it.fixture.resource.E8Resource;
+import org.apache.cayenne.query.SQLSelect;
+import org.apache.cayenne.query.SQLTemplate;
+import org.junit.Test;
 
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.FeatureContext;
@@ -9,20 +22,8 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
-import org.apache.cayenne.query.SQLSelect;
-import org.apache.cayenne.query.SQLTemplate;
-import org.junit.Test;
-
-import com.nhl.link.rest.it.fixture.JerseyTestOnDerby;
-import com.nhl.link.rest.it.fixture.cayenne.E12;
-import com.nhl.link.rest.it.fixture.cayenne.E12E13;
-import com.nhl.link.rest.it.fixture.cayenne.E2;
-import com.nhl.link.rest.it.fixture.cayenne.E3;
-import com.nhl.link.rest.it.fixture.resource.E12Resource;
-import com.nhl.link.rest.it.fixture.resource.E2Resource;
-import com.nhl.link.rest.it.fixture.resource.E3Resource;
-import com.nhl.link.rest.it.fixture.resource.E7Resource;
-import com.nhl.link.rest.it.fixture.resource.E8Resource;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 public class PUT_Related_IT extends JerseyTestOnDerby {
 
@@ -33,6 +34,7 @@ public class PUT_Related_IT extends JerseyTestOnDerby {
 		context.register(E7Resource.class);
 		context.register(E8Resource.class);
 		context.register(E12Resource.class);
+		context.register(E15Resource.class);
 	}
 
 	@Test
@@ -88,6 +90,34 @@ public class PUT_Related_IT extends JerseyTestOnDerby {
 
 		assertEquals("yyy", SQLSelect.scalarQuery(String.class, "SELECT name FROM utest.e3 WHERE e2_id = 24")
 				.selectOne(context));
+	}
+
+	@Test
+	public void testRelate_ValidRel_ToOne_Existing_onDeleteUnrelate() {
+		runtime.newContext().performGenericQuery(
+				new SQLTemplate(E4.class, "INSERT INTO utest.e15 (long_id, name) values (1, 'parent')"));
+
+		runtime.newContext().performGenericQuery(
+				new SQLTemplate(E4.class, "INSERT INTO utest.e14 (long_id, name, e15_id) values (1, 'child1', 1)"));
+		runtime.newContext().performGenericQuery(
+				new SQLTemplate(E4.class, "INSERT INTO utest.e14 (long_id, name, e15_id) values (2, 'child2', 1)"));
+		runtime.newContext().performGenericQuery(
+				new SQLTemplate(E4.class, "INSERT INTO utest.e14 (long_id, name, e15_id) values (3, 'child3', 1)"));
+
+		Response response = target("/e15/1/e14s_2").request().put(
+				Entity.entity(
+						"[{\"id\":1}]",
+						MediaType.APPLICATION_JSON
+				)
+		);
+		assertEquals(Status.OK.getStatusCode(), response.getStatus());
+		assertEquals(response.readEntity(String.class), "{\"success\":true,\"data\":[{\"id\":1,\"name\":\"child1\"}],\"total\":1}");
+
+		assertEquals(3, SQLSelect.scalarQuery(String.class, "SELECT count(1) FROM utest.e14 WHERE long_id IN (1,2,3)").selectOne(context));
+
+		assertEquals(1, SQLSelect.scalarQuery(String.class, "SELECT count(1) FROM utest.e14 WHERE e15_id = 1").selectOne(context));
+
+		assertEquals(2, SQLSelect.scalarQuery(String.class, "SELECT count(1) FROM utest.e14 WHERE long_id IN (2,3) AND e15_id IS NULL").selectOne(context));
 	}
 
 	@Test
