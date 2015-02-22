@@ -6,47 +6,52 @@ import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
+import javax.ws.rs.core.Configuration;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.UriInfo;
 
 import org.apache.cayenne.query.SelectQuery;
 
 import com.nhl.link.rest.DataResponse;
+import com.nhl.link.rest.LinkRest;
 import com.nhl.link.rest.SimpleResponse;
 import com.nhl.link.rest.constraints.ConstraintsBuilder;
 import com.nhl.link.rest.it.fixture.cayenne.E2;
 import com.nhl.link.rest.it.fixture.cayenne.E3;
 
 @Path("e2")
-public class E2Resource extends LrResource {
+public class E2Resource {
+
+	@Context
+	private Configuration config;
 
 	@GET
 	public DataResponse<E2> getE2(@Context UriInfo uriInfo) {
-		return getService().select(SelectQuery.query(E2.class), uriInfo);
+		return LinkRest.service(config).select(SelectQuery.query(E2.class), uriInfo);
 	}
 
 	@GET
 	@Path("{id}")
 	public DataResponse<E2> getE2ById(@PathParam("id") int id, @Context UriInfo uriInfo) {
-		return getService().selectById(E2.class, id, uriInfo);
+		return LinkRest.service(config).selectById(E2.class, id, uriInfo);
 	}
 
 	@GET
 	@Path("{id}/dummyrel")
 	public DataResponse<E3> getE2_Dummyrel(@PathParam("id") int id, @Context UriInfo uriInfo) {
-		return getService().forSelect(E3.class).parent(E2.class, id, "dummyrel").with(uriInfo).select();
+		return LinkRest.select(E3.class, config).parent(E2.class, id, "dummyrel").with(uriInfo).select();
 	}
 
 	@GET
 	@Path("{id}/e3s")
 	public DataResponse<E3> getE2_E3s(@PathParam("id") int id, @Context UriInfo uriInfo) {
-		return (DataResponse<E3>) getService().forSelect(E3.class).parent(E2.class, id, "e3s").with(uriInfo).select();
+		return LinkRest.select(E3.class, config).parent(E2.class, id, "e3s").with(uriInfo).select();
 	}
 
 	@GET
 	@Path("constraints/{id}/e3s")
 	public DataResponse<E3> getE2_E3s_Constrained(@PathParam("id") int id, @Context UriInfo uriInfo) {
-		return (DataResponse<E3>) getService().forSelect(E3.class).parent(E2.class, id, "e3s").with(uriInfo)
+		return LinkRest.select(E3.class, config).parent(E2.class, id, "e3s").with(uriInfo)
 				.constraints(ConstraintsBuilder.idOnly(E3.class)).select();
 	}
 
@@ -54,20 +59,20 @@ public class E2Resource extends LrResource {
 	@Path("{id}/{rel}/{tid}")
 	public SimpleResponse deleteToMany(@PathParam("id") int id, @PathParam("rel") String relationship,
 			@PathParam("tid") int tid) {
-		return getService().unrelate(E2.class, id, relationship, tid);
+		return LinkRest.service(config).unrelate(E2.class, id, relationship, tid);
 	}
 
 	@POST
 	@Path("{id}/e3s")
 	public DataResponse<E3> createOrUpdateE3s(@PathParam("id") int id, String targetData) {
-		return getService().createOrUpdate(E3.class).toManyParent(E2.class, id, E2.E3S).includeData()
+		return LinkRest.createOrUpdate(E3.class, config).toManyParent(E2.class, id, E2.E3S).includeData()
 				.process(targetData);
 	}
 
 	@PUT
 	@Path("{id}/e3s")
 	public DataResponse<E3> createOrUpdate_Idempotent_E3s(@PathParam("id") int id, String entityData) {
-		return getService().idempotentCreateOrUpdate(E3.class).toManyParent(E2.class, id, E2.E3S).includeData()
+		return LinkRest.idempotentCreateOrUpdate(E3.class, config).toManyParent(E2.class, id, E2.E3S).includeData()
 				.process(entityData);
 	}
 }

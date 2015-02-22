@@ -9,6 +9,7 @@ import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
+import javax.ws.rs.core.Configuration;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.UriInfo;
 
@@ -17,22 +18,26 @@ import org.apache.cayenne.DataObject;
 import org.apache.cayenne.query.SelectQuery;
 
 import com.nhl.link.rest.DataResponse;
+import com.nhl.link.rest.LinkRest;
 import com.nhl.link.rest.SimpleResponse;
 import com.nhl.link.rest.it.fixture.cayenne.E4;
 import com.nhl.link.rest.property.PropertyReader;
 
 @Path("e4")
-public class E4Resource extends LrResource {
+public class E4Resource {
+
+	@Context
+	private Configuration config;
 
 	@GET
 	public DataResponse<E4> get(@Context UriInfo uriInfo) {
-		return getService().select(SelectQuery.query(E4.class), uriInfo);
+		return LinkRest.service(config).select(SelectQuery.query(E4.class), uriInfo);
 	}
 
 	@GET
 	@Path("limit_attributes")
 	public DataResponse<E4> getObjects_LimitAttributes(@Context UriInfo uriInfo) {
-		return getService().forSelect(E4.class).with(uriInfo).constraints(idOnly(E4.class).attributes(E4.C_INT))
+		return LinkRest.select(E4.class, config).with(uriInfo).constraints(idOnly(E4.class).attributes(E4.C_INT))
 				.select();
 	}
 
@@ -50,42 +55,42 @@ public class E4Resource extends LrResource {
 			}
 		};
 
-		return getService().forSelect(query).with(uriInfo).withProperty("x", property(xReader)).select();
+		return LinkRest.select(query, config).with(uriInfo).withProperty("x", property(xReader)).select();
 	}
 
 	@GET
 	@Path("{id}")
 	public DataResponse<E4> getById(@PathParam("id") int id) {
-		return getService().selectById(E4.class, id);
+		return LinkRest.service(config).selectById(E4.class, id);
 	}
 
 	@POST
 	public DataResponse<E4> create(String requestBody) {
-		return getService().create(E4.class).includeData().process(requestBody);
+		return LinkRest.create(E4.class, config).includeData().process(requestBody);
 	}
 
 	@POST
 	@Path("defaultdata")
 	public DataResponse<E4> create_DefaultData(String requestBody) {
-		return getService().create(E4.class).process(requestBody);
+		return LinkRest.create(E4.class, config).process(requestBody);
 	}
 
 	@GET
 	@Path("ie/{id}")
 	public DataResponse<E4> get_WithIncludeExclude(@PathParam("id") int id, @Context UriInfo uriInfo) {
-		return getService().selectById(E4.class, id, uriInfo);
+		return LinkRest.service(config).selectById(E4.class, id, uriInfo);
 	}
 
 	@DELETE
 	@Path("{id}")
 	public SimpleResponse delete(@PathParam("id") int id) {
-		return getService().delete(E4.class, id);
+		return LinkRest.service(config).delete(E4.class, id);
 	}
 
 	@PUT
 	@Path("{id}")
 	public DataResponse<E4> update(@PathParam("id") int id, String requestBody) {
-		return getService().update(E4.class).id(id).includeData().process(requestBody);
+		return LinkRest.update(E4.class, config).id(id).includeData().process(requestBody);
 	}
 
 }
