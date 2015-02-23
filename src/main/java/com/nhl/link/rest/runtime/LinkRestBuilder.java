@@ -85,7 +85,17 @@ public class LinkRestBuilder {
 	 * @since 1.14
 	 */
 	public static LinkRestRuntime build(ServerRuntime cayenneRuntime) {
-		return new LinkRestBuilder().cayenneRuntime(cayenneRuntime).build();
+		return builder(cayenneRuntime).build();
+	}
+
+	/**
+	 * A shortcut that creates a LinkRestBuilder, setting its Cayenne runtime. A
+	 * caller can continue customizing the returned builder.
+	 * 
+	 * @since 1.14
+	 */
+	public static LinkRestBuilder builder(ServerRuntime cayenneRuntime) {
+		return new LinkRestBuilder().cayenneRuntime(cayenneRuntime);
 	}
 
 	public LinkRestBuilder() {

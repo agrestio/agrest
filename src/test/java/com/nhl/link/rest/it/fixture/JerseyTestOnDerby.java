@@ -120,7 +120,7 @@ public abstract class JerseyTestOnDerby extends JerseyTest {
 	}
 
 	protected LinkRestBuilder doConfigure() {
-		return new LinkRestBuilder().cayenneRuntime(runtime);
+		return LinkRestBuilder.builder(runtime);
 	}
 
 	protected abstract void doAddResources(FeatureContext context);
