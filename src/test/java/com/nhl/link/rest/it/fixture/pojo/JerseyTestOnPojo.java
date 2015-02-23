@@ -67,7 +67,7 @@ public class JerseyTestOnPojo extends JerseyTest {
 	public Application configure() {
 
 		Feature lrFeature = new LinkRestBuilder().linkRestService(PojoLinkRestService.class).extraEntities(pojoModels)
-				.build().getFeature();
+				.build();
 
 		Feature unitFeature = new Feature() {
 

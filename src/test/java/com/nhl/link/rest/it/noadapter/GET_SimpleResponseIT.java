@@ -30,7 +30,7 @@ public class GET_SimpleResponseIT extends JerseyTest {
 	@Override
 	public Application configure() {
 
-		Feature lrFeature = new LinkRestBuilder().cayenneRuntime(mock(ServerRuntime.class)).build().getFeature();
+		Feature lrFeature = new LinkRestBuilder().cayenneRuntime(mock(ServerRuntime.class)).build();
 
 		Feature feature = new Feature() {
 

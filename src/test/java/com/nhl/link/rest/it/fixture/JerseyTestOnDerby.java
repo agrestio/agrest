@@ -105,7 +105,7 @@ public abstract class JerseyTestOnDerby extends JerseyTest {
 	@Override
 	public Application configure() {
 
-		Feature lrFeature = doConfigure().build().getFeature();
+		Feature lrFeature = doConfigure().build();
 
 		Feature unitFeature = new Feature() {
 

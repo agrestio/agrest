@@ -30,7 +30,7 @@ public class LinkRestBuilderTest {
 	@Test
 	public void testMapException_Standard() {
 		LinkRestBuilder builder = new LinkRestBuilder();
-		Feature f = builder.build().getFeature();
+		Feature f = builder.build();
 
 		FeatureContext context = mock(FeatureContext.class);
 
@@ -42,7 +42,7 @@ public class LinkRestBuilderTest {
 	@Test
 	public void testMapException_Custom() {
 		LinkRestBuilder builder = new LinkRestBuilder().mapException(TestValidationExceptionMapper.class);
-		Feature f = builder.build().getFeature();
+		Feature f = builder.build();
 
 		FeatureContext context = mock(FeatureContext.class);
 
@@ -83,7 +83,7 @@ public class LinkRestBuilderTest {
 		assertSame(mockParser, runtime.service(IRequestParser.class));
 
 		FeatureContext context = mock(FeatureContext.class);
-		runtime.getFeature().configure(context);
+		runtime.configure(context);
 		verify(adapterFeature).configure(context);
 	}
 

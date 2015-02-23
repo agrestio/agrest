@@ -217,8 +217,7 @@ public class LinkRestBuilder {
 
 	public LinkRestRuntime build() {
 		Injector i = createInjector();
-		Feature f = new LinkRestFeature(i, createExtraFeatures(), createExtraComponents());
-		return new LinkRestRuntime(f, i);
+		return new LinkRestRuntime(i, createExtraFeatures(), createExtraComponents());
 	}
 
 	private Collection<Class<?>> createExtraComponents() {
