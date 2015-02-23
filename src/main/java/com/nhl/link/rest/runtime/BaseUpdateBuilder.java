@@ -255,7 +255,7 @@ public abstract class BaseUpdateBuilder<T> implements UpdateBuilder<T> {
 				Persistent o = (Persistent) u.getMergedTo();
 
 				if (!relatedObjects) {
-					relatedObjects = (u.getRelatedIds().size() > 0);
+					relatedObjects = (response.getEntity().getChildren().size() > 0);
 				}
 
 				if (o != null && seen.add(o.getObjectId())) {

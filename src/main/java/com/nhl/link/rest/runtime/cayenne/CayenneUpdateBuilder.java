@@ -1,10 +1,10 @@
 package com.nhl.link.rest.runtime.cayenne;
 
 import com.nhl.link.rest.EntityParent;
-import com.nhl.link.rest.EntityUpdate;
 import com.nhl.link.rest.LinkRestException;
 import com.nhl.link.rest.ObjectMapper;
 import com.nhl.link.rest.ObjectMapperFactory;
+import com.nhl.link.rest.ResourceEntity;
 import com.nhl.link.rest.UpdateResponse;
 import com.nhl.link.rest.meta.LrEntity;
 import com.nhl.link.rest.runtime.BaseUpdateBuilder;
@@ -21,8 +21,7 @@ import org.apache.cayenne.query.SelectQuery;
 
 import javax.ws.rs.core.Response.Status;
 import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.Map;
 
 class CayenneUpdateBuilder<T> extends BaseUpdateBuilder<T> {
 
@@ -67,17 +66,11 @@ class CayenneUpdateBuilder<T> extends BaseUpdateBuilder<T> {
 		}
 		query.andQualifier(builder.buildExpression());
 
-		Set<String> seen = new HashSet<>();
-		for (EntityUpdate u : responseBuilder.getUpdates()) {
-			if (u.getRelatedIds().size() > 0) {
-				for (String path : u.getRelatedIds().keySet()) {
-					if (seen.add(path)) {
-						query.addPrefetch(Util.createPrefetch(
-								responseBuilder.getEntity().getChild(path), PrefetchTreeNode.JOINT_PREFETCH_SEMANTICS, path
-						));
-					}
-				}
-			}
+		Map<String, ResourceEntity<?>> childrenMap = responseBuilder.getEntity().getChildren();
+		for (Map.Entry<String, ResourceEntity<?>> child : childrenMap.entrySet()) {
+			query.addPrefetch(Util.createPrefetch(
+					child.getValue(), PrefetchTreeNode.JOINT_PREFETCH_SEMANTICS, child.getKey()
+			));
 		}
 
 		persister.sharedContext().select(query);
