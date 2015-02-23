@@ -78,6 +78,16 @@ public class LinkRestBuilder {
 	private Map<Class<?>, Class<?>> exceptionMappers;
 	private Collection<LinkRestAdapter> adapters;
 
+	/**
+	 * A shortcut that creates a LinkRest stack based on Cayenne runtime and
+	 * default settings.
+	 * 
+	 * @since 1.14
+	 */
+	public static LinkRestRuntime build(ServerRuntime cayenneRuntime) {
+		return new LinkRestBuilder().cayenneRuntime(cayenneRuntime).build();
+	}
+
 	public LinkRestBuilder() {
 		this.extraEntities = new ArrayList<>();
 		this.entityOverlays = new HashMap<>();

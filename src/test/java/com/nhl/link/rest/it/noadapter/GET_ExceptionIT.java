@@ -28,7 +28,7 @@ public class GET_ExceptionIT extends JerseyTest {
 	@Override
 	public Application configure() {
 
-		Feature lrFeature = new LinkRestBuilder().cayenneRuntime(mock(ServerRuntime.class)).build();
+		Feature lrFeature = LinkRestBuilder.build(mock(ServerRuntime.class));
 
 		Feature testFeature = new Feature() {
 
