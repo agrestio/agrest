@@ -32,13 +32,13 @@
 		<url>https://github.com/nhl/link-rest</url>
 		<tag>HEAD</tag>
 	</scm>
-
+	
 	<distributionManagement>
 		<repository>
 			<uniqueVersion>false</uniqueVersion>
-			<id>linkrest-releases</id>
+			<id>oss-sonatype-releases</id>
 			<name>Deployment Repository</name>
-			<url>http://maven.objectstyle.org/nexus/content/repositories/linkrestreleases</url>
+			<url>https://oss.sonatype.org/service/local/staging/deploy/maven2</url>
 		</repository>
 	</distributionManagement>
 
