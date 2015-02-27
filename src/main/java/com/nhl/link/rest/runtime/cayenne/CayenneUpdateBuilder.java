@@ -68,9 +68,11 @@ class CayenneUpdateBuilder<T> extends BaseUpdateBuilder<T> {
 
 		Map<String, ResourceEntity<?>> childrenMap = responseBuilder.getEntity().getChildren();
 		for (Map.Entry<String, ResourceEntity<?>> child : childrenMap.entrySet()) {
-			query.addPrefetch(Util.createPrefetch(
-					child.getValue(), PrefetchTreeNode.JOINT_PREFETCH_SEMANTICS, child.getKey()
-			));
+			if (!entity.getRelationship(child.getKey()).isToMany()) {
+				query.addPrefetch(Util.createPrefetch(
+						child.getValue(), PrefetchTreeNode.JOINT_PREFETCH_SEMANTICS, child.getKey()
+				));
+			}
 		}
 
 		persister.sharedContext().select(query);
