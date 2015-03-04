@@ -5,6 +5,7 @@ Release 1.14
 #81 LinkRestRuntime should implement JAX RS Feature
 #82 LinkRestBuilder: a static shortcut for simple LinkRest stack
 #83 Start deploying releases to Maven central
+#84 Problems with entity attributes of type java.sql.Time
 
 Release 1.13
 
