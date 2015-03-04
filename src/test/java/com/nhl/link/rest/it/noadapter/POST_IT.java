@@ -14,6 +14,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import com.nhl.link.rest.it.fixture.resource.E16Resource;
 import org.apache.cayenne.Cayenne;
 import org.apache.cayenne.query.SQLSelect;
 import org.apache.cayenne.query.SQLTemplate;
@@ -34,6 +35,7 @@ public class POST_IT extends JerseyTestOnDerby {
 		context.register(E3Resource.class);
 		context.register(E4Resource.class);
 		context.register(E8Resource.class);
+		context.register(E16Resource.class);
 	}
 
 	@Test
@@ -73,7 +75,7 @@ public class POST_IT extends JerseyTestOnDerby {
 
 	@Test
 	public void testPost_DateTime() {
-		Response r1 = target("e4").request().post(
+		Response r1 = target("e16").request().post(
 				Entity.entity(
 						"{\"cDate\":\"2015-03-14\", \"cTime\":\"T19:00:00\", \"cTimestamp\":\"2015-03-14T19:00:00.000\"}",
 						MediaType.APPLICATION_JSON
