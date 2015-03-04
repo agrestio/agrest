@@ -29,10 +29,10 @@ class CayenneExpProcessor {
 		// mapped with existing tools
 
 		this.converters = new HashMap<>();
-		this.converters.put(Date.class.getName(), new UtcDateConverter());
-		this.converters.put(java.sql.Date.class.getName(), new UtcDateConverter());
-		this.converters.put(java.sql.Time.class.getName(), new UtcDateConverter());
-		this.converters.put(java.sql.Timestamp.class.getName(), new UtcDateConverter());
+		this.converters.put(Date.class.getName(), UtcDateConverter.converter());
+		this.converters.put(java.sql.Date.class.getName(), UtcDateConverter.converter());
+		this.converters.put(java.sql.Time.class.getName(), UtcDateConverter.converter());
+		this.converters.put(java.sql.Timestamp.class.getName(), UtcDateConverter.converter());
 	}
 
 	void process(ResourceEntity<?> resourceEntity, String cayenneExpJson) {
