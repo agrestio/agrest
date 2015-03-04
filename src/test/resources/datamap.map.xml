@@ -128,7 +128,7 @@
 	<obj-entity name="E16" className="com.nhl.link.rest.it.fixture.cayenne.E16" dbEntityName="e16">
 		<obj-attribute name="cDate" type="java.sql.Date" db-attribute-path="c_date"/>
 		<obj-attribute name="cTime" type="java.sql.Time" db-attribute-path="c_time"/>
-		<obj-attribute name="cTimestamp" type="java.util.Date" db-attribute-path="c_timestamp"/>
+		<obj-attribute name="cTimestamp" type="java.sql.Timestamp" db-attribute-path="c_timestamp"/>
 	</obj-entity>
 	<obj-entity name="E2" className="com.nhl.link.rest.it.fixture.cayenne.E2" dbEntityName="e2">
 		<obj-attribute name="address" type="java.lang.String" db-attribute-path="address"/>
