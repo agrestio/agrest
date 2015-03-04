@@ -72,6 +72,17 @@ public class POST_IT extends JerseyTestOnDerby {
 	}
 
 	@Test
+	public void testPost_DateTime() {
+		Response r1 = target("e4").request().post(
+				Entity.entity(
+						"{\"cDate\":\"2015-03-14\", \"cTime\":\"T19:00:00\", \"cTimestamp\":\"2015-03-14T19:00:00.000\"}",
+						MediaType.APPLICATION_JSON
+				)
+		);
+		assertEquals(Status.CREATED.getStatusCode(), r1.getStatus());
+	}
+
+	@Test
 	public void testPost_Default_NoData() throws WebApplicationException, IOException {
 
 		Response response1 = target("/e4/defaultdata").request().post(
