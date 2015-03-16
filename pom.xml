@@ -21,7 +21,7 @@
 
 		<servlet-api-version>3.0.0.v201112011016</servlet-api-version>
 		<slf4j-version>1.6.6</slf4j-version>
-		<cayenne-version>4.0.M2.1ab1caa</cayenne-version>
+		<cayenne-version>4.0.M2</cayenne-version>
 		<jersey-version>2.12</jersey-version>
 		<jackson-version>2.4.2</jackson-version>
 	</properties>
