@@ -26,6 +26,26 @@
 		<jackson-version>2.4.2</jackson-version>
 	</properties>
 
+	<url>https://github.com/nhl/link-rest</url>
+
+	<licenses>
+		<license>
+			<name>BSD License</name>
+			<url>https://github.com/nhl/link-rest/blob/master/LICENSE.txt</url>
+			<distribution>repo</distribution>
+		</license>
+	</licenses>
+
+	<developers>
+		<developer>
+			<id>andrus</id>
+			<name>Andrus Adamchik</name>
+			<email>andrus@objectstyle.com</email>
+			<organization>ObjectStyle</organization>
+			<timezone>America/New_York</timezone>
+		</developer>
+	</developers>
+
 	<scm>
 		<connection>scm:git:https://github.com/nhl/link-rest</connection>
 		<developerConnection>scm:git:ssh://git@github.com/nhl/link-rest</developerConnection>
@@ -201,6 +221,12 @@
 
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-gpg-plugin</artifactId>
+					<version>1.6</version>
+				</plugin>
+
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-source-plugin</artifactId>
 					<version>2.2.1</version>
 				</plugin>
@@ -339,5 +365,29 @@
 		</dependency>
 
 	</dependencies>
+
+	<!-- Optional profile used to sign artifacts -->
+	<profiles>
+		<profile>
+			<id>gpg</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-gpg-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>sign-artifacts</id>
+								<phase>verify</phase>
+								<goals>
+									<goal>sign</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
 
 </project>
