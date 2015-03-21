@@ -7,6 +7,7 @@ Release 1.14
 #83 Start deploying releases to Maven central
 #84 Problems with entity attributes of type java.sql.Time
 #87 Upgrade to release version of Cayenne
+#88 Error when using 'cayenneExp' with outer joins ending in relationship
 
 Release 1.13
 

@@ -135,7 +135,9 @@ class EntityPathCache {
 			return attribute;
 		}
 
-		LrRelationship relationship = entity.getRelationship(path);
+		// if not an attribute, take into account a possibility of outer join
+		String pathSegment = path.endsWith("+") ? path.substring(0, path.length() - 1) : path;
+		LrRelationship relationship = entity.getRelationship(pathSegment);
 		if (relationship != null) {
 			return relationship;
 		}

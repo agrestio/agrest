@@ -371,6 +371,36 @@ public class GET_IT extends JerseyTestOnDerby {
 		assertEquals(Status.OK.getStatusCode(), response1.getStatus());
 		assertEquals("{\"success\":true,\"data\":[{\"id\":9}],\"total\":1}", response1.readEntity(String.class));
 	}
+	
+	@Test
+	public void test_Select_CayenneExp_Outer_Relationship() throws WebApplicationException, IOException {
+
+		runtime.newContext().performGenericQuery(
+				new SQLTemplate(E2.class, "INSERT INTO utest.e2 (id, name) values (1, 'xxx'),(2, 'yyy')"));
+		runtime.newContext().performGenericQuery(
+				new SQLTemplate(E3.class, "INSERT INTO utest.e3 (id, e2_id, name) values (8, 1, 'A'),(9, null, 'B')"));
+
+		Response response1 = target("/e3").queryParam("include", "id")
+				.queryParam("cayenneExp", urlEnc("{\"exp\":\"e2+ = null\"}")).request().get();
+
+		assertEquals(Status.OK.getStatusCode(), response1.getStatus());
+		assertEquals("{\"success\":true,\"data\":[{\"id\":9}],\"total\":1}", response1.readEntity(String.class));
+	}
+	
+	@Test
+	public void test_Select_CayenneExp_Outer_To_Many_Relationship() throws WebApplicationException, IOException {
+
+		runtime.newContext().performGenericQuery(
+				new SQLTemplate(E2.class, "INSERT INTO utest.e2 (id, name) values (1, 'xxx'),(2, 'yyy')"));
+		runtime.newContext().performGenericQuery(
+				new SQLTemplate(E3.class, "INSERT INTO utest.e3 (id, e2_id, name) values (8, 1, 'A'),(9, null, 'B')"));
+
+		Response response1 = target("/e2").queryParam("include", "id")
+				.queryParam("cayenneExp", urlEnc("{\"exp\":\"e3s+ = null\"}")).request().get();
+
+		assertEquals(Status.OK.getStatusCode(), response1.getStatus());
+		assertEquals("{\"success\":true,\"data\":[{\"id\":2}],\"total\":1}", response1.readEntity(String.class));
+	}
 
 	@Test
 	public void test_SelectToOne_Null() throws WebApplicationException, IOException {
