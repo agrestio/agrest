@@ -45,7 +45,7 @@ public class PojoLinkRestService_InContainer_GET_IT extends JerseyTestOnPojo {
 		pojoDB.bucketForType(P6.class).put("o1id", o1);
 		pojoDB.bucketForType(P6.class).put("o2id", o2);
 
-		Response response1 = target("/pojo/p6").request().get();
+		Response response1 = target("/pojo/p6").queryParam("sort", "id").request().get();
 		assertEquals(Status.OK.getStatusCode(), response1.getStatus());
 		assertEquals("{\"success\":true,\"data\":[{\"id\":\"o1id\",\"intProp\":15},"
 				+ "{\"id\":\"o2id\",\"intProp\":16}],\"total\":2}", response1.readEntity(String.class));
