@@ -21,7 +21,6 @@ import com.nhl.link.rest.it.fixture.JerseyTestOnDerby;
 import com.nhl.link.rest.it.fixture.cayenne.E2;
 import com.nhl.link.rest.it.fixture.cayenne.E3;
 import com.nhl.link.rest.it.fixture.cayenne.E4;
-import com.nhl.link.rest.it.fixture.resource.E2Resource;
 import com.nhl.link.rest.it.fixture.resource.E3Resource;
 import com.nhl.link.rest.it.fixture.resource.E4Resource;
 import com.nhl.link.rest.it.fixture.resource.E6Resource;
@@ -30,7 +29,6 @@ public class GET_IT extends JerseyTestOnDerby {
 
 	@Override
 	protected void doAddResources(FeatureContext context) {
-		context.register(E2Resource.class);
 		context.register(E3Resource.class);
 		context.register(E4Resource.class);
 		context.register(E6Resource.class);
@@ -254,152 +252,6 @@ public class GET_IT extends JerseyTestOnDerby {
 		assertEquals(Status.OK.getStatusCode(), response1.getStatus());
 		assertEquals("{\"success\":true,\"data\":[{\"id\":9,\"e2\":{\"id\":1}},"
 				+ "{\"id\":10,\"e2\":{\"id\":1}}],\"total\":4}", response1.readEntity(String.class));
-	}
-
-	@Test
-	public void test_Select_CayenneExp_NotIn_ById() throws WebApplicationException, IOException {
-
-		runtime.newContext().performGenericQuery(
-				new SQLTemplate(E2.class, "INSERT INTO utest.e2 (id, name) values (1, 'xxx'),(2, 'yyy')"));
-		runtime.newContext().performGenericQuery(
-				new SQLTemplate(E3.class, "INSERT INTO utest.e3 (id, e2_id, name) values (8, 1, 'yyy'),(9, 2, 'zzz')"));
-
-		Response response1 = target("/e3").queryParam("include", "id")
-				.queryParam("cayenneExp", urlEnc("{\"exp\":\"e2 not in ($id)\",\"params\":{\"id\":1}}")).request()
-				.get();
-
-		assertEquals(Status.OK.getStatusCode(), response1.getStatus());
-		assertEquals("{\"success\":true,\"data\":[{\"id\":9}],\"total\":1}", response1.readEntity(String.class));
-	}
-
-	@Test
-	public void test_Select_CayenneExp_NotIn_By2Ids() throws WebApplicationException, IOException {
-
-		runtime.newContext().performGenericQuery(
-				new SQLTemplate(E2.class, "INSERT INTO utest.e2 (id, name) values (1, 'xxx'),(2, 'yyy')"));
-		runtime.newContext().performGenericQuery(
-				new SQLTemplate(E3.class, "INSERT INTO utest.e3 (id, e2_id, name) values (8, 1, 'yyy'),(9, 2, 'zzz')"));
-
-		Response response1 = target("/e3")
-				.queryParam("include", "id")
-				.queryParam("cayenneExp",
-						urlEnc("{\"exp\":\"e2 not in ($id1, $id2)\",\"params\":{\"id1\":1,\"id2\":3}}")).request()
-				.get();
-
-		assertEquals(Status.OK.getStatusCode(), response1.getStatus());
-		assertEquals("{\"success\":true,\"data\":[{\"id\":9}],\"total\":1}", response1.readEntity(String.class));
-	}
-
-	@Test
-	public void test_Select_CayenneExp_In_TwoObjects() throws WebApplicationException, IOException {
-
-		runtime.newContext().performGenericQuery(
-				new SQLTemplate(E3.class, "INSERT INTO utest.e3 (id, name) values (8, 'yyy'),(9, 'zzz')"));
-
-		Response response1 = target("/e3")
-				.queryParam("include", "id")
-				.queryParam("cayenneExp",
-						urlEnc("{\"exp\":\"name in ($n1, $n2)\",\"params\":{\"n1\":\"zzz\",\"n2\":\"xxx\"}}"))
-				.request().get();
-
-		assertEquals(Status.OK.getStatusCode(), response1.getStatus());
-		assertEquals("{\"success\":true,\"data\":[{\"id\":9}],\"total\":1}", response1.readEntity(String.class));
-	}
-
-	@Test
-	public void test_Select_CayenneExp_In_TwoRelatedObjects() throws WebApplicationException, IOException {
-
-		runtime.newContext().performGenericQuery(
-				new SQLTemplate(E2.class, "INSERT INTO utest.e2 (id, name) values (1, 'xxx'),(2, 'yyy')"));
-		runtime.newContext().performGenericQuery(
-				new SQLTemplate(E3.class, "INSERT INTO utest.e3 (id, e2_id, name) values (8, 1, 'yyy'),(9, 2, 'zzz')"));
-
-		Response response1 = target("/e3")
-				.queryParam("include", "id")
-				.queryParam("cayenneExp",
-						urlEnc("{\"exp\":\"e2.name in ($n1, $n2)\",\"params\":{\"n1\":\"zzz\",\"n2\":\"xxx\"}}"))
-				.request().get();
-
-		assertEquals(Status.OK.getStatusCode(), response1.getStatus());
-		assertEquals("{\"success\":true,\"data\":[{\"id\":8}],\"total\":1}", response1.readEntity(String.class));
-	}
-
-	@Test
-	public void test_Select_CayenneExp_In_Array() throws WebApplicationException, IOException {
-
-		runtime.newContext().performGenericQuery(
-				new SQLTemplate(E2.class, "INSERT INTO utest.e2 (id, name) values (1, 'xxx'),(2, 'yyy'),(3, 'zzzz')"));
-		runtime.newContext().performGenericQuery(
-				new SQLTemplate(E3.class,
-						"INSERT INTO utest.e3 (id, e2_id, name) values (6, 3, 'yyy'),(8, 1, 'yyy'),(9, 2, 'zzz')"));
-
-		Response response1 = target("/e3").queryParam("include", "id")
-				.queryParam("cayenneExp", urlEnc("{\"exp\":\"e2 in $ids\",\"params\":{\"ids\": [3, 4]}}")).request()
-				.get();
-
-		assertEquals(Status.OK.getStatusCode(), response1.getStatus());
-		assertEquals("{\"success\":true,\"data\":[{\"id\":6}],\"total\":1}", response1.readEntity(String.class));
-	}
-
-	@Test
-	public void test_Select_CayenneExp_NotIn_Array() throws WebApplicationException, IOException {
-
-		runtime.newContext().performGenericQuery(
-				new SQLTemplate(E2.class, "INSERT INTO utest.e2 (id, name) values (1, 'xxx'),(2, 'yyy')"));
-		runtime.newContext().performGenericQuery(
-				new SQLTemplate(E3.class, "INSERT INTO utest.e3 (id, e2_id, name) values (8, 1, 'yyy'),(9, 2, 'zzz')"));
-
-		Response response1 = target("/e3").queryParam("include", "id")
-				.queryParam("cayenneExp", urlEnc("{\"exp\":\"e2 not in $ids\",\"params\":{\"ids\": [1, 2]}}"))
-				.request().get();
-
-		assertEquals(Status.OK.getStatusCode(), response1.getStatus());
-		assertEquals("{\"success\":true,\"data\":[],\"total\":0}", response1.readEntity(String.class));
-	}
-
-	@Test
-	public void test_Select_CayenneExp_Outer() throws WebApplicationException, IOException {
-
-		runtime.newContext().performGenericQuery(
-				new SQLTemplate(E2.class, "INSERT INTO utest.e2 (id, name) values (1, 'xxx'),(2, 'yyy')"));
-		runtime.newContext().performGenericQuery(
-				new SQLTemplate(E3.class, "INSERT INTO utest.e3 (id, e2_id, name) values (8, 1, 'A'),(9, null, 'B')"));
-
-		Response response1 = target("/e3").queryParam("include", "id")
-				.queryParam("cayenneExp", urlEnc("{\"exp\":\"e2+.name = null\"}")).request().get();
-
-		assertEquals(Status.OK.getStatusCode(), response1.getStatus());
-		assertEquals("{\"success\":true,\"data\":[{\"id\":9}],\"total\":1}", response1.readEntity(String.class));
-	}
-	
-	@Test
-	public void test_Select_CayenneExp_Outer_Relationship() throws WebApplicationException, IOException {
-
-		runtime.newContext().performGenericQuery(
-				new SQLTemplate(E2.class, "INSERT INTO utest.e2 (id, name) values (1, 'xxx'),(2, 'yyy')"));
-		runtime.newContext().performGenericQuery(
-				new SQLTemplate(E3.class, "INSERT INTO utest.e3 (id, e2_id, name) values (8, 1, 'A'),(9, null, 'B')"));
-
-		Response response1 = target("/e3").queryParam("include", "id")
-				.queryParam("cayenneExp", urlEnc("{\"exp\":\"e2+ = null\"}")).request().get();
-
-		assertEquals(Status.OK.getStatusCode(), response1.getStatus());
-		assertEquals("{\"success\":true,\"data\":[{\"id\":9}],\"total\":1}", response1.readEntity(String.class));
-	}
-	
-	@Test
-	public void test_Select_CayenneExp_Outer_To_Many_Relationship() throws WebApplicationException, IOException {
-
-		runtime.newContext().performGenericQuery(
-				new SQLTemplate(E2.class, "INSERT INTO utest.e2 (id, name) values (1, 'xxx'),(2, 'yyy')"));
-		runtime.newContext().performGenericQuery(
-				new SQLTemplate(E3.class, "INSERT INTO utest.e3 (id, e2_id, name) values (8, 1, 'A'),(9, null, 'B')"));
-
-		Response response1 = target("/e2").queryParam("include", "id")
-				.queryParam("cayenneExp", urlEnc("{\"exp\":\"e3s+ = null\"}")).request().get();
-
-		assertEquals(Status.OK.getStatusCode(), response1.getStatus());
-		assertEquals("{\"success\":true,\"data\":[{\"id\":2}],\"total\":1}", response1.readEntity(String.class));
 	}
 
 	@Test
