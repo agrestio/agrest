@@ -1,5 +1,6 @@
 Release 1.14
 
+#58  'cayenneExp' positional parameter binding
 #79 Simplified API to start request processor builders
 #80 ILinkRestService and related builders API refactoring for consistency
 #81 LinkRestRuntime should implement JAX RS Feature

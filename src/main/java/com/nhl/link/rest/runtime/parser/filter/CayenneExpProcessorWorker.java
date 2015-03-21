@@ -23,6 +23,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.nhl.link.rest.LinkRestException;
 import com.nhl.link.rest.meta.LrEntity;
 import com.nhl.link.rest.parser.converter.JsonValueConverter;
+import com.nhl.link.rest.runtime.jackson.IJacksonService;
 import com.nhl.link.rest.runtime.parser.cache.IPathCache;
 import com.nhl.link.rest.runtime.parser.cache.PathDescriptor;
 
@@ -31,51 +32,116 @@ class CayenneExpProcessorWorker {
 	private static final String EXP = "exp";
 	private static final String PARAMS = "params";
 
-	private JsonNode expNode;
-	private JsonNode paramsNode;
-
+	private IJacksonService jsonParser;
 	private IPathCache pathCache;
 	private LrEntity<?> entity;
 	private Map<String, JsonValueConverter> converters;
 	private TraversalHandler expressionPostProcessor;
 
-	CayenneExpProcessorWorker(JsonNode rootNode, Map<String, JsonValueConverter> converters, IPathCache pathCache,
-			LrEntity<?> entity) {
+	CayenneExpProcessorWorker(IJacksonService jsonParser, Map<String, JsonValueConverter> converters,
+			IPathCache pathCache, LrEntity<?> entity) {
 
-		this.expNode = rootNode.get(EXP);
-		this.paramsNode = rootNode.get(PARAMS);
+		this.jsonParser = jsonParser;
 		this.converters = converters;
 		this.entity = entity;
 		this.pathCache = pathCache;
 		this.expressionPostProcessor = new ExpressionPostProcessor();
 	}
 
-	Expression exp() {
-		if (expNode == null) {
+	Expression exp(String cayenneExp) {
+
+		if (cayenneExp == null) {
 			return null;
 		}
 
-		String expString = expNode.asText();
+		Expression exp;
 
-		Expression exp = ExpressionFactory.exp(expString);
-		return validateAndBindParams(exp);
+		if (cayenneExp.startsWith("[")) {
+			exp = processArray(jsonParser.parseJson(cayenneExp));
+		} else if (cayenneExp.startsWith("{")) {
+			exp = processMap(jsonParser.parseJson(cayenneExp));
+		} else {
+			exp = processExp(cayenneExp);
+		}
+
+		return validateAndCleanup(exp);
 	}
 
-	private Expression validateAndBindParams(Expression exp) {
+	Expression exp(JsonNode cayenneExp) {
+		if (cayenneExp == null) {
+			return null;
+		}
 
+		Expression exp;
+
+		if (cayenneExp.isArray()) {
+			exp = processArray(cayenneExp);
+		} else if (cayenneExp.isObject()) {
+			exp = processMap(cayenneExp);
+		} else {
+			exp = processExp(cayenneExp.asText());
+		}
+
+		return validateAndCleanup(exp);
+	}
+
+	private Expression processExp(String cayenneExp) {
+		return ExpressionFactory.exp(cayenneExp);
+	}
+
+	private Expression processMap(JsonNode map) {
+
+		// 'exp' key is required; 'params' key is optional
+		JsonNode expNode = map.get(EXP);
+		if (expNode == null) {
+			throw new LinkRestException(Status.BAD_REQUEST, "'exp' key is missing in 'cayenneExp' map");
+		}
+
+		Expression exp = ExpressionFactory.exp(expNode.asText());
+
+		JsonNode paramsNode = map.get(PARAMS);
 		if (paramsNode != null) {
-			Map<String, Object> parsedParams = new HashMap<>();
+
+			Map<String, Object> paramsMap = new HashMap<>();
 
 			Iterator<String> it = paramsNode.fieldNames();
 			while (it.hasNext()) {
 				String key = it.next();
 				JsonNode valueNode = paramsNode.get(key);
 				Object value = extractValue(valueNode);
-				parsedParams.put(key, value);
+				paramsMap.put(key, value);
 			}
 
-			exp = exp.params(parsedParams);
+			exp = exp.params(paramsMap);
 		}
+
+		return exp;
+	}
+
+	private Expression processArray(JsonNode array) {
+
+		int len = array.size();
+		if (len < 1) {
+			throw new LinkRestException(Status.BAD_REQUEST, "array 'cayenneExp' mist have at least one element");
+		}
+
+		String expString = array.get(0).asText();
+		if (len < 2) {
+			return ExpressionFactory.exp(expString);
+		}
+
+		Object[] params = new Object[len - 1];
+
+		for (int i = 1; i < len; i++) {
+
+			JsonNode paramNode = array.get(i);
+			params[i - 1] = extractValue(paramNode);
+		}
+
+		return ExpressionFactory.exp(expString, params);
+	}
+
+	private Expression validateAndCleanup(Expression exp) {
 
 		// change expression in-place
 		// note - this will not fully handle an expression whose root is

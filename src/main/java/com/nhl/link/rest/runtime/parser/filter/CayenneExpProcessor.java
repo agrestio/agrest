@@ -4,6 +4,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.cayenne.exp.Expression;
+
 import com.fasterxml.jackson.databind.JsonNode;
 import com.nhl.link.rest.ResourceEntity;
 import com.nhl.link.rest.meta.LrEntity;
@@ -35,20 +37,28 @@ class CayenneExpProcessor {
 		this.converters.put(java.sql.Timestamp.class.getName(), UtcDateConverter.converter());
 	}
 
-	void process(ResourceEntity<?> resourceEntity, String cayenneExpJson) {
-		if (cayenneExpJson == null || cayenneExpJson.length() == 0) {
+	void process(ResourceEntity<?> resourceEntity, String cayenneExp) {
+		
+		if (cayenneExp == null || cayenneExp.length() == 0) {
 			return;
 		}
 
-		JsonNode expNode = jsonParser.parseJson(cayenneExpJson);
-		if (expNode != null) {
-			process(resourceEntity, expNode);
-		}
+		Expression exp = worker(resourceEntity).exp(cayenneExp);
+		resourceEntity.andQualifier(exp);
 	}
 
-	void process(ResourceEntity<?> resourceEntity, JsonNode expNode) {
+	void process(ResourceEntity<?> resourceEntity, JsonNode cayenneExp) {
+
+		if (cayenneExp == null) {
+			return;
+		}
+
+		Expression exp = worker(resourceEntity).exp(cayenneExp);
+		resourceEntity.andQualifier(exp);
+	}
+
+	private CayenneExpProcessorWorker worker(ResourceEntity<?> resourceEntity) {
 		LrEntity<?> entity = resourceEntity.getLrEntity();
-		CayenneExpProcessorWorker worker = new CayenneExpProcessorWorker(expNode, converters, pathCache, entity);
-		resourceEntity.andQualifier(worker.exp());
+		return new CayenneExpProcessorWorker(jsonParser, converters, pathCache, entity);
 	}
 }

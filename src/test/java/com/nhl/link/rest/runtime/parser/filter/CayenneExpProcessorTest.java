@@ -37,7 +37,47 @@ public class CayenneExpProcessorTest extends TestWithCayenneMapping {
 	}
 
 	@Test
-	public void testProcess_NoParams() {
+	public void testProcess_Bare() {
+
+		assertNull(e4Descriptor.getQualifier());
+		processor.process(e4Descriptor, "cInt = 12345 and cVarchar = 'John Smith' and cBoolean = true");
+
+		assertNotNull(e4Descriptor.getQualifier());
+		assertEquals(exp("cInt = 12345 and cVarchar = 'John Smith' and cBoolean = true"), e4Descriptor.getQualifier());
+	}
+
+	@Test
+	public void testProcess_List() {
+
+		assertNull(e4Descriptor.getQualifier());
+		processor.process(e4Descriptor, "[\"cInt = 12345 and cVarchar = 'John Smith' and cBoolean = true\"]");
+
+		assertNotNull(e4Descriptor.getQualifier());
+		assertEquals(exp("cInt = 12345 and cVarchar = 'John Smith' and cBoolean = true"), e4Descriptor.getQualifier());
+	}
+
+	@Test
+	public void testProcess_List_Params_String() {
+
+		assertNull(e4Descriptor.getQualifier());
+		processor.process(e4Descriptor, "[\"cVarchar=$s\",\"x\"]");
+
+		assertNotNull(e4Descriptor.getQualifier());
+		assertEquals(exp("cVarchar='x'"), e4Descriptor.getQualifier());
+	}
+
+	@Test
+	public void testProcess_List_Params_Multiple() {
+
+		assertNull(e4Descriptor.getQualifier());
+		processor.process(e4Descriptor, "[\"cVarchar=$s or cVarchar =$x or cVarchar =$s\",\"x\",\"y\"]");
+
+		assertNotNull(e4Descriptor.getQualifier());
+		assertEquals(exp("cVarchar='x' or cVarchar='y' or cVarchar='x'"), e4Descriptor.getQualifier());
+	}
+
+	@Test
+	public void testProcess_Map() {
 
 		assertNull(e4Descriptor.getQualifier());
 		processor.process(e4Descriptor, "{\"exp\" : \"cInt = 12345 and cVarchar = 'John Smith' and cBoolean = true\"}");
@@ -47,7 +87,7 @@ public class CayenneExpProcessorTest extends TestWithCayenneMapping {
 	}
 
 	@Test
-	public void testProcess_Params_String() {
+	public void testProcess_Map_Params_String() {
 
 		assertNull(e4Descriptor.getQualifier());
 		processor.process(e4Descriptor, "{\"exp\" : \"cVarchar=$s\", \"params\":{\"s\":\"x\"}}");
@@ -57,7 +97,7 @@ public class CayenneExpProcessorTest extends TestWithCayenneMapping {
 	}
 
 	@Test
-	public void testProcess_Params_Int() {
+	public void testProcess_Map_Params_Int() {
 
 		assertNull(e4Descriptor.getQualifier());
 		processor.process(e4Descriptor, "{\"exp\" : \"cInt=$n\", \"params\":{\"n\":453}}");
@@ -67,7 +107,7 @@ public class CayenneExpProcessorTest extends TestWithCayenneMapping {
 	}
 
 	@Test
-	public void testProcess_Params_Float() {
+	public void testProcess_Map_Params_Float() {
 
 		assertNull(e4Descriptor.getQualifier());
 		processor.process(e4Descriptor, "{\"exp\" : \"cDecimal=$n\", \"params\":{\"n\":4.4009}}");
@@ -77,7 +117,7 @@ public class CayenneExpProcessorTest extends TestWithCayenneMapping {
 	}
 
 	@Test
-	public void testProcess_Params_Float_Negative() {
+	public void testProcess_Map_Params_Float_Negative() {
 
 		assertNull(e4Descriptor.getQualifier());
 		processor.process(e4Descriptor, "{\"exp\" : \"cDecimal=$n\", \"params\":{\"n\":-4.4009}}");
@@ -91,7 +131,7 @@ public class CayenneExpProcessorTest extends TestWithCayenneMapping {
 	}
 
 	@Test
-	public void testProcess_Params_Boolean_True() {
+	public void testProcess_Map_Params_Boolean_True() {
 
 		assertNull(e4Descriptor.getQualifier());
 		processor.process(e4Descriptor, "{\"exp\" : \"cBoolean=$b\", \"params\":{\"b\": true}}");
@@ -101,7 +141,7 @@ public class CayenneExpProcessorTest extends TestWithCayenneMapping {
 	}
 
 	@Test
-	public void testProcess_Params_Boolean_False() {
+	public void testProcess_Map_Params_Boolean_False() {
 
 		assertNull(e4Descriptor.getQualifier());
 		processor.process(e4Descriptor, "{\"exp\" : \"cBoolean=$b\", \"params\":{\"b\": false}}");
@@ -118,7 +158,7 @@ public class CayenneExpProcessorTest extends TestWithCayenneMapping {
 	}
 
 	@Test
-	public void testProcess_Params_Null() {
+	public void testProcess_Map_Params_Null() {
 
 		assertNull(e4Descriptor.getQualifier());
 		processor.process(e4Descriptor, "{\"exp\" : \"cBoolean=$b\", \"params\":{\"b\": null}}");
@@ -128,12 +168,12 @@ public class CayenneExpProcessorTest extends TestWithCayenneMapping {
 	}
 
 	@Test(expected = LinkRestException.class)
-	public void testProcess_Params_Date_NonISO() {
+	public void testProcess_Map_Params_Date_NonISO() {
 		processor.process(e4Descriptor, "{\"exp\" : \"cTimestamp=$d\", \"params\":{\"d\": \"2014:02:03\"}}");
 	}
 
 	@Test
-	public void testProcess_Params_Date_Local_TZ() {
+	public void testProcess_Map_Params_Date_Local_TZ() {
 
 		assertNull(e4Descriptor.getQualifier());
 		processor.process(e4Descriptor, "{\"exp\" : \"cTimestamp=$d\", \"params\":{\"d\": \"2014-02-03T14:06:35\"}}");
@@ -149,7 +189,7 @@ public class CayenneExpProcessorTest extends TestWithCayenneMapping {
 	}
 
 	@Test
-	public void testProcess_Params_Date_TZ_Zulu() {
+	public void testProcess_Map_Params_Date_TZ_Zulu() {
 
 		assertNull(e4Descriptor.getQualifier());
 		processor.process(e4Descriptor, "{\"exp\" : \"cTimestamp=$d\", \"params\":{\"d\": \"2014-02-03T22:06:35Z\"}}");
@@ -165,7 +205,7 @@ public class CayenneExpProcessorTest extends TestWithCayenneMapping {
 	}
 
 	@Test
-	public void testProcess_Params_Date_TZ_Zulu_DST() {
+	public void testProcess_Map_Params_Date_TZ_Zulu_DST() {
 
 		assertNull(e4Descriptor.getQualifier());
 		processor.process(e4Descriptor, "{\"exp\" : \"cTimestamp=$d\", \"params\":{\"d\": \"2013-06-03\"}}");
@@ -181,7 +221,7 @@ public class CayenneExpProcessorTest extends TestWithCayenneMapping {
 	}
 
 	@Test
-	public void testProcess_Params_Date_NoTime() {
+	public void testProcess_Map_Params_Date_NoTime() {
 
 		assertNull(e4Descriptor.getQualifier());
 		processor.process(e4Descriptor, "{\"exp\" : \"cTimestamp=$d\", \"params\":{\"d\": \"2013-06-03T22:06:35Z\"}}");

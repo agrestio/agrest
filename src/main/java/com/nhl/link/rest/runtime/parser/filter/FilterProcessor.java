@@ -23,12 +23,12 @@ public class FilterProcessor extends BaseRequestProcessor implements IFilterProc
 	// and keep "query" under Sencha adapter
 	private static final String BY_PROPERTY = "query";
 
-	private CayenneExpProcessor cayenneExpWorker;
-	private ByPropertyProcessor byPropertyWorker;
+	private CayenneExpProcessor cayenneExpProcessor;
+	private ByPropertyProcessor byPropertyProcessor;
 
 	public FilterProcessor(@Inject IJacksonService jsonParser, @Inject IPathCache pathCache) {
-		this.cayenneExpWorker = new CayenneExpProcessor(jsonParser, pathCache);
-		this.byPropertyWorker = new ByPropertyProcessor();
+		this.cayenneExpProcessor = new CayenneExpProcessor(jsonParser, pathCache);
+		this.byPropertyProcessor = new ByPropertyProcessor();
 	}
 
 	@Override
@@ -38,13 +38,13 @@ public class FilterProcessor extends BaseRequestProcessor implements IFilterProc
 
 			// filters are chained to SelectQuery using AND, so the order is not
 			// important...
-			cayenneExpWorker.process(response.getEntity(), string(parameters, CAYENNE_EXP));
+			cayenneExpProcessor.process(response.getEntity(), string(parameters, CAYENNE_EXP));
 
 			// if no property is specified, then we don't care about 'query'
 			// parameter... E.g. query may have been processed by a custom code
 			// outside linkrest
 			if (response.getQueryProperty() != null) {
-				byPropertyWorker.process(response.getEntity(), string(parameters, BY_PROPERTY),
+				byPropertyProcessor.process(response.getEntity(), string(parameters, BY_PROPERTY),
 						response.getQueryProperty());
 			}
 
@@ -53,7 +53,7 @@ public class FilterProcessor extends BaseRequestProcessor implements IFilterProc
 
 	@Override
 	public void process(ResourceEntity<?> entity, JsonNode expNode) {
-		cayenneExpWorker.process(entity, expNode);
+		cayenneExpProcessor.process(entity, expNode);
 	}
 
 }

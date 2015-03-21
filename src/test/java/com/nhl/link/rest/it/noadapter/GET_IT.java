@@ -21,6 +21,7 @@ import com.nhl.link.rest.it.fixture.JerseyTestOnDerby;
 import com.nhl.link.rest.it.fixture.cayenne.E2;
 import com.nhl.link.rest.it.fixture.cayenne.E3;
 import com.nhl.link.rest.it.fixture.cayenne.E4;
+import com.nhl.link.rest.it.fixture.resource.E2Resource;
 import com.nhl.link.rest.it.fixture.resource.E3Resource;
 import com.nhl.link.rest.it.fixture.resource.E4Resource;
 import com.nhl.link.rest.it.fixture.resource.E6Resource;
@@ -29,6 +30,7 @@ public class GET_IT extends JerseyTestOnDerby {
 
 	@Override
 	protected void doAddResources(FeatureContext context) {
+		context.register(E2Resource.class);
 		context.register(E3Resource.class);
 		context.register(E4Resource.class);
 		context.register(E6Resource.class);
