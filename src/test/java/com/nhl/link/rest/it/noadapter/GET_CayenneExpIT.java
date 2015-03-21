@@ -27,6 +27,32 @@ public class GET_CayenneExpIT extends JerseyTestOnDerby {
 	}
 
 	@Test
+	public void test_CayenneExp_Map() throws WebApplicationException, IOException {
+
+		runtime.newContext().performGenericQuery(
+				new SQLTemplate(E2.class, "INSERT INTO utest.e2 (id, name) values (1, 'xxx'),(2, 'yyy'),(3, 'zzz')"));
+
+		Response r1 = target("/e2").queryParam("include", "id")
+				.queryParam("cayenneExp", urlEnc("{\"exp\":\"name = 'yyy'\"}")).request().get();
+
+		assertEquals(Status.OK.getStatusCode(), r1.getStatus());
+		assertEquals("{\"success\":true,\"data\":[{\"id\":2}],\"total\":1}", r1.readEntity(String.class));
+	}
+	
+	@Test
+	public void test_CayenneExp_Map_Params() throws WebApplicationException, IOException {
+
+		runtime.newContext().performGenericQuery(
+				new SQLTemplate(E2.class, "INSERT INTO utest.e2 (id, name) values (1, 'xxx'),(2, 'yyy'),(3, 'zzz')"));
+
+		Response r1 = target("/e2").queryParam("include", "id")
+				.queryParam("cayenneExp", urlEnc("{\"exp\":\"name = $n\",\"params\":{\"n\":\"xxx\"}}")).request().get();
+
+		assertEquals(Status.OK.getStatusCode(), r1.getStatus());
+		assertEquals("{\"success\":true,\"data\":[{\"id\":1}],\"total\":1}", r1.readEntity(String.class));
+	}
+
+	@Test
 	public void test_Select_CayenneExp_In_Array() throws WebApplicationException, IOException {
 
 		runtime.newContext().performGenericQuery(
