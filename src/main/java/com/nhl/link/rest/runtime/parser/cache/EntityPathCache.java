@@ -114,12 +114,10 @@ class EntityPathCache {
 		}
 
 		if (dot > 0) {
-			String segment = path.substring(0, dot);
-
-			String pathSegment = segment.endsWith("+") ? segment.substring(0, segment.length() - 1) : segment;
+			String segment = toRelationshipName(path.substring(0, dot));
 
 			// must be a relationship ..
-			LrRelationship relationship = entity.getRelationship(pathSegment);
+			LrRelationship relationship = entity.getRelationship(segment);
 			if (relationship == null) {
 				throw new LinkRestException(Status.BAD_REQUEST, "Invalid path '" + path + "' for '" + entity.getName()
 						+ "'. Not a relationship");
@@ -135,13 +133,15 @@ class EntityPathCache {
 			return attribute;
 		}
 
-		// if not an attribute, take into account a possibility of outer join
-		String pathSegment = path.endsWith("+") ? path.substring(0, path.length() - 1) : path;
-		LrRelationship relationship = entity.getRelationship(pathSegment);
+		LrRelationship relationship = entity.getRelationship(toRelationshipName(path));
 		if (relationship != null) {
 			return relationship;
 		}
 
 		throw new LinkRestException(Status.BAD_REQUEST, "Invalid path '" + path + "' for '" + entity.getName() + "'");
+	}
+
+	private String toRelationshipName(String pathSegment) {
+		return pathSegment.endsWith("+") ? pathSegment.substring(0, pathSegment.length() - 1) : pathSegment;
 	}
 }
