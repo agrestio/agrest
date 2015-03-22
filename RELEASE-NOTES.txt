@@ -1,10 +1,11 @@
 Release 1.15
 
+#58  'cayenneExp' positional parameter binding
+#88 Error when using 'cayenneExp' with outer joins ending in relationship
 #89 ConstraintsBuilder to allow individual attribute and relationship excludes
 
-Release 1.14
+Release 1.14 2015-03-16
 
-#58  'cayenneExp' positional parameter binding
 #79 Simplified API to start request processor builders
 #80 ILinkRestService and related builders API refactoring for consistency
 #81 LinkRestRuntime should implement JAX RS Feature
@@ -12,7 +13,6 @@ Release 1.14
 #83 Start deploying releases to Maven central
 #84 Problems with entity attributes of type java.sql.Time
 #87 Upgrade to release version of Cayenne
-#88 Error when using 'cayenneExp' with outer joins ending in relationship
 
 Release 1.13
 
