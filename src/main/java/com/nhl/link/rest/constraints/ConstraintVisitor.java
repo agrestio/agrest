@@ -7,6 +7,11 @@ import org.apache.cayenne.exp.Expression;
  */
 public interface ConstraintVisitor {
 
+	/**
+	 * @since 1.15
+	 */
+	void visitExcludePropertiesConstraint(String... attributesOrRelationships);
+
 	void visitExcludeAllAttributesConstraint();
 
 	void visitExcludeAllChildrenConstraint();

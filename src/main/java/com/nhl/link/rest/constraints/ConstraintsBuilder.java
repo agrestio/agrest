@@ -68,9 +68,88 @@ public class ConstraintsBuilder<T> implements Constraint {
 	}
 
 	/**
-	 * Excludes all previously included attributes.
+	 * @since 1.15
 	 */
+	public ConstraintsBuilder<T> excludeProperty(final String attributeOrRelationship) {
+		ops.add(new Constraint() {
+
+			@Override
+			public void accept(ConstraintVisitor visitor) {
+				visitor.visitExcludePropertiesConstraint(attributeOrRelationship);
+			}
+		});
+
+		return this;
+	}
+
+	/**
+	 * Excludes an attribute or relationship.
+	 * 
+	 * @since 1.15
+	 */
+	public ConstraintsBuilder<T> excludeProperty(final Property<?> attributeOrRelationship) {
+		ops.add(new Constraint() {
+
+			@Override
+			public void accept(ConstraintVisitor visitor) {
+				visitor.visitExcludePropertiesConstraint(attributeOrRelationship.getName());
+			}
+		});
+		return this;
+	}
+
+	/**
+	 * @since 1.15
+	 */
+	public ConstraintsBuilder<T> excludeProperties(final String... attributesOrRelationships) {
+
+		ops.add(new Constraint() {
+
+			@Override
+			public void accept(ConstraintVisitor visitor) {
+				visitor.visitExcludePropertiesConstraint(attributesOrRelationships);
+			}
+		});
+
+		return this;
+	}
+
+	/**
+	 * @since 1.15
+	 */
+	public ConstraintsBuilder<T> excludeProperties(final Property<?>... attributesOrRelationships) {
+
+		ops.add(new Constraint() {
+
+			@Override
+			public void accept(ConstraintVisitor visitor) {
+
+				String[] names = new String[attributesOrRelationships.length];
+				for (int i = 0; i < attributesOrRelationships.length; i++) {
+					names[i] = attributesOrRelationships[i].getName();
+				}
+
+				visitor.visitExcludePropertiesConstraint(names);
+			}
+		});
+
+		return this;
+	}
+
+	/**
+	 * @deprecated since 1.15 use {@link #excludeAllAttributes()}.
+	 */
+	@Deprecated
 	public ConstraintsBuilder<T> excludeAttributes() {
+		return excludeAllAttributes();
+	}
+
+	/**
+	 * Excludes all previously included attributes.
+	 * 
+	 * @since 1.15
+	 */
+	public ConstraintsBuilder<T> excludeAllAttributes() {
 
 		ops.add(new Constraint() {
 			@Override
@@ -83,9 +162,18 @@ public class ConstraintsBuilder<T> implements Constraint {
 	}
 
 	/**
-	 * Excludes all previously included child configs.
+	 * @deprecated since 1.15 use {@link #excludeAllChildren()}.
 	 */
 	public ConstraintsBuilder<T> excludeChildren() {
+		return excludeAllChildren();
+	}
+
+	/**
+	 * Excludes all previously included child configs.
+	 * 
+	 * @sicne 1.15
+	 */
+	public ConstraintsBuilder<T> excludeAllChildren() {
 		ops.add(new Constraint() {
 
 			@Override

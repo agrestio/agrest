@@ -46,4 +46,20 @@ public class ConstraintsBuilderTest {
 		verify(visitor).visitIncludeAllAttributesConstraint();
 		verifyNoMoreInteractions(visitor);
 	}
+
+	@Test
+	public void testExcludeProperties() {
+
+		ConstraintVisitor visitor = mock(ConstraintVisitor.class);
+		ConstraintsBuilder<E4> tc = ConstraintsBuilder.idAndAttributes(E4.class).excludeProperties(E4.C_BOOLEAN,
+				E4.C_DECIMAL);
+
+		tc.accept(visitor);
+
+		verify(visitor).visitIncludeIdConstraint(true);
+		verify(visitor).visitIncludeAllAttributesConstraint();
+		verify(visitor).visitExcludePropertiesConstraint(E4.C_BOOLEAN.getName(), E4.C_DECIMAL.getName());
+
+		verifyNoMoreInteractions(visitor);
+	}
 }

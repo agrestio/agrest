@@ -27,7 +27,7 @@ public class RequestConstraintsVisitor implements ConstraintVisitor {
 	private Collection<String> attributes;
 	private Map<String, RequestConstraintsVisitor> children;
 	private Expression qualifier;
-	LrEntity<?> entity;
+	private LrEntity<?> entity;
 	private IMetadataService metadataService;
 
 	RequestConstraintsVisitor(LrEntity<?> entity, IMetadataService metadataService) {
@@ -43,6 +43,14 @@ public class RequestConstraintsVisitor implements ConstraintVisitor {
 
 		// using HashSet, as we'll need fast 'contains' calls on attributes
 		this.attributes = new HashSet<>();
+	}
+
+	Collection<String> getAttributes() {
+		return attributes;
+	}
+
+	Map<String, RequestConstraintsVisitor> getChildren() {
+		return children;
 	}
 
 	public boolean isIdIncluded() {
@@ -63,6 +71,18 @@ public class RequestConstraintsVisitor implements ConstraintVisitor {
 
 	public Expression getQualifier() {
 		return qualifier;
+	}
+
+	@Override
+	public void visitExcludePropertiesConstraint(String... attributesOrRelationships) {
+		if (attributesOrRelationships != null) {
+			for (String name : attributesOrRelationships) {
+
+				if (!attributes.remove(name)) {
+					children.remove(name);
+				}
+			}
+		}
 	}
 
 	@Override
