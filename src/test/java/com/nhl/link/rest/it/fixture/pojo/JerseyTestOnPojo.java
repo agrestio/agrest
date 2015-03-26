@@ -10,12 +10,10 @@ import javax.ws.rs.core.Application;
 import javax.ws.rs.core.Feature;
 import javax.ws.rs.core.FeatureContext;
 
-import org.apache.cayenne.configuration.server.ServerRuntime;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.test.JerseyTest;
 import org.glassfish.jersey.test.inmemory.InMemoryTestContainerFactory;
 import org.glassfish.jersey.test.spi.TestContainerException;
-import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 
@@ -30,7 +28,7 @@ import com.nhl.link.rest.meta.LrEntityBuilder;
 import com.nhl.link.rest.runtime.LinkRestBuilder;
 
 public class JerseyTestOnPojo extends JerseyTest {
-	protected static ServerRuntime runtime;
+
 	protected static List<LrEntity<?>> pojoModels;
 
 	// using in-memory key/value "database" to store POJOs
@@ -39,19 +37,11 @@ public class JerseyTestOnPojo extends JerseyTest {
 	@BeforeClass
 	public static void setUpClass() throws IOException, SQLException {
 
-		runtime = new ServerRuntime("cayenne-linkrest-tests.xml");
 		pojoModels = new ArrayList<>();
 		pojoModels = Arrays.asList(LrEntityBuilder.build(P1.class), LrEntityBuilder.build(P2.class),
 				LrEntityBuilder.build(P3.class), LrEntityBuilder.build(P4.class),
 				LrEntityBuilder.builder(P6.class).id("stringId").build());
 		pojoDB = new PojoDB();
-	}
-
-	@AfterClass
-	public static void tearDownClass() throws IOException, SQLException {
-		runtime.shutdown();
-		runtime = null;
-
 	}
 
 	public JerseyTestOnPojo() throws TestContainerException {
