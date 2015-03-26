@@ -13,8 +13,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A helper class to assemble custom {@link LrPersistentEntity} objects. Used
- * for POJOs,etc.
+ * A helper class to assemble custom {@link LrEntity} objects. Used for
+ * POJOs,etc.
  * 
  * @since 1.12
  */
@@ -92,7 +92,7 @@ public class LrEntityBuilder<T> {
 		} else {
 			entity.addAttribute(a);
 		}
-		
+
 		return true;
 	}
 
