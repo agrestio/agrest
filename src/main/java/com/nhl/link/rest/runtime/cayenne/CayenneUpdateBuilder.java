@@ -1,13 +1,10 @@
 package com.nhl.link.rest.runtime.cayenne;
 
-import javax.ws.rs.core.Response.Status;
-
-import org.apache.cayenne.DataObject;
-
 import com.nhl.link.rest.EntityParent;
 import com.nhl.link.rest.LinkRestException;
 import com.nhl.link.rest.ObjectMapper;
 import com.nhl.link.rest.ObjectMapperFactory;
+import com.nhl.link.rest.ResourceEntity;
 import com.nhl.link.rest.UpdateResponse;
 import com.nhl.link.rest.meta.LrEntity;
 import com.nhl.link.rest.runtime.BaseUpdateBuilder;
@@ -16,8 +13,19 @@ import com.nhl.link.rest.runtime.constraints.IConstraintsHandler;
 import com.nhl.link.rest.runtime.encoder.IEncoderService;
 import com.nhl.link.rest.runtime.meta.IMetadataService;
 import com.nhl.link.rest.runtime.parser.IRequestParser;
+import org.apache.cayenne.DataObject;
+import org.apache.cayenne.Persistent;
+import org.apache.cayenne.map.ObjEntity;
+import org.apache.cayenne.query.PrefetchTreeNode;
+import org.apache.cayenne.query.SelectQuery;
+
+import javax.ws.rs.core.Response.Status;
+import java.util.Collection;
+import java.util.Map;
 
 class CayenneUpdateBuilder<T> extends BaseUpdateBuilder<T> {
+
+	protected final ObjEntity entity;
 
 	private ICayennePersister persister;
 
@@ -28,6 +36,10 @@ class CayenneUpdateBuilder<T> extends BaseUpdateBuilder<T> {
 
 		this.persister = persister;
 		this.metadataService = metadataService;
+
+		if ((this.entity = persister.entityResolver().getObjEntity(type)) == null) {
+			throw new LinkRestException(Status.INTERNAL_SERVER_ERROR, "ObjEntity not found for class: " + type.getName());
+		}
 	}
 
 	@Override
@@ -35,6 +47,35 @@ class CayenneUpdateBuilder<T> extends BaseUpdateBuilder<T> {
 		CayenneUpdateResponse<T> response = new CayenneUpdateResponse<>(type, persister.newContext());
 		response.parent(parent);
 		return response;
+	}
+
+	@Override
+	protected void fetchObjects(UpdateResponse<T> responseBuilder) {
+		SelectQuery<T> query = new SelectQuery<>(type);
+
+		if (responseBuilder.getEntity().getQualifier() != null) {
+			query.andQualifier(responseBuilder.getEntity().getQualifier());
+		}
+
+		Collection<T> objects = responseBuilder.getObjects();
+		IdExpressionBuilder builder = IdExpressionBuilder.forEntity(entity, objects.size());
+		for (T o : objects) {
+			builder.appendId(
+					((Persistent)o).getObjectId()
+			);
+		}
+		query.andQualifier(builder.buildExpression());
+
+		Map<String, ResourceEntity<?>> childrenMap = responseBuilder.getEntity().getChildren();
+		for (Map.Entry<String, ResourceEntity<?>> child : childrenMap.entrySet()) {
+			if (!entity.getRelationship(child.getKey()).isToMany()) {
+				query.addPrefetch(Util.createPrefetch(
+						child.getValue(), PrefetchTreeNode.JOINT_PREFETCH_SEMANTICS, child.getKey()
+				));
+			}
+		}
+
+		persister.sharedContext().select(query);
 	}
 
 	@Override

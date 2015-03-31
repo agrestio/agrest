@@ -1,12 +1,5 @@
 package com.nhl.link.rest.it.fixture.pojo;
 
-import java.util.Map;
-import java.util.Map.Entry;
-
-import javax.ws.rs.core.Response.Status;
-
-import org.apache.cayenne.reflect.PropertyUtils;
-
 import com.nhl.link.rest.LinkRestException;
 import com.nhl.link.rest.UpdateResponse;
 import com.nhl.link.rest.runtime.BaseUpdateBuilder;
@@ -15,6 +8,11 @@ import com.nhl.link.rest.runtime.constraints.IConstraintsHandler;
 import com.nhl.link.rest.runtime.encoder.IEncoderService;
 import com.nhl.link.rest.runtime.meta.IMetadataService;
 import com.nhl.link.rest.runtime.parser.IRequestParser;
+import org.apache.cayenne.reflect.PropertyUtils;
+
+import javax.ws.rs.core.Response.Status;
+import java.util.Map;
+import java.util.Map.Entry;
 
 public class PojoUpdateBuilder<T> extends BaseUpdateBuilder<T> {
 
@@ -29,6 +27,11 @@ public class PojoUpdateBuilder<T> extends BaseUpdateBuilder<T> {
 
 	protected UpdateResponse<T> createResponse() {
 		return new UpdateResponse<>(type).parent(parent);
+	}
+
+	@Override
+	protected void fetchObjects(UpdateResponse<T> responseBuilder) {
+		throw new UnsupportedOperationException("TODO");
 	}
 
 	@Override
