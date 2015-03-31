@@ -1,8 +1,9 @@
 Release 1.15
 
-#58  'cayenneExp' positional parameter binding
+#58 'cayenneExp' positional parameter binding
 #88 Error when using 'cayenneExp' with outer joins ending in relationship
 #89 ConstraintsBuilder to allow individual attribute and relationship excludes
+#91 Expand EntityDAO concept 
 
 Release 1.14 2015-03-16
 

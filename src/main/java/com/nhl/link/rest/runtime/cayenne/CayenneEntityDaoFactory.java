@@ -1,7 +1,10 @@
 package com.nhl.link.rest.runtime.cayenne;
 
+import javax.ws.rs.core.Response.Status;
+
 import org.apache.cayenne.di.Inject;
 
+import com.nhl.link.rest.LinkRestException;
 import com.nhl.link.rest.meta.LrEntity;
 import com.nhl.link.rest.runtime.constraints.IConstraintsHandler;
 import com.nhl.link.rest.runtime.dao.EntityDao;
@@ -33,6 +36,12 @@ public class CayenneEntityDaoFactory implements IEntityDaoFactory {
 
 	@Override
 	public <T> EntityDao<T> dao(LrEntity<T> entity) {
+
+		// sanity check
+		if (cayennePersister.entityResolver().getObjEntity(entity.getType()) == null) {
+			throw new LinkRestException(Status.BAD_REQUEST, "Not a Cayenne entity: " + entity.getName());
+		}
+
 		return new CayenneDao<>(entity.getType(), requestParser, encoderService, cayennePersister, constraintsHandler,
 				metadataService);
 	}
