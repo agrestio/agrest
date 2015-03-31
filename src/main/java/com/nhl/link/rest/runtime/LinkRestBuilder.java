@@ -30,11 +30,14 @@ import com.nhl.link.rest.provider.CayenneRuntimeExceptionMapper;
 import com.nhl.link.rest.provider.LinkRestExceptionMapper;
 import com.nhl.link.rest.provider.ValidationExceptionMapper;
 import com.nhl.link.rest.runtime.adapter.LinkRestAdapter;
+import com.nhl.link.rest.runtime.cayenne.CayenneEntityDaoFactory;
 import com.nhl.link.rest.runtime.cayenne.CayennePersister;
 import com.nhl.link.rest.runtime.cayenne.ICayennePersister;
 import com.nhl.link.rest.runtime.cayenne.NoCayennePersister;
 import com.nhl.link.rest.runtime.constraints.ConstraintsHandler;
 import com.nhl.link.rest.runtime.constraints.IConstraintsHandler;
+import com.nhl.link.rest.runtime.dao.EntityDaoLinkRestService;
+import com.nhl.link.rest.runtime.dao.IEntityDaoFactory;
 import com.nhl.link.rest.runtime.encoder.AttributeEncoderFactory;
 import com.nhl.link.rest.runtime.encoder.EncoderService;
 import com.nhl.link.rest.runtime.encoder.IAttributeEncoderFactory;
@@ -284,6 +287,7 @@ public class LinkRestBuilder {
 					binder.bind(ILinkRestService.class).toInstance(linkRestService);
 				}
 
+				binder.bind(IEntityDaoFactory.class).to(CayenneEntityDaoFactory.class);
 				binder.bind(IRequestParser.class).to(RequestParser.class);
 				binder.bind(IJsonValueConverterFactory.class).to(DefaultJsonValueConverterFactory.class);
 				binder.bind(IAttributeEncoderFactory.class).to(AttributeEncoderFactory.class);

@@ -1,75 +1,62 @@
-package com.nhl.link.rest.runtime;
+package com.nhl.link.rest.runtime.dao;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.ws.rs.core.Response.Status;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 import org.apache.cayenne.di.Inject;
-import org.apache.cayenne.map.EntityResolver;
-import org.apache.cayenne.map.ObjEntity;
 import org.apache.cayenne.query.SelectQuery;
-import org.apache.cayenne.reflect.ClassDescriptor;
 
 import com.nhl.link.rest.DeleteBuilder;
-import com.nhl.link.rest.LinkRestException;
 import com.nhl.link.rest.SelectBuilder;
 import com.nhl.link.rest.SimpleResponse;
 import com.nhl.link.rest.UpdateBuilder;
-import com.nhl.link.rest.runtime.cayenne.CayenneDao;
-import com.nhl.link.rest.runtime.cayenne.ICayennePersister;
+import com.nhl.link.rest.meta.LrEntity;
+import com.nhl.link.rest.runtime.BaseLinkRestService;
+import com.nhl.link.rest.runtime.ILinkRestService;
 import com.nhl.link.rest.runtime.constraints.IConstraintsHandler;
-import com.nhl.link.rest.runtime.dao.EntityDao;
 import com.nhl.link.rest.runtime.encoder.IEncoderService;
 import com.nhl.link.rest.runtime.meta.IMetadataService;
 import com.nhl.link.rest.runtime.parser.IRequestParser;
 
 /**
  * An {@link ILinkRestService} that can work with per-entity pluggable backends.
- * Cayenne backend is automatically configured for all known Cayenne entities.
- * Other backends, e.g. for LDAP objects, etc. are contributed in an
- * {@link EntityDao} collection.
+ * LinkRest automatically includes Cayenne backend, which is configured for all
+ * known Cayenne entities. Other backends, e.g. for LDAP objects, etc. are
+ * contributed via a collection of {@link IEntityDaoFactory} objects.
  */
 public class EntityDaoLinkRestService extends BaseLinkRestService {
 
-	private Map<String, EntityDao<?>> entityDaos;
+	private ConcurrentMap<String, EntityDao<?>> entityDaos;
 	private IMetadataService metadataService;
+	private IEntityDaoFactory daoFactory;
 
 	public EntityDaoLinkRestService(@Inject IRequestParser requestParser, @Inject IEncoderService encoderService,
-			@Inject IMetadataService metadataService, @Inject ICayennePersister cayenneService,
-			@Inject IConstraintsHandler configMerger) {
+			@Inject IMetadataService metadataService, @Inject IConstraintsHandler configMerger,
+			@Inject IEntityDaoFactory daoFactory) {
 		super(requestParser, encoderService);
 
 		this.metadataService = metadataService;
-		this.entityDaos = new HashMap<>();
-
-		EntityResolver resolver = cayenneService.entityResolver();
-		for (ObjEntity e : resolver.getObjEntities()) {
-
-			if (!entityDaos.containsKey(e.getName())) {
-
-				ClassDescriptor cd = resolver.getClassDescriptor(e.getName());
-				EntityDao<?> dao = new CayenneDao<>(cd.getObjectClass(), requestParser, encoderService, cayenneService,
-						configMerger, metadataService);
-				entityDaos.put(e.getName(), dao);
-			}
-		}
+		this.entityDaos = new ConcurrentHashMap<>();
+		this.daoFactory = daoFactory;
 	}
 
 	private <T> EntityDao<T> daoForType(Class<T> type) {
-		return dao(metadataService.getLrEntity(type).getName());
+		return dao(metadataService.getLrEntity(type));
 	}
 
 	private <T> EntityDao<T> daoForQuery(SelectQuery<T> query) {
-		return dao(metadataService.getLrEntity(query).getName());
+		return dao(metadataService.getLrEntity(query));
 	}
 
 	@SuppressWarnings("unchecked")
-	private <T> EntityDao<T> dao(String entityName) {
-		EntityDao<?> dao = entityDaos.get(entityName);
+	private <T> EntityDao<T> dao(LrEntity<T> entity) {
+
+		EntityDao<T> dao = (EntityDao<T>) entityDaos.get(entity.getName());
 
 		if (dao == null) {
-			throw new LinkRestException(Status.BAD_REQUEST, "Unsupported entity: " + entityName);
+			EntityDao<T> newDao = daoFactory.dao(entity);
+			EntityDao<T> oldDao = (EntityDao<T>) entityDaos.putIfAbsent(entity.getName(), newDao);
+			dao = oldDao != null ? oldDao : newDao;
 		}
 
 		return (EntityDao<T>) dao;
@@ -119,7 +106,7 @@ public class EntityDaoLinkRestService extends BaseLinkRestService {
 	public <T> UpdateBuilder<T> idempotentCreateOrUpdate(Class<T> type) {
 		return daoForType(type).idempotentCreateOrUpdate();
 	}
-	
+
 	/**
 	 * @since 1.7
 	 */
