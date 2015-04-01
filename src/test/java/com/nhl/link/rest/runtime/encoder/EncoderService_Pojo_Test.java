@@ -64,7 +64,7 @@ public class EncoderService_Pojo_Test {
 		p6.setStringId("myid");
 		p6.setIntProp(4);
 
-		LrEntity<P6> p6lre = LrEntityBuilder.builder(P6.class).id("stringId").build();
+		LrEntity<P6> p6lre = LrEntityBuilder.builder(P6.class).build();
 		ResourceEntity<P6> descriptor = new ResourceEntity<P6>(p6lre);
 		descriptor.getAttributes().put("intProp", new DefaultLrAttribute("intProp", Integer.class.getName()));
 		descriptor.includeId();

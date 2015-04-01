@@ -38,9 +38,8 @@ public class JerseyTestOnPojo extends JerseyTest {
 	public static void setUpClass() throws IOException, SQLException {
 
 		pojoModels = new ArrayList<>();
-		pojoModels = Arrays.asList(LrEntityBuilder.build(P1.class), LrEntityBuilder.build(P2.class),
-				LrEntityBuilder.build(P3.class), LrEntityBuilder.build(P4.class),
-				LrEntityBuilder.builder(P6.class).id("stringId").build());
+		pojoModels = Arrays.asList(LrEntityBuilder.build(P1.class), LrEntityBuilder.build(P2.class), LrEntityBuilder
+				.build(P3.class), LrEntityBuilder.build(P4.class), LrEntityBuilder.builder(P6.class).build());
 		pojoDB = new PojoDB();
 	}
 

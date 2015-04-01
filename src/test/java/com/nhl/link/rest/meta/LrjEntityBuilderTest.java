@@ -3,6 +3,7 @@ package com.nhl.link.rest.meta;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
@@ -12,6 +13,22 @@ import com.nhl.link.rest.it.fixture.pojo.model.P4;
 import com.nhl.link.rest.it.fixture.pojo.model.P5;
 
 public class LrjEntityBuilderTest {
+
+	@Test
+	public void testToPropertyName() {
+		LrEntityBuilder<P3> builder = LrEntityBuilder.builder(P3.class);
+		
+		assertNull(builder.toPropertyName("get"));
+		assertNull(builder.toPropertyName("xyz"));
+		assertNull(builder.toPropertyName("setXyz"));
+		assertNull(builder.toPropertyName("getxyz"));
+
+		assertEquals("x", builder.toPropertyName("getX"));
+		assertEquals("xyz", builder.toPropertyName("getXyz"));
+		assertEquals("xyzAbc", builder.toPropertyName("getXyzAbc"));
+
+		assertEquals("xyz", builder.toPropertyName("isXyz"));
+	}
 
 	@Test
 	public void testBuild_Default() {

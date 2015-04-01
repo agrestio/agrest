@@ -18,6 +18,9 @@ public class GET_NonPersistentProperties_IT extends JerseyTestOnDerby {
 
 	@Override
 	protected LinkRestBuilder doConfigure() {
+
+		// "prettyName" is loaded explicitly , "notSoPrettyName" is loaded via
+		// annotations
 		return super.doConfigure().transientProperty(E14.class, "prettyName");
 	}
 
@@ -36,6 +39,19 @@ public class GET_NonPersistentProperties_IT extends JerseyTestOnDerby {
 				.get();
 		assertEquals(Status.OK.getStatusCode(), response1.getStatus());
 		assertEquals("{\"success\":true,\"data\":[{\"name\":\"yyy\",\"prettyName\":\"yyy_pretty\"}],\"total\":1}",
+				response1.readEntity(String.class));
+	}
+
+	@Test
+	public void testGET_Root_Annotated() {
+		insert("e15", "long_id, name", "1, 'xxx'");
+		insert("e14", "e15_id, long_id, name", "1, 8, 'yyy'");
+
+		Response response1 = target("/e14").queryParam("include", "name").queryParam("include", "notSoPrettyName")
+				.request().get();
+		assertEquals(Status.OK.getStatusCode(), response1.getStatus());
+		assertEquals(
+				"{\"success\":true,\"data\":[{\"name\":\"yyy\",\"notSoPrettyName\":\"yyy_notpretty\"}],\"total\":1}",
 				response1.readEntity(String.class));
 	}
 

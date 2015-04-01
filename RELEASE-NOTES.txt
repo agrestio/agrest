@@ -4,6 +4,8 @@ Release 1.15
 #88 Error when using 'cayenneExp' with outer joins ending in relationship
 #89 ConstraintsBuilder to allow individual attribute and relationship excludes
 #91 Expand EntityDAO concept 
+#92 Simplify POJO metadata compilation: LR annotations
+
 
 Release 1.14 2015-03-16
 

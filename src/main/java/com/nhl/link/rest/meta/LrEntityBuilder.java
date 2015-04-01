@@ -1,20 +1,22 @@
 package com.nhl.link.rest.meta;
 
-import java.beans.BeanInfo;
-import java.beans.IntrospectionException;
-import java.beans.Introspector;
-import java.beans.PropertyDescriptor;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.util.Collection;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.nhl.link.rest.annotation.LrAttribute;
+import com.nhl.link.rest.annotation.LrId;
+import com.nhl.link.rest.annotation.LrRelationship;
+
 /**
- * A helper class to assemble custom {@link LrEntity} objects. Used for
- * POJOs,etc.
+ * A helper class to compile custom {@link LrEntity} objects based on
+ * annotations. Used for POJOs,etc.
  * 
  * @since 1.12
  */
@@ -30,16 +32,13 @@ public class LrEntityBuilder<T> {
 		return builder(type).build();
 	}
 
+	private static final Pattern GETTER = Pattern.compile("^(get|is)([A-Z].*)$");
+
 	private Class<T> type;
-	private PropertyDescriptor[] propertyDescriptors;
 	private Package entityPackage;
-	private String idProperty;
 
 	LrEntityBuilder(Class<T> type) {
 		this.type = type;
-
-		// TODO: pretty lame - only allowing relationships within the same
-		// package...
 		this.entityPackage = type.getPackage();
 	}
 
@@ -49,101 +48,107 @@ public class LrEntityBuilder<T> {
 		return e;
 	}
 
-	public LrEntityBuilder<T> id(String idProperty) {
-		this.idProperty = idProperty;
-		return this;
-	}
-
 	private void appendProperties(DefaultLrEntity<T> entity) {
 
-		for (PropertyDescriptor pd : propertyDescriptors()) {
-			Method reader = pd.getReadMethod();
-			if (reader == null) {
-				// don't care about write-only props
-				continue;
-			}
-
-			if (reader.getDeclaringClass().equals(Object.class)) {
-				// 'getClass' is not a property we care about
-				continue;
-			}
-
-			if (!addAsToOneRelationship(entity, pd)) {
-				if (!addAsToManyRelationship(entity, pd)) {
-					if (!addAsAttribute(entity, pd)) {
-						LOGGER.info("Skipping unsupported property: " + entity.getName() + "." + pd.getName());
-					}
-				}
-			}
+		for (Method method : type.getMethods()) {
+			appendProperty(entity, method);
 		}
 	}
 
-	private boolean addAsAttribute(DefaultLrEntity<T> entity, PropertyDescriptor pd) {
+	private void appendProperty(DefaultLrEntity<T> entity, Method m) {
 
-		Class<?> targetType = pd.getPropertyType();
-		if (Collection.class.isAssignableFrom(targetType) || Map.class.isAssignableFrom(targetType)) {
-			return false;
+		Class<?> type = m.getReturnType();
+		if (type.equals(Void.class) || m.getParameterTypes().length > 0) {
+			return;
 		}
 
-		DefaultLrAttribute a = new DefaultLrAttribute(pd.getName(), targetType.getName());
-
-		if (a.getName().equals(idProperty)) {
-			entity.addId(a);
-		} else {
-			entity.addAttribute(a);
+		String name = toPropertyName(m.getName());
+		if (name == null) {
+			return;
 		}
 
-		return true;
+		if (name.equals("class")) {
+			// 'getClass' is not a property we care about
+			return;
+		}
+
+		if (!addAsAttribute(entity, name, m)) {
+			addAsRelationship(entity, name, m);
+		}
 	}
 
-	private boolean addAsToManyRelationship(DefaultLrEntity<T> entity, PropertyDescriptor pd) {
-
-		Method propertyReader = pd.getReadMethod();
-		if (propertyReader == null) {
-			return false;
+	String toPropertyName(String methodName) {
+		Matcher matcher = GETTER.matcher(methodName);
+		if (!matcher.find()) {
+			return null;
 		}
 
-		Class<?> returnType = propertyReader.getReturnType();
-		if (!Collection.class.isAssignableFrom(returnType)) {
-			return false;
-		}
-
-		ParameterizedType genericReturnType = (ParameterizedType) propertyReader.getGenericReturnType();
-		Class<?> collectionType = (Class<?>) genericReturnType.getActualTypeArguments()[0];
-		if (!isRelationship(collectionType)) {
-			return false;
-		}
-
-		entity.addRelationship(new DefaultLrRelationship(pd.getName(), collectionType, true));
-		return true;
+		String raw = matcher.group(2);
+		return Character.toLowerCase(raw.charAt(0)) + raw.substring(1);
 	}
 
-	private boolean addAsToOneRelationship(DefaultLrEntity<T> entity, PropertyDescriptor pd) {
+	private boolean addAsAttribute(DefaultLrEntity<T> entity, String name, Method m) {
 
-		Class<?> targetType = pd.getPropertyType();
-		if (!isRelationship(targetType)) {
-			return false;
+		if (m.getAnnotation(LrAttribute.class) != null) {
+
+			if (checkValidAttributeType(m.getReturnType())) {
+				DefaultLrAttribute a = new DefaultLrAttribute(name, m.getReturnType().getName());
+				entity.addAttribute(a);
+			} else {
+				// still return true after validation failure... this is an
+				// attribute, just not a proper one
+				LOGGER.warn("Invalid attribute type for " + entity.getName() + "." + name + ". Skipping.");
+			}
+
+			return true;
 		}
 
-		entity.addRelationship(new DefaultLrRelationship(pd.getName(), targetType, false));
-		return true;
+		if (m.getAnnotation(LrId.class) != null) {
+
+			if (checkValidAttributeType(m.getReturnType())) {
+				DefaultLrAttribute a = new DefaultLrAttribute(name, m.getReturnType().getName());
+				entity.addId(a);
+			} else {
+				// still return true after validation failure... this is an
+				// attribute, just not a proper one
+				LOGGER.warn("Invalid ID attribute type for " + entity.getName() + "." + name + ". Skipping.");
+			}
+
+			return true;
+		}
+
+		return false;
+	}
+
+	private boolean checkValidAttributeType(Class<?> type) {
+		return !Collection.class.isAssignableFrom(type) && !Map.class.isAssignableFrom(type);
+	}
+
+	private boolean addAsRelationship(DefaultLrEntity<T> entity, String name, Method m) {
+
+		if (m.getAnnotation(LrRelationship.class) != null) {
+
+			Class<?> targetType = m.getReturnType();
+			boolean toMany = false;
+
+			if (Collection.class.isAssignableFrom(targetType)) {
+				targetType = (Class<?>) ((ParameterizedType) m.getGenericReturnType()).getActualTypeArguments()[0];
+				toMany = true;
+			}
+
+			if (!isRelationship(targetType)) {
+				return false;
+			}
+
+			entity.addRelationship(new DefaultLrRelationship(name, targetType, toMany));
+		}
+
+		return false;
 	}
 
 	private boolean isRelationship(Class<?> propertyType) {
 		// treat classes in the same package as relationships...
+		// TODO: lame...
 		return !propertyType.isPrimitive() && propertyType.getPackage().equals(entityPackage);
-	}
-
-	private PropertyDescriptor[] propertyDescriptors() {
-		if (propertyDescriptors == null) {
-			BeanInfo info;
-			try {
-				info = Introspector.getBeanInfo(type);
-			} catch (IntrospectionException e) {
-				throw new RuntimeException("Error getting bean properties from " + type.getName(), e);
-			}
-			return info.getPropertyDescriptors();
-		}
-		return propertyDescriptors;
 	}
 }
