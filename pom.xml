@@ -7,7 +7,7 @@
 	<version>1.16-SNAPSHOT</version>
 
 	<name>Library: link-rest</name>
-	<description>Link Server-side REST Service Framework built with Sencha/ExtJS client in mind.</description>
+	<description>Model-driven REST data service framework</description>
 	<packaging>jar</packaging>
 
 	<properties>
