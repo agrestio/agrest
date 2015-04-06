@@ -51,13 +51,6 @@ public interface ILinkRestService {
 	<T> SelectBuilder<T> select(Class<T> root);
 
 	/**
-	 * @deprecated since 1.14 in favor of {@link #select(Class)}.
-	 * @return
-	 */
-	@Deprecated
-	<T> SelectBuilder<T> forSelect(Class<T> root);
-
-	/**
 	 * Creates a {@link SelectBuilder} to customize data retrieval. This is the
 	 * most generic and customizable way to select data. It can be used as a
 	 * replacement of any other select.
@@ -65,12 +58,6 @@ public interface ILinkRestService {
 	 * @since 1.14
 	 */
 	<T> SelectBuilder<T> select(SelectQuery<T> query);
-
-	/**
-	 * @deprecated since 1.14 in favor of {@link #select(SelectQuery)}.
-	 */
-	@Deprecated
-	<T> SelectBuilder<T> forSelect(SelectQuery<T> query);
 
 	SimpleResponse delete(Class<?> root, Object id);
 

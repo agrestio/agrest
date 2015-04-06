@@ -43,20 +43,6 @@ public class LinkRestServiceDecorator implements ILinkRestService {
 		return delegate.select(root);
 	}
 
-	@Deprecated
-	@Override
-	public <T> SelectBuilder<T> forSelect(Class<T> root) {
-		// not delegating deprecated method as it will make interception harder
-		return select(root);
-	}
-
-	@Deprecated
-	@Override
-	public <T> SelectBuilder<T> forSelect(SelectQuery<T> query) {
-		// not delegating deprecated method as it will make interception harder
-		return select(query);
-	}
-
 	@Override
 	public <T> SelectBuilder<T> select(SelectQuery<T> query) {
 		return delegate.select(query);

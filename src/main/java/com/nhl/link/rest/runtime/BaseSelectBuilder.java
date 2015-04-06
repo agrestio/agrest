@@ -122,12 +122,6 @@ public abstract class BaseSelectBuilder<T> implements SelectBuilder<T> {
 		return this;
 	}
 
-	@Deprecated
-	@Override
-	public SelectBuilder<T> with(UriInfo uriInfo) {
-		return uri(uriInfo);
-	}
-
 	/**
 	 * @since 1.14
 	 */
@@ -135,12 +129,6 @@ public abstract class BaseSelectBuilder<T> implements SelectBuilder<T> {
 	public SelectBuilder<T> dataEncoder(Encoder dataEncoder) {
 		this.dataEncoder = dataEncoder;
 		return this;
-	}
-
-	@Deprecated
-	@Override
-	public SelectBuilder<T> withDataEncoder(Encoder encoder) {
-		return dataEncoder(encoder);
 	}
 
 	/**
@@ -152,24 +140,12 @@ public abstract class BaseSelectBuilder<T> implements SelectBuilder<T> {
 		return this;
 	}
 
-	@Deprecated
-	@Override
-	public SelectBuilder<T> withAutocompleteOn(Property<?> autocompleteProperty) {
-		return autocompleteOn(autocompleteProperty);
-	}
-
 	/**
 	 * @since 1.14
 	 */
 	@Override
 	public SelectBuilder<T> property(String name) {
 		return property(name, PropertyBuilder.property());
-	}
-
-	@Deprecated
-	@Override
-	public SelectBuilder<T> withProperty(String name) {
-		return property(name);
 	}
 
 	/**
@@ -187,12 +163,6 @@ public abstract class BaseSelectBuilder<T> implements SelectBuilder<T> {
 		}
 
 		return this;
-	}
-
-	@Deprecated
-	@Override
-	public SelectBuilder<T> withProperty(String name, EntityProperty clientProperty) {
-		return property(name, clientProperty);
 	}
 
 	@Override

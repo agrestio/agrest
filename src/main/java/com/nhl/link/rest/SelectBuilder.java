@@ -27,24 +27,12 @@ public interface SelectBuilder<T> {
 	SelectBuilder<T> uri(UriInfo uriInfo);
 
 	/**
-	 * @deprecated since 1.14 rename to {@link #uri(UriInfo)} for clarity.
-	 */
-	@Deprecated
-	SelectBuilder<T> with(UriInfo uriInfo);
-
-	/**
 	 * Sets the encoder for the entities under the "data" key in the response
 	 * collection.
 	 * 
 	 * @since 1.14
 	 */
 	SelectBuilder<T> dataEncoder(Encoder encoder);
-
-	/**
-	 * @deprecated since 1.14 renamed to {@link #dataEncoder(Encoder)}.
-	 */
-	@Deprecated
-	SelectBuilder<T> withDataEncoder(Encoder encoder);
 
 	/**
 	 * Configures SelectBuilder for a common scenario of "autocomplete" request,
@@ -54,12 +42,6 @@ public interface SelectBuilder<T> {
 	 * @since 1.14
 	 */
 	SelectBuilder<T> autocompleteOn(Property<?> autocompleteProperty);
-
-	/**
-	 * @deprecated since 1.14 renamed to {@link #autocompleteOn(Property)}.
-	 */
-	@Deprecated
-	SelectBuilder<T> withAutocompleteOn(Property<?> autocompleteProperty);
 
 	/**
 	 * Forces the builder to select a single object by ID. Any explicit query
@@ -78,13 +60,6 @@ public interface SelectBuilder<T> {
 	SelectBuilder<T> property(String name, EntityProperty clientProperty);
 
 	/**
-	 * @deprecated since 1.14 renamed to
-	 *             {@link #withProperty(String, EntityProperty)}.
-	 */
-	@Deprecated
-	SelectBuilder<T> withProperty(String name, EntityProperty clientProperty);
-
-	/**
 	 * Adds a custom property that is appended to the root
 	 * {@link ResourceEntity}. Property is read as a regular JavaBean
 	 * "property", and default encoder is used. For more control over property
@@ -94,12 +69,6 @@ public interface SelectBuilder<T> {
 	 * @since 1.14
 	 */
 	SelectBuilder<T> property(String name);
-
-	/**
-	 * @deprecated since 1.14 renamed to {@link #property(String)}.
-	 */
-	@Deprecated
-	SelectBuilder<T> withProperty(String name);
 
 	/**
 	 * Applies entity constraints to the SelectBuilder.

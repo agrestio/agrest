@@ -44,21 +44,9 @@ public abstract class BaseLinkRestService implements ILinkRestService {
 
 	@Override
 	public abstract <T> SelectBuilder<T> select(Class<T> root);
-	
-	@Deprecated
-	@Override
-	public <T> SelectBuilder<T> forSelect(Class<T> root) {
-		return select(root);
-	}
 
 	@Override
 	public abstract <T> SelectBuilder<T> select(SelectQuery<T> query);
-	
-	@Deprecated
-	@Override
-	public <T> SelectBuilder<T> forSelect(SelectQuery<T> query) {
-		return select(query);
-	}
 
 	/**
 	 * @since 1.2
