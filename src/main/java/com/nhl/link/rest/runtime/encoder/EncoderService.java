@@ -21,7 +21,6 @@ import com.nhl.link.rest.encoder.EncoderFilter;
 import com.nhl.link.rest.encoder.EntityEncoder;
 import com.nhl.link.rest.encoder.EntityToOneEncoder;
 import com.nhl.link.rest.encoder.FilterChainEncoder;
-import com.nhl.link.rest.encoder.GenericEncoder;
 import com.nhl.link.rest.encoder.ListEncoder;
 import com.nhl.link.rest.encoder.MapByEncoder;
 import com.nhl.link.rest.encoder.RootListEncoder;
@@ -64,15 +63,7 @@ public class EncoderService implements IEncoderService {
 			throw new LinkRestException(Status.INTERNAL_SERVER_ERROR, "Can't apply 'mapBy' to the root entity.");
 		}
 
-		// don't bother compiling element encoder for empty response... as long
-		// as 'makeEncoder' is called after the objects are fetched, we
-		// should be fine
-
-		// TODO: this is flaky -- if this method is called before the
-		// objects were set, the result will be garbage
-
-		Encoder elementEncoder = response.getObjects().isEmpty() ? GenericEncoder.encoder()
-				: collectionElementEncoder(entity);
+		Encoder elementEncoder = collectionElementEncoder(entity);
 
 		// notice that we are not passing either qualifier or ordering to the
 		// encoder, as those are presumably applied at the query level.. (unlike
