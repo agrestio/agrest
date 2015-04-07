@@ -72,12 +72,6 @@ public abstract class BaseUpdateBuilder<T> implements UpdateBuilder<T> {
 		return this;
 	}
 
-	@Deprecated
-	@Override
-	public UpdateBuilder<T> with(UriInfo uriInfo) {
-		return uri(uriInfo);
-	}
-
 	@Override
 	public UpdateBuilder<T> id(Object id) {
 		this.id = id;

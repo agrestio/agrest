@@ -50,14 +50,6 @@ public class LinkRestRuntime implements Feature {
 	}
 
 	/**
-	 * @deprecated since 1.14, as LinkRestRuntime implements Feature itself.
-	 */
-	@Deprecated
-	public Feature getFeature() {
-		return this;
-	}
-
-	/**
 	 * Returns a LinkRest service instance of a given type stored in the
 	 * internal DI container.
 	 */
