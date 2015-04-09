@@ -29,11 +29,11 @@ import com.nhl.link.rest.meta.LrEntity;
 import com.nhl.link.rest.meta.LrEntityBuilder;
 import com.nhl.link.rest.runtime.LinkRestBuilder;
 import com.nhl.link.rest.runtime.adapter.LinkRestAdapter;
-import com.nhl.link.rest.runtime.dao.IEntityDaoFactory;
+import com.nhl.link.rest.runtime.processor.IProcessorFactory;
 
 public class JerseyTestOnPojo extends JerseyTest {
 
-	protected static List<LrEntity<?>> pojoModels;
+	protected static List<LrEntity<?>> pojoEntities;
 
 	// using in-memory key/value "database" to store POJOs
 	protected static PojoDB pojoDB;
@@ -41,8 +41,8 @@ public class JerseyTestOnPojo extends JerseyTest {
 	@BeforeClass
 	public static void setUpClass() throws IOException, SQLException {
 
-		pojoModels = new ArrayList<>();
-		pojoModels = Arrays.asList(LrEntityBuilder.build(P1.class), LrEntityBuilder.build(P2.class), LrEntityBuilder
+		pojoEntities = new ArrayList<>();
+		pojoEntities = Arrays.asList(LrEntityBuilder.build(P1.class), LrEntityBuilder.build(P2.class), LrEntityBuilder
 				.build(P3.class), LrEntityBuilder.build(P4.class), LrEntityBuilder.builder(P6.class).build());
 		pojoDB = new PojoDB();
 	}
@@ -59,11 +59,11 @@ public class JerseyTestOnPojo extends JerseyTest {
 	@Override
 	public Application configure() {
 
-		Feature lrFeature = new LinkRestBuilder().extraEntities(pojoModels).adapter(new LinkRestAdapter() {
+		Feature lrFeature = new LinkRestBuilder().extraEntities(pojoEntities).adapter(new LinkRestAdapter() {
 
 			@Override
 			public void contributeToRuntime(Binder binder) {
-				binder.bind(IEntityDaoFactory.class).to(PojoEntityDaoFactory.class);
+				binder.bind(IProcessorFactory.class).to(PojoProcessorFactory.class);
 			}
 
 			@Override

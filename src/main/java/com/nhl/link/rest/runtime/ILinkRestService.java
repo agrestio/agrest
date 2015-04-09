@@ -20,13 +20,13 @@ public interface ILinkRestService {
 	/**
 	 * Selects a single object by ID.
 	 */
-	<T> DataResponse<T> selectById(Class<T> root, Object id);
+	<T> DataResponse<T> selectById(Class<T> type, Object id);
 
 	/**
 	 * Selects a single object by ID, applying optional include/exclude
 	 * information from the UriInfo to the result.
 	 */
-	<T> DataResponse<T> selectById(Class<T> root, Object id, UriInfo uriInfo);
+	<T> DataResponse<T> selectById(Class<T> type, Object id, UriInfo uriInfo);
 
 	/**
 	 * Selects objects based on the provided query template and extra URL
@@ -48,7 +48,7 @@ public interface ILinkRestService {
 	 * 
 	 * @since 1.14
 	 */
-	<T> SelectBuilder<T> select(Class<T> root);
+	<T> SelectBuilder<T> select(Class<T> type);
 
 	/**
 	 * Creates a {@link SelectBuilder} to customize data retrieval. This is the
@@ -59,35 +59,35 @@ public interface ILinkRestService {
 	 */
 	<T> SelectBuilder<T> select(SelectQuery<T> query);
 
-	SimpleResponse delete(Class<?> root, Object id);
+	SimpleResponse delete(Class<?> type, Object id);
 
 	/**
 	 * Breaks the relationship between source and all its target objects.
 	 * 
 	 * @since 1.2
 	 */
-	SimpleResponse unrelate(Class<?> root, Object sourceId, String relationship);
+	SimpleResponse unrelate(Class<?> type, Object sourceId, String relationship);
 
 	/**
 	 * Breaks the relationship between source and all its target objects.
 	 * 
 	 * @since 1.2
 	 */
-	SimpleResponse unrelate(Class<?> root, Object sourceId, Property<?> relationship);
+	SimpleResponse unrelate(Class<?> type, Object sourceId, Property<?> relationship);
 
 	/**
 	 * Breaks the relationship between source and a target object.
 	 * 
 	 * @since 1.2
 	 */
-	SimpleResponse unrelate(Class<?> root, Object sourceId, String relationship, Object targetId);
+	SimpleResponse unrelate(Class<?> type, Object sourceId, String relationship, Object targetId);
 
 	/**
 	 * Breaks the relationship between source and a target object.
 	 * 
 	 * @since 1.2
 	 */
-	SimpleResponse unrelate(Class<?> root, Object sourceId, Property<?> relationship, Object targetId);
+	SimpleResponse unrelate(Class<?> type, Object sourceId, Property<?> relationship, Object targetId);
 
 	/**
 	 * @since 1.3
@@ -132,5 +132,5 @@ public interface ILinkRestService {
 	/**
 	 * @since 1.4
 	 */
-	<T> DeleteBuilder<T> delete(Class<T> root);
+	<T> DeleteBuilder<T> delete(Class<T> type);
 }

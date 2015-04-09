@@ -1,5 +1,6 @@
 package com.nhl.link.rest.runtime.cayenne;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -7,30 +8,28 @@ import javax.ws.rs.core.Response.Status;
 
 import org.apache.cayenne.di.Inject;
 
-import com.nhl.link.rest.LinkRestException;
-import com.nhl.link.rest.meta.LrEntity;
 import com.nhl.link.rest.processor.ProcessingStage;
 import com.nhl.link.rest.processor.Processor;
+import com.nhl.link.rest.runtime.UpdateOperation;
 import com.nhl.link.rest.runtime.cayenne.processor.CayenneContextInitStage;
+import com.nhl.link.rest.runtime.cayenne.processor.CayenneCreateOrUpdateStage;
+import com.nhl.link.rest.runtime.cayenne.processor.CayenneCreateStage;
 import com.nhl.link.rest.runtime.cayenne.processor.CayenneDeleteStage;
 import com.nhl.link.rest.runtime.cayenne.processor.CayenneFetchStage;
-import com.nhl.link.rest.runtime.cayenne.processor.CayenneUnrelateStage;
-import com.nhl.link.rest.runtime.cayenne.processor.CayenneCreateStage;
-import com.nhl.link.rest.runtime.cayenne.processor.CayenneCreateOrUpdateStage;
 import com.nhl.link.rest.runtime.cayenne.processor.CayenneFullSyncStage;
+import com.nhl.link.rest.runtime.cayenne.processor.CayenneUnrelateStage;
 import com.nhl.link.rest.runtime.cayenne.processor.CayenneUpdateStage;
 import com.nhl.link.rest.runtime.constraints.IConstraintsHandler;
-import com.nhl.link.rest.runtime.dao.EntityDao;
-import com.nhl.link.rest.runtime.dao.IEntityDaoFactory;
 import com.nhl.link.rest.runtime.encoder.IEncoderService;
 import com.nhl.link.rest.runtime.meta.IMetadataService;
 import com.nhl.link.rest.runtime.parser.IRequestParser;
+import com.nhl.link.rest.runtime.processor.IProcessorFactory;
 import com.nhl.link.rest.runtime.processor.delete.DeleteContext;
 import com.nhl.link.rest.runtime.processor.delete.DeleteInitStage;
 import com.nhl.link.rest.runtime.processor.select.ApplyRequestStage;
 import com.nhl.link.rest.runtime.processor.select.ApplyServerParamsStage;
-import com.nhl.link.rest.runtime.processor.select.SelectInitStage;
 import com.nhl.link.rest.runtime.processor.select.SelectContext;
+import com.nhl.link.rest.runtime.processor.select.SelectInitStage;
 import com.nhl.link.rest.runtime.processor.unrelate.UnrelateContext;
 import com.nhl.link.rest.runtime.processor.unrelate.UnrelateInitStage;
 import com.nhl.link.rest.runtime.processor.update.UpdateApplyRequestStage;
@@ -40,9 +39,9 @@ import com.nhl.link.rest.runtime.processor.update.UpdateInitStage;
 import com.nhl.link.rest.runtime.processor.update.UpdatePostProcessStage;
 
 /**
- * @since 1.15
+ * @since 1.16
  */
-public class CayenneEntityDaoFactory implements IEntityDaoFactory {
+public class CayenneProcessorFactory implements IProcessorFactory {
 
 	private IRequestParser requestParser;
 	private IEncoderService encoderService;
@@ -50,32 +49,36 @@ public class CayenneEntityDaoFactory implements IEntityDaoFactory {
 	private IConstraintsHandler constraintsHandler;
 	private IMetadataService metadataService;
 
-	private Processor<SelectContext<?>> selectProcessor;
-	private Map<UpdateOperation, Processor<UpdateContext<?>>> updateProcessors;
-	private Processor<DeleteContext<?>> deleteProcessor;
-	private Processor<UnrelateContext<?>> unrelateProcessor;
-
-	public CayenneEntityDaoFactory(@Inject IRequestParser requestParser, @Inject IEncoderService encoderService,
+	public CayenneProcessorFactory(@Inject IRequestParser requestParser, @Inject IEncoderService encoderService,
 			@Inject ICayennePersister persister, @Inject IConstraintsHandler constraintsHandler,
 			@Inject IMetadataService metadataService) {
-
 		this.requestParser = requestParser;
 		this.encoderService = encoderService;
 		this.persister = persister;
 		this.constraintsHandler = constraintsHandler;
 		this.metadataService = metadataService;
+	}
 
-		this.selectProcessor = createSelectProcessor();
+	@Override
+	public Map<Class<?>, Map<String, Processor<?>>> processors() {
+		Map<Class<?>, Map<String, Processor<?>>> map = new HashMap<>();
+		map.put(SelectContext.class, Collections.<String, Processor<?>> singletonMap(null, createSelectProcessor()));
+		map.put(DeleteContext.class, Collections.<String, Processor<?>> singletonMap(null, createDeleteProcessor()));
+		map.put(UnrelateContext.class, Collections.<String, Processor<?>> singletonMap(null, createUnrelateProcessor()));
+		map.put(UpdateContext.class, createUpdateProcessors());
+		return map;
+	}
 
-		this.updateProcessors = new HashMap<>();
-		updateProcessors.put(UpdateOperation.create, createCreateProcessor());
-		updateProcessors.put(UpdateOperation.update, createUpdateProcessor());
-		updateProcessors.put(UpdateOperation.createOrUpdate, createOrUpdateProcessor(false));
-		updateProcessors.put(UpdateOperation.idempotentCreateOrUpdate, createOrUpdateProcessor(true));
-		updateProcessors.put(UpdateOperation.idempotentFullSync, createFullSyncProcessor(true));
+	private Map<String, Processor<?>> createUpdateProcessors() {
+		Map<String, Processor<?>> map = new HashMap<>();
 
-		this.deleteProcessor = createDeleteProcessor();
-		this.unrelateProcessor = createUnrelateProcessor();
+		map.put(UpdateOperation.create.name(), createCreateProcessor());
+		map.put(UpdateOperation.createOrUpdate.name(), createOrUpdateProcessor(false));
+		map.put(UpdateOperation.update.name(), createUpdateProcessor());
+		map.put(UpdateOperation.idempotentCreateOrUpdate.name(), createOrUpdateProcessor(true));
+		map.put(UpdateOperation.idempotentFullSync.name(), createFullSyncProcessor(true));
+
+		return map;
 	}
 
 	private Processor<UnrelateContext<?>> createUnrelateProcessor() {
@@ -98,7 +101,8 @@ public class CayenneEntityDaoFactory implements IEntityDaoFactory {
 	private Processor<SelectContext<?>> createSelectProcessor() {
 
 		ProcessingStage<SelectContext<?>> stage3 = new CayenneFetchStage(null, persister);
-		ProcessingStage<SelectContext<?>> stage2 = new ApplyServerParamsStage(stage3, encoderService, constraintsHandler);
+		ProcessingStage<SelectContext<?>> stage2 = new ApplyServerParamsStage(stage3, encoderService,
+				constraintsHandler);
 		ProcessingStage<SelectContext<?>> stage1 = new ApplyRequestStage(stage2, requestParser);
 		ProcessingStage<SelectContext<?>> stage0 = new SelectInitStage(stage1);
 
@@ -155,16 +159,5 @@ public class CayenneEntityDaoFactory implements IEntityDaoFactory {
 		ProcessingStage<UpdateContext<?>> stage0 = new CayenneContextInitStage<>(stage1, persister);
 
 		return stage0;
-	}
-
-	@Override
-	public <T> EntityDao<T> dao(LrEntity<T> entity) {
-
-		// sanity check
-		if (persister.entityResolver().getObjEntity(entity.getType()) == null) {
-			throw new LinkRestException(Status.BAD_REQUEST, "Not a Cayenne entity: " + entity.getName());
-		}
-
-		return new CayenneDao<>(entity.getType(), selectProcessor, updateProcessors, deleteProcessor, unrelateProcessor);
 	}
 }

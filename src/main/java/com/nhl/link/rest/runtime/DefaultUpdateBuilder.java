@@ -20,10 +20,10 @@ import com.nhl.link.rest.runtime.processor.update.UpdateContext;
 public class DefaultUpdateBuilder<T> implements UpdateBuilder<T> {
 
 	private UpdateContext<T> context;
-	private Processor<UpdateContext<?>> processor;
+	private Processor<UpdateContext<T>> processor;
 
-	public DefaultUpdateBuilder(Class<T> type, Processor<UpdateContext<?>> processor) {
-		this.context = new UpdateContext<>(type);
+	public DefaultUpdateBuilder(UpdateContext<T> context, Processor<UpdateContext<T>> processor) {
+		this.context = context;
 		this.processor = processor;
 	}
 
