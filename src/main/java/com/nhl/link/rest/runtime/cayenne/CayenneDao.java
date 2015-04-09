@@ -1,47 +1,44 @@
 package com.nhl.link.rest.runtime.cayenne;
 
-import java.util.ArrayList;
-import java.util.Collection;
+import java.util.Map;
 
 import javax.ws.rs.core.Response.Status;
 
-import org.apache.cayenne.Cayenne;
-import org.apache.cayenne.DataObject;
-import org.apache.cayenne.ObjectContext;
-import org.apache.cayenne.ObjectId;
-import org.apache.cayenne.map.ObjEntity;
-import org.apache.cayenne.query.ObjectIdQuery;
 import org.apache.cayenne.query.SelectQuery;
 
 import com.nhl.link.rest.DeleteBuilder;
+import com.nhl.link.rest.EntityParent;
 import com.nhl.link.rest.LinkRestException;
 import com.nhl.link.rest.SelectBuilder;
+import com.nhl.link.rest.SimpleResponse;
 import com.nhl.link.rest.UpdateBuilder;
-import com.nhl.link.rest.meta.LrRelationship;
-import com.nhl.link.rest.runtime.UpdateOperation;
-import com.nhl.link.rest.runtime.constraints.IConstraintsHandler;
+import com.nhl.link.rest.processor.Processor;
+import com.nhl.link.rest.runtime.DefaultDeleteBuilder;
+import com.nhl.link.rest.runtime.DefaultSelectBuilder;
+import com.nhl.link.rest.runtime.DefaultUpdateBuilder;
 import com.nhl.link.rest.runtime.dao.EntityDao;
-import com.nhl.link.rest.runtime.encoder.IEncoderService;
-import com.nhl.link.rest.runtime.meta.IMetadataService;
-import com.nhl.link.rest.runtime.parser.IRequestParser;
+import com.nhl.link.rest.runtime.processor.delete.DeleteContext;
+import com.nhl.link.rest.runtime.processor.select.SelectContext;
+import com.nhl.link.rest.runtime.processor.unrelate.UnrelateContext;
+import com.nhl.link.rest.runtime.processor.update.UpdateContext;
 
 public class CayenneDao<T> implements EntityDao<T> {
 
 	private Class<T> type;
-	private ICayennePersister persister;
-	private IEncoderService encoderService;
-	private IRequestParser requestParser;
-	private IConstraintsHandler constraintsHandler;
-	private IMetadataService metadataService;
 
-	public CayenneDao(Class<T> type, IRequestParser requestParser, IEncoderService encoderService,
-			ICayennePersister cayenneService, IConstraintsHandler constraintsHandler, IMetadataService metadataService) {
+	private Processor<SelectContext<?>> selectProcessor;
+	private Map<UpdateOperation, Processor<UpdateContext<?>>> updateProcessors;
+	private Processor<DeleteContext<?>> deleteProcessor;
+	private Processor<UnrelateContext<?>> unrelateProcessor;
+
+	public CayenneDao(Class<T> type, Processor<SelectContext<?>> selectProcessor,
+			Map<UpdateOperation, Processor<UpdateContext<?>>> updateProcessors,
+			Processor<DeleteContext<?>> deletedProcessor, Processor<UnrelateContext<?>> unrelateProcessor) {
 		this.type = type;
-		this.requestParser = requestParser;
-		this.encoderService = encoderService;
-		this.persister = cayenneService;
-		this.constraintsHandler = constraintsHandler;
-		this.metadataService = metadataService;
+		this.selectProcessor = selectProcessor;
+		this.updateProcessors = updateProcessors;
+		this.deleteProcessor = deletedProcessor;
+		this.unrelateProcessor = unrelateProcessor;
 	}
 
 	@Override
@@ -51,149 +48,75 @@ public class CayenneDao<T> implements EntityDao<T> {
 
 	@Override
 	public SelectBuilder<T> forSelect() {
-		return new CayenneSelectBuilder<T>(type, persister, encoderService, requestParser, constraintsHandler);
+		return new DefaultSelectBuilder<>(type, selectProcessor);
 	}
 
 	@Override
 	public SelectBuilder<T> forSelect(SelectQuery<T> query) {
-		return new CayenneSelectBuilder<T>(query, type, persister, encoderService, requestParser, constraintsHandler);
+		DefaultSelectBuilder<T> builder = new DefaultSelectBuilder<>(type, selectProcessor);
+		builder.getContext().setSelect(query);
+		return builder;
+	}
+
+	private Processor<UpdateContext<?>> getUpdateProcessor(UpdateOperation op) {
+		Processor<UpdateContext<?>> p = updateProcessors.get(op);
+		if (p == null) {
+			throw new LinkRestException(Status.INTERNAL_SERVER_ERROR, "Invalid operation: " + op);
+		}
+
+		return p;
 	}
 
 	@Override
 	public UpdateBuilder<T> create() {
-		return new CayenneUpdateBuilder<>(type, UpdateOperation.create, persister, encoderService, requestParser,
-				metadataService, constraintsHandler);
+		return new DefaultUpdateBuilder<>(type, getUpdateProcessor(UpdateOperation.create));
 	}
 
 	@Override
 	public UpdateBuilder<T> createOrUpdate() {
-		return new CayenneUpdateBuilder<>(type, UpdateOperation.createOrUpdate, persister, encoderService,
-				requestParser, metadataService, constraintsHandler);
+		return new DefaultUpdateBuilder<>(type, getUpdateProcessor(UpdateOperation.createOrUpdate));
 	}
 
 	@Override
 	public UpdateBuilder<T> idempotentCreateOrUpdate() {
-		return new CayenneUpdateBuilder<>(type, UpdateOperation.idempotentCreateOrUpdate, persister, encoderService,
-				requestParser, metadataService, constraintsHandler);
+		return new DefaultUpdateBuilder<>(type, getUpdateProcessor(UpdateOperation.idempotentCreateOrUpdate));
 	}
 
 	@Override
 	public UpdateBuilder<T> idempotentFullSync() {
-		return new CayenneUpdateBuilder<>(type, UpdateOperation.idempotentFullSync, persister, encoderService,
-				requestParser, metadataService, constraintsHandler);
+		return new DefaultUpdateBuilder<>(type, getUpdateProcessor(UpdateOperation.idempotentFullSync));
 	}
 
 	@Override
 	public UpdateBuilder<T> update() {
-		return new CayenneUpdateBuilder<>(type, UpdateOperation.update, persister, encoderService, requestParser,
-				metadataService, constraintsHandler);
+		return new DefaultUpdateBuilder<>(type, getUpdateProcessor(UpdateOperation.update));
 	}
 
 	@Override
 	public DeleteBuilder<T> delete() {
-		return new CayenneDeleteBuilder<>(type, persister);
-	}
-
-	// TODO: use ObjectMapper
-	private <A> A getExistingObject(Class<A> type, ObjectContext context, Object id) {
-
-		A object = getOptionalExistingObject(type, context, id);
-		if (object == null) {
-			ObjEntity entity = context.getEntityResolver().getObjEntity(type);
-			throw new LinkRestException(Status.NOT_FOUND, "No object for ID '" + id + "' and entity '"
-					+ entity.getName() + "'");
-		}
-
-		return object;
-	}
-
-	// TODO: use ObjectMapper
-	@SuppressWarnings("unchecked")
-	private <A> A getOptionalExistingObject(Class<A> type, ObjectContext context, Object id) {
-
-		ObjEntity entity = context.getEntityResolver().getObjEntity(type);
-
-		// sanity checking...
-		if (entity == null) {
-			throw new LinkRestException(Status.INTERNAL_SERVER_ERROR, "Unknown entity class: " + type);
-		}
-
-		// TODO: should we start using optimistic locking on PK by default
-		// instead of SELECT/DELETE|UPDATE?
-
-		String idName = entity.getPrimaryKeyNames().iterator().next();
-		ObjectIdQuery select = new ObjectIdQuery(new ObjectId(entity.getName(), idName, id));
-
-		return (A) Cayenne.objectForQuery(context, select);
+		return new DefaultDeleteBuilder<>(type, deleteProcessor);
 	}
 
 	@Override
-	public void unrelate(Object sourceId, String relationship) {
+	public SimpleResponse unrelate(Object sourceId, String relationship) {
 
-		// validate relationship before doing anything else
-		LrRelationship lrRelationship = metadataService.getLrRelationship(type, relationship);
+		UnrelateContext<?> context = new UnrelateContext<>(type);
+		context.setParent(new EntityParent<>(getType(), sourceId, relationship));
 
-		ObjectContext context = persister.newContext();
-		DataObject src = (DataObject) getExistingObject(getType(), context, sourceId);
+		unrelateProcessor.execute(context);
 
-		if (lrRelationship.isToMany()) {
-
-			// clone relationship before we start deleting to avoid concurrent
-			// modification of the iterator, and to be able to batch-delete
-			// objects if needed
-			@SuppressWarnings("unchecked")
-			Collection<DataObject> relatedCollection = new ArrayList<>(
-					(Collection<DataObject>) src.readProperty(relationship));
-
-			for (DataObject o : relatedCollection) {
-				src.removeToManyTarget(relationship, o, true);
-			}
-
-		} else {
-
-			DataObject target = (DataObject) src.readProperty(relationship);
-			if (target != null) {
-				src.setToOneTarget(relationship, null, true);
-			}
-		}
-
-		context.commitChanges();
+		return context.getResponse();
 	}
 
 	@Override
-	public void unrelate(Object sourceId, String relationship, Object targetId) {
+	public SimpleResponse unrelate(Object sourceId, String relationship, Object targetId) {
 
-		// validate relationship before doing anything else
-		LrRelationship lrRelationship = metadataService.getLrRelationship(type, relationship);
+		UnrelateContext<?> context = new UnrelateContext<>(type);
+		context.setParent(new EntityParent<>(getType(), sourceId, relationship));
+		context.setId(targetId);
 
-		ObjectContext context = persister.newContext();
+		unrelateProcessor.execute(context);
 
-		DataObject src = (DataObject) getExistingObject(getType(), context, sourceId);
-
-		Class<?> targetType = metadataService.getLrEntity(lrRelationship.getTargetEntityType()).getType();
-
-		// among other things this call checks that the target exists
-		DataObject target = (DataObject) getExistingObject(targetType, context, targetId);
-
-		if (lrRelationship.isToMany()) {
-
-			// sanity check...
-			Collection<?> relatedCollection = (Collection<?>) src.readProperty(relationship);
-			if (!relatedCollection.contains(target)) {
-				throw new LinkRestException(Status.EXPECTATION_FAILED, "Source and target are not related");
-			}
-
-			src.removeToManyTarget(relationship, target, true);
-		} else {
-
-			// sanity check...
-			if (src.readProperty(relationship) != target) {
-				throw new LinkRestException(Status.EXPECTATION_FAILED, "Source and target are not related");
-			}
-
-			src.setToOneTarget(relationship, null, true);
-		}
-
-		context.commitChanges();
+		return context.getResponse();
 	}
 }

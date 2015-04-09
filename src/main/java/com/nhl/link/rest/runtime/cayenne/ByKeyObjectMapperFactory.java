@@ -13,7 +13,7 @@ import com.nhl.link.rest.UpdateResponse;
  * 
  * @since 1.4
  */
-public class ByKeyObjectMapperFactory extends CayenneObjectMapperFactory {
+public class ByKeyObjectMapperFactory implements ObjectMapperFactory {
 
 	private String property;
 
@@ -30,7 +30,7 @@ public class ByKeyObjectMapperFactory extends CayenneObjectMapperFactory {
 	}
 
 	@Override
-	protected <T> ObjectMapper<T> mapper(UpdateResponse<T> response) {
+	public <T> ObjectMapper<T> forResponse(UpdateResponse<T> response) {
 		return new ByKeyObjectMapper<>(property);
 	}
 }

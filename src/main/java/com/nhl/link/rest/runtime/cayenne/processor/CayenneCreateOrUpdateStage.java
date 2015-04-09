@@ -1,7 +1,6 @@
-package com.nhl.link.rest.runtime.cayenne;
+package com.nhl.link.rest.runtime.cayenne.processor;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -9,28 +8,29 @@ import javax.ws.rs.core.Response.Status;
 
 import com.nhl.link.rest.EntityUpdate;
 import com.nhl.link.rest.LinkRestException;
-import com.nhl.link.rest.ObjectMapper;
-import com.nhl.link.rest.runtime.cayenne.CayenneUpdateBuilder.ObjectRelator;
+import com.nhl.link.rest.processor.Processor;
+import com.nhl.link.rest.runtime.processor.update.UpdateContext;
 
 /**
- * @since 1.7
+ * @since 1.16
  */
-class CreateOrUpdateStrategy<T> extends UpdateStrategy<T> {
+public class CayenneCreateOrUpdateStage extends CayenneUpdateStage {
 
 	private boolean idempotent;
 
-	CreateOrUpdateStrategy(CayenneUpdateResponse<T> response, ObjectRelator<T> relator, ResourceReader reader,
-			ObjectMapper<T> mapper, boolean idempotent) {
-		super(response, relator, reader, mapper);
+	public CayenneCreateOrUpdateStage(Processor<UpdateContext<?>> next, boolean idempotent) {
+		super(next);
 		this.idempotent = idempotent;
 	}
 
 	@Override
-	protected void afterUpdatesMerge(Map<Object, Collection<EntityUpdate>> keyMap) {
+	protected void afterUpdatesMerge(UpdateContext<?> context, Map<Object, Collection<EntityUpdate>> keyMap) {
 
 		if (keyMap.isEmpty()) {
 			return;
 		}
+
+		ObjectRelator relator = createRelator(context);
 
 		for (Entry<Object, Collection<EntityUpdate>> e : keyMap.entrySet()) {
 
@@ -43,12 +43,12 @@ class CreateOrUpdateStrategy<T> extends UpdateStrategy<T> {
 					throw new LinkRestException(Status.BAD_REQUEST, "Request is not idempotent.");
 				}
 
-				for (EntityUpdate u : e.getValue()) {
-					create(Collections.singletonList(u));
-				}
-			} else {
-				create(e.getValue());
+			}
+
+			for (EntityUpdate u : e.getValue()) {
+				createSingle(context, relator, u);
 			}
 		}
 	}
+
 }

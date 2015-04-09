@@ -82,14 +82,12 @@ public class EntityDaoLinkRestService extends BaseLinkRestService {
 
 	@Override
 	public SimpleResponse unrelate(Class<?> root, Object sourceId, String relationship) {
-		daoForType(root).unrelate(sourceId, relationship);
-		return new SimpleResponse(true);
+		return daoForType(root).unrelate(sourceId, relationship);
 	}
 
 	@Override
 	public SimpleResponse unrelate(Class<?> root, Object sourceId, String relationship, Object targetId) {
-		daoForType(root).unrelate(sourceId, relationship, targetId);
-		return new SimpleResponse(true);
+		return daoForType(root).unrelate(sourceId, relationship, targetId);
 	}
 
 	@Override

@@ -7,35 +7,37 @@ import org.apache.cayenne.exp.Property;
 import com.nhl.link.rest.DeleteBuilder;
 import com.nhl.link.rest.EntityParent;
 import com.nhl.link.rest.SimpleResponse;
+import com.nhl.link.rest.processor.Processor;
+import com.nhl.link.rest.runtime.processor.delete.DeleteContext;
 
 /**
  * @since 1.4
  */
-public abstract class BaseDeleteBuilder<T> implements DeleteBuilder<T> {
+public class DefaultDeleteBuilder<T> implements DeleteBuilder<T> {
 
-	protected Class<T> type;
-	protected Object id;
-	protected EntityParent<?> parent;
+	protected DeleteContext<T> context;
+	private Processor<DeleteContext<?>> processor;
 
-	public BaseDeleteBuilder(Class<T> type) {
-		this.type = type;
+	public DefaultDeleteBuilder(Class<T> type, Processor<DeleteContext<?>> processor) {
+		this.context = new DeleteContext<>(type);
+		this.processor = processor;
 	}
 
 	@Override
 	public DeleteBuilder<T> id(Object id) {
-		this.id = id;
+		context.setId(id);
 		return this;
 	}
 
 	@Override
 	public DeleteBuilder<T> parent(Class<?> parentType, Object parentId, Property<T> relationshipFromParent) {
-		this.parent = new EntityParent<>(parentType, parentId, relationshipFromParent.getName());
+		context.setParent(new EntityParent<>(parentType, parentId, relationshipFromParent.getName()));
 		return this;
 	}
 
 	@Override
 	public DeleteBuilder<T> parent(Class<?> parentType, Object parentId, String relationshipFromParent) {
-		this.parent = new EntityParent<>(parentType, parentId, relationshipFromParent);
+		context.setParent(new EntityParent<>(parentType, parentId, relationshipFromParent));
 		return this;
 	}
 
@@ -46,5 +48,8 @@ public abstract class BaseDeleteBuilder<T> implements DeleteBuilder<T> {
 	}
 
 	@Override
-	public abstract SimpleResponse delete();
+	public SimpleResponse delete() {
+		processor.execute(context);
+		return context.getResponse();
+	}
 }

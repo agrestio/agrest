@@ -4,12 +4,14 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 import javax.ws.rs.core.Application;
 import javax.ws.rs.core.Feature;
 import javax.ws.rs.core.FeatureContext;
 
+import org.apache.cayenne.di.Binder;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.test.JerseyTest;
 import org.glassfish.jersey.test.inmemory.InMemoryTestContainerFactory;
@@ -26,6 +28,8 @@ import com.nhl.link.rest.it.fixture.resource.PojoResource;
 import com.nhl.link.rest.meta.LrEntity;
 import com.nhl.link.rest.meta.LrEntityBuilder;
 import com.nhl.link.rest.runtime.LinkRestBuilder;
+import com.nhl.link.rest.runtime.adapter.LinkRestAdapter;
+import com.nhl.link.rest.runtime.dao.IEntityDaoFactory;
 
 public class JerseyTestOnPojo extends JerseyTest {
 
@@ -55,8 +59,18 @@ public class JerseyTestOnPojo extends JerseyTest {
 	@Override
 	public Application configure() {
 
-		Feature lrFeature = new LinkRestBuilder().linkRestService(PojoLinkRestService.class).extraEntities(pojoModels)
-				.build();
+		Feature lrFeature = new LinkRestBuilder().extraEntities(pojoModels).adapter(new LinkRestAdapter() {
+
+			@Override
+			public void contributeToRuntime(Binder binder) {
+				binder.bind(IEntityDaoFactory.class).to(PojoEntityDaoFactory.class);
+			}
+
+			@Override
+			public void contributeToJaxRs(Collection<Feature> features) {
+				// nothing to contribute...
+			}
+		}).build();
 
 		Feature unitFeature = new Feature() {
 

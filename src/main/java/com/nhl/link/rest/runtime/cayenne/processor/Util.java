@@ -1,4 +1,4 @@
-package com.nhl.link.rest.runtime.cayenne;
+package com.nhl.link.rest.runtime.cayenne.processor;
 
 import javax.ws.rs.core.Response.Status;
 
@@ -18,9 +18,6 @@ class Util {
 	private Util() {
 	}
 
-	/**
-	 * @since 1.7
-	 */
 	@SuppressWarnings("unchecked")
 	static <A> A findById(ObjectContext context, Class<A> type, Object id) {
 		ObjEntity entity = context.getEntityResolver().getObjEntity(type);
@@ -34,6 +31,7 @@ class Util {
 			throw new LinkRestException(Status.BAD_REQUEST, "No id specified");
 		}
 
+		// TODO: switchover to ObjectSelect
 		String idName = entity.getPrimaryKeyNames().iterator().next();
 		ObjectIdQuery select = new ObjectIdQuery(new ObjectId(entity.getName(), idName, id));
 		return (A) Cayenne.objectForQuery(context, select);

@@ -4,6 +4,7 @@ import org.apache.cayenne.query.SelectQuery;
 
 import com.nhl.link.rest.DeleteBuilder;
 import com.nhl.link.rest.SelectBuilder;
+import com.nhl.link.rest.SimpleResponse;
 import com.nhl.link.rest.UpdateBuilder;
 
 /**
@@ -47,10 +48,10 @@ public interface EntityDao<T> {
 	/**
 	 * @since 1.2
 	 */
-	void unrelate(Object sourceId, String relationship);
+	SimpleResponse unrelate(Object sourceId, String relationship);
 
 	/**
 	 * @since 1.2
 	 */
-	void unrelate(Object sourceId, String relationship, Object targetId);
+	SimpleResponse unrelate(Object sourceId, String relationship, Object targetId);
 }

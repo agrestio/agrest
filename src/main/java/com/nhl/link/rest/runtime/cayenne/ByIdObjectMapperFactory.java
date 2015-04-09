@@ -15,7 +15,7 @@ import com.nhl.link.rest.meta.LrAttribute;
  * 
  * @since 1.4
  */
-public class ByIdObjectMapperFactory extends CayenneObjectMapperFactory {
+public class ByIdObjectMapperFactory implements ObjectMapperFactory {
 
 	private static final ObjectMapperFactory instance = new ByIdObjectMapperFactory();
 
@@ -24,7 +24,7 @@ public class ByIdObjectMapperFactory extends CayenneObjectMapperFactory {
 	}
 
 	@Override
-	protected <T> ObjectMapper<T> mapper(UpdateResponse<T> response) {
+	public <T> ObjectMapper<T> forResponse(UpdateResponse<T> response) {
 
 		Collection<LrAttribute> ids = response.getEntity().getLrEntity().getIds();
 		ASTPath[] paths = new ASTPath[ids.size()];

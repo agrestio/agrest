@@ -1,6 +1,7 @@
 package com.nhl.link.rest.it.noadapter;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
@@ -15,7 +16,9 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
 import com.nhl.link.rest.it.fixture.resource.E16Resource;
+
 import org.apache.cayenne.Cayenne;
+import org.apache.cayenne.query.ObjectSelect;
 import org.apache.cayenne.query.SQLSelect;
 import org.apache.cayenne.query.SQLTemplate;
 import org.apache.cayenne.query.SelectQuery;
@@ -45,7 +48,8 @@ public class POST_IT extends JerseyTestOnDerby {
 				Entity.entity("{\"cVarchar\":\"zzz\"}", MediaType.APPLICATION_JSON));
 		assertEquals(Status.CREATED.getStatusCode(), response1.getStatus());
 
-		E4 e41 = (E4) Cayenne.objectForQuery(context, new SelectQuery<E4>(E4.class));
+		E4 e41 = ObjectSelect.query(E4.class).selectFirst(context);
+		assertNotNull(e41);
 		assertEquals("zzz", e41.getCVarchar());
 		int id1 = Cayenne.intPKForObject(e41);
 
