@@ -37,6 +37,7 @@ import com.nhl.link.rest.runtime.parser.sort.ISortProcessor;
 import com.nhl.link.rest.runtime.parser.sort.SortProcessor;
 import com.nhl.link.rest.runtime.parser.tree.ITreeProcessor;
 import com.nhl.link.rest.runtime.parser.tree.IncludeExcludeProcessor;
+import com.nhl.link.rest.runtime.processor.select.SelectContext;
 import com.nhl.link.rest.runtime.semantics.RelationshipMapper;
 import com.nhl.link.rest.unit.TestWithCayenneMapping;
 import com.nhl.link.rest.update.UpdateFilter;
@@ -70,26 +71,29 @@ public class RequestParser_WithPojoTest extends TestWithCayenneMapping {
 	@Test
 	public void testSelectRequest_Default() {
 
-		UriInfo urlInfo = mock(UriInfo.class);
 		@SuppressWarnings("unchecked")
 		MultivaluedMap<String, String> params = mock(MultivaluedMap.class);
-		when(urlInfo.getQueryParameters()).thenReturn(params);
 
-		DataResponse<P1> req1 = DataResponse.forType(P1.class);
-		parser.parseSelect(req1, urlInfo, null);
+		UriInfo uriInfo = mock(UriInfo.class);
+		when(uriInfo.getQueryParameters()).thenReturn(params);
 
-		assertNotNull(req1);
-		ResourceEntity<P1> ce1 = req1.getEntity();
+		SelectContext<P1> context = new SelectContext<>(P1.class);
+		context.setResponse(DataResponse.forType(P1.class));
+		context.setUriInfo(uriInfo);
+		parser.parseSelect(context);
+
+		ResourceEntity<P1> ce1 = context.getResponse().getEntity();
 		assertNotNull(ce1);
 		assertTrue(ce1.isIdIncluded());
 		assertEquals(1, ce1.getAttributes().size());
 		assertTrue(ce1.getChildren().isEmpty());
 
-		DataResponse<P2> req2 = DataResponse.forType(P2.class);
-		parser.parseSelect(req2, urlInfo, null);
+		SelectContext<P2> context2 = new SelectContext<>(P2.class);
+		context2.setResponse(DataResponse.forType(P2.class));
+		context2.setUriInfo(uriInfo);
+		parser.parseSelect(context2);
 
-		assertNotNull(req2);
-		ResourceEntity<P2> ce2 = req2.getEntity();
+		ResourceEntity<P2> ce2 = context2.getResponse().getEntity();
 		assertNotNull(ce2);
 		assertTrue(ce2.isIdIncluded());
 		assertEquals(1, ce2.getAttributes().size());
@@ -99,18 +103,19 @@ public class RequestParser_WithPojoTest extends TestWithCayenneMapping {
 	@Test
 	public void testSelectRequest_IncludeRels() {
 
-		UriInfo urlInfo = mock(UriInfo.class);
 		@SuppressWarnings("unchecked")
 		MultivaluedMap<String, String> params = mock(MultivaluedMap.class);
 		when(params.get("include")).thenReturn(Arrays.asList("p1"));
 
-		when(urlInfo.getQueryParameters()).thenReturn(params);
+		UriInfo uriInfo = mock(UriInfo.class);
+		when(uriInfo.getQueryParameters()).thenReturn(params);
 
-		DataResponse<P2> req2 = DataResponse.forType(P2.class);
-		parser.parseSelect(req2, urlInfo, null);
+		SelectContext<P2> context2 = new SelectContext<>(P2.class);
+		context2.setResponse(DataResponse.forType(P2.class));
+		context2.setUriInfo(uriInfo);
+		parser.parseSelect(context2);
 
-		assertNotNull(req2);
-		ResourceEntity<P2> ce2 = req2.getEntity();
+		ResourceEntity<P2> ce2 = context2.getResponse().getEntity();
 		assertNotNull(ce2);
 		assertTrue(ce2.isIdIncluded());
 		assertEquals(1, ce2.getAttributes().size());

@@ -3,6 +3,7 @@ Release 1.16
 #93 Remove methods deprecated since 1.14
 #94 Chain-of-responsibility execution pipeline
 #95 refactoring DAO concept to IProcessorFactory
+#96 Switching IRequestParser to the use of contexts
 
 Release 1.15
 

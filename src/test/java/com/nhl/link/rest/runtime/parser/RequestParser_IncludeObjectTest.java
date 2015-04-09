@@ -31,6 +31,7 @@ import com.nhl.link.rest.runtime.parser.sort.ISortProcessor;
 import com.nhl.link.rest.runtime.parser.sort.SortProcessor;
 import com.nhl.link.rest.runtime.parser.tree.ITreeProcessor;
 import com.nhl.link.rest.runtime.parser.tree.IncludeExcludeProcessor;
+import com.nhl.link.rest.runtime.processor.select.SelectContext;
 import com.nhl.link.rest.runtime.semantics.RelationshipMapper;
 import com.nhl.link.rest.unit.TestWithCayenneMapping;
 import com.nhl.link.rest.update.UpdateFilter;
@@ -62,14 +63,15 @@ public class RequestParser_IncludeObjectTest extends TestWithCayenneMapping {
 		MultivaluedMap<String, String> params = mock(MultivaluedMap.class);
 		when(params.get("include")).thenReturn(Arrays.asList("{\"path\":\"e3s\"}"));
 
-		UriInfo urlInfo = mock(UriInfo.class);
-		when(urlInfo.getQueryParameters()).thenReturn(params);
+		UriInfo uriInfo = mock(UriInfo.class);
+		when(uriInfo.getQueryParameters()).thenReturn(params);
 
-		DataResponse<E2> dataRequest = DataResponse.forType(E2.class);
-		parser.parseSelect(dataRequest, urlInfo, null);
+		SelectContext<E2> context = new SelectContext<>(E2.class);
+		context.setResponse(DataResponse.forType(E2.class));
+		context.setUriInfo(uriInfo);
+		parser.parseSelect(context);
 
-		assertNotNull(dataRequest);
-		ResourceEntity<E2> resourceEntity = dataRequest.getEntity();
+		ResourceEntity<E2> resourceEntity = context.getResponse().getEntity();
 		assertNotNull(resourceEntity);
 		assertTrue(resourceEntity.isIdIncluded());
 
@@ -84,14 +86,15 @@ public class RequestParser_IncludeObjectTest extends TestWithCayenneMapping {
 		MultivaluedMap<String, String> params = mock(MultivaluedMap.class);
 		when(params.get("include")).thenReturn(Arrays.asList("{\"path\":\"e3s\",\"mapBy\":\"e5\"}"));
 
-		UriInfo urlInfo = mock(UriInfo.class);
-		when(urlInfo.getQueryParameters()).thenReturn(params);
+		UriInfo uriInfo = mock(UriInfo.class);
+		when(uriInfo.getQueryParameters()).thenReturn(params);
 
-		DataResponse<E2> dataRequest = DataResponse.forType(E2.class);
-		parser.parseSelect(dataRequest, urlInfo, null);
+		SelectContext<E2> context = new SelectContext<>(E2.class);
+		context.setResponse(DataResponse.forType(E2.class));
+		context.setUriInfo(uriInfo);
+		parser.parseSelect(context);
 
-		assertNotNull(dataRequest);
-		ResourceEntity<E2> resourceEntity = dataRequest.getEntity();
+		ResourceEntity<E2> resourceEntity = context.getResponse().getEntity();
 		assertNotNull(resourceEntity);
 
 		ResourceEntity<?> mapBy = resourceEntity.getChildren().get(E2.E3S.getName()).getMapBy();

@@ -19,6 +19,8 @@ import com.nhl.link.rest.runtime.parser.converter.IJsonValueConverterFactory;
 import com.nhl.link.rest.runtime.parser.filter.IFilterProcessor;
 import com.nhl.link.rest.runtime.parser.sort.ISortProcessor;
 import com.nhl.link.rest.runtime.parser.tree.ITreeProcessor;
+import com.nhl.link.rest.runtime.processor.select.SelectContext;
+import com.nhl.link.rest.runtime.processor.update.UpdateContext;
 import com.nhl.link.rest.runtime.semantics.IRelationshipMapper;
 import com.nhl.link.rest.update.UpdateFilter;
 
@@ -57,22 +59,26 @@ public class RequestParser implements IRequestParser {
 		return new DataObjectProcessor(jacksonService, associationHandler, jsonValueConverterFactory);
 	}
 
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
-	public <T> DataResponse<T> parseSelect(DataResponse<T> response, UriInfo uriInfo, String autocompleteProperty) {
+	public void parseSelect(SelectContext<?> context) {
 
-		if (response == null) {
-			throw new LinkRestException(Status.INTERNAL_SERVER_ERROR, "Null response");
+		if (context == null) {
+			throw new LinkRestException(Status.INTERNAL_SERVER_ERROR, "Null context");
 		}
 
-		LrEntity<T> entity = metadataService.getLrEntity(response.getType());
+		LrEntity<?> entity = metadataService.getLrEntity(context.getType());
 
-		ResourceEntity<T> rootDescriptor = new ResourceEntity<T>(entity);
+		DataResponse<?> response = context.getResponse();
+
+		ResourceEntity rootDescriptor = new ResourceEntity(entity);
 		response.resourceEntity(rootDescriptor);
-		response.withQueryProperty(autocompleteProperty);
+		response.withQueryProperty(context.getAutocompleteProperty());
 
 		// selectById can send us a null uriInfo; still we want to run through
 		// the processors in this case to init the defaults
 
+		UriInfo uriInfo = context.getUriInfo();
 		MultivaluedMap<String, String> parameters = uriInfo != null ? uriInfo.getQueryParameters()
 				: EmptyMultiValuedMap.map();
 
@@ -83,32 +89,29 @@ public class RequestParser implements IRequestParser {
 		treeProcessor.process(response, uriInfo);
 		sortProcessor.process(response, uriInfo);
 		filterProcessor.process(response, uriInfo);
-
-		return response;
 	}
 
-	/**
-	 * @since 1.3
-	 */
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
-	public <T> UpdateResponse<T> parseUpdate(UpdateResponse<T> response, UriInfo uriInfo, String requestBody) {
-		if (response == null) {
-			throw new LinkRestException(Status.INTERNAL_SERVER_ERROR, "Null response");
+	public void parseUpdate(UpdateContext<?> context) {
+		if (context == null) {
+			throw new LinkRestException(Status.INTERNAL_SERVER_ERROR, "Null context");
 		}
 
-		LrEntity<T> entity = metadataService.getLrEntity(response.getType());
-		ResourceEntity<T> resourceEntity = new ResourceEntity<T>(entity);
+		LrEntity<?> entity = metadataService.getLrEntity(context.getType());
+		ResourceEntity resourceEntity = new ResourceEntity(entity);
+
+		UpdateResponse<?> response = context.getResponse();
+
 		response.resourceEntity(resourceEntity);
 
-		treeProcessor.process(response, uriInfo);
+		treeProcessor.process(response, context.getUriInfo());
 
-		dataObjectProcessor.process(response, requestBody);
+		dataObjectProcessor.process(response, context.getEntityData());
 
 		for (UpdateFilter f : updateFilters) {
 			response = f.afterParse(response);
 		}
-
-		return response;
 	}
 
 }

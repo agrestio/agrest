@@ -15,6 +15,6 @@ public class UpdateApplyRequestStage extends ProcessingStage<UpdateContext<?>> {
 
 	@Override
 	protected void doExecute(UpdateContext<?> context) {
-		requestParser.parseUpdate(context.getResponse(), context.getUriInfo(), context.getEntityData());
+		requestParser.parseUpdate(context);
 	}
 }

@@ -1,7 +1,7 @@
 package com.nhl.link.rest.runtime.processor.select;
 
-import com.nhl.link.rest.processor.Processor;
 import com.nhl.link.rest.processor.ProcessingStage;
+import com.nhl.link.rest.processor.Processor;
 import com.nhl.link.rest.runtime.parser.IRequestParser;
 
 /**
@@ -18,6 +18,6 @@ public class ApplyRequestStage extends ProcessingStage<SelectContext<?>> {
 
 	@Override
 	protected void doExecute(SelectContext<?> context) {
-		requestParser.parseSelect(context.getResponse(), context.getUriInfo(), context.getAutocompleteProperty());
+		requestParser.parseSelect(context);
 	}
 }
