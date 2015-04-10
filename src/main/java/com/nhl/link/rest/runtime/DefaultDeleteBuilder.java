@@ -16,9 +16,9 @@ import com.nhl.link.rest.runtime.processor.delete.DeleteContext;
 public class DefaultDeleteBuilder<T> implements DeleteBuilder<T> {
 
 	protected DeleteContext<T> context;
-	private Processor<DeleteContext<T>> processor;
+	private Processor<DeleteContext<T>, T> processor;
 
-	public DefaultDeleteBuilder(DeleteContext<T> context, Processor<DeleteContext<T>> processor) {
+	public DefaultDeleteBuilder(DeleteContext<T> context, Processor<DeleteContext<T>, T> processor) {
 		this.context = context;
 		this.processor = processor;
 	}

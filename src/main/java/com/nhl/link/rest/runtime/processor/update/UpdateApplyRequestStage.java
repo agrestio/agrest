@@ -4,17 +4,17 @@ import com.nhl.link.rest.processor.ProcessingStage;
 import com.nhl.link.rest.processor.Processor;
 import com.nhl.link.rest.runtime.parser.IRequestParser;
 
-public class UpdateApplyRequestStage extends ProcessingStage<UpdateContext<?>> {
+public class UpdateApplyRequestStage<T> extends ProcessingStage<UpdateContext<T>, T> {
 
 	private IRequestParser requestParser;
 
-	public UpdateApplyRequestStage(Processor<UpdateContext<?>> next, IRequestParser requestParser) {
+	public UpdateApplyRequestStage(Processor<UpdateContext<T>, ? super T> next, IRequestParser requestParser) {
 		super(next);
 		this.requestParser = requestParser;
 	}
 
 	@Override
-	protected void doExecute(UpdateContext<?> context) {
+	protected void doExecute(UpdateContext<T> context) {
 		requestParser.parseUpdate(context);
 	}
 }

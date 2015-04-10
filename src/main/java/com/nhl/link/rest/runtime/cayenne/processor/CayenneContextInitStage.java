@@ -10,7 +10,7 @@ import com.nhl.link.rest.runtime.cayenne.ICayennePersister;
 /**
  * @since 1.16
  */
-public class CayenneContextInitStage<C extends ProcessingContext<?>> extends ProcessingStage<C> {
+public class CayenneContextInitStage<C extends ProcessingContext<T>, T> extends ProcessingStage<C, T> {
 
 	private static final String UPDATE_OBJECT_CONTEXT_ATTRIBITE = "updateContext";
 
@@ -24,7 +24,7 @@ public class CayenneContextInitStage<C extends ProcessingContext<?>> extends Pro
 
 	private ICayennePersister persister;
 
-	public CayenneContextInitStage(Processor<C> next, ICayennePersister persister) {
+	public CayenneContextInitStage(Processor<C, ? super T> next, ICayennePersister persister) {
 		super(next);
 		this.persister = persister;
 	}

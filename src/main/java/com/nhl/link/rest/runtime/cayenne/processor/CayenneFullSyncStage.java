@@ -18,14 +18,14 @@ import com.nhl.link.rest.runtime.processor.update.UpdateContext;
 /**
  * @since 1.16
  */
-public class CayenneFullSyncStage extends CayenneCreateOrUpdateStage {
+public class CayenneFullSyncStage<T extends DataObject> extends CayenneCreateOrUpdateStage<T> {
 
-	public CayenneFullSyncStage(Processor<UpdateContext<?>> next, boolean idempotent) {
+	public CayenneFullSyncStage(Processor<UpdateContext<T>, ? super T> next, boolean idempotent) {
 		super(next, idempotent);
 	}
 
 	@Override
-	protected <T> void sync(UpdateContext<T> context) {
+	protected void sync(UpdateContext<T> context) {
 
 		ObjectMapper<T> mapper = createObjectMapper(context);
 		Map<Object, Collection<EntityUpdate>> keyMap = mutableKeyMap(context, mapper);
@@ -55,7 +55,7 @@ public class CayenneFullSyncStage extends CayenneCreateOrUpdateStage {
 		afterUpdatesMerge(context, keyMap);
 	}
 
-	<T> List<T> allItems(UpdateContext<T> context) {
+	List<T> allItems(UpdateContext<T> context) {
 		SelectQuery<T> query = SelectQuery.query(context.getType());
 
 		UpdateResponse<T> response = context.getResponse();

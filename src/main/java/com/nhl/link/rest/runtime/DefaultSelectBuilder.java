@@ -30,9 +30,9 @@ public class DefaultSelectBuilder<T> implements SelectBuilder<T> {
 	private static final Logger logger = LoggerFactory.getLogger(DefaultSelectBuilder.class);
 
 	protected SelectContext<T> context;
-	protected Processor<SelectContext<T>> processor;
+	protected Processor<SelectContext<T>, T> processor;
 
-	public DefaultSelectBuilder(SelectContext<T> context, Processor<SelectContext<T>> processor) {
+	public DefaultSelectBuilder(SelectContext<T> context, Processor<SelectContext<T>, T> processor) {
 		this.context = context;
 		this.processor = processor;
 	}

@@ -10,12 +10,12 @@ import com.nhl.link.rest.runtime.encoder.IEncoderService;
 /**
  * @since 1.16
  */
-public class ApplyServerParamsStage extends ProcessingStage<SelectContext<?>> {
+public class ApplyServerParamsStage<T> extends ProcessingStage<SelectContext<T>, T> {
 
 	private IConstraintsHandler constraintsHandler;
 	private IEncoderService encoderService;
 
-	public ApplyServerParamsStage(Processor<SelectContext<?>> next, IEncoderService encoderService,
+	public ApplyServerParamsStage(Processor<SelectContext<T>, ? super T> next, IEncoderService encoderService,
 			IConstraintsHandler constraintsHandler) {
 
 		super(next);
@@ -26,7 +26,7 @@ public class ApplyServerParamsStage extends ProcessingStage<SelectContext<?>> {
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
-	protected void doExecute(SelectContext<?> context) {
+	protected void doExecute(SelectContext<T> context) {
 
 		DataResponse response = context.getResponse();
 

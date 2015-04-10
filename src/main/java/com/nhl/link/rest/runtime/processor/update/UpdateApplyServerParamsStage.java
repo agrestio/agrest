@@ -22,13 +22,13 @@ import com.nhl.link.rest.runtime.constraints.IConstraintsHandler;
 import com.nhl.link.rest.runtime.encoder.IEncoderService;
 import com.nhl.link.rest.runtime.meta.IMetadataService;
 
-public class UpdateApplyServerParamsStage extends ProcessingStage<UpdateContext<?>> {
+public class UpdateApplyServerParamsStage<T> extends ProcessingStage<UpdateContext<T>, T> {
 
 	private IEncoderService encoderService;
 	private IConstraintsHandler constraintsHandler;
 	private IMetadataService metadataService;
 
-	public UpdateApplyServerParamsStage(Processor<UpdateContext<?>> next, IEncoderService encoderService,
+	public UpdateApplyServerParamsStage(Processor<UpdateContext<T>, ? super T> next, IEncoderService encoderService,
 			IConstraintsHandler constraintsHandler, IMetadataService metadataService) {
 		super(next);
 		this.encoderService = encoderService;
@@ -36,11 +36,10 @@ public class UpdateApplyServerParamsStage extends ProcessingStage<UpdateContext<
 		this.metadataService = metadataService;
 	}
 
-	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
-	protected void doExecute(UpdateContext<?> context) {
+	protected void doExecute(UpdateContext<T> context) {
 
-		UpdateResponse response = context.getResponse();
+		UpdateResponse<T> response = context.getResponse();
 		response.parent(context.getParent());
 
 		if (context.isIncludingDataInResponse()) {
@@ -63,7 +62,7 @@ public class UpdateApplyServerParamsStage extends ProcessingStage<UpdateContext<
 		response.withEncoder(encoderService.makeEncoder(response));
 	}
 
-	private <T> void processExplicitId(UpdateContext<T> context) {
+	private void processExplicitId(UpdateContext<T> context) {
 
 		if (context.getId() != null) {
 
@@ -88,7 +87,7 @@ public class UpdateApplyServerParamsStage extends ProcessingStage<UpdateContext<
 		}
 	}
 
-	private <T> void processParentId(UpdateContext<T> context) {
+	private void processParentId(UpdateContext<T> context) {
 
 		EntityParent<?> parent = context.getParent();
 

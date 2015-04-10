@@ -5,11 +5,11 @@ package com.nhl.link.rest.processor;
  * 
  * @since 1.16
  */
-public abstract class ProcessingStage<C extends ProcessingContext<?>> implements Processor<C> {
+public abstract class ProcessingStage<C extends ProcessingContext<T>, T> implements Processor<C, T> {
 
-	private Processor<C> next;
+	private Processor<C, ? super T> next;
 
-	public ProcessingStage(Processor<C> next) {
+	public ProcessingStage(Processor<C, ? super T> next) {
 		this.next = next;
 	}
 

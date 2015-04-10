@@ -9,6 +9,7 @@ import java.util.Map;
 
 import javax.ws.rs.core.Response.Status;
 
+import org.apache.cayenne.DataObject;
 import org.apache.cayenne.exp.Expression;
 import org.apache.cayenne.exp.ExpressionFactory;
 import org.apache.cayenne.query.SelectQuery;
@@ -25,14 +26,14 @@ import com.nhl.link.rest.runtime.processor.update.UpdateContext;
 /**
  * @since 1.16
  */
-public class CayenneUpdateStage extends BaseCayenneUpdateStage {
+public class CayenneUpdateStage<T extends DataObject> extends BaseCayenneUpdateStage<T> {
 
-	public CayenneUpdateStage(Processor<UpdateContext<?>> next) {
+	public CayenneUpdateStage(Processor<UpdateContext<T>, ? super T> next) {
 		super(next);
 	}
 
 	@Override
-	protected <T> void sync(UpdateContext<T> context) {
+	protected void sync(UpdateContext<T> context) {
 
 		ObjectMapper<T> mapper = createObjectMapper(context);
 
@@ -56,7 +57,7 @@ public class CayenneUpdateStage extends BaseCayenneUpdateStage {
 		afterUpdatesMerge(context, keyMap);
 	}
 
-	protected void afterUpdatesMerge(UpdateContext<?> context, Map<Object, Collection<EntityUpdate>> keyMap) {
+	protected void afterUpdatesMerge(UpdateContext<T> context, Map<Object, Collection<EntityUpdate>> keyMap) {
 		if (!keyMap.isEmpty()) {
 			Object firstKey = keyMap.keySet().iterator().next();
 
@@ -70,7 +71,7 @@ public class CayenneUpdateStage extends BaseCayenneUpdateStage {
 		}
 	}
 
-	protected <T> Map<Object, Collection<EntityUpdate>> mutableKeyMap(UpdateContext<T> context, ObjectMapper<T> mapper) {
+	protected Map<Object, Collection<EntityUpdate>> mutableKeyMap(UpdateContext<T> context, ObjectMapper<T> mapper) {
 
 		Collection<EntityUpdate> updates = context.getResponse().getUpdates();
 
@@ -92,13 +93,13 @@ public class CayenneUpdateStage extends BaseCayenneUpdateStage {
 		return map;
 	}
 
-	protected <T> ObjectMapper<T> createObjectMapper(UpdateContext<T> context) {
+	protected ObjectMapper<T> createObjectMapper(UpdateContext<T> context) {
 		ObjectMapperFactory mapper = context.getMapper() != null ? context.getMapper() : ByIdObjectMapperFactory
 				.mapper();
 		return mapper.forResponse(context.getResponse());
 	}
 
-	<T> List<T> itemsForKeys(UpdateContext<T> context, Collection<Object> keys, ObjectMapper<T> mapper) {
+	List<T> itemsForKeys(UpdateContext<T> context, Collection<Object> keys, ObjectMapper<T> mapper) {
 
 		// TODO: split query in batches:
 		// respect Constants.SERVER_MAX_ID_QUALIFIER_SIZE_PROPERTY

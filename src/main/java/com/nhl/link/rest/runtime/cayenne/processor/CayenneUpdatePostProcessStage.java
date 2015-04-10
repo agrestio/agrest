@@ -1,4 +1,4 @@
-package com.nhl.link.rest.runtime.processor.update;
+package com.nhl.link.rest.runtime.cayenne.processor;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -7,31 +7,32 @@ import java.util.Set;
 
 import javax.ws.rs.core.Response.Status;
 
+import org.apache.cayenne.DataObject;
 import org.apache.cayenne.ObjectId;
-import org.apache.cayenne.Persistent;
 
 import com.nhl.link.rest.EntityUpdate;
 import com.nhl.link.rest.UpdateResponse;
 import com.nhl.link.rest.processor.ProcessingStage;
 import com.nhl.link.rest.processor.Processor;
+import com.nhl.link.rest.runtime.processor.update.UpdateContext;
 
 /**
  * @since 1.16
  */
-public class UpdatePostProcessStage extends ProcessingStage<UpdateContext<?>> {
+public class CayenneUpdatePostProcessStage<T extends DataObject> extends ProcessingStage<UpdateContext<T>, T> {
 
 	private Status status;
 
-	public UpdatePostProcessStage(Processor<UpdateContext<?>> next, Status status) {
+	public CayenneUpdatePostProcessStage(Processor<UpdateContext<T>, ? super T> next, Status status) {
 		super(next);
 		this.status = status;
 	}
 
-	@SuppressWarnings({ "rawtypes", "unchecked" })
+	@SuppressWarnings("unchecked")
 	@Override
-	protected void doExecute(UpdateContext<?> context) {
+	protected void doExecute(UpdateContext<T> context) {
 
-		UpdateResponse<?> response = context.getResponse();
+		UpdateResponse<T> response = context.getResponse();
 		response.withStatus(status);
 
 		// response objects are attached to EntityUpdate instances ... if
@@ -45,9 +46,7 @@ public class UpdatePostProcessStage extends ProcessingStage<UpdateContext<?>> {
 
 			// if there are dupes, the list size will be smaller... sizing it
 			// pessimistically
-			List objects = new ArrayList<>(response.getUpdates().size());
-
-			// TODO: Cayenne API leak - here we should not know about ObjectId.
+			List<T> objects = new ArrayList<>(response.getUpdates().size());
 
 			// 'seen' is for a less common case of multiple updates per object
 			// in a request
@@ -55,7 +54,7 @@ public class UpdatePostProcessStage extends ProcessingStage<UpdateContext<?>> {
 
 			for (EntityUpdate u : response.getUpdates()) {
 
-				Persistent o = (Persistent) u.getMergedTo();
+				T o = (T) u.getMergedTo();
 				if (o != null && seen.add(o.getObjectId())) {
 					objects.add(o);
 				}

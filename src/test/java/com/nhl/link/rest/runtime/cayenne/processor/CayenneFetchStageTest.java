@@ -20,17 +20,16 @@ import com.nhl.link.rest.it.fixture.cayenne.E2;
 import com.nhl.link.rest.it.fixture.cayenne.E3;
 import com.nhl.link.rest.meta.LrPersistentEntity;
 import com.nhl.link.rest.meta.LrRelationship;
-import com.nhl.link.rest.runtime.cayenne.processor.CayenneFetchStage;
 import com.nhl.link.rest.runtime.processor.select.SelectContext;
 import com.nhl.link.rest.unit.TestWithCayenneMapping;
 
 public class CayenneFetchStageTest extends TestWithCayenneMapping {
 
-	private CayenneFetchStage fetchStage;
+	private CayenneFetchStage<Object> fetchStage;
 
 	@Before
 	public void before() {
-		this.fetchStage = new CayenneFetchStage(null, mockCayennePersister);
+		this.fetchStage = new CayenneFetchStage<>(null, mockCayennePersister);
 	}
 
 	@Test

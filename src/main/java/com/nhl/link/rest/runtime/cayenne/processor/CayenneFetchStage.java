@@ -16,30 +16,29 @@ import com.nhl.link.rest.LinkRestException;
 import com.nhl.link.rest.ResourceEntity;
 import com.nhl.link.rest.meta.LrEntity;
 import com.nhl.link.rest.meta.LrPersistentAttribute;
-import com.nhl.link.rest.processor.Processor;
 import com.nhl.link.rest.processor.ProcessingStage;
+import com.nhl.link.rest.processor.Processor;
 import com.nhl.link.rest.runtime.cayenne.ICayennePersister;
 import com.nhl.link.rest.runtime.processor.select.SelectContext;
 
 /**
  * @since 1.16
  */
-public class CayenneFetchStage extends ProcessingStage<SelectContext<?>> {
+public class CayenneFetchStage<T> extends ProcessingStage<SelectContext<T>, T> {
 
 	private ICayennePersister persister;
 
-	public CayenneFetchStage(Processor<SelectContext<?>> next, ICayennePersister persister) {
+	public CayenneFetchStage(Processor<SelectContext<T>, ? super T> next, ICayennePersister persister) {
 		super(next);
 		this.persister = persister;
 	}
 
-	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
-	protected void doExecute(SelectContext<?> context) {
-		DataResponse response = context.getResponse();
-		SelectQuery select = buildQuery(context);
+	protected void doExecute(SelectContext<T> context) {
+		DataResponse<T> response = context.getResponse();
+		SelectQuery<T> select = buildQuery(context);
 
-		List objects = persister.sharedContext().select(select);
+		List<T> objects = persister.sharedContext().select(select);
 
 		if (context.isAtMostOneObject() && objects.size() != 1) {
 
@@ -57,12 +56,12 @@ public class CayenneFetchStage extends ProcessingStage<SelectContext<?>> {
 		response.withObjects(persister.sharedContext().select(select));
 	}
 
-	<T> SelectQuery<T> buildQuery(SelectContext<T> context) {
+	<X extends T> SelectQuery<X> buildQuery(SelectContext<X> context) {
 
-		DataResponse<T> response = context.getResponse();
-		ResourceEntity<T> entity = response.getEntity();
+		DataResponse<X> response = context.getResponse();
+		ResourceEntity<X> entity = response.getEntity();
 
-		SelectQuery<T> query = basicSelect(context);
+		SelectQuery<X> query = basicSelect(context);
 
 		if (context.getParent() != null) {
 			Expression qualifier = context.getParent().qualifier(persister.entityResolver());
@@ -95,18 +94,18 @@ public class CayenneFetchStage extends ProcessingStage<SelectContext<?>> {
 		return query;
 	}
 
-	<T> SelectQuery<T> basicSelect(SelectContext<T> context) {
+	<X extends T> SelectQuery<X> basicSelect(SelectContext<X> context) {
 
 		// selecting by ID overrides any explicit SelectQuery...
 		if (context.isById()) {
 
-			Class<T> root = context.getType();
+			Class<X> root = context.getType();
 
 			// TODO: compound PK
 			LrPersistentAttribute idAttribute = (LrPersistentAttribute) context.getResponse().getEntity().getLrEntity()
 					.getSingleId();
 
-			SelectQuery<T> query = new SelectQuery<T>(root);
+			SelectQuery<X> query = new SelectQuery<>(root);
 			query.andQualifier(ExpressionFactory.matchDbExp(idAttribute.getDbAttribute().getName(), context.getId()));
 			return query;
 		}

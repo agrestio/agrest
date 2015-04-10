@@ -12,6 +12,6 @@ public interface IProcessorFactory {
 	/**
 	 * Returns a map of processors by context type and operation name.
 	 */
-	Map<Class<?>, Map<String, Processor<?>>> processors();
+	Map<Class<?>, Map<String, Processor<?, ?>>> processors();
 
 }

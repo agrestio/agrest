@@ -22,17 +22,17 @@ import com.nhl.link.rest.runtime.processor.unrelate.UnrelateContext;
 /**
  * @since 1.16
  */
-public class CayenneUnrelateStage extends ProcessingStage<UnrelateContext<?>> {
+public class CayenneUnrelateStage<T> extends ProcessingStage<UnrelateContext<T>, T> {
 
 	private IMetadataService metadataService;
 
-	public CayenneUnrelateStage(Processor<UnrelateContext<?>> next, IMetadataService metadataService) {
+	public CayenneUnrelateStage(Processor<UnrelateContext<T>, ? super T> next, IMetadataService metadataService) {
 		super(next);
 		this.metadataService = metadataService;
 	}
 
 	@Override
-	protected void doExecute(UnrelateContext<?> context) {
+	protected void doExecute(UnrelateContext<T> context) {
 
 		ObjectContext cayenneContext = CayenneContextInitStage.cayenneContext(context);
 
@@ -48,8 +48,8 @@ public class CayenneUnrelateStage extends ProcessingStage<UnrelateContext<?>> {
 		// validate relationship before doing anything else
 		LrRelationship relationship = metadataService.getLrRelationship(context.getParent());
 
-		DataObject parent = (DataObject) getExistingObject(context.getParent().getType(), cayenneContext, context.getParent()
-				.getId());
+		DataObject parent = (DataObject) getExistingObject(context.getParent().getType(), cayenneContext, context
+				.getParent().getId());
 
 		Class<?> childType = metadataService.getLrEntity(relationship.getTargetEntityType()).getType();
 
@@ -82,7 +82,8 @@ public class CayenneUnrelateStage extends ProcessingStage<UnrelateContext<?>> {
 		// validate relationship before doing anything else
 		LrRelationship lrRelationship = metadataService.getLrRelationship(context.getParent());
 
-		DataObject parent = (DataObject) getExistingObject(context.getParent().getType(), cayenneContext, context.getParent().getId());
+		DataObject parent = (DataObject) getExistingObject(context.getParent().getType(), cayenneContext, context
+				.getParent().getId());
 
 		if (lrRelationship.isToMany()) {
 

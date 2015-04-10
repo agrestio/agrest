@@ -25,21 +25,21 @@ import com.nhl.link.rest.runtime.processor.update.UpdateContext;
 /**
  * @since 1.16
  */
-public abstract class BaseCayenneUpdateStage extends ProcessingStage<UpdateContext<?>> {
+public abstract class BaseCayenneUpdateStage<T extends DataObject> extends ProcessingStage<UpdateContext<T>, T> {
 
-	public BaseCayenneUpdateStage(Processor<UpdateContext<?>> next) {
+	public BaseCayenneUpdateStage(Processor<UpdateContext<T>, ? super T> next) {
 		super(next);
 	}
 
 	@Override
-	protected void doExecute(UpdateContext<?> context) {
+	protected void doExecute(UpdateContext<T> context) {
 		sync(context);
 		CayenneContextInitStage.cayenneContext(context).commitChanges();
 	}
 
-	protected abstract <T> void sync(UpdateContext<T> context);
+	protected abstract void sync(UpdateContext<T> context);
 
-	protected void create(UpdateContext<?> context) {
+	protected void create(UpdateContext<T> context) {
 
 		ObjectRelator relator = createRelator(context);
 
@@ -48,7 +48,7 @@ public abstract class BaseCayenneUpdateStage extends ProcessingStage<UpdateConte
 		}
 	}
 
-	protected <T> void updateSingle(UpdateContext<T> context, T o, Collection<EntityUpdate> updates) {
+	protected void updateSingle(UpdateContext<T> context, T o, Collection<EntityUpdate> updates) {
 
 		DataObject dataO = (DataObject) o;
 		ObjectRelator relator = createRelator(context);
@@ -60,10 +60,10 @@ public abstract class BaseCayenneUpdateStage extends ProcessingStage<UpdateConte
 		relator.relate(dataO);
 	}
 
-	protected void createSingle(UpdateContext<?> context, ObjectRelator relator, EntityUpdate u) {
+	protected void createSingle(UpdateContext<T> context, ObjectRelator relator, EntityUpdate u) {
 
 		ObjectContext objectContext = CayenneContextInitStage.cayenneContext(context);
-		DataObject o = (DataObject) objectContext.newObject(context.getType());
+		DataObject o = objectContext.newObject(context.getType());
 		Map<String, Object> idMap = u.getId();
 
 		// set explicit ID
@@ -144,7 +144,7 @@ public abstract class BaseCayenneUpdateStage extends ProcessingStage<UpdateConte
 		entityUpdate.setMergedTo(o);
 	}
 
-	protected ObjectRelator createRelator(UpdateContext<?> context) {
+	protected ObjectRelator createRelator(UpdateContext<T> context) {
 
 		final EntityParent<?> parent = context.getResponse().getParent();
 

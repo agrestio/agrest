@@ -19,14 +19,14 @@ import com.nhl.link.rest.runtime.processor.delete.DeleteContext;
 /**
  * @since 1.16
  */
-public class CayenneDeleteStage extends ProcessingStage<DeleteContext<?>> {
+public class CayenneDeleteStage<T> extends ProcessingStage<DeleteContext<T>, T> {
 
-	public CayenneDeleteStage(Processor<DeleteContext<?>> next) {
+	public CayenneDeleteStage(Processor<DeleteContext<T>, ? super T> next) {
 		super(next);
 	}
 
 	@Override
-	protected void doExecute(DeleteContext<?> context) {
+	protected void doExecute(DeleteContext<T> context) {
 
 		ObjectContext cayenneContext = CayenneContextInitStage.cayenneContext(context);
 

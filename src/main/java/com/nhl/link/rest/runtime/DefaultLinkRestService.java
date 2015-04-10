@@ -32,7 +32,7 @@ import com.nhl.link.rest.runtime.processor.update.UpdateContext;
 public class DefaultLinkRestService implements ILinkRestService {
 
 	private IMetadataService metadataService;
-	private Map<Class<?>, Map<String, Processor<?>>> processors;
+	private Map<Class<?>, Map<String, Processor<?, ?>>> processors;
 
 	public DefaultLinkRestService(@Inject IProcessorFactory processorFactory, @Inject IMetadataService metadataService) {
 		this.processors = processorFactory.processors();
@@ -90,7 +90,7 @@ public class DefaultLinkRestService implements ILinkRestService {
 		UnrelateContext<Object> context = new UnrelateContext(type);
 		context.setParent(new EntityParent<>(type, sourceId, relationship));
 
-		Processor<UnrelateContext<Object>> processor = processor(context);
+		Processor<UnrelateContext<Object>, Object> processor = processor(context);
 		processor.execute(context);
 
 		return context.getResponse();
@@ -117,7 +117,7 @@ public class DefaultLinkRestService implements ILinkRestService {
 		context.setParent(new EntityParent<>(type, sourceId, relationship));
 		context.setId(targetId);
 
-		Processor<UnrelateContext<Object>> processor = processor(context);
+		Processor<UnrelateContext<Object>, Object> processor = processor(context);
 		processor.execute(context);
 
 		return context.getResponse();
@@ -182,13 +182,14 @@ public class DefaultLinkRestService implements ILinkRestService {
 		return new DefaultDeleteBuilder<>(context, processor(context));
 	}
 
-	protected <C extends ProcessingContext<?>> Processor<C> processor(C context) {
+	protected <C extends ProcessingContext<T>, T> Processor<C, T> processor(C context) {
 		return processor(context, null);
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	protected <C extends ProcessingContext<?>> Processor<C> processor(C context, String operation) {
-		Map<String, Processor<?>> forContextType = processors.get(context.getClass());
+	protected <C extends ProcessingContext<T>, T> Processor<C, T> processor(C context, String operation) {
+
+		Map<String, Processor<?, ?>> forContextType = processors.get(context.getClass());
 		if (forContextType == null) {
 			throw new LinkRestException(Status.INTERNAL_SERVER_ERROR, String.format(
 					"Processor is unsupported for context type %s", context.getClass().getName()));

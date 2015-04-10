@@ -6,6 +6,7 @@ import java.util.Map;
 
 import javax.ws.rs.core.Response.Status;
 
+import org.apache.cayenne.DataObject;
 import org.apache.cayenne.di.Inject;
 
 import com.nhl.link.rest.processor.ProcessingStage;
@@ -18,6 +19,7 @@ import com.nhl.link.rest.runtime.cayenne.processor.CayenneDeleteStage;
 import com.nhl.link.rest.runtime.cayenne.processor.CayenneFetchStage;
 import com.nhl.link.rest.runtime.cayenne.processor.CayenneFullSyncStage;
 import com.nhl.link.rest.runtime.cayenne.processor.CayenneUnrelateStage;
+import com.nhl.link.rest.runtime.cayenne.processor.CayenneUpdatePostProcessStage;
 import com.nhl.link.rest.runtime.cayenne.processor.CayenneUpdateStage;
 import com.nhl.link.rest.runtime.constraints.IConstraintsHandler;
 import com.nhl.link.rest.runtime.encoder.IEncoderService;
@@ -36,7 +38,6 @@ import com.nhl.link.rest.runtime.processor.update.UpdateApplyRequestStage;
 import com.nhl.link.rest.runtime.processor.update.UpdateApplyServerParamsStage;
 import com.nhl.link.rest.runtime.processor.update.UpdateContext;
 import com.nhl.link.rest.runtime.processor.update.UpdateInitStage;
-import com.nhl.link.rest.runtime.processor.update.UpdatePostProcessStage;
 
 /**
  * @since 1.16
@@ -60,17 +61,20 @@ public class CayenneProcessorFactory implements IProcessorFactory {
 	}
 
 	@Override
-	public Map<Class<?>, Map<String, Processor<?>>> processors() {
-		Map<Class<?>, Map<String, Processor<?>>> map = new HashMap<>();
-		map.put(SelectContext.class, Collections.<String, Processor<?>> singletonMap(null, createSelectProcessor()));
-		map.put(DeleteContext.class, Collections.<String, Processor<?>> singletonMap(null, createDeleteProcessor()));
-		map.put(UnrelateContext.class, Collections.<String, Processor<?>> singletonMap(null, createUnrelateProcessor()));
+	public Map<Class<?>, Map<String, Processor<?, ?>>> processors() {
+		Map<Class<?>, Map<String, Processor<?, ?>>> map = new HashMap<>();
+		map.put(SelectContext.class, Collections.<String, Processor<?, ?>> singletonMap(null, createSelectProcessor()));
+		map.put(DeleteContext.class, Collections.<String, Processor<?, ?>> singletonMap(null, createDeleteProcessor()));
+		map.put(UnrelateContext.class,
+				Collections.<String, Processor<?, ?>> singletonMap(null, createUnrelateProcessor()));
 		map.put(UpdateContext.class, createUpdateProcessors());
 		return map;
 	}
 
-	private Map<String, Processor<?>> createUpdateProcessors() {
-		Map<String, Processor<?>> map = new HashMap<>();
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	private Map<String, Processor<?, ?>> createUpdateProcessors() {
+
+		Map map = new HashMap<>();
 
 		map.put(UpdateOperation.create.name(), createCreateProcessor());
 		map.put(UpdateOperation.createOrUpdate.name(), createOrUpdateProcessor(false));
@@ -81,82 +85,90 @@ public class CayenneProcessorFactory implements IProcessorFactory {
 		return map;
 	}
 
-	private Processor<UnrelateContext<?>> createUnrelateProcessor() {
-		ProcessingStage<UnrelateContext<?>> stage2 = new CayenneUnrelateStage(null, metadataService);
-		ProcessingStage<UnrelateContext<?>> stage1 = new UnrelateInitStage(stage2);
-		ProcessingStage<UnrelateContext<?>> stage0 = new CayenneContextInitStage<>(stage1, persister);
+	private Processor<UnrelateContext<Object>, Object> createUnrelateProcessor() {
+		ProcessingStage<UnrelateContext<Object>, Object> stage2 = new CayenneUnrelateStage<>(null, metadataService);
+		ProcessingStage<UnrelateContext<Object>, Object> stage1 = new UnrelateInitStage<>(stage2);
+		ProcessingStage<UnrelateContext<Object>, Object> stage0 = new CayenneContextInitStage<>(stage1, persister);
 
 		return stage0;
 	}
 
-	private Processor<DeleteContext<?>> createDeleteProcessor() {
-
-		ProcessingStage<DeleteContext<?>> stage2 = new CayenneDeleteStage(null);
-		ProcessingStage<DeleteContext<?>> stage1 = new DeleteInitStage(stage2);
-		ProcessingStage<DeleteContext<?>> stage0 = new CayenneContextInitStage<>(stage1, persister);
+	private Processor<DeleteContext<Object>, Object> createDeleteProcessor() {
+		ProcessingStage<DeleteContext<Object>, Object> stage2 = new CayenneDeleteStage<>(null);
+		ProcessingStage<DeleteContext<Object>, Object> stage1 = new DeleteInitStage<>(stage2);
+		ProcessingStage<DeleteContext<Object>, Object> stage0 = new CayenneContextInitStage<>(stage1, persister);
 
 		return stage0;
 	}
 
-	private Processor<SelectContext<?>> createSelectProcessor() {
+	private Processor<SelectContext<Object>, Object> createSelectProcessor() {
 
-		ProcessingStage<SelectContext<?>> stage3 = new CayenneFetchStage(null, persister);
-		ProcessingStage<SelectContext<?>> stage2 = new ApplyServerParamsStage(stage3, encoderService,
+		ProcessingStage<SelectContext<Object>, Object> stage3 = new CayenneFetchStage<>(null, persister);
+		ProcessingStage<SelectContext<Object>, Object> stage2 = new ApplyServerParamsStage<>(stage3, encoderService,
 				constraintsHandler);
-		ProcessingStage<SelectContext<?>> stage1 = new ApplyRequestStage(stage2, requestParser);
-		ProcessingStage<SelectContext<?>> stage0 = new SelectInitStage(stage1);
+		ProcessingStage<SelectContext<Object>, Object> stage1 = new ApplyRequestStage<>(stage2, requestParser);
+		ProcessingStage<SelectContext<Object>, Object> stage0 = new SelectInitStage<>(stage1);
 
 		return stage0;
 	}
 
-	private Processor<UpdateContext<?>> createCreateProcessor() {
+	private Processor<UpdateContext<DataObject>, DataObject> createCreateProcessor() {
 
-		ProcessingStage<UpdateContext<?>> stage5 = new UpdatePostProcessStage(null, Status.CREATED);
-		ProcessingStage<UpdateContext<?>> stage4 = new CayenneCreateStage(stage5);
-		ProcessingStage<UpdateContext<?>> stage3 = new UpdateApplyServerParamsStage(stage4, encoderService,
-				constraintsHandler, metadataService);
-		ProcessingStage<UpdateContext<?>> stage2 = new UpdateApplyRequestStage(stage3, requestParser);
-		ProcessingStage<UpdateContext<?>> stage1 = new UpdateInitStage(stage2);
-		ProcessingStage<UpdateContext<?>> stage0 = new CayenneContextInitStage<>(stage1, persister);
-
-		return stage0;
-	}
-
-	private Processor<UpdateContext<?>> createUpdateProcessor() {
-
-		ProcessingStage<UpdateContext<?>> stage5 = new UpdatePostProcessStage(null, Status.OK);
-		ProcessingStage<UpdateContext<?>> stage4 = new CayenneUpdateStage(stage5);
-		ProcessingStage<UpdateContext<?>> stage3 = new UpdateApplyServerParamsStage(stage4, encoderService,
-				constraintsHandler, metadataService);
-		ProcessingStage<UpdateContext<?>> stage2 = new UpdateApplyRequestStage(stage3, requestParser);
-		ProcessingStage<UpdateContext<?>> stage1 = new UpdateInitStage(stage2);
-		ProcessingStage<UpdateContext<?>> stage0 = new CayenneContextInitStage<>(stage1, persister);
+		ProcessingStage<UpdateContext<DataObject>, DataObject> stage5 = new CayenneUpdatePostProcessStage<>(null,
+				Status.CREATED);
+		ProcessingStage<UpdateContext<DataObject>, DataObject> stage4 = new CayenneCreateStage<>(stage5);
+		ProcessingStage<UpdateContext<DataObject>, DataObject> stage3 = new UpdateApplyServerParamsStage<>(stage4,
+				encoderService, constraintsHandler, metadataService);
+		ProcessingStage<UpdateContext<DataObject>, DataObject> stage2 = new UpdateApplyRequestStage<>(stage3,
+				requestParser);
+		ProcessingStage<UpdateContext<DataObject>, DataObject> stage1 = new UpdateInitStage<>(stage2);
+		ProcessingStage<UpdateContext<DataObject>, DataObject> stage0 = new CayenneContextInitStage<>(stage1, persister);
 
 		return stage0;
 	}
 
-	private Processor<UpdateContext<?>> createOrUpdateProcessor(boolean idempotnent) {
+	private Processor<UpdateContext<DataObject>, DataObject> createUpdateProcessor() {
 
-		ProcessingStage<UpdateContext<?>> stage5 = new UpdatePostProcessStage(null, Status.OK);
-		ProcessingStage<UpdateContext<?>> stage4 = new CayenneCreateOrUpdateStage(stage5, idempotnent);
-		ProcessingStage<UpdateContext<?>> stage3 = new UpdateApplyServerParamsStage(stage4, encoderService,
-				constraintsHandler, metadataService);
-		ProcessingStage<UpdateContext<?>> stage2 = new UpdateApplyRequestStage(stage3, requestParser);
-		ProcessingStage<UpdateContext<?>> stage1 = new UpdateInitStage(stage2);
-		ProcessingStage<UpdateContext<?>> stage0 = new CayenneContextInitStage<>(stage1, persister);
+		ProcessingStage<UpdateContext<DataObject>, DataObject> stage5 = new CayenneUpdatePostProcessStage<>(null,
+				Status.OK);
+		ProcessingStage<UpdateContext<DataObject>, DataObject> stage4 = new CayenneUpdateStage<>(stage5);
+		ProcessingStage<UpdateContext<DataObject>, DataObject> stage3 = new UpdateApplyServerParamsStage<>(stage4,
+				encoderService, constraintsHandler, metadataService);
+		ProcessingStage<UpdateContext<DataObject>, DataObject> stage2 = new UpdateApplyRequestStage<>(stage3,
+				requestParser);
+		ProcessingStage<UpdateContext<DataObject>, DataObject> stage1 = new UpdateInitStage<>(stage2);
+		ProcessingStage<UpdateContext<DataObject>, DataObject> stage0 = new CayenneContextInitStage<>(stage1, persister);
 
 		return stage0;
 	}
 
-	private Processor<UpdateContext<?>> createFullSyncProcessor(boolean idempotnent) {
+	private Processor<UpdateContext<DataObject>, DataObject> createOrUpdateProcessor(boolean idempotnent) {
 
-		ProcessingStage<UpdateContext<?>> stage5 = new UpdatePostProcessStage(null, Status.OK);
-		ProcessingStage<UpdateContext<?>> stage4 = new CayenneFullSyncStage(stage5, idempotnent);
-		ProcessingStage<UpdateContext<?>> stage3 = new UpdateApplyServerParamsStage(stage4, encoderService,
-				constraintsHandler, metadataService);
-		ProcessingStage<UpdateContext<?>> stage2 = new UpdateApplyRequestStage(stage3, requestParser);
-		ProcessingStage<UpdateContext<?>> stage1 = new UpdateInitStage(stage2);
-		ProcessingStage<UpdateContext<?>> stage0 = new CayenneContextInitStage<>(stage1, persister);
+		ProcessingStage<UpdateContext<DataObject>, DataObject> stage5 = new CayenneUpdatePostProcessStage<>(null,
+				Status.OK);
+		ProcessingStage<UpdateContext<DataObject>, DataObject> stage4 = new CayenneCreateOrUpdateStage<>(stage5,
+				idempotnent);
+		ProcessingStage<UpdateContext<DataObject>, DataObject> stage3 = new UpdateApplyServerParamsStage<>(stage4,
+				encoderService, constraintsHandler, metadataService);
+		ProcessingStage<UpdateContext<DataObject>, DataObject> stage2 = new UpdateApplyRequestStage<>(stage3,
+				requestParser);
+		ProcessingStage<UpdateContext<DataObject>, DataObject> stage1 = new UpdateInitStage<>(stage2);
+		ProcessingStage<UpdateContext<DataObject>, DataObject> stage0 = new CayenneContextInitStage<>(stage1, persister);
+
+		return stage0;
+	}
+
+	private Processor<UpdateContext<DataObject>, DataObject> createFullSyncProcessor(boolean idempotnent) {
+
+		ProcessingStage<UpdateContext<DataObject>, DataObject> stage5 = new CayenneUpdatePostProcessStage<>(null,
+				Status.OK);
+		ProcessingStage<UpdateContext<DataObject>, DataObject> stage4 = new CayenneFullSyncStage<>(stage5, idempotnent);
+		ProcessingStage<UpdateContext<DataObject>, DataObject> stage3 = new UpdateApplyServerParamsStage<>(stage4,
+				encoderService, constraintsHandler, metadataService);
+		ProcessingStage<UpdateContext<DataObject>, DataObject> stage2 = new UpdateApplyRequestStage<>(stage3,
+				requestParser);
+		ProcessingStage<UpdateContext<DataObject>, DataObject> stage1 = new UpdateInitStage<>(stage2);
+		ProcessingStage<UpdateContext<DataObject>, DataObject> stage0 = new CayenneContextInitStage<>(stage1, persister);
 
 		return stage0;
 	}

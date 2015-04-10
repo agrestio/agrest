@@ -7,14 +7,14 @@ import com.nhl.link.rest.processor.Processor;
 /**
  * @since 1.16
  */
-public class UnrelateInitStage extends ProcessingStage<UnrelateContext<?>> {
+public class UnrelateInitStage<Т> extends ProcessingStage<UnrelateContext<Т>, Т> {
 
-	public UnrelateInitStage(Processor<UnrelateContext<?>> next) {
+	public UnrelateInitStage(Processor<UnrelateContext<Т>, ? super Т> next) {
 		super(next);
 	}
 
 	@Override
-	protected void doExecute(UnrelateContext<?> context) {
+	protected void doExecute(UnrelateContext<Т> context) {
 		context.setResponse(new SimpleResponse(true));
 	}
 

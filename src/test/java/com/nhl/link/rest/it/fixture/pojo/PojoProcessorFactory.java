@@ -40,35 +40,35 @@ public class PojoProcessorFactory implements IProcessorFactory {
 	}
 
 	@Override
-	public Map<Class<?>, Map<String, Processor<?>>> processors() {
-		Map<Class<?>, Map<String, Processor<?>>> map = new HashMap<>();
-		map.put(SelectContext.class, Collections.<String, Processor<?>> singletonMap(null, createSelectProcessor()));
+	public Map<Class<?>, Map<String, Processor<?, ?>>> processors() {
+		Map<Class<?>, Map<String, Processor<?, ?>>> map = new HashMap<>();
+		map.put(SelectContext.class, Collections.<String, Processor<?, ?>> singletonMap(null, createSelectProcessor()));
 		return map;
 	}
 
-	protected Processor<SelectContext<?>> createSelectProcessor() {
+	protected Processor<SelectContext<Object>, Object> createSelectProcessor() {
 
-		ProcessingStage<SelectContext<?>> stage4 = new PojoFetchStage(null);
-		ProcessingStage<SelectContext<?>> stage3 = new ApplyServerParamsStage(stage4, encoderService,
+		ProcessingStage<SelectContext<Object>, Object> stage4 = new PojoFetchStage<>(null);
+		ProcessingStage<SelectContext<Object>, Object> stage3 = new ApplyServerParamsStage<>(stage4, encoderService,
 				constraintsHandler);
-		ProcessingStage<SelectContext<?>> stage2 = new ApplyRequestStage(stage3, requestParser);
-		ProcessingStage<SelectContext<?>> stage1 = new SelectInitStage(stage2);
+		ProcessingStage<SelectContext<Object>, Object> stage2 = new ApplyRequestStage<>(stage3, requestParser);
+		ProcessingStage<SelectContext<Object>, Object> stage1 = new SelectInitStage<>(stage2);
 
 		return stage1;
 	}
 
-	class PojoFetchStage extends ProcessingStage<SelectContext<?>> {
+	class PojoFetchStage<T> extends ProcessingStage<SelectContext<T>, T> {
 
-		public PojoFetchStage(Processor<SelectContext<?>> next) {
+		public PojoFetchStage(Processor<SelectContext<T>, ? super T> next) {
 			super(next);
 		}
 
 		@Override
-		protected void doExecute(SelectContext<?> context) {
+		protected void doExecute(SelectContext<T> context) {
 			findObjects(context);
 		}
 
-		protected <T> void findObjects(SelectContext<T> context) {
+		protected void findObjects(SelectContext<T> context) {
 
 			Map<Object, T> typeBucket = db.bucketForType(context.getType());
 			if (context.isById()) {

@@ -6,7 +6,7 @@ package com.nhl.link.rest.processor;
  * 
  * @since 1.16
  */
-public interface Processor<C extends ProcessingContext<?>> {
+public interface Processor<C extends ProcessingContext<T>, T> {
 
 	void execute(C context);
 }
