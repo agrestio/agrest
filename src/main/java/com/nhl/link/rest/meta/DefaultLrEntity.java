@@ -28,14 +28,11 @@ public class DefaultLrEntity<T> implements LrEntity<T> {
 		this.relationships = new HashMap<>();
 		this.attributes = new HashMap<>();
 		this.ids = new ArrayList<>();
+		this.name = type.getSimpleName();
 	}
 
 	@Override
 	public String getName() {
-		if (name == null) {
-			name = type.getSimpleName();
-		}
-
 		return name;
 	}
 
