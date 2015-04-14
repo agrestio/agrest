@@ -52,6 +52,11 @@
 		<db-attribute name="c_timestamp" type="TIMESTAMP"/>
 		<db-attribute name="id" type="INTEGER" isPrimaryKey="true" isGenerated="true" isMandatory="true"/>
 	</db-entity>
+	<db-entity name="e17" schema="utest">
+		<db-attribute name="id1" type="INTEGER" isPrimaryKey="true" isMandatory="true"/>
+		<db-attribute name="id2" type="INTEGER" isPrimaryKey="true" isMandatory="true"/>
+		<db-attribute name="name" type="VARCHAR" length="100"/>
+	</db-entity>
 	<db-entity name="e2" schema="utest">
 		<db-attribute name="address" type="VARCHAR" length="255"/>
 		<db-attribute name="id" type="INTEGER" isPrimaryKey="true" isGenerated="true" isMandatory="true"/>
@@ -129,6 +134,11 @@
 		<obj-attribute name="cDate" type="java.sql.Date" db-attribute-path="c_date"/>
 		<obj-attribute name="cTime" type="java.sql.Time" db-attribute-path="c_time"/>
 		<obj-attribute name="cTimestamp" type="java.sql.Timestamp" db-attribute-path="c_timestamp"/>
+	</obj-entity>
+	<obj-entity name="E17" className="com.nhl.link.rest.it.fixture.cayenne.E17" dbEntityName="e17">
+		<obj-attribute name="id1" type="java.lang.Integer" db-attribute-path="id1"/>
+		<obj-attribute name="id2" type="java.lang.Integer" db-attribute-path="id2"/>
+		<obj-attribute name="name" type="java.lang.String" db-attribute-path="name"/>
 	</obj-entity>
 	<obj-entity name="E2" className="com.nhl.link.rest.it.fixture.cayenne.E2" dbEntityName="e2">
 		<obj-attribute name="address" type="java.lang.String" db-attribute-path="address"/>

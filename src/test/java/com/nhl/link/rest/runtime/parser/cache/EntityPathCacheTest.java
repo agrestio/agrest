@@ -12,11 +12,38 @@ import org.junit.Test;
 
 import com.nhl.link.rest.LinkRestException;
 import com.nhl.link.rest.it.fixture.cayenne.E1;
+import com.nhl.link.rest.it.fixture.cayenne.E17;
 import com.nhl.link.rest.it.fixture.cayenne.E2;
 import com.nhl.link.rest.it.fixture.cayenne.E3;
 import com.nhl.link.rest.unit.TestWithCayenneMapping;
 
 public class EntityPathCacheTest extends TestWithCayenneMapping {
+	
+	@Test
+	public void testMultiColumnId() {
+		EntityPathCache cache = new EntityPathCache(getLrEntity(E17.class), metadataService);
+		
+		PathDescriptor pdName = cache.getPathDescriptor(new ASTObjPath("name"));
+		assertNotNull(pdName);
+		assertTrue(pdName.isAttribute());
+		assertEquals("java.lang.String", pdName.getType());
+		assertEquals("name", pdName.getPathExp().getPath());
+		assertSame(pdName, cache.getPathDescriptor(new ASTObjPath("name")));
+		
+		PathDescriptor pdId1 = cache.getPathDescriptor(new ASTObjPath("id1"));
+		assertNotNull(pdId1);
+		assertTrue(pdId1.isAttribute());
+		assertEquals("java.lang.Integer", pdId1.getType());
+		assertEquals("id1", pdId1.getPathExp().getPath());
+		assertSame(pdId1, cache.getPathDescriptor(new ASTObjPath("id1")));
+		
+		PathDescriptor pdId2 = cache.getPathDescriptor(new ASTObjPath("id2"));
+		assertNotNull(pdId2);
+		assertTrue(pdId2.isAttribute());
+		assertEquals("java.lang.Integer", pdId2.getType());
+		assertEquals("id2", pdId2.getPathExp().getPath());
+		assertSame(pdId2, cache.getPathDescriptor(new ASTObjPath("id2")));
+	}
 
 	@Test
 	public void testGetPathDescriptor_Attribute() {

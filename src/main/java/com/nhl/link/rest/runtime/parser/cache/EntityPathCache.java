@@ -26,26 +26,37 @@ class EntityPathCache {
 		this.metadataService = metadataService;
 		this.pathCache = new ConcurrentHashMap<>();
 
-		// immediately cache a special entry matching "id" constant
-		pathCache.put(PathConstants.ID_PK_ATTRIBUTE, new PathDescriptor() {
+		// immediately cache a special entry matching "id" constant ... if there
+		// is a single ID
 
-			LrAttribute id = entity.getSingleId();
+		// TODO: single ID check allows us to support id-less entities (quite
+		// common, e.g. various aggregated data reports). However it does not
+		// solve an issue of more common case of entities with multi-column ID.
+		// Will need a concept of "virtual" ID built from ObjectId (or POJO id
+		// properties) via cayenne-lifecycle.
 
-			@Override
-			public boolean isAttribute() {
-				return true;
-			}
+		if (entity.getIds().size() == 1) {
 
-			@Override
-			public String getType() {
-				return id.getJavaType();
-			}
+			pathCache.put(PathConstants.ID_PK_ATTRIBUTE, new PathDescriptor() {
 
-			@Override
-			public ASTPath getPathExp() {
-				return id.getPathExp();
-			}
-		});
+				LrAttribute id = entity.getIds().iterator().next();
+
+				@Override
+				public boolean isAttribute() {
+					return true;
+				}
+
+				@Override
+				public String getType() {
+					return id.getJavaType();
+				}
+
+				@Override
+				public ASTPath getPathExp() {
+					return id.getPathExp();
+				}
+			});
+		}
 	}
 
 	PathDescriptor getPathDescriptor(final ASTObjPath path) {
