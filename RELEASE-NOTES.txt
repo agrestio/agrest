@@ -1,3 +1,7 @@
+Release 1.17
+
+#98 Start weeding out "id is a single attribue" assumption
+
 Release 1.16
 
 #93 Remove methods deprecated since 1.14
