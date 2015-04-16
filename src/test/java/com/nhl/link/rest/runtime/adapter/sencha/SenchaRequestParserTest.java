@@ -25,7 +25,10 @@ import com.nhl.link.rest.runtime.parser.cache.IPathCache;
 import com.nhl.link.rest.runtime.parser.cache.PathCache;
 import com.nhl.link.rest.runtime.parser.converter.DefaultJsonValueConverterFactory;
 import com.nhl.link.rest.runtime.parser.converter.IJsonValueConverterFactory;
-import com.nhl.link.rest.runtime.parser.filter.IFilterProcessor;
+import com.nhl.link.rest.runtime.parser.filter.CayenneExpProcessor;
+import com.nhl.link.rest.runtime.parser.filter.ICayenneExpProcessor;
+import com.nhl.link.rest.runtime.parser.filter.IKeyValueExpProcessor;
+import com.nhl.link.rest.runtime.parser.filter.KeyValueExpProcessor;
 import com.nhl.link.rest.runtime.parser.sort.ISortProcessor;
 import com.nhl.link.rest.runtime.parser.tree.ITreeProcessor;
 import com.nhl.link.rest.runtime.parser.tree.IncludeExcludeProcessor;
@@ -46,12 +49,16 @@ public class SenchaRequestParserTest extends TestWithCayenneMapping {
 		IPathCache pathCache = new PathCache(metadataService);
 		IJacksonService jacksonService = new JacksonService();
 		ISortProcessor sortProcessor = new SenchaSortProcessor(jacksonService, pathCache);
-		IFilterProcessor filterProcessor = new SenchaFilterProcessor(jacksonService, pathCache);
-		ITreeProcessor treeProcessor = new IncludeExcludeProcessor(jacksonService, sortProcessor, filterProcessor,
+
+		ICayenneExpProcessor expProcessor = new CayenneExpProcessor(jacksonService, pathCache);
+		IKeyValueExpProcessor kvExpProcessor = new KeyValueExpProcessor();
+		ISenchaFilterProcessor senchaFilterProcessor = new SenchaFilterProcessor(jacksonService, pathCache);
+		ITreeProcessor treeProcessor = new IncludeExcludeProcessor(jacksonService, sortProcessor, expProcessor,
 				metadataService);
 
 		parser = new SenchaRequestParser(Collections.<UpdateFilter> emptyList(), metadataService, jacksonService,
-				new RelationshipMapper(), treeProcessor, sortProcessor, filterProcessor, converterFactory);
+				new RelationshipMapper(), treeProcessor, sortProcessor, converterFactory, expProcessor, kvExpProcessor,
+				senchaFilterProcessor);
 	}
 
 	@Test
@@ -59,7 +66,7 @@ public class SenchaRequestParserTest extends TestWithCayenneMapping {
 
 		@SuppressWarnings("unchecked")
 		MultivaluedMap<String, String> params = mock(MultivaluedMap.class);
-		when(params.getFirst(SenchaFilterProcessor.FILTER)).thenReturn("[{\"property\":\"name\",\"value\":\"xyz\"}]");
+		when(params.getFirst(SenchaRequestParser.FILTER)).thenReturn("[{\"property\":\"name\",\"value\":\"xyz\"}]");
 
 		UriInfo uriInfo = mock(UriInfo.class);
 		when(uriInfo.getQueryParameters()).thenReturn(params);
@@ -79,7 +86,7 @@ public class SenchaRequestParserTest extends TestWithCayenneMapping {
 		@SuppressWarnings("unchecked")
 		MultivaluedMap<String, String> params = mock(MultivaluedMap.class);
 		when(params.getFirst("query")).thenReturn("Bla");
-		when(params.getFirst(SenchaFilterProcessor.FILTER)).thenReturn("[{\"property\":\"name\",\"value\":\"xyz\"}]");
+		when(params.getFirst(SenchaRequestParser.FILTER)).thenReturn("[{\"property\":\"name\",\"value\":\"xyz\"}]");
 
 		UriInfo uriInfo = mock(UriInfo.class);
 		when(uriInfo.getQueryParameters()).thenReturn(params);
@@ -101,7 +108,7 @@ public class SenchaRequestParserTest extends TestWithCayenneMapping {
 		@SuppressWarnings("unchecked")
 		MultivaluedMap<String, String> params = mock(MultivaluedMap.class);
 		when(params.getFirst("cayenneExp")).thenReturn("{\"exp\" : \"address = '1 Main Street'\"}");
-		when(params.getFirst(SenchaFilterProcessor.FILTER)).thenReturn("[{\"property\":\"name\",\"value\":\"xyz\"}]");
+		when(params.getFirst(SenchaRequestParser.FILTER)).thenReturn("[{\"property\":\"name\",\"value\":\"xyz\"}]");
 
 		UriInfo uriInfo = mock(UriInfo.class);
 		when(uriInfo.getQueryParameters()).thenReturn(params);

@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.ws.rs.core.Response.Status;
 
+import org.apache.cayenne.exp.Expression;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,7 +17,7 @@ import com.nhl.link.rest.meta.LrRelationship;
 import com.nhl.link.rest.runtime.jackson.IJacksonService;
 import com.nhl.link.rest.runtime.meta.IMetadataService;
 import com.nhl.link.rest.runtime.parser.PathConstants;
-import com.nhl.link.rest.runtime.parser.filter.IFilterProcessor;
+import com.nhl.link.rest.runtime.parser.filter.ICayenneExpProcessor;
 import com.nhl.link.rest.runtime.parser.sort.ISortProcessor;
 
 class IncludeWorker {
@@ -30,10 +31,10 @@ class IncludeWorker {
 
 	private IJacksonService jsonParser;
 	private ISortProcessor sortProcessor;
-	private IFilterProcessor expProcessor;
+	private ICayenneExpProcessor expProcessor;
 	private IMetadataService metadataService;
 
-	IncludeWorker(IJacksonService jsonParser, ISortProcessor sortProcessor, IFilterProcessor expProcessor,
+	IncludeWorker(IJacksonService jsonParser, ISortProcessor sortProcessor, ICayenneExpProcessor expProcessor,
 			IMetadataService metadataService) {
 		this.jsonParser = jsonParser;
 		this.sortProcessor = sortProcessor;
@@ -110,7 +111,10 @@ class IncludeWorker {
 
 			JsonNode expNode = root.get(CAYENNE_EXP);
 			if (expNode != null) {
-				expProcessor.process(includeEntity, expNode);
+				Expression exp = expProcessor.process(includeEntity.getLrEntity(), expNode);
+				if (exp != null) {
+					includeEntity.andQualifier(exp);
+				}
 			}
 		}
 	}

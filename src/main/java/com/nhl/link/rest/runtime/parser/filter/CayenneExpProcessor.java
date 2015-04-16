@@ -4,23 +4,23 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.cayenne.di.Inject;
 import org.apache.cayenne.exp.Expression;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.nhl.link.rest.ResourceEntity;
 import com.nhl.link.rest.meta.LrEntity;
 import com.nhl.link.rest.parser.converter.JsonValueConverter;
 import com.nhl.link.rest.parser.converter.UtcDateConverter;
 import com.nhl.link.rest.runtime.jackson.IJacksonService;
 import com.nhl.link.rest.runtime.parser.cache.IPathCache;
 
-class CayenneExpProcessor {
+public class CayenneExpProcessor implements ICayenneExpProcessor {
 
 	private IJacksonService jsonParser;
 	private Map<String, JsonValueConverter> converters;
 	private IPathCache pathCache;
 
-	CayenneExpProcessor(IJacksonService jsonParser, IPathCache pathCache) {
+	public CayenneExpProcessor(@Inject IJacksonService jsonParser, @Inject IPathCache pathCache) {
 		this.jsonParser = jsonParser;
 		this.pathCache = pathCache;
 
@@ -37,28 +37,27 @@ class CayenneExpProcessor {
 		this.converters.put(java.sql.Timestamp.class.getName(), UtcDateConverter.converter());
 	}
 
-	void process(ResourceEntity<?> resourceEntity, String cayenneExp) {
-		
-		if (cayenneExp == null || cayenneExp.length() == 0) {
-			return;
+	@Override
+	public Expression process(LrEntity<?> entity, String expressionString) {
+
+		if (expressionString == null || expressionString.length() == 0) {
+			return null;
 		}
 
-		Expression exp = worker(resourceEntity).exp(cayenneExp);
-		resourceEntity.andQualifier(exp);
+		return worker(entity).exp(expressionString);
 	}
 
-	void process(ResourceEntity<?> resourceEntity, JsonNode cayenneExp) {
+	@Override
+	public Expression process(LrEntity<?> entity, JsonNode expressionNode) {
 
-		if (cayenneExp == null) {
-			return;
+		if (expressionNode == null) {
+			return null;
 		}
 
-		Expression exp = worker(resourceEntity).exp(cayenneExp);
-		resourceEntity.andQualifier(exp);
+		return worker(entity).exp(expressionNode);
 	}
 
-	private CayenneExpProcessorWorker worker(ResourceEntity<?> resourceEntity) {
-		LrEntity<?> entity = resourceEntity.getLrEntity();
+	private CayenneExpProcessorWorker worker(LrEntity<?> entity) {
 		return new CayenneExpProcessorWorker(jsonParser, converters, pathCache, entity);
 	}
 }

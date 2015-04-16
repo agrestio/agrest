@@ -1,6 +1,7 @@
 Release 1.17
 
 #98 Start weeding out "id is a single attribue" assumption
+#99 Refactor RequestParser expression 'workers' to function-like injectable services
 
 Release 1.16
 

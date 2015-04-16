@@ -8,29 +8,24 @@ import org.apache.cayenne.exp.Expression;
 import org.apache.cayenne.exp.ExpressionFactory;
 
 import com.nhl.link.rest.LinkRestException;
-import com.nhl.link.rest.ResourceEntity;
 import com.nhl.link.rest.meta.LrAttribute;
 import com.nhl.link.rest.meta.LrEntity;
 import com.nhl.link.rest.meta.LrPersistentAttribute;
 
-class ByPropertyProcessor {
+public class KeyValueExpProcessor implements IKeyValueExpProcessor {
 
-	void process(ResourceEntity<?> resourceEntity, String query, String queryProperty) {
+	@Override
+	public Expression process(LrEntity<?> entity, String queryProperty, String value) {
 
-		if (query == null || query.length() == 0) {
-			return;
+		if (value == null || value.length() == 0 || queryProperty == null) {
+			return null;
 		}
 
-		if (queryProperty == null) {
-			throw new LinkRestException(Status.BAD_REQUEST, "'query' parameter is not supported by this service");
-		}
+		validateAttribute(entity, queryProperty);
 
-		validateAttribute(resourceEntity.getLrEntity(), queryProperty);
+		value = FilterUtil.escapeValueForLike(value) + "%";
 
-		query = FilterUtil.escapeValueForLike(query) + "%";
-
-		Expression exp = ExpressionFactory.likeIgnoreCaseExp(queryProperty, query);
-		resourceEntity.andQualifier(exp);
+		return ExpressionFactory.likeIgnoreCaseExp(queryProperty, value);
 	}
 
 	/**

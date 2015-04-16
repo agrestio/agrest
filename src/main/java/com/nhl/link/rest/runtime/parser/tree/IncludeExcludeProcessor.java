@@ -10,7 +10,7 @@ import com.nhl.link.rest.runtime.jackson.IJacksonService;
 import com.nhl.link.rest.runtime.meta.IMetadataService;
 import com.nhl.link.rest.runtime.parser.BaseRequestProcessor;
 import com.nhl.link.rest.runtime.parser.EmptyMultiValuedMap;
-import com.nhl.link.rest.runtime.parser.filter.IFilterProcessor;
+import com.nhl.link.rest.runtime.parser.filter.ICayenneExpProcessor;
 import com.nhl.link.rest.runtime.parser.sort.ISortProcessor;
 
 /**
@@ -25,8 +25,8 @@ public class IncludeExcludeProcessor extends BaseRequestProcessor implements ITr
 	private ExcludeWorker excludeWorker;
 
 	public IncludeExcludeProcessor(@Inject IJacksonService jacksonService, @Inject ISortProcessor sortProcessor,
-			@Inject IFilterProcessor filterProcessor, @Inject IMetadataService metadataService) {
-		this.includeWorker = new IncludeWorker(jacksonService, sortProcessor, filterProcessor, metadataService);
+			@Inject ICayenneExpProcessor expProcessor, @Inject IMetadataService metadataService) {
+		this.includeWorker = new IncludeWorker(jacksonService, sortProcessor, expProcessor, metadataService);
 		this.excludeWorker = new ExcludeWorker(jacksonService);
 	}
 

@@ -52,8 +52,10 @@ import com.nhl.link.rest.runtime.parser.cache.IPathCache;
 import com.nhl.link.rest.runtime.parser.cache.PathCache;
 import com.nhl.link.rest.runtime.parser.converter.DefaultJsonValueConverterFactory;
 import com.nhl.link.rest.runtime.parser.converter.IJsonValueConverterFactory;
-import com.nhl.link.rest.runtime.parser.filter.FilterProcessor;
-import com.nhl.link.rest.runtime.parser.filter.IFilterProcessor;
+import com.nhl.link.rest.runtime.parser.filter.IKeyValueExpProcessor;
+import com.nhl.link.rest.runtime.parser.filter.KeyValueExpProcessor;
+import com.nhl.link.rest.runtime.parser.filter.CayenneExpProcessor;
+import com.nhl.link.rest.runtime.parser.filter.ICayenneExpProcessor;
 import com.nhl.link.rest.runtime.parser.sort.ISortProcessor;
 import com.nhl.link.rest.runtime.parser.sort.SortProcessor;
 import com.nhl.link.rest.runtime.parser.tree.ITreeProcessor;
@@ -295,12 +297,13 @@ public class LinkRestBuilder {
 				binder.bind(IRelationshipMapper.class).to(RelationshipMapper.class);
 				binder.bind(IMetadataService.class).to(MetadataService.class);
 				binder.bind(IConstraintsHandler.class).to(ConstraintsHandler.class);
+				binder.bind(ICayenneExpProcessor.class).to(CayenneExpProcessor.class);
+				binder.bind(IKeyValueExpProcessor.class).to(KeyValueExpProcessor.class);
 
 				binder.bind(IJacksonService.class).to(JacksonService.class);
 				binder.bind(ICayennePersister.class).toInstance(cayenneService);
 
 				binder.bind(IPathCache.class).to(PathCache.class);
-				binder.bind(IFilterProcessor.class).to(FilterProcessor.class);
 				binder.bind(ISortProcessor.class).to(SortProcessor.class);
 				binder.bind(ITreeProcessor.class).to(IncludeExcludeProcessor.class);
 

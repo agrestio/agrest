@@ -31,8 +31,10 @@ import com.nhl.link.rest.runtime.parser.cache.IPathCache;
 import com.nhl.link.rest.runtime.parser.cache.PathCache;
 import com.nhl.link.rest.runtime.parser.converter.DefaultJsonValueConverterFactory;
 import com.nhl.link.rest.runtime.parser.converter.IJsonValueConverterFactory;
-import com.nhl.link.rest.runtime.parser.filter.FilterProcessor;
-import com.nhl.link.rest.runtime.parser.filter.IFilterProcessor;
+import com.nhl.link.rest.runtime.parser.filter.CayenneExpProcessor;
+import com.nhl.link.rest.runtime.parser.filter.ICayenneExpProcessor;
+import com.nhl.link.rest.runtime.parser.filter.IKeyValueExpProcessor;
+import com.nhl.link.rest.runtime.parser.filter.KeyValueExpProcessor;
 import com.nhl.link.rest.runtime.parser.sort.ISortProcessor;
 import com.nhl.link.rest.runtime.parser.sort.SortProcessor;
 import com.nhl.link.rest.runtime.parser.tree.ITreeProcessor;
@@ -53,13 +55,14 @@ public class RequestParser_WithPojoTest extends TestWithCayenneMapping {
 
 		IPathCache pathCache = new PathCache(metadataService);
 		IJacksonService jacksonService = new JacksonService();
+		ICayenneExpProcessor expProcessor = new CayenneExpProcessor(jacksonService, pathCache);
+		IKeyValueExpProcessor kvExpProcessor = new KeyValueExpProcessor();
 		ISortProcessor sortProcessor = new SortProcessor(jacksonService, pathCache);
-		IFilterProcessor filterProcessor = new FilterProcessor(jacksonService, pathCache);
-		ITreeProcessor treeProcessor = new IncludeExcludeProcessor(jacksonService, sortProcessor, filterProcessor,
+		ITreeProcessor treeProcessor = new IncludeExcludeProcessor(jacksonService, sortProcessor, expProcessor,
 				metadataService);
 
 		parser = new RequestParser(Collections.<UpdateFilter> emptyList(), metadataService, jacksonService,
-				new RelationshipMapper(), treeProcessor, sortProcessor, filterProcessor, converterFactory);
+				new RelationshipMapper(), treeProcessor, sortProcessor, converterFactory, expProcessor, kvExpProcessor);
 	}
 
 	@Override
