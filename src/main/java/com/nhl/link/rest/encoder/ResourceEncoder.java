@@ -25,7 +25,7 @@ public class ResourceEncoder extends AbstractEncoder {
     private void writeResource(LrResource resource, JsonGenerator out) throws IOException{
         out.writeObjectFieldStart("data");
 
-        out.writeStringField("href", applicationBase + "/" + resource.getPath());
+        out.writeStringField("href", applicationBase + resource.getPath());
 
         out.writeStringField("type", "");
 
