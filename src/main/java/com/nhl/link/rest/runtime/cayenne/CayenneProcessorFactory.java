@@ -1,14 +1,7 @@
 package com.nhl.link.rest.runtime.cayenne;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.ws.rs.core.Response.Status;
-
-import org.apache.cayenne.DataObject;
-import org.apache.cayenne.di.Inject;
-
+import com.nhl.link.rest.MetadataResponse;
+import com.nhl.link.rest.encoder.ResourceEncoder;
 import com.nhl.link.rest.processor.ProcessingStage;
 import com.nhl.link.rest.processor.Processor;
 import com.nhl.link.rest.runtime.UpdateOperation;
@@ -28,6 +21,7 @@ import com.nhl.link.rest.runtime.parser.IRequestParser;
 import com.nhl.link.rest.runtime.processor.IProcessorFactory;
 import com.nhl.link.rest.runtime.processor.delete.DeleteContext;
 import com.nhl.link.rest.runtime.processor.delete.DeleteInitStage;
+import com.nhl.link.rest.runtime.processor.meta.MetadataContext;
 import com.nhl.link.rest.runtime.processor.select.ApplyRequestStage;
 import com.nhl.link.rest.runtime.processor.select.ApplyServerParamsStage;
 import com.nhl.link.rest.runtime.processor.select.SelectContext;
@@ -38,6 +32,13 @@ import com.nhl.link.rest.runtime.processor.update.UpdateApplyRequestStage;
 import com.nhl.link.rest.runtime.processor.update.UpdateApplyServerParamsStage;
 import com.nhl.link.rest.runtime.processor.update.UpdateContext;
 import com.nhl.link.rest.runtime.processor.update.UpdateInitStage;
+import org.apache.cayenne.DataObject;
+import org.apache.cayenne.di.Inject;
+
+import javax.ws.rs.core.Response.Status;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @since 1.16
@@ -68,6 +69,7 @@ public class CayenneProcessorFactory implements IProcessorFactory {
 		map.put(UnrelateContext.class,
 				Collections.<String, Processor<?, ?>> singletonMap(null, createUnrelateProcessor()));
 		map.put(UpdateContext.class, createUpdateProcessors());
+		map.put(MetadataContext.class, Collections.<String, Processor<?, ?>> singletonMap(null, createMetadataProcessor()));
 		return map;
 	}
 
@@ -169,6 +171,26 @@ public class CayenneProcessorFactory implements IProcessorFactory {
 				requestParser);
 		ProcessingStage<UpdateContext<DataObject>, DataObject> stage1 = new UpdateInitStage<>(stage2);
 		ProcessingStage<UpdateContext<DataObject>, DataObject> stage0 = new CayenneContextInitStage<>(stage1, persister);
+
+		return stage0;
+	}
+
+	private <T> Processor<MetadataContext<T>, T> createMetadataProcessor() {
+
+		ProcessingStage<MetadataContext<T>, T> stage0 = new ProcessingStage<MetadataContext<T>, T>(null) {
+			@Override
+			protected void doExecute(MetadataContext<T> context) {
+				context.setResponse(
+						new MetadataResponse()
+								.withEncoder(
+										new ResourceEncoder(context.getApplicationBase())
+								)
+								.withResource(
+										metadataService.getLrResource(context.getResource(), context.getPath())
+								)
+				);
+			}
+		};
 
 		return stage0;
 	}

@@ -1,5 +1,6 @@
 package com.nhl.link.rest.runtime.meta;
 
+import com.nhl.link.rest.meta.LrResource;
 import org.apache.cayenne.query.Select;
 
 import com.nhl.link.rest.EntityParent;
@@ -37,4 +38,6 @@ public interface IMetadataService {
 	 * @since 1.12
 	 */
 	LrRelationship getLrRelationship(EntityParent<?> parent);
+
+	LrResource getLrResource(Class<?> resourceClass, String path);
 }

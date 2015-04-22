@@ -1,31 +1,15 @@
 package com.nhl.link.rest.runtime;
 
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.ws.rs.core.Feature;
-import javax.ws.rs.ext.ExceptionMapper;
-
-import org.apache.cayenne.CayenneRuntimeException;
-import org.apache.cayenne.configuration.server.ServerRuntime;
-import org.apache.cayenne.di.Binder;
-import org.apache.cayenne.di.DIBootstrap;
-import org.apache.cayenne.di.Injector;
-import org.apache.cayenne.di.Module;
-import org.apache.cayenne.validation.ValidationException;
-
 import com.nhl.link.rest.EntityConstraint;
 import com.nhl.link.rest.LinkRestException;
 import com.nhl.link.rest.encoder.EncoderFilter;
+import com.nhl.link.rest.meta.LrDataMap;
 import com.nhl.link.rest.meta.LrEntity;
 import com.nhl.link.rest.meta.LrEntityBuilder;
 import com.nhl.link.rest.meta.LrEntityOverlay;
+import com.nhl.link.rest.meta.cayenne.CayenneAwareLrDataMap;
+import com.nhl.link.rest.meta.parser.IResourceParser;
+import com.nhl.link.rest.meta.parser.ResourceParser;
 import com.nhl.link.rest.provider.CayenneRuntimeExceptionMapper;
 import com.nhl.link.rest.provider.LinkRestExceptionMapper;
 import com.nhl.link.rest.provider.ValidationExceptionMapper;
@@ -52,10 +36,10 @@ import com.nhl.link.rest.runtime.parser.cache.IPathCache;
 import com.nhl.link.rest.runtime.parser.cache.PathCache;
 import com.nhl.link.rest.runtime.parser.converter.DefaultJsonValueConverterFactory;
 import com.nhl.link.rest.runtime.parser.converter.IJsonValueConverterFactory;
-import com.nhl.link.rest.runtime.parser.filter.IKeyValueExpProcessor;
-import com.nhl.link.rest.runtime.parser.filter.KeyValueExpProcessor;
 import com.nhl.link.rest.runtime.parser.filter.CayenneExpProcessor;
 import com.nhl.link.rest.runtime.parser.filter.ICayenneExpProcessor;
+import com.nhl.link.rest.runtime.parser.filter.IKeyValueExpProcessor;
+import com.nhl.link.rest.runtime.parser.filter.KeyValueExpProcessor;
 import com.nhl.link.rest.runtime.parser.sort.ISortProcessor;
 import com.nhl.link.rest.runtime.parser.sort.SortProcessor;
 import com.nhl.link.rest.runtime.parser.tree.ITreeProcessor;
@@ -64,6 +48,24 @@ import com.nhl.link.rest.runtime.processor.IProcessorFactory;
 import com.nhl.link.rest.runtime.semantics.IRelationshipMapper;
 import com.nhl.link.rest.runtime.semantics.RelationshipMapper;
 import com.nhl.link.rest.update.UpdateFilter;
+import org.apache.cayenne.CayenneRuntimeException;
+import org.apache.cayenne.configuration.server.ServerRuntime;
+import org.apache.cayenne.di.Binder;
+import org.apache.cayenne.di.DIBootstrap;
+import org.apache.cayenne.di.Injector;
+import org.apache.cayenne.di.Module;
+import org.apache.cayenne.validation.ValidationException;
+
+import javax.ws.rs.core.Feature;
+import javax.ws.rs.ext.ExceptionMapper;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * A builder of LinkRest runtime that can be loaded into JAX-RS 2 container as a
@@ -289,6 +291,7 @@ public class LinkRestBuilder {
 				}
 
 				binder.bind(IProcessorFactory.class).to(CayenneProcessorFactory.class);
+				binder.bind(LrDataMap.class).to(CayenneAwareLrDataMap.class);
 				binder.bind(IRequestParser.class).to(RequestParser.class);
 				binder.bind(IJsonValueConverterFactory.class).to(DefaultJsonValueConverterFactory.class);
 				binder.bind(IAttributeEncoderFactory.class).to(AttributeEncoderFactory.class);
@@ -306,6 +309,8 @@ public class LinkRestBuilder {
 				binder.bind(IPathCache.class).to(PathCache.class);
 				binder.bind(ISortProcessor.class).to(SortProcessor.class);
 				binder.bind(ITreeProcessor.class).to(IncludeExcludeProcessor.class);
+
+				binder.bind(IResourceParser.class).to(ResourceParser.class);
 
 				// apply adapter-contributed bindings
 				for (LinkRestAdapter a : adapters) {
