@@ -1,21 +1,5 @@
 package com.nhl.link.rest.runtime.parser;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-
-import javax.ws.rs.core.MultivaluedMap;
-import javax.ws.rs.core.UriInfo;
-
-import org.junit.Before;
-import org.junit.Test;
-
 import com.nhl.link.rest.DataResponse;
 import com.nhl.link.rest.ResourceEntity;
 import com.nhl.link.rest.it.fixture.pojo.model.P1;
@@ -23,6 +7,7 @@ import com.nhl.link.rest.it.fixture.pojo.model.P2;
 import com.nhl.link.rest.meta.LrEntity;
 import com.nhl.link.rest.meta.LrEntityBuilder;
 import com.nhl.link.rest.meta.LrEntityOverlay;
+import com.nhl.link.rest.meta.cayenne.CayenneAwareLrDataMap;
 import com.nhl.link.rest.runtime.jackson.IJacksonService;
 import com.nhl.link.rest.runtime.jackson.JacksonService;
 import com.nhl.link.rest.runtime.meta.IMetadataService;
@@ -43,6 +28,20 @@ import com.nhl.link.rest.runtime.processor.select.SelectContext;
 import com.nhl.link.rest.runtime.semantics.RelationshipMapper;
 import com.nhl.link.rest.unit.TestWithCayenneMapping;
 import com.nhl.link.rest.update.UpdateFilter;
+import org.junit.Before;
+import org.junit.Test;
+
+import javax.ws.rs.core.MultivaluedMap;
+import javax.ws.rs.core.UriInfo;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class RequestParser_WithPojoTest extends TestWithCayenneMapping {
 
@@ -68,7 +67,11 @@ public class RequestParser_WithPojoTest extends TestWithCayenneMapping {
 	@Override
 	protected IMetadataService createMetadataService() {
 		List<LrEntity<?>> pojos = Arrays.asList(LrEntityBuilder.build(P1.class), LrEntityBuilder.build(P2.class));
-		return new MetadataService(pojos, Collections.<String, LrEntityOverlay<?>> emptyMap(), mockCayennePersister);
+
+		lrDataMap = new CayenneAwareLrDataMap(mockCayennePersister,
+				pojos, Collections.<String, LrEntityOverlay<?>> emptyMap());
+
+		return new MetadataService(lrDataMap, mockCayennePersister, null);
 	}
 
 	@Test

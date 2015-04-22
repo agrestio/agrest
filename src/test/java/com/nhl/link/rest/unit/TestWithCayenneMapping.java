@@ -1,10 +1,14 @@
 package com.nhl.link.rest.unit;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
-import java.util.Collections;
-
+import com.nhl.link.rest.ResourceEntity;
+import com.nhl.link.rest.meta.DefaultLrAttribute;
+import com.nhl.link.rest.meta.LrDataMap;
+import com.nhl.link.rest.meta.LrEntity;
+import com.nhl.link.rest.meta.LrEntityOverlay;
+import com.nhl.link.rest.meta.cayenne.CayenneAwareLrDataMap;
+import com.nhl.link.rest.runtime.cayenne.ICayennePersister;
+import com.nhl.link.rest.runtime.meta.IMetadataService;
+import com.nhl.link.rest.runtime.meta.MetadataService;
 import org.apache.cayenne.ObjectContext;
 import org.apache.cayenne.configuration.server.DataSourceFactory;
 import org.apache.cayenne.configuration.server.ServerRuntime;
@@ -16,15 +20,10 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 
-import com.nhl.link.rest.ResourceEntity;
-import com.nhl.link.rest.meta.DefaultLrAttribute;
-import com.nhl.link.rest.meta.LrDataMap;
-import com.nhl.link.rest.meta.LrEntity;
-import com.nhl.link.rest.meta.LrEntityOverlay;
-import com.nhl.link.rest.meta.cayenne.CayenneAwareLrDataMap;
-import com.nhl.link.rest.runtime.cayenne.ICayennePersister;
-import com.nhl.link.rest.runtime.meta.IMetadataService;
-import com.nhl.link.rest.runtime.meta.MetadataService;
+import java.util.Collections;
+
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * A superclass of Cayenne-aware test cases that do not need to access the DB,
@@ -60,9 +59,6 @@ public class TestWithCayenneMapping {
 
 	@Before
 	public void initLrDataMap() {
-		lrDataMap = new CayenneAwareLrDataMap(runtime.getChannel().getEntityResolver(),
-				Collections.<LrEntity<?>> emptyList(), Collections.<String, LrEntityOverlay<?>> emptyMap());
-
 		ObjectContext sharedContext = runtime.newContext();
 
 		this.mockCayennePersister = mock(ICayennePersister.class);
@@ -70,12 +66,14 @@ public class TestWithCayenneMapping {
 		when(mockCayennePersister.sharedContext()).thenReturn(sharedContext);
 		when(mockCayennePersister.newContext()).thenReturn(runtime.newContext());
 
+		lrDataMap = new CayenneAwareLrDataMap(mockCayennePersister,
+				Collections.<LrEntity<?>> emptyList(), Collections.<String, LrEntityOverlay<?>> emptyMap());
+
 		this.metadataService = createMetadataService();
 	}
 
 	protected IMetadataService createMetadataService() {
-		return new MetadataService(Collections.<LrEntity<?>> emptyList(),
-				Collections.<String, LrEntityOverlay<?>> emptyMap(), mockCayennePersister);
+		return new MetadataService(lrDataMap, mockCayennePersister, null);
 	}
 
 	protected <T> LrEntity<T> getLrEntity(Class<T> type) {

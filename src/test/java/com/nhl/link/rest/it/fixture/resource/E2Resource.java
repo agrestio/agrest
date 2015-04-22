@@ -10,6 +10,7 @@ import javax.ws.rs.core.Configuration;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.UriInfo;
 
+import com.nhl.link.rest.MetadataResponse;
 import org.apache.cayenne.query.SelectQuery;
 
 import com.nhl.link.rest.DataResponse;
@@ -74,5 +75,15 @@ public class E2Resource {
 	public DataResponse<E3> createOrUpdate_Idempotent_E3s(@PathParam("id") int id, String entityData) {
 		return LinkRest.idempotentCreateOrUpdate(E3.class, config).toManyParent(E2.class, id, E2.E3S).includeData()
 				.process(entityData);
+	}
+
+	@GET
+	@Path("metadata")
+	public MetadataResponse getMetadata(@Context UriInfo uriInfo) {
+		return LinkRest.metadata(E2.class, config)
+				.forResource(E2Resource.class)
+				.uri(uriInfo)
+				.path("e2/{id}/e3s")
+				.process();
 	}
 }
