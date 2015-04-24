@@ -8,22 +8,42 @@ import com.nhl.link.rest.meta.LrResource;
 import java.io.IOException;
 import java.util.Collection;
 
-public class ResourceEncoder extends AbstractEncoder {
+public class ResourceEncoder<T> extends AbstractEncoder {
 
+    private LrEntity<T> entity;
     private String applicationBase;
 
-    public ResourceEncoder(String applicationBase) {
+    public ResourceEncoder(LrEntity<T> entity, String applicationBase) {
+        this.entity = entity;
         this.applicationBase = applicationBase == null? "" : applicationBase;
     }
 
     @Override
     protected boolean encodeNonNullObject(Object object, JsonGenerator out) throws IOException {
-        writeResource((LrResource) object, out);
+        out.writeObjectFieldStart("data");
+
+        writeEntity(entity, out);
+
+        writeResources((Collection<LrResource>) object, out);
+
+        out.writeEndObject();
+
         return true;
     }
 
+    private void writeResources(Collection<LrResource> resources, JsonGenerator out) throws IOException {
+        out.writeArrayFieldStart("links");
+
+        for (LrResource resource : resources) {
+            writeResource(resource, out);
+        }
+
+        out.writeEndArray();
+    }
+
     private void writeResource(LrResource resource, JsonGenerator out) throws IOException{
-        out.writeObjectFieldStart("data");
+
+        out.writeStartObject();
 
         out.writeStringField("href", applicationBase + resource.getPath());
 
@@ -31,9 +51,8 @@ public class ResourceEncoder extends AbstractEncoder {
 
         writeOperations(resource.getOperations(), out);
 
-        writeEntity(resource.getEntity(), out);
-
         out.writeEndObject();
+
     }
 
     private void writeOperations(Collection<LrOperation> operations, JsonGenerator out) throws IOException {

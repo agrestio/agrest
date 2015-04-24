@@ -83,7 +83,6 @@ public class E2Resource {
 		return LinkRest.metadata(E2.class, config)
 				.forResource(E2Resource.class)
 				.uri(uriInfo)
-				.path("e2/{id}/e3s")
 				.process();
 	}
 }

@@ -187,6 +187,7 @@ public class DefaultLinkRestService implements ILinkRestService {
 	@Override
 	public <T> MetadataBuilder<T> metadata(Class<T> type) {
 		MetadataContext<T> context = new MetadataContext<>(type);
+		context.setEntity(metadataService.getLrEntity(type));
 		return new DefaultMetadataBuilder<>(context, processor(context));
 	}
 

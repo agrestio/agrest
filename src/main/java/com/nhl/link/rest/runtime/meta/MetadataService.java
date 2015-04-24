@@ -100,7 +100,7 @@ public class MetadataService implements IMetadataService {
 	}
 
 	@Override
-	public LrResource getLrResource(Class<?> resourceClass, String path) {
+	public Collection<LrResource> getLrResources(Class<?> resourceClass) {
 
 		Collection<LrResource> resources = classResources.get(resourceClass);
 		if (resources == null) {
@@ -110,17 +110,7 @@ public class MetadataService implements IMetadataService {
 			resources = existingResources == null? newResources : existingResources;
 		}
 
-		for (LrResource resource : resources) {
-			if (resource.getPath().equals(path)) {
-				return resource;
-			}
-		}
-
-		throw new IllegalArgumentException(String.format(
-				"Failed to find resources with path '%s' for class: %s",
-				path,
-				resourceClass.getName()
-		));
+		return resources;
 	}
 
 }

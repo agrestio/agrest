@@ -1,6 +1,7 @@
 package com.nhl.link.rest.runtime.processor.meta;
 
 import com.nhl.link.rest.MetadataResponse;
+import com.nhl.link.rest.meta.LrEntity;
 import com.nhl.link.rest.processor.BaseProcessingContext;
 
 import javax.ws.rs.core.UriInfo;
@@ -10,10 +11,18 @@ public class MetadataContext<T> extends BaseProcessingContext<T> {
     private Class<?> resourceClass;
     private UriInfo uriInfo;
     private MetadataResponse response;
-    private String path;
+    private LrEntity<T> entity;
 
     public MetadataContext(Class<T> type) {
         super(type);
+    }
+
+    public LrEntity<T> getEntity() {
+        return entity;
+    }
+
+    public void setEntity(LrEntity<T> entity) {
+        this.entity = entity;
     }
 
     public void setResource(Class<?> resourceClass) {
@@ -30,14 +39,6 @@ public class MetadataContext<T> extends BaseProcessingContext<T> {
 
     public void setResponse(MetadataResponse response) {
         this.response = response;
-    }
-
-    public String getPath() {
-        return path;
-    }
-
-    public void setPath(String path) {
-        this.path = path;
     }
 
     public UriInfo getUriInfo() {

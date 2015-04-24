@@ -30,12 +30,6 @@ public class DefaultMetadataBuilder<T> implements MetadataBuilder<T> {
     }
 
     @Override
-    public MetadataBuilder<T> path(String path) {
-        context.setPath(path);
-        return this;
-    }
-
-    @Override
     public MetadataResponse process() {
         processor.execute(context);
         return context.getResponse();

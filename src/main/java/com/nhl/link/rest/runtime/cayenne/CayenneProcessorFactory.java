@@ -1,7 +1,10 @@
 package com.nhl.link.rest.runtime.cayenne;
 
 import com.nhl.link.rest.MetadataResponse;
+import com.nhl.link.rest.annotation.LrRelationship;
 import com.nhl.link.rest.encoder.ResourceEncoder;
+import com.nhl.link.rest.meta.LrEntity;
+import com.nhl.link.rest.meta.LrResource;
 import com.nhl.link.rest.processor.ProcessingStage;
 import com.nhl.link.rest.processor.Processor;
 import com.nhl.link.rest.runtime.UpdateOperation;
@@ -36,6 +39,8 @@ import org.apache.cayenne.DataObject;
 import org.apache.cayenne.di.Inject;
 
 import javax.ws.rs.core.Response.Status;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -180,13 +185,23 @@ public class CayenneProcessorFactory implements IProcessorFactory {
 		ProcessingStage<MetadataContext<T>, T> stage0 = new ProcessingStage<MetadataContext<T>, T>(null) {
 			@Override
 			protected void doExecute(MetadataContext<T> context) {
+				LrEntity<T> entity = context.getEntity();
+				Collection<LrResource> resources = metadataService.getLrResources(context.getResource());
+				Collection<LrResource> filteredResources = new ArrayList<>(resources.size());
+				for (LrResource<?> resource : resources) {
+					LrEntity<?> resourceEntity = resource.getEntity();
+					if (resourceEntity != null && resourceEntity.getName().equals(entity.getName())) {
+						filteredResources.add(resource);
+					}
+				}
+
 				context.setResponse(
-						new MetadataResponse()
+						new MetadataResponse<>(context.getType())
 								.withEncoder(
-										new ResourceEncoder(context.getApplicationBase())
+										new ResourceEncoder<>(entity, context.getApplicationBase())
 								)
-								.withResource(
-										metadataService.getLrResource(context.getResource(), context.getPath())
+								.withResources(
+										filteredResources
 								)
 				);
 			}

@@ -2,10 +2,10 @@ package com.nhl.link.rest.meta;
 
 import java.util.Collection;
 
-public interface LrResource {
+public interface LrResource<T> {
 
     String getPath();
     Collection<LrOperation> getOperations();
-    LrEntity getEntity();
+    LrEntity<T> getEntity();
 
 }
