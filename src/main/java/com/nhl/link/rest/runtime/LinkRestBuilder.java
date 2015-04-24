@@ -3,6 +3,7 @@ package com.nhl.link.rest.runtime;
 import com.nhl.link.rest.EntityConstraint;
 import com.nhl.link.rest.LinkRestException;
 import com.nhl.link.rest.encoder.EncoderFilter;
+import com.nhl.link.rest.encoder.PropertyMetadataEncoder;
 import com.nhl.link.rest.meta.LrDataMap;
 import com.nhl.link.rest.meta.LrEntity;
 import com.nhl.link.rest.meta.LrEntityBuilder;
@@ -83,6 +84,7 @@ public class LinkRestBuilder {
 	private Map<String, LrEntityOverlay<?>> entityOverlays;
 	private Map<Class<?>, Class<?>> exceptionMappers;
 	private Collection<LinkRestAdapter> adapters;
+	private Map<String, PropertyMetadataEncoder> metadataEncoders;
 
 	/**
 	 * A shortcut that creates a LinkRest stack based on Cayenne runtime and
@@ -113,6 +115,7 @@ public class LinkRestBuilder {
 
 		this.exceptionMappers = mapDefaultExceptions();
 		this.adapters = new ArrayList<>();
+		this.metadataEncoders = new HashMap<>();
 	}
 
 	protected Map<Class<?>, Class<?>> mapDefaultExceptions() {
@@ -241,6 +244,11 @@ public class LinkRestBuilder {
 		return this;
 	}
 
+	public LinkRestBuilder metadataEncoder(String type, PropertyMetadataEncoder encoder) {
+		this.metadataEncoders.put(type, encoder);
+		return this;
+	}
+
 	public LinkRestRuntime build() {
 		Injector i = createInjector();
 		return new LinkRestRuntime(i, createExtraFeatures(), createExtraComponents());
@@ -283,6 +291,7 @@ public class LinkRestBuilder {
 
 				binder.<EntityConstraint> bindList(ConstraintsHandler.DEFAULT_READ_CONSTRAINTS_LIST);
 				binder.<EntityConstraint> bindList(ConstraintsHandler.DEFAULT_WRITE_CONSTRAINTS_LIST);
+				binder.<PropertyMetadataEncoder>bindMap(EncoderService.PROPERTY_METADATA_ENCODER_MAP).putAll(metadataEncoders);
 
 				if (linkRestServiceType != null) {
 					binder.bind(ILinkRestService.class).to(linkRestServiceType);

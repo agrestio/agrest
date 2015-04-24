@@ -14,12 +14,24 @@ public class MetadataResponse<T> extends SimpleResponse {
     private Encoder encoder;
     private Collection<LrResource> resources;
     private Class<T> type;
+    private ResourceEntity<T> entity;
+    private String applicationBase;
 
     public MetadataResponse(Class<T> type) {
         super(true, null);
         this.encoder = GenericEncoder.encoder();
         this.type = type;
         this.resources = new ArrayList<>();
+    }
+
+    public MetadataResponse<T> resourceEntity(ResourceEntity<T> entity) {
+        this.entity = entity;
+        return this;
+    }
+
+    public MetadataResponse<T> withApplicationBase(String applicationBase) {
+        this.applicationBase = applicationBase;
+        return this;
     }
 
     public MetadataResponse<T> withEncoder(Encoder encoder) {
@@ -40,5 +52,13 @@ public class MetadataResponse<T> extends SimpleResponse {
     public void writeData(JsonGenerator out) throws IOException {
 		encoder.encode(null, resources, out);
 	}
+
+    public ResourceEntity<T> getEntity() {
+        return entity;
+    }
+
+    public String getApplicationBase() {
+        return applicationBase;
+    }
 
 }

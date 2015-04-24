@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import com.nhl.link.rest.encoder.PropertyMetadataEncoder;
 import org.apache.cayenne.Cayenne;
 import org.apache.cayenne.ObjectContext;
 import org.apache.cayenne.ObjectId;
@@ -42,7 +43,7 @@ public class EncoderServiceTest extends TestWithCayenneMapping {
 		IStringConverterFactory stringConverterFactory = mock(IStringConverterFactory.class);
 
 		encoderService = new EncoderService(this.filters, attributeEncoderFactory, stringConverterFactory,
-				new RelationshipMapper());
+				new RelationshipMapper(), Collections.<String, PropertyMetadataEncoder>emptyMap());
 	}
 
 	@Test

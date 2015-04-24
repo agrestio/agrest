@@ -1,8 +1,7 @@
 package com.nhl.link.rest.runtime.cayenne;
 
 import com.nhl.link.rest.MetadataResponse;
-import com.nhl.link.rest.annotation.LrRelationship;
-import com.nhl.link.rest.encoder.ResourceEncoder;
+import com.nhl.link.rest.ResourceEntity;
 import com.nhl.link.rest.meta.LrEntity;
 import com.nhl.link.rest.meta.LrResource;
 import com.nhl.link.rest.processor.ProcessingStage;
@@ -195,14 +194,13 @@ public class CayenneProcessorFactory implements IProcessorFactory {
 					}
 				}
 
+				MetadataResponse<T> response = new MetadataResponse<>(context.getType())
+						.resourceEntity(new ResourceEntity<>(entity))
+						.withApplicationBase(context.getApplicationBase())
+						.withResources(filteredResources);
+
 				context.setResponse(
-						new MetadataResponse<>(context.getType())
-								.withEncoder(
-										new ResourceEncoder<>(entity, context.getApplicationBase())
-								)
-								.withResources(
-										filteredResources
-								)
+						response.withEncoder(encoderService.makeEncoder(response))
 				);
 			}
 		};

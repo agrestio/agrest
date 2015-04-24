@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import com.nhl.link.rest.encoder.PropertyMetadataEncoder;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -40,7 +41,7 @@ public class EncoderService_Pojo_Test {
 		IStringConverterFactory stringConverterFactory = mock(IStringConverterFactory.class);
 
 		this.encoderService = new EncoderService(this.filters, attributeEncoderFactory, stringConverterFactory,
-				new RelationshipMapper());
+				new RelationshipMapper(), Collections.<String, PropertyMetadataEncoder>emptyMap());
 
 	}
 

@@ -1,7 +1,9 @@
 package com.nhl.link.rest.runtime.adapter.sencha;
 
 import java.util.List;
+import java.util.Map;
 
+import com.nhl.link.rest.encoder.PropertyMetadataEncoder;
 import org.apache.cayenne.di.Inject;
 
 import com.nhl.link.rest.EntityProperty;
@@ -21,8 +23,9 @@ public class SenchaEncoderService extends EncoderService {
 
 	public SenchaEncoderService(@Inject(ENCODER_FILTER_LIST) List<EncoderFilter> filters,
 			@Inject IAttributeEncoderFactory attributeEncoderFactory,
-			@Inject IStringConverterFactory stringConverterFactory, @Inject IRelationshipMapper relationshipMapper) {
-		super(filters, attributeEncoderFactory, stringConverterFactory, relationshipMapper);
+			@Inject IStringConverterFactory stringConverterFactory, @Inject IRelationshipMapper relationshipMapper,
+			@Inject(PROPERTY_METADATA_ENCODER_MAP) Map<String, PropertyMetadataEncoder> propertyMetadataEncoders) {
+		super(filters, attributeEncoderFactory, stringConverterFactory, relationshipMapper, propertyMetadataEncoders);
 	}
 
 	@Override

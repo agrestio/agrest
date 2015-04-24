@@ -12,10 +12,12 @@ public class ResourceEncoder<T> extends AbstractEncoder {
 
     private LrEntity<T> entity;
     private String applicationBase;
+    private Encoder entityEncoder;
 
-    public ResourceEncoder(LrEntity<T> entity, String applicationBase) {
+    public ResourceEncoder(LrEntity<T> entity, String applicationBase, Encoder entityEncoder) {
         this.entity = entity;
         this.applicationBase = applicationBase == null? "" : applicationBase;
+        this.entityEncoder = entityEncoder;
     }
 
     @Override
@@ -65,9 +67,7 @@ public class ResourceEncoder<T> extends AbstractEncoder {
         out.writeEndArray();
     }
 
-    private void writeEntity(LrEntity entity, JsonGenerator out) throws IOException {
-        out.writeObjectFieldStart("entity");
-        out.writeEndObject();
+    private void writeEntity(LrEntity<T> entity, JsonGenerator out) throws IOException {
+        entityEncoder.encode("entity", entity, out);
     }
-
 }

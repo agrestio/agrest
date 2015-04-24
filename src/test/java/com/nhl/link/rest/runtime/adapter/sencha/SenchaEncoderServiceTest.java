@@ -7,8 +7,10 @@ import static org.mockito.Mockito.when;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
+import com.nhl.link.rest.encoder.PropertyMetadataEncoder;
 import org.apache.cayenne.Cayenne;
 import org.apache.cayenne.ObjectContext;
 import org.apache.cayenne.ObjectId;
@@ -51,7 +53,7 @@ public class SenchaEncoderServiceTest extends TestWithCayenneMapping {
 		IRelationshipMapper relationshipMapper = new SenchaRelationshipMapper();
 
 		encoderService = new SenchaEncoderService(this.filters, attributeEncoderFactory, stringConverterFactory,
-				relationshipMapper);
+				relationshipMapper, Collections.<String, PropertyMetadataEncoder>emptyMap());
 	}
 
 	@Test

@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import com.nhl.link.rest.encoder.PropertyMetadataEncoder;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -32,7 +33,7 @@ public class DataResponseTest extends TestWithCayenneMapping {
 		IAttributeEncoderFactory attributeEncoderFactory = new AttributeEncoderFactory();
 		IStringConverterFactory stringConverterFactory = mock(IStringConverterFactory.class);
 		this.encoderService = new EncoderService(Collections.<EncoderFilter> emptyList(), attributeEncoderFactory,
-				stringConverterFactory, new RelationshipMapper());
+				stringConverterFactory, new RelationshipMapper(), Collections.<String, PropertyMetadataEncoder>emptyMap());
 	}
 
 	@Test
