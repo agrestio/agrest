@@ -11,6 +11,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.UriInfo;
 
 import com.nhl.link.rest.MetadataResponse;
+import com.nhl.link.rest.meta.annotation.Resource;
 import org.apache.cayenne.query.SelectQuery;
 
 import com.nhl.link.rest.DataResponse;
@@ -79,6 +80,7 @@ public class E2Resource {
 
 	@GET
 	@Path("metadata")
+	@Resource(E2.class)
 	public MetadataResponse getMetadata(@Context UriInfo uriInfo) {
 		return LinkRest.metadata(E2.class, config)
 				.forResource(E2Resource.class)

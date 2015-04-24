@@ -7,6 +7,7 @@ import com.nhl.link.rest.meta.LinkMethodType;
 import com.nhl.link.rest.meta.LrDataMap;
 import com.nhl.link.rest.meta.LrEntity;
 import com.nhl.link.rest.meta.LrResource;
+import com.nhl.link.rest.meta.annotation.Resource;
 import org.apache.cayenne.di.Inject;
 
 import javax.ws.rs.DELETE;
@@ -68,7 +69,18 @@ public class ResourceParser implements IResourceParser {
         DefaultLrResource resource = new DefaultLrResource();
 
         for (Method method : methods) {
-            if (DataResponse.class.isAssignableFrom(method.getReturnType())) {
+
+            Resource annotation = method.getAnnotation(Resource.class);
+            if (annotation != null) {
+
+                LrEntity<?> entity = dataMap.getEntity(annotation.value());
+                if (entity == null) {
+                    throw new IllegalStateException("Unknown entity class: " + annotation.value().getName());
+                }
+                resource.setEntity(entity);
+
+            } else if (DataResponse.class.isAssignableFrom(method.getReturnType())) {
+
                 Type returnType = method.getGenericReturnType();
                 if (returnType instanceof ParameterizedType) {
                     LrEntity<?> entity = dataMap.getEntity(
