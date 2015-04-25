@@ -2,13 +2,20 @@ package com.nhl.link.rest.encoder;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.nhl.link.rest.meta.LrAttribute;
+import com.nhl.link.rest.meta.LrPersistentRelationship;
 import com.nhl.link.rest.meta.LrRelationship;
 import com.nhl.link.rest.meta.cayenne.CayenneLrAttribute;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.util.Date;
 
 public abstract class PropertyMetadataEncoder extends AbstractEncoder {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(PropertyMetadataEncoder.class);
+
+    // TODO: this just seems not right, probably we should enhance LrEntity/LrRelationship model
     private static final Encoder instance = new PropertyMetadataEncoder() {
 
         @Override
@@ -24,6 +31,27 @@ public abstract class PropertyMetadataEncoder extends AbstractEncoder {
 
         @Override
         protected String getPropertyType(Object property) {
+            if (property instanceof LrAttribute) {
+                String javaType = ((LrAttribute) property).getJavaType();
+                if (javaType.equals("java.lang.String")) {
+                    return "string";
+                } else if (javaType.equals("java.lang.Boolean")) {
+                    return "boolean";
+                }
+                try {
+                    Class<?> javaClass = Class.forName(javaType);
+                    if (Number.class.isAssignableFrom(javaClass)) {
+                        return "number";
+                    } else if (Date.class.isAssignableFrom(javaClass)) {
+                        return "date";
+                    }
+                } catch (ClassNotFoundException e) {
+                    LOGGER.warn("Failed to load class for name: {}", javaType);
+                }
+            } else if (property instanceof LrPersistentRelationship) {
+                return ((LrPersistentRelationship) property).getObjRelationship()
+                        .getTargetEntityName();
+            }
             return null;
         }
 
