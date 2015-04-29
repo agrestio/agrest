@@ -22,13 +22,9 @@ public class ResourceEncoder<T> extends AbstractEncoder {
 
     @Override
     protected boolean encodeNonNullObject(Object object, JsonGenerator out) throws IOException {
-        out.writeObjectFieldStart("data");
-
         writeEntity(entity, out);
 
         writeResources((Collection<LrResource>) object, out);
-
-        out.writeEndObject();
 
         return true;
     }

@@ -51,6 +51,8 @@ public class EntityMetadataEncoder extends AbstractEncoder {
         }
         out.writeEndArray();
 
+        out.writeEndObject();
+
         return true;
     }
 
