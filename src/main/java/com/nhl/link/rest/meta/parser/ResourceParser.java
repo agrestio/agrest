@@ -4,6 +4,7 @@ import com.nhl.link.rest.DataResponse;
 import com.nhl.link.rest.meta.DefaultLrOperation;
 import com.nhl.link.rest.meta.DefaultLrResource;
 import com.nhl.link.rest.meta.LinkMethodType;
+import com.nhl.link.rest.meta.LinkType;
 import com.nhl.link.rest.meta.LrDataMap;
 import com.nhl.link.rest.meta.LrEntity;
 import com.nhl.link.rest.meta.LrResource;
@@ -68,29 +69,51 @@ public class ResourceParser implements IResourceParser {
     private LrResource createResource(String path, Set<Method> methods) {
         DefaultLrResource resource = new DefaultLrResource();
 
+        LinkType resourceType = LinkType.UNDEFINED;
         for (Method method : methods) {
 
             Resource annotation = method.getAnnotation(Resource.class);
+            LrEntity<?> entity = null;
             if (annotation != null) {
-
-                LrEntity<?> entity = dataMap.getEntity(annotation.value());
-                if (entity == null) {
-                    throw new IllegalStateException("Unknown entity class: " + annotation.value().getName());
+                LinkType annotatedType = annotation.type();
+                if (resourceType == LinkType.UNDEFINED) {
+                    resourceType = annotatedType;
+                } else {
+                    if (annotatedType != LinkType.UNDEFINED && annotatedType != resourceType) {
+                        throw new IllegalStateException(
+                                "Conflicting resource type annotations detected for resource: " + path
+                        );
+                    }
                 }
-                resource.setEntity(entity);
+            }
+
+            if (annotation != null && !annotation.entityClass().equals(Object.class)) {
+
+                Class<?> entityClass = annotation.entityClass();
+                entity = dataMap.getEntity(entityClass);
+                if (entity == null) {
+                    throw new IllegalStateException("Unknown entity class: " + entityClass.getName());
+                }
 
             } else if (DataResponse.class.isAssignableFrom(method.getReturnType())) {
 
                 Type returnType = method.getGenericReturnType();
                 if (returnType instanceof ParameterizedType) {
-                    LrEntity<?> entity = dataMap.getEntity(
+                    entity = dataMap.getEntity(
                             (Class) ((ParameterizedType) returnType).getActualTypeArguments()[0]
                     );
-                    if (entity != null) {
-                        // TODO: Check that entity has been set already and is the same
-                        resource.setEntity(entity);
+                }
+            }
+
+            if (entity != null) {
+                if (resource.getEntity() != null) {
+                    if (!resource.getEntity().getName().equals(entity.getName())) {
+                        throw new IllegalStateException(
+                                "Conflicting entity class annotations detected for resource: " + path
+                        );
                     }
                 }
+                resource.setEntity(entity);
             }
 
             LinkMethodType methodType = getMethodType(method);
@@ -104,6 +127,7 @@ public class ResourceParser implements IResourceParser {
         }
 
         resource.setPath(path);
+        resource.setType(resourceType);
 
         return resource;
     }

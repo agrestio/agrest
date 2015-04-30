@@ -11,6 +11,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.UriInfo;
 
 import com.nhl.link.rest.MetadataResponse;
+import com.nhl.link.rest.meta.LinkType;
 import com.nhl.link.rest.meta.annotation.Resource;
 import org.apache.cayenne.query.SelectQuery;
 
@@ -28,14 +29,22 @@ public class E2Resource {
 	private Configuration config;
 
 	@GET
+	@Resource(type = LinkType.COLLECTION)
 	public DataResponse<E2> getE2(@Context UriInfo uriInfo) {
 		return LinkRest.service(config).select(SelectQuery.query(E2.class), uriInfo);
 	}
 
 	@GET
 	@Path("{id}")
+	@Resource(type = LinkType.ITEM)
 	public DataResponse<E2> getE2ById(@PathParam("id") int id, @Context UriInfo uriInfo) {
 		return LinkRest.service(config).selectById(E2.class, id, uriInfo);
+	}
+
+	@DELETE
+	@Path("{id}")
+	public SimpleResponse deleteE2ById(@PathParam("id") int id, @Context UriInfo uriInfo) {
+		return LinkRest.service(config).delete(E2.class, id);
 	}
 
 	@GET
@@ -80,7 +89,7 @@ public class E2Resource {
 
 	@GET
 	@Path("metadata")
-	@Resource(E2.class)
+	@Resource(entityClass = E2.class, type = LinkType.METADATA)
 	public MetadataResponse getMetadata(@Context UriInfo uriInfo) {
 		return LinkRest.metadata(E2.class, config)
 				.forResource(E2Resource.class)

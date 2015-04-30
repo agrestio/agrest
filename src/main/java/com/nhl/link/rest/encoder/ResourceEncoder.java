@@ -45,7 +45,7 @@ public class ResourceEncoder<T> extends AbstractEncoder {
 
         out.writeStringField("href", applicationBase + resource.getPath());
 
-        out.writeStringField("type", "");
+        out.writeStringField("type", resource.getType().name().toLowerCase());
 
         writeOperations(resource.getOperations(), out);
 

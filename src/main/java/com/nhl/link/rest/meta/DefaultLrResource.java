@@ -6,6 +6,7 @@ import java.util.Collection;
 public class DefaultLrResource implements LrResource {
 
     private String path;
+    private LinkType type;
     private Collection<LrOperation> operations;
     private LrEntity entity;
 
@@ -16,6 +17,11 @@ public class DefaultLrResource implements LrResource {
     @Override
     public String getPath() {
         return path;
+    }
+
+    @Override
+    public LinkType getType() {
+        return type;
     }
 
     @Override
@@ -30,6 +36,10 @@ public class DefaultLrResource implements LrResource {
 
     public void setPath(String path) {
         this.path = path;
+    }
+
+    public void setType(LinkType type) {
+        this.type = type;
     }
 
     public void addOperation(LrOperation operation) {
