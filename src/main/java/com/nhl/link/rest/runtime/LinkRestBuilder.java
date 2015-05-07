@@ -4,11 +4,9 @@ import com.nhl.link.rest.EntityConstraint;
 import com.nhl.link.rest.LinkRestException;
 import com.nhl.link.rest.encoder.EncoderFilter;
 import com.nhl.link.rest.encoder.PropertyMetadataEncoder;
-import com.nhl.link.rest.meta.LrDataMap;
 import com.nhl.link.rest.meta.LrEntity;
 import com.nhl.link.rest.meta.LrEntityBuilder;
 import com.nhl.link.rest.meta.LrEntityOverlay;
-import com.nhl.link.rest.meta.cayenne.CayenneAwareLrDataMap;
 import com.nhl.link.rest.meta.parser.IResourceParser;
 import com.nhl.link.rest.meta.parser.ResourceParser;
 import com.nhl.link.rest.provider.CayenneRuntimeExceptionMapper;
@@ -30,7 +28,9 @@ import com.nhl.link.rest.runtime.encoder.StringConverterFactory;
 import com.nhl.link.rest.runtime.jackson.IJacksonService;
 import com.nhl.link.rest.runtime.jackson.JacksonService;
 import com.nhl.link.rest.runtime.meta.IMetadataService;
+import com.nhl.link.rest.runtime.meta.IResourceMetadataService;
 import com.nhl.link.rest.runtime.meta.MetadataService;
+import com.nhl.link.rest.runtime.meta.ResourceMetadataService;
 import com.nhl.link.rest.runtime.parser.IRequestParser;
 import com.nhl.link.rest.runtime.parser.RequestParser;
 import com.nhl.link.rest.runtime.parser.cache.IPathCache;
@@ -300,7 +300,6 @@ public class LinkRestBuilder {
 				}
 
 				binder.bind(IProcessorFactory.class).to(CayenneProcessorFactory.class);
-				binder.bind(LrDataMap.class).to(CayenneAwareLrDataMap.class);
 				binder.bind(IRequestParser.class).to(RequestParser.class);
 				binder.bind(IJsonValueConverterFactory.class).to(DefaultJsonValueConverterFactory.class);
 				binder.bind(IAttributeEncoderFactory.class).to(AttributeEncoderFactory.class);
@@ -308,6 +307,7 @@ public class LinkRestBuilder {
 				binder.bind(IEncoderService.class).to(EncoderService.class);
 				binder.bind(IRelationshipMapper.class).to(RelationshipMapper.class);
 				binder.bind(IMetadataService.class).to(MetadataService.class);
+				binder.bind(IResourceMetadataService.class).to(ResourceMetadataService.class);
 				binder.bind(IConstraintsHandler.class).to(ConstraintsHandler.class);
 				binder.bind(ICayenneExpProcessor.class).to(CayenneExpProcessor.class);
 				binder.bind(IKeyValueExpProcessor.class).to(KeyValueExpProcessor.class);

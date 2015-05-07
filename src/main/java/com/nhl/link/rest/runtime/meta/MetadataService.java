@@ -1,28 +1,29 @@
 package com.nhl.link.rest.runtime.meta;
 
-import com.nhl.link.rest.EntityParent;
-import com.nhl.link.rest.LinkRestException;
-import com.nhl.link.rest.meta.LrDataMap;
-import com.nhl.link.rest.meta.LrEntity;
-import com.nhl.link.rest.meta.LrRelationship;
-import com.nhl.link.rest.meta.LrResource;
-import com.nhl.link.rest.meta.parser.IResourceParser;
-import com.nhl.link.rest.runtime.cayenne.ICayennePersister;
+import java.util.List;
+import java.util.Map;
+
+import javax.ws.rs.core.Response.Status;
+
 import org.apache.cayenne.di.Inject;
 import org.apache.cayenne.map.EntityResolver;
 import org.apache.cayenne.query.Select;
 
-import javax.ws.rs.core.Response.Status;
-import java.util.Collection;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
+import com.nhl.link.rest.EntityParent;
+import com.nhl.link.rest.LinkRestException;
+import com.nhl.link.rest.meta.LrDataMap;
+import com.nhl.link.rest.meta.LrEntity;
+import com.nhl.link.rest.meta.LrEntityOverlay;
+import com.nhl.link.rest.meta.LrRelationship;
+import com.nhl.link.rest.meta.cayenne.CayenneAwareLrDataMap;
+import com.nhl.link.rest.runtime.cayenne.ICayennePersister;
 
 public class MetadataService implements IMetadataService {
 
 	/**
 	 * A DI key that allows loading arbitrary user-provided entities into
 	 * LinkRest metadata store. Usually used to map POJO entities.
-	 *
+	 * 
 	 * @since 1.12
 	 */
 	public static final String EXTRA_ENTITIES_LIST = "linkrest.meta.entity.extras.list";
@@ -30,23 +31,20 @@ public class MetadataService implements IMetadataService {
 	/**
 	 * A DI key that allows to expand the model of persistent entities coming
 	 * form Cayenne.
-	 *
+	 * 
 	 * @since 1.12
 	 */
 	public static final String ENTITY_OVERLAY_MAP = "linkrest.meta.entity.overlay.map";
 
 	private EntityResolver entityResolver;
 	private LrDataMap dataMap;
-	private IResourceParser resourceParser;
-	private ConcurrentMap<Class, Collection<LrResource>> classResources;
 
-	public MetadataService(@Inject LrDataMap dataMap, @Inject ICayennePersister cayenneService,
-						   @Inject IResourceParser resourceParser) {
+	public MetadataService(@Inject(EXTRA_ENTITIES_LIST) List<LrEntity<?>> extraEntities,
+			@Inject(ENTITY_OVERLAY_MAP) Map<String, LrEntityOverlay<?>> entityOverlays,
+			@Inject ICayennePersister cayenneService) {
 
 		this.entityResolver = cayenneService.entityResolver();
-		this.dataMap = dataMap;
-		this.resourceParser = resourceParser;
-		this.classResources = new ConcurrentHashMap<>();
+		this.dataMap = new CayenneAwareLrDataMap(entityResolver, extraEntities, entityOverlays);
 	}
 
 	/**
@@ -98,19 +96,4 @@ public class MetadataService implements IMetadataService {
 	public LrRelationship getLrRelationship(EntityParent<?> parent) {
 		return getLrRelationship(parent.getType(), parent.getRelationship());
 	}
-
-	@Override
-	public Collection<LrResource> getLrResources(Class<?> resourceClass) {
-
-		Collection<LrResource> resources = classResources.get(resourceClass);
-		if (resources == null) {
-			Collection<LrResource> newResources = resourceParser.parse(resourceClass);
-
-			Collection<LrResource> existingResources = classResources.putIfAbsent(resourceClass, newResources);
-			resources = existingResources == null? newResources : existingResources;
-		}
-
-		return resources;
-	}
-
 }

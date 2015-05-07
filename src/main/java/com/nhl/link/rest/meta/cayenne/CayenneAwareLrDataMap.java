@@ -7,9 +7,6 @@ import java.util.concurrent.ConcurrentMap;
 
 import javax.ws.rs.core.Response.Status;
 
-import com.nhl.link.rest.runtime.cayenne.ICayennePersister;
-import com.nhl.link.rest.runtime.meta.MetadataService;
-import org.apache.cayenne.di.Inject;
 import org.apache.cayenne.map.DbAttribute;
 import org.apache.cayenne.map.EntityResolver;
 import org.apache.cayenne.map.ObjAttribute;
@@ -37,11 +34,10 @@ public class CayenneAwareLrDataMap implements LrDataMap {
 	private ConcurrentMap<Class<?>, LrEntity<?>> entities;
 	private Map<String, LrEntityOverlay<?>> entityOverlays;
 
-	public CayenneAwareLrDataMap(@Inject ICayennePersister cayenneService,
-								 @Inject(MetadataService.EXTRA_ENTITIES_LIST) List<LrEntity<?>> extraEntities,
-								 @Inject(MetadataService.ENTITY_OVERLAY_MAP) Map<String, LrEntityOverlay<?>> entityOverlays) {
+	public CayenneAwareLrDataMap(EntityResolver resolver, List<LrEntity<?>> extraEntities,
+			Map<String, LrEntityOverlay<?>> entityOverlays) {
 
-		this.resolver = cayenneService.entityResolver();
+		this.resolver = resolver;
 		this.entityOverlays = entityOverlays;
 		this.entities = new ConcurrentHashMap<>();
 

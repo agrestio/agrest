@@ -1,13 +1,10 @@
 package com.nhl.link.rest.runtime.meta;
 
-import com.nhl.link.rest.meta.LrResource;
 import org.apache.cayenne.query.Select;
 
 import com.nhl.link.rest.EntityParent;
 import com.nhl.link.rest.meta.LrEntity;
 import com.nhl.link.rest.meta.LrRelationship;
-
-import java.util.Collection;
 
 /**
  * Provides access to LinkRest entity metadata.
@@ -40,6 +37,4 @@ public interface IMetadataService {
 	 * @since 1.12
 	 */
 	LrRelationship getLrRelationship(EntityParent<?> parent);
-
-	Collection<LrResource> getLrResources(Class<?> resourceClass);
 }

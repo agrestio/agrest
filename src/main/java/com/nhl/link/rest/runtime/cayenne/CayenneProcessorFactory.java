@@ -19,6 +19,7 @@ import com.nhl.link.rest.runtime.cayenne.processor.CayenneUpdateStage;
 import com.nhl.link.rest.runtime.constraints.IConstraintsHandler;
 import com.nhl.link.rest.runtime.encoder.IEncoderService;
 import com.nhl.link.rest.runtime.meta.IMetadataService;
+import com.nhl.link.rest.runtime.meta.IResourceMetadataService;
 import com.nhl.link.rest.runtime.parser.IRequestParser;
 import com.nhl.link.rest.runtime.processor.IProcessorFactory;
 import com.nhl.link.rest.runtime.processor.delete.DeleteContext;
@@ -54,15 +55,17 @@ public class CayenneProcessorFactory implements IProcessorFactory {
 	private ICayennePersister persister;
 	private IConstraintsHandler constraintsHandler;
 	private IMetadataService metadataService;
+	private IResourceMetadataService resourceMetadataService;
 
 	public CayenneProcessorFactory(@Inject IRequestParser requestParser, @Inject IEncoderService encoderService,
 			@Inject ICayennePersister persister, @Inject IConstraintsHandler constraintsHandler,
-			@Inject IMetadataService metadataService) {
+			@Inject IMetadataService metadataService, @Inject IResourceMetadataService resourceMetadataService) {
 		this.requestParser = requestParser;
 		this.encoderService = encoderService;
 		this.persister = persister;
 		this.constraintsHandler = constraintsHandler;
 		this.metadataService = metadataService;
+		this.resourceMetadataService = resourceMetadataService;
 	}
 
 	@Override
@@ -185,7 +188,7 @@ public class CayenneProcessorFactory implements IProcessorFactory {
 			@Override
 			protected void doExecute(MetadataContext<T> context) {
 				LrEntity<T> entity = context.getEntity();
-				Collection<LrResource> resources = metadataService.getLrResources(context.getResource());
+				Collection<LrResource> resources = resourceMetadataService.getLrResources(context.getResource());
 				Collection<LrResource> filteredResources = new ArrayList<>(resources.size());
 				for (LrResource<?> resource : resources) {
 					LrEntity<?> resourceEntity = resource.getEntity();

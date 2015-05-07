@@ -5,10 +5,10 @@ import com.nhl.link.rest.meta.DefaultLrOperation;
 import com.nhl.link.rest.meta.DefaultLrResource;
 import com.nhl.link.rest.meta.LinkMethodType;
 import com.nhl.link.rest.meta.LinkType;
-import com.nhl.link.rest.meta.LrDataMap;
 import com.nhl.link.rest.meta.LrEntity;
 import com.nhl.link.rest.meta.LrResource;
 import com.nhl.link.rest.meta.annotation.Resource;
+import com.nhl.link.rest.runtime.meta.IMetadataService;
 import org.apache.cayenne.di.Inject;
 
 import javax.ws.rs.DELETE;
@@ -32,7 +32,7 @@ import java.util.Set;
 public class ResourceParser implements IResourceParser {
 
     @Inject
-    private LrDataMap dataMap;
+    private IMetadataService metadataService;
 
     @Override
     public <T> Collection<LrResource> parse(Class<T> resourceClass) {
@@ -90,7 +90,7 @@ public class ResourceParser implements IResourceParser {
             if (annotation != null && !annotation.entityClass().equals(Object.class)) {
 
                 Class<?> entityClass = annotation.entityClass();
-                entity = dataMap.getEntity(entityClass);
+                entity = metadataService.getLrEntity(entityClass);
                 if (entity == null) {
                     throw new IllegalStateException("Unknown entity class: " + entityClass.getName());
                 }
@@ -99,7 +99,7 @@ public class ResourceParser implements IResourceParser {
 
                 Type returnType = method.getGenericReturnType();
                 if (returnType instanceof ParameterizedType) {
-                    entity = dataMap.getEntity(
+                    entity = metadataService.getLrEntity(
                             (Class) ((ParameterizedType) returnType).getActualTypeArguments()[0]
                     );
                 }
