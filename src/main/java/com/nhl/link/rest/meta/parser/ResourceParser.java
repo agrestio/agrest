@@ -31,8 +31,11 @@ import java.util.Set;
 
 public class ResourceParser implements IResourceParser {
 
-    @Inject
     private IMetadataService metadataService;
+
+    public ResourceParser(@Inject IMetadataService metadataService) {
+        this.metadataService = metadataService;
+    }
 
     @Override
     public <T> Collection<LrResource> parse(Class<T> resourceClass) {
