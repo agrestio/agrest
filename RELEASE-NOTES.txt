@@ -1,3 +1,7 @@
+Release 1.18
+
+#102 Remove DataResponse.queryProperty
+
 Release 1.17
 
 #98 Start weeding out "id is a single attribue" assumption

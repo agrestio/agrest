@@ -114,7 +114,6 @@ public class RequestParser implements IRequestParser {
 
 		ResourceEntity rootDescriptor = new ResourceEntity(entity);
 		response.resourceEntity(rootDescriptor);
-		response.withQueryProperty(context.getAutocompleteProperty());
 
 		// selectById can send us a null uriInfo; still we want to run through
 		// the processors in this case to init the defaults
@@ -142,8 +141,7 @@ public class RequestParser implements IRequestParser {
 
 	protected Expression parseKeyValueExp(SelectContext<?> context, MultivaluedMap<String, String> parameters) {
 		String value = string(parameters, QUERY);
-		return keyValueExpProcessor.process(context.getResponse().getEntity().getLrEntity(), context.getResponse()
-				.getQueryProperty(), value);
+		return keyValueExpProcessor.process(context.getResponse().getEntity().getLrEntity(), context.getAutocompleteProperty(), value);
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
