@@ -2,6 +2,7 @@ package com.nhl.link.rest.runtime;
 
 import javax.ws.rs.core.UriInfo;
 
+import com.nhl.link.rest.MetadataBuilder;
 import org.apache.cayenne.exp.Property;
 import org.apache.cayenne.query.SelectQuery;
 
@@ -133,4 +134,6 @@ public interface ILinkRestService {
 	 * @since 1.4
 	 */
 	<T> DeleteBuilder<T> delete(Class<T> type);
+	
+	<T> MetadataBuilder<T> metadata(Class<T> type);
 }

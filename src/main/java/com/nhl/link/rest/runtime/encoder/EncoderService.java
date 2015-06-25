@@ -1,55 +1,74 @@
 package com.nhl.link.rest.runtime.encoder;
 
-import static com.nhl.link.rest.property.PropertyBuilder.dataObjectProperty;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.TreeMap;
-
-import javax.ws.rs.core.Response.Status;
-
-import org.apache.cayenne.di.Inject;
-
 import com.nhl.link.rest.DataResponse;
 import com.nhl.link.rest.EntityProperty;
 import com.nhl.link.rest.LinkRestException;
+import com.nhl.link.rest.MetadataResponse;
 import com.nhl.link.rest.ResourceEntity;
 import com.nhl.link.rest.encoder.Encoder;
 import com.nhl.link.rest.encoder.EncoderFilter;
 import com.nhl.link.rest.encoder.EntityEncoder;
+import com.nhl.link.rest.encoder.EntityMetadataEncoder;
 import com.nhl.link.rest.encoder.EntityToOneEncoder;
 import com.nhl.link.rest.encoder.FilterChainEncoder;
 import com.nhl.link.rest.encoder.ListEncoder;
 import com.nhl.link.rest.encoder.MapByEncoder;
+import com.nhl.link.rest.encoder.PropertyMetadataEncoder;
+import com.nhl.link.rest.encoder.ResourceEncoder;
 import com.nhl.link.rest.encoder.RootListEncoder;
 import com.nhl.link.rest.meta.LrAttribute;
 import com.nhl.link.rest.meta.LrRelationship;
 import com.nhl.link.rest.property.PropertyBuilder;
 import com.nhl.link.rest.runtime.semantics.IRelationshipMapper;
+import org.apache.cayenne.di.Inject;
+
+import javax.ws.rs.core.Response.Status;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.TreeMap;
+import java.util.concurrent.ConcurrentHashMap;
+
+import static com.nhl.link.rest.property.PropertyBuilder.dataObjectProperty;
 
 public class EncoderService implements IEncoderService {
 
 	public static final String ENCODER_FILTER_LIST = "linkrest.encoder.filter.list";
+	public static final String PROPERTY_METADATA_ENCODER_MAP = "linkrest.metadata.encoder.map";
 
 	protected IAttributeEncoderFactory attributeEncoderFactory;
 	private IStringConverterFactory stringConverterFactory;
 	protected IRelationshipMapper relationshipMapper;
 	private List<EncoderFilter> filters;
+	private Map<String, PropertyMetadataEncoder> propertyMetadataEncoders;
+	private Map<ResourceEntity<?>, Encoder> entityMetadataEncoders;
 
 	public EncoderService(@Inject(ENCODER_FILTER_LIST) List<EncoderFilter> filters,
 			@Inject IAttributeEncoderFactory attributeEncoderFactory,
-			@Inject IStringConverterFactory stringConverterFactory, @Inject IRelationshipMapper relationshipMapper) {
+			@Inject IStringConverterFactory stringConverterFactory, @Inject IRelationshipMapper relationshipMapper,
+			@Inject(PROPERTY_METADATA_ENCODER_MAP) Map<String, PropertyMetadataEncoder> propertyMetadataEncoders) {
 		this.attributeEncoderFactory = attributeEncoderFactory;
 		this.relationshipMapper = relationshipMapper;
 		this.stringConverterFactory = stringConverterFactory;
 		this.filters = filters;
+		this.propertyMetadataEncoders = propertyMetadataEncoders;
+		this.entityMetadataEncoders = new ConcurrentHashMap<>();
 	}
 
 	@Override
 	public Encoder makeEncoder(DataResponse<?> response) {
 		return rootEncoder(response);
+	}
+
+	@Override
+	public Encoder makeEncoder(MetadataResponse<?> response) {
+		return rootEncoder(response);
+	}
+
+	private <T> Encoder rootEncoder(MetadataResponse<T> response) {
+		ResourceEntity<T> entity = response.getEntity();
+		return new ResourceEncoder<>(entity.getLrEntity(), response.getApplicationBase(), entityMetadataEncoder(entity));
 	}
 
 	private <T> Encoder rootEncoder(DataResponse<T> response) {
@@ -107,6 +126,17 @@ public class EncoderService implements IEncoderService {
 		Encoder valueEncoder = entityEncoder(resourceEntity);
 		Encoder compositeValueEncoder = new EntityToOneEncoder(valueEncoder);
 		return filteredEncoder(compositeValueEncoder, resourceEntity);
+	}
+
+	protected Encoder entityMetadataEncoder(ResourceEntity<?> resourceEntity) {
+		Encoder encoder = entityMetadataEncoders.get(resourceEntity);
+
+		if (encoder == null) {
+			encoder = new EntityMetadataEncoder(resourceEntity.getLrEntity(), propertyMetadataEncoders);
+			entityMetadataEncoders.put(resourceEntity, encoder);
+		}
+
+		return encoder;
 	}
 
 	protected Encoder entityEncoder(ResourceEntity<?> resourceEntity) {

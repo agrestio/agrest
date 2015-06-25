@@ -2,6 +2,7 @@ package com.nhl.link.rest.runtime.adapter.sencha;
 
 import javax.ws.rs.core.UriInfo;
 
+import com.nhl.link.rest.MetadataBuilder;
 import org.apache.cayenne.exp.Property;
 import org.apache.cayenne.query.SelectQuery;
 
@@ -101,6 +102,11 @@ public class LinkRestServiceDecorator implements ILinkRestService {
 	@Override
 	public <T> DeleteBuilder<T> delete(Class<T> root) {
 		return delegate.delete(root);
+	}
+
+	@Override
+	public <T> MetadataBuilder<T> metadata(Class<T> type) {
+		return delegate.metadata(type);
 	}
 
 }

@@ -5,6 +5,10 @@ import static org.mockito.Mockito.when;
 
 import java.util.Collections;
 
+import com.nhl.link.rest.meta.parser.IResourceParser;
+import com.nhl.link.rest.meta.parser.ResourceParser;
+import com.nhl.link.rest.runtime.meta.IResourceMetadataService;
+import com.nhl.link.rest.runtime.meta.ResourceMetadataService;
 import org.apache.cayenne.ObjectContext;
 import org.apache.cayenne.configuration.server.DataSourceFactory;
 import org.apache.cayenne.configuration.server.ServerRuntime;
@@ -57,6 +61,8 @@ public class TestWithCayenneMapping {
 	protected LrDataMap lrDataMap;
 	protected ICayennePersister mockCayennePersister;
 	protected IMetadataService metadataService;
+	protected IResourceMetadataService resourceMetadataService;
+	protected IResourceParser resourceParser;
 
 	@Before
 	public void initLrDataMap() {
@@ -71,11 +77,17 @@ public class TestWithCayenneMapping {
 		when(mockCayennePersister.newContext()).thenReturn(runtime.newContext());
 
 		this.metadataService = createMetadataService();
+		this.resourceParser = new ResourceParser(metadataService);
+		this.resourceMetadataService = createResourceMetadataService();
 	}
 
 	protected IMetadataService createMetadataService() {
 		return new MetadataService(Collections.<LrEntity<?>> emptyList(),
 				Collections.<String, LrEntityOverlay<?>> emptyMap(), mockCayennePersister);
+	}
+
+	protected IResourceMetadataService createResourceMetadataService() {
+		return new ResourceMetadataService(resourceParser);
 	}
 
 	protected <T> LrEntity<T> getLrEntity(Class<T> type) {

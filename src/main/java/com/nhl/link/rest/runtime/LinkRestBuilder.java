@@ -1,31 +1,14 @@
 package com.nhl.link.rest.runtime;
 
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.ws.rs.core.Feature;
-import javax.ws.rs.ext.ExceptionMapper;
-
-import org.apache.cayenne.CayenneRuntimeException;
-import org.apache.cayenne.configuration.server.ServerRuntime;
-import org.apache.cayenne.di.Binder;
-import org.apache.cayenne.di.DIBootstrap;
-import org.apache.cayenne.di.Injector;
-import org.apache.cayenne.di.Module;
-import org.apache.cayenne.validation.ValidationException;
-
 import com.nhl.link.rest.EntityConstraint;
 import com.nhl.link.rest.LinkRestException;
 import com.nhl.link.rest.encoder.EncoderFilter;
+import com.nhl.link.rest.encoder.PropertyMetadataEncoder;
 import com.nhl.link.rest.meta.LrEntity;
 import com.nhl.link.rest.meta.LrEntityBuilder;
 import com.nhl.link.rest.meta.LrEntityOverlay;
+import com.nhl.link.rest.meta.parser.IResourceParser;
+import com.nhl.link.rest.meta.parser.ResourceParser;
 import com.nhl.link.rest.provider.CayenneRuntimeExceptionMapper;
 import com.nhl.link.rest.provider.LinkRestExceptionMapper;
 import com.nhl.link.rest.provider.ValidationExceptionMapper;
@@ -45,17 +28,19 @@ import com.nhl.link.rest.runtime.encoder.StringConverterFactory;
 import com.nhl.link.rest.runtime.jackson.IJacksonService;
 import com.nhl.link.rest.runtime.jackson.JacksonService;
 import com.nhl.link.rest.runtime.meta.IMetadataService;
+import com.nhl.link.rest.runtime.meta.IResourceMetadataService;
 import com.nhl.link.rest.runtime.meta.MetadataService;
+import com.nhl.link.rest.runtime.meta.ResourceMetadataService;
 import com.nhl.link.rest.runtime.parser.IRequestParser;
 import com.nhl.link.rest.runtime.parser.RequestParser;
 import com.nhl.link.rest.runtime.parser.cache.IPathCache;
 import com.nhl.link.rest.runtime.parser.cache.PathCache;
 import com.nhl.link.rest.runtime.parser.converter.DefaultJsonValueConverterFactory;
 import com.nhl.link.rest.runtime.parser.converter.IJsonValueConverterFactory;
-import com.nhl.link.rest.runtime.parser.filter.IKeyValueExpProcessor;
-import com.nhl.link.rest.runtime.parser.filter.KeyValueExpProcessor;
 import com.nhl.link.rest.runtime.parser.filter.CayenneExpProcessor;
 import com.nhl.link.rest.runtime.parser.filter.ICayenneExpProcessor;
+import com.nhl.link.rest.runtime.parser.filter.IKeyValueExpProcessor;
+import com.nhl.link.rest.runtime.parser.filter.KeyValueExpProcessor;
 import com.nhl.link.rest.runtime.parser.sort.ISortProcessor;
 import com.nhl.link.rest.runtime.parser.sort.SortProcessor;
 import com.nhl.link.rest.runtime.parser.tree.ITreeProcessor;
@@ -64,6 +49,24 @@ import com.nhl.link.rest.runtime.processor.IProcessorFactory;
 import com.nhl.link.rest.runtime.semantics.IRelationshipMapper;
 import com.nhl.link.rest.runtime.semantics.RelationshipMapper;
 import com.nhl.link.rest.update.UpdateFilter;
+import org.apache.cayenne.CayenneRuntimeException;
+import org.apache.cayenne.configuration.server.ServerRuntime;
+import org.apache.cayenne.di.Binder;
+import org.apache.cayenne.di.DIBootstrap;
+import org.apache.cayenne.di.Injector;
+import org.apache.cayenne.di.Module;
+import org.apache.cayenne.validation.ValidationException;
+
+import javax.ws.rs.core.Feature;
+import javax.ws.rs.ext.ExceptionMapper;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * A builder of LinkRest runtime that can be loaded into JAX-RS 2 container as a
@@ -81,6 +84,7 @@ public class LinkRestBuilder {
 	private Map<String, LrEntityOverlay<?>> entityOverlays;
 	private Map<Class<?>, Class<?>> exceptionMappers;
 	private Collection<LinkRestAdapter> adapters;
+	private Map<String, PropertyMetadataEncoder> metadataEncoders;
 
 	/**
 	 * A shortcut that creates a LinkRest stack based on Cayenne runtime and
@@ -111,6 +115,7 @@ public class LinkRestBuilder {
 
 		this.exceptionMappers = mapDefaultExceptions();
 		this.adapters = new ArrayList<>();
+		this.metadataEncoders = new HashMap<>();
 	}
 
 	protected Map<Class<?>, Class<?>> mapDefaultExceptions() {
@@ -239,6 +244,11 @@ public class LinkRestBuilder {
 		return this;
 	}
 
+	public LinkRestBuilder metadataEncoder(String type, PropertyMetadataEncoder encoder) {
+		this.metadataEncoders.put(type, encoder);
+		return this;
+	}
+
 	public LinkRestRuntime build() {
 		Injector i = createInjector();
 		return new LinkRestRuntime(i, createExtraFeatures(), createExtraComponents());
@@ -281,6 +291,7 @@ public class LinkRestBuilder {
 
 				binder.<EntityConstraint> bindList(ConstraintsHandler.DEFAULT_READ_CONSTRAINTS_LIST);
 				binder.<EntityConstraint> bindList(ConstraintsHandler.DEFAULT_WRITE_CONSTRAINTS_LIST);
+				binder.<PropertyMetadataEncoder>bindMap(EncoderService.PROPERTY_METADATA_ENCODER_MAP).putAll(metadataEncoders);
 
 				if (linkRestServiceType != null) {
 					binder.bind(ILinkRestService.class).to(linkRestServiceType);
@@ -296,6 +307,7 @@ public class LinkRestBuilder {
 				binder.bind(IEncoderService.class).to(EncoderService.class);
 				binder.bind(IRelationshipMapper.class).to(RelationshipMapper.class);
 				binder.bind(IMetadataService.class).to(MetadataService.class);
+				binder.bind(IResourceMetadataService.class).to(ResourceMetadataService.class);
 				binder.bind(IConstraintsHandler.class).to(ConstraintsHandler.class);
 				binder.bind(ICayenneExpProcessor.class).to(CayenneExpProcessor.class);
 				binder.bind(IKeyValueExpProcessor.class).to(KeyValueExpProcessor.class);
@@ -306,6 +318,8 @@ public class LinkRestBuilder {
 				binder.bind(IPathCache.class).to(PathCache.class);
 				binder.bind(ISortProcessor.class).to(SortProcessor.class);
 				binder.bind(ITreeProcessor.class).to(IncludeExcludeProcessor.class);
+
+				binder.bind(IResourceParser.class).to(ResourceParser.class);
 
 				// apply adapter-contributed bindings
 				for (LinkRestAdapter a : adapters) {

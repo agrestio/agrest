@@ -48,6 +48,10 @@ public class LinkRest {
 		return service(config).update(type);
 	}
 
+	public static <T> MetadataBuilder<T> metadata(Class<T> entityClass, Configuration config) {
+		return service(config).metadata(entityClass);
+	}
+
 	/**
 	 * Returns {@link ILinkRestService} bound to a given JAX RS configuration.
 	 * ILinkRestService is the main engine behind all the operations in

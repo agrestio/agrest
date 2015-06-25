@@ -1,6 +1,7 @@
 package com.nhl.link.rest.runtime.encoder;
 
 import com.nhl.link.rest.DataResponse;
+import com.nhl.link.rest.MetadataResponse;
 import com.nhl.link.rest.encoder.Encoder;
 
 public interface IEncoderService {
@@ -11,4 +12,6 @@ public interface IEncoderService {
 	 * @since 1.3
 	 */
 	Encoder makeEncoder(DataResponse<?> response);
+
+	Encoder makeEncoder(MetadataResponse<?> response);
 }

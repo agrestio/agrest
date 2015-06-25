@@ -6,6 +6,7 @@ import javax.ws.rs.core.Configuration;
 import javax.ws.rs.core.Feature;
 import javax.ws.rs.core.FeatureContext;
 
+import com.nhl.link.rest.provider.MetadataResponseWriter;
 import org.apache.cayenne.di.Injector;
 
 import com.nhl.link.rest.provider.DataResponseWriter;
@@ -66,6 +67,7 @@ public class LinkRestRuntime implements Feature {
 		context.register(SimpleResponseWriter.class);
 		context.register(DataResponseWriter.class);
 		context.register(UpdateResponseWriter.class);
+		context.register(MetadataResponseWriter.class);
 
 		context.register(ResponseStatusDynamicFeature.class);
 

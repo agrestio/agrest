@@ -5,6 +5,8 @@ import java.util.Map;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriInfo;
 
+import com.nhl.link.rest.MetadataBuilder;
+import com.nhl.link.rest.runtime.processor.meta.MetadataContext;
 import org.apache.cayenne.di.Inject;
 import org.apache.cayenne.exp.Property;
 import org.apache.cayenne.query.SelectQuery;
@@ -180,6 +182,13 @@ public class DefaultLinkRestService implements ILinkRestService {
 	public <T> DeleteBuilder<T> delete(Class<T> type) {
 		DeleteContext<T> context = new DeleteContext<>(type);
 		return new DefaultDeleteBuilder<>(context, processor(context));
+	}
+
+	@Override
+	public <T> MetadataBuilder<T> metadata(Class<T> type) {
+		MetadataContext<T> context = new MetadataContext<>(type);
+		context.setEntity(metadataService.getLrEntity(type));
+		return new DefaultMetadataBuilder<>(context, processor(context));
 	}
 
 	protected <C extends ProcessingContext<T>, T> Processor<C, T> processor(C context) {
