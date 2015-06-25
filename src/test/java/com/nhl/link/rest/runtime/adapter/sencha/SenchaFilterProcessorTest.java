@@ -3,6 +3,7 @@ package com.nhl.link.rest.runtime.adapter.sencha;
 import static org.apache.cayenne.exp.ExpressionFactory.exp;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 import org.apache.cayenne.exp.Expression;
 import org.junit.Before;
@@ -40,12 +41,28 @@ public class SenchaFilterProcessorTest extends TestWithCayenneMapping {
 	}
 
 	@Test
+	public void testProcess_SingleFilter_Disabled() {
+		Expression e = processor.process(e4Entity, "[{\"property\":\"cVarchar\",\"value\":\"xyz\",\"disabled\":\"true\"}]");
+
+		assertNull(e);
+	}
+
+	@Test
 	public void testProcess_MultipleFilters() {
 		Expression e = processor.process(e4Entity,
 				"[{\"property\":\"cVarchar\",\"value\":\"xyz\"}, {\"property\":\"cVarchar\",\"value\":\"123\"}]");
 
 		assertNotNull(e);
 		assertEquals(exp("cVarchar likeIgnoreCase 'xyz%' and cVarchar likeIgnoreCase '123%'"), e);
+	}
+
+	@Test
+	public void testProcess_MultipleFilters_Disabled() {
+		Expression e = processor.process(e4Entity,
+				"[{\"property\":\"cVarchar\",\"value\":\"xyz\", \"disabled\":\"true\"}, {\"property\":\"cVarchar\",\"value\":\"123\"}]");
+
+		assertNotNull(e);
+		assertEquals(exp("cVarchar likeIgnoreCase '123%'"), e);
 	}
 
 	@Test(expected = LinkRestException.class)

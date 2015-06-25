@@ -33,6 +33,7 @@ public class SenchaFilterProcessor implements ISenchaFilterProcessor {
 	private static final String EXACT_MATCH = "exactMatch";
 	private static final String PROPERTY = "property";
 	private static final String VALUE = "value";
+	private static final String DISABLED = "disabled";
 	private static final String OPERATOR = "operator";
 
 	private IJacksonService jsonParser;
@@ -66,6 +67,11 @@ public class SenchaFilterProcessor implements ISenchaFilterProcessor {
 			JsonNode valueNode = filterNode.get(VALUE);
 			if (valueNode == null) {
 				throw new LinkRestException(Status.BAD_REQUEST, "filter 'value' is missing" + filterNode.asText());
+			}
+
+			JsonNode disabledNode = filterNode.get(DISABLED);
+			if (disabledNode != null && disabledNode.asBoolean()) {
+				continue;
 			}
 
 			String property = propertyNode.asText();
