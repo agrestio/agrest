@@ -60,7 +60,7 @@ public class ResourceParserTest extends TestWithCayenneMapping {
 
     @Test
     public void testParse_NoResource() {
-        Collection<LrResource> resources = resourceParser.parse(Object.class);
+        Collection<LrResource<?>> resources = resourceParser.parse(Object.class);
         assertEquals(0, resources.size());
     }
 }

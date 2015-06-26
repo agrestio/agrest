@@ -9,10 +9,13 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 
+/**
+ * @since 1.18
+ */
 public class MetadataResponse<T> extends SimpleResponse {
 
     private Encoder encoder;
-    private Collection<LrResource> resources;
+    private Collection<LrResource<T>> resources;
     private Class<T> type;
     private ResourceEntity<T> entity;
     private String applicationBase;
@@ -22,6 +25,10 @@ public class MetadataResponse<T> extends SimpleResponse {
         this.encoder = GenericEncoder.encoder();
         this.type = type;
         this.resources = new ArrayList<>();
+    }
+    
+    public Class<T> getType() {
+    	return type;
     }
 
     public MetadataResponse<T> resourceEntity(ResourceEntity<T> entity) {
@@ -39,12 +46,12 @@ public class MetadataResponse<T> extends SimpleResponse {
         return this;
     }
 
-    public MetadataResponse<T> withResources(Collection<LrResource> resources) {
+    public MetadataResponse<T> withResources(Collection<LrResource<T>> resources) {
         this.resources.addAll(resources);
         return this;
     }
 
-    public MetadataResponse<T> withResource(LrResource resource) {
+    public MetadataResponse<T> withResource(LrResource<T> resource) {
         this.resources.add(resource);
         return this;
     }

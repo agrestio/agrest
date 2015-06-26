@@ -90,7 +90,7 @@ public class E2Resource {
 	@GET
 	@Path("metadata")
 	@Resource(entityClass = E2.class, type = LinkType.METADATA)
-	public MetadataResponse getMetadata(@Context UriInfo uriInfo) {
+	public MetadataResponse<E2> getMetadata(@Context UriInfo uriInfo) {
 		return LinkRest.metadata(E2.class, config)
 				.forResource(E2Resource.class)
 				.uri(uriInfo)

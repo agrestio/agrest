@@ -7,6 +7,9 @@ import com.nhl.link.rest.runtime.processor.meta.MetadataContext;
 
 import javax.ws.rs.core.UriInfo;
 
+/**
+ * @since 1.18
+ */
 public class DefaultMetadataBuilder<T> implements MetadataBuilder<T> {
 
     protected MetadataContext<T> context;
@@ -30,7 +33,7 @@ public class DefaultMetadataBuilder<T> implements MetadataBuilder<T> {
     }
 
     @Override
-    public MetadataResponse process() {
+    public MetadataResponse<T> process() {
         processor.execute(context);
         return context.getResponse();
     }

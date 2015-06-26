@@ -1,11 +1,14 @@
 package com.nhl.link.rest.meta.parser;
 
-import com.nhl.link.rest.meta.LrResource;
-
 import java.util.Collection;
 
+import com.nhl.link.rest.meta.LrResource;
+
+/**
+ * @since 1.18
+ */
 public interface IResourceParser {
 
-    <T> Collection<LrResource> parse(Class<T> resourceClass);
+	<T> Collection<LrResource<?>> parse(Class<T> resourceClass);
 
 }

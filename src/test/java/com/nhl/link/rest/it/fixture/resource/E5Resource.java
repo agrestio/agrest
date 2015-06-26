@@ -45,7 +45,7 @@ public class E5Resource {
 	@GET
 	@Path("metadata")
 	@Resource(entityClass = E5.class, type = LinkType.METADATA)
-	public MetadataResponse getMetadata(@Context UriInfo uriInfo) {
+	public MetadataResponse<E5> getMetadata(@Context UriInfo uriInfo) {
 		return LinkRest.metadata(E5.class, config)
 				.forResource(E5Resource.class)
 				.uri(uriInfo)

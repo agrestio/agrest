@@ -3,12 +3,15 @@ package com.nhl.link.rest.meta;
 import java.util.ArrayList;
 import java.util.Collection;
 
-public class DefaultLrResource implements LrResource {
+/**
+ * @since 1.18
+ */
+public class DefaultLrResource<T> implements LrResource<T> {
 
     private String path;
     private LinkType type;
     private Collection<LrOperation> operations;
-    private LrEntity entity;
+    private LrEntity<T> entity;
 
     public DefaultLrResource() {
         operations = new ArrayList<>();
@@ -30,7 +33,7 @@ public class DefaultLrResource implements LrResource {
     }
 
     @Override
-    public LrEntity getEntity() {
+    public LrEntity<T> getEntity() {
         return entity;
     }
 
@@ -46,7 +49,7 @@ public class DefaultLrResource implements LrResource {
         operations.add(operation);
     }
 
-    public void setEntity(LrEntity entity) {
+    public void setEntity(LrEntity<T> entity) {
         this.entity = entity;
     }
 

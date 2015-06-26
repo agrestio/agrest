@@ -48,6 +48,9 @@ public class LinkRest {
 		return service(config).update(type);
 	}
 
+	/**
+	 * @since 1.18
+	 */
 	public static <T> MetadataBuilder<T> metadata(Class<T> entityClass, Configuration config) {
 		return service(config).metadata(entityClass);
 	}

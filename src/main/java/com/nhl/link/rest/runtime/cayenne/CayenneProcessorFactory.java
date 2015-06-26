@@ -35,10 +35,12 @@ import com.nhl.link.rest.runtime.processor.update.UpdateApplyRequestStage;
 import com.nhl.link.rest.runtime.processor.update.UpdateApplyServerParamsStage;
 import com.nhl.link.rest.runtime.processor.update.UpdateContext;
 import com.nhl.link.rest.runtime.processor.update.UpdateInitStage;
+
 import org.apache.cayenne.DataObject;
 import org.apache.cayenne.di.Inject;
 
 import javax.ws.rs.core.Response.Status;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -185,15 +187,17 @@ public class CayenneProcessorFactory implements IProcessorFactory {
 	private <T> Processor<MetadataContext<T>, T> createMetadataProcessor() {
 
 		ProcessingStage<MetadataContext<T>, T> stage0 = new ProcessingStage<MetadataContext<T>, T>(null) {
+			
+			@SuppressWarnings("unchecked")
 			@Override
 			protected void doExecute(MetadataContext<T> context) {
 				LrEntity<T> entity = context.getEntity();
-				Collection<LrResource> resources = resourceMetadataService.getLrResources(context.getResource());
-				Collection<LrResource> filteredResources = new ArrayList<>(resources.size());
+				Collection<LrResource<?>> resources = resourceMetadataService.getLrResources(context.getResource());
+				Collection<LrResource<T>> filteredResources = new ArrayList<>(resources.size());
 				for (LrResource<?> resource : resources) {
 					LrEntity<?> resourceEntity = resource.getEntity();
 					if (resourceEntity != null && resourceEntity.getName().equals(entity.getName())) {
-						filteredResources.add(resource);
+						filteredResources.add((LrResource<T>) resource);
 					}
 				}
 

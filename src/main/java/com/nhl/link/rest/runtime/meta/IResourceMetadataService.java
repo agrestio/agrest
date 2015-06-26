@@ -6,8 +6,10 @@ import java.util.Collection;
 
 /**
  * Provides access to LinkRest resource metadata.
+ * 
+ * @since 1.18
  */
 public interface IResourceMetadataService {
 
-    Collection<LrResource> getLrResources(Class<?> resourceClass);
+	Collection<LrResource<?>> getLrResources(Class<?> resourceClass);
 }

@@ -19,7 +19,7 @@ public class ResourceMetadataServiceTest extends TestWithCayenneMapping {
     @Test
     public void testGetResources() {
         LrEntity<?> e5 = metadataService.getLrEntity(E5.class);
-        Collection<LrResource> resources = resourceMetadataService.getLrResources(E5Resource.class);
+        Collection<LrResource<?>> resources = resourceMetadataService.getLrResources(E5Resource.class);
 
         assertEquals(3, resources.size());
 

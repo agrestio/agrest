@@ -8,6 +8,9 @@ import com.nhl.link.rest.meta.LrResource;
 import java.io.IOException;
 import java.util.Collection;
 
+/**
+ * @since 1.18
+ */
 public class ResourceEncoder<T> extends AbstractEncoder {
 
     private LrEntity<T> entity;
@@ -20,26 +23,27 @@ public class ResourceEncoder<T> extends AbstractEncoder {
         this.entityEncoder = entityEncoder;
     }
 
-    @Override
+    @SuppressWarnings("unchecked")
+	@Override
     protected boolean encodeNonNullObject(Object object, JsonGenerator out) throws IOException {
         writeEntity(entity, out);
 
-        writeResources((Collection<LrResource>) object, out);
+        writeResources((Collection<LrResource<?>>) object, out);
 
         return true;
     }
 
-    private void writeResources(Collection<LrResource> resources, JsonGenerator out) throws IOException {
+    private void writeResources(Collection<LrResource<?>> resources, JsonGenerator out) throws IOException {
         out.writeArrayFieldStart("links");
 
-        for (LrResource resource : resources) {
+        for (LrResource<?> resource : resources) {
             writeResource(resource, out);
         }
 
         out.writeEndArray();
     }
 
-    private void writeResource(LrResource resource, JsonGenerator out) throws IOException{
+    private void writeResource(LrResource<?> resource, JsonGenerator out) throws IOException{
 
         out.writeStartObject();
 

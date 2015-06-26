@@ -6,11 +6,14 @@ import com.nhl.link.rest.processor.BaseProcessingContext;
 
 import javax.ws.rs.core.UriInfo;
 
+/**
+ * @since 1.18
+ */
 public class MetadataContext<T> extends BaseProcessingContext<T> {
 
     private Class<?> resourceClass;
     private UriInfo uriInfo;
-    private MetadataResponse response;
+    private MetadataResponse<T> response;
     private LrEntity<T> entity;
 
     public MetadataContext(Class<T> type) {
@@ -33,11 +36,11 @@ public class MetadataContext<T> extends BaseProcessingContext<T> {
         return resourceClass;
     }
 
-    public MetadataResponse getResponse() {
+    public MetadataResponse<T> getResponse() {
         return response;
     }
 
-    public void setResponse(MetadataResponse response) {
+    public void setResponse(MetadataResponse<T> response) {
         this.response = response;
     }
 
