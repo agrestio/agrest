@@ -1,5 +1,6 @@
 Release 1.18
 
+#100 LR metadata
 #102 Remove DataResponse.queryProperty
 #105 SenchaAdapter: filter should disengage if “disabled":true option is passed
 
