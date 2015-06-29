@@ -1,0 +1,283 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Protocol and Java framework for model-driven REST data services. 
+            Works on top of JAX RS and integrates with various backends, such as Apache Cayenne.">
+
+    <title>linkREST - Model-Driven REST Data Services</title>
+
+    
+    <link rel="stylesheet" href="build/custom-fonts-min.css">
+    
+    <link rel="stylesheet" href="build/pure-min.css">
+
+    <!--[if lte IE 8]>
+        <link rel="stylesheet" href="build/grids-responsive-old-ie-min.css">
+        <link rel="stylesheet" href="build/layout-old-ie-min.css">
+    <![endif]-->
+    <!--[if gt IE 8]><!-->
+        <link rel="stylesheet" href="build/grids-responsive-min.css">
+        <link rel="stylesheet" href="build/layout-min.css">
+    <!--<![endif]-->
+
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+    <![endif]-->
+
+    <script type="text/javascript" src="js/prettify.js"></script>
+
+    <style>
+        @-ms-viewport{width:device-width !important;}
+    </style>
+
+</head>
+<body onload="prettyPrint()">
+
+
+
+    <!-- Main Nav -->
+    <div class="header">
+        <div class="home-menu pure-menu pure-menu-horizontal pure-menu-fixed">
+            <div class="container">
+                <a class="pure-menu-heading" href="#">
+                    <img src="img/logo.png" alt="linkREST" />
+                </a>
+
+                <ul class="pure-menu-list">
+                    <!-- need to add .pure-menu-selected to `li` for `selected state` -->
+                    <li class="pure-menu-item"><a href="#get-started" class="pure-menu-link">Getting Started</a></li>
+                    <li class="pure-menu-item"><a href="#features" class="pure-menu-link">Features</a></li>
+                    <li class="pure-menu-item"><a href="https://github.com/nhl/link-rest/wiki" class="pure-menu-link">Documentation</a></li>
+                    <li class="pure-menu-item fork-on-github-btn"><a href="https://github.com/nhl/link-rest" class="pure-menu-link">Fork on GitHub</a></li>
+                </ul>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- PROMO BLOCK -->
+    <div class="promo-container">
+        <div class="promo">
+            <div class="pure-g">
+                <div class="pure-u-1 pure-u-md-1-2">
+                    <div class="principle">
+                        <div class="text-vert-block">
+                            <img src="img/principle.png" class="vert-centered" alt="linkREST principle scheme" />
+                        </div>
+                    </div>
+                </div>
+                <div class="pure-u-1 pure-u-md-1-2">
+                    <div class="welcome">
+                        <div class="text-vert-block">
+                            <h1 class="vert-centered"><span class="is-center">...<strong>protocol</strong> and <strong>framework</strong> for flexible model-driven<br />REST data services</span></h1>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="content-wrapper">
+        <!-- GET STARTED BLOCK -->
+        <div class="content container">
+        <span id="get-started"></span>
+            <a href="#get-started" class="go"></a>
+
+            <h2 class="content-head is-center">getting started</h2>
+
+            <div class="pure-g get-started">
+
+                <div class="get-started-env">
+                    
+                    <!-- env-wndw-top -->
+                    <div class="env-wndw-top">
+                        <div class="btns red"></div>
+                        <div class="btns yellow"></div>
+                        <div class="btns green"></div>
+                    </div>
+                    <!-- /.wnv-wndw-top -->
+                    
+                    <div class="code-tabs">
+                        <input id="tab1" type="radio" name="tabs" checked>
+                        <label for="tab1">
+                            <span class="step-counter">1</span>
+                            <span class="tab-text">Add Maven <br />Dependency</span>
+                        </label>
+                            
+                        <input id="tab2" type="radio" name="tabs">
+                        <label for="tab2">
+                            <span class="step-counter">2</span>
+                            <span class="tab-text">Load in JAX RS Application</span>
+                        </label>
+                            
+                        <input id="tab3" type="radio" name="tabs">
+                        <label for="tab3">
+                            <span class="step-counter">3</span>
+                            <span class="tab-text">Write a JAX-RS Resource</span>
+                        </label>
+
+                        <input id="tab4" type="radio" name="tabs">
+                        <label for="tab4">
+                            <span class="step-counter">4</span>
+                            <span class="tab-text">Start Sending Requests</span>
+                        </label>
+                            
+                        <section id="content1">
+                        
+                            <div class="hldr">
+                                <pre class="is-md-hidden prettyprint"><code>&lt;!-- Add Maven Dependency --&gt;
+
+</code></pre>
+                                <pre class="prettyprint"><code>&lt;dependency&gt;
+    &lt;groupId&gt;com.nhl.link.rest&lt;/groupId&gt;
+    &lt;artifactId&gt;link-rest&lt;/artifactId&gt;
+    &lt;version&gt;1.17&lt;/version&gt;
+&lt;/dependency&gt;</code></pre>
+                            </div>
+
+                        </section>
+
+                        <section id="content2">
+
+                            <div>
+                                <pre class="is-md-hidden prettyprint"><code>// Load in JAX RS Application
+
+</code></pre>
+                                <pre class="prettyprint"><code>@ApplicationPath("/")
+public class JaxRsApplication extends ResourceConfig {
+    public JaxRsApplication() {
+        ServerRuntime cayenneRuntime = ..
+        LinkRestRuntime lrRuntime = LinkRestBuilder.build(cayenneRuntime);
+        register(lrRuntime);
+    }
+}</code></pre>
+                            </div>
+
+                        </section>
+
+                        <section id="content3">
+                            <div class="hldr">
+                                <pre class="is-md-hidden prettyprint"><code>// Write a JAX-RS Resourcy
+
+</code></pre>
+                                <pre class="prettyprint"><code>@Path("myentity")
+@Produces(MediaType.APPLICATION_JSON)
+public class DomainResource {
+    
+    @Context
+    private Configuration config;
+
+    @GET
+    public DataResponse &lt;Domain&gt; getAll(@Context UriInfo uriInfo) {
+        return LinkRest.select(Domain.class, config).uri(uriInfo).select();
+    }
+}</code></pre>
+                            </div>
+                        </section>
+
+                        <section id="content4">
+                            <div class="hldr">
+                                <pre class="is-md-hidden prettyprint"><code># Start Sending Requests
+
+</code></pre>
+                                <pre class="prettyprint"><code>curl -i -X GET \
+'http://127.0.0.1:8080/myapp/my-entity'</code></pre>
+                            </div>
+                        </section>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+
+        <!-- MAIN FEATURES BLOCK -->
+        <div class="content container">
+            <span id="features"></span>
+            
+            <h2 class="content-head is-center">features</h2>
+
+            <div class="pure-g features with-divider">
+
+                <div class="pure-u-1 pure-u-md-1-2"> <!-- could bу + .divider-vert -->
+                    
+                    <h2 class="is-center is-uppercase">Protocol</h2>
+
+                    <div class="pure-g">
+                        
+                        <div class="l-box pure-u-1 pure-u-xl-1-2 ">
+                            <h3 class="content-subhead">Client Shapes the Response</h3>
+                            <p>
+                                Provides REST API that allows client to filter, sort, paginate the response. Client can request specific properties of "root" entity and recursively include data of related entities.
+                            </p>
+                        </div>
+                        
+                        <div class="l-box pure-u-1 pure-u-xl-1-2">
+                            <h3 class="content-subhead">GET, POST, PUT, DELETE</h3>
+                            <p>
+                                Supports reading / modifying data objects, collections and relationships.
+                            </p>
+                        </div>
+                        
+                        <div class="l-box pure-u-1 pure-u-xl-1-2">
+                            <h3 class="content-subhead">Vanilla HTTP / JSON</h3>
+                            <p>
+                                Based on common REST HTTP interactions. Serves data as JSON.
+                            </p>
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="pure-u-1 pure-u-md-1-2"> 
+                    
+                    <h2 class="is-center is-uppercase">framework</h2>
+                    
+                    <div class="pure-g">
+                        <div class="l-box pure-u-1 pure-u-xl-1-2">
+                            <h3 class="content-subhead">Java DSL for Building REST APIs for Data Stores</h3>
+                            <p>
+                                Features easy-to-use fluent Java API to build customized processors for entity web methods. API works on top of JAX-RS standard. Reuses / extends entity model of a pluggable backend provider.
+                            </p>
+                        </div>
+                        <div class="l-box pure-u-1 pure-u-xl-1-2">
+                            <h3 class="content-subhead">Supports Relational Databases</h3>
+                            <p>
+                                Supports relational databases via Cayenne ORM backend provider out of the box.
+                            </p>
+                        </div>
+                        <div class="l-box pure-u-1 pure-u-xl-1-2">
+                            <h3 class="content-subhead is-nowrap">Pluggable Backend Providers for Other Data Stores</h3>
+                            <p>
+                                Supports alternative user-defined backends. E.g. for NoSQL stores, analytical queries, LDAP / Active Directory, etc.
+                            </p>
+                        </div>
+                        <div class="l-box pure-u-1 pure-u-xl-1-2">
+                            <h3 class="content-subhead">Fine Grained Security</h3>
+                            <p>
+                                Straightforward integration with any Java authorization framework to provide attribute-level and object-level access control.
+                            </p>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <div class="footer is-center">
+            <div class="container">
+                <p class="copy">
+                   &copy; 2015 NHL, ObjectStyle and other LinkRest Developers.<br />
+                </p>
+            </div>
+        </div>
+
+    </div>
+
+
+</body>
+</html>
