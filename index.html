@@ -172,7 +172,7 @@ public class MyEntityResource {
     private Configuration config;
 
     @GET
-    public DataResponse &lt;MyEntity&gt; getAll(@Context UriInfo uriInfo) {
+    public DataResponse&lt;MyEntity&gt; getAll(@Context UriInfo uriInfo) {
         return LinkRest.select(MyEntity.class, config).uri(uriInfo).select();
     }
 }</code></pre>
