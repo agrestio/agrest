@@ -166,14 +166,14 @@ public class JaxRsApplication extends ResourceConfig {
 </code></pre>
                                 <pre class="prettyprint"><code>@Path("myentity")
 @Produces(MediaType.APPLICATION_JSON)
-public class DomainResource {
+public class MyEntityResource {
     
     @Context
     private Configuration config;
 
     @GET
-    public DataResponse &lt;Domain&gt; getAll(@Context UriInfo uriInfo) {
-        return LinkRest.select(Domain.class, config).uri(uriInfo).select();
+    public DataResponse &lt;MyEntity&gt; getAll(@Context UriInfo uriInfo) {
+        return LinkRest.select(MyEntity.class, config).uri(uriInfo).select();
     }
 }</code></pre>
                             </div>
