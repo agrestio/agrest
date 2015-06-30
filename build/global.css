@@ -199,9 +199,10 @@ ul {
   position: absolute;
   left: 0;
   right: 0;
-  margin: 0 auto;
+  margin: -1.6em auto;
   opacity: .3;
   text-align: center;
+  padding: 2em;
 }
 .go:hover {
   opacity: 1;
@@ -352,12 +353,18 @@ ul {
     position: fixed;
     height: 521px;
   }
+  .promo-container:before {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 50%;
+    background: #e95c4e;
+  }
   .promo-container .promo .pure-u-md-1-2 {
     padding: 0 3.8em 0 3.4em;
     height: 100%;
-  }
-  .promo-container .promo .pure-u-md-1-2:first-child {
-    padding-right: 2.5em;
   }
 
   .principle {
