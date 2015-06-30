@@ -53,7 +53,7 @@ public class CayenneFetchStage<T> extends ProcessingStage<SelectContext<T>, T> {
 			}
 		}
 
-		response.withObjects(persister.sharedContext().select(select));
+		response.withObjects(objects);
 	}
 
 	<X extends T> SelectQuery<X> buildQuery(SelectContext<X> context) {
