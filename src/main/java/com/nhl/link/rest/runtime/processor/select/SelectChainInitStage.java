@@ -5,11 +5,11 @@ import com.nhl.link.rest.processor.ProcessingStage;
 import com.nhl.link.rest.processor.Processor;
 
 /**
- * @since 1.16
+ * @since 1.19
  */
-public class SelectInitStage<T> extends ProcessingStage<SelectContext<T>, T> {
+public class SelectChainInitStage<T> extends ProcessingStage<SelectContext<T>, T> {
 
-	public SelectInitStage(Processor<SelectContext<T>, ? super T> next) {
+	public SelectChainInitStage(Processor<SelectContext<T>, ? super T> next) {
 		super(next);
 	}
 

@@ -17,10 +17,10 @@ import com.nhl.link.rest.runtime.constraints.IConstraintsHandler;
 import com.nhl.link.rest.runtime.encoder.IEncoderService;
 import com.nhl.link.rest.runtime.parser.IRequestParser;
 import com.nhl.link.rest.runtime.processor.IProcessorFactory;
-import com.nhl.link.rest.runtime.processor.select.ApplyRequestStage;
-import com.nhl.link.rest.runtime.processor.select.ApplyServerParamsStage;
+import com.nhl.link.rest.runtime.processor.select.ParseSelectRequestStage;
+import com.nhl.link.rest.runtime.processor.select.ApplySelectServerParamsStage;
 import com.nhl.link.rest.runtime.processor.select.SelectContext;
-import com.nhl.link.rest.runtime.processor.select.SelectInitStage;
+import com.nhl.link.rest.runtime.processor.select.SelectChainInitStage;
 
 public class PojoProcessorFactory implements IProcessorFactory {
 
@@ -49,10 +49,10 @@ public class PojoProcessorFactory implements IProcessorFactory {
 	protected Processor<SelectContext<Object>, Object> createSelectProcessor() {
 
 		ProcessingStage<SelectContext<Object>, Object> stage4 = new PojoFetchStage<>(null);
-		ProcessingStage<SelectContext<Object>, Object> stage3 = new ApplyServerParamsStage<>(stage4, encoderService,
+		ProcessingStage<SelectContext<Object>, Object> stage3 = new ApplySelectServerParamsStage<>(stage4, encoderService,
 				constraintsHandler);
-		ProcessingStage<SelectContext<Object>, Object> stage2 = new ApplyRequestStage<>(stage3, requestParser);
-		ProcessingStage<SelectContext<Object>, Object> stage1 = new SelectInitStage<>(stage2);
+		ProcessingStage<SelectContext<Object>, Object> stage2 = new ParseSelectRequestStage<>(stage3, requestParser);
+		ProcessingStage<SelectContext<Object>, Object> stage1 = new SelectChainInitStage<>(stage2);
 
 		return stage1;
 	}

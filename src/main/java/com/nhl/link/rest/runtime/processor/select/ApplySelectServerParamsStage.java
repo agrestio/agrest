@@ -8,14 +8,14 @@ import com.nhl.link.rest.runtime.constraints.IConstraintsHandler;
 import com.nhl.link.rest.runtime.encoder.IEncoderService;
 
 /**
- * @since 1.16
+ * @since 1.19
  */
-public class ApplyServerParamsStage<T> extends ProcessingStage<SelectContext<T>, T> {
+public class ApplySelectServerParamsStage<T> extends ProcessingStage<SelectContext<T>, T> {
 
 	private IConstraintsHandler constraintsHandler;
 	private IEncoderService encoderService;
 
-	public ApplyServerParamsStage(Processor<SelectContext<T>, ? super T> next, IEncoderService encoderService,
+	public ApplySelectServerParamsStage(Processor<SelectContext<T>, ? super T> next, IEncoderService encoderService,
 			IConstraintsHandler constraintsHandler) {
 
 		super(next);

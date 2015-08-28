@@ -5,13 +5,13 @@ import com.nhl.link.rest.processor.Processor;
 import com.nhl.link.rest.runtime.parser.IRequestParser;
 
 /**
- * @since 1.16
+ * @since 1.19
  */
-public class ApplyRequestStage<T> extends ProcessingStage<SelectContext<T>, T> {
+public class ParseSelectRequestStage<T> extends ProcessingStage<SelectContext<T>, T> {
 
 	private IRequestParser requestParser;
 
-	public ApplyRequestStage(Processor<SelectContext<T>, ? super T> next, IRequestParser requestParser) {
+	public ParseSelectRequestStage(Processor<SelectContext<T>, ? super T> next, IRequestParser requestParser) {
 		super(next);
 		this.requestParser = requestParser;
 	}
