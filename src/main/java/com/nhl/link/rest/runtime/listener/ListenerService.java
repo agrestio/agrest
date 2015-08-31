@@ -24,7 +24,7 @@ public class ListenerService implements IListenerService {
 
 	private static final MethodHandles.Lookup LOOKUP = MethodHandles.lookup();
 
-	private ConcurrentMap<Class<?>, Map<Class<? extends Annotation>, List<ListenerInvocationFactory>>>[] factories;
+	private ConcurrentMap<String, Map<Class<? extends Annotation>, List<ListenerInvocationFactory>>>[] factories;
 
 	@SuppressWarnings("unchecked")
 	public ListenerService() {
@@ -34,9 +34,16 @@ public class ListenerService implements IListenerService {
 		}
 	}
 
+	private String factoriesKey(Class<?> listenerType, ProcessingContext<?> context) {
+		// TODO: we are ignoring context's own type here, leaving it up to the
+		// user to provide the right context type; may need to include that in
+		// the key as well
+		return listenerType.getName() + "|" + context.getType().getName();
+	}
+
 	@Override
 	public Map<Class<? extends Annotation>, List<ListenerInvocationFactory>> getListenerInvocationFactories(
-			Class<?> listenerType, EventGroup eventGroup) {
+			Class<?> listenerType, ProcessingContext<?> context, EventGroup eventGroup) {
 
 		if (listenerType == null) {
 			throw new NullPointerException("Null type");
@@ -46,26 +53,27 @@ public class ListenerService implements IListenerService {
 			throw new NullPointerException("Null eventGroup");
 		}
 
-		ConcurrentMap<Class<?>, Map<Class<? extends Annotation>, List<ListenerInvocationFactory>>> stageFactories = factories[eventGroup
+		ConcurrentMap<String, Map<Class<? extends Annotation>, List<ListenerInvocationFactory>>> factoriesForEventGroup = factories[eventGroup
 				.ordinal()];
 
-		Map<Class<? extends Annotation>, List<ListenerInvocationFactory>> executorsForType = stageFactories
-				.get(listenerType);
+		String key = factoriesKey(listenerType, context);
+		Map<Class<? extends Annotation>, List<ListenerInvocationFactory>> factoriesForListener = factoriesForEventGroup
+				.get(key);
 
-		if (executorsForType == null) {
+		if (factoriesForListener == null) {
 
-			Map<Class<? extends Annotation>, List<ListenerInvocationFactory>> newExecutors = compileExecutors(
-					listenerType, eventGroup);
-			Map<Class<? extends Annotation>, List<ListenerInvocationFactory>> oldExecutors = stageFactories
-					.putIfAbsent(listenerType, newExecutors);
-			executorsForType = oldExecutors != null ? oldExecutors : newExecutors;
+			Map<Class<? extends Annotation>, List<ListenerInvocationFactory>> newFactories = compileFactories(
+					listenerType, context, eventGroup);
+			Map<Class<? extends Annotation>, List<ListenerInvocationFactory>> oldFactories = factoriesForEventGroup
+					.putIfAbsent(key, newFactories);
+			factoriesForListener = oldFactories != null ? oldFactories : newFactories;
 		}
 
-		return executorsForType;
+		return factoriesForListener;
 	}
 
-	Map<Class<? extends Annotation>, List<ListenerInvocationFactory>> compileExecutors(Class<?> listenerType,
-			EventGroup eventGroup) {
+	Map<Class<? extends Annotation>, List<ListenerInvocationFactory>> compileFactories(Class<?> listenerType,
+			ProcessingContext<?> context, EventGroup eventGroup) {
 
 		Map<Class<? extends Annotation>, List<ListenerInvocationFactory>> map = new ConcurrentHashMap<>();
 

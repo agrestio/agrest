@@ -19,7 +19,9 @@ import com.nhl.link.rest.SimpleResponse;
 import com.nhl.link.rest.UpdateBuilder;
 import com.nhl.link.rest.processor.ProcessingContext;
 import com.nhl.link.rest.processor.Processor;
+import com.nhl.link.rest.runtime.listener.EventGroup;
 import com.nhl.link.rest.runtime.listener.IListenerService;
+import com.nhl.link.rest.runtime.listener.ListenersBuilder;
 import com.nhl.link.rest.runtime.meta.IMetadataService;
 import com.nhl.link.rest.runtime.processor.IProcessorFactory;
 import com.nhl.link.rest.runtime.processor.delete.DeleteContext;
@@ -63,7 +65,7 @@ public class DefaultLinkRestService implements ILinkRestService {
 	@Override
 	public <T> SelectBuilder<T> select(Class<T> type) {
 		SelectContext<T> context = new SelectContext<>(type);
-		return new DefaultSelectBuilder<>(context, processor(context), listenerService);
+		return toSelectBuilder(context);
 	}
 
 	@Override
@@ -73,7 +75,12 @@ public class DefaultLinkRestService implements ILinkRestService {
 		SelectContext<T> context = new SelectContext<>(type);
 		context.setSelect(query);
 
-		return new DefaultSelectBuilder<>(context, processor(context), listenerService);
+		return toSelectBuilder(context);
+	}
+
+	private <T> SelectBuilder<T> toSelectBuilder(SelectContext<T> context) {
+		ListenersBuilder listenersBuilder = new ListenersBuilder(listenerService, context, EventGroup.select);
+		return new DefaultSelectBuilder<>(context, processor(context), listenersBuilder);
 	}
 
 	/**

@@ -7,16 +7,20 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import com.nhl.link.rest.processor.ProcessingContext;
+
 /**
  * @since 1.19
  */
 public class ListenersBuilder {
 
+	private ProcessingContext<?> context;
 	private EventGroup eventGroup;
 	private IListenerService listenerService;
 	private Map<Class<? extends Annotation>, List<ListenerInvocation>> listeners;
 
-	public ListenersBuilder(IListenerService listenerService, EventGroup eventGroup) {
+	public ListenersBuilder(IListenerService listenerService, ProcessingContext<?> context, EventGroup eventGroup) {
+		this.context = context;
 		this.eventGroup = eventGroup;
 		this.listenerService = listenerService;
 		this.listeners = new HashMap<>();
@@ -29,7 +33,7 @@ public class ListenersBuilder {
 	public ListenersBuilder addListener(Object listener) {
 
 		Map<Class<? extends Annotation>, List<ListenerInvocationFactory>> factories = listenerService
-				.getListenerInvocationFactories(listener.getClass(), eventGroup);
+				.getListenerInvocationFactories(listener.getClass(), context, eventGroup);
 
 		if (factories.isEmpty()) {
 			return this;

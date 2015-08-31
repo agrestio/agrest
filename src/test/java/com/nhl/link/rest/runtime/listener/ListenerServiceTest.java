@@ -26,8 +26,8 @@ import com.nhl.link.rest.processor.Processor;
 
 public class ListenerServiceTest {
 
-	private ProcessingContext<Listener> mockContext;
-	private ProcessingStage<ProcessingContext<Listener>, Listener> mockStage;
+	private ProcessingContext<Object> mockContext;
+	private ProcessingStage<ProcessingContext<Object>, Object> mockStage;
 	private Listener mockListener;
 
 	private ListenerService service;
@@ -45,7 +45,7 @@ public class ListenerServiceTest {
 	public void testGetListenerInvocationFactories() {
 
 		Map<Class<? extends Annotation>, List<ListenerInvocationFactory>> factories = service
-				.getListenerInvocationFactories(Listener.class, EventGroup.select);
+				.getListenerInvocationFactories(Listener.class, mockContext, EventGroup.select);
 
 		assertNotNull(factories);
 		assertEquals(3, factories.size());
@@ -69,9 +69,9 @@ public class ListenerServiceTest {
 	@Test
 	public void testGetListenerInvocationFactories_CacheMetadata() {
 		Map<Class<? extends Annotation>, List<ListenerInvocationFactory>> factories = service
-				.getListenerInvocationFactories(Listener.class, EventGroup.select);
+				.getListenerInvocationFactories(Listener.class, mockContext, EventGroup.select);
 		Map<Class<? extends Annotation>, List<ListenerInvocationFactory>> factories1 = service
-				.getListenerInvocationFactories(Listener.class, EventGroup.select);
+				.getListenerInvocationFactories(Listener.class, mockContext, EventGroup.select);
 
 		assertSame(factories, factories1);
 	}

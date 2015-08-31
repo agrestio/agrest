@@ -20,8 +20,6 @@ import com.nhl.link.rest.constraints.ConstraintsBuilder;
 import com.nhl.link.rest.encoder.Encoder;
 import com.nhl.link.rest.processor.Processor;
 import com.nhl.link.rest.property.PropertyBuilder;
-import com.nhl.link.rest.runtime.listener.EventGroup;
-import com.nhl.link.rest.runtime.listener.IListenerService;
 import com.nhl.link.rest.runtime.listener.ListenersBuilder;
 import com.nhl.link.rest.runtime.processor.select.SelectContext;
 
@@ -37,10 +35,10 @@ public class DefaultSelectBuilder<T> implements SelectBuilder<T> {
 	protected ListenersBuilder listenersBuilder;
 
 	public DefaultSelectBuilder(SelectContext<T> context, Processor<SelectContext<T>, T> processor,
-			IListenerService listenerService) {
+			ListenersBuilder listenersBuilder) {
 		this.context = context;
 		this.processor = processor;
-		this.listenersBuilder = new ListenersBuilder(listenerService, EventGroup.select);
+		this.listenersBuilder = listenersBuilder;
 	}
 
 	public SelectContext<T> getContext() {
