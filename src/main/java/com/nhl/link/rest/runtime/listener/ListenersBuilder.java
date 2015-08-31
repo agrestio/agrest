@@ -33,7 +33,7 @@ public class ListenersBuilder {
 	public ListenersBuilder addListener(Object listener) {
 
 		Map<Class<? extends Annotation>, List<ListenerInvocationFactory>> factories = listenerService
-				.getListenerInvocationFactories(listener.getClass(), context, eventGroup);
+				.getFactories(listener.getClass(), context, eventGroup);
 
 		if (factories.isEmpty()) {
 			return this;

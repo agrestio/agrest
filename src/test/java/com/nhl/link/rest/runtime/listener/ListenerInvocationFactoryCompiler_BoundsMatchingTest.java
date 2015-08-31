@@ -12,7 +12,7 @@ import org.junit.Test;
 import com.nhl.link.rest.annotation.Fetched;
 import com.nhl.link.rest.runtime.processor.select.SelectContext;
 
-public class ListenerService_BoundsMatchingTest {
+public class ListenerInvocationFactoryCompiler_BoundsMatchingTest {
 
 	public static class E1 {
 
@@ -31,53 +31,56 @@ public class ListenerService_BoundsMatchingTest {
 		void fetchedSelectContextE1(SelectContext<E1> c);
 
 		@Fetched
+		void fetchedSelectContextExtendsE1(SelectContext<? extends E1> c);
+		
+		@Fetched
 		void fetchedSelectContextE2(SelectContext<E2> c);
 	}
 
-	private ListenerService service;
+	private ListenerInvocationFactoryCompiler compiler;
 
 	@Before
 	public void before() {
-		this.service = new ListenerService();
+		this.compiler = new ListenerInvocationFactoryCompiler();
 	}
 
 	@SuppressWarnings("unchecked")
 	@Test
-	public void testGetListenerInvocationFactories_ObjectEntity() {
+	public void testCompileFactories_ObjectEntity() {
 
 		SelectContext<Object> mockContext = mock(SelectContext.class);
 		when(mockContext.getType()).thenReturn(Object.class);
 
-		List<ListenerInvocationFactory> factories = service
-				.getListenerInvocationFactories(Listener.class, mockContext, EventGroup.select).get(Fetched.class);
+		List<ListenerInvocationFactory> factories = compiler
+				.compileFactories(Listener.class, mockContext, EventGroup.select).get(Fetched.class);
 
 		assertEquals(1, factories.size());
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	@Test
-	public void testGetListenerInvocationFactories_E1Entity() {
+	public void testCompileFactories_E1Entity() {
 
 		SelectContext<E1> mockContext = mock(SelectContext.class);
 		when(mockContext.getType()).thenReturn(E1.class);
 
-		List<ListenerInvocationFactory> factories = service
-				.getListenerInvocationFactories(Listener.class, mockContext, EventGroup.select).get(Fetched.class);
+		List<ListenerInvocationFactory> factories = compiler
+				.compileFactories(Listener.class, mockContext, EventGroup.select).get(Fetched.class);
 
-		assertEquals(2, factories.size());
+		assertEquals(3, factories.size());
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	@Test
-	public void testGetListenerInvocationFactories_E2Entity() {
+	public void testCompileFactories_E2Entity() {
 
 		SelectContext<E2> mockContext = mock(SelectContext.class);
 		when(mockContext.getType()).thenReturn(E2.class);
 
-		List<ListenerInvocationFactory> factories = service
-				.getListenerInvocationFactories(Listener.class, mockContext, EventGroup.select).get(Fetched.class);
+		List<ListenerInvocationFactory> factories = compiler
+				.compileFactories(Listener.class, mockContext, EventGroup.select).get(Fetched.class);
 
-		assertEquals(3, factories.size());
+		assertEquals(4, factories.size());
 	}
 
 }

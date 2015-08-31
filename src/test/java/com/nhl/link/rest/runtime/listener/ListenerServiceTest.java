@@ -9,6 +9,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.when;
 
 import java.lang.annotation.Annotation;
 import java.util.List;
@@ -38,6 +39,7 @@ public class ListenerServiceTest {
 		this.service = new ListenerService();
 		this.mockListener = mock(Listener.class);
 		this.mockContext = mock(ProcessingContext.class);
+		when(mockContext.getType()).thenReturn(Object.class);
 		this.mockStage = mock(ProcessingStage.class);
 	}
 
@@ -45,7 +47,7 @@ public class ListenerServiceTest {
 	public void testGetListenerInvocationFactories() {
 
 		Map<Class<? extends Annotation>, List<ListenerInvocationFactory>> factories = service
-				.getListenerInvocationFactories(Listener.class, mockContext, EventGroup.select);
+				.getFactories(Listener.class, mockContext, EventGroup.select);
 
 		assertNotNull(factories);
 		assertEquals(3, factories.size());
@@ -69,9 +71,9 @@ public class ListenerServiceTest {
 	@Test
 	public void testGetListenerInvocationFactories_CacheMetadata() {
 		Map<Class<? extends Annotation>, List<ListenerInvocationFactory>> factories = service
-				.getListenerInvocationFactories(Listener.class, mockContext, EventGroup.select);
+				.getFactories(Listener.class, mockContext, EventGroup.select);
 		Map<Class<? extends Annotation>, List<ListenerInvocationFactory>> factories1 = service
-				.getListenerInvocationFactories(Listener.class, mockContext, EventGroup.select);
+				.getFactories(Listener.class, mockContext, EventGroup.select);
 
 		assertSame(factories, factories1);
 	}

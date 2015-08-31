@@ -11,6 +11,6 @@ import com.nhl.link.rest.processor.ProcessingContext;
  */
 public interface IListenerService {
 
-	Map<Class<? extends Annotation>, List<ListenerInvocationFactory>> getListenerInvocationFactories(
-			Class<?> listenerType, ProcessingContext<?> context, EventGroup eventGroup);
+	Map<Class<? extends Annotation>, List<ListenerInvocationFactory>> getFactories(Class<?> listenerType,
+			ProcessingContext<?> context, EventGroup eventGroup);
 }
