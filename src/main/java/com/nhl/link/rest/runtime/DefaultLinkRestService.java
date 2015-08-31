@@ -5,8 +5,6 @@ import java.util.Map;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriInfo;
 
-import com.nhl.link.rest.MetadataBuilder;
-import com.nhl.link.rest.runtime.processor.meta.MetadataContext;
 import org.apache.cayenne.di.Inject;
 import org.apache.cayenne.exp.Property;
 import org.apache.cayenne.query.SelectQuery;
@@ -15,14 +13,17 @@ import com.nhl.link.rest.DataResponse;
 import com.nhl.link.rest.DeleteBuilder;
 import com.nhl.link.rest.EntityParent;
 import com.nhl.link.rest.LinkRestException;
+import com.nhl.link.rest.MetadataBuilder;
 import com.nhl.link.rest.SelectBuilder;
 import com.nhl.link.rest.SimpleResponse;
 import com.nhl.link.rest.UpdateBuilder;
 import com.nhl.link.rest.processor.ProcessingContext;
 import com.nhl.link.rest.processor.Processor;
+import com.nhl.link.rest.runtime.listener.IListenerService;
 import com.nhl.link.rest.runtime.meta.IMetadataService;
 import com.nhl.link.rest.runtime.processor.IProcessorFactory;
 import com.nhl.link.rest.runtime.processor.delete.DeleteContext;
+import com.nhl.link.rest.runtime.processor.meta.MetadataContext;
 import com.nhl.link.rest.runtime.processor.select.SelectContext;
 import com.nhl.link.rest.runtime.processor.unrelate.UnrelateContext;
 import com.nhl.link.rest.runtime.processor.update.UpdateContext;
@@ -33,12 +34,15 @@ import com.nhl.link.rest.runtime.processor.update.UpdateContext;
  */
 public class DefaultLinkRestService implements ILinkRestService {
 
+	private IListenerService listenerService;
 	private IMetadataService metadataService;
 	private Map<Class<?>, Map<String, Processor<?, ?>>> processors;
 
-	public DefaultLinkRestService(@Inject IProcessorFactory processorFactory, @Inject IMetadataService metadataService) {
+	public DefaultLinkRestService(@Inject IProcessorFactory processorFactory, @Inject IMetadataService metadataService,
+			@Inject IListenerService listenerService) {
 		this.processors = processorFactory.processors();
 		this.metadataService = metadataService;
+		this.listenerService = listenerService;
 	}
 
 	@Override
@@ -59,7 +63,7 @@ public class DefaultLinkRestService implements ILinkRestService {
 	@Override
 	public <T> SelectBuilder<T> select(Class<T> type) {
 		SelectContext<T> context = new SelectContext<>(type);
-		return new DefaultSelectBuilder<>(context, processor(context));
+		return new DefaultSelectBuilder<>(context, processor(context), listenerService);
 	}
 
 	@Override
@@ -69,7 +73,7 @@ public class DefaultLinkRestService implements ILinkRestService {
 		SelectContext<T> context = new SelectContext<>(type);
 		context.setSelect(query);
 
-		return new DefaultSelectBuilder<>(context, processor(context));
+		return new DefaultSelectBuilder<>(context, processor(context), listenerService);
 	}
 
 	/**
@@ -200,15 +204,15 @@ public class DefaultLinkRestService implements ILinkRestService {
 
 		Map<String, Processor<?, ?>> forContextType = processors.get(context.getClass());
 		if (forContextType == null) {
-			throw new LinkRestException(Status.INTERNAL_SERVER_ERROR, String.format(
-					"Processor is unsupported for context type %s", context.getClass().getName()));
+			throw new LinkRestException(Status.INTERNAL_SERVER_ERROR,
+					String.format("Processor is unsupported for context type %s", context.getClass().getName()));
 		}
 
 		Processor processor = forContextType.get(operation);
 		if (processor == null) {
-			throw new LinkRestException(Status.INTERNAL_SERVER_ERROR, String.format(
-					"Processor is unsupported for context type %s and operation %s", context.getClass().getName(),
-					operation));
+			throw new LinkRestException(Status.INTERNAL_SERVER_ERROR,
+					String.format("Processor is unsupported for context type %s and operation %s",
+							context.getClass().getName(), operation));
 		}
 
 		return processor;

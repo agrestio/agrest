@@ -1,5 +1,6 @@
 package com.nhl.link.rest.runtime.cayenne.processor;
 
+import java.lang.annotation.Annotation;
 import java.util.List;
 import java.util.Map.Entry;
 
@@ -14,6 +15,7 @@ import org.apache.cayenne.query.SelectQuery;
 import com.nhl.link.rest.DataResponse;
 import com.nhl.link.rest.LinkRestException;
 import com.nhl.link.rest.ResourceEntity;
+import com.nhl.link.rest.annotation.Fetched;
 import com.nhl.link.rest.meta.LrEntity;
 import com.nhl.link.rest.meta.LrPersistentAttribute;
 import com.nhl.link.rest.processor.ProcessingStage;
@@ -31,6 +33,11 @@ public class CayenneFetchStage<T> extends ProcessingStage<SelectContext<T>, T> {
 	public CayenneFetchStage(Processor<SelectContext<T>, ? super T> next, ICayennePersister persister) {
 		super(next);
 		this.persister = persister;
+	}
+	
+	@Override
+	protected Class<? extends Annotation> afterStageListener() {
+		return Fetched.class;
 	}
 
 	@Override

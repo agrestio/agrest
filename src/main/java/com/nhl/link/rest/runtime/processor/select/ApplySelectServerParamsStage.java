@@ -1,6 +1,9 @@
 package com.nhl.link.rest.runtime.processor.select;
 
+import java.lang.annotation.Annotation;
+
 import com.nhl.link.rest.DataResponse;
+import com.nhl.link.rest.annotation.SelectServerParamsApplied;
 import com.nhl.link.rest.encoder.Encoder;
 import com.nhl.link.rest.processor.Processor;
 import com.nhl.link.rest.processor.ProcessingStage;
@@ -22,6 +25,11 @@ public class ApplySelectServerParamsStage<T> extends ProcessingStage<SelectConte
 
 		this.encoderService = encoderService;
 		this.constraintsHandler = constraintsHandler;
+	}
+	
+	@Override
+	protected Class<? extends Annotation> afterStageListener() {
+		return SelectServerParamsApplied.class;
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })

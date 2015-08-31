@@ -28,7 +28,7 @@ import com.nhl.link.rest.runtime.processor.meta.MetadataContext;
 import com.nhl.link.rest.runtime.processor.select.ParseSelectRequestStage;
 import com.nhl.link.rest.runtime.processor.select.ApplySelectServerParamsStage;
 import com.nhl.link.rest.runtime.processor.select.SelectContext;
-import com.nhl.link.rest.runtime.processor.select.SelectChainInitStage;
+import com.nhl.link.rest.runtime.processor.select.InitializeSelectChainStage;
 import com.nhl.link.rest.runtime.processor.unrelate.UnrelateContext;
 import com.nhl.link.rest.runtime.processor.unrelate.UnrelateInitStage;
 import com.nhl.link.rest.runtime.processor.update.UpdateApplyRequestStage;
@@ -118,7 +118,7 @@ public class CayenneProcessorFactory implements IProcessorFactory {
 		ProcessingStage<SelectContext<Object>, Object> stage2 = new ApplySelectServerParamsStage<>(stage3, encoderService,
 				constraintsHandler);
 		ProcessingStage<SelectContext<Object>, Object> stage1 = new ParseSelectRequestStage<>(stage2, requestParser);
-		ProcessingStage<SelectContext<Object>, Object> stage0 = new SelectChainInitStage<>(stage1);
+		ProcessingStage<SelectContext<Object>, Object> stage0 = new InitializeSelectChainStage<>(stage1);
 
 		return stage0;
 	}

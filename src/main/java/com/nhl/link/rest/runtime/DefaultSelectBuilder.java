@@ -20,6 +20,9 @@ import com.nhl.link.rest.constraints.ConstraintsBuilder;
 import com.nhl.link.rest.encoder.Encoder;
 import com.nhl.link.rest.processor.Processor;
 import com.nhl.link.rest.property.PropertyBuilder;
+import com.nhl.link.rest.runtime.listener.EventGroup;
+import com.nhl.link.rest.runtime.listener.IListenerService;
+import com.nhl.link.rest.runtime.listener.ListenersBuilder;
 import com.nhl.link.rest.runtime.processor.select.SelectContext;
 
 /**
@@ -31,10 +34,13 @@ public class DefaultSelectBuilder<T> implements SelectBuilder<T> {
 
 	protected SelectContext<T> context;
 	protected Processor<SelectContext<T>, T> processor;
+	protected ListenersBuilder listenersBuilder;
 
-	public DefaultSelectBuilder(SelectContext<T> context, Processor<SelectContext<T>, T> processor) {
+	public DefaultSelectBuilder(SelectContext<T> context, Processor<SelectContext<T>, T> processor,
+			IListenerService listenerService) {
 		this.context = context;
 		this.processor = processor;
+		this.listenersBuilder = new ListenersBuilder(listenerService, EventGroup.select);
 	}
 
 	public SelectContext<T> getContext() {
@@ -141,11 +147,21 @@ public class DefaultSelectBuilder<T> implements SelectBuilder<T> {
 		return this;
 	}
 
+	/**
+	 * @since 1.19
+	 */
+	@Override
+	public SelectBuilder<T> listener(Object listener) {
+		listenersBuilder.addListener(listener);
+		return this;
+	}
+
 	@Override
 	public DataResponse<T> select() {
 		// 'byId' behaving as "selectOne" is really legacy behavior of 1.1...
 		// should deprecate eventually
 		context.setAtMostOneObject(context.isById());
+		context.setListeners(listenersBuilder.getListeners());
 
 		processor.execute(context);
 		return context.getResponse();
@@ -154,7 +170,9 @@ public class DefaultSelectBuilder<T> implements SelectBuilder<T> {
 	@Override
 	public DataResponse<T> selectOne() {
 		context.setAtMostOneObject(true);
+		context.setListeners(listenersBuilder.getListeners());
 		processor.execute(context);
 		return context.getResponse();
 	}
+
 }

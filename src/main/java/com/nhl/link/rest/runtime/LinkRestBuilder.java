@@ -27,6 +27,8 @@ import com.nhl.link.rest.runtime.encoder.IStringConverterFactory;
 import com.nhl.link.rest.runtime.encoder.StringConverterFactory;
 import com.nhl.link.rest.runtime.jackson.IJacksonService;
 import com.nhl.link.rest.runtime.jackson.JacksonService;
+import com.nhl.link.rest.runtime.listener.IListenerService;
+import com.nhl.link.rest.runtime.listener.ListenerService;
 import com.nhl.link.rest.runtime.meta.IMetadataService;
 import com.nhl.link.rest.runtime.meta.IResourceMetadataService;
 import com.nhl.link.rest.runtime.meta.MetadataService;
@@ -307,6 +309,7 @@ public class LinkRestBuilder {
 				binder.bind(IEncoderService.class).to(EncoderService.class);
 				binder.bind(IRelationshipMapper.class).to(RelationshipMapper.class);
 				binder.bind(IMetadataService.class).to(MetadataService.class);
+				binder.bind(IListenerService.class).to(ListenerService.class);
 				binder.bind(IResourceMetadataService.class).to(ResourceMetadataService.class);
 				binder.bind(IConstraintsHandler.class).to(ConstraintsHandler.class);
 				binder.bind(ICayenneExpProcessor.class).to(CayenneExpProcessor.class);

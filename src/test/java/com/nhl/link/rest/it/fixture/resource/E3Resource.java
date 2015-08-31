@@ -18,6 +18,9 @@ import com.nhl.link.rest.SimpleResponse;
 import com.nhl.link.rest.constraints.ConstraintsBuilder;
 import com.nhl.link.rest.it.fixture.cayenne.E2;
 import com.nhl.link.rest.it.fixture.cayenne.E3;
+import com.nhl.link.rest.it.fixture.listener.FetchCallbackListener;
+import com.nhl.link.rest.it.fixture.listener.FetchPassThroughListener;
+import com.nhl.link.rest.it.fixture.listener.FetchTakeOverListener;
 
 @Path("e3")
 public class E3Resource {
@@ -29,6 +32,24 @@ public class E3Resource {
 	public DataResponse<E3> get(@Context UriInfo uriInfo) {
 		SelectQuery<E3> query = new SelectQuery<E3>(E3.class);
 		return LinkRest.service(config).select(query, uriInfo);
+	}
+
+	@GET
+	@Path("callbacklistener")
+	public DataResponse<E3> getWithCallbackListeners(@Context UriInfo uriInfo) {
+		return LinkRest.service(config).select(E3.class).listener(new FetchCallbackListener()).uri(uriInfo).select();
+	}
+
+	@GET
+	@Path("passthroughlistener")
+	public DataResponse<E3> getWithPassThroughListeners(@Context UriInfo uriInfo) {
+		return LinkRest.service(config).select(E3.class).listener(new FetchPassThroughListener()).uri(uriInfo).select();
+	}
+
+	@GET
+	@Path("takeoverlistener")
+	public DataResponse<E3> getWithTakeOverListeners(@Context UriInfo uriInfo) {
+		return LinkRest.service(config).select(E3.class).listener(new FetchTakeOverListener()).uri(uriInfo).select();
 	}
 
 	@POST

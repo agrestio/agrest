@@ -20,7 +20,7 @@ import com.nhl.link.rest.runtime.processor.IProcessorFactory;
 import com.nhl.link.rest.runtime.processor.select.ParseSelectRequestStage;
 import com.nhl.link.rest.runtime.processor.select.ApplySelectServerParamsStage;
 import com.nhl.link.rest.runtime.processor.select.SelectContext;
-import com.nhl.link.rest.runtime.processor.select.SelectChainInitStage;
+import com.nhl.link.rest.runtime.processor.select.InitializeSelectChainStage;
 
 public class PojoProcessorFactory implements IProcessorFactory {
 
@@ -52,7 +52,7 @@ public class PojoProcessorFactory implements IProcessorFactory {
 		ProcessingStage<SelectContext<Object>, Object> stage3 = new ApplySelectServerParamsStage<>(stage4, encoderService,
 				constraintsHandler);
 		ProcessingStage<SelectContext<Object>, Object> stage2 = new ParseSelectRequestStage<>(stage3, requestParser);
-		ProcessingStage<SelectContext<Object>, Object> stage1 = new SelectChainInitStage<>(stage2);
+		ProcessingStage<SelectContext<Object>, Object> stage1 = new InitializeSelectChainStage<>(stage2);
 
 		return stage1;
 	}

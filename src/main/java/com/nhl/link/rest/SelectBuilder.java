@@ -6,6 +6,10 @@ import javax.ws.rs.core.UriInfo;
 
 import org.apache.cayenne.exp.Property;
 
+import com.nhl.link.rest.annotation.SelectServerParamsApplied;
+import com.nhl.link.rest.annotation.Fetched;
+import com.nhl.link.rest.annotation.SelectRequestParsed;
+import com.nhl.link.rest.annotation.SelectChainInitialized;
 import com.nhl.link.rest.constraints.ConstraintsBuilder;
 import com.nhl.link.rest.encoder.Encoder;
 import com.nhl.link.rest.runtime.LinkRestBuilder;
@@ -107,6 +111,27 @@ public interface SelectBuilder<T> {
 	 * @since 1.2
 	 */
 	SelectBuilder<T> fetchLimit(int limit);
+
+	/**
+	 * Adds an annotated listener that will be notified of completion of
+	 * individual stages during request processing. Recognized annotations are
+	 * {@link SelectChainInitialized}, {@link SelectRequestParsed},
+	 * {@link SelectServerParamsApplied}, {@link Fetched}. Annotated
+	 * method can take two forms, one that doesn't change the flow, and another
+	 * one - that does:
+	 * 
+	 * <pre>
+	 * void doSomething(SelectContext<?> context) {
+	 * }
+	 * 
+	 * <T> ProcessingStage<SelectContext<T>, T> doSomethingWithTheFlow(SelectContext<T> context,
+	 * 		ProcessingStage<SelectContext<T>, T> next) {
+	 * }
+	 * </pre>
+	 * 
+	 * @since 1.19
+	 */
+	SelectBuilder<T> listener(Object listener);
 
 	/**
 	 * Runs the query corresponding to the state of this builder, returning
