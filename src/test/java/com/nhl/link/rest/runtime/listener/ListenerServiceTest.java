@@ -65,14 +65,14 @@ public class ListenerServiceTest {
 		verifyNoMoreInteractions(mockListener);
 		assertNull(stage);
 	}
-	
+
 	@Test
 	public void testGetListenerInvocationFactories_CacheMetadata() {
 		Map<Class<? extends Annotation>, List<ListenerInvocationFactory>> factories = service
 				.getListenerInvocationFactories(Listener.class, EventGroup.select);
 		Map<Class<? extends Annotation>, List<ListenerInvocationFactory>> factories1 = service
 				.getListenerInvocationFactories(Listener.class, EventGroup.select);
-		
+
 		assertSame(factories, factories1);
 	}
 
