@@ -1,5 +1,6 @@
 package com.nhl.link.rest.runtime.cayenne.processor;
 
+import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -12,6 +13,7 @@ import org.apache.cayenne.ObjectId;
 
 import com.nhl.link.rest.EntityUpdate;
 import com.nhl.link.rest.UpdateResponse;
+import com.nhl.link.rest.annotation.listener.UpdateResponseUpdated;
 import com.nhl.link.rest.processor.ProcessingStage;
 import com.nhl.link.rest.processor.Processor;
 import com.nhl.link.rest.runtime.processor.update.UpdateContext;
@@ -29,6 +31,11 @@ public class CayenneUpdatePostProcessStage<T extends DataObject> extends Process
 	public CayenneUpdatePostProcessStage(Processor<UpdateContext<T>, ? super T> next, Status status) {
 		super(next);
 		this.status = status;
+	}
+
+	@Override
+	protected Class<? extends Annotation> afterStageListener() {
+		return UpdateResponseUpdated.class;
 	}
 
 	@SuppressWarnings("unchecked")

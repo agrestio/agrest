@@ -21,6 +21,7 @@ import com.nhl.link.rest.it.fixture.cayenne.E3;
 import com.nhl.link.rest.it.fixture.listener.FetchCallbackListener;
 import com.nhl.link.rest.it.fixture.listener.FetchPassThroughListener;
 import com.nhl.link.rest.it.fixture.listener.FetchTakeOverListener;
+import com.nhl.link.rest.it.fixture.listener.UpdateCallbackListener;
 
 @Path("e3")
 public class E3Resource {
@@ -60,6 +61,13 @@ public class E3Resource {
 	@PUT
 	public DataResponse<E3> sync(@Context UriInfo uriInfo, String requestBody) {
 		return LinkRest.idempotentFullSync(E3.class, config).uri(uriInfo).includeData().process(requestBody);
+	}
+
+	@PUT
+	@Path("callbacklistener")
+	public DataResponse<E3> syncWithCallbackListeners(@Context UriInfo uriInfo, String requestBody) {
+		return LinkRest.idempotentFullSync(E3.class, config).listener(new UpdateCallbackListener()).uri(uriInfo)
+				.includeData().process(requestBody);
 	}
 
 	@GET

@@ -1,5 +1,6 @@
 package com.nhl.link.rest.runtime.cayenne.processor;
 
+import java.lang.annotation.Annotation;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -18,6 +19,7 @@ import org.apache.cayenne.reflect.ClassDescriptor;
 import com.nhl.link.rest.EntityParent;
 import com.nhl.link.rest.EntityUpdate;
 import com.nhl.link.rest.LinkRestException;
+import com.nhl.link.rest.annotation.listener.DataStoreUpdated;
 import com.nhl.link.rest.processor.ProcessingStage;
 import com.nhl.link.rest.processor.Processor;
 import com.nhl.link.rest.runtime.processor.update.UpdateContext;
@@ -35,6 +37,11 @@ public abstract class BaseCayenneUpdateStage<T extends DataObject> extends Proce
 	protected void doExecute(UpdateContext<T> context) {
 		sync(context);
 		CayenneContextInitStage.cayenneContext(context).commitChanges();
+	}
+	
+	@Override
+	protected Class<? extends Annotation> afterStageListener() {
+		return DataStoreUpdated.class;
 	}
 
 	protected abstract void sync(UpdateContext<T> context);

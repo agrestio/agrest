@@ -6,6 +6,11 @@ import javax.ws.rs.core.UriInfo;
 
 import org.apache.cayenne.exp.Property;
 
+import com.nhl.link.rest.annotation.listener.DataStoreUpdated;
+import com.nhl.link.rest.annotation.listener.UpdateChainInitialized;
+import com.nhl.link.rest.annotation.listener.UpdateRequestParsed;
+import com.nhl.link.rest.annotation.listener.UpdateResponseUpdated;
+import com.nhl.link.rest.annotation.listener.UpdateServerParamsApplied;
 import com.nhl.link.rest.constraints.ConstraintsBuilder;
 
 /**
@@ -66,6 +71,27 @@ public interface UpdateBuilder<T> {
 	 * Suppresses 'data' key in response.
 	 */
 	UpdateBuilder<T> excludeData();
+
+	/**
+	 * Adds an annotated listener that will be notified of completion of
+	 * individual stages during request processing. Recognized annotations are
+	 * {@link UpdateChainInitialized}, {@link UpdateRequestParsed},
+	 * {@link UpdateServerParamsApplied}, {@link DataStoreUpdated},
+	 * {@link UpdateResponseUpdated}. Annotated method can take two forms, one
+	 * that doesn't change the flow, and another one - that may:
+	 * 
+	 * <pre>
+	 * void doSomething(UpdateContext<?> context) {
+	 * }
+	 * 
+	 * <T> ProcessingStage<UpdateContext<T>, T> doSomethingWithTheFlow(UpdateContext<T> context,
+	 * 		ProcessingStage<UpdateContext<T>, T> next) {
+	 * }
+	 * </pre>
+	 * 
+	 * @since 1.19
+	 */
+	UpdateBuilder<T> listener(Object listener);
 
 	UpdateResponse<T> process(String entityData);
 }

@@ -12,6 +12,7 @@ import com.nhl.link.rest.UpdateBuilder;
 import com.nhl.link.rest.UpdateResponse;
 import com.nhl.link.rest.constraints.ConstraintsBuilder;
 import com.nhl.link.rest.processor.Processor;
+import com.nhl.link.rest.runtime.listener.ListenersBuilder;
 import com.nhl.link.rest.runtime.processor.update.UpdateContext;
 
 /**
@@ -21,10 +22,13 @@ public class DefaultUpdateBuilder<T> implements UpdateBuilder<T> {
 
 	private UpdateContext<T> context;
 	private Processor<UpdateContext<T>, T> updateChain;
+	private ListenersBuilder listenersBuilder;
 
-	public DefaultUpdateBuilder(UpdateContext<T> context, Processor<UpdateContext<T>, T> updateChain) {
+	public DefaultUpdateBuilder(UpdateContext<T> context, Processor<UpdateContext<T>, T> updateChain,
+			ListenersBuilder listenersBuilder) {
 		this.context = context;
 		this.updateChain = updateChain;
+		this.listenersBuilder = listenersBuilder;
 	}
 
 	@Override
@@ -84,6 +88,15 @@ public class DefaultUpdateBuilder<T> implements UpdateBuilder<T> {
 		return this;
 	}
 
+	/**
+	 * @since 1.19
+	 */
+	@Override
+	public UpdateBuilder<T> listener(Object listener) {
+		listenersBuilder.addListener(listener);
+		return this;
+	}
+
 	@Override
 	public UpdateBuilder<T> includeData() {
 		context.setIncludingDataInResponse(true);
@@ -93,6 +106,8 @@ public class DefaultUpdateBuilder<T> implements UpdateBuilder<T> {
 	@Override
 	public UpdateResponse<T> process(String entityData) {
 		context.setEntityData(entityData);
+		context.setListeners(listenersBuilder.getListeners());
+
 		updateChain.execute(context);
 		return context.getResponse();
 	}

@@ -1,5 +1,6 @@
 package com.nhl.link.rest.runtime.processor.update;
 
+import java.lang.annotation.Annotation;
 import java.util.List;
 
 import javax.ws.rs.core.Response.Status;
@@ -11,6 +12,7 @@ import com.nhl.link.rest.EntityParent;
 import com.nhl.link.rest.EntityUpdate;
 import com.nhl.link.rest.LinkRestException;
 import com.nhl.link.rest.UpdateResponse;
+import com.nhl.link.rest.annotation.listener.UpdateServerParamsApplied;
 import com.nhl.link.rest.meta.LrEntity;
 import com.nhl.link.rest.meta.LrPersistentAttribute;
 import com.nhl.link.rest.meta.LrPersistentRelationship;
@@ -34,6 +36,11 @@ public class ApplyUpdateServerParamsStage<T> extends ProcessingStage<UpdateConte
 		this.encoderService = encoderService;
 		this.constraintsHandler = constraintsHandler;
 		this.metadataService = metadataService;
+	}
+	
+	@Override
+	protected Class<? extends Annotation> afterStageListener() {
+		return UpdateServerParamsApplied.class;
 	}
 
 	@Override
