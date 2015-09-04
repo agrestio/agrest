@@ -3,7 +3,7 @@ package com.nhl.link.rest.runtime.processor.select;
 import java.lang.annotation.Annotation;
 
 import com.nhl.link.rest.DataResponse;
-import com.nhl.link.rest.annotation.SelectServerParamsApplied;
+import com.nhl.link.rest.annotation.listener.SelectServerParamsApplied;
 import com.nhl.link.rest.encoder.Encoder;
 import com.nhl.link.rest.processor.Processor;
 import com.nhl.link.rest.processor.ProcessingStage;

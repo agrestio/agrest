@@ -7,9 +7,9 @@ import com.nhl.link.rest.processor.Processor;
 /**
  * @since 1.16
  */
-public class UpdateInitStage<T> extends ProcessingStage<UpdateContext<T>, T> {
+public class InitializeUpdateChainStage<T> extends ProcessingStage<UpdateContext<T>, T> {
 
-	public UpdateInitStage(Processor<UpdateContext<T>, ? super T> next) {
+	public InitializeUpdateChainStage(Processor<UpdateContext<T>, ? super T> next) {
 		super(next);
 	}
 

@@ -18,18 +18,18 @@ import java.util.Map;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.nhl.link.rest.annotation.Fetched;
-import com.nhl.link.rest.annotation.SelectChainInitialized;
-import com.nhl.link.rest.annotation.SelectRequestParsed;
+import com.nhl.link.rest.annotation.listener.DataFetched;
+import com.nhl.link.rest.annotation.listener.SelectChainInitialized;
+import com.nhl.link.rest.annotation.listener.SelectRequestParsed;
 import com.nhl.link.rest.processor.ProcessingContext;
 import com.nhl.link.rest.processor.ProcessingStage;
 import com.nhl.link.rest.processor.Processor;
 
-public class ListenerServiceTest {
+public class ListenerService_SelectTest {
 
 	private ProcessingContext<Object> mockContext;
 	private ProcessingStage<ProcessingContext<Object>, Object> mockStage;
-	private Listener mockListener;
+	private SelectListener mockListener;
 
 	private ListenerService service;
 
@@ -37,25 +37,25 @@ public class ListenerServiceTest {
 	@Before
 	public void before() {
 		this.service = new ListenerService();
-		this.mockListener = mock(Listener.class);
+		this.mockListener = mock(SelectListener.class);
 		this.mockContext = mock(ProcessingContext.class);
 		when(mockContext.getType()).thenReturn(Object.class);
 		this.mockStage = mock(ProcessingStage.class);
 	}
 
 	@Test
-	public void testGetListenerInvocationFactories() {
+	public void testGetFactories() {
 
 		Map<Class<? extends Annotation>, List<ListenerInvocationFactory>> factories = service
-				.getFactories(Listener.class, mockContext, EventGroup.select);
+				.getFactories(SelectListener.class, mockContext, EventGroup.select);
 
 		assertNotNull(factories);
 		assertEquals(3, factories.size());
-		assertTrue(factories.containsKey(Fetched.class));
+		assertTrue(factories.containsKey(DataFetched.class));
 		assertTrue(factories.containsKey(SelectRequestParsed.class));
 		assertTrue(factories.containsKey(SelectChainInitialized.class));
 
-		assertEquals(2, factories.get(Fetched.class).size());
+		assertEquals(2, factories.get(DataFetched.class).size());
 		assertEquals(1, factories.get(SelectRequestParsed.class).size());
 		assertEquals(1, factories.get(SelectChainInitialized.class).size());
 
@@ -69,24 +69,24 @@ public class ListenerServiceTest {
 	}
 
 	@Test
-	public void testGetListenerInvocationFactories_CacheMetadata() {
+	public void testGetFactories_CacheMetadata() {
 		Map<Class<? extends Annotation>, List<ListenerInvocationFactory>> factories = service
-				.getFactories(Listener.class, mockContext, EventGroup.select);
+				.getFactories(SelectListener.class, mockContext, EventGroup.select);
 		Map<Class<? extends Annotation>, List<ListenerInvocationFactory>> factories1 = service
-				.getFactories(Listener.class, mockContext, EventGroup.select);
+				.getFactories(SelectListener.class, mockContext, EventGroup.select);
 
 		assertSame(factories, factories1);
 	}
 
-	public static interface Listener {
+	public static interface SelectListener {
 
-		@Fetched
+		@DataFetched
 		void afterFetched();
 
 		@SelectRequestParsed
 		Object afterSelectRequestParsed(ProcessingContext<?> context);
 
-		@Fetched
+		@DataFetched
 		void afterFetched2();
 
 		@SelectChainInitialized
@@ -94,4 +94,5 @@ public class ListenerServiceTest {
 
 		Object notAnnotated(ProcessingContext<?> context, ProcessingStage<?, ?> stage);
 	}
+
 }

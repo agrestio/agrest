@@ -15,7 +15,7 @@ import org.apache.cayenne.query.SelectQuery;
 import com.nhl.link.rest.DataResponse;
 import com.nhl.link.rest.LinkRestException;
 import com.nhl.link.rest.ResourceEntity;
-import com.nhl.link.rest.annotation.Fetched;
+import com.nhl.link.rest.annotation.listener.DataFetched;
 import com.nhl.link.rest.meta.LrEntity;
 import com.nhl.link.rest.meta.LrPersistentAttribute;
 import com.nhl.link.rest.processor.ProcessingStage;
@@ -37,7 +37,7 @@ public class CayenneFetchStage<T> extends ProcessingStage<SelectContext<T>, T> {
 	
 	@Override
 	protected Class<? extends Annotation> afterStageListener() {
-		return Fetched.class;
+		return DataFetched.class;
 	}
 
 	@Override

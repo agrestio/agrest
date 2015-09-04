@@ -4,20 +4,28 @@ import java.lang.annotation.Annotation;
 import java.util.Arrays;
 import java.util.Collection;
 
-import com.nhl.link.rest.annotation.SelectServerParamsApplied;
-import com.nhl.link.rest.annotation.Fetched;
-import com.nhl.link.rest.annotation.SelectRequestParsed;
-import com.nhl.link.rest.annotation.SelectChainInitialized;
+import com.nhl.link.rest.annotation.listener.DataFetched;
+import com.nhl.link.rest.annotation.listener.SelectChainInitialized;
+import com.nhl.link.rest.annotation.listener.SelectRequestParsed;
+import com.nhl.link.rest.annotation.listener.SelectServerParamsApplied;
+import com.nhl.link.rest.annotation.listener.UpdateChainInitialized;
+import com.nhl.link.rest.annotation.listener.UpdateRequestParsed;
+import com.nhl.link.rest.annotation.listener.UpdateResponseUpdated;
+import com.nhl.link.rest.annotation.listener.UpdateServerParamsApplied;
+import com.nhl.link.rest.annotation.listener.DataStoreUpdated;
 
 /**
- * Organizes listener annotations by the type of LinKRest they participate in.
+ * Organizes listener annotations by the type of LinkRest chain they participate
+ * in.
  * 
  * @since 1.19
  */
 public enum EventGroup {
 
-	select(SelectServerParamsApplied.class, Fetched.class, SelectRequestParsed.class,
-			SelectChainInitialized.class);
+	select(SelectChainInitialized.class, SelectRequestParsed.class, SelectServerParamsApplied.class, DataFetched.class),
+
+	update(UpdateChainInitialized.class, UpdateRequestParsed.class, UpdateServerParamsApplied.class, DataStoreUpdated.class,
+			UpdateResponseUpdated.class);
 
 	private final Collection<Class<? extends Annotation>> eventsFired;
 

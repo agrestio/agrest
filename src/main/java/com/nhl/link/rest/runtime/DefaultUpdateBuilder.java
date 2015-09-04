@@ -20,11 +20,11 @@ import com.nhl.link.rest.runtime.processor.update.UpdateContext;
 public class DefaultUpdateBuilder<T> implements UpdateBuilder<T> {
 
 	private UpdateContext<T> context;
-	private Processor<UpdateContext<T>, T> processor;
+	private Processor<UpdateContext<T>, T> updateChain;
 
-	public DefaultUpdateBuilder(UpdateContext<T> context, Processor<UpdateContext<T>, T> processor) {
+	public DefaultUpdateBuilder(UpdateContext<T> context, Processor<UpdateContext<T>, T> updateChain) {
 		this.context = context;
-		this.processor = processor;
+		this.updateChain = updateChain;
 	}
 
 	@Override
@@ -93,7 +93,7 @@ public class DefaultUpdateBuilder<T> implements UpdateBuilder<T> {
 	@Override
 	public UpdateResponse<T> process(String entityData) {
 		context.setEntityData(entityData);
-		processor.execute(context);
+		updateChain.execute(context);
 		return context.getResponse();
 	}
 

@@ -22,13 +22,13 @@ import com.nhl.link.rest.runtime.constraints.IConstraintsHandler;
 import com.nhl.link.rest.runtime.encoder.IEncoderService;
 import com.nhl.link.rest.runtime.meta.IMetadataService;
 
-public class UpdateApplyServerParamsStage<T> extends ProcessingStage<UpdateContext<T>, T> {
+public class ApplyUpdateServerParamsStage<T> extends ProcessingStage<UpdateContext<T>, T> {
 
 	private IEncoderService encoderService;
 	private IConstraintsHandler constraintsHandler;
 	private IMetadataService metadataService;
 
-	public UpdateApplyServerParamsStage(Processor<UpdateContext<T>, ? super T> next, IEncoderService encoderService,
+	public ApplyUpdateServerParamsStage(Processor<UpdateContext<T>, ? super T> next, IEncoderService encoderService,
 			IConstraintsHandler constraintsHandler, IMetadataService metadataService) {
 		super(next);
 		this.encoderService = encoderService;

@@ -31,13 +31,13 @@ public class DefaultSelectBuilder<T> implements SelectBuilder<T> {
 	private static final Logger logger = LoggerFactory.getLogger(DefaultSelectBuilder.class);
 
 	protected SelectContext<T> context;
-	protected Processor<SelectContext<T>, T> processor;
+	protected Processor<SelectContext<T>, T> selectChain;
 	protected ListenersBuilder listenersBuilder;
 
-	public DefaultSelectBuilder(SelectContext<T> context, Processor<SelectContext<T>, T> processor,
+	public DefaultSelectBuilder(SelectContext<T> context, Processor<SelectContext<T>, T> selectChain,
 			ListenersBuilder listenersBuilder) {
 		this.context = context;
-		this.processor = processor;
+		this.selectChain = selectChain;
 		this.listenersBuilder = listenersBuilder;
 	}
 
@@ -161,7 +161,7 @@ public class DefaultSelectBuilder<T> implements SelectBuilder<T> {
 		context.setAtMostOneObject(context.isById());
 		context.setListeners(listenersBuilder.getListeners());
 
-		processor.execute(context);
+		selectChain.execute(context);
 		return context.getResponse();
 	}
 
@@ -169,7 +169,7 @@ public class DefaultSelectBuilder<T> implements SelectBuilder<T> {
 	public DataResponse<T> selectOne() {
 		context.setAtMostOneObject(true);
 		context.setListeners(listenersBuilder.getListeners());
-		processor.execute(context);
+		selectChain.execute(context);
 		return context.getResponse();
 	}
 

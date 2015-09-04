@@ -3,7 +3,7 @@ package com.nhl.link.rest.it.fixture.listener;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.nhl.link.rest.annotation.SelectServerParamsApplied;
+import com.nhl.link.rest.annotation.listener.SelectServerParamsApplied;
 import com.nhl.link.rest.it.fixture.cayenne.E3;
 import com.nhl.link.rest.processor.ProcessingStage;
 import com.nhl.link.rest.runtime.processor.select.SelectContext;

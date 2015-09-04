@@ -2,7 +2,7 @@ package com.nhl.link.rest.runtime.processor.select;
 
 import java.lang.annotation.Annotation;
 
-import com.nhl.link.rest.annotation.SelectRequestParsed;
+import com.nhl.link.rest.annotation.listener.SelectRequestParsed;
 import com.nhl.link.rest.processor.ProcessingStage;
 import com.nhl.link.rest.processor.Processor;
 import com.nhl.link.rest.runtime.parser.IRequestParser;

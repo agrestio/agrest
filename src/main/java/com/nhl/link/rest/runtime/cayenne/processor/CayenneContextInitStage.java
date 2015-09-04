@@ -24,6 +24,10 @@ public class CayenneContextInitStage<C extends ProcessingContext<T>, T> extends 
 
 	private ICayennePersister persister;
 
+	// do we need a listener annotation for this stage? It is kind of trivial,
+	// and any possible uses of a listener can probably be addressed with
+	// @UpdateChainInitialized
+
 	public CayenneContextInitStage(Processor<C, ? super T> next, ICayennePersister persister) {
 		super(next);
 		this.persister = persister;

@@ -17,6 +17,9 @@ import com.nhl.link.rest.processor.Processor;
 import com.nhl.link.rest.runtime.processor.update.UpdateContext;
 
 /**
+ * A stage that updates the response after the data got stored in the DB in the
+ * previous stages.
+ * 
  * @since 1.16
  */
 public class CayenneUpdatePostProcessStage<T extends DataObject> extends ProcessingStage<UpdateContext<T>, T> {

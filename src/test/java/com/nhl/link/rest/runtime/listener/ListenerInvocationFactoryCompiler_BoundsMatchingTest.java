@@ -9,7 +9,7 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.nhl.link.rest.annotation.Fetched;
+import com.nhl.link.rest.annotation.listener.DataFetched;
 import com.nhl.link.rest.runtime.processor.select.SelectContext;
 
 public class ListenerInvocationFactoryCompiler_BoundsMatchingTest {
@@ -24,16 +24,16 @@ public class ListenerInvocationFactoryCompiler_BoundsMatchingTest {
 
 	public static interface Listener {
 
-		@Fetched
+		@DataFetched
 		void fetchedSelectContextAny(SelectContext<?> c);
 
-		@Fetched
+		@DataFetched
 		void fetchedSelectContextE1(SelectContext<E1> c);
 
-		@Fetched
+		@DataFetched
 		void fetchedSelectContextExtendsE1(SelectContext<? extends E1> c);
 		
-		@Fetched
+		@DataFetched
 		void fetchedSelectContextE2(SelectContext<E2> c);
 	}
 
@@ -52,7 +52,7 @@ public class ListenerInvocationFactoryCompiler_BoundsMatchingTest {
 		when(mockContext.getType()).thenReturn(Object.class);
 
 		List<ListenerInvocationFactory> factories = compiler
-				.compileFactories(Listener.class, mockContext, EventGroup.select).get(Fetched.class);
+				.compileFactories(Listener.class, mockContext, EventGroup.select).get(DataFetched.class);
 
 		assertEquals(1, factories.size());
 	}
@@ -65,7 +65,7 @@ public class ListenerInvocationFactoryCompiler_BoundsMatchingTest {
 		when(mockContext.getType()).thenReturn(E1.class);
 
 		List<ListenerInvocationFactory> factories = compiler
-				.compileFactories(Listener.class, mockContext, EventGroup.select).get(Fetched.class);
+				.compileFactories(Listener.class, mockContext, EventGroup.select).get(DataFetched.class);
 
 		assertEquals(3, factories.size());
 	}
@@ -78,7 +78,7 @@ public class ListenerInvocationFactoryCompiler_BoundsMatchingTest {
 		when(mockContext.getType()).thenReturn(E2.class);
 
 		List<ListenerInvocationFactory> factories = compiler
-				.compileFactories(Listener.class, mockContext, EventGroup.select).get(Fetched.class);
+				.compileFactories(Listener.class, mockContext, EventGroup.select).get(DataFetched.class);
 
 		assertEquals(4, factories.size());
 	}

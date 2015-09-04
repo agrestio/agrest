@@ -6,10 +6,10 @@ import javax.ws.rs.core.UriInfo;
 
 import org.apache.cayenne.exp.Property;
 
-import com.nhl.link.rest.annotation.SelectServerParamsApplied;
-import com.nhl.link.rest.annotation.Fetched;
-import com.nhl.link.rest.annotation.SelectRequestParsed;
-import com.nhl.link.rest.annotation.SelectChainInitialized;
+import com.nhl.link.rest.annotation.listener.DataFetched;
+import com.nhl.link.rest.annotation.listener.SelectChainInitialized;
+import com.nhl.link.rest.annotation.listener.SelectRequestParsed;
+import com.nhl.link.rest.annotation.listener.SelectServerParamsApplied;
 import com.nhl.link.rest.constraints.ConstraintsBuilder;
 import com.nhl.link.rest.encoder.Encoder;
 import com.nhl.link.rest.runtime.LinkRestBuilder;
@@ -116,7 +116,7 @@ public interface SelectBuilder<T> {
 	 * Adds an annotated listener that will be notified of completion of
 	 * individual stages during request processing. Recognized annotations are
 	 * {@link SelectChainInitialized}, {@link SelectRequestParsed},
-	 * {@link SelectServerParamsApplied}, {@link Fetched}. Annotated
+	 * {@link SelectServerParamsApplied}, {@link DataFetched}. Annotated
 	 * method can take two forms, one that doesn't change the flow, and another
 	 * one - that does:
 	 * 
