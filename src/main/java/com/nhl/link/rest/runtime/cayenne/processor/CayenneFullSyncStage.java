@@ -12,7 +12,7 @@ import org.apache.cayenne.query.SelectQuery;
 import com.nhl.link.rest.EntityUpdate;
 import com.nhl.link.rest.ObjectMapper;
 import com.nhl.link.rest.UpdateResponse;
-import com.nhl.link.rest.processor.Processor;
+import com.nhl.link.rest.processor.ProcessingStage;
 import com.nhl.link.rest.runtime.processor.update.UpdateContext;
 
 /**
@@ -20,7 +20,7 @@ import com.nhl.link.rest.runtime.processor.update.UpdateContext;
  */
 public class CayenneFullSyncStage<T extends DataObject> extends CayenneCreateOrUpdateStage<T> {
 
-	public CayenneFullSyncStage(Processor<UpdateContext<T>, ? super T> next, boolean idempotent) {
+	public CayenneFullSyncStage(ProcessingStage<UpdateContext<T>, ? super T> next, boolean idempotent) {
 		super(next, idempotent);
 	}
 

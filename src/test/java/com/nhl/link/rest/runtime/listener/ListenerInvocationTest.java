@@ -16,8 +16,8 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.nhl.link.rest.processor.ProcessingContext;
+import com.nhl.link.rest.processor.BaseLinearProcessingStage;
 import com.nhl.link.rest.processor.ProcessingStage;
-import com.nhl.link.rest.processor.Processor;
 
 public class ListenerInvocationTest {
 
@@ -27,7 +27,7 @@ public class ListenerInvocationTest {
 
 	private Listener mockListener;
 	private ProcessingContext<Listener> mockContext;
-	private ProcessingStage<ProcessingContext<Listener>, Listener> mockStage;
+	private BaseLinearProcessingStage<ProcessingContext<Listener>, Listener> mockStage;
 
 	@BeforeClass
 	public static void beforeClass() throws IllegalAccessException, NoSuchMethodException, SecurityException {
@@ -35,7 +35,7 @@ public class ListenerInvocationTest {
 		VOID_NO_ARGS = LOOKUP.unreflect(Listener.class.getMethod("voidNoArg"));
 		OBJECT_ONE_ARG = LOOKUP.unreflect(Listener.class.getMethod("objectOneArg", ProcessingContext.class));
 		OBJECT_TWO_ARGS = LOOKUP
-				.unreflect(Listener.class.getMethod("objectTwoArgs", ProcessingContext.class, ProcessingStage.class));
+				.unreflect(Listener.class.getMethod("objectTwoArgs", ProcessingContext.class, BaseLinearProcessingStage.class));
 	}
 
 	@SuppressWarnings("unchecked")
@@ -43,7 +43,7 @@ public class ListenerInvocationTest {
 	public void before() {
 		this.mockListener = mock(Listener.class);
 		this.mockContext = mock(ProcessingContext.class);
-		this.mockStage = mock(ProcessingStage.class);
+		this.mockStage = mock(BaseLinearProcessingStage.class);
 	}
 
 	@Test
@@ -52,9 +52,9 @@ public class ListenerInvocationTest {
 		ListenerInvocation invocation = new ListenerInvocation(VOID_NO_ARGS.bindTo(mockListener), true) {
 
 			@Override
-			protected <C extends ProcessingContext<T>, T> Processor<C, T> doInvoke(C context,
-					Processor<C, ? super T> next) throws Throwable {
-				return (Processor<C, T>) methodHandle.invoke();
+			protected <C extends ProcessingContext<T>, T> ProcessingStage<C, T> doInvoke(C context,
+					ProcessingStage<C, ? super T> next) throws Throwable {
+				return (ProcessingStage<C, T>) methodHandle.invoke();
 			}
 		};
 
@@ -69,15 +69,15 @@ public class ListenerInvocationTest {
 	@Test
 	public void testInvoke_ObjectOneArg() {
 
-		ProcessingStage<ProcessingContext<Listener>, Listener> altStage = mock(ProcessingStage.class);
+		BaseLinearProcessingStage<ProcessingContext<Listener>, Listener> altStage = mock(BaseLinearProcessingStage.class);
 		when(mockListener.objectOneArg(mockContext)).thenReturn(altStage);
 
 		ListenerInvocation invocation = new ListenerInvocation(OBJECT_ONE_ARG.bindTo(mockListener), false) {
 
 			@Override
-			protected <C extends ProcessingContext<T>, T> Processor<C, T> doInvoke(C context,
-					Processor<C, ? super T> next) throws Throwable {
-				return (Processor<C, T>) methodHandle.invoke(context);
+			protected <C extends ProcessingContext<T>, T> ProcessingStage<C, T> doInvoke(C context,
+					ProcessingStage<C, ? super T> next) throws Throwable {
+				return (ProcessingStage<C, T>) methodHandle.invoke(context);
 			}
 		};
 
@@ -94,9 +94,9 @@ public class ListenerInvocationTest {
 		ListenerInvocation invocation = new ListenerInvocation(OBJECT_TWO_ARGS.bindTo(mockListener), false) {
 
 			@Override
-			protected <C extends ProcessingContext<T>, T> Processor<C, T> doInvoke(C context,
-					Processor<C, ? super T> next) throws Throwable {
-				return (Processor<C, T>) methodHandle.invoke(context, next);
+			protected <C extends ProcessingContext<T>, T> ProcessingStage<C, T> doInvoke(C context,
+					ProcessingStage<C, ? super T> next) throws Throwable {
+				return (ProcessingStage<C, T>) methodHandle.invoke(context, next);
 			}
 		};
 
@@ -112,6 +112,6 @@ public class ListenerInvocationTest {
 
 		Object objectOneArg(ProcessingContext<?> context);
 
-		Object objectTwoArgs(ProcessingContext<?> context, ProcessingStage<?, ?> stage);
+		Object objectTwoArgs(ProcessingContext<?> context, BaseLinearProcessingStage<?, ?> stage);
 	}
 }

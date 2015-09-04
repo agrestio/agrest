@@ -24,14 +24,14 @@ import com.nhl.link.rest.annotation.listener.UpdateRequestParsed;
 import com.nhl.link.rest.annotation.listener.UpdateResponseUpdated;
 import com.nhl.link.rest.annotation.listener.UpdateServerParamsApplied;
 import com.nhl.link.rest.processor.ProcessingContext;
+import com.nhl.link.rest.processor.BaseLinearProcessingStage;
 import com.nhl.link.rest.processor.ProcessingStage;
-import com.nhl.link.rest.processor.Processor;
 import com.nhl.link.rest.runtime.processor.update.UpdateContext;
 
 public class ListenerService_UpdateTest {
 
 	private ProcessingContext<Object> mockContext;
-	private ProcessingStage<ProcessingContext<Object>, Object> mockStage;
+	private BaseLinearProcessingStage<ProcessingContext<Object>, Object> mockStage;
 	private UpdateListener mockListener;
 
 	private ListenerService service;
@@ -43,7 +43,7 @@ public class ListenerService_UpdateTest {
 		this.mockListener = mock(UpdateListener.class);
 		this.mockContext = mock(ProcessingContext.class);
 		when(mockContext.getType()).thenReturn(Object.class);
-		this.mockStage = mock(ProcessingStage.class);
+		this.mockStage = mock(BaseLinearProcessingStage.class);
 	}
 
 	@Test
@@ -67,7 +67,7 @@ public class ListenerService_UpdateTest {
 		assertEquals(1, factories.get(UpdateResponseUpdated.class).size());
 
 		verifyZeroInteractions(mockListener);
-		Processor<?, ?> stage = factories.get(DataStoreUpdated.class).get(0).toInvocation(mockListener)
+		ProcessingStage<?, ?> stage = factories.get(DataStoreUpdated.class).get(0).toInvocation(mockListener)
 				.invoke(mockContext, mockStage);
 
 		verify(mockListener).afterDataStoreUpdate(mockContext);
@@ -80,7 +80,7 @@ public class ListenerService_UpdateTest {
 		@DataFetched
 		void selectAnnotationMustBeIgnored();
 
-		Object notAnnotatedMustBeIgnored(ProcessingContext<?> context, ProcessingStage<?, ?> stage);
+		Object notAnnotatedMustBeIgnored(ProcessingContext<?> context, BaseLinearProcessingStage<?, ?> stage);
 
 		@UpdateRequestParsed
 		Object afterUpdateRequestParsed(UpdateContext<?> context);
@@ -89,7 +89,7 @@ public class ListenerService_UpdateTest {
 		Object afterUpdateRequestParsed2(ProcessingContext<?> context);
 
 		@UpdateChainInitialized
-		Object afterChainInitialized(UpdateContext<?> context, ProcessingStage<?, ?> stage);
+		Object afterChainInitialized(UpdateContext<?> context, BaseLinearProcessingStage<?, ?> stage);
 
 		@UpdateServerParamsApplied
 		Object afterUpdateServerParamsApplied(ProcessingContext<?> context);

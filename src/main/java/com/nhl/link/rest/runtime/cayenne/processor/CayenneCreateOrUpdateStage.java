@@ -10,7 +10,7 @@ import org.apache.cayenne.DataObject;
 
 import com.nhl.link.rest.EntityUpdate;
 import com.nhl.link.rest.LinkRestException;
-import com.nhl.link.rest.processor.Processor;
+import com.nhl.link.rest.processor.ProcessingStage;
 import com.nhl.link.rest.runtime.processor.update.UpdateContext;
 
 /**
@@ -20,7 +20,7 @@ public class CayenneCreateOrUpdateStage<T extends DataObject> extends CayenneUpd
 
 	private boolean idempotent;
 
-	public CayenneCreateOrUpdateStage(Processor<UpdateContext<T>, ? super T> next, boolean idempotent) {
+	public CayenneCreateOrUpdateStage(ProcessingStage<UpdateContext<T>, ? super T> next, boolean idempotent) {
 		super(next);
 		this.idempotent = idempotent;
 	}

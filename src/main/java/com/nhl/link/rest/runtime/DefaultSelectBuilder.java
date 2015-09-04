@@ -18,7 +18,8 @@ import com.nhl.link.rest.SelectBuilder;
 import com.nhl.link.rest.SizeConstraints;
 import com.nhl.link.rest.constraints.ConstraintsBuilder;
 import com.nhl.link.rest.encoder.Encoder;
-import com.nhl.link.rest.processor.Processor;
+import com.nhl.link.rest.processor.ChainProcessor;
+import com.nhl.link.rest.processor.ProcessingStage;
 import com.nhl.link.rest.property.PropertyBuilder;
 import com.nhl.link.rest.runtime.listener.ListenersBuilder;
 import com.nhl.link.rest.runtime.processor.select.SelectContext;
@@ -31,10 +32,10 @@ public class DefaultSelectBuilder<T> implements SelectBuilder<T> {
 	private static final Logger logger = LoggerFactory.getLogger(DefaultSelectBuilder.class);
 
 	protected SelectContext<T> context;
-	protected Processor<SelectContext<T>, T> selectChain;
+	protected ProcessingStage<SelectContext<T>, T> selectChain;
 	protected ListenersBuilder listenersBuilder;
 
-	public DefaultSelectBuilder(SelectContext<T> context, Processor<SelectContext<T>, T> selectChain,
+	public DefaultSelectBuilder(SelectContext<T> context, ProcessingStage<SelectContext<T>, T> selectChain,
 			ListenersBuilder listenersBuilder) {
 		this.context = context;
 		this.selectChain = selectChain;
@@ -161,7 +162,7 @@ public class DefaultSelectBuilder<T> implements SelectBuilder<T> {
 		context.setAtMostOneObject(context.isById());
 		context.setListeners(listenersBuilder.getListeners());
 
-		selectChain.execute(context);
+		ChainProcessor.execute(selectChain, context);
 		return context.getResponse();
 	}
 
@@ -169,7 +170,7 @@ public class DefaultSelectBuilder<T> implements SelectBuilder<T> {
 	public DataResponse<T> selectOne() {
 		context.setAtMostOneObject(true);
 		context.setListeners(listenersBuilder.getListeners());
-		selectChain.execute(context);
+		ChainProcessor.execute(selectChain, context);
 		return context.getResponse();
 	}
 

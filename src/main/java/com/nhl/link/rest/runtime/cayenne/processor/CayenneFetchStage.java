@@ -18,25 +18,25 @@ import com.nhl.link.rest.ResourceEntity;
 import com.nhl.link.rest.annotation.listener.DataFetched;
 import com.nhl.link.rest.meta.LrEntity;
 import com.nhl.link.rest.meta.LrPersistentAttribute;
+import com.nhl.link.rest.processor.BaseLinearProcessingStage;
 import com.nhl.link.rest.processor.ProcessingStage;
-import com.nhl.link.rest.processor.Processor;
 import com.nhl.link.rest.runtime.cayenne.ICayennePersister;
 import com.nhl.link.rest.runtime.processor.select.SelectContext;
 
 /**
  * @since 1.16
  */
-public class CayenneFetchStage<T> extends ProcessingStage<SelectContext<T>, T> {
+public class CayenneFetchStage<T> extends BaseLinearProcessingStage<SelectContext<T>, T> {
 
 	private ICayennePersister persister;
 
-	public CayenneFetchStage(Processor<SelectContext<T>, ? super T> next, ICayennePersister persister) {
+	public CayenneFetchStage(ProcessingStage<SelectContext<T>, ? super T> next, ICayennePersister persister) {
 		super(next);
 		this.persister = persister;
 	}
 	
 	@Override
-	protected Class<? extends Annotation> afterStageListener() {
+	public Class<? extends Annotation> afterStageListener() {
 		return DataFetched.class;
 	}
 

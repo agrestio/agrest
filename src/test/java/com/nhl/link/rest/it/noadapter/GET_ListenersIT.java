@@ -70,7 +70,7 @@ public class GET_ListenersIT extends JerseyTestOnDerby {
 	}
 
 	@Test
-	public void testTakeOverLisetner() throws WebApplicationException, IOException {
+	public void testTakeOverListener() throws WebApplicationException, IOException {
 
 		FetchTakeOverListener.BEFORE_FETCH_CALLED = false;
 

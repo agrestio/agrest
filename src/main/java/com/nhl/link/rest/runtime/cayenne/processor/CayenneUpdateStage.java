@@ -19,7 +19,7 @@ import com.nhl.link.rest.LinkRestException;
 import com.nhl.link.rest.ObjectMapper;
 import com.nhl.link.rest.ObjectMapperFactory;
 import com.nhl.link.rest.meta.LrEntity;
-import com.nhl.link.rest.processor.Processor;
+import com.nhl.link.rest.processor.ProcessingStage;
 import com.nhl.link.rest.runtime.cayenne.ByIdObjectMapperFactory;
 import com.nhl.link.rest.runtime.processor.update.UpdateContext;
 
@@ -28,7 +28,7 @@ import com.nhl.link.rest.runtime.processor.update.UpdateContext;
  */
 public class CayenneUpdateStage<T extends DataObject> extends BaseCayenneUpdateStage<T> {
 
-	public CayenneUpdateStage(Processor<UpdateContext<T>, ? super T> next) {
+	public CayenneUpdateStage(ProcessingStage<UpdateContext<T>, ? super T> next) {
 		super(next);
 	}
 

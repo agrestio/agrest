@@ -31,9 +31,4 @@ public interface ProcessingContext<T> {
 	 * @since 1.19
 	 */
 	Map<Class<? extends Annotation>, List<ListenerInvocation>> getListeners();
-
-	/**
-	 * @since 1.19
-	 */
-	void setListeners(Map<Class<? extends Annotation>, List<ListenerInvocation>> listeners);
 }

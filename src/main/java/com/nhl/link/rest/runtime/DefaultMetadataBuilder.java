@@ -2,7 +2,8 @@ package com.nhl.link.rest.runtime;
 
 import com.nhl.link.rest.MetadataBuilder;
 import com.nhl.link.rest.MetadataResponse;
-import com.nhl.link.rest.processor.Processor;
+import com.nhl.link.rest.processor.ChainProcessor;
+import com.nhl.link.rest.processor.ProcessingStage;
 import com.nhl.link.rest.runtime.processor.meta.MetadataContext;
 
 import javax.ws.rs.core.UriInfo;
@@ -13,11 +14,11 @@ import javax.ws.rs.core.UriInfo;
 public class DefaultMetadataBuilder<T> implements MetadataBuilder<T> {
 
     protected MetadataContext<T> context;
-    private Processor<MetadataContext<T>, T> processor;
+    private ProcessingStage<MetadataContext<T>, T> metadataChain;
 
-    public DefaultMetadataBuilder(MetadataContext<T> context, Processor<MetadataContext<T>, T> processor) {
+    public DefaultMetadataBuilder(MetadataContext<T> context, ProcessingStage<MetadataContext<T>, T> processor) {
         this.context = context;
-        this.processor = processor;
+        this.metadataChain = processor;
     }
 
     @Override
@@ -34,7 +35,7 @@ public class DefaultMetadataBuilder<T> implements MetadataBuilder<T> {
 
     @Override
     public MetadataResponse<T> process() {
-        processor.execute(context);
+		ChainProcessor.execute(metadataChain, context);
         return context.getResponse();
     }
 

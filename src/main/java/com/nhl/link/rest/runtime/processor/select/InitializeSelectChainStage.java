@@ -4,20 +4,20 @@ import java.lang.annotation.Annotation;
 
 import com.nhl.link.rest.DataResponse;
 import com.nhl.link.rest.annotation.listener.SelectChainInitialized;
+import com.nhl.link.rest.processor.BaseLinearProcessingStage;
 import com.nhl.link.rest.processor.ProcessingStage;
-import com.nhl.link.rest.processor.Processor;
 
 /**
  * @since 1.19
  */
-public class InitializeSelectChainStage<T> extends ProcessingStage<SelectContext<T>, T> {
+public class InitializeSelectChainStage<T> extends BaseLinearProcessingStage<SelectContext<T>, T> {
 
-	public InitializeSelectChainStage(Processor<SelectContext<T>, ? super T> next) {
+	public InitializeSelectChainStage(ProcessingStage<SelectContext<T>, ? super T> next) {
 		super(next);
 	}
 
 	@Override
-	protected Class<? extends Annotation> afterStageListener() {
+	public Class<? extends Annotation> afterStageListener() {
 		return SelectChainInitialized.class;
 	}
 	

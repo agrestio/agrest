@@ -22,13 +22,13 @@ import com.nhl.link.rest.annotation.listener.DataFetched;
 import com.nhl.link.rest.annotation.listener.SelectChainInitialized;
 import com.nhl.link.rest.annotation.listener.SelectRequestParsed;
 import com.nhl.link.rest.processor.ProcessingContext;
+import com.nhl.link.rest.processor.BaseLinearProcessingStage;
 import com.nhl.link.rest.processor.ProcessingStage;
-import com.nhl.link.rest.processor.Processor;
 
 public class ListenerService_SelectTest {
 
 	private ProcessingContext<Object> mockContext;
-	private ProcessingStage<ProcessingContext<Object>, Object> mockStage;
+	private BaseLinearProcessingStage<ProcessingContext<Object>, Object> mockStage;
 	private SelectListener mockListener;
 
 	private ListenerService service;
@@ -40,7 +40,7 @@ public class ListenerService_SelectTest {
 		this.mockListener = mock(SelectListener.class);
 		this.mockContext = mock(ProcessingContext.class);
 		when(mockContext.getType()).thenReturn(Object.class);
-		this.mockStage = mock(ProcessingStage.class);
+		this.mockStage = mock(BaseLinearProcessingStage.class);
 	}
 
 	@Test
@@ -60,7 +60,7 @@ public class ListenerService_SelectTest {
 		assertEquals(1, factories.get(SelectChainInitialized.class).size());
 
 		verifyZeroInteractions(mockListener);
-		Processor<?, ?> stage = factories.get(SelectRequestParsed.class).get(0).toInvocation(mockListener)
+		ProcessingStage<?, ?> stage = factories.get(SelectRequestParsed.class).get(0).toInvocation(mockListener)
 				.invoke(mockContext, mockStage);
 
 		verify(mockListener).afterSelectRequestParsed(mockContext);
@@ -90,9 +90,9 @@ public class ListenerService_SelectTest {
 		void afterFetched2();
 
 		@SelectChainInitialized
-		Object afterChainInitialized(ProcessingContext<?> context, ProcessingStage<?, ?> stage);
+		Object afterChainInitialized(ProcessingContext<?> context, BaseLinearProcessingStage<?, ?> stage);
 
-		Object notAnnotated(ProcessingContext<?> context, ProcessingStage<?, ?> stage);
+		Object notAnnotated(ProcessingContext<?> context, BaseLinearProcessingStage<?, ?> stage);
 	}
 
 }

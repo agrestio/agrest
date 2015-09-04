@@ -14,19 +14,19 @@ import org.apache.cayenne.query.ObjectIdQuery;
 
 import com.nhl.link.rest.LinkRestException;
 import com.nhl.link.rest.meta.LrRelationship;
+import com.nhl.link.rest.processor.BaseLinearProcessingStage;
 import com.nhl.link.rest.processor.ProcessingStage;
-import com.nhl.link.rest.processor.Processor;
 import com.nhl.link.rest.runtime.meta.IMetadataService;
 import com.nhl.link.rest.runtime.processor.unrelate.UnrelateContext;
 
 /**
  * @since 1.16
  */
-public class CayenneUnrelateStage<T> extends ProcessingStage<UnrelateContext<T>, T> {
+public class CayenneUnrelateStage<T> extends BaseLinearProcessingStage<UnrelateContext<T>, T> {
 
 	private IMetadataService metadataService;
 
-	public CayenneUnrelateStage(Processor<UnrelateContext<T>, ? super T> next, IMetadataService metadataService) {
+	public CayenneUnrelateStage(ProcessingStage<UnrelateContext<T>, ? super T> next, IMetadataService metadataService) {
 		super(next);
 		this.metadataService = metadataService;
 	}

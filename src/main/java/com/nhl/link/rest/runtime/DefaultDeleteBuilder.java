@@ -7,7 +7,8 @@ import org.apache.cayenne.exp.Property;
 import com.nhl.link.rest.DeleteBuilder;
 import com.nhl.link.rest.EntityParent;
 import com.nhl.link.rest.SimpleResponse;
-import com.nhl.link.rest.processor.Processor;
+import com.nhl.link.rest.processor.ChainProcessor;
+import com.nhl.link.rest.processor.ProcessingStage;
 import com.nhl.link.rest.runtime.processor.delete.DeleteContext;
 
 /**
@@ -16,11 +17,11 @@ import com.nhl.link.rest.runtime.processor.delete.DeleteContext;
 public class DefaultDeleteBuilder<T> implements DeleteBuilder<T> {
 
 	protected DeleteContext<T> context;
-	private Processor<DeleteContext<T>, T> processor;
+	private ProcessingStage<DeleteContext<T>, T> deleteChain;
 
-	public DefaultDeleteBuilder(DeleteContext<T> context, Processor<DeleteContext<T>, T> processor) {
+	public DefaultDeleteBuilder(DeleteContext<T> context, ProcessingStage<DeleteContext<T>, T> deleteChain) {
 		this.context = context;
-		this.processor = processor;
+		this.deleteChain = deleteChain;
 	}
 
 	@Override
@@ -49,7 +50,7 @@ public class DefaultDeleteBuilder<T> implements DeleteBuilder<T> {
 
 	@Override
 	public SimpleResponse delete() {
-		processor.execute(context);
+		ChainProcessor.execute(deleteChain, context);
 		return context.getResponse();
 	}
 }

@@ -6,7 +6,7 @@ import javax.ws.rs.core.Response.Status;
 
 import com.nhl.link.rest.LinkRestException;
 import com.nhl.link.rest.processor.ProcessingContext;
-import com.nhl.link.rest.processor.Processor;
+import com.nhl.link.rest.processor.ProcessingStage;
 
 /**
  * A wrapper of an annotated listener method for a single execution stage of a
@@ -25,13 +25,13 @@ public abstract class ListenerInvocation {
 		this.voidMethod = voidMethod;
 	}
 
-	protected abstract <C extends ProcessingContext<T>, T> Processor<C, ? super T> doInvoke(C context,
-			Processor<C, ? super T> next) throws Throwable;
+	protected abstract <C extends ProcessingContext<T>, T> ProcessingStage<C, ? super T> doInvoke(C context,
+			ProcessingStage<C, ? super T> next) throws Throwable;
 
 	@SuppressWarnings("unchecked")
-	public <C extends ProcessingContext<T>, T> Processor<C, ? super T> invoke(C context, Processor<C, ? super T> next) {
+	public <C extends ProcessingContext<T>, T> ProcessingStage<C, ? super T> invoke(C context, ProcessingStage<C, ? super T> next) {
 
-		Processor<C, ? super T> processor;
+		ProcessingStage<C, ? super T> processor;
 		try {
 			processor = doInvoke(context, next);
 
@@ -41,7 +41,7 @@ public abstract class ListenerInvocation {
 
 		// if result is NULL, but the method is void, we must return
 		// next; otherwise NULL is treated chain terminator...
-		return (Processor<C, ? super T>) (voidMethod ? next : processor);
+		return (ProcessingStage<C, ? super T>) (voidMethod ? next : processor);
 	}
 
 }

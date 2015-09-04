@@ -17,8 +17,9 @@ import com.nhl.link.rest.MetadataBuilder;
 import com.nhl.link.rest.SelectBuilder;
 import com.nhl.link.rest.SimpleResponse;
 import com.nhl.link.rest.UpdateBuilder;
+import com.nhl.link.rest.processor.ChainProcessor;
 import com.nhl.link.rest.processor.ProcessingContext;
-import com.nhl.link.rest.processor.Processor;
+import com.nhl.link.rest.processor.ProcessingStage;
 import com.nhl.link.rest.runtime.listener.EventGroup;
 import com.nhl.link.rest.runtime.listener.IListenerService;
 import com.nhl.link.rest.runtime.listener.ListenersBuilder;
@@ -38,7 +39,7 @@ public class DefaultLinkRestService implements ILinkRestService {
 
 	private IListenerService listenerService;
 	private IMetadataService metadataService;
-	private Map<Class<?>, Map<String, Processor<?, ?>>> processors;
+	private Map<Class<?>, Map<String, ProcessingStage<?, ?>>> processors;
 
 	public DefaultLinkRestService(@Inject IProcessorFactory processorFactory, @Inject IMetadataService metadataService,
 			@Inject IListenerService listenerService) {
@@ -80,7 +81,7 @@ public class DefaultLinkRestService implements ILinkRestService {
 
 	private <T> SelectBuilder<T> toSelectBuilder(SelectContext<T> context) {
 		ListenersBuilder listenersBuilder = new ListenersBuilder(listenerService, context, EventGroup.select);
-		return new DefaultSelectBuilder<>(context, processor(context), listenersBuilder);
+		return new DefaultSelectBuilder<>(context, chain(context), listenersBuilder);
 	}
 
 	/**
@@ -103,8 +104,8 @@ public class DefaultLinkRestService implements ILinkRestService {
 		UnrelateContext<Object> context = new UnrelateContext(type);
 		context.setParent(new EntityParent<>(type, sourceId, relationship));
 
-		Processor<UnrelateContext<Object>, Object> processor = processor(context);
-		processor.execute(context);
+		ProcessingStage<UnrelateContext<Object>, Object> chain = chain(context);
+		ChainProcessor.execute(chain, context);
 
 		return context.getResponse();
 	}
@@ -130,8 +131,8 @@ public class DefaultLinkRestService implements ILinkRestService {
 		context.setParent(new EntityParent<>(type, sourceId, relationship));
 		context.setId(targetId);
 
-		Processor<UnrelateContext<Object>, Object> processor = processor(context);
-		processor.execute(context);
+		ProcessingStage<UnrelateContext<Object>, Object> processor = chain(context);
+		ChainProcessor.execute(processor, context);
 
 		return context.getResponse();
 	}
@@ -205,30 +206,30 @@ public class DefaultLinkRestService implements ILinkRestService {
 	@Override
 	public <T> DeleteBuilder<T> delete(Class<T> type) {
 		DeleteContext<T> context = new DeleteContext<>(type);
-		return new DefaultDeleteBuilder<>(context, processor(context));
+		return new DefaultDeleteBuilder<>(context, chain(context));
 	}
 
 	@Override
 	public <T> MetadataBuilder<T> metadata(Class<T> type) {
 		MetadataContext<T> context = new MetadataContext<>(type);
 		context.setEntity(metadataService.getLrEntity(type));
-		return new DefaultMetadataBuilder<>(context, processor(context));
+		return new DefaultMetadataBuilder<>(context, chain(context));
 	}
 
-	protected <C extends ProcessingContext<T>, T> Processor<C, T> processor(C context) {
+	protected <C extends ProcessingContext<T>, T> ProcessingStage<C, T> chain(C context) {
 		return processor(context, null);
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	protected <C extends ProcessingContext<T>, T> Processor<C, T> processor(C context, String operation) {
+	protected <C extends ProcessingContext<T>, T> ProcessingStage<C, T> processor(C context, String operation) {
 
-		Map<String, Processor<?, ?>> forContextType = processors.get(context.getClass());
+		Map<String, ProcessingStage<?, ?>> forContextType = processors.get(context.getClass());
 		if (forContextType == null) {
 			throw new LinkRestException(Status.INTERNAL_SERVER_ERROR,
 					String.format("Processor is unsupported for context type %s", context.getClass().getName()));
 		}
 
-		Processor processor = forContextType.get(operation);
+		ProcessingStage processor = forContextType.get(operation);
 		if (processor == null) {
 			throw new LinkRestException(Status.INTERNAL_SERVER_ERROR,
 					String.format("Processor is unsupported for context type %s and operation %s",

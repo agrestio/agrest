@@ -18,19 +18,19 @@ import com.nhl.link.rest.meta.LrPersistentAttribute;
 import com.nhl.link.rest.meta.LrPersistentRelationship;
 import com.nhl.link.rest.meta.LrRelationship;
 import com.nhl.link.rest.parser.converter.Normalizer;
+import com.nhl.link.rest.processor.BaseLinearProcessingStage;
 import com.nhl.link.rest.processor.ProcessingStage;
-import com.nhl.link.rest.processor.Processor;
 import com.nhl.link.rest.runtime.constraints.IConstraintsHandler;
 import com.nhl.link.rest.runtime.encoder.IEncoderService;
 import com.nhl.link.rest.runtime.meta.IMetadataService;
 
-public class ApplyUpdateServerParamsStage<T> extends ProcessingStage<UpdateContext<T>, T> {
+public class ApplyUpdateServerParamsStage<T> extends BaseLinearProcessingStage<UpdateContext<T>, T> {
 
 	private IEncoderService encoderService;
 	private IConstraintsHandler constraintsHandler;
 	private IMetadataService metadataService;
 
-	public ApplyUpdateServerParamsStage(Processor<UpdateContext<T>, ? super T> next, IEncoderService encoderService,
+	public ApplyUpdateServerParamsStage(ProcessingStage<UpdateContext<T>, ? super T> next, IEncoderService encoderService,
 			IConstraintsHandler constraintsHandler, IMetadataService metadataService) {
 		super(next);
 		this.encoderService = encoderService;
@@ -39,7 +39,7 @@ public class ApplyUpdateServerParamsStage<T> extends ProcessingStage<UpdateConte
 	}
 	
 	@Override
-	protected Class<? extends Annotation> afterStageListener() {
+	public Class<? extends Annotation> afterStageListener() {
 		return UpdateServerParamsApplied.class;
 	}
 

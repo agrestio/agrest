@@ -1,15 +1,15 @@
 package com.nhl.link.rest.runtime.processor.unrelate;
 
 import com.nhl.link.rest.SimpleResponse;
+import com.nhl.link.rest.processor.BaseLinearProcessingStage;
 import com.nhl.link.rest.processor.ProcessingStage;
-import com.nhl.link.rest.processor.Processor;
 
 /**
  * @since 1.16
  */
-public class UnrelateInitStage<Т> extends ProcessingStage<UnrelateContext<Т>, Т> {
+public class UnrelateInitStage<Т> extends BaseLinearProcessingStage<UnrelateContext<Т>, Т> {
 
-	public UnrelateInitStage(Processor<UnrelateContext<Т>, ? super Т> next) {
+	public UnrelateInitStage(ProcessingStage<UnrelateContext<Т>, ? super Т> next) {
 		super(next);
 	}
 

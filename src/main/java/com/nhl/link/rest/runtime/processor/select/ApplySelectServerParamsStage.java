@@ -5,20 +5,20 @@ import java.lang.annotation.Annotation;
 import com.nhl.link.rest.DataResponse;
 import com.nhl.link.rest.annotation.listener.SelectServerParamsApplied;
 import com.nhl.link.rest.encoder.Encoder;
-import com.nhl.link.rest.processor.Processor;
 import com.nhl.link.rest.processor.ProcessingStage;
+import com.nhl.link.rest.processor.BaseLinearProcessingStage;
 import com.nhl.link.rest.runtime.constraints.IConstraintsHandler;
 import com.nhl.link.rest.runtime.encoder.IEncoderService;
 
 /**
  * @since 1.19
  */
-public class ApplySelectServerParamsStage<T> extends ProcessingStage<SelectContext<T>, T> {
+public class ApplySelectServerParamsStage<T> extends BaseLinearProcessingStage<SelectContext<T>, T> {
 
 	private IConstraintsHandler constraintsHandler;
 	private IEncoderService encoderService;
 
-	public ApplySelectServerParamsStage(Processor<SelectContext<T>, ? super T> next, IEncoderService encoderService,
+	public ApplySelectServerParamsStage(ProcessingStage<SelectContext<T>, ? super T> next, IEncoderService encoderService,
 			IConstraintsHandler constraintsHandler) {
 
 		super(next);
@@ -28,7 +28,7 @@ public class ApplySelectServerParamsStage<T> extends ProcessingStage<SelectConte
 	}
 	
 	@Override
-	protected Class<? extends Annotation> afterStageListener() {
+	public Class<? extends Annotation> afterStageListener() {
 		return SelectServerParamsApplied.class;
 	}
 

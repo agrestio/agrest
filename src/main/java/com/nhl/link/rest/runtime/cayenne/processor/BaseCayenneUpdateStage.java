@@ -20,16 +20,16 @@ import com.nhl.link.rest.EntityParent;
 import com.nhl.link.rest.EntityUpdate;
 import com.nhl.link.rest.LinkRestException;
 import com.nhl.link.rest.annotation.listener.DataStoreUpdated;
+import com.nhl.link.rest.processor.BaseLinearProcessingStage;
 import com.nhl.link.rest.processor.ProcessingStage;
-import com.nhl.link.rest.processor.Processor;
 import com.nhl.link.rest.runtime.processor.update.UpdateContext;
 
 /**
  * @since 1.16
  */
-public abstract class BaseCayenneUpdateStage<T extends DataObject> extends ProcessingStage<UpdateContext<T>, T> {
+public abstract class BaseCayenneUpdateStage<T extends DataObject> extends BaseLinearProcessingStage<UpdateContext<T>, T> {
 
-	public BaseCayenneUpdateStage(Processor<UpdateContext<T>, ? super T> next) {
+	public BaseCayenneUpdateStage(ProcessingStage<UpdateContext<T>, ? super T> next) {
 		super(next);
 	}
 
@@ -40,7 +40,7 @@ public abstract class BaseCayenneUpdateStage<T extends DataObject> extends Proce
 	}
 	
 	@Override
-	protected Class<? extends Annotation> afterStageListener() {
+	public Class<? extends Annotation> afterStageListener() {
 		return DataStoreUpdated.class;
 	}
 

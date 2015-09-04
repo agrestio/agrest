@@ -16,8 +16,8 @@ import javax.ws.rs.core.Response.Status;
 
 import com.nhl.link.rest.LinkRestException;
 import com.nhl.link.rest.processor.ProcessingContext;
+import com.nhl.link.rest.processor.BaseLinearProcessingStage;
 import com.nhl.link.rest.processor.ProcessingStage;
-import com.nhl.link.rest.processor.Processor;
 
 /**
  * @since 1.19
@@ -98,10 +98,10 @@ class ListenerInvocationFactoryCompiler {
 
 					@SuppressWarnings("unchecked")
 					@Override
-					protected <C extends ProcessingContext<T>, T> Processor<C, ? super T> doInvoke(C context,
-							Processor<C, ? super T> next) throws Throwable {
+					protected <C extends ProcessingContext<T>, T> ProcessingStage<C, ? super T> doInvoke(C context,
+							ProcessingStage<C, ? super T> next) throws Throwable {
 
-						return (Processor<C, ? super T>) invoker.invoke(methodHandle, context, next);
+						return (ProcessingStage<C, ? super T>) invoker.invoke(methodHandle, context, next);
 					}
 				};
 			}
@@ -125,7 +125,7 @@ class ListenerInvocationFactoryCompiler {
 
 				@Override
 				public <C extends ProcessingContext<T>, T> Object invoke(MethodHandle handle, C context,
-						Processor<C, ? super T> next) throws Throwable {
+						ProcessingStage<C, ? super T> next) throws Throwable {
 					return handle.invoke();
 				}
 			};
@@ -144,14 +144,14 @@ class ListenerInvocationFactoryCompiler {
 
 				@Override
 				public <C extends ProcessingContext<T>, T> Object invoke(MethodHandle handle, C context,
-						Processor<C, ? super T> next) throws Throwable {
+						ProcessingStage<C, ? super T> next) throws Throwable {
 					return handle.invoke(context);
 				}
 			};
 
 		case 2:
 			checkParamType(m.getName(), paramTypes[0], ProcessingContext.class);
-			checkParamType(m.getName(), paramTypes[1], ProcessingStage.class);
+			checkParamType(m.getName(), paramTypes[1], BaseLinearProcessingStage.class);
 			final Class<?> entityType2 = entityTypeForParamType(genericParamTypes[0]);
 
 			return new Invoker() {
@@ -163,7 +163,7 @@ class ListenerInvocationFactoryCompiler {
 
 				@Override
 				public <C extends ProcessingContext<T>, T> Object invoke(MethodHandle handle, C context,
-						Processor<C, ? super T> next) throws Throwable {
+						ProcessingStage<C, ? super T> next) throws Throwable {
 					return handle.invoke(context, next);
 				}
 			};
@@ -218,7 +218,7 @@ class ListenerInvocationFactoryCompiler {
 
 	private interface Invoker {
 
-		<C extends ProcessingContext<T>, T> Object invoke(MethodHandle handle, C context, Processor<C, ? super T> next)
+		<C extends ProcessingContext<T>, T> Object invoke(MethodHandle handle, C context, ProcessingStage<C, ? super T> next)
 				throws Throwable;
 
 		Class<?> getEntityType();

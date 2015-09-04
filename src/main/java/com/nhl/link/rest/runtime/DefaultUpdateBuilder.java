@@ -11,7 +11,8 @@ import com.nhl.link.rest.ObjectMapperFactory;
 import com.nhl.link.rest.UpdateBuilder;
 import com.nhl.link.rest.UpdateResponse;
 import com.nhl.link.rest.constraints.ConstraintsBuilder;
-import com.nhl.link.rest.processor.Processor;
+import com.nhl.link.rest.processor.ChainProcessor;
+import com.nhl.link.rest.processor.ProcessingStage;
 import com.nhl.link.rest.runtime.listener.ListenersBuilder;
 import com.nhl.link.rest.runtime.processor.update.UpdateContext;
 
@@ -21,10 +22,10 @@ import com.nhl.link.rest.runtime.processor.update.UpdateContext;
 public class DefaultUpdateBuilder<T> implements UpdateBuilder<T> {
 
 	private UpdateContext<T> context;
-	private Processor<UpdateContext<T>, T> updateChain;
+	private ProcessingStage<UpdateContext<T>, T> updateChain;
 	private ListenersBuilder listenersBuilder;
 
-	public DefaultUpdateBuilder(UpdateContext<T> context, Processor<UpdateContext<T>, T> updateChain,
+	public DefaultUpdateBuilder(UpdateContext<T> context, ProcessingStage<UpdateContext<T>, T> updateChain,
 			ListenersBuilder listenersBuilder) {
 		this.context = context;
 		this.updateChain = updateChain;
@@ -108,7 +109,7 @@ public class DefaultUpdateBuilder<T> implements UpdateBuilder<T> {
 		context.setEntityData(entityData);
 		context.setListeners(listenersBuilder.getListeners());
 
-		updateChain.execute(context);
+		ChainProcessor.execute(updateChain, context);
 		return context.getResponse();
 	}
 

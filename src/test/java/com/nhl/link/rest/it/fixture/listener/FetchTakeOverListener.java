@@ -5,7 +5,7 @@ import java.util.List;
 
 import com.nhl.link.rest.annotation.listener.SelectServerParamsApplied;
 import com.nhl.link.rest.it.fixture.cayenne.E3;
-import com.nhl.link.rest.processor.ProcessingStage;
+import com.nhl.link.rest.processor.BaseLinearProcessingStage;
 import com.nhl.link.rest.runtime.processor.select.SelectContext;
 
 public class FetchTakeOverListener {
@@ -14,8 +14,8 @@ public class FetchTakeOverListener {
 
 	@SuppressWarnings({ "unchecked", "rawtypes", "serial" })
 	@SelectServerParamsApplied
-	public <T> ProcessingStage<SelectContext<T>, T> beforeFetch(SelectContext<T> context,
-			ProcessingStage<SelectContext<T>, T> next) {
+	public <T> BaseLinearProcessingStage<SelectContext<T>, T> beforeFetch(SelectContext<T> context,
+			BaseLinearProcessingStage<SelectContext<T>, T> next) {
 
 		BEFORE_FETCH_CALLED = true;
 

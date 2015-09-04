@@ -4,15 +4,15 @@ import java.lang.annotation.Annotation;
 
 import com.nhl.link.rest.UpdateResponse;
 import com.nhl.link.rest.annotation.listener.UpdateChainInitialized;
+import com.nhl.link.rest.processor.BaseLinearProcessingStage;
 import com.nhl.link.rest.processor.ProcessingStage;
-import com.nhl.link.rest.processor.Processor;
 
 /**
  * @since 1.16
  */
-public class InitializeUpdateChainStage<T> extends ProcessingStage<UpdateContext<T>, T> {
+public class InitializeUpdateChainStage<T> extends BaseLinearProcessingStage<UpdateContext<T>, T> {
 
-	public InitializeUpdateChainStage(Processor<UpdateContext<T>, ? super T> next) {
+	public InitializeUpdateChainStage(ProcessingStage<UpdateContext<T>, ? super T> next) {
 		super(next);
 	}
 
@@ -23,7 +23,7 @@ public class InitializeUpdateChainStage<T> extends ProcessingStage<UpdateContext
 	}
 
 	@Override
-	protected Class<? extends Annotation> afterStageListener() {
+	public Class<? extends Annotation> afterStageListener() {
 		return UpdateChainInitialized.class;
 	}
 

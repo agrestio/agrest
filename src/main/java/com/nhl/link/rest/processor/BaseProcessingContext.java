@@ -33,7 +33,6 @@ public abstract class BaseProcessingContext<T> implements ProcessingContext<T> {
 	/**
 	 * @since 1.19
 	 */
-	@Override
 	public void setListeners(Map<Class<? extends Annotation>, List<ListenerInvocation>> listeners) {
 		this.listeners = listeners;
 	}

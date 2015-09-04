@@ -12,16 +12,16 @@ import org.apache.cayenne.query.SelectQuery;
 
 import com.nhl.link.rest.EntityParent;
 import com.nhl.link.rest.LinkRestException;
+import com.nhl.link.rest.processor.BaseLinearProcessingStage;
 import com.nhl.link.rest.processor.ProcessingStage;
-import com.nhl.link.rest.processor.Processor;
 import com.nhl.link.rest.runtime.processor.delete.DeleteContext;
 
 /**
  * @since 1.16
  */
-public class CayenneDeleteStage<T> extends ProcessingStage<DeleteContext<T>, T> {
+public class CayenneDeleteStage<T> extends BaseLinearProcessingStage<DeleteContext<T>, T> {
 
-	public CayenneDeleteStage(Processor<DeleteContext<T>, ? super T> next) {
+	public CayenneDeleteStage(ProcessingStage<DeleteContext<T>, ? super T> next) {
 		super(next);
 	}
 

@@ -11,8 +11,8 @@ import org.apache.cayenne.di.Inject;
 import org.apache.cayenne.exp.Expression;
 import org.apache.cayenne.query.Ordering;
 
+import com.nhl.link.rest.processor.BaseLinearProcessingStage;
 import com.nhl.link.rest.processor.ProcessingStage;
-import com.nhl.link.rest.processor.Processor;
 import com.nhl.link.rest.runtime.constraints.IConstraintsHandler;
 import com.nhl.link.rest.runtime.encoder.IEncoderService;
 import com.nhl.link.rest.runtime.parser.IRequestParser;
@@ -40,26 +40,26 @@ public class PojoProcessorFactory implements IProcessorFactory {
 	}
 
 	@Override
-	public Map<Class<?>, Map<String, Processor<?, ?>>> processors() {
-		Map<Class<?>, Map<String, Processor<?, ?>>> map = new HashMap<>();
-		map.put(SelectContext.class, Collections.<String, Processor<?, ?>> singletonMap(null, createSelectProcessor()));
+	public Map<Class<?>, Map<String, ProcessingStage<?, ?>>> processors() {
+		Map<Class<?>, Map<String, ProcessingStage<?, ?>>> map = new HashMap<>();
+		map.put(SelectContext.class, Collections.<String, ProcessingStage<?, ?>> singletonMap(null, createSelectProcessor()));
 		return map;
 	}
 
-	protected Processor<SelectContext<Object>, Object> createSelectProcessor() {
+	protected ProcessingStage<SelectContext<Object>, Object> createSelectProcessor() {
 
-		ProcessingStage<SelectContext<Object>, Object> stage4 = new PojoFetchStage<>(null);
-		ProcessingStage<SelectContext<Object>, Object> stage3 = new ApplySelectServerParamsStage<>(stage4, encoderService,
+		BaseLinearProcessingStage<SelectContext<Object>, Object> stage4 = new PojoFetchStage<>(null);
+		BaseLinearProcessingStage<SelectContext<Object>, Object> stage3 = new ApplySelectServerParamsStage<>(stage4, encoderService,
 				constraintsHandler);
-		ProcessingStage<SelectContext<Object>, Object> stage2 = new ParseSelectRequestStage<>(stage3, requestParser);
-		ProcessingStage<SelectContext<Object>, Object> stage1 = new InitializeSelectChainStage<>(stage2);
+		BaseLinearProcessingStage<SelectContext<Object>, Object> stage2 = new ParseSelectRequestStage<>(stage3, requestParser);
+		BaseLinearProcessingStage<SelectContext<Object>, Object> stage1 = new InitializeSelectChainStage<>(stage2);
 
 		return stage1;
 	}
 
-	class PojoFetchStage<T> extends ProcessingStage<SelectContext<T>, T> {
+	class PojoFetchStage<T> extends BaseLinearProcessingStage<SelectContext<T>, T> {
 
-		public PojoFetchStage(Processor<SelectContext<T>, ? super T> next) {
+		public PojoFetchStage(ProcessingStage<SelectContext<T>, ? super T> next) {
 			super(next);
 		}
 
