@@ -8,7 +8,8 @@ import java.lang.annotation.Target;
 
 /**
  * Annotates a getter of a property in a POJO to indicate that the property is a
- * LinkRest-exposed relationship. The property must be of some Collection type.
+ * LinkRest-exposed relationship. The property type should be either another
+ * entity, or a collection of entities.
  * 
  * @since 1.15
  */

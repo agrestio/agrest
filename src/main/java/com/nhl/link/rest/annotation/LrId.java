@@ -8,7 +8,7 @@ import java.lang.annotation.Target;
 
 /**
  * Annotates a getter of a property in a POJO to indicate that the property is a
- * LinkRest-exposed attribute.
+ * LinkRest-exposed ID attribute.
  * 
  * @since 1.15
  */
