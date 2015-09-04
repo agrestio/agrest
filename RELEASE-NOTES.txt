@@ -2,6 +2,7 @@ Release 1.19
 
 #103 Support for annotation-based stage listeners - select listeners
 #110 Refactor Select stage names to be more meaningful
+#111 Annotation-based listeners for update chains
 
 Release 1.18
 
