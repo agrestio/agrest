@@ -109,31 +109,28 @@ Content-Type: application/json
                understood by Cayenne</link> (hence the name - "cayenneExp"). The root for the
             property paths is the request entity (unless "cayenneExp" is used within a relationship
             "include", in which case the root is that related entity). </para>
-         <para>Examples:<programlisting>// filtering on a single property
-cayenneExp=vhost='linkrest.org' 
-
-// filtering using outer join:
-cayenneExp=articles+ = null  
-
-// filtering with parameters - positional parameter bindings
-cayenneExp=["articles.body like $b","%LinkRest%"] 
-
-// filtering with parameters - named parameter bindings
-cayenneExp={ "exp" : "articles.body like $b", "params": {"b":"%LinkRest%"}} </programlisting></para>
+         <para>Example 1: Filtering on a single property.</para>
+         <para><code>cayenneExp=vhost='linkrest.org' </code></para>
+         <para>Example 2: Filtering using outer join (the "+" sign is Cayenne notation for
+            outer).</para>
+         <para><code>cayenneExp=articles+ = null</code></para>
+         <para>Example 3: Filtering with parameters using positional bindings.</para>
+         <para><code>cayenneExp=["articles.body like $b","%LinkRest%"]</code></para>
+         <para>Example 4: Filtering with parameters using named bindings.</para>
+         <para><code>cayenneExp={ "exp" : "articles.body like $b", "params":
+               {"b":"%LinkRest%"}}</code></para>
        </section>
        <section xml:id="protocol-sort-dir">
           <title>Ordering Collection with <code>sort</code> / <code>dir</code></title>
-         <para>Examples:<programlisting>// sort on a single property
-sort=vhost 
-
-// sort descending on a property
-sort=id&amp;dir=DESC 
-
-// same, but sort is a JSON object
-sort={"property":"vhost","direction":"DESC"} 
-
-// multiple sortings using the same key
-sort=[{"property":"name"}, "property":"vhost","direction":"DESC"}]  </programlisting></para>
+         <para>Example 1: Sort on a single property.</para>
+         <para><code>sort=vhost </code></para>
+         <para>Example 2: Sort descending on a property.</para>
+         <para><code>sort=id&amp;dir=DESC </code></para>
+         <para>Example 3: Same as 2, but sort is a JSON object.</para>
+         <para><code>sort={"property":"vhost","direction":"DESC"} </code></para>
+         <para>Example 4: Multiple sortings as a single JSON structure.</para>
+         <para><code>sort=[{"property":"name"}, "property":"vhost","direction":"DESC"}] 
+            </code></para>
        </section>
        <section xml:id="protocol-start-limit" xreflabel="Pagination">
          <title>Pagination with <code>start</code> / <code>limit</code></title>
@@ -178,7 +175,7 @@ sort=[{"property":"name"}, "property":"vhost","direction":"DESC"}]  </progra
             for each root object.</para>
           <para><code>include={"path":"articles","cayenneExp":"title like
             '%LinkRest%'","sort":"title"} &amp;include=articles.title </code></para>
-         <programlisting>{
+         <programlisting language="json">{
    "id":45,
    "articles" : [
       { "title" : "Introducing LinkRest" },
