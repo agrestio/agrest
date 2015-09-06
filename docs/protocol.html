@@ -73,27 +73,10 @@ Content-Type: application/json
             String should follow the <a class="link" href="http://cayenne.apache.org/docs/4.0/cayenne-guide/expressions.html" target="_top">format
                understood by Cayenne</a> (hence the name - "cayenneExp"). The root for the
             property paths is the request entity (unless "cayenneExp" is used within a relationship
-            "include", in which case the root is that related entity). </p><p>Examples:</p><pre class="programlisting">// filtering on a single property
-cayenneExp=vhost='linkrest.org'&#8232;
-
-// filtering using outer join:
-cayenneExp=articles+ = null &#8232;
-
-// filtering with parameters - positional parameter bindings
-cayenneExp=["articles.body like $b","%LinkRest%"] 
-
-// filtering with parameters - named parameter bindings
-cayenneExp={ "exp" : "articles.body like $b", "params": {"b":"%LinkRest%"}} </pre></div><div class="section" title="Ordering Collection with sort / dir"><div class="titlepage"><div><div><h3 class="title"><a name="protocol-sort-dir"></a>Ordering Collection with <code class="code">sort</code> / <code class="code">dir</code></h3></div></div></div><p>Examples:</p><pre class="programlisting">// sort on a single property
-sort=vhost&#8232;
-
-// sort descending on a property
-sort=id&amp;dir=DESC&#8232;
-
-// same, but sort is a JSON object
-sort={"property":"vhost","direction":"DESC"}&#8232;
-
-// multiple sortings using the same key
-sort=[{"property":"name"},&#8232;"property":"vhost","direction":"DESC"}]&#8232; </pre></div><div class="section" title="Pagination with start / limit"><div class="titlepage"><div><div><h3 class="title"><a name="protocol-start-limit"></a>Pagination with <code class="code">start</code> / <code class="code">limit</code></h3></div></div></div><p>These two parameters are used together to request from the server a range of objects
+            "include", in which case the root is that related entity). </p><p>Example 1: Filtering on a single property.</p><p><code class="code">cayenneExp=vhost='linkrest.org'&#8232;</code></p><p>Example 2: Filtering using outer join (the "+" sign is Cayenne notation for
+            outer).</p><p><code class="code">cayenneExp=articles+ = null</code></p><p>Example 3: Filtering with parameters using positional bindings.</p><p><code class="code">cayenneExp=["articles.body like $b","%LinkRest%"]</code></p><p>Example 4: Filtering with parameters using named bindings.</p><p><code class="code">cayenneExp={ "exp" : "articles.body like $b", "params":
+               {"b":"%LinkRest%"}}</code></p></div><div class="section" title="Ordering Collection with sort / dir"><div class="titlepage"><div><div><h3 class="title"><a name="protocol-sort-dir"></a>Ordering Collection with <code class="code">sort</code> / <code class="code">dir</code></h3></div></div></div><p>Example 1: Sort on a single property.</p><p><code class="code">sort=vhost&#8232;</code></p><p>Example 2: Sort descending on a property.</p><p><code class="code">sort=id&amp;dir=DESC&#8232;</code></p><p>Example 3: Same as 2, but sort is a JSON object.</p><p><code class="code">sort={"property":"vhost","direction":"DESC"}&#8232;</code></p><p>Example 4: Multiple sortings as a single JSON structure.</p><p><code class="code">sort=[{"property":"name"},&#8232;"property":"vhost","direction":"DESC"}]&#8232;
+            </code></p></div><div class="section" title="Pagination with start / limit"><div class="titlepage"><div><div><h3 class="title"><a name="protocol-start-limit"></a>Pagination with <code class="code">start</code> / <code class="code">limit</code></h3></div></div></div><p>These two parameters are used together to request from the server a range of objects
             for a potentially huge collection. They allow to implement efficient data pagination on
             the client.</p><p><code class="code">"start"</code> is an offset within the "data" array. All the objects below this
             offset are discarded from the collection. Default "start" is 0. </p><p><code class="code">"limit"</code> is a maximum number of objects in the collection "data". Default
