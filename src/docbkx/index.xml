@@ -9,9 +9,8 @@
         </copyright>
     </info>
    
-        <title>LinkRest API Construction Toolkit</title>
-        <xi:include href="introduction.xml"/>
-        <xi:include href="protocol.xml"/>
-        <xi:include href="framework.xml"/>
-
+    <title>LinkRest: Web API Construction Toolkit</title>
+    <xi:include href="overview.xml"/>
+    <xi:include href="protocol.xml"/>
+    <xi:include href="framework.xml"/>
 </book>

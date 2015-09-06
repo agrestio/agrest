@@ -3,7 +3,19 @@
     version="5.0" xml:id="framework">
     <title>LinkRest Framework</title>
  
-    <section xml:id="framework-getting-started">
-        <title>Getting Started</title>]    
+    <section xml:id="framework-include">
+        <title>Getting Started with LinkRest Framework</title>
+    </section>
+    
+    <section xml:id="framework-programming-endpoints">
+        <title>Writing Resource Endpoints</title>
+    </section>
+    
+    <section xml:id="framework-security">
+        <title>Implementing Security Policies</title>
+    </section>
+    
+    <section xml:id="framework-customize-stack">
+        <title>Customizing Request Processing</title>
     </section>
 </chapter>

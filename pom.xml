@@ -145,7 +145,10 @@
 							<chunkedOutput>true</chunkedOutput>
 							<postProcess>
 								<copy todir="${basedir}/target/site/index/css">
-									<fileset dir="${basedir}/src/css" />
+									<fileset dir="${basedir}/src/docbkx/css" />
+								</copy>
+								<copy todir="${basedir}/target/site/index/img">
+									<fileset dir="${basedir}/src/docbkx/img" />
 								</copy>
 							</postProcess>
 						</configuration>
