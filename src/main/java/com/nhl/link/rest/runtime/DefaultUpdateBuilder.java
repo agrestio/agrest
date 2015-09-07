@@ -99,23 +99,8 @@ public class DefaultUpdateBuilder<T> implements UpdateBuilder<T> {
 
 	@Deprecated
 	@Override
-	public UpdateBuilder<T> includeData() {
-		LOGGER.warn("Calling deprecated method 'includeData'. It doesn't do anything. Call 'syncAndSelect' instead.");
-		// does nothing...
-		return this;
-	}
-
-	@Override
-	public UpdateBuilder<T> excludeData() {
-		LOGGER.warn("Calling deprecated method 'excludeData'. It doesn't do anything. Call 'sync' instead.");
-		// does nothing...
-		return this;
-	}
-
-	@Deprecated
-	@Override
 	public DataResponse<T> process(String entityData) {
-		LOGGER.warn("Calling deprecated method 'process'. Use 'sync' or 'syncAndSelect' instead.");
+		LOGGER.warn("*** Calling deprecated method 'process'. Use 'sync' or 'syncAndSelect' instead.");
 		return syncAndSelect(entityData);
 	}
 

@@ -62,20 +62,6 @@ public interface UpdateBuilder<T> {
 	UpdateBuilder<T> mapper(ObjectMapperFactory mapper);
 
 	/**
-	 * @since 1.19 does nothing. To include data in update response use
-	 *        {@link #syncAndSelect(String)}.
-	 */
-	@Deprecated
-	UpdateBuilder<T> includeData();
-
-	/**
-	 * @since 1.19 does nothing. To include data in update response use
-	 *        {@link #syncAndSelect(String)}.
-	 */
-	@Deprecated
-	UpdateBuilder<T> excludeData();
-
-	/**
 	 * Adds an annotated listener that will be notified of completion of
 	 * individual stages during request processing. Recognized annotations are
 	 * {@link UpdateChainInitialized}, {@link UpdateRequestParsed},
