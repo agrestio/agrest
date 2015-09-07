@@ -12,7 +12,7 @@ public interface ObjectMapper<T> {
 
 	Object keyForObject(T object);
 
-	Object keyForUpdate(EntityUpdate update);
+	Object keyForUpdate(EntityUpdate<T> update);
 
 	Expression expressionForKey(Object key);
 }

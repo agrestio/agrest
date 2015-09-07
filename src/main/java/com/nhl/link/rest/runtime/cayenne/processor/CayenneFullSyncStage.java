@@ -28,7 +28,7 @@ public class CayenneFullSyncStage<T extends DataObject> extends CayenneCreateOrU
 	protected void sync(UpdateContext<T> context) {
 
 		ObjectMapper<T> mapper = createObjectMapper(context);
-		Map<Object, Collection<EntityUpdate>> keyMap = mutableKeyMap(context, mapper);
+		Map<Object, Collection<EntityUpdate<T>>> keyMap = mutableKeyMap(context, mapper);
 
 		List<T> allObjects = allItems(context);
 
@@ -37,7 +37,7 @@ public class CayenneFullSyncStage<T extends DataObject> extends CayenneCreateOrU
 		for (T o : allObjects) {
 			Object key = mapper.keyForObject(o);
 
-			Collection<EntityUpdate> updates = keyMap.remove(key);
+			Collection<EntityUpdate<T>> updates = keyMap.remove(key);
 
 			if (updates == null) {
 				deletedObjects.add((DataObject) o);

@@ -37,12 +37,12 @@ public class CayenneUpdateStage<T extends DataObject> extends BaseCayenneUpdateS
 
 		ObjectMapper<T> mapper = createObjectMapper(context);
 
-		Map<Object, Collection<EntityUpdate>> keyMap = mutableKeyMap(context, mapper);
+		Map<Object, Collection<EntityUpdate<T>>> keyMap = mutableKeyMap(context, mapper);
 
 		for (T o : itemsForKeys(context, keyMap.keySet(), mapper)) {
 			Object key = mapper.keyForObject(o);
 
-			Collection<EntityUpdate> updates = keyMap.remove(key);
+			Collection<EntityUpdate<T>> updates = keyMap.remove(key);
 
 			// a null can only mean some algorithm malfunction
 			if (updates == null) {
@@ -57,7 +57,7 @@ public class CayenneUpdateStage<T extends DataObject> extends BaseCayenneUpdateS
 		afterUpdatesMerge(context, keyMap);
 	}
 
-	protected void afterUpdatesMerge(UpdateContext<T> context, Map<Object, Collection<EntityUpdate>> keyMap) {
+	protected void afterUpdatesMerge(UpdateContext<T> context, Map<Object, Collection<EntityUpdate<T>>> keyMap) {
 		if (!keyMap.isEmpty()) {
 			Object firstKey = keyMap.keySet().iterator().next();
 
@@ -71,17 +71,17 @@ public class CayenneUpdateStage<T extends DataObject> extends BaseCayenneUpdateS
 		}
 	}
 
-	protected Map<Object, Collection<EntityUpdate>> mutableKeyMap(UpdateContext<T> context, ObjectMapper<T> mapper) {
+	protected Map<Object, Collection<EntityUpdate<T>>> mutableKeyMap(UpdateContext<T> context, ObjectMapper<T> mapper) {
 
-		Collection<EntityUpdate> updates = context.getResponse().getUpdates();
+		Collection<EntityUpdate<T>> updates = context.getResponse().getUpdates();
 
 		// sizing the map with one-update per key assumption
-		Map<Object, Collection<EntityUpdate>> map = new HashMap<>((int) (updates.size() / 0.75));
+		Map<Object, Collection<EntityUpdate<T>>> map = new HashMap<>((int) (updates.size() / 0.75));
 
-		for (EntityUpdate u : updates) {
+		for (EntityUpdate<T> u : updates) {
 
 			Object key = mapper.keyForUpdate(u);
-			Collection<EntityUpdate> updatesForKey = map.get(key);
+			Collection<EntityUpdate<T>> updatesForKey = map.get(key);
 			if (updatesForKey == null) {
 				updatesForKey = new ArrayList<>(2);
 				map.put(key, updatesForKey);

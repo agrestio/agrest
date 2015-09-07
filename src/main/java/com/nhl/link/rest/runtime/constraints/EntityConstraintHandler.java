@@ -84,7 +84,7 @@ class EntityConstraintHandler {
 		// TODO: updates may contain FKs ... need to handle that
 
 		if (!c.allowsAllAttributes()) {
-			for (EntityUpdate u : response.getUpdates()) {
+			for (EntityUpdate<?> u : response.getUpdates()) {
 
 				// exclude disallowed attributes
 				Iterator<Entry<String, Object>> it = u.getValues().entrySet().iterator();

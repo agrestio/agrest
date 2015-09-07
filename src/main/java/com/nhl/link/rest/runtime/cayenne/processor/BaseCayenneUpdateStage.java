@@ -50,24 +50,24 @@ public abstract class BaseCayenneUpdateStage<T extends DataObject> extends BaseL
 
 		ObjectRelator relator = createRelator(context);
 
-		for (EntityUpdate u : context.getResponse().getUpdates()) {
+		for (EntityUpdate<T> u : context.getResponse().getUpdates()) {
 			createSingle(context, relator, u);
 		}
 	}
 
-	protected void updateSingle(UpdateContext<T> context, T o, Collection<EntityUpdate> updates) {
+	protected void updateSingle(UpdateContext<T> context, T o, Collection<EntityUpdate<T>> updates) {
 
 		DataObject dataO = (DataObject) o;
 		ObjectRelator relator = createRelator(context);
 
-		for (EntityUpdate u : updates) {
+		for (EntityUpdate<T> u : updates) {
 			mergeChanges(u, dataO);
 		}
 
 		relator.relate(dataO);
 	}
 
-	protected void createSingle(UpdateContext<T> context, ObjectRelator relator, EntityUpdate u) {
+	protected void createSingle(UpdateContext<T> context, ObjectRelator relator, EntityUpdate<T> u) {
 
 		ObjectContext objectContext = CayenneContextInitStage.cayenneContext(context);
 		DataObject o = objectContext.newObject(context.getType());
@@ -115,7 +115,7 @@ public abstract class BaseCayenneUpdateStage<T extends DataObject> extends BaseL
 		relator.relate(o);
 	}
 
-	private void mergeChanges(EntityUpdate entityUpdate, DataObject o) {
+	private void mergeChanges(EntityUpdate<T> entityUpdate, DataObject o) {
 
 		// attributes
 		for (Entry<String, Object> e : entityUpdate.getValues().entrySet()) {

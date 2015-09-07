@@ -68,10 +68,10 @@ public class DataObjectProcessor {
 		}
 	}
 
-	private void processObject(UpdateResponse<?> response, JsonNode objectNode) {
-		LrEntity<?> entity = response.getEntity().getLrEntity();
+	private <T> void processObject(UpdateResponse<T> response, JsonNode objectNode) {
+		LrEntity<T> entity = response.getEntity().getLrEntity();
 
-		EntityUpdate update = new EntityUpdate();
+		EntityUpdate<T> update = new EntityUpdate<>(entity);
 
 		Iterator<String> it = objectNode.fieldNames();
 		while (it.hasNext()) {
@@ -79,7 +79,7 @@ public class DataObjectProcessor {
 
 			if (PathConstants.ID_PK_ATTRIBUTE.equals(key)) {
 				JsonNode valueNode = objectNode.get(key);
-				extractPK(update, entity, valueNode);
+				extractPK(update, valueNode);
 				continue;
 			}
 
@@ -125,9 +125,9 @@ public class DataObjectProcessor {
 		response.getUpdates().add(update);
 	}
 
-	protected void extractPK(EntityUpdate update, LrEntity<?> entity, JsonNode valueNode) {
+	protected void extractPK(EntityUpdate<?> update, JsonNode valueNode) {
 
-		LrPersistentAttribute id = (LrPersistentAttribute) entity.getSingleId();
+		LrPersistentAttribute id = (LrPersistentAttribute) update.getEntity().getSingleId();
 
 		Object value = extractValue(valueNode, id.getJavaType());
 		update.getOrCreateId().put(id.getDbAttribute().getName(), value);
@@ -140,7 +140,8 @@ public class DataObjectProcessor {
 		try {
 			return converter.value(valueNode);
 		} catch (Exception e) {
-			throw new LinkRestException(Status.BAD_REQUEST, "Incorrectly formatted value: '" + valueNode.asText() + "'");
+			throw new LinkRestException(Status.BAD_REQUEST,
+					"Incorrectly formatted value: '" + valueNode.asText() + "'");
 		}
 	}
 
@@ -152,7 +153,8 @@ public class DataObjectProcessor {
 		try {
 			return converter.value(valueNode);
 		} catch (Exception e) {
-			throw new LinkRestException(Status.BAD_REQUEST, "Incorrectly formatted value: '" + valueNode.asText() + "'");
+			throw new LinkRestException(Status.BAD_REQUEST,
+					"Incorrectly formatted value: '" + valueNode.asText() + "'");
 		}
 	}
 

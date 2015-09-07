@@ -3,22 +3,33 @@ package com.nhl.link.rest;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.nhl.link.rest.meta.LrEntity;
+
 /**
  * Contains update data of a single object.
  * 
  * @since 1.3
  */
-public class EntityUpdate {
+public class EntityUpdate<T> {
 
 	private Map<String, Object> values;
 	private Map<String, Object> relatedIds;
 	private Map<String, Object> id;
 	private boolean explicitId;
 	private Object mergedTo;
+	private LrEntity<T> entity;
 
-	public EntityUpdate() {
+	public EntityUpdate(LrEntity<T> entity) {
 		this.values = new HashMap<>();
 		this.relatedIds = new HashMap<>();
+		this.entity = entity;
+	}
+	
+	/**
+	 * @since 1.19
+	 */
+	public LrEntity<T> getEntity() {
+		return entity;
 	}
 
 	public boolean hasChanges() {

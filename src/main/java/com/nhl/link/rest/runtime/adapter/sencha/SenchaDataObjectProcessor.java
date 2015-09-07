@@ -4,7 +4,6 @@ import java.util.regex.Pattern;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.nhl.link.rest.EntityUpdate;
-import com.nhl.link.rest.meta.LrEntity;
 import com.nhl.link.rest.parser.converter.GenericConverter;
 import com.nhl.link.rest.runtime.jackson.IJacksonService;
 import com.nhl.link.rest.runtime.parser.DataObjectProcessor;
@@ -30,12 +29,12 @@ public class SenchaDataObjectProcessor extends DataObjectProcessor {
 	}
 
 	@Override
-	protected void extractPK(EntityUpdate update, LrEntity<?> entity, JsonNode valueNode) {
+	protected void extractPK(EntityUpdate<?> update, JsonNode valueNode) {
 		Object value = GenericConverter.converter().value(valueNode);
 
 		// if PK is a Sencha temporary value, completely ignore it...
 		if (!isTempId(value)) {
-			super.extractPK(update, entity, valueNode);
+			super.extractPK(update, valueNode);
 		}
 	}
 

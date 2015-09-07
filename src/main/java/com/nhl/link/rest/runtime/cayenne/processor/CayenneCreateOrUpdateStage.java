@@ -26,7 +26,7 @@ public class CayenneCreateOrUpdateStage<T extends DataObject> extends CayenneUpd
 	}
 
 	@Override
-	protected void afterUpdatesMerge(UpdateContext<T> context, Map<Object, Collection<EntityUpdate>> keyMap) {
+	protected void afterUpdatesMerge(UpdateContext<T> context, Map<Object, Collection<EntityUpdate<T>>> keyMap) {
 
 		if (keyMap.isEmpty()) {
 			return;
@@ -34,7 +34,7 @@ public class CayenneCreateOrUpdateStage<T extends DataObject> extends CayenneUpd
 
 		ObjectRelator relator = createRelator(context);
 
-		for (Entry<Object, Collection<EntityUpdate>> e : keyMap.entrySet()) {
+		for (Entry<Object, Collection<EntityUpdate<T>>> e : keyMap.entrySet()) {
 
 			// null key - each update is individual object to create;
 			// explicit key - each update applies to the same object;
@@ -47,7 +47,7 @@ public class CayenneCreateOrUpdateStage<T extends DataObject> extends CayenneUpd
 
 			}
 
-			for (EntityUpdate u : e.getValue()) {
+			for (EntityUpdate<T> u : e.getValue()) {
 				createSingle(context, relator, u);
 			}
 		}

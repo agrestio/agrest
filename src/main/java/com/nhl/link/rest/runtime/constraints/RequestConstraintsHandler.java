@@ -77,7 +77,7 @@ class RequestConstraintsHandler {
 		// updates are not hierarchical yet, so simply check attributes...
 		// TODO: updates may contain FKs ... need to handle that
 
-		for (EntityUpdate u : response.getUpdates()) {
+		for (EntityUpdate<?> u : response.getUpdates()) {
 
 			// exclude disallowed attributes
 			Iterator<Entry<String, Object>> it = u.getValues().entrySet().iterator();

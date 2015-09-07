@@ -62,7 +62,7 @@ public class CayenneUpdatePostProcessStage<T extends DataObject> extends BaseLin
 			// in a request
 			Set<ObjectId> seen = new HashSet<>();
 
-			for (EntityUpdate u : response.getUpdates()) {
+			for (EntityUpdate<T> u : response.getUpdates()) {
 
 				T o = (T) u.getMergedTo();
 				if (o != null && seen.add(o.getObjectId())) {

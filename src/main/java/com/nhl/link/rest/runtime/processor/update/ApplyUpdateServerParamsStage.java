@@ -30,14 +30,14 @@ public class ApplyUpdateServerParamsStage<T> extends BaseLinearProcessingStage<U
 	private IConstraintsHandler constraintsHandler;
 	private IMetadataService metadataService;
 
-	public ApplyUpdateServerParamsStage(ProcessingStage<UpdateContext<T>, ? super T> next, IEncoderService encoderService,
-			IConstraintsHandler constraintsHandler, IMetadataService metadataService) {
+	public ApplyUpdateServerParamsStage(ProcessingStage<UpdateContext<T>, ? super T> next,
+			IEncoderService encoderService, IConstraintsHandler constraintsHandler, IMetadataService metadataService) {
 		super(next);
 		this.encoderService = encoderService;
 		this.constraintsHandler = constraintsHandler;
 		this.metadataService = metadataService;
 	}
-	
+
 	@Override
 	public Class<? extends Annotation> afterStageListener() {
 		return UpdateServerParamsApplied.class;
@@ -80,14 +80,15 @@ public class ApplyUpdateServerParamsStage<T> extends BaseLinearProcessingStage<U
 			// * if more than one - throw...
 
 			if (context.getResponse().getUpdates().isEmpty()) {
-				context.getResponse().getUpdates().add(new EntityUpdate());
+				context.getResponse().getUpdates()
+						.add(new EntityUpdate<>(context.getResponse().getEntity().getLrEntity()));
 			}
 
 			LrEntity<T> entity = context.getResponse().getEntity().getLrEntity();
 
 			LrPersistentAttribute pk = (LrPersistentAttribute) entity.getSingleId();
 
-			EntityUpdate u = context.getResponse().getFirst();
+			EntityUpdate<T> u = context.getResponse().getFirst();
 			u.getOrCreateId().put(pk.getDbAttribute().getName(),
 					Normalizer.normalize(context.getId(), pk.getJavaType()));
 			u.setExplicitId();
@@ -113,7 +114,7 @@ public class ApplyUpdateServerParamsStage<T> extends BaseLinearProcessingStage<U
 				}
 
 				String parentIdKey = last.getJoins().get(0).getTargetName();
-				for (EntityUpdate u : context.getResponse().getUpdates()) {
+				for (EntityUpdate<T> u : context.getResponse().getUpdates()) {
 					u.getOrCreateId().put(parentIdKey, parent.getId());
 				}
 			}

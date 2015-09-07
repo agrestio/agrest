@@ -11,7 +11,7 @@ import javax.ws.rs.core.Response.Status;
 public class UpdateResponse<T> extends DataResponse<T> {
 
 	private boolean idUpdatesDisallowed;
-	private Collection<EntityUpdate> updates;
+	private Collection<EntityUpdate<T>> updates;
 	private EntityParent<?> parent;
 	private boolean includeData;
 
@@ -31,7 +31,7 @@ public class UpdateResponse<T> extends DataResponse<T> {
 
 	public boolean hasChanges() {
 
-		for (EntityUpdate u : updates) {
+		for (EntityUpdate<T> u : updates) {
 			if (u.hasChanges()) {
 				return true;
 			}
@@ -40,7 +40,7 @@ public class UpdateResponse<T> extends DataResponse<T> {
 		return false;
 	}
 
-	public Collection<EntityUpdate> getUpdates() {
+	public Collection<EntityUpdate<T>> getUpdates() {
 		return updates;
 	}
 
@@ -48,7 +48,7 @@ public class UpdateResponse<T> extends DataResponse<T> {
 	 * Returns first update object. Throws unless this response contains exactly
 	 * one update.
 	 */
-	public EntityUpdate getFirst() {
+	public EntityUpdate<T> getFirst() {
 
 		if (updates.size() != 1) {
 			throw new LinkRestException(Status.INTERNAL_SERVER_ERROR, "Expected one object in update. Actual: "
