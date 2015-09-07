@@ -56,13 +56,13 @@ public class CayenneUpdatePostProcessStage<T extends DataObject> extends BaseLin
 
 			// if there are dupes, the list size will be smaller... sizing it
 			// pessimistically
-			List<T> objects = new ArrayList<>(response.getUpdates().size());
+			List<T> objects = new ArrayList<>(context.getUpdates().size());
 
 			// 'seen' is for a less common case of multiple updates per object
 			// in a request
 			Set<ObjectId> seen = new HashSet<>();
 
-			for (EntityUpdate<T> u : response.getUpdates()) {
+			for (EntityUpdate<T> u : context.getUpdates()) {
 
 				T o = (T) u.getMergedTo();
 				if (o != null && seen.add(o.getObjectId())) {

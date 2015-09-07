@@ -160,7 +160,7 @@ public class RequestParser implements IRequestParser {
 
 		treeProcessor.process(response, context.getUriInfo());
 
-		dataObjectProcessor.process(response, context.getEntityData());
+		dataObjectProcessor.process(context, context.getEntityData());
 
 		for (UpdateFilter f : updateFilters) {
 			response = f.afterParse(response);

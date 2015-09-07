@@ -58,15 +58,14 @@ public class CayenneFullSyncStage<T extends DataObject> extends CayenneCreateOrU
 	List<T> allItems(UpdateContext<T> context) {
 		SelectQuery<T> query = SelectQuery.query(context.getType());
 
-		UpdateResponse<T> response = context.getResponse();
-
 		// apply various request filters identifying the span of the collection
 
-		if (response.getParent() != null) {
+		if (context.getParent() != null) {
 			EntityResolver resolver = CayenneContextInitStage.cayenneContext(context).getEntityResolver();
-			query.andQualifier(response.getParent().qualifier(resolver));
+			query.andQualifier(context.getParent().qualifier(resolver));
 		}
 
+		UpdateResponse<T> response = context.getResponse();
 		if (response.getEntity().getQualifier() != null) {
 			query.andQualifier(response.getEntity().getQualifier());
 		}

@@ -13,7 +13,6 @@ import org.slf4j.LoggerFactory;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.nhl.link.rest.EntityUpdate;
 import com.nhl.link.rest.LinkRestException;
-import com.nhl.link.rest.UpdateResponse;
 import com.nhl.link.rest.meta.LrAttribute;
 import com.nhl.link.rest.meta.LrEntity;
 import com.nhl.link.rest.meta.LrPersistentAttribute;
@@ -22,6 +21,7 @@ import com.nhl.link.rest.meta.LrRelationship;
 import com.nhl.link.rest.parser.converter.JsonValueConverter;
 import com.nhl.link.rest.runtime.jackson.IJacksonService;
 import com.nhl.link.rest.runtime.parser.converter.IJsonValueConverterFactory;
+import com.nhl.link.rest.runtime.processor.update.UpdateContext;
 import com.nhl.link.rest.runtime.semantics.IRelationshipMapper;
 
 /**
@@ -42,34 +42,34 @@ public class DataObjectProcessor {
 		this.converterFactory = converterFactory;
 	}
 
-	public void process(UpdateResponse<?> response, String json) {
+	public void process(UpdateContext<?> context, String json) {
 
 		JsonNode node = jsonParser.parseJson(json);
 		if (node == null) {
 			// empty requests are fine. we just do nothing...
 			return;
 		} else if (node.isArray()) {
-			processArray(response, node);
+			processArray(context, node);
 		} else if (node.isObject()) {
-			processObject(response, node);
+			processObject(context, node);
 		} else {
 			throw new LinkRestException(Status.BAD_REQUEST, "Expected Object or Array. Got: " + node.asText());
 		}
 	}
 
-	private void processArray(UpdateResponse<?> response, JsonNode arrayNode) {
+	private void processArray(UpdateContext<?> context, JsonNode arrayNode) {
 
 		for (JsonNode node : arrayNode) {
 			if (node.isObject()) {
-				processObject(response, node);
+				processObject(context, node);
 			} else {
 				throw new LinkRestException(Status.BAD_REQUEST, "Expected Object, got: " + node.asText());
 			}
 		}
 	}
 
-	private <T> void processObject(UpdateResponse<T> response, JsonNode objectNode) {
-		LrEntity<T> entity = response.getEntity().getLrEntity();
+	private <T> void processObject(UpdateContext<T> context, JsonNode objectNode) {
+		LrEntity<T> entity = context.getResponse().getEntity().getLrEntity();
 
 		EntityUpdate<T> update = new EntityUpdate<>(entity);
 
@@ -122,7 +122,7 @@ public class DataObjectProcessor {
 		}
 
 		// not excluding for empty updates ... we may still need them...
-		response.getUpdates().add(update);
+		context.getUpdates().add(update);
 	}
 
 	protected void extractPK(EntityUpdate<?> update, JsonNode valueNode) {

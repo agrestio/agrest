@@ -47,7 +47,6 @@ public class ApplyUpdateServerParamsStage<T> extends BaseLinearProcessingStage<U
 	protected void doExecute(UpdateContext<T> context) {
 
 		UpdateResponse<T> response = context.getResponse();
-		response.parent(context.getParent());
 
 		if (context.isIncludingDataInResponse()) {
 			response.includeData();
@@ -58,7 +57,7 @@ public class ApplyUpdateServerParamsStage<T> extends BaseLinearProcessingStage<U
 		processExplicitId(context);
 		processParentId(context);
 
-		constraintsHandler.constrainUpdate(response, context.getWriteConstraints());
+		constraintsHandler.constrainUpdate(context, context.getWriteConstraints());
 
 		// apply read constraints (TODO: should we only care about response
 		// constraints after the commit?)
@@ -79,16 +78,15 @@ public class ApplyUpdateServerParamsStage<T> extends BaseLinearProcessingStage<U
 			// ID.
 			// * if more than one - throw...
 
-			if (context.getResponse().getUpdates().isEmpty()) {
-				context.getResponse().getUpdates()
-						.add(new EntityUpdate<>(context.getResponse().getEntity().getLrEntity()));
+			if (context.getUpdates().isEmpty()) {
+				context.getUpdates().add(new EntityUpdate<>(context.getResponse().getEntity().getLrEntity()));
 			}
 
 			LrEntity<T> entity = context.getResponse().getEntity().getLrEntity();
 
 			LrPersistentAttribute pk = (LrPersistentAttribute) entity.getSingleId();
 
-			EntityUpdate<T> u = context.getResponse().getFirst();
+			EntityUpdate<T> u = context.getFirst();
 			u.getOrCreateId().put(pk.getDbAttribute().getName(),
 					Normalizer.normalize(context.getId(), pk.getJavaType()));
 			u.setExplicitId();
@@ -114,7 +112,7 @@ public class ApplyUpdateServerParamsStage<T> extends BaseLinearProcessingStage<U
 				}
 
 				String parentIdKey = last.getJoins().get(0).getTargetName();
-				for (EntityUpdate<T> u : context.getResponse().getUpdates()) {
+				for (EntityUpdate<T> u : context.getUpdates()) {
 					u.getOrCreateId().put(parentIdKey, parent.getId());
 				}
 			}

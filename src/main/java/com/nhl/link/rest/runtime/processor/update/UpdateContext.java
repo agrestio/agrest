@@ -1,8 +1,14 @@
 package com.nhl.link.rest.runtime.processor.update;
 
+import java.util.ArrayList;
+import java.util.Collection;
+
+import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriInfo;
 
 import com.nhl.link.rest.EntityParent;
+import com.nhl.link.rest.EntityUpdate;
+import com.nhl.link.rest.LinkRestException;
 import com.nhl.link.rest.ObjectMapperFactory;
 import com.nhl.link.rest.UpdateResponse;
 import com.nhl.link.rest.constraints.ConstraintsBuilder;
@@ -25,9 +31,12 @@ public class UpdateContext<T> extends BaseProcessingContext<T> {
 	private boolean includingDataInResponse;
 	private ObjectMapperFactory mapper;
 	private String entityData;
+	private boolean idUpdatesDisallowed;
+	private Collection<EntityUpdate<T>> updates;
 
 	public UpdateContext(Class<T> type) {
 		super(type);
+		this.updates = new ArrayList<>();
 	}
 
 	public UpdateResponse<T> getResponse() {
@@ -36,6 +45,43 @@ public class UpdateContext<T> extends BaseProcessingContext<T> {
 
 	public void setResponse(UpdateResponse<T> response) {
 		this.response = response;
+	}
+
+	/**
+	 * @since 1.19
+	 */
+	public boolean hasChanges() {
+
+		for (EntityUpdate<T> u : updates) {
+			if (u.hasChanges()) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	/**
+	 * @since 1.19
+	 */
+	public Collection<EntityUpdate<T>> getUpdates() {
+		return updates;
+	}
+
+	/**
+	 * Returns first update object. Throws unless this response contains exactly
+	 * one update.
+	 * 
+	 * @since 1.19
+	 */
+	public EntityUpdate<T> getFirst() {
+
+		if (updates.size() != 1) {
+			throw new LinkRestException(Status.INTERNAL_SERVER_ERROR,
+					"Expected one object in update. Actual: " + updates.size());
+		}
+
+		return updates.iterator().next();
 	}
 
 	public UriInfo getUriInfo() {
@@ -100,5 +146,19 @@ public class UpdateContext<T> extends BaseProcessingContext<T> {
 
 	public void setEntityData(String entityData) {
 		this.entityData = entityData;
+	}
+
+	/**
+	 * @since 1.19
+	 */
+	public boolean isIdUpdatesDisallowed() {
+		return idUpdatesDisallowed;
+	}
+
+	/**
+	 * @since 1.19
+	 */
+	public void setIdUpdatesDisallowed(boolean idUpdatesDisallowed) {
+		this.idUpdatesDisallowed = idUpdatesDisallowed;
 	}
 }

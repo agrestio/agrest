@@ -73,7 +73,7 @@ public class CayenneUpdateStage<T extends DataObject> extends BaseCayenneUpdateS
 
 	protected Map<Object, Collection<EntityUpdate<T>>> mutableKeyMap(UpdateContext<T> context, ObjectMapper<T> mapper) {
 
-		Collection<EntityUpdate<T>> updates = context.getResponse().getUpdates();
+		Collection<EntityUpdate<T>> updates = context.getUpdates();
 
 		// sizing the map with one-update per key assumption
 		Map<Object, Collection<EntityUpdate<T>>> map = new HashMap<>((int) (updates.size() / 0.75));

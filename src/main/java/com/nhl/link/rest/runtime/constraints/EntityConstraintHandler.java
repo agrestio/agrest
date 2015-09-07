@@ -9,14 +9,13 @@ import java.util.concurrent.ConcurrentMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.nhl.link.rest.DataResponse;
 import com.nhl.link.rest.EntityConstraint;
 import com.nhl.link.rest.EntityUpdate;
 import com.nhl.link.rest.ResourceEntity;
-import com.nhl.link.rest.UpdateResponse;
 import com.nhl.link.rest.annotation.ClientReadable;
 import com.nhl.link.rest.annotation.ClientWritable;
 import com.nhl.link.rest.meta.LrAttribute;
+import com.nhl.link.rest.runtime.processor.update.UpdateContext;
 
 /**
  * @since 1.6
@@ -68,23 +67,23 @@ class EntityConstraintHandler {
 		};
 	}
 
-	void constrainResponse(DataResponse<?> response) {
-		constrainForRead(response.getEntity());
+	void constrainResponse(ResourceEntity<?> resourceEntity) {
+		constrainForRead(resourceEntity);
 	}
 
-	void constrainUpdate(UpdateResponse<?> response) {
+	void constrainUpdate(UpdateContext<?> context) {
 
-		EntityConstraint c = forWrite.getOrCreate(response.getEntity().getLrEntity());
+		EntityConstraint c = forWrite.getOrCreate(context.getResponse().getEntity().getLrEntity());
 
 		if (!c.allowsId()) {
-			response.disallowIdUpdates();
+			context.setIdUpdatesDisallowed(true);
 		}
 
 		// updates are not hierarchical yet, so simply check attributes...
 		// TODO: updates may contain FKs ... need to handle that
 
 		if (!c.allowsAllAttributes()) {
-			for (EntityUpdate<?> u : response.getUpdates()) {
+			for (EntityUpdate<?> u : context.getUpdates()) {
 
 				// exclude disallowed attributes
 				Iterator<Entry<String, Object>> it = u.getValues().entrySet().iterator();
@@ -94,7 +93,7 @@ class EntityConstraintHandler {
 
 						// do not report default properties, as this wasn't a
 						// client's fault it go there..
-						if (!response.getEntity().isDefault(e.getKey())) {
+						if (!context.getResponse().getEntity().isDefault(e.getKey())) {
 							LOGGER.info("Attribute not allowed, removing: " + e.getKey() + " for id " + u.getId());
 						}
 

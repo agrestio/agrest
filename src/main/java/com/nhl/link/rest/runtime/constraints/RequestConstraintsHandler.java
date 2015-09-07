@@ -8,15 +8,15 @@ import javax.ws.rs.core.Response.Status;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.nhl.link.rest.DataResponse;
-import com.nhl.link.rest.ResourceEntity;
 import com.nhl.link.rest.EntityUpdate;
 import com.nhl.link.rest.LinkRestException;
-import com.nhl.link.rest.UpdateResponse;
+import com.nhl.link.rest.ResourceEntity;
 import com.nhl.link.rest.constraints.ConstraintsBuilder;
 import com.nhl.link.rest.meta.LrAttribute;
+import com.nhl.link.rest.meta.LrEntity;
 import com.nhl.link.rest.runtime.meta.IMetadataService;
 import com.nhl.link.rest.runtime.parser.PathConstants;
+import com.nhl.link.rest.runtime.processor.update.UpdateContext;
 
 /**
  * @since 1.6
@@ -31,11 +31,11 @@ class RequestConstraintsHandler {
 		this.metadataService = metadataService;
 	}
 
-	<T> boolean constrainResponse(DataResponse<T> response, ConstraintsBuilder<T> c) {
+	<T> boolean constrainResponse(ResourceEntity<T> resourceEntity, ConstraintsBuilder<T> c) {
 
 		// Null entity means we don't need to worry about unauthorized
 		// attributes and relationships
-		if (response.getEntity() == null) {
+		if (resourceEntity == null) {
 			return true;
 		}
 
@@ -43,13 +43,13 @@ class RequestConstraintsHandler {
 			return false;
 		}
 
-		applyForRead(response.getEntity(), extract(response, c));
+		applyForRead(resourceEntity, extract(resourceEntity.getLrEntity(), c));
 		return true;
 	}
 
-	<T> boolean constrainUpdate(UpdateResponse<T> response, ConstraintsBuilder<T> c) {
+	<T> boolean constrainUpdate(UpdateContext<T> context, ConstraintsBuilder<T> c) {
 
-		if (response.getUpdates().isEmpty()) {
+		if (context.getUpdates().isEmpty()) {
 			return true;
 		}
 
@@ -57,27 +57,26 @@ class RequestConstraintsHandler {
 			return false;
 		}
 
-		applyForWrite(response, extract(response, c));
+		applyForWrite(context, extract(context.getResponse().getEntity().getLrEntity(), c));
 		return true;
 	}
 
-	private RequestConstraintsVisitor extract(DataResponse<?> response, ConstraintsBuilder<?> c) {
-		RequestConstraintsVisitor constraintVisitor = new RequestConstraintsVisitor(response.getEntity().getLrEntity(),
-				metadataService);
+	private RequestConstraintsVisitor extract(LrEntity<?> entity, ConstraintsBuilder<?> c) {
+		RequestConstraintsVisitor constraintVisitor = new RequestConstraintsVisitor(entity, metadataService);
 		c.accept(constraintVisitor);
 		return constraintVisitor;
 	}
 
-	private void applyForWrite(UpdateResponse<?> response, RequestConstraintsVisitor constraints) {
+	private void applyForWrite(UpdateContext<?> context, RequestConstraintsVisitor constraints) {
 
 		if (!constraints.isIdIncluded()) {
-			response.disallowIdUpdates();
+			context.setIdUpdatesDisallowed(true);
 		}
 
 		// updates are not hierarchical yet, so simply check attributes...
 		// TODO: updates may contain FKs ... need to handle that
 
-		for (EntityUpdate<?> u : response.getUpdates()) {
+		for (EntityUpdate<?> u : context.getUpdates()) {
 
 			// exclude disallowed attributes
 			Iterator<Entry<String, Object>> it = u.getValues().entrySet().iterator();
@@ -87,7 +86,7 @@ class RequestConstraintsHandler {
 
 					// do not report default properties, as this wasn't a
 					// client's fault it go there..
-					if (!response.getEntity().isDefault(e.getKey())) {
+					if (!context.getResponse().getEntity().isDefault(e.getKey())) {
 						LOGGER.info("Attribute not allowed, removing: " + e.getKey() + " for id " + u.getId());
 					}
 

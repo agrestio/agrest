@@ -8,10 +8,11 @@ import org.slf4j.LoggerFactory;
 
 import com.nhl.link.rest.DataResponse;
 import com.nhl.link.rest.EntityConstraint;
+import com.nhl.link.rest.ResourceEntity;
 import com.nhl.link.rest.SizeConstraints;
-import com.nhl.link.rest.UpdateResponse;
 import com.nhl.link.rest.constraints.ConstraintsBuilder;
 import com.nhl.link.rest.runtime.meta.IMetadataService;
+import com.nhl.link.rest.runtime.processor.update.UpdateContext;
 
 /**
  * An {@link IConstraintsHandler} that ensures that no target attributes exceed
@@ -38,26 +39,29 @@ public class ConstraintsHandler implements IConstraintsHandler {
 	}
 
 	@Override
-	public <T> void constrainUpdate(UpdateResponse<T> response, ConstraintsBuilder<T> c) {
+	public <T> void constrainUpdate(UpdateContext<T> context, ConstraintsBuilder<T> c) {
 
-		if (!treeConstraintsHandler.constrainUpdate(response, c)) {
-			entityConstraintHandler.constrainUpdate(response);
+		if (!treeConstraintsHandler.constrainUpdate(context, c)) {
+			entityConstraintHandler.constrainUpdate(context);
 		}
 	}
 
 	@Override
-	public <T> void constrainResponse(DataResponse<T> response, SizeConstraints sizeConstraints, ConstraintsBuilder<T> c) {
+	public <T> void constrainResponse(DataResponse<T> response, SizeConstraints sizeConstraints,
+			ConstraintsBuilder<T> c) {
 
 		if (sizeConstraints != null) {
 			applySizeConstraintsForRead(response, sizeConstraints);
 		}
 
-		if (!treeConstraintsHandler.constrainResponse(response, c)) {
-			entityConstraintHandler.constrainResponse(response);
+		ResourceEntity<T> resourceEntity = response.getEntity();
+		if (!treeConstraintsHandler.constrainResponse(resourceEntity, c)) {
+			entityConstraintHandler.constrainResponse(resourceEntity);
 		}
 	}
 
 	protected void applySizeConstraintsForRead(DataResponse<?> response, SizeConstraints constraints) {
+
 		// fetchOffset - do not exceed source offset
 		int upperOffset = constraints.getFetchOffset();
 		if (upperOffset > 0 && response.getFetchOffset() > upperOffset) {
@@ -69,8 +73,8 @@ public class ConstraintsHandler implements IConstraintsHandler {
 		// fetchLimit - do not exceed source limit
 		int upperLimit = constraints.getFetchLimit();
 		if (upperLimit > 0 && response.getFetchLimit() > upperLimit) {
-			LOGGER.info("Reducing fetch limit from " + response.getFetchLimit() + " to max allowed value of "
-					+ upperLimit);
+			LOGGER.info(
+					"Reducing fetch limit from " + response.getFetchLimit() + " to max allowed value of " + upperLimit);
 			response.withFetchLimit(upperLimit);
 		}
 	}

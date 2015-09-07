@@ -50,7 +50,7 @@ public abstract class BaseCayenneUpdateStage<T extends DataObject> extends BaseL
 
 		ObjectRelator relator = createRelator(context);
 
-		for (EntityUpdate<T> u : context.getResponse().getUpdates()) {
+		for (EntityUpdate<T> u : context.getUpdates()) {
 			createSingle(context, relator, u);
 		}
 	}
@@ -76,7 +76,7 @@ public abstract class BaseCayenneUpdateStage<T extends DataObject> extends BaseL
 		// set explicit ID
 		if (idMap != null) {
 
-			if (context.getResponse().isIdUpdatesDisallowed() && u.isExplicitId()) {
+			if (context.isIdUpdatesDisallowed() && u.isExplicitId()) {
 				throw new LinkRestException(Status.BAD_REQUEST, "Setting ID explicitly is not allowed: " + idMap);
 			}
 
@@ -153,7 +153,7 @@ public abstract class BaseCayenneUpdateStage<T extends DataObject> extends BaseL
 
 	protected ObjectRelator createRelator(UpdateContext<T> context) {
 
-		final EntityParent<?> parent = context.getResponse().getParent();
+		final EntityParent<?> parent = context.getParent();
 
 		if (parent == null) {
 			return new ObjectRelator() {
