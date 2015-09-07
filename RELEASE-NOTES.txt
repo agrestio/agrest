@@ -4,6 +4,7 @@ Release 1.19
 #110 Refactor Select stage names to be more meaningful
 #111 Annotation-based listeners for update chains
 #112 Externalizing Processor Chain invocation
+#113 UpdateBuilder / UpdateResponse / EntityUpdate refactoring
 
 Release 1.18
 
