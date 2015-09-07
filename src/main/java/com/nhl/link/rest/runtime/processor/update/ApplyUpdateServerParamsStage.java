@@ -8,10 +8,10 @@ import javax.ws.rs.core.Response.Status;
 import org.apache.cayenne.map.DbRelationship;
 import org.apache.cayenne.map.ObjRelationship;
 
+import com.nhl.link.rest.DataResponse;
 import com.nhl.link.rest.EntityParent;
 import com.nhl.link.rest.EntityUpdate;
 import com.nhl.link.rest.LinkRestException;
-import com.nhl.link.rest.UpdateResponse;
 import com.nhl.link.rest.annotation.listener.UpdateServerParamsApplied;
 import com.nhl.link.rest.meta.LrEntity;
 import com.nhl.link.rest.meta.LrPersistentAttribute;
@@ -46,13 +46,7 @@ public class ApplyUpdateServerParamsStage<T> extends BaseLinearProcessingStage<U
 	@Override
 	protected void doExecute(UpdateContext<T> context) {
 
-		UpdateResponse<T> response = context.getResponse();
-
-		if (context.isIncludingDataInResponse()) {
-			response.includeData();
-		} else {
-			response.excludeData();
-		}
+		DataResponse<T> response = context.getResponse();
 
 		processExplicitId(context);
 		processParentId(context);

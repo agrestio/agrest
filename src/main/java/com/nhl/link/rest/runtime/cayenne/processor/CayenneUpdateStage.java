@@ -96,7 +96,7 @@ public class CayenneUpdateStage<T extends DataObject> extends BaseCayenneUpdateS
 	protected ObjectMapper<T> createObjectMapper(UpdateContext<T> context) {
 		ObjectMapperFactory mapper = context.getMapper() != null ? context.getMapper() : ByIdObjectMapperFactory
 				.mapper();
-		return mapper.forResponse(context.getResponse());
+		return mapper.createMapper(context);
 	}
 
 	List<T> itemsForKeys(UpdateContext<T> context, Collection<Object> keys, ObjectMapper<T> mapper) {

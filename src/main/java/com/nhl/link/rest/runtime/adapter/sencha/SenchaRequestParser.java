@@ -1,6 +1,5 @@
 package com.nhl.link.rest.runtime.adapter.sencha;
 
-import java.util.List;
 import java.util.regex.Pattern;
 
 import javax.ws.rs.core.MultivaluedMap;
@@ -21,7 +20,6 @@ import com.nhl.link.rest.runtime.parser.sort.ISortProcessor;
 import com.nhl.link.rest.runtime.parser.tree.ITreeProcessor;
 import com.nhl.link.rest.runtime.processor.select.SelectContext;
 import com.nhl.link.rest.runtime.semantics.IRelationshipMapper;
-import com.nhl.link.rest.update.UpdateFilter;
 
 /**
  * @since 1.11
@@ -34,14 +32,13 @@ public class SenchaRequestParser extends RequestParser {
 
 	private ISenchaFilterProcessor senchaFilterProcessor;
 
-	public SenchaRequestParser(@Inject(UPDATE_FILTER_LIST) List<UpdateFilter> updateFilters,
-			@Inject IMetadataService metadataService, @Inject IJacksonService jacksonService,
+	public SenchaRequestParser(@Inject IMetadataService metadataService, @Inject IJacksonService jacksonService,
 			@Inject IRelationshipMapper associationHandler, @Inject ITreeProcessor treeProcessor,
 			@Inject ISortProcessor sortProcessor, @Inject IJsonValueConverterFactory jsonValueConverterFactory,
 			@Inject ICayenneExpProcessor cayenneExpProcessor, @Inject IKeyValueExpProcessor keyValueExpProcessor,
 			@Inject ISenchaFilterProcessor senchaFilterProcessor) {
-		
-		super(updateFilters, metadataService, jacksonService, associationHandler, treeProcessor, sortProcessor,
+
+		super(metadataService, jacksonService, associationHandler, treeProcessor, sortProcessor,
 				jsonValueConverterFactory, cayenneExpProcessor, keyValueExpProcessor);
 
 		this.senchaFilterProcessor = senchaFilterProcessor;

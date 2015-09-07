@@ -2,7 +2,7 @@ package com.nhl.link.rest.runtime.processor.update;
 
 import java.lang.annotation.Annotation;
 
-import com.nhl.link.rest.UpdateResponse;
+import com.nhl.link.rest.DataResponse;
 import com.nhl.link.rest.annotation.listener.UpdateChainInitialized;
 import com.nhl.link.rest.processor.BaseLinearProcessingStage;
 import com.nhl.link.rest.processor.ProcessingStage;
@@ -18,7 +18,11 @@ public class InitializeUpdateChainStage<T> extends BaseLinearProcessingStage<Upd
 
 	@Override
 	protected void doExecute(UpdateContext<T> context) {
-		UpdateResponse<T> response = new UpdateResponse<>(context.getType());
+		// TODO: the actual response may be SimpleResponse ... still need to
+		// maintain an illusion of a DataResponse, as it holds the parameters
+		// that we need for update . E.g. ResourceEntity (it has qualifier,
+		// etc.)
+		DataResponse<T> response = DataResponse.forType(context.getType());
 		context.setResponse(response);
 	}
 

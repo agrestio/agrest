@@ -6,7 +6,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import java.util.Collections;
 import java.util.Iterator;
 
 import javax.ws.rs.core.MultivaluedMap;
@@ -35,7 +34,6 @@ import com.nhl.link.rest.runtime.parser.tree.IncludeExcludeProcessor;
 import com.nhl.link.rest.runtime.processor.select.SelectContext;
 import com.nhl.link.rest.runtime.semantics.RelationshipMapper;
 import com.nhl.link.rest.unit.TestWithCayenneMapping;
-import com.nhl.link.rest.update.UpdateFilter;
 
 public class SenchaRequestParserTest extends TestWithCayenneMapping {
 
@@ -56,9 +54,8 @@ public class SenchaRequestParserTest extends TestWithCayenneMapping {
 		ITreeProcessor treeProcessor = new IncludeExcludeProcessor(jacksonService, sortProcessor, expProcessor,
 				metadataService);
 
-		parser = new SenchaRequestParser(Collections.<UpdateFilter> emptyList(), metadataService, jacksonService,
-				new RelationshipMapper(), treeProcessor, sortProcessor, converterFactory, expProcessor, kvExpProcessor,
-				senchaFilterProcessor);
+		parser = new SenchaRequestParser(metadataService, jacksonService, new RelationshipMapper(), treeProcessor,
+				sortProcessor, converterFactory, expProcessor, kvExpProcessor, senchaFilterProcessor);
 	}
 
 	@Test
@@ -98,8 +95,8 @@ public class SenchaRequestParserTest extends TestWithCayenneMapping {
 		parser.parseSelect(context);
 
 		assertNotNull(context.getResponse().getEntity().getQualifier());
-		assertEquals(exp("name likeIgnoreCase 'Bla%' and name likeIgnoreCase 'xyz%'"), context.getResponse()
-				.getEntity().getQualifier());
+		assertEquals(exp("name likeIgnoreCase 'Bla%' and name likeIgnoreCase 'xyz%'"),
+				context.getResponse().getEntity().getQualifier());
 	}
 
 	@Test
@@ -119,8 +116,8 @@ public class SenchaRequestParserTest extends TestWithCayenneMapping {
 		parser.parseSelect(context);
 
 		assertNotNull(context.getResponse().getEntity().getQualifier());
-		assertEquals(exp("address = '1 Main Street' and name likeIgnoreCase 'xyz%'"), context.getResponse().getEntity()
-				.getQualifier());
+		assertEquals(exp("address = '1 Main Street' and name likeIgnoreCase 'xyz%'"),
+				context.getResponse().getEntity().getQualifier());
 	}
 
 	@Test

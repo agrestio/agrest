@@ -10,7 +10,6 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Iterator;
 
 import javax.ws.rs.core.MultivaluedMap;
@@ -44,7 +43,6 @@ import com.nhl.link.rest.runtime.parser.tree.IncludeExcludeProcessor;
 import com.nhl.link.rest.runtime.processor.select.SelectContext;
 import com.nhl.link.rest.runtime.semantics.RelationshipMapper;
 import com.nhl.link.rest.unit.TestWithCayenneMapping;
-import com.nhl.link.rest.update.UpdateFilter;
 
 public class RequestParserTest extends TestWithCayenneMapping {
 
@@ -63,8 +61,8 @@ public class RequestParserTest extends TestWithCayenneMapping {
 		ITreeProcessor treeProcessor = new IncludeExcludeProcessor(jacksonService, sortProcessor, expProcessor,
 				metadataService);
 
-		parser = new RequestParser(Collections.<UpdateFilter> emptyList(), metadataService, jacksonService,
-				new RelationshipMapper(), treeProcessor, sortProcessor, converterFactory, expProcessor, kvExpProcessor);
+		parser = new RequestParser(metadataService, jacksonService, new RelationshipMapper(), treeProcessor,
+				sortProcessor, converterFactory, expProcessor, kvExpProcessor);
 	}
 
 	@Test
@@ -531,8 +529,8 @@ public class RequestParserTest extends TestWithCayenneMapping {
 
 		@SuppressWarnings("unchecked")
 		MultivaluedMap<String, String> params = mock(MultivaluedMap.class);
-		when(params.getFirst("cayenneExp")).thenReturn(
-				"{exp : \"numericProp = 12345 and stringProp = 'John Smith' and booleanProp = true\"}");
+		when(params.getFirst("cayenneExp"))
+				.thenReturn("{exp : \"numericProp = 12345 and stringProp = 'John Smith' and booleanProp = true\"}");
 
 		UriInfo uriInfo = mock(UriInfo.class);
 		when(uriInfo.getQueryParameters()).thenReturn(params);

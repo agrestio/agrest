@@ -42,7 +42,6 @@ import com.nhl.link.rest.runtime.parser.tree.IncludeExcludeProcessor;
 import com.nhl.link.rest.runtime.processor.select.SelectContext;
 import com.nhl.link.rest.runtime.semantics.RelationshipMapper;
 import com.nhl.link.rest.unit.TestWithCayenneMapping;
-import com.nhl.link.rest.update.UpdateFilter;
 
 public class RequestParser_WithPojoTest extends TestWithCayenneMapping {
 
@@ -61,8 +60,8 @@ public class RequestParser_WithPojoTest extends TestWithCayenneMapping {
 		ITreeProcessor treeProcessor = new IncludeExcludeProcessor(jacksonService, sortProcessor, expProcessor,
 				metadataService);
 
-		parser = new RequestParser(Collections.<UpdateFilter> emptyList(), metadataService, jacksonService,
-				new RelationshipMapper(), treeProcessor, sortProcessor, converterFactory, expProcessor, kvExpProcessor);
+		parser = new RequestParser(metadataService, jacksonService, new RelationshipMapper(), treeProcessor,
+				sortProcessor, converterFactory, expProcessor, kvExpProcessor);
 	}
 
 	@Override

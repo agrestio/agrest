@@ -11,8 +11,8 @@ import javax.ws.rs.core.Response.Status;
 import org.apache.cayenne.DataObject;
 import org.apache.cayenne.ObjectId;
 
+import com.nhl.link.rest.DataResponse;
 import com.nhl.link.rest.EntityUpdate;
-import com.nhl.link.rest.UpdateResponse;
 import com.nhl.link.rest.annotation.listener.UpdateResponseUpdated;
 import com.nhl.link.rest.processor.BaseLinearProcessingStage;
 import com.nhl.link.rest.processor.ProcessingStage;
@@ -24,7 +24,8 @@ import com.nhl.link.rest.runtime.processor.update.UpdateContext;
  * 
  * @since 1.16
  */
-public class CayenneUpdatePostProcessStage<T extends DataObject> extends BaseLinearProcessingStage<UpdateContext<T>, T> {
+public class CayenneUpdatePostProcessStage<T extends DataObject>
+		extends BaseLinearProcessingStage<UpdateContext<T>, T> {
 
 	private Status status;
 
@@ -42,7 +43,7 @@ public class CayenneUpdatePostProcessStage<T extends DataObject> extends BaseLin
 	@Override
 	protected void doExecute(UpdateContext<T> context) {
 
-		UpdateResponse<T> response = context.getResponse();
+		DataResponse<T> response = context.getResponse();
 		response.withStatus(status);
 
 		// response objects are attached to EntityUpdate instances ... if

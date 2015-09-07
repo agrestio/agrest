@@ -62,14 +62,17 @@ public interface UpdateBuilder<T> {
 	UpdateBuilder<T> mapper(ObjectMapperFactory mapper);
 
 	/**
-	 * Results in a 'data' key included in response with the updated state of
-	 * the collection.
+	 * @since 1.19 does nothing. To include data in update response use
+	 *        {@link #syncAndSelect(String)}.
 	 */
+	@Deprecated
 	UpdateBuilder<T> includeData();
 
 	/**
-	 * Suppresses 'data' key in response.
+	 * @since 1.19 does nothing. To include data in update response use
+	 *        {@link #syncAndSelect(String)}.
 	 */
+	@Deprecated
 	UpdateBuilder<T> excludeData();
 
 	/**
@@ -93,5 +96,20 @@ public interface UpdateBuilder<T> {
 	 */
 	UpdateBuilder<T> listener(Object listener);
 
-	UpdateResponse<T> process(String entityData);
+	/**
+	 * @deprecated since 1.19 in favor of {@link #sync(String)} and
+	 *             {@link #syncAndSelect(String)}.
+	 */
+	@Deprecated
+	DataResponse<T> process(String entityData);
+
+	/**
+	 * @since 1.19
+	 */
+	DataResponse<T> syncAndSelect(String entityData);
+
+	/**
+	 * @since 1.19
+	 */
+	SimpleResponse sync(String entityData);
 }

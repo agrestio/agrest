@@ -6,11 +6,11 @@ import java.util.Collection;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriInfo;
 
+import com.nhl.link.rest.DataResponse;
 import com.nhl.link.rest.EntityParent;
 import com.nhl.link.rest.EntityUpdate;
 import com.nhl.link.rest.LinkRestException;
 import com.nhl.link.rest.ObjectMapperFactory;
-import com.nhl.link.rest.UpdateResponse;
 import com.nhl.link.rest.constraints.ConstraintsBuilder;
 import com.nhl.link.rest.processor.BaseProcessingContext;
 
@@ -22,7 +22,7 @@ import com.nhl.link.rest.processor.BaseProcessingContext;
  */
 public class UpdateContext<T> extends BaseProcessingContext<T> {
 
-	private UpdateResponse<T> response;
+	private DataResponse<T> response;
 	private UriInfo uriInfo;
 	private Object id;
 	private EntityParent<?> parent;
@@ -39,11 +39,11 @@ public class UpdateContext<T> extends BaseProcessingContext<T> {
 		this.updates = new ArrayList<>();
 	}
 
-	public UpdateResponse<T> getResponse() {
+	public DataResponse<T> getResponse() {
 		return response;
 	}
 
-	public void setResponse(UpdateResponse<T> response) {
+	public void setResponse(DataResponse<T> response) {
 		this.response = response;
 	}
 

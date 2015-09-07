@@ -6,8 +6,8 @@ import org.apache.cayenne.exp.parser.ASTPath;
 
 import com.nhl.link.rest.ObjectMapper;
 import com.nhl.link.rest.ObjectMapperFactory;
-import com.nhl.link.rest.UpdateResponse;
 import com.nhl.link.rest.meta.LrAttribute;
+import com.nhl.link.rest.runtime.processor.update.UpdateContext;
 
 /**
  * A default singleton implementation of the {@link ObjectMapperFactory} that
@@ -24,9 +24,9 @@ public class ByIdObjectMapperFactory implements ObjectMapperFactory {
 	}
 
 	@Override
-	public <T> ObjectMapper<T> forResponse(UpdateResponse<T> response) {
+	public <T> ObjectMapper<T> createMapper(UpdateContext<T> context) {
 
-		Collection<LrAttribute> ids = response.getEntity().getLrEntity().getIds();
+		Collection<LrAttribute> ids = context.getResponse().getEntity().getLrEntity().getIds();
 		ASTPath[] paths = new ASTPath[ids.size()];
 
 		int i = 0;

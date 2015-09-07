@@ -9,9 +9,9 @@ import org.apache.cayenne.DataObject;
 import org.apache.cayenne.map.EntityResolver;
 import org.apache.cayenne.query.SelectQuery;
 
+import com.nhl.link.rest.DataResponse;
 import com.nhl.link.rest.EntityUpdate;
 import com.nhl.link.rest.ObjectMapper;
-import com.nhl.link.rest.UpdateResponse;
 import com.nhl.link.rest.processor.ProcessingStage;
 import com.nhl.link.rest.runtime.processor.update.UpdateContext;
 
@@ -65,7 +65,7 @@ public class CayenneFullSyncStage<T extends DataObject> extends CayenneCreateOrU
 			query.andQualifier(context.getParent().qualifier(resolver));
 		}
 
-		UpdateResponse<T> response = context.getResponse();
+		DataResponse<T> response = context.getResponse();
 		if (response.getEntity().getQualifier() != null) {
 			query.andQualifier(response.getEntity().getQualifier());
 		}

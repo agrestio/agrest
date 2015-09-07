@@ -4,7 +4,7 @@ import org.apache.cayenne.exp.Property;
 
 import com.nhl.link.rest.ObjectMapper;
 import com.nhl.link.rest.ObjectMapperFactory;
-import com.nhl.link.rest.UpdateResponse;
+import com.nhl.link.rest.runtime.processor.update.UpdateContext;
 
 /**
  * An {@link ObjectMapperFactory} that locates objects by the combination of FK
@@ -30,7 +30,7 @@ public class ByKeyObjectMapperFactory implements ObjectMapperFactory {
 	}
 
 	@Override
-	public <T> ObjectMapper<T> forResponse(UpdateResponse<T> response) {
+	public <T> ObjectMapper<T> createMapper(UpdateContext<T> context) {
 		return new ByKeyObjectMapper<>(property);
 	}
 }

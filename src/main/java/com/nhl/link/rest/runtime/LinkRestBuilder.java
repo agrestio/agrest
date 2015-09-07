@@ -1,5 +1,25 @@
 package com.nhl.link.rest.runtime;
 
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.ws.rs.core.Feature;
+import javax.ws.rs.ext.ExceptionMapper;
+
+import org.apache.cayenne.CayenneRuntimeException;
+import org.apache.cayenne.configuration.server.ServerRuntime;
+import org.apache.cayenne.di.Binder;
+import org.apache.cayenne.di.DIBootstrap;
+import org.apache.cayenne.di.Injector;
+import org.apache.cayenne.di.Module;
+import org.apache.cayenne.validation.ValidationException;
+
 import com.nhl.link.rest.EntityConstraint;
 import com.nhl.link.rest.LinkRestException;
 import com.nhl.link.rest.encoder.EncoderFilter;
@@ -50,25 +70,6 @@ import com.nhl.link.rest.runtime.parser.tree.IncludeExcludeProcessor;
 import com.nhl.link.rest.runtime.processor.IProcessorFactory;
 import com.nhl.link.rest.runtime.semantics.IRelationshipMapper;
 import com.nhl.link.rest.runtime.semantics.RelationshipMapper;
-import com.nhl.link.rest.update.UpdateFilter;
-import org.apache.cayenne.CayenneRuntimeException;
-import org.apache.cayenne.configuration.server.ServerRuntime;
-import org.apache.cayenne.di.Binder;
-import org.apache.cayenne.di.DIBootstrap;
-import org.apache.cayenne.di.Injector;
-import org.apache.cayenne.di.Module;
-import org.apache.cayenne.validation.ValidationException;
-
-import javax.ws.rs.core.Feature;
-import javax.ws.rs.ext.ExceptionMapper;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * A builder of LinkRest runtime that can be loaded into JAX-RS 2 container as a
@@ -286,7 +287,6 @@ public class LinkRestBuilder {
 			@Override
 			public void configure(Binder binder) {
 
-				binder.<UpdateFilter> bindList(RequestParser.UPDATE_FILTER_LIST);
 				binder.<EncoderFilter> bindList(EncoderService.ENCODER_FILTER_LIST).addAll(encoderFilters);
 				binder.<LrEntity<?>> bindList(MetadataService.EXTRA_ENTITIES_LIST).addAll(extraEntities);
 				binder.<LrEntityOverlay<?>> bindMap(MetadataService.ENTITY_OVERLAY_MAP).putAll(entityOverlays);

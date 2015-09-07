@@ -13,7 +13,6 @@ import org.apache.cayenne.exp.Expression;
 import com.nhl.link.rest.DataResponse;
 import com.nhl.link.rest.LinkRestException;
 import com.nhl.link.rest.ResourceEntity;
-import com.nhl.link.rest.UpdateResponse;
 import com.nhl.link.rest.meta.LrEntity;
 import com.nhl.link.rest.runtime.jackson.IJacksonService;
 import com.nhl.link.rest.runtime.meta.IMetadataService;
@@ -25,11 +24,8 @@ import com.nhl.link.rest.runtime.parser.tree.ITreeProcessor;
 import com.nhl.link.rest.runtime.processor.select.SelectContext;
 import com.nhl.link.rest.runtime.processor.update.UpdateContext;
 import com.nhl.link.rest.runtime.semantics.IRelationshipMapper;
-import com.nhl.link.rest.update.UpdateFilter;
 
 public class RequestParser implements IRequestParser {
-
-	public static final String UPDATE_FILTER_LIST = "linkrest.update.filter.list";
 
 	static final String START = "start";
 	static final String LIMIT = "limit";
@@ -46,8 +42,6 @@ public class RequestParser implements IRequestParser {
 	private IKeyValueExpProcessor keyValueExpProcessor;
 
 	private DataObjectProcessor dataObjectProcessor;
-
-	private List<UpdateFilter> updateFilters;
 
 	protected static String string(MultivaluedMap<String, String> parameters, String name) {
 		return parameters.getFirst(name);
@@ -80,13 +74,11 @@ public class RequestParser implements IRequestParser {
 		return e1 == null ? e2 : (e2 == null) ? e1 : e1.andExp(e2);
 	}
 
-	public RequestParser(@Inject(UPDATE_FILTER_LIST) List<UpdateFilter> updateFilters,
-			@Inject IMetadataService metadataService, @Inject IJacksonService jacksonService,
+	public RequestParser(@Inject IMetadataService metadataService, @Inject IJacksonService jacksonService,
 			@Inject IRelationshipMapper associationHandler, @Inject ITreeProcessor treeProcessor,
 			@Inject ISortProcessor sortProcessor, @Inject IJsonValueConverterFactory jsonValueConverterFactory,
 			@Inject ICayenneExpProcessor cayenneExpProcessor, @Inject IKeyValueExpProcessor keyValueExpProcessor) {
 
-		this.updateFilters = updateFilters;
 		this.metadataService = metadataService;
 		this.sortProcessor = sortProcessor;
 		this.treeProcessor = treeProcessor;
@@ -141,7 +133,8 @@ public class RequestParser implements IRequestParser {
 
 	protected Expression parseKeyValueExp(SelectContext<?> context, MultivaluedMap<String, String> parameters) {
 		String value = string(parameters, QUERY);
-		return keyValueExpProcessor.process(context.getResponse().getEntity().getLrEntity(), context.getAutocompleteProperty(), value);
+		return keyValueExpProcessor.process(context.getResponse().getEntity().getLrEntity(),
+				context.getAutocompleteProperty(), value);
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
@@ -154,17 +147,10 @@ public class RequestParser implements IRequestParser {
 		LrEntity<?> entity = metadataService.getLrEntity(context.getType());
 		ResourceEntity resourceEntity = new ResourceEntity(entity);
 
-		UpdateResponse<?> response = context.getResponse();
-
+		DataResponse<?> response = context.getResponse();
 		response.resourceEntity(resourceEntity);
-
 		treeProcessor.process(response, context.getUriInfo());
-
 		dataObjectProcessor.process(context, context.getEntityData());
-
-		for (UpdateFilter f : updateFilters) {
-			response = f.afterParse(response);
-		}
 	}
 
 }
