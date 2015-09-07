@@ -29,14 +29,14 @@ public class E12Resource {
 	@POST
 	@Path("{id}/e1213")
 	public DataResponse<E12E13> create_Joins(@PathParam("id") int id, @Context UriInfo info, String entityData) {
-		return LinkRest.create(E12E13.class, config).toManyParent(E12.class, id, E12.E1213).uri(info).includeData()
-				.process(entityData);
+		return LinkRest.create(E12E13.class, config).toManyParent(E12.class, id, E12.E1213).uri(info)
+				.syncAndSelect(entityData);
 	}
 
 	@PUT
 	@Path("{id}/e1213")
 	public DataResponse<E12E13> fullSync_Joins(@PathParam("id") int id, @Context UriInfo info, String entityData) {
 		return LinkRest.idempotentFullSync(E12E13.class, config).toManyParent(E12.class, id, E12.E1213).uri(info)
-				.includeData().process(entityData);
+				.syncAndSelect(entityData);
 	}
 }

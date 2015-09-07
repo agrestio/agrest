@@ -29,7 +29,6 @@ public class E15Resource {
 	// note that parent id is "int" here , but is BIGINT (long) in the DB. This
 	// is intentional
 	public DataResponse<E14> relateToOneExisting(@PathParam("id") int id, String data) {
-		return LinkRest.idempotentFullSync(E14.class, config).toManyParent(E15.class, id, E15.E14S).includeData()
-				.process(data);
+		return LinkRest.idempotentFullSync(E14.class, config).toManyParent(E15.class, id, E15.E14S).syncAndSelect(data);
 	}
 }

@@ -17,7 +17,7 @@ public class E16Resource {
 
     @POST
 	public DataResponse<E16> create(String requestBody) {
-		return LinkRest.create(E16.class, config).includeData().process(requestBody);
+		return LinkRest.create(E16.class, config).syncAndSelect(requestBody);
 	}
 
 }

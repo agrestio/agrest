@@ -66,13 +66,13 @@ public class E4Resource {
 
 	@POST
 	public DataResponse<E4> create(String requestBody) {
-		return LinkRest.create(E4.class, config).includeData().process(requestBody);
+		return LinkRest.create(E4.class, config).syncAndSelect(requestBody);
 	}
 
 	@POST
 	@Path("defaultdata")
-	public DataResponse<E4> create_DefaultData(String requestBody) {
-		return LinkRest.create(E4.class, config).process(requestBody);
+	public SimpleResponse create_DefaultData(String requestBody) {
+		return LinkRest.create(E4.class, config).sync(requestBody);
 	}
 
 	@GET
@@ -90,7 +90,7 @@ public class E4Resource {
 	@PUT
 	@Path("{id}")
 	public DataResponse<E4> update(@PathParam("id") int id, String requestBody) {
-		return LinkRest.update(E4.class, config).id(id).includeData().process(requestBody);
+		return LinkRest.update(E4.class, config).id(id).syncAndSelect(requestBody);
 	}
 
 }

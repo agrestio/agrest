@@ -26,18 +26,18 @@ public class E14Resource {
 
 	@POST
 	public DataResponse<E14> post(String data) {
-		return LinkRest.create(E14.class, config).includeData().process(data);
+		return LinkRest.create(E14.class, config).syncAndSelect(data);
 	}
 
 	@PUT
 	public DataResponse<E14> sync(String data) {
-		return LinkRest.idempotentFullSync(E14.class, config).includeData().process(data);
+		return LinkRest.idempotentFullSync(E14.class, config).syncAndSelect(data);
 	}
 
 	@PUT
 	@Path("{id}")
 	public DataResponse<E14> update(@PathParam("id") int id, String data) {
-		return LinkRest.update(E14.class, config).id(id).includeData().process(data);
+		return LinkRest.update(E14.class, config).id(id).syncAndSelect(data);
 	}
 
 }

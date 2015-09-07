@@ -10,17 +10,17 @@ import javax.ws.rs.core.Configuration;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.UriInfo;
 
-import com.nhl.link.rest.MetadataResponse;
-import com.nhl.link.rest.meta.LinkType;
-import com.nhl.link.rest.meta.annotation.Resource;
 import org.apache.cayenne.query.SelectQuery;
 
 import com.nhl.link.rest.DataResponse;
 import com.nhl.link.rest.LinkRest;
+import com.nhl.link.rest.MetadataResponse;
 import com.nhl.link.rest.SimpleResponse;
 import com.nhl.link.rest.constraints.ConstraintsBuilder;
 import com.nhl.link.rest.it.fixture.cayenne.E2;
 import com.nhl.link.rest.it.fixture.cayenne.E3;
+import com.nhl.link.rest.meta.LinkType;
+import com.nhl.link.rest.meta.annotation.Resource;
 
 @Path("e2")
 public class E2Resource {
@@ -76,24 +76,20 @@ public class E2Resource {
 	@POST
 	@Path("{id}/e3s")
 	public DataResponse<E3> createOrUpdateE3s(@PathParam("id") int id, String targetData) {
-		return LinkRest.createOrUpdate(E3.class, config).toManyParent(E2.class, id, E2.E3S).includeData()
-				.process(targetData);
+		return LinkRest.createOrUpdate(E3.class, config).toManyParent(E2.class, id, E2.E3S).syncAndSelect(targetData);
 	}
 
 	@PUT
 	@Path("{id}/e3s")
 	public DataResponse<E3> createOrUpdate_Idempotent_E3s(@PathParam("id") int id, String entityData) {
-		return LinkRest.idempotentCreateOrUpdate(E3.class, config).toManyParent(E2.class, id, E2.E3S).includeData()
-				.process(entityData);
+		return LinkRest.idempotentCreateOrUpdate(E3.class, config).toManyParent(E2.class, id, E2.E3S)
+				.syncAndSelect(entityData);
 	}
 
 	@GET
 	@Path("metadata")
 	@Resource(entityClass = E2.class, type = LinkType.METADATA)
 	public MetadataResponse<E2> getMetadata(@Context UriInfo uriInfo) {
-		return LinkRest.metadata(E2.class, config)
-				.forResource(E2Resource.class)
-				.uri(uriInfo)
-				.process();
+		return LinkRest.metadata(E2.class, config).forResource(E2Resource.class).uri(uriInfo).process();
 	}
 }

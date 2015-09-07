@@ -20,19 +20,19 @@ public class E7Resource {
 
 	@PUT
 	public DataResponse<E7> sync(@Context UriInfo uriInfo, String data) {
-		return LinkRest.idempotentFullSync(E7.class, config).uri(uriInfo).includeData().process(data);
+		return LinkRest.idempotentFullSync(E7.class, config).uri(uriInfo).syncAndSelect(data);
 	}
 
 	@PUT
 	@Path("{id}")
 	public DataResponse<E7> syncOne(@PathParam("id") int id, @Context UriInfo uriInfo, String data) {
-		return LinkRest.idempotentFullSync(E7.class, config).id(id).uri(uriInfo).includeData().process(data);
+		return LinkRest.idempotentFullSync(E7.class, config).id(id).uri(uriInfo).syncAndSelect(data);
 	}
 
 	@PUT
 	@Path("{id}/e8/{tid}")
 	public DataResponse<E8> relateToOneExisting(@PathParam("id") int parentId, @PathParam("tid") int id, String data) {
-		return LinkRest.idempotentCreateOrUpdate(E8.class, config).id(id).includeData()
-				.parent(E7.class, parentId, E7.E8).process(data);
+		return LinkRest.idempotentCreateOrUpdate(E8.class, config).id(id).parent(E7.class, parentId, E7.E8)
+				.syncAndSelect(data);
 	}
 }

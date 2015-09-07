@@ -41,38 +41,22 @@ public class Sencha_POST_IT extends JerseyTestOnDerby {
 	}
 
 	@Test
-	public void testPost_Default_Data() throws WebApplicationException, IOException {
-
-		Response response1 = target("/e4/defaultdata").request().post(
-				Entity.entity("{\"cVarchar\":\"zzz\"}", MediaType.APPLICATION_JSON));
-		assertEquals(Status.CREATED.getStatusCode(), response1.getStatus());
-
-		E4 e41 = (E4) Cayenne.objectForQuery(context, new SelectQuery<E4>(E4.class));
-		assertEquals("zzz", e41.getCVarchar());
-		int id1 = Cayenne.intPKForObject(e41);
-
-		assertEquals("{\"success\":true,\"data\":[{\"id\":" + id1
-				+ ",\"cBoolean\":null,\"cDate\":null,\"cDecimal\":null,\"cInt\":null,"
-				+ "\"cTime\":null,\"cTimestamp\":null,\"cVarchar\":\"zzz\"}],\"total\":1}",
-				response1.readEntity(String.class));
-	}
-
-	@Test
 	public void testPost_ToOne() throws WebApplicationException, IOException {
 
 		context.performGenericQuery(new SQLTemplate(E4.class, "INSERT INTO utest.e2 (id, name) values (1, 'xxx')"));
 		context.performGenericQuery(new SQLTemplate(E4.class, "INSERT INTO utest.e2 (id, name) values (8, 'yyy')"));
 
-		Response response1 = target("/e3").request().post(
-				Entity.entity("{\"e2_id\":8,\"name\":\"MM\"}", MediaType.APPLICATION_JSON));
+		Response response1 = target("/e3").request()
+				.post(Entity.entity("{\"e2_id\":8,\"name\":\"MM\"}", MediaType.APPLICATION_JSON));
 
 		assertEquals(Status.CREATED.getStatusCode(), response1.getStatus());
 
 		E3 e3 = (E3) Cayenne.objectForQuery(context, new SelectQuery<E3>(E3.class));
 		int id = Cayenne.intPKForObject(e3);
 
-		assertEquals("{\"success\":true,\"data\":[{\"id\":" + id
-				+ ",\"name\":\"MM\",\"phoneNumber\":null}],\"total\":1}", response1.readEntity(String.class));
+		assertEquals(
+				"{\"success\":true,\"data\":[{\"id\":" + id + ",\"name\":\"MM\",\"phoneNumber\":null}],\"total\":1}",
+				response1.readEntity(String.class));
 
 		runtime.newContext().invalidateObjects(e3);
 		assertEquals("MM", e3.getName());
@@ -85,8 +69,8 @@ public class Sencha_POST_IT extends JerseyTestOnDerby {
 		context.performGenericQuery(new SQLTemplate(E4.class, "INSERT INTO utest.e2 (id, name) values (1, 'xxx')"));
 		context.performGenericQuery(new SQLTemplate(E4.class, "INSERT INTO utest.e2 (id, name) values (8, 'yyy')"));
 
-		Response response1 = target("/e3").request().post(
-				Entity.entity("{\"e2_id\":15,\"name\":\"MM\"}", MediaType.APPLICATION_JSON));
+		Response response1 = target("/e3").request()
+				.post(Entity.entity("{\"e2_id\":15,\"name\":\"MM\"}", MediaType.APPLICATION_JSON));
 
 		assertEquals(Status.NOT_FOUND.getStatusCode(), response1.getStatus());
 
@@ -96,8 +80,8 @@ public class Sencha_POST_IT extends JerseyTestOnDerby {
 	@Test
 	public void testPOST_Bulk_LongId() throws WebApplicationException, IOException {
 
-		Entity<String> entity = jsonEntity("[{\"id\":\"ext-record-6881\",\"name\":\"yyy\"}"
-				+ ",{\"id\":\"ext-record-6882\",\"name\":\"zzz\"}]");
+		Entity<String> entity = jsonEntity(
+				"[{\"id\":\"ext-record-6881\",\"name\":\"yyy\"}" + ",{\"id\":\"ext-record-6882\",\"name\":\"zzz\"}]");
 		Response response = target("/e14/").request().post(entity);
 		assertEquals(Status.CREATED.getStatusCode(), response.getStatus());
 

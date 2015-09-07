@@ -131,8 +131,13 @@ public class DefaultUpdateBuilder<T> implements UpdateBuilder<T> {
 
 		ChainProcessor.execute(updateChain, context);
 
-		// TODO: copy context's response status and any headers.
-		return new SimpleResponse(true);
+		// TODO: somehow context should know internally whether its response is
+		// a SimpleResponse or a DataResponse, instead of overriding the
+		// response here..
+
+		SimpleResponse response = new SimpleResponse(true);
+		response.setStatus(context.getResponse().getStatus());
+		return response;
 	}
 
 	/**

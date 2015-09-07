@@ -26,15 +26,15 @@ public class E8Resource {
 
 	@PUT
 	public DataResponse<E8> sync(@Context UriInfo uriInfo, String data) {
-		return LinkRest.idempotentFullSync(E8.class, config).uri(uriInfo).includeData().process(data);
+		return LinkRest.idempotentFullSync(E8.class, config).uri(uriInfo).syncAndSelect(data);
 	}
 
 	@POST
 	@Path("w/constrainedid/{id}")
-	public DataResponse<E8> create_WriteConstrainedId(@PathParam("id") int id, @Context UriInfo uriInfo,
+	public SimpleResponse create_WriteConstrainedId(@PathParam("id") int id, @Context UriInfo uriInfo,
 			String requestBody) {
 		ConstraintsBuilder<E8> tc = ConstraintsBuilder.idOnly(E8.class).attribute(E8.NAME);
-		return LinkRest.create(E8.class, config).uri(uriInfo).id(id).writeConstraints(tc).process(requestBody);
+		return LinkRest.create(E8.class, config).uri(uriInfo).id(id).writeConstraints(tc).sync(requestBody);
 	}
 
 	@POST
@@ -42,8 +42,7 @@ public class E8Resource {
 	public DataResponse<E8> create_WriteConstrainedIdBlocked(@PathParam("id") int id, @Context UriInfo uriInfo,
 			String requestBody) {
 		ConstraintsBuilder<E8> tc = ConstraintsBuilder.excludeAll(E8.class).attribute(E8.NAME);
-		return LinkRest.create(E8.class, config).uri(uriInfo).id(id).writeConstraints(tc).includeData()
-				.process(requestBody);
+		return LinkRest.create(E8.class, config).uri(uriInfo).id(id).writeConstraints(tc).syncAndSelect(requestBody);
 	}
 
 	@DELETE
@@ -56,28 +55,28 @@ public class E8Resource {
 	@Path("{id}/e9")
 	public DataResponse<E9> relateToOneDependent(@PathParam("id") int id, String entityData) {
 		// this will test support for ID propagation in a 1..1
-		return LinkRest.idempotentCreateOrUpdate(E9.class, config).parent(E8.class, id, E8.E9).includeData()
-				.process(entityData);
+		return LinkRest.idempotentCreateOrUpdate(E9.class, config).parent(E8.class, id, E8.E9)
+				.syncAndSelect(entityData);
 	}
 
 	@PUT
 	@Path("createorupdate/{id}/e7s")
 	public DataResponse<E7> createOrUpdateE7s(@PathParam("id") int id, String entityData) {
-		return LinkRest.idempotentCreateOrUpdate(E7.class, config).toManyParent(E8.class, id, E8.E7S).includeData()
-				.process(entityData);
+		return LinkRest.idempotentCreateOrUpdate(E7.class, config).toManyParent(E8.class, id, E8.E7S)
+				.syncAndSelect(entityData);
 	}
 
 	@PUT
 	@Path("{id}/e7s")
 	public DataResponse<E7> fullSyncE7s(@PathParam("id") int id, String entityData) {
-		return LinkRest.idempotentFullSync(E7.class, config).toManyParent(E8.class, id, E8.E7S).includeData()
-				.process(entityData);
+		return LinkRest.idempotentFullSync(E7.class, config).toManyParent(E8.class, id, E8.E7S)
+				.syncAndSelect(entityData);
 	}
 
 	@PUT
 	@Path("bykey/{id}/e7s")
 	public DataResponse<E7> e8CreateOrUpdateE7sByKey_Idempotent(@PathParam("id") int id, String entityData) {
 		return LinkRest.idempotentCreateOrUpdate(E7.class, config).mapper(ByKeyObjectMapperFactory.byKey(E7.NAME))
-				.toManyParent(E8.class, id, E8.E7S).includeData().process(entityData);
+				.toManyParent(E8.class, id, E8.E7S).syncAndSelect(entityData);
 	}
 }

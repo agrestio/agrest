@@ -55,19 +55,19 @@ public class E3Resource {
 
 	@POST
 	public DataResponse<E3> create(@Context UriInfo uriInfo, String requestBody) {
-		return LinkRest.create(E3.class, config).uri(uriInfo).includeData().process(requestBody);
+		return LinkRest.create(E3.class, config).uri(uriInfo).syncAndSelect(requestBody);
 	}
 
 	@PUT
 	public DataResponse<E3> sync(@Context UriInfo uriInfo, String requestBody) {
-		return LinkRest.idempotentFullSync(E3.class, config).uri(uriInfo).includeData().process(requestBody);
+		return LinkRest.idempotentFullSync(E3.class, config).uri(uriInfo).syncAndSelect(requestBody);
 	}
 
 	@PUT
 	@Path("callbacklistener")
 	public DataResponse<E3> syncWithCallbackListeners(@Context UriInfo uriInfo, String requestBody) {
 		return LinkRest.idempotentFullSync(E3.class, config).listener(new UpdateCallbackListener()).uri(uriInfo)
-				.includeData().process(requestBody);
+				.syncAndSelect(requestBody);
 	}
 
 	@GET
@@ -79,21 +79,21 @@ public class E3Resource {
 	@PUT
 	@Path("{id}")
 	public DataResponse<E3> updateE3(@PathParam("id") int id, String requestBody) {
-		return LinkRest.update(E3.class, config).id(id).includeData().process(requestBody);
+		return LinkRest.update(E3.class, config).id(id).syncAndSelect(requestBody);
 	}
 
 	@POST
 	@Path("constrained")
 	public DataResponse<E3> insertReadConstrained(@Context UriInfo uriInfo, String requestBody) {
 		ConstraintsBuilder<E3> tc = ConstraintsBuilder.idOnly(E3.class).attribute(E3.NAME);
-		return LinkRest.create(E3.class, config).uri(uriInfo).readConstraints(tc).includeData().process(requestBody);
+		return LinkRest.create(E3.class, config).uri(uriInfo).readConstraints(tc).syncAndSelect(requestBody);
 	}
 
 	@POST
 	@Path("w/constrained")
 	public DataResponse<E3> insertWriteConstrained(@Context UriInfo uriInfo, String requestBody) {
 		ConstraintsBuilder<E3> tc = ConstraintsBuilder.idOnly(E3.class).attribute(E3.NAME);
-		return LinkRest.create(E3.class, config).uri(uriInfo).writeConstraints(tc).includeData().process(requestBody);
+		return LinkRest.create(E3.class, config).uri(uriInfo).writeConstraints(tc).syncAndSelect(requestBody);
 	}
 
 	@GET
@@ -112,8 +112,8 @@ public class E3Resource {
 	@Path("{id}/e2/{tid}")
 	public DataResponse<E2> createOrUpdate_Idempotent_E2(@PathParam("id") int parentId, @PathParam("tid") int id,
 			String entityData) {
-		return LinkRest.idempotentCreateOrUpdate(E2.class, config).id(id).includeData()
-				.parent(E3.class, parentId, E3.E2).process(entityData);
+		return LinkRest.idempotentCreateOrUpdate(E2.class, config).id(id).parent(E3.class, parentId, E3.E2)
+				.syncAndSelect(entityData);
 	}
 
 	@DELETE

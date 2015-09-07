@@ -44,7 +44,7 @@ public class CayenneUpdatePostProcessStage<T extends DataObject>
 	protected void doExecute(UpdateContext<T> context) {
 
 		DataResponse<T> response = context.getResponse();
-		response.withStatus(status);
+		response.setStatus(status);
 
 		// response objects are attached to EntityUpdate instances ... if
 		// 'includeData' is true create a list of unique updated objects in the
