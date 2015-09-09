@@ -50,7 +50,7 @@ public class GET_ListenersIT extends JerseyTestOnDerby {
 		assertEquals(Status.OK.getStatusCode(), response1.getStatus());
 		assertTrue(FetchCallbackListener.BEFORE_FETCH_CALLED);
 
-		assertEquals("{\"success\":true,\"data\":[{\"id\":8},{\"id\":9}],\"total\":2}",
+		assertEquals("{\"data\":[{\"id\":8},{\"id\":9}],\"total\":2}",
 				response1.readEntity(String.class));
 	}
 
@@ -65,7 +65,7 @@ public class GET_ListenersIT extends JerseyTestOnDerby {
 		assertEquals(Status.OK.getStatusCode(), response1.getStatus());
 		assertTrue(FetchPassThroughListener.BEFORE_FETCH_CALLED);
 
-		assertEquals("{\"success\":true,\"data\":[{\"id\":8},{\"id\":9}],\"total\":2}",
+		assertEquals("{\"data\":[{\"id\":8},{\"id\":9}],\"total\":2}",
 				response1.readEntity(String.class));
 	}
 
@@ -80,7 +80,7 @@ public class GET_ListenersIT extends JerseyTestOnDerby {
 		assertEquals(Status.OK.getStatusCode(), response1.getStatus());
 		assertTrue(FetchTakeOverListener.BEFORE_FETCH_CALLED);
 
-		assertEquals("{\"success\":true,\"data\":[{\"name\":\"__X__\"},{\"name\":\"__Y__\"}],\"total\":2}",
+		assertEquals("{\"data\":[{\"name\":\"__X__\"},{\"name\":\"__Y__\"}],\"total\":2}",
 				response1.readEntity(String.class));
 
 	}

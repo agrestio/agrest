@@ -55,7 +55,7 @@ public class GET_ObjectIncludeIT extends JerseyTestOnDerby {
 
 		assertEquals(Status.OK.getStatusCode(), response1.getStatus());
 		assertEquals(
-				"{\"success\":true,\"data\":[{\"id\":8,\"e2\":{\"id\":1,\"address\":null,\"name\":\"xxx\"}}],\"total\":1}",
+				"{\"data\":[{\"id\":8,\"e2\":{\"id\":1,\"address\":null,\"name\":\"xxx\"}}],\"total\":1}",
 				response1.readEntity(String.class));
 	}
 
@@ -73,7 +73,7 @@ public class GET_ObjectIncludeIT extends JerseyTestOnDerby {
 		assertEquals(Status.OK.getStatusCode(), response1.getStatus());
 
 		// no support for MapBy for to-one... simply ignoring it...
-		assertEquals("{\"success\":true,\"data\":[{\"id\":8,\"e2\":{"
+		assertEquals("{\"data\":[{\"id\":8,\"e2\":{"
 				+ "\"id\":1,\"address\":null,\"name\":\"xxx\"}}],\"total\":1}", response1.readEntity(String.class));
 	}
 
@@ -94,7 +94,7 @@ public class GET_ObjectIncludeIT extends JerseyTestOnDerby {
 
 		assertEquals(Status.OK.getStatusCode(), response1.getStatus());
 		assertEquals(
-				"{\"success\":true,\"data\":[{\"id\":1,\"e3s\":{"
+				"{\"data\":[{\"id\":1,\"e3s\":{"
 						+ "\"aaa\":[{\"id\":8,\"name\":\"aaa\",\"phoneNumber\":null},{\"id\":7,\"name\":\"aaa\",\"phoneNumber\":null}],"
 						+ "\"zzz\":[{\"id\":9,\"name\":\"zzz\",\"phoneNumber\":null}]" + "}}],\"total\":1}",
 				response1.readEntity(String.class));
@@ -116,7 +116,7 @@ public class GET_ObjectIncludeIT extends JerseyTestOnDerby {
 				.queryParam("include", "id").request().get();
 
 		assertEquals(Status.OK.getStatusCode(), response1.getStatus());
-		assertEquals("{\"success\":true,\"data\":[{\"id\":1,\"e3s\":{"
+		assertEquals("{\"data\":[{\"id\":1,\"e3s\":{"
 				+ "\"8\":[{\"id\":8,\"name\":\"aaa\",\"phoneNumber\":null}],"
 				+ "\"9\":[{\"id\":9,\"name\":\"zzz\",\"phoneNumber\":null}],"
 				+ "\"7\":[{\"id\":7,\"name\":\"aaa\",\"phoneNumber\":null}]" + "}}],\"total\":1}",
@@ -139,7 +139,7 @@ public class GET_ObjectIncludeIT extends JerseyTestOnDerby {
 
 		assertEquals(Status.OK.getStatusCode(), response1.getStatus());
 		assertEquals(
-				"{\"success\":true,\"data\":[{\"id\":1,\"e3s\":{"
+				"{\"data\":[{\"id\":1,\"e3s\":{"
 						+ "\"45\":[{\"id\":8,\"name\":\"aaa\",\"phoneNumber\":null},{\"id\":9,\"name\":\"zzz\",\"phoneNumber\":null}],"
 						+ "\"46\":[{\"id\":7,\"name\":\"aaa\",\"phoneNumber\":null}]" + "}}],\"total\":1}",
 				response1.readEntity(String.class));
@@ -161,7 +161,7 @@ public class GET_ObjectIncludeIT extends JerseyTestOnDerby {
 
 		assertEquals(Status.OK.getStatusCode(), response1.getStatus());
 		assertEquals(
-				"{\"success\":true,\"data\":[{\"id\":1,\"e3s\":{"
+				"{\"data\":[{\"id\":1,\"e3s\":{"
 						+ "\"T\":[{\"id\":8,\"name\":\"aaa\",\"phoneNumber\":null},{\"id\":9,\"name\":\"zzz\",\"phoneNumber\":null}],"
 						+ "\"Y\":[{\"id\":7,\"name\":\"aaa\",\"phoneNumber\":null}]" + "}}],\"total\":1}",
 				response1.readEntity(String.class));
@@ -184,7 +184,7 @@ public class GET_ObjectIncludeIT extends JerseyTestOnDerby {
 
 		assertEquals(Status.OK.getStatusCode(), response1.getStatus());
 		assertEquals(
-				"{\"success\":true,\"data\":[{\"id\":1,\"e3s\":{"
+				"{\"data\":[{\"id\":1,\"e3s\":{"
 						+ "\"2013-01-03\":[{\"id\":8,\"name\":\"aaa\",\"phoneNumber\":null},{\"id\":9,\"name\":\"zzz\",\"phoneNumber\":null}],"
 						+ "\"2013-01-04\":[{\"id\":7,\"name\":\"aaa\",\"phoneNumber\":null}]" + "}}],\"total\":1}",
 				response1.readEntity(String.class));
@@ -213,7 +213,7 @@ public class GET_ObjectIncludeIT extends JerseyTestOnDerby {
 
 		assertEquals(Status.OK.getStatusCode(), response1.getStatus());
 		assertEquals(
-				"{\"success\":true,\"data\":[{\"id\":1,\"e3s\":{"
+				"{\"data\":[{\"id\":1,\"e3s\":{"
 						+ "\"aaa\":[{\"id\":8,\"name\":\"aaa\",\"phoneNumber\":null},{\"id\":7,\"name\":\"aaa\",\"phoneNumber\":null}],"
 						+ "\"zzz\":[{\"id\":9,\"name\":\"zzz\",\"phoneNumber\":null}]" + "}}],\"total\":1}",
 				response1.readEntity(String.class));
@@ -232,7 +232,7 @@ public class GET_ObjectIncludeIT extends JerseyTestOnDerby {
 				.queryParam("include", "id").request().get();
 
 		assertEquals(Status.OK.getStatusCode(), response1.getStatus());
-		assertEquals("{\"success\":true,\"data\":[{\"id\":1,\"e3s\":["
+		assertEquals("{\"data\":[{\"id\":1,\"e3s\":["
 				+ "{\"id\":7,\"name\":\"b\",\"phoneNumber\":null}," + "{\"id\":9,\"name\":\"s\",\"phoneNumber\":null},"
 				+ "{\"id\":8,\"name\":\"z\",\"phoneNumber\":null}]}],\"total\":1}", response1.readEntity(String.class));
 	}
@@ -253,7 +253,7 @@ public class GET_ObjectIncludeIT extends JerseyTestOnDerby {
 				.queryParam("include", "id").request().get();
 
 		assertEquals(Status.OK.getStatusCode(), response1.getStatus());
-		assertEquals("{\"success\":true,\"data\":[{\"id\":11,\"e3s\":["
+		assertEquals("{\"data\":[{\"id\":11,\"e3s\":["
 				+ "{\"id\":17,\"name\":\"b\",\"phoneNumber\":null},"
 				+ "{\"id\":18,\"name\":\"s\",\"phoneNumber\":null},"
 				+ "{\"id\":19,\"name\":\"z\",\"phoneNumber\":null}]}],\"total\":1}", response1.readEntity(String.class));
@@ -277,7 +277,7 @@ public class GET_ObjectIncludeIT extends JerseyTestOnDerby {
 				.queryParam("include", "id").request().get();
 
 		assertEquals(Status.OK.getStatusCode(), response1.getStatus());
-		assertEquals("{\"success\":true,\"data\":[{\"id\":21,\"e3s\":["
+		assertEquals("{\"data\":[{\"id\":21,\"e3s\":["
 				+ "{\"id\":29,\"name\":\"z\",\"phoneNumber\":null},"
 				+ "{\"id\":28,\"name\":\"s\",\"phoneNumber\":null},"
 				+ "{\"id\":27,\"name\":\"b\",\"phoneNumber\":null}]}],\"total\":1}", response1.readEntity(String.class));
@@ -298,7 +298,7 @@ public class GET_ObjectIncludeIT extends JerseyTestOnDerby {
 				.queryParam("include", "id").request().get();
 
 		assertEquals(Status.OK.getStatusCode(), response1.getStatus());
-		assertEquals("{\"success\":true,\"data\":[{\"id\":1,\"e3s\":["
+		assertEquals("{\"data\":[{\"id\":1,\"e3s\":["
 				+ "{\"id\":8,\"name\":\"a\",\"phoneNumber\":null},"
 				+ "{\"id\":7,\"name\":\"a\",\"phoneNumber\":null}]}],\"total\":1}", response1.readEntity(String.class));
 	}
@@ -320,7 +320,7 @@ public class GET_ObjectIncludeIT extends JerseyTestOnDerby {
 				.queryParam("include", "id").request().get();
 
 		assertEquals(Status.OK.getStatusCode(), response1.getStatus());
-		assertEquals("{\"success\":true,\"data\":[{\"id\":51,\"e3s\":["
+		assertEquals("{\"data\":[{\"id\":51,\"e3s\":["
 				+ "{\"id\":57,\"name\":\"b\",\"phoneNumber\":null}]}],\"total\":1}", response1.readEntity(String.class));
 	}
 
@@ -338,7 +338,7 @@ public class GET_ObjectIncludeIT extends JerseyTestOnDerby {
 				.request().get();
 
 		assertEquals(Status.OK.getStatusCode(), response1.getStatus());
-		assertEquals("{\"success\":true,\"data\":[{\"id\":1,\"e3s\":[{\"name\":\"a\"}," + "{\"name\":\"z\"},"
+		assertEquals("{\"data\":[{\"id\":1,\"e3s\":[{\"name\":\"a\"}," + "{\"name\":\"z\"},"
 				+ "{\"name\":\"m\"}]}],\"total\":1}", response1.readEntity(String.class));
 	}
 
@@ -357,7 +357,7 @@ public class GET_ObjectIncludeIT extends JerseyTestOnDerby {
 				.queryParam("include", "e3s.e5.name").request().get();
 
 		assertEquals(Status.OK.getStatusCode(), response1.getStatus());
-		assertEquals("{\"success\":true,\"data\":[{\"id\":1,\"e3s\":[{\"e5\":{\"name\":\"B\"},\"name\":\"a\"},"
+		assertEquals("{\"data\":[{\"id\":1,\"e3s\":[{\"e5\":{\"name\":\"B\"},\"name\":\"a\"},"
 				+ "{\"e5\":{\"name\":\"B\"},\"name\":\"z\"},"
 				+ "{\"e5\":{\"name\":\"A\"},\"name\":\"m\"}]}],\"total\":1}", response1.readEntity(String.class));
 	}

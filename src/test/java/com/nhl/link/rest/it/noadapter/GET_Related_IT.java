@@ -45,7 +45,7 @@ public class GET_Related_IT extends JerseyTestOnDerby {
 		Response r1 = target("/e2/constraints/1/e3s").request().get();
 
 		assertEquals(Status.OK.getStatusCode(), r1.getStatus());
-		assertEquals("{\"success\":true,\"data\":[{\"id\":8},{\"id\":9}],\"total\":2}", r1.readEntity(String.class));
+		assertEquals("{\"data\":[{\"id\":8},{\"id\":9}],\"total\":2}", r1.readEntity(String.class));
 	}
 
 	@Test
@@ -66,7 +66,7 @@ public class GET_Related_IT extends JerseyTestOnDerby {
 		Response r1 = target("/e2/1/e3s").queryParam("include", "id").request().get();
 
 		assertEquals(Status.OK.getStatusCode(), r1.getStatus());
-		assertEquals("{\"success\":true,\"data\":[{\"id\":8},{\"id\":9}],\"total\":2}", r1.readEntity(String.class));
+		assertEquals("{\"data\":[{\"id\":8},{\"id\":9}],\"total\":2}", r1.readEntity(String.class));
 	}
 
 	@Test
@@ -87,7 +87,7 @@ public class GET_Related_IT extends JerseyTestOnDerby {
 		Response r1 = target("/e3/7/e2").queryParam("include", "id").request().get();
 
 		assertEquals(Status.OK.getStatusCode(), r1.getStatus());
-		assertEquals("{\"success\":true,\"data\":[{\"id\":2}],\"total\":1}", r1.readEntity(String.class));
+		assertEquals("{\"data\":[{\"id\":2}],\"total\":1}", r1.readEntity(String.class));
 	}
 
 	@Test
@@ -118,7 +118,7 @@ public class GET_Related_IT extends JerseyTestOnDerby {
 				.queryParam("include", "e13").request().get();
 
 		assertEquals(Status.OK.getStatusCode(), r1.getStatus());
-		assertEquals("{\"success\":true,\"data\":[{\"e12\":{\"id\":12},\"e13\":{\"id\":16}}],\"total\":1}",
+		assertEquals("{\"data\":[{\"e12\":{\"id\":12},\"e13\":{\"id\":16}}],\"total\":1}",
 				r1.readEntity(String.class));
 	}
 }

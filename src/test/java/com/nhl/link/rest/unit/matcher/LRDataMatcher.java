@@ -11,7 +11,7 @@ import org.hamcrest.Matcher;
 public class LRDataMatcher extends BaseMatcher<Response> {
 
 	private static String toEntityString(String expectedData, int expectedTotal) {
-		return new StringBuilder().append("{\"success\":true,\"data\":").append(expectedData).append(",\"total\":")
+		return new StringBuilder().append("{\"data\":").append(expectedData).append(",\"total\":")
 				.append(expectedTotal).append("}").toString();
 	}
 

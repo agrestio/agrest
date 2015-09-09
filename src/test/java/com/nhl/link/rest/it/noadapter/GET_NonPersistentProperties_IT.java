@@ -38,7 +38,7 @@ public class GET_NonPersistentProperties_IT extends JerseyTestOnDerby {
 		Response response1 = target("/e14").queryParam("include", "name").queryParam("include", "prettyName").request()
 				.get();
 		assertEquals(Status.OK.getStatusCode(), response1.getStatus());
-		assertEquals("{\"success\":true,\"data\":[{\"name\":\"yyy\",\"prettyName\":\"yyy_pretty\"}],\"total\":1}",
+		assertEquals("{\"data\":[{\"name\":\"yyy\",\"prettyName\":\"yyy_pretty\"}],\"total\":1}",
 				response1.readEntity(String.class));
 	}
 
@@ -51,7 +51,7 @@ public class GET_NonPersistentProperties_IT extends JerseyTestOnDerby {
 				.request().get();
 		assertEquals(Status.OK.getStatusCode(), response1.getStatus());
 		assertEquals(
-				"{\"success\":true,\"data\":"
+				"{\"data\":"
 						+ "[{\"id\":1,\"e14s\":[{\"name\":\"yyy\",\"prettyName\":\"yyy_pretty\"}],\"name\":\"xxx\"}],\"total\":1}",
 				response1.readEntity(String.class));
 	}

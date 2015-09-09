@@ -46,7 +46,7 @@ public class PUT_Related_IT extends JerseyTestOnDerby {
 		Response r1 = target("/e3/8/e2/24").request().put(Entity.entity("", MediaType.APPLICATION_JSON));
 
 		assertEquals(Status.OK.getStatusCode(), r1.getStatus());
-		assertEquals("{\"success\":true,\"data\":[{\"id\":24,\"address\":null,\"name\":\"xxx\"}],\"total\":1}",
+		assertEquals("{\"data\":[{\"id\":24,\"address\":null,\"name\":\"xxx\"}],\"total\":1}",
 				r1.readEntity(String.class));
 
 		assertEquals("yyy", SQLSelect.scalarQuery(String.class, "SELECT name FROM utest.e3 WHERE e2_id = 24")
@@ -63,7 +63,7 @@ public class PUT_Related_IT extends JerseyTestOnDerby {
 		Response r1 = target("/e3/8/e2/24").request().put(Entity.entity("{}", MediaType.APPLICATION_JSON));
 
 		assertEquals(Status.OK.getStatusCode(), r1.getStatus());
-		assertEquals("{\"success\":true,\"data\":[{\"id\":24,\"address\":null,\"name\":\"xxx\"}],\"total\":1}",
+		assertEquals("{\"data\":[{\"id\":24,\"address\":null,\"name\":\"xxx\"}],\"total\":1}",
 				r1.readEntity(String.class));
 
 		assertEquals("yyy", SQLSelect.scalarQuery(String.class, "SELECT name FROM utest.e3 WHERE e2_id = 24")
@@ -81,7 +81,7 @@ public class PUT_Related_IT extends JerseyTestOnDerby {
 				Entity.entity("{\"name\":\"123\"}", MediaType.APPLICATION_JSON));
 
 		assertEquals(Status.OK.getStatusCode(), r1.getStatus());
-		assertEquals("{\"success\":true,\"data\":[{\"id\":24,\"address\":null,\"name\":\"123\"}],\"total\":1}",
+		assertEquals("{\"data\":[{\"id\":24,\"address\":null,\"name\":\"123\"}],\"total\":1}",
 				r1.readEntity(String.class));
 
 		assertEquals(1, SQLSelect.scalarQuery(String.class, "SELECT count(1) FROM utest.e2").selectOne(context));
@@ -108,7 +108,7 @@ public class PUT_Related_IT extends JerseyTestOnDerby {
 						MediaType.APPLICATION_JSON));
 
 		assertEquals(Status.OK.getStatusCode(), r1.getStatus());
-		assertEquals("{\"success\":true,\"data\":["
+		assertEquals("{\"data\":["
 				+ "{\"id\":1,\"name\":\"newname\"},{\"id\":8,\"name\":\"123\"}],\"total\":2}",
 				r1.readEntity(String.class));
 		assertEquals(4, SQLSelect.scalarQuery(String.class, "SELECT count(1) FROM utest.e7").selectOne(context));
@@ -120,7 +120,7 @@ public class PUT_Related_IT extends JerseyTestOnDerby {
 						MediaType.APPLICATION_JSON));
 
 		assertEquals(Status.OK.getStatusCode(), r2.getStatus());
-		assertEquals("{\"success\":true,\"data\":[{\"id\":1,\"name\":\"newname\"},"
+		assertEquals("{\"data\":[{\"id\":1,\"name\":\"newname\"},"
 				+ "{\"id\":8,\"name\":\"123\"}],\"total\":2}", r2.readEntity(String.class));
 		assertEquals(4, SQLSelect.scalarQuery(String.class, "SELECT count(1) FROM utest.e7").selectOne(context));
 	}
@@ -144,7 +144,7 @@ public class PUT_Related_IT extends JerseyTestOnDerby {
 						MediaType.APPLICATION_JSON));
 
 		assertEquals(Status.OK.getStatusCode(), r1.getStatus());
-		assertEquals("{\"success\":true,\"data\":["
+		assertEquals("{\"data\":["
 				+ "{\"id\":1,\"name\":\"newname\"},{\"id\":8,\"name\":\"123\"}],\"total\":2}",
 				r1.readEntity(String.class));
 		assertEquals(2, SQLSelect.scalarQuery(String.class, "SELECT count(1) FROM utest.e7 WHERE e8_id = 15")
@@ -159,7 +159,7 @@ public class PUT_Related_IT extends JerseyTestOnDerby {
 						MediaType.APPLICATION_JSON));
 
 		assertEquals(Status.OK.getStatusCode(), r2.getStatus());
-		assertEquals("{\"success\":true,\"data\":["
+		assertEquals("{\"data\":["
 				+ "{\"id\":1,\"name\":\"newname\"},{\"id\":8,\"name\":\"123\"}],\"total\":2}",
 				r2.readEntity(String.class));
 		assertEquals(2, SQLSelect.scalarQuery(String.class, "SELECT count(1) FROM utest.e7 WHERE e8_id = 15")
@@ -193,7 +193,7 @@ public class PUT_Related_IT extends JerseyTestOnDerby {
 				Entity.entity("{\"name\":\"aaa\"}", MediaType.APPLICATION_JSON));
 
 		assertEquals(Status.OK.getStatusCode(), r1.getStatus());
-		assertEquals("{\"success\":true,\"data\":[{\"id\":24,\"name\":\"aaa\"}],\"total\":1}",
+		assertEquals("{\"data\":[{\"id\":24,\"name\":\"aaa\"}],\"total\":1}",
 				r1.readEntity(String.class));
 
 		assertEquals(1, SQLSelect.scalarQuery(String.class, "SELECT count(1) FROM utest.e8").selectOne(context));
@@ -210,7 +210,7 @@ public class PUT_Related_IT extends JerseyTestOnDerby {
 				Entity.entity("{\"name\":\"aaa\"}", MediaType.APPLICATION_JSON));
 
 		assertEquals(Status.OK.getStatusCode(), r2.getStatus());
-		assertEquals("{\"success\":true,\"data\":[{\"id\":24,\"name\":\"aaa\"}],\"total\":1}",
+		assertEquals("{\"data\":[{\"id\":24,\"name\":\"aaa\"}],\"total\":1}",
 				r2.readEntity(String.class));
 
 		assertEquals(1, SQLSelect.scalarQuery(String.class, "SELECT count(1) FROM utest.e8").selectOne(context));
@@ -231,7 +231,7 @@ public class PUT_Related_IT extends JerseyTestOnDerby {
 		Response r1 = target("/e8/8/e9").request().put(Entity.entity("{}", MediaType.APPLICATION_JSON));
 
 		assertEquals(Status.OK.getStatusCode(), r1.getStatus());
-		assertEquals("{\"success\":true,\"data\":[{\"id\":8}],\"total\":1}", r1.readEntity(String.class));
+		assertEquals("{\"data\":[{\"id\":8}],\"total\":1}", r1.readEntity(String.class));
 
 		assertEquals(1, SQLSelect.scalarQuery(String.class, "SELECT count(1) FROM utest.e9").selectOne(context));
 		assertEquals(8, SQLSelect.scalarQuery(Integer.class, "SELECT e8_id FROM utest.e9").selectOne(context)
@@ -242,7 +242,7 @@ public class PUT_Related_IT extends JerseyTestOnDerby {
 		Response r2 = target("/e8/8/e9").request().put(Entity.entity("{}", MediaType.APPLICATION_JSON));
 
 		assertEquals(Status.OK.getStatusCode(), r2.getStatus());
-		assertEquals("{\"success\":true,\"data\":[{\"id\":8}],\"total\":1}", r2.readEntity(String.class));
+		assertEquals("{\"data\":[{\"id\":8}],\"total\":1}", r2.readEntity(String.class));
 
 		assertEquals(1, SQLSelect.scalarQuery(String.class, "SELECT count(1) FROM utest.e9").selectOne(context));
 		assertEquals(8, SQLSelect.scalarQuery(Integer.class, "SELECT e8_id FROM utest.e9").selectOne(context)
@@ -292,7 +292,7 @@ public class PUT_Related_IT extends JerseyTestOnDerby {
 				.put(Entity.entity("[{\"e13\":15},{\"e13\":14}]", MediaType.APPLICATION_JSON));
 
 		assertEquals(Status.OK.getStatusCode(), r1.getStatus());
-		assertEquals("{\"success\":true,\"data\":[{},{}],\"total\":2}", r1.readEntity(String.class));
+		assertEquals("{\"data\":[{},{}],\"total\":2}", r1.readEntity(String.class));
 
 		assertEquals(2, SQLSelect.scalarQuery(E12E13.class, "SELECT count(1) FROM utest.e12_e13").selectOne(context));
 		assertEquals(1, SQLSelect.scalarQuery(E12E13.class,
@@ -305,7 +305,7 @@ public class PUT_Related_IT extends JerseyTestOnDerby {
 				.put(Entity.entity("[{\"e13\":15},{\"e13\":14}]", MediaType.APPLICATION_JSON));
 
 		assertEquals(Status.OK.getStatusCode(), r2.getStatus());
-		assertEquals("{\"success\":true,\"data\":[{},{}],\"total\":2}", r2.readEntity(String.class));
+		assertEquals("{\"data\":[{},{}],\"total\":2}", r2.readEntity(String.class));
 
 		assertEquals(2, SQLSelect.scalarQuery(E12E13.class, "SELECT count(1) FROM utest.e12_e13").selectOne(context));
 		assertEquals(
@@ -322,7 +322,7 @@ public class PUT_Related_IT extends JerseyTestOnDerby {
 				.put(Entity.entity("[{\"e13\":16},{\"e13\":14}]", MediaType.APPLICATION_JSON));
 
 		assertEquals(Status.OK.getStatusCode(), r3.getStatus());
-		assertEquals("{\"success\":true,\"data\":[{},{}],\"total\":2}", r3.readEntity(String.class));
+		assertEquals("{\"data\":[{},{}],\"total\":2}", r3.readEntity(String.class));
 
 		assertEquals(2, SQLSelect.scalarQuery(E12E13.class, "SELECT count(1) FROM utest.e12_e13").selectOne(context));
 		assertEquals(

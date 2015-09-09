@@ -38,7 +38,7 @@ public class POST_Related_IT extends JerseyTestOnDerby {
 				Entity.entity("{\"name\":\"zzz\"}", MediaType.APPLICATION_JSON));
 
 		assertEquals(Status.OK.getStatusCode(), r1.getStatus());
-		assertEquals("{\"success\":true,\"data\":[{REPLACED_ID,\"name\":\"zzz\",\"phoneNumber\":null}],\"total\":1}",
+		assertEquals("{\"data\":[{REPLACED_ID,\"name\":\"zzz\",\"phoneNumber\":null}],\"total\":1}",
 				r1.readEntity(String.class).replaceFirst("\"id\":[\\d]+", "REPLACED_ID"));
 
 		assertEquals(1, SQLSelect.scalarQuery(E3.class, "SELECT count(1) FROM utest.e3").selectOne(context));
@@ -65,7 +65,7 @@ public class POST_Related_IT extends JerseyTestOnDerby {
 				Entity.entity("[ {\"id\":8,\"name\":\"123\"}, {\"name\":\"newname\"} ]", MediaType.APPLICATION_JSON));
 
 		assertEquals(Status.OK.getStatusCode(), r1.getStatus());
-		assertEquals("{\"success\":true,\"data\":[{\"id\":8,\"name\":\"123\",\"phoneNumber\":null},"
+		assertEquals("{\"data\":[{\"id\":8,\"name\":\"123\",\"phoneNumber\":null},"
 				+ "{\"id\":1,\"name\":\"newname\",\"phoneNumber\":null}],\"total\":2}", r1.readEntity(String.class));
 		assertEquals(4, SQLSelect.scalarQuery(String.class, "SELECT count(1) FROM utest.e3").selectOne(context));
 		assertEquals(3, SQLSelect.scalarQuery(String.class, "SELECT count(1) FROM utest.e3 WHERE e2_id = 15")
@@ -77,7 +77,7 @@ public class POST_Related_IT extends JerseyTestOnDerby {
 				Entity.entity("[ {\"id\":8,\"name\":\"123\"}, {\"name\":\"newname\"} ]", MediaType.APPLICATION_JSON));
 
 		assertEquals(Status.OK.getStatusCode(), r2.getStatus());
-		assertEquals("{\"success\":true,\"data\":[{\"id\":8,\"name\":\"123\",\"phoneNumber\":null},"
+		assertEquals("{\"data\":[{\"id\":8,\"name\":\"123\",\"phoneNumber\":null},"
 				+ "{\"id\":2,\"name\":\"newname\",\"phoneNumber\":null}],\"total\":2}", r2.readEntity(String.class));
 		assertEquals(5, SQLSelect.scalarQuery(String.class, "SELECT count(1) FROM utest.e3").selectOne(context));
 		assertEquals(4, SQLSelect.scalarQuery(String.class, "SELECT count(1) FROM utest.e3 WHERE e2_id = 15")
@@ -97,7 +97,7 @@ public class POST_Related_IT extends JerseyTestOnDerby {
 				.post(Entity.entity("[{\"e13\":15},{\"e13\":14}]", MediaType.APPLICATION_JSON));
 
 		assertEquals(Status.CREATED.getStatusCode(), r1.getStatus());
-		assertEquals("{\"success\":true,\"data\":[{},{}],\"total\":2}",
+		assertEquals("{\"data\":[{},{}],\"total\":2}",
 				r1.readEntity(String.class));
 
 		assertEquals(2, SQLSelect.scalarQuery(E12E13.class, "SELECT count(1) FROM utest.e12_e13").selectOne(context));

@@ -53,7 +53,7 @@ public class POST_IT extends JerseyTestOnDerby {
 		assertEquals("zzz", e41.getCVarchar());
 		int id1 = Cayenne.intPKForObject(e41);
 
-		assertEquals("{\"success\":true,\"data\":[{\"id\":" + id1
+		assertEquals("{\"data\":[{\"id\":" + id1
 				+ ",\"cBoolean\":null,\"cDate\":null,\"cDecimal\":null,\"cInt\":null,"
 				+ "\"cTime\":null,\"cTimestamp\":null,\"cVarchar\":\"zzz\"}],\"total\":1}",
 				response1.readEntity(String.class));
@@ -71,7 +71,7 @@ public class POST_IT extends JerseyTestOnDerby {
 		assertEquals("TTTT", e42.getCVarchar());
 		int id2 = Cayenne.intPKForObject(e42);
 
-		assertEquals("{\"success\":true,\"data\":[{\"id\":" + id2
+		assertEquals("{\"data\":[{\"id\":" + id2
 				+ ",\"cBoolean\":null,\"cDate\":null,\"cDecimal\":null,\"cInt\":null,"
 				+ "\"cTime\":null,\"cTimestamp\":null,\"cVarchar\":\"TTTT\"}],\"total\":1}",
 				response2.readEntity(String.class));
@@ -137,7 +137,7 @@ public class POST_IT extends JerseyTestOnDerby {
 		assertEquals("zzz", SQLSelect.scalarQuery(String.class, "SELECT name FROM utest.e3").selectOne(context));
 		int id1 = SQLSelect.scalarQuery(Integer.class, "SELECT id FROM utest.e3").selectOne(context);
 
-		assertEquals("{\"success\":true,\"data\":[{\"id\":" + id1
+		assertEquals("{\"data\":[{\"id\":" + id1
 				+ ",\"name\":\"zzz\",\"phoneNumber\":null}],\"total\":1}", r1.readEntity(String.class));
 	}
 
@@ -155,7 +155,7 @@ public class POST_IT extends JerseyTestOnDerby {
 		int id1 = SQLSelect.scalarQuery(Integer.class, "SELECT id FROM utest.e3  WHERE name = 'yyy'")
 				.selectOne(context);
 
-		assertEquals("{\"success\":true,\"data\":[{\"id\":" + id1
+		assertEquals("{\"data\":[{\"id\":" + id1
 				+ ",\"name\":\"yyy\",\"phoneNumber\":null}],\"total\":1}", r2.readEntity(String.class));
 	}
 
@@ -171,7 +171,7 @@ public class POST_IT extends JerseyTestOnDerby {
 		assertEquals("zzz", SQLSelect.scalarQuery(String.class, "SELECT name FROM utest.e3").selectOne(context));
 		int id1 = SQLSelect.scalarQuery(Integer.class, "SELECT id FROM utest.e3").selectOne(context);
 
-		assertEquals("{\"success\":true,\"data\":[{\"id\":" + id1 + ",\"name\":\"zzz\"}],\"total\":1}",
+		assertEquals("{\"data\":[{\"id\":" + id1 + ",\"name\":\"zzz\"}],\"total\":1}",
 				r1.readEntity(String.class));
 	}
 
@@ -187,7 +187,7 @@ public class POST_IT extends JerseyTestOnDerby {
 				SQLSelect.scalarQuery(Integer.class, "SELECT count(1) FROM utest.e3 WHERE name = 'yyy'").selectOne(
 						context));
 
-		assertEquals("{\"success\":true,\"data\":[{\"name\":\"yyy\"}],\"total\":1}", r2.readEntity(String.class));
+		assertEquals("{\"data\":[{\"name\":\"yyy\"}],\"total\":1}", r2.readEntity(String.class));
 	}
 
 	@Test
@@ -203,7 +203,7 @@ public class POST_IT extends JerseyTestOnDerby {
 						context));
 		int id2 = SQLSelect.scalarQuery(Integer.class, "SELECT id FROM utest.e3 WHERE name = 'yyy'").selectOne(context);
 
-		assertEquals("{\"success\":true,\"data\":[{\"id\":" + id2 + ",\"name\":\"yyy\"}],\"total\":1}",
+		assertEquals("{\"data\":[{\"id\":" + id2 + ",\"name\":\"yyy\"}],\"total\":1}",
 				r2.readEntity(String.class));
 	}
 
@@ -221,7 +221,7 @@ public class POST_IT extends JerseyTestOnDerby {
 		E3 e3 = (E3) Cayenne.objectForQuery(context, new SelectQuery<E3>(E3.class));
 		int id = Cayenne.intPKForObject(e3);
 
-		assertEquals("{\"success\":true,\"data\":[{\"id\":" + id
+		assertEquals("{\"data\":[{\"id\":" + id
 				+ ",\"name\":\"MM\",\"phoneNumber\":null}],\"total\":1}", response1.readEntity(String.class));
 
 		runtime.newContext().invalidateObjects(e3);
@@ -243,7 +243,7 @@ public class POST_IT extends JerseyTestOnDerby {
 		E3 e3 = (E3) Cayenne.objectForQuery(context, new SelectQuery<E3>(E3.class));
 		int id = Cayenne.intPKForObject(e3);
 
-		assertEquals("{\"success\":true,\"data\":[{\"id\":" + id
+		assertEquals("{\"data\":[{\"id\":" + id
 				+ ",\"name\":\"MM\",\"phoneNumber\":null}],\"total\":1}", response1.readEntity(String.class));
 
 		runtime.newContext().invalidateObjects(e3);
@@ -278,7 +278,7 @@ public class POST_IT extends JerseyTestOnDerby {
 
 		// ordering must be preserved...
 		assertEquals(
-				"{\"success\":true,\"data\":[{\"name\":\"aaa\"},{\"name\":\"zzz\"},{\"name\":\"bbb\"},{\"name\":\"yyy\"}],\"total\":4}",
+				"{\"data\":[{\"name\":\"aaa\"},{\"name\":\"zzz\"},{\"name\":\"bbb\"},{\"name\":\"yyy\"}],\"total\":4}",
 				r2.readEntity(String.class));
 	}
 }

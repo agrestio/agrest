@@ -42,7 +42,7 @@ public class GET_EncoderFilters_IT extends JerseyTestOnDerby {
 
 		Response response1 = target("/e4").queryParam("include", "id").queryParam("sort", "id").request().get();
 		assertEquals(Status.OK.getStatusCode(), response1.getStatus());
-		assertEquals("{\"success\":true,\"data\":[{\"id\":2}],\"total\":1}", response1.readEntity(String.class));
+		assertEquals("{\"data\":[{\"id\":2}],\"total\":1}", response1.readEntity(String.class));
 	}
 
 	@Test
@@ -56,7 +56,7 @@ public class GET_EncoderFilters_IT extends JerseyTestOnDerby {
 				.queryParam("start", "0").queryParam("limit", "2").request().get();
 
 		assertEquals(Status.OK.getStatusCode(), response1.getStatus());
-		assertEquals("{\"success\":true,\"data\":[{\"id\":2},{\"id\":4}],\"total\":5}",
+		assertEquals("{\"data\":[{\"id\":2},{\"id\":4}],\"total\":5}",
 				response1.readEntity(String.class));
 	}
 
@@ -71,7 +71,7 @@ public class GET_EncoderFilters_IT extends JerseyTestOnDerby {
 				.queryParam("start", "2").queryParam("limit", "3").request().get();
 
 		assertEquals(Status.OK.getStatusCode(), response1.getStatus());
-		assertEquals("{\"success\":true,\"data\":[{\"id\":6},{\"id\":8},{\"id\":10}],\"total\":5}",
+		assertEquals("{\"data\":[{\"id\":6},{\"id\":8},{\"id\":10}],\"total\":5}",
 				response1.readEntity(String.class));
 	}
 
@@ -86,7 +86,7 @@ public class GET_EncoderFilters_IT extends JerseyTestOnDerby {
 				.queryParam("start", "2").queryParam("limit", "10").request().get();
 
 		assertEquals(Status.OK.getStatusCode(), response1.getStatus());
-		assertEquals("{\"success\":true,\"data\":[{\"id\":6},{\"id\":8},{\"id\":10}],\"total\":5}",
+		assertEquals("{\"data\":[{\"id\":6},{\"id\":8},{\"id\":10}],\"total\":5}",
 				response1.readEntity(String.class));
 	}
 

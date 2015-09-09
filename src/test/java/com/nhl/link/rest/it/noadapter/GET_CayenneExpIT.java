@@ -36,7 +36,7 @@ public class GET_CayenneExpIT extends JerseyTestOnDerby {
 				.queryParam("cayenneExp", urlEnc("{\"exp\":\"name = 'yyy'\"}")).request().get();
 
 		assertEquals(Status.OK.getStatusCode(), r1.getStatus());
-		assertEquals("{\"success\":true,\"data\":[{\"id\":2}],\"total\":1}", r1.readEntity(String.class));
+		assertEquals("{\"data\":[{\"id\":2}],\"total\":1}", r1.readEntity(String.class));
 	}
 
 	@Test
@@ -49,7 +49,7 @@ public class GET_CayenneExpIT extends JerseyTestOnDerby {
 				.queryParam("cayenneExp", urlEnc("{\"exp\":\"name = $n\",\"params\":{\"n\":\"xxx\"}}")).request().get();
 
 		assertEquals(Status.OK.getStatusCode(), r1.getStatus());
-		assertEquals("{\"success\":true,\"data\":[{\"id\":1}],\"total\":1}", r1.readEntity(String.class));
+		assertEquals("{\"data\":[{\"id\":1}],\"total\":1}", r1.readEntity(String.class));
 	}
 
 	@Test
@@ -62,7 +62,7 @@ public class GET_CayenneExpIT extends JerseyTestOnDerby {
 				.request().get();
 
 		assertEquals(Status.OK.getStatusCode(), r1.getStatus());
-		assertEquals("{\"success\":true,\"data\":[{\"id\":2}],\"total\":1}", r1.readEntity(String.class));
+		assertEquals("{\"data\":[{\"id\":2}],\"total\":1}", r1.readEntity(String.class));
 	}
 
 	@Test
@@ -75,7 +75,7 @@ public class GET_CayenneExpIT extends JerseyTestOnDerby {
 				.request().get();
 
 		assertEquals(Status.OK.getStatusCode(), r1.getStatus());
-		assertEquals("{\"success\":true,\"data\":[{\"id\":2}],\"total\":1}", r1.readEntity(String.class));
+		assertEquals("{\"data\":[{\"id\":2}],\"total\":1}", r1.readEntity(String.class));
 	}
 
 	@Test
@@ -88,7 +88,7 @@ public class GET_CayenneExpIT extends JerseyTestOnDerby {
 				.queryParam("cayenneExp", urlEnc("[\"name = $b\", \"xxx\"]")).request().get();
 
 		assertEquals(Status.OK.getStatusCode(), r1.getStatus());
-		assertEquals("{\"success\":true,\"data\":[{\"id\":1}],\"total\":1}", r1.readEntity(String.class));
+		assertEquals("{\"data\":[{\"id\":1}],\"total\":1}", r1.readEntity(String.class));
 	}
 
 	@Test
@@ -105,7 +105,7 @@ public class GET_CayenneExpIT extends JerseyTestOnDerby {
 				.get();
 
 		assertEquals(Status.OK.getStatusCode(), response1.getStatus());
-		assertEquals("{\"success\":true,\"data\":[{\"id\":6}],\"total\":1}", response1.readEntity(String.class));
+		assertEquals("{\"data\":[{\"id\":6}],\"total\":1}", response1.readEntity(String.class));
 	}
 
 	@Test
@@ -121,7 +121,7 @@ public class GET_CayenneExpIT extends JerseyTestOnDerby {
 				.request().get();
 
 		assertEquals(Status.OK.getStatusCode(), response1.getStatus());
-		assertEquals("{\"success\":true,\"data\":[],\"total\":0}", response1.readEntity(String.class));
+		assertEquals("{\"data\":[],\"total\":0}", response1.readEntity(String.class));
 	}
 
 	@Test
@@ -136,7 +136,7 @@ public class GET_CayenneExpIT extends JerseyTestOnDerby {
 				.queryParam("cayenneExp", urlEnc("{\"exp\":\"e2+.name = null\"}")).request().get();
 
 		assertEquals(Status.OK.getStatusCode(), response1.getStatus());
-		assertEquals("{\"success\":true,\"data\":[{\"id\":9}],\"total\":1}", response1.readEntity(String.class));
+		assertEquals("{\"data\":[{\"id\":9}],\"total\":1}", response1.readEntity(String.class));
 	}
 
 	@Test
@@ -151,7 +151,7 @@ public class GET_CayenneExpIT extends JerseyTestOnDerby {
 				.queryParam("cayenneExp", urlEnc("{\"exp\":\"e2+ = null\"}")).request().get();
 
 		assertEquals(Status.OK.getStatusCode(), response1.getStatus());
-		assertEquals("{\"success\":true,\"data\":[{\"id\":9}],\"total\":1}", response1.readEntity(String.class));
+		assertEquals("{\"data\":[{\"id\":9}],\"total\":1}", response1.readEntity(String.class));
 	}
 
 	@Test
@@ -166,7 +166,7 @@ public class GET_CayenneExpIT extends JerseyTestOnDerby {
 				.queryParam("cayenneExp", urlEnc("{\"exp\":\"e3s+ = null\"}")).request().get();
 
 		assertEquals(Status.OK.getStatusCode(), response1.getStatus());
-		assertEquals("{\"success\":true,\"data\":[{\"id\":2}],\"total\":1}", response1.readEntity(String.class));
+		assertEquals("{\"data\":[{\"id\":2}],\"total\":1}", response1.readEntity(String.class));
 	}
 
 	@Test
@@ -182,7 +182,7 @@ public class GET_CayenneExpIT extends JerseyTestOnDerby {
 				.request().get();
 
 		assertEquals(Status.OK.getStatusCode(), response1.getStatus());
-		assertEquals("{\"success\":true,\"data\":[{\"id\":9}],\"total\":1}", response1.readEntity(String.class));
+		assertEquals("{\"data\":[{\"id\":9}],\"total\":1}", response1.readEntity(String.class));
 	}
 
 	@Test
@@ -200,7 +200,7 @@ public class GET_CayenneExpIT extends JerseyTestOnDerby {
 				.request().get();
 
 		assertEquals(Status.OK.getStatusCode(), response1.getStatus());
-		assertEquals("{\"success\":true,\"data\":[{\"id\":8}],\"total\":1}", response1.readEntity(String.class));
+		assertEquals("{\"data\":[{\"id\":8}],\"total\":1}", response1.readEntity(String.class));
 	}
 
 	@Test
@@ -216,7 +216,7 @@ public class GET_CayenneExpIT extends JerseyTestOnDerby {
 				.get();
 
 		assertEquals(Status.OK.getStatusCode(), response1.getStatus());
-		assertEquals("{\"success\":true,\"data\":[{\"id\":9}],\"total\":1}", response1.readEntity(String.class));
+		assertEquals("{\"data\":[{\"id\":9}],\"total\":1}", response1.readEntity(String.class));
 	}
 
 	@Test
@@ -234,6 +234,6 @@ public class GET_CayenneExpIT extends JerseyTestOnDerby {
 				.get();
 
 		assertEquals(Status.OK.getStatusCode(), response1.getStatus());
-		assertEquals("{\"success\":true,\"data\":[{\"id\":9}],\"total\":1}", response1.readEntity(String.class));
+		assertEquals("{\"data\":[{\"id\":9}],\"total\":1}", response1.readEntity(String.class));
 	}
 }

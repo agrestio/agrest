@@ -30,7 +30,7 @@ public class GET_CustomProperties_IT extends JerseyTestOnDerby {
 				.get();
 		assertEquals(Status.OK.getStatusCode(), response1.getStatus());
 		assertEquals(
-				"{\"success\":true,\"data\":[{\"id\":1,\"x\":\"y_1\"}," + "{\"id\":2,\"x\":\"y_2\"}],\"total\":2}",
+				"{\"data\":[{\"id\":1,\"x\":\"y_1\"}," + "{\"id\":2,\"x\":\"y_2\"}],\"total\":2}",
 				response1.readEntity(String.class));
 	}
 }
