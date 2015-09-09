@@ -7,7 +7,7 @@ import javax.ws.rs.container.ContainerResponseContext;
 import javax.ws.rs.container.ContainerResponseFilter;
 import javax.ws.rs.ext.Provider;
 
-import com.nhl.link.rest.SimpleResponse;
+import com.nhl.link.rest.LrResponse;
 
 /**
  * Ensures correct default response status for LinkRest responses.
@@ -22,9 +22,9 @@ public class ResponseStatusFilter implements ContainerResponseFilter {
 			throws IOException {
 
 		Object entity = responseContext.getEntity();
-		if (entity instanceof SimpleResponse) {
+		if (entity instanceof LrResponse) {
 
-			SimpleResponse response = (SimpleResponse) entity;
+			LrResponse response = (LrResponse) entity;
 			if (response.getStatus() != null) {
 				responseContext.setStatus(response.getStatus().getStatusCode());
 			}

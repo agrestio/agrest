@@ -4,7 +4,7 @@ import javax.ws.rs.container.DynamicFeature;
 import javax.ws.rs.container.ResourceInfo;
 import javax.ws.rs.core.FeatureContext;
 
-import com.nhl.link.rest.SimpleResponse;
+import com.nhl.link.rest.LrResponse;
 
 /**
  * A JAX RS {@link DynamicFeature} that registers {@link ResponseStatusFilter}
@@ -18,8 +18,8 @@ public class ResponseStatusDynamicFeature implements DynamicFeature {
 	public void configure(ResourceInfo resourceInfo, FeatureContext context) {
 
 		// ignore any other method signatures - in those cases we assume
-		// response status is set by the user on his own..
-		if (SimpleResponse.class.isAssignableFrom(resourceInfo.getResourceMethod().getReturnType())) {
+		// response status is set by the user on their own..
+		if (LrResponse.class.isAssignableFrom(resourceInfo.getResourceMethod().getReturnType())) {
 			context.register(ResponseStatusFilter.class);
 		}
 	}

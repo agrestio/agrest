@@ -11,11 +11,10 @@ import com.nhl.link.rest.encoder.Encoder;
 import com.nhl.link.rest.encoder.GenericEncoder;
 
 /**
- * {@link DataResponse} is populated with request parts as a request processing
- * pipeline proceeds. After all its information is filled, the response can be
- * encoded to JSON.
+ * A response object that represents a 'Collection Document' from LinkRest
+ * protocol.
  */
-public class DataResponse<T> extends SimpleResponse {
+public class DataResponse<T> extends LrResponse {
 
 	private Class<T> type;
 	private ResourceEntity<T> entity;
@@ -52,16 +51,10 @@ public class DataResponse<T> extends SimpleResponse {
 	}
 
 	DataResponse(Class<T> type) {
-		super(true, null);
 		this.type = type;
 		this.prefetchSemantics = PrefetchTreeNode.DISJOINT_PREFETCH_SEMANTICS;
 		this.encoder = GenericEncoder.encoder();
 		this.objects = Collections.emptyList();
-	}
-
-	public DataResponse<T> withMessage(String message) {
-		this.message = message;
-		return this;
 	}
 
 	public Class<T> getType() {

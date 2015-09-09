@@ -29,7 +29,7 @@ public class GET_Metadata_IT extends JerseyTestOnDerby {
 		assertEquals(Response.Status.OK.getStatusCode(), response1.getStatus());
 
         assertEquals(
-                "{\"success\":true," +
+                "{" +
                         "\"entity\":{" +
                             "\"name\":\"E5\"," +
                             "\"properties\":[" +

@@ -1,10 +1,10 @@
 package com.nhl.link.rest;
 
-import javax.ws.rs.core.Response.Status;
+/**
+ * A response object that represents a 'Simple Document' from LinkRest protocol .
+ */
+public class SimpleResponse extends LrResponse {
 
-public class SimpleResponse {
-
-	protected Status status;
 	protected boolean success;
 	protected String message;
 
@@ -25,17 +25,4 @@ public class SimpleResponse {
 		return success;
 	}
 
-	/**
-	 * @since 1.19
-	 */
-	public Status getStatus() {
-		return status;
-	}
-
-	/**
-	 * @since 1.19
-	 */
-	public void setStatus(Status status) {
-		this.status = status;
-	}
 }
