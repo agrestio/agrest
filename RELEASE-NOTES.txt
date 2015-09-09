@@ -5,6 +5,7 @@ Release 1.19
 #111 Annotation-based listeners for update chains
 #112 Externalizing Processor Chain invocation
 #113 UpdateBuilder / UpdateResponse / EntityUpdate refactoring
+#114 Collection Document: remove "success":true key, keep it under SenchaAdapter
 
 Release 1.18
 
