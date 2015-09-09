@@ -1,17 +1,16 @@
 package com.nhl.link.rest.runtime;
 
 import java.util.Collection;
+import java.util.Map;
 
 import javax.ws.rs.core.Configuration;
 import javax.ws.rs.core.Feature;
 import javax.ws.rs.core.FeatureContext;
 
 import org.apache.cayenne.di.Injector;
+import org.apache.cayenne.di.Key;
 
-import com.nhl.link.rest.provider.DataResponseWriter;
-import com.nhl.link.rest.provider.MetadataResponseWriter;
 import com.nhl.link.rest.provider.ResponseStatusDynamicFeature;
-import com.nhl.link.rest.provider.SimpleResponseWriter;
 
 /**
  * Stores LinkRest runtime stack packaged as a JAX RS {@link Feature}.
@@ -19,6 +18,8 @@ import com.nhl.link.rest.provider.SimpleResponseWriter;
 public class LinkRestRuntime implements Feature {
 
 	static final String LINK_REST_CONTAINER_PROPERTY = "linkrest.container";
+
+	public static final String BODY_WRITERS_MAP = "linkrest.jaxrs.bodywriters";
 
 	private Injector injector;
 	private Collection<Class<?>> extraComponents;
@@ -36,8 +37,8 @@ public class LinkRestRuntime implements Feature {
 
 		Injector injector = (Injector) config.getProperty(LINK_REST_CONTAINER_PROPERTY);
 		if (injector == null) {
-			throw new IllegalStateException("LinkRest is misconfigured. No injector found for property: "
-					+ LINK_REST_CONTAINER_PROPERTY);
+			throw new IllegalStateException(
+					"LinkRest is misconfigured. No injector found for property: " + LINK_REST_CONTAINER_PROPERTY);
 		}
 
 		return injector.getInstance(type);
@@ -63,9 +64,12 @@ public class LinkRestRuntime implements Feature {
 		// this gives everyone access to the LinkRest services
 		context.property(LinkRestRuntime.LINK_REST_CONTAINER_PROPERTY, injector);
 
-		context.register(SimpleResponseWriter.class);
-		context.register(DataResponseWriter.class);
-		context.register(MetadataResponseWriter.class);
+		@SuppressWarnings("unchecked")
+		Map<String, Class<?>> bodyWriters = injector.getInstance(Key.get(Map.class, LinkRestRuntime.BODY_WRITERS_MAP));
+
+		for (Class<?> type : bodyWriters.values()) {
+			context.register(type);
+		}
 
 		context.register(ResponseStatusDynamicFeature.class);
 

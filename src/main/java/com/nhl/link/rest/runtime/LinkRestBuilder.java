@@ -20,8 +20,11 @@ import org.apache.cayenne.di.Injector;
 import org.apache.cayenne.di.Module;
 import org.apache.cayenne.validation.ValidationException;
 
+import com.nhl.link.rest.DataResponse;
 import com.nhl.link.rest.EntityConstraint;
 import com.nhl.link.rest.LinkRestException;
+import com.nhl.link.rest.MetadataResponse;
+import com.nhl.link.rest.SimpleResponse;
 import com.nhl.link.rest.encoder.EncoderFilter;
 import com.nhl.link.rest.encoder.PropertyMetadataEncoder;
 import com.nhl.link.rest.meta.LrEntity;
@@ -30,7 +33,10 @@ import com.nhl.link.rest.meta.LrEntityOverlay;
 import com.nhl.link.rest.meta.parser.IResourceParser;
 import com.nhl.link.rest.meta.parser.ResourceParser;
 import com.nhl.link.rest.provider.CayenneRuntimeExceptionMapper;
+import com.nhl.link.rest.provider.DataResponseWriter;
 import com.nhl.link.rest.provider.LinkRestExceptionMapper;
+import com.nhl.link.rest.provider.MetadataResponseWriter;
+import com.nhl.link.rest.provider.SimpleResponseWriter;
 import com.nhl.link.rest.provider.ValidationExceptionMapper;
 import com.nhl.link.rest.runtime.adapter.LinkRestAdapter;
 import com.nhl.link.rest.runtime.cayenne.CayennePersister;
@@ -290,10 +296,15 @@ public class LinkRestBuilder {
 				binder.<EncoderFilter> bindList(EncoderService.ENCODER_FILTER_LIST).addAll(encoderFilters);
 				binder.<LrEntity<?>> bindList(MetadataService.EXTRA_ENTITIES_LIST).addAll(extraEntities);
 				binder.<LrEntityOverlay<?>> bindMap(MetadataService.ENTITY_OVERLAY_MAP).putAll(entityOverlays);
+				binder.<Class<?>> bindMap(LinkRestRuntime.BODY_WRITERS_MAP)
+						.put(SimpleResponse.class.getName(), SimpleResponseWriter.class)
+						.put(DataResponse.class.getName(), DataResponseWriter.class)
+						.put(MetadataResponse.class.getName(), MetadataResponseWriter.class);
 
 				binder.<EntityConstraint> bindList(ConstraintsHandler.DEFAULT_READ_CONSTRAINTS_LIST);
 				binder.<EntityConstraint> bindList(ConstraintsHandler.DEFAULT_WRITE_CONSTRAINTS_LIST);
-				binder.<PropertyMetadataEncoder>bindMap(EncoderService.PROPERTY_METADATA_ENCODER_MAP).putAll(metadataEncoders);
+				binder.<PropertyMetadataEncoder> bindMap(EncoderService.PROPERTY_METADATA_ENCODER_MAP)
+						.putAll(metadataEncoders);
 
 				if (linkRestServiceType != null) {
 					binder.bind(ILinkRestService.class).to(linkRestServiceType);
