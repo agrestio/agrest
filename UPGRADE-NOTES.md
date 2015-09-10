@@ -2,7 +2,7 @@
 
 ###  Collection Document: remove "success":true key, keep it under SenchaAdapter [#114](https://github.com/nhl/link-rest/issues/114)
 
-LinkRest no longer includes ```"success":true``` key in Collection Document responses, unless you are using SenchaAdapter. The hope is that nobody actually relied on the JSON body to check the status of response, and instead used HTTP status code for that purpose.
+LinkRest no longer includes ```"success":true``` key in Collection Document responses, unless you are using SenchaAdapter. The hope is that nobody actually relied on the JSON body to check the status of response, and instead used HTTP status code for that purpose. ```"success":true``` is still available when SenchaAdapter is in use. 
 
 ###  UpdateBuilder / UpdateResponse / EntityUpdate refactoring [#113](https://github.com/nhl/link-rest/issues/113)
 
@@ -13,9 +13,9 @@ DataResponse<T> syncAndSelect(String);
 SimpleResponse sync(String)
 ```
 
-Additionally ```UpdateBuilder.includeData()/excludeData()``` methods were removed, as they make no sense any longer. The users must review compilation errors and deprecation warnings and replace those 3 methods with calls to syncAndSelect() or sync().Note that deprecated 'process(String)' method would work the same way as 'sync' with default adapter, and same way as 'syncAndSelect' with SenchaAdapter
+Additionally ```UpdateBuilder.includeData()/excludeData()``` methods were removed, as they make no sense any longer. The users must review compilation errors and deprecation warnings and replace those 3 methods with calls to ```syncAndSelect()``` or ```sync()```. Note that deprecated 'process(String)' method would work the same way as 'sync' with default adapter, and same way as 'syncAndSelect' with SenchaAdapter.
 
-This change also required us to kill ```UpdateFilter```. UpdateFilter users must change to annotated listeners available per [#111](https://github.com/nhl/link-rest/issues/111).
+This change also forced us to kill ```UpdateFilter```. UpdateFilter users must change to annotated listeners available per [#111](https://github.com/nhl/link-rest/issues/111).
 
 
 ###   Externalizing Processor Chain invocation [#112](https://github.com/nhl/link-rest/issues/112)
