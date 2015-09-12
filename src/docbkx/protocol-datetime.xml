@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<chapter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink"
+    version="5.0" xml:id="protocol-datetime">
+    <title>Dates and Times</title>
+      <para>JSON doesn't have datatypes for either date or time. Both are represented as strings.
+         Server and client must ensure that date/time strings are in <link
+            xlink:href="http://en.wikipedia.org/wiki/ISO_8601">ISO 8601 format</link>.
+         E.g.:<programlisting>2015-04-19T11:08:53Z
+2015-04-10T11:08
+2015-04-19</programlisting></para>
+      <para>Developers should not assume that the server is in the same time zone as the browser.
+         All timezone-aware expressions should contain time zone offset or "Z" suffix (for "Zulu"
+         time).</para>
+</chapter>

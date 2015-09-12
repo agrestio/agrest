@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<chapter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink"
+    xmlns:xi="http://www.w3.org/2001/XInclude"
+    version="5.0" xml:id="framework-getting-started">
+
+        <title>Getting Started</title>
+        <para>To load LinkRest in your project, follow these simple steps:</para>
+        <para>1. Declare LinkRest dependency. Here is a Maven example. If you are using Gradle or
+            Ant, you do what needs to be done there to include LinkRest
+            dependency.<programlisting language="xml">&lt;dependency>
+   &lt;groupId>com.nhl.link.rest&lt;/groupId>
+   &lt;artifactId>link-rest&lt;/artifactId>
+   &lt;version>1.19&lt;/version>
+&lt;/dependency> </programlisting>2.
+            Create <code>LinkRestRuntime</code>, and load it in JAX-RS container. Assuming the
+            container is Jersey, this may look like
+            this:<programlisting language="java">import javax.ws.rs.ApplicationPath;
+import org.glassfish.jersey.server.ResourceConfig;
+import com.nhl.link.rest.runtime.LinkRestBuilder;
+
+/**
+ * A Jersey-specific JAX-RS Application class that loads LinkRest.
+ */
+@ApplicationPath("/")
+public class JaxRsApplication extends ResourceConfig {
+
+	public JaxRsApplication() {
+
+		ServerRuntime cayenneRuntime = ..
+        LinkRestRuntime lrRuntime = LinkRestBuilder.build(cayenneRuntime);
+        super.register(lrRuntime);
+
+        // continue with Application setup...
+        ..
+	}
+}
+</programlisting>
+            Now you are ready to write LinkRest endpoints.</para>
+</chapter>
