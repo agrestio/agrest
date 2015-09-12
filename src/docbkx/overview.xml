@@ -3,7 +3,7 @@
     version="5.0" xml:id="overview">
     <title>LinkRest Overview</title>
  
-    <section xml:id="about-section">
+    <section xml:id="overview-what-is-linkrest">
         <title>What is LinkRest</title>
         <para>LinkRest is a set of tools to build web APIs for your data. You would use it to expose
             a data store (such as a relational database) as a RESTful web service. To achieve that
@@ -19,6 +19,18 @@
         </para>
        
     </section>
+    <section xml:id="overview-what-linkrest-is-not">
+        <title>What LinkRest is Not</title>
+        <para>LinkRest is not an automated engine to take your DB online with a single command. You
+            still have to write code for JAX-RS endpoints (however simple and trivial that code
+            might end up being). Having this code around allows you to customize processing,
+            implement security around endpoints, hide certain methods, etc. This is a defensive
+            approach that goes a long way to avoid unintended consequences when opening up your data
+            on the web.</para>
+        <para>Having said that, such an engine can be written on top of LinkRest with relative
+            ease.</para>
+        
+    </section>
     <section xml:id="data-stores">
         <title>Supported Data Stores</title>
         <para>LinkRest is written on top of <link xlink:href="http://cayenne.apache.org">Apache
@@ -29,7 +41,7 @@
     </section>
     
     <section xml:id="security-features">
-        <title>Security Features</title>
+        <title>Security</title>
         <para>From the very beginning LinkRest was designed with security in mind. It can be easily
             integrated with common web and enterprise security solutions (OAuth, <link
                 xlink:href="http://shiro.apache.org/">Apache Shiro</link>, etc.), giving Java

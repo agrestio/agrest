@@ -82,9 +82,10 @@ Content-Type: application/json
    </section>
    
    <section xml:id="protocol-json-datetime">
-      <title>Dates and Times in JSON</title>
-      <para>JSON doesn't have a datatype for either date or time. Both are represented as strings.
-         Both server and client must ensure that date/time strings are in <link xlink:href="http://en.wikipedia.org/wiki/ISO_8601">ISO 8601 format</link>.
+      <title>Dates and Times</title>
+      <para>JSON doesn't have datatypes for either date or time. Both are represented as strings.
+         Server and client must ensure that date/time strings are in <link
+            xlink:href="http://en.wikipedia.org/wiki/ISO_8601">ISO 8601 format</link>.
          E.g.:<programlisting>2015-04-19T11:08:53Z
 2015-04-10T11:08
 2015-04-19</programlisting></para>
