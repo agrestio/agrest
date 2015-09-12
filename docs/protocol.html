@@ -1,6 +1,6 @@
 <html><head>
       <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-   <title xmlns:d="http://docbook.org/ns/docbook">Chapter&nbsp;2.&nbsp;LinkRest Protocol</title><link rel="stylesheet" type="text/css" href="css/doc.css"><meta xmlns:d="http://docbook.org/ns/docbook" name="keywords" content="LinkRest 1 documentation"><meta xmlns:d="http://docbook.org/ns/docbook" name="description" content="User documentation for LinkRest version 1"><link rel="home" href="index.html" title="LinkRest Guide"><link rel="up" href="index.html" title="LinkRest Guide"><link rel="prev" href="overview.html" title="Chapter&nbsp;1.&nbsp;LinkRest Overview"><link rel="next" href="framework.html" title="Chapter&nbsp;3.&nbsp;LinkRest Framework"><script xmlns:d="http://docbook.org/ns/docbook" type="text/javascript">
+   <title xmlns:d="http://docbook.org/ns/docbook">Part&nbsp;II.&nbsp;LinkRest Protocol</title><link rel="stylesheet" type="text/css" href="css/doc.css"><meta xmlns:d="http://docbook.org/ns/docbook" name="keywords" content="LinkRest 1 documentation"><meta xmlns:d="http://docbook.org/ns/docbook" name="description" content="User documentation for LinkRest version 1"><link rel="home" href="index.html" title="LinkRest Guide"><link rel="up" href="index.html" title="LinkRest Guide"><link rel="prev" href="security-features.html" title="Chapter&nbsp;4.&nbsp;Security"><link rel="next" href="protocol-overview.html" title="Chapter&nbsp;5.&nbsp;Overview"><script xmlns:d="http://docbook.org/ns/docbook" type="text/javascript">
   (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
   (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
   m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
@@ -8,114 +8,5 @@
 
   ga('create', 'UA-67243676-1', 'auto');
   ga('send', 'pageview');
-        </script></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div xmlns:d="http://docbook.org/ns/docbook" class="navheader"><table width="100%" summary="Navigation header"><tr><th class="versioninfo">v.1 (1.19-SNAPSHOT)</th><th align="center">Chapter&nbsp;2.&nbsp;LinkRest Protocol</th><th></th></tr><tr><td width="20%" align="left"><a accesskey="p" href="overview.html">Prev</a>&nbsp;</td><th width="60%" align="center">&nbsp;</th><td width="20%" align="right">&nbsp;<a accesskey="n" href="framework.html">Next</a></td></tr></table><hr></div><div class="chapter" title="Chapter&nbsp;2.&nbsp;LinkRest Protocol"><div class="titlepage"><div><div><h2 class="title"><a name="protocol"></a>Chapter&nbsp;2.&nbsp;LinkRest Protocol</h2></div></div></div><div class="toc"><p><b>Table of Contents</b></p><dl><dt><span class="section"><a href="protocol.html#protocol-overview">Overview</a></span></dt><dt><span class="section"><a href="protocol.html#protocol-json-documents">JSON Documents</a></span></dt><dt><span class="section"><a href="protocol.html#protocol-json-datetime">Dates and Times in JSON</a></span></dt><dt><span class="section"><a href="protocol.html#protocol-control-parameters">Control Parameters</a></span></dt><dt><span class="section"><a href="protocol.html#protocol-extensions">Protocol Extensions</a></span></dt></dl></div><div class="section" title="Overview"><div class="titlepage"><div><div><h2 class="title"><a name="protocol-overview"></a>Overview</h2></div></div></div><p>LinkRest Protocol is a simple HTTP/JSON-based message protocol. It operates on an object
-         model implicitly shared between a client and a server. It defines the format of JSON
-         documents exchanged between client and server, and a set of control parameters that let the
-         client to control representation of the model returned from the server. E.g. the client may
-         request a range of objects, sorted in a specific order, matching a criteria, with each
-         object including a subset of attributes and related entities. This gives the client exactly
-         what it needs, thus simplifying the code, minimizing the number of trips to the server, and
-         optimizing the size of the response.</p><p><code class="code">application/json</code> is used in both requests and responses where applicable.
-         Values of some control parameters below are also represented as JSON.</p><p>All examples below use an imaginary CMS data model that is made of 2 entities: Domain
-         and Article, with a 1..N relationship between them: </p><p><span class="inlinemediaobject"><img src="img/model.png"></span></p></div><div class="section" title="JSON Documents"><div class="titlepage"><div><div><h2 class="title"><a name="protocol-json-documents"></a>JSON Documents</h2></div></div></div><div class="section" title="Response: Simple Document"><div class="titlepage"><div><div><h3 class="title"><a name="protocol-simple-document"></a>Response: Simple Document</h3></div></div></div><p>This document is used in responses that contain no data, just a boolean status and a
-            message. On success it might look like
-            this:</p><pre class="programlisting">HTTP/1.1 200 OK
-Content-Type: application/json
-
-{
-   "success" : true,
-   "message" : "all is good"
-} </pre><p>On
-            failure it might look like
-            this:</p><pre class="programlisting">HTTP/1.1 500 Server error
-Content-Type: application/json    
-
-{
-   "success" : false,
-   "message" : "Database connection failure"
-} </pre></div><div class="section" title="Response: Collection Document"><div class="titlepage"><div><div><h3 class="title"><a name="protocol-collection-document"></a>Response: Collection Document</h3></div></div></div><p>A document that passes the data from the server to the client. This is the main
-            representation of data in
-            LinkRest.</p><pre class="programlisting">HTTP/1.1 200 OK
-Content-Type: application/json
-
-{
-   "data" : [
-      { "id" : 5, "name": "A" },
-      { "id" : 8, "name": "B" }
-   ],
-   "total" : 2
-}</pre><p><code class="code">"data"</code> array contains entity objects. Implicit entity model defines what
-            attributes and relationships (collectively - "properties") each object has. A subset of
-            properties showing in the collection document is a defined by a combination of
-            server-side constraints and client request control parameters. Each object in the data
-            array may contain related objects, those in turn may contain their related objects, with
-            no limit on the depth of nesting.</p><p><code class="code">"total"</code> is a number of objects one would see in the collection if there
-            was no pagination. If pagination is in use (see <a class="xref" href="protocol.html#protocol-start-limit" title="Pagination with start / limit">Pagination</a>),
-            the total may be greater than the number of visible objects in the "data" array.
-            Otherwise it is equal to the size of "data".</p></div><div class="section" title="Request: Update Document"><div class="titlepage"><div><div><h3 class="title"><a name="protocol-update-document"></a>Request: Update Document</h3></div></div></div><p>Update Document is sent from the client to the server to modify an entity collection.
-            It is a Collection document stripped down to its "data" section. There are two flavors -
-            a single object and an array of
-            objects:</p><pre class="programlisting">{ "id" : 5, "name": "X" } </pre><pre class="programlisting">[
-   { "id" : 5, "name": "X" },
-   { "id" : 8, "name": "Y" }
-] </pre></div></div><div class="section" title="Dates and Times in JSON"><div class="titlepage"><div><div><h2 class="title"><a name="protocol-json-datetime"></a>Dates and Times in JSON</h2></div></div></div><p>JSON doesn't have a datatype for either date or time. Both are represented as strings.
-         Both server and client must ensure that date/time strings are in <a class="link" href="http://en.wikipedia.org/wiki/ISO_8601" target="_top">ISO 8601 format</a>.
-         E.g.:</p><pre class="programlisting">2015-04-19T11:08:53Z
-2015-04-10T11:08
-2015-04-19</pre><p>Developers should not assume that the server is in the same time zone as the browser.
-         All timezone-aware expressions should contain time zone offset or "Z" suffix (for "Zulu"
-         time).</p></div><div class="section" title="Control Parameters"><div class="titlepage"><div><div><h2 class="title"><a name="protocol-control-parameters"></a>Control Parameters</h2></div></div></div><p>Control parameters, usually passed as URL keys, apply to the Collection Document and let
-         the server to provide a single generic endpoint per entity, while still allowing the client
-         to shape up the response Collection to its liking. These parameters are normally used with
-         GET, however POST/PUT can also return a Collection Document, so many of the parameters are
-         also applicable when modifying the data.</p><div class="section" title="Filtering Collection with cayenneExp"><div class="titlepage"><div><div><h3 class="title"><a name="protocol-cayenneExp"></a>Filtering Collection with <code class="code">cayenneExp</code></h3></div></div></div><p>A conditional expression that is used to filter the response objects. Expression
-            String should follow the <a class="link" href="http://cayenne.apache.org/docs/4.0/cayenne-guide/expressions.html" target="_top">format
-               understood by Cayenne</a> (hence the name - "cayenneExp"). The root for the
-            property paths is the request entity (unless "cayenneExp" is used within a relationship
-            "include", in which case the root is that related entity). </p><p>Example 1: Filtering on a single property.</p><p><code class="code">cayenneExp=vhost='linkrest.org'&#8232;</code></p><p>Example 2: Filtering using outer join (the "+" sign is Cayenne notation for
-            outer).</p><p><code class="code">cayenneExp=articles+ = null</code></p><p>Example 3: Filtering with parameters using positional bindings.</p><p><code class="code">cayenneExp=["articles.body like $b","%LinkRest%"]</code></p><p>Example 4: Filtering with parameters using named bindings.</p><p><code class="code">cayenneExp={ "exp" : "articles.body like $b", "params":
-               {"b":"%LinkRest%"}}</code></p></div><div class="section" title="Ordering Collection with sort / dir"><div class="titlepage"><div><div><h3 class="title"><a name="protocol-sort-dir"></a>Ordering Collection with <code class="code">sort</code> / <code class="code">dir</code></h3></div></div></div><p>Example 1: Sort on a single property.</p><p><code class="code">sort=vhost&#8232;</code></p><p>Example 2: Sort descending on a property.</p><p><code class="code">sort=id&amp;dir=DESC&#8232;</code></p><p>Example 3: Same as 2, but sort is a JSON object.</p><p><code class="code">sort={"property":"vhost","direction":"DESC"}&#8232;</code></p><p>Example 4: Multiple sortings as a single JSON structure.</p><p><code class="code">sort=[{"property":"name"},&#8232;"property":"vhost","direction":"DESC"}]&#8232;
-            </code></p></div><div class="section" title="Pagination with start / limit"><div class="titlepage"><div><div><h3 class="title"><a name="protocol-start-limit"></a>Pagination with <code class="code">start</code> / <code class="code">limit</code></h3></div></div></div><p>These two parameters are used together to request from the server a range of objects
-            for a potentially huge collection. They allow to implement efficient data pagination on
-            the client.</p><p><code class="code">"start"</code> is an offset within the "data" array. All the objects below this
-            offset are discarded from the collection. Default "start" is 0. </p><p><code class="code">"limit"</code> is a maximum number of objects in the collection "data". Default
-            is infinity (no limit). </p><p>"limit" is applied after "start". So for a collection with a total of 10 objects,
-               <code class="code">?start=2&amp;limit=5</code> would result in objects 2..6 returned from the
-            server. Returned Collection "total" would still be 10.</p></div><div class="section" title="Shaping Collection Entities with include / exclude"><div class="titlepage"><div><div><h3 class="title"><a name="protocol-include-exclude"></a>Shaping Collection Entities with <code class="code">include</code> /
-            <code class="code">exclude</code></h3></div></div></div><p>Model entities may have "simple" properties (attributes) and properties that point to
-            related entities (relationships). By default Collection Document contains entity
-            representation that includes its "id", all of its attributes, and none of the
-            relationships. "include" and "exclude" parameters allow the client to request a specific
-            subset of entity properties, including related entities. Some examples are given below,
-            showing include/exclude parameters and resulting entity contents.</p><p>Example 1: Include default properties (all entity attributes) minus "vhost"
-            attribute. </p><p><code class="code">exclude=vhost</code></p><pre class="programlisting">{ "id" : 45, "name" : "LinkRest Site" } </pre><p>Example 2: Exclude all properties, but "id".</p><p></p><p><code class="code">include=id</code></p><pre class="programlisting">{ "id" : 45 } </pre><p>Example 3: Multiple includes, one of them points to attributes of related
-            entity.</p><p><code class="code">include=id&amp;include=articles.title&#8232;</code></p><pre class="programlisting">{
-   "id" : 45,
-   "articles" : [
-      { "title" : "LinkRest Includes" }, 
-      { "title" : "Other Tech News" },
-      { "title" : "Introducing LinkRest" }
-   ]
-}</pre><p>Example 4: Advanced include. Include specification can itself be a JSON object and
-            contain "cayenneExp" and "sort" directives shaping up a collection of related objects
-            for each root object.</p><p><code class="code">include={"path":"articles","cayenneExp":"title like
-            '%LinkRest%'","sort":"title"}&#8232;&amp;include=articles.title&#8232;</code></p><pre class="programlisting">{
-   "id":45,
-   "articles" : [
-      { "title" : "Introducing LinkRest" },
-      { "title" : "LinkRest Includes" }
-   ]
-}</pre><p>Example 5: Related objects as a map. Here we'll map article bodies by title.</p><p><code class="code">include={"path":"articles","mapBy":"title"}&amp;include=articles.body</code>&#8232;</p><pre class="programlisting">{
-   "articles" : {&#8232;  
-      "Introducing LinkRest" : { "body" : "LinkRest is a .." },&#8232;  
-      "LinkRest Includes" : { "body" : "Includes are .." }&#8232;  
-   }
-}</pre></div></div><div class="section" title="Protocol Extensions"><div class="titlepage"><div><div><h2 class="title"><a name="protocol-extensions"></a>Protocol Extensions</h2></div></div></div><p>With the help of <a class="link" href="https://github.com/nhl/link-rest/blob/master/src/main/java/com/nhl/link/rest/runtime/adapter/LinkRestAdapter.java" target="_top">LinkRestAdapter</a> and other LinkRest extension techniques one can extend or
-         customize the protocol to recognize extra control parameters, etc. LinkRest ships with one
-         such optional extension that adapts the framework for the use with Sencha/ExtJS JavaScript
-         client. This extension is described below.</p><div class="section" title="Sencha Adapter"><div class="titlepage"><div><div><h3 class="title"><a name="sencha-adapter"></a>Sencha Adapter</h3></div></div></div><p><a class="link" href="https://github.com/nhl/link-rest/blob/master/src/main/java/com/nhl/link/rest/runtime/adapter/sencha/SenchaAdapter.java" target="_top">SenchaAdapter</a> provides a few extensions to the LinkRest protocol to better
-            handle certain Sencha features:</p><div class="itemizedlist"><ul class="itemizedlist"><li class="listitem"><p>If a to-one relationship property is included in the Collection, the
-                     framework would also generate a companion "synthetic" FK property called
-                     "propertyName_id"</p></li><li class="listitem"><p><code class="code">"filter"</code> key - an alternative to
-                     <code class="code">"cayenneExp"</code>.</p></li><li class="listitem"><p><code class="code">"group"</code> / <code class="code">"groupDir"</code> keys that are functionally
-                     equivalent to <code class="code">"sort"</code> / <code class="code">"dir"</code>.</p></li></ul></div></div></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="overview.html">Prev</a>&nbsp;</td><td width="20%" align="center">&nbsp;</td><td width="40%" align="right">&nbsp;<a accesskey="n" href="framework.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Chapter&nbsp;1.&nbsp;LinkRest Overview&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top">&nbsp;Chapter&nbsp;3.&nbsp;LinkRest Framework</td></tr></table></div></body></html>
+        </script></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div xmlns:d="http://docbook.org/ns/docbook" class="navheader"><table width="100%" summary="Navigation header"><tr><th class="versioninfo">v.1 (1.19-SNAPSHOT)</th><th align="center">Part&nbsp;II.&nbsp;LinkRest Protocol</th><th></th></tr><tr><td width="20%" align="left"><a accesskey="p" href="security-features.html">Prev</a>&nbsp;</td><th width="60%" align="center">&nbsp;</th><td width="20%" align="right">&nbsp;<a accesskey="n" href="protocol-overview.html">Next</a></td></tr></table><hr></div><div class="part" title="Part&nbsp;II.&nbsp;LinkRest Protocol"><div class="titlepage"><div><div><h1 class="title"><a name="protocol"></a>Part&nbsp;II.&nbsp;LinkRest Protocol</h1></div></div></div><div class="toc"><p><b>Table of Contents</b></p><dl><dt><span class="chapter"><a href="protocol-overview.html">5. Overview</a></span></dt><dt><span class="chapter"><a href="protocol-json-documents.html">6. JSON Documents</a></span></dt><dd><dl><dt><span class="section"><a href="protocol-json-documents.html#protocol-simple-document">Response: Simple Document</a></span></dt><dt><span class="section"><a href="protocol-json-documents.html#protocol-collection-document">Response: Collection Document</a></span></dt><dt><span class="section"><a href="protocol-json-documents.html#protocol-update-document">Request: Update Document</a></span></dt></dl></dd><dt><span class="chapter"><a href="protocol-datetime.html">7. Dates and Times</a></span></dt><dt><span class="chapter"><a href="protocol-control-parameters.html">8. Control Parameters</a></span></dt><dd><dl><dt><span class="section"><a href="protocol-control-parameters.html#protocol-cayenneExp">Filtering Collection with <code class="code">cayenneExp</code></a></span></dt><dt><span class="section"><a href="protocol-control-parameters.html#protocol-sort-dir">Ordering Collection with <code class="code">sort</code> / <code class="code">dir</code></a></span></dt><dt><span class="section"><a href="protocol-control-parameters.html#protocol-start-limit">Pagination with <code class="code">start</code> / <code class="code">limit</code></a></span></dt><dt><span class="section"><a href="protocol-control-parameters.html#protocol-include-exclude">Shaping Collection Entities with <code class="code">include</code> /
+            <code class="code">exclude</code></a></span></dt></dl></dd><dt><span class="chapter"><a href="protocol-extensions.html">9. Protocol Extensions</a></span></dt><dd><dl><dt><span class="section"><a href="protocol-extensions.html#sencha-adapter">Sencha Adapter</a></span></dt></dl></dd></dl></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="security-features.html">Prev</a>&nbsp;</td><td width="20%" align="center">&nbsp;</td><td width="40%" align="right">&nbsp;<a accesskey="n" href="protocol-overview.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Chapter&nbsp;4.&nbsp;Security&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top">&nbsp;Chapter&nbsp;5.&nbsp;Overview</td></tr></table></div></body></html>
