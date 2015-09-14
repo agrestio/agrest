@@ -32,10 +32,10 @@ class EntityUpdateReaderProcessor {
 	}
 
 	@SuppressWarnings("unchecked")
-	<T> Collection<EntityUpdate<T>> read(Type genericType, InputStream entityStream)
+	<T> Collection<EntityUpdate<T>> read(Type entityUpdateType, InputStream entityStream)
 			throws IOException, WebApplicationException {
 
-		Class<T> entityType = (Class<T>) entityTypeForParamType(genericType);
+		Class<T> entityType = (Class<T>) entityTypeForParamType(entityUpdateType);
 		LrEntity<T> entity = metadataService.getLrEntity(entityType);
 		if (entity == null) {
 			throw new LinkRestException(Status.INTERNAL_SERVER_ERROR,

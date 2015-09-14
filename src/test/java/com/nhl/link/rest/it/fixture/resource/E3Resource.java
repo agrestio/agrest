@@ -1,5 +1,7 @@
 package com.nhl.link.rest.it.fixture.resource;
 
+import java.util.Collection;
+
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -65,6 +67,13 @@ public class E3Resource {
 	}
 
 	@PUT
+	@Path("updatebinding")
+	public SimpleResponse sync_EntityUpdateCollection(@Context UriInfo uriInfo,
+			Collection<EntityUpdate<E3>> entityUpdates) {
+		return LinkRest.idempotentFullSync(E3.class, config).uri(uriInfo).sync(entityUpdates);
+	}
+
+	@PUT
 	@Path("callbacklistener")
 	public DataResponse<E3> syncWithCallbackListeners(@Context UriInfo uriInfo, String requestBody) {
 		return LinkRest.idempotentFullSync(E3.class, config).listener(new UpdateCallbackListener()).uri(uriInfo)
@@ -82,10 +91,10 @@ public class E3Resource {
 	public DataResponse<E3> updateE3(@PathParam("id") int id, String requestBody) {
 		return LinkRest.update(E3.class, config).id(id).syncAndSelect(requestBody);
 	}
-	
+
 	@PUT
 	@Path("updatebinding/{id}")
-	public SimpleResponse updateE3_EntityUpdateParam(@PathParam("id") int id, EntityUpdate<E3> update) {
+	public SimpleResponse updateE3_EntityUpdateSingle(@PathParam("id") int id, EntityUpdate<E3> update) {
 		return LinkRest.createOrUpdate(E3.class, config).id(id).sync(update);
 	}
 

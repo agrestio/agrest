@@ -10,6 +10,7 @@ import javax.ws.rs.core.FeatureContext;
 import org.apache.cayenne.di.Injector;
 import org.apache.cayenne.di.Key;
 
+import com.nhl.link.rest.provider.EntityUpdateCollectionReader;
 import com.nhl.link.rest.provider.EntityUpdateReader;
 import com.nhl.link.rest.provider.ResponseStatusDynamicFeature;
 
@@ -73,8 +74,9 @@ public class LinkRestRuntime implements Feature {
 		}
 
 		context.register(ResponseStatusDynamicFeature.class);
-		
+
 		context.register(EntityUpdateReader.class);
+		context.register(EntityUpdateCollectionReader.class);
 
 		for (Class<?> c : extraComponents) {
 			context.register(c);

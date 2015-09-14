@@ -23,13 +23,27 @@ public class PUT_EntityUpdateBindingIT extends JerseyTestOnDerby {
 	}
 
 	@Test
-	public void testPut_ToOne() throws WebApplicationException, IOException {
-		insert("e2", "id, name", "1, 'xxx'");
-		insert("e2", "id, name", "8, 'yyy'");
-		insert("e3", "id, name, e2_id", "3, 'zzz', 8");
+	public void testPut_Single() throws WebApplicationException, IOException {
 
-		Response response = target("/e3/updatebinding/3").request().put(jsonEntity("{\"id\":3,\"e2\":1}"));
+		insert("e3", "id, name", "3, 'zzz'");
+
+		Response response = target("/e3/updatebinding/3").request().put(jsonEntity("{\"id\":3,\"name\":\"yyy\"}"));
 		assertThat(response, okAndHasBody("{\"success\":true}"));
-		assertEquals(1, intForQuery("SELECT COUNT(1) FROM utest.e3 WHERE id = 3 AND e2_id = 1"));
+		assertEquals(1, intForQuery("SELECT COUNT(1) FROM utest.e3 WHERE id = 3 AND name = 'yyy'"));
+	}
+
+	@Test
+	public void testPut_Collection() throws WebApplicationException, IOException {
+		insert("e3", "id, name", "3, 'zzz'");
+		insert("e3", "id, name", "4, 'xxx'");
+		insert("e3", "id, name", "5, 'mmm'");
+
+		Response response = target("/e3/updatebinding").request()
+				.put(jsonEntity("[{\"id\":3,\"name\":\"yyy\"},{\"id\":5,\"name\":\"nnn\"}]"));
+		assertThat(response, okAndHasBody("{\"success\":true}"));
+
+		assertEquals(2, intForQuery("SELECT COUNT(1) FROM utest.e3"));
+		assertEquals(1, intForQuery("SELECT COUNT(1) FROM utest.e3 WHERE id = 3 AND name = 'yyy'"));
+		assertEquals(1, intForQuery("SELECT COUNT(1) FROM utest.e3 WHERE id = 5 AND name = 'nnn'"));
 	}
 }

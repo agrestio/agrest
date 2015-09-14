@@ -14,7 +14,6 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.ext.MessageBodyReader;
-import javax.ws.rs.ext.ParamConverter;
 import javax.ws.rs.ext.Provider;
 
 import com.nhl.link.rest.EntityUpdate;
@@ -25,7 +24,7 @@ import com.nhl.link.rest.runtime.meta.IMetadataService;
 import com.nhl.link.rest.runtime.parser.IUpdateParser;
 
 /**
- * A provider of {@link ParamConverter} for {@link EntityUpdate} parameters.
+ * A provider of {@link MessageBodyReader} for {@link EntityUpdate} parameters.
  * 
  * @since 1.20
  */
