@@ -1,7 +1,5 @@
 package com.nhl.link.rest.runtime.adapter.sencha;
 
-import java.util.regex.Pattern;
-
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.UriInfo;
 
@@ -10,45 +8,33 @@ import org.apache.cayenne.exp.Expression;
 
 import com.nhl.link.rest.runtime.jackson.IJacksonService;
 import com.nhl.link.rest.runtime.meta.IMetadataService;
-import com.nhl.link.rest.runtime.parser.DataObjectProcessor;
 import com.nhl.link.rest.runtime.parser.EmptyMultiValuedMap;
+import com.nhl.link.rest.runtime.parser.IUpdateParser;
 import com.nhl.link.rest.runtime.parser.RequestParser;
-import com.nhl.link.rest.runtime.parser.converter.IJsonValueConverterFactory;
 import com.nhl.link.rest.runtime.parser.filter.ICayenneExpProcessor;
 import com.nhl.link.rest.runtime.parser.filter.IKeyValueExpProcessor;
 import com.nhl.link.rest.runtime.parser.sort.ISortProcessor;
 import com.nhl.link.rest.runtime.parser.tree.ITreeProcessor;
 import com.nhl.link.rest.runtime.processor.select.SelectContext;
-import com.nhl.link.rest.runtime.semantics.IRelationshipMapper;
 
 /**
  * @since 1.11
  */
 public class SenchaRequestParser extends RequestParser {
 
-	static final Pattern DASH_ID_PATTERN = Pattern.compile(".-[\\d]+$");
-
 	static final String FILTER = "filter";
 
 	private ISenchaFilterProcessor senchaFilterProcessor;
 
 	public SenchaRequestParser(@Inject IMetadataService metadataService, @Inject IJacksonService jacksonService,
-			@Inject IRelationshipMapper associationHandler, @Inject ITreeProcessor treeProcessor,
-			@Inject ISortProcessor sortProcessor, @Inject IJsonValueConverterFactory jsonValueConverterFactory,
-			@Inject ICayenneExpProcessor cayenneExpProcessor, @Inject IKeyValueExpProcessor keyValueExpProcessor,
-			@Inject ISenchaFilterProcessor senchaFilterProcessor) {
+			@Inject ITreeProcessor treeProcessor, @Inject ISortProcessor sortProcessor,
+			@Inject IUpdateParser updateParser, @Inject ICayenneExpProcessor cayenneExpProcessor,
+			@Inject IKeyValueExpProcessor keyValueExpProcessor, @Inject ISenchaFilterProcessor senchaFilterProcessor) {
 
-		super(metadataService, jacksonService, associationHandler, treeProcessor, sortProcessor,
-				jsonValueConverterFactory, cayenneExpProcessor, keyValueExpProcessor);
+		super(metadataService, jacksonService, treeProcessor, sortProcessor, updateParser, cayenneExpProcessor,
+				keyValueExpProcessor);
 
 		this.senchaFilterProcessor = senchaFilterProcessor;
-	}
-
-	@Override
-	protected DataObjectProcessor createObjectProcessor(IJacksonService jacksonService,
-			IRelationshipMapper associationHandler, IJsonValueConverterFactory jsonValueConverterFactory) {
-		return new SenchaDataObjectProcessor(DASH_ID_PATTERN, jacksonService, associationHandler,
-				jsonValueConverterFactory);
 	}
 
 	@Override

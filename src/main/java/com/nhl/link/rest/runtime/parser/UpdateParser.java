@@ -1,10 +1,14 @@
 package com.nhl.link.rest.runtime.parser;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
 import javax.ws.rs.core.Response.Status;
 
+import org.apache.cayenne.di.Inject;
 import org.apache.cayenne.map.DbJoin;
 import org.apache.cayenne.map.DbRelationship;
 import org.slf4j.Logger;
@@ -19,57 +23,55 @@ import com.nhl.link.rest.meta.LrPersistentAttribute;
 import com.nhl.link.rest.meta.LrPersistentRelationship;
 import com.nhl.link.rest.meta.LrRelationship;
 import com.nhl.link.rest.parser.converter.JsonValueConverter;
-import com.nhl.link.rest.runtime.jackson.IJacksonService;
 import com.nhl.link.rest.runtime.parser.converter.IJsonValueConverterFactory;
-import com.nhl.link.rest.runtime.processor.update.UpdateContext;
 import com.nhl.link.rest.runtime.semantics.IRelationshipMapper;
 
 /**
- * @since 1.11 made public
+ * @since 1.20
  */
-public class DataObjectProcessor {
+public class UpdateParser implements IUpdateParser {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(DataObjectProcessor.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(UpdateParser.class);
 
-	protected IJacksonService jsonParser;
 	protected IJsonValueConverterFactory converterFactory;
 	protected IRelationshipMapper relationshipMapper;
 
-	public DataObjectProcessor(IJacksonService jsonParser, IRelationshipMapper relationshipMapper,
-			IJsonValueConverterFactory converterFactory) {
-		this.jsonParser = jsonParser;
+	public UpdateParser(@Inject IRelationshipMapper relationshipMapper,
+			@Inject IJsonValueConverterFactory converterFactory) {
 		this.relationshipMapper = relationshipMapper;
 		this.converterFactory = converterFactory;
 	}
 
-	public void process(UpdateContext<?> context, String json) {
+	@Override
+	public <T> Collection<EntityUpdate<T>> parse(LrEntity<T> entity, JsonNode json) {
 
-		JsonNode node = jsonParser.parseJson(json);
-		if (node == null) {
+		if (json == null) {
 			// empty requests are fine. we just do nothing...
-			return;
-		} else if (node.isArray()) {
-			processArray(context, node);
-		} else if (node.isObject()) {
-			processObject(context, node);
+			return Collections.emptyList();
+		} else if (json.isArray()) {
+			return processArray(entity, json);
+		} else if (json.isObject()) {
+			return Collections.singletonList(processObject(entity, json));
 		} else {
-			throw new LinkRestException(Status.BAD_REQUEST, "Expected Object or Array. Got: " + node.asText());
+			throw new LinkRestException(Status.BAD_REQUEST, "Expected Object or Array. Got: " + json.asText());
 		}
 	}
 
-	private void processArray(UpdateContext<?> context, JsonNode arrayNode) {
+	private <T> Collection<EntityUpdate<T>> processArray(LrEntity<T> entity, JsonNode arrayNode) {
 
+		Collection<EntityUpdate<T>> updates = new ArrayList<>();
 		for (JsonNode node : arrayNode) {
 			if (node.isObject()) {
-				processObject(context, node);
+				updates.add(processObject(entity, node));
 			} else {
 				throw new LinkRestException(Status.BAD_REQUEST, "Expected Object, got: " + node.asText());
 			}
 		}
+
+		return updates;
 	}
 
-	private <T> void processObject(UpdateContext<T> context, JsonNode objectNode) {
-		LrEntity<T> entity = context.getResponse().getEntity().getLrEntity();
+	private <T> EntityUpdate<T> processObject(LrEntity<T> entity, JsonNode objectNode) {
 
 		EntityUpdate<T> update = new EntityUpdate<>(entity);
 
@@ -121,8 +123,8 @@ public class DataObjectProcessor {
 			LOGGER.info("Skipping unknown attribute '" + key + "'");
 		}
 
-		// not excluding for empty updates ... we may still need them...
-		context.getUpdates().add(update);
+		// not excluding empty updates ... we may still need them...
+		return update;
 	}
 
 	protected void extractPK(EntityUpdate<?> update, JsonNode valueNode) {

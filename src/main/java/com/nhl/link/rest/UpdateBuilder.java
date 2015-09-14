@@ -95,7 +95,28 @@ public interface UpdateBuilder<T> {
 	DataResponse<T> syncAndSelect(String entityData);
 
 	/**
+	 * @since 1.20
+	 */
+	DataResponse<T> syncAndSelect(EntityUpdate<T> update);
+
+	/**
+	 * @since 1.20
+	 */
+	DataResponse<T> syncAndSelect(Collection<EntityUpdate<T>> updates);
+
+	/**
 	 * @since 1.19
 	 */
 	SimpleResponse sync(String entityData);
+
+	/**
+	 * @since 1.20
+	 */
+	SimpleResponse sync(EntityUpdate<T> update);
+
+	/**
+	 * @since 1.20
+	 */
+	SimpleResponse sync(Collection<EntityUpdate<T>> updates);
+
 }

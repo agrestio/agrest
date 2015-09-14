@@ -1,5 +1,6 @@
 package com.nhl.link.rest.runtime.parser;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -10,20 +11,20 @@ import javax.ws.rs.core.UriInfo;
 import org.apache.cayenne.di.Inject;
 import org.apache.cayenne.exp.Expression;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.nhl.link.rest.DataResponse;
+import com.nhl.link.rest.EntityUpdate;
 import com.nhl.link.rest.LinkRestException;
 import com.nhl.link.rest.ResourceEntity;
 import com.nhl.link.rest.meta.LrEntity;
 import com.nhl.link.rest.runtime.jackson.IJacksonService;
 import com.nhl.link.rest.runtime.meta.IMetadataService;
-import com.nhl.link.rest.runtime.parser.converter.IJsonValueConverterFactory;
 import com.nhl.link.rest.runtime.parser.filter.ICayenneExpProcessor;
 import com.nhl.link.rest.runtime.parser.filter.IKeyValueExpProcessor;
 import com.nhl.link.rest.runtime.parser.sort.ISortProcessor;
 import com.nhl.link.rest.runtime.parser.tree.ITreeProcessor;
 import com.nhl.link.rest.runtime.processor.select.SelectContext;
 import com.nhl.link.rest.runtime.processor.update.UpdateContext;
-import com.nhl.link.rest.runtime.semantics.IRelationshipMapper;
 
 public class RequestParser implements IRequestParser {
 
@@ -40,8 +41,8 @@ public class RequestParser implements IRequestParser {
 	private ISortProcessor sortProcessor;
 	private ICayenneExpProcessor cayenneExpProcessor;
 	private IKeyValueExpProcessor keyValueExpProcessor;
-
-	private DataObjectProcessor dataObjectProcessor;
+	private IUpdateParser updateParser;
+	private IJacksonService jacksonService;
 
 	protected static String string(MultivaluedMap<String, String> parameters, String name) {
 		return parameters.getFirst(name);
@@ -75,21 +76,17 @@ public class RequestParser implements IRequestParser {
 	}
 
 	public RequestParser(@Inject IMetadataService metadataService, @Inject IJacksonService jacksonService,
-			@Inject IRelationshipMapper associationHandler, @Inject ITreeProcessor treeProcessor,
-			@Inject ISortProcessor sortProcessor, @Inject IJsonValueConverterFactory jsonValueConverterFactory,
-			@Inject ICayenneExpProcessor cayenneExpProcessor, @Inject IKeyValueExpProcessor keyValueExpProcessor) {
+			@Inject ITreeProcessor treeProcessor, @Inject ISortProcessor sortProcessor,
+			@Inject IUpdateParser updateParser, @Inject ICayenneExpProcessor cayenneExpProcessor,
+			@Inject IKeyValueExpProcessor keyValueExpProcessor) {
 
 		this.metadataService = metadataService;
 		this.sortProcessor = sortProcessor;
 		this.treeProcessor = treeProcessor;
 		this.cayenneExpProcessor = cayenneExpProcessor;
 		this.keyValueExpProcessor = keyValueExpProcessor;
-		this.dataObjectProcessor = createObjectProcessor(jacksonService, associationHandler, jsonValueConverterFactory);
-	}
-
-	protected DataObjectProcessor createObjectProcessor(IJacksonService jacksonService,
-			IRelationshipMapper associationHandler, IJsonValueConverterFactory jsonValueConverterFactory) {
-		return new DataObjectProcessor(jacksonService, associationHandler, jsonValueConverterFactory);
+		this.updateParser = updateParser;
+		this.jacksonService = jacksonService;
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
@@ -137,20 +134,28 @@ public class RequestParser implements IRequestParser {
 				context.getAutocompleteProperty(), value);
 	}
 
-	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
-	public void parseUpdate(UpdateContext<?> context) {
+	public <T> void parseUpdate(UpdateContext<T> context) {
 		if (context == null) {
 			throw new LinkRestException(Status.INTERNAL_SERVER_ERROR, "Null context");
 		}
 
-		LrEntity<?> entity = metadataService.getLrEntity(context.getType());
-		ResourceEntity resourceEntity = new ResourceEntity(entity);
+		LrEntity<T> entity = metadataService.getLrEntity(context.getType());
+		ResourceEntity<T> resourceEntity = new ResourceEntity<>(entity);
 
-		DataResponse<?> response = context.getResponse();
+		DataResponse<T> response = context.getResponse();
 		response.resourceEntity(resourceEntity);
 		treeProcessor.process(response, context.getUriInfo());
-		dataObjectProcessor.process(context, context.getEntityData());
+
+		// skip parsing if we already received EntityUpdates collection parsed
+		// by MessageBodyReader
+
+		if (context.getUpdates() == null) {
+			JsonNode node = jacksonService.parseJson(context.getEntityData());
+			Collection<EntityUpdate<T>> updates = updateParser.parse(context.getResponse().getEntity().getLrEntity(),
+					node);
+			context.setUpdates(updates);
+		}
 	}
 
 }

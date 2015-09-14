@@ -7,18 +7,16 @@ import static org.mockito.Mockito.mock;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.nhl.link.rest.runtime.jackson.IJacksonService;
 import com.nhl.link.rest.runtime.parser.converter.IJsonValueConverterFactory;
 import com.nhl.link.rest.runtime.semantics.IRelationshipMapper;
 
-public class SenchaDataObjectProcessorTest {
+public class SenchaUpdateParserTest {
 
-	private SenchaDataObjectProcessor processor;
+	private SenchaUpdateParser processor;
 
 	@Before
 	public void before() {
-		processor = new SenchaDataObjectProcessor(SenchaRequestParser.DASH_ID_PATTERN, mock(IJacksonService.class),
-				mock(IRelationshipMapper.class), mock(IJsonValueConverterFactory.class));
+		processor = new SenchaUpdateParser(mock(IRelationshipMapper.class), mock(IJsonValueConverterFactory.class));
 	}
 
 	@Test

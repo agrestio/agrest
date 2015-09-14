@@ -11,6 +11,7 @@ import com.nhl.link.rest.runtime.LinkRestRuntime;
 import com.nhl.link.rest.runtime.adapter.LinkRestAdapter;
 import com.nhl.link.rest.runtime.encoder.IEncoderService;
 import com.nhl.link.rest.runtime.parser.IRequestParser;
+import com.nhl.link.rest.runtime.parser.IUpdateParser;
 import com.nhl.link.rest.runtime.parser.sort.ISortProcessor;
 import com.nhl.link.rest.runtime.semantics.IRelationshipMapper;
 
@@ -29,6 +30,7 @@ public class SenchaAdapter implements LinkRestAdapter {
 		binder.bind(IEncoderService.class).to(SenchaEncoderService.class);
 		binder.bind(IRelationshipMapper.class).to(SenchaRelationshipMapper.class);
 		binder.bind(ISenchaFilterProcessor.class).to(SenchaFilterProcessor.class);
+		binder.bind(IUpdateParser.class).to(SenchaUpdateParser.class);
 
 		binder.<Class<?>> bindMap(LinkRestRuntime.BODY_WRITERS_MAP).put(DataResponse.class.getName(),
 				SenchaDataResponseWriter.class);

@@ -1,6 +1,7 @@
 package com.nhl.link.rest.runtime.processor.update;
 
 import java.lang.annotation.Annotation;
+import java.util.Collections;
 import java.util.List;
 
 import javax.ws.rs.core.Response.Status;
@@ -73,7 +74,8 @@ public class ApplyUpdateServerParamsStage<T> extends BaseLinearProcessingStage<U
 			// * if more than one - throw...
 
 			if (context.getUpdates().isEmpty()) {
-				context.getUpdates().add(new EntityUpdate<>(context.getResponse().getEntity().getLrEntity()));
+				context.setUpdates(
+						Collections.singleton(new EntityUpdate<>(context.getResponse().getEntity().getLrEntity())));
 			}
 
 			LrEntity<T> entity = context.getResponse().getEntity().getLrEntity();

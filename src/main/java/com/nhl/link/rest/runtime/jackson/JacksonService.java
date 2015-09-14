@@ -1,6 +1,7 @@
 package com.nhl.link.rest.runtime.jackson;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 
 import javax.ws.rs.core.Response.Status;
@@ -57,6 +58,20 @@ public class JacksonService implements IJacksonService {
 		if (json == null) {
 			return null;
 		}
+
+		try {
+			JsonParser parser = getJsonFactory().createParser(json);
+			return new ObjectMapper().readTree(parser);
+		} catch (IOException ioex) {
+			throw new LinkRestException(Status.BAD_REQUEST, "Error parsing JSON");
+		}
+	}
+
+	/**
+	 * @since 1.20
+	 */
+	@Override
+	public JsonNode parseJson(InputStream json) {
 
 		try {
 			JsonParser parser = getJsonFactory().createParser(json);

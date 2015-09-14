@@ -14,6 +14,6 @@ public interface IRequestParser {
 	 * Parses an update that may contain zero or more objects of a single kind
 	 * with or without IDs.
 	 */
-	void parseUpdate(UpdateContext<?> context);
+	<T> void parseUpdate(UpdateContext<T> context);
 
 }

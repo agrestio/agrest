@@ -60,7 +60,9 @@ import com.nhl.link.rest.runtime.meta.IResourceMetadataService;
 import com.nhl.link.rest.runtime.meta.MetadataService;
 import com.nhl.link.rest.runtime.meta.ResourceMetadataService;
 import com.nhl.link.rest.runtime.parser.IRequestParser;
+import com.nhl.link.rest.runtime.parser.IUpdateParser;
 import com.nhl.link.rest.runtime.parser.RequestParser;
+import com.nhl.link.rest.runtime.parser.UpdateParser;
 import com.nhl.link.rest.runtime.parser.cache.IPathCache;
 import com.nhl.link.rest.runtime.parser.cache.PathCache;
 import com.nhl.link.rest.runtime.parser.converter.DefaultJsonValueConverterFactory;
@@ -334,6 +336,7 @@ public class LinkRestBuilder {
 				binder.bind(ITreeProcessor.class).to(IncludeExcludeProcessor.class);
 
 				binder.bind(IResourceParser.class).to(ResourceParser.class);
+				binder.bind(IUpdateParser.class).to(UpdateParser.class);
 
 				// apply adapter-contributed bindings
 				for (LinkRestAdapter a : adapters) {

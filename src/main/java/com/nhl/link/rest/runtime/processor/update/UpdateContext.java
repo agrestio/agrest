@@ -1,6 +1,5 @@
 package com.nhl.link.rest.runtime.processor.update;
 
-import java.util.ArrayList;
 import java.util.Collection;
 
 import javax.ws.rs.core.Response.Status;
@@ -36,7 +35,6 @@ public class UpdateContext<T> extends BaseProcessingContext<T> {
 
 	public UpdateContext(Class<T> type) {
 		super(type);
-		this.updates = new ArrayList<>();
 	}
 
 	public DataResponse<T> getResponse() {
@@ -68,6 +66,10 @@ public class UpdateContext<T> extends BaseProcessingContext<T> {
 		return updates;
 	}
 
+	public void setUpdates(Collection<EntityUpdate<T>> updates) {
+		this.updates = updates;
+	}
+
 	/**
 	 * Returns first update object. Throws unless this response contains exactly
 	 * one update.
@@ -75,6 +77,8 @@ public class UpdateContext<T> extends BaseProcessingContext<T> {
 	 * @since 1.19
 	 */
 	public EntityUpdate<T> getFirst() {
+
+		Collection<EntityUpdate<T>> updates = getUpdates();
 
 		if (updates.size() != 1) {
 			throw new LinkRestException(Status.INTERNAL_SERVER_ERROR,

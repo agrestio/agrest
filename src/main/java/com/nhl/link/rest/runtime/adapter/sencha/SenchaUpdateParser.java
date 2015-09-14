@@ -2,30 +2,36 @@ package com.nhl.link.rest.runtime.adapter.sencha;
 
 import java.util.regex.Pattern;
 
+import org.apache.cayenne.di.Inject;
+
 import com.fasterxml.jackson.databind.JsonNode;
 import com.nhl.link.rest.EntityUpdate;
 import com.nhl.link.rest.parser.converter.GenericConverter;
-import com.nhl.link.rest.runtime.jackson.IJacksonService;
-import com.nhl.link.rest.runtime.parser.DataObjectProcessor;
+import com.nhl.link.rest.runtime.parser.UpdateParser;
 import com.nhl.link.rest.runtime.parser.converter.IJsonValueConverterFactory;
 import com.nhl.link.rest.runtime.semantics.IRelationshipMapper;
 
 /**
+ * 
  * Strips off Sencha-generated temporary IDs from the update data structures.
  * 
- * @see http 
- *      ://docs.sencha.com/extjs/5.0/apidocs/#!/api/Ext.data.identifier.Generator
- * @since 1.11
+ * @see http ://docs.sencha.com/extjs/5.0/apidocs/#!/api/Ext.data.identifier.
+ *      Generator
+ * 
+ * @since 1.20
  */
-public class SenchaDataObjectProcessor extends DataObjectProcessor {
+public class SenchaUpdateParser extends UpdateParser {
+
+	private static final Pattern DASH_ID_PATTERN = Pattern.compile(".-[\\d]+$");
 
 	private Pattern tempIdPattern;
 
-	public SenchaDataObjectProcessor(Pattern tempIdPattern, IJacksonService jsonParser,
-			IRelationshipMapper relationshipMapper, IJsonValueConverterFactory converterFactory) {
-		super(jsonParser, relationshipMapper, converterFactory);
+	public SenchaUpdateParser(@Inject IRelationshipMapper relationshipMapper,
+			@Inject IJsonValueConverterFactory converterFactory) {
+		super(relationshipMapper, converterFactory);
 
-		this.tempIdPattern = tempIdPattern;
+		// do we need to make it injectable?
+		this.tempIdPattern = DASH_ID_PATTERN;
 	}
 
 	@Override

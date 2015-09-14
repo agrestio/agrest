@@ -1,6 +1,7 @@
 package com.nhl.link.rest.runtime;
 
 import java.util.Collection;
+import java.util.Collections;
 
 import javax.ws.rs.core.UriInfo;
 
@@ -10,6 +11,7 @@ import org.slf4j.LoggerFactory;
 
 import com.nhl.link.rest.DataResponse;
 import com.nhl.link.rest.EntityParent;
+import com.nhl.link.rest.EntityUpdate;
 import com.nhl.link.rest.ObjectMapperFactory;
 import com.nhl.link.rest.SimpleResponse;
 import com.nhl.link.rest.UpdateBuilder;
@@ -109,9 +111,55 @@ public class DefaultUpdateBuilder<T> implements UpdateBuilder<T> {
 	 */
 	@Override
 	public SimpleResponse sync(String entityData) {
-		context.setIncludingDataInResponse(false);
-
 		context.setEntityData(entityData);
+		return doSync();
+	}
+
+	/**
+	 * @since 1.20
+	 */
+	@Override
+	public SimpleResponse sync(EntityUpdate<T> update) {
+		return sync(Collections.singleton(update));
+	}
+
+	/**
+	 * @since 1.20
+	 */
+	@Override
+	public SimpleResponse sync(Collection<EntityUpdate<T>> updates) {
+		context.setUpdates(updates);
+		return doSync();
+	}
+
+	/**
+	 * @since 1.19
+	 */
+	@Override
+	public DataResponse<T> syncAndSelect(String entityData) {
+		context.setEntityData(entityData);
+		return doSyncAndSelect();
+	}
+
+	/**
+	 * @since 1.20
+	 */
+	@Override
+	public DataResponse<T> syncAndSelect(Collection<EntityUpdate<T>> updates) {
+		context.setUpdates(updates);
+		return doSyncAndSelect();
+	}
+
+	/**
+	 * @since 1.20
+	 */
+	@Override
+	public DataResponse<T> syncAndSelect(EntityUpdate<T> update) {
+		return syncAndSelect(Collections.singleton(update));
+	}
+
+	private SimpleResponse doSync() {
+		context.setIncludingDataInResponse(false);
 		context.setListeners(listenersBuilder.getListeners());
 
 		ChainProcessor.execute(updateChain, context);
@@ -125,18 +173,12 @@ public class DefaultUpdateBuilder<T> implements UpdateBuilder<T> {
 		return response;
 	}
 
-	/**
-	 * @since 1.19
-	 */
-	@Override
-	public DataResponse<T> syncAndSelect(String entityData) {
+	private DataResponse<T> doSyncAndSelect() {
 		context.setIncludingDataInResponse(true);
-
-		context.setEntityData(entityData);
 		context.setListeners(listenersBuilder.getListeners());
 
 		ChainProcessor.execute(updateChain, context);
-
+		
 		return context.getResponse();
 	}
 

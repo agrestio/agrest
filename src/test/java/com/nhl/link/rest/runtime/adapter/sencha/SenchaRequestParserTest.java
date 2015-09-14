@@ -20,10 +20,9 @@ import com.nhl.link.rest.DataResponse;
 import com.nhl.link.rest.it.fixture.cayenne.E2;
 import com.nhl.link.rest.runtime.jackson.IJacksonService;
 import com.nhl.link.rest.runtime.jackson.JacksonService;
+import com.nhl.link.rest.runtime.parser.IUpdateParser;
 import com.nhl.link.rest.runtime.parser.cache.IPathCache;
 import com.nhl.link.rest.runtime.parser.cache.PathCache;
-import com.nhl.link.rest.runtime.parser.converter.DefaultJsonValueConverterFactory;
-import com.nhl.link.rest.runtime.parser.converter.IJsonValueConverterFactory;
 import com.nhl.link.rest.runtime.parser.filter.CayenneExpProcessor;
 import com.nhl.link.rest.runtime.parser.filter.ICayenneExpProcessor;
 import com.nhl.link.rest.runtime.parser.filter.IKeyValueExpProcessor;
@@ -32,7 +31,6 @@ import com.nhl.link.rest.runtime.parser.sort.ISortProcessor;
 import com.nhl.link.rest.runtime.parser.tree.ITreeProcessor;
 import com.nhl.link.rest.runtime.parser.tree.IncludeExcludeProcessor;
 import com.nhl.link.rest.runtime.processor.select.SelectContext;
-import com.nhl.link.rest.runtime.semantics.RelationshipMapper;
 import com.nhl.link.rest.unit.TestWithCayenneMapping;
 
 public class SenchaRequestParserTest extends TestWithCayenneMapping {
@@ -41,8 +39,6 @@ public class SenchaRequestParserTest extends TestWithCayenneMapping {
 
 	@Before
 	public void before() {
-
-		IJsonValueConverterFactory converterFactory = new DefaultJsonValueConverterFactory();
 
 		IPathCache pathCache = new PathCache(metadataService);
 		IJacksonService jacksonService = new JacksonService();
@@ -54,8 +50,9 @@ public class SenchaRequestParserTest extends TestWithCayenneMapping {
 		ITreeProcessor treeProcessor = new IncludeExcludeProcessor(jacksonService, sortProcessor, expProcessor,
 				metadataService);
 
-		parser = new SenchaRequestParser(metadataService, jacksonService, new RelationshipMapper(), treeProcessor,
-				sortProcessor, converterFactory, expProcessor, kvExpProcessor, senchaFilterProcessor);
+		IUpdateParser mockUpdateParser = mock(IUpdateParser.class);
+		parser = new SenchaRequestParser(metadataService, jacksonService, treeProcessor, sortProcessor,
+				mockUpdateParser, expProcessor, kvExpProcessor, senchaFilterProcessor);
 	}
 
 	@Test

@@ -13,6 +13,7 @@ import javax.ws.rs.core.UriInfo;
 import org.apache.cayenne.query.SelectQuery;
 
 import com.nhl.link.rest.DataResponse;
+import com.nhl.link.rest.EntityUpdate;
 import com.nhl.link.rest.LinkRest;
 import com.nhl.link.rest.SimpleResponse;
 import com.nhl.link.rest.constraints.ConstraintsBuilder;
@@ -80,6 +81,12 @@ public class E3Resource {
 	@Path("{id}")
 	public DataResponse<E3> updateE3(@PathParam("id") int id, String requestBody) {
 		return LinkRest.update(E3.class, config).id(id).syncAndSelect(requestBody);
+	}
+	
+	@PUT
+	@Path("updatebinding/{id}")
+	public SimpleResponse updateE3_EntityUpdateParam(@PathParam("id") int id, EntityUpdate<E3> update) {
+		return LinkRest.createOrUpdate(E3.class, config).id(id).sync(update);
 	}
 
 	@POST
