@@ -12,6 +12,8 @@ import com.nhl.link.rest.annotation.listener.UpdateRequestParsed;
 import com.nhl.link.rest.annotation.listener.UpdateResponseUpdated;
 import com.nhl.link.rest.annotation.listener.UpdateServerParamsApplied;
 import com.nhl.link.rest.constraints.ConstraintsBuilder;
+import com.nhl.link.rest.it.fixture.cayenne.E7;
+import com.nhl.link.rest.runtime.cayenne.ByKeyObjectMapperFactory;
 
 /**
  * A builder for create (insert) or update operations for a single entity type.
@@ -57,9 +59,28 @@ public interface UpdateBuilder<T> {
 
 	/**
 	 * Sets a custom mapper that locates existing objects based on request data.
-	 * If not set, objects will be located by their ID.
+	 * If not set, objects will be located by their IDs.
 	 */
 	UpdateBuilder<T> mapper(ObjectMapperFactory mapper);
+
+	/**
+	 * Sets a property name that should be used to map objects in update
+	 * collection to backend objects. This overrides a default mapping by ID,
+	 * and is equivalent to calling
+	 * 'mapped(ByKeyObjectMapperFactory.byKey(propertyName))'.
+	 * 
+	 * @since 1.20
+	 */
+	UpdateBuilder<T> mapper(String propertyName);
+
+	/**
+	 * Sets a property that should be used to map objects in update collection
+	 * to backend objects. This overrides a default mapping by ID, and is
+	 * equivalent to calling 'mapped(ByKeyObjectMapperFactory.byKey(property))'.
+	 * 
+	 * @since 1.20
+	 */
+	UpdateBuilder<T> mapper(Property<?> property);
 
 	/**
 	 * Adds an annotated listener that will be notified of completion of

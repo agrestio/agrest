@@ -18,6 +18,7 @@ import com.nhl.link.rest.UpdateBuilder;
 import com.nhl.link.rest.constraints.ConstraintsBuilder;
 import com.nhl.link.rest.processor.ChainProcessor;
 import com.nhl.link.rest.processor.ProcessingStage;
+import com.nhl.link.rest.runtime.cayenne.ByKeyObjectMapperFactory;
 import com.nhl.link.rest.runtime.listener.ListenersBuilder;
 import com.nhl.link.rest.runtime.processor.update.UpdateContext;
 
@@ -88,6 +89,22 @@ public class DefaultUpdateBuilder<T> implements UpdateBuilder<T> {
 	public UpdateBuilder<T> mapper(ObjectMapperFactory mapper) {
 		context.setMapper(mapper);
 		return this;
+	}
+
+	/**
+	 * @since 1.20
+	 */
+	@Override
+	public UpdateBuilder<T> mapper(Property<?> property) {
+		return mapper(ByKeyObjectMapperFactory.byKey(property));
+	}
+
+	/**
+	 * @since 1.20
+	 */
+	@Override
+	public UpdateBuilder<T> mapper(String propertyName) {
+		return mapper(ByKeyObjectMapperFactory.byKey(propertyName));
 	}
 
 	/**
@@ -178,7 +195,7 @@ public class DefaultUpdateBuilder<T> implements UpdateBuilder<T> {
 		context.setListeners(listenersBuilder.getListeners());
 
 		ChainProcessor.execute(updateChain, context);
-		
+
 		return context.getResponse();
 	}
 

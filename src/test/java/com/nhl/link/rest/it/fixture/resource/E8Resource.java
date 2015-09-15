@@ -79,4 +79,11 @@ public class E8Resource {
 		return LinkRest.idempotentCreateOrUpdate(E7.class, config).mapper(ByKeyObjectMapperFactory.byKey(E7.NAME))
 				.toManyParent(E8.class, id, E8.E7S).syncAndSelect(entityData);
 	}
+
+	@PUT
+	@Path("bypropkey/{id}/e7s")
+	public DataResponse<E7> e8CreateOrUpdateE7sByPropKey_Idempotent(@PathParam("id") int id, String entityData) {
+		return LinkRest.idempotentCreateOrUpdate(E7.class, config).mapper(E7.NAME).toManyParent(E8.class, id, E8.E7S)
+				.syncAndSelect(entityData);
+	}
 }
