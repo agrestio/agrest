@@ -19,12 +19,14 @@ public class SenchaRelationshipMapper implements IRelationshipMapper {
 	@Override
 	public LrRelationship toRelationship(LrEntity<?> root, String relatedIdName) {
 
+		// allow both relname_id and relname forms ...
+
 		if (relatedIdName.length() > SUFFIX.length() && relatedIdName.endsWith(SUFFIX)) {
 			String baseName = relatedIdName.substring(0, relatedIdName.length() - SUFFIX.length());
 			return root.getRelationship(baseName);
+		} else {
+			return root.getRelationship(relatedIdName);
 		}
-
-		return null;
 	}
 
 }
