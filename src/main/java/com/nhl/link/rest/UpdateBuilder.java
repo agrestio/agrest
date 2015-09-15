@@ -12,8 +12,6 @@ import com.nhl.link.rest.annotation.listener.UpdateRequestParsed;
 import com.nhl.link.rest.annotation.listener.UpdateResponseUpdated;
 import com.nhl.link.rest.annotation.listener.UpdateServerParamsApplied;
 import com.nhl.link.rest.constraints.ConstraintsBuilder;
-import com.nhl.link.rest.it.fixture.cayenne.E7;
-import com.nhl.link.rest.runtime.cayenne.ByKeyObjectMapperFactory;
 
 /**
  * A builder for create (insert) or update operations for a single entity type.
