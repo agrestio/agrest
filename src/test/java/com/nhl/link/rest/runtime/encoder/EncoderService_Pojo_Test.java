@@ -9,16 +9,15 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import com.nhl.link.rest.encoder.PropertyMetadataEncoder;
 import org.junit.Before;
 import org.junit.Test;
 
 import com.fasterxml.jackson.core.JsonEncoding;
 import com.fasterxml.jackson.core.JsonGenerator;
-import com.nhl.link.rest.DataResponse;
 import com.nhl.link.rest.ResourceEntity;
 import com.nhl.link.rest.encoder.Encoder;
 import com.nhl.link.rest.encoder.EncoderFilter;
+import com.nhl.link.rest.encoder.PropertyMetadataEncoder;
 import com.nhl.link.rest.it.fixture.pojo.model.P1;
 import com.nhl.link.rest.it.fixture.pojo.model.P6;
 import com.nhl.link.rest.meta.DefaultLrAttribute;
@@ -41,7 +40,7 @@ public class EncoderService_Pojo_Test {
 		IStringConverterFactory stringConverterFactory = mock(IStringConverterFactory.class);
 
 		this.encoderService = new EncoderService(this.filters, attributeEncoderFactory, stringConverterFactory,
-				new RelationshipMapper(), Collections.<String, PropertyMetadataEncoder>emptyMap());
+				new RelationshipMapper(), Collections.<String, PropertyMetadataEncoder> emptyMap());
 
 	}
 
@@ -51,11 +50,9 @@ public class EncoderService_Pojo_Test {
 		ResourceEntity<P1> descriptor = new ResourceEntity<P1>(p1lre);
 		descriptor.getAttributes().put("name", new DefaultLrAttribute("name", String.class.getName()));
 
-		DataResponse<P1> builder = DataResponse.forType(P1.class).resourceEntity(descriptor);
-
 		P1 p1 = new P1();
 		p1.setName("XYZ");
-		assertEquals("[{\"name\":\"XYZ\"}]", toJson(p1, builder));
+		assertEquals("[{\"name\":\"XYZ\"}]", toJson(p1, descriptor));
 	}
 
 	@Test
@@ -69,14 +66,13 @@ public class EncoderService_Pojo_Test {
 		ResourceEntity<P6> descriptor = new ResourceEntity<P6>(p6lre);
 		descriptor.getAttributes().put("intProp", new DefaultLrAttribute("intProp", Integer.class.getName()));
 		descriptor.includeId();
-		DataResponse<P6> builder = DataResponse.forObjects(Collections.singletonList(p6)).resourceEntity(descriptor);
 
-		assertEquals("[{\"id\":\"myid\",\"intProp\":4}]", toJson(p6, builder));
+		assertEquals("[{\"id\":\"myid\",\"intProp\":4}]", toJson(p6, descriptor));
 	}
 
-	private String toJson(Object object, DataResponse<?> builder) throws IOException {
+	private String toJson(Object object, ResourceEntity<?> resourceEntity) throws IOException {
 
-		Encoder encoder = encoderService.makeEncoder(builder);
+		Encoder encoder = encoderService.dataEncoder(resourceEntity);
 
 		// wrap in collection... root encoder expects a list...
 		object = Collections.singletonList(object);

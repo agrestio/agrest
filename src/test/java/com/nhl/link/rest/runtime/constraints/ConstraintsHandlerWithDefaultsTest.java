@@ -13,7 +13,6 @@ import org.apache.cayenne.map.ObjEntity;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.nhl.link.rest.DataResponse;
 import com.nhl.link.rest.EntityConstraint;
 import com.nhl.link.rest.ResourceEntity;
 import com.nhl.link.rest.constraints.ConstraintsBuilder;
@@ -34,12 +33,12 @@ public class ConstraintsHandlerWithDefaultsTest extends TestWithCayenneMapping {
 	public void before() {
 
 		List<EntityConstraint> r = new ArrayList<>();
-		r.add(new DefaultEntityConstraint("E1", true, false, Collections.singleton(E1.AGE.getName()), Collections
-				.<String> emptySet()));
+		r.add(new DefaultEntityConstraint("E1", true, false, Collections.singleton(E1.AGE.getName()),
+				Collections.<String> emptySet()));
 
 		List<EntityConstraint> w = new ArrayList<>();
-		w.add(new DefaultEntityConstraint("E2", false, false, Collections.singleton(E2.ADDRESS.getName()), Collections
-				.<String> emptySet()));
+		w.add(new DefaultEntityConstraint("E2", false, false, Collections.singleton(E2.ADDRESS.getName()),
+				Collections.<String> emptySet()));
 
 		ObjEntity e1 = runtime.getChannel().getEntityResolver().getObjEntity(E1.class);
 		ObjEntity e2 = runtime.getChannel().getEntityResolver().getObjEntity(E2.class);
@@ -67,12 +66,10 @@ public class ConstraintsHandlerWithDefaultsTest extends TestWithCayenneMapping {
 		appendAttribute(te1, E1.AGE, Integer.class);
 		appendAttribute(te1, E1.DESCRIPTION, String.class);
 
-		DataResponse<E1> t1 = DataResponse.forType(E1.class).resourceEntity(te1);
-
-		constraintHandler.constrainResponse(t1, null, tc1);
-		assertEquals(1, t1.getEntity().getAttributes().size());
-		assertTrue(t1.getEntity().getAttributes().containsKey(E1.DESCRIPTION.getName()));
-		assertTrue(t1.getEntity().getChildren().isEmpty());
+		constraintHandler.constrainResponse(te1, null, tc1);
+		assertEquals(1, te1.getAttributes().size());
+		assertTrue(te1.getAttributes().containsKey(E1.DESCRIPTION.getName()));
+		assertTrue(te1.getChildren().isEmpty());
 	}
 
 	@Test
@@ -82,12 +79,10 @@ public class ConstraintsHandlerWithDefaultsTest extends TestWithCayenneMapping {
 		appendAttribute(te1, E1.AGE, Integer.class);
 		appendAttribute(te1, E1.DESCRIPTION, String.class);
 
-		DataResponse<E1> t1 = DataResponse.forType(E1.class).resourceEntity(te1);
-
-		constraintHandler.constrainResponse(t1, null, null);
-		assertEquals(1, t1.getEntity().getAttributes().size());
-		assertTrue(t1.getEntity().getAttributes().containsKey(E1.AGE.getName()));
-		assertTrue(t1.getEntity().getChildren().isEmpty());
+		constraintHandler.constrainResponse(te1, null, null);
+		assertEquals(1, te1.getAttributes().size());
+		assertTrue(te1.getAttributes().containsKey(E1.AGE.getName()));
+		assertTrue(te1.getChildren().isEmpty());
 	}
 
 	@Test
@@ -97,14 +92,12 @@ public class ConstraintsHandlerWithDefaultsTest extends TestWithCayenneMapping {
 		appendAttribute(te1, E2.ADDRESS, String.class);
 		appendAttribute(te1, E2.NAME, String.class);
 
-		DataResponse<E2> t1 = DataResponse.forType(E2.class).resourceEntity(te1);
+		constraintHandler.constrainResponse(te1, null, null);
+		assertEquals(2, te1.getAttributes().size());
+		assertTrue(te1.getAttributes().containsKey(E2.ADDRESS.getName()));
+		assertTrue(te1.getAttributes().containsKey(E2.NAME.getName()));
 
-		constraintHandler.constrainResponse(t1, null, null);
-		assertEquals(2, t1.getEntity().getAttributes().size());
-		assertTrue(t1.getEntity().getAttributes().containsKey(E2.ADDRESS.getName()));
-		assertTrue(t1.getEntity().getAttributes().containsKey(E2.NAME.getName()));
-
-		assertTrue(t1.getEntity().getChildren().isEmpty());
+		assertTrue(te1.getChildren().isEmpty());
 	}
 
 }

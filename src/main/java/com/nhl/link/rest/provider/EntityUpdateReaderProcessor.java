@@ -10,25 +10,20 @@ import java.util.Collection;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response.Status;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.nhl.link.rest.EntityUpdate;
 import com.nhl.link.rest.LinkRestException;
 import com.nhl.link.rest.meta.LrEntity;
-import com.nhl.link.rest.runtime.jackson.IJacksonService;
 import com.nhl.link.rest.runtime.meta.IMetadataService;
 import com.nhl.link.rest.runtime.parser.IUpdateParser;
 
 class EntityUpdateReaderProcessor {
 
-	private IJacksonService jacksonService;
 	private IUpdateParser parser;
 	private IMetadataService metadataService;
 
-	EntityUpdateReaderProcessor(IJacksonService jacksonService, IUpdateParser parser,
-			IMetadataService metadataService) {
+	EntityUpdateReaderProcessor(IUpdateParser parser, IMetadataService metadataService) {
 		this.parser = parser;
 		this.metadataService = metadataService;
-		this.jacksonService = jacksonService;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -42,9 +37,7 @@ class EntityUpdateReaderProcessor {
 					"Can't parse update JSON. EntityUpdate type '" + entityType.getName() + "' is not an entity");
 		}
 
-		JsonNode json = jacksonService.parseJson(entityStream);
-
-		return parser.parse(entity, json);
+		return parser.parse(entity, entityStream);
 	}
 
 	// TODO: duplication of code with ListenerInvocationFactory

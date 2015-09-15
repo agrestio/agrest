@@ -16,11 +16,10 @@ import org.apache.cayenne.query.SortOrder;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.nhl.link.rest.DataResponse;
+import com.nhl.link.rest.ResourceEntity;
 import com.nhl.link.rest.it.fixture.cayenne.E2;
 import com.nhl.link.rest.runtime.jackson.IJacksonService;
 import com.nhl.link.rest.runtime.jackson.JacksonService;
-import com.nhl.link.rest.runtime.parser.IUpdateParser;
 import com.nhl.link.rest.runtime.parser.cache.IPathCache;
 import com.nhl.link.rest.runtime.parser.cache.PathCache;
 import com.nhl.link.rest.runtime.parser.filter.CayenneExpProcessor;
@@ -30,7 +29,6 @@ import com.nhl.link.rest.runtime.parser.filter.KeyValueExpProcessor;
 import com.nhl.link.rest.runtime.parser.sort.ISortProcessor;
 import com.nhl.link.rest.runtime.parser.tree.ITreeProcessor;
 import com.nhl.link.rest.runtime.parser.tree.IncludeExcludeProcessor;
-import com.nhl.link.rest.runtime.processor.select.SelectContext;
 import com.nhl.link.rest.unit.TestWithCayenneMapping;
 
 public class SenchaRequestParserTest extends TestWithCayenneMapping {
@@ -50,9 +48,8 @@ public class SenchaRequestParserTest extends TestWithCayenneMapping {
 		ITreeProcessor treeProcessor = new IncludeExcludeProcessor(jacksonService, sortProcessor, expProcessor,
 				metadataService);
 
-		IUpdateParser mockUpdateParser = mock(IUpdateParser.class);
-		parser = new SenchaRequestParser(metadataService, jacksonService, treeProcessor, sortProcessor,
-				mockUpdateParser, expProcessor, kvExpProcessor, senchaFilterProcessor);
+		parser = new SenchaRequestParser(treeProcessor, sortProcessor, expProcessor, kvExpProcessor,
+				senchaFilterProcessor);
 	}
 
 	@Test
@@ -65,13 +62,10 @@ public class SenchaRequestParserTest extends TestWithCayenneMapping {
 		UriInfo uriInfo = mock(UriInfo.class);
 		when(uriInfo.getQueryParameters()).thenReturn(params);
 
-		SelectContext<E2> context = new SelectContext<>(E2.class);
-		context.setResponse(DataResponse.forType(E2.class));
-		context.setUriInfo(uriInfo);
-		parser.parseSelect(context);
+		ResourceEntity<E2> resourceEntity = parser.parseSelect(getLrEntity(E2.class), uriInfo, null);
 
-		assertNotNull(context.getResponse().getEntity().getQualifier());
-		assertEquals(exp("name likeIgnoreCase 'xyz%'"), context.getResponse().getEntity().getQualifier());
+		assertNotNull(resourceEntity.getQualifier());
+		assertEquals(exp("name likeIgnoreCase 'xyz%'"), resourceEntity.getQualifier());
 	}
 
 	@Test
@@ -85,15 +79,10 @@ public class SenchaRequestParserTest extends TestWithCayenneMapping {
 		UriInfo uriInfo = mock(UriInfo.class);
 		when(uriInfo.getQueryParameters()).thenReturn(params);
 
-		SelectContext<E2> context = new SelectContext<>(E2.class);
-		context.setResponse(DataResponse.forType(E2.class));
-		context.setUriInfo(uriInfo);
-		context.setAutocompleteProperty(E2.NAME.getName());
-		parser.parseSelect(context);
+		ResourceEntity<E2> resourceEntity = parser.parseSelect(getLrEntity(E2.class), uriInfo, E2.NAME.getName());
 
-		assertNotNull(context.getResponse().getEntity().getQualifier());
-		assertEquals(exp("name likeIgnoreCase 'Bla%' and name likeIgnoreCase 'xyz%'"),
-				context.getResponse().getEntity().getQualifier());
+		assertNotNull(resourceEntity.getQualifier());
+		assertEquals(exp("name likeIgnoreCase 'Bla%' and name likeIgnoreCase 'xyz%'"), resourceEntity.getQualifier());
 	}
 
 	@Test
@@ -107,14 +96,10 @@ public class SenchaRequestParserTest extends TestWithCayenneMapping {
 		UriInfo uriInfo = mock(UriInfo.class);
 		when(uriInfo.getQueryParameters()).thenReturn(params);
 
-		SelectContext<E2> context = new SelectContext<>(E2.class);
-		context.setResponse(DataResponse.forType(E2.class));
-		context.setUriInfo(uriInfo);
-		parser.parseSelect(context);
+		ResourceEntity<E2> resourceEntity = parser.parseSelect(getLrEntity(E2.class), uriInfo, null);
 
-		assertNotNull(context.getResponse().getEntity().getQualifier());
-		assertEquals(exp("address = '1 Main Street' and name likeIgnoreCase 'xyz%'"),
-				context.getResponse().getEntity().getQualifier());
+		assertNotNull(resourceEntity.getQualifier());
+		assertEquals(exp("address = '1 Main Street' and name likeIgnoreCase 'xyz%'"), resourceEntity.getQualifier());
 	}
 
 	@Test
@@ -130,13 +115,10 @@ public class SenchaRequestParserTest extends TestWithCayenneMapping {
 		UriInfo uriInfo = mock(UriInfo.class);
 		when(uriInfo.getQueryParameters()).thenReturn(params);
 
-		SelectContext<E2> context = new SelectContext<>(E2.class);
-		context.setResponse(DataResponse.forType(E2.class));
-		context.setUriInfo(uriInfo);
-		parser.parseSelect(context);
+		ResourceEntity<E2> resourceEntity = parser.parseSelect(getLrEntity(E2.class), uriInfo, null);
 
-		assertEquals(3, context.getResponse().getEntity().getOrderings().size());
-		Iterator<Ordering> it = context.getResponse().getEntity().getOrderings().iterator();
+		assertEquals(3, resourceEntity.getOrderings().size());
+		Iterator<Ordering> it = resourceEntity.getOrderings().iterator();
 		Ordering o1 = it.next();
 		Ordering o2 = it.next();
 		Ordering o3 = it.next();

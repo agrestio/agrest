@@ -3,7 +3,6 @@ package com.nhl.link.rest.runtime.parser.sort;
 import javax.ws.rs.core.UriInfo;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.nhl.link.rest.DataResponse;
 import com.nhl.link.rest.ResourceEntity;
 
 /**
@@ -11,8 +10,7 @@ import com.nhl.link.rest.ResourceEntity;
  */
 public interface ISortProcessor {
 
-	void process(DataResponse<?> response, UriInfo uriInfo);
+	void process(ResourceEntity<?> entity, UriInfo uriInfo);
 
 	void process(ResourceEntity<?> entity, JsonNode sortNode);
-
 }

@@ -85,28 +85,30 @@ public class CayenneFetchStageTest extends TestWithCayenneMapping {
 	@Test
 	public void testBuildQuery_Pagination() {
 
-		DataResponse<E1> response = DataResponse.forType(E1.class).resourceEntity(getResourceEntity(E1.class));
+		ResourceEntity<E1> resourceEntity = new ResourceEntity<>(getLrEntity(E1.class));
+		resourceEntity.setFetchLimit(10);
+		resourceEntity.setFetchOffset(0);
+
+		DataResponse<E1> response = DataResponse.forType(E1.class).resourceEntity(resourceEntity);
 		SelectContext<E1> c = new SelectContext<E1>(E1.class);
 		c.setResponse(response);
 
-		response.withFetchLimit(10);
-		response.withFetchOffset(0);
 		SelectQuery<E1> q1 = fetchStage.buildQuery(c);
 
 		assertEquals("No pagination in the query for paginated request is expected", 0, q1.getPageSize());
 		assertEquals(0, q1.getFetchOffset());
 		assertEquals(0, q1.getFetchLimit());
 
-		response.withFetchLimit(0);
-		response.withFetchOffset(0);
+		resourceEntity.setFetchLimit(0);
+		resourceEntity.setFetchOffset(0);
 
 		SelectQuery<E1> q2 = fetchStage.buildQuery(c);
 		assertEquals(0, q2.getPageSize());
 		assertEquals(0, q2.getFetchOffset());
 		assertEquals(0, q2.getFetchLimit());
 
-		response.withFetchLimit(0);
-		response.withFetchOffset(5);
+		resourceEntity.setFetchLimit(0);
+		resourceEntity.setFetchOffset(5);
 
 		SelectQuery<E1> q3 = fetchStage.buildQuery(c);
 		assertEquals(0, q3.getPageSize());

@@ -5,7 +5,7 @@ import javax.ws.rs.core.UriInfo;
 
 import org.apache.cayenne.di.Inject;
 
-import com.nhl.link.rest.DataResponse;
+import com.nhl.link.rest.ResourceEntity;
 import com.nhl.link.rest.runtime.jackson.IJacksonService;
 import com.nhl.link.rest.runtime.meta.IMetadataService;
 import com.nhl.link.rest.runtime.parser.BaseRequestProcessor;
@@ -31,14 +31,14 @@ public class IncludeExcludeProcessor extends BaseRequestProcessor implements ITr
 	}
 
 	@Override
-	public void process(DataResponse<?> response, UriInfo uriInfo) {
+	public void process(ResourceEntity<?> entity, UriInfo uriInfo) {
 
 		// process even if uriinfo is not available ... this will result in
 		// default includes
 		MultivaluedMap<String, String> parameters = uriInfo != null ? uriInfo.getQueryParameters()
 				: EmptyMultiValuedMap.map();
 
-		includeWorker.process(response.getEntity(), strings(parameters, INCLUDE));
-		excludeWorker.process(response.getEntity(), strings(parameters, EXCLUDE));
+		includeWorker.process(entity, strings(parameters, INCLUDE));
+		excludeWorker.process(entity, strings(parameters, EXCLUDE));
 	}
 }

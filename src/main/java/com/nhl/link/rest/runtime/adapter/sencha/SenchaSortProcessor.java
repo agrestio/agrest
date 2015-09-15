@@ -5,7 +5,7 @@ import javax.ws.rs.core.UriInfo;
 
 import org.apache.cayenne.di.Inject;
 
-import com.nhl.link.rest.DataResponse;
+import com.nhl.link.rest.ResourceEntity;
 import com.nhl.link.rest.runtime.jackson.IJacksonService;
 import com.nhl.link.rest.runtime.parser.cache.IPathCache;
 import com.nhl.link.rest.runtime.parser.sort.SortProcessor;
@@ -23,16 +23,16 @@ public class SenchaSortProcessor extends SortProcessor {
 	}
 
 	@Override
-	public void process(DataResponse<?> response, UriInfo uriInfo) {
+	public void process(ResourceEntity<?> entity, UriInfo uriInfo) {
 
 		if (uriInfo != null) {
 
 			// sencha groupers go before sorters (sorters are processed by
 			// super).
 			MultivaluedMap<String, String> parameters = uriInfo.getQueryParameters();
-			process(response.getEntity(), string(parameters, GROUP), string(parameters, GROUP_DIR));
+			process(entity, string(parameters, GROUP), string(parameters, GROUP_DIR));
 
-			super.process(response, uriInfo);
+			super.process(entity, uriInfo);
 		}
 	}
 

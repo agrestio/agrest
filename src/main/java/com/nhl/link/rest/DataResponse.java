@@ -18,8 +18,7 @@ public class DataResponse<T> extends LrResponse {
 
 	private Class<T> type;
 	private ResourceEntity<T> entity;
-	private int fetchOffset;
-	private int fetchLimit;
+
 	private int prefetchSemantics;
 	private List<T> objects;
 	private Encoder encoder;
@@ -67,24 +66,6 @@ public class DataResponse<T> extends LrResponse {
 
 	public ResourceEntity<T> getEntity() {
 		return entity;
-	}
-
-	public int getFetchOffset() {
-		return fetchOffset;
-	}
-
-	public DataResponse<T> withFetchOffset(int fetchOffset) {
-		this.fetchOffset = fetchOffset;
-		return this;
-	}
-
-	public int getFetchLimit() {
-		return fetchLimit;
-	}
-
-	public DataResponse<T> withFetchLimit(int fetchLimit) {
-		this.fetchLimit = fetchLimit;
-		return this;
 	}
 
 	public int getPrefetchSemantics() {

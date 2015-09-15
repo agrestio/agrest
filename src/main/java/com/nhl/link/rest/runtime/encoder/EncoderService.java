@@ -1,9 +1,20 @@
 package com.nhl.link.rest.runtime.encoder;
 
-import com.nhl.link.rest.DataResponse;
+import static com.nhl.link.rest.property.PropertyBuilder.dataObjectProperty;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.TreeMap;
+import java.util.concurrent.ConcurrentHashMap;
+
+import javax.ws.rs.core.Response.Status;
+
+import org.apache.cayenne.di.Inject;
+
 import com.nhl.link.rest.EntityProperty;
 import com.nhl.link.rest.LinkRestException;
-import com.nhl.link.rest.MetadataResponse;
 import com.nhl.link.rest.ResourceEntity;
 import com.nhl.link.rest.encoder.Encoder;
 import com.nhl.link.rest.encoder.EncoderFilter;
@@ -20,17 +31,6 @@ import com.nhl.link.rest.meta.LrAttribute;
 import com.nhl.link.rest.meta.LrRelationship;
 import com.nhl.link.rest.property.PropertyBuilder;
 import com.nhl.link.rest.runtime.semantics.IRelationshipMapper;
-import org.apache.cayenne.di.Inject;
-
-import javax.ws.rs.core.Response.Status;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.TreeMap;
-import java.util.concurrent.ConcurrentHashMap;
-
-import static com.nhl.link.rest.property.PropertyBuilder.dataObjectProperty;
 
 public class EncoderService implements IEncoderService {
 
@@ -57,23 +57,12 @@ public class EncoderService implements IEncoderService {
 	}
 
 	@Override
-	public Encoder makeEncoder(DataResponse<?> response) {
-		return rootEncoder(response);
+	public <T> Encoder metadataEncoder(ResourceEntity<T> entity) {
+		return new ResourceEncoder<>(entity.getLrEntity(), entity.getApplicationBase(), entityMetadataEncoder(entity));
 	}
 
 	@Override
-	public Encoder makeEncoder(MetadataResponse<?> response) {
-		return rootEncoder(response);
-	}
-
-	private <T> Encoder rootEncoder(MetadataResponse<T> response) {
-		ResourceEntity<T> entity = response.getEntity();
-		return new ResourceEncoder<>(entity.getLrEntity(), response.getApplicationBase(), entityMetadataEncoder(entity));
-	}
-
-	private <T> Encoder rootEncoder(DataResponse<T> response) {
-
-		ResourceEntity<T> entity = response.getEntity();
+	public <T> Encoder dataEncoder(ResourceEntity<T> entity) {
 
 		// TODO: in theory we can support this actually, but leaving it for
 		// another day, as fetch limit/offset and other filtering is
@@ -88,8 +77,8 @@ public class EncoderService implements IEncoderService {
 		// encoder, as those are presumably applied at the query level.. (unlike
 		// with #nestedToManyEncoder)
 
-		return new RootListEncoder(elementEncoder).withTotal("total").withOffset(response.getFetchOffset())
-				.withLimit(response.getFetchLimit());
+		return new RootListEncoder(elementEncoder).withTotal("total").withOffset(entity.getFetchOffset())
+				.withLimit(entity.getFetchLimit());
 	}
 
 	private Encoder nestedToManyEncoder(ResourceEntity<?> resourceEntity) {
@@ -102,8 +91,8 @@ public class EncoderService implements IEncoderService {
 			// sublists...
 			Encoder listEncoder = new ListEncoder(elementEncoder, null, resourceEntity.getOrderings());
 
-			return new MapByEncoder(resourceEntity.getMapByPath(), resourceEntity.getQualifier(), resourceEntity.getMapBy(),
-					listEncoder, stringConverterFactory);
+			return new MapByEncoder(resourceEntity.getMapByPath(), resourceEntity.getQualifier(),
+					resourceEntity.getMapBy(), listEncoder, stringConverterFactory);
 
 		} else {
 			return new ListEncoder(elementEncoder, resourceEntity.getQualifier(), resourceEntity.getOrderings());
@@ -153,8 +142,8 @@ public class EncoderService implements IEncoderService {
 		for (Entry<String, ResourceEntity<?>> e : resourceEntity.getChildren().entrySet()) {
 			LrRelationship relationship = resourceEntity.getLrEntity().getRelationship(e.getKey());
 
-			Encoder encoder = relationship.isToMany() ? nestedToManyEncoder(e.getValue()) : toOneEncoder(e.getValue(),
-					relationship);
+			Encoder encoder = relationship.isToMany() ? nestedToManyEncoder(e.getValue())
+					: toOneEncoder(e.getValue(), relationship);
 
 			properties.put(e.getKey(), dataObjectProperty().encodedWith(encoder));
 		}

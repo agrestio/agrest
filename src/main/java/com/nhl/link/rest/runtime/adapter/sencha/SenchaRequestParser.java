@@ -6,16 +6,14 @@ import javax.ws.rs.core.UriInfo;
 import org.apache.cayenne.di.Inject;
 import org.apache.cayenne.exp.Expression;
 
-import com.nhl.link.rest.runtime.jackson.IJacksonService;
-import com.nhl.link.rest.runtime.meta.IMetadataService;
+import com.nhl.link.rest.ResourceEntity;
+import com.nhl.link.rest.meta.LrEntity;
 import com.nhl.link.rest.runtime.parser.EmptyMultiValuedMap;
-import com.nhl.link.rest.runtime.parser.IUpdateParser;
 import com.nhl.link.rest.runtime.parser.RequestParser;
 import com.nhl.link.rest.runtime.parser.filter.ICayenneExpProcessor;
 import com.nhl.link.rest.runtime.parser.filter.IKeyValueExpProcessor;
 import com.nhl.link.rest.runtime.parser.sort.ISortProcessor;
 import com.nhl.link.rest.runtime.parser.tree.ITreeProcessor;
-import com.nhl.link.rest.runtime.processor.select.SelectContext;
 
 /**
  * @since 1.11
@@ -26,34 +24,33 @@ public class SenchaRequestParser extends RequestParser {
 
 	private ISenchaFilterProcessor senchaFilterProcessor;
 
-	public SenchaRequestParser(@Inject IMetadataService metadataService, @Inject IJacksonService jacksonService,
-			@Inject ITreeProcessor treeProcessor, @Inject ISortProcessor sortProcessor,
-			@Inject IUpdateParser updateParser, @Inject ICayenneExpProcessor cayenneExpProcessor,
-			@Inject IKeyValueExpProcessor keyValueExpProcessor, @Inject ISenchaFilterProcessor senchaFilterProcessor) {
+	public SenchaRequestParser(@Inject ITreeProcessor treeProcessor, @Inject ISortProcessor sortProcessor,
+			@Inject ICayenneExpProcessor cayenneExpProcessor, @Inject IKeyValueExpProcessor keyValueExpProcessor,
+			@Inject ISenchaFilterProcessor senchaFilterProcessor) {
 
-		super(metadataService, jacksonService, treeProcessor, sortProcessor, updateParser, cayenneExpProcessor,
-				keyValueExpProcessor);
+		super(treeProcessor, sortProcessor, cayenneExpProcessor, keyValueExpProcessor);
 
 		this.senchaFilterProcessor = senchaFilterProcessor;
 	}
 
 	@Override
-	public void parseSelect(SelectContext<?> context) {
-		super.parseSelect(context);
+	public <T> ResourceEntity<T> parseSelect(LrEntity<T> entity, UriInfo uriInfo, String autocompleteProperty) {
+		ResourceEntity<T> resourceEntity = super.parseSelect(entity, uriInfo, autocompleteProperty);
 
-		UriInfo uriInfo = context.getUriInfo();
 		MultivaluedMap<String, String> parameters = uriInfo != null ? uriInfo.getQueryParameters()
 				: EmptyMultiValuedMap.map();
 
-		Expression e1 = parseFilter(context, parameters);
+		Expression e1 = parseFilter(entity, parameters);
 		if (e1 != null) {
-			context.getResponse().getEntity().andQualifier(e1);
+			resourceEntity.andQualifier(e1);
 		}
+
+		return resourceEntity;
 	}
 
-	protected Expression parseFilter(SelectContext<?> context, MultivaluedMap<String, String> parameters) {
+	protected Expression parseFilter(LrEntity<?> entity, MultivaluedMap<String, String> parameters) {
 		String value = string(parameters, FILTER);
-		return senchaFilterProcessor.process(context.getResponse().getEntity().getLrEntity(), value);
+		return senchaFilterProcessor.process(entity, value);
 	}
 
 }

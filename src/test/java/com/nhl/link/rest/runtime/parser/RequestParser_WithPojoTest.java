@@ -16,7 +16,6 @@ import javax.ws.rs.core.UriInfo;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.nhl.link.rest.DataResponse;
 import com.nhl.link.rest.ResourceEntity;
 import com.nhl.link.rest.it.fixture.pojo.model.P1;
 import com.nhl.link.rest.it.fixture.pojo.model.P2;
@@ -37,7 +36,6 @@ import com.nhl.link.rest.runtime.parser.sort.ISortProcessor;
 import com.nhl.link.rest.runtime.parser.sort.SortProcessor;
 import com.nhl.link.rest.runtime.parser.tree.ITreeProcessor;
 import com.nhl.link.rest.runtime.parser.tree.IncludeExcludeProcessor;
-import com.nhl.link.rest.runtime.processor.select.SelectContext;
 import com.nhl.link.rest.unit.TestWithCayenneMapping;
 
 public class RequestParser_WithPojoTest extends TestWithCayenneMapping {
@@ -55,10 +53,7 @@ public class RequestParser_WithPojoTest extends TestWithCayenneMapping {
 		ITreeProcessor treeProcessor = new IncludeExcludeProcessor(jacksonService, sortProcessor, expProcessor,
 				metadataService);
 
-		IUpdateParser mockUpdateParser = mock(IUpdateParser.class);
-
-		parser = new RequestParser(metadataService, jacksonService, treeProcessor, sortProcessor, mockUpdateParser,
-				expProcessor, kvExpProcessor);
+		parser = new RequestParser(treeProcessor, sortProcessor, expProcessor, kvExpProcessor);
 	}
 
 	@Override
@@ -76,23 +71,14 @@ public class RequestParser_WithPojoTest extends TestWithCayenneMapping {
 		UriInfo uriInfo = mock(UriInfo.class);
 		when(uriInfo.getQueryParameters()).thenReturn(params);
 
-		SelectContext<P1> context = new SelectContext<>(P1.class);
-		context.setResponse(DataResponse.forType(P1.class));
-		context.setUriInfo(uriInfo);
-		parser.parseSelect(context);
-
-		ResourceEntity<P1> ce1 = context.getResponse().getEntity();
+		ResourceEntity<P1> ce1 = parser.parseSelect(getLrEntity(P1.class), uriInfo, null);
 		assertNotNull(ce1);
 		assertTrue(ce1.isIdIncluded());
 		assertEquals(1, ce1.getAttributes().size());
 		assertTrue(ce1.getChildren().isEmpty());
 
-		SelectContext<P2> context2 = new SelectContext<>(P2.class);
-		context2.setResponse(DataResponse.forType(P2.class));
-		context2.setUriInfo(uriInfo);
-		parser.parseSelect(context2);
+		ResourceEntity<P2> ce2 = parser.parseSelect(getLrEntity(P2.class), uriInfo, null);
 
-		ResourceEntity<P2> ce2 = context2.getResponse().getEntity();
 		assertNotNull(ce2);
 		assertTrue(ce2.isIdIncluded());
 		assertEquals(1, ce2.getAttributes().size());
@@ -109,12 +95,8 @@ public class RequestParser_WithPojoTest extends TestWithCayenneMapping {
 		UriInfo uriInfo = mock(UriInfo.class);
 		when(uriInfo.getQueryParameters()).thenReturn(params);
 
-		SelectContext<P2> context2 = new SelectContext<>(P2.class);
-		context2.setResponse(DataResponse.forType(P2.class));
-		context2.setUriInfo(uriInfo);
-		parser.parseSelect(context2);
+		ResourceEntity<P2> ce2 = parser.parseSelect(getLrEntity(P2.class), uriInfo, null);
 
-		ResourceEntity<P2> ce2 = context2.getResponse().getEntity();
 		assertNotNull(ce2);
 		assertTrue(ce2.isIdIncluded());
 		assertEquals(1, ce2.getAttributes().size());

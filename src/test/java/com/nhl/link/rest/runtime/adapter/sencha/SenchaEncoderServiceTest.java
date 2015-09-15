@@ -10,7 +10,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import com.nhl.link.rest.encoder.PropertyMetadataEncoder;
 import org.apache.cayenne.Cayenne;
 import org.apache.cayenne.ObjectContext;
 import org.apache.cayenne.ObjectId;
@@ -19,10 +18,10 @@ import org.junit.Test;
 
 import com.fasterxml.jackson.core.JsonEncoding;
 import com.fasterxml.jackson.core.JsonGenerator;
-import com.nhl.link.rest.DataResponse;
 import com.nhl.link.rest.ResourceEntity;
 import com.nhl.link.rest.encoder.Encoder;
 import com.nhl.link.rest.encoder.EncoderFilter;
+import com.nhl.link.rest.encoder.PropertyMetadataEncoder;
 import com.nhl.link.rest.it.fixture.cayenne.E2;
 import com.nhl.link.rest.it.fixture.cayenne.E3;
 import com.nhl.link.rest.runtime.cayenne.ICayennePersister;
@@ -53,7 +52,7 @@ public class SenchaEncoderServiceTest extends TestWithCayenneMapping {
 		IRelationshipMapper relationshipMapper = new SenchaRelationshipMapper();
 
 		encoderService = new SenchaEncoderService(this.filters, attributeEncoderFactory, stringConverterFactory,
-				relationshipMapper, Collections.<String, PropertyMetadataEncoder>emptyMap());
+				relationshipMapper, Collections.<String, PropertyMetadataEncoder> emptyMap());
 	}
 
 	@Test
@@ -116,9 +115,7 @@ public class SenchaEncoderServiceTest extends TestWithCayenneMapping {
 		context.registerNewObject(e31);
 		e31.setE2(e21);
 
-		DataResponse<E3> builder = DataResponse.forType(E3.class).resourceEntity(e3Descriptor).withObject(e31);
-
-		assertEquals("[{\"id\":5,\"e2\":{\"id\":7},\"e2_id\":7}]", toJson(builder));
+		assertEquals("[{\"id\":5,\"e2\":{\"id\":7},\"e2_id\":7}]", toJson(e31, e3Descriptor));
 
 		E2 e22 = new E2();
 		e22.setObjectId(new ObjectId("E2", E2.ID_PK_COLUMN, 8));
@@ -129,19 +126,17 @@ public class SenchaEncoderServiceTest extends TestWithCayenneMapping {
 		context.registerNewObject(e32);
 		e32.setE2(e22);
 
-		builder.withObject(e32);
-
-		assertEquals("[{\"id\":6}]", toJson(builder));
+		assertEquals("[{\"id\":6}]", toJson(e32, e3Descriptor));
 	}
 
-	private String toJson(DataResponse<?> builder) throws IOException {
+	private String toJson(Object object, ResourceEntity<?> entity) throws IOException {
 
-		Encoder encoder = encoderService.makeEncoder(builder);
+		Encoder encoder = encoderService.dataEncoder(entity);
 
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 
 		try (JsonGenerator generator = new JacksonService().getJsonFactory().createGenerator(out, JsonEncoding.UTF8)) {
-			encoder.encode(null, builder.getObjects(), generator);
+			encoder.encode(null, Collections.singletonList(object), generator);
 		}
 
 		return new String(out.toByteArray(), "UTF-8");

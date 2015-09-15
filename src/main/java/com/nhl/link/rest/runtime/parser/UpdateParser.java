@@ -1,5 +1,6 @@
 package com.nhl.link.rest.runtime.parser;
 
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -23,6 +24,7 @@ import com.nhl.link.rest.meta.LrPersistentAttribute;
 import com.nhl.link.rest.meta.LrPersistentRelationship;
 import com.nhl.link.rest.meta.LrRelationship;
 import com.nhl.link.rest.parser.converter.JsonValueConverter;
+import com.nhl.link.rest.runtime.jackson.IJacksonService;
 import com.nhl.link.rest.runtime.parser.converter.IJsonValueConverterFactory;
 import com.nhl.link.rest.runtime.semantics.IRelationshipMapper;
 
@@ -35,15 +37,28 @@ public class UpdateParser implements IUpdateParser {
 
 	protected IJsonValueConverterFactory converterFactory;
 	protected IRelationshipMapper relationshipMapper;
+	protected IJacksonService jacksonService;
 
 	public UpdateParser(@Inject IRelationshipMapper relationshipMapper,
-			@Inject IJsonValueConverterFactory converterFactory) {
+			@Inject IJsonValueConverterFactory converterFactory, @Inject IJacksonService jacksonService) {
 		this.relationshipMapper = relationshipMapper;
 		this.converterFactory = converterFactory;
+		this.jacksonService = jacksonService;
 	}
 
 	@Override
-	public <T> Collection<EntityUpdate<T>> parse(LrEntity<T> entity, JsonNode json) {
+	public <T> Collection<EntityUpdate<T>> parse(LrEntity<T> entity, InputStream entityStream) {
+		JsonNode node = jacksonService.parseJson(entityStream);
+		return parse(entity, node);
+	}
+
+	@Override
+	public <T> Collection<EntityUpdate<T>> parse(LrEntity<T> entity, String entityData) {
+		JsonNode node = jacksonService.parseJson(entityData);
+		return parse(entity, node);
+	}
+
+	protected <T> Collection<EntityUpdate<T>> parse(LrEntity<T> entity, JsonNode json) {
 
 		if (json == null) {
 			// empty requests are fine. we just do nothing...

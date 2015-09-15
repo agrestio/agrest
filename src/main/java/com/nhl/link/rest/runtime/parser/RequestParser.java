@@ -1,30 +1,20 @@
 package com.nhl.link.rest.runtime.parser;
 
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
 import javax.ws.rs.core.MultivaluedMap;
-import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriInfo;
 
 import org.apache.cayenne.di.Inject;
 import org.apache.cayenne.exp.Expression;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.nhl.link.rest.DataResponse;
-import com.nhl.link.rest.EntityUpdate;
-import com.nhl.link.rest.LinkRestException;
 import com.nhl.link.rest.ResourceEntity;
 import com.nhl.link.rest.meta.LrEntity;
-import com.nhl.link.rest.runtime.jackson.IJacksonService;
-import com.nhl.link.rest.runtime.meta.IMetadataService;
 import com.nhl.link.rest.runtime.parser.filter.ICayenneExpProcessor;
 import com.nhl.link.rest.runtime.parser.filter.IKeyValueExpProcessor;
 import com.nhl.link.rest.runtime.parser.sort.ISortProcessor;
 import com.nhl.link.rest.runtime.parser.tree.ITreeProcessor;
-import com.nhl.link.rest.runtime.processor.select.SelectContext;
-import com.nhl.link.rest.runtime.processor.update.UpdateContext;
 
 public class RequestParser implements IRequestParser {
 
@@ -37,12 +27,9 @@ public class RequestParser implements IRequestParser {
 	private static final String QUERY = "query";
 
 	private ITreeProcessor treeProcessor;
-	private IMetadataService metadataService;
 	private ISortProcessor sortProcessor;
 	private ICayenneExpProcessor cayenneExpProcessor;
 	private IKeyValueExpProcessor keyValueExpProcessor;
-	private IUpdateParser updateParser;
-	private IJacksonService jacksonService;
 
 	protected static String string(MultivaluedMap<String, String> parameters, String name) {
 		return parameters.getFirst(name);
@@ -75,87 +62,56 @@ public class RequestParser implements IRequestParser {
 		return e1 == null ? e2 : (e2 == null) ? e1 : e1.andExp(e2);
 	}
 
-	public RequestParser(@Inject IMetadataService metadataService, @Inject IJacksonService jacksonService,
-			@Inject ITreeProcessor treeProcessor, @Inject ISortProcessor sortProcessor,
-			@Inject IUpdateParser updateParser, @Inject ICayenneExpProcessor cayenneExpProcessor,
-			@Inject IKeyValueExpProcessor keyValueExpProcessor) {
+	public RequestParser(@Inject ITreeProcessor treeProcessor, @Inject ISortProcessor sortProcessor,
+			@Inject ICayenneExpProcessor cayenneExpProcessor, @Inject IKeyValueExpProcessor keyValueExpProcessor) {
 
-		this.metadataService = metadataService;
 		this.sortProcessor = sortProcessor;
 		this.treeProcessor = treeProcessor;
 		this.cayenneExpProcessor = cayenneExpProcessor;
 		this.keyValueExpProcessor = keyValueExpProcessor;
-		this.updateParser = updateParser;
-		this.jacksonService = jacksonService;
 	}
 
-	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
-	public void parseSelect(SelectContext<?> context) {
+	public <T> ResourceEntity<T> parseSelect(LrEntity<T> entity, UriInfo uriInfo, String autocompleteProperty) {
 
-		if (context == null) {
-			throw new LinkRestException(Status.INTERNAL_SERVER_ERROR, "Null context");
-		}
-
-		LrEntity<?> entity = metadataService.getLrEntity(context.getType());
-
-		DataResponse<?> response = context.getResponse();
-
-		ResourceEntity rootDescriptor = new ResourceEntity(entity);
-		response.resourceEntity(rootDescriptor);
+		ResourceEntity<T> resourceEntity = new ResourceEntity<>(entity);
 
 		// selectById can send us a null uriInfo; still we want to run through
 		// the processors in this case to init the defaults
 
-		UriInfo uriInfo = context.getUriInfo();
 		MultivaluedMap<String, String> parameters = uriInfo != null ? uriInfo.getQueryParameters()
 				: EmptyMultiValuedMap.map();
 
 		// TODO: "ISizeProcessor"
-		response.withFetchOffset(BaseRequestProcessor.integer(parameters, START));
-		response.withFetchLimit(BaseRequestProcessor.integer(parameters, LIMIT));
+		resourceEntity.setFetchOffset(BaseRequestProcessor.integer(parameters, START));
+		resourceEntity.setFetchLimit(BaseRequestProcessor.integer(parameters, LIMIT));
 
-		treeProcessor.process(response, uriInfo);
-		sortProcessor.process(response, uriInfo);
+		treeProcessor.process(resourceEntity, uriInfo);
+		sortProcessor.process(resourceEntity, uriInfo);
 
-		Expression e1 = parseCayenneExp(context, parameters);
-		Expression e2 = parseKeyValueExp(context, parameters);
-		response.getEntity().andQualifier(combine(e1, e2));
-	}
+		Expression e1 = parseCayenneExp(entity, parameters);
+		Expression e2 = parseKeyValueExp(entity, parameters, autocompleteProperty);
+		resourceEntity.andQualifier(combine(e1, e2));
 
-	protected Expression parseCayenneExp(SelectContext<?> context, MultivaluedMap<String, String> parameters) {
-		String exp = string(parameters, CAYENNE_EXP);
-		return cayenneExpProcessor.process(context.getResponse().getEntity().getLrEntity(), exp);
-	}
-
-	protected Expression parseKeyValueExp(SelectContext<?> context, MultivaluedMap<String, String> parameters) {
-		String value = string(parameters, QUERY);
-		return keyValueExpProcessor.process(context.getResponse().getEntity().getLrEntity(),
-				context.getAutocompleteProperty(), value);
+		return resourceEntity;
 	}
 
 	@Override
-	public <T> void parseUpdate(UpdateContext<T> context) {
-		if (context == null) {
-			throw new LinkRestException(Status.INTERNAL_SERVER_ERROR, "Null context");
-		}
-
-		LrEntity<T> entity = metadataService.getLrEntity(context.getType());
+	public <T> ResourceEntity<T> parseUpdate(LrEntity<T> entity, UriInfo uriInfo) {
 		ResourceEntity<T> resourceEntity = new ResourceEntity<>(entity);
+		treeProcessor.process(resourceEntity, uriInfo);
+		return resourceEntity;
+	}
 
-		DataResponse<T> response = context.getResponse();
-		response.resourceEntity(resourceEntity);
-		treeProcessor.process(response, context.getUriInfo());
+	protected Expression parseCayenneExp(LrEntity<?> entity, MultivaluedMap<String, String> parameters) {
+		String exp = string(parameters, CAYENNE_EXP);
+		return cayenneExpProcessor.process(entity, exp);
+	}
 
-		// skip parsing if we already received EntityUpdates collection parsed
-		// by MessageBodyReader
-
-		if (context.getUpdates() == null) {
-			JsonNode node = jacksonService.parseJson(context.getEntityData());
-			Collection<EntityUpdate<T>> updates = updateParser.parse(context.getResponse().getEntity().getLrEntity(),
-					node);
-			context.setUpdates(updates);
-		}
+	protected Expression parseKeyValueExp(LrEntity<?> entity, MultivaluedMap<String, String> parameters,
+			String autocompleteProperty) {
+		String value = string(parameters, QUERY);
+		return keyValueExpProcessor.process(entity, autocompleteProperty, value);
 	}
 
 }

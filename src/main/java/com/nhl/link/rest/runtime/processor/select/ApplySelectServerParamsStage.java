@@ -3,6 +3,7 @@ package com.nhl.link.rest.runtime.processor.select;
 import java.lang.annotation.Annotation;
 
 import com.nhl.link.rest.DataResponse;
+import com.nhl.link.rest.ResourceEntity;
 import com.nhl.link.rest.annotation.listener.SelectServerParamsApplied;
 import com.nhl.link.rest.encoder.Encoder;
 import com.nhl.link.rest.processor.ProcessingStage;
@@ -18,15 +19,15 @@ public class ApplySelectServerParamsStage<T> extends BaseLinearProcessingStage<S
 	private IConstraintsHandler constraintsHandler;
 	private IEncoderService encoderService;
 
-	public ApplySelectServerParamsStage(ProcessingStage<SelectContext<T>, ? super T> next, IEncoderService encoderService,
-			IConstraintsHandler constraintsHandler) {
+	public ApplySelectServerParamsStage(ProcessingStage<SelectContext<T>, ? super T> next,
+			IEncoderService encoderService, IConstraintsHandler constraintsHandler) {
 
 		super(next);
 
 		this.encoderService = encoderService;
 		this.constraintsHandler = constraintsHandler;
 	}
-	
+
 	@Override
 	public Class<? extends Annotation> afterStageListener() {
 		return SelectServerParamsApplied.class;
@@ -37,8 +38,9 @@ public class ApplySelectServerParamsStage<T> extends BaseLinearProcessingStage<S
 	protected void doExecute(SelectContext<T> context) {
 
 		DataResponse response = context.getResponse();
+		ResourceEntity<T> entity = response.getEntity();
 
-		constraintsHandler.constrainResponse(response, context.getSizeConstraints(), context.getTreeConstraints());
+		constraintsHandler.constrainResponse(entity, context.getSizeConstraints(), context.getTreeConstraints());
 
 		if (context.getExtraProperties() != null) {
 			response.getEntity().getExtraProperties().putAll(context.getExtraProperties());
@@ -47,7 +49,7 @@ public class ApplySelectServerParamsStage<T> extends BaseLinearProcessingStage<S
 		// make sure we create the encoder, even if we end up with an empty
 		// list, as we need to encode the totals
 
-		Encoder encoder = context.getEncoder() != null ? context.getEncoder() : encoderService.makeEncoder(response);
+		Encoder encoder = context.getEncoder() != null ? context.getEncoder() : encoderService.dataEncoder(entity);
 		response.withEncoder(encoder);
 	}
 }

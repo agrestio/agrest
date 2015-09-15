@@ -7,6 +7,7 @@ import org.apache.cayenne.di.Inject;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.nhl.link.rest.EntityUpdate;
 import com.nhl.link.rest.parser.converter.GenericConverter;
+import com.nhl.link.rest.runtime.jackson.IJacksonService;
 import com.nhl.link.rest.runtime.parser.UpdateParser;
 import com.nhl.link.rest.runtime.parser.converter.IJsonValueConverterFactory;
 import com.nhl.link.rest.runtime.semantics.IRelationshipMapper;
@@ -27,8 +28,8 @@ public class SenchaUpdateParser extends UpdateParser {
 	private Pattern tempIdPattern;
 
 	public SenchaUpdateParser(@Inject IRelationshipMapper relationshipMapper,
-			@Inject IJsonValueConverterFactory converterFactory) {
-		super(relationshipMapper, converterFactory);
+			@Inject IJsonValueConverterFactory converterFactory, @Inject IJacksonService jacksonService) {
+		super(relationshipMapper, converterFactory, jacksonService);
 
 		// do we need to make it injectable?
 		this.tempIdPattern = DASH_ID_PATTERN;

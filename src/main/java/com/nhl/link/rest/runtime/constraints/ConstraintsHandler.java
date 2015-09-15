@@ -6,7 +6,6 @@ import org.apache.cayenne.di.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.nhl.link.rest.DataResponse;
 import com.nhl.link.rest.EntityConstraint;
 import com.nhl.link.rest.ResourceEntity;
 import com.nhl.link.rest.SizeConstraints;
@@ -47,35 +46,34 @@ public class ConstraintsHandler implements IConstraintsHandler {
 	}
 
 	@Override
-	public <T> void constrainResponse(DataResponse<T> response, SizeConstraints sizeConstraints,
+	public <T> void constrainResponse(ResourceEntity<T> entity, SizeConstraints sizeConstraints,
 			ConstraintsBuilder<T> c) {
 
 		if (sizeConstraints != null) {
-			applySizeConstraintsForRead(response, sizeConstraints);
+			applySizeConstraintsForRead(entity, sizeConstraints);
 		}
 
-		ResourceEntity<T> resourceEntity = response.getEntity();
-		if (!treeConstraintsHandler.constrainResponse(resourceEntity, c)) {
-			entityConstraintHandler.constrainResponse(resourceEntity);
+		if (!treeConstraintsHandler.constrainResponse(entity, c)) {
+			entityConstraintHandler.constrainResponse(entity);
 		}
 	}
 
-	protected void applySizeConstraintsForRead(DataResponse<?> response, SizeConstraints constraints) {
+	protected void applySizeConstraintsForRead(ResourceEntity<?> entity, SizeConstraints constraints) {
 
 		// fetchOffset - do not exceed source offset
 		int upperOffset = constraints.getFetchOffset();
-		if (upperOffset > 0 && response.getFetchOffset() > upperOffset) {
-			LOGGER.info("Reducing fetch offset from " + response.getFetchOffset() + " to max allowed value of "
+		if (upperOffset > 0 && entity.getFetchOffset() > upperOffset) {
+			LOGGER.info("Reducing fetch offset from " + entity.getFetchOffset() + " to max allowed value of "
 					+ upperOffset);
-			response.withFetchOffset(upperOffset);
+			entity.setFetchOffset(upperOffset);
 		}
 
 		// fetchLimit - do not exceed source limit
 		int upperLimit = constraints.getFetchLimit();
-		if (upperLimit > 0 && response.getFetchLimit() > upperLimit) {
+		if (upperLimit > 0 && entity.getFetchLimit() > upperLimit) {
 			LOGGER.info(
-					"Reducing fetch limit from " + response.getFetchLimit() + " to max allowed value of " + upperLimit);
-			response.withFetchLimit(upperLimit);
+					"Reducing fetch limit from " + entity.getFetchLimit() + " to max allowed value of " + upperLimit);
+			entity.setFetchLimit(upperLimit);
 		}
 	}
 

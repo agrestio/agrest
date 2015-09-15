@@ -21,7 +21,6 @@ public class MetadataResponse<T> extends LrResponse {
 	private Collection<LrResource<T>> resources;
 	private Class<T> type;
 	private ResourceEntity<T> entity;
-	private String applicationBase;
 
 	public MetadataResponse(Class<T> type) {
 		this.encoder = GenericEncoder.encoder();
@@ -35,11 +34,6 @@ public class MetadataResponse<T> extends LrResponse {
 
 	public MetadataResponse<T> resourceEntity(ResourceEntity<T> entity) {
 		this.entity = entity;
-		return this;
-	}
-
-	public MetadataResponse<T> withApplicationBase(String applicationBase) {
-		this.applicationBase = applicationBase;
 		return this;
 	}
 
@@ -64,10 +58,6 @@ public class MetadataResponse<T> extends LrResponse {
 
 	public ResourceEntity<T> getEntity() {
 		return entity;
-	}
-
-	public String getApplicationBase() {
-		return applicationBase;
 	}
 
 }

@@ -1,17 +1,21 @@
 package com.nhl.link.rest.runtime.encoder;
 
-import com.nhl.link.rest.DataResponse;
-import com.nhl.link.rest.MetadataResponse;
+import com.nhl.link.rest.ResourceEntity;
 import com.nhl.link.rest.encoder.Encoder;
 
 public interface IEncoderService {
 
 	/**
-	 * Builds a hierarchical encoder for a given response.
+	 * Builds a hierarchical data encoder for a given response.
 	 * 
-	 * @since 1.3
+	 * @since 1.20
 	 */
-	Encoder makeEncoder(DataResponse<?> response);
+	<T> Encoder dataEncoder(ResourceEntity<T> entity);
 
-	Encoder makeEncoder(MetadataResponse<?> response);
+	/**
+	 * Builds a metadata encoder for a given response.
+	 * 
+	 * @since 1.20
+	 */
+	<T> Encoder metadataEncoder(ResourceEntity<T> entity);
 }

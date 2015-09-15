@@ -5,10 +5,6 @@ import static org.mockito.Mockito.when;
 
 import java.util.Collections;
 
-import com.nhl.link.rest.meta.parser.IResourceParser;
-import com.nhl.link.rest.meta.parser.ResourceParser;
-import com.nhl.link.rest.runtime.meta.IResourceMetadataService;
-import com.nhl.link.rest.runtime.meta.ResourceMetadataService;
 import org.apache.cayenne.ObjectContext;
 import org.apache.cayenne.configuration.server.DataSourceFactory;
 import org.apache.cayenne.configuration.server.ServerRuntime;
@@ -22,13 +18,15 @@ import org.junit.BeforeClass;
 
 import com.nhl.link.rest.ResourceEntity;
 import com.nhl.link.rest.meta.DefaultLrAttribute;
-import com.nhl.link.rest.meta.LrDataMap;
 import com.nhl.link.rest.meta.LrEntity;
 import com.nhl.link.rest.meta.LrEntityOverlay;
-import com.nhl.link.rest.meta.cayenne.CayenneAwareLrDataMap;
+import com.nhl.link.rest.meta.parser.IResourceParser;
+import com.nhl.link.rest.meta.parser.ResourceParser;
 import com.nhl.link.rest.runtime.cayenne.ICayennePersister;
 import com.nhl.link.rest.runtime.meta.IMetadataService;
+import com.nhl.link.rest.runtime.meta.IResourceMetadataService;
 import com.nhl.link.rest.runtime.meta.MetadataService;
+import com.nhl.link.rest.runtime.meta.ResourceMetadataService;
 
 /**
  * A superclass of Cayenne-aware test cases that do not need to access the DB,
@@ -58,7 +56,6 @@ public class TestWithCayenneMapping {
 		runtime = null;
 	}
 
-	protected LrDataMap lrDataMap;
 	protected ICayennePersister mockCayennePersister;
 	protected IMetadataService metadataService;
 	protected IResourceMetadataService resourceMetadataService;
@@ -66,8 +63,6 @@ public class TestWithCayenneMapping {
 
 	@Before
 	public void initLrDataMap() {
-		lrDataMap = new CayenneAwareLrDataMap(runtime.getChannel().getEntityResolver(),
-				Collections.<LrEntity<?>> emptyList(), Collections.<String, LrEntityOverlay<?>> emptyMap());
 
 		ObjectContext sharedContext = runtime.newContext();
 
@@ -91,7 +86,7 @@ public class TestWithCayenneMapping {
 	}
 
 	protected <T> LrEntity<T> getLrEntity(Class<T> type) {
-		return lrDataMap.getEntity(type);
+		return metadataService.getLrEntity(type);
 	}
 
 	protected ObjEntity getEntity(Class<?> type) {

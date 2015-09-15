@@ -8,12 +8,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import com.nhl.link.rest.encoder.PropertyMetadataEncoder;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.nhl.link.rest.DataResponse;
 import com.nhl.link.rest.encoder.EncoderFilter;
+import com.nhl.link.rest.encoder.PropertyMetadataEncoder;
 import com.nhl.link.rest.it.fixture.cayenne.E1;
 import com.nhl.link.rest.runtime.encoder.AttributeEncoderFactory;
 import com.nhl.link.rest.runtime.encoder.EncoderService;
@@ -33,19 +32,22 @@ public class DataResponseTest extends TestWithCayenneMapping {
 		IAttributeEncoderFactory attributeEncoderFactory = new AttributeEncoderFactory();
 		IStringConverterFactory stringConverterFactory = mock(IStringConverterFactory.class);
 		this.encoderService = new EncoderService(Collections.<EncoderFilter> emptyList(), attributeEncoderFactory,
-				stringConverterFactory, new RelationshipMapper(), Collections.<String, PropertyMetadataEncoder>emptyMap());
+				stringConverterFactory, new RelationshipMapper(),
+				Collections.<String, PropertyMetadataEncoder> emptyMap());
 	}
 
 	@Test
 	public void testToResponse_PlainObjects() {
-		DataResponse<E1> request = DataResponse.forType(E1.class).resourceEntity(getResourceEntity(E1.class));
+
+		ResourceEntity<E1> resourceEntity = getResourceEntity(E1.class);
+		DataResponse<E1> request = DataResponse.forType(E1.class).resourceEntity(resourceEntity);
 
 		List<E1> o1 = new ArrayList<>();
 		for (int i = 0; i < 10; i++) {
 			o1.add(new E1());
 		}
 
-		DataResponse<E1> r1 = request.withObjects(o1).withEncoder(encoderService.makeEncoder(request));
+		DataResponse<E1> r1 = request.withObjects(o1).withEncoder(encoderService.dataEncoder(resourceEntity));
 
 		assertNotNull(r1);
 		assertEquals(o1, r1.getObjects());

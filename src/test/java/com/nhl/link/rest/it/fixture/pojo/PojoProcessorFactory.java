@@ -15,26 +15,29 @@ import com.nhl.link.rest.processor.BaseLinearProcessingStage;
 import com.nhl.link.rest.processor.ProcessingStage;
 import com.nhl.link.rest.runtime.constraints.IConstraintsHandler;
 import com.nhl.link.rest.runtime.encoder.IEncoderService;
+import com.nhl.link.rest.runtime.meta.IMetadataService;
 import com.nhl.link.rest.runtime.parser.IRequestParser;
 import com.nhl.link.rest.runtime.processor.IProcessorFactory;
-import com.nhl.link.rest.runtime.processor.select.ParseSelectRequestStage;
 import com.nhl.link.rest.runtime.processor.select.ApplySelectServerParamsStage;
-import com.nhl.link.rest.runtime.processor.select.SelectContext;
 import com.nhl.link.rest.runtime.processor.select.InitializeSelectChainStage;
+import com.nhl.link.rest.runtime.processor.select.ParseSelectRequestStage;
+import com.nhl.link.rest.runtime.processor.select.SelectContext;
 
 public class PojoProcessorFactory implements IProcessorFactory {
 
 	private IEncoderService encoderService;
 	private IRequestParser requestParser;
 	private IConstraintsHandler constraintsHandler;
+	private IMetadataService metadataService;
 	private PojoDB db;
 
 	public PojoProcessorFactory(@Inject IEncoderService encoderService, @Inject IRequestParser requestParser,
-			@Inject IConstraintsHandler constraintsHandler) {
+			@Inject IConstraintsHandler constraintsHandler, @Inject IMetadataService metadataService) {
 
 		this.encoderService = encoderService;
 		this.requestParser = requestParser;
 		this.constraintsHandler = constraintsHandler;
+		this.metadataService = metadataService;
 
 		this.db = JerseyTestOnPojo.pojoDB;
 	}
@@ -42,16 +45,18 @@ public class PojoProcessorFactory implements IProcessorFactory {
 	@Override
 	public Map<Class<?>, Map<String, ProcessingStage<?, ?>>> processors() {
 		Map<Class<?>, Map<String, ProcessingStage<?, ?>>> map = new HashMap<>();
-		map.put(SelectContext.class, Collections.<String, ProcessingStage<?, ?>> singletonMap(null, createSelectProcessor()));
+		map.put(SelectContext.class,
+				Collections.<String, ProcessingStage<?, ?>> singletonMap(null, createSelectProcessor()));
 		return map;
 	}
 
 	protected ProcessingStage<SelectContext<Object>, Object> createSelectProcessor() {
 
 		BaseLinearProcessingStage<SelectContext<Object>, Object> stage4 = new PojoFetchStage<>(null);
-		BaseLinearProcessingStage<SelectContext<Object>, Object> stage3 = new ApplySelectServerParamsStage<>(stage4, encoderService,
-				constraintsHandler);
-		BaseLinearProcessingStage<SelectContext<Object>, Object> stage2 = new ParseSelectRequestStage<>(stage3, requestParser);
+		BaseLinearProcessingStage<SelectContext<Object>, Object> stage3 = new ApplySelectServerParamsStage<>(stage4,
+				encoderService, constraintsHandler);
+		BaseLinearProcessingStage<SelectContext<Object>, Object> stage2 = new ParseSelectRequestStage<>(stage3,
+				requestParser, metadataService);
 		BaseLinearProcessingStage<SelectContext<Object>, Object> stage1 = new InitializeSelectChainStage<>(stage2);
 
 		return stage1;

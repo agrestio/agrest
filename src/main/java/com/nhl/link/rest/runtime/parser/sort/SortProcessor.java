@@ -6,7 +6,6 @@ import javax.ws.rs.core.UriInfo;
 import org.apache.cayenne.di.Inject;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.nhl.link.rest.DataResponse;
 import com.nhl.link.rest.ResourceEntity;
 import com.nhl.link.rest.runtime.jackson.IJacksonService;
 import com.nhl.link.rest.runtime.parser.BaseRequestProcessor;
@@ -27,10 +26,10 @@ public class SortProcessor extends BaseRequestProcessor implements ISortProcesso
 	}
 
 	@Override
-	public void process(DataResponse<?> response, UriInfo uriInfo) {
+	public void process(ResourceEntity<?> entity, UriInfo uriInfo) {
 		if (uriInfo != null) {
 			MultivaluedMap<String, String> parameters = uriInfo.getQueryParameters();
-			process(response.getEntity(), string(parameters, SORT), string(parameters, DIR));
+			process(entity, string(parameters, SORT), string(parameters, DIR));
 		}
 	}
 

@@ -1,19 +1,29 @@
 package com.nhl.link.rest.runtime.parser;
 
-import com.nhl.link.rest.runtime.processor.select.SelectContext;
-import com.nhl.link.rest.runtime.processor.update.UpdateContext;
+import javax.ws.rs.core.UriInfo;
+
+import com.nhl.link.rest.ResourceEntity;
+import com.nhl.link.rest.meta.LrEntity;
 
 /**
  * Defines protocol adapter between the REST interface and LinkRest backend.
  */
 public interface IRequestParser {
 
-	void parseSelect(SelectContext<?> context);
+	/**
+	 * Parses request control parameters, creating a {@link ResourceEntity},
+	 * representing client request.
+	 * 
+	 * @since 1.20
+	 */
+	<T> ResourceEntity<T> parseSelect(LrEntity<T> entity, UriInfo uriInfo, String autocompleteProperty);
 
 	/**
-	 * Parses an update that may contain zero or more objects of a single kind
-	 * with or without IDs.
+	 * Parses request control parameters, creating a {@link ResourceEntity},
+	 * representing updating client request.
+	 * 
+	 * @since 1.20
 	 */
-	<T> void parseUpdate(UpdateContext<T> context);
+	<T> ResourceEntity<T> parseUpdate(LrEntity<T> entity, UriInfo uriInfo);
 
 }

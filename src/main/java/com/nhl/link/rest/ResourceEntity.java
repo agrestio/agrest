@@ -32,6 +32,7 @@ public class ResourceEntity<T> {
 	private Map<String, LrAttribute> attributes;
 	private Collection<String> defaultProperties;
 
+	private String applicationBase;
 	private String mapByPath;
 	private ResourceEntity<?> mapBy;
 	private Map<String, ResourceEntity<?>> children;
@@ -39,6 +40,8 @@ public class ResourceEntity<T> {
 	private Collection<Ordering> orderings;
 	private Expression qualifier;
 	private Map<String, EntityProperty> extraProperties;
+	private int fetchOffset;
+	private int fetchLimit;
 
 	public ResourceEntity(LrEntity<T> lrEntity) {
 		this.idIncluded = false;
@@ -167,5 +170,47 @@ public class ResourceEntity<T> {
 
 	public Class<T> getType() {
 		return lrEntity.getType();
+	}
+
+	/**
+	 * @since 1.20
+	 */
+	public int getFetchOffset() {
+		return fetchOffset;
+	}
+
+	/**
+	 * @since 1.20
+	 */
+	public void setFetchOffset(int fetchOffset) {
+		this.fetchOffset = fetchOffset;
+	}
+
+	/**
+	 * @since 1.20
+	 */
+	public int getFetchLimit() {
+		return fetchLimit;
+	}
+
+	/**
+	 * @since 1.20
+	 */
+	public void setFetchLimit(int fetchLimit) {
+		this.fetchLimit = fetchLimit;
+	}
+
+	/**
+	 * @since 1.20
+	 */
+	public String getApplicationBase() {
+		return applicationBase;
+	}
+
+	/**
+	 * @since 1.20
+	 */
+	public void setApplicationBase(String applicationBase) {
+		this.applicationBase = applicationBase;
 	}
 }

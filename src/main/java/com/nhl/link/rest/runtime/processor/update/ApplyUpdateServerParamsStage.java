@@ -13,6 +13,7 @@ import com.nhl.link.rest.DataResponse;
 import com.nhl.link.rest.EntityParent;
 import com.nhl.link.rest.EntityUpdate;
 import com.nhl.link.rest.LinkRestException;
+import com.nhl.link.rest.ResourceEntity;
 import com.nhl.link.rest.annotation.listener.UpdateServerParamsApplied;
 import com.nhl.link.rest.meta.LrEntity;
 import com.nhl.link.rest.meta.LrPersistentAttribute;
@@ -48,6 +49,7 @@ public class ApplyUpdateServerParamsStage<T> extends BaseLinearProcessingStage<U
 	protected void doExecute(UpdateContext<T> context) {
 
 		DataResponse<T> response = context.getResponse();
+		ResourceEntity<T> entity = response.getEntity();
 
 		processExplicitId(context);
 		processParentId(context);
@@ -56,11 +58,11 @@ public class ApplyUpdateServerParamsStage<T> extends BaseLinearProcessingStage<U
 
 		// apply read constraints (TODO: should we only care about response
 		// constraints after the commit?)
-		constraintsHandler.constrainResponse(response, null, context.getReadConstraints());
+		constraintsHandler.constrainResponse(entity, null, context.getReadConstraints());
 
 		// TODO: we don't need encoder if includeData=false... should we
 		// conditionally skip this step?
-		response.withEncoder(encoderService.makeEncoder(response));
+		response.withEncoder(encoderService.dataEncoder(entity));
 	}
 
 	private void processExplicitId(UpdateContext<T> context) {

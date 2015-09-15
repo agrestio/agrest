@@ -20,7 +20,6 @@ import org.apache.cayenne.query.SortOrder;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.nhl.link.rest.DataResponse;
 import com.nhl.link.rest.LinkRestException;
 import com.nhl.link.rest.ResourceEntity;
 import com.nhl.link.rest.it.fixture.cayenne.E1;
@@ -38,7 +37,6 @@ import com.nhl.link.rest.runtime.parser.sort.ISortProcessor;
 import com.nhl.link.rest.runtime.parser.sort.SortProcessor;
 import com.nhl.link.rest.runtime.parser.tree.ITreeProcessor;
 import com.nhl.link.rest.runtime.parser.tree.IncludeExcludeProcessor;
-import com.nhl.link.rest.runtime.processor.select.SelectContext;
 import com.nhl.link.rest.unit.TestWithCayenneMapping;
 
 public class RequestParserTest extends TestWithCayenneMapping {
@@ -56,10 +54,7 @@ public class RequestParserTest extends TestWithCayenneMapping {
 		ITreeProcessor treeProcessor = new IncludeExcludeProcessor(jacksonService, sortProcessor, expProcessor,
 				metadataService);
 
-		IUpdateParser mockUpdateParser = mock(IUpdateParser.class);
-
-		parser = new RequestParser(metadataService, jacksonService, treeProcessor, sortProcessor, mockUpdateParser,
-				expProcessor, kvExpProcessor);
+		parser = new RequestParser(treeProcessor, sortProcessor, expProcessor, kvExpProcessor);
 	}
 
 	@Test
@@ -70,13 +65,7 @@ public class RequestParserTest extends TestWithCayenneMapping {
 		MultivaluedMap<String, String> params = mock(MultivaluedMap.class);
 		when(uriInfo.getQueryParameters()).thenReturn(params);
 
-		SelectContext<E1> context = new SelectContext<E1>(E1.class);
-		context.setResponse(DataResponse.forType(E1.class));
-		context.setUriInfo(uriInfo);
-
-		parser.parseSelect(context);
-
-		ResourceEntity<E1> resourceEntity = context.getResponse().getEntity();
+		ResourceEntity<E1> resourceEntity = parser.parseSelect(getLrEntity(E1.class), uriInfo, null);
 		assertNotNull(resourceEntity);
 		assertTrue(resourceEntity.isIdIncluded());
 		assertEquals(3, resourceEntity.getAttributes().size());
@@ -93,12 +82,7 @@ public class RequestParserTest extends TestWithCayenneMapping {
 		UriInfo uriInfo = mock(UriInfo.class);
 		when(uriInfo.getQueryParameters()).thenReturn(params);
 
-		SelectContext<E1> context = new SelectContext<E1>(E1.class);
-		context.setResponse(DataResponse.forType(E1.class));
-		context.setUriInfo(uriInfo);
-		parser.parseSelect(context);
-
-		ResourceEntity<E1> resourceEntity = context.getResponse().getEntity();
+		ResourceEntity<E1> resourceEntity = parser.parseSelect(getLrEntity(E1.class), uriInfo, null);
 		assertNotNull(resourceEntity);
 		assertFalse(resourceEntity.isIdIncluded());
 
@@ -119,12 +103,7 @@ public class RequestParserTest extends TestWithCayenneMapping {
 		UriInfo uriInfo = mock(UriInfo.class);
 		when(uriInfo.getQueryParameters()).thenReturn(params);
 
-		SelectContext<E1> context = new SelectContext<E1>(E1.class);
-		context.setResponse(DataResponse.forType(E1.class));
-		context.setUriInfo(uriInfo);
-		parser.parseSelect(context);
-
-		ResourceEntity<E1> resourceEntity = context.getResponse().getEntity();
+		ResourceEntity<E1> resourceEntity = parser.parseSelect(getLrEntity(E1.class), uriInfo, null);
 		assertNotNull(resourceEntity);
 		assertFalse(resourceEntity.isIdIncluded());
 
@@ -144,12 +123,7 @@ public class RequestParserTest extends TestWithCayenneMapping {
 		UriInfo uriInfo = mock(UriInfo.class);
 		when(uriInfo.getQueryParameters()).thenReturn(params);
 
-		SelectContext<E1> context = new SelectContext<E1>(E1.class);
-		context.setResponse(DataResponse.forType(E1.class));
-		context.setUriInfo(uriInfo);
-		parser.parseSelect(context);
-
-		ResourceEntity<E1> resourceEntity = context.getResponse().getEntity();
+		ResourceEntity<E1> resourceEntity = parser.parseSelect(getLrEntity(E1.class), uriInfo, null);
 		assertNotNull(resourceEntity);
 		assertTrue(resourceEntity.isIdIncluded());
 
@@ -168,12 +142,7 @@ public class RequestParserTest extends TestWithCayenneMapping {
 		UriInfo uriInfo = mock(UriInfo.class);
 		when(uriInfo.getQueryParameters()).thenReturn(params);
 
-		SelectContext<E1> context = new SelectContext<E1>(E1.class);
-		context.setResponse(DataResponse.forType(E1.class));
-		context.setUriInfo(uriInfo);
-		parser.parseSelect(context);
-
-		ResourceEntity<E1> resourceEntity = context.getResponse().getEntity();
+		ResourceEntity<E1> resourceEntity = parser.parseSelect(getLrEntity(E1.class), uriInfo, null);
 		assertNotNull(resourceEntity);
 		assertTrue(resourceEntity.isIdIncluded());
 
@@ -193,12 +162,7 @@ public class RequestParserTest extends TestWithCayenneMapping {
 		UriInfo uriInfo = mock(UriInfo.class);
 		when(uriInfo.getQueryParameters()).thenReturn(params);
 
-		SelectContext<E1> context = new SelectContext<>(E1.class);
-		context.setResponse(DataResponse.forType(E1.class));
-		context.setUriInfo(uriInfo);
-		parser.parseSelect(context);
-
-		ResourceEntity<E1> resourceEntity = context.getResponse().getEntity();
+		ResourceEntity<E1> resourceEntity = parser.parseSelect(getLrEntity(E1.class), uriInfo, null);
 		assertNotNull(resourceEntity);
 		assertTrue(resourceEntity.isIdIncluded());
 		assertEquals(1, resourceEntity.getAttributes().size());
@@ -217,12 +181,7 @@ public class RequestParserTest extends TestWithCayenneMapping {
 		UriInfo uriInfo = mock(UriInfo.class);
 		when(uriInfo.getQueryParameters()).thenReturn(params);
 
-		SelectContext<E2> context = new SelectContext<>(E2.class);
-		context.setResponse(DataResponse.forType(E2.class));
-		context.setUriInfo(uriInfo);
-		parser.parseSelect(context);
-
-		ResourceEntity<E2> resourceEntity = context.getResponse().getEntity();
+		ResourceEntity<E2> resourceEntity = parser.parseSelect(getLrEntity(E2.class), uriInfo, null);
 		assertNotNull(resourceEntity);
 		assertTrue(resourceEntity.isIdIncluded());
 		assertEquals(2, resourceEntity.getAttributes().size());
@@ -252,12 +211,7 @@ public class RequestParserTest extends TestWithCayenneMapping {
 		UriInfo uriInfo = mock(UriInfo.class);
 		when(uriInfo.getQueryParameters()).thenReturn(params);
 
-		SelectContext<E2> context = new SelectContext<>(E2.class);
-		context.setResponse(DataResponse.forType(E2.class));
-		context.setUriInfo(uriInfo);
-		parser.parseSelect(context);
-
-		ResourceEntity<E2> resourceEntity = context.getResponse().getEntity();
+		ResourceEntity<E2> resourceEntity = parser.parseSelect(getLrEntity(E2.class), uriInfo, null);
 		assertNotNull(resourceEntity);
 		assertFalse(resourceEntity.isIdIncluded());
 		assertEquals(1, resourceEntity.getAttributes().size());
@@ -286,12 +240,7 @@ public class RequestParserTest extends TestWithCayenneMapping {
 		UriInfo uriInfo = mock(UriInfo.class);
 		when(uriInfo.getQueryParameters()).thenReturn(params);
 
-		SelectContext<E2> context = new SelectContext<>(E2.class);
-		context.setResponse(DataResponse.forType(E2.class));
-		context.setUriInfo(uriInfo);
-		parser.parseSelect(context);
-
-		ResourceEntity<E2> resourceEntity = context.getResponse().getEntity();
+		ResourceEntity<E2> resourceEntity = parser.parseSelect(getLrEntity(E2.class), uriInfo, null);
 		assertNotNull(resourceEntity);
 		assertTrue(resourceEntity.isIdIncluded());
 		assertEquals(1, resourceEntity.getAttributes().size());
@@ -320,12 +269,7 @@ public class RequestParserTest extends TestWithCayenneMapping {
 		UriInfo uriInfo = mock(UriInfo.class);
 		when(uriInfo.getQueryParameters()).thenReturn(params);
 
-		SelectContext<E2> context = new SelectContext<>(E2.class);
-		context.setResponse(DataResponse.forType(E2.class));
-		context.setUriInfo(uriInfo);
-		parser.parseSelect(context);
-
-		ResourceEntity<E2> resourceEntity = context.getResponse().getEntity();
+		ResourceEntity<E2> resourceEntity = parser.parseSelect(getLrEntity(E2.class), uriInfo, null);
 		assertNotNull(resourceEntity);
 		assertTrue(resourceEntity.isIdIncluded());
 		assertEquals(1, resourceEntity.getAttributes().size());
@@ -353,12 +297,7 @@ public class RequestParserTest extends TestWithCayenneMapping {
 		UriInfo uriInfo = mock(UriInfo.class);
 		when(uriInfo.getQueryParameters()).thenReturn(params);
 
-		SelectContext<E2> context = new SelectContext<>(E2.class);
-		context.setResponse(DataResponse.forType(E2.class));
-		context.setUriInfo(uriInfo);
-		parser.parseSelect(context);
-
-		ResourceEntity<E2> resourceEntity = context.getResponse().getEntity();
+		ResourceEntity<E2> resourceEntity = parser.parseSelect(getLrEntity(E2.class), uriInfo, null);
 		assertNotNull(resourceEntity);
 		assertTrue(resourceEntity.isIdIncluded());
 		assertTrue(resourceEntity.getAttributes().isEmpty());
@@ -383,13 +322,10 @@ public class RequestParserTest extends TestWithCayenneMapping {
 		UriInfo uriInfo = mock(UriInfo.class);
 		when(uriInfo.getQueryParameters()).thenReturn(params);
 
-		SelectContext<E2> context = new SelectContext<>(E2.class);
-		context.setResponse(DataResponse.forType(E2.class));
-		context.setUriInfo(uriInfo);
-		parser.parseSelect(context);
+		ResourceEntity<E2> resourceEntity = parser.parseSelect(getLrEntity(E2.class), uriInfo, null);
 
-		assertEquals(1, context.getResponse().getEntity().getOrderings().size());
-		Ordering o1 = context.getResponse().getEntity().getOrderings().iterator().next();
+		assertEquals(1, resourceEntity.getOrderings().size());
+		Ordering o1 = resourceEntity.getOrderings().iterator().next();
 		assertEquals(SortOrder.ASCENDING, o1.getSortOrder());
 		assertEquals(E2.NAME.getName(), o1.getSortSpecString());
 	}
@@ -405,13 +341,9 @@ public class RequestParserTest extends TestWithCayenneMapping {
 		UriInfo uriInfo = mock(UriInfo.class);
 		when(uriInfo.getQueryParameters()).thenReturn(params);
 
-		SelectContext<E2> context = new SelectContext<>(E2.class);
-		context.setResponse(DataResponse.forType(E2.class));
-		context.setUriInfo(uriInfo);
-		parser.parseSelect(context);
-
-		assertEquals(1, context.getResponse().getEntity().getOrderings().size());
-		Ordering o1 = context.getResponse().getEntity().getOrderings().iterator().next();
+		ResourceEntity<E2> resourceEntity = parser.parseSelect(getLrEntity(E2.class), uriInfo, null);
+		assertEquals(1, resourceEntity.getOrderings().size());
+		Ordering o1 = resourceEntity.getOrderings().iterator().next();
 		assertEquals(SortOrder.ASCENDING, o1.getSortOrder());
 		assertEquals(E2.NAME.getName(), o1.getSortSpecString());
 	}
@@ -427,13 +359,9 @@ public class RequestParserTest extends TestWithCayenneMapping {
 		UriInfo uriInfo = mock(UriInfo.class);
 		when(uriInfo.getQueryParameters()).thenReturn(params);
 
-		SelectContext<E2> context = new SelectContext<>(E2.class);
-		context.setResponse(DataResponse.forType(E2.class));
-		context.setUriInfo(uriInfo);
-		parser.parseSelect(context);
-
-		assertEquals(1, context.getResponse().getEntity().getOrderings().size());
-		Ordering o1 = context.getResponse().getEntity().getOrderings().iterator().next();
+		ResourceEntity<E2> resourceEntity = parser.parseSelect(getLrEntity(E2.class), uriInfo, null);
+		assertEquals(1, resourceEntity.getOrderings().size());
+		Ordering o1 = resourceEntity.getOrderings().iterator().next();
 		assertEquals(SortOrder.DESCENDING, o1.getSortOrder());
 		assertEquals(E2.NAME.getName(), o1.getSortSpecString());
 	}
@@ -449,10 +377,7 @@ public class RequestParserTest extends TestWithCayenneMapping {
 		UriInfo uriInfo = mock(UriInfo.class);
 		when(uriInfo.getQueryParameters()).thenReturn(params);
 
-		SelectContext<E2> context = new SelectContext<>(E2.class);
-		context.setResponse(DataResponse.forType(E2.class));
-		context.setUriInfo(uriInfo);
-		parser.parseSelect(context);
+		parser.parseSelect(getLrEntity(E2.class), uriInfo, null);
 	}
 
 	@Test
@@ -466,13 +391,10 @@ public class RequestParserTest extends TestWithCayenneMapping {
 		UriInfo uriInfo = mock(UriInfo.class);
 		when(uriInfo.getQueryParameters()).thenReturn(params);
 
-		SelectContext<E2> context = new SelectContext<>(E2.class);
-		context.setResponse(DataResponse.forType(E2.class));
-		context.setUriInfo(uriInfo);
-		parser.parseSelect(context);
+		ResourceEntity<E2> resourceEntity = parser.parseSelect(getLrEntity(E2.class), uriInfo, null);
 
-		assertEquals(2, context.getResponse().getEntity().getOrderings().size());
-		Iterator<Ordering> it = context.getResponse().getEntity().getOrderings().iterator();
+		assertEquals(2, resourceEntity.getOrderings().size());
+		Iterator<Ordering> it = resourceEntity.getOrderings().iterator();
 		Ordering o1 = it.next();
 		Ordering o2 = it.next();
 		assertEquals(SortOrder.DESCENDING, o1.getSortOrder());
@@ -492,13 +414,10 @@ public class RequestParserTest extends TestWithCayenneMapping {
 		UriInfo uriInfo = mock(UriInfo.class);
 		when(uriInfo.getQueryParameters()).thenReturn(params);
 
-		SelectContext<E2> context = new SelectContext<>(E2.class);
-		context.setResponse(DataResponse.forType(E2.class));
-		context.setUriInfo(uriInfo);
-		parser.parseSelect(context);
+		ResourceEntity<E2> resourceEntity = parser.parseSelect(getLrEntity(E2.class), uriInfo, null);
 
-		assertEquals(1, context.getResponse().getEntity().getOrderings().size());
-		Iterator<Ordering> it = context.getResponse().getEntity().getOrderings().iterator();
+		assertEquals(1, resourceEntity.getOrderings().size());
+		Iterator<Ordering> it = resourceEntity.getOrderings().iterator();
 		Ordering o1 = it.next();
 		assertEquals(SortOrder.DESCENDING, o1.getSortOrder());
 		assertEquals(E2.NAME.getName(), o1.getSortSpecString());
@@ -515,10 +434,7 @@ public class RequestParserTest extends TestWithCayenneMapping {
 		UriInfo uriInfo = mock(UriInfo.class);
 		when(uriInfo.getQueryParameters()).thenReturn(params);
 
-		SelectContext<E2> context = new SelectContext<>(E2.class);
-		context.setResponse(DataResponse.forType(E2.class));
-		context.setUriInfo(uriInfo);
-		parser.parseSelect(context);
+		parser.parseSelect(getLrEntity(E2.class), uriInfo, null);
 	}
 
 	@Test(expected = LinkRestException.class)
@@ -532,10 +448,7 @@ public class RequestParserTest extends TestWithCayenneMapping {
 		UriInfo uriInfo = mock(UriInfo.class);
 		when(uriInfo.getQueryParameters()).thenReturn(params);
 
-		SelectContext<E2> context = new SelectContext<>(E2.class);
-		context.setResponse(DataResponse.forType(E2.class));
-		context.setUriInfo(uriInfo);
-		parser.parseSelect(context);
+		parser.parseSelect(getLrEntity(E2.class), uriInfo, null);
 	}
 
 	@Test
@@ -548,13 +461,10 @@ public class RequestParserTest extends TestWithCayenneMapping {
 		UriInfo uriInfo = mock(UriInfo.class);
 		when(uriInfo.getQueryParameters()).thenReturn(params);
 
-		SelectContext<E2> context = new SelectContext<>(E2.class);
-		context.setResponse(DataResponse.forType(E2.class));
-		context.setUriInfo(uriInfo);
-		parser.parseSelect(context);
+		ResourceEntity<E2> resourceEntity = parser.parseSelect(getLrEntity(E2.class), uriInfo, null);
 
-		assertNotNull(context.getResponse().getEntity().getQualifier());
-		assertEquals(exp("name = 'John Smith'"), context.getResponse().getEntity().getQualifier());
+		assertNotNull(resourceEntity.getQualifier());
+		assertEquals(exp("name = 'John Smith'"), resourceEntity.getQualifier());
 	}
 
 	@Test
@@ -567,14 +477,10 @@ public class RequestParserTest extends TestWithCayenneMapping {
 		UriInfo uriInfo = mock(UriInfo.class);
 		when(uriInfo.getQueryParameters()).thenReturn(params);
 
-		SelectContext<E2> context = new SelectContext<>(E2.class);
-		context.setResponse(DataResponse.forType(E2.class));
-		context.setUriInfo(uriInfo);
-		context.setAutocompleteProperty(E2.NAME.getName());
-		parser.parseSelect(context);
-
-		assertNotNull(context.getResponse().getEntity().getQualifier());
-		assertEquals(exp("name likeIgnoreCase 'Bla%'"), context.getResponse().getEntity().getQualifier());
+		ResourceEntity<E2> resourceEntity = parser.parseSelect(getLrEntity(E2.class), uriInfo, E2.NAME.getName());
+ 
+		assertNotNull(resourceEntity.getQualifier());
+		assertEquals(exp("name likeIgnoreCase 'Bla%'"), resourceEntity.getQualifier());
 	}
 
 	@Test
@@ -589,12 +495,9 @@ public class RequestParserTest extends TestWithCayenneMapping {
 		UriInfo uriInfo = mock(UriInfo.class);
 		when(uriInfo.getQueryParameters()).thenReturn(params);
 
-		SelectContext<E2> context = new SelectContext<>(E2.class);
-		context.setResponse(DataResponse.forType(E2.class));
-		context.setUriInfo(uriInfo);
-		parser.parseSelect(context);
+		ResourceEntity<E2> resourceEntity = parser.parseSelect(getLrEntity(E2.class), uriInfo, null);
 
-		assertNull(context.getResponse().getEntity().getQualifier());
+		assertNull(resourceEntity.getQualifier());
 	}
 
 }

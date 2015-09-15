@@ -7,6 +7,7 @@ import static org.mockito.Mockito.mock;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.nhl.link.rest.runtime.jackson.IJacksonService;
 import com.nhl.link.rest.runtime.parser.converter.IJsonValueConverterFactory;
 import com.nhl.link.rest.runtime.semantics.IRelationshipMapper;
 
@@ -16,7 +17,8 @@ public class SenchaUpdateParserTest {
 
 	@Before
 	public void before() {
-		processor = new SenchaUpdateParser(mock(IRelationshipMapper.class), mock(IJsonValueConverterFactory.class));
+		processor = new SenchaUpdateParser(mock(IRelationshipMapper.class), mock(IJsonValueConverterFactory.class),
+				mock(IJacksonService.class));
 	}
 
 	@Test

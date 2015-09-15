@@ -1,8 +1,8 @@
 package com.nhl.link.rest.runtime.parser;
 
+import java.io.InputStream;
 import java.util.Collection;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.nhl.link.rest.EntityUpdate;
 import com.nhl.link.rest.meta.LrEntity;
 
@@ -11,5 +11,7 @@ import com.nhl.link.rest.meta.LrEntity;
  */
 public interface IUpdateParser {
 
-	<T> Collection<EntityUpdate<T>> parse(LrEntity<T> entityType, JsonNode json);
+	<T> Collection<EntityUpdate<T>> parse(LrEntity<T> entity, String entityData);
+
+	<T> Collection<EntityUpdate<T>> parse(LrEntity<T> entity, InputStream entityStream);
 }

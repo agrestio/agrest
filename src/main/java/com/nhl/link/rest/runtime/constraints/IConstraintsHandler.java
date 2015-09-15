@@ -1,6 +1,6 @@
 package com.nhl.link.rest.runtime.constraints;
 
-import com.nhl.link.rest.DataResponse;
+import com.nhl.link.rest.ResourceEntity;
 import com.nhl.link.rest.SizeConstraints;
 import com.nhl.link.rest.constraints.ConstraintsBuilder;
 import com.nhl.link.rest.runtime.processor.update.UpdateContext;
@@ -11,10 +11,10 @@ import com.nhl.link.rest.runtime.processor.update.UpdateContext;
 public interface IConstraintsHandler {
 
 	/**
-	 * Applies constraints to the {@link DataResponse}, potentially filtering
+	 * Applies constraints to the {@link ResourceEntity}, potentially filtering
 	 * out some properties from the response.
 	 */
-	<T> void constrainResponse(DataResponse<T> response, SizeConstraints sizeConstraints,
+	<T> void constrainResponse(ResourceEntity<T> entity, SizeConstraints sizeConstraints,
 			ConstraintsBuilder<T> readConstraints);
 
 	/**
