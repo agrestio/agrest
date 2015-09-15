@@ -33,17 +33,17 @@ public class ApplySelectServerParamsStage<T> extends BaseLinearProcessingStage<S
 		return SelectServerParamsApplied.class;
 	}
 
-	@SuppressWarnings({ "rawtypes", "unchecked" })
+	@SuppressWarnings({ "rawtypes" })
 	@Override
 	protected void doExecute(SelectContext<T> context) {
 
 		DataResponse response = context.getResponse();
-		ResourceEntity<T> entity = response.getEntity();
+		ResourceEntity<T> entity = context.getEntity();
 
 		constraintsHandler.constrainResponse(entity, context.getSizeConstraints(), context.getTreeConstraints());
 
 		if (context.getExtraProperties() != null) {
-			response.getEntity().getExtraProperties().putAll(context.getExtraProperties());
+			entity.getExtraProperties().putAll(context.getExtraProperties());
 		}
 
 		// make sure we create the encoder, even if we end up with an empty

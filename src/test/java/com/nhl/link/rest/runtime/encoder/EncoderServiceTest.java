@@ -255,7 +255,7 @@ public class EncoderServiceTest extends TestWithCayenneMapping {
 		ResourceEntity<E2> descriptor = getResourceEntity(E2.class);
 		descriptor.includeId();
 
-		DataResponse<E2> builder = DataResponse.forType(E2.class).resourceEntity(descriptor);
+		DataResponse<E2> builder = DataResponse.forType(E2.class);
 
 		ObjectContext context = mockCayennePersister.newContext();
 		E2 e21 = new E2();

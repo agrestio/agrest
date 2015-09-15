@@ -9,6 +9,7 @@ import org.apache.cayenne.query.SelectQuery;
 import com.nhl.link.rest.DataResponse;
 import com.nhl.link.rest.EntityParent;
 import com.nhl.link.rest.EntityProperty;
+import com.nhl.link.rest.ResourceEntity;
 import com.nhl.link.rest.SizeConstraints;
 import com.nhl.link.rest.constraints.ConstraintsBuilder;
 import com.nhl.link.rest.encoder.Encoder;
@@ -23,6 +24,7 @@ public class SelectContext<T> extends BaseProcessingContext<T> {
 
 	private Object id;
 	private EntityParent<?> parent;
+	private ResourceEntity<T> entity;
 	private DataResponse<T> response;
 	private UriInfo uriInfo;
 	private String autocompleteProperty;
@@ -131,5 +133,19 @@ public class SelectContext<T> extends BaseProcessingContext<T> {
 
 	public void setEncoder(Encoder encoder) {
 		this.encoder = encoder;
+	}
+
+	/**
+	 * @since 1.20
+	 */
+	public ResourceEntity<T> getEntity() {
+		return entity;
+	}
+
+	/**
+	 * @since 1.20
+	 */
+	public void setEntity(ResourceEntity<T> entity) {
+		this.entity = entity;
 	}
 }

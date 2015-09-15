@@ -86,7 +86,7 @@ public class PojoProcessorFactory implements IProcessorFactory {
 			// clone the list and then filter/sort it as needed
 			List<T> list = new ArrayList<>(typeBucket.values());
 
-			Expression filter = context.getResponse().getEntity().getQualifier();
+			Expression filter = context.getEntity().getQualifier();
 			if (filter != null) {
 
 				Iterator<T> it = list.iterator();
@@ -98,7 +98,7 @@ public class PojoProcessorFactory implements IProcessorFactory {
 				}
 			}
 
-			for (Ordering o : context.getResponse().getEntity().getOrderings()) {
+			for (Ordering o : context.getEntity().getOrderings()) {
 				o.orderList(list);
 			}
 

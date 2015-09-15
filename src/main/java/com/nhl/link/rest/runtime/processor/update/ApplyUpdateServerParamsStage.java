@@ -49,7 +49,7 @@ public class ApplyUpdateServerParamsStage<T> extends BaseLinearProcessingStage<U
 	protected void doExecute(UpdateContext<T> context) {
 
 		DataResponse<T> response = context.getResponse();
-		ResourceEntity<T> entity = response.getEntity();
+		ResourceEntity<T> entity = context.getEntity();
 
 		processExplicitId(context);
 		processParentId(context);
@@ -76,11 +76,10 @@ public class ApplyUpdateServerParamsStage<T> extends BaseLinearProcessingStage<U
 			// * if more than one - throw...
 
 			if (context.getUpdates().isEmpty()) {
-				context.setUpdates(
-						Collections.singleton(new EntityUpdate<>(context.getResponse().getEntity().getLrEntity())));
+				context.setUpdates(Collections.singleton(new EntityUpdate<>(context.getEntity().getLrEntity())));
 			}
 
-			LrEntity<T> entity = context.getResponse().getEntity().getLrEntity();
+			LrEntity<T> entity = context.getEntity().getLrEntity();
 
 			LrPersistentAttribute pk = (LrPersistentAttribute) entity.getSingleId();
 
@@ -106,7 +105,7 @@ public class ApplyUpdateServerParamsStage<T> extends BaseLinearProcessingStage<U
 				if (last.getJoins().size() != 1) {
 					throw new LinkRestException(Status.BAD_REQUEST,
 							"Multi-join relationship propagation is not supported yet: "
-									+ context.getResponse().getEntity().getLrEntity().getName());
+									+ context.getEntity().getLrEntity().getName());
 				}
 
 				String parentIdKey = last.getJoins().get(0).getTargetName();

@@ -34,7 +34,7 @@ public class CayenneFetchStage<T> extends BaseLinearProcessingStage<SelectContex
 		super(next);
 		this.persister = persister;
 	}
-	
+
 	@Override
 	public Class<? extends Annotation> afterStageListener() {
 		return DataFetched.class;
@@ -49,11 +49,11 @@ public class CayenneFetchStage<T> extends BaseLinearProcessingStage<SelectContex
 
 		if (context.isAtMostOneObject() && objects.size() != 1) {
 
-			LrEntity<?> entity = response.getEntity().getLrEntity();
+			LrEntity<?> entity = context.getEntity().getLrEntity();
 
 			if (objects.isEmpty()) {
-				throw new LinkRestException(Status.NOT_FOUND, String.format("No object for ID '%s' and entity '%s'",
-						context.getId(), entity.getName()));
+				throw new LinkRestException(Status.NOT_FOUND,
+						String.format("No object for ID '%s' and entity '%s'", context.getId(), entity.getName()));
 			} else {
 				throw new LinkRestException(Status.INTERNAL_SERVER_ERROR, String.format(
 						"Found more than one object for ID '%s' and entity '%s'", context.getId(), entity.getName()));
@@ -66,7 +66,7 @@ public class CayenneFetchStage<T> extends BaseLinearProcessingStage<SelectContex
 	<X extends T> SelectQuery<X> buildQuery(SelectContext<X> context) {
 
 		DataResponse<X> response = context.getResponse();
-		ResourceEntity<X> entity = response.getEntity();
+		ResourceEntity<X> entity = context.getEntity();
 
 		SelectQuery<X> query = basicSelect(context);
 
@@ -109,8 +109,7 @@ public class CayenneFetchStage<T> extends BaseLinearProcessingStage<SelectContex
 			Class<X> root = context.getType();
 
 			// TODO: compound PK
-			LrPersistentAttribute idAttribute = (LrPersistentAttribute) context.getResponse().getEntity().getLrEntity()
-					.getSingleId();
+			LrPersistentAttribute idAttribute = (LrPersistentAttribute) context.getEntity().getLrEntity().getSingleId();
 
 			SelectQuery<X> query = new SelectQuery<>(root);
 			query.andQualifier(ExpressionFactory.matchDbExp(idAttribute.getDbAttribute().getName(), context.getId()));

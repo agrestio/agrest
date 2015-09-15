@@ -73,7 +73,7 @@ class EntityConstraintHandler {
 
 	void constrainUpdate(UpdateContext<?> context) {
 
-		EntityConstraint c = forWrite.getOrCreate(context.getResponse().getEntity().getLrEntity());
+		EntityConstraint c = forWrite.getOrCreate(context.getEntity().getLrEntity());
 
 		if (!c.allowsId()) {
 			context.setIdUpdatesDisallowed(true);
@@ -93,7 +93,7 @@ class EntityConstraintHandler {
 
 						// do not report default properties, as this wasn't a
 						// client's fault it go there..
-						if (!context.getResponse().getEntity().isDefault(e.getKey())) {
+						if (!context.getEntity().isDefault(e.getKey())) {
 							LOGGER.info("Attribute not allowed, removing: " + e.getKey() + " for id " + u.getId());
 						}
 

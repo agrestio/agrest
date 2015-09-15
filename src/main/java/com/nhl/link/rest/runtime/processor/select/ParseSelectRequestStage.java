@@ -36,6 +36,6 @@ public class ParseSelectRequestStage<T> extends BaseLinearProcessingStage<Select
 		LrEntity<T> entity = metadataService.getLrEntity(context.getType());
 		ResourceEntity<T> resourceEntity = requestParser.parseSelect(entity, context.getUriInfo(),
 				context.getAutocompleteProperty());
-		context.getResponse().resourceEntity(resourceEntity);
+		context.setEntity(resourceEntity);
 	}
 }

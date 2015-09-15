@@ -10,6 +10,7 @@ import com.nhl.link.rest.EntityParent;
 import com.nhl.link.rest.EntityUpdate;
 import com.nhl.link.rest.LinkRestException;
 import com.nhl.link.rest.ObjectMapperFactory;
+import com.nhl.link.rest.ResourceEntity;
 import com.nhl.link.rest.constraints.ConstraintsBuilder;
 import com.nhl.link.rest.processor.BaseProcessingContext;
 
@@ -22,6 +23,7 @@ import com.nhl.link.rest.processor.BaseProcessingContext;
 public class UpdateContext<T> extends BaseProcessingContext<T> {
 
 	private DataResponse<T> response;
+	private ResourceEntity<T> entity;
 	private UriInfo uriInfo;
 	private Object id;
 	private EntityParent<?> parent;
@@ -164,5 +166,19 @@ public class UpdateContext<T> extends BaseProcessingContext<T> {
 	 */
 	public void setIdUpdatesDisallowed(boolean idUpdatesDisallowed) {
 		this.idUpdatesDisallowed = idUpdatesDisallowed;
+	}
+
+	/**
+	 * @since 1.20
+	 */
+	public ResourceEntity<T> getEntity() {
+		return entity;
+	}
+
+	/**
+	 * @since 1.20
+	 */
+	public void setEntity(ResourceEntity<T> entity) {
+		this.entity = entity;
 	}
 }

@@ -26,7 +26,7 @@ public class ByIdObjectMapperFactory implements ObjectMapperFactory {
 	@Override
 	public <T> ObjectMapper<T> createMapper(UpdateContext<T> context) {
 
-		Collection<LrAttribute> ids = context.getResponse().getEntity().getLrEntity().getIds();
+		Collection<LrAttribute> ids = context.getEntity().getLrEntity().getIds();
 		ASTPath[] paths = new ASTPath[ids.size()];
 
 		int i = 0;

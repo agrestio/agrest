@@ -65,7 +65,7 @@ public class CayenneUpdateStage<T extends DataObject> extends BaseCayenneUpdateS
 				throw new LinkRestException(Status.BAD_REQUEST, "Can't update. No id for object");
 			}
 
-			LrEntity<?> entity = context.getResponse().getEntity().getLrEntity();
+			LrEntity<?> entity = context.getEntity().getLrEntity();
 			throw new LinkRestException(Status.NOT_FOUND, "No object for ID '" + firstKey + "' and entity '"
 					+ entity.getName() + "'");
 		}

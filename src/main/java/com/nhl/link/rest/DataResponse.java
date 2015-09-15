@@ -17,7 +17,6 @@ import com.nhl.link.rest.encoder.GenericEncoder;
 public class DataResponse<T> extends LrResponse {
 
 	private Class<T> type;
-	private ResourceEntity<T> entity;
 
 	private int prefetchSemantics;
 	private List<T> objects;
@@ -64,24 +63,12 @@ public class DataResponse<T> extends LrResponse {
 		return encoder;
 	}
 
-	public ResourceEntity<T> getEntity() {
-		return entity;
-	}
-
 	public int getPrefetchSemantics() {
 		return prefetchSemantics;
 	}
 
 	public DataResponse<T> withPrefetchSemantics(int prefetchSemantics) {
 		this.prefetchSemantics = prefetchSemantics;
-		return this;
-	}
-
-	/**
-	 * @since 1.12
-	 */
-	public DataResponse<T> resourceEntity(ResourceEntity<T> rootEntity) {
-		this.entity = rootEntity;
 		return this;
 	}
 

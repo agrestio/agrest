@@ -9,7 +9,6 @@ import org.apache.cayenne.DataObject;
 import org.apache.cayenne.map.EntityResolver;
 import org.apache.cayenne.query.SelectQuery;
 
-import com.nhl.link.rest.DataResponse;
 import com.nhl.link.rest.EntityUpdate;
 import com.nhl.link.rest.ObjectMapper;
 import com.nhl.link.rest.processor.ProcessingStage;
@@ -65,14 +64,12 @@ public class CayenneFullSyncStage<T extends DataObject> extends CayenneCreateOrU
 			query.andQualifier(context.getParent().qualifier(resolver));
 		}
 
-		DataResponse<T> response = context.getResponse();
-		if (response.getEntity().getQualifier() != null) {
-			query.andQualifier(response.getEntity().getQualifier());
+		if (context.getEntity().getQualifier() != null) {
+			query.andQualifier(context.getEntity().getQualifier());
 		}
 
 		// TODO: use SelectBuilder to get Cayenne representation of the
-		// resource,
-		// instead of duplicating this here...
+		// resource, instead of duplicating this here...
 
 		return CayenneContextInitStage.cayenneContext(context).select(query);
 	}

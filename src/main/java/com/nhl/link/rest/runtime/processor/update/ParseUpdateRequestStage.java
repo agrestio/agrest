@@ -39,7 +39,7 @@ public class ParseUpdateRequestStage<T> extends BaseLinearProcessingStage<Update
 
 		// TODO: should we skip this for SimpleResponse-returning updates?
 		ResourceEntity<T> resourceEntity = requestParser.parseUpdate(entity, context.getUriInfo());
-		context.getResponse().resourceEntity(resourceEntity);
+		context.setEntity(resourceEntity);
 
 		// skip parsing if we already received EntityUpdates collection parsed
 		// by MessageBodyReader

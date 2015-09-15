@@ -57,7 +57,7 @@ class RequestConstraintsHandler {
 			return false;
 		}
 
-		applyForWrite(context, extract(context.getResponse().getEntity().getLrEntity(), c));
+		applyForWrite(context, extract(context.getEntity().getLrEntity(), c));
 		return true;
 	}
 
@@ -86,7 +86,7 @@ class RequestConstraintsHandler {
 
 					// do not report default properties, as this wasn't a
 					// client's fault it go there..
-					if (!context.getResponse().getEntity().isDefault(e.getKey())) {
+					if (!context.getEntity().isDefault(e.getKey())) {
 						LOGGER.info("Attribute not allowed, removing: " + e.getKey() + " for id " + u.getId());
 					}
 

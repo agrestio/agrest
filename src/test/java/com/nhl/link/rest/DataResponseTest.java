@@ -40,7 +40,7 @@ public class DataResponseTest extends TestWithCayenneMapping {
 	public void testToResponse_PlainObjects() {
 
 		ResourceEntity<E1> resourceEntity = getResourceEntity(E1.class);
-		DataResponse<E1> request = DataResponse.forType(E1.class).resourceEntity(resourceEntity);
+		DataResponse<E1> request = DataResponse.forType(E1.class);
 
 		List<E1> o1 = new ArrayList<>();
 		for (int i = 0; i < 10; i++) {

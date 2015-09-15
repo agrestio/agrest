@@ -41,12 +41,15 @@ public class CayenneFetchStageTest extends TestWithCayenneMapping {
 		SelectQuery<E1> query = new SelectQuery<E1>(E1.class);
 		query.addOrdering(o1);
 
-		DataResponse<E1> response = DataResponse.forType(E1.class).resourceEntity(getResourceEntity(E1.class));
-		response.getEntity().getOrderings().add(o2);
+		ResourceEntity<E1> resourceEntity = getResourceEntity(E1.class);
+		resourceEntity.getOrderings().add(o2);
+
+		DataResponse<E1> response = DataResponse.forType(E1.class);
 
 		SelectContext<E1> context = new SelectContext<E1>(E1.class);
 		context.setResponse(response);
 		context.setSelect(query);
+		context.setEntity(resourceEntity);
 
 		SelectQuery<E1> amended = fetchStage.buildQuery(context);
 		assertSame(query, amended);
@@ -65,9 +68,10 @@ public class CayenneFetchStageTest extends TestWithCayenneMapping {
 		LrPersistentEntity<E3> target = mock(LrPersistentEntity.class);
 		resultFilter.getChildren().put(E2.E3S.getName(), new ResourceEntity<E3>(target, incoming));
 
-		DataResponse<E2> response = DataResponse.forType(E2.class).resourceEntity(resultFilter);
+		DataResponse<E2> response = DataResponse.forType(E2.class);
 
 		SelectContext<E2> context = new SelectContext<E2>(E2.class);
+		context.setEntity(resultFilter);
 		context.setResponse(response);
 		context.setSelect(query);
 
@@ -89,9 +93,10 @@ public class CayenneFetchStageTest extends TestWithCayenneMapping {
 		resourceEntity.setFetchLimit(10);
 		resourceEntity.setFetchOffset(0);
 
-		DataResponse<E1> response = DataResponse.forType(E1.class).resourceEntity(resourceEntity);
+		DataResponse<E1> response = DataResponse.forType(E1.class);
 		SelectContext<E1> c = new SelectContext<E1>(E1.class);
 		c.setResponse(response);
+		c.setEntity(resourceEntity);
 
 		SelectQuery<E1> q1 = fetchStage.buildQuery(c);
 
@@ -119,11 +124,14 @@ public class CayenneFetchStageTest extends TestWithCayenneMapping {
 	@Test
 	public void testBuildQuery_Qualifier() {
 		Expression extraQualifier = E1.NAME.eq("X");
-		DataResponse<E1> response = DataResponse.forType(E1.class).resourceEntity(getResourceEntity(E1.class));
-		response.getEntity().andQualifier(extraQualifier);
+		DataResponse<E1> response = DataResponse.forType(E1.class);
+		ResourceEntity<E1> resourceEntity = getResourceEntity(E1.class);
+
+		resourceEntity.andQualifier(extraQualifier);
 
 		SelectContext<E1> c1 = new SelectContext<>(E1.class);
 		c1.setResponse(response);
+		c1.setEntity(resourceEntity);
 
 		SelectQuery<E1> query = fetchStage.buildQuery(c1);
 		assertEquals(extraQualifier, query.getQualifier());
@@ -134,6 +142,7 @@ public class CayenneFetchStageTest extends TestWithCayenneMapping {
 		SelectContext<E1> c2 = new SelectContext<>(E1.class);
 		c2.setResponse(response);
 		c2.setSelect(query2);
+		c2.setEntity(resourceEntity);
 
 		SelectQuery<E1> query2Amended = fetchStage.buildQuery(c2);
 		assertEquals(E1.NAME.in("a", "b").andExp(E1.NAME.eq("X")), query2Amended.getQualifier());
@@ -144,7 +153,8 @@ public class CayenneFetchStageTest extends TestWithCayenneMapping {
 
 		SelectContext<E1> c = new SelectContext<>(E1.class);
 		c.setId(1);
-		c.setResponse(DataResponse.forType(E1.class).resourceEntity(getResourceEntity(E1.class)));
+		c.setResponse(DataResponse.forType(E1.class));
+		c.setEntity(getResourceEntity(E1.class));
 
 		SelectQuery<E1> s1 = fetchStage.basicSelect(c);
 		assertNotNull(s1);
@@ -157,8 +167,9 @@ public class CayenneFetchStageTest extends TestWithCayenneMapping {
 
 		SelectContext<E1> c = new SelectContext<>(E1.class);
 		c.setId(1);
-		c.setResponse(DataResponse.forType(E1.class).resourceEntity(getResourceEntity(E1.class)));
+		c.setResponse(DataResponse.forType(E1.class));
 		c.setSelect(select);
+		c.setEntity(getResourceEntity(E1.class));
 
 		SelectQuery<E1> s2 = fetchStage.basicSelect(c);
 		assertNotNull(s2);
