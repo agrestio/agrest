@@ -13,9 +13,6 @@ public abstract class _E6 extends CayenneDataObject {
 
     private static final long serialVersionUID = 1L; 
 
-    @Deprecated
-    public static final String CHAR_COLUMN_PROPERTY = "charColumn";
-
     public static final String CHAR_ID_PK_COLUMN = "char_id";
 
     public static final Property<String> CHAR_COLUMN = new Property<String>("charColumn");

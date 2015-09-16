@@ -15,11 +15,6 @@ public abstract class _E7 extends CayenneDataObject {
 
     private static final long serialVersionUID = 1L; 
 
-    @Deprecated
-    public static final String NAME_PROPERTY = "name";
-    @Deprecated
-    public static final String E8_PROPERTY = "e8";
-
     public static final String ID_PK_COLUMN = "id";
 
     public static final Property<String> NAME = new Property<String>("name");

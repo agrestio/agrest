@@ -18,23 +18,6 @@ public abstract class _E10 extends CayenneDataObject {
 
     private static final long serialVersionUID = 1L; 
 
-    @Deprecated
-    public static final String C_BOOLEAN_PROPERTY = "cBoolean";
-    @Deprecated
-    public static final String C_DATE_PROPERTY = "cDate";
-    @Deprecated
-    public static final String C_DECIMAL_PROPERTY = "cDecimal";
-    @Deprecated
-    public static final String C_INT_PROPERTY = "cInt";
-    @Deprecated
-    public static final String C_TIME_PROPERTY = "cTime";
-    @Deprecated
-    public static final String C_TIMESTAMP_PROPERTY = "cTimestamp";
-    @Deprecated
-    public static final String C_VARCHAR_PROPERTY = "cVarchar";
-    @Deprecated
-    public static final String E11S_PROPERTY = "e11s";
-
     public static final String ID_PK_COLUMN = "id";
 
     public static final Property<Boolean> C_BOOLEAN = new Property<Boolean>("cBoolean");

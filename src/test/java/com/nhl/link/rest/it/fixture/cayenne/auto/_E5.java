@@ -18,13 +18,6 @@ public abstract class _E5 extends CayenneDataObject {
 
     private static final long serialVersionUID = 1L; 
 
-    @Deprecated
-    public static final String DATE_PROPERTY = "date";
-    @Deprecated
-    public static final String NAME_PROPERTY = "name";
-    @Deprecated
-    public static final String E2S_PROPERTY = "e2s";
-
     public static final String ID_PK_COLUMN = "id";
 
     public static final Property<Date> DATE = new Property<Date>("date");

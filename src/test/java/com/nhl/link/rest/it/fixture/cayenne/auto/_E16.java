@@ -17,13 +17,6 @@ public abstract class _E16 extends CayenneDataObject {
 
     private static final long serialVersionUID = 1L; 
 
-    @Deprecated
-    public static final String C_DATE_PROPERTY = "cDate";
-    @Deprecated
-    public static final String C_TIME_PROPERTY = "cTime";
-    @Deprecated
-    public static final String C_TIMESTAMP_PROPERTY = "cTimestamp";
-
     public static final String ID_PK_COLUMN = "id";
 
     public static final Property<Date> C_DATE = new Property<Date>("cDate");
