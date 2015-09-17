@@ -23,6 +23,7 @@ import com.nhl.link.rest.processor.BaseProcessingContext;
 public class SelectContext<T> extends BaseProcessingContext<T> {
 
 	private Object id;
+	private Map<String, Object> compoundId;
 	private EntityParent<?> parent;
 	private ResourceEntity<T> entity;
 	private DataResponse<T> response;
@@ -42,7 +43,11 @@ public class SelectContext<T> extends BaseProcessingContext<T> {
 	}
 
 	public boolean isById() {
-		return id != null;
+		return id != null || compoundId != null;
+	}
+
+	public boolean isCompoundId() {
+		return compoundId != null;
 	}
 
 	public Object getId() {
@@ -51,6 +56,16 @@ public class SelectContext<T> extends BaseProcessingContext<T> {
 
 	public void setId(Object id) {
 		this.id = id;
+		this.compoundId = null;
+	}
+
+	public Map<String, Object> getCompoundId() {
+		return compoundId;
+	}
+
+	public void setCompoundId(Map<String, Object> ids) {
+		this.id = null;
+		this.compoundId = ids;
 	}
 
 	public EntityParent<?> getParent() {

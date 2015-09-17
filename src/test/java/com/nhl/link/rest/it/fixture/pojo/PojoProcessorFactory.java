@@ -77,9 +77,14 @@ public class PojoProcessorFactory implements IProcessorFactory {
 
 			Map<Object, T> typeBucket = db.bucketForType(context.getType());
 			if (context.isById()) {
-				T object = typeBucket.get(context.getId());
+				T object;
+				if (context.isCompoundId()) {
+					object = typeBucket.get(context.getCompoundId());
+				} else {
+					object = typeBucket.get(context.getId());
+				}
 				context.getResponse().withObjects(
-						object != null ? Collections.<T> singletonList(object) : Collections.<T> emptyList());
+						object != null ? Collections.singletonList(object) : Collections.<T> emptyList());
 				return;
 			}
 

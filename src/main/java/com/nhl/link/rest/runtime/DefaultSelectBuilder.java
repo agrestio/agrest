@@ -2,6 +2,7 @@ package com.nhl.link.rest.runtime;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Map;
 
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriInfo;
@@ -53,8 +54,20 @@ public class DefaultSelectBuilder<T> implements SelectBuilder<T> {
 	}
 
 	@Override
+	public SelectBuilder<T> parent(Class<?> parentType, Map<String, Object> parentIds, Property<T> relationshipFromParent) {
+		context.setParent(new EntityParent<>(parentType, parentIds, relationshipFromParent.getName()));
+		return this;
+	}
+
+	@Override
 	public SelectBuilder<T> parent(Class<?> parentType, Object parentId, String relationshipFromParent) {
 		context.setParent(new EntityParent<>(parentType, parentId, relationshipFromParent));
+		return this;
+	}
+
+	@Override
+	public SelectBuilder<T> parent(Class<?> parentType, Map<String, Object> parentIds, String relationshipFromParent) {
+		context.setParent(new EntityParent<>(parentType, parentIds, relationshipFromParent));
 		return this;
 	}
 
@@ -68,6 +81,11 @@ public class DefaultSelectBuilder<T> implements SelectBuilder<T> {
 	public SelectBuilder<T> toManyParent(Class<?> parentType, Object parentId,
 			Property<? extends Collection<T>> relationshipFromParent) {
 		return parent(parentType, parentId, relationshipFromParent.getName());
+	}
+
+	@Override
+	public SelectBuilder<T> toManyParent(Class<?> parentType, Map<String, Object> parentIds, Property<? extends Collection<T>> relationshipFromParent) {
+		return parent(parentType, parentIds, relationshipFromParent.getName());
 	}
 
 	@Override
@@ -143,6 +161,19 @@ public class DefaultSelectBuilder<T> implements SelectBuilder<T> {
 		}
 
 		context.setId(id);
+		return this;
+	}
+
+	@Override
+	public SelectBuilder<T> byId(Map<String, Object> ids) {
+
+		for (Object id : ids.entrySet()) {
+			if (id == null) {
+				throw new LinkRestException(Status.NOT_FOUND, "Part of compound ID is null");
+			}
+		}
+
+		context.setCompoundId(ids);
 		return this;
 	}
 

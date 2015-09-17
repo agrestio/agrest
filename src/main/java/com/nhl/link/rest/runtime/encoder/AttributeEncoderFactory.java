@@ -3,10 +3,13 @@ package com.nhl.link.rest.runtime.encoder;
 import java.sql.Time;
 import java.sql.Timestamp;
 import java.sql.Types;
+import java.util.Collection;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import com.nhl.link.rest.meta.cayenne.CayenneLrEntity;
 import org.apache.cayenne.DataObject;
 
 import com.nhl.link.rest.EntityProperty;
@@ -82,22 +85,36 @@ public class AttributeEncoderFactory implements IAttributeEncoderFactory {
 
 	protected EntityProperty buildIdProperty(ResourceEntity<?> entity) {
 
-		LrAttribute id = entity.getLrEntity().getSingleId();
+		Collection<LrAttribute> ids = entity.getLrEntity().getIds();
 
-		if (id instanceof LrPersistentAttribute) {
+		if (entity.getLrEntity() instanceof CayenneLrEntity) {
 
 			// Cayenne object - PK is an ObjectId (even if it is also a
 			// meaningful object property)
 
-			LrPersistentAttribute persistentId = (LrPersistentAttribute) id;
-			Encoder valueEncoder = buildEncoder(persistentId.getJavaType(), persistentId.getJdbcType());
-			return PropertyBuilder.property(PersistentObjectIdPropertyReader.reader()).encodedWith(
-					new ObjectIdEncoder(valueEncoder));
+			if (ids.size() > 1) {
+				Map<String, Encoder> valueEncoders = new HashMap<>();
+				for (LrAttribute id : ids) {
+					LrPersistentAttribute persistentId = (LrPersistentAttribute) id;
+					Encoder valueEncoder = buildEncoder(persistentId.getJavaType(), persistentId.getJdbcType());
+					valueEncoders.put(id.getName(), valueEncoder);
+				}
 
+				return PropertyBuilder.property(PersistentObjectIdPropertyReader.reader()).encodedWith(
+						new ObjectIdEncoder(valueEncoders));
+			} else {
+
+				LrPersistentAttribute persistentId = (LrPersistentAttribute) ids.iterator().next();
+				Encoder valueEncoder = buildEncoder(persistentId.getJavaType(), persistentId.getJdbcType());
+
+				return PropertyBuilder.property(PersistentObjectIdPropertyReader.reader()).encodedWith(
+						new ObjectIdEncoder(valueEncoder));
+			}
 		} else {
 
 			// POJO - PK is an object property
 
+			LrAttribute id = ids.iterator().next();
 			return PropertyBuilder.property(BeanPropertyReader.reader(id.getName()));
 		}
 	}

@@ -1,6 +1,7 @@
 package com.nhl.link.rest;
 
 import java.util.Collection;
+import java.util.Map;
 
 import javax.ws.rs.core.UriInfo;
 
@@ -56,6 +57,14 @@ public interface SelectBuilder<T> {
 	SelectBuilder<T> byId(Object id);
 
 	/**
+	 * Forces the builder to select a single object by compound ID. Any explicit query
+	 * associated with the builder is ignored (except possibly for the root
+	 * entity resolution purposes). And a new ID query is built internally by
+	 * LinkRest.
+	 */
+	SelectBuilder<T> byId(Map<String, Object> ids);
+
+	/**
 	 * Adds a custom property that is appended to the root
 	 * {@link ResourceEntity}.
 	 * 
@@ -86,10 +95,14 @@ public interface SelectBuilder<T> {
 	 */
 	SelectBuilder<T> parent(Class<?> parentType, Object parentId, String relationshipFromParent);
 
+	SelectBuilder<T> parent(Class<?> parentType, Map<String, Object> parentIds, String relationshipFromParent);
+
 	/**
 	 * @since 1.4
 	 */
 	SelectBuilder<T> parent(Class<?> parentType, Object parentId, Property<T> relationshipFromParent);
+
+	SelectBuilder<T> parent(Class<?> parentType, Map<String, Object> parentIds, Property<T> relationshipFromParent);
 
 	/**
 	 * @since 1.7
@@ -100,6 +113,9 @@ public interface SelectBuilder<T> {
 	 * @since 1.7
 	 */
 	SelectBuilder<T> toManyParent(Class<?> parentType, Object parentId,
+			Property<? extends Collection<T>> relationshipFromParent);
+
+	SelectBuilder<T> toManyParent(Class<?> parentType, Map<String, Object> parentIds,
 			Property<? extends Collection<T>> relationshipFromParent);
 
 	/**

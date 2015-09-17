@@ -12,6 +12,8 @@ import javax.ws.rs.core.FeatureContext;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import com.nhl.link.rest.it.fixture.cayenne.E17;
+import com.nhl.link.rest.it.fixture.resource.E17Resource;
 import org.apache.cayenne.query.SQLTemplate;
 import org.joda.time.DateTime;
 import org.joda.time.LocalTime;
@@ -34,6 +36,7 @@ public class GET_IT extends JerseyTestOnDerby {
 		context.register(E3Resource.class);
 		context.register(E4Resource.class);
 		context.register(E6Resource.class);
+		context.register(E17Resource.class);
 	}
 
 	@Test
@@ -283,6 +286,18 @@ public class GET_IT extends JerseyTestOnDerby {
 
 		assertEquals(Status.OK.getStatusCode(), response1.getStatus());
 		assertEquals("{\"data\":[{\"id\":\"a\",\"charColumn\":\"aaa\"}],\"total\":1}",
+				response1.readEntity(String.class));
+	}
+
+	@Test
+	public void test_SelectByCompoundId() {
+		runtime.newContext().performGenericQuery(
+				new SQLTemplate(E17.class, "INSERT INTO utest.e17 (id1, id2, name) values (1, 1, 'aaa')"));
+
+		Response response1 = target("/e17").queryParam("id1", 1).queryParam("id2", 1).request().get();
+
+		assertEquals(Status.OK.getStatusCode(), response1.getStatus());
+		assertEquals("{\"data\":[{\"id\":{\"id2\":1,\"id1\":1},\"id1\":1,\"id2\":1,\"name\":\"aaa\"}],\"total\":1}",
 				response1.readEntity(String.class));
 	}
 
