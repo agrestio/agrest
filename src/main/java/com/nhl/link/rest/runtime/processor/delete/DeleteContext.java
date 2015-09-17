@@ -1,6 +1,7 @@
 package com.nhl.link.rest.runtime.processor.delete;
 
 import com.nhl.link.rest.EntityParent;
+import com.nhl.link.rest.LrObjectId;
 import com.nhl.link.rest.SimpleResponse;
 import com.nhl.link.rest.processor.BaseProcessingContext;
 
@@ -11,8 +12,7 @@ import java.util.Map;
  */
 public class DeleteContext<T> extends BaseProcessingContext<T> {
 
-	protected Object id;
-	protected Map<String, Object> compoundId;
+	protected LrObjectId id;
 	protected EntityParent<?> parent;
 	protected SimpleResponse response;
 
@@ -21,29 +21,19 @@ public class DeleteContext<T> extends BaseProcessingContext<T> {
 	}
 
 	public boolean isById() {
-		return id != null || compoundId != null;
+		return id != null;
 	}
 
-	public boolean isCompoundId() {
-		return compoundId != null;
-	}
-
-	public Object getId() {
+	public LrObjectId getId() {
 		return id;
 	}
 
 	public void setId(Object id) {
-		this.id = id;
-		this.compoundId = null;
+		this.id = new LrObjectId(id);
 	}
 
-	public Map<String, Object> getCompoundId() {
-		return compoundId;
-	}
-
-	public void setCompoundId(Map<String, Object> compoundId) {
-		this.id = null;
-		this.compoundId = compoundId;
+	public void setCompoundId(Map<String, Object> ids) {
+		this.id = new LrObjectId(ids);
 	}
 
 	public EntityParent<?> getParent() {

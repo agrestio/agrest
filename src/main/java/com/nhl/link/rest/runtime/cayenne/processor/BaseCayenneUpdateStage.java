@@ -168,7 +168,7 @@ public abstract class BaseCayenneUpdateStage<T extends DataObject> extends BaseL
 		ObjectContext objectContext = CayenneContextInitStage.cayenneContext(context);
 
 		ObjEntity parentEntity = objectContext.getEntityResolver().getObjEntity(parent.getType());
-		final DataObject parentObject = (DataObject) Util.findById(objectContext, parent.getType(), parent.getId());
+		final DataObject parentObject = (DataObject) Util.findById(objectContext, parent.getType(), parent.getId().get());
 
 		if (parentObject == null) {
 			throw new LinkRestException(Status.NOT_FOUND, "No parent object for ID '" + parent.getId()

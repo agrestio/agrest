@@ -49,7 +49,7 @@ public class CayenneUnrelateStage<T> extends BaseLinearProcessingStage<UnrelateC
 		LrRelationship relationship = metadataService.getLrRelationship(context.getParent());
 
 		DataObject parent = (DataObject) getExistingObject(context.getParent().getType(), cayenneContext, context
-				.getParent().getId());
+				.getParent().getId().get());
 
 		Class<?> childType = metadataService.getLrEntity(relationship.getTargetEntityType()).getType();
 
@@ -83,7 +83,7 @@ public class CayenneUnrelateStage<T> extends BaseLinearProcessingStage<UnrelateC
 		LrRelationship lrRelationship = metadataService.getLrRelationship(context.getParent());
 
 		DataObject parent = (DataObject) getExistingObject(context.getParent().getType(), cayenneContext, context
-				.getParent().getId());
+				.getParent().getId().get());
 
 		if (lrRelationship.isToMany()) {
 

@@ -4,6 +4,7 @@ import java.util.Map;
 
 import javax.ws.rs.core.UriInfo;
 
+import com.nhl.link.rest.LrObjectId;
 import org.apache.cayenne.query.SelectQuery;
 
 import com.nhl.link.rest.DataResponse;
@@ -22,8 +23,7 @@ import com.nhl.link.rest.processor.BaseProcessingContext;
  */
 public class SelectContext<T> extends BaseProcessingContext<T> {
 
-	private Object id;
-	private Map<String, Object> compoundId;
+	private LrObjectId id;
 	private EntityParent<?> parent;
 	private ResourceEntity<T> entity;
 	private DataResponse<T> response;
@@ -43,29 +43,19 @@ public class SelectContext<T> extends BaseProcessingContext<T> {
 	}
 
 	public boolean isById() {
-		return id != null || compoundId != null;
+		return id != null;
 	}
 
-	public boolean isCompoundId() {
-		return compoundId != null;
-	}
-
-	public Object getId() {
+	public LrObjectId getId() {
 		return id;
 	}
 
 	public void setId(Object id) {
-		this.id = id;
-		this.compoundId = null;
-	}
-
-	public Map<String, Object> getCompoundId() {
-		return compoundId;
+		this.id = new LrObjectId(id);
 	}
 
 	public void setCompoundId(Map<String, Object> ids) {
-		this.id = null;
-		this.compoundId = ids;
+		this.id = new LrObjectId(ids);
 	}
 
 	public EntityParent<?> getParent() {

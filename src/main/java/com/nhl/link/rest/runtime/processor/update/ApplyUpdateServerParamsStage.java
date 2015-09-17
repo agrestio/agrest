@@ -1,18 +1,14 @@
 package com.nhl.link.rest.runtime.processor.update;
 
 import java.lang.annotation.Annotation;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import javax.ws.rs.core.Response.Status;
 
 import com.nhl.link.rest.meta.LrAttribute;
-import org.apache.cayenne.exp.Expression;
-import org.apache.cayenne.exp.ExpressionFactory;
 import org.apache.cayenne.map.DbJoin;
 import org.apache.cayenne.map.DbRelationship;
 import org.apache.cayenne.map.ObjRelationship;
@@ -93,33 +89,20 @@ public class ApplyUpdateServerParamsStage<T> extends BaseLinearProcessingStage<U
 			Map<String, Object> idMap = u.getOrCreateId();
 			Collection<LrAttribute> idAttributes = entity.getIds();
 
-			if (context.isCompoundId()) {
+			if (idAttributes.size() != context.getId().size()) {
+				throw new LinkRestException(Status.BAD_REQUEST,
+						"Wrong compound ID size: expected " + idAttributes.size() +
+								", got: " + context.getId().size());
+			}
 
-				if (idAttributes.size() != context.getCompoundId().size()) {
-					throw new LinkRestException(Status.BAD_REQUEST,
-							"Wrong compound ID size: expected " + idAttributes.size() +
-									", got: " + context.getCompoundId().size());
-				}
+			for (LrAttribute idAttribute : idAttributes) {
+				LrPersistentAttribute persistentId = (LrPersistentAttribute) idAttribute;
+				Object idValue = context.getId().get(persistentId.getName());
 
-				for (LrAttribute idAttribute : idAttributes) {
-					LrPersistentAttribute persistentId = (LrPersistentAttribute) idAttribute;
-					Object idValue = context.getCompoundId().get(persistentId.getName());
-
-					idMap.put(
-							persistentId.getDbAttribute().getName(),
-							Normalizer.normalize(idValue, persistentId.getJavaType())
-					);
-				}
-			} else {
-
-				if (idAttributes.size() != 1) {
-					throw new LinkRestException(Status.BAD_REQUEST,
-							"Compound ID of size " + idAttributes.size() + " is expected");
-				}
-
-				LrPersistentAttribute persistentId = (LrPersistentAttribute) idAttributes.iterator().next();
-				u.getOrCreateId().put(persistentId.getDbAttribute().getName(),
-					Normalizer.normalize(context.getId(), persistentId.getJavaType()));
+				idMap.put(
+						persistentId.getDbAttribute().getName(),
+						Normalizer.normalize(idValue, persistentId.getJavaType())
+				);
 			}
 
 			u.setExplicitId();
@@ -137,35 +120,15 @@ public class ApplyUpdateServerParamsStage<T> extends BaseLinearProcessingStage<U
 
 				Map<String, Object> parentIdMap = new HashMap<>();
 
-				if (parent.getId() instanceof Map) {
-					@SuppressWarnings("unchecked")
-					Map<String, Object> parentIds = (Map<String, Object>) parent.getId();
-
-					for (DbRelationship dbRelationship : fromParent.getDbRelationships()) {
-						DbRelationship reverseRelationship = dbRelationship.getReverseRelationship();
-						for (DbJoin join : reverseRelationship.getJoins()) {
-							parentIdMap.put(join.getSourceName(), parentIds.get(join.getTargetName()));
-						}
+				for (DbRelationship dbRelationship : fromParent.getDbRelationships()) {
+					DbRelationship reverseRelationship = dbRelationship.getReverseRelationship();
+					for (DbJoin join : reverseRelationship.getJoins()) {
+						parentIdMap.put(join.getSourceName(), parent.getId().get(join.getTargetName()));
 					}
+				}
 
-					for (EntityUpdate<T> u : context.getUpdates()) {
-						u.getOrCreateId().putAll(parentIdMap);
-					}
-				} else {
-					List<DbRelationship> dbRelationships = fromParent.getDbRelationships();
-
-					DbRelationship last = dbRelationships.get(dbRelationships.size() - 1);
-
-					if (last.getJoins().size() != 1) {
-						throw new LinkRestException(Status.BAD_REQUEST,
-								"Compound ID is expected for parent entity: "
-										+ context.getEntity().getLrEntity().getName());
-					}
-
-					String parentIdKey = last.getJoins().get(0).getTargetName();
-					for (EntityUpdate<T> u : context.getUpdates()) {
-						u.getOrCreateId().put(parentIdKey, parent.getId());
-					}
+				for (EntityUpdate<T> u : context.getUpdates()) {
+					u.getOrCreateId().putAll(parentIdMap);
 				}
 			}
 		}

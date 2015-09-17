@@ -10,6 +10,7 @@ import com.nhl.link.rest.DataResponse;
 import com.nhl.link.rest.EntityParent;
 import com.nhl.link.rest.EntityUpdate;
 import com.nhl.link.rest.LinkRestException;
+import com.nhl.link.rest.LrObjectId;
 import com.nhl.link.rest.ObjectMapperFactory;
 import com.nhl.link.rest.ResourceEntity;
 import com.nhl.link.rest.constraints.ConstraintsBuilder;
@@ -26,8 +27,7 @@ public class UpdateContext<T> extends BaseProcessingContext<T> {
 	private DataResponse<T> response;
 	private ResourceEntity<T> entity;
 	private UriInfo uriInfo;
-	private Object id;
-	private Map<String, Object> compoundId;
+	private LrObjectId id;
 	private EntityParent<?> parent;
 	private ConstraintsBuilder<T> readConstraints;
 	private ConstraintsBuilder<T> writeConstraints;
@@ -101,29 +101,19 @@ public class UpdateContext<T> extends BaseProcessingContext<T> {
 	}
 
 	public boolean isById() {
-		return id != null || compoundId != null;
+		return id != null;
 	}
 
-	public boolean isCompoundId() {
-		return compoundId != null;
-	}
-
-	public Object getId() {
+	public LrObjectId getId() {
 		return id;
 	}
 
 	public void setId(Object id) {
-		this.id = id;
-		this.compoundId = null;
+		this.id = new LrObjectId(id);
 	}
 
-	public Map<String, Object> getCompoundId() {
-		return compoundId;
-	}
-
-	public void setCompoundId(Map<String, Object> compoundId) {
-		this.id = null;
-		this.compoundId = compoundId;
+	public void setCompoundId(Map<String, Object> ids) {
+		this.id = new LrObjectId(ids);
 	}
 
 	public EntityParent<?> getParent() {
