@@ -8,6 +8,9 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import com.nhl.link.rest.it.fixture.cayenne.E17;
+import com.nhl.link.rest.it.fixture.cayenne.E18;
+import com.nhl.link.rest.it.fixture.resource.E17Resource;
 import org.apache.cayenne.DataRow;
 import org.apache.cayenne.query.SQLSelect;
 import org.apache.cayenne.query.SQLTemplate;
@@ -27,6 +30,7 @@ public class POST_Related_IT extends JerseyTestOnDerby {
 	protected void doAddResources(FeatureContext context) {
 		context.register(E2Resource.class);
 		context.register(E12Resource.class);
+		context.register(E17Resource.class);
 	}
 
 	@Test
@@ -46,6 +50,27 @@ public class POST_Related_IT extends JerseyTestOnDerby {
 		DataRow row = SQLSelect.dataRowQuery("SELECT e2_id, name FROM utest.e3").lowerColumnNames().selectOne(context);
 		assertEquals("zzz", row.get("name"));
 		assertEquals(24, row.get("e2_id"));
+	}
+
+	@Test
+	public void testRelate_ToMany_New_CompoundId() {
+
+		runtime.newContext().performGenericQuery(
+				new SQLTemplate(E17.class, "INSERT INTO utest.e17 (id1, id2, name) values (1, 1, 'aaa')"));
+
+		Response r1 = target("/e17/e18s").matrixParam("parentId1", 1).matrixParam("parentId2", 1).request()
+				.post(Entity.entity("{\"name\":\"xxx\"}", MediaType.APPLICATION_JSON));
+
+		assertEquals(Status.OK.getStatusCode(), r1.getStatus());
+		assertEquals("{\"data\":[{REPLACED_ID,\"name\":\"xxx\"}],\"total\":1}",
+				r1.readEntity(String.class).replaceFirst("\"id\":[\\d]+", "REPLACED_ID"));
+
+		assertEquals(1, SQLSelect.scalarQuery(E18.class, "SELECT count(1) FROM utest.e18").selectOne(context));
+
+		DataRow row = SQLSelect.dataRowQuery("SELECT e17_id1, e17_id2, name FROM utest.e18").lowerColumnNames().selectOne(context);
+		assertEquals("xxx", row.get("name"));
+		assertEquals(1, row.get("e17_id1"));
+		assertEquals(1, row.get("e17_id2"));
 	}
 
 	@Test

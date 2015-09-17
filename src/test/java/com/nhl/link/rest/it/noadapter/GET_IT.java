@@ -297,7 +297,7 @@ public class GET_IT extends JerseyTestOnDerby {
 		Response response1 = target("/e17").queryParam("id1", 1).queryParam("id2", 1).request().get();
 
 		assertEquals(Status.OK.getStatusCode(), response1.getStatus());
-		assertEquals("{\"data\":[{\"id\":{\"id2\":1,\"id1\":1},\"id1\":1,\"id2\":1,\"name\":\"aaa\"}],\"total\":1}",
+		assertEquals("{\"data\":[{\"id\":{\"id1\":1,\"id2\":1},\"id1\":1,\"id2\":1,\"name\":\"aaa\"}],\"total\":1}",
 				response1.readEntity(String.class));
 	}
 

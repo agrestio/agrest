@@ -1,6 +1,7 @@
 package com.nhl.link.rest;
 
 import java.util.Collection;
+import java.util.Map;
 
 import javax.ws.rs.core.UriInfo;
 
@@ -29,9 +30,20 @@ public interface UpdateBuilder<T> {
 	UpdateBuilder<T> id(Object id);
 
 	/**
+	 * Set an explicit compound id for the update. In this case only a single object is
+	 * allowed in the update.
+	 */
+	UpdateBuilder<T> id(Map<String, Object> ids);
+
+	/**
 	 * Sets up a relationship clause for all objects in this update.
 	 */
 	UpdateBuilder<T> parent(Class<?> parentType, Object parentId, String relationshipFromParent);
+
+	/**
+	 * Sets up a relationship clause for all objects in this update.
+	 */
+	UpdateBuilder<T> parent(Class<?> parentType, Map<String, Object> parentIds, String relationshipFromParent);
 
 	/**
 	 * Sets up a relationship clause for all objects in this update.
@@ -41,7 +53,18 @@ public interface UpdateBuilder<T> {
 	/**
 	 * Sets up a relationship clause for all objects in this update.
 	 */
+	UpdateBuilder<T> parent(Class<?> parentType, Map<String, Object> parentIds, Property<T> relationshipFromParent);
+
+	/**
+	 * Sets up a relationship clause for all objects in this update.
+	 */
 	UpdateBuilder<T> toManyParent(Class<?> parentType, Object parentId,
+			Property<? extends Collection<T>> relationshipFromParent);
+
+	/**
+	 * Sets up a relationship clause for all objects in this update.
+	 */
+	UpdateBuilder<T> toManyParent(Class<?> parentType, Map<String, Object> parentIds,
 			Property<? extends Collection<T>> relationshipFromParent);
 
 	/**

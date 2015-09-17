@@ -81,13 +81,14 @@ public class ObjectIdEncoder implements Encoder {
 
         out.writeStartObject();
 
-        for (Map.Entry<String, Object> entry : values.entrySet()) {
-            Encoder valueEncoder = valueEncoders.get(entry.getKey());
-            if (valueEncoder == null) {
+        for (Map.Entry<String, Encoder> entry : valueEncoders.entrySet()) {
+            Encoder valueEncoder = entry.getValue();
+            Object value = values.get(entry.getKey());
+            if (value == null) {
                 throw new LinkRestException(Response.Status.BAD_REQUEST,
-                        "Missing encoder for compound ID property: " + entry.getKey());
+                        "Missing value for compound ID property: " + entry.getKey());
             }
-            valueEncoder.encode(entry.getKey(), entry.getValue(), out);
+            valueEncoder.encode(entry.getKey(), value, out);
         }
 
         out.writeEndObject();

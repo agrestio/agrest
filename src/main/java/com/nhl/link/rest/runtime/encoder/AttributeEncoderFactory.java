@@ -7,6 +7,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.TreeMap;
 import java.util.concurrent.ConcurrentHashMap;
 
 import com.nhl.link.rest.meta.cayenne.CayenneLrEntity;
@@ -93,7 +94,8 @@ public class AttributeEncoderFactory implements IAttributeEncoderFactory {
 			// meaningful object property)
 
 			if (ids.size() > 1) {
-				Map<String, Encoder> valueEncoders = new HashMap<>();
+				// keeping attribute encoders in alphabetical order
+				Map<String, Encoder> valueEncoders = new TreeMap<>();
 				for (LrAttribute id : ids) {
 					LrPersistentAttribute persistentId = (LrPersistentAttribute) id;
 					Encoder valueEncoder = buildEncoder(persistentId.getJavaType(), persistentId.getJdbcType());
