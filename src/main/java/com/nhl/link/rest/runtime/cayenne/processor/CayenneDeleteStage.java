@@ -36,7 +36,7 @@ public class CayenneDeleteStage<T> extends BaseLinearProcessingStage<DeleteConte
 		// delete responses
 
 		// delete by id
-		if (context.getId() != null) {
+		if (context.isById()) {
 			deleteById(context, cayenneContext);
 		}
 		// delete by parent
@@ -51,7 +51,8 @@ public class CayenneDeleteStage<T> extends BaseLinearProcessingStage<DeleteConte
 
 	private void deleteById(DeleteContext<?> context, ObjectContext cayenneContext) {
 
-		Object o = Util.findById(cayenneContext, context.getType(), context.getId());
+		Object o = Util.findById(cayenneContext, context.getType(),
+				context.isCompoundId()? context.getCompoundId() : context.getId());
 
 		if (o == null) {
 			ObjEntity entity = cayenneContext.getEntityResolver().getObjEntity(context.getType());

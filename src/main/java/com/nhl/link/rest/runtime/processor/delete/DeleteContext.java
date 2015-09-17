@@ -4,17 +4,28 @@ import com.nhl.link.rest.EntityParent;
 import com.nhl.link.rest.SimpleResponse;
 import com.nhl.link.rest.processor.BaseProcessingContext;
 
+import java.util.Map;
+
 /**
  * @since 1.16
  */
 public class DeleteContext<T> extends BaseProcessingContext<T> {
 
 	protected Object id;
+	protected Map<String, Object> compoundId;
 	protected EntityParent<?> parent;
 	protected SimpleResponse response;
 
 	public DeleteContext(Class<T> type) {
 		super(type);
+	}
+
+	public boolean isById() {
+		return id != null || compoundId != null;
+	}
+
+	public boolean isCompoundId() {
+		return compoundId != null;
 	}
 
 	public Object getId() {
@@ -23,6 +34,16 @@ public class DeleteContext<T> extends BaseProcessingContext<T> {
 
 	public void setId(Object id) {
 		this.id = id;
+		this.compoundId = null;
+	}
+
+	public Map<String, Object> getCompoundId() {
+		return compoundId;
+	}
+
+	public void setCompoundId(Map<String, Object> compoundId) {
+		this.id = null;
+		this.compoundId = compoundId;
 	}
 
 	public EntityParent<?> getParent() {
