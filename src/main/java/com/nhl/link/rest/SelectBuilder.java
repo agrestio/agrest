@@ -57,10 +57,12 @@ public interface SelectBuilder<T> {
 	SelectBuilder<T> byId(Object id);
 
 	/**
-	 * Forces the builder to select a single object by compound ID. Any explicit query
-	 * associated with the builder is ignored (except possibly for the root
-	 * entity resolution purposes). And a new ID query is built internally by
-	 * LinkRest.
+	 * Forces the builder to select a single object by compound ID. Any explicit
+	 * query associated with the builder is ignored (except possibly for the
+	 * root entity resolution purposes). And a new ID query is built internally
+	 * by LinkRest.
+	 * 
+	 * @since 1.20
 	 */
 	SelectBuilder<T> byId(Map<String, Object> ids);
 
@@ -95,6 +97,9 @@ public interface SelectBuilder<T> {
 	 */
 	SelectBuilder<T> parent(Class<?> parentType, Object parentId, String relationshipFromParent);
 
+	/**
+	 * @since 1.20
+	 */
 	SelectBuilder<T> parent(Class<?> parentType, Map<String, Object> parentIds, String relationshipFromParent);
 
 	/**
@@ -102,6 +107,9 @@ public interface SelectBuilder<T> {
 	 */
 	SelectBuilder<T> parent(Class<?> parentType, Object parentId, Property<T> relationshipFromParent);
 
+	/**
+	 * @since 1.20
+	 */
 	SelectBuilder<T> parent(Class<?> parentType, Map<String, Object> parentIds, Property<T> relationshipFromParent);
 
 	/**
@@ -115,6 +123,9 @@ public interface SelectBuilder<T> {
 	SelectBuilder<T> toManyParent(Class<?> parentType, Object parentId,
 			Property<? extends Collection<T>> relationshipFromParent);
 
+	/**
+	 * @since 1.20
+	 */
 	SelectBuilder<T> toManyParent(Class<?> parentType, Map<String, Object> parentIds,
 			Property<? extends Collection<T>> relationshipFromParent);
 
@@ -132,9 +143,9 @@ public interface SelectBuilder<T> {
 	 * Adds an annotated listener that will be notified of completion of
 	 * individual stages during request processing. Recognized annotations are
 	 * {@link SelectChainInitialized}, {@link SelectRequestParsed},
-	 * {@link SelectServerParamsApplied}, {@link DataFetched}. Annotated
-	 * method can take two forms, one that doesn't change the flow, and another
-	 * one - that does:
+	 * {@link SelectServerParamsApplied}, {@link DataFetched}. Annotated method
+	 * can take two forms, one that doesn't change the flow, and another one -
+	 * that does:
 	 * 
 	 * <pre>
 	 * void doSomething(SelectContext<?> context) {

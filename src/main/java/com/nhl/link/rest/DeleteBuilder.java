@@ -12,19 +12,31 @@ public interface DeleteBuilder<T> {
 
 	DeleteBuilder<T> id(Object id);
 
+	/**
+	 * @since 1.20
+	 */
 	DeleteBuilder<T> id(Map<String, Object> ids);
 
 	DeleteBuilder<T> parent(Class<?> parentType, Object parentId, String relationshipFromParent);
 
+	/**
+	 * @since 1.20
+	 */
 	DeleteBuilder<T> parent(Class<?> parentType, Map<String, Object> parentIds, String relationshipFromParent);
 
 	DeleteBuilder<T> parent(Class<?> parentType, Object parentId, Property<T> relationshipFromParent);
 
+	/**
+	 * @since 1.20
+	 */
 	DeleteBuilder<T> parent(Class<?> parentType, Map<String, Object> parentIds, Property<T> relationshipFromParent);
 
 	DeleteBuilder<T> toManyParent(Class<?> parentType, Object parentId,
 			Property<? extends Collection<T>> relationshipFromParent);
 
+	/**
+	 * @since 1.20
+	 */
 	DeleteBuilder<T> toManyParent(Class<?> parentType, Map<String, Object> parentIds,
 			Property<? extends Collection<T>> relationshipFromParent);
 

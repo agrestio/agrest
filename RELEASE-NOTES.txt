@@ -2,6 +2,7 @@ Release 1.20
 
 #78  Parsed update payload objects as resource method parameters
 #101 Add supporting of id-value for foreign key value during post and put.
+#109 Support for compound IDs in LR service operations
 #115 Refactoring of the service layer
 #116 UpdateBuilder.mapper(String) and UpdateBuilder.mapper(Property)
 

@@ -30,8 +30,10 @@ public interface UpdateBuilder<T> {
 	UpdateBuilder<T> id(Object id);
 
 	/**
-	 * Set an explicit compound id for the update. In this case only a single object is
-	 * allowed in the update.
+	 * Set an explicit compound id for the update. In this case only a single
+	 * object is allowed in the update.
+	 * 
+	 * @since 1.20
 	 */
 	UpdateBuilder<T> id(Map<String, Object> ids);
 
@@ -42,6 +44,8 @@ public interface UpdateBuilder<T> {
 
 	/**
 	 * Sets up a relationship clause for all objects in this update.
+	 * 
+	 * @since 1.20
 	 */
 	UpdateBuilder<T> parent(Class<?> parentType, Map<String, Object> parentIds, String relationshipFromParent);
 
@@ -52,6 +56,8 @@ public interface UpdateBuilder<T> {
 
 	/**
 	 * Sets up a relationship clause for all objects in this update.
+	 * 
+	 * @since 1.20
 	 */
 	UpdateBuilder<T> parent(Class<?> parentType, Map<String, Object> parentIds, Property<T> relationshipFromParent);
 
@@ -63,6 +69,8 @@ public interface UpdateBuilder<T> {
 
 	/**
 	 * Sets up a relationship clause for all objects in this update.
+	 * 
+	 * @since 1.20
 	 */
 	UpdateBuilder<T> toManyParent(Class<?> parentType, Map<String, Object> parentIds,
 			Property<? extends Collection<T>> relationshipFromParent);
