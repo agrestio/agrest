@@ -1,6 +1,7 @@
 package com.nhl.link.rest.runtime.processor.update;
 
 import java.util.Collection;
+import java.util.Map;
 
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriInfo;
@@ -9,6 +10,7 @@ import com.nhl.link.rest.DataResponse;
 import com.nhl.link.rest.EntityParent;
 import com.nhl.link.rest.EntityUpdate;
 import com.nhl.link.rest.LinkRestException;
+import com.nhl.link.rest.LrObjectId;
 import com.nhl.link.rest.ObjectMapperFactory;
 import com.nhl.link.rest.ResourceEntity;
 import com.nhl.link.rest.constraints.ConstraintsBuilder;
@@ -25,7 +27,7 @@ public class UpdateContext<T> extends BaseProcessingContext<T> {
 	private DataResponse<T> response;
 	private ResourceEntity<T> entity;
 	private UriInfo uriInfo;
-	private Object id;
+	private LrObjectId id;
 	private EntityParent<?> parent;
 	private ConstraintsBuilder<T> readConstraints;
 	private ConstraintsBuilder<T> writeConstraints;
@@ -98,12 +100,20 @@ public class UpdateContext<T> extends BaseProcessingContext<T> {
 		this.uriInfo = uriInfo;
 	}
 
-	public Object getId() {
+	public boolean isById() {
+		return id != null;
+	}
+
+	public LrObjectId getId() {
 		return id;
 	}
 
 	public void setId(Object id) {
-		this.id = id;
+		this.id = new LrObjectId(id);
+	}
+
+	public void setCompoundId(Map<String, Object> ids) {
+		this.id = new LrObjectId(ids);
 	}
 
 	public EntityParent<?> getParent() {

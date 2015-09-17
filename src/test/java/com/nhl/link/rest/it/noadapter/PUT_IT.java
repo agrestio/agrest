@@ -11,6 +11,7 @@ import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.FeatureContext;
 import javax.ws.rs.core.Response;
 
+import com.nhl.link.rest.it.fixture.resource.E17Resource;
 import org.junit.Test;
 
 import com.nhl.link.rest.it.fixture.JerseyTestOnDerby;
@@ -33,6 +34,7 @@ public class PUT_IT extends JerseyTestOnDerby {
 		context.register(E7Resource.class);
 		context.register(E8Resource.class);
 		context.register(E14Resource.class);
+		context.register(E17Resource.class);
 	}
 
 	@Test
@@ -47,6 +49,20 @@ public class PUT_IT extends JerseyTestOnDerby {
 						+ "\"cTime\":null,\"cTimestamp\":null,\"cVarchar\":\"zzz\"}]"));
 
 		assertEquals(1, intForQuery("SELECT COUNT(1) FROM utest.e4 WHERE id = 8 AND c_varchar = 'zzz'"));
+	}
+
+	@Test
+	public void test_PUT_ExplicitCompoundId() throws WebApplicationException, IOException {
+		insert("e17", "id1, id2, name", "1, 1, 'aaa'");
+		insert("e17", "id1, id2, name", "2, 2, 'bbb'");
+
+		Response response = target("/e17").queryParam("id1", 1).queryParam("id2", 1).request()
+				.put(jsonEntity("{\"name\":\"xxx\"}"));
+
+		assertThat(response, okAndHasData(1,
+				"[{\"id\":{\"id1\":1,\"id2\":1},\"id1\":1,\"id2\":1,\"name\":\"xxx\"}]"));
+
+		assertEquals(1, intForQuery("SELECT COUNT(1) FROM utest.e17 WHERE id1 = 1 AND id2 = 1 AND name = 'xxx'"));
 	}
 
 	@Test

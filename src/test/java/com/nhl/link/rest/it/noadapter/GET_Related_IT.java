@@ -6,6 +6,9 @@ import javax.ws.rs.core.FeatureContext;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import com.nhl.link.rest.it.fixture.cayenne.E17;
+import com.nhl.link.rest.it.fixture.cayenne.E18;
+import com.nhl.link.rest.it.fixture.resource.E17Resource;
 import org.apache.cayenne.query.SQLTemplate;
 import org.junit.Test;
 
@@ -24,6 +27,7 @@ public class GET_Related_IT extends JerseyTestOnDerby {
 		context.register(E2Resource.class);
 		context.register(E3Resource.class);
 		context.register(E12Resource.class);
+		context.register(E17Resource.class);
 	}
 
 	@Test
@@ -46,6 +50,29 @@ public class GET_Related_IT extends JerseyTestOnDerby {
 
 		assertEquals(Status.OK.getStatusCode(), r1.getStatus());
 		assertEquals("{\"data\":[{\"id\":8},{\"id\":9}],\"total\":2}", r1.readEntity(String.class));
+	}
+
+	@Test
+	public void testGet_ToMany_CompoundId() {
+
+		context.performGenericQuery(new SQLTemplate(E17.class, "INSERT INTO utest.e17 (id1, id2, name) values (1, 1, 'aaa')"));
+		context.performGenericQuery(new SQLTemplate(E17.class, "INSERT INTO utest.e17 (id1, id2, name) values (2, 2, 'bbb')"));
+
+		context.performGenericQuery(new SQLTemplate(E18.class,
+				"INSERT INTO utest.e18 (id, e17_id1, e17_id2, name) values (1, 1, 1, 'xxx')"));
+		context.performGenericQuery(new SQLTemplate(E18.class,
+				"INSERT INTO utest.e18 (id, e17_id1, e17_id2, name) values (2, 1, 1, 'yyy')"));
+		context.performGenericQuery(new SQLTemplate(E18.class,
+				"INSERT INTO utest.e18 (id, e17_id1, e17_id2, name) values (3, 2, 2, 'zzz')"));
+
+		Response r1 = target("/e17/e18s").matrixParam("parentId1", 1).matrixParam("parentId2", 1).request().get();
+
+		assertEquals(Status.OK.getStatusCode(), r1.getStatus());
+		assertEquals(
+				"{\"data\":[{\"id\":1,\"name\":\"xxx\"},{\"id\":2,\"name\":\"yyy\"}],\"total\":2}",
+				r1.readEntity(String.class)
+		);
+
 	}
 
 	@Test

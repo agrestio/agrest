@@ -8,6 +8,8 @@ import javax.ws.rs.core.FeatureContext;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import com.nhl.link.rest.it.fixture.cayenne.E17;
+import com.nhl.link.rest.it.fixture.resource.E17Resource;
 import org.apache.cayenne.Cayenne;
 import org.apache.cayenne.query.EJBQLQuery;
 import org.apache.cayenne.query.SQLTemplate;
@@ -22,6 +24,7 @@ public class DELETE_IT extends JerseyTestOnDerby {
 	@Override
 	protected void doAddResources(FeatureContext context) {
 		context.register(E4Resource.class);
+		context.register(E17Resource.class);
 	}
 
 	@Test
@@ -39,6 +42,23 @@ public class DELETE_IT extends JerseyTestOnDerby {
 		assertEquals("{\"success\":true}", response1.readEntity(String.class));
 
 		assertEquals(1l, Cayenne.objectForQuery(runtime.newContext(), new EJBQLQuery("select count(a) from E4 a")));
+	}
+
+	@Test
+	public void testDelete_CompoundId() {
+
+		runtime.newContext().performGenericQuery(
+				new SQLTemplate(E17.class, "INSERT INTO utest.e17 (id1, id2, name) values (1, 1, 'aaa')"));
+		runtime.newContext().performGenericQuery(
+				new SQLTemplate(E17.class, "INSERT INTO utest.e17 (id1, id2, name) values (2, 2, 'bbb')"));
+
+		Response response1 = target("/e17").queryParam("id1", 1).queryParam("id2", 1).request().delete();
+		assertEquals(Status.OK.getStatusCode(), response1.getStatus());
+		assertEquals("{\"success\":true}", response1.readEntity(String.class));
+
+		assertEquals(1l, Cayenne.objectForQuery(runtime.newContext(), new EJBQLQuery("select count(a) from E17 a")));
+		assertEquals("bbb", Cayenne.objectForQuery(runtime.newContext(),
+				new EJBQLQuery("select a.name from E17 a where a.id1 =2 and a.id2 = 2")));
 	}
 
 	@Test

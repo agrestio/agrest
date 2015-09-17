@@ -1,11 +1,14 @@
 package com.nhl.link.rest.runtime.cayenne.processor;
 
 import java.lang.annotation.Annotation;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map.Entry;
 
 import javax.ws.rs.core.Response.Status;
 
+import com.nhl.link.rest.meta.LrAttribute;
+import com.nhl.link.rest.meta.cayenne.CayenneLrAttribute;
 import org.apache.cayenne.exp.Expression;
 import org.apache.cayenne.exp.ExpressionFactory;
 import org.apache.cayenne.query.Ordering;
@@ -17,7 +20,6 @@ import com.nhl.link.rest.LinkRestException;
 import com.nhl.link.rest.ResourceEntity;
 import com.nhl.link.rest.annotation.listener.DataFetched;
 import com.nhl.link.rest.meta.LrEntity;
-import com.nhl.link.rest.meta.LrPersistentAttribute;
 import com.nhl.link.rest.processor.BaseLinearProcessingStage;
 import com.nhl.link.rest.processor.ProcessingStage;
 import com.nhl.link.rest.runtime.cayenne.ICayennePersister;
@@ -90,8 +92,8 @@ public class CayenneFetchStage<T> extends BaseLinearProcessingStage<SelectContex
 			if (prefetchSemantics <= 0) {
 				// it makes more sense to use joint prefetches for single object
 				// queries...
-				prefetchSemantics = context.isById() ? PrefetchTreeNode.JOINT_PREFETCH_SEMANTICS
-						: PrefetchTreeNode.DISJOINT_PREFETCH_SEMANTICS;
+				prefetchSemantics = context.isById() && !context.getId().isCompound() ?
+						PrefetchTreeNode.JOINT_PREFETCH_SEMANTICS : PrefetchTreeNode.DISJOINT_PREFETCH_SEMANTICS;
 			}
 
 			appendPrefetches(root, entity, prefetchSemantics);
@@ -107,12 +109,20 @@ public class CayenneFetchStage<T> extends BaseLinearProcessingStage<SelectContex
 		if (context.isById()) {
 
 			Class<X> root = context.getType();
-
-			// TODO: compound PK
-			LrPersistentAttribute idAttribute = (LrPersistentAttribute) context.getEntity().getLrEntity().getSingleId();
-
 			SelectQuery<X> query = new SelectQuery<>(root);
-			query.andQualifier(ExpressionFactory.matchDbExp(idAttribute.getDbAttribute().getName(), context.getId()));
+			Collection<LrAttribute> idAttributes = context.getEntity().getLrEntity().getIds();
+
+			if (idAttributes.size() != context.getId().size()) {
+				throw new LinkRestException(Status.BAD_REQUEST,
+						"Wrong compound ID size: expected " + idAttributes.size() + ", got: " + context.getId().size());
+			}
+			for (LrAttribute idAttribute : idAttributes) {
+				Object idValue = context.getId().get(idAttribute.getName());
+				query.andQualifier(ExpressionFactory.matchDbExp(
+						((CayenneLrAttribute) idAttribute).getDbAttribute().getName(), idValue
+				));
+			}
+
 			return query;
 		}
 

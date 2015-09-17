@@ -142,6 +142,11 @@ public class DefaultLinkRestService implements ILinkRestService {
 		return delete(root).id(id).delete();
 	}
 
+	@Override
+	public SimpleResponse delete(Class<?> root, Map<String, Object> ids) {
+		return delete(root).id(ids).delete();
+	}
+
 	/**
 	 * @since 1.3
 	 */

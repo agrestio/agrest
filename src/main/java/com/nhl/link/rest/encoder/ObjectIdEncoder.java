@@ -1,8 +1,10 @@
 package com.nhl.link.rest.encoder;
 
 import com.fasterxml.jackson.core.JsonGenerator;
+import com.nhl.link.rest.LinkRestException;
 import org.apache.cayenne.ObjectId;
 
+import javax.ws.rs.core.Response;
 import java.io.IOException;
 import java.util.Map;
 
@@ -12,9 +14,16 @@ import java.util.Map;
 public class ObjectIdEncoder implements Encoder {
 
     private Encoder valueEncoder;
+    private Map<String, Encoder> valueEncoders;
+    private boolean isCompoundId;
 
     public ObjectIdEncoder(Encoder valueEncoder) {
         this.valueEncoder = valueEncoder;
+    }
+
+    public ObjectIdEncoder(Map<String, Encoder> valueEncoders) {
+        this.valueEncoders = valueEncoders;
+        isCompoundId = true;
     }
 
     @Override
@@ -44,6 +53,13 @@ public class ObjectIdEncoder implements Encoder {
             throw new IllegalArgumentException("Can't serialize temporary ObjectId: " + id);
         }
 
+        return isCompoundId? encodeCompoundId(propertyName, id, valueEncoders, out)
+                : encodeSingleId(propertyName, id, valueEncoder, out);
+    }
+
+    private boolean encodeSingleId(String propertyName, ObjectId id,
+                                   Encoder valueEncoder, JsonGenerator out) throws IOException {
+
         Map<String, Object> values = id.getIdSnapshot();
 
         if (values.size() != 1) {
@@ -52,5 +68,30 @@ public class ObjectIdEncoder implements Encoder {
 
         Object value = values.entrySet().iterator().next().getValue();
         return valueEncoder.encode(propertyName, value, out);
+    }
+
+    private boolean encodeCompoundId(String propertyName, ObjectId id,
+                                     Map<String, Encoder> valueEncoders, JsonGenerator out) throws IOException {
+
+        Map<String, Object> values = id.getIdSnapshot();
+
+        if (propertyName != null) {
+            out.writeFieldName(propertyName);
+        }
+
+        out.writeStartObject();
+
+        for (Map.Entry<String, Encoder> entry : valueEncoders.entrySet()) {
+            Encoder valueEncoder = entry.getValue();
+            Object value = values.get(entry.getKey());
+            if (value == null) {
+                throw new LinkRestException(Response.Status.BAD_REQUEST,
+                        "Missing value for compound ID property: " + entry.getKey());
+            }
+            valueEncoder.encode(entry.getKey(), value, out);
+        }
+
+        out.writeEndObject();
+        return true;
     }
 }

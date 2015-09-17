@@ -1,7 +1,9 @@
 package com.nhl.link.rest.runtime;
 
 import java.util.Collection;
+import java.util.Map;
 
+import com.nhl.link.rest.LinkRestException;
 import org.apache.cayenne.exp.Property;
 
 import com.nhl.link.rest.DeleteBuilder;
@@ -10,6 +12,8 @@ import com.nhl.link.rest.SimpleResponse;
 import com.nhl.link.rest.processor.ChainProcessor;
 import com.nhl.link.rest.processor.ProcessingStage;
 import com.nhl.link.rest.runtime.processor.delete.DeleteContext;
+
+import javax.ws.rs.core.Response;
 
 /**
  * @since 1.4
@@ -31,8 +35,27 @@ public class DefaultDeleteBuilder<T> implements DeleteBuilder<T> {
 	}
 
 	@Override
+	public DeleteBuilder<T> id(Map<String, Object> ids) {
+
+		for (Object id : ids.entrySet()) {
+			if (id == null) {
+				throw new LinkRestException(Response.Status.NOT_FOUND, "Part of compound ID is null");
+			}
+		}
+
+		context.setCompoundId(ids);
+		return this;
+	}
+
+	@Override
 	public DeleteBuilder<T> parent(Class<?> parentType, Object parentId, Property<T> relationshipFromParent) {
 		context.setParent(new EntityParent<>(parentType, parentId, relationshipFromParent.getName()));
+		return this;
+	}
+
+	@Override
+	public DeleteBuilder<T> parent(Class<?> parentType, Map<String, Object> parentIds, Property<T> relationshipFromParent) {
+		context.setParent(new EntityParent<>(parentType, parentIds, relationshipFromParent.getName()));
 		return this;
 	}
 
@@ -43,9 +66,20 @@ public class DefaultDeleteBuilder<T> implements DeleteBuilder<T> {
 	}
 
 	@Override
+	public DeleteBuilder<T> parent(Class<?> parentType, Map<String, Object> parentIds, String relationshipFromParent) {
+		context.setParent(new EntityParent<>(parentType, parentIds, relationshipFromParent));
+		return this;
+	}
+
+	@Override
 	public DeleteBuilder<T> toManyParent(Class<?> parentType, Object parentId,
 			Property<? extends Collection<T>> relationshipFromParent) {
 		return parent(parentType, parentId, relationshipFromParent.getName());
+	}
+
+	@Override
+	public DeleteBuilder<T> toManyParent(Class<?> parentType, Map<String, Object> parentIds, Property<? extends Collection<T>> relationshipFromParent) {
+		return parent(parentType, parentIds, relationshipFromParent.getName());
 	}
 
 	@Override

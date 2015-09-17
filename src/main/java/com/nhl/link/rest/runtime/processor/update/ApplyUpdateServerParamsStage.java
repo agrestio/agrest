@@ -1,11 +1,15 @@
 package com.nhl.link.rest.runtime.processor.update;
 
 import java.lang.annotation.Annotation;
+import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.ws.rs.core.Response.Status;
 
+import com.nhl.link.rest.meta.LrAttribute;
+import org.apache.cayenne.map.DbJoin;
 import org.apache.cayenne.map.DbRelationship;
 import org.apache.cayenne.map.ObjRelationship;
 
@@ -67,7 +71,7 @@ public class ApplyUpdateServerParamsStage<T> extends BaseLinearProcessingStage<U
 
 	private void processExplicitId(UpdateContext<T> context) {
 
-		if (context.getId() != null) {
+		if (context.isById()) {
 
 			// id was specified explicitly ... this means a few things:
 			// * we expect zero or one object in the body
@@ -81,11 +85,26 @@ public class ApplyUpdateServerParamsStage<T> extends BaseLinearProcessingStage<U
 
 			LrEntity<T> entity = context.getEntity().getLrEntity();
 
-			LrPersistentAttribute pk = (LrPersistentAttribute) entity.getSingleId();
-
 			EntityUpdate<T> u = context.getFirst();
-			u.getOrCreateId().put(pk.getDbAttribute().getName(),
-					Normalizer.normalize(context.getId(), pk.getJavaType()));
+			Map<String, Object> idMap = u.getOrCreateId();
+			Collection<LrAttribute> idAttributes = entity.getIds();
+
+			if (idAttributes.size() != context.getId().size()) {
+				throw new LinkRestException(Status.BAD_REQUEST,
+						"Wrong compound ID size: expected " + idAttributes.size() +
+								", got: " + context.getId().size());
+			}
+
+			for (LrAttribute idAttribute : idAttributes) {
+				LrPersistentAttribute persistentId = (LrPersistentAttribute) idAttribute;
+				Object idValue = context.getId().get(persistentId.getName());
+
+				idMap.put(
+						persistentId.getDbAttribute().getName(),
+						Normalizer.normalize(idValue, persistentId.getJavaType())
+				);
+			}
+
 			u.setExplicitId();
 		}
 	}
@@ -98,19 +117,18 @@ public class ApplyUpdateServerParamsStage<T> extends BaseLinearProcessingStage<U
 			ObjRelationship fromParent = relationshipFromParent(context);
 
 			if (fromParent != null && fromParent.isToDependentEntity()) {
-				List<DbRelationship> dbRelationships = fromParent.getDbRelationships();
 
-				DbRelationship last = dbRelationships.get(dbRelationships.size() - 1);
+				Map<String, Object> parentIdMap = new HashMap<>();
 
-				if (last.getJoins().size() != 1) {
-					throw new LinkRestException(Status.BAD_REQUEST,
-							"Multi-join relationship propagation is not supported yet: "
-									+ context.getEntity().getLrEntity().getName());
+				for (DbRelationship dbRelationship : fromParent.getDbRelationships()) {
+					DbRelationship reverseRelationship = dbRelationship.getReverseRelationship();
+					for (DbJoin join : reverseRelationship.getJoins()) {
+						parentIdMap.put(join.getSourceName(), parent.getId().get(join.getTargetName()));
+					}
 				}
 
-				String parentIdKey = last.getJoins().get(0).getTargetName();
 				for (EntityUpdate<T> u : context.getUpdates()) {
-					u.getOrCreateId().put(parentIdKey, parent.getId());
+					u.getOrCreateId().putAll(parentIdMap);
 				}
 			}
 		}

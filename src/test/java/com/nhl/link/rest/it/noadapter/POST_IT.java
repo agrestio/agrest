@@ -17,6 +17,7 @@ import javax.ws.rs.core.Response.Status;
 
 import com.nhl.link.rest.it.fixture.resource.E16Resource;
 
+import com.nhl.link.rest.it.fixture.resource.E17Resource;
 import org.apache.cayenne.Cayenne;
 import org.apache.cayenne.query.ObjectSelect;
 import org.apache.cayenne.query.SQLSelect;
@@ -39,6 +40,7 @@ public class POST_IT extends JerseyTestOnDerby {
 		context.register(E4Resource.class);
 		context.register(E8Resource.class);
 		context.register(E16Resource.class);
+		context.register(E17Resource.class);
 	}
 
 	@Test
@@ -75,6 +77,14 @@ public class POST_IT extends JerseyTestOnDerby {
 				+ ",\"cBoolean\":null,\"cDate\":null,\"cDecimal\":null,\"cInt\":null,"
 				+ "\"cTime\":null,\"cTimestamp\":null,\"cVarchar\":\"TTTT\"}],\"total\":1}",
 				response2.readEntity(String.class));
+	}
+
+	@Test
+	public void testPost_ExplicitCompoundId() {
+
+		Response response1 = target("/e17").queryParam("id1", 1).queryParam("id2", 1).request().post(
+				Entity.entity("{\"name\":\"xxx\"}", MediaType.APPLICATION_JSON));
+		assertEquals(Status.CREATED.getStatusCode(), response1.getStatus());
 	}
 
 	@Test

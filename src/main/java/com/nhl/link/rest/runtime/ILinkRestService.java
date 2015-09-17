@@ -12,6 +12,8 @@ import com.nhl.link.rest.SelectBuilder;
 import com.nhl.link.rest.SimpleResponse;
 import com.nhl.link.rest.UpdateBuilder;
 
+import java.util.Map;
+
 /**
  * The main entry point to LinkRest stack. Used from the user REST resource
  * classes to build request processors.
@@ -61,6 +63,8 @@ public interface ILinkRestService {
 	<T> SelectBuilder<T> select(SelectQuery<T> query);
 
 	SimpleResponse delete(Class<?> type, Object id);
+
+	SimpleResponse delete(Class<?> type, Map<String, Object> ids);
 
 	/**
 	 * Breaks the relationship between source and all its target objects.
