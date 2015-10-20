@@ -117,7 +117,6 @@ public abstract class BaseCayenneUpdateStage<T extends DataObject> extends BaseL
 		relator.relate(o);
 	}
 
-	@SuppressWarnings("unchecked")
 	private void mergeChanges(EntityUpdate<T> entityUpdate, DataObject o) {
 
 		// attributes
@@ -147,8 +146,9 @@ public abstract class BaseCayenneUpdateStage<T extends DataObject> extends BaseL
 				if (lrRelationship.isToMany()) {
 
 					// removing all related objects
-					List<? extends DataObject> relatedObjects;
-					while (!(relatedObjects = (List<? extends DataObject>) o.readProperty(lrRelationship.getName())).isEmpty()) {
+					@SuppressWarnings("unchecked")
+					List<? extends DataObject> relatedObjects = (List<? extends DataObject>) o.readProperty(lrRelationship.getName());
+					while (!relatedObjects.isEmpty()) {
 						o.removeToManyTarget(e.getKey(), relatedObjects.get(0), true);
 					}
 				} else {
@@ -168,16 +168,14 @@ public abstract class BaseCayenneUpdateStage<T extends DataObject> extends BaseL
 
 			if (lrRelationship.isToMany()) {
 
-				List<? extends DataObject> relatedObjects;
-				outer:
-				while (!(relatedObjects = (List<? extends DataObject>) o.readProperty(lrRelationship.getName())).isEmpty()) {
-					for (DataObject relatedObject : relatedObjects) {
-						if (!relatedIds.contains(Cayenne.pkForObject(relatedObject))) {
-							o.removeToManyTarget(e.getKey(), relatedObject, true);
-							continue outer;
-						}
+				@SuppressWarnings("unchecked")
+				List<? extends DataObject> relatedObjects = (List<? extends DataObject>) o.readProperty(lrRelationship.getName());
+				for (int i = 0; i < relatedObjects.size(); i++) {
+					DataObject relatedObject = relatedObjects.get(i);
+					if (!relatedIds.contains(Cayenne.pkForObject(relatedObject))) {
+						o.removeToManyTarget(e.getKey(), relatedObject, true);
+						i--;
 					}
-					break;
 				}
 
 				for (DataObject relatedObject : relatedObjects) {
