@@ -11,7 +11,9 @@ import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.FeatureContext;
 import javax.ws.rs.core.Response;
 
+import com.nhl.link.rest.it.fixture.cayenne.E2;
 import com.nhl.link.rest.it.fixture.resource.E17Resource;
+import com.nhl.link.rest.it.fixture.resource.E2Resource;
 import org.junit.Test;
 
 import com.nhl.link.rest.it.fixture.JerseyTestOnDerby;
@@ -29,6 +31,7 @@ public class PUT_IT extends JerseyTestOnDerby {
 
 	@Override
 	protected void doAddResources(FeatureContext context) {
+		context.register(E2Resource.class);
 		context.register(E3Resource.class);
 		context.register(E4Resource.class);
 		context.register(E7Resource.class);
@@ -72,6 +75,17 @@ public class PUT_IT extends JerseyTestOnDerby {
 		insert("e3", "id, name, e2_id", "3, 'zzz', 8");
 
 		Response response = target("/e3/3").request().put(jsonEntity("{\"id\":3,\"e2\":1}"));
+		assertThat(response, okAndHasData(1, "[{\"id\":3,\"name\":\"zzz\",\"phoneNumber\":null}]"));
+		assertEquals(1, intForQuery("SELECT COUNT(1) FROM utest.e3 WHERE id = 3 AND e2_id = 1"));
+	}
+
+	@Test
+	public void testPut_ToOne_ArraySyntax() throws WebApplicationException, IOException {
+		insert("e2", "id, name", "1, 'xxx'");
+		insert("e2", "id, name", "8, 'yyy'");
+		insert("e3", "id, name, e2_id", "3, 'zzz', 8");
+
+		Response response = target("/e3/3").request().put(jsonEntity("{\"id\":3,\"e2\":[1]}"));
 		assertThat(response, okAndHasData(1, "[{\"id\":3,\"name\":\"zzz\",\"phoneNumber\":null}]"));
 		assertEquals(1, intForQuery("SELECT COUNT(1) FROM utest.e3 WHERE id = 3 AND e2_id = 1"));
 	}
@@ -255,4 +269,41 @@ public class PUT_IT extends JerseyTestOnDerby {
 
 		assertThat(response1, okAndHasData(1, "[{\"id\":6,\"e8\":{\"e9\":{\"id\":6}}}]"));
 	}
+
+	@Test
+	public void testPut_ToMany() throws WebApplicationException, IOException {
+
+		insert("e2", "id, name", "1, 'xxx'");
+		insert("e2", "id, name", "8, 'yyy'");
+		insert("e3", "id, name, e2_id", "3, 'zzz', null");
+		insert("e3", "id, name, e2_id", "4, 'aaa', 8");
+		insert("e3", "id, name, e2_id", "5, 'bbb', 8");
+
+		Response response = target("/e2/1").queryParam("include", E2.E3S.getName())
+				.queryParam("exclude", E2.ADDRESS.getName(), E2.NAME.getName(),
+						E2.E3S.dot(E3.NAME).getName(), E2.E3S.dot(E3.PHONE_NUMBER).getName())
+				.request().put(jsonEntity("{\"e3s\":[3,4,5]}"));
+
+		assertThat(response, okAndHasData(1, "[{\"id\":1,\"e3s\":[{\"id\":3},{\"id\":4},{\"id\":5}]}]"));
+		assertEquals(3, intForQuery("SELECT COUNT(1) FROM utest.e3 WHERE e2_id = 1"));
+	}
+
+	@Test
+	public void testPut_ToMany_UnrelateAll() throws WebApplicationException, IOException {
+
+		insert("e2", "id, name", "1, 'xxx'");
+		insert("e2", "id, name", "8, 'yyy'");
+		insert("e3", "id, name, e2_id", "3, 'zzz', null");
+		insert("e3", "id, name, e2_id", "4, 'aaa', 8");
+		insert("e3", "id, name, e2_id", "5, 'bbb', 8");
+
+		Response response = target("/e2/8").queryParam("include", E2.E3S.getName())
+				.queryParam("exclude", E2.ADDRESS.getName(), E2.NAME.getName(),
+						E2.E3S.dot(E3.NAME).getName(), E2.E3S.dot(E3.PHONE_NUMBER).getName())
+				.request().put(jsonEntity("{\"e3s\":[]}"));
+
+		assertThat(response, okAndHasData(1, "[{\"id\":8,\"e3s\":[]}]"));
+		assertEquals(3, intForQuery("SELECT COUNT(1) FROM utest.e3 WHERE e2_id IS NULL"));
+	}
+
 }

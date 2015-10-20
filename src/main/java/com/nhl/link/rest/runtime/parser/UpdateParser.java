@@ -9,6 +9,7 @@ import java.util.List;
 
 import javax.ws.rs.core.Response.Status;
 
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import org.apache.cayenne.di.Inject;
 import org.apache.cayenne.map.DbJoin;
 import org.apache.cayenne.map.DbRelationship;
@@ -115,12 +116,6 @@ public class UpdateParser implements IUpdateParser {
 						.getDbRelationships().get(0);
 
 				JsonNode valueNode = objectNode.get(key);
-				Object value = extractValue(valueNode, dbRelationship);
-
-				// record FK, whether it is a PK or not
-				update.getRelatedIds().put(relationship.getName(), value);
-
-				// record FK that is also a PK
 				DbRelationship dbRleationship = dbRelationship.getReverseRelationship();
 				if (dbRleationship.isToDependentPK()) {
 					List<DbJoin> joins = dbRleationship.getJoins();
@@ -128,8 +123,45 @@ public class UpdateParser implements IUpdateParser {
 						throw new LinkRestException(Status.BAD_REQUEST,
 								"Multi-join relationship propagation is not supported yet: " + entity.getName());
 					}
+					DbJoin reversePkJoin = joins.get(0);
 
-					update.getOrCreateId().put(joins.get(0).getTargetName(), value);
+					Object value = null;
+					if (valueNode.isArray()) {
+						ArrayNode arrayNode = (ArrayNode) valueNode;
+						if (arrayNode.size() > 1) {
+							throw new LinkRestException(Status.BAD_REQUEST,
+								"Relationship is a part of the primary key, only one related object allowed: "
+										+ reversePkJoin.getTargetName());
+						} else if (arrayNode.size() == 1) {
+							value = extractValue(arrayNode.get(0), dbRelationship);
+						}
+					} else {
+						value = extractValue(valueNode, dbRelationship);
+					}
+
+					if (value != null) {
+						// record FK that is also a PK
+						update.getOrCreateId().put(reversePkJoin.getTargetName(), value);
+					}
+
+				}
+
+				if (valueNode.isArray()) {
+					ArrayNode arrayNode = (ArrayNode) valueNode;
+
+					int len = arrayNode.size();
+
+					if (len == 0) {
+						// this is kind of a a hack/workaround
+						addRelatedObject(update, relationship, null);
+					} else {
+						for (int i = 0; i < len; i++) {
+							valueNode = arrayNode.get(i);
+							addRelatedObject(update, relationship, extractValue(valueNode, dbRelationship));
+						}
+					}
+				} else {
+					addRelatedObject(update, relationship, extractValue(valueNode, dbRelationship));
 				}
 
 				continue;
@@ -140,6 +172,12 @@ public class UpdateParser implements IUpdateParser {
 
 		// not excluding empty updates ... we may still need them...
 		return update;
+	}
+
+	private void addRelatedObject(EntityUpdate<?> update, LrRelationship relationship, Object value) {
+
+		// record FK, whether it is a PK or not
+		update.addRelatedId(relationship.getName(), value);
 	}
 
 	protected void extractPK(EntityUpdate<?> update, JsonNode valueNode) {

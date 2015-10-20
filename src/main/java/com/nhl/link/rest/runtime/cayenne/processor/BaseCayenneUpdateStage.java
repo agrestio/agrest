@@ -2,11 +2,14 @@ package com.nhl.link.rest.runtime.cayenne.processor;
 
 import java.lang.annotation.Annotation;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import javax.ws.rs.core.Response.Status;
 
+import com.nhl.link.rest.meta.LrRelationship;
 import org.apache.cayenne.Cayenne;
 import org.apache.cayenne.DataObject;
 import org.apache.cayenne.ObjectContext;
@@ -57,14 +60,13 @@ public abstract class BaseCayenneUpdateStage<T extends DataObject> extends BaseL
 
 	protected void updateSingle(UpdateContext<T> context, T o, Collection<EntityUpdate<T>> updates) {
 
-		DataObject dataO = (DataObject) o;
 		ObjectRelator relator = createRelator(context);
 
 		for (EntityUpdate<T> u : updates) {
-			mergeChanges(u, dataO);
+			mergeChanges(u, o);
 		}
 
-		relator.relate(dataO);
+		relator.relate(o);
 	}
 
 	protected void createSingle(UpdateContext<T> context, ObjectRelator relator, EntityUpdate<T> u) {
@@ -115,6 +117,7 @@ public abstract class BaseCayenneUpdateStage<T extends DataObject> extends BaseL
 		relator.relate(o);
 	}
 
+	@SuppressWarnings("unchecked")
 	private void mergeChanges(EntityUpdate<T> entityUpdate, DataObject o) {
 
 		// attributes
@@ -122,27 +125,87 @@ public abstract class BaseCayenneUpdateStage<T extends DataObject> extends BaseL
 			o.writeProperty(e.getKey(), e.getValue());
 		}
 
-		// to-one relationships
-		if (!entityUpdate.getRelatedIds().isEmpty()) {
-			ObjectContext context = o.getObjectContext();
+		// relationships
+		ObjectContext context = o.getObjectContext();
 
-			ObjEntity entity = context.getEntityResolver().getObjEntity(o);
+		ObjEntity entity = context.getEntityResolver().getObjEntity(o);
 
-			for (Entry<String, Object> e : entityUpdate.getRelatedIds().entrySet()) {
-				if (e.getValue() == null) {
+		for (Entry<String, Set<Object>> e : entityUpdate.getRelatedIds().entrySet()) {
+
+			ObjRelationship relationship = entity.getRelationship(e.getKey());
+			LrRelationship lrRelationship = entityUpdate.getEntity().getRelationship(e.getKey());
+
+			// sanity check
+			if (lrRelationship == null) {
+				continue;
+			}
+
+			Set<Object> relatedIds = e.getValue();
+			if (relatedIds == null || relatedIds.isEmpty()
+					|| (relatedIds.size() == 1 && relatedIds.iterator().next() == null)) {
+
+				if (lrRelationship.isToMany()) {
+
+					// removing all related objects
+					List<? extends DataObject> relatedObjects;
+					while (!(relatedObjects = (List<? extends DataObject>) o.readProperty(lrRelationship.getName())).isEmpty()) {
+						o.removeToManyTarget(e.getKey(), relatedObjects.get(0), true);
+					}
+				} else {
 					o.setToOneTarget(e.getKey(), null, true);
+				}
+				continue;
+			}
+
+			if (!lrRelationship.isToMany() && relatedIds.size() > 1) {
+				throw new LinkRestException(Status.BAD_REQUEST,
+					"Relationship is to-one, but received update with multiple objects: " +
+							lrRelationship.getName());
+			}
+
+			ClassDescriptor relatedDescriptor = context.getEntityResolver().getClassDescriptor(
+					relationship.getTargetEntityName());
+
+			if (lrRelationship.isToMany()) {
+
+				List<? extends DataObject> relatedObjects;
+				outer:
+				while (!(relatedObjects = (List<? extends DataObject>) o.readProperty(lrRelationship.getName())).isEmpty()) {
+					for (DataObject relatedObject : relatedObjects) {
+						if (!relatedIds.contains(Cayenne.pkForObject(relatedObject))) {
+							o.removeToManyTarget(e.getKey(), relatedObject, true);
+							continue outer;
+						}
+					}
+					break;
+				}
+
+				for (DataObject relatedObject : relatedObjects) {
+					if (!relatedIds.contains(Cayenne.pkForObject(relatedObject))) {
+						o.removeToManyTarget(e.getKey(), relatedObject, true);
+					}
+				}
+			}
+
+			for (Object relatedId : relatedIds) {
+
+				if (relatedId == null) {
 					continue;
 				}
-				ObjRelationship relationship = (ObjRelationship) entity.getRelationship(e.getKey());
-				ClassDescriptor relatedDescriptor = context.getEntityResolver().getClassDescriptor(
-						relationship.getTargetEntityName());
+
 				DataObject related = (DataObject) Cayenne.objectForPK(context, relatedDescriptor.getObjectClass(),
-						e.getValue());
+						relatedId);
+
 				if (related == null) {
 					throw new LinkRestException(Status.NOT_FOUND, "Related object '"
 							+ relationship.getTargetEntityName() + "' with ID '" + e.getValue() + "' is not found");
 				}
-				o.setToOneTarget(e.getKey(), related, true);
+
+				if (lrRelationship.isToMany()) {
+					o.addToManyTarget(e.getKey(), related, true);
+				} else {
+					o.setToOneTarget(e.getKey(), related, true);
+				}
 			}
 		}
 

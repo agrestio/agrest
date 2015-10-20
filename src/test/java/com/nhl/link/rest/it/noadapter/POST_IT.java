@@ -1,8 +1,10 @@
 package com.nhl.link.rest.it.noadapter;
 
+import static com.nhl.link.rest.unit.matcher.LRMatchers.hasStatusAndBody;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
@@ -15,9 +17,11 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import com.nhl.link.rest.it.fixture.cayenne.E2;
 import com.nhl.link.rest.it.fixture.resource.E16Resource;
 
 import com.nhl.link.rest.it.fixture.resource.E17Resource;
+import com.nhl.link.rest.it.fixture.resource.E2Resource;
 import org.apache.cayenne.Cayenne;
 import org.apache.cayenne.query.ObjectSelect;
 import org.apache.cayenne.query.SQLSelect;
@@ -36,6 +40,7 @@ public class POST_IT extends JerseyTestOnDerby {
 
 	@Override
 	protected void doAddResources(FeatureContext context) {
+		context.register(E2Resource.class);
 		context.register(E3Resource.class);
 		context.register(E4Resource.class);
 		context.register(E8Resource.class);
@@ -290,5 +295,23 @@ public class POST_IT extends JerseyTestOnDerby {
 		assertEquals(
 				"{\"data\":[{\"name\":\"aaa\"},{\"name\":\"zzz\"},{\"name\":\"bbb\"},{\"name\":\"yyy\"}],\"total\":4}",
 				r2.readEntity(String.class));
+	}
+
+	@Test
+	public void testPost_ToMany() throws WebApplicationException, IOException {
+
+		context.performGenericQuery(new SQLTemplate(E3.class, "INSERT INTO utest.e3 (id, name) values (1, 'xxx')"));
+		context.performGenericQuery(new SQLTemplate(E3.class, "INSERT INTO utest.e3 (id, name) values (8, 'yyy')"));
+
+		Response response = target("/e2").queryParam("include", E2.E3S.getName())
+				.queryParam("exclude", E2.ADDRESS.getName(), E2.E3S.dot(E3.NAME).getName(), E2.E3S.dot(E3.PHONE_NUMBER).getName())
+				.request().post(Entity.entity("{\"e3s\":[1,8],\"name\":\"MM\"}", MediaType.APPLICATION_JSON));
+
+		E2 e2 = (E2) Cayenne.objectForQuery(context, new SelectQuery<>(E2.class));
+		int id = Cayenne.intPKForObject(e2);
+
+		assertThat(response, hasStatusAndBody(Status.CREATED, "{\"data\":[{\"id\":" + id +
+				",\"e3s\":[{\"id\":1},{\"id\":8}],\"name\":\"MM\"}],\"total\":1}"));
+		assertEquals(2, intForQuery("SELECT COUNT(1) FROM utest.e3 WHERE e2_id = " + id));
 	}
 }

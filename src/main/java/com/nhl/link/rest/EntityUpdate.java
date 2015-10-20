@@ -1,7 +1,9 @@
 package com.nhl.link.rest;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import com.nhl.link.rest.meta.LrEntity;
 
@@ -13,7 +15,7 @@ import com.nhl.link.rest.meta.LrEntity;
 public class EntityUpdate<T> {
 
 	private Map<String, Object> values;
-	private Map<String, Object> relatedIds;
+	private Map<String, Set<Object>> relatedIds;
 	private Map<String, Object> id;
 	private boolean explicitId;
 	private Object mergedTo;
@@ -40,8 +42,19 @@ public class EntityUpdate<T> {
 		return values;
 	}
 
-	public Map<String, Object> getRelatedIds() {
+	public Map<String, Set<Object>> getRelatedIds() {
 		return relatedIds;
+	}
+
+	public void addRelatedId(String relationshipName, Object value) {
+
+		Set<Object> values = relatedIds.get(relationshipName);
+		if (values == null) {
+			values = new HashSet<>();
+			relatedIds.put(relationshipName, values);
+		}
+
+		values.add(value);
 	}
 
 	/**

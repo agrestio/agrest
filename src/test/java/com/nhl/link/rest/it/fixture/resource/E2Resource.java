@@ -74,9 +74,20 @@ public class E2Resource {
 	}
 
 	@POST
+	public DataResponse<E2> createE2(String targetData, @Context UriInfo uriInfo) {
+		return LinkRest.create(E2.class, config).uri(uriInfo).syncAndSelect(targetData);
+	}
+
+	@POST
 	@Path("{id}/e3s")
 	public DataResponse<E3> createOrUpdateE3s(@PathParam("id") int id, String targetData) {
 		return LinkRest.createOrUpdate(E3.class, config).toManyParent(E2.class, id, E2.E3S).syncAndSelect(targetData);
+	}
+
+	@PUT
+	@Path("{id}")
+	public DataResponse<E2> createOrUpdate_E2(@PathParam("id") int id, String entityData, @Context UriInfo uriInfo) {
+		return LinkRest.idempotentCreateOrUpdate(E2.class, config).id(id).uri(uriInfo).syncAndSelect(entityData);
 	}
 
 	@PUT
