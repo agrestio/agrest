@@ -177,12 +177,6 @@ public abstract class BaseCayenneUpdateStage<T extends DataObject> extends BaseL
 						i--;
 					}
 				}
-
-				for (DataObject relatedObject : relatedObjects) {
-					if (!relatedIds.contains(Cayenne.pkForObject(relatedObject))) {
-						o.removeToManyTarget(e.getKey(), relatedObject, true);
-					}
-				}
 			}
 
 			for (Object relatedId : relatedIds) {
