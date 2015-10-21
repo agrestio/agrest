@@ -2,6 +2,7 @@ package com.nhl.link.rest.runtime.cayenne.processor;
 
 import java.lang.annotation.Annotation;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -140,8 +141,7 @@ public abstract class BaseCayenneUpdateStage<T extends DataObject> extends BaseL
 			}
 
 			final Set<Object> relatedIds = e.getValue();
-			if (relatedIds == null || relatedIds.isEmpty()
-					|| (relatedIds.size() == 1 && relatedIds.iterator().next() == null)) {
+			if (relatedIds == null || relatedIds.isEmpty() || allElementsNull(relatedIds)) {
 
 				relator.unrelateAll(lrRelationship, o);
 				continue;
@@ -184,6 +184,17 @@ public abstract class BaseCayenneUpdateStage<T extends DataObject> extends BaseL
 		// record this for the benefit of the downstream code that may want to
 		// order the results, etc...
 		entityUpdate.setMergedTo(o);
+	}
+
+	private boolean allElementsNull(Collection<?> elements) {
+
+		for (Object element : elements) {
+			if (element != null) {
+				return false;
+			}
+		}
+
+		return true;
 	}
 
 	protected ObjectRelator createRelator(UpdateContext<T> context) {

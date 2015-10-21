@@ -306,4 +306,23 @@ public class PUT_IT extends JerseyTestOnDerby {
 		assertEquals(3, intForQuery("SELECT COUNT(1) FROM utest.e3 WHERE e2_id IS NULL"));
 	}
 
+	@Test
+	public void testPut_ToMany_UnrelateOne() throws WebApplicationException, IOException {
+
+		insert("e2", "id, name", "1, 'xxx'");
+		insert("e2", "id, name", "8, 'yyy'");
+		insert("e3", "id, name, e2_id", "3, 'zzz', null");
+		insert("e3", "id, name, e2_id", "4, 'aaa', 8");
+		insert("e3", "id, name, e2_id", "5, 'bbb', 8");
+
+		Response response = target("/e2/1").queryParam("include", E2.E3S.getName())
+				.queryParam("exclude", E2.ADDRESS.getName(), E2.NAME.getName(),
+						E2.E3S.dot(E3.NAME).getName(), E2.E3S.dot(E3.PHONE_NUMBER).getName())
+				.request().put(jsonEntity("{\"e3s\":[4]}"));
+
+		assertThat(response, okAndHasData(1, "[{\"id\":1,\"e3s\":[{\"id\":4}]}]"));
+		assertEquals(1, intForQuery("SELECT COUNT(1) FROM utest.e3 WHERE e2_id = 1 AND id = 4"));
+		assertEquals(1, intForQuery("SELECT COUNT(1) FROM utest.e3 WHERE e2_id = 8 AND id = 5"));
+	}
+
 }
