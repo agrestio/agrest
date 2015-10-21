@@ -63,10 +63,10 @@ public abstract class BaseCayenneUpdateStage<T extends DataObject> extends BaseL
 		ObjectRelator relator = createRelator(context);
 
 		for (EntityUpdate<T> u : updates) {
-			mergeChanges(u, o);
+			mergeChanges(u, o, relator);
 		}
 
-		relator.relate(o);
+		relator.relateToParent(o);
 	}
 
 	protected void createSingle(UpdateContext<T> context, ObjectRelator relator, EntityUpdate<T> u) {
@@ -113,11 +113,11 @@ public abstract class BaseCayenneUpdateStage<T extends DataObject> extends BaseL
 			}
 		}
 
-		mergeChanges(u, o);
-		relator.relate(o);
+		mergeChanges(u, o, relator);
+		relator.relateToParent(o);
 	}
 
-	private void mergeChanges(EntityUpdate<T> entityUpdate, DataObject o) {
+	private void mergeChanges(EntityUpdate<T> entityUpdate, DataObject o, ObjectRelator relator) {
 
 		// attributes
 		for (Entry<String, Object> e : entityUpdate.getValues().entrySet()) {
@@ -139,21 +139,11 @@ public abstract class BaseCayenneUpdateStage<T extends DataObject> extends BaseL
 				continue;
 			}
 
-			Set<Object> relatedIds = e.getValue();
+			final Set<Object> relatedIds = e.getValue();
 			if (relatedIds == null || relatedIds.isEmpty()
 					|| (relatedIds.size() == 1 && relatedIds.iterator().next() == null)) {
 
-				if (lrRelationship.isToMany()) {
-
-					// removing all related objects
-					@SuppressWarnings("unchecked")
-					List<? extends DataObject> relatedObjects = (List<? extends DataObject>) o.readProperty(lrRelationship.getName());
-					while (!relatedObjects.isEmpty()) {
-						o.removeToManyTarget(e.getKey(), relatedObjects.get(0), true);
-					}
-				} else {
-					o.setToOneTarget(e.getKey(), null, true);
-				}
+				relator.unrelateAll(lrRelationship, o);
 				continue;
 			}
 
@@ -166,18 +156,12 @@ public abstract class BaseCayenneUpdateStage<T extends DataObject> extends BaseL
 			ClassDescriptor relatedDescriptor = context.getEntityResolver().getClassDescriptor(
 					relationship.getTargetEntityName());
 
-			if (lrRelationship.isToMany()) {
-
-				@SuppressWarnings("unchecked")
-				List<? extends DataObject> relatedObjects = (List<? extends DataObject>) o.readProperty(lrRelationship.getName());
-				for (int i = 0; i < relatedObjects.size(); i++) {
-					DataObject relatedObject = relatedObjects.get(i);
-					if (!relatedIds.contains(Cayenne.pkForObject(relatedObject))) {
-						o.removeToManyTarget(e.getKey(), relatedObject, true);
-						i--;
-					}
+			relator.unrelateAll(lrRelationship, o, new Filter() {
+				@Override
+				public boolean filter(DataObject relatedObject) {
+					return relatedIds.contains(Cayenne.pkForObject(relatedObject));
 				}
-			}
+			});
 
 			for (Object relatedId : relatedIds) {
 
@@ -193,11 +177,7 @@ public abstract class BaseCayenneUpdateStage<T extends DataObject> extends BaseL
 							+ relationship.getTargetEntityName() + "' with ID '" + e.getValue() + "' is not found");
 				}
 
-				if (lrRelationship.isToMany()) {
-					o.addToManyTarget(e.getKey(), related, true);
-				} else {
-					o.setToOneTarget(e.getKey(), related, true);
-				}
+				relator.relate(lrRelationship, o, related);
 			}
 		}
 
@@ -211,13 +191,7 @@ public abstract class BaseCayenneUpdateStage<T extends DataObject> extends BaseL
 		final EntityParent<?> parent = context.getParent();
 
 		if (parent == null) {
-			return new ObjectRelator() {
-
-				@Override
-				public void relate(DataObject object) {
-					// do nothing..
-				}
-			};
+			return new ObjectRelator();
 		}
 
 		ObjectContext objectContext = CayenneContextInitStage.cayenneContext(context);
@@ -234,21 +208,61 @@ public abstract class BaseCayenneUpdateStage<T extends DataObject> extends BaseL
 		if (parentEntity.getRelationship(parent.getRelationship()).isToMany()) {
 			return new ObjectRelator() {
 				@Override
-				public void relate(DataObject object) {
+				public void relateToParent(DataObject object) {
 					parentObject.addToManyTarget(parent.getRelationship(), (DataObject) object, true);
 				}
 			};
 		} else {
 			return new ObjectRelator() {
 				@Override
-				public void relate(DataObject object) {
+				public void relateToParent(DataObject object) {
 					parentObject.setToOneTarget(parent.getRelationship(), (DataObject) object, true);
 				}
 			};
 		}
 	}
 
-	interface ObjectRelator {
-		void relate(DataObject object);
+	class ObjectRelator {
+
+		void relateToParent(DataObject object) {
+			// do nothing
+		}
+
+		void relate(LrRelationship lrRelationship, DataObject object, DataObject relatedObject) {
+			if (lrRelationship.isToMany()) {
+				object.addToManyTarget(lrRelationship.getName(), relatedObject, true);
+			} else {
+				object.setToOneTarget(lrRelationship.getName(), relatedObject, true);
+			}
+		}
+
+		void unrelateAll(LrRelationship lrRelationship, DataObject object) {
+			unrelateAll(lrRelationship, object, null);
+		}
+
+		void unrelateAll(LrRelationship lrRelationship, DataObject object, Filter filter) {
+
+			if (lrRelationship.isToMany()) {
+
+				@SuppressWarnings("unchecked")
+				List<? extends DataObject> relatedObjects =
+						(List<? extends DataObject>) object.readProperty(lrRelationship.getName());
+
+				for (int i = 0; i < relatedObjects.size(); i++) {
+					DataObject relatedObject = relatedObjects.get(i);
+					if (filter == null || !filter.filter(relatedObject)) {
+						object.removeToManyTarget(lrRelationship.getName(), relatedObject, true);
+						i--;
+					}
+				}
+
+			} else {
+				object.setToOneTarget(lrRelationship.getName(), null, true);
+			}
+		}
+	}
+
+	interface Filter {
+		boolean filter(DataObject o);
 	}
 }
