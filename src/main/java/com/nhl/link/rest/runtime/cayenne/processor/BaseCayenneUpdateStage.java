@@ -2,7 +2,6 @@ package com.nhl.link.rest.runtime.cayenne.processor;
 
 import java.lang.annotation.Annotation;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -10,7 +9,6 @@ import java.util.Set;
 
 import javax.ws.rs.core.Response.Status;
 
-import com.nhl.link.rest.meta.LrRelationship;
 import org.apache.cayenne.Cayenne;
 import org.apache.cayenne.DataObject;
 import org.apache.cayenne.ObjectContext;
@@ -24,6 +22,7 @@ import com.nhl.link.rest.EntityParent;
 import com.nhl.link.rest.EntityUpdate;
 import com.nhl.link.rest.LinkRestException;
 import com.nhl.link.rest.annotation.listener.DataStoreUpdated;
+import com.nhl.link.rest.meta.LrRelationship;
 import com.nhl.link.rest.processor.BaseLinearProcessingStage;
 import com.nhl.link.rest.processor.ProcessingStage;
 import com.nhl.link.rest.runtime.processor.update.UpdateContext;
