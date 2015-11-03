@@ -301,4 +301,20 @@ public class GET_IT extends JerseyTestOnDerby {
 				response1.readEntity(String.class));
 	}
 
+	@Test
+	public void test_SelectById_EscapeLineSeparators() throws WebApplicationException, IOException {
+
+		String s = "First line\u2028Second line...\u2029";
+		runtime.newContext().performGenericQuery(
+				new SQLTemplate(E2.class, "INSERT INTO utest.e4 (id, c_varchar) values (1, '" + s + "')"));
+
+		Response response1 = target("/e4/1").request().get();
+
+		assertEquals(Status.OK.getStatusCode(), response1.getStatus());
+		assertEquals("{\"data\":[{\"id\":1,\"cBoolean\":null,\"cDate\":null,\"cDecimal\":null," +
+						"\"cInt\":null,\"cTime\":null,\"cTimestamp\":null," +
+						"\"cVarchar\":\"First line\\u2028Second line...\\u2029\"}],\"total\":1}",
+				response1.readEntity(String.class));
+	}
+
 }

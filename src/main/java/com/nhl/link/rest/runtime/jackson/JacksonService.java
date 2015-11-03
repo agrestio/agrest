@@ -11,6 +11,9 @@ import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonGenerator.Feature;
 import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.SerializableString;
+import com.fasterxml.jackson.core.io.CharacterEscapes;
+import com.fasterxml.jackson.core.io.SerializedString;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -27,6 +30,35 @@ public class JacksonService implements IJacksonService {
 		// first, and grab implicitly created factory from it
 		this.sharedMapper = new ObjectMapper();
 		this.sharedFactory = sharedMapper.getFactory();
+
+		final SerializableString LINE_SEPARATOR = new SerializedString("\\u2028");
+		final SerializableString PARAGRAPH_SEPARATOR = new SerializedString("\\u2029");
+
+		this.sharedFactory.setCharacterEscapes(new CharacterEscapes() {
+
+			@Override
+			public int[] getEscapeCodesForAscii() {
+				return standardAsciiEscapesForJSON();
+			}
+
+			@Override
+			public SerializableString getEscapeSequence(int ch) {
+				// see ECMA-262 Section 7.3;
+				// in most cases our client is browser,
+				// and JSON is parsed into JS;
+				// therefore these two whitespace characters,
+				// which are perfectly valid in JSON but invalid in JS strings,
+				// need to be escaped...
+				switch (ch) {
+					case '\u2028':
+						return LINE_SEPARATOR;
+					case '\u2029':
+						return PARAGRAPH_SEPARATOR;
+					default:
+						return null;
+				}
+			}
+		});
 
 		// make sure mapper does not attempt closing streams it does not
 		// manage... why is this even a default in jackson?
