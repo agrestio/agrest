@@ -1,6 +1,7 @@
 Release 1.21
 
 #117 Sync: Linking with to-many relationships
+#120 Custom escape sequences for Unicode characters in JSON
 
 Release 1.20
 
