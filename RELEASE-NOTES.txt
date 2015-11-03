@@ -5,6 +5,7 @@ Release 1.20
 #109 Support for compound IDs in LR service operations
 #115 Refactoring of the service layer
 #116 UpdateBuilder.mapper(String) and UpdateBuilder.mapper(Property)
+#117 Sync: Linking with to-many relationships
 
 Release 1.19
 
