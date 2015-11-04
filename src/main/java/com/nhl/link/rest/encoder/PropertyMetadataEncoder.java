@@ -33,10 +33,25 @@ public abstract class PropertyMetadataEncoder extends AbstractEncoder {
         protected String getPropertyType(Object property) {
             if (property instanceof LrAttribute) {
                 String javaType = ((LrAttribute) property).getJavaType();
-                if (javaType.equals("java.lang.String")) {
-                    return "string";
-                } else if (javaType.equals("java.lang.Boolean")) {
-                    return "boolean";
+                switch (javaType) {
+                    case "byte":
+                    case "short":
+                    case "int":
+                    case "long":
+                    case "float":
+                    case "double": {
+                        return "number";
+                    }
+                    case "byte[]":
+                    case "char":
+                    case "java.lang.Character":
+                    case "java.lang.String": {
+                        return "string";
+                    }
+                    case "boolean":
+                    case "java.lang.Boolean": {
+                        return "boolean";
+                    }
                 }
                 try {
                     Class<?> javaClass = Class.forName(javaType);

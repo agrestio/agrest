@@ -63,6 +63,32 @@
 		<db-attribute name="e17_id1" type="INTEGER"/>
 		<db-attribute name="e17_id2" type="INTEGER"/>
 	</db-entity>
+	<db-entity name="e19" schema="utest">
+		<db-attribute name="id" type="INTEGER" isPrimaryKey="true" isGenerated="true" isMandatory="true"/>
+		<db-attribute name="byte_object" type="SMALLINT"/>
+		<db-attribute name="byte_primitive" type="SMALLINT"/>
+		<db-attribute name="short_object" type="SMALLINT"/>
+		<db-attribute name="short_primitive" type="SMALLINT"/>
+		<db-attribute name="int_object" type="INTEGER"/>
+		<db-attribute name="int_primitive" type="INTEGER"/>
+		<db-attribute name="long_object" type="BIGINT"/>
+		<db-attribute name="long_primitive" type="BIGINT"/>
+		<db-attribute name="float_object" type="FLOAT"/>
+		<db-attribute name="float_primitive" type="FLOAT"/>
+		<db-attribute name="double_object" type="DOUBLE"/>
+		<db-attribute name="double_primitive" type="DOUBLE"/>
+		<db-attribute name="big_decimal" type="DECIMAL" length="18" scale="2"/>
+		<db-attribute name="big_integer" type="DECIMAL" length="18" scale="0"/>
+		<db-attribute name="char_object" type="CHAR" length="1"/>
+		<db-attribute name="char_primitive" type="CHAR" length="1"/>
+		<db-attribute name="boolean_object" type="TINYINT"/>
+		<db-attribute name="boolean_primitive" type="TINYINT"/>
+		<db-attribute name="c_string" type="VARCHAR" length="45"/>
+		<db-attribute name="c_date" type="DATE"/>
+		<db-attribute name="c_time" type="TIME"/>
+		<db-attribute name="c_timestamp" type="TIMESTAMP"/>
+		<db-attribute name="guid" type="BINARY" length="16"/>
+	</db-entity>
 	<db-entity name="e2" schema="utest">
 		<db-attribute name="address" type="VARCHAR" length="255"/>
 		<db-attribute name="id" type="INTEGER" isPrimaryKey="true" isGenerated="true" isMandatory="true"/>
@@ -148,6 +174,31 @@
 	</obj-entity>
 	<obj-entity name="E18" className="com.nhl.link.rest.it.fixture.cayenne.E18" dbEntityName="e18">
 		<obj-attribute name="name" type="java.lang.String" db-attribute-path="name"/>
+	</obj-entity>
+	<obj-entity name="E19" className="com.nhl.link.rest.it.fixture.cayenne.E19" dbEntityName="e19">
+		<obj-attribute name="byteObject" type="java.lang.Byte" db-attribute-path="byte_object"/>
+		<obj-attribute name="bytePrimitive" type="byte" db-attribute-path="byte_primitive"/>
+		<obj-attribute name="shortObject" type="java.lang.Short" db-attribute-path="short_object"/>
+		<obj-attribute name="shortPrimitive" type="short" db-attribute-path="short_primitive"/>
+		<obj-attribute name="intObject" type="java.lang.Integer" db-attribute-path="int_object"/>
+		<obj-attribute name="intPrimitive" type="int" db-attribute-path="int_primitive"/>
+		<obj-attribute name="longObject" type="java.lang.Long" db-attribute-path="long_object"/>
+		<obj-attribute name="longPrimitive" type="long" db-attribute-path="long_primitive"/>
+		<obj-attribute name="floatObject" type="java.lang.Float" db-attribute-path="float_object"/>
+		<obj-attribute name="floatPrimitive" type="float" db-attribute-path="float_primitive"/>
+		<obj-attribute name="doubleObject" type="java.lang.Double" db-attribute-path="double_object"/>
+		<obj-attribute name="doublePrimitive" type="double" db-attribute-path="double_primitive"/>
+		<obj-attribute name="bigDecimal" type="java.math.BigDecimal" db-attribute-path="big_decimal"/>
+		<obj-attribute name="bigInteger" type="java.math.BigInteger" db-attribute-path="big_integer"/>
+		<obj-attribute name="charObject" type="java.lang.Character" db-attribute-path="char_object"/>
+		<obj-attribute name="charPrimitive" type="char" db-attribute-path="char_primitive"/>
+		<obj-attribute name="booleanObject" type="java.lang.Boolean" db-attribute-path="boolean_object"/>
+		<obj-attribute name="booleanPrimitive" type="boolean" db-attribute-path="boolean_primitive"/>
+		<obj-attribute name="cString" type="java.lang.String" db-attribute-path="c_string"/>
+		<obj-attribute name="cDate" type="java.sql.Date" db-attribute-path="c_date"/>
+		<obj-attribute name="cTime" type="java.sql.Time" db-attribute-path="c_time"/>
+		<obj-attribute name="cTimestamp" type="java.sql.Timestamp" db-attribute-path="c_timestamp"/>
+		<obj-attribute name="guid" type="byte[]" db-attribute-path="guid"/>
 	</obj-entity>
 	<obj-entity name="E2" className="com.nhl.link.rest.it.fixture.cayenne.E2" dbEntityName="e2">
 		<obj-attribute name="address" type="java.lang.String" db-attribute-path="address"/>
