@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import com.nhl.link.rest.it.fixture.cayenne.E19;
 import org.apache.cayenne.Cayenne;
 import org.apache.cayenne.ObjectContext;
 import org.apache.cayenne.ObjectId;
@@ -265,6 +266,23 @@ public class EncoderServiceTest extends TestWithCayenneMapping {
 		context.registerNewObject(e21);
 
 		builder.getEncoder().encode(null, Collections.singletonList(e21), mock(JsonGenerator.class));
+	}
+
+	@Test
+	public void testEncoder_BinaryAttribute() throws IOException {
+
+		ResourceEntity<E19> descriptor = getResourceEntity(E19.class);
+		descriptor.includeId();
+		descriptor.getAttributes().put(
+				E19.GUID.getName(),
+				getLrEntity(E19.class).getAttribute(E19.GUID.getName())
+		);
+
+		E19 e19 = new E19();
+		e19.setObjectId(new ObjectId("E19", E19.ID_PK_COLUMN, 1));
+		e19.setGuid("abcdefghjklmnopr".getBytes("UTF-8"));
+
+		assertEquals("[{\"id\":1,\"guid\":\"YWJjZGVmZ2hqa2xtbm9wcg==\"}]", toJson(e19, descriptor));
 	}
 
 	private String toJson(Object object, ResourceEntity<?> entity) throws IOException {
