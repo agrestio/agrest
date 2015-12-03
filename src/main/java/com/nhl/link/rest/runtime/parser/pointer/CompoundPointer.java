@@ -5,11 +5,11 @@ import com.nhl.link.rest.LinkRestException;
 import javax.ws.rs.core.Response.Status;
 import java.util.List;
 
-public class CompoundPointer implements LrPointer {
+class CompoundPointer implements LrPointer {
 
-    private List<LrPointer> parts;
+    private List<SimplePointer> parts;
 
-    CompoundPointer(List<LrPointer> parts) {
+    CompoundPointer(List<SimplePointer> parts) {
         this.parts = parts;
     }
 
@@ -23,18 +23,28 @@ public class CompoundPointer implements LrPointer {
     }
 
     @Override
+    public Class<?> getBaseType() {
+        return parts.get(0).getBaseType();
+    }
+
+    @Override
     public Class<?> getTargetType() {
         return getLastElement().getTargetType();
     }
 
     @Override
-    public Object resolve(Object context) {
+    public List<? extends LrPointer> getElements() {
+        return parts;
+    }
 
-        Object target = null;
+    @Override
+    public Object resolve(PointerContext context, Object baseObject) throws Exception {
+
+        Object target = baseObject;
 
         try {
-            for (LrPointer part : parts) {
-                target = part.resolve(target);
+            for (SimplePointer part : parts) {
+                target = part.resolve(context, target);
             }
         } catch (Exception e) {
             throw new LinkRestException(Status.BAD_REQUEST, "Failed to resolve pointer", e);
@@ -44,8 +54,8 @@ public class CompoundPointer implements LrPointer {
     }
 
     @Override
-    public Object resolve() throws Exception {
-        return resolve(null);
+    public Object resolve(PointerContext context) throws Exception {
+        return resolve(context, null);
     }
 
     @Override

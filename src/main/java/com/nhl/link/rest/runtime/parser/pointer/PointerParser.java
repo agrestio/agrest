@@ -28,8 +28,8 @@ public class PointerParser {
                     "Invalid empty pointer for '" + rootEntity.getName() + "'");
         }
 
-        if (s.startsWith(Pointers.PATH_SEPARATOR) || s.startsWith(Pointers.ID_SEPARATOR)
-                || s.endsWith(Pointers.PATH_SEPARATOR) || s.endsWith(Pointers.ID_SEPARATOR)) {
+        if (s.startsWith(Pointers.PATH_SEPARATOR) || s.startsWith(Pointers.RELATIONSHIP_SEPARATOR)
+                || s.endsWith(Pointers.PATH_SEPARATOR) || s.endsWith(Pointers.RELATIONSHIP_SEPARATOR)) {
             throw new LinkRestException(Status.BAD_REQUEST,
                     "Invalid pointer '" + s + "' for '" + rootEntity.getName() + "'");
         }
@@ -45,12 +45,12 @@ public class PointerParser {
                 throw new LinkRestException(Status.BAD_REQUEST,
                         "Invalid pointer '" + s + "' for '" + rootEntity.getName() + "'");
             }
-            if (property.startsWith(Pointers.ID_SEPARATOR) || property.endsWith(Pointers.ID_SEPARATOR)) {
+            if (property.startsWith(Pointers.RELATIONSHIP_SEPARATOR) || property.endsWith(Pointers.RELATIONSHIP_SEPARATOR)) {
                 throw new LinkRestException(Status.BAD_REQUEST,
                         "Invalid pointer '" + s + "' for '" + rootEntity.getName() + "'");
             }
 
-            String[] parts = property.split(Pointers.ID_SEPARATOR);
+            String[] parts = property.split(Pointers.RELATIONSHIP_SEPARATOR);
             if (parts.length == 1) {
                 // single ID, attribute or to-one relationship
                 builder.append(parts[0]);
