@@ -53,8 +53,7 @@ public class CayennePointerContext implements PointerContext {
                 queries.put(baseEntityClass, query);
             }
 
-            // TODO: do prefetches work for base query entity?
-            // TODO: resolve and optimize loops
+            // TODO: detect and optimize loops ( e.g. "e3s:3.e5.e2s:2.e3s:33" )
             ObjEntity baseEntity = cayenneService.entityResolver().getObjEntity(baseEntityClass);
             String currentPath = "";
             for (LrPointer part : pointer.getElements()) {
