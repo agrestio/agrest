@@ -10,6 +10,10 @@ class CompoundPointer implements LrPointer {
     private List<SimplePointer> parts;
 
     CompoundPointer(List<SimplePointer> parts) {
+
+        if (parts == null || parts.isEmpty()) {
+            throw new IllegalArgumentException("Empty pointer");
+        }
         this.parts = parts;
     }
 

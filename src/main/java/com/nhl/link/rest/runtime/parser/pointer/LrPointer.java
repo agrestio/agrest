@@ -29,8 +29,8 @@ public interface LrPointer {
     Object resolve(PointerContext context, Object baseObject) throws Exception;
 
     /**
-     * Shortcut for LrPointer#resolve(Object), that is convenient for simple instance pointers
-     * @throws Exception If pointer can't be resolved without context (i.e. it's compound and/or is not an instance pointer)
+     * Shortcut for LrPointer#resolve(PointerContext, Object), that is convenient for simple instance pointers
+     * @throws Exception If pointer can't be resolved without base object (i.e. it is/contains not an instance pointer)
      */
     Object resolve(PointerContext context) throws Exception;
 }

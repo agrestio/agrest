@@ -10,6 +10,7 @@ class ObjectInstancePointer extends SimplePointer {
     ObjectInstancePointer(SimplePointer predecessor, LrEntity<?> entity, Object id) {
         super(predecessor, entity);
         this.entity = entity;
+        // TODO: Use ID normalizers
         this.id = id;
     }
 

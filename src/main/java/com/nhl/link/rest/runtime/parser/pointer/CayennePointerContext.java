@@ -4,6 +4,7 @@ import com.nhl.link.rest.LinkRestException;
 import com.nhl.link.rest.runtime.cayenne.ICayennePersister;
 import org.apache.cayenne.ObjectContext;
 import org.apache.cayenne.exp.ExpressionFactory;
+import org.apache.cayenne.map.Entity;
 import org.apache.cayenne.map.ObjEntity;
 import org.apache.cayenne.query.PrefetchTreeNode;
 import org.apache.cayenne.query.SelectById;
@@ -60,13 +61,13 @@ public class CayennePointerContext implements PointerContext {
                 switch (part.getType()) {
                     case INSTANCE: {
                         if (!baseEntityClass.equals(part.getTargetType())) {
-                            // this can be when pointer is resolving another instance of the same type as it's predecessor
-                            // ( e.g. "e3s:1.3" )
                             continue;
                         }
                         if (baseEntity.getPrimaryKeys().size() > 1) {
                             throw new LinkRestException(Status.INTERNAL_SERVER_ERROR, "Multi-attribute IDs not supported");
                         }
+                        // this can be when pointer is resolving another instance of the same type as it's predecessor
+                        // ( e.g. "e3s:1.3" )
                         query.andQualifier(ExpressionFactory.matchDbExp(
                                 baseEntity.getPrimaryKeyNames().iterator().next(),
                                 ((ObjectInstancePointer)part).getId()
@@ -81,7 +82,7 @@ public class CayennePointerContext implements PointerContext {
                     case IMPLICIT_TO_ONE_RELATIONSHIP:
                     case TO_MANY_RELATIONSHIP: {
                         String relationshipName = ((RelationshipPointer)part).getRelationship().getName();
-                        currentPath += "." + relationshipName;
+                        currentPath += Entity.PATH_SEPARATOR + relationshipName;
                         PrefetchTreeNode prefetch = PrefetchTreeNode.withPath(
                                 currentPath, PrefetchTreeNode.JOINT_PREFETCH_SEMANTICS);
                         query.addPrefetch(prefetch);
