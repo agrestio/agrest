@@ -1,6 +1,7 @@
 package com.nhl.link.rest.runtime.parser.pointer;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.nhl.link.rest.LinkRestException;
 import com.nhl.link.rest.meta.LrEntity;
 
@@ -10,15 +11,66 @@ import static javax.ws.rs.core.Response.Status;
 
 public class PointerParser {
 
+    private static final String JSON_POINTER_PROPERTY_ATTRIBUTE = "property";
+    private static final String JSON_POINTER_ID_ATTRIBUTE = "id";
+
     private LrPointerService pointerService;
 
     public PointerParser(LrPointerService pointerService) {
         this.pointerService = pointerService;
     }
 
-    public LrPointer getPointer(JsonNode node) {
-        // TODO: Implement me
-        return null;
+    public LrPointer getPointer(LrEntity<?> rootEntity, JsonNode node) {
+
+        if (node == null) {
+            throw new LinkRestException(Status.BAD_REQUEST,
+                    "Invalid empty pointer for '" + rootEntity.getName() + "'");
+        }
+
+        LrPointerBuilder builder = pointerService.forEntity(rootEntity);
+        try {
+            if (node.isArray()) {
+                ArrayNode pointerNodes = (ArrayNode) node;
+                if (pointerNodes.size() == 0) {
+                    throw new LinkRestException(Status.BAD_REQUEST,
+                        "Invalid empty pointer for '" + rootEntity.getName() + "'");
+                }
+                for (JsonNode pointerNode : pointerNodes) {
+                    appendSimplePointer(builder, pointerNode);
+                }
+            } else {
+                appendSimplePointer(builder, node);
+            }
+        } catch (Exception e) {
+            throw new LinkRestException(Status.BAD_REQUEST,
+                    "Invalid pointer '" + node.toString() + "' for '" + rootEntity.getName() + "'", e);
+        }
+
+        return builder.build();
+    }
+
+    private void appendSimplePointer(LrPointerBuilder builder, JsonNode pointerNode) throws Exception {
+
+        if (!pointerNode.isObject()) {
+            throw new LinkRestException(Status.BAD_REQUEST,
+                "Invalid pointer element '" + pointerNode.toString() + "'");
+        }
+
+        JsonNode propertyNode = pointerNode.get(JSON_POINTER_PROPERTY_ATTRIBUTE),
+                idNode = pointerNode.get(JSON_POINTER_ID_ATTRIBUTE);
+
+        if (propertyNode == null && idNode == null) {
+            throw new LinkRestException(Status.BAD_REQUEST,
+                "Invalid pointer element '" + pointerNode.toString() + "'");
+        }
+
+        if (propertyNode == null) {
+            builder.append(idNode.textValue());
+        } else if (idNode == null) {
+            builder.append(propertyNode.textValue());
+        } else {
+            builder.append(propertyNode.textValue(), idNode.textValue());
+        }
     }
 
     public LrPointer getPointer(LrEntity<?> rootEntity, String s) {
