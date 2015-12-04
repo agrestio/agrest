@@ -58,6 +58,10 @@ public class CayennePointerContext implements PointerContext {
             ObjEntity baseEntity = cayenneService.entityResolver().getObjEntity(baseEntityClass);
             String currentPath = "";
             for (LrPointer part : pointer.getElements()) {
+                if (part.getElements().size() > 1) {
+                    // can't handle nested compound pointers for now
+                    continue;
+                }
                 switch (part.getType()) {
                     case INSTANCE: {
                         if (!baseEntityClass.equals(part.getTargetType())) {
