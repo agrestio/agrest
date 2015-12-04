@@ -87,10 +87,6 @@ public class LrPointerService {
 
             if (parts.size() > 0) {
                 PointerType type = parts.get(parts.size() - 1).getType();
-                if (type == PointerType.INSTANCE) {
-                    throw new LinkRestException(Status.BAD_REQUEST,
-                            "Can't add pointer element: last element was instance");
-                }
                 if (type == PointerType.ATTRIBUTE) {
                     throw new LinkRestException(Status.BAD_REQUEST,
                             "Can't add pointer element: last element was attribute");
