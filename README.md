@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/nhl/link-rest.svg?branch=master)](https://travis-ci.org/nhl/link-rest)
+
 LinkRest is a flexible model-driven REST data service framework. Visit [our site](http://nhl.github.io/link-rest/) for more information.
 
 Quick links:
