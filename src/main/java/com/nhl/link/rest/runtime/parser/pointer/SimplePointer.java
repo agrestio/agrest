@@ -32,17 +32,15 @@ abstract class SimplePointer implements LrPointer {
             throw new IllegalStateException("Null context in pointer: " + toString());
         }
 
-        if (baseObject == null && getType() != PointerType.INSTANCE) {
-            throw new IllegalArgumentException("Null base object passed to pointer: " + toString());
-        }
-
-        return context.resolvePointer(this, baseObject);
+        return doResolve((CayennePointerContext) context, baseObject);
     }
 
     @Override
     public final Object resolve(PointerContext context) throws Exception {
         return resolve(context, null);
     }
+
+    protected abstract Object doResolve(CayennePointerContext context, Object baseObject);
 
     /**
      * @return Escaped string representation of this pointer

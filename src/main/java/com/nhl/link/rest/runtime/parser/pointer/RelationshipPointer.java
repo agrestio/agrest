@@ -1,7 +1,10 @@
 package com.nhl.link.rest.runtime.parser.pointer;
 
+import com.nhl.link.rest.LinkRestException;
 import com.nhl.link.rest.meta.LrEntity;
 import com.nhl.link.rest.meta.LrRelationship;
+
+import javax.ws.rs.core.Response;
 
 class RelationshipPointer extends SimplePointer {
 
@@ -20,6 +23,28 @@ class RelationshipPointer extends SimplePointer {
             type = PointerType.EXPLICIT_TO_ONE_RELATIONSHIP;
         } else {
             type = PointerType.IMPLICIT_TO_ONE_RELATIONSHIP;
+        }
+    }
+
+    @Override
+    protected Object doResolve(CayennePointerContext context, Object baseObject) {
+
+        if (baseObject == null) {
+            throw new IllegalArgumentException("Null base object passed to pointer: " + toString());
+        }
+
+        switch (type) {
+            case IMPLICIT_TO_ONE_RELATIONSHIP: {
+                return context.resolveProperty(getBaseType(), relationship.getName(), baseObject);
+            }
+            case EXPLICIT_TO_ONE_RELATIONSHIP:
+            case TO_MANY_RELATIONSHIP: {
+                return context.resolveObject(getTargetType(), id);
+            }
+            default: {
+                throw new LinkRestException(Response.Status.INTERNAL_SERVER_ERROR,
+                                "Unknown pointer type: " + getType().name());
+            }
         }
     }
 

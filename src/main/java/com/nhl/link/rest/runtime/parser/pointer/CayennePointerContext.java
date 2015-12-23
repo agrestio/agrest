@@ -103,38 +103,20 @@ public class CayennePointerContext implements PointerContext {
         return queries;
     }
 
+    /**
+     * @param baseObject Base object for resolving the specified attribute.
+     *                   Should be from this PointerContext's Cayenne context
+     */
     @Override
     public Object resolvePointer(LrPointer pointer, Object baseObject) {
-
-        switch (pointer.getType()) {
-            case INSTANCE: {
-                // ignoring base object
-                ObjectInstancePointer instancePointer = (ObjectInstancePointer) pointer;
-                return resolveObject(instancePointer.getTargetType(), instancePointer.getId());
-            }
-            case ATTRIBUTE: {
-                AttributePointer attributePointer = (AttributePointer) pointer;
-                return resolveProperty(attributePointer.getBaseType(),
-                        attributePointer.getAttribute().getName(), baseObject);
-            }
-            case IMPLICIT_TO_ONE_RELATIONSHIP: {
-                RelationshipPointer relationshipPointer = (RelationshipPointer) pointer;
-                return resolveProperty(relationshipPointer.getBaseType(),
-                        relationshipPointer.getRelationship().getName(), baseObject);
-            }
-            case EXPLICIT_TO_ONE_RELATIONSHIP:
-            case TO_MANY_RELATIONSHIP: {
-                RelationshipPointer relationshipPointer = (RelationshipPointer) pointer;
-                return resolveObject(relationshipPointer.getTargetType(), relationshipPointer.getId());
-            }
-            default: {
-                throw new LinkRestException(Status.INTERNAL_SERVER_ERROR,
-                                "Unknown pointer type: " + pointer.getType().name());
-            }
+        try {
+            return pointer.resolve(this, baseObject);
+        } catch (Exception e) {
+            throw new LinkRestException(Status.INTERNAL_SERVER_ERROR, "Failed to resolve pointer: " + pointer, e);
         }
     }
 
-    private Object resolveObject(Class<?> type, Object id) {
+    Object resolveObject(Class<?> type, Object id) {
         return SelectById.query(type, id).selectOne(delegateContext);
     }
 
@@ -142,7 +124,7 @@ public class CayennePointerContext implements PointerContext {
      * @param baseObject Base object for resolving the specified attribute.
      *                   Should be from this PointerContext's Cayenne context
      */
-    private Object resolveProperty(Class<?> type, String propertyName, Object baseObject) {
+    Object resolveProperty(Class<?> type, String propertyName, Object baseObject) {
 
         ObjEntity entity = cayenneService.entityResolver().getObjEntity(type);
         PropertyDescriptor property = cayenneService.entityResolver()

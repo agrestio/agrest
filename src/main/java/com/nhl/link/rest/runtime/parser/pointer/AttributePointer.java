@@ -16,6 +16,16 @@ class AttributePointer extends SimplePointer {
     }
 
     @Override
+    protected Object doResolve(CayennePointerContext context, Object baseObject) {
+
+        if (baseObject == null) {
+            throw new IllegalArgumentException("Null base object passed to pointer: " + toString());
+        }
+
+        return context.resolveProperty(getBaseType(), attribute.getName(), baseObject);
+    }
+
+    @Override
     protected String encodeToString() {
         return attribute.getName();
     }

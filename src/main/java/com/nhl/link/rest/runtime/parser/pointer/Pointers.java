@@ -1,6 +1,6 @@
 package com.nhl.link.rest.runtime.parser.pointer;
 
-public class Pointers {
+class Pointers {
 
     static final String PATH_SEPARATOR = ".";
     static final String RELATIONSHIP_SEPARATOR = ":";

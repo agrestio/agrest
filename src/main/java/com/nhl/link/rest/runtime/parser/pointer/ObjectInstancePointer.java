@@ -15,6 +15,12 @@ class ObjectInstancePointer extends SimplePointer {
     }
 
     @Override
+    protected Object doResolve(CayennePointerContext context, Object baseObject) {
+        // ignoring base object
+        return context.resolveObject(getTargetType(), id);
+    }
+
+    @Override
     protected String encodeToString() {
         return id.toString();
     }
