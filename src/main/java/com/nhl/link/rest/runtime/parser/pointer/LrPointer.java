@@ -1,7 +1,5 @@
 package com.nhl.link.rest.runtime.parser.pointer;
 
-import java.util.List;
-
 public interface LrPointer {
 
     PointerType getType();
@@ -16,10 +14,7 @@ public interface LrPointer {
      */
     Class<?> getTargetType();
 
-    /**
-     * @return List of this pointer's elements
-     */
-    List<? extends LrPointer> getElements();
+    LrPointer getParent();
 
     /**
      * @param baseObject Base object for this pointer (e.g. instance of some entity E1)

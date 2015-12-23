@@ -2,9 +2,6 @@ package com.nhl.link.rest.runtime.parser.pointer;
 
 import com.nhl.link.rest.meta.LrEntity;
 
-import java.util.Collections;
-import java.util.List;
-
 abstract class SimplePointer implements LrPointer {
 
     private SimplePointer predecessor;
@@ -17,12 +14,12 @@ abstract class SimplePointer implements LrPointer {
 
     @Override
     public final Class<?> getBaseType() {
-        return entity.getType();
+        return predecessor == null? entity.getType() : predecessor.getBaseType();
     }
 
     @Override
-    public final List<LrPointer> getElements() {
-        return Collections.<LrPointer>singletonList(this);
+    public LrPointer getParent() {
+        return predecessor;
     }
 
     @Override
@@ -32,6 +29,9 @@ abstract class SimplePointer implements LrPointer {
             throw new IllegalStateException("Null context in pointer: " + toString());
         }
 
+        if (predecessor != null) {
+            baseObject = predecessor.resolve(context, baseObject);
+        }
         return doResolve((CayennePointerContext) context, baseObject);
     }
 

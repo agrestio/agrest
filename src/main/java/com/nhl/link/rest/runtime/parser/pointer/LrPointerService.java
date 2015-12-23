@@ -6,9 +6,6 @@ import com.nhl.link.rest.meta.LrEntity;
 import com.nhl.link.rest.meta.LrRelationship;
 import com.nhl.link.rest.runtime.meta.IMetadataService;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import static javax.ws.rs.core.Response.Status;
 
 public class LrPointerService {
@@ -26,12 +23,10 @@ public class LrPointerService {
     private class DefaultLrPointerBuilder implements LrPointerBuilder {
 
         private LrEntity<?> currentEntity;
-        private List<SimplePointer> parts;
-        private SimplePointer previousElement;
+        private SimplePointer tail;
 
         private DefaultLrPointerBuilder(LrEntity<?> entity) {
             this.currentEntity = entity;
-            parts = new ArrayList<>();
         }
 
         @Override
@@ -45,8 +40,7 @@ public class LrPointerService {
                         "Unknown relationship '" + relationshipName + "' for '" + currentEntity.getName() + "'");
             }
 
-            previousElement = new RelationshipPointer(previousElement, currentEntity, relationship, id);
-            parts.add(previousElement);
+            tail = new RelationshipPointer(tail, currentEntity, relationship, id);
             currentEntity = metadataService.getLrEntity(relationship.getTargetEntityType());
 
             return this;
@@ -59,8 +53,7 @@ public class LrPointerService {
 
             LrAttribute attribute = currentEntity.getAttribute(pathElement);
             if (attribute != null) {
-                previousElement = new AttributePointer(previousElement, currentEntity, attribute);
-                parts.add(previousElement);
+                tail = new AttributePointer(tail, currentEntity, attribute);
 
             } else {
                 LrRelationship relationship = currentEntity.getRelationship(pathElement);
@@ -70,13 +63,11 @@ public class LrPointerService {
                                 "Invalid pointer element: to-many relationship '" + pathElement +
                                         "' without explicit ID");
                     }
-                    previousElement = new RelationshipPointer(previousElement, currentEntity, relationship, null);
-                    parts.add(previousElement);
+                    tail = new RelationshipPointer(tail, currentEntity, relationship, null);
                     currentEntity = metadataService.getLrEntity(relationship.getTargetEntityType());
 
                 } else {
-                    previousElement = new ObjectInstancePointer(previousElement, currentEntity, pathElement);
-                    parts.add(previousElement);
+                    tail = new ObjectInstancePointer(tail, currentEntity, pathElement);
                 }
             }
 
@@ -85,8 +76,8 @@ public class LrPointerService {
 
         private void ensurePossibleToAddMoreElements() {
 
-            if (parts.size() > 0) {
-                PointerType type = parts.get(parts.size() - 1).getType();
+            if (tail != null) {
+                PointerType type = tail.getType();
                 if (type == PointerType.ATTRIBUTE) {
                     throw new LinkRestException(Status.BAD_REQUEST,
                             "Can't add pointer element: last element was attribute");
@@ -97,13 +88,11 @@ public class LrPointerService {
         @Override
         public LrPointer build() {
 
-            if (parts.size() == 0) {
+            if (tail == null) {
                 throw new IllegalStateException("Can't build an empty pointer");
-            } else if (parts.size() == 1) {
-                return parts.get(0);
-            } else {
-                return new CompoundPointer(parts);
             }
+
+            return tail;
         }
     }
 

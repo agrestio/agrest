@@ -11,6 +11,7 @@ import org.apache.cayenne.query.SelectById;
 import org.apache.cayenne.query.SelectQuery;
 import org.apache.cayenne.reflect.PropertyDescriptor;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -57,11 +58,9 @@ public class CayennePointerContext implements PointerContext {
             // TODO: detect and optimize loops ( e.g. "e3s:3.e5.e2s:2.e3s:33" )
             ObjEntity baseEntity = cayenneService.entityResolver().getObjEntity(baseEntityClass);
             String currentPath = "";
-            for (LrPointer part : pointer.getElements()) {
-                if (part.getElements().size() > 1) {
-                    // can't handle nested compound pointers for now
-                    continue;
-                }
+            List<LrPointer> parts = collectParts(pointer);
+            for (int i = parts.size() - 1; i >= 0; i--) {
+                LrPointer part = parts.get(i);
                 switch (part.getType()) {
                     case INSTANCE: {
                         if (!baseEntityClass.equals(part.getTargetType())) {
@@ -101,6 +100,21 @@ public class CayennePointerContext implements PointerContext {
         }
 
         return queries;
+    }
+
+    /**
+     * @return Pointer's chain of predecessors, in reverse order (from last to first)
+     */
+    private List<LrPointer> collectParts(LrPointer pointer) {
+
+        List<LrPointer> parts = new ArrayList<>();
+        LrPointer part = pointer;
+        do {
+            parts.add(part);
+
+        } while ((part = part.getParent()) != null);
+
+        return parts;
     }
 
     /**
