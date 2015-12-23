@@ -33,7 +33,6 @@ https://github.com/yahoo/pure/blob/master/LICENSE.md
   max-width: 80em;
   margin: 0 auto;
   position: relative;
-  border-top: 1px solid #d7d7d7;
 }
 .container:first-child {
   border-top: 0;
@@ -199,9 +198,10 @@ ul {
   position: absolute;
   left: 0;
   right: 0;
-  margin: 0 auto;
+  margin: -1.6em auto;
   opacity: .3;
   text-align: center;
+  padding: 2em;
 }
 .go:hover {
   opacity: 1;
@@ -284,6 +284,82 @@ ul {
   content: "\f175";
 }
 
+.dark-section {
+  background-color: #BAC0C5;
+}
+.dark-section h2 {
+  color: #636363;
+}
+
+.video-container-holder {
+  max-width: 63em;
+  margin: 0 auto;
+  background: #3f4959 url(../img/video-section-transp.png) no-repeat center;
+  position: relative;
+  background-size: 100% auto;
+  margin: 30px auto 80px;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.17), 0 5px 35px rgba(0, 0, 0, 0.48);
+  overflow: hidden;
+  transition: all .3s ease-out;
+}
+.video-container-holder:before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.29);
+}
+.video-container-holder:hover {
+  cursor: default;
+}
+.video-container-holder.active .video-container {
+  opacity: 1;
+  z-index: 1;
+}
+.video-container-holder .play-btn {
+  /* text-shadow: 10px 0 30px rgba(0,0,0,.2); */
+  position: absolute;
+  left: 50%;
+  top: 52%;
+  transform: translate(-50%, -50%);
+  display: block;
+  border-radius: 50%;
+  width: 100px;
+  height: 100px;
+  background: #fff;
+  cursor: pointer;
+  transition: all .2s ease-out;
+}
+.video-container-holder .play-btn .fa {
+  color: #393d41;
+  font-size: 34px;
+  padding: 34px 0 0 41px;
+}
+.video-container-holder .play-btn:hover, .video-container-holder .play-btn:focus {
+  transform: translate(-50%, -50%) scale(1.05);
+}
+.video-container-holder .video-container {
+  position: relative;
+  padding-bottom: 56.25%;
+  /*16:9*/
+  height: 0;
+  opacity: 0;
+  transition: all .3s ease-out;
+}
+.video-container-holder .video-container iframe,
+.video-container-holder .video-container object,
+.video-container-holder .video-container embed {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0 auto;
+}
+
 .features h2 {
   color: #4a4a4a;
   margin-top: 1.8em;
@@ -352,12 +428,18 @@ ul {
     position: fixed;
     height: 521px;
   }
+  .promo-container:before {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 50%;
+    background: #e95c4e;
+  }
   .promo-container .promo .pure-u-md-1-2 {
     padding: 0 3.8em 0 3.4em;
     height: 100%;
-  }
-  .promo-container .promo .pure-u-md-1-2:first-child {
-    padding-right: 2.5em;
   }
 
   .principle {

@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Protocol and Java framework for model-driven REST data services. 
+    <meta name="description" content="Open source protocol and Java framework for model-driven REST data services. 
             Works on top of JAX RS and integrates with various backends, such as Apache Cayenne.">
 
     <title>LinkRest - Model-Driven REST Data Services</title>
@@ -34,6 +34,16 @@
         @-ms-viewport{width:device-width !important;}
     </style>
 
+    <script type="text/javascript">
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-67243676-1', 'auto');
+  ga('send', 'pageview');
+     </script>
+
 </head>
 <body onload="prettyPrint()">
 
@@ -51,8 +61,9 @@
                     <!-- need to add .pure-menu-selected to `li` for `selected state` -->
                     <li class="pure-menu-item"><a href="#get-started" class="pure-menu-link">Getting Started</a></li>
                     <li class="pure-menu-item"><a href="#features" class="pure-menu-link">Features</a></li>
-                    <li class="pure-menu-item"><a href="https://github.com/nhl/link-rest/wiki" class="pure-menu-link">Documentation</a></li>
-                    <li class="pure-menu-item fork-on-github-btn"><a href="https://github.com/nhl/link-rest" class="pure-menu-link">Fork on GitHub</a></li>
+                    <li class="pure-menu-item"><a href="docs/index.html" class="pure-menu-link">Documentation</a></li>
+                    <li class="pure-menu-item"><a href="https://groups.google.com/forum/?#!forum/linkrest-user" class="pure-menu-link">Forum</a></li>
+                    <li class="pure-menu-item fork-on-github-btn"><a href="https://github.com/nhl/link-rest" class="pure-menu-link">GitHub <i class="fa fa-code-fork fa-inverse"></i></a></li>
                 </ul>
             </div>
         </div>
@@ -61,7 +72,7 @@
 
     <!-- PROMO BLOCK -->
     <div class="promo-container">
-        <div class="promo">
+        <div class="promo container">
             <div class="pure-g">
                 <div class="pure-u-1 pure-u-md-1-2">
                     <div class="principle">
@@ -73,7 +84,7 @@
                 <div class="pure-u-1 pure-u-md-1-2">
                     <div class="welcome">
                         <div class="text-vert-block">
-                            <h1 class="vert-centered"><span class="is-center">...<strong>protocol</strong> and <strong>framework</strong> for flexible model-driven<br />REST data services</span></h1>
+                            <h1 class="vert-centered"><span class="is-center">...open-source <strong>protocol</strong> and <strong>framework</strong> for flexible model-driven<br />REST data services</span></h1>
                         </div>
                     </div>
                 </div>
@@ -135,7 +146,7 @@
                                 <pre class="prettyprint"><code>&lt;dependency&gt;
     &lt;groupId&gt;com.nhl.link.rest&lt;/groupId&gt;
     &lt;artifactId&gt;link-rest&lt;/artifactId&gt;
-    &lt;version&gt;1.17&lt;/version&gt;
+    &lt;version&gt;1.18&lt;/version&gt;
 &lt;/dependency&gt;</code></pre>
                             </div>
 
@@ -194,7 +205,29 @@ public class MyEntityResource {
 
             </div>
         </div>
+        
+        <!-- VIDEO BLOCK -->
+        <div class="full-width dark-section">
+            <div class="content container">
+                <span id="video"></span>
 
+                <h2 class="content-head is-center">video presentation</h2>
+
+                <div class="pure-g">
+
+                    <div class="pure-u-1 "> <!-- could bу + .divider-vert -->
+                            
+                        <div class="video-container-holder">
+                            <div class="video-container">
+                                <iframe class="yt-player" id="linkrest-presentation" src="//www.youtube.com/embed/Zwf9Xy90-8s?enablejsapi=1&modestbranding=1&rel=0&start=24" frameborder="0" allowfullscreen></iframe>
+                            </div>
+                            <span class="play-btn"><i class="fa fa-play"></i></span>
+                        </div>    
+
+                    </div>
+                </div>
+            </div>
+        </div>
         <!-- MAIN FEATURES BLOCK -->
         <div class="content container">
             <span id="features"></span>
@@ -277,6 +310,9 @@ public class MyEntityResource {
         </div>
 
     </div>
+
+    <script src="js/jquery.min.js"></script>
+    <script src="js/linkrest-app.js"></script>
 
 
 </body>
