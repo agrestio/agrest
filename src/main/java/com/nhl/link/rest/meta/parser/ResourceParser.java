@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -51,7 +52,11 @@ public class ResourceParser implements IResourceParser {
 		}
 
 		Method[] methods = resourceClass.getDeclaredMethods();
-		Map<String, Set<Method>> methodsMap = new HashMap<>();
+		
+		// using sorted TreeMap to ensure stable ordering of resources returned
+		// from the method. Otherwise ordering differs between Java 8 and 7 ,
+		// causing non-deterministic responses (and unit test failures).
+		Map<String, Set<Method>> methodsMap = new TreeMap<>();
 		for (Method method : methods) {
 			if (Modifier.isPublic(method.getModifiers()) && getMethodType(method) != null) {
 				String path = buildPath(getPath(resourceClass), getPath(method));
