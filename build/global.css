@@ -290,19 +290,28 @@ ul {
 .dark-section h2 {
   color: #636363;
 }
+.dark-section p {
+  max-width: 63em;
+  margin-left: auto;
+  margin-right: auto;
+}
 
 .video-container-holder {
   max-width: 63em;
-  margin: 0 auto;
-  background: #3f4959 url(../img/video-section-transp.png) no-repeat center;
   position: relative;
-  background-size: 100% auto;
   margin: 30px auto 80px;
   box-shadow: 0 0 5px rgba(0, 0, 0, 0.17), 0 5px 35px rgba(0, 0, 0, 0.48);
   overflow: hidden;
+}
+.video-container-holder:hover {
+  cursor: default;
+}
+.video-container-holder.splash-screen {
+  background: #3f4959 url(../img/video-section-transp.png) no-repeat center;
+  background-size: 100% auto;
   transition: all .3s ease-out;
 }
-.video-container-holder:before {
+.video-container-holder.splash-screen:before {
   content: '';
   position: absolute;
   left: 0;
@@ -311,14 +320,8 @@ ul {
   height: 100%;
   background: rgba(0, 0, 0, 0.29);
 }
-.video-container-holder:hover {
-  cursor: default;
-}
-.video-container-holder.active .video-container {
-  opacity: 1;
-  z-index: 1;
-}
-.video-container-holder .play-btn {
+.video-container-holder.splash-screen .play-btn {
+  display: block;
   /* text-shadow: 10px 0 30px rgba(0,0,0,.2); */
   position: absolute;
   left: 50%;
@@ -332,20 +335,30 @@ ul {
   cursor: pointer;
   transition: all .2s ease-out;
 }
-.video-container-holder .play-btn .fa {
+.video-container-holder.splash-screen .play-btn .fa {
   color: #393d41;
   font-size: 34px;
   padding: 34px 0 0 41px;
 }
-.video-container-holder .play-btn:hover, .video-container-holder .play-btn:focus {
+.video-container-holder.splash-screen .play-btn:hover, .video-container-holder.splash-screen .play-btn:focus {
   transform: translate(-50%, -50%) scale(1.05);
+}
+.video-container-holder.splash-screen .video-container {
+  opacity: 0;
+}
+.video-container-holder.splash-screen.off .video-container {
+  opacity: 1;
+  z-index: 1;
+}
+.video-container-holder .play-btn {
+  display: none;
 }
 .video-container-holder .video-container {
   position: relative;
   padding-bottom: 56.25%;
   /*16:9*/
   height: 0;
-  opacity: 0;
+  opacity: 1;
   transition: all .3s ease-out;
 }
 .video-container-holder .video-container iframe,
@@ -370,8 +383,7 @@ ul {
   margin-top: 3.375em;
 }
 
-#get-started,
-#features {
+.link-anchor {
   position: absolute;
   top: 0;
   visibility: hidden;
@@ -415,8 +427,7 @@ ul {
  * -- TABLET (AND UP) MEDIA QUERIES --
  */
 @media (min-width: 48em) {
-  #get-started,
-  #features {
+  .link-anchor {
     top: -60px;
   }
 
