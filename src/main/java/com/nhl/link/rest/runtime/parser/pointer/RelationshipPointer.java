@@ -29,7 +29,7 @@ class RelationshipPointer extends SimplePointer {
     }
 
     @Override
-    protected Object doResolve(CayennePointerContext context, Object baseObject) {
+    protected Object doResolve(PointerContext context, Object baseObject) {
 
         if (baseObject == null) {
             throw new IllegalArgumentException("Null base object passed to pointer: " + toString());

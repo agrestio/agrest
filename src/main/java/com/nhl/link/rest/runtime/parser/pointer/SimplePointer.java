@@ -32,7 +32,7 @@ abstract class SimplePointer implements LrPointer {
         if (predecessor != null) {
             baseObject = predecessor.resolve(context, baseObject);
         }
-        return doResolve((CayennePointerContext) context, baseObject);
+        return doResolve(context, baseObject);
     }
 
     @Override
@@ -40,7 +40,7 @@ abstract class SimplePointer implements LrPointer {
         return resolve(context, null);
     }
 
-    protected abstract Object doResolve(CayennePointerContext context, Object baseObject);
+    protected abstract Object doResolve(PointerContext context, Object baseObject);
 
     /**
      * @return Escaped string representation of this pointer

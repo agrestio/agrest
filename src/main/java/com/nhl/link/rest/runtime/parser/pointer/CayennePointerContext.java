@@ -117,28 +117,13 @@ public class CayennePointerContext implements PointerContext {
         return parts;
     }
 
-    /**
-     * @param baseObject Base object for resolving the specified attribute.
-     *                   Should be from this PointerContext's Cayenne context
-     */
     @Override
-    public Object resolvePointer(LrPointer pointer, Object baseObject) {
-        try {
-            return pointer.resolve(this, baseObject);
-        } catch (Exception e) {
-            throw new LinkRestException(Status.INTERNAL_SERVER_ERROR, "Failed to resolve pointer: " + pointer, e);
-        }
-    }
-
-    Object resolveObject(Class<?> type, Object id) {
+    public Object resolveObject(Class<?> type, Object id) {
         return SelectById.query(type, id).selectOne(delegateContext);
     }
 
-    /**
-     * @param baseObject Base object for resolving the specified attribute.
-     *                   Should be from this PointerContext's Cayenne context
-     */
-    Object resolveProperty(Class<?> type, String propertyName, Object baseObject) {
+    @Override
+    public Object resolveProperty(Class<?> type, String propertyName, Object baseObject) {
 
         ObjEntity entity = cayenneService.entityResolver().getObjEntity(type);
         PropertyDescriptor property = cayenneService.entityResolver()
