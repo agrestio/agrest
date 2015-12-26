@@ -60,6 +60,7 @@
                 <ul class="pure-menu-list">
                     <!-- need to add .pure-menu-selected to `li` for `selected state` -->
                     <li class="pure-menu-item"><a href="#get-started" class="pure-menu-link">Getting Started</a></li>
+                    <li class="pure-menu-item"><a href="#video" class="pure-menu-link">Presentation</a></li>
                     <li class="pure-menu-item"><a href="#features" class="pure-menu-link">Features</a></li>
                     <li class="pure-menu-item"><a href="docs/index.html" class="pure-menu-link">Documentation</a></li>
                     <li class="pure-menu-item"><a href="https://groups.google.com/forum/?#!forum/linkrest-user" class="pure-menu-link">Forum</a></li>
@@ -95,7 +96,7 @@
     <div class="content-wrapper">
         <!-- GET STARTED BLOCK -->
         <div class="content container">
-        <span id="get-started"></span>
+        <span class="link-anchor" id="get-started"></span>
             <a href="#get-started" class="go"></a>
 
             <h2 class="content-head is-center">getting started</h2>
@@ -205,10 +206,33 @@ public class MyEntityResource {
 
             </div>
         </div>
+        
+        <!-- VIDEO BLOCK -->
+        <div class="full-width dark-section">
+            <div class="content container">
+                <span class="link-anchor" id="video"></span>
+
+                <h2 class="content-head is-center">video presentation</h2>
+
+                <p class="is-center">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nisi reiciendis doloremque deleniti perspiciatis laboriosam placeat dignissimos expedita sunt, earum officia voluptatibus optio aspernatur assumenda iste laborum molestiae iure numquam. Odio!</p>
+
+                <div class="pure-g">
+                    <div class="pure-u-1 ">
+                        <div class="video-container-holder splash-screen">
+                            <div class="video-container">
+                                <iframe class="yt-player" id="linkrest-presentation" src="//www.youtube.com/embed/Zwf9Xy90-8s?enablejsapi=1&modestbranding=1&rel=0&start=24" frameborder="0" allowfullscreen></iframe>
+                            </div>
+                            <!-- `play`-btn for version with .splash-screen -->
+                            <span class="play-btn"><i class="fa fa-play"></i></span>
+                        </div>    
+                    </div>
+                </div>
+            </div>
+        </div>
 
         <!-- MAIN FEATURES BLOCK -->
         <div class="content container">
-            <span id="features"></span>
+            <span class="link-anchor" id="features"></span>
             
             <h2 class="content-head is-center">features</h2>
 
@@ -282,12 +306,15 @@ public class MyEntityResource {
         <div class="footer is-center">
             <div class="container">
                 <p class="copy">
-                   &copy; 2015 NHL, ObjectStyle and other LinkRest Developers.<br />
+                   &copy; <span class="current-year">2015</span> NHL, ObjectStyle and other LinkRest Developers.<br />
                 </p>
             </div>
         </div>
 
     </div>
+
+    <script src="js/jquery.min.js"></script>
+    <script src="js/linkrest-app.js"></script>
 
 
 </body>

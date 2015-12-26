@@ -33,7 +33,6 @@ https://github.com/yahoo/pure/blob/master/LICENSE.md
   max-width: 80em;
   margin: 0 auto;
   position: relative;
-  border-top: 1px solid #d7d7d7;
 }
 .container:first-child {
   border-top: 0;
@@ -285,6 +284,95 @@ ul {
   content: "\f175";
 }
 
+.dark-section {
+  background-color: #BAC0C5;
+}
+.dark-section h2 {
+  color: #636363;
+}
+.dark-section p {
+  max-width: 63em;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.video-container-holder {
+  max-width: 63em;
+  position: relative;
+  margin: 30px auto 80px;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.17), 0 5px 35px rgba(0, 0, 0, 0.48);
+  overflow: hidden;
+}
+.video-container-holder:hover {
+  cursor: default;
+}
+.video-container-holder.splash-screen {
+  background: #3f4959 url(../img/video-section-transp.png) no-repeat center;
+  background-size: 100% auto;
+  transition: all .3s ease-out;
+}
+.video-container-holder.splash-screen:before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.29);
+}
+.video-container-holder.splash-screen .play-btn {
+  display: block;
+  /* text-shadow: 10px 0 30px rgba(0,0,0,.2); */
+  position: absolute;
+  left: 50%;
+  top: 52%;
+  transform: translate(-50%, -50%);
+  display: block;
+  border-radius: 50%;
+  width: 100px;
+  height: 100px;
+  background: #fff;
+  cursor: pointer;
+  transition: all .2s ease-out;
+}
+.video-container-holder.splash-screen .play-btn .fa {
+  color: #393d41;
+  font-size: 34px;
+  padding: 34px 0 0 41px;
+}
+.video-container-holder.splash-screen .play-btn:hover, .video-container-holder.splash-screen .play-btn:focus {
+  transform: translate(-50%, -50%) scale(1.05);
+}
+.video-container-holder.splash-screen .video-container {
+  opacity: 0;
+}
+.video-container-holder.splash-screen.off .video-container {
+  opacity: 1;
+  z-index: 1;
+}
+.video-container-holder .play-btn {
+  display: none;
+}
+.video-container-holder .video-container {
+  position: relative;
+  padding-bottom: 56.25%;
+  /*16:9*/
+  height: 0;
+  opacity: 1;
+  transition: all .3s ease-out;
+}
+.video-container-holder .video-container iframe,
+.video-container-holder .video-container object,
+.video-container-holder .video-container embed {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0 auto;
+}
+
 .features h2 {
   color: #4a4a4a;
   margin-top: 1.8em;
@@ -295,8 +383,7 @@ ul {
   margin-top: 3.375em;
 }
 
-#get-started,
-#features {
+.link-anchor {
   position: absolute;
   top: 0;
   visibility: hidden;
@@ -340,8 +427,7 @@ ul {
  * -- TABLET (AND UP) MEDIA QUERIES --
  */
 @media (min-width: 48em) {
-  #get-started,
-  #features {
+  .link-anchor {
     top: -60px;
   }
 
