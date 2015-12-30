@@ -3,6 +3,7 @@ package com.nhl.link.rest.runtime.parser.pointer;
 import com.nhl.link.rest.LinkRestException;
 import com.nhl.link.rest.runtime.cayenne.ICayennePersister;
 import org.apache.cayenne.ObjectContext;
+import org.apache.cayenne.Persistent;
 import org.apache.cayenne.exp.ExpressionFactory;
 import org.apache.cayenne.map.Entity;
 import org.apache.cayenne.map.ObjEntity;
@@ -116,18 +117,20 @@ public class CayennePointerContext implements PointerContext {
 
         return parts;
     }
-
+    
     @Override
-    public Object resolveObject(Class<?> type, Object id) {
+    public <T> T resolveObject(Class<T> type, Object id) {
         return SelectById.query(type, id).selectOne(delegateContext);
     }
+    
+	@Override
+	public Object resolveProperty(Object baseObject, String propertyName) {
 
-    @Override
-    public Object resolveProperty(Class<?> type, String propertyName, Object baseObject) {
+		Persistent persistentBaseObject = (Persistent) baseObject;
 
-        ObjEntity entity = cayenneService.entityResolver().getObjEntity(type);
-        PropertyDescriptor property = cayenneService.entityResolver()
-                .getClassDescriptor(entity.getName()).getProperty(propertyName);
-        return property.readProperty(baseObject);
-    }
+		ObjEntity entity = cayenneService.entityResolver().getObjEntity(persistentBaseObject);
+		PropertyDescriptor property = cayenneService.entityResolver().getClassDescriptor(entity.getName())
+				.getProperty(propertyName);
+		return property.readProperty(baseObject);
+	}
 }

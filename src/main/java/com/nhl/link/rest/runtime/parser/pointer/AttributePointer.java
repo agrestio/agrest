@@ -8,12 +8,10 @@ import javax.ws.rs.core.Response;
 
 class AttributePointer extends SimplePointer {
 
-    private LrEntity<?> entity;
     private LrAttribute attribute;
 
     AttributePointer(SimplePointer predecessor, LrEntity<?> entity, LrAttribute attribute) {
         super(predecessor, entity);
-        this.entity = entity;
         this.attribute = attribute;
     }
 
@@ -24,7 +22,7 @@ class AttributePointer extends SimplePointer {
             throw new IllegalArgumentException("Null base object passed to pointer: " + toString());
         }
 
-        return context.resolveProperty(entity.getType(), attribute.getName(), baseObject);
+        return context.resolveProperty(baseObject, attribute.getName());
     }
 
     @Override

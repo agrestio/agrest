@@ -9,13 +9,11 @@ import javax.ws.rs.core.Response;
 class RelationshipPointer extends SimplePointer {
 
     private PointerType type;
-    private LrEntity<?> entity;
     private LrRelationship relationship;
     private Object id;
 
     RelationshipPointer(SimplePointer predecessor, LrEntity<?> entity, LrRelationship relationship, Object id) {
         super(predecessor, entity);
-        this.entity = entity;
         this.relationship = relationship;
         this.id = id;
 
@@ -37,7 +35,7 @@ class RelationshipPointer extends SimplePointer {
 
         switch (type) {
             case IMPLICIT_TO_ONE_RELATIONSHIP: {
-                return context.resolveProperty(entity.getType(), relationship.getName(), baseObject);
+                return context.resolveProperty(baseObject, relationship.getName());
             }
             case EXPLICIT_TO_ONE_RELATIONSHIP:
             case TO_MANY_RELATIONSHIP: {
