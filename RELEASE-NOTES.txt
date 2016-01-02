@@ -1,6 +1,7 @@
 Release 1.22
 
 #126 LinkRest JSON Path
+#132 Listener param and return type are forced to be BaseLinearProcessingStage instead of ProcessingStage
 
 Release 1.21
 

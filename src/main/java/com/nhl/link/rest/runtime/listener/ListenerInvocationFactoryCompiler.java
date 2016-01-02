@@ -16,7 +16,6 @@ import javax.ws.rs.core.Response.Status;
 
 import com.nhl.link.rest.LinkRestException;
 import com.nhl.link.rest.processor.ProcessingContext;
-import com.nhl.link.rest.processor.BaseLinearProcessingStage;
 import com.nhl.link.rest.processor.ProcessingStage;
 
 /**
@@ -151,7 +150,7 @@ class ListenerInvocationFactoryCompiler {
 
 		case 2:
 			checkParamType(m.getName(), paramTypes[0], ProcessingContext.class);
-			checkParamType(m.getName(), paramTypes[1], BaseLinearProcessingStage.class);
+			checkParamType(m.getName(), paramTypes[1], ProcessingStage.class);
 			final Class<?> entityType2 = entityTypeForParamType(genericParamTypes[0]);
 
 			return new Invoker() {
