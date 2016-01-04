@@ -223,6 +223,8 @@ ul {
   border-radius: 0.25em 0.25em 0 0;
   background-color: #d4d8d8;
   padding: 0.563em 0.750em;
+  position: relative;
+  z-index: 2;
 }
 .get-started .get-started-env .env-wndw-top .btns {
   height: 0.875em;
@@ -247,10 +249,10 @@ ul {
   position: absolute;
   top: -4.3em;
   left: 0;
-  border: 1px solid #c9c9c9;
+  border: 1px solid #88929b;
   border-radius: 50%;
   line-height: 1.4;
-  color: #CFCFCF;
+  color: #838d96;
   cursor: pointer;
   font-size: 22px;
   font-family: 'Lato', sans-serif;
@@ -262,10 +264,10 @@ ul {
   height: 2.5em;
   width: 1px;
   position: absolute;
-  border-right: 1px dashed #c9c9c9;
+  border-right: 1px dashed #88929b;
   left: 50%;
   top: 100%;
-  z-index: -1;
+  z-index: 0;
 }
 .get-started .get-started-env pre.prettyprint {
   background: transparent;
@@ -285,7 +287,7 @@ ul {
 }
 
 .dark-section {
-  background-color: #BAC0C5;
+  background-color: #CED5DA;
 }
 .dark-section h2 {
   color: #636363;
@@ -473,6 +475,11 @@ ul {
   .content-wrapper {
     position: absolute;
     top: 521px;
+  }
+}
+@media screen and (min-width: 950px) and (max-width: 1023px) {
+  .code-tabs > label[for="tab4"] .tab-text {
+    padding: 15px 31px;
   }
 }
 /*
