@@ -21,6 +21,8 @@ public class LinkRestExceptionMapper implements ExceptionMapper<LinkRestExceptio
 	public Response toResponse(LinkRestException exception) {
 
 		String message = exception.getMessage();
+		String causeMessage = exception.getCause() != null && exception.getCause() != exception
+				? exception.getCause().getMessage() : null;
 		Status status = exception.getStatus();
 
 		if (LOGGER.isInfoEnabled()) {
@@ -29,6 +31,10 @@ public class LinkRestExceptionMapper implements ExceptionMapper<LinkRestExceptio
 
 			if (message != null) {
 				log.append(" (").append(message).append(")");
+			}
+			
+			if(causeMessage != null) {
+				log.append(" [cause: ").append(causeMessage).append("]");
 			}
 
 			// include stack trace in debug mode...
