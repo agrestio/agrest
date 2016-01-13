@@ -329,7 +329,6 @@ ul {
   left: 50%;
   top: 52%;
   transform: translate(-50%, -50%);
-  display: block;
   border-radius: 50%;
   width: 100px;
   height: 100px;
@@ -340,7 +339,7 @@ ul {
 .video-container-holder.splash-screen .play-btn .fa {
   color: #393d41;
   font-size: 34px;
-  padding: 34px 0 0 41px;
+  padding: 34px 0 0 10px;
 }
 .video-container-holder.splash-screen .play-btn:hover, .video-container-holder.splash-screen .play-btn:focus {
   transform: translate(-50%, -50%) scale(1.05);
@@ -413,10 +412,6 @@ ul {
 @media (max-width: 48em) {
   .pure-menu-horizontal .pure-menu-list {
     display: block;
-  }
-
-  .fork-on-github-btn {
-    display: none !important;
   }
 
   .go {
