@@ -47,16 +47,13 @@ public abstract class JerseyTestOnDerby extends JerseyTest {
 	public static void setUpClass() throws IOException, SQLException {
 		JerseyTestOnDerby.DERBY_MANAGER = new DerbyManager("target/derby");
 
-		JerseyTestOnDerby.CAYENNE_RUNTIME = new ServerRuntimeBuilder()
-				.addConfig("cayenne-linkrest-tests.xml")
+		JerseyTestOnDerby.CAYENNE_RUNTIME = new ServerRuntimeBuilder().addConfig("cayenne-linkrest-tests.xml")
 				.addModule(new Module() {
 					@Override
 					public void configure(Binder binder) {
 						binder.bind(SchemaUpdateStrategy.class).to(CreateIfNoSchemaStrategy.class);
 					}
-				})
-				.jdbcDriver("org.apache.derby.jdbc.EmbeddedDriver")
-				.url("jdbc:derby:target/derby;create=true")
+				}).jdbcDriver("org.apache.derby.jdbc.EmbeddedDriver").url("jdbc:derby:target/derby;create=true")
 				.build();
 	}
 
@@ -67,10 +64,6 @@ public abstract class JerseyTestOnDerby extends JerseyTest {
 
 		JerseyTestOnDerby.DERBY_MANAGER.shutdown();
 		JerseyTestOnDerby.DERBY_MANAGER = null;
-	}
-	
-	protected static ObjectContext newContext() {
-		return CAYENNE_RUNTIME.newContext();
 	}
 
 	protected ObjectContext context;
@@ -147,6 +140,10 @@ public abstract class JerseyTestOnDerby extends JerseyTest {
 
 	protected int intForQuery(String querySql) {
 		return SQLSelect.scalarQuery(Integer.class, querySql).selectOne(context).intValue();
+	}
+
+	protected ObjectContext newContext() {
+		return CAYENNE_RUNTIME.newContext();
 	}
 
 	protected void insert(String table, String columns, String values) {
