@@ -37,7 +37,7 @@ public class GET_EncoderFilters_IT extends JerseyTestOnDerby {
 	@Test
 	public void testFilteredTotal() {
 
-		runtime.newContext()
+		newContext()
 				.performGenericQuery(new SQLTemplate(E3.class, "INSERT INTO utest.e4 (id) values (1), (2)"));
 
 		Response response1 = target("/e4").queryParam("include", "id").queryParam("sort", "id").request().get();
@@ -48,7 +48,7 @@ public class GET_EncoderFilters_IT extends JerseyTestOnDerby {
 	@Test
 	public void testFilteredPagination1() {
 
-		runtime.newContext().performGenericQuery(
+		newContext().performGenericQuery(
 				new SQLTemplate(E3.class, "INSERT INTO utest.e4 (id) "
 						+ "values (1), (2), (3), (4), (5), (6), (7), (8), (9), (10)"));
 
@@ -63,7 +63,7 @@ public class GET_EncoderFilters_IT extends JerseyTestOnDerby {
 	@Test
 	public void testFilteredPagination2() {
 
-		runtime.newContext().performGenericQuery(
+		newContext().performGenericQuery(
 				new SQLTemplate(E3.class, "INSERT INTO utest.e4 (id) "
 						+ "values (1), (2), (3), (4), (5), (6), (7), (8), (9), (10)"));
 
@@ -78,7 +78,7 @@ public class GET_EncoderFilters_IT extends JerseyTestOnDerby {
 	@Test
 	public void testFilteredPagination3() {
 
-		runtime.newContext().performGenericQuery(
+		newContext().performGenericQuery(
 				new SQLTemplate(E3.class, "INSERT INTO utest.e4 (id) "
 						+ "values (1), (2), (3), (4), (5), (6), (7), (8), (9), (10)"));
 

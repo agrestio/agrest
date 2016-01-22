@@ -26,11 +26,11 @@ public class GET_ListenersIT extends JerseyTestOnDerby {
 
 	@Before
 	public void loadData() {
-		runtime.newContext()
+		newContext()
 				.performGenericQuery(new SQLTemplate(E2.class, "INSERT INTO utest.e2 (id, name) values (1, 'xxx')"));
-		runtime.newContext().performGenericQuery(
+		newContext().performGenericQuery(
 				new SQLTemplate(E3.class, "INSERT INTO utest.e3 (id, e2_id, name) values (8, 1, 'yyy')"));
-		runtime.newContext().performGenericQuery(
+		newContext().performGenericQuery(
 				new SQLTemplate(E3.class, "INSERT INTO utest.e3 (id, e2_id, name) values (9, 1, 'zzz')"));
 	}
 

@@ -36,11 +36,11 @@ public class Sencha_GET_IT extends JerseyTestOnDerby {
 	@Test
 	public void test_SelectById_Prefetching() throws WebApplicationException, IOException {
 
-		runtime.newContext().performGenericQuery(
+		newContext().performGenericQuery(
 				new SQLTemplate(E2.class, "INSERT INTO utest.e2 (id, name) values (1, 'xxx')"));
-		runtime.newContext().performGenericQuery(
+		newContext().performGenericQuery(
 				new SQLTemplate(E3.class, "INSERT INTO utest.e3 (id, e2_id, name) values (8, 1, 'yyy')"));
-		runtime.newContext().performGenericQuery(
+		newContext().performGenericQuery(
 				new SQLTemplate(E3.class, "INSERT INTO utest.e3 (id, e2_id, name) values (9, 1, 'zzz')"));
 
 		Response response1 = target("/e3/8").queryParam("include", "e2.id").request().get();
@@ -67,11 +67,11 @@ public class Sencha_GET_IT extends JerseyTestOnDerby {
 	@Test
 	public void test_Select_Prefetching() throws WebApplicationException, IOException {
 
-		runtime.newContext().performGenericQuery(
+		newContext().performGenericQuery(
 				new SQLTemplate(E2.class, "INSERT INTO utest.e2 (id, name) values (1, 'xxx')"));
-		runtime.newContext().performGenericQuery(
+		newContext().performGenericQuery(
 				new SQLTemplate(E3.class, "INSERT INTO utest.e3 (id, e2_id, name) values (8, 1, 'yyy')"));
-		runtime.newContext().performGenericQuery(
+		newContext().performGenericQuery(
 				new SQLTemplate(E3.class, "INSERT INTO utest.e3 (id, e2_id, name) values (9, 1, 'zzz')"));
 
 		Response response1 = target("/e3").queryParam("include", "id").queryParam("include", "e2.id")
@@ -85,15 +85,15 @@ public class Sencha_GET_IT extends JerseyTestOnDerby {
 	@Test
 	public void test_Select_Prefetching_StartLimit() throws WebApplicationException, IOException {
 
-		runtime.newContext().performGenericQuery(
+		newContext().performGenericQuery(
 				new SQLTemplate(E2.class, "INSERT INTO utest.e2 (id, name) values (1, 'xxx')"));
-		runtime.newContext().performGenericQuery(
+		newContext().performGenericQuery(
 				new SQLTemplate(E3.class, "INSERT INTO utest.e3 (id, e2_id, name) values (8, 1, 'yyy')"));
-		runtime.newContext().performGenericQuery(
+		newContext().performGenericQuery(
 				new SQLTemplate(E3.class, "INSERT INTO utest.e3 (id, e2_id, name) values (9, 1, 'zzz')"));
-		runtime.newContext().performGenericQuery(
+		newContext().performGenericQuery(
 				new SQLTemplate(E3.class, "INSERT INTO utest.e3 (id, e2_id, name) values (10, 1, 'zzz')"));
-		runtime.newContext().performGenericQuery(
+		newContext().performGenericQuery(
 				new SQLTemplate(E3.class, "INSERT INTO utest.e3 (id, e2_id, name) values (11, 1, 'zzz')"));
 
 		Response response1 = target("/e3").queryParam("include", "id").queryParam("include", "e2.id")
@@ -107,11 +107,11 @@ public class Sencha_GET_IT extends JerseyTestOnDerby {
 	@Test
 	public void test_SelectToOne_Null() throws WebApplicationException, IOException {
 
-		runtime.newContext().performGenericQuery(
+		newContext().performGenericQuery(
 				new SQLTemplate(E2.class, "INSERT INTO utest.e2 (id, name) values (1, 'xxx')"));
-		runtime.newContext().performGenericQuery(
+		newContext().performGenericQuery(
 				new SQLTemplate(E3.class, "INSERT INTO utest.e3 (id, e2_id, name) values (8, 1, 'yyy')"));
-		runtime.newContext().performGenericQuery(
+		newContext().performGenericQuery(
 				new SQLTemplate(E3.class, "INSERT INTO utest.e3 (id, e2_id, name) values (9, null, 'zzz')"));
 
 		Response response1 = target("/e3").queryParam("include", "e2.id").queryParam("include", "id").request().get();
@@ -125,9 +125,9 @@ public class Sencha_GET_IT extends JerseyTestOnDerby {
 	@Test
 	public void test_MapBy_ToOne() throws WebApplicationException, IOException {
 
-		runtime.newContext().performGenericQuery(
+		newContext().performGenericQuery(
 				new SQLTemplate(E2.class, "INSERT INTO utest.e2 (id, name) values (1, 'xxx')"));
-		runtime.newContext().performGenericQuery(
+		newContext().performGenericQuery(
 				new SQLTemplate(E3.class, "INSERT INTO utest.e3 (id, e2_id, name) values (8, 1, 'yyy')"));
 
 		Response response1 = target("/e3").queryParam("include", urlEnc("{\"path\":\"e2\",\"mapBy\":\"name\"}"))
@@ -143,11 +143,11 @@ public class Sencha_GET_IT extends JerseyTestOnDerby {
 
 	@Test
 	public void test_ToMany_IncludeRelated() throws WebApplicationException, IOException {
-		runtime.newContext().performGenericQuery(
+		newContext().performGenericQuery(
 				new SQLTemplate(E3.class, "INSERT INTO utest.e5 (id,name) values (345, 'B'),(346, 'A')"));
-		runtime.newContext().performGenericQuery(
+		newContext().performGenericQuery(
 				new SQLTemplate(E2.class, "INSERT INTO utest.e2 (id, name) values (1, 'xxx')"));
-		runtime.newContext().performGenericQuery(
+		newContext().performGenericQuery(
 				new SQLTemplate(E3.class, "INSERT INTO utest.e3 (id, e2_id, e5_id, name) "
 						+ "values (8, 1, 345, 'a'),(9, 1, 345, 'z'),(7, 1, 346, 'm')"));
 
@@ -166,9 +166,9 @@ public class Sencha_GET_IT extends JerseyTestOnDerby {
 	@Test
 	public void test_PathRelationship() throws WebApplicationException, IOException {
 
-		runtime.newContext().performGenericQuery(
+		newContext().performGenericQuery(
 				new SQLTemplate(E2.class, "INSERT INTO utest.e2 (id, name) values (1, 'xxx')"));
-		runtime.newContext().performGenericQuery(
+		newContext().performGenericQuery(
 				new SQLTemplate(E3.class, "INSERT INTO utest.e3 (id, e2_id, name) values (8, 1, 'yyy')"));
 
 		Response response1 = target("/e3").queryParam("include", urlEnc("{\"path\":\"e2\"}"))

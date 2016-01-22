@@ -93,18 +93,18 @@ public class PUT_Related_ByKey_IT extends JerseyTestOnDerby {
 	@Test
 	public void testPUT_ToMany_LongId() throws WebApplicationException, IOException {
 
-		runtime.newContext().performGenericQuery(
+		newContext().performGenericQuery(
 				new SQLTemplate(E3.class, "INSERT INTO utest.e15 (long_id, name) values (5, 'aaa')"));
-		runtime.newContext().performGenericQuery(
+		newContext().performGenericQuery(
 				new SQLTemplate(E3.class, "INSERT INTO utest.e15 (long_id, name) values (44, 'aaa')"));
 
-		runtime.newContext().performGenericQuery(
+		newContext().performGenericQuery(
 				new SQLTemplate(E3.class, "INSERT INTO utest.e14 (long_id, e15_id, name) values (5, 5, 'aaa')"));
-		runtime.newContext().performGenericQuery(
+		newContext().performGenericQuery(
 				new SQLTemplate(E3.class, "INSERT INTO utest.e14 (long_id, e15_id, name) values (4, 44, 'zzz')"));
-		runtime.newContext().performGenericQuery(
+		newContext().performGenericQuery(
 				new SQLTemplate(E3.class, "INSERT INTO utest.e14 (long_id, e15_id, name) values (2, 44, 'bbb')"));
-		runtime.newContext().performGenericQuery(
+		newContext().performGenericQuery(
 				new SQLTemplate(E3.class, "INSERT INTO utest.e14 (long_id, e15_id, name) values (6, 5, 'yyy')"));
 
 		Response r1 = target("/e15/44/e14s").queryParam("exclude", "id").queryParam("include", E3.NAME.getName())

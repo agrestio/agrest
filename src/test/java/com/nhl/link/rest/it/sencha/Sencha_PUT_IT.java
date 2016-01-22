@@ -38,15 +38,15 @@ public class Sencha_PUT_IT extends JerseyTestOnDerby {
 	@Test
 	public void testPut_ToOne_FromNull() throws WebApplicationException, IOException {
 
-		runtime.newContext()
+		newContext()
 				.performGenericQuery(new SQLTemplate(E4.class, "INSERT INTO utest.e2 (id, name) values (1, 'xxx')"));
-		runtime.newContext()
+		newContext()
 				.performGenericQuery(new SQLTemplate(E4.class, "INSERT INTO utest.e2 (id, name) values (8, 'yyy')"));
-		runtime.newContext().performGenericQuery(
+		newContext().performGenericQuery(
 				new SQLTemplate(E4.class, "INSERT INTO utest.e3 (id, name, e2_id) values (3, 'zzz', null)"));
 
-		E3 e3 = Cayenne.objectForPK(runtime.newContext(), E3.class, 3);
-		runtime.newContext().invalidateObjects(e3);
+		E3 e3 = Cayenne.objectForPK(newContext(), E3.class, 3);
+		newContext().invalidateObjects(e3);
 		assertNull(e3.getE2());
 
 		Response response1 = target("/e3/3").request()
@@ -55,23 +55,23 @@ public class Sencha_PUT_IT extends JerseyTestOnDerby {
 		assertEquals("{\"success\":true,\"data\":[{\"id\":3,\"name\":\"zzz\",\"phoneNumber\":null}],\"total\":1}",
 				response1.readEntity(String.class));
 
-		e3 = Cayenne.objectForPK(runtime.newContext(), E3.class, 3);
-		runtime.newContext().invalidateObjects(e3);
+		e3 = Cayenne.objectForPK(newContext(), E3.class, 3);
+		newContext().invalidateObjects(e3);
 		assertEquals(8, Cayenne.intPKForObject(e3.getE2()));
 	}
 
 	@Test
 	public void testPut_ToOne_ToNull() throws WebApplicationException, IOException {
 
-		runtime.newContext()
+		newContext()
 				.performGenericQuery(new SQLTemplate(E4.class, "INSERT INTO utest.e2 (id, name) values (1, 'xxx')"));
-		runtime.newContext()
+		newContext()
 				.performGenericQuery(new SQLTemplate(E4.class, "INSERT INTO utest.e2 (id, name) values (8, 'yyy')"));
-		runtime.newContext().performGenericQuery(
+		newContext().performGenericQuery(
 				new SQLTemplate(E4.class, "INSERT INTO utest.e3 (id, name, e2_id) values (3, 'zzz', 8)"));
 
-		E3 e3 = Cayenne.objectForPK(runtime.newContext(), E3.class, 3);
-		runtime.newContext().invalidateObjects(e3);
+		E3 e3 = Cayenne.objectForPK(newContext(), E3.class, 3);
+		newContext().invalidateObjects(e3);
 		assertEquals(8, Cayenne.intPKForObject(e3.getE2()));
 
 		Response response1 = target("/e3/3").request()
@@ -81,23 +81,23 @@ public class Sencha_PUT_IT extends JerseyTestOnDerby {
 		assertEquals("{\"success\":true,\"data\":[{\"id\":3,\"name\":\"zzz\",\"phoneNumber\":null}],\"total\":1}",
 				response1.readEntity(String.class));
 
-		e3 = Cayenne.objectForPK(runtime.newContext(), E3.class, 3);
-		runtime.newContext().invalidateObjects(e3);
+		e3 = Cayenne.objectForPK(newContext(), E3.class, 3);
+		newContext().invalidateObjects(e3);
 		assertNull(e3.getE2());
 	}
 
 	@Test
 	public void testPut_ToOne() throws WebApplicationException, IOException {
 
-		runtime.newContext()
+		newContext()
 				.performGenericQuery(new SQLTemplate(E4.class, "INSERT INTO utest.e2 (id, name) values (1, 'xxx')"));
-		runtime.newContext()
+		newContext()
 				.performGenericQuery(new SQLTemplate(E4.class, "INSERT INTO utest.e2 (id, name) values (8, 'yyy')"));
-		runtime.newContext().performGenericQuery(
+		newContext().performGenericQuery(
 				new SQLTemplate(E4.class, "INSERT INTO utest.e3 (id, name, e2_id) values (3, 'zzz', 8)"));
 
-		E3 e3 = Cayenne.objectForPK(runtime.newContext(), E3.class, 3);
-		runtime.newContext().invalidateObjects(e3);
+		E3 e3 = Cayenne.objectForPK(newContext(), E3.class, 3);
+		newContext().invalidateObjects(e3);
 		assertEquals(8, Cayenne.intPKForObject(e3.getE2()));
 
 		Response response1 = target("/e3/3").request()
@@ -106,19 +106,19 @@ public class Sencha_PUT_IT extends JerseyTestOnDerby {
 		assertEquals("{\"success\":true,\"data\":[{\"id\":3,\"name\":\"zzz\",\"phoneNumber\":null}],\"total\":1}",
 				response1.readEntity(String.class));
 
-		e3 = Cayenne.objectForPK(runtime.newContext(), E3.class, 3);
-		runtime.newContext().invalidateObjects(e3);
+		e3 = Cayenne.objectForPK(newContext(), E3.class, 3);
+		newContext().invalidateObjects(e3);
 		assertEquals(1, Cayenne.intPKForObject(e3.getE2()));
 	}
 
 	@Test
 	public void testPut_ToOne_Relationship_Name() throws WebApplicationException, IOException {
 
-		runtime.newContext()
+		newContext()
 				.performGenericQuery(new SQLTemplate(E4.class, "INSERT INTO utest.e2 (id, name) values (1, 'xxx')"));
-		runtime.newContext()
+		newContext()
 				.performGenericQuery(new SQLTemplate(E4.class, "INSERT INTO utest.e2 (id, name) values (8, 'yyy')"));
-		runtime.newContext().performGenericQuery(
+		newContext().performGenericQuery(
 				new SQLTemplate(E4.class, "INSERT INTO utest.e3 (id, name, e2_id) values (3, 'zzz', 8)"));
 
 		Response response1 = target("/e3/3").request()

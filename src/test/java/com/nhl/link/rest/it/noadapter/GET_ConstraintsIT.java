@@ -31,7 +31,7 @@ public class GET_ConstraintsIT extends JerseyTestOnDerby {
 
 		SQLTemplate insert = new SQLTemplate(E4.class,
 				"INSERT INTO utest.e4 (id, c_varchar, c_int) values (1, 'xxx', 5)");
-		runtime.newContext().performGenericQuery(insert);
+		newContext().performGenericQuery(insert);
 
 		Response response1 = target("/e4/limit_attributes").request().get();
 		assertEquals(Status.OK.getStatusCode(), response1.getStatus());
@@ -45,7 +45,7 @@ public class GET_ConstraintsIT extends JerseyTestOnDerby {
 
 		SQLTemplate insert = new SQLTemplate(E4.class,
 				"INSERT INTO utest.e4 (id, c_varchar, c_int) values (1, 'xxx', 5)");
-		runtime.newContext().performGenericQuery(insert);
+		newContext().performGenericQuery(insert);
 
 		Response response1 = target("/e4/limit_attributes").queryParam("include", E4.C_BOOLEAN.getName())
 				.queryParam("include", E4.C_INT.getName()).request().get();

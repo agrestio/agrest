@@ -44,7 +44,7 @@ public class GET_IT extends JerseyTestOnDerby {
 
 		SQLTemplate insert = new SQLTemplate(E4.class,
 				"INSERT INTO utest.e4 (id, c_varchar, c_int) values (1, 'xxx', 5)");
-		runtime.newContext().performGenericQuery(insert);
+		newContext().performGenericQuery(insert);
 
 		Response response1 = target("/e4").request().get();
 		assertEquals(Status.OK.getStatusCode(), response1.getStatus());
@@ -61,7 +61,7 @@ public class GET_IT extends JerseyTestOnDerby {
 		SQLTemplate insert = new SQLTemplate(E4.class,
 				"INSERT INTO utest.e4 (c_timestamp) values (#bind($ts 'TIMESTAMP'))");
 		insert.setParams(Collections.singletonMap("ts", ts.toDate()));
-		runtime.newContext().performGenericQuery(insert);
+		newContext().performGenericQuery(insert);
 
 		Response response1 = target("/e4").queryParam("include", E4.C_TIMESTAMP.getName()).request().get();
 
@@ -77,7 +77,7 @@ public class GET_IT extends JerseyTestOnDerby {
 
 		SQLTemplate insert = new SQLTemplate(E4.class, "INSERT INTO utest.e4 (c_date) values (#bind($date 'DATE'))");
 		insert.setParams(Collections.singletonMap("date", date.toDate()));
-		runtime.newContext().performGenericQuery(insert);
+		newContext().performGenericQuery(insert);
 
 		Response response1 = target("/e4").queryParam("include", E4.C_DATE.getName()).request().get();
 
@@ -96,7 +96,7 @@ public class GET_IT extends JerseyTestOnDerby {
 
 		SQLTemplate insert = new SQLTemplate(E4.class, "INSERT INTO utest.e4 (c_time) values (#bind($time 'TIME'))");
 		insert.setParams(Collections.singletonMap("time", time));
-		runtime.newContext().performGenericQuery(insert);
+		newContext().performGenericQuery(insert);
 
 		Response response1 = target("/e4").queryParam("include", E4.C_TIME.getName()).request().get();
 
@@ -108,9 +108,9 @@ public class GET_IT extends JerseyTestOnDerby {
 	@Test
 	public void test_Sort_ById() throws WebApplicationException, IOException {
 
-		runtime.newContext().performGenericQuery(new SQLTemplate(E4.class, "INSERT INTO utest.e4 (id) values (2)"));
-		runtime.newContext().performGenericQuery(new SQLTemplate(E4.class, "INSERT INTO utest.e4 (id) values (1)"));
-		runtime.newContext().performGenericQuery(new SQLTemplate(E4.class, "INSERT INTO utest.e4 (id) values (3)"));
+		newContext().performGenericQuery(new SQLTemplate(E4.class, "INSERT INTO utest.e4 (id) values (2)"));
+		newContext().performGenericQuery(new SQLTemplate(E4.class, "INSERT INTO utest.e4 (id) values (1)"));
+		newContext().performGenericQuery(new SQLTemplate(E4.class, "INSERT INTO utest.e4 (id) values (3)"));
 
 		Response response1 = target("/e4").queryParam("sort", urlEnc("[{\"property\":\"id\",\"direction\":\"DESC\"}]"))
 				.queryParam("include", "id").request().get();
@@ -137,9 +137,9 @@ public class GET_IT extends JerseyTestOnDerby {
 	// allowing for lax property name checking as a result
 	public void test_Sort_Null() throws WebApplicationException, IOException {
 
-		runtime.newContext().performGenericQuery(new SQLTemplate(E4.class, "INSERT INTO utest.e4 (id) values (2)"));
-		runtime.newContext().performGenericQuery(new SQLTemplate(E4.class, "INSERT INTO utest.e4 (id) values (1)"));
-		runtime.newContext().performGenericQuery(new SQLTemplate(E4.class, "INSERT INTO utest.e4 (id) values (3)"));
+		newContext().performGenericQuery(new SQLTemplate(E4.class, "INSERT INTO utest.e4 (id) values (2)"));
+		newContext().performGenericQuery(new SQLTemplate(E4.class, "INSERT INTO utest.e4 (id) values (1)"));
+		newContext().performGenericQuery(new SQLTemplate(E4.class, "INSERT INTO utest.e4 (id) values (3)"));
 
 		Response response1 = target("/e4").queryParam("sort", urlEnc("[{\"property\":null,\"direction\":\"DESC\"}]"))
 				.queryParam("include", "id").request().get();
@@ -151,7 +151,7 @@ public class GET_IT extends JerseyTestOnDerby {
 	@Test
 	public void test_SelectById() throws WebApplicationException, IOException {
 
-		runtime.newContext().performGenericQuery(new SQLTemplate(E4.class, "INSERT INTO utest.e4 (id) values (2)"));
+		newContext().performGenericQuery(new SQLTemplate(E4.class, "INSERT INTO utest.e4 (id) values (2)"));
 
 		Response response1 = target("/e4/2").request().get();
 
@@ -164,7 +164,7 @@ public class GET_IT extends JerseyTestOnDerby {
 	@Test
 	public void test_SelectById_Params() throws WebApplicationException, IOException {
 
-		runtime.newContext().performGenericQuery(new SQLTemplate(E4.class, "INSERT INTO utest.e4 (id) values (2)"));
+		newContext().performGenericQuery(new SQLTemplate(E4.class, "INSERT INTO utest.e4 (id) values (2)"));
 
 		Response response1 = target("/e4/ie/2").request().get();
 
@@ -191,11 +191,11 @@ public class GET_IT extends JerseyTestOnDerby {
 	@Test
 	public void test_SelectById_Prefetching() throws WebApplicationException, IOException {
 
-		runtime.newContext().performGenericQuery(
+		newContext().performGenericQuery(
 				new SQLTemplate(E2.class, "INSERT INTO utest.e2 (id, name) values (1, 'xxx')"));
-		runtime.newContext().performGenericQuery(
+		newContext().performGenericQuery(
 				new SQLTemplate(E3.class, "INSERT INTO utest.e3 (id, e2_id, name) values (8, 1, 'yyy')"));
-		runtime.newContext().performGenericQuery(
+		newContext().performGenericQuery(
 				new SQLTemplate(E3.class, "INSERT INTO utest.e3 (id, e2_id, name) values (9, 1, 'zzz')"));
 
 		Response response1 = target("/e3/8").queryParam("include", "e2.id").request().get();
@@ -222,11 +222,11 @@ public class GET_IT extends JerseyTestOnDerby {
 	@Test
 	public void test_Select_Prefetching() throws WebApplicationException, IOException {
 
-		runtime.newContext().performGenericQuery(
+		newContext().performGenericQuery(
 				new SQLTemplate(E2.class, "INSERT INTO utest.e2 (id, name) values (1, 'xxx')"));
-		runtime.newContext().performGenericQuery(
+		newContext().performGenericQuery(
 				new SQLTemplate(E3.class, "INSERT INTO utest.e3 (id, e2_id, name) values (8, 1, 'yyy')"));
-		runtime.newContext().performGenericQuery(
+		newContext().performGenericQuery(
 				new SQLTemplate(E3.class, "INSERT INTO utest.e3 (id, e2_id, name) values (9, 1, 'zzz')"));
 
 		Response response1 = target("/e3").queryParam("include", "id").queryParam("include", "e2.id")
@@ -240,15 +240,15 @@ public class GET_IT extends JerseyTestOnDerby {
 	@Test
 	public void test_Select_Prefetching_StartLimit() throws WebApplicationException, IOException {
 
-		runtime.newContext().performGenericQuery(
+		newContext().performGenericQuery(
 				new SQLTemplate(E2.class, "INSERT INTO utest.e2 (id, name) values (1, 'xxx')"));
-		runtime.newContext().performGenericQuery(
+		newContext().performGenericQuery(
 				new SQLTemplate(E3.class, "INSERT INTO utest.e3 (id, e2_id, name) values (8, 1, 'yyy')"));
-		runtime.newContext().performGenericQuery(
+		newContext().performGenericQuery(
 				new SQLTemplate(E3.class, "INSERT INTO utest.e3 (id, e2_id, name) values (9, 1, 'zzz')"));
-		runtime.newContext().performGenericQuery(
+		newContext().performGenericQuery(
 				new SQLTemplate(E3.class, "INSERT INTO utest.e3 (id, e2_id, name) values (10, 1, 'zzz')"));
-		runtime.newContext().performGenericQuery(
+		newContext().performGenericQuery(
 				new SQLTemplate(E3.class, "INSERT INTO utest.e3 (id, e2_id, name) values (11, 1, 'zzz')"));
 
 		Response response1 = target("/e3").queryParam("include", "id").queryParam("include", "e2.id")
@@ -262,11 +262,11 @@ public class GET_IT extends JerseyTestOnDerby {
 	@Test
 	public void test_SelectToOne_Null() throws WebApplicationException, IOException {
 
-		runtime.newContext().performGenericQuery(
+		newContext().performGenericQuery(
 				new SQLTemplate(E2.class, "INSERT INTO utest.e2 (id, name) values (1, 'xxx')"));
-		runtime.newContext().performGenericQuery(
+		newContext().performGenericQuery(
 				new SQLTemplate(E3.class, "INSERT INTO utest.e3 (id, e2_id, name) values (8, 1, 'yyy')"));
-		runtime.newContext().performGenericQuery(
+		newContext().performGenericQuery(
 				new SQLTemplate(E3.class, "INSERT INTO utest.e3 (id, e2_id, name) values (9, null, 'zzz')"));
 
 		Response response1 = target("/e3").queryParam("include", "e2.id").queryParam("include", "id").request().get();
@@ -279,7 +279,7 @@ public class GET_IT extends JerseyTestOnDerby {
 	@Test
 	public void test_SelectCharPK() throws WebApplicationException, IOException {
 
-		runtime.newContext().performGenericQuery(
+		newContext().performGenericQuery(
 				new SQLTemplate(E2.class, "INSERT INTO utest.e6 (char_id, char_column) values ('a', 'aaa')"));
 
 		Response response1 = target("/e6/a").request().get();
@@ -291,7 +291,7 @@ public class GET_IT extends JerseyTestOnDerby {
 
 	@Test
 	public void test_SelectByCompoundId() {
-		runtime.newContext().performGenericQuery(
+		newContext().performGenericQuery(
 				new SQLTemplate(E17.class, "INSERT INTO utest.e17 (id1, id2, name) values (1, 1, 'aaa')"));
 
 		Response response1 = target("/e17").queryParam("id1", 1).queryParam("id2", 1).request().get();
@@ -305,7 +305,7 @@ public class GET_IT extends JerseyTestOnDerby {
 	public void test_SelectById_EscapeLineSeparators() throws WebApplicationException, IOException {
 
 		String s = "First line\u2028Second line...\u2029";
-		runtime.newContext().performGenericQuery(
+		newContext().performGenericQuery(
 				new SQLTemplate(E2.class, "INSERT INTO utest.e4 (id, c_varchar) values (1, '" + s + "')"));
 
 		Response response1 = target("/e4/1").request().get();

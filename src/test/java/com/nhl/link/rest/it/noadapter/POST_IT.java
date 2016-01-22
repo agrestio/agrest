@@ -239,7 +239,7 @@ public class POST_IT extends JerseyTestOnDerby {
 		assertEquals("{\"data\":[{\"id\":" + id
 				+ ",\"name\":\"MM\",\"phoneNumber\":null}],\"total\":1}", response1.readEntity(String.class));
 
-		runtime.newContext().invalidateObjects(e3);
+		newContext().invalidateObjects(e3);
 		assertEquals("MM", e3.getName());
 		assertEquals(8, Cayenne.intPKForObject(e3.getE2()));
 	}
@@ -261,7 +261,7 @@ public class POST_IT extends JerseyTestOnDerby {
 		assertEquals("{\"data\":[{\"id\":" + id
 				+ ",\"name\":\"MM\",\"phoneNumber\":null}],\"total\":1}", response1.readEntity(String.class));
 
-		runtime.newContext().invalidateObjects(e3);
+		newContext().invalidateObjects(e3);
 		assertEquals("MM", e3.getName());
 		assertNull(e3.getE2());
 	}

@@ -55,7 +55,7 @@ public class POST_Related_IT extends JerseyTestOnDerby {
 	@Test
 	public void testRelate_ToMany_New_CompoundId() {
 
-		runtime.newContext().performGenericQuery(
+		newContext().performGenericQuery(
 				new SQLTemplate(E17.class, "INSERT INTO utest.e17 (id1, id2, name) values (1, 1, 'aaa')"));
 
 		Response r1 = target("/e17/e18s").matrixParam("parentId1", 1).matrixParam("parentId2", 1).request()

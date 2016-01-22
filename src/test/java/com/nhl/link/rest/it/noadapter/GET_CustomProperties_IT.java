@@ -23,7 +23,7 @@ public class GET_CustomProperties_IT extends JerseyTestOnDerby {
 	@Test
 	public void testRootExtrasEncoder() {
 
-		runtime.newContext()
+		newContext()
 				.performGenericQuery(new SQLTemplate(E3.class, "INSERT INTO utest.e4 (id) values (1), (2)"));
 
 		Response response1 = target("/e4/calc_property").queryParam("include", "id").queryParam("sort", "id").request()

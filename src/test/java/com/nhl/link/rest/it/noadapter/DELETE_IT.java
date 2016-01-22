@@ -30,61 +30,61 @@ public class DELETE_IT extends JerseyTestOnDerby {
 	@Test
 	public void testDelete() throws IOException {
 
-		runtime.newContext().performGenericQuery(
+		newContext().performGenericQuery(
 				new SQLTemplate(E4.class, "INSERT INTO utest.e4 (id, c_varchar) values (1, 'xxx')"));
-		runtime.newContext().performGenericQuery(
+		newContext().performGenericQuery(
 				new SQLTemplate(E4.class, "INSERT INTO utest.e4 (id, c_varchar) values (8, 'yyy')"));
 
-		assertEquals(2l, Cayenne.objectForQuery(runtime.newContext(), new EJBQLQuery("select count(a) from E4 a")));
+		assertEquals(2l, Cayenne.objectForQuery(newContext(), new EJBQLQuery("select count(a) from E4 a")));
 
 		Response response1 = target("/e4/8").request().delete();
 		assertEquals(Status.OK.getStatusCode(), response1.getStatus());
 		assertEquals("{\"success\":true}", response1.readEntity(String.class));
 
-		assertEquals(1l, Cayenne.objectForQuery(runtime.newContext(), new EJBQLQuery("select count(a) from E4 a")));
+		assertEquals(1l, Cayenne.objectForQuery(newContext(), new EJBQLQuery("select count(a) from E4 a")));
 	}
 
 	@Test
 	public void testDelete_CompoundId() {
 
-		runtime.newContext().performGenericQuery(
+		newContext().performGenericQuery(
 				new SQLTemplate(E17.class, "INSERT INTO utest.e17 (id1, id2, name) values (1, 1, 'aaa')"));
-		runtime.newContext().performGenericQuery(
+		newContext().performGenericQuery(
 				new SQLTemplate(E17.class, "INSERT INTO utest.e17 (id1, id2, name) values (2, 2, 'bbb')"));
 
 		Response response1 = target("/e17").queryParam("id1", 1).queryParam("id2", 1).request().delete();
 		assertEquals(Status.OK.getStatusCode(), response1.getStatus());
 		assertEquals("{\"success\":true}", response1.readEntity(String.class));
 
-		assertEquals(1l, Cayenne.objectForQuery(runtime.newContext(), new EJBQLQuery("select count(a) from E17 a")));
-		assertEquals("bbb", Cayenne.objectForQuery(runtime.newContext(),
+		assertEquals(1l, Cayenne.objectForQuery(newContext(), new EJBQLQuery("select count(a) from E17 a")));
+		assertEquals("bbb", Cayenne.objectForQuery(newContext(),
 				new EJBQLQuery("select a.name from E17 a where a.id1 =2 and a.id2 = 2")));
 	}
 
 	@Test
 	public void testDelete_BadID() throws IOException {
 
-		runtime.newContext().performGenericQuery(
+		newContext().performGenericQuery(
 				new SQLTemplate(E4.class, "INSERT INTO utest.e4 (id, c_varchar) values (1, 'xxx')"));
-		runtime.newContext().performGenericQuery(
+		newContext().performGenericQuery(
 				new SQLTemplate(E4.class, "INSERT INTO utest.e4 (id, c_varchar) values (8, 'yyy')"));
 
-		assertEquals(2l, Cayenne.objectForQuery(runtime.newContext(), new EJBQLQuery("select count(a) from E4 a")));
+		assertEquals(2l, Cayenne.objectForQuery(newContext(), new EJBQLQuery("select count(a) from E4 a")));
 
 		Response response1 = target("/e4/7").request().delete();
 		assertEquals(Status.NOT_FOUND.getStatusCode(), response1.getStatus());
 		assertEquals("{\"success\":false,\"message\":\"No object for ID '7' and entity 'E4'\"}",
 				response1.readEntity(String.class));
 
-		assertEquals(2l, Cayenne.objectForQuery(runtime.newContext(), new EJBQLQuery("select count(a) from E4 a")));
+		assertEquals(2l, Cayenne.objectForQuery(newContext(), new EJBQLQuery("select count(a) from E4 a")));
 	}
 
 	@Test
 	public void testDelete_Twice() throws IOException {
 
-		runtime.newContext().performGenericQuery(
+		newContext().performGenericQuery(
 				new SQLTemplate(E4.class, "INSERT INTO utest.e4 (id, c_varchar) values (1, 'xxx')"));
-		runtime.newContext().performGenericQuery(
+		newContext().performGenericQuery(
 				new SQLTemplate(E4.class, "INSERT INTO utest.e4 (id, c_varchar) values (8, 'yyy')"));
 
 		Response response1 = target("/e4/8").request().delete();

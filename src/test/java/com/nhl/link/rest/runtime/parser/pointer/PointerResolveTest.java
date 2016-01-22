@@ -32,7 +32,7 @@ public class PointerResolveTest extends JerseyTestOnDerby {
 
         SQLTemplate insert = new SQLTemplate(E4.class,
 				"INSERT INTO utest.e4 (id, c_varchar, c_int) values (1, 'xxx', 5)");
-		runtime.newContext().performGenericQuery(insert);
+		newContext().performGenericQuery(insert);
 
         LrEntity<E4> e4 = metadataService.getLrEntity(E4.class);
 
@@ -48,9 +48,9 @@ public class PointerResolveTest extends JerseyTestOnDerby {
 
         SQLTemplate insert = new SQLTemplate(E4.class,
 				"INSERT INTO utest.e4 (id, c_varchar, c_int) values (1, 'xxx', 5)");
-		runtime.newContext().performGenericQuery(insert);
+		newContext().performGenericQuery(insert);
 
-        E4 instance = runtime.newContext().selectOne(SelectQuery.query(E4.class, E4.C_VARCHAR.eq("xxx")));
+        E4 instance = newContext().selectOne(SelectQuery.query(E4.class, E4.C_VARCHAR.eq("xxx")));
         assertNotNull(instance);
 
         LrEntity<E4> e4 = metadataService.getLrEntity(E4.class);
@@ -69,11 +69,11 @@ public class PointerResolveTest extends JerseyTestOnDerby {
 				"INSERT INTO utest.e2 (id, name) values (2, 'yyy')");
         SQLTemplate insertE3 = new SQLTemplate(E3.class,
 				"INSERT INTO utest.e3 (id, name, e2_id) values (1, 'xxx', 2)");
-		runtime.newContext().performGenericQuery(insertE2);
-        runtime.newContext().performGenericQuery(insertE3);
+		newContext().performGenericQuery(insertE2);
+        newContext().performGenericQuery(insertE3);
 
-        E3 instanceE3 = runtime.newContext().selectOne(SelectQuery.query(E3.class, E3.NAME.eq("xxx")));
-        E2 instanceE2 = runtime.newContext().selectOne(SelectQuery.query(E2.class, E2.NAME.eq("yyy")));
+        E3 instanceE3 = newContext().selectOne(SelectQuery.query(E3.class, E3.NAME.eq("xxx")));
+        E2 instanceE2 = newContext().selectOne(SelectQuery.query(E2.class, E2.NAME.eq("yyy")));
         assertNotNull(instanceE3);
         assertNotNull(instanceE2);
 
@@ -93,11 +93,11 @@ public class PointerResolveTest extends JerseyTestOnDerby {
 				"INSERT INTO utest.e2 (id, name) values (2, 'yyy')");
         SQLTemplate insertE3 = new SQLTemplate(E3.class,
 				"INSERT INTO utest.e3 (id, name, e2_id) values (1, 'xxx', 2)");
-		runtime.newContext().performGenericQuery(insertE2);
-        runtime.newContext().performGenericQuery(insertE3);
+		newContext().performGenericQuery(insertE2);
+        newContext().performGenericQuery(insertE3);
 
-        E3 instanceE3 = runtime.newContext().selectOne(SelectQuery.query(E3.class, E3.NAME.eq("xxx")));
-        E2 instanceE2 = runtime.newContext().selectOne(SelectQuery.query(E2.class, E2.NAME.eq("yyy")));
+        E3 instanceE3 = newContext().selectOne(SelectQuery.query(E3.class, E3.NAME.eq("xxx")));
+        E2 instanceE2 = newContext().selectOne(SelectQuery.query(E2.class, E2.NAME.eq("yyy")));
         assertNotNull(instanceE3);
         assertNotNull(instanceE2);
 
@@ -120,12 +120,12 @@ public class PointerResolveTest extends JerseyTestOnDerby {
 				"INSERT INTO utest.e3 (id, name, e2_id) values (1, 'xxx', 2)");
         SQLTemplate insertE3_2 = new SQLTemplate(E3.class,
 				"INSERT INTO utest.e3 (id, name, e2_id) values (3, 'zzz', 2)");
-		runtime.newContext().performGenericQuery(insertE2);
-        runtime.newContext().performGenericQuery(insertE3_1);
-        runtime.newContext().performGenericQuery(insertE3_2);
+		newContext().performGenericQuery(insertE2);
+        newContext().performGenericQuery(insertE3_1);
+        newContext().performGenericQuery(insertE3_2);
 
-        E3 instanceE3 = runtime.newContext().selectOne(SelectQuery.query(E3.class, E3.NAME.eq("zzz")));
-        E2 instanceE2 = runtime.newContext().selectOne(SelectQuery.query(E2.class, E2.NAME.eq("yyy")));
+        E3 instanceE3 = newContext().selectOne(SelectQuery.query(E3.class, E3.NAME.eq("zzz")));
+        E2 instanceE2 = newContext().selectOne(SelectQuery.query(E2.class, E2.NAME.eq("yyy")));
         assertNotNull(instanceE3);
         assertNotNull(instanceE2);
 
@@ -148,12 +148,12 @@ public class PointerResolveTest extends JerseyTestOnDerby {
 				"INSERT INTO utest.e3 (id, name, e2_id) values (1, 'xxx', 2)");
         SQLTemplate insertE3_2 = new SQLTemplate(E3.class,
 				"INSERT INTO utest.e3 (id, name, e2_id) values (3, 'zzz', 2)");
-		runtime.newContext().performGenericQuery(insertE2);
-        runtime.newContext().performGenericQuery(insertE3_1);
-        runtime.newContext().performGenericQuery(insertE3_2);
+		newContext().performGenericQuery(insertE2);
+        newContext().performGenericQuery(insertE3_1);
+        newContext().performGenericQuery(insertE3_2);
 
-        E3 instanceE3 = runtime.newContext().selectOne(SelectQuery.query(E3.class, E3.NAME.eq("zzz")));
-        E2 instanceE2 = runtime.newContext().selectOne(SelectQuery.query(E2.class, E2.NAME.eq("yyy")));
+        E3 instanceE3 = newContext().selectOne(SelectQuery.query(E3.class, E3.NAME.eq("zzz")));
+        E2 instanceE2 = newContext().selectOne(SelectQuery.query(E2.class, E2.NAME.eq("yyy")));
         assertNotNull(instanceE3);
         assertNotNull(instanceE2);
 
@@ -176,12 +176,12 @@ public class PointerResolveTest extends JerseyTestOnDerby {
 				"INSERT INTO utest.e3 (id, name, e2_id) values (1, 'xxx', 2)");
         SQLTemplate insertE3_2 = new SQLTemplate(E3.class,
 				"INSERT INTO utest.e3 (id, name, e2_id) values (3, 'zzz', 2)");
-		runtime.newContext().performGenericQuery(insertE2);
-        runtime.newContext().performGenericQuery(insertE3_1);
-        runtime.newContext().performGenericQuery(insertE3_2);
+		newContext().performGenericQuery(insertE2);
+        newContext().performGenericQuery(insertE3_1);
+        newContext().performGenericQuery(insertE3_2);
 
-        E3 instanceE3 = runtime.newContext().selectOne(SelectQuery.query(E3.class, E3.NAME.eq("xxx")));
-        E2 instanceE2 = runtime.newContext().selectOne(SelectQuery.query(E2.class, E2.NAME.eq("yyy")));
+        E3 instanceE3 = newContext().selectOne(SelectQuery.query(E3.class, E3.NAME.eq("xxx")));
+        E2 instanceE2 = newContext().selectOne(SelectQuery.query(E2.class, E2.NAME.eq("yyy")));
         assertNotNull(instanceE3);
         assertNotNull(instanceE2);
 
@@ -204,13 +204,13 @@ public class PointerResolveTest extends JerseyTestOnDerby {
 				"INSERT INTO utest.e5 (id, name) values (5, 'zzz')");
         SQLTemplate insertE3 = new SQLTemplate(E3.class,
 				"INSERT INTO utest.e3 (id, name, e2_id, e5_id) values (3, 'xxx', 2, 5)");
-		runtime.newContext().performGenericQuery(insertE2);
-        runtime.newContext().performGenericQuery(insertE5);
-        runtime.newContext().performGenericQuery(insertE3);
+		newContext().performGenericQuery(insertE2);
+        newContext().performGenericQuery(insertE5);
+        newContext().performGenericQuery(insertE3);
 
 
-        E5 instanceE5 = runtime.newContext().selectOne(SelectQuery.query(E5.class, E5.NAME.eq("zzz")));
-        E2 instanceE2 = runtime.newContext().selectOne(SelectQuery.query(E2.class, E2.NAME.eq("yyy")));
+        E5 instanceE5 = newContext().selectOne(SelectQuery.query(E5.class, E5.NAME.eq("zzz")));
+        E2 instanceE2 = newContext().selectOne(SelectQuery.query(E2.class, E2.NAME.eq("yyy")));
         assertNotNull(instanceE5);
         assertNotNull(instanceE2);
 
@@ -233,13 +233,13 @@ public class PointerResolveTest extends JerseyTestOnDerby {
 				"INSERT INTO utest.e5 (id, name) values (5, 'zzz')");
         SQLTemplate insertE3 = new SQLTemplate(E3.class,
 				"INSERT INTO utest.e3 (id, name, e2_id, e5_id) values (3, 'xxx', 2, 5)");
-		runtime.newContext().performGenericQuery(insertE2);
-        runtime.newContext().performGenericQuery(insertE5);
-        runtime.newContext().performGenericQuery(insertE3);
+		newContext().performGenericQuery(insertE2);
+        newContext().performGenericQuery(insertE5);
+        newContext().performGenericQuery(insertE3);
 
 
-        E5 instanceE5 = runtime.newContext().selectOne(SelectQuery.query(E5.class, E5.NAME.eq("zzz")));
-        E2 instanceE2 = runtime.newContext().selectOne(SelectQuery.query(E2.class, E2.NAME.eq("yyy")));
+        E5 instanceE5 = newContext().selectOne(SelectQuery.query(E5.class, E5.NAME.eq("zzz")));
+        E2 instanceE2 = newContext().selectOne(SelectQuery.query(E2.class, E2.NAME.eq("yyy")));
         assertNotNull(instanceE5);
         assertNotNull(instanceE2);
 
@@ -265,14 +265,14 @@ public class PointerResolveTest extends JerseyTestOnDerby {
 				"INSERT INTO utest.e3 (id, name, e2_id, e5_id) values (3, 'xxx', 2, 5)");
         SQLTemplate insertE3_2 = new SQLTemplate(E3.class,
 				"INSERT INTO utest.e3 (id, name, e5_id) values (33, 'www', 5)");
-		runtime.newContext().performGenericQuery(insertE2);
-        runtime.newContext().performGenericQuery(insertE5);
-        runtime.newContext().performGenericQuery(insertE3_1);
-        runtime.newContext().performGenericQuery(insertE3_2);
+		newContext().performGenericQuery(insertE2);
+        newContext().performGenericQuery(insertE5);
+        newContext().performGenericQuery(insertE3_1);
+        newContext().performGenericQuery(insertE3_2);
 
 
-        E3 instanceE3 = runtime.newContext().selectOne(SelectQuery.query(E3.class, E3.NAME.eq("www")));
-        E2 instanceE2 = runtime.newContext().selectOne(SelectQuery.query(E2.class, E2.NAME.eq("yyy")));
+        E3 instanceE3 = newContext().selectOne(SelectQuery.query(E3.class, E3.NAME.eq("www")));
+        E2 instanceE2 = newContext().selectOne(SelectQuery.query(E2.class, E2.NAME.eq("yyy")));
         assertNotNull(instanceE3);
         assertNotNull(instanceE2);
 
@@ -297,10 +297,10 @@ public class PointerResolveTest extends JerseyTestOnDerby {
 				"INSERT INTO utest.e2 (id, name) values (2, 'yyy')");
         SQLTemplate insertE3 = new SQLTemplate(E3.class,
 				"INSERT INTO utest.e3 (id, name, e2_id) values (3, 'xxx', 2)");
-		runtime.newContext().performGenericQuery(insertE2);
-        runtime.newContext().performGenericQuery(insertE3);
+		newContext().performGenericQuery(insertE2);
+        newContext().performGenericQuery(insertE3);
 
-        E2 instanceE2 = runtime.newContext().selectOne(SelectQuery.query(E2.class, E2.NAME.eq("yyy")));
+        E2 instanceE2 = newContext().selectOne(SelectQuery.query(E2.class, E2.NAME.eq("yyy")));
         assertNotNull(instanceE2);
 
         LrEntity<E2> e2 = metadataService.getLrEntity(E2.class);
@@ -322,11 +322,11 @@ public class PointerResolveTest extends JerseyTestOnDerby {
 				"INSERT INTO utest.e5 (id, name) values (5, 'zzz')");
         SQLTemplate insertE3 = new SQLTemplate(E3.class,
 				"INSERT INTO utest.e3 (id, name, e5_id) values (33, 'www', 5)");
-		runtime.newContext().performGenericQuery(insertE2);
-        runtime.newContext().performGenericQuery(insertE5);
-        runtime.newContext().performGenericQuery(insertE3);
+		newContext().performGenericQuery(insertE2);
+        newContext().performGenericQuery(insertE5);
+        newContext().performGenericQuery(insertE3);
 
-        E2 instanceE2 = runtime.newContext().selectOne(SelectQuery.query(E2.class, E2.NAME.eq("yyy")));
+        E2 instanceE2 = newContext().selectOne(SelectQuery.query(E2.class, E2.NAME.eq("yyy")));
         assertNotNull(instanceE2);
 
         LrEntity<E2> e2 = metadataService.getLrEntity(E2.class);

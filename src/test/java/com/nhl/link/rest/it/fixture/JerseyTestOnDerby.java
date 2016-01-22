@@ -12,7 +12,12 @@ import javax.ws.rs.core.FeatureContext;
 import javax.ws.rs.core.MediaType;
 
 import org.apache.cayenne.ObjectContext;
+import org.apache.cayenne.access.dbsync.CreateIfNoSchemaStrategy;
+import org.apache.cayenne.access.dbsync.SchemaUpdateStrategy;
 import org.apache.cayenne.configuration.server.ServerRuntime;
+import org.apache.cayenne.configuration.server.ServerRuntimeBuilder;
+import org.apache.cayenne.di.Binder;
+import org.apache.cayenne.di.Module;
 import org.apache.cayenne.query.EJBQLQuery;
 import org.apache.cayenne.query.QueryChain;
 import org.apache.cayenne.query.RefreshQuery;
@@ -35,29 +40,44 @@ import com.nhl.link.rest.runtime.LinkRestBuilder;
  */
 public abstract class JerseyTestOnDerby extends JerseyTest {
 
-	protected static ServerRuntime runtime;
-	protected static DerbyManager derbyAssembly;
+	private static ServerRuntime CAYENNE_RUNTIME;
+	private static DerbyManager DERBY_MANAGER;
 
 	@BeforeClass
 	public static void setUpClass() throws IOException, SQLException {
-		derbyAssembly = new DerbyManager("target/derby");
-		runtime = new ServerRuntime("cayenne-linkrest-tests.xml");
+		JerseyTestOnDerby.DERBY_MANAGER = new DerbyManager("target/derby");
+
+		JerseyTestOnDerby.CAYENNE_RUNTIME = new ServerRuntimeBuilder()
+				.addConfig("cayenne-linkrest-tests.xml")
+				.addModule(new Module() {
+					@Override
+					public void configure(Binder binder) {
+						binder.bind(SchemaUpdateStrategy.class).to(CreateIfNoSchemaStrategy.class);
+					}
+				})
+				.jdbcDriver("org.apache.derby.jdbc.EmbeddedDriver")
+				.url("jdbc:derby:target/derby;create=true")
+				.build();
 	}
 
 	@AfterClass
 	public static void tearDownClass() throws IOException, SQLException {
-		runtime.shutdown();
-		runtime = null;
+		JerseyTestOnDerby.CAYENNE_RUNTIME.shutdown();
+		JerseyTestOnDerby.CAYENNE_RUNTIME = null;
 
-		derbyAssembly.shutdown();
-		derbyAssembly = null;
+		JerseyTestOnDerby.DERBY_MANAGER.shutdown();
+		JerseyTestOnDerby.DERBY_MANAGER = null;
+	}
+	
+	protected static ObjectContext newContext() {
+		return CAYENNE_RUNTIME.newContext();
 	}
 
 	protected ObjectContext context;
 
 	@Before
 	public void before() {
-		this.context = runtime.newContext();
+		this.context = newContext();
 
 		// this is to prevent shared caches from returning bogus data between
 		// test runs
@@ -120,7 +140,7 @@ public abstract class JerseyTestOnDerby extends JerseyTest {
 	}
 
 	protected LinkRestBuilder doConfigure() {
-		return LinkRestBuilder.builder(runtime);
+		return LinkRestBuilder.builder(CAYENNE_RUNTIME);
 	}
 
 	protected abstract void doAddResources(FeatureContext context);
