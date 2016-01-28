@@ -44,8 +44,9 @@
         <title>Security</title>
         <para>From the very beginning LinkRest was designed with security in mind. It can be easily
             integrated with common web and enterprise security solutions (OAuth, <link
-                xlink:href="http://shiro.apache.org/">Apache Shiro</link>, etc.), giving Java
-            developers a straightforward API to implement custom object and attribute-level access. </para>
+                xlink:href="http://shiro.apache.org/">Apache Shiro</link>, Spring Security, etc.),
+            giving Java developers a straightforward API to implement custom object and
+            attribute-level access. </para>
         
     </chapter>
 </part>
