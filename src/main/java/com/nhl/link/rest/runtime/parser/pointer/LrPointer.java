@@ -28,4 +28,16 @@ public interface LrPointer {
      * @throws Exception If pointer can't be resolved without base object (i.e. it is/contains not an instance pointer)
      */
     Object resolve(PointerContext context) throws Exception;
+
+    void update(PointerContext context, Object baseObject, Object value) throws Exception;
+
+    void update(PointerContext context, Object value) throws Exception;
+
+    void delete(PointerContext context, Object baseObject) throws Exception;
+
+    /**
+     * Shortcut for LrPointer#delete(PointerContext, Object), that is convenient for simple instance pointers
+     * @throws Exception If pointer can't be deleted without base object (i.e. it is/contains not an instance pointer)
+     */
+    void delete(PointerContext context) throws Exception;
 }

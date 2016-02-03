@@ -22,6 +22,7 @@ public class PointerParser {
 
     public LrPointer getPointer(LrEntity<?> rootEntity, JsonNode node) {
 
+        // TODO: Entity collection pointer
         if (node == null) {
             throw new LinkRestException(Status.BAD_REQUEST,
                     "Invalid empty pointer for '" + rootEntity.getName() + "'");
@@ -80,13 +81,18 @@ public class PointerParser {
                     "Invalid empty pointer for '" + rootEntity.getName() + "'");
         }
 
+        LrPointerBuilder builder = pointerService.forEntity(rootEntity);
+
+        if (s.equals(Pointers.PATH_SEPARATOR)) {
+            // entity collection pointer
+            return builder.build();
+        }
+
         if (s.startsWith(Pointers.PATH_SEPARATOR) || s.startsWith(Pointers.RELATIONSHIP_SEPARATOR)
                 || s.endsWith(Pointers.PATH_SEPARATOR) || s.endsWith(Pointers.RELATIONSHIP_SEPARATOR)) {
             throw new LinkRestException(Status.BAD_REQUEST,
                     "Invalid pointer '" + s + "' for '" + rootEntity.getName() + "'");
         }
-
-        LrPointerBuilder builder = pointerService.forEntity(rootEntity);
 
         StringTokenizer properties = new StringTokenizer(Pointers.unescape(s), Pointers.PATH_SEPARATOR);
         while (properties.hasMoreTokens()) {

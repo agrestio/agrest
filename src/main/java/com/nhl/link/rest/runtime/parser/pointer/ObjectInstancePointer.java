@@ -17,7 +17,19 @@ class ObjectInstancePointer extends SimplePointer {
     @Override
     protected Object doResolve(PointerContext context, Object baseObject) {
         // ignoring base object
-        return context.resolveObject(getTargetType(), id);
+        return context.resolveObject(entity.getType(), id);
+    }
+
+    @Override
+    protected void doUpdate(PointerContext context, Object baseObject, Object value) {
+        // ignoring base object (can be null if the pointer is, say, "3")
+        context.updateObject(entity.getType(), id, value);
+    }
+
+    @Override
+    protected void doDelete(PointerContext context, Object baseObject) {
+        // ignoring base object
+        context.deleteObject(entity.getType(), id);
     }
 
     @Override

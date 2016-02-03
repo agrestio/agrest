@@ -24,15 +24,7 @@ abstract class SimplePointer implements LrPointer {
 
     @Override
     public final Object resolve(PointerContext context, Object baseObject) throws Exception {
-
-        if (context == null) {
-            throw new IllegalStateException("Null context in pointer: " + toString());
-        }
-
-        if (predecessor != null) {
-            baseObject = predecessor.resolve(context, baseObject);
-        }
-        return doResolve(context, baseObject);
+        return doResolve(context, resolveBase(context, baseObject));
     }
 
     @Override
@@ -41,6 +33,42 @@ abstract class SimplePointer implements LrPointer {
     }
 
     protected abstract Object doResolve(PointerContext context, Object baseObject);
+
+    @Override
+    public void update(PointerContext context, Object baseObject, Object value) throws Exception {
+        doUpdate(context, resolveBase(context, baseObject), value);
+    }
+
+    @Override
+    public void update(PointerContext context, Object value) throws Exception {
+        update(context, null, value);
+    }
+
+    protected abstract void doUpdate(PointerContext context, Object baseObject, Object value);
+
+    @Override
+    public void delete(PointerContext context) throws Exception {
+        delete(context, null);
+    }
+
+    @Override
+    public void delete(PointerContext context, Object baseObject) throws Exception {
+        doDelete(context, resolveBase(context, baseObject));
+    }
+
+    protected abstract void doDelete(PointerContext context, Object baseObject);
+
+    private Object resolveBase(PointerContext context, Object baseObject) throws Exception {
+
+        if (context == null) {
+            throw new IllegalStateException("Null context in pointer: " + toString());
+        }
+
+        if (predecessor != null) {
+            baseObject = predecessor.resolve(context, baseObject);
+        }
+        return baseObject;
+    }
 
     /**
      * @return Escaped string representation of this pointer

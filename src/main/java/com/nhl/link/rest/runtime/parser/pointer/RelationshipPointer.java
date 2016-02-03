@@ -4,7 +4,10 @@ import com.nhl.link.rest.LinkRestException;
 import com.nhl.link.rest.meta.LrEntity;
 import com.nhl.link.rest.meta.LrRelationship;
 
-import javax.ws.rs.core.Response;
+import java.lang.reflect.Array;
+import java.util.Collection;
+
+import static javax.ws.rs.core.Response.Status;
 
 class RelationshipPointer extends SimplePointer {
 
@@ -18,7 +21,11 @@ class RelationshipPointer extends SimplePointer {
         this.id = id;
 
         if (relationship.isToMany()) {
-            type = PointerType.TO_MANY_RELATIONSHIP;
+            if (id == null) {
+                type = PointerType.TO_MANY_LIST_RELATIONSHIP;
+            } else {
+                type = PointerType.TO_MANY_RELATIONSHIP;
+            }
         } else if (id != null) {
             type = PointerType.EXPLICIT_TO_ONE_RELATIONSHIP;
         } else {
@@ -34,7 +41,8 @@ class RelationshipPointer extends SimplePointer {
         }
 
         switch (type) {
-            case IMPLICIT_TO_ONE_RELATIONSHIP: {
+            case IMPLICIT_TO_ONE_RELATIONSHIP:
+            case TO_MANY_LIST_RELATIONSHIP: {
                 return context.resolveProperty(baseObject, relationship.getName());
             }
             case EXPLICIT_TO_ONE_RELATIONSHIP:
@@ -42,7 +50,75 @@ class RelationshipPointer extends SimplePointer {
                 return context.resolveObject(getTargetType(), id);
             }
             default: {
-                throw new LinkRestException(Response.Status.INTERNAL_SERVER_ERROR,
+                throw new LinkRestException(Status.INTERNAL_SERVER_ERROR,
+                                "Unknown pointer type: " + getType().name());
+            }
+        }
+    }
+
+    @Override
+    protected void doUpdate(PointerContext context, Object baseObject, Object value) {
+
+        if (baseObject == null) {
+            throw new IllegalArgumentException("Null base object passed to pointer: " + toString());
+        }
+
+        switch (type) {
+            case IMPLICIT_TO_ONE_RELATIONSHIP: {
+                context.updateProperty(baseObject, relationship.getName(), value);
+                break;
+            }
+            case TO_MANY_LIST_RELATIONSHIP: {
+                if (value.getClass().isArray()) {
+                    if (Array.getLength(value) == 0) {
+                        context.deleteProperty(baseObject, relationship.getName());
+                    } else {
+                        throw new RuntimeException("Multi-valued updates not implemented yet");
+                    }
+                } else if (Collection.class.isAssignableFrom(value.getClass())) {
+                    if (((Collection<?>) value).isEmpty()) {
+                        context.deleteProperty(baseObject, relationship.getName());
+                    } else {
+                        throw new RuntimeException("Multi-valued updates not implemented yet");
+                    }
+                } else {
+                    context.addRelatedObject(baseObject, relationship.getName(), value);
+                }
+                break;
+            }
+            case EXPLICIT_TO_ONE_RELATIONSHIP:
+            case TO_MANY_RELATIONSHIP: {
+                context.deleteRelatedObject(baseObject, relationship.getName(), id);
+                context.addRelatedObject(baseObject, relationship.getName(), value);
+                break;
+            }
+            default: {
+                throw new LinkRestException(Status.INTERNAL_SERVER_ERROR,
+                                "Unknown pointer type: " + getType().name());
+            }
+        }
+    }
+
+    @Override
+    protected void doDelete(PointerContext context, Object baseObject) {
+
+        if (baseObject == null) {
+            throw new IllegalArgumentException("Null base object passed to pointer: " + toString());
+        }
+
+        switch (type) {
+            case IMPLICIT_TO_ONE_RELATIONSHIP:
+            case TO_MANY_LIST_RELATIONSHIP: {
+                context.deleteProperty(baseObject, relationship.getName());
+                break;
+            }
+            case EXPLICIT_TO_ONE_RELATIONSHIP:
+            case TO_MANY_RELATIONSHIP: {
+                context.deleteRelatedObject(baseObject, relationship.getName(), id);
+                break;
+            }
+            default: {
+                throw new LinkRestException(Status.INTERNAL_SERVER_ERROR,
                                 "Unknown pointer type: " + getType().name());
             }
         }
@@ -58,7 +134,8 @@ class RelationshipPointer extends SimplePointer {
                 encoded = Pointers.buildRelationship(relationship.getName(), id);
                 break;
             }
-            case IMPLICIT_TO_ONE_RELATIONSHIP: {
+            case IMPLICIT_TO_ONE_RELATIONSHIP:
+            case TO_MANY_LIST_RELATIONSHIP: {
                 encoded = relationship.getName();
                 break;
             }

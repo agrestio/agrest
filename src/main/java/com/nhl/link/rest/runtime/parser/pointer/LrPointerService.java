@@ -40,6 +40,7 @@ public class LrPointerService {
                         "Unknown relationship '" + relationshipName + "' for '" + currentEntity.getName() + "'");
             }
 
+            // TODO: id type check and fix
             tail = new RelationshipPointer(tail, currentEntity, relationship, id);
             currentEntity = metadataService.getLrEntity(relationship.getTargetEntityType());
 
@@ -58,11 +59,6 @@ public class LrPointerService {
             } else {
                 LrRelationship relationship = currentEntity.getRelationship(pathElement);
                 if (relationship != null) {
-                    if (relationship.isToMany()) {
-                        throw new LinkRestException(Status.BAD_REQUEST,
-                                "Invalid pointer element: to-many relationship '" + pathElement +
-                                        "' without explicit ID");
-                    }
                     tail = new RelationshipPointer(tail, currentEntity, relationship, null);
                     currentEntity = metadataService.getLrEntity(relationship.getTargetEntityType());
 
@@ -89,7 +85,7 @@ public class LrPointerService {
         public LrPointer build() {
 
             if (tail == null) {
-                throw new IllegalStateException("Can't build an empty pointer");
+                return new EntityCollectionPointer(null, currentEntity);
             }
 
             return tail;

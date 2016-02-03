@@ -15,6 +15,7 @@ import org.junit.Test;
 
 import javax.ws.rs.core.FeatureContext;
 
+import java.util.Collection;
 import java.util.Collections;
 
 import static org.junit.Assert.assertEquals;
@@ -41,6 +42,25 @@ public class PointerResolveTest extends JerseyTestOnDerby {
 
         Object object = pointer.resolve(context);
         assertNotNull(object);
+    }
+
+    @Test
+    public void testResolving_EntityCollectionPointer() throws Exception {
+
+        SQLTemplate insertE4_1 = new SQLTemplate(E4.class,
+				"INSERT INTO utest.e4 (id, c_varchar, c_int) values (1, 'xxx', 5)");
+        SQLTemplate insertE4_2 = new SQLTemplate(E4.class,
+				"INSERT INTO utest.e4 (id, c_varchar, c_int) values (2, 'yyy', 7)");
+		newContext().performGenericQuery(insertE4_1);
+        newContext().performGenericQuery(insertE4_2);
+
+        LrEntity<E4> e4 = metadataService.getLrEntity(E4.class);
+
+        LrPointer pointer = new PointerParser(pointerService).getPointer(e4, Pointers.PATH_SEPARATOR);
+        PointerContext context = new CayennePointerContext(cayenneService, Collections.singletonList(pointer));
+
+        Object object = pointer.resolve(context);
+        assertEquals(2, ((Collection<?>) object).size());
     }
 
     @Test

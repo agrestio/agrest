@@ -26,6 +26,26 @@ class AttributePointer extends SimplePointer {
     }
 
     @Override
+    protected void doUpdate(PointerContext context, Object baseObject, Object value) {
+
+        if (baseObject == null) {
+            throw new IllegalArgumentException("Null base object passed to pointer: " + toString());
+        }
+
+        context.updateProperty(baseObject, attribute.getName(), value);
+    }
+
+    @Override
+    protected void doDelete(PointerContext context, Object baseObject) {
+
+        if (baseObject == null) {
+            throw new IllegalArgumentException("Null base object passed to pointer: " + toString());
+        }
+
+        context.deleteProperty(baseObject, attribute.getName());
+    }
+
+    @Override
     protected String encodeToString() {
         return attribute.getName();
     }

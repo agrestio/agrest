@@ -266,20 +266,6 @@ public class PointerTest extends TestWithCayenneMapping {
     }
 
     @Test(expected = Exception.class)
-    public void testDecoding_CompoundToManyRelationshipPointer_WithoutId() {
-
-        LrEntity<E3> e3 = getLrEntity(E3.class);
-        new PointerParser(pointerService).getPointer(e3, Pointers.buildPath(E3.E5.getName(),E5.E2S.getName()));
-    }
-
-    @Test(expected = Exception.class)
-    public void testDecoding_ToManyRelationshipPointer_WithoutId() {
-
-        LrEntity<E2> e2 = getLrEntity(E2.class);
-        new PointerParser(pointerService).getPointer(e2, E2.E3S.getName());
-    }
-
-    @Test(expected = Exception.class)
     public void testDecoding_RelationshipPointer_AfterAttribute() {
 
         LrEntity<E3> e3 = getLrEntity(E3.class);
@@ -291,13 +277,6 @@ public class PointerTest extends TestWithCayenneMapping {
 
         LrEntity<E1> e1 = getLrEntity(E1.class);
         new PointerParser(pointerService).getPointer(e1, "");
-    }
-
-    @Test(expected = Exception.class)
-    public void testDecoding_InvalidPath2() {
-
-        LrEntity<E1> e1 = getLrEntity(E1.class);
-        new PointerParser(pointerService).getPointer(e1, Pointers.PATH_SEPARATOR);
     }
 
     @Test(expected = Exception.class)
