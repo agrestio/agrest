@@ -260,7 +260,7 @@ public abstract class BaseCayenneUpdateStage<T extends DataObject> extends BaseL
 
 				for (int i = 0; i < relatedObjects.size(); i++) {
 					DataObject relatedObject = relatedObjects.get(i);
-					if (filter == null || !filter.filter(relatedObject)) {
+					if (filter == null || filter.filter(relatedObject)) {
 						object.removeToManyTarget(lrRelationship.getName(), relatedObject, true);
 						i--;
 					}
