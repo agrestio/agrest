@@ -112,8 +112,9 @@ public class UpdateParser implements IUpdateParser {
 			LrRelationship relationship = relationshipMapper.toRelationship(entity, key);
 			if (relationship instanceof LrPersistentRelationship) {
 
-				DbRelationship dbRelationship = ((LrPersistentRelationship) relationship).getObjRelationship()
-						.getDbRelationships().get(0);
+				List<DbRelationship> dbRelationshipsList = ((LrPersistentRelationship) relationship).getObjRelationship().getDbRelationships();
+				DbRelationship dbRelationship = dbRelationshipsList.get(dbRelationshipsList.size() - 1);
+				int type = dbRelationship.getJoins().get(0).getTarget().getType();
 
 				JsonNode valueNode = objectNode.get(key);
 				DbRelationship dbRleationship = dbRelationship.getReverseRelationship();
@@ -133,10 +134,10 @@ public class UpdateParser implements IUpdateParser {
 								"Relationship is a part of the primary key, only one related object allowed: "
 										+ reversePkJoin.getTargetName());
 						} else if (arrayNode.size() == 1) {
-							value = extractValue(arrayNode.get(0), dbRelationship);
+							value = extractValue(arrayNode.get(0), type);
 						}
 					} else {
-						value = extractValue(valueNode, dbRelationship);
+						value = extractValue(valueNode, type);
 					}
 
 					if (value != null) {
@@ -157,11 +158,11 @@ public class UpdateParser implements IUpdateParser {
 					} else {
 						for (int i = 0; i < len; i++) {
 							valueNode = arrayNode.get(i);
-							addRelatedObject(update, relationship, extractValue(valueNode, dbRelationship));
+							addRelatedObject(update, relationship, extractValue(valueNode, type));
 						}
 					}
 				} else {
-					addRelatedObject(update, relationship, extractValue(valueNode, dbRelationship));
+					addRelatedObject(update, relationship, extractValue(valueNode, type));
 				}
 
 				continue;
@@ -200,8 +201,7 @@ public class UpdateParser implements IUpdateParser {
 		}
 	}
 
-	protected Object extractValue(JsonNode valueNode, DbRelationship dbRelationship) {
-		int type = dbRelationship.getJoins().get(0).getSource().getType();
+	protected Object extractValue(JsonNode valueNode, int type) {
 
 		JsonValueConverter converter = converterFactory.converter(type);
 
