@@ -155,12 +155,7 @@ public abstract class BaseCayenneUpdateStage<T extends DataObject> extends BaseL
 			ClassDescriptor relatedDescriptor = context.getEntityResolver().getClassDescriptor(
 					relationship.getTargetEntityName());
 
-			relator.unrelateAll(lrRelationship, o, new Filter() {
-				@Override
-				public boolean filter(DataObject relatedObject) {
-					return relatedIds.contains(Cayenne.pkForObject(relatedObject));
-				}
-			});
+			relator.unrelateAll(lrRelationship, o, null);
 
 			for (Object relatedId : relatedIds) {
 
