@@ -73,8 +73,8 @@
             <link rev="made" href="{$link.mailto.url}"/>
         </xsl:if>
 
-        <meta name="keywords" content="LinkRest ${linkrest.version.major} documentation"/>
-        <meta name="description" content="User documentation for LinkRest version ${linkrest.version.major}"/>
+        <meta name="keywords" content="LinkRest documentation LinkRest docs"/>
+        <meta name="description" content="LinkRest user documentation, version ${linkrest.version.major}"/>
 
         <xsl:if test="$generate.meta.abstract != 0">
             <xsl:variable name="info" select="(d:articleinfo
