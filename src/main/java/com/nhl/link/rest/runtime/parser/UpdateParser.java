@@ -112,9 +112,9 @@ public class UpdateParser implements IUpdateParser {
 			LrRelationship relationship = relationshipMapper.toRelationship(entity, key);
 			if (relationship instanceof LrPersistentRelationship) {
 
+				DbRelationship dbRelationship = ((LrPersistentRelationship) relationship).getObjRelationship().getDbRelationships().get(0);
 				List<DbRelationship> dbRelationshipsList = ((LrPersistentRelationship) relationship).getObjRelationship().getDbRelationships();
-				DbRelationship dbRelationship = dbRelationshipsList.get(dbRelationshipsList.size() - 1);
-				int type = dbRelationship.getJoins().get(0).getTarget().getType();
+				int type = dbRelationshipsList.get(dbRelationshipsList.size() - 1).getJoins().get(0).getTarget().getType();
 
 				JsonNode valueNode = objectNode.get(key);
 				DbRelationship dbRleationship = dbRelationship.getReverseRelationship();
