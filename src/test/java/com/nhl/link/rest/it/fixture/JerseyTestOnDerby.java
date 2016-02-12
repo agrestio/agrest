@@ -79,6 +79,9 @@ public abstract class JerseyTestOnDerby extends JerseyTest {
 		QueryChain chain = new QueryChain();
 
 		// ordering is important to avoid FK constraint failures on delete
+		chain.addQuery(new EJBQLQuery("delete from E15E1"));
+		chain.addQuery(SQLSelect.scalarQuery(Object.class, "delete from utest.e15_e5"));
+
 		chain.addQuery(new EJBQLQuery("delete from E4"));
 		chain.addQuery(new EJBQLQuery("delete from E3"));
 		chain.addQuery(new EJBQLQuery("delete from E2"));
@@ -92,7 +95,6 @@ public abstract class JerseyTestOnDerby extends JerseyTest {
 		chain.addQuery(new EJBQLQuery("delete from E12E13"));
 		chain.addQuery(new EJBQLQuery("delete from E12"));
 		chain.addQuery(new EJBQLQuery("delete from E13"));
-
 		chain.addQuery(new EJBQLQuery("delete from E14"));
 		chain.addQuery(new EJBQLQuery("delete from E15"));
 

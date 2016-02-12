@@ -43,7 +43,7 @@ public class MetadataServiceTest extends TestWithCayenneMapping {
 		assertEquals("E5", e5.getObjEntity().getName());
 
 		assertEquals(2, e5.getPersistentAttributes().size());
-		assertEquals(1, e5.getRelationships().size());
+		assertEquals(2, e5.getRelationships().size());
 
 		assertNotNull(e5.getPersistentAttribute(E5.NAME.getName()));
 		assertNotNull(e5.getPersistentAttribute(E5.DATE.getName()));

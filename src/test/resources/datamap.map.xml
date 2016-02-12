@@ -332,7 +332,7 @@
 	<obj-relationship name="e15" source="E14" target="E15" deleteRule="Nullify" db-relationship-path="e15"/>
 	<obj-relationship name="e14s" source="E15" target="E14" deleteRule="Cascade" db-relationship-path="e14s"/>
 	<obj-relationship name="e15e1" source="E15" target="E15E1" deleteRule="Deny" db-relationship-path="e15e1"/>
-	<obj-relationship name="e5s" source="E15" target="E5" deleteRule="Deny" db-relationship-path="e15e5.e5"/>
+	<obj-relationship name="e5s" source="E15" target="E5" db-relationship-path="e15e5.e5"/>
 	<obj-relationship name="e1" source="E15E1" target="E1" deleteRule="Nullify" db-relationship-path="e1"/>
 	<obj-relationship name="e15" source="E15E1" target="E15" deleteRule="Nullify" db-relationship-path="e15"/>
 	<obj-relationship name="e18s" source="E17" target="E18" deleteRule="Deny" db-relationship-path="e18s"/>
@@ -340,7 +340,7 @@
 	<obj-relationship name="e3s" source="E2" target="E3" deleteRule="Deny" db-relationship-path="e3s"/>
 	<obj-relationship name="e2" source="E3" target="E2" deleteRule="Nullify" db-relationship-path="e2"/>
 	<obj-relationship name="e5" source="E3" target="E5" deleteRule="Nullify" db-relationship-path="e5"/>
-	<obj-relationship name="e15s" source="E5" target="E15" deleteRule="Deny" db-relationship-path="e15e5.e15"/>
+	<obj-relationship name="e15s" source="E5" target="E15" db-relationship-path="e15e5.e15"/>
 	<obj-relationship name="e2s" source="E5" target="E3" deleteRule="Deny" db-relationship-path="e2s"/>
 	<obj-relationship name="e8" source="E7" target="E8" deleteRule="Nullify" db-relationship-path="e8"/>
 	<obj-relationship name="e7s" source="E8" target="E7" deleteRule="Deny" db-relationship-path="e7s"/>

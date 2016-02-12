@@ -27,27 +27,24 @@ public class GET_Metadata_IT extends JerseyTestOnDerby {
     @Test
     public void testGetMetadataForResource() {
         WebTarget target = target("/e5/metadata");
-        URI uri = target.getUri();
-        String baseUrl = uri.toString().replace(uri.getPath(), "");
 
         Response response1 = target.request().get();
 		assertEquals(Response.Status.OK.getStatusCode(), response1.getStatus());
 
         assertEquals(
-                "{" +
-                        "\"entity\":{" +
-                            "\"name\":\"E5\"," +
-                            "\"properties\":[" +
-                                "{\"name\":\"date\",\"type\":\"date\"}," +
-                                "{\"name\":\"e2s\",\"type\":\"E3\",\"relationship\":true,\"collection\":true}," +
-                                "{\"name\":\"name\",\"type\":\"string\"}]}," +
-                            "\"links\":[" +
-                            "{\"href\":\"" + baseUrl + "/e5\",\"type\":\"collection\"," +
-                               "\"operations\":[{\"method\":\"GET\"}]}," +
-                            "{\"href\":\"" + baseUrl + "/e5/metadata\",\"type\":\"metadata\"," +
-                               "\"operations\":[{\"method\":\"GET\"}]}," +
-                            "{\"href\":\"" + baseUrl + "/e5/{id}\",\"type\":\"item\"," +
-                                "\"operations\":[{\"method\":\"GET\"},{\"method\":\"DELETE\"}]}]}"
+                "{\"entity\":{\"name\":\"E5\"," +
+                        "\"properties\":[" +
+                            "{\"name\":\"date\",\"type\":\"date\"}," +
+                            "{\"name\":\"e15s\",\"type\":\"E15\",\"relationship\":true,\"collection\":true}," +
+                            "{\"name\":\"e2s\",\"type\":\"E3\",\"relationship\":true,\"collection\":true}," +
+                            "{\"name\":\"name\",\"type\":\"string\"}]}," +
+                        "\"links\":[" +
+                        "{\"href\":\"http://localhost:9998/e5\",\"type\":\"collection\"," +
+                            "\"operations\":[{\"method\":\"GET\"}]}," +
+                        "{\"href\":\"http://localhost:9998/e5/metadata\",\"type\":\"metadata\"," +
+                            "\"operations\":[{\"method\":\"GET\"}]}," +
+                        "{\"href\":\"http://localhost:9998/e5/{id}\",\"type\":\"item\"," +
+                            "\"operations\":[{\"method\":\"GET\"},{\"method\":\"DELETE\"}]}]}"
                             ,
                 response1.readEntity(String.class)
         );
