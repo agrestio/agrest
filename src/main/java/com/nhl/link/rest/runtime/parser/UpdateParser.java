@@ -112,14 +112,19 @@ public class UpdateParser implements IUpdateParser {
 			LrRelationship relationship = relationshipMapper.toRelationship(entity, key);
 			if (relationship instanceof LrPersistentRelationship) {
 
-				DbRelationship dbRelationship = ((LrPersistentRelationship) relationship).getObjRelationship().getDbRelationships().get(0);
-				List<DbRelationship> dbRelationshipsList = ((LrPersistentRelationship) relationship).getObjRelationship().getDbRelationships();
-				int type = dbRelationshipsList.get(dbRelationshipsList.size() - 1).getJoins().get(0).getTarget().getType();
+				List<DbRelationship> dbRelationshipsList = ((LrPersistentRelationship) relationship)
+						.getObjRelationship().getDbRelationships();
+
+				// take last element from list of db relationships
+				// in order to behave correctly if
+				// db entities are connected through intermediate tables
+				DbRelationship targetRelationship = dbRelationshipsList.get(dbRelationshipsList.size() - 1);
+				int targetJdbcType = targetRelationship.getJoins().get(0).getTarget().getType();
 
 				JsonNode valueNode = objectNode.get(key);
-				DbRelationship dbRleationship = dbRelationship.getReverseRelationship();
-				if (dbRleationship.isToDependentPK()) {
-					List<DbJoin> joins = dbRleationship.getJoins();
+				DbRelationship reverseRelationship = dbRelationshipsList.get(0).getReverseRelationship();
+				if (reverseRelationship.isToDependentPK()) {
+					List<DbJoin> joins = reverseRelationship.getJoins();
 					if (joins.size() != 1) {
 						throw new LinkRestException(Status.BAD_REQUEST,
 								"Multi-join relationship propagation is not supported yet: " + entity.getName());
@@ -134,10 +139,10 @@ public class UpdateParser implements IUpdateParser {
 								"Relationship is a part of the primary key, only one related object allowed: "
 										+ reversePkJoin.getTargetName());
 						} else if (arrayNode.size() == 1) {
-							value = extractValue(arrayNode.get(0), type);
+							value = extractValue(arrayNode.get(0), targetJdbcType);
 						}
 					} else {
-						value = extractValue(valueNode, type);
+						value = extractValue(valueNode, targetJdbcType);
 					}
 
 					if (value != null) {
@@ -158,11 +163,11 @@ public class UpdateParser implements IUpdateParser {
 					} else {
 						for (int i = 0; i < len; i++) {
 							valueNode = arrayNode.get(i);
-							addRelatedObject(update, relationship, extractValue(valueNode, type));
+							addRelatedObject(update, relationship, extractValue(valueNode, targetJdbcType));
 						}
 					}
 				} else {
-					addRelatedObject(update, relationship, extractValue(valueNode, type));
+					addRelatedObject(update, relationship, extractValue(valueNode, targetJdbcType));
 				}
 
 				continue;

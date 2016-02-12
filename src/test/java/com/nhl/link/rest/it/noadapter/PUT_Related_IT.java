@@ -9,6 +9,10 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import com.nhl.link.rest.it.fixture.cayenne.E1;
+import com.nhl.link.rest.it.fixture.cayenne.E15;
+import com.nhl.link.rest.it.fixture.cayenne.E15E1;
+import com.nhl.link.rest.it.fixture.resource.E15Resource;
 import org.apache.cayenne.query.SQLSelect;
 import org.apache.cayenne.query.SQLTemplate;
 import org.junit.Test;
@@ -33,6 +37,7 @@ public class PUT_Related_IT extends JerseyTestOnDerby {
 		context.register(E7Resource.class);
 		context.register(E8Resource.class);
 		context.register(E12Resource.class);
+		context.register(E15Resource.class);
 	}
 
 	@Test
@@ -333,5 +338,59 @@ public class PUT_Related_IT extends JerseyTestOnDerby {
 				1,
 				SQLSelect.scalarQuery(E12E13.class,
 						"SELECT count(1) FROM utest.e12_e13 WHERE e12_id = 12 AND e13_id = 16").selectOne(context));
+	}
+
+	@Test
+	public void testPUT_ToMany_DifferentIdTypes() {
+
+		context.performGenericQuery(new SQLTemplate(E1.class, "INSERT INTO utest.e1 (id, name) values (1, 'xxx')"));
+		context.performGenericQuery(new SQLTemplate(E1.class, "INSERT INTO utest.e1 (id, name) values (2, 'yyy')"));
+
+		context.performGenericQuery(new SQLTemplate(E15.class, "INSERT INTO utest.e15 (long_id, name) values (14, 'aaa')"));
+		context.performGenericQuery(new SQLTemplate(E15.class, "INSERT INTO utest.e15 (long_id, name) values (15, 'bbb')"));
+		context.performGenericQuery(new SQLTemplate(E15.class, "INSERT INTO utest.e15 (long_id, name) values (16, 'ccc')"));
+
+		context.performGenericQuery(new SQLTemplate(E15E1.class, "INSERT INTO utest.e15_e1 (e15_id, e1_id) values (14, 1)"));
+
+		Response r1 = target("/e15/14/e15e1").queryParam("exclude", "id").request()
+				.put(Entity.entity("[{\"e1\":1}]", MediaType.APPLICATION_JSON));
+
+		assertEquals(Status.OK.getStatusCode(), r1.getStatus());
+
+		assertEquals(1, SQLSelect.scalarQuery(E15E1.class, "SELECT count(1) FROM utest.e15_e1").selectOne(context));
+		assertEquals(2, SQLSelect.scalarQuery(E12E13.class, "SELECT count(1) FROM utest.e1").selectOne(context));
+		assertEquals(3, SQLSelect.scalarQuery(E12E13.class, "SELECT count(1) FROM utest.e15").selectOne(context));
+
+		assertEquals(
+				1,
+				SQLSelect.scalarQuery(E15E1.class,
+						"SELECT count(1) FROM utest.e15_e1 WHERE e15_id = 14 AND e1_id = 1").selectOne(context));
+	}
+
+	@Test
+	public void testPUT_ToMany_Flattened_DifferentIdTypes() {
+
+		context.performGenericQuery(new SQLTemplate(E1.class, "INSERT INTO utest.e5 (id, name) values (1, 'xxx')"));
+		context.performGenericQuery(new SQLTemplate(E1.class, "INSERT INTO utest.e5 (id, name) values (2, 'yyy')"));
+
+		context.performGenericQuery(new SQLTemplate(E15.class, "INSERT INTO utest.e15 (long_id, name) values (14, 'aaa')"));
+		context.performGenericQuery(new SQLTemplate(E15.class, "INSERT INTO utest.e15 (long_id, name) values (15, 'bbb')"));
+		context.performGenericQuery(new SQLTemplate(E15.class, "INSERT INTO utest.e15 (long_id, name) values (16, 'ccc')"));
+
+		context.performGenericQuery(new SQLTemplate(E15E1.class, "INSERT INTO utest.e15_e5 (e15_id, e5_id) values (14, 1)"));
+
+		Response r1 = target("/e15/14").request()
+				.put(Entity.entity("{\"e5s\":[1]}", MediaType.APPLICATION_JSON));
+
+		assertEquals(Status.OK.getStatusCode(), r1.getStatus());
+
+		assertEquals(1, SQLSelect.scalarQuery(E15E1.class, "SELECT count(1) FROM utest.e15_e5").selectOne(context));
+		assertEquals(2, SQLSelect.scalarQuery(E12E13.class, "SELECT count(1) FROM utest.e5").selectOne(context));
+		assertEquals(3, SQLSelect.scalarQuery(E12E13.class, "SELECT count(1) FROM utest.e15").selectOne(context));
+
+		assertEquals(
+				1,
+				SQLSelect.scalarQuery(E15E1.class,
+						"SELECT count(1) FROM utest.e15_e5 WHERE e15_id = 14 AND e5_id = 1").selectOne(context));
 	}
 }

@@ -155,10 +155,15 @@ public abstract class BaseCayenneUpdateStage<T extends DataObject> extends BaseL
 			ClassDescriptor relatedDescriptor = context.getEntityResolver().getClassDescriptor(
 					relationship.getTargetEntityName());
 
-			relator.unrelateAll(lrRelationship, o, new Filter() {
+			relator.unrelateAll(lrRelationship, o, new RelationshipUpdate() {
 				@Override
-				public boolean filter(DataObject relatedObject) {
+				public boolean containsRelatedObject(DataObject relatedObject) {
 					return relatedIds.contains(Cayenne.pkForObject(relatedObject));
+				}
+
+				@Override
+				public void removeUpdateForRelatedObject(DataObject relatedObject) {
+					relatedIds.remove(Cayenne.pkForObject(relatedObject));
 				}
 			});
 
@@ -250,7 +255,7 @@ public abstract class BaseCayenneUpdateStage<T extends DataObject> extends BaseL
 			unrelateAll(lrRelationship, object, null);
 		}
 
-		void unrelateAll(LrRelationship lrRelationship, DataObject object, Filter filter) {
+		void unrelateAll(LrRelationship lrRelationship, DataObject object, RelationshipUpdate relationshipUpdate) {
 
 			if (lrRelationship.isToMany()) {
 
@@ -260,9 +265,11 @@ public abstract class BaseCayenneUpdateStage<T extends DataObject> extends BaseL
 
 				for (int i = 0; i < relatedObjects.size(); i++) {
 					DataObject relatedObject = relatedObjects.get(i);
-					if (filter == null || !filter.filter(relatedObject)) {
+					if (relationshipUpdate == null || !relationshipUpdate.containsRelatedObject(relatedObject)) {
 						object.removeToManyTarget(lrRelationship.getName(), relatedObject, true);
 						i--;
+					} else {
+						relationshipUpdate.removeUpdateForRelatedObject(relatedObject);
 					}
 				}
 
@@ -272,7 +279,8 @@ public abstract class BaseCayenneUpdateStage<T extends DataObject> extends BaseL
 		}
 	}
 
-	interface Filter {
-		boolean filter(DataObject o);
+	interface RelationshipUpdate {
+		boolean containsRelatedObject(DataObject o);
+		void removeUpdateForRelatedObject(DataObject o);
 	}
 }
