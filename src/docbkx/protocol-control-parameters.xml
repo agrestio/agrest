@@ -77,8 +77,9 @@
    ]
 }</programlisting></para>
          <para>Example 4: Advanced include. Include specification can itself be a JSON object and
-            contain "cayenneExp" and "sort" directives shaping up a collection of related objects
-            for each root object.</para>
+         contain "<code>cayenneExp</code>", "<code>sort</code>", "<code>start</code>" and
+            "<code>limit</code>" keys shaping up a collection of related objects for each root
+         object.</para>
           <para><code>include={"path":"articles","cayenneExp":"title like
             '%LinkRest%'","sort":"title"} &amp;include=articles.title </code></para>
          <programlisting language="json">{
