@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
+import java.net.URLEncoder;
 import java.sql.Time;
 import java.util.Collections;
 
@@ -235,6 +236,58 @@ public class GET_IT extends JerseyTestOnDerby {
 		assertEquals(Status.OK.getStatusCode(), response1.getStatus());
 		assertEquals("{\"data\":[{\"id\":8,\"e2\":{\"id\":1}},"
 				+ "{\"id\":9,\"e2\":{\"id\":1}}],\"total\":2}", response1.readEntity(String.class));
+	}
+
+	@Test
+	public void test_Select_RelationshipSort() throws WebApplicationException, IOException {
+
+		newContext().performGenericQuery(
+				new SQLTemplate(E2.class, "INSERT INTO utest.e2 (id, name) values (1, 'zzz')"));
+		newContext().performGenericQuery(
+				new SQLTemplate(E2.class, "INSERT INTO utest.e2 (id, name) values (2, 'yyy')"));
+		newContext().performGenericQuery(
+				new SQLTemplate(E2.class, "INSERT INTO utest.e2 (id, name) values (3, 'xxx')"));
+
+		newContext().performGenericQuery(
+				new SQLTemplate(E3.class, "INSERT INTO utest.e3 (id, e2_id, name) values (8, 1, 'aaa')"));
+		newContext().performGenericQuery(
+				new SQLTemplate(E3.class, "INSERT INTO utest.e3 (id, e2_id, name) values (9, 2, 'bbb')"));
+		newContext().performGenericQuery(
+				new SQLTemplate(E3.class, "INSERT INTO utest.e3 (id, e2_id, name) values (10, 3, 'ccc')"));
+
+		Response response1 = target("/e3").queryParam("include", "id").queryParam("include", E3.E2.getName())
+				.queryParam("sort", E3.E2.dot(E2.NAME).getName()).request().get();
+
+		assertEquals(Status.OK.getStatusCode(), response1.getStatus());
+		assertEquals("{\"data\":[{\"id\":10,\"e2\":{\"id\":3,\"address\":null,\"name\":\"xxx\"}}," +
+				"{\"id\":9,\"e2\":{\"id\":2,\"address\":null,\"name\":\"yyy\"}}," +
+				"{\"id\":8,\"e2\":{\"id\":1,\"address\":null,\"name\":\"zzz\"}}],\"total\":3}", response1.readEntity(String.class));
+	}
+
+	@Test
+	public void test_Select_RelationshipStartLimit() throws WebApplicationException, IOException {
+
+		newContext().performGenericQuery(
+				new SQLTemplate(E2.class, "INSERT INTO utest.e2 (id, name) values (1, 'zzz')"));
+		newContext().performGenericQuery(
+				new SQLTemplate(E2.class, "INSERT INTO utest.e2 (id, name) values (2, 'yyy')"));
+
+		newContext().performGenericQuery(
+				new SQLTemplate(E3.class, "INSERT INTO utest.e3 (id, e2_id, name) values (8, 1, 'aaa')"));
+		newContext().performGenericQuery(
+				new SQLTemplate(E3.class, "INSERT INTO utest.e3 (id, e2_id, name) values (9, 1, 'bbb')"));
+		newContext().performGenericQuery(
+				new SQLTemplate(E3.class, "INSERT INTO utest.e3 (id, e2_id, name) values (10, 2, 'ccc')"));
+
+		Response response1 = target("/e2")
+				.queryParam("include", "id")
+				.queryParam("include", URLEncoder.encode("{\"path\":\"" + E2.E3S.getName() + "\",\"start\":1,\"limit\":1}", "UTF-8"))
+				.queryParam("exclude", E2.E3S.dot(E3.PHONE_NUMBER).getName())
+				.request().get();
+
+		assertEquals(Status.OK.getStatusCode(), response1.getStatus());
+		assertEquals("{\"data\":[{\"id\":1,\"e3s\":[{\"id\":9,\"name\":\"bbb\"}]}," +
+				"{\"id\":2,\"e3s\":[]}],\"total\":2}", response1.readEntity(String.class));
 	}
 
 	@Test

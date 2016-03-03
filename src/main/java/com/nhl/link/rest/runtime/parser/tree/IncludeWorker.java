@@ -28,6 +28,8 @@ class IncludeWorker {
 	private static final String MAP_BY = "mapBy";
 	private static final String SORT = "sort";
 	private static final String CAYENNE_EXP = "cayenneExp";
+	private static final String START = "start";
+	private static final String LIMIT = "limit";
 
 	private IJacksonService jsonParser;
 	private ISortProcessor sortProcessor;
@@ -115,6 +117,16 @@ class IncludeWorker {
 				if (exp != null) {
 					includeEntity.andQualifier(exp);
 				}
+			}
+
+			JsonNode startNode = root.get(START);
+			if (startNode != null) {
+				includeEntity.setFetchOffset(startNode.asInt());
+			}
+
+			JsonNode limitNode = root.get(LIMIT);
+			if (limitNode != null) {
+				includeEntity.setFetchLimit(limitNode.asInt());
 			}
 		}
 	}
