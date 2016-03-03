@@ -42,8 +42,9 @@
       { "title" : "Introducing LinkRest" }
    ]
 }</pre><p>Example 4: Advanced include. Include specification can itself be a JSON object and
-            contain "cayenneExp" and "sort" directives shaping up a collection of related objects
-            for each root object.</p><p><code class="code">include={"path":"articles","cayenneExp":"title like
+         contain "<code class="code">cayenneExp</code>", "<code class="code">sort</code>", "<code class="code">start</code>" and
+            "<code class="code">limit</code>" keys shaping up a collection of related objects for each root
+         object.</p><p><code class="code">include={"path":"articles","cayenneExp":"title like
             '%LinkRest%'","sort":"title"}&#8232;&amp;include=articles.title&#8232;</code></p><pre class="programlisting">{
    "id":45,
    "articles" : [
