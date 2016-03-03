@@ -12,11 +12,20 @@ import org.apache.commons.collections.ComparatorUtils;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 
-public class ListEncoder extends AbstractEncoder {
+public class ListEncoder implements Encoder {
 
 	private Encoder elementEncoder;
 	private Collection<Ordering> orderings;
 	private Expression filter;
+
+	private String totalKey;
+	private int offset;
+	private int limit;
+
+	public ListEncoder(Encoder elementEncoder) {
+		this.elementEncoder = elementEncoder;
+		this.orderings = Collections.emptyList();
+	}
 
 	public ListEncoder(Encoder elementEncoder, Expression filter, Collection<Ordering> orderings) {
 		this.elementEncoder = elementEncoder;
@@ -24,39 +33,65 @@ public class ListEncoder extends AbstractEncoder {
 		this.filter = filter;
 	}
 
-	@Override
-	protected boolean encodeNonNullObject(Object object, JsonGenerator out) throws IOException {
+	public ListEncoder withTotal(String totalKey) {
+		this.totalKey = totalKey;
+		return this;
+	}
 
-		List<?> list = toList(object);
+	public ListEncoder withOffset(int offset) {
+		this.offset = offset;
+		return this;
+	}
+
+	public ListEncoder withLimit(int limit) {
+		this.limit = limit;
+		return this;
+	}
+
+	@Override
+	public boolean encode(String propertyName, Object object, JsonGenerator out) throws IOException {
+
+		if (propertyName != null) {
+			out.writeFieldName(propertyName);
+		}
+
+		List<?> objects = toList(object);
 
 		out.writeStartArray();
 
-		if (filter != null) {
-			encodeWithFilter(list, out);
-		} else {
-			encodeWithNoFilter(list, out);
-		}
+		Counter counter = new Counter();
+
+		// to get valid counts and offsets, we need to do the following:
+		// rewind head -> encode -> rewind tail
+		rewind(counter, objects, offset);
+		encode(counter, objects, limit > 0 ? limit : Integer.MAX_VALUE, out);
+		rewind(counter, objects, objects.size());
 
 		out.writeEndArray();
+
+		// checking for 'propertyName', not just 'totalKey', as if we skipped
+		// encoding the field name above, we are not in the right place to
+		// encode the totals.
+		if (propertyName != null && totalKey != null) {
+			out.writeFieldName(totalKey);
+			out.writeNumber(counter.getTotal());
+		}
+
+		// regardless of the list contents, our encoding has succeeded...
 		return true;
-	}
-
-	private void encodeWithFilter(List<?> list, JsonGenerator out) throws IOException {
-		for (Object o : list) {
-			if (filter.match(o)) {
-				elementEncoder.encode(null, o, out);
-			}
-		}
-	}
-
-	private void encodeWithNoFilter(List<?> list, JsonGenerator out) throws IOException {
-		for (Object o : list) {
-			elementEncoder.encode(null, o, out);
-		}
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	private List<?> toList(Object object) {
+
+		if (object == null) {
+			throw new IllegalStateException("Unexpected null list");
+		}
+
+		if (!(object instanceof List)) {
+			throw new IllegalStateException("Unexpected object type. Should be a List, got: "
+					+ object.getClass().getName());
+		}
 
 		List<?> list = (List) object;
 
@@ -73,4 +108,49 @@ public class ListEncoder extends AbstractEncoder {
 		return list;
 	}
 
+	private void rewind(Counter c, List<?> objects, int limit) throws IOException {
+
+		int length = objects.size();
+
+		for (; c.position < length && c.rewound < limit; c.position++) {
+
+			Object o = objects.get(c.position);
+			if (filter == null || filter.match(o)) {
+				if (elementEncoder.willEncode(null, o)) {
+					c.rewound++;
+				}
+			}
+		}
+	}
+
+	private void encode(Counter c, List<?> objects, int limit, JsonGenerator out) throws IOException {
+
+		int length = objects.size();
+
+		for (; c.position < length && c.encoded < limit; c.position++) {
+
+			Object o = objects.get(c.position);
+			if (filter == null || filter.match(o)) {
+				if (elementEncoder.encode(null, objects.get(c.position), out)) {
+					c.encoded++;
+				}
+			}
+		}
+	}
+
+	@Override
+	public boolean willEncode(String propertyName, Object object) {
+		return true;
+	}
+
+	final class Counter {
+		int position;
+
+		int encoded;
+		int rewound;
+
+		int getTotal() {
+			return encoded + rewound;
+		}
+	}
 }

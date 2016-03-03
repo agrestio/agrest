@@ -26,7 +26,6 @@ import com.nhl.link.rest.encoder.ListEncoder;
 import com.nhl.link.rest.encoder.MapByEncoder;
 import com.nhl.link.rest.encoder.PropertyMetadataEncoder;
 import com.nhl.link.rest.encoder.ResourceEncoder;
-import com.nhl.link.rest.encoder.RootListEncoder;
 import com.nhl.link.rest.meta.LrAttribute;
 import com.nhl.link.rest.meta.LrRelationship;
 import com.nhl.link.rest.property.PropertyBuilder;
@@ -77,7 +76,7 @@ public class EncoderService implements IEncoderService {
 		// encoder, as those are presumably applied at the query level.. (unlike
 		// with #nestedToManyEncoder)
 
-		return new RootListEncoder(elementEncoder).withTotal("total").withOffset(entity.getFetchOffset())
+		return new ListEncoder(elementEncoder).withTotal("total").withOffset(entity.getFetchOffset())
 				.withLimit(entity.getFetchLimit());
 	}
 
@@ -89,13 +88,15 @@ public class EncoderService implements IEncoderService {
 
 			// if mapBy is involved, apply filters at MapBy level, not inside
 			// sublists...
-			Encoder listEncoder = new ListEncoder(elementEncoder, null, resourceEntity.getOrderings());
+			Encoder listEncoder = new ListEncoder(elementEncoder, null, resourceEntity.getOrderings())
+					.withOffset(resourceEntity.getFetchOffset()).withLimit(resourceEntity.getFetchLimit());
 
 			return new MapByEncoder(resourceEntity.getMapByPath(), resourceEntity.getQualifier(),
 					resourceEntity.getMapBy(), listEncoder, stringConverterFactory);
 
 		} else {
-			return new ListEncoder(elementEncoder, resourceEntity.getQualifier(), resourceEntity.getOrderings());
+			return new ListEncoder(elementEncoder, resourceEntity.getQualifier(), resourceEntity.getOrderings())
+					.withOffset(resourceEntity.getFetchOffset()).withLimit(resourceEntity.getFetchLimit());
 		}
 	}
 
