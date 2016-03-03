@@ -10,7 +10,7 @@
             dependency.<programlisting language="xml">&lt;dependency>
    &lt;groupId>com.nhl.link.rest&lt;/groupId>
    &lt;artifactId>link-rest&lt;/artifactId>
-   &lt;version>1.19&lt;/version>
+   &lt;version>1.22&lt;/version>
 &lt;/dependency> </programlisting>2.
             Create <code>LinkRestRuntime</code>, and load it in JAX-RS container. Assuming the
             container is Jersey, this may look like
