@@ -3,6 +3,7 @@ Release 1.22
 #126 LinkRest JSON Path
 #132 Listener param and return type are forced to be BaseLinearProcessingStage instead of ProcessingStage
 #134 LinkRestException logging should include cause message
+#141 Implement `start`/`limit` for advanced `include`s
 #142 PUT fails when existing many-to-many relationship passed into JSON
 
 Release 1.21
