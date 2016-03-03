@@ -4,7 +4,7 @@
 
 	<groupId>com.nhl.link.rest</groupId>
 	<artifactId>link-rest</artifactId>
-	<version>1.23-SNAPSHOT</version>
+	<version>1.22-SNAPSHOT</version>
 
 	<name>Library: link-rest</name>
 	<description>Model-driven REST data service framework</description>
