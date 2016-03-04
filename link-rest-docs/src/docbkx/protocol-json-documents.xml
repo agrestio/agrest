@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<chapter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink"
+    version="5.0" xml:id="protocol-json-documents">
+ 
+       <title>JSON Documents</title>
+      <section xml:id="protocol-simple-document">
+         <title>Response: Simple Document</title>
+         <para>This document is used in responses that contain no data, just a boolean status and a
+            message. On success it might look like
+            this:<programlisting language="json">HTTP/1.1 200 OK
+Content-Type: application/json
+
+{
+   "success" : true,
+   "message" : "all is good"
+} </programlisting>On
+            failure it might look like
+            this:<programlisting>HTTP/1.1 500 Server error
+Content-Type: application/json    
+
+{
+   "success" : false,
+   "message" : "Database connection failure"
+} </programlisting></para>   
+      </section>
+      <section xml:id="protocol-collection-document">
+         <title>Response: Collection Document</title>
+         <para>A document that passes the data from the server to the client. This is the main
+            representation of data in
+            LinkRest.<programlisting>HTTP/1.1 200 OK
+Content-Type: application/json
+
+{
+   "data" : [
+      { "id" : 5, "name": "A" },
+      { "id" : 8, "name": "B" }
+   ],
+   "total" : 2
+}</programlisting></para>
+         <para><code>"data"</code> array contains entity objects. Implicit entity model defines what
+            attributes and relationships (collectively - "properties") each object has. A subset of
+            properties showing in the collection document is a defined by a combination of
+            server-side constraints and client request control parameters. Each object in the data
+            array may contain related objects, those in turn may contain their related objects, with
+            no limit on the depth of nesting.</para>
+         <para><code>"total"</code> is a number of objects one would see in the collection if there
+            was no pagination. If pagination is in use (see <xref linkend="protocol-start-limit"/>),
+            the total may be greater than the number of visible objects in the "data" array.
+            Otherwise it is equal to the size of "data".</para>   
+      </section>
+      <section xml:id="protocol-update-document">
+         <title>Request: Update Document</title>
+         <para>Update Document is sent from the client to the server to modify an entity collection.
+            It is a Collection document stripped down to its "data" section. There are two flavors -
+            a single object and an array of
+            objects:<programlisting>{ "id" : 5, "name": "X" } </programlisting><programlisting>[
+   { "id" : 5, "name": "X" },
+   { "id" : 8, "name": "Y" }
+] </programlisting></para>   
+      </section>
+</chapter>
