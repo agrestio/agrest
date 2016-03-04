@@ -3,12 +3,16 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>com.nhl.link.rest</groupId>
-	<artifactId>link-rest</artifactId>
+	<artifactId>link-rest-parent</artifactId>
 	<version>1.23-SNAPSHOT</version>
 
-	<name>Library: link-rest</name>
+	<name>Library: link-rest (Parent)</name>
 	<description>Model-driven REST data service framework</description>
-	<packaging>jar</packaging>
+	<packaging>pom</packaging>
+
+	<modules>
+		<module>link-rest</module>
+	</modules>
 
 	<properties>
 
@@ -97,9 +101,9 @@
 				<version>1.9.5-rc1</version>
 			</dependency>
 
-			<!-- Let's only use the servlet spec used by Jetty. There is some confusion 
-				with it. Origin and version of this jar bundled with production jetty is 
-				"glassfish javax.servlet.3.1.0.b33", while appserver-launcher jetty artifacts 
+			<!-- Let's only use the servlet spec used by Jetty. There is some confusion
+				with it. Origin and version of this jar bundled with production jetty is
+				"glassfish javax.servlet.3.1.0.b33", while appserver-launcher jetty artifacts
 				rely on the Orbit version and won't work with anything else. -->
 			<dependency>
 				<groupId>org.eclipse.jetty.orbit</groupId>
@@ -342,7 +346,7 @@
 			<artifactId>mockito-all</artifactId>
 			<scope>test</scope>
 		</dependency>
-		<!-- providing slf4j binding for use with unit tests that require SLF and 
+		<!-- providing slf4j binding for use with unit tests that require SLF and
 			for clean Cayenne output. -->
 		<dependency>
 			<groupId>org.slf4j</groupId>
