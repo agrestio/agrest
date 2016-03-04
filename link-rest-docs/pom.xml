@@ -2,67 +2,22 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<!-- TODO: turn main LinkRest into a multi-module project - https://github.com/nhl/link-rest/issues/144 ; 
-		make the docs a subproject of LinkRest to ensure the versions match..
-	-->
+	<parent>
+		<groupId>com.nhl.link.rest</groupId>
+		<artifactId>link-rest-parent</artifactId>
+		<version>1.23-SNAPSHOT</version>
+		<relativePath>../pom.xml</relativePath>
+	</parent>
 
-	<groupId>com.nhl.link.rest</groupId>
 	<artifactId>link-rest-docs</artifactId>
-	<version>1.22-SNAPSHOT</version>
-
 	<name>Documentation: link-rest</name>
 	<description>LinkRest framework documentation</description>
 	<packaging>pom</packaging>
 
 	<properties>
-
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-
         <!-- This property allows to only expose major version in the docs metadata to avoid confusing SEO -->
         <linkrest.version.major>1</linkrest.version.major>
-		
 	</properties>
-
-	<url>https://github.com/nhl/link-rest</url>
-
-	<licenses>
-		<license>
-			<name>BSD License</name>
-			<url>https://github.com/nhl/link-rest/blob/master/LICENSE.txt</url>
-			<distribution>repo</distribution>
-		</license>
-	</licenses>
-
-	<developers>
-		<developer>
-			<id>andrus</id>
-			<name>Andrus Adamchik</name>
-			<email>andrus@objectstyle.com</email>
-			<organization>ObjectStyle</organization>
-			<timezone>America/New_York</timezone>
-		</developer>
-	</developers>
-
-	<repositories>
-		<repository>
-			<id>linkrest-dependencies</id>
-			<name>Link Rest Dependencies Repo</name>
-			<url>http://maven.objectstyle.org/nexus/content/groups/linkrest</url>
-			<snapshots>
-				<enabled>false</enabled>
-			</snapshots>
-		</repository>
-	</repositories>
-	<pluginRepositories>
-		<pluginRepository>
-			<id>linkrest-dependencies</id>
-			<name>Link Rest Dependencies Repo</name>
-			<url>http://maven.objectstyle.org/nexus/content/groups/linkrest</url>
-			<snapshots>
-				<enabled>false</enabled>
-			</snapshots>
-		</pluginRepository>
-	</pluginRepositories>
 
 	<build>
 		<resources>
