@@ -12,6 +12,7 @@
 
 	<modules>
 		<module>link-rest</module>
+		<module>link-rest-docs</module>
 	</modules>
 
 	<properties>
