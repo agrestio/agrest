@@ -23,7 +23,7 @@ import com.nhl.link.rest.meta.LrRelationship;
 import com.nhl.link.rest.runtime.processor.select.SelectContext;
 import com.nhl.link.rest.unit.TestWithCayenneMapping;
 
-public class CayenneFetchStageTest extends TestWithCayenneMapping {
+public class CayenneQueryAssembleStageTest extends TestWithCayenneMapping {
 
 	private CayenneQueryAssembleStage<Object> fetchStage;
 
