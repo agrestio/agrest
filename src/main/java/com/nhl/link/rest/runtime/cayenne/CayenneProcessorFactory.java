@@ -8,6 +8,7 @@ import java.util.Map;
 
 import javax.ws.rs.core.Response.Status;
 
+import com.nhl.link.rest.runtime.cayenne.processor.CayenneFetchStage;
 import org.apache.cayenne.DataObject;
 import org.apache.cayenne.di.Inject;
 
@@ -22,7 +23,7 @@ import com.nhl.link.rest.runtime.cayenne.processor.CayenneContextInitStage;
 import com.nhl.link.rest.runtime.cayenne.processor.CayenneCreateOrUpdateStage;
 import com.nhl.link.rest.runtime.cayenne.processor.CayenneCreateStage;
 import com.nhl.link.rest.runtime.cayenne.processor.CayenneDeleteStage;
-import com.nhl.link.rest.runtime.cayenne.processor.CayenneFetchStage;
+import com.nhl.link.rest.runtime.cayenne.processor.CayenneQueryAssembleStage;
 import com.nhl.link.rest.runtime.cayenne.processor.CayenneFullSyncStage;
 import com.nhl.link.rest.runtime.cayenne.processor.CayenneUnrelateStage;
 import com.nhl.link.rest.runtime.cayenne.processor.CayenneUpdatePostProcessStage;
@@ -124,7 +125,8 @@ public class CayenneProcessorFactory implements IProcessorFactory {
 
 	private ProcessingStage<SelectContext<Object>, Object> createSelectProcessor() {
 
-		BaseLinearProcessingStage<SelectContext<Object>, Object> stage3 = new CayenneFetchStage<>(null, persister);
+		BaseLinearProcessingStage<SelectContext<Object>, Object> stage4 = new CayenneFetchStage<>(null, persister);
+		BaseLinearProcessingStage<SelectContext<Object>, Object> stage3 = new CayenneQueryAssembleStage<>(stage4, persister);
 		BaseLinearProcessingStage<SelectContext<Object>, Object> stage2 = new ApplySelectServerParamsStage<>(stage3,
 				encoderService, constraintsHandler);
 		BaseLinearProcessingStage<SelectContext<Object>, Object> stage1 = new ParseSelectRequestStage<>(stage2,

@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.Collection;
 
 import com.nhl.link.rest.annotation.listener.DataFetched;
+import com.nhl.link.rest.annotation.listener.QueryAssembled;
 import com.nhl.link.rest.annotation.listener.SelectChainInitialized;
 import com.nhl.link.rest.annotation.listener.SelectRequestParsed;
 import com.nhl.link.rest.annotation.listener.SelectServerParamsApplied;
@@ -22,7 +23,8 @@ import com.nhl.link.rest.annotation.listener.DataStoreUpdated;
  */
 public enum EventGroup {
 
-	select(SelectChainInitialized.class, SelectRequestParsed.class, SelectServerParamsApplied.class, DataFetched.class),
+	select(SelectChainInitialized.class, SelectRequestParsed.class, SelectServerParamsApplied.class, QueryAssembled.class,
+			DataFetched.class),
 
 	update(UpdateChainInitialized.class, UpdateRequestParsed.class, UpdateServerParamsApplied.class, DataStoreUpdated.class,
 			UpdateResponseUpdated.class);

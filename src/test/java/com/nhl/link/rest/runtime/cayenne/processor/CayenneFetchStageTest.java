@@ -25,11 +25,11 @@ import com.nhl.link.rest.unit.TestWithCayenneMapping;
 
 public class CayenneFetchStageTest extends TestWithCayenneMapping {
 
-	private CayenneFetchStage<Object> fetchStage;
+	private CayenneQueryAssembleStage<Object> fetchStage;
 
 	@Before
 	public void before() {
-		this.fetchStage = new CayenneFetchStage<>(null, mockCayennePersister);
+		this.fetchStage = new CayenneQueryAssembleStage<>(null, mockCayennePersister);
 	}
 
 	@Test
@@ -100,7 +100,7 @@ public class CayenneFetchStageTest extends TestWithCayenneMapping {
 
 		SelectQuery<E1> q1 = fetchStage.buildQuery(c);
 
-		assertEquals("No pagination in the query for paginated request is expected", 0, q1.getPageSize());
+		assertEquals("Pagination in the query for paginated request is expected", 10, q1.getPageSize());
 		assertEquals(0, q1.getFetchOffset());
 		assertEquals(0, q1.getFetchLimit());
 
