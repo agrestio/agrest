@@ -2,7 +2,6 @@ Release 1.23
 
 #148 Optimizing paginated fetches
 
-
 Release 1.22
 
 #126 LinkRest JSON Path
