@@ -5,6 +5,7 @@ Release 1.22
 #134 LinkRestException logging should include cause message
 #141 Implement `start`/`limit` for advanced `include`s
 #142 PUT fails when existing many-to-many relationship passed into JSON
+#148 Optimizing paginated fetches
 
 Release 1.21
 
