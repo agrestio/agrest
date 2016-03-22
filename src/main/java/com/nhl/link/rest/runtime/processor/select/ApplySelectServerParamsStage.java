@@ -53,6 +53,7 @@ public class ApplySelectServerParamsStage<T> extends BaseLinearProcessingStage<S
 		for (EncoderFilter filter : filters) {
 			if (filter.matches(entity)) {
 				entity.setFiltered(true);
+				break;
 			}
 		}
 
