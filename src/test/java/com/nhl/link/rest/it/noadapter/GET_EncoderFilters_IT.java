@@ -1,6 +1,7 @@
 package com.nhl.link.rest.it.noadapter;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 
@@ -8,6 +9,7 @@ import javax.ws.rs.core.FeatureContext;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import com.nhl.link.rest.it.fixture.listener.CayennePaginationListener;
 import org.apache.cayenne.Cayenne;
 import org.apache.cayenne.query.SQLTemplate;
 import org.junit.Test;
@@ -88,6 +90,19 @@ public class GET_EncoderFilters_IT extends JerseyTestOnDerby {
 		assertEquals(Status.OK.getStatusCode(), response1.getStatus());
 		assertEquals("{\"data\":[{\"id\":6},{\"id\":8},{\"id\":10}],\"total\":5}",
 				response1.readEntity(String.class));
+	}
+
+	@Test
+	public void testFilteredPagination4() {
+
+		CayennePaginationListener.RESOURCE_ENTITY_IS_FILTERED = false;
+		CayennePaginationListener.QUERY_PAGE_SIZE = 0;
+
+		target("/e4/pagination_listener").queryParam("include", "id").queryParam("sort", "id")
+				.queryParam("start", "2").queryParam("limit", "10").request().get();
+
+		assertTrue(CayennePaginationListener.RESOURCE_ENTITY_IS_FILTERED);
+		assertEquals(0, CayennePaginationListener.QUERY_PAGE_SIZE);
 	}
 
 	private final class E4OddFilter implements EncoderFilter {

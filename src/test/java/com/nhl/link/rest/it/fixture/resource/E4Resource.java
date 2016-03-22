@@ -13,6 +13,7 @@ import javax.ws.rs.core.Configuration;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.UriInfo;
 
+import com.nhl.link.rest.it.fixture.listener.CayennePaginationListener;
 import org.apache.cayenne.Cayenne;
 import org.apache.cayenne.DataObject;
 import org.apache.cayenne.query.SelectQuery;
@@ -32,6 +33,12 @@ public class E4Resource {
 	@GET
 	public DataResponse<E4> get(@Context UriInfo uriInfo) {
 		return LinkRest.service(config).select(SelectQuery.query(E4.class), uriInfo);
+	}
+
+	@GET
+	@Path("pagination_listener")
+	public DataResponse<E4> get_WithPaginationListener(@Context UriInfo uriInfo) {
+		return LinkRest.service(config).select(E4.class).uri(uriInfo).listener(new CayennePaginationListener()).select();
 	}
 
 	@GET
