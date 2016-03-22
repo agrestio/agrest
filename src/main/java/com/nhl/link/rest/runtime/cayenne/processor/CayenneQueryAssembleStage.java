@@ -52,9 +52,11 @@ public class CayenneQueryAssembleStage<T> extends BaseLinearProcessingStage<Sele
 
 		SelectQuery<X> query = basicSelect(context);
 
-		int limit = context.getEntity().getFetchLimit();
-		if (limit > 0) {
-			query.setPageSize(limit);
+		if (!entity.isFiltered()) {
+			int limit = context.getEntity().getFetchLimit();
+			if (limit > 0) {
+				query.setPageSize(limit);
+			}
 		}
 
 		if (context.getParent() != null) {

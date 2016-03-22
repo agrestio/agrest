@@ -76,29 +76,39 @@ public class EncoderService implements IEncoderService {
 		// encoder, as those are presumably applied at the query level.. (unlike
 		// with #nestedToManyEncoder)
 
-		return new ListEncoder(elementEncoder).withTotal("total").withOffset(entity.getFetchOffset())
+		ListEncoder rootEncoder = new ListEncoder(elementEncoder).withTotal("total").withOffset(entity.getFetchOffset())
 				.withLimit(entity.getFetchLimit());
+
+		if (entity.isFiltered()) {
+			rootEncoder.shouldFilter();
+		}
+		return rootEncoder;
 	}
 
 	private Encoder nestedToManyEncoder(ResourceEntity<?> resourceEntity) {
 
 		Encoder elementEncoder = collectionElementEncoder(resourceEntity);
+		boolean isMapBy = resourceEntity.getMapBy() != null;
 
-		if ((resourceEntity.getMapBy() != null)) {
+		// if mapBy is involved, apply filters at MapBy level, not inside
+		// sublists...
+		ListEncoder listEncoder = new ListEncoder(
+				elementEncoder,
+				isMapBy? null : resourceEntity.getQualifier(),
+				resourceEntity.getOrderings()
+		);
 
-			// if mapBy is involved, apply filters at MapBy level, not inside
-			// sublists...
-			Encoder listEncoder = new ListEncoder(elementEncoder, null, resourceEntity.getOrderings())
-					.withOffset(resourceEntity.getFetchOffset()).withLimit(resourceEntity.getFetchLimit());
+		listEncoder.withOffset(resourceEntity.getFetchOffset()).withLimit(resourceEntity.getFetchLimit());
 
-			return new MapByEncoder(resourceEntity.getMapByPath(), resourceEntity.getQualifier(),
-					resourceEntity.getMapBy(), listEncoder, stringConverterFactory);
-
-		} else {
-			return new ListEncoder(elementEncoder, resourceEntity.getQualifier(), resourceEntity.getOrderings())
-					.withOffset(resourceEntity.getFetchOffset()).withLimit(resourceEntity.getFetchLimit());
+		if (resourceEntity.isFiltered()) {
+			listEncoder.shouldFilter();
 		}
+
+		return isMapBy? new MapByEncoder(resourceEntity.getMapByPath(), resourceEntity.getQualifier(),
+					resourceEntity.getMapBy(), listEncoder, stringConverterFactory) : listEncoder;
 	}
+
+
 
 	private Encoder collectionElementEncoder(ResourceEntity<?> resourceEntity) {
 		Encoder encoder = entityEncoder(resourceEntity);

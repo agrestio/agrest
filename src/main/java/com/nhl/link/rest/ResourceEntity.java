@@ -42,6 +42,7 @@ public class ResourceEntity<T> {
 	private Map<String, EntityProperty> extraProperties;
 	private int fetchOffset;
 	private int fetchLimit;
+	private boolean filtered;
 
 	public ResourceEntity(LrEntity<T> lrEntity) {
 		this.idIncluded = false;
@@ -212,5 +213,19 @@ public class ResourceEntity<T> {
 	 */
 	public void setApplicationBase(String applicationBase) {
 		this.applicationBase = applicationBase;
+	}
+
+	/**
+	 * @since 1.23
+     */
+	public boolean isFiltered() {
+		return filtered;
+	}
+
+	/**
+	 * @since 1.23
+     */
+	public void setFiltered(boolean filtered) {
+		this.filtered = filtered;
 	}
 }

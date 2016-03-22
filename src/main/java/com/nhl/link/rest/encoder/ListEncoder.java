@@ -22,6 +22,8 @@ public class ListEncoder implements Encoder {
 	private int offset;
 	private int limit;
 
+	private boolean shouldFilter;
+
 	public ListEncoder(Encoder elementEncoder) {
 		this.elementEncoder = elementEncoder;
 		this.orderings = Collections.emptyList();
@@ -45,6 +47,11 @@ public class ListEncoder implements Encoder {
 
 	public ListEncoder withLimit(int limit) {
 		this.limit = limit;
+		return this;
+	}
+
+	public ListEncoder shouldFilter() {
+		shouldFilter = true;
 		return this;
 	}
 
@@ -114,11 +121,15 @@ public class ListEncoder implements Encoder {
 
 		for (; c.position < length && c.rewound < limit; c.position++) {
 
-			Object o = objects.get(c.position);
-			if (filter == null || filter.match(o)) {
-				if (elementEncoder.willEncode(null, o)) {
-					c.rewound++;
+			if (shouldFilter) {
+				Object o = objects.get(c.position);
+				if (filter == null || filter.match(o)) {
+					if (elementEncoder.willEncode(null, o)) {
+						c.rewound++;
+					}
 				}
+			} else {
+				c.rewound++;
 			}
 		}
 	}

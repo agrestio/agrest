@@ -4,11 +4,14 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.ws.rs.core.Response.Status;
 
+import com.nhl.link.rest.encoder.EncoderFilter;
 import com.nhl.link.rest.runtime.cayenne.processor.CayenneFetchStage;
+import com.nhl.link.rest.runtime.encoder.EncoderService;
 import org.apache.cayenne.DataObject;
 import org.apache.cayenne.di.Inject;
 
@@ -61,11 +64,12 @@ public class CayenneProcessorFactory implements IProcessorFactory {
 	private IConstraintsHandler constraintsHandler;
 	private IMetadataService metadataService;
 	private IResourceMetadataService resourceMetadataService;
+	private List<EncoderFilter> filters;
 
 	public CayenneProcessorFactory(@Inject IRequestParser requestParser, @Inject IUpdateParser updateParser,
 			@Inject IEncoderService encoderService, @Inject ICayennePersister persister,
 			@Inject IConstraintsHandler constraintsHandler, @Inject IMetadataService metadataService,
-			@Inject IResourceMetadataService resourceMetadataService) {
+			@Inject IResourceMetadataService resourceMetadataService, @Inject(EncoderService.ENCODER_FILTER_LIST) List<EncoderFilter> filters) {
 		this.requestParser = requestParser;
 		this.encoderService = encoderService;
 		this.persister = persister;
@@ -73,6 +77,7 @@ public class CayenneProcessorFactory implements IProcessorFactory {
 		this.metadataService = metadataService;
 		this.resourceMetadataService = resourceMetadataService;
 		this.updateParser = updateParser;
+		this.filters = filters;
 	}
 
 	@Override
@@ -128,7 +133,7 @@ public class CayenneProcessorFactory implements IProcessorFactory {
 		BaseLinearProcessingStage<SelectContext<Object>, Object> stage4 = new CayenneFetchStage<>(null, persister);
 		BaseLinearProcessingStage<SelectContext<Object>, Object> stage3 = new CayenneQueryAssembleStage<>(stage4, persister);
 		BaseLinearProcessingStage<SelectContext<Object>, Object> stage2 = new ApplySelectServerParamsStage<>(stage3,
-				encoderService, constraintsHandler);
+				encoderService, constraintsHandler, filters);
 		BaseLinearProcessingStage<SelectContext<Object>, Object> stage1 = new ParseSelectRequestStage<>(stage2,
 				requestParser, metadataService);
 		BaseLinearProcessingStage<SelectContext<Object>, Object> stage0 = new InitializeSelectChainStage<>(stage1);

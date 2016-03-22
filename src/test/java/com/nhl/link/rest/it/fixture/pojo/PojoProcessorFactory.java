@@ -7,6 +7,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import com.nhl.link.rest.encoder.EncoderFilter;
 import org.apache.cayenne.di.Inject;
 import org.apache.cayenne.exp.Expression;
 import org.apache.cayenne.query.Ordering;
@@ -54,7 +55,7 @@ public class PojoProcessorFactory implements IProcessorFactory {
 
 		BaseLinearProcessingStage<SelectContext<Object>, Object> stage4 = new PojoFetchStage<>(null);
 		BaseLinearProcessingStage<SelectContext<Object>, Object> stage3 = new ApplySelectServerParamsStage<>(stage4,
-				encoderService, constraintsHandler);
+				encoderService, constraintsHandler, Collections.<EncoderFilter>emptyList());
 		BaseLinearProcessingStage<SelectContext<Object>, Object> stage2 = new ParseSelectRequestStage<>(stage3,
 				requestParser, metadataService);
 		BaseLinearProcessingStage<SelectContext<Object>, Object> stage1 = new InitializeSelectChainStage<>(stage2);
