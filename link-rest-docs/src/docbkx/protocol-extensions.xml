@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<chapter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink"
+    version="5.0" xml:id="protocol-extensions">
+  <title>Protocol Extensions</title>
+      <para>With the help of <link
+            xlink:href="https://github.com/nhl/link-rest/blob/master/src/main/java/com/nhl/link/rest/runtime/adapter/LinkRestAdapter.java"
+            >LinkRestAdapter</link> and other LinkRest extension techniques one can extend or
+         customize the protocol to recognize extra control parameters, etc. LinkRest ships with one
+         such optional extension that adapts the framework for the use with Sencha/ExtJS JavaScript
+         client. This extension is described below.</para>
+      <section xml:id="sencha-adapter">
+         <title>Sencha Adapter</title>
+         <para><link
+               xlink:href="https://github.com/nhl/link-rest/blob/master/src/main/java/com/nhl/link/rest/runtime/adapter/sencha/SenchaAdapter.java"
+               >SenchaAdapter</link> provides a few extensions to the LinkRest protocol to better
+            handle certain Sencha features:<itemizedlist>
+               <listitem>
+                  <para>If a to-one relationship property is included in the Collection, the
+                     framework would also generate a companion "synthetic" FK property called
+                     "propertyName_id"</para>
+               </listitem>
+               <listitem>
+                  <para><code>"filter"</code> key - an alternative to
+                     <code>"cayenneExp"</code>.</para>
+               </listitem>
+               <listitem>
+                  <para><code>"group"</code> / <code>"groupDir"</code> keys that are functionally
+                     equivalent to <code>"sort"</code> / <code>"dir"</code>.</para>
+               </listitem>
+            </itemizedlist></para>
+      </section>
+</chapter>

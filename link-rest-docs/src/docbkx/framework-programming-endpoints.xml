@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<chapter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink"
+    xmlns:xi="http://www.w3.org/2001/XInclude"
+    version="5.0"  xml:id="framework-programming-endpoints">
+        <title>Writing Resource Endpoints</title>
+        <para>Let's create a resource class called DomainResource, annotated with JAX-RS @Path and
+            @Produces annotations. One extra thing we need for LinkRest to work is a an instance of
+                <code>javax.ws.rs.core.Configuration</code>, that can be injected with
+                <code>@Context</code>
+            annotation:<programlisting language="java">import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.Configuration;
+import javax.ws.rs.core.Context;
+
+@Path("domain")
+@Produces(MediaType.APPLICATION_JSON)
+public class DomainResource {
+
+    @Context
+    private Configuration config;
+}</programlisting></para>
+        <section xml:id="framework-endpoints-post">
+            <title>Create Entity with POST</title>
+            <para>Now let's implement a <code>POST</code> method in DomainResource
+                class:<programlisting language="java">import com.nhl.link.rest.LinkRest;
+import com.nhl.link.rest.SimpleResponse;
+
+...
+
+@POST
+public SimpleResponse create(String data) {
+    return LinkRest.create(Domain.class, config).sync(data);
+}</programlisting>Here
+                we've built a very simple "create chain" using LinkRest fluent API. It starts with a
+                static "create" method on LinkRest class, taking a type of entity to create (Domain) and
+                previously injected Configuration. Finally it calls "sync" method to execute the
+                request. "data" String is expected to be an "Update Document" (see <xref
+                    linkend="protocol-update-document"/>), i.e. a single object or an array of objects.
+                Now if you compile your app and deploy it in a web container (e.g. Tomcat), you may call
+                this endpoint to create new Domain
+                objects:<programlisting>curl -i -X POST 'http://example.org/myapp/domain' \
+>          -d '{"vhost":"mysite1.example.org","name":"My Site #1"}'
+
+HTTP/1.1 201 Created
+Content-Type: application/json
+
+{"success":true}</programlisting></para>
+            <para>In your container log you might see output from Cayenne, actually inserting a newly
+                created
+                object:<programlisting>INFO CommonsJdbcEventLogger - INSERT INTO "domain" ("name", "vhost") VALUES (?, ?)
+INFO CommonsJdbcEventLogger - [bind: 1->name:'My Site #1', 2->vhost:'mysite1.example.org']
+INFO CommonsJdbcEventLogger - Generated PK: domain.id = 1
+INFO CommonsJdbcEventLogger - === updated 1 row.</programlisting></para>
+        </section>
+        <section xml:id="framework-endpoints-get">
+            <title>Read Collection of Entities with GET</title>
+        
+        <para>You may create more Domain objects, executing <code>POST</code> request above. Now
+            let's write a <code>GET</code> method to search for
+            domains:<programlisting language="java">import com.nhl.link.rest.DataResponse;
+import com.nhl.link.rest.LinkRest;
+
+...
+
+@GET
+public DataResponse&lt;Domain> getAll(@Context UriInfo uriInfo) {
+    return LinkRest.select(Domain.class, config).uri(uriInfo).select();
+}</programlisting></para>
+        <para>The above is a typical "select chain". Now <code>GET</code> can be invoked from the
+                client like
+                this:<programlisting>curl -i -X GET 'http://example.org/myapp/domain'
+
+HTTP/1.1 200 OK
+Content-Type: application/json
+
+{
+    "data" : [
+        { "id" : 1, "name" : "My Site #1", "vhost" : "mysite1.example.org" },
+        { "id" : 2, "name" : "My Site #2", "vhost" : "mysite2.example.org" }
+    ],
+    "total" : 2
+}</programlisting>Since
+                select chain above incorporates UriInfo, it will recognize LinkRest control
+                parameters passed from the client (see <xref linkend="protocol-control-parameters"
+                />). Let's try using "cayenneExp" filter and
+                "include":<programlisting>curl -i -X GET 'http://example.org/myapp/domain?cayenneExp=vhost="mysite1.example.org"&amp;include=id'
+
+HTTP/1.1 200 OK
+Content-Type: application/json
+
+{
+    "data" : [
+        { "id" : 1 }
+    ],
+    "total" : 1
+}</programlisting></para>
+        </section>
+        <section xml:id="framework-endpoints-get-one">
+            <title>Read a Single Entity with GET</title>
+            <para>A common request is to locate a single instance of an entity by ID. Here is how
+                this can be done with
+                LinkRest:<programlisting>@GET
+@Path("{id}")
+public DataResponse&lt;Domain> getOne(@PathParam("id") int id, @Context UriInfo uriInfo) {
+    return LinkRest.select(Domain.class, config).byId(id).uri(uriInfo).selectOne();
+}</programlisting>Here
+                we are binding "id" as a URL path parameter, but also notice that LinkRest doesn't
+                mandate any specific place in the URL for ID. This is a decision made by the
+                developer. Calling this endpoint, we'll get an expected
+                result:<programlisting>curl -i -X GET 'http://example.org/myapp/domain/1'
+
+HTTP/1.1 200 OK
+Content-Type: application/json
+
+{
+    "data" : [
+        { "id" : 1, "name" : "My Site #1", "vhost" : "mysite1.example.org" }
+    ],
+    "total" : 1
+}</programlisting>Even
+                though we expect at most one object to be returned, the response is the same
+                Collection Document as we've seen before.</para>
+        </section>
+</chapter>
+

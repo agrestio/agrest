@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<chapter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink"
+    version="5.0" xml:id="protocol-overview">
+      <title>Overview</title>
+      <para>LinkRest Protocol is a simple HTTP/JSON-based message protocol. It operates on an object
+         model implicitly shared between a client and a server. It defines the format of JSON
+         documents exchanged between client and server, and a set of control parameters that let the
+         client to control representation of the model returned from the server. E.g. the client may
+         request a range of objects, sorted in a specific order, matching a criteria, with each
+         object including a subset of attributes and related entities. This gives the client exactly
+         what it needs, thus simplifying the code, minimizing the number of trips to the server, and
+         optimizing the size of the response.</para>
+      <para><code>application/json</code> is used in both requests and responses where applicable.
+         Values of some control parameters below are also represented as JSON.</para>
+      <para>All examples below use an imaginary CMS data model that is made of 2 entities: Domain
+         and Article, with a 1..N relationship between them: </para> <para><inlinemediaobject>
+            <imageobject>
+               <imagedata fileref="img/model.png"/>
+            </imageobject>
+         </inlinemediaobject></para>
+</chapter>
