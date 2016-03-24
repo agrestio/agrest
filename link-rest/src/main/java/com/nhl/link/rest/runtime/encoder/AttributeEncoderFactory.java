@@ -5,12 +5,10 @@ import java.sql.Timestamp;
 import java.sql.Types;
 import java.util.Collection;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.concurrent.ConcurrentHashMap;
 
-import com.nhl.link.rest.meta.cayenne.CayenneLrEntity;
 import org.apache.cayenne.DataObject;
 
 import com.nhl.link.rest.EntityProperty;
@@ -23,6 +21,7 @@ import com.nhl.link.rest.encoder.ISOTimeEncoder;
 import com.nhl.link.rest.encoder.ObjectIdEncoder;
 import com.nhl.link.rest.meta.LrAttribute;
 import com.nhl.link.rest.meta.LrPersistentAttribute;
+import com.nhl.link.rest.meta.cayenne.CayenneLrEntity;
 import com.nhl.link.rest.property.BeanPropertyReader;
 import com.nhl.link.rest.property.PersistentObjectIdPropertyReader;
 import com.nhl.link.rest.property.PropertyBuilder;
