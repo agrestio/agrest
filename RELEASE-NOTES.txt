@@ -1,5 +1,6 @@
 Release 1.23
 
+#144 Merge link-rest-docs repo into link-rest
 #148 Optimizing paginated fetches
 
 Release 1.22
