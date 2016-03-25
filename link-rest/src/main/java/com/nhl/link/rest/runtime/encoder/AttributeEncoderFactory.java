@@ -101,24 +101,25 @@ public class AttributeEncoderFactory implements IAttributeEncoderFactory {
 					valueEncoders.put(id.getName(), valueEncoder);
 				}
 
-				return PropertyBuilder.property(PersistentObjectIdPropertyReader.reader()).encodedWith(
-						new ObjectIdEncoder(valueEncoders));
+				return PropertyBuilder.property(PersistentObjectIdPropertyReader.reader())
+						.encodedWith(new ObjectIdEncoder(valueEncoders));
 			} else {
 
 				LrPersistentAttribute persistentId = (LrPersistentAttribute) ids.iterator().next();
 				Encoder valueEncoder = buildEncoder(persistentId.getJavaType(), persistentId.getJdbcType());
 
-				return PropertyBuilder.property(PersistentObjectIdPropertyReader.reader()).encodedWith(
-						new ObjectIdEncoder(valueEncoder));
+				return PropertyBuilder.property(PersistentObjectIdPropertyReader.reader())
+						.encodedWith(new ObjectIdEncoder(valueEncoder));
 			}
 		} else {
 
 			// POJO - PK is an object property
-			
+
 			if (ids.isEmpty()) {
-				throw new IllegalStateException("No ID for entity: " + entity.getLrEntity().getName());
+				// use fake ID encoder
+				return PropertyBuilder.doNothingProperty();
 			}
-			
+
 			// TODO: multi-attribute ID?
 
 			LrAttribute id = ids.iterator().next();

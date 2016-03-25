@@ -11,6 +11,7 @@ import javax.ws.rs.core.Response.Status;
 import org.junit.Test;
 
 import com.nhl.link.rest.it.fixture.pojo.JerseyTestOnPojo;
+import com.nhl.link.rest.it.fixture.pojo.model.P1;
 import com.nhl.link.rest.it.fixture.pojo.model.P6;
 
 public class PojoLinkRestService_InContainer_GET_IT extends JerseyTestOnPojo {
@@ -49,5 +50,21 @@ public class PojoLinkRestService_InContainer_GET_IT extends JerseyTestOnPojo {
 		assertEquals(Status.OK.getStatusCode(), response1.getStatus());
 		assertEquals("{\"data\":[{\"id\":\"o1id\",\"intProp\":15},"
 				+ "{\"id\":\"o2id\",\"intProp\":16}],\"total\":2}", response1.readEntity(String.class));
+	}
+	
+	@Test
+	public void test_SelectAll_NoId() throws WebApplicationException, IOException {
+
+		P1 o1 = new P1();
+		o1.setName("n2");
+		P1 o2 = new P1();
+		o2.setName("n1");
+		pojoDB.bucketForType(P1.class).put("o1id", o1);
+		pojoDB.bucketForType(P1.class).put("o2id", o2);
+
+		Response response1 = target("/pojo/p1").queryParam("sort", "name").request().get();
+		assertEquals(Status.OK.getStatusCode(), response1.getStatus());
+		assertEquals("{\"data\":[{\"name\":\"n1\"},"
+				+ "{\"name\":\"n2\"}],\"total\":2}", response1.readEntity(String.class));
 	}
 }
