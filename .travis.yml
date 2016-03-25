@@ -1,14 +1,14 @@
 language: java
 
-jdk:
-  - oraclejdk8
-  - openjdk7
-
 branches:
   only:
     - master
 
-script: mvn clean source:jar deploy --settings travis_settings.xml
+script: 
+  - jdk_switcher use oraclejdk8
+  - mvn clean verify
+  - jdk_switcher use openjdk7
+  - mvn clean source:jar deploy --settings travis_settings.xml
 
 # travis encrypt -r nhl/link-rest "CI_DEPLOY_USERNAME='name'"
 # travis encrypt -r nhl/link-rest "CI_DEPLOY_PASSWORD='password'"
