@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.nhl.link.rest.parser.converter.Base64Converter;
 import com.nhl.link.rest.parser.converter.GenericConverter;
 import com.nhl.link.rest.parser.converter.JsonValueConverter;
 import com.nhl.link.rest.parser.converter.LongConverter;
@@ -30,6 +31,7 @@ public class DefaultJsonValueConverterFactory implements IJsonValueConverterFact
 		convertersByJavaType.put(java.sql.Date.class.getName(), UtcDateConverter.converter());
 		convertersByJavaType.put(java.sql.Time.class.getName(), UtcDateConverter.converter());
 		convertersByJavaType.put(java.sql.Timestamp.class.getName(), UtcDateConverter.converter());
+		convertersByJavaType.put(byte[].class.getSimpleName(), Base64Converter.converter());
 
 		this.convertersByJdbcType = new HashMap<>();
 		convertersByJdbcType.put(Types.BIGINT, LongConverter.converter());

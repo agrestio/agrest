@@ -88,7 +88,7 @@
 		<db-attribute name="double_primitive" type="DOUBLE"/>
 		<db-attribute name="float_object" type="FLOAT"/>
 		<db-attribute name="float_primitive" type="FLOAT"/>
-		<db-attribute name="guid" type="BINARY" length="16"/>
+		<db-attribute name="guid" type="VARBINARY" length="16"/>
 		<db-attribute name="id" type="INTEGER" isPrimaryKey="true" isGenerated="true" isMandatory="true"/>
 		<db-attribute name="int_object" type="INTEGER"/>
 		<db-attribute name="int_primitive" type="INTEGER"/>

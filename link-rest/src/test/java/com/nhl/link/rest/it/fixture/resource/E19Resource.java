@@ -8,6 +8,7 @@ import com.nhl.link.rest.meta.LinkType;
 import com.nhl.link.rest.meta.annotation.Resource;
 
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Configuration;
@@ -24,6 +25,11 @@ public class E19Resource {
     @Path("{id}")
 	public DataResponse<E19> getById(@Context UriInfo uriInfo, @PathParam("id") Integer id) {
 		return LinkRest.select(E19.class, config).uri(uriInfo).byId(id).selectOne();
+	}
+
+	@POST
+	public DataResponse<E19> create(@Context UriInfo uriInfo, String data) {
+		return LinkRest.create(E19.class, config).uri(uriInfo).syncAndSelect(data);
 	}
 
 	@GET

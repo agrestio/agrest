@@ -14,7 +14,11 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
 import com.nhl.link.rest.it.fixture.cayenne.E17;
+import com.nhl.link.rest.it.fixture.cayenne.E19;
 import com.nhl.link.rest.it.fixture.resource.E17Resource;
+import com.nhl.link.rest.it.fixture.resource.E19Resource;
+import org.apache.cayenne.Cayenne;
+import org.apache.cayenne.ObjectContext;
 import org.apache.cayenne.query.SQLTemplate;
 import org.joda.time.DateTime;
 import org.joda.time.LocalTime;
@@ -38,6 +42,7 @@ public class GET_IT extends JerseyTestOnDerby {
 		context.register(E4Resource.class);
 		context.register(E6Resource.class);
 		context.register(E17Resource.class);
+		context.register(E19Resource.class);
 	}
 
 	@Test
@@ -367,6 +372,22 @@ public class GET_IT extends JerseyTestOnDerby {
 		assertEquals("{\"data\":[{\"id\":1,\"cBoolean\":null,\"cDate\":null,\"cDecimal\":null," +
 						"\"cInt\":null,\"cTime\":null,\"cTimestamp\":null," +
 						"\"cVarchar\":\"First line\\u2028Second line...\\u2029\"}],\"total\":1}",
+				response1.readEntity(String.class));
+	}
+
+	@Test
+	public void test_SelectByteArrayProperty() throws WebApplicationException, IOException {
+
+		ObjectContext ctx = newContext();
+		E19 e19 = ctx.newObject(E19.class);
+		e19.setGuid("someValue123".getBytes("UTF-8"));
+		ctx.commitChanges();
+
+		Response response1 = target("/e19/" + Cayenne.intPKForObject(e19))
+				.queryParam("include", E19.GUID.getName()).request().get();
+
+		assertEquals(Status.OK.getStatusCode(), response1.getStatus());
+		assertEquals("{\"data\":[{\"guid\":\"c29tZVZhbHVlMTIz\"}],\"total\":1}",
 				response1.readEntity(String.class));
 	}
 
