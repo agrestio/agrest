@@ -9,7 +9,6 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import javax.ws.rs.core.Response.Status;
 
-import org.apache.cayenne.DataObject;
 import org.apache.cayenne.di.Inject;
 
 import com.nhl.link.rest.EntityProperty;
@@ -140,7 +139,8 @@ public class EncoderService implements IEncoderService {
 		Map<String, EntityProperty> properties = new TreeMap<String, EntityProperty>();
 
 		for (LrAttribute attribute : resourceEntity.getAttributes().values()) {
-			EntityProperty property = attributeEncoderFactory.getAttributeProperty(resourceEntity, attribute);
+			EntityProperty property = attributeEncoderFactory.getAttributeProperty(resourceEntity.getLrEntity(),
+					attribute);
 			properties.put(attribute.getName(), property);
 		}
 
@@ -150,12 +150,9 @@ public class EncoderService implements IEncoderService {
 			Encoder encoder = relationship.isToMany() ? nestedToManyEncoder(e.getValue())
 					: toOneEncoder(e.getValue(), relationship);
 
-			// TODO: cache lookups for speed ... see attributeEncoderFactory
-			if (DataObject.class.isAssignableFrom(resourceEntity.getLrEntity().getType())) {
-				properties.put(e.getKey(), PropertyBuilder.dataObjectProperty().encodedWith(encoder));
-			} else {
-				properties.put(e.getKey(), PropertyBuilder.property().encodedWith(encoder));
-			}
+			EntityProperty property = attributeEncoderFactory.getRelationshipProperty(resourceEntity.getLrEntity(),
+					relationship, encoder);
+			properties.put(e.getKey(), property);
 		}
 
 		properties.putAll(resourceEntity.getExtraProperties());

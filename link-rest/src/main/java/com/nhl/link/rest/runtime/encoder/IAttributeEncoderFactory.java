@@ -2,7 +2,10 @@ package com.nhl.link.rest.runtime.encoder;
 
 import com.nhl.link.rest.EntityProperty;
 import com.nhl.link.rest.ResourceEntity;
+import com.nhl.link.rest.encoder.Encoder;
 import com.nhl.link.rest.meta.LrAttribute;
+import com.nhl.link.rest.meta.LrEntity;
+import com.nhl.link.rest.meta.LrRelationship;
 
 /**
  * Provides an extension point for building custom attribute encoders if the
@@ -11,9 +14,14 @@ import com.nhl.link.rest.meta.LrAttribute;
 public interface IAttributeEncoderFactory {
 
 	/**
-	 * @since 1.12
+	 * @since 1.23
 	 */
-	EntityProperty getAttributeProperty(ResourceEntity<?> entity, LrAttribute attribute);
+	EntityProperty getAttributeProperty(LrEntity<?> entity, LrAttribute attribute);
+
+	/**
+	 * @since 1.23
+	 */
+	EntityProperty getRelationshipProperty(LrEntity<?> entity, LrRelationship relationship, Encoder encoder);
 
 	EntityProperty getIdProperty(ResourceEntity<?> entity);
 }
