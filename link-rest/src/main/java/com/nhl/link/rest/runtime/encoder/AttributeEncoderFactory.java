@@ -114,6 +114,12 @@ public class AttributeEncoderFactory implements IAttributeEncoderFactory {
 		} else {
 
 			// POJO - PK is an object property
+			
+			if (ids.isEmpty()) {
+				throw new IllegalStateException("No ID for entity: " + entity.getLrEntity().getName());
+			}
+			
+			// TODO: multi-attribute ID?
 
 			LrAttribute id = ids.iterator().next();
 			return PropertyBuilder.property(BeanPropertyReader.reader(id.getName()));
