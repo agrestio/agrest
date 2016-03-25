@@ -1,7 +1,5 @@
 package com.nhl.link.rest.runtime.encoder;
 
-import static com.nhl.link.rest.property.PropertyBuilder.dataObjectProperty;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -11,6 +9,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import javax.ws.rs.core.Response.Status;
 
+import org.apache.cayenne.DataObject;
 import org.apache.cayenne.di.Inject;
 
 import com.nhl.link.rest.EntityProperty;
@@ -92,11 +91,8 @@ public class EncoderService implements IEncoderService {
 
 		// if mapBy is involved, apply filters at MapBy level, not inside
 		// sublists...
-		ListEncoder listEncoder = new ListEncoder(
-				elementEncoder,
-				isMapBy? null : resourceEntity.getQualifier(),
-				resourceEntity.getOrderings()
-		);
+		ListEncoder listEncoder = new ListEncoder(elementEncoder, isMapBy ? null : resourceEntity.getQualifier(),
+				resourceEntity.getOrderings());
 
 		listEncoder.withOffset(resourceEntity.getFetchOffset()).withLimit(resourceEntity.getFetchLimit());
 
@@ -104,11 +100,9 @@ public class EncoderService implements IEncoderService {
 			listEncoder.shouldFilter();
 		}
 
-		return isMapBy? new MapByEncoder(resourceEntity.getMapByPath(), resourceEntity.getQualifier(),
-					resourceEntity.getMapBy(), listEncoder, stringConverterFactory) : listEncoder;
+		return isMapBy ? new MapByEncoder(resourceEntity.getMapByPath(), resourceEntity.getQualifier(),
+				resourceEntity.getMapBy(), listEncoder, stringConverterFactory) : listEncoder;
 	}
-
-
 
 	private Encoder collectionElementEncoder(ResourceEntity<?> resourceEntity) {
 		Encoder encoder = entityEncoder(resourceEntity);
@@ -156,7 +150,12 @@ public class EncoderService implements IEncoderService {
 			Encoder encoder = relationship.isToMany() ? nestedToManyEncoder(e.getValue())
 					: toOneEncoder(e.getValue(), relationship);
 
-			properties.put(e.getKey(), dataObjectProperty().encodedWith(encoder));
+			// TODO: cache lookups for speed ... see attributeEncoderFactory
+			if (DataObject.class.isAssignableFrom(resourceEntity.getLrEntity().getType())) {
+				properties.put(e.getKey(), PropertyBuilder.dataObjectProperty().encodedWith(encoder));
+			} else {
+				properties.put(e.getKey(), PropertyBuilder.property().encodedWith(encoder));
+			}
 		}
 
 		properties.putAll(resourceEntity.getExtraProperties());
