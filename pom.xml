@@ -312,6 +312,15 @@
 				</plugins>
 			</build>
 		</profile>
+		<profile>
+			<id>link-rest-java8-module-to-build</id>
+			<activation>
+				<jdk>[1.8,)</jdk>
+			</activation>
+			<modules>
+				<module>link-rest-java8</module>
+			</modules>
+		</profile>
 	</profiles>
 
 </project>

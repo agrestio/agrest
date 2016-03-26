@@ -1,25 +1,10 @@
 package com.nhl.link.rest.unit;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
-import java.util.Collections;
-
-import org.apache.cayenne.ObjectContext;
-import org.apache.cayenne.configuration.server.DataSourceFactory;
-import org.apache.cayenne.configuration.server.ServerRuntime;
-import org.apache.cayenne.di.Binder;
-import org.apache.cayenne.di.Module;
-import org.apache.cayenne.exp.Property;
-import org.apache.cayenne.map.ObjEntity;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-
 import com.nhl.link.rest.ResourceEntity;
 import com.nhl.link.rest.meta.DefaultLrAttribute;
 import com.nhl.link.rest.meta.LrEntity;
 import com.nhl.link.rest.meta.LrEntityOverlay;
+import com.nhl.link.rest.meta.LrPersistentAttribute;
 import com.nhl.link.rest.meta.parser.IResourceParser;
 import com.nhl.link.rest.meta.parser.ResourceParser;
 import com.nhl.link.rest.runtime.cayenne.ICayennePersister;
@@ -27,6 +12,24 @@ import com.nhl.link.rest.runtime.meta.IMetadataService;
 import com.nhl.link.rest.runtime.meta.IResourceMetadataService;
 import com.nhl.link.rest.runtime.meta.MetadataService;
 import com.nhl.link.rest.runtime.meta.ResourceMetadataService;
+import org.apache.cayenne.ObjectContext;
+import org.apache.cayenne.configuration.server.DataSourceFactory;
+import org.apache.cayenne.configuration.server.ServerRuntime;
+import org.apache.cayenne.di.Binder;
+import org.apache.cayenne.di.Module;
+import org.apache.cayenne.exp.Property;
+import org.apache.cayenne.exp.parser.ASTPath;
+import org.apache.cayenne.map.DbAttribute;
+import org.apache.cayenne.map.ObjAttribute;
+import org.apache.cayenne.map.ObjEntity;
+import org.junit.AfterClass;
+import org.junit.Before;
+import org.junit.BeforeClass;
+
+import java.util.Collections;
+
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * A superclass of Cayenne-aware test cases that do not need to access the DB,
@@ -105,4 +108,53 @@ public class TestWithCayenneMapping {
 		entity.getAttributes().put(name, new DefaultLrAttribute(name, type.getName()));
 	}
 
+	protected  <T> void appendPersistenceAttribute(ResourceEntity<?> entity, Property<T> property, Class<T> javaType, int jdbcType) {
+		appendPersistenceAttribute(entity, property.getName(), javaType, jdbcType);
+	}
+
+	protected void appendPersistenceAttribute(ResourceEntity<?> entity, String name, Class<?> javaType, int jdbcType) {
+		entity.getAttributes().put(name, new TestLrPersistenceAttribute(name, javaType.getName(), jdbcType));
+	}
+
+	private class TestLrPersistenceAttribute implements LrPersistentAttribute {
+		private String name;
+		private String javaType;
+		private int jdbcType;
+
+		public TestLrPersistenceAttribute(String name, String javaType, int jdbcType) {
+			this.name = name;
+			this.javaType = javaType;
+			this.jdbcType = jdbcType;
+		}
+
+		@Override
+		public int getJdbcType() {
+			return jdbcType;
+		}
+
+		@Override
+		public ObjAttribute getObjAttribute() {
+			return null;
+		}
+
+		@Override
+		public DbAttribute getDbAttribute() {
+			return null;
+		}
+
+		@Override
+		public String getName() {
+			return name;
+		}
+
+		@Override
+		public String getJavaType() {
+			return javaType;
+		}
+
+		@Override
+		public ASTPath getPathExp() {
+			return null;
+		}
+	}
 }

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<data-map xmlns="http://cayenne.apache.org/schema/7/modelMap"
+		  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		  xsi:schemaLocation="http://cayenne.apache.org/schema/7/modelMap http://cayenne.apache.org/schema/7/modelMap.xsd"
+		  project-version="7">
+	<property name="defaultPackage" value="com.nhl.link.rest.it.fixture.cayenne.iso"/>
+	<db-entity name="ISO_DATE_TEST">
+		<db-attribute name="ID" type="INTEGER" isPrimaryKey="true" isMandatory="true"/>
+		<db-attribute name="sqlDate" type="DATE"/>
+		<db-attribute name="utilDate" type="DATE"/>
+	</db-entity>
+	<db-entity name="ISO_TIMESTAMP_TEST">
+		<db-attribute name="ID" type="INTEGER" isPrimaryKey="true" isMandatory="true"/>
+		<db-attribute name="Timestamp" type="TIMESTAMP"/>
+	</db-entity>
+	<db-entity name="ISO_TIME_TEST">
+		<db-attribute name="ID" type="INTEGER" isPrimaryKey="true" isMandatory="true"/>
+		<db-attribute name="Time" type="TIME"/>
+	</db-entity>
+	<obj-entity name="ISODateTest" className="com.nhl.link.rest.it.fixture.cayenne.iso.ISODateTestEntity" dbEntityName="ISO_DATE_TEST">
+		<obj-attribute name="sqlDate" type="java.sql.Date" db-attribute-path="sqlDate"/>
+		<obj-attribute name="utilDate" type="java.util.Date" db-attribute-path="utilDate"/>
+	</obj-entity>
+	<obj-entity name="ISOTimeTest" className="com.nhl.link.rest.it.fixture.cayenne.iso.ISOTimeTestEntity" dbEntityName="ISO_TIME_TEST">
+		<obj-attribute name="time" type="java.sql.Time" db-attribute-path="Time"/>
+	</obj-entity>
+	<obj-entity name="ISOTimestampTest" className="com.nhl.link.rest.it.fixture.cayenne.iso.ISOTimestampTestEntity" dbEntityName="ISO_TIMESTAMP_TEST">
+		<obj-attribute name="timestamp" type="java.sql.Timestamp" db-attribute-path="Timestamp"/>
+	</obj-entity>
+</data-map>
