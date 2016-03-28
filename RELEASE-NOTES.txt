@@ -2,7 +2,10 @@ Release 1.23
 
 #144 Merge link-rest-docs repo into link-rest
 #148 Optimizing paginated fetches
+#153 Treat byte[] properties as Base64-encoded when parsing request payload
 #154 Add JSON Converters for Java 8 Dates
+#156 Support encoding of entities with no IDs
+#158 POJO's with relationships can't be encoded.
 
 Release 1.22
 

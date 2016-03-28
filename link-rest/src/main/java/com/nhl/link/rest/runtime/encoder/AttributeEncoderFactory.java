@@ -20,7 +20,9 @@ import com.nhl.link.rest.encoder.ISODateTimeEncoder;
 import com.nhl.link.rest.encoder.ISOTimeEncoder;
 import com.nhl.link.rest.encoder.ObjectIdEncoder;
 import com.nhl.link.rest.meta.LrAttribute;
+import com.nhl.link.rest.meta.LrEntity;
 import com.nhl.link.rest.meta.LrPersistentAttribute;
+import com.nhl.link.rest.meta.LrRelationship;
 import com.nhl.link.rest.meta.cayenne.CayenneLrEntity;
 import com.nhl.link.rest.property.BeanPropertyReader;
 import com.nhl.link.rest.property.PersistentObjectIdPropertyReader;
@@ -43,8 +45,8 @@ public class AttributeEncoderFactory implements IAttributeEncoderFactory {
 	}
 
 	@Override
-	public EntityProperty getAttributeProperty(ResourceEntity<?> entity, LrAttribute attribute) {
-		String key = entity.getLrEntity().getName() + "." + attribute.getName();
+	public EntityProperty getAttributeProperty(LrEntity<?> entity, LrAttribute attribute) {
+		String key = entity.getName() + "." + attribute.getName();
 
 		EntityProperty property = attributePropertiesByPath.get(key);
 		if (property == null) {
@@ -53,6 +55,17 @@ public class AttributeEncoderFactory implements IAttributeEncoderFactory {
 		}
 
 		return property;
+	}
+
+	@Override
+	public EntityProperty getRelationshipProperty(LrEntity<?> entity, LrRelationship relationship, Encoder encoder) {
+
+		// TODO: can't cache, as target encoder is dynamic...
+		if (DataObject.class.isAssignableFrom(entity.getType())) {
+			return PropertyBuilder.dataObjectProperty().encodedWith(encoder);
+		} else {
+			return PropertyBuilder.property().encodedWith(encoder);
+		}
 	}
 
 	@Override
@@ -69,7 +82,7 @@ public class AttributeEncoderFactory implements IAttributeEncoderFactory {
 		return property;
 	}
 
-	protected EntityProperty buildAttributeProperty(ResourceEntity<?> entity, LrAttribute attribute) {
+	protected EntityProperty buildAttributeProperty(LrEntity<?> entity, LrAttribute attribute) {
 
 		boolean persistent = attribute instanceof LrPersistentAttribute;
 
@@ -101,19 +114,26 @@ public class AttributeEncoderFactory implements IAttributeEncoderFactory {
 					valueEncoders.put(id.getName(), valueEncoder);
 				}
 
-				return PropertyBuilder.property(PersistentObjectIdPropertyReader.reader()).encodedWith(
-						new ObjectIdEncoder(valueEncoders));
+				return PropertyBuilder.property(PersistentObjectIdPropertyReader.reader())
+						.encodedWith(new ObjectIdEncoder(valueEncoders));
 			} else {
 
 				LrPersistentAttribute persistentId = (LrPersistentAttribute) ids.iterator().next();
 				Encoder valueEncoder = buildEncoder(persistentId.getJavaType(), persistentId.getJdbcType());
 
-				return PropertyBuilder.property(PersistentObjectIdPropertyReader.reader()).encodedWith(
-						new ObjectIdEncoder(valueEncoder));
+				return PropertyBuilder.property(PersistentObjectIdPropertyReader.reader())
+						.encodedWith(new ObjectIdEncoder(valueEncoder));
 			}
 		} else {
 
 			// POJO - PK is an object property
+
+			if (ids.isEmpty()) {
+				// use fake ID encoder
+				return PropertyBuilder.doNothingProperty();
+			}
+
+			// TODO: multi-attribute ID?
 
 			LrAttribute id = ids.iterator().next();
 			return PropertyBuilder.property(BeanPropertyReader.reader(id.getName()));

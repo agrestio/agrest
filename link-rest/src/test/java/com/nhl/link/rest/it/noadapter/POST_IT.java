@@ -17,10 +17,12 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import com.nhl.link.rest.it.fixture.cayenne.E19;
 import com.nhl.link.rest.it.fixture.cayenne.E2;
 import com.nhl.link.rest.it.fixture.resource.E16Resource;
 
 import com.nhl.link.rest.it.fixture.resource.E17Resource;
+import com.nhl.link.rest.it.fixture.resource.E19Resource;
 import com.nhl.link.rest.it.fixture.resource.E2Resource;
 import org.apache.cayenne.Cayenne;
 import org.apache.cayenne.query.ObjectSelect;
@@ -46,6 +48,7 @@ public class POST_IT extends JerseyTestOnDerby {
 		context.register(E8Resource.class);
 		context.register(E16Resource.class);
 		context.register(E17Resource.class);
+		context.register(E19Resource.class);
 	}
 
 	@Test
@@ -313,5 +316,17 @@ public class POST_IT extends JerseyTestOnDerby {
 		assertThat(response, hasStatusAndBody(Status.CREATED, "{\"data\":[{\"id\":" + id +
 				",\"e3s\":[{\"id\":1},{\"id\":8}],\"name\":\"MM\"}],\"total\":1}"));
 		assertEquals(2, intForQuery("SELECT COUNT(1) FROM utest.e3 WHERE e2_id = " + id));
+	}
+
+	@Test
+	public void testPost_ByteArrayProperty() throws WebApplicationException, IOException {
+
+		String base64Encoded = "c29tZVZhbHVlMTIz"; // someValue123
+
+		Response response = target("/e19").queryParam("include", E19.GUID.getName())
+				.request().post(jsonEntity("{\"guid\":\"" + base64Encoded + "\"}"));
+
+		assertThat(response, hasStatusAndBody(Status.CREATED,
+				"{\"data\":[{\"guid\":\"" + base64Encoded + "\"}],\"total\":1}"));
 	}
 }

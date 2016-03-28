@@ -1,7 +1,5 @@
 package com.nhl.link.rest.runtime.encoder;
 
-import static com.nhl.link.rest.property.PropertyBuilder.dataObjectProperty;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -92,11 +90,8 @@ public class EncoderService implements IEncoderService {
 
 		// if mapBy is involved, apply filters at MapBy level, not inside
 		// sublists...
-		ListEncoder listEncoder = new ListEncoder(
-				elementEncoder,
-				isMapBy? null : resourceEntity.getQualifier(),
-				resourceEntity.getOrderings()
-		);
+		ListEncoder listEncoder = new ListEncoder(elementEncoder, isMapBy ? null : resourceEntity.getQualifier(),
+				resourceEntity.getOrderings());
 
 		listEncoder.withOffset(resourceEntity.getFetchOffset()).withLimit(resourceEntity.getFetchLimit());
 
@@ -104,11 +99,9 @@ public class EncoderService implements IEncoderService {
 			listEncoder.shouldFilter();
 		}
 
-		return isMapBy? new MapByEncoder(resourceEntity.getMapByPath(), resourceEntity.getQualifier(),
-					resourceEntity.getMapBy(), listEncoder, stringConverterFactory) : listEncoder;
+		return isMapBy ? new MapByEncoder(resourceEntity.getMapByPath(), resourceEntity.getQualifier(),
+				resourceEntity.getMapBy(), listEncoder, stringConverterFactory) : listEncoder;
 	}
-
-
 
 	private Encoder collectionElementEncoder(ResourceEntity<?> resourceEntity) {
 		Encoder encoder = entityEncoder(resourceEntity);
@@ -146,7 +139,8 @@ public class EncoderService implements IEncoderService {
 		Map<String, EntityProperty> properties = new TreeMap<String, EntityProperty>();
 
 		for (LrAttribute attribute : resourceEntity.getAttributes().values()) {
-			EntityProperty property = attributeEncoderFactory.getAttributeProperty(resourceEntity, attribute);
+			EntityProperty property = attributeEncoderFactory.getAttributeProperty(resourceEntity.getLrEntity(),
+					attribute);
 			properties.put(attribute.getName(), property);
 		}
 
@@ -156,7 +150,9 @@ public class EncoderService implements IEncoderService {
 			Encoder encoder = relationship.isToMany() ? nestedToManyEncoder(e.getValue())
 					: toOneEncoder(e.getValue(), relationship);
 
-			properties.put(e.getKey(), dataObjectProperty().encodedWith(encoder));
+			EntityProperty property = attributeEncoderFactory.getRelationshipProperty(resourceEntity.getLrEntity(),
+					relationship, encoder);
+			properties.put(e.getKey(), property);
 		}
 
 		properties.putAll(resourceEntity.getExtraProperties());

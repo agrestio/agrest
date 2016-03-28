@@ -65,6 +65,10 @@
 			<name>Deployment Repository</name>
 			<url>https://oss.sonatype.org/service/local/staging/deploy/maven2</url>
 		</repository>
+		<snapshotRepository>
+			<id>linkrest-snapshots</id>
+			<url>http://maven.objectstyle.org/nexus/content/repositories/linkrest-snapshots</url>
+		</snapshotRepository>
 	</distributionManagement>
 
 	<repositories>
