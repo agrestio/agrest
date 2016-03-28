@@ -1,3 +1,17 @@
+## Upgrading to 1.23
+
+If you want to start using Java 8 date/time types, you will need to import an extra module:
+
+```xml
+<dependency>
+	<artifactId>link-rest-java8</artifactId>
+	<groupId>com.nhl.link.rest</groupId>
+	<version>1.23</version>
+</dependency>
+```
+
+and then add a ```com.nhl.link.rest.runtime.adapter.java8.Java8Adapter``` to LinkRest runtime.
+
 ## Upgrading to 1.19
 
 ###  Collection Document: remove "success":true key, keep it under SenchaAdapter [#114](https://github.com/nhl/link-rest/issues/114)
