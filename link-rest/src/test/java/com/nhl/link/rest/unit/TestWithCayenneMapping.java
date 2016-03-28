@@ -113,15 +113,15 @@ public class TestWithCayenneMapping {
 	}
 
 	protected void appendPersistenceAttribute(ResourceEntity<?> entity, String name, Class<?> javaType, int jdbcType) {
-		entity.getAttributes().put(name, new TestLrPersistenceAttribute(name, javaType.getName(), jdbcType));
+		entity.getAttributes().put(name, new TestLrPersistentAttribute(name, javaType.getName(), jdbcType));
 	}
 
-	private class TestLrPersistenceAttribute implements LrPersistentAttribute {
+	private class TestLrPersistentAttribute implements LrPersistentAttribute {
 		private String name;
 		private String javaType;
 		private int jdbcType;
 
-		public TestLrPersistenceAttribute(String name, String javaType, int jdbcType) {
+		public TestLrPersistentAttribute(String name, String javaType, int jdbcType) {
 			this.name = name;
 			this.javaType = javaType;
 			this.jdbcType = jdbcType;
