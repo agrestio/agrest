@@ -25,6 +25,11 @@ public class ConstraintsBuilder<T> implements Constraint {
 	private Collection<Constraint> ops;
 
 	/**
+	 * @param type
+	 *            a root type for constraints.
+	 * @param <T>
+	 *            LinkRest entity type.
+	 * @return this builder instance.
 	 * @since 1.5
 	 */
 	public static <T> ConstraintsBuilder<T> excludeAll(Class<T> type) {
@@ -32,6 +37,11 @@ public class ConstraintsBuilder<T> implements Constraint {
 	}
 
 	/**
+	 * @param type
+	 *            a root type for constraints.
+	 * @param <T>
+	 *            LinkRest entity type.
+	 * @return this builder instance.
 	 * @since 1.5
 	 */
 	public static <T> ConstraintsBuilder<T> idOnly(Class<T> type) {
@@ -39,6 +49,11 @@ public class ConstraintsBuilder<T> implements Constraint {
 	}
 
 	/**
+	 * @param type
+	 *            a root type for constraints.
+	 * @param <T>
+	 *            LinkRest entity type.
+	 * @return this builder instance.
 	 * @since 1.5
 	 */
 	public static <T> ConstraintsBuilder<T> idAndAttributes(Class<T> type) {
@@ -51,6 +66,7 @@ public class ConstraintsBuilder<T> implements Constraint {
 	}
 
 	/**
+	 * @return a root type for constraints in this builder.
 	 * @since 1.5
 	 */
 	public Class<T> getType() {
@@ -68,6 +84,9 @@ public class ConstraintsBuilder<T> implements Constraint {
 	}
 
 	/**
+	 * @param attributeOrRelationship
+	 *            a name of the property to exclude.
+	 * @return this builder instance.
 	 * @since 1.15
 	 */
 	public ConstraintsBuilder<T> excludeProperty(final String attributeOrRelationship) {
@@ -85,6 +104,9 @@ public class ConstraintsBuilder<T> implements Constraint {
 	/**
 	 * Excludes an attribute or relationship.
 	 * 
+	 * @param attributeOrRelationship
+	 *            a name of the property to exclude.
+	 * @return this builder instance.
 	 * @since 1.15
 	 */
 	public ConstraintsBuilder<T> excludeProperty(final Property<?> attributeOrRelationship) {
@@ -99,6 +121,9 @@ public class ConstraintsBuilder<T> implements Constraint {
 	}
 
 	/**
+	 * @param attributesOrRelationships
+	 *            an array of properties to exclude.
+	 * @return this builder instance.
 	 * @since 1.15
 	 */
 	public ConstraintsBuilder<T> excludeProperties(final String... attributesOrRelationships) {
@@ -115,6 +140,9 @@ public class ConstraintsBuilder<T> implements Constraint {
 	}
 
 	/**
+	 * @param attributesOrRelationships
+	 *            an array of properties to exclude.
+	 * @return this builder instance.
 	 * @since 1.15
 	 */
 	public ConstraintsBuilder<T> excludeProperties(final Property<?>... attributesOrRelationships) {
@@ -137,16 +165,9 @@ public class ConstraintsBuilder<T> implements Constraint {
 	}
 
 	/**
-	 * @deprecated since 1.15 use {@link #excludeAllAttributes()}.
-	 */
-	@Deprecated
-	public ConstraintsBuilder<T> excludeAttributes() {
-		return excludeAllAttributes();
-	}
-
-	/**
 	 * Excludes all previously included attributes.
 	 * 
+	 * @return this builder instance.
 	 * @since 1.15
 	 */
 	public ConstraintsBuilder<T> excludeAllAttributes() {
@@ -162,16 +183,10 @@ public class ConstraintsBuilder<T> implements Constraint {
 	}
 
 	/**
-	 * @deprecated since 1.15 use {@link #excludeAllChildren()}.
-	 */
-	public ConstraintsBuilder<T> excludeChildren() {
-		return excludeAllChildren();
-	}
-
-	/**
 	 * Excludes all previously included child configs.
 	 * 
-	 * @sicne 1.15
+	 * @return this builder instance.
+	 * @since 1.15
 	 */
 	public ConstraintsBuilder<T> excludeAllChildren() {
 		ops.add(new Constraint() {

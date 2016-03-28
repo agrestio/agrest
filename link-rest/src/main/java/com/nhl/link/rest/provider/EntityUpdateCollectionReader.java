@@ -24,7 +24,7 @@ import com.nhl.link.rest.runtime.meta.IMetadataService;
 import com.nhl.link.rest.runtime.parser.IUpdateParser;
 
 /**
- * A provider of {@link {@link MessageBodyReader}} for Collections of
+ * A provider of {@link MessageBodyReader} for Collections of
  * {@link EntityUpdate} parameters.
  * 
  * @since 1.20

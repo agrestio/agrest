@@ -13,11 +13,7 @@ import com.nhl.link.rest.runtime.parser.converter.IJsonValueConverterFactory;
 import com.nhl.link.rest.runtime.semantics.IRelationshipMapper;
 
 /**
- * 
  * Strips off Sencha-generated temporary IDs from the update data structures.
- * 
- * @see http ://docs.sencha.com/extjs/5.0/apidocs/#!/api/Ext.data.identifier.
- *      Generator
  * 
  * @since 1.20
  */
