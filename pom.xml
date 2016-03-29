@@ -216,7 +216,11 @@
 						<target>1.7</target>
 					</configuration>
 				</plugin>
-
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-enforcer-plugin</artifactId>
+					<version>1.4.1</version>
+				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-javadoc-plugin</artifactId>
@@ -226,37 +230,26 @@
 						<additionalparam>${javadoc.doclint.none}</additionalparam>
 					</configuration>
 				</plugin>
-
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-deploy-plugin</artifactId>
 					<version>2.8.1</version>
 				</plugin>
-
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-gpg-plugin</artifactId>
 					<version>1.6</version>
 				</plugin>
-
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-source-plugin</artifactId>
 					<version>2.4</version>
 				</plugin>
-
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-release-plugin</artifactId>
-					<version>2.5</version>
-					<dependencies>
-						<dependency>
-							<groupId>org.apache.maven.scm</groupId>
-							<artifactId>maven-scm-provider-gitexe</artifactId>
-							<!-- This version is necessary for use with git version 1.8.5 -->
-							<version>1.8.1</version>
-						</dependency>
-					</dependencies>
+					<!-- Older versions of release plugin do not work with Git properly -->
+					<version>2.5.3</version>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
@@ -298,11 +291,11 @@
 			</plugin>
 		</plugins>
 	</build>
-
-	<!-- Optional profile used to sign artifacts -->
 	<profiles>
+		<!-- Release profile - sign artifacts; do extra checks to ensure we don't 
+			miss anything.. -->
 		<profile>
-			<id>gpg</id>
+			<id>release</id>
 			<build>
 				<plugins>
 					<plugin>
@@ -318,11 +311,26 @@
 							</execution>
 						</executions>
 					</plugin>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-enforcer-plugin</artifactId>
+						<configuration>
+							<rules>
+								<!-- Releases must be done using Java 8 or newer; older java would 
+									result in module exclusions. -->
+								<requireJavaVersion>
+									<version>1.8</version>
+								</requireJavaVersion>
+							</rules>
+						</configuration>
+					</plugin>
 				</plugins>
 			</build>
 		</profile>
+		<!-- If Java 8 is present, build Java 8 modules and setup lenient Javadoc 
+			generation strategy. -->
 		<profile>
-			<id>link-rest-java8-module-to-build</id>
+			<id>link-rest-java8</id>
 			<activation>
 				<jdk>[1.8,)</jdk>
 			</activation>
