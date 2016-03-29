@@ -317,6 +317,7 @@
 						<executions>
 							<execution>
 								<id>enforce-jdk</id>
+								<phase>validate</phase>
 								<goals>
 									<goal>enforce</goal>
 								</goals>
