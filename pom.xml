@@ -314,15 +314,23 @@
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-enforcer-plugin</artifactId>
-						<configuration>
-							<rules>
-								<!-- Releases must be done using Java 8 or newer; older java would 
-									result in module exclusions. -->
-								<requireJavaVersion>
-									<version>1.8</version>
-								</requireJavaVersion>
-							</rules>
-						</configuration>
+						<executions>
+							<execution>
+								<id>enforce-jdk</id>
+								<goals>
+									<goal>enforce</goal>
+								</goals>
+								<configuration>
+									<rules>
+										<!-- Releases must be done using Java 8 or newer; older java would 
+											result in module exclusions. -->
+										<requireJavaVersion>
+											<version>1.8</version>
+										</requireJavaVersion>
+									</rules>
+								</configuration>
+							</execution>
+						</executions>
 					</plugin>
 				</plugins>
 			</build>
