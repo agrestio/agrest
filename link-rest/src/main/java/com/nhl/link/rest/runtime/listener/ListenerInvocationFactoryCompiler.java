@@ -4,6 +4,7 @@ import java.lang.annotation.Annotation;
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.lang.reflect.WildcardType;
@@ -17,11 +18,15 @@ import javax.ws.rs.core.Response.Status;
 import com.nhl.link.rest.LinkRestException;
 import com.nhl.link.rest.processor.ProcessingContext;
 import com.nhl.link.rest.processor.ProcessingStage;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @since 1.19
  */
 class ListenerInvocationFactoryCompiler {
+
+	private static final Logger LOGGER = LoggerFactory.getLogger(ListenerInvocationFactoryCompiler.class);
 
 	private static final MethodHandles.Lookup LOOKUP = MethodHandles.lookup();
 
@@ -35,7 +40,7 @@ class ListenerInvocationFactoryCompiler {
 
 		Map<Class<? extends Annotation>, List<ListenerInvocationFactory>> map = new ConcurrentHashMap<>();
 
-		for (final Method m : listenerType.getMethods()) {
+		for (final Method m : listenerType.getDeclaredMethods()) {
 
 			// will reuse 'invocationFactory' if the method has multiple
 			// annotations...
@@ -45,6 +50,10 @@ class ListenerInvocationFactoryCompiler {
 			for (final Class<? extends Annotation> at : eventGroup.getEventsFired()) {
 				Annotation a = m.getAnnotation(at);
 				if (a != null) {
+
+					if (!checkMethodIsPublic(a, m)) {
+						continue;
+					}
 
 					if (invocationFactory == null) {
 						invocationFactory = compileFactory(m, entityType);
@@ -70,6 +79,15 @@ class ListenerInvocationFactoryCompiler {
 		}
 
 		return map;
+	}
+
+	private boolean checkMethodIsPublic(Annotation at, Method m) {
+		boolean isPublic = Modifier.isPublic(m.getModifiers());
+		if (!isPublic) {
+			LOGGER.warn(String.format("Listener method %s.%s(...) for the @%s event is not public, skipping...",
+					m.getDeclaringClass().getName(), m.getName(), at.annotationType().getSimpleName()));
+		}
+		return isPublic;
 	}
 
 	private ListenerInvocationFactory compileFactory(final Method m, Class<?> entityType) {
