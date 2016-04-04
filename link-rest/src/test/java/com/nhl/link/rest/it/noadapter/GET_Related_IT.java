@@ -9,6 +9,10 @@ import javax.ws.rs.core.Response.Status;
 import com.nhl.link.rest.it.fixture.cayenne.E17;
 import com.nhl.link.rest.it.fixture.cayenne.E18;
 import com.nhl.link.rest.it.fixture.resource.E17Resource;
+import com.nhl.link.rest.it.fixture.resource.E18Resource;
+import org.apache.cayenne.map.DataMap;
+import org.apache.cayenne.map.ObjAttribute;
+import org.apache.cayenne.map.ObjEntity;
 import org.apache.cayenne.query.SQLTemplate;
 import org.junit.Test;
 
@@ -28,6 +32,7 @@ public class GET_Related_IT extends JerseyTestOnDerby {
 		context.register(E3Resource.class);
 		context.register(E12Resource.class);
 		context.register(E17Resource.class);
+		context.register(E18Resource.class);
 	}
 
 	@Test
@@ -72,7 +77,63 @@ public class GET_Related_IT extends JerseyTestOnDerby {
 				"{\"data\":[{\"id\":1,\"name\":\"xxx\"},{\"id\":2,\"name\":\"yyy\"}],\"total\":2}",
 				r1.readEntity(String.class)
 		);
+	}
 
+	@Test
+	public void testGet_ValidRel_ToOne_CompoundId() {
+
+		context.performGenericQuery(new SQLTemplate(E17.class, "INSERT INTO utest.e17 (id1, id2, name) values (1, 1, 'aaa')"));
+		context.performGenericQuery(new SQLTemplate(E17.class, "INSERT INTO utest.e17 (id1, id2, name) values (2, 2, 'bbb')"));
+
+		context.performGenericQuery(new SQLTemplate(E18.class,
+				"INSERT INTO utest.e18 (id, e17_id1, e17_id2, name) values (1, 1, 1, 'xxx')"));
+		context.performGenericQuery(new SQLTemplate(E18.class,
+				"INSERT INTO utest.e18 (id, e17_id1, e17_id2, name) values (2, 1, 1, 'yyy')"));
+		context.performGenericQuery(new SQLTemplate(E18.class,
+				"INSERT INTO utest.e18 (id, e17_id1, e17_id2, name) values (3, 2, 2, 'zzz')"));
+
+		Response r1 = target("/e18/1").queryParam("include", E18.E17.getName()).request().get();
+
+		assertEquals(Status.OK.getStatusCode(), r1.getStatus());
+		assertEquals(
+				"{\"data\":[{\"id\":1," +
+						"\"e17\":{\"id\":{\"id1\":1,\"id2\":1},\"id1\":1,\"id2\":1,\"name\":\"aaa\"}," +
+						"\"name\":\"xxx\"}],\"total\":1}",
+				r1.readEntity(String.class)
+		);
+	}
+
+	@Test
+	public void testGet_CompoundId_UnmappedPk() {
+
+		// remove a part of PK from the ObjEntity
+		DataMap dataMap = context.getEntityResolver().getDataMap("datamap");
+		ObjEntity E17 = dataMap.getObjEntity("E17");
+		ObjAttribute unmappedAttribute = E17.getAttribute("id2");
+		E17.removeAttribute("id2");
+
+		context.performGenericQuery(new SQLTemplate(E17.class, "INSERT INTO utest.e17 (id1, id2, name) values (1, 1, 'aaa')"));
+		context.performGenericQuery(new SQLTemplate(E17.class, "INSERT INTO utest.e17 (id1, id2, name) values (2, 2, 'bbb')"));
+
+		context.performGenericQuery(new SQLTemplate(E18.class,
+				"INSERT INTO utest.e18 (id, e17_id1, e17_id2, name) values (1, 1, 1, 'xxx')"));
+		context.performGenericQuery(new SQLTemplate(E18.class,
+				"INSERT INTO utest.e18 (id, e17_id1, e17_id2, name) values (2, 1, 1, 'yyy')"));
+		context.performGenericQuery(new SQLTemplate(E18.class,
+				"INSERT INTO utest.e18 (id, e17_id1, e17_id2, name) values (3, 2, 2, 'zzz')"));
+
+		Response r1 = target("/e18/1").queryParam("include", E18.E17.getName()).request().get();
+
+		assertEquals(Status.OK.getStatusCode(), r1.getStatus());
+		assertEquals(
+				"{\"data\":[{\"id\":1,\"" +
+						"e17\":{\"id\":{\"id1\":1,\"id2\":1},\"id1\":1,\"name\":\"aaa\"}," +
+						"\"name\":\"xxx\"}],\"total\":1}",
+				r1.readEntity(String.class)
+		);
+
+		// restore initial state
+		E17.addAttribute(unmappedAttribute);
 	}
 
 	@Test

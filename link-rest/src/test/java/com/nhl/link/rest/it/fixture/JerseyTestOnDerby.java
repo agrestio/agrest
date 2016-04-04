@@ -97,6 +97,9 @@ public abstract class JerseyTestOnDerby extends JerseyTest {
 		chain.addQuery(new EJBQLQuery("delete from E13"));
 		chain.addQuery(new EJBQLQuery("delete from E14"));
 		chain.addQuery(new EJBQLQuery("delete from E15"));
+		chain.addQuery(new EJBQLQuery("delete from E18"));
+		chain.addQuery(new EJBQLQuery("delete from E17"));
+		chain.addQuery(new EJBQLQuery("delete from E19"));
 
 		context.performGenericQuery(chain);
 	}

@@ -87,7 +87,7 @@ public class CayenneAwareLrDataMap implements LrDataMap {
 		for (DbAttribute pk : objEntity.getDbEntity().getPrimaryKeys()) {
 			ObjAttribute attribute = objEntity.getAttributeForDbAttribute(pk);
 			LrAttribute id = attribute != null ? new CayenneLrAttribute(attribute) : new CayenneLrDbAttribute(
-					PathConstants.ID_PK_ATTRIBUTE, pk);
+					pk.getName(), pk);
 			lrEntity.addId(id);
 		}
 
