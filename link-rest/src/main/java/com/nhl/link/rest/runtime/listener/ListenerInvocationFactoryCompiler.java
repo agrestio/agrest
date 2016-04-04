@@ -9,8 +9,11 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.lang.reflect.WildcardType;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import javax.ws.rs.core.Response.Status;
@@ -40,13 +43,14 @@ class ListenerInvocationFactoryCompiler {
 
 		Map<Class<? extends Annotation>, List<ListenerInvocationFactory>> map = new ConcurrentHashMap<>();
 
-		for (final Method m : listenerType.getDeclaredMethods()) {
+		for (MethodDescriptor descriptor : collectMethods(listenerType, new HashSet<MethodDescriptor>())) {
 
 			// will reuse 'invocationFactory' if the method has multiple
 			// annotations...
 
 			ListenerInvocationFactory invocationFactory = null;
 
+			Method m = descriptor.getMethod();
 			for (final Class<? extends Annotation> at : eventGroup.getEventsFired()) {
 				Annotation a = m.getAnnotation(at);
 				if (a != null) {
@@ -79,6 +83,71 @@ class ListenerInvocationFactoryCompiler {
 		}
 
 		return map;
+	}
+
+	private Set<MethodDescriptor> collectMethods(Class<?> listenerType, Set<MethodDescriptor> acc) {
+		if (listenerType.getSuperclass() != null) {
+			collectMethods(listenerType.getSuperclass(), acc);
+		}
+		for (Method m : listenerType.getDeclaredMethods()) {
+			MethodDescriptor descriptor = new MethodDescriptor(m);
+			if (acc.contains(descriptor)) {
+				acc.remove(descriptor); // remove overriden method
+			}
+			acc.add(descriptor);
+		}
+		return acc;
+	}
+
+	private class MethodDescriptor {
+
+		private final Method m;
+		private final String name;
+		private final Class<?>[] parameterTypes;
+
+		MethodDescriptor(Method m) {
+			this.m = m;
+			name = m.getName();
+			Class<?>[] parameterTypes = m.getParameterTypes();
+			this.parameterTypes = Arrays.copyOf(parameterTypes, parameterTypes.length);
+		}
+
+		Method getMethod() {
+			return m;
+		}
+
+		String getName() {
+			return name;
+		}
+
+		Class<?>[] getParameterTypes() {
+			return parameterTypes;
+		}
+
+		@Override
+		public int hashCode() {
+			int hash = 0;
+			for (Class<?> parameterType : parameterTypes) {
+				hash += parameterType.hashCode();
+				hash *= 31;
+			}
+			hash += name.hashCode();
+			return hash;
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (!(obj instanceof MethodDescriptor)) {
+				return false;
+			}
+			MethodDescriptor that = (MethodDescriptor) obj;
+			return this.name.equals(that.getName()) && Arrays.deepEquals(this.parameterTypes, that.getParameterTypes());
+		}
+
+		@Override
+		public String toString() {
+			return m.getDeclaringClass().getName() + "." + m.getName() + "(...)";
+		}
 	}
 
 	private boolean checkMethodIsPublic(Annotation at, Method m) {
