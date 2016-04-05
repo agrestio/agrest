@@ -1,10 +1,7 @@
 package com.nhl.link.rest.runtime.parser.pointer;
 
-import com.nhl.link.rest.LinkRestException;
 import com.nhl.link.rest.meta.LrAttribute;
 import com.nhl.link.rest.meta.LrEntity;
-
-import javax.ws.rs.core.Response;
 
 class AttributePointer extends SimplePointer {
 
@@ -37,13 +34,7 @@ class AttributePointer extends SimplePointer {
 
     @Override
     public Class<?> getTargetType() {
-        try {
-            // TODO: Primitive types mapping
-            return Class.forName(attribute.getJavaType());
-        } catch (ClassNotFoundException e) {
-            throw new LinkRestException(Response.Status.INTERNAL_SERVER_ERROR,
-                    "Unknown attribute type: " + attribute.getJavaType());
-        }
+        return attribute.getType();
     }
 
     LrAttribute getAttribute() {

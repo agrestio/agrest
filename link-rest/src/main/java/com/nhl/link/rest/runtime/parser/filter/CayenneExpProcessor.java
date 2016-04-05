@@ -17,7 +17,7 @@ import com.nhl.link.rest.runtime.parser.cache.IPathCache;
 public class CayenneExpProcessor implements ICayenneExpProcessor {
 
 	private IJacksonService jsonParser;
-	private Map<String, JsonValueConverter> converters;
+	private Map<Class<?>, JsonValueConverter> converters;
 	private IPathCache pathCache;
 
 	public CayenneExpProcessor(@Inject IJacksonService jsonParser, @Inject IPathCache pathCache) {
@@ -31,10 +31,10 @@ public class CayenneExpProcessor implements ICayenneExpProcessor {
 		// mapped with existing tools
 
 		this.converters = new HashMap<>();
-		this.converters.put(Date.class.getName(), UtcDateConverter.converter());
-		this.converters.put(java.sql.Date.class.getName(), UtcDateConverter.converter());
-		this.converters.put(java.sql.Time.class.getName(), UtcDateConverter.converter());
-		this.converters.put(java.sql.Timestamp.class.getName(), UtcDateConverter.converter());
+		this.converters.put(Date.class, UtcDateConverter.converter());
+		this.converters.put(java.sql.Date.class, UtcDateConverter.converter());
+		this.converters.put(java.sql.Time.class, UtcDateConverter.converter());
+		this.converters.put(java.sql.Timestamp.class, UtcDateConverter.converter());
 	}
 
 	@Override

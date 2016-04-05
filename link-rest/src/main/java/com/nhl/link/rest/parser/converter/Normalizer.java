@@ -1,5 +1,8 @@
 package com.nhl.link.rest.parser.converter;
 
+import com.nhl.link.rest.LinkRestException;
+
+import javax.ws.rs.core.Response;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -17,9 +20,9 @@ public class Normalizer {
 	}
 
 	@SuppressWarnings("serial")
-	private static final Map<String, TypeNormalizer> NORMALIZERS = new HashMap<String, TypeNormalizer>() {
+	private static final Map<Class<?>, TypeNormalizer> NORMALIZERS = new HashMap<Class<?>, TypeNormalizer>() {
 		{
-			put(Long.class.getName(), new TypeNormalizer() {
+			put(Long.class, new TypeNormalizer() {
 				@Override
 				public Object normalize(Object value) {
 
@@ -37,7 +40,20 @@ public class Normalizer {
 		}
 	};
 
+	@Deprecated
 	public static Object normalize(Object value, String numericType) {
+		try {
+			return normalize(value, Class.forName(numericType));
+		} catch (ClassNotFoundException e) {
+			throw new LinkRestException(Response.Status.INTERNAL_SERVER_ERROR,
+					"Unknown class: " + numericType, e);
+		}
+	}
+
+	/**
+	 * @since 1.24
+     */
+	public static Object normalize(Object value, Class<?> numericType) {
 		TypeNormalizer normalizer = NORMALIZERS.get(numericType);
 		return normalizer == null ? value : normalizer.normalize(value);
 	}

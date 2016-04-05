@@ -1,5 +1,6 @@
 package com.nhl.link.rest.meta;
 
+import org.apache.cayenne.dba.TypesMapping;
 import org.apache.cayenne.exp.parser.ASTObjPath;
 import org.apache.cayenne.exp.parser.ASTPath;
 import org.apache.cayenne.util.ToStringBuilder;
@@ -10,9 +11,9 @@ import org.apache.cayenne.util.ToStringBuilder;
 public class DefaultLrAttribute implements LrAttribute {
 
 	private String name;
-	private String javaType;
+	private Class<?> javaType;
 
-	public DefaultLrAttribute(String name, String javaType) {
+	public DefaultLrAttribute(String name, Class<?> javaType) {
 		this.name = name;
 		this.javaType = javaType;
 	}
@@ -29,6 +30,15 @@ public class DefaultLrAttribute implements LrAttribute {
 
 	@Override
 	public String getJavaType() {
+		if (byte[].class.equals(javaType)) {
+			return TypesMapping.JAVA_BYTES;
+		} else {
+			return javaType.getName();
+		}
+	}
+
+	@Override
+	public Class<?> getType() {
 		return javaType;
 	}
 	

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import com.nhl.link.rest.meta.LrAttribute;
 import com.nhl.link.rest.meta.LrEntity;
 import com.nhl.link.rest.meta.LrRelationship;
+import org.apache.cayenne.dba.TypesMapping;
 
 import java.io.IOException;
 import java.util.Map;
@@ -43,7 +44,14 @@ public class EntityMetadataEncoder extends AbstractEncoder {
 
         out.writeArrayFieldStart("properties");
         for (Map.Entry<String, PropertyHelper> e : properties.entrySet()) {
-            Encoder encoder = propertyMetadataEncoders.get(e.getValue().getType());
+
+            String typeName;
+            if (byte[].class.equals(e.getValue().getType())) {
+                typeName = TypesMapping.JAVA_BYTES;
+            } else {
+                typeName = e.getValue().getType().getName();
+            }
+            Encoder encoder = propertyMetadataEncoders.get(typeName);
             if (encoder == null) {
                 encoder = PropertyMetadataEncoder.encoder();
             }
@@ -57,7 +65,7 @@ public class EntityMetadataEncoder extends AbstractEncoder {
     }
 
     private static abstract class PropertyHelper {
-        abstract String getType();
+        abstract Class<?> getType();
         abstract Object getProperty();
     }
 
@@ -69,8 +77,8 @@ public class EntityMetadataEncoder extends AbstractEncoder {
         }
 
         @Override
-        String getType() {
-            return attribute.getJavaType();
+        Class<?> getType() {
+            return attribute.getType();
         }
 
         @Override
@@ -87,8 +95,8 @@ public class EntityMetadataEncoder extends AbstractEncoder {
         }
 
         @Override
-        String getType() {
-            return relationship.getTargetEntityType().getName();
+        Class<?> getType() {
+            return relationship.getTargetEntityType();
         }
 
         @Override

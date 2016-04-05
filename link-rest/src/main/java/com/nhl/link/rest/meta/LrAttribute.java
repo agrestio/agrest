@@ -11,7 +11,13 @@ public interface LrAttribute {
 
 	String getName();
 
+	@Deprecated
 	String getJavaType();
+
+	/**
+	 * @since 1.24
+     */
+	Class<?> getType();
 	
 	ASTPath getPathExp();
 }

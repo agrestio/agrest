@@ -6,7 +6,7 @@ public interface PathDescriptor {
 
 	boolean isAttribute();
 
-	String getType();
+	Class<?> getType();
 
 	ASTPath getPathExp();
 }

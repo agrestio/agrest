@@ -47,8 +47,8 @@ class EntityPathCache {
 				}
 
 				@Override
-				public String getType() {
-					return id.getJavaType();
+				public Class<?> getType() {
+					return id.getType();
 				}
 
 				@Override
@@ -78,8 +78,8 @@ class EntityPathCache {
 					}
 
 					@Override
-					public String getType() {
-						return attribute.getJavaType();
+					public Class<?> getType() {
+						return attribute.getType();
 					}
 
 					@Override
@@ -98,8 +98,8 @@ class EntityPathCache {
 					}
 
 					@Override
-					public String getType() {
-						return relationship.getTargetEntityType().getName();
+					public Class<?> getType() {
+						return relationship.getTargetEntityType();
 					}
 
 					@Override

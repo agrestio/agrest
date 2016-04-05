@@ -10,7 +10,13 @@ import com.nhl.link.rest.parser.converter.JsonValueConverter;
  */
 public interface IJsonValueConverterFactory {
 
+	@Deprecated
 	JsonValueConverter converter(String valueType);
+
+	/**
+	 * @since 1.24
+     */
+	JsonValueConverter converter(Class<?> valueType);
 	
 	JsonValueConverter converter(int jdbcType);
 }

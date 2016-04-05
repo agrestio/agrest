@@ -11,12 +11,12 @@ import java.time.LocalTime;
 
 public class Java8AttributeEncoderFactory extends AttributeEncoderFactory {
 
-    static final String LOCAL_DATE = LocalDate.class.getName();
-    static final String LOCAL_TIME = LocalTime.class.getName();
-    static final String LOCAL_DATETIME = LocalDateTime.class.getName();
+    static final Class<?> LOCAL_DATE = LocalDate.class;
+    static final Class<?> LOCAL_TIME = LocalTime.class;
+    static final Class<?> LOCAL_DATETIME = LocalDateTime.class;
 
     @Override
-    protected Encoder buildEncoder(String javaType, int jdbcType) {
+    protected Encoder buildEncoder(Class<?> javaType, int jdbcType) {
 
         if (LOCAL_DATE.equals(javaType)) {
             return ISOLocalDateEncoder.encoder();

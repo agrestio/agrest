@@ -5,8 +5,10 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
+import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import org.apache.cayenne.dba.TypesMapping;
 import org.apache.cayenne.map.DbAttribute;
 import org.apache.cayenne.map.EntityResolver;
 import org.apache.cayenne.map.ObjAttribute;
@@ -20,7 +22,6 @@ import com.nhl.link.rest.meta.LrDataMap;
 import com.nhl.link.rest.meta.LrEntity;
 import com.nhl.link.rest.meta.LrEntityOverlay;
 import com.nhl.link.rest.meta.LrPersistentEntity;
-import com.nhl.link.rest.runtime.parser.PathConstants;
 
 /**
  * An {@link LrDataMap} that can resolve metadata from Cayenne mapping,
@@ -73,7 +74,7 @@ public class CayenneAwareLrDataMap implements LrDataMap {
 		CayenneLrEntity<T> lrEntity = new CayenneLrEntity<T>(type, objEntity);
 
 		for (ObjAttribute a : objEntity.getAttributes()) {
-			CayenneLrAttribute lrAttribute = new CayenneLrAttribute(a);
+			CayenneLrAttribute lrAttribute = new CayenneLrAttribute(a, getJavaTypeForTypeName(a.getType()));
 			lrEntity.addPersistentAttribute(lrAttribute);
 		}
 
@@ -86,8 +87,8 @@ public class CayenneAwareLrDataMap implements LrDataMap {
 
 		for (DbAttribute pk : objEntity.getDbEntity().getPrimaryKeys()) {
 			ObjAttribute attribute = objEntity.getAttributeForDbAttribute(pk);
-			LrAttribute id = attribute != null ? new CayenneLrAttribute(attribute) : new CayenneLrDbAttribute(
-					pk.getName(), pk);
+			LrAttribute id = attribute != null ? new CayenneLrAttribute(attribute, getJavaTypeForTypeName(attribute.getType()))
+					: new CayenneLrDbAttribute(pk.getName(), pk, getJavaTypeForTypeName(TypesMapping.getJavaBySqlType(pk.getType())));
 			lrEntity.addId(id);
 		}
 
@@ -96,12 +97,48 @@ public class CayenneAwareLrDataMap implements LrDataMap {
 
 			for (String a : overlay.getTransientAttributes()) {
 				// TODO: figure out the type
-				DefaultLrAttribute lrAttribute = new DefaultLrAttribute(a, "java.lang.Object");
+				DefaultLrAttribute lrAttribute = new DefaultLrAttribute(a, Object.class);
 				lrEntity.addAttribute(lrAttribute);
 			}
 		}
 
 		return lrEntity;
+	}
+
+	static Class<?> getJavaTypeForTypeName(String typeName) {
+
+		if (typeName == null) {
+			throw new NullPointerException("Attribute type cannot be null");
+		}
+
+		switch (typeName) {
+			case TypesMapping.JAVA_BYTES:
+				return byte[].class;
+			case "boolean":
+				return boolean.class;
+			case "byte":
+				return byte.class;
+			case "char":
+				return char.class;
+			case "short":
+				return short.class;
+			case "int":
+				return int.class;
+			case "long":
+				return long.class;
+			case "float":
+				return float.class;
+			case "double":
+				return double.class;
+			default: {
+				try {
+					return Class.forName(typeName);
+				} catch (ClassNotFoundException e) {
+					throw new LinkRestException(Response.Status.INTERNAL_SERVER_ERROR,
+							"Unknown class: " + typeName, e);
+				}
+			}
+		}
 	}
 
 }

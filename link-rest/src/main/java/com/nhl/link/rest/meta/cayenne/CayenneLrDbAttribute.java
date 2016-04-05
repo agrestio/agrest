@@ -14,14 +14,28 @@ public class CayenneLrDbAttribute extends CayenneLrAttribute {
 	private static ObjAttribute fakeObjAttribute(String name, DbAttribute dbAttribute) {
 		ObjAttribute a = new ObjAttribute(name);
 		a.setDbAttributePath(dbAttribute.getName());
-		a.setType(TypesMapping.getJavaBySqlType(dbAttribute.getType()));
+
+		String javaType = TypesMapping.getJavaBySqlType(dbAttribute.getType());
+		if (javaType == null) {
+			throw new NullPointerException("Java type not found for SQL type: " + dbAttribute.getType());
+		}
+		a.setType(javaType);
 		return a;
 	}
 
 	private DbAttribute dbAttribute;
 
+	@Deprecated
 	public CayenneLrDbAttribute(String name, DbAttribute dbAttribute) {
 		super(fakeObjAttribute(name, dbAttribute));
+		this.dbAttribute = dbAttribute;
+	}
+
+	/**
+	 * @since 1.24
+     */
+	public CayenneLrDbAttribute(String name, DbAttribute dbAttribute, Class<?> type) {
+		super(fakeObjAttribute(name, dbAttribute), type);
 		this.dbAttribute = dbAttribute;
 	}
 

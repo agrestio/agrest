@@ -30,10 +30,10 @@ import com.nhl.link.rest.property.PropertyBuilder;
 
 public class AttributeEncoderFactory implements IAttributeEncoderFactory {
 
-	static final String UTIL_DATE = Date.class.getName();
-	static final String SQL_DATE = java.sql.Date.class.getName();
-	static final String SQL_TIME = Time.class.getName();
-	static final String SQL_TIMESTAMP = Timestamp.class.getName();
+	static final Class<?> UTIL_DATE = Date.class;
+	static final Class<?> SQL_DATE = java.sql.Date.class;
+	static final Class<?> SQL_TIME = Time.class;
+	static final Class<?> SQL_TIMESTAMP = Timestamp.class;
 
 	// these are explicit overrides for named attributes
 	private Map<String, EntityProperty> attributePropertiesByPath;
@@ -88,7 +88,7 @@ public class AttributeEncoderFactory implements IAttributeEncoderFactory {
 
 		int jdbcType = persistent ? ((LrPersistentAttribute) attribute).getJdbcType() : Integer.MIN_VALUE;
 
-		Encoder encoder = buildEncoder(attribute.getJavaType(), jdbcType);
+		Encoder encoder = buildEncoder(attribute.getType(), jdbcType);
 		if (persistent && DataObject.class.isAssignableFrom(entity.getType())) {
 			return PropertyBuilder.dataObjectProperty().encodedWith(encoder);
 		} else {
@@ -110,7 +110,7 @@ public class AttributeEncoderFactory implements IAttributeEncoderFactory {
 				Map<String, Encoder> valueEncoders = new TreeMap<>();
 				for (LrAttribute id : ids) {
 					LrPersistentAttribute persistentId = (LrPersistentAttribute) id;
-					Encoder valueEncoder = buildEncoder(persistentId.getJavaType(), persistentId.getJdbcType());
+					Encoder valueEncoder = buildEncoder(persistentId.getType(), persistentId.getJdbcType());
 					valueEncoders.put(id.getName(), valueEncoder);
 				}
 
@@ -119,7 +119,7 @@ public class AttributeEncoderFactory implements IAttributeEncoderFactory {
 			} else {
 
 				LrPersistentAttribute persistentId = (LrPersistentAttribute) ids.iterator().next();
-				Encoder valueEncoder = buildEncoder(persistentId.getJavaType(), persistentId.getJdbcType());
+				Encoder valueEncoder = buildEncoder(persistentId.getType(), persistentId.getJdbcType());
 
 				return PropertyBuilder.property(PersistentObjectIdPropertyReader.reader())
 						.encodedWith(new ObjectIdEncoder(valueEncoder));
@@ -143,7 +143,7 @@ public class AttributeEncoderFactory implements IAttributeEncoderFactory {
 	/**
 	 * @since 1.12
 	 */
-	protected Encoder buildEncoder(String javaType, int jdbcType) {
+	protected Encoder buildEncoder(Class<?> javaType, int jdbcType) {
 
 		if (UTIL_DATE.equals(javaType)) {
 			if (jdbcType == Types.DATE) {

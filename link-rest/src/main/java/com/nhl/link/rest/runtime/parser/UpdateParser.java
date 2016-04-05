@@ -104,7 +104,7 @@ public class UpdateParser implements IUpdateParser {
 			LrAttribute attribute = entity.getAttribute(key);
 			if (attribute != null) {
 				JsonNode valueNode = objectNode.get(key);
-				Object value = extractValue(valueNode, attribute.getJavaType());
+				Object value = extractValue(valueNode, attribute.getType());
 				update.getValues().put(key, value);
 				continue;
 			}
@@ -190,11 +190,11 @@ public class UpdateParser implements IUpdateParser {
 
 		LrPersistentAttribute id = (LrPersistentAttribute) update.getEntity().getSingleId();
 
-		Object value = extractValue(valueNode, id.getJavaType());
+		Object value = extractValue(valueNode, id.getType());
 		update.getOrCreateId().put(id.getDbAttribute().getName(), value);
 	}
 
-	protected Object extractValue(JsonNode valueNode, String javaType) {
+	protected Object extractValue(JsonNode valueNode, Class<?> javaType) {
 
 		JsonValueConverter converter = converterFactory.converter(javaType);
 

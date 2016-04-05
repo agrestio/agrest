@@ -53,7 +53,7 @@ public class PointerTest extends TestWithCayenneMapping {
         LrPointer pointer = new PointerParser(pointerService).getPointer(e1, E1.DESCRIPTION.getName());
         assertEquals(PointerType.ATTRIBUTE, pointer.getType());
 
-        Class<?> targetType = Class.forName(e1.getAttribute(E1.DESCRIPTION.getName()).getJavaType());
+        Class<?> targetType = e1.getAttribute(E1.DESCRIPTION.getName()).getType();
         assertEquals(targetType, pointer.getTargetType());
     }
 
@@ -67,7 +67,7 @@ public class PointerTest extends TestWithCayenneMapping {
         LrPointer pointer = new PointerParser(pointerService).getPointer(e1, node);
         assertEquals(PointerType.ATTRIBUTE, pointer.getType());
 
-        Class<?> targetType = Class.forName(e1.getAttribute(E1.DESCRIPTION.getName()).getJavaType());
+        Class<?> targetType = e1.getAttribute(E1.DESCRIPTION.getName()).getType();
         assertEquals(targetType, pointer.getTargetType());
     }
 
@@ -169,7 +169,7 @@ public class PointerTest extends TestWithCayenneMapping {
                 Pointers.buildPath(E3.E2.getName(),E2.ADDRESS.getName()));
         assertEquals(PointerType.ATTRIBUTE, pointer.getType());
 
-        Class<?> targetType = Class.forName(e2.getAttribute(E2.ADDRESS.getName()).getJavaType());
+        Class<?> targetType = e2.getAttribute(E2.ADDRESS.getName()).getType();
         assertEquals(targetType, pointer.getTargetType());
     }
 
@@ -186,7 +186,7 @@ public class PointerTest extends TestWithCayenneMapping {
         LrPointer pointer = new PointerParser(pointerService).getPointer(e3, node);
         assertEquals(PointerType.ATTRIBUTE, pointer.getType());
 
-        Class<?> targetType = Class.forName(e2.getAttribute(E2.ADDRESS.getName()).getJavaType());
+        Class<?> targetType = e2.getAttribute(E2.ADDRESS.getName()).getType();
         assertEquals(targetType, pointer.getTargetType());
     }
 

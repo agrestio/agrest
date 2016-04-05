@@ -14,9 +14,20 @@ import com.nhl.link.rest.meta.LrPersistentAttribute;
 public class CayenneLrAttribute implements LrPersistentAttribute {
 
 	private ObjAttribute objAttribute;
+	private Class<?> type;
 
+	@Deprecated
 	public CayenneLrAttribute(ObjAttribute objAttribute) {
 		this.objAttribute = objAttribute;
+		this.type = CayenneAwareLrDataMap.getJavaTypeForTypeName(objAttribute.getType());
+	}
+
+	/**
+	 * @since 1.24
+     */
+	public CayenneLrAttribute(ObjAttribute objAttribute, Class<?> type) {
+		this.objAttribute = objAttribute;
+		this.type = type;
 	}
 
 	@Override
@@ -42,6 +53,11 @@ public class CayenneLrAttribute implements LrPersistentAttribute {
 	@Override
 	public String getJavaType() {
 		return objAttribute.getType();
+	}
+
+	@Override
+	public Class<?> getType() {
+		return type;
 	}
 
 	@Override

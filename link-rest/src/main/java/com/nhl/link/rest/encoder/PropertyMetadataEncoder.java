@@ -32,8 +32,8 @@ public abstract class PropertyMetadataEncoder extends AbstractEncoder {
         @Override
         protected String getPropertyType(Object property) {
             if (property instanceof LrAttribute) {
-                String javaType = ((LrAttribute) property).getJavaType();
-                switch (javaType) {
+                Class<?> type = ((LrAttribute) property).getType();
+                switch (type.getName()) {
                     case "byte":
                     case "short":
                     case "int":
@@ -42,7 +42,7 @@ public abstract class PropertyMetadataEncoder extends AbstractEncoder {
                     case "double": {
                         return "number";
                     }
-                    case "byte[]":
+                    case "[B":
                     case "char":
                     case "java.lang.Character":
                     case "java.lang.String": {
@@ -53,15 +53,10 @@ public abstract class PropertyMetadataEncoder extends AbstractEncoder {
                         return "boolean";
                     }
                 }
-                try {
-                    Class<?> javaClass = Class.forName(javaType);
-                    if (Number.class.isAssignableFrom(javaClass)) {
-                        return "number";
-                    } else if (Date.class.isAssignableFrom(javaClass)) {
-                        return "date";
-                    }
-                } catch (ClassNotFoundException e) {
-                    LOGGER.warn("Failed to load class for name: {}", javaType);
+                if (Number.class.isAssignableFrom(type)) {
+                    return "number";
+                } else if (Date.class.isAssignableFrom(type)) {
+                    return "date";
                 }
             } else if (property instanceof LrPersistentRelationship) {
                 return ((LrPersistentRelationship) property).getObjRelationship()

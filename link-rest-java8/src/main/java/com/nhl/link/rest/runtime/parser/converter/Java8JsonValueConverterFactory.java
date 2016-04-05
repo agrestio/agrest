@@ -13,8 +13,12 @@ public class Java8JsonValueConverterFactory extends DefaultJsonValueConverterFac
     public Java8JsonValueConverterFactory() {
         super();
 
-        convertersByJavaType.put(LocalDate.class.getName(), ISOLocalDateConverter.converter());
-        convertersByJavaType.put(LocalTime.class.getName(), ISOLocalTimeConverter.converter());
-        convertersByJavaType.put(LocalDateTime.class.getName(), ISOLocalDateTimeConverter.converter());
+        convertersByJavaTypeName.put(LocalDate.class.getName(), ISOLocalDateConverter.converter());
+        convertersByJavaTypeName.put(LocalTime.class.getName(), ISOLocalTimeConverter.converter());
+        convertersByJavaTypeName.put(LocalDateTime.class.getName(), ISOLocalDateTimeConverter.converter());
+
+        convertersByJavaType.put(LocalDate.class, ISOLocalDateConverter.converter());
+        convertersByJavaType.put(LocalTime.class, ISOLocalTimeConverter.converter());
+        convertersByJavaType.put(LocalDateTime.class, ISOLocalDateTimeConverter.converter());
     }
 }

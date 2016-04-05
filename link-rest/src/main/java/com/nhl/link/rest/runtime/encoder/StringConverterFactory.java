@@ -57,7 +57,7 @@ public class StringConverterFactory implements IStringConverterFactory {
 					+ attributeName + "'");
 		}
 
-		if (AttributeEncoderFactory.UTIL_DATE.equals(attribute.getJavaType())) {
+		if (AttributeEncoderFactory.UTIL_DATE.equals(attribute.getType())) {
 
 			if (attribute instanceof LrPersistentAttribute) {
 				LrPersistentAttribute persistentAttribute = (LrPersistentAttribute) attribute;
@@ -76,11 +76,11 @@ public class StringConverterFactory implements IStringConverterFactory {
 			return ISODateTimeConverter.converter();
 		}
 		// less common cases of mapping to java.sql.* types...
-		else if (AttributeEncoderFactory.SQL_TIMESTAMP.equals(attribute.getJavaType())) {
+		else if (AttributeEncoderFactory.SQL_TIMESTAMP.equals(attribute.getType())) {
 			return ISODateTimeConverter.converter();
-		} else if (AttributeEncoderFactory.SQL_DATE.equals(attribute.getJavaType())) {
+		} else if (AttributeEncoderFactory.SQL_DATE.equals(attribute.getType())) {
 			return ISODateConverter.converter();
-		} else if (AttributeEncoderFactory.SQL_TIME.equals(attribute.getJavaType())) {
+		} else if (AttributeEncoderFactory.SQL_TIME.equals(attribute.getType())) {
 			return ISOTimeConverter.converter();
 		}
 

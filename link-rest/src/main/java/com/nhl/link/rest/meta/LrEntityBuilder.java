@@ -92,7 +92,7 @@ public class LrEntityBuilder<T> {
 		if (m.getAnnotation(LrAttribute.class) != null) {
 
 			if (checkValidAttributeType(m.getReturnType())) {
-				DefaultLrAttribute a = new DefaultLrAttribute(name, m.getReturnType().getName());
+				DefaultLrAttribute a = new DefaultLrAttribute(name, m.getReturnType());
 				entity.addAttribute(a);
 			} else {
 				// still return true after validation failure... this is an
@@ -106,7 +106,7 @@ public class LrEntityBuilder<T> {
 		if (m.getAnnotation(LrId.class) != null) {
 
 			if (checkValidAttributeType(m.getReturnType())) {
-				DefaultLrAttribute a = new DefaultLrAttribute(name, m.getReturnType().getName());
+				DefaultLrAttribute a = new DefaultLrAttribute(name, m.getReturnType());
 				entity.addId(a);
 			} else {
 				// still return true after validation failure... this is an
@@ -121,7 +121,8 @@ public class LrEntityBuilder<T> {
 	}
 
 	private boolean checkValidAttributeType(Class<?> type) {
-		return !Collection.class.isAssignableFrom(type) && !Map.class.isAssignableFrom(type);
+		return !Void.class.equals(type) && !void.class.equals(type) &&
+				!Collection.class.isAssignableFrom(type) && !Map.class.isAssignableFrom(type);
 	}
 
 	private boolean addAsRelationship(DefaultLrEntity<T> entity, String name, Method m) {

@@ -48,7 +48,7 @@ public class EncoderService_Pojo_Test {
 	public void testEncode_SimplePojo_noId() throws IOException {
 		LrEntity<P1> p1lre = LrEntityBuilder.build(P1.class);
 		ResourceEntity<P1> descriptor = new ResourceEntity<P1>(p1lre);
-		descriptor.getAttributes().put("name", new DefaultLrAttribute("name", String.class.getName()));
+		descriptor.getAttributes().put("name", new DefaultLrAttribute("name", String.class));
 
 		P1 p1 = new P1();
 		p1.setName("XYZ");
@@ -64,7 +64,7 @@ public class EncoderService_Pojo_Test {
 
 		LrEntity<P6> p6lre = LrEntityBuilder.builder(P6.class).build();
 		ResourceEntity<P6> descriptor = new ResourceEntity<P6>(p6lre);
-		descriptor.getAttributes().put("intProp", new DefaultLrAttribute("intProp", Integer.class.getName()));
+		descriptor.getAttributes().put("intProp", new DefaultLrAttribute("intProp", Integer.class));
 		descriptor.includeId();
 
 		assertEquals("[{\"id\":\"myid\",\"intProp\":4}]", toJson(p6, descriptor));

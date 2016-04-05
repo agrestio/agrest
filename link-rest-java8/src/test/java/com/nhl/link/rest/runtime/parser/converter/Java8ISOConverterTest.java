@@ -25,7 +25,7 @@ public class Java8ISOConverterTest {
 
     @Test
     public void testJava8ISODate() {
-        JsonValueConverter converter = this.converterFactory.converter(LocalDate.class.getName());
+        JsonValueConverter converter = this.converterFactory.converter(LocalDate.class);
         assertEquals(ISOLocalDateConverter.class, converter.getClass());
 
         TextNode node = new TextNode("2016-03-26");
@@ -36,7 +36,7 @@ public class Java8ISOConverterTest {
 
     @Test
     public void testJava8ISOTime() {
-        JsonValueConverter converter = this.converterFactory.converter(LocalTime.class.getName());
+        JsonValueConverter converter = this.converterFactory.converter(LocalTime.class);
         assertEquals(ISOLocalTimeConverter.class, converter.getClass());
 
         TextNode node = new TextNode("16:58:47");
@@ -47,7 +47,7 @@ public class Java8ISOConverterTest {
 
     @Test
     public void testJava8ISOTimestamp() {
-        JsonValueConverter converter = this.converterFactory.converter(LocalDateTime.class.getName());
+        JsonValueConverter converter = this.converterFactory.converter(LocalDateTime.class);
         assertEquals(ISOLocalDateTimeConverter.class, converter.getClass());
 
         TextNode node = new TextNode("2016-03-26T16:59:58");

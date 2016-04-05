@@ -43,7 +43,7 @@ public class LrjEntityBuilderTest {
 		LrAttribute name = p3e.getAttribute("name");
 		assertNotNull(name);
 		assertEquals("name", name.getName());
-		assertEquals("java.lang.String", name.getJavaType());
+		assertEquals(String.class, name.getType());
 	}
 
 	@Test

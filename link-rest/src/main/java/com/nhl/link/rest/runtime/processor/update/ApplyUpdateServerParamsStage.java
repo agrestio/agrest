@@ -101,7 +101,7 @@ public class ApplyUpdateServerParamsStage<T> extends BaseLinearProcessingStage<U
 
 				idMap.put(
 						persistentId.getDbAttribute().getName(),
-						Normalizer.normalize(idValue, persistentId.getJavaType())
+						Normalizer.normalize(idValue, persistentId.getType())
 				);
 			}
 

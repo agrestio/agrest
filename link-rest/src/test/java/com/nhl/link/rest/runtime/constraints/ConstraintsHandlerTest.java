@@ -337,6 +337,6 @@ public class ConstraintsHandlerTest {
 	}
 
 	protected void appendAttribute(ResourceEntity<?> entity, String name) {
-		entity.getAttributes().put(name, new DefaultLrAttribute(name, String.class.getName()));
+		entity.getAttributes().put(name, new DefaultLrAttribute(name, String.class));
 	}
 }

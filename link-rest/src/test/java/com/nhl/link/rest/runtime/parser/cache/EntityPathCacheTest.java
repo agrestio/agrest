@@ -26,21 +26,21 @@ public class EntityPathCacheTest extends TestWithCayenneMapping {
 		PathDescriptor pdName = cache.getPathDescriptor(new ASTObjPath("name"));
 		assertNotNull(pdName);
 		assertTrue(pdName.isAttribute());
-		assertEquals("java.lang.String", pdName.getType());
+		assertEquals(String.class, pdName.getType());
 		assertEquals("name", pdName.getPathExp().getPath());
 		assertSame(pdName, cache.getPathDescriptor(new ASTObjPath("name")));
 		
 		PathDescriptor pdId1 = cache.getPathDescriptor(new ASTObjPath("id1"));
 		assertNotNull(pdId1);
 		assertTrue(pdId1.isAttribute());
-		assertEquals("java.lang.Integer", pdId1.getType());
+		assertEquals(Integer.class, pdId1.getType());
 		assertEquals("id1", pdId1.getPathExp().getPath());
 		assertSame(pdId1, cache.getPathDescriptor(new ASTObjPath("id1")));
 		
 		PathDescriptor pdId2 = cache.getPathDescriptor(new ASTObjPath("id2"));
 		assertNotNull(pdId2);
 		assertTrue(pdId2.isAttribute());
-		assertEquals("java.lang.Integer", pdId2.getType());
+		assertEquals(Integer.class, pdId2.getType());
 		assertEquals("id2", pdId2.getPathExp().getPath());
 		assertSame(pdId2, cache.getPathDescriptor(new ASTObjPath("id2")));
 	}
@@ -51,7 +51,7 @@ public class EntityPathCacheTest extends TestWithCayenneMapping {
 		PathDescriptor pd = cache.getPathDescriptor(new ASTObjPath("name"));
 		assertNotNull(pd);
 		assertTrue(pd.isAttribute());
-		assertEquals("java.lang.String", pd.getType());
+		assertEquals(String.class, pd.getType());
 		assertEquals("name", pd.getPathExp().getPath());
 		assertSame(pd, cache.getPathDescriptor(new ASTObjPath("name")));
 	}
@@ -62,7 +62,7 @@ public class EntityPathCacheTest extends TestWithCayenneMapping {
 		PathDescriptor pd = cache.getPathDescriptor(new ASTObjPath("e2"));
 		assertNotNull(pd);
 		assertFalse(pd.isAttribute());
-		assertEquals(E2.class.getName(), pd.getType());
+		assertEquals(E2.class, pd.getType());
 		assertEquals("e2", pd.getPathExp().getPath());
 		assertSame(pd, cache.getPathDescriptor(new ASTObjPath("e2")));
 	}
@@ -73,7 +73,7 @@ public class EntityPathCacheTest extends TestWithCayenneMapping {
 		PathDescriptor pd = cache.getPathDescriptor(new ASTObjPath("e2.name"));
 		assertNotNull(pd);
 		assertTrue(pd.isAttribute());
-		assertEquals("java.lang.String", pd.getType());
+		assertEquals(String.class, pd.getType());
 		assertEquals("e2.name", pd.getPathExp().getPath());
 		assertSame(pd, cache.getPathDescriptor(new ASTObjPath("e2.name")));
 	}
@@ -90,7 +90,7 @@ public class EntityPathCacheTest extends TestWithCayenneMapping {
 		PathDescriptor pd = cache.getPathDescriptor(new ASTObjPath("e2+.name"));
 		assertNotNull(pd);
 		assertTrue(pd.isAttribute());
-		assertEquals("java.lang.String", pd.getType());
+		assertEquals(String.class, pd.getType());
 		assertEquals("e2+.name", pd.getPathExp().getPath());
 		assertSame(pd, cache.getPathDescriptor(new ASTObjPath("e2+.name")));
 		assertNotSame(pd, cache.getPathDescriptor(new ASTObjPath("e2.name")));

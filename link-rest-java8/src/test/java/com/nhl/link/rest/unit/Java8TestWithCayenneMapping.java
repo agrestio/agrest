@@ -100,7 +100,7 @@ public class Java8TestWithCayenneMapping {
     }
 
     protected void appendAttribute(ResourceEntity<?> entity, String name, Class<?> type) {
-        entity.getAttributes().put(name, new DefaultLrAttribute(name, type.getName()));
+        entity.getAttributes().put(name, new DefaultLrAttribute(name, type));
     }
 
 
@@ -109,17 +109,14 @@ public class Java8TestWithCayenneMapping {
     }
 
     protected void appendPersistenceAttribute(ResourceEntity<?> entity, String name, Class<?> javaType, int jdbcType) {
-        entity.getAttributes().put(name, new TestLrPersistentAttribute(name, javaType.getName(), jdbcType));
+        entity.getAttributes().put(name, new TestLrPersistentAttribute(name, javaType, jdbcType));
     }
 
-    private class TestLrPersistentAttribute implements LrPersistentAttribute {
-        private String name;
-        private String javaType;
+    private class TestLrPersistentAttribute extends DefaultLrAttribute implements LrPersistentAttribute {
         private int jdbcType;
 
-        public TestLrPersistentAttribute(String name, String javaType, int jdbcType) {
-            this.name = name;
-            this.javaType = javaType;
+        public TestLrPersistentAttribute(String name, Class<?> javaType, int jdbcType) {
+            super(name, javaType);
             this.jdbcType = jdbcType;
         }
 
@@ -136,16 +133,6 @@ public class Java8TestWithCayenneMapping {
         @Override
         public DbAttribute getDbAttribute() {
             return null;
-        }
-
-        @Override
-        public String getName() {
-            return name;
-        }
-
-        @Override
-        public String getJavaType() {
-            return javaType;
         }
 
         @Override

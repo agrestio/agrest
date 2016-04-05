@@ -35,10 +35,10 @@ class CayenneExpProcessorWorker {
 	private IJacksonService jsonParser;
 	private IPathCache pathCache;
 	private LrEntity<?> entity;
-	private Map<String, JsonValueConverter> converters;
+	private Map<Class<?>, JsonValueConverter> converters;
 	private TraversalHandler expressionPostProcessor;
 
-	CayenneExpProcessorWorker(IJacksonService jsonParser, Map<String, JsonValueConverter> converters,
+	CayenneExpProcessorWorker(IJacksonService jsonParser, Map<Class<?>, JsonValueConverter> converters,
 			IPathCache pathCache, LrEntity<?> entity) {
 
 		this.jsonParser = jsonParser;
