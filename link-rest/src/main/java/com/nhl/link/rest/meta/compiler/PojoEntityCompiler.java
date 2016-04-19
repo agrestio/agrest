@@ -16,10 +16,14 @@ public class PojoEntityCompiler implements LrEntityCompiler {
 	@Override
 	public <T> LrEntity<T> compile(Class<T> type) {
 
-		// TODO: should we bail on entities with no annotated attributes and
-		// relationships instead of returning empty entities?
+		LrEntity<T> entity = LrEntityBuilder.build(type);
+
+		// bailing on Java classes with no LR annotations
+		if (entity.getIds().isEmpty() && entity.getAttributes().isEmpty() && entity.getRelationships().isEmpty()) {
+			return null;
+		}
 
 		LOGGER.debug("compiling entity for type: " + type);
-		return LrEntityBuilder.build(type);
+		return entity;
 	}
 }
