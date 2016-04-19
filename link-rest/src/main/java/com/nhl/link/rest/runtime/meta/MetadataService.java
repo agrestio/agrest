@@ -30,7 +30,7 @@ public class MetadataService implements IMetadataService {
 
 	/**
 	 * A DI key that allows to expand the model of persistent entities coming
-	 * form Cayenne.
+	 * from Cayenne.
 	 * 
 	 * @since 1.12
 	 */
