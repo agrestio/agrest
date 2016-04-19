@@ -4,6 +4,7 @@ Release 1.24
 #137 Change LrAttribute.getJavaType() to return Class object
 #157 Not enough diagnostics on misconfigured listeners
 #161 Unmapped PK causes response encoding to fail
+#164 Auto-compile Lr-annotated properties of entity objects
 
 Release 1.23
 
