@@ -30,6 +30,8 @@ import com.nhl.link.rest.encoder.PropertyMetadataEncoder;
 import com.nhl.link.rest.meta.LrEntity;
 import com.nhl.link.rest.meta.LrEntityBuilder;
 import com.nhl.link.rest.meta.LrEntityOverlay;
+import com.nhl.link.rest.meta.compiler.CayenneEntityCompiler;
+import com.nhl.link.rest.meta.compiler.LrEntityCompiler;
 import com.nhl.link.rest.meta.parser.IResourceParser;
 import com.nhl.link.rest.meta.parser.ResourceParser;
 import com.nhl.link.rest.provider.CayenneRuntimeExceptionMapper;
@@ -297,7 +299,12 @@ public class LinkRestBuilder {
 
 				binder.<EncoderFilter> bindList(EncoderService.ENCODER_FILTER_LIST).addAll(encoderFilters);
 				binder.<LrEntity<?>> bindList(MetadataService.EXTRA_ENTITIES_LIST).addAll(extraEntities);
-				binder.<LrEntityOverlay<?>> bindMap(MetadataService.ENTITY_OVERLAY_MAP).putAll(entityOverlays);
+				
+				binder.bind(CayenneEntityCompiler.class).to(CayenneEntityCompiler.class);
+				binder.<LrEntityCompiler> bindList(MetadataService.ENTITY_COMPILER_LIST)
+						.add(CayenneEntityCompiler.class);
+
+				binder.<LrEntityOverlay<?>> bindMap(CayenneEntityCompiler.ENTITY_OVERLAY_MAP).putAll(entityOverlays);
 				binder.<Class<?>> bindMap(LinkRestRuntime.BODY_WRITERS_MAP)
 						.put(SimpleResponse.class.getName(), SimpleResponseWriter.class)
 						.put(DataResponse.class.getName(), DataResponseWriter.class)

@@ -1,17 +1,12 @@
 package com.nhl.link.rest.unit;
 
-import com.nhl.link.rest.ResourceEntity;
-import com.nhl.link.rest.meta.DefaultLrAttribute;
-import com.nhl.link.rest.meta.LrEntity;
-import com.nhl.link.rest.meta.LrEntityOverlay;
-import com.nhl.link.rest.meta.LrPersistentAttribute;
-import com.nhl.link.rest.meta.parser.IResourceParser;
-import com.nhl.link.rest.meta.parser.ResourceParser;
-import com.nhl.link.rest.runtime.cayenne.ICayennePersister;
-import com.nhl.link.rest.runtime.meta.IMetadataService;
-import com.nhl.link.rest.runtime.meta.IResourceMetadataService;
-import com.nhl.link.rest.runtime.meta.MetadataService;
-import com.nhl.link.rest.runtime.meta.ResourceMetadataService;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import org.apache.cayenne.ObjectContext;
 import org.apache.cayenne.configuration.server.DataSourceFactory;
 import org.apache.cayenne.configuration.server.ServerRuntime;
@@ -26,10 +21,20 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 
-import java.util.Collections;
-
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import com.nhl.link.rest.ResourceEntity;
+import com.nhl.link.rest.meta.DefaultLrAttribute;
+import com.nhl.link.rest.meta.LrEntity;
+import com.nhl.link.rest.meta.LrEntityOverlay;
+import com.nhl.link.rest.meta.LrPersistentAttribute;
+import com.nhl.link.rest.meta.compiler.CayenneEntityCompiler;
+import com.nhl.link.rest.meta.compiler.LrEntityCompiler;
+import com.nhl.link.rest.meta.parser.IResourceParser;
+import com.nhl.link.rest.meta.parser.ResourceParser;
+import com.nhl.link.rest.runtime.cayenne.ICayennePersister;
+import com.nhl.link.rest.runtime.meta.IMetadataService;
+import com.nhl.link.rest.runtime.meta.IResourceMetadataService;
+import com.nhl.link.rest.runtime.meta.MetadataService;
+import com.nhl.link.rest.runtime.meta.ResourceMetadataService;
 
 /**
  * A superclass of Cayenne-aware test cases that do not need to access the DB,
@@ -80,8 +85,12 @@ public class TestWithCayenneMapping {
 	}
 
 	protected IMetadataService createMetadataService() {
-		return new MetadataService(Collections.<LrEntity<?>> emptyList(),
-				Collections.<String, LrEntityOverlay<?>> emptyMap(), mockCayennePersister);
+
+		List<LrEntityCompiler> compilers = new ArrayList<>();
+		compilers.add(
+				new CayenneEntityCompiler(mockCayennePersister, Collections.<String, LrEntityOverlay<?>> emptyMap()));
+
+		return new MetadataService(Collections.<LrEntity<?>> emptyList(), compilers, mockCayennePersister);
 	}
 
 	protected IResourceMetadataService createResourceMetadataService() {
@@ -108,7 +117,8 @@ public class TestWithCayenneMapping {
 		entity.getAttributes().put(name, new DefaultLrAttribute(name, type));
 	}
 
-	protected  <T> void appendPersistenceAttribute(ResourceEntity<?> entity, Property<T> property, Class<T> javaType, int jdbcType) {
+	protected <T> void appendPersistenceAttribute(ResourceEntity<?> entity, Property<T> property, Class<T> javaType,
+			int jdbcType) {
 		appendPersistenceAttribute(entity, property.getName(), javaType, jdbcType);
 	}
 

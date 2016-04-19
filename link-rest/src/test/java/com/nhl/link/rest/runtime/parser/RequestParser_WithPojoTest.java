@@ -6,6 +6,7 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -22,6 +23,8 @@ import com.nhl.link.rest.it.fixture.pojo.model.P2;
 import com.nhl.link.rest.meta.LrEntity;
 import com.nhl.link.rest.meta.LrEntityBuilder;
 import com.nhl.link.rest.meta.LrEntityOverlay;
+import com.nhl.link.rest.meta.compiler.CayenneEntityCompiler;
+import com.nhl.link.rest.meta.compiler.LrEntityCompiler;
 import com.nhl.link.rest.runtime.jackson.IJacksonService;
 import com.nhl.link.rest.runtime.jackson.JacksonService;
 import com.nhl.link.rest.runtime.meta.IMetadataService;
@@ -59,7 +62,12 @@ public class RequestParser_WithPojoTest extends TestWithCayenneMapping {
 	@Override
 	protected IMetadataService createMetadataService() {
 		List<LrEntity<?>> pojos = Arrays.asList(LrEntityBuilder.build(P1.class), LrEntityBuilder.build(P2.class));
-		return new MetadataService(pojos, Collections.<String, LrEntityOverlay<?>> emptyMap(), mockCayennePersister);
+
+		List<LrEntityCompiler> compilers = new ArrayList<>();
+		compilers.add(
+				new CayenneEntityCompiler(mockCayennePersister, Collections.<String, LrEntityOverlay<?>> emptyMap()));
+
+		return new MetadataService(pojos, compilers, mockCayennePersister);
 	}
 
 	@Test

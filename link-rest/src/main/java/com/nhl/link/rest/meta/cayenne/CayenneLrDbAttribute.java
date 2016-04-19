@@ -25,12 +25,6 @@ public class CayenneLrDbAttribute extends CayenneLrAttribute {
 
 	private DbAttribute dbAttribute;
 
-	@Deprecated
-	public CayenneLrDbAttribute(String name, DbAttribute dbAttribute) {
-		super(fakeObjAttribute(name, dbAttribute));
-		this.dbAttribute = dbAttribute;
-	}
-
 	/**
 	 * @since 1.24
      */

@@ -1,7 +1,6 @@
 package com.nhl.link.rest.runtime.meta;
 
 import java.util.List;
-import java.util.Map;
 
 import javax.ws.rs.core.Response.Status;
 
@@ -11,11 +10,11 @@ import org.apache.cayenne.query.Select;
 
 import com.nhl.link.rest.EntityParent;
 import com.nhl.link.rest.LinkRestException;
+import com.nhl.link.rest.meta.LazyLrDataMap;
 import com.nhl.link.rest.meta.LrDataMap;
 import com.nhl.link.rest.meta.LrEntity;
-import com.nhl.link.rest.meta.LrEntityOverlay;
 import com.nhl.link.rest.meta.LrRelationship;
-import com.nhl.link.rest.meta.cayenne.CayenneAwareLrDataMap;
+import com.nhl.link.rest.meta.compiler.LrEntityCompiler;
 import com.nhl.link.rest.runtime.cayenne.ICayennePersister;
 
 public class MetadataService implements IMetadataService {
@@ -28,23 +27,24 @@ public class MetadataService implements IMetadataService {
 	 */
 	public static final String EXTRA_ENTITIES_LIST = "linkrest.meta.entity.extras.list";
 
+	
+
 	/**
-	 * A DI key that allows to expand the model of persistent entities coming
-	 * from Cayenne.
+	 * A DI key that allows to access a list of entity compilers.
 	 * 
-	 * @since 1.12
+	 * @since 1.24
 	 */
-	public static final String ENTITY_OVERLAY_MAP = "linkrest.meta.entity.overlay.map";
+	public static final String ENTITY_COMPILER_LIST = "linkrest.meta.entity.compiler.list";
 
 	private EntityResolver entityResolver;
 	private LrDataMap dataMap;
 
 	public MetadataService(@Inject(EXTRA_ENTITIES_LIST) List<LrEntity<?>> extraEntities,
-			@Inject(ENTITY_OVERLAY_MAP) Map<String, LrEntityOverlay<?>> entityOverlays,
+			@Inject(ENTITY_COMPILER_LIST) List<LrEntityCompiler> entityCompilers,
 			@Inject ICayennePersister cayenneService) {
 
 		this.entityResolver = cayenneService.entityResolver();
-		this.dataMap = new CayenneAwareLrDataMap(entityResolver, extraEntities, entityOverlays);
+		this.dataMap = new LazyLrDataMap(entityCompilers, extraEntities);
 	}
 
 	/**
