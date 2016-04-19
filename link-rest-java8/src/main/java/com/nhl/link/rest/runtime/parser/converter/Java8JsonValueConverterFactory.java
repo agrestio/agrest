@@ -10,15 +10,11 @@ import java.time.LocalTime;
 
 public class Java8JsonValueConverterFactory extends DefaultJsonValueConverterFactory {
 
-    public Java8JsonValueConverterFactory() {
-        super();
+	public Java8JsonValueConverterFactory() {
+		super();
 
-        convertersByJavaTypeName.put(LocalDate.class.getName(), ISOLocalDateConverter.converter());
-        convertersByJavaTypeName.put(LocalTime.class.getName(), ISOLocalTimeConverter.converter());
-        convertersByJavaTypeName.put(LocalDateTime.class.getName(), ISOLocalDateTimeConverter.converter());
-
-        convertersByJavaType.put(LocalDate.class, ISOLocalDateConverter.converter());
-        convertersByJavaType.put(LocalTime.class, ISOLocalTimeConverter.converter());
-        convertersByJavaType.put(LocalDateTime.class, ISOLocalDateTimeConverter.converter());
-    }
+		convertersByJavaType.put(LocalDate.class, ISOLocalDateConverter.converter());
+		convertersByJavaType.put(LocalTime.class, ISOLocalTimeConverter.converter());
+		convertersByJavaType.put(LocalDateTime.class, ISOLocalDateTimeConverter.converter());
+	}
 }

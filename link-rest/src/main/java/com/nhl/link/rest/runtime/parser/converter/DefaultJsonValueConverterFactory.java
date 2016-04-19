@@ -1,23 +1,21 @@
 package com.nhl.link.rest.runtime.parser.converter;
 
+import java.sql.Types;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+
 import com.nhl.link.rest.parser.converter.Base64Converter;
 import com.nhl.link.rest.parser.converter.GenericConverter;
 import com.nhl.link.rest.parser.converter.JsonValueConverter;
 import com.nhl.link.rest.parser.converter.LongConverter;
 import com.nhl.link.rest.parser.converter.UtcDateConverter;
-import org.apache.cayenne.dba.TypesMapping;
-
-import java.sql.Types;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * @since 1.10
  */
 public class DefaultJsonValueConverterFactory implements IJsonValueConverterFactory {
 
-	protected Map<String, JsonValueConverter> convertersByJavaTypeName;
 	protected Map<Class<?>, JsonValueConverter> convertersByJavaType;
 	private Map<Integer, JsonValueConverter> convertersByJdbcType;
 
@@ -26,14 +24,6 @@ public class DefaultJsonValueConverterFactory implements IJsonValueConverterFact
 	public DefaultJsonValueConverterFactory() {
 
 		this.defaultConverter = GenericConverter.converter();
-
-		this.convertersByJavaTypeName = new HashMap<>();
-		convertersByJavaTypeName.put(Long.class.getName(), LongConverter.converter());
-		convertersByJavaTypeName.put(Date.class.getName(), UtcDateConverter.converter());
-		convertersByJavaTypeName.put(java.sql.Date.class.getName(), UtcDateConverter.converter());
-		convertersByJavaTypeName.put(java.sql.Time.class.getName(), UtcDateConverter.converter());
-		convertersByJavaTypeName.put(java.sql.Timestamp.class.getName(), UtcDateConverter.converter());
-		convertersByJavaTypeName.put(TypesMapping.JAVA_BYTES, Base64Converter.converter());
 
 		this.convertersByJavaType = new HashMap<>();
 		convertersByJavaType.put(Long.class, LongConverter.converter());
@@ -49,9 +39,13 @@ public class DefaultJsonValueConverterFactory implements IJsonValueConverterFact
 	}
 
 	@Override
+	@Deprecated
 	public JsonValueConverter converter(String valueType) {
-		JsonValueConverter converter = convertersByJavaTypeName.get(valueType);
-		return converter != null ? converter : defaultConverter;
+		try {
+			return converter(Class.forName(valueType));
+		} catch (ClassNotFoundException e) {
+			throw new IllegalArgumentException("Unknown class: " + valueType, e);
+		}
 	}
 
 	@Override
