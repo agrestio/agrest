@@ -28,6 +28,7 @@ public class DefaultLrAttribute implements LrAttribute {
 		return new ASTObjPath(name);
 	}
 
+	@Deprecated
 	@Override
 	public String getJavaType() {
 		if (byte[].class.equals(javaType)) {
