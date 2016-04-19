@@ -30,8 +30,9 @@ import com.nhl.link.rest.encoder.PropertyMetadataEncoder;
 import com.nhl.link.rest.meta.LrEntity;
 import com.nhl.link.rest.meta.LrEntityBuilder;
 import com.nhl.link.rest.meta.LrEntityOverlay;
-import com.nhl.link.rest.meta.compiler.CayenneEntityCompiler;
+import com.nhl.link.rest.meta.cayenne.CayenneEntityCompiler;
 import com.nhl.link.rest.meta.compiler.LrEntityCompiler;
+import com.nhl.link.rest.meta.compiler.PojoEntityCompiler;
 import com.nhl.link.rest.meta.parser.IResourceParser;
 import com.nhl.link.rest.meta.parser.ResourceParser;
 import com.nhl.link.rest.provider.CayenneRuntimeExceptionMapper;
@@ -207,7 +208,10 @@ public class LinkRestBuilder {
 	 * 
 	 * @since 1.12
 	 * @see LrEntityBuilder
+	 * @deprecated since 1.24, as annotated entities are now loaded
+	 *             automatically.
 	 */
+	@Deprecated
 	public LinkRestBuilder extraEntity(LrEntity<?> entity) {
 		this.extraEntities.add(entity);
 		return this;
@@ -220,7 +224,10 @@ public class LinkRestBuilder {
 	 * 
 	 * @since 1.12
 	 * @see LrEntityBuilder
+	 * @deprecated since 1.24, as annotated entities are now loaded
+	 *             automatically.
 	 */
+	@Deprecated
 	public LinkRestBuilder extraEntities(Collection<? extends LrEntity<?>> entities) {
 		this.extraEntities.addAll(entities);
 		return this;
@@ -299,10 +306,11 @@ public class LinkRestBuilder {
 
 				binder.<EncoderFilter> bindList(EncoderService.ENCODER_FILTER_LIST).addAll(encoderFilters);
 				binder.<LrEntity<?>> bindList(MetadataService.EXTRA_ENTITIES_LIST).addAll(extraEntities);
-				
+
 				binder.bind(CayenneEntityCompiler.class).to(CayenneEntityCompiler.class);
+				binder.bind(PojoEntityCompiler.class).to(PojoEntityCompiler.class);
 				binder.<LrEntityCompiler> bindList(MetadataService.ENTITY_COMPILER_LIST)
-						.add(CayenneEntityCompiler.class);
+						.add(CayenneEntityCompiler.class).add(PojoEntityCompiler.class);
 
 				binder.<LrEntityOverlay<?>> bindMap(CayenneEntityCompiler.ENTITY_OVERLAY_MAP).putAll(entityOverlays);
 				binder.<Class<?>> bindMap(LinkRestRuntime.BODY_WRITERS_MAP)

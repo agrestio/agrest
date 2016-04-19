@@ -1,5 +1,6 @@
 Release 1.24
 
+#104 Compile annotated POJO entities on the fly; no need for explicit entity declarations.
 #137 Change LrAttribute.getJavaType() to return Class object
 #157 Not enough diagnostics on misconfigured listeners
 #161 Unmapped PK causes response encoding to fail

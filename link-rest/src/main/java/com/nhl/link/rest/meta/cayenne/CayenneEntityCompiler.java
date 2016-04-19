@@ -1,9 +1,8 @@
-package com.nhl.link.rest.meta.compiler;
+package com.nhl.link.rest.meta.cayenne;
 
 import java.util.Map;
 
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
 
 import org.apache.cayenne.dba.TypesMapping;
 import org.apache.cayenne.di.Inject;
@@ -12,22 +11,23 @@ import org.apache.cayenne.map.EntityResolver;
 import org.apache.cayenne.map.ObjAttribute;
 import org.apache.cayenne.map.ObjEntity;
 import org.apache.cayenne.map.ObjRelationship;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.nhl.link.rest.LinkRestException;
 import com.nhl.link.rest.meta.DefaultLrAttribute;
 import com.nhl.link.rest.meta.LrAttribute;
 import com.nhl.link.rest.meta.LrEntity;
 import com.nhl.link.rest.meta.LrEntityOverlay;
-import com.nhl.link.rest.meta.cayenne.CayenneLrAttribute;
-import com.nhl.link.rest.meta.cayenne.CayenneLrDbAttribute;
-import com.nhl.link.rest.meta.cayenne.CayenneLrEntity;
-import com.nhl.link.rest.meta.cayenne.CayenneLrRelationship;
+import com.nhl.link.rest.meta.compiler.LrEntityCompiler;
 import com.nhl.link.rest.runtime.cayenne.ICayennePersister;
 
 /**
  * @since 1.24
  */
 public class CayenneEntityCompiler implements LrEntityCompiler {
+
+	private static final Logger LOGGER = LoggerFactory.getLogger(CayenneEntityCompiler.class);
 
 	/**
 	 * A DI key that allows to expand the model of persistent entities coming
@@ -86,8 +86,10 @@ public class CayenneEntityCompiler implements LrEntityCompiler {
 
 		ObjEntity objEntity = resolver.getObjEntity(type);
 		if (objEntity == null) {
-			throw new LinkRestException(Status.INTERNAL_SERVER_ERROR, "Unknown entity class: " + type);
+			return null;
 		}
+
+		LOGGER.debug("compiling Cayenne entity for type: " + type);
 
 		CayenneLrEntity<T> lrEntity = new CayenneLrEntity<T>(type, objEntity);
 
