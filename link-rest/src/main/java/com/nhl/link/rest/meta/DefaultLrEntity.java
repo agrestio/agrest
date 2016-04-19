@@ -1,6 +1,5 @@
 package com.nhl.link.rest.meta;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -17,7 +16,7 @@ public class DefaultLrEntity<T> implements LrEntity<T> {
 	private String name;
 	private Class<T> type;
 
-	private Collection<LrAttribute> ids;
+	private Map<String, LrAttribute> ids;
 	private Map<String, LrAttribute> attributes;
 	private Map<String, LrRelationship> relationships;
 
@@ -27,7 +26,7 @@ public class DefaultLrEntity<T> implements LrEntity<T> {
 		this.type = type;
 		this.relationships = new HashMap<>();
 		this.attributes = new HashMap<>();
-		this.ids = new ArrayList<>();
+		this.ids = new HashMap<>();
 		this.name = type.getSimpleName();
 	}
 
@@ -43,7 +42,7 @@ public class DefaultLrEntity<T> implements LrEntity<T> {
 
 	@Override
 	public Collection<LrAttribute> getIds() {
-		return ids;
+		return ids.values();
 	}
 
 	@Override
@@ -53,11 +52,11 @@ public class DefaultLrEntity<T> implements LrEntity<T> {
 		}
 
 		if (ids.size() > 1) {
-			throw new LinkRestException(Status.INTERNAL_SERVER_ERROR, "Unsupported multi-attribute id in entity "
-					+ name);
+			throw new LinkRestException(Status.INTERNAL_SERVER_ERROR,
+					"Unsupported multi-attribute id in entity " + name);
 		}
 
-		return ids.iterator().next();
+		return ids.values().iterator().next();
 	}
 
 	@Override
@@ -80,15 +79,15 @@ public class DefaultLrEntity<T> implements LrEntity<T> {
 		return attributes.values();
 	}
 
-	public void addRelationship(LrRelationship relationship) {
-		relationships.put(relationship.getName(), relationship);
+	public LrRelationship addRelationship(LrRelationship relationship) {
+		return relationships.put(relationship.getName(), relationship);
 	}
 
-	public void addAttribute(LrAttribute attribute) {
-		attributes.put(attribute.getName(), attribute);
+	public LrAttribute addAttribute(LrAttribute attribute) {
+		return attributes.put(attribute.getName(), attribute);
 	}
 
-	public void addId(LrAttribute id) {
-		ids.add(id);
+	public LrAttribute addId(LrAttribute id) {
+		return ids.put(id.getName(), id);
 	}
 }

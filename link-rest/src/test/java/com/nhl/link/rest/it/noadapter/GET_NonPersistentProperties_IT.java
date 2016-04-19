@@ -9,20 +9,10 @@ import javax.ws.rs.core.Response.Status;
 import org.junit.Test;
 
 import com.nhl.link.rest.it.fixture.JerseyTestOnDerby;
-import com.nhl.link.rest.it.fixture.cayenne.E14;
 import com.nhl.link.rest.it.fixture.resource.E14Resource;
 import com.nhl.link.rest.it.fixture.resource.E15Resource;
-import com.nhl.link.rest.runtime.LinkRestBuilder;
 
 public class GET_NonPersistentProperties_IT extends JerseyTestOnDerby {
-
-	@Override
-	protected LinkRestBuilder doConfigure() {
-
-		// "prettyName" is loaded explicitly , "notSoPrettyName" is loaded via
-		// annotations
-		return super.doConfigure().transientProperty(E14.class, "prettyName");
-	}
 
 	@Override
 	protected void doAddResources(FeatureContext context) {

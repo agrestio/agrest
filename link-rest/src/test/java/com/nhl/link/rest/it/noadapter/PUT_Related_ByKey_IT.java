@@ -113,7 +113,9 @@ public class PUT_Related_ByKey_IT extends JerseyTestOnDerby {
 		assertEquals(Status.OK.getStatusCode(), r1.getStatus());
 
 		// update: ordering must be preserved...
-		assertEquals("{\"data\":[{\"id\":4,\"name\":\"zzz\"},{\"id\":11,\"name\":\"new\"}],\"total\":2}",
+		assertEquals(
+				"{\"data\":[{\"id\":4,\"name\":\"zzz\",\"prettyName\":\"zzz_pretty\"}"
+						+ ",{\"id\":11,\"name\":\"new\",\"prettyName\":\"new_pretty\"}],\"total\":2}",
 				r1.readEntity(String.class));
 
 		assertEquals(2, SQLSelect.scalarQuery(Integer.class, "SELECT count(1) FROM utest.e14 WHERE e15_id = 44")

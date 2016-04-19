@@ -18,7 +18,9 @@ import com.nhl.link.rest.LinkRestException;
 import com.nhl.link.rest.meta.DefaultLrAttribute;
 import com.nhl.link.rest.meta.LrAttribute;
 import com.nhl.link.rest.meta.LrEntity;
+import com.nhl.link.rest.meta.LrEntityBuilder;
 import com.nhl.link.rest.meta.LrEntityOverlay;
+import com.nhl.link.rest.meta.LrRelationship;
 import com.nhl.link.rest.meta.compiler.LrEntityCompiler;
 import com.nhl.link.rest.runtime.cayenne.ICayennePersister;
 
@@ -32,8 +34,6 @@ public class CayenneEntityCompiler implements LrEntityCompiler {
 	/**
 	 * A DI key that allows to expand the model of persistent entities coming
 	 * from Cayenne.
-	 * 
-	 * @since 1.12
 	 */
 	public static final String ENTITY_OVERLAY_MAP = "linkrest.meta.entity.overlay.map";
 
@@ -93,6 +93,16 @@ public class CayenneEntityCompiler implements LrEntityCompiler {
 
 		CayenneLrEntity<T> lrEntity = new CayenneLrEntity<T>(type, objEntity);
 
+		loadCayenneEntity(lrEntity);
+		loadAnnotatedProperties(lrEntity);
+		loadOverlays(lrEntity);
+
+		return lrEntity;
+	}
+
+	protected <T> void loadCayenneEntity(CayenneLrEntity<T> lrEntity) {
+
+		ObjEntity objEntity = lrEntity.getObjEntity();
 		for (ObjAttribute a : objEntity.getAttributes()) {
 			CayenneLrAttribute lrAttribute = new CayenneLrAttribute(a, getJavaTypeForTypeName(a.getType()));
 			lrEntity.addPersistentAttribute(lrAttribute);
@@ -114,16 +124,52 @@ public class CayenneEntityCompiler implements LrEntityCompiler {
 			lrEntity.addId(id);
 		}
 
-		LrEntityOverlay<?> overlay = entityOverlays.get(type.getName());
+	}
+
+	protected <T> void loadAnnotatedProperties(CayenneLrEntity<T> entity) {
+
+		// load a separate entity built purely from annotations, then merge it
+		// with our entity... Note that we are not cloning attributes or
+		// relationship during merge... they have no references to parent and
+		// can be used as is.
+
+		LrEntity<T> annotatedEntity = LrEntityBuilder.build(entity.getType());
+
+		for (LrAttribute id : annotatedEntity.getIds()) {
+
+			LrAttribute existing = entity.addId(id);
+			if (existing != null && LOGGER.isDebugEnabled()) {
+				LOGGER.debug("ID attribute '" + existing.getName() + "' is overridden from annotations.");
+			}
+		}
+
+		for (LrAttribute attribute : annotatedEntity.getAttributes()) {
+
+			LrAttribute existing = entity.addAttribute(attribute);
+			if (existing != null && LOGGER.isDebugEnabled()) {
+				LOGGER.debug("Attribute '" + existing.getName() + "' is overridden from annotations.");
+			}
+		}
+
+		for (LrRelationship relationship : annotatedEntity.getRelationships()) {
+
+			LrRelationship existing = entity.addRelationship(relationship);
+			if (existing != null && LOGGER.isDebugEnabled()) {
+				LOGGER.debug("Relationship '" + existing.getName() + "' is overridden from annotations.");
+			}
+		}
+	}
+
+	protected <T> void loadOverlays(CayenneLrEntity<T> entity) {
+		LrEntityOverlay<?> overlay = entityOverlays.get(entity.getType().getName());
 		if (overlay != null) {
 
 			for (String a : overlay.getTransientAttributes()) {
 				// TODO: figure out the type
 				DefaultLrAttribute lrAttribute = new DefaultLrAttribute(a, Object.class);
-				lrEntity.addAttribute(lrAttribute);
+				entity.addAttribute(lrAttribute);
 			}
 		}
-
-		return lrEntity;
 	}
+
 }

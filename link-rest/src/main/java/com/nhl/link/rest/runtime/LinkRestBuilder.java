@@ -25,6 +25,7 @@ import com.nhl.link.rest.EntityConstraint;
 import com.nhl.link.rest.LinkRestException;
 import com.nhl.link.rest.MetadataResponse;
 import com.nhl.link.rest.SimpleResponse;
+import com.nhl.link.rest.annotation.LrAttribute;
 import com.nhl.link.rest.encoder.EncoderFilter;
 import com.nhl.link.rest.encoder.PropertyMetadataEncoder;
 import com.nhl.link.rest.meta.LrEntity;
@@ -237,6 +238,10 @@ public class LinkRestBuilder {
 	 * Exposes a non-persistent property of a persistent type. Once declared
 	 * such property can be rendered in responses, referenced in include/exclude
 	 * keys, etc.
+	 * <p>
+	 * Calling this method explicitly is only needed if you can't annotate
+	 * transient properties with {@link LrAttribute} and other LR annotations
+	 * for any reason.
 	 * 
 	 * @since 1.12
 	 */
