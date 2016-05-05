@@ -35,11 +35,9 @@ public class LrEntityBuilder<T> {
 	private static final Pattern GETTER = Pattern.compile("^(get|is)([A-Z].*)$");
 
 	private Class<T> type;
-	private Package entityPackage;
 
 	LrEntityBuilder(Class<T> type) {
 		this.type = type;
-		this.entityPackage = type.getPackage();
 	}
 
 	public LrEntity<T> build() {
@@ -121,8 +119,8 @@ public class LrEntityBuilder<T> {
 	}
 
 	private boolean checkValidAttributeType(Class<?> type) {
-		return !Void.class.equals(type) && !void.class.equals(type) &&
-				!Collection.class.isAssignableFrom(type) && !Map.class.isAssignableFrom(type);
+		return !Void.class.equals(type) && !void.class.equals(type) && !Collection.class.isAssignableFrom(type)
+				&& !Map.class.isAssignableFrom(type);
 	}
 
 	private boolean addAsRelationship(DefaultLrEntity<T> entity, String name, Method m) {
@@ -137,19 +135,9 @@ public class LrEntityBuilder<T> {
 				toMany = true;
 			}
 
-			if (!isRelationship(targetType)) {
-				return false;
-			}
-
 			entity.addRelationship(new DefaultLrRelationship(name, targetType, toMany));
 		}
 
 		return false;
-	}
-
-	private boolean isRelationship(Class<?> propertyType) {
-		// treat classes in the same package as relationships...
-		// TODO: lame...
-		return !propertyType.isPrimitive() && propertyType.getPackage().equals(entityPackage);
 	}
 }
