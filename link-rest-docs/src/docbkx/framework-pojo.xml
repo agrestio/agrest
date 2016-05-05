@@ -54,7 +54,7 @@ public class SomeClass {
     how to select and/or update those POJOs. Such custom "backends" can be configured per request
     chain using chain listener API. It is up to the caller what strategy the backend would utilize
     (maybe a REST call, or reading/writing from a NoSQL DB, etc.) :
-    <programlisting>// an object with methods annotated with one of the
+    <programlisting language="java">// an object with methods annotated with one of the
 // 'com.nhl.link.rest.annotation.listener' annotations
 SomeCustomBackend altBackend = new SomeCustomBackend();
 
