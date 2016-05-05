@@ -90,4 +90,11 @@ public class DefaultLrEntity<T> implements LrEntity<T> {
 	public LrAttribute addId(LrAttribute id) {
 		return ids.put(id.getName(), id);
 	}
+
+	@Override
+	public String toString() {
+		return new StringBuilder(getClass().getName()).append("@")
+				.append(Integer.toHexString(System.identityHashCode(this))).append("[").append(getName()).append("]")
+				.toString();
+	}
 }
