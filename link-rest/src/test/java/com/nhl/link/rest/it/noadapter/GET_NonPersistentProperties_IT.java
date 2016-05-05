@@ -33,6 +33,20 @@ public class GET_NonPersistentProperties_IT extends JerseyTestOnDerby {
 	}
 
 	@Test
+	public void testGET_PrefetchPojoRel() {
+		insert("e15", "long_id, name", "1, 'xxx'");
+		insert("e14", "e15_id, long_id, name", "1, 8, 'yyy'");
+
+		Response response1 = target("/e14").queryParam("include", "name").queryParam("include", "p7").request().get();
+		assertEquals(Status.OK.getStatusCode(), response1.getStatus());
+
+		// TODO: add P7 factory to the test chain... without a backend it will
+		// always be null.. still useful to test this scenario, making sure LR
+		// does not attempt to resolve P7 via Cayenne
+		assertEquals("{\"data\":[{\"name\":\"yyy\",\"p7\":null}],\"total\":1}", response1.readEntity(String.class));
+	}
+
+	@Test
 	public void testGET_Related() {
 		insert("e15", "long_id, name", "1, 'xxx'");
 		insert("e14", "e15_id, long_id, name", "1, 8, 'yyy'");

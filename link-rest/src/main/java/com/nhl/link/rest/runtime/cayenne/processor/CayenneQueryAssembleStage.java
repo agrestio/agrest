@@ -8,6 +8,7 @@ import javax.ws.rs.core.Response.Status;
 
 import com.nhl.link.rest.annotation.listener.QueryAssembled;
 import com.nhl.link.rest.meta.LrAttribute;
+import com.nhl.link.rest.meta.LrPersistentEntity;
 import com.nhl.link.rest.meta.cayenne.CayenneLrAttribute;
 import org.apache.cayenne.exp.Expression;
 import org.apache.cayenne.exp.ExpressionFactory;
@@ -79,8 +80,8 @@ public class CayenneQueryAssembleStage<T> extends BaseLinearProcessingStage<Sele
 			if (prefetchSemantics <= 0) {
 				// it makes more sense to use joint prefetches for single object
 				// queries...
-				prefetchSemantics = context.isById() && !context.getId().isCompound() ?
-						PrefetchTreeNode.JOINT_PREFETCH_SEMANTICS : PrefetchTreeNode.DISJOINT_PREFETCH_SEMANTICS;
+				prefetchSemantics = context.isById() && !context.getId().isCompound()
+						? PrefetchTreeNode.JOINT_PREFETCH_SEMANTICS : PrefetchTreeNode.DISJOINT_PREFETCH_SEMANTICS;
 			}
 
 			appendPrefetches(root, entity, prefetchSemantics);
@@ -105,9 +106,8 @@ public class CayenneQueryAssembleStage<T> extends BaseLinearProcessingStage<Sele
 			}
 			for (LrAttribute idAttribute : idAttributes) {
 				Object idValue = context.getId().get(idAttribute.getName());
-				query.andQualifier(ExpressionFactory.matchDbExp(
-						((CayenneLrAttribute) idAttribute).getDbAttribute().getName(), idValue
-				));
+				query.andQualifier(ExpressionFactory
+						.matchDbExp(((CayenneLrAttribute) idAttribute).getDbAttribute().getName(), idValue));
 			}
 
 			return query;
@@ -119,14 +119,18 @@ public class CayenneQueryAssembleStage<T> extends BaseLinearProcessingStage<Sele
 	private void appendPrefetches(PrefetchTreeNode root, ResourceEntity<?> entity, int prefetchSemantics) {
 		for (Entry<String, ResourceEntity<?>> e : entity.getChildren().entrySet()) {
 
-			PrefetchTreeNode child = root.addPath(e.getKey());
+			// skip prefetches of non-persistent entities
+			if (e.getValue().getLrEntity() instanceof LrPersistentEntity) {
 
-			// always full prefetch related entities... we can't use phantom as
-			// this will hit object cache and hence won't be cache controlled
-			// via query cache anymore...
-			child.setPhantom(false);
-			child.setSemantics(prefetchSemantics);
-			appendPrefetches(child, e.getValue(), prefetchSemantics);
+				PrefetchTreeNode child = root.addPath(e.getKey());
+
+				// always full prefetch related entities... we can't use phantom
+				// as this will hit object cache and hence won't be cache
+				// controlled via query cache anymore...
+				child.setPhantom(false);
+				child.setSemantics(prefetchSemantics);
+				appendPrefetches(child, e.getValue(), prefetchSemantics);
+			}
 		}
 
 		if (entity.getMapBy() != null) {
