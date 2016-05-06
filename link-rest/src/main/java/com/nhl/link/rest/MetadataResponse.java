@@ -1,8 +1,8 @@
 package com.nhl.link.rest;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.nhl.link.rest.encoder.Encoder;
@@ -20,44 +20,47 @@ public class MetadataResponse<T> extends LrResponse {
 	private Encoder encoder;
 	private Collection<LrResource<T>> resources;
 	private Class<T> type;
-	private ResourceEntity<T> entity;
 
 	public MetadataResponse(Class<T> type) {
 		this.encoder = GenericEncoder.encoder();
 		this.type = type;
-		this.resources = new ArrayList<>();
+		this.resources = Collections.emptyList();
 	}
 
 	public Class<T> getType() {
 		return type;
 	}
 
-	public MetadataResponse<T> resourceEntity(ResourceEntity<T> entity) {
-		this.entity = entity;
-		return this;
+	/**
+	 * @since 1.24
+	 */
+	public void setEncoder(Encoder encoder) {
+		this.encoder = encoder;
 	}
 
+	/**
+	 * @deprecated since 1.24 use {@link #setEncoder(Encoder)}.
+	 */
 	public MetadataResponse<T> withEncoder(Encoder encoder) {
 		this.encoder = encoder;
 		return this;
 	}
 
-	public MetadataResponse<T> withResources(Collection<LrResource<T>> resources) {
-		this.resources.addAll(resources);
-		return this;
+	/**
+	 * @since 1.24
+	 */
+	public void setResources(Collection<LrResource<T>> resources) {
+		this.resources = resources;
 	}
 
-	public MetadataResponse<T> withResource(LrResource<T> resource) {
-		this.resources.add(resource);
-		return this;
+	/**
+	 * @since 1.24
+	 */
+	public void setResource(LrResource<T> resource) {
+		setResources(Collections.singletonList(resource));
 	}
 
 	public void writeData(JsonGenerator out) throws IOException {
 		encoder.encode(null, resources, out);
 	}
-
-	public ResourceEntity<T> getEntity() {
-		return entity;
-	}
-
 }

@@ -12,7 +12,6 @@ import javax.ws.rs.core.Response.Status;
 import org.apache.cayenne.DataObject;
 import org.apache.cayenne.di.Inject;
 
-import com.nhl.link.rest.MetadataResponse;
 import com.nhl.link.rest.ResourceEntity;
 import com.nhl.link.rest.encoder.EncoderFilter;
 import com.nhl.link.rest.meta.LrEntity;
@@ -230,10 +229,8 @@ public class CayenneProcessorFactory implements IProcessorFactory {
 				ResourceEntity<T> resourceEntity = new ResourceEntity<>(entity);
 				resourceEntity.setApplicationBase(context.getApplicationBase());
 
-				MetadataResponse<T> response = new MetadataResponse<>(context.getType()).resourceEntity(resourceEntity)
-						.withResources(filteredResources);
-
-				context.setResponse(response.withEncoder(encoderService.metadataEncoder(resourceEntity)));
+				context.setResources(filteredResources);
+				context.setEncoder(encoderService.metadataEncoder(resourceEntity));
 			}
 		};
 

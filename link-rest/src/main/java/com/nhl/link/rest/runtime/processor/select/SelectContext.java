@@ -46,10 +46,10 @@ public class SelectContext<T> extends BaseProcessingContext<T> {
 	}
 
 	/**
-	 * Returns a newly created response object reflecting the context state.
+	 * Returns a new response object reflecting the context state.
 	 * 
 	 * @since 1.24
-	 * @return a newly created response object reflecting the context state.
+	 * @return a new response object reflecting the context state.
 	 */
 	public DataResponse<T> createDataResponse() {
 		List<T> objects = this.objects != null ? this.objects : Collections.<T> emptyList();

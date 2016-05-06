@@ -1,20 +1,20 @@
 package com.nhl.link.rest.it.noadapter;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.nhl.link.rest.it.fixture.JerseyTestOnDerby;
-import com.nhl.link.rest.it.fixture.resource.E19Resource;
-import com.nhl.link.rest.it.fixture.resource.E5Resource;
-import com.nhl.link.rest.runtime.jackson.JacksonService;
-import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+
+import java.io.IOException;
 
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.FeatureContext;
 import javax.ws.rs.core.Response;
 
-import java.io.IOException;
-import java.net.URI;
+import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.nhl.link.rest.it.fixture.JerseyTestOnDerby;
+import com.nhl.link.rest.it.fixture.resource.E19Resource;
+import com.nhl.link.rest.it.fixture.resource.E5Resource;
+import com.nhl.link.rest.runtime.jackson.JacksonService;
 
 public class GET_Metadata_IT extends JerseyTestOnDerby {
 
