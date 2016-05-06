@@ -10,8 +10,6 @@ import javax.ws.rs.core.Configuration;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.UriInfo;
 
-import org.apache.cayenne.query.SelectQuery;
-
 import com.nhl.link.rest.DataResponse;
 import com.nhl.link.rest.LinkRest;
 import com.nhl.link.rest.MetadataResponse;
@@ -31,7 +29,7 @@ public class E2Resource {
 	@GET
 	@Resource(type = LinkType.COLLECTION)
 	public DataResponse<E2> getE2(@Context UriInfo uriInfo) {
-		return LinkRest.service(config).select(SelectQuery.query(E2.class), uriInfo);
+		return LinkRest.service(config).select(E2.class).uri(uriInfo).select();
 	}
 
 	@GET

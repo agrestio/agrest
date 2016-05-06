@@ -1,14 +1,5 @@
 package com.nhl.link.rest.it.fixture.resource;
 
-import com.nhl.link.rest.DataResponse;
-import com.nhl.link.rest.LinkRest;
-import com.nhl.link.rest.MetadataResponse;
-import com.nhl.link.rest.SimpleResponse;
-import com.nhl.link.rest.it.fixture.cayenne.E5;
-import com.nhl.link.rest.meta.LinkType;
-import com.nhl.link.rest.meta.annotation.Resource;
-import org.apache.cayenne.query.SelectQuery;
-
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -17,16 +8,24 @@ import javax.ws.rs.core.Configuration;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.UriInfo;
 
+import com.nhl.link.rest.DataResponse;
+import com.nhl.link.rest.LinkRest;
+import com.nhl.link.rest.MetadataResponse;
+import com.nhl.link.rest.SimpleResponse;
+import com.nhl.link.rest.it.fixture.cayenne.E5;
+import com.nhl.link.rest.meta.LinkType;
+import com.nhl.link.rest.meta.annotation.Resource;
+
 @Path("e5")
 public class E5Resource {
-    
-    @Context
+
+	@Context
 	private Configuration config;
 
 	@GET
 	@Resource(type = LinkType.COLLECTION)
 	public DataResponse<E5> getE5(@Context UriInfo uriInfo) {
-		return LinkRest.service(config).select(SelectQuery.query(E5.class), uriInfo);
+		return LinkRest.service(config).select(E5.class).uri(uriInfo).select();
 	}
 
 	@GET
@@ -46,10 +45,7 @@ public class E5Resource {
 	@Path("metadata")
 	@Resource(entityClass = E5.class, type = LinkType.METADATA)
 	public MetadataResponse<E5> getMetadata(@Context UriInfo uriInfo) {
-		return LinkRest.metadata(E5.class, config)
-				.forResource(E5Resource.class)
-				.uri(uriInfo)
-				.process();
+		return LinkRest.metadata(E5.class, config).forResource(E5Resource.class).uri(uriInfo).process();
 	}
-    
+
 }

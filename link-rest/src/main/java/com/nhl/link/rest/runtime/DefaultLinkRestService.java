@@ -59,6 +59,7 @@ public class DefaultLinkRestService implements ILinkRestService {
 	}
 
 	@Override
+	@Deprecated
 	public <T> DataResponse<T> select(SelectQuery<T> query, UriInfo uriInfo) {
 		return select(query).uri(uriInfo).select();
 	}
@@ -70,6 +71,7 @@ public class DefaultLinkRestService implements ILinkRestService {
 	}
 
 	@Override
+	@Deprecated
 	public <T> SelectBuilder<T> select(SelectQuery<T> query) {
 
 		Class<T> type = metadataService.getLrEntity(query).getType();

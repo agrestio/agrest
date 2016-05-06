@@ -1,18 +1,20 @@
 package com.nhl.link.rest.runtime;
 
+import java.util.Map;
+
 import javax.ws.rs.core.UriInfo;
 
-import com.nhl.link.rest.MetadataBuilder;
 import org.apache.cayenne.exp.Property;
 import org.apache.cayenne.query.SelectQuery;
 
 import com.nhl.link.rest.DataResponse;
 import com.nhl.link.rest.DeleteBuilder;
+import com.nhl.link.rest.MetadataBuilder;
 import com.nhl.link.rest.SelectBuilder;
 import com.nhl.link.rest.SimpleResponse;
 import com.nhl.link.rest.UpdateBuilder;
-
-import java.util.Map;
+import com.nhl.link.rest.annotation.listener.QueryAssembled;
+import com.nhl.link.rest.annotation.listener.SelectServerParamsApplied;
 
 /**
  * The main entry point to LinkRest stack. Used from the user REST resource
@@ -41,6 +43,10 @@ public interface ILinkRestService {
 	 *            request.
 	 * @param uriInfo
 	 * @return the result of a select wrapped in a DataResponse.
+	 * @deprecated since 1.24. Direct dependency on Cayenne should not exist in
+	 *             the user-facing API. If you need to run a custom query, use
+	 *             listener annotated with {@link QueryAssembled} or or
+	 *             {@link SelectServerParamsApplied}.
 	 */
 	<T> DataResponse<T> select(SelectQuery<T> query, UriInfo uriInfo);
 
@@ -59,6 +65,10 @@ public interface ILinkRestService {
 	 * replacement of any other select.
 	 * 
 	 * @since 1.14
+	 * @deprecated since 1.24. Direct dependency on Cayenne should not exist in
+	 *             the user-facing API. If you need to run a custom query, use
+	 *             listener annotated with {@link QueryAssembled} or
+	 *             {@link SelectServerParamsApplied}.
 	 */
 	<T> SelectBuilder<T> select(SelectQuery<T> query);
 
@@ -138,6 +148,6 @@ public interface ILinkRestService {
 	 * @since 1.4
 	 */
 	<T> DeleteBuilder<T> delete(Class<T> type);
-	
+
 	<T> MetadataBuilder<T> metadata(Class<T> type);
 }

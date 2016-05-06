@@ -12,8 +12,6 @@ import javax.ws.rs.core.Configuration;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.UriInfo;
 
-import org.apache.cayenne.query.SelectQuery;
-
 import com.nhl.link.rest.DataResponse;
 import com.nhl.link.rest.EntityUpdate;
 import com.nhl.link.rest.LinkRest;
@@ -34,8 +32,7 @@ public class E3Resource {
 
 	@GET
 	public DataResponse<E3> get(@Context UriInfo uriInfo) {
-		SelectQuery<E3> query = new SelectQuery<E3>(E3.class);
-		return LinkRest.service(config).select(query, uriInfo);
+		return LinkRest.service(config).select(E3.class).uri(uriInfo).select();
 	}
 
 	@GET

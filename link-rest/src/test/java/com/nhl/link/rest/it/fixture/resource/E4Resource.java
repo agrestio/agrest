@@ -13,15 +13,14 @@ import javax.ws.rs.core.Configuration;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.UriInfo;
 
-import com.nhl.link.rest.it.fixture.listener.CayennePaginationListener;
 import org.apache.cayenne.Cayenne;
 import org.apache.cayenne.DataObject;
-import org.apache.cayenne.query.SelectQuery;
 
 import com.nhl.link.rest.DataResponse;
 import com.nhl.link.rest.LinkRest;
 import com.nhl.link.rest.SimpleResponse;
 import com.nhl.link.rest.it.fixture.cayenne.E4;
+import com.nhl.link.rest.it.fixture.listener.CayennePaginationListener;
 import com.nhl.link.rest.property.PropertyReader;
 
 @Path("e4")
@@ -32,13 +31,14 @@ public class E4Resource {
 
 	@GET
 	public DataResponse<E4> get(@Context UriInfo uriInfo) {
-		return LinkRest.service(config).select(SelectQuery.query(E4.class), uriInfo);
+		return LinkRest.service(config).select(E4.class).uri(uriInfo).select();
 	}
 
 	@GET
 	@Path("pagination_listener")
 	public DataResponse<E4> get_WithPaginationListener(@Context UriInfo uriInfo) {
-		return LinkRest.service(config).select(E4.class).uri(uriInfo).listener(new CayennePaginationListener()).select();
+		return LinkRest.service(config).select(E4.class).uri(uriInfo).listener(new CayennePaginationListener())
+				.select();
 	}
 
 	@GET
@@ -52,8 +52,6 @@ public class E4Resource {
 	@Path("calc_property")
 	public DataResponse<E4> property_WithReader(@Context UriInfo uriInfo) {
 
-		SelectQuery<E4> query = new SelectQuery<E4>(E4.class);
-
 		PropertyReader xReader = new PropertyReader() {
 
 			@Override
@@ -62,7 +60,7 @@ public class E4Resource {
 			}
 		};
 
-		return LinkRest.select(query, config).uri(uriInfo).property("x", property(xReader)).select();
+		return LinkRest.select(E4.class, config).uri(uriInfo).property("x", property(xReader)).select();
 	}
 
 	@GET
