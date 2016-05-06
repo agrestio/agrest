@@ -107,7 +107,7 @@ public class DefaultLinkRestService implements ILinkRestService {
 		ProcessingStage<UnrelateContext<Object>, Object> chain = chain(context);
 		ChainProcessor.execute(chain, context);
 
-		return context.getResponse();
+		return context.createSimpleResponse();
 	}
 
 	/**
@@ -134,7 +134,7 @@ public class DefaultLinkRestService implements ILinkRestService {
 		ProcessingStage<UnrelateContext<Object>, Object> processor = chain(context);
 		ChainProcessor.execute(processor, context);
 
-		return context.getResponse();
+		return context.createSimpleResponse();
 	}
 
 	@Override

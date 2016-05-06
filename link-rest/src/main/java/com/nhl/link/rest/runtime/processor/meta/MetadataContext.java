@@ -11,51 +11,53 @@ import javax.ws.rs.core.UriInfo;
  */
 public class MetadataContext<T> extends BaseProcessingContext<T> {
 
-    private Class<?> resourceClass;
-    private UriInfo uriInfo;
-    private MetadataResponse<T> response;
-    private LrEntity<T> entity;
+	private Class<?> resourceClass;
+	private UriInfo uriInfo;
 
-    public MetadataContext(Class<T> type) {
-        super(type);
-    }
+	// TODO: get rid of response ivar like we did for other contexts
+	private MetadataResponse<T> response;
+	private LrEntity<T> entity;
 
-    public LrEntity<T> getEntity() {
-        return entity;
-    }
+	public MetadataContext(Class<T> type) {
+		super(type);
+	}
 
-    public void setEntity(LrEntity<T> entity) {
-        this.entity = entity;
-    }
+	public LrEntity<T> getEntity() {
+		return entity;
+	}
 
-    public void setResource(Class<?> resourceClass) {
-        this.resourceClass = resourceClass;
-    }
+	public void setEntity(LrEntity<T> entity) {
+		this.entity = entity;
+	}
 
-    public Class<?> getResource() {
-        return resourceClass;
-    }
+	public void setResource(Class<?> resourceClass) {
+		this.resourceClass = resourceClass;
+	}
 
-    public MetadataResponse<T> getResponse() {
-        return response;
-    }
+	public Class<?> getResource() {
+		return resourceClass;
+	}
 
-    public void setResponse(MetadataResponse<T> response) {
-        this.response = response;
-    }
+	public MetadataResponse<T> getResponse() {
+		return response;
+	}
 
-    public UriInfo getUriInfo() {
-        return uriInfo;
-    }
+	public void setResponse(MetadataResponse<T> response) {
+		this.response = response;
+	}
 
-    public void setUriInfo(UriInfo uriInfo) {
-        this.uriInfo = uriInfo;
-    }
+	public UriInfo getUriInfo() {
+		return uriInfo;
+	}
 
-    public String getApplicationBase() {
-        if (uriInfo == null) {
-            return null;
-        }
-        return uriInfo.getBaseUri().toString();
-    }
+	public void setUriInfo(UriInfo uriInfo) {
+		this.uriInfo = uriInfo;
+	}
+
+	public String getApplicationBase() {
+		if (uriInfo == null) {
+			return null;
+		}
+		return uriInfo.getBaseUri().toString();
+	}
 }

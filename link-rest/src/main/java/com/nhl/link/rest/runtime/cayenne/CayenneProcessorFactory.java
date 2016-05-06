@@ -9,14 +9,12 @@ import java.util.Map;
 
 import javax.ws.rs.core.Response.Status;
 
-import com.nhl.link.rest.encoder.EncoderFilter;
-import com.nhl.link.rest.runtime.cayenne.processor.CayenneFetchStage;
-import com.nhl.link.rest.runtime.encoder.EncoderService;
 import org.apache.cayenne.DataObject;
 import org.apache.cayenne.di.Inject;
 
 import com.nhl.link.rest.MetadataResponse;
 import com.nhl.link.rest.ResourceEntity;
+import com.nhl.link.rest.encoder.EncoderFilter;
 import com.nhl.link.rest.meta.LrEntity;
 import com.nhl.link.rest.meta.LrResource;
 import com.nhl.link.rest.processor.BaseLinearProcessingStage;
@@ -26,12 +24,14 @@ import com.nhl.link.rest.runtime.cayenne.processor.CayenneContextInitStage;
 import com.nhl.link.rest.runtime.cayenne.processor.CayenneCreateOrUpdateStage;
 import com.nhl.link.rest.runtime.cayenne.processor.CayenneCreateStage;
 import com.nhl.link.rest.runtime.cayenne.processor.CayenneDeleteStage;
-import com.nhl.link.rest.runtime.cayenne.processor.CayenneQueryAssembleStage;
+import com.nhl.link.rest.runtime.cayenne.processor.CayenneFetchStage;
 import com.nhl.link.rest.runtime.cayenne.processor.CayenneFullSyncStage;
+import com.nhl.link.rest.runtime.cayenne.processor.CayenneQueryAssembleStage;
 import com.nhl.link.rest.runtime.cayenne.processor.CayenneUnrelateStage;
 import com.nhl.link.rest.runtime.cayenne.processor.CayenneUpdatePostProcessStage;
 import com.nhl.link.rest.runtime.cayenne.processor.CayenneUpdateStage;
 import com.nhl.link.rest.runtime.constraints.IConstraintsHandler;
+import com.nhl.link.rest.runtime.encoder.EncoderService;
 import com.nhl.link.rest.runtime.encoder.IEncoderService;
 import com.nhl.link.rest.runtime.meta.IMetadataService;
 import com.nhl.link.rest.runtime.meta.IResourceMetadataService;
@@ -39,14 +39,12 @@ import com.nhl.link.rest.runtime.parser.IRequestParser;
 import com.nhl.link.rest.runtime.parser.IUpdateParser;
 import com.nhl.link.rest.runtime.processor.IProcessorFactory;
 import com.nhl.link.rest.runtime.processor.delete.DeleteContext;
-import com.nhl.link.rest.runtime.processor.delete.DeleteInitStage;
 import com.nhl.link.rest.runtime.processor.meta.MetadataContext;
 import com.nhl.link.rest.runtime.processor.select.ApplySelectServerParamsStage;
 import com.nhl.link.rest.runtime.processor.select.InitializeSelectChainStage;
 import com.nhl.link.rest.runtime.processor.select.ParseSelectRequestStage;
 import com.nhl.link.rest.runtime.processor.select.SelectContext;
 import com.nhl.link.rest.runtime.processor.unrelate.UnrelateContext;
-import com.nhl.link.rest.runtime.processor.unrelate.UnrelateInitStage;
 import com.nhl.link.rest.runtime.processor.update.ApplyUpdateServerParamsStage;
 import com.nhl.link.rest.runtime.processor.update.InitializeUpdateChainStage;
 import com.nhl.link.rest.runtime.processor.update.ParseUpdateRequestStage;
@@ -69,7 +67,8 @@ public class CayenneProcessorFactory implements IProcessorFactory {
 	public CayenneProcessorFactory(@Inject IRequestParser requestParser, @Inject IUpdateParser updateParser,
 			@Inject IEncoderService encoderService, @Inject ICayennePersister persister,
 			@Inject IConstraintsHandler constraintsHandler, @Inject IMetadataService metadataService,
-			@Inject IResourceMetadataService resourceMetadataService, @Inject(EncoderService.ENCODER_FILTER_LIST) List<EncoderFilter> filters) {
+			@Inject IResourceMetadataService resourceMetadataService,
+			@Inject(EncoderService.ENCODER_FILTER_LIST) List<EncoderFilter> filters) {
 		this.requestParser = requestParser;
 		this.encoderService = encoderService;
 		this.persister = persister;
@@ -110,9 +109,8 @@ public class CayenneProcessorFactory implements IProcessorFactory {
 	}
 
 	private ProcessingStage<UnrelateContext<Object>, Object> createUnrelateProcessor() {
-		BaseLinearProcessingStage<UnrelateContext<Object>, Object> stage2 = new CayenneUnrelateStage<>(null,
+		BaseLinearProcessingStage<UnrelateContext<Object>, Object> stage1 = new CayenneUnrelateStage<>(null,
 				metadataService);
-		BaseLinearProcessingStage<UnrelateContext<Object>, Object> stage1 = new UnrelateInitStage<>(stage2);
 		BaseLinearProcessingStage<UnrelateContext<Object>, Object> stage0 = new CayenneContextInitStage<>(stage1,
 				persister);
 
@@ -120,8 +118,7 @@ public class CayenneProcessorFactory implements IProcessorFactory {
 	}
 
 	private ProcessingStage<DeleteContext<Object>, Object> createDeleteProcessor() {
-		BaseLinearProcessingStage<DeleteContext<Object>, Object> stage2 = new CayenneDeleteStage<>(null);
-		BaseLinearProcessingStage<DeleteContext<Object>, Object> stage1 = new DeleteInitStage<>(stage2);
+		BaseLinearProcessingStage<DeleteContext<Object>, Object> stage1 = new CayenneDeleteStage<>(null);
 		BaseLinearProcessingStage<DeleteContext<Object>, Object> stage0 = new CayenneContextInitStage<>(stage1,
 				persister);
 
@@ -131,7 +128,8 @@ public class CayenneProcessorFactory implements IProcessorFactory {
 	private ProcessingStage<SelectContext<Object>, Object> createSelectProcessor() {
 
 		BaseLinearProcessingStage<SelectContext<Object>, Object> stage4 = new CayenneFetchStage<>(null, persister);
-		BaseLinearProcessingStage<SelectContext<Object>, Object> stage3 = new CayenneQueryAssembleStage<>(stage4, persister);
+		BaseLinearProcessingStage<SelectContext<Object>, Object> stage3 = new CayenneQueryAssembleStage<>(stage4,
+				persister);
 		BaseLinearProcessingStage<SelectContext<Object>, Object> stage2 = new ApplySelectServerParamsStage<>(stage3,
 				encoderService, constraintsHandler, filters);
 		BaseLinearProcessingStage<SelectContext<Object>, Object> stage1 = new ParseSelectRequestStage<>(stage2,

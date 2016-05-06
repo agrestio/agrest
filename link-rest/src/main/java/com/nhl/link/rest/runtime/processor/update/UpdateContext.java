@@ -1,6 +1,8 @@
 package com.nhl.link.rest.runtime.processor.update;
 
 import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 import javax.ws.rs.core.Response.Status;
@@ -14,6 +16,7 @@ import com.nhl.link.rest.LrObjectId;
 import com.nhl.link.rest.ObjectMapperFactory;
 import com.nhl.link.rest.ResourceEntity;
 import com.nhl.link.rest.constraints.ConstraintsBuilder;
+import com.nhl.link.rest.encoder.Encoder;
 import com.nhl.link.rest.processor.BaseProcessingContext;
 
 /**
@@ -24,7 +27,6 @@ import com.nhl.link.rest.processor.BaseProcessingContext;
  */
 public class UpdateContext<T> extends BaseProcessingContext<T> {
 
-	private DataResponse<T> response;
 	private ResourceEntity<T> entity;
 	private UriInfo uriInfo;
 	private LrObjectId id;
@@ -36,17 +38,26 @@ public class UpdateContext<T> extends BaseProcessingContext<T> {
 	private String entityData;
 	private boolean idUpdatesDisallowed;
 	private Collection<EntityUpdate<T>> updates;
+	private Encoder encoder;
+	private List<T> objects;
 
 	public UpdateContext(Class<T> type) {
 		super(type);
 	}
 
-	public DataResponse<T> getResponse() {
+	/**
+	 * Returns a newly created DataResponse object reflecting the context state.
+	 * 
+	 * @since 1.24
+	 * @return a newly created DataResponse object reflecting the context state.
+	 */
+	public DataResponse<T> createDataResponse() {
+		List<T> objects = this.objects != null ? this.objects : Collections.<T> emptyList();
+		DataResponse<T> response = DataResponse.forType(getType());
+		response.withObjects(objects);
+		response.withEncoder(encoder);
+		response.setStatus(getStatus());
 		return response;
-	}
-
-	public void setResponse(DataResponse<T> response) {
-		this.response = response;
 	}
 
 	/**
@@ -190,5 +201,33 @@ public class UpdateContext<T> extends BaseProcessingContext<T> {
 	 */
 	public void setEntity(ResourceEntity<T> entity) {
 		this.entity = entity;
+	}
+
+	/**
+	 * @since 1.24
+	 */
+	public Encoder getEncoder() {
+		return encoder;
+	}
+
+	/**
+	 * @since 1.24
+	 */
+	public void setEncoder(Encoder encoder) {
+		this.encoder = encoder;
+	}
+
+	/**
+	 * @since 1.24
+	 */
+	public List<T> getObjects() {
+		return objects;
+	}
+
+	/**
+	 * @since 1.24
+	 */
+	public void setObjects(List<T> objects) {
+		this.objects = objects;
 	}
 }

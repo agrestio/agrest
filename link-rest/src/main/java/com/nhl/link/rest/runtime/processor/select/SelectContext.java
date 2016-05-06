@@ -1,15 +1,17 @@
 package com.nhl.link.rest.runtime.processor.select;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 import javax.ws.rs.core.UriInfo;
 
-import com.nhl.link.rest.LrObjectId;
 import org.apache.cayenne.query.SelectQuery;
 
 import com.nhl.link.rest.DataResponse;
 import com.nhl.link.rest.EntityParent;
 import com.nhl.link.rest.EntityProperty;
+import com.nhl.link.rest.LrObjectId;
 import com.nhl.link.rest.ResourceEntity;
 import com.nhl.link.rest.SizeConstraints;
 import com.nhl.link.rest.constraints.ConstraintsBuilder;
@@ -26,7 +28,6 @@ public class SelectContext<T> extends BaseProcessingContext<T> {
 	private LrObjectId id;
 	private EntityParent<?> parent;
 	private ResourceEntity<T> entity;
-	private DataResponse<T> response;
 	private UriInfo uriInfo;
 	private String autocompleteProperty;
 	private Map<String, EntityProperty> extraProperties;
@@ -34,12 +35,29 @@ public class SelectContext<T> extends BaseProcessingContext<T> {
 	private ConstraintsBuilder<T> treeConstraints;
 	private boolean atMostOneObject;
 	private Encoder encoder;
+	private int prefetchSemantics;
+	private List<T> objects;
 
 	// TODO: deprecate dependency on Cayenne in generic code
 	private SelectQuery<T> select;
 
 	public SelectContext(Class<T> type) {
 		super(type);
+	}
+
+	/**
+	 * Returns a newly created response object reflecting the context state.
+	 * 
+	 * @since 1.24
+	 * @return a newly created response object reflecting the context state.
+	 */
+	public DataResponse<T> createDataResponse() {
+		List<T> objects = this.objects != null ? this.objects : Collections.<T> emptyList();
+		DataResponse<T> response = DataResponse.forType(getType());
+		response.withObjects(objects);
+		response.withEncoder(encoder);
+		response.setStatus(getStatus());
+		return response;
 	}
 
 	public boolean isById() {
@@ -64,14 +82,6 @@ public class SelectContext<T> extends BaseProcessingContext<T> {
 
 	public void setParent(EntityParent<?> parent) {
 		this.parent = parent;
-	}
-
-	public DataResponse<T> getResponse() {
-		return response;
-	}
-
-	public void setResponse(DataResponse<T> response) {
-		this.response = response;
 	}
 
 	public UriInfo getUriInfo() {
@@ -152,5 +162,33 @@ public class SelectContext<T> extends BaseProcessingContext<T> {
 	 */
 	public void setEntity(ResourceEntity<T> entity) {
 		this.entity = entity;
+	}
+
+	/**
+	 * @since 1.24
+	 */
+	public int getPrefetchSemantics() {
+		return prefetchSemantics;
+	}
+
+	/**
+	 * @since 1.24
+	 */
+	public void setPrefetchSemantics(int prefetchSemantics) {
+		this.prefetchSemantics = prefetchSemantics;
+	}
+
+	/**
+	 * @since 1.24
+	 */
+	public List<T> getObjects() {
+		return objects;
+	}
+
+	/**
+	 * @since 1.24
+	 */
+	public void setObjects(List<T> objects) {
+		this.objects = objects;
 	}
 }

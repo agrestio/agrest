@@ -6,6 +6,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.ws.rs.core.Response.Status;
+
+import com.nhl.link.rest.SimpleResponse;
 import com.nhl.link.rest.runtime.listener.ListenerInvocation;
 
 /**
@@ -16,9 +19,22 @@ public abstract class BaseProcessingContext<T> implements ProcessingContext<T> {
 	private Class<T> type;
 	private Map<String, Object> attributes;
 	private Map<Class<? extends Annotation>, List<ListenerInvocation>> listeners;
+	private Status status;
 
 	public BaseProcessingContext(Class<T> type) {
 		this.type = type;
+	}
+
+	/**
+	 * Returns a new SimpleResponse with status of this context.
+	 * 
+	 * @since 1.24
+	 * @return a new SimpleResponse with status of this context.
+	 */
+	public SimpleResponse createSimpleResponse() {
+		SimpleResponse response = new SimpleResponse(true);
+		response.setStatus(getStatus());
+		return response;
 	}
 
 	/**
@@ -58,5 +74,19 @@ public abstract class BaseProcessingContext<T> implements ProcessingContext<T> {
 		}
 
 		attributes.put(name, value);
+	}
+
+	/**
+	 * @since 1.24
+	 */
+	public Status getStatus() {
+		return status;
+	}
+
+	/**
+	 * @since 1.24
+	 */
+	public void setStatus(Status status) {
+		this.status = status;
 	}
 }

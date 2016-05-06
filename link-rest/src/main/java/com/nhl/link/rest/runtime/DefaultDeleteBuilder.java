@@ -85,6 +85,6 @@ public class DefaultDeleteBuilder<T> implements DeleteBuilder<T> {
 	@Override
 	public SimpleResponse delete() {
 		ChainProcessor.execute(deleteChain, context);
-		return context.getResponse();
+		return context.createSimpleResponse();
 	}
 }

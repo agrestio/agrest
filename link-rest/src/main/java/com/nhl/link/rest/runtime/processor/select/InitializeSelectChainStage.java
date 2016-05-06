@@ -2,7 +2,8 @@ package com.nhl.link.rest.runtime.processor.select;
 
 import java.lang.annotation.Annotation;
 
-import com.nhl.link.rest.DataResponse;
+import org.apache.cayenne.query.PrefetchTreeNode;
+
 import com.nhl.link.rest.annotation.listener.SelectChainInitialized;
 import com.nhl.link.rest.processor.BaseLinearProcessingStage;
 import com.nhl.link.rest.processor.ProcessingStage;
@@ -20,10 +21,9 @@ public class InitializeSelectChainStage<T> extends BaseLinearProcessingStage<Sel
 	public Class<? extends Annotation> afterStageListener() {
 		return SelectChainInitialized.class;
 	}
-	
+
 	@Override
 	protected void doExecute(SelectContext<T> context) {
-		DataResponse<T> response = DataResponse.forType(context.getType());
-		context.setResponse(response);
+		context.setPrefetchSemantics(PrefetchTreeNode.DISJOINT_PREFETCH_SEMANTICS);
 	}
 }

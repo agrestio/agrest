@@ -6,19 +6,18 @@ import java.util.Map.Entry;
 
 import javax.ws.rs.core.Response.Status;
 
-import com.nhl.link.rest.annotation.listener.QueryAssembled;
-import com.nhl.link.rest.meta.LrAttribute;
-import com.nhl.link.rest.meta.LrPersistentEntity;
-import com.nhl.link.rest.meta.cayenne.CayenneLrAttribute;
 import org.apache.cayenne.exp.Expression;
 import org.apache.cayenne.exp.ExpressionFactory;
 import org.apache.cayenne.query.Ordering;
 import org.apache.cayenne.query.PrefetchTreeNode;
 import org.apache.cayenne.query.SelectQuery;
 
-import com.nhl.link.rest.DataResponse;
 import com.nhl.link.rest.LinkRestException;
 import com.nhl.link.rest.ResourceEntity;
+import com.nhl.link.rest.annotation.listener.QueryAssembled;
+import com.nhl.link.rest.meta.LrAttribute;
+import com.nhl.link.rest.meta.LrPersistentEntity;
+import com.nhl.link.rest.meta.cayenne.CayenneLrAttribute;
 import com.nhl.link.rest.processor.BaseLinearProcessingStage;
 import com.nhl.link.rest.processor.ProcessingStage;
 import com.nhl.link.rest.runtime.cayenne.ICayennePersister;
@@ -48,7 +47,6 @@ public class CayenneQueryAssembleStage<T> extends BaseLinearProcessingStage<Sele
 
 	<X extends T> SelectQuery<X> buildQuery(SelectContext<X> context) {
 
-		DataResponse<X> response = context.getResponse();
 		ResourceEntity<X> entity = context.getEntity();
 
 		SelectQuery<X> query = basicSelect(context);
@@ -76,7 +74,7 @@ public class CayenneQueryAssembleStage<T> extends BaseLinearProcessingStage<Sele
 		if (!entity.getChildren().isEmpty()) {
 			PrefetchTreeNode root = new PrefetchTreeNode();
 
-			int prefetchSemantics = response.getPrefetchSemantics();
+			int prefetchSemantics = context.getPrefetchSemantics();
 			if (prefetchSemantics <= 0) {
 				// it makes more sense to use joint prefetches for single object
 				// queries...

@@ -7,11 +7,11 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import com.nhl.link.rest.encoder.EncoderFilter;
 import org.apache.cayenne.di.Inject;
 import org.apache.cayenne.exp.Expression;
 import org.apache.cayenne.query.Ordering;
 
+import com.nhl.link.rest.encoder.EncoderFilter;
 import com.nhl.link.rest.processor.BaseLinearProcessingStage;
 import com.nhl.link.rest.processor.ProcessingStage;
 import com.nhl.link.rest.runtime.constraints.IConstraintsHandler;
@@ -55,7 +55,7 @@ public class PojoProcessorFactory implements IProcessorFactory {
 
 		BaseLinearProcessingStage<SelectContext<Object>, Object> stage4 = new PojoFetchStage<>(null);
 		BaseLinearProcessingStage<SelectContext<Object>, Object> stage3 = new ApplySelectServerParamsStage<>(stage4,
-				encoderService, constraintsHandler, Collections.<EncoderFilter>emptyList());
+				encoderService, constraintsHandler, Collections.<EncoderFilter> emptyList());
 		BaseLinearProcessingStage<SelectContext<Object>, Object> stage2 = new ParseSelectRequestStage<>(stage3,
 				requestParser, metadataService);
 		BaseLinearProcessingStage<SelectContext<Object>, Object> stage1 = new InitializeSelectChainStage<>(stage2);
@@ -79,8 +79,7 @@ public class PojoProcessorFactory implements IProcessorFactory {
 			Map<Object, T> typeBucket = db.bucketForType(context.getType());
 			if (context.isById()) {
 				T object = typeBucket.get(context.getId().get());
-				context.getResponse().withObjects(
-						object != null ? Collections.singletonList(object) : Collections.<T> emptyList());
+				context.setObjects(object != null ? Collections.singletonList(object) : Collections.<T> emptyList());
 				return;
 			}
 
@@ -103,7 +102,7 @@ public class PojoProcessorFactory implements IProcessorFactory {
 				o.orderList(list);
 			}
 
-			context.getResponse().withObjects(list);
+			context.setObjects(list);
 		}
 
 	}

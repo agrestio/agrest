@@ -1,7 +1,6 @@
 package com.nhl.link.rest.runtime.processor.unrelate;
 
 import com.nhl.link.rest.EntityParent;
-import com.nhl.link.rest.SimpleResponse;
 import com.nhl.link.rest.processor.BaseProcessingContext;
 
 /**
@@ -9,7 +8,6 @@ import com.nhl.link.rest.processor.BaseProcessingContext;
  */
 public class UnrelateContext<T> extends BaseProcessingContext<T> {
 
-	private SimpleResponse response;
 	private EntityParent<?> parent;
 	private Object id;
 
@@ -31,13 +29,5 @@ public class UnrelateContext<T> extends BaseProcessingContext<T> {
 
 	public void setId(Object targetId) {
 		this.id = targetId;
-	}
-
-	public SimpleResponse getResponse() {
-		return response;
-	}
-
-	public void setResponse(SimpleResponse response) {
-		this.response = response;
 	}
 }

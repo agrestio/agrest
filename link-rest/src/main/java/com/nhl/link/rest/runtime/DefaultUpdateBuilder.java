@@ -7,7 +7,6 @@ import java.util.Map;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
-import com.nhl.link.rest.LinkRestException;
 import org.apache.cayenne.exp.Property;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,6 +14,7 @@ import org.slf4j.LoggerFactory;
 import com.nhl.link.rest.DataResponse;
 import com.nhl.link.rest.EntityParent;
 import com.nhl.link.rest.EntityUpdate;
+import com.nhl.link.rest.LinkRestException;
 import com.nhl.link.rest.ObjectMapperFactory;
 import com.nhl.link.rest.SimpleResponse;
 import com.nhl.link.rest.UpdateBuilder;
@@ -75,7 +75,8 @@ public class DefaultUpdateBuilder<T> implements UpdateBuilder<T> {
 	}
 
 	@Override
-	public UpdateBuilder<T> parent(Class<?> parentType, Map<String, Object> parentIds, Property<T> relationshipFromParent) {
+	public UpdateBuilder<T> parent(Class<?> parentType, Map<String, Object> parentIds,
+			Property<T> relationshipFromParent) {
 		context.setParent(new EntityParent<>(parentType, parentIds, relationshipFromParent.getName()));
 		return this;
 	}
@@ -99,7 +100,8 @@ public class DefaultUpdateBuilder<T> implements UpdateBuilder<T> {
 	}
 
 	@Override
-	public UpdateBuilder<T> toManyParent(Class<?> parentType, Map<String, Object> parentIds, Property<? extends Collection<T>> relationshipFromParent) {
+	public UpdateBuilder<T> toManyParent(Class<?> parentType, Map<String, Object> parentIds,
+			Property<? extends Collection<T>> relationshipFromParent) {
 		return parent(parentType, parentIds, relationshipFromParent.getName());
 	}
 
@@ -214,13 +216,7 @@ public class DefaultUpdateBuilder<T> implements UpdateBuilder<T> {
 
 		ChainProcessor.execute(updateChain, context);
 
-		// TODO: somehow context should know internally whether its response is
-		// a SimpleResponse or a DataResponse, instead of overriding the
-		// response here..
-
-		SimpleResponse response = new SimpleResponse(true);
-		response.setStatus(context.getResponse().getStatus());
-		return response;
+		return context.createSimpleResponse();
 	}
 
 	private DataResponse<T> doSyncAndSelect() {
@@ -229,7 +225,7 @@ public class DefaultUpdateBuilder<T> implements UpdateBuilder<T> {
 
 		ChainProcessor.execute(updateChain, context);
 
-		return context.getResponse();
+		return context.createDataResponse();
 	}
 
 }

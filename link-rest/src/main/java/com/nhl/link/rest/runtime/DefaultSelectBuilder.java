@@ -54,7 +54,8 @@ public class DefaultSelectBuilder<T> implements SelectBuilder<T> {
 	}
 
 	@Override
-	public SelectBuilder<T> parent(Class<?> parentType, Map<String, Object> parentIds, Property<T> relationshipFromParent) {
+	public SelectBuilder<T> parent(Class<?> parentType, Map<String, Object> parentIds,
+			Property<T> relationshipFromParent) {
 		context.setParent(new EntityParent<>(parentType, parentIds, relationshipFromParent.getName()));
 		return this;
 	}
@@ -84,7 +85,8 @@ public class DefaultSelectBuilder<T> implements SelectBuilder<T> {
 	}
 
 	@Override
-	public SelectBuilder<T> toManyParent(Class<?> parentType, Map<String, Object> parentIds, Property<? extends Collection<T>> relationshipFromParent) {
+	public SelectBuilder<T> toManyParent(Class<?> parentType, Map<String, Object> parentIds,
+			Property<? extends Collection<T>> relationshipFromParent) {
 		return parent(parentType, parentIds, relationshipFromParent.getName());
 	}
 
@@ -194,7 +196,7 @@ public class DefaultSelectBuilder<T> implements SelectBuilder<T> {
 		context.setListeners(listenersBuilder.getListeners());
 
 		ChainProcessor.execute(selectChain, context);
-		return context.getResponse();
+		return context.createDataResponse();
 	}
 
 	@Override
@@ -202,7 +204,7 @@ public class DefaultSelectBuilder<T> implements SelectBuilder<T> {
 		context.setAtMostOneObject(true);
 		context.setListeners(listenersBuilder.getListeners());
 		ChainProcessor.execute(selectChain, context);
-		return context.getResponse();
+		return context.createDataResponse();
 	}
 
 }

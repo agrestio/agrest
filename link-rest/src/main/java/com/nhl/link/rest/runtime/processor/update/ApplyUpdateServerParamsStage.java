@@ -8,17 +8,16 @@ import java.util.Map;
 
 import javax.ws.rs.core.Response.Status;
 
-import com.nhl.link.rest.meta.LrAttribute;
 import org.apache.cayenne.map.DbJoin;
 import org.apache.cayenne.map.DbRelationship;
 import org.apache.cayenne.map.ObjRelationship;
 
-import com.nhl.link.rest.DataResponse;
 import com.nhl.link.rest.EntityParent;
 import com.nhl.link.rest.EntityUpdate;
 import com.nhl.link.rest.LinkRestException;
 import com.nhl.link.rest.ResourceEntity;
 import com.nhl.link.rest.annotation.listener.UpdateServerParamsApplied;
+import com.nhl.link.rest.meta.LrAttribute;
 import com.nhl.link.rest.meta.LrEntity;
 import com.nhl.link.rest.meta.LrPersistentAttribute;
 import com.nhl.link.rest.meta.LrPersistentRelationship;
@@ -52,7 +51,6 @@ public class ApplyUpdateServerParamsStage<T> extends BaseLinearProcessingStage<U
 	@Override
 	protected void doExecute(UpdateContext<T> context) {
 
-		DataResponse<T> response = context.getResponse();
 		ResourceEntity<T> entity = context.getEntity();
 
 		processExplicitId(context);
@@ -66,7 +64,7 @@ public class ApplyUpdateServerParamsStage<T> extends BaseLinearProcessingStage<U
 
 		// TODO: we don't need encoder if includeData=false... should we
 		// conditionally skip this step?
-		response.withEncoder(encoderService.dataEncoder(entity));
+		context.setEncoder(encoderService.dataEncoder(entity));
 	}
 
 	private void processExplicitId(UpdateContext<T> context) {
@@ -91,18 +89,15 @@ public class ApplyUpdateServerParamsStage<T> extends BaseLinearProcessingStage<U
 
 			if (idAttributes.size() != context.getId().size()) {
 				throw new LinkRestException(Status.BAD_REQUEST,
-						"Wrong compound ID size: expected " + idAttributes.size() +
-								", got: " + context.getId().size());
+						"Wrong compound ID size: expected " + idAttributes.size() + ", got: " + context.getId().size());
 			}
 
 			for (LrAttribute idAttribute : idAttributes) {
 				LrPersistentAttribute persistentId = (LrPersistentAttribute) idAttribute;
 				Object idValue = context.getId().get(persistentId.getName());
 
-				idMap.put(
-						persistentId.getDbAttribute().getName(),
-						Normalizer.normalize(idValue, persistentId.getType())
-				);
+				idMap.put(persistentId.getDbAttribute().getName(),
+						Normalizer.normalize(idValue, persistentId.getType()));
 			}
 
 			u.setExplicitId();

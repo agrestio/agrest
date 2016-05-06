@@ -30,7 +30,7 @@ public class FetchTakeOverListener {
 				setName("__Y__");
 			}
 		});
-		context.getResponse().withObjects(objects);
+		context.setObjects(objects);
 
 		// we handle the data, so block the rest of the chain
 		return null;

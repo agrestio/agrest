@@ -4,8 +4,6 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 
-import org.apache.cayenne.query.PrefetchTreeNode;
-
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.nhl.link.rest.encoder.Encoder;
 import com.nhl.link.rest.encoder.GenericEncoder;
@@ -17,8 +15,6 @@ import com.nhl.link.rest.encoder.GenericEncoder;
 public class DataResponse<T> extends LrResponse {
 
 	private Class<T> type;
-
-	private int prefetchSemantics;
 	private List<T> objects;
 	private Encoder encoder;
 
@@ -50,7 +46,6 @@ public class DataResponse<T> extends LrResponse {
 
 	DataResponse(Class<T> type) {
 		this.type = type;
-		this.prefetchSemantics = PrefetchTreeNode.DISJOINT_PREFETCH_SEMANTICS;
 		this.encoder = GenericEncoder.encoder();
 		this.objects = Collections.emptyList();
 	}
@@ -61,15 +56,6 @@ public class DataResponse<T> extends LrResponse {
 
 	public Encoder getEncoder() {
 		return encoder;
-	}
-
-	public int getPrefetchSemantics() {
-		return prefetchSemantics;
-	}
-
-	public DataResponse<T> withPrefetchSemantics(int prefetchSemantics) {
-		this.prefetchSemantics = prefetchSemantics;
-		return this;
 	}
 
 	public DataResponse<T> withObjects(List<T> objects) {

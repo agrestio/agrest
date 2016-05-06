@@ -1,6 +1,12 @@
 package com.nhl.link.rest.runtime.cayenne.processor;
 
-import com.nhl.link.rest.DataResponse;
+import java.lang.annotation.Annotation;
+import java.util.List;
+
+import javax.ws.rs.core.Response;
+
+import org.apache.cayenne.query.SelectQuery;
+
 import com.nhl.link.rest.LinkRestException;
 import com.nhl.link.rest.annotation.listener.DataFetched;
 import com.nhl.link.rest.meta.LrEntity;
@@ -8,29 +14,23 @@ import com.nhl.link.rest.processor.BaseLinearProcessingStage;
 import com.nhl.link.rest.processor.ProcessingStage;
 import com.nhl.link.rest.runtime.cayenne.ICayennePersister;
 import com.nhl.link.rest.runtime.processor.select.SelectContext;
-import org.apache.cayenne.query.SelectQuery;
-
-import javax.ws.rs.core.Response;
-import java.lang.annotation.Annotation;
-import java.util.List;
 
 public class CayenneFetchStage<T> extends BaseLinearProcessingStage<SelectContext<T>, T> {
 
-    private ICayennePersister persister;
+	private ICayennePersister persister;
 
 	public CayenneFetchStage(ProcessingStage<SelectContext<T>, ? super T> next, ICayennePersister persister) {
 		super(next);
 		this.persister = persister;
 	}
 
-    @Override
+	@Override
 	public Class<? extends Annotation> afterStageListener() {
 		return DataFetched.class;
 	}
 
-    @Override
-    protected void doExecute(SelectContext<T> context) {
-        DataResponse<T> response = context.getResponse();
+	@Override
+	protected void doExecute(SelectContext<T> context) {
 		SelectQuery<T> select = context.getSelect();
 
 		List<T> objects = persister.sharedContext().select(select);
@@ -47,7 +47,6 @@ public class CayenneFetchStage<T> extends BaseLinearProcessingStage<SelectContex
 						"Found more than one object for ID '%s' and entity '%s'", context.getId(), entity.getName()));
 			}
 		}
-
-		response.withObjects(objects);
-    }
+		context.setObjects(objects);
+	}
 }
