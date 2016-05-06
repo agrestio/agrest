@@ -18,15 +18,13 @@ public class DataResponse<T> extends LrResponse {
 	private List<T> objects;
 	private Encoder encoder;
 
-	@SuppressWarnings({ "unchecked" })
 	public static <T> DataResponse<T> forObject(T object) {
 
 		if (object == null) {
 			throw new NullPointerException("Null object");
 		}
 
-		Class<T> type = (Class<T>) object.getClass();
-		return new DataResponse<>(type).withObjects(Collections.singletonList(object));
+		return forObjects(Collections.singletonList(object));
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
@@ -36,7 +34,9 @@ public class DataResponse<T> extends LrResponse {
 			return new DataResponse(Object.class);
 		} else {
 			Class<T> type = (Class<T>) objects.get(0).getClass();
-			return new DataResponse<>(type).withObjects(objects);
+			DataResponse<T> response = new DataResponse<>(type);
+			response.setObjects(objects);
+			return response;
 		}
 	}
 
@@ -58,11 +58,31 @@ public class DataResponse<T> extends LrResponse {
 		return encoder;
 	}
 
+	/**
+	 * @since 1.24
+	 */
+	public void setObjects(List<T> objects) {
+		this.objects = objects;
+	}
+
+	/**
+	 * @deprecated since 1.24 in favor of {@link #setObjects(List)}.
+	 */
 	public DataResponse<T> withObjects(List<T> objects) {
 		this.objects = objects;
 		return this;
 	}
 
+	/**
+	 * @since 1.24
+	 */
+	public void setObject(T object) {
+		setObjects(Collections.singletonList(object));
+	}
+
+	/**
+	 * @deprecated since 1.24 in favor of {@link #setObject(Object)}.
+	 */
 	public DataResponse<T> withObject(T object) {
 		this.objects = Collections.singletonList(object);
 		return this;
@@ -75,8 +95,18 @@ public class DataResponse<T> extends LrResponse {
 		return objects;
 	}
 
-	public DataResponse<T> withEncoder(Encoder encoder) {
+	/**
+	 * @since 1.24
+	 */
+	public void setEncoder(Encoder encoder) {
 		this.encoder = encoder;
+	}
+
+	/**
+	 * @deprecated since 1.24 in favor of {@link #setEncoder(Encoder)}.
+	 */
+	public DataResponse<T> withEncoder(Encoder encoder) {
+		setEncoder(encoder);
 		return this;
 	}
 
