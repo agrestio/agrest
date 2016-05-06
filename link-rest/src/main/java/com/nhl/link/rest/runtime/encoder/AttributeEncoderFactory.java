@@ -3,6 +3,9 @@ package com.nhl.link.rest.runtime.encoder;
 import java.sql.Time;
 import java.sql.Timestamp;
 import java.sql.Types;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Map;
@@ -17,6 +20,9 @@ import com.nhl.link.rest.encoder.Encoder;
 import com.nhl.link.rest.encoder.GenericEncoder;
 import com.nhl.link.rest.encoder.ISODateEncoder;
 import com.nhl.link.rest.encoder.ISODateTimeEncoder;
+import com.nhl.link.rest.encoder.ISOLocalDateEncoder;
+import com.nhl.link.rest.encoder.ISOLocalDateTimeEncoder;
+import com.nhl.link.rest.encoder.ISOLocalTimeEncoder;
 import com.nhl.link.rest.encoder.ISOTimeEncoder;
 import com.nhl.link.rest.encoder.ObjectIdEncoder;
 import com.nhl.link.rest.meta.LrAttribute;
@@ -34,6 +40,9 @@ public class AttributeEncoderFactory implements IAttributeEncoderFactory {
 	static final Class<?> SQL_DATE = java.sql.Date.class;
 	static final Class<?> SQL_TIME = Time.class;
 	static final Class<?> SQL_TIMESTAMP = Timestamp.class;
+	static final Class<?> LOCAL_DATE = LocalDate.class;
+	static final Class<?> LOCAL_TIME = LocalTime.class;
+	static final Class<?> LOCAL_DATETIME = LocalDateTime.class;
 
 	// these are explicit overrides for named attributes
 	private Map<String, EntityProperty> attributePropertiesByPath;
@@ -144,6 +153,14 @@ public class AttributeEncoderFactory implements IAttributeEncoderFactory {
 	 * @since 1.12
 	 */
 	protected Encoder buildEncoder(Class<?> javaType, int jdbcType) {
+
+		if (LOCAL_DATE.equals(javaType)) {
+			return ISOLocalDateEncoder.encoder();
+		} else if (LOCAL_TIME.equals(javaType)) {
+			return ISOLocalTimeEncoder.encoder();
+		} else if (LOCAL_DATETIME.equals(javaType)) {
+			return ISOLocalDateTimeEncoder.encoder();
+		}
 
 		if (UTIL_DATE.equals(javaType)) {
 			if (jdbcType == Types.DATE) {

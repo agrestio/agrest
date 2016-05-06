@@ -1,5 +1,20 @@
 package com.nhl.link.rest.runtime.encoder;
 
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.mock;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.sql.Types;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.temporal.ChronoUnit;
+import java.util.Collections;
+
+import org.junit.Before;
+import org.junit.Test;
+
 import com.fasterxml.jackson.core.JsonEncoding;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.nhl.link.rest.ResourceEntity;
@@ -12,20 +27,6 @@ import com.nhl.link.rest.it.fixture.cayenne.iso.Java8ISOTimestampTestEntity;
 import com.nhl.link.rest.runtime.jackson.JacksonService;
 import com.nhl.link.rest.runtime.semantics.RelationshipMapper;
 import com.nhl.link.rest.unit.Java8TestWithCayenneMapping;
-import org.junit.Before;
-import org.junit.Test;
-
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.sql.Types;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.temporal.ChronoUnit;
-import java.util.Collections;
-
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.mock;
 
 public class Java8ISOEncoderTest extends Java8TestWithCayenneMapping {
 
@@ -33,7 +34,7 @@ public class Java8ISOEncoderTest extends Java8TestWithCayenneMapping {
 
     @Before
     public void before() {
-        IAttributeEncoderFactory attributeEncoderFactory = new Java8AttributeEncoderFactory();
+        IAttributeEncoderFactory attributeEncoderFactory = new AttributeEncoderFactory();
         IStringConverterFactory stringConverterFactory = mock(IStringConverterFactory.class);
 
         encoderService = new EncoderService(Collections.<EncoderFilter>emptyList(), attributeEncoderFactory, stringConverterFactory,

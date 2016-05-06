@@ -1,18 +1,17 @@
-package com.nhl.link.rest.runtime.parser.converter;
+package com.nhl.link.rest.parser.converter;
 
-import com.fasterxml.jackson.databind.node.TextNode;
-import com.nhl.link.rest.parser.converter.ISOLocalDateConverter;
-import com.nhl.link.rest.parser.converter.ISOLocalDateTimeConverter;
-import com.nhl.link.rest.parser.converter.ISOLocalTimeConverter;
-import com.nhl.link.rest.parser.converter.JsonValueConverter;
-import org.junit.Before;
-import org.junit.Test;
+import static org.junit.Assert.assertEquals;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 
-import static org.junit.Assert.assertEquals;
+import org.junit.Before;
+import org.junit.Test;
+
+import com.fasterxml.jackson.databind.node.TextNode;
+import com.nhl.link.rest.runtime.parser.converter.DefaultJsonValueConverterFactory;
+import com.nhl.link.rest.runtime.parser.converter.IJsonValueConverterFactory;
 
 public class Java8ISOConverterTest {
 
@@ -20,7 +19,7 @@ public class Java8ISOConverterTest {
 
     @Before
     public void before() {
-        this.converterFactory = new Java8JsonValueConverterFactory();
+        this.converterFactory = new DefaultJsonValueConverterFactory();
     }
 
     @Test
