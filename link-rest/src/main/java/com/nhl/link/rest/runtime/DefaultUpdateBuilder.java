@@ -8,8 +8,6 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
 import org.apache.cayenne.exp.Property;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.nhl.link.rest.DataResponse;
 import com.nhl.link.rest.EntityParent;
@@ -29,8 +27,6 @@ import com.nhl.link.rest.runtime.processor.update.UpdateContext;
  * @since 1.7
  */
 public class DefaultUpdateBuilder<T> implements UpdateBuilder<T> {
-
-	private static final Logger LOGGER = LoggerFactory.getLogger(DefaultUpdateBuilder.class);
 
 	private UpdateContext<T> context;
 	private ProcessingStage<UpdateContext<T>, T> updateChain;
@@ -149,13 +145,6 @@ public class DefaultUpdateBuilder<T> implements UpdateBuilder<T> {
 	public UpdateBuilder<T> listener(Object listener) {
 		listenersBuilder.addListener(listener);
 		return this;
-	}
-
-	@Deprecated
-	@Override
-	public DataResponse<T> process(String entityData) {
-		LOGGER.warn("*** Calling deprecated method 'process'. Use 'sync' or 'syncAndSelect' instead.");
-		return syncAndSelect(entityData);
 	}
 
 	/**

@@ -133,13 +133,6 @@ public interface UpdateBuilder<T> {
 	UpdateBuilder<T> listener(Object listener);
 
 	/**
-	 * @deprecated since 1.19 in favor of {@link #sync(String)} and
-	 *             {@link #syncAndSelect(String)}.
-	 */
-	@Deprecated
-	DataResponse<T> process(String entityData);
-
-	/**
 	 * @since 1.19
 	 */
 	DataResponse<T> syncAndSelect(String entityData);
