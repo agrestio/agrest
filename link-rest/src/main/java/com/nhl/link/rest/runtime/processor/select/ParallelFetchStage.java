@@ -1,21 +1,18 @@
-package com.nhl.link.rest.runtime.processor.select.fetcher;
+package com.nhl.link.rest.runtime.processor.select;
 
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 import java.util.function.Function;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.nhl.link.rest.processor.BaseLinearProcessingStage;
 import com.nhl.link.rest.processor.ProcessingStage;
-import com.nhl.link.rest.runtime.processor.select.SelectContext;
+import com.nhl.link.rest.runtime.fetcher.FutureList;
+import com.nhl.link.rest.runtime.fetcher.RootFetcher;
+import com.nhl.link.rest.runtime.fetcher.SubFetcher;
 
 /**
  * A {@link ProcessingStage} whose goal is to initialize {@link SelectContext}
@@ -26,8 +23,6 @@ import com.nhl.link.rest.runtime.processor.select.SelectContext;
  * @since 2.0
  */
 public class ParallelFetchStage<T> extends BaseLinearProcessingStage<SelectContext<T>, T> {
-
-	private static final Logger LOGGER = LoggerFactory.getLogger(ParallelFetchStage.class);
 
 	private ExecutorService executor;
 	private long singleFetcherTimeout;
@@ -67,54 +62,26 @@ public class ParallelFetchStage<T> extends BaseLinearProcessingStage<SelectConte
 	protected List<T> executeRootFetcher(RootFetcher<T> fetcher) {
 
 		Future<List<T>> rootFuture = executor.submit(() -> fetcher.fetch());
-		FutureResult<T> rootResult = new FutureResult<>(fetcher, rootFuture);
+		FutureList<T> rootResult = new FutureList<>(fetcher, rootFuture, singleFetcherTimeout,
+				singleFetcherTimeoutUnit);
 
-		Set<FutureResult<?>> resultAccummulator = ConcurrentHashMap.newKeySet();
-		fetcher.subFetchers().forEach(f -> executeSubFetcher(f, rootFuture, resultAccummulator));
+		Set<FutureList<?>> resultAccummulator = ConcurrentHashMap.newKeySet();
+		fetcher.subFetchers().forEach(f -> executeSubFetcher(f, rootResult, resultAccummulator));
 
 		// ensure all fetchers have finished... (using "count()" at the end to
 		// ensure the stream is run)
-		resultAccummulator.stream().map(FutureResult::get).count();
+		resultAccummulator.stream().map(FutureList::get).count();
 
 		return rootResult.get();
 	}
 
-	protected <C, P> void executeSubFetcher(ChildFetcher<C, P> fetcher, Future<List<P>> parents,
-			Set<FutureResult<?>> resultAccummulator) {
+	protected <C, P> void executeSubFetcher(SubFetcher<C, P> fetcher, FutureList<P> parents,
+			Set<FutureList<?>> resultAccummulator) {
 
-		Future<List<C>> result = executor.submit(() -> fetcher.fetch(parents));
-		resultAccummulator.add(new FutureResult<>(fetcher, result));
+		Future<List<C>> future = executor.submit(() -> fetcher.fetch(parents));
+		FutureList<C> result = new FutureList<>(fetcher, future, singleFetcherTimeout, singleFetcherTimeoutUnit);
+		resultAccummulator.add(result);
 		fetcher.subFetchers().forEach(f -> executeSubFetcher(f, result, resultAccummulator));
-	}
-
-	class FutureResult<R> {
-
-		private HierarchicalFetcher<R> fetcher;
-		private Future<List<R>> futureResult;
-
-		public FutureResult(HierarchicalFetcher<R> fetcher, Future<List<R>> futureResult) {
-			this.fetcher = fetcher;
-			this.futureResult = futureResult;
-		}
-
-		public List<R> get() {
-
-			// TODO: more descriptive exception message - which fetcher failed?
-
-			try {
-				return futureResult.get(singleFetcherTimeout, singleFetcherTimeoutUnit);
-			} catch (InterruptedException e) {
-				LOGGER.warn("fetcher interrupted: " + e.getMessage());
-				return fetcher.onError(e);
-			} catch (ExecutionException e) {
-				LOGGER.warn("fetcher error: " + e.getMessage());
-				return fetcher.onError(e);
-			} catch (TimeoutException e) {
-				LOGGER.warn("fetcher timed out");
-				return fetcher.onError(e);
-			}
-
-		}
 	}
 
 }

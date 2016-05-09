@@ -1,4 +1,4 @@
-package com.nhl.link.rest.runtime.processor.select.fetcher;
+package com.nhl.link.rest.runtime.fetcher;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -9,11 +9,13 @@ import javax.ws.rs.core.Response.Status;
 import com.nhl.link.rest.LinkRestException;
 
 /**
+ * A common superinterface of fetchers.
+ * 
  * @since 2.0
  */
-public interface HierarchicalFetcher<T> {
-	
-	default Collection<ChildFetcher<?, T>> subFetchers() {
+public interface Fetcher<T> {
+
+	default Collection<SubFetcher<?, T>> subFetchers() {
 		return Collections.emptyList();
 	}
 

@@ -1,4 +1,4 @@
-package com.nhl.link.rest.runtime.processor.select.fetcher;
+package com.nhl.link.rest.runtime.processor.select;
 
 import static java.util.Arrays.asList;
 import static org.junit.Assert.assertEquals;
@@ -11,12 +11,9 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 import java.util.function.Function;
 
 import org.junit.After;
@@ -26,6 +23,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.nhl.link.rest.LinkRestException;
+import com.nhl.link.rest.runtime.fetcher.FutureList;
+import com.nhl.link.rest.runtime.fetcher.RootFetcher;
+import com.nhl.link.rest.runtime.fetcher.SubFetcher;
+import com.nhl.link.rest.runtime.processor.select.ParallelFetchStage;
 import com.nhl.link.rest.runtime.processor.select.SelectContext;
 
 public class ParallelFetchStageTest {
@@ -93,7 +94,7 @@ public class ParallelFetchStageTest {
 
 	@Test
 	public void testDoExecute_NestedDependentFetchers() {
-		ChildFetcher<TreeNode, TreeNode> c1 = new SingleChildFetcher("c1", new SingleChildFetcher("c3"),
+		SubFetcher<TreeNode, TreeNode> c1 = new SingleChildFetcher("c1", new SingleChildFetcher("c3"),
 				new SingleChildFetcher("c4"));
 
 		RootFetcher<TreeNode> rootFetcher = new SingleRootFetcher("n", c1, new SingleChildFetcher("c2"));
@@ -123,10 +124,11 @@ public class ParallelFetchStageTest {
 
 	@Test(expected = LinkRestException.class)
 	public void testDoExecute_TimeoutInChild() throws InterruptedException {
-		ChildFetcher<TreeNode, TreeNode> c1 = new SingleChildFetcher("c1") {
+		SubFetcher<TreeNode, TreeNode> c1 = new SingleChildFetcher("c1") {
 
 			@Override
-			public List<TreeNode> fetch(Future<List<TreeNode>> parents) {
+			public List<TreeNode> fetch(FutureList<TreeNode> parents) {
+
 				try {
 					Thread.sleep(2000);
 				} catch (InterruptedException e) {
@@ -143,10 +145,10 @@ public class ParallelFetchStageTest {
 
 	@Test(expected = LinkRestException.class)
 	public void testDoExecute_ErrorInChild() throws InterruptedException {
-		ChildFetcher<TreeNode, TreeNode> c1 = new SingleChildFetcher("c1") {
+		SubFetcher<TreeNode, TreeNode> c1 = new SingleChildFetcher("c1") {
 
 			@Override
-			public List<TreeNode> fetch(Future<List<TreeNode>> parents) {
+			public List<TreeNode> fetch(FutureList<TreeNode> parents) {
 				throw new UnsupportedOperationException("Can't fetch...");
 			}
 		};
@@ -158,16 +160,16 @@ public class ParallelFetchStageTest {
 
 	static class SingleRootFetcher implements RootFetcher<TreeNode> {
 		protected String name;
-		private Collection<ChildFetcher<?, TreeNode>> children;
+		private Collection<SubFetcher<?, TreeNode>> children;
 
 		@SafeVarargs
-		public SingleRootFetcher(String name, ChildFetcher<?, TreeNode>... children) {
+		public SingleRootFetcher(String name, SubFetcher<?, TreeNode>... children) {
 			this.name = name;
 			this.children = asList(children);
 		}
 
 		@Override
-		public Collection<ChildFetcher<?, TreeNode>> subFetchers() {
+		public Collection<SubFetcher<?, TreeNode>> subFetchers() {
 			return children;
 		}
 
@@ -178,34 +180,29 @@ public class ParallelFetchStageTest {
 		}
 	}
 
-	static class SingleChildFetcher implements ChildFetcher<TreeNode, TreeNode> {
+	static class SingleChildFetcher implements SubFetcher<TreeNode, TreeNode> {
 
 		protected String name;
-		private Collection<ChildFetcher<?, TreeNode>> children;
+		private Collection<SubFetcher<?, TreeNode>> children;
 
 		@SafeVarargs
-		public SingleChildFetcher(String name, ChildFetcher<?, TreeNode>... children) {
+		public SingleChildFetcher(String name, SubFetcher<?, TreeNode>... children) {
 			this.name = name;
 			this.children = asList(children);
 		}
 
 		@Override
-		public Collection<ChildFetcher<?, TreeNode>> subFetchers() {
+		public Collection<SubFetcher<?, TreeNode>> subFetchers() {
 			return children;
 		}
 
 		@Override
-		public List<TreeNode> fetch(Future<List<TreeNode>> parents) {
+		public List<TreeNode> fetch(FutureList<TreeNode> parents) {
 
 			LOGGER.info("fetched child: " + name);
 
 			TreeNode c = new TreeNode(name);
-			try {
-				parents.get(1, TimeUnit.SECONDS).get(0).addChild(c);
-			} catch (InterruptedException | ExecutionException | TimeoutException e) {
-				throw new RuntimeException(e);
-			}
-
+			parents.get().get(0).addChild(c);
 			return Collections.singletonList(c);
 		}
 	}
