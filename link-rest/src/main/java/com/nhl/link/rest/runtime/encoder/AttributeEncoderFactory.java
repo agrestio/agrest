@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.concurrent.ConcurrentHashMap;
 
+import com.nhl.link.rest.property.IdPropertyReader;
 import org.apache.cayenne.DataObject;
 
 import com.nhl.link.rest.EntityProperty;
@@ -25,7 +26,6 @@ import com.nhl.link.rest.meta.LrPersistentAttribute;
 import com.nhl.link.rest.meta.LrRelationship;
 import com.nhl.link.rest.meta.cayenne.CayenneLrEntity;
 import com.nhl.link.rest.property.BeanPropertyReader;
-import com.nhl.link.rest.property.PersistentObjectIdPropertyReader;
 import com.nhl.link.rest.property.PropertyBuilder;
 
 public class AttributeEncoderFactory implements IAttributeEncoderFactory {
@@ -38,10 +38,12 @@ public class AttributeEncoderFactory implements IAttributeEncoderFactory {
 	// these are explicit overrides for named attributes
 	private Map<String, EntityProperty> attributePropertiesByPath;
 	private Map<String, EntityProperty> idPropertiesByEntity;
+	private Map<LrEntity<?>, IdPropertyReader> idPropertyReaders;
 
 	public AttributeEncoderFactory() {
 		this.attributePropertiesByPath = new ConcurrentHashMap<>();
 		this.idPropertiesByEntity = new ConcurrentHashMap<>();
+		this.idPropertyReaders = new ConcurrentHashMap<>();
 	}
 
 	@Override
@@ -114,14 +116,14 @@ public class AttributeEncoderFactory implements IAttributeEncoderFactory {
 					valueEncoders.put(id.getName(), valueEncoder);
 				}
 
-				return PropertyBuilder.property(PersistentObjectIdPropertyReader.reader())
+				return PropertyBuilder.property(getOrCreateIdPropertyReader(entity.getLrEntity()))
 						.encodedWith(new ObjectIdEncoder(valueEncoders));
 			} else {
 
 				LrPersistentAttribute persistentId = (LrPersistentAttribute) ids.iterator().next();
 				Encoder valueEncoder = buildEncoder(persistentId.getType(), persistentId.getJdbcType());
 
-				return PropertyBuilder.property(PersistentObjectIdPropertyReader.reader())
+				return PropertyBuilder.property(getOrCreateIdPropertyReader(entity.getLrEntity()))
 						.encodedWith(new ObjectIdEncoder(valueEncoder));
 			}
 		} else {
@@ -138,6 +140,17 @@ public class AttributeEncoderFactory implements IAttributeEncoderFactory {
 			LrAttribute id = ids.iterator().next();
 			return PropertyBuilder.property(BeanPropertyReader.reader(id.getName()));
 		}
+	}
+
+	private IdPropertyReader getOrCreateIdPropertyReader(LrEntity<?> entity) {
+
+		IdPropertyReader reader = idPropertyReaders.get(entity);
+		if (reader == null) {
+			reader = new IdPropertyReader(entity);
+			IdPropertyReader oldReader = idPropertyReaders.putIfAbsent(entity, reader);
+			reader = (oldReader == null)? reader : oldReader;
+		}
+		return reader;
 	}
 
 	/**

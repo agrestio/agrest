@@ -1,5 +1,6 @@
 package com.nhl.link.rest.property;
 
+import org.apache.cayenne.ObjectId;
 import org.apache.cayenne.Persistent;
 
 public class PersistentObjectIdPropertyReader implements PropertyReader {
@@ -12,7 +13,13 @@ public class PersistentObjectIdPropertyReader implements PropertyReader {
 
 	@Override
 	public Object value(Object root, String name) {
-		return ((Persistent) root).getObjectId();
+
+		ObjectId id = ((Persistent) root).getObjectId();
+		if (id.isTemporary()) {
+			// for now supporting only permanent IDs
+			throw new IllegalArgumentException("Can't read from temporary ObjectId: " + id);
+		}
+		return id.getIdSnapshot().get(name);
 	}
 
 }
