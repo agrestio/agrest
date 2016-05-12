@@ -19,7 +19,7 @@ import com.nhl.link.rest.encoder.GenericEncoder;
 import com.nhl.link.rest.encoder.ISODateEncoder;
 import com.nhl.link.rest.encoder.ISODateTimeEncoder;
 import com.nhl.link.rest.encoder.ISOTimeEncoder;
-import com.nhl.link.rest.encoder.ObjectIdEncoder;
+import com.nhl.link.rest.encoder.IdEncoder;
 import com.nhl.link.rest.meta.LrAttribute;
 import com.nhl.link.rest.meta.LrEntity;
 import com.nhl.link.rest.meta.LrPersistentAttribute;
@@ -117,14 +117,14 @@ public class AttributeEncoderFactory implements IAttributeEncoderFactory {
 				}
 
 				return PropertyBuilder.property(getOrCreateIdPropertyReader(entity.getLrEntity()))
-						.encodedWith(new ObjectIdEncoder(valueEncoders));
+						.encodedWith(new IdEncoder(valueEncoders));
 			} else {
 
 				LrPersistentAttribute persistentId = (LrPersistentAttribute) ids.iterator().next();
 				Encoder valueEncoder = buildEncoder(persistentId.getType(), persistentId.getJdbcType());
 
 				return PropertyBuilder.property(getOrCreateIdPropertyReader(entity.getLrEntity()))
-						.encodedWith(new ObjectIdEncoder(valueEncoder));
+						.encodedWith(new IdEncoder(valueEncoder));
 			}
 		} else {
 

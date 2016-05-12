@@ -10,17 +10,17 @@ import java.util.Map;
 /**
  * @since 1.2
  */
-public class ObjectIdEncoder implements Encoder {
+public class IdEncoder implements Encoder {
 
     private Encoder valueEncoder;
     private Map<String, Encoder> valueEncoders;
     private boolean isCompoundId;
 
-    public ObjectIdEncoder(Encoder valueEncoder) {
+    public IdEncoder(Encoder valueEncoder) {
         this.valueEncoder = valueEncoder;
     }
 
-    public ObjectIdEncoder(Map<String, Encoder> valueEncoders) {
+    public IdEncoder(Map<String, Encoder> valueEncoders) {
         this.valueEncoders = valueEncoders;
         isCompoundId = true;
     }
