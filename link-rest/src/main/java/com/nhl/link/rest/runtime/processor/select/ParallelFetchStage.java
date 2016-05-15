@@ -1,18 +1,12 @@
 package com.nhl.link.rest.runtime.processor.select;
 
-import java.util.List;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.Objects;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
-import java.util.function.Function;
 
+import com.nhl.link.rest.ResourceEntity;
 import com.nhl.link.rest.processor.BaseLinearProcessingStage;
 import com.nhl.link.rest.processor.ProcessingStage;
-import com.nhl.link.rest.runtime.fetcher.FutureList;
-import com.nhl.link.rest.runtime.fetcher.RootFetcher;
-import com.nhl.link.rest.runtime.fetcher.SubFetcher;
 
 /**
  * A {@link ProcessingStage} whose goal is to initialize {@link SelectContext}
@@ -28,60 +22,47 @@ public class ParallelFetchStage<T> extends BaseLinearProcessingStage<SelectConte
 	private long singleFetcherTimeout;
 	private TimeUnit singleFetcherTimeoutUnit;
 
-	private Function<SelectContext<T>, RootFetcher<T>> fetchPartitioner;
-
-	public ParallelFetchStage(ProcessingStage<SelectContext<T>, ? super T> next,
-			Function<SelectContext<T>, RootFetcher<T>> fetchPartitioner, ExecutorService executor,
+	public ParallelFetchStage(ProcessingStage<SelectContext<T>, ? super T> next, ExecutorService executor,
 			long singleFetcherTimeout, TimeUnit singleFetcherTimeoutUnit) {
 
 		super(next);
 
 		this.executor = executor;
-		this.fetchPartitioner = fetchPartitioner;
 		this.singleFetcherTimeout = singleFetcherTimeout;
 		this.singleFetcherTimeoutUnit = singleFetcherTimeoutUnit;
 	}
 
 	@Override
 	protected void doExecute(SelectContext<T> context) {
+		ResourceEntity<T> rootEntity = Objects.requireNonNull(context.getEntity());
+		fetch(rootEntity, 0);
 
-		List<T> rootData;
-		RootFetcher<T> rootFetcher = fetchPartitioner.apply(context);
+		// note that we can return from this stage, while the result is still
+		// being calculated...
+	}
 
-		if (rootFetcher.subFetchers().isEmpty()) {
-			// single fetcher - run in the current thread...
-			rootData = rootFetcher.fetch();
-		} else {
-			// fetcher hierarchy - run multithreaded in the background...
-			rootData = executeRootFetcher(rootFetcher);
+	protected <U> int fetch(ResourceEntity<U> entity, int treeDepth) {
+
+		int childFetchers = 0;
+		for (ResourceEntity<?> childEntity : entity.getChildren().values()) {
+			childFetchers += fetch(childEntity, treeDepth + 1);
 		}
 
-		context.setObjects(rootData);
-	}
+		if (entity.getFetcher() != null) {
 
-	protected List<T> executeRootFetcher(RootFetcher<T> fetcher) {
+			// fetch strategy - if we are the root fetcher, and there were no
+			// child fetchers, run in the main thread. Otherwise run using
+			// executor...
+			if (childFetchers == 0 && treeDepth == 0) {
+				entity.fetch();
+			} else {
+				entity.fetchAsync(executor, singleFetcherTimeout, singleFetcherTimeoutUnit);
+			}
 
-		Future<List<T>> rootFuture = executor.submit(() -> fetcher.fetch());
-		FutureList<T> rootResult = new FutureList<>(fetcher, rootFuture, singleFetcherTimeout,
-				singleFetcherTimeoutUnit);
-
-		Set<FutureList<?>> resultAccummulator = ConcurrentHashMap.newKeySet();
-		fetcher.subFetchers().forEach(f -> executeSubFetcher(f, rootResult, resultAccummulator));
-
-		// ensure all fetchers have finished... (using "count()" at the end to
-		// ensure the stream is run)
-		resultAccummulator.stream().map(FutureList::get).count();
-
-		return rootResult.get();
-	}
-
-	protected <C, P> void executeSubFetcher(SubFetcher<C, P> fetcher, FutureList<P> parents,
-			Set<FutureList<?>> resultAccummulator) {
-
-		Future<List<C>> future = executor.submit(() -> fetcher.fetch(parents));
-		FutureList<C> result = new FutureList<>(fetcher, future, singleFetcherTimeout, singleFetcherTimeoutUnit);
-		resultAccummulator.add(result);
-		fetcher.subFetchers().forEach(f -> executeSubFetcher(f, result, resultAccummulator));
+			return childFetchers + 1;
+		} else {
+			return childFetchers;
+		}
 	}
 
 }

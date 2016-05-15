@@ -4,7 +4,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.cayenne.exp.Expression;
 import org.apache.cayenne.query.Ordering;
@@ -13,6 +17,8 @@ import org.apache.cayenne.util.ToStringBuilder;
 import com.nhl.link.rest.meta.LrAttribute;
 import com.nhl.link.rest.meta.LrEntity;
 import com.nhl.link.rest.meta.LrRelationship;
+import com.nhl.link.rest.runtime.fetcher.Fetcher;
+import com.nhl.link.rest.runtime.fetcher.FutureList;
 
 /**
  * A metadata object that describes a data structure of a given REST resource.
@@ -43,6 +49,8 @@ public class ResourceEntity<T> {
 	private int fetchOffset;
 	private int fetchLimit;
 	private boolean filtered;
+	private FutureList<T> objects;
+	private Fetcher<T> fetcher;
 
 	public ResourceEntity(LrEntity<T> lrEntity) {
 		this.idIncluded = false;
@@ -217,15 +225,72 @@ public class ResourceEntity<T> {
 
 	/**
 	 * @since 1.23
-     */
+	 */
 	public boolean isFiltered() {
 		return filtered;
 	}
 
 	/**
 	 * @since 1.23
-     */
+	 */
 	public void setFiltered(boolean filtered) {
 		this.filtered = filtered;
+	}
+
+	/**
+	 * @since 2.0
+	 */
+	public FutureList<T> getObjects() {
+		return objects;
+	}
+
+	/**
+	 * @since 2.0
+	 */
+	public void setObjects(FutureList<T> objects) {
+		this.objects = objects;
+	}
+	
+	/**
+	 * @since 2.0
+	 */
+	public void setObjects(List<T> objects) {
+		this.objects = FutureList.resolved(objects);
+	}
+
+	/**
+	 * @since 2.0
+	 */
+	public Fetcher<T> getFetcher() {
+		return fetcher;
+	}
+
+	/**
+	 * @since 2.0
+	 */
+	public void setFetcher(Fetcher<T> fetcher) {
+		this.fetcher = fetcher;
+	}
+
+	/**
+	 * @since 2.0
+	 */
+	public boolean canFetch() {
+		return fetcher != null;
+	}
+
+	/**
+	 * @since 2.0
+	 */
+	public void fetch() {
+		setObjects(FutureList.resolved(fetcher.fetch()));
+	}
+
+	/**
+	 * @since 2.0
+	 */
+	public void fetchAsync(ExecutorService executor, long timeout, TimeUnit timeoutUnit) {
+		Future<List<T>> future = executor.submit(() -> fetcher.fetch());
+		setObjects(FutureList.future(fetcher, future, timeout, timeoutUnit));
 	}
 }

@@ -1,20 +1,13 @@
 package com.nhl.link.rest.runtime.processor.select;
 
-import static java.util.Arrays.asList;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
-import java.util.function.Function;
 
 import org.junit.After;
 import org.junit.Before;
@@ -23,11 +16,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.nhl.link.rest.LinkRestException;
+import com.nhl.link.rest.ResourceEntity;
+import com.nhl.link.rest.meta.DefaultLrRelationship;
+import com.nhl.link.rest.meta.LrRelationship;
+import com.nhl.link.rest.runtime.fetcher.Fetcher;
 import com.nhl.link.rest.runtime.fetcher.FutureList;
-import com.nhl.link.rest.runtime.fetcher.RootFetcher;
-import com.nhl.link.rest.runtime.fetcher.SubFetcher;
-import com.nhl.link.rest.runtime.processor.select.ParallelFetchStage;
-import com.nhl.link.rest.runtime.processor.select.SelectContext;
 
 public class ParallelFetchStageTest {
 
@@ -39,6 +32,7 @@ public class ParallelFetchStageTest {
 	@Before
 	public void before() {
 		this.context = new SelectContext<>(TreeNode.class);
+		this.context.setEntity(createEntityWithFetcher("n", null, null));
 		this.executor = Executors.newFixedThreadPool(3);
 	}
 
@@ -47,27 +41,56 @@ public class ParallelFetchStageTest {
 		executor.shutdownNow();
 	}
 
-	private <T> ParallelFetchStage<T> createStage(Function<SelectContext<T>, RootFetcher<T>> partitioner) {
-		return new ParallelFetchStage<>(null, partitioner, executor, 500, TimeUnit.MILLISECONDS);
+	private ResourceEntity<TreeNode> createEntityWithFetcher(String treeNodeName, ResourceEntity<TreeNode> parent,
+			String name) {
+		return createEntityWithFetcher(new TreeNodeFetcher(treeNodeName), parent, name);
 	}
 
-	private void assertContext(int nodeCount, String... nodeStrings) {
+	private ResourceEntity<TreeNode> createEntityWithFetcher(Fetcher<TreeNode> fetcher, ResourceEntity<TreeNode> parent,
+			String name) {
 
-		List<TreeNode> nodes = context.getObjects();
-		assertNotNull(nodes);
-		assertEquals(nodeStrings.length, nodes.size());
-		assertEquals(nodeCount, countNodes(nodes));
+		LrRelationship incoming = name != null ? new DefaultLrRelationship(name, TreeNode.class, false) : null;
 
-		for (int i = 0; i < nodeStrings.length; i++) {
-			assertEquals(nodeStrings[i], nodes.get(i).toString());
+		ResourceEntity<TreeNode> e = new ResourceEntity<>(null, incoming);
+
+		if (parent != null && name != null) {
+			parent.getChildren().put(name, e);
 		}
+
+		e.setFetcher(fetcher);
+		return e;
 	}
 
-	private int countNodes(List<TreeNode> nodes) {
+	private ParallelFetchStage<TreeNode> createStage() {
+		return new ParallelFetchStage<>(null, executor, 500, TimeUnit.MILLISECONDS);
+	}
 
-		int count = nodes.size();
-		for (TreeNode n : nodes) {
-			count += countNodes(n.getChildren());
+	private void assertContext(int expectedNodeCount, String expectedNodeAsString) {
+
+		StringBuilder buffer = new StringBuilder();
+		int actualNodeCount = objectsAsString(context.getEntity(), buffer);
+
+		assertEquals(expectedNodeCount, actualNodeCount);
+		assertEquals(expectedNodeAsString, buffer.toString());
+	}
+
+	private <U> int objectsAsString(ResourceEntity<U> entity, StringBuilder buffer) {
+
+		int count = 0;
+
+		FutureList<U> list = entity.getObjects();
+		if (list != null) {
+			count += list.get().size();
+
+			String prefix = entity.getIncoming() != null ? entity.getIncoming().getName() + "." : "";
+
+			for (U object : list.get()) {
+				buffer.append(prefix).append(object).append(";");
+			}
+		}
+
+		for (ResourceEntity<?> childEntity : entity.getChildren().values()) {
+			count += objectsAsString(childEntity, buffer);
 		}
 
 		return count;
@@ -75,39 +98,40 @@ public class ParallelFetchStageTest {
 
 	@Test
 	public void testDoExecute_SingleFetcher() {
-		Function<SelectContext<TreeNode>, RootFetcher<TreeNode>> partitioner = c -> () -> Collections
-				.singletonList(new TreeNode("n"));
-		createStage(partitioner).doExecute(context);
-
+		createStage().doExecute(context);
 		assertContext(1, "n;");
 	}
 
 	@Test
 	public void testDoExecute_DependentFetchers() {
-		RootFetcher<TreeNode> rootFetcher = new SingleRootFetcher("n", new SingleChildFetcher("c1"),
-				new SingleChildFetcher("c2"));
-		Function<SelectContext<TreeNode>, RootFetcher<TreeNode>> partitioner = c -> rootFetcher;
-		createStage(partitioner).doExecute(context);
 
-		assertContext(3, "n;n.c1;n.c2;");
+		createEntityWithFetcher("c1", context.getEntity(), "ec1");
+		createEntityWithFetcher("c2", context.getEntity(), "ec2");
+
+		createStage().doExecute(context);
+
+		assertContext(3, "n;ec1.c1;ec2.c2;");
 	}
 
 	@Test
 	public void testDoExecute_NestedDependentFetchers() {
-		SubFetcher<TreeNode, TreeNode> c1 = new SingleChildFetcher("c1", new SingleChildFetcher("c3"),
-				new SingleChildFetcher("c4"));
 
-		RootFetcher<TreeNode> rootFetcher = new SingleRootFetcher("n", c1, new SingleChildFetcher("c2"));
-		Function<SelectContext<TreeNode>, RootFetcher<TreeNode>> partitioner = c -> rootFetcher;
-		createStage(partitioner).doExecute(context);
+		ResourceEntity<TreeNode> ec1 = createEntityWithFetcher("c1", context.getEntity(), "ec1");
 
-		assertContext(5, "n;n.c1;c1.c3;c1.c4;n.c2;");
+		createEntityWithFetcher("c3", ec1, "ec3");
+		createEntityWithFetcher("c4", ec1, "ec4");
+
+		createEntityWithFetcher("c2", context.getEntity(), "ec2");
+
+		createStage().doExecute(context);
+
+		assertContext(5, "n;ec1.c1;ec3.c3;ec4.c4;ec2.c2;");
 	}
 
 	@Test(expected = LinkRestException.class)
 	public void testDoExecute_TimeoutInRoot() {
-		RootFetcher<TreeNode> rootFetcher = new SingleRootFetcher("n", new SingleChildFetcher("c1"),
-				new SingleChildFetcher("c2")) {
+
+		context.setEntity(createEntityWithFetcher(new TreeNodeFetcher("n") {
 			@Override
 			public List<TreeNode> fetch() {
 				try {
@@ -117,140 +141,77 @@ public class ParallelFetchStageTest {
 				}
 				return super.fetch();
 			}
-		};
-		Function<SelectContext<TreeNode>, RootFetcher<TreeNode>> partitioner = c -> rootFetcher;
-		createStage(partitioner).doExecute(context);
+		}, null, null));
+
+		createEntityWithFetcher("c1", context.getEntity(), "ec1");
+		createEntityWithFetcher("c2", context.getEntity(), "ec2");
+
+		createStage().doExecute(context);
+		assertContext(-1, "expecting_an_error_not_this_string");
 	}
 
 	@Test(expected = LinkRestException.class)
 	public void testDoExecute_TimeoutInChild() throws InterruptedException {
-		SubFetcher<TreeNode, TreeNode> c1 = new SingleChildFetcher("c1") {
-
+		createEntityWithFetcher("c1", context.getEntity(), "ec1");
+		createEntityWithFetcher(new TreeNodeFetcher("c2") {
 			@Override
-			public List<TreeNode> fetch(FutureList<TreeNode> parents) {
-
+			public List<TreeNode> fetch() {
 				try {
 					Thread.sleep(2000);
 				} catch (InterruptedException e) {
 					LOGGER.info("interrupted: " + name);
 				}
-				return super.fetch(parents);
+				return super.fetch();
 			}
-		};
+		}, context.getEntity(), "ec2");
 
-		RootFetcher<TreeNode> rootFetcher = new SingleRootFetcher("n", c1, new SingleChildFetcher("c2"));
-		Function<SelectContext<TreeNode>, RootFetcher<TreeNode>> partitioner = c -> rootFetcher;
-		createStage(partitioner).doExecute(context);
+		createStage().doExecute(context);
+		assertContext(-1, "expecting_an_error_not_this_string");
 	}
 
 	@Test(expected = LinkRestException.class)
 	public void testDoExecute_ErrorInChild() throws InterruptedException {
-		SubFetcher<TreeNode, TreeNode> c1 = new SingleChildFetcher("c1") {
 
+		createEntityWithFetcher("c1", context.getEntity(), "ec1");
+		createEntityWithFetcher(new TreeNodeFetcher("c2") {
 			@Override
-			public List<TreeNode> fetch(FutureList<TreeNode> parents) {
+			public List<TreeNode> fetch() {
 				throw new UnsupportedOperationException("Can't fetch...");
 			}
-		};
+		}, context.getEntity(), "ec2");
 
-		RootFetcher<TreeNode> rootFetcher = new SingleRootFetcher("n", c1, new SingleChildFetcher("c2"));
-		Function<SelectContext<TreeNode>, RootFetcher<TreeNode>> partitioner = c -> rootFetcher;
-		createStage(partitioner).doExecute(context);
+		createStage().doExecute(context);
+		assertContext(-1, "expecting_an_error_not_this_string");
 	}
 
-	static class SingleRootFetcher implements RootFetcher<TreeNode> {
+	static class TreeNodeFetcher implements Fetcher<TreeNode> {
 		protected String name;
-		private Collection<SubFetcher<?, TreeNode>> children;
 
-		@SafeVarargs
-		public SingleRootFetcher(String name, SubFetcher<?, TreeNode>... children) {
+		public TreeNodeFetcher(String name) {
 			this.name = name;
-			this.children = asList(children);
-		}
-
-		@Override
-		public Collection<SubFetcher<?, TreeNode>> subFetchers() {
-			return children;
 		}
 
 		@Override
 		public List<TreeNode> fetch() {
-			LOGGER.info("fetched root: " + name);
+			LOGGER.info("fetched: " + name);
 			return Collections.singletonList(new TreeNode(name));
-		}
-	}
-
-	static class SingleChildFetcher implements SubFetcher<TreeNode, TreeNode> {
-
-		protected String name;
-		private Collection<SubFetcher<?, TreeNode>> children;
-
-		@SafeVarargs
-		public SingleChildFetcher(String name, SubFetcher<?, TreeNode>... children) {
-			this.name = name;
-			this.children = asList(children);
-		}
-
-		@Override
-		public Collection<SubFetcher<?, TreeNode>> subFetchers() {
-			return children;
-		}
-
-		@Override
-		public List<TreeNode> fetch(FutureList<TreeNode> parents) {
-
-			LOGGER.info("fetched child: " + name);
-
-			TreeNode c = new TreeNode(name);
-			parents.get().get(0).addChild(c);
-			return Collections.singletonList(c);
 		}
 	}
 
 	static class TreeNode {
 		private String name;
-		private Set<TreeNode> children;
 
 		TreeNode(String name) {
 			this.name = Objects.requireNonNull(name);
-			this.children = ConcurrentHashMap.newKeySet();
 		}
 
 		public String getName() {
 			return name;
 		}
 
-		public void addChild(TreeNode child) {
-			children.add(child);
-		}
-
-		public List<TreeNode> getChildren() {
-
-			// results may arrive in any order, so we need to sort children for
-			// predictability...
-
-			List<TreeNode> sorted = new ArrayList<>(children);
-			Collections.sort(sorted, (t1, t2) -> t1.getName().compareTo(t2.getName()));
-			return sorted;
-		}
-
 		@Override
 		public String toString() {
-			StringBuilder buffer = new StringBuilder();
-			toString(buffer, null);
-			return buffer.toString();
-		}
-
-		private void toString(StringBuilder buffer, String parentName) {
-
-			if (parentName != null) {
-				buffer.append(parentName).append(".");
-			}
-			buffer.append(name).append(";");
-
-			for (TreeNode c : getChildren()) {
-				c.toString(buffer, name);
-			}
+			return name;
 		}
 	}
 }
