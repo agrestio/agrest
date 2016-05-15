@@ -1,6 +1,5 @@
 package com.nhl.link.rest.runtime.processor.select;
 
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -55,7 +54,7 @@ public class SelectContext<T> extends BaseProcessingContext<T> {
 		// TODO: we may pass an unresolved future down to DataResponse and JSON
 		// serializers to further minimize blocking of the request thread...
 		
-		List<T> objects = Objects.requireNonNull(entity).getObjects().get();
+		Iterable<T> objects = Objects.requireNonNull(entity, "Null entity").getObjects();
 		DataResponse<T> response = DataResponse.forType(getType());
 		response.setObjects(objects);
 		response.setEncoder(encoder);

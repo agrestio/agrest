@@ -20,7 +20,6 @@ import com.nhl.link.rest.ResourceEntity;
 import com.nhl.link.rest.meta.DefaultLrRelationship;
 import com.nhl.link.rest.meta.LrRelationship;
 import com.nhl.link.rest.runtime.fetcher.Fetcher;
-import com.nhl.link.rest.runtime.fetcher.FutureList;
 
 public class ParallelFetchStageTest {
 
@@ -78,13 +77,14 @@ public class ParallelFetchStageTest {
 
 		int count = 0;
 
-		FutureList<U> list = entity.getObjects();
+		Iterable<U> list = entity.getObjects();
 		if (list != null) {
-			count += list.get().size();
 
 			String prefix = entity.getIncoming() != null ? entity.getIncoming().getName() + "." : "";
 
-			for (U object : list.get()) {
+			for (U object : list) {
+
+				count++;
 				buffer.append(prefix).append(object).append(";");
 			}
 		}

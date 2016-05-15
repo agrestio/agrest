@@ -1,5 +1,6 @@
 package com.nhl.link.rest.runtime.fetcher;
 
+import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
@@ -12,9 +13,9 @@ import org.slf4j.LoggerFactory;
 /**
  * @since 2.0
  */
-public class FutureList<T> {
+public class FutureIterable<T> implements Iterable<T> {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(FutureList.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(FutureIterable.class);
 
 	private volatile List<T> result;
 	private Fetcher<T> fetcher;
@@ -22,17 +23,17 @@ public class FutureList<T> {
 	private long timeout;
 	private TimeUnit timeoutUnit;
 
-	public static <T> FutureList<T> resolved(List<T> result) {
+	public static <T> FutureIterable<T> resolved(List<T> result) {
 
-		FutureList<T> futureList = new FutureList<>();
+		FutureIterable<T> futureList = new FutureIterable<>();
 		futureList.result = result;
 		return futureList;
 	}
 
-	public static <T> FutureList<T> future(Fetcher<T> fetcher, Future<List<T>> future, long timeout,
+	public static <T> FutureIterable<T> future(Fetcher<T> fetcher, Future<List<T>> future, long timeout,
 			TimeUnit timeoutUnit) {
 
-		FutureList<T> futureList = new FutureList<>();
+		FutureIterable<T> futureList = new FutureIterable<>();
 		futureList.timeout = timeout;
 		futureList.timeoutUnit = timeoutUnit;
 		futureList.fetcher = fetcher;
@@ -41,16 +42,17 @@ public class FutureList<T> {
 		return futureList;
 	}
 
-	private FutureList() {
+	private FutureIterable() {
 	}
 
-	public List<T> get() {
+	@Override
+	public Iterator<T> iterator() {
 
 		if (result == null) {
 			result = awaitResult();
 		}
 
-		return result;
+		return result.iterator();
 	}
 
 	private List<T> awaitResult() {

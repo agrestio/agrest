@@ -13,7 +13,6 @@ import com.nhl.link.rest.meta.LrEntity;
 import com.nhl.link.rest.processor.BaseLinearProcessingStage;
 import com.nhl.link.rest.processor.ProcessingStage;
 import com.nhl.link.rest.runtime.cayenne.ICayennePersister;
-import com.nhl.link.rest.runtime.fetcher.FutureList;
 import com.nhl.link.rest.runtime.processor.select.SelectContext;
 
 public class CayenneFetchStage<T> extends BaseLinearProcessingStage<SelectContext<T>, T> {
@@ -48,7 +47,7 @@ public class CayenneFetchStage<T> extends BaseLinearProcessingStage<SelectContex
 						"Found more than one object for ID '%s' and entity '%s'", context.getId(), entity.getName()));
 			}
 		}
-		
-		context.getEntity().setObjects(FutureList.resolved(objects));
+
+		context.getEntity().setObjects(objects);
 	}
 }

@@ -18,7 +18,7 @@ import com.nhl.link.rest.meta.LrAttribute;
 import com.nhl.link.rest.meta.LrEntity;
 import com.nhl.link.rest.meta.LrRelationship;
 import com.nhl.link.rest.runtime.fetcher.Fetcher;
-import com.nhl.link.rest.runtime.fetcher.FutureList;
+import com.nhl.link.rest.runtime.fetcher.FutureIterable;
 
 /**
  * A metadata object that describes a data structure of a given REST resource.
@@ -49,8 +49,9 @@ public class ResourceEntity<T> {
 	private int fetchOffset;
 	private int fetchLimit;
 	private boolean filtered;
-	private FutureList<T> objects;
+
 	private Fetcher<T> fetcher;
+	private Iterable<T> objects;
 
 	public ResourceEntity(LrEntity<T> lrEntity) {
 		this.idIncluded = false;
@@ -240,22 +241,15 @@ public class ResourceEntity<T> {
 	/**
 	 * @since 2.0
 	 */
-	public FutureList<T> getObjects() {
-		return objects;
-	}
-
-	/**
-	 * @since 2.0
-	 */
-	public void setObjects(FutureList<T> objects) {
+	public void setObjects(Iterable<T> objects) {
 		this.objects = objects;
 	}
 	
 	/**
 	 * @since 2.0
 	 */
-	public void setObjects(List<T> objects) {
-		this.objects = FutureList.resolved(objects);
+	public Iterable<T> getObjects() {
+		return objects;
 	}
 
 	/**
@@ -283,7 +277,7 @@ public class ResourceEntity<T> {
 	 * @since 2.0
 	 */
 	public void fetch() {
-		setObjects(FutureList.resolved(fetcher.fetch()));
+		setObjects(FutureIterable.resolved(fetcher.fetch()));
 	}
 
 	/**
@@ -291,6 +285,6 @@ public class ResourceEntity<T> {
 	 */
 	public void fetchAsync(ExecutorService executor, long timeout, TimeUnit timeoutUnit) {
 		Future<List<T>> future = executor.submit(() -> fetcher.fetch());
-		setObjects(FutureList.future(fetcher, future, timeout, timeoutUnit));
+		setObjects(FutureIterable.future(fetcher, future, timeout, timeoutUnit));
 	}
 }
