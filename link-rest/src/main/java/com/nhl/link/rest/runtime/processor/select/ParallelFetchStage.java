@@ -48,7 +48,7 @@ public class ParallelFetchStage<T> extends BaseLinearProcessingStage<SelectConte
 			childFetchers += fetch(childEntity, treeDepth + 1);
 		}
 
-		if (entity.getFetcher() != null) {
+		if (entity.canFetch()) {
 
 			// fetch strategy - if we are the root fetcher, and there were no
 			// child fetchers, run in the main thread. Otherwise run using

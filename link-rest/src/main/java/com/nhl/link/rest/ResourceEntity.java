@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
@@ -277,14 +276,14 @@ public class ResourceEntity<T> {
 	 * @since 2.0
 	 */
 	public void fetch() {
-		setObjects(FutureIterable.resolved(fetcher.fetch()));
+		setObjects(fetcher.fetch());
 	}
 
 	/**
 	 * @since 2.0
 	 */
 	public void fetchAsync(ExecutorService executor, long timeout, TimeUnit timeoutUnit) {
-		Future<List<T>> future = executor.submit(() -> fetcher.fetch());
+		Future<Iterable<T>> future = executor.submit(() -> fetcher.fetch());
 		setObjects(FutureIterable.future(fetcher, future, timeout, timeoutUnit));
 	}
 }

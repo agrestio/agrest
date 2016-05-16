@@ -17,9 +17,9 @@ public class FutureIterable<T> implements Iterable<T> {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(FutureIterable.class);
 
-	private volatile List<T> result;
+	private volatile Iterable<T> result;
 	private Fetcher<T> fetcher;
-	private Future<List<T>> future;
+	private Future<Iterable<T>> future;
 	private long timeout;
 	private TimeUnit timeoutUnit;
 
@@ -30,7 +30,7 @@ public class FutureIterable<T> implements Iterable<T> {
 		return futureList;
 	}
 
-	public static <T> FutureIterable<T> future(Fetcher<T> fetcher, Future<List<T>> future, long timeout,
+	public static <T> FutureIterable<T> future(Fetcher<T> fetcher, Future<Iterable<T>> future, long timeout,
 			TimeUnit timeoutUnit) {
 
 		FutureIterable<T> futureList = new FutureIterable<>();
@@ -55,7 +55,7 @@ public class FutureIterable<T> implements Iterable<T> {
 		return result.iterator();
 	}
 
-	private List<T> awaitResult() {
+	private Iterable<T> awaitResult() {
 
 		// TODO: more descriptive exception message - which fetcher failed?
 

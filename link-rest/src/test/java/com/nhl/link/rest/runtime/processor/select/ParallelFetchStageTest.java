@@ -133,7 +133,7 @@ public class ParallelFetchStageTest {
 
 		context.setEntity(createEntityWithFetcher(new TreeNodeFetcher("n") {
 			@Override
-			public List<TreeNode> fetch() {
+			public Iterable<TreeNode> fetch() {
 				try {
 					Thread.sleep(2000);
 				} catch (InterruptedException e) {
@@ -155,7 +155,7 @@ public class ParallelFetchStageTest {
 		createEntityWithFetcher("c1", context.getEntity(), "ec1");
 		createEntityWithFetcher(new TreeNodeFetcher("c2") {
 			@Override
-			public List<TreeNode> fetch() {
+			public Iterable<TreeNode> fetch() {
 				try {
 					Thread.sleep(2000);
 				} catch (InterruptedException e) {
@@ -192,7 +192,7 @@ public class ParallelFetchStageTest {
 		}
 
 		@Override
-		public List<TreeNode> fetch() {
+		public Iterable<TreeNode> fetch() {
 			LOGGER.info("fetched: " + name);
 			return Collections.singletonList(new TreeNode(name));
 		}
