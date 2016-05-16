@@ -111,8 +111,7 @@ public class AttributeEncoderFactory implements IAttributeEncoderFactory {
 				// keeping attribute encoders in alphabetical order
 				Map<String, Encoder> valueEncoders = new TreeMap<>();
 				for (LrAttribute id : ids) {
-					LrPersistentAttribute persistentId = (LrPersistentAttribute) id;
-					Encoder valueEncoder = buildEncoder(persistentId.getType(), persistentId.getJdbcType());
+					Encoder valueEncoder = buildEncoder(id.getType(), getJdbcType(id));
 					valueEncoders.put(id.getName(), valueEncoder);
 				}
 
@@ -120,8 +119,8 @@ public class AttributeEncoderFactory implements IAttributeEncoderFactory {
 						.encodedWith(new IdEncoder(valueEncoders));
 			} else {
 
-				LrPersistentAttribute persistentId = (LrPersistentAttribute) ids.iterator().next();
-				Encoder valueEncoder = buildEncoder(persistentId.getType(), persistentId.getJdbcType());
+				LrAttribute id = ids.iterator().next();
+				Encoder valueEncoder = buildEncoder(id.getType(), getJdbcType(id));
 
 				return PropertyBuilder.property(getOrCreateIdPropertyReader(entity.getLrEntity()))
 						.encodedWith(new IdEncoder(valueEncoder));
@@ -139,6 +138,14 @@ public class AttributeEncoderFactory implements IAttributeEncoderFactory {
 
 			LrAttribute id = ids.iterator().next();
 			return PropertyBuilder.property(BeanPropertyReader.reader(id.getName()));
+		}
+	}
+
+	private int getJdbcType(LrAttribute attribute) {
+		if (attribute instanceof LrPersistentAttribute) {
+			return ((LrPersistentAttribute) attribute).getJdbcType();
+		} else {
+			return Integer.MIN_VALUE;
 		}
 	}
 
