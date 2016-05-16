@@ -9,12 +9,11 @@ import com.nhl.link.rest.runtime.processor.select.SelectContext;
  */
 public class StageBasedFetcher<T> implements Fetcher<T> {
 
-	private ProcessingStage<SelectContext<T>, T> startingStage;
-	private SelectContext<T> context;
+	private ProcessingStage<SelectContext<T>, T> pipeline;
 
 	@Override
-	public Iterable<T> fetch() {
-		ChainProcessor.execute(startingStage, context);
+	public Iterable<T> fetch(SelectContext<T> context) {
+		ChainProcessor.execute(pipeline, context);
 		return context.getEntity().getObjects();
 	}
 }

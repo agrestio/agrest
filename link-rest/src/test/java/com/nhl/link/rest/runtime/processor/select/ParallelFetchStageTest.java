@@ -3,7 +3,6 @@ package com.nhl.link.rest.runtime.processor.select;
 import static org.junit.Assert.assertEquals;
 
 import java.util.Collections;
-import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -133,13 +132,13 @@ public class ParallelFetchStageTest {
 
 		context.setEntity(createEntityWithFetcher(new TreeNodeFetcher("n") {
 			@Override
-			public Iterable<TreeNode> fetch() {
+			public Iterable<TreeNode> fetch(SelectContext<TreeNode> context) {
 				try {
 					Thread.sleep(2000);
 				} catch (InterruptedException e) {
 					LOGGER.info("interrupted: " + name);
 				}
-				return super.fetch();
+				return super.fetch(context);
 			}
 		}, null, null));
 
@@ -155,13 +154,13 @@ public class ParallelFetchStageTest {
 		createEntityWithFetcher("c1", context.getEntity(), "ec1");
 		createEntityWithFetcher(new TreeNodeFetcher("c2") {
 			@Override
-			public Iterable<TreeNode> fetch() {
+			public Iterable<TreeNode> fetch(SelectContext<TreeNode> context) {
 				try {
 					Thread.sleep(2000);
 				} catch (InterruptedException e) {
 					LOGGER.info("interrupted: " + name);
 				}
-				return super.fetch();
+				return super.fetch(context);
 			}
 		}, context.getEntity(), "ec2");
 
@@ -175,7 +174,7 @@ public class ParallelFetchStageTest {
 		createEntityWithFetcher("c1", context.getEntity(), "ec1");
 		createEntityWithFetcher(new TreeNodeFetcher("c2") {
 			@Override
-			public List<TreeNode> fetch() {
+			public Iterable<TreeNode> fetch(SelectContext<TreeNode> context) {
 				throw new UnsupportedOperationException("Can't fetch...");
 			}
 		}, context.getEntity(), "ec2");
@@ -190,9 +189,9 @@ public class ParallelFetchStageTest {
 		public TreeNodeFetcher(String name) {
 			this.name = name;
 		}
-
+		
 		@Override
-		public Iterable<TreeNode> fetch() {
+		public Iterable<TreeNode> fetch(SelectContext<TreeNode> context) {
 			LOGGER.info("fetched: " + name);
 			return Collections.singletonList(new TreeNode(name));
 		}

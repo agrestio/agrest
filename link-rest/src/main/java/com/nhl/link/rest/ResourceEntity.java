@@ -5,9 +5,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
 
 import org.apache.cayenne.exp.Expression;
 import org.apache.cayenne.query.Ordering;
@@ -17,7 +14,6 @@ import com.nhl.link.rest.meta.LrAttribute;
 import com.nhl.link.rest.meta.LrEntity;
 import com.nhl.link.rest.meta.LrRelationship;
 import com.nhl.link.rest.runtime.fetcher.Fetcher;
-import com.nhl.link.rest.runtime.fetcher.FutureIterable;
 
 /**
  * A metadata object that describes a data structure of a given REST resource.
@@ -243,7 +239,7 @@ public class ResourceEntity<T> {
 	public void setObjects(Iterable<T> objects) {
 		this.objects = objects;
 	}
-	
+
 	/**
 	 * @since 2.0
 	 */
@@ -263,27 +259,5 @@ public class ResourceEntity<T> {
 	 */
 	public void setFetcher(Fetcher<T> fetcher) {
 		this.fetcher = fetcher;
-	}
-
-	/**
-	 * @since 2.0
-	 */
-	public boolean canFetch() {
-		return fetcher != null;
-	}
-
-	/**
-	 * @since 2.0
-	 */
-	public void fetch() {
-		setObjects(fetcher.fetch());
-	}
-
-	/**
-	 * @since 2.0
-	 */
-	public void fetchAsync(ExecutorService executor, long timeout, TimeUnit timeoutUnit) {
-		Future<Iterable<T>> future = executor.submit(() -> fetcher.fetch());
-		setObjects(FutureIterable.future(fetcher, future, timeout, timeoutUnit));
 	}
 }
