@@ -45,7 +45,7 @@ public class ResourceEntity<T> {
 	private int fetchLimit;
 	private boolean filtered;
 
-	private Fetcher<T> fetcher;
+	private Fetcher fetcher;
 	private Iterable<T> objects;
 
 	public ResourceEntity(LrEntity<T> lrEntity) {
@@ -250,14 +250,14 @@ public class ResourceEntity<T> {
 	/**
 	 * @since 2.0
 	 */
-	public Fetcher<T> getFetcher() {
+	public Fetcher getFetcher() {
 		return fetcher;
 	}
 
 	/**
 	 * @since 2.0
 	 */
-	public void setFetcher(Fetcher<T> fetcher) {
+	public void setFetcher(Fetcher fetcher) {
 		this.fetcher = fetcher;
 	}
 }

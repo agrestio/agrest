@@ -3,6 +3,7 @@ package com.nhl.link.rest.runtime.processor.select;
 import static org.junit.Assert.assertEquals;
 
 import java.util.Collections;
+import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -16,7 +17,9 @@ import org.slf4j.LoggerFactory;
 
 import com.nhl.link.rest.LinkRestException;
 import com.nhl.link.rest.ResourceEntity;
+import com.nhl.link.rest.meta.DefaultLrEntity;
 import com.nhl.link.rest.meta.DefaultLrRelationship;
+import com.nhl.link.rest.meta.LrEntity;
 import com.nhl.link.rest.meta.LrRelationship;
 import com.nhl.link.rest.runtime.fetcher.Fetcher;
 
@@ -44,12 +47,13 @@ public class ParallelFetchStageTest {
 		return createEntityWithFetcher(new TreeNodeFetcher(treeNodeName), parent, name);
 	}
 
-	private ResourceEntity<TreeNode> createEntityWithFetcher(Fetcher<TreeNode> fetcher, ResourceEntity<TreeNode> parent,
+	private ResourceEntity<TreeNode> createEntityWithFetcher(Fetcher fetcher, ResourceEntity<TreeNode> parent,
 			String name) {
 
 		LrRelationship incoming = name != null ? new DefaultLrRelationship(name, TreeNode.class, false) : null;
 
-		ResourceEntity<TreeNode> e = new ResourceEntity<>(null, incoming);
+		LrEntity<TreeNode> lrEntity = new DefaultLrEntity<>(TreeNode.class);
+		ResourceEntity<TreeNode> e = new ResourceEntity<>(lrEntity, incoming);
 
 		if (parent != null && name != null) {
 			parent.getChildren().put(name, e);
@@ -132,7 +136,7 @@ public class ParallelFetchStageTest {
 
 		context.setEntity(createEntityWithFetcher(new TreeNodeFetcher("n") {
 			@Override
-			public Iterable<TreeNode> fetch(SelectContext<TreeNode> context) {
+			public <T> Iterable<T> fetch(SelectContext<T> context) {
 				try {
 					Thread.sleep(2000);
 				} catch (InterruptedException e) {
@@ -154,7 +158,7 @@ public class ParallelFetchStageTest {
 		createEntityWithFetcher("c1", context.getEntity(), "ec1");
 		createEntityWithFetcher(new TreeNodeFetcher("c2") {
 			@Override
-			public Iterable<TreeNode> fetch(SelectContext<TreeNode> context) {
+			public <T> Iterable<T> fetch(SelectContext<T> context) {
 				try {
 					Thread.sleep(2000);
 				} catch (InterruptedException e) {
@@ -173,8 +177,9 @@ public class ParallelFetchStageTest {
 
 		createEntityWithFetcher("c1", context.getEntity(), "ec1");
 		createEntityWithFetcher(new TreeNodeFetcher("c2") {
+			
 			@Override
-			public Iterable<TreeNode> fetch(SelectContext<TreeNode> context) {
+			public <T> Iterable<T> fetch(SelectContext<T> context) {
 				throw new UnsupportedOperationException("Can't fetch...");
 			}
 		}, context.getEntity(), "ec2");
@@ -183,17 +188,19 @@ public class ParallelFetchStageTest {
 		assertContext(-1, "expecting_an_error_not_this_string");
 	}
 
-	static class TreeNodeFetcher implements Fetcher<TreeNode> {
+	static class TreeNodeFetcher implements Fetcher {
 		protected String name;
 
 		public TreeNodeFetcher(String name) {
 			this.name = name;
 		}
 		
+		@SuppressWarnings({ "rawtypes", "unchecked" })
 		@Override
-		public Iterable<TreeNode> fetch(SelectContext<TreeNode> context) {
+		public <T> Iterable<T> fetch(SelectContext<T> context) {
 			LOGGER.info("fetched: " + name);
-			return Collections.singletonList(new TreeNode(name));
+			List nodes = Collections.singletonList(new TreeNode(name));
+			return nodes;
 		}
 	}
 

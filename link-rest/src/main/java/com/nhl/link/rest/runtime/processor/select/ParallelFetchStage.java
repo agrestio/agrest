@@ -86,7 +86,7 @@ public class ParallelFetchStage<T> extends BaseLinearProcessingStage<SelectConte
 	}
 
 	protected <U> Iterable<U> fetchAsynchronously(SelectContext<U> context, ResourceEntity<U> entity) {
-		Fetcher<U> fetcher = entity.getFetcher();
+		Fetcher fetcher = entity.getFetcher();
 		Future<Iterable<U>> future = executor.submit(() -> fetcher.fetch(context));
 		return FutureIterable.future(fetcher, future, singleFetcherTimeout, singleFetcherTimeoutUnit);
 	}
