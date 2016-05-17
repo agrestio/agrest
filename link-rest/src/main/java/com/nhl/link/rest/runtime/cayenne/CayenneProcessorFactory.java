@@ -27,13 +27,17 @@ import com.nhl.link.rest.runtime.cayenne.processor.CayenneContextInitStage;
 import com.nhl.link.rest.runtime.cayenne.processor.CayenneCreateOrUpdateStage;
 import com.nhl.link.rest.runtime.cayenne.processor.CayenneCreateStage;
 import com.nhl.link.rest.runtime.cayenne.processor.CayenneDeleteStage;
+import com.nhl.link.rest.runtime.cayenne.processor.CayenneFetchStage;
 import com.nhl.link.rest.runtime.cayenne.processor.CayenneFullSyncStage;
+import com.nhl.link.rest.runtime.cayenne.processor.CayenneQueryAssembleStage;
 import com.nhl.link.rest.runtime.cayenne.processor.CayenneUnrelateStage;
 import com.nhl.link.rest.runtime.cayenne.processor.CayenneUpdatePostProcessStage;
 import com.nhl.link.rest.runtime.cayenne.processor.CayenneUpdateStage;
 import com.nhl.link.rest.runtime.constraints.IConstraintsHandler;
 import com.nhl.link.rest.runtime.encoder.EncoderService;
 import com.nhl.link.rest.runtime.encoder.IEncoderService;
+import com.nhl.link.rest.runtime.fetcher.Fetcher;
+import com.nhl.link.rest.runtime.fetcher.StageBasedFetcher;
 import com.nhl.link.rest.runtime.meta.IMetadataService;
 import com.nhl.link.rest.runtime.meta.IResourceMetadataService;
 import com.nhl.link.rest.runtime.parser.IRequestParser;
@@ -129,6 +133,14 @@ public class CayenneProcessorFactory implements IProcessorFactory {
 		return stage0;
 	}
 
+	private Fetcher createDefaultFetcher() {
+		BaseLinearProcessingStage<SelectContext<Object>, Object> stage1 = new CayenneFetchStage<>(null, persister);
+		BaseLinearProcessingStage<SelectContext<Object>, Object> stage0 = new CayenneQueryAssembleStage<>(stage1,
+				persister);
+
+		return new StageBasedFetcher(stage0);
+	}
+
 	private ProcessingStage<SelectContext<Object>, Object> createSelectProcessor() {
 
 		// TODO: make executor customizable..
@@ -139,7 +151,7 @@ public class CayenneProcessorFactory implements IProcessorFactory {
 		ExecutorService executor = Executors.newCachedThreadPool(
 				(runnable) -> new Thread(runnable, "link-rest-exec-" + threadCounter.getAndIncrement()));
 		BaseLinearProcessingStage<SelectContext<Object>, Object> stage3 = new ParallelFetchStage<>(null, executor, 5,
-				TimeUnit.SECONDS);
+				TimeUnit.SECONDS, createDefaultFetcher());
 		BaseLinearProcessingStage<SelectContext<Object>, Object> stage2 = new ApplySelectServerParamsStage<>(stage3,
 				encoderService, constraintsHandler, filters);
 		BaseLinearProcessingStage<SelectContext<Object>, Object> stage1 = new ParseSelectRequestStage<>(stage2,

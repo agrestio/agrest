@@ -1,6 +1,7 @@
 package com.nhl.link.rest.runtime.processor.select;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.mock;
 
 import java.util.Collections;
 import java.util.List;
@@ -64,7 +65,7 @@ public class ParallelFetchStageTest {
 	}
 
 	private ParallelFetchStage<TreeNode> createStage() {
-		return new ParallelFetchStage<>(null, executor, 500, TimeUnit.MILLISECONDS);
+		return new ParallelFetchStage<>(null, executor, 500, TimeUnit.MILLISECONDS, mock(Fetcher.class));
 	}
 
 	private void assertContext(int expectedNodeCount, String expectedNodeAsString) {

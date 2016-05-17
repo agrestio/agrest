@@ -24,12 +24,14 @@ public class ParallelFetchStage<T> extends BaseLinearProcessingStage<SelectConte
 	private ExecutorService executor;
 	private long singleFetcherTimeout;
 	private TimeUnit singleFetcherTimeoutUnit;
+	private Fetcher defaultFetcher;
 
 	public ParallelFetchStage(ProcessingStage<SelectContext<T>, ? super T> next, ExecutorService executor,
-			long singleFetcherTimeout, TimeUnit singleFetcherTimeoutUnit) {
+			long singleFetcherTimeout, TimeUnit singleFetcherTimeoutUnit, Fetcher defaultFetcher) {
 
 		super(next);
 
+		this.defaultFetcher = defaultFetcher;
 		this.executor = executor;
 		this.singleFetcherTimeout = singleFetcherTimeout;
 		this.singleFetcherTimeoutUnit = singleFetcherTimeoutUnit;
@@ -51,21 +53,40 @@ public class ParallelFetchStage<T> extends BaseLinearProcessingStage<SelectConte
 			childFetchers += fetch(rootContext, childEntity, treeDepth + 1);
 		}
 
-		if (entity.getFetcher() != null) {
+		Fetcher fetcher = getFetcher(entity, treeDepth);
+
+		if (fetcher != null) {
 
 			// fetch strategy - if we are the root fetcher, and there were no
 			// child fetchers, run in the main thread. Otherwise run using
 			// executor...
 
 			SelectContext<U> subcontext = createSubcontext(rootContext, entity, treeDepth);
-			Iterable<U> objects = (childFetchers == 0 && treeDepth == 0) ? fetchSynchronously(subcontext, entity)
-					: fetchAsynchronously(subcontext, entity);
+			Iterable<U> objects = (childFetchers == 0 && treeDepth == 0) ? fetchSynchronously(fetcher, subcontext)
+					: fetchAsynchronously(fetcher, subcontext);
 			entity.setObjects(objects);
 
 			return childFetchers + 1;
 		} else {
 			return childFetchers;
 		}
+	}
+
+	protected Fetcher getFetcher(ResourceEntity<?> entity, int treeDepth) {
+
+		Fetcher fetcher = entity.getFetcher();
+		if (fetcher != null) {
+			return fetcher;
+		}
+
+		// use default fetcher for the top-level entity, null for any other
+		// level ("null" meaning the entity will be fetched as a part of the
+		// parent entity
+		if (treeDepth == 0) {
+			return defaultFetcher;
+		}
+
+		return null;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -81,12 +102,11 @@ public class ParallelFetchStage<T> extends BaseLinearProcessingStage<SelectConte
 		return subcontext;
 	}
 
-	protected <U> Iterable<U> fetchSynchronously(SelectContext<U> context, ResourceEntity<U> entity) {
-		return entity.getFetcher().fetch(context);
+	protected <U> Iterable<U> fetchSynchronously(Fetcher fetcher, SelectContext<U> context) {
+		return fetcher.fetch(context);
 	}
 
-	protected <U> Iterable<U> fetchAsynchronously(SelectContext<U> context, ResourceEntity<U> entity) {
-		Fetcher fetcher = entity.getFetcher();
+	protected <U> Iterable<U> fetchAsynchronously(Fetcher fetcher, SelectContext<U> context) {
 		Future<Iterable<U>> future = executor.submit(() -> fetcher.fetch(context));
 		return FutureIterable.future(fetcher, future, singleFetcherTimeout, singleFetcherTimeoutUnit);
 	}
