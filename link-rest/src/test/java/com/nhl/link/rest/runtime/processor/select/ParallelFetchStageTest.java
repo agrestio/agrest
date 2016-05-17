@@ -137,13 +137,13 @@ public class ParallelFetchStageTest {
 
 		context.setEntity(createEntityWithFetcher(new TreeNodeFetcher("n") {
 			@Override
-			public <T> Iterable<T> fetch(SelectContext<T> context) {
+			public <T> Iterable<T> fetch(SelectContext<T> context, Iterable<?> parentResult) {
 				try {
 					Thread.sleep(2000);
 				} catch (InterruptedException e) {
 					LOGGER.info("interrupted: " + name);
 				}
-				return super.fetch(context);
+				return super.fetch(context, parentResult);
 			}
 		}, null, null));
 
@@ -159,13 +159,13 @@ public class ParallelFetchStageTest {
 		createEntityWithFetcher("c1", context.getEntity(), "ec1");
 		createEntityWithFetcher(new TreeNodeFetcher("c2") {
 			@Override
-			public <T> Iterable<T> fetch(SelectContext<T> context) {
+			public <T> Iterable<T> fetch(SelectContext<T> context, Iterable<?> parentResult) {
 				try {
 					Thread.sleep(2000);
 				} catch (InterruptedException e) {
 					LOGGER.info("interrupted: " + name);
 				}
-				return super.fetch(context);
+				return super.fetch(context, parentResult);
 			}
 		}, context.getEntity(), "ec2");
 
@@ -178,9 +178,9 @@ public class ParallelFetchStageTest {
 
 		createEntityWithFetcher("c1", context.getEntity(), "ec1");
 		createEntityWithFetcher(new TreeNodeFetcher("c2") {
-			
+
 			@Override
-			public <T> Iterable<T> fetch(SelectContext<T> context) {
+			public <T> Iterable<T> fetch(SelectContext<T> context, Iterable<?> parentResult) {
 				throw new UnsupportedOperationException("Can't fetch...");
 			}
 		}, context.getEntity(), "ec2");
@@ -195,12 +195,13 @@ public class ParallelFetchStageTest {
 		public TreeNodeFetcher(String name) {
 			this.name = name;
 		}
-		
+
 		@SuppressWarnings({ "rawtypes", "unchecked" })
 		@Override
-		public <T> Iterable<T> fetch(SelectContext<T> context) {
+		public <T> Iterable<T> fetch(SelectContext<T> context, Iterable<?> parentResult) {
 			LOGGER.info("fetched: " + name);
 			List nodes = Collections.singletonList(new TreeNode(name));
+			context.getEntity().setObjects(nodes);
 			return nodes;
 		}
 	}

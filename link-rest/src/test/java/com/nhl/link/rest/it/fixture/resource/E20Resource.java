@@ -58,7 +58,7 @@ public class E20Resource {
 
 		@SuppressWarnings("unchecked")
 		@Override
-		public <T> Iterable<T> fetch(SelectContext<T> context) {
+		public <T> Iterable<T> fetch(SelectContext<T> context, Iterable<?> parentResult) {
 			LOGGER.info("Fetching E20Pojo's");
 			List<E20Pojo> pojos = new ArrayList<>();
 			return (Iterable<T>) pojos;

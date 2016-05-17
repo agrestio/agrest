@@ -18,7 +18,7 @@ public class StageBasedFetcher implements Fetcher {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public <T> Iterable<T> fetch(SelectContext<T> context) {
+	public <T> Iterable<T> fetch(SelectContext<T> context, Iterable<?> parentResult) {
 		ChainProcessor.execute(pipeline, context);
 		return context.getEntity().getObjects();
 	}

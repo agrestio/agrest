@@ -47,12 +47,16 @@ public class FutureIterable<T> implements Iterable<T> {
 
 	@Override
 	public Iterator<T> iterator() {
+		return getOrAwaitResult().iterator();
+	}
+
+	public Iterable<T> getOrAwaitResult() {
 
 		if (result == null) {
 			result = awaitResult();
 		}
 
-		return result.iterator();
+		return result;
 	}
 
 	private Iterable<T> awaitResult() {

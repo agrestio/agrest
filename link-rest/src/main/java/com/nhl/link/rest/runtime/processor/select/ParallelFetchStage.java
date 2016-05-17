@@ -1,5 +1,7 @@
 package com.nhl.link.rest.runtime.processor.select;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
@@ -40,36 +42,58 @@ public class ParallelFetchStage<T> extends BaseLinearProcessingStage<SelectConte
 	@Override
 	protected void doExecute(SelectContext<T> context) {
 		ResourceEntity<T> rootEntity = Objects.requireNonNull(context.getEntity());
-		fetch(context, rootEntity, 0);
 
-		// note that we can return from this stage, while the result is still
-		// being calculated...
+		// fetch strategy - if we are the root fetcher, and there were no
+		// child fetchers, run in the main thread. Otherwise run using
+		// executor...
+
+		if (hasChildFetchers(rootEntity)) {
+			// TODO: should we use some kind of ForkJoinTask here?
+			fetchRecursive(context, rootEntity, null, 0).forEach(FutureIterable::getOrAwaitResult);
+		} else {
+			fetchRoot(context);
+		}
 	}
 
-	protected <U> int fetch(SelectContext<T> rootContext, ResourceEntity<U> entity, int treeDepth) {
+	protected boolean hasChildFetchers(ResourceEntity<?> entity) {
 
-		int childFetchers = 0;
 		for (ResourceEntity<?> childEntity : entity.getChildren().values()) {
-			childFetchers += fetch(rootContext, childEntity, treeDepth + 1);
+			if (childEntity.getFetcher() != null || hasChildFetchers(childEntity)) {
+				return true;
+			}
 		}
 
+		return false;
+	}
+
+	protected <U> Collection<FutureIterable<?>> fetchRecursive(SelectContext<T> rootContext, ResourceEntity<U> entity,
+			FutureIterable<?> parentResult, int treeDepth) {
+
+		Collection<FutureIterable<?>> allResults = new ArrayList<>();
 		Fetcher fetcher = getFetcher(entity, treeDepth);
+		FutureIterable<?> results;
 
 		if (fetcher != null) {
 
-			// fetch strategy - if we are the root fetcher, and there were no
-			// child fetchers, run in the main thread. Otherwise run using
-			// executor...
+			@SuppressWarnings("unchecked")
+			SelectContext<U> subcontext = treeDepth > 0 ? createSubcontext(rootContext, entity, treeDepth)
+					: (SelectContext<U>) rootContext;
 
-			SelectContext<U> subcontext = createSubcontext(rootContext, entity, treeDepth);
-			Iterable<U> objects = (childFetchers == 0 && treeDepth == 0) ? fetchSynchronously(fetcher, subcontext)
-					: fetchAsynchronously(fetcher, subcontext);
-			entity.setObjects(objects);
-
-			return childFetchers + 1;
+			Future<Iterable<U>> future = executor.submit(() -> fetcher.fetch(subcontext, parentResult));
+			results = FutureIterable.future(fetcher, future, singleFetcherTimeout, singleFetcherTimeoutUnit);
+			allResults.add(results);
 		} else {
-			return childFetchers;
+			// TODO: for non-fetching nodes we probably need to fake the result
+			// that is a parent of U... for now it may be a parent of a parent
+			// of a parent
+			results = parentResult;
 		}
+
+		for (ResourceEntity<?> childEntity : entity.getChildren().values()) {
+			allResults.addAll(fetchRecursive(rootContext, childEntity, results, treeDepth + 1));
+		}
+
+		return allResults;
 	}
 
 	protected Fetcher getFetcher(ResourceEntity<?> entity, int treeDepth) {
@@ -102,13 +126,9 @@ public class ParallelFetchStage<T> extends BaseLinearProcessingStage<SelectConte
 		return subcontext;
 	}
 
-	protected <U> Iterable<U> fetchSynchronously(Fetcher fetcher, SelectContext<U> context) {
-		return fetcher.fetch(context);
-	}
-
-	protected <U> Iterable<U> fetchAsynchronously(Fetcher fetcher, SelectContext<U> context) {
-		Future<Iterable<U>> future = executor.submit(() -> fetcher.fetch(context));
-		return FutureIterable.future(fetcher, future, singleFetcherTimeout, singleFetcherTimeoutUnit);
+	protected void fetchRoot(SelectContext<T> context) {
+		Fetcher fetcher = getFetcher(context.getEntity(), 0);
+		fetcher.fetch(context, null);
 	}
 
 }

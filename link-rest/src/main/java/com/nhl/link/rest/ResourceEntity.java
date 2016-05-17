@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.cayenne.exp.Expression;
@@ -47,7 +48,7 @@ public class ResourceEntity<T> {
 	private boolean filtered;
 
 	private Fetcher fetcher;
-	private Iterable<T> objects;
+	private List<T> objects;
 
 	public ResourceEntity(LrEntity<T> lrEntity) {
 		this.idIncluded = false;
@@ -245,14 +246,14 @@ public class ResourceEntity<T> {
 	/**
 	 * @since 2.0
 	 */
-	public void setObjects(Iterable<T> objects) {
+	public void setObjects(List<T> objects) {
 		this.objects = objects;
 	}
 
 	/**
 	 * @since 2.0
 	 */
-	public Iterable<T> getObjects() {
+	public List<T> getObjects() {
 		return objects;
 	}
 
