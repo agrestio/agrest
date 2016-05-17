@@ -102,6 +102,15 @@
 		<db-attribute name="id" type="INTEGER" isPrimaryKey="true" isGenerated="true" isMandatory="true"/>
 		<db-attribute name="name" type="VARCHAR" length="100"/>
 	</db-entity>
+	<db-entity name="e20" schema="utest">
+		<db-attribute name="id" type="INTEGER" isPrimaryKey="true" isGenerated="true" isMandatory="true"/>
+		<db-attribute name="name" type="VARCHAR" length="100"/>
+	</db-entity>
+	<db-entity name="e21" schema="utest">
+		<db-attribute name="e20_id" type="INTEGER"/>
+		<db-attribute name="id" type="INTEGER" isPrimaryKey="true" isMandatory="true"/>
+		<db-attribute name="name" type="VARCHAR" length="100"/>
+	</db-entity>
 	<db-entity name="e3" schema="utest">
 		<db-attribute name="e2_id" type="INTEGER"/>
 		<db-attribute name="e5_id" type="INTEGER"/>
@@ -214,6 +223,12 @@
 		<obj-attribute name="address" type="java.lang.String" db-attribute-path="address"/>
 		<obj-attribute name="name" type="java.lang.String" db-attribute-path="name"/>
 	</obj-entity>
+	<obj-entity name="E20" className="com.nhl.link.rest.it.fixture.cayenne.E20" dbEntityName="e20">
+		<obj-attribute name="name" type="java.lang.String" db-attribute-path="name"/>
+	</obj-entity>
+	<obj-entity name="E21" className="com.nhl.link.rest.it.fixture.cayenne.E21" dbEntityName="e21">
+		<obj-attribute name="name" type="java.lang.String" db-attribute-path="name"/>
+	</obj-entity>
 	<obj-entity name="E3" className="com.nhl.link.rest.it.fixture.cayenne.E3" dbEntityName="e3">
 		<obj-attribute name="name" type="java.lang.String" db-attribute-path="name"/>
 		<obj-attribute name="phoneNumber" type="java.lang.String" db-attribute-path="phone_number"/>
@@ -298,6 +313,12 @@
 	<db-relationship name="e3s" source="e2" target="e3" toMany="true">
 		<db-attribute-pair source="id" target="e2_id"/>
 	</db-relationship>
+	<db-relationship name="e21s" source="e20" target="e21" toMany="true">
+		<db-attribute-pair source="id" target="e20_id"/>
+	</db-relationship>
+	<db-relationship name="e20" source="e21" target="e20" toMany="false">
+		<db-attribute-pair source="e20_id" target="id"/>
+	</db-relationship>
 	<db-relationship name="e2" source="e3" target="e2" toMany="false">
 		<db-attribute-pair source="e2_id" target="id"/>
 	</db-relationship>
@@ -338,6 +359,8 @@
 	<obj-relationship name="e18s" source="E17" target="E18" deleteRule="Deny" db-relationship-path="e18s"/>
 	<obj-relationship name="e17" source="E18" target="E17" deleteRule="Nullify" db-relationship-path="e17"/>
 	<obj-relationship name="e3s" source="E2" target="E3" deleteRule="Deny" db-relationship-path="e3s"/>
+	<obj-relationship name="e21s" source="E20" target="E21" deleteRule="Deny" db-relationship-path="e21s"/>
+	<obj-relationship name="e20" source="E21" target="E20" deleteRule="Nullify" db-relationship-path="e20"/>
 	<obj-relationship name="e2" source="E3" target="E2" deleteRule="Nullify" db-relationship-path="e2"/>
 	<obj-relationship name="e5" source="E3" target="E5" deleteRule="Nullify" db-relationship-path="e5"/>
 	<obj-relationship name="e15s" source="E5" target="E15" db-relationship-path="e15e5.e15"/>
