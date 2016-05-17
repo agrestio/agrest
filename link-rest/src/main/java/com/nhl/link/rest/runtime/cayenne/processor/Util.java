@@ -1,17 +1,13 @@
 package com.nhl.link.rest.runtime.cayenne.processor;
 
-import javax.ws.rs.core.Response.Status;
-
-import org.apache.cayenne.Cayenne;
+import com.nhl.link.rest.LinkRestException;
+import com.nhl.link.rest.meta.LrEntity;
 import org.apache.cayenne.ObjectContext;
-import org.apache.cayenne.ObjectId;
 import org.apache.cayenne.exp.ExpressionFactory;
 import org.apache.cayenne.map.ObjEntity;
-import org.apache.cayenne.query.ObjectIdQuery;
-
-import com.nhl.link.rest.LinkRestException;
 import org.apache.cayenne.query.ObjectSelect;
 
+import javax.ws.rs.core.Response.Status;
 import java.util.Map;
 
 /**
@@ -23,7 +19,7 @@ class Util {
 	}
 
 	@SuppressWarnings("unchecked")
-	static <A> A findById(ObjectContext context, Class<A> type, Object id) {
+	static <A> A findById(ObjectContext context, Class<A> type, LrEntity<?> lrEntity, Object id) {
 		ObjEntity entity = context.getEntityResolver().getObjEntity(type);
 
 		// sanity checking...
@@ -45,10 +41,10 @@ class Util {
 			}
 			return query.selectOne(context);
 		} else {
-			// TODO: switchover to ObjectSelect
-			String idName = entity.getPrimaryKeyNames().iterator().next();
-			ObjectIdQuery select = new ObjectIdQuery(new ObjectId(entity.getName(), idName, id));
-			return (A) Cayenne.objectForQuery(context, select);
+			String idName = lrEntity.getIds().iterator().next().getName();
+			ObjectSelect<A> query = ObjectSelect.query(type);
+			query.and(ExpressionFactory.matchDbExp(entity.getDbEntity().getAttribute(idName).getName(), id));
+			return query.selectOne(context);
 		}
 	}
 }

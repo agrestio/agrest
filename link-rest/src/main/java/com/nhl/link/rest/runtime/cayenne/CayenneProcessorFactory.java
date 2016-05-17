@@ -117,7 +117,7 @@ public class CayenneProcessorFactory implements IProcessorFactory {
 	}
 
 	private ProcessingStage<DeleteContext<Object>, Object> createDeleteProcessor() {
-		BaseLinearProcessingStage<DeleteContext<Object>, Object> stage1 = new CayenneDeleteStage<>(null);
+		BaseLinearProcessingStage<DeleteContext<Object>, Object> stage1 = new CayenneDeleteStage<>(null, metadataService);
 		BaseLinearProcessingStage<DeleteContext<Object>, Object> stage0 = new CayenneContextInitStage<>(stage1,
 				persister);
 
@@ -142,7 +142,7 @@ public class CayenneProcessorFactory implements IProcessorFactory {
 
 		BaseLinearProcessingStage<UpdateContext<DataObject>, DataObject> stage5 = new CayenneUpdatePostProcessStage<>(
 				null, Status.CREATED);
-		BaseLinearProcessingStage<UpdateContext<DataObject>, DataObject> stage4 = new CayenneCreateStage<>(stage5);
+		BaseLinearProcessingStage<UpdateContext<DataObject>, DataObject> stage4 = new CayenneCreateStage<>(stage5, metadataService);
 		BaseLinearProcessingStage<UpdateContext<DataObject>, DataObject> stage3 = new ApplyUpdateServerParamsStage<>(
 				stage4, encoderService, constraintsHandler, metadataService);
 		BaseLinearProcessingStage<UpdateContext<DataObject>, DataObject> stage2 = new ParseUpdateRequestStage<>(stage3,
@@ -159,7 +159,7 @@ public class CayenneProcessorFactory implements IProcessorFactory {
 
 		BaseLinearProcessingStage<UpdateContext<DataObject>, DataObject> stage5 = new CayenneUpdatePostProcessStage<>(
 				null, Status.OK);
-		BaseLinearProcessingStage<UpdateContext<DataObject>, DataObject> stage4 = new CayenneUpdateStage<>(stage5);
+		BaseLinearProcessingStage<UpdateContext<DataObject>, DataObject> stage4 = new CayenneUpdateStage<>(stage5, metadataService);
 		BaseLinearProcessingStage<UpdateContext<DataObject>, DataObject> stage3 = new ApplyUpdateServerParamsStage<>(
 				stage4, encoderService, constraintsHandler, metadataService);
 		BaseLinearProcessingStage<UpdateContext<DataObject>, DataObject> stage2 = new ParseUpdateRequestStage<>(stage3,
@@ -177,7 +177,7 @@ public class CayenneProcessorFactory implements IProcessorFactory {
 		BaseLinearProcessingStage<UpdateContext<DataObject>, DataObject> stage5 = new CayenneUpdatePostProcessStage<>(
 				null, Status.OK);
 		BaseLinearProcessingStage<UpdateContext<DataObject>, DataObject> stage4 = new CayenneCreateOrUpdateStage<>(
-				stage5, idempotnent);
+				stage5, metadataService, idempotnent);
 		BaseLinearProcessingStage<UpdateContext<DataObject>, DataObject> stage3 = new ApplyUpdateServerParamsStage<>(
 				stage4, encoderService, constraintsHandler, metadataService);
 		BaseLinearProcessingStage<UpdateContext<DataObject>, DataObject> stage2 = new ParseUpdateRequestStage<>(stage3,
@@ -195,7 +195,7 @@ public class CayenneProcessorFactory implements IProcessorFactory {
 		BaseLinearProcessingStage<UpdateContext<DataObject>, DataObject> stage5 = new CayenneUpdatePostProcessStage<>(
 				null, Status.OK);
 		BaseLinearProcessingStage<UpdateContext<DataObject>, DataObject> stage4 = new CayenneFullSyncStage<>(stage5,
-				idempotnent);
+				metadataService, idempotnent);
 		BaseLinearProcessingStage<UpdateContext<DataObject>, DataObject> stage3 = new ApplyUpdateServerParamsStage<>(
 				stage4, encoderService, constraintsHandler, metadataService);
 		BaseLinearProcessingStage<UpdateContext<DataObject>, DataObject> stage2 = new ParseUpdateRequestStage<>(stage3,
