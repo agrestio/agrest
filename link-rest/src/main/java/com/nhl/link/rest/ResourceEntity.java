@@ -38,6 +38,7 @@ public class ResourceEntity<T> {
 	private ResourceEntity<?> mapBy;
 	private Map<String, ResourceEntity<?>> children;
 	private LrRelationship incoming;
+	private ResourceEntity<?> parent;
 	private Collection<Ordering> orderings;
 	private Expression qualifier;
 	private Map<String, EntityProperty> extraProperties;
@@ -58,9 +59,17 @@ public class ResourceEntity<T> {
 		this.lrEntity = lrEntity;
 	}
 
-	public ResourceEntity(LrEntity<T> lrEntity, LrRelationship incoming) {
+	public ResourceEntity(LrEntity<T> lrEntity, ResourceEntity<?> parent, LrRelationship incoming) {
 		this(lrEntity);
 		this.incoming = incoming;
+		this.parent = parent;
+	}
+	
+	/**
+	 * @since 2.0
+	 */
+	public ResourceEntity<?> getParent() {
+		return parent;
 	}
 
 	/**

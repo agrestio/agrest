@@ -54,7 +54,7 @@ public class ParallelFetchStageTest {
 		LrRelationship incoming = name != null ? new DefaultLrRelationship(name, TreeNode.class, false) : null;
 
 		LrEntity<TreeNode> lrEntity = new DefaultLrEntity<>(TreeNode.class);
-		ResourceEntity<TreeNode> e = new ResourceEntity<>(lrEntity, incoming);
+		ResourceEntity<TreeNode> e = new ResourceEntity<>(lrEntity, parent, incoming);
 
 		if (parent != null && name != null) {
 			parent.getChildren().put(name, e);
