@@ -189,14 +189,21 @@ public class UpdateParser implements IUpdateParser {
 	protected void extractPK(EntityUpdate<?> update, JsonNode valueNode) {
 
 		Collection<LrAttribute> ids = update.getEntity().getIds();
-		if (ids.size() > 1) {
-			throw new LinkRestException(Status.BAD_REQUEST,
-					"Can't parse update with a single ID, because entity has multiple ids: " + update.getEntity().getName());
+		for (LrAttribute id : ids) {
+			boolean persistent = id instanceof LrPersistentAttribute;
+			JsonNode idNode;
+			if (ids.size() > 1) {
+				idNode = valueNode.get(id.getName());
+				if (idNode == null) {
+					throw new LinkRestException(Status.BAD_REQUEST,
+							"Failed to parse update payload -- ID part is missing: " + id.getName());
+				}
+			} else {
+				idNode = valueNode;
+			}
+			Object value = extractValue(idNode, persistent ? ((LrPersistentAttribute) id).getJdbcType() : Integer.MIN_VALUE);
+			update.getOrCreateId().put(persistent? ((LrPersistentAttribute) id).getDbAttribute().getName() : id.getName(), value);
 		}
-
-		LrPersistentAttribute id = (LrPersistentAttribute) ids.iterator().next();
-		Object value = extractValue(valueNode, id.getType());
-		update.getOrCreateId().put(id.getDbAttribute().getName(), value);
 	}
 
 	protected Object extractValue(JsonNode valueNode, Class<?> javaType) {
