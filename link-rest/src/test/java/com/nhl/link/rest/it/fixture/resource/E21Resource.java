@@ -4,7 +4,6 @@ import com.nhl.link.rest.DataResponse;
 import com.nhl.link.rest.EntityUpdate;
 import com.nhl.link.rest.LinkRest;
 import com.nhl.link.rest.SimpleResponse;
-import com.nhl.link.rest.it.fixture.cayenne.E20;
 import com.nhl.link.rest.it.fixture.cayenne.E21;
 
 import javax.ws.rs.DELETE;
@@ -46,7 +45,7 @@ public class E21Resource {
 		Map<String, Object> id = new HashMap<>(3);
 		id.put("age", age);
 		id.put("name", name);
-		return LinkRest.service(config).delete(E20.class).id(id).delete();
+		return LinkRest.service(config).delete(E21.class).id(id).delete();
 	}
 
 	@POST
