@@ -23,6 +23,7 @@ import com.nhl.link.rest.encoder.IdEncoder;
 import com.nhl.link.rest.meta.LrAttribute;
 import com.nhl.link.rest.meta.LrEntity;
 import com.nhl.link.rest.meta.LrPersistentAttribute;
+import com.nhl.link.rest.meta.LrPersistentRelationship;
 import com.nhl.link.rest.meta.LrRelationship;
 import com.nhl.link.rest.meta.cayenne.CayenneLrEntity;
 import com.nhl.link.rest.property.BeanPropertyReader;
@@ -64,11 +65,7 @@ public class AttributeEncoderFactory implements IAttributeEncoderFactory {
 	public EntityProperty getRelationshipProperty(LrEntity<?> entity, LrRelationship relationship, Encoder encoder) {
 
 		// TODO: can't cache, as target encoder is dynamic...
-		if (DataObject.class.isAssignableFrom(entity.getType())) {
-			return PropertyBuilder.dataObjectProperty().encodedWith(encoder);
-		} else {
-			return PropertyBuilder.property().encodedWith(encoder);
-		}
+		return buildRelationshipProperty(entity, relationship, encoder);
 	}
 
 	@Override
@@ -83,6 +80,18 @@ public class AttributeEncoderFactory implements IAttributeEncoderFactory {
 		}
 
 		return property;
+	}
+
+	protected EntityProperty buildRelationshipProperty(LrEntity<?> entity, LrRelationship relationship,
+			Encoder encoder) {
+
+		boolean persistent = relationship instanceof LrPersistentRelationship;
+
+		if (persistent && DataObject.class.isAssignableFrom(entity.getType())) {
+			return PropertyBuilder.dataObjectProperty().encodedWith(encoder);
+		} else {
+			return PropertyBuilder.property().encodedWith(encoder);
+		}
 	}
 
 	protected EntityProperty buildAttributeProperty(LrEntity<?> entity, LrAttribute attribute) {
@@ -156,7 +165,7 @@ public class AttributeEncoderFactory implements IAttributeEncoderFactory {
 		if (reader == null) {
 			reader = new IdPropertyReader(entity);
 			IdPropertyReader oldReader = idPropertyReaders.putIfAbsent(entity, reader);
-			reader = (oldReader == null)? reader : oldReader;
+			reader = (oldReader == null) ? reader : oldReader;
 		}
 		return reader;
 	}
