@@ -48,6 +48,6 @@ public class CayenneFetchStage<T> extends BaseLinearProcessingStage<SelectContex
 			}
 		}
 
-		context.getEntity().setObjects(objects);
+		context.setObjects(objects);
 	}
 }

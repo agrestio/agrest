@@ -106,6 +106,9 @@ public interface FetcherBuilder {
 			};
 			return this;
 		}
-
+	}
+	
+	public static class SingleParentFetcherBuilder {
+		
 	}
 }

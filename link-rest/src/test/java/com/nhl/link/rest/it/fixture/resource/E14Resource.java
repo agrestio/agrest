@@ -50,7 +50,7 @@ public class E14Resource {
 		@DataFetched
 		public void afterCayenneFetch(SelectContext<E14> context) {
 
-			for (E14 e14 : context.getEntity().getObjects()) {
+			for (E14 e14 : context.getObjects()) {
 				P7 p7 = new P7();
 				p7.setId(Cayenne.intPKForObject(e14) * 100);
 				p7.setString("p7_" + e14.getName());

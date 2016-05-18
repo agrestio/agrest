@@ -79,7 +79,7 @@ public class PojoProcessorFactory implements IProcessorFactory {
 			Map<Object, T> typeBucket = db.bucketForType(context.getType());
 			if (context.isById()) {
 				T object = typeBucket.get(context.getId().get());
-				context.getEntity().setObjects(object != null ? Collections.singletonList(object) : Collections.<T> emptyList());
+				context.setObjects(object != null ? Collections.singletonList(object) : Collections.<T> emptyList());
 				return;
 			}
 
@@ -102,7 +102,7 @@ public class PojoProcessorFactory implements IProcessorFactory {
 				o.orderList(list);
 			}
 
-			context.getEntity().setObjects(list);
+			context.setObjects(list);
 		}
 
 	}

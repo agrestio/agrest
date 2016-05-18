@@ -1,7 +1,8 @@
 package com.nhl.link.rest.runtime.processor.select;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 import javax.ws.rs.core.UriInfo;
 
@@ -35,6 +36,7 @@ public class SelectContext<T> extends BaseProcessingContext<T> {
 	private boolean atMostOneObject;
 	private Encoder encoder;
 	private int prefetchSemantics;
+	private List<T> objects;
 
 	// TODO: deprecate dependency on Cayenne in generic code
 	private SelectQuery<T> select;
@@ -53,8 +55,8 @@ public class SelectContext<T> extends BaseProcessingContext<T> {
 
 		// TODO: we may pass an unresolved future down to DataResponse and JSON
 		// serializers to further minimize blocking of the request thread...
-		
-		Iterable<T> objects = Objects.requireNonNull(entity, "Null entity").getObjects();
+
+		List<T> objects = this.objects != null ? this.objects : Collections.<T> emptyList();
 		DataResponse<T> response = DataResponse.forType(getType());
 		response.setObjects(objects);
 		response.setEncoder(encoder);
@@ -178,5 +180,19 @@ public class SelectContext<T> extends BaseProcessingContext<T> {
 	 */
 	public void setPrefetchSemantics(int prefetchSemantics) {
 		this.prefetchSemantics = prefetchSemantics;
+	}
+
+	/**
+	 * @since 1.24
+	 */
+	public List<T> getObjects() {
+		return objects;
+	}
+
+	/**
+	 * @since 1.24
+	 */
+	public void setObjects(List<T> objects) {
+		this.objects = objects;
 	}
 }

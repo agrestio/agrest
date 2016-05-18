@@ -20,6 +20,6 @@ public class StageBasedFetcher<T> implements Fetcher<T> {
 	@Override
 	public Iterable<T> fetch(SelectContext<T> context, Iterable<?> parents) {
 		ChainProcessor.execute(pipeline, context);
-		return context.getEntity().getObjects();
+		return context.getObjects();
 	}
 }

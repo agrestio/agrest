@@ -1,11 +1,15 @@
 package com.nhl.link.rest.runtime.processor.select;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.mock;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -44,20 +48,20 @@ public class ParallelFetchStageTest {
 	}
 
 	private ResourceEntity<TreeNode> createEntityWithFetcher(String treeNodeName, ResourceEntity<TreeNode> parent,
-			String name) {
-		return createEntityWithFetcher(new TreeNodeFetcher(treeNodeName), parent, name);
+			String relationshipName) {
+		return createEntityWithFetcher(new TreeNodeFetcher(treeNodeName), parent, relationshipName);
 	}
 
 	private ResourceEntity<TreeNode> createEntityWithFetcher(Fetcher<TreeNode> fetcher, ResourceEntity<TreeNode> parent,
-			String name) {
+			String relationshipName) {
 
-		LrRelationship incoming = name != null ? new DefaultLrRelationship(name, TreeNode.class, false) : null;
+		LrRelationship incoming = relationshipName != null ? new DefaultLrRelationship(relationshipName, TreeNode.class, false) : null;
 
 		LrEntity<TreeNode> lrEntity = new DefaultLrEntity<>(TreeNode.class);
 		ResourceEntity<TreeNode> e = new ResourceEntity<>(lrEntity, parent, incoming);
 
-		if (parent != null && name != null) {
-			parent.getChildren().put(name, e);
+		if (parent != null && relationshipName != null) {
+			parent.getChildren().put(relationshipName, e);
 		}
 
 		e.setFetcher(fetcher);
@@ -68,33 +72,23 @@ public class ParallelFetchStageTest {
 		return new ParallelFetchStage<>(null, executor, 500, TimeUnit.MILLISECONDS, mock(Fetcher.class));
 	}
 
-	private void assertContext(int expectedNodeCount, String expectedNodeAsString) {
+	private void assertContext(int nodeCount, String... nodeStrings) {
 
-		StringBuilder buffer = new StringBuilder();
-		int actualNodeCount = objectsAsString(context.getEntity(), buffer);
+		List<TreeNode> nodes = context.getObjects();
+		assertNotNull(nodes);
+		assertEquals(nodeStrings.length, nodes.size());
+		assertEquals(nodeCount, countNodes(nodes));
 
-		assertEquals(expectedNodeCount, actualNodeCount);
-		assertEquals(expectedNodeAsString, buffer.toString());
+		for (int i = 0; i < nodeStrings.length; i++) {
+			assertEquals(nodeStrings[i], nodes.get(i).toString());
+		}
 	}
 
-	private <U> int objectsAsString(ResourceEntity<U> entity, StringBuilder buffer) {
+	private int countNodes(List<TreeNode> nodes) {
 
-		int count = 0;
-
-		Iterable<U> list = entity.getObjects();
-		if (list != null) {
-
-			String prefix = entity.getIncoming() != null ? entity.getIncoming().getName() + "." : "";
-
-			for (U object : list) {
-
-				count++;
-				buffer.append(prefix).append(object).append(";");
-			}
-		}
-
-		for (ResourceEntity<?> childEntity : entity.getChildren().values()) {
-			count += objectsAsString(childEntity, buffer);
+		int count = nodes.size();
+		for (TreeNode n : nodes) {
+			count += countNodes(n.getChildren());
 		}
 
 		return count;
@@ -114,22 +108,22 @@ public class ParallelFetchStageTest {
 
 		createStage().doExecute(context);
 
-		assertContext(3, "n;ec1.c1;ec2.c2;");
+		assertContext(3, "n;n.c1;n.c2;");
 	}
 
 	@Test
 	public void testDoExecute_NestedDependentFetchers() {
 
-		ResourceEntity<TreeNode> ec1 = createEntityWithFetcher("c1", context.getEntity(), "ec1");
+		ResourceEntity<TreeNode> c1 = createEntityWithFetcher("c1", context.getEntity(), "ec1");
 
-		createEntityWithFetcher("c3", ec1, "ec3");
-		createEntityWithFetcher("c4", ec1, "ec4");
+		createEntityWithFetcher("c3", c1, "ec3");
+		createEntityWithFetcher("c4", c1, "ec4");
 
 		createEntityWithFetcher("c2", context.getEntity(), "ec2");
 
 		createStage().doExecute(context);
 
-		assertContext(5, "n;ec1.c1;ec3.c3;ec4.c4;ec2.c2;");
+		assertContext(5, "n;n.c1;c1.c3;c1.c4;n.c2;");
 	}
 
 	@Test(expected = LinkRestException.class)
@@ -200,27 +194,66 @@ public class ParallelFetchStageTest {
 
 		@Override
 		public Iterable<TreeNode> fetch(SelectContext<TreeNode> context, Iterable<?> parents) {
-			LOGGER.info("fetched: " + name);
-			List<TreeNode> nodes = Collections.singletonList(new TreeNode(name));
-			context.getEntity().setObjects(nodes);
-			return nodes;
+
+			LOGGER.info("fetched child: " + name);
+
+			TreeNode c = new TreeNode(name);
+			List<TreeNode> children = Collections.singletonList(c);
+
+			if (parents != null) {
+				((TreeNode) parents.iterator().next()).addChild(c);
+			} else {
+				context.setObjects(children);
+			}
+
+			return children;
 		}
 	}
 
 	static class TreeNode {
 		private String name;
+		private Set<TreeNode> children;
 
 		TreeNode(String name) {
 			this.name = Objects.requireNonNull(name);
+			this.children = ConcurrentHashMap.newKeySet();
 		}
 
 		public String getName() {
 			return name;
 		}
 
+		public void addChild(TreeNode child) {
+			children.add(child);
+		}
+
+		public List<TreeNode> getChildren() {
+
+			// results may arrive in any order, so we need to sort children for
+			// predictability...
+
+			List<TreeNode> sorted = new ArrayList<>(children);
+			Collections.sort(sorted, (t1, t2) -> t1.getName().compareTo(t2.getName()));
+			return sorted;
+		}
+
 		@Override
 		public String toString() {
-			return name;
+			StringBuilder buffer = new StringBuilder();
+			toString(buffer, null);
+			return buffer.toString();
+		}
+
+		private void toString(StringBuilder buffer, String parentName) {
+
+			if (parentName != null) {
+				buffer.append(parentName).append(".");
+			}
+			buffer.append(name).append(";");
+
+			for (TreeNode c : getChildren()) {
+				c.toString(buffer, name);
+			}
 		}
 	}
 }
