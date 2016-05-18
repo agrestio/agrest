@@ -21,6 +21,7 @@ import com.nhl.link.rest.annotation.listener.SelectRequestParsed;
 import com.nhl.link.rest.it.fixture.cayenne.E20;
 import com.nhl.link.rest.it.fixture.cayenne.E20Pojo;
 import com.nhl.link.rest.runtime.fetcher.Fetcher;
+import com.nhl.link.rest.runtime.fetcher.FetcherBuilder;
 import com.nhl.link.rest.runtime.fetcher.ParentAgnosticFetcher;
 import com.nhl.link.rest.runtime.processor.select.SelectContext;
 
@@ -88,7 +89,7 @@ public class E20Resource {
 		}
 
 		protected Fetcher<E20Pojo> createFetcher() {
-			return ParentAgnosticFetcher.builder(new E20ParentAgnosticFetcher()).toOneConnector(E20::setPojo)
+			return FetcherBuilder.parentAgnostic(new E20ParentAgnosticFetcher()).toOneConnector(E20::setPojo)
 					.idMapper(E20::getObjectId).parentIdMapper(E20Pojo::getParentId).build();
 		}
 	}
@@ -105,7 +106,7 @@ public class E20Resource {
 		}
 
 		protected Fetcher<E20Pojo> createFetcher() {
-			return ParentAgnosticFetcher.builder(new E20ParentAgnosticErrorsFetcher()).toOneConnector(E20::setPojo)
+			return  FetcherBuilder.parentAgnostic(new E20ParentAgnosticErrorsFetcher()).toOneConnector(E20::setPojo)
 					.idMapper(E20::getObjectId).parentIdMapper(E20Pojo::getParentId).build();
 		}
 	}
