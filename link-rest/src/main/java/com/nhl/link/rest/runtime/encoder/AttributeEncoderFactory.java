@@ -8,8 +8,8 @@ import java.util.Date;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
-import com.nhl.link.rest.property.IdPropertyReader;
 import org.apache.cayenne.DataObject;
 
 import com.nhl.link.rest.EntityProperty;
@@ -26,6 +26,7 @@ import com.nhl.link.rest.meta.LrPersistentAttribute;
 import com.nhl.link.rest.meta.LrRelationship;
 import com.nhl.link.rest.meta.cayenne.CayenneLrEntity;
 import com.nhl.link.rest.property.BeanPropertyReader;
+import com.nhl.link.rest.property.IdPropertyReader;
 import com.nhl.link.rest.property.PropertyBuilder;
 
 public class AttributeEncoderFactory implements IAttributeEncoderFactory {
@@ -38,7 +39,7 @@ public class AttributeEncoderFactory implements IAttributeEncoderFactory {
 	// these are explicit overrides for named attributes
 	private Map<String, EntityProperty> attributePropertiesByPath;
 	private Map<String, EntityProperty> idPropertiesByEntity;
-	private Map<LrEntity<?>, IdPropertyReader> idPropertyReaders;
+	private ConcurrentMap<LrEntity<?>, IdPropertyReader> idPropertyReaders;
 
 	public AttributeEncoderFactory() {
 		this.attributePropertiesByPath = new ConcurrentHashMap<>();
