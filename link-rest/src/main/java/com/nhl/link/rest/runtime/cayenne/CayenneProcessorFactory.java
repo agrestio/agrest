@@ -7,9 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicLong;
 
 import javax.ws.rs.core.Response.Status;
 
@@ -69,13 +67,16 @@ public class CayenneProcessorFactory implements IProcessorFactory {
 	private IMetadataService metadataService;
 	private IResourceMetadataService resourceMetadataService;
 	private List<EncoderFilter> filters;
-	private AtomicLong threadCounter;
+	private ExecutorService executor;
 
 	public CayenneProcessorFactory(@Inject IRequestParser requestParser, @Inject IUpdateParser updateParser,
 			@Inject IEncoderService encoderService, @Inject ICayennePersister persister,
 			@Inject IConstraintsHandler constraintsHandler, @Inject IMetadataService metadataService,
 			@Inject IResourceMetadataService resourceMetadataService,
+			@Inject ExecutorService executor,
 			@Inject(EncoderService.ENCODER_FILTER_LIST) List<EncoderFilter> filters) {
+		
+		this.executor = executor;
 		this.requestParser = requestParser;
 		this.encoderService = encoderService;
 		this.persister = persister;
@@ -84,7 +85,6 @@ public class CayenneProcessorFactory implements IProcessorFactory {
 		this.resourceMetadataService = resourceMetadataService;
 		this.updateParser = updateParser;
 		this.filters = filters;
-		this.threadCounter = new AtomicLong();
 	}
 
 	@Override
@@ -148,8 +148,6 @@ public class CayenneProcessorFactory implements IProcessorFactory {
 		// current select processor is no longer Cayenne-specific (Cayenne part
 		// is hidden in the Fetcher).
 
-		ExecutorService executor = Executors.newCachedThreadPool(
-				(runnable) -> new Thread(runnable, "link-rest-exec-" + threadCounter.getAndIncrement()));
 		BaseLinearProcessingStage<SelectContext<Object>, Object> stage3 = new ParallelFetchStage<>(null, executor, 5,
 				TimeUnit.SECONDS, createDefaultFetcher());
 		BaseLinearProcessingStage<SelectContext<Object>, Object> stage2 = new ApplySelectServerParamsStage<>(stage3,

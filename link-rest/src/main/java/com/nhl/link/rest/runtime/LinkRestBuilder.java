@@ -8,6 +8,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
 
 import javax.ws.rs.core.Feature;
 import javax.ws.rs.ext.ExceptionMapper;
@@ -55,6 +56,7 @@ import com.nhl.link.rest.runtime.encoder.IAttributeEncoderFactory;
 import com.nhl.link.rest.runtime.encoder.IEncoderService;
 import com.nhl.link.rest.runtime.encoder.IStringConverterFactory;
 import com.nhl.link.rest.runtime.encoder.StringConverterFactory;
+import com.nhl.link.rest.runtime.executor.ExecutorServiceProvider;
 import com.nhl.link.rest.runtime.jackson.IJacksonService;
 import com.nhl.link.rest.runtime.jackson.JacksonService;
 import com.nhl.link.rest.runtime.listener.IListenerService;
@@ -357,6 +359,7 @@ public class LinkRestBuilder {
 
 				binder.bind(IResourceParser.class).to(ResourceParser.class);
 				binder.bind(IUpdateParser.class).to(UpdateParser.class);
+				binder.bind(ExecutorService.class).toProvider(ExecutorServiceProvider.class);
 
 				// apply adapter-contributed bindings
 				for (LinkRestAdapter a : adapters) {

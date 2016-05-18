@@ -2,6 +2,7 @@ Release 2.0
 
 #166 Multiple backends and parallel fetch stage
 #167 Move to Java 8
+#173 Centralized ExecutorService
 
 Release 1.24
 
