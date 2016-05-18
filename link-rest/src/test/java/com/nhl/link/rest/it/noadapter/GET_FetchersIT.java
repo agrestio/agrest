@@ -56,4 +56,28 @@ public class GET_FetchersIT extends JerseyTestOnDerby {
 
 		assertEquals(Status.INTERNAL_SERVER_ERROR.getStatusCode(), response1.getStatus());
 	}
+
+	@Test
+	public void testMultiFetcher_PerParent() {
+		Response response1 = target("/e20/per-parent-strategy").queryParam("include", "id")
+				.queryParam("include", "pojo").queryParam("include", "e21s.id").queryParam("sort", "id").request()
+				.get();
+
+		assertEquals(Status.OK.getStatusCode(), response1.getStatus());
+
+		assertEquals(
+				"{\"data\":[{\"id\":1,\"e21s\":[{\"id\":8},{\"id\":9}],\"pojo\":{\"integer\":1,\"string\":\"s_1\"}},"
+						+ "{\"id\":2,\"e21s\":[],\"pojo\":{\"integer\":2,\"string\":\"s_2\"}}],\"total\":2}",
+				response1.readEntity(String.class));
+	}
+	
+	@Test
+	public void testMultiFetcher_PerParent_Fetcher_Error() {
+		Response response1 = target("/e20/per-parent-strategy-fetcher-error").queryParam("include", "id")
+				.queryParam("include", "pojo").queryParam("include", "e21s.id").queryParam("sort", "id").request()
+				.get();
+
+		assertEquals(Status.INTERNAL_SERVER_ERROR.getStatusCode(), response1.getStatus());
+	}
+
 }

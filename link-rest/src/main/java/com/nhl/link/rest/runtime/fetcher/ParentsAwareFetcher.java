@@ -2,7 +2,7 @@ package com.nhl.link.rest.runtime.fetcher;
 
 import com.nhl.link.rest.runtime.processor.select.SelectContext;
 
-public interface SingleParentFetcher {
+public interface ParentsAwareFetcher<T, P> {
 
-	<T> Iterable<T> fetch(SelectContext<T> context, Object parent);
+	Iterable<T> fetch(SelectContext<T> context, Iterable<P> parents);
 }

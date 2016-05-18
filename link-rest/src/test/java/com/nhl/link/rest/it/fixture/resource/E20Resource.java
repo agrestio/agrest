@@ -10,6 +10,7 @@ import javax.ws.rs.core.Configuration;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.UriInfo;
 
+import org.apache.cayenne.Cayenne;
 import org.apache.cayenne.ObjectId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,6 +24,7 @@ import com.nhl.link.rest.it.fixture.cayenne.E20Pojo;
 import com.nhl.link.rest.runtime.fetcher.Fetcher;
 import com.nhl.link.rest.runtime.fetcher.FetcherBuilder;
 import com.nhl.link.rest.runtime.fetcher.ParentAgnosticFetcher;
+import com.nhl.link.rest.runtime.fetcher.PerParentFetcher;
 import com.nhl.link.rest.runtime.processor.select.SelectContext;
 
 @Path("e20")
@@ -45,6 +47,20 @@ public class E20Resource {
 	public DataResponse<E20> getParentAgnosticFetcherError(@Context UriInfo uriInfo) {
 		return LinkRest.service(config).select(E20.class).uri(uriInfo)
 				.listener(new ParentAgnosticFetcherErrorsListener()).select();
+	}
+
+	@GET
+	@Path("per-parent-strategy")
+	public DataResponse<E20> getPerParent(@Context UriInfo uriInfo) {
+		return LinkRest.service(config).select(E20.class).uri(uriInfo).listener(new PerParentFetcherListener())
+				.select();
+	}
+	
+	@GET
+	@Path("per-parent-strategy-fetcher-error")
+	public DataResponse<E20> getPerParentFetcherError(@Context UriInfo uriInfo) {
+		return LinkRest.service(config).select(E20.class).uri(uriInfo).listener(new PerParentFetcherErrorsListener())
+				.select();
 	}
 
 	public static abstract class AbstractFetcherListener {
@@ -106,8 +122,50 @@ public class E20Resource {
 		}
 
 		protected Fetcher<E20Pojo> createFetcher() {
-			return  FetcherBuilder.parentAgnostic(new E20ParentAgnosticErrorsFetcher()).toOneConnector(E20::setPojo)
+			return FetcherBuilder.parentAgnostic(new E20ParentAgnosticErrorsFetcher()).toOneConnector(E20::setPojo)
 					.idMapper(E20::getObjectId).parentIdMapper(E20Pojo::getParentId).build();
+		}
+	}
+
+	public static class PerParentFetcherListener extends AbstractFetcherListener {
+
+		static class E20PerParentFetcher implements PerParentFetcher<E20Pojo, E20> {
+
+			@Override
+			public Iterable<E20Pojo> fetch(SelectContext<E20Pojo> context, E20 parent) {
+
+				int id = Cayenne.intPKForObject(parent);
+				LOGGER.info("Fetching E20Pojo's for parent: " + id);
+				List<E20Pojo> pojos = new ArrayList<>();
+
+				E20Pojo p = new E20Pojo();
+				p.setInteger(id);
+				p.setString("s_" + id);
+
+				pojos.add(p);
+
+				return pojos;
+			}
+		}
+
+		protected Fetcher<E20Pojo> createFetcher() {
+			return FetcherBuilder.perParent(new E20PerParentFetcher()).toOneConnector(E20::setPojo).build();
+		}
+	}
+	
+	public static class PerParentFetcherErrorsListener extends AbstractFetcherListener {
+
+		static class E20PerParentFetcherErrors implements PerParentFetcher<E20Pojo, E20> {
+
+			@Override
+			public Iterable<E20Pojo> fetch(SelectContext<E20Pojo> context, E20 parent) {
+				LOGGER.info("Will intenationally throw an exception");
+				throw new UnsupportedOperationException("Intentional exception...");
+			}
+		}
+
+		protected Fetcher<E20Pojo> createFetcher() {
+			return FetcherBuilder.perParent(new E20PerParentFetcherErrors()).toOneConnector(E20::setPojo).build();
 		}
 	}
 

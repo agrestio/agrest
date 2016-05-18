@@ -19,6 +19,10 @@ public interface FetcherBuilder {
 		return new ParentAgnosticFetcherBuilder<>(fetcher);
 	}
 
+	public static <T, P> PerParentFetcherBuilder<T, P> perParent(PerParentFetcher<T, P> fetcher) {
+		return new PerParentFetcherBuilder<>(fetcher);
+	}
+
 	public static class ParentAgnosticFetcherBuilder<T, P, I> {
 
 		private ParentAgnosticFetcher<T, P, I> fetcher;
@@ -87,7 +91,13 @@ public interface FetcherBuilder {
 		}
 
 		public ParentAgnosticFetcherBuilder<T, P, I> toOneConnector(BiConsumer<P, T> connector) {
-			parentChildConnector = (parent, childCollection) -> {
+			parentChildConnector = mapToOneConnector(connector);
+			return this;
+		}
+
+		private static <P, T> BiConsumer<P, Iterable<T>> mapToOneConnector(BiConsumer<P, T> toOneConnector) {
+
+			return (parent, childCollection) -> {
 
 				Iterator<T> it = childCollection.iterator();
 
@@ -102,13 +112,55 @@ public interface FetcherBuilder {
 					}
 				}
 
-				connector.accept(parent, child);
+				toOneConnector.accept(parent, child);
 			};
-			return this;
 		}
 	}
-	
-	public static class SingleParentFetcherBuilder {
-		
+
+	public static class PerParentFetcherBuilder<T, P> {
+
+		private PerParentFetcher<T, P> fetcher;
+		private BiConsumer<P, Iterable<T>> parentChildConnector;
+
+		private PerParentFetcherBuilder(PerParentFetcher<T, P> fetcher) {
+			this.fetcher = fetcher;
+		}
+
+		public Fetcher<T> build() {
+
+			Objects.requireNonNull(fetcher);
+			Objects.requireNonNull(parentChildConnector);
+
+			return (context, parents) -> {
+
+				Collection<T> combinedResult = new ArrayList<>();
+
+				parents.forEach(p -> {
+					@SuppressWarnings("unchecked")
+					P parent = (P) p;
+
+					// TODO: must split into parallel fetchers on the same
+					// executor as the main fetcher is running
+					Iterable<T> result = fetcher.fetch(context, parent);
+					parentChildConnector.accept(parent, result);
+
+					result.forEach(t -> combinedResult.add(t));
+
+				});
+
+				return combinedResult;
+			};
+		}
+
+		public PerParentFetcherBuilder<T, P> toManyConnector(BiConsumer<P, Iterable<T>> connector) {
+			this.parentChildConnector = connector;
+			return this;
+		}
+
+		public PerParentFetcherBuilder<T, P> toOneConnector(BiConsumer<P, T> connector) {
+			parentChildConnector = ParentAgnosticFetcherBuilder.mapToOneConnector(connector);
+			return this;
+		}
+
 	}
 }
