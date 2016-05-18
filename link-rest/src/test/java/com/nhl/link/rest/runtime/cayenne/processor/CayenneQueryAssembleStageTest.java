@@ -62,7 +62,7 @@ public class CayenneQueryAssembleStageTest extends TestWithCayenneMapping {
 		LrRelationship incoming = resultFilter.getLrEntity().getRelationship(E2.E3S.getName());
 		@SuppressWarnings("unchecked")
 		LrPersistentEntity<E3> target = mock(LrPersistentEntity.class);
-		resultFilter.getChildren().put(E2.E3S.getName(), new ResourceEntity<E3>(target, null, incoming));
+		resultFilter.getChildren().put(E2.E3S.getName(), new ResourceEntity<E3>(target, incoming));
 
 		SelectContext<E2> context = new SelectContext<E2>(E2.class);
 		context.setEntity(resultFilter);

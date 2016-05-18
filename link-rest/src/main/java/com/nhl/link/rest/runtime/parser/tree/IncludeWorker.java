@@ -189,7 +189,7 @@ class IncludeWorker {
 			ResourceEntity<?> childEntity = parent.getChild(property);
 			if (childEntity == null) {
 				LrEntity<?> targetType = metadataService.getLrEntity(relationship.getTargetEntityType());
-				childEntity = new ResourceEntity(targetType, parent, relationship);
+				childEntity = new ResourceEntity(targetType, relationship);
 				parent.getChildren().put(property, childEntity);
 			}
 

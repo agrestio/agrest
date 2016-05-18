@@ -7,7 +7,7 @@ import com.nhl.link.rest.runtime.processor.select.SelectContext;
 /**
  * @since 2.0
  */
-public class StageBasedFetcher<T> implements Fetcher<T> {
+public class StageBasedFetcher<T,P> implements Fetcher<T,P> {
 
 	@SuppressWarnings("rawtypes")
 	private ProcessingStage pipeline;
@@ -18,7 +18,7 @@ public class StageBasedFetcher<T> implements Fetcher<T> {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public Iterable<T> fetch(SelectContext<T> context, Iterable<?> parents) {
+	public Iterable<T> fetch(SelectContext<T> context, Iterable<P> parents) {
 		ChainProcessor.execute(pipeline, context);
 		return context.getObjects();
 	}

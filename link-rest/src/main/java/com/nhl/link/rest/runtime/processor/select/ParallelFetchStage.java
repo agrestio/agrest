@@ -2,6 +2,7 @@ package com.nhl.link.rest.runtime.processor.select;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
@@ -26,10 +27,10 @@ public class ParallelFetchStage<T> extends BaseLinearProcessingStage<SelectConte
 	private ExecutorService executor;
 	private long singleFetcherTimeout;
 	private TimeUnit singleFetcherTimeoutUnit;
-	private Fetcher<?> defaultFetcher;
+	private Fetcher<?, ?> defaultFetcher;
 
 	public ParallelFetchStage(ProcessingStage<SelectContext<T>, ? super T> next, ExecutorService executor,
-			long singleFetcherTimeout, TimeUnit singleFetcherTimeoutUnit, Fetcher<?> defaultFetcher) {
+			long singleFetcherTimeout, TimeUnit singleFetcherTimeoutUnit, Fetcher<?, ?> defaultFetcher) {
 
 		super(next);
 
@@ -66,12 +67,14 @@ public class ParallelFetchStage<T> extends BaseLinearProcessingStage<SelectConte
 		return false;
 	}
 
-	protected <U> Collection<FutureIterable<?>> fetchRecursive(SelectContext<T> rootContext, ResourceEntity<U> entity,
-			FutureIterable<?> parentResult, int treeDepth) {
+	protected <U, V> Collection<FutureIterable<?>> fetchRecursive(SelectContext<T> rootContext,
+			ResourceEntity<U> entity, FutureIterable<V> parentResult, int treeDepth) {
 
 		Collection<FutureIterable<?>> allResults = new ArrayList<>();
-		Fetcher<U> fetcher = getFetcher(entity, treeDepth);
-		FutureIterable<?> results;
+
+		@SuppressWarnings("unchecked")
+		Fetcher<U, V> fetcher = (Fetcher<U, V>) getFetcher(entity, treeDepth);
+		FutureIterable<U> results;
 
 		if (fetcher != null) {
 
@@ -84,9 +87,8 @@ public class ParallelFetchStage<T> extends BaseLinearProcessingStage<SelectConte
 			allResults.add(results);
 		} else {
 			// TODO: for non-fetching nodes we probably need to fake the result
-			// that is a parent of U... for now it may be a parent of a parent
-			// of a parent
-			results = parentResult;
+			// that is a parent of U... for now sending an empty list...
+			results = FutureIterable.resolved(Collections.emptyList());
 		}
 
 		for (ResourceEntity<?> childEntity : entity.getChildren().values()) {
@@ -97,9 +99,9 @@ public class ParallelFetchStage<T> extends BaseLinearProcessingStage<SelectConte
 	}
 
 	@SuppressWarnings("unchecked")
-	protected <U> Fetcher<U> getFetcher(ResourceEntity<U> entity, int treeDepth) {
+	protected <U> Fetcher<U, ?> getFetcher(ResourceEntity<U> entity, int treeDepth) {
 
-		Fetcher<U> fetcher = entity.getFetcher();
+		Fetcher<U, ?> fetcher = entity.getFetcher();
 		if (fetcher != null) {
 			return fetcher;
 		}
@@ -108,7 +110,7 @@ public class ParallelFetchStage<T> extends BaseLinearProcessingStage<SelectConte
 		// level ("null" meaning the entity will be fetched as a part of the
 		// parent entity
 		if (treeDepth == 0) {
-			return (Fetcher<U>) defaultFetcher;
+			return (Fetcher<U, ?>) defaultFetcher;
 		}
 
 		return null;
@@ -128,7 +130,7 @@ public class ParallelFetchStage<T> extends BaseLinearProcessingStage<SelectConte
 	}
 
 	protected void fetchRoot(SelectContext<T> context) {
-		Fetcher<T> fetcher = getFetcher(context.getEntity(), 0);
+		Fetcher<T, ?> fetcher = getFetcher(context.getEntity(), 0);
 		fetcher.fetch(context, null);
 	}
 

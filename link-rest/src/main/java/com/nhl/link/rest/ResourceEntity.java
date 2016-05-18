@@ -38,7 +38,6 @@ public class ResourceEntity<T> {
 	private ResourceEntity<?> mapBy;
 	private Map<String, ResourceEntity<?>> children;
 	private LrRelationship incoming;
-	private ResourceEntity<?> parent;
 	private Collection<Ordering> orderings;
 	private Expression qualifier;
 	private Map<String, EntityProperty> extraProperties;
@@ -46,7 +45,7 @@ public class ResourceEntity<T> {
 	private int fetchLimit;
 	private boolean filtered;
 
-	private Fetcher<T> fetcher;
+	private Fetcher<T, ?> fetcher;
 
 	public ResourceEntity(LrEntity<T> lrEntity) {
 		this.idIncluded = false;
@@ -58,17 +57,9 @@ public class ResourceEntity<T> {
 		this.lrEntity = lrEntity;
 	}
 
-	public ResourceEntity(LrEntity<T> lrEntity, ResourceEntity<?> parent, LrRelationship incoming) {
+	public ResourceEntity(LrEntity<T> lrEntity, LrRelationship incoming) {
 		this(lrEntity);
 		this.incoming = incoming;
-		this.parent = parent;
-	}
-
-	/**
-	 * @since 2.0
-	 */
-	public ResourceEntity<?> getParent() {
-		return parent;
 	}
 
 	/**
@@ -244,14 +235,14 @@ public class ResourceEntity<T> {
 	/**
 	 * @since 2.0
 	 */
-	public Fetcher<T> getFetcher() {
+	public Fetcher<T, ?> getFetcher() {
 		return fetcher;
 	}
 
 	/**
 	 * @since 2.0
 	 */
-	public void setFetcher(Fetcher<T> fetcher) {
+	public void setFetcher(Fetcher<T, ?> fetcher) {
 		this.fetcher = fetcher;
 	}
 }

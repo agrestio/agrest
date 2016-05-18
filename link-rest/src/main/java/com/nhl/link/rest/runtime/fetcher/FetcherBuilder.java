@@ -12,43 +12,57 @@ import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.stream.StreamSupport;
 
+/**
+ * Produces fetchers that extract the data from some data sources and connect
+ * fetched objects into a parent-child tree.
+ * 
+ * @since 2.0
+ */
 public interface FetcherBuilder {
 
-	public static <T, P, I> ParentAgnosticFetcherBuilder<T, P, I> batch(
-			BatchFetcher<T, P, I> fetcher) {
-		return new ParentAgnosticFetcherBuilder<>(fetcher);
+	/**
+	 * Starts a builder for a batch fetcher.
+	 * 
+	 * @param nonConnectingFetcher
+	 *            a fetcher that fetches the data, but does not attempt to
+	 *            connect fetched objects to their parents.
+	 * @param keyType
+	 *            a java type of the key used to map children to parents.
+	 * @return
+	 */
+	public static <T, P, K> BatchFetcherBuilder<T, P, K> batch(Fetcher<T, P> nonConnectingFetcher, Class<K> keyType) {
+		return new BatchFetcherBuilder<>(nonConnectingFetcher);
 	}
 
-	public static <T, P> PerParentFetcherBuilder<T, P> perParent(PerParentFetcher<T, P> fetcher) {
-		return new PerParentFetcherBuilder<>(fetcher);
+	public static <T, P> PerParentFetcherBuilder<T, P> perParent(PerParentFetcher<T, P> nonConnectingFetcher) {
+		return new PerParentFetcherBuilder<>(nonConnectingFetcher);
 	}
 
-	public static class ParentAgnosticFetcherBuilder<T, P, I> {
+	public static class BatchFetcherBuilder<T, P, K> {
 
-		private BatchFetcher<T, P, I> fetcher;
-		private Function<T, I> parentIdMapper;
-		private Function<P, I> idMapper;
+		private Fetcher<T, P> nonConnectingFetcher;
+		private Function<T, K> childKeyMapper;
+		private Function<P, K> parentKeyMapper;
 		private BiConsumer<P, Iterable<T>> parentChildConnector;
 
-		private ParentAgnosticFetcherBuilder(BatchFetcher<T, P, I> fetcher) {
-			this.fetcher = fetcher;
+		private BatchFetcherBuilder(Fetcher<T, P> nonConnectingFetcher) {
+			this.nonConnectingFetcher = nonConnectingFetcher;
 		}
 
-		public Fetcher<T> build() {
+		public Fetcher<T, P> build() {
 
-			Objects.requireNonNull(fetcher);
-			Objects.requireNonNull(idMapper);
+			Objects.requireNonNull(nonConnectingFetcher);
+			Objects.requireNonNull(parentKeyMapper);
 			Objects.requireNonNull(parentChildConnector);
-			Objects.requireNonNull(parentIdMapper);
+			Objects.requireNonNull(childKeyMapper);
 
 			return (context, parents) -> {
-				@SuppressWarnings("unchecked")
-				Iterable<T> result = fetcher.fetch(context, (Iterable<P>) parents);
+
+				Iterable<T> result = nonConnectingFetcher.fetch(context, parents);
 
 				Iterator<T> childrenIt = result.iterator();
 				if (childrenIt.hasNext()) {
 
-					@SuppressWarnings("unchecked")
 					Iterator<P> parentsIt = (Iterator<P>) parents.iterator();
 					if (parentsIt.hasNext()) {
 						connectToParents(childrenIt, parentsIt);
@@ -61,37 +75,37 @@ public interface FetcherBuilder {
 
 		private void connectToParents(Iterator<T> children, Iterator<P> parents) {
 
-			Map<I, Collection<T>> childrenByParentId = new HashMap<>();
+			Map<K, Collection<T>> childrenByParentId = new HashMap<>();
 			while (children.hasNext()) {
 				T child = children.next();
-				I key = parentIdMapper.apply(child);
+				K key = childKeyMapper.apply(child);
 				childrenByParentId.computeIfAbsent(key, k -> new ArrayList<>()).add(child);
 			}
 
 			StreamSupport.stream(Spliterators.spliteratorUnknownSize(parents, Spliterator.ORDERED), false)
 					.forEach(parent -> {
-						I id = idMapper.apply(parent);
+						K id = parentKeyMapper.apply(parent);
 						Collection<T> parentsChildren = childrenByParentId.get(id);
 						parentChildConnector.accept(parent, parentsChildren);
 					});
 		}
 
-		public ParentAgnosticFetcherBuilder<T, P, I> idMapper(Function<P, I> idMapper) {
-			this.idMapper = idMapper;
+		public BatchFetcherBuilder<T, P, K> parentKeyMapper(Function<P, K> keyMapper) {
+			this.parentKeyMapper = keyMapper;
 			return this;
 		}
 
-		public ParentAgnosticFetcherBuilder<T, P, I> parentIdMapper(Function<T, I> parentIdMapper) {
-			this.parentIdMapper = parentIdMapper;
+		public BatchFetcherBuilder<T, P, K> childKeyMapper(Function<T, K> keyMapper) {
+			this.childKeyMapper = keyMapper;
 			return this;
 		}
 
-		public ParentAgnosticFetcherBuilder<T, P, I> toManyConnector(BiConsumer<P, Iterable<T>> connector) {
+		public BatchFetcherBuilder<T, P, K> toManyConnector(BiConsumer<P, Iterable<T>> connector) {
 			this.parentChildConnector = connector;
 			return this;
 		}
 
-		public ParentAgnosticFetcherBuilder<T, P, I> toOneConnector(BiConsumer<P, T> connector) {
+		public BatchFetcherBuilder<T, P, K> toOneConnector(BiConsumer<P, T> connector) {
 			parentChildConnector = mapToOneConnector(connector);
 			return this;
 		}
@@ -120,16 +134,16 @@ public interface FetcherBuilder {
 
 	public static class PerParentFetcherBuilder<T, P> {
 
-		private PerParentFetcher<T, P> fetcher;
+		private PerParentFetcher<T, P> nonConnectingFetcher;
 		private BiConsumer<P, Iterable<T>> parentChildConnector;
 
-		private PerParentFetcherBuilder(PerParentFetcher<T, P> fetcher) {
-			this.fetcher = fetcher;
+		private PerParentFetcherBuilder(PerParentFetcher<T, P> nonConnectingFetcher) {
+			this.nonConnectingFetcher = nonConnectingFetcher;
 		}
 
-		public Fetcher<T> build() {
+		public Fetcher<T, P> build() {
 
-			Objects.requireNonNull(fetcher);
+			Objects.requireNonNull(nonConnectingFetcher);
 			Objects.requireNonNull(parentChildConnector);
 
 			return (context, parents) -> {
@@ -137,13 +151,11 @@ public interface FetcherBuilder {
 				Collection<T> combinedResult = new ArrayList<>();
 
 				parents.forEach(p -> {
-					@SuppressWarnings("unchecked")
-					P parent = (P) p;
 
 					// TODO: must split into parallel fetchers on the same
 					// executor as the main fetcher is running
-					Iterable<T> result = fetcher.fetch(context, parent);
-					parentChildConnector.accept(parent, result);
+					Iterable<T> result = nonConnectingFetcher.fetch(context, p);
+					parentChildConnector.accept(p, result);
 
 					result.forEach(t -> combinedResult.add(t));
 
@@ -159,7 +171,7 @@ public interface FetcherBuilder {
 		}
 
 		public PerParentFetcherBuilder<T, P> toOneConnector(BiConsumer<P, T> connector) {
-			parentChildConnector = ParentAgnosticFetcherBuilder.mapToOneConnector(connector);
+			parentChildConnector = BatchFetcherBuilder.mapToOneConnector(connector);
 			return this;
 		}
 

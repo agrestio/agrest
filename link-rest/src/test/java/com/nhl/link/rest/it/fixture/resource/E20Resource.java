@@ -21,7 +21,6 @@ import com.nhl.link.rest.ResourceEntity;
 import com.nhl.link.rest.annotation.listener.SelectRequestParsed;
 import com.nhl.link.rest.it.fixture.cayenne.E20;
 import com.nhl.link.rest.it.fixture.cayenne.E20Pojo;
-import com.nhl.link.rest.runtime.fetcher.BatchFetcher;
 import com.nhl.link.rest.runtime.fetcher.Fetcher;
 import com.nhl.link.rest.runtime.fetcher.FetcherBuilder;
 import com.nhl.link.rest.runtime.fetcher.PerParentFetcher;
@@ -87,12 +86,12 @@ public class E20Resource {
 			}
 		}
 
-		protected abstract Fetcher<E20Pojo> createFetcher();
+		protected abstract Fetcher<E20Pojo, E20> createFetcher();
 	}
 
 	public static class ParentAwareFetcherListener extends AbstractFetcherListener {
 
-		static class E20ParentAwareFetcher implements BatchFetcher<E20Pojo, E20, ObjectId> {
+		static class E20ParentAwareFetcher implements Fetcher<E20Pojo, E20> {
 
 			@Override
 			public Iterable<E20Pojo> fetch(SelectContext<E20Pojo> context, Iterable<E20> parents) {
@@ -114,15 +113,15 @@ public class E20Resource {
 			}
 		}
 
-		protected Fetcher<E20Pojo> createFetcher() {
-			return FetcherBuilder.batch(new E20ParentAwareFetcher()).toOneConnector(E20::setPojo)
-					.idMapper(E20::getObjectId).parentIdMapper(E20Pojo::getParentId).build();
+		protected Fetcher<E20Pojo, E20> createFetcher() {
+			return FetcherBuilder.batch(new E20ParentAwareFetcher(), ObjectId.class).toOneConnector(E20::setPojo)
+					.parentKeyMapper(E20::getObjectId).childKeyMapper(E20Pojo::getParentId).build();
 		}
 	}
 
 	public static class ParentAgnosticFetcherListener extends AbstractFetcherListener {
 
-		static class E20ParentAgnosticFetcher implements BatchFetcher<E20Pojo, E20, ObjectId> {
+		static class E20ParentAgnosticFetcher implements Fetcher<E20Pojo, E20> {
 
 			@Override
 			public Iterable<E20Pojo> fetch(SelectContext<E20Pojo> context, Iterable<E20> parents) {
@@ -141,15 +140,15 @@ public class E20Resource {
 			}
 		}
 
-		protected Fetcher<E20Pojo> createFetcher() {
-			return FetcherBuilder.batch(new E20ParentAgnosticFetcher()).toOneConnector(E20::setPojo)
-					.idMapper(E20::getObjectId).parentIdMapper(E20Pojo::getParentId).build();
+		protected Fetcher<E20Pojo, E20> createFetcher() {
+			return FetcherBuilder.batch(new E20ParentAgnosticFetcher(), ObjectId.class).toOneConnector(E20::setPojo)
+					.parentKeyMapper(E20::getObjectId).childKeyMapper(E20Pojo::getParentId).build();
 		}
 	}
 
 	public static class ParentAgnosticFetcherErrorsListener extends AbstractFetcherListener {
 
-		static class E20ParentAgnosticErrorsFetcher implements BatchFetcher<E20Pojo, E20, ObjectId> {
+		static class E20ParentAgnosticErrorsFetcher implements Fetcher<E20Pojo, E20> {
 
 			@Override
 			public Iterable<E20Pojo> fetch(SelectContext<E20Pojo> context, Iterable<E20> parents) {
@@ -158,9 +157,10 @@ public class E20Resource {
 			}
 		}
 
-		protected Fetcher<E20Pojo> createFetcher() {
-			return FetcherBuilder.batch(new E20ParentAgnosticErrorsFetcher()).toOneConnector(E20::setPojo)
-					.idMapper(E20::getObjectId).parentIdMapper(E20Pojo::getParentId).build();
+		protected Fetcher<E20Pojo, E20> createFetcher() {
+			return FetcherBuilder.batch(new E20ParentAgnosticErrorsFetcher(), ObjectId.class)
+					.toOneConnector(E20::setPojo).parentKeyMapper(E20::getObjectId).childKeyMapper(E20Pojo::getParentId)
+					.build();
 		}
 	}
 
@@ -185,7 +185,7 @@ public class E20Resource {
 			}
 		}
 
-		protected Fetcher<E20Pojo> createFetcher() {
+		protected Fetcher<E20Pojo, E20> createFetcher() {
 			return FetcherBuilder.perParent(new E20PerParentFetcher()).toOneConnector(E20::setPojo).build();
 		}
 	}
@@ -201,7 +201,7 @@ public class E20Resource {
 			}
 		}
 
-		protected Fetcher<E20Pojo> createFetcher() {
+		protected Fetcher<E20Pojo, E20> createFetcher() {
 			return FetcherBuilder.perParent(new E20PerParentFetcherErrors()).toOneConnector(E20::setPojo).build();
 		}
 	}

@@ -133,7 +133,7 @@ public class CayenneProcessorFactory implements IProcessorFactory {
 		return stage0;
 	}
 
-	private <T> Fetcher<T> createDefaultFetcher() {
+	private <T, P> Fetcher<T, P> createDefaultFetcher() {
 		BaseLinearProcessingStage<SelectContext<Object>, Object> stage1 = new CayenneFetchStage<>(null, persister);
 		BaseLinearProcessingStage<SelectContext<Object>, Object> stage0 = new CayenneQueryAssembleStage<>(stage1,
 				persister);
