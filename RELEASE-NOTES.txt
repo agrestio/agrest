@@ -1,5 +1,6 @@
 Release 2.0
 
+#166 Multiple backends and parallel fetch stage
 #167 Move to Java 8
 
 Release 1.24
