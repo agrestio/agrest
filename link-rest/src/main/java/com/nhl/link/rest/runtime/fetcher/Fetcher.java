@@ -6,15 +6,13 @@ import com.nhl.link.rest.LinkRestException;
 import com.nhl.link.rest.runtime.processor.select.SelectContext;
 
 /**
- * A common interface for data fetchers. Fetcher implementors usually create one
- * of specialized fetchers, such as {@link BatchFetcher},
- * {@link PerParentFetcher}, that are adapted to the common fetcher interface
- * via {@link FetcherBuilder}.
+ * A common interface for data fetchers.
  * 
  * @since 2.0
+ * @see FetcherBuilder
  */
 @FunctionalInterface
-public interface Fetcher<T,P> {
+public interface Fetcher<T, P> {
 
 	Iterable<T> fetch(SelectContext<T> context, Iterable<P> parents);
 

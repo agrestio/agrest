@@ -14,7 +14,9 @@ import java.util.stream.StreamSupport;
 
 /**
  * Produces fetchers that extract the data from some data sources and connect
- * fetched objects into a parent-child tree.
+ * fetched objects into a parent-child tree. Produced fetchers are usually based
+ * on non-connecting {@link Fetcher} or {@link PerParentFetcher} with addition
+ * of parent-child connection functionality.
  * 
  * @since 2.0
  */
