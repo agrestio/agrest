@@ -124,6 +124,13 @@ public class CayenneUpdateStage<T extends DataObject> extends BaseCayenneUpdateS
 
 		SelectQuery<T> query = SelectQuery.query(context.getType());
 		query.setQualifier(ExpressionFactory.joinExp(Expression.OR, expressions));
-		return CayenneContextInitStage.cayenneContext(context).select(query);
+
+		List<T> objects = CayenneContextInitStage.cayenneContext(context).select(query);
+		if (context.isById() && objects.size() > 1) {
+			throw new LinkRestException(Status.INTERNAL_SERVER_ERROR, String.format(
+					"Found more than one object for ID '%s' and entity '%s'",
+					context.getId(), context.getEntity().getLrEntity().getName()));
+		}
+		return objects;
 	}
 }

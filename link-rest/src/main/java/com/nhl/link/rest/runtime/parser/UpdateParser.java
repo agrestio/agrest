@@ -188,8 +188,13 @@ public class UpdateParser implements IUpdateParser {
 
 	protected void extractPK(EntityUpdate<?> update, JsonNode valueNode) {
 
-		LrPersistentAttribute id = (LrPersistentAttribute) update.getEntity().getSingleId();
+		Collection<LrAttribute> ids = update.getEntity().getIds();
+		if (ids.size() > 1) {
+			throw new LinkRestException(Status.BAD_REQUEST,
+					"Can't parse update with a single ID, because entity has multiple ids: " + update.getEntity().getName());
+		}
 
+		LrPersistentAttribute id = (LrPersistentAttribute) ids.iterator().next();
 		Object value = extractValue(valueNode, id.getType());
 		update.getOrCreateId().put(id.getDbAttribute().getName(), value);
 	}

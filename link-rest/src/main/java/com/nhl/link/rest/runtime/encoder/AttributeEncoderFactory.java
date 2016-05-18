@@ -11,6 +11,7 @@ import java.util.Date;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 import org.apache.cayenne.DataObject;
 
@@ -24,14 +25,15 @@ import com.nhl.link.rest.encoder.ISOLocalDateEncoder;
 import com.nhl.link.rest.encoder.ISOLocalDateTimeEncoder;
 import com.nhl.link.rest.encoder.ISOLocalTimeEncoder;
 import com.nhl.link.rest.encoder.ISOTimeEncoder;
-import com.nhl.link.rest.encoder.ObjectIdEncoder;
+import com.nhl.link.rest.encoder.IdEncoder;
 import com.nhl.link.rest.meta.LrAttribute;
 import com.nhl.link.rest.meta.LrEntity;
 import com.nhl.link.rest.meta.LrPersistentAttribute;
+import com.nhl.link.rest.meta.LrPersistentRelationship;
 import com.nhl.link.rest.meta.LrRelationship;
 import com.nhl.link.rest.meta.cayenne.CayenneLrEntity;
 import com.nhl.link.rest.property.BeanPropertyReader;
-import com.nhl.link.rest.property.PersistentObjectIdPropertyReader;
+import com.nhl.link.rest.property.IdPropertyReader;
 import com.nhl.link.rest.property.PropertyBuilder;
 
 public class AttributeEncoderFactory implements IAttributeEncoderFactory {
@@ -47,10 +49,12 @@ public class AttributeEncoderFactory implements IAttributeEncoderFactory {
 	// these are explicit overrides for named attributes
 	private Map<String, EntityProperty> attributePropertiesByPath;
 	private Map<String, EntityProperty> idPropertiesByEntity;
+	private ConcurrentMap<LrEntity<?>, IdPropertyReader> idPropertyReaders;
 
 	public AttributeEncoderFactory() {
 		this.attributePropertiesByPath = new ConcurrentHashMap<>();
 		this.idPropertiesByEntity = new ConcurrentHashMap<>();
+		this.idPropertyReaders = new ConcurrentHashMap<>();
 	}
 
 	@Override
@@ -70,11 +74,7 @@ public class AttributeEncoderFactory implements IAttributeEncoderFactory {
 	public EntityProperty getRelationshipProperty(LrEntity<?> entity, LrRelationship relationship, Encoder encoder) {
 
 		// TODO: can't cache, as target encoder is dynamic...
-		if (DataObject.class.isAssignableFrom(entity.getType())) {
-			return PropertyBuilder.dataObjectProperty().encodedWith(encoder);
-		} else {
-			return PropertyBuilder.property().encodedWith(encoder);
-		}
+		return buildRelationshipProperty(entity, relationship, encoder);
 	}
 
 	@Override
@@ -89,6 +89,18 @@ public class AttributeEncoderFactory implements IAttributeEncoderFactory {
 		}
 
 		return property;
+	}
+
+	protected EntityProperty buildRelationshipProperty(LrEntity<?> entity, LrRelationship relationship,
+			Encoder encoder) {
+
+		boolean persistent = relationship instanceof LrPersistentRelationship;
+
+		if (persistent && DataObject.class.isAssignableFrom(entity.getType())) {
+			return PropertyBuilder.dataObjectProperty().encodedWith(encoder);
+		} else {
+			return PropertyBuilder.property().encodedWith(encoder);
+		}
 	}
 
 	protected EntityProperty buildAttributeProperty(LrEntity<?> entity, LrAttribute attribute) {
@@ -118,20 +130,19 @@ public class AttributeEncoderFactory implements IAttributeEncoderFactory {
 				// keeping attribute encoders in alphabetical order
 				Map<String, Encoder> valueEncoders = new TreeMap<>();
 				for (LrAttribute id : ids) {
-					LrPersistentAttribute persistentId = (LrPersistentAttribute) id;
-					Encoder valueEncoder = buildEncoder(persistentId.getType(), persistentId.getJdbcType());
+					Encoder valueEncoder = buildEncoder(id.getType(), getJdbcType(id));
 					valueEncoders.put(id.getName(), valueEncoder);
 				}
 
-				return PropertyBuilder.property(PersistentObjectIdPropertyReader.reader())
-						.encodedWith(new ObjectIdEncoder(valueEncoders));
+				return PropertyBuilder.property(getOrCreateIdPropertyReader(entity.getLrEntity()))
+						.encodedWith(new IdEncoder(valueEncoders));
 			} else {
 
-				LrPersistentAttribute persistentId = (LrPersistentAttribute) ids.iterator().next();
-				Encoder valueEncoder = buildEncoder(persistentId.getType(), persistentId.getJdbcType());
+				LrAttribute id = ids.iterator().next();
+				Encoder valueEncoder = buildEncoder(id.getType(), getJdbcType(id));
 
-				return PropertyBuilder.property(PersistentObjectIdPropertyReader.reader())
-						.encodedWith(new ObjectIdEncoder(valueEncoder));
+				return PropertyBuilder.property(getOrCreateIdPropertyReader(entity.getLrEntity()))
+						.encodedWith(new IdEncoder(valueEncoder));
 			}
 		} else {
 
@@ -147,6 +158,25 @@ public class AttributeEncoderFactory implements IAttributeEncoderFactory {
 			LrAttribute id = ids.iterator().next();
 			return PropertyBuilder.property(BeanPropertyReader.reader(id.getName()));
 		}
+	}
+
+	private int getJdbcType(LrAttribute attribute) {
+		if (attribute instanceof LrPersistentAttribute) {
+			return ((LrPersistentAttribute) attribute).getJdbcType();
+		} else {
+			return Integer.MIN_VALUE;
+		}
+	}
+
+	private IdPropertyReader getOrCreateIdPropertyReader(LrEntity<?> entity) {
+
+		IdPropertyReader reader = idPropertyReaders.get(entity);
+		if (reader == null) {
+			reader = new IdPropertyReader(entity);
+			IdPropertyReader oldReader = idPropertyReaders.putIfAbsent(entity, reader);
+			reader = (oldReader == null) ? reader : oldReader;
+		}
+		return reader;
 	}
 
 	/**

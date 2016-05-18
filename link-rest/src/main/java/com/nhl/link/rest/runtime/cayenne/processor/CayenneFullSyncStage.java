@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import com.nhl.link.rest.LinkRestException;
 import org.apache.cayenne.DataObject;
 import org.apache.cayenne.map.EntityResolver;
 import org.apache.cayenne.query.SelectQuery;
@@ -13,6 +14,8 @@ import com.nhl.link.rest.EntityUpdate;
 import com.nhl.link.rest.ObjectMapper;
 import com.nhl.link.rest.processor.ProcessingStage;
 import com.nhl.link.rest.runtime.processor.update.UpdateContext;
+
+import javax.ws.rs.core.Response.Status;
 
 /**
  * @since 1.16
@@ -39,7 +42,7 @@ public class CayenneFullSyncStage<T extends DataObject> extends CayenneCreateOrU
 			Collection<EntityUpdate<T>> updates = keyMap.remove(key);
 
 			if (updates == null) {
-				deletedObjects.add((DataObject) o);
+				deletedObjects.add(o);
 			} else {
 				updateSingle(context, o, updates);
 			}
@@ -71,7 +74,13 @@ public class CayenneFullSyncStage<T extends DataObject> extends CayenneCreateOrU
 		// TODO: use SelectBuilder to get Cayenne representation of the
 		// resource, instead of duplicating this here...
 
-		return CayenneContextInitStage.cayenneContext(context).select(query);
+		List<T> objects = CayenneContextInitStage.cayenneContext(context).select(query);
+		if (context.isById() && objects.size() > 1) {
+			throw new LinkRestException(Status.INTERNAL_SERVER_ERROR, String.format(
+					"Found more than one object for ID '%s' and entity '%s'",
+					context.getId(), context.getEntity().getLrEntity().getName()));
+		}
+		return objects;
 	}
 
 }
