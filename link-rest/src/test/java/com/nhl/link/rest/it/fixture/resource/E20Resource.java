@@ -21,7 +21,7 @@ import com.nhl.link.rest.annotation.listener.SelectRequestParsed;
 import com.nhl.link.rest.it.fixture.cayenne.E20;
 import com.nhl.link.rest.it.fixture.cayenne.E20Pojo;
 import com.nhl.link.rest.runtime.fetcher.Fetcher;
-import com.nhl.link.rest.runtime.fetcher.NoParentFetcher;
+import com.nhl.link.rest.runtime.fetcher.ParentAgnosticFetcher;
 import com.nhl.link.rest.runtime.processor.select.SelectContext;
 
 @Path("e20")
@@ -32,14 +32,14 @@ public class E20Resource {
 	@Context
 	private Configuration config;
 
-	private FetcherInstallListener listener = new FetcherInstallListener();
-
 	@GET
-	public DataResponse<E20> get(@Context UriInfo uriInfo) {
-		return LinkRest.service(config).select(E20.class).uri(uriInfo).listener(listener).select();
+	@Path("parent-agnostic-strategy")
+	public DataResponse<E20> getParentAgnostic(@Context UriInfo uriInfo) {
+		return LinkRest.service(config).select(E20.class).uri(uriInfo).listener(new ParentAgnosticFetcherListener())
+				.select();
 	}
 
-	public static class FetcherInstallListener {
+	public static class ParentAgnosticFetcherListener {
 
 		@SelectRequestParsed
 		public void selectRequestParsed(SelectContext<?> context) {
@@ -58,12 +58,12 @@ public class E20Resource {
 		}
 
 		private Fetcher<E20Pojo> createFetcher() {
-			return NoParentFetcher.builder(new E20Fetcher()).toOneParentConnector(E20::setPojo)
+			return ParentAgnosticFetcher.builder(new E20Fetcher()).toOneParentConnector(E20::setPojo)
 					.idMapper(E20::getObjectId).parentIdMapper(E20Pojo::getParentId).build();
 		}
 	}
 
-	static class E20Fetcher implements NoParentFetcher<E20Pojo, E20, ObjectId> {
+	static class E20Fetcher implements ParentAgnosticFetcher<E20Pojo, E20, ObjectId> {
 
 		@Override
 		public Iterable<E20Pojo> fetch(SelectContext<E20Pojo> context) {
@@ -74,7 +74,7 @@ public class E20Resource {
 				E20Pojo p = new E20Pojo();
 				p.setInteger(i);
 				p.setString("s_" + i);
-				
+
 				pojos.add(p);
 			});
 

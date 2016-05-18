@@ -35,15 +35,16 @@ public class GET_FetchersIT extends JerseyTestOnDerby {
 	}
 
 	@Test
-	public void testMultiFetcher() {
-		Response response1 = target("/e20").queryParam("include", "id").queryParam("include", "pojo")
-				.queryParam("include", "e21s.id").queryParam("sort", "id").request().get();
+	public void testMultiFetcher_ParentAgnostic() {
+		Response response1 = target("/e20/parent-agnostic-strategy").queryParam("include", "id")
+				.queryParam("include", "pojo").queryParam("include", "e21s.id").queryParam("sort", "id").request()
+				.get();
 
 		assertEquals(Status.OK.getStatusCode(), response1.getStatus());
 
 		assertEquals(
-				"{\"data\":[{\"id\":1,\"e21s\":[{\"id\":8},{\"id\":9}],\"pojo\":{\"string\"\"s_xxx\",\"integer\":100}},"
-						+ "{\"id\":2,\"e21s\":[],\"pojo\":{\"string\"\"s_yyy\",\"integer\":200}}],\"total\":2}",
+				"{\"data\":[{\"id\":1,\"e21s\":[{\"id\":8},{\"id\":9}],\"pojo\":{\"integer\":1,\"string\":\"s_1\"}},"
+						+ "{\"id\":2,\"e21s\":[],\"pojo\":{\"integer\":2,\"string\":\"s_2\"}}],\"total\":2}",
 				response1.readEntity(String.class));
 	}
 }

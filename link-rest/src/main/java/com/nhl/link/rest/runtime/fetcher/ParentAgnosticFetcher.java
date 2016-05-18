@@ -14,22 +14,32 @@ import java.util.stream.StreamSupport;
 
 import com.nhl.link.rest.runtime.processor.select.SelectContext;
 
-public interface NoParentFetcher<T, P, I> {
+/**
+ * A fetcher interface for queries that can be executed without the knowledge of
+ * parent objects, and that can be "mapped" to parent objects based on their own
+ * values.
+ * <p>
+ * This fetcher has very good parallelism, as it can be run in parallel with the
+ * parent fetcher.
+ * 
+ * @since 2.0
+ */
+public interface ParentAgnosticFetcher<T, P, I> {
 
 	Iterable<T> fetch(SelectContext<T> context);
 
-	public static <T, P, I> Builder<T, P, I> builder(NoParentFetcher<T, P, I> fetcher) {
+	public static <T, P, I> Builder<T, P, I> builder(ParentAgnosticFetcher<T, P, I> fetcher) {
 		return new Builder<>(fetcher);
 	}
 
 	public static class Builder<T, P, I> {
 
-		private NoParentFetcher<T, P, I> fetcher;
+		private ParentAgnosticFetcher<T, P, I> fetcher;
 		private Function<T, I> parentIdMapper;
 		private Function<P, I> idMapper;
 		private BiConsumer<P, Iterable<T>> parentChildConnector;
 
-		private Builder(NoParentFetcher<T, P, I> fetcher) {
+		private Builder(ParentAgnosticFetcher<T, P, I> fetcher) {
 			this.fetcher = fetcher;
 		}
 
