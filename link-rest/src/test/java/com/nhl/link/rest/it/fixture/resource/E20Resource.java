@@ -18,7 +18,9 @@ import com.nhl.link.rest.ResourceEntity;
 import com.nhl.link.rest.annotation.listener.SelectRequestParsed;
 import com.nhl.link.rest.it.fixture.cayenne.E20;
 import com.nhl.link.rest.it.fixture.cayenne.E20Pojo;
+import com.nhl.link.rest.runtime.cayenne.processor.CayenneIdMapper;
 import com.nhl.link.rest.runtime.fetcher.Fetcher;
+import com.nhl.link.rest.runtime.fetcher.TreeConnectingFetcher;
 import com.nhl.link.rest.runtime.processor.select.SelectContext;
 
 @Path("e20")
@@ -47,10 +49,19 @@ public class E20Resource {
 		private void traverseEntityTree(ResourceEntity<?> entity) {
 			if (E20Pojo.class.equals(entity.getType())) {
 				LOGGER.info("Installing fetcher for E20Pojo");
-				entity.setFetcher(new E20Fetcher());
+				entity.setFetcher(createConnectingFetcher());
 			} else {
 				entity.getChildren().forEach((n, c) -> traverseEntityTree(c));
 			}
+		}
+
+		private Fetcher createConnectingFetcher() {
+			return TreeConnectingFetcher.builder().dataFetcher(new E20Fetcher()).idMapper(CayenneIdMapper.instance())
+					.toOneParentConnector(this::connectE20ToE20Pojo).build();
+		}
+
+		private void connectE20ToE20Pojo(Object parent, Object child) {
+			((E20) parent).setPojo((E20Pojo) child);
 		}
 	}
 
