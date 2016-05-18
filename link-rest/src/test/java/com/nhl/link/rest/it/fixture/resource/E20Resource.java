@@ -21,9 +21,9 @@ import com.nhl.link.rest.ResourceEntity;
 import com.nhl.link.rest.annotation.listener.SelectRequestParsed;
 import com.nhl.link.rest.it.fixture.cayenne.E20;
 import com.nhl.link.rest.it.fixture.cayenne.E20Pojo;
+import com.nhl.link.rest.runtime.fetcher.BatchFetcher;
 import com.nhl.link.rest.runtime.fetcher.Fetcher;
 import com.nhl.link.rest.runtime.fetcher.FetcherBuilder;
-import com.nhl.link.rest.runtime.fetcher.ParentAgnosticFetcher;
 import com.nhl.link.rest.runtime.fetcher.PerParentFetcher;
 import com.nhl.link.rest.runtime.processor.select.SelectContext;
 
@@ -34,6 +34,13 @@ public class E20Resource {
 
 	@Context
 	private Configuration config;
+
+	@GET
+	@Path("parent-aware-strategy")
+	public DataResponse<E20> getParentAware(@Context UriInfo uriInfo) {
+		return LinkRest.service(config).select(E20.class).uri(uriInfo).listener(new ParentAwareFetcherListener())
+				.select();
+	}
 
 	@GET
 	@Path("parent-agnostic-strategy")
@@ -55,7 +62,7 @@ public class E20Resource {
 		return LinkRest.service(config).select(E20.class).uri(uriInfo).listener(new PerParentFetcherListener())
 				.select();
 	}
-	
+
 	@GET
 	@Path("per-parent-strategy-fetcher-error")
 	public DataResponse<E20> getPerParentFetcherError(@Context UriInfo uriInfo) {
@@ -83,12 +90,42 @@ public class E20Resource {
 		protected abstract Fetcher<E20Pojo> createFetcher();
 	}
 
-	public static class ParentAgnosticFetcherListener extends AbstractFetcherListener {
+	public static class ParentAwareFetcherListener extends AbstractFetcherListener {
 
-		static class E20ParentAgnosticFetcher implements ParentAgnosticFetcher<E20Pojo, E20, ObjectId> {
+		static class E20ParentAwareFetcher implements BatchFetcher<E20Pojo, E20, ObjectId> {
 
 			@Override
-			public Iterable<E20Pojo> fetch(SelectContext<E20Pojo> context) {
+			public Iterable<E20Pojo> fetch(SelectContext<E20Pojo> context, Iterable<E20> parents) {
+				LOGGER.info("Fetching E20Pojo's");
+				List<E20Pojo> pojos = new ArrayList<>();
+
+				parents.forEach(parent -> {
+
+					int pk = Cayenne.intPKForObject(parent);
+
+					E20Pojo p = new E20Pojo();
+					p.setInteger(pk);
+					p.setString("s_" + pk);
+
+					pojos.add(p);
+				});
+
+				return pojos;
+			}
+		}
+
+		protected Fetcher<E20Pojo> createFetcher() {
+			return FetcherBuilder.batch(new E20ParentAwareFetcher()).toOneConnector(E20::setPojo)
+					.idMapper(E20::getObjectId).parentIdMapper(E20Pojo::getParentId).build();
+		}
+	}
+
+	public static class ParentAgnosticFetcherListener extends AbstractFetcherListener {
+
+		static class E20ParentAgnosticFetcher implements BatchFetcher<E20Pojo, E20, ObjectId> {
+
+			@Override
+			public Iterable<E20Pojo> fetch(SelectContext<E20Pojo> context, Iterable<E20> parents) {
 				LOGGER.info("Fetching E20Pojo's");
 				List<E20Pojo> pojos = new ArrayList<>();
 
@@ -105,24 +142,24 @@ public class E20Resource {
 		}
 
 		protected Fetcher<E20Pojo> createFetcher() {
-			return FetcherBuilder.parentAgnostic(new E20ParentAgnosticFetcher()).toOneConnector(E20::setPojo)
+			return FetcherBuilder.batch(new E20ParentAgnosticFetcher()).toOneConnector(E20::setPojo)
 					.idMapper(E20::getObjectId).parentIdMapper(E20Pojo::getParentId).build();
 		}
 	}
 
 	public static class ParentAgnosticFetcherErrorsListener extends AbstractFetcherListener {
 
-		static class E20ParentAgnosticErrorsFetcher implements ParentAgnosticFetcher<E20Pojo, E20, ObjectId> {
+		static class E20ParentAgnosticErrorsFetcher implements BatchFetcher<E20Pojo, E20, ObjectId> {
 
 			@Override
-			public Iterable<E20Pojo> fetch(SelectContext<E20Pojo> context) {
+			public Iterable<E20Pojo> fetch(SelectContext<E20Pojo> context, Iterable<E20> parents) {
 				LOGGER.info("Will intenationally throw an exception");
 				throw new UnsupportedOperationException("Intentional exception...");
 			}
 		}
 
 		protected Fetcher<E20Pojo> createFetcher() {
-			return FetcherBuilder.parentAgnostic(new E20ParentAgnosticErrorsFetcher()).toOneConnector(E20::setPojo)
+			return FetcherBuilder.batch(new E20ParentAgnosticErrorsFetcher()).toOneConnector(E20::setPojo)
 					.idMapper(E20::getObjectId).parentIdMapper(E20Pojo::getParentId).build();
 		}
 	}
@@ -152,7 +189,7 @@ public class E20Resource {
 			return FetcherBuilder.perParent(new E20PerParentFetcher()).toOneConnector(E20::setPojo).build();
 		}
 	}
-	
+
 	public static class PerParentFetcherErrorsListener extends AbstractFetcherListener {
 
 		static class E20PerParentFetcherErrors implements PerParentFetcher<E20Pojo, E20> {

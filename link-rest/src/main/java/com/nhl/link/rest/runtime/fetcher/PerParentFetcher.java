@@ -11,7 +11,7 @@ import com.nhl.link.rest.runtime.processor.select.SelectContext;
  * in parallel.
  * 
  * @since 2.0
- * @see FetcherBuilder#parentAgnostic(ParentAgnosticFetcher)
+ * @see FetcherBuilder#batch(ParentAgnosticFetcher)
  */
 public interface PerParentFetcher<T, P> {
 

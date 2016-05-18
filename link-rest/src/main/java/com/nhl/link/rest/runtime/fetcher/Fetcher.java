@@ -7,9 +7,9 @@ import com.nhl.link.rest.runtime.processor.select.SelectContext;
 
 /**
  * A common interface for data fetchers. Fetcher implementors usually create one
- * of specialized fetchers, such as {@link ParentAgnosticFetcher},
- * {@link PerParentFetcher}, {@link ParentsAwareFetcher}, that are adapted to
- * the common fetcher interface via {@link FetcherBuilder}.
+ * of specialized fetchers, such as {@link BatchFetcher},
+ * {@link PerParentFetcher}, that are adapted to the common fetcher interface
+ * via {@link FetcherBuilder}.
  * 
  * @since 2.0
  */

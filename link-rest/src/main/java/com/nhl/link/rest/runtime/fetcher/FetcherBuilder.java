@@ -14,8 +14,8 @@ import java.util.stream.StreamSupport;
 
 public interface FetcherBuilder {
 
-	public static <T, P, I> ParentAgnosticFetcherBuilder<T, P, I> parentAgnostic(
-			ParentAgnosticFetcher<T, P, I> fetcher) {
+	public static <T, P, I> ParentAgnosticFetcherBuilder<T, P, I> batch(
+			BatchFetcher<T, P, I> fetcher) {
 		return new ParentAgnosticFetcherBuilder<>(fetcher);
 	}
 
@@ -25,12 +25,12 @@ public interface FetcherBuilder {
 
 	public static class ParentAgnosticFetcherBuilder<T, P, I> {
 
-		private ParentAgnosticFetcher<T, P, I> fetcher;
+		private BatchFetcher<T, P, I> fetcher;
 		private Function<T, I> parentIdMapper;
 		private Function<P, I> idMapper;
 		private BiConsumer<P, Iterable<T>> parentChildConnector;
 
-		private ParentAgnosticFetcherBuilder(ParentAgnosticFetcher<T, P, I> fetcher) {
+		private ParentAgnosticFetcherBuilder(BatchFetcher<T, P, I> fetcher) {
 			this.fetcher = fetcher;
 		}
 
@@ -42,7 +42,8 @@ public interface FetcherBuilder {
 			Objects.requireNonNull(parentIdMapper);
 
 			return (context, parents) -> {
-				Iterable<T> result = fetcher.fetch(context);
+				@SuppressWarnings("unchecked")
+				Iterable<T> result = fetcher.fetch(context, (Iterable<P>) parents);
 
 				Iterator<T> childrenIt = result.iterator();
 				if (childrenIt.hasNext()) {
