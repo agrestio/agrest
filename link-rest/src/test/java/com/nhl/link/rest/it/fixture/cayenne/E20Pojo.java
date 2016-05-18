@@ -1,5 +1,7 @@
 package com.nhl.link.rest.it.fixture.cayenne;
 
+import org.apache.cayenne.ObjectId;
+
 import com.nhl.link.rest.annotation.LrAttribute;
 import com.nhl.link.rest.annotation.LrRelationship;
 
@@ -8,6 +10,10 @@ public class E20Pojo {
 	private String string;
 	private int integer;
 	private E20SubPojo subPojo;
+
+	public ObjectId getParentId() {
+		return new ObjectId("E20", E20.ID_PK_COLUMN, integer);
+	}
 
 	@LrAttribute
 	public String getString() {
@@ -26,12 +32,12 @@ public class E20Pojo {
 	public void setInteger(int integer) {
 		this.integer = integer;
 	}
-	
+
 	@LrRelationship
 	public E20SubPojo getSubPojo() {
 		return subPojo;
 	}
-	
+
 	public void setSubPojo(E20SubPojo subPojo) {
 		this.subPojo = subPojo;
 	}

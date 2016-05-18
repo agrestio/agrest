@@ -26,10 +26,10 @@ public class ParallelFetchStage<T> extends BaseLinearProcessingStage<SelectConte
 	private ExecutorService executor;
 	private long singleFetcherTimeout;
 	private TimeUnit singleFetcherTimeoutUnit;
-	private Fetcher defaultFetcher;
+	private Fetcher<?> defaultFetcher;
 
 	public ParallelFetchStage(ProcessingStage<SelectContext<T>, ? super T> next, ExecutorService executor,
-			long singleFetcherTimeout, TimeUnit singleFetcherTimeoutUnit, Fetcher defaultFetcher) {
+			long singleFetcherTimeout, TimeUnit singleFetcherTimeoutUnit, Fetcher<?> defaultFetcher) {
 
 		super(next);
 
@@ -70,7 +70,7 @@ public class ParallelFetchStage<T> extends BaseLinearProcessingStage<SelectConte
 			FutureIterable<?> parentResult, int treeDepth) {
 
 		Collection<FutureIterable<?>> allResults = new ArrayList<>();
-		Fetcher fetcher = getFetcher(entity, treeDepth);
+		Fetcher<U> fetcher = getFetcher(entity, treeDepth);
 		FutureIterable<?> results;
 
 		if (fetcher != null) {
@@ -96,9 +96,10 @@ public class ParallelFetchStage<T> extends BaseLinearProcessingStage<SelectConte
 		return allResults;
 	}
 
-	protected Fetcher getFetcher(ResourceEntity<?> entity, int treeDepth) {
+	@SuppressWarnings("unchecked")
+	protected <U> Fetcher<U> getFetcher(ResourceEntity<U> entity, int treeDepth) {
 
-		Fetcher fetcher = entity.getFetcher();
+		Fetcher<U> fetcher = entity.getFetcher();
 		if (fetcher != null) {
 			return fetcher;
 		}
@@ -107,7 +108,7 @@ public class ParallelFetchStage<T> extends BaseLinearProcessingStage<SelectConte
 		// level ("null" meaning the entity will be fetched as a part of the
 		// parent entity
 		if (treeDepth == 0) {
-			return defaultFetcher;
+			return (Fetcher<U>) defaultFetcher;
 		}
 
 		return null;
@@ -127,7 +128,7 @@ public class ParallelFetchStage<T> extends BaseLinearProcessingStage<SelectConte
 	}
 
 	protected void fetchRoot(SelectContext<T> context) {
-		Fetcher fetcher = getFetcher(context.getEntity(), 0);
+		Fetcher<T> fetcher = getFetcher(context.getEntity(), 0);
 		fetcher.fetch(context, null);
 	}
 

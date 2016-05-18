@@ -10,11 +10,12 @@ import com.nhl.link.rest.runtime.processor.select.SelectContext;
  * 
  * @since 2.0
  */
-public interface Fetcher {
+@FunctionalInterface
+public interface Fetcher<T> {
 
-	<T> Iterable<T> fetch(SelectContext<T> context, Iterable<?> parents);
+	Iterable<T> fetch(SelectContext<T> context, Iterable<?> parents);
 
-	default <T> Iterable<T> onError(Exception e) {
+	default Iterable<T> onError(Exception e) {
 		throw new LinkRestException(Status.INTERNAL_SERVER_ERROR, "Error fetching data", e);
 	}
 }

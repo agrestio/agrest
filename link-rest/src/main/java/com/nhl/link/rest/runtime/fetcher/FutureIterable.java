@@ -1,7 +1,6 @@
 package com.nhl.link.rest.runtime.fetcher;
 
 import java.util.Iterator;
-import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
@@ -18,19 +17,12 @@ public class FutureIterable<T> implements Iterable<T> {
 	private static final Logger LOGGER = LoggerFactory.getLogger(FutureIterable.class);
 
 	private volatile Iterable<T> result;
-	private Fetcher fetcher;
+	private Fetcher<T> fetcher;
 	private Future<Iterable<T>> future;
 	private long timeout;
 	private TimeUnit timeoutUnit;
 
-	public static <T> FutureIterable<T> resolved(List<T> result) {
-
-		FutureIterable<T> futureList = new FutureIterable<>();
-		futureList.result = result;
-		return futureList;
-	}
-
-	public static <T> FutureIterable<T> future(Fetcher fetcher, Future<Iterable<T>> future, long timeout,
+	public static <T> FutureIterable<T> future(Fetcher<T> fetcher, Future<Iterable<T>> future, long timeout,
 			TimeUnit timeoutUnit) {
 
 		FutureIterable<T> futureList = new FutureIterable<>();
