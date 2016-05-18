@@ -94,12 +94,12 @@ public interface ParentAgnosticFetcher<T, P, I> {
 			return this;
 		}
 
-		public Builder<T, P, I> toManyParentConnector(BiConsumer<P, Iterable<T>> connector) {
+		public Builder<T, P, I> toManyConnector(BiConsumer<P, Iterable<T>> connector) {
 			this.parentChildConnector = connector;
 			return this;
 		}
 
-		public Builder<T, P, I> toOneParentConnector(BiConsumer<P, T> connector) {
+		public Builder<T, P, I> toOneConnector(BiConsumer<P, T> connector) {
 			parentChildConnector = (parent, childCollection) -> {
 
 				Iterator<T> it = childCollection.iterator();

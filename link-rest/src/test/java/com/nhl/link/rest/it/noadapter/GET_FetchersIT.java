@@ -47,4 +47,13 @@ public class GET_FetchersIT extends JerseyTestOnDerby {
 						+ "{\"id\":2,\"e21s\":[],\"pojo\":{\"integer\":2,\"string\":\"s_2\"}}],\"total\":2}",
 				response1.readEntity(String.class));
 	}
+
+	@Test
+	public void testMultiFetcher_ParentAgnostic_Fetcher_Error() {
+		Response response1 = target("/e20/parent-agnostic-strategy-fetcher-error").queryParam("include", "id")
+				.queryParam("include", "pojo").queryParam("include", "e21s.id").queryParam("sort", "id").request()
+				.get();
+
+		assertEquals(Status.INTERNAL_SERVER_ERROR.getStatusCode(), response1.getStatus());
+	}
 }

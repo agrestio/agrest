@@ -39,11 +39,17 @@ public class E20Resource {
 				.select();
 	}
 
-	public static class ParentAgnosticFetcherListener {
+	@GET
+	@Path("parent-agnostic-strategy-fetcher-error")
+	public DataResponse<E20> getParentAgnosticFetcherError(@Context UriInfo uriInfo) {
+		return LinkRest.service(config).select(E20.class).uri(uriInfo)
+				.listener(new ParentAgnosticFetcherErrorsListener()).select();
+	}
+
+	public static abstract class AbstractFetcherListener {
 
 		@SelectRequestParsed
 		public void selectRequestParsed(SelectContext<?> context) {
-
 			traverseEntityTree(context.getEntity());
 		}
 
@@ -57,28 +63,51 @@ public class E20Resource {
 			}
 		}
 
-		private Fetcher<E20Pojo> createFetcher() {
-			return ParentAgnosticFetcher.builder(new E20Fetcher()).toOneParentConnector(E20::setPojo)
+		protected abstract Fetcher<E20Pojo> createFetcher();
+	}
+
+	public static class ParentAgnosticFetcherListener extends AbstractFetcherListener {
+
+		static class E20ParentAgnosticFetcher implements ParentAgnosticFetcher<E20Pojo, E20, ObjectId> {
+
+			@Override
+			public Iterable<E20Pojo> fetch(SelectContext<E20Pojo> context) {
+				LOGGER.info("Fetching E20Pojo's");
+				List<E20Pojo> pojos = new ArrayList<>();
+
+				IntStream.range(0, 5).forEach(i -> {
+					E20Pojo p = new E20Pojo();
+					p.setInteger(i);
+					p.setString("s_" + i);
+
+					pojos.add(p);
+				});
+
+				return pojos;
+			}
+		}
+
+		protected Fetcher<E20Pojo> createFetcher() {
+			return ParentAgnosticFetcher.builder(new E20ParentAgnosticFetcher()).toOneConnector(E20::setPojo)
 					.idMapper(E20::getObjectId).parentIdMapper(E20Pojo::getParentId).build();
 		}
 	}
 
-	static class E20Fetcher implements ParentAgnosticFetcher<E20Pojo, E20, ObjectId> {
+	public static class ParentAgnosticFetcherErrorsListener extends AbstractFetcherListener {
 
-		@Override
-		public Iterable<E20Pojo> fetch(SelectContext<E20Pojo> context) {
-			LOGGER.info("Fetching E20Pojo's");
-			List<E20Pojo> pojos = new ArrayList<>();
+		static class E20ParentAgnosticErrorsFetcher implements ParentAgnosticFetcher<E20Pojo, E20, ObjectId> {
 
-			IntStream.range(0, 5).forEach(i -> {
-				E20Pojo p = new E20Pojo();
-				p.setInteger(i);
-				p.setString("s_" + i);
+			@Override
+			public Iterable<E20Pojo> fetch(SelectContext<E20Pojo> context) {
+				LOGGER.info("Will intenationally throw an exception");
+				throw new UnsupportedOperationException("Intentional exception...");
+			}
+		}
 
-				pojos.add(p);
-			});
-
-			return pojos;
+		protected Fetcher<E20Pojo> createFetcher() {
+			return ParentAgnosticFetcher.builder(new E20ParentAgnosticErrorsFetcher()).toOneConnector(E20::setPojo)
+					.idMapper(E20::getObjectId).parentIdMapper(E20Pojo::getParentId).build();
 		}
 	}
+
 }
