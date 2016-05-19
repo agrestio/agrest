@@ -167,7 +167,12 @@ public class UpdateParser implements IUpdateParser {
 						}
 					}
 				} else {
-					addRelatedObject(update, relationship, extractValue(valueNode, targetJdbcType));
+					if (relationship.isToMany() && valueNode.isNull()) {
+						LOGGER.warn("Unexpected 'null' for a to-many relationship: " + relationship.getName()
+								+ ". Skipping...");
+					} else {
+						addRelatedObject(update, relationship, extractValue(valueNode, targetJdbcType));
+					}
 				}
 
 				continue;
