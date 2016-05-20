@@ -1,23 +1,16 @@
 package com.nhl.link.rest.runtime.cayenne.processor;
 
 import java.lang.annotation.Annotation;
-import java.util.Collection;
 import java.util.Map.Entry;
 
-import javax.ws.rs.core.Response.Status;
-
 import org.apache.cayenne.exp.Expression;
-import org.apache.cayenne.exp.ExpressionFactory;
 import org.apache.cayenne.query.Ordering;
 import org.apache.cayenne.query.PrefetchTreeNode;
 import org.apache.cayenne.query.SelectQuery;
 
-import com.nhl.link.rest.LinkRestException;
 import com.nhl.link.rest.ResourceEntity;
 import com.nhl.link.rest.annotation.listener.QueryAssembled;
-import com.nhl.link.rest.meta.LrAttribute;
 import com.nhl.link.rest.meta.LrPersistentEntity;
-import com.nhl.link.rest.meta.cayenne.CayenneLrAttribute;
 import com.nhl.link.rest.processor.BaseLinearProcessingStage;
 import com.nhl.link.rest.processor.ProcessingStage;
 import com.nhl.link.rest.runtime.cayenne.ICayennePersister;
@@ -96,18 +89,7 @@ public class CayenneQueryAssembleStage<T> extends BaseLinearProcessingStage<Sele
 
 			Class<X> root = context.getType();
 			SelectQuery<X> query = new SelectQuery<>(root);
-			Collection<LrAttribute> idAttributes = context.getEntity().getLrEntity().getIds();
-
-			if (idAttributes.size() != context.getId().size()) {
-				throw new LinkRestException(Status.BAD_REQUEST,
-						"Wrong compound ID size: expected " + idAttributes.size() + ", got: " + context.getId().size());
-			}
-			for (LrAttribute idAttribute : idAttributes) {
-				Object idValue = context.getId().get(idAttribute.getName());
-				query.andQualifier(ExpressionFactory
-						.matchDbExp(((CayenneLrAttribute) idAttribute).getDbAttribute().getName(), idValue));
-			}
-
+			query.andQualifier(context.getId().qualifier(context.getEntity().getLrEntity()));
 			return query;
 		}
 

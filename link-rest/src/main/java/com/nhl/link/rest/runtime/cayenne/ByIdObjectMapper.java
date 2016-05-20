@@ -3,12 +3,14 @@ package com.nhl.link.rest.runtime.cayenne;
 import static org.apache.cayenne.exp.ExpressionFactory.joinExp;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.ws.rs.core.Response.Status;
 
-import org.apache.cayenne.Persistent;
+import com.nhl.link.rest.property.DataObjectPropertyReader;
+import com.nhl.link.rest.property.PersistentObjectIdPropertyReader;
 import org.apache.cayenne.exp.Expression;
 import org.apache.cayenne.exp.parser.ASTEqual;
 import org.apache.cayenne.exp.parser.ASTPath;
@@ -70,8 +72,20 @@ class ByIdObjectMapper<T> implements ObjectMapper<T> {
 
 	@Override
 	public Object keyForObject(T object) {
-		return ((Persistent) object).getObjectId().getIdSnapshot();
+		Map<String, Object> idMap = new HashMap<>();
+		for (ASTPath keyPath : keyPaths) {
+			idMap.put(keyPath.getPath(), readPropertyOrId(object, keyPath.getPath()));
+		}
+		return idMap;
 	}
+
+	private Object readPropertyOrId(Object object, String name) {
+		// try normal property first, and if it's absent,
+		// assume that it's (a part of) the entity's ID
+		Object property = DataObjectPropertyReader.reader().value(object, name);
+		return property == null ?
+				PersistentObjectIdPropertyReader.reader().value(object, name) : property;
+    }
 
 	@Override
 	public Object keyForUpdate(EntityUpdate<T> update) {

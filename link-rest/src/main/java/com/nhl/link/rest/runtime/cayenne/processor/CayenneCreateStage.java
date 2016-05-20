@@ -1,5 +1,6 @@
 package com.nhl.link.rest.runtime.cayenne.processor;
 
+import com.nhl.link.rest.runtime.meta.IMetadataService;
 import org.apache.cayenne.DataObject;
 
 import com.nhl.link.rest.processor.ProcessingStage;
@@ -10,8 +11,8 @@ import com.nhl.link.rest.runtime.processor.update.UpdateContext;
  */
 public class CayenneCreateStage<T extends DataObject> extends BaseCayenneUpdateStage<T> {
 
-	public CayenneCreateStage(ProcessingStage<UpdateContext<T>, ? super T> next) {
-		super(next);
+	public CayenneCreateStage(ProcessingStage<UpdateContext<T>, ? super T> next, IMetadataService metadataService) {
+		super(next, metadataService);
 	}
 
 	@Override
