@@ -7,6 +7,7 @@ Release 1.24
 #164 Auto-compile Lr-annotated properties of entity objects
 #168 Refactor DataResponse use
 #169 Deprecate LinkRest and ILinkRestService methods that take SelectQuery parameter
+#172 Disallow null value for to-many relationships in update
 
 Release 1.23
 
