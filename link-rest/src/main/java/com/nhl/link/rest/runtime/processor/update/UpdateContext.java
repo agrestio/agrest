@@ -8,6 +8,7 @@ import java.util.Map;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriInfo;
 
+import com.nhl.link.rest.CompoundObjectId;
 import com.nhl.link.rest.DataResponse;
 import com.nhl.link.rest.EntityParent;
 import com.nhl.link.rest.EntityUpdate;
@@ -15,6 +16,7 @@ import com.nhl.link.rest.LinkRestException;
 import com.nhl.link.rest.LrObjectId;
 import com.nhl.link.rest.ObjectMapperFactory;
 import com.nhl.link.rest.ResourceEntity;
+import com.nhl.link.rest.SimpleObjectId;
 import com.nhl.link.rest.constraints.ConstraintsBuilder;
 import com.nhl.link.rest.encoder.Encoder;
 import com.nhl.link.rest.processor.BaseProcessingContext;
@@ -120,11 +122,11 @@ public class UpdateContext<T> extends BaseProcessingContext<T> {
 	}
 
 	public void setId(Object id) {
-		this.id = new LrObjectId(id);
+		this.id = new SimpleObjectId(id);
 	}
 
 	public void setCompoundId(Map<String, Object> ids) {
-		this.id = new LrObjectId(ids);
+		this.id = new CompoundObjectId(ids);
 	}
 
 	public EntityParent<?> getParent() {

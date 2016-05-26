@@ -9,7 +9,7 @@ import java.util.Set;
 
 import javax.ws.rs.core.Response.Status;
 
-import com.nhl.link.rest.LrObjectId;
+import com.nhl.link.rest.CompoundObjectId;
 import com.nhl.link.rest.meta.LrEntity;
 import com.nhl.link.rest.runtime.meta.IMetadataService;
 import org.apache.cayenne.Cayenne;
@@ -108,7 +108,7 @@ public abstract class BaseCayenneUpdateStage<T extends DataObject> extends BaseL
 				T existing = Util.findById(objectContext, context.getType(), context.getEntity().getLrEntity(), idMap);
 				if (existing != null) {
 					throw new LinkRestException(Status.BAD_REQUEST, "Can't create '" + entity.getName()
-								+ "' with id " + LrObjectId.mapToString(idMap) + " -- object already exists");
+								+ "' with id " + CompoundObjectId.mapToString(idMap) + " -- object already exists");
 				}
 
 				for (Map.Entry<String, Object> idPart : idMap.entrySet()) {
@@ -125,12 +125,12 @@ public abstract class BaseCayenneUpdateStage<T extends DataObject> extends BaseL
 						DbAttribute dbAttribute = entity.getDbEntity().getAttribute(idPart.getKey());
 						if (dbAttribute == null) {
 							throw new LinkRestException(Status.BAD_REQUEST, "Can't create '" + entity.getName()
-								+ "' with id " + LrObjectId.mapToString(idMap) + " -- unknown db attribute: " + idPart.getKey());
+								+ "' with id " + CompoundObjectId.mapToString(idMap) + " -- unknown db attribute: " + idPart.getKey());
 						}
 						ObjAttribute objAttribute = entity.getAttributeForDbAttribute(dbAttribute);
 						if (objAttribute == null) {
 							throw new LinkRestException(Status.BAD_REQUEST, "Can't create '" + entity.getName()
-								+ "' with id " + LrObjectId.mapToString(idMap) + " -- unknown object attribute: " + idPart.getKey());
+								+ "' with id " + CompoundObjectId.mapToString(idMap) + " -- unknown object attribute: " + idPart.getKey());
 						}
 						o.writeProperty(objAttribute.getName(), idPart.getValue());
 					} else {

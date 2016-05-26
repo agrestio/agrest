@@ -2,8 +2,10 @@ package com.nhl.link.rest.runtime.processor.delete;
 
 import java.util.Map;
 
+import com.nhl.link.rest.CompoundObjectId;
 import com.nhl.link.rest.EntityParent;
 import com.nhl.link.rest.LrObjectId;
+import com.nhl.link.rest.SimpleObjectId;
 import com.nhl.link.rest.processor.BaseProcessingContext;
 
 /**
@@ -27,11 +29,11 @@ public class DeleteContext<T> extends BaseProcessingContext<T> {
 	}
 
 	public void setId(Object id) {
-		this.id = new LrObjectId(id);
+		this.id = new SimpleObjectId(id);
 	}
 
 	public void setCompoundId(Map<String, Object> ids) {
-		this.id = new LrObjectId(ids);
+		this.id = new CompoundObjectId(ids);
 	}
 
 	public EntityParent<?> getParent() {

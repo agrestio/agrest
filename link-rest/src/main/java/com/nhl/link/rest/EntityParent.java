@@ -33,7 +33,7 @@ public class EntityParent<P> {
 			throw new LinkRestException(Status.INTERNAL_SERVER_ERROR, "Related parent ID is missing");
 		}
 
-		this.id = new LrObjectId(parentIds);
+		this.id = new CompoundObjectId(parentIds);
 	}
 
 	public EntityParent(Class<P> parentType, Object parentId, String relationshipFromParent) {
@@ -44,7 +44,7 @@ public class EntityParent<P> {
 			throw new LinkRestException(Status.INTERNAL_SERVER_ERROR, "Related parent ID is missing");
 		}
 
-		this.id = new LrObjectId(parentId);
+		this.id = new SimpleObjectId(parentId);
 	}
 
 	public EntityParent(Class<P> parentType, String relationshipFromParent) {
@@ -85,7 +85,7 @@ public class EntityParent<P> {
 		// navigate through DbRelationships ... there may be no reverse
 		// ObjRel.. Reverse DB should always be there
 
-		if (id.isCompound()) {
+		if (id.size() > 1) {
 			List<Expression> expressions = new ArrayList<>();
 			for (DbRelationship dbRelationship : objRelationship.getDbRelationships()) {
 				DbRelationship reverseRelationship = dbRelationship.getReverseRelationship();

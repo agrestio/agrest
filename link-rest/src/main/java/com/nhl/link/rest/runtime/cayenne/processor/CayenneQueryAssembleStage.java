@@ -81,7 +81,7 @@ public class CayenneQueryAssembleStage<T> extends BaseLinearProcessingStage<Sele
 			if (prefetchSemantics <= 0) {
 				// it makes more sense to use joint prefetches for single object
 				// queries...
-				prefetchSemantics = context.isById() && !context.getId().isCompound()
+				prefetchSemantics = context.isById() && context.getId().size() == 1
 						? PrefetchTreeNode.JOINT_PREFETCH_SEMANTICS : PrefetchTreeNode.DISJOINT_PREFETCH_SEMANTICS;
 			}
 

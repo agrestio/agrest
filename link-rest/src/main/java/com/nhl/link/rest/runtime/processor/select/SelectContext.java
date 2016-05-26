@@ -6,6 +6,8 @@ import java.util.Map;
 
 import javax.ws.rs.core.UriInfo;
 
+import com.nhl.link.rest.CompoundObjectId;
+import com.nhl.link.rest.SimpleObjectId;
 import org.apache.cayenne.query.SelectQuery;
 
 import com.nhl.link.rest.DataResponse;
@@ -69,11 +71,11 @@ public class SelectContext<T> extends BaseProcessingContext<T> {
 	}
 
 	public void setId(Object id) {
-		this.id = new LrObjectId(id);
+		this.id = new SimpleObjectId(id);
 	}
 
 	public void setCompoundId(Map<String, Object> ids) {
-		this.id = new LrObjectId(ids);
+		this.id = new CompoundObjectId(ids);
 	}
 
 	public EntityParent<?> getParent() {
