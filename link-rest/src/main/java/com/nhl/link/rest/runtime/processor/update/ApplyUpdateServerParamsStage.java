@@ -1,12 +1,9 @@
 package com.nhl.link.rest.runtime.processor.update;
 
 import java.lang.annotation.Annotation;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-
-import javax.ws.rs.core.Response.Status;
 
 import org.apache.cayenne.map.DbJoin;
 import org.apache.cayenne.map.DbRelationship;
@@ -14,15 +11,11 @@ import org.apache.cayenne.map.ObjRelationship;
 
 import com.nhl.link.rest.EntityParent;
 import com.nhl.link.rest.EntityUpdate;
-import com.nhl.link.rest.LinkRestException;
 import com.nhl.link.rest.ResourceEntity;
 import com.nhl.link.rest.annotation.listener.UpdateServerParamsApplied;
-import com.nhl.link.rest.meta.LrAttribute;
 import com.nhl.link.rest.meta.LrEntity;
-import com.nhl.link.rest.meta.LrPersistentAttribute;
 import com.nhl.link.rest.meta.LrPersistentRelationship;
 import com.nhl.link.rest.meta.LrRelationship;
-import com.nhl.link.rest.parser.converter.Normalizer;
 import com.nhl.link.rest.processor.BaseLinearProcessingStage;
 import com.nhl.link.rest.processor.ProcessingStage;
 import com.nhl.link.rest.runtime.constraints.IConstraintsHandler;
@@ -82,23 +75,9 @@ public class ApplyUpdateServerParamsStage<T> extends BaseLinearProcessingStage<U
 			}
 
 			LrEntity<T> entity = context.getEntity().getLrEntity();
-
 			EntityUpdate<T> u = context.getFirst();
 			Map<String, Object> idMap = u.getOrCreateId();
-			Collection<LrAttribute> idAttributes = entity.getIds();
-
-			if (idAttributes.size() != context.getId().size()) {
-				throw new LinkRestException(Status.BAD_REQUEST,
-						"Wrong compound ID size: expected " + idAttributes.size() + ", got: " + context.getId().size());
-			}
-
-			for (LrAttribute idAttribute : idAttributes) {
-				LrPersistentAttribute persistentId = (LrPersistentAttribute) idAttribute;
-				Object idValue = context.getId().get(persistentId.getName());
-
-				idMap.put(persistentId.getDbAttribute().getName(),
-						Normalizer.normalize(idValue, persistentId.getType()));
-			}
+			idMap.putAll(context.getId().asMap(entity));
 
 			u.setExplicitId();
 		}

@@ -4,6 +4,8 @@ import java.util.List;
 
 import javax.ws.rs.core.Response.Status;
 
+import com.nhl.link.rest.meta.LrEntity;
+import com.nhl.link.rest.runtime.meta.IMetadataService;
 import org.apache.cayenne.ObjectContext;
 import org.apache.cayenne.exp.Expression;
 import org.apache.cayenne.map.ObjEntity;
@@ -21,8 +23,11 @@ import com.nhl.link.rest.runtime.processor.delete.DeleteContext;
  */
 public class CayenneDeleteStage<T> extends BaseLinearProcessingStage<DeleteContext<T>, T> {
 
-	public CayenneDeleteStage(ProcessingStage<DeleteContext<T>, ? super T> next) {
+	private IMetadataService metadataService;
+
+	public CayenneDeleteStage(ProcessingStage<DeleteContext<T>, ? super T> next, IMetadataService metadataService) {
 		super(next);
+		this.metadataService = metadataService;
 	}
 
 	@Override
@@ -37,11 +42,13 @@ public class CayenneDeleteStage<T> extends BaseLinearProcessingStage<DeleteConte
 
 		// delete by id
 		if (context.isById()) {
-			deleteById(context, cayenneContext);
+			LrEntity<T> lrEntity = metadataService.getLrEntity(context.getType());
+			deleteById(context, cayenneContext, lrEntity);
 		}
 		// delete by parent
 		else if (context.getParent() != null) {
-			deleteByParent(context, cayenneContext);
+			LrEntity<?> parentLrEntity = metadataService.getLrEntity(context.getParent().getType());
+			deleteByParent(context, cayenneContext, parentLrEntity);
 		}
 		// delete all !!
 		else {
@@ -49,9 +56,9 @@ public class CayenneDeleteStage<T> extends BaseLinearProcessingStage<DeleteConte
 		}
 	}
 
-	private void deleteById(DeleteContext<?> context, ObjectContext cayenneContext) {
+	private void deleteById(DeleteContext<T> context, ObjectContext cayenneContext, LrEntity<T> lrEntity) {
 
-		Object o = Util.findById(cayenneContext, context.getType(), context.getId().get());
+		Object o = Util.findById(cayenneContext, context.getType(), lrEntity, context.getId().get());
 
 		if (o == null) {
 			ObjEntity entity = cayenneContext.getEntityResolver().getObjEntity(context.getType());
@@ -63,10 +70,10 @@ public class CayenneDeleteStage<T> extends BaseLinearProcessingStage<DeleteConte
 		cayenneContext.commitChanges();
 	}
 
-	private void deleteByParent(DeleteContext<?> context, ObjectContext cayenneContext) {
+	private void deleteByParent(DeleteContext<T> context, ObjectContext cayenneContext, LrEntity<?> lrParentEntity) {
 
 		EntityParent<?> parent = context.getParent();
-		Object parentObject = Util.findById(cayenneContext, parent.getType(), parent.getId().get());
+		Object parentObject = Util.findById(cayenneContext, parent.getType(), lrParentEntity, parent.getId().get());
 
 		if (parentObject == null) {
 			ObjEntity entity = cayenneContext.getEntityResolver().getObjEntity(parent.getType());

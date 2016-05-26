@@ -1,5 +1,6 @@
 package com.nhl.link.rest.meta.cayenne;
 
+import java.util.Iterator;
 import java.util.Map;
 
 import javax.ws.rs.core.Response;
@@ -135,11 +136,21 @@ public class CayenneEntityCompiler implements LrEntityCompiler {
 
 		LrEntity<T> annotatedEntity = LrEntityBuilder.build(entity.getType());
 
-		for (LrAttribute id : annotatedEntity.getIds()) {
+		if (annotatedEntity.getIds().size() > 0) {
+			for (LrAttribute id : annotatedEntity.getIds()) {
 
-			LrAttribute existing = entity.addId(id);
-			if (existing != null && LOGGER.isDebugEnabled()) {
-				LOGGER.debug("ID attribute '" + existing.getName() + "' is overridden from annotations.");
+				LrAttribute existing = entity.addId(id);
+				if (existing != null && LOGGER.isDebugEnabled()) {
+					LOGGER.debug("ID attribute '" + existing.getName() + "' is overridden from annotations.");
+				}
+			}
+
+			Iterator<LrAttribute> iter = entity.getIds().iterator();
+			while (iter.hasNext()) {
+				LrAttribute id = iter.next();
+				if (!annotatedEntity.getIds().contains(id)) {
+					iter.remove();
+				}
 			}
 		}
 

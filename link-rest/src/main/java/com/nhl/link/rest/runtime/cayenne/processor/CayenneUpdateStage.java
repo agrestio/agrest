@@ -9,6 +9,7 @@ import java.util.Map;
 
 import javax.ws.rs.core.Response.Status;
 
+import com.nhl.link.rest.runtime.meta.IMetadataService;
 import org.apache.cayenne.DataObject;
 import org.apache.cayenne.exp.Expression;
 import org.apache.cayenne.exp.ExpressionFactory;
@@ -28,8 +29,8 @@ import com.nhl.link.rest.runtime.processor.update.UpdateContext;
  */
 public class CayenneUpdateStage<T extends DataObject> extends BaseCayenneUpdateStage<T> {
 
-	public CayenneUpdateStage(ProcessingStage<UpdateContext<T>, ? super T> next) {
-		super(next);
+	public CayenneUpdateStage(ProcessingStage<UpdateContext<T>, ? super T> next, IMetadataService metadataService) {
+		super(next, metadataService);
 	}
 
 	@Override

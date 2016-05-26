@@ -90,7 +90,13 @@ public class EntityParent<P> {
 			for (DbRelationship dbRelationship : objRelationship.getDbRelationships()) {
 				DbRelationship reverseRelationship = dbRelationship.getReverseRelationship();
 				for (DbJoin join : reverseRelationship.getJoins()) {
-					expressions.add(ExpressionFactory.matchDbExp(join.getSourceName(), id.get(join.getTargetName())));
+					Object joinValue = id.get(join.getTargetName());
+					if (joinValue == null) {
+						throw new LinkRestException(Status.BAD_REQUEST,
+								"Failed to build a Cayenne qualifier for a by-parent relationship '" + relationship +
+										"'; one of the parent's ID parts is missing in it's ID: " + join.getTargetName());
+					}
+					expressions.add(ExpressionFactory.matchDbExp(join.getSourceName(), joinValue));
 				}
 			}
 			return ExpressionFactory.and(expressions);

@@ -1,27 +1,30 @@
 package com.nhl.link.rest.runtime.cayenne.processor;
 
 import java.lang.annotation.Annotation;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map.Entry;
 
-import javax.ws.rs.core.Response.Status;
-
+import com.nhl.link.rest.LinkRestException;
+import com.nhl.link.rest.LrObjectId;
+import com.nhl.link.rest.meta.LrAttribute;
+import com.nhl.link.rest.meta.LrEntity;
+import com.nhl.link.rest.meta.LrPersistentAttribute;
 import org.apache.cayenne.exp.Expression;
 import org.apache.cayenne.exp.ExpressionFactory;
 import org.apache.cayenne.query.Ordering;
 import org.apache.cayenne.query.PrefetchTreeNode;
 import org.apache.cayenne.query.SelectQuery;
 
-import com.nhl.link.rest.LinkRestException;
 import com.nhl.link.rest.ResourceEntity;
 import com.nhl.link.rest.annotation.listener.QueryAssembled;
-import com.nhl.link.rest.meta.LrAttribute;
 import com.nhl.link.rest.meta.LrPersistentEntity;
-import com.nhl.link.rest.meta.cayenne.CayenneLrAttribute;
 import com.nhl.link.rest.processor.BaseLinearProcessingStage;
 import com.nhl.link.rest.processor.ProcessingStage;
 import com.nhl.link.rest.runtime.cayenne.ICayennePersister;
 import com.nhl.link.rest.runtime.processor.select.SelectContext;
+
+import javax.ws.rs.core.Response.Status;
 
 /**
  * @since 1.23
@@ -96,23 +99,43 @@ public class CayenneQueryAssembleStage<T> extends BaseLinearProcessingStage<Sele
 
 			Class<X> root = context.getType();
 			SelectQuery<X> query = new SelectQuery<>(root);
-			Collection<LrAttribute> idAttributes = context.getEntity().getLrEntity().getIds();
-
-			if (idAttributes.size() != context.getId().size()) {
-				throw new LinkRestException(Status.BAD_REQUEST,
-						"Wrong compound ID size: expected " + idAttributes.size() + ", got: " + context.getId().size());
-			}
-			for (LrAttribute idAttribute : idAttributes) {
-				Object idValue = context.getId().get(idAttribute.getName());
-				query.andQualifier(ExpressionFactory
-						.matchDbExp(((CayenneLrAttribute) idAttribute).getDbAttribute().getName(), idValue));
-			}
-
+			query.andQualifier(buildIdQualifer(context.getEntity().getLrEntity(), context.getId()));
 			return query;
 		}
 
 		return context.getSelect() != null ? context.getSelect() : new SelectQuery<>(context.getType());
 	}
+
+	private Expression buildIdQualifer(LrEntity<?> entity, LrObjectId id) {
+
+        Collection<LrAttribute> idAttributes = entity.getIds();
+        if (idAttributes.size() != id.size()) {
+            throw new LinkRestException(Status.BAD_REQUEST,
+                    "Wrong ID size: expected " + idAttributes.size() + ", got: " + id.size());
+        }
+
+		if (id.size() == 1) {
+			return ExpressionFactory.matchDbExp(idAttributes.iterator().next().getName(), id.get());
+		}
+
+        Collection<Expression> qualifiers = new ArrayList<>();
+		for (LrAttribute idAttribute : idAttributes) {
+			Object idValue = id.get(idAttribute.getName());
+			if (idValue == null) {
+				throw new LinkRestException(Status.BAD_REQUEST,
+						"Failed to build a Cayenne qualifier for entity " + entity.getName()
+								+ ": one of the entity's ID parts is missing in this ID: " + idAttribute.getName());
+			}
+			if (idAttribute instanceof LrPersistentAttribute) {
+				qualifiers.add(ExpressionFactory.matchDbExp(
+						((LrPersistentAttribute) idAttribute).getDbAttribute().getName(), idValue));
+			} else {
+				// can be non-persistent attribute if assembled from @LrId by LrEntityBuilder
+				qualifiers.add(ExpressionFactory.matchDbExp(idAttribute.getName(), idValue));
+			}
+		}
+        return ExpressionFactory.and(qualifiers);
+    }
 
 	private void appendPrefetches(PrefetchTreeNode root, ResourceEntity<?> entity, int prefetchSemantics) {
 		for (Entry<String, ResourceEntity<?>> e : entity.getChildren().entrySet()) {

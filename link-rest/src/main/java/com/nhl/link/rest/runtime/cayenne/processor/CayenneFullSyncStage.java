@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.nhl.link.rest.LinkRestException;
+import com.nhl.link.rest.runtime.meta.IMetadataService;
 import org.apache.cayenne.DataObject;
 import org.apache.cayenne.map.EntityResolver;
 import org.apache.cayenne.query.SelectQuery;
@@ -22,8 +23,9 @@ import javax.ws.rs.core.Response.Status;
  */
 public class CayenneFullSyncStage<T extends DataObject> extends CayenneCreateOrUpdateStage<T> {
 
-	public CayenneFullSyncStage(ProcessingStage<UpdateContext<T>, ? super T> next, boolean idempotent) {
-		super(next, idempotent);
+	public CayenneFullSyncStage(ProcessingStage<UpdateContext<T>, ? super T> next, IMetadataService metadataService,
+								boolean idempotent) {
+		super(next, metadataService, idempotent);
 	}
 
 	@Override

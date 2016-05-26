@@ -6,6 +6,7 @@ import java.util.Map.Entry;
 
 import javax.ws.rs.core.Response.Status;
 
+import com.nhl.link.rest.runtime.meta.IMetadataService;
 import org.apache.cayenne.DataObject;
 
 import com.nhl.link.rest.EntityUpdate;
@@ -20,8 +21,9 @@ public class CayenneCreateOrUpdateStage<T extends DataObject> extends CayenneUpd
 
 	private boolean idempotent;
 
-	public CayenneCreateOrUpdateStage(ProcessingStage<UpdateContext<T>, ? super T> next, boolean idempotent) {
-		super(next);
+	public CayenneCreateOrUpdateStage(ProcessingStage<UpdateContext<T>, ? super T> next, IMetadataService metadataService,
+									  boolean idempotent) {
+		super(next, metadataService);
 		this.idempotent = idempotent;
 	}
 

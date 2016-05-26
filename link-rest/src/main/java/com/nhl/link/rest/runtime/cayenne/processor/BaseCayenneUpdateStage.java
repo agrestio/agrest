@@ -9,10 +9,14 @@ import java.util.Set;
 
 import javax.ws.rs.core.Response.Status;
 
+import com.nhl.link.rest.LrObjectId;
+import com.nhl.link.rest.meta.LrEntity;
+import com.nhl.link.rest.runtime.meta.IMetadataService;
 import org.apache.cayenne.Cayenne;
 import org.apache.cayenne.DataObject;
 import org.apache.cayenne.ObjectContext;
 import org.apache.cayenne.map.DbAttribute;
+import org.apache.cayenne.map.DbEntity;
 import org.apache.cayenne.map.ObjAttribute;
 import org.apache.cayenne.map.ObjEntity;
 import org.apache.cayenne.map.ObjRelationship;
@@ -32,8 +36,11 @@ import com.nhl.link.rest.runtime.processor.update.UpdateContext;
  */
 public abstract class BaseCayenneUpdateStage<T extends DataObject> extends BaseLinearProcessingStage<UpdateContext<T>, T> {
 
-	public BaseCayenneUpdateStage(ProcessingStage<UpdateContext<T>, ? super T> next) {
+	private IMetadataService metadataService;
+
+	public BaseCayenneUpdateStage(ProcessingStage<UpdateContext<T>, ? super T> next, IMetadataService metadataService) {
 		super(next);
+		this.metadataService = metadataService;
 	}
 
 	@Override
@@ -84,37 +91,93 @@ public abstract class BaseCayenneUpdateStage<T extends DataObject> extends BaseL
 
 			ObjEntity entity = objectContext.getEntityResolver().getObjEntity(context.getType());
 
-			for (DbAttribute pk : entity.getDbEntity().getPrimaryKeys()) {
-
-				Object id = idMap.get(pk.getName());
-				if (id == null) {
-					continue;
+			if (isPrimaryKey(entity.getDbEntity(), idMap.keySet())) {
+				// lrId is the same as the PK,
+				// no need to make an additional check that the lrId is unique
+				for (DbAttribute pk : entity.getDbEntity().getPrimaryKeys()) {
+					Object id = idMap.get(pk.getName());
+					if (id == null) {
+						continue;
+					}
+					setPrimaryKey(o, entity, pk, id);
 				}
 
-				// 1. meaningful ID
-				// TODO: must compile all this... figuring this on the fly is
-				// slow
-				ObjAttribute opk = entity.getAttributeForDbAttribute(pk);
-				if (opk != null) {
-					o.writeProperty(opk.getName(), id);
-				}
-				// 2. PK is auto-generated ... I guess this is sorta
-				// expected to fail - generated meaningless PK should not be
-				// pushed from the client
-				else if (pk.isGenerated()) {
+			} else {
+				// need to make an additional check that the lrId is unique
+				// TODO: I guess this should be done in a separate new context
+				T existing = Util.findById(objectContext, context.getType(), context.getEntity().getLrEntity(), idMap);
+				if (existing != null) {
 					throw new LinkRestException(Status.BAD_REQUEST, "Can't create '" + entity.getName()
-							+ "' with fixed id");
+								+ "' with id " + LrObjectId.mapToString(idMap) + " -- object already exists");
 				}
-				// 3. probably a propagated ID.
-				else {
-					// TODO: hopefully this works..
-					o.getObjectId().getReplacementIdMap().put(pk.getName(), id);
+
+				for (Map.Entry<String, Object> idPart : idMap.entrySet()) {
+
+					DbAttribute pk = null;
+					for (DbAttribute _pk: entity.getDbEntity().getPrimaryKeys()) {
+						if (_pk.getName().equals(idPart.getKey())) {
+							pk = _pk;
+							break;
+						}
+					}
+
+					if (pk == null) {
+						DbAttribute dbAttribute = entity.getDbEntity().getAttribute(idPart.getKey());
+						if (dbAttribute == null) {
+							throw new LinkRestException(Status.BAD_REQUEST, "Can't create '" + entity.getName()
+								+ "' with id " + LrObjectId.mapToString(idMap) + " -- unknown db attribute: " + idPart.getKey());
+						}
+						ObjAttribute objAttribute = entity.getAttributeForDbAttribute(dbAttribute);
+						if (objAttribute == null) {
+							throw new LinkRestException(Status.BAD_REQUEST, "Can't create '" + entity.getName()
+								+ "' with id " + LrObjectId.mapToString(idMap) + " -- unknown object attribute: " + idPart.getKey());
+						}
+						o.writeProperty(objAttribute.getName(), idPart.getValue());
+					} else {
+						setPrimaryKey(o, entity, pk, idPart.getValue());
+					}
 				}
 			}
 		}
 
 		mergeChanges(u, o, relator);
 		relator.relateToParent(o);
+	}
+
+	private void setPrimaryKey(DataObject o, ObjEntity entity, DbAttribute pk, Object id) {
+
+		// 1. meaningful ID
+		// TODO: must compile all this... figuring this on the fly is
+		// slow
+		ObjAttribute opk = entity.getAttributeForDbAttribute(pk);
+		if (opk != null) {
+            o.writeProperty(opk.getName(), id);
+        }
+        // 2. PK is auto-generated ... I guess this is sorta
+        // expected to fail - generated meaningless PK should not be
+        // pushed from the client
+        else if (pk.isGenerated()) {
+            throw new LinkRestException(Status.BAD_REQUEST, "Can't create '" + entity.getName()
+                    + "' with fixed id");
+        }
+        // 3. probably a propagated ID.
+        else {
+            // TODO: hopefully this works..
+            o.getObjectId().getReplacementIdMap().put(pk.getName(), id);
+        }
+	}
+
+	/**
+	 * @return true if all PK columns are represented in {@code keys}
+     */
+	private boolean isPrimaryKey(DbEntity entity, Collection<String> keys) {
+		Collection<DbAttribute> pks = entity.getPrimaryKeys();
+		for (DbAttribute pk : pks) {
+			if (!keys.contains(pk.getName())) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 	private void mergeChanges(EntityUpdate<T> entityUpdate, DataObject o, ObjectRelator relator) {
@@ -212,7 +275,9 @@ public abstract class BaseCayenneUpdateStage<T extends DataObject> extends BaseL
 		ObjectContext objectContext = CayenneContextInitStage.cayenneContext(context);
 
 		ObjEntity parentEntity = objectContext.getEntityResolver().getObjEntity(parent.getType());
-		final DataObject parentObject = (DataObject) Util.findById(objectContext, parent.getType(), parent.getId().get());
+		LrEntity<?> parentLrEntity = metadataService.getLrEntity(context.getParent().getType());
+		final DataObject parentObject = (DataObject) Util.findById(objectContext, parent.getType(),
+				parentLrEntity, parent.getId().get());
 
 		if (parentObject == null) {
 			throw new LinkRestException(Status.NOT_FOUND, "No parent object for ID '" + parent.getId()
