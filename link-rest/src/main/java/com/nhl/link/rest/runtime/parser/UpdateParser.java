@@ -194,21 +194,36 @@ public class UpdateParser implements IUpdateParser {
 	protected void extractPK(EntityUpdate<?> update, JsonNode valueNode) {
 
 		Collection<LrAttribute> ids = update.getEntity().getIds();
-		for (LrAttribute id : ids) {
-			boolean persistent = id instanceof LrPersistentAttribute;
-			JsonNode idNode;
-			if (ids.size() > 1) {
-				idNode = valueNode.get(id.getName());
-				if (idNode == null) {
-					throw new LinkRestException(Status.BAD_REQUEST,
-							"Failed to parse update payload -- ID part is missing: " + id.getName());
-				}
-			} else {
-				idNode = valueNode;
-			}
-			Object value = extractValue(idNode, persistent ? ((LrPersistentAttribute) id).getJdbcType() : Integer.MIN_VALUE);
-			update.getOrCreateId().put(persistent? ((LrPersistentAttribute) id).getDbAttribute().getName() : id.getName(), value);
+		if (ids.size() == 1) {
+			extractPKPart(update, ids.iterator().next(), valueNode);
+			return;
 		}
+
+		for (LrAttribute id : ids) {
+
+			JsonNode idNode = valueNode.get(id.getName());
+			if (idNode == null) {
+				throw new LinkRestException(Status.BAD_REQUEST,
+						"Failed to parse update payload -- ID part is missing: " + id.getName());
+			}
+
+			extractPKPart(update, id, idNode);
+		}
+	}
+	
+	protected void extractPKPart(EntityUpdate<?> update, LrAttribute id, JsonNode valueNode) {
+		
+		int type = Integer.MIN_VALUE;
+		String name = id.getName();
+
+		if (id instanceof LrPersistentAttribute) {
+			LrPersistentAttribute persistentId = (LrPersistentAttribute) id;
+			type = persistentId.getJdbcType();
+			name = persistentId.getDbAttribute().getName();
+		}
+
+		Object value = extractValue(valueNode, type);
+		update.getOrCreateId().put(name, value);
 	}
 
 	protected Object extractValue(JsonNode valueNode, Class<?> javaType) {
