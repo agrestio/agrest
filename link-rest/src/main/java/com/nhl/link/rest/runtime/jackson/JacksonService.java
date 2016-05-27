@@ -36,6 +36,8 @@ public class JacksonService implements IJacksonService {
 
 		this.sharedFactory.setCharacterEscapes(new CharacterEscapes() {
 
+			private static final long serialVersionUID = 3995801066651016289L;
+
 			@Override
 			public int[] getEscapeCodesForAscii() {
 				return standardAsciiEscapesForJSON();
@@ -50,12 +52,12 @@ public class JacksonService implements IJacksonService {
 				// which are perfectly valid in JSON but invalid in JS strings,
 				// need to be escaped...
 				switch (ch) {
-					case '\u2028':
-						return LINE_SEPARATOR;
-					case '\u2029':
-						return PARAGRAPH_SEPARATOR;
-					default:
-						return null;
+				case '\u2028':
+					return LINE_SEPARATOR;
+				case '\u2029':
+					return PARAGRAPH_SEPARATOR;
+				default:
+					return null;
 				}
 			}
 		});

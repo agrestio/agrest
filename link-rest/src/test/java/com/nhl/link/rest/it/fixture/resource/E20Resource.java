@@ -1,15 +1,10 @@
 package com.nhl.link.rest.it.fixture.resource;
 
-import com.nhl.link.rest.DataResponse;
-import com.nhl.link.rest.EntityUpdate;
-import com.nhl.link.rest.LinkRest;
-import com.nhl.link.rest.SimpleResponse;
-import com.nhl.link.rest.it.fixture.cayenne.E20;
-import com.nhl.link.rest.it.fixture.cayenne.E21;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
-import javax.ws.rs.MatrixParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
@@ -18,8 +13,13 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Configuration;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.UriInfo;
-import java.util.HashMap;
-import java.util.Map;
+
+import com.nhl.link.rest.DataResponse;
+import com.nhl.link.rest.EntityUpdate;
+import com.nhl.link.rest.LinkRest;
+import com.nhl.link.rest.SimpleResponse;
+import com.nhl.link.rest.it.fixture.cayenne.E20;
+import com.nhl.link.rest.it.fixture.cayenne.E21;
 
 @Path("e20")
 public class E20Resource {
