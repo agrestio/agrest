@@ -4,6 +4,7 @@ Release 1.24
 #137 Change LrAttribute.getJavaType() to return Class object
 #157 Not enough diagnostics on misconfigured listeners
 #161 Unmapped PK causes response encoding to fail
+#163 Redefining public ID attribute
 #164 Auto-compile Lr-annotated properties of entity objects
 #168 Refactor DataResponse use
 #169 Deprecate LinkRest and ILinkRestService methods that take SelectQuery parameter
