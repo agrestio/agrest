@@ -4,6 +4,9 @@ import com.nhl.link.rest.meta.LrEntity;
 
 import java.util.Map;
 
+/**
+ * @since 1.24
+ */
 public interface LrObjectId {
 
     int size();

@@ -7,6 +7,9 @@ import javax.ws.rs.core.Response;
 import java.util.Collection;
 import java.util.Map;
 
+/**
+ * @since 1.24
+ */
 public abstract class BaseObjectId implements LrObjectId {
 
     @Override
