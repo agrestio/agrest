@@ -90,7 +90,7 @@ public class TestWithCayenneMapping {
 		compilers.add(
 				new CayenneEntityCompiler(mockCayennePersister, Collections.<String, LrEntityOverlay<?>> emptyMap()));
 
-		return new MetadataService(Collections.<LrEntity<?>> emptyList(), compilers, mockCayennePersister);
+		return new MetadataService(compilers, mockCayennePersister);
 	}
 
 	protected IResourceMetadataService createResourceMetadataService() {

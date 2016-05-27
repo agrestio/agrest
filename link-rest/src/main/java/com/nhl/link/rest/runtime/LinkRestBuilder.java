@@ -29,8 +29,6 @@ import com.nhl.link.rest.SimpleResponse;
 import com.nhl.link.rest.annotation.LrAttribute;
 import com.nhl.link.rest.encoder.EncoderFilter;
 import com.nhl.link.rest.encoder.PropertyMetadataEncoder;
-import com.nhl.link.rest.meta.LrEntity;
-import com.nhl.link.rest.meta.LrEntityBuilder;
 import com.nhl.link.rest.meta.LrEntityOverlay;
 import com.nhl.link.rest.meta.cayenne.CayenneEntityCompiler;
 import com.nhl.link.rest.meta.compiler.LrEntityCompiler;
@@ -97,7 +95,6 @@ public class LinkRestBuilder {
 	private ILinkRestService linkRestService;
 
 	private List<EncoderFilter> encoderFilters;
-	private List<LrEntity<?>> extraEntities;
 	private Map<String, LrEntityOverlay<?>> entityOverlays;
 	private Map<Class<?>, Class<?>> exceptionMappers;
 	private Collection<LinkRestAdapter> adapters;
@@ -124,7 +121,6 @@ public class LinkRestBuilder {
 	}
 
 	public LinkRestBuilder() {
-		this.extraEntities = new ArrayList<>();
 		this.entityOverlays = new HashMap<>();
 		this.encoderFilters = new ArrayList<>();
 		this.linkRestServiceType = DefaultLinkRestService.class;
@@ -205,38 +201,6 @@ public class LinkRestBuilder {
 	}
 
 	/**
-	 * Adds a user-configured entity to the LinkRest runtime model. Usually used
-	 * for POJOs, as Cayenne entities are all automatically loaded from
-	 * CayenneRuntime.
-	 * 
-	 * @since 1.12
-	 * @see LrEntityBuilder
-	 * @deprecated since 1.24, as annotated entities are now loaded
-	 *             automatically.
-	 */
-	@Deprecated
-	public LinkRestBuilder extraEntity(LrEntity<?> entity) {
-		this.extraEntities.add(entity);
-		return this;
-	}
-
-	/**
-	 * Adds a list of user-configured entities to the LinkRest runtime model.
-	 * Usually used for POJOs, as Cayenne entities are all automatically loaded
-	 * from CayenneRuntime.
-	 * 
-	 * @since 1.12
-	 * @see LrEntityBuilder
-	 * @deprecated since 1.24, as annotated entities are now loaded
-	 *             automatically.
-	 */
-	@Deprecated
-	public LinkRestBuilder extraEntities(Collection<? extends LrEntity<?>> entities) {
-		this.extraEntities.addAll(entities);
-		return this;
-	}
-
-	/**
 	 * Exposes a non-persistent property of a persistent type. Once declared
 	 * such property can be rendered in responses, referenced in include/exclude
 	 * keys, etc.
@@ -312,7 +276,6 @@ public class LinkRestBuilder {
 			public void configure(Binder binder) {
 
 				binder.<EncoderFilter> bindList(EncoderService.ENCODER_FILTER_LIST).addAll(encoderFilters);
-				binder.<LrEntity<?>> bindList(MetadataService.EXTRA_ENTITIES_LIST).addAll(extraEntities);
 
 				binder.bind(CayenneEntityCompiler.class).to(CayenneEntityCompiler.class);
 				binder.bind(PojoEntityCompiler.class).to(PojoEntityCompiler.class);

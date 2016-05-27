@@ -1,6 +1,5 @@
 package com.nhl.link.rest.meta;
 
-import org.apache.cayenne.dba.TypesMapping;
 import org.apache.cayenne.exp.parser.ASTObjPath;
 import org.apache.cayenne.exp.parser.ASTPath;
 import org.apache.cayenne.util.ToStringBuilder;
@@ -22,27 +21,17 @@ public class DefaultLrAttribute implements LrAttribute {
 	public String getName() {
 		return name;
 	}
-	
+
 	@Override
 	public ASTPath getPathExp() {
 		return new ASTObjPath(name);
-	}
-
-	@Deprecated
-	@Override
-	public String getJavaType() {
-		if (byte[].class.equals(javaType)) {
-			return TypesMapping.JAVA_BYTES;
-		} else {
-			return javaType.getName();
-		}
 	}
 
 	@Override
 	public Class<?> getType() {
 		return javaType;
 	}
-	
+
 	@Override
 	public String toString() {
 

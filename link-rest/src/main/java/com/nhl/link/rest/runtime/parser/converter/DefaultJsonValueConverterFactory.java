@@ -48,16 +48,6 @@ public class DefaultJsonValueConverterFactory implements IJsonValueConverterFact
 	}
 
 	@Override
-	@Deprecated
-	public JsonValueConverter converter(String valueType) {
-		try {
-			return converter(Class.forName(valueType));
-		} catch (ClassNotFoundException e) {
-			throw new IllegalArgumentException("Unknown class: " + valueType, e);
-		}
-	}
-
-	@Override
 	public JsonValueConverter converter(Class<?> valueType) {
 		JsonValueConverter converter = convertersByJavaType.get(valueType);
 		return converter != null ? converter : defaultConverter;

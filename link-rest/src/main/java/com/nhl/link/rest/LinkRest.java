@@ -2,10 +2,6 @@ package com.nhl.link.rest;
 
 import javax.ws.rs.core.Configuration;
 
-import org.apache.cayenne.query.SelectQuery;
-
-import com.nhl.link.rest.annotation.listener.QueryAssembled;
-import com.nhl.link.rest.annotation.listener.SelectServerParamsApplied;
 import com.nhl.link.rest.runtime.ILinkRestService;
 import com.nhl.link.rest.runtime.LinkRestRuntime;
 
@@ -20,16 +16,6 @@ public class LinkRest {
 
 	public static <T> SelectBuilder<T> select(Class<T> root, Configuration config) {
 		return service(config).select(root);
-	}
-
-	/**
-	 * @deprecated since 1.24. Direct dependency on Cayenne should not exist in
-	 *             the user-facing API. If you need to run a custom query, use
-	 *             listener annotated with {@link QueryAssembled} or
-	 *             {@link SelectServerParamsApplied}.
-	 */
-	public static <T> SelectBuilder<T> select(SelectQuery<T> query, Configuration config) {
-		return service(config).select(query);
 	}
 
 	public static <T> UpdateBuilder<T> create(Class<T> type, Configuration config) {

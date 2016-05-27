@@ -1,7 +1,6 @@
 package com.nhl.link.rest.meta;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -17,14 +16,10 @@ public class LazyLrDataMap implements LrDataMap {
 	private Collection<LrEntityCompiler> compilers;
 	private ConcurrentMap<Class<?>, LrEntity<?>> entities;
 
-	public LazyLrDataMap(Collection<LrEntityCompiler> compilers, List<LrEntity<?>> extraEntities) {
+	public LazyLrDataMap(Collection<LrEntityCompiler> compilers) {
 
 		this.compilers = compilers;
 		this.entities = new ConcurrentHashMap<>();
-
-		for (LrEntity<?> e : extraEntities) {
-			entities.put(e.getType(), e);
-		}
 	}
 
 	@SuppressWarnings("unchecked")

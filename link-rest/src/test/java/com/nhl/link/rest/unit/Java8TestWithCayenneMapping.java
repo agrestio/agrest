@@ -84,7 +84,7 @@ public class Java8TestWithCayenneMapping {
 		List<LrEntityCompiler> compilers = asList(
 				new CayenneEntityCompiler(mockCayennePersister, Collections.<String, LrEntityOverlay<?>> emptyMap()));
 
-		return new MetadataService(Collections.<LrEntity<?>> emptyList(), compilers, mockCayennePersister);
+		return new MetadataService(compilers, mockCayennePersister);
 	}
 
 	protected IResourceMetadataService createResourceMetadataService() {

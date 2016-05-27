@@ -39,14 +39,6 @@ public class MetadataResponse<T> extends LrResponse {
 	}
 
 	/**
-	 * @deprecated since 1.24 use {@link #setEncoder(Encoder)}.
-	 */
-	public MetadataResponse<T> withEncoder(Encoder encoder) {
-		this.encoder = encoder;
-		return this;
-	}
-
-	/**
 	 * @since 1.24
 	 */
 	public void setResources(Collection<LrResource<T>> resources) {

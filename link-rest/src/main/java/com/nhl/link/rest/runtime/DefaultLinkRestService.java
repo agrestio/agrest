@@ -7,7 +7,6 @@ import javax.ws.rs.core.UriInfo;
 
 import org.apache.cayenne.di.Inject;
 import org.apache.cayenne.exp.Property;
-import org.apache.cayenne.query.SelectQuery;
 
 import com.nhl.link.rest.DataResponse;
 import com.nhl.link.rest.DeleteBuilder;
@@ -59,25 +58,8 @@ public class DefaultLinkRestService implements ILinkRestService {
 	}
 
 	@Override
-	@Deprecated
-	public <T> DataResponse<T> select(SelectQuery<T> query, UriInfo uriInfo) {
-		return select(query).uri(uriInfo).select();
-	}
-
-	@Override
 	public <T> SelectBuilder<T> select(Class<T> type) {
 		SelectContext<T> context = new SelectContext<>(type);
-		return toSelectBuilder(context);
-	}
-
-	@Override
-	@Deprecated
-	public <T> SelectBuilder<T> select(SelectQuery<T> query) {
-
-		Class<T> type = metadataService.getLrEntity(query).getType();
-		SelectContext<T> context = new SelectContext<>(type);
-		context.setSelect(query);
-
 		return toSelectBuilder(context);
 	}
 

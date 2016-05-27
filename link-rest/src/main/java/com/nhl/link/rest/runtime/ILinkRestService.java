@@ -5,7 +5,6 @@ import java.util.Map;
 import javax.ws.rs.core.UriInfo;
 
 import org.apache.cayenne.exp.Property;
-import org.apache.cayenne.query.SelectQuery;
 
 import com.nhl.link.rest.DataResponse;
 import com.nhl.link.rest.DeleteBuilder;
@@ -13,8 +12,6 @@ import com.nhl.link.rest.MetadataBuilder;
 import com.nhl.link.rest.SelectBuilder;
 import com.nhl.link.rest.SimpleResponse;
 import com.nhl.link.rest.UpdateBuilder;
-import com.nhl.link.rest.annotation.listener.QueryAssembled;
-import com.nhl.link.rest.annotation.listener.SelectServerParamsApplied;
 
 /**
  * The main entry point to LinkRest stack. Used from the user REST resource
@@ -34,23 +31,6 @@ public interface ILinkRestService {
 	<T> DataResponse<T> selectById(Class<T> type, Object id, UriInfo uriInfo);
 
 	/**
-	 * Selects objects based on the provided query template and extra URL
-	 * parameters.
-	 * 
-	 * @param query
-	 *            a server-side built SelectQuery that is used as a template for
-	 *            database select, amended with parameters inferred from the
-	 *            request.
-	 * @param uriInfo
-	 * @return the result of a select wrapped in a DataResponse.
-	 * @deprecated since 1.24. Direct dependency on Cayenne should not exist in
-	 *             the user-facing API. If you need to run a custom query, use
-	 *             listener annotated with {@link QueryAssembled} or or
-	 *             {@link SelectServerParamsApplied}.
-	 */
-	<T> DataResponse<T> select(SelectQuery<T> query, UriInfo uriInfo);
-
-	/**
 	 * Creates a {@link SelectBuilder} to customize data retrieval. This is the
 	 * most generic and customizable way to select data. It can be used as a
 	 * replacement of any other select.
@@ -58,19 +38,6 @@ public interface ILinkRestService {
 	 * @since 1.14
 	 */
 	<T> SelectBuilder<T> select(Class<T> type);
-
-	/**
-	 * Creates a {@link SelectBuilder} to customize data retrieval. This is the
-	 * most generic and customizable way to select data. It can be used as a
-	 * replacement of any other select.
-	 * 
-	 * @since 1.14
-	 * @deprecated since 1.24. Direct dependency on Cayenne should not exist in
-	 *             the user-facing API. If you need to run a custom query, use
-	 *             listener annotated with {@link QueryAssembled} or
-	 *             {@link SelectServerParamsApplied}.
-	 */
-	<T> SelectBuilder<T> select(SelectQuery<T> query);
 
 	SimpleResponse delete(Class<?> type, Object id);
 

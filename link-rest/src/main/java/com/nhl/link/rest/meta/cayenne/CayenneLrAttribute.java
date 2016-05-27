@@ -45,11 +45,6 @@ public class CayenneLrAttribute implements LrPersistentAttribute {
 	}
 
 	@Override
-	public String getJavaType() {
-		return objAttribute.getType();
-	}
-
-	@Override
 	public Class<?> getType() {
 		return type;
 	}

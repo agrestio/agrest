@@ -20,11 +20,10 @@ import org.junit.Test;
 import com.nhl.link.rest.ResourceEntity;
 import com.nhl.link.rest.it.fixture.pojo.model.P1;
 import com.nhl.link.rest.it.fixture.pojo.model.P2;
-import com.nhl.link.rest.meta.LrEntity;
-import com.nhl.link.rest.meta.LrEntityBuilder;
 import com.nhl.link.rest.meta.LrEntityOverlay;
 import com.nhl.link.rest.meta.cayenne.CayenneEntityCompiler;
 import com.nhl.link.rest.meta.compiler.LrEntityCompiler;
+import com.nhl.link.rest.meta.compiler.PojoEntityCompiler;
 import com.nhl.link.rest.runtime.jackson.IJacksonService;
 import com.nhl.link.rest.runtime.jackson.JacksonService;
 import com.nhl.link.rest.runtime.meta.IMetadataService;
@@ -61,13 +60,13 @@ public class RequestParser_WithPojoTest extends TestWithCayenneMapping {
 
 	@Override
 	protected IMetadataService createMetadataService() {
-		List<LrEntity<?>> pojos = Arrays.asList(LrEntityBuilder.build(P1.class), LrEntityBuilder.build(P2.class));
 
 		List<LrEntityCompiler> compilers = new ArrayList<>();
+		compilers.add(new PojoEntityCompiler());
 		compilers.add(
 				new CayenneEntityCompiler(mockCayennePersister, Collections.<String, LrEntityOverlay<?>> emptyMap()));
 
-		return new MetadataService(pojos, compilers, mockCayennePersister);
+		return new MetadataService(compilers, mockCayennePersister);
 	}
 
 	@Test

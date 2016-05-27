@@ -20,16 +20,6 @@ import com.nhl.link.rest.runtime.cayenne.ICayennePersister;
 public class MetadataService implements IMetadataService {
 
 	/**
-	 * A DI key that allows loading arbitrary user-provided entities into
-	 * LinkRest metadata store. Usually used to map POJO entities.
-	 * 
-	 * @since 1.12
-	 */
-	public static final String EXTRA_ENTITIES_LIST = "linkrest.meta.entity.extras.list";
-
-	
-
-	/**
 	 * A DI key that allows to access a list of entity compilers.
 	 * 
 	 * @since 1.24
@@ -39,12 +29,11 @@ public class MetadataService implements IMetadataService {
 	private EntityResolver entityResolver;
 	private LrDataMap dataMap;
 
-	public MetadataService(@Inject(EXTRA_ENTITIES_LIST) List<LrEntity<?>> extraEntities,
-			@Inject(ENTITY_COMPILER_LIST) List<LrEntityCompiler> entityCompilers,
+	public MetadataService(@Inject(ENTITY_COMPILER_LIST) List<LrEntityCompiler> entityCompilers,
 			@Inject ICayennePersister cayenneService) {
 
 		this.entityResolver = cayenneService.entityResolver();
-		this.dataMap = new LazyLrDataMap(entityCompilers, extraEntities);
+		this.dataMap = new LazyLrDataMap(entityCompilers);
 	}
 
 	/**

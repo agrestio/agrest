@@ -66,26 +66,10 @@ public class DataResponse<T> extends LrResponse {
 	}
 
 	/**
-	 * @deprecated since 1.24 in favor of {@link #setObjects(List)}.
-	 */
-	public DataResponse<T> withObjects(List<T> objects) {
-		this.objects = objects;
-		return this;
-	}
-
-	/**
 	 * @since 1.24
 	 */
 	public void setObject(T object) {
 		setObjects(Collections.singletonList(object));
-	}
-
-	/**
-	 * @deprecated since 1.24 in favor of {@link #setObject(Object)}.
-	 */
-	public DataResponse<T> withObject(T object) {
-		this.objects = Collections.singletonList(object);
-		return this;
 	}
 
 	/**
@@ -100,14 +84,6 @@ public class DataResponse<T> extends LrResponse {
 	 */
 	public void setEncoder(Encoder encoder) {
 		this.encoder = encoder;
-	}
-
-	/**
-	 * @deprecated since 1.24 in favor of {@link #setEncoder(Encoder)}.
-	 */
-	public DataResponse<T> withEncoder(Encoder encoder) {
-		setEncoder(encoder);
-		return this;
 	}
 
 	/**
