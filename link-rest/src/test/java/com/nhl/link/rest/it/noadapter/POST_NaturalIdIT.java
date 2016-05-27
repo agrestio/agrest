@@ -1,24 +1,25 @@
 package com.nhl.link.rest.it.noadapter;
 
-import com.nhl.link.rest.it.fixture.JerseyTestOnDerby;
-import com.nhl.link.rest.it.fixture.cayenne.E20;
-import com.nhl.link.rest.it.fixture.cayenne.E21;
-import com.nhl.link.rest.it.fixture.resource.E20Resource;
-import com.nhl.link.rest.it.fixture.resource.E21Resource;
-import org.apache.cayenne.Cayenne;
-import org.apache.cayenne.query.ObjectSelect;
-import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
+import java.io.IOException;
 
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.FeatureContext;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.io.IOException;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import org.apache.cayenne.query.ObjectSelect;
+import org.junit.Test;
+
+import com.nhl.link.rest.it.fixture.JerseyTestOnDerby;
+import com.nhl.link.rest.it.fixture.cayenne.E20;
+import com.nhl.link.rest.it.fixture.cayenne.E21;
+import com.nhl.link.rest.it.fixture.resource.E20Resource;
+import com.nhl.link.rest.it.fixture.resource.E21Resource;
 
 public class POST_NaturalIdIT extends JerseyTestOnDerby {
 
