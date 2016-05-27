@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>com.nhl.link.rest</groupId>
 		<artifactId>link-rest-parent</artifactId>
-		<version>2.0-SNAPSHOT</version>
+		<version>1.24-SNAPSHOT</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 
