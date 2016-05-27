@@ -88,26 +88,38 @@ public class ListEncoder implements Encoder {
 		return true;
 	}
 
-	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@SuppressWarnings({ "rawtypes" })
 	private List<?> toList(Object object) {
 
 		if (object == null) {
 			throw new IllegalStateException("Unexpected null list");
 		}
 
-		if (!(object instanceof List)) {
-			throw new IllegalStateException("Unexpected object type. Should be a List, got: "
-					+ object.getClass().getName());
+		if (object instanceof List) {
+			List<?> list = (List) object;
+			return postprocessList(list);
 		}
 
-		List<?> list = (List) object;
+		if (object instanceof Iterable) {
+			List<Object> list = new ArrayList<>();
+			Iterable<?> it = (Iterable) object;
+			it.forEach(list::add);
+			return postprocessList(list);
+		}
+
+		throw new IllegalStateException(
+				"Unexpected object type. Should be a List or iterable, got: " + object.getClass().getName());
+	}
+
+	@SuppressWarnings("unchecked")
+	private <T> List<T> postprocessList(List<T> list) {
 
 		// sort list before encoding, but do not filter it - we can filter
 		// during encoding
 		if (!orderings.isEmpty() && list.size() > 1) {
 
 			// don't mess up underlying relationship, sort a copy...
-			list = new ArrayList(list);
+			list = new ArrayList<>(list);
 
 			Collections.sort(list, ComparatorUtils.chainedComparator(orderings));
 		}

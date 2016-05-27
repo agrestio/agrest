@@ -17,7 +17,7 @@ import org.apache.cayenne.exp.Property;
  */
 public abstract class _E19 extends CayenneDataObject {
 
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L; 
 
     public static final String ID_PK_COLUMN = "id";
 

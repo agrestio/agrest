@@ -29,6 +29,9 @@
 		<cayenne-version>4.0.M2</cayenne-version>
 		<jersey-version>2.22.1</jersey-version>
 		<jackson-version>2.6.3</jackson-version>
+
+		<maven.compiler.source>1.8</maven.compiler.source>
+		<maven.compiler.target>1.8</maven.compiler.target>
 	</properties>
 
 	<url>https://github.com/nhl/link-rest</url>
@@ -55,7 +58,7 @@
 		<connection>scm:git:https://github.com/nhl/link-rest</connection>
 		<developerConnection>scm:git:ssh://git@github.com/nhl/link-rest</developerConnection>
 		<url>https://github.com/nhl/link-rest</url>
-		<tag>link-rest-parent-1.23</tag>
+		<tag>HEAD</tag>
 	</scm>
 
 	<distributionManagement>
@@ -210,10 +213,6 @@
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-compiler-plugin</artifactId>
 					<version>2.5.1</version>
-					<configuration>
-						<source>1.7</source>
-						<target>1.7</target>
-					</configuration>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
@@ -226,7 +225,7 @@
 					<version>2.9.1</version>
 					<configuration>
 						<!-- Java 8 is too strict about Javadoc omissions -->
-						<additionalparam>${javadoc.doclint.none}</additionalparam>
+						<additionalparam>-Xdoclint:none</additionalparam>
 					</configuration>
 				</plugin>
 				<plugin>
@@ -310,44 +309,8 @@
 							</execution>
 						</executions>
 					</plugin>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-enforcer-plugin</artifactId>
-						<executions>
-							<execution>
-								<id>enforce-jdk</id>
-								<phase>validate</phase>
-								<goals>
-									<goal>enforce</goal>
-								</goals>
-								<configuration>
-									<rules>
-										<!-- Releases must be done using Java 8 or newer; older java would 
-											result in module exclusions. -->
-										<requireJavaVersion>
-											<version>1.8</version>
-										</requireJavaVersion>
-									</rules>
-								</configuration>
-							</execution>
-						</executions>
-					</plugin>
 				</plugins>
 			</build>
-		</profile>
-		<!-- If Java 8 is present, build Java 8 modules and setup lenient Javadoc 
-			generation strategy. -->
-		<profile>
-			<id>link-rest-java8</id>
-			<activation>
-				<jdk>[1.8,)</jdk>
-			</activation>
-			<modules>
-				<module>link-rest-java8</module>
-			</modules>
-			<properties>
-				<javadoc.doclint.none>-Xdoclint:none</javadoc.doclint.none>
-			</properties>
 		</profile>
 	</profiles>
 

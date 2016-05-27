@@ -13,6 +13,7 @@ import org.apache.cayenne.util.ToStringBuilder;
 import com.nhl.link.rest.meta.LrAttribute;
 import com.nhl.link.rest.meta.LrEntity;
 import com.nhl.link.rest.meta.LrRelationship;
+import com.nhl.link.rest.runtime.fetcher.Fetcher;
 
 /**
  * A metadata object that describes a data structure of a given REST resource.
@@ -43,6 +44,8 @@ public class ResourceEntity<T> {
 	private int fetchOffset;
 	private int fetchLimit;
 	private boolean filtered;
+
+	private Fetcher<T, ?> fetcher;
 
 	public ResourceEntity(LrEntity<T> lrEntity) {
 		this.idIncluded = false;
@@ -217,15 +220,29 @@ public class ResourceEntity<T> {
 
 	/**
 	 * @since 1.23
-     */
+	 */
 	public boolean isFiltered() {
 		return filtered;
 	}
 
 	/**
 	 * @since 1.23
-     */
+	 */
 	public void setFiltered(boolean filtered) {
 		this.filtered = filtered;
+	}
+
+	/**
+	 * @since 2.0
+	 */
+	public Fetcher<T, ?> getFetcher() {
+		return fetcher;
+	}
+
+	/**
+	 * @since 2.0
+	 */
+	public void setFetcher(Fetcher<T, ?> fetcher) {
+		this.fetcher = fetcher;
 	}
 }
