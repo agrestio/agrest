@@ -1,20 +1,19 @@
 package com.nhl.link.rest.it.noadapter;
 
-import com.nhl.link.rest.it.fixture.JerseyTestOnDerby;
-import com.nhl.link.rest.it.fixture.cayenne.E20;
-import com.nhl.link.rest.it.fixture.cayenne.E4;
-import com.nhl.link.rest.it.fixture.resource.E20Resource;
-import com.nhl.link.rest.it.fixture.resource.E21Resource;
-import org.apache.cayenne.Cayenne;
-import org.apache.cayenne.query.EJBQLQuery;
-import org.apache.cayenne.query.SQLTemplate;
-import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+
+import java.io.IOException;
 
 import javax.ws.rs.core.FeatureContext;
 import javax.ws.rs.core.Response;
-import java.io.IOException;
 
-import static org.junit.Assert.assertEquals;
+import org.apache.cayenne.Cayenne;
+import org.apache.cayenne.query.EJBQLQuery;
+import org.junit.Test;
+
+import com.nhl.link.rest.it.fixture.JerseyTestOnDerby;
+import com.nhl.link.rest.it.fixture.resource.E20Resource;
+import com.nhl.link.rest.it.fixture.resource.E21Resource;
 
 public class DELETE_NaturalIdIT extends JerseyTestOnDerby {
 
