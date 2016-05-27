@@ -5,14 +5,14 @@ import org.apache.cayenne.ObjectId;
 import com.nhl.link.rest.annotation.LrAttribute;
 import com.nhl.link.rest.annotation.LrRelationship;
 
-public class E20Pojo {
+public class E22Pojo {
 
 	private String string;
 	private int integer;
-	private E20SubPojo subPojo;
+	private E22SubPojo subPojo;
 
 	public ObjectId getParentId() {
-		return new ObjectId("E20", E20.ID_PK_COLUMN, integer);
+		return new ObjectId("E22", E22.ID_PK_COLUMN, integer);
 	}
 
 	@LrAttribute
@@ -34,11 +34,11 @@ public class E20Pojo {
 	}
 
 	@LrRelationship
-	public E20SubPojo getSubPojo() {
+	public E22SubPojo getSubPojo() {
 		return subPojo;
 	}
 
-	public void setSubPojo(E20SubPojo subPojo) {
+	public void setSubPojo(E22SubPojo subPojo) {
 		this.subPojo = subPojo;
 	}
 }

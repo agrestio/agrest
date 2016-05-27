@@ -2,7 +2,7 @@ package com.nhl.link.rest.it.fixture.cayenne;
 
 import com.nhl.link.rest.annotation.LrAttribute;
 
-public class E20SubPojo {
+public class E22SubPojo {
 
 	private String string;
 

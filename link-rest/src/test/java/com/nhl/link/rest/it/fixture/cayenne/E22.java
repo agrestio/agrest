@@ -1,20 +1,20 @@
 package com.nhl.link.rest.it.fixture.cayenne;
 
 import com.nhl.link.rest.annotation.LrRelationship;
-import com.nhl.link.rest.it.fixture.cayenne.auto._E20;
+import com.nhl.link.rest.it.fixture.cayenne.auto._E22;
 
-public class E20 extends _E20 {
+public class E22 extends _E22 {
 
 	private static final long serialVersionUID = 1L;
 
-	private E20Pojo pojo;
+	private E22Pojo pojo;
 
 	@LrRelationship
-	public E20Pojo getPojo() {
+	public E22Pojo getPojo() {
 		return pojo;
 	}
 
-	public void setPojo(E20Pojo pojo) {
+	public void setPojo(E22Pojo pojo) {
 		this.pojo = pojo;
 	}
 }

@@ -14,7 +14,7 @@ import com.nhl.link.rest.it.fixture.cayenne.E15;
  */
 public abstract class _E15E1 extends CayenneDataObject {
 
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L; 
 
     public static final String E15_ID_PK_COLUMN = "e15_id";
     public static final String E1_ID_PK_COLUMN = "e1_id";

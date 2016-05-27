@@ -13,7 +13,7 @@ import com.nhl.link.rest.it.fixture.cayenne.E17;
  */
 public abstract class _E18 extends CayenneDataObject {
 
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L; 
 
     public static final String ID_PK_COLUMN = "id";
 
