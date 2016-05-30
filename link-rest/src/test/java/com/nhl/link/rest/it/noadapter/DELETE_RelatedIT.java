@@ -6,13 +6,9 @@ import javax.ws.rs.core.FeatureContext;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
-import org.apache.cayenne.query.SQLSelect;
-import org.apache.cayenne.query.SQLTemplate;
 import org.junit.Test;
 
 import com.nhl.link.rest.it.fixture.JerseyTestOnDerby;
-import com.nhl.link.rest.it.fixture.cayenne.E2;
-import com.nhl.link.rest.it.fixture.cayenne.E3;
 import com.nhl.link.rest.it.fixture.resource.E2Resource;
 import com.nhl.link.rest.it.fixture.resource.E3Resource;
 import com.nhl.link.rest.it.fixture.resource.E8Resource;
@@ -32,26 +28,19 @@ public class DELETE_RelatedIT extends JerseyTestOnDerby {
 		// make sure we have e3s for more than one e2 - this will help us
 		// confirm that relationship queries are properly filtered.
 
-		context.performGenericQuery(new SQLTemplate(E2.class, "INSERT INTO utest.e8 (id, name) values (1, 'xxx')"));
-		context.performGenericQuery(new SQLTemplate(E2.class, "INSERT INTO utest.e8 (id, name) values (2, 'yyy')"));
-		context.performGenericQuery(new SQLTemplate(E3.class,
-				"INSERT INTO utest.e7 (id, e8_id, name) values (7, 2, 'zzz')"));
-		context.performGenericQuery(new SQLTemplate(E3.class,
-				"INSERT INTO utest.e7 (id, e8_id, name) values (8, 1, 'yyy')"));
-		context.performGenericQuery(new SQLTemplate(E3.class,
-				"INSERT INTO utest.e7 (id, e8_id, name) values (9, 1, 'zzz')"));
+		insert("e8", "id, name", "1, 'xxx'");
+		insert("e8", "id, name", "2, 'yyy'");
+		insert("e7", "id, e8_id, name", "7, 2, 'zzz'");
+		insert("e7", "id, e8_id, name", "8, 1, 'yyy'");
+		insert("e7", "id, e8_id, name", "9, 1, 'zzz'");
 
-		assertEquals(Integer.valueOf(2),
-				SQLSelect.scalarQuery(Integer.class, "SELECT COUNT(1) FROM utest.e7 WHERE e8_id = 1")
-						.selectOne(context));
+		assertEquals(2, intForQuery("SELECT COUNT(1) FROM utest.e7 WHERE e8_id = 1"));
 		Response r1 = target("/e8/1/e7s").request().delete();
 
 		assertEquals(Status.OK.getStatusCode(), r1.getStatus());
 		assertEquals("{\"success\":true}", r1.readEntity(String.class));
 
-		assertEquals(Integer.valueOf(0),
-				SQLSelect.scalarQuery(Integer.class, "SELECT COUNT(1) FROM utest.e7 WHERE e8_id = 1")
-						.selectOne(context));
+		assertEquals(0, intForQuery("SELECT COUNT(1) FROM utest.e7 WHERE e8_id = 1"));
 	}
 
 	@Test
@@ -60,24 +49,20 @@ public class DELETE_RelatedIT extends JerseyTestOnDerby {
 		// make sure we have e3s for more than one e2 - this will help us
 		// confirm that relationship queries are properly filtered.
 
-		context.performGenericQuery(new SQLTemplate(E2.class, "INSERT INTO utest.e2 (id, name) values (1, 'xxx')"));
-		context.performGenericQuery(new SQLTemplate(E2.class, "INSERT INTO utest.e2 (id, name) values (2, 'yyy')"));
-		context.performGenericQuery(new SQLTemplate(E3.class,
-				"INSERT INTO utest.e3 (id, e2_id, name) values (7, 2, 'zzz')"));
-		context.performGenericQuery(new SQLTemplate(E3.class,
-				"INSERT INTO utest.e3 (id, e2_id, name) values (8, 1, 'yyy')"));
-		context.performGenericQuery(new SQLTemplate(E3.class,
-				"INSERT INTO utest.e3 (id, e2_id, name) values (9, 1, 'zzz')"));
+		insert("e2", "id, name", "1, 'xxx'");
+		insert("e2", "id, name", "2, 'yyy'");
+		insert("e3", "id, e2_id, name", "7, 2, 'zzz'");
+		insert("e3", "id, e2_id, name", "8, 1, 'yyy'");
+		insert("e3", "id, e2_id, name", "9, 1, 'zzz'");
 
-		assertEquals(1, SQLSelect.scalarQuery(E3.class, "SELECT e2_id FROM utest.e3 WHERE id = 9").selectOne(context));
+		assertEquals(1, intForQuery("SELECT e2_id FROM utest.e3 WHERE id = 9"));
 
 		Response r1 = target("/e2/1/e3s/9").request().delete();
 
 		assertEquals(Status.OK.getStatusCode(), r1.getStatus());
 		assertEquals("{\"success\":true}", r1.readEntity(String.class));
 
-		assertEquals(null, SQLSelect.scalarQuery(E3.class, "SELECT e2_id FROM utest.e3 WHERE id = 9")
-				.selectOne(context));
+		assertEquals(-1, intForQuery("SELECT e2_id FROM utest.e3 WHERE id = 9"));
 	}
 
 	@Test
@@ -86,24 +71,20 @@ public class DELETE_RelatedIT extends JerseyTestOnDerby {
 		// make sure we have e3s for more than one e2 - this will help us
 		// confirm that relationship queries are properly filtered.
 
-		context.performGenericQuery(new SQLTemplate(E2.class, "INSERT INTO utest.e2 (id, name) values (1, 'xxx')"));
-		context.performGenericQuery(new SQLTemplate(E2.class, "INSERT INTO utest.e2 (id, name) values (2, 'yyy')"));
-		context.performGenericQuery(new SQLTemplate(E3.class,
-				"INSERT INTO utest.e3 (id, e2_id, name) values (7, 2, 'zzz')"));
-		context.performGenericQuery(new SQLTemplate(E3.class,
-				"INSERT INTO utest.e3 (id, e2_id, name) values (8, 1, 'yyy')"));
-		context.performGenericQuery(new SQLTemplate(E3.class,
-				"INSERT INTO utest.e3 (id, e2_id, name) values (9, 1, 'zzz')"));
+		insert("e2", "id, name", "1, 'xxx'");
+		insert("e2", "id, name", "2, 'yyy'");
+		insert("e3", "id, e2_id, name", "7, 2, 'zzz'");
+		insert("e3", "id, e2_id, name", "8, 1, 'yyy'");
+		insert("e3", "id, e2_id, name", "9, 1, 'zzz'");
 
-		assertEquals(1, SQLSelect.scalarQuery(E3.class, "SELECT e2_id FROM utest.e3 WHERE id = 9").selectOne(context));
+		assertEquals(1, intForQuery("SELECT e2_id FROM utest.e3 WHERE id = 9"));
 
 		Response r1 = target("/e3/9/e2/1").request().delete();
 
 		assertEquals(Status.OK.getStatusCode(), r1.getStatus());
 		assertEquals("{\"success\":true}", r1.readEntity(String.class));
 
-		assertEquals(null, SQLSelect.scalarQuery(E3.class, "SELECT e2_id FROM utest.e3 WHERE id = 9")
-				.selectOne(context));
+		assertEquals(-1, intForQuery("SELECT e2_id FROM utest.e3 WHERE id = 9"));
 	}
 
 	@Test
@@ -112,24 +93,20 @@ public class DELETE_RelatedIT extends JerseyTestOnDerby {
 		// make sure we have e3s for more than one e2 - this will help us
 		// confirm that relationship queries are properly filtered.
 
-		context.performGenericQuery(new SQLTemplate(E2.class, "INSERT INTO utest.e2 (id, name) values (1, 'xxx')"));
-		context.performGenericQuery(new SQLTemplate(E2.class, "INSERT INTO utest.e2 (id, name) values (2, 'yyy')"));
-		context.performGenericQuery(new SQLTemplate(E3.class,
-				"INSERT INTO utest.e3 (id, e2_id, name) values (7, 2, 'zzz')"));
-		context.performGenericQuery(new SQLTemplate(E3.class,
-				"INSERT INTO utest.e3 (id, e2_id, name) values (8, 1, 'yyy')"));
-		context.performGenericQuery(new SQLTemplate(E3.class,
-				"INSERT INTO utest.e3 (id, e2_id, name) values (9, 1, 'zzz')"));
+		insert("e2", "id, name", "1, 'xxx'");
+		insert("e2", "id, name", "2, 'yyy'");
+		insert("e3", "id, e2_id, name", "7, 2, 'zzz'");
+		insert("e3", "id, e2_id, name", "8, 1, 'yyy'");
+		insert("e3", "id, e2_id, name", "9, 1, 'zzz'");
 
-		assertEquals(1, SQLSelect.scalarQuery(E3.class, "SELECT e2_id FROM utest.e3 WHERE id = 9").selectOne(context));
+		assertEquals(1, intForQuery("SELECT e2_id FROM utest.e3 WHERE id = 9"));
 
 		Response r1 = target("/e3/9/e2").request().delete();
 
 		assertEquals(Status.OK.getStatusCode(), r1.getStatus());
 		assertEquals("{\"success\":true}", r1.readEntity(String.class));
 
-		assertEquals(null, SQLSelect.scalarQuery(E3.class, "SELECT e2_id FROM utest.e3 WHERE id = 9")
-				.selectOne(context));
+		assertEquals(-1, intForQuery("SELECT e2_id FROM utest.e3 WHERE id = 9"));
 	}
 
 	@Test

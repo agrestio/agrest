@@ -41,15 +41,12 @@ public class GET_Related_IT extends JerseyTestOnDerby {
 		// make sure we have e3s for more than one e2 - this will help us
 		// confirm that relationship queries are properly filtered.
 
-		context.performGenericQuery(new SQLTemplate(E2.class, "INSERT INTO utest.e2 (id, name) values (1, 'xxx')"));
-		context.performGenericQuery(new SQLTemplate(E2.class, "INSERT INTO utest.e2 (id, name) values (2, 'yyy')"));
+		performQuery(new SQLTemplate(E2.class, "INSERT INTO utest.e2 (id, name) values (1, 'xxx')"));
+		performQuery(new SQLTemplate(E2.class, "INSERT INTO utest.e2 (id, name) values (2, 'yyy')"));
 
-		context.performGenericQuery(new SQLTemplate(E3.class,
-				"INSERT INTO utest.e3 (id, e2_id, name) values (7, 2, 'zzz')"));
-		context.performGenericQuery(new SQLTemplate(E3.class,
-				"INSERT INTO utest.e3 (id, e2_id, name) values (8, 1, 'yyy')"));
-		context.performGenericQuery(new SQLTemplate(E3.class,
-				"INSERT INTO utest.e3 (id, e2_id, name) values (9, 1, 'zzz')"));
+		performQuery(new SQLTemplate(E3.class, "INSERT INTO utest.e3 (id, e2_id, name) values (7, 2, 'zzz')"));
+		performQuery(new SQLTemplate(E3.class, "INSERT INTO utest.e3 (id, e2_id, name) values (8, 1, 'yyy')"));
+		performQuery(new SQLTemplate(E3.class, "INSERT INTO utest.e3 (id, e2_id, name) values (9, 1, 'zzz')"));
 
 		Response r1 = target("/e2/constraints/1/e3s").request().get();
 
@@ -60,77 +57,69 @@ public class GET_Related_IT extends JerseyTestOnDerby {
 	@Test
 	public void testGet_ToMany_CompoundId() {
 
-		context.performGenericQuery(new SQLTemplate(E17.class, "INSERT INTO utest.e17 (id1, id2, name) values (1, 1, 'aaa')"));
-		context.performGenericQuery(new SQLTemplate(E17.class, "INSERT INTO utest.e17 (id1, id2, name) values (2, 2, 'bbb')"));
+		performQuery(new SQLTemplate(E17.class, "INSERT INTO utest.e17 (id1, id2, name) values (1, 1, 'aaa')"));
+		performQuery(new SQLTemplate(E17.class, "INSERT INTO utest.e17 (id1, id2, name) values (2, 2, 'bbb')"));
 
-		context.performGenericQuery(new SQLTemplate(E18.class,
+		performQuery(new SQLTemplate(E18.class,
 				"INSERT INTO utest.e18 (id, e17_id1, e17_id2, name) values (1, 1, 1, 'xxx')"));
-		context.performGenericQuery(new SQLTemplate(E18.class,
+		performQuery(new SQLTemplate(E18.class,
 				"INSERT INTO utest.e18 (id, e17_id1, e17_id2, name) values (2, 1, 1, 'yyy')"));
-		context.performGenericQuery(new SQLTemplate(E18.class,
+		performQuery(new SQLTemplate(E18.class,
 				"INSERT INTO utest.e18 (id, e17_id1, e17_id2, name) values (3, 2, 2, 'zzz')"));
 
 		Response r1 = target("/e17/e18s").matrixParam("parentId1", 1).matrixParam("parentId2", 1).request().get();
 
 		assertEquals(Status.OK.getStatusCode(), r1.getStatus());
-		assertEquals(
-				"{\"data\":[{\"id\":1,\"name\":\"xxx\"},{\"id\":2,\"name\":\"yyy\"}],\"total\":2}",
-				r1.readEntity(String.class)
-		);
+		assertEquals("{\"data\":[{\"id\":1,\"name\":\"xxx\"},{\"id\":2,\"name\":\"yyy\"}],\"total\":2}",
+				r1.readEntity(String.class));
 	}
 
 	@Test
 	public void testGet_ValidRel_ToOne_CompoundId() {
 
-		context.performGenericQuery(new SQLTemplate(E17.class, "INSERT INTO utest.e17 (id1, id2, name) values (1, 1, 'aaa')"));
-		context.performGenericQuery(new SQLTemplate(E17.class, "INSERT INTO utest.e17 (id1, id2, name) values (2, 2, 'bbb')"));
+		performQuery(new SQLTemplate(E17.class, "INSERT INTO utest.e17 (id1, id2, name) values (1, 1, 'aaa')"));
+		performQuery(new SQLTemplate(E17.class, "INSERT INTO utest.e17 (id1, id2, name) values (2, 2, 'bbb')"));
 
-		context.performGenericQuery(new SQLTemplate(E18.class,
+		performQuery(new SQLTemplate(E18.class,
 				"INSERT INTO utest.e18 (id, e17_id1, e17_id2, name) values (1, 1, 1, 'xxx')"));
-		context.performGenericQuery(new SQLTemplate(E18.class,
+		performQuery(new SQLTemplate(E18.class,
 				"INSERT INTO utest.e18 (id, e17_id1, e17_id2, name) values (2, 1, 1, 'yyy')"));
-		context.performGenericQuery(new SQLTemplate(E18.class,
+		performQuery(new SQLTemplate(E18.class,
 				"INSERT INTO utest.e18 (id, e17_id1, e17_id2, name) values (3, 2, 2, 'zzz')"));
 
 		Response r1 = target("/e18/1").queryParam("include", E18.E17.getName()).request().get();
 
 		assertEquals(Status.OK.getStatusCode(), r1.getStatus());
 		assertEquals(
-				"{\"data\":[{\"id\":1," +
-						"\"e17\":{\"id\":{\"id1\":1,\"id2\":1},\"id1\":1,\"id2\":1,\"name\":\"aaa\"}," +
-						"\"name\":\"xxx\"}],\"total\":1}",
-				r1.readEntity(String.class)
-		);
+				"{\"data\":[{\"id\":1," + "\"e17\":{\"id\":{\"id1\":1,\"id2\":1},\"id1\":1,\"id2\":1,\"name\":\"aaa\"},"
+						+ "\"name\":\"xxx\"}],\"total\":1}",
+				r1.readEntity(String.class));
 	}
 
 	@Test
 	public void testGet_CompoundId_UnmappedPk() {
 
 		// remove a part of PK from the ObjEntity
-		DataMap dataMap = context.getEntityResolver().getDataMap("datamap");
+		DataMap dataMap = DB_STACK.getCayenneStack().getChannel().getEntityResolver().getDataMap("datamap");
 		ObjEntity E17 = dataMap.getObjEntity("E17");
 		ObjAttribute unmappedAttribute = E17.getAttribute("id2");
 		E17.removeAttribute("id2");
 
-		context.performGenericQuery(new SQLTemplate(E17.class, "INSERT INTO utest.e17 (id1, id2, name) values (1, 1, 'aaa')"));
-		context.performGenericQuery(new SQLTemplate(E17.class, "INSERT INTO utest.e17 (id1, id2, name) values (2, 2, 'bbb')"));
+		performQuery(new SQLTemplate(E17.class, "INSERT INTO utest.e17 (id1, id2, name) values (1, 1, 'aaa')"));
+		performQuery(new SQLTemplate(E17.class, "INSERT INTO utest.e17 (id1, id2, name) values (2, 2, 'bbb')"));
 
-		context.performGenericQuery(new SQLTemplate(E18.class,
+		performQuery(new SQLTemplate(E18.class,
 				"INSERT INTO utest.e18 (id, e17_id1, e17_id2, name) values (1, 1, 1, 'xxx')"));
-		context.performGenericQuery(new SQLTemplate(E18.class,
+		performQuery(new SQLTemplate(E18.class,
 				"INSERT INTO utest.e18 (id, e17_id1, e17_id2, name) values (2, 1, 1, 'yyy')"));
-		context.performGenericQuery(new SQLTemplate(E18.class,
+		performQuery(new SQLTemplate(E18.class,
 				"INSERT INTO utest.e18 (id, e17_id1, e17_id2, name) values (3, 2, 2, 'zzz')"));
 
 		Response r1 = target("/e18/1").queryParam("include", E18.E17.getName()).request().get();
 
 		assertEquals(Status.OK.getStatusCode(), r1.getStatus());
-		assertEquals(
-				"{\"data\":[{\"id\":1,\"" +
-						"e17\":{\"id\":{\"id1\":1,\"id2\":1},\"id1\":1,\"name\":\"aaa\"}," +
-						"\"name\":\"xxx\"}],\"total\":1}",
-				r1.readEntity(String.class)
-		);
+		assertEquals("{\"data\":[{\"id\":1,\"" + "e17\":{\"id\":{\"id1\":1,\"id2\":1},\"id1\":1,\"name\":\"aaa\"},"
+				+ "\"name\":\"xxx\"}],\"total\":1}", r1.readEntity(String.class));
 
 		// restore initial state
 		E17.addAttribute(unmappedAttribute);
@@ -142,14 +131,11 @@ public class GET_Related_IT extends JerseyTestOnDerby {
 		// make sure we have e3s for more than one e2 - this will help us
 		// confirm that relationship queries are properly filtered.
 
-		context.performGenericQuery(new SQLTemplate(E2.class, "INSERT INTO utest.e2 (id, name) values (1, 'xxx')"));
-		context.performGenericQuery(new SQLTemplate(E2.class, "INSERT INTO utest.e2 (id, name) values (2, 'yyy')"));
-		context.performGenericQuery(new SQLTemplate(E3.class,
-				"INSERT INTO utest.e3 (id, e2_id, name) values (7, 2, 'zzz')"));
-		context.performGenericQuery(new SQLTemplate(E3.class,
-				"INSERT INTO utest.e3 (id, e2_id, name) values (8, 1, 'yyy')"));
-		context.performGenericQuery(new SQLTemplate(E3.class,
-				"INSERT INTO utest.e3 (id, e2_id, name) values (9, 1, 'zzz')"));
+		performQuery(new SQLTemplate(E2.class, "INSERT INTO utest.e2 (id, name) values (1, 'xxx')"));
+		performQuery(new SQLTemplate(E2.class, "INSERT INTO utest.e2 (id, name) values (2, 'yyy')"));
+		performQuery(new SQLTemplate(E3.class, "INSERT INTO utest.e3 (id, e2_id, name) values (7, 2, 'zzz')"));
+		performQuery(new SQLTemplate(E3.class, "INSERT INTO utest.e3 (id, e2_id, name) values (8, 1, 'yyy')"));
+		performQuery(new SQLTemplate(E3.class, "INSERT INTO utest.e3 (id, e2_id, name) values (9, 1, 'zzz')"));
 
 		Response r1 = target("/e2/1/e3s").queryParam("include", "id").request().get();
 
@@ -163,14 +149,11 @@ public class GET_Related_IT extends JerseyTestOnDerby {
 		// make sure we have e3s for more than one e2 - this will help us
 		// confirm that relationship queries are properly filtered.
 
-		context.performGenericQuery(new SQLTemplate(E2.class, "INSERT INTO utest.e2 (id, name) values (1, 'xxx')"));
-		context.performGenericQuery(new SQLTemplate(E2.class, "INSERT INTO utest.e2 (id, name) values (2, 'yyy')"));
-		context.performGenericQuery(new SQLTemplate(E3.class,
-				"INSERT INTO utest.e3 (id, e2_id, name) values (7, 2, 'zzz')"));
-		context.performGenericQuery(new SQLTemplate(E3.class,
-				"INSERT INTO utest.e3 (id, e2_id, name) values (8, 1, 'yyy')"));
-		context.performGenericQuery(new SQLTemplate(E3.class,
-				"INSERT INTO utest.e3 (id, e2_id, name) values (9, 1, 'zzz')"));
+		performQuery(new SQLTemplate(E2.class, "INSERT INTO utest.e2 (id, name) values (1, 'xxx')"));
+		performQuery(new SQLTemplate(E2.class, "INSERT INTO utest.e2 (id, name) values (2, 'yyy')"));
+		performQuery(new SQLTemplate(E3.class, "INSERT INTO utest.e3 (id, e2_id, name) values (7, 2, 'zzz')"));
+		performQuery(new SQLTemplate(E3.class, "INSERT INTO utest.e3 (id, e2_id, name) values (8, 1, 'yyy')"));
+		performQuery(new SQLTemplate(E3.class, "INSERT INTO utest.e3 (id, e2_id, name) values (9, 1, 'zzz')"));
 
 		Response r1 = target("/e3/7/e2").queryParam("include", "id").request().get();
 
@@ -190,23 +173,20 @@ public class GET_Related_IT extends JerseyTestOnDerby {
 	@Test
 	public void testGET_ToManyJoin() {
 
-		context.performGenericQuery(new SQLTemplate(E12.class, "INSERT INTO utest.e12 (id) values (11)"));
-		context.performGenericQuery(new SQLTemplate(E12.class, "INSERT INTO utest.e12 (id) values (12)"));
-		context.performGenericQuery(new SQLTemplate(E12.class, "INSERT INTO utest.e13 (id) values (14)"));
-		context.performGenericQuery(new SQLTemplate(E12.class, "INSERT INTO utest.e13 (id) values (15)"));
-		context.performGenericQuery(new SQLTemplate(E12.class, "INSERT INTO utest.e13 (id) values (16)"));
+		performQuery(new SQLTemplate(E12.class, "INSERT INTO utest.e12 (id) values (11)"));
+		performQuery(new SQLTemplate(E12.class, "INSERT INTO utest.e12 (id) values (12)"));
+		performQuery(new SQLTemplate(E12.class, "INSERT INTO utest.e13 (id) values (14)"));
+		performQuery(new SQLTemplate(E12.class, "INSERT INTO utest.e13 (id) values (15)"));
+		performQuery(new SQLTemplate(E12.class, "INSERT INTO utest.e13 (id) values (16)"));
 
-		context.performGenericQuery(new SQLTemplate(E12.class,
-				"INSERT INTO utest.e12_e13 (e12_id, e13_id) values (11, 14)"));
-		context.performGenericQuery(new SQLTemplate(E12.class,
-				"INSERT INTO utest.e12_e13 (e12_id, e13_id) values (12, 16)"));
+		performQuery(new SQLTemplate(E12.class, "INSERT INTO utest.e12_e13 (e12_id, e13_id) values (11, 14)"));
+		performQuery(new SQLTemplate(E12.class, "INSERT INTO utest.e12_e13 (e12_id, e13_id) values (12, 16)"));
 
 		// excluding ID - can't render multi-column IDs yet
 		Response r1 = target("/e12/12/e1213").queryParam("exclude", "id").queryParam("include", "e12")
 				.queryParam("include", "e13").request().get();
 
 		assertEquals(Status.OK.getStatusCode(), r1.getStatus());
-		assertEquals("{\"data\":[{\"e12\":{\"id\":12},\"e13\":{\"id\":16}}],\"total\":1}",
-				r1.readEntity(String.class));
+		assertEquals("{\"data\":[{\"e12\":{\"id\":12},\"e13\":{\"id\":16}}],\"total\":1}", r1.readEntity(String.class));
 	}
 }

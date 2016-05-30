@@ -43,15 +43,15 @@ public class Sencha_POST_IT extends JerseyTestOnDerby {
 	@Test
 	public void testPost_ToOne() throws WebApplicationException, IOException {
 
-		context.performGenericQuery(new SQLTemplate(E4.class, "INSERT INTO utest.e2 (id, name) values (1, 'xxx')"));
-		context.performGenericQuery(new SQLTemplate(E4.class, "INSERT INTO utest.e2 (id, name) values (8, 'yyy')"));
+		performQuery(new SQLTemplate(E4.class, "INSERT INTO utest.e2 (id, name) values (1, 'xxx')"));
+		performQuery(new SQLTemplate(E4.class, "INSERT INTO utest.e2 (id, name) values (8, 'yyy')"));
 
 		Response response1 = target("/e3").request()
 				.post(Entity.entity("{\"e2_id\":8,\"name\":\"MM\"}", MediaType.APPLICATION_JSON));
 
 		assertEquals(Status.CREATED.getStatusCode(), response1.getStatus());
 
-		E3 e3 = (E3) Cayenne.objectForQuery(context, new SelectQuery<E3>(E3.class));
+		E3 e3 = (E3) Cayenne.objectForQuery(newContext(), new SelectQuery<E3>(E3.class));
 		int id = Cayenne.intPKForObject(e3);
 
 		assertEquals(
@@ -66,15 +66,15 @@ public class Sencha_POST_IT extends JerseyTestOnDerby {
 	@Test
 	public void testPost_ToOne_BadFK() throws WebApplicationException, IOException {
 
-		context.performGenericQuery(new SQLTemplate(E4.class, "INSERT INTO utest.e2 (id, name) values (1, 'xxx')"));
-		context.performGenericQuery(new SQLTemplate(E4.class, "INSERT INTO utest.e2 (id, name) values (8, 'yyy')"));
+		performQuery(new SQLTemplate(E4.class, "INSERT INTO utest.e2 (id, name) values (1, 'xxx')"));
+		performQuery(new SQLTemplate(E4.class, "INSERT INTO utest.e2 (id, name) values (8, 'yyy')"));
 
 		Response response1 = target("/e3").request()
 				.post(Entity.entity("{\"e2_id\":15,\"name\":\"MM\"}", MediaType.APPLICATION_JSON));
 
 		assertEquals(Status.NOT_FOUND.getStatusCode(), response1.getStatus());
 
-		assertEquals(0, context.select(new SelectQuery<E3>(E3.class)).size());
+		assertEquals(0, newContext().select(new SelectQuery<E3>(E3.class)).size());
 	}
 
 	@Test

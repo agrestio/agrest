@@ -36,7 +36,7 @@ public class POST_NaturalIdIT extends JerseyTestOnDerby {
 				Entity.entity("{\"id\":\"John\"}", MediaType.APPLICATION_JSON));
 		assertEquals(Response.Status.CREATED.getStatusCode(), response1.getStatus());
 
-		E20 e20 = ObjectSelect.query(E20.class).selectFirst(context);
+		E20 e20 = ObjectSelect.query(E20.class).selectFirst(newContext());
 		assertNotNull(e20);
 		assertEquals("John", e20.getName());
 
@@ -57,7 +57,7 @@ public class POST_NaturalIdIT extends JerseyTestOnDerby {
 				Entity.entity("{\"id\":{\"age\":18,\"name\":\"John\"}}", MediaType.APPLICATION_JSON));
 		assertEquals(Response.Status.CREATED.getStatusCode(), response1.getStatus());
 
-		E21 e21 = ObjectSelect.query(E21.class).selectFirst(context);
+		E21 e21 = ObjectSelect.query(E21.class).selectFirst(newContext());
 		assertNotNull(e21);
 		assertEquals(Integer.valueOf(18), e21.getAge());
 		assertEquals("John", e21.getName());

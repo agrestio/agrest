@@ -59,7 +59,7 @@ public class GET_ConstraintsIT extends JerseyTestOnDerby {
 
 		SQLTemplate insert = new SQLTemplate(E10.class,
 				"INSERT INTO utest.e10 (id, c_varchar, c_int, c_boolean, c_date) values (1, 'xxx', 5, true, '2014-01-02')");
-		context.performGenericQuery(insert);
+		performQuery(insert);
 
 		Response response1 = target("/e10").request().get();
 		assertEquals(Status.OK.getStatusCode(), response1.getStatus());
@@ -71,9 +71,9 @@ public class GET_ConstraintsIT extends JerseyTestOnDerby {
 	@Test
 	public void test_Annotated_Relationship() throws WebApplicationException, IOException {
 
-		context.performGenericQuery(new SQLTemplate(E10.class,
+		performQuery(new SQLTemplate(E10.class,
 				"INSERT INTO utest.e10 (id, c_varchar, c_int, c_boolean, c_date) values (1, 'xxx', 5, true, '2014-01-02')"));
-		context.performGenericQuery(new SQLTemplate(E4.class,
+		performQuery(new SQLTemplate(E4.class,
 				"INSERT INTO utest.e11 (id, e10_id, address, name) values (15, 1, 'aaa', 'nnn')"));
 
 		Response response1 = target("/e10").queryParam("include", E10.E11S.getName()).request().get();

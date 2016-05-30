@@ -25,6 +25,7 @@ import com.nhl.link.rest.it.fixture.resource.E17Resource;
 import com.nhl.link.rest.it.fixture.resource.E19Resource;
 import com.nhl.link.rest.it.fixture.resource.E2Resource;
 import org.apache.cayenne.Cayenne;
+import org.apache.cayenne.ObjectContext;
 import org.apache.cayenne.query.ObjectSelect;
 import org.apache.cayenne.query.SQLSelect;
 import org.apache.cayenne.query.SQLTemplate;
@@ -54,8 +55,10 @@ public class POST_IT extends JerseyTestOnDerby {
 	@Test
 	public void testPost() throws WebApplicationException, IOException {
 
-		Response response1 = target("/e4").request().post(
-				Entity.entity("{\"cVarchar\":\"zzz\"}", MediaType.APPLICATION_JSON));
+		ObjectContext context = newContext();
+
+		Response response1 = target("/e4").request()
+				.post(Entity.entity("{\"cVarchar\":\"zzz\"}", MediaType.APPLICATION_JSON));
 		assertEquals(Status.CREATED.getStatusCode(), response1.getStatus());
 
 		E4 e41 = ObjectSelect.query(E4.class).selectFirst(context);
@@ -63,13 +66,13 @@ public class POST_IT extends JerseyTestOnDerby {
 		assertEquals("zzz", e41.getCVarchar());
 		int id1 = Cayenne.intPKForObject(e41);
 
-		assertEquals("{\"data\":[{\"id\":" + id1
-				+ ",\"cBoolean\":null,\"cDate\":null,\"cDecimal\":null,\"cInt\":null,"
-				+ "\"cTime\":null,\"cTimestamp\":null,\"cVarchar\":\"zzz\"}],\"total\":1}",
+		assertEquals(
+				"{\"data\":[{\"id\":" + id1 + ",\"cBoolean\":null,\"cDate\":null,\"cDecimal\":null,\"cInt\":null,"
+						+ "\"cTime\":null,\"cTimestamp\":null,\"cVarchar\":\"zzz\"}],\"total\":1}",
 				response1.readEntity(String.class));
 
-		Response response2 = target("/e4").request().post(
-				Entity.entity("{\"cVarchar\":\"TTTT\"}", MediaType.APPLICATION_JSON));
+		Response response2 = target("/e4").request()
+				.post(Entity.entity("{\"cVarchar\":\"TTTT\"}", MediaType.APPLICATION_JSON));
 
 		assertEquals(Status.CREATED.getStatusCode(), response2.getStatus());
 
@@ -81,36 +84,35 @@ public class POST_IT extends JerseyTestOnDerby {
 		assertEquals("TTTT", e42.getCVarchar());
 		int id2 = Cayenne.intPKForObject(e42);
 
-		assertEquals("{\"data\":[{\"id\":" + id2
-				+ ",\"cBoolean\":null,\"cDate\":null,\"cDecimal\":null,\"cInt\":null,"
-				+ "\"cTime\":null,\"cTimestamp\":null,\"cVarchar\":\"TTTT\"}],\"total\":1}",
+		assertEquals(
+				"{\"data\":[{\"id\":" + id2 + ",\"cBoolean\":null,\"cDate\":null,\"cDecimal\":null,\"cInt\":null,"
+						+ "\"cTime\":null,\"cTimestamp\":null,\"cVarchar\":\"TTTT\"}],\"total\":1}",
 				response2.readEntity(String.class));
 	}
 
 	@Test
 	public void testPost_ExplicitCompoundId() {
 
-		Response response1 = target("/e17").queryParam("id1", 1).queryParam("id2", 1).request().post(
-				Entity.entity("{\"name\":\"xxx\"}", MediaType.APPLICATION_JSON));
+		Response response1 = target("/e17").queryParam("id1", 1).queryParam("id2", 1).request()
+				.post(Entity.entity("{\"name\":\"xxx\"}", MediaType.APPLICATION_JSON));
 		assertEquals(Status.CREATED.getStatusCode(), response1.getStatus());
 	}
 
 	@Test
 	public void testPost_DateTime() {
-		Response r1 = target("e16").request().post(
-				Entity.entity(
+		Response r1 = target("e16").request()
+				.post(Entity.entity(
 						"{\"cDate\":\"2015-03-14\", \"cTime\":\"T19:00:00\", \"cTimestamp\":\"2015-03-14T19:00:00.000\"}",
-						MediaType.APPLICATION_JSON
-				)
-		);
+						MediaType.APPLICATION_JSON));
 		assertEquals(Status.CREATED.getStatusCode(), r1.getStatus());
 	}
 
 	@Test
 	public void testPost_Default_NoData() throws WebApplicationException, IOException {
+		ObjectContext context = newContext();
 
-		Response response1 = target("/e4/defaultdata").request().post(
-				Entity.entity("{\"cVarchar\":\"zzz\"}", MediaType.APPLICATION_JSON));
+		Response response1 = target("/e4/defaultdata").request()
+				.post(Entity.entity("{\"cVarchar\":\"zzz\"}", MediaType.APPLICATION_JSON));
 		assertEquals(Status.CREATED.getStatusCode(), response1.getStatus());
 		assertEquals("{\"success\":true}", response1.readEntity(String.class));
 
@@ -120,77 +122,69 @@ public class POST_IT extends JerseyTestOnDerby {
 
 	@Test
 	public void testPost_WriteConstraints_Id_Allowed() throws WebApplicationException, IOException {
+		ObjectContext context = newContext();
 
-		Response r1 = target("/e8/w/constrainedid/578").request().post(
-				Entity.entity("{\"name\":\"zzz\"}", MediaType.APPLICATION_JSON));
+		Response r1 = target("/e8/w/constrainedid/578").request()
+				.post(Entity.entity("{\"name\":\"zzz\"}", MediaType.APPLICATION_JSON));
 		assertEquals(Status.CREATED.getStatusCode(), r1.getStatus());
 
-		assertEquals(Integer.valueOf(1), SQLSelect.scalarQuery(Integer.class, "SELECT count(1) FROM utest.e8")
-				.selectOne(context));
+		assertEquals(Integer.valueOf(1),
+				SQLSelect.scalarQuery(Integer.class, "SELECT count(1) FROM utest.e8").selectOne(context));
 		assertEquals("zzz", SQLSelect.scalarQuery(String.class, "SELECT name FROM utest.e8").selectOne(context));
-		int id1 = SQLSelect.scalarQuery(Integer.class, "SELECT id FROM utest.e8").selectOne(context);
-		assertEquals(578, id1);
+		assertEquals(578, intForQuery("SELECT id FROM utest.e8"));
 	}
 
 	@Test
 	public void testPost_WriteConstraints_Id_Blocked() throws WebApplicationException, IOException {
 
-		Response r1 = target("/e8/w/constrainedidblocked/578").request().post(
-				Entity.entity("{\"name\":\"zzz\"}", MediaType.APPLICATION_JSON));
+		Response r1 = target("/e8/w/constrainedidblocked/578").request()
+				.post(Entity.entity("{\"name\":\"zzz\"}", MediaType.APPLICATION_JSON));
 		assertEquals(Status.BAD_REQUEST.getStatusCode(), r1.getStatus());
 
-		assertEquals(Integer.valueOf(0), SQLSelect.scalarQuery(Integer.class, "SELECT count(1) FROM utest.e8")
-				.selectOne(context));
+		assertEquals(0, intForQuery("SELECT count(1) FROM utest.e8"));
 	}
 
 	@Test
 	public void testPost_WriteConstraints1() throws WebApplicationException, IOException {
 
-		Response r1 = target("/e3/w/constrained").request().post(
-				Entity.entity("{\"name\":\"zzz\"}", MediaType.APPLICATION_JSON));
+		Response r1 = target("/e3/w/constrained").request()
+				.post(Entity.entity("{\"name\":\"zzz\"}", MediaType.APPLICATION_JSON));
 		assertEquals(Status.CREATED.getStatusCode(), r1.getStatus());
 
-		assertEquals(Integer.valueOf(1), SQLSelect.scalarQuery(Integer.class, "SELECT count(1) FROM utest.e3")
-				.selectOne(context));
-		assertEquals("zzz", SQLSelect.scalarQuery(String.class, "SELECT name FROM utest.e3").selectOne(context));
-		int id1 = SQLSelect.scalarQuery(Integer.class, "SELECT id FROM utest.e3").selectOne(context);
+		assertEquals(1, intForQuery("SELECT count(1) FROM utest.e3"));
+		assertEquals("zzz", stringForQuery("SELECT name FROM utest.e3"));
+		int id1 = intForQuery("SELECT id FROM utest.e3");
 
-		assertEquals("{\"data\":[{\"id\":" + id1
-				+ ",\"name\":\"zzz\",\"phoneNumber\":null}],\"total\":1}", r1.readEntity(String.class));
+		assertEquals("{\"data\":[{\"id\":" + id1 + ",\"name\":\"zzz\",\"phoneNumber\":null}],\"total\":1}",
+				r1.readEntity(String.class));
 	}
 
 	@Test
 	public void testPost_WriteConstraints2() throws WebApplicationException, IOException {
 
-		Response r2 = target("/e3/w/constrained").request().post(
-				Entity.entity("{\"name\":\"yyy\",\"phoneNumber\":\"12345\"}", MediaType.APPLICATION_JSON));
+		Response r2 = target("/e3/w/constrained").request()
+				.post(Entity.entity("{\"name\":\"yyy\",\"phoneNumber\":\"12345\"}", MediaType.APPLICATION_JSON));
 		assertEquals(Status.CREATED.getStatusCode(), r2.getStatus());
 
-		assertEquals(
-				Integer.valueOf(1),
-				SQLSelect.scalarQuery(Integer.class, "SELECT count(1) FROM utest.e3 WHERE name = 'yyy'").selectOne(
-						context));
-		int id1 = SQLSelect.scalarQuery(Integer.class, "SELECT id FROM utest.e3  WHERE name = 'yyy'")
-				.selectOne(context);
+		assertEquals(1, intForQuery("SELECT count(1) FROM utest.e3 WHERE name = 'yyy'"));
+		int id1 = intForQuery("SELECT id FROM utest.e3  WHERE name = 'yyy'");
 
-		assertEquals("{\"data\":[{\"id\":" + id1
-				+ ",\"name\":\"yyy\",\"phoneNumber\":null}],\"total\":1}", r2.readEntity(String.class));
+		assertEquals("{\"data\":[{\"id\":" + id1 + ",\"name\":\"yyy\",\"phoneNumber\":null}],\"total\":1}",
+				r2.readEntity(String.class));
 	}
 
 	@Test
 	public void testPost_ReadConstraints1() throws WebApplicationException, IOException {
 
-		Response r1 = target("/e3/constrained").request().post(
-				Entity.entity("{\"name\":\"zzz\"}", MediaType.APPLICATION_JSON));
+		Response r1 = target("/e3/constrained").request()
+				.post(Entity.entity("{\"name\":\"zzz\"}", MediaType.APPLICATION_JSON));
 		assertEquals(Status.CREATED.getStatusCode(), r1.getStatus());
 
-		assertEquals(Integer.valueOf(1), SQLSelect.scalarQuery(Integer.class, "SELECT count(1) FROM utest.e3")
-				.selectOne(context));
-		assertEquals("zzz", SQLSelect.scalarQuery(String.class, "SELECT name FROM utest.e3").selectOne(context));
-		int id1 = SQLSelect.scalarQuery(Integer.class, "SELECT id FROM utest.e3").selectOne(context);
+		assertEquals(1, intForQuery("SELECT count(1) FROM utest.e3"));
+		assertEquals("zzz", stringForQuery("SELECT name FROM utest.e3"));
+		int id1 = intForQuery("SELECT id FROM utest.e3");
 
-		assertEquals("{\"data\":[{\"id\":" + id1 + ",\"name\":\"zzz\"}],\"total\":1}",
-				r1.readEntity(String.class));
+		assertEquals("{\"data\":[{\"id\":" + id1 + ",\"name\":\"zzz\"}],\"total\":1}", r1.readEntity(String.class));
 	}
 
 	@Test
@@ -200,10 +194,7 @@ public class POST_IT extends JerseyTestOnDerby {
 				.request().post(Entity.entity("{\"name\":\"yyy\"}", MediaType.APPLICATION_JSON));
 		assertEquals(Status.CREATED.getStatusCode(), r2.getStatus());
 
-		assertEquals(
-				Integer.valueOf(1),
-				SQLSelect.scalarQuery(Integer.class, "SELECT count(1) FROM utest.e3 WHERE name = 'yyy'").selectOne(
-						context));
+		assertEquals(1, intForQuery("SELECT count(1) FROM utest.e3 WHERE name = 'yyy'"));
 
 		assertEquals("{\"data\":[{\"name\":\"yyy\"}],\"total\":1}", r2.readEntity(String.class));
 	}
@@ -215,32 +206,28 @@ public class POST_IT extends JerseyTestOnDerby {
 				.post(Entity.entity("{\"name\":\"yyy\"}", MediaType.APPLICATION_JSON));
 		assertEquals(Status.CREATED.getStatusCode(), r2.getStatus());
 
-		assertEquals(
-				Integer.valueOf(1),
-				SQLSelect.scalarQuery(Integer.class, "SELECT count(1) FROM utest.e3 WHERE name = 'yyy'").selectOne(
-						context));
-		int id2 = SQLSelect.scalarQuery(Integer.class, "SELECT id FROM utest.e3 WHERE name = 'yyy'").selectOne(context);
+		assertEquals(1, intForQuery("SELECT count(1) FROM utest.e3 WHERE name = 'yyy'"));
+		int id2 = intForQuery("SELECT id FROM utest.e3 WHERE name = 'yyy'");
 
-		assertEquals("{\"data\":[{\"id\":" + id2 + ",\"name\":\"yyy\"}],\"total\":1}",
-				r2.readEntity(String.class));
+		assertEquals("{\"data\":[{\"id\":" + id2 + ",\"name\":\"yyy\"}],\"total\":1}", r2.readEntity(String.class));
 	}
 
 	@Test
 	public void testPost_ToOne() throws WebApplicationException, IOException {
 
-		context.performGenericQuery(new SQLTemplate(E4.class, "INSERT INTO utest.e2 (id, name) values (1, 'xxx')"));
-		context.performGenericQuery(new SQLTemplate(E4.class, "INSERT INTO utest.e2 (id, name) values (8, 'yyy')"));
+		performQuery(new SQLTemplate(E4.class, "INSERT INTO utest.e2 (id, name) values (1, 'xxx')"));
+		performQuery(new SQLTemplate(E4.class, "INSERT INTO utest.e2 (id, name) values (8, 'yyy')"));
 
-		Response response1 = target("/e3").request().post(
-				Entity.entity("{\"e2\":8,\"name\":\"MM\"}", MediaType.APPLICATION_JSON));
+		Response response1 = target("/e3").request()
+				.post(Entity.entity("{\"e2\":8,\"name\":\"MM\"}", MediaType.APPLICATION_JSON));
 
 		assertEquals(Status.CREATED.getStatusCode(), response1.getStatus());
 
-		E3 e3 = (E3) Cayenne.objectForQuery(context, new SelectQuery<E3>(E3.class));
+		E3 e3 = (E3) Cayenne.objectForQuery(newContext(), new SelectQuery<E3>(E3.class));
 		int id = Cayenne.intPKForObject(e3);
 
-		assertEquals("{\"data\":[{\"id\":" + id
-				+ ",\"name\":\"MM\",\"phoneNumber\":null}],\"total\":1}", response1.readEntity(String.class));
+		assertEquals("{\"data\":[{\"id\":" + id + ",\"name\":\"MM\",\"phoneNumber\":null}],\"total\":1}",
+				response1.readEntity(String.class));
 
 		newContext().invalidateObjects(e3);
 		assertEquals("MM", e3.getName());
@@ -250,19 +237,19 @@ public class POST_IT extends JerseyTestOnDerby {
 	@Test
 	public void testPost_ToOne_Null() throws WebApplicationException, IOException {
 
-		context.performGenericQuery(new SQLTemplate(E4.class, "INSERT INTO utest.e2 (id, name) values (1, 'xxx')"));
-		context.performGenericQuery(new SQLTemplate(E4.class, "INSERT INTO utest.e2 (id, name) values (8, 'yyy')"));
+		performQuery(new SQLTemplate(E4.class, "INSERT INTO utest.e2 (id, name) values (1, 'xxx')"));
+		performQuery(new SQLTemplate(E4.class, "INSERT INTO utest.e2 (id, name) values (8, 'yyy')"));
 
-		Response response1 = target("/e3").request().post(
-				Entity.entity("{\"e2_id\":null,\"name\":\"MM\"}", MediaType.APPLICATION_JSON));
+		Response response1 = target("/e3").request()
+				.post(Entity.entity("{\"e2_id\":null,\"name\":\"MM\"}", MediaType.APPLICATION_JSON));
 
 		assertEquals(Status.CREATED.getStatusCode(), response1.getStatus());
 
-		E3 e3 = (E3) Cayenne.objectForQuery(context, new SelectQuery<E3>(E3.class));
+		E3 e3 = (E3) Cayenne.objectForQuery(newContext(), new SelectQuery<E3>(E3.class));
 		int id = Cayenne.intPKForObject(e3);
 
-		assertEquals("{\"data\":[{\"id\":" + id
-				+ ",\"name\":\"MM\",\"phoneNumber\":null}],\"total\":1}", response1.readEntity(String.class));
+		assertEquals("{\"data\":[{\"id\":" + id + ",\"name\":\"MM\",\"phoneNumber\":null}],\"total\":1}",
+				response1.readEntity(String.class));
 
 		newContext().invalidateObjects(e3);
 		assertEquals("MM", e3.getName());
@@ -272,24 +259,21 @@ public class POST_IT extends JerseyTestOnDerby {
 	@Test
 	public void testPost_ToOne_BadFK() throws WebApplicationException, IOException {
 
-		context.performGenericQuery(new SQLTemplate(E4.class, "INSERT INTO utest.e2 (id, name) values (1, 'xxx')"));
-		context.performGenericQuery(new SQLTemplate(E4.class, "INSERT INTO utest.e2 (id, name) values (8, 'yyy')"));
+		performQuery(new SQLTemplate(E4.class, "INSERT INTO utest.e2 (id, name) values (1, 'xxx')"));
+		performQuery(new SQLTemplate(E4.class, "INSERT INTO utest.e2 (id, name) values (8, 'yyy')"));
 
-		Response response1 = target("/e3").request().post(
-				Entity.entity("{\"e2\":15,\"name\":\"MM\"}", MediaType.APPLICATION_JSON));
+		Response response1 = target("/e3").request()
+				.post(Entity.entity("{\"e2\":15,\"name\":\"MM\"}", MediaType.APPLICATION_JSON));
 
 		assertEquals(Status.NOT_FOUND.getStatusCode(), response1.getStatus());
 
-		assertEquals(0, context.select(new SelectQuery<E3>(E3.class)).size());
+		assertEquals(0, newContext().select(new SelectQuery<E3>(E3.class)).size());
 	}
 
 	@Test
 	public void testPost_Bulk() throws WebApplicationException, IOException {
 
-		Response r2 = target("/e3/")
-				.queryParam("exclude", "id")
-				.queryParam("include", E3.NAME.getName())
-				.request()
+		Response r2 = target("/e3/").queryParam("exclude", "id").queryParam("include", E3.NAME.getName()).request()
 				.post(Entity.entity("[{\"name\":\"aaa\"},{\"name\":\"zzz\"},{\"name\":\"bbb\"},{\"name\":\"yyy\"}]",
 						MediaType.APPLICATION_JSON));
 		assertEquals(Status.CREATED.getStatusCode(), r2.getStatus());
@@ -303,18 +287,19 @@ public class POST_IT extends JerseyTestOnDerby {
 	@Test
 	public void testPost_ToMany() throws WebApplicationException, IOException {
 
-		context.performGenericQuery(new SQLTemplate(E3.class, "INSERT INTO utest.e3 (id, name) values (1, 'xxx')"));
-		context.performGenericQuery(new SQLTemplate(E3.class, "INSERT INTO utest.e3 (id, name) values (8, 'yyy')"));
+		performQuery(new SQLTemplate(E3.class, "INSERT INTO utest.e3 (id, name) values (1, 'xxx')"));
+		performQuery(new SQLTemplate(E3.class, "INSERT INTO utest.e3 (id, name) values (8, 'yyy')"));
 
 		Response response = target("/e2").queryParam("include", E2.E3S.getName())
-				.queryParam("exclude", E2.ADDRESS.getName(), E2.E3S.dot(E3.NAME).getName(), E2.E3S.dot(E3.PHONE_NUMBER).getName())
+				.queryParam("exclude", E2.ADDRESS.getName(), E2.E3S.dot(E3.NAME).getName(),
+						E2.E3S.dot(E3.PHONE_NUMBER).getName())
 				.request().post(Entity.entity("{\"e3s\":[1,8],\"name\":\"MM\"}", MediaType.APPLICATION_JSON));
 
-		E2 e2 = (E2) Cayenne.objectForQuery(context, new SelectQuery<>(E2.class));
+		E2 e2 = (E2) Cayenne.objectForQuery(newContext(), new SelectQuery<>(E2.class));
 		int id = Cayenne.intPKForObject(e2);
 
-		assertThat(response, hasStatusAndBody(Status.CREATED, "{\"data\":[{\"id\":" + id +
-				",\"e3s\":[{\"id\":1},{\"id\":8}],\"name\":\"MM\"}],\"total\":1}"));
+		assertThat(response, hasStatusAndBody(Status.CREATED,
+				"{\"data\":[{\"id\":" + id + ",\"e3s\":[{\"id\":1},{\"id\":8}],\"name\":\"MM\"}],\"total\":1}"));
 		assertEquals(2, intForQuery("SELECT COUNT(1) FROM utest.e3 WHERE e2_id = " + id));
 	}
 
@@ -323,10 +308,10 @@ public class POST_IT extends JerseyTestOnDerby {
 
 		String base64Encoded = "c29tZVZhbHVlMTIz"; // someValue123
 
-		Response response = target("/e19").queryParam("include", E19.GUID.getName())
-				.request().post(jsonEntity("{\"guid\":\"" + base64Encoded + "\"}"));
+		Response response = target("/e19").queryParam("include", E19.GUID.getName()).request()
+				.post(jsonEntity("{\"guid\":\"" + base64Encoded + "\"}"));
 
-		assertThat(response, hasStatusAndBody(Status.CREATED,
-				"{\"data\":[{\"guid\":\"" + base64Encoded + "\"}],\"total\":1}"));
+		assertThat(response,
+				hasStatusAndBody(Status.CREATED, "{\"data\":[{\"guid\":\"" + base64Encoded + "\"}],\"total\":1}"));
 	}
 }
