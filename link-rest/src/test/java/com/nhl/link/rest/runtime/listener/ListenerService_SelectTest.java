@@ -60,8 +60,8 @@ public class ListenerService_SelectTest {
 		assertEquals(1, factories.get(SelectChainInitialized.class).size());
 
 		verifyZeroInteractions(mockListener);
-		ProcessingStage<?, ?> stage = factories.get(SelectRequestParsed.class).get(0).toInvocation(mockListener)
-				.invoke(mockContext, mockStage);
+		ProcessingStage<ProcessingContext<Object>, ?> stage = factories.get(SelectRequestParsed.class).get(0)
+				.toInvocation(mockListener).invoke(mockContext, mockStage);
 
 		verify(mockListener).afterSelectRequestParsed(mockContext);
 		verifyNoMoreInteractions(mockListener);
