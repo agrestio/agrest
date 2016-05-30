@@ -41,12 +41,12 @@ public class GET_Related_IT extends JerseyTestOnDerby {
 		// make sure we have e3s for more than one e2 - this will help us
 		// confirm that relationship queries are properly filtered.
 
-		performQuery(new SQLTemplate(E2.class, "INSERT INTO utest.e2 (id, name) values (1, 'xxx')"));
-		performQuery(new SQLTemplate(E2.class, "INSERT INTO utest.e2 (id, name) values (2, 'yyy')"));
+		insert("e2", "id, name", "1, 'xxx'");
+		insert("e2", "id, name", "2, 'yyy'");
 
-		performQuery(new SQLTemplate(E3.class, "INSERT INTO utest.e3 (id, e2_id, name) values (7, 2, 'zzz')"));
-		performQuery(new SQLTemplate(E3.class, "INSERT INTO utest.e3 (id, e2_id, name) values (8, 1, 'yyy')"));
-		performQuery(new SQLTemplate(E3.class, "INSERT INTO utest.e3 (id, e2_id, name) values (9, 1, 'zzz')"));
+		insert("e3", "id, e2_id, name", "7, 2, 'zzz'");
+		insert("e3", "id, e2_id, name", "8, 1, 'yyy'");
+		insert("e3", "id, e2_id, name", "9, 1, 'zzz'");
 
 		Response r1 = target("/e2/constraints/1/e3s").request().get();
 
@@ -57,15 +57,11 @@ public class GET_Related_IT extends JerseyTestOnDerby {
 	@Test
 	public void testGet_ToMany_CompoundId() {
 
-		performQuery(new SQLTemplate(E17.class, "INSERT INTO utest.e17 (id1, id2, name) values (1, 1, 'aaa')"));
-		performQuery(new SQLTemplate(E17.class, "INSERT INTO utest.e17 (id1, id2, name) values (2, 2, 'bbb')"));
-
-		performQuery(new SQLTemplate(E18.class,
-				"INSERT INTO utest.e18 (id, e17_id1, e17_id2, name) values (1, 1, 1, 'xxx')"));
-		performQuery(new SQLTemplate(E18.class,
-				"INSERT INTO utest.e18 (id, e17_id1, e17_id2, name) values (2, 1, 1, 'yyy')"));
-		performQuery(new SQLTemplate(E18.class,
-				"INSERT INTO utest.e18 (id, e17_id1, e17_id2, name) values (3, 2, 2, 'zzz')"));
+		insert("e17", "id1, id2, name", "1, 1, 'aaa'");
+		insert("e17", "id1, id2, name", "2, 2, 'bbb'");
+		insert("e18", "id, e17_id1, e17_id2, name", "1, 1, 1, 'xxx'");
+		insert("e18", "id, e17_id1, e17_id2, name", "2, 1, 1, 'yyy'");
+		insert("e18", "id, e17_id1, e17_id2, name", "3, 2, 2, 'zzz'");
 
 		Response r1 = target("/e17/e18s").matrixParam("parentId1", 1).matrixParam("parentId2", 1).request().get();
 
