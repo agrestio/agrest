@@ -23,8 +23,8 @@ import com.nhl.link.rest.annotation.listener.UpdateChainInitialized;
 import com.nhl.link.rest.annotation.listener.UpdateRequestParsed;
 import com.nhl.link.rest.annotation.listener.UpdateResponseUpdated;
 import com.nhl.link.rest.annotation.listener.UpdateServerParamsApplied;
-import com.nhl.link.rest.processor.ProcessingContext;
 import com.nhl.link.rest.processor.BaseLinearProcessingStage;
+import com.nhl.link.rest.processor.ProcessingContext;
 import com.nhl.link.rest.processor.ProcessingStage;
 import com.nhl.link.rest.runtime.processor.update.UpdateContext;
 
@@ -67,8 +67,8 @@ public class ListenerService_UpdateTest {
 		assertEquals(1, factories.get(UpdateResponseUpdated.class).size());
 
 		verifyZeroInteractions(mockListener);
-		ProcessingStage<?, ?> stage = factories.get(DataStoreUpdated.class).get(0).toInvocation(mockListener)
-				.invoke(mockContext, mockStage);
+		ProcessingStage<ProcessingContext<Object>, ?> stage = factories.get(DataStoreUpdated.class).get(0)
+				.toInvocation(mockListener).invoke(mockContext, mockStage);
 
 		verify(mockListener).afterDataStoreUpdate(mockContext);
 		verifyNoMoreInteractions(mockListener);
