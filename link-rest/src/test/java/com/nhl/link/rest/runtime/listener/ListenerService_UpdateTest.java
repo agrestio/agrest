@@ -67,8 +67,8 @@ public class ListenerService_UpdateTest {
 		assertEquals(1, factories.get(UpdateResponseUpdated.class).size());
 
 		verifyZeroInteractions(mockListener);
-		ProcessingStage<ProcessingContext<Object>, ?> stage = factories.get(DataStoreUpdated.class).get(0)
-				.toInvocation(mockListener).invoke(mockContext, mockStage);
+		ProcessingStage<?, ?> stage = factories.get(DataStoreUpdated.class).get(0).toInvocation(mockListener)
+				.invoke(mockContext, mockStage);
 
 		verify(mockListener).afterDataStoreUpdate(mockContext);
 		verifyNoMoreInteractions(mockListener);

@@ -54,10 +54,6 @@ public class SelectContext<T> extends BaseProcessingContext<T> {
 	 * @return a new response object reflecting the context state.
 	 */
 	public DataResponse<T> createDataResponse() {
-
-		// TODO: we may pass an unresolved future down to DataResponse and JSON
-		// serializers to further minimize blocking of the request thread...
-
 		List<T> objects = this.objects != null ? this.objects : Collections.<T> emptyList();
 		DataResponse<T> response = DataResponse.forType(getType());
 		response.setObjects(objects);

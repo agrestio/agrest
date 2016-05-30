@@ -47,7 +47,6 @@ public class CayenneFetchStage<T> extends BaseLinearProcessingStage<SelectContex
 						"Found more than one object for ID '%s' and entity '%s'", context.getId(), entity.getName()));
 			}
 		}
-
 		context.setObjects(objects);
 	}
 }

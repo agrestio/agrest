@@ -6,8 +6,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.TimeUnit;
 
 import javax.ws.rs.core.Response.Status;
 
@@ -34,8 +32,6 @@ import com.nhl.link.rest.runtime.cayenne.processor.CayenneUpdateStage;
 import com.nhl.link.rest.runtime.constraints.IConstraintsHandler;
 import com.nhl.link.rest.runtime.encoder.EncoderService;
 import com.nhl.link.rest.runtime.encoder.IEncoderService;
-import com.nhl.link.rest.runtime.fetcher.Fetcher;
-import com.nhl.link.rest.runtime.fetcher.StageBasedFetcher;
 import com.nhl.link.rest.runtime.meta.IMetadataService;
 import com.nhl.link.rest.runtime.meta.IResourceMetadataService;
 import com.nhl.link.rest.runtime.parser.IRequestParser;
@@ -45,7 +41,6 @@ import com.nhl.link.rest.runtime.processor.delete.DeleteContext;
 import com.nhl.link.rest.runtime.processor.meta.MetadataContext;
 import com.nhl.link.rest.runtime.processor.select.ApplySelectServerParamsStage;
 import com.nhl.link.rest.runtime.processor.select.InitializeSelectChainStage;
-import com.nhl.link.rest.runtime.processor.select.ParallelFetchStage;
 import com.nhl.link.rest.runtime.processor.select.ParseSelectRequestStage;
 import com.nhl.link.rest.runtime.processor.select.SelectContext;
 import com.nhl.link.rest.runtime.processor.unrelate.UnrelateContext;
@@ -67,16 +62,12 @@ public class CayenneProcessorFactory implements IProcessorFactory {
 	private IMetadataService metadataService;
 	private IResourceMetadataService resourceMetadataService;
 	private List<EncoderFilter> filters;
-	private ExecutorService executor;
 
 	public CayenneProcessorFactory(@Inject IRequestParser requestParser, @Inject IUpdateParser updateParser,
 			@Inject IEncoderService encoderService, @Inject ICayennePersister persister,
 			@Inject IConstraintsHandler constraintsHandler, @Inject IMetadataService metadataService,
 			@Inject IResourceMetadataService resourceMetadataService,
-			@Inject ExecutorService executor,
 			@Inject(EncoderService.ENCODER_FILTER_LIST) List<EncoderFilter> filters) {
-		
-		this.executor = executor;
 		this.requestParser = requestParser;
 		this.encoderService = encoderService;
 		this.persister = persister;
@@ -133,23 +124,11 @@ public class CayenneProcessorFactory implements IProcessorFactory {
 		return stage0;
 	}
 
-	private <T, P> Fetcher<T, P> createDefaultFetcher() {
-		BaseLinearProcessingStage<SelectContext<Object>, Object> stage1 = new CayenneFetchStage<>(null, persister);
-		BaseLinearProcessingStage<SelectContext<Object>, Object> stage0 = new CayenneQueryAssembleStage<>(stage1,
-				persister);
-
-		return new StageBasedFetcher<>(stage0);
-	}
-
 	private ProcessingStage<SelectContext<Object>, Object> createSelectProcessor() {
 
-		// TODO: make executor customizable..
-		// currently using unbounded pool and hardcoded timeouts. Also the
-		// current select processor is no longer Cayenne-specific (Cayenne part
-		// is hidden in the Fetcher).
-
-		BaseLinearProcessingStage<SelectContext<Object>, Object> stage3 = new ParallelFetchStage<>(null, executor, 5,
-				TimeUnit.SECONDS, createDefaultFetcher());
+		BaseLinearProcessingStage<SelectContext<Object>, Object> stage4 = new CayenneFetchStage<>(null, persister);
+		BaseLinearProcessingStage<SelectContext<Object>, Object> stage3 = new CayenneQueryAssembleStage<>(stage4,
+				persister);
 		BaseLinearProcessingStage<SelectContext<Object>, Object> stage2 = new ApplySelectServerParamsStage<>(stage3,
 				encoderService, constraintsHandler, filters);
 		BaseLinearProcessingStage<SelectContext<Object>, Object> stage1 = new ParseSelectRequestStage<>(stage2,
