@@ -1,12 +1,14 @@
 package com.nhl.link.rest.client;
 
+import com.nhl.link.rest.it.fixture.JerseyTestOnDerby;
 import org.junit.Test;
 
 import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.core.FeatureContext;
 
 import static org.junit.Assert.assertEquals;
 
-public class TargetBuilderTest extends JerseyClientTest {
+public class TargetBuilderTest extends JerseyTestOnDerby {
 
     @Test
     public void testBuild_Target_NoConstraints() {
@@ -36,5 +38,10 @@ public class TargetBuilderTest extends JerseyClientTest {
         assertEquals("mapBy=r1&exclude=ex3&exclude=ex2&exclude=ex1&include=in2&include=in1&" +
                 "include={\"path\":\"in3\",\"limit\":100,\"sort\":{\"property\":\"in3.s1\",\"direction\":\"DESC\"}}",
                 query);
+    }
+
+    @Override
+    protected void doAddResources(FeatureContext context) {
+        // do nothing...
     }
 }
