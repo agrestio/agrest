@@ -64,16 +64,13 @@ public class EntityEncoder extends AbstractEncoder {
 
 				visitor.push(e.getKey());
 
-				try {
+				int propBitmask = e.getValue().visit(object, e.getKey(), visitor);
 
-					int propBitmask = e.getValue().visit(object, e.getKey(), visitor);
-
-					if ((propBitmask & VISIT_SKIP_ALL) != 0) {
-						return VISIT_SKIP_ALL;
-					}
-				} finally {
-					visitor.pop();
+				if ((propBitmask & VISIT_SKIP_ALL) != 0) {
+					return VISIT_SKIP_ALL;
 				}
+
+				visitor.pop();
 			}
 
 		}

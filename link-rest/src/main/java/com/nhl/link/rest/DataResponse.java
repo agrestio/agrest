@@ -1,6 +1,7 @@
 package com.nhl.link.rest;
 
 import java.io.IOException;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -77,6 +78,33 @@ public class DataResponse<T> extends LrResponse {
 	 */
 	public List<T> getObjects() {
 		return objects;
+	}
+
+	/**
+	 * Returns a collection of objects associated with the root node of the
+	 * request include tree. Unlike {@link #getObjects()}, the result only
+	 * includes objects that will be rendered via encoder.
+	 * 
+	 * @since 2.0
+	 */
+	public Collection<T> getIncludedObjects() {
+		return getIncludedObjects(getType(), "");
+	}
+
+	/**
+	 * Returns a flat collection of objects associated with a node of the
+	 * request include tree, defined by the path argument. Unlike
+	 * {@link #getObjects()}, the result only includes objects that will be
+	 * rendered via encoder. Path must have been included in the request that
+	 * generated this response and known to the response encoders.
+	 * 
+	 * @since 2.0
+	 */
+	public <U> Collection<U> getIncludedObjects(Class<U> type, String path) {
+
+		DataResponseFlattenExtractor<U> extractor = new DataResponseFlattenExtractor<>(path);
+		encoder.visitEntities(objects, extractor);
+		return extractor.getResult();
 	}
 
 	/**
