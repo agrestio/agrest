@@ -9,6 +9,10 @@ import com.fasterxml.jackson.core.JsonGenerator;
  */
 public interface Encoder {
 
+	public static final int VISIT_CONTINUE = 0b00;
+	public static final int VISIT_SKIP_CHILDREN = 0b01;
+	public static final int VISIT_SKIP_ALL = 0b10;
+
 	/**
 	 * Encodes provided object into {@link JsonGenerator}. Encoder should encode
 	 * "propertyName" (if not null) and a matching object.
@@ -32,4 +36,25 @@ public interface Encoder {
 	 * encoding the object.
 	 */
 	boolean willEncode(String propertyName, Object object);
+
+	/**
+	 * A graph traversal method that recursively visits all entity nodes
+	 * starting with provided object, but only including those nodes that will
+	 * be encoded with this encoder.
+	 * <p>
+	 * Visitor can control ongoing graph traversal by returning a code from each
+	 * visit callback. Code is a bitmask combining one of
+	 * {@link #VISIT_CONTINUE}, {@link #VISIT_SKIP_ALL},
+	 * {@link #VISIT_SKIP_CHILDREN}.
+	 * 
+	 * @since 2.0
+	 */
+	default int visitEntities(Object object, EncoderVisitor visitor) {
+		if (object != null && willEncode(null, object)) {
+			int bitmask = visitor.visit(object);
+			return (bitmask & VISIT_SKIP_ALL) != 0 ? VISIT_SKIP_ALL : VISIT_CONTINUE;
+		}
+
+		return VISIT_CONTINUE;
+	}
 }

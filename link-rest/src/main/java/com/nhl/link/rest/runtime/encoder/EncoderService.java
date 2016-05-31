@@ -136,14 +136,15 @@ public class EncoderService implements IEncoderService {
 
 		// ensure we sort property encoders alphabetically for cleaner JSON
 		// output
-		Map<String, EntityProperty> properties = new TreeMap<String, EntityProperty>();
+		Map<String, EntityProperty> attributeEncoders = new TreeMap<String, EntityProperty>();
 
 		for (LrAttribute attribute : resourceEntity.getAttributes().values()) {
 			EntityProperty property = attributeEncoderFactory.getAttributeProperty(resourceEntity.getLrEntity(),
 					attribute);
-			properties.put(attribute.getName(), property);
+			attributeEncoders.put(attribute.getName(), property);
 		}
 
+		Map<String, EntityProperty> relationshipEncoders = new TreeMap<String, EntityProperty>();
 		for (Entry<String, ResourceEntity<?>> e : resourceEntity.getChildren().entrySet()) {
 			LrRelationship relationship = resourceEntity.getLrEntity().getRelationship(e.getKey());
 
@@ -152,14 +153,16 @@ public class EncoderService implements IEncoderService {
 
 			EntityProperty property = attributeEncoderFactory.getRelationshipProperty(resourceEntity.getLrEntity(),
 					relationship, encoder);
-			properties.put(e.getKey(), property);
+			relationshipEncoders.put(e.getKey(), property);
 		}
+		
+		Map<String, EntityProperty> extraEncoders = new TreeMap<String, EntityProperty>();
 
-		properties.putAll(resourceEntity.getExtraProperties());
+		extraEncoders.putAll(resourceEntity.getExtraProperties());
 
 		EntityProperty idEncoder = resourceEntity.isIdIncluded() ? attributeEncoderFactory.getIdProperty(resourceEntity)
 				: PropertyBuilder.doNothingProperty();
-		return new EntityEncoder(idEncoder, properties);
+		return new EntityEncoder(idEncoder, attributeEncoders, relationshipEncoders, extraEncoders);
 	}
 
 	protected Encoder filteredEncoder(Encoder encoder, ResourceEntity<?> resourceEntity) {

@@ -35,6 +35,16 @@ public class ListEncoder implements Encoder {
 		this.filter = filter;
 	}
 
+	@Override
+	public int visitEntities(Object root, EncoderVisitor visitor) {
+		List<?> objects = toList(root);
+
+		Counter counter = new Counter();
+
+		rewind(counter, objects, offset);
+		return visit(counter, objects, limit > 0 ? limit : Integer.MAX_VALUE, visitor);
+	}
+
 	public ListEncoder withTotal(String totalKey) {
 		this.totalKey = totalKey;
 		return this;
@@ -96,8 +106,8 @@ public class ListEncoder implements Encoder {
 		}
 
 		if (!(object instanceof List)) {
-			throw new IllegalStateException("Unexpected object type. Should be a List, got: "
-					+ object.getClass().getName());
+			throw new IllegalStateException(
+					"Unexpected object type. Should be a List, got: " + object.getClass().getName());
 		}
 
 		List<?> list = (List) object;
@@ -115,7 +125,7 @@ public class ListEncoder implements Encoder {
 		return list;
 	}
 
-	private void rewind(Counter c, List<?> objects, int limit) throws IOException {
+	private void rewind(Counter c, List<?> objects, int limit) {
 
 		int length = objects.size();
 
@@ -147,6 +157,27 @@ public class ListEncoder implements Encoder {
 				}
 			}
 		}
+	}
+
+	private int visit(Counter c, List<?> objects, int limit, EncoderVisitor visitor) {
+
+		int length = objects.size();
+
+		for (; c.position < length && c.encoded < limit; c.position++) {
+
+			Object o = objects.get(c.position);
+			if (filter == null || filter.match(o)) {
+
+				int bitmask = elementEncoder.visitEntities(o, visitor);
+				c.encoded++;
+
+				if ((bitmask & VISIT_SKIP_ALL) != 0) {
+					return VISIT_SKIP_ALL;
+				}
+			}
+		}
+
+		return VISIT_CONTINUE;
 	}
 
 	@Override

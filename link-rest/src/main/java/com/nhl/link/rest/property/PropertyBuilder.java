@@ -6,6 +6,7 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import com.nhl.link.rest.EntityProperty;
 import com.nhl.link.rest.encoder.Encoder;
 import com.nhl.link.rest.encoder.GenericEncoder;
+import com.nhl.link.rest.encoder.EncoderVisitor;
 
 /**
  * A {@link EntityProperty} implementation that provides fluent builder methods
@@ -21,6 +22,11 @@ public class PropertyBuilder implements EntityProperty {
 			@Override
 			public void encode(Object root, String propertyName, JsonGenerator out) throws IOException {
 				// do nothing...
+			}
+
+			@Override
+			public int visit(Object root, String propertyName, EncoderVisitor visitor) {
+				return Encoder.VISIT_CONTINUE;
 			}
 		};
 	}
@@ -58,5 +64,11 @@ public class PropertyBuilder implements EntityProperty {
 	public void encode(Object root, String propertyName, JsonGenerator out) throws IOException {
 		Object value = root == null ? null : reader.value(root, propertyName);
 		encoder.encode(propertyName, value, out);
+	}
+
+	@Override
+	public int visit(Object root, String propertyName, EncoderVisitor visitor) {
+		Object value = root == null ? null : reader.value(root, propertyName);
+		return encoder.visitEntities(value, visitor);
 	}
 }

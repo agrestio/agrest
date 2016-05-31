@@ -3,6 +3,7 @@ package com.nhl.link.rest.encoder;
 import java.io.IOException;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.TreeMap;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.nhl.link.rest.EntityProperty;
@@ -11,11 +12,22 @@ import com.nhl.link.rest.runtime.parser.PathConstants;
 public class EntityEncoder extends AbstractEncoder {
 
 	private EntityProperty idEncoder;
-	private Map<String, EntityProperty> propertyEncoders;
+	private Map<String, EntityProperty> relationshipEncoders;
+	private Map<String, EntityProperty> combinedEncoders;
 
-	public EntityEncoder(EntityProperty idEncoder, Map<String, EntityProperty> propertyEncoders) {
+	public EntityEncoder(EntityProperty idEncoder, Map<String, EntityProperty> attributeEncoders,
+			Map<String, EntityProperty> relationshipEncoders, Map<String, EntityProperty> extraEncoders) {
+
 		this.idEncoder = idEncoder;
-		this.propertyEncoders = propertyEncoders;
+
+		// tracking relationship encoders separately for the sake of the
+		// visitors
+		this.relationshipEncoders = relationshipEncoders;
+
+		this.combinedEncoders = new TreeMap<>();
+		combinedEncoders.putAll(attributeEncoders);
+		combinedEncoders.putAll(relationshipEncoders);
+		combinedEncoders.putAll(extraEncoders);
 	}
 
 	@Override
@@ -25,11 +37,34 @@ public class EntityEncoder extends AbstractEncoder {
 
 		idEncoder.encode(object, PathConstants.ID_PK_ATTRIBUTE, out);
 
-		for (Entry<String, EntityProperty> e : propertyEncoders.entrySet()) {
+		for (Entry<String, EntityProperty> e : combinedEncoders.entrySet()) {
 			e.getValue().encode(object, e.getKey(), out);
 		}
 
 		out.writeEndObject();
 		return true;
+	}
+
+	@Override
+	public int visitEntities(Object root, EncoderVisitor visitor) {
+		int bitmask = super.visitEntities(root, visitor);
+
+		if ((bitmask & VISIT_SKIP_ALL) != 0) {
+			return VISIT_SKIP_ALL;
+		}
+
+		if ((bitmask & VISIT_SKIP_CHILDREN) == 0) {
+
+			for (Entry<String, EntityProperty> e : relationshipEncoders.entrySet()) {
+				int propBitmask = e.getValue().visit(root, e.getKey(), visitor);
+
+				if ((propBitmask & VISIT_SKIP_ALL) != 0) {
+					return VISIT_SKIP_ALL;
+				}
+			}
+
+		}
+
+		return VISIT_CONTINUE;
 	}
 }
