@@ -49,7 +49,7 @@ public class ConstraintEncoder {
 
             if (!include.getOrderings().isEmpty()) {
                 buf.append(",\"sort\":");
-                buf.append(encodeSorts(include.getOrderings()));
+                buf.append(encode(include.getOrderings(), false));
             }
 
             buf.append("}");
@@ -72,6 +72,10 @@ public class ConstraintEncoder {
     }
 
     public String encode(Collection<Sort> orderings) {
+        return encode(orderings, true);
+    }
+
+    private String encode(Collection<Sort> orderings, boolean shouldEncodeUrl) {
 
         if (orderings == null || orderings.isEmpty()) {
             return null;
@@ -85,10 +89,14 @@ public class ConstraintEncoder {
             result = encodeSorts(orderings);
         }
 
-        try {
-            return URLEncoder.encode(result, "UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            throw new LinkRestClientException("Unexpected error", e);
+        if (shouldEncodeUrl) {
+            try {
+                return URLEncoder.encode(result, "UTF-8");
+            } catch (UnsupportedEncodingException e) {
+                throw new LinkRestClientException("Unexpected error", e);
+            }
+        } else {
+            return result;
         }
     }
 

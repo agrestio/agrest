@@ -20,29 +20,30 @@ public class ConstraintEncoderTest {
     }
 
     @Test
-    public void testEncode_Sort_Ascending() {
+    public void testEncode_Sort_Ascending() throws UnsupportedEncodingException {
 
         Sort ordering = Sort.property("abc");
         String encoded = encoder.encode(Collections.singleton(ordering));
-        assertEquals("{\"property\":\"abc\"}", encoded);
+        assertEquals("{\"property\":\"abc\"}", URLDecoder.decode(encoded, "UTF-8"));
     }
 
     @Test
-    public void testEncode_Sort_Descending() {
+    public void testEncode_Sort_Descending() throws UnsupportedEncodingException {
 
         Sort ordering = Sort.property("abc").desc();
         String encoded = encoder.encode(Collections.singleton(ordering));
-        assertEquals("{\"property\":\"abc\",\"direction\":\"DESC\"}", encoded);
+        assertEquals("{\"property\":\"abc\",\"direction\":\"DESC\"}", URLDecoder.decode(encoded, "UTF-8"));
     }
 
     @Test
-    public void testEncode_Sort_Multiple() {
+    public void testEncode_Sort_Multiple() throws UnsupportedEncodingException {
 
         Sort ordering1 = Sort.property("abc").desc();
         Sort ordering2 = Sort.property("xyz");
 
         String encoded = encoder.encode(Arrays.asList(ordering1, ordering2));
-        assertEquals("[{\"property\":\"abc\",\"direction\":\"DESC\"},{\"property\":\"xyz\"}]", encoded);
+        assertEquals("[{\"property\":\"abc\",\"direction\":\"DESC\"},{\"property\":\"xyz\"}]",
+                URLDecoder.decode(encoded, "UTF-8"));
     }
 
     @Test
