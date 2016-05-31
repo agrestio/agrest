@@ -13,6 +13,7 @@
 	<modules>
 		<module>link-rest</module>
 		<module>link-rest-docs</module>
+		<module>link-rest-client</module>
 	</modules>
 
 	<properties>
