@@ -10,7 +10,7 @@ public class ClientSimpleResponse {
         this.status = status;
     }
 
-    Status getStatus() {
+    public Status getStatus() {
         return status;
     }
 }

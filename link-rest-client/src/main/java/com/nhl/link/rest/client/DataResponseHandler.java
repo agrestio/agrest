@@ -15,11 +15,10 @@ public class DataResponseHandler<T> extends BaseResponseHandler<ClientDataRespon
     private static final String DATA_NODE = "data";
     private static final String TOTAL_NODE = "total";
 
-    private JsonFactory jsonFactory;
     private IJsonEntityReader<T> jsonEntityReader;
 
     DataResponseHandler(JsonFactory jsonFactory, IJsonEntityReader<T> jsonEntityReader) {
-        this.jsonFactory = jsonFactory;
+        super(jsonFactory);
         this.jsonEntityReader = jsonEntityReader;
     }
 

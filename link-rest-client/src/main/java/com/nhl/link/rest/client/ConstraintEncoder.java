@@ -77,8 +77,10 @@ public class ConstraintEncoder {
             return null;
         }
 
+        String result;
+
         if (orderings.size() == 1) {
-            return encodeSort(orderings.iterator().next());
+            result = encodeSort(orderings.iterator().next());
 
         } else {
             StringBuilder buf = new StringBuilder();
@@ -93,7 +95,13 @@ public class ConstraintEncoder {
             }
 
             buf.append("]");
-            return buf.toString();
+            result = buf.toString();
+        }
+
+        try {
+            return URLEncoder.encode(result, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            throw new LinkRestClientException("Unexpected error", e);
         }
     }
 
