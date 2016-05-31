@@ -318,8 +318,8 @@ public class PUT_Related_IT extends JerseyTestOnDerby {
 	@Test
 	public void testPUT_ToMany_Flattened_DifferentIdTypes() {
 
-		performQuery(new SQLTemplate(E1.class, "INSERT INTO utest.e5 (id, name) values (1, 'xxx')"));
-		performQuery(new SQLTemplate(E1.class, "INSERT INTO utest.e5 (id, name) values (2, 'yyy')"));
+		insert("e5", "id, name", "1, 'xxx'");
+		insert("e5", "id, name", "2, 'yyy'");
 
 		performQuery(new SQLTemplate(E15.class, "INSERT INTO utest.e15 (long_id, name) values (14, 'aaa')"));
 		performQuery(new SQLTemplate(E15.class, "INSERT INTO utest.e15 (long_id, name) values (15, 'bbb')"));
