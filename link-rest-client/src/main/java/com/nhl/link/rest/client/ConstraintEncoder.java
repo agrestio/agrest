@@ -49,7 +49,7 @@ public class ConstraintEncoder {
 
             if (!include.getOrderings().isEmpty()) {
                 buf.append(",\"sort\":");
-                buf.append(encode(include.getOrderings()));
+                buf.append(encodeSorts(include.getOrderings()));
             }
 
             buf.append("}");
@@ -81,21 +81,8 @@ public class ConstraintEncoder {
 
         if (orderings.size() == 1) {
             result = encodeSort(orderings.iterator().next());
-
         } else {
-            StringBuilder buf = new StringBuilder();
-            buf.append("[");
-
-            Iterator<Sort> iter = orderings.iterator();
-            while (iter.hasNext()) {
-                buf.append(encodeSort(iter.next()));
-                if (iter.hasNext()) {
-                    buf.append(",");
-                }
-            }
-
-            buf.append("]");
-            result = buf.toString();
+            result = encodeSorts(orderings);
         }
 
         try {
@@ -103,6 +90,27 @@ public class ConstraintEncoder {
         } catch (UnsupportedEncodingException e) {
             throw new LinkRestClientException("Unexpected error", e);
         }
+    }
+
+    private String encodeSorts(Collection<Sort> orderings) {
+
+        if (orderings == null || orderings.isEmpty()) {
+            return null;
+        }
+
+        StringBuilder buf = new StringBuilder();
+        buf.append("[");
+
+        Iterator<Sort> iter = orderings.iterator();
+        while (iter.hasNext()) {
+            buf.append(encodeSort(iter.next()));
+            if (iter.hasNext()) {
+                buf.append(",");
+            }
+        }
+
+        buf.append("]");
+        return buf.toString();
     }
 
     private String encodeSort(Sort ordering) {
