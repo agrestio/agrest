@@ -46,8 +46,13 @@ public class EntityEncoder extends AbstractEncoder {
 	}
 
 	@Override
-	public int visitEntities(Object root, EncoderVisitor visitor) {
-		int bitmask = super.visitEntities(root, visitor);
+	public int visitEntities(Object object, EncoderVisitor visitor) {
+
+		if (object == null || !willEncode(null, object)) {
+			return VISIT_CONTINUE;
+		}
+
+		int bitmask = visitor.visit(object);
 
 		if ((bitmask & VISIT_SKIP_ALL) != 0) {
 			return VISIT_SKIP_ALL;
@@ -56,10 +61,18 @@ public class EntityEncoder extends AbstractEncoder {
 		if ((bitmask & VISIT_SKIP_CHILDREN) == 0) {
 
 			for (Entry<String, EntityProperty> e : relationshipEncoders.entrySet()) {
-				int propBitmask = e.getValue().visit(root, e.getKey(), visitor);
 
-				if ((propBitmask & VISIT_SKIP_ALL) != 0) {
-					return VISIT_SKIP_ALL;
+				visitor.push(e.getKey());
+
+				try {
+
+					int propBitmask = e.getValue().visit(object, e.getKey(), visitor);
+
+					if ((propBitmask & VISIT_SKIP_ALL) != 0) {
+						return VISIT_SKIP_ALL;
+					}
+				} finally {
+					visitor.pop();
 				}
 			}
 

@@ -7,44 +7,23 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.util.List;
 
 import javax.ws.rs.core.MultivaluedHashMap;
 import javax.ws.rs.core.UriInfo;
 
 import org.apache.cayenne.Cayenne;
 import org.apache.cayenne.Persistent;
-import org.junit.ClassRule;
-import org.junit.Rule;
 import org.junit.Test;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.nhl.link.rest.DataResponse;
 import com.nhl.link.rest.ResourceEntity;
-import com.nhl.link.rest.it.fixture.CayenneDerbyStack;
-import com.nhl.link.rest.it.fixture.DbCleaner;
 import com.nhl.link.rest.it.fixture.cayenne.E2;
-import com.nhl.link.rest.runtime.ILinkRestService;
-import com.nhl.link.rest.runtime.LinkRestBuilder;
 
-public class Encoder_VisitIT {
-
-	@ClassRule
-	public static CayenneDerbyStack DB = new CayenneDerbyStack();
-
-	@Rule
-	public DbCleaner dbCleaner = new DbCleaner(DB.newContext());
-
-	private ILinkRestService createLRService(EncoderFilter... filters) {
-		LinkRestBuilder builder = LinkRestBuilder.builder(DB.getCayenneStack());
-		for (EncoderFilter filter : filters) {
-			builder.encoderFilter(filter);
-		}
-
-		return builder.build().service(ILinkRestService.class);
-	}
+public class Encoder_VisitIT extends EncoderITBase {
 
 	private String responseContents(DataResponse<?> response) {
 		return responseContents(response, new IdCountingVisitor());
@@ -166,7 +145,7 @@ public class Encoder_VisitIT {
 
 	class IdCountingVisitor implements EncoderVisitor {
 
-		Set<String> ids = new LinkedHashSet<>();
+		List<String> ids = new ArrayList<>();
 		int remainingNodes = Integer.MAX_VALUE;
 		int visited;
 
@@ -179,11 +158,9 @@ public class Encoder_VisitIT {
 
 			visited++;
 
-			if (object instanceof Persistent) {
-				remainingNodes--;
-				Persistent p = (Persistent) object;
-				ids.add(p.getObjectId().getEntityName() + ":" + Cayenne.intPKForObject(p));
-			}
+			remainingNodes--;
+			Persistent p = (Persistent) object;
+			ids.add(p.getObjectId().getEntityName() + ":" + Cayenne.intPKForObject(p));
 
 			return Encoder.VISIT_CONTINUE;
 		}
