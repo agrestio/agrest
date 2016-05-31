@@ -20,15 +20,14 @@ public class TargetBuilderTest extends JerseyClientTest {
     @Test
     public void testBuild_Target_Constrained1() throws Exception {
 
-        Constraint constraint = new ConstraintBuilder()
+        Constraint constraint = new Constraint()
                 .exclude("ex1", "ex2").exclude("ex3")
                 .include("in1")
-                .include(IncludeBuilder.path("in2").build())
-                .include(IncludeBuilder.path("in3")
+                .include(Include.path("in2"))
+                .include(Include.path("in3")
                         .sort(Sort.property("in3.s1").desc())
-                        .limit(100).build())
-                .mapBy("r1")
-                .build();
+                        .limit(100))
+                .mapBy("r1");
 
         WebTarget target = target("/path/to/resource");
         WebTarget newTarget = TargetBuilder.target(target).constraint(constraint).build();

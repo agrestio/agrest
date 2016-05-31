@@ -3,6 +3,8 @@ package com.nhl.link.rest.client;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.Arrays;
 import java.util.Collections;
 
@@ -46,20 +48,20 @@ public class ConstraintEncoderTest {
     @Test
     public void testEncode_Include_Simple() {
 
-        Include include = IncludeBuilder.path("abc").build();
+        Include include = Include.path("abc");
         String encoded = encoder.encode(include);
         assertEquals(include.getPath(), encoded);
     }
 
     @Test
-    public void testEncode_Include_Constrained() {
+    public void testEncode_Include_Constrained() throws UnsupportedEncodingException {
 
-        Include include = IncludeBuilder.path("abc").mapBy("related").start(50).limit(100)
-                .sort("s1", "s2").sort(Sort.property("d1").desc()).build();
+        Include include = Include.path("abc").mapBy("related").start(50).limit(100)
+                .sort("s1", "s2").sort(Sort.property("d1").desc());
 
         String encoded = encoder.encode(include);
         assertEquals("{\"path\":\"abc\",\"mapBy\":\"related\",\"start\":50,\"limit\":100," +
                 "\"sort\":[{\"property\":\"d1\",\"direction\":\"DESC\"},{\"property\":\"s1\"},{\"property\":\"s2\"}]}",
-                encoded);
+                URLDecoder.decode(encoded, "UTF-8"));
     }
 }
