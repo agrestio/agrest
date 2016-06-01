@@ -9,4 +9,6 @@ public interface PathDescriptor {
 	Class<?> getType();
 
 	ASTPath getPathExp();
+
+	Object getTargetComponent();
 }

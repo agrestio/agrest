@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import com.nhl.link.rest.runtime.parser.cache.IPathCache;
+import com.nhl.link.rest.runtime.parser.cache.PathCache;
 import org.apache.cayenne.ObjectContext;
 import org.apache.cayenne.configuration.server.DataSourceFactory;
 import org.apache.cayenne.configuration.server.ServerRuntime;
@@ -65,6 +67,7 @@ public class TestWithCayenneMapping {
 	}
 
 	protected ICayennePersister mockCayennePersister;
+	protected IPathCache pathCache;
 	protected IMetadataService metadataService;
 	protected IResourceMetadataService resourceMetadataService;
 	protected IResourceParser resourceParser;
@@ -80,6 +83,7 @@ public class TestWithCayenneMapping {
 		when(mockCayennePersister.newContext()).thenReturn(runtime.newContext());
 
 		this.metadataService = createMetadataService();
+		this.pathCache = new PathCache(metadataService);
 		this.resourceParser = new ResourceParser(metadataService);
 		this.resourceMetadataService = createResourceMetadataService();
 	}

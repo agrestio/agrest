@@ -33,6 +33,44 @@ public class GET_NonPersistentProperties_IT extends JerseyTestOnDerby {
 	}
 
 	@Test
+	public void testGET_Root_SortByNonPersistentProperty() {
+
+		insert("e14", "long_id, name", "7, 'xxx'");
+		insert("e14", "long_id, name", "8, 'yyy'");
+		insert("e14", "long_id, name", "9, 'zzz'");
+
+		Response response1 = target("/e14").queryParam("include", "name").queryParam("include", "prettyName")
+				.queryParam("sort", urlEnc("[{\"property\":\"name\",\"direction\":\"DESC\"},{\"property\":\"prettyName\"}]"))
+				.request().get();
+
+		assertEquals(Status.OK.getStatusCode(), response1.getStatus());
+		assertEquals("{\"data\":[{\"name\":\"zzz\",\"prettyName\":\"zzz_pretty\"}," +
+				"{\"name\":\"yyy\",\"prettyName\":\"yyy_pretty\"}," +
+				"{\"name\":\"xxx\",\"prettyName\":\"xxx_pretty\"}],\"total\":3}",
+				response1.readEntity(String.class));
+	}
+
+	@Test
+	public void testGET_Root_SortByRelatedObjectsNonPersistentProperty() {
+
+		insert("e15", "long_id, name", "1, 'aaa'");
+		insert("e15", "long_id, name", "2, 'bbb'");
+		insert("e15", "long_id, name", "3, 'ccc'");
+
+		insert("e14", "e15_id, long_id, name", "1, 7, 'xxx'");
+		insert("e14", "e15_id, long_id, name", "2, 8, 'yyy'");
+		insert("e14", "e15_id, long_id, name", "3, 9, 'zzz'");
+
+		Response response1 = target("/e14").queryParam("include", "name")
+				.queryParam("sort", urlEnc("[{\"property\":\"name\"},{\"property\":\"e15.nonPersistent\"}]"))
+				.request().get();
+
+		assertEquals(Status.OK.getStatusCode(), response1.getStatus());
+		assertEquals("{\"data\":[{\"name\":\"xxx\"},{\"name\":\"yyy\"},{\"name\":\"zzz\"}],\"total\":3}",
+				response1.readEntity(String.class));
+	}
+
+	@Test
 	public void testGET_PrefetchPojoRel() {
 		insert("e15", "long_id, name", "1, 'xxx'");
 		insert("e14", "e15_id, long_id, name", "1, 8, 'yyy'");
@@ -50,7 +88,8 @@ public class GET_NonPersistentProperties_IT extends JerseyTestOnDerby {
 		insert("e14", "e15_id, long_id, name", "1, 8, 'yyy'");
 
 		Response response1 = target("/e15").queryParam("include", "e14s.name").queryParam("include", "e14s.prettyName")
-				.request().get();
+				.queryParam("exclude", "nonPersistent").request().get();
+
 		assertEquals(Status.OK.getStatusCode(), response1.getStatus());
 		assertEquals(
 				"{\"data\":"
