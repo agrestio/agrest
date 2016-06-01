@@ -106,16 +106,38 @@ public class GET_Client_IT extends JerseyTestOnDerby {
         assertEquals(createE2(1, "xxx", createE3(7, "ccc"), createE3(6, "bbb")), response.getData().get(0));
     }
 
+    @Test
+    public void testClient_CayenneExpression() {
+
+        insert("e2", "id, name", "1, 'xxx'");
+        insert("e2", "id, name", "2, 'yyy'");
+        insert("e3", "id, e2_id, name", "5, 1, 'aaa'");
+        insert("e3", "id, e2_id, name", "6, 2, 'bbb'");
+        insert("e3", "id, e2_id, name", "7, 1, 'ccc'");
+
+        ClientDataResponse<JsonNode> response = LinkRestClient.client(target("/e2"))
+                .exclude(E2.ADDRESS.getName(), E2.E3S.dot(E3.PHONE_NUMBER).getName())
+                .cayenneExp(E2.NAME.like("xx%"))
+                .include(Include.path(E2.E3S.getName()).cayenneExp(E3.NAME.eq("ccc")))
+                .get(JsonNode.class);
+
+        assertEquals(Status.OK, response.getStatus());
+        assertEquals(1, response.getTotal());
+        assertEquals(createE2(1, "xxx", createE3(7, "ccc")), response.getData().get(0));
+    }
+
     private JsonNode createE2(int id, String name, JsonNode... e3s) {
 
         ObjectNode e2 = nodeFactory.objectNode();
         e2.set(E2.ID_PK_COLUMN, nodeFactory.numberNode(id));
 
-        ArrayNode e3sNodes = nodeFactory.arrayNode();
-        for (JsonNode e3 : e3s) {
-            e3sNodes.add(e3);
+        if (e3s.length > 0) {
+            ArrayNode e3sNodes = nodeFactory.arrayNode();
+            for (JsonNode e3 : e3s) {
+                e3sNodes.add(e3);
+            }
+            e2.set(E2.E3S.getName(), e3sNodes);
         }
-        e2.set(E2.E3S.getName(), e3sNodes);
 
         e2.set(E2.NAME.getName(), nodeFactory.textNode(name));
 

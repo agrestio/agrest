@@ -36,7 +36,7 @@ public class TargetBuilderTest extends JerseyTestOnDerby {
 
         String query = newTarget.getUri().getQuery();
         assertEquals("mapBy=r1&exclude=ex3&exclude=ex2&exclude=ex1&include=in2&include=in1&" +
-                "include={\"path\":\"in3\",\"limit\":100,\"sort\":{\"property\":\"in3.s1\",\"direction\":\"DESC\"}}",
+                "include={\"path\":\"in3\",\"limit\":100,\"sort\":[{\"property\":\"in3.s1\",\"direction\":\"DESC\"}]}",
                 query);
     }
 

@@ -1,5 +1,6 @@
 package com.nhl.link.rest.client;
 
+import com.nhl.link.rest.it.fixture.cayenne.E1;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -24,7 +25,7 @@ public class ConstraintEncoderTest {
 
         Sort ordering = Sort.property("abc");
         String encoded = encoder.encode(Collections.singleton(ordering));
-        assertEquals("{\"property\":\"abc\"}", URLDecoder.decode(encoded, "UTF-8"));
+        assertEquals("[{\"property\":\"abc\"}]", URLDecoder.decode(encoded, "UTF-8"));
     }
 
     @Test
@@ -32,7 +33,7 @@ public class ConstraintEncoderTest {
 
         Sort ordering = Sort.property("abc").desc();
         String encoded = encoder.encode(Collections.singleton(ordering));
-        assertEquals("{\"property\":\"abc\",\"direction\":\"DESC\"}", URLDecoder.decode(encoded, "UTF-8"));
+        assertEquals("[{\"property\":\"abc\",\"direction\":\"DESC\"}]", URLDecoder.decode(encoded, "UTF-8"));
     }
 
     @Test
@@ -63,6 +64,16 @@ public class ConstraintEncoderTest {
         String encoded = encoder.encode(include);
         assertEquals("{\"path\":\"abc\",\"mapBy\":\"related\",\"start\":50,\"limit\":100," +
                 "\"sort\":[{\"property\":\"d1\",\"direction\":\"DESC\"},{\"property\":\"s1\"},{\"property\":\"s2\"}]}",
+                URLDecoder.decode(encoded, "UTF-8"));
+    }
+
+    @Test
+    public void testEncode_Include_CayenneExpression() throws UnsupportedEncodingException {
+
+        Include include = Include.path("abc").cayenneExp(E1.NAME.like("Jo%").andExp(E1.AGE.gt(21)));
+
+        String encoded = encoder.encode(include);
+        assertEquals("{\"path\":\"abc\",\"cayenneExp\":\"(name like 'Jo%') and (age > 21)\"}",
                 URLDecoder.decode(encoded, "UTF-8"));
     }
 }

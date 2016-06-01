@@ -5,6 +5,7 @@ import org.apache.cayenne.exp.Expression;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
 
 public class ConstraintEncoder {
@@ -33,7 +34,7 @@ public class ConstraintEncoder {
 
             if (include.getCayenneExp() != null) {
                 buf.append(",\"cayenneExp\":\"");
-                buf.append(encode(include.getCayenneExp()));
+                buf.append(encode(include.getCayenneExp(), false));
                 buf.append("\"");
             }
 
@@ -59,16 +60,20 @@ public class ConstraintEncoder {
             result = include.getPath();
         }
 
-        try {
-            return URLEncoder.encode(result, "UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            throw new LinkRestClientException("Unexpected error", e);
-        }
+        return urlEncode(result);
     }
 
     public String encode(Expression expression) {
-        // TODO: encode expression with params (if there are any)
-        return null;
+        return encode(expression, true);
+    }
+
+    private String encode(Expression expression, boolean shouldEncodeUrl) {
+
+        if (shouldEncodeUrl) {
+            return urlEncode(expression.toString());
+        } else {
+            return expression.toString().replace('"', '\'');
+        }
     }
 
     public String encode(Collection<Sort> orderings) {
@@ -84,20 +89,12 @@ public class ConstraintEncoder {
         String result;
 
         if (orderings.size() == 1) {
-            result = encodeSort(orderings.iterator().next());
+            result = encodeSorts(Collections.singleton(orderings.iterator().next()));
         } else {
             result = encodeSorts(orderings);
         }
 
-        if (shouldEncodeUrl) {
-            try {
-                return URLEncoder.encode(result, "UTF-8");
-            } catch (UnsupportedEncodingException e) {
-                throw new LinkRestClientException("Unexpected error", e);
-            }
-        } else {
-            return result;
-        }
+        return shouldEncodeUrl? urlEncode(result) : result;
     }
 
     private String encodeSorts(Collection<Sort> orderings) {
@@ -140,5 +137,13 @@ public class ConstraintEncoder {
 
         buf.append("}");
         return buf.toString();
+    }
+
+    private String urlEncode(String s) {
+        try {
+            return URLEncoder.encode(s, "UTF-8").replace("+", "%20");
+        } catch (UnsupportedEncodingException e) {
+            throw new LinkRestClientException("Unexpected error", e);
+        }
     }
 }
