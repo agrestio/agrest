@@ -13,13 +13,11 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
 import org.apache.cayenne.Cayenne;
-import org.apache.cayenne.query.SQLTemplate;
 import org.apache.cayenne.query.SelectById;
 import org.junit.Test;
 
 import com.nhl.link.rest.it.fixture.JerseyTestOnDerby;
 import com.nhl.link.rest.it.fixture.cayenne.E3;
-import com.nhl.link.rest.it.fixture.cayenne.E4;
 import com.nhl.link.rest.it.fixture.resource.E3Resource;
 import com.nhl.link.rest.runtime.LinkRestBuilder;
 import com.nhl.link.rest.runtime.adapter.sencha.SenchaAdapter;
@@ -38,13 +36,9 @@ public class Sencha_PUT_IT extends JerseyTestOnDerby {
 
 	@Test
 	public void testPut_ToOne_FromNull() throws WebApplicationException, IOException {
-
-		newContext()
-				.performGenericQuery(new SQLTemplate(E4.class, "INSERT INTO utest.e2 (id, name) values (1, 'xxx')"));
-		newContext()
-				.performGenericQuery(new SQLTemplate(E4.class, "INSERT INTO utest.e2 (id, name) values (8, 'yyy')"));
-		newContext().performGenericQuery(
-				new SQLTemplate(E4.class, "INSERT INTO utest.e3 (id, name, e2_id) values (3, 'zzz', null)"));
+		insert("e2", "id, name", "1, 'xxx'");
+		insert("e2", "id, name", "8, 'yyy'");
+		insert("e3", "id, name, e2_id", "3, 'zzz', null");
 
 		E3 e3 = Cayenne.objectForPK(newContext(), E3.class, 3);
 		newContext().invalidateObjects(e3);
@@ -82,12 +76,9 @@ public class Sencha_PUT_IT extends JerseyTestOnDerby {
 	@Test
 	public void testPut_ToOne() throws WebApplicationException, IOException {
 
-		newContext()
-				.performGenericQuery(new SQLTemplate(E4.class, "INSERT INTO utest.e2 (id, name) values (1, 'xxx')"));
-		newContext()
-				.performGenericQuery(new SQLTemplate(E4.class, "INSERT INTO utest.e2 (id, name) values (8, 'yyy')"));
-		newContext().performGenericQuery(
-				new SQLTemplate(E4.class, "INSERT INTO utest.e3 (id, name, e2_id) values (3, 'zzz', 8)"));
+		insert("e2", "id, name", "1, 'xxx'");
+		insert("e2", "id, name", "8, 'yyy'");
+		insert("e3", "id, name, e2_id", "3, 'zzz', 8");
 
 		E3 e3 = Cayenne.objectForPK(newContext(), E3.class, 3);
 		newContext().invalidateObjects(e3);
@@ -107,12 +98,9 @@ public class Sencha_PUT_IT extends JerseyTestOnDerby {
 	@Test
 	public void testPut_ToOne_Relationship_Name() throws WebApplicationException, IOException {
 
-		newContext()
-				.performGenericQuery(new SQLTemplate(E4.class, "INSERT INTO utest.e2 (id, name) values (1, 'xxx')"));
-		newContext()
-				.performGenericQuery(new SQLTemplate(E4.class, "INSERT INTO utest.e2 (id, name) values (8, 'yyy')"));
-		newContext().performGenericQuery(
-				new SQLTemplate(E4.class, "INSERT INTO utest.e3 (id, name, e2_id) values (3, 'zzz', 8)"));
+		insert("e2", "id, name", "1, 'xxx'");
+		insert("e2", "id, name", "8, 'yyy'");
+		insert("e3", "id, name, e2_id", "3, 'zzz', 8");
 
 		Response response1 = target("/e3/3").request()
 				.put(Entity.entity("{\"id\":3,\"e2\":1}", MediaType.APPLICATION_JSON));
