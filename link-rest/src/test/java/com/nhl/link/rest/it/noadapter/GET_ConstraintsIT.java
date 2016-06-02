@@ -35,8 +35,7 @@ public class GET_ConstraintsIT extends JerseyTestOnDerby {
 
 		Response response1 = target("/e4/limit_attributes").request().get();
 		assertEquals(Status.OK.getStatusCode(), response1.getStatus());
-		assertEquals("{\"data\":[{\"id\":1,\"cInt\":5}],\"total\":1}",
-				response1.readEntity(String.class));
+		assertEquals("{\"data\":[{\"id\":1,\"cInt\":5}],\"total\":1}", response1.readEntity(String.class));
 
 	}
 
@@ -57,9 +56,7 @@ public class GET_ConstraintsIT extends JerseyTestOnDerby {
 	@Test
 	public void test_Annotated() throws WebApplicationException, IOException {
 
-		SQLTemplate insert = new SQLTemplate(E10.class,
-				"INSERT INTO utest.e10 (id, c_varchar, c_int, c_boolean, c_date) values (1, 'xxx', 5, true, '2014-01-02')");
-		performQuery(insert);
+		insert("e10", "id, c_varchar, c_int, c_boolean, c_date", "1, 'xxx', 5, true, '2014-01-02'");
 
 		Response response1 = target("/e10").request().get();
 		assertEquals(Status.OK.getStatusCode(), response1.getStatus());
@@ -71,15 +68,12 @@ public class GET_ConstraintsIT extends JerseyTestOnDerby {
 	@Test
 	public void test_Annotated_Relationship() throws WebApplicationException, IOException {
 
-		performQuery(new SQLTemplate(E10.class,
-				"INSERT INTO utest.e10 (id, c_varchar, c_int, c_boolean, c_date) values (1, 'xxx', 5, true, '2014-01-02')"));
-		performQuery(new SQLTemplate(E4.class,
-				"INSERT INTO utest.e11 (id, e10_id, address, name) values (15, 1, 'aaa', 'nnn')"));
+		insert("e10", "id, c_varchar, c_int, c_boolean, c_date", "1, 'xxx', 5, true, '2014-01-02'");
+		insert("e11", "id, e10_id, address, name", "15, 1, 'aaa', 'nnn'");
 
 		Response response1 = target("/e10").queryParam("include", E10.E11S.getName()).request().get();
 		assertEquals(Status.OK.getStatusCode(), response1.getStatus());
-		assertEquals(
-				"{\"data\":[{\"id\":1,\"cBoolean\":true,\"cInt\":5,\"e11s\":{\"address\":\"aaa\"}}],\"total\":1}",
+		assertEquals("{\"data\":[{\"id\":1,\"cBoolean\":true,\"cInt\":5,\"e11s\":{\"address\":\"aaa\"}}],\"total\":1}",
 				response1.readEntity(String.class));
 
 	}
