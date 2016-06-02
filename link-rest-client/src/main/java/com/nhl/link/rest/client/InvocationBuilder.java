@@ -3,6 +3,9 @@ package com.nhl.link.rest.client;
 import javax.ws.rs.client.Invocation;
 import javax.ws.rs.client.WebTarget;
 
+/**
+ * @since 2.0
+ */
 public class InvocationBuilder {
 
     public static InvocationBuilder target(WebTarget target) {

@@ -1,5 +1,8 @@
 package com.nhl.link.rest.client;
 
+/**
+ * @since 2.0
+ */
 public class Sort {
 
     enum SortDirection {

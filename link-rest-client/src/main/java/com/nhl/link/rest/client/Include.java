@@ -4,6 +4,9 @@ import org.apache.cayenne.exp.Expression;
 
 import java.util.Collection;
 
+/**
+ * @since 2.0
+ */
 public class Include {
 
     public static Include path(String path) {

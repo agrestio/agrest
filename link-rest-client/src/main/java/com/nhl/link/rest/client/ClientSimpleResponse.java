@@ -2,6 +2,9 @@ package com.nhl.link.rest.client;
 
 import javax.ws.rs.core.Response.Status;
 
+/**
+ * @since 2.0
+ */
 public class ClientSimpleResponse {
 
     private Status status;

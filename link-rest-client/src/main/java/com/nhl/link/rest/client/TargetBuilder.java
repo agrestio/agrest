@@ -2,6 +2,9 @@ package com.nhl.link.rest.client;
 
 import javax.ws.rs.client.WebTarget;
 
+/**
+ * @since 2.0
+ */
 public class TargetBuilder {
 
     private static final String MAP_BY = "mapBy";

@@ -8,6 +8,9 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import java.io.IOException;
 
+/**
+ * @since 2.0
+ */
 public abstract class BaseResponseHandler<T extends ClientSimpleResponse> implements ClientResponseHandler<T> {
 
     private static final String MESSAGE_NODE = "message";

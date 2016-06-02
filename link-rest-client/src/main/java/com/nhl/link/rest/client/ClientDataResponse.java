@@ -3,6 +3,9 @@ package com.nhl.link.rest.client;
 import javax.ws.rs.core.Response.Status;
 import java.util.List;
 
+/**
+ * @since 2.0
+ */
 public class ClientDataResponse<T> extends ClientSimpleResponse {
 
     private List<T> data;

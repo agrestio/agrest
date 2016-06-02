@@ -10,6 +10,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * @since 2.0
+ */
 public class DataResponseHandler<T> extends BaseResponseHandler<ClientDataResponse<T>> {
 
     private static final String DATA_NODE = "data";

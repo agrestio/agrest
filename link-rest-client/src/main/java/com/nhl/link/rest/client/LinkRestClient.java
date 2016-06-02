@@ -7,6 +7,9 @@ import org.apache.cayenne.exp.Expression;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Response;
 
+/**
+ * @since 2.0
+ */
 public class LinkRestClient {
 
     private static JsonFactory jsonFactory;
