@@ -25,15 +25,27 @@ public abstract class LrcEntityRequest {
 		return Optional.ofNullable(cayenneExp);
 	}
 
-	void setCayenneExp(Expression cayenneExp) {
-		this.cayenneExp = cayenneExp;
-	}
-
 	public Collection<Sort> getOrderings() {
 		return orderingMap == null ? Collections.emptyList() : orderingMap.values();
 	}
 
-	void addOrderings(Sort... orderings) {
+	public Optional<Long> getLimit() {
+		return limit > 0 ? Optional.of(limit) : Optional.empty();
+	}
+
+	public Optional<Long> getStart() {
+		return start > 0 ? Optional.of(start) : Optional.empty();
+	}
+
+	protected void setStart(long start) {
+		this.start = start;
+	}
+
+	protected void setLimit(long limit) {
+		this.limit = limit;
+	}
+
+	protected void addOrderings(Sort... orderings) {
 
 		if (orderings != null) {
 			for (Sort o : orderings) {
@@ -42,7 +54,7 @@ public abstract class LrcEntityRequest {
 		}
 	}
 
-	private void addOrdering(String property, Sort sort) {
+	protected void addOrdering(String property, Sort sort) {
 
 		if (orderingMap == null) {
 			orderingMap = new HashMap<>();
@@ -50,19 +62,8 @@ public abstract class LrcEntityRequest {
 		orderingMap.put(property, sort);
 	}
 
-	public Optional<Long> getLimit() {
-		return limit > 0 ? Optional.of(limit) : Optional.empty();
+	protected void setCayenneExp(Expression cayenneExp) {
+		this.cayenneExp = cayenneExp;
 	}
 
-	void setLimit(long limit) {
-		this.limit = limit;
-	}
-
-	public Optional<Long> getStart() {
-		return start > 0 ? Optional.of(start) : Optional.empty();
-	}
-
-	void setStart(long start) {
-		this.start = start;
-	}
 }

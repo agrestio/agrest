@@ -20,7 +20,7 @@ public class Include extends LrcEntityRequest {
 	// supported at the root level this will have to be moved to the superclass
 	protected String mapBy;
 
-	public Include(String path) {
+	protected Include(String path) {
 		this.path = Objects.requireNonNull(path);
 	}
 
@@ -44,7 +44,7 @@ public class Include extends LrcEntityRequest {
 		return Optional.ofNullable(mapBy);
 	}
 
-	void setMapBy(String mapBy) {
+	protected void setMapBy(String mapBy) {
 		this.mapBy = mapBy;
 	}
 

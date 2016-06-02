@@ -23,7 +23,10 @@ public class LrcRequest extends LrcEntityRequest {
 		return new LrRequestBuilder();
 	}
 
-	void addExcludes(String... excludePaths) {
+	protected LrcRequest() {
+	}
+
+	protected void addExcludes(String... excludePaths) {
 
 		if (excludePaths != null) {
 			if (excludes == null) {
@@ -37,7 +40,7 @@ public class LrcRequest extends LrcEntityRequest {
 		}
 	}
 
-	void addIncludes(Include... includes) {
+	protected void addIncludes(Include... includes) {
 
 		if (includes != null) {
 			for (Include i : includes) {
@@ -46,7 +49,7 @@ public class LrcRequest extends LrcEntityRequest {
 		}
 	}
 
-	private void addInclude(String path, Include include) {
+	protected void addInclude(String path, Include include) {
 
 		if (includeMap == null) {
 			includeMap = new HashMap<>();
