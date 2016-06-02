@@ -3,7 +3,7 @@ package com.nhl.link.rest.client.runtime.run;
 import javax.ws.rs.client.Invocation;
 import javax.ws.rs.client.WebTarget;
 
-import com.nhl.link.rest.client.protocol.LrRequest;
+import com.nhl.link.rest.client.protocol.LrcRequest;
 
 /**
  * @since 2.0
@@ -20,8 +20,8 @@ public class InvocationBuilder {
         targetBuilder = TargetBuilder.target(target);
     }
 
-    public InvocationBuilder constraint(LrRequest constraint) {
-        targetBuilder.constraint(constraint);
+    public InvocationBuilder request(LrcRequest request) {
+        targetBuilder.request(request);
         return this;
     }
 

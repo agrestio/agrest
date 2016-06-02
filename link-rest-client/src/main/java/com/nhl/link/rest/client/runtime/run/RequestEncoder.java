@@ -1,4 +1,4 @@
-package com.nhl.link.rest.client.protocol;
+package com.nhl.link.rest.client.runtime.run;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -9,63 +9,63 @@ import java.util.Iterator;
 import org.apache.cayenne.exp.Expression;
 
 import com.nhl.link.rest.client.LinkRestClientException;
+import com.nhl.link.rest.client.protocol.Include;
+import com.nhl.link.rest.client.protocol.Sort;
 
 /**
  * @since 2.0
  */
-public class LrRequestEncoder {
+class RequestEncoder {
 
-	private static final LrRequestEncoder instance = new LrRequestEncoder();
+	private static final RequestEncoder instance = new RequestEncoder();
 
-	public static LrRequestEncoder encoder() {
+	public static RequestEncoder encoder() {
 		return instance;
 	}
 
 	public String encode(Include include) {
+		return urlEncode(asString(include));
+	}
 
-		String result;
-
-		if (include.isConstrained()) {
-			StringBuilder buf = new StringBuilder();
-			buf.append("{\"path\":\"");
-			buf.append(include.getPath());
-			buf.append("\"");
-
-			if (include.getMapBy() != null) {
-				buf.append(",\"mapBy\":\"");
-				buf.append(include.getMapBy());
-				buf.append("\"");
-			}
-
-			if (include.getCayenneExp() != null) {
-				buf.append(",\"cayenneExp\":\"");
-				buf.append(encode(include.getCayenneExp(), false));
-				buf.append("\"");
-			}
-
-			if (include.getStart() != null) {
-				buf.append(",\"start\":");
-				buf.append(include.getStart());
-			}
-
-			if (include.getLimit() != null) {
-				buf.append(",\"limit\":");
-				buf.append(include.getLimit());
-			}
-
-			if (!include.getOrderings().isEmpty()) {
-				buf.append(",\"sort\":");
-				buf.append(encode(include.getOrderings(), false));
-			}
-
-			buf.append("}");
-			result = buf.toString();
-
-		} else {
-			result = include.getPath();
+	private String asString(Include include) {
+		if (include.isSimple()) {
+			return include.getPath();
 		}
 
-		return urlEncode(result);
+		StringBuilder buf = new StringBuilder();
+		buf.append("{\"path\":\"");
+		buf.append(include.getPath());
+		buf.append("\"");
+
+		include.getMapBy().ifPresent(mapBy -> {
+			buf.append(",\"mapBy\":\"");
+			buf.append(mapBy);
+			buf.append("\"");
+		});
+
+		include.getCayenneExp().ifPresent(exp -> {
+			buf.append(",\"cayenneExp\":\"");
+			buf.append(encode(exp, false));
+			buf.append("\"");
+		});
+
+		include.getStart().ifPresent(start -> {
+			buf.append(",\"start\":");
+			buf.append(start);
+		});
+
+		include.getLimit().ifPresent(limit -> {
+			buf.append(",\"limit\":");
+			buf.append(limit);
+		});
+
+		if (!include.getOrderings().isEmpty()) {
+			buf.append(",\"sort\":");
+			buf.append(encode(include.getOrderings(), false));
+		}
+
+		buf.append("}");
+		return buf.toString();
 	}
 
 	public String encode(Expression expression) {

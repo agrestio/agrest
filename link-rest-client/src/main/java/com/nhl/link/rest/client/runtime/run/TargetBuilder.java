@@ -1,77 +1,79 @@
 package com.nhl.link.rest.client.runtime.run;
 
+import java.util.Objects;
+import java.util.Optional;
+
 import javax.ws.rs.client.WebTarget;
 
-import com.nhl.link.rest.client.protocol.LrRequest;
-import com.nhl.link.rest.client.protocol.LrRequestEncoder;
+import org.apache.cayenne.exp.Expression;
+
 import com.nhl.link.rest.client.protocol.Include;
+import com.nhl.link.rest.client.protocol.LrcRequest;
 
 /**
  * @since 2.0
  */
 public class TargetBuilder {
 
-    private static final String MAP_BY = "mapBy";
-    private static final String CAYENNE_EXP = "cayenneExp";
-    private static final String START = "start";
-    private static final String LIMIT = "limit";
-    private static final String SORT = "sort";
-    private static final String EXCLUDE = "exclude";
-    private static final String INCLUDE = "include";
+	private static final String CAYENNE_EXP = "cayenneExp";
+	private static final String START = "start";
+	private static final String LIMIT = "limit";
+	private static final String SORT = "sort";
+	private static final String EXCLUDE = "exclude";
+	private static final String INCLUDE = "include";
 
-    public static TargetBuilder target(WebTarget target) {
-        return new TargetBuilder(target);
-    }
+	public static TargetBuilder target(WebTarget target) {
+		return new TargetBuilder(target);
+	}
 
-    private WebTarget target;
-    private LrRequest constraint;
+	private WebTarget target;
+	private LrcRequest request;
 
-    private TargetBuilder(WebTarget target) {
+	private TargetBuilder(WebTarget target) {
+		this.target = Objects.requireNonNull(target);
+	}
 
-        if (target == null) {
-            throw new NullPointerException("Target");
-        }
-        this.target = target;
-    }
+	public TargetBuilder request(LrcRequest request) {
 
-    public TargetBuilder constraint(LrRequest constraint) {
+		this.request = Objects.requireNonNull(request);
+		return this;
+	}
 
-        if (constraint != null) {
-            this.constraint = constraint;
-        }
-        return this;
-    }
+	public WebTarget build() {
 
-    public WebTarget build() {
+		Objects.requireNonNull(request);
 
-        WebTarget newTarget = target;
-        if (constraint != null) {
+		WebTarget newTarget = target;
 
-            if (constraint.getMapBy() != null) {
-                newTarget = newTarget.queryParam(MAP_BY, constraint.getMapBy());
-            }
-            if (constraint.getStart() != null) {
-                newTarget = newTarget.queryParam(START, constraint.getStart());
-            }
-            if (constraint.getLimit() != null) {
-                newTarget = newTarget.queryParam(LIMIT, constraint.getLimit());
-            }
-            for (String exclude : constraint.getExcludes()) {
-                newTarget = newTarget.queryParam(EXCLUDE, exclude);
-            }
+		Optional<Long> start = request.getStart();
+		if (start.isPresent()) {
+			newTarget = newTarget.queryParam(START, start.get());
+		}
 
-            LrRequestEncoder encoder = LrRequestEncoder.encoder();
-            if (constraint.getCayenneExp() != null) {
-                newTarget = newTarget.queryParam(CAYENNE_EXP, encoder.encode(constraint.getCayenneExp()));
-            }
-            if (!constraint.getOrderings().isEmpty()) {
-                newTarget = newTarget.queryParam(SORT, encoder.encode(constraint.getOrderings()));
-            }
-            for (Include include : constraint.getIncludes()) {
-                newTarget = newTarget.queryParam(INCLUDE, encoder.encode(include));
-            }
-        }
+		Optional<Long> limit = request.getLimit();
+		if (limit.isPresent()) {
+			newTarget = newTarget.queryParam(LIMIT, limit.get());
+		}
 
-        return newTarget;
-    }
+		for (String exclude : request.getExcludes()) {
+			newTarget = newTarget.queryParam(EXCLUDE, exclude);
+		}
+
+		RequestEncoder encoder = RequestEncoder.encoder();
+
+		Optional<Expression> exp = request.getCayenneExp();
+		if (exp.isPresent()) {
+			newTarget = newTarget.queryParam(CAYENNE_EXP, encoder.encode(exp.get()));
+		}
+
+		if (!request.getOrderings().isEmpty()) {
+			newTarget = newTarget.queryParam(SORT, encoder.encode(request.getOrderings()));
+		}
+		
+		for (Include include : request.getIncludes()) {
+			newTarget = newTarget.queryParam(INCLUDE, encoder.encode(include));
+		}
+
+		return newTarget;
+	}
 }

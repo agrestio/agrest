@@ -1,85 +1,104 @@
 package com.nhl.link.rest.client.protocol;
 
-import org.apache.cayenne.exp.Expression;
+import java.util.Objects;
+import java.util.Optional;
 
-import java.util.Collection;
+import org.apache.cayenne.exp.Expression;
 
 /**
  * @since 2.0
  */
-public class Include {
+public class Include extends LrcEntityRequest {
 
-    public static Include path(String path) {
-        return new Include(path);
-    }
+	public static IncludeBuilder path(String path) {
+		return new IncludeBuilder(path);
+	}
 
-    private String path;
-    private LrRequest constraint;
+	private String path;
 
-    private Include(String path) {
+	// TODO: for now LR only supports 'mapBy' in nested includes. Once it is
+	// supported at the root level this will have to be moved to the superclass
+	protected String mapBy;
 
-        if (path == null) {
-            throw new NullPointerException("Path");
-        }
-        this.path = path;
-        constraint = new LrRequest();
-    }
+	public Include(String path) {
+		this.path = Objects.requireNonNull(path);
+	}
 
-    public Include mapBy(String mapByPath) {
-        constraint.mapBy(mapByPath);
-        return this;
-    }
+	/**
+	 * Returns true if the include is simply a path and doesn't have any
+	 * addition constraints.
+	 * 
+	 * @return true if the include is simply a path and doesn't have any
+	 *         addition constraints.
+	 */
+	public boolean isSimple() {
+		return mapBy == null && cayenneExp == null && start <= 0 && limit <= 0
+				&& (orderingMap == null || orderingMap.isEmpty());
+	}
 
-    public Include cayenneExp(Expression cayenneExp) {
-        constraint.cayenneExp(cayenneExp);
-        return this;
-    }
+	public String getPath() {
+		return path;
+	}
 
-    public Include sort(String... properties) {
-        constraint.sort(properties);
-        return this;
-    }
+	public Optional<String> getMapBy() {
+		return Optional.ofNullable(mapBy);
+	}
 
-    public Include sort(Sort ordering) {
-        constraint.sort(ordering);
-        return this;
-    }
+	void setMapBy(String mapBy) {
+		this.mapBy = mapBy;
+	}
 
-    public Include start(long startIndex) {
-        constraint.start(startIndex);
-        return this;
-    }
+	public static class IncludeBuilder {
 
-    public Include limit(long limit) {
-        constraint.limit(limit);
-        return this;
-    }
+		private Include include;
 
-    boolean isConstrained() {
-        return constraint.hasAnyConstraints();
-    }
+		private IncludeBuilder(String path) {
+			this.include = new Include(path);
+		}
 
-    String getPath() {
-        return path;
-    }
+		public Include build() {
+			return include;
+		}
 
-    String getMapBy() {
-        return constraint.getMapBy();
-    }
+		public IncludeBuilder mapBy(String mapByPath) {
+			include.setMapBy(mapByPath);
+			return this;
+		}
 
-    Expression getCayenneExp() {
-        return constraint.getCayenneExp();
-    }
+		public IncludeBuilder start(long start) {
+			include.setStart(start);
+			return this;
+		}
 
-    Long getStart() {
-        return constraint.getStart();
-    }
+		public IncludeBuilder limit(long limit) {
+			include.setLimit(limit);
+			return this;
+		}
 
-    Long getLimit() {
-        return constraint.getLimit();
-    }
+		public IncludeBuilder cayenneExp(Expression exp) {
+			include.setCayenneExp(exp);
+			return this;
+		}
 
-    Collection<Sort> getOrderings() {
-        return constraint.getOrderings();
-    }
+		public IncludeBuilder sort(String... properties) {
+
+			if (properties != null) {
+
+				Sort[] orderings = new Sort[properties.length];
+
+				for (int i = 0; i < properties.length; i++) {
+					orderings[i] = Sort.property(properties[i]);
+				}
+
+				include.addOrderings(orderings);
+			}
+
+			return this;
+		}
+
+		public IncludeBuilder sort(Sort... properties) {
+			include.addOrderings(properties);
+			return this;
+		}
+	}
 }
