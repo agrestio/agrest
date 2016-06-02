@@ -1,5 +1,7 @@
 package com.nhl.link.rest.client;
 
+import java.util.function.Supplier;
+
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Response;
 
@@ -17,7 +19,6 @@ import com.nhl.link.rest.client.runtime.jackson.IJsonEntityReaderFactory;
 import com.nhl.link.rest.client.runtime.jackson.JsonEntityReaderFactory;
 import com.nhl.link.rest.client.runtime.response.DataResponseHandler;
 import com.nhl.link.rest.client.runtime.run.InvocationBuilder;
-import com.nhl.link.rest.client.runtime.run.LinkRestInvocation;
 
 /**
  * @since 2.0
@@ -100,8 +101,8 @@ public class LinkRestClient {
 			throw new LinkRestClientException("Unsupported target type: " + targetType.getName());
 		}
 
-		LinkRestInvocation invocation = InvocationBuilder.target(target).request(request.build()).build();
-		Response response = invocation.invoke();
+		Supplier<Response> invocation = InvocationBuilder.target(target).request(request.build()).build();
+		Response response = invocation.get();
 
 		DataResponseHandler<T> responseHandler = new DataResponseHandler<>(jsonFactory, jsonEntityReader);
 		return responseHandler.handleResponse(response);
