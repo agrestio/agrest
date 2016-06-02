@@ -1,4 +1,4 @@
-package com.nhl.link.rest.client;
+package com.nhl.link.rest.client.runtime.jackson;
 
 import com.fasterxml.jackson.databind.JsonNode;
 

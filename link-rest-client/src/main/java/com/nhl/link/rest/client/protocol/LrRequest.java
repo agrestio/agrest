@@ -1,4 +1,4 @@
-package com.nhl.link.rest.client;
+package com.nhl.link.rest.client.protocol;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -12,7 +12,7 @@ import org.apache.cayenne.exp.Expression;
 /**
  * @since 2.0
  */
-class Constraint {
+public class LrRequest {
 
 	private String mapByPath;
 	private Expression cayenneExp;
@@ -23,17 +23,17 @@ class Constraint {
 	private Set<String> excludes;
 	private Map<String, Include> includeMap;
 
-	public Constraint mapBy(String mapByPath) {
+	public LrRequest mapBy(String mapByPath) {
 		this.mapByPath = mapByPath;
 		return this;
 	}
 
-	public Constraint cayenneExp(Expression cayenneExp) {
+	public LrRequest cayenneExp(Expression cayenneExp) {
 		this.cayenneExp = cayenneExp;
 		return this;
 	}
 
-	public Constraint sort(String... properties) {
+	public LrRequest sort(String... properties) {
 
 		if (properties != null) {
 			for (String property : properties) {
@@ -43,7 +43,7 @@ class Constraint {
 		return this;
 	}
 
-	public Constraint sort(Sort ordering) {
+	public LrRequest sort(Sort ordering) {
 
 		if (ordering != null) {
 			addSort(ordering.getPropertyName(), ordering);
@@ -59,7 +59,7 @@ class Constraint {
 		orderingMap.put(property, sort);
 	}
 
-	public Constraint start(long startIndex) {
+	public LrRequest start(long startIndex) {
 
 		if (startIndex >= 0) {
 			this.startIndex = startIndex;
@@ -67,7 +67,7 @@ class Constraint {
 		return this;
 	}
 
-	public Constraint limit(long limit) {
+	public LrRequest limit(long limit) {
 
 		if (limit > 0) {
 			this.limit = limit;
@@ -75,7 +75,7 @@ class Constraint {
 		return this;
 	}
 
-	public Constraint exclude(String... excludePaths) {
+	public LrRequest exclude(String... excludePaths) {
 
 		if (excludePaths != null) {
 			if (excludes == null) {
@@ -90,7 +90,7 @@ class Constraint {
 		return this;
 	}
 
-	public Constraint include(String... includePaths) {
+	public LrRequest include(String... includePaths) {
 
 		if (includePaths != null) {
 			for (String includePath : includePaths) {
@@ -102,7 +102,7 @@ class Constraint {
 		return this;
 	}
 
-	public Constraint include(Include include) {
+	public LrRequest include(Include include) {
 
 		if (include != null) {
 			addInclude(include.getPath(), include);
@@ -124,31 +124,31 @@ class Constraint {
 				|| (includeMap != null && includeMap.size() > 0);
 	}
 
-	String getMapBy() {
+	public String getMapBy() {
 		return mapByPath;
 	}
 
-	Expression getCayenneExp() {
+	public Expression getCayenneExp() {
 		return cayenneExp;
 	}
 
-	Collection<Sort> getOrderings() {
+	public Collection<Sort> getOrderings() {
 		return orderingMap == null ? Collections.emptyList() : orderingMap.values();
 	}
 
-	Long getStart() {
+	public Long getStart() {
 		return startIndex;
 	}
 
-	Long getLimit() {
+	public Long getLimit() {
 		return limit;
 	}
 
-	Collection<String> getExcludes() {
+	public Collection<String> getExcludes() {
 		return excludes == null ? Collections.emptyList() : excludes;
 	}
 
-	Collection<Include> getIncludes() {
+	public Collection<Include> getIncludes() {
 		return includeMap == null ? Collections.emptyList() : includeMap.values();
 	}
 }

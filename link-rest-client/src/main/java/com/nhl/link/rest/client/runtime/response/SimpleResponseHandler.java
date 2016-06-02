@@ -1,6 +1,7 @@
-package com.nhl.link.rest.client;
+package com.nhl.link.rest.client.runtime.response;
 
 import com.fasterxml.jackson.core.JsonFactory;
+import com.nhl.link.rest.client.ClientSimpleResponse;
 
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;

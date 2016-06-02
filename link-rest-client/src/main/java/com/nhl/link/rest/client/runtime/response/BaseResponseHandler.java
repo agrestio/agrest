@@ -1,8 +1,10 @@
-package com.nhl.link.rest.client;
+package com.nhl.link.rest.client.runtime.response;
 
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.nhl.link.rest.client.ClientSimpleResponse;
+import com.nhl.link.rest.client.LinkRestClientException;
 
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;

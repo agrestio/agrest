@@ -1,4 +1,4 @@
-package com.nhl.link.rest.client;
+package com.nhl.link.rest.client.runtime.jackson;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -12,7 +12,7 @@ public class JsonEntityReaderFactory implements IJsonEntityReaderFactory {
 
 	private Map<Class<?>, IJsonEntityReader<?>> readerMap;
 
-	JsonEntityReaderFactory() {
+	public JsonEntityReaderFactory() {
 		readerMap = new HashMap<>();
 		readerMap.put(JsonNode.class, new JsonEntityReader());
 	}

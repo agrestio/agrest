@@ -2,6 +2,16 @@ package com.nhl.link.rest.client;
 
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.nhl.link.rest.client.protocol.LrRequest;
+import com.nhl.link.rest.client.protocol.Include;
+import com.nhl.link.rest.client.protocol.Sort;
+import com.nhl.link.rest.client.runtime.jackson.IJsonEntityReader;
+import com.nhl.link.rest.client.runtime.jackson.IJsonEntityReaderFactory;
+import com.nhl.link.rest.client.runtime.jackson.JsonEntityReaderFactory;
+import com.nhl.link.rest.client.runtime.response.DataResponseHandler;
+import com.nhl.link.rest.client.runtime.run.InvocationBuilder;
+import com.nhl.link.rest.client.runtime.run.LinkRestInvocation;
+
 import org.apache.cayenne.exp.Expression;
 
 import javax.ws.rs.client.WebTarget;
@@ -25,56 +35,56 @@ public class LinkRestClient {
     }
 
     private WebTarget target;
-    private Constraint constraint;
+    private LrRequest request;
 
 
     private LinkRestClient(WebTarget target) {
         this.target = target;
-        constraint = new Constraint();
+        request = new LrRequest();
     }
 
     public LinkRestClient exclude(String... excludePaths) {
-        constraint.exclude(excludePaths);
+        request.exclude(excludePaths);
         return this;
     }
     
     public LinkRestClient include(String... includePaths) {
-        constraint.include(includePaths);
+        request.include(includePaths);
         return this;
     }
 
     public LinkRestClient include(Include include) {
-        constraint.include(include);
+        request.include(include);
         return this;
     }
 
     public LinkRestClient mapBy(String mapByPath) {
-        constraint.mapBy(mapByPath);
+        request.mapBy(mapByPath);
         return this;
     }
 
     public LinkRestClient cayenneExp(Expression cayenneExp) {
-        constraint.cayenneExp(cayenneExp);
+        request.cayenneExp(cayenneExp);
         return this;
     }
 
     public LinkRestClient sort(String... properties) {
-        constraint.sort(properties);
+        request.sort(properties);
         return this;
     }
 
     public LinkRestClient sort(Sort ordering) {
-        constraint.sort(ordering);
+        request.sort(ordering);
         return this;
     }
 
     public LinkRestClient start(long startIndex) {
-        constraint.start(startIndex);
+        request.start(startIndex);
         return this;
     }
 
     public LinkRestClient limit(long limit) {
-        constraint.limit(limit);
+        request.limit(limit);
         return this;
     }
 
@@ -89,7 +99,7 @@ public class LinkRestClient {
             throw new LinkRestClientException("Unsupported target type: " + targetType.getName());
         }
 
-        LinkRestInvocation invocation = InvocationBuilder.target(target).constraint(constraint).build();
+        LinkRestInvocation invocation = InvocationBuilder.target(target).constraint(request).build();
         Response response = invocation.invoke();
 
         DataResponseHandler<T> responseHandler = new DataResponseHandler<>(jsonFactory, jsonEntityReader);

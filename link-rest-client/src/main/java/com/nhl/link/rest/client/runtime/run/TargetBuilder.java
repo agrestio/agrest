@@ -1,6 +1,10 @@
-package com.nhl.link.rest.client;
+package com.nhl.link.rest.client.runtime.run;
 
 import javax.ws.rs.client.WebTarget;
+
+import com.nhl.link.rest.client.protocol.LrRequest;
+import com.nhl.link.rest.client.protocol.LrRequestEncoder;
+import com.nhl.link.rest.client.protocol.Include;
 
 /**
  * @since 2.0
@@ -20,7 +24,7 @@ public class TargetBuilder {
     }
 
     private WebTarget target;
-    private Constraint constraint;
+    private LrRequest constraint;
 
     private TargetBuilder(WebTarget target) {
 
@@ -30,7 +34,7 @@ public class TargetBuilder {
         this.target = target;
     }
 
-    public TargetBuilder constraint(Constraint constraint) {
+    public TargetBuilder constraint(LrRequest constraint) {
 
         if (constraint != null) {
             this.constraint = constraint;
@@ -56,7 +60,7 @@ public class TargetBuilder {
                 newTarget = newTarget.queryParam(EXCLUDE, exclude);
             }
 
-            ConstraintEncoder encoder = ConstraintEncoder.encoder();
+            LrRequestEncoder encoder = LrRequestEncoder.encoder();
             if (constraint.getCayenneExp() != null) {
                 newTarget = newTarget.queryParam(CAYENNE_EXP, encoder.encode(constraint.getCayenneExp()));
             }

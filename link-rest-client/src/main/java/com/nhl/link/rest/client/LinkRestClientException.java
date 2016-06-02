@@ -7,11 +7,11 @@ public class LinkRestClientException extends RuntimeException {
 
 	private static final long serialVersionUID = 8027409723345873322L;
 
-	LinkRestClientException(String message) {
+	public LinkRestClientException(String message) {
 		super(message);
 	}
 
-	LinkRestClientException(String message, Throwable cause) {
+	public LinkRestClientException(String message, Throwable cause) {
 		super(message, cause);
 	}
 }

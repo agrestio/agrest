@@ -1,5 +1,9 @@
 package com.nhl.link.rest.client;
 
+import com.nhl.link.rest.client.protocol.LrRequest;
+import com.nhl.link.rest.client.protocol.Include;
+import com.nhl.link.rest.client.protocol.Sort;
+import com.nhl.link.rest.client.runtime.run.TargetBuilder;
 import com.nhl.link.rest.it.fixture.JerseyTestOnDerby;
 import org.junit.Test;
 
@@ -22,7 +26,7 @@ public class TargetBuilderTest extends JerseyTestOnDerby {
     @Test
     public void testBuild_Target_Constrained1() throws Exception {
 
-        Constraint constraint = new Constraint()
+        LrRequest constraint = new LrRequest()
                 .exclude("ex1", "ex2").exclude("ex3")
                 .include("in1")
                 .include(Include.path("in2"))

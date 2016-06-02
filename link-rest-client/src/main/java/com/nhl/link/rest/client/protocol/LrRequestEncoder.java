@@ -1,4 +1,4 @@
-package com.nhl.link.rest.client;
+package com.nhl.link.rest.client.protocol;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -8,14 +8,16 @@ import java.util.Iterator;
 
 import org.apache.cayenne.exp.Expression;
 
+import com.nhl.link.rest.client.LinkRestClientException;
+
 /**
  * @since 2.0
  */
-public class ConstraintEncoder {
+public class LrRequestEncoder {
 
-	private static final ConstraintEncoder instance = new ConstraintEncoder();
+	private static final LrRequestEncoder instance = new LrRequestEncoder();
 
-	public static ConstraintEncoder encoder() {
+	public static LrRequestEncoder encoder() {
 		return instance;
 	}
 

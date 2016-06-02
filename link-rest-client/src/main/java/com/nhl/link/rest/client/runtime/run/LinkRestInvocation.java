@@ -1,4 +1,4 @@
-package com.nhl.link.rest.client;
+package com.nhl.link.rest.client.runtime.run;
 
 import javax.ws.rs.core.Response;
 

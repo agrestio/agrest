@@ -1,5 +1,8 @@
-package com.nhl.link.rest.client;
+package com.nhl.link.rest.client.protocol;
 
+import com.nhl.link.rest.client.protocol.LrRequestEncoder;
+import com.nhl.link.rest.client.protocol.Include;
+import com.nhl.link.rest.client.protocol.Sort;
 import com.nhl.link.rest.it.fixture.cayenne.E1;
 import org.junit.Before;
 import org.junit.Test;
@@ -13,11 +16,11 @@ import static org.junit.Assert.assertEquals;
 
 public class ConstraintEncoderTest {
 
-    private ConstraintEncoder encoder;
+    private LrRequestEncoder encoder;
 
     @Before
     public void setUp() {
-        encoder = ConstraintEncoder.encoder();
+        encoder = LrRequestEncoder.encoder();
     }
 
     @Test

@@ -1,4 +1,4 @@
-package com.nhl.link.rest.client;
+package com.nhl.link.rest.client.protocol;
 
 import org.apache.cayenne.exp.Expression;
 
@@ -14,7 +14,7 @@ public class Include {
     }
 
     private String path;
-    private Constraint constraint;
+    private LrRequest constraint;
 
     private Include(String path) {
 
@@ -22,7 +22,7 @@ public class Include {
             throw new NullPointerException("Path");
         }
         this.path = path;
-        constraint = new Constraint();
+        constraint = new LrRequest();
     }
 
     public Include mapBy(String mapByPath) {
