@@ -5,8 +5,7 @@ import java.util.Optional;
 
 import javax.ws.rs.client.WebTarget;
 
-import org.apache.cayenne.exp.Expression;
-
+import com.nhl.link.rest.client.protocol.Expression;
 import com.nhl.link.rest.client.protocol.Include;
 import com.nhl.link.rest.client.protocol.LrcRequest;
 

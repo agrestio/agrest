@@ -5,10 +5,10 @@ import java.net.URLEncoder;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
-
-import org.apache.cayenne.exp.Expression;
+import java.util.Map;
 
 import com.nhl.link.rest.client.LinkRestClientException;
+import com.nhl.link.rest.client.protocol.Expression;
 import com.nhl.link.rest.client.protocol.Include;
 import com.nhl.link.rest.client.protocol.Sort;
 
@@ -44,9 +44,8 @@ class RequestEncoder {
 		});
 
 		include.getCayenneExp().ifPresent(exp -> {
-			buf.append(",\"cayenneExp\":\"");
+			buf.append(",\"cayenneExp\":");
 			buf.append(encode(exp, false));
-			buf.append("\"");
 		});
 
 		include.getStart().ifPresent(start -> {
@@ -74,11 +73,64 @@ class RequestEncoder {
 
 	private String encode(Expression expression, boolean shouldEncodeUrl) {
 
-		if (shouldEncodeUrl) {
-			return urlEncode(expression.toString());
-		} else {
-			return expression.toString().replace('"', '\'');
+		String query = expression.getQuery().replace('"', '\'');
+
+		String result;
+		switch (expression.getParamsType()) {
+
+			case NO_PARAMS: {
+				result = query;
+				break;
+			}
+			case POSITIONAL: {
+
+				StringBuilder buf = new StringBuilder();
+				buf.append("[\"");
+				buf.append(query);
+				buf.append("\"");
+
+				for (Object param : expression.getParams()) {
+					buf.append(",\"");
+					buf.append(param);
+					buf.append("\"");
+				}
+
+				buf.append("]");
+				result = buf.toString();
+				break;
+			}
+			case NAMED: {
+
+				StringBuilder buf = new StringBuilder();
+				buf.append("{\"exp\":\"");
+				buf.append(query);
+				buf.append("\",\"params\":{");
+
+				Iterator<Map.Entry<String, Object>> iter = expression.getParamsMap().entrySet().iterator();
+				while (iter.hasNext()) {
+
+					Map.Entry<String, Object> param = iter.next();
+					buf.append("\"");
+					buf.append(param.getKey());
+					buf.append("\":\"");
+					buf.append(param.getValue());
+					buf.append("\"");
+
+					if (iter.hasNext()) {
+						buf.append(",");
+					}
+				}
+
+				buf.append("}}");
+				result = buf.toString();
+				break;
+			}
+			default: {
+				throw new LinkRestClientException("Unexpected expression params type: " + expression.getParamsType().name());
+			}
 		}
+
+		return shouldEncodeUrl? urlEncode(result) : result;
 	}
 
 	public String encode(Collection<Sort> orderings) {
@@ -139,7 +191,6 @@ class RequestEncoder {
 			buf.append(ordering.getDirection().abbrev());
 			buf.append("\"");
 		}
-		;
 
 		buf.append("}");
 		return buf.toString();

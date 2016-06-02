@@ -22,11 +22,6 @@
             <scope>compile</scope>
         </dependency>
         <dependency>
-            <groupId>org.apache.cayenne</groupId>
-            <artifactId>cayenne-server</artifactId>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
             <scope>compile</scope>

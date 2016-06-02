@@ -3,7 +3,7 @@ package com.nhl.link.rest.client.protocol;
 import java.util.Objects;
 import java.util.Optional;
 
-import org.apache.cayenne.exp.Expression;
+import com.nhl.link.rest.client.protocol.Expression.ExpressionBuilder;
 
 /**
  * @since 2.0
@@ -75,8 +75,8 @@ public class Include extends LrcEntityRequest {
 			return this;
 		}
 
-		public IncludeBuilder cayenneExp(Expression exp) {
-			include.setCayenneExp(exp);
+		public IncludeBuilder cayenneExp(ExpressionBuilder exp) {
+			include.setCayenneExp(exp.build());
 			return this;
 		}
 

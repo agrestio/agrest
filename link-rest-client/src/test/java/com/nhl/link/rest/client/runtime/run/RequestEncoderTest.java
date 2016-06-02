@@ -1,9 +1,8 @@
 package com.nhl.link.rest.client.runtime.run;
 
+import com.nhl.link.rest.client.protocol.Expression;
 import com.nhl.link.rest.client.protocol.Include;
 import com.nhl.link.rest.client.protocol.Sort;
-import com.nhl.link.rest.client.runtime.run.RequestEncoder;
-import com.nhl.link.rest.it.fixture.cayenne.E1;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -74,10 +73,13 @@ public class RequestEncoderTest {
 	@Test
 	public void testEncode_Include_CayenneExpression() throws UnsupportedEncodingException {
 
-		Include include = Include.path("abc").cayenneExp(E1.NAME.like("Jo%").andExp(E1.AGE.gt(21))).build();
+		Include include = Include.path("abc")
+				.cayenneExp(Expression.query("name like $name and age >= $age").param("name", "Jo%").param("age", 21))
+				.build();
 
 		String encoded = encoder.encode(include);
-		assertEquals("{\"path\":\"abc\",\"cayenneExp\":\"(name like 'Jo%') and (age > 21)\"}",
+		assertEquals("{\"path\":\"abc\",\"cayenneExp\":{\"exp\":\"name like $name and age >= $age\"," +
+				"\"params\":{\"name\":\"Jo%\",\"age\":\"21\"}}}",
 				URLDecoder.decode(encoded, "UTF-8"));
 	}
 }

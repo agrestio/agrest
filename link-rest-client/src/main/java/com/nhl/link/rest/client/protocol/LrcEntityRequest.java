@@ -6,8 +6,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-import org.apache.cayenne.exp.Expression;
-
 /**
  * A base superlcass of representations of either a root entity request or an
  * entity subrequest.

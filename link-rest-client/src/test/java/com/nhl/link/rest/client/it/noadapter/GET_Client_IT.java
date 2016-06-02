@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.nhl.link.rest.client.ClientDataResponse;
 import com.nhl.link.rest.client.LinkRestClient;
+import com.nhl.link.rest.client.protocol.Expression;
 import com.nhl.link.rest.client.protocol.Include;
 import com.nhl.link.rest.client.protocol.Sort;
 import com.nhl.link.rest.it.fixture.JerseyTestOnDerby;
@@ -35,6 +36,7 @@ public class GET_Client_IT extends JerseyTestOnDerby {
 
     @Override
     protected void doAddResources(FeatureContext context) {
+        context.register(E4Resource.class);
         context.register(E2Resource.class);
         context.register(E4Resource.class);
     }
@@ -107,7 +109,7 @@ public class GET_Client_IT extends JerseyTestOnDerby {
     }
 
     @Test
-    public void testClient_CayenneExpression() {
+    public void testClient_CayenneExpression1() {
 
         insert("e2", "id, name", "1, 'xxx'");
         insert("e2", "id, name", "2, 'yyy'");
@@ -117,13 +119,31 @@ public class GET_Client_IT extends JerseyTestOnDerby {
 
         ClientDataResponse<JsonNode> response = LinkRestClient.client(target("/e2"))
                 .exclude(E2.ADDRESS.getName(), E2.E3S.dot(E3.PHONE_NUMBER).getName())
-                .cayenneExp(E2.NAME.like("xx%"))
-                .include(Include.path(E2.E3S.getName()).cayenneExp(E3.NAME.eq("ccc")))
+                .cayenneExp(Expression.query("name like 'xx%'"))
+                .include(Include.path(E2.E3S.getName()).cayenneExp(Expression.query("name = $b").params("ccc")))
                 .get(JsonNode.class);
 
         assertEquals(Status.OK, response.getStatus());
         assertEquals(1, response.getTotal());
         assertEquals(createE2(1, "xxx", createE3(7, "ccc")), response.getData().get(0));
+    }
+
+    @Test
+    public void testClient_CayenneExpression2() {
+
+        insert("e4", "id, c_varchar, c_int, c_boolean", "1, 'xxx', 1, false");
+        insert("e4", "id, c_varchar, c_int, c_boolean", "2, 'yyy', 2, false");
+        insert("e4", "id, c_varchar, c_int, c_boolean", "3, 'xxz', 3, true");
+
+        ClientDataResponse<JsonNode> response = LinkRestClient.client(target("/e4"))
+                .include(E4.ID_PK_COLUMN, E4.C_VARCHAR.getName(), E4.C_INT.getName())
+                .cayenneExp(Expression.query("cVarchar like $a and cInt >= $b and cBoolean <> $c")
+                                      .param("a", "xx%").param("b", 2).param("c", false))
+                .get(JsonNode.class);
+
+        assertEquals(Status.OK, response.getStatus());
+        assertEquals(1, response.getTotal());
+        assertEquals(createE4(3, "xxz", 3), response.getData().get(0));
     }
 
     private JsonNode createE2(int id, String name, JsonNode... e3s) {
@@ -156,8 +176,8 @@ public class GET_Client_IT extends JerseyTestOnDerby {
 
         ObjectNode e4 = nodeFactory.objectNode();
         e4.set(E4.ID_PK_COLUMN, nodeFactory.numberNode(id));
-        e4.set(E4.C_VARCHAR.getName(), nodeFactory.textNode(cVarchar));
         e4.set(E4.C_INT.getName(), nodeFactory.numberNode(cInt));
+        e4.set(E4.C_VARCHAR.getName(), nodeFactory.textNode(cVarchar));
         return e4;
     }
 }

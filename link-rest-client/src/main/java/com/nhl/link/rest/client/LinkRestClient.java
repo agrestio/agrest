@@ -5,10 +5,9 @@ import java.util.function.Supplier;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Response;
 
-import org.apache.cayenne.exp.Expression;
-
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.nhl.link.rest.client.protocol.Expression.ExpressionBuilder;
 import com.nhl.link.rest.client.protocol.Include;
 import com.nhl.link.rest.client.protocol.Include.IncludeBuilder;
 import com.nhl.link.rest.client.protocol.LrcRequest;
@@ -65,8 +64,8 @@ public class LinkRestClient {
 		return this;
 	}
 
-	public LinkRestClient cayenneExp(Expression cayenneExp) {
-		request.cayenneExp(cayenneExp);
+	public LinkRestClient cayenneExp(ExpressionBuilder cayenneExp) {
+		request.cayenneExp(cayenneExp.build());
 		return this;
 	}
 
