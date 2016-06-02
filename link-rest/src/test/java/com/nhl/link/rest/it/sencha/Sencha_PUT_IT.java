@@ -14,6 +14,7 @@ import javax.ws.rs.core.Response.Status;
 
 import org.apache.cayenne.Cayenne;
 import org.apache.cayenne.query.SQLTemplate;
+import org.apache.cayenne.query.SelectById;
 import org.junit.Test;
 
 import com.nhl.link.rest.it.fixture.JerseyTestOnDerby;
@@ -63,16 +64,9 @@ public class Sencha_PUT_IT extends JerseyTestOnDerby {
 	@Test
 	public void testPut_ToOne_ToNull() throws WebApplicationException, IOException {
 
-		newContext()
-				.performGenericQuery(new SQLTemplate(E4.class, "INSERT INTO utest.e2 (id, name) values (1, 'xxx')"));
-		newContext()
-				.performGenericQuery(new SQLTemplate(E4.class, "INSERT INTO utest.e2 (id, name) values (8, 'yyy')"));
-		newContext().performGenericQuery(
-				new SQLTemplate(E4.class, "INSERT INTO utest.e3 (id, name, e2_id) values (3, 'zzz', 8)"));
-
-		E3 e3 = Cayenne.objectForPK(newContext(), E3.class, 3);
-		newContext().invalidateObjects(e3);
-		assertEquals(8, Cayenne.intPKForObject(e3.getE2()));
+		insert("e2", "id, name", "1, 'xxx'");
+		insert("e2", "id, name", "8, 'yyy'");
+		insert("e3", "id, name, e2_id", "3, 'zzz', 8");
 
 		Response response1 = target("/e3/3").request()
 				.put(Entity.entity("{\"id\":3,\"e2_id\":null}", MediaType.APPLICATION_JSON));
@@ -81,8 +75,7 @@ public class Sencha_PUT_IT extends JerseyTestOnDerby {
 		assertEquals("{\"success\":true,\"data\":[{\"id\":3,\"name\":\"zzz\",\"phoneNumber\":null}],\"total\":1}",
 				response1.readEntity(String.class));
 
-		e3 = Cayenne.objectForPK(newContext(), E3.class, 3);
-		newContext().invalidateObjects(e3);
+		E3 e3 = SelectById.query(E3.class, 3).prefetch(E3.E2.joint()).selectOne(newContext());
 		assertNull(e3.getE2());
 	}
 
