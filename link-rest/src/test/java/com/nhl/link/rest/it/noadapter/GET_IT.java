@@ -360,6 +360,22 @@ public class GET_IT extends JerseyTestOnDerby {
 	}
 
 	@Test
+	public void test_Select_MapByRootEntity() {
+
+		insert("e4", "c_varchar, c_int", "'xxx', 1");
+		insert("e4", "c_varchar, c_int", "'yyy', 2");
+		insert("e4", "c_varchar, c_int", "'zzz', 2");
+
+		Response response1 = target("/e4").queryParam("mapBy", E4.C_INT.getName())
+				.queryParam("include", E4.C_VARCHAR.getName()).request().get();
+
+		assertEquals(Status.OK.getStatusCode(), response1.getStatus());
+		assertEquals("{\"data\":{\"1\":[{\"cVarchar\":\"xxx\"}]," +
+				"\"2\":[{\"cVarchar\":\"yyy\"},{\"cVarchar\":\"zzz\"}],\"total\":3}}",
+				response1.readEntity(String.class));
+	}
+
+	@Test
 	public void test_SelectById_EscapeLineSeparators() throws WebApplicationException, IOException {
 
 		String s = "First line\u2028Second line...\u2029";

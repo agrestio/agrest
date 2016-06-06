@@ -61,14 +61,8 @@ public class EncoderService implements IEncoderService {
 	@Override
 	public <T> Encoder dataEncoder(ResourceEntity<T> entity) {
 
-		// TODO: in theory we can support this actually, but leaving it for
-		// another day, as fetch limit/offset and other filtering is
-		// non-trivial.
-		if (entity.getMapBy() != null) {
-			throw new LinkRestException(Status.INTERNAL_SERVER_ERROR, "Can't apply 'mapBy' to the root entity.");
-		}
-
 		Encoder elementEncoder = collectionElementEncoder(entity);
+		boolean isMapBy = entity.getMapBy() != null;
 
 		// notice that we are not passing either qualifier or ordering to the
 		// encoder, as those are presumably applied at the query level.. (unlike
@@ -80,7 +74,9 @@ public class EncoderService implements IEncoderService {
 		if (entity.isFiltered()) {
 			rootEncoder.shouldFilter();
 		}
-		return rootEncoder;
+
+		return isMapBy? new MapByEncoder(entity.getMapByPath(), null, entity.getMapBy(),
+				rootEncoder, stringConverterFactory).withTotal("total") : rootEncoder;
 	}
 
 	private Encoder nestedToManyEncoder(ResourceEntity<?> resourceEntity) {

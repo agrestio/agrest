@@ -24,11 +24,13 @@ public class MapByEncoder extends AbstractEncoder {
 
 	private String mapByPath;
 	private List<PropertyReader> mapByReaders;
-	private Encoder listEncoder;
+	private ListEncoder listEncoder;
 	private StringConverter fieldNameConverter;
 	private Expression filter;
 
-	public MapByEncoder(String mapByPath, Expression filter, ResourceEntity<?> mapBy, Encoder listEncoder,
+	private String totalKey;
+
+	public MapByEncoder(String mapByPath, Expression filter, ResourceEntity<?> mapBy, ListEncoder listEncoder,
 			IStringConverterFactory converterFactory) {
 
 		if (mapBy == null) {
@@ -41,6 +43,11 @@ public class MapByEncoder extends AbstractEncoder {
 		this.filter = filter;
 
 		config(converterFactory, mapBy);
+	}
+
+	public MapByEncoder withTotal(String totalKey) {
+		this.totalKey = totalKey;
+		return this;
 	}
 
 	private void config(IStringConverterFactory converterFactory, ResourceEntity<?> mapBy) {
@@ -113,9 +120,15 @@ public class MapByEncoder extends AbstractEncoder {
 
 		out.writeStartObject();
 
+		int total = 0;
 		for (Entry<String, List<DataObject>> e : map.entrySet()) {
 			out.writeFieldName(e.getKey());
-			listEncoder.encode(null, e.getValue(), out);
+			total += listEncoder.encodeAndGetTotal(null, e.getValue(), out);
+		}
+
+		if (totalKey != null) {
+			out.writeFieldName(totalKey);
+			out.writeNumber(total);
 		}
 
 		out.writeEndObject();

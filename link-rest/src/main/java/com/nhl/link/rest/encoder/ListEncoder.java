@@ -67,7 +67,12 @@ public class ListEncoder implements Encoder {
 
 	@Override
 	public boolean encode(String propertyName, Object object, JsonGenerator out) throws IOException {
+		encodeAndGetTotal(propertyName, object, out);
+		// regardless of the list contents, our encoding has succeeded...
+		return true;
+	}
 
+	public int encodeAndGetTotal(String propertyName, Object object, JsonGenerator out) throws IOException {
 		if (propertyName != null) {
 			out.writeFieldName(propertyName);
 		}
@@ -94,8 +99,7 @@ public class ListEncoder implements Encoder {
 			out.writeNumber(counter.getTotal());
 		}
 
-		// regardless of the list contents, our encoding has succeeded...
-		return true;
+		return counter.getTotal();
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
