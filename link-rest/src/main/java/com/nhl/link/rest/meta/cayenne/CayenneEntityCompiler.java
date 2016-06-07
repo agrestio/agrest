@@ -1,10 +1,15 @@
 package com.nhl.link.rest.meta.cayenne;
 
-import java.util.Iterator;
-import java.util.Map;
-
-import javax.ws.rs.core.Response;
-
+import com.nhl.link.rest.LinkRestException;
+import com.nhl.link.rest.meta.DefaultLrAttribute;
+import com.nhl.link.rest.meta.compiler.CompilerContext;
+import com.nhl.link.rest.meta.LrAttribute;
+import com.nhl.link.rest.meta.LrEntity;
+import com.nhl.link.rest.meta.LrEntityBuilder;
+import com.nhl.link.rest.meta.LrEntityOverlay;
+import com.nhl.link.rest.meta.LrRelationship;
+import com.nhl.link.rest.meta.compiler.LrEntityCompiler;
+import com.nhl.link.rest.runtime.cayenne.ICayennePersister;
 import org.apache.cayenne.dba.TypesMapping;
 import org.apache.cayenne.di.Inject;
 import org.apache.cayenne.map.DbAttribute;
@@ -15,15 +20,9 @@ import org.apache.cayenne.map.ObjRelationship;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.nhl.link.rest.LinkRestException;
-import com.nhl.link.rest.meta.DefaultLrAttribute;
-import com.nhl.link.rest.meta.LrAttribute;
-import com.nhl.link.rest.meta.LrEntity;
-import com.nhl.link.rest.meta.LrEntityBuilder;
-import com.nhl.link.rest.meta.LrEntityOverlay;
-import com.nhl.link.rest.meta.LrRelationship;
-import com.nhl.link.rest.meta.compiler.LrEntityCompiler;
-import com.nhl.link.rest.runtime.cayenne.ICayennePersister;
+import javax.ws.rs.core.Response;
+import java.util.Iterator;
+import java.util.Map;
 
 /**
  * @since 1.24
@@ -83,7 +82,7 @@ public class CayenneEntityCompiler implements LrEntityCompiler {
 	}
 
 	@Override
-	public <T> LrEntity<T> compile(Class<T> type) {
+	public <T> LrEntity<T> compile(Class<T> type, CompilerContext compilerContext) {
 
 		ObjEntity objEntity = resolver.getObjEntity(type);
 		if (objEntity == null) {
@@ -92,16 +91,15 @@ public class CayenneEntityCompiler implements LrEntityCompiler {
 
 		LOGGER.debug("compiling Cayenne entity for type: " + type);
 
-		CayenneLrEntity<T> lrEntity = new CayenneLrEntity<T>(type, objEntity);
-
-		loadCayenneEntity(lrEntity);
-		loadAnnotatedProperties(lrEntity);
+		CayenneLrEntity<T> lrEntity =
+				(CayenneLrEntity<T>) compilerContext.addEntityIfAbsent(type, new CayenneLrEntity<>(type, objEntity));
+		loadCayenneEntity(lrEntity, compilerContext);
+		loadAnnotatedProperties(lrEntity, compilerContext);
 		loadOverlays(lrEntity);
-
 		return lrEntity;
 	}
 
-	protected <T> void loadCayenneEntity(CayenneLrEntity<T> lrEntity) {
+	protected <T> void loadCayenneEntity(CayenneLrEntity<T> lrEntity, CompilerContext compilerContext) {
 
 		ObjEntity objEntity = lrEntity.getObjEntity();
 		for (ObjAttribute a : objEntity.getAttributes()) {
@@ -112,7 +110,9 @@ public class CayenneEntityCompiler implements LrEntityCompiler {
 		for (ObjRelationship r : objEntity.getRelationships()) {
 
 			Class<?> targetEntityType = resolver.getClassDescriptor(r.getTargetEntityName()).getObjectClass();
-			CayenneLrRelationship lrRelationship = new CayenneLrRelationship(r, targetEntityType);
+
+			LrEntity<?> targetEntity = compilerContext.getOrCreateEntity(targetEntityType);
+			CayenneLrRelationship lrRelationship = new CayenneLrRelationship(r, targetEntity);
 			lrEntity.addRelationship(lrRelationship);
 		}
 
@@ -127,14 +127,14 @@ public class CayenneEntityCompiler implements LrEntityCompiler {
 
 	}
 
-	protected <T> void loadAnnotatedProperties(CayenneLrEntity<T> entity) {
+	protected <T> void loadAnnotatedProperties(CayenneLrEntity<T> entity, CompilerContext compilerContext) {
 
 		// load a separate entity built purely from annotations, then merge it
 		// with our entity... Note that we are not cloning attributes or
 		// relationship during merge... they have no references to parent and
 		// can be used as is.
 
-		LrEntity<T> annotatedEntity = LrEntityBuilder.build(entity.getType());
+		LrEntity<T> annotatedEntity = LrEntityBuilder.build(entity.getType(), compilerContext);
 
 		if (annotatedEntity.getIds().size() > 0) {
 			for (LrAttribute id : annotatedEntity.getIds()) {

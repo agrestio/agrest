@@ -14,7 +14,7 @@ public class PojoEntityCompilerTest {
 
 	@Test
 	public void testCompile() {
-		LrEntity<Entity> entity = new PojoEntityCompiler().compile(Entity.class);
+		LrEntity<Entity> entity = new PojoEntityCompiler().compile(Entity.class, new PojoCompilerContext());
 		assertNotNull(entity);
 		assertEquals(1, entity.getIds().size());
 		assertEquals(1, entity.getAttributes().size());
@@ -23,7 +23,7 @@ public class PojoEntityCompilerTest {
 
 	@Test
 	public void testCompileSkip() {
-		LrEntity<NotAnEntity> entity = new PojoEntityCompiler().compile(NotAnEntity.class);
+		LrEntity<NotAnEntity> entity = new PojoEntityCompiler().compile(NotAnEntity.class, new PojoCompilerContext());
 		assertNull(entity);
 	}
 

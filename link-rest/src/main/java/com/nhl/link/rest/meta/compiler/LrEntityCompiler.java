@@ -7,5 +7,5 @@ import com.nhl.link.rest.meta.LrEntity;
  */
 public interface LrEntityCompiler {
 
-	<T> LrEntity<T> compile(Class<T> type);
+	<T> LrEntity<T> compile(Class<T> type, CompilerContext compilerContext);
 }
