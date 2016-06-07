@@ -6,18 +6,31 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
-import com.nhl.link.rest.meta.compiler.PojoCompilerContext;
+import com.nhl.link.rest.meta.compiler.LrEntityCompiler;
+import com.nhl.link.rest.meta.compiler.PojoEntityCompiler;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.nhl.link.rest.it.fixture.pojo.model.P3;
 import com.nhl.link.rest.it.fixture.pojo.model.P4;
 import com.nhl.link.rest.it.fixture.pojo.model.P5;
 
+import java.util.ArrayList;
+import java.util.Collection;
+
 public class LrjEntityBuilderTest {
+
+	private static Collection<LrEntityCompiler> compilers;
+
+	@BeforeClass
+	public static void setUpClass() {
+		compilers = new ArrayList<>();
+		compilers.add(new PojoEntityCompiler());
+	}
 
 	@Test
 	public void testToPropertyName() {
-		LrEntityBuilder<P3> builder = LrEntityBuilder.builder(P3.class, new PojoCompilerContext());
+		LrEntityBuilder<P3> builder = LrEntityBuilder.builder(P3.class, new LazyLrDataMap(compilers));
 		
 		assertNull(builder.toPropertyName("get"));
 		assertNull(builder.toPropertyName("xyz"));
@@ -34,7 +47,7 @@ public class LrjEntityBuilderTest {
 	@Test
 	public void testBuild_Default() {
 
-		LrEntity<P3> p3e = LrEntityBuilder.build(P3.class, new PojoCompilerContext());
+		LrEntity<P3> p3e = LrEntityBuilder.build(P3.class, new LazyLrDataMap(compilers));
 		assertNotNull(p3e);
 		assertEquals("P3", p3e.getName());
 
@@ -50,7 +63,7 @@ public class LrjEntityBuilderTest {
 	@Test
 	public void testToOneRelationship() {
 
-		LrEntity<P4> p4e = LrEntityBuilder.build(P4.class, new PojoCompilerContext());
+		LrEntity<P4> p4e = LrEntityBuilder.build(P4.class, new LazyLrDataMap(compilers));
 		assertNotNull(p4e);
 		assertEquals("P4", p4e.getName());
 
@@ -66,7 +79,7 @@ public class LrjEntityBuilderTest {
 	@Test
 	public void testToManyRelationship() {
 
-		LrEntity<P5> p5e = LrEntityBuilder.build(P5.class, new PojoCompilerContext());
+		LrEntity<P5> p5e = LrEntityBuilder.build(P5.class, new LazyLrDataMap(compilers));
 
 		assertNotNull(p5e);
 		assertEquals("P5", p5e.getName());

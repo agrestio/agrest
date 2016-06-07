@@ -2,6 +2,7 @@ package com.nhl.link.rest.property;
 
 import com.nhl.link.rest.meta.LrAttribute;
 import com.nhl.link.rest.meta.LrEntity;
+import com.nhl.link.rest.meta.LrPersistentEntity;
 import com.nhl.link.rest.meta.cayenne.CayenneLrEntity;
 
 import java.util.Collection;
@@ -16,7 +17,7 @@ public class IdPropertyReader implements PropertyReader {
 
     public IdPropertyReader(LrEntity<?> entity) {
         this.entity = entity;
-        this.isPersistent = entity instanceof CayenneLrEntity;
+        this.isPersistent = entity instanceof LrPersistentEntity;
     }
 
     @Override

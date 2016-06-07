@@ -13,6 +13,7 @@ import javax.ws.rs.Path;
 import java.util.Collection;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class ResourceParserTest extends TestWithCayenneMapping {
 
@@ -40,7 +41,13 @@ public class ResourceParserTest extends TestWithCayenneMapping {
                 public void method1() {}
             }
 
-        resourceParser.parse(R1.class);
+        Collection<LrResource<?>> resources = resourceParser.parse(R1.class);
+        try {
+            resources.iterator().next().getEntity().getIds();
+        } catch (Exception e) {
+            assertTrue(e.getMessage().contains("Unable to compile LrEntity: class java.lang.String"));
+            throw e;
+        }
     }
 
     @Test(expected = Exception.class)
