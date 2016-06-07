@@ -45,6 +45,9 @@ public class MapByEncoder extends AbstractEncoder {
 		config(converterFactory, mapBy);
 	}
 
+	/**
+	 * @since 2.0
+	 */
 	public MapByEncoder withTotal(String totalKey) {
 		this.totalKey = totalKey;
 		return this;

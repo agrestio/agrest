@@ -72,6 +72,9 @@ public class ListEncoder implements Encoder {
 		return true;
 	}
 
+	/**
+	 * @since 2.0
+	 */
 	public int encodeAndGetTotal(String propertyName, Object object, JsonGenerator out) throws IOException {
 		if (propertyName != null) {
 			out.writeFieldName(propertyName);
