@@ -17,24 +17,22 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
-import com.nhl.link.rest.it.fixture.cayenne.E19;
-import com.nhl.link.rest.it.fixture.cayenne.E2;
-import com.nhl.link.rest.it.fixture.resource.E16Resource;
-
-import com.nhl.link.rest.it.fixture.resource.E17Resource;
-import com.nhl.link.rest.it.fixture.resource.E19Resource;
-import com.nhl.link.rest.it.fixture.resource.E2Resource;
 import org.apache.cayenne.Cayenne;
 import org.apache.cayenne.ObjectContext;
 import org.apache.cayenne.query.ObjectSelect;
 import org.apache.cayenne.query.SQLSelect;
-import org.apache.cayenne.query.SQLTemplate;
 import org.apache.cayenne.query.SelectQuery;
 import org.junit.Test;
 
 import com.nhl.link.rest.it.fixture.JerseyTestOnDerby;
+import com.nhl.link.rest.it.fixture.cayenne.E19;
+import com.nhl.link.rest.it.fixture.cayenne.E2;
 import com.nhl.link.rest.it.fixture.cayenne.E3;
 import com.nhl.link.rest.it.fixture.cayenne.E4;
+import com.nhl.link.rest.it.fixture.resource.E16Resource;
+import com.nhl.link.rest.it.fixture.resource.E17Resource;
+import com.nhl.link.rest.it.fixture.resource.E19Resource;
+import com.nhl.link.rest.it.fixture.resource.E2Resource;
 import com.nhl.link.rest.it.fixture.resource.E3Resource;
 import com.nhl.link.rest.it.fixture.resource.E4Resource;
 import com.nhl.link.rest.it.fixture.resource.E8Resource;
@@ -215,8 +213,8 @@ public class POST_IT extends JerseyTestOnDerby {
 	@Test
 	public void testPost_ToOne() throws WebApplicationException, IOException {
 
-		performQuery(new SQLTemplate(E4.class, "INSERT INTO utest.e2 (id, name) values (1, 'xxx')"));
-		performQuery(new SQLTemplate(E4.class, "INSERT INTO utest.e2 (id, name) values (8, 'yyy')"));
+		insert("e2", "id, name", "1, 'xxx'");
+		insert("e2", "id, name", "8, 'yyy'");
 
 		Response response1 = target("/e3").request()
 				.post(Entity.entity("{\"e2\":8,\"name\":\"MM\"}", MediaType.APPLICATION_JSON));
@@ -237,8 +235,8 @@ public class POST_IT extends JerseyTestOnDerby {
 	@Test
 	public void testPost_ToOne_Null() throws WebApplicationException, IOException {
 
-		performQuery(new SQLTemplate(E4.class, "INSERT INTO utest.e2 (id, name) values (1, 'xxx')"));
-		performQuery(new SQLTemplate(E4.class, "INSERT INTO utest.e2 (id, name) values (8, 'yyy')"));
+		insert("e2", "id, name", "1, 'xxx'");
+		insert("e2", "id, name", "8, 'yyy'");
 
 		Response response1 = target("/e3").request()
 				.post(Entity.entity("{\"e2_id\":null,\"name\":\"MM\"}", MediaType.APPLICATION_JSON));
@@ -259,8 +257,8 @@ public class POST_IT extends JerseyTestOnDerby {
 	@Test
 	public void testPost_ToOne_BadFK() throws WebApplicationException, IOException {
 
-		performQuery(new SQLTemplate(E4.class, "INSERT INTO utest.e2 (id, name) values (1, 'xxx')"));
-		performQuery(new SQLTemplate(E4.class, "INSERT INTO utest.e2 (id, name) values (8, 'yyy')"));
+		insert("e2", "id, name", "1, 'xxx'");
+		insert("e2", "id, name", "8, 'yyy'");
 
 		Response response1 = target("/e3").request()
 				.post(Entity.entity("{\"e2\":15,\"name\":\"MM\"}", MediaType.APPLICATION_JSON));
@@ -287,8 +285,8 @@ public class POST_IT extends JerseyTestOnDerby {
 	@Test
 	public void testPost_ToMany() throws WebApplicationException, IOException {
 
-		performQuery(new SQLTemplate(E3.class, "INSERT INTO utest.e3 (id, name) values (1, 'xxx')"));
-		performQuery(new SQLTemplate(E3.class, "INSERT INTO utest.e3 (id, name) values (8, 'yyy')"));
+		insert("e3", "id, name", "1, 'xxx'");
+		insert("e3", "id, name", "8, 'yyy'");
 
 		Response response = target("/e2").queryParam("include", E2.E3S.getName())
 				.queryParam("exclude", E2.ADDRESS.getName(), E2.E3S.dot(E3.NAME).getName(),
