@@ -5,6 +5,7 @@ Release 2.0
 #175 Removing API deprecated prior to 2.0
 #176 LR client
 #178 Encoder "visitor" API
+#182 Support for "mapBy" at the top level of request
 
 Release 1.24
 
