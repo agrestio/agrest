@@ -55,8 +55,8 @@ public abstract class PropertyMetadataEncoder extends AbstractEncoder {
 				} else if (Date.class.isAssignableFrom(type)) {
 					return "date";
 				}
-			} else if (property instanceof LrPersistentRelationship) {
-				return ((LrPersistentRelationship) property).getObjRelationship().getTargetEntityName();
+			} else if (property instanceof LrRelationship) {
+				return ((LrRelationship) property).getTargetEntity().getName();
 			}
 			return null;
 		}

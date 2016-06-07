@@ -1,17 +1,19 @@
 package com.nhl.link.rest.meta;
 
+import java.util.Objects;
+
 /**
  * @since 1.12
  */
 public class DefaultLrRelationship implements LrRelationship {
 
 	private String name;
-	private Class<?> targetEntityType;
+	private LrEntity<?> targetEntity;
 	private boolean toMany;
 
-	public DefaultLrRelationship(String name, Class<?> targetEntityType, boolean toMany) {
+	public DefaultLrRelationship(String name, LrEntity<?> targetEntity, boolean toMany) {
 		this.name = name;
-		this.targetEntityType = targetEntityType;
+		this.targetEntity = Objects.requireNonNull(targetEntity);
 		this.toMany = toMany;
 	}
 
@@ -21,8 +23,8 @@ public class DefaultLrRelationship implements LrRelationship {
 	}
 
 	@Override
-	public Class<?> getTargetEntityType() {
-		return targetEntityType;
+	public LrEntity<?> getTargetEntity() {
+		return targetEntity;
 	}
 
 	@Override

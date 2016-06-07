@@ -7,7 +7,15 @@ public interface LrRelationship {
 
 	String getName();
 
-	Class<?> getTargetEntityType();
+	@Deprecated
+	default Class<?> getTargetEntityType() {
+		return getTargetEntity().getType();
+	}
+
+	/**
+	 * @since 2.0
+     */
+	LrEntity<?> getTargetEntity();
 
 	boolean isToMany();
 }

@@ -1,18 +1,18 @@
 package com.nhl.link.rest.meta;
 
+import com.nhl.link.rest.annotation.LrAttribute;
+import com.nhl.link.rest.annotation.LrId;
+import com.nhl.link.rest.annotation.LrRelationship;
+import com.nhl.link.rest.meta.compiler.CompilerContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.util.Collection;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.nhl.link.rest.annotation.LrAttribute;
-import com.nhl.link.rest.annotation.LrId;
-import com.nhl.link.rest.annotation.LrRelationship;
 
 /**
  * A helper class to compile custom {@link LrEntity} objects based on
@@ -24,20 +24,22 @@ public class LrEntityBuilder<T> {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(LrEntityBuilder.class);
 
-	public static <T> LrEntityBuilder<T> builder(Class<T> type) {
-		return new LrEntityBuilder<T>(type);
+	public static <T> LrEntityBuilder<T> builder(Class<T> type, CompilerContext compilerContext) {
+		return new LrEntityBuilder<>(type, compilerContext);
 	}
 
-	public static <T> LrEntity<T> build(Class<T> type) {
-		return builder(type).build();
+	public static <T> LrEntity<T> build(Class<T> type, CompilerContext compilerContext) {
+		return builder(type, compilerContext).build();
 	}
 
 	private static final Pattern GETTER = Pattern.compile("^(get|is)([A-Z].*)$");
 
 	private Class<T> type;
+	private CompilerContext compilerContext;
 
-	LrEntityBuilder(Class<T> type) {
+	LrEntityBuilder(Class<T> type, CompilerContext compilerContext) {
 		this.type = type;
+		this.compilerContext = compilerContext;
 	}
 
 	public LrEntity<T> build() {
@@ -135,7 +137,8 @@ public class LrEntityBuilder<T> {
 				toMany = true;
 			}
 
-			entity.addRelationship(new DefaultLrRelationship(name, targetType, toMany));
+			LrEntity<?> targetEntity = compilerContext.getOrCreateEntity(targetType);
+			entity.addRelationship(new DefaultLrRelationship(name, targetEntity, toMany));
 		}
 
 		return false;

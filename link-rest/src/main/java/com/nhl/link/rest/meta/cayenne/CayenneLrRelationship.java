@@ -1,8 +1,11 @@
 package com.nhl.link.rest.meta.cayenne;
 
+import com.nhl.link.rest.meta.LrEntity;
 import org.apache.cayenne.map.ObjRelationship;
 
 import com.nhl.link.rest.meta.LrPersistentRelationship;
+
+import java.util.Objects;
 
 /**
  * @since 1.12
@@ -10,11 +13,11 @@ import com.nhl.link.rest.meta.LrPersistentRelationship;
 public class CayenneLrRelationship implements LrPersistentRelationship {
 
 	private ObjRelationship objRelationship;
-	private Class<?> targetEntityType;
+	private LrEntity<?> targetEntity;
 
-	public CayenneLrRelationship(ObjRelationship objRelationship, Class<?> targetEntityType) {
+	public CayenneLrRelationship(ObjRelationship objRelationship, LrEntity<?> targetEntity) {
 		this.objRelationship = objRelationship;
-		this.targetEntityType = targetEntityType;
+		this.targetEntity = Objects.requireNonNull(targetEntity);
 	}
 
 	@Override
@@ -23,8 +26,8 @@ public class CayenneLrRelationship implements LrPersistentRelationship {
 	}
 
 	@Override
-	public Class<?> getTargetEntityType() {
-		return targetEntityType;
+	public LrEntity<?> getTargetEntity() {
+		return targetEntity;
 	}
 
 	@Override

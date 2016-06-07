@@ -1,10 +1,11 @@
 package com.nhl.link.rest.meta;
 
+import com.nhl.link.rest.meta.compiler.CompilerContext;
+import com.nhl.link.rest.meta.compiler.LrEntityCompiler;
+
 import java.util.Collection;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
-
-import com.nhl.link.rest.meta.compiler.LrEntityCompiler;
 
 /**
  * An {@link LrDataMap} that lazily loads its entities.
@@ -31,7 +32,7 @@ public class LazyLrDataMap implements LrDataMap {
 		// and decreasing memory footprint.
 		if (e == null) {
 
-			LrEntity<?> newEntity = compile(type);
+			LrEntity<?> newEntity = compile(type, new ConcurrentCompilerContext());
 			LrEntity<?> existingEntity = entities.putIfAbsent(type, newEntity);
 			e = existingEntity != null ? existingEntity : newEntity;
 		}
@@ -39,15 +40,36 @@ public class LazyLrDataMap implements LrDataMap {
 		return (LrEntity<T>) e;
 	}
 
-	protected <T> LrEntity<T> compile(Class<T> type) {
+	protected <T> LrEntity<T> compile(Class<T> type, CompilerContext compilerContext) {
 
 		for (LrEntityCompiler compiler : compilers) {
-			LrEntity<T> e = compiler.compile(type);
+			LrEntity<T> e = compiler.compile(type, compilerContext);
 			if (e != null) {
 				return e;
 			}
 		}
 
 		throw new IllegalArgumentException("Unable to compile LrEntity: " + type);
+	}
+
+	private class ConcurrentCompilerContext implements CompilerContext {
+
+		@SuppressWarnings("unchecked")
+		@Override
+		public <T> LrEntity<T> addEntityIfAbsent(Class<T> type, LrEntity<T> entity) {
+			LrEntity<T> existing = (LrEntity<T>) entities.putIfAbsent(type, entity);
+			return existing == null? entity : existing;
+		}
+
+		@SuppressWarnings("unchecked")
+		@Override
+		public <T> LrEntity<T> getOrCreateEntity(Class<T> type) {
+
+			LrEntity<T> entity = (LrEntity<T>) entities.get(type);
+			if (entity == null) {
+				entity = addEntityIfAbsent(type, compile(type, this));
+			}
+			return entity;
+		}
 	}
 }

@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import com.nhl.link.rest.meta.compiler.PojoCompilerContext;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -46,7 +47,7 @@ public class EncoderService_Pojo_Test {
 
 	@Test
 	public void testEncode_SimplePojo_noId() throws IOException {
-		LrEntity<P1> p1lre = LrEntityBuilder.build(P1.class);
+		LrEntity<P1> p1lre = LrEntityBuilder.build(P1.class, new PojoCompilerContext());
 		ResourceEntity<P1> descriptor = new ResourceEntity<P1>(p1lre);
 		descriptor.getAttributes().put("name", new DefaultLrAttribute("name", String.class));
 
@@ -62,7 +63,7 @@ public class EncoderService_Pojo_Test {
 		p6.setStringId("myid");
 		p6.setIntProp(4);
 
-		LrEntity<P6> p6lre = LrEntityBuilder.builder(P6.class).build();
+		LrEntity<P6> p6lre = LrEntityBuilder.builder(P6.class, new PojoCompilerContext()).build();
 		ResourceEntity<P6> descriptor = new ResourceEntity<P6>(p6lre);
 		descriptor.getAttributes().put("intProp", new DefaultLrAttribute("intProp", Integer.class));
 		descriptor.includeId();
