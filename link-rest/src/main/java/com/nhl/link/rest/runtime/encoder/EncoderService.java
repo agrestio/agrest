@@ -7,12 +7,9 @@ import java.util.Map.Entry;
 import java.util.TreeMap;
 import java.util.concurrent.ConcurrentHashMap;
 
-import javax.ws.rs.core.Response.Status;
-
 import org.apache.cayenne.di.Inject;
 
 import com.nhl.link.rest.EntityProperty;
-import com.nhl.link.rest.LinkRestException;
 import com.nhl.link.rest.ResourceEntity;
 import com.nhl.link.rest.encoder.Encoder;
 import com.nhl.link.rest.encoder.EncoderFilter;
