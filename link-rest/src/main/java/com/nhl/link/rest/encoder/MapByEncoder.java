@@ -138,12 +138,12 @@ public class MapByEncoder extends AbstractEncoder {
 			total += listEncoder.encodeAndGetTotal(null, e.getValue(), out);
 		}
 
+		out.writeEndObject();
+
 		if (totalKey != null) {
 			out.writeFieldName(totalKey);
 			out.writeNumber(total);
 		}
-
-		out.writeEndObject();
 		return true;
 	}
 

@@ -371,7 +371,7 @@ public class GET_IT extends JerseyTestOnDerby {
 
 		assertEquals(Status.OK.getStatusCode(), response1.getStatus());
 		assertEquals("{\"data\":{\"1\":[{\"cVarchar\":\"xxx\"}]," +
-				"\"2\":[{\"cVarchar\":\"yyy\"},{\"cVarchar\":\"zzz\"}],\"total\":3}}",
+				"\"2\":[{\"cVarchar\":\"yyy\"},{\"cVarchar\":\"zzz\"}]},\"total\":3}",
 				response1.readEntity(String.class));
 	}
 
