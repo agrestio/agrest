@@ -39,6 +39,25 @@ public class DataResponseIT extends EncoderITBase {
 	}
 
 	@Test
+	public void testGetIncludedObjects_Root_MapBy() {
+
+		DB.insert("e2", "id, name", "1, 'xxx'");
+		DB.insert("e2", "id, name", "2, 'yyy'");
+		DB.insert("e2", "id, name", "3, 'zzz'");
+
+		MultivaluedHashMap<String, String> params = new MultivaluedHashMap<>();
+		params.putSingle("mapBy", "name");
+
+		UriInfo mockUri = mock(UriInfo.class);
+		when(mockUri.getQueryParameters()).thenReturn(params);
+
+		DataResponse<E2> response = createLRService().select(E2.class).uri(mockUri).select();
+		Collection<E2> objects = response.getIncludedObjects(E2.class, "");
+
+		assertEquals("E2:1;E2:2;E2:3", toIdsString(objects));
+	}
+
+	@Test
 	public void testGetIncludedObjects_Root_StartLimit() {
 
 		DB.insert("e2", "id, name", "1, 'xxx'");

@@ -44,6 +44,15 @@ public class MapByEncoder extends AbstractEncoder {
 
 		config(converterFactory, mapBy);
 	}
+	
+	/**
+	 * @since 2.0
+	 */
+	@Override
+	public int visitEntities(Object object, EncoderVisitor visitor) {
+		// a "flat" visit method that ignores mapping property
+		return listEncoder.visitEntities(object, visitor);
+	}
 
 	/**
 	 * @since 2.0
