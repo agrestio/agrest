@@ -3,7 +3,6 @@ package com.nhl.link.rest.meta;
 import com.nhl.link.rest.annotation.LrAttribute;
 import com.nhl.link.rest.annotation.LrId;
 import com.nhl.link.rest.annotation.LrRelationship;
-import com.nhl.link.rest.meta.compiler.CompilerContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,22 +23,22 @@ public class LrEntityBuilder<T> {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(LrEntityBuilder.class);
 
-	public static <T> LrEntityBuilder<T> builder(Class<T> type, CompilerContext compilerContext) {
-		return new LrEntityBuilder<>(type, compilerContext);
+	public static <T> LrEntityBuilder<T> builder(Class<T> type, LrDataMap dataMap) {
+		return new LrEntityBuilder<>(type, dataMap);
 	}
 
-	public static <T> LrEntity<T> build(Class<T> type, CompilerContext compilerContext) {
-		return builder(type, compilerContext).build();
+	public static <T> LrEntity<T> build(Class<T> type, LrDataMap dataMap) {
+		return builder(type, dataMap).build();
 	}
 
 	private static final Pattern GETTER = Pattern.compile("^(get|is)([A-Z].*)$");
 
 	private Class<T> type;
-	private CompilerContext compilerContext;
+	private LrDataMap dataMap;
 
-	LrEntityBuilder(Class<T> type, CompilerContext compilerContext) {
+	LrEntityBuilder(Class<T> type, LrDataMap dataMap) {
 		this.type = type;
-		this.compilerContext = compilerContext;
+		this.dataMap = dataMap;
 	}
 
 	public LrEntity<T> build() {
@@ -137,7 +136,7 @@ public class LrEntityBuilder<T> {
 				toMany = true;
 			}
 
-			LrEntity<?> targetEntity = compilerContext.getOrCreateEntity(targetType);
+			LrEntity<?> targetEntity = dataMap.getEntity(targetType);
 			entity.addRelationship(new DefaultLrRelationship(name, targetEntity, toMany));
 		}
 

@@ -13,6 +13,7 @@ import java.util.TreeMap;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
+import com.nhl.link.rest.meta.LrPersistentEntity;
 import org.apache.cayenne.DataObject;
 
 import com.nhl.link.rest.EntityProperty;
@@ -121,7 +122,7 @@ public class AttributeEncoderFactory implements IAttributeEncoderFactory {
 
 		Collection<LrAttribute> ids = entity.getLrEntity().getIds();
 
-		if (entity.getLrEntity() instanceof CayenneLrEntity) {
+		if (entity.getLrEntity() instanceof LrPersistentEntity) {
 
 			// Cayenne object - PK is an ObjectId (even if it is also a
 			// meaningful object property)
