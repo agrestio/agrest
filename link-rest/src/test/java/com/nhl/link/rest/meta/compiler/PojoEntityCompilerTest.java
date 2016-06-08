@@ -3,6 +3,7 @@ package com.nhl.link.rest.meta.compiler;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import com.nhl.link.rest.meta.LazyLrDataMap;
 import org.junit.BeforeClass;
@@ -34,10 +35,17 @@ public class PojoEntityCompilerTest {
 		assertEquals(0, entity.getRelationships().size());
 	}
 
-	@Test
-	public void testCompileSkip() {
+	@Test(expected = Exception.class)
+	public void testCompile_NotAnEntity() {
 		LrEntity<NotAnEntity> entity = new PojoEntityCompiler().compile(NotAnEntity.class, new LazyLrDataMap(compilers));
-		assertNull(entity);
+		assertNotNull(entity);
+
+		try {
+			entity.getAttributes();
+		} catch (Exception e) {
+			assertTrue(e.getMessage().startsWith("Not an entity"));
+			throw e;
+		}
 	}
 
 	static class Entity {
