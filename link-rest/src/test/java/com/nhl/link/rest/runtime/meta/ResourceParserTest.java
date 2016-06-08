@@ -45,7 +45,7 @@ public class ResourceParserTest extends TestWithCayenneMapping {
         try {
             resources.iterator().next().getEntity().getIds();
         } catch (Exception e) {
-            assertTrue(e.getMessage().contains("Unable to compile LrEntity: class java.lang.String"));
+            assertTrue(e.getMessage().startsWith("Not an entity"));
             throw e;
         }
     }
