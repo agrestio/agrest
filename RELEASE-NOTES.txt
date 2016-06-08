@@ -6,6 +6,7 @@ Release 2.0
 #176 LR client
 #178 Encoder "visitor" API
 #182 Support for "mapBy" at the top level of request
+#184 Metadata request: related entity type is NULL for POJO related entities
 #185 Store information about the target entity in LrRelationship
 
 Release 1.24
