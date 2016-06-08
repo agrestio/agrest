@@ -1,14 +1,13 @@
 package com.nhl.link.rest.property;
 
-import com.nhl.link.rest.meta.LrAttribute;
-import com.nhl.link.rest.meta.LrEntity;
-import com.nhl.link.rest.meta.LrPersistentEntity;
-import com.nhl.link.rest.meta.cayenne.CayenneLrEntity;
-
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+
+import com.nhl.link.rest.meta.LrAttribute;
+import com.nhl.link.rest.meta.LrEntity;
+import com.nhl.link.rest.meta.LrPersistentEntity;
 
 public class IdPropertyReader implements PropertyReader {
 

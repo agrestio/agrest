@@ -5,7 +5,6 @@ import java.util.Date;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.nhl.link.rest.meta.LrAttribute;
-import com.nhl.link.rest.meta.LrPersistentRelationship;
 import com.nhl.link.rest.meta.LrRelationship;
 import com.nhl.link.rest.meta.cayenne.CayenneLrAttribute;
 
