@@ -9,6 +9,8 @@ import javax.ws.rs.core.FeatureContext;
 
 import org.apache.cayenne.di.Injector;
 import org.apache.cayenne.di.Key;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.nhl.link.rest.provider.EntityUpdateCollectionReader;
 import com.nhl.link.rest.provider.EntityUpdateReader;
@@ -18,6 +20,8 @@ import com.nhl.link.rest.provider.ResponseStatusDynamicFeature;
  * Stores LinkRest runtime stack packaged as a JAX RS {@link Feature}.
  */
 public class LinkRestRuntime implements Feature {
+
+	private static final Logger LOGGER = LoggerFactory.getLogger(LinkRestRuntime.class);
 
 	static final String LINK_REST_CONTAINER_PROPERTY = "linkrest.container";
 
@@ -58,6 +62,14 @@ public class LinkRestRuntime implements Feature {
 	 */
 	public <T> T service(Class<T> type) {
 		return injector.getInstance(type);
+	}
+
+	/**
+	 * @since 2.0
+	 */
+	public void shutdown() {
+		LOGGER.info("Shutting down LinkRest");
+		injector.shutdown();
 	}
 
 	@Override

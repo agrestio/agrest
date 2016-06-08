@@ -1,7 +1,9 @@
 package com.nhl.link.rest.runtime;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyCollectionOf;
 import static org.mockito.Mockito.doAnswer;
@@ -97,21 +99,49 @@ public class LinkRestBuilderTest {
 		LinkRestBuilder builder = new LinkRestBuilder();
 		LinkRestRuntime r = builder.build();
 
-		ExecutorService exec = r.service(ExecutorService.class);
+		ExecutorService exec;
+		try {
+			exec = r.service(ExecutorService.class);
 
-		assertEquals("a", exec.submit(() -> "a").get(10, TimeUnit.SECONDS));
+			assertEquals("a", exec.submit(() -> "a").get(10, TimeUnit.SECONDS));
+		} finally {
+			r.shutdown();
+		}
 	}
-	
+
 	@Test
-	public void testExecutorService_Custom() throws InterruptedException, ExecutionException, TimeoutException {
-		
-		ExecutorService mockExec = mock(ExecutorService.class);
-		LinkRestBuilder builder = new LinkRestBuilder().executor(mockExec);
+	public void testExecutorService_DefaultShutdown()
+			throws InterruptedException, ExecutionException, TimeoutException {
+
+		LinkRestBuilder builder = new LinkRestBuilder();
 		LinkRestRuntime r = builder.build();
 
-		ExecutorService exec = r.service(ExecutorService.class);
+		ExecutorService exec;
+		try {
+			exec = r.service(ExecutorService.class);
+			assertFalse(exec.isShutdown());
 
-		assertSame(mockExec, exec);
+		} finally {
+			r.shutdown();
+		}
+
+		assertTrue(exec.isShutdown());
+	}
+
+	@Test
+	public void testExecutorService_Custom() throws InterruptedException, ExecutionException, TimeoutException {
+
+		ExecutorService mockExec = mock(ExecutorService.class);
+		LinkRestBuilder builder = new LinkRestBuilder().executor(mockExec);
+
+		LinkRestRuntime r = builder.build();
+		try {
+			ExecutorService exec = r.service(ExecutorService.class);
+
+			assertSame(mockExec, exec);
+		} finally {
+			r.shutdown();
+		}
 	}
 
 	static class TestValidationExceptionMapper implements ExceptionMapper<ValidationException> {

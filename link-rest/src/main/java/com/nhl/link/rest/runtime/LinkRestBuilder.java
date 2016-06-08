@@ -2,6 +2,7 @@ package com.nhl.link.rest.runtime;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -9,8 +10,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.atomic.AtomicLong;
 
 import javax.ws.rs.core.Feature;
 import javax.ws.rs.ext.ExceptionMapper;
@@ -56,6 +55,7 @@ import com.nhl.link.rest.runtime.encoder.IAttributeEncoderFactory;
 import com.nhl.link.rest.runtime.encoder.IEncoderService;
 import com.nhl.link.rest.runtime.encoder.IStringConverterFactory;
 import com.nhl.link.rest.runtime.encoder.StringConverterFactory;
+import com.nhl.link.rest.runtime.executor.UnboundedExecutorServiceProvider;
 import com.nhl.link.rest.runtime.jackson.IJacksonService;
 import com.nhl.link.rest.runtime.jackson.JacksonService;
 import com.nhl.link.rest.runtime.listener.IListenerService;
@@ -83,6 +83,7 @@ import com.nhl.link.rest.runtime.parser.tree.IncludeExcludeProcessor;
 import com.nhl.link.rest.runtime.processor.IProcessorFactory;
 import com.nhl.link.rest.runtime.semantics.IRelationshipMapper;
 import com.nhl.link.rest.runtime.semantics.RelationshipMapper;
+import com.nhl.link.rest.runtime.shutdown.ShutdownManager;
 
 /**
  * A builder of LinkRest runtime that can be loaded into JAX-RS 2 container as a
@@ -338,7 +339,13 @@ public class LinkRestBuilder {
 				binder.bind(IResourceParser.class).to(ResourceParser.class);
 				binder.bind(IUpdateParser.class).to(UpdateParser.class);
 
-				binder.bind(ExecutorService.class).toProviderInstance(LinkRestBuilder.this::createExecutorService);
+				binder.bind(ShutdownManager.class).toInstance(new ShutdownManager(Duration.ofSeconds(10)));
+
+				if (executor != null) {
+					binder.bind(ExecutorService.class).toInstance(executor);
+				} else {
+					binder.bind(ExecutorService.class).toProvider(UnboundedExecutorServiceProvider.class);
+				}
 
 				// apply adapter-contributed bindings
 				for (LinkRestAdapter a : adapters) {
@@ -348,24 +355,5 @@ public class LinkRestBuilder {
 		};
 
 		return DIBootstrap.createInjector(module);
-	}
-
-	private ExecutorService createExecutorService() {
-		if (this.executor != null) {
-			return this.executor;
-		}
-
-		// TODO: we are not limiting the thread pool size... this is unsafe. An
-		// alternative - fixed thread pool - doesn't seem to be able to shrink
-		// on light usage though.
-
-		AtomicLong threadNumber = new AtomicLong();
-		ExecutorService service = Executors
-				.newCachedThreadPool(r -> new Thread(r, "link-rest-pool-" + threadNumber.getAndIncrement()));
-
-		// TODO: how do we shutdown LR and the pool?
-		// see https://github.com/nhl/link-rest/issues/189
-
-		return service;
 	}
 }

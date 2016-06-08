@@ -9,6 +9,7 @@ Release 2.0
 #184 Metadata request: related entity type is NULL for POJO related entities
 #185 Store information about the target entity in LrRelationship
 #188 ExecutorService service 
+#189 Shutdown service and API
 
 Release 1.24
 
