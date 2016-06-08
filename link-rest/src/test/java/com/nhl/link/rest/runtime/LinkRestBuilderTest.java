@@ -1,5 +1,6 @@
 package com.nhl.link.rest.runtime;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertSame;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyCollectionOf;
@@ -9,6 +10,10 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 
 import java.util.Collection;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import javax.ws.rs.core.Feature;
 import javax.ws.rs.core.FeatureContext;
@@ -85,6 +90,28 @@ public class LinkRestBuilderTest {
 		FeatureContext context = mock(FeatureContext.class);
 		runtime.configure(context);
 		verify(adapterFeature).configure(context);
+	}
+
+	@Test
+	public void testExecutorService_Default() throws InterruptedException, ExecutionException, TimeoutException {
+		LinkRestBuilder builder = new LinkRestBuilder();
+		LinkRestRuntime r = builder.build();
+
+		ExecutorService exec = r.service(ExecutorService.class);
+
+		assertEquals("a", exec.submit(() -> "a").get(10, TimeUnit.SECONDS));
+	}
+	
+	@Test
+	public void testExecutorService_Custom() throws InterruptedException, ExecutionException, TimeoutException {
+		
+		ExecutorService mockExec = mock(ExecutorService.class);
+		LinkRestBuilder builder = new LinkRestBuilder().executor(mockExec);
+		LinkRestRuntime r = builder.build();
+
+		ExecutorService exec = r.service(ExecutorService.class);
+
+		assertSame(mockExec, exec);
 	}
 
 	static class TestValidationExceptionMapper implements ExceptionMapper<ValidationException> {

@@ -8,6 +8,9 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicLong;
 
 import javax.ws.rs.core.Feature;
 import javax.ws.rs.ext.ExceptionMapper;
@@ -97,6 +100,7 @@ public class LinkRestBuilder {
 	private Map<Class<?>, Class<?>> exceptionMappers;
 	private Collection<LinkRestAdapter> adapters;
 	private Map<String, PropertyMetadataEncoder> metadataEncoders;
+	private ExecutorService executor;
 
 	/**
 	 * A shortcut that creates a LinkRest stack based on Cayenne runtime and
@@ -195,6 +199,19 @@ public class LinkRestBuilder {
 
 	public LinkRestBuilder encoderFilters(Collection<EncoderFilter> filters) {
 		this.encoderFilters.addAll(filters);
+		return this;
+	}
+
+	/**
+	 * Sets an optional thread pool that should be used by non-blocking request
+	 * runners.
+	 * 
+	 * @since 2.0
+	 * @param executor
+	 * @return
+	 */
+	public LinkRestBuilder executor(ExecutorService executor) {
+		this.executor = executor;
 		return this;
 	}
 
@@ -321,6 +338,8 @@ public class LinkRestBuilder {
 				binder.bind(IResourceParser.class).to(ResourceParser.class);
 				binder.bind(IUpdateParser.class).to(UpdateParser.class);
 
+				binder.bind(ExecutorService.class).toProviderInstance(LinkRestBuilder.this::createExecutorService);
+
 				// apply adapter-contributed bindings
 				for (LinkRestAdapter a : adapters) {
 					a.contributeToRuntime(binder);
@@ -329,5 +348,24 @@ public class LinkRestBuilder {
 		};
 
 		return DIBootstrap.createInjector(module);
+	}
+
+	private ExecutorService createExecutorService() {
+		if (this.executor != null) {
+			return this.executor;
+		}
+
+		// TODO: we are not limiting the thread pool size... this is unsafe. An
+		// alternative - fixed thread pool - doesn't seem to be able to shrink
+		// on light usage though.
+
+		AtomicLong threadNumber = new AtomicLong();
+		ExecutorService service = Executors
+				.newCachedThreadPool(r -> new Thread(r, "link-rest-pool-" + threadNumber.getAndIncrement()));
+
+		// TODO: how do we shutdown LR and the pool?
+		// see https://github.com/nhl/link-rest/issues/189
+
+		return service;
 	}
 }
