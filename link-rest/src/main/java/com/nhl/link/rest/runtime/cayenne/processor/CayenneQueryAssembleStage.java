@@ -10,8 +10,11 @@ import com.nhl.link.rest.LrObjectId;
 import com.nhl.link.rest.meta.LrAttribute;
 import com.nhl.link.rest.meta.LrEntity;
 import com.nhl.link.rest.meta.LrPersistentAttribute;
+import com.nhl.link.rest.runtime.parser.cache.IPathCache;
+import com.nhl.link.rest.runtime.parser.cache.PathDescriptor;
 import org.apache.cayenne.exp.Expression;
 import org.apache.cayenne.exp.ExpressionFactory;
+import org.apache.cayenne.exp.parser.ASTObjPath;
 import org.apache.cayenne.query.Ordering;
 import org.apache.cayenne.query.PrefetchTreeNode;
 import org.apache.cayenne.query.SelectQuery;
@@ -23,6 +26,8 @@ import com.nhl.link.rest.processor.BaseLinearProcessingStage;
 import com.nhl.link.rest.processor.ProcessingStage;
 import com.nhl.link.rest.runtime.cayenne.ICayennePersister;
 import com.nhl.link.rest.runtime.processor.select.SelectContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.ws.rs.core.Response.Status;
 
@@ -31,11 +36,16 @@ import javax.ws.rs.core.Response.Status;
  */
 public class CayenneQueryAssembleStage<T> extends BaseLinearProcessingStage<SelectContext<T>, T> {
 
-	private ICayennePersister persister;
+	private static final Logger LOGGER = LoggerFactory.getLogger(CayenneQueryAssembleStage.class);
 
-	public CayenneQueryAssembleStage(ProcessingStage<SelectContext<T>, ? super T> next, ICayennePersister persister) {
+	private ICayennePersister persister;
+	private IPathCache pathCache;
+
+	public CayenneQueryAssembleStage(ProcessingStage<SelectContext<T>, ? super T> next, ICayennePersister persister,
+									 IPathCache pathCache) {
 		super(next);
 		this.persister = persister;
+		this.pathCache = pathCache;
 	}
 
 	@Override
@@ -71,7 +81,14 @@ public class CayenneQueryAssembleStage<T> extends BaseLinearProcessingStage<Sele
 		}
 
 		for (Ordering o : entity.getOrderings()) {
-			query.addOrdering(o);
+
+			String sortSpec = o.getSortSpecString();
+			LrAttribute sortAttribute = findAttribute(entity.getLrEntity(), sortSpec);
+			if (sortAttribute instanceof LrPersistentAttribute) {
+				query.addOrdering(o);
+			} else {
+				LOGGER.warn("Will not sort by a non-persistent attribute: " + o.getSortSpecString());
+			}
 		}
 
 		if (!entity.getChildren().isEmpty()) {
@@ -90,6 +107,30 @@ public class CayenneQueryAssembleStage<T> extends BaseLinearProcessingStage<Sele
 		}
 
 		return query;
+	}
+
+	private LrAttribute findAttribute(LrEntity<?> lrEntity, String path) {
+
+		LrAttribute attribute = lrEntity.getAttribute(path);
+
+		if (attribute == null) {
+			// check IDs first, because path cache does not store info on those
+			for (LrAttribute id : lrEntity.getIds()) {
+				if (id.getPathExp().toString().equals(path)) {
+					attribute = id;
+					break;
+				}
+			}
+		}
+
+		if (attribute == null) {
+			PathDescriptor pathDescriptor = pathCache.getPathDescriptor(lrEntity, new ASTObjPath(path));
+			if (pathDescriptor.isAttribute()) {
+				attribute = (LrAttribute) pathDescriptor.getTargetComponent();
+			}
+		}
+
+		return attribute;
 	}
 
 	<X extends T> SelectQuery<X> basicSelect(SelectContext<X> context) {

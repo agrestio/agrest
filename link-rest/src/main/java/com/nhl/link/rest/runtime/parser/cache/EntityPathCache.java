@@ -55,6 +55,11 @@ class EntityPathCache {
 				public ASTPath getPathExp() {
 					return id.getPathExp();
 				}
+
+				@Override
+				public Object getTargetComponent() {
+					return id;
+				}
 			});
 		}
 	}
@@ -86,6 +91,11 @@ class EntityPathCache {
 					public ASTPath getPathExp() {
 						return path;
 					}
+
+					@Override
+					public Object getTargetComponent() {
+						return attribute;
+					}
 				};
 			} else {
 				entry = new PathDescriptor() {
@@ -105,6 +115,11 @@ class EntityPathCache {
 					@Override
 					public ASTPath getPathExp() {
 						return path;
+					}
+
+					@Override
+					public Object getTargetComponent() {
+						return relationship;
 					}
 				};
 			}

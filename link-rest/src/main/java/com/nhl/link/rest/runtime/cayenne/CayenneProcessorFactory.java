@@ -9,6 +9,7 @@ import java.util.Map;
 
 import javax.ws.rs.core.Response.Status;
 
+import com.nhl.link.rest.runtime.parser.cache.IPathCache;
 import org.apache.cayenne.DataObject;
 import org.apache.cayenne.di.Inject;
 
@@ -62,12 +63,14 @@ public class CayenneProcessorFactory implements IProcessorFactory {
 	private IMetadataService metadataService;
 	private IResourceMetadataService resourceMetadataService;
 	private List<EncoderFilter> filters;
+	private IPathCache pathCache;
 
 	public CayenneProcessorFactory(@Inject IRequestParser requestParser, @Inject IUpdateParser updateParser,
 			@Inject IEncoderService encoderService, @Inject ICayennePersister persister,
 			@Inject IConstraintsHandler constraintsHandler, @Inject IMetadataService metadataService,
 			@Inject IResourceMetadataService resourceMetadataService,
-			@Inject(EncoderService.ENCODER_FILTER_LIST) List<EncoderFilter> filters) {
+			@Inject(EncoderService.ENCODER_FILTER_LIST) List<EncoderFilter> filters,
+			@Inject IPathCache pathCache) {
 		this.requestParser = requestParser;
 		this.encoderService = encoderService;
 		this.persister = persister;
@@ -76,6 +79,7 @@ public class CayenneProcessorFactory implements IProcessorFactory {
 		this.resourceMetadataService = resourceMetadataService;
 		this.updateParser = updateParser;
 		this.filters = filters;
+		this.pathCache = pathCache;
 	}
 
 	@Override
@@ -128,7 +132,7 @@ public class CayenneProcessorFactory implements IProcessorFactory {
 
 		BaseLinearProcessingStage<SelectContext<Object>, Object> stage4 = new CayenneFetchStage<>(null, persister);
 		BaseLinearProcessingStage<SelectContext<Object>, Object> stage3 = new CayenneQueryAssembleStage<>(stage4,
-				persister);
+				persister, pathCache);
 		BaseLinearProcessingStage<SelectContext<Object>, Object> stage2 = new ApplySelectServerParamsStage<>(stage3,
 				encoderService, constraintsHandler, filters);
 		BaseLinearProcessingStage<SelectContext<Object>, Object> stage1 = new ParseSelectRequestStage<>(stage2,
