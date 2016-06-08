@@ -1,5 +1,6 @@
 package com.nhl.link.rest.meta.compiler;
 
+import com.nhl.link.rest.meta.LrDataMap;
 import com.nhl.link.rest.meta.LrEntity;
 
 /**
@@ -7,5 +8,8 @@ import com.nhl.link.rest.meta.LrEntity;
  */
 public interface LrEntityCompiler {
 
-	<T> LrEntity<T> compile(Class<T> type);
+	/**
+	 * @since 2.0
+     */
+	<T> LrEntity<T> compile(Class<T> type, LrDataMap dataMap);
 }

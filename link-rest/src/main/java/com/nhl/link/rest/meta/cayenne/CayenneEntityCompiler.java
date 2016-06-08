@@ -1,10 +1,17 @@
 package com.nhl.link.rest.meta.cayenne;
 
-import java.util.Iterator;
-import java.util.Map;
-
-import javax.ws.rs.core.Response;
-
+import com.nhl.link.rest.LinkRestException;
+import com.nhl.link.rest.meta.DefaultLrAttribute;
+import com.nhl.link.rest.meta.LrDataMap;
+import com.nhl.link.rest.meta.LrAttribute;
+import com.nhl.link.rest.meta.LrEntity;
+import com.nhl.link.rest.meta.LrEntityBuilder;
+import com.nhl.link.rest.meta.LrEntityOverlay;
+import com.nhl.link.rest.meta.LrPersistentEntity;
+import com.nhl.link.rest.meta.LrRelationship;
+import com.nhl.link.rest.meta.compiler.LazyLrPersistentEntity;
+import com.nhl.link.rest.meta.compiler.LrEntityCompiler;
+import com.nhl.link.rest.runtime.cayenne.ICayennePersister;
 import org.apache.cayenne.dba.TypesMapping;
 import org.apache.cayenne.di.Inject;
 import org.apache.cayenne.map.DbAttribute;
@@ -15,15 +22,9 @@ import org.apache.cayenne.map.ObjRelationship;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.nhl.link.rest.LinkRestException;
-import com.nhl.link.rest.meta.DefaultLrAttribute;
-import com.nhl.link.rest.meta.LrAttribute;
-import com.nhl.link.rest.meta.LrEntity;
-import com.nhl.link.rest.meta.LrEntityBuilder;
-import com.nhl.link.rest.meta.LrEntityOverlay;
-import com.nhl.link.rest.meta.LrRelationship;
-import com.nhl.link.rest.meta.compiler.LrEntityCompiler;
-import com.nhl.link.rest.runtime.cayenne.ICayennePersister;
+import javax.ws.rs.core.Response;
+import java.util.Iterator;
+import java.util.Map;
 
 /**
  * @since 1.24
@@ -83,25 +84,28 @@ public class CayenneEntityCompiler implements LrEntityCompiler {
 	}
 
 	@Override
-	public <T> LrEntity<T> compile(Class<T> type) {
+	public <T> LrEntity<T> compile(Class<T> type, LrDataMap dataMap) {
 
 		ObjEntity objEntity = resolver.getObjEntity(type);
 		if (objEntity == null) {
 			return null;
 		}
+		return new LazyLrPersistentEntity<>(type, () -> doCompile(type, dataMap));
+	}
+
+	private <T> LrPersistentEntity<T> doCompile(Class<T> type, LrDataMap dataMap) {
 
 		LOGGER.debug("compiling Cayenne entity for type: " + type);
 
-		CayenneLrEntity<T> lrEntity = new CayenneLrEntity<T>(type, objEntity);
-
-		loadCayenneEntity(lrEntity);
-		loadAnnotatedProperties(lrEntity);
+		ObjEntity objEntity = resolver.getObjEntity(type);
+		CayenneLrEntity<T> lrEntity = new CayenneLrEntity<>(type, objEntity);
+		loadCayenneEntity(lrEntity, dataMap);
+		loadAnnotatedProperties(lrEntity, dataMap);
 		loadOverlays(lrEntity);
-
 		return lrEntity;
 	}
 
-	protected <T> void loadCayenneEntity(CayenneLrEntity<T> lrEntity) {
+	protected <T> void loadCayenneEntity(CayenneLrEntity<T> lrEntity, LrDataMap dataMap) {
 
 		ObjEntity objEntity = lrEntity.getObjEntity();
 		for (ObjAttribute a : objEntity.getAttributes()) {
@@ -112,7 +116,9 @@ public class CayenneEntityCompiler implements LrEntityCompiler {
 		for (ObjRelationship r : objEntity.getRelationships()) {
 
 			Class<?> targetEntityType = resolver.getClassDescriptor(r.getTargetEntityName()).getObjectClass();
-			CayenneLrRelationship lrRelationship = new CayenneLrRelationship(r, targetEntityType);
+
+			LrEntity<?> targetEntity = dataMap.getEntity(targetEntityType);
+			CayenneLrRelationship lrRelationship = new CayenneLrRelationship(r, targetEntity);
 			lrEntity.addRelationship(lrRelationship);
 		}
 
@@ -127,14 +133,14 @@ public class CayenneEntityCompiler implements LrEntityCompiler {
 
 	}
 
-	protected <T> void loadAnnotatedProperties(CayenneLrEntity<T> entity) {
+	protected <T> void loadAnnotatedProperties(CayenneLrEntity<T> entity, LrDataMap dataMap) {
 
 		// load a separate entity built purely from annotations, then merge it
 		// with our entity... Note that we are not cloning attributes or
 		// relationship during merge... they have no references to parent and
 		// can be used as is.
 
-		LrEntity<T> annotatedEntity = LrEntityBuilder.build(entity.getType());
+		LrEntity<T> annotatedEntity = LrEntityBuilder.build(entity.getType(), dataMap);
 
 		if (annotatedEntity.getIds().size() > 0) {
 			for (LrAttribute id : annotatedEntity.getIds()) {

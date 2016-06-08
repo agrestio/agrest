@@ -6,10 +6,15 @@ import static org.mockito.Mockito.mock;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
+import com.nhl.link.rest.meta.LazyLrDataMap;
+import com.nhl.link.rest.meta.compiler.LrEntityCompiler;
+import com.nhl.link.rest.meta.compiler.PojoEntityCompiler;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.fasterxml.jackson.core.JsonEncoding;
@@ -28,8 +33,16 @@ import com.nhl.link.rest.runtime.semantics.RelationshipMapper;
 
 public class EncoderService_Pojo_Test {
 
+	private static Collection<LrEntityCompiler> compilers;
+
 	private EncoderService encoderService;
 	private List<EncoderFilter> filters;
+
+	@BeforeClass
+	public static void setUpClass() {
+		compilers = new ArrayList<>();
+		compilers.add(new PojoEntityCompiler());
+	}
 
 	@Before
 	public void setUp() {
@@ -41,12 +54,11 @@ public class EncoderService_Pojo_Test {
 
 		this.encoderService = new EncoderService(this.filters, attributeEncoderFactory, stringConverterFactory,
 				new RelationshipMapper(), Collections.<String, PropertyMetadataEncoder> emptyMap());
-
 	}
 
 	@Test
 	public void testEncode_SimplePojo_noId() throws IOException {
-		LrEntity<P1> p1lre = LrEntityBuilder.build(P1.class);
+		LrEntity<P1> p1lre = LrEntityBuilder.build(P1.class, new LazyLrDataMap(compilers));
 		ResourceEntity<P1> descriptor = new ResourceEntity<P1>(p1lre);
 		descriptor.getAttributes().put("name", new DefaultLrAttribute("name", String.class));
 
@@ -62,7 +74,7 @@ public class EncoderService_Pojo_Test {
 		p6.setStringId("myid");
 		p6.setIntProp(4);
 
-		LrEntity<P6> p6lre = LrEntityBuilder.builder(P6.class).build();
+		LrEntity<P6> p6lre = LrEntityBuilder.builder(P6.class, new LazyLrDataMap(compilers)).build();
 		ResourceEntity<P6> descriptor = new ResourceEntity<P6>(p6lre);
 		descriptor.getAttributes().put("intProp", new DefaultLrAttribute("intProp", Integer.class));
 		descriptor.includeId();

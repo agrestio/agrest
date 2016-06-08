@@ -1,18 +1,17 @@
 package com.nhl.link.rest.meta;
 
+import com.nhl.link.rest.annotation.LrAttribute;
+import com.nhl.link.rest.annotation.LrId;
+import com.nhl.link.rest.annotation.LrRelationship;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.util.Collection;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.nhl.link.rest.annotation.LrAttribute;
-import com.nhl.link.rest.annotation.LrId;
-import com.nhl.link.rest.annotation.LrRelationship;
 
 /**
  * A helper class to compile custom {@link LrEntity} objects based on
@@ -24,20 +23,22 @@ public class LrEntityBuilder<T> {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(LrEntityBuilder.class);
 
-	public static <T> LrEntityBuilder<T> builder(Class<T> type) {
-		return new LrEntityBuilder<T>(type);
+	public static <T> LrEntityBuilder<T> builder(Class<T> type, LrDataMap dataMap) {
+		return new LrEntityBuilder<>(type, dataMap);
 	}
 
-	public static <T> LrEntity<T> build(Class<T> type) {
-		return builder(type).build();
+	public static <T> LrEntity<T> build(Class<T> type, LrDataMap dataMap) {
+		return builder(type, dataMap).build();
 	}
 
 	private static final Pattern GETTER = Pattern.compile("^(get|is)([A-Z].*)$");
 
 	private Class<T> type;
+	private LrDataMap dataMap;
 
-	LrEntityBuilder(Class<T> type) {
+	LrEntityBuilder(Class<T> type, LrDataMap dataMap) {
 		this.type = type;
+		this.dataMap = dataMap;
 	}
 
 	public LrEntity<T> build() {
@@ -135,7 +136,8 @@ public class LrEntityBuilder<T> {
 				toMany = true;
 			}
 
-			entity.addRelationship(new DefaultLrRelationship(name, targetType, toMany));
+			LrEntity<?> targetEntity = dataMap.getEntity(targetType);
+			entity.addRelationship(new DefaultLrRelationship(name, targetEntity, toMany));
 		}
 
 		return false;

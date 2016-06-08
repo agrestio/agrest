@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import com.nhl.link.rest.meta.compiler.PojoEntityCompiler;
 import org.apache.cayenne.ObjectContext;
 import org.apache.cayenne.configuration.server.DataSourceFactory;
 import org.apache.cayenne.configuration.server.ServerRuntime;
@@ -89,6 +90,7 @@ public class TestWithCayenneMapping {
 		List<LrEntityCompiler> compilers = new ArrayList<>();
 		compilers.add(
 				new CayenneEntityCompiler(mockCayennePersister, Collections.<String, LrEntityOverlay<?>> emptyMap()));
+		compilers.add(new PojoEntityCompiler());
 
 		return new MetadataService(compilers, mockCayennePersister);
 	}

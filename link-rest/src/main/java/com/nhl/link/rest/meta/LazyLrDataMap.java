@@ -1,10 +1,10 @@
 package com.nhl.link.rest.meta;
 
+import com.nhl.link.rest.meta.compiler.LrEntityCompiler;
+
 import java.util.Collection;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
-
-import com.nhl.link.rest.meta.compiler.LrEntityCompiler;
 
 /**
  * An {@link LrDataMap} that lazily loads its entities.
@@ -42,7 +42,7 @@ public class LazyLrDataMap implements LrDataMap {
 	protected <T> LrEntity<T> compile(Class<T> type) {
 
 		for (LrEntityCompiler compiler : compilers) {
-			LrEntity<T> e = compiler.compile(type);
+			LrEntity<T> e = compiler.compile(type, this);
 			if (e != null) {
 				return e;
 			}
