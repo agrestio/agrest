@@ -351,6 +351,6 @@ public class PointerResolveTest extends JerseyTestOnDerby {
                 break;
             }
         }
-        pointerService = new LrPointerService(metadataService);
+        pointerService = new LrPointerService();
     }
 }

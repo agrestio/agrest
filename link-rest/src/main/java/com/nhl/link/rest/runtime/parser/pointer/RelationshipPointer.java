@@ -77,7 +77,7 @@ class RelationshipPointer extends SimplePointer {
 
     @Override
     public Class<?> getTargetType() {
-        return relationship.getTargetEntityType();
+        return relationship.getTargetEntity().getType();
     }
 
     LrRelationship getRelationship() {

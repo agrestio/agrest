@@ -72,7 +72,7 @@ public class LrjEntityBuilderTest {
 
 		LrRelationship p3r = p4e.getRelationship("p3");
 		assertNotNull(p3r);
-		assertEquals(P3.class, p3r.getTargetEntityType());
+		assertEquals(P3.class, p3r.getTargetEntity().getType());
 		assertFalse(p3r.isToMany());
 	}
 
@@ -89,7 +89,7 @@ public class LrjEntityBuilderTest {
 
 		LrRelationship p4sr = p5e.getRelationship("p4s");
 		assertNotNull(p4sr);
-		assertEquals(P4.class, p4sr.getTargetEntityType());
+		assertEquals(P4.class, p4sr.getTargetEntity().getType());
 		assertTrue(p4sr.isToMany());
 	}
 

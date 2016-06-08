@@ -26,7 +26,7 @@ public class SenchaFilterProcessorTest extends TestWithCayenneMapping {
 	public void setUp() {
 
 		IJacksonService jsonParser = new JacksonService();
-		PathCache pathCache = new PathCache(metadataService);
+		PathCache pathCache = new PathCache();
 
 		this.processor = new SenchaFilterProcessor(jsonParser, pathCache);
 		this.e4Entity = getLrEntity(E4.class);

@@ -46,13 +46,12 @@ public class RequestParserTest extends TestWithCayenneMapping {
 	@Before
 	public void setUp() {
 
-		IPathCache pathCache = new PathCache(metadataService);
+		IPathCache pathCache = new PathCache();
 		IJacksonService jacksonService = new JacksonService();
 		ICayenneExpProcessor expProcessor = new CayenneExpProcessor(jacksonService, pathCache);
 		IKeyValueExpProcessor kvExpProcessor = new KeyValueExpProcessor();
 		ISortProcessor sortProcessor = new SortProcessor(jacksonService, pathCache);
-		ITreeProcessor treeProcessor = new IncludeExcludeProcessor(jacksonService, sortProcessor, expProcessor,
-				metadataService);
+		ITreeProcessor treeProcessor = new IncludeExcludeProcessor(jacksonService, sortProcessor, expProcessor);
 
 		parser = new RequestParser(treeProcessor, sortProcessor, expProcessor, kvExpProcessor);
 	}

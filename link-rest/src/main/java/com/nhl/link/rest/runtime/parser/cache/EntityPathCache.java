@@ -12,18 +12,15 @@ import com.nhl.link.rest.LinkRestException;
 import com.nhl.link.rest.meta.LrAttribute;
 import com.nhl.link.rest.meta.LrEntity;
 import com.nhl.link.rest.meta.LrRelationship;
-import com.nhl.link.rest.runtime.meta.IMetadataService;
 import com.nhl.link.rest.runtime.parser.PathConstants;
 
 class EntityPathCache {
 
 	private LrEntity<?> entity;
 	private Map<String, PathDescriptor> pathCache;
-	private IMetadataService metadataService;
 
-	EntityPathCache(final LrEntity<?> entity, IMetadataService metadataService) {
+	EntityPathCache(final LrEntity<?> entity) {
 		this.entity = entity;
-		this.metadataService = metadataService;
 		this.pathCache = new ConcurrentHashMap<>();
 
 		// immediately cache a special entry matching "id" constant ... if there
@@ -91,6 +88,7 @@ class EntityPathCache {
 				entry = new PathDescriptor() {
 
 					LrRelationship relationship = (LrRelationship) last;
+					Class<?> type = relationship.getTargetEntity().getType();
 
 					@Override
 					public boolean isAttribute() {
@@ -99,7 +97,7 @@ class EntityPathCache {
 
 					@Override
 					public Class<?> getType() {
-						return relationship.getTargetEntityType();
+						return type;
 					}
 
 					@Override
@@ -134,7 +132,7 @@ class EntityPathCache {
 						+ "'. Not a relationship");
 			}
 
-			LrEntity<?> targetEntity = metadataService.getLrEntity(relationship.getTargetEntityType());
+			LrEntity<?> targetEntity = relationship.getTargetEntity();
 			return lastPathComponent(targetEntity, path.substring(dot + 1));
 		}
 

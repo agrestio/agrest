@@ -1,99 +1,92 @@
 package com.nhl.link.rest.runtime.parser.pointer;
 
+import javax.ws.rs.core.Response.Status;
+
 import com.nhl.link.rest.LinkRestException;
 import com.nhl.link.rest.meta.LrAttribute;
 import com.nhl.link.rest.meta.LrEntity;
 import com.nhl.link.rest.meta.LrRelationship;
-import com.nhl.link.rest.runtime.meta.IMetadataService;
-
-import static javax.ws.rs.core.Response.Status;
 
 public class LrPointerService {
 
-    private IMetadataService metadataService;
+	DefaultLrPointerBuilder forEntity(LrEntity<?> entity) {
+		return new DefaultLrPointerBuilder(entity);
+	}
 
-    public LrPointerService(IMetadataService metadataService) {
-        this.metadataService = metadataService;
-    }
+	private class DefaultLrPointerBuilder implements LrPointerBuilder {
 
-    DefaultLrPointerBuilder forEntity(LrEntity<?> entity) {
-        return new DefaultLrPointerBuilder(entity);
-    }
+		private LrEntity<?> currentEntity;
+		private SimplePointer tail;
 
-    private class DefaultLrPointerBuilder implements LrPointerBuilder {
+		private DefaultLrPointerBuilder(LrEntity<?> entity) {
+			this.currentEntity = entity;
+		}
 
-        private LrEntity<?> currentEntity;
-        private SimplePointer tail;
+		@Override
+		public DefaultLrPointerBuilder append(String relationshipName, Object id) {
 
-        private DefaultLrPointerBuilder(LrEntity<?> entity) {
-            this.currentEntity = entity;
-        }
+			ensurePossibleToAddMoreElements();
 
-        @Override
-        public DefaultLrPointerBuilder append(String relationshipName, Object id) {
+			LrRelationship relationship = currentEntity.getRelationship(relationshipName);
+			if (relationship == null) {
+				throw new LinkRestException(Status.BAD_REQUEST,
+						"Unknown relationship '" + relationshipName + "' for '" + currentEntity.getName() + "'");
+			}
 
-            ensurePossibleToAddMoreElements();
+			tail = new RelationshipPointer(tail, currentEntity, relationship, id);
+			currentEntity = relationship.getTargetEntity();
 
-            LrRelationship relationship = currentEntity.getRelationship(relationshipName);
-            if (relationship == null) {
-                throw new LinkRestException(Status.BAD_REQUEST,
-                        "Unknown relationship '" + relationshipName + "' for '" + currentEntity.getName() + "'");
-            }
+			return this;
+		}
 
-            tail = new RelationshipPointer(tail, currentEntity, relationship, id);
-            currentEntity = metadataService.getLrEntity(relationship.getTargetEntityType());
+		@Override
+		public DefaultLrPointerBuilder append(String pathElement) {
 
-            return this;
-        }
+			ensurePossibleToAddMoreElements();
 
-        @Override
-        public DefaultLrPointerBuilder append(String pathElement) {
+			LrAttribute attribute = currentEntity.getAttribute(pathElement);
+			if (attribute != null) {
+				tail = new AttributePointer(tail, currentEntity, attribute);
 
-            ensurePossibleToAddMoreElements();
+			} else {
+				LrRelationship relationship = currentEntity.getRelationship(pathElement);
+				if (relationship != null) {
+					if (relationship.isToMany()) {
+						throw new LinkRestException(Status.BAD_REQUEST,
+								"Invalid pointer element: to-many relationship '" + pathElement
+										+ "' without explicit ID");
+					}
+					tail = new RelationshipPointer(tail, currentEntity, relationship, null);
+					currentEntity = relationship.getTargetEntity();
 
-            LrAttribute attribute = currentEntity.getAttribute(pathElement);
-            if (attribute != null) {
-                tail = new AttributePointer(tail, currentEntity, attribute);
+				} else {
+					tail = new ObjectInstancePointer(tail, currentEntity, pathElement);
+				}
+			}
 
-            } else {
-                LrRelationship relationship = currentEntity.getRelationship(pathElement);
-                if (relationship != null) {
-                    if (relationship.isToMany()) {
-                        throw new LinkRestException(Status.BAD_REQUEST,
-                                "Invalid pointer element: to-many relationship '" + pathElement +
-                                        "' without explicit ID");
-                    }
-                    tail = new RelationshipPointer(tail, currentEntity, relationship, null);
-                    currentEntity = metadataService.getLrEntity(relationship.getTargetEntityType());
+			return this;
+		}
 
-                } else {
-                    tail = new ObjectInstancePointer(tail, currentEntity, pathElement);
-                }
-            }
+		private void ensurePossibleToAddMoreElements() {
 
-            return this;
-        }
+			if (tail != null) {
+				PointerType type = tail.getType();
+				if (type == PointerType.ATTRIBUTE) {
+					throw new LinkRestException(Status.BAD_REQUEST,
+							"Can't add pointer element: last element was attribute");
+				}
+			}
+		}
 
-        private void ensurePossibleToAddMoreElements() {
+		@Override
+		public LrPointer build() {
 
-            if (tail != null) {
-                PointerType type = tail.getType();
-                if (type == PointerType.ATTRIBUTE) {
-                    throw new LinkRestException(Status.BAD_REQUEST,
-                            "Can't add pointer element: last element was attribute");
-                }
-            }
-        }
+			if (tail == null) {
+				throw new IllegalStateException("Can't build an empty pointer");
+			}
 
-        @Override
-        public LrPointer build() {
-
-            if (tail == null) {
-                throw new IllegalStateException("Can't build an empty pointer");
-            }
-
-            return tail;
-        }
-    }
+			return tail;
+		}
+	}
 
 }

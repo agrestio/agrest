@@ -15,7 +15,6 @@ import com.nhl.link.rest.meta.LrAttribute;
 import com.nhl.link.rest.meta.LrEntity;
 import com.nhl.link.rest.meta.LrRelationship;
 import com.nhl.link.rest.runtime.jackson.IJacksonService;
-import com.nhl.link.rest.runtime.meta.IMetadataService;
 import com.nhl.link.rest.runtime.parser.PathConstants;
 import com.nhl.link.rest.runtime.parser.filter.ICayenneExpProcessor;
 import com.nhl.link.rest.runtime.parser.sort.ISortProcessor;
@@ -34,14 +33,11 @@ class IncludeWorker {
 	private IJacksonService jsonParser;
 	private ISortProcessor sortProcessor;
 	private ICayenneExpProcessor expProcessor;
-	private IMetadataService metadataService;
 
-	IncludeWorker(IJacksonService jsonParser, ISortProcessor sortProcessor, ICayenneExpProcessor expProcessor,
-			IMetadataService metadataService) {
+	IncludeWorker(IJacksonService jsonParser, ISortProcessor sortProcessor, ICayenneExpProcessor expProcessor) {
 		this.jsonParser = jsonParser;
 		this.sortProcessor = sortProcessor;
 		this.expProcessor = expProcessor;
-		this.metadataService = metadataService;
 	}
 
 	void process(ResourceEntity<?> resourceEntity, List<String> includes) {
@@ -188,7 +184,7 @@ class IncludeWorker {
 
 			ResourceEntity<?> childEntity = parent.getChild(property);
 			if (childEntity == null) {
-				LrEntity<?> targetType = metadataService.getLrEntity(relationship.getTargetEntityType());
+				LrEntity<?> targetType = relationship.getTargetEntity();
 				childEntity = new ResourceEntity(targetType, relationship);
 				parent.getChildren().put(property, childEntity);
 			}

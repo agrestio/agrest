@@ -38,15 +38,14 @@ public class SenchaRequestParserTest extends TestWithCayenneMapping {
 	@Before
 	public void before() {
 
-		IPathCache pathCache = new PathCache(metadataService);
+		IPathCache pathCache = new PathCache();
 		IJacksonService jacksonService = new JacksonService();
 		ISortProcessor sortProcessor = new SenchaSortProcessor(jacksonService, pathCache);
 
 		ICayenneExpProcessor expProcessor = new CayenneExpProcessor(jacksonService, pathCache);
 		IKeyValueExpProcessor kvExpProcessor = new KeyValueExpProcessor();
 		ISenchaFilterProcessor senchaFilterProcessor = new SenchaFilterProcessor(jacksonService, pathCache);
-		ITreeProcessor treeProcessor = new IncludeExcludeProcessor(jacksonService, sortProcessor, expProcessor,
-				metadataService);
+		ITreeProcessor treeProcessor = new IncludeExcludeProcessor(jacksonService, sortProcessor, expProcessor);
 
 		parser = new SenchaRequestParser(treeProcessor, sortProcessor, expProcessor, kvExpProcessor,
 				senchaFilterProcessor);

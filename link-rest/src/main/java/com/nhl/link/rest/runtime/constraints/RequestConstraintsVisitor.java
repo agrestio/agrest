@@ -13,7 +13,6 @@ import com.nhl.link.rest.constraints.ConstraintsBuilder;
 import com.nhl.link.rest.meta.LrAttribute;
 import com.nhl.link.rest.meta.LrEntity;
 import com.nhl.link.rest.meta.LrRelationship;
-import com.nhl.link.rest.runtime.meta.IMetadataService;
 import com.nhl.link.rest.runtime.parser.PathConstants;
 
 /**
@@ -28,15 +27,13 @@ public class RequestConstraintsVisitor implements ConstraintVisitor {
 	private Map<String, RequestConstraintsVisitor> children;
 	private Expression qualifier;
 	private LrEntity<?> entity;
-	private IMetadataService metadataService;
 
-	RequestConstraintsVisitor(LrEntity<?> entity, IMetadataService metadataService) {
+	RequestConstraintsVisitor(LrEntity<?> entity) {
 
 		if (entity == null) {
 			throw new NullPointerException("Null entity");
 		}
 
-		this.metadataService = metadataService;
 		this.idIncluded = false;
 		this.entity = entity;
 		this.children = new HashMap<>();
@@ -159,8 +156,8 @@ public class RequestConstraintsVisitor implements ConstraintVisitor {
 
 		RequestConstraintsVisitor child = parent.getChild(relationship.getName());
 		if (child == null) {
-			LrEntity<?> targetEntity = metadataService.getLrEntity(relationship.getTargetEntityType());
-			child = new RequestConstraintsVisitor(targetEntity, metadataService);
+			LrEntity<?> targetEntity = relationship.getTargetEntity();
+			child = new RequestConstraintsVisitor(targetEntity);
 			parent.children.put(relationship.getName(), child);
 		}
 

@@ -21,7 +21,7 @@ public class PointerTest extends TestWithCayenneMapping {
 
     @Before
     public void setUp() {
-        pointerService = new LrPointerService(metadataService);
+        pointerService = new LrPointerService();
         jacksonService = new JacksonService();
     }
 

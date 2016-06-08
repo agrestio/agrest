@@ -8,7 +8,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.nhl.link.rest.meta.LrEntity;
-import com.nhl.link.rest.runtime.meta.IMetadataService;
 
 public class RequestConstraintsVisitorTest {
 
@@ -17,8 +16,7 @@ public class RequestConstraintsVisitorTest {
 	@Before
 	public void before() {
 		LrEntity<?> entity = mock(LrEntity.class);
-		IMetadataService metadataService = mock(IMetadataService.class);
-		visitor = new RequestConstraintsVisitor(entity, metadataService);
+		visitor = new RequestConstraintsVisitor(entity);
 	}
 
 	@Test

@@ -19,7 +19,6 @@ import com.nhl.link.rest.constraints.ConstraintsBuilder;
 import com.nhl.link.rest.it.fixture.cayenne.E1;
 import com.nhl.link.rest.it.fixture.cayenne.E2;
 import com.nhl.link.rest.meta.LrPersistentEntity;
-import com.nhl.link.rest.runtime.meta.IMetadataService;
 import com.nhl.link.rest.unit.TestWithCayenneMapping;
 
 public class ConstraintsHandlerWithDefaultsTest extends TestWithCayenneMapping {
@@ -53,8 +52,7 @@ public class ConstraintsHandlerWithDefaultsTest extends TestWithCayenneMapping {
 		when(lre2.getType()).thenReturn(E2.class);
 		when(lre2.getName()).thenReturn(e2.getName());
 
-		IMetadataService mockMDService = mock(IMetadataService.class);
-		this.constraintHandler = new ConstraintsHandler(r, w, mockMDService);
+		this.constraintHandler = new ConstraintsHandler(r, w);
 	}
 
 	@Test

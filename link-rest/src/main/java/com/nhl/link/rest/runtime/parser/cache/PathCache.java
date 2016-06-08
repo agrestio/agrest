@@ -3,23 +3,19 @@ package com.nhl.link.rest.runtime.parser.cache;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
-import org.apache.cayenne.di.Inject;
 import org.apache.cayenne.exp.parser.ASTObjPath;
 
 import com.nhl.link.rest.meta.LrEntity;
-import com.nhl.link.rest.runtime.meta.IMetadataService;
 
 /**
  * @since 1.5
  */
 public class PathCache implements IPathCache {
 
-	private IMetadataService metadataService;
 	private ConcurrentMap<String, EntityPathCache> pathCacheByEntity;
 
-	public PathCache(@Inject IMetadataService metadataService) {
+	public PathCache() {
 		this.pathCacheByEntity = new ConcurrentHashMap<String, EntityPathCache>();
-		this.metadataService = metadataService;
 	}
 
 	@Override
@@ -34,7 +30,7 @@ public class PathCache implements IPathCache {
 			return pathCache;
 		}
 
-		pathCache = new EntityPathCache(entity, metadataService);
+		pathCache = new EntityPathCache(entity);
 		EntityPathCache previousCache = pathCacheByEntity.putIfAbsent(entity.getName(), pathCache);
 		if (previousCache != null) {
 			pathCache = previousCache;

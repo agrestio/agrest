@@ -51,7 +51,7 @@ public class CayenneUnrelateStage<T> extends BaseLinearProcessingStage<UnrelateC
 		DataObject parent = (DataObject) getExistingObject(context.getParent().getType(), cayenneContext, context
 				.getParent().getId().get());
 
-		Class<?> childType = metadataService.getLrEntity(relationship.getTargetEntityType()).getType();
+		Class<?> childType = relationship.getTargetEntity().getType();
 
 		// among other things this call checks that the target exists
 		DataObject child = (DataObject) getExistingObject(childType, cayenneContext, context.getId());

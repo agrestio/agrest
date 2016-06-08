@@ -13,7 +13,6 @@ import java.util.TreeMap;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
-import com.nhl.link.rest.meta.LrPersistentEntity;
 import org.apache.cayenne.DataObject;
 
 import com.nhl.link.rest.EntityProperty;
@@ -30,9 +29,9 @@ import com.nhl.link.rest.encoder.IdEncoder;
 import com.nhl.link.rest.meta.LrAttribute;
 import com.nhl.link.rest.meta.LrEntity;
 import com.nhl.link.rest.meta.LrPersistentAttribute;
+import com.nhl.link.rest.meta.LrPersistentEntity;
 import com.nhl.link.rest.meta.LrPersistentRelationship;
 import com.nhl.link.rest.meta.LrRelationship;
-import com.nhl.link.rest.meta.cayenne.CayenneLrEntity;
 import com.nhl.link.rest.property.BeanPropertyReader;
 import com.nhl.link.rest.property.IdPropertyReader;
 import com.nhl.link.rest.property.PropertyBuilder;

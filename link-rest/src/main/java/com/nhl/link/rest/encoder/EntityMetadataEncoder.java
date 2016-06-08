@@ -96,7 +96,7 @@ public class EntityMetadataEncoder extends AbstractEncoder {
 
         @Override
         Class<?> getType() {
-            return relationship.getTargetEntityType();
+            return relationship.getTargetEntity().getType();
         }
 
         @Override

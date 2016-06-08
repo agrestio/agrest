@@ -32,7 +32,6 @@ import com.nhl.link.rest.it.fixture.cayenne.E5;
 import com.nhl.link.rest.meta.DefaultLrAttribute;
 import com.nhl.link.rest.meta.LrEntity;
 import com.nhl.link.rest.meta.LrRelationship;
-import com.nhl.link.rest.runtime.meta.IMetadataService;
 
 public class ConstraintsHandlerTest {
 
@@ -54,20 +53,20 @@ public class ConstraintsHandlerTest {
 		LrRelationship r1 = mock(LrRelationship.class);
 		when(lre0.getRelationship("r1")).thenReturn(r1);
 		when(r1.getName()).thenReturn("r1");
-		when(r1.getTargetEntityType()).then(new Answer<Object>() {
+		when(r1.getTargetEntity()).then(new Answer<LrEntity<?>>() {
 			@Override
-			public Object answer(InvocationOnMock invocation) throws Throwable {
-				return E2.class;
+			public LrEntity<?> answer(InvocationOnMock invocation) throws Throwable {
+				return lre1;
 			}
 		});
 
 		LrRelationship r2 = mock(LrRelationship.class);
 		when(lre0.getRelationship("r2")).thenReturn(r2);
 		when(r2.getName()).thenReturn("r2");
-		when(r2.getTargetEntityType()).then(new Answer<Object>() {
+		when(r2.getTargetEntity()).then(new Answer<Object>() {
 			@Override
 			public Object answer(InvocationOnMock invocation) throws Throwable {
-				return E4.class;
+				return lre3;
 			}
 		});
 
@@ -78,10 +77,10 @@ public class ConstraintsHandlerTest {
 		LrRelationship r11 = mock(LrRelationship.class);
 		when(lre1.getRelationship("r11")).thenReturn(r11);
 		when(r11.getName()).thenReturn("r11");
-		when(r11.getTargetEntityType()).then(new Answer<Object>() {
+		when(r11.getTargetEntity()).then(new Answer<Object>() {
 			@Override
 			public Object answer(InvocationOnMock invocation) throws Throwable {
-				return E3.class;
+				return lre2;
 			}
 		});
 
@@ -97,16 +96,9 @@ public class ConstraintsHandlerTest {
 		when(lre4.getName()).thenReturn("E5");
 		when(lre4.getType()).thenReturn(E5.class);
 
-		IMetadataService mockMDService = mock(IMetadataService.class);
-		when(mockMDService.getLrEntity(E1.class)).thenReturn(lre0);
-		when(mockMDService.getLrEntity(E2.class)).thenReturn(lre1);
-		when(mockMDService.getLrEntity(E3.class)).thenReturn(lre2);
-		when(mockMDService.getLrEntity(E4.class)).thenReturn(lre3);
-		when(mockMDService.getLrEntity(E5.class)).thenReturn(lre4);
-
 		List<EntityConstraint> r = Collections.emptyList();
 		List<EntityConstraint> w = Collections.emptyList();
-		this.constraintHandler = new ConstraintsHandler(r, w, mockMDService);
+		this.constraintHandler = new ConstraintsHandler(r, w);
 	}
 
 	@Test

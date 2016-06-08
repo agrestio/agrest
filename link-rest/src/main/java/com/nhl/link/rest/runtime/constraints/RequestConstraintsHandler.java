@@ -14,7 +14,6 @@ import com.nhl.link.rest.ResourceEntity;
 import com.nhl.link.rest.constraints.ConstraintsBuilder;
 import com.nhl.link.rest.meta.LrAttribute;
 import com.nhl.link.rest.meta.LrEntity;
-import com.nhl.link.rest.runtime.meta.IMetadataService;
 import com.nhl.link.rest.runtime.parser.PathConstants;
 import com.nhl.link.rest.runtime.processor.update.UpdateContext;
 
@@ -25,10 +24,7 @@ class RequestConstraintsHandler {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(RequestConstraintsHandler.class);
 
-	private IMetadataService metadataService;
-
-	RequestConstraintsHandler(IMetadataService metadataService) {
-		this.metadataService = metadataService;
+	RequestConstraintsHandler() {
 	}
 
 	<T> boolean constrainResponse(ResourceEntity<T> resourceEntity, ConstraintsBuilder<T> c) {
@@ -62,7 +58,7 @@ class RequestConstraintsHandler {
 	}
 
 	private RequestConstraintsVisitor extract(LrEntity<?> entity, ConstraintsBuilder<?> c) {
-		RequestConstraintsVisitor constraintVisitor = new RequestConstraintsVisitor(entity, metadataService);
+		RequestConstraintsVisitor constraintVisitor = new RequestConstraintsVisitor(entity);
 		c.accept(constraintVisitor);
 		return constraintVisitor;
 	}

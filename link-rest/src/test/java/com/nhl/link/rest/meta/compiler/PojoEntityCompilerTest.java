@@ -2,19 +2,18 @@ package com.nhl.link.rest.meta.compiler;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
-import com.nhl.link.rest.meta.LazyLrDataMap;
+import java.util.ArrayList;
+import java.util.Collection;
+
 import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.nhl.link.rest.annotation.LrAttribute;
 import com.nhl.link.rest.annotation.LrId;
+import com.nhl.link.rest.meta.LazyLrDataMap;
 import com.nhl.link.rest.meta.LrEntity;
-
-import java.util.ArrayList;
-import java.util.Collection;
 
 public class PojoEntityCompilerTest {
 

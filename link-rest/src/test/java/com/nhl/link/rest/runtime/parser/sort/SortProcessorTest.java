@@ -27,7 +27,7 @@ public class SortProcessorTest extends TestWithCayenneMapping {
 	@Before
 	public void before() {
 		JacksonService jacksonService = new JacksonService();
-		this.processor = new SortWorker(jacksonService, new PathCache(metadataService));
+		this.processor = new SortWorker(jacksonService, new PathCache());
 
 		@SuppressWarnings("unchecked")
 		LrEntity<E2> lre2 = mock(LrEntity.class);
