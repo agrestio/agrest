@@ -9,9 +9,9 @@ import com.nhl.link.rest.runtime.ILinkRestService;
 import com.nhl.link.rest.runtime.LinkRestBuilder;
 
 public abstract class EncoderITBase {
-	
+
 	@ClassRule
-	public static CayenneDerbyStack DB = new CayenneDerbyStack();
+	public static CayenneDerbyStack DB = new CayenneDerbyStack("derby-for-encoder");
 
 	@Rule
 	public DbCleaner dbCleaner = new DbCleaner(DB.newContext());

@@ -17,17 +17,22 @@ public class CayenneDerbyStack extends ExternalResource {
 
 	private ServerRuntime cayenne;
 	private DerbyManager derby;
+	private String dbPath;
+
+	public CayenneDerbyStack(String dbName) {
+		this.dbPath = "target/" + dbPath;
+	}
 
 	@Override
 	public void before() {
-		derby = new DerbyManager("target/test-on-derby");
+		derby = new DerbyManager(dbPath);
 
 		cayenne = new ServerRuntimeBuilder().addConfig("cayenne-linkrest-tests.xml").addModule(new Module() {
 			@Override
 			public void configure(Binder binder) {
 				binder.bind(SchemaUpdateStrategy.class).to(CreateIfNoSchemaStrategy.class);
 			}
-		}).jdbcDriver("org.apache.derby.jdbc.EmbeddedDriver").url("jdbc:derby:target/test-on-derby;create=true")
+		}).jdbcDriver("org.apache.derby.jdbc.EmbeddedDriver").url(String.format("jdbc:derby:%s;create=true", dbPath))
 				.build();
 	}
 
@@ -52,7 +57,7 @@ public class CayenneDerbyStack extends ExternalResource {
 		Integer result = SQLSelect.scalarQuery(Integer.class, querySql).selectOne(newContext());
 		return result != null ? result : -1;
 	}
-	
+
 	public String stringForQuery(String querySql) {
 		return SQLSelect.scalarQuery(String.class, querySql).selectOne(newContext());
 	}

@@ -113,6 +113,11 @@ public class MultiSelectBuilder<T> {
 	}
 
 	public <U> MultiSelectBuilder<T> afterParent(BiFunction<List<T>, ResourceEntity<T>, U> fetcher,
+			BiConsumer<List<T>, U> merger) {
+		return afterParent(fetcher, merger, Integer.MAX_VALUE);
+	}
+
+	public <U> MultiSelectBuilder<T> afterParent(BiFunction<List<T>, ResourceEntity<T>, U> fetcher,
 			BiConsumer<List<T>, U> merger, int parentBatchSize) {
 		return afterParent("", fetcher, merger, parentBatchSize);
 	}
@@ -151,6 +156,10 @@ public class MultiSelectBuilder<T> {
 	public <U, P> MultiSelectBuilder<T> afterParent(String pathToParents, Function<List<P>, U> fetcher,
 			BiConsumer<List<P>, U> merger) {
 		return afterParent(pathToParents, fetcher, merger, Integer.MAX_VALUE);
+	}
+
+	public <U> MultiSelectBuilder<T> afterParent(Function<List<T>, U> fetcher, BiConsumer<List<T>, U> merger) {
+		return afterParent(fetcher, merger, Integer.MAX_VALUE);
 	}
 
 	public <U> MultiSelectBuilder<T> afterParent(Function<List<T>, U> fetcher, BiConsumer<List<T>, U> merger,

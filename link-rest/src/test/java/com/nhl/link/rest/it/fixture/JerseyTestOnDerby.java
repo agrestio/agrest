@@ -19,6 +19,7 @@ import org.junit.ClassRule;
 import org.junit.Rule;
 
 import com.nhl.link.rest.runtime.LinkRestBuilder;
+import com.nhl.link.rest.runtime.LinkRestRuntime;
 
 /**
  * A main superclass of LinkRest unit tests that require full stack Jersey
@@ -27,7 +28,7 @@ import com.nhl.link.rest.runtime.LinkRestBuilder;
 public abstract class JerseyTestOnDerby extends JerseyTest {
 
 	@ClassRule
-	public static CayenneDerbyStack DB_STACK = new CayenneDerbyStack();
+	public static CayenneDerbyStack DB_STACK = new CayenneDerbyStack("derby-for-jersey");
 
 	@Rule
 	public DbCleaner dbCleaner = new DbCleaner(DB_STACK.newContext());
@@ -51,7 +52,7 @@ public abstract class JerseyTestOnDerby extends JerseyTest {
 	@Override
 	public Application configure() {
 
-		Feature lrFeature = doConfigure().build();
+		LinkRestRuntime lrFeature = doConfigure().build();
 
 		Feature unitFeature = new Feature() {
 
