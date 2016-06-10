@@ -1,37 +1,37 @@
 package com.nhl.link.rest.it.noadapter;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
-import java.io.IOException;
-import java.net.URLEncoder;
-import java.sql.Time;
-import java.util.Collections;
+import com.nhl.link.rest.it.fixture.JerseyTestOnDerby;
+import com.nhl.link.rest.it.fixture.cayenne.E17;
+import com.nhl.link.rest.it.fixture.cayenne.E19;
+import com.nhl.link.rest.it.fixture.cayenne.E2;
+import com.nhl.link.rest.it.fixture.cayenne.E3;
+import com.nhl.link.rest.it.fixture.cayenne.E4;
+import com.nhl.link.rest.it.fixture.resource.E17Resource;
+import com.nhl.link.rest.it.fixture.resource.E19Resource;
+import com.nhl.link.rest.it.fixture.resource.E2Resource;
+import com.nhl.link.rest.it.fixture.resource.E3Resource;
+import com.nhl.link.rest.it.fixture.resource.E4Resource;
+import com.nhl.link.rest.it.fixture.resource.E6Resource;
+import com.nhl.link.rest.parser.converter.UtcDateConverter;
+import org.apache.cayenne.Cayenne;
+import org.apache.cayenne.ObjectContext;
+import org.apache.cayenne.query.SQLTemplate;
+import org.junit.Test;
 
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.FeatureContext;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
+import java.io.IOException;
+import java.net.URLEncoder;
+import java.sql.Time;
+import java.time.Instant;
+import java.time.LocalTime;
+import java.util.Collections;
+import java.util.Date;
 
-import com.nhl.link.rest.it.fixture.cayenne.E17;
-import com.nhl.link.rest.it.fixture.cayenne.E19;
-import com.nhl.link.rest.it.fixture.resource.E17Resource;
-import com.nhl.link.rest.it.fixture.resource.E19Resource;
-import org.apache.cayenne.Cayenne;
-import org.apache.cayenne.ObjectContext;
-import org.apache.cayenne.query.SQLTemplate;
-import org.joda.time.DateTime;
-import org.joda.time.LocalTime;
-import org.junit.Test;
-
-import com.nhl.link.rest.it.fixture.JerseyTestOnDerby;
-import com.nhl.link.rest.it.fixture.cayenne.E2;
-import com.nhl.link.rest.it.fixture.cayenne.E3;
-import com.nhl.link.rest.it.fixture.cayenne.E4;
-import com.nhl.link.rest.it.fixture.resource.E2Resource;
-import com.nhl.link.rest.it.fixture.resource.E3Resource;
-import com.nhl.link.rest.it.fixture.resource.E4Resource;
-import com.nhl.link.rest.it.fixture.resource.E6Resource;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class GET_IT extends JerseyTestOnDerby {
 
@@ -62,11 +62,11 @@ public class GET_IT extends JerseyTestOnDerby {
 	@Test
 	public void testDateTime() throws WebApplicationException, IOException {
 
-		DateTime ts = new DateTime("2012-02-03T11:01:02Z");
+		Date date = Date.from(Instant.from(UtcDateConverter.dateParser().fromString("2012-02-03T11:01:02Z")));
 
 		SQLTemplate insert = new SQLTemplate(E4.class,
 				"INSERT INTO utest.e4 (c_timestamp) values (#bind($ts 'TIMESTAMP'))");
-		insert.setParams(Collections.singletonMap("ts", ts.toDate()));
+		insert.setParams(Collections.singletonMap("ts", date));
 		newContext().performGenericQuery(insert);
 
 		Response response1 = target("/e4").queryParam("include", E4.C_TIMESTAMP.getName()).request().get();
@@ -79,10 +79,10 @@ public class GET_IT extends JerseyTestOnDerby {
 	@Test
 	public void testDate() throws WebApplicationException, IOException {
 
-		DateTime date = new DateTime("2012-02-03");
+		Date date = Date.from(Instant.from(UtcDateConverter.dateParser().fromString("2012-02-03")));
 
 		SQLTemplate insert = new SQLTemplate(E4.class, "INSERT INTO utest.e4 (c_date) values (#bind($date 'DATE'))");
-		insert.setParams(Collections.singletonMap("date", date.toDate()));
+		insert.setParams(Collections.singletonMap("date", date));
 		newContext().performGenericQuery(insert);
 
 		Response response1 = target("/e4").queryParam("include", E4.C_DATE.getName()).request().get();
@@ -95,10 +95,10 @@ public class GET_IT extends JerseyTestOnDerby {
 	@Test
 	public void testTime() throws WebApplicationException, IOException {
 
-		LocalTime lt = new LocalTime(14, 0, 1);
+		LocalTime lt = LocalTime.of(14, 0, 1);
 
 		// "14:00:01"
-		Time time = new Time(lt.toDateTimeToday().getMillis());
+		Time time = Time.valueOf(lt);
 
 		SQLTemplate insert = new SQLTemplate(E4.class, "INSERT INTO utest.e4 (c_time) values (#bind($time 'TIME'))");
 		insert.setParams(Collections.singletonMap("time", time));
@@ -406,5 +406,4 @@ public class GET_IT extends JerseyTestOnDerby {
 		assertEquals("{\"data\":[{\"guid\":\"c29tZVZhbHVlMTIz\"}],\"total\":1}",
 				response1.readEntity(String.class));
 	}
-
 }

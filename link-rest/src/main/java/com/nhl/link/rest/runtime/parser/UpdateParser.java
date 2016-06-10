@@ -234,7 +234,7 @@ public class UpdateParser implements IUpdateParser {
 			return converter.value(valueNode);
 		} catch (Exception e) {
 			throw new LinkRestException(Status.BAD_REQUEST,
-					"Incorrectly formatted value: '" + valueNode.asText() + "'");
+					"Incorrectly formatted value: '" + valueNode.asText() + "'", e);
 		}
 	}
 
@@ -246,7 +246,7 @@ public class UpdateParser implements IUpdateParser {
 			return converter.value(valueNode);
 		} catch (Exception e) {
 			throw new LinkRestException(Status.BAD_REQUEST,
-					"Incorrectly formatted value: '" + valueNode.asText() + "'");
+					"Incorrectly formatted value: '" + valueNode.asText() + "'", e);
 		}
 	}
 
