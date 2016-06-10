@@ -54,6 +54,7 @@ public class UtcDateConverter extends AbstractConverter {
 		Temporal temporal = ISODateParser.parser().fromString(node.asText());
 
 		GregorianCalendar calendar = new GregorianCalendar();
+		calendar.setTimeInMillis(0);
 
 		ZoneId zone = temporal.query(TemporalQueries.zone());
 		if (zone != null) {
