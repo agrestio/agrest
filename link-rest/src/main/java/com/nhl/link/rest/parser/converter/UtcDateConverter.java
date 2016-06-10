@@ -33,7 +33,7 @@ public class UtcDateConverter extends AbstractConverter {
                 .appendOptional(new DateTimeFormatterBuilder().append(DateTimeFormatter.ISO_LOCAL_TIME).toFormatter())
                 .appendOptional(new DateTimeFormatterBuilder().appendZoneOrOffsetId().toFormatter())
 				.appendOptional(new DateTimeFormatterBuilder().appendLiteral('[').parseCaseSensitive()
-						.appendZoneRegionId().appendLiteral(']').toFormatter()).toFormatter().withZone(ZoneOffset.UTC);
+						.appendZoneRegionId().appendLiteral(']').toFormatter()).toFormatter().withZone(ZoneId.systemDefault());
 	}
 
 	public static JsonValueConverter converter() {
