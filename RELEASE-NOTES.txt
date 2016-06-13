@@ -10,6 +10,7 @@ Release 2.0
 #185 Store information about the target entity in LrRelationship
 #188 ExecutorService service 
 #189 Shutdown service and API
+#190 "mapBy" breaks on POJOs
 
 Release 1.24
 
