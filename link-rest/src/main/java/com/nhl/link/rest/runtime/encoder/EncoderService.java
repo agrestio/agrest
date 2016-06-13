@@ -73,7 +73,7 @@ public class EncoderService implements IEncoderService {
 		}
 
 		return isMapBy? new MapByEncoder(entity.getMapByPath(), null, entity.getMapBy(),
-				rootEncoder, stringConverterFactory).withTotal("total") : rootEncoder;
+				rootEncoder, stringConverterFactory, attributeEncoderFactory).withTotal("total") : rootEncoder;
 	}
 
 	private Encoder nestedToManyEncoder(ResourceEntity<?> resourceEntity) {
@@ -93,7 +93,7 @@ public class EncoderService implements IEncoderService {
 		}
 
 		return isMapBy ? new MapByEncoder(resourceEntity.getMapByPath(), resourceEntity.getQualifier(),
-				resourceEntity.getMapBy(), listEncoder, stringConverterFactory) : listEncoder;
+				resourceEntity.getMapBy(), listEncoder, stringConverterFactory, attributeEncoderFactory) : listEncoder;
 	}
 
 	private Encoder collectionElementEncoder(ResourceEntity<?> resourceEntity) {

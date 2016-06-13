@@ -84,4 +84,20 @@ public class PojoLinkRestService_InContainer_GET_IT extends JerseyTestOnPojo {
 		assertEquals("{\"data\":[{\"name\":\"n1\"}," + "{\"name\":\"n2\"}],\"total\":2}",
 				response1.readEntity(String.class));
 	}
+
+	@Test
+	public void test_SelectAll_MapBy() {
+
+		P1 o1 = new P1();
+		o1.setName("n2");
+		P1 o2 = new P1();
+		o2.setName("n1");
+		pojoDB.bucketForType(P1.class).put("o1id", o1);
+		pojoDB.bucketForType(P1.class).put("o2id", o2);
+
+		Response response1 = target("/pojo/p1").queryParam("mapBy", "name").request().get();
+		assertEquals(Status.OK.getStatusCode(), response1.getStatus());
+		assertEquals("{\"data\":{\"n1\":[{\"name\":\"n1\"}],\"n2\":[{\"name\":\"n2\"}]},\"total\":2}",
+				response1.readEntity(String.class));
+	}
 }

@@ -25,6 +25,11 @@ public class PropertyBuilder implements EntityProperty {
 			}
 
 			@Override
+			public Object read(Object root, String propertyName) {
+				return null;
+			}
+
+			@Override
 			public int visit(Object root, String propertyName, EncoderVisitor visitor) {
 				return Encoder.VISIT_CONTINUE;
 			}
@@ -62,13 +67,18 @@ public class PropertyBuilder implements EntityProperty {
 
 	@Override
 	public void encode(Object root, String propertyName, JsonGenerator out) throws IOException {
-		Object value = root == null ? null : reader.value(root, propertyName);
+		Object value = root == null ? null : read(root, propertyName);
 		encoder.encode(propertyName, value, out);
 	}
 
 	@Override
+	public Object read(Object root, String propertyName) {
+		return reader.value(root, propertyName);
+	}
+
+	@Override
 	public int visit(Object root, String propertyName, EncoderVisitor visitor) {
-		Object value = root == null ? null : reader.value(root, propertyName);
+		Object value = root == null ? null : read(root, propertyName);
 		return encoder.visitEntities(value, visitor);
 	}
 }

@@ -1,5 +1,17 @@
 package com.nhl.link.rest.encoder;
 
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.nhl.link.rest.EntityProperty;
+import com.nhl.link.rest.LinkRestException;
+import com.nhl.link.rest.ResourceEntity;
+import com.nhl.link.rest.encoder.converter.StringConverter;
+import com.nhl.link.rest.meta.LrAttribute;
+import com.nhl.link.rest.meta.LrRelationship;
+import com.nhl.link.rest.runtime.encoder.IAttributeEncoderFactory;
+import com.nhl.link.rest.runtime.encoder.IStringConverterFactory;
+import org.apache.cayenne.exp.Expression;
+
+import javax.ws.rs.core.Response.Status;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -7,31 +19,21 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-
-import javax.ws.rs.core.Response.Status;
-
-import org.apache.cayenne.Cayenne;
-import org.apache.cayenne.DataObject;
-import org.apache.cayenne.exp.Expression;
-
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.nhl.link.rest.ResourceEntity;
-import com.nhl.link.rest.LinkRestException;
-import com.nhl.link.rest.encoder.converter.StringConverter;
-import com.nhl.link.rest.runtime.encoder.IStringConverterFactory;
+import java.util.function.Function;
 
 public class MapByEncoder extends AbstractEncoder {
 
 	private String mapByPath;
-	private List<PropertyReader> mapByReaders;
+	private List<Function<Object, ?>> mapByReaders;
 	private ListEncoder listEncoder;
+	private boolean byId;
 	private StringConverter fieldNameConverter;
 	private Expression filter;
 
 	private String totalKey;
 
 	public MapByEncoder(String mapByPath, Expression filter, ResourceEntity<?> mapBy, ListEncoder listEncoder,
-			IStringConverterFactory converterFactory) {
+						IStringConverterFactory converterFactory, IAttributeEncoderFactory encoderFactory) {
 
 		if (mapBy == null) {
 			throw new NullPointerException("Null mapBy");
@@ -42,7 +44,7 @@ public class MapByEncoder extends AbstractEncoder {
 		this.listEncoder = listEncoder;
 		this.filter = filter;
 
-		config(converterFactory, mapBy);
+		config(converterFactory, encoderFactory, mapBy);
 	}
 	
 	/**
@@ -62,11 +64,13 @@ public class MapByEncoder extends AbstractEncoder {
 		return this;
 	}
 
-	private void config(IStringConverterFactory converterFactory, ResourceEntity<?> mapBy) {
+	private void config(IStringConverterFactory converterFactory, IAttributeEncoderFactory encoderFactory,
+						ResourceEntity<?> mapBy) {
 
 		if (mapBy.isIdIncluded()) {
 			validateLeafMapBy(mapBy);
-			this.mapByReaders.add(IdReader.idReader);
+			byId = true;
+			this.mapByReaders.add(getPropertyReader(null, encoderFactory.getIdProperty(mapBy)));
 			this.fieldNameConverter = converterFactory.getConverter(mapBy.getLrEntity());
 			return;
 		}
@@ -74,40 +78,33 @@ public class MapByEncoder extends AbstractEncoder {
 		if (!mapBy.getAttributes().isEmpty()) {
 
 			validateLeafMapBy(mapBy);
+			byId = false;
 
-			final String property = mapBy.getAttributes().keySet().iterator().next();
+			Map.Entry<String, LrAttribute> attribute = mapBy.getAttributes().entrySet().iterator().next();
+			mapByReaders.add(getPropertyReader(attribute.getKey(),
+					encoderFactory.getAttributeProperty(mapBy.getLrEntity(), attribute.getValue())));
 
-			this.mapByReaders.add(new PropertyReader() {
-
-				@Override
-				Object get(DataObject object) {
-					return object.readProperty(property);
-				}
-			});
-
-			this.fieldNameConverter = converterFactory.getConverter(mapBy.getLrEntity(), property);
+			this.fieldNameConverter = converterFactory.getConverter(mapBy.getLrEntity(), attribute.getKey());
 			return;
 		}
 
 		if (!mapBy.getChildren().isEmpty()) {
 
-			final String property = mapBy.getChildren().keySet().iterator().next();
+			byId = false;
 
-			this.mapByReaders.add(new PropertyReader() {
+			Map.Entry<String, ResourceEntity<?>> child = mapBy.getChildren().entrySet().iterator().next();
+			LrRelationship relationship = child.getValue().getLrEntity().getRelationship(child.getKey());
+			mapByReaders.add(getPropertyReader(child.getKey(),
+					encoderFactory.getRelationshipProperty(mapBy.getLrEntity(), relationship, null)));
 
-				@Override
-				Object get(DataObject object) {
-					return object.readProperty(property);
-				}
-			});
-
-			ResourceEntity<?> childMapBy = mapBy.getChildren().get(property);
-			config(converterFactory, childMapBy);
+			ResourceEntity<?> childMapBy = mapBy.getChildren().get(child.getKey());
+			config(converterFactory, encoderFactory, childMapBy);
 			return;
 		}
 
 		// by default we are dealing with ID
-		mapByReaders.add(IdReader.idReader);
+		byId = true;
+		mapByReaders.add(getPropertyReader(null, encoderFactory.getIdProperty(mapBy)));
 	}
 
 	private void validateLeafMapBy(ResourceEntity<?> mapBy) {
@@ -126,14 +123,14 @@ public class MapByEncoder extends AbstractEncoder {
 	protected boolean encodeNonNullObject(Object object, JsonGenerator out) throws IOException {
 
 		@SuppressWarnings({ "rawtypes", "unchecked" })
-		List<DataObject> objects = (List) object;
+		List<?> objects = (List) object;
 
-		Map<String, List<DataObject>> map = mapBy(objects);
+		Map<String, List<Object>> map = mapBy(objects);
 
 		out.writeStartObject();
 
 		int total = 0;
-		for (Entry<String, List<DataObject>> e : map.entrySet()) {
+		for (Entry<String, List<Object>> e : map.entrySet()) {
 			out.writeFieldName(e.getKey());
 			total += listEncoder.encodeAndGetTotal(null, e.getValue(), out);
 		}
@@ -147,25 +144,21 @@ public class MapByEncoder extends AbstractEncoder {
 		return true;
 	}
 
-	private Object mapByValue(DataObject object) {
+	private Object mapByValue(Object object) {
 		Object result = object;
 
-		for (PropertyReader reader : mapByReaders) {
+		for (Function<Object, ?> reader : mapByReaders) {
 			if (result == null) {
 				break;
 			}
 
-			if (result instanceof DataObject) {
-				result = reader.get((DataObject) result);
-			} else {
-				throw new LinkRestException(Status.BAD_REQUEST, "Invalid 'mapBy' path: " + mapByPath);
-			}
+			result = reader.apply(result);
 		}
 
 		return result;
 	}
 
-	private Map<String, List<DataObject>> mapBy(List<DataObject> objects) {
+	private Map<String, List<Object>> mapBy(List<?> objects) {
 
 		if (objects.isEmpty()) {
 			return Collections.emptyMap();
@@ -173,9 +166,9 @@ public class MapByEncoder extends AbstractEncoder {
 
 		// though the map is unsorted, it is still in predictable iteration
 		// order...
-		Map<String, List<DataObject>> map = new LinkedHashMap<String, List<DataObject>>();
+		Map<String, List<Object>> map = new LinkedHashMap<>();
 
-		for (DataObject o : objects) {
+		for (Object o : objects) {
 
 			// filter objects even before we apply mapping...
 			if (filter != null && !filter.match(o)) {
@@ -183,18 +176,23 @@ public class MapByEncoder extends AbstractEncoder {
 			}
 
 			Object key = mapByValue(o);
+			if (byId) {
+				@SuppressWarnings("unchecked")
+				Map<String, Object> id = (Map<String, Object>) key;
+				key = id.entrySet().iterator().next().getValue();
+			}
 
 			// disallow nulls as JSON keys...
 			// note that converter below will throw an NPE if we pass NULL
 			// further down... the error here has more context.
 			if (key == null) {
 				throw new LinkRestException(Status.INTERNAL_SERVER_ERROR, "Null mapBy value for key '" + mapByPath
-						+ "' and object '" + o.getObjectId() + "'");
+						+ "' and object '" + /*o.getObjectId()*/"" + "'");
 			}
 
 			String keyString = fieldNameConverter.asString(key);
 
-			List<DataObject> list = map.get(keyString);
+			List<Object> list = map.get(keyString);
 			if (list == null) {
 				list = new ArrayList<>();
 				map.put(keyString, list);
@@ -206,17 +204,7 @@ public class MapByEncoder extends AbstractEncoder {
 		return map;
 	}
 
-	private static abstract class PropertyReader {
-		abstract Object get(DataObject object);
-	}
-
-	private static final class IdReader extends PropertyReader {
-
-		static PropertyReader idReader = new IdReader();
-
-		@Override
-		Object get(DataObject object) {
-			return Cayenne.intPKForObject(object);
-		}
+	private static Function<Object, ?> getPropertyReader(String propertyName, EntityProperty property) {
+		return it -> property.read(it, propertyName);
 	}
 }

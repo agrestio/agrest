@@ -20,6 +20,11 @@ public interface EntityProperty {
 	void encode(Object root, String propertyName, JsonGenerator out) throws IOException;
 
 	/**
+     * @since 2.0
+     */
+	Object read(Object root, String propertyName);
+
+	/**
 	 * A graph traversal method that recursively visits all graph nodes that
 	 * will be encoded with this encoder.
 	 * 
