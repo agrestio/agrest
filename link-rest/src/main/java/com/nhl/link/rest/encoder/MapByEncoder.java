@@ -23,188 +23,187 @@ import java.util.function.Function;
 
 public class MapByEncoder extends AbstractEncoder {
 
-	private String mapByPath;
-	private List<Function<Object, ?>> mapByReaders;
-	private ListEncoder listEncoder;
-	private boolean byId;
-	private StringConverter fieldNameConverter;
-	private Expression filter;
+    private String mapByPath;
+    private List<Function<Object, ?>> mapByReaders;
+    private ListEncoder listEncoder;
+    private boolean byId;
+    private StringConverter fieldNameConverter;
+    private Expression filter;
 
-	private String totalKey;
+    private String totalKey;
 
-	public MapByEncoder(String mapByPath, Expression filter, ResourceEntity<?> mapBy, ListEncoder listEncoder,
-						IStringConverterFactory converterFactory, IAttributeEncoderFactory encoderFactory) {
+    public MapByEncoder(String mapByPath, Expression filter, ResourceEntity<?> mapBy, ListEncoder listEncoder,
+                        IStringConverterFactory converterFactory, IAttributeEncoderFactory encoderFactory) {
 
-		if (mapBy == null) {
-			throw new NullPointerException("Null mapBy");
-		}
+        if (mapBy == null) {
+            throw new NullPointerException("Null mapBy");
+        }
 
-		this.mapByPath = mapByPath;
-		this.mapByReaders = new ArrayList<>();
-		this.listEncoder = listEncoder;
-		this.filter = filter;
+        this.mapByPath = mapByPath;
+        this.mapByReaders = new ArrayList<>();
+        this.listEncoder = listEncoder;
+        this.filter = filter;
 
-		config(converterFactory, encoderFactory, mapBy);
-	}
-	
-	/**
-	 * @since 2.0
-	 */
-	@Override
-	public int visitEntities(Object object, EncoderVisitor visitor) {
-		// a "flat" visit method that ignores mapping property
-		return listEncoder.visitEntities(object, visitor);
-	}
+        config(converterFactory, encoderFactory, mapBy);
+    }
 
-	/**
-	 * @since 2.0
-	 */
-	public MapByEncoder withTotal(String totalKey) {
-		this.totalKey = totalKey;
-		return this;
-	}
+    /**
+     * @since 2.0
+     */
+    @Override
+    public int visitEntities(Object object, EncoderVisitor visitor) {
+        // a "flat" visit method that ignores mapping property
+        return listEncoder.visitEntities(object, visitor);
+    }
 
-	private void config(IStringConverterFactory converterFactory, IAttributeEncoderFactory encoderFactory,
-						ResourceEntity<?> mapBy) {
+    /**
+     * @since 2.0
+     */
+    public MapByEncoder withTotal(String totalKey) {
+        this.totalKey = totalKey;
+        return this;
+    }
 
-		if (mapBy.isIdIncluded()) {
-			validateLeafMapBy(mapBy);
-			byId = true;
-			this.mapByReaders.add(getPropertyReader(null, encoderFactory.getIdProperty(mapBy)));
-			this.fieldNameConverter = converterFactory.getConverter(mapBy.getLrEntity());
-			return;
-		}
+    private void config(IStringConverterFactory converterFactory, IAttributeEncoderFactory encoderFactory,
+                        ResourceEntity<?> mapBy) {
 
-		if (!mapBy.getAttributes().isEmpty()) {
+        if (mapBy.isIdIncluded()) {
+            validateLeafMapBy(mapBy);
+            byId = true;
+            this.mapByReaders.add(getPropertyReader(null, encoderFactory.getIdProperty(mapBy)));
+            this.fieldNameConverter = converterFactory.getConverter(mapBy.getLrEntity());
+            return;
+        }
 
-			validateLeafMapBy(mapBy);
-			byId = false;
+        if (!mapBy.getAttributes().isEmpty()) {
 
-			Map.Entry<String, LrAttribute> attribute = mapBy.getAttributes().entrySet().iterator().next();
-			mapByReaders.add(getPropertyReader(attribute.getKey(),
-					encoderFactory.getAttributeProperty(mapBy.getLrEntity(), attribute.getValue())));
+            validateLeafMapBy(mapBy);
+            byId = false;
 
-			this.fieldNameConverter = converterFactory.getConverter(mapBy.getLrEntity(), attribute.getKey());
-			return;
-		}
+            Map.Entry<String, LrAttribute> attribute = mapBy.getAttributes().entrySet().iterator().next();
+            mapByReaders.add(getPropertyReader(attribute.getKey(),
+                    encoderFactory.getAttributeProperty(mapBy.getLrEntity(), attribute.getValue())));
 
-		if (!mapBy.getChildren().isEmpty()) {
+            this.fieldNameConverter = converterFactory.getConverter(mapBy.getLrEntity(), attribute.getKey());
+            return;
+        }
 
-			byId = false;
+        if (!mapBy.getChildren().isEmpty()) {
 
-			Map.Entry<String, ResourceEntity<?>> child = mapBy.getChildren().entrySet().iterator().next();
-			LrRelationship relationship = child.getValue().getLrEntity().getRelationship(child.getKey());
-			mapByReaders.add(getPropertyReader(child.getKey(),
-					encoderFactory.getRelationshipProperty(mapBy.getLrEntity(), relationship, null)));
+            byId = false;
 
-			ResourceEntity<?> childMapBy = mapBy.getChildren().get(child.getKey());
-			config(converterFactory, encoderFactory, childMapBy);
-			return;
-		}
+            Map.Entry<String, ResourceEntity<?>> child = mapBy.getChildren().entrySet().iterator().next();
+            LrRelationship relationship = child.getValue().getLrEntity().getRelationship(child.getKey());
+            mapByReaders.add(getPropertyReader(child.getKey(),
+                    encoderFactory.getRelationshipProperty(mapBy.getLrEntity(), relationship, null)));
 
-		// by default we are dealing with ID
-		byId = true;
-		mapByReaders.add(getPropertyReader(null, encoderFactory.getIdProperty(mapBy)));
-	}
+            ResourceEntity<?> childMapBy = mapBy.getChildren().get(child.getKey());
+            config(converterFactory, encoderFactory, childMapBy);
+            return;
+        }
 
-	private void validateLeafMapBy(ResourceEntity<?> mapBy) {
+        // by default we are dealing with ID
+        byId = true;
+        mapByReaders.add(getPropertyReader(null, encoderFactory.getIdProperty(mapBy)));
+    }
 
-		if (!mapBy.getChildren().isEmpty()) {
+    private void validateLeafMapBy(ResourceEntity<?> mapBy) {
 
-			StringBuilder message = new StringBuilder("'mapBy' path segment '");
-			message.append(mapBy.getIncoming().getName()).append(
-					"should not have children. Full 'mapBy' path: " + mapByPath);
+        if (!mapBy.getChildren().isEmpty()) {
 
-			throw new LinkRestException(Status.BAD_REQUEST, message.toString());
-		}
-	}
+            StringBuilder message = new StringBuilder("'mapBy' path segment '");
+            message.append(mapBy.getIncoming().getName()).append(
+                    "should not have children. Full 'mapBy' path: " + mapByPath);
 
-	@Override
-	protected boolean encodeNonNullObject(Object object, JsonGenerator out) throws IOException {
+            throw new LinkRestException(Status.BAD_REQUEST, message.toString());
+        }
+    }
 
-		@SuppressWarnings({ "rawtypes", "unchecked" })
-		List<?> objects = (List) object;
+    @Override
+    protected boolean encodeNonNullObject(Object object, JsonGenerator out) throws IOException {
 
-		Map<String, List<Object>> map = mapBy(objects);
+        @SuppressWarnings({"rawtypes", "unchecked"})
+        List<?> objects = (List) object;
 
-		out.writeStartObject();
+        Map<String, List<Object>> map = mapBy(objects);
 
-		int total = 0;
-		for (Entry<String, List<Object>> e : map.entrySet()) {
-			out.writeFieldName(e.getKey());
-			total += listEncoder.encodeAndGetTotal(null, e.getValue(), out);
-		}
+        out.writeStartObject();
 
-		out.writeEndObject();
+        int total = 0;
+        for (Entry<String, List<Object>> e : map.entrySet()) {
+            out.writeFieldName(e.getKey());
+            total += listEncoder.encodeAndGetTotal(null, e.getValue(), out);
+        }
 
-		if (totalKey != null) {
-			out.writeFieldName(totalKey);
-			out.writeNumber(total);
-		}
-		return true;
-	}
+        out.writeEndObject();
 
-	private Object mapByValue(Object object) {
-		Object result = object;
+        if (totalKey != null) {
+            out.writeFieldName(totalKey);
+            out.writeNumber(total);
+        }
+        return true;
+    }
 
-		for (Function<Object, ?> reader : mapByReaders) {
-			if (result == null) {
-				break;
-			}
+    private Object mapByValue(Object object) {
+        Object result = object;
 
-			result = reader.apply(result);
-		}
+        for (Function<Object, ?> reader : mapByReaders) {
+            if (result == null) {
+                break;
+            }
 
-		return result;
-	}
+            result = reader.apply(result);
+        }
 
-	private Map<String, List<Object>> mapBy(List<?> objects) {
+        return result;
+    }
 
-		if (objects.isEmpty()) {
-			return Collections.emptyMap();
-		}
+    private Map<String, List<Object>> mapBy(List<?> objects) {
 
-		// though the map is unsorted, it is still in predictable iteration
-		// order...
-		Map<String, List<Object>> map = new LinkedHashMap<>();
+        if (objects.isEmpty()) {
+            return Collections.emptyMap();
+        }
 
-		for (Object o : objects) {
+        // though the map is unsorted, it is still in predictable iteration
+        // order...
+        Map<String, List<Object>> map = new LinkedHashMap<>();
 
-			// filter objects even before we apply mapping...
-			if (filter != null && !filter.match(o)) {
-				continue;
-			}
+        for (Object o : objects) {
 
-			Object key = mapByValue(o);
-			if (byId) {
-				@SuppressWarnings("unchecked")
-				Map<String, Object> id = (Map<String, Object>) key;
-				key = id.entrySet().iterator().next().getValue();
-			}
+            // filter objects even before we apply mapping...
+            if (filter != null && !filter.match(o)) {
+                continue;
+            }
 
-			// disallow nulls as JSON keys...
-			// note that converter below will throw an NPE if we pass NULL
-			// further down... the error here has more context.
-			if (key == null) {
-				throw new LinkRestException(Status.INTERNAL_SERVER_ERROR, "Null mapBy value for key '" + mapByPath
-						+ "' and object '" + /*o.getObjectId()*/"" + "'");
-			}
+            Object key = mapByValue(o);
+            if (byId) {
+                @SuppressWarnings("unchecked")
+                Map<String, Object> id = (Map<String, Object>) key;
+                key = id.entrySet().iterator().next().getValue();
+            }
 
-			String keyString = fieldNameConverter.asString(key);
+            // disallow nulls as JSON keys...
+            // note that converter below will throw an NPE if we pass NULL
+            // further down... the error here has more context.
+            if (key == null) {
+                throw new LinkRestException(Status.INTERNAL_SERVER_ERROR, "Null mapBy value for key '" + mapByPath + "'");
+            }
 
-			List<Object> list = map.get(keyString);
-			if (list == null) {
-				list = new ArrayList<>();
-				map.put(keyString, list);
-			}
+            String keyString = fieldNameConverter.asString(key);
 
-			list.add(o);
-		}
+            List<Object> list = map.get(keyString);
+            if (list == null) {
+                list = new ArrayList<>();
+                map.put(keyString, list);
+            }
 
-		return map;
-	}
+            list.add(o);
+        }
 
-	private static Function<Object, ?> getPropertyReader(String propertyName, EntityProperty property) {
-		return it -> property.read(it, propertyName);
-	}
+        return map;
+    }
+
+    private static Function<Object, ?> getPropertyReader(String propertyName, EntityProperty property) {
+        return it -> property.read(it, propertyName);
+    }
 }

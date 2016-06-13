@@ -26,7 +26,7 @@ public class PropertyBuilder implements EntityProperty {
 
 			@Override
 			public Object read(Object root, String propertyName) {
-				return null;
+				throw new UnsupportedOperationException("Can't read property: " + propertyName);
 			}
 
 			@Override
