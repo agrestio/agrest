@@ -1,3 +1,7 @@
+Release 2.1
+
+#194 Refactor root encoder for easier customization
+
 Release 2.0
 
 #166 Multiple backends with parallel fetch

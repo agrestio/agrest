@@ -1,22 +1,5 @@
 package com.nhl.link.rest.runtime.encoder;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
-import static org.mockito.Mockito.mock;
-
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
-import com.nhl.link.rest.it.fixture.cayenne.E19;
-import org.apache.cayenne.Cayenne;
-import org.apache.cayenne.ObjectContext;
-import org.apache.cayenne.ObjectId;
-import org.junit.Before;
-import org.junit.Test;
-
 import com.fasterxml.jackson.core.JsonEncoding;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.nhl.link.rest.DataResponse;
@@ -25,11 +8,27 @@ import com.nhl.link.rest.encoder.Encoder;
 import com.nhl.link.rest.encoder.EncoderFilter;
 import com.nhl.link.rest.encoder.PropertyMetadataEncoder;
 import com.nhl.link.rest.it.fixture.cayenne.E1;
+import com.nhl.link.rest.it.fixture.cayenne.E19;
 import com.nhl.link.rest.it.fixture.cayenne.E2;
 import com.nhl.link.rest.it.fixture.cayenne.E3;
 import com.nhl.link.rest.runtime.jackson.JacksonService;
 import com.nhl.link.rest.runtime.semantics.RelationshipMapper;
 import com.nhl.link.rest.unit.TestWithCayenneMapping;
+import org.apache.cayenne.Cayenne;
+import org.apache.cayenne.ObjectContext;
+import org.apache.cayenne.ObjectId;
+import org.junit.Before;
+import org.junit.Test;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
+import static org.mockito.Mockito.mock;
 
 public class EncoderServiceTest extends TestWithCayenneMapping {
 
@@ -59,7 +58,7 @@ public class EncoderServiceTest extends TestWithCayenneMapping {
 		e1.setAge(30);
 		e1.setDescription("test");
 
-		assertEquals("[{\"id\":777}]", toJson(e1, descriptor));
+		assertEquals("{\"data\":[{\"id\":777}],\"total\":1}", toJson(e1, descriptor));
 	}
 
 	@Test
@@ -94,7 +93,7 @@ public class EncoderServiceTest extends TestWithCayenneMapping {
 		context.registerNewObject(e32);
 		e2.addToE3s(e32);
 
-		assertEquals("[{\"id\":7,\"e3s\":[{\"id\":5,\"name\":\"31\"},{\"id\":6,\"name\":\"32\"}]}]",
+		assertEquals("{\"data\":[{\"id\":7,\"e3s\":[{\"id\":5,\"name\":\"31\"},{\"id\":6,\"name\":\"32\"}]}],\"total\":1}",
 				toJson(e2, descriptor));
 	}
 
@@ -143,7 +142,7 @@ public class EncoderServiceTest extends TestWithCayenneMapping {
 		e21.setAddress("bla bla street");
 		context.registerNewObject(e21);
 
-		assertEquals("[{\"id\":7}]", toJson(e21, descriptor));
+		assertEquals("{\"data\":[{\"id\":7}],\"total\":1}", toJson(e21, descriptor));
 
 		E2 e22 = new E2();
 		e22.setObjectId(new ObjectId("E2", E2.ID_PK_COLUMN, 8));
@@ -151,7 +150,7 @@ public class EncoderServiceTest extends TestWithCayenneMapping {
 		e22.setAddress("bla bla street");
 		context.registerNewObject(e22);
 
-		assertEquals("[]", toJson(e22, descriptor));
+		assertEquals("{\"data\":[],\"total\":0}", toJson(e22, descriptor));
 	}
 
 	@Test
@@ -214,7 +213,7 @@ public class EncoderServiceTest extends TestWithCayenneMapping {
 		context.registerNewObject(e31);
 		e31.setE2(e21);
 
-		assertEquals("[{\"id\":5,\"e2\":{\"id\":7}}]", toJson(e31, e3Descriptor));
+		assertEquals("{\"data\":[{\"id\":5,\"e2\":{\"id\":7}}],\"total\":1}", toJson(e31, e3Descriptor));
 
 		E2 e22 = new E2();
 		e22.setObjectId(new ObjectId("E2", E2.ID_PK_COLUMN, 8));
@@ -225,7 +224,7 @@ public class EncoderServiceTest extends TestWithCayenneMapping {
 		context.registerNewObject(e32);
 		e32.setE2(e22);
 
-		assertEquals("[{\"id\":6}]", toJson(e32, e3Descriptor));
+		assertEquals("{\"data\":[{\"id\":6}],\"total\":1}", toJson(e32, e3Descriptor));
 	}
 
 	@Test
@@ -282,7 +281,7 @@ public class EncoderServiceTest extends TestWithCayenneMapping {
 		e19.setObjectId(new ObjectId("E19", E19.ID_PK_COLUMN, 1));
 		e19.setGuid("abcdefghjklmnopr".getBytes("UTF-8"));
 
-		assertEquals("[{\"id\":1,\"guid\":\"YWJjZGVmZ2hqa2xtbm9wcg==\"}]", toJson(e19, descriptor));
+		assertEquals("{\"data\":[{\"id\":1,\"guid\":\"YWJjZGVmZ2hqa2xtbm9wcg==\"}],\"total\":1}", toJson(e19, descriptor));
 	}
 
 	private String toJson(Object object, ResourceEntity<?> entity) throws IOException {

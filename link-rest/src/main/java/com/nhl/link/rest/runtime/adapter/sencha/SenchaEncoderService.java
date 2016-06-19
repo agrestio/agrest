@@ -1,20 +1,19 @@
 package com.nhl.link.rest.runtime.adapter.sencha;
 
-import java.util.List;
-import java.util.Map;
-
-import com.nhl.link.rest.encoder.PropertyMetadataEncoder;
-import org.apache.cayenne.di.Inject;
-
+import com.fasterxml.jackson.core.JsonGenerator;
 import com.nhl.link.rest.EntityProperty;
 import com.nhl.link.rest.ResourceEntity;
-import com.nhl.link.rest.encoder.Encoder;
-import com.nhl.link.rest.encoder.EncoderFilter;
+import com.nhl.link.rest.encoder.*;
 import com.nhl.link.rest.meta.LrRelationship;
 import com.nhl.link.rest.runtime.encoder.EncoderService;
 import com.nhl.link.rest.runtime.encoder.IAttributeEncoderFactory;
 import com.nhl.link.rest.runtime.encoder.IStringConverterFactory;
 import com.nhl.link.rest.runtime.semantics.IRelationshipMapper;
+import org.apache.cayenne.di.Inject;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @since 1.5
@@ -26,6 +25,19 @@ public class SenchaEncoderService extends EncoderService {
 			@Inject IStringConverterFactory stringConverterFactory, @Inject IRelationshipMapper relationshipMapper,
 			@Inject(PROPERTY_METADATA_ENCODER_MAP) Map<String, PropertyMetadataEncoder> propertyMetadataEncoders) {
 		super(filters, attributeEncoderFactory, stringConverterFactory, relationshipMapper, propertyMetadataEncoders);
+	}
+
+	@Override
+	public <T> Encoder dataEncoder(ResourceEntity<T> entity) {
+		CollectionEncoder resultEncoder = resultEncoder(entity);
+		return new DataResponseEncoder("data", resultEncoder, "total", GenericEncoder.encoder()) {
+			@Override
+			protected void encodeObjectBody(Object object, JsonGenerator out) throws IOException {
+				out.writeFieldName("success");
+				out.writeBoolean(true);
+				super.encodeObjectBody(object, out);
+			}
+		};
 	}
 
 	@Override

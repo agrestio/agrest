@@ -48,7 +48,8 @@ public class ISOEncoderTest extends TestWithCayenneMapping {
         isoDateTestEntity.setUtilDate(date);
         isoDateTestEntity.setSqlDate(date);
 
-        assertEquals("[{\"sqlDate\":\"" + date + "\",\"utilDate\":\"" + date + "\"}]", toJson(isoDateTestEntity, resourceEntity));
+        assertEquals("{\"data\":[{\"sqlDate\":\"" + date + "\",\"utilDate\":\"" + date + "\"}],\"total\":1}",
+                toJson(isoDateTestEntity, resourceEntity));
     }
 
     @Test
@@ -61,7 +62,7 @@ public class ISOEncoderTest extends TestWithCayenneMapping {
         ISOTimeTestEntity isoTimeTestEntity = new ISOTimeTestEntity();
         isoTimeTestEntity.setTime(time);
 
-        assertEquals("[{\"time\":\"" + time + "\"}]", toJson(isoTimeTestEntity, resourceEntity));
+        assertEquals("{\"data\":[{\"time\":\"" + time + "\"}],\"total\":1}", toJson(isoTimeTestEntity, resourceEntity));
     }
 
     @Test
@@ -74,7 +75,8 @@ public class ISOEncoderTest extends TestWithCayenneMapping {
         ISOTimestampTestEntity isoTimestampTestEntity = new ISOTimestampTestEntity();
         isoTimestampTestEntity.setTimestamp(timestamp);
 
-        assertEquals("[{\"timestamp\":\"2016-03-26T12:27:27Z\"}]", toJson(isoTimestampTestEntity, resourceEntity));
+        assertEquals("{\"data\":[{\"timestamp\":\"2016-03-26T12:27:27Z\"}],\"total\":1}",
+                toJson(isoTimestampTestEntity, resourceEntity));
     }
 
     private String toJson(Object object, ResourceEntity<?> resourceEntity) throws IOException {

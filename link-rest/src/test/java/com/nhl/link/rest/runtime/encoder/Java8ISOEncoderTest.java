@@ -1,20 +1,5 @@
 package com.nhl.link.rest.runtime.encoder;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.mock;
-
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.sql.Types;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.temporal.ChronoUnit;
-import java.util.Collections;
-
-import org.junit.Before;
-import org.junit.Test;
-
 import com.fasterxml.jackson.core.JsonEncoding;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.nhl.link.rest.ResourceEntity;
@@ -27,6 +12,20 @@ import com.nhl.link.rest.it.fixture.cayenne.iso.Java8ISOTimestampTestEntity;
 import com.nhl.link.rest.runtime.jackson.JacksonService;
 import com.nhl.link.rest.runtime.semantics.RelationshipMapper;
 import com.nhl.link.rest.unit.Java8TestWithCayenneMapping;
+import org.junit.Before;
+import org.junit.Test;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.sql.Types;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.temporal.ChronoUnit;
+import java.util.Collections;
+
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.mock;
 
 public class Java8ISOEncoderTest extends Java8TestWithCayenneMapping {
 
@@ -51,7 +50,7 @@ public class Java8ISOEncoderTest extends Java8TestWithCayenneMapping {
         Java8ISODateTestEntity isoDateTestEntity = new Java8ISODateTestEntity();
         isoDateTestEntity.setDate(localDate);
 
-        assertEquals("[{\"date\":\"" + localDate + "\"}]", toJson(isoDateTestEntity, resourceEntity));
+        assertEquals("{\"data\":[{\"date\":\"" + localDate + "\"}],\"total\":1}", toJson(isoDateTestEntity, resourceEntity));
     }
 
     @Test
@@ -64,7 +63,8 @@ public class Java8ISOEncoderTest extends Java8TestWithCayenneMapping {
         Java8ISOTimeTestEntity isoTimeTestEntity = new Java8ISOTimeTestEntity();
         isoTimeTestEntity.setTime(localTime);
 
-        assertEquals("[{\"time\":\"" + localTime.truncatedTo(ChronoUnit.SECONDS) + "\"}]", toJson(isoTimeTestEntity, resourceEntity));
+        assertEquals("{\"data\":[{\"time\":\"" + localTime.truncatedTo(ChronoUnit.SECONDS) + "\"}],\"total\":1}",
+                toJson(isoTimeTestEntity, resourceEntity));
     }
 
     @Test
@@ -77,7 +77,8 @@ public class Java8ISOEncoderTest extends Java8TestWithCayenneMapping {
         Java8ISOTimestampTestEntity isoTimestampTestEntity = new Java8ISOTimestampTestEntity();
         isoTimestampTestEntity.setTimestamp(localDateTime);
 
-        assertEquals("[{\"timestamp\":\"" + localDateTime.truncatedTo(ChronoUnit.SECONDS) + "\"}]", toJson(isoTimestampTestEntity, resourceEntity));
+        assertEquals("{\"data\":[{\"timestamp\":\"" + localDateTime.truncatedTo(ChronoUnit.SECONDS) + "\"}],\"total\":1}",
+                toJson(isoTimestampTestEntity, resourceEntity));
     }
 
     private String toJson(Object object, ResourceEntity<?> resourceEntity) throws IOException {

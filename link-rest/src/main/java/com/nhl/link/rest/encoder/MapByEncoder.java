@@ -21,18 +21,16 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.function.Function;
 
-public class MapByEncoder extends AbstractEncoder {
+public class MapByEncoder implements CollectionEncoder {
 
     private String mapByPath;
     private List<Function<Object, ?>> mapByReaders;
-    private ListEncoder listEncoder;
+    private CollectionEncoder collectionEncoder;
     private boolean byId;
     private StringConverter fieldNameConverter;
     private Expression filter;
 
-    private String totalKey;
-
-    public MapByEncoder(String mapByPath, Expression filter, ResourceEntity<?> mapBy, ListEncoder listEncoder,
+    public MapByEncoder(String mapByPath, Expression filter, ResourceEntity<?> mapBy, CollectionEncoder collectionEncoder,
                         IStringConverterFactory converterFactory, IAttributeEncoderFactory encoderFactory) {
 
         if (mapBy == null) {
@@ -41,10 +39,19 @@ public class MapByEncoder extends AbstractEncoder {
 
         this.mapByPath = mapByPath;
         this.mapByReaders = new ArrayList<>();
-        this.listEncoder = listEncoder;
+        this.collectionEncoder = collectionEncoder;
         this.filter = filter;
 
         config(converterFactory, encoderFactory, mapBy);
+    }
+
+    private static Function<Object, ?> getPropertyReader(String propertyName, EntityProperty property) {
+        return it -> property.read(it, propertyName);
+    }
+
+    @Override
+    public boolean willEncode(String propertyName, Object object) {
+        return true;
     }
 
     /**
@@ -53,15 +60,7 @@ public class MapByEncoder extends AbstractEncoder {
     @Override
     public int visitEntities(Object object, EncoderVisitor visitor) {
         // a "flat" visit method that ignores mapping property
-        return listEncoder.visitEntities(object, visitor);
-    }
-
-    /**
-     * @since 2.0
-     */
-    public MapByEncoder withTotal(String totalKey) {
-        this.totalKey = totalKey;
-        return this;
+        return collectionEncoder.visitEntities(object, visitor);
     }
 
     private void config(IStringConverterFactory converterFactory, IAttributeEncoderFactory encoderFactory,
@@ -120,7 +119,15 @@ public class MapByEncoder extends AbstractEncoder {
     }
 
     @Override
-    protected boolean encodeNonNullObject(Object object, JsonGenerator out) throws IOException {
+    public int encodeAndGetTotal(String propertyName, Object object, JsonGenerator out) throws IOException {
+        if (propertyName != null) {
+            out.writeFieldName(propertyName);
+        }
+
+        if (object == null) {
+            out.writeNull();
+            return 0;
+        }
 
         @SuppressWarnings({"rawtypes", "unchecked"})
         List<?> objects = (List) object;
@@ -132,16 +139,12 @@ public class MapByEncoder extends AbstractEncoder {
         int total = 0;
         for (Entry<String, List<Object>> e : map.entrySet()) {
             out.writeFieldName(e.getKey());
-            total += listEncoder.encodeAndGetTotal(null, e.getValue(), out);
+            total += collectionEncoder.encodeAndGetTotal(null, e.getValue(), out);
         }
 
         out.writeEndObject();
 
-        if (totalKey != null) {
-            out.writeFieldName(totalKey);
-            out.writeNumber(total);
-        }
-        return true;
+        return total;
     }
 
     private Object mapByValue(Object object) {
@@ -201,9 +204,5 @@ public class MapByEncoder extends AbstractEncoder {
         }
 
         return map;
-    }
-
-    private static Function<Object, ?> getPropertyReader(String propertyName, EntityProperty property) {
-        return it -> property.read(it, propertyName);
     }
 }

@@ -1,9 +1,10 @@
 package com.nhl.link.rest.provider;
 
-import java.io.IOException;
-import java.io.OutputStream;
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Type;
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.nhl.link.rest.DataResponse;
+import com.nhl.link.rest.runtime.LinkRestRuntime;
+import com.nhl.link.rest.runtime.jackson.IJacksonService;
+import com.nhl.link.rest.runtime.jackson.JsonConvertable;
 
 import javax.ws.rs.core.Configuration;
 import javax.ws.rs.core.Context;
@@ -11,12 +12,10 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.ext.MessageBodyWriter;
 import javax.ws.rs.ext.Provider;
-
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.nhl.link.rest.DataResponse;
-import com.nhl.link.rest.runtime.LinkRestRuntime;
-import com.nhl.link.rest.runtime.jackson.IJacksonService;
-import com.nhl.link.rest.runtime.jackson.JsonConvertable;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Type;
 
 @Provider
 public class DataResponseWriter implements MessageBodyWriter<DataResponse<?>> {
@@ -45,11 +44,7 @@ public class DataResponseWriter implements MessageBodyWriter<DataResponse<?>> {
 		getJacksonService().outputJson(new JsonConvertable() {
 			@Override
 			public void generateJSON(JsonGenerator out) throws IOException {
-				out.writeStartObject();
-
 				writeData(t, out);
-
-				out.writeEndObject();
 			}
 		}, entityStream);
 	}

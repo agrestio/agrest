@@ -1,24 +1,22 @@
 package com.nhl.link.rest.encoder;
 
+import com.fasterxml.jackson.core.JsonGenerator;
+import org.apache.cayenne.exp.Expression;
+import org.apache.cayenne.query.Ordering;
+import org.apache.commons.collections.ComparatorUtils;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import org.apache.cayenne.exp.Expression;
-import org.apache.cayenne.query.Ordering;
-import org.apache.commons.collections.ComparatorUtils;
-
-import com.fasterxml.jackson.core.JsonGenerator;
-
-public class ListEncoder implements Encoder {
+public class ListEncoder implements CollectionEncoder {
 
 	private Encoder elementEncoder;
 	private Collection<Ordering> orderings;
 	private Expression filter;
 
-	private String totalKey;
 	private int offset;
 	private int limit;
 
@@ -45,11 +43,6 @@ public class ListEncoder implements Encoder {
 		return visit(counter, objects, limit > 0 ? limit : Integer.MAX_VALUE, visitor);
 	}
 
-	public ListEncoder withTotal(String totalKey) {
-		this.totalKey = totalKey;
-		return this;
-	}
-
 	public ListEncoder withOffset(int offset) {
 		this.offset = offset;
 		return this;
@@ -65,11 +58,12 @@ public class ListEncoder implements Encoder {
 		return this;
 	}
 
-	@Override
-	public boolean encode(String propertyName, Object object, JsonGenerator out) throws IOException {
-		encodeAndGetTotal(propertyName, object, out);
-		// regardless of the list contents, our encoding has succeeded...
-		return true;
+	/**
+	 * @since 2.1
+     */
+	public ListEncoder shouldFilter(boolean filter) {
+		shouldFilter = filter;
+		return this;
 	}
 
 	/**
@@ -93,14 +87,6 @@ public class ListEncoder implements Encoder {
 		rewind(counter, objects, objects.size());
 
 		out.writeEndArray();
-
-		// checking for 'propertyName', not just 'totalKey', as if we skipped
-		// encoding the field name above, we are not in the right place to
-		// encode the totals.
-		if (propertyName != null && totalKey != null) {
-			out.writeFieldName(totalKey);
-			out.writeNumber(counter.getTotal());
-		}
 
 		return counter.getTotal();
 	}

@@ -1,22 +1,5 @@
 package com.nhl.link.rest.runtime.encoder;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.mock;
-
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-
-import com.nhl.link.rest.meta.LazyLrDataMap;
-import com.nhl.link.rest.meta.compiler.LrEntityCompiler;
-import com.nhl.link.rest.meta.compiler.PojoEntityCompiler;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-
 import com.fasterxml.jackson.core.JsonEncoding;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.nhl.link.rest.ResourceEntity;
@@ -26,10 +9,26 @@ import com.nhl.link.rest.encoder.PropertyMetadataEncoder;
 import com.nhl.link.rest.it.fixture.pojo.model.P1;
 import com.nhl.link.rest.it.fixture.pojo.model.P6;
 import com.nhl.link.rest.meta.DefaultLrAttribute;
+import com.nhl.link.rest.meta.LazyLrDataMap;
 import com.nhl.link.rest.meta.LrEntity;
 import com.nhl.link.rest.meta.LrEntityBuilder;
+import com.nhl.link.rest.meta.compiler.LrEntityCompiler;
+import com.nhl.link.rest.meta.compiler.PojoEntityCompiler;
 import com.nhl.link.rest.runtime.jackson.JacksonService;
 import com.nhl.link.rest.runtime.semantics.RelationshipMapper;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.mock;
 
 public class EncoderService_Pojo_Test {
 
@@ -64,7 +63,7 @@ public class EncoderService_Pojo_Test {
 
 		P1 p1 = new P1();
 		p1.setName("XYZ");
-		assertEquals("[{\"name\":\"XYZ\"}]", toJson(p1, descriptor));
+		assertEquals("{\"data\":[{\"name\":\"XYZ\"}],\"total\":1}", toJson(p1, descriptor));
 	}
 
 	@Test
@@ -79,7 +78,7 @@ public class EncoderService_Pojo_Test {
 		descriptor.getAttributes().put("intProp", new DefaultLrAttribute("intProp", Integer.class));
 		descriptor.includeId();
 
-		assertEquals("[{\"id\":\"myid\",\"intProp\":4}]", toJson(p6, descriptor));
+		assertEquals("{\"data\":[{\"id\":\"myid\",\"intProp\":4}],\"total\":1}", toJson(p6, descriptor));
 	}
 
 	private String toJson(Object object, ResourceEntity<?> resourceEntity) throws IOException {

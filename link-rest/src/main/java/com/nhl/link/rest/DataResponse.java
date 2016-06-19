@@ -1,13 +1,13 @@
 package com.nhl.link.rest;
 
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.nhl.link.rest.encoder.Encoder;
+import com.nhl.link.rest.encoder.GenericEncoder;
+
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.nhl.link.rest.encoder.Encoder;
-import com.nhl.link.rest.encoder.GenericEncoder;
 
 /**
  * A response object that represents a 'Collection Document' from LinkRest
@@ -119,6 +119,6 @@ public class DataResponse<T> extends LrResponse {
 	 * {@link Encoder}.
 	 */
 	public void writeData(JsonGenerator out) throws IOException {
-		encoder.encode("data", getObjects(), out);
+		encoder.encode(null, getObjects(), out);
 	}
 }
