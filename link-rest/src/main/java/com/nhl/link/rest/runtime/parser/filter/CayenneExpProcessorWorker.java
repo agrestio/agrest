@@ -173,7 +173,7 @@ class CayenneExpProcessorWorker {
 						return converter.value(node);
 					} catch (Exception e) {
 						throw new LinkRestException(Status.BAD_REQUEST,
-								"cayenneExp.params contains an incorrectly formatted value: '" + node.asText() + "'");
+								"cayenneExp.params contains an incorrectly formatted value: '" + node.asText() + "'", e);
 					}
 				}
 			}

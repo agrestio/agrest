@@ -1,9 +1,9 @@
 package com.nhl.link.rest.encoder.converter;
 
+import java.time.Instant;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
-
-import org.joda.time.format.DateTimeFormatter;
-import org.joda.time.format.ISODateTimeFormat;
 
 public class ISODateTimeConverter extends AbstractConverter {
 
@@ -16,12 +16,12 @@ public class ISODateTimeConverter extends AbstractConverter {
 	private DateTimeFormatter format;
 
 	private ISODateTimeConverter() {
-		this.format = ISODateTimeFormat.dateTimeNoMillis().withZoneUTC();
+		format = DateTimeFormatter.ISO_OFFSET_DATE_TIME.withZone(ZoneOffset.UTC);
 	}
 
 	@Override
 	protected String asStringNonNull(Object object) {
 		Date date = (Date) object;
-		return format.print(date.getTime());
+		return format.format(Instant.ofEpochMilli(date.getTime()));
 	}
 }

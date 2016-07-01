@@ -1,12 +1,12 @@
 package com.nhl.link.rest.encoder;
 
-import java.io.IOException;
-import java.util.Date;
-
-import org.joda.time.format.DateTimeFormatter;
-import org.joda.time.format.ISODateTimeFormat;
-
 import com.fasterxml.jackson.core.JsonGenerator;
+
+import java.io.IOException;
+import java.time.Instant;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
+import java.util.Date;
 
 public class ISODateTimeEncoder extends AbstractEncoder {
 
@@ -19,13 +19,13 @@ public class ISODateTimeEncoder extends AbstractEncoder {
 	private DateTimeFormatter format;
 
 	private ISODateTimeEncoder() {
-		this.format = ISODateTimeFormat.dateTimeNoMillis().withZoneUTC();
+		format = DateTimeFormatter.ISO_OFFSET_DATE_TIME.withZone(ZoneOffset.UTC);
 	}
 
 	@Override
 	protected boolean encodeNonNullObject(Object object, JsonGenerator out) throws IOException {
 		Date date = (Date) object;
-		String formatted = format.print(date.getTime());
+		String formatted = format.format(Instant.ofEpochMilli(date.getTime()));
 		out.writeObject(formatted);
 		return true;
 	}
