@@ -1,14 +1,13 @@
 package com.nhl.link.rest.runtime.executor;
 
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.atomic.AtomicLong;
-
+import com.nhl.link.rest.runtime.shutdown.ShutdownManager;
 import org.apache.cayenne.di.DIRuntimeException;
 import org.apache.cayenne.di.Inject;
 import org.apache.cayenne.di.Provider;
 
-import com.nhl.link.rest.runtime.shutdown.ShutdownManager;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * @since 2.0
@@ -31,7 +30,7 @@ public class UnboundedExecutorServiceProvider implements Provider<ExecutorServic
 		ExecutorService service = Executors
 				.newCachedThreadPool(r -> new Thread(r, "link-rest-pool-" + threadNumber.getAndIncrement()));
 
-		shutdownManager.addShutdownHook(() -> service.shutdownNow());
+		shutdownManager.addShutdownHook(service::shutdownNow);
 
 		return service;
 	}
