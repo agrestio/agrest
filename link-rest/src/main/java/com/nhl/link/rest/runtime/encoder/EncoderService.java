@@ -67,7 +67,7 @@ public class EncoderService implements IEncoderService {
                 : encoder;
     }
 
-    private Encoder nestedToManyEncoder(ResourceEntity<?> resourceEntity) {
+    protected Encoder nestedToManyEncoder(ResourceEntity<?> resourceEntity) {
 
         Encoder elementEncoder = collectionElementEncoder(resourceEntity);
         boolean isMapBy = resourceEntity.getMapBy() != null;
@@ -87,7 +87,7 @@ public class EncoderService implements IEncoderService {
                 resourceEntity.getMapBy(), listEncoder, stringConverterFactory, attributeEncoderFactory) : listEncoder;
     }
 
-    private Encoder collectionElementEncoder(ResourceEntity<?> resourceEntity) {
+    protected Encoder collectionElementEncoder(ResourceEntity<?> resourceEntity) {
         Encoder encoder = entityEncoder(resourceEntity);
         return filteredEncoder(encoder, resourceEntity);
     }
