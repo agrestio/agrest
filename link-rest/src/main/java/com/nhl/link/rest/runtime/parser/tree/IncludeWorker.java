@@ -1,13 +1,5 @@
 package com.nhl.link.rest.runtime.parser.tree;
 
-import java.util.List;
-
-import javax.ws.rs.core.Response.Status;
-
-import org.apache.cayenne.exp.Expression;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.nhl.link.rest.LinkRestException;
 import com.nhl.link.rest.ResourceEntity;
@@ -18,8 +10,14 @@ import com.nhl.link.rest.runtime.jackson.IJacksonService;
 import com.nhl.link.rest.runtime.parser.PathConstants;
 import com.nhl.link.rest.runtime.parser.filter.ICayenneExpProcessor;
 import com.nhl.link.rest.runtime.parser.sort.ISortProcessor;
+import org.apache.cayenne.exp.Expression;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-class IncludeWorker {
+import javax.ws.rs.core.Response.Status;
+import java.util.List;
+
+public class IncludeWorker {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(IncludeWorker.class);
 
@@ -34,13 +32,13 @@ class IncludeWorker {
 	private ISortProcessor sortProcessor;
 	private ICayenneExpProcessor expProcessor;
 
-	IncludeWorker(IJacksonService jsonParser, ISortProcessor sortProcessor, ICayenneExpProcessor expProcessor) {
+	public IncludeWorker(IJacksonService jsonParser, ISortProcessor sortProcessor, ICayenneExpProcessor expProcessor) {
 		this.jsonParser = jsonParser;
 		this.sortProcessor = sortProcessor;
 		this.expProcessor = expProcessor;
 	}
 
-	void process(ResourceEntity<?> resourceEntity, List<String> includes) {
+	public void process(ResourceEntity<?> resourceEntity, List<String> includes) {
 		for (String include : includes) {
 
 			if (include.startsWith("[")) {
