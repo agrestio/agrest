@@ -7,8 +7,9 @@ branches:
 jdk:
   - oraclejdk8
 
-script: 
-  - mvn clean source:jar deploy --settings travis_settings.xml
+script:
+   - 'if [ "$TRAVIS_SECURE_ENV_VARS" = "true" ]; then mvn clean source:jar deploy --settings travis_settings.xml; fi'
+   - 'if [ "$TRAVIS_SECURE_ENV_VARS" = "false" ]; then mvn verify; fi'
 
 # travis encrypt -r nhl/link-rest "CI_DEPLOY_USERNAME='name'"
 # travis encrypt -r nhl/link-rest "CI_DEPLOY_PASSWORD='password'"
