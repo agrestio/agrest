@@ -46,7 +46,7 @@ public class SomeClass {
   }
 
   @LrRelationship 
-  public String getRelated() {
+  public SomeOtherClass getRelated() {
     return related;
   }
 }</programlisting></para>
