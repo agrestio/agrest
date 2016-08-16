@@ -16,7 +16,7 @@
             property paths is the request entity (unless "cayenneExp" is used within a relationship
             "include", in which case the root is that related entity). </para>
          <para>Example 1: Filtering on a single property.</para>
-         <para><code>cayenneExp=vhost='linkrest.org' </code></para>
+         <para><code>cayenneExp=vhost='linkrest.org'</code></para>
          <para>Example 2: Filtering using outer join (the "+" sign is Cayenne notation for
             outer).</para>
          <para><code>cayenneExp=articles+ = null</code></para>
@@ -29,13 +29,13 @@
        <section xml:id="protocol-sort-dir">
           <title>Ordering Collection with <code>sort</code> / <code>dir</code></title>
          <para>Example 1: Sort on a single property.</para>
-         <para><code>sort=vhost </code></para>
+         <para><code>sort=vhost</code></para>
          <para>Example 2: Sort descending on a property.</para>
-         <para><code>sort=id&amp;dir=DESC </code></para>
+         <para><code>sort=id&amp;dir=DESC</code></para>
          <para>Example 3: Same as 2, but sort is a JSON object.</para>
-         <para><code>sort={"property":"vhost","direction":"DESC"} </code></para>
+         <para><code>sort={"property":"vhost","direction":"DESC"}</code></para>
          <para>Example 4: Multiple sortings as a single JSON structure.</para>
-         <para><code>sort=[{"property":"name"}, "property":"vhost","direction":"DESC"}] 
+         <para><code>sort=[{"property":"name"},"property":"vhost","direction":"DESC"}]
             </code></para>
        </section>
        <section xml:id="protocol-start-limit" xreflabel="Pagination">
@@ -68,7 +68,7 @@
           <para><code>include=id</code><programlisting>{ "id" : 45 } </programlisting></para>
          <para>Example 3: Multiple includes, one of them points to attributes of related
             entity.</para>
-         <para><code>include=id&amp;include=articles.title </code><programlisting>{
+         <para><code>include=id&amp;include=articles.title</code><programlisting>{
    "id" : 45,
    "articles" : [
       { "title" : "LinkRest Includes" }, 
@@ -81,7 +81,7 @@
             "<code>limit</code>" keys shaping up a collection of related objects for each root
          object.</para>
           <para><code>include={"path":"articles","cayenneExp":"title like
-            '%LinkRest%'","sort":"title"} &amp;include=articles.title </code></para>
+            '%LinkRest%'","sort":"title"}&amp;include=articles.title</code></para>
          <programlisting language="json">{
    "id":45,
    "articles" : [
@@ -90,10 +90,10 @@
    ]
 }</programlisting>
          <para>Example 5: Related objects as a map. Here we'll map article bodies by title.</para>
-         <para><code>include={"path":"articles","mapBy":"title"}&amp;include=articles.body</code> <programlisting>{
-   "articles" : {   
-      "Introducing LinkRest" : { "body" : "LinkRest is a .." },   
-      "LinkRest Includes" : { "body" : "Includes are .." }   
+         <para><code>include={"path":"articles","mapBy":"title"}&amp;include=articles.body</code><programlisting>{
+   "articles" : {
+      "Introducing LinkRest" : { "body" : "LinkRest is a .." },
+      "LinkRest Includes" : { "body" : "Includes are .." }
    }
 }</programlisting></para>
        </section>
