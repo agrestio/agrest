@@ -1,10 +1,6 @@
 package com.nhl.link.rest.client.it.noadapter;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.JsonNodeFactory;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.nhl.link.rest.client.ClientDataResponse;
 import com.nhl.link.rest.client.LinkRestClient;
 import com.nhl.link.rest.client.protocol.Expression;
@@ -28,15 +24,8 @@ import static org.junit.Assert.assertNotNull;
 
 public class GET_Client_IT extends JerseyTestOnDerby {
 
-    private static JsonNodeFactory nodeFactory;
-
-    static {
-        nodeFactory = new ObjectMapper().getNodeFactory();
-    }
-
     @Override
     protected void doAddResources(FeatureContext context) {
-        context.register(E4Resource.class);
         context.register(E2Resource.class);
         context.register(E4Resource.class);
     }
@@ -59,7 +48,7 @@ public class GET_Client_IT extends JerseyTestOnDerby {
         assertNotNull(items);
         assertEquals(2, items.size());
 
-        JsonNode[] expected = new JsonNode[] {createE4(1, "xxx", 5), createE4(2, "yyy", 7)};
+        JsonNode[] expected = new JsonNode[] {EntityUtil.createE4(1, "xxx", 5), EntityUtil.createE4(2, "yyy", 7)};
         assertArrayEquals(expected, items.toArray());
 	}
 
@@ -82,7 +71,7 @@ public class GET_Client_IT extends JerseyTestOnDerby {
         assertNotNull(items);
         assertEquals(2, items.size());
 
-        JsonNode[] expected = new JsonNode[] {createE4(2, "yyy", 7), createE4(1, "xxx", 5)};
+        JsonNode[] expected = new JsonNode[] {EntityUtil.createE4(2, "yyy", 7), EntityUtil.createE4(1, "xxx", 5)};
         assertArrayEquals(expected, items.toArray());
 	}
 
@@ -105,7 +94,7 @@ public class GET_Client_IT extends JerseyTestOnDerby {
 
         assertEquals(Status.OK, response.getStatus());
         assertEquals(1, response.getTotal());
-        assertEquals(createE2(1, "xxx", createE3(7, "ccc"), createE3(6, "bbb")), response.getData().get(0));
+        assertEquals(EntityUtil.createE2(1, "xxx", EntityUtil.createE3(7, "ccc"), EntityUtil.createE3(6, "bbb")), response.getData().get(0));
     }
 
     @Test
@@ -125,7 +114,7 @@ public class GET_Client_IT extends JerseyTestOnDerby {
 
         assertEquals(Status.OK, response.getStatus());
         assertEquals(1, response.getTotal());
-        assertEquals(createE2(1, "xxx", createE3(7, "ccc")), response.getData().get(0));
+        assertEquals(EntityUtil.createE2(1, "xxx", EntityUtil.createE3(7, "ccc")), response.getData().get(0));
     }
 
     @Test
@@ -143,41 +132,6 @@ public class GET_Client_IT extends JerseyTestOnDerby {
 
         assertEquals(Status.OK, response.getStatus());
         assertEquals(1, response.getTotal());
-        assertEquals(createE4(3, "xxz", 3), response.getData().get(0));
-    }
-
-    private JsonNode createE2(int id, String name, JsonNode... e3s) {
-
-        ObjectNode e2 = nodeFactory.objectNode();
-        e2.set(E2.ID_PK_COLUMN, nodeFactory.numberNode(id));
-
-        if (e3s.length > 0) {
-            ArrayNode e3sNodes = nodeFactory.arrayNode();
-            for (JsonNode e3 : e3s) {
-                e3sNodes.add(e3);
-            }
-            e2.set(E2.E3S.getName(), e3sNodes);
-        }
-
-        e2.set(E2.NAME.getName(), nodeFactory.textNode(name));
-
-        return e2;
-    }
-
-    private JsonNode createE3(int id, String name) {
-
-        ObjectNode e3 = nodeFactory.objectNode();
-        e3.set(E3.ID_PK_COLUMN, nodeFactory.numberNode(id));
-        e3.set(E3.NAME.getName(), nodeFactory.textNode(name));
-        return e3;
-    }
-
-    private JsonNode createE4(int id, String cVarchar, int cInt) {
-
-        ObjectNode e4 = nodeFactory.objectNode();
-        e4.set(E4.ID_PK_COLUMN, nodeFactory.numberNode(id));
-        e4.set(E4.C_INT.getName(), nodeFactory.numberNode(cInt));
-        e4.set(E4.C_VARCHAR.getName(), nodeFactory.textNode(cVarchar));
-        return e4;
+        assertEquals(EntityUtil.createE4(3, "xxz", 3), response.getData().get(0));
     }
 }

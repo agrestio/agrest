@@ -17,6 +17,7 @@ import com.nhl.link.rest.client.runtime.jackson.IJsonEntityReader;
 import com.nhl.link.rest.client.runtime.jackson.IJsonEntityReaderFactory;
 import com.nhl.link.rest.client.runtime.jackson.JsonEntityReaderFactory;
 import com.nhl.link.rest.client.runtime.response.DataResponseHandler;
+import com.nhl.link.rest.client.runtime.response.SimpleResponseHandler;
 import com.nhl.link.rest.client.runtime.run.InvocationBuilder;
 
 /**
@@ -90,20 +91,50 @@ public class LinkRestClient {
 	}
 
 	public <T> ClientDataResponse<T> get(Class<T> targetType) {
+		return invoke(targetType, InvocationBuilder.target(target).request(request.build()).buildGet());
+	}
 
-		if (targetType == null) {
+	/**
+	 * @since 2.1
+     */
+	public <T> ClientDataResponse<T> post(Class<T> targetType, String data) {
+		return invoke(targetType, InvocationBuilder.target(target).request(request.build()).buildPost(data));
+	}
+
+	/**
+	 * @since 2.1
+     */
+	public <T> ClientDataResponse<T> put(Class<T> targetType, String data) {
+		return invoke(targetType, InvocationBuilder.target(target).request(request.build()).buildPut(data));
+	}
+
+	/**
+	 * @since 2.1
+     */
+	public ClientSimpleResponse delete() {
+		Supplier<Response> invocation = InvocationBuilder.target(target).request(request.build()).buildDelete();
+		return new SimpleResponseHandler(jsonFactory).handleResponse(invocation.get());
+	}
+
+	private <T> ClientDataResponse<T> invoke(Class<T> targetType, Supplier<Response> invocation) {
+
+		IJsonEntityReader<T> entityReader = getEntityReader(targetType);
+		Response response = invocation.get();
+		DataResponseHandler<T> responseHandler = new DataResponseHandler<>(jsonFactory, entityReader);
+		return responseHandler.handleResponse(response);
+	}
+
+	private <T> IJsonEntityReader<T> getEntityReader(Class<T> entityType) {
+
+		if (entityType == null) {
 			throw new NullPointerException("Target type");
 		}
 
-		IJsonEntityReader<T> jsonEntityReader = jsonEntityReaderFactory.getReaderForType(targetType);
+		IJsonEntityReader<T> jsonEntityReader = jsonEntityReaderFactory.getReaderForType(entityType);
 		if (jsonEntityReader == null) {
-			throw new LinkRestClientException("Unsupported target type: " + targetType.getName());
+			throw new LinkRestClientException("Unsupported target type: " + entityType.getName());
 		}
 
-		Supplier<Response> invocation = InvocationBuilder.target(target).request(request.build()).build();
-		Response response = invocation.get();
-
-		DataResponseHandler<T> responseHandler = new DataResponseHandler<>(jsonFactory, jsonEntityReader);
-		return responseHandler.handleResponse(response);
+		return jsonEntityReader;
 	}
 }

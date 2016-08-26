@@ -1,12 +1,12 @@
 package com.nhl.link.rest.client.runtime.run;
 
-import java.util.function.Supplier;
+import com.nhl.link.rest.client.protocol.LrcRequest;
 
+import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.Invocation;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Response;
-
-import com.nhl.link.rest.client.protocol.LrcRequest;
+import java.util.function.Supplier;
 
 /**
  * @since 2.0
@@ -28,11 +28,23 @@ public class InvocationBuilder {
         return this;
     }
 
-    public Supplier<Response> build() {
+    public Supplier<Response> buildGet() {
+        return toInvocation().buildGet()::invoke;
+    }
 
-        WebTarget target = targetBuilder.build();
-        Invocation invocation = target.request().buildGet();
+    public Supplier<Response> buildPost(String data) {
+        return toInvocation().buildPost(Entity.json(data))::invoke;
+    }
 
-        return invocation::invoke;
+    public Supplier<Response> buildPut(String data) {
+        return toInvocation().buildPut(Entity.json(data))::invoke;
+    }
+
+    public Supplier<Response> buildDelete() {
+        return toInvocation().buildDelete()::invoke;
+    }
+
+    private Invocation.Builder toInvocation() {
+        return targetBuilder.build().request();
     }
 }

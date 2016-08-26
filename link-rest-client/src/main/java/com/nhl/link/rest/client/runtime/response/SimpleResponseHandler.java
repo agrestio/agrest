@@ -11,7 +11,7 @@ import javax.ws.rs.core.Response.Status;
  */
 public class SimpleResponseHandler extends BaseResponseHandler<ClientSimpleResponse> {
 
-    SimpleResponseHandler(JsonFactory jsonFactory) {
+    public SimpleResponseHandler(JsonFactory jsonFactory) {
         super(jsonFactory);
     }
 
