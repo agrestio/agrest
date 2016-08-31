@@ -2,6 +2,7 @@ Release 2.1
 
 #191 Replace Joda Time with java.time in JSON encoders and converters 
 #194 Refactor root encoder for easier customization
+#199 Support post/put/delete in LR Client
 
 Release 2.0
 
