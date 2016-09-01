@@ -1,3 +1,7 @@
+Release 2.2
+
+#201 Change license from BSD to Apache 2.0
+
 Release 2.1
 
 #191 Replace Joda Time with java.time in JSON encoders and converters 
