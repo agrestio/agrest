@@ -179,4 +179,17 @@ public class Sencha_GET_IT extends JerseyTestOnDerby {
 				+ "\"e2_id\":1}],\"total\":1}", response1.readEntity(String.class));
 	}
 
+	@Test
+	public void test_Filter_ById() {
+
+		newContext().performGenericQuery(
+				new SQLTemplate(E2.class, "INSERT INTO utest.e2 (id, name) values (1, 'xxx')"));
+
+		Response response1 = target("/e2").queryParam("include", "id")
+   			.queryParam("filter", urlEnc("[{\"exactMatch\":true,\"disabled\":false," +
+					"\"property\":\"id\",\"operator\":\"=\",\"value\":1}]")).request().get();
+
+		assertEquals(Status.OK.getStatusCode(), response1.getStatus());
+		assertEquals("{\"success\":true,\"data\":[{\"id\":1}],\"total\":1}", response1.readEntity(String.class));
+	}
 }
