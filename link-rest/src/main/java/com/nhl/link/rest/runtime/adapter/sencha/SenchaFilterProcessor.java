@@ -6,18 +6,15 @@ import com.nhl.link.rest.LinkRestException;
 import com.nhl.link.rest.meta.LrEntity;
 import com.nhl.link.rest.runtime.jackson.IJacksonService;
 import com.nhl.link.rest.runtime.parser.cache.IPathCache;
+import com.nhl.link.rest.runtime.parser.filter.ExpressionPostProcessor;
 import com.nhl.link.rest.runtime.parser.filter.FilterUtil;
 import org.apache.cayenne.di.Inject;
 import org.apache.cayenne.exp.Expression;
-import org.apache.cayenne.exp.TraversalHelper;
 import org.apache.cayenne.exp.parser.ASTObjPath;
-import org.apache.cayenne.exp.parser.ASTPath;
 
 import javax.ws.rs.core.Response.Status;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 import static org.apache.cayenne.exp.ExpressionFactory.expFalse;
 import static org.apache.cayenne.exp.ExpressionFactory.greaterExp;
@@ -40,14 +37,12 @@ public class SenchaFilterProcessor implements ISenchaFilterProcessor {
 
 	private IJacksonService jsonParser;
 	private IPathCache pathCache;
-
-	private Map<LrEntity<?>, ExpressionPostProcessor> postProcessors;
+	private ExpressionPostProcessor postProcessor;
 
 	public SenchaFilterProcessor(@Inject IJacksonService jsonParser, @Inject IPathCache pathCache) {
 		this.jsonParser = jsonParser;
 		this.pathCache = pathCache;
-
-		postProcessors = new ConcurrentHashMap<>();
+		this.postProcessor = new ExpressionPostProcessor(pathCache);
 	}
 
 	@Override
@@ -133,7 +128,7 @@ public class SenchaFilterProcessor implements ISenchaFilterProcessor {
 			combined = combined != null ? combined.andExp(qualifier) : qualifier;
 		}
 
-		return validateAndCleanup(combined, entity);
+		return postProcessor.process(entity, combined);
 	}
 
 	Expression eq(String property, Object value) {
@@ -218,71 +213,6 @@ public class SenchaFilterProcessor implements ISenchaFilterProcessor {
 	private void checkValueLength(String value) {
 		if (value.length() > MAX_VALUE_LENGTH) {
 			throw new LinkRestException(Status.BAD_REQUEST, "filter 'value' is to long: " + value);
-		}
-	}
-
-	private Expression validateAndCleanup(Expression exp, LrEntity<?> entity) {
-
-		// change expression in-place
-		// note - this will not fully handle an expression whose root is
-		// ASTObjPath, so will manually process it below
-		exp.traverse(getOrCreatePostProcessor(entity));
-
-		// process root ASTObjPath that can't be properly handled by
-		// 'expressionPostProcessor'. If it happens to be "id", it will be
-		// converted to "db:id".
-		if (exp instanceof ASTObjPath) {
-			exp = pathCache.getPathDescriptor(entity, (ASTObjPath) exp).getPathExp();
-		}
-
-		return exp;
-	}
-
-	private ExpressionPostProcessor getOrCreatePostProcessor(LrEntity<?> entity) {
-
-		ExpressionPostProcessor postProcessor = postProcessors.get(entity);
-		if (postProcessor == null) {
-			postProcessor = new ExpressionPostProcessor(entity);
-			ExpressionPostProcessor existing = postProcessors.putIfAbsent(entity, postProcessor);
-			if (existing != null) {
-				postProcessor = existing;
-			}
-		}
-		return postProcessor;
-	}
-
-	private class ExpressionPostProcessor extends TraversalHelper {
-
-		private LrEntity<?> entity;
-
-		ExpressionPostProcessor(LrEntity<?> entity) {
-			this.entity = entity;
-		}
-
-		@Override
-		public void startNode(Expression node, Expression parentNode) {
-			// do nothing
-		}
-
-		@Override
-		public void finishedChild(Expression parentNode, int childIndex, boolean hasMoreChildren) {
-
-			Object childNode = parentNode.getOperand(childIndex);
-			if (childNode instanceof ASTObjPath) {
-
-				// validate and replace if needed ... note that we can only
-				// replace non-root nodes during the traversal. Root node is
-				// validated and replaced explicitly by the caller.
-				ASTPath replacement = pathCache.getPathDescriptor(entity, (ASTObjPath) childNode).getPathExp();
-				if (replacement != childNode) {
-					parentNode.setOperand(childIndex, replacement);
-				}
-			}
-		}
-
-		@Override
-		public void objectNode(Object leaf, Expression parentNode) {
-			// do nothing
 		}
 	}
 }

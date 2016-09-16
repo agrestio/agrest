@@ -4,8 +4,10 @@ import static org.apache.cayenne.exp.ExpressionFactory.exp;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertThat;
 
 import org.apache.cayenne.exp.Expression;
+import org.hamcrest.core.IsInstanceOf;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -16,6 +18,9 @@ import com.nhl.link.rest.runtime.jackson.IJacksonService;
 import com.nhl.link.rest.runtime.jackson.JacksonService;
 import com.nhl.link.rest.runtime.parser.cache.PathCache;
 import com.nhl.link.rest.unit.TestWithCayenneMapping;
+
+import java.util.Date;
+import java.util.GregorianCalendar;
 
 public class SenchaFilterProcessorTest extends TestWithCayenneMapping {
 
@@ -172,4 +177,12 @@ public class SenchaFilterProcessorTest extends TestWithCayenneMapping {
 		assertEquals(exp("cVarchar <= 'xyz'"), e);
 	}
 
+	@Test
+	public void testProcess_Date() {
+		Expression e = processor.process(e4Entity, "[{\"property\":\"cDate\",\"value\":\"2016-03-26\",\"operator\":\">\"}]");
+
+		assertNotNull(e);
+		assertThat(e.getOperand(1), new IsInstanceOf(Date.class));
+		assertEquals(e.getOperand(1), new GregorianCalendar(2016, 2, 26).getTime());
+	}
 }
