@@ -6,8 +6,8 @@ import com.nhl.link.rest.LinkRestException;
 import com.nhl.link.rest.meta.LrEntity;
 import com.nhl.link.rest.runtime.jackson.IJacksonService;
 import com.nhl.link.rest.runtime.parser.cache.IPathCache;
-import com.nhl.link.rest.runtime.parser.filter.ExpressionPostProcessor;
 import com.nhl.link.rest.runtime.parser.filter.FilterUtil;
+import com.nhl.link.rest.runtime.parser.filter.IExpressionPostProcessor;
 import org.apache.cayenne.di.Inject;
 import org.apache.cayenne.exp.Expression;
 import org.apache.cayenne.exp.parser.ASTObjPath;
@@ -37,12 +37,13 @@ public class SenchaFilterProcessor implements ISenchaFilterProcessor {
 
 	private IJacksonService jsonParser;
 	private IPathCache pathCache;
-	private ExpressionPostProcessor postProcessor;
+	private IExpressionPostProcessor postProcessor;
 
-	public SenchaFilterProcessor(@Inject IJacksonService jsonParser, @Inject IPathCache pathCache) {
+	public SenchaFilterProcessor(@Inject IJacksonService jsonParser, @Inject IPathCache pathCache,
+								 @Inject IExpressionPostProcessor postProcessor) {
 		this.jsonParser = jsonParser;
 		this.pathCache = pathCache;
-		this.postProcessor = new ExpressionPostProcessor(pathCache);
+		this.postProcessor = postProcessor;
 	}
 
 	@Override

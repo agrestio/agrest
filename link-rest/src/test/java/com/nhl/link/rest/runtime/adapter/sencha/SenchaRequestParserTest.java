@@ -11,6 +11,7 @@ import java.util.Iterator;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.UriInfo;
 
+import com.nhl.link.rest.runtime.parser.filter.ExpressionPostProcessor;
 import org.apache.cayenne.query.Ordering;
 import org.apache.cayenne.query.SortOrder;
 import org.junit.Before;
@@ -42,9 +43,10 @@ public class SenchaRequestParserTest extends TestWithCayenneMapping {
 		IJacksonService jacksonService = new JacksonService();
 		ISortProcessor sortProcessor = new SenchaSortProcessor(jacksonService, pathCache);
 
-		ICayenneExpProcessor expProcessor = new CayenneExpProcessor(jacksonService, pathCache);
+		ICayenneExpProcessor expProcessor = new CayenneExpProcessor(jacksonService, new ExpressionPostProcessor(pathCache));
 		IKeyValueExpProcessor kvExpProcessor = new KeyValueExpProcessor();
-		ISenchaFilterProcessor senchaFilterProcessor = new SenchaFilterProcessor(jacksonService, pathCache);
+		ISenchaFilterProcessor senchaFilterProcessor = new SenchaFilterProcessor(jacksonService, pathCache,
+				new ExpressionPostProcessor(pathCache));
 		ITreeProcessor treeProcessor = new IncludeExcludeProcessor(jacksonService, sortProcessor, expProcessor);
 
 		parser = new SenchaRequestParser(treeProcessor, sortProcessor, expProcessor, kvExpProcessor,
