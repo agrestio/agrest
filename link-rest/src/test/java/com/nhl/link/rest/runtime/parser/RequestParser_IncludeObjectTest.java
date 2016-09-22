@@ -11,6 +11,7 @@ import java.util.Arrays;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.UriInfo;
 
+import com.nhl.link.rest.runtime.parser.filter.ExpressionPostProcessor;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -40,7 +41,7 @@ public class RequestParser_IncludeObjectTest extends TestWithCayenneMapping {
 
 		IPathCache pathCache = new PathCache();
 		IJacksonService jacksonService = new JacksonService();
-		ICayenneExpProcessor expProcessor = new CayenneExpProcessor(jacksonService, pathCache);
+		ICayenneExpProcessor expProcessor = new CayenneExpProcessor(jacksonService, new ExpressionPostProcessor(pathCache));
 		IKeyValueExpProcessor kvExpProcessor = new KeyValueExpProcessor();
 
 		ISortProcessor sortProcessor = new SortProcessor(jacksonService, pathCache);

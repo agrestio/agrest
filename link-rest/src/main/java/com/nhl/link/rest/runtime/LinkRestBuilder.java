@@ -14,6 +14,8 @@ import java.util.concurrent.ExecutorService;
 import javax.ws.rs.core.Feature;
 import javax.ws.rs.ext.ExceptionMapper;
 
+import com.nhl.link.rest.runtime.parser.filter.ExpressionPostProcessor;
+import com.nhl.link.rest.runtime.parser.filter.IExpressionPostProcessor;
 import org.apache.cayenne.CayenneRuntimeException;
 import org.apache.cayenne.configuration.server.ServerRuntime;
 import org.apache.cayenne.di.Binder;
@@ -327,6 +329,7 @@ public class LinkRestBuilder {
 				binder.bind(IResourceMetadataService.class).to(ResourceMetadataService.class);
 				binder.bind(IConstraintsHandler.class).to(ConstraintsHandler.class);
 				binder.bind(ICayenneExpProcessor.class).to(CayenneExpProcessor.class);
+				binder.bind(IExpressionPostProcessor.class).to(ExpressionPostProcessor.class);
 				binder.bind(IKeyValueExpProcessor.class).to(KeyValueExpProcessor.class);
 
 				binder.bind(IJacksonService.class).to(JacksonService.class);

@@ -8,6 +8,7 @@ import com.nhl.link.rest.parser.converter.JsonValueConverter;
 import com.nhl.link.rest.parser.converter.UtcDateConverter;
 import com.nhl.link.rest.runtime.parser.cache.IPathCache;
 import com.nhl.link.rest.runtime.parser.cache.PathDescriptor;
+import org.apache.cayenne.di.Inject;
 import org.apache.cayenne.exp.Expression;
 import org.apache.cayenne.exp.TraversalHelper;
 import org.apache.cayenne.exp.parser.ASTDbPath;
@@ -22,14 +23,14 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class ExpressionPostProcessor {
+public class ExpressionPostProcessor implements IExpressionPostProcessor {
 
     private IPathCache pathCache;
 	private Map<Class<?>, JsonValueConverter> converters;
 
     private Map<LrEntity<?>, ExpressionProcessor> postProcessors;
 
-    public ExpressionPostProcessor(IPathCache pathCache) {
+    public ExpressionPostProcessor(@Inject IPathCache pathCache) {
         this.pathCache = pathCache;
 
         // TODO: instead of manually assembling converters we must switch to
@@ -47,6 +48,7 @@ public class ExpressionPostProcessor {
         postProcessors = new ConcurrentHashMap<>();
     }
 
+    @Override
     public Expression process(LrEntity<?> entity, Expression exp) {
         return (exp == null) ? null : validateAndCleanup(entity, exp);
     }

@@ -6,6 +6,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 
+import com.nhl.link.rest.runtime.parser.filter.ExpressionPostProcessor;
 import org.apache.cayenne.exp.Expression;
 import org.hamcrest.core.IsInstanceOf;
 import org.junit.Before;
@@ -33,7 +34,7 @@ public class SenchaFilterProcessorTest extends TestWithCayenneMapping {
 		IJacksonService jsonParser = new JacksonService();
 		PathCache pathCache = new PathCache();
 
-		this.processor = new SenchaFilterProcessor(jsonParser, pathCache);
+		this.processor = new SenchaFilterProcessor(jsonParser, pathCache, new ExpressionPostProcessor(pathCache));
 		this.e4Entity = getLrEntity(E4.class);
 	}
 

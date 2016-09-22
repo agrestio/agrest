@@ -3,18 +3,17 @@ package com.nhl.link.rest.runtime.parser.filter;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.nhl.link.rest.meta.LrEntity;
 import com.nhl.link.rest.runtime.jackson.IJacksonService;
-import com.nhl.link.rest.runtime.parser.cache.IPathCache;
 import org.apache.cayenne.di.Inject;
 import org.apache.cayenne.exp.Expression;
 
 public class CayenneExpProcessor implements ICayenneExpProcessor {
 
 	private CayenneExpProcessorWorker worker;
-	private ExpressionPostProcessor postProcessor;
+	private IExpressionPostProcessor postProcessor;
 
-	public CayenneExpProcessor(@Inject IJacksonService jsonParser, @Inject IPathCache pathCache) {
+	public CayenneExpProcessor(@Inject IJacksonService jsonParser, @Inject IExpressionPostProcessor postProcessor) {
 		this.worker = new CayenneExpProcessorWorker(jsonParser);
-		postProcessor = new ExpressionPostProcessor(pathCache);
+		this.postProcessor = postProcessor;
 	}
 
 	@Override
