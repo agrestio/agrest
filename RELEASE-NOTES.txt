@@ -1,6 +1,7 @@
 Release 2.2
 
 #201 Change license from BSD to Apache 2.0
+#202 Sencha adapter "filter" key can't use "id" property 
 
 Release 2.1
 
