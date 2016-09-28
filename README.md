@@ -1,4 +1,5 @@
 [![Build Status](https://travis-ci.org/nhl/link-rest.svg?branch=master)](https://travis-ci.org/nhl/link-rest)
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.nhl.link.rest/link-rest/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.nhl.link.rest/link-rest/)
 
 LinkRest is a flexible model-driven REST data service framework. Visit [our site](http://linkrest.io/) for more information.
 
