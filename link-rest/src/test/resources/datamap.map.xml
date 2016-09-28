@@ -119,6 +119,10 @@
 		<db-attribute name="id" type="INTEGER" isPrimaryKey="true" isMandatory="true"/>
 		<db-attribute name="name" type="VARCHAR" length="100"/>
 	</db-entity>
+	<db-entity name="e23" schema="utest">
+		<db-attribute name="id" type="INTEGER" isPrimaryKey="true" isMandatory="true"/>
+		<db-attribute name="name" type="VARCHAR" length="100"/>
+	</db-entity>
 	<db-entity name="e3" schema="utest">
 		<db-attribute name="e2_id" type="INTEGER"/>
 		<db-attribute name="e5_id" type="INTEGER"/>
@@ -242,6 +246,10 @@
 		<obj-attribute name="name" type="java.lang.String" db-attribute-path="name"/>
 	</obj-entity>
 	<obj-entity name="E22" className="com.nhl.link.rest.it.fixture.cayenne.E22" dbEntityName="e22">
+		<obj-attribute name="name" type="java.lang.String" db-attribute-path="name"/>
+	</obj-entity>
+	<obj-entity name="E23" className="com.nhl.link.rest.it.fixture.cayenne.E23" dbEntityName="e23">
+		<obj-attribute name="exposedId" type="java.lang.Integer" db-attribute-path="id"/>
 		<obj-attribute name="name" type="java.lang.String" db-attribute-path="name"/>
 	</obj-entity>
 	<obj-entity name="E3" className="com.nhl.link.rest.it.fixture.cayenne.E3" dbEntityName="e3">

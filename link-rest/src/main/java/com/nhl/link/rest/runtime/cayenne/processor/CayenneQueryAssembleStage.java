@@ -114,10 +114,6 @@ public class CayenneQueryAssembleStage<T> extends BaseLinearProcessingStage<Sele
                     "Wrong ID size: expected " + idAttributes.size() + ", got: " + id.size());
         }
 
-		if (id.size() == 1) {
-			return ExpressionFactory.matchDbExp(idAttributes.iterator().next().getName(), id.get());
-		}
-
         Collection<Expression> qualifiers = new ArrayList<>();
 		for (LrAttribute idAttribute : idAttributes) {
 			Object idValue = id.get(idAttribute.getName());
