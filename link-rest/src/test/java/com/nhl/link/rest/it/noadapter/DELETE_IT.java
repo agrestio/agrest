@@ -1,23 +1,22 @@
 package com.nhl.link.rest.it.noadapter;
 
-import static org.junit.Assert.assertEquals;
-
-import java.io.IOException;
-
-import javax.ws.rs.core.FeatureContext;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
-
+import com.nhl.link.rest.it.fixture.JerseyTestOnDerby;
 import com.nhl.link.rest.it.fixture.cayenne.E17;
+import com.nhl.link.rest.it.fixture.cayenne.E4;
 import com.nhl.link.rest.it.fixture.resource.E17Resource;
+import com.nhl.link.rest.it.fixture.resource.E24Resource;
+import com.nhl.link.rest.it.fixture.resource.E4Resource;
 import org.apache.cayenne.Cayenne;
 import org.apache.cayenne.query.EJBQLQuery;
 import org.apache.cayenne.query.SQLTemplate;
 import org.junit.Test;
 
-import com.nhl.link.rest.it.fixture.JerseyTestOnDerby;
-import com.nhl.link.rest.it.fixture.cayenne.E4;
-import com.nhl.link.rest.it.fixture.resource.E4Resource;
+import javax.ws.rs.core.FeatureContext;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
+import java.io.IOException;
+
+import static org.junit.Assert.assertEquals;
 
 public class DELETE_IT extends JerseyTestOnDerby {
 
@@ -25,6 +24,7 @@ public class DELETE_IT extends JerseyTestOnDerby {
 	protected void doAddResources(FeatureContext context) {
 		context.register(E4Resource.class);
 		context.register(E17Resource.class);
+		context.register(E24Resource.class);
 	}
 
 	@Test
@@ -97,4 +97,10 @@ public class DELETE_IT extends JerseyTestOnDerby {
 				response2.readEntity(String.class));
 	}
 
+	@Test
+	public void test_Delete_UpperCasePK() {
+		insert("e24", "TYPE, NAME", "1, 'xyz'");
+		Response response1 = target("/e24/1").request().delete();
+		assertEquals(Status.OK.getStatusCode(), response1.getStatus());
+	}
 }

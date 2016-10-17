@@ -1,9 +1,11 @@
 package com.nhl.link.rest.runtime.cayenne.processor;
 
 import com.nhl.link.rest.LinkRestException;
+import com.nhl.link.rest.meta.LrAttribute;
 import com.nhl.link.rest.meta.LrEntity;
 import org.apache.cayenne.ObjectContext;
 import org.apache.cayenne.exp.ExpressionFactory;
+import org.apache.cayenne.exp.parser.ASTEqual;
 import org.apache.cayenne.map.ObjEntity;
 import org.apache.cayenne.query.ObjectSelect;
 
@@ -41,10 +43,8 @@ class Util {
 			}
 			return query.selectOne(context);
 		} else {
-			String idName = lrEntity.getIds().iterator().next().getName();
-			ObjectSelect<A> query = ObjectSelect.query(type);
-			query.and(ExpressionFactory.matchDbExp(entity.getDbEntity().getAttribute(idName).getName(), id));
-			return query.selectOne(context);
+			LrAttribute attribute = lrEntity.getIds().iterator().next();
+			return ObjectSelect.query(type, new ASTEqual(attribute.getPathExp(), id)).selectOne(context);
 		}
 	}
 }
