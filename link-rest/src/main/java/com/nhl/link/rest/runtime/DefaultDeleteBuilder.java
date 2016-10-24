@@ -37,11 +37,11 @@ public class DefaultDeleteBuilder<T> implements DeleteBuilder<T> {
 	@Override
 	public DeleteBuilder<T> id(Map<String, Object> ids) {
 
-		for (Object id : ids.entrySet()) {
-			if (id == null) {
-				throw new LinkRestException(Response.Status.NOT_FOUND, "Part of compound ID is null");
+		ids.forEach((name, value) -> {
+			if (value == null) {
+				throw new LinkRestException(Response.Status.NOT_FOUND, "Part of compound ID is null: " + name);
 			}
-		}
+		});
 
 		context.setCompoundId(ids);
 		return this;
