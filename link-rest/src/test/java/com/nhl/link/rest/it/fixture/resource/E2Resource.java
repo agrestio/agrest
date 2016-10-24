@@ -11,6 +11,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.UriInfo;
 
 import com.nhl.link.rest.DataResponse;
+import com.nhl.link.rest.EntityDelete;
 import com.nhl.link.rest.LinkRest;
 import com.nhl.link.rest.MetadataResponse;
 import com.nhl.link.rest.SimpleResponse;
@@ -19,6 +20,8 @@ import com.nhl.link.rest.it.fixture.cayenne.E2;
 import com.nhl.link.rest.it.fixture.cayenne.E3;
 import com.nhl.link.rest.meta.LinkType;
 import com.nhl.link.rest.meta.annotation.Resource;
+
+import java.util.Collection;
 
 @Path("e2")
 public class E2Resource {
@@ -43,6 +46,11 @@ public class E2Resource {
 	@Path("{id}")
 	public SimpleResponse deleteE2ById(@PathParam("id") int id, @Context UriInfo uriInfo) {
 		return LinkRest.service(config).delete(E2.class, id);
+	}
+
+	@DELETE
+	public SimpleResponse deleteE2_Batch(Collection<EntityDelete<E2>> deleted, @Context UriInfo uriInfo) {
+		return LinkRest.service(config).delete(E2.class, deleted);
 	}
 
 	@GET

@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.Map;
 
 import com.nhl.link.rest.LinkRestException;
+import com.nhl.link.rest.LrObjectId;
 import org.apache.cayenne.exp.Property;
 
 import com.nhl.link.rest.DeleteBuilder;
@@ -44,6 +45,12 @@ public class DefaultDeleteBuilder<T> implements DeleteBuilder<T> {
 		});
 
 		context.addCompoundId(ids);
+		return this;
+	}
+
+	@Override
+	public DeleteBuilder<T> id(LrObjectId id) {
+		context.addId(id);
 		return this;
 	}
 

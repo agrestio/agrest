@@ -18,6 +18,11 @@ public interface DeleteBuilder<T> {
 	 */
 	DeleteBuilder<T> id(Map<String, Object> ids);
 
+	/**
+	 * @since 2.3
+     */
+	DeleteBuilder<T> id(LrObjectId id);
+
 	DeleteBuilder<T> parent(Class<?> parentType, Object parentId, String relationshipFromParent);
 
 	/**

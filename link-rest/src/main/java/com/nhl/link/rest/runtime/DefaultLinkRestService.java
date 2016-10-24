@@ -1,10 +1,12 @@
 package com.nhl.link.rest.runtime;
 
+import java.util.Collection;
 import java.util.Map;
 
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriInfo;
 
+import com.nhl.link.rest.EntityDelete;
 import org.apache.cayenne.di.Inject;
 import org.apache.cayenne.exp.Property;
 
@@ -129,6 +131,13 @@ public class DefaultLinkRestService implements ILinkRestService {
 	@Override
 	public SimpleResponse delete(Class<?> root, Map<String, Object> ids) {
 		return delete(root).id(ids).delete();
+	}
+
+	@Override
+	public <T> SimpleResponse delete(Class<T> root, Collection<EntityDelete<T>> deleted) {
+		DeleteBuilder<T> builder = delete(root);
+		deleted.forEach(entityDelete -> builder.id(entityDelete.getId()));
+		return builder.delete();
 	}
 
 	/**

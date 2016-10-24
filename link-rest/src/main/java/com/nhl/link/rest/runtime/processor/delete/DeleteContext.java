@@ -44,6 +44,13 @@ public class DeleteContext<T> extends BaseProcessingContext<T> {
 		this.ids.add(new CompoundObjectId(ids));
 	}
 
+	public void addId(LrObjectId id) {
+		if (this.ids == null) {
+			this.ids = new ArrayList<>();
+		}
+		this.ids.add(id);
+	}
+
 	public EntityParent<?> getParent() {
 		return parent;
 	}

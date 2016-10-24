@@ -1,5 +1,6 @@
 package com.nhl.link.rest.it.fixture.resource;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -15,6 +16,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.UriInfo;
 
 import com.nhl.link.rest.DataResponse;
+import com.nhl.link.rest.EntityDelete;
 import com.nhl.link.rest.LinkRest;
 import com.nhl.link.rest.SimpleResponse;
 import com.nhl.link.rest.it.fixture.cayenne.E17;
@@ -94,4 +96,10 @@ public class E17Resource {
 
 		return LinkRest.service(config).delete(E17.class, ids);
 	}
+
+    @DELETE
+    @Path("batch_delete")
+    public SimpleResponse delete_Batch(Collection<EntityDelete<E17>> deleted) {
+        return LinkRest.service(config).delete(E17.class, deleted);
+    }
 }

@@ -11,4 +11,8 @@ public class EntityDelete<T> {
         this.entity = entity;
         this.id = id;
     }
+
+    public LrObjectId getId() {
+        return id;
+    }
 }

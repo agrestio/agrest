@@ -1,9 +1,11 @@
 package com.nhl.link.rest.runtime;
 
+import java.util.Collection;
 import java.util.Map;
 
 import javax.ws.rs.core.UriInfo;
 
+import com.nhl.link.rest.EntityDelete;
 import org.apache.cayenne.exp.Property;
 
 import com.nhl.link.rest.DataResponse;
@@ -42,6 +44,11 @@ public interface ILinkRestService {
 	SimpleResponse delete(Class<?> type, Object id);
 
 	SimpleResponse delete(Class<?> type, Map<String, Object> ids);
+
+	/**
+	 * @since 2.3
+     */
+	<T> SimpleResponse delete(Class<T> type, Collection<EntityDelete<T>> deleted);
 
 	/**
 	 * Breaks the relationship between source and all its target objects.

@@ -31,7 +31,10 @@ public class SenchaAdapter implements LinkRestAdapter {
 
 	@Override
 	public void contributeToJaxRs(Collection<Feature> features) {
-		// nothing is contributed specifically for Sencha here..
+		features.add(context -> {
+			context.register(SenchaDeletePayloadParser.class);
+			return true;
+		});
 	}
 
 }
