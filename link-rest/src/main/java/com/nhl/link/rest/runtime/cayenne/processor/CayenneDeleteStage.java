@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.ws.rs.core.Response.Status;
 
+import com.nhl.link.rest.LrObjectId;
 import com.nhl.link.rest.meta.LrEntity;
 import com.nhl.link.rest.runtime.meta.IMetadataService;
 import org.apache.cayenne.ObjectContext;
@@ -58,15 +59,17 @@ public class CayenneDeleteStage<T> extends BaseLinearProcessingStage<DeleteConte
 
 	private void deleteById(DeleteContext<T> context, ObjectContext cayenneContext, LrEntity<T> lrEntity) {
 
-		Object o = Util.findById(cayenneContext, context.getType(), lrEntity, context.getId().get());
+		for (LrObjectId id : context.getIds()) {
+			Object o = Util.findById(cayenneContext, context.getType(), lrEntity, id.get());
 
-		if (o == null) {
-			ObjEntity entity = cayenneContext.getEntityResolver().getObjEntity(context.getType());
-			throw new LinkRestException(Status.NOT_FOUND, "No object for ID '" + context.getId() + "' and entity '"
-					+ entity.getName() + "'");
+			if (o == null) {
+				ObjEntity entity = cayenneContext.getEntityResolver().getObjEntity(context.getType());
+				throw new LinkRestException(Status.NOT_FOUND, "No object for ID '" + id + "' and entity '"
+						+ entity.getName() + "'");
+			}
+
+			cayenneContext.deleteObject(o);
 		}
-
-		cayenneContext.deleteObject(o);
 		cayenneContext.commitChanges();
 	}
 

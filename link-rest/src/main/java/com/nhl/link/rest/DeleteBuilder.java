@@ -13,6 +13,7 @@ public interface DeleteBuilder<T> {
 	DeleteBuilder<T> id(Object id);
 
 	/**
+	 * @param ids multi-attribute ID
 	 * @since 1.20
 	 */
 	DeleteBuilder<T> id(Map<String, Object> ids);

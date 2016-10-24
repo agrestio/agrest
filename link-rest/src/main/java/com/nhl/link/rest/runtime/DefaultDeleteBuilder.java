@@ -30,7 +30,7 @@ public class DefaultDeleteBuilder<T> implements DeleteBuilder<T> {
 
 	@Override
 	public DeleteBuilder<T> id(Object id) {
-		context.setId(id);
+		context.addId(id);
 		return this;
 	}
 
@@ -43,7 +43,7 @@ public class DefaultDeleteBuilder<T> implements DeleteBuilder<T> {
 			}
 		});
 
-		context.setCompoundId(ids);
+		context.addCompoundId(ids);
 		return this;
 	}
 

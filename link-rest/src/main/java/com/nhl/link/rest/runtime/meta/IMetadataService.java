@@ -6,6 +6,8 @@ import com.nhl.link.rest.EntityParent;
 import com.nhl.link.rest.meta.LrEntity;
 import com.nhl.link.rest.meta.LrRelationship;
 
+import java.lang.reflect.Type;
+
 /**
  * Provides access to LinkRest entity metadata.
  */
@@ -37,4 +39,9 @@ public interface IMetadataService {
 	 * @since 1.12
 	 */
 	LrRelationship getLrRelationship(EntityParent<?> parent);
+
+	/**
+     * @since 2.3
+     */
+	<T> LrEntity<T> getEntityByType(Type entityType);
 }
