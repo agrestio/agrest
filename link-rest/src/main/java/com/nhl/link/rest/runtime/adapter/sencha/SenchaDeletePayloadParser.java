@@ -131,6 +131,7 @@ public class SenchaDeletePayloadParser<T> implements MessageBodyReader<Collectio
 			} else {
 				deleted.add(new EntityDelete<T>(entity, new CompoundObjectId(deletedId)));
 			}
+			deletedId = null;
 		}
 
 		public Collection<EntityDelete<T>> getDeleted() {

@@ -1,6 +1,7 @@
 Release 2.3
 
 #208 NPE on deleting
+#209 Batch delete (Sencha-only)
 
 Release 2.2
 
