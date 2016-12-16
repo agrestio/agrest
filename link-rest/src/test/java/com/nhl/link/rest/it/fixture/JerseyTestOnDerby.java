@@ -1,14 +1,7 @@
 package com.nhl.link.rest.it.fixture;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-
-import javax.ws.rs.client.Entity;
-import javax.ws.rs.core.Application;
-import javax.ws.rs.core.Feature;
-import javax.ws.rs.core.FeatureContext;
-import javax.ws.rs.core.MediaType;
-
+import com.nhl.link.rest.runtime.LinkRestBuilder;
+import com.nhl.link.rest.runtime.LinkRestRuntime;
 import org.apache.cayenne.ObjectContext;
 import org.apache.cayenne.query.Query;
 import org.glassfish.jersey.server.ResourceConfig;
@@ -18,14 +11,21 @@ import org.glassfish.jersey.test.spi.TestContainerException;
 import org.junit.ClassRule;
 import org.junit.Rule;
 
-import com.nhl.link.rest.runtime.LinkRestBuilder;
-import com.nhl.link.rest.runtime.LinkRestRuntime;
+import javax.ws.rs.client.Entity;
+import javax.ws.rs.core.Application;
+import javax.ws.rs.core.Feature;
+import javax.ws.rs.core.FeatureContext;
+import javax.ws.rs.core.MediaType;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 
 /**
  * A main superclass of LinkRest unit tests that require full stack Jersey
  * container.
  */
 public abstract class JerseyTestOnDerby extends JerseyTest {
+
+	// TODO: switch to Bootique test framework...
 
 	@ClassRule
 	public static CayenneDerbyStack DB_STACK = new CayenneDerbyStack("derby-for-jersey");

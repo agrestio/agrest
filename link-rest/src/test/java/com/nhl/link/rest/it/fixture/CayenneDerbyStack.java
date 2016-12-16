@@ -1,8 +1,9 @@
 package com.nhl.link.rest.it.fixture;
 
+import com.nhl.link.rest.it.fixture.cayenne.E1;
 import org.apache.cayenne.ObjectContext;
 import org.apache.cayenne.access.dbsync.CreateIfNoSchemaStrategy;
-import org.apache.cayenne.access.dbsync.SchemaUpdateStrategy;
+import org.apache.cayenne.access.dbsync.SchemaUpdateStrategyFactory;
 import org.apache.cayenne.configuration.server.ServerRuntime;
 import org.apache.cayenne.configuration.server.ServerRuntimeBuilder;
 import org.apache.cayenne.di.Binder;
@@ -11,8 +12,7 @@ import org.apache.cayenne.query.SQLSelect;
 import org.apache.cayenne.query.SQLTemplate;
 import org.junit.rules.ExternalResource;
 
-import com.nhl.link.rest.it.fixture.cayenne.E1;
-
+// TODO: switch to Bootique test framework...
 public class CayenneDerbyStack extends ExternalResource {
 
 	private ServerRuntime cayenne;
@@ -20,7 +20,7 @@ public class CayenneDerbyStack extends ExternalResource {
 	private String dbPath;
 
 	public CayenneDerbyStack(String dbName) {
-		this.dbPath = "target/" + dbPath;
+		this.dbPath = "target/" + dbName;
 	}
 
 	@Override
@@ -30,7 +30,7 @@ public class CayenneDerbyStack extends ExternalResource {
 		cayenne = new ServerRuntimeBuilder().addConfig("cayenne-linkrest-tests.xml").addModule(new Module() {
 			@Override
 			public void configure(Binder binder) {
-				binder.bind(SchemaUpdateStrategy.class).to(CreateIfNoSchemaStrategy.class);
+				binder.bind(SchemaUpdateStrategyFactory.class).toInstance(descriptor -> new CreateIfNoSchemaStrategy());
 			}
 		}).jdbcDriver("org.apache.derby.jdbc.EmbeddedDriver").url(String.format("jdbc:derby:%s;create=true", dbPath))
 				.build();
