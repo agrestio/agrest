@@ -1,25 +1,25 @@
 package com.nhl.link.rest.runtime.constraints;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
-import org.apache.cayenne.map.ObjEntity;
-import org.junit.Before;
-import org.junit.Test;
-
 import com.nhl.link.rest.EntityConstraint;
 import com.nhl.link.rest.ResourceEntity;
+import com.nhl.link.rest.constraints.Constraint;
 import com.nhl.link.rest.constraints.ConstraintsBuilder;
 import com.nhl.link.rest.it.fixture.cayenne.E1;
 import com.nhl.link.rest.it.fixture.cayenne.E2;
 import com.nhl.link.rest.meta.LrPersistentEntity;
 import com.nhl.link.rest.unit.TestWithCayenneMapping;
+import org.apache.cayenne.map.ObjEntity;
+import org.junit.Before;
+import org.junit.Test;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class ConstraintsHandlerWithDefaultsTest extends TestWithCayenneMapping {
 
@@ -58,7 +58,7 @@ public class ConstraintsHandlerWithDefaultsTest extends TestWithCayenneMapping {
 	@Test
 	public void testConstrainResponse_PerRequest() {
 
-		ConstraintsBuilder<E1> tc1 = ConstraintsBuilder.excludeAll(E1.class).attributes(E1.DESCRIPTION);
+		Constraint<E1> tc1 = ConstraintsBuilder.excludeAll(E1.class).attributes(E1.DESCRIPTION);
 
 		ResourceEntity<E1> te1 = new ResourceEntity<>(lre1);
 		appendAttribute(te1, E1.AGE, Integer.class);

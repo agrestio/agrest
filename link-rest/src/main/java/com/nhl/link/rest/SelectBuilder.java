@@ -84,7 +84,8 @@ public interface SelectBuilder<T> {
 	SelectBuilder<T> property(String name);
 
 	/**
-	 * Applies entity constraints to the SelectBuilder.
+	 * Installs an optional constraint function defining how much of the request entity attributes / relationships
+     * the client can see.
 	 *
 	 * @since 1.3
 	 * @deprecated since 2.4 in favor of {@link #constraint(Constraint)}.
@@ -94,6 +95,9 @@ public interface SelectBuilder<T> {
     }
 
     /**
+     * Installs an optional constraint function defining how much of the request entity attributes / relationships
+     * the client can see.
+     *
      * @param constraint an instance of Constraint function.
      * @return
      * @since 2.4

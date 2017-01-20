@@ -1,14 +1,5 @@
 package com.nhl.link.rest.runtime;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Map;
-
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriInfo;
-
-import org.apache.cayenne.exp.Property;
-
 import com.nhl.link.rest.DataResponse;
 import com.nhl.link.rest.EntityParent;
 import com.nhl.link.rest.EntityUpdate;
@@ -16,12 +7,19 @@ import com.nhl.link.rest.LinkRestException;
 import com.nhl.link.rest.ObjectMapperFactory;
 import com.nhl.link.rest.SimpleResponse;
 import com.nhl.link.rest.UpdateBuilder;
-import com.nhl.link.rest.constraints.ConstraintsBuilder;
+import com.nhl.link.rest.constraints.Constraint;
 import com.nhl.link.rest.processor.ChainProcessor;
 import com.nhl.link.rest.processor.ProcessingStage;
 import com.nhl.link.rest.runtime.cayenne.ByKeyObjectMapperFactory;
 import com.nhl.link.rest.runtime.listener.ListenersBuilder;
 import com.nhl.link.rest.runtime.processor.update.UpdateContext;
+import org.apache.cayenne.exp.Property;
+
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriInfo;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Map;
 
 /**
  * @since 1.7
@@ -101,15 +99,21 @@ public class DefaultUpdateBuilder<T> implements UpdateBuilder<T> {
 		return parent(parentType, parentIds, relationshipFromParent.getName());
 	}
 
+	/**
+	 * @since 2.4
+	 */
 	@Override
-	public UpdateBuilder<T> readConstraints(ConstraintsBuilder<T> constraints) {
-		context.setReadConstraints(constraints);
+	public UpdateBuilder<T> readConstraint(Constraint<T> constraint) {
+		context.setReadConstraints(constraint);
 		return this;
 	}
 
+	/**
+	 * @since 2.4
+	 */
 	@Override
-	public UpdateBuilder<T> writeConstraints(ConstraintsBuilder<T> constraints) {
-		context.setWriteConstraints(constraints);
+	public UpdateBuilder<T> writeConstraint(Constraint<T> constraint) {
+		context.setWriteConstraints(constraint);
 		return this;
 	}
 

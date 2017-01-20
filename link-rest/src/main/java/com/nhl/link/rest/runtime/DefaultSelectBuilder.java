@@ -1,29 +1,27 @@
 package com.nhl.link.rest.runtime;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.ws.rs.core.Response.Status;
-import javax.ws.rs.core.UriInfo;
-
-import org.apache.cayenne.exp.Property;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.nhl.link.rest.DataResponse;
 import com.nhl.link.rest.EntityParent;
 import com.nhl.link.rest.EntityProperty;
 import com.nhl.link.rest.LinkRestException;
 import com.nhl.link.rest.SelectBuilder;
 import com.nhl.link.rest.SizeConstraints;
-import com.nhl.link.rest.constraints.ConstraintsBuilder;
+import com.nhl.link.rest.constraints.Constraint;
 import com.nhl.link.rest.encoder.Encoder;
 import com.nhl.link.rest.processor.ChainProcessor;
 import com.nhl.link.rest.processor.ProcessingStage;
 import com.nhl.link.rest.property.PropertyBuilder;
 import com.nhl.link.rest.runtime.listener.ListenersBuilder;
 import com.nhl.link.rest.runtime.processor.select.SelectContext;
+import org.apache.cayenne.exp.Property;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.ws.rs.core.Response.Status;
+import javax.ws.rs.core.UriInfo;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @since 1.16
@@ -90,9 +88,17 @@ public class DefaultSelectBuilder<T> implements SelectBuilder<T> {
 		return parent(parentType, parentIds, relationshipFromParent.getName());
 	}
 
+	/**
+	 * Installs an optional constraint function defining how much of the request entity attributes / relationships
+	 * the client can see.
+	 *
+	 * @param constraint an instance of Constraint function.
+	 * @return
+	 * @since 2.4
+	 */
 	@Override
-	public SelectBuilder<T> constraints(ConstraintsBuilder<T> constraints) {
-		context.setTreeConstraints(constraints);
+	public SelectBuilder<T> constraint(Constraint<T> constraint) {
+		context.setConstraint(constraint);
 		return this;
 	}
 

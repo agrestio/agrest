@@ -1,16 +1,15 @@
 package com.nhl.link.rest.runtime.constraints;
 
-import java.util.List;
-
+import com.nhl.link.rest.EntityConstraint;
+import com.nhl.link.rest.ResourceEntity;
+import com.nhl.link.rest.SizeConstraints;
+import com.nhl.link.rest.constraints.Constraint;
+import com.nhl.link.rest.runtime.processor.update.UpdateContext;
 import org.apache.cayenne.di.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.nhl.link.rest.EntityConstraint;
-import com.nhl.link.rest.ResourceEntity;
-import com.nhl.link.rest.SizeConstraints;
-import com.nhl.link.rest.constraints.ConstraintsBuilder;
-import com.nhl.link.rest.runtime.processor.update.UpdateContext;
+import java.util.List;
 
 /**
  * An {@link IConstraintsHandler} that ensures that no target attributes exceed
@@ -36,7 +35,7 @@ public class ConstraintsHandler implements IConstraintsHandler {
 	}
 
 	@Override
-	public <T> void constrainUpdate(UpdateContext<T> context, ConstraintsBuilder<T> c) {
+	public <T> void constrainUpdate(UpdateContext<T> context, Constraint<T> c) {
 
 		if (!treeConstraintsHandler.constrainUpdate(context, c)) {
 			entityConstraintHandler.constrainUpdate(context);
@@ -44,8 +43,7 @@ public class ConstraintsHandler implements IConstraintsHandler {
 	}
 
 	@Override
-	public <T> void constrainResponse(ResourceEntity<T> entity, SizeConstraints sizeConstraints,
-			ConstraintsBuilder<T> c) {
+	public <T> void constrainResponse(ResourceEntity<T> entity, SizeConstraints sizeConstraints, Constraint<T> c) {
 
 		if (sizeConstraints != null) {
 			applySizeConstraintsForRead(entity, sizeConstraints);

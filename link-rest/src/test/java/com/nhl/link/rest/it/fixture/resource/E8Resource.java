@@ -1,5 +1,15 @@
 package com.nhl.link.rest.it.fixture.resource;
 
+import com.nhl.link.rest.DataResponse;
+import com.nhl.link.rest.LinkRest;
+import com.nhl.link.rest.SimpleResponse;
+import com.nhl.link.rest.constraints.Constraint;
+import com.nhl.link.rest.constraints.Constraints;
+import com.nhl.link.rest.it.fixture.cayenne.E7;
+import com.nhl.link.rest.it.fixture.cayenne.E8;
+import com.nhl.link.rest.it.fixture.cayenne.E9;
+import com.nhl.link.rest.runtime.cayenne.ByKeyObjectMapperFactory;
+
 import javax.ws.rs.DELETE;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
@@ -8,15 +18,6 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Configuration;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.UriInfo;
-
-import com.nhl.link.rest.DataResponse;
-import com.nhl.link.rest.LinkRest;
-import com.nhl.link.rest.SimpleResponse;
-import com.nhl.link.rest.constraints.ConstraintsBuilder;
-import com.nhl.link.rest.it.fixture.cayenne.E7;
-import com.nhl.link.rest.it.fixture.cayenne.E8;
-import com.nhl.link.rest.it.fixture.cayenne.E9;
-import com.nhl.link.rest.runtime.cayenne.ByKeyObjectMapperFactory;
 
 @Path("e8")
 public class E8Resource {
@@ -33,7 +34,7 @@ public class E8Resource {
 	@Path("w/constrainedid/{id}")
 	public SimpleResponse create_WriteConstrainedId(@PathParam("id") int id, @Context UriInfo uriInfo,
 			String requestBody) {
-		ConstraintsBuilder<E8> tc = ConstraintsBuilder.idOnly(E8.class).attribute(E8.NAME);
+		Constraint<E8> tc = Constraints.idOnly(E8.class).attribute(E8.NAME);
 		return LinkRest.create(E8.class, config).uri(uriInfo).id(id).writeConstraints(tc).sync(requestBody);
 	}
 
@@ -41,7 +42,7 @@ public class E8Resource {
 	@Path("w/constrainedidblocked/{id}")
 	public DataResponse<E8> create_WriteConstrainedIdBlocked(@PathParam("id") int id, @Context UriInfo uriInfo,
 			String requestBody) {
-		ConstraintsBuilder<E8> tc = ConstraintsBuilder.excludeAll(E8.class).attribute(E8.NAME);
+		Constraint<E8> tc = Constraints.excludeAll(E8.class).attribute(E8.NAME);
 		return LinkRest.create(E8.class, config).uri(uriInfo).id(id).writeConstraints(tc).syncAndSelect(requestBody);
 	}
 

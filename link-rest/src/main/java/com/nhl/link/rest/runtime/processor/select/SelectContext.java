@@ -1,24 +1,22 @@
 package com.nhl.link.rest.runtime.processor.select;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-
-import javax.ws.rs.core.UriInfo;
-
 import com.nhl.link.rest.CompoundObjectId;
-import com.nhl.link.rest.SimpleObjectId;
-import org.apache.cayenne.query.SelectQuery;
-
 import com.nhl.link.rest.DataResponse;
 import com.nhl.link.rest.EntityParent;
 import com.nhl.link.rest.EntityProperty;
 import com.nhl.link.rest.LrObjectId;
 import com.nhl.link.rest.ResourceEntity;
+import com.nhl.link.rest.SimpleObjectId;
 import com.nhl.link.rest.SizeConstraints;
-import com.nhl.link.rest.constraints.ConstraintsBuilder;
+import com.nhl.link.rest.constraints.Constraint;
 import com.nhl.link.rest.encoder.Encoder;
 import com.nhl.link.rest.processor.BaseProcessingContext;
+import org.apache.cayenne.query.SelectQuery;
+
+import javax.ws.rs.core.UriInfo;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Maintains state of the request processing chain for select requests.
@@ -34,7 +32,7 @@ public class SelectContext<T> extends BaseProcessingContext<T> {
 	private String autocompleteProperty;
 	private Map<String, EntityProperty> extraProperties;
 	private SizeConstraints sizeConstraints;
-	private ConstraintsBuilder<T> treeConstraints;
+	private Constraint<T> constraint;
 	private boolean atMostOneObject;
 	private Encoder encoder;
 	private int prefetchSemantics;
@@ -118,12 +116,21 @@ public class SelectContext<T> extends BaseProcessingContext<T> {
 		this.sizeConstraints = sizeConstraints;
 	}
 
-	public ConstraintsBuilder<T> getTreeConstraints() {
-		return treeConstraints;
+
+	/**
+	 * @since 2.4
+	 * @return this context's constraint function.
+	 */
+	public Constraint<T> getConstraint() {
+		return constraint;
 	}
 
-	public void setTreeConstraints(ConstraintsBuilder<T> treeConstraints) {
-		this.treeConstraints = treeConstraints;
+	/**
+	 * @since 2.4
+	 * @param constraint constraint function.
+	 */
+	public void setConstraint(Constraint<T> constraint) {
+		this.constraint = constraint;
 	}
 
 	// TODO: deprecate dependency on Cayenne in generic code

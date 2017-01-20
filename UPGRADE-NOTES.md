@@ -1,3 +1,28 @@
+## Upgrading to 2.4
+
+### New Constraints API [#214](https://github.com/nhl/link-rest/issues/214)
+`ConstraintsBuilder` was replaced with `Constraints` class. While most backwards compatibility is preserved, you will need
+to replace references to `ConstraintsBuilder`, and ideally also clean up deprecated method calls (mainly replacing 
+`SelectBuilder.constraints` with `SelectBuilder.constraint`).
+
+A more subtle change is that the new `Constraints` class is immutable, so whenever you are calling one of its builder
+methods, a new instance is created. So make sure you do not keep references to the intermediate builder results, and only use 
+the Constraints instance returned from the last builder method. I.e. this will not do what you'd expect:
+
+```java
+Constraints<E> c = Constraints.excludeAll();
+
+// Likely a bug!! This does not modify c, it creates and returns a new instance
+c.attribute("a");
+
+```
+
+while this will:
+
+```java
+Constraints<E> c = Constraints.excludeAll().attribute("a");
+```
+
 ## Upgrading to 1.23
 
 ### New Feature: support for Java 8 Dates [#154](https://github.com/nhl/link-rest/issues/154)

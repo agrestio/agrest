@@ -1,8 +1,5 @@
 package com.nhl.link.rest.runtime.processor.select;
 
-import java.lang.annotation.Annotation;
-import java.util.List;
-
 import com.nhl.link.rest.ResourceEntity;
 import com.nhl.link.rest.annotation.listener.SelectServerParamsApplied;
 import com.nhl.link.rest.encoder.EncoderFilter;
@@ -10,6 +7,9 @@ import com.nhl.link.rest.processor.BaseLinearProcessingStage;
 import com.nhl.link.rest.processor.ProcessingStage;
 import com.nhl.link.rest.runtime.constraints.IConstraintsHandler;
 import com.nhl.link.rest.runtime.encoder.IEncoderService;
+
+import java.lang.annotation.Annotation;
+import java.util.List;
 
 /**
  * @since 1.19
@@ -40,7 +40,7 @@ public class ApplySelectServerParamsStage<T> extends BaseLinearProcessingStage<S
 
 		ResourceEntity<T> entity = context.getEntity();
 
-		constraintsHandler.constrainResponse(entity, context.getSizeConstraints(), context.getTreeConstraints());
+		constraintsHandler.constrainResponse(entity, context.getSizeConstraints(), context.getConstraint());
 
 		if (context.getExtraProperties() != null) {
 			entity.getExtraProperties().putAll(context.getExtraProperties());

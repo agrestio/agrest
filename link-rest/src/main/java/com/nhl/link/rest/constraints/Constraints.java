@@ -63,7 +63,7 @@ public class Constraints<T> implements Constraint<T> {
      */
     public Constraints<T> excludeProperty(String attributeOrRelationship) {
         return new Constraints<>(op.andThen(ce -> {
-            ce.visitExcludePropertiesConstraint(attributeOrRelationship);
+            ce.excludeProperties(attributeOrRelationship);
             return ce;
         }));
     }
@@ -84,7 +84,7 @@ public class Constraints<T> implements Constraint<T> {
      */
     public Constraints<T> excludeProperties(String... attributesOrRelationships) {
         return new Constraints<>(op.andThen(ce -> {
-            ce.visitExcludePropertiesConstraint(attributesOrRelationships);
+            ce.excludeProperties(attributesOrRelationships);
             return ce;
         }));
     }
@@ -110,7 +110,7 @@ public class Constraints<T> implements Constraint<T> {
      */
     public Constraints<T> excludeAllAttributes() {
         return new Constraints<>(op.andThen(ce -> {
-            ce.visitExcludeAllAttributesConstraint();
+            ce.excludeAllAttributes();
             return ce;
         }));
     }
@@ -122,14 +122,14 @@ public class Constraints<T> implements Constraint<T> {
      */
     public Constraints<T> excludeAllChildren() {
         return new Constraints<>(op.andThen(ce -> {
-            ce.visitExcludeAllChildrenConstraint();
+            ce.excludeAllChildren();
             return ce;
         }));
     }
 
     public Constraints<T> attribute(String attribute) {
         return new Constraints<>(op.andThen(ce -> {
-            ce.visitIncludeAttributesConstraint(attribute);
+            ce.includeAttributes(attribute);
             return ce;
         }));
     }
@@ -140,14 +140,14 @@ public class Constraints<T> implements Constraint<T> {
 
     public Constraints<T> allAttributes() {
         return new Constraints<>(op.andThen(ce -> {
-            ce.visitIncludeAllAttributesConstraint();
+            ce.includeAllAttributes();
             return ce;
         }));
     }
 
     public Constraints<T> attributes(String... attributes) {
         return new Constraints<>(op.andThen(ce -> {
-            ce.visitIncludeAttributesConstraint(attributes);
+            ce.includeAttributes(attributes);
             return ce;
         }));
     }
@@ -163,7 +163,7 @@ public class Constraints<T> implements Constraint<T> {
 
     public Constraints<T> includeId(boolean include) {
         return new Constraints<>(op.andThen(ce -> {
-            ce.visitIncludeIdConstraint(include);
+            ce.includeId(include);
             return ce;
         }));
     }
@@ -178,14 +178,14 @@ public class Constraints<T> implements Constraint<T> {
 
     public Constraints<T> and(Expression qualifier) {
         return new Constraints<>(op.andThen(ce -> {
-            ce.visitAndQualifierConstraint(qualifier);
+            ce.andQualifier(qualifier);
             return ce;
         }));
     }
 
     public Constraints<T> or(Expression qualifier) {
         return new Constraints<>(op.andThen(ce -> {
-            ce.visitOrQualifierConstraint(qualifier);
+            ce.orQualifier(qualifier);
             return ce;
         }));
     }

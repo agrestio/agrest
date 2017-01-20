@@ -1,6 +1,17 @@
 package com.nhl.link.rest.it.fixture.resource;
 
-import java.util.Collection;
+import com.nhl.link.rest.DataResponse;
+import com.nhl.link.rest.EntityUpdate;
+import com.nhl.link.rest.LinkRest;
+import com.nhl.link.rest.SimpleResponse;
+import com.nhl.link.rest.constraints.Constraint;
+import com.nhl.link.rest.constraints.Constraints;
+import com.nhl.link.rest.it.fixture.cayenne.E2;
+import com.nhl.link.rest.it.fixture.cayenne.E3;
+import com.nhl.link.rest.it.fixture.listener.FetchCallbackListener;
+import com.nhl.link.rest.it.fixture.listener.FetchPassThroughListener;
+import com.nhl.link.rest.it.fixture.listener.FetchTakeOverListener;
+import com.nhl.link.rest.it.fixture.listener.UpdateCallbackListener;
 
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -11,18 +22,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Configuration;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.UriInfo;
-
-import com.nhl.link.rest.DataResponse;
-import com.nhl.link.rest.EntityUpdate;
-import com.nhl.link.rest.LinkRest;
-import com.nhl.link.rest.SimpleResponse;
-import com.nhl.link.rest.constraints.ConstraintsBuilder;
-import com.nhl.link.rest.it.fixture.cayenne.E2;
-import com.nhl.link.rest.it.fixture.cayenne.E3;
-import com.nhl.link.rest.it.fixture.listener.FetchCallbackListener;
-import com.nhl.link.rest.it.fixture.listener.FetchPassThroughListener;
-import com.nhl.link.rest.it.fixture.listener.FetchTakeOverListener;
-import com.nhl.link.rest.it.fixture.listener.UpdateCallbackListener;
+import java.util.Collection;
 
 @Path("e3")
 public class E3Resource {
@@ -98,15 +98,15 @@ public class E3Resource {
 	@POST
 	@Path("constrained")
 	public DataResponse<E3> insertReadConstrained(@Context UriInfo uriInfo, String requestBody) {
-		ConstraintsBuilder<E3> tc = ConstraintsBuilder.idOnly(E3.class).attribute(E3.NAME);
-		return LinkRest.create(E3.class, config).uri(uriInfo).readConstraints(tc).syncAndSelect(requestBody);
+		Constraint<E3> tc = Constraints.idOnly(E3.class).attribute(E3.NAME);
+		return LinkRest.create(E3.class, config).uri(uriInfo).readConstraint(tc).syncAndSelect(requestBody);
 	}
 
 	@POST
 	@Path("w/constrained")
 	public DataResponse<E3> insertWriteConstrained(@Context UriInfo uriInfo, String requestBody) {
-		ConstraintsBuilder<E3> tc = ConstraintsBuilder.idOnly(E3.class).attribute(E3.NAME);
-		return LinkRest.create(E3.class, config).uri(uriInfo).writeConstraints(tc).syncAndSelect(requestBody);
+		Constraint<E3> tc = Constraints.idOnly(E3.class).attribute(E3.NAME);
+		return LinkRest.create(E3.class, config).uri(uriInfo).writeConstraint(tc).syncAndSelect(requestBody);
 	}
 
 	@GET

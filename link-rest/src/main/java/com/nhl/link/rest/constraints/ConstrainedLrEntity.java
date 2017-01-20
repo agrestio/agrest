@@ -2,22 +2,19 @@ package com.nhl.link.rest.constraints;
 
 import com.nhl.link.rest.meta.LrAttribute;
 import com.nhl.link.rest.meta.LrEntity;
-import com.nhl.link.rest.meta.LrRelationship;
-import com.nhl.link.rest.runtime.parser.PathConstants;
 import org.apache.cayenne.exp.Expression;
 
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
-import java.util.StringTokenizer;
 
 /**
  * A view of an LrEntity after applying request constraints.
  *
  * @since 2.4
  */
-public class ConstrainedLrEntity<T> implements  ConstraintVisitor {
+public class ConstrainedLrEntity<T> {
 
     private boolean idIncluded;
     private Collection<String> attributes;
@@ -71,8 +68,7 @@ public class ConstrainedLrEntity<T> implements  ConstraintVisitor {
         return qualifier;
     }
 
-    @Override
-    public void visitExcludePropertiesConstraint(String... attributesOrRelationships) {
+    void excludeProperties(String... attributesOrRelationships) {
         if (attributesOrRelationships != null) {
             for (String name : attributesOrRelationships) {
 
@@ -83,18 +79,15 @@ public class ConstrainedLrEntity<T> implements  ConstraintVisitor {
         }
     }
 
-    @Override
-    public void visitExcludeAllAttributesConstraint() {
+    void excludeAllAttributes() {
         attributes.clear();
     }
 
-    @Override
-    public void visitExcludeAllChildrenConstraint() {
+    void excludeAllChildren() {
         children.clear();
     }
 
-    @Override
-    public void visitIncludeAttributesConstraint(String... attributes) {
+    void includeAttributes(String... attributes) {
         if (attributes != null) {
 
             for (String a : attributes) {
@@ -103,20 +96,18 @@ public class ConstrainedLrEntity<T> implements  ConstraintVisitor {
         }
     }
 
-    @Override
-    public void visitIncludeAllAttributesConstraint() {
+    public void includeAllAttributes() {
         for (LrAttribute a : entity.getAttributes()) {
             this.attributes.add(a.getName());
         }
     }
 
-    @Override
-    public void visitIncludeIdConstraint(boolean include) {
+
+    void includeId(boolean include) {
         this.idIncluded = include;
     }
 
-    @Override
-    public void visitAndQualifierConstraint(Expression qualifier) {
+    void andQualifier(Expression qualifier) {
         if (this.qualifier == null) {
             this.qualifier = qualifier;
         } else {
@@ -124,8 +115,7 @@ public class ConstrainedLrEntity<T> implements  ConstraintVisitor {
         }
     }
 
-    @Override
-    public void visitOrQualifierConstraint(Expression qualifier) {
+    void orQualifier(Expression qualifier) {
 
         if (this.qualifier == null) {
             this.qualifier = qualifier;
@@ -133,36 +123,4 @@ public class ConstrainedLrEntity<T> implements  ConstraintVisitor {
             this.qualifier = this.qualifier.orExp(qualifier);
         }
     }
-
-    @Override
-    public ConstrainedLrEntity subtreeVisitor(String path) {
-
-        StringTokenizer segments = new StringTokenizer(path, Character.toString(PathConstants.DOT));
-
-        ConstrainedLrEntity c = this;
-        while (segments.hasMoreTokens()) {
-            c = ensurePath(c, segments.nextToken());
-        }
-
-        return c;
-    }
-
-    private ConstrainedLrEntity ensurePath(ConstrainedLrEntity parent, String pathSegment) {
-
-        LrRelationship relationship = parent.entity.getRelationship(pathSegment);
-
-        if (relationship == null) {
-            throw new IllegalArgumentException("Path contains non-relationship component: " + pathSegment);
-        }
-
-        ConstrainedLrEntity child = parent.getChild(relationship.getName());
-        if (child == null) {
-            LrEntity<?> targetEntity = relationship.getTargetEntity();
-            child = new ConstrainedLrEntity(targetEntity);
-            parent.children.put(relationship.getName(), child);
-        }
-
-        return child;
-    }
-
 }

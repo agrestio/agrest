@@ -4,9 +4,8 @@ import com.nhl.link.rest.EntityUpdate;
 import com.nhl.link.rest.LinkRestException;
 import com.nhl.link.rest.ResourceEntity;
 import com.nhl.link.rest.constraints.ConstrainedLrEntity;
-import com.nhl.link.rest.constraints.ConstraintsBuilder;
+import com.nhl.link.rest.constraints.Constraint;
 import com.nhl.link.rest.meta.LrAttribute;
-import com.nhl.link.rest.meta.LrEntity;
 import com.nhl.link.rest.runtime.parser.PathConstants;
 import com.nhl.link.rest.runtime.processor.update.UpdateContext;
 import org.slf4j.Logger;
@@ -26,7 +25,7 @@ class RequestConstraintsHandler {
 	RequestConstraintsHandler() {
 	}
 
-	<T> boolean constrainResponse(ResourceEntity<T> resourceEntity, ConstraintsBuilder<T> c) {
+	<T> boolean constrainResponse(ResourceEntity<T> resourceEntity, Constraint<T> c) {
 
 		// Null entity means we don't need to worry about unauthorized
 		// attributes and relationships
@@ -38,11 +37,11 @@ class RequestConstraintsHandler {
 			return false;
 		}
 
-		applyForRead(resourceEntity, extract(resourceEntity.getLrEntity(), c));
+		applyForRead(resourceEntity, c.apply(resourceEntity.getLrEntity()));
 		return true;
 	}
 
-	<T> boolean constrainUpdate(UpdateContext<T> context, ConstraintsBuilder<T> c) {
+	<T> boolean constrainUpdate(UpdateContext<T> context, Constraint<T> c) {
 
 		if (context.getUpdates().isEmpty()) {
 			return true;
@@ -52,14 +51,8 @@ class RequestConstraintsHandler {
 			return false;
 		}
 
-		applyForWrite(context, extract(context.getEntity().getLrEntity(), c));
+		applyForWrite(context, c.apply(context.getEntity().getLrEntity()));
 		return true;
-	}
-
-	private ConstrainedLrEntity extract(LrEntity<?> entity, ConstraintsBuilder<?> c) {
-		ConstrainedLrEntity constraintVisitor = new ConstrainedLrEntity(entity);
-		c.accept(constraintVisitor);
-		return constraintVisitor;
 	}
 
 	private void applyForWrite(UpdateContext<?> context, ConstrainedLrEntity constraints) {

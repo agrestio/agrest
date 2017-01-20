@@ -1,13 +1,5 @@
 package com.nhl.link.rest.runtime.processor.update;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-
-import javax.ws.rs.core.Response.Status;
-import javax.ws.rs.core.UriInfo;
-
 import com.nhl.link.rest.CompoundObjectId;
 import com.nhl.link.rest.DataResponse;
 import com.nhl.link.rest.EntityParent;
@@ -17,9 +9,16 @@ import com.nhl.link.rest.LrObjectId;
 import com.nhl.link.rest.ObjectMapperFactory;
 import com.nhl.link.rest.ResourceEntity;
 import com.nhl.link.rest.SimpleObjectId;
-import com.nhl.link.rest.constraints.ConstraintsBuilder;
+import com.nhl.link.rest.constraints.Constraint;
 import com.nhl.link.rest.encoder.Encoder;
 import com.nhl.link.rest.processor.BaseProcessingContext;
+
+import javax.ws.rs.core.Response.Status;
+import javax.ws.rs.core.UriInfo;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Maintains state of the request processing chain for various updating
@@ -33,8 +32,8 @@ public class UpdateContext<T> extends BaseProcessingContext<T> {
 	private UriInfo uriInfo;
 	private LrObjectId id;
 	private EntityParent<?> parent;
-	private ConstraintsBuilder<T> readConstraints;
-	private ConstraintsBuilder<T> writeConstraints;
+	private Constraint<T> readConstraints;
+	private Constraint<T> writeConstraints;
 	private boolean includingDataInResponse;
 	private ObjectMapperFactory mapper;
 	private String entityData;
@@ -137,19 +136,19 @@ public class UpdateContext<T> extends BaseProcessingContext<T> {
 		this.parent = parent;
 	}
 
-	public ConstraintsBuilder<T> getReadConstraints() {
+	public Constraint<T> getReadConstraints() {
 		return readConstraints;
 	}
 
-	public void setReadConstraints(ConstraintsBuilder<T> readConstraints) {
+	public void setReadConstraints(Constraint<T> readConstraints) {
 		this.readConstraints = readConstraints;
 	}
 
-	public ConstraintsBuilder<T> getWriteConstraints() {
+	public Constraint<T> getWriteConstraints() {
 		return writeConstraints;
 	}
 
-	public void setWriteConstraints(ConstraintsBuilder<T> writeConstraints) {
+	public void setWriteConstraints(Constraint<T> writeConstraints) {
 		this.writeConstraints = writeConstraints;
 	}
 

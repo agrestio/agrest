@@ -1,16 +1,14 @@
-package com.nhl.link.rest.runtime.constraints;
+package com.nhl.link.rest.constraints;
+
+import com.nhl.link.rest.meta.LrEntity;
+import org.junit.Before;
+import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 
-import com.nhl.link.rest.constraints.ConstrainedLrEntity;
-import org.junit.Before;
-import org.junit.Test;
-
-import com.nhl.link.rest.meta.LrEntity;
-
-public class RequestConstraintsVisitorTest {
+public class ConstrainedLrEntityTest {
 
 	private ConstrainedLrEntity visitor;
 
@@ -28,7 +26,7 @@ public class RequestConstraintsVisitorTest {
 		visitor.getAttributes().add("a");
 		visitor.getAttributes().add("a1");
 
-		visitor.visitExcludePropertiesConstraint("c", "a1");
+		visitor.excludeProperties("c", "a1");
 		assertEquals(1, visitor.getChildren().size());
 		assertTrue(visitor.getChildren().containsKey("c1"));
 		assertEquals(1, visitor.getAttributes().size());

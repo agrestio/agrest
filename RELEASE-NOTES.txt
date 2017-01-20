@@ -1,6 +1,7 @@
 Release 2.4
 
 #212 Upgrade to Cayenne 4.0.M4
+#214 Immutable constraint objects
 
 Release 2.3
 
