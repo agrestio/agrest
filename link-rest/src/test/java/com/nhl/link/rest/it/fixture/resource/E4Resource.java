@@ -1,7 +1,14 @@
 package com.nhl.link.rest.it.fixture.resource;
 
-import static com.nhl.link.rest.constraints.ConstraintsBuilder.idOnly;
-import static com.nhl.link.rest.property.PropertyBuilder.property;
+import com.nhl.link.rest.DataResponse;
+import com.nhl.link.rest.LinkRest;
+import com.nhl.link.rest.SimpleResponse;
+import com.nhl.link.rest.constraints.Constraint;
+import com.nhl.link.rest.it.fixture.cayenne.E4;
+import com.nhl.link.rest.it.fixture.listener.CayennePaginationListener;
+import com.nhl.link.rest.property.PropertyReader;
+import org.apache.cayenne.Cayenne;
+import org.apache.cayenne.DataObject;
 
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -13,15 +20,7 @@ import javax.ws.rs.core.Configuration;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.UriInfo;
 
-import org.apache.cayenne.Cayenne;
-import org.apache.cayenne.DataObject;
-
-import com.nhl.link.rest.DataResponse;
-import com.nhl.link.rest.LinkRest;
-import com.nhl.link.rest.SimpleResponse;
-import com.nhl.link.rest.it.fixture.cayenne.E4;
-import com.nhl.link.rest.it.fixture.listener.CayennePaginationListener;
-import com.nhl.link.rest.property.PropertyReader;
+import static com.nhl.link.rest.property.PropertyBuilder.property;
 
 @Path("e4")
 public class E4Resource {
@@ -44,7 +43,8 @@ public class E4Resource {
 	@GET
 	@Path("limit_attributes")
 	public DataResponse<E4> getObjects_LimitAttributes(@Context UriInfo uriInfo) {
-		return LinkRest.select(E4.class, config).uri(uriInfo).constraints(idOnly(E4.class).attributes(E4.C_INT))
+		return LinkRest.select(E4.class, config).uri(uriInfo)
+				.constraint(Constraint.idOnly(E4.class).attributes(E4.C_INT))
 				.select();
 	}
 

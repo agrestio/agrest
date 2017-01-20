@@ -6,11 +6,11 @@ import org.junit.Test;
 
 import static org.junit.Assert.*;
 
-public class ConstraintsTest extends TestWithCayenneMapping {
+public class ConstraintsBuilderTest extends TestWithCayenneMapping {
 
     @Test
     public void testExcludeAll() {
-        Constraints<E4> tc = Constraints.excludeAll(E4.class);
+        ConstraintsBuilder<E4> tc = Constraint.excludeAll(E4.class);
         ConstrainedLrEntity<E4> result = tc.apply(getLrEntity(E4.class));
 
         assertNotNull(result);
@@ -21,7 +21,7 @@ public class ConstraintsTest extends TestWithCayenneMapping {
 
     @Test
     public void testIdOnly() {
-        Constraints<E4> tc = Constraints.idOnly(E4.class);
+        ConstraintsBuilder<E4> tc = Constraint.idOnly(E4.class);
         ConstrainedLrEntity<E4> result = tc.apply(getLrEntity(E4.class));
 
         assertNotNull(result);
@@ -33,7 +33,7 @@ public class ConstraintsTest extends TestWithCayenneMapping {
     @Test
     public void testIdAndAttributes() {
 
-        Constraints<E4> tc = Constraints.idAndAttributes(E4.class);
+        ConstraintsBuilder<E4> tc = Constraint.idAndAttributes(E4.class);
         ConstrainedLrEntity<E4> result = tc.apply(getLrEntity(E4.class));
 
         assertNotNull(result);
@@ -45,7 +45,7 @@ public class ConstraintsTest extends TestWithCayenneMapping {
     @Test
     public void testExcludeProperties() {
 
-        Constraints<E4> tc = Constraints.idAndAttributes(E4.class).excludeProperties(E4.C_BOOLEAN, E4.C_DECIMAL);
+        ConstraintsBuilder<E4> tc = Constraint.idAndAttributes(E4.class).excludeProperties(E4.C_BOOLEAN, E4.C_DECIMAL);
         ConstrainedLrEntity<E4> result = tc.apply(getLrEntity(E4.class));
 
         assertNotNull(result);

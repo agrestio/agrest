@@ -1,5 +1,16 @@
 package com.nhl.link.rest.it.fixture.resource;
 
+import com.nhl.link.rest.DataResponse;
+import com.nhl.link.rest.EntityDelete;
+import com.nhl.link.rest.LinkRest;
+import com.nhl.link.rest.MetadataResponse;
+import com.nhl.link.rest.SimpleResponse;
+import com.nhl.link.rest.constraints.Constraint;
+import com.nhl.link.rest.it.fixture.cayenne.E2;
+import com.nhl.link.rest.it.fixture.cayenne.E3;
+import com.nhl.link.rest.meta.LinkType;
+import com.nhl.link.rest.meta.annotation.Resource;
+
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -9,18 +20,6 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Configuration;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.UriInfo;
-
-import com.nhl.link.rest.DataResponse;
-import com.nhl.link.rest.EntityDelete;
-import com.nhl.link.rest.LinkRest;
-import com.nhl.link.rest.MetadataResponse;
-import com.nhl.link.rest.SimpleResponse;
-import com.nhl.link.rest.constraints.ConstraintsBuilder;
-import com.nhl.link.rest.it.fixture.cayenne.E2;
-import com.nhl.link.rest.it.fixture.cayenne.E3;
-import com.nhl.link.rest.meta.LinkType;
-import com.nhl.link.rest.meta.annotation.Resource;
-
 import java.util.Collection;
 
 @Path("e2")
@@ -69,7 +68,7 @@ public class E2Resource {
 	@Path("constraints/{id}/e3s")
 	public DataResponse<E3> getE2_E3s_Constrained(@PathParam("id") int id, @Context UriInfo uriInfo) {
 		return LinkRest.select(E3.class, config).parent(E2.class, id, "e3s").uri(uriInfo)
-				.constraints(ConstraintsBuilder.idOnly(E3.class)).select();
+				.constraint(Constraint.idOnly(E3.class)).select();
 	}
 
 	@DELETE

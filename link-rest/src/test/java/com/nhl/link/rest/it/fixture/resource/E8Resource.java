@@ -4,7 +4,6 @@ import com.nhl.link.rest.DataResponse;
 import com.nhl.link.rest.LinkRest;
 import com.nhl.link.rest.SimpleResponse;
 import com.nhl.link.rest.constraints.Constraint;
-import com.nhl.link.rest.constraints.Constraints;
 import com.nhl.link.rest.it.fixture.cayenne.E7;
 import com.nhl.link.rest.it.fixture.cayenne.E8;
 import com.nhl.link.rest.it.fixture.cayenne.E9;
@@ -34,7 +33,7 @@ public class E8Resource {
 	@Path("w/constrainedid/{id}")
 	public SimpleResponse create_WriteConstrainedId(@PathParam("id") int id, @Context UriInfo uriInfo,
 			String requestBody) {
-		Constraint<E8> tc = Constraints.idOnly(E8.class).attribute(E8.NAME);
+		Constraint<E8> tc = Constraint.idOnly(E8.class).attribute(E8.NAME);
 		return LinkRest.create(E8.class, config).uri(uriInfo).id(id).writeConstraints(tc).sync(requestBody);
 	}
 
@@ -42,7 +41,7 @@ public class E8Resource {
 	@Path("w/constrainedidblocked/{id}")
 	public DataResponse<E8> create_WriteConstrainedIdBlocked(@PathParam("id") int id, @Context UriInfo uriInfo,
 			String requestBody) {
-		Constraint<E8> tc = Constraints.excludeAll(E8.class).attribute(E8.NAME);
+		Constraint<E8> tc = Constraint.excludeAll(E8.class).attribute(E8.NAME);
 		return LinkRest.create(E8.class, config).uri(uriInfo).id(id).writeConstraints(tc).syncAndSelect(requestBody);
 	}
 

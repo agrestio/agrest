@@ -5,7 +5,6 @@ import com.nhl.link.rest.EntityUpdate;
 import com.nhl.link.rest.LinkRest;
 import com.nhl.link.rest.SimpleResponse;
 import com.nhl.link.rest.constraints.Constraint;
-import com.nhl.link.rest.constraints.Constraints;
 import com.nhl.link.rest.it.fixture.cayenne.E2;
 import com.nhl.link.rest.it.fixture.cayenne.E3;
 import com.nhl.link.rest.it.fixture.listener.FetchCallbackListener;
@@ -98,14 +97,14 @@ public class E3Resource {
 	@POST
 	@Path("constrained")
 	public DataResponse<E3> insertReadConstrained(@Context UriInfo uriInfo, String requestBody) {
-		Constraint<E3> tc = Constraints.idOnly(E3.class).attribute(E3.NAME);
+		Constraint<E3> tc = Constraint.idOnly(E3.class).attribute(E3.NAME);
 		return LinkRest.create(E3.class, config).uri(uriInfo).readConstraint(tc).syncAndSelect(requestBody);
 	}
 
 	@POST
 	@Path("w/constrained")
 	public DataResponse<E3> insertWriteConstrained(@Context UriInfo uriInfo, String requestBody) {
-		Constraint<E3> tc = Constraints.idOnly(E3.class).attribute(E3.NAME);
+		Constraint<E3> tc = Constraint.idOnly(E3.class).attribute(E3.NAME);
 		return LinkRest.create(E3.class, config).uri(uriInfo).writeConstraint(tc).syncAndSelect(requestBody);
 	}
 

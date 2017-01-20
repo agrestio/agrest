@@ -99,7 +99,7 @@ public interface SelectBuilder<T> {
      * the client can see.
      *
      * @param constraint an instance of Constraint function.
-     * @return
+     * @return this builder instance.
      * @since 2.4
      */
     SelectBuilder<T> constraint(Constraint<T> constraint);

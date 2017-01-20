@@ -3,7 +3,6 @@ package com.nhl.link.rest.runtime.constraints;
 import com.nhl.link.rest.EntityConstraint;
 import com.nhl.link.rest.ResourceEntity;
 import com.nhl.link.rest.constraints.Constraint;
-import com.nhl.link.rest.constraints.ConstraintsBuilder;
 import com.nhl.link.rest.it.fixture.cayenne.E1;
 import com.nhl.link.rest.it.fixture.cayenne.E2;
 import com.nhl.link.rest.meta.LrPersistentEntity;
@@ -58,7 +57,7 @@ public class ConstraintsHandlerWithDefaultsTest extends TestWithCayenneMapping {
 	@Test
 	public void testConstrainResponse_PerRequest() {
 
-		Constraint<E1> tc1 = ConstraintsBuilder.excludeAll(E1.class).attributes(E1.DESCRIPTION);
+		Constraint<E1> tc1 = Constraint.excludeAll(E1.class).attributes(E1.DESCRIPTION);
 
 		ResourceEntity<E1> te1 = new ResourceEntity<>(lre1);
 		appendAttribute(te1, E1.AGE, Integer.class);

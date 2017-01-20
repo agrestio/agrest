@@ -4,7 +4,6 @@ import com.nhl.link.rest.EntityConstraint;
 import com.nhl.link.rest.ResourceEntity;
 import com.nhl.link.rest.SizeConstraints;
 import com.nhl.link.rest.constraints.Constraint;
-import com.nhl.link.rest.constraints.Constraints;
 import com.nhl.link.rest.it.fixture.cayenne.E1;
 import com.nhl.link.rest.it.fixture.cayenne.E2;
 import com.nhl.link.rest.it.fixture.cayenne.E3;
@@ -20,7 +19,6 @@ import org.junit.Test;
 import java.util.Collections;
 import java.util.List;
 
-import static com.nhl.link.rest.constraints.ConstraintsBuilder.excludeAll;
 import static org.apache.cayenne.exp.ExpressionFactory.exp;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
@@ -144,7 +142,7 @@ public class ConstraintsHandlerTest {
     @Test
     public void testApply_ResourceEntity_NoTargetRel() {
 
-        Constraint<E1> tc1 = Constraints.excludeAll(E1.class).attributes("a", "b");
+        Constraint<E1> tc1 = Constraint.excludeAll(E1.class).attributes("a", "b");
 
         ResourceEntity<E1> te1 = new ResourceEntity<>(lre0);
         appendAttribute(te1, "c");
@@ -164,10 +162,10 @@ public class ConstraintsHandlerTest {
     @Test
     public void testApply_ResourceEntity_TargetRel() {
 
-        Constraint<E1> tc1 = Constraints.excludeAll(E1.class).attributes("a", "b")
-                .path("r1", Constraints.excludeAll(E2.class).attributes("n", "m"))
-                .path("r1.r11", Constraints.excludeAll(E3.class).attributes("p", "r"))
-                .path("r2", Constraints.excludeAll(E4.class).attributes("k", "l"));
+        Constraint<E1> tc1 = Constraint.excludeAll(E1.class).attributes("a", "b")
+                .path("r1", Constraint.excludeAll(E2.class).attributes("n", "m"))
+                .path("r1.r11", Constraint.excludeAll(E3.class).attributes("p", "r"))
+                .path("r2", Constraint.excludeAll(E4.class).attributes("k", "l"));
 
         ResourceEntity<E1> te1 = new ResourceEntity<>(lre0);
         appendAttribute(te1, "c");
@@ -198,8 +196,8 @@ public class ConstraintsHandlerTest {
     @Test
     public void testMerge_ResourceEntity_Id() {
 
-        Constraint<E1> tc1 = Constraints.excludeAll(E1.class).excludeId();
-        Constraint<E1> tc2 = Constraints.excludeAll(E1.class).includeId();
+        Constraint<E1> tc1 = Constraint.excludeAll(E1.class).excludeId();
+        Constraint<E1> tc2 = Constraint.excludeAll(E1.class).includeId();
 
         ResourceEntity<E1> te1 = new ResourceEntity<>(lre0);
         te1.includeId();
@@ -222,7 +220,7 @@ public class ConstraintsHandlerTest {
 
         Expression q1 = exp("a = 5");
 
-        Constraint<E1> tc1 = Constraints.excludeAll(E1.class).and(q1);
+        Constraint<E1> tc1 = Constraint.excludeAll(E1.class).and(q1);
 
         ResourceEntity<E1> te1 = new ResourceEntity<>(lre0);
         constraintHandler.constrainResponse(te1, null, tc1);
@@ -237,8 +235,8 @@ public class ConstraintsHandlerTest {
     @Test
     public void testMerge_MapBy() {
 
-        Constraint<E1> tc1 = Constraints.excludeAll(E1.class).path("r1",
-                Constraints.excludeAll(E2.class).attribute("a"));
+        Constraint<E1> tc1 = Constraint.excludeAll(E1.class).path("r1",
+                Constraint.excludeAll(E2.class).attribute("a"));
 
         ResourceEntity<E1> te1MapByTarget = new ResourceEntity<>(lre0);
         appendAttribute(te1MapByTarget, "b");
@@ -270,7 +268,7 @@ public class ConstraintsHandlerTest {
     @Test
     public void testMerge_MapById_Exclude() {
 
-        Constraint<E1> tc1 = Constraints.excludeAll(E1.class).path("r1", Constraints.excludeAll(E2.class).excludeId());
+        Constraint<E1> tc1 = Constraint.excludeAll(E1.class).path("r1", Constraint.excludeAll(E2.class).excludeId());
 
         ResourceEntity<E1> te1MapByTarget = new ResourceEntity<>(lre0);
         te1MapByTarget.includeId();
@@ -290,7 +288,7 @@ public class ConstraintsHandlerTest {
     @Test
     public void testMerge_MapById_Include() {
 
-        Constraint<E1> tc1 = Constraints.excludeAll(E1.class).path("r1", Constraints.excludeAll(E2.class).includeId());
+        Constraint<E1> tc1 = Constraint.excludeAll(E1.class).path("r1", Constraint.excludeAll(E2.class).includeId());
 
         ResourceEntity<E2> te1MapByTarget = new ResourceEntity<>(lre1);
         te1MapByTarget.includeId();
