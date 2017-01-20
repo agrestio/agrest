@@ -1,19 +1,17 @@
 package com.nhl.link.rest;
 
-import java.util.Collection;
-import java.util.Map;
-
-import javax.ws.rs.core.UriInfo;
-
-import org.apache.cayenne.exp.Property;
-
 import com.nhl.link.rest.annotation.listener.DataFetched;
 import com.nhl.link.rest.annotation.listener.SelectChainInitialized;
 import com.nhl.link.rest.annotation.listener.SelectRequestParsed;
 import com.nhl.link.rest.annotation.listener.SelectServerParamsApplied;
-import com.nhl.link.rest.constraints.ConstraintsBuilder;
+import com.nhl.link.rest.constraints.Constraint;
 import com.nhl.link.rest.encoder.Encoder;
 import com.nhl.link.rest.runtime.LinkRestBuilder;
+import org.apache.cayenne.exp.Property;
+
+import javax.ws.rs.core.UriInfo;
+import java.util.Collection;
+import java.util.Map;
 
 /**
  * An object that allows to customize/extend LinkRest request processing.
@@ -26,7 +24,7 @@ public interface SelectBuilder<T> {
 	/**
 	 * Sets request {@link UriInfo} that is a source of various request
 	 * parameters.
-	 * 
+	 *
 	 * @since 1.14
 	 */
 	SelectBuilder<T> uri(UriInfo uriInfo);
@@ -34,7 +32,7 @@ public interface SelectBuilder<T> {
 	/**
 	 * Sets the encoder for the entities under the "data" key in the response
 	 * collection.
-	 * 
+	 *
 	 * @since 1.14
 	 */
 	SelectBuilder<T> dataEncoder(Encoder encoder);
@@ -43,7 +41,7 @@ public interface SelectBuilder<T> {
 	 * Configures SelectBuilder for a common scenario of "autocomplete" request,
 	 * allowing the server-side code to choose which object property to use for
 	 * selecting matching objects.
-	 * 
+	 *
 	 * @since 1.14
 	 */
 	SelectBuilder<T> autocompleteOn(Property<?> autocompleteProperty);
@@ -61,7 +59,7 @@ public interface SelectBuilder<T> {
 	 * query associated with the builder is ignored (except possibly for the
 	 * root entity resolution purposes). And a new ID query is built internally
 	 * by LinkRest.
-	 * 
+	 *
 	 * @since 1.20
 	 */
 	SelectBuilder<T> byId(Map<String, Object> ids);
@@ -69,7 +67,7 @@ public interface SelectBuilder<T> {
 	/**
 	 * Adds a custom property that is appended to the root
 	 * {@link ResourceEntity}.
-	 * 
+	 *
 	 * @since 1.14
 	 */
 	SelectBuilder<T> property(String name, EntityProperty clientProperty);
@@ -80,17 +78,27 @@ public interface SelectBuilder<T> {
 	 * "property", and default encoder is used. For more control over property
 	 * access and encoding use {@link #property(String, EntityProperty)}. Also
 	 * see {@link LinkRestBuilder#transientProperty(Class, String)}.
-	 * 
+	 *
 	 * @since 1.14
 	 */
 	SelectBuilder<T> property(String name);
 
 	/**
 	 * Applies entity constraints to the SelectBuilder.
-	 * 
+	 *
 	 * @since 1.3
+	 * @deprecated since 2.4 in favor of {@link #constraint(Constraint)}.
 	 */
-	SelectBuilder<T> constraints(ConstraintsBuilder<T> constraints);
+	default SelectBuilder<T> constraints(Constraint<T> constraint) {
+	    return constraint(constraint);
+    }
+
+    /**
+     * @param constraint an instance of Constraint function.
+     * @return
+     * @since 2.4
+     */
+    SelectBuilder<T> constraint(Constraint<T> constraint);
 
 	/**
 	 * @since 1.4
@@ -146,16 +154,16 @@ public interface SelectBuilder<T> {
 	 * {@link SelectServerParamsApplied}, {@link DataFetched}. Annotated method
 	 * can take two forms, one that doesn't change the flow, and another one -
 	 * that does:
-	 * 
+	 *
 	 * <pre>
 	 * void doSomething(SelectContext<?> context) {
 	 * }
-	 * 
+	 *
 	 * <T> ProcessingStage<SelectContext<T>, T> doSomethingWithTheFlow(SelectContext<T> context,
 	 * 		ProcessingStage<SelectContext<T>, T> next) {
 	 * }
 	 * </pre>
-	 * 
+	 *
 	 * @since 1.19
 	 */
 	SelectBuilder<T> listener(Object listener);
@@ -176,7 +184,7 @@ public interface SelectBuilder<T> {
 	 * Note that "by id" selects are routing to "selectOne" internally even if
 	 * query is invoked as "select". This is for backwards compatibility with
 	 * 1.1. Should change that eventuall.y
-	 * 
+	 *
 	 * @since 1.2
 	 */
 	DataResponse<T> selectOne();

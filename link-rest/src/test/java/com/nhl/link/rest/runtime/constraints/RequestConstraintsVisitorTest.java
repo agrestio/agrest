@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 
+import com.nhl.link.rest.constraints.ConstrainedLrEntity;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -11,19 +12,19 @@ import com.nhl.link.rest.meta.LrEntity;
 
 public class RequestConstraintsVisitorTest {
 
-	private RequestConstraintsVisitor visitor;
+	private ConstrainedLrEntity visitor;
 
 	@Before
 	public void before() {
 		LrEntity<?> entity = mock(LrEntity.class);
-		visitor = new RequestConstraintsVisitor(entity);
+		visitor = new ConstrainedLrEntity(entity);
 	}
 
 	@Test
 	public void testVisitExcludePropertiesConstraint() {
 
-		visitor.getChildren().put("c", mock(RequestConstraintsVisitor.class));
-		visitor.getChildren().put("c1", mock(RequestConstraintsVisitor.class));
+		visitor.getChildren().put("c", mock(ConstrainedLrEntity.class));
+		visitor.getChildren().put("c1", mock(ConstrainedLrEntity.class));
 		visitor.getAttributes().add("a");
 		visitor.getAttributes().add("a1");
 

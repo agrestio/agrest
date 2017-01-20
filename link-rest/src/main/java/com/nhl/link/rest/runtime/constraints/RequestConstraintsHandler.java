@@ -1,21 +1,20 @@
 package com.nhl.link.rest.runtime.constraints;
 
-import java.util.Iterator;
-import java.util.Map.Entry;
-
-import javax.ws.rs.core.Response.Status;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.nhl.link.rest.EntityUpdate;
 import com.nhl.link.rest.LinkRestException;
 import com.nhl.link.rest.ResourceEntity;
+import com.nhl.link.rest.constraints.ConstrainedLrEntity;
 import com.nhl.link.rest.constraints.ConstraintsBuilder;
 import com.nhl.link.rest.meta.LrAttribute;
 import com.nhl.link.rest.meta.LrEntity;
 import com.nhl.link.rest.runtime.parser.PathConstants;
 import com.nhl.link.rest.runtime.processor.update.UpdateContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.ws.rs.core.Response.Status;
+import java.util.Iterator;
+import java.util.Map.Entry;
 
 /**
  * @since 1.6
@@ -57,13 +56,13 @@ class RequestConstraintsHandler {
 		return true;
 	}
 
-	private RequestConstraintsVisitor extract(LrEntity<?> entity, ConstraintsBuilder<?> c) {
-		RequestConstraintsVisitor constraintVisitor = new RequestConstraintsVisitor(entity);
+	private ConstrainedLrEntity extract(LrEntity<?> entity, ConstraintsBuilder<?> c) {
+		ConstrainedLrEntity constraintVisitor = new ConstrainedLrEntity(entity);
 		c.accept(constraintVisitor);
 		return constraintVisitor;
 	}
 
-	private void applyForWrite(UpdateContext<?> context, RequestConstraintsVisitor constraints) {
+	private void applyForWrite(UpdateContext<?> context, ConstrainedLrEntity constraints) {
 
 		if (!constraints.isIdIncluded()) {
 			context.setIdUpdatesDisallowed(true);
@@ -92,7 +91,7 @@ class RequestConstraintsHandler {
 		}
 	}
 
-	private void applyForRead(ResourceEntity<?> target, RequestConstraintsVisitor constraints) {
+	private void applyForRead(ResourceEntity<?> target, ConstrainedLrEntity constraints) {
 
 		if (!constraints.isIdIncluded()) {
 			target.excludeId();
@@ -118,7 +117,7 @@ class RequestConstraintsHandler {
 		while (rit.hasNext()) {
 
 			Entry<String, ResourceEntity<?>> e = rit.next();
-			RequestConstraintsVisitor sourceChild = constraints.getChild(e.getKey());
+			ConstrainedLrEntity sourceChild = constraints.getChild(e.getKey());
 			if (sourceChild != null) {
 
 				// removing recursively ... the depth or recursion depends on
@@ -152,7 +151,7 @@ class RequestConstraintsHandler {
 		}
 	}
 
-	private boolean allowedMapBy(RequestConstraintsVisitor source, String path) {
+	private boolean allowedMapBy(ConstrainedLrEntity source, String path) {
 
 		int dot = path.indexOf(PathConstants.DOT);
 
@@ -167,7 +166,7 @@ class RequestConstraintsHandler {
 		if (dot > 0) {
 			// process intermediate component
 			String property = path.substring(0, dot);
-			RequestConstraintsVisitor child = source.getChild(property);
+			ConstrainedLrEntity child = source.getChild(property);
 			return child != null && allowedMapBy(child, path.substring(dot + 1));
 
 		} else {
@@ -175,7 +174,7 @@ class RequestConstraintsHandler {
 		}
 	}
 
-	private boolean allowedMapBy_LastComponent(RequestConstraintsVisitor source, String path) {
+	private boolean allowedMapBy_LastComponent(ConstrainedLrEntity source, String path) {
 
 		// process last component
 		String property = path;
@@ -188,7 +187,7 @@ class RequestConstraintsHandler {
 			return true;
 		}
 
-		RequestConstraintsVisitor child = source.getChild(property);
+		ConstrainedLrEntity child = source.getChild(property);
 		return child != null && allowedMapBy_LastComponent(child, null);
 	}
 }
