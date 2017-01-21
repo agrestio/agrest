@@ -4,9 +4,9 @@
 `ConstraintsBuilder` static factory methods were moved (with deprecation) to `Constraint` interface. It is advisable to
 clean up all deprecation warnings.
 
-The only (subltly) breaking change is that `ConstraintsBuilder` was made immutable, so whenever you are calling one of 
+The only subltly breaking change is that `ConstraintsBuilder` was made immutable, so whenever you are calling one of 
 its builder methods, a new instance is created. So make sure you do not keep references to the intermediate builder 
-results, and only use the ConstraintsBuilder instance returned from the last builder method. I.e. this will not do what 
+results (unless this is intentional), and only use the ConstraintsBuilder instance returned from the last builder method. I.e. this will not do what 
 you'd expect:
 
 ```java
