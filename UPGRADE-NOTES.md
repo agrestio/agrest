@@ -1,6 +1,6 @@
 ## Upgrading to 2.4
 
-### New Constraints API [#214](https://github.com/nhl/link-rest/issues/214)
+### Immutable Constraints API [#214](https://github.com/nhl/link-rest/issues/214)
 `ConstraintsBuilder` static factory methods were moved (with deprecation) to `Constraint` interface. It is advisable to
 clean up all deprecation warnings.
 
