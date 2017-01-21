@@ -6,21 +6,22 @@ clean up all deprecation warnings.
 
 The only subltly breaking change is that `ConstraintsBuilder` was made immutable, so whenever you are calling one of 
 its builder methods, a new instance is created. So make sure you do not keep references to the intermediate builder 
-results (unless this is intentional), and only use the ConstraintsBuilder instance returned from the last builder method. I.e. this will not do what 
-you'd expect:
+results (unless this is intentional), and only use the ConstraintsBuilder instance returned from the last builder method. 
+E.g. the following likely won't do what you'd expect:
 
 ```java
 ConstraintsBuilder<E> c = Constraint.excludeAll();
-
-// Likely a bug!! This does not modify c, it creates and returns a new instance
 c.attribute("a");
 
+// Likely a bug!! "c" does not include attribute "a"
+LinkRest.select(MyType.class, config).constraint(c);
 ```
 
 while this will:
 
 ```java
 ConstraintsBuilder<E> c = Constraint.excludeAll().attribute("a");
+LinkRest.select(MyType.class, config).constraint(c);
 ```
 
 ## Upgrading to 1.23
