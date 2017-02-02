@@ -47,18 +47,12 @@ public interface SelectBuilder<T> {
 	SelectBuilder<T> autocompleteOn(Property<?> autocompleteProperty);
 
 	/**
-	 * Forces the builder to select a single object by ID. Any explicit query
-	 * associated with the builder is ignored (except possibly for the root
-	 * entity resolution purposes). And a new ID query is built internally by
-	 * LinkRest.
+	 * Forces the builder to select a single object by ID.
 	 */
 	SelectBuilder<T> byId(Object id);
 
 	/**
-	 * Forces the builder to select a single object by compound ID. Any explicit
-	 * query associated with the builder is ignored (except possibly for the
-	 * root entity resolution purposes). And a new ID query is built internally
-	 * by LinkRest.
+	 * Forces the builder to select a single object by compound ID.
 	 *
 	 * @since 1.20
 	 */
@@ -174,7 +168,7 @@ public interface SelectBuilder<T> {
 
 	/**
 	 * Runs the query corresponding to the state of this builder, returning
-	 * response that can be serialized by the framework.
+	 * a response that can be serialized by the framework.
 	 */
 	DataResponse<T> select();
 
@@ -187,7 +181,7 @@ public interface SelectBuilder<T> {
 	 * <p>
 	 * Note that "by id" selects are routing to "selectOne" internally even if
 	 * query is invoked as "select". This is for backwards compatibility with
-	 * 1.1. Should change that eventuall.y
+	 * 1.1. Should change that eventually.
 	 *
 	 * @since 1.2
 	 */
