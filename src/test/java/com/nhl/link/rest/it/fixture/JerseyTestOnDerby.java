@@ -1,19 +1,12 @@
 package com.nhl.link.rest.it.fixture;
 
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-import java.sql.SQLException;
-
-import javax.ws.rs.client.Entity;
-import javax.ws.rs.core.Application;
-import javax.ws.rs.core.Feature;
-import javax.ws.rs.core.FeatureContext;
-import javax.ws.rs.core.MediaType;
-
+import com.nhl.link.rest.it.fixture.cayenne.E1;
+import com.nhl.link.rest.runtime.LinkRestBuilder;
 import org.apache.cayenne.ObjectContext;
 import org.apache.cayenne.access.dbsync.CreateIfNoSchemaStrategy;
 import org.apache.cayenne.access.dbsync.SchemaUpdateStrategy;
+import org.apache.cayenne.access.dbsync.SchemaUpdateStrategyFactory;
+import org.apache.cayenne.configuration.DataNodeDescriptor;
 import org.apache.cayenne.configuration.server.ServerRuntime;
 import org.apache.cayenne.configuration.server.ServerRuntimeBuilder;
 import org.apache.cayenne.di.Binder;
@@ -31,8 +24,15 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 
-import com.nhl.link.rest.it.fixture.cayenne.E1;
-import com.nhl.link.rest.runtime.LinkRestBuilder;
+import javax.ws.rs.client.Entity;
+import javax.ws.rs.core.Application;
+import javax.ws.rs.core.Feature;
+import javax.ws.rs.core.FeatureContext;
+import javax.ws.rs.core.MediaType;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.sql.SQLException;
 
 /**
  * A main superclass of LinkRest unit tests that require full stack Jersey
@@ -51,7 +51,12 @@ public abstract class JerseyTestOnDerby extends JerseyTest {
 				.addModule(new Module() {
 					@Override
 					public void configure(Binder binder) {
-						binder.bind(SchemaUpdateStrategy.class).to(CreateIfNoSchemaStrategy.class);
+						binder.bind(SchemaUpdateStrategyFactory.class).toInstance(new SchemaUpdateStrategyFactory() {
+							@Override
+							public SchemaUpdateStrategy create(DataNodeDescriptor nodeDescriptor) {
+								return new CreateIfNoSchemaStrategy();
+							}
+						});
 					}
 				}).jdbcDriver("org.apache.derby.jdbc.EmbeddedDriver").url("jdbc:derby:target/derby;create=true")
 				.build();
