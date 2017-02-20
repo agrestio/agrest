@@ -54,15 +54,19 @@ public abstract class BaseResponseHandler<T extends ClientSimpleResponse> implem
         if (entity != null) {
             try {
                 JsonNode entityNode = new ObjectMapper().readTree(jsonFactory.createParser(entity));
-                JsonNode messageNode = entityNode.get(MESSAGE_NODE);
-                if (messageNode != null) {
-                    message = messageNode.textValue();
+                // parsed node will be null if the response did not contain a valid JSON
+                if (entityNode != null) {
+                    JsonNode messageNode = entityNode.get(MESSAGE_NODE);
+                    if (messageNode != null) {
+                        message = messageNode.textValue();
+                    }
                 }
             } catch (IOException e) {
                 // do nothing...
             }
         }
-        return message;
+        // return the response body if the LR message is not present
+        return (message == null) ? entity : message;
     }
 
     protected abstract T doHandleResponse(Status status, Response response);
