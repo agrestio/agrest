@@ -34,7 +34,7 @@ import java.util.Map;
 
 @Provider
 @Consumes(MediaType.APPLICATION_JSON)
-public class SenchaDeletePayloadParser<T> implements MessageBodyReader<Collection<EntityDelete<T>>> {
+public class SenchaDeletePayloadParser implements MessageBodyReader<Collection<EntityDelete<?>>> {
 
     private IJacksonService jacksonService;
 	private IMetadataService metadataService;
@@ -59,7 +59,7 @@ public class SenchaDeletePayloadParser<T> implements MessageBodyReader<Collectio
 	}
 
     @Override
-    public Collection<EntityDelete<T>> readFrom(Class<Collection<EntityDelete<T>>> type, Type genericType, Annotation[] annotations,
+    public Collection<EntityDelete<?>> readFrom(Class<Collection<EntityDelete<?>>> type, Type genericType, Annotation[] annotations,
                                            MediaType mediaType, MultivaluedMap<String, String> httpHeaders,
                                            InputStream entityStream) throws IOException, WebApplicationException {
 
@@ -69,9 +69,9 @@ public class SenchaDeletePayloadParser<T> implements MessageBodyReader<Collectio
 					"Invalid request entity collection type: " + genericType);
 		}
 
-		LrEntity<T> entity = metadataService.getEntityByType(entityType);
+		LrEntity<?> entity = metadataService.getEntityByType(entityType);
 
-		DeleteVisitor<T> visitor = new DeleteVisitor<>(entity);
+		DeleteVisitor visitor = new DeleteVisitor(entity);
         entityJsonTraverser.traverse(entity, jacksonService.parseJson(entityStream), visitor);
 		return visitor.getDeleted();
     }
@@ -90,14 +90,14 @@ public class SenchaDeletePayloadParser<T> implements MessageBodyReader<Collectio
 		return typeArgs[0];
 	}
 
-	private static class DeleteVisitor<T> implements EntityJsonVisitor {
+	private static class DeleteVisitor implements EntityJsonVisitor {
 
-		private LrEntity<T> entity;
-		private Collection<EntityDelete<T>> deleted;
+		private LrEntity<?> entity;
+		private Collection<EntityDelete<?>> deleted;
 
 		private Map<String, Object> deletedId;
 
-		protected DeleteVisitor(LrEntity<T> entity) {
+		protected DeleteVisitor(LrEntity<?> entity) {
 			this.entity = entity;
 			this.deleted = new ArrayList<>();
 		}
@@ -127,14 +127,14 @@ public class SenchaDeletePayloadParser<T> implements MessageBodyReader<Collectio
 			if (deletedId.isEmpty()) {
 				throw new LinkRestException(Status.BAD_REQUEST, "Object id is empty");
 			} else if (deletedId.size() == 1) {
-				deleted.add(new EntityDelete<T>(entity, new SimpleObjectId(deletedId.values().iterator().next())));
+				deleted.add(new EntityDelete<>(entity, new SimpleObjectId(deletedId.values().iterator().next())));
 			} else {
-				deleted.add(new EntityDelete<T>(entity, new CompoundObjectId(deletedId)));
+				deleted.add(new EntityDelete<>(entity, new CompoundObjectId(deletedId)));
 			}
 			deletedId = null;
 		}
 
-		public Collection<EntityDelete<T>> getDeleted() {
+		public Collection<EntityDelete<?>> getDeleted() {
 			return deleted;
 		}
 	}
