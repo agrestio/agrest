@@ -15,4 +15,8 @@ public class EntityDelete<T> {
     public LrObjectId getId() {
         return id;
     }
+
+    public LrEntity<T> getEntity() {
+        return entity;
+    }
 }
