@@ -1,29 +1,5 @@
 package com.nhl.link.rest.runtime;
 
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-import java.time.Duration;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ExecutorService;
-
-import javax.ws.rs.core.Feature;
-import javax.ws.rs.ext.ExceptionMapper;
-
-import com.nhl.link.rest.runtime.parser.filter.ExpressionPostProcessor;
-import com.nhl.link.rest.runtime.parser.filter.IExpressionPostProcessor;
-import org.apache.cayenne.CayenneRuntimeException;
-import org.apache.cayenne.configuration.server.ServerRuntime;
-import org.apache.cayenne.di.Binder;
-import org.apache.cayenne.di.DIBootstrap;
-import org.apache.cayenne.di.Injector;
-import org.apache.cayenne.di.Module;
-import org.apache.cayenne.validation.ValidationException;
-
 import com.nhl.link.rest.DataResponse;
 import com.nhl.link.rest.EntityConstraint;
 import com.nhl.link.rest.LinkRestException;
@@ -75,7 +51,9 @@ import com.nhl.link.rest.runtime.parser.cache.PathCache;
 import com.nhl.link.rest.runtime.parser.converter.DefaultJsonValueConverterFactory;
 import com.nhl.link.rest.runtime.parser.converter.IJsonValueConverterFactory;
 import com.nhl.link.rest.runtime.parser.filter.CayenneExpProcessor;
+import com.nhl.link.rest.runtime.parser.filter.ExpressionPostProcessor;
 import com.nhl.link.rest.runtime.parser.filter.ICayenneExpProcessor;
+import com.nhl.link.rest.runtime.parser.filter.IExpressionPostProcessor;
 import com.nhl.link.rest.runtime.parser.filter.IKeyValueExpProcessor;
 import com.nhl.link.rest.runtime.parser.filter.KeyValueExpProcessor;
 import com.nhl.link.rest.runtime.parser.sort.ISortProcessor;
@@ -86,6 +64,25 @@ import com.nhl.link.rest.runtime.processor.IProcessorFactory;
 import com.nhl.link.rest.runtime.semantics.IRelationshipMapper;
 import com.nhl.link.rest.runtime.semantics.RelationshipMapper;
 import com.nhl.link.rest.runtime.shutdown.ShutdownManager;
+import org.apache.cayenne.CayenneRuntimeException;
+import org.apache.cayenne.configuration.server.ServerRuntime;
+import org.apache.cayenne.di.DIBootstrap;
+import org.apache.cayenne.di.Injector;
+import org.apache.cayenne.di.Module;
+import org.apache.cayenne.validation.ValidationException;
+
+import javax.ws.rs.core.Feature;
+import javax.ws.rs.ext.ExceptionMapper;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.time.Duration;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ExecutorService;
 
 /**
  * A builder of LinkRest runtime that can be loaded into JAX-RS 2 container as a
@@ -206,12 +203,11 @@ public class LinkRestBuilder {
 	}
 
 	/**
-	 * Sets an optional thread pool that should be used by non-blocking request
-	 * runners.
+	 * Sets an optional thread pool that should be used by non-blocking request runners.
 	 * 
 	 * @since 2.0
-	 * @param executor
-	 * @return
+	 * @param executor a thread pool used for non-blocking request runners.
+	 * @return this builder instance.
 	 */
 	public LinkRestBuilder executor(ExecutorService executor) {
 		this.executor = executor;
@@ -288,74 +284,70 @@ public class LinkRestBuilder {
 			throw new IllegalStateException("Required 'linkRestService' is not set");
 		}
 
-		Module module = new Module() {
+		Module module = binder -> {
 
-			@Override
-			public void configure(Binder binder) {
+            binder.<EncoderFilter> bindList(EncoderService.ENCODER_FILTER_LIST).addAll(encoderFilters);
 
-				binder.<EncoderFilter> bindList(EncoderService.ENCODER_FILTER_LIST).addAll(encoderFilters);
+            binder.bind(CayenneEntityCompiler.class).to(CayenneEntityCompiler.class);
+            binder.bind(PojoEntityCompiler.class).to(PojoEntityCompiler.class);
+            binder.<LrEntityCompiler> bindList(MetadataService.ENTITY_COMPILER_LIST)
+                    .add(CayenneEntityCompiler.class).add(PojoEntityCompiler.class);
 
-				binder.bind(CayenneEntityCompiler.class).to(CayenneEntityCompiler.class);
-				binder.bind(PojoEntityCompiler.class).to(PojoEntityCompiler.class);
-				binder.<LrEntityCompiler> bindList(MetadataService.ENTITY_COMPILER_LIST)
-						.add(CayenneEntityCompiler.class).add(PojoEntityCompiler.class);
+            binder.<LrEntityOverlay<?>> bindMap(CayenneEntityCompiler.ENTITY_OVERLAY_MAP).putAll(entityOverlays);
+            binder.<Class<?>> bindMap(LinkRestRuntime.BODY_WRITERS_MAP)
+                    .put(SimpleResponse.class.getName(), SimpleResponseWriter.class)
+                    .put(DataResponse.class.getName(), DataResponseWriter.class)
+                    .put(MetadataResponse.class.getName(), MetadataResponseWriter.class);
 
-				binder.<LrEntityOverlay<?>> bindMap(CayenneEntityCompiler.ENTITY_OVERLAY_MAP).putAll(entityOverlays);
-				binder.<Class<?>> bindMap(LinkRestRuntime.BODY_WRITERS_MAP)
-						.put(SimpleResponse.class.getName(), SimpleResponseWriter.class)
-						.put(DataResponse.class.getName(), DataResponseWriter.class)
-						.put(MetadataResponse.class.getName(), MetadataResponseWriter.class);
+            binder.<EntityConstraint> bindList(ConstraintsHandler.DEFAULT_READ_CONSTRAINTS_LIST);
+            binder.<EntityConstraint> bindList(ConstraintsHandler.DEFAULT_WRITE_CONSTRAINTS_LIST);
+            binder.<PropertyMetadataEncoder> bindMap(EncoderService.PROPERTY_METADATA_ENCODER_MAP)
+                    .putAll(metadataEncoders);
 
-				binder.<EntityConstraint> bindList(ConstraintsHandler.DEFAULT_READ_CONSTRAINTS_LIST);
-				binder.<EntityConstraint> bindList(ConstraintsHandler.DEFAULT_WRITE_CONSTRAINTS_LIST);
-				binder.<PropertyMetadataEncoder> bindMap(EncoderService.PROPERTY_METADATA_ENCODER_MAP)
-						.putAll(metadataEncoders);
+            if (linkRestServiceType != null) {
+                binder.bind(ILinkRestService.class).to(linkRestServiceType);
+            } else {
+                binder.bind(ILinkRestService.class).toInstance(linkRestService);
+            }
 
-				if (linkRestServiceType != null) {
-					binder.bind(ILinkRestService.class).to(linkRestServiceType);
-				} else {
-					binder.bind(ILinkRestService.class).toInstance(linkRestService);
-				}
+            binder.bind(IProcessorFactory.class).to(CayenneProcessorFactory.class);
+            binder.bind(IRequestParser.class).to(RequestParser.class);
+            binder.bind(IJsonValueConverterFactory.class).to(DefaultJsonValueConverterFactory.class);
+            binder.bind(IAttributeEncoderFactory.class).to(AttributeEncoderFactory.class);
+            binder.bind(IStringConverterFactory.class).to(StringConverterFactory.class);
+            binder.bind(IEncoderService.class).to(EncoderService.class);
+            binder.bind(IRelationshipMapper.class).to(RelationshipMapper.class);
+            binder.bind(IMetadataService.class).to(MetadataService.class);
+            binder.bind(IListenerService.class).to(ListenerService.class);
+            binder.bind(IResourceMetadataService.class).to(ResourceMetadataService.class);
+            binder.bind(IConstraintsHandler.class).to(ConstraintsHandler.class);
+            binder.bind(ICayenneExpProcessor.class).to(CayenneExpProcessor.class);
+            binder.bind(IExpressionPostProcessor.class).to(ExpressionPostProcessor.class);
+            binder.bind(IKeyValueExpProcessor.class).to(KeyValueExpProcessor.class);
 
-				binder.bind(IProcessorFactory.class).to(CayenneProcessorFactory.class);
-				binder.bind(IRequestParser.class).to(RequestParser.class);
-				binder.bind(IJsonValueConverterFactory.class).to(DefaultJsonValueConverterFactory.class);
-				binder.bind(IAttributeEncoderFactory.class).to(AttributeEncoderFactory.class);
-				binder.bind(IStringConverterFactory.class).to(StringConverterFactory.class);
-				binder.bind(IEncoderService.class).to(EncoderService.class);
-				binder.bind(IRelationshipMapper.class).to(RelationshipMapper.class);
-				binder.bind(IMetadataService.class).to(MetadataService.class);
-				binder.bind(IListenerService.class).to(ListenerService.class);
-				binder.bind(IResourceMetadataService.class).to(ResourceMetadataService.class);
-				binder.bind(IConstraintsHandler.class).to(ConstraintsHandler.class);
-				binder.bind(ICayenneExpProcessor.class).to(CayenneExpProcessor.class);
-				binder.bind(IExpressionPostProcessor.class).to(ExpressionPostProcessor.class);
-				binder.bind(IKeyValueExpProcessor.class).to(KeyValueExpProcessor.class);
+            binder.bind(IJacksonService.class).to(JacksonService.class);
+            binder.bind(ICayennePersister.class).toInstance(cayenneService);
 
-				binder.bind(IJacksonService.class).to(JacksonService.class);
-				binder.bind(ICayennePersister.class).toInstance(cayenneService);
+            binder.bind(IPathCache.class).to(PathCache.class);
+            binder.bind(ISortProcessor.class).to(SortProcessor.class);
+            binder.bind(ITreeProcessor.class).to(IncludeExcludeProcessor.class);
 
-				binder.bind(IPathCache.class).to(PathCache.class);
-				binder.bind(ISortProcessor.class).to(SortProcessor.class);
-				binder.bind(ITreeProcessor.class).to(IncludeExcludeProcessor.class);
+            binder.bind(IResourceParser.class).to(ResourceParser.class);
+            binder.bind(IUpdateParser.class).to(UpdateParser.class);
 
-				binder.bind(IResourceParser.class).to(ResourceParser.class);
-				binder.bind(IUpdateParser.class).to(UpdateParser.class);
+            binder.bind(ShutdownManager.class).toInstance(new ShutdownManager(Duration.ofSeconds(10)));
 
-				binder.bind(ShutdownManager.class).toInstance(new ShutdownManager(Duration.ofSeconds(10)));
+            if (executor != null) {
+                binder.bind(ExecutorService.class).toInstance(executor);
+            } else {
+                binder.bind(ExecutorService.class).toProvider(UnboundedExecutorServiceProvider.class);
+            }
 
-				if (executor != null) {
-					binder.bind(ExecutorService.class).toInstance(executor);
-				} else {
-					binder.bind(ExecutorService.class).toProvider(UnboundedExecutorServiceProvider.class);
-				}
-
-				// apply adapter-contributed bindings
-				for (LinkRestAdapter a : adapters) {
-					a.contributeToRuntime(binder);
-				}
-			}
-		};
+            // apply adapter-contributed bindings
+            for (LinkRestAdapter a : adapters) {
+                a.contributeToRuntime(binder);
+            }
+        };
 
 		return DIBootstrap.createInjector(module);
 	}
