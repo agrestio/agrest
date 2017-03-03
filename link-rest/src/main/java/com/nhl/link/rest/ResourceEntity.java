@@ -1,18 +1,20 @@
 package com.nhl.link.rest;
 
+import com.nhl.link.rest.meta.LrAttribute;
+import com.nhl.link.rest.meta.LrEntity;
+import com.nhl.link.rest.meta.LrRelationship;
+import com.nhl.link.rest.runtime.parser.PathConstants;
+import org.apache.cayenne.exp.Expression;
+import org.apache.cayenne.query.Ordering;
+import org.apache.cayenne.util.ToStringBuilder;
+
+import javax.ws.rs.core.Response;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
-
-import org.apache.cayenne.exp.Expression;
-import org.apache.cayenne.query.Ordering;
-import org.apache.cayenne.util.ToStringBuilder;
-
-import com.nhl.link.rest.meta.LrAttribute;
-import com.nhl.link.rest.meta.LrEntity;
-import com.nhl.link.rest.meta.LrRelationship;
+import java.util.Objects;
 
 /**
  * A metadata object that describes a data structure of a given REST resource.
@@ -227,5 +229,104 @@ public class ResourceEntity<T> {
      */
 	public void setFiltered(boolean filtered) {
 		this.filtered = filtered;
+	}
+
+	/**
+	 * Includes all attributes, default properties and ID,
+	 * if this resource entity is empty or contains only relationships.
+	 *
+	 * @since 2.4
+	 */
+	public void includeDefaults() {
+		// either there are no includes (taking into account Id) or all includes
+		// are relationships
+		if (!isIdIncluded() && getAttributes().isEmpty()) {
+
+			for (LrAttribute a : getLrEntity().getAttributes()) {
+				getAttributes().put(a.getName(), a);
+				getDefaultProperties().add(a.getName());
+			}
+
+			// Id should be included by default
+			includeId();
+		}
+	}
+
+	/**
+	 * Include everything on the path.
+	 *
+	 * @param path Attribute name or a path, starting with relationship name.
+	 * @return null for the path corresponding to an attribute,
+	 * 			and a child {@link ResourceEntity} for the path corresponding to relationship.
+	 * @since 2.4
+     */
+	public ResourceEntity<?> includePath(String path) {
+		Objects.requireNonNull(path, "Missing path");
+		return processIncludePath(this, path);
+	}
+
+	/**
+	 * Records include path, returning null for the path corresponding to an
+	 * attribute, and a child {@link ResourceEntity} for the path corresponding
+	 * to relationship.
+	 */
+	@SuppressWarnings("unchecked")
+	private ResourceEntity<?> processIncludePath(ResourceEntity<?> parent, String path) {
+
+
+		if (path.length() > PathConstants.MAX_PATH_LENGTH) {
+			throw new LinkRestException(Response.Status.BAD_REQUEST, "Include/exclude path too long: " + path);
+		}
+
+		int dot = path.indexOf(PathConstants.DOT);
+
+		if (dot == 0) {
+			throw new LinkRestException(Response.Status.BAD_REQUEST, "Include starts with dot: " + path);
+		}
+
+		if (dot == path.length() - 1) {
+			throw new LinkRestException(Response.Status.BAD_REQUEST, "Include ends with dot: " + path);
+		}
+
+		String property = dot > 0 ? path.substring(0, dot) : path;
+		LrEntity<?> lrEntity = parent.getLrEntity();
+		LrAttribute attribute = lrEntity.getAttribute(property);
+		if (attribute != null) {
+
+			if (dot > 0) {
+				throw new LinkRestException(Response.Status.BAD_REQUEST, "Invalid include path: " + path);
+			}
+
+			parent.getAttributes().put(property, attribute);
+			return null;
+		}
+
+		LrRelationship relationship = lrEntity.getRelationship(property);
+		if (relationship != null) {
+
+			ResourceEntity<?> childEntity = parent.getChild(property);
+			if (childEntity == null) {
+				LrEntity<?> targetType = relationship.getTargetEntity();
+				childEntity = new ResourceEntity<>(targetType, relationship);
+				parent.getChildren().put(property, childEntity);
+			}
+
+			if (dot > 0) {
+				return processIncludePath(childEntity, path.substring(dot + 1));
+			} else {
+				childEntity.includeDefaults();
+				// Id should be included implicitly
+				childEntity.includeId();
+				return childEntity;
+			}
+		}
+
+		// this is root entity id and it's included explicitly
+		if (property.equals(PathConstants.ID_PK_ATTRIBUTE)) {
+			parent.includeId();
+			return null;
+		}
+
+		throw new LinkRestException(Response.Status.BAD_REQUEST, "Invalid include path: " + path);
 	}
 }

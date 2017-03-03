@@ -3,11 +3,7 @@ package com.nhl.link.rest.runtime.parser.tree;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.nhl.link.rest.LinkRestException;
 import com.nhl.link.rest.ResourceEntity;
-import com.nhl.link.rest.meta.LrAttribute;
-import com.nhl.link.rest.meta.LrEntity;
-import com.nhl.link.rest.meta.LrRelationship;
 import com.nhl.link.rest.runtime.jackson.IJacksonService;
-import com.nhl.link.rest.runtime.parser.PathConstants;
 import com.nhl.link.rest.runtime.parser.filter.ICayenneExpProcessor;
 import com.nhl.link.rest.runtime.parser.sort.ISortProcessor;
 import org.apache.cayenne.exp.Expression;
@@ -47,11 +43,11 @@ public class IncludeWorker {
 				JsonNode root = jsonParser.parseJson(include);
 				processIncludeObject(resourceEntity, root);
 			} else {
-				processIncludePath(resourceEntity, include);
+				resourceEntity.includePath(include);
 			}
 		}
 
-		processDefaultIncludes(resourceEntity);
+		resourceEntity.includeDefaults();
 	}
 
 	private void processIncludeArray(ResourceEntity<?> resourceEntity, String include) {
@@ -64,7 +60,7 @@ public class IncludeWorker {
 				if (child.isObject()) {
 					processIncludeObject(resourceEntity, child);
 				} else if (child.isTextual()) {
-					processIncludePath(resourceEntity, child.asText());
+					resourceEntity.includePath(child.asText());
 				} else {
 					throw new LinkRestException(Status.BAD_REQUEST, "Bad include spec: " + child);
 				}
@@ -84,7 +80,7 @@ public class IncludeWorker {
 				includeEntity = rootEntity;
 			} else {
 				String path = pathNode.asText();
-				includeEntity = processIncludePath(rootEntity, path);
+				includeEntity = rootEntity.includePath(path);
 				if (includeEntity == null) {
 					throw new LinkRestException(Status.BAD_REQUEST,
 							"Bad include spec, non-relationship 'path' in include object: " + path);
@@ -135,90 +131,12 @@ public class IncludeWorker {
 		// either root list, or to-many relationship
 		if (descriptor.getIncoming() == null || descriptor.getIncoming().isToMany()) {
 
-			ResourceEntity<T> mapByRoot = new ResourceEntity<T>(descriptor.getLrEntity());
-			processIncludePath(mapByRoot, mapByPath);
+			ResourceEntity<T> mapByRoot = new ResourceEntity<>(descriptor.getLrEntity());
+			mapByRoot.includePath(mapByPath);
 			descriptor.mapBy(mapByRoot, mapByPath);
 
 		} else {
 			LOGGER.info("Ignoring 'mapBy:" + mapByPath + "' for to-one relationship property");
 		}
 	}
-
-	/**
-	 * Records include path, returning null for the path corresponding to an
-	 * attribute, and a child {@link ResourceEntity} for the path corresponding
-	 * to relationship.
-	 */
-	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public static ResourceEntity<?> processIncludePath(ResourceEntity<?> parent, String path) {
-
-		ExcludeWorker.checkTooLong(path);
-
-		int dot = path.indexOf(PathConstants.DOT);
-
-		if (dot == 0) {
-			throw new LinkRestException(Status.BAD_REQUEST, "Include starts with dot: " + path);
-		}
-
-		if (dot == path.length() - 1) {
-			throw new LinkRestException(Status.BAD_REQUEST, "Include ends with dot: " + path);
-		}
-
-		String property = dot > 0 ? path.substring(0, dot) : path;
-		LrEntity<?> lrEntity = parent.getLrEntity();
-		LrAttribute attribute = lrEntity.getAttribute(property);
-		if (attribute != null) {
-
-			if (dot > 0) {
-				throw new LinkRestException(Status.BAD_REQUEST, "Invalid include path: " + path);
-			}
-
-			parent.getAttributes().put(property, attribute);
-			return null;
-		}
-
-		LrRelationship relationship = lrEntity.getRelationship(property);
-		if (relationship != null) {
-
-			ResourceEntity<?> childEntity = parent.getChild(property);
-			if (childEntity == null) {
-				LrEntity<?> targetType = relationship.getTargetEntity();
-				childEntity = new ResourceEntity(targetType, relationship);
-				parent.getChildren().put(property, childEntity);
-			}
-
-			if (dot > 0) {
-				return processIncludePath(childEntity, path.substring(dot + 1));
-			} else {
-				processDefaultIncludes(childEntity);
-				// Id should be included implicitly
-				childEntity.includeId();
-				return childEntity;
-			}
-		}
-
-		// this is root entity id and it's included explicitly
-		if (property.equals(PathConstants.ID_PK_ATTRIBUTE)) {
-			parent.includeId();
-			return null;
-		}
-
-		throw new LinkRestException(Status.BAD_REQUEST, "Invalid include path: " + path);
-	}
-
-	private static void processDefaultIncludes(ResourceEntity<?> resourceEntity) {
-		// either there are no includes (taking into account Id) or all includes
-		// are relationships
-		if (!resourceEntity.isIdIncluded() && resourceEntity.getAttributes().isEmpty()) {
-
-			for (LrAttribute a : resourceEntity.getLrEntity().getAttributes()) {
-				resourceEntity.getAttributes().put(a.getName(), a);
-				resourceEntity.getDefaultProperties().add(a.getName());
-			}
-
-			// Id should be included by default
-			resourceEntity.includeId();
-		}
-	}
-
 }
