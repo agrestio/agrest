@@ -3,6 +3,7 @@ Release 2.4
 #212 Upgrade to Cayenne 4.0.M4
 #214 Immutable constraint objects
 #218 NPE in LR client when HTTP request fails with something different from LinkRestException
+#220 Support multi-component paths for root "mapBy"
 
 Release 2.3
 
