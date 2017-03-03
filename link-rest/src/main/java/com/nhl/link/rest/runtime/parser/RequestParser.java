@@ -1,23 +1,22 @@
 package com.nhl.link.rest.runtime.parser;
 
-import java.util.Collections;
-import java.util.List;
-
-import javax.ws.rs.core.MultivaluedMap;
-import javax.ws.rs.core.UriInfo;
-
-import com.nhl.link.rest.meta.LrAttribute;
-import org.apache.cayenne.di.Inject;
-import org.apache.cayenne.exp.Expression;
-
 import com.nhl.link.rest.ResourceEntity;
+import com.nhl.link.rest.meta.LrAttribute;
 import com.nhl.link.rest.meta.LrEntity;
 import com.nhl.link.rest.runtime.parser.filter.ICayenneExpProcessor;
 import com.nhl.link.rest.runtime.parser.filter.IKeyValueExpProcessor;
 import com.nhl.link.rest.runtime.parser.sort.ISortProcessor;
 import com.nhl.link.rest.runtime.parser.tree.ITreeProcessor;
+import com.nhl.link.rest.runtime.parser.tree.IncludeWorker;
+import org.apache.cayenne.di.Inject;
+import org.apache.cayenne.exp.Expression;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.ws.rs.core.MultivaluedMap;
+import javax.ws.rs.core.UriInfo;
+import java.util.Collections;
+import java.util.List;
 
 public class RequestParser implements IRequestParser {
 
@@ -120,7 +119,9 @@ public class RequestParser implements IRequestParser {
 				mapBy.getAttributes().put(attribute.getName(), attribute);
 				descriptor.mapBy(mapBy, attribute.getName());
 			} else {
-				LOGGER.info("Ignoring top-level '" + MAP_BY + ":" + mapByPath + "' -- not an attribute");
+				ResourceEntity<?> mapBy = new ResourceEntity<>(descriptor.getLrEntity());
+				IncludeWorker.processIncludePath(mapBy, mapByPath);
+				descriptor.mapBy(mapBy, mapByPath);
 			}
 		}
 	}

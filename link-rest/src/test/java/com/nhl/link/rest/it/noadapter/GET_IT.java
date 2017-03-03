@@ -376,6 +376,24 @@ public class GET_IT extends JerseyTestOnDerby {
 	}
 
 	@Test
+	public void test_Select_MapByRootEntity_Related() {
+
+		insert("e2", "id, name", "1, 'zzz'");
+		insert("e2", "id, name", "2, 'yyy'");
+		insert("e3", "id, e2_id, name", "8,  1, 'aaa'");
+		insert("e3", "id, e2_id, name", "9,  1, 'bbb'");
+		insert("e3", "id, e2_id, name", "10, 2, 'ccc'");
+
+		Response response1 = target("/e3").queryParam("mapBy", E3.E2.dot(E2.ID_PK_COLUMN).getName())
+				.queryParam("exclude", E3.PHONE_NUMBER.getName()).request().get();
+
+		assertEquals(Status.OK.getStatusCode(), response1.getStatus());
+		assertEquals("{\"data\":{\"1\":[{\"id\":8,\"name\":\"aaa\"},{\"id\":9,\"name\":\"bbb\"}]," +
+								"\"2\":[{\"id\":10,\"name\":\"ccc\"}]},\"total\":3}",
+				response1.readEntity(String.class));
+	}
+
+	@Test
 	public void test_SelectById_EscapeLineSeparators() throws WebApplicationException, IOException {
 
 		String s = "First line\u2028Second line...\u2029";

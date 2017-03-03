@@ -150,7 +150,7 @@ public class IncludeWorker {
 	 * to relationship.
 	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	private ResourceEntity<?> processIncludePath(ResourceEntity<?> parent, String path) {
+	public static ResourceEntity<?> processIncludePath(ResourceEntity<?> parent, String path) {
 
 		ExcludeWorker.checkTooLong(path);
 
@@ -206,7 +206,7 @@ public class IncludeWorker {
 		throw new LinkRestException(Status.BAD_REQUEST, "Invalid include path: " + path);
 	}
 
-	private void processDefaultIncludes(ResourceEntity<?> resourceEntity) {
+	private static void processDefaultIncludes(ResourceEntity<?> resourceEntity) {
 		// either there are no includes (taking into account Id) or all includes
 		// are relationships
 		if (!resourceEntity.isIdIncluded() && resourceEntity.getAttributes().isEmpty()) {
