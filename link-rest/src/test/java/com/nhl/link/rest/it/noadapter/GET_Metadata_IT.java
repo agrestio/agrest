@@ -33,16 +33,14 @@ public class GET_Metadata_IT extends JerseyTestOnDerby {
 
         assertEquals(
                 "{\"entity\":{\"name\":\"E5\"," +
-                        "\"properties\":[" +
-                            "{\"name\":\"date\",\"type\":\"date\"}," +
-                            "{\"name\":\"e15s\",\"type\":\"E15\",\"relationship\":true,\"collection\":true}," +
-                            "{\"name\":\"e2s\",\"type\":\"E3\",\"relationship\":true,\"collection\":true}," +
-                            "{\"name\":\"name\",\"type\":\"string\"}]}," +
-                        "\"links\":[" +
-                        "{\"href\":\"http://localhost:9998/e5\",\"type\":\"collection\"," +
-                            "\"operations\":[{\"method\":\"GET\"}]}," +
-                        "{\"href\":\"http://localhost:9998/e5/metadata\",\"type\":\"metadata\"," +
-                            "\"operations\":[{\"method\":\"GET\"}]}," +
+                    "\"properties\":[" +
+                        "{\"name\":\"date\",\"type\":\"date\",\"format\":\"date-time\"}," +
+                        "{\"name\":\"e15s\",\"type\":\"E15\",\"relationship\":true,\"collection\":true}," +
+                        "{\"name\":\"e2s\",\"type\":\"E3\",\"relationship\":true,\"collection\":true}," +
+                        "{\"name\":\"name\",\"type\":\"string\"}]}," +
+                    "\"links\":[" +
+                        "{\"href\":\"http://localhost:9998/e5\",\"type\":\"collection\",\"operations\":[{\"method\":\"GET\"}]}," +
+                        "{\"href\":\"http://localhost:9998/e5/metadata\",\"type\":\"metadata\",\"operations\":[{\"method\":\"GET\"}]}," +
                         "{\"href\":\"http://localhost:9998/e5/{id}\",\"type\":\"item\"," +
                             "\"operations\":[{\"method\":\"GET\"},{\"method\":\"DELETE\"}]}]}"
                             ,
@@ -59,18 +57,30 @@ public class GET_Metadata_IT extends JerseyTestOnDerby {
 		assertEquals(Response.Status.OK.getStatusCode(), response1.getStatus());
 
         JsonNode jsonNode = new JacksonService().parseJson(response1.readEntity(String.class));
-        assertEquals("[{\"name\":\"bigDecimal\",\"type\":\"number\"},{\"name\":\"bigInteger\",\"type\":\"number\"}," +
-                "{\"name\":\"booleanObject\",\"type\":\"boolean\"},{\"name\":\"booleanPrimitive\",\"type\":\"boolean\"}," +
-                "{\"name\":\"byteObject\",\"type\":\"number\"},{\"name\":\"bytePrimitive\",\"type\":\"number\"}," +
-                "{\"name\":\"cDate\",\"type\":\"date\"},{\"name\":\"cString\",\"type\":\"string\"}," +
-                "{\"name\":\"cTime\",\"type\":\"date\"},{\"name\":\"cTimestamp\",\"type\":\"date\"}," +
-                "{\"name\":\"charObject\",\"type\":\"string\"},{\"name\":\"charPrimitive\",\"type\":\"string\"}," +
-                "{\"name\":\"doubleObject\",\"type\":\"number\"},{\"name\":\"doublePrimitive\",\"type\":\"number\"}," +
-                "{\"name\":\"floatObject\",\"type\":\"number\"},{\"name\":\"floatPrimitive\",\"type\":\"number\"}," +
-                "{\"name\":\"guid\",\"type\":\"string\"},{\"name\":\"intObject\",\"type\":\"number\"}," +
-                "{\"name\":\"intPrimitive\",\"type\":\"number\"},{\"name\":\"longObject\",\"type\":\"number\"}," +
-                "{\"name\":\"longPrimitive\",\"type\":\"number\"},{\"name\":\"shortObject\",\"type\":\"number\"}," +
-                "{\"name\":\"shortPrimitive\",\"type\":\"number\"}]", jsonNode.get("entity").get("properties").toString());
+        assertEquals("[{\"name\":\"bigDecimal\",\"type\":\"number\"}," +
+                "{\"name\":\"bigInteger\",\"type\":\"number\"}," +
+                "{\"name\":\"booleanObject\",\"type\":\"boolean\"}," +
+                "{\"name\":\"booleanPrimitive\",\"type\":\"boolean\"}," +
+                "{\"name\":\"byteObject\",\"type\":\"number\",\"format\":\"int32\"}," +
+                "{\"name\":\"bytePrimitive\",\"type\":\"number\",\"format\":\"int32\"}," +
+                "{\"name\":\"cDate\",\"type\":\"date\",\"format\":\"date-time\"}," +
+                "{\"name\":\"cString\",\"type\":\"string\"}," +
+                "{\"name\":\"cTime\",\"type\":\"date\",\"format\":\"full-time\"}," +
+                "{\"name\":\"cTimestamp\",\"type\":\"date\",\"format\":\"date-time\"}," +
+                "{\"name\":\"charObject\",\"type\":\"string\"}," +
+                "{\"name\":\"charPrimitive\",\"type\":\"string\"}," +
+                "{\"name\":\"doubleObject\",\"type\":\"number\",\"format\":\"double\"}," +
+                "{\"name\":\"doublePrimitive\",\"type\":\"number\",\"format\":\"double\"}," +
+                "{\"name\":\"floatObject\",\"type\":\"number\",\"format\":\"float\"}," +
+                "{\"name\":\"floatPrimitive\",\"type\":\"number\",\"format\":\"float\"}," +
+                "{\"name\":\"guid\",\"type\":\"string\",\"format\":\"byte\"}," +
+                "{\"name\":\"intObject\",\"type\":\"number\",\"format\":\"int32\"}," +
+                "{\"name\":\"intPrimitive\",\"type\":\"number\",\"format\":\"int32\"}," +
+                "{\"name\":\"longObject\",\"type\":\"number\",\"format\":\"int64\"}," +
+                "{\"name\":\"longPrimitive\",\"type\":\"number\",\"format\":\"int64\"}," +
+                "{\"name\":\"shortObject\",\"type\":\"number\",\"format\":\"int32\"}," +
+                "{\"name\":\"shortPrimitive\",\"type\":\"number\",\"format\":\"int32\"}]",
+                jsonNode.get("entity").get("properties").toString());
 	}
 
 }

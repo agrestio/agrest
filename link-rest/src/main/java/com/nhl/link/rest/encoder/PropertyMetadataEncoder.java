@@ -1,17 +1,19 @@
 package com.nhl.link.rest.encoder;
 
-import java.io.IOException;
-import java.util.Date;
-
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.nhl.link.rest.meta.LrAttribute;
 import com.nhl.link.rest.meta.LrRelationship;
 import com.nhl.link.rest.meta.cayenne.CayenneLrAttribute;
 
+import java.io.IOException;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.Date;
+import java.util.Optional;
+
 public abstract class PropertyMetadataEncoder extends AbstractEncoder {
 
-	// TODO: this just seems not right, probably we should enhance
-	// LrEntity/LrRelationship model
 	private static final Encoder instance = new PropertyMetadataEncoder() {
 
 		@Override
@@ -26,36 +28,58 @@ public abstract class PropertyMetadataEncoder extends AbstractEncoder {
 		}
 
 		@Override
-		protected String getPropertyType(Object property) {
+		protected TypeDescription getPropertyType(Object property) {
 			if (property instanceof LrAttribute) {
 				Class<?> type = ((LrAttribute) property).getType();
 				switch (type.getName()) {
-				case "byte":
-				case "short":
-				case "int":
-				case "long":
-				case "float":
-				case "double": {
-					return "number";
-				}
-				case "[B":
-				case "char":
-				case "java.lang.Character":
-				case "java.lang.String": {
-					return "string";
-				}
-				case "boolean":
-				case "java.lang.Boolean": {
-					return "boolean";
-				}
+					case "byte":
+					case "short":
+					case "int":
+						return TypeDescription.int32();
+					case "long":
+						return TypeDescription.int64();
+					case "float":
+						return TypeDescription.float32();
+					case "double":
+						return TypeDescription.float64();
+					case "[B":
+						return TypeDescription.base64();
+					case "char":
+					case "java.lang.Character":
+					case "java.lang.String":
+						return TypeDescription.string();
+					case "boolean":
+					case "java.lang.Boolean":
+						return new TypeDescription("boolean");
 				}
 				if (Number.class.isAssignableFrom(type)) {
-					return "number";
+					if (Byte.class.equals(type) || Short.class.equals(type) || Integer.class.equals(type)) {
+						return TypeDescription.int32();
+					} else if (Long.class.equals(type)) {
+						return TypeDescription.int64();
+					} else if (Float.class.equals(type)) {
+						return TypeDescription.float32();
+					} else if (Double.class.equals(type)) {
+						return TypeDescription.float64();
+					}
+					return TypeDescription.number();
 				} else if (Date.class.isAssignableFrom(type)) {
-					return "date";
+					if (java.sql.Date.class.equals(type) || java.sql.Timestamp.class.equals(type)) {
+						return TypeDescription.datetime();
+					} else if (java.sql.Time.class.equals(type)) {
+						return TypeDescription.time();
+					}
+					return TypeDescription.datetime();
+				} else if (LocalDate.class.equals(type)) {
+					return TypeDescription.date();
+				} else if (LocalDateTime.class.equals(type)) {
+					return TypeDescription.datetime();
+				} else if (LocalTime.class.equals(type)) {
+					return TypeDescription.time();
 				}
 			} else if (property instanceof LrRelationship) {
-				return ((LrRelationship) property).getTargetEntity().getName();
+				String entityName = ((LrRelationship) property).getTargetEntity().getName();
+				return new TypeDescription(entityName);
 			}
 			return null;
 		}
@@ -89,7 +113,13 @@ public abstract class PropertyMetadataEncoder extends AbstractEncoder {
 		out.writeStartObject();
 
 		out.writeStringField("name", getPropertyName(property));
-		out.writeStringField("type", getPropertyType(property));
+
+		TypeDescription type = getPropertyType(property);
+		out.writeStringField("type", type.getTypeName());
+		Optional<String> format = type.getFormat();
+		if (format.isPresent()) {
+			out.writeStringField("format", format.get());
+		}
 
 		doEncode(property, out);
 
@@ -100,8 +130,74 @@ public abstract class PropertyMetadataEncoder extends AbstractEncoder {
 
 	protected abstract String getPropertyName(Object property);
 
-	protected abstract String getPropertyType(Object property);
+	protected abstract TypeDescription getPropertyType(Object property);
 
 	protected abstract void doEncode(Object object, JsonGenerator out) throws IOException;
 
+	private static class TypeDescription {
+		static final String NUMBER_TYPE = "number";
+		static final String STRING_TYPE = "string";
+		static final String DATE_TYPE = "date";
+
+		static TypeDescription int32() {
+			return new TypeDescription(NUMBER_TYPE, "int32");
+		}
+
+		static TypeDescription int64() {
+			return new TypeDescription(NUMBER_TYPE, "int64");
+		}
+
+		static TypeDescription float32() {
+			return new TypeDescription(NUMBER_TYPE, "float");
+		}
+
+		static TypeDescription float64() {
+			return new TypeDescription(NUMBER_TYPE, "double");
+		}
+
+		static TypeDescription number() {
+			return new TypeDescription(NUMBER_TYPE);
+		}
+
+		static TypeDescription base64() {
+			return new TypeDescription(STRING_TYPE, "byte");
+		}
+
+		static TypeDescription string() {
+			return new TypeDescription(STRING_TYPE);
+		}
+
+		static TypeDescription date() {
+			return new TypeDescription(DATE_TYPE, "full-date");
+		}
+
+		static TypeDescription datetime() {
+			return new TypeDescription(DATE_TYPE, "date-time");
+		}
+
+		static TypeDescription time() {
+			return new TypeDescription(DATE_TYPE, "full-time");
+		}
+
+		private String typeName;
+		private Optional<String> format;
+
+		TypeDescription(String typeName, String format) {
+			this.typeName = typeName;
+			this.format = Optional.of(format);
+		}
+
+		TypeDescription(String typeName) {
+			this.typeName = typeName;
+			this.format = Optional.empty();
+		}
+
+		String getTypeName() {
+			return typeName;
+		}
+
+		Optional<String> getFormat() {
+			return format;
+		}
+	}
 }
