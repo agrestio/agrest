@@ -22,19 +22,19 @@ public class PojoResource {
 	@GET
 	@Path("p1")
 	public DataResponse<P1> p1All(@Context UriInfo uriInfo) {
-		return LinkRest.select(P1.class, config).uri(uriInfo).select();
+		return LinkRest.select(P1.class, config).uri(uriInfo).get();
 	}
 	
 	@GET
 	@Path("p4")
 	public DataResponse<P4> p4All(@Context UriInfo uriInfo) {
-		return LinkRest.select(P4.class, config).uri(uriInfo).select();
+		return LinkRest.select(P4.class, config).uri(uriInfo).get();
 	}
 
 	@GET
 	@Path("p6")
 	public DataResponse<P6> p6All(@Context UriInfo uriInfo) {
-		return LinkRest.select(P6.class, config).uri(uriInfo).select();
+		return LinkRest.select(P6.class, config).uri(uriInfo).get();
 	}
 
 	@GET

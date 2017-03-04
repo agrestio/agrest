@@ -31,7 +31,7 @@ public class E2Resource {
 	@GET
 	@Resource(type = LinkType.COLLECTION)
 	public DataResponse<E2> getE2(@Context UriInfo uriInfo) {
-		return LinkRest.service(config).select(E2.class).uri(uriInfo).select();
+		return LinkRest.service(config).select(E2.class).uri(uriInfo).get();
 	}
 
 	@GET
@@ -55,20 +55,20 @@ public class E2Resource {
 	@GET
 	@Path("{id}/dummyrel")
 	public DataResponse<E3> getE2_Dummyrel(@PathParam("id") int id, @Context UriInfo uriInfo) {
-		return LinkRest.select(E3.class, config).parent(E2.class, id, "dummyrel").uri(uriInfo).select();
+		return LinkRest.select(E3.class, config).parent(E2.class, id, "dummyrel").uri(uriInfo).get();
 	}
 
 	@GET
 	@Path("{id}/e3s")
 	public DataResponse<E3> getE2_E3s(@PathParam("id") int id, @Context UriInfo uriInfo) {
-		return LinkRest.select(E3.class, config).parent(E2.class, id, "e3s").uri(uriInfo).select();
+		return LinkRest.select(E3.class, config).parent(E2.class, id, "e3s").uri(uriInfo).get();
 	}
 
 	@GET
 	@Path("constraints/{id}/e3s")
 	public DataResponse<E3> getE2_E3s_Constrained(@PathParam("id") int id, @Context UriInfo uriInfo) {
 		return LinkRest.select(E3.class, config).parent(E2.class, id, "e3s").uri(uriInfo)
-				.constraint(Constraint.idOnly(E3.class)).select();
+				.constraint(Constraint.idOnly(E3.class)).get();
 	}
 
 	@DELETE

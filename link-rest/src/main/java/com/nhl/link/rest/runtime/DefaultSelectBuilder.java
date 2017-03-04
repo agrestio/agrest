@@ -195,7 +195,7 @@ public class DefaultSelectBuilder<T> implements SelectBuilder<T> {
 	}
 
 	@Override
-	public DataResponse<T> select() {
+	public DataResponse<T> get() {
 		// 'byId' behaving as "selectOne" is really legacy behavior of 1.1...
 		// should deprecate eventually
 		context.setAtMostOneObject(context.isById());
@@ -206,7 +206,7 @@ public class DefaultSelectBuilder<T> implements SelectBuilder<T> {
 	}
 
 	@Override
-	public DataResponse<T> selectOne() {
+	public DataResponse<T> getOne() {
 		context.setAtMostOneObject(true);
 		context.setListeners(listenersBuilder.getListeners());
 		ChainProcessor.execute(selectChain, context);

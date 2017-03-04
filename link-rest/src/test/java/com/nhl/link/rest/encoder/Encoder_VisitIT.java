@@ -41,7 +41,7 @@ public class Encoder_VisitIT extends EncoderITBase {
 		DB.insert("e2", "id, name", "2, 'yyy'");
 		DB.insert("e2", "id, name", "3, 'zzz'");
 
-		DataResponse<E2> response = createLRService().select(E2.class).select();
+		DataResponse<E2> response = createLRService().select(E2.class).get();
 		assertEquals("3;E2:1;E2:2;E2:3", responseContents(response));
 	}
 
@@ -60,7 +60,7 @@ public class Encoder_VisitIT extends EncoderITBase {
 
 		UriInfo mockUri = mock(UriInfo.class);
 		when(mockUri.getQueryParameters()).thenReturn(params);
-		DataResponse<E2> response = createLRService().select(E2.class).uri(mockUri).select();
+		DataResponse<E2> response = createLRService().select(E2.class).uri(mockUri).get();
 
 		assertEquals("2;E2:2;E2:3", responseContents(response));
 	}
@@ -73,7 +73,7 @@ public class Encoder_VisitIT extends EncoderITBase {
 		DB.insert("e2", "id, name", "3, 'zzz'");
 		DB.insert("e2", "id, name", "4, 'zzz'");
 
-		DataResponse<E2> response = createLRService(new TestFilter(1, 3)).select(E2.class).select();
+		DataResponse<E2> response = createLRService(new TestFilter(1, 3)).select(E2.class).get();
 		assertEquals("2;E2:1;E2:3", responseContents(response));
 	}
 
@@ -87,7 +87,7 @@ public class Encoder_VisitIT extends EncoderITBase {
 		IdCountingVisitor visitor = new IdCountingVisitor();
 		visitor.remainingNodes = 2;
 
-		DataResponse<E2> response = createLRService().select(E2.class).select();
+		DataResponse<E2> response = createLRService().select(E2.class).get();
 		assertEquals("2;E2:1;E2:2", responseContents(response, visitor));
 	}
 
@@ -108,7 +108,7 @@ public class Encoder_VisitIT extends EncoderITBase {
 		UriInfo mockUri = mock(UriInfo.class);
 		when(mockUri.getQueryParameters()).thenReturn(params);
 
-		DataResponse<E2> response = createLRService().select(E2.class).uri(mockUri).select();
+		DataResponse<E2> response = createLRService().select(E2.class).uri(mockUri).get();
 
 		assertEquals("6;E2:1;E3:8;E3:9;E2:2;E3:7;E2:3", responseContents(response));
 	}

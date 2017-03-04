@@ -25,7 +25,7 @@ public class E5Resource {
 	@GET
 	@Resource(type = LinkType.COLLECTION)
 	public DataResponse<E5> getE5(@Context UriInfo uriInfo) {
-		return LinkRest.service(config).select(E5.class).uri(uriInfo).select();
+		return LinkRest.service(config).select(E5.class).uri(uriInfo).get();
 	}
 
 	@GET

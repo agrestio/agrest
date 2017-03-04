@@ -51,12 +51,12 @@ public class DefaultLinkRestService implements ILinkRestService {
 
 	@Override
 	public <T> DataResponse<T> selectById(Class<T> root, Object id) {
-		return select(root).byId(id).select();
+		return select(root).byId(id).get();
 	}
 
 	@Override
 	public <T> DataResponse<T> selectById(Class<T> root, Object id, UriInfo uriInfo) {
-		return select(root).uri(uriInfo).byId(id).select();
+		return select(root).uri(uriInfo).byId(id).get();
 	}
 
 	@Override

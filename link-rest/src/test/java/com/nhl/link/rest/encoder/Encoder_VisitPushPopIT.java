@@ -48,7 +48,7 @@ public class Encoder_VisitPushPopIT extends EncoderITBase {
 		UriInfo mockUri = mock(UriInfo.class);
 		when(mockUri.getQueryParameters()).thenReturn(params);
 
-		DataResponse<E2> response = createLRService().select(E2.class).uri(mockUri).select();
+		DataResponse<E2> response = createLRService().select(E2.class).uri(mockUri).get();
 
 		PushPopVisitor visitor = new PushPopVisitor();
 
@@ -77,7 +77,7 @@ public class Encoder_VisitPushPopIT extends EncoderITBase {
 		UriInfo mockUri = mock(UriInfo.class);
 		when(mockUri.getQueryParameters()).thenReturn(params);
 
-		DataResponse<E2> response = createLRService().select(E2.class).uri(mockUri).select();
+		DataResponse<E2> response = createLRService().select(E2.class).uri(mockUri).get();
 
 		PushPopVisitor visitor = new PushPopVisitor();
 

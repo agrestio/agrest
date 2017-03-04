@@ -17,7 +17,7 @@ import java.util.Map;
  * An object that allows to customize/extend LinkRest request processing.
  * SelectBuilder instance is bootstrapped by the framework based on a user query
  * or a root entity and then configured by the user server-side code to achieve
- * the desired behavior. Finally {@link #select()} is called to get the results.
+ * the desired behavior. Finally {@link #get()} is called to get the results.
  */
 public interface SelectBuilder<T> {
 
@@ -169,13 +169,22 @@ public interface SelectBuilder<T> {
 	/**
 	 * Runs the query corresponding to the state of this builder, returning
 	 * a response that can be serialized by the framework.
+	 *
+	 * @since 2.4
 	 */
-	DataResponse<T> select();
+	DataResponse<T> get();
+
+	/**
+	 * @deprecated since 2.4 in favor of {@link #get()}.
+	 */
+	default DataResponse<T> select() {
+		return get();
+	}
 
 	/**
 	 * Runs the query corresponding to the state of this builder, returning
 	 * response that can be serialized by the framework. The difference with
-	 * {@link #select()} is that the framework ensures that one and only one
+	 * {@link #get()} is that the framework ensures that one and only one
 	 * record is returned in response. Zero records result in 404 response, 2 or
 	 * more records - in 500 response.
 	 * <p>
@@ -185,5 +194,12 @@ public interface SelectBuilder<T> {
 	 *
 	 * @since 1.2
 	 */
-	DataResponse<T> selectOne();
+	DataResponse<T> getOne();
+
+	/**
+	 * @deprecated since 2.4 in favor of {@link #getOne()}.
+	 */
+	default DataResponse<T> selectOne() {
+		return getOne();
+	}
 }

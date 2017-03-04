@@ -22,7 +22,7 @@ public class E15Resource {
 
 	@GET
 	public DataResponse<E15> get(@Context UriInfo uriInfo) {
-		return LinkRest.select(E15.class, config).uri(uriInfo).select();
+		return LinkRest.select(E15.class, config).uri(uriInfo).get();
 	}
 
 	@PUT

@@ -20,6 +20,6 @@ public class E23Resource {
     @GET
     @Path("{id}")
     public DataResponse<E23> getById(@PathParam("id") int id, @Context UriInfo uriInfo) {
-        return LinkRest.select(E23.class, config).byId(id).uri(uriInfo).selectOne();
+        return LinkRest.select(E23.class, config).byId(id).uri(uriInfo).getOne();
     }
 }

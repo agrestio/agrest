@@ -29,7 +29,7 @@ public class E20Resource {
 
 	@GET
 	public DataResponse<E20> getE20(@Context UriInfo uriInfo) {
-		return LinkRest.service(config).select(E20.class).uri(uriInfo).select();
+		return LinkRest.service(config).select(E20.class).uri(uriInfo).get();
 	}
 
 	@GET
@@ -46,7 +46,7 @@ public class E20Resource {
 		Map<String, Object> parentId = new HashMap<>(3);
 		parentId.put(E21.AGE.getName(), age);
 		parentId.put(E21.NAME.getName(), name);
-		return LinkRest.service(config).select(E20.class).parent(E21.class, parentId, E21.E20S.getName()).uri(uriInfo).select();
+		return LinkRest.service(config).select(E20.class).parent(E21.class, parentId, E21.E20S.getName()).uri(uriInfo).get();
 	}
 
 	@DELETE

@@ -239,7 +239,7 @@ public class MultiSelectBuilder<T> {
 
 	public CompletableFuture<DataResponse<T>> selectAsync() {
 
-		CompletableFuture<DataResponse<T>> rootFuture = CompletableFuture.supplyAsync(() -> rootChain.select(),
+		CompletableFuture<DataResponse<T>> rootFuture = CompletableFuture.supplyAsync(() -> rootChain.get(),
 				executor);
 
 		Collection<CompletableFuture<DataResponse<T>>> futures = new ArrayList<>();

@@ -31,25 +31,25 @@ public class E3Resource {
 
 	@GET
 	public DataResponse<E3> get(@Context UriInfo uriInfo) {
-		return LinkRest.service(config).select(E3.class).uri(uriInfo).select();
+		return LinkRest.service(config).select(E3.class).uri(uriInfo).get();
 	}
 
 	@GET
 	@Path("callbacklistener")
 	public DataResponse<E3> getWithCallbackListeners(@Context UriInfo uriInfo) {
-		return LinkRest.service(config).select(E3.class).listener(new FetchCallbackListener()).uri(uriInfo).select();
+		return LinkRest.service(config).select(E3.class).listener(new FetchCallbackListener()).uri(uriInfo).get();
 	}
 
 	@GET
 	@Path("passthroughlistener")
 	public DataResponse<E3> getWithPassThroughListeners(@Context UriInfo uriInfo) {
-		return LinkRest.service(config).select(E3.class).listener(new FetchPassThroughListener()).uri(uriInfo).select();
+		return LinkRest.service(config).select(E3.class).listener(new FetchPassThroughListener()).uri(uriInfo).get();
 	}
 
 	@GET
 	@Path("takeoverlistener")
 	public DataResponse<E3> getWithTakeOverListeners(@Context UriInfo uriInfo) {
-		return LinkRest.service(config).select(E3.class).listener(new FetchTakeOverListener()).uri(uriInfo).select();
+		return LinkRest.service(config).select(E3.class).listener(new FetchTakeOverListener()).uri(uriInfo).get();
 	}
 
 	@POST
@@ -111,7 +111,7 @@ public class E3Resource {
 	@GET
 	@Path("{id}/e2")
 	public DataResponse<E2> getE2(@PathParam("id") int id, @Context UriInfo uriInfo) {
-		return LinkRest.select(E2.class, config).parent(E3.class, id, E3.E2).uri(uriInfo).select();
+		return LinkRest.select(E2.class, config).parent(E3.class, id, E3.E2).uri(uriInfo).get();
 	}
 
 	@DELETE

@@ -23,7 +23,7 @@ public class E12Resource {
 	@GET
 	@Path("{id}/e1213")
 	public DataResponse<E12E13> get_Joins_NoId(@PathParam("id") int id, @Context UriInfo info) {
-		return LinkRest.select(E12E13.class, config).toManyParent(E12.class, id, E12.E1213).uri(info).select();
+		return LinkRest.select(E12E13.class, config).toManyParent(E12.class, id, E12.E1213).uri(info).get();
 	}
 
 	@POST

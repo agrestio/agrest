@@ -36,7 +36,7 @@ public class E17Resource {
         ids.put(E17.ID1_PK_COLUMN, id1);
         ids.put(E17.ID2_PK_COLUMN, id2);
 
-		return LinkRest.select(E17.class, config).uri(uriInfo).byId(ids).selectOne();
+		return LinkRest.select(E17.class, config).uri(uriInfo).byId(ids).getOne();
 	}
 
     @GET
@@ -48,7 +48,7 @@ public class E17Resource {
         parentIds.put(E17.ID1_PK_COLUMN, parentId1);
         parentIds.put(E17.ID2_PK_COLUMN, parentId2);
 
-		return LinkRest.select(E18.class, config).parent(E17.class, parentIds, E17.E18S.getName()).uri(uriInfo).select();
+		return LinkRest.select(E18.class, config).parent(E17.class, parentIds, E17.E18S.getName()).uri(uriInfo).get();
 	}
 
     @POST

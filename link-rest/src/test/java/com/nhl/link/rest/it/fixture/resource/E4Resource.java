@@ -30,14 +30,14 @@ public class E4Resource {
 
 	@GET
 	public DataResponse<E4> get(@Context UriInfo uriInfo) {
-		return LinkRest.service(config).select(E4.class).uri(uriInfo).select();
+		return LinkRest.service(config).select(E4.class).uri(uriInfo).get();
 	}
 
 	@GET
 	@Path("pagination_listener")
 	public DataResponse<E4> get_WithPaginationListener(@Context UriInfo uriInfo) {
 		return LinkRest.service(config).select(E4.class).uri(uriInfo).listener(new CayennePaginationListener())
-				.select();
+				.get();
 	}
 
 	@GET
@@ -45,7 +45,7 @@ public class E4Resource {
 	public DataResponse<E4> getObjects_LimitAttributes(@Context UriInfo uriInfo) {
 		return LinkRest.select(E4.class, config).uri(uriInfo)
 				.constraint(Constraint.idOnly(E4.class).attributes(E4.C_INT))
-				.select();
+				.get();
 	}
 
 	@GET
@@ -60,7 +60,7 @@ public class E4Resource {
 			}
 		};
 
-		return LinkRest.select(E4.class, config).uri(uriInfo).property("x", property(xReader)).select();
+		return LinkRest.select(E4.class, config).uri(uriInfo).property("x", property(xReader)).get();
 	}
 
 	@GET

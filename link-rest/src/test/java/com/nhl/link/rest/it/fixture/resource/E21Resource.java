@@ -26,7 +26,7 @@ public class E21Resource {
 
 	@GET
 	public DataResponse<E21> getE21(@Context UriInfo uriInfo) {
-		return LinkRest.service(config).select(E21.class).uri(uriInfo).select();
+		return LinkRest.service(config).select(E21.class).uri(uriInfo).get();
 	}
 
 	@GET
@@ -36,7 +36,7 @@ public class E21Resource {
 		Map<String, Object> id = new HashMap<>(3);
 		id.put("age", age);
 		id.put("name", name);
-		return LinkRest.service(config).select(E21.class).byId(id).uri(uriInfo).selectOne();
+		return LinkRest.service(config).select(E21.class).byId(id).uri(uriInfo).getOne();
 	}
 
 	@DELETE

@@ -5,6 +5,7 @@ Release 2.4
 #218 NPE in LR client when HTTP request fails with something different from LinkRestException
 #220 Support multi-component paths for root "mapBy"
 #222 Support for Java 8 date time types in the metadata requests
+#223 Rename SelectBuilder.select() to get()
 
 Release 2.3
 
