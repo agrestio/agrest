@@ -58,7 +58,7 @@ public class SomeClass {
 // 'com.nhl.link.rest.annotation.listener' annotations
 SomeCustomBackend altBackend = new SomeCustomBackend();
 
-LinkRest.select(SomeClass.class, config).listener(altBackend).uri(urlInfo).select();</programlisting></para>
+LinkRest.select(SomeClass.class, config).listener(altBackend).uri(urlInfo).get();</programlisting></para>
 
 </chapter>
 

@@ -5,20 +5,19 @@
     <para>
             <itemizedlist>
                 <listitem>
-                    <para>Java 1.7 or newer</para>
+                    <para>Java 1.8 or newer</para>
                 </listitem>
                 <listitem>
-                    <para>A Java "war" project that will serve your REST requests.</para>
+                    <para>A Java web app project that will serve your REST requests.</para>
                 </listitem>
                 <listitem>
                     <para>A JAX-RS 2.0 container, such as Jersey 2.x.</para>
                 </listitem>
                 <listitem>
-                    <para>Cayenne 4.0.M2 or newer. Mapping your database and starting Cayenne
-                        ServerRuntime is outside the scope of this document. Please refer to the
-                            <link
-                            xlink:href="http://cayenne.apache.org/docs/4.0/cayenne-guide/index.html"
-                            >corresponding Cayenne docs</link>.</para>
+                    <para>Cayenne 4.0.M4 or newer. Mapping your database and starting Cayenne
+                    ServerRuntime is outside the scope of this document. Please refer to the <link
+                        xlink:href="http://cayenne.apache.org/docs/4.0/cayenne-guide/index.html"
+                        >corresponding Cayenne docs</link>.</para>
                 </listitem>
             </itemizedlist>
     </para>
