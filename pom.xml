@@ -380,7 +380,7 @@
 	<!-- Optional profile used to sign artifacts -->
 	<profiles>
 		<profile>
-			<id>gpg</id>
+			<id>release</id>
 			<build>
 				<plugins>
 					<plugin>
