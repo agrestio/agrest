@@ -1,6 +1,7 @@
 Release 1.23
 
 #217 1.x - Upgrade to Cayenne 4.0.M4 
+#216 LinkRest 1.x to support Cayenne 4.0.M5
 
 Release 1.22
 
