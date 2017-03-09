@@ -1,9 +1,13 @@
 language: java
 
+branches:
+  only:
+    - link-rest-1.x
+
 jdk:
   - oraclejdk8
   - openjdk7
 
-branches:
-  only:
-    - master
+script:
+   - 'if [ "$TRAVIS_SECURE_ENV_VARS" = "true" ]; then mvn clean source:jar javadoc:javadoc verify; fi'
+   - 'if [ "$TRAVIS_SECURE_ENV_VARS" = "false" ]; then mvn verify; fi'
