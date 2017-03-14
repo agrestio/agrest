@@ -1,17 +1,5 @@
 package com.nhl.link.rest.runtime.parser.filter;
 
-import static org.apache.cayenne.exp.ExpressionFactory.exp;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.TimeZone;
-
-import org.apache.cayenne.exp.Expression;
-import org.junit.Before;
-import org.junit.Test;
-
 import com.nhl.link.rest.LinkRestException;
 import com.nhl.link.rest.it.fixture.cayenne.E4;
 import com.nhl.link.rest.meta.LrEntity;
@@ -19,6 +7,17 @@ import com.nhl.link.rest.runtime.jackson.IJacksonService;
 import com.nhl.link.rest.runtime.jackson.JacksonService;
 import com.nhl.link.rest.runtime.parser.cache.PathCache;
 import com.nhl.link.rest.unit.TestWithCayenneMapping;
+import org.apache.cayenne.exp.Expression;
+import org.junit.Before;
+import org.junit.Test;
+
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.TimeZone;
+
+import static org.apache.cayenne.exp.ExpressionFactory.exp;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 public class CayenneExpProcessorTest extends TestWithCayenneMapping {
 
@@ -41,6 +40,15 @@ public class CayenneExpProcessorTest extends TestWithCayenneMapping {
 
 		assertNotNull(e);
 		assertEquals(exp("cInt = 12345 and cVarchar = 'John Smith' and cBoolean = true"), e);
+	}
+
+	@Test
+	public void testProcess_Functions() {
+
+		Expression e = processor.process(e4Entity, "length(cVarchar) > 5");
+
+		assertNotNull(e);
+		assertEquals(exp("length(cVarchar) > 5"), e);
 	}
 
 	@Test
