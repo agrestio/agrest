@@ -86,19 +86,30 @@ class EntityConstraintHandler {
 			for (EntityUpdate<?> u : context.getUpdates()) {
 
 				// exclude disallowed attributes
-				Iterator<Entry<String, Object>> it = u.getValues().entrySet().iterator();
+				Iterator<String> it = u.getValues().keySet().iterator();
 				while (it.hasNext()) {
-					Entry<String, Object> e = it.next();
-					if (!c.allowsAttribute(e.getKey())) {
+					String attr = it.next();
+					if (!c.allowsAttribute(attr)) {
 
 						// do not report default properties, as this wasn't a
 						// client's fault it go there..
-						if (!context.getEntity().isDefault(e.getKey())) {
-							LOGGER.info("Attribute not allowed, removing: " + e.getKey() + " for id " + u.getId());
+						if (!context.getEntity().isDefault(attr)) {
+							LOGGER.info("Attribute not allowed, removing: " + attr + " for id " + u.getId());
 						}
 
 						it.remove();
 					}
+				}
+			}
+		}
+
+		for (EntityUpdate<?> u : context.getUpdates()) {
+			Iterator<String> it = u.getRelatedIds().keySet().iterator();
+			while (it.hasNext()) {
+				String relationship = it.next();
+				if (!c.allowsRelationship(relationship)) {
+					LOGGER.info("Relationship not allowed, removing: " + relationship + " for id " + u.getId());
+					it.remove();
 				}
 			}
 		}

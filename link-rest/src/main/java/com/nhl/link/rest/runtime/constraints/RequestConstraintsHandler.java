@@ -81,6 +81,15 @@ class RequestConstraintsHandler {
 					it.remove();
 				}
 			}
+
+			Iterator<String> it2 = u.getRelatedIds().keySet().iterator();
+			while (it2.hasNext()) {
+				String relationship = it2.next();
+				if (!constraints.hasChild(relationship)) {
+					LOGGER.info("Relationship not allowed, removing: " + relationship + " for id " + u.getId());
+					it2.remove();
+				}
+			}
 		}
 	}
 
