@@ -56,6 +56,7 @@ public class MetadataService implements IMetadataService {
 	/**
 	 * @since 1.12
 	 */
+	@Deprecated
 	@Override
 	public <T> LrEntity<T> getLrEntity(Select<T> query) {
 		@SuppressWarnings("unchecked")

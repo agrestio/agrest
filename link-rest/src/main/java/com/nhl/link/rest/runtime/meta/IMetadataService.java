@@ -21,7 +21,9 @@ public interface IMetadataService {
 
 	/**
 	 * @since 1.12
+     * @deprecated since 2.5 unused and unneeded.
 	 */
+	@Deprecated
 	<T> LrEntity<T> getLrEntity(Select<T> query);
 
 	/**
