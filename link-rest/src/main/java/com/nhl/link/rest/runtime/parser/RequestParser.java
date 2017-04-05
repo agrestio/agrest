@@ -13,9 +13,6 @@ import org.apache.cayenne.exp.Expression;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.ws.rs.core.MultivaluedMap;
-import javax.ws.rs.core.UriInfo;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -72,14 +69,14 @@ public class RequestParser implements IRequestParser {
 		return resourceEntity;
 	}
 
-	@Override
-	public <T> ResourceEntity<T> parseUpdate(LrEntity<T> entity, UriInfo uriInfo) {
-		ResourceEntity<T> resourceEntity = new ResourceEntity<>(entity);
-		treeProcessor.process(resourceEntity, uriInfo);
-		return resourceEntity;
-	}
+    @Override
+    public <T> ResourceEntity<T> parseUpdate(LrEntity<T> entity, Map<String, List<String>> protocolParameters) {
+        ResourceEntity<T> resourceEntity = new ResourceEntity<>(entity);
+        treeProcessor.process(resourceEntity, protocolParameters);
+        return resourceEntity;
+    }
 
-	private void processMapBy(ResourceEntity<?> descriptor, Map<String, List<String>> protocolParameters) {
+    private void processMapBy(ResourceEntity<?> descriptor, Map<String, List<String>> protocolParameters) {
 		String mapByPath = BaseRequestProcessor.string(protocolParameters, MAP_BY);
 		if (mapByPath != null) {
 			LrAttribute attribute = descriptor.getLrEntity().getAttribute(mapByPath);
