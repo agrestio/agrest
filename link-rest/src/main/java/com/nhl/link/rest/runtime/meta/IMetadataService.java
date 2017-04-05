@@ -1,11 +1,12 @@
 package com.nhl.link.rest.runtime.meta;
 
-import org.apache.cayenne.query.Select;
-
 import com.nhl.link.rest.EntityParent;
+import com.nhl.link.rest.LinkRestException;
 import com.nhl.link.rest.meta.LrEntity;
 import com.nhl.link.rest.meta.LrRelationship;
+import org.apache.cayenne.query.Select;
 
+import javax.ws.rs.core.Response;
 import java.lang.reflect.Type;
 
 /**
@@ -29,7 +30,15 @@ public interface IMetadataService {
 	 * 
 	 * @since 1.12
 	 */
-	LrRelationship getLrRelationship(Class<?> type, String relationship);
+	default LrRelationship getLrRelationship(Class<?> type, String relationship) {
+		LrEntity<?> e = getLrEntity(type);
+		LrRelationship r = e.getRelationship(relationship);
+		if (r == null) {
+			throw new LinkRestException(Response.Status.BAD_REQUEST, "Invalid relationship: '" + relationship + "'");
+		}
+
+		return r;
+	}
 
 	/**
 	 * Returns a relationship to child for a given {@link EntityParent}. If the
@@ -38,7 +47,9 @@ public interface IMetadataService {
 	 * 
 	 * @since 1.12
 	 */
-	LrRelationship getLrRelationship(EntityParent<?> parent);
+	default LrRelationship getLrRelationship(EntityParent<?> parent) {
+		return getLrRelationship(parent.getType(), parent.getRelationship());
+	}
 
 	/**
      * @since 2.3
