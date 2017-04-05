@@ -1,19 +1,18 @@
 package com.nhl.link.rest.runtime.adapter.sencha;
 
-import javax.ws.rs.core.MultivaluedMap;
-import javax.ws.rs.core.UriInfo;
-
-import org.apache.cayenne.di.Inject;
-import org.apache.cayenne.exp.Expression;
-
 import com.nhl.link.rest.ResourceEntity;
 import com.nhl.link.rest.meta.LrEntity;
-import com.nhl.link.rest.runtime.parser.EmptyMultiValuedMap;
+import com.nhl.link.rest.runtime.parser.BaseRequestProcessor;
 import com.nhl.link.rest.runtime.parser.RequestParser;
 import com.nhl.link.rest.runtime.parser.filter.ICayenneExpProcessor;
 import com.nhl.link.rest.runtime.parser.filter.IKeyValueExpProcessor;
 import com.nhl.link.rest.runtime.parser.sort.ISortProcessor;
 import com.nhl.link.rest.runtime.parser.tree.ITreeProcessor;
+import org.apache.cayenne.di.Inject;
+import org.apache.cayenne.exp.Expression;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * @since 1.11
@@ -34,13 +33,11 @@ public class SenchaRequestParser extends RequestParser {
 	}
 
 	@Override
-	public <T> ResourceEntity<T> parseSelect(LrEntity<T> entity, UriInfo uriInfo, String autocompleteProperty) {
-		ResourceEntity<T> resourceEntity = super.parseSelect(entity, uriInfo, autocompleteProperty);
+	public <T> ResourceEntity<T> parseSelect(LrEntity<T> entity, Map<String, List<String>> protocolParameters, String autocompleteProperty) {
 
-		MultivaluedMap<String, String> parameters = uriInfo != null ? uriInfo.getQueryParameters()
-				: EmptyMultiValuedMap.map();
+		ResourceEntity<T> resourceEntity = super.parseSelect(entity, protocolParameters, autocompleteProperty);
 
-		Expression e1 = parseFilter(entity, parameters);
+		Expression e1 = parseFilter(entity, protocolParameters);
 		if (e1 != null) {
 			resourceEntity.andQualifier(e1);
 		}
@@ -48,8 +45,8 @@ public class SenchaRequestParser extends RequestParser {
 		return resourceEntity;
 	}
 
-	protected Expression parseFilter(LrEntity<?> entity, MultivaluedMap<String, String> parameters) {
-		String value = string(parameters, FILTER);
+	protected Expression parseFilter(LrEntity<?> entity, Map<String, List<String>> protocolParameters) {
+		String value = BaseRequestProcessor.string(protocolParameters, FILTER);
 		return senchaFilterProcessor.process(entity, value);
 	}
 

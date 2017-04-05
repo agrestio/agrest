@@ -1,22 +1,5 @@
 package com.nhl.link.rest.runtime.adapter.sencha;
 
-import static org.apache.cayenne.exp.ExpressionFactory.exp;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
-import java.util.Iterator;
-
-import javax.ws.rs.core.MultivaluedMap;
-import javax.ws.rs.core.UriInfo;
-
-import com.nhl.link.rest.runtime.parser.filter.ExpressionPostProcessor;
-import org.apache.cayenne.query.Ordering;
-import org.apache.cayenne.query.SortOrder;
-import org.junit.Before;
-import org.junit.Test;
-
 import com.nhl.link.rest.ResourceEntity;
 import com.nhl.link.rest.it.fixture.cayenne.E2;
 import com.nhl.link.rest.runtime.jackson.IJacksonService;
@@ -24,6 +7,7 @@ import com.nhl.link.rest.runtime.jackson.JacksonService;
 import com.nhl.link.rest.runtime.parser.cache.IPathCache;
 import com.nhl.link.rest.runtime.parser.cache.PathCache;
 import com.nhl.link.rest.runtime.parser.filter.CayenneExpProcessor;
+import com.nhl.link.rest.runtime.parser.filter.ExpressionPostProcessor;
 import com.nhl.link.rest.runtime.parser.filter.ICayenneExpProcessor;
 import com.nhl.link.rest.runtime.parser.filter.IKeyValueExpProcessor;
 import com.nhl.link.rest.runtime.parser.filter.KeyValueExpProcessor;
@@ -31,6 +15,20 @@ import com.nhl.link.rest.runtime.parser.sort.ISortProcessor;
 import com.nhl.link.rest.runtime.parser.tree.ITreeProcessor;
 import com.nhl.link.rest.runtime.parser.tree.IncludeExcludeProcessor;
 import com.nhl.link.rest.unit.TestWithCayenneMapping;
+import org.apache.cayenne.query.Ordering;
+import org.apache.cayenne.query.SortOrder;
+import org.junit.Before;
+import org.junit.Test;
+
+import javax.ws.rs.core.MultivaluedMap;
+import java.util.Collections;
+import java.util.Iterator;
+
+import static org.apache.cayenne.exp.ExpressionFactory.exp;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class SenchaRequestParserTest extends TestWithCayenneMapping {
 
@@ -58,12 +56,9 @@ public class SenchaRequestParserTest extends TestWithCayenneMapping {
 
 		@SuppressWarnings("unchecked")
 		MultivaluedMap<String, String> params = mock(MultivaluedMap.class);
-		when(params.getFirst(SenchaRequestParser.FILTER)).thenReturn("[{\"property\":\"name\",\"value\":\"xyz\"}]");
+		when(params.get(SenchaRequestParser.FILTER)).thenReturn(Collections.singletonList("[{\"property\":\"name\",\"value\":\"xyz\"}]"));
 
-		UriInfo uriInfo = mock(UriInfo.class);
-		when(uriInfo.getQueryParameters()).thenReturn(params);
-
-		ResourceEntity<E2> resourceEntity = parser.parseSelect(getLrEntity(E2.class), uriInfo, null);
+		ResourceEntity<E2> resourceEntity = parser.parseSelect(getLrEntity(E2.class), params, null);
 
 		assertNotNull(resourceEntity.getQualifier());
 		assertEquals(exp("name likeIgnoreCase 'xyz%'"), resourceEntity.getQualifier());
@@ -74,13 +69,10 @@ public class SenchaRequestParserTest extends TestWithCayenneMapping {
 
 		@SuppressWarnings("unchecked")
 		MultivaluedMap<String, String> params = mock(MultivaluedMap.class);
-		when(params.getFirst("query")).thenReturn("Bla");
-		when(params.getFirst(SenchaRequestParser.FILTER)).thenReturn("[{\"property\":\"name\",\"value\":\"xyz\"}]");
+		when(params.get("query")).thenReturn(Collections.singletonList("Bla"));
+		when(params.get(SenchaRequestParser.FILTER)).thenReturn(Collections.singletonList("[{\"property\":\"name\",\"value\":\"xyz\"}]"));
 
-		UriInfo uriInfo = mock(UriInfo.class);
-		when(uriInfo.getQueryParameters()).thenReturn(params);
-
-		ResourceEntity<E2> resourceEntity = parser.parseSelect(getLrEntity(E2.class), uriInfo, E2.NAME.getName());
+		ResourceEntity<E2> resourceEntity = parser.parseSelect(getLrEntity(E2.class), params, E2.NAME.getName());
 
 		assertNotNull(resourceEntity.getQualifier());
 		assertEquals(exp("name likeIgnoreCase 'Bla%' and name likeIgnoreCase 'xyz%'"), resourceEntity.getQualifier());
@@ -91,13 +83,10 @@ public class SenchaRequestParserTest extends TestWithCayenneMapping {
 
 		@SuppressWarnings("unchecked")
 		MultivaluedMap<String, String> params = mock(MultivaluedMap.class);
-		when(params.getFirst("cayenneExp")).thenReturn("{\"exp\" : \"address = '1 Main Street'\"}");
-		when(params.getFirst(SenchaRequestParser.FILTER)).thenReturn("[{\"property\":\"name\",\"value\":\"xyz\"}]");
+		when(params.get("cayenneExp")).thenReturn(Collections.singletonList("{\"exp\" : \"address = '1 Main Street'\"}"));
+		when(params.get(SenchaRequestParser.FILTER)).thenReturn(Collections.singletonList("[{\"property\":\"name\",\"value\":\"xyz\"}]"));
 
-		UriInfo uriInfo = mock(UriInfo.class);
-		when(uriInfo.getQueryParameters()).thenReturn(params);
-
-		ResourceEntity<E2> resourceEntity = parser.parseSelect(getLrEntity(E2.class), uriInfo, null);
+		ResourceEntity<E2> resourceEntity = parser.parseSelect(getLrEntity(E2.class), params, null);
 
 		assertNotNull(resourceEntity.getQualifier());
 		assertEquals(exp("address = '1 Main Street' and name likeIgnoreCase 'xyz%'"), resourceEntity.getQualifier());
@@ -108,15 +97,13 @@ public class SenchaRequestParserTest extends TestWithCayenneMapping {
 
 		@SuppressWarnings("unchecked")
 		MultivaluedMap<String, String> params = mock(MultivaluedMap.class);
-		when(params.getFirst("sort")).thenReturn(
-				"[{\"property\":\"name\",\"direction\":\"DESC\"},{\"property\":\"address\",\"direction\":\"ASC\"}]");
-		when(params.getFirst(SenchaSortProcessor.GROUP)).thenReturn(
-				"[{\"property\":\"id\",\"direction\":\"DESC\"},{\"property\":\"address\",\"direction\":\"ASC\"}]");
+		when(params.get("sort")).thenReturn(
+				Collections.singletonList("[{\"property\":\"name\",\"direction\":\"DESC\"},{\"property\":\"address\",\"direction\":\"ASC\"}]"));
+		when(params.get(SenchaSortProcessor.GROUP)).thenReturn(
+				Collections.singletonList("[{\"property\":\"id\",\"direction\":\"DESC\"},{\"property\":\"address\",\"direction\":\"ASC\"}]"));
 
-		UriInfo uriInfo = mock(UriInfo.class);
-		when(uriInfo.getQueryParameters()).thenReturn(params);
 
-		ResourceEntity<E2> resourceEntity = parser.parseSelect(getLrEntity(E2.class), uriInfo, null);
+		ResourceEntity<E2> resourceEntity = parser.parseSelect(getLrEntity(E2.class), params, null);
 
 		assertEquals(3, resourceEntity.getOrderings().size());
 		Iterator<Ordering> it = resourceEntity.getOrderings().iterator();

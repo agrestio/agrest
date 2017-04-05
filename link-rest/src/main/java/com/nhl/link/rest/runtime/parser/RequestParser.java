@@ -17,6 +17,7 @@ import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.UriInfo;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 public class RequestParser implements IRequestParser {
 
@@ -36,32 +37,6 @@ public class RequestParser implements IRequestParser {
 	private ICayenneExpProcessor cayenneExpProcessor;
 	private IKeyValueExpProcessor keyValueExpProcessor;
 
-	protected static String string(MultivaluedMap<String, String> parameters, String name) {
-		return parameters.getFirst(name);
-	}
-
-	protected static List<String> strings(MultivaluedMap<String, String> parameters, String name) {
-		List<String> result = parameters.get(name);
-		if (result == null) {
-			result = Collections.emptyList();
-		}
-
-		return result;
-	}
-
-	protected static int integer(MultivaluedMap<String, String> parameters, String name) {
-
-		String value = parameters.getFirst(name);
-		if (value == null) {
-			return -1;
-		}
-
-		try {
-			return Integer.parseInt(value);
-		} catch (NumberFormatException nfex) {
-			return -1;
-		}
-	}
 
 	protected static Expression combine(Expression e1, Expression e2) {
 		return e1 == null ? e2 : (e2 == null) ? e1 : e1.andExp(e2);
@@ -77,27 +52,21 @@ public class RequestParser implements IRequestParser {
 	}
 
 	@Override
-	public <T> ResourceEntity<T> parseSelect(LrEntity<T> entity, UriInfo uriInfo, String autocompleteProperty) {
+	public <T> ResourceEntity<T> parseSelect(LrEntity<T> entity, Map<String, List<String>> protocolParameters, String autocompleteProperty) {
 
 		ResourceEntity<T> resourceEntity = new ResourceEntity<>(entity);
 
-		// selectById can send us a null uriInfo; still we want to run through
-		// the processors in this case to init the defaults
-
-		MultivaluedMap<String, String> parameters = uriInfo != null ? uriInfo.getQueryParameters()
-				: EmptyMultiValuedMap.map();
-
 		// TODO: "ISizeProcessor"
-		resourceEntity.setFetchOffset(BaseRequestProcessor.integer(parameters, START));
-		resourceEntity.setFetchLimit(BaseRequestProcessor.integer(parameters, LIMIT));
+		resourceEntity.setFetchOffset(BaseRequestProcessor.integer(protocolParameters, START));
+		resourceEntity.setFetchLimit(BaseRequestProcessor.integer(protocolParameters, LIMIT));
 
-		treeProcessor.process(resourceEntity, uriInfo);
-		sortProcessor.process(resourceEntity, uriInfo);
+		treeProcessor.process(resourceEntity, protocolParameters);
+		sortProcessor.process(resourceEntity, protocolParameters);
 
-		processMapBy(resourceEntity, parameters);
+		processMapBy(resourceEntity, protocolParameters);
 
-		Expression e1 = parseCayenneExp(entity, parameters);
-		Expression e2 = parseKeyValueExp(entity, parameters, autocompleteProperty);
+		Expression e1 = parseCayenneExp(entity, protocolParameters);
+		Expression e2 = parseKeyValueExp(entity, protocolParameters, autocompleteProperty);
 		resourceEntity.andQualifier(combine(e1, e2));
 
 		return resourceEntity;
@@ -110,8 +79,8 @@ public class RequestParser implements IRequestParser {
 		return resourceEntity;
 	}
 
-	private void processMapBy(ResourceEntity<?> descriptor, MultivaluedMap<String, String> parameters) {
-		String mapByPath = string(parameters, MAP_BY);
+	private void processMapBy(ResourceEntity<?> descriptor, Map<String, List<String>> protocolParameters) {
+		String mapByPath = BaseRequestProcessor.string(protocolParameters, MAP_BY);
 		if (mapByPath != null) {
 			LrAttribute attribute = descriptor.getLrEntity().getAttribute(mapByPath);
 			if (attribute != null) {
@@ -126,14 +95,14 @@ public class RequestParser implements IRequestParser {
 		}
 	}
 
-	protected Expression parseCayenneExp(LrEntity<?> entity, MultivaluedMap<String, String> parameters) {
-		String exp = string(parameters, CAYENNE_EXP);
+	protected Expression parseCayenneExp(LrEntity<?> entity, Map<String, List<String>> protocolParameters) {
+		String exp = BaseRequestProcessor.string(protocolParameters, CAYENNE_EXP);
 		return cayenneExpProcessor.process(entity, exp);
 	}
 
-	protected Expression parseKeyValueExp(LrEntity<?> entity, MultivaluedMap<String, String> parameters,
+	protected Expression parseKeyValueExp(LrEntity<?> entity, Map<String, List<String>> protocolParameters,
 			String autocompleteProperty) {
-		String value = string(parameters, QUERY);
+		String value = BaseRequestProcessor.string(protocolParameters, QUERY);
 		return keyValueExpProcessor.process(entity, autocompleteProperty, value);
 	}
 

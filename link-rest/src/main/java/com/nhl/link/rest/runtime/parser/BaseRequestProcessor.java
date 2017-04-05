@@ -2,19 +2,20 @@ package com.nhl.link.rest.runtime.parser;
 
 import java.util.Collections;
 import java.util.List;
-
-import javax.ws.rs.core.MultivaluedMap;
+import java.util.Map;
 
 /**
  * @since 1.5
  */
 public abstract class BaseRequestProcessor {
 
-	protected static String string(MultivaluedMap<String, String> parameters, String name) {
-		return parameters.getFirst(name);
+	public static String string(Map<String, List<String>> parameters, String name) {
+
+		List<String> strings = strings(parameters, name);
+		return strings.isEmpty() ? null : strings.get(0);
 	}
 
-	protected static List<String> strings(MultivaluedMap<String, String> parameters, String name) {
+    public static List<String> strings(Map<String, List<String>> parameters, String name) {
 		List<String> result = parameters.get(name);
 		if (result == null) {
 			result = Collections.emptyList();
@@ -23,9 +24,11 @@ public abstract class BaseRequestProcessor {
 		return result;
 	}
 
-	protected static int integer(MultivaluedMap<String, String> parameters, String name) {
+    public static int integer(Map<String, List<String>> parameters, String name) {
 
-		String value = parameters.getFirst(name);
+		List<String> strings = strings(parameters, name);
+		String value =  strings.isEmpty() ? null : strings.get(0);
+
 		if (value == null) {
 			return -1;
 		}

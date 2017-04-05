@@ -88,6 +88,13 @@ public class SelectContext<T> extends BaseProcessingContext<T> {
 		return uriInfo;
 	}
 
+	/**
+	 * @since 2.5
+	 */
+	public Map<String, List<String>> getProtocolParameters() {
+		return uriInfo != null ? uriInfo.getQueryParameters() : Collections.emptyMap();
+	}
+
 	public void setUriInfo(UriInfo uriInfo) {
 		this.uriInfo = uriInfo;
 	}
