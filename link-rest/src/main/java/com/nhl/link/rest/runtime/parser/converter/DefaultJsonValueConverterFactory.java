@@ -1,13 +1,5 @@
 package com.nhl.link.rest.runtime.parser.converter;
 
-import java.sql.Types;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-
 import com.nhl.link.rest.parser.converter.Base64Converter;
 import com.nhl.link.rest.parser.converter.GenericConverter;
 import com.nhl.link.rest.parser.converter.ISOLocalDateConverter;
@@ -16,6 +8,14 @@ import com.nhl.link.rest.parser.converter.ISOLocalTimeConverter;
 import com.nhl.link.rest.parser.converter.JsonValueConverter;
 import com.nhl.link.rest.parser.converter.LongConverter;
 import com.nhl.link.rest.parser.converter.UtcDateConverter;
+
+import java.sql.Types;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @since 1.10
@@ -44,7 +44,10 @@ public class DefaultJsonValueConverterFactory implements IJsonValueConverterFact
 
 		this.convertersByJdbcType = new HashMap<>();
 		convertersByJdbcType.put(Types.BIGINT, LongConverter.converter());
+		convertersByJdbcType.put(Types.DATE, UtcDateConverter.converter());
+		convertersByJdbcType.put(Types.TIME, UtcDateConverter.converter());
 		convertersByJdbcType.put(Types.TIMESTAMP, UtcDateConverter.converter());
+		convertersByJdbcType.put(Types.VARBINARY, Base64Converter.converter());
 	}
 
 	@Override
