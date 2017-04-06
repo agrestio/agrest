@@ -3,6 +3,7 @@ package com.nhl.link.rest.meta;
 import com.nhl.link.rest.annotation.LrAttribute;
 import com.nhl.link.rest.annotation.LrId;
 import com.nhl.link.rest.annotation.LrRelationship;
+import com.nhl.link.rest.runtime.parser.converter.IJsonValueConverterFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,22 +24,16 @@ public class LrEntityBuilder<T> {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(LrEntityBuilder.class);
 
-	public static <T> LrEntityBuilder<T> builder(Class<T> type, LrDataMap dataMap) {
-		return new LrEntityBuilder<>(type, dataMap);
-	}
-
-	public static <T> LrEntity<T> build(Class<T> type, LrDataMap dataMap) {
-		return builder(type, dataMap).build();
-	}
-
 	private static final Pattern GETTER = Pattern.compile("^(get|is)([A-Z].*)$");
 
 	private Class<T> type;
 	private LrDataMap dataMap;
+	private IJsonValueConverterFactory converterFactory;
 
-	LrEntityBuilder(Class<T> type, LrDataMap dataMap) {
+	public LrEntityBuilder(Class<T> type, LrDataMap dataMap, IJsonValueConverterFactory converterFactory) {
 		this.type = type;
 		this.dataMap = dataMap;
+		this.converterFactory = converterFactory;
 	}
 
 	public LrEntity<T> build() {
@@ -88,10 +83,12 @@ public class LrEntityBuilder<T> {
 
 	private boolean addAsAttribute(DefaultLrEntity<T> entity, String name, Method m) {
 
+		Class<?> type = m.getReturnType();
+
 		if (m.getAnnotation(LrAttribute.class) != null) {
 
 			if (checkValidAttributeType(m.getReturnType())) {
-				DefaultLrAttribute a = new DefaultLrAttribute(name, m.getReturnType());
+				DefaultLrAttribute a = new DefaultLrAttribute(name, type, converterFactory.converter(type));
 				entity.addAttribute(a);
 			} else {
 				// still return true after validation failure... this is an
@@ -105,7 +102,7 @@ public class LrEntityBuilder<T> {
 		if (m.getAnnotation(LrId.class) != null) {
 
 			if (checkValidAttributeType(m.getReturnType())) {
-				DefaultLrAttribute a = new DefaultLrAttribute(name, m.getReturnType());
+				DefaultLrAttribute a = new DefaultLrAttribute(name, type, converterFactory.converter(type));
 				entity.addId(a);
 			} else {
 				// still return true after validation failure... this is an

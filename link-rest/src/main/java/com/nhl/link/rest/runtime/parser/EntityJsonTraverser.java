@@ -187,7 +187,7 @@ public class EntityJsonTraverser {
 		if (id instanceof LrPersistentAttribute) {
 			LrPersistentAttribute persistentId = (LrPersistentAttribute) id;
 			type = persistentId.getJdbcType();
-			name = persistentId.getDbAttribute().getName();
+			name = persistentId.getColumnName();
 		}
 
 		Object value = extractValue(valueNode, type);

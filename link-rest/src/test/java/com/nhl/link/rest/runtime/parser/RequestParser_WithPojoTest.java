@@ -57,9 +57,9 @@ public class RequestParser_WithPojoTest extends TestWithCayenneMapping {
 	protected IMetadataService createMetadataService() {
 
 		List<LrEntityCompiler> compilers = new ArrayList<>();
-		compilers.add(new PojoEntityCompiler());
+		compilers.add(new PojoEntityCompiler(converterFactory));
 		compilers.add(
-				new CayenneEntityCompiler(mockCayennePersister, Collections.<String, LrEntityOverlay<?>> emptyMap()));
+				new CayenneEntityCompiler(mockCayennePersister, Collections.<String, LrEntityOverlay<?>> emptyMap(), converterFactory));
 
 		return new MetadataService(compilers, mockCayennePersister);
 	}

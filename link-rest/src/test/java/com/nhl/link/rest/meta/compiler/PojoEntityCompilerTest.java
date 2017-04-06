@@ -1,33 +1,37 @@
 package com.nhl.link.rest.meta.compiler;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-
-import java.util.ArrayList;
-import java.util.Collection;
-
-import org.junit.BeforeClass;
-import org.junit.Test;
-
 import com.nhl.link.rest.annotation.LrAttribute;
 import com.nhl.link.rest.annotation.LrId;
 import com.nhl.link.rest.meta.LazyLrDataMap;
 import com.nhl.link.rest.meta.LrEntity;
+import com.nhl.link.rest.runtime.parser.converter.DefaultJsonValueConverterFactory;
+import com.nhl.link.rest.runtime.parser.converter.IJsonValueConverterFactory;
+import org.junit.BeforeClass;
+import org.junit.Test;
+
+import java.util.ArrayList;
+import java.util.Collection;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 public class PojoEntityCompilerTest {
 
 	private static Collection<LrEntityCompiler> compilers;
+	private static IJsonValueConverterFactory converterFactory;
 
 	@BeforeClass
 	public static void setUpClass() {
+		converterFactory = new DefaultJsonValueConverterFactory();
 		compilers = new ArrayList<>();
-		compilers.add(new PojoEntityCompiler());
+		compilers.add(new PojoEntityCompiler(converterFactory));
 	}
 
 	@Test
 	public void testCompile() {
-		LrEntity<Entity> entity = new PojoEntityCompiler().compile(Entity.class, new LazyLrDataMap(compilers));
+		LrEntity<Entity> entity = new PojoEntityCompiler(converterFactory)
+				.compile(Entity.class, new LazyLrDataMap(compilers));
 		assertNotNull(entity);
 		assertEquals(1, entity.getIds().size());
 		assertEquals(1, entity.getAttributes().size());
@@ -36,7 +40,8 @@ public class PojoEntityCompilerTest {
 
 	@Test(expected = Exception.class)
 	public void testCompile_NotAnEntity() {
-		LrEntity<NotAnEntity> entity = new PojoEntityCompiler().compile(NotAnEntity.class, new LazyLrDataMap(compilers));
+		LrEntity<NotAnEntity> entity = new PojoEntityCompiler(converterFactory)
+				.compile(NotAnEntity.class, new LazyLrDataMap(compilers));
 		assertNotNull(entity);
 
 		try {

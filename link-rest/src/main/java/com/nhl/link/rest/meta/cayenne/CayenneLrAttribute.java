@@ -1,61 +1,40 @@
 package com.nhl.link.rest.meta.cayenne;
 
-import org.apache.cayenne.exp.parser.ASTObjPath;
-import org.apache.cayenne.exp.parser.ASTPath;
-import org.apache.cayenne.map.DbAttribute;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.nhl.link.rest.meta.DefaultLrAttribute;
+import com.nhl.link.rest.meta.LrPersistentAttribute;
+import com.nhl.link.rest.parser.converter.JsonValueConverter;
 import org.apache.cayenne.map.ObjAttribute;
 import org.apache.cayenne.util.ToStringBuilder;
-
-import com.nhl.link.rest.meta.LrPersistentAttribute;
 
 /**
  * @since 1.12
  */
-public class CayenneLrAttribute implements LrPersistentAttribute {
+public class CayenneLrAttribute extends DefaultLrAttribute implements LrPersistentAttribute {
 
 	private ObjAttribute objAttribute;
-	private Class<?> type;
 
 	/**
 	 * @since 1.24
 	 */
-	public CayenneLrAttribute(ObjAttribute objAttribute, Class<?> type) {
+	public CayenneLrAttribute(ObjAttribute objAttribute, Class<?> type, JsonValueConverter converter) {
+		super(objAttribute.getName(), type, converter);
 		this.objAttribute = objAttribute;
-		this.type = type;
-	}
-
-	@Override
-	public String getName() {
-		return objAttribute.getName();
-	}
-
-	@Override
-	public ASTPath getPathExp() {
-		return new ASTObjPath(getName());
-	}
-
-	@Override
-	public ObjAttribute getObjAttribute() {
-		return objAttribute;
-	}
-
-	@Override
-	public DbAttribute getDbAttribute() {
-		return objAttribute.getDbAttribute();
-	}
-
-	@Override
-	public Class<?> getType() {
-		return type;
 	}
 
 	@Override
 	public int getJdbcType() {
-		// TODO: this check won't be needed as soon as we switch POJOs to
-		// LrDataMap instead of Cayenne DataMap. Until then we have to be
-		// dealing with POJOs mapped vai CayenneLr* model.
+		return objAttribute.getDbAttribute().getType();
+	}
 
-		return objAttribute.getDbAttribute() != null ? objAttribute.getDbAttribute().getType() : Integer.MIN_VALUE;
+	@Override
+	public String getColumnName() {
+		return objAttribute.getDbAttribute().getName();
+	}
+
+	@Override
+	public boolean isMandatory() {
+		return objAttribute.getDbAttribute().isMandatory();
 	}
 
 	@Override

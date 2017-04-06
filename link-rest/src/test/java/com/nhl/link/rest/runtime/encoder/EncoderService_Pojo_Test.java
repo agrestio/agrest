@@ -14,7 +14,10 @@ import com.nhl.link.rest.meta.LrEntity;
 import com.nhl.link.rest.meta.LrEntityBuilder;
 import com.nhl.link.rest.meta.compiler.LrEntityCompiler;
 import com.nhl.link.rest.meta.compiler.PojoEntityCompiler;
+import com.nhl.link.rest.parser.converter.GenericConverter;
 import com.nhl.link.rest.runtime.jackson.JacksonService;
+import com.nhl.link.rest.runtime.parser.converter.DefaultJsonValueConverterFactory;
+import com.nhl.link.rest.runtime.parser.converter.IJsonValueConverterFactory;
 import com.nhl.link.rest.runtime.semantics.RelationshipMapper;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -33,14 +36,16 @@ import static org.mockito.Mockito.mock;
 public class EncoderService_Pojo_Test {
 
 	private static Collection<LrEntityCompiler> compilers;
+	private static IJsonValueConverterFactory converterFactory;
 
 	private EncoderService encoderService;
 	private List<EncoderFilter> filters;
 
 	@BeforeClass
 	public static void setUpClass() {
+		converterFactory = new DefaultJsonValueConverterFactory();
 		compilers = new ArrayList<>();
-		compilers.add(new PojoEntityCompiler());
+		compilers.add(new PojoEntityCompiler(converterFactory));
 	}
 
 	@Before
@@ -57,9 +62,9 @@ public class EncoderService_Pojo_Test {
 
 	@Test
 	public void testEncode_SimplePojo_noId() throws IOException {
-		LrEntity<P1> p1lre = LrEntityBuilder.build(P1.class, new LazyLrDataMap(compilers));
+		LrEntity<P1> p1lre = new LrEntityBuilder<>(P1.class, new LazyLrDataMap(compilers), converterFactory).build();
 		ResourceEntity<P1> descriptor = new ResourceEntity<P1>(p1lre);
-		descriptor.getAttributes().put("name", new DefaultLrAttribute("name", String.class));
+		descriptor.getAttributes().put("name", new DefaultLrAttribute("name", String.class, GenericConverter.converter()));
 
 		P1 p1 = new P1();
 		p1.setName("XYZ");
@@ -73,9 +78,9 @@ public class EncoderService_Pojo_Test {
 		p6.setStringId("myid");
 		p6.setIntProp(4);
 
-		LrEntity<P6> p6lre = LrEntityBuilder.builder(P6.class, new LazyLrDataMap(compilers)).build();
+		LrEntity<P6> p6lre = new LrEntityBuilder<>(P6.class, new LazyLrDataMap(compilers), converterFactory).build();
 		ResourceEntity<P6> descriptor = new ResourceEntity<P6>(p6lre);
-		descriptor.getAttributes().put("intProp", new DefaultLrAttribute("intProp", Integer.class));
+		descriptor.getAttributes().put("intProp", new DefaultLrAttribute("intProp", Integer.class, GenericConverter.converter()));
 		descriptor.includeId();
 
 		assertEquals("{\"data\":[{\"id\":\"myid\",\"intProp\":4}],\"total\":1}", toJson(p6, descriptor));

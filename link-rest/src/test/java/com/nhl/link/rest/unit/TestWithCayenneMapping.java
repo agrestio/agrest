@@ -1,27 +1,5 @@
 package com.nhl.link.rest.unit;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
-import com.nhl.link.rest.meta.compiler.PojoEntityCompiler;
-import org.apache.cayenne.ObjectContext;
-import org.apache.cayenne.configuration.server.DataSourceFactory;
-import org.apache.cayenne.configuration.server.ServerRuntime;
-import org.apache.cayenne.di.Binder;
-import org.apache.cayenne.di.Module;
-import org.apache.cayenne.exp.Property;
-import org.apache.cayenne.exp.parser.ASTPath;
-import org.apache.cayenne.map.DbAttribute;
-import org.apache.cayenne.map.ObjAttribute;
-import org.apache.cayenne.map.ObjEntity;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-
 import com.nhl.link.rest.ResourceEntity;
 import com.nhl.link.rest.meta.DefaultLrAttribute;
 import com.nhl.link.rest.meta.LrEntity;
@@ -29,13 +7,34 @@ import com.nhl.link.rest.meta.LrEntityOverlay;
 import com.nhl.link.rest.meta.LrPersistentAttribute;
 import com.nhl.link.rest.meta.cayenne.CayenneEntityCompiler;
 import com.nhl.link.rest.meta.compiler.LrEntityCompiler;
+import com.nhl.link.rest.meta.compiler.PojoEntityCompiler;
 import com.nhl.link.rest.meta.parser.IResourceParser;
 import com.nhl.link.rest.meta.parser.ResourceParser;
+import com.nhl.link.rest.parser.converter.JsonValueConverter;
 import com.nhl.link.rest.runtime.cayenne.ICayennePersister;
 import com.nhl.link.rest.runtime.meta.IMetadataService;
 import com.nhl.link.rest.runtime.meta.IResourceMetadataService;
 import com.nhl.link.rest.runtime.meta.MetadataService;
 import com.nhl.link.rest.runtime.meta.ResourceMetadataService;
+import com.nhl.link.rest.runtime.parser.converter.DefaultJsonValueConverterFactory;
+import com.nhl.link.rest.runtime.parser.converter.IJsonValueConverterFactory;
+import org.apache.cayenne.ObjectContext;
+import org.apache.cayenne.configuration.server.DataSourceFactory;
+import org.apache.cayenne.configuration.server.ServerRuntime;
+import org.apache.cayenne.di.Module;
+import org.apache.cayenne.exp.Property;
+import org.apache.cayenne.exp.parser.ASTPath;
+import org.apache.cayenne.map.ObjEntity;
+import org.junit.AfterClass;
+import org.junit.Before;
+import org.junit.BeforeClass;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * A superclass of Cayenne-aware test cases that do not need to access the DB,
@@ -47,15 +46,10 @@ public class TestWithCayenneMapping {
 
 	@BeforeClass
 	public static void setUpClass() {
-
-		Module module = new Module() {
-
-			@Override
-			public void configure(Binder binder) {
-				DataSourceFactory dsf = mock(DataSourceFactory.class);
-				binder.bind(DataSourceFactory.class).toInstance(dsf);
-			}
-		};
+		Module module = binder -> {
+            DataSourceFactory dsf = mock(DataSourceFactory.class);
+            binder.bind(DataSourceFactory.class).toInstance(dsf);
+        };
 		runtime = new ServerRuntime("cayenne-linkrest-tests.xml", module);
 	}
 
@@ -69,6 +63,7 @@ public class TestWithCayenneMapping {
 	protected IMetadataService metadataService;
 	protected IResourceMetadataService resourceMetadataService;
 	protected IResourceParser resourceParser;
+	protected IJsonValueConverterFactory converterFactory;
 
 	@Before
 	public void initLrDataMap() {
@@ -80,6 +75,7 @@ public class TestWithCayenneMapping {
 		when(mockCayennePersister.sharedContext()).thenReturn(sharedContext);
 		when(mockCayennePersister.newContext()).thenReturn(runtime.newContext());
 
+		this.converterFactory = new DefaultJsonValueConverterFactory();
 		this.metadataService = createMetadataService();
 		this.resourceParser = new ResourceParser(metadataService);
 		this.resourceMetadataService = createResourceMetadataService();
@@ -89,8 +85,9 @@ public class TestWithCayenneMapping {
 
 		List<LrEntityCompiler> compilers = new ArrayList<>();
 		compilers.add(
-				new CayenneEntityCompiler(mockCayennePersister, Collections.<String, LrEntityOverlay<?>> emptyMap()));
-		compilers.add(new PojoEntityCompiler());
+				new CayenneEntityCompiler(mockCayennePersister, Collections.<String,
+						LrEntityOverlay<?>> emptyMap(), converterFactory));
+		compilers.add(new PojoEntityCompiler(converterFactory));
 
 		return new MetadataService(compilers, mockCayennePersister);
 	}
@@ -116,7 +113,7 @@ public class TestWithCayenneMapping {
 	}
 
 	protected void appendAttribute(ResourceEntity<?> entity, String name, Class<?> type) {
-		entity.getAttributes().put(name, new DefaultLrAttribute(name, type));
+		entity.getAttributes().put(name, new DefaultLrAttribute(name, type, converterFactory.converter(type)));
 	}
 
 	protected <T> void appendPersistenceAttribute(ResourceEntity<?> entity, Property<T> property, Class<T> javaType,
@@ -125,14 +122,15 @@ public class TestWithCayenneMapping {
 	}
 
 	protected void appendPersistenceAttribute(ResourceEntity<?> entity, String name, Class<?> javaType, int jdbcType) {
-		entity.getAttributes().put(name, new TestLrPersistentAttribute(name, javaType, jdbcType));
+		entity.getAttributes().put(name,
+				new TestLrPersistentAttribute(name, javaType, jdbcType, converterFactory.converter(javaType)));
 	}
 
 	private class TestLrPersistentAttribute extends DefaultLrAttribute implements LrPersistentAttribute {
 		private int jdbcType;
 
-		public TestLrPersistentAttribute(String name, Class<?> javaType, int jdbcType) {
-			super(name, javaType);
+		public TestLrPersistentAttribute(String name, Class<?> javaType, int jdbcType, JsonValueConverter converter) {
+			super(name, javaType, converter);
 			this.jdbcType = jdbcType;
 		}
 
@@ -142,13 +140,13 @@ public class TestWithCayenneMapping {
 		}
 
 		@Override
-		public ObjAttribute getObjAttribute() {
-			return null;
+		public String getColumnName() {
+			return getName();
 		}
 
 		@Override
-		public DbAttribute getDbAttribute() {
-			return null;
+		public boolean isMandatory() {
+			return false;
 		}
 
 		@Override

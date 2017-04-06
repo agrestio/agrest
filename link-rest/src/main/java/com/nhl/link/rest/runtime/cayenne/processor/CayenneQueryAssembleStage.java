@@ -124,7 +124,7 @@ public class CayenneQueryAssembleStage<T> extends BaseLinearProcessingStage<Sele
 			}
 			if (idAttribute instanceof LrPersistentAttribute) {
 				qualifiers.add(ExpressionFactory.matchDbExp(
-						((LrPersistentAttribute) idAttribute).getDbAttribute().getName(), idValue));
+						((LrPersistentAttribute) idAttribute).getColumnName(), idValue));
 			} else {
 				// can be non-persistent attribute if assembled from @LrId by LrEntityBuilder
 				qualifiers.add(ExpressionFactory.matchDbExp(idAttribute.getName(), idValue));

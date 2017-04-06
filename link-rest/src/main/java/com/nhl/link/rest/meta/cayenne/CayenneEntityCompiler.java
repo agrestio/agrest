@@ -2,8 +2,8 @@ package com.nhl.link.rest.meta.cayenne;
 
 import com.nhl.link.rest.LinkRestException;
 import com.nhl.link.rest.meta.DefaultLrAttribute;
-import com.nhl.link.rest.meta.LrDataMap;
 import com.nhl.link.rest.meta.LrAttribute;
+import com.nhl.link.rest.meta.LrDataMap;
 import com.nhl.link.rest.meta.LrEntity;
 import com.nhl.link.rest.meta.LrEntityBuilder;
 import com.nhl.link.rest.meta.LrEntityOverlay;
@@ -11,7 +11,9 @@ import com.nhl.link.rest.meta.LrPersistentEntity;
 import com.nhl.link.rest.meta.LrRelationship;
 import com.nhl.link.rest.meta.compiler.LazyLrPersistentEntity;
 import com.nhl.link.rest.meta.compiler.LrEntityCompiler;
+import com.nhl.link.rest.parser.converter.GenericConverter;
 import com.nhl.link.rest.runtime.cayenne.ICayennePersister;
+import com.nhl.link.rest.runtime.parser.converter.IJsonValueConverterFactory;
 import org.apache.cayenne.dba.TypesMapping;
 import org.apache.cayenne.di.Inject;
 import org.apache.cayenne.map.DbAttribute;
@@ -76,11 +78,14 @@ public class CayenneEntityCompiler implements LrEntityCompiler {
 
 	private EntityResolver resolver;
 	private Map<String, LrEntityOverlay<?>> entityOverlays;
+	private IJsonValueConverterFactory converterFactory;
 
 	public CayenneEntityCompiler(@Inject ICayennePersister cayennePersister,
-			@Inject(ENTITY_OVERLAY_MAP) Map<String, LrEntityOverlay<?>> entityOverlays) {
+								 @Inject(ENTITY_OVERLAY_MAP) Map<String, LrEntityOverlay<?>> entityOverlays,
+								 @Inject IJsonValueConverterFactory converterFactory) {
 		this.resolver = cayennePersister.entityResolver();
 		this.entityOverlays = entityOverlays;
+		this.converterFactory = converterFactory;
 	}
 
 	@Override
@@ -109,7 +114,9 @@ public class CayenneEntityCompiler implements LrEntityCompiler {
 
 		ObjEntity objEntity = lrEntity.getObjEntity();
 		for (ObjAttribute a : objEntity.getAttributes()) {
-			CayenneLrAttribute lrAttribute = new CayenneLrAttribute(a, getJavaTypeForTypeName(a.getType()));
+			Class<?> type = getJavaTypeForTypeName(a.getType());
+			int jdbcType = a.getDbAttribute().getType();
+			CayenneLrAttribute lrAttribute = new CayenneLrAttribute(a, type, converterFactory.converter(jdbcType));
 			lrEntity.addPersistentAttribute(lrAttribute);
 		}
 
@@ -124,10 +131,18 @@ public class CayenneEntityCompiler implements LrEntityCompiler {
 
 		for (DbAttribute pk : objEntity.getDbEntity().getPrimaryKeys()) {
 			ObjAttribute attribute = objEntity.getAttributeForDbAttribute(pk);
-			LrAttribute id = attribute != null
-					? new CayenneLrAttribute(attribute, getJavaTypeForTypeName(attribute.getType()))
-					: new CayenneLrDbAttribute(pk.getName(), pk,
-							getJavaTypeForTypeName(TypesMapping.getJavaBySqlType(pk.getType())));
+			int jdbcType;
+			Class<?> type;
+			LrAttribute id;
+			if (attribute == null) {
+				jdbcType = pk.getType();
+				type = getJavaTypeForTypeName(TypesMapping.getJavaBySqlType(pk.getType()));
+				id = new CayenneLrDbAttribute(pk.getName(), pk, type, converterFactory.converter(jdbcType));
+			} else {
+				jdbcType = attribute.getDbAttribute().getType();
+				type = getJavaTypeForTypeName(attribute.getType());
+				id = new CayenneLrAttribute(attribute, type, converterFactory.converter(jdbcType));
+			}
 			lrEntity.addId(id);
 		}
 
@@ -140,7 +155,7 @@ public class CayenneEntityCompiler implements LrEntityCompiler {
 		// relationship during merge... they have no references to parent and
 		// can be used as is.
 
-		LrEntity<T> annotatedEntity = LrEntityBuilder.build(entity.getType(), dataMap);
+		LrEntity<T> annotatedEntity = new LrEntityBuilder<>(entity.getType(), dataMap, converterFactory).build();
 
 		if (annotatedEntity.getIds().size() > 0) {
 			for (LrAttribute id : annotatedEntity.getIds()) {
@@ -183,7 +198,7 @@ public class CayenneEntityCompiler implements LrEntityCompiler {
 
 			for (String a : overlay.getTransientAttributes()) {
 				// TODO: figure out the type
-				DefaultLrAttribute lrAttribute = new DefaultLrAttribute(a, Object.class);
+				DefaultLrAttribute lrAttribute = new DefaultLrAttribute(a, Object.class, GenericConverter.converter());
 				entity.addAttribute(lrAttribute);
 			}
 		}

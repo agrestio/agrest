@@ -1,25 +1,5 @@
 package com.nhl.link.rest.unit;
 
-import static java.util.Arrays.asList;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
-import java.util.Collections;
-import java.util.List;
-
-import org.apache.cayenne.ObjectContext;
-import org.apache.cayenne.configuration.server.DataSourceFactory;
-import org.apache.cayenne.configuration.server.ServerRuntime;
-import org.apache.cayenne.di.Module;
-import org.apache.cayenne.exp.Property;
-import org.apache.cayenne.exp.parser.ASTPath;
-import org.apache.cayenne.map.DbAttribute;
-import org.apache.cayenne.map.ObjAttribute;
-import org.apache.cayenne.map.ObjEntity;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-
 import com.nhl.link.rest.ResourceEntity;
 import com.nhl.link.rest.meta.DefaultLrAttribute;
 import com.nhl.link.rest.meta.LrEntity;
@@ -29,11 +9,32 @@ import com.nhl.link.rest.meta.cayenne.CayenneEntityCompiler;
 import com.nhl.link.rest.meta.compiler.LrEntityCompiler;
 import com.nhl.link.rest.meta.parser.IResourceParser;
 import com.nhl.link.rest.meta.parser.ResourceParser;
+import com.nhl.link.rest.parser.converter.GenericConverter;
+import com.nhl.link.rest.parser.converter.JsonValueConverter;
 import com.nhl.link.rest.runtime.cayenne.ICayennePersister;
 import com.nhl.link.rest.runtime.meta.IMetadataService;
 import com.nhl.link.rest.runtime.meta.IResourceMetadataService;
 import com.nhl.link.rest.runtime.meta.MetadataService;
 import com.nhl.link.rest.runtime.meta.ResourceMetadataService;
+import com.nhl.link.rest.runtime.parser.converter.DefaultJsonValueConverterFactory;
+import com.nhl.link.rest.runtime.parser.converter.IJsonValueConverterFactory;
+import org.apache.cayenne.ObjectContext;
+import org.apache.cayenne.configuration.server.DataSourceFactory;
+import org.apache.cayenne.configuration.server.ServerRuntime;
+import org.apache.cayenne.di.Module;
+import org.apache.cayenne.exp.Property;
+import org.apache.cayenne.exp.parser.ASTPath;
+import org.apache.cayenne.map.ObjEntity;
+import org.junit.AfterClass;
+import org.junit.Before;
+import org.junit.BeforeClass;
+
+import java.util.Collections;
+import java.util.List;
+
+import static java.util.Arrays.asList;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * A superclass of Cayenne-aware test cases that do not need to access the DB,
@@ -64,6 +65,8 @@ public class Java8TestWithCayenneMapping {
 	protected IResourceMetadataService resourceMetadataService;
 	protected IResourceParser resourceParser;
 
+	private IJsonValueConverterFactory converterFactory;
+
 	@Before
 	public void initLrDataMap() {
 
@@ -74,6 +77,7 @@ public class Java8TestWithCayenneMapping {
 		when(mockCayennePersister.sharedContext()).thenReturn(sharedContext);
 		when(mockCayennePersister.newContext()).thenReturn(runtime.newContext());
 
+		this.converterFactory = new DefaultJsonValueConverterFactory();
 		this.metadataService = createMetadataService();
 		this.resourceParser = new ResourceParser(metadataService);
 		this.resourceMetadataService = createResourceMetadataService();
@@ -82,7 +86,7 @@ public class Java8TestWithCayenneMapping {
 	protected IMetadataService createMetadataService() {
 
 		List<LrEntityCompiler> compilers = asList(
-				new CayenneEntityCompiler(mockCayennePersister, Collections.<String, LrEntityOverlay<?>> emptyMap()));
+				new CayenneEntityCompiler(mockCayennePersister, Collections.<String, LrEntityOverlay<?>> emptyMap(), converterFactory));
 
 		return new MetadataService(compilers, mockCayennePersister);
 	}
@@ -108,7 +112,7 @@ public class Java8TestWithCayenneMapping {
 	}
 
 	protected void appendAttribute(ResourceEntity<?> entity, String name, Class<?> type) {
-		entity.getAttributes().put(name, new DefaultLrAttribute(name, type));
+		entity.getAttributes().put(name, new DefaultLrAttribute(name, type, GenericConverter.converter()));
 	}
 
 	protected <T> void appendPersistenceAttribute(ResourceEntity<?> entity, Property<T> property, Class<T> javaType,
@@ -117,14 +121,15 @@ public class Java8TestWithCayenneMapping {
 	}
 
 	protected void appendPersistenceAttribute(ResourceEntity<?> entity, String name, Class<?> javaType, int jdbcType) {
-		entity.getAttributes().put(name, new TestLrPersistentAttribute(name, javaType, jdbcType));
+		entity.getAttributes().put(name,
+				new TestLrPersistentAttribute(name, javaType, jdbcType, converterFactory.converter(javaType)));
 	}
 
 	private class TestLrPersistentAttribute extends DefaultLrAttribute implements LrPersistentAttribute {
 		private int jdbcType;
 
-		public TestLrPersistentAttribute(String name, Class<?> javaType, int jdbcType) {
-			super(name, javaType);
+		public TestLrPersistentAttribute(String name, Class<?> javaType, int jdbcType, JsonValueConverter converter) {
+			super(name, javaType, converter);
 			this.jdbcType = jdbcType;
 		}
 
@@ -134,13 +139,13 @@ public class Java8TestWithCayenneMapping {
 		}
 
 		@Override
-		public ObjAttribute getObjAttribute() {
-			return null;
+		public String getColumnName() {
+			return getName();
 		}
 
 		@Override
-		public DbAttribute getDbAttribute() {
-			return null;
+		public boolean isMandatory() {
+			return false;
 		}
 
 		@Override

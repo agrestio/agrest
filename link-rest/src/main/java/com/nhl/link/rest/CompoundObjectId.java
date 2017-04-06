@@ -50,7 +50,7 @@ public class CompoundObjectId extends BaseObjectId {
 								+ idAttribute.getName());
 			}
 			if (idAttribute instanceof LrPersistentAttribute) {
-				idMap.put(((LrPersistentAttribute) idAttribute).getDbAttribute().getName(), idValue);
+				idMap.put(((LrPersistentAttribute) idAttribute).getColumnName(), idValue);
 			} else {
 				idMap.put(idAttribute.getName(), idValue);
 			}

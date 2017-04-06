@@ -1,5 +1,6 @@
 package com.nhl.link.rest.meta.cayenne;
 
+import com.nhl.link.rest.parser.converter.JsonValueConverter;
 import org.apache.cayenne.dba.TypesMapping;
 import org.apache.cayenne.exp.parser.ASTDbPath;
 import org.apache.cayenne.exp.parser.ASTPath;
@@ -12,7 +13,12 @@ import org.apache.cayenne.map.ObjAttribute;
 public class CayenneLrDbAttribute extends CayenneLrAttribute {
 
 	private static ObjAttribute fakeObjAttribute(String name, DbAttribute dbAttribute) {
-		ObjAttribute a = new ObjAttribute(name);
+		ObjAttribute a = new ObjAttribute(name) {
+			@Override
+			public DbAttribute getDbAttribute() {
+				return dbAttribute;
+			}
+		};
 		a.setDbAttributePath(dbAttribute.getName());
 
 		String javaType = TypesMapping.getJavaBySqlType(dbAttribute.getType());
@@ -28,14 +34,9 @@ public class CayenneLrDbAttribute extends CayenneLrAttribute {
 	/**
 	 * @since 1.24
      */
-	public CayenneLrDbAttribute(String name, DbAttribute dbAttribute, Class<?> type) {
-		super(fakeObjAttribute(name, dbAttribute), type);
+	public CayenneLrDbAttribute(String name, DbAttribute dbAttribute, Class<?> type, JsonValueConverter converter) {
+		super(fakeObjAttribute(name, dbAttribute), type, converter);
 		this.dbAttribute = dbAttribute;
-	}
-
-	@Override
-	public DbAttribute getDbAttribute() {
-		return dbAttribute;
 	}
 
 	@Override

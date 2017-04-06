@@ -1,8 +1,5 @@
 package com.nhl.link.rest.meta;
 
-import org.apache.cayenne.map.DbAttribute;
-import org.apache.cayenne.map.ObjAttribute;
-
 /**
  * Represents a persistent attribute.
  * 
@@ -10,9 +7,18 @@ import org.apache.cayenne.map.ObjAttribute;
  */
 public interface LrPersistentAttribute extends LrAttribute {
 
+	/**
+	 * @since 1.12
+     */
 	int getJdbcType();
 
-	ObjAttribute getObjAttribute();
-	
-	DbAttribute getDbAttribute();
+	/**
+	 * @since 2.4
+     */
+	String getColumnName();
+
+	/**
+	 * @since 2.4
+     */
+	boolean isMandatory();
 }

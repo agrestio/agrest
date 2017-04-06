@@ -2,8 +2,8 @@ package com.nhl.link.rest.encoder;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.nhl.link.rest.meta.LrAttribute;
+import com.nhl.link.rest.meta.LrPersistentAttribute;
 import com.nhl.link.rest.meta.LrRelationship;
-import com.nhl.link.rest.meta.cayenne.CayenneLrAttribute;
 
 import java.io.IOException;
 import java.time.LocalDate;
@@ -86,8 +86,8 @@ public abstract class PropertyMetadataEncoder extends AbstractEncoder {
 
 		@Override
 		protected void doEncode(Object property, JsonGenerator out) throws IOException {
-			if (property instanceof CayenneLrAttribute) {
-				if (((CayenneLrAttribute) property).getDbAttribute().isMandatory()) {
+			if (property instanceof LrPersistentAttribute) {
+				if (((LrPersistentAttribute) property).isMandatory()) {
 					out.writeBooleanField("mandatory", true);
 				}
 			} else if (property instanceof LrRelationship) {

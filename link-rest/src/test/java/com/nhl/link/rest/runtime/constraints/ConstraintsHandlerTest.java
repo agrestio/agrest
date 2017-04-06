@@ -12,6 +12,7 @@ import com.nhl.link.rest.it.fixture.cayenne.E5;
 import com.nhl.link.rest.meta.DefaultLrAttribute;
 import com.nhl.link.rest.meta.LrEntity;
 import com.nhl.link.rest.meta.LrRelationship;
+import com.nhl.link.rest.parser.converter.GenericConverter;
 import org.apache.cayenne.exp.Expression;
 import org.junit.Before;
 import org.junit.Test;
@@ -305,6 +306,6 @@ public class ConstraintsHandlerTest {
     }
 
     protected void appendAttribute(ResourceEntity<?> entity, String name) {
-        entity.getAttributes().put(name, new DefaultLrAttribute(name, String.class));
+        entity.getAttributes().put(name, new DefaultLrAttribute(name, String.class, GenericConverter.converter()));
     }
 }
