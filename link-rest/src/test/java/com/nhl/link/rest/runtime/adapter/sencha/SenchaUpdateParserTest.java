@@ -1,15 +1,13 @@
 package com.nhl.link.rest.runtime.adapter.sencha;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
-
+import com.nhl.link.rest.runtime.jackson.IJacksonService;
+import com.nhl.link.rest.runtime.semantics.IRelationshipMapper;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.nhl.link.rest.runtime.jackson.IJacksonService;
-import com.nhl.link.rest.runtime.parser.converter.IJsonValueConverterFactory;
-import com.nhl.link.rest.runtime.semantics.IRelationshipMapper;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
 
 public class SenchaUpdateParserTest {
 
@@ -17,8 +15,7 @@ public class SenchaUpdateParserTest {
 
 	@Before
 	public void before() {
-		processor = new SenchaUpdateParser(mock(IRelationshipMapper.class), mock(IJsonValueConverterFactory.class),
-				mock(IJacksonService.class));
+		processor = new SenchaUpdateParser(mock(IRelationshipMapper.class), mock(IJacksonService.class));
 	}
 
 	@Test

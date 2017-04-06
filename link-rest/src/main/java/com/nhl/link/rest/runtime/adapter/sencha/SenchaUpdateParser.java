@@ -1,18 +1,16 @@
 package com.nhl.link.rest.runtime.adapter.sencha;
 
-import java.util.regex.Pattern;
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.nhl.link.rest.meta.LrEntity;
 import com.nhl.link.rest.parser.converter.GenericConverter;
+import com.nhl.link.rest.runtime.jackson.IJacksonService;
 import com.nhl.link.rest.runtime.parser.EntityJsonTraverser;
 import com.nhl.link.rest.runtime.parser.EntityJsonVisitor;
+import com.nhl.link.rest.runtime.parser.UpdateParser;
+import com.nhl.link.rest.runtime.semantics.IRelationshipMapper;
 import org.apache.cayenne.di.Inject;
 
-import com.nhl.link.rest.runtime.jackson.IJacksonService;
-import com.nhl.link.rest.runtime.parser.UpdateParser;
-import com.nhl.link.rest.runtime.parser.converter.IJsonValueConverterFactory;
-import com.nhl.link.rest.runtime.semantics.IRelationshipMapper;
+import java.util.regex.Pattern;
 
 /**
  * Strips off Sencha-generated temporary IDs from the update data structures.
@@ -25,10 +23,9 @@ public class SenchaUpdateParser extends UpdateParser {
 
 	private EntityJsonTraverser senchaEntityJsonTraverser;
 
-	public SenchaUpdateParser(@Inject IRelationshipMapper relationshipMapper,
-			@Inject IJsonValueConverterFactory converterFactory, @Inject IJacksonService jacksonService) {
-		super(relationshipMapper, converterFactory, jacksonService);
-		senchaEntityJsonTraverser = new SenchaEntityJsonTraverser(relationshipMapper, converterFactory);
+	public SenchaUpdateParser(@Inject IRelationshipMapper relationshipMapper, @Inject IJacksonService jacksonService) {
+		super(relationshipMapper, jacksonService);
+		senchaEntityJsonTraverser = new SenchaEntityJsonTraverser(relationshipMapper);
 	}
 
 	protected boolean isTempId(Object value) {
@@ -49,9 +46,8 @@ public class SenchaUpdateParser extends UpdateParser {
 
 	private class SenchaEntityJsonTraverser extends EntityJsonTraverser {
 
-		public SenchaEntityJsonTraverser(IRelationshipMapper relationshipMapper,
-										 IJsonValueConverterFactory converterFactory) {
-			super(relationshipMapper, converterFactory);
+		public SenchaEntityJsonTraverser(IRelationshipMapper relationshipMapper) {
+			super(relationshipMapper);
 		}
 
 		@Override

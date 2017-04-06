@@ -4,13 +4,13 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.nhl.link.rest.EntityUpdate;
 import com.nhl.link.rest.meta.LrEntity;
 import com.nhl.link.rest.runtime.jackson.IJacksonService;
-import com.nhl.link.rest.runtime.parser.converter.IJsonValueConverterFactory;
 import com.nhl.link.rest.runtime.semantics.IRelationshipMapper;
 import org.apache.cayenne.di.Inject;
 
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Map;
 
 /**
  * @since 1.20
@@ -22,9 +22,9 @@ public class UpdateParser implements IUpdateParser {
     private EntityJsonTraverser entityJsonTraverser;
 
     public UpdateParser(@Inject IRelationshipMapper relationshipMapper,
-                        @Inject IJsonValueConverterFactory converterFactory, @Inject IJacksonService jacksonService) {
+                        @Inject IJacksonService jacksonService) {
         this.jacksonService = jacksonService;
-        this.entityJsonTraverser = new EntityJsonTraverser(relationshipMapper, converterFactory);
+        this.entityJsonTraverser = new EntityJsonTraverser(relationshipMapper);
     }
 
     @Override
@@ -73,6 +73,11 @@ public class UpdateParser implements IUpdateParser {
         @Override
         public void visitId(String name, Object value) {
             currentUpdate.getOrCreateId().put(name, value);
+        }
+
+        @Override
+        public void visitId(Map<String, Object> value) {
+            currentUpdate.getOrCreateId().putAll(value);
         }
 
         @Override

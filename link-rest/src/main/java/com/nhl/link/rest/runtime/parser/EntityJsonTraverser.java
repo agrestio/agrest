@@ -8,18 +8,13 @@ import com.nhl.link.rest.meta.LrEntity;
 import com.nhl.link.rest.meta.LrPersistentAttribute;
 import com.nhl.link.rest.meta.LrPersistentRelationship;
 import com.nhl.link.rest.meta.LrRelationship;
-import com.nhl.link.rest.parser.converter.JsonValueConverter;
-import com.nhl.link.rest.runtime.parser.converter.IJsonValueConverterFactory;
 import com.nhl.link.rest.runtime.semantics.IRelationshipMapper;
-import org.apache.cayenne.map.DbJoin;
-import org.apache.cayenne.map.DbRelationship;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.ws.rs.core.Response;
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.List;
 import java.util.function.BiConsumer;
 
 public class EntityJsonTraverser {
@@ -27,11 +22,9 @@ public class EntityJsonTraverser {
     private static final Logger LOGGER = LoggerFactory.getLogger(EntityJsonTraverser.class);
 
     private IRelationshipMapper relationshipMapper;
-    private IJsonValueConverterFactory converterFactory;
 
-    public EntityJsonTraverser(IRelationshipMapper relationshipMapper, IJsonValueConverterFactory converterFactory) {
+    public EntityJsonTraverser(IRelationshipMapper relationshipMapper) {
         this.relationshipMapper = relationshipMapper;
-        this.converterFactory = converterFactory;
     }
 
     public void traverse(LrEntity<?> entity, JsonNode json, EntityJsonVisitor visitor) {
@@ -80,70 +73,8 @@ public class EntityJsonTraverser {
 
 			LrRelationship relationship = relationshipMapper.toRelationship(entity, key);
 			if (relationship instanceof LrPersistentRelationship) {
-
-				List<DbRelationship> dbRelationshipsList = ((LrPersistentRelationship) relationship)
-						.getObjRelationship().getDbRelationships();
-
-				// take last element from list of db relationships
-				// in order to behave correctly if
-				// db entities are connected through intermediate tables
-				DbRelationship targetRelationship = dbRelationshipsList.get(dbRelationshipsList.size() - 1);
-				int targetJdbcType = targetRelationship.getJoins().get(0).getTarget().getType();
-
 				JsonNode valueNode = objectNode.get(key);
-				DbRelationship reverseRelationship = dbRelationshipsList.get(0).getReverseRelationship();
-				if (reverseRelationship.isToDependentPK()) {
-					List<DbJoin> joins = reverseRelationship.getJoins();
-					if (joins.size() != 1) {
-						throw new LinkRestException(Response.Status.BAD_REQUEST,
-								"Multi-join relationship propagation is not supported yet: " + entity.getName());
-					}
-					DbJoin reversePkJoin = joins.get(0);
-
-					Object value = null;
-					if (valueNode.isArray()) {
-						ArrayNode arrayNode = (ArrayNode) valueNode;
-						if (arrayNode.size() > 1) {
-							throw new LinkRestException(Response.Status.BAD_REQUEST,
-								"Relationship is a part of the primary key, only one related object allowed: "
-										+ reversePkJoin.getTargetName());
-						} else if (arrayNode.size() == 1) {
-							value = extractValue(arrayNode.get(0), targetJdbcType);
-						}
-					} else {
-						value = extractValue(valueNode, targetJdbcType);
-					}
-
-					if (value != null) {
-						// record FK that is also a PK
-                        visitor.visitId(reversePkJoin.getTargetName(), value);
-					}
-
-				}
-
-				if (valueNode.isArray()) {
-					ArrayNode arrayNode = (ArrayNode) valueNode;
-
-					int len = arrayNode.size();
-
-					if (len == 0) {
-						// this is kind of a a hack/workaround
-						addRelatedObject(visitor, relationship, null);
-					} else {
-						for (int i = 0; i < len; i++) {
-							valueNode = arrayNode.get(i);
-							addRelatedObject(visitor, relationship, extractValue(valueNode, targetJdbcType));
-						}
-					}
-				} else {
-					if (relationship.isToMany() && valueNode.isNull()) {
-						LOGGER.warn("Unexpected 'null' for a to-many relationship: " + relationship.getName()
-								+ ". Skipping...");
-					} else {
-						addRelatedObject(visitor, relationship, extractValue(valueNode, targetJdbcType));
-					}
-				}
-
+				processRelationship(visitor, (LrPersistentRelationship) relationship, valueNode);
 				continue;
 			}
 
@@ -151,6 +82,42 @@ public class EntityJsonTraverser {
 		}
 
 		visitor.endObject();
+	}
+
+	private void processRelationship(EntityJsonVisitor visitor, LrPersistentRelationship relationship, JsonNode valueNode) {
+		if (relationship.isPrimaryKey()) {
+			if (valueNode.isArray()) {
+				ArrayNode arrayNode = (ArrayNode) valueNode;
+				if (arrayNode.size() > 1) {
+                    throw new LinkRestException(Response.Status.BAD_REQUEST,
+                        "Relationship is a part of the primary key, only one related object allowed: "
+                                + relationship.getName());
+                } else if (arrayNode.size() == 1) {
+					valueNode = arrayNode.get(0);
+				}
+			}
+			// record FK that is also a PK
+			relationship.extractId(valueNode).forEach(visitor::visitId);
+		}
+
+		if (valueNode.isArray()) {
+            ArrayNode arrayNode = (ArrayNode) valueNode;
+            if (arrayNode.size() == 0) {
+				// this is kind of a a hack/workaround
+				addRelatedObject(visitor, relationship, null);
+			} else {
+				for (int i = 0; i < arrayNode.size(); i++) {
+					addRelatedObject(visitor, relationship, relationship.extractValue(arrayNode.get(i)));
+				}
+			}
+        } else {
+            if (relationship.isToMany() && valueNode.isNull()) {
+                LOGGER.warn("Unexpected 'null' for a to-many relationship: " + relationship.getName()
+                        + ". Skipping...");
+            } else {
+                addRelatedObject(visitor, relationship, relationship.extractValue(valueNode));
+            }
+        }
 	}
 
 	private void addRelatedObject(EntityJsonVisitor visitor, LrRelationship relationship, Object value) {
@@ -190,17 +157,5 @@ public class EntityJsonTraverser {
 		Object value = id.extractValue(valueNode);
 
         idConsumer.accept(name, value);
-	}
-
-	protected Object extractValue(JsonNode valueNode, int type) {
-
-		JsonValueConverter converter = converterFactory.converter(type);
-
-		try {
-			return converter.value(valueNode);
-		} catch (Exception e) {
-			throw new LinkRestException(Response.Status.BAD_REQUEST,
-					"Incorrectly formatted value: '" + valueNode.asText() + "'", e);
-		}
 	}
 }

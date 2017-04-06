@@ -10,7 +10,6 @@ import com.nhl.link.rest.runtime.jackson.IJacksonService;
 import com.nhl.link.rest.runtime.meta.IMetadataService;
 import com.nhl.link.rest.runtime.parser.EntityJsonTraverser;
 import com.nhl.link.rest.runtime.parser.EntityJsonVisitor;
-import com.nhl.link.rest.runtime.parser.converter.IJsonValueConverterFactory;
 import com.nhl.link.rest.runtime.semantics.IRelationshipMapper;
 
 import javax.ws.rs.Consumes;
@@ -43,8 +42,7 @@ public class SenchaDeletePayloadParser implements MessageBodyReader<Collection<E
     public SenchaDeletePayloadParser(@Context Configuration config) {
         this.jacksonService = LinkRestRuntime.service(IJacksonService.class, config);
 		this.metadataService = LinkRestRuntime.service(IMetadataService.class, config);
-		this.entityJsonTraverser = new EntityJsonTraverser(LinkRestRuntime.service(IRelationshipMapper.class, config),
-				LinkRestRuntime.service(IJsonValueConverterFactory.class, config));
+		this.entityJsonTraverser = new EntityJsonTraverser(LinkRestRuntime.service(IRelationshipMapper.class, config));
     }
 
     @Override
@@ -110,6 +108,11 @@ public class SenchaDeletePayloadParser implements MessageBodyReader<Collection<E
 		@Override
 		public void visitId(String name, Object value) {
 			deletedId.put(name, value);
+		}
+
+		@Override
+		public void visitId(Map<String, Object> value) {
+			deletedId.putAll(value);
 		}
 
 		@Override

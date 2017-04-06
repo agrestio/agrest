@@ -1,14 +1,5 @@
 package com.nhl.link.rest.runtime.processor.update;
 
-import java.lang.annotation.Annotation;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-
-import org.apache.cayenne.map.DbJoin;
-import org.apache.cayenne.map.DbRelationship;
-import org.apache.cayenne.map.ObjRelationship;
-
 import com.nhl.link.rest.EntityParent;
 import com.nhl.link.rest.EntityUpdate;
 import com.nhl.link.rest.ResourceEntity;
@@ -21,6 +12,10 @@ import com.nhl.link.rest.processor.ProcessingStage;
 import com.nhl.link.rest.runtime.constraints.IConstraintsHandler;
 import com.nhl.link.rest.runtime.encoder.IEncoderService;
 import com.nhl.link.rest.runtime.meta.IMetadataService;
+
+import java.lang.annotation.Annotation;
+import java.util.Collections;
+import java.util.Map;
 
 public class ApplyUpdateServerParamsStage<T> extends BaseLinearProcessingStage<UpdateContext<T>, T> {
 
@@ -88,27 +83,19 @@ public class ApplyUpdateServerParamsStage<T> extends BaseLinearProcessingStage<U
 		EntityParent<?> parent = context.getParent();
 
 		if (parent != null && parent.getId() != null) {
-			ObjRelationship fromParent = relationshipFromParent(context);
-
-			if (fromParent != null && fromParent.isToDependentEntity()) {
-
-				Map<String, Object> parentIdMap = new HashMap<>();
-
-				for (DbRelationship dbRelationship : fromParent.getDbRelationships()) {
-					DbRelationship reverseRelationship = dbRelationship.getReverseRelationship();
-					for (DbJoin join : reverseRelationship.getJoins()) {
-						parentIdMap.put(join.getSourceName(), parent.getId().get(join.getTargetName()));
+			LrRelationship fromParent = relationshipFromParent(context);
+			if (fromParent instanceof LrPersistentRelationship) {
+				LrPersistentRelationship r = (LrPersistentRelationship) fromParent;
+				if (r.isToDependentEntity()) {
+					for (EntityUpdate<T> u : context.getUpdates()) {
+						u.getOrCreateId().putAll(r.extractId(parent.getId()));
 					}
-				}
-
-				for (EntityUpdate<T> u : context.getUpdates()) {
-					u.getOrCreateId().putAll(parentIdMap);
 				}
 			}
 		}
 	}
 
-	private ObjRelationship relationshipFromParent(UpdateContext<?> context) {
+	private LrRelationship relationshipFromParent(UpdateContext<?> context) {
 
 		EntityParent<?> parent = context.getParent();
 
@@ -118,7 +105,7 @@ public class ApplyUpdateServerParamsStage<T> extends BaseLinearProcessingStage<U
 
 		LrRelationship r = metadataService.getLrRelationship(parent);
 		if (r instanceof LrPersistentRelationship) {
-			return ((LrPersistentRelationship) r).getObjRelationship();
+			return r;
 		}
 
 		return null;

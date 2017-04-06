@@ -25,5 +25,5 @@ public interface LrAttribute {
      */
 	ASTPath getPathExp();
 
-	Object extractValue(JsonNode node);
+	Object extractValue(JsonNode node); // TODO: move this to a separate place?
 }
