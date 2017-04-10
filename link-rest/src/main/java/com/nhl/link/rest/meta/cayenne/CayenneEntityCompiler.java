@@ -17,6 +17,7 @@ import com.nhl.link.rest.runtime.parser.converter.IJsonValueConverterFactory;
 import org.apache.cayenne.dba.TypesMapping;
 import org.apache.cayenne.di.Inject;
 import org.apache.cayenne.map.DbAttribute;
+import org.apache.cayenne.map.DbJoin;
 import org.apache.cayenne.map.DbRelationship;
 import org.apache.cayenne.map.EntityResolver;
 import org.apache.cayenne.map.ObjAttribute;
@@ -117,23 +118,21 @@ public class CayenneEntityCompiler implements LrEntityCompiler {
 		ObjEntity objEntity = lrEntity.getObjEntity();
 		for (ObjAttribute a : objEntity.getAttributes()) {
 			Class<?> type = getJavaTypeForTypeName(a.getType());
-			int jdbcType = a.getDbAttribute().getType();
-			CayenneLrAttribute lrAttribute = new CayenneLrAttribute(a, type, converterFactory.converter(jdbcType));
+			CayenneLrAttribute lrAttribute = new CayenneLrAttribute(a, type, converterFactory.converter(type));
 			lrEntity.addPersistentAttribute(lrAttribute);
 		}
 
 		for (ObjRelationship r : objEntity.getRelationships()) {
 			List<DbRelationship> dbRelationshipsList = r.getDbRelationships();
 
-			// TODO: this seems outdated
-//			DbRelationship reverseRelationship = dbRelationshipsList.get(0).getReverseRelationship();
-//			if (reverseRelationship.isToDependentPK()) {
-//				List<DbJoin> joins = reverseRelationship.getJoins();
-//				if (joins.size() != 1) {
-//					throw new LinkRestException(Response.Status.BAD_REQUEST,
-//							"Multi-join relationship propagation is not supported yet: " + lrEntity.getName());
-//				}
-//			}
+			DbRelationship reverseRelationship = dbRelationshipsList.get(0).getReverseRelationship();
+			if (reverseRelationship.isToDependentPK()) {
+				List<DbJoin> joins = reverseRelationship.getJoins();
+				if (joins.size() != 1) {
+					throw new LinkRestException(Response.Status.BAD_REQUEST,
+							"Multi-join relationship propagation is not supported yet: " + lrEntity.getName());
+				}
+			}
 
 			Class<?> targetEntityType = resolver.getClassDescriptor(r.getTargetEntityName()).getObjectClass();
 			LrEntity<?> targetEntity = dataMap.getEntity(targetEntityType);
@@ -143,24 +142,22 @@ public class CayenneEntityCompiler implements LrEntityCompiler {
 			// db entities are connected through intermediate tables
 			DbRelationship targetRelationship = dbRelationshipsList.get(dbRelationshipsList.size() - 1);
 			int targetJdbcType = targetRelationship.getJoins().get(0).getTarget().getType();
+			Class<?> type = getJavaTypeForTypeName(TypesMapping.getJavaBySqlType(targetJdbcType));
 
-			LrRelationship lrRelationship = new CayenneLrRelationship(r, targetEntity, converterFactory.converter(targetJdbcType));
+			LrRelationship lrRelationship = new CayenneLrRelationship(r, targetEntity, converterFactory.converter(type));
 			lrEntity.addRelationship(lrRelationship);
 		}
 
 		for (DbAttribute pk : objEntity.getDbEntity().getPrimaryKeys()) {
 			ObjAttribute attribute = objEntity.getAttributeForDbAttribute(pk);
-			int jdbcType;
 			Class<?> type;
 			LrAttribute id;
 			if (attribute == null) {
-				jdbcType = pk.getType();
 				type = getJavaTypeForTypeName(TypesMapping.getJavaBySqlType(pk.getType()));
-				id = new CayenneLrDbAttribute(pk.getName(), pk, type, converterFactory.converter(jdbcType));
+				id = new CayenneLrDbAttribute(pk.getName(), pk, type, converterFactory.converter(type));
 			} else {
-				jdbcType = attribute.getDbAttribute().getType();
 				type = getJavaTypeForTypeName(attribute.getType());
-				id = new CayenneLrAttribute(attribute, type, converterFactory.converter(jdbcType));
+				id = new CayenneLrAttribute(attribute, type, converterFactory.converter(type));
 			}
 			lrEntity.addId(id);
 		}

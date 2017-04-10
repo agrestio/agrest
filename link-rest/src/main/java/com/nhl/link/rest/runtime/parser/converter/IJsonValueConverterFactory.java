@@ -1,5 +1,6 @@
 package com.nhl.link.rest.runtime.parser.converter;
 
+import com.nhl.link.rest.meta.LrAttribute;
 import com.nhl.link.rest.parser.converter.JsonValueConverter;
 
 /**
@@ -15,5 +16,8 @@ public interface IJsonValueConverterFactory {
 	 */
 	JsonValueConverter converter(Class<?> valueType);
 
-	JsonValueConverter converter(int jdbcType);
+	/**
+	 * @since 2.5
+     */
+	JsonValueConverter converter(LrAttribute attribute);
 }

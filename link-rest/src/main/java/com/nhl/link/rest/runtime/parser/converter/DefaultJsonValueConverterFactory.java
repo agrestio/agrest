@@ -1,5 +1,6 @@
 package com.nhl.link.rest.runtime.parser.converter;
 
+import com.nhl.link.rest.meta.LrAttribute;
 import com.nhl.link.rest.parser.converter.Base64Converter;
 import com.nhl.link.rest.parser.converter.GenericConverter;
 import com.nhl.link.rest.parser.converter.ISOLocalDateConverter;
@@ -9,7 +10,6 @@ import com.nhl.link.rest.parser.converter.JsonValueConverter;
 import com.nhl.link.rest.parser.converter.LongConverter;
 import com.nhl.link.rest.parser.converter.UtcDateConverter;
 
-import java.sql.Types;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -23,7 +23,6 @@ import java.util.Map;
 public class DefaultJsonValueConverterFactory implements IJsonValueConverterFactory {
 
 	protected Map<Class<?>, JsonValueConverter> convertersByJavaType;
-	private Map<Integer, JsonValueConverter> convertersByJdbcType;
 
 	private JsonValueConverter defaultConverter;
 
@@ -41,13 +40,6 @@ public class DefaultJsonValueConverterFactory implements IJsonValueConverterFact
 		convertersByJavaType.put(LocalDate.class, ISOLocalDateConverter.converter());
 		convertersByJavaType.put(LocalTime.class, ISOLocalTimeConverter.converter());
 		convertersByJavaType.put(LocalDateTime.class, ISOLocalDateTimeConverter.converter());
-
-		this.convertersByJdbcType = new HashMap<>();
-		convertersByJdbcType.put(Types.BIGINT, LongConverter.converter());
-		convertersByJdbcType.put(Types.DATE, UtcDateConverter.converter());
-		convertersByJdbcType.put(Types.TIME, UtcDateConverter.converter());
-		convertersByJdbcType.put(Types.TIMESTAMP, UtcDateConverter.converter());
-		convertersByJdbcType.put(Types.VARBINARY, Base64Converter.converter());
 	}
 
 	@Override
@@ -57,8 +49,7 @@ public class DefaultJsonValueConverterFactory implements IJsonValueConverterFact
 	}
 
 	@Override
-	public JsonValueConverter converter(int jdbcType) {
-		JsonValueConverter converter = convertersByJdbcType.get(jdbcType);
-		return converter != null ? converter : defaultConverter;
+	public JsonValueConverter converter(LrAttribute attribute) {
+		return converter(attribute.getType());
 	}
 }
