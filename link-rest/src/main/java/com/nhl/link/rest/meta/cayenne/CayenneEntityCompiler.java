@@ -11,7 +11,6 @@ import com.nhl.link.rest.meta.LrPersistentEntity;
 import com.nhl.link.rest.meta.LrRelationship;
 import com.nhl.link.rest.meta.compiler.LazyLrPersistentEntity;
 import com.nhl.link.rest.meta.compiler.LrEntityCompiler;
-import com.nhl.link.rest.parser.converter.GenericConverter;
 import com.nhl.link.rest.runtime.cayenne.ICayennePersister;
 import com.nhl.link.rest.runtime.parser.converter.IJsonValueConverterFactory;
 import org.apache.cayenne.dba.TypesMapping;
@@ -118,7 +117,7 @@ public class CayenneEntityCompiler implements LrEntityCompiler {
 		ObjEntity objEntity = lrEntity.getObjEntity();
 		for (ObjAttribute a : objEntity.getAttributes()) {
 			Class<?> type = getJavaTypeForTypeName(a.getType());
-			CayenneLrAttribute lrAttribute = new CayenneLrAttribute(a, type, converterFactory.converter(type));
+			CayenneLrAttribute lrAttribute = new CayenneLrAttribute(a, type);
 			lrEntity.addPersistentAttribute(lrAttribute);
 		}
 
@@ -154,10 +153,10 @@ public class CayenneEntityCompiler implements LrEntityCompiler {
 			LrAttribute id;
 			if (attribute == null) {
 				type = getJavaTypeForTypeName(TypesMapping.getJavaBySqlType(pk.getType()));
-				id = new CayenneLrDbAttribute(pk.getName(), pk, type, converterFactory.converter(type));
+				id = new CayenneLrDbAttribute(pk.getName(), pk, type);
 			} else {
 				type = getJavaTypeForTypeName(attribute.getType());
-				id = new CayenneLrAttribute(attribute, type, converterFactory.converter(type));
+				id = new CayenneLrAttribute(attribute, type);
 			}
 			lrEntity.addId(id);
 		}
@@ -214,7 +213,7 @@ public class CayenneEntityCompiler implements LrEntityCompiler {
 
 			for (String a : overlay.getTransientAttributes()) {
 				// TODO: figure out the type
-				DefaultLrAttribute lrAttribute = new DefaultLrAttribute(a, Object.class, GenericConverter.converter());
+				DefaultLrAttribute lrAttribute = new DefaultLrAttribute(a, Object.class);
 				entity.addAttribute(lrAttribute);
 			}
 		}

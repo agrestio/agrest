@@ -8,6 +8,7 @@ import com.nhl.link.rest.meta.LrEntity;
 import com.nhl.link.rest.meta.LrPersistentAttribute;
 import com.nhl.link.rest.meta.LrPersistentRelationship;
 import com.nhl.link.rest.meta.LrRelationship;
+import com.nhl.link.rest.runtime.parser.converter.IJsonValueConverterFactory;
 import com.nhl.link.rest.runtime.semantics.IRelationshipMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,9 +23,11 @@ public class EntityJsonTraverser {
     private static final Logger LOGGER = LoggerFactory.getLogger(EntityJsonTraverser.class);
 
     private IRelationshipMapper relationshipMapper;
+	private IJsonValueConverterFactory converterFactory;
 
-    public EntityJsonTraverser(IRelationshipMapper relationshipMapper) {
+    public EntityJsonTraverser(IRelationshipMapper relationshipMapper, IJsonValueConverterFactory converterFactory) {
         this.relationshipMapper = relationshipMapper;
+		this.converterFactory = converterFactory;
     }
 
     public void traverse(LrEntity<?> entity, JsonNode json, EntityJsonVisitor visitor) {
@@ -66,7 +69,7 @@ public class EntityJsonTraverser {
 			LrAttribute attribute = entity.getAttribute(key);
 			if (attribute != null) {
 				JsonNode valueNode = objectNode.get(key);
-				Object value = attribute.extractValue(valueNode);
+				Object value = converterFactory.converter(attribute.getType()).value(valueNode);
                 visitor.visitAttribute(key, value);
 				continue;
 			}
@@ -154,7 +157,7 @@ public class EntityJsonTraverser {
 			name = id.getName();
 		}
 
-		Object value = id.extractValue(valueNode);
+		Object value = converterFactory.converter(id.getType()).value(valueNode);
 
         idConsumer.accept(name, value);
 	}

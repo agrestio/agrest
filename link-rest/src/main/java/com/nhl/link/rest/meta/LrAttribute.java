@@ -1,6 +1,5 @@
 package com.nhl.link.rest.meta;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import org.apache.cayenne.exp.parser.ASTPath;
 
 /**
@@ -24,6 +23,4 @@ public interface LrAttribute {
 	 * @since 1.12
      */
 	ASTPath getPathExp();
-
-	Object extractValue(JsonNode node); // TODO: move this to a separate place?
 }

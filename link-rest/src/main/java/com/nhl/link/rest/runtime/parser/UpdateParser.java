@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.nhl.link.rest.EntityUpdate;
 import com.nhl.link.rest.meta.LrEntity;
 import com.nhl.link.rest.runtime.jackson.IJacksonService;
+import com.nhl.link.rest.runtime.parser.converter.IJsonValueConverterFactory;
 import com.nhl.link.rest.runtime.semantics.IRelationshipMapper;
 import org.apache.cayenne.di.Inject;
 
@@ -22,9 +23,10 @@ public class UpdateParser implements IUpdateParser {
     private EntityJsonTraverser entityJsonTraverser;
 
     public UpdateParser(@Inject IRelationshipMapper relationshipMapper,
-                        @Inject IJacksonService jacksonService) {
+                        @Inject IJacksonService jacksonService,
+                        @Inject IJsonValueConverterFactory converterFactory) {
         this.jacksonService = jacksonService;
-        this.entityJsonTraverser = new EntityJsonTraverser(relationshipMapper);
+        this.entityJsonTraverser = new EntityJsonTraverser(relationshipMapper, converterFactory);
     }
 
     @Override

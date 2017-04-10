@@ -7,6 +7,7 @@ import com.nhl.link.rest.runtime.jackson.IJacksonService;
 import com.nhl.link.rest.runtime.parser.EntityJsonTraverser;
 import com.nhl.link.rest.runtime.parser.EntityJsonVisitor;
 import com.nhl.link.rest.runtime.parser.UpdateParser;
+import com.nhl.link.rest.runtime.parser.converter.IJsonValueConverterFactory;
 import com.nhl.link.rest.runtime.semantics.IRelationshipMapper;
 import org.apache.cayenne.di.Inject;
 
@@ -23,9 +24,11 @@ public class SenchaUpdateParser extends UpdateParser {
 
 	private EntityJsonTraverser senchaEntityJsonTraverser;
 
-	public SenchaUpdateParser(@Inject IRelationshipMapper relationshipMapper, @Inject IJacksonService jacksonService) {
-		super(relationshipMapper, jacksonService);
-		senchaEntityJsonTraverser = new SenchaEntityJsonTraverser(relationshipMapper);
+	public SenchaUpdateParser(@Inject IRelationshipMapper relationshipMapper,
+							  @Inject IJacksonService jacksonService,
+							  @Inject IJsonValueConverterFactory converterFactory) {
+		super(relationshipMapper, jacksonService, converterFactory);
+		senchaEntityJsonTraverser = new SenchaEntityJsonTraverser(relationshipMapper, converterFactory);
 	}
 
 	protected boolean isTempId(Object value) {
@@ -46,8 +49,8 @@ public class SenchaUpdateParser extends UpdateParser {
 
 	private class SenchaEntityJsonTraverser extends EntityJsonTraverser {
 
-		public SenchaEntityJsonTraverser(IRelationshipMapper relationshipMapper) {
-			super(relationshipMapper);
+		public SenchaEntityJsonTraverser(IRelationshipMapper relationshipMapper, IJsonValueConverterFactory converterFactory) {
+			super(relationshipMapper, converterFactory);
 		}
 
 		@Override

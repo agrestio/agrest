@@ -88,7 +88,7 @@ public class LrEntityBuilder<T> {
 		if (m.getAnnotation(LrAttribute.class) != null) {
 
 			if (checkValidAttributeType(m.getReturnType())) {
-				DefaultLrAttribute a = new DefaultLrAttribute(name, type, converterFactory.converter(type));
+				DefaultLrAttribute a = new DefaultLrAttribute(name, type);
 				entity.addAttribute(a);
 			} else {
 				// still return true after validation failure... this is an
@@ -102,7 +102,7 @@ public class LrEntityBuilder<T> {
 		if (m.getAnnotation(LrId.class) != null) {
 
 			if (checkValidAttributeType(m.getReturnType())) {
-				DefaultLrAttribute a = new DefaultLrAttribute(name, type, converterFactory.converter(type));
+				DefaultLrAttribute a = new DefaultLrAttribute(name, type);
 				entity.addId(a);
 			} else {
 				// still return true after validation failure... this is an

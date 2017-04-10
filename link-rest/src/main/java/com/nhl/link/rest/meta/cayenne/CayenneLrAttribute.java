@@ -17,8 +17,8 @@ public class CayenneLrAttribute extends DefaultLrAttribute implements LrPersiste
 	/**
 	 * @since 1.24
 	 */
-	public CayenneLrAttribute(ObjAttribute objAttribute, Class<?> type, JsonValueConverter converter) {
-		super(objAttribute.getName(), type, converter);
+	public CayenneLrAttribute(ObjAttribute objAttribute, Class<?> type) {
+		super(objAttribute.getName(), type);
 		this.objAttribute = objAttribute;
 	}
 

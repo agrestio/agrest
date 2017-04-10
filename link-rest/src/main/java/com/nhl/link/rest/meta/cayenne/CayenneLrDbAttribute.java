@@ -34,8 +34,8 @@ public class CayenneLrDbAttribute extends CayenneLrAttribute {
 	/**
 	 * @since 1.24
      */
-	public CayenneLrDbAttribute(String name, DbAttribute dbAttribute, Class<?> type, JsonValueConverter converter) {
-		super(fakeObjAttribute(name, dbAttribute), type, converter);
+	public CayenneLrDbAttribute(String name, DbAttribute dbAttribute, Class<?> type) {
+		super(fakeObjAttribute(name, dbAttribute), type);
 		this.dbAttribute = dbAttribute;
 	}
 
