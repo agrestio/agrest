@@ -1,19 +1,15 @@
 package com.nhl.link.rest.meta.cayenne;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.nhl.link.rest.LrObjectId;
 import com.nhl.link.rest.meta.LrEntity;
+import com.nhl.link.rest.meta.LrJoin;
 import com.nhl.link.rest.meta.LrPersistentRelationship;
-import com.nhl.link.rest.parser.converter.JsonValueConverter;
 import org.apache.cayenne.map.DbJoin;
 import org.apache.cayenne.map.DbRelationship;
 import org.apache.cayenne.map.ObjRelationship;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Objects;
-import java.util.function.Function;
 
 /**
  * @since 1.12
@@ -22,12 +18,33 @@ public class CayenneLrRelationship implements LrPersistentRelationship {
 
 	private ObjRelationship objRelationship;
 	private LrEntity<?> targetEntity;
-	private JsonValueConverter converter;
+	private Collection<LrJoin> joins;
 
-	public CayenneLrRelationship(ObjRelationship objRelationship, LrEntity<?> targetEntity, JsonValueConverter converter) {
+	public CayenneLrRelationship(ObjRelationship objRelationship, LrEntity<?> targetEntity) {
 		this.objRelationship = objRelationship;
 		this.targetEntity = Objects.requireNonNull(targetEntity);
-		this.converter = converter;
+		this.joins = collectJoins(objRelationship);
+	}
+
+	private Collection<LrJoin> collectJoins(ObjRelationship objRelationship) {
+		Collection<LrJoin> joins = new ArrayList<>();
+		for (DbRelationship dbRelationship : objRelationship.getDbRelationships()) {
+			DbRelationship reverseRelationship = dbRelationship.getReverseRelationship();
+			for (DbJoin join : reverseRelationship.getJoins()) {
+				joins.add(new LrJoin() {
+					@Override
+					public String getSourceColumnName() {
+						return join.getTargetName();
+					}
+
+					@Override
+					public String getTargetColumnName() {
+						return join.getSourceName();
+					}
+				});
+			}
+		}
+		return joins;
 	}
 
 	@Override
@@ -55,43 +72,12 @@ public class CayenneLrRelationship implements LrPersistentRelationship {
 		return getDbRelationship().getReverseRelationship().isToDependentPK();
 	}
 
+	@Override
+	public Collection<LrJoin> getJoins() {
+		return joins;
+	}
+
 	private DbRelationship getDbRelationship() {
 		return objRelationship.getDbRelationships().get(0);
-	}
-
-	@Override
-	public Map<String, Object> extractId(LrObjectId id) {
-		return extractId(id::get);
-	}
-
-	@Override
-	public Map<String, Object> extractId(JsonNode id) {
-		if (isMultiJoin()) {
-			if (!id.isObject()) {
-				throw new IllegalArgumentException("Relationship has multiple joins, but only a scalar value was provided");
-			}
-			return extractId(id::get);
-		} else if (id.isObject()) {
-			return extractId(id::get);
-		} else {
-			return Collections.singletonMap(
-					getDbRelationship().getReverseRelationship().getJoins().iterator().next().getTargetName(),
-					converter.value(id));
-		}
-	}
-
-	private Map<String, Object> extractId(Function<String, Object> idPartSupplier) {
-		Map<String, Object> parentIdMap = new HashMap<>();
-		for (DbRelationship dbRelationship : objRelationship.getDbRelationships()) {
-			DbRelationship reverseRelationship = dbRelationship.getReverseRelationship();
-			for (DbJoin join : reverseRelationship.getJoins()) {
-				parentIdMap.put(join.getSourceName(), idPartSupplier.apply(join.getTargetName()));
-			}
-		}
-		return parentIdMap;
-	}
-
-	private boolean isMultiJoin() {
-		return getDbRelationship().getReverseRelationship().getJoins().size() > 1;
 	}
 }

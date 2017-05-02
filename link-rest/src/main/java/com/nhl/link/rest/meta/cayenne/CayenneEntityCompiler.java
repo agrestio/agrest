@@ -135,15 +135,7 @@ public class CayenneEntityCompiler implements LrEntityCompiler {
 
 			Class<?> targetEntityType = resolver.getClassDescriptor(r.getTargetEntityName()).getObjectClass();
 			LrEntity<?> targetEntity = dataMap.getEntity(targetEntityType);
-
-			// take last element from list of db relationships
-			// in order to behave correctly if
-			// db entities are connected through intermediate tables
-			DbRelationship targetRelationship = dbRelationshipsList.get(dbRelationshipsList.size() - 1);
-			int targetJdbcType = targetRelationship.getJoins().get(0).getTarget().getType();
-			Class<?> type = getJavaTypeForTypeName(TypesMapping.getJavaBySqlType(targetJdbcType));
-
-			LrRelationship lrRelationship = new CayenneLrRelationship(r, targetEntity, converterFactory.converter(type));
+			LrRelationship lrRelationship = new CayenneLrRelationship(r, targetEntity);
 			lrEntity.addRelationship(lrRelationship);
 		}
 

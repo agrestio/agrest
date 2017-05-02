@@ -1,22 +1,26 @@
 package com.nhl.link.rest.meta;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.nhl.link.rest.LrObjectId;
-
-import java.util.Map;
+import java.util.Collection;
 
 /**
  * @since 1.12
  */
 public interface LrPersistentRelationship extends LrRelationship {
 
+	/**
+     * @since 2.5
+     */
 	boolean isToDependentEntity();
 
+	/**
+     * @since 2.5
+     */
 	boolean isPrimaryKey();
 
+	/**
+     * @since 2.5
+     */
+	Collection<LrJoin> getJoins();
+
 //	LrPersistentRelationship getReverseRelationship(); // ???
-
-	Map<String, Object> extractId(LrObjectId id); // TODO: move this to a separate place?
-
-	Map<String, Object> extractId(JsonNode id); // TODO: move this to a separate place?
 }

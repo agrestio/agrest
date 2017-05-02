@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.nhl.link.rest.LinkRestException;
 import com.nhl.link.rest.meta.LrAttribute;
 import com.nhl.link.rest.meta.LrEntity;
+import com.nhl.link.rest.meta.LrJoin;
 import com.nhl.link.rest.meta.LrPersistentAttribute;
 import com.nhl.link.rest.meta.LrPersistentRelationship;
 import com.nhl.link.rest.meta.LrRelationship;
@@ -100,8 +101,7 @@ public class EntityJsonTraverser {
 					valueNode = arrayNode.get(0);
 				}
 			}
-			// record FK that is also a PK
-			relationship.extractId(valueNode).forEach(visitor::visitId);
+			extractPK(relationship, visitor, valueNode);
 		}
 
 		if (valueNode.isArray()) {
@@ -124,14 +124,24 @@ public class EntityJsonTraverser {
         }
 	}
 
-	private void addRelatedObject(EntityJsonVisitor visitor, LrRelationship relationship, Object value) {
+	// record FK that is also a PK
+	private void extractPK(LrPersistentRelationship relationship, EntityJsonVisitor visitor, JsonNode valueNode) {
+		Collection<LrJoin> joins = relationship.getJoins();
+		if (valueNode.isObject()) {
+			joins.forEach(join -> visitor.visitId(join.getTargetColumnName(), valueNode.get(join.getSourceColumnName())));
+		} else if (joins.size() > 1) {
+			throw new IllegalArgumentException("Relationship has multiple joins, but only a scalar value was provided");
+		} else {
+			visitor.visitId(joins.iterator().next().getSourceColumnName(), converter(relationship).value(valueNode));
+		}
+	}
 
+	private void addRelatedObject(EntityJsonVisitor visitor, LrRelationship relationship, Object value) {
 		// record FK, whether it is a PK or not
 		visitor.visitRelationship(relationship.getName(), value);
 	}
 
 	protected void extractPK(LrEntity<?> entity, EntityJsonVisitor visitor, JsonNode valueNode) {
-
 		Collection<LrAttribute> ids = entity.getIds();
 		if (ids.size() == 1) {
 			extractPKPart(visitor::visitId, ids.iterator().next(), valueNode);

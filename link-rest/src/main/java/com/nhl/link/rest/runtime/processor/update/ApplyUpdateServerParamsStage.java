@@ -2,6 +2,7 @@ package com.nhl.link.rest.runtime.processor.update;
 
 import com.nhl.link.rest.EntityParent;
 import com.nhl.link.rest.EntityUpdate;
+import com.nhl.link.rest.LrObjectId;
 import com.nhl.link.rest.ResourceEntity;
 import com.nhl.link.rest.annotation.listener.UpdateServerParamsApplied;
 import com.nhl.link.rest.meta.LrEntity;
@@ -15,6 +16,7 @@ import com.nhl.link.rest.runtime.meta.IMetadataService;
 
 import java.lang.annotation.Annotation;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 
 public class ApplyUpdateServerParamsStage<T> extends BaseLinearProcessingStage<UpdateContext<T>, T> {
@@ -88,11 +90,18 @@ public class ApplyUpdateServerParamsStage<T> extends BaseLinearProcessingStage<U
 				LrPersistentRelationship r = (LrPersistentRelationship) fromParent;
 				if (r.isToDependentEntity()) {
 					for (EntityUpdate<T> u : context.getUpdates()) {
-						u.getOrCreateId().putAll(r.extractId(parent.getId()));
+						u.getOrCreateId().putAll(extractRelatedId(r, parent.getId()));
 					}
 				}
 			}
 		}
+	}
+
+	private Map<String, Object> extractRelatedId(LrPersistentRelationship relationship, LrObjectId objectId) {
+		return relationship.getJoins().stream()
+				.collect(HashMap::new,
+						(m, j) -> m.put(j.getTargetColumnName(), objectId.get(j.getSourceColumnName())),
+						Map::putAll);
 	}
 
 	private LrRelationship relationshipFromParent(UpdateContext<?> context) {
