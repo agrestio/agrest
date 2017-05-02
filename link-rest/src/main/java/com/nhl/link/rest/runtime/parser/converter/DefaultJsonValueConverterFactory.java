@@ -1,6 +1,7 @@
 package com.nhl.link.rest.runtime.parser.converter;
 
 import com.nhl.link.rest.meta.LrAttribute;
+import com.nhl.link.rest.meta.LrEntity;
 import com.nhl.link.rest.parser.converter.Base64Converter;
 import com.nhl.link.rest.parser.converter.GenericConverter;
 import com.nhl.link.rest.parser.converter.ISOLocalDateConverter;
@@ -52,5 +53,15 @@ public class DefaultJsonValueConverterFactory implements IJsonValueConverterFact
 	@Override
 	public JsonValueConverter converter(LrAttribute attribute) {
 		return converter(attribute.getType());
+	}
+
+	@Override
+	public JsonValueConverter converter(LrEntity<?> entity) {
+		int ids = entity.getIds().size();
+		if (ids != 1) {
+			throw new IllegalArgumentException("Entity '" + entity.getName() +
+					"' has unexpected number of ID attributes: " + ids);
+		}
+		return converter(entity.getIds().iterator().next().getType());
 	}
 }

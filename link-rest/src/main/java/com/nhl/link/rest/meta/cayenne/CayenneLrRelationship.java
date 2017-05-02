@@ -60,11 +60,6 @@ public class CayenneLrRelationship implements LrPersistentRelationship {
 	}
 
 	@Override
-	public Object extractValue(JsonNode node) {
-		return converter.value(node);
-	}
-
-	@Override
 	public Map<String, Object> extractId(LrObjectId id) {
 		return extractId(id::get);
 	}

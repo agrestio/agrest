@@ -8,6 +8,7 @@ import com.nhl.link.rest.meta.LrEntity;
 import com.nhl.link.rest.meta.LrPersistentAttribute;
 import com.nhl.link.rest.meta.LrPersistentRelationship;
 import com.nhl.link.rest.meta.LrRelationship;
+import com.nhl.link.rest.parser.converter.JsonValueConverter;
 import com.nhl.link.rest.runtime.parser.converter.IJsonValueConverterFactory;
 import com.nhl.link.rest.runtime.semantics.IRelationshipMapper;
 import org.slf4j.Logger;
@@ -69,7 +70,7 @@ public class EntityJsonTraverser {
 			LrAttribute attribute = entity.getAttribute(key);
 			if (attribute != null) {
 				JsonNode valueNode = objectNode.get(key);
-				Object value = converterFactory.converter(attribute.getType()).value(valueNode);
+				Object value = converter(attribute).value(valueNode);
                 visitor.visitAttribute(key, value);
 				continue;
 			}
@@ -110,7 +111,7 @@ public class EntityJsonTraverser {
 				addRelatedObject(visitor, relationship, null);
 			} else {
 				for (int i = 0; i < arrayNode.size(); i++) {
-					addRelatedObject(visitor, relationship, relationship.extractValue(arrayNode.get(i)));
+					addRelatedObject(visitor, relationship, converter(relationship).value(arrayNode.get(i)));
 				}
 			}
         } else {
@@ -118,7 +119,7 @@ public class EntityJsonTraverser {
                 LOGGER.warn("Unexpected 'null' for a to-many relationship: " + relationship.getName()
                         + ". Skipping...");
             } else {
-                addRelatedObject(visitor, relationship, relationship.extractValue(valueNode));
+                addRelatedObject(visitor, relationship, converter(relationship).value(valueNode));
             }
         }
 	}
@@ -157,8 +158,16 @@ public class EntityJsonTraverser {
 			name = id.getName();
 		}
 
-		Object value = converterFactory.converter(id.getType()).value(valueNode);
+		Object value = converter(id).value(valueNode);
 
         idConsumer.accept(name, value);
+	}
+
+	private JsonValueConverter converter(LrAttribute attribute) {
+		return converterFactory.converter(attribute.getType());
+	}
+
+	private JsonValueConverter converter(LrRelationship relationship) {
+		return converterFactory.converter(relationship.getTargetEntity());
 	}
 }

@@ -16,8 +16,6 @@ public interface LrPersistentRelationship extends LrRelationship {
 
 //	LrPersistentRelationship getReverseRelationship(); // ???
 
-	Object extractValue(JsonNode node); // TODO: move this to a separate place?
-
 	Map<String, Object> extractId(LrObjectId id); // TODO: move this to a separate place?
 
 	Map<String, Object> extractId(JsonNode id); // TODO: move this to a separate place?
