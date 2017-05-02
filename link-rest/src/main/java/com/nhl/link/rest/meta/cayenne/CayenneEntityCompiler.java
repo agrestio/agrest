@@ -105,16 +105,15 @@ public class CayenneEntityCompiler implements LrEntityCompiler {
 		LOGGER.debug("compiling Cayenne entity for type: " + type);
 
 		ObjEntity objEntity = resolver.getObjEntity(type);
-		CayenneLrEntity<T> lrEntity = new CayenneLrEntity<>(type, objEntity);
-		loadCayenneEntity(lrEntity, dataMap);
+		CayenneLrEntity<T> lrEntity = new CayenneLrEntity<>(type, objEntity.getName());
+		loadCayenneEntity(lrEntity, objEntity, dataMap);
 		loadAnnotatedProperties(lrEntity, dataMap);
 		loadOverlays(lrEntity);
 		return lrEntity;
 	}
 
-	protected <T> void loadCayenneEntity(CayenneLrEntity<T> lrEntity, LrDataMap dataMap) {
+	protected <T> void loadCayenneEntity(CayenneLrEntity<T> lrEntity, ObjEntity objEntity, LrDataMap dataMap) {
 
-		ObjEntity objEntity = lrEntity.getObjEntity();
 		for (ObjAttribute a : objEntity.getAttributes()) {
 			Class<?> type = getJavaTypeForTypeName(a.getType());
 			CayenneLrAttribute lrAttribute = new CayenneLrAttribute(a, type);

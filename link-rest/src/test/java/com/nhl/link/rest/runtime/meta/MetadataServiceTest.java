@@ -1,15 +1,14 @@
 package com.nhl.link.rest.runtime.meta;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertSame;
-
-import org.junit.Test;
-
 import com.nhl.link.rest.it.fixture.cayenne.E4;
 import com.nhl.link.rest.it.fixture.cayenne.E5;
 import com.nhl.link.rest.meta.LrPersistentEntity;
 import com.nhl.link.rest.unit.TestWithCayenneMapping;
+import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertSame;
 
 public class MetadataServiceTest extends TestWithCayenneMapping {
 
@@ -21,8 +20,7 @@ public class MetadataServiceTest extends TestWithCayenneMapping {
 		assertEquals("E4", e4.getName());
 		assertSame(E4.class, e4.getType());
 
-		assertNotNull(e4.getObjEntity());
-		assertEquals("E4", e4.getObjEntity().getName());
+		assertEquals("E4", e4.getName());
 
 		assertEquals(7, e4.getPersistentAttributes().size());
 		assertEquals(0, e4.getRelationships().size());
@@ -39,8 +37,7 @@ public class MetadataServiceTest extends TestWithCayenneMapping {
 		assertEquals("E5", e5.getName());
 		assertSame(E5.class, e5.getType());
 
-		assertNotNull(e5.getObjEntity());
-		assertEquals("E5", e5.getObjEntity().getName());
+		assertEquals("E5", e5.getName());
 
 		assertEquals(2, e5.getPersistentAttributes().size());
 		assertEquals(2, e5.getRelationships().size());

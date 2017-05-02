@@ -42,12 +42,10 @@ public class ConstraintsHandlerWithDefaultsTest extends TestWithCayenneMapping {
 		ObjEntity e2 = runtime.getChannel().getEntityResolver().getObjEntity(E2.class);
 
 		lre1 = mock(LrPersistentEntity.class);
-		when(lre1.getObjEntity()).thenReturn(e1);
 		when(lre1.getType()).thenReturn(E1.class);
 		when(lre1.getName()).thenReturn(e1.getName());
 
 		lre2 = mock(LrPersistentEntity.class);
-		when(lre2.getObjEntity()).thenReturn(e2);
 		when(lre2.getType()).thenReturn(E2.class);
 		when(lre2.getName()).thenReturn(e2.getName());
 

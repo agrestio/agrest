@@ -19,11 +19,15 @@ public class DefaultLrEntity<T> implements LrEntity<T> {
 	// TODO: ensure name uniquness between all types of properties
 
 	public DefaultLrEntity(Class<T> type) {
+		this(type, type.getSimpleName());
+	}
+
+	public DefaultLrEntity(Class<T> type, String name) {
 		this.type = type;
 		this.relationships = new HashMap<>();
 		this.attributes = new HashMap<>();
 		this.ids = new HashMap<>();
-		this.name = type.getSimpleName();
+		this.name = name;
 	}
 
 	@Override

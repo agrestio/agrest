@@ -4,7 +4,6 @@ import com.nhl.link.rest.meta.LrAttribute;
 import com.nhl.link.rest.meta.LrPersistentAttribute;
 import com.nhl.link.rest.meta.LrPersistentEntity;
 import com.nhl.link.rest.meta.LrRelationship;
-import org.apache.cayenne.map.ObjEntity;
 
 import java.util.Collection;
 import java.util.function.Supplier;
@@ -19,11 +18,6 @@ public class LazyLrPersistentEntity<T> extends BaseLazyLrEntity<T, LrPersistentE
     public LazyLrPersistentEntity(Class<T> type, Supplier<LrPersistentEntity<T>> delegateSupplier) {
         super(delegateSupplier);
         this.type = type;
-    }
-
-    @Override
-    public ObjEntity getObjEntity() {
-        return getDelegate().getObjEntity();
     }
 
     @Override
