@@ -4,7 +4,6 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import com.nhl.link.rest.DataResponse;
 import com.nhl.link.rest.runtime.LinkRestRuntime;
 import com.nhl.link.rest.runtime.jackson.IJacksonService;
-import com.nhl.link.rest.runtime.jackson.JsonConvertable;
 
 import javax.ws.rs.core.Configuration;
 import javax.ws.rs.core.Context;
@@ -41,12 +40,7 @@ public class DataResponseWriter implements MessageBodyWriter<DataResponse<?>> {
 			MediaType mediaType, MultivaluedMap<String, Object> httpHeaders, OutputStream entityStream)
 					throws IOException {
 
-		getJacksonService().outputJson(new JsonConvertable() {
-			@Override
-			public void generateJSON(JsonGenerator out) throws IOException {
-				writeData(t, out);
-			}
-		}, entityStream);
+		getJacksonService().outputJson(out -> writeData(t, out), entityStream);
 	}
 
 	private IJacksonService getJacksonService() {
