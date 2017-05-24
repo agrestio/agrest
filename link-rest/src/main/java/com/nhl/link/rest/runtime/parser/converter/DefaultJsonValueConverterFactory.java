@@ -3,6 +3,7 @@ package com.nhl.link.rest.runtime.parser.converter;
 import com.nhl.link.rest.meta.LrAttribute;
 import com.nhl.link.rest.meta.LrEntity;
 import com.nhl.link.rest.parser.converter.Base64Converter;
+import com.nhl.link.rest.parser.converter.FloatConverter;
 import com.nhl.link.rest.parser.converter.GenericConverter;
 import com.nhl.link.rest.parser.converter.ISOLocalDateConverter;
 import com.nhl.link.rest.parser.converter.ISOLocalDateTimeConverter;
@@ -33,6 +34,7 @@ public class DefaultJsonValueConverterFactory implements IJsonValueConverterFact
 
 		this.convertersByJavaType = new HashMap<>();
 		convertersByJavaType.put(Object.class, GenericConverter.converter());
+		convertersByJavaType.put(Float.class, FloatConverter.converter());
 		convertersByJavaType.put(Long.class, LongConverter.converter());
 		convertersByJavaType.put(Date.class, UtcDateConverter.converter());
 		convertersByJavaType.put(java.sql.Date.class, UtcDateConverter.converter());
