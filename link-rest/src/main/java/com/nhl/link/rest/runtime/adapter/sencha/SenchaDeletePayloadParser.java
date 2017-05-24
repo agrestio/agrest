@@ -49,7 +49,7 @@ public class SenchaDeletePayloadParser implements MessageBodyReader<Collection<E
 
     @Override
     public boolean isReadable(Class<?> type, Type genericType, Annotation[] annotations, MediaType mediaType) {
-        if (!Collection.class.equals(type) || !MediaType.APPLICATION_JSON_TYPE.equals(mediaType)) {
+        if (!Collection.class.equals(type) || !MediaType.APPLICATION_JSON_TYPE.isCompatible(mediaType)) {
 			return false;
 		}
 

@@ -40,7 +40,7 @@ public class EntityUpdateReader implements MessageBodyReader<EntityUpdate<?>> {
 
 	@Override
 	public boolean isReadable(Class<?> type, Type genericType, Annotation[] annotations, MediaType mediaType) {
-		return EntityUpdate.class.equals(type) && MediaType.APPLICATION_JSON_TYPE.equals(mediaType);
+		return EntityUpdate.class.equals(type) && MediaType.APPLICATION_JSON_TYPE.isCompatible(mediaType);
 	}
 
 	@Override

@@ -42,7 +42,7 @@ public class EntityUpdateCollectionReader<T> implements MessageBodyReader<Collec
 
 	@Override
 	public boolean isReadable(Class<?> type, Type genericType, Annotation[] annotations, MediaType mediaType) {
-		if (!Collection.class.isAssignableFrom(type) || !MediaType.APPLICATION_JSON_TYPE.equals(mediaType)) {
+		if (!Collection.class.isAssignableFrom(type) || !MediaType.APPLICATION_JSON_TYPE.isCompatible(mediaType)) {
 			return false;
 		}
 
