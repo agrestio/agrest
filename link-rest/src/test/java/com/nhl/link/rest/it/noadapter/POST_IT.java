@@ -322,6 +322,7 @@ public class POST_IT extends JerseyTestOnDerby {
 				.request()
 				.post(jsonEntity(data));
 
-		assertThat(response, hasStatusAndBody(Status.CREATED, "{\"floatObject\":0.0,\"floatPrimitive\":0.0}"));
+		assertThat(response, hasStatusAndBody(Status.CREATED,
+				"{\"data\":[{\"floatObject\":0.0,\"floatPrimitive\":0.0}],\"total\":1}"));
 	}
 }
