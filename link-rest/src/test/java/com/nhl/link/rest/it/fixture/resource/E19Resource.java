@@ -32,6 +32,23 @@ public class E19Resource {
 		return LinkRest.create(E19.class, config).uri(uriInfo).syncAndSelect(data);
 	}
 
+	@POST
+	@Path("float")
+	public DataResponse<E19> create_FloatAttribute(@Context UriInfo uriInfo, String data) {
+		DataResponse<E19> response = LinkRest.create(E19.class, config).uri(uriInfo).syncAndSelect(data);
+
+		int objectCount = response.getObjects().size();
+		if (objectCount > 1) {
+			throw new IllegalStateException("unexpected number of objects: " + objectCount);
+		}
+		E19 e19 = response.getObjects().get(0);
+		// trigger type casts
+		e19.getFloatObject();
+		e19.getFloatPrimitive();
+
+		return response;
+	}
+
 	@GET
 	@Path("metadata")
 	@Resource(entityClass = E19.class, type = LinkType.METADATA)

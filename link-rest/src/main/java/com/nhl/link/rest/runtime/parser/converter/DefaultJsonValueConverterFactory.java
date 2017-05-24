@@ -35,7 +35,9 @@ public class DefaultJsonValueConverterFactory implements IJsonValueConverterFact
 		this.convertersByJavaType = new HashMap<>();
 		convertersByJavaType.put(Object.class, GenericConverter.converter());
 		convertersByJavaType.put(Float.class, FloatConverter.converter());
+		convertersByJavaType.put(float.class, FloatConverter.converter());
 		convertersByJavaType.put(Long.class, LongConverter.converter());
+		convertersByJavaType.put(long.class, LongConverter.converter());
 		convertersByJavaType.put(Date.class, UtcDateConverter.converter());
 		convertersByJavaType.put(java.sql.Date.class, UtcDateConverter.converter());
 		convertersByJavaType.put(java.sql.Time.class, UtcDateConverter.converter());

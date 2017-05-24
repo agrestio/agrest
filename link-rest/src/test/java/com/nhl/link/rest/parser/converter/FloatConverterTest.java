@@ -2,6 +2,7 @@ package com.nhl.link.rest.parser.converter;
 
 import com.fasterxml.jackson.databind.node.DoubleNode;
 import com.fasterxml.jackson.databind.node.FloatNode;
+import com.fasterxml.jackson.databind.node.IntNode;
 import com.fasterxml.jackson.databind.node.TextNode;
 import com.nhl.link.rest.LinkRestException;
 import org.junit.Test;
@@ -14,6 +15,12 @@ public class FloatConverterTest {
     public void testConverter_Zero() {
         Float value = 0f;
         assertEquals(value, convert(value));
+    }
+
+    @Test
+    public void testConverter_Integer_Zero() {
+        Float value = 0f;
+        assertEquals(value, convert(0));
     }
 
     @Test
@@ -78,6 +85,10 @@ public class FloatConverterTest {
 
     private Float convert(Float value) {
         return (Float) FloatConverter.converter().value(new FloatNode(value));
+    }
+
+    private Float convert(Integer value) {
+        return (Float) FloatConverter.converter().value(new IntNode(value));
     }
 
     private Float convert(String value) {

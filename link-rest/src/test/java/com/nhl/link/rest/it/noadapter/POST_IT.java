@@ -312,4 +312,16 @@ public class POST_IT extends JerseyTestOnDerby {
 		assertThat(response,
 				hasStatusAndBody(Status.CREATED, "{\"data\":[{\"guid\":\"" + base64Encoded + "\"}],\"total\":1}"));
 	}
+
+	@Test
+	public void testPost_FloatProperty() throws WebApplicationException, IOException {
+		String data = "{\"floatObject\":0,\"floatPrimitive\":0}";
+		Response response = target("/e19").path("float")
+				.queryParam("include", "floatObject")
+				.queryParam("include", "floatPrimitive")
+				.request()
+				.post(jsonEntity(data));
+
+		assertThat(response, hasStatusAndBody(Status.CREATED, "{\"floatObject\":0.0,\"floatPrimitive\":0.0}"));
+	}
 }

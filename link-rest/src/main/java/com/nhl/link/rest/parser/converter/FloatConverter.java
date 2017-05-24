@@ -29,8 +29,8 @@ public class FloatConverter extends AbstractConverter {
 			}
 		}
 
-		if (!node.isFloatingPointNumber()) {
-			throw new LinkRestException(Status.BAD_REQUEST, "Expected floating point numeric value, got: " + node.asText());
+		if (!node.isIntegralNumber() && !node.isFloatingPointNumber()) {
+			throw new LinkRestException(Status.BAD_REQUEST, "Expected numeric value, got: " + node.asText());
 		}
 
 		Double doubleValue = node.asDouble();
