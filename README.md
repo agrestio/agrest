@@ -6,7 +6,7 @@ LinkRest is a flexible model-driven REST data service framework. Visit [our site
 Quick links:
 
 * [website](http://linkrest.io)
-* [self-contained LinkRest/Bootique demo](https://github.com/bootique-examples/bootique-linkrest-demo)
+* [quick tutorial with Bootuque and Derby DB](https://github.com/bootique-examples/bootique-linkrest-demo)
 * [documentation](http://linkrest.io/docs/)
 * [support](https://groups.google.com/forum/?#!forum/linkrest-user)
 * [upgrade instructions](https://github.com/nhl/link-rest/blob/master/UPGRADE-NOTES.md)
