@@ -1,25 +1,5 @@
 package com.nhl.link.rest.runtime;
 
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.ws.rs.core.Feature;
-import javax.ws.rs.ext.ExceptionMapper;
-
-import org.apache.cayenne.CayenneRuntimeException;
-import org.apache.cayenne.configuration.server.ServerRuntime;
-import org.apache.cayenne.di.Binder;
-import org.apache.cayenne.di.DIBootstrap;
-import org.apache.cayenne.di.Injector;
-import org.apache.cayenne.di.Module;
-import org.apache.cayenne.validation.ValidationException;
-
 import com.nhl.link.rest.DataResponse;
 import com.nhl.link.rest.EntityConstraint;
 import com.nhl.link.rest.LinkRestException;
@@ -78,6 +58,24 @@ import com.nhl.link.rest.runtime.parser.tree.IncludeExcludeProcessor;
 import com.nhl.link.rest.runtime.processor.IProcessorFactory;
 import com.nhl.link.rest.runtime.semantics.IRelationshipMapper;
 import com.nhl.link.rest.runtime.semantics.RelationshipMapper;
+import org.apache.cayenne.CayenneRuntimeException;
+import org.apache.cayenne.configuration.server.ServerRuntime;
+import org.apache.cayenne.di.Binder;
+import org.apache.cayenne.di.DIBootstrap;
+import org.apache.cayenne.di.Injector;
+import org.apache.cayenne.di.Module;
+import org.apache.cayenne.validation.ValidationException;
+
+import javax.ws.rs.core.Feature;
+import javax.ws.rs.ext.ExceptionMapper;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * A builder of LinkRest runtime that can be loaded into JAX-RS 2 container as a
@@ -91,8 +89,8 @@ public class LinkRestBuilder {
 	private ILinkRestService linkRestService;
 
 	private List<EncoderFilter> encoderFilters;
-	private List<LrEntity<?>> extraEntities;
-	private Map<String, LrEntityOverlay<?>> entityOverlays;
+	private List<LrEntity> extraEntities;
+	private Map<String, LrEntityOverlay> entityOverlays;
 	private Map<Class<?>, Class<?>> exceptionMappers;
 	private Collection<LinkRestAdapter> adapters;
 	private Map<String, PropertyMetadataEncoder> metadataEncoders;
@@ -295,17 +293,17 @@ public class LinkRestBuilder {
 			@Override
 			public void configure(Binder binder) {
 
-				binder.<EncoderFilter> bindList(EncoderService.ENCODER_FILTER_LIST).addAll(encoderFilters);
-				binder.<LrEntity<?>> bindList(MetadataService.EXTRA_ENTITIES_LIST).addAll(extraEntities);
-				binder.<LrEntityOverlay<?>> bindMap(MetadataService.ENTITY_OVERLAY_MAP).putAll(entityOverlays);
-				binder.<Class<?>> bindMap(LinkRestRuntime.BODY_WRITERS_MAP)
+				binder.bindList(EncoderFilter.class, EncoderService.ENCODER_FILTER_LIST).addAll(encoderFilters);
+				binder.bindList(LrEntity.class, MetadataService.EXTRA_ENTITIES_LIST).addAll(extraEntities);
+				binder.bindMap(LrEntityOverlay.class, MetadataService.ENTITY_OVERLAY_MAP).putAll(entityOverlays);
+				binder.bindMap(Class.class, LinkRestRuntime.BODY_WRITERS_MAP)
 						.put(SimpleResponse.class.getName(), SimpleResponseWriter.class)
 						.put(DataResponse.class.getName(), DataResponseWriter.class)
 						.put(MetadataResponse.class.getName(), MetadataResponseWriter.class);
 
-				binder.<EntityConstraint> bindList(ConstraintsHandler.DEFAULT_READ_CONSTRAINTS_LIST);
-				binder.<EntityConstraint> bindList(ConstraintsHandler.DEFAULT_WRITE_CONSTRAINTS_LIST);
-				binder.<PropertyMetadataEncoder> bindMap(EncoderService.PROPERTY_METADATA_ENCODER_MAP)
+				binder.bindList(EntityConstraint.class, ConstraintsHandler.DEFAULT_READ_CONSTRAINTS_LIST);
+				binder.bindList(EntityConstraint.class, ConstraintsHandler.DEFAULT_WRITE_CONSTRAINTS_LIST);
+				binder.bindMap(PropertyMetadataEncoder.class, EncoderService.PROPERTY_METADATA_ENCODER_MAP)
 						.putAll(metadataEncoders);
 
 				if (linkRestServiceType != null) {

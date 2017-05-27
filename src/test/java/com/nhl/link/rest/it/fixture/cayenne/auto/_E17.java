@@ -20,10 +20,10 @@ public abstract class _E17 extends CayenneDataObject {
     public static final String ID1_PK_COLUMN = "id1";
     public static final String ID2_PK_COLUMN = "id2";
 
-    public static final Property<Integer> ID1 = new Property<Integer>("id1");
-    public static final Property<Integer> ID2 = new Property<Integer>("id2");
-    public static final Property<String> NAME = new Property<String>("name");
-    public static final Property<List<E18>> E18S = new Property<List<E18>>("e18s");
+    public static final Property<Integer> ID1 = Property.create("id1", Integer.class);
+    public static final Property<Integer> ID2 = Property.create("id2", Integer.class);
+    public static final Property<String> NAME = Property.create("name", String.class);
+    public static final Property<List<E18>> E18S = Property.create("e18s", List.class);
 
     public void setId1(Integer id1) {
         writeProperty("id1", id1);

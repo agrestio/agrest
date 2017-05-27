@@ -1,11 +1,5 @@
 package com.nhl.link.rest.runtime.adapter.sencha;
 
-import java.util.Collection;
-
-import javax.ws.rs.core.Feature;
-
-import org.apache.cayenne.di.Binder;
-
 import com.nhl.link.rest.DataResponse;
 import com.nhl.link.rest.runtime.LinkRestRuntime;
 import com.nhl.link.rest.runtime.adapter.LinkRestAdapter;
@@ -14,6 +8,10 @@ import com.nhl.link.rest.runtime.parser.IRequestParser;
 import com.nhl.link.rest.runtime.parser.IUpdateParser;
 import com.nhl.link.rest.runtime.parser.sort.ISortProcessor;
 import com.nhl.link.rest.runtime.semantics.IRelationshipMapper;
+import org.apache.cayenne.di.Binder;
+
+import javax.ws.rs.core.Feature;
+import java.util.Collection;
 
 /**
  * A collection of Sencha-specific extensions to LinkRest.
@@ -32,7 +30,7 @@ public class SenchaAdapter implements LinkRestAdapter {
 		binder.bind(ISenchaFilterProcessor.class).to(SenchaFilterProcessor.class);
 		binder.bind(IUpdateParser.class).to(SenchaUpdateParser.class);
 
-		binder.<Class<?>> bindMap(LinkRestRuntime.BODY_WRITERS_MAP).put(DataResponse.class.getName(),
+		binder.bindMap(Class.class, LinkRestRuntime.BODY_WRITERS_MAP).put(DataResponse.class.getName(),
 				SenchaDataResponseWriter.class);
 	}
 

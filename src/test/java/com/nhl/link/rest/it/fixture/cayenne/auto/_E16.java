@@ -19,9 +19,9 @@ public abstract class _E16 extends CayenneDataObject {
 
     public static final String ID_PK_COLUMN = "id";
 
-    public static final Property<Date> C_DATE = new Property<Date>("cDate");
-    public static final Property<Time> C_TIME = new Property<Time>("cTime");
-    public static final Property<Timestamp> C_TIMESTAMP = new Property<Timestamp>("cTimestamp");
+    public static final Property<Date> C_DATE = Property.create("cDate", Date.class);
+    public static final Property<Time> C_TIME = Property.create("cTime", Time.class);
+    public static final Property<Timestamp> C_TIMESTAMP = Property.create("cTimestamp", Timestamp.class);
 
     public void setCDate(Date cDate) {
         writeProperty("cDate", cDate);

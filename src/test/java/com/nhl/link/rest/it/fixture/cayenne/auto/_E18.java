@@ -13,12 +13,12 @@ import com.nhl.link.rest.it.fixture.cayenne.E17;
  */
 public abstract class _E18 extends CayenneDataObject {
 
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L; 
 
     public static final String ID_PK_COLUMN = "id";
 
-    public static final Property<String> NAME = new Property<String>("name");
-    public static final Property<E17> E17 = new Property<E17>("e17");
+    public static final Property<String> NAME = Property.create("name", String.class);
+    public static final Property<E17> E17 = Property.create("e17", E17.class);
 
     public void setName(String name) {
         writeProperty("name", name);

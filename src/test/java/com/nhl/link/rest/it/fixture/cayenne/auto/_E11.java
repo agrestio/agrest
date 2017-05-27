@@ -19,9 +19,9 @@ public abstract class _E11 extends CayenneDataObject {
 
     public static final String ID_PK_COLUMN = "id";
 
-    public static final Property<String> ADDRESS = new Property<String>("address");
-    public static final Property<String> NAME = new Property<String>("name");
-    public static final Property<List<E10>> E10 = new Property<List<E10>>("e10");
+    public static final Property<String> ADDRESS = Property.create("address", String.class);
+    public static final Property<String> NAME = Property.create("name", String.class);
+    public static final Property<List<E10>> E10 = Property.create("e10", List.class);
 
     public void setAddress(String address) {
         writeProperty("address", address);

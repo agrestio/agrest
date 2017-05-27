@@ -20,9 +20,9 @@ public abstract class _E8 extends CayenneDataObject {
 
     public static final String ID_PK_COLUMN = "id";
 
-    public static final Property<String> NAME = new Property<String>("name");
-    public static final Property<List<E7>> E7S = new Property<List<E7>>("e7s");
-    public static final Property<E9> E9 = new Property<E9>("e9");
+    public static final Property<String> NAME = Property.create("name", String.class);
+    public static final Property<List<E7>> E7S = Property.create("e7s", List.class);
+    public static final Property<E9> E9 = Property.create("e9", E9.class);
 
     public void setName(String name) {
         writeProperty("name", name);

@@ -1,18 +1,16 @@
 package com.nhl.link.rest.runtime;
 
-import java.util.Collection;
-import java.util.Map;
+import com.nhl.link.rest.provider.EntityUpdateCollectionReader;
+import com.nhl.link.rest.provider.EntityUpdateReader;
+import com.nhl.link.rest.provider.ResponseStatusDynamicFeature;
+import org.apache.cayenne.di.Injector;
+import org.apache.cayenne.di.Key;
 
 import javax.ws.rs.core.Configuration;
 import javax.ws.rs.core.Feature;
 import javax.ws.rs.core.FeatureContext;
-
-import org.apache.cayenne.di.Injector;
-import org.apache.cayenne.di.Key;
-
-import com.nhl.link.rest.provider.EntityUpdateCollectionReader;
-import com.nhl.link.rest.provider.EntityUpdateReader;
-import com.nhl.link.rest.provider.ResponseStatusDynamicFeature;
+import java.util.Collection;
+import java.util.Map;
 
 /**
  * Stores LinkRest runtime stack packaged as a JAX RS {@link Feature}.
@@ -67,7 +65,8 @@ public class LinkRestRuntime implements Feature {
 		context.property(LinkRestRuntime.LINK_REST_CONTAINER_PROPERTY, injector);
 
 		@SuppressWarnings("unchecked")
-		Map<String, Class<?>> bodyWriters = injector.getInstance(Key.get(Map.class, LinkRestRuntime.BODY_WRITERS_MAP));
+		Map<String, Class> bodyWriters =
+				injector.getInstance(Key.getMapOf(String.class, Class.class, LinkRestRuntime.BODY_WRITERS_MAP));
 
 		for (Class<?> type : bodyWriters.values()) {
 			context.register(type);

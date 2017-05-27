@@ -14,13 +14,13 @@ import com.nhl.link.rest.it.fixture.cayenne.E15;
  */
 public abstract class _E15E1 extends CayenneDataObject {
 
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L; 
 
     public static final String E15_ID_PK_COLUMN = "e15_id";
     public static final String E1_ID_PK_COLUMN = "e1_id";
 
-    public static final Property<E1> E1 = new Property<E1>("e1");
-    public static final Property<E15> E15 = new Property<E15>("e15");
+    public static final Property<E1> E1 = Property.create("e1", E1.class);
+    public static final Property<E15> E15 = Property.create("e15", E15.class);
 
     public void setE1(E1 e1) {
         setToOneTarget("e1", e1, true);

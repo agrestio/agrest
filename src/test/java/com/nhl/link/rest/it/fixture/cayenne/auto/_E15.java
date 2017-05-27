@@ -21,10 +21,10 @@ public abstract class _E15 extends CayenneDataObject {
 
     public static final String LONG_ID_PK_COLUMN = "long_id";
 
-    public static final Property<String> NAME = new Property<String>("name");
-    public static final Property<List<E14>> E14S = new Property<List<E14>>("e14s");
-    public static final Property<List<E15E1>> E15E1 = new Property<List<E15E1>>("e15e1");
-    public static final Property<List<E5>> E5S = new Property<List<E5>>("e5s");
+    public static final Property<String> NAME = Property.create("name", String.class);
+    public static final Property<List<E14>> E14S = Property.create("e14s", List.class);
+    public static final Property<List<E15E1>> E15E1 = Property.create("e15e1", List.class);
+    public static final Property<List<E5>> E5S = Property.create("e5s", List.class);
 
     public void setName(String name) {
         writeProperty("name", name);

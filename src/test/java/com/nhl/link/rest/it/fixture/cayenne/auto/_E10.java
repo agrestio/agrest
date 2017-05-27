@@ -20,14 +20,14 @@ public abstract class _E10 extends CayenneDataObject {
 
     public static final String ID_PK_COLUMN = "id";
 
-    public static final Property<Boolean> C_BOOLEAN = new Property<Boolean>("cBoolean");
-    public static final Property<Date> C_DATE = new Property<Date>("cDate");
-    public static final Property<BigDecimal> C_DECIMAL = new Property<BigDecimal>("cDecimal");
-    public static final Property<Integer> C_INT = new Property<Integer>("cInt");
-    public static final Property<Date> C_TIME = new Property<Date>("cTime");
-    public static final Property<Date> C_TIMESTAMP = new Property<Date>("cTimestamp");
-    public static final Property<String> C_VARCHAR = new Property<String>("cVarchar");
-    public static final Property<E11> E11S = new Property<E11>("e11s");
+    public static final Property<Boolean> C_BOOLEAN = Property.create("cBoolean", Boolean.class);
+    public static final Property<Date> C_DATE = Property.create("cDate", Date.class);
+    public static final Property<BigDecimal> C_DECIMAL = Property.create("cDecimal", BigDecimal.class);
+    public static final Property<Integer> C_INT = Property.create("cInt", Integer.class);
+    public static final Property<Date> C_TIME = Property.create("cTime", Date.class);
+    public static final Property<Date> C_TIMESTAMP = Property.create("cTimestamp", Date.class);
+    public static final Property<String> C_VARCHAR = Property.create("cVarchar", String.class);
+    public static final Property<E11> E11S = Property.create("e11s", E11.class);
 
     public void setCBoolean(Boolean cBoolean) {
         writeProperty("cBoolean", cBoolean);
