@@ -67,9 +67,6 @@
 			<id>linkrest-dependencies</id>
 			<name>Link Rest Dependencies Repo</name>
 			<url>http://maven.objectstyle.org/nexus/content/groups/linkrest</url>
-			<snapshots>
-				<enabled>false</enabled>
-			</snapshots>
 		</repository>
 	</repositories>
 	<pluginRepositories>
