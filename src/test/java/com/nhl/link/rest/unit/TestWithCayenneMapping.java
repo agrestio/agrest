@@ -80,8 +80,8 @@ public class TestWithCayenneMapping {
     }
 
     protected IMetadataService createMetadataService() {
-        return new MetadataService(Collections.<LrEntity<?>>emptyList(),
-                Collections.<String, LrEntityOverlay<?>>emptyMap(), mockCayennePersister);
+        return new MetadataService(Collections.<LrEntity>emptyList(),
+                Collections.<String, LrEntityOverlay>emptyMap(), mockCayennePersister);
     }
 
     protected IResourceMetadataService createResourceMetadataService() {

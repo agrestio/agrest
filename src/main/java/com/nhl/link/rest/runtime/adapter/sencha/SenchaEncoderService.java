@@ -1,30 +1,29 @@
 package com.nhl.link.rest.runtime.adapter.sencha;
 
-import java.util.List;
-import java.util.Map;
-
-import com.nhl.link.rest.encoder.PropertyMetadataEncoder;
-import org.apache.cayenne.di.Inject;
-
 import com.nhl.link.rest.EntityProperty;
 import com.nhl.link.rest.ResourceEntity;
 import com.nhl.link.rest.encoder.Encoder;
 import com.nhl.link.rest.encoder.EncoderFilter;
+import com.nhl.link.rest.encoder.PropertyMetadataEncoder;
 import com.nhl.link.rest.meta.LrRelationship;
 import com.nhl.link.rest.runtime.encoder.EncoderService;
 import com.nhl.link.rest.runtime.encoder.IAttributeEncoderFactory;
 import com.nhl.link.rest.runtime.encoder.IStringConverterFactory;
 import com.nhl.link.rest.runtime.semantics.IRelationshipMapper;
+import org.apache.cayenne.di.Inject;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * @since 1.5
  */
 public class SenchaEncoderService extends EncoderService {
 
-	public SenchaEncoderService(@Inject(ENCODER_FILTER_LIST) List<EncoderFilter> filters,
+	public SenchaEncoderService(@Inject List<EncoderFilter> filters,
 			@Inject IAttributeEncoderFactory attributeEncoderFactory,
 			@Inject IStringConverterFactory stringConverterFactory, @Inject IRelationshipMapper relationshipMapper,
-			@Inject(PROPERTY_METADATA_ENCODER_MAP) Map<String, PropertyMetadataEncoder> propertyMetadataEncoders) {
+			@Inject Map<String, PropertyMetadataEncoder> propertyMetadataEncoders) {
 		super(filters, attributeEncoderFactory, stringConverterFactory, relationshipMapper, propertyMetadataEncoders);
 	}
 

@@ -293,9 +293,9 @@ public class LinkRestBuilder {
 			@Override
 			public void configure(Binder binder) {
 
-				binder.bindList(EncoderFilter.class, EncoderService.ENCODER_FILTER_LIST).addAll(encoderFilters);
-				binder.bindList(LrEntity.class, MetadataService.EXTRA_ENTITIES_LIST).addAll(extraEntities);
-				binder.bindMap(LrEntityOverlay.class, MetadataService.ENTITY_OVERLAY_MAP).putAll(entityOverlays);
+				binder.bindList(EncoderFilter.class).addAll(encoderFilters);
+				binder.bindList(LrEntity.class).addAll(extraEntities);
+				binder.bindMap(LrEntityOverlay.class).putAll(entityOverlays);
 				binder.bindMap(Class.class, LinkRestRuntime.BODY_WRITERS_MAP)
 						.put(SimpleResponse.class.getName(), SimpleResponseWriter.class)
 						.put(DataResponse.class.getName(), DataResponseWriter.class)
@@ -303,8 +303,7 @@ public class LinkRestBuilder {
 
 				binder.bindList(EntityConstraint.class, ConstraintsHandler.DEFAULT_READ_CONSTRAINTS_LIST);
 				binder.bindList(EntityConstraint.class, ConstraintsHandler.DEFAULT_WRITE_CONSTRAINTS_LIST);
-				binder.bindMap(PropertyMetadataEncoder.class, EncoderService.PROPERTY_METADATA_ENCODER_MAP)
-						.putAll(metadataEncoders);
+				binder.bindMap(PropertyMetadataEncoder.class).putAll(metadataEncoders);
 
 				if (linkRestServiceType != null) {
 					binder.bind(ILinkRestService.class).to(linkRestServiceType);

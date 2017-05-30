@@ -1,18 +1,5 @@
 package com.nhl.link.rest.meta.cayenne;
 
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
-
-import javax.ws.rs.core.Response.Status;
-
-import org.apache.cayenne.map.DbAttribute;
-import org.apache.cayenne.map.EntityResolver;
-import org.apache.cayenne.map.ObjAttribute;
-import org.apache.cayenne.map.ObjEntity;
-import org.apache.cayenne.map.ObjRelationship;
-
 import com.nhl.link.rest.LinkRestException;
 import com.nhl.link.rest.meta.DefaultLrAttribute;
 import com.nhl.link.rest.meta.LrAttribute;
@@ -21,6 +8,17 @@ import com.nhl.link.rest.meta.LrEntity;
 import com.nhl.link.rest.meta.LrEntityOverlay;
 import com.nhl.link.rest.meta.LrPersistentEntity;
 import com.nhl.link.rest.runtime.parser.PathConstants;
+import org.apache.cayenne.map.DbAttribute;
+import org.apache.cayenne.map.EntityResolver;
+import org.apache.cayenne.map.ObjAttribute;
+import org.apache.cayenne.map.ObjEntity;
+import org.apache.cayenne.map.ObjRelationship;
+
+import javax.ws.rs.core.Response.Status;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 /**
  * An {@link LrDataMap} that can resolve metadata from Cayenne mapping,
@@ -31,11 +29,11 @@ import com.nhl.link.rest.runtime.parser.PathConstants;
 public class CayenneAwareLrDataMap implements LrDataMap {
 
 	private EntityResolver resolver;
-	private ConcurrentMap<Class<?>, LrEntity<?>> entities;
-	private Map<String, LrEntityOverlay<?>> entityOverlays;
+	private ConcurrentMap<Class<?>, LrEntity> entities;
+	private Map<String, LrEntityOverlay> entityOverlays;
 
-	public CayenneAwareLrDataMap(EntityResolver resolver, List<LrEntity<?>> extraEntities,
-			Map<String, LrEntityOverlay<?>> entityOverlays) {
+	public CayenneAwareLrDataMap(EntityResolver resolver, List<LrEntity> extraEntities,
+			Map<String, LrEntityOverlay> entityOverlays) {
 
 		this.resolver = resolver;
 		this.entityOverlays = entityOverlays;

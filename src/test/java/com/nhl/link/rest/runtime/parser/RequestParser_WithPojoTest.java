@@ -1,21 +1,5 @@
 package com.nhl.link.rest.runtime.parser;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-
-import javax.ws.rs.core.MultivaluedMap;
-import javax.ws.rs.core.UriInfo;
-
-import org.junit.Before;
-import org.junit.Test;
-
 import com.nhl.link.rest.ResourceEntity;
 import com.nhl.link.rest.it.fixture.pojo.model.P1;
 import com.nhl.link.rest.it.fixture.pojo.model.P2;
@@ -37,6 +21,18 @@ import com.nhl.link.rest.runtime.parser.sort.SortProcessor;
 import com.nhl.link.rest.runtime.parser.tree.ITreeProcessor;
 import com.nhl.link.rest.runtime.parser.tree.IncludeExcludeProcessor;
 import com.nhl.link.rest.unit.TestWithCayenneMapping;
+import org.junit.Before;
+import org.junit.Test;
+
+import javax.ws.rs.core.MultivaluedMap;
+import javax.ws.rs.core.UriInfo;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class RequestParser_WithPojoTest extends TestWithCayenneMapping {
 
@@ -58,8 +54,8 @@ public class RequestParser_WithPojoTest extends TestWithCayenneMapping {
 
 	@Override
 	protected IMetadataService createMetadataService() {
-		List<LrEntity<?>> pojos = Arrays.asList(LrEntityBuilder.build(P1.class), LrEntityBuilder.build(P2.class));
-		return new MetadataService(pojos, Collections.<String, LrEntityOverlay<?>> emptyMap(), mockCayennePersister);
+		List<LrEntity> pojos = Arrays.<LrEntity>asList(LrEntityBuilder.build(P1.class), LrEntityBuilder.build(P2.class));
+		return new MetadataService(pojos, Collections.<String, LrEntityOverlay> emptyMap(), mockCayennePersister);
 	}
 
 	@Test
