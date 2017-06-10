@@ -21,7 +21,7 @@
 
 		<servlet-api-version>3.0.0.v201112011016</servlet-api-version>
 		<slf4j-version>1.7.12</slf4j-version>
-		<cayenne-version>4.0.M6-SNAPSHOT</cayenne-version>
+		<cayenne-version>4.0.B1</cayenne-version>
 		<jersey-version>2.22.1</jersey-version>
 		<jackson-version>2.6.3</jackson-version>
 	</properties>
@@ -72,6 +72,10 @@
 			<name>Link Rest Dependencies Repo</name>
 			<url>http://maven.objectstyle.org/nexus/content/groups/linkrest</url>
 		</repository>
+		<repository>
+			<id>cayenne-vote-repo-tmp</id>
+			<url>https://repository.apache.org/content/repositories/orgapachecayenne-1015/</url>
+		</repository>
 	</repositories>
 	<pluginRepositories>
 		<pluginRepository>
@@ -81,6 +85,10 @@
 			<snapshots>
 				<enabled>false</enabled>
 			</snapshots>
+		</pluginRepository>
+		<pluginRepository>
+			<id>cayenne-vote-repo-tmp</id>
+			<url>https://repository.apache.org/content/repositories/orgapachecayenne-1015/</url>
 		</pluginRepository>
 	</pluginRepositories>
 
