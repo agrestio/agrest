@@ -3,7 +3,6 @@ package com.nhl.link.rest.unit;
 import com.nhl.link.rest.ResourceEntity;
 import com.nhl.link.rest.meta.DefaultLrAttribute;
 import com.nhl.link.rest.meta.LrEntity;
-import com.nhl.link.rest.meta.LrEntityOverlay;
 import com.nhl.link.rest.meta.LrPersistentAttribute;
 import com.nhl.link.rest.meta.cayenne.CayenneEntityCompiler;
 import com.nhl.link.rest.meta.compiler.LrEntityCompiler;
@@ -83,9 +82,7 @@ public class Java8TestWithCayenneMapping {
 
 	protected IMetadataService createMetadataService() {
 
-		List<LrEntityCompiler> compilers = asList(
-				new CayenneEntityCompiler(mockCayennePersister, Collections.<String, LrEntityOverlay<?>> emptyMap(), converterFactory));
-
+		List<LrEntityCompiler> compilers = asList(new CayenneEntityCompiler(mockCayennePersister, Collections.emptyMap(), converterFactory));
 		return new MetadataService(compilers, mockCayennePersister);
 	}
 

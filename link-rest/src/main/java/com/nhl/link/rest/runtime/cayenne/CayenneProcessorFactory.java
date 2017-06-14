@@ -1,17 +1,5 @@
 package com.nhl.link.rest.runtime.cayenne;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.ws.rs.core.Response.Status;
-
-import org.apache.cayenne.DataObject;
-import org.apache.cayenne.di.Inject;
-
 import com.nhl.link.rest.ResourceEntity;
 import com.nhl.link.rest.encoder.EncoderFilter;
 import com.nhl.link.rest.meta.LrEntity;
@@ -30,7 +18,6 @@ import com.nhl.link.rest.runtime.cayenne.processor.CayenneUnrelateStage;
 import com.nhl.link.rest.runtime.cayenne.processor.CayenneUpdatePostProcessStage;
 import com.nhl.link.rest.runtime.cayenne.processor.CayenneUpdateStage;
 import com.nhl.link.rest.runtime.constraints.IConstraintsHandler;
-import com.nhl.link.rest.runtime.encoder.EncoderService;
 import com.nhl.link.rest.runtime.encoder.IEncoderService;
 import com.nhl.link.rest.runtime.meta.IMetadataService;
 import com.nhl.link.rest.runtime.meta.IResourceMetadataService;
@@ -48,6 +35,16 @@ import com.nhl.link.rest.runtime.processor.update.ApplyUpdateServerParamsStage;
 import com.nhl.link.rest.runtime.processor.update.InitializeUpdateChainStage;
 import com.nhl.link.rest.runtime.processor.update.ParseUpdateRequestStage;
 import com.nhl.link.rest.runtime.processor.update.UpdateContext;
+import org.apache.cayenne.DataObject;
+import org.apache.cayenne.di.Inject;
+
+import javax.ws.rs.core.Response.Status;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @since 1.16
@@ -67,7 +64,7 @@ public class CayenneProcessorFactory implements IProcessorFactory {
 			@Inject IEncoderService encoderService, @Inject ICayennePersister persister,
 			@Inject IConstraintsHandler constraintsHandler, @Inject IMetadataService metadataService,
 			@Inject IResourceMetadataService resourceMetadataService,
-			@Inject(EncoderService.ENCODER_FILTER_LIST) List<EncoderFilter> filters) {
+			@Inject List<EncoderFilter> filters) {
 		this.requestParser = requestParser;
 		this.encoderService = encoderService;
 		this.persister = persister;

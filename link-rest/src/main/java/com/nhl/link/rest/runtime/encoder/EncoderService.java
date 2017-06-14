@@ -18,9 +18,6 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class EncoderService implements IEncoderService {
 
-    public static final String ENCODER_FILTER_LIST = "linkrest.encoder.filter.list";
-    public static final String PROPERTY_METADATA_ENCODER_MAP = "linkrest.metadata.encoder.map";
-
     protected IAttributeEncoderFactory attributeEncoderFactory;
     protected IRelationshipMapper relationshipMapper;
     private IStringConverterFactory stringConverterFactory;
@@ -28,10 +25,10 @@ public class EncoderService implements IEncoderService {
     private Map<String, PropertyMetadataEncoder> propertyMetadataEncoders;
     private Map<ResourceEntity<?>, Encoder> entityMetadataEncoders;
 
-    public EncoderService(@Inject(ENCODER_FILTER_LIST) List<EncoderFilter> filters,
+    public EncoderService(@Inject List<EncoderFilter> filters,
                           @Inject IAttributeEncoderFactory attributeEncoderFactory,
                           @Inject IStringConverterFactory stringConverterFactory, @Inject IRelationshipMapper relationshipMapper,
-                          @Inject(PROPERTY_METADATA_ENCODER_MAP) Map<String, PropertyMetadataEncoder> propertyMetadataEncoders) {
+                          @Inject Map<String, PropertyMetadataEncoder> propertyMetadataEncoders) {
         this.attributeEncoderFactory = attributeEncoderFactory;
         this.relationshipMapper = relationshipMapper;
         this.stringConverterFactory = stringConverterFactory;

@@ -20,10 +20,10 @@ import java.util.Map;
  */
 public class SenchaEncoderService extends EncoderService {
 
-	public SenchaEncoderService(@Inject(ENCODER_FILTER_LIST) List<EncoderFilter> filters,
+	public SenchaEncoderService(@Inject List<EncoderFilter> filters,
 			@Inject IAttributeEncoderFactory attributeEncoderFactory,
 			@Inject IStringConverterFactory stringConverterFactory, @Inject IRelationshipMapper relationshipMapper,
-			@Inject(PROPERTY_METADATA_ENCODER_MAP) Map<String, PropertyMetadataEncoder> propertyMetadataEncoders) {
+			@Inject Map<String, PropertyMetadataEncoder> propertyMetadataEncoders) {
 		super(filters, attributeEncoderFactory, stringConverterFactory, relationshipMapper, propertyMetadataEncoders);
 	}
 

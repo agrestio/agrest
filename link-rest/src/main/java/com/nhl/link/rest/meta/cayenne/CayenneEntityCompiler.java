@@ -37,12 +37,6 @@ public class CayenneEntityCompiler implements LrEntityCompiler {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(CayenneEntityCompiler.class);
 
-	/**
-	 * A DI key that allows to expand the model of persistent entities coming
-	 * from Cayenne.
-	 */
-	public static final String ENTITY_OVERLAY_MAP = "linkrest.meta.entity.overlay.map";
-
 	static Class<?> getJavaTypeForTypeName(String typeName) {
 
 		if (typeName == null) {
@@ -79,11 +73,11 @@ public class CayenneEntityCompiler implements LrEntityCompiler {
 	}
 
 	private EntityResolver resolver;
-	private Map<String, LrEntityOverlay<?>> entityOverlays;
+	private Map<String, LrEntityOverlay> entityOverlays;
 	private IJsonValueConverterFactory converterFactory;
 
 	public CayenneEntityCompiler(@Inject ICayennePersister cayennePersister,
-								 @Inject(ENTITY_OVERLAY_MAP) Map<String, LrEntityOverlay<?>> entityOverlays,
+								 @Inject Map<String, LrEntityOverlay> entityOverlays,
 								 @Inject IJsonValueConverterFactory converterFactory) {
 		this.resolver = cayennePersister.entityResolver();
 		this.entityOverlays = entityOverlays;

@@ -96,7 +96,7 @@ public class LinkRestBuilder {
 	private ILinkRestService linkRestService;
 
 	private List<EncoderFilter> encoderFilters;
-	private Map<String, LrEntityOverlay<?>> entityOverlays;
+	private Map<String, LrEntityOverlay> entityOverlays;
 	private Map<Class<?>, Class<?>> exceptionMappers;
 	private Collection<LinkRestAdapter> adapters;
 	private Map<String, PropertyMetadataEncoder> metadataEncoders;
@@ -286,23 +286,23 @@ public class LinkRestBuilder {
 
 		Module module = binder -> {
 
-            binder.<EncoderFilter> bindList(EncoderService.ENCODER_FILTER_LIST).addAll(encoderFilters);
+            binder.bindList(EncoderFilter.class).addAll(encoderFilters);
 
             binder.bind(CayenneEntityCompiler.class).to(CayenneEntityCompiler.class);
             binder.bind(PojoEntityCompiler.class).to(PojoEntityCompiler.class);
-            binder.<LrEntityCompiler> bindList(MetadataService.ENTITY_COMPILER_LIST)
-                    .add(CayenneEntityCompiler.class).add(PojoEntityCompiler.class);
+            binder.bindList(LrEntityCompiler.class)
+					.add(CayenneEntityCompiler.class)
+					.add(PojoEntityCompiler.class);
 
-            binder.<LrEntityOverlay<?>> bindMap(CayenneEntityCompiler.ENTITY_OVERLAY_MAP).putAll(entityOverlays);
-            binder.<Class<?>> bindMap(LinkRestRuntime.BODY_WRITERS_MAP)
+            binder.bindMap(LrEntityOverlay.class).putAll(entityOverlays);
+            binder.bindMap(Class.class, LinkRestRuntime.BODY_WRITERS_MAP)
                     .put(SimpleResponse.class.getName(), SimpleResponseWriter.class)
                     .put(DataResponse.class.getName(), DataResponseWriter.class)
                     .put(MetadataResponse.class.getName(), MetadataResponseWriter.class);
 
-            binder.<EntityConstraint> bindList(ConstraintsHandler.DEFAULT_READ_CONSTRAINTS_LIST);
-            binder.<EntityConstraint> bindList(ConstraintsHandler.DEFAULT_WRITE_CONSTRAINTS_LIST);
-            binder.<PropertyMetadataEncoder> bindMap(EncoderService.PROPERTY_METADATA_ENCODER_MAP)
-                    .putAll(metadataEncoders);
+            binder.bindList(EntityConstraint.class, ConstraintsHandler.DEFAULT_READ_CONSTRAINTS_LIST);
+            binder.bindList(EntityConstraint.class, ConstraintsHandler.DEFAULT_WRITE_CONSTRAINTS_LIST);
+            binder.bindMap(PropertyMetadataEncoder.class).putAll(metadataEncoders);
 
             if (linkRestServiceType != null) {
                 binder.bind(ILinkRestService.class).to(linkRestServiceType);

@@ -3,7 +3,6 @@ package com.nhl.link.rest.runtime.parser;
 import com.nhl.link.rest.ResourceEntity;
 import com.nhl.link.rest.it.fixture.pojo.model.P1;
 import com.nhl.link.rest.it.fixture.pojo.model.P2;
-import com.nhl.link.rest.meta.LrEntityOverlay;
 import com.nhl.link.rest.meta.cayenne.CayenneEntityCompiler;
 import com.nhl.link.rest.meta.compiler.LrEntityCompiler;
 import com.nhl.link.rest.meta.compiler.PojoEntityCompiler;
@@ -58,8 +57,7 @@ public class RequestParser_WithPojoTest extends TestWithCayenneMapping {
 
 		List<LrEntityCompiler> compilers = new ArrayList<>();
 		compilers.add(new PojoEntityCompiler(converterFactory));
-		compilers.add(
-				new CayenneEntityCompiler(mockCayennePersister, Collections.<String, LrEntityOverlay<?>> emptyMap(), converterFactory));
+		compilers.add(new CayenneEntityCompiler(mockCayennePersister, Collections.emptyMap(), converterFactory));
 
 		return new MetadataService(compilers, mockCayennePersister);
 	}

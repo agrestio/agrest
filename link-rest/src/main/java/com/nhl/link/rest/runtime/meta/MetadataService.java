@@ -18,18 +18,10 @@ import java.util.List;
 
 public class MetadataService implements IMetadataService {
 
-	/**
-	 * A DI key that allows to access a list of entity compilers.
-	 * 
-	 * @since 1.24
-	 */
-	public static final String ENTITY_COMPILER_LIST = "linkrest.meta.entity.compiler.list";
-
 	private EntityResolver entityResolver;
 	private LrDataMap dataMap;
 
-	public MetadataService(@Inject(ENTITY_COMPILER_LIST) List<LrEntityCompiler> entityCompilers,
-			@Inject ICayennePersister cayenneService) {
+	public MetadataService(@Inject List<LrEntityCompiler> entityCompilers, @Inject ICayennePersister cayenneService) {
 
 		this.entityResolver = cayenneService.entityResolver();
 		this.dataMap = new LazyLrDataMap(entityCompilers);
