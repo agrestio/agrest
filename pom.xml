@@ -72,10 +72,6 @@
 			<name>Link Rest Dependencies Repo</name>
 			<url>http://maven.objectstyle.org/nexus/content/groups/linkrest</url>
 		</repository>
-		<repository>
-			<id>cayenne-vote-repo-tmp</id>
-			<url>https://repository.apache.org/content/repositories/orgapachecayenne-1015/</url>
-		</repository>
 	</repositories>
 	<pluginRepositories>
 		<pluginRepository>
@@ -85,10 +81,6 @@
 			<snapshots>
 				<enabled>false</enabled>
 			</snapshots>
-		</pluginRepository>
-		<pluginRepository>
-			<id>cayenne-vote-repo-tmp</id>
-			<url>https://repository.apache.org/content/repositories/orgapachecayenne-1015/</url>
 		</pluginRepository>
 	</pluginRepositories>
 
