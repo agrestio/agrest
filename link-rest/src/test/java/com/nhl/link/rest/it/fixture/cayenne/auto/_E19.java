@@ -21,29 +21,29 @@ public abstract class _E19 extends CayenneDataObject {
 
     public static final String ID_PK_COLUMN = "id";
 
-    public static final Property<BigDecimal> BIG_DECIMAL = new Property<BigDecimal>("bigDecimal");
-    public static final Property<BigInteger> BIG_INTEGER = new Property<BigInteger>("bigInteger");
-    public static final Property<Boolean> BOOLEAN_OBJECT = new Property<Boolean>("booleanObject");
-    public static final Property<Boolean> BOOLEAN_PRIMITIVE = new Property<Boolean>("booleanPrimitive");
-    public static final Property<Byte> BYTE_OBJECT = new Property<Byte>("byteObject");
-    public static final Property<Byte> BYTE_PRIMITIVE = new Property<Byte>("bytePrimitive");
-    public static final Property<Date> C_DATE = new Property<Date>("cDate");
-    public static final Property<String> C_STRING = new Property<String>("cString");
-    public static final Property<Time> C_TIME = new Property<Time>("cTime");
-    public static final Property<Timestamp> C_TIMESTAMP = new Property<Timestamp>("cTimestamp");
-    public static final Property<Character> CHAR_OBJECT = new Property<Character>("charObject");
-    public static final Property<Character> CHAR_PRIMITIVE = new Property<Character>("charPrimitive");
-    public static final Property<Double> DOUBLE_OBJECT = new Property<Double>("doubleObject");
-    public static final Property<Double> DOUBLE_PRIMITIVE = new Property<Double>("doublePrimitive");
-    public static final Property<Float> FLOAT_OBJECT = new Property<Float>("floatObject");
-    public static final Property<Float> FLOAT_PRIMITIVE = new Property<Float>("floatPrimitive");
-    public static final Property<byte[]> GUID = new Property<byte[]>("guid");
-    public static final Property<Integer> INT_OBJECT = new Property<Integer>("intObject");
-    public static final Property<Integer> INT_PRIMITIVE = new Property<Integer>("intPrimitive");
-    public static final Property<Long> LONG_OBJECT = new Property<Long>("longObject");
-    public static final Property<Long> LONG_PRIMITIVE = new Property<Long>("longPrimitive");
-    public static final Property<Short> SHORT_OBJECT = new Property<Short>("shortObject");
-    public static final Property<Short> SHORT_PRIMITIVE = new Property<Short>("shortPrimitive");
+    public static final Property<BigDecimal> BIG_DECIMAL = Property.create("bigDecimal", BigDecimal.class);
+    public static final Property<BigInteger> BIG_INTEGER = Property.create("bigInteger", BigInteger.class);
+    public static final Property<Boolean> BOOLEAN_OBJECT = Property.create("booleanObject", Boolean.class);
+    public static final Property<Boolean> BOOLEAN_PRIMITIVE = Property.create("booleanPrimitive", Boolean.class);
+    public static final Property<Byte> BYTE_OBJECT = Property.create("byteObject", Byte.class);
+    public static final Property<Byte> BYTE_PRIMITIVE = Property.create("bytePrimitive", Byte.class);
+    public static final Property<Date> C_DATE = Property.create("cDate", Date.class);
+    public static final Property<String> C_STRING = Property.create("cString", String.class);
+    public static final Property<Time> C_TIME = Property.create("cTime", Time.class);
+    public static final Property<Timestamp> C_TIMESTAMP = Property.create("cTimestamp", Timestamp.class);
+    public static final Property<Character> CHAR_OBJECT = Property.create("charObject", Character.class);
+    public static final Property<Character> CHAR_PRIMITIVE = Property.create("charPrimitive", Character.class);
+    public static final Property<Double> DOUBLE_OBJECT = Property.create("doubleObject", Double.class);
+    public static final Property<Double> DOUBLE_PRIMITIVE = Property.create("doublePrimitive", Double.class);
+    public static final Property<Float> FLOAT_OBJECT = Property.create("floatObject", Float.class);
+    public static final Property<Float> FLOAT_PRIMITIVE = Property.create("floatPrimitive", Float.class);
+    public static final Property<byte[]> GUID = Property.create("guid", byte[].class);
+    public static final Property<Integer> INT_OBJECT = Property.create("intObject", Integer.class);
+    public static final Property<Integer> INT_PRIMITIVE = Property.create("intPrimitive", Integer.class);
+    public static final Property<Long> LONG_OBJECT = Property.create("longObject", Long.class);
+    public static final Property<Long> LONG_PRIMITIVE = Property.create("longPrimitive", Long.class);
+    public static final Property<Short> SHORT_OBJECT = Property.create("shortObject", Short.class);
+    public static final Property<Short> SHORT_PRIMITIVE = Property.create("shortPrimitive", Short.class);
 
     public void setBigDecimal(BigDecimal bigDecimal) {
         writeProperty("bigDecimal", bigDecimal);

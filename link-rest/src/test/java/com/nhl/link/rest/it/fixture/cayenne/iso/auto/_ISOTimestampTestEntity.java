@@ -17,7 +17,7 @@ public abstract class _ISOTimestampTestEntity extends CayenneDataObject {
 
     public static final String ID_PK_COLUMN = "ID";
 
-    public static final Property<Timestamp> TIMESTAMP = new Property<Timestamp>("timestamp");
+    public static final Property<Timestamp> TIMESTAMP = Property.create("timestamp", Timestamp.class);
 
     public void setTimestamp(Timestamp timestamp) {
         writeProperty("timestamp", timestamp);

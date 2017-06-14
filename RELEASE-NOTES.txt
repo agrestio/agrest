@@ -3,6 +3,7 @@ Release 2.5
 #225 Support constraining FK updates
 #229 POST and PUT methods doesn't supports content type header with charset
 #230 Generic object API and type conversion problems
+#233 (2.x) Upgrade to Cayenne 4.0.B1
 
 Release 2.4
 

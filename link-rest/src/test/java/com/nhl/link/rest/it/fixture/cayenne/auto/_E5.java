@@ -21,10 +21,10 @@ public abstract class _E5 extends CayenneDataObject {
 
     public static final String ID_PK_COLUMN = "id";
 
-    public static final Property<Date> DATE = new Property<Date>("date");
-    public static final Property<String> NAME = new Property<String>("name");
-    public static final Property<List<E15>> E15S = new Property<List<E15>>("e15s");
-    public static final Property<List<E3>> E2S = new Property<List<E3>>("e2s");
+    public static final Property<Date> DATE = Property.create("date", Date.class);
+    public static final Property<String> NAME = Property.create("name", String.class);
+    public static final Property<List<E15>> E15S = Property.create("e15s", List.class);
+    public static final Property<List<E3>> E2S = Property.create("e2s", List.class);
 
     public void setDate(Date date) {
         writeProperty("date", date);

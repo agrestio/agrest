@@ -13,15 +13,10 @@ public abstract class _E23 extends CayenneDataObject {
 
     private static final long serialVersionUID = 1L; 
 
-    @Deprecated
-    public static final String EXPOSED_ID_PROPERTY = "exposedId";
-    @Deprecated
-    public static final String NAME_PROPERTY = "name";
-
     public static final String ID_PK_COLUMN = "id";
 
-    public static final Property<Integer> EXPOSED_ID = new Property<Integer>("exposedId");
-    public static final Property<String> NAME = new Property<String>("name");
+    public static final Property<Integer> EXPOSED_ID = Property.create("exposedId", Integer.class);
+    public static final Property<String> NAME = Property.create("name", String.class);
 
     public void setExposedId(Integer exposedId) {
         writeProperty("exposedId", exposedId);

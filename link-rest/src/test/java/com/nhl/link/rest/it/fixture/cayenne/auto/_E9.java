@@ -17,7 +17,7 @@ public abstract class _E9 extends CayenneDataObject {
 
     public static final String E8_ID_PK_COLUMN = "e8_id";
 
-    public static final Property<E8> E8 = new Property<E8>("e8");
+    public static final Property<E8> E8 = Property.create("e8", E8.class);
 
     public void setE8(E8 e8) {
         setToOneTarget("e8", e8, true);

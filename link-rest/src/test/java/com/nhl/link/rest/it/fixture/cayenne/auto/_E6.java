@@ -15,7 +15,7 @@ public abstract class _E6 extends CayenneDataObject {
 
     public static final String CHAR_ID_PK_COLUMN = "char_id";
 
-    public static final Property<String> CHAR_COLUMN = new Property<String>("charColumn");
+    public static final Property<String> CHAR_COLUMN = Property.create("charColumn", String.class);
 
     public void setCharColumn(String charColumn) {
         writeProperty("charColumn", charColumn);

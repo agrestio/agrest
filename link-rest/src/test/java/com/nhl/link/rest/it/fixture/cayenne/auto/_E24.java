@@ -11,12 +11,12 @@ import org.apache.cayenne.exp.Property;
  */
 public abstract class _E24 extends CayenneDataObject {
 
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L; 
 
     public static final String TYPE_PK_COLUMN = "TYPE";
 
-    public static final Property<String> NAME = new Property<String>("name");
-    public static final Property<String> TYPE = new Property<String>("type");
+    public static final Property<String> NAME = Property.create("name", String.class);
+    public static final Property<String> TYPE = Property.create("type", String.class);
 
     public void setName(String name) {
         writeProperty("name", name);

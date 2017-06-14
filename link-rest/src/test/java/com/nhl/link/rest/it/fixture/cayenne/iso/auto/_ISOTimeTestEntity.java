@@ -17,7 +17,7 @@ public abstract class _ISOTimeTestEntity extends CayenneDataObject {
 
     public static final String ID_PK_COLUMN = "ID";
 
-    public static final Property<Time> TIME = new Property<Time>("time");
+    public static final Property<Time> TIME = Property.create("time", Time.class);
 
     public void setTime(Time time) {
         writeProperty("time", time);
