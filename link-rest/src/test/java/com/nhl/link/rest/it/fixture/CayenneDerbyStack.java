@@ -5,9 +5,6 @@ import org.apache.cayenne.ObjectContext;
 import org.apache.cayenne.access.dbsync.CreateIfNoSchemaStrategy;
 import org.apache.cayenne.access.dbsync.SchemaUpdateStrategyFactory;
 import org.apache.cayenne.configuration.server.ServerRuntime;
-import org.apache.cayenne.configuration.server.ServerRuntimeBuilder;
-import org.apache.cayenne.di.Binder;
-import org.apache.cayenne.di.Module;
 import org.apache.cayenne.query.SQLSelect;
 import org.apache.cayenne.query.SQLTemplate;
 import org.junit.rules.ExternalResource;
@@ -27,12 +24,10 @@ public class CayenneDerbyStack extends ExternalResource {
 	public void before() {
 		derby = new DerbyManager(dbPath);
 
-		cayenne = new ServerRuntimeBuilder().addConfig("cayenne-linkrest-tests.xml").addModule(new Module() {
-			@Override
-			public void configure(Binder binder) {
-				binder.bind(SchemaUpdateStrategyFactory.class).toInstance(descriptor -> new CreateIfNoSchemaStrategy());
-			}
-		}).jdbcDriver("org.apache.derby.jdbc.EmbeddedDriver").url(String.format("jdbc:derby:%s;create=true", dbPath))
+		cayenne = ServerRuntime.builder().addConfig("cayenne-linkrest-tests.xml")
+				.addModule(binder ->
+						binder.bind(SchemaUpdateStrategyFactory.class).toInstance(descriptor -> new CreateIfNoSchemaStrategy())
+				).jdbcDriver("org.apache.derby.jdbc.EmbeddedDriver").url(String.format("jdbc:derby:%s;create=true", dbPath))
 				.build();
 	}
 
