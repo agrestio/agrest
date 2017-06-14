@@ -16,7 +16,6 @@ import com.nhl.link.rest.runtime.parser.converter.IJsonValueConverterFactory;
 import org.apache.cayenne.dba.TypesMapping;
 import org.apache.cayenne.di.Inject;
 import org.apache.cayenne.map.DbAttribute;
-import org.apache.cayenne.map.DbJoin;
 import org.apache.cayenne.map.DbRelationship;
 import org.apache.cayenne.map.EntityResolver;
 import org.apache.cayenne.map.ObjAttribute;
@@ -117,15 +116,6 @@ public class CayenneEntityCompiler implements LrEntityCompiler {
 
 		for (ObjRelationship r : objEntity.getRelationships()) {
 			List<DbRelationship> dbRelationshipsList = r.getDbRelationships();
-
-			DbRelationship reverseRelationship = dbRelationshipsList.get(0).getReverseRelationship();
-			if (reverseRelationship.isToDependentPK()) {
-				List<DbJoin> joins = reverseRelationship.getJoins();
-				if (joins.size() != 1) {
-					throw new LinkRestException(Response.Status.BAD_REQUEST,
-							"Multi-join relationship propagation is not supported yet: " + lrEntity.getName());
-				}
-			}
 
 			Class<?> targetEntityType = resolver.getClassDescriptor(r.getTargetEntityName()).getObjectClass();
 			LrEntity<?> targetEntity = dataMap.getEntity(targetEntityType);

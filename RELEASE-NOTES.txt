@@ -1,3 +1,7 @@
+Release 2.6
+
+#234 Error reading relationships: Multi-join relationship propagation is not supported yet
+
 Release 2.5
 
 #225 Support constraining FK updates
