@@ -116,7 +116,7 @@ public class PojoLinkRestService_InContainer_GET_IT extends JerseyTestOnPojo {
 
 		List<Number> numbers = Arrays.asList((byte)0, (short)1, 2, 3L, 4.f, 5.);
 		o1.setNumberList(numbers);
-		o1.setNumberSubtypeCollection(numbers);
+		o1.setWildcardCollection(numbers);
 
 		pojoDB.bucketForType(P8.class).put(1, o1);
 
@@ -126,9 +126,9 @@ public class PojoLinkRestService_InContainer_GET_IT extends JerseyTestOnPojo {
 				"\"booleans\":[true,false]," +
 				"\"characters\":[\"a\",\"b\",\"c\"]," +
 				"\"doubles\":[1.0,2.5,3.5]," +
+				"\"genericCollection\":[]," +
 				"\"numberList\":[0,1,2,3,4.0,5.0]," +
-				"\"numberSubtypeCollection\":[0,1,2,3,4.0,5.0]," +
 				"\"stringSet\":[\"abc\"]," +
-				"\"typedCollection\":[]}],\"total\":1}", response1.readEntity(String.class));
+				"\"wildcardCollection\":[0,1,2,3,4.0,5.0]}],\"total\":1}", response1.readEntity(String.class));
 	}
 }

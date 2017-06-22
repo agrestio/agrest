@@ -10,16 +10,16 @@ import java.util.Set;
 public class P8 {
     public static final String STRING_SET = "stringSet";
     public static final String NUMBER_LIST = "numberList";
-    public static final String NUMBER_SUBTYPE_COLLECTION = "numberSubtypeCollection";
+    public static final String WILDCARD_COLLECTION = "wildcardCollection";
+    public static final String GENERIC_COLLECTION = "genericCollection";
     public static final String BOOLEANS = "booleans";
     public static final String DOUBLES = "doubles";
     public static final String CHARACTERS = "characters";
-    public static final String TYPED_COLLECTION = "typedCollection";
 
 
     private Set<String> stringSet;
     private List<Number> numberList;
-    private Collection<? extends Number> numberSubtypeCollection;
+    private Collection<? extends Number> wildcardCollection;
     private Collection<Boolean> booleans;
     private Collection<Double> doubles;
     private Collection<Character> characters;
@@ -43,16 +43,16 @@ public class P8 {
     }
 
     @LrAttribute
-    public Collection<? extends Number> getNumberSubtypeCollection() {
-        return numberSubtypeCollection;
+    public Collection<? extends Number> getWildcardCollection() {
+        return wildcardCollection;
     }
 
-    public void setNumberSubtypeCollection(Collection<? extends Number> numberSubtypeCollection) {
-        this.numberSubtypeCollection = numberSubtypeCollection;
+    public void setWildcardCollection(Collection<? extends Number> wildcardCollection) {
+        this.wildcardCollection = wildcardCollection;
     }
 
     @LrAttribute
-    public <T extends Number> Collection<T> getTypedCollection() {
+    public <T extends Number> Collection<T> getGenericCollection() {
         return Collections.emptyList();
     }
 

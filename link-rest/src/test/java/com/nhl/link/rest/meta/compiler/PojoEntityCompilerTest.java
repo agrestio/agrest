@@ -51,8 +51,8 @@ public class PojoEntityCompilerTest {
 		assertEquals(Collection.class, entity.getAttribute(P8.BOOLEANS).getType());
 		assertEquals(Collection.class, entity.getAttribute(P8.DOUBLES).getType());
 		assertEquals(Collection.class, entity.getAttribute(P8.CHARACTERS).getType());
-		assertEquals(Collection.class, entity.getAttribute(P8.NUMBER_SUBTYPE_COLLECTION).getType());
-		assertEquals(Collection.class, entity.getAttribute(P8.TYPED_COLLECTION).getType());
+		assertEquals(Collection.class, entity.getAttribute(P8.WILDCARD_COLLECTION).getType());
+		assertEquals(Collection.class, entity.getAttribute(P8.GENERIC_COLLECTION).getType());
 		assertEquals(List.class, entity.getAttribute(P8.NUMBER_LIST).getType());
 		assertEquals(Set.class, entity.getAttribute(P8.STRING_SET).getType());
 		assertEquals(0, entity.getRelationships().size());
