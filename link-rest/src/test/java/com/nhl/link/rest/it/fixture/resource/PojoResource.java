@@ -12,6 +12,7 @@ import com.nhl.link.rest.LinkRest;
 import com.nhl.link.rest.it.fixture.pojo.model.P1;
 import com.nhl.link.rest.it.fixture.pojo.model.P4;
 import com.nhl.link.rest.it.fixture.pojo.model.P6;
+import com.nhl.link.rest.it.fixture.pojo.model.P8;
 
 @Path("pojo")
 public class PojoResource {
@@ -41,5 +42,11 @@ public class PojoResource {
 	@Path("p6/{id}")
 	public DataResponse<P6> p6ById(@PathParam("id") String id, @Context UriInfo uriInfo) {
 		return LinkRest.service(config).selectById(P6.class, id, uriInfo);
+	}
+
+	@GET
+	@Path("p8/{id}")
+	public DataResponse<P8> p8ById(@PathParam("id") int id, @Context UriInfo uriInfo) {
+		return LinkRest.service(config).selectById(P8.class, id, uriInfo);
 	}
 }

@@ -3,11 +3,15 @@ package com.nhl.link.rest.it.pojo;
 import static org.junit.Assert.assertEquals;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import com.nhl.link.rest.it.fixture.pojo.model.P8;
 import org.junit.Test;
 
 import com.nhl.link.rest.it.fixture.pojo.JerseyTestOnPojo;
@@ -99,5 +103,31 @@ public class PojoLinkRestService_InContainer_GET_IT extends JerseyTestOnPojo {
 		assertEquals(Status.OK.getStatusCode(), response1.getStatus());
 		assertEquals("{\"data\":{\"n1\":[{\"name\":\"n1\"}],\"n2\":[{\"name\":\"n2\"}]},\"total\":2}",
 				response1.readEntity(String.class));
+	}
+
+	@Test
+	public void test_CollectionAttributes() throws WebApplicationException, IOException {
+
+		P8 o1 = new P8();
+		o1.setBooleans(Arrays.asList(true, false));
+		o1.setCharacters(Arrays.asList('a', 'b', 'c'));
+		o1.setDoubles(Arrays.asList(1., 2.5, 3.5));
+		o1.setStringSet(Collections.singleton("abc"));
+
+		List<Number> numbers = Arrays.asList((byte)0, (short)1, 2, 3L, 4.f, 5.);
+		o1.setNumberList(numbers);
+		o1.setNumberSubtypeCollection(numbers);
+
+		pojoDB.bucketForType(P8.class).put(1, o1);
+
+		Response response1 = target("/pojo/p8/1").request().get();
+		assertEquals(Status.OK.getStatusCode(), response1.getStatus());
+		assertEquals("{\"data\":[{" +
+				"\"booleans\":[true,false]," +
+				"\"characters\":[\"a\",\"b\",\"c\"]," +
+				"\"doubles\":[1.0,2.5,3.5]," +
+				"\"numberList\":[0,1,2,3,4.0,5.0]," +
+				"\"numberSubtypeCollection\":[0,1,2,3,4.0,5.0]," +
+				"\"stringSet\":[\"abc\"]}],\"total\":1}", response1.readEntity(String.class));
 	}
 }

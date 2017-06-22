@@ -2,6 +2,7 @@ package com.nhl.link.rest.meta.compiler;
 
 import com.nhl.link.rest.annotation.LrAttribute;
 import com.nhl.link.rest.annotation.LrId;
+import com.nhl.link.rest.it.fixture.pojo.model.P8;
 import com.nhl.link.rest.meta.LazyLrDataMap;
 import com.nhl.link.rest.meta.LrEntity;
 import com.nhl.link.rest.runtime.parser.converter.DefaultJsonValueConverterFactory;
@@ -11,6 +12,8 @@ import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
+import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -35,6 +38,22 @@ public class PojoEntityCompilerTest {
 		assertNotNull(entity);
 		assertEquals(1, entity.getIds().size());
 		assertEquals(1, entity.getAttributes().size());
+		assertEquals(0, entity.getRelationships().size());
+	}
+
+	@Test
+	public void testCompile_CollectionAttributes() {
+		LrEntity<P8> entity = new PojoEntityCompiler(converterFactory)
+				.compile(P8.class, new LazyLrDataMap(compilers));
+		assertNotNull(entity);
+		assertEquals(0, entity.getIds().size());
+		assertEquals(6, entity.getAttributes().size());
+		assertEquals(Collection.class, entity.getAttribute(P8.BOOLEANS).getType());
+		assertEquals(Collection.class, entity.getAttribute(P8.DOUBLES).getType());
+		assertEquals(Collection.class, entity.getAttribute(P8.CHARACTERS).getType());
+		assertEquals(Collection.class, entity.getAttribute(P8.NUMBER_SUBTYPE_COLLECTION).getType());
+		assertEquals(List.class, entity.getAttribute(P8.NUMBER_LIST).getType());
+		assertEquals(Set.class, entity.getAttribute(P8.STRING_SET).getType());
 		assertEquals(0, entity.getRelationships().size());
 	}
 

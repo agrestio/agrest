@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.lang.reflect.WildcardType;
 import java.util.Collection;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -118,25 +119,41 @@ public class LrEntityBuilder<T> {
 	}
 
 	private boolean checkValidAttributeType(Class<?> type, Type genericType) {
-		return !Void.class.equals(type) && !void.class.equals(type) && !Map.class.isAssignableFrom(type)
-				&& !isCollectionOfSimpleType(type, genericType);
+		if (Void.class.equals(type) || void.class.equals(type) || Map.class.isAssignableFrom(type)) {
+			return false;
+		}
+		if (Collection.class.isAssignableFrom(type) && !isCollectionOfSimpleType(type, genericType)) {
+			return false;
+		}
+		return true;
 	}
 
 	private boolean isCollectionOfSimpleType(Class<?> type, Type genericType) {
 		if (Collection.class.isAssignableFrom(type) && genericType instanceof ParameterizedType) {
 			ParameterizedType pt = (ParameterizedType) genericType;
-			return isSimpleType(pt.getRawType());
+			Type[] typeArgs = pt.getActualTypeArguments();
+			if (typeArgs.length == 1) {
+				return isSimpleType(typeArgs[0]);
+			}
 		}
 		return false;
 	}
 
 	private boolean isSimpleType(Type rawType) {
+		Class<?> cls = null;
 		if (rawType instanceof Class) {
-			Class<?> cls = (Class<?>) rawType;
+			cls = (Class<?>) rawType;
+		} else if (rawType instanceof WildcardType) {
+			Type[] bounds = ((WildcardType) rawType).getUpperBounds();
+			if (bounds.length == 1 && bounds[0] instanceof Class) {
+				cls = (Class<?>) bounds[0];
+			}
+		}
+		if (cls != null) {
 			return String.class.isAssignableFrom(cls)
-					|| Number.class.isAssignableFrom(cls)
-					|| Boolean.class.isAssignableFrom(cls)
-					|| Character.class.isAssignableFrom(cls);
+				|| Number.class.isAssignableFrom(cls)
+				|| Boolean.class.isAssignableFrom(cls)
+				|| Character.class.isAssignableFrom(cls);
 		}
 		return false;
 	}
