@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.Collection;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -87,7 +88,7 @@ public class LrEntityBuilder<T> {
 
 		if (m.getAnnotation(LrAttribute.class) != null) {
 
-			if (checkValidAttributeType(m.getReturnType())) {
+			if (checkValidAttributeType(type, m.getGenericReturnType())) {
 				DefaultLrAttribute a = new DefaultLrAttribute(name, type);
 				entity.addAttribute(a);
 			} else {
@@ -101,7 +102,7 @@ public class LrEntityBuilder<T> {
 
 		if (m.getAnnotation(LrId.class) != null) {
 
-			if (checkValidAttributeType(m.getReturnType())) {
+			if (checkValidIdType(type)) {
 				DefaultLrAttribute a = new DefaultLrAttribute(name, type);
 				entity.addId(a);
 			} else {
@@ -116,9 +117,33 @@ public class LrEntityBuilder<T> {
 		return false;
 	}
 
-	private boolean checkValidAttributeType(Class<?> type) {
-		return !Void.class.equals(type) && !void.class.equals(type) && !Collection.class.isAssignableFrom(type)
-				&& !Map.class.isAssignableFrom(type);
+	private boolean checkValidAttributeType(Class<?> type, Type genericType) {
+		return !Void.class.equals(type) && !void.class.equals(type) && !Map.class.isAssignableFrom(type)
+				&& !isCollectionOfSimpleType(type, genericType);
+	}
+
+	private boolean isCollectionOfSimpleType(Class<?> type, Type genericType) {
+		if (Collection.class.isAssignableFrom(type) && genericType instanceof ParameterizedType) {
+			ParameterizedType pt = (ParameterizedType) genericType;
+			return isSimpleType(pt.getRawType());
+		}
+		return false;
+	}
+
+	private boolean isSimpleType(Type rawType) {
+		if (rawType instanceof Class) {
+			Class<?> cls = (Class<?>) rawType;
+			return String.class.isAssignableFrom(cls)
+					|| Number.class.isAssignableFrom(cls)
+					|| Boolean.class.isAssignableFrom(cls)
+					|| Character.class.isAssignableFrom(cls);
+		}
+		return false;
+	}
+
+	private boolean checkValidIdType(Class<?> type) {
+		return !Void.class.equals(type) && !void.class.equals(type) && !Map.class.isAssignableFrom(type)
+				&& !Collection.class.isAssignableFrom(type);
 	}
 
 	private boolean addAsRelationship(DefaultLrEntity<T> entity, String name, Method m) {
