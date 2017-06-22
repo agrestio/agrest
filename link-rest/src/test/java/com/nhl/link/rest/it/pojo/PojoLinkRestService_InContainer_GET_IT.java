@@ -128,6 +128,7 @@ public class PojoLinkRestService_InContainer_GET_IT extends JerseyTestOnPojo {
 				"\"doubles\":[1.0,2.5,3.5]," +
 				"\"numberList\":[0,1,2,3,4.0,5.0]," +
 				"\"numberSubtypeCollection\":[0,1,2,3,4.0,5.0]," +
-				"\"stringSet\":[\"abc\"]}],\"total\":1}", response1.readEntity(String.class));
+				"\"stringSet\":[\"abc\"]," +
+				"\"typedCollection\":[]}],\"total\":1}", response1.readEntity(String.class));
 	}
 }

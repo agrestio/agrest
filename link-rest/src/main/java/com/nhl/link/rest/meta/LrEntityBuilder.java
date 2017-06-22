@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.lang.reflect.TypeVariable;
 import java.lang.reflect.WildcardType;
 import java.util.Collection;
 import java.util.Map;
@@ -145,6 +146,11 @@ public class LrEntityBuilder<T> {
 			cls = (Class<?>) rawType;
 		} else if (rawType instanceof WildcardType) {
 			Type[] bounds = ((WildcardType) rawType).getUpperBounds();
+			if (bounds.length == 1 && bounds[0] instanceof Class) {
+				cls = (Class<?>) bounds[0];
+			}
+		} else if (rawType instanceof TypeVariable) {
+			Type[] bounds = ((TypeVariable) rawType).getBounds();
 			if (bounds.length == 1 && bounds[0] instanceof Class) {
 				cls = (Class<?>) bounds[0];
 			}

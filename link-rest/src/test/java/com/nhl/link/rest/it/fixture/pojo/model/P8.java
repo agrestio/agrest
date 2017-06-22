@@ -3,6 +3,7 @@ package com.nhl.link.rest.it.fixture.pojo.model;
 import com.nhl.link.rest.annotation.LrAttribute;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -13,6 +14,7 @@ public class P8 {
     public static final String BOOLEANS = "booleans";
     public static final String DOUBLES = "doubles";
     public static final String CHARACTERS = "characters";
+    public static final String TYPED_COLLECTION = "typedCollection";
 
 
     private Set<String> stringSet;
@@ -47,6 +49,11 @@ public class P8 {
 
     public void setNumberSubtypeCollection(Collection<? extends Number> numberSubtypeCollection) {
         this.numberSubtypeCollection = numberSubtypeCollection;
+    }
+
+    @LrAttribute
+    public <T extends Number> Collection<T> getTypedCollection() {
+        return Collections.emptyList();
     }
 
     @LrAttribute

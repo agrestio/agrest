@@ -47,11 +47,12 @@ public class PojoEntityCompilerTest {
 				.compile(P8.class, new LazyLrDataMap(compilers));
 		assertNotNull(entity);
 		assertEquals(0, entity.getIds().size());
-		assertEquals(6, entity.getAttributes().size());
+		assertEquals(7, entity.getAttributes().size());
 		assertEquals(Collection.class, entity.getAttribute(P8.BOOLEANS).getType());
 		assertEquals(Collection.class, entity.getAttribute(P8.DOUBLES).getType());
 		assertEquals(Collection.class, entity.getAttribute(P8.CHARACTERS).getType());
 		assertEquals(Collection.class, entity.getAttribute(P8.NUMBER_SUBTYPE_COLLECTION).getType());
+		assertEquals(Collection.class, entity.getAttribute(P8.TYPED_COLLECTION).getType());
 		assertEquals(List.class, entity.getAttribute(P8.NUMBER_LIST).getType());
 		assertEquals(Set.class, entity.getAttribute(P8.STRING_SET).getType());
 		assertEquals(0, entity.getRelationships().size());
