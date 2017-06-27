@@ -5,7 +5,6 @@ import com.nhl.link.rest.it.fixture.cayenne.E22;
 import com.nhl.link.rest.it.fixture.resource.E25Resource;
 import org.apache.cayenne.E25;
 import org.apache.cayenne.query.SQLTemplate;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import javax.ws.rs.WebApplicationException;
@@ -60,13 +59,18 @@ public class GET_DynamicAttributesIT extends JerseyTestOnDerby {
     }
 
     @Test
-    @Ignore
     public void testMapByRel() throws WebApplicationException, IOException {
 
         newContext().performGenericQuery(
                 new SQLTemplate(E22.class, "INSERT INTO utest.e22 (id, name) values (3, 'yyy')"));
         newContext().performGenericQuery(
+                new SQLTemplate(E22.class, "INSERT INTO utest.e22 (id, name) values (4, 'zzzz')"));
+        newContext().performGenericQuery(
                 new SQLTemplate(E25.class, "INSERT INTO utest.e25 (id, name, e22_id) values (1, 'xxx', 3)"));
+        newContext().performGenericQuery(
+                new SQLTemplate(E25.class, "INSERT INTO utest.e25 (id, name, e22_id) values (2, 'yyy', 4)"));
+        newContext().performGenericQuery(
+                new SQLTemplate(E25.class, "INSERT INTO utest.e25 (id, name, e22_id) values (3, 'zzz', 3)"));
 
         Response r = target("/e25")
                 .queryParam("mapBy", "e22.id")
@@ -74,6 +78,9 @@ public class GET_DynamicAttributesIT extends JerseyTestOnDerby {
                 .queryParam("include", "e22.id")
                 .request().get();
         assertEquals(Response.Status.OK.getStatusCode(), r.getStatus());
-        assertEquals("{\"data\":{\"3\":[{\"id\":1,\"e22\":{\"id\":3}]},\"total\":1}", r.readEntity(String.class));
+        assertEquals("{\"data\":{" +
+                "\"3\":[{\"id\":1,\"e22\":{\"id\":3}},{\"id\":3,\"e22\":{\"id\":3}}]," +
+                "\"4\":[{\"id\":2,\"e22\":{\"id\":4}}]" +
+                "},\"total\":3}", r.readEntity(String.class));
     }
 }

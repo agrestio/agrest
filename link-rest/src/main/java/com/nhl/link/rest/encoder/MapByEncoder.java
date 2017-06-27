@@ -92,7 +92,7 @@ public class MapByEncoder implements CollectionEncoder {
             byId = false;
 
             Map.Entry<String, ResourceEntity<?>> child = mapBy.getChildren().entrySet().iterator().next();
-            LrRelationship relationship = child.getValue().getLrEntity().getRelationship(child.getKey());
+            LrRelationship relationship = mapBy.getLrEntity().getRelationship(child.getKey());
             mapByReaders.add(getPropertyReader(child.getKey(),
                     encoderFactory.getRelationshipProperty(mapBy.getLrEntity(), relationship, null)));
 

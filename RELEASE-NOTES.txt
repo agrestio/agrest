@@ -1,3 +1,7 @@
+Release 2.7
+
+#238 Dynamic relationships do not work with "mapBy"
+
 Release 2.6
 
 #234 Error reading relationships: Multi-join relationship propagation is not supported yet

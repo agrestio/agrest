@@ -21,6 +21,6 @@ public class E25Resource {
 
     @GET
     public DataResponse<E25> getAll(@Context UriInfo uriInfo) {
-        return LinkRest.select(E25.class, config).uri(uriInfo).getOne();
+        return LinkRest.select(E25.class, config).uri(uriInfo).get();
     }
 }
