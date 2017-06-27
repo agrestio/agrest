@@ -51,6 +51,7 @@ public class DbCleaner extends ExternalResource {
 		chain.addQuery(new EJBQLQuery("delete from E22"));
 		chain.addQuery(new EJBQLQuery("delete from E23"));
 		chain.addQuery(new EJBQLQuery("delete from E24"));
+		chain.addQuery(new EJBQLQuery("delete from E25"));
 
 		context.performGenericQuery(chain);
 	}
