@@ -3,8 +3,7 @@ package com.nhl.link.rest;
 import org.apache.cayenne.exp.Expression;
 
 /**
- * A helper to locate objects within a context of a single
- * {@link UpdateResponse}.
+ * A helper to locate objects within a context of a single update request.
  * 
  * @since 1.7
  */
