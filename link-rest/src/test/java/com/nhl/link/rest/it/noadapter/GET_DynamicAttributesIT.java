@@ -5,6 +5,7 @@ import com.nhl.link.rest.it.fixture.cayenne.E22;
 import com.nhl.link.rest.it.fixture.resource.E25Resource;
 import org.apache.cayenne.E25;
 import org.apache.cayenne.query.SQLTemplate;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import javax.ws.rs.WebApplicationException;
@@ -59,6 +60,7 @@ public class GET_DynamicAttributesIT extends JerseyTestOnDerby {
     }
 
     @Test
+    @Ignore
     public void testMapByRel() throws WebApplicationException, IOException {
 
         newContext().performGenericQuery(
