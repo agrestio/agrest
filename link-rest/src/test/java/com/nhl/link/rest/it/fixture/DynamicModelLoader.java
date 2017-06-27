@@ -1,5 +1,6 @@
 package com.nhl.link.rest.it.fixture;
 
+import com.nhl.link.rest.it.fixture.cayenne.E22;
 import org.apache.cayenne.DataChannel;
 import org.apache.cayenne.DataChannelFilter;
 import org.apache.cayenne.DataChannelFilterChain;
@@ -9,6 +10,7 @@ import org.apache.cayenne.QueryResponse;
 import org.apache.cayenne.graph.GraphDiff;
 import org.apache.cayenne.map.ObjAttribute;
 import org.apache.cayenne.map.ObjEntity;
+import org.apache.cayenne.map.ObjRelationship;
 import org.apache.cayenne.query.Query;
 
 public class DynamicModelLoader implements DataChannelFilter {
@@ -23,6 +25,13 @@ public class DynamicModelLoader implements DataChannelFilter {
         ObjAttribute dynamicAttribute = new ObjAttribute("name", "java.lang.String", e25);
         dynamicAttribute.setDbAttributePath("name");
         e25.addAttribute(dynamicAttribute);
+
+        ObjEntity e22 = channel.getEntityResolver().getObjEntity(E22.class);
+        ObjRelationship e25_e22 = new ObjRelationship("e22");
+        e25_e22.setTargetEntityName(e22.getName());
+        e25_e22.setSourceEntity(e25);
+        e25_e22.setDbRelationshipPath("e22");
+        e25.addRelationship(e25_e22);
     }
 
     @Override

@@ -1,8 +1,9 @@
 package com.nhl.link.rest.it.noadapter;
 
 import com.nhl.link.rest.it.fixture.JerseyTestOnDerby;
-import com.nhl.link.rest.it.fixture.cayenne.E4;
+import com.nhl.link.rest.it.fixture.cayenne.E22;
 import com.nhl.link.rest.it.fixture.resource.E25Resource;
+import org.apache.cayenne.E25;
 import org.apache.cayenne.query.SQLTemplate;
 import org.junit.Test;
 
@@ -23,7 +24,7 @@ public class GET_DynamicAttributesIT extends JerseyTestOnDerby {
     @Test
     public void testGet() throws WebApplicationException, IOException {
 
-        SQLTemplate insert = new SQLTemplate(E4.class, "INSERT INTO utest.e25 (id, name) values (1, 'xxx')");
+        SQLTemplate insert = new SQLTemplate(E25.class, "INSERT INTO utest.e25 (id, name) values (1, 'xxx')");
         newContext().performGenericQuery(insert);
 
         Response r = target("/e25").request().get();
@@ -32,13 +33,45 @@ public class GET_DynamicAttributesIT extends JerseyTestOnDerby {
     }
 
     @Test
+    public void testGet_Rel() throws WebApplicationException, IOException {
+        newContext().performGenericQuery(
+                new SQLTemplate(E22.class, "INSERT INTO utest.e22 (id, name) values (3, 'yyy')"));
+        newContext().performGenericQuery(
+                new SQLTemplate(E25.class, "INSERT INTO utest.e25 (id, name, e22_id) values (1, 'xxx', 3)"));
+
+        Response r = target("/e25")
+                .queryParam("include", "id")
+                .queryParam("include", "e22.id")
+                .request().get();
+        assertEquals(Response.Status.OK.getStatusCode(), r.getStatus());
+        assertEquals("{\"data\":[{\"id\":1,\"e22\":{\"id\":3}}],\"total\":1}", r.readEntity(String.class));
+    }
+
+    @Test
     public void testMapBy() throws WebApplicationException, IOException {
 
-        SQLTemplate insert = new SQLTemplate(E4.class, "INSERT INTO utest.e25 (id, name) values (1, 'xxx')");
+        SQLTemplate insert = new SQLTemplate(E25.class, "INSERT INTO utest.e25 (id, name) values (1, 'xxx')");
         newContext().performGenericQuery(insert);
 
         Response r = target("/e25").queryParam("mapBy", "name").request().get();
         assertEquals(Response.Status.OK.getStatusCode(), r.getStatus());
         assertEquals("{\"data\":{\"xxx\":[{\"id\":1,\"name\":\"xxx\"}]},\"total\":1}", r.readEntity(String.class));
+    }
+
+    @Test
+    public void testMapByRel() throws WebApplicationException, IOException {
+
+        newContext().performGenericQuery(
+                new SQLTemplate(E22.class, "INSERT INTO utest.e22 (id, name) values (3, 'yyy')"));
+        newContext().performGenericQuery(
+                new SQLTemplate(E25.class, "INSERT INTO utest.e25 (id, name, e22_id) values (1, 'xxx', 3)"));
+
+        Response r = target("/e25")
+                .queryParam("mapBy", "e22.id")
+                .queryParam("include", "id")
+                .queryParam("include", "e22.id")
+                .request().get();
+        assertEquals(Response.Status.OK.getStatusCode(), r.getStatus());
+        assertEquals("{\"data\":{\"3\":[{\"id\":1,\"e22\":{\"id\":3}]},\"total\":1}", r.readEntity(String.class));
     }
 }

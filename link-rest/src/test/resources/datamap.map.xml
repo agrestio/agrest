@@ -128,6 +128,7 @@
 		<db-attribute name="name" type="VARCHAR" length="100"/>
 	</db-entity>
 	<db-entity name="e25" schema="utest">
+		<db-attribute name="e22_id" type="INTEGER"/>
 		<db-attribute name="id" type="INTEGER" isPrimaryKey="true" isMandatory="true"/>
 		<db-attribute name="name" type="VARCHAR" length="100"/>
 	</db-entity>
@@ -355,6 +356,12 @@
 	</db-relationship>
 	<db-relationship name="e20" source="e21" target="e20" toMany="true">
 		<db-attribute-pair source="id" target="e21_id"/>
+	</db-relationship>
+	<db-relationship name="e25s" source="e22" target="e25" toMany="true">
+		<db-attribute-pair source="id" target="e22_id"/>
+	</db-relationship>
+	<db-relationship name="e22" source="e25" target="e22" toMany="false">
+		<db-attribute-pair source="e22_id" target="id"/>
 	</db-relationship>
 	<db-relationship name="e2" source="e3" target="e2" toMany="false">
 		<db-attribute-pair source="e2_id" target="id"/>
