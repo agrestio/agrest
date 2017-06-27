@@ -16,7 +16,8 @@ public class DynamicModelLoader implements DataChannelFilter {
     @Override
     public void init(DataChannel channel) {
 
-        // load dynamic attributes and relationships...
+        // load dynamic attributes and relationships... Will be testing whether LR can handle generic Cayenne properties
+        // with no getters/setters.
 
         ObjEntity e25 = channel.getEntityResolver().getObjEntity(E25.class);
         ObjAttribute dynamicAttribute = new ObjAttribute("name", "java.lang.String", e25);
