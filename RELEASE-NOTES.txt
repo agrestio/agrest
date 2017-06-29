@@ -1,7 +1,7 @@
 Release 2.7
 
 #238 Dynamic relationships do not work with "mapBy"
-#239 Add ResourceEntity.setQualifier(..) method
+#239 Add ResourceEntity.setQualifier(..) method.
 
 Release 2.6
 
