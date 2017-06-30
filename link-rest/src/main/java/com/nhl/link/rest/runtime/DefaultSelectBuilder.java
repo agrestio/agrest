@@ -93,7 +93,7 @@ public class DefaultSelectBuilder<T> implements SelectBuilder<T> {
 	 * the client can see.
 	 *
 	 * @param constraint an instance of Constraint function.
-	 * @return
+	 * @return this builder instance.
 	 * @since 2.4
 	 */
 	@Override
@@ -148,7 +148,7 @@ public class DefaultSelectBuilder<T> implements SelectBuilder<T> {
 	@Override
 	public SelectBuilder<T> property(String name, EntityProperty clientProperty) {
 		if (context.getExtraProperties() == null) {
-			context.setExtraProperties(new HashMap<String, EntityProperty>());
+			context.setExtraProperties(new HashMap<>());
 		}
 
 		EntityProperty oldProperty = context.getExtraProperties().put(name, clientProperty);
