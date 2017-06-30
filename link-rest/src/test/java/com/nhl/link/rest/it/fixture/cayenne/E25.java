@@ -1,4 +1,4 @@
-package org.apache.cayenne;
+package com.nhl.link.rest.it.fixture.cayenne;
 
 import com.nhl.link.rest.it.fixture.cayenne.auto._E25;
 

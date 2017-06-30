@@ -265,7 +265,7 @@
 		<obj-attribute name="name" type="java.lang.String" db-attribute-path="name"/>
 		<obj-attribute name="type" type="java.lang.String" db-attribute-path="TYPE"/>
 	</obj-entity>
-	<obj-entity name="E25" className="org.apache.cayenne.E25" dbEntityName="e25">
+	<obj-entity name="E25" className="com.nhl.link.rest.it.fixture.cayenne.E25" dbEntityName="e25">
 	</obj-entity>
 	<obj-entity name="E3" className="com.nhl.link.rest.it.fixture.cayenne.E3" dbEntityName="e3">
 		<obj-attribute name="name" type="java.lang.String" db-attribute-path="name"/>

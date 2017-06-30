@@ -1,10 +1,10 @@
 package com.nhl.link.rest.it.fixture;
 
 import com.nhl.link.rest.it.fixture.cayenne.E22;
+import com.nhl.link.rest.it.fixture.cayenne.E25;
 import org.apache.cayenne.DataChannel;
 import org.apache.cayenne.DataChannelFilter;
 import org.apache.cayenne.DataChannelFilterChain;
-import org.apache.cayenne.E25;
 import org.apache.cayenne.ObjectContext;
 import org.apache.cayenne.QueryResponse;
 import org.apache.cayenne.graph.GraphDiff;

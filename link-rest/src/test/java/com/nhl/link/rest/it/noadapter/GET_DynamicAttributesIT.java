@@ -2,8 +2,8 @@ package com.nhl.link.rest.it.noadapter;
 
 import com.nhl.link.rest.it.fixture.JerseyTestOnDerby;
 import com.nhl.link.rest.it.fixture.cayenne.E22;
+import com.nhl.link.rest.it.fixture.cayenne.E25;
 import com.nhl.link.rest.it.fixture.resource.E25Resource;
-import org.apache.cayenne.E25;
 import org.apache.cayenne.query.SQLTemplate;
 import org.junit.Test;
 

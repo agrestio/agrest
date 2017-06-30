@@ -2,7 +2,7 @@ package com.nhl.link.rest.it.fixture.resource;
 
 import com.nhl.link.rest.DataResponse;
 import com.nhl.link.rest.LinkRest;
-import org.apache.cayenne.E25;
+import com.nhl.link.rest.it.fixture.cayenne.E25;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
