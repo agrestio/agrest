@@ -28,189 +28,191 @@ import java.util.Map;
  */
 public class DefaultSelectBuilder<T> implements SelectBuilder<T> {
 
-	private static final Logger logger = LoggerFactory.getLogger(DefaultSelectBuilder.class);
+    private static final Logger logger = LoggerFactory.getLogger(DefaultSelectBuilder.class);
 
-	protected SelectContext<T> context;
-	protected ProcessingStage<SelectContext<T>, T> selectChain;
-	protected ListenersBuilder listenersBuilder;
+    protected SelectContext<T> context;
+    protected ProcessingStage<SelectContext<T>, T> selectChain;
+    protected ListenersBuilder listenersBuilder;
 
-	public DefaultSelectBuilder(SelectContext<T> context, ProcessingStage<SelectContext<T>, T> selectChain,
-			ListenersBuilder listenersBuilder) {
-		this.context = context;
-		this.selectChain = selectChain;
-		this.listenersBuilder = listenersBuilder;
-	}
+    public DefaultSelectBuilder(
+            SelectContext<T> context,
+            ProcessingStage<SelectContext<T>, T> selectChain,
+            ListenersBuilder listenersBuilder) {
+        this.context = context;
+        this.selectChain = selectChain;
+        this.listenersBuilder = listenersBuilder;
+    }
 
-	public SelectContext<T> getContext() {
-		return context;
-	}
+    public SelectContext<T> getContext() {
+        return context;
+    }
 
-	@Override
-	public SelectBuilder<T> parent(Class<?> parentType, Object parentId, Property<T> relationshipFromParent) {
-		context.setParent(new EntityParent<>(parentType, parentId, relationshipFromParent.getName()));
-		return this;
-	}
+    @Override
+    public SelectBuilder<T> parent(Class<?> parentType, Object parentId, Property<T> relationshipFromParent) {
+        context.setParent(new EntityParent<>(parentType, parentId, relationshipFromParent.getName()));
+        return this;
+    }
 
-	@Override
-	public SelectBuilder<T> parent(Class<?> parentType, Map<String, Object> parentIds,
-			Property<T> relationshipFromParent) {
-		context.setParent(new EntityParent<>(parentType, parentIds, relationshipFromParent.getName()));
-		return this;
-	}
+    @Override
+    public SelectBuilder<T> parent(Class<?> parentType, Map<String, Object> parentIds,
+                                   Property<T> relationshipFromParent) {
+        context.setParent(new EntityParent<>(parentType, parentIds, relationshipFromParent.getName()));
+        return this;
+    }
 
-	@Override
-	public SelectBuilder<T> parent(Class<?> parentType, Object parentId, String relationshipFromParent) {
-		context.setParent(new EntityParent<>(parentType, parentId, relationshipFromParent));
-		return this;
-	}
+    @Override
+    public SelectBuilder<T> parent(Class<?> parentType, Object parentId, String relationshipFromParent) {
+        context.setParent(new EntityParent<>(parentType, parentId, relationshipFromParent));
+        return this;
+    }
 
-	@Override
-	public SelectBuilder<T> parent(Class<?> parentType, Map<String, Object> parentIds, String relationshipFromParent) {
-		context.setParent(new EntityParent<>(parentType, parentIds, relationshipFromParent));
-		return this;
-	}
+    @Override
+    public SelectBuilder<T> parent(Class<?> parentType, Map<String, Object> parentIds, String relationshipFromParent) {
+        context.setParent(new EntityParent<>(parentType, parentIds, relationshipFromParent));
+        return this;
+    }
 
-	@Override
-	public SelectBuilder<T> parent(EntityParent<?> parent) {
-		context.setParent(parent);
-		return this;
-	}
+    @Override
+    public SelectBuilder<T> parent(EntityParent<?> parent) {
+        context.setParent(parent);
+        return this;
+    }
 
-	@Override
-	public SelectBuilder<T> toManyParent(Class<?> parentType, Object parentId,
-			Property<? extends Collection<T>> relationshipFromParent) {
-		return parent(parentType, parentId, relationshipFromParent.getName());
-	}
+    @Override
+    public SelectBuilder<T> toManyParent(Class<?> parentType, Object parentId,
+                                         Property<? extends Collection<T>> relationshipFromParent) {
+        return parent(parentType, parentId, relationshipFromParent.getName());
+    }
 
-	@Override
-	public SelectBuilder<T> toManyParent(Class<?> parentType, Map<String, Object> parentIds,
-			Property<? extends Collection<T>> relationshipFromParent) {
-		return parent(parentType, parentIds, relationshipFromParent.getName());
-	}
+    @Override
+    public SelectBuilder<T> toManyParent(Class<?> parentType, Map<String, Object> parentIds,
+                                         Property<? extends Collection<T>> relationshipFromParent) {
+        return parent(parentType, parentIds, relationshipFromParent.getName());
+    }
 
-	/**
-	 * Installs an optional constraint function defining how much of the request entity attributes / relationships
-	 * the client can see.
-	 *
-	 * @param constraint an instance of Constraint function.
-	 * @return this builder instance.
-	 * @since 2.4
-	 */
-	@Override
-	public SelectBuilder<T> constraint(Constraint<T> constraint) {
-		context.setConstraint(constraint);
-		return this;
-	}
+    /**
+     * Installs an optional constraint function defining how much of the request entity attributes / relationships
+     * the client can see.
+     *
+     * @param constraint an instance of Constraint function.
+     * @return this builder instance.
+     * @since 2.4
+     */
+    @Override
+    public SelectBuilder<T> constraint(Constraint<T> constraint) {
+        context.setConstraint(constraint);
+        return this;
+    }
 
-	@Override
-	public SelectBuilder<T> fetchLimit(int limit) {
-		getOrCreateSizeConstraints().fetchLimit(limit);
-		return this;
-	}
+    @Override
+    public SelectBuilder<T> fetchLimit(int limit) {
+        getOrCreateSizeConstraints().fetchLimit(limit);
+        return this;
+    }
 
-	@Override
-	public SelectBuilder<T> fetchOffset(int offset) {
-		getOrCreateSizeConstraints().fetchOffset(offset);
-		return this;
-	}
+    @Override
+    public SelectBuilder<T> fetchOffset(int offset) {
+        getOrCreateSizeConstraints().fetchOffset(offset);
+        return this;
+    }
 
-	private SizeConstraints getOrCreateSizeConstraints() {
-		if (context.getSizeConstraints() == null) {
-			context.setSizeConstraints(new SizeConstraints());
-		}
+    private SizeConstraints getOrCreateSizeConstraints() {
+        if (context.getSizeConstraints() == null) {
+            context.setSizeConstraints(new SizeConstraints());
+        }
 
-		return context.getSizeConstraints();
-	}
+        return context.getSizeConstraints();
+    }
 
-	@Override
-	public SelectBuilder<T> uri(UriInfo uriInfo) {
-		this.context.setUriInfo(uriInfo);
-		return this;
-	}
+    @Override
+    public SelectBuilder<T> uri(UriInfo uriInfo) {
+        this.context.setUriInfo(uriInfo);
+        return this;
+    }
 
-	@Override
-	public SelectBuilder<T> dataEncoder(Encoder encoder) {
-		this.context.setEncoder(encoder);
-		return this;
-	}
+    @Override
+    public SelectBuilder<T> dataEncoder(Encoder encoder) {
+        this.context.setEncoder(encoder);
+        return this;
+    }
 
-	@Override
-	public SelectBuilder<T> autocompleteOn(Property<?> autocompleteProperty) {
-		context.setAutocompleteProperty(autocompleteProperty != null ? autocompleteProperty.getName() : null);
-		return this;
-	}
+    @Override
+    public SelectBuilder<T> autocompleteOn(Property<?> autocompleteProperty) {
+        context.setAutocompleteProperty(autocompleteProperty != null ? autocompleteProperty.getName() : null);
+        return this;
+    }
 
-	@Override
-	public SelectBuilder<T> property(String name) {
-		return property(name, PropertyBuilder.property());
-	}
+    @Override
+    public SelectBuilder<T> property(String name) {
+        return property(name, PropertyBuilder.property());
+    }
 
-	@Override
-	public SelectBuilder<T> property(String name, EntityProperty clientProperty) {
-		if (context.getExtraProperties() == null) {
-			context.setExtraProperties(new HashMap<>());
-		}
+    @Override
+    public SelectBuilder<T> property(String name, EntityProperty clientProperty) {
+        if (context.getExtraProperties() == null) {
+            context.setExtraProperties(new HashMap<>());
+        }
 
-		EntityProperty oldProperty = context.getExtraProperties().put(name, clientProperty);
-		if (oldProperty != null) {
-			logger.info("Overriding existing custom property '" + name + "', ignoring...");
-		}
+        EntityProperty oldProperty = context.getExtraProperties().put(name, clientProperty);
+        if (oldProperty != null) {
+            logger.info("Overriding existing custom property '" + name + "', ignoring...");
+        }
 
-		return this;
-	}
+        return this;
+    }
 
-	@Override
-	public SelectBuilder<T> byId(Object id) {
-		// TODO: return a special builder that will preserve 'byId' strategy on
-		// select
+    @Override
+    public SelectBuilder<T> byId(Object id) {
+        // TODO: return a special builder that will preserve 'byId' strategy on
+        // select
 
-		if (id == null) {
-			throw new LinkRestException(Status.NOT_FOUND, "Null 'id'");
-		}
+        if (id == null) {
+            throw new LinkRestException(Status.NOT_FOUND, "Null 'id'");
+        }
 
-		context.setId(id);
-		return this;
-	}
+        context.setId(id);
+        return this;
+    }
 
-	@Override
-	public SelectBuilder<T> byId(Map<String, Object> ids) {
+    @Override
+    public SelectBuilder<T> byId(Map<String, Object> ids) {
 
-		for (Object id : ids.entrySet()) {
-			if (id == null) {
-				throw new LinkRestException(Status.NOT_FOUND, "Part of compound ID is null");
-			}
-		}
+        for (Object id : ids.entrySet()) {
+            if (id == null) {
+                throw new LinkRestException(Status.NOT_FOUND, "Part of compound ID is null");
+            }
+        }
 
-		context.setCompoundId(ids);
-		return this;
-	}
+        context.setCompoundId(ids);
+        return this;
+    }
 
-	/**
-	 * @since 1.19
-	 */
-	@Override
-	public SelectBuilder<T> listener(Object listener) {
-		listenersBuilder.addListener(listener);
-		return this;
-	}
+    /**
+     * @since 1.19
+     */
+    @Override
+    public SelectBuilder<T> listener(Object listener) {
+        listenersBuilder.addListener(listener);
+        return this;
+    }
 
-	@Override
-	public DataResponse<T> get() {
-		// 'byId' behaving as "selectOne" is really legacy behavior of 1.1...
-		// should deprecate eventually
-		context.setAtMostOneObject(context.isById());
-		context.setListeners(listenersBuilder.getListeners());
+    @Override
+    public DataResponse<T> get() {
+        // 'byId' behaving as "selectOne" is really legacy behavior of 1.1...
+        // should deprecate eventually
+        context.setAtMostOneObject(context.isById());
+        context.setListeners(listenersBuilder.getListeners());
 
-		ChainProcessor.execute(selectChain, context);
-		return context.createDataResponse();
-	}
+        ChainProcessor.execute(selectChain, context);
+        return context.createDataResponse();
+    }
 
-	@Override
-	public DataResponse<T> getOne() {
-		context.setAtMostOneObject(true);
-		context.setListeners(listenersBuilder.getListeners());
-		ChainProcessor.execute(selectChain, context);
-		return context.createDataResponse();
-	}
+    @Override
+    public DataResponse<T> getOne() {
+        context.setAtMostOneObject(true);
+        context.setListeners(listenersBuilder.getListeners());
+        ChainProcessor.execute(selectChain, context);
+        return context.createDataResponse();
+    }
 
 }
