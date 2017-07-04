@@ -5,6 +5,7 @@ Release 2.7
 #240 Functional select pipeline interceptors
 #241 Functional update pipeline interceptors
 #242 Functional delete pipeline
+#243 Functional pipeline for unrelate and meta chains
 
 Release 2.6
 
