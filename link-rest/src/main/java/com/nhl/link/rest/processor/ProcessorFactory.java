@@ -36,6 +36,10 @@ public class ProcessorFactory<E extends Enum<E>, C extends ProcessingContext<?>>
         return p;
     }
 
+    public Processor<C> createProcessor() {
+        return defaultProcessor;
+    }
+
     /**
      * Creates a processor that is a combination of default stages intermixed with provided listeners.
      *

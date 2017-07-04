@@ -22,7 +22,6 @@ import com.nhl.link.rest.provider.SimpleResponseWriter;
 import com.nhl.link.rest.provider.ValidationExceptionMapper;
 import com.nhl.link.rest.runtime.adapter.LinkRestAdapter;
 import com.nhl.link.rest.runtime.cayenne.CayennePersister;
-import com.nhl.link.rest.runtime.cayenne.CayenneProcessorFactory;
 import com.nhl.link.rest.runtime.cayenne.ICayennePersister;
 import com.nhl.link.rest.runtime.cayenne.NoCayennePersister;
 import com.nhl.link.rest.runtime.cayenne.processor.delete.CayenneDeleteProcessorFactoryProvider;
@@ -31,6 +30,9 @@ import com.nhl.link.rest.runtime.cayenne.processor.delete.CayenneDeleteStartStag
 import com.nhl.link.rest.runtime.cayenne.processor.select.CayenneAssembleQueryStage;
 import com.nhl.link.rest.runtime.cayenne.processor.select.CayenneFetchDataStage;
 import com.nhl.link.rest.runtime.cayenne.processor.select.CayenneSelectProcessorFactoryProvider;
+import com.nhl.link.rest.runtime.cayenne.processor.unrelate.CayenneUnrelateProcessorFactoryProvider;
+import com.nhl.link.rest.runtime.cayenne.processor.unrelate.CayenneUnrelateDataStoreStage;
+import com.nhl.link.rest.runtime.cayenne.processor.unrelate.CayenneUnrelateStartStage;
 import com.nhl.link.rest.runtime.cayenne.processor.update.CayenneCreateOrUpdateStage;
 import com.nhl.link.rest.runtime.cayenne.processor.update.CayenneCreateStage;
 import com.nhl.link.rest.runtime.cayenne.processor.update.CayenneCreatedResponseStage;
@@ -75,7 +77,6 @@ import com.nhl.link.rest.runtime.parser.sort.ISortProcessor;
 import com.nhl.link.rest.runtime.parser.sort.SortProcessor;
 import com.nhl.link.rest.runtime.parser.tree.ITreeProcessor;
 import com.nhl.link.rest.runtime.parser.tree.IncludeExcludeProcessor;
-import com.nhl.link.rest.runtime.processor.IProcessorFactory;
 import com.nhl.link.rest.runtime.processor.delete.DeleteProcessorFactory;
 import com.nhl.link.rest.runtime.processor.meta.CollectMetadataStage;
 import com.nhl.link.rest.runtime.processor.meta.MetadataProcessorFactory;
@@ -84,6 +85,7 @@ import com.nhl.link.rest.runtime.processor.select.ApplyServerParamsStage;
 import com.nhl.link.rest.runtime.processor.select.ParseRequestStage;
 import com.nhl.link.rest.runtime.processor.select.SelectProcessorFactory;
 import com.nhl.link.rest.runtime.processor.select.StartStage;
+import com.nhl.link.rest.runtime.processor.unrelate.UnrelateProcessorFactory;
 import com.nhl.link.rest.runtime.processor.update.UpdateProcessorFactoryFactory;
 import com.nhl.link.rest.runtime.semantics.IRelationshipMapper;
 import com.nhl.link.rest.runtime.semantics.RelationshipMapper;
@@ -334,8 +336,6 @@ public class LinkRestBuilder {
                 binder.bind(ILinkRestService.class).toInstance(linkRestService);
             }
 
-            binder.bind(IProcessorFactory.class).to(CayenneProcessorFactory.class);
-
             // select stages
             binder.bind(SelectProcessorFactory.class).toProvider(CayenneSelectProcessorFactoryProvider.class);
             binder.bind(StartStage.class).to(StartStage.class);
@@ -368,6 +368,11 @@ public class LinkRestBuilder {
             // metadata stages
             binder.bind(MetadataProcessorFactory.class).toProvider(MetadataProcessorFactoryProvider.class);
             binder.bind(CollectMetadataStage.class).to(CollectMetadataStage.class);
+
+            // unrelate stages
+            binder.bind(UnrelateProcessorFactory.class).toProvider(CayenneUnrelateProcessorFactoryProvider.class);
+            binder.bind(CayenneUnrelateStartStage.class).to(CayenneUnrelateStartStage.class);
+            binder.bind(CayenneUnrelateDataStoreStage.class).to(CayenneUnrelateDataStoreStage.class);
 
             binder.bind(IRequestParser.class).to(RequestParser.class);
             binder.bind(IJsonValueConverterFactory.class).to(DefaultJsonValueConverterFactory.class);

@@ -44,9 +44,7 @@ public abstract class BaseProcessingContext<T> implements ProcessingContext<T> {
     @Override
     public void setAttribute(String name, Object value) {
 
-        // presumably BaseProcessingContext is single-threaded, so lazy init and
-        // using
-        // like this is ok
+        // Presumably BaseProcessingContext is single-threaded (one per request), so lazy init and using HashMap is ok.
         if (attributes == null) {
             attributes = new HashMap<>();
         }

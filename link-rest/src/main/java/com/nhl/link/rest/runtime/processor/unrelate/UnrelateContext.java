@@ -8,26 +8,24 @@ import com.nhl.link.rest.processor.BaseProcessingContext;
  */
 public class UnrelateContext<T> extends BaseProcessingContext<T> {
 
-	private EntityParent<?> parent;
-	private Object id;
+    private EntityParent<?> parent;
+    private Object id;
 
-	public UnrelateContext(Class<T> type) {
-		super(type);
-	}
+    public UnrelateContext(Class<T> type, EntityParent<?> parent) {
+        super(type);
+        this.parent = parent;
+    }
 
-	public EntityParent<?> getParent() {
-		return parent;
-	}
+    public UnrelateContext(Class<T> type, EntityParent<?> parent, Object id) {
+        this(type, parent);
+        this.id = id;
+    }
 
-	public void setParent(EntityParent<?> parent) {
-		this.parent = parent;
-	}
+    public EntityParent<?> getParent() {
+        return parent;
+    }
 
-	public Object getId() {
-		return id;
-	}
-
-	public void setId(Object targetId) {
-		this.id = targetId;
-	}
+    public Object getId() {
+        return id;
+    }
 }

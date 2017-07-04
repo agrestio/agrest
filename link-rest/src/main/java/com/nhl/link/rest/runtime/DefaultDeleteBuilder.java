@@ -1,28 +1,22 @@
 package com.nhl.link.rest.runtime;
 
 import com.nhl.link.rest.DeleteBuilder;
-import com.nhl.link.rest.DeleteStage;
 import com.nhl.link.rest.EntityParent;
 import com.nhl.link.rest.LinkRestException;
 import com.nhl.link.rest.LrObjectId;
 import com.nhl.link.rest.SimpleResponse;
-import com.nhl.link.rest.processor.Processor;
 import com.nhl.link.rest.runtime.processor.delete.DeleteContext;
 import com.nhl.link.rest.runtime.processor.delete.DeleteProcessorFactory;
 import org.apache.cayenne.exp.Property;
 
 import javax.ws.rs.core.Response;
 import java.util.Collection;
-import java.util.EnumMap;
 import java.util.Map;
 
 /**
  * @since 1.4
  */
 public class DefaultDeleteBuilder<T> implements DeleteBuilder<T> {
-
-	// TODO: support custom stages, instead of using empty placeholder for stages
-	private static final EnumMap<DeleteStage, Processor<DeleteContext<?>>> PLACEHOLDER  = new EnumMap<>(DeleteStage.class);
 
 	protected DeleteContext<T> context;
 	protected DeleteProcessorFactory processorFactory;
@@ -94,7 +88,7 @@ public class DefaultDeleteBuilder<T> implements DeleteBuilder<T> {
 
 	@Override
 	public SimpleResponse delete() {
-		processorFactory.createProcessor(PLACEHOLDER).execute(context);
+		processorFactory.createProcessor().execute(context);
 		return context.createSimpleResponse();
 	}
 }

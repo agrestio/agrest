@@ -1,19 +1,17 @@
 package com.nhl.link.rest.runtime;
 
-import java.util.Collection;
-import java.util.Map;
-
-import javax.ws.rs.core.UriInfo;
-
-import com.nhl.link.rest.EntityDelete;
-import org.apache.cayenne.exp.Property;
-
 import com.nhl.link.rest.DataResponse;
 import com.nhl.link.rest.DeleteBuilder;
+import com.nhl.link.rest.EntityDelete;
 import com.nhl.link.rest.MetadataBuilder;
 import com.nhl.link.rest.SelectBuilder;
 import com.nhl.link.rest.SimpleResponse;
 import com.nhl.link.rest.UpdateBuilder;
+import org.apache.cayenne.exp.Property;
+
+import javax.ws.rs.core.UriInfo;
+import java.util.Collection;
+import java.util.Map;
 
 /**
  * The main entry point to LinkRest stack. Used from the user REST resource
@@ -55,7 +53,7 @@ public interface ILinkRestService {
 	 * 
 	 * @since 1.2
 	 */
-	SimpleResponse unrelate(Class<?> type, Object sourceId, String relationship);
+	<T> SimpleResponse unrelate(Class<T> type, Object sourceId, String relationship);
 
 	/**
 	 * Breaks the relationship between source and all its target objects.
@@ -69,7 +67,7 @@ public interface ILinkRestService {
 	 * 
 	 * @since 1.2
 	 */
-	SimpleResponse unrelate(Class<?> type, Object sourceId, String relationship, Object targetId);
+	<T> SimpleResponse unrelate(Class<T> type, Object sourceId, String relationship, Object targetId);
 
 	/**
 	 * Breaks the relationship between source and a target object.

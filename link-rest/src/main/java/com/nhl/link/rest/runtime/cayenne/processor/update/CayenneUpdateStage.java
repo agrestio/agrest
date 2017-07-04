@@ -6,7 +6,6 @@ import com.nhl.link.rest.ObjectMapper;
 import com.nhl.link.rest.ObjectMapperFactory;
 import com.nhl.link.rest.meta.LrEntity;
 import com.nhl.link.rest.runtime.cayenne.ByIdObjectMapperFactory;
-import com.nhl.link.rest.runtime.cayenne.processor.CayenneContextInitStage;
 import com.nhl.link.rest.runtime.meta.IMetadataService;
 import com.nhl.link.rest.runtime.processor.update.UpdateContext;
 import org.apache.cayenne.DataObject;
@@ -125,7 +124,7 @@ public class CayenneUpdateStage extends CayenneUpdateDataStoreStage {
         SelectQuery<T> query = SelectQuery.query(context.getType());
         query.setQualifier(ExpressionFactory.joinExp(Expression.OR, expressions));
 
-        List<T> objects = CayenneContextInitStage.cayenneContext(context).select(query);
+        List<T> objects = CayenneUpdateStartStage.cayenneContext(context).select(query);
         if (context.isById() && objects.size() > 1) {
             throw new LinkRestException(Response.Status.INTERNAL_SERVER_ERROR, String.format(
                     "Found more than one object for ID '%s' and entity '%s'",
