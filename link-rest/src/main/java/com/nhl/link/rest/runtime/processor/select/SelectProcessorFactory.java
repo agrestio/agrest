@@ -1,8 +1,7 @@
-package com.nhl.link.rest.runtime.processor2.select;
+package com.nhl.link.rest.runtime.processor.select;
 
 import com.nhl.link.rest.processor2.Processor;
 import com.nhl.link.rest.processor2.ProcessorFactory;
-import com.nhl.link.rest.runtime.processor.select.SelectContext;
 
 import java.util.EnumMap;
 

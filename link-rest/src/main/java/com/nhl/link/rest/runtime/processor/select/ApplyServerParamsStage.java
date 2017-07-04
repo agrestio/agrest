@@ -1,4 +1,4 @@
-package com.nhl.link.rest.runtime.processor2.select;
+package com.nhl.link.rest.runtime.processor.select;
 
 import com.nhl.link.rest.ResourceEntity;
 import com.nhl.link.rest.encoder.EncoderFilter;

@@ -22,7 +22,7 @@ import com.nhl.link.rest.runtime.processor.meta.MetadataContext;
 import com.nhl.link.rest.runtime.processor.select.SelectContext;
 import com.nhl.link.rest.runtime.processor.unrelate.UnrelateContext;
 import com.nhl.link.rest.runtime.processor.update.UpdateContext;
-import com.nhl.link.rest.runtime.processor2.select.SelectProcessorFactory;
+import com.nhl.link.rest.runtime.processor.select.SelectProcessorFactory;
 import org.apache.cayenne.di.Inject;
 import org.apache.cayenne.exp.Property;
 

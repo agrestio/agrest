@@ -6,7 +6,7 @@ import com.nhl.link.rest.it.fixture.CayenneDerbyStack;
 import com.nhl.link.rest.it.fixture.DbCleaner;
 import com.nhl.link.rest.it.fixture.LinkRestFactory;
 import com.nhl.link.rest.it.fixture.cayenne.E2;
-import com.nhl.link.rest.runtime.processor2.select.SelectStage;
+import com.nhl.link.rest.runtime.processor.select.SelectStage;
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;

@@ -3,7 +3,7 @@ package com.nhl.link.rest.it.fixture.pojo;
 import com.nhl.link.rest.it.fixture.resource.PojoResource;
 import com.nhl.link.rest.runtime.LinkRestBuilder;
 import com.nhl.link.rest.runtime.adapter.LinkRestAdapter;
-import com.nhl.link.rest.runtime.processor2.select.SelectProcessorFactory;
+import com.nhl.link.rest.runtime.processor.select.SelectProcessorFactory;
 import org.apache.cayenne.di.Binder;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.test.JerseyTest;
