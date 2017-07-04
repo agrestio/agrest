@@ -1,17 +1,19 @@
 package com.nhl.link.rest.runtime.listener;
 
+import com.nhl.link.rest.annotation.listener.DataFetched;
+import com.nhl.link.rest.runtime.processor.select.SelectContext;
+import org.junit.Before;
+import org.junit.Test;
+
+import java.util.List;
+
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import java.util.List;
-
-import org.junit.Before;
-import org.junit.Test;
-
-import com.nhl.link.rest.annotation.listener.DataFetched;
-import com.nhl.link.rest.runtime.processor.select.SelectContext;
-
+/**
+ * @deprecated since 2.7
+ */
 public class ListenerInvocationFactoryCompiler_BoundsMatchingTest {
 
 	public static class E1 {

@@ -75,8 +75,7 @@ public class DefaultLinkRestService implements ILinkRestService {
 	}
 
 	private <T> SelectBuilder<T> toSelectBuilder(SelectContext<T> context) {
-		ListenersBuilder listenersBuilder = new ListenersBuilder(listenerService, context, EventGroup.select);
-		return new DefaultSelectBuilder<>(context, selectProcessorFactory, listenersBuilder);
+		return new DefaultSelectBuilder<>(context, selectProcessorFactory, listenerService);
 	}
 
 	/**
@@ -155,11 +154,9 @@ public class DefaultLinkRestService implements ILinkRestService {
 	@Override
 	public <T> UpdateBuilder<T> create(Class<T> type) {
 		UpdateContext<T> context = new UpdateContext<>(type);
-		ListenersBuilder listenersBuilder = new ListenersBuilder(listenerService, context, EventGroup.update);
-
 		return new DefaultUpdateBuilder<>(context,
 				updateProcessorFactoryFactory.getFactory(UpdateOperation.create),
-				listenersBuilder);
+				listenerService);
 	}
 
 	/**
@@ -168,11 +165,9 @@ public class DefaultLinkRestService implements ILinkRestService {
 	@Override
 	public <T> UpdateBuilder<T> createOrUpdate(Class<T> type) {
 		UpdateContext<T> context = new UpdateContext<>(type);
-		ListenersBuilder listenersBuilder = new ListenersBuilder(listenerService, context, EventGroup.update);
-
 		return new DefaultUpdateBuilder<>(context,
 				updateProcessorFactoryFactory.getFactory(UpdateOperation.createOrUpdate),
-				listenersBuilder);
+                listenerService);
 	}
 
 	/**
@@ -181,11 +176,9 @@ public class DefaultLinkRestService implements ILinkRestService {
 	@Override
 	public <T> UpdateBuilder<T> idempotentCreateOrUpdate(Class<T> type) {
 		UpdateContext<T> context = new UpdateContext<>(type);
-		ListenersBuilder listenersBuilder = new ListenersBuilder(listenerService, context, EventGroup.update);
-
 		return new DefaultUpdateBuilder<>(context,
 				updateProcessorFactoryFactory.getFactory(UpdateOperation.idempotentCreateOrUpdate),
-				listenersBuilder);
+                listenerService);
 	}
 
 	/**
@@ -194,11 +187,9 @@ public class DefaultLinkRestService implements ILinkRestService {
 	@Override
 	public <T> UpdateBuilder<T> idempotentFullSync(Class<T> type) {
 		UpdateContext<T> context = new UpdateContext<>(type);
-		ListenersBuilder listenersBuilder = new ListenersBuilder(listenerService, context, EventGroup.update);
-
 		return new DefaultUpdateBuilder<>(context,
 				updateProcessorFactoryFactory.getFactory(UpdateOperation.idempotentFullSync),
-				listenersBuilder);
+                listenerService);
 	}
 
 	/**
@@ -207,11 +198,9 @@ public class DefaultLinkRestService implements ILinkRestService {
 	@Override
 	public <T> UpdateBuilder<T> update(Class<T> type) {
 		UpdateContext<T> context = new UpdateContext<>(type);
-		ListenersBuilder listenersBuilder = new ListenersBuilder(listenerService, context, EventGroup.update);
-
 		return new DefaultUpdateBuilder<>(context,
 				updateProcessorFactoryFactory.getFactory(UpdateOperation.update),
-				listenersBuilder);
+                listenerService);
 	}
 
 	/**

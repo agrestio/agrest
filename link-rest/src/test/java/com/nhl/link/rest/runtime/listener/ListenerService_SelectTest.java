@@ -1,30 +1,24 @@
 package com.nhl.link.rest.runtime.listener;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static org.mockito.Mockito.verifyZeroInteractions;
-import static org.mockito.Mockito.when;
+import com.nhl.link.rest.annotation.listener.DataFetched;
+import com.nhl.link.rest.annotation.listener.SelectChainInitialized;
+import com.nhl.link.rest.annotation.listener.SelectRequestParsed;
+import com.nhl.link.rest.processor.BaseLinearProcessingStage;
+import com.nhl.link.rest.processor.ProcessingContext;
+import com.nhl.link.rest.processor.ProcessingStage;
+import org.junit.Before;
+import org.junit.Test;
 
 import java.lang.annotation.Annotation;
 import java.util.List;
 import java.util.Map;
 
-import org.junit.Before;
-import org.junit.Test;
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
 
-import com.nhl.link.rest.annotation.listener.DataFetched;
-import com.nhl.link.rest.annotation.listener.SelectChainInitialized;
-import com.nhl.link.rest.annotation.listener.SelectRequestParsed;
-import com.nhl.link.rest.processor.ProcessingContext;
-import com.nhl.link.rest.processor.BaseLinearProcessingStage;
-import com.nhl.link.rest.processor.ProcessingStage;
-
+/**
+ * @deprecated since 2.7
+ */
 public class ListenerService_SelectTest {
 
 	private ProcessingContext<Object> mockContext;
@@ -61,7 +55,7 @@ public class ListenerService_SelectTest {
 
 		verifyZeroInteractions(mockListener);
 		ProcessingStage<ProcessingContext<Object>, ?> stage = factories.get(SelectRequestParsed.class).get(0)
-				.toInvocation(mockListener).invoke(mockContext, mockStage);
+				.toInvocation(mockListener).invokeOld(mockContext, mockStage);
 
 		verify(mockListener).afterSelectRequestParsed(mockContext);
 		verifyNoMoreInteractions(mockListener);

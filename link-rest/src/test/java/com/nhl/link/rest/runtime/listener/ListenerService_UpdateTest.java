@@ -1,22 +1,5 @@
 package com.nhl.link.rest.runtime.listener;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static org.mockito.Mockito.verifyZeroInteractions;
-import static org.mockito.Mockito.when;
-
-import java.lang.annotation.Annotation;
-import java.util.List;
-import java.util.Map;
-
-import org.junit.Before;
-import org.junit.Test;
-
 import com.nhl.link.rest.annotation.listener.DataFetched;
 import com.nhl.link.rest.annotation.listener.DataStoreUpdated;
 import com.nhl.link.rest.annotation.listener.UpdateChainInitialized;
@@ -27,7 +10,19 @@ import com.nhl.link.rest.processor.BaseLinearProcessingStage;
 import com.nhl.link.rest.processor.ProcessingContext;
 import com.nhl.link.rest.processor.ProcessingStage;
 import com.nhl.link.rest.runtime.processor.update.UpdateContext;
+import org.junit.Before;
+import org.junit.Test;
 
+import java.lang.annotation.Annotation;
+import java.util.List;
+import java.util.Map;
+
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
+
+/**
+ * @deprecated since 2.7
+ */
 public class ListenerService_UpdateTest {
 
 	private ProcessingContext<Object> mockContext;
@@ -68,14 +63,14 @@ public class ListenerService_UpdateTest {
 
 		verifyZeroInteractions(mockListener);
 		ProcessingStage<ProcessingContext<Object>, ?> stage = factories.get(DataStoreUpdated.class).get(0)
-				.toInvocation(mockListener).invoke(mockContext, mockStage);
+				.toInvocation(mockListener).invokeOld(mockContext, mockStage);
 
 		verify(mockListener).afterDataStoreUpdate(mockContext);
 		verifyNoMoreInteractions(mockListener);
 		assertNull(stage);
 	}
 
-	public static interface UpdateListener {
+	public interface UpdateListener {
 
 		@DataFetched
 		void selectAnnotationMustBeIgnored();

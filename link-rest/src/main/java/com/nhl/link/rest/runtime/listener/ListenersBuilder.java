@@ -3,36 +3,34 @@ package com.nhl.link.rest.runtime.listener;
 import com.nhl.link.rest.processor.ProcessingContext;
 
 import java.lang.annotation.Annotation;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
 /**
  * @since 1.19
+ * @deprecated since 2.7 as listeners got replaced by functional stages.
  */
-public class ListenersBuilder {
+public abstract class ListenersBuilder<E extends Enum<E>> {
 
 	private ProcessingContext<?> context;
 	private EventGroup eventGroup;
 	private IListenerService listenerService;
-	private Map<Class<? extends Annotation>, List<ListenerInvocation>> listeners;
 
 	public ListenersBuilder(IListenerService listenerService, ProcessingContext<?> context, EventGroup eventGroup) {
 		this.context = context;
 		this.eventGroup = eventGroup;
 		this.listenerService = listenerService;
-		this.listeners = new HashMap<>();
 	}
 
-	public Map<Class<? extends Annotation>, List<ListenerInvocation>> getListeners() {
-		return listeners;
-	}
+	protected abstract E mapStage(Class<? extends Annotation> annotation);
 
-	public ListenersBuilder addListener(Object listener) {
+	protected abstract void appendInvocation(E stage, ListenerInvocation invocation);
 
-		Map<Class<? extends Annotation>, List<ListenerInvocationFactory>> factories = listenerService
+    public ListenersBuilder addListener(Object listener) {
+
+		Map<Class<? extends Annotation>, List<ListenerInvocationFactory>> factories =
+                listenerService
 				.getFactories(listener.getClass(), context, eventGroup);
 
 		if (factories.isEmpty()) {
@@ -45,15 +43,8 @@ public class ListenersBuilder {
 				continue;
 			}
 
-			List<ListenerInvocation> list = listeners.get(e.getKey());
-			if (list == null) {
-				list = new ArrayList<>();
-				listeners.put(e.getKey(), list);
-			}
-
-			for (ListenerInvocationFactory factory : e.getValue()) {
-				list.add(factory.toInvocation(listener));
-			}
+            E stage = mapStage(e.getKey());
+			e.getValue().forEach(factory -> appendInvocation(stage, factory.toInvocation(listener)));
 		}
 
 		return this;

@@ -1,13 +1,9 @@
 package com.nhl.link.rest.processor;
 
 import com.nhl.link.rest.SimpleResponse;
-import com.nhl.link.rest.runtime.listener.ListenerInvocation;
 
 import javax.ws.rs.core.Response.Status;
-import java.lang.annotation.Annotation;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -17,7 +13,6 @@ public abstract class BaseProcessingContext<T> implements ProcessingContext<T> {
 
     private Class<T> type;
     private Map<String, Object> attributes;
-    private Map<Class<? extends Annotation>, List<ListenerInvocation>> listeners;
     private Status status;
 
     public BaseProcessingContext(Class<T> type) {
@@ -34,24 +29,6 @@ public abstract class BaseProcessingContext<T> implements ProcessingContext<T> {
         SimpleResponse response = new SimpleResponse(true);
         response.setStatus(getStatus());
         return response;
-    }
-
-    /**
-     * @since 1.19
-     * @deprecated since 2.7 listeners are part of the processor function
-     */
-    @Override
-    public Map<Class<? extends Annotation>, List<ListenerInvocation>> getListeners() {
-        return listeners == null ? Collections.<Class<? extends Annotation>, List<ListenerInvocation>>emptyMap()
-                : listeners;
-    }
-
-    /**
-     * @since 1.19
-     * @deprecated since 2.7 listeners are part of the processor function
-     */
-    public void setListeners(Map<Class<? extends Annotation>, List<ListenerInvocation>> listeners) {
-        this.listeners = listeners;
     }
 
     @Override

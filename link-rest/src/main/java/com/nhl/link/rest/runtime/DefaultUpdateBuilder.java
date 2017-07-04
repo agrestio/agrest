@@ -8,28 +8,20 @@ import com.nhl.link.rest.ObjectMapperFactory;
 import com.nhl.link.rest.SimpleResponse;
 import com.nhl.link.rest.UpdateBuilder;
 import com.nhl.link.rest.UpdateStage;
-import com.nhl.link.rest.annotation.listener.DataStoreUpdated;
-import com.nhl.link.rest.annotation.listener.UpdateChainInitialized;
-import com.nhl.link.rest.annotation.listener.UpdateRequestParsed;
-import com.nhl.link.rest.annotation.listener.UpdateResponseUpdated;
-import com.nhl.link.rest.annotation.listener.UpdateServerParamsApplied;
 import com.nhl.link.rest.constraints.Constraint;
 import com.nhl.link.rest.processor2.Processor;
 import com.nhl.link.rest.runtime.cayenne.ByKeyObjectMapperFactory;
-import com.nhl.link.rest.runtime.listener.ListenerInvocation;
-import com.nhl.link.rest.runtime.listener.ListenersBuilder;
+import com.nhl.link.rest.runtime.listener.IListenerService;
+import com.nhl.link.rest.runtime.listener.UpdateListenersBuilder;
 import com.nhl.link.rest.runtime.processor.update.UpdateContext;
 import com.nhl.link.rest.runtime.processor.update.UpdateProcessorFactory;
 import org.apache.cayenne.exp.Property;
 
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
-import java.lang.annotation.Annotation;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumMap;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -37,29 +29,18 @@ import java.util.Map;
  */
 public class DefaultUpdateBuilder<T> implements UpdateBuilder<T> {
 
-    private static final Map<Class<? extends Annotation>, UpdateStage> ANNOTATIONS_MAP;
-
-    static {
-        ANNOTATIONS_MAP = new HashMap<>();
-        ANNOTATIONS_MAP.put(UpdateChainInitialized.class, UpdateStage.START);
-        ANNOTATIONS_MAP.put(UpdateRequestParsed.class, UpdateStage.PARSE_REQUEST);
-        ANNOTATIONS_MAP.put(UpdateServerParamsApplied.class, UpdateStage.APPLY_SERVER_PARAMS);
-        ANNOTATIONS_MAP.put(DataStoreUpdated.class, UpdateStage.UPDATE_DATA_STORE);
-        ANNOTATIONS_MAP.put(UpdateResponseUpdated.class, UpdateStage.FILL_RESPONSE);
-    }
-
     private UpdateContext<T> context;
-    private ListenersBuilder listenersBuilder;
+    private UpdateListenersBuilder listenersBuilder;
     protected UpdateProcessorFactory processorFactory;
     protected EnumMap<UpdateStage, Processor<UpdateContext<?>>> processors;
 
     public DefaultUpdateBuilder(
             UpdateContext<T> context,
             UpdateProcessorFactory processorFactory,
-            ListenersBuilder listenersBuilder) {
+            IListenerService listenerService) {
 
         this.context = context;
-        this.listenersBuilder = listenersBuilder;
+        this.listenersBuilder = new UpdateListenersBuilder(this, listenerService, context);
         this.processorFactory = processorFactory;
         this.processors = new EnumMap<>(UpdateStage.class);
     }
@@ -242,38 +223,13 @@ public class DefaultUpdateBuilder<T> implements UpdateBuilder<T> {
 
     private SimpleResponse doSync() {
         context.setIncludingDataInResponse(false);
-        context.setListeners(listenersBuilder.getListeners());
-
-        processorFactory
-                .createProcessor(processors, getListeners())
-                .execute(context);
-
+        processorFactory.createProcessor(processors).execute(context);
         return context.createSimpleResponse();
     }
 
     private DataResponse<T> doSyncAndSelect() {
         context.setIncludingDataInResponse(true);
-        context.setListeners(listenersBuilder.getListeners());
-
-        processorFactory
-                .createProcessor(processors, getListeners())
-                .execute(context);
-
+        processorFactory.createProcessor(processors).execute(context);
         return context.createDataResponse();
-    }
-
-
-    private EnumMap<UpdateStage, List<ListenerInvocation>> getListeners() {
-
-        EnumMap<UpdateStage, List<ListenerInvocation>> byStage = new EnumMap<>(UpdateStage.class);
-        listenersBuilder.getListeners().forEach((a, invocations) -> {
-
-            UpdateStage stage = ANNOTATIONS_MAP.get(a);
-            if (stage != null) {
-                byStage.put(stage, invocations);
-            }
-        });
-
-        return byStage;
     }
 }

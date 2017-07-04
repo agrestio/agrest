@@ -1,5 +1,12 @@
 package com.nhl.link.rest.runtime.listener;
 
+import com.nhl.link.rest.LinkRestException;
+import com.nhl.link.rest.processor.ProcessingContext;
+import com.nhl.link.rest.processor.ProcessingStage;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.ws.rs.core.Response.Status;
 import java.lang.annotation.Annotation;
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
@@ -16,16 +23,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-import javax.ws.rs.core.Response.Status;
-
-import com.nhl.link.rest.LinkRestException;
-import com.nhl.link.rest.processor.ProcessingContext;
-import com.nhl.link.rest.processor.ProcessingStage;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 /**
  * @since 1.19
+ * @deprecated since 2.7 as listeners got replaced by functional stages.
  */
 class ListenerInvocationFactoryCompiler {
 
@@ -184,7 +184,7 @@ class ListenerInvocationFactoryCompiler {
 
 					@SuppressWarnings("unchecked")
 					@Override
-					protected <C extends ProcessingContext<T>, T> ProcessingStage<C, ? super T> doInvoke(C context,
+					protected <C extends ProcessingContext<T>, T> ProcessingStage<C, ? super T> doInvokeOld(C context,
 							ProcessingStage<C, ? super T> next) throws Throwable {
 
 						return (ProcessingStage<C, ? super T>) invoker.invoke(methodHandle, context, next);

@@ -1,11 +1,5 @@
 package com.nhl.link.rest.processor;
 
-import java.lang.annotation.Annotation;
-import java.util.List;
-import java.util.Map;
-
-import com.nhl.link.rest.runtime.listener.ListenerInvocation;
-
 /**
  * An abstraction of a "context" object in a processor chain.
  *
@@ -26,9 +20,4 @@ public interface ProcessingContext<T> {
 	 * Allows to store an arbitrary attribute in the context during processing.
 	 */
 	void setAttribute(String name, Object value);
-
-	/**
-	 * @since 1.19
-	 */
-	Map<Class<? extends Annotation>, List<ListenerInvocation>> getListeners();
 }

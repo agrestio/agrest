@@ -1,24 +1,22 @@
 package com.nhl.link.rest.runtime.listener;
 
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertSame;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static org.mockito.Mockito.verifyZeroInteractions;
-import static org.mockito.Mockito.when;
-
-import java.lang.invoke.MethodHandle;
-import java.lang.invoke.MethodHandles;
-
+import com.nhl.link.rest.processor.BaseLinearProcessingStage;
+import com.nhl.link.rest.processor.ProcessingContext;
+import com.nhl.link.rest.processor.ProcessingStage;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import com.nhl.link.rest.processor.ProcessingContext;
-import com.nhl.link.rest.processor.BaseLinearProcessingStage;
-import com.nhl.link.rest.processor.ProcessingStage;
+import java.lang.invoke.MethodHandle;
+import java.lang.invoke.MethodHandles;
 
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
+import static org.mockito.Mockito.*;
+
+/**
+ * @deprecated since 2.7
+ */
 public class ListenerInvocationTest {
 
 	private static MethodHandle VOID_NO_ARGS;
@@ -47,19 +45,19 @@ public class ListenerInvocationTest {
 	}
 
 	@Test
-	public void testInvoke_VoidNoArg() {
+	public void testInvokeOld_VoidNoArg() {
 
 		ListenerInvocation invocation = new ListenerInvocation(VOID_NO_ARGS.bindTo(mockListener), true) {
 
 			@Override
-			protected <C extends ProcessingContext<T>, T> ProcessingStage<C, T> doInvoke(C context,
+			protected <C extends ProcessingContext<T>, T> ProcessingStage<C, T> doInvokeOld(C context,
 					ProcessingStage<C, ? super T> next) throws Throwable {
 				return (ProcessingStage<C, T>) methodHandle.invoke();
 			}
 		};
 
 		verifyZeroInteractions(mockListener);
-		Object result = invocation.invoke(mockContext, mockStage);
+		Object result = invocation.invokeOld(mockContext, mockStage);
 		verify(mockListener).voidNoArg();
 		verifyNoMoreInteractions(mockListener);
 		assertSame(mockStage, result);
@@ -67,7 +65,7 @@ public class ListenerInvocationTest {
 
 	@SuppressWarnings("unchecked")
 	@Test
-	public void testInvoke_ObjectOneArg() {
+	public void testInvokeOld_ObjectOneArg() {
 
 		BaseLinearProcessingStage<ProcessingContext<Listener>, Listener> altStage = mock(BaseLinearProcessingStage.class);
 		when(mockListener.objectOneArg(mockContext)).thenReturn(altStage);
@@ -75,33 +73,33 @@ public class ListenerInvocationTest {
 		ListenerInvocation invocation = new ListenerInvocation(OBJECT_ONE_ARG.bindTo(mockListener), false) {
 
 			@Override
-			protected <C extends ProcessingContext<T>, T> ProcessingStage<C, T> doInvoke(C context,
+			protected <C extends ProcessingContext<T>, T> ProcessingStage<C, T> doInvokeOld(C context,
 					ProcessingStage<C, ? super T> next) throws Throwable {
 				return (ProcessingStage<C, T>) methodHandle.invoke(context);
 			}
 		};
 
 		verifyZeroInteractions(mockListener);
-		Object result = invocation.invoke(mockContext, mockStage);
+		Object result = invocation.invokeOld(mockContext, mockStage);
 		verify(mockListener).objectOneArg(mockContext);
 		verifyNoMoreInteractions(mockListener);
 		assertSame(altStage, result);
 	}
 
 	@Test
-	public void testInvoke_ObjectTwoArgs() {
+	public void testInvokeOld_ObjectTwoArgs() {
 
 		ListenerInvocation invocation = new ListenerInvocation(OBJECT_TWO_ARGS.bindTo(mockListener), false) {
 
 			@Override
-			protected <C extends ProcessingContext<T>, T> ProcessingStage<C, T> doInvoke(C context,
+			protected <C extends ProcessingContext<T>, T> ProcessingStage<C, T> doInvokeOld(C context,
 					ProcessingStage<C, ? super T> next) throws Throwable {
 				return (ProcessingStage<C, T>) methodHandle.invoke(context, next);
 			}
 		};
 
 		verifyZeroInteractions(mockListener);
-		Object result = invocation.invoke(mockContext, mockStage);
+		Object result = invocation.invokeOld(mockContext, mockStage);
 		verify(mockListener).objectTwoArgs(mockContext, mockStage);
 		verifyNoMoreInteractions(mockListener);
 		assertNull(result);
