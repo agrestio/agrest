@@ -6,6 +6,7 @@ Release 2.7
 #241 Functional update pipeline interceptors
 #242 Functional delete pipeline
 #243 Functional pipeline for unrelate and meta chains
+#244 Remove API deprecated on or before 2.0
 
 Release 2.6
 
