@@ -6,21 +6,31 @@ import com.nhl.link.rest.EntityProperty;
 import com.nhl.link.rest.LinkRestException;
 import com.nhl.link.rest.SelectBuilder;
 import com.nhl.link.rest.SizeConstraints;
+import com.nhl.link.rest.annotation.listener.DataFetched;
+import com.nhl.link.rest.annotation.listener.QueryAssembled;
+import com.nhl.link.rest.annotation.listener.SelectChainInitialized;
+import com.nhl.link.rest.annotation.listener.SelectRequestParsed;
+import com.nhl.link.rest.annotation.listener.SelectServerParamsApplied;
 import com.nhl.link.rest.constraints.Constraint;
 import com.nhl.link.rest.encoder.Encoder;
-import com.nhl.link.rest.processor.ChainProcessor;
-import com.nhl.link.rest.processor.ProcessingStage;
+import com.nhl.link.rest.processor2.Processor;
 import com.nhl.link.rest.property.PropertyBuilder;
+import com.nhl.link.rest.runtime.listener.ListenerInvocation;
 import com.nhl.link.rest.runtime.listener.ListenersBuilder;
 import com.nhl.link.rest.runtime.processor.select.SelectContext;
+import com.nhl.link.rest.runtime.processor2.select.SelectProcessorFactory;
+import com.nhl.link.rest.runtime.processor2.select.SelectStage;
 import org.apache.cayenne.exp.Property;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriInfo;
+import java.lang.annotation.Annotation;
 import java.util.Collection;
+import java.util.EnumMap;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -30,17 +40,30 @@ public class DefaultSelectBuilder<T> implements SelectBuilder<T> {
 
     private static final Logger logger = LoggerFactory.getLogger(DefaultSelectBuilder.class);
 
+    private static final Map<Class<? extends Annotation>, SelectStage> ANNOTATIONS_MAP;
+
+    static {
+        ANNOTATIONS_MAP = new HashMap<>();
+        ANNOTATIONS_MAP.put(SelectChainInitialized.class, SelectStage.START);
+        ANNOTATIONS_MAP.put(SelectRequestParsed.class, SelectStage.PARSE_REQUEST);
+        ANNOTATIONS_MAP.put(SelectServerParamsApplied.class, SelectStage.APPLY_SERVER_PARAMS);
+        ANNOTATIONS_MAP.put(QueryAssembled.class, SelectStage.ASSEMBLE_QUERY);
+        ANNOTATIONS_MAP.put(DataFetched.class, SelectStage.FETCH_DATA);
+    }
+
     protected SelectContext<T> context;
-    protected ProcessingStage<SelectContext<T>, T> selectChain;
+    protected SelectProcessorFactory processorFactory;
     protected ListenersBuilder listenersBuilder;
+    protected EnumMap<SelectStage, Processor<SelectContext<?>>> processors;
 
     public DefaultSelectBuilder(
             SelectContext<T> context,
-            ProcessingStage<SelectContext<T>, T> selectChain,
+            SelectProcessorFactory processorFactory,
             ListenersBuilder listenersBuilder) {
         this.context = context;
-        this.selectChain = selectChain;
+        this.processorFactory = processorFactory;
         this.listenersBuilder = listenersBuilder;
+        this.processors = new EnumMap<>(SelectStage.class);
     }
 
     public SelectContext<T> getContext() {
@@ -196,22 +219,51 @@ public class DefaultSelectBuilder<T> implements SelectBuilder<T> {
         return this;
     }
 
+    private EnumMap<SelectStage, List<ListenerInvocation>> getListeners() {
+
+        EnumMap<SelectStage, List<ListenerInvocation>> byStage = new EnumMap<>(SelectStage.class);
+        listenersBuilder.getListeners().forEach((a, invocations) -> {
+
+            SelectStage stage = ANNOTATIONS_MAP.get(a);
+            if (stage != null) {
+                byStage.put(stage, invocations);
+            }
+        });
+
+        return byStage;
+    }
+
+    @Override
+    public SelectBuilder<T> insertProcessor(SelectStage stage, Processor<SelectContext<?>> processor) {
+        processors.compute(stage, (s, existing) -> existing != null ? existing.andThen(processor) : processor);
+        return this;
+    }
+
     @Override
     public DataResponse<T> get() {
+
         // 'byId' behaving as "selectOne" is really legacy behavior of 1.1...
         // should deprecate eventually
         context.setAtMostOneObject(context.isById());
         context.setListeners(listenersBuilder.getListeners());
 
-        ChainProcessor.execute(selectChain, context);
+        processorFactory
+                .createProcessor(processors, getListeners())
+                .execute(context);
+
         return context.createDataResponse();
     }
 
     @Override
     public DataResponse<T> getOne() {
+
         context.setAtMostOneObject(true);
         context.setListeners(listenersBuilder.getListeners());
-        ChainProcessor.execute(selectChain, context);
+
+        processorFactory
+                .createProcessor(processors, getListeners())
+                .execute(context);
+
         return context.createDataResponse();
     }
 

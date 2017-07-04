@@ -25,6 +25,8 @@ import com.nhl.link.rest.runtime.cayenne.CayennePersister;
 import com.nhl.link.rest.runtime.cayenne.CayenneProcessorFactory;
 import com.nhl.link.rest.runtime.cayenne.ICayennePersister;
 import com.nhl.link.rest.runtime.cayenne.NoCayennePersister;
+import com.nhl.link.rest.runtime.cayenne.processor2.select.CayenneAssembleQueryStage;
+import com.nhl.link.rest.runtime.cayenne.processor2.select.CayenneFetchDataStage;
 import com.nhl.link.rest.runtime.constraints.ConstraintsHandler;
 import com.nhl.link.rest.runtime.constraints.IConstraintsHandler;
 import com.nhl.link.rest.runtime.encoder.AttributeEncoderFactory;
@@ -61,6 +63,11 @@ import com.nhl.link.rest.runtime.parser.sort.SortProcessor;
 import com.nhl.link.rest.runtime.parser.tree.ITreeProcessor;
 import com.nhl.link.rest.runtime.parser.tree.IncludeExcludeProcessor;
 import com.nhl.link.rest.runtime.processor.IProcessorFactory;
+import com.nhl.link.rest.runtime.processor2.select.ApplyServerParamsStage;
+import com.nhl.link.rest.runtime.processor2.select.ParseRequestStage;
+import com.nhl.link.rest.runtime.processor2.select.SelectProcessorFactory;
+import com.nhl.link.rest.runtime.cayenne.processor2.select.CayenneSelectProcessorFactoryProvider;
+import com.nhl.link.rest.runtime.processor2.select.StartStage;
 import com.nhl.link.rest.runtime.semantics.IRelationshipMapper;
 import com.nhl.link.rest.runtime.semantics.RelationshipMapper;
 import com.nhl.link.rest.runtime.shutdown.ShutdownManager;
@@ -311,6 +318,15 @@ public class LinkRestBuilder {
             }
 
             binder.bind(IProcessorFactory.class).to(CayenneProcessorFactory.class);
+
+            // select stages
+            binder.bind(SelectProcessorFactory.class).toProvider(CayenneSelectProcessorFactoryProvider.class);
+            binder.bind(StartStage.class).to(StartStage.class);
+			binder.bind(ParseRequestStage.class).to(ParseRequestStage.class);
+			binder.bind(ApplyServerParamsStage.class).to(ApplyServerParamsStage.class);
+			binder.bind(CayenneAssembleQueryStage.class).to(CayenneAssembleQueryStage.class);
+			binder.bind(CayenneFetchDataStage.class).to(CayenneFetchDataStage.class);
+
             binder.bind(IRequestParser.class).to(RequestParser.class);
             binder.bind(IJsonValueConverterFactory.class).to(DefaultJsonValueConverterFactory.class);
             binder.bind(IAttributeEncoderFactory.class).to(AttributeEncoderFactory.class);

@@ -48,6 +48,7 @@ import java.util.Map;
 
 /**
  * @since 1.16
+ * @deprecated since 2.7 not used for select processors, and the rest will be factored out soon.
  */
 public class CayenneProcessorFactory implements IProcessorFactory {
 

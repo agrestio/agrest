@@ -1,41 +1,39 @@
-package com.nhl.link.rest.runtime.cayenne.processor;
+package com.nhl.link.rest.runtime.cayenne.processor2.select;
 
 import com.nhl.link.rest.LinkRestException;
-import com.nhl.link.rest.annotation.listener.DataFetched;
 import com.nhl.link.rest.meta.LrEntity;
-import com.nhl.link.rest.processor.BaseLinearProcessingStage;
-import com.nhl.link.rest.processor.ProcessingStage;
+import com.nhl.link.rest.processor2.Processor;
+import com.nhl.link.rest.processor2.ProcessorOutcome;
 import com.nhl.link.rest.runtime.cayenne.ICayennePersister;
 import com.nhl.link.rest.runtime.processor.select.SelectContext;
+import org.apache.cayenne.ObjectContext;
+import org.apache.cayenne.di.Inject;
 import org.apache.cayenne.query.SelectQuery;
 
 import javax.ws.rs.core.Response;
-import java.lang.annotation.Annotation;
 import java.util.List;
 
 /**
- * @param <T>
- * @deprecated since 2.7 in favor of {@link com.nhl.link.rest.processor2.Processor} based stages.
+ * @since 2.7
  */
-public class CayenneFetchStage<T> extends BaseLinearProcessingStage<SelectContext<T>, T> {
+public class CayenneFetchDataStage implements Processor<SelectContext<?>> {
 
-    private ICayennePersister persister;
+    private ObjectContext sharedContext;
 
-    public CayenneFetchStage(ProcessingStage<SelectContext<T>, ? super T> next, ICayennePersister persister) {
-        super(next);
-        this.persister = persister;
+    public CayenneFetchDataStage(@Inject ICayennePersister persister) {
+        this.sharedContext = persister.sharedContext();
     }
 
     @Override
-    public Class<? extends Annotation> afterStageListener() {
-        return DataFetched.class;
+    public ProcessorOutcome execute(SelectContext<?> context) {
+        doExecute(context);
+        return ProcessorOutcome.CONTINUE;
     }
 
-    @Override
-    protected void doExecute(SelectContext<T> context) {
+    protected <T> void doExecute(SelectContext<T> context) {
         SelectQuery<T> select = context.getSelect();
 
-        List<T> objects = persister.sharedContext().select(select);
+        List<T> objects = sharedContext.select(select);
 
         if (context.isAtMostOneObject() && objects.size() != 1) {
 

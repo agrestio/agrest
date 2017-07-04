@@ -2,6 +2,7 @@ Release 2.7
 
 #238 Dynamic relationships do not work with "mapBy"
 #239 Add ResourceEntity.setQualifier(..) method.
+#240 Functional select pipeline interceptors
 
 Release 2.6
 

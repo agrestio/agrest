@@ -1,0 +1,41 @@
+package com.nhl.link.rest.runtime.processor2.select;
+
+import com.nhl.link.rest.ResourceEntity;
+import com.nhl.link.rest.meta.LrEntity;
+import com.nhl.link.rest.processor2.Processor;
+import com.nhl.link.rest.processor2.ProcessorOutcome;
+import com.nhl.link.rest.runtime.meta.IMetadataService;
+import com.nhl.link.rest.runtime.parser.IRequestParser;
+import com.nhl.link.rest.runtime.processor.select.SelectContext;
+import org.apache.cayenne.di.Inject;
+
+/**
+ * @since 2.7
+ */
+public class ParseRequestStage implements Processor<SelectContext<?>> {
+
+    private IRequestParser requestParser;
+    private IMetadataService metadataService;
+
+    public ParseRequestStage(
+            @Inject IRequestParser requestParser,
+            @Inject IMetadataService metadataService) {
+
+        this.requestParser = requestParser;
+        this.metadataService = metadataService;
+    }
+
+    @Override
+    public ProcessorOutcome execute(SelectContext<?> context) {
+        doExecute(context);
+        return ProcessorOutcome.CONTINUE;
+    }
+
+    protected <T> void doExecute(SelectContext<T> context) {
+        LrEntity<T> entity = metadataService.getLrEntity(context.getType());
+        ResourceEntity<T> resourceEntity = requestParser.parseSelect(entity,
+                context.getProtocolParameters(),
+                context.getAutocompleteProperty());
+        context.setEntity(resourceEntity);
+    }
+}

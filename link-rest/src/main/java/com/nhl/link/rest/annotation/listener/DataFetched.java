@@ -1,13 +1,13 @@
 package com.nhl.link.rest.annotation.listener;
 
-import static java.lang.annotation.ElementType.METHOD;
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
+import com.nhl.link.rest.runtime.cayenne.processor.CayenneFetchStage;
 
 import java.lang.annotation.Inherited;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
-import com.nhl.link.rest.runtime.cayenne.processor.CayenneFetchStage;
+import static java.lang.annotation.ElementType.METHOD;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
  * A chain listener annotation for methods to be invoked after
@@ -19,5 +19,4 @@ import com.nhl.link.rest.runtime.cayenne.processor.CayenneFetchStage;
 @Retention(RUNTIME)
 @Inherited
 public @interface DataFetched {
-
 }

@@ -6,6 +6,7 @@ import java.lang.annotation.Annotation;
  * A single stage in a chained request processor.
  *
  * @since 1.16
+ * @deprecated since 2.7 in favor of {@link com.nhl.link.rest.processor2.Processor}.
  */
 public interface ProcessingStage<C extends ProcessingContext<T>, T> {
 

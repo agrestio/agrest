@@ -12,6 +12,7 @@ import java.lang.annotation.Annotation;
 
 /**
  * @since 1.19
+ * @deprecated since 2.7 in favor of {@link com.nhl.link.rest.processor2.Processor} based stages.
  */
 public class ParseSelectRequestStage<T> extends BaseLinearProcessingStage<SelectContext<T>, T> {
 

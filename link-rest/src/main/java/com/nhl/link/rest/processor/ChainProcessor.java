@@ -10,6 +10,8 @@ import java.util.List;
  * listeners in between.
  *
  * @since 1.19
+ * @deprecated since 2.7 we are using a different processor model - {@link com.nhl.link.rest.processor2.Processor}. So
+ * after refactoring is complete, ChainProcessor becomes irrelevant.
  */
 public class ChainProcessor {
 

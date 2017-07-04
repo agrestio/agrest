@@ -1,17 +1,8 @@
 package com.nhl.link.rest.runtime;
 
-import java.util.Collection;
-import java.util.Map;
-
-import javax.ws.rs.core.Response.Status;
-import javax.ws.rs.core.UriInfo;
-
-import com.nhl.link.rest.EntityDelete;
-import org.apache.cayenne.di.Inject;
-import org.apache.cayenne.exp.Property;
-
 import com.nhl.link.rest.DataResponse;
 import com.nhl.link.rest.DeleteBuilder;
+import com.nhl.link.rest.EntityDelete;
 import com.nhl.link.rest.EntityParent;
 import com.nhl.link.rest.LinkRestException;
 import com.nhl.link.rest.MetadataBuilder;
@@ -31,6 +22,14 @@ import com.nhl.link.rest.runtime.processor.meta.MetadataContext;
 import com.nhl.link.rest.runtime.processor.select.SelectContext;
 import com.nhl.link.rest.runtime.processor.unrelate.UnrelateContext;
 import com.nhl.link.rest.runtime.processor.update.UpdateContext;
+import com.nhl.link.rest.runtime.processor2.select.SelectProcessorFactory;
+import org.apache.cayenne.di.Inject;
+import org.apache.cayenne.exp.Property;
+
+import javax.ws.rs.core.Response.Status;
+import javax.ws.rs.core.UriInfo;
+import java.util.Collection;
+import java.util.Map;
 
 /**
  * A backend-agnostic abstract {@link ILinkRestService} that can serve to
@@ -41,10 +40,16 @@ public class DefaultLinkRestService implements ILinkRestService {
 	private IListenerService listenerService;
 	private IMetadataService metadataService;
 	private Map<Class<?>, Map<String, ProcessingStage<?, ?>>> processors;
+	private SelectProcessorFactory selectProcessorFactory;
 
-	public DefaultLinkRestService(@Inject IProcessorFactory processorFactory, @Inject IMetadataService metadataService,
+	public DefaultLinkRestService(
+			@Inject IProcessorFactory processorFactory,
+			@Inject SelectProcessorFactory selectProcessorFactory,
+			@Inject IMetadataService metadataService,
 			@Inject IListenerService listenerService) {
+
 		this.processors = processorFactory.processors();
+		this.selectProcessorFactory = selectProcessorFactory;
 		this.metadataService = metadataService;
 		this.listenerService = listenerService;
 	}
@@ -67,7 +72,7 @@ public class DefaultLinkRestService implements ILinkRestService {
 
 	private <T> SelectBuilder<T> toSelectBuilder(SelectContext<T> context) {
 		ListenersBuilder listenersBuilder = new ListenersBuilder(listenerService, context, EventGroup.select);
-		return new DefaultSelectBuilder<>(context, chain(context), listenersBuilder);
+		return new DefaultSelectBuilder<>(context, selectProcessorFactory, listenersBuilder);
 	}
 
 	/**
