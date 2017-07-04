@@ -1,3 +1,26 @@
+## Upgrading to 2.7
+
+### Replacing Listeners with Functions [240](https://github.com/nhl/link-rest/issues/240), [241](https://github.com/nhl/link-rest/issues/241), [242](https://github.com/nhl/link-rest/issues/242), [243](https://github.com/nhl/link-rest/issues/243)
+
+To simplify writing LR extensions, an API alternative to annotated listeners was implemented for "select" and "update"
+operations. Now you can register specific functions to be invoked after a given stage. E.g.:
+ 
+```java
+LinkRest.select(E.class, config)
+    .uri(uri)
+    .stage(SelectStage.PARSE_REQUEST, c -> c.getEntity().setQualifier(E.NAME.eq("John")))
+    .get();
+
+LinkRest.select(E.class, config)
+    .uri(uri)
+    .terminalStage(SelectStage.APPLY_SERVER_PARAMS, object::customBackend)
+    .get();
+```
+Old-style listeners are still supported, but deprecated. While most existing listeners will work unchanged, there are
+may be issues if the listeners do anything fancy with stage routing (beyond just returning unchanged "next" or null).
+generally we would recommend to inspect the deprecation warnings and migrate to the new function-centric API.
+
+
 ## Upgrading to 2.4
 
 ### Immutable Constraints API [#214](https://github.com/nhl/link-rest/issues/214)
