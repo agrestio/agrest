@@ -13,11 +13,11 @@ import com.nhl.link.rest.processor.ChainProcessor;
 import com.nhl.link.rest.processor.ProcessingContext;
 import com.nhl.link.rest.processor.ProcessingStage;
 import com.nhl.link.rest.runtime.listener.IListenerService;
-import com.nhl.link.rest.runtime.meta.IMetadataService;
 import com.nhl.link.rest.runtime.processor.IProcessorFactory;
 import com.nhl.link.rest.runtime.processor.delete.DeleteContext;
 import com.nhl.link.rest.runtime.processor.delete.DeleteProcessorFactory;
 import com.nhl.link.rest.runtime.processor.meta.MetadataContext;
+import com.nhl.link.rest.runtime.processor.meta.MetadataProcessorFactory;
 import com.nhl.link.rest.runtime.processor.select.SelectContext;
 import com.nhl.link.rest.runtime.processor.select.SelectProcessorFactory;
 import com.nhl.link.rest.runtime.processor.unrelate.UnrelateContext;
@@ -38,25 +38,25 @@ import java.util.Map;
 public class DefaultLinkRestService implements ILinkRestService {
 
 	private IListenerService listenerService;
-	private IMetadataService metadataService;
 	private Map<Class<?>, Map<String, ProcessingStage<?, ?>>> processors;
 	private SelectProcessorFactory selectProcessorFactory;
     private DeleteProcessorFactory deleteProcessorFactory;
 	private UpdateProcessorFactoryFactory updateProcessorFactoryFactory;
+	private MetadataProcessorFactory metadataProcessorFactory;
 
 	public DefaultLinkRestService(
 			@Inject IProcessorFactory processorFactory,
 			@Inject SelectProcessorFactory selectProcessorFactory,
 			@Inject DeleteProcessorFactory deleteProcessorFactory,
 			@Inject UpdateProcessorFactoryFactory updateProcessorFactoryFactory,
-			@Inject IMetadataService metadataService,
+			@Inject MetadataProcessorFactory metadataProcessorFactory,
 			@Inject IListenerService listenerService) {
 
 		this.processors = processorFactory.processors();
 		this.selectProcessorFactory = selectProcessorFactory;
 		this.deleteProcessorFactory = deleteProcessorFactory;
 		this.updateProcessorFactoryFactory = updateProcessorFactoryFactory;
-		this.metadataService = metadataService;
+		this.metadataProcessorFactory = metadataProcessorFactory;
 		this.listenerService = listenerService;
 	}
 
@@ -217,8 +217,7 @@ public class DefaultLinkRestService implements ILinkRestService {
 	@Override
 	public <T> MetadataBuilder<T> metadata(Class<T> type) {
 		MetadataContext<T> context = new MetadataContext<>(type);
-		context.setEntity(metadataService.getLrEntity(type));
-		return new DefaultMetadataBuilder<>(context, chain(context));
+		return new DefaultMetadataBuilder<>(context, metadataProcessorFactory);
 	}
 
     /**

@@ -77,6 +77,9 @@ import com.nhl.link.rest.runtime.parser.tree.ITreeProcessor;
 import com.nhl.link.rest.runtime.parser.tree.IncludeExcludeProcessor;
 import com.nhl.link.rest.runtime.processor.IProcessorFactory;
 import com.nhl.link.rest.runtime.processor.delete.DeleteProcessorFactory;
+import com.nhl.link.rest.runtime.processor.meta.CollectMetadataStage;
+import com.nhl.link.rest.runtime.processor.meta.MetadataProcessorFactory;
+import com.nhl.link.rest.runtime.processor.meta.MetadataProcessorFactoryProvider;
 import com.nhl.link.rest.runtime.processor.select.ApplyServerParamsStage;
 import com.nhl.link.rest.runtime.processor.select.ParseRequestStage;
 import com.nhl.link.rest.runtime.processor.select.SelectProcessorFactory;
@@ -361,6 +364,10 @@ public class LinkRestBuilder {
             binder.bind(CayenneIdempotentFullSyncStage.class).to(CayenneIdempotentFullSyncStage.class);
             binder.bind(CayenneOkResponseStage.class).to(CayenneOkResponseStage.class);
             binder.bind(CayenneCreatedResponseStage.class).to(CayenneCreatedResponseStage.class);
+
+            // metadata stages
+            binder.bind(MetadataProcessorFactory.class).toProvider(MetadataProcessorFactoryProvider.class);
+            binder.bind(CollectMetadataStage.class).to(CollectMetadataStage.class);
 
             binder.bind(IRequestParser.class).to(RequestParser.class);
             binder.bind(IJsonValueConverterFactory.class).to(DefaultJsonValueConverterFactory.class);

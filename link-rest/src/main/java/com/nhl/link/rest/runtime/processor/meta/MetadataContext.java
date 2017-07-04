@@ -1,14 +1,12 @@
 package com.nhl.link.rest.runtime.processor.meta;
 
-import java.util.Collection;
-
-import javax.ws.rs.core.UriInfo;
-
 import com.nhl.link.rest.MetadataResponse;
 import com.nhl.link.rest.encoder.Encoder;
-import com.nhl.link.rest.meta.LrEntity;
 import com.nhl.link.rest.meta.LrResource;
 import com.nhl.link.rest.processor.BaseProcessingContext;
+
+import javax.ws.rs.core.UriInfo;
+import java.util.Collection;
 
 /**
  * @since 1.18
@@ -18,7 +16,6 @@ public class MetadataContext<T> extends BaseProcessingContext<T> {
 	private Class<?> resourceType;
 	private UriInfo uriInfo;
 	private Encoder encoder;
-	private LrEntity<T> entity;
 	private Collection<LrResource<T>> resources;
 
 	public MetadataContext(Class<T> type) {
@@ -37,14 +34,6 @@ public class MetadataContext<T> extends BaseProcessingContext<T> {
 		response.setResources(resources);
 
 		return response;
-	}
-
-	public LrEntity<T> getEntity() {
-		return entity;
-	}
-
-	public void setEntity(LrEntity<T> entity) {
-		this.entity = entity;
 	}
 
 	public void setResource(Class<?> resourceClass) {
