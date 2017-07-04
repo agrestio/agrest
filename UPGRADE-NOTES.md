@@ -1,6 +1,6 @@
 ## Upgrading to 2.7
 
-### Replacing Listeners with Functions [240](https://github.com/nhl/link-rest/issues/240), [241](https://github.com/nhl/link-rest/issues/241), [242](https://github.com/nhl/link-rest/issues/242), [243](https://github.com/nhl/link-rest/issues/243)
+### Replacing Listeners with Functions [#240](https://github.com/nhl/link-rest/issues/240), [#241](https://github.com/nhl/link-rest/issues/241), [#242](https://github.com/nhl/link-rest/issues/242), [#243](https://github.com/nhl/link-rest/issues/243)
 
 To simplify writing LR extensions, an API alternative to annotated listeners was implemented for "select" and "update"
 operations. Now you can register specific functions to be invoked after a given stage. E.g.:
