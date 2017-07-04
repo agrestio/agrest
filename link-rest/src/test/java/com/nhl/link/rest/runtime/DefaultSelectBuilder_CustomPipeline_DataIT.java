@@ -32,13 +32,13 @@ public class DefaultSelectBuilder_CustomPipeline_DataIT {
     }
 
     @Test
-    public void testPeek_RequestParsed() {
+    public void testStage() {
 
         DB.insert("e2", "id, name", "1, 'xxx'");
         DB.insert("e2", "id, name", "2, 'yyy'");
 
         DataResponse<E2> dr = createBuilder(E2.class)
-                .peek(SelectStage.PARSE_REQUEST, c -> c.getEntity().setQualifier(E2.NAME.eq("yyy")))
+                .stage(SelectStage.PARSE_REQUEST, c -> c.getEntity().setQualifier(E2.NAME.eq("yyy")))
                 .get();
 
         assertEquals(1, dr.getObjects().size());
@@ -46,12 +46,12 @@ public class DefaultSelectBuilder_CustomPipeline_DataIT {
     }
 
     @Test
-    public void testTerminateAfter() {
+    public void testTerminalStage() {
 
         DB.insert("e2", "id, name", "1, 'xxx'");
 
         DataResponse<E2> dr = createBuilder(E2.class)
-                .terminateAfter(SelectStage.PARSE_REQUEST, c -> {
+                .terminalStage(SelectStage.PARSE_REQUEST, c -> {
                 })
                 .get();
 

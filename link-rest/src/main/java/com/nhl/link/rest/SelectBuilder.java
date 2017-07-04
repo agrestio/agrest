@@ -168,62 +168,64 @@ public interface SelectBuilder<T> {
      * </pre>
      *
      * @since 1.19
-     * @deprecated since 2.7 use annotation-free functional form of listeners: {@link #peek(SelectStage, Consumer)},
-     * {@link #terminateAfter(SelectStage, Consumer)} and {@link #insertProcessor(SelectStage, Processor)}.
+     * @deprecated since 2.7 use annotation-free functional form of listeners: {@link #stage(SelectStage, Consumer)},
+     * {@link #terminalStage(SelectStage, Consumer)} and {@link #routingStage(SelectStage, Processor)}.
      */
     SelectBuilder<T> listener(Object listener);
 
     /**
-     * Registers a custom callback to be executed after the specified execution stage. The callback can inspect and
+     * Registers a consumer to be executed after a specified standard execution stage. The consumer can inspect and
      * modify provided {@link SelectContext}.
-     * <p>This operation is composable. For each stage all custom consumers and processors
-     * (see {@link #insertProcessor(SelectStage, Processor)}) will be invoked in the order they were registered.</p>
+     * <p>This operation is composable. For each stage all custom processors will be invoked in the order they were
+     * registered.</p>
      *
-     * @param stage    Defines a place in the processing pipeline where the callback needs to be inserted.
-     * @param callback a callback to invoke at a specific point during select execution.
+     * @param afterStage  A name of the standard stage after which the inserted stage needs to be run.
+     * @param customStage a callback to invoke at a specific point during select execution.
      * @return this builder instance.
      * @since 2.7
      */
-    default SelectBuilder<T> peek(SelectStage stage, Consumer<SelectContext<?>> callback) {
-        return insertProcessor(stage, c -> {
-            callback.accept(c);
+    default SelectBuilder<T> stage(SelectStage afterStage, Consumer<SelectContext<?>> customStage) {
+        return routingStage(afterStage, c -> {
+            customStage.accept(c);
             return ProcessorOutcome.CONTINUE;
         });
     }
 
     /**
-     * Registers a custom callback to be executed after the specified execution stage and then stop the processing.
-     * This is useful for quick assembly of custom backends that reuse the initial stages of LinkRest processing.
-     * The callback can inspect and modify provided {@link SelectContext}.
-     * <p>This operation is composable. For each stage all custom consumers and processors
-     * (see {@link #insertProcessor(SelectStage, Processor)}) will be invoked in the order they were registered.</p>
+     * Registers a consumer to be executed after the specified standard execution stage. The rest of the standard pipeline
+     * following the named stage will be skipped. This is useful for quick assembly of custom backends that reuse the
+     * initial stages of LinkRest processing, but query the data store on their own. The consumer can inspect and modify
+     * provided {@link SelectContext}.
+     * <p>This operation is composable. For each stage all custom processors will be invoked in the order they were
+     * registered.</p>
      *
-     * @param stage                Defines a place in the processing pipeline where the callback needs to be inserted.
-     * @param terminationProcessor a callback to invoke at a specific point during select execution.
+     * @param afterStage          A name of the standard stage after which the inserted stage needs to be run.
+     * @param customTerminalStage a consumer that will be invoked after 'afterStage', and will be the last piece of
+     *                            code executed in the select pipeline.
      * @return this builder instance.
      * @since 2.7
      */
-    default SelectBuilder<T> terminateAfter(SelectStage stage, Consumer<SelectContext<?>> terminationProcessor) {
-        return insertProcessor(stage, c -> {
-            terminationProcessor.accept(c);
+    default SelectBuilder<T> terminalStage(SelectStage afterStage, Consumer<SelectContext<?>> customTerminalStage) {
+        return routingStage(afterStage, c -> {
+            customTerminalStage.accept(c);
             return ProcessorOutcome.STOP;
         });
     }
 
     /**
-     * Registers a custom processor to be executed after the specified execution stage. The processor can inspect and
-     * modify provided {@link SelectContext}. The processor can also either pass control to the next stage by returning
+     * Registers a processor to be executed after the specified standard execution stage. The processor can inspect and
+     * modify provided {@link SelectContext}. When finished, processor can either pass control to the next stage by returning
      * {@link com.nhl.link.rest.processor2.ProcessorOutcome#CONTINUE}, or terminate the pipeline by returning
      * {@link com.nhl.link.rest.processor2.ProcessorOutcome#STOP}.
-     * <p>This operation is composable. For each stage all custom processors and consumer
-     * (see {@link #peek(SelectStage, Consumer)}) will be invoked in the order they were registered.</p>
+     * <p>This operation is composable. For each stage all custom processors will be invoked in the order they were
+     * registered.</p>
      *
-     * @param stage     Defines a place in the processing pipeline where the processor needs to be inserted.
-     * @param processor a processor to invoke at a specific point during select execution.
+     * @param afterStage  A name of the standard stage after which the inserted stage needs to be run.
+     * @param customStage a processor to invoke at a specific point during select execution.
      * @return this builder instance.
      * @since 2.7
      */
-    SelectBuilder<T> insertProcessor(SelectStage stage, Processor<SelectContext<?>> processor);
+    SelectBuilder<T> routingStage(SelectStage afterStage, Processor<SelectContext<?>> customStage);
 
     /**
      * Runs the query corresponding to the state of this builder, returning

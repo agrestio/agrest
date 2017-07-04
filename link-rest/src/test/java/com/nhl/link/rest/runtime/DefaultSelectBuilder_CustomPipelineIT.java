@@ -36,18 +36,18 @@ public class DefaultSelectBuilder_CustomPipelineIT {
     }
 
     @Test
-    public void testPeek_AllStages() {
+    public void testStage_AllStages() {
 
         Map<SelectStage, Integer> stages = new EnumMap<>(SelectStage.class);
         Consumer<SelectStage> stageRecorder = s -> stages.put(s, stages.size());
 
         DataResponse<E2> dr = createBuilder(E2.class)
                 // Order of registration across stages is not significant. Stage natural order will be preserved.
-                .peek(SelectStage.PARSE_REQUEST, c -> stageRecorder.accept(SelectStage.PARSE_REQUEST))
-                .peek(SelectStage.START, c -> stageRecorder.accept(SelectStage.START))
-                .peek(SelectStage.FETCH_DATA, c -> stageRecorder.accept(SelectStage.FETCH_DATA))
-                .peek(SelectStage.ASSEMBLE_QUERY, c -> stageRecorder.accept(SelectStage.ASSEMBLE_QUERY))
-                .peek(SelectStage.APPLY_SERVER_PARAMS, c -> stageRecorder.accept(SelectStage.APPLY_SERVER_PARAMS))
+                .stage(SelectStage.PARSE_REQUEST, c -> stageRecorder.accept(SelectStage.PARSE_REQUEST))
+                .stage(SelectStage.START, c -> stageRecorder.accept(SelectStage.START))
+                .stage(SelectStage.FETCH_DATA, c -> stageRecorder.accept(SelectStage.FETCH_DATA))
+                .stage(SelectStage.ASSEMBLE_QUERY, c -> stageRecorder.accept(SelectStage.ASSEMBLE_QUERY))
+                .stage(SelectStage.APPLY_SERVER_PARAMS, c -> stageRecorder.accept(SelectStage.APPLY_SERVER_PARAMS))
                 .get();
 
         assertEquals(SelectStage.values().length, stages.size());
@@ -55,7 +55,7 @@ public class DefaultSelectBuilder_CustomPipelineIT {
     }
 
     @Test
-    public void testPeek_Composition() {
+    public void testStage_Composition() {
 
         Map<SelectStage, String> stages = new EnumMap<>(SelectStage.class);
         BiConsumer<SelectStage, String> stageRecorder = (stage, value) -> {
@@ -65,11 +65,11 @@ public class DefaultSelectBuilder_CustomPipelineIT {
 
         DataResponse<E2> dr = createBuilder(E2.class)
                 // Order of registration with stages is significant.
-                .peek(SelectStage.PARSE_REQUEST, c -> stageRecorder.accept(SelectStage.PARSE_REQUEST, "a"))
-                .peek(SelectStage.FETCH_DATA, c -> stageRecorder.accept(SelectStage.FETCH_DATA, "b"))
-                .peek(SelectStage.PARSE_REQUEST, c -> stageRecorder.accept(SelectStage.PARSE_REQUEST, "c"))
-                .peek(SelectStage.PARSE_REQUEST, c -> stageRecorder.accept(SelectStage.PARSE_REQUEST, "d"))
-                .peek(SelectStage.FETCH_DATA, c -> stageRecorder.accept(SelectStage.FETCH_DATA, "e"))
+                .stage(SelectStage.PARSE_REQUEST, c -> stageRecorder.accept(SelectStage.PARSE_REQUEST, "a"))
+                .stage(SelectStage.FETCH_DATA, c -> stageRecorder.accept(SelectStage.FETCH_DATA, "b"))
+                .stage(SelectStage.PARSE_REQUEST, c -> stageRecorder.accept(SelectStage.PARSE_REQUEST, "c"))
+                .stage(SelectStage.PARSE_REQUEST, c -> stageRecorder.accept(SelectStage.PARSE_REQUEST, "d"))
+                .stage(SelectStage.FETCH_DATA, c -> stageRecorder.accept(SelectStage.FETCH_DATA, "e"))
                 .get();
 
         assertEquals(2, stages.size());

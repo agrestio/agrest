@@ -234,7 +234,7 @@ public class DefaultSelectBuilder<T> implements SelectBuilder<T> {
     }
 
     @Override
-    public SelectBuilder<T> insertProcessor(SelectStage stage, Processor<SelectContext<?>> processor) {
+    public SelectBuilder<T> routingStage(SelectStage stage, Processor<SelectContext<?>> processor) {
         processors.compute(stage, (s, existing) -> existing != null ? existing.andThen(processor) : processor);
         return this;
     }

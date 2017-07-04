@@ -12,10 +12,11 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 /**
  * A chain listener annotation for methods to be invoked after
  * {@link CayenneQueryAssembleStage} execution.
- * 
+ *
  * @since 1.23
+ * @deprecated since 2.7 as annotated listeners were deprecated in favor of the functional interceptor API.
  */
-@Target({ METHOD })
+@Target({METHOD})
 @Retention(RUNTIME)
 @Inherited
 public @interface QueryAssembled {
