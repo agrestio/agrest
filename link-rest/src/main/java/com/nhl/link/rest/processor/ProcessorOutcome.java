@@ -1,4 +1,4 @@
-package com.nhl.link.rest.processor2;
+package com.nhl.link.rest.processor;
 
 /**
  * @since 2.7

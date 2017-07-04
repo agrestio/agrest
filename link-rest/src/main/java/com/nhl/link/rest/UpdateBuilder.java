@@ -6,8 +6,8 @@ import com.nhl.link.rest.annotation.listener.UpdateRequestParsed;
 import com.nhl.link.rest.annotation.listener.UpdateResponseUpdated;
 import com.nhl.link.rest.annotation.listener.UpdateServerParamsApplied;
 import com.nhl.link.rest.constraints.Constraint;
-import com.nhl.link.rest.processor2.Processor;
-import com.nhl.link.rest.processor2.ProcessorOutcome;
+import com.nhl.link.rest.processor.Processor;
+import com.nhl.link.rest.processor.ProcessorOutcome;
 import com.nhl.link.rest.runtime.processor.update.UpdateContext;
 import org.apache.cayenne.exp.Property;
 
@@ -207,8 +207,8 @@ public interface UpdateBuilder<T> {
     /**
      * Registers a processor to be executed after the specified standard execution stage. The processor can inspect and
      * modify provided {@link UpdateContext}. When finished, processor can either pass control to the next stage by returning
-     * {@link com.nhl.link.rest.processor2.ProcessorOutcome#CONTINUE}, or terminate the pipeline by returning
-     * {@link com.nhl.link.rest.processor2.ProcessorOutcome#STOP}.
+     * {@link ProcessorOutcome#CONTINUE}, or terminate the pipeline by returning
+     * {@link ProcessorOutcome#STOP}.
      * <p>This operation is composable. For each stage all custom processors will be invoked in the order they were
      * registered.</p>
      *

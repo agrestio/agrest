@@ -1,7 +1,7 @@
 package com.nhl.link.rest.runtime.cayenne.processor.update;
 
 import com.nhl.link.rest.UpdateStage;
-import com.nhl.link.rest.processor2.Processor;
+import com.nhl.link.rest.processor.Processor;
 import com.nhl.link.rest.runtime.UpdateOperation;
 import com.nhl.link.rest.runtime.processor.update.ApplyServerParamsStage;
 import com.nhl.link.rest.runtime.processor.update.ParseRequestStage;

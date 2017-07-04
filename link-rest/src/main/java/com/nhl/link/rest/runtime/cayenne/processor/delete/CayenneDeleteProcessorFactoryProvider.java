@@ -1,7 +1,7 @@
 package com.nhl.link.rest.runtime.cayenne.processor.delete;
 
 import com.nhl.link.rest.DeleteStage;
-import com.nhl.link.rest.processor2.Processor;
+import com.nhl.link.rest.processor.Processor;
 import com.nhl.link.rest.runtime.processor.delete.DeleteContext;
 import com.nhl.link.rest.runtime.processor.delete.DeleteProcessorFactory;
 import org.apache.cayenne.di.Inject;

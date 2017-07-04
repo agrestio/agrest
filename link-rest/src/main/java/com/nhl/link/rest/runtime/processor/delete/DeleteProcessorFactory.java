@@ -1,8 +1,8 @@
 package com.nhl.link.rest.runtime.processor.delete;
 
 import com.nhl.link.rest.DeleteStage;
-import com.nhl.link.rest.processor2.Processor;
-import com.nhl.link.rest.processor2.ProcessorFactory;
+import com.nhl.link.rest.processor.Processor;
+import com.nhl.link.rest.processor.ProcessorFactory;
 
 import java.util.EnumMap;
 

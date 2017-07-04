@@ -9,7 +9,7 @@ import com.nhl.link.rest.SelectStage;
 import com.nhl.link.rest.SizeConstraints;
 import com.nhl.link.rest.constraints.Constraint;
 import com.nhl.link.rest.encoder.Encoder;
-import com.nhl.link.rest.processor2.Processor;
+import com.nhl.link.rest.processor.Processor;
 import com.nhl.link.rest.property.PropertyBuilder;
 import com.nhl.link.rest.runtime.listener.IListenerService;
 import com.nhl.link.rest.runtime.listener.SelectListenersBuilder;

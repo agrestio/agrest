@@ -6,7 +6,7 @@ import com.nhl.link.rest.EntityParent;
 import com.nhl.link.rest.LinkRestException;
 import com.nhl.link.rest.LrObjectId;
 import com.nhl.link.rest.SimpleResponse;
-import com.nhl.link.rest.processor2.Processor;
+import com.nhl.link.rest.processor.Processor;
 import com.nhl.link.rest.runtime.processor.delete.DeleteContext;
 import com.nhl.link.rest.runtime.processor.delete.DeleteProcessorFactory;
 import org.apache.cayenne.exp.Property;

@@ -2,8 +2,8 @@ package com.nhl.link.rest.runtime.cayenne.processor.select;
 
 import com.nhl.link.rest.LinkRestException;
 import com.nhl.link.rest.meta.LrEntity;
-import com.nhl.link.rest.processor2.Processor;
-import com.nhl.link.rest.processor2.ProcessorOutcome;
+import com.nhl.link.rest.processor.Processor;
+import com.nhl.link.rest.processor.ProcessorOutcome;
 import com.nhl.link.rest.runtime.cayenne.ICayennePersister;
 import com.nhl.link.rest.runtime.processor.select.SelectContext;
 import org.apache.cayenne.ObjectContext;

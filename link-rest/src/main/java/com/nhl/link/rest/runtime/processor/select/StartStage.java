@@ -1,7 +1,7 @@
 package com.nhl.link.rest.runtime.processor.select;
 
-import com.nhl.link.rest.processor2.Processor;
-import com.nhl.link.rest.processor2.ProcessorOutcome;
+import com.nhl.link.rest.processor.Processor;
+import com.nhl.link.rest.processor.ProcessorOutcome;
 import org.apache.cayenne.query.PrefetchTreeNode;
 
 /**

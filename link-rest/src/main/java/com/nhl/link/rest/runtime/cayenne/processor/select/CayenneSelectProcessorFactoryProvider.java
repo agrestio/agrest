@@ -1,7 +1,7 @@
 package com.nhl.link.rest.runtime.cayenne.processor.select;
 
 import com.nhl.link.rest.SelectStage;
-import com.nhl.link.rest.processor2.Processor;
+import com.nhl.link.rest.processor.Processor;
 import com.nhl.link.rest.runtime.processor.select.ApplyServerParamsStage;
 import com.nhl.link.rest.runtime.processor.select.ParseRequestStage;
 import com.nhl.link.rest.runtime.processor.select.SelectContext;

@@ -9,7 +9,7 @@ import com.nhl.link.rest.SimpleResponse;
 import com.nhl.link.rest.UpdateBuilder;
 import com.nhl.link.rest.UpdateStage;
 import com.nhl.link.rest.constraints.Constraint;
-import com.nhl.link.rest.processor2.Processor;
+import com.nhl.link.rest.processor.Processor;
 import com.nhl.link.rest.runtime.cayenne.ByKeyObjectMapperFactory;
 import com.nhl.link.rest.runtime.listener.IListenerService;
 import com.nhl.link.rest.runtime.listener.UpdateListenersBuilder;

@@ -1,8 +1,8 @@
 package com.nhl.link.rest.runtime.cayenne.processor.update;
 
 import com.nhl.link.rest.EntityUpdate;
-import com.nhl.link.rest.processor2.Processor;
-import com.nhl.link.rest.processor2.ProcessorOutcome;
+import com.nhl.link.rest.processor.Processor;
+import com.nhl.link.rest.processor.ProcessorOutcome;
 import com.nhl.link.rest.runtime.processor.update.UpdateContext;
 import org.apache.cayenne.DataObject;
 import org.apache.cayenne.ObjectId;

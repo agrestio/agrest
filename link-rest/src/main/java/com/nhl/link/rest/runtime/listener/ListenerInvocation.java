@@ -4,7 +4,7 @@ import com.nhl.link.rest.LinkRestException;
 import com.nhl.link.rest.processor.ChainProcessor;
 import com.nhl.link.rest.processor.ProcessingContext;
 import com.nhl.link.rest.processor.ProcessingStage;
-import com.nhl.link.rest.processor2.ProcessorOutcome;
+import com.nhl.link.rest.processor.ProcessorOutcome;
 
 import javax.ws.rs.core.Response.Status;
 import java.lang.invoke.MethodHandle;

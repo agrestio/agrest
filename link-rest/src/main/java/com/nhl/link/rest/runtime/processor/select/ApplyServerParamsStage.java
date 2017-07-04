@@ -2,11 +2,10 @@ package com.nhl.link.rest.runtime.processor.select;
 
 import com.nhl.link.rest.ResourceEntity;
 import com.nhl.link.rest.encoder.EncoderFilter;
-import com.nhl.link.rest.processor2.Processor;
-import com.nhl.link.rest.processor2.ProcessorOutcome;
+import com.nhl.link.rest.processor.Processor;
+import com.nhl.link.rest.processor.ProcessorOutcome;
 import com.nhl.link.rest.runtime.constraints.IConstraintsHandler;
 import com.nhl.link.rest.runtime.encoder.IEncoderService;
-import com.nhl.link.rest.runtime.processor.select.SelectContext;
 import org.apache.cayenne.di.Inject;
 
 import java.util.List;

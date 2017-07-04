@@ -1,5 +1,7 @@
 package com.nhl.link.rest.processor2;
 
+import com.nhl.link.rest.processor.Processor;
+import com.nhl.link.rest.processor.ProcessorOutcome;
 import com.nhl.link.rest.runtime.processor.select.SelectContext;
 import org.junit.Before;
 import org.junit.Test;

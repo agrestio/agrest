@@ -1,6 +1,4 @@
-package com.nhl.link.rest.processor2;
-
-import com.nhl.link.rest.processor.ProcessingContext;
+package com.nhl.link.rest.processor;
 
 import java.util.Objects;
 
