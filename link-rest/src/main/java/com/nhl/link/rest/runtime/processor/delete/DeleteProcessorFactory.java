@@ -6,6 +6,9 @@ import com.nhl.link.rest.processor.ProcessorFactory;
 
 import java.util.EnumMap;
 
+/**
+ * @since 2.7
+ */
 public class DeleteProcessorFactory extends ProcessorFactory<DeleteStage, DeleteContext<?>> {
 
     public DeleteProcessorFactory(EnumMap<DeleteStage, Processor<DeleteContext<?>>> defaultStages) {
