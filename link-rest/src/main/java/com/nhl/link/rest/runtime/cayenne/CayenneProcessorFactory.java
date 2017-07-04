@@ -7,7 +7,6 @@ import com.nhl.link.rest.meta.LrResource;
 import com.nhl.link.rest.processor.BaseLinearProcessingStage;
 import com.nhl.link.rest.processor.ProcessingStage;
 import com.nhl.link.rest.runtime.cayenne.processor.CayenneContextInitStage;
-import com.nhl.link.rest.runtime.cayenne.processor.CayenneDeleteStage;
 import com.nhl.link.rest.runtime.cayenne.processor.CayenneUnrelateStage;
 import com.nhl.link.rest.runtime.constraints.IConstraintsHandler;
 import com.nhl.link.rest.runtime.encoder.IEncoderService;
@@ -16,7 +15,6 @@ import com.nhl.link.rest.runtime.meta.IResourceMetadataService;
 import com.nhl.link.rest.runtime.parser.IRequestParser;
 import com.nhl.link.rest.runtime.parser.IUpdateParser;
 import com.nhl.link.rest.runtime.processor.IProcessorFactory;
-import com.nhl.link.rest.runtime.processor.delete.DeleteContext;
 import com.nhl.link.rest.runtime.processor.meta.MetadataContext;
 import com.nhl.link.rest.runtime.processor.unrelate.UnrelateContext;
 import org.apache.cayenne.di.Inject;
@@ -34,34 +32,25 @@ import java.util.Map;
  */
 public class CayenneProcessorFactory implements IProcessorFactory {
 
-	private IUpdateParser updateParser;
-	private IRequestParser requestParser;
 	private IEncoderService encoderService;
 	private ICayennePersister persister;
-	private IConstraintsHandler constraintsHandler;
 	private IMetadataService metadataService;
 	private IResourceMetadataService resourceMetadataService;
-	private List<EncoderFilter> filters;
 
 	public CayenneProcessorFactory(@Inject IRequestParser requestParser, @Inject IUpdateParser updateParser,
 			@Inject IEncoderService encoderService, @Inject ICayennePersister persister,
 			@Inject IConstraintsHandler constraintsHandler, @Inject IMetadataService metadataService,
 			@Inject IResourceMetadataService resourceMetadataService,
 			@Inject List<EncoderFilter> filters) {
-		this.requestParser = requestParser;
 		this.encoderService = encoderService;
 		this.persister = persister;
-		this.constraintsHandler = constraintsHandler;
 		this.metadataService = metadataService;
 		this.resourceMetadataService = resourceMetadataService;
-		this.updateParser = updateParser;
-		this.filters = filters;
 	}
 
 	@Override
 	public Map<Class<?>, Map<String, ProcessingStage<?, ?>>> processors() {
 		Map<Class<?>, Map<String, ProcessingStage<?, ?>>> map = new HashMap<>();
-		map.put(DeleteContext.class, Collections.<String, ProcessingStage<?, ?>> singletonMap(null, createDeleteProcessor()));
 		map.put(UnrelateContext.class,
 				Collections.<String, ProcessingStage<?, ?>> singletonMap(null, createUnrelateProcessor()));
 		map.put(MetadataContext.class, Collections.<String, ProcessingStage<?, ?>> singletonMap(null, createMetadataProcessor()));
@@ -72,14 +61,6 @@ public class CayenneProcessorFactory implements IProcessorFactory {
 		BaseLinearProcessingStage<UnrelateContext<Object>, Object> stage1 = new CayenneUnrelateStage<>(null,
 				metadataService);
 		BaseLinearProcessingStage<UnrelateContext<Object>, Object> stage0 = new CayenneContextInitStage<>(stage1,
-				persister);
-
-		return stage0;
-	}
-
-	private ProcessingStage<DeleteContext<Object>, Object> createDeleteProcessor() {
-		BaseLinearProcessingStage<DeleteContext<Object>, Object> stage1 = new CayenneDeleteStage<>(null, metadataService);
-		BaseLinearProcessingStage<DeleteContext<Object>, Object> stage0 = new CayenneContextInitStage<>(stage1,
 				persister);
 
 		return stage0;

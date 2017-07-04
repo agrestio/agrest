@@ -12,12 +12,11 @@ import com.nhl.link.rest.UpdateBuilder;
 import com.nhl.link.rest.processor.ChainProcessor;
 import com.nhl.link.rest.processor.ProcessingContext;
 import com.nhl.link.rest.processor.ProcessingStage;
-import com.nhl.link.rest.runtime.listener.EventGroup;
 import com.nhl.link.rest.runtime.listener.IListenerService;
-import com.nhl.link.rest.runtime.listener.ListenersBuilder;
 import com.nhl.link.rest.runtime.meta.IMetadataService;
 import com.nhl.link.rest.runtime.processor.IProcessorFactory;
 import com.nhl.link.rest.runtime.processor.delete.DeleteContext;
+import com.nhl.link.rest.runtime.processor.delete.DeleteProcessorFactory;
 import com.nhl.link.rest.runtime.processor.meta.MetadataContext;
 import com.nhl.link.rest.runtime.processor.select.SelectContext;
 import com.nhl.link.rest.runtime.processor.select.SelectProcessorFactory;
@@ -42,17 +41,20 @@ public class DefaultLinkRestService implements ILinkRestService {
 	private IMetadataService metadataService;
 	private Map<Class<?>, Map<String, ProcessingStage<?, ?>>> processors;
 	private SelectProcessorFactory selectProcessorFactory;
+    private DeleteProcessorFactory deleteProcessorFactory;
 	private UpdateProcessorFactoryFactory updateProcessorFactoryFactory;
 
 	public DefaultLinkRestService(
 			@Inject IProcessorFactory processorFactory,
 			@Inject SelectProcessorFactory selectProcessorFactory,
+			@Inject DeleteProcessorFactory deleteProcessorFactory,
 			@Inject UpdateProcessorFactoryFactory updateProcessorFactoryFactory,
 			@Inject IMetadataService metadataService,
 			@Inject IListenerService listenerService) {
 
 		this.processors = processorFactory.processors();
 		this.selectProcessorFactory = selectProcessorFactory;
+		this.deleteProcessorFactory = deleteProcessorFactory;
 		this.updateProcessorFactoryFactory = updateProcessorFactoryFactory;
 		this.metadataService = metadataService;
 		this.listenerService = listenerService;
@@ -209,7 +211,7 @@ public class DefaultLinkRestService implements ILinkRestService {
 	@Override
 	public <T> DeleteBuilder<T> delete(Class<T> type) {
 		DeleteContext<T> context = new DeleteContext<>(type);
-		return new DefaultDeleteBuilder<>(context, chain(context));
+		return new DefaultDeleteBuilder<>(context, deleteProcessorFactory);
 	}
 
 	@Override
@@ -219,10 +221,16 @@ public class DefaultLinkRestService implements ILinkRestService {
 		return new DefaultMetadataBuilder<>(context, chain(context));
 	}
 
+    /**
+     * @deprecated since 2.7
+     */
 	protected <C extends ProcessingContext<T>, T> ProcessingStage<C, T> chain(C context) {
 		return processor(context, null);
 	}
 
+    /**
+     * @deprecated since 2.7
+     */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	protected <C extends ProcessingContext<T>, T> ProcessingStage<C, T> processor(C context, String operation) {
 

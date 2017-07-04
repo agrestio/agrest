@@ -1,32 +1,35 @@
 package com.nhl.link.rest.runtime;
 
-import java.util.Collection;
-import java.util.Map;
-
+import com.nhl.link.rest.DeleteBuilder;
+import com.nhl.link.rest.DeleteStage;
+import com.nhl.link.rest.EntityParent;
 import com.nhl.link.rest.LinkRestException;
 import com.nhl.link.rest.LrObjectId;
+import com.nhl.link.rest.SimpleResponse;
+import com.nhl.link.rest.processor2.Processor;
+import com.nhl.link.rest.runtime.processor.delete.DeleteContext;
+import com.nhl.link.rest.runtime.processor.delete.DeleteProcessorFactory;
 import org.apache.cayenne.exp.Property;
 
-import com.nhl.link.rest.DeleteBuilder;
-import com.nhl.link.rest.EntityParent;
-import com.nhl.link.rest.SimpleResponse;
-import com.nhl.link.rest.processor.ChainProcessor;
-import com.nhl.link.rest.processor.ProcessingStage;
-import com.nhl.link.rest.runtime.processor.delete.DeleteContext;
-
 import javax.ws.rs.core.Response;
+import java.util.Collection;
+import java.util.EnumMap;
+import java.util.Map;
 
 /**
  * @since 1.4
  */
 public class DefaultDeleteBuilder<T> implements DeleteBuilder<T> {
 
-	protected DeleteContext<T> context;
-	private ProcessingStage<DeleteContext<T>, T> deleteChain;
+	// TODO: support custom stages, instead of using empty placeholder for stages
+	private static final EnumMap<DeleteStage, Processor<DeleteContext<?>>> PLACEHOLDER  = new EnumMap<>(DeleteStage.class);
 
-	public DefaultDeleteBuilder(DeleteContext<T> context, ProcessingStage<DeleteContext<T>, T> deleteChain) {
+	protected DeleteContext<T> context;
+	protected DeleteProcessorFactory processorFactory;
+
+	public DefaultDeleteBuilder(DeleteContext<T> context, DeleteProcessorFactory processorFactory) {
 		this.context = context;
-		this.deleteChain = deleteChain;
+		this.processorFactory = processorFactory;
 	}
 
 	@Override
@@ -91,7 +94,7 @@ public class DefaultDeleteBuilder<T> implements DeleteBuilder<T> {
 
 	@Override
 	public SimpleResponse delete() {
-		ChainProcessor.execute(deleteChain, context);
+		processorFactory.createProcessor(PLACEHOLDER).execute(context);
 		return context.createSimpleResponse();
 	}
 }

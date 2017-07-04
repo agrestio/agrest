@@ -15,13 +15,13 @@ import java.util.Map;
 /**
  * @since 1.7
  */
-class Util {
+public final class Util {
 
 	private Util() {
 	}
 
 	@SuppressWarnings("unchecked")
-	static <A> A findById(ObjectContext context, Class<A> type, LrEntity<?> lrEntity, Object id) {
+	public static <A> A findById(ObjectContext context, Class<A> type, LrEntity<?> lrEntity, Object id) {
 		ObjEntity entity = context.getEntityResolver().getObjEntity(type);
 
 		// sanity checking...

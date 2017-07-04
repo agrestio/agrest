@@ -48,7 +48,7 @@ public class CayenneIdempotentFullSyncStage extends CayenneIdempotentCreateOrUpd
         }
 
         if (!deletedObjects.isEmpty()) {
-            CayenneStartStage.cayenneContext(context).deleteObjects(deletedObjects);
+            CayenneUpdateStartStage.cayenneContext(context).deleteObjects(deletedObjects);
         }
 
         // check leftovers - those correspond to objects missing in the DB or
@@ -62,7 +62,7 @@ public class CayenneIdempotentFullSyncStage extends CayenneIdempotentCreateOrUpd
         // apply various request filters identifying the span of the collection
 
         if (context.getParent() != null) {
-            EntityResolver resolver = CayenneStartStage.cayenneContext(context).getEntityResolver();
+            EntityResolver resolver = CayenneUpdateStartStage.cayenneContext(context).getEntityResolver();
             query.andQualifier(context.getParent().qualifier(resolver));
         }
 
@@ -73,7 +73,7 @@ public class CayenneIdempotentFullSyncStage extends CayenneIdempotentCreateOrUpd
         // TODO: use SelectBuilder to get Cayenne representation of the
         // resource, instead of duplicating this here...
 
-        List<T> objects = CayenneStartStage.cayenneContext(context).select(query);
+        List<T> objects = CayenneUpdateStartStage.cayenneContext(context).select(query);
         if (context.isById() && objects.size() > 1) {
             throw new LinkRestException(Response.Status.INTERNAL_SERVER_ERROR, String.format(
                     "Found more than one object for ID '%s' and entity '%s'",

@@ -4,6 +4,7 @@ Release 2.7
 #239 Add ResourceEntity.setQualifier(..) method.
 #240 Functional select pipeline interceptors
 #241 Functional update pipeline interceptors
+#242 Functional delete pipeline
 
 Release 2.6
 

@@ -1,16 +1,8 @@
-package com.nhl.link.rest.runtime.cayenne.processor;
+package com.nhl.link.rest.runtime.cayenne.processor.update;
 
 import com.nhl.link.rest.UpdateStage;
 import com.nhl.link.rest.processor2.Processor;
 import com.nhl.link.rest.runtime.UpdateOperation;
-import com.nhl.link.rest.runtime.cayenne.processor.update.CayenneCreateOrUpdateStage;
-import com.nhl.link.rest.runtime.cayenne.processor.update.CayenneCreateStage;
-import com.nhl.link.rest.runtime.cayenne.processor.update.CayenneCreatedResponseStage;
-import com.nhl.link.rest.runtime.cayenne.processor.update.CayenneIdempotentCreateOrUpdateStage;
-import com.nhl.link.rest.runtime.cayenne.processor.update.CayenneIdempotentFullSyncStage;
-import com.nhl.link.rest.runtime.cayenne.processor.update.CayenneOkResponseStage;
-import com.nhl.link.rest.runtime.cayenne.processor.update.CayenneStartStage;
-import com.nhl.link.rest.runtime.cayenne.processor.update.CayenneUpdateStage;
 import com.nhl.link.rest.runtime.processor.update.ApplyServerParamsStage;
 import com.nhl.link.rest.runtime.processor.update.ParseRequestStage;
 import com.nhl.link.rest.runtime.processor.update.UpdateContext;
@@ -34,7 +26,7 @@ public class CayenneUpdateProcessorFactoryFactoryProvider implements Provider<Up
     private EnumMap<UpdateStage, Processor<UpdateContext<?>>> idempotentFullSyncStages;
 
     public CayenneUpdateProcessorFactoryFactoryProvider(
-            @Inject CayenneStartStage startStage,
+            @Inject CayenneUpdateStartStage startStage,
             @Inject ParseRequestStage parseRequestStage,
             @Inject ApplyServerParamsStage applyServerParamsStage,
             @Inject CayenneCreateStage createStage,

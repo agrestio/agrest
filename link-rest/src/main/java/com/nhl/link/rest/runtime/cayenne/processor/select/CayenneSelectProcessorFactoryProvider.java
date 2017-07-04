@@ -1,13 +1,11 @@
-package com.nhl.link.rest.runtime.cayenne.processor;
+package com.nhl.link.rest.runtime.cayenne.processor.select;
 
+import com.nhl.link.rest.SelectStage;
 import com.nhl.link.rest.processor2.Processor;
-import com.nhl.link.rest.runtime.cayenne.processor.select.CayenneAssembleQueryStage;
-import com.nhl.link.rest.runtime.cayenne.processor.select.CayenneFetchDataStage;
-import com.nhl.link.rest.runtime.processor.select.SelectContext;
 import com.nhl.link.rest.runtime.processor.select.ApplyServerParamsStage;
 import com.nhl.link.rest.runtime.processor.select.ParseRequestStage;
+import com.nhl.link.rest.runtime.processor.select.SelectContext;
 import com.nhl.link.rest.runtime.processor.select.SelectProcessorFactory;
-import com.nhl.link.rest.SelectStage;
 import com.nhl.link.rest.runtime.processor.select.StartStage;
 import org.apache.cayenne.di.DIRuntimeException;
 import org.apache.cayenne.di.Inject;

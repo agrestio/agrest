@@ -8,6 +8,7 @@ import com.nhl.link.rest.meta.LrEntity;
 import com.nhl.link.rest.meta.LrRelationship;
 import com.nhl.link.rest.processor2.Processor;
 import com.nhl.link.rest.processor2.ProcessorOutcome;
+import com.nhl.link.rest.runtime.cayenne.processor.Util;
 import com.nhl.link.rest.runtime.meta.IMetadataService;
 import com.nhl.link.rest.runtime.processor.update.UpdateContext;
 import org.apache.cayenne.Cayenne;
@@ -40,7 +41,7 @@ public abstract class CayenneUpdateDataStoreStage implements Processor<UpdateCon
     @Override
     public ProcessorOutcome execute(UpdateContext<?> context) {
         sync((UpdateContext<DataObject>) context);
-        CayenneStartStage.cayenneContext(context).commitChanges();
+        CayenneUpdateStartStage.cayenneContext(context).commitChanges();
         return ProcessorOutcome.CONTINUE;
     }
 
@@ -68,7 +69,7 @@ public abstract class CayenneUpdateDataStoreStage implements Processor<UpdateCon
 
     protected <T extends DataObject> void createSingle(UpdateContext<T> context, ObjectRelator relator, EntityUpdate<T> u) {
 
-        ObjectContext objectContext = CayenneStartStage.cayenneContext(context);
+        ObjectContext objectContext = CayenneUpdateStartStage.cayenneContext(context);
         DataObject o = objectContext.newObject(context.getType());
         Map<String, Object> idMap = u.getId();
 
@@ -262,7 +263,7 @@ public abstract class CayenneUpdateDataStoreStage implements Processor<UpdateCon
             return new ObjectRelator();
         }
 
-        ObjectContext objectContext = CayenneStartStage.cayenneContext(context);
+        ObjectContext objectContext = CayenneUpdateStartStage.cayenneContext(context);
 
         ObjEntity parentEntity = objectContext.getEntityResolver().getObjEntity(parent.getType());
         LrEntity<?> parentLrEntity = metadataService.getLrEntity(context.getParent().getType());
