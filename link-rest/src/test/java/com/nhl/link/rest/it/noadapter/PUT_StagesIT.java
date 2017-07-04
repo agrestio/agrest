@@ -13,10 +13,7 @@ import java.io.IOException;
 import static com.nhl.link.rest.unit.matcher.LRMatchers.okAndHasData;
 import static org.junit.Assert.*;
 
-/**
- * @deprecated since 2.7 as listeners API is deprecated.
- */
-public class PUT_ListenersIT extends JerseyTestOnDerby {
+public class PUT_StagesIT extends JerseyTestOnDerby {
 
     @Override
     protected void doAddResources(FeatureContext context) {
@@ -24,6 +21,7 @@ public class PUT_ListenersIT extends JerseyTestOnDerby {
     }
 
     @Test
+    @Deprecated
     public void testPut_ToOne() throws WebApplicationException, IOException {
         insert("e3", "id, name", "3, 'z'");
         insert("e3", "id, name", "4, 'a'");
@@ -31,7 +29,7 @@ public class PUT_ListenersIT extends JerseyTestOnDerby {
 
         UpdateCallbackListener.BEFORE_UPDATE_CALLED = false;
 
-        Response response = target("/e3/callbacklistener").request()
+        Response response = target("/e3/callbackstage").request()
                 .put(jsonEntity("[{\"id\":3,\"name\":\"x\"}]"));
 
         assertThat(response, okAndHasData(1, "[{\"id\":3,\"name\":\"x\",\"phoneNumber\":null}]"));

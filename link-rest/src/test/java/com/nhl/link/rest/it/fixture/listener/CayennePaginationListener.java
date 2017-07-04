@@ -10,6 +10,7 @@ public class CayennePaginationListener {
     public static boolean RESOURCE_ENTITY_IS_FILTERED;
     public static int QUERY_PAGE_SIZE;
 
+    @Deprecated
     @SelectServerParamsApplied
 	public <T> ProcessingStage<SelectContext<T>, T> selectServerParamsApplied(SelectContext<T> context,
                                                                 ProcessingStage<SelectContext<T>, T> next) {
@@ -18,6 +19,7 @@ public class CayennePaginationListener {
 		return next;
 	}
 
+	@Deprecated
     @QueryAssembled
 	public <T> ProcessingStage<SelectContext<T>, T> queryAssembled(SelectContext<T> context,
 			ProcessingStage<SelectContext<T>, T> next) {

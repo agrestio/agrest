@@ -7,6 +7,7 @@ public class FetchCallbackListener {
 	
 	public static boolean BEFORE_FETCH_CALLED;
 
+	@Deprecated
 	@SelectServerParamsApplied
 	public void beforeFetch(SelectContext<?> context) {
 		BEFORE_FETCH_CALLED = true;

@@ -1,17 +1,18 @@
 package com.nhl.link.rest.it.fixture.listener;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.nhl.link.rest.annotation.listener.SelectServerParamsApplied;
 import com.nhl.link.rest.it.fixture.cayenne.E3;
 import com.nhl.link.rest.processor.ProcessingStage;
 import com.nhl.link.rest.runtime.processor.select.SelectContext;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class FetchTakeOverListener {
 
 	public static boolean BEFORE_FETCH_CALLED;
 
+	@Deprecated
 	@SuppressWarnings({ "unchecked", "rawtypes", "serial" })
 	@SelectServerParamsApplied
 	public <T> ProcessingStage<SelectContext<T>, T> beforeFetch(SelectContext<T> context,

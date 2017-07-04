@@ -1,19 +1,5 @@
 package com.nhl.link.rest.it.noadapter;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
-import java.io.IOException;
-
-import javax.ws.rs.core.FeatureContext;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
-
-import com.nhl.link.rest.it.fixture.listener.CayennePaginationListener;
-import org.apache.cayenne.Cayenne;
-import org.apache.cayenne.query.SQLTemplate;
-import org.junit.Test;
-
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.nhl.link.rest.ResourceEntity;
 import com.nhl.link.rest.encoder.Encoder;
@@ -21,8 +7,20 @@ import com.nhl.link.rest.encoder.EncoderFilter;
 import com.nhl.link.rest.it.fixture.JerseyTestOnDerby;
 import com.nhl.link.rest.it.fixture.cayenne.E3;
 import com.nhl.link.rest.it.fixture.cayenne.E4;
+import com.nhl.link.rest.it.fixture.listener.CayennePaginationListener;
 import com.nhl.link.rest.it.fixture.resource.E4Resource;
 import com.nhl.link.rest.runtime.LinkRestBuilder;
+import org.apache.cayenne.Cayenne;
+import org.apache.cayenne.query.SQLTemplate;
+import org.junit.Test;
+
+import javax.ws.rs.core.FeatureContext;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
+import java.io.IOException;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class GET_EncoderFilters_IT extends JerseyTestOnDerby {
 
@@ -93,12 +91,25 @@ public class GET_EncoderFilters_IT extends JerseyTestOnDerby {
 	}
 
 	@Test
-	public void testFilteredPagination4() {
+	public void testFilteredPagination4_Listeners() {
 
 		CayennePaginationListener.RESOURCE_ENTITY_IS_FILTERED = false;
 		CayennePaginationListener.QUERY_PAGE_SIZE = 0;
 
 		target("/e4/pagination_listener").queryParam("include", "id").queryParam("sort", "id")
+				.queryParam("start", "2").queryParam("limit", "10").request().get();
+
+		assertTrue(CayennePaginationListener.RESOURCE_ENTITY_IS_FILTERED);
+		assertEquals(0, CayennePaginationListener.QUERY_PAGE_SIZE);
+	}
+
+	@Test
+	public void testFilteredPagination4_CustomStage() {
+
+		CayennePaginationListener.RESOURCE_ENTITY_IS_FILTERED = false;
+		CayennePaginationListener.QUERY_PAGE_SIZE = 0;
+
+		target("/e4/pagination_stage").queryParam("include", "id").queryParam("sort", "id")
 				.queryParam("start", "2").queryParam("limit", "10").request().get();
 
 		assertTrue(CayennePaginationListener.RESOURCE_ENTITY_IS_FILTERED);

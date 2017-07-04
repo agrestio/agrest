@@ -2,6 +2,7 @@ package com.nhl.link.rest.it.fixture.resource;
 
 import com.nhl.link.rest.DataResponse;
 import com.nhl.link.rest.LinkRest;
+import com.nhl.link.rest.SelectStage;
 import com.nhl.link.rest.SimpleResponse;
 import com.nhl.link.rest.constraints.Constraint;
 import com.nhl.link.rest.it.fixture.cayenne.E4;
@@ -25,77 +26,93 @@ import static com.nhl.link.rest.property.PropertyBuilder.property;
 @Path("e4")
 public class E4Resource {
 
-	@Context
-	private Configuration config;
+    @Context
+    private Configuration config;
 
-	@GET
-	public DataResponse<E4> get(@Context UriInfo uriInfo) {
-		return LinkRest.service(config).select(E4.class).uri(uriInfo).get();
-	}
+    @GET
+    public DataResponse<E4> get(@Context UriInfo uriInfo) {
+        return LinkRest.service(config).select(E4.class).uri(uriInfo).get();
+    }
 
-	@GET
-	@Path("pagination_listener")
-	public DataResponse<E4> get_WithPaginationListener(@Context UriInfo uriInfo) {
-		return LinkRest.service(config).select(E4.class).uri(uriInfo).listener(new CayennePaginationListener())
-				.get();
-	}
+    /**
+     * @deprecated since 2.7 in favor of {@link #get_WithPaginationStage(UriInfo)}.
+     */
+    @GET
+    @Path("pagination_listener")
+    public DataResponse<E4> get_WithPaginationListener(@Context UriInfo uriInfo) {
+        return LinkRest.service(config).select(E4.class).uri(uriInfo).listener(new CayennePaginationListener())
+                .get();
+    }
 
-	@GET
-	@Path("limit_attributes")
-	public DataResponse<E4> getObjects_LimitAttributes(@Context UriInfo uriInfo) {
-		return LinkRest.select(E4.class, config).uri(uriInfo)
-				.constraint(Constraint.idOnly(E4.class).attributes(E4.C_INT))
-				.get();
-	}
+    @GET
+    @Path("pagination_stage")
+    public DataResponse<E4> get_WithPaginationStage(@Context UriInfo uriInfo) {
+        return LinkRest.service(config)
+                .select(E4.class)
+                .uri(uriInfo)
+                .stage(SelectStage.APPLY_SERVER_PARAMS,
+                        c -> CayennePaginationListener.RESOURCE_ENTITY_IS_FILTERED = c.getEntity().isFiltered())
+                .stage(SelectStage.ASSEMBLE_QUERY,
+                        c -> CayennePaginationListener.QUERY_PAGE_SIZE = c.getSelect().getPageSize())
+                .get();
+    }
 
-	@GET
-	@Path("calc_property")
-	public DataResponse<E4> property_WithReader(@Context UriInfo uriInfo) {
+    @GET
+    @Path("limit_attributes")
+    public DataResponse<E4> getObjects_LimitAttributes(@Context UriInfo uriInfo) {
+        return LinkRest.select(E4.class, config).uri(uriInfo)
+                .constraint(Constraint.idOnly(E4.class).attributes(E4.C_INT))
+                .get();
+    }
 
-		PropertyReader xReader = new PropertyReader() {
+    @GET
+    @Path("calc_property")
+    public DataResponse<E4> property_WithReader(@Context UriInfo uriInfo) {
 
-			@Override
-			public Object value(Object root, String name) {
-				return "y_" + Cayenne.intPKForObject((DataObject) root);
-			}
-		};
+        PropertyReader xReader = new PropertyReader() {
 
-		return LinkRest.select(E4.class, config).uri(uriInfo).property("x", property(xReader)).get();
-	}
+            @Override
+            public Object value(Object root, String name) {
+                return "y_" + Cayenne.intPKForObject((DataObject) root);
+            }
+        };
 
-	@GET
-	@Path("{id}")
-	public DataResponse<E4> getById(@PathParam("id") int id) {
-		return LinkRest.service(config).selectById(E4.class, id);
-	}
+        return LinkRest.select(E4.class, config).uri(uriInfo).property("x", property(xReader)).get();
+    }
 
-	@POST
-	public DataResponse<E4> create(String requestBody) {
-		return LinkRest.create(E4.class, config).syncAndSelect(requestBody);
-	}
+    @GET
+    @Path("{id}")
+    public DataResponse<E4> getById(@PathParam("id") int id) {
+        return LinkRest.service(config).selectById(E4.class, id);
+    }
 
-	@POST
-	@Path("defaultdata")
-	public SimpleResponse create_DefaultData(String requestBody) {
-		return LinkRest.create(E4.class, config).sync(requestBody);
-	}
+    @POST
+    public DataResponse<E4> create(String requestBody) {
+        return LinkRest.create(E4.class, config).syncAndSelect(requestBody);
+    }
 
-	@GET
-	@Path("ie/{id}")
-	public DataResponse<E4> get_WithIncludeExclude(@PathParam("id") int id, @Context UriInfo uriInfo) {
-		return LinkRest.service(config).selectById(E4.class, id, uriInfo);
-	}
+    @POST
+    @Path("defaultdata")
+    public SimpleResponse create_DefaultData(String requestBody) {
+        return LinkRest.create(E4.class, config).sync(requestBody);
+    }
 
-	@DELETE
-	@Path("{id}")
-	public SimpleResponse delete(@PathParam("id") int id) {
-		return LinkRest.service(config).delete(E4.class, id);
-	}
+    @GET
+    @Path("ie/{id}")
+    public DataResponse<E4> get_WithIncludeExclude(@PathParam("id") int id, @Context UriInfo uriInfo) {
+        return LinkRest.service(config).selectById(E4.class, id, uriInfo);
+    }
 
-	@PUT
-	@Path("{id}")
-	public DataResponse<E4> update(@PathParam("id") int id, String requestBody) {
-		return LinkRest.update(E4.class, config).id(id).syncAndSelect(requestBody);
-	}
+    @DELETE
+    @Path("{id}")
+    public SimpleResponse delete(@PathParam("id") int id) {
+        return LinkRest.service(config).delete(E4.class, id);
+    }
+
+    @PUT
+    @Path("{id}")
+    public DataResponse<E4> update(@PathParam("id") int id, String requestBody) {
+        return LinkRest.update(E4.class, config).id(id).syncAndSelect(requestBody);
+    }
 
 }

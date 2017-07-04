@@ -7,6 +7,7 @@ public class UpdateCallbackListener {
 
 	public static boolean BEFORE_UPDATE_CALLED;
 
+	@Deprecated
 	@UpdateServerParamsApplied
 	public void beforeFetch(UpdateContext<?> context) {
 		BEFORE_UPDATE_CALLED = true;

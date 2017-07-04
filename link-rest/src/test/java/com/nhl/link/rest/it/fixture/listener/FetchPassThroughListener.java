@@ -8,6 +8,7 @@ public class FetchPassThroughListener {
 
 	public static boolean BEFORE_FETCH_CALLED;
 
+	@Deprecated
 	@SelectServerParamsApplied
 	public <T> ProcessingStage<SelectContext<T>, T> beforeFetch(SelectContext<T> context,
 			ProcessingStage<SelectContext<T>, T> next) {
