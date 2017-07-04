@@ -20,9 +20,10 @@ import com.nhl.link.rest.runtime.processor.IProcessorFactory;
 import com.nhl.link.rest.runtime.processor.delete.DeleteContext;
 import com.nhl.link.rest.runtime.processor.meta.MetadataContext;
 import com.nhl.link.rest.runtime.processor.select.SelectContext;
+import com.nhl.link.rest.runtime.processor.select.SelectProcessorFactory;
 import com.nhl.link.rest.runtime.processor.unrelate.UnrelateContext;
 import com.nhl.link.rest.runtime.processor.update.UpdateContext;
-import com.nhl.link.rest.runtime.processor.select.SelectProcessorFactory;
+import com.nhl.link.rest.runtime.processor.update.UpdateProcessorFactoryFactory;
 import org.apache.cayenne.di.Inject;
 import org.apache.cayenne.exp.Property;
 
@@ -41,15 +42,18 @@ public class DefaultLinkRestService implements ILinkRestService {
 	private IMetadataService metadataService;
 	private Map<Class<?>, Map<String, ProcessingStage<?, ?>>> processors;
 	private SelectProcessorFactory selectProcessorFactory;
+	private UpdateProcessorFactoryFactory updateProcessorFactoryFactory;
 
 	public DefaultLinkRestService(
 			@Inject IProcessorFactory processorFactory,
 			@Inject SelectProcessorFactory selectProcessorFactory,
+			@Inject UpdateProcessorFactoryFactory updateProcessorFactoryFactory,
 			@Inject IMetadataService metadataService,
 			@Inject IListenerService listenerService) {
 
 		this.processors = processorFactory.processors();
 		this.selectProcessorFactory = selectProcessorFactory;
+		this.updateProcessorFactoryFactory = updateProcessorFactoryFactory;
 		this.metadataService = metadataService;
 		this.listenerService = listenerService;
 	}
@@ -153,7 +157,9 @@ public class DefaultLinkRestService implements ILinkRestService {
 		UpdateContext<T> context = new UpdateContext<>(type);
 		ListenersBuilder listenersBuilder = new ListenersBuilder(listenerService, context, EventGroup.update);
 
-		return new DefaultUpdateBuilder<>(context, processor(context, UpdateOperation.create.name()), listenersBuilder);
+		return new DefaultUpdateBuilder<>(context,
+				updateProcessorFactoryFactory.getFactory(UpdateOperation.create),
+				listenersBuilder);
 	}
 
 	/**
@@ -164,7 +170,8 @@ public class DefaultLinkRestService implements ILinkRestService {
 		UpdateContext<T> context = new UpdateContext<>(type);
 		ListenersBuilder listenersBuilder = new ListenersBuilder(listenerService, context, EventGroup.update);
 
-		return new DefaultUpdateBuilder<>(context, processor(context, UpdateOperation.createOrUpdate.name()),
+		return new DefaultUpdateBuilder<>(context,
+				updateProcessorFactoryFactory.getFactory(UpdateOperation.createOrUpdate),
 				listenersBuilder);
 	}
 
@@ -176,7 +183,8 @@ public class DefaultLinkRestService implements ILinkRestService {
 		UpdateContext<T> context = new UpdateContext<>(type);
 		ListenersBuilder listenersBuilder = new ListenersBuilder(listenerService, context, EventGroup.update);
 
-		return new DefaultUpdateBuilder<>(context, processor(context, UpdateOperation.idempotentCreateOrUpdate.name()),
+		return new DefaultUpdateBuilder<>(context,
+				updateProcessorFactoryFactory.getFactory(UpdateOperation.idempotentCreateOrUpdate),
 				listenersBuilder);
 	}
 
@@ -188,7 +196,8 @@ public class DefaultLinkRestService implements ILinkRestService {
 		UpdateContext<T> context = new UpdateContext<>(type);
 		ListenersBuilder listenersBuilder = new ListenersBuilder(listenerService, context, EventGroup.update);
 
-		return new DefaultUpdateBuilder<>(context, processor(context, UpdateOperation.idempotentFullSync.name()),
+		return new DefaultUpdateBuilder<>(context,
+				updateProcessorFactoryFactory.getFactory(UpdateOperation.idempotentFullSync),
 				listenersBuilder);
 	}
 
@@ -200,7 +209,9 @@ public class DefaultLinkRestService implements ILinkRestService {
 		UpdateContext<T> context = new UpdateContext<>(type);
 		ListenersBuilder listenersBuilder = new ListenersBuilder(listenerService, context, EventGroup.update);
 
-		return new DefaultUpdateBuilder<>(context, processor(context, UpdateOperation.update.name()), listenersBuilder);
+		return new DefaultUpdateBuilder<>(context,
+				updateProcessorFactoryFactory.getFactory(UpdateOperation.update),
+				listenersBuilder);
 	}
 
 	/**

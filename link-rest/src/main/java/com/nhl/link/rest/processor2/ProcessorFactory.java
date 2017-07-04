@@ -4,7 +4,6 @@ import com.nhl.link.rest.processor.ChainProcessor;
 import com.nhl.link.rest.processor.ProcessingContext;
 import com.nhl.link.rest.processor.ProcessingStage;
 import com.nhl.link.rest.runtime.listener.ListenerInvocation;
-import com.nhl.link.rest.SelectStage;
 
 import java.util.EnumMap;
 import java.util.List;
@@ -51,7 +50,7 @@ public class ProcessorFactory<E extends Enum<E>, C extends ProcessingContext<?>>
      */
     // TODO: convert listeners to processors on the fly when they are registered in the builder... so this method
     // should not be aware of listeners
-    public Processor<C> createProcessor(EnumMap<SelectStage, Processor<C>> processors,
+    public Processor<C> createProcessor(EnumMap<E, Processor<C>> processors,
                                         EnumMap<E, List<ListenerInvocation>> listeners) {
 
         if (listeners.isEmpty() && processors.isEmpty()) {

@@ -1,21 +1,20 @@
 package com.nhl.link.rest.annotation.listener;
 
-import static java.lang.annotation.ElementType.METHOD;
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
-
 import java.lang.annotation.Inherited;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
-import com.nhl.link.rest.runtime.processor.update.ParseUpdateRequestStage;
+import static java.lang.annotation.ElementType.METHOD;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
  * A chain listener annotation for methods to be invoked after
- * {@link ParseUpdateRequestStage} execution.
- * 
+ * {@link com.nhl.link.rest.UpdateStage#PARSE_REQUEST} stage.
+ *
  * @since 1.19
+ * @deprecated since 2.7 as annotated listeners were deprecated in favor of the functional interceptor API.
  */
-@Target({ METHOD })
+@Target({METHOD})
 @Retention(RUNTIME)
 @Inherited
 public @interface UpdateRequestParsed {

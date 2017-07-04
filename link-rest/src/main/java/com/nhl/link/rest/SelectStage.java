@@ -8,7 +8,7 @@ package com.nhl.link.rest;
  */
 public enum SelectStage {
 
-    // Note that stages ordinals are meaningful. DO NOT REORDER for no reason.
+    // Note that stages ordinals are meaningful. DO NOT REORDER CASUALLY!
 
     START,
 

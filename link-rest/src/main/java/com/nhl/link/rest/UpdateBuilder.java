@@ -6,11 +6,15 @@ import com.nhl.link.rest.annotation.listener.UpdateRequestParsed;
 import com.nhl.link.rest.annotation.listener.UpdateResponseUpdated;
 import com.nhl.link.rest.annotation.listener.UpdateServerParamsApplied;
 import com.nhl.link.rest.constraints.Constraint;
+import com.nhl.link.rest.processor2.Processor;
+import com.nhl.link.rest.processor2.ProcessorOutcome;
+import com.nhl.link.rest.runtime.processor.update.UpdateContext;
 import org.apache.cayenne.exp.Property;
 
 import javax.ws.rs.core.UriInfo;
 import java.util.Collection;
 import java.util.Map;
+import java.util.function.Consumer;
 
 /**
  * A builder for create (insert) or update operations for a single entity type.
@@ -156,8 +160,64 @@ public interface UpdateBuilder<T> {
      * </pre>
      *
      * @since 1.19
+     * @deprecated since 2.7 use annotation-free functional form of listeners: {@link #stage(UpdateStage, Consumer)},
+     * {@link #terminalStage(UpdateStage, Consumer)} and {@link #routingStage(UpdateStage, Processor)}.
      */
     UpdateBuilder<T> listener(Object listener);
+
+    /**
+     * Registers a consumer to be executed after a specified standard execution stage. The consumer can inspect and
+     * modify provided {@link UpdateContext}.
+     * <p>This operation is composable. For each stage all custom processors will be invoked in the order they were
+     * registered.</p>
+     *
+     * @param afterStage  A name of the standard stage after which the inserted stage needs to be run.
+     * @param customStage a callback to invoke at a specific point during  the update execution.
+     * @return this builder instance.
+     * @since 2.7
+     */
+    default UpdateBuilder<T> stage(UpdateStage afterStage, Consumer<UpdateContext<?>> customStage) {
+        return routingStage(afterStage, c -> {
+            customStage.accept(c);
+            return ProcessorOutcome.CONTINUE;
+        });
+    }
+
+    /**
+     * Registers a consumer to be executed after the specified standard execution stage. The rest of the standard pipeline
+     * following the named stage will be skipped. This is useful for quick assembly of custom backends that reuse the
+     * initial stages of LinkRest processing, but query the data store on their own. The consumer can inspect and modify
+     * provided {@link UpdateContext}.
+     * <p>This operation is composable. For each stage all custom processors will be invoked in the order they were
+     * registered.</p>
+     *
+     * @param afterStage          A name of the standard stage after which the inserted stage needs to be run.
+     * @param customTerminalStage a consumer that will be invoked after 'afterStage', and will be the last piece of
+     *                            code executed in the update pipeline.
+     * @return this builder instance.
+     * @since 2.7
+     */
+    default UpdateBuilder<T> terminalStage(UpdateStage afterStage, Consumer<UpdateContext<?>> customTerminalStage) {
+        return routingStage(afterStage, c -> {
+            customTerminalStage.accept(c);
+            return ProcessorOutcome.STOP;
+        });
+    }
+
+    /**
+     * Registers a processor to be executed after the specified standard execution stage. The processor can inspect and
+     * modify provided {@link UpdateContext}. When finished, processor can either pass control to the next stage by returning
+     * {@link com.nhl.link.rest.processor2.ProcessorOutcome#CONTINUE}, or terminate the pipeline by returning
+     * {@link com.nhl.link.rest.processor2.ProcessorOutcome#STOP}.
+     * <p>This operation is composable. For each stage all custom processors will be invoked in the order they were
+     * registered.</p>
+     *
+     * @param afterStage  A name of the standard stage after which the inserted stage needs to be run.
+     * @param customStage a processor to invoke at a specific point during the update execution.
+     * @return this builder instance.
+     * @since 2.7
+     */
+    UpdateBuilder<T> routingStage(UpdateStage afterStage, Processor<UpdateContext<?>> customStage);
 
     /**
      * @since 1.19
