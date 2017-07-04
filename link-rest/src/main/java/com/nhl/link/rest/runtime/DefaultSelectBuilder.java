@@ -19,7 +19,7 @@ import com.nhl.link.rest.runtime.listener.ListenerInvocation;
 import com.nhl.link.rest.runtime.listener.ListenersBuilder;
 import com.nhl.link.rest.runtime.processor.select.SelectContext;
 import com.nhl.link.rest.runtime.processor.select.SelectProcessorFactory;
-import com.nhl.link.rest.runtime.processor.select.SelectStage;
+import com.nhl.link.rest.SelectStage;
 import org.apache.cayenne.exp.Property;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

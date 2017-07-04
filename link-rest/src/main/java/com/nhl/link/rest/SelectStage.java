@@ -1,4 +1,4 @@
-package com.nhl.link.rest.runtime.processor.select;
+package com.nhl.link.rest;
 
 /**
  * Defines the names of standard select stages that can be used to insert custom processors. Stages ordinals are

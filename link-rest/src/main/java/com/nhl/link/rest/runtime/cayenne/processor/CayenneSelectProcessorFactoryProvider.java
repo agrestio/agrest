@@ -5,7 +5,7 @@ import com.nhl.link.rest.runtime.processor.select.SelectContext;
 import com.nhl.link.rest.runtime.processor.select.ApplyServerParamsStage;
 import com.nhl.link.rest.runtime.processor.select.ParseRequestStage;
 import com.nhl.link.rest.runtime.processor.select.SelectProcessorFactory;
-import com.nhl.link.rest.runtime.processor.select.SelectStage;
+import com.nhl.link.rest.SelectStage;
 import com.nhl.link.rest.runtime.processor.select.StartStage;
 import org.apache.cayenne.di.DIRuntimeException;
 import org.apache.cayenne.di.Inject;

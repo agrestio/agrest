@@ -10,7 +10,6 @@ import com.nhl.link.rest.processor2.Processor;
 import com.nhl.link.rest.processor2.ProcessorOutcome;
 import com.nhl.link.rest.runtime.LinkRestBuilder;
 import com.nhl.link.rest.runtime.processor.select.SelectContext;
-import com.nhl.link.rest.runtime.processor.select.SelectStage;
 import org.apache.cayenne.exp.Property;
 
 import javax.ws.rs.core.UriInfo;

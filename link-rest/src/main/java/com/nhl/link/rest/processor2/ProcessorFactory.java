@@ -4,7 +4,7 @@ import com.nhl.link.rest.processor.ChainProcessor;
 import com.nhl.link.rest.processor.ProcessingContext;
 import com.nhl.link.rest.processor.ProcessingStage;
 import com.nhl.link.rest.runtime.listener.ListenerInvocation;
-import com.nhl.link.rest.runtime.processor.select.SelectStage;
+import com.nhl.link.rest.SelectStage;
 
 import java.util.EnumMap;
 import java.util.List;
