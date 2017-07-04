@@ -1,4 +1,4 @@
-package com.nhl.link.rest.runtime.cayenne.processor;
+package com.nhl.link.rest.runtime.cayenne.processor.select;
 
 import com.nhl.link.rest.ResourceEntity;
 import com.nhl.link.rest.it.fixture.cayenne.E1;
@@ -14,9 +14,9 @@ import org.apache.cayenne.query.PrefetchTreeNode;
 import org.apache.cayenne.query.SelectQuery;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mockito;
 
 import static org.junit.Assert.*;
-import static org.mockito.Mockito.mock;
 
 public class CayenneAssembleQueryStageTest extends TestWithCayenneMapping {
 
@@ -57,7 +57,7 @@ public class CayenneAssembleQueryStageTest extends TestWithCayenneMapping {
 		ResourceEntity<E2> resultFilter = getResourceEntity(E2.class);
 		LrRelationship incoming = resultFilter.getLrEntity().getRelationship(E2.E3S.getName());
 		@SuppressWarnings("unchecked")
-		LrPersistentEntity<E3> target = mock(LrPersistentEntity.class);
+		LrPersistentEntity<E3> target = Mockito.mock(LrPersistentEntity.class);
 		resultFilter.getChildren().put(E2.E3S.getName(), new ResourceEntity<E3>(target, incoming));
 
 		SelectContext<E2> context = new SelectContext<E2>(E2.class);

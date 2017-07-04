@@ -25,8 +25,18 @@ import com.nhl.link.rest.runtime.cayenne.CayennePersister;
 import com.nhl.link.rest.runtime.cayenne.CayenneProcessorFactory;
 import com.nhl.link.rest.runtime.cayenne.ICayennePersister;
 import com.nhl.link.rest.runtime.cayenne.NoCayennePersister;
-import com.nhl.link.rest.runtime.cayenne.processor.CayenneAssembleQueryStage;
-import com.nhl.link.rest.runtime.cayenne.processor.CayenneFetchDataStage;
+import com.nhl.link.rest.runtime.cayenne.processor.CayenneSelectProcessorFactoryProvider;
+import com.nhl.link.rest.runtime.cayenne.processor.CayenneUpdateProcessorFactoryFactoryProvider;
+import com.nhl.link.rest.runtime.cayenne.processor.select.CayenneAssembleQueryStage;
+import com.nhl.link.rest.runtime.cayenne.processor.select.CayenneFetchDataStage;
+import com.nhl.link.rest.runtime.cayenne.processor.update.CayenneCreateOrUpdateStage;
+import com.nhl.link.rest.runtime.cayenne.processor.update.CayenneCreateStage;
+import com.nhl.link.rest.runtime.cayenne.processor.update.CayenneCreatedResponseStage;
+import com.nhl.link.rest.runtime.cayenne.processor.update.CayenneIdempotentCreateOrUpdateStage;
+import com.nhl.link.rest.runtime.cayenne.processor.update.CayenneIdempotentFullSyncStage;
+import com.nhl.link.rest.runtime.cayenne.processor.update.CayenneOkResponseStage;
+import com.nhl.link.rest.runtime.cayenne.processor.update.CayenneStartStage;
+import com.nhl.link.rest.runtime.cayenne.processor.update.CayenneUpdateStage;
 import com.nhl.link.rest.runtime.constraints.ConstraintsHandler;
 import com.nhl.link.rest.runtime.constraints.IConstraintsHandler;
 import com.nhl.link.rest.runtime.encoder.AttributeEncoderFactory;
@@ -66,8 +76,8 @@ import com.nhl.link.rest.runtime.processor.IProcessorFactory;
 import com.nhl.link.rest.runtime.processor.select.ApplyServerParamsStage;
 import com.nhl.link.rest.runtime.processor.select.ParseRequestStage;
 import com.nhl.link.rest.runtime.processor.select.SelectProcessorFactory;
-import com.nhl.link.rest.runtime.cayenne.processor.CayenneSelectProcessorFactoryProvider;
 import com.nhl.link.rest.runtime.processor.select.StartStage;
+import com.nhl.link.rest.runtime.processor.update.UpdateProcessorFactoryFactory;
 import com.nhl.link.rest.runtime.semantics.IRelationshipMapper;
 import com.nhl.link.rest.runtime.semantics.RelationshipMapper;
 import com.nhl.link.rest.runtime.shutdown.ShutdownManager;
@@ -97,209 +107,209 @@ import java.util.concurrent.ExecutorService;
  */
 public class LinkRestBuilder {
 
-	private ICayennePersister cayenneService;
+    private ICayennePersister cayenneService;
 
-	private Class<? extends ILinkRestService> linkRestServiceType;
-	private ILinkRestService linkRestService;
+    private Class<? extends ILinkRestService> linkRestServiceType;
+    private ILinkRestService linkRestService;
 
-	private List<EncoderFilter> encoderFilters;
-	private Map<String, LrEntityOverlay> entityOverlays;
-	private Map<Class<?>, Class<?>> exceptionMappers;
-	private Collection<LinkRestAdapter> adapters;
-	private Map<String, PropertyMetadataEncoder> metadataEncoders;
-	private ExecutorService executor;
+    private List<EncoderFilter> encoderFilters;
+    private Map<String, LrEntityOverlay> entityOverlays;
+    private Map<Class<?>, Class<?>> exceptionMappers;
+    private Collection<LinkRestAdapter> adapters;
+    private Map<String, PropertyMetadataEncoder> metadataEncoders;
+    private ExecutorService executor;
 
-	/**
-	 * A shortcut that creates a LinkRest stack based on Cayenne runtime and
-	 * default settings.
-	 * 
-	 * @since 1.14
-	 */
-	public static LinkRestRuntime build(ServerRuntime cayenneRuntime) {
-		return builder(cayenneRuntime).build();
-	}
+    /**
+     * A shortcut that creates a LinkRest stack based on Cayenne runtime and
+     * default settings.
+     *
+     * @since 1.14
+     */
+    public static LinkRestRuntime build(ServerRuntime cayenneRuntime) {
+        return builder(cayenneRuntime).build();
+    }
 
-	/**
-	 * A shortcut that creates a LinkRestBuilder, setting its Cayenne runtime. A
-	 * caller can continue customizing the returned builder.
-	 * 
-	 * @since 1.14
-	 */
-	public static LinkRestBuilder builder(ServerRuntime cayenneRuntime) {
-		return new LinkRestBuilder().cayenneRuntime(cayenneRuntime);
-	}
+    /**
+     * A shortcut that creates a LinkRestBuilder, setting its Cayenne runtime. A
+     * caller can continue customizing the returned builder.
+     *
+     * @since 1.14
+     */
+    public static LinkRestBuilder builder(ServerRuntime cayenneRuntime) {
+        return new LinkRestBuilder().cayenneRuntime(cayenneRuntime);
+    }
 
-	public LinkRestBuilder() {
-		this.entityOverlays = new HashMap<>();
-		this.encoderFilters = new ArrayList<>();
-		this.linkRestServiceType = DefaultLinkRestService.class;
-		this.cayenneService = NoCayennePersister.instance();
+    public LinkRestBuilder() {
+        this.entityOverlays = new HashMap<>();
+        this.encoderFilters = new ArrayList<>();
+        this.linkRestServiceType = DefaultLinkRestService.class;
+        this.cayenneService = NoCayennePersister.instance();
 
-		this.exceptionMappers = mapDefaultExceptions();
-		this.adapters = new ArrayList<>();
-		this.metadataEncoders = new HashMap<>();
-	}
+        this.exceptionMappers = mapDefaultExceptions();
+        this.adapters = new ArrayList<>();
+        this.metadataEncoders = new HashMap<>();
+    }
 
-	protected Map<Class<?>, Class<?>> mapDefaultExceptions() {
+    protected Map<Class<?>, Class<?>> mapDefaultExceptions() {
 
-		Map<Class<?>, Class<?>> map = new HashMap<>();
-		map.put(CayenneRuntimeException.class, CayenneRuntimeExceptionMapper.class);
-		map.put(LinkRestException.class, LinkRestExceptionMapper.class);
-		map.put(ValidationException.class, ValidationExceptionMapper.class);
+        Map<Class<?>, Class<?>> map = new HashMap<>();
+        map.put(CayenneRuntimeException.class, CayenneRuntimeExceptionMapper.class);
+        map.put(LinkRestException.class, LinkRestExceptionMapper.class);
+        map.put(ValidationException.class, ValidationExceptionMapper.class);
 
-		return map;
-	}
+        return map;
+    }
 
-	/**
-	 * Maps an ExceptionMapper for a given type of Exceptions. While this method
-	 * can be used for arbitrary exceptions, it is most useful to override the
-	 * default exception handlers defined in LinkRest for the following
-	 * exceptions: {@link LinkRestException}, {@link CayenneRuntimeException},
-	 * {@link ValidationException}.
-	 * 
-	 * @since 1.1
-	 */
-	public <E extends Throwable> LinkRestBuilder mapException(Class<? extends ExceptionMapper<E>> mapper) {
+    /**
+     * Maps an ExceptionMapper for a given type of Exceptions. While this method
+     * can be used for arbitrary exceptions, it is most useful to override the
+     * default exception handlers defined in LinkRest for the following
+     * exceptions: {@link LinkRestException}, {@link CayenneRuntimeException},
+     * {@link ValidationException}.
+     *
+     * @since 1.1
+     */
+    public <E extends Throwable> LinkRestBuilder mapException(Class<? extends ExceptionMapper<E>> mapper) {
 
-		for (Type t : mapper.getGenericInterfaces()) {
+        for (Type t : mapper.getGenericInterfaces()) {
 
-			if (t instanceof ParameterizedType) {
-				ParameterizedType pt = (ParameterizedType) t;
-				if (ExceptionMapper.class.equals(pt.getRawType())) {
-					Type[] args = pt.getActualTypeArguments();
-					exceptionMappers.put((Class<?>) args[0], mapper);
-					return this;
-				}
-			}
+            if (t instanceof ParameterizedType) {
+                ParameterizedType pt = (ParameterizedType) t;
+                if (ExceptionMapper.class.equals(pt.getRawType())) {
+                    Type[] args = pt.getActualTypeArguments();
+                    exceptionMappers.put((Class<?>) args[0], mapper);
+                    return this;
+                }
+            }
 
-		}
+        }
 
-		throw new IllegalArgumentException("Failed to register ExceptionMapper: " + mapper.getName());
-	}
+        throw new IllegalArgumentException("Failed to register ExceptionMapper: " + mapper.getName());
+    }
 
-	public LinkRestBuilder linkRestService(ILinkRestService linkRestService) {
-		this.linkRestService = linkRestService;
-		this.linkRestServiceType = null;
-		return this;
-	}
+    public LinkRestBuilder linkRestService(ILinkRestService linkRestService) {
+        this.linkRestService = linkRestService;
+        this.linkRestServiceType = null;
+        return this;
+    }
 
-	public LinkRestBuilder linkRestService(Class<? extends ILinkRestService> linkRestServiceType) {
-		this.linkRestService = null;
-		this.linkRestServiceType = linkRestServiceType;
-		return this;
-	}
+    public LinkRestBuilder linkRestService(Class<? extends ILinkRestService> linkRestServiceType) {
+        this.linkRestService = null;
+        this.linkRestServiceType = linkRestServiceType;
+        return this;
+    }
 
-	public LinkRestBuilder cayenneRuntime(ServerRuntime cayenneRuntime) {
-		this.cayenneService = new CayennePersister(cayenneRuntime);
-		return this;
-	}
+    public LinkRestBuilder cayenneRuntime(ServerRuntime cayenneRuntime) {
+        this.cayenneService = new CayennePersister(cayenneRuntime);
+        return this;
+    }
 
-	public LinkRestBuilder cayenneService(ICayennePersister cayenneService) {
-		this.cayenneService = cayenneService;
-		return this;
-	}
+    public LinkRestBuilder cayenneService(ICayennePersister cayenneService) {
+        this.cayenneService = cayenneService;
+        return this;
+    }
 
-	public LinkRestBuilder encoderFilter(EncoderFilter filter) {
-		this.encoderFilters.add(filter);
-		return this;
-	}
+    public LinkRestBuilder encoderFilter(EncoderFilter filter) {
+        this.encoderFilters.add(filter);
+        return this;
+    }
 
-	public LinkRestBuilder encoderFilters(Collection<EncoderFilter> filters) {
-		this.encoderFilters.addAll(filters);
-		return this;
-	}
+    public LinkRestBuilder encoderFilters(Collection<EncoderFilter> filters) {
+        this.encoderFilters.addAll(filters);
+        return this;
+    }
 
-	/**
-	 * Sets an optional thread pool that should be used by non-blocking request runners.
-	 * 
-	 * @since 2.0
-	 * @param executor a thread pool used for non-blocking request runners.
-	 * @return this builder instance.
-	 */
-	public LinkRestBuilder executor(ExecutorService executor) {
-		this.executor = executor;
-		return this;
-	}
+    /**
+     * Sets an optional thread pool that should be used by non-blocking request runners.
+     *
+     * @param executor a thread pool used for non-blocking request runners.
+     * @return this builder instance.
+     * @since 2.0
+     */
+    public LinkRestBuilder executor(ExecutorService executor) {
+        this.executor = executor;
+        return this;
+    }
 
-	/**
-	 * Exposes a non-persistent property of a persistent type. Once declared
-	 * such property can be rendered in responses, referenced in include/exclude
-	 * keys, etc.
-	 * <p>
-	 * Calling this method explicitly is only needed if you can't annotate
-	 * transient properties with {@link LrAttribute} and other LR annotations
-	 * for any reason.
-	 * 
-	 * @since 1.12
-	 */
-	public LinkRestBuilder transientProperty(Class<?> type, String propertyName) {
+    /**
+     * Exposes a non-persistent property of a persistent type. Once declared
+     * such property can be rendered in responses, referenced in include/exclude
+     * keys, etc.
+     * <p>
+     * Calling this method explicitly is only needed if you can't annotate
+     * transient properties with {@link LrAttribute} and other LR annotations
+     * for any reason.
+     *
+     * @since 1.12
+     */
+    public LinkRestBuilder transientProperty(Class<?> type, String propertyName) {
 
-		LrEntityOverlay<?> overlay = entityOverlays.get(type.getName());
-		if (overlay == null) {
-			overlay = new LrEntityOverlay<>(type);
-			entityOverlays.put(type.getName(), overlay);
-		}
+        LrEntityOverlay<?> overlay = entityOverlays.get(type.getName());
+        if (overlay == null) {
+            overlay = new LrEntityOverlay<>(type);
+            entityOverlays.put(type.getName(), overlay);
+        }
 
-		overlay.getTransientAttributes().add(propertyName);
+        overlay.getTransientAttributes().add(propertyName);
 
-		return this;
-	}
+        return this;
+    }
 
-	/**
-	 * Adds an adapter that may contribute custom configuration to
-	 * {@link LinkRestRuntime}.
-	 * 
-	 * @since 1.3
-	 */
-	public LinkRestBuilder adapter(LinkRestAdapter adapter) {
-		this.adapters.add(adapter);
-		return this;
-	}
+    /**
+     * Adds an adapter that may contribute custom configuration to
+     * {@link LinkRestRuntime}.
+     *
+     * @since 1.3
+     */
+    public LinkRestBuilder adapter(LinkRestAdapter adapter) {
+        this.adapters.add(adapter);
+        return this;
+    }
 
-	public LinkRestBuilder metadataEncoder(String type, PropertyMetadataEncoder encoder) {
-		this.metadataEncoders.put(type, encoder);
-		return this;
-	}
+    public LinkRestBuilder metadataEncoder(String type, PropertyMetadataEncoder encoder) {
+        this.metadataEncoders.put(type, encoder);
+        return this;
+    }
 
-	public LinkRestRuntime build() {
-		Injector i = createInjector();
-		return new LinkRestRuntime(i, createExtraFeatures(), createExtraComponents());
-	}
+    public LinkRestRuntime build() {
+        Injector i = createInjector();
+        return new LinkRestRuntime(i, createExtraFeatures(), createExtraComponents());
+    }
 
-	private Collection<Class<?>> createExtraComponents() {
-		// for now the only extra components are exception mappers
-		return exceptionMappers.values();
-	}
+    private Collection<Class<?>> createExtraComponents() {
+        // for now the only extra components are exception mappers
+        return exceptionMappers.values();
+    }
 
-	private Collection<Feature> createExtraFeatures() {
+    private Collection<Feature> createExtraFeatures() {
 
-		if (adapters.isEmpty()) {
-			return Collections.emptyList();
-		}
+        if (adapters.isEmpty()) {
+            return Collections.emptyList();
+        }
 
-		Collection<Feature> features = new ArrayList<>(adapters.size());
-		for (LinkRestAdapter a : adapters) {
-			a.contributeToJaxRs(features);
-		}
+        Collection<Feature> features = new ArrayList<>(adapters.size());
+        for (LinkRestAdapter a : adapters) {
+            a.contributeToJaxRs(features);
+        }
 
-		return features;
-	}
+        return features;
+    }
 
-	private Injector createInjector() {
+    private Injector createInjector() {
 
-		if (linkRestService == null && linkRestServiceType == null) {
-			throw new IllegalStateException("Required 'linkRestService' is not set");
-		}
+        if (linkRestService == null && linkRestServiceType == null) {
+            throw new IllegalStateException("Required 'linkRestService' is not set");
+        }
 
-		Module module = binder -> {
+        Module module = binder -> {
 
             binder.bindList(EncoderFilter.class).addAll(encoderFilters);
 
             binder.bind(CayenneEntityCompiler.class).to(CayenneEntityCompiler.class);
             binder.bind(PojoEntityCompiler.class).to(PojoEntityCompiler.class);
             binder.bindList(LrEntityCompiler.class)
-					.add(CayenneEntityCompiler.class)
-					.add(PojoEntityCompiler.class);
+                    .add(CayenneEntityCompiler.class)
+                    .add(PojoEntityCompiler.class);
 
             binder.bindMap(LrEntityOverlay.class).putAll(entityOverlays);
             binder.bindMap(Class.class, LinkRestRuntime.BODY_WRITERS_MAP)
@@ -322,10 +332,25 @@ public class LinkRestBuilder {
             // select stages
             binder.bind(SelectProcessorFactory.class).toProvider(CayenneSelectProcessorFactoryProvider.class);
             binder.bind(StartStage.class).to(StartStage.class);
-			binder.bind(ParseRequestStage.class).to(ParseRequestStage.class);
-			binder.bind(ApplyServerParamsStage.class).to(ApplyServerParamsStage.class);
-			binder.bind(CayenneAssembleQueryStage.class).to(CayenneAssembleQueryStage.class);
-			binder.bind(CayenneFetchDataStage.class).to(CayenneFetchDataStage.class);
+            binder.bind(ParseRequestStage.class).to(ParseRequestStage.class);
+            binder.bind(ApplyServerParamsStage.class).to(ApplyServerParamsStage.class);
+            binder.bind(CayenneAssembleQueryStage.class).to(CayenneAssembleQueryStage.class);
+            binder.bind(CayenneFetchDataStage.class).to(CayenneFetchDataStage.class);
+
+            // update stages
+            binder.bind(UpdateProcessorFactoryFactory.class).toProvider(CayenneUpdateProcessorFactoryFactoryProvider.class);
+            binder.bind(CayenneStartStage.class).to(CayenneStartStage.class);
+            binder.bind(com.nhl.link.rest.runtime.processor.update.ParseRequestStage.class)
+                    .to(com.nhl.link.rest.runtime.processor.update.ParseRequestStage.class);
+            binder.bind(com.nhl.link.rest.runtime.processor.update.ApplyServerParamsStage.class)
+                    .to(com.nhl.link.rest.runtime.processor.update.ApplyServerParamsStage.class);
+            binder.bind(CayenneCreateStage.class).to(CayenneCreateStage.class);
+            binder.bind(CayenneUpdateStage.class).to(CayenneUpdateStage.class);
+            binder.bind(CayenneCreateOrUpdateStage.class).to(CayenneCreateOrUpdateStage.class);
+            binder.bind(CayenneIdempotentCreateOrUpdateStage.class).to(CayenneIdempotentCreateOrUpdateStage.class);
+            binder.bind(CayenneIdempotentFullSyncStage.class).to(CayenneIdempotentFullSyncStage.class);
+            binder.bind(CayenneOkResponseStage.class).to(CayenneOkResponseStage.class);
+            binder.bind(CayenneCreatedResponseStage.class).to(CayenneCreatedResponseStage.class);
 
             binder.bind(IRequestParser.class).to(RequestParser.class);
             binder.bind(IJsonValueConverterFactory.class).to(DefaultJsonValueConverterFactory.class);
@@ -365,6 +390,6 @@ public class LinkRestBuilder {
             }
         };
 
-		return DIBootstrap.createInjector(module);
-	}
+        return DIBootstrap.createInjector(module);
+    }
 }

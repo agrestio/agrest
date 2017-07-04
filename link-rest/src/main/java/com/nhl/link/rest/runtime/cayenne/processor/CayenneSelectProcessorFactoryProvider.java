@@ -1,6 +1,8 @@
 package com.nhl.link.rest.runtime.cayenne.processor;
 
 import com.nhl.link.rest.processor2.Processor;
+import com.nhl.link.rest.runtime.cayenne.processor.select.CayenneAssembleQueryStage;
+import com.nhl.link.rest.runtime.cayenne.processor.select.CayenneFetchDataStage;
 import com.nhl.link.rest.runtime.processor.select.SelectContext;
 import com.nhl.link.rest.runtime.processor.select.ApplyServerParamsStage;
 import com.nhl.link.rest.runtime.processor.select.ParseRequestStage;

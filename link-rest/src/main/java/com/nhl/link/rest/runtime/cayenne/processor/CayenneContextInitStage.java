@@ -9,6 +9,7 @@ import com.nhl.link.rest.runtime.cayenne.ICayennePersister;
 
 /**
  * @since 1.16
+ * @deprecated since 2.7 in favor of {@link com.nhl.link.rest.runtime.cayenne.processor.update.CayenneStartStage}.
  */
 public class CayenneContextInitStage<C extends ProcessingContext<T>, T> extends BaseLinearProcessingStage<C, T> {
 
