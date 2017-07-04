@@ -1,4 +1,4 @@
-package com.nhl.link.rest.runtime.cayenne.processor2.select;
+package com.nhl.link.rest.runtime.cayenne.processor;
 
 import com.nhl.link.rest.LinkRestException;
 import com.nhl.link.rest.LrObjectId;

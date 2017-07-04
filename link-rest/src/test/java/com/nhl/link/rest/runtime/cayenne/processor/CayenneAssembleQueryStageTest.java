@@ -1,18 +1,5 @@
 package com.nhl.link.rest.runtime.cayenne.processor;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNotSame;
-import static org.junit.Assert.assertSame;
-import static org.mockito.Mockito.mock;
-
-import org.apache.cayenne.exp.Expression;
-import org.apache.cayenne.query.Ordering;
-import org.apache.cayenne.query.PrefetchTreeNode;
-import org.apache.cayenne.query.SelectQuery;
-import org.junit.Before;
-import org.junit.Test;
-
 import com.nhl.link.rest.ResourceEntity;
 import com.nhl.link.rest.it.fixture.cayenne.E1;
 import com.nhl.link.rest.it.fixture.cayenne.E2;
@@ -21,14 +8,23 @@ import com.nhl.link.rest.meta.LrPersistentEntity;
 import com.nhl.link.rest.meta.LrRelationship;
 import com.nhl.link.rest.runtime.processor.select.SelectContext;
 import com.nhl.link.rest.unit.TestWithCayenneMapping;
+import org.apache.cayenne.exp.Expression;
+import org.apache.cayenne.query.Ordering;
+import org.apache.cayenne.query.PrefetchTreeNode;
+import org.apache.cayenne.query.SelectQuery;
+import org.junit.Before;
+import org.junit.Test;
 
-public class CayenneQueryAssembleStageTest extends TestWithCayenneMapping {
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.mock;
 
-	private CayenneQueryAssembleStage<Object> fetchStage;
+public class CayenneAssembleQueryStageTest extends TestWithCayenneMapping {
+
+	private CayenneAssembleQueryStage makeQueryStage;
 
 	@Before
 	public void before() {
-		this.fetchStage = new CayenneQueryAssembleStage<>(null, mockCayennePersister);
+		this.makeQueryStage = new CayenneAssembleQueryStage(mockCayennePersister);
 	}
 
 	@Test
@@ -47,7 +43,7 @@ public class CayenneQueryAssembleStageTest extends TestWithCayenneMapping {
 		context.setSelect(query);
 		context.setEntity(resourceEntity);
 
-		SelectQuery<E1> amended = fetchStage.buildQuery(context);
+		SelectQuery<E1> amended = makeQueryStage.buildQuery(context);
 		assertSame(query, amended);
 		assertEquals(2, amended.getOrderings().size());
 		assertSame(o1, amended.getOrderings().get(0));
@@ -68,7 +64,7 @@ public class CayenneQueryAssembleStageTest extends TestWithCayenneMapping {
 		context.setEntity(resultFilter);
 		context.setSelect(query);
 
-		SelectQuery<E2> amended = fetchStage.buildQuery(context);
+		SelectQuery<E2> amended = makeQueryStage.buildQuery(context);
 		assertSame(query, amended);
 		PrefetchTreeNode rootPrefetch = amended.getPrefetchTree();
 
@@ -89,7 +85,7 @@ public class CayenneQueryAssembleStageTest extends TestWithCayenneMapping {
 		SelectContext<E1> c = new SelectContext<E1>(E1.class);
 		c.setEntity(resourceEntity);
 
-		SelectQuery<E1> q1 = fetchStage.buildQuery(c);
+		SelectQuery<E1> q1 = makeQueryStage.buildQuery(c);
 
 		assertEquals("Pagination in the query for paginated request is expected", 10, q1.getPageSize());
 		assertEquals(0, q1.getFetchOffset());
@@ -98,7 +94,7 @@ public class CayenneQueryAssembleStageTest extends TestWithCayenneMapping {
 		resourceEntity.setFetchLimit(0);
 		resourceEntity.setFetchOffset(0);
 
-		SelectQuery<E1> q2 = fetchStage.buildQuery(c);
+		SelectQuery<E1> q2 = makeQueryStage.buildQuery(c);
 		assertEquals(0, q2.getPageSize());
 		assertEquals(0, q2.getFetchOffset());
 		assertEquals(0, q2.getFetchLimit());
@@ -106,7 +102,7 @@ public class CayenneQueryAssembleStageTest extends TestWithCayenneMapping {
 		resourceEntity.setFetchLimit(0);
 		resourceEntity.setFetchOffset(5);
 
-		SelectQuery<E1> q3 = fetchStage.buildQuery(c);
+		SelectQuery<E1> q3 = makeQueryStage.buildQuery(c);
 		assertEquals(0, q3.getPageSize());
 		assertEquals(0, q3.getFetchOffset());
 		assertEquals(0, q3.getFetchLimit());
@@ -122,7 +118,7 @@ public class CayenneQueryAssembleStageTest extends TestWithCayenneMapping {
 		SelectContext<E1> c1 = new SelectContext<>(E1.class);
 		c1.setEntity(resourceEntity);
 
-		SelectQuery<E1> query = fetchStage.buildQuery(c1);
+		SelectQuery<E1> query = makeQueryStage.buildQuery(c1);
 		assertEquals(extraQualifier, query.getQualifier());
 
 		SelectQuery<E1> query2 = new SelectQuery<E1>(E1.class);
@@ -132,7 +128,7 @@ public class CayenneQueryAssembleStageTest extends TestWithCayenneMapping {
 		c2.setSelect(query2);
 		c2.setEntity(resourceEntity);
 
-		SelectQuery<E1> query2Amended = fetchStage.buildQuery(c2);
+		SelectQuery<E1> query2Amended = makeQueryStage.buildQuery(c2);
 		assertEquals(E1.NAME.in("a", "b").andExp(E1.NAME.eq("X")), query2Amended.getQualifier());
 	}
 
@@ -143,7 +139,7 @@ public class CayenneQueryAssembleStageTest extends TestWithCayenneMapping {
 		c.setId(1);
 		c.setEntity(getResourceEntity(E1.class));
 
-		SelectQuery<E1> s1 = fetchStage.basicSelect(c);
+		SelectQuery<E1> s1 = makeQueryStage.basicSelect(c);
 		assertNotNull(s1);
 		assertSame(E1.class, s1.getRoot());
 	}
@@ -157,7 +153,7 @@ public class CayenneQueryAssembleStageTest extends TestWithCayenneMapping {
 		c.setSelect(select);
 		c.setEntity(getResourceEntity(E1.class));
 
-		SelectQuery<E1> s2 = fetchStage.basicSelect(c);
+		SelectQuery<E1> s2 = makeQueryStage.basicSelect(c);
 		assertNotNull(s2);
 		assertNotSame(select, s2);
 		assertSame(E1.class, s2.getRoot());

@@ -11,9 +11,7 @@ import com.nhl.link.rest.runtime.cayenne.processor.CayenneContextInitStage;
 import com.nhl.link.rest.runtime.cayenne.processor.CayenneCreateOrUpdateStage;
 import com.nhl.link.rest.runtime.cayenne.processor.CayenneCreateStage;
 import com.nhl.link.rest.runtime.cayenne.processor.CayenneDeleteStage;
-import com.nhl.link.rest.runtime.cayenne.processor.CayenneFetchStage;
 import com.nhl.link.rest.runtime.cayenne.processor.CayenneFullSyncStage;
-import com.nhl.link.rest.runtime.cayenne.processor.CayenneQueryAssembleStage;
 import com.nhl.link.rest.runtime.cayenne.processor.CayenneUnrelateStage;
 import com.nhl.link.rest.runtime.cayenne.processor.CayenneUpdatePostProcessStage;
 import com.nhl.link.rest.runtime.cayenne.processor.CayenneUpdateStage;
@@ -26,10 +24,6 @@ import com.nhl.link.rest.runtime.parser.IUpdateParser;
 import com.nhl.link.rest.runtime.processor.IProcessorFactory;
 import com.nhl.link.rest.runtime.processor.delete.DeleteContext;
 import com.nhl.link.rest.runtime.processor.meta.MetadataContext;
-import com.nhl.link.rest.runtime.processor.select.ApplySelectServerParamsStage;
-import com.nhl.link.rest.runtime.processor.select.InitializeSelectChainStage;
-import com.nhl.link.rest.runtime.processor.select.ParseSelectRequestStage;
-import com.nhl.link.rest.runtime.processor.select.SelectContext;
 import com.nhl.link.rest.runtime.processor.unrelate.UnrelateContext;
 import com.nhl.link.rest.runtime.processor.update.ApplyUpdateServerParamsStage;
 import com.nhl.link.rest.runtime.processor.update.InitializeUpdateChainStage;
@@ -79,8 +73,6 @@ public class CayenneProcessorFactory implements IProcessorFactory {
 	@Override
 	public Map<Class<?>, Map<String, ProcessingStage<?, ?>>> processors() {
 		Map<Class<?>, Map<String, ProcessingStage<?, ?>>> map = new HashMap<>();
-		map.put(SelectContext.class,
-				Collections.<String, ProcessingStage<?, ?>> singletonMap(null, createSelectProcessor()));
 		map.put(DeleteContext.class,
 				Collections.<String, ProcessingStage<?, ?>> singletonMap(null, createDeleteProcessor()));
 		map.put(UnrelateContext.class,
@@ -118,20 +110,6 @@ public class CayenneProcessorFactory implements IProcessorFactory {
 		BaseLinearProcessingStage<DeleteContext<Object>, Object> stage1 = new CayenneDeleteStage<>(null, metadataService);
 		BaseLinearProcessingStage<DeleteContext<Object>, Object> stage0 = new CayenneContextInitStage<>(stage1,
 				persister);
-
-		return stage0;
-	}
-
-	private ProcessingStage<SelectContext<Object>, Object> createSelectProcessor() {
-
-		BaseLinearProcessingStage<SelectContext<Object>, Object> stage4 = new CayenneFetchStage<>(null, persister);
-		BaseLinearProcessingStage<SelectContext<Object>, Object> stage3 = new CayenneQueryAssembleStage<>(stage4,
-				persister);
-		BaseLinearProcessingStage<SelectContext<Object>, Object> stage2 = new ApplySelectServerParamsStage<>(stage3,
-				encoderService, constraintsHandler, filters);
-		BaseLinearProcessingStage<SelectContext<Object>, Object> stage1 = new ParseSelectRequestStage<>(stage2,
-				requestParser, metadataService);
-		BaseLinearProcessingStage<SelectContext<Object>, Object> stage0 = new InitializeSelectChainStage<>(stage1);
 
 		return stage0;
 	}
