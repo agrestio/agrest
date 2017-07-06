@@ -106,9 +106,7 @@ public class AttributeEncoderFactory implements IAttributeEncoderFactory {
 
 		boolean persistent = attribute instanceof LrPersistentAttribute;
 
-		int jdbcType = persistent ? ((LrPersistentAttribute) attribute).getJdbcType() : Integer.MIN_VALUE;
-
-		Encoder encoder = buildEncoder(attribute.getType(), jdbcType);
+		Encoder encoder = buildEncoder(attribute.getType(), getJdbcType(attribute));
 		if (persistent && DataObject.class.isAssignableFrom(entity.getType())) {
 			return PropertyBuilder.dataObjectProperty().encodedWith(encoder);
 		} else {
