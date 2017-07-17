@@ -4,7 +4,7 @@
 
 	<groupId>com.nhl.link.rest</groupId>
 	<artifactId>link-rest-parent</artifactId>
-	<version>2.7-SNAPSHOT</version>
+	<version>2.7</version>
 
 	<name>Library: link-rest (Parent)</name>
 	<description>Model-driven REST data service framework</description>
@@ -59,7 +59,7 @@
 		<connection>scm:git:https://github.com/nhl/link-rest</connection>
 		<developerConnection>scm:git:ssh://git@github.com/nhl/link-rest</developerConnection>
 		<url>https://github.com/nhl/link-rest</url>
-		<tag>HEAD</tag>
+		<tag>link-rest-parent-2.7</tag>
 	</scm>
 
 	<distributionManagement>
