@@ -1,5 +1,6 @@
 Release 2.7
 
+#235 Allow Pojo attributes of type java.util.Collection
 #238 Dynamic relationships do not work with "mapBy"
 #239 Add ResourceEntity.setQualifier(..) method.
 #240 Functional select pipeline interceptors
@@ -11,7 +12,6 @@ Release 2.7
 Release 2.6
 
 #234 Error reading relationships: Multi-join relationship propagation is not supported yet
-#235 Allow Pojo attributes of type java.util.Collection
 
 Release 2.5
 
