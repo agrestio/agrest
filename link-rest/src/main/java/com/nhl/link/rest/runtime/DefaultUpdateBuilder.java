@@ -164,7 +164,11 @@ public class DefaultUpdateBuilder<T> implements UpdateBuilder<T> {
      * @since 2.7
      */
     @Override
-    public UpdateBuilder<T> routingStage(UpdateStage afterStage, Processor<UpdateContext<?>> customStage) {
+    public <U> UpdateBuilder<T> routingStage(UpdateStage afterStage, Processor<UpdateContext<U>> customStage) {
+        return routingStage_NoGenerics(afterStage, customStage);
+    }
+
+    private <U> UpdateBuilder<T> routingStage_NoGenerics(UpdateStage afterStage, Processor customStage) {
         processors.compute(afterStage, (s, existing) -> existing != null ? existing.andThen(customStage) : customStage);
         return this;
     }

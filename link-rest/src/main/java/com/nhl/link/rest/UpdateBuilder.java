@@ -176,8 +176,8 @@ public interface UpdateBuilder<T> {
      * @return this builder instance.
      * @since 2.7
      */
-    default UpdateBuilder<T> stage(UpdateStage afterStage, Consumer<UpdateContext<?>> customStage) {
-        return routingStage(afterStage, c -> {
+    default <U> UpdateBuilder<T> stage(UpdateStage afterStage, Consumer<UpdateContext<U>> customStage) {
+        return routingStage(afterStage, (UpdateContext<U> c) -> {
             customStage.accept(c);
             return ProcessorOutcome.CONTINUE;
         });
@@ -197,8 +197,8 @@ public interface UpdateBuilder<T> {
      * @return this builder instance.
      * @since 2.7
      */
-    default UpdateBuilder<T> terminalStage(UpdateStage afterStage, Consumer<UpdateContext<?>> customTerminalStage) {
-        return routingStage(afterStage, c -> {
+    default <U> UpdateBuilder<T> terminalStage(UpdateStage afterStage, Consumer<UpdateContext<U>> customTerminalStage) {
+        return routingStage(afterStage, (UpdateContext<U> c) -> {
             customTerminalStage.accept(c);
             return ProcessorOutcome.STOP;
         });
@@ -217,7 +217,7 @@ public interface UpdateBuilder<T> {
      * @return this builder instance.
      * @since 2.7
      */
-    UpdateBuilder<T> routingStage(UpdateStage afterStage, Processor<UpdateContext<?>> customStage);
+    <U> UpdateBuilder<T> routingStage(UpdateStage afterStage, Processor<UpdateContext<U>> customStage);
 
     /**
      * @since 1.19

@@ -7,10 +7,12 @@ import com.nhl.link.rest.processor.ProcessorOutcome;
 import com.nhl.link.rest.runtime.listener.IListenerService;
 import com.nhl.link.rest.runtime.processor.select.SelectContext;
 import com.nhl.link.rest.runtime.processor.select.SelectProcessorFactory;
+import org.apache.cayenne.CayenneDataObject;
 import org.apache.cayenne.DataObject;
 import org.junit.Test;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
@@ -41,8 +43,7 @@ public class DefaultSelectBuilderTest {
                 .stage(SelectStage.PARSE_REQUEST, (SelectContext<E2> s) -> {
                 })
                 .stage(SelectStage.PARSE_REQUEST, s -> {
-                })
-                .get();
+                });
     }
 
     @Test
@@ -60,8 +61,7 @@ public class DefaultSelectBuilderTest {
                 .terminalStage(SelectStage.PARSE_REQUEST, (SelectContext<E2> s) -> {
                 })
                 .terminalStage(SelectStage.PARSE_REQUEST, s -> {
-                })
-                .get();
+                });
     }
 
     @Test
@@ -77,8 +77,7 @@ public class DefaultSelectBuilderTest {
                 .routingStage(SelectStage.PARSE_REQUEST, this::doSomethingAndReturn3)
                 .routingStage(SelectStage.PARSE_REQUEST, this::doSomethingAndReturn4)
                 .routingStage(SelectStage.PARSE_REQUEST, (SelectContext<E2> s) -> ProcessorOutcome.CONTINUE)
-                .routingStage(SelectStage.PARSE_REQUEST, s -> ProcessorOutcome.CONTINUE)
-                .get();
+                .routingStage(SelectStage.PARSE_REQUEST, s -> ProcessorOutcome.CONTINUE);
     }
 
     private void doSomething0(SelectContext<?> c) {
@@ -91,6 +90,9 @@ public class DefaultSelectBuilderTest {
     private void doSomething2(SelectContext<DataObject> c) {
         c.setObjects(new ArrayList<>());
         c.setObjects(new ArrayList<E2>());
+
+        List<DataObject> objects = c.getObjects();
+        objects.add(new CayenneDataObject());
     }
 
     private void doSomething3(SelectContext<Object> c) {

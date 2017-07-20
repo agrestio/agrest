@@ -40,7 +40,7 @@ public class UpdateContext<T> extends BaseProcessingContext<T> {
 	private boolean idUpdatesDisallowed;
 	private Collection<EntityUpdate<T>> updates;
 	private Encoder encoder;
-	private List<T> objects;
+	private List objects;
 
 	public UpdateContext(Class<T> type) {
 		super(type);
@@ -228,7 +228,7 @@ public class UpdateContext<T> extends BaseProcessingContext<T> {
 	/**
 	 * @since 1.24
 	 */
-	public void setObjects(List<T> objects) {
+	public void setObjects(List<? extends T> objects) {
 		this.objects = objects;
 	}
 }

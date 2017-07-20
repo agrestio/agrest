@@ -36,7 +36,7 @@ public class SelectContext<T> extends BaseProcessingContext<T> {
 	private boolean atMostOneObject;
 	private Encoder encoder;
 	private int prefetchSemantics;
-	private List<? extends T> objects;
+	private List objects;
 
 	// TODO: deprecate dependency on Cayenne in generic code
 	private SelectQuery<T> select;
@@ -197,7 +197,7 @@ public class SelectContext<T> extends BaseProcessingContext<T> {
 	/**
 	 * @since 1.24
 	 */
-	public List<? extends T> getObjects() {
+	public List<T> getObjects() {
 		return objects;
 	}
 
