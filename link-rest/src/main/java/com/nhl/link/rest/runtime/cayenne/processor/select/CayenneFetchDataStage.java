@@ -6,7 +6,6 @@ import com.nhl.link.rest.processor.Processor;
 import com.nhl.link.rest.processor.ProcessorOutcome;
 import com.nhl.link.rest.runtime.cayenne.ICayennePersister;
 import com.nhl.link.rest.runtime.processor.select.SelectContext;
-import org.apache.cayenne.ObjectContext;
 import org.apache.cayenne.di.Inject;
 import org.apache.cayenne.query.SelectQuery;
 
@@ -18,10 +17,14 @@ import java.util.List;
  */
 public class CayenneFetchDataStage implements Processor<SelectContext<?>> {
 
-    private ObjectContext sharedContext;
+    private ICayennePersister persister;
 
     public CayenneFetchDataStage(@Inject ICayennePersister persister) {
-        this.sharedContext = persister.sharedContext();
+
+        // Store persister, don't extract ObjectContext from it right away.
+        // Such deferred initialization may help building POJO pipelines.
+
+        this.persister = persister;
     }
 
     @Override
@@ -33,7 +36,7 @@ public class CayenneFetchDataStage implements Processor<SelectContext<?>> {
     protected <T> void doExecute(SelectContext<T> context) {
         SelectQuery<T> select = context.getSelect();
 
-        List<T> objects = sharedContext.select(select);
+        List<T> objects = persister.sharedContext().select(select);
 
         if (context.isAtMostOneObject() && objects.size() != 1) {
 
