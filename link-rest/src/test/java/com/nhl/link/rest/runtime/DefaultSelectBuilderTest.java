@@ -81,7 +81,6 @@ public class DefaultSelectBuilderTest {
     }
 
     private void doSomething0(SelectContext<?> c) {
-        c.setObjects(new ArrayList<>());
     }
 
     private <T> void doSomething1(SelectContext<T> c) {
@@ -106,7 +105,6 @@ public class DefaultSelectBuilderTest {
     }
 
     private ProcessorOutcome doSomethingAndReturn0(SelectContext<?> c) {
-        c.setObjects(new ArrayList<>());
         return ProcessorOutcome.CONTINUE;
     }
 

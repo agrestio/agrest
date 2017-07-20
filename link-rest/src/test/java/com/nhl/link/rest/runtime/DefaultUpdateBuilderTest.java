@@ -81,7 +81,6 @@ public class DefaultUpdateBuilderTest {
     }
 
     private void doSomething0(UpdateContext<?> c) {
-        c.setObjects(new ArrayList<>());
     }
 
     private <T> void doSomething1(UpdateContext<T> c) {
@@ -105,7 +104,6 @@ public class DefaultUpdateBuilderTest {
     }
 
     private ProcessorOutcome doSomethingAndReturn0(UpdateContext<?> c) {
-        c.setObjects(new ArrayList<>());
         return ProcessorOutcome.CONTINUE;
     }
 
