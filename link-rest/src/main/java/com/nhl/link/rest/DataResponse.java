@@ -16,7 +16,7 @@ import java.util.List;
 public class DataResponse<T> extends LrResponse {
 
 	private Class<T> type;
-	private List<T> objects;
+	private List<? extends T> objects;
 	private Encoder encoder;
 
 	public static <T> DataResponse<T> forObject(T object) {
@@ -62,7 +62,7 @@ public class DataResponse<T> extends LrResponse {
 	/**
 	 * @since 1.24
 	 */
-	public void setObjects(List<T> objects) {
+	public void setObjects(List<? extends T> objects) {
 		this.objects = objects;
 	}
 
@@ -76,7 +76,7 @@ public class DataResponse<T> extends LrResponse {
 	/**
 	 * Returns all objects returned from DB.
 	 */
-	public List<T> getObjects() {
+	public List<? extends T> getObjects() {
 		return objects;
 	}
 

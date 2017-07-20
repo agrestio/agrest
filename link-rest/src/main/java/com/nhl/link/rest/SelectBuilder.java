@@ -183,8 +183,8 @@ public interface SelectBuilder<T> {
      * @return this builder instance.
      * @since 2.7
      */
-    default SelectBuilder<T> stage(SelectStage afterStage, Consumer<SelectContext<?>> customStage) {
-        return routingStage(afterStage, c -> {
+    default <U> SelectBuilder<T> stage(SelectStage afterStage, Consumer<SelectContext<U>> customStage) {
+        return routingStage(afterStage, (SelectContext<U> c) -> {
             customStage.accept(c);
             return ProcessorOutcome.CONTINUE;
         });
@@ -204,8 +204,8 @@ public interface SelectBuilder<T> {
      * @return this builder instance.
      * @since 2.7
      */
-    default SelectBuilder<T> terminalStage(SelectStage afterStage, Consumer<SelectContext<?>> customTerminalStage) {
-        return routingStage(afterStage, c -> {
+    default <U> SelectBuilder<T> terminalStage(SelectStage afterStage, Consumer<SelectContext<U>> customTerminalStage) {
+        return routingStage(afterStage, (SelectContext<U> c) -> {
             customTerminalStage.accept(c);
             return ProcessorOutcome.STOP;
         });
@@ -224,7 +224,7 @@ public interface SelectBuilder<T> {
      * @return this builder instance.
      * @since 2.7
      */
-    SelectBuilder<T> routingStage(SelectStage afterStage, Processor<SelectContext<?>> customStage);
+    <U> SelectBuilder<T> routingStage(SelectStage afterStage, Processor<SelectContext<U>> customStage);
 
     /**
      * Runs the query corresponding to the state of this builder, returning

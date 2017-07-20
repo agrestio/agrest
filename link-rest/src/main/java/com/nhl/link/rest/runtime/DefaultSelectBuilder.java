@@ -205,7 +205,11 @@ public class DefaultSelectBuilder<T> implements SelectBuilder<T> {
      * @since 2.7
      */
     @Override
-    public SelectBuilder<T> routingStage(SelectStage afterStage, Processor<SelectContext<?>> customStage) {
+    public <U> SelectBuilder<T> routingStage(SelectStage afterStage, Processor<SelectContext<U>> customStage) {
+        return routingStage_NoGenerics(afterStage, customStage);
+    }
+
+    private SelectBuilder<T> routingStage_NoGenerics(SelectStage afterStage, Processor customStage) {
         processors.compute(afterStage, (s, existing) -> existing != null ? existing.andThen(customStage) : customStage);
         return this;
     }

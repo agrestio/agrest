@@ -36,7 +36,7 @@ public class SelectContext<T> extends BaseProcessingContext<T> {
 	private boolean atMostOneObject;
 	private Encoder encoder;
 	private int prefetchSemantics;
-	private List<T> objects;
+	private List<? extends T> objects;
 
 	// TODO: deprecate dependency on Cayenne in generic code
 	private SelectQuery<T> select;
@@ -52,7 +52,7 @@ public class SelectContext<T> extends BaseProcessingContext<T> {
 	 * @return a new response object reflecting the context state.
 	 */
 	public DataResponse<T> createDataResponse() {
-		List<T> objects = this.objects != null ? this.objects : Collections.<T> emptyList();
+		List<? extends T> objects = this.objects != null ? this.objects : Collections.<T> emptyList();
 		DataResponse<T> response = DataResponse.forType(getType());
 		response.setObjects(objects);
 		response.setEncoder(encoder);
@@ -197,14 +197,14 @@ public class SelectContext<T> extends BaseProcessingContext<T> {
 	/**
 	 * @since 1.24
 	 */
-	public List<T> getObjects() {
+	public List<? extends T> getObjects() {
 		return objects;
 	}
 
 	/**
 	 * @since 1.24
 	 */
-	public void setObjects(List<T> objects) {
+	public void setObjects(List<? extends T> objects) {
 		this.objects = objects;
 	}
 }
