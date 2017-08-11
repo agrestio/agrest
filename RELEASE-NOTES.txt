@@ -1,3 +1,7 @@
+Release 2.9
+
+#247  Split Lr annotations in a separate jar
+
 Release 2.8
 
 #250 Fix stage method generics boundaries

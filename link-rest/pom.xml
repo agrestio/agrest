@@ -17,6 +17,11 @@
 
 		<!-- required runtime dependencies -->
 		<dependency>
+			<groupId>com.nhl.link.rest</groupId>
+			<artifactId>link-rest-annotations</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
 			<artifactId>javax.inject</artifactId>
 			<groupId>javax.inject</groupId>
 			<scope>compile</scope>
