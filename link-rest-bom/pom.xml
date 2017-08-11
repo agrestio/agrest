@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>com.nhl.link.rest</groupId>
+        <artifactId>link-rest-parent</artifactId>
+        <version>2.9-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+
+    <artifactId>link-rest-bom</artifactId>
+    <packaging>pom</packaging>
+    <name>link-rest-bom: Bill of Materials (BOM) for LR modules.</name>
+    <description>
+        Bill of Materials (BOM) for LR modules that allows the end users to capture the version of multiple LR modules
+        at once.
+    </description>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>com.nhl.link.rest</groupId>
+                <artifactId>link-rest-annotations</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.nhl.link.rest</groupId>
+                <artifactId>link-rest</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.nhl.link.rest</groupId>
+                <artifactId>link-rest-client</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+</project>

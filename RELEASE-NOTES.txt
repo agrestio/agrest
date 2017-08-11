@@ -1,6 +1,7 @@
 Release 2.9
 
-#247  Split Lr annotations in a separate jar
+#247 Split Lr annotations in a separate jar
+#252 link-rest-bom
 
 Release 2.8
 
