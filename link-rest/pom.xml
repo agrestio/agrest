@@ -10,8 +10,8 @@
 	</parent>
 
 	<artifactId>link-rest</artifactId>
-	<name>Library: link-rest (Core)</name>
-	<description>Model-driven REST data service framework</description>
+	<name>link-rest: Model-driven REST data services framework</name>
+	<description>Model-driven REST data services framework</description>
 
 	<dependencies>
 

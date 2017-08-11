@@ -10,7 +10,7 @@
 	</parent>
 
 	<artifactId>link-rest-docs</artifactId>
-	<name>Documentation: link-rest</name>
+	<name>link-rest-docs: Docbook documentation</name>
 	<description>LinkRest framework documentation</description>
 	<packaging>pom</packaging>
 

@@ -6,7 +6,7 @@
 	<artifactId>link-rest-parent</artifactId>
 	<version>2.9-SNAPSHOT</version>
 
-	<name>Library: link-rest (Parent)</name>
+	<name>link-rest: Parent POM of LinkRest modules</name>
 	<description>Model-driven REST data service framework</description>
 	<packaging>pom</packaging>
 
