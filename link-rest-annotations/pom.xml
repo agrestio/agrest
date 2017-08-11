@@ -10,6 +10,7 @@
 	</parent>
 
 	<artifactId>link-rest-annotations</artifactId>
+	<packaging>jar</packaging>
 	<name>link-rest-annotations: Dependency-free LR model annotations</name>
 	<description>
 		A dependency-free collection of LR annotations that allow to annotate model objects without
