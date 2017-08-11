@@ -10,7 +10,7 @@
     </parent>
 
     <artifactId>link-rest-client</artifactId>
-    <name>link-rest-client: client library to access LinkRest services</name>
+    <name>link-rest-client: client library to access LR services</name>
     <description>Link Rest Java client</description>
 
     <dependencies>
