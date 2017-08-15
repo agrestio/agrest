@@ -10,6 +10,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.Date;
+import java.util.Objects;
 import java.util.Optional;
 
 public abstract class PropertyMetadataEncoder extends AbstractEncoder {
@@ -115,6 +116,8 @@ public abstract class PropertyMetadataEncoder extends AbstractEncoder {
 		out.writeStringField("name", getPropertyName(property));
 
 		TypeDescription type = getPropertyType(property);
+		Objects.requireNonNull(type, () -> "Could not determine meta encoder type for property: " + property);
+
 		out.writeStringField("type", type.getTypeName());
 		Optional<String> format = type.getFormat();
 		if (format.isPresent()) {
