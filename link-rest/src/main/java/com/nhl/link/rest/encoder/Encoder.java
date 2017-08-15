@@ -1,17 +1,17 @@
 package com.nhl.link.rest.encoder;
 
-import java.io.IOException;
-
 import com.fasterxml.jackson.core.JsonGenerator;
+
+import java.io.IOException;
 
 /**
  * An object that encodes JSON field/value pairs.
  */
 public interface Encoder {
 
-	public static final int VISIT_CONTINUE = 0b00;
-	public static final int VISIT_SKIP_CHILDREN = 0b01;
-	public static final int VISIT_SKIP_ALL = 0b10;
+	int VISIT_CONTINUE = 0b00;
+	int VISIT_SKIP_CHILDREN = 0b01;
+	int VISIT_SKIP_ALL = 0b10;
 
 	/**
 	 * Encodes provided object into {@link JsonGenerator}. Encoder should encode
