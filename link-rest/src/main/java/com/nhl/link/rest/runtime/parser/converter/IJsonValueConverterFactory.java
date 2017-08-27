@@ -19,7 +19,9 @@ public interface IJsonValueConverterFactory {
 
     /**
      * @since 2.5
+     * @deprecated since 2.10 unused.
      */
+    @Deprecated
     default JsonValueConverter converter(LrAttribute attribute) {
         return converter(attribute.getType());
     }
@@ -29,7 +31,9 @@ public interface IJsonValueConverterFactory {
      *
      * @throws IllegalArgumentException if entity has multiple IDs
      * @since 2.5
+     * @deprecated since 2.10 unused.
      */
+    @Deprecated
     default JsonValueConverter converter(LrEntity<?> entity) {
         int ids = entity.getIds().size();
         if (ids != 1) {

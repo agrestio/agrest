@@ -168,6 +168,14 @@ public class EntityJsonTraverser {
 	}
 
 	private JsonValueConverter converter(LrRelationship relationship) {
-		return converterFactory.converter(relationship.getTargetEntity());
+
+    	LrEntity<?> target = relationship.getTargetEntity();
+
+		int ids = target.getIds().size();
+		if (ids != 1) {
+			throw new IllegalArgumentException("Entity '" + target.getName() +
+					"' has unexpected number of ID attributes: " + ids);
+		}
+		return converterFactory.converter(target.getIds().iterator().next().getType());
 	}
 }
