@@ -1,6 +1,7 @@
 Release 2.10
 
 #254 Upgrade to Jackson 2.6.4
+#256 Built-in JsonValueConverter for enums
 
 Release 2.9
 
