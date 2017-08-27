@@ -10,6 +10,7 @@ import com.nhl.link.rest.parser.converter.JsonValueConverter;
 import com.nhl.link.rest.parser.converter.LongConverter;
 import com.nhl.link.rest.parser.converter.UtcDateConverter;
 import org.apache.cayenne.di.DIRuntimeException;
+import org.apache.cayenne.di.Inject;
 import org.apache.cayenne.di.Provider;
 
 import java.time.LocalDate;
@@ -24,28 +25,55 @@ import java.util.Map;
  */
 public class DefaultJsonValueConverterFactoryProvider implements Provider<IJsonValueConverterFactory> {
 
-    @Override
-    public IJsonValueConverterFactory get() throws DIRuntimeException {
-        return new DefaultJsonValueConverterFactory(createKnownConverters(), GenericConverter.converter());
+    private Map<String, JsonValueConverter> injectedConverters;
+
+    public DefaultJsonValueConverterFactoryProvider(@Inject Map<String, JsonValueConverter> injectedConverters) {
+        this.injectedConverters = injectedConverters;
     }
 
-    protected Map<Class<?>, JsonValueConverter> createKnownConverters() {
-        Map<Class<?>, JsonValueConverter> knownConverters = new HashMap<>();
+    @Override
+    public IJsonValueConverterFactory get() throws DIRuntimeException {
 
-        knownConverters.put(Object.class, GenericConverter.converter());
-        knownConverters.put(Float.class, FloatConverter.converter());
-        knownConverters.put(float.class, FloatConverter.converter());
-        knownConverters.put(Long.class, LongConverter.converter());
-        knownConverters.put(long.class, LongConverter.converter());
-        knownConverters.put(Date.class, UtcDateConverter.converter());
-        knownConverters.put(java.sql.Date.class, UtcDateConverter.converter());
-        knownConverters.put(java.sql.Time.class, UtcDateConverter.converter());
-        knownConverters.put(java.sql.Timestamp.class, UtcDateConverter.converter());
-        knownConverters.put(byte[].class, Base64Converter.converter());
-        knownConverters.put(LocalDate.class, ISOLocalDateConverter.converter());
-        knownConverters.put(LocalTime.class, ISOLocalTimeConverter.converter());
-        knownConverters.put(LocalDateTime.class, ISOLocalDateTimeConverter.converter());
+        Map<Class<?>, JsonValueConverter> converters =
+                appendInjectedConverters(
+                        appendKnownConverters(new HashMap<>()));
 
-        return knownConverters;
+        return new DefaultJsonValueConverterFactory(converters, defaultConverter());
+    }
+
+    protected JsonValueConverter defaultConverter() {
+        return GenericConverter.converter();
+    }
+
+    protected Map<Class<?>, JsonValueConverter> appendKnownConverters(Map<Class<?>, JsonValueConverter> converters) {
+
+        converters.put(Object.class, GenericConverter.converter());
+        converters.put(Float.class, FloatConverter.converter());
+        converters.put(float.class, FloatConverter.converter());
+        converters.put(Long.class, LongConverter.converter());
+        converters.put(long.class, LongConverter.converter());
+        converters.put(Date.class, UtcDateConverter.converter());
+        converters.put(java.sql.Date.class, UtcDateConverter.converter());
+        converters.put(java.sql.Time.class, UtcDateConverter.converter());
+        converters.put(java.sql.Timestamp.class, UtcDateConverter.converter());
+        converters.put(byte[].class, Base64Converter.converter());
+        converters.put(LocalDate.class, ISOLocalDateConverter.converter());
+        converters.put(LocalTime.class, ISOLocalTimeConverter.converter());
+        converters.put(LocalDateTime.class, ISOLocalDateTimeConverter.converter());
+
+        return converters;
+    }
+
+    protected Map<Class<?>, JsonValueConverter> appendInjectedConverters(Map<Class<?>, JsonValueConverter> converters) {
+        injectedConverters.forEach((k, v) -> converters.put(typeForName(k), v));
+        return converters;
+    }
+
+    protected Class<?> typeForName(String typeName) {
+        try {
+            return Class.forName(typeName);
+        } catch (ClassNotFoundException e) {
+            throw new IllegalStateException("Can't create Class for " + typeName, e);
+        }
     }
 }

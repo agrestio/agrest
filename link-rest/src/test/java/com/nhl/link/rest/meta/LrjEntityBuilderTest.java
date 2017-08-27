@@ -12,6 +12,7 @@ import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 
 import static org.junit.Assert.*;
 
@@ -22,7 +23,7 @@ public class LrjEntityBuilderTest {
 
 	@BeforeClass
 	public static void setUpClass() {
-		converterFactory = new DefaultJsonValueConverterFactoryProvider().get();
+		converterFactory = new DefaultJsonValueConverterFactoryProvider(Collections.emptyMap()).get();
 		compilers = new ArrayList<>();
 		compilers.add(new PojoEntityCompiler(converterFactory));
 	}

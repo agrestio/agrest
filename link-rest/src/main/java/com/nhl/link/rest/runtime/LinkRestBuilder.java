@@ -14,6 +14,7 @@ import com.nhl.link.rest.meta.compiler.LrEntityCompiler;
 import com.nhl.link.rest.meta.compiler.PojoEntityCompiler;
 import com.nhl.link.rest.meta.parser.IResourceParser;
 import com.nhl.link.rest.meta.parser.ResourceParser;
+import com.nhl.link.rest.parser.converter.JsonValueConverter;
 import com.nhl.link.rest.provider.CayenneRuntimeExceptionMapper;
 import com.nhl.link.rest.provider.DataResponseWriter;
 import com.nhl.link.rest.provider.LinkRestExceptionMapper;
@@ -374,8 +375,11 @@ public class LinkRestBuilder {
             binder.bind(CayenneUnrelateStartStage.class).to(CayenneUnrelateStartStage.class);
             binder.bind(CayenneUnrelateDataStoreStage.class).to(CayenneUnrelateDataStoreStage.class);
 
-            binder.bind(IRequestParser.class).to(RequestParser.class);
+            // a map of custom converters
+            binder.bindMap(JsonValueConverter.class);
             binder.bind(IJsonValueConverterFactory.class).toProvider(DefaultJsonValueConverterFactoryProvider.class);
+
+            binder.bind(IRequestParser.class).to(RequestParser.class);
             binder.bind(IAttributeEncoderFactory.class).to(AttributeEncoderFactory.class);
             binder.bind(IStringConverterFactory.class).to(StringConverterFactory.class);
             binder.bind(IEncoderService.class).to(EncoderService.class);

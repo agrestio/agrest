@@ -12,6 +12,7 @@ import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -24,7 +25,7 @@ public class PojoEntityCompilerTest {
 
 	@BeforeClass
 	public static void setUpClass() {
-		converterFactory = new DefaultJsonValueConverterFactoryProvider().get();
+		converterFactory = new DefaultJsonValueConverterFactoryProvider(Collections.emptyMap()).get();
 		compilers = new ArrayList<>();
 		compilers.add(new PojoEntityCompiler(converterFactory));
 	}

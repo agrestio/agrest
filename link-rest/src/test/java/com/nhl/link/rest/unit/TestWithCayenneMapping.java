@@ -77,7 +77,7 @@ public class TestWithCayenneMapping {
 		when(mockCayennePersister.sharedContext()).thenReturn(sharedContext);
 		when(mockCayennePersister.newContext()).thenReturn(runtime.newContext());
 
-		this.converterFactory = new DefaultJsonValueConverterFactoryProvider().get();
+		this.converterFactory = new DefaultJsonValueConverterFactoryProvider(Collections.emptyMap()).get();
 		this.metadataService = createMetadataService();
 		this.resourceParser = new ResourceParser(metadataService);
 		this.resourceMetadataService = createResourceMetadataService();
