@@ -48,7 +48,6 @@ public class DefaultJsonValueConverterFactory implements IJsonValueConverterFact
 
     @Override
     public JsonValueConverter converter(Class<?> valueType) {
-        JsonValueConverter converter = convertersByJavaType.get(valueType);
-        return converter != null ? converter : defaultConverter;
+        return convertersByJavaType.computeIfAbsent(valueType, vt -> defaultConverter);
     }
 }
