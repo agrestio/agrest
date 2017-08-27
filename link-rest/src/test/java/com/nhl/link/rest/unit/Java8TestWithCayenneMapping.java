@@ -13,7 +13,7 @@ import com.nhl.link.rest.runtime.meta.IMetadataService;
 import com.nhl.link.rest.runtime.meta.IResourceMetadataService;
 import com.nhl.link.rest.runtime.meta.MetadataService;
 import com.nhl.link.rest.runtime.meta.ResourceMetadataService;
-import com.nhl.link.rest.runtime.parser.converter.DefaultJsonValueConverterFactory;
+import com.nhl.link.rest.runtime.parser.converter.DefaultJsonValueConverterFactoryProvider;
 import com.nhl.link.rest.runtime.parser.converter.IJsonValueConverterFactory;
 import org.apache.cayenne.ObjectContext;
 import org.apache.cayenne.configuration.server.DataSourceFactory;
@@ -74,7 +74,7 @@ public class Java8TestWithCayenneMapping {
 		when(mockCayennePersister.sharedContext()).thenReturn(sharedContext);
 		when(mockCayennePersister.newContext()).thenReturn(runtime.newContext());
 
-		this.converterFactory = new DefaultJsonValueConverterFactory();
+		this.converterFactory = new DefaultJsonValueConverterFactoryProvider().get();
 		this.metadataService = createMetadataService();
 		this.resourceParser = new ResourceParser(metadataService);
 		this.resourceMetadataService = createResourceMetadataService();

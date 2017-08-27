@@ -5,7 +5,7 @@ import com.nhl.link.rest.annotation.LrId;
 import com.nhl.link.rest.it.fixture.pojo.model.P8;
 import com.nhl.link.rest.meta.LazyLrDataMap;
 import com.nhl.link.rest.meta.LrEntity;
-import com.nhl.link.rest.runtime.parser.converter.DefaultJsonValueConverterFactory;
+import com.nhl.link.rest.runtime.parser.converter.DefaultJsonValueConverterFactoryProvider;
 import com.nhl.link.rest.runtime.parser.converter.IJsonValueConverterFactory;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -15,9 +15,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 public class PojoEntityCompilerTest {
 
@@ -26,7 +24,7 @@ public class PojoEntityCompilerTest {
 
 	@BeforeClass
 	public static void setUpClass() {
-		converterFactory = new DefaultJsonValueConverterFactory();
+		converterFactory = new DefaultJsonValueConverterFactoryProvider().get();
 		compilers = new ArrayList<>();
 		compilers.add(new PojoEntityCompiler(converterFactory));
 	}

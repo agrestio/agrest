@@ -15,7 +15,7 @@ import com.nhl.link.rest.meta.LrEntityBuilder;
 import com.nhl.link.rest.meta.compiler.LrEntityCompiler;
 import com.nhl.link.rest.meta.compiler.PojoEntityCompiler;
 import com.nhl.link.rest.runtime.jackson.JacksonService;
-import com.nhl.link.rest.runtime.parser.converter.DefaultJsonValueConverterFactory;
+import com.nhl.link.rest.runtime.parser.converter.DefaultJsonValueConverterFactoryProvider;
 import com.nhl.link.rest.runtime.parser.converter.IJsonValueConverterFactory;
 import com.nhl.link.rest.runtime.semantics.RelationshipMapper;
 import org.junit.Before;
@@ -42,7 +42,7 @@ public class EncoderService_Pojo_Test {
 
 	@BeforeClass
 	public static void setUpClass() {
-		converterFactory = new DefaultJsonValueConverterFactory();
+		converterFactory = new DefaultJsonValueConverterFactoryProvider().get();
 		compilers = new ArrayList<>();
 		compilers.add(new PojoEntityCompiler(converterFactory));
 	}
