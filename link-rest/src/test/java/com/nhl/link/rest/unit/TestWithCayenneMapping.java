@@ -87,7 +87,7 @@ public class TestWithCayenneMapping {
 
 		List<LrEntityCompiler> compilers = new ArrayList<>();
 		compilers.add(new CayenneEntityCompiler(mockCayennePersister, Collections.emptyMap(), converterFactory));
-		compilers.add(new PojoEntityCompiler(converterFactory));
+		compilers.add(new PojoEntityCompiler(Collections.emptyMap()));
 
 		return new MetadataService(compilers, mockCayennePersister);
 	}

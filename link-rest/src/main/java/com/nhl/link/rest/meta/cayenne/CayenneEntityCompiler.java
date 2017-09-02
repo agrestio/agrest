@@ -74,9 +74,11 @@ public class CayenneEntityCompiler implements LrEntityCompiler {
     private Map<String, LrEntityOverlay> entityOverlays;
     private IJsonValueConverterFactory converterFactory;
 
-    public CayenneEntityCompiler(@Inject ICayennePersister cayennePersister,
-                                 @Inject Map<String, LrEntityOverlay> entityOverlays,
-                                 @Inject IJsonValueConverterFactory converterFactory) {
+    public CayenneEntityCompiler(
+            @Inject ICayennePersister cayennePersister,
+            @Inject Map<String, LrEntityOverlay> entityOverlays,
+            @Inject IJsonValueConverterFactory converterFactory) {
+
         this.resolver = cayennePersister.entityResolver();
         this.entityOverlays = entityOverlays;
         this.converterFactory = converterFactory;
@@ -153,7 +155,7 @@ public class CayenneEntityCompiler implements LrEntityCompiler {
         // relationship during merge... they have no references to parent and
         // can be used as is.
 
-        LrEntity<T> annotatedEntity = new LrEntityBuilder<>(entity.getType(), dataMap, converterFactory).build();
+        LrEntity<T> annotatedEntity = new LrEntityBuilder<>(entity.getType(), dataMap).build();
 
         if (annotatedEntity.getIds().size() > 0) {
             for (LrAttribute id : annotatedEntity.getIds()) {

@@ -1,5 +1,6 @@
 package com.nhl.link.rest.runtime.meta;
 
+import com.nhl.link.rest.LinkRestException;
 import com.nhl.link.rest.it.fixture.cayenne.E1;
 import com.nhl.link.rest.it.fixture.cayenne.E2;
 import com.nhl.link.rest.meta.LinkType;
@@ -14,6 +15,7 @@ import java.util.Collection;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 public class ResourceParserTest extends TestWithCayenneMapping {
 
@@ -32,7 +34,7 @@ public class ResourceParserTest extends TestWithCayenneMapping {
         resourceParser.parse(R1.class);
     }
 
-    @Test(expected = Exception.class)
+    @Test
     public void testParse_UnknownEntity() {
          @Path("r1")
             class R1 {
@@ -44,9 +46,9 @@ public class ResourceParserTest extends TestWithCayenneMapping {
         Collection<LrResource<?>> resources = resourceParser.parse(R1.class);
         try {
             resources.iterator().next().getEntity().getIds();
-        } catch (Exception e) {
-            assertTrue(e.getMessage().startsWith("Not an entity"));
-            throw e;
+            fail("Exception expected");
+        } catch (LinkRestException e) {
+            assertTrue(e.getMessage(), e.getMessage().startsWith("Invalid entity '"));
         }
     }
 

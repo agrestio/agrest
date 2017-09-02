@@ -1,12 +1,11 @@
 package com.nhl.link.rest.meta.compiler;
 
+import com.nhl.link.rest.LinkRestException;
 import com.nhl.link.rest.annotation.LrAttribute;
 import com.nhl.link.rest.annotation.LrId;
 import com.nhl.link.rest.it.fixture.pojo.model.P8;
 import com.nhl.link.rest.meta.LazyLrDataMap;
 import com.nhl.link.rest.meta.LrEntity;
-import com.nhl.link.rest.runtime.parser.converter.DefaultJsonValueConverterFactoryProvider;
-import com.nhl.link.rest.runtime.parser.converter.IJsonValueConverterFactory;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -21,18 +20,16 @@ import static org.junit.Assert.*;
 public class PojoEntityCompilerTest {
 
 	private static Collection<LrEntityCompiler> compilers;
-	private static IJsonValueConverterFactory converterFactory;
 
 	@BeforeClass
 	public static void setUpClass() {
-		converterFactory = new DefaultJsonValueConverterFactoryProvider(Collections.emptyMap()).get();
 		compilers = new ArrayList<>();
-		compilers.add(new PojoEntityCompiler(converterFactory));
+		compilers.add(new PojoEntityCompiler(Collections.emptyMap()));
 	}
 
 	@Test
 	public void testCompile() {
-		LrEntity<Entity> entity = new PojoEntityCompiler(converterFactory)
+		LrEntity<Entity> entity = new PojoEntityCompiler(Collections.emptyMap())
 				.compile(Entity.class, new LazyLrDataMap(compilers));
 		assertNotNull(entity);
 		assertEquals(1, entity.getIds().size());
@@ -42,7 +39,7 @@ public class PojoEntityCompilerTest {
 
 	@Test
 	public void testCompile_CollectionAttributes() {
-		LrEntity<P8> entity = new PojoEntityCompiler(converterFactory)
+		LrEntity<P8> entity = new PojoEntityCompiler(Collections.emptyMap())
 				.compile(P8.class, new LazyLrDataMap(compilers));
 		assertNotNull(entity);
 		assertEquals(0, entity.getIds().size());
@@ -57,17 +54,17 @@ public class PojoEntityCompilerTest {
 		assertEquals(0, entity.getRelationships().size());
 	}
 
-	@Test(expected = Exception.class)
+	@Test
 	public void testCompile_NotAnEntity() {
-		LrEntity<NotAnEntity> entity = new PojoEntityCompiler(converterFactory)
+		LrEntity<NotAnEntity> entity = new PojoEntityCompiler(Collections.emptyMap())
 				.compile(NotAnEntity.class, new LazyLrDataMap(compilers));
 		assertNotNull(entity);
 
 		try {
 			entity.getAttributes();
-		} catch (Exception e) {
-			assertTrue(e.getMessage().startsWith("Not an entity"));
-			throw e;
+			fail("Exception expected");
+		} catch (LinkRestException e) {
+			assertTrue(e.getMessage(), e.getMessage().startsWith("Invalid entity '"));
 		}
 	}
 

@@ -15,8 +15,6 @@ import com.nhl.link.rest.meta.LrEntityBuilder;
 import com.nhl.link.rest.meta.compiler.LrEntityCompiler;
 import com.nhl.link.rest.meta.compiler.PojoEntityCompiler;
 import com.nhl.link.rest.runtime.jackson.JacksonService;
-import com.nhl.link.rest.runtime.parser.converter.DefaultJsonValueConverterFactoryProvider;
-import com.nhl.link.rest.runtime.parser.converter.IJsonValueConverterFactory;
 import com.nhl.link.rest.runtime.semantics.RelationshipMapper;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -35,16 +33,14 @@ import static org.mockito.Mockito.mock;
 public class EncoderService_Pojo_Test {
 
 	private static Collection<LrEntityCompiler> compilers;
-	private static IJsonValueConverterFactory converterFactory;
 
 	private EncoderService encoderService;
 	private List<EncoderFilter> filters;
 
 	@BeforeClass
 	public static void setUpClass() {
-		converterFactory = new DefaultJsonValueConverterFactoryProvider(Collections.emptyMap()).get();
 		compilers = new ArrayList<>();
-		compilers.add(new PojoEntityCompiler(converterFactory));
+		compilers.add(new PojoEntityCompiler(Collections.emptyMap()));
 	}
 
 	@Before
@@ -61,7 +57,7 @@ public class EncoderService_Pojo_Test {
 
 	@Test
 	public void testEncode_SimplePojo_noId() throws IOException {
-		LrEntity<P1> p1lre = new LrEntityBuilder<>(P1.class, new LazyLrDataMap(compilers), converterFactory).build();
+		LrEntity<P1> p1lre = new LrEntityBuilder<>(P1.class, new LazyLrDataMap(compilers)).build();
 		ResourceEntity<P1> descriptor = new ResourceEntity<P1>(p1lre);
 		descriptor.getAttributes().put("name", new DefaultLrAttribute("name", String.class));
 
@@ -77,7 +73,7 @@ public class EncoderService_Pojo_Test {
 		p6.setStringId("myid");
 		p6.setIntProp(4);
 
-		LrEntity<P6> p6lre = new LrEntityBuilder<>(P6.class, new LazyLrDataMap(compilers), converterFactory).build();
+		LrEntity<P6> p6lre = new LrEntityBuilder<>(P6.class, new LazyLrDataMap(compilers)).build();
 		ResourceEntity<P6> descriptor = new ResourceEntity<P6>(p6lre);
 		descriptor.getAttributes().put("intProp", new DefaultLrAttribute("intProp", Integer.class));
 		descriptor.includeId();

@@ -6,6 +6,7 @@ import com.nhl.link.rest.annotation.listener.SelectRequestParsed;
 import com.nhl.link.rest.annotation.listener.SelectServerParamsApplied;
 import com.nhl.link.rest.constraints.Constraint;
 import com.nhl.link.rest.encoder.Encoder;
+import com.nhl.link.rest.meta.LrEntityOverlay;
 import com.nhl.link.rest.processor.Processor;
 import com.nhl.link.rest.processor.ProcessorOutcome;
 import com.nhl.link.rest.runtime.LinkRestBuilder;
@@ -16,7 +17,6 @@ import javax.ws.rs.core.UriInfo;
 import java.util.Collection;
 import java.util.Map;
 import java.util.function.Consumer;
-import java.util.function.Function;
 
 /**
  * An object that allows to customize/extend LinkRest request processing.
@@ -66,6 +66,7 @@ public interface SelectBuilder<T> {
     /**
      * Adds a custom property that is appended to the root {@link ResourceEntity}.
      *
+     * @see LinkRestBuilder#entityOverlay(LrEntityOverlay)
      * @since 1.14
      */
     SelectBuilder<T> property(String name, EntityProperty clientProperty);
@@ -76,10 +77,7 @@ public interface SelectBuilder<T> {
      * "property", and default encoder is used. For more control over property
      * access and encoding use {@link #property(String, EntityProperty)}.
      *
-     * @see LinkRestBuilder#transientAttribute(Class, String)
-     * @see LinkRestBuilder#adHocAttribute(Class, String, Class, Function)
-     * @see LinkRestBuilder#adHocToManyRelationship(Class, String, Class, Function)
-     * @see LinkRestBuilder#adHocToOneRelationship(Class, String, Class, Function)
+     * @see LinkRestBuilder#entityOverlay(LrEntityOverlay)
      * @since 1.14
      */
     SelectBuilder<T> property(String name);

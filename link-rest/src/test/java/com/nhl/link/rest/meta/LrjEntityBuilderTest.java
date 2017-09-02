@@ -5,8 +5,6 @@ import com.nhl.link.rest.it.fixture.pojo.model.P4;
 import com.nhl.link.rest.it.fixture.pojo.model.P5;
 import com.nhl.link.rest.meta.compiler.LrEntityCompiler;
 import com.nhl.link.rest.meta.compiler.PojoEntityCompiler;
-import com.nhl.link.rest.runtime.parser.converter.DefaultJsonValueConverterFactoryProvider;
-import com.nhl.link.rest.runtime.parser.converter.IJsonValueConverterFactory;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -19,18 +17,16 @@ import static org.junit.Assert.*;
 public class LrjEntityBuilderTest {
 
 	private static Collection<LrEntityCompiler> compilers;
-	private static IJsonValueConverterFactory converterFactory;
 
 	@BeforeClass
 	public static void setUpClass() {
-		converterFactory = new DefaultJsonValueConverterFactoryProvider(Collections.emptyMap()).get();
 		compilers = new ArrayList<>();
-		compilers.add(new PojoEntityCompiler(converterFactory));
+		compilers.add(new PojoEntityCompiler(Collections.emptyMap()));
 	}
 
 	@Test
 	public void testToPropertyName() {
-		LrEntityBuilder<P3> builder = new LrEntityBuilder<>(P3.class, new LazyLrDataMap(compilers), converterFactory);
+		LrEntityBuilder<P3> builder = new LrEntityBuilder<>(P3.class, new LazyLrDataMap(compilers));
 		
 		assertNull(builder.toPropertyName("get"));
 		assertNull(builder.toPropertyName("xyz"));
@@ -47,7 +43,7 @@ public class LrjEntityBuilderTest {
 	@Test
 	public void testBuild_Default() {
 
-		LrEntity<P3> p3e = new LrEntityBuilder<>(P3.class, new LazyLrDataMap(compilers), converterFactory).build();
+		LrEntity<P3> p3e = new LrEntityBuilder<>(P3.class, new LazyLrDataMap(compilers)).build();
 		assertNotNull(p3e);
 		assertEquals("P3", p3e.getName());
 
@@ -63,7 +59,7 @@ public class LrjEntityBuilderTest {
 	@Test
 	public void testToOneRelationship() {
 
-		LrEntity<P4> p4e = new LrEntityBuilder<>(P4.class, new LazyLrDataMap(compilers), converterFactory).build();
+		LrEntity<P4> p4e = new LrEntityBuilder<>(P4.class, new LazyLrDataMap(compilers)).build();
 		assertNotNull(p4e);
 		assertEquals("P4", p4e.getName());
 
@@ -79,7 +75,7 @@ public class LrjEntityBuilderTest {
 	@Test
 	public void testToManyRelationship() {
 
-		LrEntity<P5> p5e = new LrEntityBuilder<>(P5.class, new LazyLrDataMap(compilers), converterFactory).build();
+		LrEntity<P5> p5e = new LrEntityBuilder<>(P5.class, new LazyLrDataMap(compilers)).build();
 
 		assertNotNull(p5e);
 		assertEquals("P5", p5e.getName());
