@@ -1,5 +1,6 @@
 package com.nhl.link.rest.meta;
 
+import com.nhl.link.rest.property.PropertyReader;
 import org.apache.cayenne.exp.parser.ASTPath;
 
 /**
@@ -23,4 +24,9 @@ public interface LrAttribute {
 	 * @since 1.12
      */
 	ASTPath getPathExp();
+
+	/**
+	 * @since 2.10
+	 */
+	PropertyReader getPropertyReader();
 }

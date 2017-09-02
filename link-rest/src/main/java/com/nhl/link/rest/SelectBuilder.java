@@ -16,6 +16,7 @@ import javax.ws.rs.core.UriInfo;
 import java.util.Collection;
 import java.util.Map;
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 /**
  * An object that allows to customize/extend LinkRest request processing.
@@ -63,8 +64,7 @@ public interface SelectBuilder<T> {
     SelectBuilder<T> byId(Map<String, Object> ids);
 
     /**
-     * Adds a custom property that is appended to the root
-     * {@link ResourceEntity}.
+     * Adds a custom property that is appended to the root {@link ResourceEntity}.
      *
      * @since 1.14
      */
@@ -74,9 +74,12 @@ public interface SelectBuilder<T> {
      * Adds a custom property that is appended to the root
      * {@link ResourceEntity}. Property is read as a regular JavaBean
      * "property", and default encoder is used. For more control over property
-     * access and encoding use {@link #property(String, EntityProperty)}. Also
-     * see {@link LinkRestBuilder#transientProperty(Class, String)}.
+     * access and encoding use {@link #property(String, EntityProperty)}.
      *
+     * @see LinkRestBuilder#transientAttribute(Class, String)
+     * @see LinkRestBuilder#adHocAttribute(Class, String, Class, Function)
+     * @see LinkRestBuilder#adHocToManyRelationship(Class, String, Class, Function)
+     * @see LinkRestBuilder#adHocToOneRelationship(Class, String, Class, Function)
      * @since 1.14
      */
     SelectBuilder<T> property(String name);

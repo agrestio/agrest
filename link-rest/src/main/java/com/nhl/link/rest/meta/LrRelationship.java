@@ -1,5 +1,7 @@
 package com.nhl.link.rest.meta;
 
+import com.nhl.link.rest.property.PropertyReader;
+
 /**
  * @since 1.12
  */
@@ -13,4 +15,9 @@ public interface LrRelationship {
 	LrEntity<?> getTargetEntity();
 
 	boolean isToMany();
+
+	/**
+	 * @since 2.10
+	 */
+	PropertyReader getPropertyReader();
 }

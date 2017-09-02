@@ -97,7 +97,11 @@ public class AttributeEncoderFactory implements IAttributeEncoderFactory {
 
 		if (persistent && DataObject.class.isAssignableFrom(entity.getType())) {
 			return PropertyBuilder.dataObjectProperty().encodedWith(encoder);
-		} else {
+		}
+		else if(relationship.getPropertyReader() != null) {
+			return PropertyBuilder.property(relationship.getPropertyReader());
+		}
+		else {
 			return PropertyBuilder.property().encodedWith(encoder);
 		}
 	}
@@ -109,7 +113,11 @@ public class AttributeEncoderFactory implements IAttributeEncoderFactory {
 		Encoder encoder = buildEncoder(attribute.getType(), getJdbcType(attribute));
 		if (persistent && DataObject.class.isAssignableFrom(entity.getType())) {
 			return PropertyBuilder.dataObjectProperty().encodedWith(encoder);
-		} else {
+		}
+		else if(attribute.getPropertyReader() != null) {
+			return PropertyBuilder.property(attribute.getPropertyReader());
+		}
+		else {
 			return PropertyBuilder.property().encodedWith(encoder);
 		}
 	}

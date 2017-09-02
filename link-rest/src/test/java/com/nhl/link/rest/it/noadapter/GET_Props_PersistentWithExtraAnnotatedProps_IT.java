@@ -1,18 +1,17 @@
 package com.nhl.link.rest.it.noadapter;
 
-import static org.junit.Assert.assertEquals;
+import com.nhl.link.rest.it.fixture.JerseyTestOnDerby;
+import com.nhl.link.rest.it.fixture.resource.E14Resource;
+import com.nhl.link.rest.it.fixture.resource.E15Resource;
+import org.junit.Test;
 
 import javax.ws.rs.core.FeatureContext;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
-import org.junit.Test;
+import static org.junit.Assert.assertEquals;
 
-import com.nhl.link.rest.it.fixture.JerseyTestOnDerby;
-import com.nhl.link.rest.it.fixture.resource.E14Resource;
-import com.nhl.link.rest.it.fixture.resource.E15Resource;
-
-public class GET_NonPersistentProperties_IT extends JerseyTestOnDerby {
+public class GET_Props_PersistentWithExtraAnnotatedProps_IT extends JerseyTestOnDerby {
 
 	@Override
 	protected void doAddResources(FeatureContext context) {

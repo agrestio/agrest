@@ -5,7 +5,6 @@ import com.nhl.link.rest.EntityConstraint;
 import com.nhl.link.rest.LinkRestException;
 import com.nhl.link.rest.MetadataResponse;
 import com.nhl.link.rest.SimpleResponse;
-import com.nhl.link.rest.annotation.LrAttribute;
 import com.nhl.link.rest.encoder.EncoderFilter;
 import com.nhl.link.rest.encoder.PropertyMetadataEncoder;
 import com.nhl.link.rest.meta.LrEntityOverlay;
@@ -241,28 +240,31 @@ public class LinkRestBuilder {
         return this;
     }
 
+
     /**
-     * Exposes a non-persistent property of a persistent type. Once declared
-     * such property can be rendered in responses, referenced in include/exclude
-     * keys, etc.
-     * <p>
-     * Calling this method explicitly is only needed if you can't annotate
-     * transient properties with {@link LrAttribute} and other LR annotations
-     * for any reason.
-     *
      * @since 1.12
+     * @deprecated since 2.10. Instead use {@link LrEntityOverlay#addAttribute(String)}, and register
+     * the overlay via {@link #entityOverlay(LrEntityOverlay)}.
      */
+    @Deprecated
     public LinkRestBuilder transientProperty(Class<?> type, String propertyName) {
-
-        LrEntityOverlay<?> overlay = entityOverlays.get(type.getName());
-        if (overlay == null) {
-            overlay = new LrEntityOverlay<>(type);
-            entityOverlays.put(type.getName(), overlay);
-        }
-
-        overlay.getTransientAttributes().add(propertyName);
-
+        getOrCreateOverlay(type).addAttribute(propertyName);
         return this;
+    }
+
+    /**
+     * Adds a descriptor of extra properties of a particular entity. If multiple overlays are registered for the
+     * same entity, they are merged together. If they have overlapping properties, the last overlay wins.
+     *
+     * @since 2.10
+     */
+    public <T> LinkRestBuilder entityOverlay(LrEntityOverlay<T> overlay) {
+        getOrCreateOverlay(overlay.getType()).merge(overlay);
+        return this;
+    }
+
+    private <T> LrEntityOverlay<T> getOrCreateOverlay(Class<T> type) {
+        return entityOverlays.computeIfAbsent(type.getName(), n -> new LrEntityOverlay<>(type));
     }
 
     /**

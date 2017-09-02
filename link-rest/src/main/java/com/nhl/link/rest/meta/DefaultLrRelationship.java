@@ -1,5 +1,7 @@
 package com.nhl.link.rest.meta;
 
+import com.nhl.link.rest.property.PropertyReader;
+
 import java.util.Objects;
 
 /**
@@ -7,28 +9,45 @@ import java.util.Objects;
  */
 public class DefaultLrRelationship implements LrRelationship {
 
-	private String name;
-	private LrEntity<?> targetEntity;
-	private boolean toMany;
+    private String name;
+    private LrEntity<?> targetEntity;
+    private boolean toMany;
+    private PropertyReader propertyReader;
 
-	public DefaultLrRelationship(String name, LrEntity<?> targetEntity, boolean toMany) {
-		this.name = name;
-		this.targetEntity = Objects.requireNonNull(targetEntity);
-		this.toMany = toMany;
-	}
+    public DefaultLrRelationship(String name, LrEntity<?> targetEntity, boolean toMany) {
+        this(name, targetEntity, toMany, null);
+    }
 
-	@Override
-	public String getName() {
-		return name;
-	}
+    /**
+     * @since 2.10
+     */
+    public DefaultLrRelationship(String name, LrEntity<?> targetEntity, boolean toMany, PropertyReader propertyReader) {
+        this.name = name;
+        this.targetEntity = Objects.requireNonNull(targetEntity);
+        this.toMany = toMany;
+        this.propertyReader = propertyReader;
+    }
 
-	@Override
-	public LrEntity<?> getTargetEntity() {
-		return targetEntity;
-	}
+    @Override
+    public String getName() {
+        return name;
+    }
 
-	@Override
-	public boolean isToMany() {
-		return toMany;
-	}
+    @Override
+    public LrEntity<?> getTargetEntity() {
+        return targetEntity;
+    }
+
+    @Override
+    public boolean isToMany() {
+        return toMany;
+    }
+
+    /**
+     * @since 2.10
+     */
+    @Override
+    public PropertyReader getPropertyReader() {
+        return propertyReader;
+    }
 }
