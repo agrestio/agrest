@@ -13,11 +13,11 @@ import java.util.Set;
 public class LrEntityOverlay<T> {
 
 	private Class<T> type;
-	private Set<String> transientAtttributes;
+	private Set<String> transientAttributes;
 
 	public LrEntityOverlay(Class<T> type) {
 		this.type = type;
-		this.transientAtttributes = new HashSet<>();
+		this.transientAttributes = new HashSet<>();
 	}
 
 	public Class<T> getType() {
@@ -25,6 +25,6 @@ public class LrEntityOverlay<T> {
 	}
 
 	public Set<String> getTransientAttributes() {
-		return transientAtttributes;
+		return transientAttributes;
 	}
 }
