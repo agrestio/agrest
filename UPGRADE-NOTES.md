@@ -1,3 +1,15 @@
+## Upgrading to 2.10
+
+### Renamed @Resource to @LrResource [#261](https://github.com/nhl/link-rest/issues/261)
+
+`@Resource` annotation was used for annotating REST endpoints to build informative metadata resources. For naming 
+consistency across LR annotations it was renamed to `@LrResource` and placed in `link-rest-annotations` module. 
+While the old form is still operational, it is deprecated and will eventually be removed. When replacing it
+with the new form (`@LrResource`) you will get an error about one of its attributes, namely the `LinkType` enum. `@LrResource`
+uses LinkType from a different package. So be sure to replace `com.nhl.link.rest.meta.LinkType` import with 
+`com.nhl.link.rest.annotation.LinkType`.
+
+
 ## Upgrading to 2.7
 
 ### Replacing Listeners with Functions [#240](https://github.com/nhl/link-rest/issues/240), [#241](https://github.com/nhl/link-rest/issues/241), [#242](https://github.com/nhl/link-rest/issues/242), [#243](https://github.com/nhl/link-rest/issues/243)
