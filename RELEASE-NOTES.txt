@@ -6,6 +6,7 @@ Release 2.10
 #258 "AdHoc" properties
 #259 NPE in metadata resource when the model has unknown attribute types
 #260 LrEntityOverlay.addAttribute(String) must detect attribute type
+#261 Rename @Resource to @LrResource and move to link-rest-annotations
 
 Release 2.9
 

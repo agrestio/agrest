@@ -1,5 +1,7 @@
 package com.nhl.link.rest.meta;
 
+import com.nhl.link.rest.annotation.LinkType;
+
 import java.util.ArrayList;
 import java.util.Collection;
 

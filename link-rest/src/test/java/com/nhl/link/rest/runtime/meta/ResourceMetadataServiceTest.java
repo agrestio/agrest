@@ -1,9 +1,9 @@
 package com.nhl.link.rest.runtime.meta;
 
+import com.nhl.link.rest.annotation.LinkType;
 import com.nhl.link.rest.it.fixture.cayenne.E5;
 import com.nhl.link.rest.it.fixture.resource.E5Resource;
 import com.nhl.link.rest.meta.LinkMethodType;
-import com.nhl.link.rest.meta.LinkType;
 import com.nhl.link.rest.meta.LrEntity;
 import com.nhl.link.rest.meta.LrOperation;
 import com.nhl.link.rest.meta.LrResource;

@@ -1,5 +1,20 @@
 package com.nhl.link.rest.meta.parser;
 
+import com.nhl.link.rest.DataResponse;
+import com.nhl.link.rest.annotation.LinkType;
+import com.nhl.link.rest.meta.DefaultLrOperation;
+import com.nhl.link.rest.meta.DefaultLrResource;
+import com.nhl.link.rest.meta.LinkMethodType;
+import com.nhl.link.rest.meta.LrEntity;
+import com.nhl.link.rest.meta.LrResource;
+import com.nhl.link.rest.runtime.meta.IMetadataService;
+import org.apache.cayenne.di.Inject;
+
+import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
 import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -12,24 +27,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
-
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-
-import org.apache.cayenne.di.Inject;
-
-import com.nhl.link.rest.DataResponse;
-import com.nhl.link.rest.meta.DefaultLrOperation;
-import com.nhl.link.rest.meta.DefaultLrResource;
-import com.nhl.link.rest.meta.LinkMethodType;
-import com.nhl.link.rest.meta.LinkType;
-import com.nhl.link.rest.meta.LrEntity;
-import com.nhl.link.rest.meta.LrResource;
-import com.nhl.link.rest.meta.annotation.Resource;
-import com.nhl.link.rest.runtime.meta.IMetadataService;
 
 /**
  * @since 1.18
@@ -82,10 +79,10 @@ public class ResourceParser implements IResourceParser {
 		LinkType resourceType = LinkType.UNDEFINED;
 		for (Method method : methods) {
 
-			Resource annotation = method.getAnnotation(Resource.class);
+			EndpointMetadata md = EndpointMetadata.fromAnnotation(method);
 			LrEntity<?> entity = null;
-			if (annotation != null) {
-				LinkType annotatedType = annotation.type();
+			if (md != null) {
+				LinkType annotatedType = md.getLinkType();
 				if (resourceType == LinkType.UNDEFINED) {
 					resourceType = annotatedType;
 				} else {
@@ -96,9 +93,9 @@ public class ResourceParser implements IResourceParser {
 				}
 			}
 
-			if (annotation != null && !annotation.entityClass().equals(Object.class)) {
+			if (md != null && !md.getEntityClass().equals(Object.class)) {
 
-				Class<?> entityClass = annotation.entityClass();
+				Class<?> entityClass = md.getEntityClass();
 				entity = metadataService.getLrEntity(entityClass);
 				if (entity == null) {
 					throw new IllegalStateException("Unknown entity class: " + entityClass.getName());
