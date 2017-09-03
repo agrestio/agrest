@@ -54,14 +54,10 @@ public abstract class JerseyTestOnDerby extends JerseyTest {
 
 		LinkRestRuntime lrFeature = doConfigure().build();
 
-		Feature unitFeature = new Feature() {
-
-			@Override
-			public boolean configure(FeatureContext context) {
-				doAddResources(context);
-				return true;
-			}
-		};
+		Feature unitFeature = context -> {
+            doAddResources(context);
+            return true;
+        };
 
 		return new ResourceConfig().register(unitFeature).register(lrFeature);
 	}
