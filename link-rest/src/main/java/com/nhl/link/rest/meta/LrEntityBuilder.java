@@ -3,6 +3,8 @@ package com.nhl.link.rest.meta;
 import com.nhl.link.rest.annotation.LrAttribute;
 import com.nhl.link.rest.annotation.LrId;
 import com.nhl.link.rest.annotation.LrRelationship;
+import com.nhl.link.rest.meta.compiler.BeanAnalyzer;
+import com.nhl.link.rest.meta.compiler.PropertyMethod;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -13,8 +15,6 @@ import java.lang.reflect.TypeVariable;
 import java.lang.reflect.WildcardType;
 import java.util.Collection;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * A helper class to compile custom {@link LrEntity} objects based on annotations.
@@ -24,8 +24,6 @@ import java.util.regex.Pattern;
 public class LrEntityBuilder<T> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(LrEntityBuilder.class);
-
-    private static final Pattern GETTER = Pattern.compile("^(get|is)([A-Z].*)$");
 
     private Class<T> type;
     private LrDataMap dataMap;
@@ -42,47 +40,20 @@ public class LrEntityBuilder<T> {
     }
 
     private void appendProperties(DefaultLrEntity<T> entity) {
+        BeanAnalyzer.findGetters(type).forEach(getter -> appendProperty(entity, getter));
+    }
 
-        for (Method method : type.getMethods()) {
-            appendProperty(entity, method);
+    private void appendProperty(DefaultLrEntity<T> entity, PropertyMethod getter) {
+        if (!addAsAttribute(entity, getter)) {
+            addAsRelationship(entity, getter);
         }
     }
 
-    private void appendProperty(DefaultLrEntity<T> entity, Method m) {
+    private boolean addAsAttribute(DefaultLrEntity<T> entity, PropertyMethod getter) {
 
-        Class<?> type = m.getReturnType();
-        if (type.equals(Void.class) || m.getParameterTypes().length > 0) {
-            return;
-        }
-
-        String name = toPropertyName(m.getName());
-        if (name == null) {
-            return;
-        }
-
-        if (name.equals("class")) {
-            // 'getClass' is not a property we care about
-            return;
-        }
-
-        if (!addAsAttribute(entity, name, m)) {
-            addAsRelationship(entity, name, m);
-        }
-    }
-
-    String toPropertyName(String methodName) {
-        Matcher matcher = GETTER.matcher(methodName);
-        if (!matcher.find()) {
-            return null;
-        }
-
-        String raw = matcher.group(2);
-        return Character.toLowerCase(raw.charAt(0)) + raw.substring(1);
-    }
-
-    private boolean addAsAttribute(DefaultLrEntity<T> entity, String name, Method m) {
-
-        Class<?> type = m.getReturnType();
+        Method m = getter.getGetterOrSetter();
+        Class<?> type = getter.getType();
+        String name = getter.getName();
 
         if (m.getAnnotation(LrAttribute.class) != null) {
 
@@ -165,11 +136,14 @@ public class LrEntityBuilder<T> {
                 && !Collection.class.isAssignableFrom(type);
     }
 
-    private boolean addAsRelationship(DefaultLrEntity<T> entity, String name, Method m) {
+    private boolean addAsRelationship(DefaultLrEntity<T> entity, PropertyMethod getter) {
+
+        Method m = getter.getGetterOrSetter();
+        Class<?> targetType = getter.getType();
+        String name = getter.getName();
 
         if (m.getAnnotation(LrRelationship.class) != null) {
 
-            Class<?> targetType = m.getReturnType();
             boolean toMany = false;
 
             if (Collection.class.isAssignableFrom(targetType)) {
