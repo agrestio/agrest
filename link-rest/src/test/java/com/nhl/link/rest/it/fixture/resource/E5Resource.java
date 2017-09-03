@@ -4,11 +4,11 @@ import com.nhl.link.rest.DataResponse;
 import com.nhl.link.rest.LinkRest;
 import com.nhl.link.rest.MetadataResponse;
 import com.nhl.link.rest.SimpleResponse;
+import com.nhl.link.rest.annotation.LinkType;
+import com.nhl.link.rest.annotation.LrResource;
 import com.nhl.link.rest.constraints.Constraint;
 import com.nhl.link.rest.it.fixture.cayenne.E15;
 import com.nhl.link.rest.it.fixture.cayenne.E5;
-import com.nhl.link.rest.meta.LinkType;
-import com.nhl.link.rest.meta.annotation.Resource;
 
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -25,14 +25,14 @@ public class E5Resource {
     private Configuration config;
 
     @GET
-    @Resource(type = LinkType.COLLECTION)
+    @LrResource(type = LinkType.COLLECTION)
     public DataResponse<E5> getE5(@Context UriInfo uriInfo) {
         return LinkRest.service(config).select(E5.class).uri(uriInfo).get();
     }
 
     @GET
     @Path("{id}")
-    @Resource(type = LinkType.ITEM)
+    @LrResource(type = LinkType.ITEM)
     public DataResponse<E5> getE5ById(@PathParam("id") int id, @Context UriInfo uriInfo) {
         return LinkRest.service(config).selectById(E5.class, id, uriInfo);
     }
@@ -45,14 +45,14 @@ public class E5Resource {
 
     @GET
     @Path("metadata")
-    @Resource(entityClass = E5.class, type = LinkType.METADATA)
+    @LrResource(entityClass = E5.class, type = LinkType.METADATA)
     public MetadataResponse<E5> getMetadata(@Context UriInfo uriInfo) {
         return LinkRest.metadata(E5.class, config).forResource(E5Resource.class).uri(uriInfo).process();
     }
 
     @GET
     @Path("metadata-constraints")
-    @Resource(entityClass = E5.class, type = LinkType.METADATA)
+    @LrResource(entityClass = E5.class, type = LinkType.METADATA)
     public MetadataResponse<E5> getMetadataWithConstraints(@Context UriInfo uriInfo) {
 
         Constraint<E5> constraint = Constraint.excludeAll(E5.class)
