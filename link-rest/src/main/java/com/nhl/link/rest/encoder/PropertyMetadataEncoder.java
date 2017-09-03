@@ -15,192 +15,207 @@ import java.util.Optional;
 
 public abstract class PropertyMetadataEncoder extends AbstractEncoder {
 
-	private static final Encoder instance = new PropertyMetadataEncoder() {
+    private static final Encoder instance = new PropertyMetadataEncoder() {
 
-		@Override
-		protected String getPropertyName(Object property) {
-			if (property instanceof LrAttribute) {
-				return ((LrAttribute) property).getName();
-			} else if (property instanceof LrRelationship) {
-				return ((LrRelationship) property).getName();
-			} else {
-				return null;
-			}
-		}
+        @Override
+        protected String getPropertyName(Object property) {
+            if (property instanceof LrAttribute) {
+                return ((LrAttribute) property).getName();
+            } else if (property instanceof LrRelationship) {
+                return ((LrRelationship) property).getName();
+            } else {
+                return null;
+            }
+        }
 
-		@Override
-		protected TypeDescription getPropertyType(Object property) {
-			if (property instanceof LrAttribute) {
-				Class<?> type = ((LrAttribute) property).getType();
-				switch (type.getName()) {
-					case "byte":
-					case "short":
-					case "int":
-						return TypeDescription.int32();
-					case "long":
-						return TypeDescription.int64();
-					case "float":
-						return TypeDescription.float32();
-					case "double":
-						return TypeDescription.float64();
-					case "[B":
-						return TypeDescription.base64();
-					case "char":
-					case "java.lang.Character":
-					case "java.lang.String":
-						return TypeDescription.string();
-					case "boolean":
-					case "java.lang.Boolean":
-						return new TypeDescription("boolean");
-				}
-				if (Number.class.isAssignableFrom(type)) {
-					if (Byte.class.equals(type) || Short.class.equals(type) || Integer.class.equals(type)) {
-						return TypeDescription.int32();
-					} else if (Long.class.equals(type)) {
-						return TypeDescription.int64();
-					} else if (Float.class.equals(type)) {
-						return TypeDescription.float32();
-					} else if (Double.class.equals(type)) {
-						return TypeDescription.float64();
-					}
-					return TypeDescription.number();
-				} else if (Date.class.isAssignableFrom(type)) {
-					if (java.sql.Date.class.equals(type) || java.sql.Timestamp.class.equals(type)) {
-						return TypeDescription.datetime();
-					} else if (java.sql.Time.class.equals(type)) {
-						return TypeDescription.time();
-					}
-					return TypeDescription.datetime();
-				} else if (LocalDate.class.equals(type)) {
-					return TypeDescription.date();
-				} else if (LocalDateTime.class.equals(type)) {
-					return TypeDescription.datetime();
-				} else if (LocalTime.class.equals(type)) {
-					return TypeDescription.time();
-				}
-			} else if (property instanceof LrRelationship) {
-				String entityName = ((LrRelationship) property).getTargetEntity().getName();
-				return new TypeDescription(entityName);
-			}
-			return null;
-		}
+        @Override
+        protected TypeDescription getPropertyType(Object property) {
+            if (property instanceof LrAttribute) {
+                return getAttributeType((LrAttribute) property);
+            } else if (property instanceof LrRelationship) {
+                return getRelationshipType((LrRelationship) property);
+            }
 
-		@Override
-		protected void doEncode(Object property, JsonGenerator out) throws IOException {
-			if (property instanceof LrPersistentAttribute) {
-				if (((LrPersistentAttribute) property).isMandatory()) {
-					out.writeBooleanField("mandatory", true);
-				}
-			} else if (property instanceof LrRelationship) {
-				out.writeBooleanField("relationship", true);
-				if (((LrRelationship) property).isToMany()) {
-					out.writeBooleanField("collection", true);
-				}
-			}
-		}
+            throw new UnsupportedOperationException("Unsupported property type, must be attribute or relationship: " + property);
+        }
 
-	};
+        protected TypeDescription getRelationshipType(LrRelationship relationship) {
+            String entityName = relationship.getTargetEntity().getName();
+            return new TypeDescription(entityName);
+        }
 
-	public static Encoder encoder() {
-		return instance;
-	}
+        protected TypeDescription getAttributeType(LrAttribute attribute) {
+            Class<?> type = attribute.getType();
+            switch (type.getName()) {
+                case "byte":
+                case "short":
+                case "int":
+                    return TypeDescription.int32();
+                case "long":
+                    return TypeDescription.int64();
+                case "float":
+                    return TypeDescription.float32();
+                case "double":
+                    return TypeDescription.float64();
+                case "[B":
+                    return TypeDescription.base64();
+                case "char":
+                case "java.lang.Character":
+                case "java.lang.String":
+                    return TypeDescription.string();
+                case "boolean":
+                case "java.lang.Boolean":
+                    return new TypeDescription("boolean");
+            }
+            if (Number.class.isAssignableFrom(type)) {
+                if (Byte.class.equals(type) || Short.class.equals(type) || Integer.class.equals(type)) {
+                    return TypeDescription.int32();
+                } else if (Long.class.equals(type)) {
+                    return TypeDescription.int64();
+                } else if (Float.class.equals(type)) {
+                    return TypeDescription.float32();
+                } else if (Double.class.equals(type)) {
+                    return TypeDescription.float64();
+                }
+                return TypeDescription.number();
+            } else if (Date.class.isAssignableFrom(type)) {
+                if (java.sql.Date.class.equals(type) || java.sql.Timestamp.class.equals(type)) {
+                    return TypeDescription.datetime();
+                } else if (java.sql.Time.class.equals(type)) {
+                    return TypeDescription.time();
+                }
+                return TypeDescription.datetime();
+            } else if (LocalDate.class.equals(type)) {
+                return TypeDescription.date();
+            } else if (LocalDateTime.class.equals(type)) {
+                return TypeDescription.datetime();
+            } else if (LocalTime.class.equals(type)) {
+                return TypeDescription.time();
+            }
 
-	@Override
-	protected boolean encodeNonNullObject(Object property, JsonGenerator out) throws IOException {
-		if (property == null) {
-			return false;
-		}
+            return TypeDescription.unknown();
+        }
 
-		out.writeStartObject();
+        @Override
+        protected void doEncode(Object property, JsonGenerator out) throws IOException {
+            if (property instanceof LrPersistentAttribute) {
+                if (((LrPersistentAttribute) property).isMandatory()) {
+                    out.writeBooleanField("mandatory", true);
+                }
+            } else if (property instanceof LrRelationship) {
+                out.writeBooleanField("relationship", true);
+                if (((LrRelationship) property).isToMany()) {
+                    out.writeBooleanField("collection", true);
+                }
+            }
+        }
+    };
 
-		out.writeStringField("name", getPropertyName(property));
+    public static Encoder encoder() {
+        return instance;
+    }
 
-		TypeDescription type = getPropertyType(property);
-		Objects.requireNonNull(type, () -> "Could not determine meta encoder type for property: " + property);
+    @Override
+    protected boolean encodeNonNullObject(Object property, JsonGenerator out) throws IOException {
+        if (property == null) {
+            return false;
+        }
 
-		out.writeStringField("type", type.getTypeName());
-		Optional<String> format = type.getFormat();
-		if (format.isPresent()) {
-			out.writeStringField("format", format.get());
-		}
+        out.writeStartObject();
 
-		doEncode(property, out);
+        out.writeStringField("name", getPropertyName(property));
 
-		out.writeEndObject();
+        TypeDescription type = getPropertyType(property);
+        Objects.requireNonNull(type, () -> "Could not determine meta encoder type for property: " + property);
 
-		return true;
-	}
+        out.writeStringField("type", type.getTypeName());
+        Optional<String> format = type.getFormat();
+        if (format.isPresent()) {
+            out.writeStringField("format", format.get());
+        }
 
-	protected abstract String getPropertyName(Object property);
+        doEncode(property, out);
 
-	protected abstract TypeDescription getPropertyType(Object property);
+        out.writeEndObject();
 
-	protected abstract void doEncode(Object object, JsonGenerator out) throws IOException;
+        return true;
+    }
 
-	private static class TypeDescription {
-		static final String NUMBER_TYPE = "number";
-		static final String STRING_TYPE = "string";
-		static final String DATE_TYPE = "date";
+    protected abstract String getPropertyName(Object property);
 
-		static TypeDescription int32() {
-			return new TypeDescription(NUMBER_TYPE, "int32");
-		}
+    protected abstract TypeDescription getPropertyType(Object property);
 
-		static TypeDescription int64() {
-			return new TypeDescription(NUMBER_TYPE, "int64");
-		}
+    protected abstract void doEncode(Object object, JsonGenerator out) throws IOException;
 
-		static TypeDescription float32() {
-			return new TypeDescription(NUMBER_TYPE, "float");
-		}
+    private static class TypeDescription {
+        static final String NUMBER_TYPE = "number";
+        static final String STRING_TYPE = "string";
+        static final String DATE_TYPE = "date";
+        static final String UNKNOWN_TYPE = "unknown";
 
-		static TypeDescription float64() {
-			return new TypeDescription(NUMBER_TYPE, "double");
-		}
+        static TypeDescription int32() {
+            return new TypeDescription(NUMBER_TYPE, "int32");
+        }
 
-		static TypeDescription number() {
-			return new TypeDescription(NUMBER_TYPE);
-		}
+        static TypeDescription int64() {
+            return new TypeDescription(NUMBER_TYPE, "int64");
+        }
 
-		static TypeDescription base64() {
-			return new TypeDescription(STRING_TYPE, "byte");
-		}
+        static TypeDescription float32() {
+            return new TypeDescription(NUMBER_TYPE, "float");
+        }
 
-		static TypeDescription string() {
-			return new TypeDescription(STRING_TYPE);
-		}
+        static TypeDescription float64() {
+            return new TypeDescription(NUMBER_TYPE, "double");
+        }
 
-		static TypeDescription date() {
-			return new TypeDescription(DATE_TYPE, "full-date");
-		}
+        static TypeDescription number() {
+            return new TypeDescription(NUMBER_TYPE);
+        }
 
-		static TypeDescription datetime() {
-			return new TypeDescription(DATE_TYPE, "date-time");
-		}
+        static TypeDescription base64() {
+            return new TypeDescription(STRING_TYPE, "byte");
+        }
 
-		static TypeDescription time() {
-			return new TypeDescription(DATE_TYPE, "full-time");
-		}
+        static TypeDescription string() {
+            return new TypeDescription(STRING_TYPE);
+        }
 
-		private String typeName;
-		private Optional<String> format;
+        static TypeDescription date() {
+            return new TypeDescription(DATE_TYPE, "full-date");
+        }
 
-		TypeDescription(String typeName, String format) {
-			this.typeName = typeName;
-			this.format = Optional.of(format);
-		}
+        static TypeDescription datetime() {
+            return new TypeDescription(DATE_TYPE, "date-time");
+        }
 
-		TypeDescription(String typeName) {
-			this.typeName = typeName;
-			this.format = Optional.empty();
-		}
+        static TypeDescription time() {
+            return new TypeDescription(DATE_TYPE, "full-time");
+        }
 
-		String getTypeName() {
-			return typeName;
-		}
+        static TypeDescription unknown() {
+            return new TypeDescription(UNKNOWN_TYPE);
+        }
 
-		Optional<String> getFormat() {
-			return format;
-		}
-	}
+        private String typeName;
+        private Optional<String> format;
+
+        TypeDescription(String typeName, String format) {
+            this.typeName = typeName;
+            this.format = Optional.of(format);
+        }
+
+        TypeDescription(String typeName) {
+            this.typeName = typeName;
+            this.format = Optional.empty();
+        }
+
+        String getTypeName() {
+            return typeName;
+        }
+
+        Optional<String> getFormat() {
+            return format;
+        }
+    }
 }

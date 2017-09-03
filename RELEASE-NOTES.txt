@@ -2,6 +2,7 @@ Release 2.10
 
 #254 Upgrade to Jackson 2.6.4
 #256 Built-in JsonValueConverter for enums
+#259 NPE in metadata resource when the model has unknown attribute types
 
 Release 2.9
 
