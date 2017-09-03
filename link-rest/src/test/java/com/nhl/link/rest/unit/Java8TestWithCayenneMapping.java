@@ -50,7 +50,12 @@ public class Java8TestWithCayenneMapping {
 			DataSourceFactory dsf = mock(DataSourceFactory.class);
 			binder.bind(DataSourceFactory.class).toInstance(dsf);
 		};
-		runtime = new ServerRuntime("cayenne-linkrest-java8-tests.xml", module);
+
+		runtime = ServerRuntime
+				.builder()
+				.addConfig("cayenne-linkrest-java8-tests.xml")
+				.addModule(module)
+				.build();
 	}
 
 	@AfterClass
