@@ -59,10 +59,17 @@ public class CollectMetadataStage implements Processor<MetadataContext<?>> {
 
         ResourceEntity<T> resourceEntity = createDefaultResourceEntity(entity);
         constraintsHandler.constrainResponse(resourceEntity, null, context.getConstraint());
-        resourceEntity.setApplicationBase(context.getApplicationBase());
+        resourceEntity.setApplicationBase(getBaseUrl(context));
 
         context.setResources(filteredResources);
         context.setEncoder(encoderService.metadataEncoder(resourceEntity));
+    }
+
+    private <T> String getBaseUrl(MetadataContext<T> context) {
+        return resourceMetadataService.getBaseUrl().orElseGet(() ->
+                context.getUriInfo() != null
+                        ? context.getUriInfo().getBaseUri().toString() : null
+        );
     }
 
     private <T> ResourceEntity<T> createDefaultResourceEntity(LrEntity<T> entity) {

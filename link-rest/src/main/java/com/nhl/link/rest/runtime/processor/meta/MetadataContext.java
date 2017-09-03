@@ -82,6 +82,11 @@ public class MetadataContext<T> extends BaseProcessingContext<T> {
         this.uriInfo = uriInfo;
     }
 
+    /**
+     * @return application base URL calculated from the current request.
+     * @deprecated since 2.10 unused. Base URL for metadata is calculated differently.
+     */
+    @Deprecated
     public String getApplicationBase() {
         if (uriInfo == null) {
             return null;

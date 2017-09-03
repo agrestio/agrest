@@ -10,6 +10,7 @@ import com.nhl.link.rest.meta.compiler.PojoEntityCompiler;
 import com.nhl.link.rest.meta.parser.IResourceParser;
 import com.nhl.link.rest.meta.parser.ResourceParser;
 import com.nhl.link.rest.runtime.cayenne.ICayennePersister;
+import com.nhl.link.rest.runtime.meta.BaseUrlProvider;
 import com.nhl.link.rest.runtime.meta.IMetadataService;
 import com.nhl.link.rest.runtime.meta.IResourceMetadataService;
 import com.nhl.link.rest.runtime.meta.MetadataService;
@@ -30,6 +31,7 @@ import org.junit.BeforeClass;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -93,7 +95,7 @@ public class TestWithCayenneMapping {
 	}
 
 	protected IResourceMetadataService createResourceMetadataService() {
-		return new ResourceMetadataService(resourceParser);
+		return new ResourceMetadataService(resourceParser, BaseUrlProvider.forUrl(Optional.empty()));
 	}
 
 	protected <T> LrEntity<T> getLrEntity(Class<T> type) {

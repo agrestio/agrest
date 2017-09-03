@@ -55,6 +55,7 @@ import com.nhl.link.rest.runtime.jackson.IJacksonService;
 import com.nhl.link.rest.runtime.jackson.JacksonService;
 import com.nhl.link.rest.runtime.listener.IListenerService;
 import com.nhl.link.rest.runtime.listener.ListenerService;
+import com.nhl.link.rest.runtime.meta.BaseUrlProvider;
 import com.nhl.link.rest.runtime.meta.IMetadataService;
 import com.nhl.link.rest.runtime.meta.IResourceMetadataService;
 import com.nhl.link.rest.runtime.meta.MetadataService;
@@ -110,6 +111,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ExecutorService;
 
 /**
@@ -129,6 +131,7 @@ public class LinkRestBuilder {
     private Collection<LinkRestAdapter> adapters;
     private Map<String, PropertyMetadataEncoder> metadataEncoders;
     private ExecutorService executor;
+    private String baseUrl;
 
     /**
      * A shortcut that creates a LinkRest stack based on Cayenne runtime and
@@ -227,6 +230,22 @@ public class LinkRestBuilder {
 
     public LinkRestBuilder encoderFilters(Collection<EncoderFilter> filters) {
         this.encoderFilters.addAll(filters);
+        return this;
+    }
+
+    /**
+     * Sets the public base URL of the application serving this LinkRest stack. This should be a URL of the root REST
+     * resource of the application. This value is used to build hypermedia controls (i.e. links) in the metadata
+     * responses. It is optional, and for most apps can be calculated automatically. Usually has to be set explicitly
+     * in case of a misconfigured reverse proxy (missing "X-Forwarded-Proto" header to tell apart HTTP from HTTPS), and
+     * such.
+     *
+     * @param url a URL of the root REST resource of the application.
+     * @return this builder instance
+     * @since 2.10
+     */
+    public LinkRestBuilder baseUrl(String url) {
+        this.baseUrl = url;
         return this;
     }
 
@@ -406,6 +425,9 @@ public class LinkRestBuilder {
 
             binder.bind(IResourceParser.class).to(ResourceParser.class);
             binder.bind(IUpdateParser.class).to(UpdateParser.class);
+
+            Optional<String> maybeBaseUrl = Optional.ofNullable(baseUrl);
+            binder.bind(BaseUrlProvider.class).toInstance(BaseUrlProvider.forUrl(maybeBaseUrl));
 
             binder.bind(ShutdownManager.class).toInstance(new ShutdownManager(Duration.ofSeconds(10)));
 

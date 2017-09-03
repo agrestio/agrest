@@ -9,6 +9,7 @@ import com.nhl.link.rest.meta.compiler.LrEntityCompiler;
 import com.nhl.link.rest.meta.parser.IResourceParser;
 import com.nhl.link.rest.meta.parser.ResourceParser;
 import com.nhl.link.rest.runtime.cayenne.ICayennePersister;
+import com.nhl.link.rest.runtime.meta.BaseUrlProvider;
 import com.nhl.link.rest.runtime.meta.IMetadataService;
 import com.nhl.link.rest.runtime.meta.IResourceMetadataService;
 import com.nhl.link.rest.runtime.meta.MetadataService;
@@ -28,6 +29,7 @@ import org.junit.BeforeClass;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import static java.util.Arrays.asList;
 import static org.mockito.Mockito.mock;
@@ -87,7 +89,7 @@ public class Java8TestWithCayenneMapping {
 	}
 
 	protected IResourceMetadataService createResourceMetadataService() {
-		return new ResourceMetadataService(resourceParser);
+		return new ResourceMetadataService(resourceParser, BaseUrlProvider.forUrl(Optional.empty()));
 	}
 
 	protected <T> LrEntity<T> getLrEntity(Class<T> type) {
