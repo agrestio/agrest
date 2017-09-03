@@ -2,7 +2,9 @@ package com.nhl.link.rest.it.noadapter;
 
 import com.nhl.link.rest.annotation.LrAttribute;
 import com.nhl.link.rest.it.fixture.JerseyTestOnDerby;
+import com.nhl.link.rest.it.fixture.cayenne.E2;
 import com.nhl.link.rest.it.fixture.cayenne.E4;
+import com.nhl.link.rest.it.fixture.resource.E3Resource;
 import com.nhl.link.rest.it.fixture.resource.E4Resource;
 import com.nhl.link.rest.meta.LrEntityOverlay;
 import com.nhl.link.rest.runtime.LinkRestBuilder;
@@ -20,19 +22,24 @@ public class GET_Props_AdHocProperties_IT extends JerseyTestOnDerby {
 
     @Override
     protected void doAddResources(FeatureContext context) {
+        context.register(E3Resource.class);
         context.register(E4Resource.class);
     }
 
     @Override
     protected LinkRestBuilder doConfigure() {
         // try all possible adhoc properties...
-        LrEntityOverlay<E4> overlay = new LrEntityOverlay<>(E4.class)
+        LrEntityOverlay<E4> e4Overlay = new LrEntityOverlay<>(E4.class)
                 .addAttribute("adhocString", String.class, e4 -> e4.getCVarchar() + "*")
                 .addToOneRelationship("adhocToOne", EX.class, EX::forE4)
                 .addToManyRelationship("adhocToMany", EY.class, EY::forE4)
                 .addAttribute("derived");
 
-        return super.doConfigure().entityOverlay(overlay);
+        // this entity has incoming relationships
+        LrEntityOverlay<E2> e2Overlay = new LrEntityOverlay<>(E2.class)
+                .addAttribute("adhocString", String.class, e2 -> e2.getName() + "*");
+
+        return super.doConfigure().entityOverlay(e4Overlay).entityOverlay(e2Overlay);
     }
 
     @Test
@@ -63,6 +70,25 @@ public class GET_Props_AdHocProperties_IT extends JerseyTestOnDerby {
         assertEquals(Response.Status.OK.getStatusCode(), r.getStatus());
         assertEquals(
                 "{\"data\":[{\"derived\":\"x$\"},{\"derived\":\"y$\"}],\"total\":2}",
+                r.readEntity(String.class));
+    }
+
+    @Test
+    public void testAdHocAttribute_Related() {
+
+        insert("e2", "id, name", "1, 'xxx'");
+        insert("e3", "id, name, e2_id", "3, 'zzz', 1");
+
+        Response r = target("/e3")
+                .queryParam("include", "id")
+                .queryParam("include", "e2.adhocString")
+                .queryParam("sort", "id")
+                .request()
+                .get();
+
+        assertEquals(Response.Status.OK.getStatusCode(), r.getStatus());
+        assertEquals(
+                "{\"data\":[{\"id\":3,\"e2\":{\"adhocString\":\"xxx*\"}}],\"total\":1}",
                 r.readEntity(String.class));
     }
 
