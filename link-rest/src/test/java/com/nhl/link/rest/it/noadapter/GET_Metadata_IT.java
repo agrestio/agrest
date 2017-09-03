@@ -41,6 +41,7 @@ public class GET_Metadata_IT extends JerseyTestOnDerby {
                         "\"links\":[" +
                         "{\"href\":\"http://localhost:9998/e5\",\"type\":\"collection\",\"operations\":[{\"method\":\"GET\"}]}," +
                         "{\"href\":\"http://localhost:9998/e5/metadata\",\"type\":\"metadata\",\"operations\":[{\"method\":\"GET\"}]}," +
+                        "{\"href\":\"http://localhost:9998/e5/metadata-constraints\",\"type\":\"metadata\",\"operations\":[{\"method\":\"GET\"}]}," +
                         "{\"href\":\"http://localhost:9998/e5/{id}\",\"type\":\"item\"," +
                         "\"operations\":[{\"method\":\"GET\"},{\"method\":\"DELETE\"}]}]}"
                 ,

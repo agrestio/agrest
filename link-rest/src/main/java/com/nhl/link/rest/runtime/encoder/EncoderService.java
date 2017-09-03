@@ -39,7 +39,7 @@ public class EncoderService implements IEncoderService {
 
     @Override
     public <T> Encoder metadataEncoder(ResourceEntity<T> entity) {
-        return new ResourceEncoder<>(entity.getLrEntity(), entity.getApplicationBase(), entityMetadataEncoder(entity));
+        return new ResourceEncoder<>(entity, entity.getApplicationBase(), entityMetadataEncoder(entity));
     }
 
     @Override
@@ -106,7 +106,7 @@ public class EncoderService implements IEncoderService {
         Encoder encoder = entityMetadataEncoders.get(resourceEntity);
 
         if (encoder == null) {
-            encoder = new EntityMetadataEncoder(resourceEntity.getLrEntity(), propertyMetadataEncoders);
+            encoder = new EntityMetadataEncoder(resourceEntity, propertyMetadataEncoders);
             entityMetadataEncoders.put(resourceEntity, encoder);
         }
 

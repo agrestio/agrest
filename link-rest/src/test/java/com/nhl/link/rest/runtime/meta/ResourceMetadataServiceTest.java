@@ -1,7 +1,5 @@
 package com.nhl.link.rest.runtime.meta;
 
-import static org.junit.Assert.assertEquals;
-
 import com.nhl.link.rest.it.fixture.cayenne.E5;
 import com.nhl.link.rest.it.fixture.resource.E5Resource;
 import com.nhl.link.rest.meta.LinkMethodType;
@@ -14,6 +12,8 @@ import org.junit.Test;
 
 import java.util.Collection;
 
+import static org.junit.Assert.assertEquals;
+
 public class ResourceMetadataServiceTest extends TestWithCayenneMapping {
 
     @Test
@@ -21,19 +21,18 @@ public class ResourceMetadataServiceTest extends TestWithCayenneMapping {
         LrEntity<?> e5 = metadataService.getLrEntity(E5.class);
         Collection<LrResource<?>> resources = resourceMetadataService.getLrResources(E5Resource.class);
 
-        assertEquals(3, resources.size());
+        assertEquals(4, resources.size());
 
         for (LrResource<?> resource : resources) {
             assertEquals(e5, resource.getEntity());
 
             switch (resource.getPath()) {
-                case "e5": {
+                case "e5":
                     assertEquals(LinkType.COLLECTION, resource.getType());
                     assertEquals(1, resource.getOperations().size());
                     assertEquals(LinkMethodType.GET, resource.getOperations().iterator().next().getMethod());
                     break;
-                }
-                case "e5/{id}": {
+                case "e5/{id}":
                     assertEquals(LinkType.ITEM, resource.getType());
                     assertEquals(2, resource.getOperations().size());
                     for (LrOperation operation : resource.getOperations()) {
@@ -48,13 +47,12 @@ public class ResourceMetadataServiceTest extends TestWithCayenneMapping {
                         }
                     }
                     break;
-                }
-                case "e5/metadata": {
+                case "e5/metadata":
+                case "e5/metadata-constraints":
                     assertEquals(LinkType.METADATA, resource.getType());
                     assertEquals(1, resource.getOperations().size());
                     assertEquals(LinkMethodType.GET, resource.getOperations().iterator().next().getMethod());
                     break;
-                }
                 default: {
                     throw new RuntimeException("Unexpected resource: " + resource.getPath());
                 }

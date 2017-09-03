@@ -52,6 +52,7 @@ public class E5Resource {
 
     @GET
     @Path("metadata-constraints")
+    @Resource(entityClass = E5.class, type = LinkType.METADATA)
     public MetadataResponse<E5> getMetadataWithConstraints(@Context UriInfo uriInfo) {
 
         Constraint<E5> constraint = Constraint.excludeAll(E5.class)

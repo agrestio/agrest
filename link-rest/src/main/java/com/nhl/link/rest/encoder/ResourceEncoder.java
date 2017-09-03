@@ -1,7 +1,7 @@
 package com.nhl.link.rest.encoder;
 
 import com.fasterxml.jackson.core.JsonGenerator;
-import com.nhl.link.rest.meta.LrEntity;
+import com.nhl.link.rest.ResourceEntity;
 import com.nhl.link.rest.meta.LrOperation;
 import com.nhl.link.rest.meta.LrResource;
 
@@ -13,11 +13,11 @@ import java.util.Collection;
  */
 public class ResourceEncoder<T> extends AbstractEncoder {
 
-    private LrEntity<T> entity;
+    private ResourceEntity<T> entity;
     private String applicationBase;
     private Encoder entityEncoder;
 
-    public ResourceEncoder(LrEntity<T> entity, String applicationBase, Encoder entityEncoder) {
+    public ResourceEncoder(ResourceEntity<T> entity, String applicationBase, Encoder entityEncoder) {
         this.entity = entity;
         this.applicationBase = applicationBase == null? "" : applicationBase;
         this.entityEncoder = entityEncoder;
@@ -67,7 +67,7 @@ public class ResourceEncoder<T> extends AbstractEncoder {
         out.writeEndArray();
     }
 
-    private void writeEntity(LrEntity<T> entity, JsonGenerator out) throws IOException {
+    private void writeEntity(ResourceEntity<T> entity, JsonGenerator out) throws IOException {
         entityEncoder.encode("entity", entity, out);
     }
 }

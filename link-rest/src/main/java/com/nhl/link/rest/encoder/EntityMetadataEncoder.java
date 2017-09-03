@@ -1,8 +1,8 @@
 package com.nhl.link.rest.encoder;
 
 import com.fasterxml.jackson.core.JsonGenerator;
+import com.nhl.link.rest.ResourceEntity;
 import com.nhl.link.rest.meta.LrAttribute;
-import com.nhl.link.rest.meta.LrEntity;
 import com.nhl.link.rest.meta.LrRelationship;
 import org.apache.cayenne.dba.TypesMapping;
 
@@ -12,20 +12,20 @@ import java.util.TreeMap;
 
 public class EntityMetadataEncoder extends AbstractEncoder {
 
-    private LrEntity<?> entity;
+    private ResourceEntity<?> entity;
     private Map<String, PropertyMetadataEncoder> propertyMetadataEncoders;
     private Map<String, PropertyHelper> properties;
 
-    public EntityMetadataEncoder(LrEntity<?> entity, Map<String, PropertyMetadataEncoder> propertyMetadataEncoders) {
+    public EntityMetadataEncoder(ResourceEntity<?> entity, Map<String, PropertyMetadataEncoder> propertyMetadataEncoders) {
         this.entity = entity;
         this.propertyMetadataEncoders = propertyMetadataEncoders;
 
         this.properties = new TreeMap<>();
-        for (LrAttribute attribute : entity.getAttributes()) {
+        for (LrAttribute attribute : entity.getAttributes().values()) {
             properties.put(attribute.getName(), new AttributeProperty(attribute));
         }
-        for (LrRelationship relationship : entity.getRelationships()) {
-            properties.put(relationship.getName(), new RelationshipProperty(relationship));
+        for (ResourceEntity<?> child : entity.getChildren().values()) {
+            properties.put(child.getIncoming().getName(), new RelationshipProperty(child.getIncoming()));
         }
     }
 
@@ -34,13 +34,13 @@ public class EntityMetadataEncoder extends AbstractEncoder {
         // sanity check
         if (!entity.equals(object)) {
             throw new IllegalArgumentException(
-                    "Expected entity: " + entity.getName() + ", was object of class: " + object.getClass().getName()
+                    "Expected entity: " + entity.getLrEntity().getName() + ", was object of class: " + object.getClass().getName()
             );
         }
 
         out.writeStartObject();
 
-        out.writeStringField("name", entity.getName());
+        out.writeStringField("name", entity.getLrEntity().getName());
 
         out.writeArrayFieldStart("properties");
         for (Map.Entry<String, PropertyHelper> e : properties.entrySet()) {
