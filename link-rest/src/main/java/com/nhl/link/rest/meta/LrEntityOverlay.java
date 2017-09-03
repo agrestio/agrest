@@ -1,8 +1,8 @@
 package com.nhl.link.rest.meta;
 
+import com.nhl.link.rest.meta.compiler.BeanAnalyzer;
+import com.nhl.link.rest.meta.compiler.PropertyGetter;
 import com.nhl.link.rest.property.PropertyReader;
-import org.apache.cayenne.reflect.Accessor;
-import org.apache.cayenne.reflect.PropertyUtils;
 
 import java.util.HashMap;
 import java.util.List;
@@ -21,6 +21,7 @@ public class LrEntityOverlay<T> {
     private Class<T> type;
     private Map<String, LrAttribute> attributes;
     private Map<String, Function<LrDataMap, LrRelationship>> relationships;
+    private Map<String, PropertyGetter> typeGetters;
 
     public LrEntityOverlay(Class<T> type) {
         this.type = type;
@@ -56,6 +57,21 @@ public class LrEntityOverlay<T> {
         return relationships.values().stream().map(f -> f.apply(dataMap));
     }
 
+    private Map<String, PropertyGetter> getTypeGetters() {
+
+        // compile getters map lazily, only when the caller adds attributes that require getters
+        if (this.typeGetters == null) {
+            Map<String, PropertyGetter> getters = new HashMap<>();
+
+            // this is expensive... still not caching, as presumably overlays are processed only once
+            BeanAnalyzer.findGetters(type).forEach(pm -> getters.put(pm.getName(), pm));
+
+            this.typeGetters = getters;
+        }
+
+        return typeGetters;
+    }
+
     /**
      * Adds an attribute to the overlaid entity. The value of the attribute will be read from the object itself.
      * This overlay is only needed if LinkRest can't otherwise determine property presence in the entity.
@@ -67,10 +83,14 @@ public class LrEntityOverlay<T> {
      */
     public LrEntityOverlay<T> addAttribute(String name) {
 
-        Accessor accessor = PropertyUtils.accessor(name);
+        PropertyGetter getter = getTypeGetters().get(name);
 
-        // TODO: provide actual type instead of Object
-        addAttribute(name, Object.class, accessor::getValue);
+        if (getter == null) {
+            throw new IllegalArgumentException("'" + name + "' is not a readable property in " + type.getName());
+        }
+
+        Class vType = getter.getType();
+        addAttribute(name, vType, getter::getValue);
         return this;
     }
 

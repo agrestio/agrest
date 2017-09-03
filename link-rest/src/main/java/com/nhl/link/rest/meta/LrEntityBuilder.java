@@ -4,7 +4,7 @@ import com.nhl.link.rest.annotation.LrAttribute;
 import com.nhl.link.rest.annotation.LrId;
 import com.nhl.link.rest.annotation.LrRelationship;
 import com.nhl.link.rest.meta.compiler.BeanAnalyzer;
-import com.nhl.link.rest.meta.compiler.PropertyMethod;
+import com.nhl.link.rest.meta.compiler.PropertyGetter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,15 +43,15 @@ public class LrEntityBuilder<T> {
         BeanAnalyzer.findGetters(type).forEach(getter -> appendProperty(entity, getter));
     }
 
-    private void appendProperty(DefaultLrEntity<T> entity, PropertyMethod getter) {
+    private void appendProperty(DefaultLrEntity<T> entity, PropertyGetter getter) {
         if (!addAsAttribute(entity, getter)) {
             addAsRelationship(entity, getter);
         }
     }
 
-    private boolean addAsAttribute(DefaultLrEntity<T> entity, PropertyMethod getter) {
+    private boolean addAsAttribute(DefaultLrEntity<T> entity, PropertyGetter getter) {
 
-        Method m = getter.getGetterOrSetter();
+        Method m = getter.getMethod();
         Class<?> type = getter.getType();
         String name = getter.getName();
 
@@ -136,9 +136,9 @@ public class LrEntityBuilder<T> {
                 && !Collection.class.isAssignableFrom(type);
     }
 
-    private boolean addAsRelationship(DefaultLrEntity<T> entity, PropertyMethod getter) {
+    private boolean addAsRelationship(DefaultLrEntity<T> entity, PropertyGetter getter) {
 
-        Method m = getter.getGetterOrSetter();
+        Method m = getter.getMethod();
         Class<?> targetType = getter.getType();
         String name = getter.getName();
 

@@ -49,7 +49,7 @@ public class GET_Props_AdHocProperties_IT extends JerseyTestOnDerby {
 
         assertEquals(Response.Status.OK.getStatusCode(), r.getStatus());
         String data = r.readEntity(String.class);
-        assertTrue(data.contains("{\"name\":\"derived\",\"type\":\"unknown\"}"));
+        assertTrue(data.contains("{\"name\":\"derived\",\"type\":\"string\"}"));
         assertTrue(data.contains("{\"name\":\"adhocString\",\"type\":\"string\"}"));
         assertTrue(data.contains("{\"name\":\"adhocToOne\",\"type\":\"EX\",\"relationship\":true}"));
         assertTrue(data.contains("{\"name\":\"adhocToMany\",\"type\":\"EY\",\"relationship\":true,\"collection\":true}"));

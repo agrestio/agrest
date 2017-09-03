@@ -244,7 +244,9 @@ public class LinkRestBuilder {
     /**
      * @since 1.12
      * @deprecated since 2.10. Instead use {@link LrEntityOverlay#addAttribute(String)}, and register
-     * the overlay via {@link #entityOverlay(LrEntityOverlay)}.
+     * the overlay via {@link #entityOverlay(LrEntityOverlay)}. One potential incompatibility of the new method is that
+     * it does not support nested paths as property names. Instead you must use a property name of the corresponding
+     * target entity, or provide your own attribute read function.
      */
     @Deprecated
     public LinkRestBuilder transientProperty(Class<?> type, String propertyName) {
