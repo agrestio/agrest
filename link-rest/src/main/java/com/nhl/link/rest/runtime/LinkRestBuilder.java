@@ -95,6 +95,8 @@ import org.apache.cayenne.configuration.server.ServerRuntime;
 import org.apache.cayenne.di.DIBootstrap;
 import org.apache.cayenne.di.Injector;
 import org.apache.cayenne.di.Module;
+import org.apache.cayenne.reflect.Accessor;
+import org.apache.cayenne.reflect.PropertyUtils;
 import org.apache.cayenne.validation.ValidationException;
 
 import javax.ws.rs.core.Feature;
@@ -244,13 +246,12 @@ public class LinkRestBuilder {
     /**
      * @since 1.12
      * @deprecated since 2.10. Instead use {@link LrEntityOverlay#addAttribute(String)}, and register
-     * the overlay via {@link #entityOverlay(LrEntityOverlay)}. One potential incompatibility of the new method is that
-     * it does not support nested paths as property names. Instead you must use a property name of the corresponding
-     * target entity, or provide your own attribute read function.
+     * the overlay via {@link #entityOverlay(LrEntityOverlay)}.
      */
     @Deprecated
     public LinkRestBuilder transientProperty(Class<?> type, String propertyName) {
-        getOrCreateOverlay(type).addAttribute(propertyName);
+        Accessor accessor = PropertyUtils.accessor(propertyName);
+        getOrCreateOverlay(type).addAttribute(propertyName, Object.class, accessor::getValue);
         return this;
     }
 
