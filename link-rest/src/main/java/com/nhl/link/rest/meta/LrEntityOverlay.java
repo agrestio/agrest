@@ -11,8 +11,8 @@ import java.util.function.Function;
 import java.util.stream.Stream;
 
 /**
- * A collection of entity properties that are not derived from the object structure. An {@link LrEntityOverlay} is
- * provided to LinkRest by the app, and is merged into a corresponding {@link LrEntity}.
+ * A mutable collection of entity properties that are not derived from the object structure. {@link LrEntityOverlay}
+ * objects are provided to LinkRest by the app, and are merged into corresponding {@link LrEntity} entities.
  *
  * @since 1.12
  */
