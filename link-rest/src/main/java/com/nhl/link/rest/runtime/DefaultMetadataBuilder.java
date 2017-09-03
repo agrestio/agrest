@@ -2,6 +2,7 @@ package com.nhl.link.rest.runtime;
 
 import com.nhl.link.rest.MetadataBuilder;
 import com.nhl.link.rest.MetadataResponse;
+import com.nhl.link.rest.constraints.Constraint;
 import com.nhl.link.rest.runtime.processor.meta.MetadataContext;
 import com.nhl.link.rest.runtime.processor.meta.MetadataProcessorFactory;
 
@@ -29,6 +30,12 @@ public class DefaultMetadataBuilder<T> implements MetadataBuilder<T> {
     @Override
     public MetadataBuilder<T> uri(UriInfo uriInfo) {
         context.setUriInfo(uriInfo);
+        return this;
+    }
+
+    @Override
+    public MetadataBuilder<T> constraint(Constraint<T> constraint) {
+        context.setConstraint(constraint);
         return this;
     }
 
