@@ -3,6 +3,7 @@ package com.nhl.link.rest.runtime;
 import com.nhl.link.rest.DataResponse;
 import com.nhl.link.rest.EntityConstraint;
 import com.nhl.link.rest.LinkRestException;
+import com.nhl.link.rest.LrModuleProvider;
 import com.nhl.link.rest.MetadataResponse;
 import com.nhl.link.rest.SimpleResponse;
 import com.nhl.link.rest.encoder.EncoderFilter;
@@ -96,6 +97,7 @@ import org.apache.cayenne.configuration.server.ServerRuntime;
 import org.apache.cayenne.di.DIBootstrap;
 import org.apache.cayenne.di.Injector;
 import org.apache.cayenne.di.Module;
+import org.apache.cayenne.di.spi.ModuleLoader;
 import org.apache.cayenne.reflect.Accessor;
 import org.apache.cayenne.reflect.PropertyUtils;
 import org.apache.cayenne.validation.ValidationException;
@@ -121,14 +123,10 @@ import java.util.concurrent.ExecutorService;
 public class LinkRestBuilder {
 
     private ICayennePersister cayenneService;
-
     private Class<? extends ILinkRestService> linkRestServiceType;
     private ILinkRestService linkRestService;
-
-
     private List<LrModuleProvider> moduleProviders;
     private List<Module> modules;
-
     private List<EncoderFilter> encoderFilters;
     private Map<String, LrEntityOverlay> entityOverlays;
     private Map<Class<?>, Class<?>> exceptionMappers;
@@ -136,6 +134,7 @@ public class LinkRestBuilder {
     private Map<String, PropertyMetadataEncoder> metadataEncoders;
     private ExecutorService executor;
     private String baseUrl;
+    private boolean autoLoadModules;
 
     /**
      * A shortcut that creates a LinkRest stack based on Cayenne runtime and
@@ -158,15 +157,14 @@ public class LinkRestBuilder {
     }
 
     public LinkRestBuilder() {
+        this.autoLoadModules = true;
         this.entityOverlays = new HashMap<>();
         this.encoderFilters = new ArrayList<>();
         this.linkRestServiceType = DefaultLinkRestService.class;
         this.cayenneService = NoCayennePersister.instance();
-
         this.exceptionMappers = mapDefaultExceptions();
         this.adapters = new ArrayList<>();
         this.metadataEncoders = new HashMap<>();
-
         this.moduleProviders = new ArrayList<>(5);
         this.modules = new ArrayList<>(5);
     }
@@ -179,6 +177,19 @@ public class LinkRestBuilder {
         map.put(ValidationException.class, ValidationExceptionMapper.class);
 
         return map;
+    }
+
+    /**
+     * Suppresses module auto-loading. By default modules are auto-loaded based on the service descriptors under
+     * "META-INF/services/com.nhl.link.rest.LrModuleProvider". Calling this method would suppress auto-loading behavior,
+     * letting the programmer explicitly pick which extensions need to be loaded.
+     *
+     * @return this builder instance.
+     * @since 2.10
+     */
+    public LinkRestBuilder doNotAutoLoadModules() {
+        this.autoLoadModules = false;
+        return this;
     }
 
     /**
@@ -267,7 +278,6 @@ public class LinkRestBuilder {
         this.executor = executor;
         return this;
     }
-
 
     /**
      * @since 1.12
@@ -372,11 +382,19 @@ public class LinkRestBuilder {
         // core module goes first, the rest of them override the core and each other
         allModules.add(createCoreModule());
 
+        if(autoLoadModules) {
+            allModules.addAll(autoLoadModules());
+        }
+
         // TODO: consistent sorting policy: Cayenne ModuleProvider sorting facility ? Same order as the modules are aded to the builder?
         allModules.addAll(modules);
         moduleProviders.forEach(p -> allModules.add(p.module()));
 
         return DIBootstrap.createInjector(allModules);
+    }
+
+    private List<Module> autoLoadModules() {
+        return new ModuleLoader().load(LrModuleProvider.class);
     }
 
     private Module createCoreModule() {

@@ -19,84 +19,92 @@ import java.util.Map;
  */
 public class LinkRestRuntime implements Feature {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(LinkRestRuntime.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(LinkRestRuntime.class);
 
-	static final String LINK_REST_CONTAINER_PROPERTY = "linkrest.container";
+    static final String LINK_REST_CONTAINER_PROPERTY = "linkrest.container";
 
-	public static final String BODY_WRITERS_MAP = "linkrest.jaxrs.bodywriters";
+    public static final String BODY_WRITERS_MAP = "linkrest.jaxrs.bodywriters";
 
-	private Injector injector;
-	private Collection<Class<?>> extraComponents;
-	private Collection<Feature> extraFeatures;
+    private Injector injector;
+    private Collection<Class<?>> extraComponents;
+    private Collection<Feature> extraFeatures;
 
-	/**
-	 * Returns a service of a specified type present in LinkRest container that
-	 * is stored in JAX RS Configuration.
-	 */
-	public static <T> T service(Class<T> type, Configuration config) {
+    /**
+     * Returns a service of a specified type present in LinkRest container that
+     * is stored in JAX RS Configuration.
+     */
+    public static <T> T service(Class<T> type, Configuration config) {
 
-		if (config == null) {
-			throw new NullPointerException("Null config");
-		}
+        if (config == null) {
+            throw new NullPointerException("Null config");
+        }
 
-		Injector injector = (Injector) config.getProperty(LINK_REST_CONTAINER_PROPERTY);
-		if (injector == null) {
-			throw new IllegalStateException(
-					"LinkRest is misconfigured. No injector found for property: " + LINK_REST_CONTAINER_PROPERTY);
-		}
+        Injector injector = (Injector) config.getProperty(LINK_REST_CONTAINER_PROPERTY);
+        if (injector == null) {
+            throw new IllegalStateException(
+                    "LinkRest is misconfigured. No injector found for property: " + LINK_REST_CONTAINER_PROPERTY);
+        }
 
-		return injector.getInstance(type);
-	}
+        return injector.getInstance(type);
+    }
 
-	LinkRestRuntime(Injector injector, Collection<Feature> extraFeatures, Collection<Class<?>> extraComponents) {
-		this.injector = injector;
-		this.extraFeatures = extraFeatures;
-		this.extraComponents = extraComponents;
-	}
+    LinkRestRuntime(Injector injector, Collection<Feature> extraFeatures, Collection<Class<?>> extraComponents) {
+        this.injector = injector;
+        this.extraFeatures = extraFeatures;
+        this.extraComponents = extraComponents;
+    }
 
-	/**
-	 * Returns a LinkRest service instance of a given type stored in the
-	 * internal DI container.
-	 */
-	public <T> T service(Class<T> type) {
-		return injector.getInstance(type);
-	}
+    /**
+     * Returns a LinkRest service instance of a given type stored in the internal DI container.
+     */
+    public <T> T service(Class<T> type) {
+        return injector.getInstance(type);
+    }
 
-	/**
-	 * @since 2.0
-	 */
-	public void shutdown() {
-		LOGGER.info("Shutting down LinkRest");
-		injector.shutdown();
-	}
+    /**
+     * Returns a LinkRest service instance of a given type stored in the internal DI container.
+     *
+     * @since 2.10
+     */
+    public <T> T service(Key<T> key) {
+        return injector.getInstance(key);
+    }
 
-	@Override
-	public boolean configure(FeatureContext context) {
+    /**
+     * @since 2.0
+     */
+    public void shutdown() {
+        LOGGER.info("Shutting down LinkRest");
+        injector.shutdown();
+    }
 
-		// this gives everyone access to the LinkRest services
-		context.property(LinkRestRuntime.LINK_REST_CONTAINER_PROPERTY, injector);
+    @Override
+    public boolean configure(FeatureContext context) {
 
-		@SuppressWarnings("unchecked")
-		Map<String, Class> bodyWriters =
-				injector.getInstance(Key.getMapOf(String.class, Class.class, LinkRestRuntime.BODY_WRITERS_MAP));
+        // this gives everyone access to the LinkRest services
+        context.property(LinkRestRuntime.LINK_REST_CONTAINER_PROPERTY, injector);
 
-		for (Class<?> type : bodyWriters.values()) {
-			context.register(type);
-		}
+        @SuppressWarnings("unchecked")
+        Map<String, Class> bodyWriters =
+                injector.getInstance(Key.getMapOf(String.class, Class.class, LinkRestRuntime.BODY_WRITERS_MAP));
 
-		context.register(ResponseStatusDynamicFeature.class);
+        for (Class<?> type : bodyWriters.values()) {
+            context.register(type);
+        }
 
-		context.register(EntityUpdateReader.class);
-		context.register(EntityUpdateCollectionReader.class);
+        context.register(ResponseStatusDynamicFeature.class);
 
-		for (Class<?> c : extraComponents) {
-			context.register(c);
-		}
+        context.register(EntityUpdateReader.class);
+        context.register(EntityUpdateCollectionReader.class);
 
-		for (Feature f : extraFeatures) {
-			f.configure(context);
-		}
+        for (Class<?> c : extraComponents) {
+            context.register(c);
+        }
 
-		return true;
-	}
+        for (Feature f : extraFeatures) {
+            f.configure(context);
+        }
+
+        return true;
+    }
 }

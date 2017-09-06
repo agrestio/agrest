@@ -1,5 +1,6 @@
-package com.nhl.link.rest.runtime;
+package com.nhl.link.rest;
 
+import com.nhl.link.rest.runtime.LinkRestRuntime;
 import org.apache.cayenne.di.spi.ModuleProvider;
 
 /**
