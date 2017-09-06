@@ -125,6 +125,10 @@ public class LinkRestBuilder {
     private Class<? extends ILinkRestService> linkRestServiceType;
     private ILinkRestService linkRestService;
 
+
+    private List<LrModuleProvider> moduleProviders;
+    private List<Module> modules;
+
     private List<EncoderFilter> encoderFilters;
     private Map<String, LrEntityOverlay> entityOverlays;
     private Map<Class<?>, Class<?>> exceptionMappers;
@@ -162,6 +166,9 @@ public class LinkRestBuilder {
         this.exceptionMappers = mapDefaultExceptions();
         this.adapters = new ArrayList<>();
         this.metadataEncoders = new HashMap<>();
+
+        this.moduleProviders = new ArrayList<>(5);
+        this.modules = new ArrayList<>(5);
     }
 
     protected Map<Class<?>, Class<?>> mapDefaultExceptions() {
@@ -293,10 +300,35 @@ public class LinkRestBuilder {
      * Adds an adapter that may contribute custom configuration to
      * {@link LinkRestRuntime}.
      *
+     * @return this builder instance.
      * @since 1.3
      */
     public LinkRestBuilder adapter(LinkRestAdapter adapter) {
         this.adapters.add(adapter);
+        return this;
+    }
+
+    /**
+     * Registers a DI extension module for {@link LinkRestRuntime}.
+     *
+     * @param module an extension DI module for {@link LinkRestRuntime}.
+     * @return this builder instance.
+     * @since 2.10
+     */
+    public LinkRestBuilder module(Module module) {
+        modules.add(module);
+        return this;
+    }
+
+    /**
+     * Registers a provider of a DI extension module for {@link LinkRestRuntime}.
+     *
+     * @param provider a provider of an extension module for {@link LinkRestRuntime}.
+     * @return this builder instance.
+     * @since 2.10
+     */
+    public LinkRestBuilder module(LrModuleProvider provider) {
+        moduleProviders.add(provider);
         return this;
     }
 
@@ -335,7 +367,20 @@ public class LinkRestBuilder {
             throw new IllegalStateException("Required 'linkRestService' is not set");
         }
 
-        Module module = binder -> {
+        List<Module> allModules = new ArrayList<>();
+
+        // core module goes first, the rest of them override the core and each other
+        allModules.add(createCoreModule());
+
+        // TODO: consistent sorting policy: Cayenne ModuleProvider sorting facility ? Same order as the modules are aded to the builder?
+        allModules.addAll(modules);
+        moduleProviders.forEach(p -> allModules.add(p.module()));
+
+        return DIBootstrap.createInjector(allModules);
+    }
+
+    private Module createCoreModule() {
+        return binder -> {
 
             binder.bindList(EncoderFilter.class).addAll(encoderFilters);
 
@@ -442,7 +487,5 @@ public class LinkRestBuilder {
                 a.contributeToRuntime(binder);
             }
         };
-
-        return DIBootstrap.createInjector(module);
     }
 }
