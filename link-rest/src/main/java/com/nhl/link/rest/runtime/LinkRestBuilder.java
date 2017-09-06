@@ -3,6 +3,7 @@ package com.nhl.link.rest.runtime;
 import com.nhl.link.rest.DataResponse;
 import com.nhl.link.rest.EntityConstraint;
 import com.nhl.link.rest.LinkRestException;
+import com.nhl.link.rest.LrFeatureProvider;
 import com.nhl.link.rest.LrModuleProvider;
 import com.nhl.link.rest.MetadataResponse;
 import com.nhl.link.rest.SimpleResponse;
@@ -109,7 +110,6 @@ import java.lang.reflect.Type;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -127,6 +127,8 @@ public class LinkRestBuilder {
     private ILinkRestService linkRestService;
     private List<LrModuleProvider> moduleProviders;
     private List<Module> modules;
+    private List<LrFeatureProvider> featureProviders;
+    private List<Feature> features;
     private List<EncoderFilter> encoderFilters;
     private Map<String, LrEntityOverlay> entityOverlays;
     private Map<Class<?>, Class<?>> exceptionMappers;
@@ -167,6 +169,8 @@ public class LinkRestBuilder {
         this.metadataEncoders = new HashMap<>();
         this.moduleProviders = new ArrayList<>(5);
         this.modules = new ArrayList<>(5);
+        this.featureProviders = new ArrayList<>(5);
+        this.features = new ArrayList<>(5);
     }
 
     protected Map<Class<?>, Class<?>> mapDefaultExceptions() {
@@ -319,6 +323,30 @@ public class LinkRestBuilder {
     }
 
     /**
+     * Registers a JAX-RS feature extending LinkRest JAX-RS integration.
+     *
+     * @param feature a custom JAX-RS feature.
+     * @return this builder instance.
+     * @since 2.10
+     */
+    public LinkRestBuilder feature(Feature feature) {
+        features.add(feature);
+        return this;
+    }
+
+    /**
+     * Registers a provider of a custom JAX-RS feature extending LinkRest JAX-RS integration.
+     *
+     * @param featureProvider a provider of a custom JAX-RS feature.
+     * @return this builder instance.
+     * @since 2.10
+     */
+    public LinkRestBuilder feature(LrFeatureProvider featureProvider) {
+        featureProviders.add(featureProvider);
+        return this;
+    }
+
+    /**
      * Registers a DI extension module for {@link LinkRestRuntime}.
      *
      * @param module an extension DI module for {@link LinkRestRuntime}.
@@ -349,7 +377,7 @@ public class LinkRestBuilder {
 
     public LinkRestRuntime build() {
         Injector i = createInjector();
-        return new LinkRestRuntime(i, createExtraFeatures(), createExtraComponents());
+        return new LinkRestRuntime(i, createExtraFeatures(i), createExtraComponents());
     }
 
     private Collection<Class<?>> createExtraComponents() {
@@ -357,16 +385,18 @@ public class LinkRestBuilder {
         return exceptionMappers.values();
     }
 
-    private Collection<Feature> createExtraFeatures() {
+    private Collection<Feature> createExtraFeatures(Injector injector) {
 
-        if (adapters.isEmpty()) {
-            return Collections.emptyList();
-        }
+        Collection<Feature> features = new ArrayList<>(
+                adapters.size() + this.features.size() + this.featureProviders.size());
 
-        Collection<Feature> features = new ArrayList<>(adapters.size());
         for (LinkRestAdapter a : adapters) {
             a.contributeToJaxRs(features);
         }
+
+        features.addAll(this.features);
+
+        featureProviders.forEach(fp -> features.add(fp.feature(injector)));
 
         return features;
     }
@@ -382,7 +412,7 @@ public class LinkRestBuilder {
         // core module goes first, the rest of them override the core and each other
         allModules.add(createCoreModule());
 
-        if(autoLoadModules) {
+        if (autoLoadModules) {
             allModules.addAll(autoLoadModules());
         }
 
