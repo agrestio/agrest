@@ -114,6 +114,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.ServiceLoader;
 import java.util.concurrent.ExecutorService;
 
 /**
@@ -137,6 +138,7 @@ public class LinkRestBuilder {
     private ExecutorService executor;
     private String baseUrl;
     private boolean autoLoadModules;
+    private boolean autoLoadFeatures;
 
     /**
      * A shortcut that creates a LinkRest stack based on Cayenne runtime and
@@ -160,6 +162,7 @@ public class LinkRestBuilder {
 
     public LinkRestBuilder() {
         this.autoLoadModules = true;
+        this.autoLoadFeatures = true;
         this.entityOverlays = new HashMap<>();
         this.encoderFilters = new ArrayList<>();
         this.linkRestServiceType = DefaultLinkRestService.class;
@@ -181,6 +184,19 @@ public class LinkRestBuilder {
         map.put(ValidationException.class, ValidationExceptionMapper.class);
 
         return map;
+    }
+
+    /**
+     * Suppresses JAX-RS Feature auto-loading. By default features are auto-loaded based on the service descriptors under
+     * "META-INF/services/com.nhl.link.rest.LrFeatureProvider". Calling this method would suppress auto-loading behavior,
+     * letting the programmer explicitly pick which extensions need to be loaded.
+     *
+     * @return this builder instance.
+     * @since 2.10
+     */
+    public LinkRestBuilder doNotAutoLoadFeatures() {
+        this.autoLoadFeatures = false;
+        return this;
     }
 
     /**
@@ -387,47 +403,80 @@ public class LinkRestBuilder {
 
     private Collection<Feature> createExtraFeatures(Injector injector) {
 
-        Collection<Feature> features = new ArrayList<>(
-                adapters.size() + this.features.size() + this.featureProviders.size());
+        Collection<Feature> featureCollector = new ArrayList<>();
 
-        for (LinkRestAdapter a : adapters) {
-            a.contributeToJaxRs(features);
+        if (!adapters.isEmpty()) {
+            loadAdapterProvidedFeatures(featureCollector);
         }
 
-        features.addAll(this.features);
+        if (autoLoadFeatures) {
+            loadAutoLoadableFeatures(featureCollector, injector);
+        }
 
-        featureProviders.forEach(fp -> features.add(fp.feature(injector)));
+        loadBuilderFeatures(featureCollector, injector);
 
-        return features;
+        return featureCollector;
     }
 
     private Injector createInjector() {
+
+        Collection<Module> moduleCollector = new ArrayList<>();
+
+        // core module goes first, the rest of them override the core and each other
+        moduleCollector.add(createCoreModule());
+
+        // TODO: consistent sorting policy past core module...
+        // Cayenne ModuleProvider provides a sorting facility but how do we apply it across loading strategies ?
+
+        if (!adapters.isEmpty()) {
+            loadAdapterProvidedModules(moduleCollector);
+        }
+
+        if (autoLoadModules) {
+            loadAutoLoadableModules(moduleCollector);
+        }
+
+        loadBuilderModules(moduleCollector);
+
+        return DIBootstrap.createInjector(moduleCollector);
+    }
+
+    private void loadAutoLoadableFeatures(Collection<Feature> collector, Injector i) {
+        ServiceLoader.load(LrFeatureProvider.class).forEach(fp -> collector.add(fp.feature(i)));
+    }
+
+    private void loadAdapterProvidedFeatures(Collection<Feature> collector) {
+        adapters.forEach(a -> a.contributeToJaxRs(collector));
+    }
+
+    private void loadBuilderFeatures(Collection<Feature> collector, Injector i) {
+        collector.addAll(this.features);
+        featureProviders.forEach(fp -> collector.add(fp.feature(i)));
+    }
+
+    private void loadAutoLoadableModules(Collection<Module> collector) {
+        collector.addAll(new ModuleLoader().load(LrModuleProvider.class));
+    }
+
+    private void loadAdapterProvidedModules(Collection<Module> collector) {
+        collector.add(b -> adapters.forEach(a -> a.contributeToRuntime(b)));
+    }
+
+    private void loadBuilderModules(Collection<Module> collector) {
+
+        // TODO: Pending a global sorting policy at the caller level, should we enforce builder addition order between
+        // modules and providers?
+
+        collector.addAll(modules);
+        moduleProviders.forEach(p -> collector.add(p.module()));
+    }
+
+    private Module createCoreModule() {
 
         if (linkRestService == null && linkRestServiceType == null) {
             throw new IllegalStateException("Required 'linkRestService' is not set");
         }
 
-        List<Module> allModules = new ArrayList<>();
-
-        // core module goes first, the rest of them override the core and each other
-        allModules.add(createCoreModule());
-
-        if (autoLoadModules) {
-            allModules.addAll(autoLoadModules());
-        }
-
-        // TODO: consistent sorting policy: Cayenne ModuleProvider sorting facility ? Same order as the modules are aded to the builder?
-        allModules.addAll(modules);
-        moduleProviders.forEach(p -> allModules.add(p.module()));
-
-        return DIBootstrap.createInjector(allModules);
-    }
-
-    private List<Module> autoLoadModules() {
-        return new ModuleLoader().load(LrModuleProvider.class);
-    }
-
-    private Module createCoreModule() {
         return binder -> {
 
             binder.bindList(EncoderFilter.class).addAll(encoderFilters);
@@ -528,11 +577,6 @@ public class LinkRestBuilder {
                 binder.bind(ExecutorService.class).toInstance(executor);
             } else {
                 binder.bind(ExecutorService.class).toProvider(UnboundedExecutorServiceProvider.class);
-            }
-
-            // apply adapter-contributed bindings
-            for (LinkRestAdapter a : adapters) {
-                a.contributeToRuntime(binder);
             }
         };
     }

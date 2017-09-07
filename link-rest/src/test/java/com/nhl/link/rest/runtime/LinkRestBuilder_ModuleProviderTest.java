@@ -21,28 +21,28 @@ public class LinkRestBuilder_ModuleProviderTest {
 
     @Test
     public void testLrModule_Provider() {
-        assertRuntime(
+        inRuntime(
                 new LinkRestBuilder().module(new LocalTestModuleProvider()),
                 this::assertLocalTestModuleActive);
     }
 
     @Test
     public void testModule() {
-        assertRuntime(
+        inRuntime(
                 new LinkRestBuilder().module(new LocalTestModule()),
                 this::assertLocalTestModuleActive);
     }
 
     @Test
     public void testAutoLoading() {
-        assertRuntime(
+        inRuntime(
                 new LinkRestBuilder(),
                 this::assertTestModuleActive);
     }
 
     @Test
     public void testSuppressAutoLoading() {
-        assertRuntime(
+        inRuntime(
                 new LinkRestBuilder().doNotAutoLoadModules(),
                 this::assertTestModuleNotActive);
     }
@@ -65,7 +65,7 @@ public class LinkRestBuilder_ModuleProviderTest {
         assertFalse("Auto-loading was on", encoders.containsKey(TestModuleProvider.METADATA_ENCODER_KEY));
     }
 
-    private void assertRuntime(LinkRestBuilder builder, Consumer<LinkRestRuntime> test) {
+    private void inRuntime(LinkRestBuilder builder, Consumer<LinkRestRuntime> test) {
         LinkRestRuntime r = builder.build();
         try {
             test.accept(r);

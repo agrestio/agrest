@@ -1,6 +1,7 @@
 package com.nhl.link.rest.runtime;
 
 import com.nhl.link.rest.LrFeatureProvider;
+import com.nhl.link.rest.TestFeatureProvider;
 import org.apache.cayenne.di.Injector;
 import org.junit.Test;
 
@@ -10,6 +11,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.function.Consumer;
 
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
@@ -20,19 +22,48 @@ public class LinkRestBuilder_FeatureProviderTest {
 
     @Test
     public void testFeature() {
-        assertRuntime(
+        inRuntime(
                 new LinkRestBuilder().feature(new LocalTestFeature()),
                 this::assertLocalTestFeatureActive);
     }
 
     @Test
     public void testFeatureProvider() {
-        assertRuntime(
+        inRuntime(
                 new LinkRestBuilder().feature(new LocalTestFeatureProvider()),
                 this::assertLocalTestFeatureActive);
     }
 
+    @Test
+    public void testAutoLoadFeaturesDefault() {
+        inRuntime(
+                new LinkRestBuilder(),
+                this::assertTestFeatureActive);
+    }
+
+    @Test
+    public void testDoNotAutoLoadFeatures() {
+        inRuntime(
+                new LinkRestBuilder().doNotAutoLoadFeatures(),
+                this::assertTestFeatureNotActive);
+    }
+
+    private void assertTestFeatureActive(LinkRestRuntime runtime) {
+        Set<Object> registered = extractRegisteredInJaxRS(runtime);
+        assertTrue(registered.contains(TestFeatureProvider.RegisteredByFeature.class));
+    }
+
+    private void assertTestFeatureNotActive(LinkRestRuntime runtime) {
+        Set<Object> registered = extractRegisteredInJaxRS(runtime);
+        assertFalse("Auto-loading was on", registered.contains(TestFeatureProvider.RegisteredByFeature.class));
+    }
+
     private void assertLocalTestFeatureActive(LinkRestRuntime runtime) {
+        Set<Object> registered = extractRegisteredInJaxRS(runtime);
+        assertTrue("Auto-loading was off", registered.contains(LocalRegisteredByFeature.class));
+    }
+
+    private Set<Object> extractRegisteredInJaxRS(LinkRestRuntime runtime) {
         Set<Object> registered = new HashSet<>();
         FeatureContext fc = mock(FeatureContext.class);
         when(fc.register(any(Class.class))).then(i -> {
@@ -41,10 +72,10 @@ public class LinkRestBuilder_FeatureProviderTest {
         });
 
         runtime.configure(fc);
-        assertTrue(registered.contains(LocalRegisteredByFeature.class));
+        return registered;
     }
 
-    private void assertRuntime(LinkRestBuilder builder, Consumer<LinkRestRuntime> test) {
+    private void inRuntime(LinkRestBuilder builder, Consumer<LinkRestRuntime> test) {
         LinkRestRuntime r = builder.build();
         try {
             test.accept(r);
