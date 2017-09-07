@@ -332,7 +332,12 @@ public class LinkRestBuilder {
      *
      * @return this builder instance.
      * @since 1.3
+     * @deprecated since 2.10 LinkRestAdapter is deprecated in favor of
+     * {@link com.nhl.link.rest.LrFeatureProvider} and
+     * {@link com.nhl.link.rest.LrModuleProvider}. Either can be registered with
+     * {@link com.nhl.link.rest.runtime.LinkRestBuilder} explicitly or used to implemented auto-loadable extensions.
      */
+    @Deprecated
     public LinkRestBuilder adapter(LinkRestAdapter adapter) {
         this.adapters.add(adapter);
         return this;

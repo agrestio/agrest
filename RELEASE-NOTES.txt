@@ -1,5 +1,6 @@
 Release 2.10
 
+#245 module auto-loading
 #253 meta: explicit base URL for misconfigured proxies
 #254 Upgrade to Jackson 2.6.4
 #255 Support for constraints in MetadataBuilder
