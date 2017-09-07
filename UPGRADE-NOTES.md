@@ -1,5 +1,12 @@
 ## Upgrading to 2.10
 
+### LinkRestAdapter is deprecated, replaced with LrFeatureProvider and LrModuleProvider [#245](https://github.com/nhl/link-rest/issues/245)
+
+Instead of a monolithic adapter, LinkRest new extension mechanism is based on two separate interfaces, LrFeatureProvider and LrModuleProvider,
+one to provide JAX-RS extensions, the other - for the LinkRest stack extensions. `LinkRestAdapter` got deprecated. Consider upgrading to the new
+mechanism. Also note that both new providers can be configured for auto-loading using standard Java ServiceLoader mechanism .See 
+[#245](https://github.com/nhl/link-rest/issues/245) for details.
+
 ### Renamed @Resource to @LrResource [#261](https://github.com/nhl/link-rest/issues/261)
 
 `@Resource` annotation was used for annotating REST endpoints to build informative metadata resources. For naming 
@@ -8,6 +15,10 @@ While the old form is still operational, it is deprecated and will eventually be
 with the new form (`@LrResource`) you will get an error about one of its attributes, namely the `LinkType` enum. `@LrResource`
 uses LinkType from a different package. So be sure to replace `com.nhl.link.rest.meta.LinkType` import with 
 `com.nhl.link.rest.annotation.LinkType`.
+
+### SenchaAdapter made auto-loadable [#263](https://github.com/nhl/link-rest/issues/263)
+
+If you are using LinkRest with Sencha/ExtJS, chances are you've activated `SenchaAdapter`. In 2.10 `SenchaAdapter` class was removed and replaced with auto-loadable `SenchaFeatureProvider` and `SenchaModuleProvider` pair. So you will see compilation errors. When you do, remove the adapter registration code and instead add a dependency on the new `com.nhl.link.rest:link-rest-sencha` module. After that your app should automatically find and install all Sencha-specific services.
 
 
 ## Upgrading to 2.7
