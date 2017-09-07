@@ -1,9 +1,11 @@
-package com.nhl.link.rest.it.sencha;
+package com.nhl.link.rest.sencha.it;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-
-import java.io.IOException;
+import com.nhl.link.rest.it.fixture.JerseyTestOnDerby;
+import com.nhl.link.rest.it.fixture.cayenne.E3;
+import com.nhl.link.rest.it.fixture.resource.E3Resource;
+import org.apache.cayenne.Cayenne;
+import org.apache.cayenne.query.SelectById;
+import org.junit.Test;
 
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.client.Entity;
@@ -11,27 +13,16 @@ import javax.ws.rs.core.FeatureContext;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
+import java.io.IOException;
 
-import org.apache.cayenne.Cayenne;
-import org.apache.cayenne.query.SelectById;
-import org.junit.Test;
-
-import com.nhl.link.rest.it.fixture.JerseyTestOnDerby;
-import com.nhl.link.rest.it.fixture.cayenne.E3;
-import com.nhl.link.rest.it.fixture.resource.E3Resource;
-import com.nhl.link.rest.runtime.LinkRestBuilder;
-import com.nhl.link.rest.runtime.adapter.sencha.SenchaAdapter;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 public class Sencha_PUT_IT extends JerseyTestOnDerby {
 
 	@Override
 	protected void doAddResources(FeatureContext context) {
 		context.register(E3Resource.class);
-	}
-
-	@Override
-	protected LinkRestBuilder doConfigure() {
-		return super.doConfigure().adapter(new SenchaAdapter());
 	}
 
 	@Test

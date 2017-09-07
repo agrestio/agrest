@@ -1,4 +1,4 @@
-package com.nhl.link.rest.runtime.adapter.sencha;
+package com.nhl.link.rest.sencha;
 
 import com.fasterxml.jackson.core.JsonEncoding;
 import com.fasterxml.jackson.core.JsonGenerator;
@@ -40,10 +40,10 @@ public class SenchaEncoderServiceTest extends TestWithCayenneMapping {
     @Before
     public void before() {
 
-        ObjectContext sharedContext = runtime.newContext();
+        ObjectContext sharedContext = TestWithCayenneMapping.runtime.newContext();
         cayenneService = mock(ICayennePersister.class);
         when(cayenneService.sharedContext()).thenReturn(sharedContext);
-        when(cayenneService.newContext()).thenReturn(runtime.newContext());
+        when(cayenneService.newContext()).thenReturn(TestWithCayenneMapping.runtime.newContext());
 
         this.filters = new ArrayList<>();
         IAttributeEncoderFactory attributeEncoderFactory = new AttributeEncoderFactory();

@@ -1,11 +1,11 @@
-package com.nhl.link.rest.runtime.adapter.sencha;
-
-import java.io.IOException;
+package com.nhl.link.rest.sencha;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.nhl.link.rest.EntityProperty;
 import com.nhl.link.rest.encoder.Encoder;
 import com.nhl.link.rest.encoder.EntityToOneEncoder;
+
+import java.io.IOException;
 
 public abstract class SenchaEntityToOneEncoder extends EntityToOneEncoder {
 

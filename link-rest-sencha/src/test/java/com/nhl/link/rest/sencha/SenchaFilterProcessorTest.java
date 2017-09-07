@@ -1,4 +1,4 @@
-package com.nhl.link.rest.runtime.adapter.sencha;
+package com.nhl.link.rest.sencha;
 
 import static org.apache.cayenne.exp.ExpressionFactory.exp;
 import static org.junit.Assert.assertEquals;
@@ -9,6 +9,7 @@ import static org.junit.Assert.assertThat;
 import com.nhl.link.rest.runtime.parser.filter.ExpressionPostProcessor;
 import org.apache.cayenne.exp.Expression;
 import org.hamcrest.core.IsInstanceOf;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -81,7 +82,7 @@ public class SenchaFilterProcessorTest extends TestWithCayenneMapping {
 		Expression e = processor.process(e4Entity, "[{\"property\":\"cVarchar\",\"value\":\"x_%\"}]");
 
 		assertNotNull(e);
-		assertEquals(E4.C_VARCHAR.likeIgnoreCase("x\\_\\%%"), e);
+		Assert.assertEquals(E4.C_VARCHAR.likeIgnoreCase("x\\_\\%%"), e);
 	}
 
 	@Test
@@ -89,7 +90,7 @@ public class SenchaFilterProcessorTest extends TestWithCayenneMapping {
 		Expression e = processor.process(e4Entity, "[{\"property\":\"cVarchar\",\"value\":null}]");
 
 		assertNotNull(e);
-		assertEquals(E4.C_VARCHAR.isNull(), e);
+		Assert.assertEquals(E4.C_VARCHAR.isNull(), e);
 	}
 
 	@Test

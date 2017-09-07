@@ -15,7 +15,6 @@ import java.util.Collections;
  */
 public interface LrModuleProvider extends ModuleProvider {
 
-
     @Override
     default Collection<Class<? extends Module>> overrides() {
         return Collections.emptySet();

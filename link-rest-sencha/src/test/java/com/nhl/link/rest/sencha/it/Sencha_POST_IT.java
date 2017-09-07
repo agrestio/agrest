@@ -1,21 +1,4 @@
-package com.nhl.link.rest.it.sencha;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
-import java.io.IOException;
-
-import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.client.Entity;
-import javax.ws.rs.core.FeatureContext;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
-
-import org.apache.cayenne.Cayenne;
-import org.apache.cayenne.query.SQLTemplate;
-import org.apache.cayenne.query.SelectQuery;
-import org.junit.Test;
+package com.nhl.link.rest.sencha.it;
 
 import com.nhl.link.rest.it.fixture.JerseyTestOnDerby;
 import com.nhl.link.rest.it.fixture.cayenne.E3;
@@ -23,8 +6,21 @@ import com.nhl.link.rest.it.fixture.cayenne.E4;
 import com.nhl.link.rest.it.fixture.resource.E14Resource;
 import com.nhl.link.rest.it.fixture.resource.E3Resource;
 import com.nhl.link.rest.it.fixture.resource.E4Resource;
-import com.nhl.link.rest.runtime.LinkRestBuilder;
-import com.nhl.link.rest.runtime.adapter.sencha.SenchaAdapter;
+import org.apache.cayenne.Cayenne;
+import org.apache.cayenne.query.SQLTemplate;
+import org.apache.cayenne.query.SelectQuery;
+import org.junit.Test;
+
+import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.client.Entity;
+import javax.ws.rs.core.FeatureContext;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
+import java.io.IOException;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class Sencha_POST_IT extends JerseyTestOnDerby {
 
@@ -33,11 +29,6 @@ public class Sencha_POST_IT extends JerseyTestOnDerby {
 		context.register(E3Resource.class);
 		context.register(E4Resource.class);
 		context.register(E14Resource.class);
-	}
-
-	@Override
-	protected LinkRestBuilder doConfigure() {
-		return super.doConfigure().adapter(new SenchaAdapter());
 	}
 
 	@Test

@@ -1,10 +1,8 @@
-package com.nhl.link.rest.it.sencha;
+package com.nhl.link.rest.sencha.it;
 
 import com.nhl.link.rest.it.fixture.JerseyTestOnDerby;
 import com.nhl.link.rest.it.fixture.resource.E17Resource;
 import com.nhl.link.rest.it.fixture.resource.E2Resource;
-import com.nhl.link.rest.runtime.LinkRestBuilder;
-import com.nhl.link.rest.runtime.adapter.sencha.SenchaAdapter;
 import org.glassfish.jersey.client.ClientProperties;
 import org.junit.Test;
 
@@ -23,11 +21,6 @@ public class Sencha_DELETE_IT extends JerseyTestOnDerby {
 	protected void doAddResources(FeatureContext context) {
 		context.register(E2Resource.class);
         context.register(E17Resource.class);
-	}
-
-	@Override
-	protected LinkRestBuilder doConfigure() {
-		return super.doConfigure().adapter(new SenchaAdapter());
 	}
 
     @Test

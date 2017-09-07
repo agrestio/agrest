@@ -1,4 +1,4 @@
-package com.nhl.link.rest.runtime.adapter.sencha;
+package com.nhl.link.rest.sencha;
 
 import com.nhl.link.rest.ResourceEntity;
 import com.nhl.link.rest.it.fixture.cayenne.E2;
