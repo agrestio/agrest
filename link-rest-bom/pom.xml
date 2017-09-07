@@ -34,6 +34,11 @@
                 <artifactId>link-rest-client</artifactId>
                 <version>${project.version}</version>
             </dependency>
+            <dependency>
+                <groupId>com.nhl.link.rest</groupId>
+                <artifactId>link-rest-sencha</artifactId>
+                <version>${project.version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 

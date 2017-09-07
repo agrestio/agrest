@@ -14,6 +14,7 @@
         <module>link-rest-annotations</module>
         <module>link-rest</module>
         <module>link-rest-client</module>
+        <module>link-rest-sencha</module>
         <module>link-rest-bom</module>
         <module>link-rest-docs</module>
     </modules>
