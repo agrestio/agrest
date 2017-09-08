@@ -5,7 +5,6 @@ import com.nhl.link.rest.LinkRest;
 import com.nhl.link.rest.it.fixture.JerseyTestOnDerby;
 import com.nhl.link.rest.it.fixture.cayenne.E2;
 import com.nhl.link.rest.it.fixture.cayenne.E3;
-import com.nhl.link.rest.it.fixture.resource.E3Resource;
 import org.apache.cayenne.query.SQLTemplate;
 import org.junit.Test;
 
@@ -25,7 +24,6 @@ public class GET_CayenneExpIT extends JerseyTestOnDerby {
 	@Override
 	protected void doAddResources(FeatureContext context) {
 		context.register(Resource.class);
-		context.register(E3Resource.class);
 	}
 
 	@Test
@@ -250,5 +248,11 @@ public class GET_CayenneExpIT extends JerseyTestOnDerby {
 		public DataResponse<E2> getE2(@Context UriInfo uriInfo) {
 			return LinkRest.service(config).select(E2.class).uri(uriInfo).get();
 		}
+
+        @GET
+        @Path("e3")
+        public DataResponse<E3> getE3(@Context UriInfo uriInfo) {
+            return LinkRest.service(config).select(E3.class).uri(uriInfo).get();
+        }
 	}
 }

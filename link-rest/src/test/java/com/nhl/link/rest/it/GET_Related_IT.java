@@ -10,7 +10,6 @@ import com.nhl.link.rest.it.fixture.cayenne.E17;
 import com.nhl.link.rest.it.fixture.cayenne.E18;
 import com.nhl.link.rest.it.fixture.cayenne.E2;
 import com.nhl.link.rest.it.fixture.cayenne.E3;
-import com.nhl.link.rest.it.fixture.resource.E3Resource;
 import org.apache.cayenne.map.DataMap;
 import org.apache.cayenne.map.ObjAttribute;
 import org.apache.cayenne.map.ObjEntity;
@@ -35,7 +34,6 @@ public class GET_Related_IT extends JerseyTestOnDerby {
 
     @Override
     protected void doAddResources(FeatureContext context) {
-        context.register(E3Resource.class);
         context.register(Resource.class);
     }
 
@@ -205,6 +203,12 @@ public class GET_Related_IT extends JerseyTestOnDerby {
         public DataResponse<E3> getE2_E3s_Constrained(@PathParam("id") int id, @Context UriInfo uriInfo) {
             return LinkRest.select(E3.class, config).parent(E2.class, id, "e3s").uri(uriInfo)
                     .constraint(Constraint.idOnly(E3.class)).get();
+        }
+
+        @GET
+        @Path("e3/{id}/e2")
+        public DataResponse<E2> getE2OfE3(@PathParam("id") int id, @Context UriInfo uriInfo) {
+            return LinkRest.select(E2.class, config).parent(E3.class, id, E3.E2).uri(uriInfo).get();
         }
 
         @GET

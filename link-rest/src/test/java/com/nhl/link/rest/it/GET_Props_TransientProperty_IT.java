@@ -1,13 +1,19 @@
 package com.nhl.link.rest.it;
 
+import com.nhl.link.rest.DataResponse;
+import com.nhl.link.rest.LinkRest;
 import com.nhl.link.rest.it.fixture.JerseyTestOnDerby;
 import com.nhl.link.rest.it.fixture.cayenne.E4;
-import com.nhl.link.rest.it.fixture.resource.E4Resource;
 import com.nhl.link.rest.runtime.LinkRestBuilder;
 import org.junit.Test;
 
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.core.Configuration;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.FeatureContext;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriInfo;
 
 import static org.junit.Assert.assertEquals;
 
@@ -18,7 +24,7 @@ public class GET_Props_TransientProperty_IT extends JerseyTestOnDerby {
 
     @Override
     protected void doAddResources(FeatureContext context) {
-        context.register(E4Resource.class);
+        context.register(Resource.class);
     }
 
     @Override
@@ -42,5 +48,18 @@ public class GET_Props_TransientProperty_IT extends JerseyTestOnDerby {
         assertEquals(
                 "{\"data\":[{\"derived\":\"x$\"},{\"derived\":\"y$\"}],\"total\":2}",
                 r.readEntity(String.class));
+    }
+
+    @Path("")
+    public static class Resource {
+
+        @Context
+        private Configuration config;
+
+        @GET
+        @Path("e4")
+        public DataResponse<E4> get(@Context UriInfo uriInfo) {
+            return LinkRest.service(config).select(E4.class).uri(uriInfo).get();
+        }
     }
 }

@@ -1,15 +1,22 @@
 package com.nhl.link.rest.client.it.noadapter;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.nhl.link.rest.DataResponse;
+import com.nhl.link.rest.LinkRest;
 import com.nhl.link.rest.client.ClientDataResponse;
 import com.nhl.link.rest.client.LinkRestClient;
 import com.nhl.link.rest.it.fixture.JerseyTestOnDerby;
 import com.nhl.link.rest.it.fixture.cayenne.E3;
-import com.nhl.link.rest.it.fixture.resource.E3Resource;
 import org.junit.Test;
 
+import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
+import javax.ws.rs.core.Configuration;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.FeatureContext;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriInfo;
 
 import static com.nhl.link.rest.client.it.noadapter.EntityUtil.createE3;
 import static org.junit.Assert.assertEquals;
@@ -18,7 +25,7 @@ public class PUT_Client_IT extends JerseyTestOnDerby {
 
     @Override
     protected void doAddResources(FeatureContext context) {
-        context.register(E3Resource.class);
+        context.register(Resource.class);
     }
 
     @Test
@@ -46,5 +53,24 @@ public class PUT_Client_IT extends JerseyTestOnDerby {
 
         JsonNode e3_after_update = createE3(id, "ddd");
         assertEquals(e3_after_update, r2.getData().get(0));
+    }
+
+    @Path("")
+    public static class Resource {
+
+        @Context
+        private Configuration config;
+
+        @POST
+        @Path("e3")
+        public DataResponse<E3> create(@Context UriInfo uriInfo, String requestBody) {
+            return LinkRest.create(E3.class, config).uri(uriInfo).syncAndSelect(requestBody);
+        }
+
+        @PUT
+        @Path("e3")
+        public DataResponse<E3> sync(@Context UriInfo uriInfo, String requestBody) {
+            return LinkRest.idempotentFullSync(E3.class, config).uri(uriInfo).syncAndSelect(requestBody);
+        }
     }
 }

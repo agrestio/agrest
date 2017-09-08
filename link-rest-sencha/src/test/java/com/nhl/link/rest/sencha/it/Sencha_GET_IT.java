@@ -5,7 +5,6 @@ import com.nhl.link.rest.LinkRest;
 import com.nhl.link.rest.it.fixture.JerseyTestOnDerby;
 import com.nhl.link.rest.it.fixture.cayenne.E2;
 import com.nhl.link.rest.it.fixture.cayenne.E3;
-import com.nhl.link.rest.it.fixture.resource.E3Resource;
 import org.apache.cayenne.query.SQLTemplate;
 import org.junit.Test;
 
@@ -26,7 +25,6 @@ public class Sencha_GET_IT extends JerseyTestOnDerby {
 	@Override
 	protected void doAddResources(FeatureContext context) {
 		context.register(Resource.class);
-		context.register(E3Resource.class);
 	}
 
 	@Test
@@ -206,6 +204,17 @@ public class Sencha_GET_IT extends JerseyTestOnDerby {
 		public DataResponse<E2> getE2ById(@PathParam("id") int id, @Context UriInfo uriInfo) {
 			return LinkRest.service(config).selectById(E2.class, id, uriInfo);
 		}
-	}
 
+        @GET
+        @Path("e3")
+        public DataResponse<E3> get(@Context UriInfo uriInfo) {
+            return LinkRest.service(config).select(E3.class).uri(uriInfo).get();
+        }
+
+        @GET
+        @Path("e3/{id}")
+        public DataResponse<E3> getById(@PathParam("id") int id, @Context UriInfo uriInfo) {
+            return LinkRest.service(config).selectById(E3.class, id, uriInfo);
+        }
+	}
 }

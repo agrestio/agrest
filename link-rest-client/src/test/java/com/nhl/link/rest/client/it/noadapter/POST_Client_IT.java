@@ -9,7 +9,6 @@ import com.nhl.link.rest.client.protocol.Include;
 import com.nhl.link.rest.it.fixture.JerseyTestOnDerby;
 import com.nhl.link.rest.it.fixture.cayenne.E2;
 import com.nhl.link.rest.it.fixture.cayenne.E3;
-import com.nhl.link.rest.it.fixture.resource.E3Resource;
 import org.junit.Test;
 
 import javax.ws.rs.POST;
@@ -29,7 +28,6 @@ public class POST_Client_IT extends JerseyTestOnDerby {
     @Override
     protected void doAddResources(FeatureContext context) {
         context.register(Resource.class);
-        context.register(E3Resource.class);
     }
 
     @Test
@@ -70,6 +68,12 @@ public class POST_Client_IT extends JerseyTestOnDerby {
         @Path("e2")
         public DataResponse<E2> createE2(String targetData, @Context UriInfo uriInfo) {
             return LinkRest.create(E2.class, config).uri(uriInfo).syncAndSelect(targetData);
+        }
+
+        @POST
+        @Path("e3")
+        public DataResponse<E3> create(@Context UriInfo uriInfo, String requestBody) {
+            return LinkRest.create(E3.class, config).uri(uriInfo).syncAndSelect(requestBody);
         }
     }
 }

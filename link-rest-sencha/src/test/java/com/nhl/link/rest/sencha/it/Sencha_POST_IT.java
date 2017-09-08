@@ -6,7 +6,6 @@ import com.nhl.link.rest.it.fixture.JerseyTestOnDerby;
 import com.nhl.link.rest.it.fixture.cayenne.E14;
 import com.nhl.link.rest.it.fixture.cayenne.E3;
 import com.nhl.link.rest.it.fixture.cayenne.E4;
-import com.nhl.link.rest.it.fixture.resource.E3Resource;
 import org.apache.cayenne.Cayenne;
 import org.apache.cayenne.query.SQLTemplate;
 import org.apache.cayenne.query.SelectQuery;
@@ -14,7 +13,6 @@ import org.junit.Test;
 
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
-import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.Configuration;
 import javax.ws.rs.core.Context;
@@ -22,7 +20,7 @@ import javax.ws.rs.core.FeatureContext;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
-import java.io.IOException;
+import javax.ws.rs.core.UriInfo;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -31,7 +29,6 @@ public class Sencha_POST_IT extends JerseyTestOnDerby {
 
     @Override
     protected void doAddResources(FeatureContext context) {
-        context.register(E3Resource.class);
         context.register(Resource.class);
     }
 
@@ -91,6 +88,12 @@ public class Sencha_POST_IT extends JerseyTestOnDerby {
 
         @Context
         private Configuration config;
+
+        @POST
+        @Path("e3")
+        public DataResponse<E3> create(@Context UriInfo uriInfo, String requestBody) {
+            return LinkRest.create(E3.class, config).uri(uriInfo).syncAndSelect(requestBody);
+        }
 
         @POST
         @Path("e14")

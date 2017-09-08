@@ -1,17 +1,24 @@
 package com.nhl.link.rest.it;
 
+import com.nhl.link.rest.DataResponse;
+import com.nhl.link.rest.LinkRest;
+import com.nhl.link.rest.MetadataResponse;
 import com.nhl.link.rest.annotation.LrAttribute;
 import com.nhl.link.rest.it.fixture.JerseyTestOnDerby;
 import com.nhl.link.rest.it.fixture.cayenne.E2;
+import com.nhl.link.rest.it.fixture.cayenne.E3;
 import com.nhl.link.rest.it.fixture.cayenne.E4;
-import com.nhl.link.rest.it.fixture.resource.E3Resource;
-import com.nhl.link.rest.it.fixture.resource.E4Resource;
 import com.nhl.link.rest.meta.LrEntityOverlay;
 import com.nhl.link.rest.runtime.LinkRestBuilder;
 import org.junit.Test;
 
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.core.Configuration;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.FeatureContext;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriInfo;
 import java.util.List;
 
 import static java.util.Arrays.asList;
@@ -22,8 +29,7 @@ public class GET_Props_AdHocProperties_IT extends JerseyTestOnDerby {
 
     @Override
     protected void doAddResources(FeatureContext context) {
-        context.register(E3Resource.class);
-        context.register(E4Resource.class);
+        context.register(Resource.class);
     }
 
     @Override
@@ -188,6 +194,30 @@ public class GET_Props_AdHocProperties_IT extends JerseyTestOnDerby {
         @LrAttribute
         public String getP1() {
             return p1;
+        }
+    }
+
+    @Path("")
+    public static final class Resource {
+        @Context
+        private Configuration config;
+
+        @GET
+        @Path("e3")
+        public DataResponse<E3> getE3(@Context UriInfo uriInfo) {
+            return LinkRest.service(config).select(E3.class).uri(uriInfo).get();
+        }
+
+        @GET
+        @Path("e4")
+        public DataResponse<E4> getE4(@Context UriInfo uriInfo) {
+            return LinkRest.service(config).select(E4.class).uri(uriInfo).get();
+        }
+
+        @GET
+        @Path("e4/meta")
+        public MetadataResponse<E4> getMetaE4(@Context UriInfo uriInfo) {
+            return LinkRest.metadata(E4.class, config).forResource(Resource.class).uri(uriInfo).process();
         }
     }
 }

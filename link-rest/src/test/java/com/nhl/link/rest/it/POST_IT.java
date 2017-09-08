@@ -12,7 +12,6 @@ import com.nhl.link.rest.it.fixture.cayenne.E2;
 import com.nhl.link.rest.it.fixture.cayenne.E3;
 import com.nhl.link.rest.it.fixture.cayenne.E4;
 import com.nhl.link.rest.it.fixture.cayenne.E8;
-import com.nhl.link.rest.it.fixture.resource.E3Resource;
 import org.apache.cayenne.Cayenne;
 import org.apache.cayenne.ObjectContext;
 import org.apache.cayenne.query.ObjectSelect;
@@ -43,7 +42,6 @@ public class POST_IT extends JerseyTestOnDerby {
 
     @Override
     protected void doAddResources(FeatureContext context) {
-        context.register(E3Resource.class);
         context.register(Resource.class);
     }
 
@@ -333,6 +331,26 @@ public class POST_IT extends JerseyTestOnDerby {
         @Path("e2")
         public DataResponse<E2> createE2(String targetData, @Context UriInfo uriInfo) {
             return LinkRest.create(E2.class, config).uri(uriInfo).syncAndSelect(targetData);
+        }
+
+        @POST
+        @Path("e3")
+        public DataResponse<E3> create(@Context UriInfo uriInfo, String requestBody) {
+            return LinkRest.create(E3.class, config).uri(uriInfo).syncAndSelect(requestBody);
+        }
+
+        @POST
+        @Path("e3/constrained")
+        public DataResponse<E3> insertE3ReadConstrained(@Context UriInfo uriInfo, String requestBody) {
+            Constraint<E3> tc = Constraint.idOnly(E3.class).attribute(E3.NAME);
+            return LinkRest.create(E3.class, config).uri(uriInfo).readConstraint(tc).syncAndSelect(requestBody);
+        }
+
+        @POST
+        @Path("e3/w/constrained")
+        public DataResponse<E3> insertE3WriteConstrained(@Context UriInfo uriInfo, String requestBody) {
+            Constraint<E3> tc = Constraint.idOnly(E3.class).attribute(E3.NAME);
+            return LinkRest.create(E3.class, config).uri(uriInfo).writeConstraint(tc).syncAndSelect(requestBody);
         }
 
         @POST

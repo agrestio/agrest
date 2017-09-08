@@ -1,22 +1,29 @@
 package com.nhl.link.rest.it;
 
 import com.fasterxml.jackson.core.JsonGenerator;
+import com.nhl.link.rest.DataResponse;
+import com.nhl.link.rest.LinkRest;
 import com.nhl.link.rest.ResourceEntity;
+import com.nhl.link.rest.SelectStage;
 import com.nhl.link.rest.encoder.Encoder;
 import com.nhl.link.rest.encoder.EncoderFilter;
 import com.nhl.link.rest.it.fixture.JerseyTestOnDerby;
 import com.nhl.link.rest.it.fixture.cayenne.E3;
 import com.nhl.link.rest.it.fixture.cayenne.E4;
 import com.nhl.link.rest.it.fixture.listener.CayennePaginationListener;
-import com.nhl.link.rest.it.fixture.resource.E4Resource;
 import com.nhl.link.rest.runtime.LinkRestBuilder;
 import org.apache.cayenne.Cayenne;
 import org.apache.cayenne.query.SQLTemplate;
 import org.junit.Test;
 
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.core.Configuration;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.FeatureContext;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
+import javax.ws.rs.core.UriInfo;
 import java.io.IOException;
 
 import static org.junit.Assert.assertEquals;
@@ -26,7 +33,7 @@ public class GET_EncoderFilters_IT extends JerseyTestOnDerby {
 
 	@Override
 	protected void doAddResources(FeatureContext context) {
-		context.register(E4Resource.class);
+		context.register(Resource.class);
 	}
 
 	@Override
@@ -149,4 +156,41 @@ public class GET_EncoderFilters_IT extends JerseyTestOnDerby {
 		}
 	}
 
+	@Path("")
+	public static class Resource {
+
+		@Context
+		private Configuration config;
+
+
+		@GET
+        @Path("e4")
+		public DataResponse<E4> get(@Context UriInfo uriInfo) {
+			return LinkRest.service(config).select(E4.class).uri(uriInfo).get();
+		}
+
+		/**
+		 * @deprecated since 2.7 in favor of {@link #get_WithPaginationStage(UriInfo)}.
+		 */
+		@GET
+		@Path("e4/pagination_listener")
+        @Deprecated
+		public DataResponse<E4> get_WithPaginationListener(@Context UriInfo uriInfo) {
+			return LinkRest.service(config).select(E4.class).uri(uriInfo).listener(new CayennePaginationListener())
+					.get();
+		}
+
+		@GET
+		@Path("e4/pagination_stage")
+		public DataResponse<E4> get_WithPaginationStage(@Context UriInfo uriInfo) {
+			return LinkRest.service(config)
+					.select(E4.class)
+					.uri(uriInfo)
+					.stage(SelectStage.APPLY_SERVER_PARAMS,
+							c -> CayennePaginationListener.RESOURCE_ENTITY_IS_FILTERED = c.getEntity().isFiltered())
+					.stage(SelectStage.ASSEMBLE_QUERY,
+							c -> CayennePaginationListener.QUERY_PAGE_SIZE = c.getSelect().getPageSize())
+					.get();
+		}
+	}
 }
