@@ -59,7 +59,7 @@ public class Sencha_POST_IT extends JerseyTestOnDerby {
     }
 
     @Test
-    public void testPost_ToOne_BadFK() throws WebApplicationException, IOException {
+    public void testPost_ToOne_BadFK()  {
 
         performQuery(new SQLTemplate(E4.class, "INSERT INTO utest.e2 (id, name) values (1, 'xxx')"));
         performQuery(new SQLTemplate(E4.class, "INSERT INTO utest.e2 (id, name) values (8, 'yyy')"));
@@ -73,7 +73,7 @@ public class Sencha_POST_IT extends JerseyTestOnDerby {
     }
 
     @Test
-    public void testPOST_Bulk_LongId() throws WebApplicationException, IOException {
+    public void testPOST_Bulk_LongId()  {
 
         Entity<String> entity = jsonEntity(
                 "[{\"id\":\"ext-record-6881\",\"name\":\"yyy\"}" + ",{\"id\":\"ext-record-6882\",\"name\":\"zzz\"}]");

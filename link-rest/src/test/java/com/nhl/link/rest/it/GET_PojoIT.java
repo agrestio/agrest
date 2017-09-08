@@ -35,7 +35,7 @@ public class GET_PojoIT extends JerseyTestOnPojo {
     }
 
     @Test
-    public void test_SelectById() throws WebApplicationException, IOException {
+    public void test_SelectById()  {
 
         P6 o1 = new P6();
         o1.setIntProp(15);
@@ -52,7 +52,7 @@ public class GET_PojoIT extends JerseyTestOnPojo {
     }
 
     @Test
-    public void test_SelectAll() throws WebApplicationException, IOException {
+    public void test_SelectAll()  {
 
         P6 o1 = new P6();
         o1.setIntProp(15);
@@ -70,7 +70,7 @@ public class GET_PojoIT extends JerseyTestOnPojo {
     }
 
     @Test
-    public void test_SelectAll_IncludeToOne() throws WebApplicationException, IOException {
+    public void test_SelectAll_IncludeToOne()  {
 
         P3 o0 = new P3();
         o0.setName("xx3");
@@ -86,7 +86,7 @@ public class GET_PojoIT extends JerseyTestOnPojo {
     }
 
     @Test
-    public void test_SelectAll_NoId() throws WebApplicationException, IOException {
+    public void test_SelectAll_NoId()  {
 
         P1 o1 = new P1();
         o1.setName("n2");
@@ -118,7 +118,7 @@ public class GET_PojoIT extends JerseyTestOnPojo {
     }
 
     @Test
-    public void test_CollectionAttributes() throws WebApplicationException, IOException {
+    public void test_CollectionAttributes()  {
 
         P8 o1 = new P8();
         o1.setBooleans(Arrays.asList(true, false));

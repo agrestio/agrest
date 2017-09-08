@@ -2,23 +2,21 @@ package com.nhl.link.rest.it;
 
 import com.nhl.link.rest.DataResponse;
 import com.nhl.link.rest.LinkRest;
+import com.nhl.link.rest.constraints.Constraint;
 import com.nhl.link.rest.it.fixture.JerseyTestOnDerby;
 import com.nhl.link.rest.it.fixture.cayenne.E10;
 import com.nhl.link.rest.it.fixture.cayenne.E4;
-import com.nhl.link.rest.it.fixture.resource.E4Resource;
 import org.apache.cayenne.query.SQLTemplate;
 import org.junit.Test;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
-import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Configuration;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.FeatureContext;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriInfo;
-import java.io.IOException;
 
 import static org.junit.Assert.assertEquals;
 
@@ -26,12 +24,11 @@ public class GET_ConstraintsIT extends JerseyTestOnDerby {
 
 	@Override
 	protected void doAddResources(FeatureContext context) {
-		context.register(E4Resource.class);
 		context.register(Resource.class);
 	}
 
 	@Test
-	public void test_Implicit() throws WebApplicationException, IOException {
+	public void test_Implicit() {
 
 		SQLTemplate insert = new SQLTemplate(E4.class,
 				"INSERT INTO utest.e4 (id, c_varchar, c_int) values (1, 'xxx', 5)");
@@ -44,7 +41,7 @@ public class GET_ConstraintsIT extends JerseyTestOnDerby {
 	}
 
 	@Test
-	public void test_Explicit() throws WebApplicationException, IOException {
+	public void test_Explicit() {
 
 		SQLTemplate insert = new SQLTemplate(E4.class,
 				"INSERT INTO utest.e4 (id, c_varchar, c_int) values (1, 'xxx', 5)");
@@ -58,7 +55,7 @@ public class GET_ConstraintsIT extends JerseyTestOnDerby {
 	}
 
 	@Test
-	public void test_Annotated() throws WebApplicationException, IOException {
+	public void test_Annotated() {
 
 		insert("e10", "id, c_varchar, c_int, c_boolean, c_date", "1, 'xxx', 5, true, '2014-01-02'");
 
@@ -70,7 +67,7 @@ public class GET_ConstraintsIT extends JerseyTestOnDerby {
 	}
 
 	@Test
-	public void test_Annotated_Relationship() throws WebApplicationException, IOException {
+	public void test_Annotated_Relationship() {
 
 		insert("e10", "id, c_varchar, c_int, c_boolean, c_date", "1, 'xxx', 5, true, '2014-01-02'");
 		insert("e11", "id, e10_id, address, name", "15, 1, 'aaa', 'nnn'");
@@ -86,6 +83,14 @@ public class GET_ConstraintsIT extends JerseyTestOnDerby {
 
 		@Context
 		private Configuration config;
+
+        @GET
+        @Path("e4/limit_attributes")
+        public DataResponse<E4> getObjects_LimitAttributes(@Context UriInfo uriInfo) {
+            return LinkRest.select(E4.class, config).uri(uriInfo)
+                    .constraint(Constraint.idOnly(E4.class).attributes(E4.C_INT))
+                    .get();
+        }
 
 		@GET
         @Path("e10")

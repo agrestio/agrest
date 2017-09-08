@@ -12,13 +12,11 @@ import org.junit.Test;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
-import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Application;
 import javax.ws.rs.core.Feature;
 import javax.ws.rs.core.FeatureContext;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
-import java.io.IOException;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
@@ -55,7 +53,7 @@ public class GET_SimpleResponseIT extends JerseyTest {
 	}
 
 	@Test
-	public void testWrite() throws WebApplicationException, IOException {
+	public void testWrite() {
 
 		Response response1 = target("/simple").request().get();
 		assertEquals(Status.OK.getStatusCode(), response1.getStatus());

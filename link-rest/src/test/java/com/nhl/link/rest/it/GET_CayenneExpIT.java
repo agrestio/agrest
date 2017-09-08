@@ -11,14 +11,12 @@ import org.junit.Test;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
-import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Configuration;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.FeatureContext;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriInfo;
-import java.io.IOException;
 
 import static org.junit.Assert.assertEquals;
 
@@ -31,7 +29,7 @@ public class GET_CayenneExpIT extends JerseyTestOnDerby {
 	}
 
 	@Test
-	public void test_CayenneExp_Map() throws WebApplicationException, IOException {
+	public void test_CayenneExp_Map() {
 
 		newContext().performGenericQuery(
 				new SQLTemplate(E2.class, "INSERT INTO utest.e2 (id, name) values (1, 'xxx'),(2, 'yyy'),(3, 'zzz')"));
@@ -44,7 +42,7 @@ public class GET_CayenneExpIT extends JerseyTestOnDerby {
 	}
 
 	@Test
-	public void test_CayenneExp_Map_Params() throws WebApplicationException, IOException {
+	public void test_CayenneExp_Map_Params() {
 
 		newContext().performGenericQuery(
 				new SQLTemplate(E2.class, "INSERT INTO utest.e2 (id, name) values (1, 'xxx'),(2, 'yyy'),(3, 'zzz')"));
@@ -57,7 +55,7 @@ public class GET_CayenneExpIT extends JerseyTestOnDerby {
 	}
 
 	@Test
-	public void test_CayenneExp_Bare() throws WebApplicationException, IOException {
+	public void test_CayenneExp_Bare() {
 
 		newContext().performGenericQuery(
 				new SQLTemplate(E2.class, "INSERT INTO utest.e2 (id, name) values (1, 'xxx'),(2, 'yyy'),(3, 'zzz')"));
@@ -70,7 +68,7 @@ public class GET_CayenneExpIT extends JerseyTestOnDerby {
 	}
 
 	@Test
-	public void test_CayenneExp_List() throws WebApplicationException, IOException {
+	public void test_CayenneExp_List() {
 
 		newContext().performGenericQuery(
 				new SQLTemplate(E2.class, "INSERT INTO utest.e2 (id, name) values (1, 'xxx'),(2, 'yyy'),(3, 'zzz')"));
@@ -83,7 +81,7 @@ public class GET_CayenneExpIT extends JerseyTestOnDerby {
 	}
 
 	@Test
-	public void test_CayenneExp_List_Params() throws WebApplicationException, IOException {
+	public void test_CayenneExp_List_Params() {
 
 		newContext().performGenericQuery(
 				new SQLTemplate(E2.class, "INSERT INTO utest.e2 (id, name) values (1, 'xxx'),(2, 'yyy'),(3, 'zzz')"));
@@ -96,7 +94,7 @@ public class GET_CayenneExpIT extends JerseyTestOnDerby {
 	}
 
 	@Test
-	public void test_Select_CayenneExp_In_Array() throws WebApplicationException, IOException {
+	public void test_Select_CayenneExp_In_Array() {
 
 		newContext().performGenericQuery(
 				new SQLTemplate(E2.class, "INSERT INTO utest.e2 (id, name) values (1, 'xxx'),(2, 'yyy'),(3, 'zzzz')"));
@@ -113,7 +111,7 @@ public class GET_CayenneExpIT extends JerseyTestOnDerby {
 	}
 
 	@Test
-	public void test_Select_CayenneExp_NotIn_Array() throws WebApplicationException, IOException {
+	public void test_Select_CayenneExp_NotIn_Array() {
 
 		newContext().performGenericQuery(
 				new SQLTemplate(E2.class, "INSERT INTO utest.e2 (id, name) values (1, 'xxx'),(2, 'yyy')"));
@@ -129,7 +127,7 @@ public class GET_CayenneExpIT extends JerseyTestOnDerby {
 	}
 
 	@Test
-	public void test_Select_CayenneExp_Outer() throws WebApplicationException, IOException {
+	public void test_Select_CayenneExp_Outer() {
 
 		newContext().performGenericQuery(
 				new SQLTemplate(E2.class, "INSERT INTO utest.e2 (id, name) values (1, 'xxx'),(2, 'yyy')"));
@@ -144,7 +142,7 @@ public class GET_CayenneExpIT extends JerseyTestOnDerby {
 	}
 
 	@Test
-	public void test_Select_CayenneExp_Outer_Relationship() throws WebApplicationException, IOException {
+	public void test_Select_CayenneExp_Outer_Relationship() {
 
 		newContext().performGenericQuery(
 				new SQLTemplate(E2.class, "INSERT INTO utest.e2 (id, name) values (1, 'xxx'),(2, 'yyy')"));
@@ -159,7 +157,7 @@ public class GET_CayenneExpIT extends JerseyTestOnDerby {
 	}
 
 	@Test
-	public void test_Select_CayenneExp_Outer_To_Many_Relationship() throws WebApplicationException, IOException {
+	public void test_Select_CayenneExp_Outer_To_Many_Relationship() {
 
 		newContext().performGenericQuery(
 				new SQLTemplate(E2.class, "INSERT INTO utest.e2 (id, name) values (1, 'xxx'),(2, 'yyy')"));
@@ -174,7 +172,7 @@ public class GET_CayenneExpIT extends JerseyTestOnDerby {
 	}
 
 	@Test
-	public void test_Select_CayenneExp_In_TwoObjects() throws WebApplicationException, IOException {
+	public void test_Select_CayenneExp_In_TwoObjects() {
 
 		newContext().performGenericQuery(
 				new SQLTemplate(E3.class, "INSERT INTO utest.e3 (id, name) values (8, 'yyy'),(9, 'zzz')"));
@@ -190,7 +188,7 @@ public class GET_CayenneExpIT extends JerseyTestOnDerby {
 	}
 
 	@Test
-	public void test_Select_CayenneExp_In_TwoRelatedObjects() throws WebApplicationException, IOException {
+	public void test_Select_CayenneExp_In_TwoRelatedObjects() {
 
 		newContext().performGenericQuery(
 				new SQLTemplate(E2.class, "INSERT INTO utest.e2 (id, name) values (1, 'xxx'),(2, 'yyy')"));
@@ -208,7 +206,7 @@ public class GET_CayenneExpIT extends JerseyTestOnDerby {
 	}
 
 	@Test
-	public void test_Select_CayenneExp_NotIn_ById() throws WebApplicationException, IOException {
+	public void test_Select_CayenneExp_NotIn_ById() {
 
 		newContext().performGenericQuery(
 				new SQLTemplate(E2.class, "INSERT INTO utest.e2 (id, name) values (1, 'xxx'),(2, 'yyy')"));
@@ -224,7 +222,7 @@ public class GET_CayenneExpIT extends JerseyTestOnDerby {
 	}
 
 	@Test
-	public void test_Select_CayenneExp_NotIn_By2Ids() throws WebApplicationException, IOException {
+	public void test_Select_CayenneExp_NotIn_By2Ids() {
 
 		newContext().performGenericQuery(
 				new SQLTemplate(E2.class, "INSERT INTO utest.e2 (id, name) values (1, 'xxx'),(2, 'yyy')"));

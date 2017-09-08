@@ -10,13 +10,11 @@ import org.junit.Test;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
-import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Configuration;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.FeatureContext;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
-import java.io.IOException;
 
 import static org.junit.Assert.assertEquals;
 
@@ -28,7 +26,7 @@ public class GET_DynamicAttributesIT extends JerseyTestOnDerby {
     }
 
     @Test
-    public void testGet() throws WebApplicationException, IOException {
+    public void testGet() {
 
         SQLTemplate insert = new SQLTemplate(E25.class, "INSERT INTO utest.e25 (id, name) values (1, 'xxx')");
         newContext().performGenericQuery(insert);
@@ -39,7 +37,7 @@ public class GET_DynamicAttributesIT extends JerseyTestOnDerby {
     }
 
     @Test
-    public void testGet_Rel() throws WebApplicationException, IOException {
+    public void testGet_Rel() {
         newContext().performGenericQuery(
                 new SQLTemplate(E22.class, "INSERT INTO utest.e22 (id, name) values (3, 'yyy')"));
         newContext().performGenericQuery(
@@ -54,7 +52,7 @@ public class GET_DynamicAttributesIT extends JerseyTestOnDerby {
     }
 
     @Test
-    public void testMapBy() throws WebApplicationException, IOException {
+    public void testMapBy() {
 
         SQLTemplate insert = new SQLTemplate(E25.class, "INSERT INTO utest.e25 (id, name) values (1, 'xxx')");
         newContext().performGenericQuery(insert);
@@ -65,7 +63,7 @@ public class GET_DynamicAttributesIT extends JerseyTestOnDerby {
     }
 
     @Test
-    public void testMapByRel() throws WebApplicationException, IOException {
+    public void testMapByRel() {
 
         newContext().performGenericQuery(
                 new SQLTemplate(E22.class, "INSERT INTO utest.e22 (id, name) values (3, 'yyy')"));

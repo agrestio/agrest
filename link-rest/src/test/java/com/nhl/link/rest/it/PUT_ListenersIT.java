@@ -5,10 +5,8 @@ import com.nhl.link.rest.it.fixture.listener.UpdateCallbackListener;
 import com.nhl.link.rest.it.fixture.resource.E3Resource;
 import org.junit.Test;
 
-import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.FeatureContext;
 import javax.ws.rs.core.Response;
-import java.io.IOException;
 
 import static com.nhl.link.rest.unit.matcher.LRMatchers.okAndHasData;
 import static org.junit.Assert.*;
@@ -24,7 +22,7 @@ public class PUT_ListenersIT extends JerseyTestOnDerby {
     }
 
     @Test
-    public void testPut_ToOne() throws WebApplicationException, IOException {
+    public void testPut_ToOne() {
         insert("e3", "id, name", "3, 'z'");
         insert("e3", "id, name", "4, 'a'");
 

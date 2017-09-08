@@ -12,14 +12,12 @@ import org.junit.Test;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
-import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Configuration;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.FeatureContext;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriInfo;
-import java.io.IOException;
 
 import static org.junit.Assert.assertEquals;
 
@@ -32,7 +30,7 @@ public class Sencha_GET_IT extends JerseyTestOnDerby {
 	}
 
 	@Test
-	public void test_SelectById_Prefetching() throws WebApplicationException, IOException {
+	public void test_SelectById_Prefetching() {
 
 		newContext().performGenericQuery(
 				new SQLTemplate(E2.class, "INSERT INTO utest.e2 (id, name) values (1, 'xxx')"));
@@ -63,7 +61,7 @@ public class Sencha_GET_IT extends JerseyTestOnDerby {
 	}
 
 	@Test
-	public void test_Select_Prefetching() throws WebApplicationException, IOException {
+	public void test_Select_Prefetching() {
 
 		newContext().performGenericQuery(
 				new SQLTemplate(E2.class, "INSERT INTO utest.e2 (id, name) values (1, 'xxx')"));
@@ -81,7 +79,7 @@ public class Sencha_GET_IT extends JerseyTestOnDerby {
 	}
 
 	@Test
-	public void test_Select_Prefetching_StartLimit() throws WebApplicationException, IOException {
+	public void test_Select_Prefetching_StartLimit() {
 
 		newContext().performGenericQuery(
 				new SQLTemplate(E2.class, "INSERT INTO utest.e2 (id, name) values (1, 'xxx')"));
@@ -103,7 +101,7 @@ public class Sencha_GET_IT extends JerseyTestOnDerby {
 	}
 
 	@Test
-	public void test_SelectToOne_Null() throws WebApplicationException, IOException {
+	public void test_SelectToOne_Null() {
 
 		newContext().performGenericQuery(
 				new SQLTemplate(E2.class, "INSERT INTO utest.e2 (id, name) values (1, 'xxx')"));
@@ -121,7 +119,7 @@ public class Sencha_GET_IT extends JerseyTestOnDerby {
 	}
 
 	@Test
-	public void test_MapBy_ToOne() throws WebApplicationException, IOException {
+	public void test_MapBy_ToOne() {
 
 		newContext().performGenericQuery(
 				new SQLTemplate(E2.class, "INSERT INTO utest.e2 (id, name) values (1, 'xxx')"));
@@ -140,7 +138,7 @@ public class Sencha_GET_IT extends JerseyTestOnDerby {
 	}
 
 	@Test
-	public void test_ToMany_IncludeRelated() throws WebApplicationException, IOException {
+	public void test_ToMany_IncludeRelated() {
 		newContext().performGenericQuery(
 				new SQLTemplate(E3.class, "INSERT INTO utest.e5 (id,name) values (345, 'B'),(346, 'A')"));
 		newContext().performGenericQuery(
@@ -162,7 +160,7 @@ public class Sencha_GET_IT extends JerseyTestOnDerby {
 	}
 
 	@Test
-	public void test_PathRelationship() throws WebApplicationException, IOException {
+	public void test_PathRelationship() {
 
 		newContext().performGenericQuery(
 				new SQLTemplate(E2.class, "INSERT INTO utest.e2 (id, name) values (1, 'xxx')"));

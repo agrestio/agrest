@@ -23,7 +23,6 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.QueryParam;
-import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Configuration;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.FeatureContext;
@@ -31,6 +30,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriInfo;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.sql.Time;
 import java.time.Instant;
@@ -53,7 +53,7 @@ public class GET_IT extends JerseyTestOnDerby {
     }
 
     @Test
-    public void testResponse() throws WebApplicationException, IOException {
+    public void testResponse()  {
 
         SQLTemplate insert = new SQLTemplate(E4.class,
                 "INSERT INTO utest.e4 (id, c_varchar, c_int) values (1, 'xxx', 5)");
@@ -67,7 +67,7 @@ public class GET_IT extends JerseyTestOnDerby {
     }
 
     @Test
-    public void testDateTime() throws WebApplicationException, IOException {
+    public void testDateTime()  {
 
         Date date = Date.from(Instant.from(UtcDateConverter.dateParser().fromString("2012-02-03T11:01:02Z")));
 
@@ -84,7 +84,7 @@ public class GET_IT extends JerseyTestOnDerby {
     }
 
     @Test
-    public void testDate() throws WebApplicationException, IOException {
+    public void testDate()  {
 
         Date date = Date.from(Instant.from(UtcDateConverter.dateParser().fromString("2012-02-03")));
 
@@ -100,7 +100,7 @@ public class GET_IT extends JerseyTestOnDerby {
     }
 
     @Test
-    public void testTime() throws WebApplicationException, IOException {
+    public void testTime()  {
 
         LocalTime lt = LocalTime.of(14, 0, 1);
 
@@ -119,7 +119,7 @@ public class GET_IT extends JerseyTestOnDerby {
     }
 
     @Test
-    public void test_Sort_ById() throws WebApplicationException, IOException {
+    public void test_Sort_ById()  {
 
         newContext().performGenericQuery(new SQLTemplate(E4.class, "INSERT INTO utest.e4 (id) values (2)"));
         newContext().performGenericQuery(new SQLTemplate(E4.class, "INSERT INTO utest.e4 (id) values (1)"));
@@ -134,7 +134,7 @@ public class GET_IT extends JerseyTestOnDerby {
     }
 
     @Test
-    public void test_Sort_Invalid() throws WebApplicationException, IOException {
+    public void test_Sort_Invalid()  {
 
         Response response1 = target("/e4")
                 .queryParam("sort", urlEnc("[{\"property\":\"xyz\",\"direction\":\"DESC\"}]"))
@@ -148,7 +148,7 @@ public class GET_IT extends JerseyTestOnDerby {
     @Test
     // this is a hack for Sencha bug, passing us null sorters per LF-189...
     // allowing for lax property name checking as a result
-    public void test_Sort_Null() throws WebApplicationException, IOException {
+    public void test_Sort_Null()  {
 
         newContext().performGenericQuery(new SQLTemplate(E4.class, "INSERT INTO utest.e4 (id) values (2)"));
         newContext().performGenericQuery(new SQLTemplate(E4.class, "INSERT INTO utest.e4 (id) values (1)"));
@@ -162,7 +162,7 @@ public class GET_IT extends JerseyTestOnDerby {
     }
 
     @Test
-    public void test_SelectById() throws WebApplicationException, IOException {
+    public void test_SelectById()  {
 
         newContext().performGenericQuery(new SQLTemplate(E4.class, "INSERT INTO utest.e4 (id) values (2)"));
 
@@ -175,7 +175,7 @@ public class GET_IT extends JerseyTestOnDerby {
     }
 
     @Test
-    public void test_SelectById_Params() throws WebApplicationException, IOException {
+    public void test_SelectById_Params()  {
 
         newContext().performGenericQuery(new SQLTemplate(E4.class, "INSERT INTO utest.e4 (id) values (2)"));
 
@@ -192,7 +192,7 @@ public class GET_IT extends JerseyTestOnDerby {
     }
 
     @Test
-    public void test_SelectById_NotFound() throws WebApplicationException, IOException {
+    public void test_SelectById_NotFound()  {
 
         Response response1 = target("/e4/2").request().get();
 
@@ -202,7 +202,7 @@ public class GET_IT extends JerseyTestOnDerby {
     }
 
     @Test
-    public void test_SelectById_Prefetching() throws WebApplicationException, IOException {
+    public void test_SelectById_Prefetching()  {
 
         newContext().performGenericQuery(
                 new SQLTemplate(E2.class, "INSERT INTO utest.e2 (id, name) values (1, 'xxx')"));
@@ -233,7 +233,7 @@ public class GET_IT extends JerseyTestOnDerby {
     }
 
     @Test
-    public void test_Select_Prefetching() throws WebApplicationException, IOException {
+    public void test_Select_Prefetching()  {
 
         newContext().performGenericQuery(
                 new SQLTemplate(E2.class, "INSERT INTO utest.e2 (id, name) values (1, 'xxx')"));
@@ -251,7 +251,7 @@ public class GET_IT extends JerseyTestOnDerby {
     }
 
     @Test
-    public void test_Select_RelationshipSort() throws WebApplicationException, IOException {
+    public void test_Select_RelationshipSort()  {
 
         newContext().performGenericQuery(
                 new SQLTemplate(E2.class, "INSERT INTO utest.e2 (id, name) values (1, 'zzz')"));
@@ -277,7 +277,7 @@ public class GET_IT extends JerseyTestOnDerby {
     }
 
     @Test
-    public void test_Select_RelationshipStartLimit() throws WebApplicationException, IOException {
+    public void test_Select_RelationshipStartLimit() throws UnsupportedEncodingException {
 
         newContext().performGenericQuery(
                 new SQLTemplate(E2.class, "INSERT INTO utest.e2 (id, name) values (1, 'zzz')"));
@@ -303,7 +303,7 @@ public class GET_IT extends JerseyTestOnDerby {
     }
 
     @Test
-    public void test_Select_Prefetching_StartLimit() throws WebApplicationException, IOException {
+    public void test_Select_Prefetching_StartLimit()  {
 
         newContext().performGenericQuery(
                 new SQLTemplate(E2.class, "INSERT INTO utest.e2 (id, name) values (1, 'xxx')"));
@@ -325,7 +325,7 @@ public class GET_IT extends JerseyTestOnDerby {
     }
 
     @Test
-    public void test_SelectToOne_Null() throws WebApplicationException, IOException {
+    public void test_SelectToOne_Null()  {
 
         newContext().performGenericQuery(
                 new SQLTemplate(E2.class, "INSERT INTO utest.e2 (id, name) values (1, 'xxx')"));

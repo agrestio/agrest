@@ -33,7 +33,7 @@ public class Sencha_DELETE_IT extends JerseyTestOnDerby {
     }
 
     @Test
-    public void test_BatchDelete() throws WebApplicationException, IOException {
+    public void test_BatchDelete()  {
 
         insert("e2", "id, name", "1, 'xxx'");
         insert("e2", "id, name", "2, 'yyy'");
@@ -50,7 +50,7 @@ public class Sencha_DELETE_IT extends JerseyTestOnDerby {
     }
 
     @Test
-    public void test_BatchDelete_CompoundId() throws WebApplicationException, IOException {
+    public void test_BatchDelete_CompoundId()  {
 
         insert("e17", "id1, id2, name", "1, 1, 'aaa'");
         insert("e17", "id1, id2, name", "2, 2, 'bbb'");

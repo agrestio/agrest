@@ -2,7 +2,6 @@ package com.nhl.link.rest.it.fixture.resource;
 
 import com.nhl.link.rest.DataResponse;
 import com.nhl.link.rest.LinkRest;
-import com.nhl.link.rest.MetadataResponse;
 import com.nhl.link.rest.SelectStage;
 import com.nhl.link.rest.constraints.Constraint;
 import com.nhl.link.rest.it.fixture.cayenne.E4;
@@ -25,12 +24,6 @@ public class E4Resource {
 
     @Context
     private Configuration config;
-
-    @GET
-    @Path("meta")
-    public MetadataResponse<E4> getMeta(@Context UriInfo uriInfo) {
-        return LinkRest.metadata(E4.class, config).forResource(E4Resource.class).uri(uriInfo).process();
-    }
 
     @GET
     public DataResponse<E4> get(@Context UriInfo uriInfo) {
@@ -60,13 +53,7 @@ public class E4Resource {
                 .get();
     }
 
-    @GET
-    @Path("limit_attributes")
-    public DataResponse<E4> getObjects_LimitAttributes(@Context UriInfo uriInfo) {
-        return LinkRest.select(E4.class, config).uri(uriInfo)
-                .constraint(Constraint.idOnly(E4.class).attributes(E4.C_INT))
-                .get();
-    }
+
 
     @GET
     @Path("calc_property")

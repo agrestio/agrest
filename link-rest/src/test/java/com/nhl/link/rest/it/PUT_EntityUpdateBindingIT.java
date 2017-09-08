@@ -1,19 +1,15 @@
 package com.nhl.link.rest.it;
 
-import static com.nhl.link.rest.unit.matcher.LRMatchers.okAndHasBody;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
+import com.nhl.link.rest.it.fixture.JerseyTestOnDerby;
+import com.nhl.link.rest.it.fixture.resource.E3Resource;
+import org.junit.Test;
 
-import java.io.IOException;
-
-import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.FeatureContext;
 import javax.ws.rs.core.Response;
 
-import org.junit.Test;
-
-import com.nhl.link.rest.it.fixture.JerseyTestOnDerby;
-import com.nhl.link.rest.it.fixture.resource.E3Resource;
+import static com.nhl.link.rest.unit.matcher.LRMatchers.okAndHasBody;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
 
 public class PUT_EntityUpdateBindingIT extends JerseyTestOnDerby {
 
@@ -23,7 +19,7 @@ public class PUT_EntityUpdateBindingIT extends JerseyTestOnDerby {
 	}
 
 	@Test
-	public void testPut_Single() throws WebApplicationException, IOException {
+	public void testPut_Single() {
 
 		insert("e3", "id, name", "3, 'zzz'");
 
@@ -33,7 +29,7 @@ public class PUT_EntityUpdateBindingIT extends JerseyTestOnDerby {
 	}
 
 	@Test
-	public void testPut_Collection() throws WebApplicationException, IOException {
+	public void testPut_Collection() {
 		insert("e3", "id, name", "3, 'zzz'");
 		insert("e3", "id, name", "4, 'xxx'");
 		insert("e3", "id, name", "5, 'mmm'");

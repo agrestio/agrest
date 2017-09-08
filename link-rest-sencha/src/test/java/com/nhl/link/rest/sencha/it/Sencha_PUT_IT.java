@@ -7,13 +7,11 @@ import org.apache.cayenne.Cayenne;
 import org.apache.cayenne.query.SelectById;
 import org.junit.Test;
 
-import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.FeatureContext;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
-import java.io.IOException;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
@@ -26,7 +24,7 @@ public class Sencha_PUT_IT extends JerseyTestOnDerby {
 	}
 
 	@Test
-	public void testPut_ToOne_FromNull() throws WebApplicationException, IOException {
+	public void testPut_ToOne_FromNull() {
 		insert("e2", "id, name", "1, 'xxx'");
 		insert("e2", "id, name", "8, 'yyy'");
 		insert("e3", "id, name, e2_id", "3, 'zzz', null");
@@ -47,7 +45,7 @@ public class Sencha_PUT_IT extends JerseyTestOnDerby {
 	}
 
 	@Test
-	public void testPut_ToOne_ToNull() throws WebApplicationException, IOException {
+	public void testPut_ToOne_ToNull() {
 
 		insert("e2", "id, name", "1, 'xxx'");
 		insert("e2", "id, name", "8, 'yyy'");
@@ -65,7 +63,7 @@ public class Sencha_PUT_IT extends JerseyTestOnDerby {
 	}
 
 	@Test
-	public void testPut_ToOne() throws WebApplicationException, IOException {
+	public void testPut_ToOne() {
 
 		insert("e2", "id, name", "1, 'xxx'");
 		insert("e2", "id, name", "8, 'yyy'");
@@ -87,7 +85,7 @@ public class Sencha_PUT_IT extends JerseyTestOnDerby {
 	}
 
 	@Test
-	public void testPut_ToOne_Relationship_Name() throws WebApplicationException, IOException {
+	public void testPut_ToOne_Relationship_Name() {
 
 		insert("e2", "id, name", "1, 'xxx'");
 		insert("e2", "id, name", "8, 'yyy'");

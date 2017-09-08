@@ -1,19 +1,5 @@
 package com.nhl.link.rest.it;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
-import java.io.IOException;
-
-import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.core.FeatureContext;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
-
-import org.apache.cayenne.query.SQLTemplate;
-import org.junit.Before;
-import org.junit.Test;
-
 import com.nhl.link.rest.it.fixture.JerseyTestOnDerby;
 import com.nhl.link.rest.it.fixture.cayenne.E2;
 import com.nhl.link.rest.it.fixture.cayenne.E3;
@@ -21,6 +7,16 @@ import com.nhl.link.rest.it.fixture.listener.FetchCallbackListener;
 import com.nhl.link.rest.it.fixture.listener.FetchPassThroughListener;
 import com.nhl.link.rest.it.fixture.listener.FetchTakeOverListener;
 import com.nhl.link.rest.it.fixture.resource.E3Resource;
+import org.apache.cayenne.query.SQLTemplate;
+import org.junit.Before;
+import org.junit.Test;
+
+import javax.ws.rs.core.FeatureContext;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class GET_ListenersIT extends JerseyTestOnDerby {
 
@@ -40,7 +36,7 @@ public class GET_ListenersIT extends JerseyTestOnDerby {
 	}
 
 	@Test
-	public void testCallbackListener() throws WebApplicationException, IOException {
+	public void testCallbackListener() {
 
 		FetchCallbackListener.BEFORE_FETCH_CALLED = false;
 
@@ -55,7 +51,7 @@ public class GET_ListenersIT extends JerseyTestOnDerby {
 	}
 
 	@Test
-	public void testPassThroughLisetner() throws WebApplicationException, IOException {
+	public void testPassThroughLisetner() {
 
 		FetchPassThroughListener.BEFORE_FETCH_CALLED = false;
 
@@ -70,7 +66,7 @@ public class GET_ListenersIT extends JerseyTestOnDerby {
 	}
 
 	@Test
-	public void testTakeOverListener() throws WebApplicationException, IOException {
+	public void testTakeOverListener() {
 
 		FetchTakeOverListener.BEFORE_FETCH_CALLED = false;
 
