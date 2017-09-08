@@ -7,11 +7,10 @@ import com.nhl.link.rest.it.fixture.cayenne.E14;
 import com.nhl.link.rest.it.fixture.cayenne.E17;
 import com.nhl.link.rest.it.fixture.cayenne.E2;
 import com.nhl.link.rest.it.fixture.cayenne.E3;
+import com.nhl.link.rest.it.fixture.cayenne.E4;
 import com.nhl.link.rest.it.fixture.cayenne.E7;
 import com.nhl.link.rest.it.fixture.cayenne.E8;
-import com.nhl.link.rest.it.fixture.resource.E2Resource;
 import com.nhl.link.rest.it.fixture.resource.E3Resource;
-import com.nhl.link.rest.it.fixture.resource.E4Resource;
 import org.junit.Test;
 
 import javax.ws.rs.PUT;
@@ -35,9 +34,7 @@ public class PUT_IT extends JerseyTestOnDerby {
 
     @Override
     protected void doAddResources(FeatureContext context) {
-        context.register(E2Resource.class);
         context.register(E3Resource.class);
-        context.register(E4Resource.class);
         context.register(Resource.class);
     }
 
@@ -338,6 +335,18 @@ public class PUT_IT extends JerseyTestOnDerby {
 
         @Context
         private Configuration config;
+
+        @PUT
+        @Path("e2/{id}")
+        public DataResponse<E2> createOrUpdate_E2(@PathParam("id") int id, String entityData, @Context UriInfo uriInfo) {
+            return LinkRest.idempotentCreateOrUpdate(E2.class, config).id(id).uri(uriInfo).syncAndSelect(entityData);
+        }
+
+        @PUT
+        @Path("e4/{id}")
+        public DataResponse<E4> updateE4(@PathParam("id") int id, String requestBody) {
+            return LinkRest.update(E4.class, config).id(id).syncAndSelect(requestBody);
+        }
 
         @PUT
         @Path("e7")

@@ -7,7 +7,6 @@ import com.nhl.link.rest.it.fixture.cayenne.E14;
 import com.nhl.link.rest.it.fixture.cayenne.E3;
 import com.nhl.link.rest.it.fixture.cayenne.E4;
 import com.nhl.link.rest.it.fixture.resource.E3Resource;
-import com.nhl.link.rest.it.fixture.resource.E4Resource;
 import org.apache.cayenne.Cayenne;
 import org.apache.cayenne.query.SQLTemplate;
 import org.apache.cayenne.query.SelectQuery;
@@ -33,7 +32,6 @@ public class Sencha_POST_IT extends JerseyTestOnDerby {
     @Override
     protected void doAddResources(FeatureContext context) {
         context.register(E3Resource.class);
-        context.register(E4Resource.class);
         context.register(Resource.class);
     }
 

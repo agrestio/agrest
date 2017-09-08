@@ -6,7 +6,6 @@ import com.nhl.link.rest.it.fixture.JerseyTestOnDerby;
 import com.nhl.link.rest.it.fixture.cayenne.E17;
 import com.nhl.link.rest.it.fixture.cayenne.E24;
 import com.nhl.link.rest.it.fixture.cayenne.E4;
-import com.nhl.link.rest.it.fixture.resource.E4Resource;
 import org.apache.cayenne.Cayenne;
 import org.apache.cayenne.query.EJBQLQuery;
 import org.apache.cayenne.query.SQLTemplate;
@@ -32,9 +31,7 @@ public class DELETE_IT extends JerseyTestOnDerby {
 
     @Override
     protected void doAddResources(FeatureContext context) {
-        context.register(E4Resource.class);
-        context.register(E17Resource.class);
-        context.register(E24Resource.class);
+        context.register(Resource.class);
     }
 
     @Test
@@ -114,35 +111,36 @@ public class DELETE_IT extends JerseyTestOnDerby {
         assertEquals(Status.OK.getStatusCode(), response1.getStatus());
     }
 
-
-    @Path("e24")
-    public static class E24Resource {
+    @Path("")
+    public static class Resource {
 
         @Context
         private Configuration config;
 
         @DELETE
-        @Path("{id}")
-        public SimpleResponse delete(@PathParam("id") int id) {
-            return LinkRest.delete(E24.class, config).id(id).delete();
+        @Path("e4/{id}")
+        public SimpleResponse deleteById(@PathParam("id") int id) {
+            return LinkRest.service(config).delete(E4.class, id);
         }
-    }
-
-    @Path("e17")
-    public static class E17Resource {
-
-        @Context
-        private Configuration config;
 
         @DELETE
-        public SimpleResponse delete(@Context UriInfo uriInfo, @QueryParam("id1") Integer id1,
-                                     @QueryParam("id2") Integer id2) {
+        @Path("e17")
+        public SimpleResponse deleteByMultiId(
+                @Context UriInfo uriInfo,
+                @QueryParam("id1") Integer id1,
+                @QueryParam("id2") Integer id2) {
 
             Map<String, Object> ids = new HashMap<>();
             ids.put(E17.ID1_PK_COLUMN, id1);
             ids.put(E17.ID2_PK_COLUMN, id2);
 
             return LinkRest.service(config).delete(E17.class, ids);
+        }
+
+        @DELETE
+        @Path("e24/{id}")
+        public SimpleResponse deleteE24ById(@PathParam("id") int id) {
+            return LinkRest.delete(E24.class, config).id(id).delete();
         }
     }
 }

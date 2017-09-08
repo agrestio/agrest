@@ -82,7 +82,7 @@ public class GET_ConstraintsIT extends JerseyTestOnDerby {
 	}
 
 	@Path("")
-	public class Resource {
+	public static class Resource {
 
 		@Context
 		private Configuration config;

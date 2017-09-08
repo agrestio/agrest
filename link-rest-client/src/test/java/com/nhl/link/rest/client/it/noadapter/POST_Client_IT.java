@@ -1,18 +1,24 @@
 package com.nhl.link.rest.client.it.noadapter;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.nhl.link.rest.DataResponse;
+import com.nhl.link.rest.LinkRest;
 import com.nhl.link.rest.client.ClientDataResponse;
 import com.nhl.link.rest.client.LinkRestClient;
 import com.nhl.link.rest.client.protocol.Include;
 import com.nhl.link.rest.it.fixture.JerseyTestOnDerby;
 import com.nhl.link.rest.it.fixture.cayenne.E2;
 import com.nhl.link.rest.it.fixture.cayenne.E3;
-import com.nhl.link.rest.it.fixture.resource.E2Resource;
 import com.nhl.link.rest.it.fixture.resource.E3Resource;
 import org.junit.Test;
 
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.core.Configuration;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.FeatureContext;
 import javax.ws.rs.core.Response.Status;
+import javax.ws.rs.core.UriInfo;
 
 import static com.nhl.link.rest.client.it.noadapter.EntityUtil.createE2;
 import static com.nhl.link.rest.client.it.noadapter.EntityUtil.createE3;
@@ -22,7 +28,7 @@ public class POST_Client_IT extends JerseyTestOnDerby {
 
     @Override
     protected void doAddResources(FeatureContext context) {
-        context.register(E2Resource.class);
+        context.register(Resource.class);
         context.register(E3Resource.class);
     }
 
@@ -52,5 +58,18 @@ public class POST_Client_IT extends JerseyTestOnDerby {
 
         int e2_id = r2.getData().get(0).get(E2.ID_PK_COLUMN).asInt();
         assertEquals(createE2(e2_id, "xxx", e3), r2.getData().get(0));
+    }
+
+    @Path("")
+    public static class Resource {
+
+        @Context
+        private Configuration config;
+
+        @POST
+        @Path("e2")
+        public DataResponse<E2> createE2(String targetData, @Context UriInfo uriInfo) {
+            return LinkRest.create(E2.class, config).uri(uriInfo).syncAndSelect(targetData);
+        }
     }
 }

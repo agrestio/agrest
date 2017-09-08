@@ -1,6 +1,8 @@
 package com.nhl.link.rest.client.it.noadapter;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.nhl.link.rest.DataResponse;
+import com.nhl.link.rest.LinkRest;
 import com.nhl.link.rest.client.ClientDataResponse;
 import com.nhl.link.rest.client.LinkRestClient;
 import com.nhl.link.rest.client.protocol.Expression;
@@ -10,24 +12,24 @@ import com.nhl.link.rest.it.fixture.JerseyTestOnDerby;
 import com.nhl.link.rest.it.fixture.cayenne.E2;
 import com.nhl.link.rest.it.fixture.cayenne.E3;
 import com.nhl.link.rest.it.fixture.cayenne.E4;
-import com.nhl.link.rest.it.fixture.resource.E2Resource;
-import com.nhl.link.rest.it.fixture.resource.E4Resource;
 import org.junit.Test;
 
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.core.Configuration;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.FeatureContext;
 import javax.ws.rs.core.Response.Status;
+import javax.ws.rs.core.UriInfo;
 import java.util.List;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.*;
 
 public class GET_Client_IT extends JerseyTestOnDerby {
 
     @Override
     protected void doAddResources(FeatureContext context) {
-        context.register(E2Resource.class);
-        context.register(E4Resource.class);
+        context.register(Resource.class);
     }
 
     @Test
@@ -133,5 +135,24 @@ public class GET_Client_IT extends JerseyTestOnDerby {
         assertEquals(Status.OK, response.getStatus());
         assertEquals(1, response.getTotal());
         assertEquals(EntityUtil.createE4(3, "xxz", 3), response.getData().get(0));
+    }
+
+    @Path("")
+    public static class Resource {
+
+        @Context
+        private Configuration config;
+
+        @GET
+        @Path("e2")
+        public DataResponse<E2> getE2(@Context UriInfo uriInfo) {
+            return LinkRest.service(config).select(E2.class).uri(uriInfo).get();
+        }
+
+        @GET
+        @Path("e4")
+        public DataResponse<E4> getE4(@Context UriInfo uriInfo) {
+            return LinkRest.service(config).select(E4.class).uri(uriInfo).get();
+        }
     }
 }

@@ -13,7 +13,6 @@ import com.nhl.link.rest.it.fixture.cayenne.E3;
 import com.nhl.link.rest.it.fixture.cayenne.E7;
 import com.nhl.link.rest.it.fixture.cayenne.E8;
 import com.nhl.link.rest.it.fixture.cayenne.E9;
-import com.nhl.link.rest.it.fixture.resource.E2Resource;
 import com.nhl.link.rest.it.fixture.resource.E3Resource;
 import org.apache.cayenne.query.SQLTemplate;
 import org.junit.Test;
@@ -36,7 +35,6 @@ public class PUT_Related_IT extends JerseyTestOnDerby {
 
 	@Override
 	protected void doAddResources(FeatureContext context) {
-		context.register(E2Resource.class);
 		context.register(E3Resource.class);
 		context.register(Resource.class);
 	}
@@ -347,6 +345,13 @@ public class PUT_Related_IT extends JerseyTestOnDerby {
 
 		@Context
 		private Configuration config;
+
+        @PUT
+        @Path("e2/{id}/e3s")
+        public DataResponse<E3> createOrUpdate_Idempotent_E3s(@PathParam("id") int id, String entityData) {
+            return LinkRest.idempotentCreateOrUpdate(E3.class, config).toManyParent(E2.class, id, E2.E3S)
+                    .syncAndSelect(entityData);
+        }
 
         @PUT
         @Path("e7/{id}/e8/{tid}")

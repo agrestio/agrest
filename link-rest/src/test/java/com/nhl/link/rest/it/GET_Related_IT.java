@@ -2,12 +2,14 @@ package com.nhl.link.rest.it;
 
 import com.nhl.link.rest.DataResponse;
 import com.nhl.link.rest.LinkRest;
+import com.nhl.link.rest.constraints.Constraint;
 import com.nhl.link.rest.it.fixture.JerseyTestOnDerby;
 import com.nhl.link.rest.it.fixture.cayenne.E12;
 import com.nhl.link.rest.it.fixture.cayenne.E12E13;
 import com.nhl.link.rest.it.fixture.cayenne.E17;
 import com.nhl.link.rest.it.fixture.cayenne.E18;
-import com.nhl.link.rest.it.fixture.resource.E2Resource;
+import com.nhl.link.rest.it.fixture.cayenne.E2;
+import com.nhl.link.rest.it.fixture.cayenne.E3;
 import com.nhl.link.rest.it.fixture.resource.E3Resource;
 import org.apache.cayenne.map.DataMap;
 import org.apache.cayenne.map.ObjAttribute;
@@ -33,7 +35,6 @@ public class GET_Related_IT extends JerseyTestOnDerby {
 
     @Override
     protected void doAddResources(FeatureContext context) {
-        context.register(E2Resource.class);
         context.register(E3Resource.class);
         context.register(Resource.class);
     }
@@ -186,6 +187,25 @@ public class GET_Related_IT extends JerseyTestOnDerby {
 
         @Context
         private Configuration config;
+
+        @GET
+        @Path("e2/{id}/dummyrel")
+        public DataResponse<E3> getE2_Dummyrel(@PathParam("id") int id, @Context UriInfo uriInfo) {
+            return LinkRest.select(E3.class, config).parent(E2.class, id, "dummyrel").uri(uriInfo).get();
+        }
+
+        @GET
+        @Path("e2/{id}/e3s")
+        public DataResponse<E3> getE2_E3s(@PathParam("id") int id, @Context UriInfo uriInfo) {
+            return LinkRest.select(E3.class, config).parent(E2.class, id, "e3s").uri(uriInfo).get();
+        }
+
+        @GET
+        @Path("e2/constraints/{id}/e3s")
+        public DataResponse<E3> getE2_E3s_Constrained(@PathParam("id") int id, @Context UriInfo uriInfo) {
+            return LinkRest.select(E3.class, config).parent(E2.class, id, "e3s").uri(uriInfo)
+                    .constraint(Constraint.idOnly(E3.class)).get();
+        }
 
         @GET
         @Path("e12/{id}/e1213")

@@ -9,7 +9,6 @@ import com.nhl.link.rest.it.fixture.cayenne.E17;
 import com.nhl.link.rest.it.fixture.cayenne.E18;
 import com.nhl.link.rest.it.fixture.cayenne.E2;
 import com.nhl.link.rest.it.fixture.cayenne.E3;
-import com.nhl.link.rest.it.fixture.resource.E2Resource;
 import org.apache.cayenne.DataRow;
 import org.apache.cayenne.query.SQLSelect;
 import org.apache.cayenne.query.SQLTemplate;
@@ -36,7 +35,6 @@ public class POST_Related_IT extends JerseyTestOnDerby {
 
     @Override
     protected void doAddResources(FeatureContext context) {
-        context.register(E2Resource.class);
         context.register(Resource.class);
     }
 
@@ -142,6 +140,12 @@ public class POST_Related_IT extends JerseyTestOnDerby {
 
         @Context
         private Configuration config;
+
+        @POST
+        @Path("e2/{id}/e3s")
+        public DataResponse<E3> createOrUpdateE3sOfE2(@PathParam("id") int id, String targetData) {
+            return LinkRest.createOrUpdate(E3.class, config).toManyParent(E2.class, id, E2.E3S).syncAndSelect(targetData);
+        }
 
         @POST
         @Path("e12/{id}/e1213")

@@ -12,9 +12,7 @@ import com.nhl.link.rest.it.fixture.cayenne.E2;
 import com.nhl.link.rest.it.fixture.cayenne.E3;
 import com.nhl.link.rest.it.fixture.cayenne.E4;
 import com.nhl.link.rest.it.fixture.cayenne.E8;
-import com.nhl.link.rest.it.fixture.resource.E2Resource;
 import com.nhl.link.rest.it.fixture.resource.E3Resource;
-import com.nhl.link.rest.it.fixture.resource.E4Resource;
 import org.apache.cayenne.Cayenne;
 import org.apache.cayenne.ObjectContext;
 import org.apache.cayenne.query.ObjectSelect;
@@ -45,9 +43,7 @@ public class POST_IT extends JerseyTestOnDerby {
 
     @Override
     protected void doAddResources(FeatureContext context) {
-        context.register(E2Resource.class);
         context.register(E3Resource.class);
-        context.register(E4Resource.class);
         context.register(Resource.class);
     }
 
@@ -334,6 +330,24 @@ public class POST_IT extends JerseyTestOnDerby {
         private Configuration config;
 
         @POST
+        @Path("e2")
+        public DataResponse<E2> createE2(String targetData, @Context UriInfo uriInfo) {
+            return LinkRest.create(E2.class, config).uri(uriInfo).syncAndSelect(targetData);
+        }
+
+        @POST
+        @Path("e4")
+        public DataResponse<E4> createE4(String requestBody) {
+            return LinkRest.create(E4.class, config).syncAndSelect(requestBody);
+        }
+
+        @POST
+        @Path("e4/defaultdata")
+        public SimpleResponse createE4_DefaultData(String requestBody) {
+            return LinkRest.create(E4.class, config).sync(requestBody);
+        }
+
+        @POST
         @Path("e8/w/constrainedid/{id}")
         public SimpleResponse create_WriteConstrainedId(
                 @PathParam("id") int id,
@@ -356,13 +370,13 @@ public class POST_IT extends JerseyTestOnDerby {
 
         @POST
         @Path("e19")
-        public DataResponse<E19> create(@Context UriInfo uriInfo, String data) {
+        public DataResponse<E19> createE19(@Context UriInfo uriInfo, String data) {
             return LinkRest.create(E19.class, config).uri(uriInfo).syncAndSelect(data);
         }
 
         @POST
         @Path("e19/float")
-        public DataResponse<E19> create_FloatAttribute(@Context UriInfo uriInfo, String data) {
+        public DataResponse<E19> createE19_FloatAttribute(@Context UriInfo uriInfo, String data) {
             DataResponse<E19> response = LinkRest.create(E19.class, config).uri(uriInfo).syncAndSelect(data);
 
             int objectCount = response.getObjects().size();
@@ -379,7 +393,7 @@ public class POST_IT extends JerseyTestOnDerby {
 
         @POST
         @Path("e17")
-        public DataResponse<E17> create(
+        public DataResponse<E17> createE17(
                 @Context UriInfo uriInfo,
                 @QueryParam("id1") Integer id1,
                 @QueryParam("id2") Integer id2,
@@ -394,7 +408,7 @@ public class POST_IT extends JerseyTestOnDerby {
 
         @POST
         @Path("e16")
-        public DataResponse<E16> create(String requestBody) {
+        public DataResponse<E16> createE16(String requestBody) {
             return LinkRest.create(E16.class, config).syncAndSelect(requestBody);
         }
     }
