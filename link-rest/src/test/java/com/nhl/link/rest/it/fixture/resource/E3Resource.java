@@ -13,7 +13,6 @@ import com.nhl.link.rest.it.fixture.listener.FetchPassThroughListener;
 import com.nhl.link.rest.it.fixture.listener.FetchTakeOverListener;
 import com.nhl.link.rest.it.fixture.listener.UpdateCallbackListener;
 
-import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
@@ -136,23 +135,11 @@ public class E3Resource {
         return LinkRest.select(E2.class, config).parent(E3.class, id, E3.E2).uri(uriInfo).get();
     }
 
-    @DELETE
-    @Path("{id}/e2")
-    public SimpleResponse deleteE2_Implicit(@PathParam("id") int id) {
-        return LinkRest.service(config).unrelate(E3.class, id, E3.E2);
-    }
-
     @PUT
     @Path("{id}/e2/{tid}")
     public DataResponse<E2> createOrUpdate_Idempotent_E2(@PathParam("id") int parentId, @PathParam("tid") int id,
                                                          String entityData) {
         return LinkRest.idempotentCreateOrUpdate(E2.class, config).id(id).parent(E3.class, parentId, E3.E2)
                 .syncAndSelect(entityData);
-    }
-
-    @DELETE
-    @Path("{id}/e2/{tid}")
-    public SimpleResponse deleteE2(@PathParam("id") int id, @PathParam("tid") int tid) {
-        return LinkRest.service(config).unrelate(E3.class, id, E3.E2, tid);
     }
 }

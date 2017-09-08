@@ -1,29 +1,33 @@
 package com.nhl.link.rest.it;
 
-import static org.junit.Assert.assertEquals;
-
-import java.io.IOException;
-
-import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.core.FeatureContext;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
-
-import org.apache.cayenne.query.SQLTemplate;
-import org.junit.Test;
-
+import com.nhl.link.rest.DataResponse;
+import com.nhl.link.rest.LinkRest;
 import com.nhl.link.rest.it.fixture.JerseyTestOnDerby;
 import com.nhl.link.rest.it.fixture.cayenne.E10;
 import com.nhl.link.rest.it.fixture.cayenne.E4;
-import com.nhl.link.rest.it.fixture.resource.E10Resource;
 import com.nhl.link.rest.it.fixture.resource.E4Resource;
+import org.apache.cayenne.query.SQLTemplate;
+import org.junit.Test;
+
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Configuration;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.FeatureContext;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
+import javax.ws.rs.core.UriInfo;
+import java.io.IOException;
+
+import static org.junit.Assert.assertEquals;
 
 public class GET_ConstraintsIT extends JerseyTestOnDerby {
 
 	@Override
 	protected void doAddResources(FeatureContext context) {
 		context.register(E4Resource.class);
-		context.register(E10Resource.class);
+		context.register(Resource.class);
 	}
 
 	@Test
@@ -75,6 +79,18 @@ public class GET_ConstraintsIT extends JerseyTestOnDerby {
 		assertEquals(Status.OK.getStatusCode(), response1.getStatus());
 		assertEquals("{\"data\":[{\"id\":1,\"cBoolean\":true,\"cInt\":5,\"e11s\":{\"address\":\"aaa\"}}],\"total\":1}",
 				response1.readEntity(String.class));
+	}
 
+	@Path("")
+	public class Resource {
+
+		@Context
+		private Configuration config;
+
+		@GET
+        @Path("e10")
+		public DataResponse<E10> get(@Context UriInfo uriInfo) {
+			return LinkRest.select(E10.class, config).uri(uriInfo).get();
+		}
 	}
 }

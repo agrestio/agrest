@@ -1,15 +1,21 @@
 package com.nhl.link.rest.it;
 
+import com.nhl.link.rest.DataResponse;
+import com.nhl.link.rest.LinkRest;
 import com.nhl.link.rest.it.fixture.JerseyTestOnDerby;
 import com.nhl.link.rest.it.fixture.cayenne.E22;
 import com.nhl.link.rest.it.fixture.cayenne.E25;
-import com.nhl.link.rest.it.fixture.resource.E25Resource;
 import org.apache.cayenne.query.SQLTemplate;
 import org.junit.Test;
 
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
 import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Configuration;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.FeatureContext;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriInfo;
 import java.io.IOException;
 
 import static org.junit.Assert.assertEquals;
@@ -82,5 +88,17 @@ public class GET_DynamicAttributesIT extends JerseyTestOnDerby {
                 "\"3\":[{\"id\":1,\"e22\":{\"id\":3}},{\"id\":3,\"e22\":{\"id\":3}}]," +
                 "\"4\":[{\"id\":2,\"e22\":{\"id\":4}}]" +
                 "},\"total\":3}", r.readEntity(String.class));
+    }
+
+    @Path("e25")
+    public static class E25Resource {
+
+        @Context
+        private Configuration config;
+
+        @GET
+        public DataResponse<E25> getAll(@Context UriInfo uriInfo) {
+            return LinkRest.select(E25.class, config).uri(uriInfo).get();
+        }
     }
 }

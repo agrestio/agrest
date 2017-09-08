@@ -1,17 +1,14 @@
 package com.nhl.link.rest.it.fixture.resource;
 
 import com.nhl.link.rest.DataResponse;
-import com.nhl.link.rest.EntityDelete;
 import com.nhl.link.rest.LinkRest;
 import com.nhl.link.rest.MetadataResponse;
-import com.nhl.link.rest.SimpleResponse;
 import com.nhl.link.rest.annotation.LinkType;
 import com.nhl.link.rest.annotation.LrResource;
 import com.nhl.link.rest.constraints.Constraint;
 import com.nhl.link.rest.it.fixture.cayenne.E2;
 import com.nhl.link.rest.it.fixture.cayenne.E3;
 
-import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
@@ -20,7 +17,6 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Configuration;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.UriInfo;
-import java.util.Collection;
 
 @Path("e2")
 public class E2Resource {
@@ -41,17 +37,6 @@ public class E2Resource {
 		return LinkRest.service(config).selectById(E2.class, id, uriInfo);
 	}
 
-	@DELETE
-	@Path("{id}")
-	public SimpleResponse deleteE2ById(@PathParam("id") int id, @Context UriInfo uriInfo) {
-		return LinkRest.service(config).delete(E2.class, id);
-	}
-
-	@DELETE
-	public SimpleResponse deleteE2_Batch(Collection<EntityDelete<E2>> deleted, @Context UriInfo uriInfo) {
-		return LinkRest.service(config).delete(E2.class, deleted);
-	}
-
 	@GET
 	@Path("{id}/dummyrel")
 	public DataResponse<E3> getE2_Dummyrel(@PathParam("id") int id, @Context UriInfo uriInfo) {
@@ -69,13 +54,6 @@ public class E2Resource {
 	public DataResponse<E3> getE2_E3s_Constrained(@PathParam("id") int id, @Context UriInfo uriInfo) {
 		return LinkRest.select(E3.class, config).parent(E2.class, id, "e3s").uri(uriInfo)
 				.constraint(Constraint.idOnly(E3.class)).get();
-	}
-
-	@DELETE
-	@Path("{id}/{rel}/{tid}")
-	public SimpleResponse deleteToMany(@PathParam("id") int id, @PathParam("rel") String relationship,
-			@PathParam("tid") int tid) {
-		return LinkRest.service(config).unrelate(E2.class, id, relationship, tid);
 	}
 
 	@POST

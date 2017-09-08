@@ -1,16 +1,7 @@
 package com.nhl.link.rest.it;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
-import javax.ws.rs.core.Application;
-import javax.ws.rs.core.Feature;
-import javax.ws.rs.core.FeatureContext;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
-
+import com.nhl.link.rest.LinkRestException;
+import com.nhl.link.rest.runtime.LinkRestBuilder;
 import org.apache.cayenne.DataChannel;
 import org.apache.cayenne.configuration.server.ServerRuntime;
 import org.apache.cayenne.map.EntityResolver;
@@ -19,8 +10,18 @@ import org.glassfish.jersey.test.JerseyTest;
 import org.glassfish.jersey.test.inmemory.InMemoryTestContainerFactory;
 import org.junit.Test;
 
-import com.nhl.link.rest.it.fixture.resource.ExceptionResource;
-import com.nhl.link.rest.runtime.LinkRestBuilder;
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.core.Application;
+import javax.ws.rs.core.Feature;
+import javax.ws.rs.core.FeatureContext;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
+
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class GET_ExceptionIT extends JerseyTest {
 
@@ -70,6 +71,25 @@ public class GET_ExceptionIT extends JerseyTest {
 
 		assertEquals(MediaType.APPLICATION_JSON_TYPE, response.getMediaType());
 		assertEquals("{\"success\":false,\"message\":\"request failed with th\"}", response.readEntity(String.class));
+	}
+
+	@Path("nodata")
+	public static class ExceptionResource {
+
+		@GET
+		public Response get() {
+			throw new LinkRestException(Status.NOT_FOUND, "request failed");
+		}
+
+		@GET
+		@Path("th")
+		public Response getTh() {
+			try {
+				throw new Throwable("Dummy");
+			} catch (Throwable th) {
+				throw new LinkRestException(Status.INTERNAL_SERVER_ERROR, "request failed with th", th);
+			}
+		}
 	}
 
 }

@@ -1,22 +1,30 @@
 package com.nhl.link.rest.client.it.noadapter;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.nhl.link.rest.DataResponse;
+import com.nhl.link.rest.LinkRest;
+import com.nhl.link.rest.SimpleResponse;
 import com.nhl.link.rest.client.ClientDataResponse;
 import com.nhl.link.rest.client.ClientSimpleResponse;
 import com.nhl.link.rest.client.LinkRestClient;
 import com.nhl.link.rest.client.LinkRestClientException;
 import com.nhl.link.rest.it.fixture.JerseyTestOnDerby;
 import com.nhl.link.rest.it.fixture.cayenne.E2;
-import com.nhl.link.rest.it.fixture.resource.E2Resource;
 import org.junit.Test;
 
+import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.core.Configuration;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.FeatureContext;
 import javax.ws.rs.core.Response.Status;
+import javax.ws.rs.core.UriInfo;
 
 import static com.nhl.link.rest.client.it.noadapter.EntityUtil.createE2;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 public class DELETE_Client_IT extends JerseyTestOnDerby {
 
@@ -58,5 +66,29 @@ public class DELETE_Client_IT extends JerseyTestOnDerby {
         }
         assertNotNull(e);
         assertTrue(e.getMessage().startsWith("Server returned 404 (Not Found)"));
+    }
+
+    @Path("e2")
+    public static class E2Resource {
+
+        @Context
+        private Configuration config;
+
+        @GET
+        @Path("{id}")
+        public DataResponse<E2> getE2ById(@PathParam("id") int id, @Context UriInfo uriInfo) {
+            return LinkRest.service(config).selectById(E2.class, id, uriInfo);
+        }
+
+        @POST
+        public DataResponse<E2> createE2(String targetData, @Context UriInfo uriInfo) {
+            return LinkRest.create(E2.class, config).uri(uriInfo).syncAndSelect(targetData);
+        }
+
+        @DELETE
+        @Path("{id}")
+        public SimpleResponse deleteE2ById(@PathParam("id") int id, @Context UriInfo uriInfo) {
+            return LinkRest.service(config).delete(E2.class, id);
+        }
     }
 }

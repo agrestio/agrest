@@ -1,6 +1,5 @@
 package com.nhl.link.rest.it.fixture.pojo;
 
-import com.nhl.link.rest.it.fixture.resource.PojoResource;
 import com.nhl.link.rest.runtime.LinkRestBuilder;
 import com.nhl.link.rest.runtime.adapter.LinkRestAdapter;
 import com.nhl.link.rest.runtime.processor.select.SelectProcessorFactory;
@@ -19,7 +18,7 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Collection;
 
-public class JerseyTestOnPojo extends JerseyTest {
+public abstract class JerseyTestOnPojo extends JerseyTest {
 
     // using in-memory key/value "database" to store POJOs
     protected static PojoDB pojoDB;
@@ -56,16 +55,13 @@ public class JerseyTestOnPojo extends JerseyTest {
             }
         }).build();
 
-        Feature unitFeature = new Feature() {
-
-            @Override
-            public boolean configure(FeatureContext context) {
-                context.register(PojoResource.class);
-                return true;
-            }
+        Feature unitFeature = context -> {
+            doAddResources(context);
+            return true;
         };
 
         return new ResourceConfig().register(unitFeature).register(lrFeature);
     }
 
+    protected abstract void doAddResources(FeatureContext context);
 }

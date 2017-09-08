@@ -1,29 +1,36 @@
 package com.nhl.link.rest.it;
 
-import static org.junit.Assert.assertEquals;
-
-import javax.ws.rs.client.Entity;
-import javax.ws.rs.core.FeatureContext;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
-
-import org.apache.cayenne.query.SQLTemplate;
-import org.junit.Test;
-
+import com.nhl.link.rest.DataResponse;
+import com.nhl.link.rest.LinkRest;
 import com.nhl.link.rest.it.fixture.JerseyTestOnDerby;
 import com.nhl.link.rest.it.fixture.cayenne.E1;
 import com.nhl.link.rest.it.fixture.cayenne.E12;
+import com.nhl.link.rest.it.fixture.cayenne.E12E13;
 import com.nhl.link.rest.it.fixture.cayenne.E15;
 import com.nhl.link.rest.it.fixture.cayenne.E15E1;
 import com.nhl.link.rest.it.fixture.cayenne.E2;
 import com.nhl.link.rest.it.fixture.cayenne.E3;
-import com.nhl.link.rest.it.fixture.resource.E12Resource;
-import com.nhl.link.rest.it.fixture.resource.E15Resource;
+import com.nhl.link.rest.it.fixture.cayenne.E7;
+import com.nhl.link.rest.it.fixture.cayenne.E8;
+import com.nhl.link.rest.it.fixture.cayenne.E9;
 import com.nhl.link.rest.it.fixture.resource.E2Resource;
 import com.nhl.link.rest.it.fixture.resource.E3Resource;
-import com.nhl.link.rest.it.fixture.resource.E7Resource;
-import com.nhl.link.rest.it.fixture.resource.E8Resource;
+import org.apache.cayenne.query.SQLTemplate;
+import org.junit.Test;
+
+import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.client.Entity;
+import javax.ws.rs.core.Configuration;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.FeatureContext;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
+import javax.ws.rs.core.UriInfo;
+
+import static org.junit.Assert.assertEquals;
 
 public class PUT_Related_IT extends JerseyTestOnDerby {
 
@@ -31,10 +38,7 @@ public class PUT_Related_IT extends JerseyTestOnDerby {
 	protected void doAddResources(FeatureContext context) {
 		context.register(E2Resource.class);
 		context.register(E3Resource.class);
-		context.register(E7Resource.class);
-		context.register(E8Resource.class);
-		context.register(E12Resource.class);
-		context.register(E15Resource.class);
+		context.register(Resource.class);
 	}
 
 	@Test
@@ -336,5 +340,61 @@ public class PUT_Related_IT extends JerseyTestOnDerby {
 		assertEquals(3, intForQuery("SELECT count(1) FROM utest.e15"));
 
 		assertEquals(1, intForQuery("SELECT count(1) FROM utest.e15_e5 WHERE e15_id = 14 AND e5_id = 1"));
+	}
+
+	@Path("")
+	public static class Resource {
+
+		@Context
+		private Configuration config;
+
+        @PUT
+        @Path("e7/{id}/e8/{tid}")
+        public DataResponse<E8> relateToOneExisting(@PathParam("id") int parentId, @PathParam("tid") int id, String data) {
+            return LinkRest.idempotentCreateOrUpdate(E8.class, config).id(id).parent(E7.class, parentId, E7.E8)
+                    .syncAndSelect(data);
+        }
+
+        @PUT
+        @Path("e8/{id}/e9")
+        public DataResponse<E9> relateToOneDependent(@PathParam("id") int id, String entityData) {
+            // this will test support for ID propagation in a 1..1
+            return LinkRest.idempotentCreateOrUpdate(E9.class, config).parent(E8.class, id, E8.E9)
+                    .syncAndSelect(entityData);
+        }
+
+        @PUT
+        @Path("e8/createorupdate/{id}/e7s")
+        public DataResponse<E7> createOrUpdateE7s(@PathParam("id") int id, String entityData) {
+            return LinkRest.idempotentCreateOrUpdate(E7.class, config).toManyParent(E8.class, id, E8.E7S)
+                    .syncAndSelect(entityData);
+        }
+
+        @PUT
+        @Path("e8/{id}/e7s")
+        public DataResponse<E7> fullSyncE7s(@PathParam("id") int id, String entityData) {
+            return LinkRest.idempotentFullSync(E7.class, config).toManyParent(E8.class, id, E8.E7S)
+                    .syncAndSelect(entityData);
+        }
+
+        @PUT
+        @Path("e12/{id}/e1213")
+        public DataResponse<E12E13> fullSync_Joins(@PathParam("id") int id, @Context UriInfo info, String entityData) {
+            return LinkRest.idempotentFullSync(E12E13.class, config).toManyParent(E12.class, id, E12.E1213).uri(info)
+                    .syncAndSelect(entityData);
+        }
+
+		@PUT
+		@Path("e15/{id}/e15e1")
+		public DataResponse<E15E1> createOrUpdate_Joins(@PathParam("id") long id, @Context UriInfo info, String entityData) {
+			return LinkRest.createOrUpdate(E15E1.class, config).toManyParent(E15.class, id, E15.E15E1).uri(info)
+					.syncAndSelect(entityData);
+		}
+
+		@PUT
+		@Path("e15/{id}")
+		public DataResponse<E15> createOrUpdate_Joins_FlattenedRel(@PathParam("id") long id, @Context UriInfo info, String entityData) {
+			return LinkRest.createOrUpdate(E15.class, config).id(id).uri(info).syncAndSelect(entityData);
+		}
 	}
 }
