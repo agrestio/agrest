@@ -5,13 +5,16 @@ import com.nhl.link.rest.DataResponse;
 import com.nhl.link.rest.LinkRest;
 import com.nhl.link.rest.ResourceEntity;
 import com.nhl.link.rest.SelectStage;
+import com.nhl.link.rest.annotation.listener.QueryAssembled;
+import com.nhl.link.rest.annotation.listener.SelectServerParamsApplied;
 import com.nhl.link.rest.encoder.Encoder;
 import com.nhl.link.rest.encoder.EncoderFilter;
 import com.nhl.link.rest.it.fixture.JerseyTestOnDerby;
 import com.nhl.link.rest.it.fixture.cayenne.E3;
 import com.nhl.link.rest.it.fixture.cayenne.E4;
-import com.nhl.link.rest.it.fixture.listener.CayennePaginationListener;
+import com.nhl.link.rest.processor.ProcessingStage;
 import com.nhl.link.rest.runtime.LinkRestBuilder;
+import com.nhl.link.rest.runtime.processor.select.SelectContext;
 import org.apache.cayenne.Cayenne;
 import org.apache.cayenne.query.SQLTemplate;
 import org.junit.Test;
@@ -31,166 +34,213 @@ import static org.junit.Assert.assertTrue;
 
 public class GET_EncoderFilters_IT extends JerseyTestOnDerby {
 
-	@Override
-	protected void doAddResources(FeatureContext context) {
-		context.register(Resource.class);
-	}
+    @Override
+    protected void doAddResources(FeatureContext context) {
+        context.register(Resource.class);
+    }
 
-	@Override
-	protected LinkRestBuilder doConfigure() {
-		return super.doConfigure().encoderFilter(new E4OddFilter());
-	}
+    @Override
+    protected LinkRestBuilder doConfigure() {
+        return super.doConfigure().encoderFilter(new E4OddFilter());
+    }
 
-	@Test
-	public void testFilteredTotal() {
+    @Test
+    public void testFilteredTotal() {
 
-		newContext()
-				.performGenericQuery(new SQLTemplate(E3.class, "INSERT INTO utest.e4 (id) values (1), (2)"));
+        newContext()
+                .performGenericQuery(new SQLTemplate(E3.class, "INSERT INTO utest.e4 (id) values (1), (2)"));
 
-		Response response1 = target("/e4").queryParam("include", "id").queryParam("sort", "id").request().get();
-		assertEquals(Status.OK.getStatusCode(), response1.getStatus());
-		assertEquals("{\"data\":[{\"id\":2}],\"total\":1}", response1.readEntity(String.class));
-	}
+        Response response = target("/e4")
+                .queryParam("include", "id")
+                .queryParam("sort", "id")
+                .request()
+                .get();
 
-	@Test
-	public void testFilteredPagination1() {
+        onSuccess(response).bodyEquals(1, "{\"id\":2}");
+    }
 
-		newContext().performGenericQuery(
-				new SQLTemplate(E3.class, "INSERT INTO utest.e4 (id) "
-						+ "values (1), (2), (3), (4), (5), (6), (7), (8), (9), (10)"));
+    @Test
+    public void testFilteredPagination1() {
 
-		Response response1 = target("/e4").queryParam("include", "id").queryParam("sort", "id")
-				.queryParam("start", "0").queryParam("limit", "2").request().get();
+        newContext().performGenericQuery(
+                new SQLTemplate(E3.class, "INSERT INTO utest.e4 (id) "
+                        + "values (1), (2), (3), (4), (5), (6), (7), (8), (9), (10)"));
 
-		assertEquals(Status.OK.getStatusCode(), response1.getStatus());
-		assertEquals("{\"data\":[{\"id\":2},{\"id\":4}],\"total\":5}",
-				response1.readEntity(String.class));
-	}
+        Response response1 = target("/e4").queryParam("include", "id").queryParam("sort", "id")
+                .queryParam("start", "0").queryParam("limit", "2").request().get();
 
-	@Test
-	public void testFilteredPagination2() {
+        assertEquals(Status.OK.getStatusCode(), response1.getStatus());
+        assertEquals("{\"data\":[{\"id\":2},{\"id\":4}],\"total\":5}",
+                response1.readEntity(String.class));
+    }
 
-		newContext().performGenericQuery(
-				new SQLTemplate(E3.class, "INSERT INTO utest.e4 (id) "
-						+ "values (1), (2), (3), (4), (5), (6), (7), (8), (9), (10)"));
+    @Test
+    public void testFilteredPagination2() {
 
-		Response response1 = target("/e4").queryParam("include", "id").queryParam("sort", "id")
-				.queryParam("start", "2").queryParam("limit", "3").request().get();
+        newContext().performGenericQuery(
+                new SQLTemplate(E3.class, "INSERT INTO utest.e4 (id) "
+                        + "values (1), (2), (3), (4), (5), (6), (7), (8), (9), (10)"));
 
-		assertEquals(Status.OK.getStatusCode(), response1.getStatus());
-		assertEquals("{\"data\":[{\"id\":6},{\"id\":8},{\"id\":10}],\"total\":5}",
-				response1.readEntity(String.class));
-	}
+        Response response1 = target("/e4").queryParam("include", "id").queryParam("sort", "id")
+                .queryParam("start", "2").queryParam("limit", "3").request().get();
 
-	@Test
-	public void testFilteredPagination3() {
+        assertEquals(Status.OK.getStatusCode(), response1.getStatus());
+        assertEquals("{\"data\":[{\"id\":6},{\"id\":8},{\"id\":10}],\"total\":5}",
+                response1.readEntity(String.class));
+    }
 
-		newContext().performGenericQuery(
-				new SQLTemplate(E3.class, "INSERT INTO utest.e4 (id) "
-						+ "values (1), (2), (3), (4), (5), (6), (7), (8), (9), (10)"));
+    @Test
+    public void testFilteredPagination3() {
 
-		Response response1 = target("/e4").queryParam("include", "id").queryParam("sort", "id")
-				.queryParam("start", "2").queryParam("limit", "10").request().get();
+        newContext().performGenericQuery(
+                new SQLTemplate(E3.class, "INSERT INTO utest.e4 (id) "
+                        + "values (1), (2), (3), (4), (5), (6), (7), (8), (9), (10)"));
 
-		assertEquals(Status.OK.getStatusCode(), response1.getStatus());
-		assertEquals("{\"data\":[{\"id\":6},{\"id\":8},{\"id\":10}],\"total\":5}",
-				response1.readEntity(String.class));
-	}
+        Response response1 = target("/e4").queryParam("include", "id").queryParam("sort", "id")
+                .queryParam("start", "2").queryParam("limit", "10").request().get();
 
-	@Test
-	public void testFilteredPagination4_Listeners() {
+        assertEquals(Status.OK.getStatusCode(), response1.getStatus());
+        assertEquals("{\"data\":[{\"id\":6},{\"id\":8},{\"id\":10}],\"total\":5}",
+                response1.readEntity(String.class));
+    }
 
-		CayennePaginationListener.RESOURCE_ENTITY_IS_FILTERED = false;
-		CayennePaginationListener.QUERY_PAGE_SIZE = 0;
+    @Deprecated
+    @Test
+    public void testFilteredPagination4_Listeners() {
 
-		target("/e4/pagination_listener").queryParam("include", "id").queryParam("sort", "id")
-				.queryParam("start", "2").queryParam("limit", "10").request().get();
+        CayennePaginationListener.RESOURCE_ENTITY_IS_FILTERED = false;
+        CayennePaginationListener.QUERY_PAGE_SIZE = 0;
 
-		assertTrue(CayennePaginationListener.RESOURCE_ENTITY_IS_FILTERED);
-		assertEquals(0, CayennePaginationListener.QUERY_PAGE_SIZE);
-	}
+        target("/e4/pagination_listener")
+                .queryParam("include", "id")
+                .queryParam("sort", "id")
+                .queryParam("start", "2")
+                .queryParam("limit", "10")
+                .request()
+                .get();
 
-	@Test
-	public void testFilteredPagination4_CustomStage() {
+        assertTrue(CayennePaginationListener.RESOURCE_ENTITY_IS_FILTERED);
+        assertEquals(0, CayennePaginationListener.QUERY_PAGE_SIZE);
+    }
 
-		CayennePaginationListener.RESOURCE_ENTITY_IS_FILTERED = false;
-		CayennePaginationListener.QUERY_PAGE_SIZE = 0;
+    @Test
+    public void testFilteredPagination4_CustomStage() {
 
-		target("/e4/pagination_stage").queryParam("include", "id").queryParam("sort", "id")
-				.queryParam("start", "2").queryParam("limit", "10").request().get();
+        Resource.RESOURCE_ENTITY_IS_FILTERED = false;
+        Resource.QUERY_PAGE_SIZE = 0;
 
-		assertTrue(CayennePaginationListener.RESOURCE_ENTITY_IS_FILTERED);
-		assertEquals(0, CayennePaginationListener.QUERY_PAGE_SIZE);
-	}
+        target("/e4/pagination_stage")
+                .queryParam("include", "id")
+                .queryParam("sort", "id")
+                .queryParam("start", "2")
+                .queryParam("limit", "10")
+                .request().get();
 
-	private final class E4OddFilter implements EncoderFilter {
-		@Override
-		public boolean matches(ResourceEntity<?> entity) {
-			return entity.getLrEntity().getName().equals("E4");
-		}
+        assertTrue(Resource.RESOURCE_ENTITY_IS_FILTERED);
+        assertEquals(0, Resource.QUERY_PAGE_SIZE);
+    }
 
-		@Override
-		public boolean encode(String propertyName, Object object, JsonGenerator out, Encoder delegate)
-				throws IOException {
+    private final class E4OddFilter implements EncoderFilter {
+        @Override
+        public boolean matches(ResourceEntity<?> entity) {
+            return entity.getLrEntity().getName().equals("E4");
+        }
 
-			E4 e4 = (E4) object;
+        @Override
+        public boolean encode(String propertyName, Object object, JsonGenerator out, Encoder delegate)
+                throws IOException {
 
-			// keep even, remove odd
-			if (Cayenne.intPKForObject(e4) % 2 == 0) {
-				return delegate.encode(propertyName, object, out);
-			}
+            E4 e4 = (E4) object;
 
-			return false;
-		}
+            // keep even, remove odd
+            if (Cayenne.intPKForObject(e4) % 2 == 0) {
+                return delegate.encode(propertyName, object, out);
+            }
 
-		@Override
-		public boolean willEncode(String propertyName, Object object, Encoder delegate) {
-			E4 e4 = (E4) object;
+            return false;
+        }
 
-			// keep even, remove odd
-			if (Cayenne.intPKForObject(e4) % 2 == 0) {
-				return delegate.willEncode(propertyName, object);
-			}
+        @Override
+        public boolean willEncode(String propertyName, Object object, Encoder delegate) {
+            E4 e4 = (E4) object;
 
-			return false;
-		}
-	}
+            // keep even, remove odd
+            if (Cayenne.intPKForObject(e4) % 2 == 0) {
+                return delegate.willEncode(propertyName, object);
+            }
 
-	@Path("")
-	public static class Resource {
+            return false;
+        }
+    }
 
-		@Context
-		private Configuration config;
+    @Path("")
+    public static class Resource {
+
+        static boolean RESOURCE_ENTITY_IS_FILTERED;
+        static int QUERY_PAGE_SIZE;
+
+        @Context
+        private Configuration config;
 
 
-		@GET
+        @GET
         @Path("e4")
-		public DataResponse<E4> get(@Context UriInfo uriInfo) {
-			return LinkRest.service(config).select(E4.class).uri(uriInfo).get();
-		}
+        public DataResponse<E4> get(@Context UriInfo uriInfo) {
+            return LinkRest.service(config).select(E4.class).uri(uriInfo).get();
+        }
 
-		/**
-		 * @deprecated since 2.7 in favor of {@link #get_WithPaginationStage(UriInfo)}.
-		 */
-		@GET
-		@Path("e4/pagination_listener")
+        /**
+         * @deprecated since 2.7 as listeners are deprecated.
+         */
+        @GET
+        @Path("e4/pagination_listener")
         @Deprecated
-		public DataResponse<E4> get_WithPaginationListener(@Context UriInfo uriInfo) {
-			return LinkRest.service(config).select(E4.class).uri(uriInfo).listener(new CayennePaginationListener())
-					.get();
-		}
+        public DataResponse<E4> get_WithPaginationListener(@Context UriInfo uriInfo) {
+            return LinkRest.service(config).select(E4.class).uri(uriInfo).listener(new CayennePaginationListener())
+                    .get();
+        }
 
-		@GET
-		@Path("e4/pagination_stage")
-		public DataResponse<E4> get_WithPaginationStage(@Context UriInfo uriInfo) {
-			return LinkRest.service(config)
-					.select(E4.class)
-					.uri(uriInfo)
-					.stage(SelectStage.APPLY_SERVER_PARAMS,
-							c -> CayennePaginationListener.RESOURCE_ENTITY_IS_FILTERED = c.getEntity().isFiltered())
-					.stage(SelectStage.ASSEMBLE_QUERY,
-							c -> CayennePaginationListener.QUERY_PAGE_SIZE = c.getSelect().getPageSize())
-					.get();
-		}
-	}
+        @GET
+        @Path("e4/pagination_stage")
+        public DataResponse<E4> get_WithPaginationStage(@Context UriInfo uriInfo) {
+            return LinkRest.service(config)
+                    .select(E4.class)
+                    .uri(uriInfo)
+                    .stage(SelectStage.APPLY_SERVER_PARAMS,
+                            c -> RESOURCE_ENTITY_IS_FILTERED = c.getEntity().isFiltered())
+                    .stage(SelectStage.ASSEMBLE_QUERY,
+                            c -> QUERY_PAGE_SIZE = c.getSelect().getPageSize())
+                    .get();
+        }
+    }
+
+    /**
+     * @deprecated since 2.7 as listeners are deprecated.
+     */
+    @Deprecated
+    public static class CayennePaginationListener {
+
+        public static boolean RESOURCE_ENTITY_IS_FILTERED;
+        public static int QUERY_PAGE_SIZE;
+
+        @Deprecated
+        @SelectServerParamsApplied
+        public <T> ProcessingStage<SelectContext<T>, T> selectServerParamsApplied(
+                SelectContext<T> context,
+                ProcessingStage<SelectContext<T>, T> next) {
+
+            RESOURCE_ENTITY_IS_FILTERED = context.getEntity().isFiltered();
+            return next;
+        }
+
+        @Deprecated
+        @QueryAssembled
+        public <T> ProcessingStage<SelectContext<T>, T> queryAssembled(
+                SelectContext<T> context,
+                ProcessingStage<SelectContext<T>, T> next) {
+
+            QUERY_PAGE_SIZE = context.getSelect().getPageSize();
+            return next;
+        }
+    }
 }

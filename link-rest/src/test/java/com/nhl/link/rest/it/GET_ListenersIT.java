@@ -2,12 +2,12 @@ package com.nhl.link.rest.it;
 
 import com.nhl.link.rest.DataResponse;
 import com.nhl.link.rest.LinkRest;
+import com.nhl.link.rest.annotation.listener.SelectServerParamsApplied;
 import com.nhl.link.rest.it.fixture.JerseyTestOnDerby;
 import com.nhl.link.rest.it.fixture.cayenne.E2;
 import com.nhl.link.rest.it.fixture.cayenne.E3;
-import com.nhl.link.rest.it.fixture.listener.FetchCallbackListener;
-import com.nhl.link.rest.it.fixture.listener.FetchPassThroughListener;
-import com.nhl.link.rest.it.fixture.listener.FetchTakeOverListener;
+import com.nhl.link.rest.processor.ProcessingStage;
+import com.nhl.link.rest.runtime.processor.select.SelectContext;
 import org.apache.cayenne.query.SQLTemplate;
 import org.junit.Before;
 import org.junit.Test;
@@ -20,6 +20,8 @@ import javax.ws.rs.core.FeatureContext;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriInfo;
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -124,4 +126,62 @@ public class GET_ListenersIT extends JerseyTestOnDerby {
         }
     }
 
+    @Deprecated
+    public static class FetchCallbackListener {
+
+        public static boolean BEFORE_FETCH_CALLED;
+
+        @Deprecated
+        @SelectServerParamsApplied
+        public void beforeFetch(SelectContext<?> context) {
+            BEFORE_FETCH_CALLED = true;
+        }
+    }
+
+    @Deprecated
+    public static class FetchPassThroughListener {
+
+        public static boolean BEFORE_FETCH_CALLED;
+
+        @Deprecated
+        @SelectServerParamsApplied
+        public <T> ProcessingStage<SelectContext<T>, T> beforeFetch(
+                SelectContext<T> context,
+                ProcessingStage<SelectContext<T>, T> next) {
+
+            BEFORE_FETCH_CALLED = true;
+            return next;
+        }
+    }
+
+    @Deprecated
+    public static class FetchTakeOverListener {
+
+        public static boolean BEFORE_FETCH_CALLED;
+
+        @Deprecated
+        @SuppressWarnings({ "unchecked", "rawtypes", "serial" })
+        @SelectServerParamsApplied
+        public <T> ProcessingStage<SelectContext<T>, T> beforeFetch(SelectContext<T> context,
+                                                                    ProcessingStage<SelectContext<T>, T> next) {
+
+            BEFORE_FETCH_CALLED = true;
+
+            List objects = new ArrayList<>();
+            objects.add(new E3() {
+                {
+                    setName("__X__");
+                }
+            });
+            objects.add(new E3() {
+                {
+                    setName("__Y__");
+                }
+            });
+            context.setObjects(objects);
+
+            // we handle the data, so block the rest of the chain
+            return null;
+        }
+    }
 }

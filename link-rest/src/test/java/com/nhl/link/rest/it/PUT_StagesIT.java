@@ -5,7 +5,6 @@ import com.nhl.link.rest.LinkRest;
 import com.nhl.link.rest.UpdateStage;
 import com.nhl.link.rest.it.fixture.JerseyTestOnDerby;
 import com.nhl.link.rest.it.fixture.cayenne.E3;
-import com.nhl.link.rest.it.fixture.listener.UpdateCallbackListener;
 import org.junit.Test;
 
 import javax.ws.rs.PUT;
@@ -17,7 +16,8 @@ import javax.ws.rs.core.FeatureContext;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class PUT_StagesIT extends JerseyTestOnDerby {
 
@@ -33,7 +33,7 @@ public class PUT_StagesIT extends JerseyTestOnDerby {
         insert("e3", "id, name", "4, 'a'");
 
 
-        UpdateCallbackListener.BEFORE_UPDATE_CALLED = false;
+        Resource.BEFORE_UPDATE_CALLED = false;
 
         Response response = target("/e3/callbackstage")
                 .request()
@@ -44,12 +44,14 @@ public class PUT_StagesIT extends JerseyTestOnDerby {
         assertEquals(1, intForQuery("SELECT COUNT(1) FROM utest.e3 WHERE id = 3 AND name = 'x'"));
         assertEquals(0, intForQuery("SELECT COUNT(1) FROM utest.e3 WHERE id = 4"));
 
-        assertTrue(UpdateCallbackListener.BEFORE_UPDATE_CALLED);
+        assertTrue(Resource.BEFORE_UPDATE_CALLED);
     }
 
 
     @Path("")
     public static class Resource {
+
+        public static boolean BEFORE_UPDATE_CALLED;
 
         @Context
         private Configuration config;
@@ -58,7 +60,7 @@ public class PUT_StagesIT extends JerseyTestOnDerby {
         @Path("e3/callbackstage")
         public DataResponse<E3> syncWithCallbackStage(@Context UriInfo uriInfo, String requestBody) {
             return LinkRest.idempotentFullSync(E3.class, config)
-                    .stage(UpdateStage.APPLY_SERVER_PARAMS, c -> UpdateCallbackListener.BEFORE_UPDATE_CALLED = true)
+                    .stage(UpdateStage.APPLY_SERVER_PARAMS, c -> BEFORE_UPDATE_CALLED = true)
                     .uri(uriInfo)
                     .syncAndSelect(requestBody);
         }

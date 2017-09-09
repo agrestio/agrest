@@ -2,9 +2,10 @@ package com.nhl.link.rest.it;
 
 import com.nhl.link.rest.DataResponse;
 import com.nhl.link.rest.LinkRest;
+import com.nhl.link.rest.annotation.listener.UpdateServerParamsApplied;
 import com.nhl.link.rest.it.fixture.JerseyTestOnDerby;
 import com.nhl.link.rest.it.fixture.cayenne.E3;
-import com.nhl.link.rest.it.fixture.listener.UpdateCallbackListener;
+import com.nhl.link.rest.runtime.processor.update.UpdateContext;
 import org.junit.Test;
 
 import javax.ws.rs.PUT;
@@ -16,7 +17,8 @@ import javax.ws.rs.core.FeatureContext;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  * @deprecated since 2.7 as listeners API is deprecated.
@@ -63,6 +65,18 @@ public class PUT_ListenersIT extends JerseyTestOnDerby {
         public DataResponse<E3> syncWithCallbackListeners(@Context UriInfo uriInfo, String requestBody) {
             return LinkRest.idempotentFullSync(E3.class, config).listener(new UpdateCallbackListener()).uri(uriInfo)
                     .syncAndSelect(requestBody);
+        }
+    }
+
+    @Deprecated
+    public static class UpdateCallbackListener {
+
+        public static boolean BEFORE_UPDATE_CALLED;
+
+        @Deprecated
+        @UpdateServerParamsApplied
+        public void beforeFetch(UpdateContext<?> context) {
+            BEFORE_UPDATE_CALLED = true;
         }
     }
 }
