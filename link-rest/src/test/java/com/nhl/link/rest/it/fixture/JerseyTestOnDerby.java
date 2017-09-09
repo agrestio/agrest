@@ -60,7 +60,9 @@ public abstract class JerseyTestOnDerby extends JerseyTest {
             return true;
         };
 
-        return new ResourceConfig().register(unitFeature).register(lrFeature);
+        return new ResourceConfig()
+                .register(unitFeature)
+                .register(lrFeature);
     }
 
     protected LinkRestBuilder doConfigure() {
@@ -96,6 +98,10 @@ public abstract class JerseyTestOnDerby extends JerseyTest {
     }
 
     protected ResponseAssertions onSuccess(Response response) {
-        return new ResponseAssertions(response).assertSuccess();
+        return new ResponseAssertions(response).wasSuccess();
+    }
+
+    protected ResponseAssertions onResponse(Response response) {
+        return new ResponseAssertions(response);
     }
 }

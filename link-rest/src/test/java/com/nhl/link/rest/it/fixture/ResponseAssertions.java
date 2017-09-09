@@ -1,8 +1,11 @@
 package com.nhl.link.rest.it.fixture;
 
+import com.fasterxml.jackson.databind.JsonNode;
+
 import javax.ws.rs.core.Response;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 public class ResponseAssertions {
 
@@ -12,9 +15,16 @@ public class ResponseAssertions {
         this.response = response;
     }
 
-    public ResponseAssertions assertSuccess() {
+    public ResponseAssertions wasSuccess() {
         assertEquals("Failed request: " + response.getStatus(),
                 Response.Status.OK.getStatusCode(),
+                response.getStatus());
+        return this;
+    }
+
+    public ResponseAssertions statusEquals(Response.Status expectedStatus) {
+        assertEquals(
+                expectedStatus.getStatusCode(),
                 response.getStatus());
         return this;
     }
@@ -38,5 +48,18 @@ public class ResponseAssertions {
                 .append("}");
 
         return bodyEquals(expectedJson.toString());
+    }
+
+    public ResponseAssertions totalEquals(long total) {
+
+        JsonNode rootNode = response.readEntity(JsonNode.class);
+        assertNotNull("No response data", rootNode);
+
+        JsonNode totalNode = rootNode.get("total");
+        assertNotNull("No 'total' info", totalNode);
+
+        assertEquals("Unexpected total", total, totalNode.asLong());
+
+        return this;
     }
 }

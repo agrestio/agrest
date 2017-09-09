@@ -18,10 +18,12 @@ import org.junit.Test;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Configuration;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.FeatureContext;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriInfo;
@@ -37,7 +39,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 public class GET_IT extends JerseyTestOnDerby {
 
@@ -52,7 +53,6 @@ public class GET_IT extends JerseyTestOnDerby {
         insert("e4", "id, c_varchar, c_int", "1, 'xxx', 5");
 
         Response response = target("/e4").request().get();
-
         onSuccess(response).bodyEquals(1,
                 "{\"id\":1,\"cBoolean\":null,\"cDate\":null,\"cDecimal\":null,"
                         + "\"cInt\":5,\"cTime\":null,\"cTimestamp\":null,\"cVarchar\":\"xxx\"}");
@@ -97,11 +97,8 @@ public class GET_IT extends JerseyTestOnDerby {
         insert.setParams(Collections.singletonMap("time", time));
         newContext().performGenericQuery(insert);
 
-        Response response1 = target("/e4").queryParam("include", E4.C_TIME.getName()).request().get();
-
-        assertEquals(Status.OK.getStatusCode(), response1.getStatus());
-        assertEquals("{\"data\":[{\"cTime\":\"14:00:01\"}],\"total\":1}",
-                response1.readEntity(String.class));
+        Response response = target("/e4").queryParam("include", E4.C_TIME.getName()).request().get();
+        onSuccess(response).bodyEquals(1, "{\"cTime\":\"14:00:01\"}");
     }
 
     @Test
@@ -117,23 +114,21 @@ public class GET_IT extends JerseyTestOnDerby {
                 .request()
                 .get();
 
-        assertEquals(Status.OK.getStatusCode(), response.getStatus());
-        assertEquals("{\"data\":[{\"id\":3},{\"id\":2},{\"id\":1}],\"total\":3}",
-                response.readEntity(String.class));
+        onSuccess(response).bodyEquals(3, "{\"id\":3}", "{\"id\":2}", "{\"id\":1}");
     }
 
     @Test
     public void test_Sort_Invalid() {
 
-        Response response1 = target("/e4")
+        Response response = target("/e4")
                 .queryParam("sort", urlEnc("[{\"property\":\"xyz\",\"direction\":\"DESC\"}]"))
                 .queryParam("include", "id")
                 .request()
                 .get();
 
-        assertEquals(Status.BAD_REQUEST.getStatusCode(), response1.getStatus());
-        assertEquals("{\"success\":false,\"message\":\"Invalid path 'xyz' for 'E4'\"}",
-                response1.readEntity(String.class));
+        onResponse(response)
+                .statusEquals(Status.BAD_REQUEST)
+                .bodyEquals("{\"success\":false,\"message\":\"Invalid path 'xyz' for 'E4'\"}");
     }
 
     @Test
@@ -151,8 +146,7 @@ public class GET_IT extends JerseyTestOnDerby {
                 .request()
                 .get();
 
-        assertEquals(Status.OK.getStatusCode(), response.getStatus());
-        assertTrue(response.readEntity(String.class).endsWith("total\":3}"));
+        onSuccess(response).totalEquals(3);
     }
 
     @Test
@@ -425,6 +419,7 @@ public class GET_IT extends JerseyTestOnDerby {
     }
 
     @Path("")
+    @Produces(MediaType.APPLICATION_JSON)
     public static class Resource {
 
         @Context
