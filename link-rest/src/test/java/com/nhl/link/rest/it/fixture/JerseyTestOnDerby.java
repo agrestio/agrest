@@ -16,6 +16,7 @@ import org.junit.Rule;
 import javax.ws.rs.core.Application;
 import javax.ws.rs.core.Feature;
 import javax.ws.rs.core.FeatureContext;
+import javax.ws.rs.core.Response;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 
@@ -92,5 +93,9 @@ public abstract class JerseyTestOnDerby extends JerseyTest {
 
     protected void insert(String table, String columns, String values) {
         DB_STACK.insert(table, columns, values);
+    }
+
+    protected ResponseAssertions onSuccess(Response response) {
+        return new ResponseAssertions(response).assertSuccess();
     }
 }

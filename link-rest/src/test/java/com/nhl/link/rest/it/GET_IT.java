@@ -52,10 +52,10 @@ public class GET_IT extends JerseyTestOnDerby {
         insert("e4", "id, c_varchar, c_int", "1, 'xxx', 5");
 
         Response response = target("/e4").request().get();
-        assertEquals(Status.OK.getStatusCode(), response.getStatus());
-        assertEquals("{\"data\":" + "[{\"id\":1,\"cBoolean\":null,\"cDate\":null,\"cDecimal\":null,"
-                        + "\"cInt\":5,\"cTime\":null,\"cTimestamp\":null,\"cVarchar\":\"xxx\"}],\"total\":1}",
-                response.readEntity(String.class));
+
+        onSuccess(response).bodyEquals(1,
+                "{\"id\":1,\"cBoolean\":null,\"cDate\":null,\"cDecimal\":null,"
+                        + "\"cInt\":5,\"cTime\":null,\"cTimestamp\":null,\"cVarchar\":\"xxx\"}");
     }
 
     @Test
@@ -68,11 +68,8 @@ public class GET_IT extends JerseyTestOnDerby {
         insert.setParams(Collections.singletonMap("ts", date));
         newContext().performGenericQuery(insert);
 
-        Response response1 = target("/e4").queryParam("include", E4.C_TIMESTAMP.getName()).request().get();
-
-        assertEquals(Status.OK.getStatusCode(), response1.getStatus());
-        assertEquals("{\"data\":[{\"cTimestamp\":\"2012-02-03T11:01:02Z\"}],\"total\":1}",
-                response1.readEntity(String.class));
+        Response response = target("/e4").queryParam("include", E4.C_TIMESTAMP.getName()).request().get();
+        onSuccess(response).bodyEquals(1, "{\"cTimestamp\":\"2012-02-03T11:01:02Z\"}");
     }
 
     @Test
@@ -84,11 +81,8 @@ public class GET_IT extends JerseyTestOnDerby {
         insert.setParams(Collections.singletonMap("date", date));
         newContext().performGenericQuery(insert);
 
-        Response response1 = target("/e4").queryParam("include", E4.C_DATE.getName()).request().get();
-
-        assertEquals(Status.OK.getStatusCode(), response1.getStatus());
-        assertEquals("{\"data\":[{\"cDate\":\"2012-02-03\"}],\"total\":1}",
-                response1.readEntity(String.class));
+        Response response = target("/e4").queryParam("include", E4.C_DATE.getName()).request().get();
+        onSuccess(response).bodyEquals(1, "{\"cDate\":\"2012-02-03\"}");
     }
 
     @Test
