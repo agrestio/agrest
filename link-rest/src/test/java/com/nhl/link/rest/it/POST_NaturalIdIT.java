@@ -15,7 +15,6 @@ import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.Configuration;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.FeatureContext;
-import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
@@ -31,8 +30,10 @@ public class POST_NaturalIdIT extends JerseyTestOnDerby {
     @Test
     public void testPost_SingleId() {
 
-        Response response1 = target("/single-id").queryParam("exclude", "age", "description").request().post(
-                Entity.entity("{\"id\":\"John\"}", MediaType.APPLICATION_JSON));
+        Response response1 = target("/single-id")
+                .queryParam("exclude", "age", "description")
+                .request()
+                .post(Entity.json("{\"id\":\"John\"}"));
         assertEquals(Response.Status.CREATED.getStatusCode(), response1.getStatus());
 
         E20 e20 = ObjectSelect.query(E20.class).selectFirst(newContext());
@@ -43,7 +44,7 @@ public class POST_NaturalIdIT extends JerseyTestOnDerby {
                 response1.readEntity(String.class));
 
         Response response2 = target("/single-id").queryParam("exclude", "age", "description").request().post(
-                Entity.entity("{\"id\":\"John\"}", MediaType.APPLICATION_JSON));
+                Entity.json("{\"id\":\"John\"}"));
 
         assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response2.getStatus());
         assertTrue(response2.readEntity(String.class).contains("object already exists"));
@@ -53,7 +54,7 @@ public class POST_NaturalIdIT extends JerseyTestOnDerby {
     public void testPost_MultiId() {
 
         Response response1 = target("/multi-id").queryParam("exclude", "description").request().post(
-                Entity.entity("{\"id\":{\"age\":18,\"name\":\"John\"}}", MediaType.APPLICATION_JSON));
+                Entity.json("{\"id\":{\"age\":18,\"name\":\"John\"}}"));
         assertEquals(Response.Status.CREATED.getStatusCode(), response1.getStatus());
 
         E21 e21 = ObjectSelect.query(E21.class).selectFirst(newContext());
@@ -65,7 +66,7 @@ public class POST_NaturalIdIT extends JerseyTestOnDerby {
                 response1.readEntity(String.class));
 
         Response response2 = target("/multi-id").queryParam("exclude", "description").request().post(
-                Entity.entity("{\"id\":{\"age\":18,\"name\":\"John\"}}", MediaType.APPLICATION_JSON));
+                Entity.json("{\"id\":{\"age\":18,\"name\":\"John\"}}"));
 
         assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response2.getStatus());
         assertTrue(response2.readEntity(String.class).contains("object already exists"));

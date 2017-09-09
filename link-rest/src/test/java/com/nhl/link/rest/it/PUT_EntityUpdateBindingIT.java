@@ -10,6 +10,7 @@ import org.junit.Test;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
+import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.Configuration;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.FeatureContext;
@@ -33,7 +34,7 @@ public class PUT_EntityUpdateBindingIT extends JerseyTestOnDerby {
 
         insert("e3", "id, name", "3, 'zzz'");
 
-        Response response = target("/e3/updatebinding/3").request().put(jsonEntity("{\"id\":3,\"name\":\"yyy\"}"));
+        Response response = target("/e3/updatebinding/3").request().put(Entity.json("{\"id\":3,\"name\":\"yyy\"}"));
         assertThat(response, okAndHasBody("{\"success\":true}"));
         assertEquals(1, intForQuery("SELECT COUNT(1) FROM utest.e3 WHERE id = 3 AND name = 'yyy'"));
     }
@@ -45,7 +46,7 @@ public class PUT_EntityUpdateBindingIT extends JerseyTestOnDerby {
         insert("e3", "id, name", "5, 'mmm'");
 
         Response response = target("/e3/updatebinding").request()
-                .put(jsonEntity("[{\"id\":3,\"name\":\"yyy\"},{\"id\":5,\"name\":\"nnn\"}]"));
+                .put(Entity.json("[{\"id\":3,\"name\":\"yyy\"},{\"id\":5,\"name\":\"nnn\"}]"));
         assertThat(response, okAndHasBody("{\"success\":true}"));
 
         assertEquals(2, intForQuery("SELECT COUNT(1) FROM utest.e3"));

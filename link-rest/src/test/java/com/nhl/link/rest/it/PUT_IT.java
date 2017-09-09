@@ -41,7 +41,7 @@ public class PUT_IT extends JerseyTestOnDerby {
         insert("e4", "id, c_varchar", "1, 'xxx'");
         insert("e4", "id, c_varchar", "8, 'yyy'");
 
-        Response response = target("/e4/8").request().put(jsonEntity("{\"id\":8,\"cVarchar\":\"zzz\"}"));
+        Response response = target("/e4/8").request().put(Entity.json("{\"id\":8,\"cVarchar\":\"zzz\"}"));
 
         assertThat(response,
                 okAndHasData(1, "[{\"id\":8,\"cBoolean\":null,\"cDate\":null,\"cDecimal\":null,\"cInt\":null,"
@@ -56,7 +56,7 @@ public class PUT_IT extends JerseyTestOnDerby {
         insert("e17", "id1, id2, name", "2, 2, 'bbb'");
 
         Response response = target("/e17").queryParam("id1", 1).queryParam("id2", 1).request()
-                .put(jsonEntity("{\"name\":\"xxx\"}"));
+                .put(Entity.json("{\"name\":\"xxx\"}"));
 
         assertThat(response, okAndHasData(1, "[{\"id\":{\"id1\":1,\"id2\":1},\"id1\":1,\"id2\":1,\"name\":\"xxx\"}]"));
 
@@ -69,7 +69,7 @@ public class PUT_IT extends JerseyTestOnDerby {
         insert("e2", "id, name", "8, 'yyy'");
         insert("e3", "id, name, e2_id", "3, 'zzz', 8");
 
-        Response response = target("/e3/3").request().put(jsonEntity("{\"id\":3,\"e2\":1}"));
+        Response response = target("/e3/3").request().put(Entity.json("{\"id\":3,\"e2\":1}"));
         assertThat(response, okAndHasData(1, "[{\"id\":3,\"name\":\"zzz\",\"phoneNumber\":null}]"));
         assertEquals(1, intForQuery("SELECT COUNT(1) FROM utest.e3 WHERE id = 3 AND e2_id = 1"));
     }
@@ -80,7 +80,7 @@ public class PUT_IT extends JerseyTestOnDerby {
         insert("e2", "id, name", "8, 'yyy'");
         insert("e3", "id, name, e2_id", "3, 'zzz', 8");
 
-        Response response = target("/e3/3").request().put(jsonEntity("{\"id\":3,\"e2\":[1]}"));
+        Response response = target("/e3/3").request().put(Entity.json("{\"id\":3,\"e2\":[1]}"));
         assertThat(response, okAndHasData(1, "[{\"id\":3,\"name\":\"zzz\",\"phoneNumber\":null}]"));
         assertEquals(1, intForQuery("SELECT COUNT(1) FROM utest.e3 WHERE id = 3 AND e2_id = 1"));
     }
@@ -92,7 +92,7 @@ public class PUT_IT extends JerseyTestOnDerby {
         insert("e2", "id, name", "8, 'yyy'");
         insert("e3", "id, name, e2_id", "3, 'zzz', 8");
 
-        Response response = target("/e3/3").request().put(jsonEntity("{\"id\":3,\"e2\":null}"));
+        Response response = target("/e3/3").request().put(Entity.json("{\"id\":3,\"e2\":null}"));
         assertThat(response, okAndHasData(1, "[{\"id\":3,\"name\":\"zzz\",\"phoneNumber\":null}]"));
 
         assertEquals(1, intForQuery("SELECT COUNT(1) FROM utest.e3 WHERE id = 3 AND e2_id IS NULL"));
@@ -105,7 +105,7 @@ public class PUT_IT extends JerseyTestOnDerby {
         insert("e2", "id, name", "8, 'yyy'");
         insert("e3", "id, name, e2_id", "3, 'zzz', null");
 
-        Entity<String> entity = jsonEntity("{\"id\":3,\"e2\":8}");
+        Entity<String> entity = Entity.json("{\"id\":3,\"e2\":8}");
         Response response = target("/e3/3").request().put(entity);
         assertThat(response, okAndHasData(1, "[{\"id\":3,\"name\":\"zzz\",\"phoneNumber\":null}]"));
 
@@ -120,7 +120,7 @@ public class PUT_IT extends JerseyTestOnDerby {
         insert("e3", "id, name", "2, 'bbb'");
         insert("e3", "id, name", "6, 'yyy'");
 
-        Entity<String> entity = jsonEntity(
+        Entity<String> entity = Entity.json(
                 "[{\"id\":6,\"name\":\"yyy\"},{\"id\":4,\"name\":\"zzz\"},{\"id\":5,\"name\":\"111\"},{\"id\":2,\"name\":\"333\"}]");
         Response response = target("/e3/").queryParam("exclude", "id").queryParam("include", E3.NAME.getName())
                 .request().put(entity);
@@ -136,7 +136,7 @@ public class PUT_IT extends JerseyTestOnDerby {
 
         insert("e14", "long_id, name", "5, 'aaa'");
 
-        Entity<String> entity = jsonEntity("[{\"id\":5,\"name\":\"bbb\",\"prettyName\":\"bbb_pretty\"}]");
+        Entity<String> entity = Entity.json("[{\"id\":5,\"name\":\"bbb\",\"prettyName\":\"bbb_pretty\"}]");
         Response response = target("/e14/5/").queryParam("exclude", "id").queryParam("include", E14.NAME.getName())
                 .request().put(entity);
 
@@ -154,7 +154,7 @@ public class PUT_IT extends JerseyTestOnDerby {
         insert("e14", "long_id, name", "2, 'bbb'");
         insert("e14", "long_id, name", "6, 'yyy'");
 
-        Entity<String> entity = jsonEntity("[{\"id\":6,\"name\":\"yyy\",\"prettyName\":\"yyy_pretty\"}"
+        Entity<String> entity = Entity.json("[{\"id\":6,\"name\":\"yyy\",\"prettyName\":\"yyy_pretty\"}"
                 + ",{\"id\":4,\"name\":\"zzz\",\"prettyName\":\"zzz_pretty\"},"
                 + "{\"id\":5,\"name\":\"111\",\"prettyName\":\"111_pretty\"}"
                 + ",{\"id\":2,\"name\":\"333\",\"prettyName\":\"333_pretty\"}]");
@@ -175,7 +175,7 @@ public class PUT_IT extends JerseyTestOnDerby {
         insert("e14", "long_id, name", "8147483649, 'bbb'");
         insert("e14", "long_id, name", "3147483646, 'yyy'");
 
-        Entity<String> putEntity = jsonEntity("[{\"id\":3147483646,\"name\":\"yyy\",\"prettyName\":\"yyy_pretty\"}"
+        Entity<String> putEntity = Entity.json("[{\"id\":3147483646,\"name\":\"yyy\",\"prettyName\":\"yyy_pretty\"}"
                 + ",{\"id\":8147483648,\"name\":\"zzz\",\"prettyName\":\"zzz_pretty\"}"
                 + ",{\"id\":8147483647,\"name\":\"111\",\"prettyName\":\"111_pretty\"}"
                 + ",{\"id\":8147483649,\"name\":\"333\",\"prettyName\":\"333_pretty\"}]");
@@ -191,12 +191,12 @@ public class PUT_IT extends JerseyTestOnDerby {
     @Test
     public void testPUT_Bulk_ResponseAttributesFilter() {
 
-        Entity<String> entity1 = jsonEntity("[{\"id\":6,\"name\":\"yyy\"},{\"id\":4,\"name\":\"zzz\"}]");
+        Entity<String> entity1 = Entity.json("[{\"id\":6,\"name\":\"yyy\"},{\"id\":4,\"name\":\"zzz\"}]");
         Response response1 = target("/e7").queryParam("exclude", "id").queryParam("include", E7.NAME.getName())
                 .request().put(entity1);
         assertThat(response1, okAndHasData(2, "[{\"name\":\"yyy\"},{\"name\":\"zzz\"}]"));
 
-        Entity<String> entity2 = jsonEntity("[{\"id\":6,\"name\":\"123\"},{\"id\":4}]");
+        Entity<String> entity2 = Entity.json("[{\"id\":6,\"name\":\"123\"},{\"id\":4}]");
         Response response2 = target("/e7").queryParam("include", "id").queryParam("exclude", E7.NAME.getName())
                 .request().put(entity2);
         assertThat(response2, okAndHasData(2, "[{\"id\":6},{\"id\":4}]"));
@@ -211,27 +211,27 @@ public class PUT_IT extends JerseyTestOnDerby {
         insert("e9", "e8_id", "5");
         insert("e9", "e8_id", "6");
 
-        Entity<String> entity1 = jsonEntity("[{\"id\":6,\"name\":\"yyy\"},{\"id\":4,\"name\":\"zzz\"}]");
+        Entity<String> entity1 = Entity.json("[{\"id\":6,\"name\":\"yyy\"},{\"id\":4,\"name\":\"zzz\"}]");
         Response response1 = target("/e7").queryParam("include", "id").queryParam("exclude", E7.NAME.getName())
                 .queryParam("include", E7.E8.getName()).request().put(entity1);
 
         assertThat(response1, okAndHasData(2, "[{\"id\":6,\"e8\":null},{\"id\":4,\"e8\":null}]"));
 
-        Entity<String> entity2 = jsonEntity(
+        Entity<String> entity2 = Entity.json(
                 "[{\"id\":6,\"name\":\"123\",\"e8\":6},{\"id\":4,\"name\":\"zzz\",\"e8\":5}]");
         Response response2 = target("/e7").queryParam("include", "id").queryParam("exclude", E7.NAME.getName())
                 .queryParam("include", E7.E8.getName()).request().put(entity2);
         assertThat(response2, okAndHasData(2,
                 "[{\"id\":6,\"e8\":{\"id\":6,\"name\":\"ert\"}}," + "{\"id\":4,\"e8\":{\"id\":5,\"name\":\"aaa\"}}]"));
 
-        Entity<String> entity3 = jsonEntity(
+        Entity<String> entity3 = Entity.json(
                 "[{\"id\":6,\"name\":\"123\",\"e8\":6},{\"id\":4,\"name\":\"zzz\",\"e8\":5}]");
         Response response3 = target("/e7").queryParam("include", "id").queryParam("exclude", E7.NAME.getName())
                 .queryParam("include", E7.E8.dot(E8.NAME).getName()).request().put(entity3);
         assertThat(response3,
                 okAndHasData(2, "[{\"id\":6,\"e8\":{\"name\":\"ert\"}}," + "{\"id\":4,\"e8\":{\"name\":\"aaa\"}}]"));
 
-        Entity<String> entity4 = jsonEntity(
+        Entity<String> entity4 = Entity.json(
                 "[{\"id\":6,\"name\":\"123\",\"e8\":6},{\"id\":4,\"name\":\"zzz\",\"e8\":5}]");
         Response response4 = target("/e7").queryParam("include", "id").queryParam("exclude", E7.NAME.getName())
                 .queryParam("include", E7.E8.dot(E8.E9).getName()).request().put(entity4);
@@ -249,7 +249,7 @@ public class PUT_IT extends JerseyTestOnDerby {
         insert("e7", "id, e8_id, name", "78, 5, 'her'");
         insert("e7", "id, e8_id, name", "81, 5, 'him'");
 
-        Entity<String> entity1 = jsonEntity("[{\"id\":6,\"name\":\"yyy\"},{\"id\":5,\"name\":\"zzz\"}]");
+        Entity<String> entity1 = Entity.json("[{\"id\":6,\"name\":\"yyy\"},{\"id\":5,\"name\":\"zzz\"}]");
         Response response1 = target("/e8").queryParam("include", "id").queryParam("exclude", E8.NAME.getName())
                 .queryParam("include", E8.E7S.dot(E7.NAME).getName()).request().put(entity1);
 
@@ -266,7 +266,7 @@ public class PUT_IT extends JerseyTestOnDerby {
         insert("e9", "e8_id", "5");
         insert("e9", "e8_id", "6");
 
-        Entity<String> entity1 = jsonEntity("[{\"name\":\"yyy\",\"e8\":6}]");
+        Entity<String> entity1 = Entity.json("[{\"name\":\"yyy\",\"e8\":6}]");
         Response response1 = target("/e7/6").queryParam("include", "id").queryParam("exclude", E7.NAME.getName())
                 .queryParam("include", E7.E8.dot(E8.E9).getName()).request().put(entity1);
 
@@ -285,7 +285,7 @@ public class PUT_IT extends JerseyTestOnDerby {
         Response response = target("/e2/1")
                 .queryParam("include", E2.E3S.getName()).queryParam("exclude", E2.ADDRESS.getName(), E2.NAME.getName(),
                         E2.E3S.dot(E3.NAME).getName(), E2.E3S.dot(E3.PHONE_NUMBER).getName())
-                .request().put(jsonEntity("{\"e3s\":[3,4,5]}"));
+                .request().put(Entity.json("{\"e3s\":[3,4,5]}"));
 
         assertThat(response, okAndHasData(1, "[{\"id\":1,\"e3s\":[{\"id\":3},{\"id\":4},{\"id\":5}]}]"));
         assertEquals(3, intForQuery("SELECT COUNT(1) FROM utest.e3 WHERE e2_id = 1"));
@@ -303,7 +303,7 @@ public class PUT_IT extends JerseyTestOnDerby {
         Response response = target("/e2/8")
                 .queryParam("include", E2.E3S.getName()).queryParam("exclude", E2.ADDRESS.getName(), E2.NAME.getName(),
                         E2.E3S.dot(E3.NAME).getName(), E2.E3S.dot(E3.PHONE_NUMBER).getName())
-                .request().put(jsonEntity("{\"e3s\":[]}"));
+                .request().put(Entity.json("{\"e3s\":[]}"));
 
         assertThat(response, okAndHasData(1, "[{\"id\":8,\"e3s\":[]}]"));
         assertEquals(3, intForQuery("SELECT COUNT(1) FROM utest.e3 WHERE e2_id IS NULL"));
@@ -321,7 +321,7 @@ public class PUT_IT extends JerseyTestOnDerby {
         Response response = target("/e2/1")
                 .queryParam("include", E2.E3S.getName()).queryParam("exclude", E2.ADDRESS.getName(), E2.NAME.getName(),
                         E2.E3S.dot(E3.NAME).getName(), E2.E3S.dot(E3.PHONE_NUMBER).getName())
-                .request().put(jsonEntity("{\"e3s\":[4]}"));
+                .request().put(Entity.json("{\"e3s\":[4]}"));
 
         assertThat(response, okAndHasData(1, "[{\"id\":1,\"e3s\":[{\"id\":4}]}]"));
         assertEquals(1, intForQuery("SELECT COUNT(1) FROM utest.e3 WHERE e2_id = 1 AND id = 4"));

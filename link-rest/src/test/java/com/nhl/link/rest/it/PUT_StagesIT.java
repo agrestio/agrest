@@ -10,6 +10,7 @@ import org.junit.Test;
 
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
+import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.Configuration;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.FeatureContext;
@@ -36,7 +37,7 @@ public class PUT_StagesIT extends JerseyTestOnDerby {
         UpdateCallbackListener.BEFORE_UPDATE_CALLED = false;
 
         Response response = target("/e3/callbackstage").request()
-                .put(jsonEntity("[{\"id\":3,\"name\":\"x\"}]"));
+                .put(Entity.json("[{\"id\":3,\"name\":\"x\"}]"));
 
         assertThat(response, okAndHasData(1, "[{\"id\":3,\"name\":\"x\",\"phoneNumber\":null}]"));
         assertEquals(1, intForQuery("SELECT COUNT(1) FROM utest.e3 WHERE id = 3 AND name = 'x'"));

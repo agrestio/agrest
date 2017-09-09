@@ -15,7 +15,6 @@ import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.Configuration;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.FeatureContext;
-import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
@@ -40,7 +39,7 @@ public class Sencha_PUT_IT extends JerseyTestOnDerby {
         assertNull(e3.getE2());
 
         Response r = target("/e3/3").request()
-                .put(Entity.entity("{\"id\":3,\"e2_id\":8}", MediaType.APPLICATION_JSON));
+                .put(Entity.json("{\"id\":3,\"e2_id\":8}"));
         assertEquals(Status.OK.getStatusCode(), r.getStatus());
         assertEquals("{\"success\":true,\"data\":[{\"id\":3,\"name\":\"zzz\",\"phoneNumber\":null}],\"total\":1}",
                 r.readEntity(String.class));
@@ -58,7 +57,7 @@ public class Sencha_PUT_IT extends JerseyTestOnDerby {
         insert("e3", "id, name, e2_id", "3, 'zzz', 8");
 
         Response response1 = target("/e3/3").request()
-                .put(Entity.entity("{\"id\":3,\"e2_id\":null}", MediaType.APPLICATION_JSON));
+                .put(Entity.json("{\"id\":3,\"e2_id\":null}"));
 
         assertEquals(Status.OK.getStatusCode(), response1.getStatus());
         assertEquals("{\"success\":true,\"data\":[{\"id\":3,\"name\":\"zzz\",\"phoneNumber\":null}],\"total\":1}",
@@ -80,7 +79,7 @@ public class Sencha_PUT_IT extends JerseyTestOnDerby {
         assertEquals(8, Cayenne.intPKForObject(e3.getE2()));
 
         Response response1 = target("/e3/3").request()
-                .put(Entity.entity("{\"id\":3,\"e2_id\":1}", MediaType.APPLICATION_JSON));
+                .put(Entity.json("{\"id\":3,\"e2_id\":1}"));
         assertEquals(Status.OK.getStatusCode(), response1.getStatus());
         assertEquals("{\"success\":true,\"data\":[{\"id\":3,\"name\":\"zzz\",\"phoneNumber\":null}],\"total\":1}",
                 response1.readEntity(String.class));
@@ -98,7 +97,7 @@ public class Sencha_PUT_IT extends JerseyTestOnDerby {
         insert("e3", "id, name, e2_id", "3, 'zzz', 8");
 
         Response response1 = target("/e3/3").request()
-                .put(Entity.entity("{\"id\":3,\"e2\":1}", MediaType.APPLICATION_JSON));
+                .put(Entity.json("{\"id\":3,\"e2\":1}"));
         assertEquals(Status.OK.getStatusCode(), response1.getStatus());
         assertEquals("{\"success\":true,\"data\":[{\"id\":3,\"name\":\"zzz\",\"phoneNumber\":null}],\"total\":1}",
                 response1.readEntity(String.class));

@@ -5,7 +5,6 @@ import com.nhl.link.rest.LinkRest;
 import com.nhl.link.rest.it.fixture.JerseyTestOnDerby;
 import com.nhl.link.rest.it.fixture.cayenne.E14;
 import com.nhl.link.rest.it.fixture.cayenne.E15;
-import com.nhl.link.rest.it.fixture.cayenne.E2;
 import com.nhl.link.rest.it.fixture.cayenne.E3;
 import com.nhl.link.rest.it.fixture.cayenne.E7;
 import com.nhl.link.rest.it.fixture.cayenne.E8;
@@ -20,7 +19,6 @@ import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.Configuration;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.FeatureContext;
-import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
@@ -36,15 +34,17 @@ public class PUT_Related_ByKey_IT extends JerseyTestOnDerby {
     @Test
     public void testRelate_ToMany_MixedCollection() {
 
-        performQuery(new SQLTemplate(E2.class, "INSERT INTO utest.e8 (id, name) values (15, 'xxx')"));
-        performQuery(new SQLTemplate(E2.class, "INSERT INTO utest.e8 (id, name) values (16, 'xxx')"));
 
-        performQuery(new SQLTemplate(E3.class, "INSERT INTO utest.e7 (id, name, e8_id) values (7, 'zzz', 16)"));
-        performQuery(new SQLTemplate(E3.class, "INSERT INTO utest.e7 (id, name, e8_id) values (8, 'yyy', 15)"));
-        performQuery(new SQLTemplate(E3.class, "INSERT INTO utest.e7 (id, name, e8_id) values (9, 'aaa', 15)"));
+        insert("e8", "id, name", "15, 'xxx'");
+        insert("e8", "id, name", "16, 'xxx'");
 
-        Response r1 = target("/e8/bykey/15/e7s").request()
-                .put(Entity.entity("[  {\"name\":\"newname\"}, {\"name\":\"aaa\"} ]", MediaType.APPLICATION_JSON));
+        insert("e7", "id, name, e8_id", "7, 'zzz', 16");
+        insert("e7", "id, name, e8_id", "8, 'yyy', 15");
+        insert("e7", "id, name, e8_id", "9, 'aaa', 15");
+
+        Response r1 = target("/e8/bykey/15/e7s")
+                .request()
+                .put(Entity.json("[  {\"name\":\"newname\"}, {\"name\":\"aaa\"} ]"));
 
         assertEquals(Status.OK.getStatusCode(), r1.getStatus());
 
@@ -56,7 +56,7 @@ public class PUT_Related_ByKey_IT extends JerseyTestOnDerby {
         // testing idempotency
 
         Response r2 = target("/e8/bykey/15/e7s").request()
-                .put(Entity.entity("[  {\"name\":\"newname\"}, {\"name\":\"aaa\"} ]", MediaType.APPLICATION_JSON));
+                .put(Entity.json("[  {\"name\":\"newname\"}, {\"name\":\"aaa\"} ]"));
 
         assertEquals(Status.OK.getStatusCode(), r2.getStatus());
         assertEquals(
@@ -68,15 +68,14 @@ public class PUT_Related_ByKey_IT extends JerseyTestOnDerby {
     @Test
     public void testRelate_ToMany_PropertyMapper() {
 
-        performQuery(new SQLTemplate(E2.class, "INSERT INTO utest.e8 (id, name) values (15, 'xxx')"));
-        performQuery(new SQLTemplate(E2.class, "INSERT INTO utest.e8 (id, name) values (16, 'xxx')"));
-
-        performQuery(new SQLTemplate(E3.class, "INSERT INTO utest.e7 (id, name, e8_id) values (7, 'zzz', 16)"));
-        performQuery(new SQLTemplate(E3.class, "INSERT INTO utest.e7 (id, name, e8_id) values (8, 'yyy', 15)"));
-        performQuery(new SQLTemplate(E3.class, "INSERT INTO utest.e7 (id, name, e8_id) values (9, 'aaa', 15)"));
+        insert("e8", "id, name", "15, 'xxx'");
+        insert("e8", "id, name", "16, 'xxx'");
+        insert("e7", "id, e8_id, name", "7, 16, 'zzz'");
+        insert("e7", "id, e8_id, name", "8, 15, 'yyy'");
+        insert("e7", "id, e8_id, name", "9, 15, 'aaa'");
 
         Response r1 = target("/e8/bypropkey/15/e7s").request()
-                .put(Entity.entity("[  {\"name\":\"newname\"}, {\"name\":\"aaa\"} ]", MediaType.APPLICATION_JSON));
+                .put(Entity.json("[  {\"name\":\"newname\"}, {\"name\":\"aaa\"} ]"));
 
         assertEquals(Status.OK.getStatusCode(), r1.getStatus());
 
@@ -104,8 +103,7 @@ public class PUT_Related_ByKey_IT extends JerseyTestOnDerby {
                 new SQLTemplate(E3.class, "INSERT INTO utest.e14 (long_id, e15_id, name) values (6, 5, 'yyy')"));
 
         Response r1 = target("/e15/44/e14s").queryParam("exclude", "id").queryParam("include", E3.NAME.getName())
-                .request().put(Entity.entity("[{\"id\":4,\"name\":\"zzz\"},{\"id\":11,\"name\":\"new\"}]",
-                        MediaType.APPLICATION_JSON));
+                .request().put(Entity.json("[{\"id\":4,\"name\":\"zzz\"},{\"id\":11,\"name\":\"new\"}]"));
         assertEquals(Status.OK.getStatusCode(), r1.getStatus());
 
         // update: ordering must be preserved...
@@ -127,8 +125,10 @@ public class PUT_Related_ByKey_IT extends JerseyTestOnDerby {
         @PUT
         @Path("e8/bykey/{id}/e7s")
         public DataResponse<E7> e8CreateOrUpdateE7sByKey_Idempotent(@PathParam("id") int id, String entityData) {
-            return LinkRest.idempotentCreateOrUpdate(E7.class, config).mapper(ByKeyObjectMapperFactory.byKey(E7.NAME))
-                    .toManyParent(E8.class, id, E8.E7S).syncAndSelect(entityData);
+            return LinkRest.idempotentCreateOrUpdate(E7.class, config)
+                    .mapper(ByKeyObjectMapperFactory.byKey(E7.NAME))
+                    .toManyParent(E8.class, id, E8.E7S)
+                    .syncAndSelect(entityData);
         }
 
         @PUT

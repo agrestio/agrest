@@ -20,7 +20,6 @@ import javax.ws.rs.core.FeatureContext;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriInfo;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -34,18 +33,16 @@ public class DELETE_IT extends JerseyTestOnDerby {
     }
 
     @Test
-    public void testDelete() throws IOException {
+    public void testDelete() {
 
         insert("e4", "id, c_varchar", "1, 'xxx'");
         insert("e4", "id, c_varchar", "8, 'yyy'");
 
-        assertEquals(2l, Cayenne.objectForQuery(newContext(), new EJBQLQuery("select count(a) from E4 a")));
+        Response response = target("/e4/8").request().delete();
+        assertEquals(Status.OK.getStatusCode(), response.getStatus());
+        assertEquals("{\"success\":true}", response.readEntity(String.class));
 
-        Response response1 = target("/e4/8").request().delete();
-        assertEquals(Status.OK.getStatusCode(), response1.getStatus());
-        assertEquals("{\"success\":true}", response1.readEntity(String.class));
-
-        assertEquals(1l, Cayenne.objectForQuery(newContext(), new EJBQLQuery("select count(a) from E4 a")));
+        assertEquals(1L, countRows(E4.class));
     }
 
     @Test
@@ -64,7 +61,7 @@ public class DELETE_IT extends JerseyTestOnDerby {
     }
 
     @Test
-    public void testDelete_BadID() throws IOException {
+    public void testDelete_BadID() {
 
         insert("e4", "id, c_varchar", "1, 'xxx'");
         insert("e4", "id, c_varchar", "8, 'yyy'");
@@ -80,7 +77,7 @@ public class DELETE_IT extends JerseyTestOnDerby {
     }
 
     @Test
-    public void testDelete_Twice() throws IOException {
+    public void testDelete_Twice() {
 
         insert("e4", "id, c_varchar", "1, 'xxx'");
         insert("e4", "id, c_varchar", "8, 'yyy'");

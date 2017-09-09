@@ -36,11 +36,9 @@ public class DELETE_NaturalIdIT extends JerseyTestOnDerby {
         insert("e20", "name", "'John'");
         insert("e20", "name", "'Brian'");
 
-        assertEquals(2L, Cayenne.objectForQuery(newContext(), new EJBQLQuery("select count(a) from E20 a")));
-
-        Response response1 = target("/single-id/John").request().delete();
-        assertEquals(Response.Status.OK.getStatusCode(), response1.getStatus());
-        assertEquals("{\"success\":true}", response1.readEntity(String.class));
+        Response response = target("/single-id/John").request().delete();
+        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+        assertEquals("{\"success\":true}", response.readEntity(String.class));
 
         assertEquals(1L, Cayenne.objectForQuery(newContext(),
                 new EJBQLQuery("select count(a) from E20 a WHERE a.name = 'Brian'")));
@@ -52,15 +50,16 @@ public class DELETE_NaturalIdIT extends JerseyTestOnDerby {
         insert("e21", "age, name", "18, 'John'");
         insert("e21", "age, name", "27, 'Brian'");
 
-        assertEquals(2L, Cayenne.objectForQuery(newContext(), new EJBQLQuery("select count(a) from E21 a")));
+        Response response = target("/multi-id")
+                .queryParam("age", 18)
+                .queryParam("name", "John")
+                .request()
+                .delete();
 
-        Response response1 = target("/multi-id").queryParam("age", 18).queryParam("name", "John")
-                .request().delete();
-        assertEquals(Response.Status.OK.getStatusCode(), response1.getStatus());
-        assertEquals("{\"success\":true}", response1.readEntity(String.class));
+        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+        assertEquals("{\"success\":true}", response.readEntity(String.class));
 
-        assertEquals(1L, Cayenne.objectForQuery(newContext(), new EJBQLQuery(
-                "select count(a) from E21 a WHERE a.age = 27 and a.name = 'Brian'")));
+        assertEquals(1L, countRows(E21.class, E21.AGE.eq(27).andExp(E21.NAME.eq("Brian"))));
     }
 
     @Path("")

@@ -12,6 +12,7 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.Configuration;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.FeatureContext;
@@ -37,7 +38,7 @@ public class PUT_NaturalIdIT extends JerseyTestOnDerby {
         insert("e20", "name", "'Brian'");
 
         Response response = target("/single-id/John").request()
-                .put(jsonEntity("{\"age\":28,\"description\":\"zzz\"}"));
+                .put(Entity.json("{\"age\":28,\"description\":\"zzz\"}"));
 
         assertThat(response,
                 okAndHasData(1, "[{\"id\":\"John\",\"age\":28,\"description\":\"zzz\",\"name\":\"John\"}]"));
@@ -50,7 +51,7 @@ public class PUT_NaturalIdIT extends JerseyTestOnDerby {
         insert("e20", "name", "'John'");
         insert("e20", "name", "'John'");
 
-        Response response = target("/single-id/John").request().put(jsonEntity("{\"age\":28,\"description\":\"zzz\"}"));
+        Response response = target("/single-id/John").request().put(Entity.json("{\"age\":28,\"description\":\"zzz\"}"));
 
         assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatus());
         assertEquals("{\"success\":false,\"message\":\"Found more than one object for ID 'John' and entity 'E20'\"}",
@@ -63,7 +64,7 @@ public class PUT_NaturalIdIT extends JerseyTestOnDerby {
         insert("e21", "age, name", "27, 'Brian'");
 
         Response response = target("/multi-id/byid").queryParam("age", 18).queryParam("name", "John")
-                .request().put(jsonEntity("{\"age\":28,\"description\":\"zzz\"}"));
+                .request().put(Entity.json("{\"age\":28,\"description\":\"zzz\"}"));
 
         assertThat(response,
                 okAndHasData(1, "[{\"id\":{\"age\":28,\"name\":\"John\"},\"age\":28,\"description\":\"zzz\",\"name\":\"John\"}]"));
@@ -77,7 +78,7 @@ public class PUT_NaturalIdIT extends JerseyTestOnDerby {
         insert("e21", "age, name", "18, 'John'");
 
         Response response = target("/multi-id/byid").queryParam("age", 18).queryParam("name", "John")
-                .request().put(jsonEntity("{\"age\":28,\"description\":\"zzz\"}"));
+                .request().put(Entity.json("{\"age\":28,\"description\":\"zzz\"}"));
 
         assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatus());
         assertEquals("{\"success\":false,\"message\":\"Found more than one object for ID '{name:John,age:18}' and entity 'E21'\"}",

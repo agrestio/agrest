@@ -3,7 +3,9 @@ package com.nhl.link.rest.it.fixture;
 import com.nhl.link.rest.runtime.LinkRestBuilder;
 import com.nhl.link.rest.runtime.LinkRestRuntime;
 import org.apache.cayenne.ObjectContext;
-import org.apache.cayenne.query.Query;
+import org.apache.cayenne.exp.Expression;
+import org.apache.cayenne.exp.Property;
+import org.apache.cayenne.query.ObjectSelect;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.test.JerseyTest;
 import org.glassfish.jersey.test.inmemory.InMemoryTestContainerFactory;
@@ -11,11 +13,9 @@ import org.glassfish.jersey.test.spi.TestContainerException;
 import org.junit.ClassRule;
 import org.junit.Rule;
 
-import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.Application;
 import javax.ws.rs.core.Feature;
 import javax.ws.rs.core.FeatureContext;
-import javax.ws.rs.core.MediaType;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 
@@ -25,76 +25,72 @@ import java.net.URLEncoder;
  */
 public abstract class JerseyTestOnDerby extends JerseyTest {
 
-	// TODO: switch to Bootique test framework...
+    // TODO: switch to Bootique test framework...
 
-	@ClassRule
-	public static CayenneDerbyStack DB_STACK = new CayenneDerbyStack("derby-for-jersey");
+    @ClassRule
+    public static CayenneDerbyStack DB_STACK = new CayenneDerbyStack("derby-for-jersey");
 
-	@Rule
-	public DbCleaner dbCleaner = new DbCleaner(DB_STACK.newContext());
+    @Rule
+    public DbCleaner dbCleaner = new DbCleaner(DB_STACK.newContext());
 
-	public JerseyTestOnDerby() throws TestContainerException {
-		super(new InMemoryTestContainerFactory());
-	}
+    public JerseyTestOnDerby() throws TestContainerException {
+        super(new InMemoryTestContainerFactory());
+    }
 
-	protected String urlEnc(String queryParam) {
-		try {
-			// URLEncoder replaces spaces with "+"... Those are not decoded
-			// properly by Jersey in 'uriInfo.getQueryParameters()' (TODO: why?)
-			return URLEncoder.encode(queryParam, "UTF-8").replace("+", "%20");
-		} catch (UnsupportedEncodingException e) {
+    protected String urlEnc(String queryParam) {
+        try {
+            // URLEncoder replaces spaces with "+"... Those are not decoded
+            // properly by Jersey in 'uriInfo.getQueryParameters()' (TODO: why?)
+            return URLEncoder.encode(queryParam, "UTF-8").replace("+", "%20");
+        } catch (UnsupportedEncodingException e) {
 
-			// unexpected... we know that UTF-8 is present
-			throw new RuntimeException(e);
-		}
-	}
+            // unexpected... we know that UTF-8 is present
+            throw new RuntimeException(e);
+        }
+    }
 
-	@Override
-	public Application configure() {
+    @Override
+    public Application configure() {
 
-		LinkRestRuntime lrFeature = doConfigure().build();
+        LinkRestRuntime lrFeature = doConfigure().build();
 
-		Feature unitFeature = context -> {
+        Feature unitFeature = context -> {
             doAddResources(context);
             return true;
         };
 
-		return new ResourceConfig().register(unitFeature).register(lrFeature);
-	}
+        return new ResourceConfig().register(unitFeature).register(lrFeature);
+    }
 
-	protected LinkRestBuilder doConfigure() {
-		return LinkRestBuilder.builder(DB_STACK.getCayenneStack());
-	}
+    protected LinkRestBuilder doConfigure() {
+        return LinkRestBuilder.builder(DB_STACK.getCayenneStack());
+    }
 
-	protected abstract void doAddResources(FeatureContext context);
+    protected abstract void doAddResources(FeatureContext context);
 
-	/**
-	 * @deprecated Kept around as we have lots of tests that need it. Consider
-	 *             changing those gradually to
-	 *             {@link #insert(String, String, String)}, etc.
-	 */
-	@Deprecated
-	protected void performQuery(Query query) {
-		newContext().performGenericQuery(query);
-	}
+    protected String stringForQuery(String querySql) {
+        return DB_STACK.stringForQuery(querySql);
+    }
 
-	protected String stringForQuery(String querySql) {
-		return DB_STACK.stringForQuery(querySql);
-	}
+    protected int intForQuery(String querySql) {
+        return DB_STACK.intForQuery(querySql);
+    }
 
-	protected int intForQuery(String querySql) {
-		return DB_STACK.intForQuery(querySql);
-	}
+    protected long countRows(Class<?> entity) {
+        return ObjectSelect.columnQuery(entity, Property.COUNT).selectOne(newContext());
+    }
 
-	protected ObjectContext newContext() {
-		return DB_STACK.newContext();
-	}
+    protected long countRows(Class<?> entity, Expression filter) {
+        return ObjectSelect.columnQuery(entity, Property.COUNT).
+                where(filter)
+                .selectOne(newContext());
+    }
 
-	protected void insert(String table, String columns, String values) {
-		DB_STACK.insert(table, columns, values);
-	}
+    protected ObjectContext newContext() {
+        return DB_STACK.newContext();
+    }
 
-	protected Entity<String> jsonEntity(String data) {
-		return Entity.entity(data, MediaType.APPLICATION_JSON);
-	}
+    protected void insert(String table, String columns, String values) {
+        DB_STACK.insert(table, columns, values);
+    }
 }

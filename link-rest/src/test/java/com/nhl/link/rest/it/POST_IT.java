@@ -51,7 +51,7 @@ public class POST_IT extends JerseyTestOnDerby {
         ObjectContext context = newContext();
 
         Response response1 = target("/e4").request()
-                .post(Entity.entity("{\"cVarchar\":\"zzz\"}", MediaType.APPLICATION_JSON));
+                .post(Entity.json("{\"cVarchar\":\"zzz\"}"));
         assertEquals(Status.CREATED.getStatusCode(), response1.getStatus());
 
         E4 e41 = ObjectSelect.query(E4.class).selectFirst(context);
@@ -65,7 +65,7 @@ public class POST_IT extends JerseyTestOnDerby {
                 response1.readEntity(String.class));
 
         Response response2 = target("/e4").request()
-                .post(Entity.entity("{\"cVarchar\":\"TTTT\"}", MediaType.APPLICATION_JSON));
+                .post(Entity.json("{\"cVarchar\":\"TTTT\"}"));
 
         assertEquals(Status.CREATED.getStatusCode(), response2.getStatus());
 
@@ -87,16 +87,15 @@ public class POST_IT extends JerseyTestOnDerby {
     public void testPost_ExplicitCompoundId() {
 
         Response response1 = target("/e17").queryParam("id1", 1).queryParam("id2", 1).request()
-                .post(Entity.entity("{\"name\":\"xxx\"}", MediaType.APPLICATION_JSON));
+                .post(Entity.json("{\"name\":\"xxx\"}"));
         assertEquals(Status.CREATED.getStatusCode(), response1.getStatus());
     }
 
     @Test
     public void testPost_DateTime() {
         Response r1 = target("e16").request()
-                .post(Entity.entity(
-                        "{\"cDate\":\"2015-03-14\", \"cTime\":\"T19:00:00\", \"cTimestamp\":\"2015-03-14T19:00:00.000\"}",
-                        MediaType.APPLICATION_JSON));
+                .post(Entity.json(
+                        "{\"cDate\":\"2015-03-14\", \"cTime\":\"T19:00:00\", \"cTimestamp\":\"2015-03-14T19:00:00.000\"}"));
         assertEquals(Status.CREATED.getStatusCode(), r1.getStatus());
     }
 
@@ -105,7 +104,7 @@ public class POST_IT extends JerseyTestOnDerby {
         ObjectContext context = newContext();
 
         Response response1 = target("/e4/defaultdata").request()
-                .post(Entity.entity("{\"cVarchar\":\"zzz\"}", MediaType.APPLICATION_JSON));
+                .post(Entity.json("{\"cVarchar\":\"zzz\"}"));
         assertEquals(Status.CREATED.getStatusCode(), response1.getStatus());
         assertEquals("{\"success\":true}", response1.readEntity(String.class));
 
@@ -118,7 +117,7 @@ public class POST_IT extends JerseyTestOnDerby {
         ObjectContext context = newContext();
 
         Response r1 = target("/e8/w/constrainedid/578").request()
-                .post(Entity.entity("{\"name\":\"zzz\"}", MediaType.APPLICATION_JSON));
+                .post(Entity.json("{\"name\":\"zzz\"}"));
         assertEquals(Status.CREATED.getStatusCode(), r1.getStatus());
 
         assertEquals(Integer.valueOf(1),
@@ -131,7 +130,7 @@ public class POST_IT extends JerseyTestOnDerby {
     public void testPost_WriteConstraints_Id_Blocked() {
 
         Response r1 = target("/e8/w/constrainedidblocked/578").request()
-                .post(Entity.entity("{\"name\":\"zzz\"}", MediaType.APPLICATION_JSON));
+                .post(Entity.json("{\"name\":\"zzz\"}"));
         assertEquals(Status.BAD_REQUEST.getStatusCode(), r1.getStatus());
 
         assertEquals(0, intForQuery("SELECT count(1) FROM utest.e8"));
@@ -141,7 +140,7 @@ public class POST_IT extends JerseyTestOnDerby {
     public void testPost_WriteConstraints1() {
 
         Response r1 = target("/e3/w/constrained").request()
-                .post(Entity.entity("{\"name\":\"zzz\"}", MediaType.APPLICATION_JSON));
+                .post(Entity.json("{\"name\":\"zzz\"}"));
         assertEquals(Status.CREATED.getStatusCode(), r1.getStatus());
 
         assertEquals(1, intForQuery("SELECT count(1) FROM utest.e3"));
@@ -156,7 +155,7 @@ public class POST_IT extends JerseyTestOnDerby {
     public void testPost_WriteConstraints2() {
 
         Response r2 = target("/e3/w/constrained").request()
-                .post(Entity.entity("{\"name\":\"yyy\",\"phoneNumber\":\"12345\"}", MediaType.APPLICATION_JSON));
+                .post(Entity.json("{\"name\":\"yyy\",\"phoneNumber\":\"12345\"}"));
         assertEquals(Status.CREATED.getStatusCode(), r2.getStatus());
 
         assertEquals(1, intForQuery("SELECT count(1) FROM utest.e3 WHERE name = 'yyy'"));
@@ -170,7 +169,7 @@ public class POST_IT extends JerseyTestOnDerby {
     public void testPost_ReadConstraints1() {
 
         Response r1 = target("/e3/constrained").request()
-                .post(Entity.entity("{\"name\":\"zzz\"}", MediaType.APPLICATION_JSON));
+                .post(Entity.json("{\"name\":\"zzz\"}"));
         assertEquals(Status.CREATED.getStatusCode(), r1.getStatus());
 
         assertEquals(1, intForQuery("SELECT count(1) FROM utest.e3"));
@@ -184,7 +183,7 @@ public class POST_IT extends JerseyTestOnDerby {
     public void testPost_ReadConstraints2() {
 
         Response r2 = target("/e3/constrained").queryParam("include", "name").queryParam("include", "phoneNumber")
-                .request().post(Entity.entity("{\"name\":\"yyy\"}", MediaType.APPLICATION_JSON));
+                .request().post(Entity.json("{\"name\":\"yyy\"}"));
         assertEquals(Status.CREATED.getStatusCode(), r2.getStatus());
 
         assertEquals(1, intForQuery("SELECT count(1) FROM utest.e3 WHERE name = 'yyy'"));
@@ -196,7 +195,7 @@ public class POST_IT extends JerseyTestOnDerby {
     public void testPost_ReadConstraints3() {
 
         Response r2 = target("/e3/constrained").queryParam("include", E3.E2.getName()).request()
-                .post(Entity.entity("{\"name\":\"yyy\"}", MediaType.APPLICATION_JSON));
+                .post(Entity.json("{\"name\":\"yyy\"}"));
         assertEquals(Status.CREATED.getStatusCode(), r2.getStatus());
 
         assertEquals(1, intForQuery("SELECT count(1) FROM utest.e3 WHERE name = 'yyy'"));
@@ -212,11 +211,11 @@ public class POST_IT extends JerseyTestOnDerby {
         insert("e2", "id, name", "8, 'yyy'");
 
         Response response1 = target("/e3").request()
-                .post(Entity.entity("{\"e2\":8,\"name\":\"MM\"}", MediaType.APPLICATION_JSON));
+                .post(Entity.json("{\"e2\":8,\"name\":\"MM\"}"));
 
         assertEquals(Status.CREATED.getStatusCode(), response1.getStatus());
 
-        E3 e3 = (E3) Cayenne.objectForQuery(newContext(), new SelectQuery<E3>(E3.class));
+        E3 e3 = (E3) Cayenne.objectForQuery(newContext(), new SelectQuery<>(E3.class));
         int id = Cayenne.intPKForObject(e3);
 
         assertEquals("{\"data\":[{\"id\":" + id + ",\"name\":\"MM\",\"phoneNumber\":null}],\"total\":1}",
@@ -234,7 +233,7 @@ public class POST_IT extends JerseyTestOnDerby {
         insert("e2", "id, name", "8, 'yyy'");
 
         Response response1 = target("/e3").request()
-                .post(Entity.entity("{\"e2_id\":null,\"name\":\"MM\"}", MediaType.APPLICATION_JSON));
+                .post(Entity.json("{\"e2_id\":null,\"name\":\"MM\"}"));
 
         assertEquals(Status.CREATED.getStatusCode(), response1.getStatus());
 
@@ -256,7 +255,7 @@ public class POST_IT extends JerseyTestOnDerby {
         insert("e2", "id, name", "8, 'yyy'");
 
         Response response1 = target("/e3").request()
-                .post(Entity.entity("{\"e2\":15,\"name\":\"MM\"}", MediaType.APPLICATION_JSON));
+                .post(Entity.json("{\"e2\":15,\"name\":\"MM\"}"));
 
         assertEquals(Status.NOT_FOUND.getStatusCode(), response1.getStatus());
 
@@ -267,8 +266,7 @@ public class POST_IT extends JerseyTestOnDerby {
     public void testPost_Bulk() {
 
         Response r2 = target("/e3/").queryParam("exclude", "id").queryParam("include", E3.NAME.getName()).request()
-                .post(Entity.entity("[{\"name\":\"aaa\"},{\"name\":\"zzz\"},{\"name\":\"bbb\"},{\"name\":\"yyy\"}]",
-                        MediaType.APPLICATION_JSON));
+                .post(Entity.json("[{\"name\":\"aaa\"},{\"name\":\"zzz\"},{\"name\":\"bbb\"},{\"name\":\"yyy\"}]"));
         assertEquals(Status.CREATED.getStatusCode(), r2.getStatus());
 
         // ordering must be preserved...
@@ -286,7 +284,7 @@ public class POST_IT extends JerseyTestOnDerby {
         Response response = target("/e2").queryParam("include", E2.E3S.getName())
                 .queryParam("exclude", E2.ADDRESS.getName(), E2.E3S.dot(E3.NAME).getName(),
                         E2.E3S.dot(E3.PHONE_NUMBER).getName())
-                .request().post(Entity.entity("{\"e3s\":[1,8],\"name\":\"MM\"}", MediaType.APPLICATION_JSON));
+                .request().post(Entity.json("{\"e3s\":[1,8],\"name\":\"MM\"}"));
 
         E2 e2 = (E2) Cayenne.objectForQuery(newContext(), new SelectQuery<>(E2.class));
         int id = Cayenne.intPKForObject(e2);
@@ -302,7 +300,7 @@ public class POST_IT extends JerseyTestOnDerby {
         String base64Encoded = "c29tZVZhbHVlMTIz"; // someValue123
 
         Response response = target("/e19").queryParam("include", E19.GUID.getName()).request()
-                .post(jsonEntity("{\"guid\":\"" + base64Encoded + "\"}"));
+                .post(Entity.json("{\"guid\":\"" + base64Encoded + "\"}"));
 
         assertThat(response,
                 hasStatusAndBody(Status.CREATED, "{\"data\":[{\"guid\":\"" + base64Encoded + "\"}],\"total\":1}"));
@@ -315,7 +313,7 @@ public class POST_IT extends JerseyTestOnDerby {
                 .queryParam("include", "floatObject")
                 .queryParam("include", "floatPrimitive")
                 .request()
-                .post(jsonEntity(data));
+                .post(Entity.json(data));
 
         assertThat(response, hasStatusAndBody(Status.CREATED,
                 "{\"data\":[{\"floatObject\":0.0,\"floatPrimitive\":0.0}],\"total\":1}"));

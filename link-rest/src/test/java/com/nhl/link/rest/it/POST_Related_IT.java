@@ -11,7 +11,6 @@ import com.nhl.link.rest.it.fixture.cayenne.E2;
 import com.nhl.link.rest.it.fixture.cayenne.E3;
 import org.apache.cayenne.DataRow;
 import org.apache.cayenne.query.SQLSelect;
-import org.apache.cayenne.query.SQLTemplate;
 import org.junit.Test;
 
 import javax.ws.rs.MatrixParam;
@@ -22,7 +21,6 @@ import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.Configuration;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.FeatureContext;
-import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriInfo;
@@ -41,14 +39,15 @@ public class POST_Related_IT extends JerseyTestOnDerby {
     @Test
     public void testRelate_ToMany_New() {
 
-        performQuery(new SQLTemplate(E2.class, "INSERT INTO utest.e2 (id, name) values (24, 'xxx')"));
+        insert("e2", "id, name", "24, 'xxx'");
 
-        Response r1 = target("/e2/24/e3s").request()
-                .post(Entity.entity("{\"name\":\"zzz\"}", MediaType.APPLICATION_JSON));
+        Response response = target("/e2/24/e3s")
+                .request()
+                .post(Entity.json("{\"name\":\"zzz\"}"));
 
-        assertEquals(Status.OK.getStatusCode(), r1.getStatus());
+        assertEquals(Status.OK.getStatusCode(), response.getStatus());
         assertEquals("{\"data\":[{REPLACED_ID,\"name\":\"zzz\",\"phoneNumber\":null}],\"total\":1}",
-                r1.readEntity(String.class).replaceFirst("\"id\":[\\d]+", "REPLACED_ID"));
+                response.readEntity(String.class).replaceFirst("\"id\":[\\d]+", "REPLACED_ID"));
 
         assertEquals(1, intForQuery("SELECT count(1) FROM utest.e3"));
 
@@ -61,15 +60,17 @@ public class POST_Related_IT extends JerseyTestOnDerby {
     @Test
     public void testRelate_ToMany_New_CompoundId() {
 
-        newContext().performGenericQuery(
-                new SQLTemplate(E17.class, "INSERT INTO utest.e17 (id1, id2, name) values (1, 1, 'aaa')"));
+        insert("e17", "id1, id2, name", "1, 1, 'aaa'");
 
-        Response r1 = target("/e17/e18s").matrixParam("parentId1", 1).matrixParam("parentId2", 1).request()
-                .post(Entity.entity("{\"name\":\"xxx\"}", MediaType.APPLICATION_JSON));
+        Response response = target("/e17/e18s")
+                .matrixParam("parentId1", 1)
+                .matrixParam("parentId2", 1)
+                .request()
+                .post(Entity.json("{\"name\":\"xxx\"}"));
 
-        assertEquals(Status.OK.getStatusCode(), r1.getStatus());
+        assertEquals(Status.OK.getStatusCode(), response.getStatus());
         assertEquals("{\"data\":[{REPLACED_ID,\"name\":\"xxx\"}],\"total\":1}",
-                r1.readEntity(String.class).replaceFirst("\"id\":[\\d]+", "REPLACED_ID"));
+                response.readEntity(String.class).replaceFirst("\"id\":[\\d]+", "REPLACED_ID"));
 
         assertEquals(1, intForQuery("SELECT count(1) FROM utest.e18"));
 
@@ -83,15 +84,16 @@ public class POST_Related_IT extends JerseyTestOnDerby {
     @Test
     public void testRelate_ToMany_MixedCollection() {
 
-        performQuery(new SQLTemplate(E2.class, "INSERT INTO utest.e2 (id, name) values (15, 'xxx')"));
-        performQuery(new SQLTemplate(E2.class, "INSERT INTO utest.e2 (id, name) values (16, 'xxx')"));
+        insert("e2", "id, name", "15, 'xxx'");
+        insert("e2", "id, name", "16, 'xxx'");
 
-        performQuery(new SQLTemplate(E3.class, "INSERT INTO utest.e3 (id, name, e2_id) values (7, 'zzz', 16)"));
-        performQuery(new SQLTemplate(E3.class, "INSERT INTO utest.e3 (id, name, e2_id) values (8, 'yyy', 15)"));
-        performQuery(new SQLTemplate(E3.class, "INSERT INTO utest.e3 (id, name, e2_id) values (9, 'aaa', 15)"));
+        insert("e3", "id, name, e2_id", "7, 'zzz', 16");
+        insert("e3", "id, name, e2_id", "8, 'yyy', 15");
+        insert("e3", "id, name, e2_id", "9, 'aaa', 15");
 
-        Response r1 = target("/e2/15/e3s").request().post(
-                Entity.entity("[ {\"id\":8,\"name\":\"123\"}, {\"name\":\"newname\"} ]", MediaType.APPLICATION_JSON));
+        Response r1 = target("/e2/15/e3s")
+                .request()
+                .post(Entity.json("[ {\"id\":8,\"name\":\"123\"}, {\"name\":\"newname\"} ]"));
 
         assertEquals(Status.OK.getStatusCode(), r1.getStatus());
         assertEquals(
@@ -103,8 +105,9 @@ public class POST_Related_IT extends JerseyTestOnDerby {
 
         // testing non-idempotency
 
-        Response r2 = target("/e2/15/e3s").request().post(
-                Entity.entity("[ {\"id\":8,\"name\":\"123\"}, {\"name\":\"newname\"} ]", MediaType.APPLICATION_JSON));
+        Response r2 = target("/e2/15/e3s")
+                .request()
+                .post(Entity.json("[ {\"id\":8,\"name\":\"123\"}, {\"name\":\"newname\"} ]"));
 
         assertEquals(Status.OK.getStatusCode(), r2.getStatus());
         assertEquals(
@@ -118,17 +121,19 @@ public class POST_Related_IT extends JerseyTestOnDerby {
     @Test
     public void testPOST_ToManyJoin() {
 
-        performQuery(new SQLTemplate(E12.class, "INSERT INTO utest.e12 (id) values (11)"));
-        performQuery(new SQLTemplate(E12.class, "INSERT INTO utest.e12 (id) values (12)"));
-        performQuery(new SQLTemplate(E12.class, "INSERT INTO utest.e13 (id) values (14)"));
-        performQuery(new SQLTemplate(E12.class, "INSERT INTO utest.e13 (id) values (15)"));
-        performQuery(new SQLTemplate(E12.class, "INSERT INTO utest.e13 (id) values (16)"));
+        insert("e12", "id", "11");
+        insert("e12", "id", "12");
+        insert("e13", "id", "14");
+        insert("e13", "id", "15");
+        insert("e13", "id", "16");
 
-        Response r1 = target("/e12/12/e1213").queryParam("exclude", "id").request()
-                .post(Entity.entity("[{\"e13\":15},{\"e13\":14}]", MediaType.APPLICATION_JSON));
+        Response response = target("/e12/12/e1213")
+                .queryParam("exclude", "id")
+                .request()
+                .post(Entity.json("[{\"e13\":15},{\"e13\":14}]"));
 
-        assertEquals(Status.CREATED.getStatusCode(), r1.getStatus());
-        assertEquals("{\"data\":[{},{}],\"total\":2}", r1.readEntity(String.class));
+        assertEquals(Status.CREATED.getStatusCode(), response.getStatus());
+        assertEquals("{\"data\":[{},{}],\"total\":2}", response.readEntity(String.class));
 
         assertEquals(2, intForQuery("SELECT count(1) FROM utest.e12_e13"));
         assertEquals(1, intForQuery("SELECT count(1) FROM utest.e12_e13 " + "WHERE e12_id = 12 AND e13_id = 14"));
