@@ -1,18 +1,24 @@
 package com.nhl.link.rest.it;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.nhl.link.rest.DataResponse;
 import com.nhl.link.rest.LinkRest;
 import com.nhl.link.rest.MetadataResponse;
+import com.nhl.link.rest.SimpleResponse;
 import com.nhl.link.rest.annotation.LinkType;
 import com.nhl.link.rest.annotation.LrResource;
+import com.nhl.link.rest.constraints.Constraint;
 import com.nhl.link.rest.it.fixture.JerseyTestOnDerby;
+import com.nhl.link.rest.it.fixture.cayenne.E15;
 import com.nhl.link.rest.it.fixture.cayenne.E19;
-import com.nhl.link.rest.it.fixture.resource.E5Resource;
+import com.nhl.link.rest.it.fixture.cayenne.E5;
 import com.nhl.link.rest.runtime.jackson.JacksonService;
 import org.junit.Test;
 
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Configuration;
 import javax.ws.rs.core.Context;
@@ -27,7 +33,7 @@ public class GET_Metadata_IT extends JerseyTestOnDerby {
     @Override
     protected void doAddResources(FeatureContext context) {
         context.register(E5Resource.class);
-        context.register(Resource.class);
+        context.register(E19Resource.class);
     }
 
     @Test
@@ -49,7 +55,7 @@ public class GET_Metadata_IT extends JerseyTestOnDerby {
                         "{\"href\":\"http://localhost:9998/e5/metadata\",\"type\":\"metadata\",\"operations\":[{\"method\":\"GET\"}]}," +
                         "{\"href\":\"http://localhost:9998/e5/metadata-constraints\",\"type\":\"metadata\",\"operations\":[{\"method\":\"GET\"}]}," +
                         "{\"href\":\"http://localhost:9998/e5/{id}\",\"type\":\"item\"," +
-                        "\"operations\":[{\"method\":\"GET\"},{\"method\":\"DELETE\"}]}]}"
+                        "\"operations\":[{\"method\":\"DELETE\"},{\"method\":\"GET\"}]}]}"
                 ,
                 response1.readEntity(String.class)
         );
@@ -58,7 +64,7 @@ public class GET_Metadata_IT extends JerseyTestOnDerby {
     @Test
     public void testMetadata_PropertyTypes() {
 
-        WebTarget target = target("/metadata");
+        WebTarget target = target("/e19/metadata");
 
         Response r = target.request().get();
         assertEquals(Response.Status.OK.getStatusCode(), r.getStatus());
@@ -104,8 +110,58 @@ public class GET_Metadata_IT extends JerseyTestOnDerby {
                 metadata.contains("{\"name\":\"e2s\",\"type\":\"E3\",\"relationship\":true,\"collection\":true}"));
     }
 
-    @Path("")
-    public static class Resource {
+    @Path("e5")
+    public static class E5Resource {
+
+        @Context
+        private Configuration config;
+
+        @GET
+        @LrResource(type = LinkType.COLLECTION)
+        public DataResponse<E5> get(@Context UriInfo uriInfo) {
+            throw new UnsupportedOperationException("Response is not relevant for the test");
+        }
+
+        @GET
+        @Path("{id}")
+        @LrResource(type = LinkType.ITEM)
+        public DataResponse<E5> getById(@PathParam("id") int id, @Context UriInfo uriInfo) {
+            throw new UnsupportedOperationException("Response is not relevant for the test");
+        }
+
+        @DELETE
+        @Path("{id}")
+        public SimpleResponse deleteById(@PathParam("id") int id, @Context UriInfo uriInfo) {
+            throw new UnsupportedOperationException("Response is not relevant for the test");
+        }
+
+        @GET
+        @Path("metadata")
+        @LrResource(entityClass = E5.class, type = LinkType.METADATA)
+        public MetadataResponse<E5> getMetadata(@Context UriInfo uriInfo) {
+            return LinkRest.metadata(E5.class, config).forResource(E5Resource.class).uri(uriInfo).process();
+        }
+
+        @GET
+        @Path("metadata-constraints")
+        @LrResource(entityClass = E5.class, type = LinkType.METADATA)
+        public MetadataResponse<E5> getMetadataWithConstraints(@Context UriInfo uriInfo) {
+
+            Constraint<E5> constraint = Constraint.excludeAll(E5.class)
+                    .attribute(E5.NAME)
+                    .toManyPath(E5.E15S, Constraint.idAndAttributes(E15.class));
+
+            return LinkRest
+                    .metadata(E5.class, config)
+                    .forResource(E5Resource.class)
+                    .uri(uriInfo)
+                    .constraint(constraint)
+                    .process();
+        }
+    }
+
+    @Path("e19")
+    public static class E19Resource {
 
         @Context
         private Configuration config;
@@ -115,7 +171,7 @@ public class GET_Metadata_IT extends JerseyTestOnDerby {
         @LrResource(entityClass = E19.class, type = LinkType.METADATA)
         public MetadataResponse<E19> getMetadata(@Context UriInfo uriInfo) {
             return LinkRest.metadata(E19.class, config)
-                    .forResource(Resource.class)
+                    .forResource(E19Resource.class)
                     .uri(uriInfo)
                     .process();
         }
