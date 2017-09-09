@@ -50,8 +50,25 @@ public class ResponseAssertions {
         return bodyEquals(expectedJson.toString());
     }
 
+    public ResponseAssertions bodyEqualsMapBy(long total, String... jsonKeyValues) {
+
+        StringBuilder expectedJson = new StringBuilder("{\"data\":{");
+        for (String o : jsonKeyValues) {
+            expectedJson.append(o).append(",");
+        }
+
+        // rempve last comma
+        expectedJson.deleteCharAt(expectedJson.length() - 1)
+                .append("},\"total\":")
+                .append(total)
+                .append("}");
+
+        return bodyEquals(expectedJson.toString());
+    }
+
     public ResponseAssertions totalEquals(long total) {
 
+        // Note: Response content type must be application/json
         JsonNode rootNode = response.readEntity(JsonNode.class);
         assertNotNull("No response data", rootNode);
 

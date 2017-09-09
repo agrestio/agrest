@@ -38,8 +38,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.junit.Assert.assertEquals;
-
 public class GET_IT extends JerseyTestOnDerby {
 
     @Override
@@ -154,12 +152,15 @@ public class GET_IT extends JerseyTestOnDerby {
 
         insert("e4", "id", "2");
 
-        Response response1 = target("/e4/2").request().get();
+        Response response = target("/e4/2").request().get();
 
-        assertEquals(Status.OK.getStatusCode(), response1.getStatus());
-        assertEquals("{\"data\":[{\"id\":2,\"cBoolean\":null,\"cDate\":null,\"cDecimal\":null,"
-                        + "\"cInt\":null,\"cTime\":null,\"cTimestamp\":null,\"cVarchar\":null}],\"total\":1}",
-                response1.readEntity(String.class));
+        onSuccess(response).bodyEquals(1, "{\"id\":2,\"cBoolean\":null," +
+                "\"cDate\":null," +
+                "\"cDecimal\":null," +
+                "\"cInt\":null," +
+                "\"cTime\":null," +
+                "\"cTimestamp\":null," +
+                "\"cVarchar\":null}");
     }
 
     @Test
@@ -167,26 +168,20 @@ public class GET_IT extends JerseyTestOnDerby {
 
         insert("e4", "id", "2");
 
-        Response response1 = target("/e4/ie/2").request().get();
+        Response response1 = target("/e4/2").request().get();
+        onSuccess(response1).bodyEquals(1, "{\"id\":2,\"cBoolean\":null,\"cDate\":null,\"cDecimal\":null,"
+                + "\"cInt\":null,\"cTime\":null,\"cTimestamp\":null,\"cVarchar\":null}");
 
-        assertEquals(Status.OK.getStatusCode(), response1.getStatus());
-        assertEquals("{\"data\":[{\"id\":2,\"cBoolean\":null,\"cDate\":null,\"cDecimal\":null,"
-                        + "\"cInt\":null,\"cTime\":null,\"cTimestamp\":null,\"cVarchar\":null}],\"total\":1}",
-                response1.readEntity(String.class));
-
-        Response response2 = target("/e4/ie/2").queryParam("include", "id").request().get();
-        assertEquals(Status.OK.getStatusCode(), response2.getStatus());
-        assertEquals("{\"data\":[{\"id\":2}],\"total\":1}", response2.readEntity(String.class));
+        Response response2 = target("/e4/2").queryParam("include", "id").request().get();
+        onSuccess(response2).bodyEquals(1, "{\"id\":2}");
     }
 
     @Test
     public void test_SelectById_NotFound() {
 
-        Response response1 = target("/e4/2").request().get();
-
-        assertEquals(Status.NOT_FOUND.getStatusCode(), response1.getStatus());
-        assertEquals("{\"success\":false,\"message\":\"No object for ID '2' and entity 'E4'\"}",
-                response1.readEntity(String.class));
+        Response response = target("/e4/2").request().get();
+        onResponse(response).statusEquals(Status.NOT_FOUND)
+                .bodyEquals("{\"success\":false,\"message\":\"No object for ID '2' and entity 'E4'\"}");
     }
 
     @Test
@@ -197,24 +192,13 @@ public class GET_IT extends JerseyTestOnDerby {
         insert("e3", "id, name, e2_id", "9, 'zzz', 1");
 
         Response response1 = target("/e3/8").queryParam("include", "e2.id").request().get();
-
-        assertEquals(Status.OK.getStatusCode(), response1.getStatus());
-        assertEquals(
-                "{\"data\":[{\"id\":8,\"e2\":{\"id\":1},\"name\":\"yyy\",\"phoneNumber\":null}],\"total\":1}",
-                response1.readEntity(String.class));
+        onSuccess(response1).bodyEquals(1, "{\"id\":8,\"e2\":{\"id\":1},\"name\":\"yyy\",\"phoneNumber\":null}");
 
         Response response2 = target("/e3/8").queryParam("include", "e2.name").request().get();
-
-        assertEquals(Status.OK.getStatusCode(), response2.getStatus());
-        assertEquals(
-                "{\"data\":[{\"id\":8,\"e2\":{\"name\":\"xxx\"},\"name\":\"yyy\",\"phoneNumber\":null}],\"total\":1}",
-                response2.readEntity(String.class));
+        onSuccess(response2).bodyEquals(1, "{\"id\":8,\"e2\":{\"name\":\"xxx\"},\"name\":\"yyy\",\"phoneNumber\":null}");
 
         Response response3 = target("/e2/1").queryParam("include", "e3s.id").request().get();
-
-        assertEquals(Status.OK.getStatusCode(), response3.getStatus());
-        assertEquals("{\"data\":[{\"id\":1,\"address\":null,\"e3s\":"
-                + "[{\"id\":8},{\"id\":9}],\"name\":\"xxx\"}],\"total\":1}", response3.readEntity(String.class));
+        onSuccess(response3).bodyEquals(1, "{\"id\":1,\"address\":null,\"e3s\":[{\"id\":8},{\"id\":9}],\"name\":\"xxx\"}");
     }
 
     @Test
@@ -231,9 +215,7 @@ public class GET_IT extends JerseyTestOnDerby {
                 .request()
                 .get();
 
-        assertEquals(Status.OK.getStatusCode(), response.getStatus());
-        assertEquals("{\"data\":[{\"id\":8,\"e2\":{\"id\":1}},"
-                + "{\"id\":9,\"e2\":{\"id\":1}}],\"total\":2}", response.readEntity(String.class));
+        onSuccess(response).bodyEquals(2, "{\"id\":8,\"e2\":{\"id\":1}}", "{\"id\":9,\"e2\":{\"id\":1}}");
     }
 
     @Test
@@ -254,11 +236,10 @@ public class GET_IT extends JerseyTestOnDerby {
                 .request()
                 .get();
 
-        assertEquals(Status.OK.getStatusCode(), response.getStatus());
-        assertEquals("{\"data\":[{\"id\":10,\"e2\":{\"id\":3,\"address\":null,\"name\":\"xxx\"}}," +
-                        "{\"id\":9,\"e2\":{\"id\":2,\"address\":null,\"name\":\"yyy\"}}," +
-                        "{\"id\":8,\"e2\":{\"id\":1,\"address\":null,\"name\":\"zzz\"}}],\"total\":3}",
-                response.readEntity(String.class));
+        onSuccess(response).bodyEquals(3,
+                "{\"id\":10,\"e2\":{\"id\":3,\"address\":null,\"name\":\"xxx\"}}",
+                "{\"id\":9,\"e2\":{\"id\":2,\"address\":null,\"name\":\"yyy\"}}",
+                "{\"id\":8,\"e2\":{\"id\":1,\"address\":null,\"name\":\"zzz\"}}");
     }
 
     @Test
@@ -271,15 +252,15 @@ public class GET_IT extends JerseyTestOnDerby {
         insert("e3", "id, name, e2_id", "9, 'bbb', 1");
         insert("e3", "id, name, e2_id", "10, 'ccc', 2");
 
-        Response response1 = target("/e2")
+        Response response = target("/e2")
                 .queryParam("include", "id")
                 .queryParam("include", URLEncoder.encode("{\"path\":\"" + E2.E3S.getName() + "\",\"start\":1,\"limit\":1}", "UTF-8"))
                 .queryParam("exclude", E2.E3S.dot(E3.PHONE_NUMBER).getName())
                 .request().get();
 
-        assertEquals(Status.OK.getStatusCode(), response1.getStatus());
-        assertEquals("{\"data\":[{\"id\":1,\"e3s\":[{\"id\":9,\"name\":\"bbb\"}]}," +
-                "{\"id\":2,\"e3s\":[]}],\"total\":2}", response1.readEntity(String.class));
+        onSuccess(response).bodyEquals(2,
+                "{\"id\":1,\"e3s\":[{\"id\":9,\"name\":\"bbb\"}]}",
+                "{\"id\":2,\"e3s\":[]}");
     }
 
     @Test
@@ -300,9 +281,9 @@ public class GET_IT extends JerseyTestOnDerby {
                 .request()
                 .get();
 
-        assertEquals(Status.OK.getStatusCode(), response.getStatus());
-        assertEquals("{\"data\":[{\"id\":9,\"e2\":{\"id\":1}},"
-                + "{\"id\":10,\"e2\":{\"id\":1}}],\"total\":4}", response.readEntity(String.class));
+        onSuccess(response).bodyEquals(4,
+                "{\"id\":9,\"e2\":{\"id\":1}}",
+                "{\"id\":10,\"e2\":{\"id\":1}}");
     }
 
     @Test
@@ -313,39 +294,37 @@ public class GET_IT extends JerseyTestOnDerby {
         insert("e3", "id, name, e2_id", "8, 'yyy', 1");
         insert("e3", "id, name, e2_id", "9, 'zzz', null");
 
-        Response response1 = target("/e3")
+        Response response = target("/e3")
                 .queryParam("include", "e2.id", "id")
                 .request()
                 .get();
 
-        assertEquals(Status.OK.getStatusCode(), response1.getStatus());
-        assertEquals("{\"data\":[{\"id\":8,\"e2\":{\"id\":1}},{\"id\":9,\"e2\":null}],\"total\":2}",
-                response1.readEntity(String.class));
+        onSuccess(response).bodyEquals(2,
+                "{\"id\":8,\"e2\":{\"id\":1}}",
+                "{\"id\":9,\"e2\":null}");
     }
 
     @Test
     public void test_SelectCharPK() {
 
-        newContext().performGenericQuery(
-                new SQLTemplate(E2.class, "INSERT INTO utest.e6 (char_id, char_column) values ('a', 'aaa')"));
+        insert("e6", "char_id, char_column", "'a', 'aaa'");
 
-        Response response1 = target("/e6/a").request().get();
-
-        assertEquals(Status.OK.getStatusCode(), response1.getStatus());
-        assertEquals("{\"data\":[{\"id\":\"a\",\"charColumn\":\"aaa\"}],\"total\":1}",
-                response1.readEntity(String.class));
+        Response response = target("/e6/a").request().get();
+        onSuccess(response).bodyEquals(1, "{\"id\":\"a\",\"charColumn\":\"aaa\"}");
     }
 
     @Test
     public void test_SelectByCompoundId() {
-        newContext().performGenericQuery(
-                new SQLTemplate(E17.class, "INSERT INTO utest.e17 (id1, id2, name) values (1, 1, 'aaa')"));
 
-        Response response1 = target("/e17").queryParam("id1", 1).queryParam("id2", 1).request().get();
+        insert("e17", "id1, id2, name", "1, 1, 'aaa'");
 
-        assertEquals(Status.OK.getStatusCode(), response1.getStatus());
-        assertEquals("{\"data\":[{\"id\":{\"id1\":1,\"id2\":1},\"id1\":1,\"id2\":1,\"name\":\"aaa\"}],\"total\":1}",
-                response1.readEntity(String.class));
+        Response response = target("/e17")
+                .queryParam("id1", 1)
+                .queryParam("id2", 1)
+                .request()
+                .get();
+
+        onSuccess(response).bodyEquals(1, "{\"id\":{\"id1\":1,\"id2\":1},\"id1\":1,\"id2\":1,\"name\":\"aaa\"}");
     }
 
     @Test
@@ -361,10 +340,9 @@ public class GET_IT extends JerseyTestOnDerby {
                 .request()
                 .get();
 
-        assertEquals(Status.OK.getStatusCode(), response.getStatus());
-        assertEquals("{\"data\":{\"1\":[{\"cVarchar\":\"xxx\"}]," +
-                        "\"2\":[{\"cVarchar\":\"yyy\"},{\"cVarchar\":\"zzz\"}]},\"total\":3}",
-                response.readEntity(String.class));
+        onSuccess(response).bodyEqualsMapBy(3,
+                "\"1\":[{\"cVarchar\":\"xxx\"}]",
+                "\"2\":[{\"cVarchar\":\"yyy\"},{\"cVarchar\":\"zzz\"}]");
     }
 
     @Test
@@ -376,16 +354,15 @@ public class GET_IT extends JerseyTestOnDerby {
         insert("e3", "id, e2_id, name", "9,  1, 'bbb'");
         insert("e3", "id, e2_id, name", "10, 2, 'ccc'");
 
-        Response response1 = target("/e3")
+        Response response = target("/e3")
                 .queryParam("mapBy", E3.E2.dot(E2.ID_PK_COLUMN).getName())
                 .queryParam("exclude", E3.PHONE_NUMBER.getName())
                 .request()
                 .get();
 
-        assertEquals(Status.OK.getStatusCode(), response1.getStatus());
-        assertEquals("{\"data\":{\"1\":[{\"id\":8,\"name\":\"aaa\"},{\"id\":9,\"name\":\"bbb\"}]," +
-                        "\"2\":[{\"id\":10,\"name\":\"ccc\"}]},\"total\":3}",
-                response1.readEntity(String.class));
+        onSuccess(response).bodyEqualsMapBy(3,
+                "\"1\":[{\"id\":8,\"name\":\"aaa\"},{\"id\":9,\"name\":\"bbb\"}]",
+                "\"2\":[{\"id\":10,\"name\":\"ccc\"}]");
     }
 
     @Test
@@ -393,13 +370,12 @@ public class GET_IT extends JerseyTestOnDerby {
 
         insert("e4", "id, c_varchar", "1, 'First line\u2028Second line...\u2029'");
 
-        Response response1 = target("/e4/1").request().get();
+        Response response = target("/e4/1")
+                .queryParam("include", "cVarchar")
+                .request()
+                .get();
 
-        assertEquals(Status.OK.getStatusCode(), response1.getStatus());
-        assertEquals("{\"data\":[{\"id\":1,\"cBoolean\":null,\"cDate\":null,\"cDecimal\":null," +
-                        "\"cInt\":null,\"cTime\":null,\"cTimestamp\":null," +
-                        "\"cVarchar\":\"First line\\u2028Second line...\\u2029\"}],\"total\":1}",
-                response1.readEntity(String.class));
+        onSuccess(response).bodyEquals(1, "{\"cVarchar\":\"First line\\u2028Second line...\\u2029\"}");
     }
 
     @Test
@@ -410,12 +386,12 @@ public class GET_IT extends JerseyTestOnDerby {
         e19.setGuid("someValue123".getBytes("UTF-8"));
         ctx.commitChanges();
 
-        Response response1 = target("/e19/" + Cayenne.intPKForObject(e19))
-                .queryParam("include", E19.GUID.getName()).request().get();
+        Response response = target("/e19/" + Cayenne.intPKForObject(e19))
+                .queryParam("include", E19.GUID.getName())
+                .request()
+                .get();
 
-        assertEquals(Status.OK.getStatusCode(), response1.getStatus());
-        assertEquals("{\"data\":[{\"guid\":\"c29tZVZhbHVlMTIz\"}],\"total\":1}",
-                response1.readEntity(String.class));
+        onSuccess(response).bodyEquals(1, "{\"guid\":\"c29tZVZhbHVlMTIz\"}");
     }
 
     @Path("")
@@ -457,12 +433,6 @@ public class GET_IT extends JerseyTestOnDerby {
 
         @GET
         @Path("e4/{id}")
-        public DataResponse<E4> getE4ById(@PathParam("id") int id) {
-            return LinkRest.service(config).selectById(E4.class, id);
-        }
-
-        @GET
-        @Path("e4/ie/{id}")
         public DataResponse<E4> getE4_WithIncludeExclude(@PathParam("id") int id, @Context UriInfo uriInfo) {
             return LinkRest.service(config).selectById(E4.class, id, uriInfo);
         }

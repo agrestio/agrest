@@ -21,9 +21,7 @@ import javax.ws.rs.core.UriInfo;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.nhl.link.rest.unit.matcher.LRMatchers.okAndHasData;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
 
 public class PUT_NaturalIdIT extends JerseyTestOnDerby {
 
@@ -37,11 +35,11 @@ public class PUT_NaturalIdIT extends JerseyTestOnDerby {
         insert("e20", "name", "'John'");
         insert("e20", "name", "'Brian'");
 
-        Response response = target("/single-id/John").request()
+        Response response = target("/single-id/John")
+                .request()
                 .put(Entity.json("{\"age\":28,\"description\":\"zzz\"}"));
 
-        assertThat(response,
-                okAndHasData(1, "[{\"id\":\"John\",\"age\":28,\"description\":\"zzz\",\"name\":\"John\"}]"));
+        onSuccess(response).bodyEquals(1, "{\"id\":\"John\",\"age\":28,\"description\":\"zzz\",\"name\":\"John\"}");
 
         assertEquals(1, intForQuery("SELECT COUNT(1) FROM utest.e20 WHERE age = 28 AND description = 'zzz'"));
     }
@@ -63,11 +61,12 @@ public class PUT_NaturalIdIT extends JerseyTestOnDerby {
         insert("e21", "age, name", "18, 'John'");
         insert("e21", "age, name", "27, 'Brian'");
 
-        Response response = target("/multi-id/byid").queryParam("age", 18).queryParam("name", "John")
+        Response response = target("/multi-id/byid").queryParam("age", 18)
+                .queryParam("name", "John")
                 .request().put(Entity.json("{\"age\":28,\"description\":\"zzz\"}"));
 
-        assertThat(response,
-                okAndHasData(1, "[{\"id\":{\"age\":28,\"name\":\"John\"},\"age\":28,\"description\":\"zzz\",\"name\":\"John\"}]"));
+        onSuccess(response).bodyEquals(1,
+                "{\"id\":{\"age\":28,\"name\":\"John\"},\"age\":28,\"description\":\"zzz\",\"name\":\"John\"}");
 
         assertEquals(1, intForQuery("SELECT COUNT(1) FROM utest.e21 WHERE age = 28 AND description = 'zzz'"));
     }

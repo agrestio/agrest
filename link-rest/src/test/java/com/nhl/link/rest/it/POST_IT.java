@@ -27,7 +27,6 @@ import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.Configuration;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.FeatureContext;
-import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriInfo;
@@ -35,7 +34,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.nhl.link.rest.unit.matcher.LRMatchers.hasStatusAndBody;
 import static org.junit.Assert.*;
 
 public class POST_IT extends JerseyTestOnDerby {
@@ -281,16 +279,19 @@ public class POST_IT extends JerseyTestOnDerby {
         insert("e3", "id, name", "1, 'xxx'");
         insert("e3", "id, name", "8, 'yyy'");
 
-        Response response = target("/e2").queryParam("include", E2.E3S.getName())
-                .queryParam("exclude", E2.ADDRESS.getName(), E2.E3S.dot(E3.NAME).getName(),
-                        E2.E3S.dot(E3.PHONE_NUMBER).getName())
-                .request().post(Entity.json("{\"e3s\":[1,8],\"name\":\"MM\"}"));
+        Response response = target("/e2")
+                .queryParam("include", E2.E3S.getName())
+                .queryParam("exclude", E2.ADDRESS.getName(), E2.E3S.dot(E3.NAME).getName(), E2.E3S.dot(E3.PHONE_NUMBER).getName())
+                .request()
+                .post(Entity.json("{\"e3s\":[1,8],\"name\":\"MM\"}"));
 
         E2 e2 = (E2) Cayenne.objectForQuery(newContext(), new SelectQuery<>(E2.class));
         int id = Cayenne.intPKForObject(e2);
 
-        assertThat(response, hasStatusAndBody(Status.CREATED,
-                "{\"data\":[{\"id\":" + id + ",\"e3s\":[{\"id\":1},{\"id\":8}],\"name\":\"MM\"}],\"total\":1}"));
+        onResponse(response)
+                .statusEquals(Status.CREATED)
+                .bodyEquals(1, "{\"id\":" + id + ",\"e3s\":[{\"id\":1},{\"id\":8}],\"name\":\"MM\"}");
+
         assertEquals(2, intForQuery("SELECT COUNT(1) FROM utest.e3 WHERE e2_id = " + id));
     }
 
@@ -299,11 +300,14 @@ public class POST_IT extends JerseyTestOnDerby {
 
         String base64Encoded = "c29tZVZhbHVlMTIz"; // someValue123
 
-        Response response = target("/e19").queryParam("include", E19.GUID.getName()).request()
+        Response response = target("/e19")
+                .queryParam("include", E19.GUID.getName())
+                .request()
                 .post(Entity.json("{\"guid\":\"" + base64Encoded + "\"}"));
 
-        assertThat(response,
-                hasStatusAndBody(Status.CREATED, "{\"data\":[{\"guid\":\"" + base64Encoded + "\"}],\"total\":1}"));
+        onResponse(response)
+                .statusEquals(Status.CREATED)
+                .bodyEquals(1, "{\"guid\":\"" + base64Encoded + "\"}");
     }
 
     @Test
@@ -315,8 +319,9 @@ public class POST_IT extends JerseyTestOnDerby {
                 .request()
                 .post(Entity.json(data));
 
-        assertThat(response, hasStatusAndBody(Status.CREATED,
-                "{\"data\":[{\"floatObject\":0.0,\"floatPrimitive\":0.0}],\"total\":1}"));
+        onResponse(response)
+                .statusEquals(Status.CREATED)
+                .bodyEquals(1, "{\"floatObject\":0.0,\"floatPrimitive\":0.0}");
     }
 
     @Path("")

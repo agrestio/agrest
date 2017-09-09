@@ -17,7 +17,6 @@ import javax.ws.rs.core.FeatureContext;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
-import static com.nhl.link.rest.unit.matcher.LRMatchers.okAndHasData;
 import static org.junit.Assert.*;
 
 public class PUT_StagesIT extends JerseyTestOnDerby {
@@ -36,10 +35,12 @@ public class PUT_StagesIT extends JerseyTestOnDerby {
 
         UpdateCallbackListener.BEFORE_UPDATE_CALLED = false;
 
-        Response response = target("/e3/callbackstage").request()
+        Response response = target("/e3/callbackstage")
+                .request()
                 .put(Entity.json("[{\"id\":3,\"name\":\"x\"}]"));
 
-        assertThat(response, okAndHasData(1, "[{\"id\":3,\"name\":\"x\",\"phoneNumber\":null}]"));
+        onSuccess(response).bodyEquals(1, "{\"id\":3,\"name\":\"x\",\"phoneNumber\":null}");
+
         assertEquals(1, intForQuery("SELECT COUNT(1) FROM utest.e3 WHERE id = 3 AND name = 'x'"));
         assertEquals(0, intForQuery("SELECT COUNT(1) FROM utest.e3 WHERE id = 4"));
 

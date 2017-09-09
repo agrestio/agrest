@@ -18,9 +18,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import java.util.Collection;
 
-import static com.nhl.link.rest.unit.matcher.LRMatchers.okAndHasBody;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
 
 public class PUT_EntityUpdateBindingIT extends JerseyTestOnDerby {
 
@@ -34,8 +32,11 @@ public class PUT_EntityUpdateBindingIT extends JerseyTestOnDerby {
 
         insert("e3", "id, name", "3, 'zzz'");
 
-        Response response = target("/e3/updatebinding/3").request().put(Entity.json("{\"id\":3,\"name\":\"yyy\"}"));
-        assertThat(response, okAndHasBody("{\"success\":true}"));
+        Response response = target("/e3/updatebinding/3")
+                .request()
+                .put(Entity.json("{\"id\":3,\"name\":\"yyy\"}"));
+
+        onSuccess(response).bodyEquals("{\"success\":true}");
         assertEquals(1, intForQuery("SELECT COUNT(1) FROM utest.e3 WHERE id = 3 AND name = 'yyy'"));
     }
 
@@ -47,7 +48,8 @@ public class PUT_EntityUpdateBindingIT extends JerseyTestOnDerby {
 
         Response response = target("/e3/updatebinding").request()
                 .put(Entity.json("[{\"id\":3,\"name\":\"yyy\"},{\"id\":5,\"name\":\"nnn\"}]"));
-        assertThat(response, okAndHasBody("{\"success\":true}"));
+
+        onSuccess(response).bodyEquals("{\"success\":true}");
 
         assertEquals(2, intForQuery("SELECT COUNT(1) FROM utest.e3"));
         assertEquals(1, intForQuery("SELECT COUNT(1) FROM utest.e3 WHERE id = 3 AND name = 'yyy'"));

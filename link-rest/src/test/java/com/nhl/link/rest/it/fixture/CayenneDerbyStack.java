@@ -51,8 +51,13 @@ public class CayenneDerbyStack extends ExternalResource {
     }
 
     public int intForQuery(String querySql) {
-        Integer result = SQLSelect.scalarQuery(Integer.class, querySql).selectOne(newContext());
-        return result != null ? result : -1;
+        Number result = SQLSelect.scalarQuery(Number.class, querySql).selectOne(newContext());
+        return result != null ? result.intValue() : -1;
+    }
+
+    public long longForQuery(String querySql) {
+        Number result = SQLSelect.scalarQuery(Number.class, querySql).selectOne(newContext());
+        return result != null ? result.longValue() : -1;
     }
 
     public String stringForQuery(String querySql) {

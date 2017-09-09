@@ -79,6 +79,14 @@ public abstract class JerseyTestOnDerby extends JerseyTest {
         return DB_STACK.intForQuery(querySql);
     }
 
+    protected long countRows(String table) {
+        return DB_STACK.longForQuery("SELECT count(1) FROM utest." + table);
+    }
+
+    protected long countRows(String table, String where) {
+        return DB_STACK.longForQuery("SELECT count(1) FROM utest." + table + " " + where);
+    }
+
     protected long countRows(Class<?> entity) {
         return ObjectSelect.columnQuery(entity, Property.COUNT).selectOne(newContext());
     }
