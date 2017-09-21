@@ -20,7 +20,7 @@ public interface FunctionProcessor {
         }
         String arguments = expression.substring(1, expression.length() - 1);
         if (arguments.isEmpty()) {
-            applyWithoutArguments(context);
+            apply(context);
         } else {
             PathVisitor visitor = new PathVisitor() {
                 @Override
@@ -47,8 +47,6 @@ public interface FunctionProcessor {
             PathProcessor.processor().processPath(context, arguments, visitor);
         }
     }
-
-    void applyWithoutArguments(ResourceEntity<?> context);
 
     void apply(ResourceEntity<?> context, LrAttribute attribute);
 
