@@ -1,11 +1,6 @@
 package com.nhl.link.rest.runtime.cayenne.processor.select;
 
-import com.nhl.link.rest.LinkRestException;
-import com.nhl.link.rest.LrObjectId;
 import com.nhl.link.rest.ResourceEntity;
-import com.nhl.link.rest.meta.LrAttribute;
-import com.nhl.link.rest.meta.LrEntity;
-import com.nhl.link.rest.meta.LrPersistentAttribute;
 import com.nhl.link.rest.meta.LrPersistentEntity;
 import com.nhl.link.rest.processor.Processor;
 import com.nhl.link.rest.processor.ProcessorOutcome;
@@ -13,15 +8,11 @@ import com.nhl.link.rest.runtime.cayenne.ICayennePersister;
 import com.nhl.link.rest.runtime.processor.select.SelectContext;
 import org.apache.cayenne.di.Inject;
 import org.apache.cayenne.exp.Expression;
-import org.apache.cayenne.exp.ExpressionFactory;
 import org.apache.cayenne.map.EntityResolver;
 import org.apache.cayenne.query.Ordering;
 import org.apache.cayenne.query.PrefetchTreeNode;
-import org.apache.cayenne.query.SelectQuery;
+import org.apache.cayenne.query.Select;
 
-import javax.ws.rs.core.Response;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Map;
 
 /**
@@ -45,30 +36,30 @@ public class CayenneAssembleQueryStage implements Processor<SelectContext<?>> {
         context.setSelect(buildQuery(context));
     }
 
-    <T> SelectQuery<T> buildQuery(SelectContext<T> context) {
+    <T> Select<T> buildQuery(SelectContext<T> context) {
 
         ResourceEntity<T> entity = context.getEntity();
 
-        SelectQuery<T> query = basicSelect(context);
+        QueryBuilder<T> query = new QueryBuilder<>(context);
 
         if (!entity.isFiltered()) {
             int limit = context.getEntity().getFetchLimit();
             if (limit > 0) {
-                query.setPageSize(limit);
+                query.pageSize(limit);
             }
         }
 
         if (context.getParent() != null) {
             Expression qualifier = context.getParent().qualifier(entityResolver);
-            query.andQualifier(qualifier);
+            query.qualifier(qualifier);
         }
 
         if (entity.getQualifier() != null) {
-            query.andQualifier(entity.getQualifier());
+            query.qualifier(entity.getQualifier());
         }
 
         for (Ordering o : entity.getOrderings()) {
-            query.addOrdering(o);
+            query.ordering(o);
         }
 
         if (!entity.getChildren().isEmpty()) {
@@ -83,51 +74,14 @@ public class CayenneAssembleQueryStage implements Processor<SelectContext<?>> {
             }
 
             appendPrefetches(root, entity, prefetchSemantics);
-            query.setPrefetchTree(root);
+            query.prefetch(root);
         }
 
-        return query;
+        return query.buildQuery();
     }
 
-    <T> SelectQuery<T> basicSelect(SelectContext<T> context) {
-
-        // selecting by ID overrides any explicit SelectQuery...
-        if (context.isById()) {
-
-            Class<T> root = context.getType();
-            SelectQuery<T> query = new SelectQuery<>(root);
-            query.andQualifier(buildIdQualifer(context.getEntity().getLrEntity(), context.getId()));
-            return query;
-        }
-
-        return context.getSelect() != null ? context.getSelect() : new SelectQuery<>(context.getType());
-    }
-
-    private Expression buildIdQualifer(LrEntity<?> entity, LrObjectId id) {
-
-        Collection<LrAttribute> idAttributes = entity.getIds();
-        if (idAttributes.size() != id.size()) {
-            throw new LinkRestException(Response.Status.BAD_REQUEST,
-                    "Wrong ID size: expected " + idAttributes.size() + ", got: " + id.size());
-        }
-
-        Collection<Expression> qualifiers = new ArrayList<>();
-        for (LrAttribute idAttribute : idAttributes) {
-            Object idValue = id.get(idAttribute.getName());
-            if (idValue == null) {
-                throw new LinkRestException(Response.Status.BAD_REQUEST,
-                        "Failed to build a Cayenne qualifier for entity " + entity.getName()
-                                + ": one of the entity's ID parts is missing in this ID: " + idAttribute.getName());
-            }
-            if (idAttribute instanceof LrPersistentAttribute) {
-                qualifiers.add(ExpressionFactory.matchDbExp(
-                        ((LrPersistentAttribute) idAttribute).getColumnName(), idValue));
-            } else {
-                // can be non-persistent attribute if assembled from @LrId by LrEntityBuilder
-                qualifiers.add(ExpressionFactory.matchDbExp(idAttribute.getName(), idValue));
-            }
-        }
-        return ExpressionFactory.and(qualifiers);
+    <T> Select<T> basicSelect(SelectContext<T> context) {
+        return new QueryBuilder<>(context).buildQuery();
     }
 
     private void appendPrefetches(PrefetchTreeNode root, ResourceEntity<?> entity, int prefetchSemantics) {

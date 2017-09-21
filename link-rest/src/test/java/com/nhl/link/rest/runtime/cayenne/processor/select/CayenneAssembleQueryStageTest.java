@@ -16,7 +16,10 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertSame;
 
 public class CayenneAssembleQueryStageTest extends TestWithCayenneMapping {
 
@@ -43,7 +46,7 @@ public class CayenneAssembleQueryStageTest extends TestWithCayenneMapping {
 		context.setSelect(query);
 		context.setEntity(resourceEntity);
 
-		SelectQuery<E1> amended = makeQueryStage.buildQuery(context);
+		SelectQuery<E1> amended = (SelectQuery<E1>) makeQueryStage.buildQuery(context);
 		assertSame(query, amended);
 		assertEquals(2, amended.getOrderings().size());
 		assertSame(o1, amended.getOrderings().get(0));
@@ -64,7 +67,7 @@ public class CayenneAssembleQueryStageTest extends TestWithCayenneMapping {
 		context.setEntity(resultFilter);
 		context.setSelect(query);
 
-		SelectQuery<E2> amended = makeQueryStage.buildQuery(context);
+		SelectQuery<E2> amended = (SelectQuery<E2>) makeQueryStage.buildQuery(context);
 		assertSame(query, amended);
 		PrefetchTreeNode rootPrefetch = amended.getPrefetchTree();
 
@@ -85,7 +88,7 @@ public class CayenneAssembleQueryStageTest extends TestWithCayenneMapping {
 		SelectContext<E1> c = new SelectContext<E1>(E1.class);
 		c.setEntity(resourceEntity);
 
-		SelectQuery<E1> q1 = makeQueryStage.buildQuery(c);
+		SelectQuery<E1> q1 = (SelectQuery<E1>) makeQueryStage.buildQuery(c);
 
 		assertEquals("Pagination in the query for paginated request is expected", 10, q1.getPageSize());
 		assertEquals(0, q1.getFetchOffset());
@@ -94,7 +97,7 @@ public class CayenneAssembleQueryStageTest extends TestWithCayenneMapping {
 		resourceEntity.setFetchLimit(0);
 		resourceEntity.setFetchOffset(0);
 
-		SelectQuery<E1> q2 = makeQueryStage.buildQuery(c);
+		SelectQuery<E1> q2 = (SelectQuery<E1>) makeQueryStage.buildQuery(c);
 		assertEquals(0, q2.getPageSize());
 		assertEquals(0, q2.getFetchOffset());
 		assertEquals(0, q2.getFetchLimit());
@@ -102,7 +105,7 @@ public class CayenneAssembleQueryStageTest extends TestWithCayenneMapping {
 		resourceEntity.setFetchLimit(0);
 		resourceEntity.setFetchOffset(5);
 
-		SelectQuery<E1> q3 = makeQueryStage.buildQuery(c);
+		SelectQuery<E1> q3 = (SelectQuery<E1>) makeQueryStage.buildQuery(c);
 		assertEquals(0, q3.getPageSize());
 		assertEquals(0, q3.getFetchOffset());
 		assertEquals(0, q3.getFetchLimit());
@@ -118,17 +121,17 @@ public class CayenneAssembleQueryStageTest extends TestWithCayenneMapping {
 		SelectContext<E1> c1 = new SelectContext<>(E1.class);
 		c1.setEntity(resourceEntity);
 
-		SelectQuery<E1> query = makeQueryStage.buildQuery(c1);
+		SelectQuery<E1> query = (SelectQuery<E1>) makeQueryStage.buildQuery(c1);
 		assertEquals(extraQualifier, query.getQualifier());
 
-		SelectQuery<E1> query2 = new SelectQuery<E1>(E1.class);
+		SelectQuery<E1> query2 = new SelectQuery<>(E1.class);
 		query2.setQualifier(E1.NAME.in("a", "b"));
 
 		SelectContext<E1> c2 = new SelectContext<>(E1.class);
 		c2.setSelect(query2);
 		c2.setEntity(resourceEntity);
 
-		SelectQuery<E1> query2Amended = makeQueryStage.buildQuery(c2);
+		SelectQuery<E1> query2Amended = (SelectQuery<E1>) makeQueryStage.buildQuery(c2);
 		assertEquals(E1.NAME.in("a", "b").andExp(E1.NAME.eq("X")), query2Amended.getQualifier());
 	}
 
@@ -139,7 +142,7 @@ public class CayenneAssembleQueryStageTest extends TestWithCayenneMapping {
 		c.setId(1);
 		c.setEntity(getResourceEntity(E1.class));
 
-		SelectQuery<E1> s1 = makeQueryStage.basicSelect(c);
+		SelectQuery<E1> s1 = (SelectQuery<E1>) makeQueryStage.basicSelect(c);
 		assertNotNull(s1);
 		assertSame(E1.class, s1.getRoot());
 	}
@@ -153,7 +156,7 @@ public class CayenneAssembleQueryStageTest extends TestWithCayenneMapping {
 		c.setSelect(select);
 		c.setEntity(getResourceEntity(E1.class));
 
-		SelectQuery<E1> s2 = makeQueryStage.basicSelect(c);
+		SelectQuery<E1> s2 = (SelectQuery<E1>) makeQueryStage.basicSelect(c);
 		assertNotNull(s2);
 		assertNotSame(select, s2);
 		assertSame(E1.class, s2.getRoot());

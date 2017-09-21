@@ -7,7 +7,7 @@ import com.nhl.link.rest.processor.ProcessorOutcome;
 import com.nhl.link.rest.runtime.cayenne.ICayennePersister;
 import com.nhl.link.rest.runtime.processor.select.SelectContext;
 import org.apache.cayenne.di.Inject;
-import org.apache.cayenne.query.SelectQuery;
+import org.apache.cayenne.query.Select;
 
 import javax.ws.rs.core.Response;
 import java.util.List;
@@ -34,7 +34,7 @@ public class CayenneFetchDataStage implements Processor<SelectContext<?>> {
     }
 
     protected <T> void doExecute(SelectContext<T> context) {
-        SelectQuery<T> select = context.getSelect();
+        Select<T> select = context.getSelect();
 
         List<T> objects = persister.sharedContext().select(select);
 

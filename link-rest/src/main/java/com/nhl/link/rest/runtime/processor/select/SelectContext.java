@@ -11,7 +11,7 @@ import com.nhl.link.rest.SizeConstraints;
 import com.nhl.link.rest.constraints.Constraint;
 import com.nhl.link.rest.encoder.Encoder;
 import com.nhl.link.rest.processor.BaseProcessingContext;
-import org.apache.cayenne.query.SelectQuery;
+import org.apache.cayenne.query.Select;
 
 import javax.ws.rs.core.UriInfo;
 import java.util.Collections;
@@ -39,7 +39,7 @@ public class SelectContext<T> extends BaseProcessingContext<T> {
 	private List objects;
 
 	// TODO: deprecate dependency on Cayenne in generic code
-	private SelectQuery<T> select;
+	private Select<T> select;
 
 	public SelectContext(Class<T> type) {
 		super(type);
@@ -141,12 +141,12 @@ public class SelectContext<T> extends BaseProcessingContext<T> {
 	}
 
 	// TODO: deprecate dependency on Cayenne in generic code
-	public SelectQuery<T> getSelect() {
+	public Select<T> getSelect() {
 		return select;
 	}
 
 	// TODO: deprecate dependency on Cayenne in generic code
-	public void setSelect(SelectQuery<T> select) {
+	public void setSelect(Select<T> select) {
 		this.select = select;
 	}
 
