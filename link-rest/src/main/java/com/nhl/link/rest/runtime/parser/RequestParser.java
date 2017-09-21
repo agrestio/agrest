@@ -7,7 +7,8 @@ import com.nhl.link.rest.runtime.parser.filter.ICayenneExpProcessor;
 import com.nhl.link.rest.runtime.parser.filter.IKeyValueExpProcessor;
 import com.nhl.link.rest.runtime.parser.sort.ISortProcessor;
 import com.nhl.link.rest.runtime.parser.tree.ITreeProcessor;
-import com.nhl.link.rest.runtime.parser.tree.IncludeWorker;
+import com.nhl.link.rest.runtime.parser.tree.IncludeVisitor;
+import com.nhl.link.rest.runtime.parser.tree.PathProcessor;
 import org.apache.cayenne.di.Inject;
 import org.apache.cayenne.exp.Expression;
 import org.slf4j.Logger;
@@ -86,7 +87,8 @@ public class RequestParser implements IRequestParser {
 				descriptor.mapBy(mapBy, attribute.getName());
 			} else {
 				ResourceEntity<?> mapBy = new ResourceEntity<>(descriptor.getLrEntity());
-				IncludeWorker.processIncludePath(mapBy, mapByPath);
+				// using standard include visitor, because functions don't make sense in the context of mapBy
+				PathProcessor.processor().processPath(mapBy, mapByPath, IncludeVisitor.visitor());
 				descriptor.mapBy(mapBy, mapByPath);
 			}
 		}

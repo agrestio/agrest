@@ -4,18 +4,18 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.nhl.link.rest.LinkRestException;
 import com.nhl.link.rest.ResourceEntity;
 import com.nhl.link.rest.meta.LrAttribute;
-import com.nhl.link.rest.meta.LrEntity;
-import com.nhl.link.rest.meta.LrRelationship;
 import com.nhl.link.rest.runtime.jackson.IJacksonService;
-import com.nhl.link.rest.runtime.parser.PathConstants;
 import com.nhl.link.rest.runtime.parser.filter.ICayenneExpProcessor;
 import com.nhl.link.rest.runtime.parser.sort.ISortProcessor;
+import com.nhl.link.rest.runtime.parser.tree.function.FunctionProcessor;
+import com.nhl.link.rest.runtime.parser.tree.function.FunctionalIncludeVisitor;
 import org.apache.cayenne.exp.Expression;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.ws.rs.core.Response.Status;
 import java.util.List;
+import java.util.Map;
 
 public class IncludeWorker {
 
@@ -31,11 +31,18 @@ public class IncludeWorker {
 	private IJacksonService jsonParser;
 	private ISortProcessor sortProcessor;
 	private ICayenneExpProcessor expProcessor;
+	private PathProcessor pathProcessor;
+	private FunctionalIncludeVisitor functionalIncludeVisitor;
 
-	public IncludeWorker(IJacksonService jsonParser, ISortProcessor sortProcessor, ICayenneExpProcessor expProcessor) {
+	public IncludeWorker(IJacksonService jsonParser,
+						 ISortProcessor sortProcessor,
+						 ICayenneExpProcessor expProcessor,
+						 Map<String, FunctionProcessor> functionProcessors) {
 		this.jsonParser = jsonParser;
 		this.sortProcessor = sortProcessor;
 		this.expProcessor = expProcessor;
+		this.pathProcessor = PathProcessor.processor();
+		this.functionalIncludeVisitor = new FunctionalIncludeVisitor(functionProcessors);
 	}
 
 	public void process(ResourceEntity<?> resourceEntity, List<String> includes) {
@@ -47,11 +54,11 @@ public class IncludeWorker {
 				JsonNode root = jsonParser.parseJson(include);
 				processIncludeObject(resourceEntity, root);
 			} else {
-				processIncludePath(resourceEntity, include);
+				pathProcessor.processPath(resourceEntity, include, functionalIncludeVisitor);
 			}
 		}
 
-		processDefaultIncludes(resourceEntity);
+		applyDefaultIncludes(resourceEntity);
 	}
 
 	private void processIncludeArray(ResourceEntity<?> resourceEntity, String include) {
@@ -64,7 +71,7 @@ public class IncludeWorker {
 				if (child.isObject()) {
 					processIncludeObject(resourceEntity, child);
 				} else if (child.isTextual()) {
-					processIncludePath(resourceEntity, child.asText());
+					pathProcessor.processPath(resourceEntity, child.asText(), functionalIncludeVisitor);
 				} else {
 					throw new LinkRestException(Status.BAD_REQUEST, "Bad include spec: " + child);
 				}
@@ -84,7 +91,7 @@ public class IncludeWorker {
 				includeEntity = rootEntity;
 			} else {
 				String path = pathNode.asText();
-				includeEntity = processIncludePath(rootEntity, path);
+				includeEntity = pathProcessor.processPath(rootEntity, path, functionalIncludeVisitor);
 				if (includeEntity == null) {
 					throw new LinkRestException(Status.BAD_REQUEST,
 							"Bad include spec, non-relationship 'path' in include object: " + path);
@@ -135,8 +142,9 @@ public class IncludeWorker {
 		// either root list, or to-many relationship
 		if (descriptor.getIncoming() == null || descriptor.getIncoming().isToMany()) {
 
-			ResourceEntity<T> mapByRoot = new ResourceEntity<T>(descriptor.getLrEntity());
-			processIncludePath(mapByRoot, mapByPath);
+			ResourceEntity<T> mapByRoot = new ResourceEntity<>(descriptor.getLrEntity());
+			// using standard include visitor, because functions don't make sense in the context of mapBy
+			pathProcessor.processPath(mapByRoot, mapByPath, IncludeVisitor.visitor());
 			descriptor.mapBy(mapByRoot, mapByPath);
 
 		} else {
@@ -144,69 +152,7 @@ public class IncludeWorker {
 		}
 	}
 
-	/**
-	 * Records include path, returning null for the path corresponding to an
-	 * attribute, and a child {@link ResourceEntity} for the path corresponding
-	 * to relationship.
-	 */
-	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public static ResourceEntity<?> processIncludePath(ResourceEntity<?> parent, String path) {
-
-		ExcludeWorker.checkTooLong(path);
-
-		int dot = path.indexOf(PathConstants.DOT);
-
-		if (dot == 0) {
-			throw new LinkRestException(Status.BAD_REQUEST, "Include starts with dot: " + path);
-		}
-
-		if (dot == path.length() - 1) {
-			throw new LinkRestException(Status.BAD_REQUEST, "Include ends with dot: " + path);
-		}
-
-		String property = dot > 0 ? path.substring(0, dot) : path;
-		LrEntity<?> lrEntity = parent.getLrEntity();
-		LrAttribute attribute = lrEntity.getAttribute(property);
-		if (attribute != null) {
-
-			if (dot > 0) {
-				throw new LinkRestException(Status.BAD_REQUEST, "Invalid include path: " + path);
-			}
-
-			parent.getAttributes().put(property, attribute);
-			return null;
-		}
-
-		LrRelationship relationship = lrEntity.getRelationship(property);
-		if (relationship != null) {
-
-			ResourceEntity<?> childEntity = parent.getChild(property);
-			if (childEntity == null) {
-				LrEntity<?> targetType = relationship.getTargetEntity();
-				childEntity = new ResourceEntity(targetType, relationship);
-				parent.getChildren().put(property, childEntity);
-			}
-
-			if (dot > 0) {
-				return processIncludePath(childEntity, path.substring(dot + 1));
-			} else {
-				processDefaultIncludes(childEntity);
-				// Id should be included implicitly
-				childEntity.includeId();
-				return childEntity;
-			}
-		}
-
-		// this is root entity id and it's included explicitly
-		if (property.equals(PathConstants.ID_PK_ATTRIBUTE)) {
-			parent.includeId();
-			return null;
-		}
-
-		throw new LinkRestException(Status.BAD_REQUEST, "Invalid include path: " + path);
-	}
-
-	private static void processDefaultIncludes(ResourceEntity<?> resourceEntity) {
+	static void applyDefaultIncludes(ResourceEntity<?> resourceEntity) {
 		// either there are no includes (taking into account Id) or all includes
 		// are relationships
 		if (!resourceEntity.isIdIncluded() && resourceEntity.getAttributes().isEmpty()) {
