@@ -35,6 +35,8 @@ public interface FunctionProcessor {
 
                 @Override
                 public void visitId(ResourceEntity<?> entity) {
+                    // TODO: some functions might need to know, that the argument is ID... like avg(id)
+                    // but in the context of LR the utility of such usage is questionable
                     apply(entity);
                 }
 
@@ -48,7 +50,7 @@ public interface FunctionProcessor {
         }
     }
 
-    void apply(ResourceEntity<?> context, LrAttribute attribute);
-
     void apply(ResourceEntity<?> context);
+
+    void apply(ResourceEntity<?> context, LrAttribute attribute);
 }

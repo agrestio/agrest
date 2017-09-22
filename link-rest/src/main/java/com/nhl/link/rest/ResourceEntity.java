@@ -26,10 +26,13 @@ import java.util.Map;
 public class ResourceEntity<T> {
 
     private boolean idIncluded;
+    private boolean countIncluded;
 
     private LrEntity<T> lrEntity;
     private Map<String, LrAttribute> attributes;
     private Collection<String> defaultProperties;
+
+    private Map<AggregationType, Collection<LrAttribute>> aggregatedAttributes;
 
     private String applicationBase;
     private String mapByPath;
@@ -47,6 +50,7 @@ public class ResourceEntity<T> {
         this.idIncluded = false;
         this.attributes = new HashMap<>();
         this.defaultProperties = new HashSet<>();
+        this.aggregatedAttributes = new HashMap<>();
         this.children = new HashMap<>();
         this.orderings = new ArrayList<>(2);
         this.extraProperties = new HashMap<>();
@@ -236,5 +240,37 @@ public class ResourceEntity<T> {
      */
     public void setFiltered(boolean filtered) {
         this.filtered = filtered;
+    }
+
+    public void includeCount() {
+        this.countIncluded = true;
+    }
+
+    public boolean isCountIncluded() {
+        return countIncluded;
+    }
+
+    public Collection<LrAttribute> getAggregatedAttributes(AggregationType aggregationType) {
+        return aggregatedAttributes.computeIfAbsent(aggregationType, it -> new ArrayList<>());
+    }
+
+    public boolean isAggregate() {
+        if (countIncluded) {
+            return true;
+        }
+
+        for (Collection<LrAttribute> attributes : aggregatedAttributes.values()) {
+            if (attributes.size() > 0) {
+                return true;
+            }
+        }
+
+        for (ResourceEntity<?> child : children.values()) {
+            if (child.isAggregate()) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

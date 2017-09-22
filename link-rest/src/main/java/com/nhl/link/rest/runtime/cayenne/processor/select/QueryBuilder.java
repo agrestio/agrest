@@ -8,6 +8,7 @@ import com.nhl.link.rest.meta.LrPersistentAttribute;
 import com.nhl.link.rest.runtime.processor.select.SelectContext;
 import org.apache.cayenne.exp.Expression;
 import org.apache.cayenne.exp.ExpressionFactory;
+import org.apache.cayenne.exp.Property;
 import org.apache.cayenne.query.ColumnSelect;
 import org.apache.cayenne.query.ObjectSelect;
 import org.apache.cayenne.query.Ordering;
@@ -29,20 +30,23 @@ public class QueryBuilder<T> {
     private Consumer<Expression> qualifierSetter;
     private Consumer<Ordering> orderingSetter;
     private Consumer<PrefetchTreeNode> prefetchSetter;
+    private Runnable rootCountSetter;
+    private Consumer<Property<?>> countSetter;
+    private Consumer<Property<?>> avgSetter;
+    private Consumer<Property<?>> columnAdder;
 
     public QueryBuilder(SelectContext<T> context) {
         // selecting by ID overrides any explicit SelectQuery...
         if (context.isById()) {
             Class<T> root = context.getType();
-            SelectQuery<T> query = new SelectQuery<>(root);
-            query.andQualifier(buildIdQualifer(context.getEntity().getLrEntity(), context.getId()));
-            this.query = query;
+            this.query = ObjectSelect.query(root)
+                    .where((buildIdQualifer(context.getEntity().getLrEntity(), context.getId())));
 
         } else if (context.getSelect() != null) {
             this.query = context.getSelect();
 
         } else {
-            this.query = new SelectQuery<>(context.getType());
+            this.query = ObjectSelect.query(context.getType());
         }
 
         initSetters(this.query.getClass());
@@ -89,28 +93,44 @@ public class QueryBuilder<T> {
             qualifierSetter = exp -> ((SelectQuery<T>) query).andQualifier(exp);
             orderingSetter = ordering -> ((SelectQuery<T>) query).addOrdering(ordering);
             prefetchSetter = prefetch -> ((SelectQuery<T>) query).setPrefetchTree(prefetch);
+            rootCountSetter = () -> {throw new IllegalStateException("count() is not applicable to SelectQuery");};
+            countSetter = property -> {throw new IllegalStateException("count() is not applicable to SelectQuery");};
+            avgSetter = property -> {throw new IllegalStateException("avg() is not applicable to SelectQuery");};
+            columnAdder = it -> {}; // ignore individual columns
 
         } else if (ObjectSelect.class.isAssignableFrom(queryType)) {
             pageSizeSetter = pageSize -> updateQuery(() -> ((ObjectSelect<T>) query).pageSize(pageSize));
             qualifierSetter = exp -> updateQuery(() -> ((ObjectSelect<T>) query).where(exp));
             orderingSetter = ordering -> updateQuery(() -> ((ObjectSelect<T>) query).orderBy(ordering));
             prefetchSetter = prefetch -> updateQuery(() -> ((ObjectSelect<T>) query).prefetch(prefetch));
+            rootCountSetter = () -> updateQuery(() -> ((ObjectSelect<T>) query).count());
+            countSetter = property -> updateQuery(() -> ((ObjectSelect<T>) query).count(property));
+            avgSetter = property -> updateQuery(() -> ((ObjectSelect<T>) query).avg(property));
+            columnAdder = property -> updateQuery(() -> ((ObjectSelect<T>) query).columns(property));
 
         } else if (ColumnSelect.class.isAssignableFrom(queryType)) {
-            pageSizeSetter = pageSize -> query = ((ColumnSelect<T>) query).pageSize(pageSize);
-            qualifierSetter = exp -> query = ((ColumnSelect<T>) query).where(exp);
-            orderingSetter = ordering -> query = ((ColumnSelect<T>) query).orderBy(ordering);
-            prefetchSetter = prefetch -> query = ((ColumnSelect<T>) query).prefetch(prefetch);
+            pageSizeSetter = pageSize -> updateQuery(() -> ((ColumnSelect<T>) query).pageSize(pageSize));
+            qualifierSetter = exp -> updateQuery(() -> ((ColumnSelect<T>) query).where(exp));
+            orderingSetter = ordering -> updateQuery(() -> ((ColumnSelect<T>) query).orderBy(ordering));
+            prefetchSetter = prefetch -> updateQuery(() -> ((ColumnSelect<T>) query).prefetch(prefetch));
+            rootCountSetter = () -> updateQuery(() -> ((ColumnSelect<T>) query).count());
+            countSetter = property -> updateQuery(() -> ((ColumnSelect<T>) query).count(property));
+            avgSetter = property -> updateQuery(() -> ((ColumnSelect<T>) query).avg(property));
+            columnAdder = property -> updateQuery(() -> ((ColumnSelect<T>) query).columns(property));
 
         } else {
             throw new LinkRestException(Status.INTERNAL_SERVER_ERROR, "Unknown query type: " + queryType.getName());
         }
     }
 
-    private <E extends Select<T>> void updateQuery(Supplier<E> updater) {
+    // ObjectSelect and ColumnSelect aggregate builder methods
+    // return ColumnSelect<Long> or ColumnSelect<Object[]> or ColumnSelect<?>, so we need to manually erase the type...
+    // and the type does not matter in this context anyway
+    @SuppressWarnings("unchecked")
+    private <E extends Select<?>> void updateQuery(Supplier<E> updater) {
         E updatedQuery = updater.get();
         updateSetters(updatedQuery.getClass());
-        query = updatedQuery;
+        query = (Select<T>) updatedQuery;
     }
 
     public QueryBuilder<T> pageSize(int pageSize) {
@@ -130,6 +150,26 @@ public class QueryBuilder<T> {
 
     public QueryBuilder<T> prefetch(PrefetchTreeNode prefetch) {
         prefetchSetter.accept(prefetch);
+        return this;
+    }
+
+    public QueryBuilder<T> count() {
+        rootCountSetter.run();
+        return this;
+    }
+
+    public QueryBuilder<T> count(Property<?> property) {
+        countSetter.accept(property);
+        return this;
+    }
+
+    public QueryBuilder<T> avg(Property<?> property) {
+        avgSetter.accept(property);
+        return this;
+    }
+
+    public QueryBuilder<T> column(Property<?> property) {
+        columnAdder.accept(property);
         return this;
     }
 

@@ -16,8 +16,8 @@ import com.nhl.link.rest.processor.ProcessingStage;
 import com.nhl.link.rest.runtime.LinkRestBuilder;
 import com.nhl.link.rest.runtime.processor.select.SelectContext;
 import org.apache.cayenne.Cayenne;
+import org.apache.cayenne.query.ObjectSelect;
 import org.apache.cayenne.query.SQLTemplate;
-import org.apache.cayenne.query.SelectQuery;
 import org.junit.Test;
 
 import javax.ws.rs.GET;
@@ -110,7 +110,7 @@ public class GET_EncoderFilters_IT extends JerseyTestOnDerby {
     public void testFilteredPagination4_Listeners() {
 
         CayennePaginationListener.RESOURCE_ENTITY_IS_FILTERED = false;
-        CayennePaginationListener.QUERY_PAGE_SIZE = 0;
+        CayennePaginationListener.QUERY_PAGE_SIZE = 1;
 
         target("/e4/pagination_listener")
                 .queryParam("include", "id")
@@ -128,7 +128,7 @@ public class GET_EncoderFilters_IT extends JerseyTestOnDerby {
     public void testFilteredPagination4_CustomStage() {
 
         Resource.RESOURCE_ENTITY_IS_FILTERED = false;
-        Resource.QUERY_PAGE_SIZE = 0;
+        Resource.QUERY_PAGE_SIZE = 1;
 
         target("/e4/pagination_stage")
                 .queryParam("include", "id")
@@ -210,7 +210,7 @@ public class GET_EncoderFilters_IT extends JerseyTestOnDerby {
                     .stage(SelectStage.APPLY_SERVER_PARAMS,
                             c -> RESOURCE_ENTITY_IS_FILTERED = c.getEntity().isFiltered())
                     .stage(SelectStage.ASSEMBLE_QUERY,
-                            c -> QUERY_PAGE_SIZE = ((SelectQuery<?>)c.getSelect()).getPageSize())
+                            c -> QUERY_PAGE_SIZE = ((ObjectSelect<?>)c.getSelect()).getPageSize())
                     .get();
         }
     }
@@ -240,7 +240,7 @@ public class GET_EncoderFilters_IT extends JerseyTestOnDerby {
                 SelectContext<T> context,
                 ProcessingStage<SelectContext<T>, T> next) {
 
-            QUERY_PAGE_SIZE = ((SelectQuery<?>)context.getSelect()).getPageSize();
+            QUERY_PAGE_SIZE = ((ObjectSelect<?>)context.getSelect()).getPageSize();
             return next;
         }
     }
