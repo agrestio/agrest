@@ -6,7 +6,7 @@ public enum AggregationType {
 
     SUM,
 
-    MIN,
+    MINIMUM,
 
-    MAX
+    MAXIMUM
 }

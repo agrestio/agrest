@@ -8,6 +8,9 @@ import com.nhl.link.rest.runtime.parser.sort.ISortProcessor;
 import com.nhl.link.rest.runtime.parser.tree.function.AverageProcessor;
 import com.nhl.link.rest.runtime.parser.tree.function.CountProcessor;
 import com.nhl.link.rest.runtime.parser.tree.function.FunctionProcessor;
+import com.nhl.link.rest.runtime.parser.tree.function.MaximumProcessor;
+import com.nhl.link.rest.runtime.parser.tree.function.MinimumProcessor;
+import com.nhl.link.rest.runtime.parser.tree.function.SumProcessor;
 import org.apache.cayenne.di.Inject;
 
 import java.util.HashMap;
@@ -24,6 +27,9 @@ public class IncludeExcludeProcessor extends BaseRequestProcessor implements ITr
 
     private static final String COUNT_FN = "count";
     private static final String AVERAGE_FN = "avg";
+    private static final String SUM_FN = "sum";
+    private static final String MINIMUM_FN = "min";
+    private static final String MAXIMUM_FN = "max";
 
     private IncludeWorker includeWorker;
     private ExcludeWorker excludeWorker;
@@ -33,6 +39,9 @@ public class IncludeExcludeProcessor extends BaseRequestProcessor implements ITr
         Map<String, FunctionProcessor> functionProcessors = new HashMap<>();
         functionProcessors.put(COUNT_FN, new CountProcessor());
         functionProcessors.put(AVERAGE_FN, new AverageProcessor());
+        functionProcessors.put(SUM_FN, new SumProcessor());
+        functionProcessors.put(MINIMUM_FN, new MinimumProcessor());
+        functionProcessors.put(MAXIMUM_FN, new MaximumProcessor());
 
         this.includeWorker = new IncludeWorker(jacksonService, sortProcessor, expProcessor, functionProcessors);
         this.excludeWorker = new ExcludeWorker(jacksonService);

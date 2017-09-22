@@ -33,6 +33,9 @@ public class QueryBuilder<T> {
     private Runnable rootCountSetter;
     private Consumer<Property<?>> countSetter;
     private Consumer<Property<?>> avgSetter;
+    private Consumer<Property<? extends Number>> sumSetter;
+    private Consumer<Property<?>> minSetter;
+    private Consumer<Property<?>> maxSetter;
     private Consumer<Property<?>> columnAdder;
 
     public QueryBuilder(SelectContext<T> context) {
@@ -88,6 +91,7 @@ public class QueryBuilder<T> {
 
     private void initSetters(Class<? extends Select> queryType) {
         // important: not using method references, because query can be null
+        // TODO: SelectQuery can be removed
         if (SelectQuery.class.isAssignableFrom(queryType)) {
             pageSizeSetter = pageSize -> ((SelectQuery<T>) query).setPageSize(pageSize);
             qualifierSetter = exp -> ((SelectQuery<T>) query).andQualifier(exp);
@@ -96,6 +100,9 @@ public class QueryBuilder<T> {
             rootCountSetter = () -> {throw new IllegalStateException("count() is not applicable to SelectQuery");};
             countSetter = property -> {throw new IllegalStateException("count() is not applicable to SelectQuery");};
             avgSetter = property -> {throw new IllegalStateException("avg() is not applicable to SelectQuery");};
+            sumSetter = property -> {throw new IllegalStateException("sum() is not applicable to SelectQuery");};
+            minSetter = property -> {throw new IllegalStateException("min() is not applicable to SelectQuery");};
+            maxSetter = property -> {throw new IllegalStateException("max() is not applicable to SelectQuery");};
             columnAdder = it -> {}; // ignore individual columns
 
         } else if (ObjectSelect.class.isAssignableFrom(queryType)) {
@@ -106,6 +113,9 @@ public class QueryBuilder<T> {
             rootCountSetter = () -> updateQuery(() -> ((ObjectSelect<T>) query).count());
             countSetter = property -> updateQuery(() -> ((ObjectSelect<T>) query).count(property));
             avgSetter = property -> updateQuery(() -> ((ObjectSelect<T>) query).avg(property));
+            sumSetter = property -> updateQuery(() -> ((ObjectSelect<T>) query).sum(property));
+            minSetter = property -> updateQuery(() -> ((ObjectSelect<T>) query).min(property));
+            maxSetter = property -> updateQuery(() -> ((ObjectSelect<T>) query).max(property));
             columnAdder = property -> updateQuery(() -> ((ObjectSelect<T>) query).columns(property));
 
         } else if (ColumnSelect.class.isAssignableFrom(queryType)) {
@@ -116,6 +126,9 @@ public class QueryBuilder<T> {
             rootCountSetter = () -> updateQuery(() -> ((ColumnSelect<T>) query).count());
             countSetter = property -> updateQuery(() -> ((ColumnSelect<T>) query).count(property));
             avgSetter = property -> updateQuery(() -> ((ColumnSelect<T>) query).avg(property));
+            sumSetter = property -> updateQuery(() -> ((ColumnSelect<T>) query).sum(property));
+            minSetter = property -> updateQuery(() -> ((ColumnSelect<T>) query).min(property));
+            maxSetter = property -> updateQuery(() -> ((ColumnSelect<T>) query).max(property));
             columnAdder = property -> updateQuery(() -> ((ColumnSelect<T>) query).columns(property));
 
         } else {
@@ -165,6 +178,21 @@ public class QueryBuilder<T> {
 
     public QueryBuilder<T> avg(Property<?> property) {
         avgSetter.accept(property);
+        return this;
+    }
+
+    public QueryBuilder<T> sum(Property<? extends Number> property) {
+        sumSetter.accept(property);
+        return this;
+    }
+
+    public QueryBuilder<T> min(Property<?> property) {
+        minSetter.accept(property);
+        return this;
+    }
+
+    public QueryBuilder<T> max(Property<?> property) {
+        maxSetter.accept(property);
         return this;
     }
 

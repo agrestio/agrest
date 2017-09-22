@@ -88,6 +88,7 @@ public class CayenneAssembleQueryStage implements Processor<SelectContext<?>> {
         return query.buildQuery();
     }
 
+    @SuppressWarnings("unchecked")
     private <T> void appendAggregateColumns(ResourceEntity<?> entity, QueryBuilder<T> query, Property<?> context) {
         if (entity.isCountIncluded()) {
             query.count();
@@ -104,6 +105,18 @@ public class CayenneAssembleQueryStage implements Processor<SelectContext<?>> {
                 switch (aggregationType) {
                     case AVERAGE: {
                         query.avg(property);
+                        break;
+                    }
+                    case SUM: {
+                        query.sum(castProperty(property, Number.class));
+                        break;
+                    }
+                    case MINIMUM: {
+                        query.min(property);
+                        break;
+                    }
+                    case MAXIMUM: {
+                        query.max(property);
                         break;
                     }
                     default: {
@@ -131,6 +144,15 @@ public class CayenneAssembleQueryStage implements Processor<SelectContext<?>> {
             property = context.dot(property);
         }
         return property;
+    }
+
+    @SuppressWarnings("unchecked")
+    private static <E> Property<E> castProperty(Property<?> property, Class<E> type) {
+        if (!type.isAssignableFrom(property.getType())) {
+            throw new LinkRestException(Status.BAD_REQUEST,
+                    "Property '" + property.getName() + "' can not be cast to Property<" + type.getSimpleName() + ">");
+        }
+        return (Property<E>) property;
     }
 
     <T> Select<T> basicSelect(SelectContext<T> context) {
