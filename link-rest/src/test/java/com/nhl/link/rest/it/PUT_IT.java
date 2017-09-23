@@ -158,7 +158,7 @@ public class PUT_IT extends JerseyTestOnDerby {
                 .queryParam("exclude", "id")
                 .queryParam("include", E14.NAME.getName())
                 .request()
-                .put(Entity.json("[{\"id\":5,\"name\":\"bbb\",\"prettyName\":\"bbb_pretty\"}]"));
+                .put(Entity.json("[{\"id\":5,\"name\":\"bbb\"}]"));
 
         onSuccess(response).bodyEquals(1, "{\"id\":5,\"name\":\"bbb\",\"prettyName\":\"bbb_pretty\"}");
 
@@ -174,10 +174,10 @@ public class PUT_IT extends JerseyTestOnDerby {
         insert("e14", "long_id, name", "2, 'bbb'");
         insert("e14", "long_id, name", "6, 'yyy'");
 
-        Entity<String> entity = Entity.json("[{\"id\":6,\"name\":\"yyy\",\"prettyName\":\"yyy_pretty\"}"
-                + ",{\"id\":4,\"name\":\"zzz\",\"prettyName\":\"zzz_pretty\"},"
-                + "{\"id\":5,\"name\":\"111\",\"prettyName\":\"111_pretty\"}"
-                + ",{\"id\":2,\"name\":\"333\",\"prettyName\":\"333_pretty\"}]");
+        Entity<String> entity = Entity.json("[{\"id\":6,\"name\":\"yyy\"}"
+                + ",{\"id\":4,\"name\":\"zzz\"},"
+                + "{\"id\":5,\"name\":\"111\"}"
+                + ",{\"id\":2,\"name\":\"333\"}]");
 
         Response response = target("/e14/")
                 .queryParam("exclude", "id")
@@ -203,10 +203,10 @@ public class PUT_IT extends JerseyTestOnDerby {
         insert("e14", "long_id, name", "8147483649, 'bbb'");
         insert("e14", "long_id, name", "3147483646, 'yyy'");
 
-        Entity<String> putEntity = Entity.json("[{\"id\":3147483646,\"name\":\"yyy\",\"prettyName\":\"yyy_pretty\"}"
-                + ",{\"id\":8147483648,\"name\":\"zzz\",\"prettyName\":\"zzz_pretty\"}"
-                + ",{\"id\":8147483647,\"name\":\"111\",\"prettyName\":\"111_pretty\"}"
-                + ",{\"id\":8147483649,\"name\":\"333\",\"prettyName\":\"333_pretty\"}]");
+        Entity<String> putEntity = Entity.json("[{\"id\":3147483646,\"name\":\"yyy\"}"
+                + ",{\"id\":8147483648,\"name\":\"zzz\"}"
+                + ",{\"id\":8147483647,\"name\":\"111\"}"
+                + ",{\"id\":8147483649,\"name\":\"333\"}]");
 
         Response response = target("/e14/")
                 .request()
