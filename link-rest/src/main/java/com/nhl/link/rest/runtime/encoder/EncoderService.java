@@ -52,17 +52,22 @@ public class EncoderService implements IEncoderService {
         Encoder elementEncoder = collectionElementEncoder(entity);
         boolean isMapBy = entity.getMapBy() != null;
 
-        // notice that we are not passing either qualifier or ordering to the
-        // encoder, as those are presumably applied at the query level.. (unlike
-        // with #nestedToManyEncoder)
+        // notice that we are not passing either qualifier or ordering to the encoder, as those are presumably applied
+        // at the query level.. (unlike with #nestedToManyEncoder)
 
         CollectionEncoder encoder = new ListEncoder(elementEncoder)
                 .withOffset(entity.getFetchOffset())
                 .withLimit(entity.getFetchLimit())
                 .shouldFilter(entity.isFiltered());
 
-        return isMapBy
-                ? new MapByEncoder(entity.getMapByPath(), null, entity.getMapBy(), encoder, stringConverterFactory, attributeEncoderFactory)
+        return isMapBy ?
+                new MapByEncoder(
+                        entity.getMapByPath(),
+                        null,
+                        entity.getMapBy(),
+                        encoder,
+                        stringConverterFactory,
+                        attributeEncoderFactory)
                 : encoder;
     }
 
@@ -71,19 +76,27 @@ public class EncoderService implements IEncoderService {
         Encoder elementEncoder = collectionElementEncoder(resourceEntity);
         boolean isMapBy = resourceEntity.getMapBy() != null;
 
-        // if mapBy is involved, apply filters at MapBy level, not inside
-        // sublists...
-        ListEncoder listEncoder = new ListEncoder(elementEncoder, isMapBy ? null : resourceEntity.getQualifier(),
-                resourceEntity.getOrderings());
-
-        listEncoder.withOffset(resourceEntity.getFetchOffset()).withLimit(resourceEntity.getFetchLimit());
+        // if mapBy is involved, apply filters at MapBy level, not inside sublists...
+        ListEncoder listEncoder = new ListEncoder(
+                elementEncoder,
+                isMapBy ? null : resourceEntity.getQualifier(),
+                resourceEntity.getOrderings())
+                .withOffset(resourceEntity.getFetchOffset())
+                .withLimit(resourceEntity.getFetchLimit());
 
         if (resourceEntity.isFiltered()) {
             listEncoder.shouldFilter();
         }
 
-        return isMapBy ? new MapByEncoder(resourceEntity.getMapByPath(), resourceEntity.getQualifier(),
-                resourceEntity.getMapBy(), listEncoder, stringConverterFactory, attributeEncoderFactory) : listEncoder;
+        return isMapBy ?
+                new MapByEncoder(
+                        resourceEntity.getMapByPath(),
+                        resourceEntity.getQualifier(),
+                        resourceEntity.getMapBy(),
+                        listEncoder,
+                        stringConverterFactory,
+                        attributeEncoderFactory)
+                : listEncoder;
     }
 
     protected Encoder collectionElementEncoder(ResourceEntity<?> resourceEntity) {
