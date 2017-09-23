@@ -56,8 +56,10 @@ public class EncoderService implements IEncoderService {
         // encoder, as those are presumably applied at the query level.. (unlike
         // with #nestedToManyEncoder)
 
-        CollectionEncoder encoder = new ListEncoder(elementEncoder).withOffset(entity.getFetchOffset())
-                .withLimit(entity.getFetchLimit()).shouldFilter(entity.isFiltered());
+        CollectionEncoder encoder = new ListEncoder(elementEncoder)
+                .withOffset(entity.getFetchOffset())
+                .withLimit(entity.getFetchLimit())
+                .shouldFilter(entity.isFiltered());
 
         return isMapBy
                 ? new MapByEncoder(entity.getMapByPath(), null, entity.getMapBy(), encoder, stringConverterFactory, attributeEncoderFactory)

@@ -3,18 +3,16 @@ package com.nhl.link.rest.encoder;
 import com.fasterxml.jackson.core.JsonGenerator;
 import org.apache.cayenne.exp.Expression;
 import org.apache.cayenne.query.Ordering;
-import org.apache.commons.collections.ComparatorUtils;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
 public class ListEncoder implements CollectionEncoder {
 
 	private Encoder elementEncoder;
-	private Collection<Ordering> orderings;
+	private List<Ordering> orderings;
 	private Expression filter;
 
 	private int offset;
@@ -27,7 +25,7 @@ public class ListEncoder implements CollectionEncoder {
 		this.orderings = Collections.emptyList();
 	}
 
-	public ListEncoder(Encoder elementEncoder, Expression filter, Collection<Ordering> orderings) {
+	public ListEncoder(Encoder elementEncoder, Expression filter, List<Ordering> orderings) {
 		this.elementEncoder = elementEncoder;
 		this.orderings = orderings;
 		this.filter = filter;
@@ -105,14 +103,13 @@ public class ListEncoder implements CollectionEncoder {
 
 		List<?> list = (List) object;
 
-		// sort list before encoding, but do not filter it - we can filter
-		// during encoding
+		// sort list before encoding, but do not filter it - we can filter during encoding
 		if (!orderings.isEmpty() && list.size() > 1) {
 
 			// don't mess up underlying relationship, sort a copy...
-			list = new ArrayList(list);
+			list = new ArrayList<>(list);
 
-			Collections.sort(list, ComparatorUtils.chainedComparator(orderings));
+			Ordering.orderList(list, orderings);
 		}
 
 		return list;

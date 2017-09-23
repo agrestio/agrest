@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -36,7 +37,7 @@ public class ResourceEntity<T> {
     private ResourceEntity<?> mapBy;
     private Map<String, ResourceEntity<?>> children;
     private LrRelationship incoming;
-    private Collection<Ordering> orderings;
+    private List<Ordering> orderings;
     private Expression qualifier;
     private Map<String, EntityProperty> extraProperties;
     private int fetchOffset;
@@ -91,7 +92,7 @@ public class ResourceEntity<T> {
         }
     }
 
-    public Collection<Ordering> getOrderings() {
+    public List<Ordering> getOrderings() {
         return orderings;
     }
 
