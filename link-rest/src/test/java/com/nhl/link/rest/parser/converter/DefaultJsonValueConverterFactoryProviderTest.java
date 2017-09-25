@@ -62,6 +62,30 @@ public class DefaultJsonValueConverterFactoryProviderTest {
         assertEquals(ISOLocalDateTimeConverter.class, converter.getClass());
     }
 
+    @Test
+    public void testConverter_javaUtilDateKnown() {
+        JsonValueConverter converter = createFactory().converter(java.util.Date.class);
+        assertEquals(UtcDateConverter.class, converter.getClass());
+    }
+
+    @Test
+    public void testConverter_javaSqlDateKnown() {
+        JsonValueConverter converter = createFactory().converter(java.sql.Date.class);
+        assertEquals(UtcDateConverter.class, converter.getClass());
+    }
+
+    @Test
+    public void testConverter_javaSqlTimeKnown() {
+        JsonValueConverter converter = createFactory().converter(java.sql.Time.class);
+        assertEquals(UtcDateConverter.class, converter.getClass());
+    }
+
+    @Test
+    public void testConverter_javaSqlTimestampKnown() {
+        JsonValueConverter converter = createFactory().converter(java.sql.Timestamp.class);
+        assertEquals(UtcDateConverter.class, converter.getClass());
+    }
+
     public static class CustomType  {
 
     }
