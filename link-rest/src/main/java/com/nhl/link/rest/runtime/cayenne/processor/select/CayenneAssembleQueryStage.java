@@ -15,6 +15,7 @@ import org.apache.cayenne.map.EntityResolver;
 import org.apache.cayenne.query.Ordering;
 import org.apache.cayenne.query.PrefetchTreeNode;
 import org.apache.cayenne.query.Select;
+import org.apache.cayenne.query.SelectQuery;
 
 import javax.ws.rs.core.Response.Status;
 import java.util.Map;
@@ -40,14 +41,14 @@ public class CayenneAssembleQueryStage implements Processor<SelectContext<?>> {
         context.setSelect(buildQuery(context));
     }
 
-    <T> Select<T> buildQuery(SelectContext<T> context) {
+    <T> SelectQuery<T> buildQuery(SelectContext<T> context) {
 
         ResourceEntity<T> entity = context.getEntity();
 
         QueryBuilder<T> query = new QueryBuilder<>(context);
 
-        if (entity.isAggregate()) {
-            appendAggregateColumns(entity, query, null);
+        if (appendAggregateColumns(entity, query, null)) {
+            appendGroupByColumns(entity, query, null);
         }
 
         if (!entity.isFiltered()) {
@@ -89,51 +90,69 @@ public class CayenneAssembleQueryStage implements Processor<SelectContext<?>> {
     }
 
     @SuppressWarnings("unchecked")
-    private <T> void appendAggregateColumns(ResourceEntity<?> entity, QueryBuilder<T> query, Property<?> context) {
+    private <T> boolean appendAggregateColumns(ResourceEntity<?> entity, QueryBuilder<T> query, Property<?> context) {
+        boolean shouldAppendGroupByColumns = false;
+
         if (entity.isCountIncluded()) {
-            query.count();
+            shouldAppendGroupByColumns = true;
+            if (context == null) {
+                query.count();
+            } else {
+                query.count(context);
+            }
         }
 
+        if (entity.isAggregate()) {
+            shouldAppendGroupByColumns = true;
+
+            for (AggregationType aggregationType : AggregationType.values()) {
+                entity.getAggregatedAttributes(aggregationType).forEach(attribute -> {
+                    Property<?> property = createProperty(context, attribute.getName(), attribute.getType());
+                    switch (aggregationType) {
+                        case AVERAGE: {
+                            query.avg(property);
+                            break;
+                        }
+                        case SUM: {
+                            query.sum(castProperty(property, Number.class));
+                            break;
+                        }
+                        case MINIMUM: {
+                            query.min(property);
+                            break;
+                        }
+                        case MAXIMUM: {
+                            query.max(property);
+                            break;
+                        }
+                        default: {
+                            throw new LinkRestException(Status.INTERNAL_SERVER_ERROR,
+                                    "Unsupported aggregation type: " + aggregationType.name());
+                        }
+                    }
+                });
+            }
+        }
+
+        for (Map.Entry<String, ResourceEntity<?>> e : entity.getChildren().entrySet()) {
+            String relationshipName = e.getKey();
+            ResourceEntity<?> child = e.getValue();
+            Property<?> relationship = createProperty(context, relationshipName, child.getType());
+            shouldAppendGroupByColumns = shouldAppendGroupByColumns || appendAggregateColumns(child, query, relationship);
+        }
+
+        return shouldAppendGroupByColumns;
+    }
+
+    private <T> void appendGroupByColumns(ResourceEntity<?> entity, QueryBuilder<T> query, Property<?> context) {
         entity.getAttributes().values().stream().filter(a -> !entity.isDefault(a.getName())).forEach(attribute -> {
             Property<?> property = createProperty(context, attribute.getName(), attribute.getType());
             query.column(property);
         });
 
-        for (AggregationType aggregationType : AggregationType.values()) {
-            entity.getAggregatedAttributes(aggregationType).forEach(attribute -> {
-                Property<?> property = createProperty(context, attribute.getName(), attribute.getType());
-                switch (aggregationType) {
-                    case AVERAGE: {
-                        query.avg(property);
-                        break;
-                    }
-                    case SUM: {
-                        query.sum(castProperty(property, Number.class));
-                        break;
-                    }
-                    case MINIMUM: {
-                        query.min(property);
-                        break;
-                    }
-                    case MAXIMUM: {
-                        query.max(property);
-                        break;
-                    }
-                    default: {
-                        throw new LinkRestException(Status.INTERNAL_SERVER_ERROR,
-                                "Unsupported aggregation type: " + aggregationType.name());
-                    }
-                }
-            });
-        }
-
         entity.getChildren().forEach((relationshipName, child) -> {
             Property<?> relationship = createProperty(context, relationshipName, child.getType());
-            appendAggregateColumns(child, query, relationship);
-
-            if (child.isCountIncluded()) {
-                query.count(relationship);
-            }
+            appendGroupByColumns(child, query, relationship);
         });
     }
 
@@ -153,10 +172,6 @@ public class CayenneAssembleQueryStage implements Processor<SelectContext<?>> {
                     "Property '" + property.getName() + "' can not be cast to Property<" + type.getSimpleName() + ">");
         }
         return (Property<E>) property;
-    }
-
-    <T> Select<T> basicSelect(SelectContext<T> context) {
-        return new QueryBuilder<>(context).buildQuery();
     }
 
     private void appendPrefetches(PrefetchTreeNode root, ResourceEntity<?> entity, int prefetchSemantics) {
@@ -179,5 +194,9 @@ public class CayenneAssembleQueryStage implements Processor<SelectContext<?>> {
         if (entity.getMapBy() != null) {
             appendPrefetches(root, entity.getMapBy(), prefetchSemantics);
         }
+    }
+
+    <T> SelectQuery<T> basicSelect(SelectContext<T> context) {
+        return new QueryBuilder<>(context).buildQuery();
     }
 }

@@ -265,12 +265,6 @@ public class ResourceEntity<T> {
             }
         }
 
-        for (ResourceEntity<?> child : children.values()) {
-            if (child.isAggregate()) {
-                return true;
-            }
-        }
-
         return false;
     }
 }
