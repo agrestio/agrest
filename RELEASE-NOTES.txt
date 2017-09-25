@@ -10,6 +10,7 @@ Release 2.10
 #260 LrEntityOverlay.addAttribute(String) must detect attribute type
 #261 Rename @Resource to @LrResource and move to link-rest-annotations
 #263 link-rest-sencha module
+#267 POST: java.util.Date to Timestamp conversion
 
 Release 2.9
 

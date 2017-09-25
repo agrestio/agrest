@@ -53,9 +53,9 @@ public class DefaultJsonValueConverterFactoryProvider implements Provider<IJsonV
         converters.put(Long.class, LongConverter.converter());
         converters.put(long.class, LongConverter.converter());
         converters.put(Date.class, UtcDateConverter.converter());
-        converters.put(java.sql.Date.class, UtcDateConverter.converter());
-        converters.put(java.sql.Time.class, UtcDateConverter.converter());
-        converters.put(java.sql.Timestamp.class, UtcDateConverter.converter());
+        converters.put(java.sql.Date.class, UtcDateConverter.converter(java.sql.Date.class));
+        converters.put(java.sql.Time.class, UtcDateConverter.converter(java.sql.Time.class));
+        converters.put(java.sql.Timestamp.class, UtcDateConverter.converter(java.sql.Timestamp.class));
         converters.put(byte[].class, Base64Converter.converter());
         converters.put(LocalDate.class, ISOLocalDateConverter.converter());
         converters.put(LocalTime.class, ISOLocalTimeConverter.converter());

@@ -8,7 +8,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.ZoneId;
-import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
@@ -17,39 +16,49 @@ import java.time.temporal.Temporal;
 import java.time.temporal.TemporalAccessor;
 import java.time.temporal.TemporalQueries;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.TimeZone;
+import java.util.function.Function;
 
-public class UtcDateConverter extends AbstractConverter {
-	
-	private static final UtcDateConverter instance = new UtcDateConverter();
+public class UtcDateConverter<T extends java.util.Date> extends AbstractConverter {
 
-	private DateTimeFormatter format;
+	private static final Map<Class<? extends java.util.Date>, UtcDateConverter> converters;
 
-	private UtcDateConverter() {
-		format = new DateTimeFormatterBuilder().appendOptional(DateTimeFormatter.ISO_LOCAL_DATE)
-				.appendOptional(new DateTimeFormatterBuilder().appendLiteral("T").toFormatter())
-                .appendOptional(new DateTimeFormatterBuilder().append(DateTimeFormatter.ISO_LOCAL_TIME).toFormatter())
-                .appendOptional(new DateTimeFormatterBuilder().appendZoneOrOffsetId().toFormatter())
-				.appendOptional(new DateTimeFormatterBuilder().appendLiteral('[').parseCaseSensitive()
-						.appendZoneRegionId().appendLiteral(']').toFormatter()).toFormatter().withZone(ZoneId.systemDefault());
+	static {
+		converters = new HashMap<>();
+		converters.put(java.util.Date.class, new UtcDateConverter<>(Function.identity()));
+		converters.put(java.sql.Date.class, new UtcDateConverter<>(date -> new java.sql.Date(date.getTime())));
+		converters.put(java.sql.Time.class, new UtcDateConverter<>(date -> new java.sql.Time(date.getTime())));
+		converters.put(java.sql.Timestamp.class, new UtcDateConverter<>(date -> new java.sql.Timestamp(date.getTime())));
 	}
 
 	public static JsonValueConverter converter() {
-		return instance;
+		return converters.get(java.util.Date.class);
+	}
+
+	public static JsonValueConverter converter(Class<? extends Date> targetType) {
+		JsonValueConverter converter = converters.get(targetType);
+		Objects.requireNonNull(converter, "Unsupported target type: " + targetType.getClass().getName());
+		return converter;
+	}
+
+	private Function<java.util.Date, T> normalizer;
+
+	private UtcDateConverter(Function<java.util.Date, T> normalizer) {
+		this.normalizer = normalizer;
 	}
 
 	public static DateParser dateParser() {
 		return ISODateParser.parser();
 	}
 
-	private DateTimeFormatter getFormat() {
-		return format;
-	}
-
 	@Override
-	protected Object valueNonNull(JsonNode node) {
+	protected T valueNonNull(JsonNode node) {
 
 		Temporal temporal = ISODateParser.parser().fromString(node.asText());
 
@@ -82,7 +91,7 @@ public class UtcDateConverter extends AbstractConverter {
 			calendar.setTimeInMillis(calendar.getTimeInMillis() + millis);
 		}
 
-		return calendar.getTime();
+		return normalizer.apply(calendar.getTime());
 	}
 
 	public interface DateParser {
@@ -97,9 +106,20 @@ public class UtcDateConverter extends AbstractConverter {
 			return parser;
 		}
 
+		private DateTimeFormatter isoFormatter;
+
+		private ISODateParser() {
+			this.isoFormatter = new DateTimeFormatterBuilder().appendOptional(DateTimeFormatter.ISO_LOCAL_DATE)
+				.appendOptional(new DateTimeFormatterBuilder().appendLiteral("T").toFormatter())
+                .appendOptional(new DateTimeFormatterBuilder().append(DateTimeFormatter.ISO_LOCAL_TIME).toFormatter())
+                .appendOptional(new DateTimeFormatterBuilder().appendZoneOrOffsetId().toFormatter())
+				.appendOptional(new DateTimeFormatterBuilder().appendLiteral('[').parseCaseSensitive()
+						.appendZoneRegionId().appendLiteral(']').toFormatter()).toFormatter().withZone(ZoneId.systemDefault());
+		}
+
 		@Override
 		public Temporal fromString(String s) {
-			return fromParsed(instance.getFormat().parse(s));
+			return fromParsed(isoFormatter.parse(s));
 		}
 
 		Temporal fromParsed(TemporalAccessor parsed) {
