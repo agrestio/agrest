@@ -115,15 +115,15 @@ public class GET_IT_Aggregate extends JerseyTestOnDerby {
 
     /**
         # Aggregation on a related entity, grouping by property from that entity (root is department)
-        # ?include=employees.avg(salary)&include=employees.lastName&include=name
+        # ?include=employees.avg(salary)&include=employees.lastName
 
         data:
           - name: accounting
             "@aggregated:employees":
               -  avg(salary) : 10000
-                  lastName: Smith
+                 lastName: Smith
               -  avg(salary) : 20000
-                  lastName: Doe
+                 lastName: Doe
           - name: it
           ...
         total: 2
@@ -141,6 +141,42 @@ public class GET_IT_Aggregate extends JerseyTestOnDerby {
                 .queryParam("include", "e20s.sum(age)")
                 .queryParam("include", "e20s.name")
                 .queryParam("include", "name")
+                .request()
+                .get();
+
+        onSuccess(response).bodyEquals(2, "{...TODO...}");
+    }
+
+    /**
+        # Aggregation on a related entity, grouping by property from that entity (root is department)
+        # ?include=employees.avg(salary)&include=employees.lastName&include=name
+
+        data:
+          - id: ...
+            name: accounting
+            ...
+            "@aggregated:employees":
+              -  avg(salary) : 10000
+                 lastName: Smith
+              -  avg(salary) : 20000
+                 lastName: Doe
+          - id: ...
+            name: it
+            ...
+        total: 2
+     */
+//    @Test
+    public void test_Select_AggregationOnRelatedEntity_GroupRelated_IncludeRoot() {
+
+        insert("e21", "id, name", "1, 'xxx'");
+        insert("e21", "id, name", "2, 'yyy'");
+        insert("e20", "id, e21_id, age, name", "1, 1, 10, 'aaa'");
+        insert("e20", "id, e21_id, age, name", "2, 1, 20, 'bbb'");
+        insert("e20", "id, e21_id, age, name", "3, 2,  5, 'ccc'");
+
+        Response response = target("/e21")
+                .queryParam("include", "e20s.sum(age)")
+                .queryParam("include", "e20s.name")
                 .request()
                 .get();
 

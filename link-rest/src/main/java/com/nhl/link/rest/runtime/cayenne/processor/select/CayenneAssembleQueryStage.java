@@ -3,22 +3,25 @@ package com.nhl.link.rest.runtime.cayenne.processor.select;
 import com.nhl.link.rest.AggregationType;
 import com.nhl.link.rest.LinkRestException;
 import com.nhl.link.rest.ResourceEntity;
+import com.nhl.link.rest.meta.LrAttribute;
 import com.nhl.link.rest.meta.LrPersistentEntity;
 import com.nhl.link.rest.processor.Processor;
 import com.nhl.link.rest.processor.ProcessorOutcome;
 import com.nhl.link.rest.runtime.cayenne.ICayennePersister;
 import com.nhl.link.rest.runtime.processor.select.SelectContext;
+import org.apache.cayenne.Persistent;
 import org.apache.cayenne.di.Inject;
 import org.apache.cayenne.exp.Expression;
 import org.apache.cayenne.exp.Property;
 import org.apache.cayenne.map.EntityResolver;
 import org.apache.cayenne.query.Ordering;
 import org.apache.cayenne.query.PrefetchTreeNode;
-import org.apache.cayenne.query.Select;
 import org.apache.cayenne.query.SelectQuery;
 
 import javax.ws.rs.core.Response.Status;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * @since 2.7
@@ -144,11 +147,25 @@ public class CayenneAssembleQueryStage implements Processor<SelectContext<?>> {
         return shouldAppendGroupByColumns;
     }
 
+    @SuppressWarnings("unchecked")
     private <T> void appendGroupByColumns(ResourceEntity<?> entity, QueryBuilder<T> query, Property<?> context) {
-        entity.getAttributes().values().stream().filter(a -> !entity.isDefault(a.getName())).forEach(attribute -> {
-            Property<?> property = createProperty(context, attribute.getName(), attribute.getType());
-            query.column(property);
-        });
+        List<LrAttribute> groupByAttributes = entity.getAttributes().values().stream()
+                .filter(a -> !entity.isDefault(a.getName()))
+                .collect(Collectors.toList());
+
+        if (groupByAttributes.isEmpty()) {
+            if (context == null) {
+                // root entity
+                query.column(Property.createSelf((Class<? super Persistent>) entity.getType())); // does this imply grouping by ID or all attributes?
+            } else {
+                // TODO: group by the single- or multi-column PK
+            }
+        } else {
+            groupByAttributes.forEach(attribute -> {
+                Property<?> property = createProperty(context, attribute.getName(), attribute.getType());
+                query.column(property);
+            });
+        }
 
         entity.getChildren().forEach((relationshipName, child) -> {
             Property<?> relationship = createProperty(context, relationshipName, child.getType());

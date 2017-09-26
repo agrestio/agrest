@@ -117,7 +117,7 @@ public class EncoderService implements IEncoderService {
 
         // ensure we sort property encoders alphabetically for cleaner JSON
         // output
-        Map<String, EntityProperty> attributeEncoders = new TreeMap<String, EntityProperty>();
+        Map<String, EntityProperty> attributeEncoders = new TreeMap<>();
 
         for (LrAttribute attribute : resourceEntity.getAttributes().values()) {
             EntityProperty property = attributeEncoderFactory.getAttributeProperty(resourceEntity.getLrEntity(),
@@ -125,7 +125,7 @@ public class EncoderService implements IEncoderService {
             attributeEncoders.put(attribute.getName(), property);
         }
 
-        Map<String, EntityProperty> relationshipEncoders = new TreeMap<String, EntityProperty>();
+        Map<String, EntityProperty> relationshipEncoders = new TreeMap<>();
         for (Entry<String, ResourceEntity<?>> e : resourceEntity.getChildren().entrySet()) {
             LrRelationship relationship = resourceEntity.getLrEntity().getRelationship(e.getKey());
 
@@ -137,7 +137,7 @@ public class EncoderService implements IEncoderService {
             relationshipEncoders.put(e.getKey(), property);
         }
 
-        Map<String, EntityProperty> extraEncoders = new TreeMap<String, EntityProperty>();
+        Map<String, EntityProperty> extraEncoders = new TreeMap<>();
 
         extraEncoders.putAll(resourceEntity.getExtraProperties());
 
