@@ -35,19 +35,30 @@ public class PathProcessor {
 		// first we must check if the path is a relationship
 		LrRelationship relationship = lrEntity.getRelationship(property);
 		if (relationship != null) {
-			ResourceEntity<?> childEntity = root.getChild(property);
+			ResourceEntity<?> childEntity = root.getChildren().get(property);
+			if (childEntity == null && dot > 0) {
+				childEntity = root.getAggregateChildren().get(property);
+			}
+
 			if (childEntity == null) {
 				LrEntity<?> targetType = relationship.getTargetEntity();
 				childEntity = new ResourceEntity<>(targetType, relationship);
 				root.getChildren().put(property, childEntity);
 			}
 
+			ResourceEntity<?> result;
 			if (dot > 0) {
-				return processPath(childEntity, path.substring(dot + 1), visitor);
+				result = processPath(childEntity, path.substring(dot + 1), visitor);
 			} else {
 				visitor.visitRelationship(root, childEntity, relationship);
-				return childEntity;
+				result = childEntity;
 			}
+
+			if (childEntity.isAggregate()) {
+				root.getChildren().remove(property);
+				root.getAggregateChildren().put(property, childEntity);
+			}
+			return result;
 		}
 
 		// if the path is not a relationship, then we must check it does not contain separators (dots)

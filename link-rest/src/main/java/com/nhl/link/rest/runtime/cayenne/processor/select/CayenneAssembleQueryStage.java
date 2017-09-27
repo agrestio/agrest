@@ -4,24 +4,28 @@ import com.nhl.link.rest.AggregationType;
 import com.nhl.link.rest.LinkRestException;
 import com.nhl.link.rest.ResourceEntity;
 import com.nhl.link.rest.meta.LrAttribute;
+import com.nhl.link.rest.meta.LrEntity;
 import com.nhl.link.rest.meta.LrPersistentEntity;
+import com.nhl.link.rest.meta.LrRelationship;
 import com.nhl.link.rest.processor.Processor;
 import com.nhl.link.rest.processor.ProcessorOutcome;
+import com.nhl.link.rest.property.DataObjectPropertyReader;
+import com.nhl.link.rest.property.PropertyReader;
 import com.nhl.link.rest.runtime.cayenne.ICayennePersister;
 import com.nhl.link.rest.runtime.processor.select.SelectContext;
-import org.apache.cayenne.Persistent;
 import org.apache.cayenne.di.Inject;
 import org.apache.cayenne.exp.Expression;
 import org.apache.cayenne.exp.Property;
+import org.apache.cayenne.exp.parser.ASTCount;
+import org.apache.cayenne.exp.parser.ASTPath;
 import org.apache.cayenne.map.EntityResolver;
 import org.apache.cayenne.query.Ordering;
 import org.apache.cayenne.query.PrefetchTreeNode;
 import org.apache.cayenne.query.SelectQuery;
 
 import javax.ws.rs.core.Response.Status;
-import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * @since 2.7
@@ -51,6 +55,7 @@ public class CayenneAssembleQueryStage implements Processor<SelectContext<?>> {
         QueryBuilder<T> query = new QueryBuilder<>(context);
 
         if (appendAggregateColumns(entity, query, null)) {
+            entity.excludeId(); // TODO: remove
             appendGroupByColumns(entity, query, null);
         }
 
@@ -98,18 +103,15 @@ public class CayenneAssembleQueryStage implements Processor<SelectContext<?>> {
 
         if (entity.isCountIncluded()) {
             shouldAppendGroupByColumns = true;
-            if (context == null) {
-                query.count();
-            } else {
-                query.count(context);
-            }
         }
 
         if (entity.isAggregate()) {
             shouldAppendGroupByColumns = true;
 
             for (AggregationType aggregationType : AggregationType.values()) {
-                entity.getAggregatedAttributes(aggregationType).forEach(attribute -> {
+                ListIterator<LrAttribute> iter = entity.getAggregatedAttributes(aggregationType).listIterator();
+                while (iter.hasNext()) {
+                    LrAttribute attribute = iter.next();
                     Property<?> property = createProperty(context, attribute.getName(), attribute.getType());
                     switch (aggregationType) {
                         case AVERAGE: {
@@ -133,11 +135,20 @@ public class CayenneAssembleQueryStage implements Processor<SelectContext<?>> {
                                     "Unsupported aggregation type: " + aggregationType.name());
                         }
                     }
-                });
+
+                    iter.set(columnAttribute(attribute, query.columnCount() - 1));
+                }
             }
         }
 
-        for (Map.Entry<String, ResourceEntity<?>> e : entity.getChildren().entrySet()) {
+//        for (Map.Entry<String, ResourceEntity<?>> e : entity.getAggregateChildren().entrySet()) {
+//            String relationshipName = e.getKey();
+//            ResourceEntity<?> child = e.getValue();
+//            Property<?> relationship = createProperty(context, relationshipName, child.getType());
+//            shouldAppendGroupByColumns = shouldAppendGroupByColumns || appendAggregateColumns(child, query, relationship);
+//        }
+
+        for (Map.Entry<String, ResourceEntity<?>> e : entity.getAggregateChildren().entrySet()) {
             String relationshipName = e.getKey();
             ResourceEntity<?> child = e.getValue();
             Property<?> relationship = createProperty(context, relationshipName, child.getType());
@@ -149,27 +160,59 @@ public class CayenneAssembleQueryStage implements Processor<SelectContext<?>> {
 
     @SuppressWarnings("unchecked")
     private <T> void appendGroupByColumns(ResourceEntity<?> entity, QueryBuilder<T> query, Property<?> context) {
-        List<LrAttribute> groupByAttributes = entity.getAttributes().values().stream()
-                .filter(a -> !entity.isDefault(a.getName()))
-                .collect(Collectors.toList());
+        boolean shouldIncludeSelf = true;
 
-        if (groupByAttributes.isEmpty()) {
-            if (context == null) {
-                // root entity
-                query.column(Property.createSelf((Class<? super Persistent>) entity.getType())); // does this imply grouping by ID or all attributes?
-            } else {
-                // TODO: group by the single- or multi-column PK
+        for (Map.Entry<String, LrAttribute> e : entity.getAttributes().entrySet()) {
+            LrAttribute attribute = e.getValue();
+            if (entity.isDefault(attribute.getName())) {
+                continue;
             }
-        } else {
-            groupByAttributes.forEach(attribute -> {
-                Property<?> property = createProperty(context, attribute.getName(), attribute.getType());
-                query.column(property);
-            });
+
+            Property<?> property = createProperty(context, attribute.getName(), attribute.getType());
+            query.column(property);
+
+            e.setValue(columnAttribute(attribute, query.columnCount() - 1));
+            shouldIncludeSelf = false;
         }
 
-        entity.getChildren().forEach((relationshipName, child) -> {
+        // do this after all attributes have been added, because we'll add one more fictional attribute for encoding purposes
+        if (entity.isCountIncluded()) {
+            if (context == null) {
+                query.count();
+            } else {
+                query.count(context);
+            }
+            entity.getAttributes().put("count()", columnAttribute(COUNT_ATTRIBUTE, query.columnCount() - 1));
+            shouldIncludeSelf = false;
+        }
+
+        if (shouldIncludeSelf) {
+            // no groupBy columns were explicitly included
+            if (context == null) {
+                // root entity
+                query.includeSelf();
+                swapPropertyReadersToSelf(entity);
+            } else {
+                // TODO: group by the single- or multi-column PK? or Cayenne takes care of that?
+            }
+        }
+
+        entity.getAggregateChildren().forEach((relationshipName, child) -> {
             Property<?> relationship = createProperty(context, relationshipName, child.getType());
             appendGroupByColumns(child, query, relationship);
+        });
+    }
+
+    private static void swapPropertyReadersToSelf(ResourceEntity<?> entity) {
+        for (Map.Entry<String, LrAttribute> e : entity.getAttributes().entrySet()) {
+            e.setValue(selfAttribute(e.getValue()));
+        }
+
+        entity.getAggregateChildren().values().forEach(child -> {
+            LrRelationship incoming = child.getIncoming();
+            if (incoming != null) {
+                child.setIncoming(selfRelationship(incoming));
+            }
         });
     }
 
@@ -189,6 +232,102 @@ public class CayenneAssembleQueryStage implements Processor<SelectContext<?>> {
                     "Property '" + property.getName() + "' can not be cast to Property<" + type.getSimpleName() + ">");
         }
         return (Property<E>) property;
+    }
+
+    private static LrAttribute columnAttribute(LrAttribute attribute, int columnIndex) {
+        PropertyReader reader = PropertyReader.forValueProducer((Object[] row) -> row[columnIndex]);
+        return decoratedAttribute(attribute, reader);
+    }
+
+    private static LrAttribute selfAttribute(LrAttribute attribute) {
+        PropertyReader delegate = (attribute.getPropertyReader() == null) ?
+                DataObjectPropertyReader.reader() : attribute.getPropertyReader();
+        PropertyReader reader = (root, name) -> {
+            Object[] row = (Object[]) root;
+            return delegate.value(row[0], name);
+        };
+        return decoratedAttribute(attribute, reader);
+    }
+
+    private static LrRelationship selfRelationship(LrRelationship relationship) {
+        PropertyReader delegate = (relationship.getPropertyReader() == null) ?
+                DataObjectPropertyReader.reader() : relationship.getPropertyReader();
+        PropertyReader reader = (root, name) -> {
+            Object[] row = (Object[]) root;
+            name = name.substring("@aggregated:".length());
+            return delegate.value(row[0], name);
+        };
+        return decoratedRelationship(relationship, reader);
+    }
+
+    private static LrAttribute COUNT_ATTRIBUTE = new LrAttribute() {
+        @Override
+        public String getName() {
+            return "count()";
+        }
+
+        @Override
+        public Class<?> getType() {
+            return Long.class;
+        }
+
+        @Override
+        public ASTPath getPathExp() {
+            return null;
+        }
+
+        @Override
+        public PropertyReader getPropertyReader() {
+            return null;
+        }
+    };
+
+    private static LrAttribute decoratedAttribute(LrAttribute delegate, PropertyReader reader) {
+        return new LrAttribute() {
+            @Override
+            public String getName() {
+                return delegate.getName();
+            }
+
+            @Override
+            public Class<?> getType() {
+                return delegate.getType();
+            }
+
+            @Override
+            public ASTPath getPathExp() {
+                return delegate.getPathExp();
+            }
+
+            @Override
+            public PropertyReader getPropertyReader() {
+                return reader;
+            }
+        };
+    }
+
+    private static LrRelationship decoratedRelationship(LrRelationship delegate, PropertyReader reader) {
+        return new LrRelationship() {
+            @Override
+            public String getName() {
+                return delegate.getName();
+            }
+
+            @Override
+            public LrEntity<?> getTargetEntity() {
+                return delegate.getTargetEntity();
+            }
+
+            @Override
+            public boolean isToMany() {
+                return delegate.isToMany();
+            }
+
+            @Override
+            public PropertyReader getPropertyReader() {
+                return reader;
+            }
+        };
     }
 
     private void appendPrefetches(PrefetchTreeNode root, ResourceEntity<?> entity, int prefetchSemantics) {

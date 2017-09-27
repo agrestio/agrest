@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -32,12 +33,13 @@ public class ResourceEntity<T> {
     private Map<String, LrAttribute> attributes;
     private Collection<String> defaultProperties;
 
-    private Map<AggregationType, Collection<LrAttribute>> aggregatedAttributes;
+    private Map<AggregationType, List<LrAttribute>> aggregatedAttributes;
 
     private String applicationBase;
     private String mapByPath;
     private ResourceEntity<?> mapBy;
     private Map<String, ResourceEntity<?>> children;
+    private Map<String, ResourceEntity<?>> aggregateChildren;
     private LrRelationship incoming;
     private Collection<Ordering> orderings;
     private Expression qualifier;
@@ -52,6 +54,7 @@ public class ResourceEntity<T> {
         this.defaultProperties = new HashSet<>();
         this.aggregatedAttributes = new HashMap<>();
         this.children = new HashMap<>();
+        this.aggregateChildren = new HashMap<>();
         this.orderings = new ArrayList<>(2);
         this.extraProperties = new HashMap<>();
         this.lrEntity = lrEntity;
@@ -71,6 +74,10 @@ public class ResourceEntity<T> {
 
     public LrRelationship getIncoming() {
         return incoming;
+    }
+
+    public void setIncoming(LrRelationship incoming) {
+        this.incoming = incoming;
     }
 
     public Expression getQualifier() {
@@ -129,6 +136,10 @@ public class ResourceEntity<T> {
      */
     public ResourceEntity<?> getChild(String name) {
         return children.get(name);
+    }
+
+    public Map<String, ResourceEntity<?>> getAggregateChildren() {
+        return aggregateChildren;
     }
 
     public Map<String, EntityProperty> getExtraProperties() {
@@ -250,7 +261,7 @@ public class ResourceEntity<T> {
         return countIncluded;
     }
 
-    public Collection<LrAttribute> getAggregatedAttributes(AggregationType aggregationType) {
+    public List<LrAttribute> getAggregatedAttributes(AggregationType aggregationType) {
         return aggregatedAttributes.computeIfAbsent(aggregationType, it -> new ArrayList<>());
     }
 

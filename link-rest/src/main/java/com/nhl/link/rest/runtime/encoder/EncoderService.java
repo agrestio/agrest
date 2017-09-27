@@ -1,5 +1,7 @@
 package com.nhl.link.rest.runtime.encoder;
 
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.nhl.link.rest.AggregationType;
 import com.nhl.link.rest.EntityProperty;
 import com.nhl.link.rest.ResourceEntity;
 import com.nhl.link.rest.encoder.*;
@@ -9,6 +11,7 @@ import com.nhl.link.rest.property.PropertyBuilder;
 import com.nhl.link.rest.runtime.semantics.IRelationshipMapper;
 import org.apache.cayenne.di.Inject;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -125,9 +128,19 @@ public class EncoderService implements IEncoderService {
             attributeEncoders.put(attribute.getName(), property);
         }
 
+        for (AggregationType aggregationType : AggregationType.values()) {
+            resourceEntity.getAggregatedAttributes(aggregationType).forEach(attribute -> {
+                EntityProperty property = attributeEncoderFactory.getAttributeProperty(resourceEntity.getLrEntity(),
+                    attribute);
+                String key = aggregationType.name().toLowerCase() + "(" + attribute.getName() + ")";
+                attributeEncoders.put(key, property);
+            });
+        }
+
         Map<String, EntityProperty> relationshipEncoders = new TreeMap<>();
         for (Entry<String, ResourceEntity<?>> e : resourceEntity.getChildren().entrySet()) {
-            LrRelationship relationship = resourceEntity.getLrEntity().getRelationship(e.getKey());
+            ResourceEntity<?> child = e.getValue();
+            LrRelationship relationship = child.getIncoming();
 
             Encoder encoder = relationship.isToMany() ? nestedToManyEncoder(e.getValue())
                     : toOneEncoder(e.getValue(), relationship);
@@ -140,6 +153,27 @@ public class EncoderService implements IEncoderService {
         Map<String, EntityProperty> extraEncoders = new TreeMap<>();
 
         extraEncoders.putAll(resourceEntity.getExtraProperties());
+
+        for (Entry<String, ResourceEntity<?>> e : resourceEntity.getAggregateChildren().entrySet()) {
+            ResourceEntity<?> child = e.getValue();
+            Encoder encoder = entityEncoder(child);
+            relationshipEncoders.put("@aggregated:" + e.getKey(), new EntityProperty() {
+                @Override
+                public void encode(Object root, String propertyName, JsonGenerator out) throws IOException {
+                    encoder.encode("@aggregated:" + e.getKey(), root, out);
+                }
+
+                @Override
+                public Object read(Object root, String propertyName) {
+                    throw new UnsupportedOperationException();
+                }
+
+                @Override
+                public int visit(Object object, String propertyName, EncoderVisitor visitor) {
+                    throw new UnsupportedOperationException();
+                }
+            });
+        }
 
         EntityProperty idEncoder = resourceEntity.isIdIncluded() ? attributeEncoderFactory.getIdProperty(resourceEntity)
                 : PropertyBuilder.doNothingProperty();

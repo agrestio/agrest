@@ -6,6 +6,7 @@ import com.nhl.link.rest.meta.LrAttribute;
 import com.nhl.link.rest.meta.LrEntity;
 import com.nhl.link.rest.meta.LrPersistentAttribute;
 import com.nhl.link.rest.runtime.processor.select.SelectContext;
+import org.apache.cayenne.Persistent;
 import org.apache.cayenne.exp.Expression;
 import org.apache.cayenne.exp.ExpressionFactory;
 import org.apache.cayenne.exp.Property;
@@ -15,7 +16,10 @@ import org.apache.cayenne.query.SelectQuery;
 
 import javax.ws.rs.core.Response.Status;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
+import java.util.Objects;
 
 public class QueryBuilder<T> {
 
@@ -119,6 +123,27 @@ public class QueryBuilder<T> {
     public QueryBuilder<T> column(Property<?> property) {
         query.getColumns().add(property);
         return this;
+    }
+
+    @SuppressWarnings("unchecked")
+    public QueryBuilder<T> includeSelf() {
+        Property<?> self = Property.createSelf((Class<? super Persistent>) query.getRoot());
+
+        List<Property<?>> columns = (List<Property<?>>) query.getColumns();
+        if (columns.isEmpty()) {
+            columns.add(self);
+        } else {
+            Property<?>[] array = columns.toArray(new Property<?>[columns.size() + 1]);
+            System.arraycopy(array, 0, array, 1, columns.size());
+            array[0] = self;
+            query.setColumns(new ArrayList<>(Arrays.asList(array)));
+        }
+
+        return this;
+    }
+
+    public int columnCount() {
+        return Objects.requireNonNull(query.getColumns()).size();
     }
 
     public SelectQuery<T> buildQuery() {
