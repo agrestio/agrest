@@ -46,6 +46,7 @@ public class GET_IT_Aggregate extends JerseyTestOnDerby {
         Response response = target("/e2")
                 .queryParam("include", "count()")
                 .queryParam("include", "name")
+                .queryParam("sort", "name")
                 .request()
                 .get();
 
@@ -65,7 +66,7 @@ public class GET_IT_Aggregate extends JerseyTestOnDerby {
                name: it
         total: 2
      */
-//    @Test
+    @Test
     public void test_Select_AggregationOnRootEntity_GroupByRelated() {
 
         insert("e21", "id, name", "1, 'xxx'");
@@ -77,10 +78,12 @@ public class GET_IT_Aggregate extends JerseyTestOnDerby {
         Response response = target("/e20")
                 .queryParam("include", "avg(age)")
                 .queryParam("include", "e21.name")
+                .queryParam("sort", "e21.name")
                 .request()
                 .get();
 
-        onSuccess(response).bodyEquals(2, "{...TODO...}");
+        onSuccess(response).bodyEquals(2, "{\"avg(age)\":15,\"e21\":{\"name\":\"xxx\"}}," +
+                "{\"avg(age)\":5,\"e21\":{\"name\":\"yyy\"}}");
     }
 
     /**
@@ -108,11 +111,12 @@ public class GET_IT_Aggregate extends JerseyTestOnDerby {
         Response response = target("/e21")
                 .queryParam("include", "e20s.sum(age)")
                 .queryParam("include", "name")
+                .queryParam("sort", "name")
                 .request()
                 .get();
 
-        onSuccess(response).bodyEquals(2, "{\"@aggregated:e20s\":{\"sum(age)\":5},\"name\":\"yyy\"}," +
-                        "{\"@aggregated:e20s\":{\"sum(age)\":30},\"name\":\"xxx\"}");
+        onSuccess(response).bodyEquals(2, "{\"@aggregated:e20s\":{\"sum(age)\":30},\"name\":\"xxx\"}," +
+                "{\"@aggregated:e20s\":{\"sum(age)\":5},\"name\":\"yyy\"}");
     }
 
     /**
@@ -143,12 +147,13 @@ public class GET_IT_Aggregate extends JerseyTestOnDerby {
                 .queryParam("include", "e20s.sum(age)")
                 .queryParam("include", "e20s.name")
                 .queryParam("include", "name")
+                .queryParam("sort", "name")
                 .request()
                 .get();
 
-        onSuccess(response).bodyEquals(3, "{\"@aggregated:e20s\":{\"name\":\"ccc\",\"sum(age)\":5},\"name\":\"yyy\"}," +
+        onSuccess(response).bodyEquals(3, "{\"@aggregated:e20s\":{\"name\":\"bbb\",\"sum(age)\":20},\"name\":\"xxx\"}," +
                 "{\"@aggregated:e20s\":{\"name\":\"aaa\",\"sum(age)\":10},\"name\":\"xxx\"}," +
-                "{\"@aggregated:e20s\":{\"name\":\"bbb\",\"sum(age)\":20},\"name\":\"xxx\"}");
+                "{\"@aggregated:e20s\":{\"name\":\"ccc\",\"sum(age)\":5},\"name\":\"yyy\"}");
     }
 
     /**

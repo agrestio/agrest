@@ -155,7 +155,7 @@ public class IncludeWorker {
 	static void applyDefaultIncludes(ResourceEntity<?> resourceEntity) {
 		// either there are no includes (taking into account Id) or all includes
 		// are relationships
-		if (!resourceEntity.isIdIncluded() && resourceEntity.getAttributes().isEmpty()) {
+		if (!resourceEntity.isIdIncluded() && resourceEntity.getAttributes().isEmpty() && !resourceEntity.isAggregate()) {
 
 			for (LrAttribute a : resourceEntity.getLrEntity().getAttributes()) {
 				resourceEntity.getAttributes().put(a.getName(), a);

@@ -2,11 +2,21 @@ package com.nhl.link.rest;
 
 public enum AggregationType {
 
-    AVERAGE,
+    AVERAGE("avg"),
 
-    SUM,
+    SUM("sum"),
 
-    MINIMUM,
+    MINIMUM("min"),
 
-    MAXIMUM
+    MAXIMUM("max");
+
+    private String functionName;
+
+    AggregationType(String functionName) {
+        this.functionName = functionName;
+    }
+
+    public String functionName() {
+        return functionName;
+    }
 }
