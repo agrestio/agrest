@@ -65,6 +65,7 @@ public class EncoderServiceTest extends TestWithCayenneMapping {
 	public void testGetRootEncoder_ExcludedRelationshipAttributes() throws IOException {
 		ResourceEntity<E3> e3Descriptor = getResourceEntity(E3.class);
 		e3Descriptor.includeId();
+		e3Descriptor.setIncoming(metadataService.getLrRelationship(E2.class, E2.E3S.getName()));
 
 		appendAttribute(e3Descriptor, E3.NAME, String.class);
 
@@ -197,6 +198,7 @@ public class EncoderServiceTest extends TestWithCayenneMapping {
 
 		ResourceEntity<E2> e2Descriptor = getResourceEntity(E2.class);
 		e2Descriptor.includeId();
+		e2Descriptor.setIncoming(metadataService.getLrRelationship(E3.class, E3.E2.getName()));
 
 		ResourceEntity<E3> e3Descriptor = getResourceEntity(E3.class);
 		e3Descriptor.includeId();

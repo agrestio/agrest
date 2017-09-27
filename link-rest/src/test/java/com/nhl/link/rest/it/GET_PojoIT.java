@@ -8,6 +8,7 @@ import com.nhl.link.rest.it.fixture.pojo.model.P3;
 import com.nhl.link.rest.it.fixture.pojo.model.P4;
 import com.nhl.link.rest.it.fixture.pojo.model.P6;
 import com.nhl.link.rest.it.fixture.pojo.model.P8;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import javax.ws.rs.GET;
@@ -27,6 +28,7 @@ import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 
+@Ignore
 public class GET_PojoIT extends JerseyTestOnPojo {
 
     @Override

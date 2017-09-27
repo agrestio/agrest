@@ -98,6 +98,7 @@ public class SenchaEncoderServiceTest extends TestWithCayenneMapping {
 
         ResourceEntity<E2> e2Descriptor = getResourceEntity(E2.class);
         e2Descriptor.includeId();
+        e2Descriptor.setIncoming(metadataService.getLrRelationship(E3.class, E3.E2.getName()));
 
         ResourceEntity<E3> e3Descriptor = getResourceEntity(E3.class);
         e3Descriptor.includeId();
