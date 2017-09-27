@@ -5,6 +5,7 @@ import com.nhl.link.rest.encoder.EncoderFilter;
 import com.nhl.link.rest.processor.Processor;
 import com.nhl.link.rest.processor.ProcessorOutcome;
 import com.nhl.link.rest.runtime.constraints.IConstraintsHandler;
+import com.nhl.link.rest.runtime.encoder.IEncoderService;
 import org.apache.cayenne.di.Inject;
 
 import java.util.List;
@@ -15,14 +16,16 @@ import java.util.List;
 public class ApplyServerParamsStage implements Processor<SelectContext<?>> {
 
     private IConstraintsHandler constraintsHandler;
-
+    private IEncoderService encoderService;
     private List<EncoderFilter> filters;
 
     public ApplyServerParamsStage(
             @Inject IConstraintsHandler constraintsHandler,
+            @Inject IEncoderService encoderService,
             @Inject List<EncoderFilter> filters) {
 
         this.constraintsHandler = constraintsHandler;
+        this.encoderService = encoderService;
         this.filters = filters;
     }
 
@@ -47,6 +50,14 @@ public class ApplyServerParamsStage implements Processor<SelectContext<?>> {
                 entity.setFiltered(true);
                 break;
             }
+        }
+
+        // make sure we create the default encoder, even if we end up with an empty
+        // list, as we need to encode the totals;
+        // the default encoder will also come in handy for Pojos and when the processing chain is terminated by a listener
+
+        if (context.getEncoder() == null) {
+            context.setEncoder(encoderService.dataEncoder(entity));
         }
     }
 }

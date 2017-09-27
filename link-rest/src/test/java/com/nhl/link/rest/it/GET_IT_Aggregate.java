@@ -177,19 +177,26 @@ public class GET_IT_Aggregate extends JerseyTestOnDerby {
 //    @Test
     public void test_Select_AggregationOnRelatedEntity_GroupRelated_IncludeRoot() {
 
-        insert("e21", "id, name", "1, 'xxx'");
-        insert("e21", "id, name", "2, 'yyy'");
+        insert("e21", "id, name, age, description", "1, 'xxx', 99, 'xxx_desc'");
+        insert("e21", "id, name, age, description", "2, 'yyy', 77, 'yyy_desc'");
         insert("e20", "id, e21_id, age, name", "1, 1, 10, 'aaa'");
-        insert("e20", "id, e21_id, age, name", "2, 1, 20, 'bbb'");
-        insert("e20", "id, e21_id, age, name", "3, 2,  5, 'ccc'");
+        insert("e20", "id, e21_id, age, name", "2, 1, 20, 'aaa'");
+        insert("e20", "id, e21_id, age, name", "3, 2,  5, 'bbb'");
+        insert("e20", "id, e21_id, age, name", "4, 2, 15, 'ccc'");
 
         Response response = target("/e21")
                 .queryParam("include", "e20s.sum(age)")
                 .queryParam("include", "e20s.name")
+                .queryParam("sort", "name")
+                .queryParam("sort", "e20s.name")
                 .request()
                 .get();
 
-        onSuccess(response).bodyEquals(2, "{...TODO...}");
+        // need to map by self (and recursively by related to-one entity in general case)
+        onSuccess(response).bodyEquals(3,
+                "{\"@aggregated:e20s\":{\"name\":\"aaa\",\"sum(age)\":30},\"age\":99,\"description\":\"xxx_desc\",\"name\":\"xxx\"}," +
+                "{\"@aggregated:e20s\":{\"name\":\"ccc\",\"sum(age)\":15},\"age\":77,\"description\":\"yyy_desc\",\"name\":\"yyy\"}," +
+                "{\"@aggregated:e20s\":{\"name\":\"bbb\",\"sum(age)\":5},\"age\":77,\"description\":\"yyy_desc\",\"name\":\"yyy\"}");
     }
 
     @Path("")

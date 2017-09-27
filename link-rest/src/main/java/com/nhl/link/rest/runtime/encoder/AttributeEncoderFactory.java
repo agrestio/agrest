@@ -46,27 +46,17 @@ public class AttributeEncoderFactory implements IAttributeEncoderFactory {
 	static final Class<?> LOCAL_DATETIME = LocalDateTime.class;
 
 	// these are explicit overrides for named attributes
-	private Map<String, EntityProperty> attributePropertiesByPath;
 	private Map<String, EntityProperty> idPropertiesByEntity;
 	private ConcurrentMap<LrEntity<?>, IdPropertyReader> idPropertyReaders;
 
 	public AttributeEncoderFactory() {
-		this.attributePropertiesByPath = new ConcurrentHashMap<>();
 		this.idPropertiesByEntity = new ConcurrentHashMap<>();
 		this.idPropertyReaders = new ConcurrentHashMap<>();
 	}
 
 	@Override
 	public EntityProperty getAttributeProperty(LrEntity<?> entity, LrAttribute attribute) {
-		String key = entity.getName() + "." + attribute.getName();
-
-		EntityProperty property = attributePropertiesByPath.get(key);
-		if (property == null) {
-			property = buildAttributeProperty(entity, attribute);
-			attributePropertiesByPath.put(key, property);
-		}
-
-		return property;
+		return buildAttributeProperty(entity, attribute);
 	}
 
 	@Override

@@ -12,6 +12,7 @@ import com.nhl.link.rest.processor.ProcessorOutcome;
 import com.nhl.link.rest.property.DataObjectPropertyReader;
 import com.nhl.link.rest.property.PropertyReader;
 import com.nhl.link.rest.runtime.cayenne.ICayennePersister;
+import com.nhl.link.rest.runtime.encoder.IEncoderService;
 import com.nhl.link.rest.runtime.processor.select.SelectContext;
 import org.apache.cayenne.DataObject;
 import org.apache.cayenne.di.Inject;
@@ -26,6 +27,7 @@ import org.apache.cayenne.query.SelectQuery;
 import javax.ws.rs.core.Response.Status;
 import java.util.ListIterator;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * @since 2.7
@@ -33,9 +35,12 @@ import java.util.Map;
 public class CayenneAssembleQueryStage implements Processor<SelectContext<?>> {
 
     private EntityResolver entityResolver;
+    private Optional<IEncoderService> encoderService;
 
-    public CayenneAssembleQueryStage(@Inject ICayennePersister persister) {
+    public CayenneAssembleQueryStage(@Inject ICayennePersister persister,
+                                     @Inject IEncoderService encoderService) {
         this.entityResolver = persister.entityResolver();
+        this.encoderService = Optional.ofNullable(encoderService); // can be absent in tests
     }
 
     @Override
@@ -46,6 +51,11 @@ public class CayenneAssembleQueryStage implements Processor<SelectContext<?>> {
 
     protected <T> void doExecute(SelectContext<T> context) {
         context.setSelect(buildQuery(context));
+
+        // create a new encoder, based on augmented entity
+        encoderService.ifPresent(service -> {
+            context.setEncoder(service.dataEncoder(context.getEntity()));
+        });
     }
 
     <T> SelectQuery<T> buildQuery(SelectContext<T> context) {
@@ -56,7 +66,12 @@ public class CayenneAssembleQueryStage implements Processor<SelectContext<?>> {
 
         if (appendAggregateColumns(entity, query, null)) {
             entity.excludeId(); // TODO: remove
-            appendGroupByColumns(entity, query, null, entity.isAggregate());
+            appendGroupByColumns(entity, query, null);
+            if (!entity.isAggregate() && !hasGroupByColumns(entity)) {
+                query.includeSelf();
+                swapAttributeReadersToSelf(entity);
+                swapRelationshipReadersToSelf(entity);
+            }
         }
 
         if (!entity.isFiltered()) {
@@ -95,6 +110,16 @@ public class CayenneAssembleQueryStage implements Processor<SelectContext<?>> {
         }
 
         return query.buildQuery();
+    }
+
+    private <T> boolean hasGroupByColumns(ResourceEntity<T> entity) {
+        for (Map.Entry<String, LrAttribute> e : entity.getAttributes().entrySet()) {
+            LrAttribute attribute = e.getValue();
+            if (!entity.isDefault(attribute.getName())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     @SuppressWarnings("unchecked")
@@ -152,9 +177,7 @@ public class CayenneAssembleQueryStage implements Processor<SelectContext<?>> {
     }
 
     @SuppressWarnings("unchecked")
-    private <T> void appendGroupByColumns(ResourceEntity<?> entity, QueryBuilder<T> query, Property<?> context, boolean parentIsAggregate) {
-        boolean shouldIncludeSelf = !parentIsAggregate;
-
+    private <T> void appendGroupByColumns(ResourceEntity<?> entity, QueryBuilder<T> query, Property<?> context) {
         for (Map.Entry<String, LrAttribute> e : entity.getAttributes().entrySet()) {
             LrAttribute attribute = e.getValue();
             // related entity attributes will be read from the data object IF the parent is not aggregate
@@ -166,7 +189,6 @@ public class CayenneAssembleQueryStage implements Processor<SelectContext<?>> {
             query.column(property);
 
             e.setValue(columnAttribute(attribute, query.columnCount() - 1));
-            shouldIncludeSelf = false;
         }
 
         // do this after all attributes have been added, because we'll add one more fictional attribute for encoding purposes
@@ -177,31 +199,18 @@ public class CayenneAssembleQueryStage implements Processor<SelectContext<?>> {
                 query.count(context);
             }
             entity.getAttributes().put("count()", columnAttribute(COUNT_ATTRIBUTE, query.columnCount() - 1));
-            shouldIncludeSelf = false;
-        }
-
-        if (shouldIncludeSelf) {
-            // no groupBy columns were explicitly included
-            if (context == null) {
-                // root entity
-                query.includeSelf();
-                swapAttributeReadersToSelf(entity);
-                swapRelationshipReadersToSelf(entity);
-            } else {
-                // TODO: group by the single- or multi-column PK? or Cayenne takes care of that?
-            }
         }
 
         // this method is called only when there is aggregation, but it's not known in which subtree, so need to track
 
         entity.getChildren().forEach((relationshipName, child) -> {
             Property<?> relationship = createProperty(context, relationshipName, child.getType());
-            appendGroupByColumns(child, query, relationship, parentIsAggregate || entity.isAggregate());
+            appendGroupByColumns(child, query, relationship);
         });
 
         entity.getAggregateChildren().forEach((relationshipName, child) -> {
             Property<?> relationship = createProperty(context, relationshipName, child.getType());
-            appendGroupByColumns(child, query, relationship, parentIsAggregate || entity.isAggregate());
+            appendGroupByColumns(child, query, relationship);
         });
     }
 

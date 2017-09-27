@@ -10,7 +10,6 @@ import com.nhl.link.rest.processor.ProcessingStage;
 import com.nhl.link.rest.runtime.processor.select.SelectContext;
 import org.apache.cayenne.query.SQLTemplate;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import javax.ws.rs.GET;
@@ -77,7 +76,6 @@ public class GET_ListenersIT extends JerseyTestOnDerby {
                 response1.readEntity(String.class));
     }
 
-    @Ignore
     @Test
     public void testTakeOverListener() {
 
