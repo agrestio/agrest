@@ -4,7 +4,20 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import com.nhl.link.rest.AggregationType;
 import com.nhl.link.rest.EntityProperty;
 import com.nhl.link.rest.ResourceEntity;
-import com.nhl.link.rest.encoder.*;
+import com.nhl.link.rest.encoder.CollectionEncoder;
+import com.nhl.link.rest.encoder.DataResponseEncoder;
+import com.nhl.link.rest.encoder.Encoder;
+import com.nhl.link.rest.encoder.EncoderFilter;
+import com.nhl.link.rest.encoder.EncoderVisitor;
+import com.nhl.link.rest.encoder.EntityEncoder;
+import com.nhl.link.rest.encoder.EntityMetadataEncoder;
+import com.nhl.link.rest.encoder.EntityToOneEncoder;
+import com.nhl.link.rest.encoder.FilterChainEncoder;
+import com.nhl.link.rest.encoder.GenericEncoder;
+import com.nhl.link.rest.encoder.ListEncoder;
+import com.nhl.link.rest.encoder.MapByEncoder;
+import com.nhl.link.rest.encoder.PropertyMetadataEncoder;
+import com.nhl.link.rest.encoder.ResourceEncoder;
 import com.nhl.link.rest.meta.LrAttribute;
 import com.nhl.link.rest.meta.LrRelationship;
 import com.nhl.link.rest.property.PropertyBuilder;
@@ -132,7 +145,7 @@ public class EncoderService implements IEncoderService {
             resourceEntity.getAggregatedAttributes(aggregationType).forEach(attribute -> {
                 EntityProperty property = attributeEncoderFactory.getAttributeProperty(resourceEntity.getLrEntity(),
                     attribute);
-                String key = aggregationType.functionName().toLowerCase() + "(" + attribute.getName() + ")";
+                String key = toFunctionName(aggregationType, attribute.getName());
                 attributeEncoders.put(key, property);
             });
         }
@@ -143,62 +156,31 @@ public class EncoderService implements IEncoderService {
 
             // TODO: same when the parent's parent is aggregate (need to pass context throughout the hierarchy)
             if (resourceEntity.isAggregate()) {
-                Encoder encoder = entityEncoder(child);
-                relationshipEncoders.put(e.getKey(), new EntityProperty() {
-                    @Override
-                    public void encode(Object root, String propertyName, JsonGenerator out) throws IOException {
-                        encoder.encode(e.getKey(), root, out);
-                    }
+                String propertyName = e.getKey();
+                relationshipEncoders.put(propertyName, new PropertyEncoder(entityEncoder(child), propertyName));
 
-                    @Override
-                    public Object read(Object root, String propertyName) {
-                        throw new UnsupportedOperationException();
-                    }
-
-                    @Override
-                    public int visit(Object object, String propertyName, EncoderVisitor visitor) {
-                        throw new UnsupportedOperationException();
-                    }
-                });
             } else {
                 LrRelationship relationship = child.getIncoming();
-
                 Encoder encoder = relationship.isToMany() ? nestedToManyEncoder(e.getValue())
                         : toOneEncoder(e.getValue(), relationship);
-
                 EntityProperty property = attributeEncoderFactory.getRelationshipProperty(resourceEntity.getLrEntity(),
                         relationship, encoder);
                 relationshipEncoders.put(e.getKey(), property);
             }
         }
 
-        Map<String, EntityProperty> extraEncoders = new TreeMap<>();
-
-        extraEncoders.putAll(resourceEntity.getExtraProperties());
-
         for (Entry<String, ResourceEntity<?>> e : resourceEntity.getAggregateChildren().entrySet()) {
             ResourceEntity<?> child = e.getValue();
-            Encoder encoder = entityEncoder(child);
-            relationshipEncoders.put("@aggregated:" + e.getKey(), new EntityProperty() {
-                @Override
-                public void encode(Object root, String propertyName, JsonGenerator out) throws IOException {
-                    encoder.encode("@aggregated:" + e.getKey(), root, out);
-                }
-
-                @Override
-                public Object read(Object root, String propertyName) {
-                    throw new UnsupportedOperationException();
-                }
-
-                @Override
-                public int visit(Object object, String propertyName, EncoderVisitor visitor) {
-                    throw new UnsupportedOperationException();
-                }
-            });
+            String propertyName = "@aggregated:" + e.getKey();
+            relationshipEncoders.put(propertyName, new PropertyEncoder(entityEncoder(child), propertyName));
         }
+
+        Map<String, EntityProperty> extraEncoders = new TreeMap<>();
+        extraEncoders.putAll(resourceEntity.getExtraProperties());
 
         EntityProperty idEncoder = resourceEntity.isIdIncluded() ? attributeEncoderFactory.getIdProperty(resourceEntity)
                 : PropertyBuilder.doNothingProperty();
+
         return new EntityEncoder(idEncoder, attributeEncoders, relationshipEncoders, extraEncoders);
     }
 
@@ -218,4 +200,33 @@ public class EncoderService implements IEncoderService {
         return matchingFilters != null ? new FilterChainEncoder(encoder, matchingFilters) : encoder;
     }
 
+    private static String toFunctionName(AggregationType aggregationType, String attributeName) {
+        return aggregationType.functionName().toLowerCase() + "(" + attributeName + ")";
+    }
+
+    private static class PropertyEncoder implements EntityProperty {
+
+        private Encoder encoder;
+        private String name;
+
+        public PropertyEncoder(Encoder encoder, String name) {
+            this.encoder = encoder;
+            this.name = name;
+        }
+
+        @Override
+        public void encode(Object root, String propertyName, JsonGenerator out) throws IOException {
+            encoder.encode(name, root, out);
+        }
+
+        @Override
+        public Object read(Object root, String propertyName) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public int visit(Object object, String propertyName, EncoderVisitor visitor) {
+            throw new UnsupportedOperationException();
+        }
+    }
 }

@@ -24,6 +24,7 @@ import java.util.Objects;
 public class QueryBuilder<T> {
 
     private SelectQuery<T> query;
+    private boolean selfIncluded;
 
     public QueryBuilder(SelectContext<T> context) {
         Class<T> root = context.getType();
@@ -127,6 +128,8 @@ public class QueryBuilder<T> {
 
     @SuppressWarnings("unchecked")
     public QueryBuilder<T> includeSelf() {
+        selfIncluded = true;
+
         Property<?> self = Property.createSelf((Class<? super Persistent>) query.getRoot());
 
         List<Property<?>> columns = (List<Property<?>>) query.getColumns();
@@ -144,6 +147,10 @@ public class QueryBuilder<T> {
 
     public int columnCount() {
         return Objects.requireNonNull(query.getColumns()).size();
+    }
+
+    public boolean isSelfIncluded() {
+        return selfIncluded;
     }
 
     public SelectQuery<T> buildQuery() {

@@ -4,7 +4,6 @@ import com.nhl.link.rest.AggregationType;
 import com.nhl.link.rest.LinkRestException;
 import com.nhl.link.rest.ResourceEntity;
 import com.nhl.link.rest.meta.LrAttribute;
-import com.nhl.link.rest.meta.LrEntity;
 import com.nhl.link.rest.meta.LrPersistentEntity;
 import com.nhl.link.rest.meta.LrRelationship;
 import com.nhl.link.rest.processor.Processor;
@@ -14,11 +13,9 @@ import com.nhl.link.rest.property.PropertyReader;
 import com.nhl.link.rest.runtime.cayenne.ICayennePersister;
 import com.nhl.link.rest.runtime.encoder.IEncoderService;
 import com.nhl.link.rest.runtime.processor.select.SelectContext;
-import org.apache.cayenne.DataObject;
 import org.apache.cayenne.di.Inject;
 import org.apache.cayenne.exp.Expression;
 import org.apache.cayenne.exp.Property;
-import org.apache.cayenne.exp.parser.ASTPath;
 import org.apache.cayenne.map.EntityResolver;
 import org.apache.cayenne.query.Ordering;
 import org.apache.cayenne.query.PrefetchTreeNode;
@@ -52,7 +49,7 @@ public class CayenneAssembleQueryStage implements Processor<SelectContext<?>> {
     protected <T> void doExecute(SelectContext<T> context) {
         context.setSelect(buildQuery(context));
 
-        // create a new encoder, based on augmented entity
+        // create a new encoder, based on augmented entity (possibly overriding the custom encoder, which is bad)
         encoderService.ifPresent(service -> {
             context.setEncoder(service.dataEncoder(context.getEntity()));
         });
@@ -65,12 +62,11 @@ public class CayenneAssembleQueryStage implements Processor<SelectContext<?>> {
         QueryBuilder<T> query = new QueryBuilder<>(context);
 
         if (appendAggregateColumns(entity, query, null)) {
-            entity.excludeId(); // TODO: remove
             appendGroupByColumns(entity, query, null);
             if (!entity.isAggregate() && !hasGroupByColumns(entity)) {
                 query.includeSelf();
                 swapAttributeReadersToSelf(entity);
-                swapRelationshipReadersToSelf(entity);
+                swapChildrenToSelf(entity);
             }
         }
 
@@ -122,13 +118,13 @@ public class CayenneAssembleQueryStage implements Processor<SelectContext<?>> {
         return false;
     }
 
+    /**
+     * @return true if some of the resource entities is aggregate,
+     *         which means that all explicit includes should be treated as GROUP BY columns
+     */
     @SuppressWarnings("unchecked")
     private <T> boolean appendAggregateColumns(ResourceEntity<?> entity, QueryBuilder<T> query, Property<?> context) {
         boolean shouldAppendGroupByColumns = false;
-
-        if (entity.isCountIncluded()) {
-            shouldAppendGroupByColumns = true;
-        }
 
         if (entity.isAggregate()) {
             shouldAppendGroupByColumns = true;
@@ -161,7 +157,7 @@ public class CayenneAssembleQueryStage implements Processor<SelectContext<?>> {
                         }
                     }
 
-                    iter.set(columnAttribute(attribute, query.columnCount() - 1));
+                    iter.set(currentColumnAttribute(attribute, query));
                 }
             }
         }
@@ -180,15 +176,12 @@ public class CayenneAssembleQueryStage implements Processor<SelectContext<?>> {
     private <T> void appendGroupByColumns(ResourceEntity<?> entity, QueryBuilder<T> query, Property<?> context) {
         for (Map.Entry<String, LrAttribute> e : entity.getAttributes().entrySet()) {
             LrAttribute attribute = e.getValue();
-            // related entity attributes will be read from the data object IF the parent is not aggregate
-            if (entity.isDefault(attribute.getName())) {
-                continue;
+            if (!entity.isDefault(attribute.getName())) {
+                Property<?> property = createProperty(context, attribute.getName(), attribute.getType());
+                query.column(property);
+
+                e.setValue(currentColumnAttribute(attribute, query));
             }
-
-            Property<?> property = createProperty(context, attribute.getName(), attribute.getType());
-            query.column(property);
-
-            e.setValue(columnAttribute(attribute, query.columnCount() - 1));
         }
 
         // do this after all attributes have been added, because we'll add one more fictional attribute for encoding purposes
@@ -198,7 +191,7 @@ public class CayenneAssembleQueryStage implements Processor<SelectContext<?>> {
             } else {
                 query.count(context);
             }
-            entity.getAttributes().put("count()", columnAttribute(COUNT_ATTRIBUTE, query.columnCount() - 1));
+            entity.getAttributes().put("count()", currentColumnAttribute(CountAttribute.instance(), query));
         }
 
         // this method is called only when there is aggregation, but it's not known in which subtree, so need to track
@@ -216,25 +209,24 @@ public class CayenneAssembleQueryStage implements Processor<SelectContext<?>> {
 
     private static void swapAttributeReadersToSelf(ResourceEntity<?> entity) {
         for (Map.Entry<String, LrAttribute> e : entity.getAttributes().entrySet()) {
+            // prevent double swap, which can happen, depending on when this method is called
             if (!(e.getValue() instanceof DecoratedLrAttribute)) {
                 e.setValue(selfAttribute(e.getValue()));
             }
         }
     }
 
-    private static void swapRelationshipReadersToSelf(ResourceEntity<?> entity) {
-        entity.getChildren().values().forEach(child -> {
-            LrRelationship incoming = child.getIncoming();
-            if (incoming != null && !(incoming instanceof DecoratedLrRelationship)) {
-                child.setIncoming(selfRelationship(incoming));
-            }
-        });
-        entity.getAggregateChildren().values().forEach(child -> {
-            LrRelationship incoming = child.getIncoming();
-            if (incoming != null && !(incoming instanceof DecoratedLrRelationship)) {
-                child.setIncoming(selfRelationship(incoming));
-            }
-        });
+    private static void swapChildrenToSelf(ResourceEntity<?> entity) {
+        entity.getChildren().values().forEach(CayenneAssembleQueryStage::swapRelationshipReaderToSelf);
+        entity.getAggregateChildren().values().forEach(CayenneAssembleQueryStage::swapRelationshipReaderToSelf);
+    }
+
+    private static void swapRelationshipReaderToSelf(ResourceEntity<?> child) {
+        LrRelationship incoming = child.getIncoming();
+        // prevent double swap, which can happen, depending on when this method is called
+        if (incoming != null && !(incoming instanceof DecoratedLrRelationship)) {
+            child.setIncoming(selfRelationship(incoming));
+        }
     }
 
     @SuppressWarnings("unchecked")
@@ -255,9 +247,10 @@ public class CayenneAssembleQueryStage implements Processor<SelectContext<?>> {
         return (Property<E>) property;
     }
 
-    private static LrAttribute columnAttribute(LrAttribute attribute, int columnIndex) {
+    private static LrAttribute currentColumnAttribute(LrAttribute attribute, QueryBuilder<?> query) {
+        int columnIndex = query.columnCount() - 1; // use current column
         PropertyReader reader = PropertyReader.forValueProducer((Object[] row) -> {
-            if (row[0] instanceof DataObject) { // self has been included
+            if (query.isSelfIncluded()) {
                 return row[columnIndex + 1];
             } else {
                 return row[columnIndex];
@@ -287,96 +280,12 @@ public class CayenneAssembleQueryStage implements Processor<SelectContext<?>> {
         return decoratedRelationship(relationship, reader);
     }
 
-    private static LrAttribute COUNT_ATTRIBUTE = new LrAttribute() {
-        @Override
-        public String getName() {
-            return "count()";
-        }
-
-        @Override
-        public Class<?> getType() {
-            return Long.class;
-        }
-
-        @Override
-        public ASTPath getPathExp() {
-            return null;
-        }
-
-        @Override
-        public PropertyReader getPropertyReader() {
-            return null;
-        }
-    };
-
     private static LrAttribute decoratedAttribute(LrAttribute delegate, PropertyReader reader) {
         return new DecoratedLrAttribute(delegate, reader);
     }
 
-    private static class DecoratedLrAttribute implements LrAttribute {
-
-        private LrAttribute delegate;
-        private PropertyReader reader;
-
-        public DecoratedLrAttribute(LrAttribute delegate, PropertyReader reader) {
-            this.delegate = delegate;
-            this.reader = reader;
-        }
-
-        @Override
-        public String getName() {
-            return delegate.getName();
-        }
-
-        @Override
-        public Class<?> getType() {
-            return delegate.getType();
-        }
-
-        @Override
-        public ASTPath getPathExp() {
-            return delegate.getPathExp();
-        }
-
-        @Override
-        public PropertyReader getPropertyReader() {
-            return reader;
-        }
-    }
-
     private static LrRelationship decoratedRelationship(LrRelationship delegate, PropertyReader reader) {
         return new DecoratedLrRelationship(delegate, reader);
-    }
-
-    private static class DecoratedLrRelationship implements LrRelationship {
-
-        private LrRelationship delegate;
-        private PropertyReader reader;
-
-        public DecoratedLrRelationship(LrRelationship delegate, PropertyReader reader) {
-            this.delegate = delegate;
-            this.reader = reader;
-        }
-
-        @Override
-        public String getName() {
-            return delegate.getName();
-        }
-
-        @Override
-        public LrEntity<?> getTargetEntity() {
-            return delegate.getTargetEntity();
-        }
-
-        @Override
-        public boolean isToMany() {
-            return delegate.isToMany();
-        }
-
-        @Override
-        public PropertyReader getPropertyReader() {
-            return reader;
-        }
     }
 
     private void appendPrefetches(PrefetchTreeNode root, ResourceEntity<?> entity, int prefetchSemantics) {
