@@ -43,7 +43,8 @@ public class EncoderService implements IEncoderService {
 
     public EncoderService(@Inject List<EncoderFilter> filters,
                           @Inject IAttributeEncoderFactory attributeEncoderFactory,
-                          @Inject IStringConverterFactory stringConverterFactory, @Inject IRelationshipMapper relationshipMapper,
+                          @Inject IStringConverterFactory stringConverterFactory,
+                          @Inject IRelationshipMapper relationshipMapper,
                           @Inject Map<String, PropertyMetadataEncoder> propertyMetadataEncoders) {
         this.attributeEncoderFactory = attributeEncoderFactory;
         this.relationshipMapper = relationshipMapper;
@@ -60,20 +61,29 @@ public class EncoderService implements IEncoderService {
 
     @Override
     public <T> Encoder dataEncoder(ResourceEntity<T> entity) {
-        CollectionEncoder resultEncoder = resultEncoder(entity);
+        return buildDataEncoder(entity, entityEncoder(entity));
+    }
+
+    private <T> Encoder buildDataEncoder(ResourceEntity<T> entity, Encoder entityEncoder) {
+        CollectionEncoder resultEncoder = resultEncoder(entity, entityEncoder);
+        return toDataResponseEncoder(resultEncoder);
+    }
+
+    protected DataResponseEncoder toDataResponseEncoder(CollectionEncoder resultEncoder) {
         return new DataResponseEncoder("data", resultEncoder, "total", GenericEncoder.encoder());
     }
 
-    protected CollectionEncoder resultEncoder(ResourceEntity<?> entity) {
-        Encoder elementEncoder = collectionElementEncoder(entity);
+    protected CollectionEncoder resultEncoder(ResourceEntity<?> entity, Encoder elementEncoder) {
         boolean isMapBy = entity.getMapBy() != null;
 
         // notice that we are not passing either qualifier or ordering to the
         // encoder, as those are presumably applied at the query level.. (unlike
         // with #nestedToManyEncoder)
 
-        CollectionEncoder encoder = new ListEncoder(elementEncoder).withOffset(entity.getFetchOffset())
-                .withLimit(entity.getFetchLimit()).shouldFilter(entity.isFiltered());
+        CollectionEncoder encoder = new ListEncoder(filteredEncoder(elementEncoder, entity))
+                .withOffset(entity.getFetchOffset())
+                .withLimit(entity.getFetchLimit())
+                .shouldFilter(entity.isFiltered());
 
         return isMapBy
                 ? new MapByEncoder(entity.getMapByPath(), null, entity.getMapBy(), encoder, stringConverterFactory, attributeEncoderFactory)
@@ -82,12 +92,14 @@ public class EncoderService implements IEncoderService {
 
     protected Encoder nestedToManyEncoder(ResourceEntity<?> resourceEntity) {
 
-        Encoder elementEncoder = collectionElementEncoder(resourceEntity);
+        Encoder elementEncoder = entityEncoder(resourceEntity);
         boolean isMapBy = resourceEntity.getMapBy() != null;
 
         // if mapBy is involved, apply filters at MapBy level, not inside
         // sublists...
-        ListEncoder listEncoder = new ListEncoder(elementEncoder, isMapBy ? null : resourceEntity.getQualifier(),
+        ListEncoder listEncoder = new ListEncoder(
+                filteredEncoder(elementEncoder, resourceEntity),
+                isMapBy ? null : resourceEntity.getQualifier(),
                 resourceEntity.getOrderings());
 
         listEncoder.withOffset(resourceEntity.getFetchOffset()).withLimit(resourceEntity.getFetchLimit());
@@ -98,11 +110,6 @@ public class EncoderService implements IEncoderService {
 
         return isMapBy ? new MapByEncoder(resourceEntity.getMapByPath(), resourceEntity.getQualifier(),
                 resourceEntity.getMapBy(), listEncoder, stringConverterFactory, attributeEncoderFactory) : listEncoder;
-    }
-
-    protected Encoder collectionElementEncoder(ResourceEntity<?> resourceEntity) {
-        Encoder encoder = entityEncoder(resourceEntity);
-        return filteredEncoder(encoder, resourceEntity);
     }
 
     protected Encoder toOneEncoder(ResourceEntity<?> resourceEntity, LrRelationship relationship) {

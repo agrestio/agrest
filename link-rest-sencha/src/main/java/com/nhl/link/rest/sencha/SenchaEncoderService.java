@@ -3,7 +3,12 @@ package com.nhl.link.rest.sencha;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.nhl.link.rest.EntityProperty;
 import com.nhl.link.rest.ResourceEntity;
-import com.nhl.link.rest.encoder.*;
+import com.nhl.link.rest.encoder.CollectionEncoder;
+import com.nhl.link.rest.encoder.DataResponseEncoder;
+import com.nhl.link.rest.encoder.Encoder;
+import com.nhl.link.rest.encoder.EncoderFilter;
+import com.nhl.link.rest.encoder.GenericEncoder;
+import com.nhl.link.rest.encoder.PropertyMetadataEncoder;
 import com.nhl.link.rest.meta.LrRelationship;
 import com.nhl.link.rest.runtime.encoder.EncoderService;
 import com.nhl.link.rest.runtime.encoder.IAttributeEncoderFactory;
@@ -28,8 +33,7 @@ public class SenchaEncoderService extends EncoderService {
 	}
 
 	@Override
-	public <T> Encoder dataEncoder(ResourceEntity<T> entity) {
-		CollectionEncoder resultEncoder = resultEncoder(entity);
+	protected DataResponseEncoder toDataResponseEncoder(CollectionEncoder resultEncoder) {
 		return new DataResponseEncoder("data", resultEncoder, "total", GenericEncoder.encoder()) {
 			@Override
 			protected void encodeObjectBody(Object object, JsonGenerator out) throws IOException {

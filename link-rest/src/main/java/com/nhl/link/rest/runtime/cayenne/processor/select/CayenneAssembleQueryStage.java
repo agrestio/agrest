@@ -274,7 +274,6 @@ public class CayenneAssembleQueryStage implements Processor<SelectContext<?>> {
                 DataObjectPropertyReader.reader() : relationship.getPropertyReader();
         PropertyReader reader = (root, name) -> {
             Object[] row = (Object[]) root;
-            name = name.replace("@aggregated:", "");
             return delegate.value(row[0], name);
         };
         return decoratedRelationship(relationship, reader);
