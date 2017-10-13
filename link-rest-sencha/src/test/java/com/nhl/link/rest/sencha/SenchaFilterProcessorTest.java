@@ -99,7 +99,7 @@ public class SenchaFilterProcessorTest extends TestWithCayenneMapping {
 				"[{\"property\":\"cVarchar\",\"value\":\"xyz\",\"exactMatch\":true}]");
 
 		assertNotNull(e);
-		assertEquals(exp("cVarchar = 'xyz'"), e);
+		assertEquals(exp("cVarchar like 'xyz%'"), e);
 	}
 
 	@Test
