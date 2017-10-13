@@ -1,5 +1,6 @@
 package com.nhl.link.rest.client;
 
+import java.util.Collections;
 import java.util.function.Supplier;
 
 import javax.ws.rs.client.WebTarget;
@@ -30,7 +31,7 @@ public class LinkRestClient {
 
 	static {
 		jsonFactory = new ObjectMapper().getFactory();
-		jsonEntityReaderFactory = new JsonEntityReaderFactory();
+		jsonEntityReaderFactory = new JsonEntityReaderFactory(Collections.emptyList());
 	}
 
 	public static LinkRestClient client(WebTarget target) {
