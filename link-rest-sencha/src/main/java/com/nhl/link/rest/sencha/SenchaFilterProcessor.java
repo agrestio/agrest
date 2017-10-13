@@ -22,6 +22,7 @@ import static org.apache.cayenne.exp.ExpressionFactory.greaterOrEqualExp;
 import static org.apache.cayenne.exp.ExpressionFactory.inExp;
 import static org.apache.cayenne.exp.ExpressionFactory.lessExp;
 import static org.apache.cayenne.exp.ExpressionFactory.lessOrEqualExp;
+import static org.apache.cayenne.exp.ExpressionFactory.likeExp;
 import static org.apache.cayenne.exp.ExpressionFactory.likeIgnoreCaseExp;
 import static org.apache.cayenne.exp.ExpressionFactory.matchExp;
 import static org.apache.cayenne.exp.ExpressionFactory.noMatchExp;
@@ -141,14 +142,14 @@ public class SenchaFilterProcessor implements ISenchaFilterProcessor {
 	}
 
 	Expression like(String property, Object value, boolean exactMatch) {
-		if (value == null || exactMatch || value instanceof Boolean) {
+		if (value == null || value instanceof Boolean) {
 			return eq(property, value);
 		}
 
 		String string = value.toString();
 		checkValueLength(string);
 		string = FilterUtil.escapeValueForLike(string) + "%";
-		return likeIgnoreCaseExp(property, string);
+		return exactMatch? likeExp(property, string) : likeIgnoreCaseExp(property, string);
 	}
 
 	Expression gt(String property, Object value) {
