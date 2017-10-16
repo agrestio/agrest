@@ -1,5 +1,6 @@
 package com.nhl.link.rest.runtime;
 
+import com.nhl.link.rest.BaseModule;
 import com.nhl.link.rest.DataResponse;
 import com.nhl.link.rest.EntityConstraint;
 import com.nhl.link.rest.LinkRestException;
@@ -15,7 +16,6 @@ import com.nhl.link.rest.meta.compiler.LrEntityCompiler;
 import com.nhl.link.rest.meta.compiler.PojoEntityCompiler;
 import com.nhl.link.rest.meta.parser.IResourceParser;
 import com.nhl.link.rest.meta.parser.ResourceParser;
-import com.nhl.link.rest.parser.converter.JsonValueConverter;
 import com.nhl.link.rest.provider.CayenneRuntimeExceptionMapper;
 import com.nhl.link.rest.provider.DataResponseWriter;
 import com.nhl.link.rest.provider.LinkRestExceptionMapper;
@@ -68,8 +68,6 @@ import com.nhl.link.rest.runtime.parser.RequestParser;
 import com.nhl.link.rest.runtime.parser.UpdateParser;
 import com.nhl.link.rest.runtime.parser.cache.IPathCache;
 import com.nhl.link.rest.runtime.parser.cache.PathCache;
-import com.nhl.link.rest.runtime.parser.converter.DefaultJsonValueConverterFactoryProvider;
-import com.nhl.link.rest.runtime.parser.converter.IJsonValueConverterFactory;
 import com.nhl.link.rest.runtime.parser.filter.CayenneExpProcessor;
 import com.nhl.link.rest.runtime.parser.filter.ExpressionPostProcessor;
 import com.nhl.link.rest.runtime.parser.filter.ICayenneExpProcessor;
@@ -171,9 +169,15 @@ public class LinkRestBuilder {
         this.adapters = new ArrayList<>();
         this.metadataEncoders = new HashMap<>();
         this.moduleProviders = new ArrayList<>(5);
-        this.modules = new ArrayList<>(5);
+        this.modules = defaultModules();
         this.featureProviders = new ArrayList<>(5);
         this.features = new ArrayList<>(5);
+    }
+
+    private List<Module> defaultModules() {
+        List<Module> modules = new ArrayList<>(5);
+        modules.add(new BaseModule());
+        return modules;
     }
 
     protected Map<Class<?>, Class<?>> mapDefaultExceptions() {
@@ -545,10 +549,6 @@ public class LinkRestBuilder {
             binder.bind(UnrelateProcessorFactory.class).toProvider(CayenneUnrelateProcessorFactoryProvider.class);
             binder.bind(CayenneUnrelateStartStage.class).to(CayenneUnrelateStartStage.class);
             binder.bind(CayenneUnrelateDataStoreStage.class).to(CayenneUnrelateDataStoreStage.class);
-
-            // a map of custom converters
-            binder.bindMap(JsonValueConverter.class);
-            binder.bind(IJsonValueConverterFactory.class).toProvider(DefaultJsonValueConverterFactoryProvider.class);
 
             binder.bind(IRequestParser.class).to(RequestParser.class);
             binder.bind(IAttributeEncoderFactory.class).to(AttributeEncoderFactory.class);

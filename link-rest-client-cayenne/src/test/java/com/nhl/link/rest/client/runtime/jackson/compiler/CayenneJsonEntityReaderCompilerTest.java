@@ -3,13 +3,25 @@ package com.nhl.link.rest.client.runtime.jackson.compiler;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.nhl.link.rest.client.runtime.jackson.IJsonEntityReader;
+import com.nhl.link.rest.runtime.parser.converter.DefaultJsonValueConverterFactoryProvider;
+import com.nhl.link.rest.runtime.parser.converter.IJsonValueConverterFactory;
+import org.junit.Before;
 import org.junit.Test;
+
+import java.util.Collections;
 
 import static org.junit.Assert.assertEquals;
 
 public class CayenneJsonEntityReaderCompilerTest {
 
-    JsonEntityReaderCompiler compiler = new CayenneJsonEntityReaderCompiler();
+    JsonEntityReaderCompiler compiler;
+
+    @Before
+    public void before() {
+        IJsonValueConverterFactory converterFactory
+                = new DefaultJsonValueConverterFactoryProvider(Collections.emptyMap()).get();
+        compiler = new CayenneJsonEntityReaderCompiler(converterFactory);
+    }
 
     @Test
     public void testCompiler() {
