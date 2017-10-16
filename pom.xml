@@ -11,6 +11,7 @@
     <packaging>pom</packaging>
 
     <modules>
+        <module>link-rest-base</module>
         <module>link-rest-annotations</module>
         <module>link-rest</module>
         <module>link-rest-client</module>
