@@ -18,7 +18,6 @@
         <module>link-rest-sencha</module>
         <module>link-rest-bom</module>
         <module>link-rest-docs</module>
-        <module>link-rest-client-cayenne</module>
     </modules>
 
     <properties>

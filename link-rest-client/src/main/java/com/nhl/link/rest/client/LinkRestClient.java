@@ -1,11 +1,5 @@
 package com.nhl.link.rest.client;
 
-import java.util.Collections;
-import java.util.function.Supplier;
-
-import javax.ws.rs.client.WebTarget;
-import javax.ws.rs.core.Response;
-
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nhl.link.rest.client.protocol.Expression.ExpressionBuilder;
@@ -17,9 +11,19 @@ import com.nhl.link.rest.client.protocol.Sort;
 import com.nhl.link.rest.client.runtime.jackson.IJsonEntityReader;
 import com.nhl.link.rest.client.runtime.jackson.IJsonEntityReaderFactory;
 import com.nhl.link.rest.client.runtime.jackson.JsonEntityReaderFactory;
+import com.nhl.link.rest.client.runtime.jackson.compiler.JsonEntityReaderCompiler;
+import com.nhl.link.rest.client.runtime.jackson.compiler.PojoJsonEntityReaderCompiler;
 import com.nhl.link.rest.client.runtime.response.DataResponseHandler;
 import com.nhl.link.rest.client.runtime.response.SimpleResponseHandler;
 import com.nhl.link.rest.client.runtime.run.InvocationBuilder;
+import com.nhl.link.rest.runtime.parser.converter.DefaultJsonValueConverterFactoryProvider;
+import com.nhl.link.rest.runtime.parser.converter.IJsonValueConverterFactory;
+
+import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.core.Response;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.function.Supplier;
 
 /**
  * @since 2.0
@@ -31,7 +35,13 @@ public class LinkRestClient {
 
 	static {
 		jsonFactory = new ObjectMapper().getFactory();
-		jsonEntityReaderFactory = new JsonEntityReaderFactory(Collections.emptyList());
+		jsonEntityReaderFactory = new JsonEntityReaderFactory(getDefaultCompilers());
+	}
+
+	private static Collection<JsonEntityReaderCompiler> getDefaultCompilers() {
+		IJsonValueConverterFactory converterFactory =
+				new DefaultJsonValueConverterFactoryProvider(Collections.emptyMap()).get();
+		return Collections.singletonList(new PojoJsonEntityReaderCompiler(converterFactory));
 	}
 
 	public static LinkRestClient client(WebTarget target) {

@@ -1,8 +1,9 @@
-package com.nhl.link.rest.client.runtime.jackson.compiler;
+package com.nhl.link.rest.client.runtime.jackson;
 
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.nhl.link.rest.client.runtime.jackson.IJsonEntityReader;
+import com.nhl.link.rest.client.it.fixture.T1;
+import com.nhl.link.rest.client.runtime.jackson.compiler.PojoJsonEntityReaderCompiler;
 import com.nhl.link.rest.runtime.parser.converter.DefaultJsonValueConverterFactoryProvider;
 import com.nhl.link.rest.runtime.parser.converter.IJsonValueConverterFactory;
 import org.junit.Before;
@@ -12,15 +13,15 @@ import java.util.Collections;
 
 import static org.junit.Assert.assertEquals;
 
-public class CayenneJsonEntityReaderCompilerTest {
+public class PojoJsonEntityReaderTest {
 
-    JsonEntityReaderCompiler compiler;
+    PojoJsonEntityReaderCompiler compiler;
 
     @Before
     public void before() {
         IJsonValueConverterFactory converterFactory
                 = new DefaultJsonValueConverterFactoryProvider(Collections.emptyMap()).get();
-        compiler = new CayenneJsonEntityReaderCompiler(converterFactory);
+        compiler = new PojoJsonEntityReaderCompiler(converterFactory);
     }
 
     @Test
@@ -28,11 +29,13 @@ public class CayenneJsonEntityReaderCompilerTest {
         IJsonEntityReader<T1> reader = compiler.compile(T1.class);
 
         ObjectNode objectNode = JsonNodeFactory.instance.objectNode();
-        objectNode.set(T1.P_INT.getName(), JsonNodeFactory.instance.numberNode(1));
-        objectNode.set(T1.P_STRING.getName(), JsonNodeFactory.instance.textNode("abc"));
+        objectNode.set(T1.P_BOOLEAN, JsonNodeFactory.instance.booleanNode(true));
+        objectNode.set(T1.P_INTEGER, JsonNodeFactory.instance.numberNode(1));
+        objectNode.set(T1.P_STRING, JsonNodeFactory.instance.textNode("abc"));
 
         T1 t1 = reader.readEntity(objectNode);
-        assertEquals("abc", t1.getPString());
-        assertEquals(Integer.valueOf(1), t1.getPInt());
+        assertEquals(true, t1.isBoolean());
+        assertEquals(Integer.valueOf(1), t1.getInteger());
+        assertEquals("abc", t1.getString());
     }
 }

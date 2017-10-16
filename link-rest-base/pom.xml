@@ -42,6 +42,13 @@
             <artifactId>cayenne-di</artifactId>
             <scope>compile</scope>
         </dependency>
+
+        <!-- Test dependencies -->
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
 </project>
