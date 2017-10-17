@@ -1,6 +1,7 @@
 package com.nhl.link.rest.runtime.listener;
 
 import com.nhl.link.rest.LinkRestException;
+import com.nhl.link.rest.meta.Types;
 import com.nhl.link.rest.processor.ProcessingContext;
 import com.nhl.link.rest.processor.ProcessingStage;
 import org.slf4j.Logger;
@@ -12,9 +13,7 @@ import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.lang.reflect.WildcardType;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -219,7 +218,7 @@ class ListenerInvocationFactoryCompiler {
 		case 1:
 
 			checkParamType(m.getName(), paramTypes[0], ProcessingContext.class);
-			final Class<?> entityType1 = entityTypeForParamType(genericParamTypes[0]);
+			final Class<?> entityType1 = Types.getClassForTypeArgument(genericParamTypes[0]).orElse(Object.class);
 
 			return new Invoker() {
 
@@ -238,7 +237,7 @@ class ListenerInvocationFactoryCompiler {
 		case 2:
 			checkParamType(m.getName(), paramTypes[0], ProcessingContext.class);
 			checkParamType(m.getName(), paramTypes[1], ProcessingStage.class);
-			final Class<?> entityType2 = entityTypeForParamType(genericParamTypes[0]);
+			final Class<?> entityType2 = Types.getClassForTypeArgument(genericParamTypes[0]).orElse(Object.class);
 
 			return new Invoker() {
 
@@ -259,31 +258,6 @@ class ListenerInvocationFactoryCompiler {
 					"Annotated method is expected to have at most 2 arguments. Method '" + m.getName() + "' has "
 							+ paramTypes.length);
 		}
-	}
-
-	Class<?> entityTypeForParamType(Type paramType) {
-
-		if (paramType instanceof ParameterizedType) {
-
-			// the algorithm below is not universal. It doesn't check multiple
-			// bounds...
-
-			Type[] typeArgs = ((ParameterizedType) paramType).getActualTypeArguments();
-			if (typeArgs.length == 1) {
-				if (typeArgs[0] instanceof Class) {
-					return (Class<?>) typeArgs[0];
-				} else if (typeArgs[0] instanceof WildcardType) {
-					Type[] upperBounds = ((WildcardType) typeArgs[0]).getUpperBounds();
-					if (upperBounds.length == 1) {
-						if (upperBounds[0] instanceof Class) {
-							return (Class<?>) upperBounds[0];
-						}
-					}
-				}
-			}
-		}
-
-		return Object.class;
 	}
 
 	void checkParamType(String methodName, Class<?> type, Class<?> expectedType) {
