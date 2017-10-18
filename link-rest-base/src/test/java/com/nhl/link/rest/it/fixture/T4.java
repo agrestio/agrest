@@ -1,4 +1,4 @@
-package com.nhl.link.rest.client.it.fixture;
+package com.nhl.link.rest.it.fixture;
 
 import java.util.Objects;
 

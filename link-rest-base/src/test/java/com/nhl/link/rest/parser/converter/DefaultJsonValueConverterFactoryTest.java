@@ -24,11 +24,11 @@ public class DefaultJsonValueConverterFactoryTest {
         DefaultJsonValueConverterFactory factory =
                 new DefaultJsonValueConverterFactory(Collections.singletonMap(Long.class, c1), c2);
 
-        assertSame(c1, factory.converter(Long.class));
-        assertSame(c2, factory.converter(Long.TYPE));
+        assertSame(c1, factory.typedConverter(Long.class));
+        assertSame(c2, factory.typedConverter(Long.TYPE));
 
-        assertSame(c2, factory.converter(this.getClass()));
-        assertSame(c2, factory.converter(Object.class));
+        assertSame(c2, factory.typedConverter(this.getClass()));
+        assertSame(c2, factory.typedConverter(Object.class));
     }
 
     @Ignore
@@ -41,18 +41,18 @@ public class DefaultJsonValueConverterFactoryTest {
         DefaultJsonValueConverterFactory factory =
                 new DefaultJsonValueConverterFactory(Collections.emptyMap(), c2);
 
-        assertSame(c2, factory.converter(Object.class));
+        assertSame(c2, factory.typedConverter(Object.class));
 
 
-        JsonValueConverter<?> e1c  = factory.converter(E1.class);
+        JsonValueConverter<?> e1c  = factory.typedConverter(E1.class);
         assertTrue(e1c instanceof EnumConverter);
         assertSame(E1.class, ((EnumConverter) e1c).getEnumType());
 
-        JsonValueConverter<?> e2c  = factory.converter(E2.class);
+        JsonValueConverter<?> e2c  = factory.typedConverter(E2.class);
         assertTrue(e2c instanceof EnumConverter);
         assertSame(E2.class, ((EnumConverter) e2c).getEnumType());
 
-        assertSame(e1c, factory.converter(E1.class));
+        assertSame(e1c, factory.typedConverter(E1.class));
     }
 
     public enum E1 {

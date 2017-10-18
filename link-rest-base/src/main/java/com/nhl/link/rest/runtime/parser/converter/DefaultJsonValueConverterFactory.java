@@ -35,9 +35,8 @@ public class DefaultJsonValueConverterFactory implements IJsonValueConverterFact
 
     private JsonValueConverter<?> defaultConverter;
 
-    public DefaultJsonValueConverterFactory(
-            Map<Class<?>, JsonValueConverter<?>> knownConverters,
-            JsonValueConverter<?> defaultConverter) {
+    public DefaultJsonValueConverterFactory(Map<Class<?>, JsonValueConverter<?>> knownConverters,
+                                            JsonValueConverter<?> defaultConverter) {
 
         this.defaultConverter = defaultConverter;
 
@@ -47,6 +46,17 @@ public class DefaultJsonValueConverterFactory implements IJsonValueConverterFact
 
     @Override
     public JsonValueConverter<?> converter(Type valueType) {
+        return getOrCreateConverter(valueType, () -> buildConverter(valueType).orElse(defaultConverter));
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public <T> JsonValueConverter<T> typedConverter(Class<T> valueType) {
+        return (JsonValueConverter<T>) getOrCreateConverter(valueType, () -> buildConverter(valueType).orElseThrow(
+                () -> new RuntimeException("Can't create typed converter for type: " + valueType.getName())));
+    }
+
+    private JsonValueConverter<?> getOrCreateConverter(Type valueType, Supplier<JsonValueConverter<?>> supplier) {
         JsonValueConverter<?> converter = convertersByJavaType.get(valueType);
         if (converter == null) {
             ThrowingSupplier<JsonValueConverter<?>> converterSupplier = new ThrowingSupplier<>();
@@ -55,29 +65,30 @@ public class DefaultJsonValueConverterFactory implements IJsonValueConverterFact
             if (existing != null) {
                 converter = existing;
             } else {
-                converterSupplier.setValue(buildConverter(valueType));
+                converterSupplier.setValue(supplier.get());
             }
         }
         return converter;
     }
 
-    private JsonValueConverter<?> buildConverter(Type t) {
-        Optional<JsonValueConverter<?>> converter = Types.getClassForType(t).map(cls -> buildConverter(cls, t));
-        if (converter.isPresent()) {
-            return converter.get();
-        } else {
-            return defaultConverter;
-        }
+    private Optional<JsonValueConverter<?>> buildConverter(Type t) {
+        return Types.getClassForType(t).flatMap(cls -> buildConverter(cls, Optional.of(t)));
     }
 
     @SuppressWarnings("unchecked")
-    private JsonValueConverter<?> buildConverter(Class<?> cls, Type t) {
+    private Optional<JsonValueConverter<?>> buildConverter(Class<?> cls, Optional<Type> t) {
         if (cls.isEnum()) {
-            return enumConverter((Class<? extends Enum<?>>)cls);
+            return Optional.of(enumConverter(cls));
         }
 
         if (Collection.class.isAssignableFrom(cls)) {
-            Type parameterType = Types.unwrapTypeArgument(t).orElse(Object.class);
+            Type parameterType;
+            if (t.isPresent()) {
+                parameterType = Types.unwrapTypeArgument(t.get()).orElse(Object.class);
+            } else {
+                parameterType = Object.class;
+            }
+
             Supplier<Collection<Object>> containerSupplier;
             if (List.class.equals(cls) || Collection.class.equals(cls)) {
                 containerSupplier = ArrayList::new;
@@ -87,35 +98,35 @@ public class DefaultJsonValueConverterFactory implements IJsonValueConverterFact
                 if (LOGGER.isDebugEnabled()) {
                     LOGGER.debug("Unsupported collection type: " + cls.getName());
                 }
-                return defaultConverter;
+                return Optional.empty();
             }
             JsonValueConverter<Object> elementConverter = (JsonValueConverter<Object>) converter(parameterType);
-            return new CollectionConverter<>(containerSupplier, elementConverter);
+            return Optional.of(new CollectionConverter<>(containerSupplier, elementConverter));
         }
 
-        return buildPojoConverter(cls);
+        return objectConverter(cls);
     }
 
     @SuppressWarnings("unchecked")
-    private <T extends Enum<T>> JsonValueConverter<?> enumConverter(Class<? extends Enum<?>> enumType) {
+    private <T extends Enum<T>> JsonValueConverter<T> enumConverter(Class<?> enumType) {
         return new EnumConverter<>((Class<T>) enumType);
     }
 
-    private JsonValueConverter<?> buildPojoConverter(Class<?> cls) {
+    private Optional<JsonValueConverter<?>> objectConverter(Class<?> cls) {
         Map<String, PropertySetter> setters = BeanAnalyzer.findSetters(cls)
                 .collect(Collectors.toMap(PropertySetter::getName, Function.identity()));
 
         if (setters.isEmpty()) {
-            return defaultConverter;
+            return Optional.empty();
 
         } else {
             Map<String, JsonValueConverter<?>> propertyConverters = setters.values().stream()
                 .collect(Collectors.toMap(PropertySetter::getName, this::buildConverter));
-            return new PojoConverter<>(cls, setters, propertyConverters, defaultConverter);
+            return Optional.of(new PojoConverter<>(cls, setters, propertyConverters, defaultConverter));
         }
     }
 
-    private JsonValueConverter buildConverter(PropertySetter setter) {
+    private JsonValueConverter<?> buildConverter(PropertySetter setter) {
         return converter(setter.getMethod().getGenericParameterTypes()[0]);
     }
 }

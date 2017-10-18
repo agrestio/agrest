@@ -16,4 +16,6 @@ public interface IJsonValueConverterFactory {
      * @since 1.24
      */
     JsonValueConverter<?> converter(Type valueType);
+
+    <T> JsonValueConverter<T> typedConverter(Class<T> valueType);
 }

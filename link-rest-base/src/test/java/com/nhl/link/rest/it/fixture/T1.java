@@ -1,4 +1,4 @@
-package com.nhl.link.rest.client.it.fixture;
+package com.nhl.link.rest.it.fixture;
 
 public class T1 {
     public static final String P_BOOLEAN = "boolean";

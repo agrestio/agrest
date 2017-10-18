@@ -1,15 +1,15 @@
-package com.nhl.link.rest.client.runtime.jackson;
+package com.nhl.link.rest.parser.converter;
 
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.nhl.link.rest.client.it.fixture.T1;
-import com.nhl.link.rest.client.it.fixture.T2;
-import com.nhl.link.rest.client.it.fixture.T3;
-import com.nhl.link.rest.client.it.fixture.T4;
-import com.nhl.link.rest.client.it.fixture.T5;
-import com.nhl.link.rest.client.runtime.jackson.compiler.PojoJsonEntityReaderCompiler;
+import com.nhl.link.rest.it.fixture.T1;
+import com.nhl.link.rest.it.fixture.T2;
+import com.nhl.link.rest.it.fixture.T3;
+import com.nhl.link.rest.it.fixture.T4;
+import com.nhl.link.rest.it.fixture.T5;
 import com.nhl.link.rest.runtime.parser.converter.DefaultJsonValueConverterFactoryProvider;
 import com.nhl.link.rest.runtime.parser.converter.IJsonValueConverterFactory;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -21,21 +21,19 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-public class PojoJsonEntityReaderCompilerTest {
+public class DefaultJsonValueConverterFactory_PojoTest {
 
-    PojoJsonEntityReaderCompiler compiler;
+    IJsonValueConverterFactory converterFactory;
     JsonNodeFactory nodeFactory;
 
     @Before
     public void before() {
-        IJsonValueConverterFactory converterFactory
-                = new DefaultJsonValueConverterFactoryProvider(Collections.emptyMap()).get();
-        compiler = new PojoJsonEntityReaderCompiler(converterFactory);
+        converterFactory = new DefaultJsonValueConverterFactoryProvider(Collections.emptyMap()).get();
         nodeFactory = JsonNodeFactory.instance;
     }
 
-    private <T> IJsonEntityReader<T> compile(Class<T> type) {
-        return compiler.compile(type);
+    private <T> JsonValueConverter<T> compile(Class<T> type) {
+        return converterFactory.typedConverter(type);
     }
 
     private JsonNodeFactory nodeFactory() {
@@ -44,29 +42,29 @@ public class PojoJsonEntityReaderCompilerTest {
 
     @Test
     public void testCompiler_SimpleProperties() {
-        IJsonEntityReader<T1> reader = compile(T1.class);
+        JsonValueConverter<T1> reader = compile(T1.class);
 
         ObjectNode objectNode = nodeFactory().objectNode();
         objectNode.set(T1.P_BOOLEAN, nodeFactory().booleanNode(true));
         objectNode.set(T1.P_INTEGER, nodeFactory().numberNode(1));
         objectNode.set(T1.P_STRING, nodeFactory().textNode("abc"));
 
-        T1 t1 = reader.readEntity(objectNode);
-        assertEquals(true, t1.isBoolean());
-        assertEquals(Integer.valueOf(1), t1.getInteger());
-        assertEquals("abc", t1.getString());
+        T1 t1 = reader.value(objectNode);
+        Assert.assertEquals(true, t1.isBoolean());
+        Assert.assertEquals(Integer.valueOf(1), t1.getInteger());
+        Assert.assertEquals("abc", t1.getString());
     }
 
     @Test
     public void testCompiler_CollectionProperties() {
-        IJsonEntityReader<T2> reader = compile(T2.class);
+        JsonValueConverter<T2> reader = compile(T2.class);
 
         ObjectNode objectNode = nodeFactory().objectNode();
         objectNode.set(T2.P_BOOLEANS, nodeFactory().arrayNode().add(true).add(false));
         objectNode.set(T2.P_INTEGERS, nodeFactory().arrayNode().add(1).add(2).add(3));
         objectNode.set(T2.P_STRINGS, nodeFactory().arrayNode().add("a").add("b").add("c"));
 
-        T2 t2 = reader.readEntity(objectNode);
+        T2 t2 = reader.value(objectNode);
         assertSameContent(t2.getBooleans(), true, false);
         assertSameContent(t2.getIntegers(), 1, 2, 3);
         assertSameContent(t2.getStrings(), "a", "b", "c");
@@ -74,7 +72,7 @@ public class PojoJsonEntityReaderCompilerTest {
 
     @Test
     public void testCompiler_RelationshipProperties() {
-        IJsonEntityReader<T3> reader = compile(T3.class);
+        JsonValueConverter<T3> reader = compile(T3.class);
 
         ObjectNode t3_objectNode_Hollow = nodeFactory().objectNode();
         t3_objectNode_Hollow.set(T3.P_ID, nodeFactory().numberNode(11));
@@ -104,8 +102,8 @@ public class PojoJsonEntityReaderCompilerTest {
         t5.setT3s(Collections.singleton(new T3(11)));
         t3_expected.setT5(t5);
 
-        T3 t3 = reader.readEntity(t3_objectNode);
-        assertEquals(t3_expected, t3);
+        T3 t3 = reader.value(t3_objectNode);
+        Assert.assertEquals(t3_expected, t3);
     }
 
     private <T extends Collection> void assertSameContent(T collection, Object... values) {

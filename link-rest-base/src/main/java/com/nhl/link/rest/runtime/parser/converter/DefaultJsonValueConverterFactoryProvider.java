@@ -1,5 +1,6 @@
 package com.nhl.link.rest.runtime.parser.converter;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.nhl.link.rest.parser.converter.Base64Converter;
 import com.nhl.link.rest.parser.converter.FloatConverter;
 import com.nhl.link.rest.parser.converter.GenericConverter;
@@ -24,6 +25,8 @@ import java.util.Map;
  * @since 2.10
  */
 public class DefaultJsonValueConverterFactoryProvider implements Provider<IJsonValueConverterFactory> {
+
+    private static final JsonValueConverter<JsonNode> DO_NOTHING_CONVERTER = node -> node;
 
     private Map<String, JsonValueConverter<?>> injectedConverters;
 
@@ -60,6 +63,7 @@ public class DefaultJsonValueConverterFactoryProvider implements Provider<IJsonV
         converters.put(LocalDate.class, ISOLocalDateConverter.converter());
         converters.put(LocalTime.class, ISOLocalTimeConverter.converter());
         converters.put(LocalDateTime.class, ISOLocalDateTimeConverter.converter());
+        converters.put(JsonNode.class, DO_NOTHING_CONVERTER);
 
         return converters;
     }
