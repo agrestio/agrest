@@ -1,13 +1,12 @@
 package com.nhl.link.rest.runtime.parser.converter;
 
-import com.nhl.link.rest.ThrowingSupplier;
 import com.nhl.link.rest.meta.Types;
 import com.nhl.link.rest.meta.compiler.BeanAnalyzer;
 import com.nhl.link.rest.meta.compiler.PropertySetter;
 import com.nhl.link.rest.parser.converter.CollectionConverter;
-import com.nhl.link.rest.parser.converter.DelegatingConverter;
 import com.nhl.link.rest.parser.converter.EnumConverter;
 import com.nhl.link.rest.parser.converter.JsonValueConverter;
+import com.nhl.link.rest.parser.converter.LazyConverter;
 import com.nhl.link.rest.parser.converter.PojoConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -59,13 +58,10 @@ public class DefaultJsonValueConverterFactory implements IJsonValueConverterFact
     private JsonValueConverter<?> getOrCreateConverter(Type valueType, Supplier<JsonValueConverter<?>> supplier) {
         JsonValueConverter<?> converter = convertersByJavaType.get(valueType);
         if (converter == null) {
-            ThrowingSupplier<JsonValueConverter<?>> converterSupplier = new ThrowingSupplier<>();
-            converter = new DelegatingConverter(converterSupplier);
+            converter = supplier.get();
             JsonValueConverter<?> existing = convertersByJavaType.putIfAbsent(valueType, converter);
             if (existing != null) {
                 converter = existing;
-            } else {
-                converterSupplier.setValue(supplier.get());
             }
         }
         return converter;
@@ -100,7 +96,8 @@ public class DefaultJsonValueConverterFactory implements IJsonValueConverterFact
                 }
                 return Optional.empty();
             }
-            JsonValueConverter<Object> elementConverter = (JsonValueConverter<Object>) converter(parameterType);
+            JsonValueConverter<Object> elementConverter =
+                    (JsonValueConverter<Object>) new LazyConverter<>(() -> converter(parameterType));
             return Optional.of(new CollectionConverter<>(containerSupplier, elementConverter));
         }
 
@@ -121,7 +118,7 @@ public class DefaultJsonValueConverterFactory implements IJsonValueConverterFact
 
         } else {
             Map<String, JsonValueConverter<?>> propertyConverters = setters.values().stream()
-                .collect(Collectors.toMap(PropertySetter::getName, this::buildConverter));
+                .collect(Collectors.toMap(PropertySetter::getName, setter -> new LazyConverter<>(() -> buildConverter(setter))));
             return Optional.of(new PojoConverter<>(cls, setters, propertyConverters, defaultConverter));
         }
     }
