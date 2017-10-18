@@ -1,5 +1,6 @@
 package com.nhl.link.rest.sencha;
 
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.nhl.link.rest.runtime.jackson.IJacksonService;
 import com.nhl.link.rest.runtime.parser.converter.IJsonValueConverterFactory;
 import com.nhl.link.rest.runtime.semantics.IRelationshipMapper;
@@ -22,11 +23,12 @@ public class SenchaUpdateParserTest {
 
 	@Test
 	public void testIsTempId() {
+		JsonNodeFactory nodeFactory = JsonNodeFactory.instance;
 
 		assertFalse(processor.isTempId(null));
-		assertFalse(processor.isTempId(new Object()));
-		assertTrue(processor.isTempId("My-123"));
-		assertFalse(processor.isTempId("My-My"));
+		assertFalse(processor.isTempId(nodeFactory.objectNode()));
+		assertTrue(processor.isTempId(nodeFactory.textNode("My-123")));
+		assertFalse(processor.isTempId(nodeFactory.textNode("My-My")));
 	}
 
 }

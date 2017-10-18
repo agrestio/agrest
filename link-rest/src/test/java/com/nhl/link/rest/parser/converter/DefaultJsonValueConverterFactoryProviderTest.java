@@ -33,12 +33,6 @@ public class DefaultJsonValueConverterFactoryProviderTest {
     }
 
     @Test
-    public void testConverter_Generic() {
-        assertSame(GenericConverter.converter(), createFactory().converter(this.getClass()));
-        assertSame(GenericConverter.converter(), createFactory().converter(Object.class));
-    }
-
-    @Test
     public void testConverter_LongKnown() {
         assertSame(LongConverter.converter(), createFactory().converter(Long.class));
         assertSame(LongConverter.converter(), createFactory().converter(Long.TYPE));

@@ -1,5 +1,7 @@
 package com.nhl.link.rest.meta.compiler;
 
+import com.nhl.link.rest.meta.Types;
+
 import java.lang.reflect.Method;
 import java.util.Optional;
 import java.util.regex.Matcher;
@@ -23,7 +25,7 @@ public class BeanAnalyzer {
 
     private static Optional<PropertyGetter> fromGetter(Method maybeGetter) {
         Class<?> type = maybeGetter.getReturnType();
-        if (isVoid(type) || maybeGetter.getParameterTypes().length > 0) {
+        if (Types.isVoid(type) || maybeGetter.getParameterTypes().length > 0) {
             return Optional.empty();
         }
 
@@ -55,14 +57,14 @@ public class BeanAnalyzer {
 
     private static Optional<PropertySetter> fromSetter(Method maybeSetter) {
         Class<?> returnType = maybeSetter.getReturnType();
-        if (!isVoid(returnType) || maybeSetter.getParameterTypes().length != 1) {
+        if (!Types.isVoid(returnType) || maybeSetter.getParameterTypes().length != 1) {
             return Optional.empty();
         }
 
-        Class<?> valueType = maybeSetter.getParameterTypes()[0];
+        Class<?> parameterType = maybeSetter.getParameterTypes()[0];
 
         return propertyNameFromSetter(maybeSetter.getName())
-                .map(n -> new PropertySetter(n, valueType, maybeSetter));
+                .map(n -> new PropertySetter(n, parameterType, maybeSetter));
     }
 
     public static Optional<String> propertyNameFromSetter(String maybeSetter) {
@@ -73,9 +75,5 @@ public class BeanAnalyzer {
 
         String raw = matcher.group(1);
         return Optional.of(Character.toLowerCase(raw.charAt(0)) + raw.substring(1));
-    }
-
-    private static boolean isVoid(Class<?> type) {
-        return Void.class.equals(type) || void.class.equals(type);
     }
 }

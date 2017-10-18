@@ -7,12 +7,14 @@ import com.nhl.link.rest.client.runtime.jackson.compiler.PojoJsonEntityReaderCom
 import com.nhl.link.rest.runtime.parser.converter.DefaultJsonValueConverterFactoryProvider;
 import com.nhl.link.rest.runtime.parser.converter.IJsonValueConverterFactory;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.Collections;
 
 import static org.junit.Assert.assertEquals;
 
+@Ignore
 public class PojoJsonEntityReaderTest {
 
     PojoJsonEntityReaderCompiler compiler;

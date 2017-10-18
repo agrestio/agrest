@@ -21,7 +21,7 @@ public class PropertySetter {
         return name;
     }
 
-    public Class<?> getType() {
+    public Class<?> getParameterType() {
         return type;
     }
 
@@ -29,13 +29,13 @@ public class PropertySetter {
         return method;
     }
 
-    public Object setValue(Object object, Object value) {
+    public void setValue(Object object, Object value) {
         if (object == null) {
-            return null;
+            return;
         }
 
         try {
-            return method.invoke(object, value);
+            method.invoke(object, value);
         } catch (Throwable th) {
             throw new LinkRestException(Response.Status.INTERNAL_SERVER_ERROR, "Error writing property: " + name, th);
         }
