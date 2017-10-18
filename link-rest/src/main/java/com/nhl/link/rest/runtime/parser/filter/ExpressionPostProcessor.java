@@ -26,7 +26,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class ExpressionPostProcessor implements IExpressionPostProcessor {
 
     private IPathCache pathCache;
-	private Map<Class<?>, JsonValueConverter> converters;
+	private Map<Class<?>, JsonValueConverter<?>> converters;
 
     private Map<LrEntity<?>, ExpressionProcessor> postProcessors;
 
@@ -38,7 +38,7 @@ public class ExpressionPostProcessor implements IExpressionPostProcessor {
 		// The tricky part is the "id" attribute that is converted to DbPath
 		// during CayenneExpProcessorWorker traversal, so its type can not be
 		// mapped with existing tools
-        Map<Class<?>, JsonValueConverter> converters = new HashMap<>();
+        Map<Class<?>, JsonValueConverter<?>> converters = new HashMap<>();
 		converters.put(Date.class, UtcDateConverter.converter());
 		converters.put(java.sql.Date.class, UtcDateConverter.converter());
 		converters.put(java.sql.Time.class, UtcDateConverter.converter());
@@ -154,7 +154,7 @@ public class ExpressionPostProcessor implements IExpressionPostProcessor {
 
                 PathDescriptor pd = pathCache.getPathDescriptor(entity, peerPath);
                 if (pd.isAttribute()) {
-                    JsonValueConverter converter = converters.get(pd.getType());
+                    JsonValueConverter<?> converter = converters.get(pd.getType());
                     if (converter != null) {
 
                         try {

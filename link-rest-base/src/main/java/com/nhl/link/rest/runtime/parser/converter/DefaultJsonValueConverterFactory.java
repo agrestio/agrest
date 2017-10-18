@@ -18,6 +18,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
@@ -30,13 +31,13 @@ import java.util.stream.Collectors;
 public class DefaultJsonValueConverterFactory implements IJsonValueConverterFactory {
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultJsonValueConverterFactory.class);
 
-    protected Map<Type, JsonValueConverter> convertersByJavaType;
+    protected Map<Type, JsonValueConverter<?>> convertersByJavaType;
 
-    private JsonValueConverter defaultConverter;
+    private JsonValueConverter<?> defaultConverter;
 
     public DefaultJsonValueConverterFactory(
-            Map<Class<?>, JsonValueConverter> knownConverters,
-            JsonValueConverter defaultConverter) {
+            Map<Class<?>, JsonValueConverter<?>> knownConverters,
+            JsonValueConverter<?> defaultConverter) {
 
         this.defaultConverter = defaultConverter;
 
@@ -45,12 +46,12 @@ public class DefaultJsonValueConverterFactory implements IJsonValueConverterFact
     }
 
     @Override
-    public JsonValueConverter converter(Type valueType) {
-        JsonValueConverter converter = convertersByJavaType.get(valueType);
+    public JsonValueConverter<?> converter(Type valueType) {
+        JsonValueConverter<?> converter = convertersByJavaType.get(valueType);
         if (converter == null) {
-            ThrowingSupplier<JsonValueConverter> converterSupplier = new ThrowingSupplier<>();
+            ThrowingSupplier<JsonValueConverter<?>> converterSupplier = new ThrowingSupplier<>();
             converter = new DelegatingConverter(converterSupplier);
-            JsonValueConverter existing = convertersByJavaType.putIfAbsent(valueType, converter);
+            JsonValueConverter<?> existing = convertersByJavaType.putIfAbsent(valueType, converter);
             if (existing != null) {
                 converter = existing;
             } else {
@@ -60,14 +61,19 @@ public class DefaultJsonValueConverterFactory implements IJsonValueConverterFact
         return converter;
     }
 
-    private JsonValueConverter buildConverter(Type t) {
-        return Types.getClassForType(t).map(cls -> buildConverter(cls, t)).orElse(defaultConverter);
+    private JsonValueConverter<?> buildConverter(Type t) {
+        Optional<JsonValueConverter<?>> converter = Types.getClassForType(t).map(cls -> buildConverter(cls, t));
+        if (converter.isPresent()) {
+            return converter.get();
+        } else {
+            return defaultConverter;
+        }
     }
 
     @SuppressWarnings("unchecked")
-    private JsonValueConverter buildConverter(Class<?> cls, Type t) {
+    private JsonValueConverter<?> buildConverter(Class<?> cls, Type t) {
         if (cls.isEnum()) {
-            return new EnumConverter((Class<? extends Enum>) cls);
+            return enumConverter((Class<? extends Enum<?>>)cls);
         }
 
         if (Collection.class.isAssignableFrom(cls)) {
@@ -83,13 +89,19 @@ public class DefaultJsonValueConverterFactory implements IJsonValueConverterFact
                 }
                 return defaultConverter;
             }
-            return new CollectionConverter(containerSupplier, converter(parameterType));
+            JsonValueConverter<Object> elementConverter = (JsonValueConverter<Object>) converter(parameterType);
+            return new CollectionConverter<>(containerSupplier, elementConverter);
         }
 
         return buildPojoConverter(cls);
     }
 
-    private JsonValueConverter buildPojoConverter(Class<?> cls) {
+    @SuppressWarnings("unchecked")
+    private <T extends Enum<T>> JsonValueConverter<?> enumConverter(Class<? extends Enum<?>> enumType) {
+        return new EnumConverter<>((Class<T>) enumType);
+    }
+
+    private JsonValueConverter<?> buildPojoConverter(Class<?> cls) {
         Map<String, PropertySetter> setters = BeanAnalyzer.findSetters(cls)
                 .collect(Collectors.toMap(PropertySetter::getName, Function.identity()));
 
@@ -97,7 +109,7 @@ public class DefaultJsonValueConverterFactory implements IJsonValueConverterFact
             return defaultConverter;
 
         } else {
-            Map<String, JsonValueConverter> propertyConverters = setters.values().stream()
+            Map<String, JsonValueConverter<?>> propertyConverters = setters.values().stream()
                 .collect(Collectors.toMap(PropertySetter::getName, this::buildConverter));
             return new PojoConverter<>(cls, setters, propertyConverters, defaultConverter);
         }

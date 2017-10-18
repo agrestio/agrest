@@ -6,16 +6,16 @@ import javax.xml.bind.DatatypeConverter;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.nhl.link.rest.LinkRestException;
 
-public class Base64Converter extends AbstractConverter {
+public class Base64Converter extends AbstractConverter<byte[]> {
 
-	private static final JsonValueConverter instance = new Base64Converter();
+	private static final Base64Converter instance = new Base64Converter();
 
-	public static JsonValueConverter converter() {
+	public static Base64Converter converter() {
 		return instance;
 	}
 
 	@Override
-	protected Object valueNonNull(JsonNode node) {
+	protected byte[] valueNonNull(JsonNode node) {
 
 		if (!node.isTextual()) {
 			throw new LinkRestException(Status.BAD_REQUEST, "Expected textual value, got: " + node.asText());

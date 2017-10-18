@@ -25,27 +25,27 @@ import java.util.Map;
  */
 public class DefaultJsonValueConverterFactoryProvider implements Provider<IJsonValueConverterFactory> {
 
-    private Map<String, JsonValueConverter> injectedConverters;
+    private Map<String, JsonValueConverter<?>> injectedConverters;
 
-    public DefaultJsonValueConverterFactoryProvider(@Inject Map<String, JsonValueConverter> injectedConverters) {
+    public DefaultJsonValueConverterFactoryProvider(@Inject Map<String, JsonValueConverter<?>> injectedConverters) {
         this.injectedConverters = injectedConverters;
     }
 
     @Override
     public IJsonValueConverterFactory get() throws DIRuntimeException {
 
-        Map<Class<?>, JsonValueConverter> converters =
+        Map<Class<?>, JsonValueConverter<?>> converters =
                 appendInjectedConverters(
                         appendKnownConverters(new HashMap<>()));
 
         return new DefaultJsonValueConverterFactory(converters, defaultConverter());
     }
 
-    protected JsonValueConverter defaultConverter() {
+    protected JsonValueConverter<?> defaultConverter() {
         return GenericConverter.converter();
     }
 
-    protected Map<Class<?>, JsonValueConverter> appendKnownConverters(Map<Class<?>, JsonValueConverter> converters) {
+    protected Map<Class<?>, JsonValueConverter<?>> appendKnownConverters(Map<Class<?>, JsonValueConverter<?>> converters) {
 
         converters.put(Object.class, GenericConverter.converter());
         converters.put(Float.class, FloatConverter.converter());
@@ -64,7 +64,7 @@ public class DefaultJsonValueConverterFactoryProvider implements Provider<IJsonV
         return converters;
     }
 
-    protected Map<Class<?>, JsonValueConverter> appendInjectedConverters(Map<Class<?>, JsonValueConverter> converters) {
+    protected Map<Class<?>, JsonValueConverter<?>> appendInjectedConverters(Map<Class<?>, JsonValueConverter<?>> converters) {
         injectedConverters.forEach((k, v) -> converters.put(typeForName(k), v));
         return converters;
     }

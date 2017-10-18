@@ -23,10 +23,10 @@ public class CayenneLrRelationship implements LrPersistentRelationship {
 
     private ObjRelationship objRelationship;
     private LrEntity<?> targetEntity;
-    private JsonValueConverter converter;
+    private JsonValueConverter<?> converter;
     private PropertyReader propertyReader;
 
-    public CayenneLrRelationship(ObjRelationship objRelationship, LrEntity<?> targetEntity, JsonValueConverter converter) {
+    public CayenneLrRelationship(ObjRelationship objRelationship, LrEntity<?> targetEntity, JsonValueConverter<?> converter) {
         this(objRelationship, targetEntity, converter, null);
     }
 
@@ -36,7 +36,7 @@ public class CayenneLrRelationship implements LrPersistentRelationship {
     public CayenneLrRelationship(
             ObjRelationship objRelationship,
             LrEntity<?> targetEntity,
-            JsonValueConverter converter,
+            JsonValueConverter<?> converter,
             PropertyReader propertyReader) {
 
         this.objRelationship = objRelationship;

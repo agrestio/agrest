@@ -7,19 +7,19 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Map;
 
-public class PojoConverter<T> implements JsonValueConverter {
+public class PojoConverter<T> extends AbstractConverter<T> {
     private static final Logger LOGGER = LoggerFactory.getLogger(PojoConverter.class);
 
     private final Class<T> type;
 
     private final Map<String, PropertySetter> setters;
-    private final Map<String, JsonValueConverter> propertyConverters;
-    private final JsonValueConverter defaultConverter;
+    private final Map<String, JsonValueConverter<?>> propertyConverters;
+    private final JsonValueConverter<?> defaultConverter;
 
     // TODO: get rid of two maps (combine setter and converter in some interface, e.g. PropertyWriter)
     public PojoConverter(Class<T> type,
                          Map<String, PropertySetter> setters,
-                         Map<String, JsonValueConverter> propertyConverters,
+                         Map<String, JsonValueConverter<?>> propertyConverters,
                          JsonValueConverter defaultConverter) {
         this.type = type;
         this.setters = setters;
@@ -28,7 +28,7 @@ public class PojoConverter<T> implements JsonValueConverter {
     }
 
     @Override
-    public Object value(JsonNode node) {
+    public T valueNonNull(JsonNode node) {
         T object = newInstance(type);
 
         node.fields().forEachRemaining(e -> {
@@ -50,7 +50,7 @@ public class PojoConverter<T> implements JsonValueConverter {
                 return;
             }
 
-            JsonValueConverter converter = getPropertyConverter(propertyName);
+            JsonValueConverter<?> converter = getPropertyConverter(propertyName);
             Object convertedValue = converter.value(value);
             if (convertedValue != null) {
                 setter.setValue(object, convertedValue);
@@ -60,7 +60,7 @@ public class PojoConverter<T> implements JsonValueConverter {
         return object;
     }
 
-    private JsonValueConverter getPropertyConverter(String propertyName) {
+    private JsonValueConverter<?> getPropertyConverter(String propertyName) {
         return propertyConverters.getOrDefault(propertyName, defaultConverter);
     }
 

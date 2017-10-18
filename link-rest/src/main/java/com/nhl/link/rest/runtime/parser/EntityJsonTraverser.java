@@ -163,11 +163,11 @@ public class EntityJsonTraverser {
         idConsumer.accept(name, value);
 	}
 
-	private JsonValueConverter converter(LrAttribute attribute) {
+	private JsonValueConverter<?> converter(LrAttribute attribute) {
 		return converterFactory.converter(attribute.getType());
 	}
 
-	private JsonValueConverter converter(LrRelationship relationship) {
+	private JsonValueConverter<?> converter(LrRelationship relationship) {
 
     	LrEntity<?> target = relationship.getTargetEntity();
 

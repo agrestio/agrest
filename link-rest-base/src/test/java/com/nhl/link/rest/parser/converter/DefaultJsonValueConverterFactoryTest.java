@@ -3,7 +3,6 @@ package com.nhl.link.rest.parser.converter;
 import com.nhl.link.rest.runtime.parser.converter.DefaultJsonValueConverterFactory;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.mockito.Mockito;
 
 import java.util.Collections;
 
@@ -19,8 +18,8 @@ public class DefaultJsonValueConverterFactoryTest {
     @Test
     public void testConverter() {
 
-        JsonValueConverter c1 = mock(JsonValueConverter.class);
-        JsonValueConverter c2 = mock(JsonValueConverter.class);
+        JsonValueConverter<?> c1 = mock(JsonValueConverter.class);
+        JsonValueConverter<?> c2 = mock(JsonValueConverter.class);
 
         DefaultJsonValueConverterFactory factory =
                 new DefaultJsonValueConverterFactory(Collections.singletonMap(Long.class, c1), c2);
@@ -36,8 +35,8 @@ public class DefaultJsonValueConverterFactoryTest {
     @Test
     public void testConverter_Enum() {
 
-        JsonValueConverter c1 = mock(JsonValueConverter.class);
-        JsonValueConverter c2 = mock(JsonValueConverter.class);
+        JsonValueConverter<?> c1 = mock(JsonValueConverter.class);
+        JsonValueConverter<?> c2 = mock(JsonValueConverter.class);
 
         DefaultJsonValueConverterFactory factory =
                 new DefaultJsonValueConverterFactory(Collections.emptyMap(), c2);
@@ -45,11 +44,11 @@ public class DefaultJsonValueConverterFactoryTest {
         assertSame(c2, factory.converter(Object.class));
 
 
-        JsonValueConverter e1c  = factory.converter(E1.class);
+        JsonValueConverter<?> e1c  = factory.converter(E1.class);
         assertTrue(e1c instanceof EnumConverter);
         assertSame(E1.class, ((EnumConverter) e1c).getEnumType());
 
-        JsonValueConverter e2c  = factory.converter(E2.class);
+        JsonValueConverter<?> e2c  = factory.converter(E2.class);
         assertTrue(e2c instanceof EnumConverter);
         assertSame(E2.class, ((EnumConverter) e2c).getEnumType());
 

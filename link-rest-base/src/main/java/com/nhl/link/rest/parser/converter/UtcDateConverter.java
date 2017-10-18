@@ -25,9 +25,9 @@ import java.util.Optional;
 import java.util.TimeZone;
 import java.util.function.Function;
 
-public class UtcDateConverter<T extends java.util.Date> extends AbstractConverter {
+public class UtcDateConverter<T extends java.util.Date> extends AbstractConverter<T> {
 
-	private static final Map<Class<? extends java.util.Date>, UtcDateConverter> converters;
+	private static final Map<Class<? extends java.util.Date>, UtcDateConverter<?>> converters;
 
 	static {
 		converters = new HashMap<>();
@@ -37,12 +37,13 @@ public class UtcDateConverter<T extends java.util.Date> extends AbstractConverte
 		converters.put(java.sql.Timestamp.class, new UtcDateConverter<>(date -> new java.sql.Timestamp(date.getTime())));
 	}
 
-	public static JsonValueConverter converter() {
+	public static UtcDateConverter converter() {
 		return converters.get(java.util.Date.class);
 	}
 
-	public static JsonValueConverter converter(Class<? extends Date> targetType) {
-		JsonValueConverter converter = converters.get(targetType);
+	@SuppressWarnings("unchecked")
+	public static <T extends java.util.Date> JsonValueConverter<T> converter(Class<T> targetType) {
+		JsonValueConverter<T> converter = (JsonValueConverter<T>) converters.get(targetType);
 		Objects.requireNonNull(converter, "Unsupported target type: " + targetType.getClass().getName());
 		return converter;
 	}

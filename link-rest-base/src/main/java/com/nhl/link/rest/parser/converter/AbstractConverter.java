@@ -5,10 +5,10 @@ import com.fasterxml.jackson.databind.JsonNode;
 /**
  * @since 1.10
  */
-public abstract class AbstractConverter implements JsonValueConverter {
+public abstract class AbstractConverter<T> implements JsonValueConverter<T> {
 
 	@Override
-	public Object value(JsonNode node) {
+	public T value(JsonNode node) {
 		if (node.isNull()) {
 			return null;
 		}
@@ -16,5 +16,5 @@ public abstract class AbstractConverter implements JsonValueConverter {
 		return valueNonNull(node);
 	}
 
-	protected abstract Object valueNonNull(JsonNode node);
+	protected abstract T valueNonNull(JsonNode node);
 }

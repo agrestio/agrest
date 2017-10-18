@@ -8,16 +8,16 @@ import javax.ws.rs.core.Response.Status;
 /**
  * @since 1.10
  */
-public class FloatConverter extends AbstractConverter {
+public class FloatConverter extends AbstractConverter<Float> {
 
-	private static final JsonValueConverter instance = new FloatConverter();
+	private static final FloatConverter instance = new FloatConverter();
 
-	public static JsonValueConverter converter() {
+	public static FloatConverter converter() {
 		return instance;
 	}
 
 	@Override
-	protected Object valueNonNull(JsonNode node) {
+	protected Float valueNonNull(JsonNode node) {
 		if (node.isTextual()) {
 			String value = node.asText();
 			if ("NaN".equalsIgnoreCase(value)) {

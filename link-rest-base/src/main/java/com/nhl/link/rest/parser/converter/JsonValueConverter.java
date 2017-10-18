@@ -7,7 +7,7 @@ import com.fasterxml.jackson.databind.JsonNode;
  * 
  * @since 1.10
  */
-public interface JsonValueConverter {
+public interface JsonValueConverter<T> {
 
-	Object value(JsonNode node);
+	T value(JsonNode node);
 }

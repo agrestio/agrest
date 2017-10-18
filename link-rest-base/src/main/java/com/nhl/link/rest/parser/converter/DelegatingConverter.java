@@ -6,11 +6,11 @@ import java.util.function.Supplier;
 
 public class DelegatingConverter implements JsonValueConverter {
 
-    private final Supplier<JsonValueConverter> converterSupplier;
-    private volatile JsonValueConverter delegate;
+    private final Supplier<JsonValueConverter<?>> converterSupplier;
+    private volatile JsonValueConverter<?> delegate;
     private final Object lock;
 
-    public DelegatingConverter(Supplier<JsonValueConverter> converterSupplier) {
+    public DelegatingConverter(Supplier<JsonValueConverter<?>> converterSupplier) {
         this.converterSupplier = converterSupplier;
         this.lock = new Object();
     }
@@ -20,7 +20,7 @@ public class DelegatingConverter implements JsonValueConverter {
         return getDelegate().value(node);
     }
 
-    private JsonValueConverter getDelegate() {
+    private JsonValueConverter<?> getDelegate() {
         if (delegate == null) {
             synchronized (lock) {
                 if (delegate == null) {

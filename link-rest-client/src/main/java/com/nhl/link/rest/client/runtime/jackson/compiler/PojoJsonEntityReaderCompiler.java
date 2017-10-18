@@ -15,7 +15,7 @@ public class PojoJsonEntityReaderCompiler implements JsonEntityReaderCompiler {
     @SuppressWarnings("unchecked")
     @Override
     public <T> IJsonEntityReader<T> compile(Class<T> type) {
-        JsonValueConverter converter = converterFactory.converter(type);
+        JsonValueConverter<?> converter = converterFactory.converter(type);
         return node -> (T) converter.value(node);
     }
 }

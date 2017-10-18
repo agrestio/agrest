@@ -6,11 +6,11 @@ import com.fasterxml.jackson.databind.JsonNode;
 /**
  * @since 1.10
  */
-public class GenericConverter implements JsonValueConverter {
+public class GenericConverter implements JsonValueConverter<Object> {
 	
-	private static final JsonValueConverter instance = new GenericConverter();
+	private static final JsonValueConverter<Object> instance = new GenericConverter();
 
-	public static JsonValueConverter converter() {
+	public static JsonValueConverter<Object> converter() {
 		return instance;
 	}
 
