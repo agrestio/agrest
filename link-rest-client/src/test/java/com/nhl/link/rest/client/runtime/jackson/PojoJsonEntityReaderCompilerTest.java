@@ -4,12 +4,16 @@ import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.nhl.link.rest.client.it.fixture.T1;
 import com.nhl.link.rest.client.it.fixture.T2;
+import com.nhl.link.rest.client.it.fixture.T3;
+import com.nhl.link.rest.client.it.fixture.T4;
+import com.nhl.link.rest.client.it.fixture.T5;
 import com.nhl.link.rest.client.runtime.jackson.compiler.PojoJsonEntityReaderCompiler;
 import com.nhl.link.rest.runtime.parser.converter.DefaultJsonValueConverterFactoryProvider;
 import com.nhl.link.rest.runtime.parser.converter.IJsonValueConverterFactory;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 
@@ -66,6 +70,42 @@ public class PojoJsonEntityReaderCompilerTest {
         assertSameContent(t2.getBooleans(), true, false);
         assertSameContent(t2.getIntegers(), 1, 2, 3);
         assertSameContent(t2.getStrings(), "a", "b", "c");
+    }
+
+    @Test
+    public void testCompiler_RelationshipProperties() {
+        IJsonEntityReader<T3> reader = compile(T3.class);
+
+        ObjectNode t3_objectNode_Hollow = nodeFactory().objectNode();
+        t3_objectNode_Hollow.set(T3.P_ID, nodeFactory().numberNode(11));
+
+        ObjectNode t4_objectNode1 = nodeFactory().objectNode();
+        t4_objectNode1.set(T4.P_ID, nodeFactory().numberNode(41));
+        t4_objectNode1.set(T4.P_T3, t3_objectNode_Hollow);
+
+        ObjectNode t4_objectNode2 = nodeFactory().objectNode();
+        t4_objectNode2.set(T4.P_ID, nodeFactory().numberNode(42));
+
+        ObjectNode t5_objectNode = nodeFactory().objectNode();
+        t5_objectNode.set(T5.P_ID, nodeFactory().numberNode(51));
+        t5_objectNode.set(T5.P_T3S, nodeFactory().arrayNode().add(t3_objectNode_Hollow));
+
+        ObjectNode t3_objectNode = nodeFactory().objectNode();
+        t3_objectNode.set(T3.P_ID, nodeFactory().numberNode(11));
+        t3_objectNode.set(T3.P_T4S, nodeFactory().arrayNode().add(t4_objectNode1).add(t4_objectNode2));
+        t3_objectNode.set(T3.P_T5, t5_objectNode);
+
+        T3 t3_expected = new T3(11);
+        T4 t4_1 = new T4(41);
+        t4_1.setT3(new T3(11));
+        T4 t4_2 = new T4(42);
+        t3_expected.setT4s(Arrays.asList(t4_1, t4_2));
+        T5 t5 = new T5(51);
+        t5.setT3s(Collections.singleton(new T3(11)));
+        t3_expected.setT5(t5);
+
+        T3 t3 = reader.readEntity(t3_objectNode);
+        assertEquals(t3_expected, t3);
     }
 
     private <T extends Collection> void assertSameContent(T collection, Object... values) {
