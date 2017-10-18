@@ -29,6 +29,8 @@ public class Types {
 		// the algorithm below is not universal. It doesn't check multiple bounds...
 		if (type instanceof Class) {
 			ret = (Class<?>) type;
+		} else if (type instanceof ParameterizedType) {
+			ret = (Class<?>) ((ParameterizedType) type).getRawType();
 		} else if (type instanceof WildcardType) {
 			Type[] upperBounds = ((WildcardType) type).getUpperBounds();
 			if (upperBounds.length == 1) {
