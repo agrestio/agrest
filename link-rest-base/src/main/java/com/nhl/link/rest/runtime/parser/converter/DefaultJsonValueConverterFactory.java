@@ -45,26 +45,37 @@ public class DefaultJsonValueConverterFactory implements IJsonValueConverterFact
 
     @Override
     public JsonValueConverter<?> converter(Type valueType) {
-        return getOrCreateConverter(valueType, () -> buildConverter(valueType).orElse(defaultConverter));
+        return getOrCreateConverter(valueType, () -> buildOrDefault(valueType));
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    public <T> JsonValueConverter<T> typedConverter(Class<T> valueType) {
-        return (JsonValueConverter<T>) getOrCreateConverter(valueType, () -> buildConverter(valueType).orElseThrow(
-                () -> new RuntimeException("Can't create typed converter for type: " + valueType.getName())));
+    public <T> Optional<JsonValueConverter<T>> typedConverter(Class<T> valueType) {
+        return Optional.ofNullable((JsonValueConverter<T>) getOrCreateConverter(valueType, () -> buildOrNull(valueType)));
     }
 
     private JsonValueConverter<?> getOrCreateConverter(Type valueType, Supplier<JsonValueConverter<?>> supplier) {
         JsonValueConverter<?> converter = convertersByJavaType.get(valueType);
+
         if (converter == null) {
             converter = supplier.get();
-            JsonValueConverter<?> existing = convertersByJavaType.putIfAbsent(valueType, converter);
-            if (existing != null) {
-                converter = existing;
+            if (converter != null) {
+                JsonValueConverter<?> existing = convertersByJavaType.putIfAbsent(valueType, converter);
+                if (existing != null) {
+                    converter = existing;
+                }
             }
         }
+
         return converter;
+    }
+
+    private JsonValueConverter<?> buildOrDefault(Type t) {
+        return buildConverter(t).orElse(defaultConverter);
+    }
+
+    private JsonValueConverter<?> buildOrNull(Type t) {
+        return buildConverter(t).orElse(null);
     }
 
     private Optional<JsonValueConverter<?>> buildConverter(Type t) {
@@ -78,30 +89,17 @@ public class DefaultJsonValueConverterFactory implements IJsonValueConverterFact
         }
 
         if (Collection.class.isAssignableFrom(cls)) {
-            Type parameterType;
+            Class<?> parameterType;
             if (t.isPresent()) {
-                parameterType = Types.unwrapTypeArgument(t.get()).orElse(Object.class);
+                parameterType = Types.getClassForTypeArgument(t.get()).orElse(Object.class);
             } else {
                 parameterType = Object.class;
             }
 
-            Supplier<Collection<Object>> containerSupplier;
-            if (List.class.equals(cls) || Collection.class.equals(cls)) {
-                containerSupplier = ArrayList::new;
-            } else if (Set.class.equals(cls)) {
-                containerSupplier = HashSet::new;
-            } else {
-                if (LOGGER.isDebugEnabled()) {
-                    LOGGER.debug("Unsupported collection type: " + cls.getName());
-                }
-                return Optional.empty();
-            }
-            JsonValueConverter<Object> elementConverter =
-                    (JsonValueConverter<Object>) new LazyConverter<>(() -> converter(parameterType));
-            return Optional.of(new CollectionConverter<>(containerSupplier, elementConverter));
+            return Optional.ofNullable(collectionConverter(cls, parameterType));
         }
 
-        return objectConverter(cls);
+        return Optional.ofNullable(objectConverter(cls));
     }
 
     @SuppressWarnings("unchecked")
@@ -109,17 +107,35 @@ public class DefaultJsonValueConverterFactory implements IJsonValueConverterFact
         return new EnumConverter<>((Class<T>) enumType);
     }
 
-    private Optional<JsonValueConverter<?>> objectConverter(Class<?> cls) {
+    @SuppressWarnings("unchecked")
+    private <T extends Collection<E>, E> JsonValueConverter<T> collectionConverter(Class<?> containerType, Class<E> elementType) {
+        Supplier<T> containerSupplier;
+        if (List.class.equals(containerType) || Collection.class.equals(containerType)) {
+            containerSupplier = () -> (T) new ArrayList<>();
+        } else if (Set.class.equals(containerType)) {
+            containerSupplier = () -> (T) new HashSet<>();
+        } else {
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Unsupported collection type: " + containerType.getName());
+            }
+            return null;
+        }
+        JsonValueConverter<E> elementConverter = new LazyConverter<>(
+                () -> typedConverter(elementType).orElse((JsonValueConverter<E>) defaultConverter));
+        return new CollectionConverter<>(containerSupplier, elementConverter);
+    }
+
+    private JsonValueConverter<?> objectConverter(Class<?> cls) {
         Map<String, PropertySetter> setters = BeanAnalyzer.findSetters(cls)
                 .collect(Collectors.toMap(PropertySetter::getName, Function.identity()));
 
         if (setters.isEmpty()) {
-            return Optional.empty();
+            return null;
 
         } else {
             Map<String, JsonValueConverter<?>> propertyConverters = setters.values().stream()
                 .collect(Collectors.toMap(PropertySetter::getName, setter -> new LazyConverter<>(() -> buildConverter(setter))));
-            return Optional.of(new PojoConverter<>(cls, setters, propertyConverters, defaultConverter));
+            return new PojoConverter<>(cls, setters, propertyConverters, defaultConverter);
         }
     }
 

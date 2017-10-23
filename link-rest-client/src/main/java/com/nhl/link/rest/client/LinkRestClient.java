@@ -126,6 +126,7 @@ public class LinkRestClient {
 
 	private <T> JsonValueConverter<T> getEntityReader(Class<T> entityType) {
 		Objects.requireNonNull(entityType, "Missing target type");
-		return jsonEntityReaderFactory.typedConverter(entityType);
+		return jsonEntityReaderFactory.typedConverter(entityType)
+				.orElseThrow(() -> new LinkRestClientException("Can't build converter for type: " + entityType.getName()));
 	}
 }

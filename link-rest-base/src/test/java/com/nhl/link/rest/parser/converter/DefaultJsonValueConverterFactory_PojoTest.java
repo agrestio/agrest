@@ -33,7 +33,8 @@ public class DefaultJsonValueConverterFactory_PojoTest {
     }
 
     private <T> JsonValueConverter<T> compile(Class<T> type) {
-        return converterFactory.typedConverter(type);
+        return converterFactory.typedConverter(type)
+                .orElseThrow(() -> new RuntimeException("Can't create converter for type: " + type.getName()));
     }
 
     private JsonNodeFactory nodeFactory() {
