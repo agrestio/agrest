@@ -3,6 +3,7 @@ package com.nhl.link.rest.runtime.encoder;
 import com.fasterxml.jackson.core.JsonEncoding;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.nhl.link.rest.ResourceEntity;
+import com.nhl.link.rest.encoder.DateTimeFormatters;
 import com.nhl.link.rest.encoder.Encoder;
 import com.nhl.link.rest.encoder.EncoderFilter;
 import com.nhl.link.rest.encoder.PropertyMetadataEncoder;
@@ -18,6 +19,7 @@ import org.junit.Test;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.sql.Types;
+import java.time.Instant;
 import java.util.Collections;
 
 import static org.junit.Assert.assertEquals;
@@ -29,7 +31,7 @@ public class ISOEncoderTest extends TestWithCayenneMapping {
 
     @Before
     public void before() {
-        IAttributeEncoderFactory attributeEncoderFactory = new AttributeEncoderFactory();
+        IAttributeEncoderFactory attributeEncoderFactory = new AttributeEncoderFactoryProvider(Collections.emptyMap()).get();
         IStringConverterFactory stringConverterFactory = mock(IStringConverterFactory.class);
 
         encoderService = new EncoderService(Collections.<EncoderFilter>emptyList(), attributeEncoderFactory, stringConverterFactory,
@@ -48,7 +50,9 @@ public class ISOEncoderTest extends TestWithCayenneMapping {
         isoDateTestEntity.setUtilDate(date);
         isoDateTestEntity.setSqlDate(date);
 
-        assertEquals("{\"data\":[{\"sqlDate\":\"" + date + "\",\"utilDate\":\"" + date + "\"}],\"total\":1}",
+        String dateString = DateTimeFormatters.isoLocalDateTime().format(Instant.ofEpochMilli(date.getTime()));
+
+        assertEquals("{\"data\":[{\"sqlDate\":\"" + date + "\",\"utilDate\":\"" + dateString + "\"}],\"total\":1}",
                 toJson(isoDateTestEntity, resourceEntity));
     }
 
@@ -70,12 +74,14 @@ public class ISOEncoderTest extends TestWithCayenneMapping {
         ResourceEntity<ISOTimestampTestEntity> resourceEntity = getResourceEntity(ISOTimestampTestEntity.class);
         appendPersistenceAttribute(resourceEntity, ISOTimestampTestEntity.TIMESTAMP, java.sql.Timestamp.class, Types.TIMESTAMP);
 
-        java.sql.Timestamp timestamp = new java.sql.Timestamp(1458995247000l);
+        java.sql.Timestamp timestamp = new java.sql.Timestamp(1458995247123L);
 
         ISOTimestampTestEntity isoTimestampTestEntity = new ISOTimestampTestEntity();
         isoTimestampTestEntity.setTimestamp(timestamp);
 
-        assertEquals("{\"data\":[{\"timestamp\":\"2016-03-26T12:27:27Z\"}],\"total\":1}",
+        String timestampString = DateTimeFormatters.isoLocalDateTime().format(Instant.ofEpochMilli(timestamp.getTime()));
+
+        assertEquals("{\"data\":[{\"timestamp\":\"" + timestampString + "\"}],\"total\":1}",
                 toJson(isoTimestampTestEntity, resourceEntity));
     }
 

@@ -33,7 +33,7 @@ public class Java8ISOEncoderTest extends Java8TestWithCayenneMapping {
 
     @Before
     public void before() {
-        IAttributeEncoderFactory attributeEncoderFactory = new AttributeEncoderFactory();
+        IAttributeEncoderFactory attributeEncoderFactory = new AttributeEncoderFactoryProvider(Collections.emptyMap()).get();
         IStringConverterFactory stringConverterFactory = mock(IStringConverterFactory.class);
 
         encoderService = new EncoderService(Collections.<EncoderFilter>emptyList(), attributeEncoderFactory, stringConverterFactory,

@@ -2,6 +2,7 @@ package com.nhl.link.rest.it;
 
 import com.nhl.link.rest.DataResponse;
 import com.nhl.link.rest.LinkRest;
+import com.nhl.link.rest.encoder.DateTimeFormatters;
 import com.nhl.link.rest.it.fixture.JerseyTestOnDerby;
 import com.nhl.link.rest.it.fixture.cayenne.E17;
 import com.nhl.link.rest.it.fixture.cayenne.E19;
@@ -66,8 +67,10 @@ public class GET_IT extends JerseyTestOnDerby {
         insert.setParams(Collections.singletonMap("ts", date));
         newContext().performGenericQuery(insert);
 
+        String dateString = DateTimeFormatters.isoLocalDateTime().format(Instant.ofEpochMilli(date.getTime()));
+
         Response response = target("/e4").queryParam("include", E4.C_TIMESTAMP.getName()).request().get();
-        onSuccess(response).bodyEquals(1, "{\"cTimestamp\":\"2012-02-03T11:01:02Z\"}");
+        onSuccess(response).bodyEquals(1, "{\"cTimestamp\":\"" + dateString + "\"}");
     }
 
     @Test
@@ -79,8 +82,10 @@ public class GET_IT extends JerseyTestOnDerby {
         insert.setParams(Collections.singletonMap("date", date));
         newContext().performGenericQuery(insert);
 
+        String dateString = DateTimeFormatters.isoLocalDateTime().format(Instant.ofEpochMilli(date.getTime()));
+
         Response response = target("/e4").queryParam("include", E4.C_DATE.getName()).request().get();
-        onSuccess(response).bodyEquals(1, "{\"cDate\":\"2012-02-03\"}");
+        onSuccess(response).bodyEquals(1, "{\"cDate\":\"" + dateString + "\"}");
     }
 
     @Test
@@ -95,9 +100,13 @@ public class GET_IT extends JerseyTestOnDerby {
         insert.setParams(Collections.singletonMap("time", time));
         newContext().performGenericQuery(insert);
 
+        String timeString = DateTimeFormatters.isoLocalDateTime().format(Instant.ofEpochMilli(time.getTime()));
+
         Response response = target("/e4").queryParam("include", E4.C_TIME.getName()).request().get();
-        onSuccess(response).bodyEquals(1, "{\"cTime\":\"14:00:01\"}");
+        onSuccess(response).bodyEquals(1, "{\"cTime\":\"" + timeString + "\"}");
     }
+
+    // TODO: add tests for java.sql attributes
 
     @Test
     public void test_Sort_ById() {

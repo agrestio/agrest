@@ -7,6 +7,7 @@ import com.nhl.link.rest.LrFeatureProvider;
 import com.nhl.link.rest.LrModuleProvider;
 import com.nhl.link.rest.MetadataResponse;
 import com.nhl.link.rest.SimpleResponse;
+import com.nhl.link.rest.encoder.Encoder;
 import com.nhl.link.rest.encoder.EncoderFilter;
 import com.nhl.link.rest.encoder.PropertyMetadataEncoder;
 import com.nhl.link.rest.meta.LrEntityOverlay;
@@ -46,7 +47,7 @@ import com.nhl.link.rest.runtime.cayenne.processor.update.CayenneUpdateStage;
 import com.nhl.link.rest.runtime.cayenne.processor.update.CayenneUpdateStartStage;
 import com.nhl.link.rest.runtime.constraints.ConstraintsHandler;
 import com.nhl.link.rest.runtime.constraints.IConstraintsHandler;
-import com.nhl.link.rest.runtime.encoder.AttributeEncoderFactory;
+import com.nhl.link.rest.runtime.encoder.AttributeEncoderFactoryProvider;
 import com.nhl.link.rest.runtime.encoder.EncoderService;
 import com.nhl.link.rest.runtime.encoder.IAttributeEncoderFactory;
 import com.nhl.link.rest.runtime.encoder.IEncoderService;
@@ -550,8 +551,11 @@ public class LinkRestBuilder {
             binder.bindMap(JsonValueConverter.class);
             binder.bind(IJsonValueConverterFactory.class).toProvider(DefaultJsonValueConverterFactoryProvider.class);
 
+            // a map of custom encoders
+            binder.bindMap(Encoder.class);
+            binder.bind(IAttributeEncoderFactory.class).toProvider(AttributeEncoderFactoryProvider.class);
+
             binder.bind(IRequestParser.class).to(RequestParser.class);
-            binder.bind(IAttributeEncoderFactory.class).to(AttributeEncoderFactory.class);
             binder.bind(IStringConverterFactory.class).to(StringConverterFactory.class);
             binder.bind(IEncoderService.class).to(EncoderService.class);
             binder.bind(IRelationshipMapper.class).to(RelationshipMapper.class);

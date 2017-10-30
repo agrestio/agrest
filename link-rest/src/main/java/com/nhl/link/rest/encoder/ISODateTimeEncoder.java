@@ -4,9 +4,9 @@ import com.fasterxml.jackson.core.JsonGenerator;
 
 import java.io.IOException;
 import java.time.Instant;
-import java.time.ZoneOffset;
-import java.time.format.DateTimeFormatter;
 import java.util.Date;
+
+import static com.nhl.link.rest.encoder.DateTimeFormatters.isoLocalDateTime;
 
 public class ISODateTimeEncoder extends AbstractEncoder {
 
@@ -16,16 +16,13 @@ public class ISODateTimeEncoder extends AbstractEncoder {
 		return instance;
 	}
 
-	private DateTimeFormatter format;
-
 	private ISODateTimeEncoder() {
-		format = DateTimeFormatter.ISO_OFFSET_DATE_TIME.withZone(ZoneOffset.UTC);
 	}
 
 	@Override
 	protected boolean encodeNonNullObject(Object object, JsonGenerator out) throws IOException {
 		Date date = (Date) object;
-		String formatted = format.format(Instant.ofEpochMilli(date.getTime()));
+		String formatted = isoLocalDateTime().format(Instant.ofEpochMilli(date.getTime()));
 		out.writeObject(formatted);
 		return true;
 	}
