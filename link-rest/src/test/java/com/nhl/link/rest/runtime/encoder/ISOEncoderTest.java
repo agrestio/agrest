@@ -66,9 +66,9 @@ public class ISOEncoderTest extends TestWithCayenneMapping {
 
         ResourceEntity<UtilDateTestEntity> resourceEntity = getResourceEntity(UtilDateTestEntity.class);
         appendPersistenceAttribute(resourceEntity, UtilDateTestEntity.DATE, java.util.Date.class, Types.DATE);
-        appendPersistenceAttribute(resourceEntity, UtilDateTestEntity.DATE_TIME, java.util.Date.class, Types.DATE);
-        appendPersistenceAttribute(resourceEntity, UtilDateTestEntity.TIMESTAMP, java.util.Date.class, Types.DATE);
-        appendPersistenceAttribute(resourceEntity, UtilDateTestEntity.TIME, java.util.Date.class, Types.DATE);
+        appendPersistenceAttribute(resourceEntity, UtilDateTestEntity.DATE_TIME, java.util.Date.class, 0);
+        appendPersistenceAttribute(resourceEntity, UtilDateTestEntity.TIMESTAMP, java.util.Date.class, Types.TIMESTAMP);
+        appendPersistenceAttribute(resourceEntity, UtilDateTestEntity.TIME, java.util.Date.class, Types.TIME);
 
         UtilDateTestEntity utilDateTestEntity = new UtilDateTestEntity();
         utilDateTestEntity.setDate(date);
