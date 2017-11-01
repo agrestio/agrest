@@ -1,9 +1,10 @@
 package com.nhl.link.rest.parser.converter;
 
 import com.fasterxml.jackson.databind.node.TextNode;
+import com.nhl.link.rest.encoder.DateTimeFormatters;
 import org.junit.Test;
 
-import java.text.SimpleDateFormat;
+import java.time.Instant;
 
 import static org.junit.Assert.assertEquals;
 
@@ -38,7 +39,7 @@ public class UtcDateConverterTest {
     }
 
     private static String isoFormat(java.util.Date date) {
-        return new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS").format(date);
+        return DateTimeFormatters.isoLocalDateTime().format(Instant.ofEpochMilli(date.getTime()));
     }
 
     @SuppressWarnings("unchecked")
