@@ -38,7 +38,7 @@ public class UtcDateConverterTest {
     }
 
     private static String isoFormat(java.util.Date date) {
-        return new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.S").format(date);
+        return new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS").format(date);
     }
 
     @SuppressWarnings("unchecked")
