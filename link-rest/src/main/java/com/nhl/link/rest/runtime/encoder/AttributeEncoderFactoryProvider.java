@@ -29,7 +29,14 @@ public class AttributeEncoderFactoryProvider implements Provider<IAttributeEncod
                 appendInjectedEncoders(
                         appendKnownEncoders(new HashMap<>()));
 
-        return new AttributeEncoderFactory(encoders, defaultEncoder());
+        return createFactory(encoders, defaultEncoder());
+    }
+
+    /**
+     * @since 2.11
+     */
+    protected IAttributeEncoderFactory createFactory(Map<Class<?>, Encoder> encoders, Encoder defaultEncoder) {
+        return new AttributeEncoderFactory(encoders, defaultEncoder);
     }
 
     protected Encoder defaultEncoder() {

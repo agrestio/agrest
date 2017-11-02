@@ -1,1 +1,1 @@
-com.nhl.link.rest.LegacyDateEncodersModule
+com.nhl.link.rest.LegacyDateEncodersModuleProvider

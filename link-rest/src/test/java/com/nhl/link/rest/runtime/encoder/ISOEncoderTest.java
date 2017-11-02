@@ -66,13 +66,11 @@ public class ISOEncoderTest extends TestWithCayenneMapping {
 
         ResourceEntity<UtilDateTestEntity> resourceEntity = getResourceEntity(UtilDateTestEntity.class);
         appendPersistenceAttribute(resourceEntity, UtilDateTestEntity.DATE, java.util.Date.class, Types.DATE);
-        appendPersistenceAttribute(resourceEntity, UtilDateTestEntity.DATE_TIME, java.util.Date.class, 0);
         appendPersistenceAttribute(resourceEntity, UtilDateTestEntity.TIMESTAMP, java.util.Date.class, Types.TIMESTAMP);
         appendPersistenceAttribute(resourceEntity, UtilDateTestEntity.TIME, java.util.Date.class, Types.TIME);
 
         UtilDateTestEntity utilDateTestEntity = new UtilDateTestEntity();
         utilDateTestEntity.setDate(date);
-        utilDateTestEntity.setDateTime(date);
         utilDateTestEntity.setTimestamp(date);
         utilDateTestEntity.setTime(date);
 
@@ -80,7 +78,6 @@ public class ISOEncoderTest extends TestWithCayenneMapping {
 
         assertEquals("{\"data\":[{" +
                 "\"date\":\"" + dateString + "\"," +
-                "\"dateTime\":\"" + dateString + "\"," +
                 "\"time\":\"" + dateString + "\"," +
                 "\"timestamp\":\"" + dateString + "\"}]" +
                 ",\"total\":1}",
@@ -157,18 +154,14 @@ public class ISOEncoderTest extends TestWithCayenneMapping {
     private void _testISODateTimeEncoder_javaSqlTimestamp(java.sql.Timestamp timestamp, String expectedPattern) {
 
         ResourceEntity<SqlDateTestEntity> resourceEntity = getResourceEntity(SqlDateTestEntity.class);
-        appendPersistenceAttribute(resourceEntity, SqlDateTestEntity.DATE_TIME, java.sql.Timestamp.class, 0);
         appendPersistenceAttribute(resourceEntity, SqlDateTestEntity.TIMESTAMP, java.sql.Timestamp.class, Types.TIMESTAMP);
 
         SqlDateTestEntity sqlDateTestEntity = new SqlDateTestEntity();
-        sqlDateTestEntity.setDateTime(timestamp);
         sqlDateTestEntity.setTimestamp(timestamp);
 
         String timestampString = DateTimeFormatter.ofPattern(expectedPattern).format(toLocalDateTime(timestamp));
 
-        assertEquals("{\"data\":[{" +
-                "\"dateTime\":\"" + timestampString + "\"," +
-                "\"timestamp\":\"" + timestampString + "\"}],\"total\":1}",
+        assertEquals("{\"data\":[{\"timestamp\":\"" + timestampString + "\"}],\"total\":1}",
                 toJson(sqlDateTestEntity, resourceEntity));
     }
 

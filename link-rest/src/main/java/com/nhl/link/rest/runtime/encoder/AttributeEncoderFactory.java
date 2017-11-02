@@ -105,7 +105,7 @@ public class AttributeEncoderFactory implements IAttributeEncoderFactory {
 
 	protected EntityProperty buildAttributeProperty(LrEntity<?> entity, LrAttribute attribute) {
 		boolean persistent = attribute instanceof LrPersistentAttribute;
-		Encoder encoder = buildEncoder(attribute.getType());
+		Encoder encoder = buildEncoder(attribute);
 		return getProperty(entity, attribute.getPropertyReader(), persistent, encoder);
 	}
 
@@ -132,7 +132,7 @@ public class AttributeEncoderFactory implements IAttributeEncoderFactory {
 				// keeping attribute encoders in alphabetical order
 				Map<String, Encoder> valueEncoders = new TreeMap<>();
 				for (LrAttribute id : ids) {
-					Encoder valueEncoder = buildEncoder(id.getType());
+					Encoder valueEncoder = buildEncoder(id);
 					valueEncoders.put(id.getName(), valueEncoder);
 				}
 
@@ -141,7 +141,7 @@ public class AttributeEncoderFactory implements IAttributeEncoderFactory {
 			} else {
 
 				LrAttribute id = ids.iterator().next();
-				Encoder valueEncoder = buildEncoder(id.getType());
+				Encoder valueEncoder = buildEncoder(id);
 
 				return PropertyBuilder.property(getOrCreateIdPropertyReader(entity.getLrEntity()))
 						.encodedWith(new IdEncoder(valueEncoder));
@@ -160,6 +160,13 @@ public class AttributeEncoderFactory implements IAttributeEncoderFactory {
 			LrAttribute id = ids.iterator().next();
 			return PropertyBuilder.property(BeanPropertyReader.reader(id.getName()));
 		}
+	}
+
+	/**
+	 * @since 2.11
+     */
+	protected Encoder buildEncoder(LrAttribute attribute) {
+		return buildEncoder(attribute.getType());
 	}
 
 	private IdPropertyReader getOrCreateIdPropertyReader(LrEntity<?> entity) {

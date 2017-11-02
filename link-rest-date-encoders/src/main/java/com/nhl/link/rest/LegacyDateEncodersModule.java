@@ -1,6 +1,8 @@
 package com.nhl.link.rest;
 
 import com.nhl.link.rest.encoder.Encoder;
+import com.nhl.link.rest.encoder.legacy.LegacyAttributeEncoderFactoryProvider;
+import com.nhl.link.rest.runtime.encoder.IAttributeEncoderFactory;
 import org.apache.cayenne.di.Binder;
 import org.apache.cayenne.di.Module;
 
@@ -15,6 +17,9 @@ public class LegacyDateEncodersModule implements Module {
 
     @Override
     public void configure(Binder binder) {
+
+        binder.bind(IAttributeEncoderFactory.class).toProvider(LegacyAttributeEncoderFactoryProvider.class);
+
         binder.bindMap(Encoder.class)
                 .put(java.time.LocalDateTime.class.getName(), com.nhl.link.rest.encoder.legacy.ISOLocalDateTimeEncoder.encoder())
                 .put(java.time.LocalDate.class.getName(), com.nhl.link.rest.encoder.legacy.ISOLocalDateEncoder.encoder())

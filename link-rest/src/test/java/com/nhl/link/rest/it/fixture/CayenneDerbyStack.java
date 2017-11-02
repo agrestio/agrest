@@ -65,7 +65,11 @@ public class CayenneDerbyStack extends ExternalResource {
     }
 
     public void insert(String table, String columns, String values) {
-        String insertSql = "INSERT INTO utest." + table + " (" + columns + ") VALUES (" + values + ")";
+        insert("utest", table, columns, values);
+    }
+
+    public void insert(String schema, String table, String columns, String values) {
+        String insertSql = "INSERT INTO " + schema + "." + table + " (" + columns + ") VALUES (" + values + ")";
         newContext().performGenericQuery(new SQLTemplate(E1.class, insertSql));
     }
 }
