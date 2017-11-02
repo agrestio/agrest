@@ -10,6 +10,11 @@ import static java.time.temporal.ChronoField.MILLI_OF_SECOND;
 import static java.time.temporal.ChronoField.MINUTE_OF_HOUR;
 import static java.time.temporal.ChronoField.SECOND_OF_MINUTE;
 
+/**
+ * LR-specific date/time formatters
+ *
+ * @since 2.11
+ */
 public class DateTimeFormatters {
 
     /**

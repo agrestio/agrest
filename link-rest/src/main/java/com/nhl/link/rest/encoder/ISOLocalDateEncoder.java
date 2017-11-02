@@ -5,6 +5,8 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import java.io.IOException;
 import java.time.LocalDate;
 
+import static com.nhl.link.rest.encoder.DateTimeFormatters.isoLocalDate;
+
 public class ISOLocalDateEncoder extends AbstractEncoder {
 
     private static final Encoder instance = new ISOLocalDateEncoder();
@@ -20,7 +22,7 @@ public class ISOLocalDateEncoder extends AbstractEncoder {
     @Override
     protected boolean encodeNonNullObject(Object object, JsonGenerator out) throws IOException {
         LocalDate date = (LocalDate) object;
-        String formatted = date.toString();
+        String formatted = isoLocalDate().format(date);
         out.writeObject(formatted);
         return true;
     }

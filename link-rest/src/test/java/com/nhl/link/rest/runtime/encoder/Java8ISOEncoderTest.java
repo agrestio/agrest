@@ -21,7 +21,7 @@ import java.sql.Types;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.time.temporal.ChronoUnit;
+import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 
 import static org.junit.Assert.assertEquals;
@@ -41,7 +41,7 @@ public class Java8ISOEncoderTest extends Java8TestWithCayenneMapping {
     }
 
     @Test
-    public void testJava8ISODate() throws IOException {
+    public void testJava8ISODate() {
         ResourceEntity<Java8ISODateTestEntity> resourceEntity = getResourceEntity(Java8ISODateTestEntity.class);
         appendPersistenceAttribute(resourceEntity, Java8ISODateTestEntity.DATE, LocalDate.class, Types.DATE);
 
@@ -50,48 +50,75 @@ public class Java8ISOEncoderTest extends Java8TestWithCayenneMapping {
         Java8ISODateTestEntity isoDateTestEntity = new Java8ISODateTestEntity();
         isoDateTestEntity.setDate(localDate);
 
-        assertEquals("{\"data\":[{\"date\":\"" + localDate + "\"}],\"total\":1}", toJson(isoDateTestEntity, resourceEntity));
+        String dateString = DateTimeFormatter.ofPattern("yyyy-MM-dd").format(localDate);
+
+        assertEquals("{\"data\":[{\"date\":\"" + dateString + "\"}],\"total\":1}",
+                toJson(isoDateTestEntity, resourceEntity));
     }
 
     @Test
-    public void testJava8ISOTime() throws IOException {
+    public void testJava8ISOTime() {
+        // fractional part is not printed, when less than a millisecond
+        _testJava8ISOTime(LocalTime.of(10, 0, 0), "HH:mm:ss");
+        _testJava8ISOTime(LocalTime.of(10, 0, 0, 1), "HH:mm:ss");
+        _testJava8ISOTime(LocalTime.of(10, 0, 0, 999_999), "HH:mm:ss");
+        int millisecond = 1_000_000; // millisecond is 10^6 nanoseconds
+        _testJava8ISOTime(LocalTime.of(10, 0, 0, millisecond), "HH:mm:ss.SSS");
+    }
+
+    private void _testJava8ISOTime(LocalTime time, String expectedPattern) {
+
         ResourceEntity<Java8ISOTimeTestEntity> resourceEntity = getResourceEntity(Java8ISOTimeTestEntity.class);
         appendPersistenceAttribute(resourceEntity, Java8ISOTimeTestEntity.TIME, LocalTime.class, Types.TIME);
 
-        LocalTime localTime = LocalTime.now();
-
         Java8ISOTimeTestEntity isoTimeTestEntity = new Java8ISOTimeTestEntity();
-        isoTimeTestEntity.setTime(localTime);
+        isoTimeTestEntity.setTime(time);
 
-        assertEquals("{\"data\":[{\"time\":\"" + localTime.truncatedTo(ChronoUnit.SECONDS) + "\"}],\"total\":1}",
+        String timeString = DateTimeFormatter.ofPattern(expectedPattern).format(time);
+
+        assertEquals("{\"data\":[{\"time\":\"" + timeString + "\"}],\"total\":1}",
                 toJson(isoTimeTestEntity, resourceEntity));
     }
 
     @Test
-    public void testJava8ISOTimestamp() throws IOException {
+    public void testJava8ISOTimestamp() {
+        // fractional part is not printed, when less than a millisecond
+        _testJava8ISOTimestamp(LocalDateTime.of(2017, 1, 1, 10, 0, 0), "yyyy-MM-dd'T'HH:mm:ss");
+        _testJava8ISOTimestamp(LocalDateTime.of(2017, 1, 1, 10, 0, 0, 1), "yyyy-MM-dd'T'HH:mm:ss");
+        _testJava8ISOTimestamp(LocalDateTime.of(2017, 1, 1, 10, 0, 0, 999_999), "yyyy-MM-dd'T'HH:mm:ss");
+        int millisecond = 1_000_000; // millisecond is 10^6 nanoseconds
+        _testJava8ISOTimestamp(LocalDateTime.of(2017, 1, 1, 10, 0, 0, millisecond), "yyyy-MM-dd'T'HH:mm:ss.SSS");
+    }
+
+    private void _testJava8ISOTimestamp(LocalDateTime dateTime, String expectedPattern) {
+
         ResourceEntity<Java8ISOTimestampTestEntity> resourceEntity = getResourceEntity(Java8ISOTimestampTestEntity.class);
         appendPersistenceAttribute(resourceEntity, Java8ISOTimestampTestEntity.TIMESTAMP, LocalDateTime.class, Types.TIMESTAMP);
 
-        LocalDateTime localDateTime = LocalDateTime.now();
-
         Java8ISOTimestampTestEntity isoTimestampTestEntity = new Java8ISOTimestampTestEntity();
-        isoTimestampTestEntity.setTimestamp(localDateTime);
+        isoTimestampTestEntity.setTimestamp(dateTime);
 
-        assertEquals("{\"data\":[{\"timestamp\":\"" + localDateTime.truncatedTo(ChronoUnit.SECONDS) + "\"}],\"total\":1}",
+        String dateTimeString = DateTimeFormatter.ofPattern(expectedPattern).format(dateTime);
+
+        assertEquals("{\"data\":[{\"timestamp\":\"" + dateTimeString + "\"}],\"total\":1}",
                 toJson(isoTimestampTestEntity, resourceEntity));
     }
 
-    private String toJson(Object object, ResourceEntity<?> resourceEntity) throws IOException {
+    private String toJson(Object object, ResourceEntity<?> resourceEntity) {
 
         Encoder encoder = encoderService.dataEncoder(resourceEntity);
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
 
-        try (JsonGenerator generator = new JacksonService().getJsonFactory().createGenerator(out, JsonEncoding.UTF8)) {
-            encoder.encode(null, Collections.singletonList(object), generator);
-        }
+        try {
+            try (JsonGenerator generator = new JacksonService().getJsonFactory().createGenerator(out, JsonEncoding.UTF8)) {
+                encoder.encode(null, Collections.singletonList(object), generator);
+            }
 
-        return new String(out.toByteArray(), "UTF-8");
+            return new String(out.toByteArray(), "UTF-8");
+        } catch (IOException e) {
+            throw new RuntimeException("Unexpected error", e);
+        }
     }
 
 }
