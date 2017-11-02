@@ -103,19 +103,6 @@
     </dependencies>
 
     <build>
-        <pluginManagement>
-            <plugins>
-                <plugin>
-                    <groupId>org.apache.cayenne.plugins</groupId>
-                    <artifactId>maven-cayenne-plugin</artifactId>
-                    <version>4.0.B2</version>
-                    <configuration>
-                        <map>${project.basedir}/src/test/resources/iso.map.xml</map>
-                        <superPkg>com.nhl.link.rest.it.fixture.cayenne.iso.auto</superPkg>
-                    </configuration>
-                </plugin>
-            </plugins>
-        </pluginManagement>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
