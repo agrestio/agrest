@@ -48,7 +48,7 @@ public class EncoderService_Pojo_Test {
 
 		this.filters = new ArrayList<>();
 
-		IAttributeEncoderFactory attributeEncoderFactory = new AttributeEncoderFactory();
+		IAttributeEncoderFactory attributeEncoderFactory = new AttributeEncoderFactoryProvider(Collections.emptyMap()).get();
 		IStringConverterFactory stringConverterFactory = mock(IStringConverterFactory.class);
 
 		this.encoderService = new EncoderService(this.filters, attributeEncoderFactory, stringConverterFactory,

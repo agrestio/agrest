@@ -1,11 +1,12 @@
-package com.nhl.link.rest.encoder;
+package com.nhl.link.rest.encoder.legacy;
 
 import com.fasterxml.jackson.core.JsonGenerator;
+import com.nhl.link.rest.encoder.AbstractEncoder;
+import com.nhl.link.rest.encoder.Encoder;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
-
-import static com.nhl.link.rest.encoder.DateTimeFormatters.isoLocalDateTime;
+import java.time.temporal.ChronoUnit;
 
 public class ISOLocalDateTimeEncoder extends AbstractEncoder {
 
@@ -21,9 +22,10 @@ public class ISOLocalDateTimeEncoder extends AbstractEncoder {
     @Override
     protected boolean encodeNonNullObject(Object object, JsonGenerator out) throws IOException {
         LocalDateTime dateTime = (LocalDateTime) object;
-        String formatted = isoLocalDateTime().format(dateTime);
+        String formatted = dateTime.truncatedTo(ChronoUnit.SECONDS).toString();
         out.writeObject(formatted);
         return true;
     }
 
 }
+
