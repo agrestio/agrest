@@ -1,7 +1,7 @@
 Release 2.11
 
-#200 Further LR Client enhancements
-#275 Stop rendering or reading timezone for *local* date/time values
+#200 Automatic JSON to POJO deserialization in LR client
+#275 Stop rendering timezone for all date/time values
 
 Release 2.10
 
