@@ -25,7 +25,7 @@ import java.util.Collections;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 
-public class ISOEncoderTest extends TestWithCayenneMapping {
+public class EncoderService_javaUtilDate_Test extends TestWithCayenneMapping {
 
     // using pre-defined moments in time with and without fractional seconds
     private static final long EPOCH_MILLIS = 1458995247000L;

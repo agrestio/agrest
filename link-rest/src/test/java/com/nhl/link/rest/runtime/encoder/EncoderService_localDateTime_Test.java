@@ -1,22 +1,18 @@
 package com.nhl.link.rest.runtime.encoder;
 
-import com.fasterxml.jackson.core.JsonEncoding;
-import com.fasterxml.jackson.core.JsonGenerator;
 import com.nhl.link.rest.ResourceEntity;
 import com.nhl.link.rest.encoder.Encoder;
 import com.nhl.link.rest.encoder.EncoderFilter;
+import com.nhl.link.rest.encoder.Encoders;
 import com.nhl.link.rest.encoder.PropertyMetadataEncoder;
 import com.nhl.link.rest.it.fixture.cayenne.iso.Java8ISODateTestEntity;
 import com.nhl.link.rest.it.fixture.cayenne.iso.Java8ISOTimeTestEntity;
 import com.nhl.link.rest.it.fixture.cayenne.iso.Java8ISOTimestampTestEntity;
-import com.nhl.link.rest.runtime.jackson.JacksonService;
 import com.nhl.link.rest.runtime.semantics.RelationshipMapper;
 import com.nhl.link.rest.unit.Java8TestWithCayenneMapping;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.sql.Types;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -27,7 +23,7 @@ import java.util.Collections;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 
-public class Java8ISOEncoderTest extends Java8TestWithCayenneMapping {
+public class EncoderService_localDateTime_Test extends Java8TestWithCayenneMapping {
 
     private EncoderService encoderService;
 
@@ -105,20 +101,7 @@ public class Java8ISOEncoderTest extends Java8TestWithCayenneMapping {
     }
 
     private String toJson(Object object, ResourceEntity<?> resourceEntity) {
-
         Encoder encoder = encoderService.dataEncoder(resourceEntity);
-
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-
-        try {
-            try (JsonGenerator generator = new JacksonService().getJsonFactory().createGenerator(out, JsonEncoding.UTF8)) {
-                encoder.encode(null, Collections.singletonList(object), generator);
-            }
-
-            return new String(out.toByteArray(), "UTF-8");
-        } catch (IOException e) {
-            throw new RuntimeException("Unexpected error", e);
-        }
+        return Encoders.toJson(encoder, Collections.singletonList(object));
     }
-
 }
