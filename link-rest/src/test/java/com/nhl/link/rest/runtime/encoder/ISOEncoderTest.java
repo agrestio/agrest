@@ -1,24 +1,20 @@
 package com.nhl.link.rest.runtime.encoder;
 
-import com.fasterxml.jackson.core.JsonEncoding;
-import com.fasterxml.jackson.core.JsonGenerator;
 import com.nhl.link.rest.ResourceEntity;
 import com.nhl.link.rest.encoder.Encoder;
 import com.nhl.link.rest.encoder.EncoderFilter;
+import com.nhl.link.rest.encoder.Encoders;
 import com.nhl.link.rest.encoder.ISODateEncoder;
 import com.nhl.link.rest.encoder.ISODateTimeEncoder;
-import com.nhl.link.rest.encoder.ISOTimeEncoder;
+import com.nhl.link.rest.encoder.ISOTimeEncoderTest;
 import com.nhl.link.rest.encoder.PropertyMetadataEncoder;
 import com.nhl.link.rest.it.fixture.cayenne.iso.SqlDateTestEntity;
 import com.nhl.link.rest.it.fixture.cayenne.iso.UtilDateTestEntity;
-import com.nhl.link.rest.runtime.jackson.JacksonService;
 import com.nhl.link.rest.runtime.semantics.RelationshipMapper;
 import com.nhl.link.rest.unit.TestWithCayenneMapping;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.sql.Types;
 import java.time.Instant;
 import java.time.LocalDateTime;
@@ -115,7 +111,7 @@ public class ISOEncoderTest extends TestWithCayenneMapping {
      *
      * See https://github.com/nhl/link-rest/issues/275
      *
-     * @see ISOTimeEncoder
+     * @see ISOTimeEncoderTest
      */
     @Test
     public void testISOTimeEncoder_javaSqlTime() {
@@ -170,21 +166,8 @@ public class ISOEncoderTest extends TestWithCayenneMapping {
     }
 
     private String toJson(Object object, ResourceEntity<?> resourceEntity) {
-
         Encoder encoder = encoderService.dataEncoder(resourceEntity);
-
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-
-        try {
-            try (JsonGenerator generator = new JacksonService().getJsonFactory().createGenerator(out, JsonEncoding.UTF8)) {
-                encoder.encode(null, Collections.singletonList(object), generator);
-            }
-
-            return new String(out.toByteArray(), "UTF-8");
-
-        } catch (IOException e) {
-            throw new RuntimeException("Unexpected error", e);
-        }
+        return Encoders.toJson(encoder, Collections.singletonList(object));
     }
 
 }
