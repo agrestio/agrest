@@ -8,6 +8,11 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 
+/**
+ * @since 2.11
+ * @deprecated since 2.11 in favor of using new date encoding strategy (default in the core module)
+ */
+@Deprecated
 public class ISOLocalDateTimeEncoder extends AbstractEncoder {
 
     private static final Encoder instance = new ISOLocalDateTimeEncoder();

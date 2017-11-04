@@ -34,6 +34,12 @@
                 <artifactId>link-rest</artifactId>
                 <version>${project.version}</version>
             </dependency>
+            <!-- TODO: Deprecated -->
+            <dependency>
+                <groupId>com.nhl.link.rest</groupId>
+                <artifactId>link-rest-date-encoders</artifactId>
+                <version>${project.version}</version>
+            </dependency>
             <dependency>
                 <groupId>com.nhl.link.rest</groupId>
                 <artifactId>link-rest-client</artifactId>

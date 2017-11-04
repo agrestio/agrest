@@ -7,6 +7,11 @@ import com.nhl.link.rest.encoder.Encoder;
 import java.io.IOException;
 import java.time.LocalDate;
 
+/**
+ * @since 2.11
+ * @deprecated since 2.11 in favor of using new date encoding strategy (default in the core module)
+ */
+@Deprecated
 public class ISOLocalDateEncoder extends AbstractEncoder {
 
     private static final Encoder instance = new ISOLocalDateEncoder();
