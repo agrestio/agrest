@@ -11,8 +11,8 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
 
-    <artifactId>link-rest-date-encoders</artifactId>
-    <name>link-rest-date-encoders: Legacy date encoders (prior to 2.11)</name>
+    <artifactId>link-rest-legacy-date-encoders</artifactId>
+    <name>link-rest-legacy-date-encoders: Legacy date encoders (prior to 2.11)</name>
     <description>Legacy date encoders (prior to 2.11)</description>
 
     <dependencies>

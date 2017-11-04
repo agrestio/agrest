@@ -18,7 +18,7 @@
         <module>link-rest-sencha</module>
         <module>link-rest-bom</module>
         <module>link-rest-docs</module>
-        <module>link-rest-date-encoders</module>
+        <module>link-rest-legacy-date-encoders</module>
     </modules>
 
     <properties>

@@ -34,10 +34,10 @@
                 <artifactId>link-rest</artifactId>
                 <version>${project.version}</version>
             </dependency>
-            <!-- TODO: Deprecated -->
+            <!-- Deprecated -->
             <dependency>
                 <groupId>com.nhl.link.rest</groupId>
-                <artifactId>link-rest-date-encoders</artifactId>
+                <artifactId>link-rest-legacy-date-encoders</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
