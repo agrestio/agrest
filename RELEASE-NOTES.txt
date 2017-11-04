@@ -1,3 +1,7 @@
+Release 2.11
+
+#200 Further LR Client enhancements
+
 Release 2.10
 
 #245 module auto-loading
