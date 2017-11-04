@@ -1,3 +1,24 @@
+## Upgrading to 2.11
+
+### JSON encoders stop rendering timezone for all date/time values
+
+Encoding of date/time values is now uniform for all attribute types and is based on the following rules:
+
+- everything is formatted in server's default TZ
+- TZ is never specified in the formatted string
+- time is not truncated to seconds, so a fractional part may appear in the formatted string
+- fractional part is truncated to milliseconds during encoding
+
+To revert these changes and go back to the old behavior you may use `com.nhl.link.rest.LegacyDateEncodersModule`. In case the modules auto-loading feature is not disabled, it should be sufficient to add the `com.nhl.link.rest:link-rest-legacy-date-encoders` JAR on your application's classpath. Here's how to do it, if you're using Maven build:
+
+```xml
+<dependency>
+	<groupId>com.nhl.link.rest</groupId>
+	<artifactId>link-rest-legacy-date-encoders</artifactId>
+	<version>2.11</version>
+</dependency>
+```
+
 ## Upgrading to 2.10
 
 ### LinkRestAdapter is deprecated, replaced with LrFeatureProvider and LrModuleProvider [#245](https://github.com/nhl/link-rest/issues/245)
