@@ -1,6 +1,7 @@
 Release 2.11
 
 #200 Further LR Client enhancements
+#275 Stop rendering or reading timezone for *local* date/time values
 
 Release 2.10
 
