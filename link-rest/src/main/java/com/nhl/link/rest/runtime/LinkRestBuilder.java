@@ -169,15 +169,9 @@ public class LinkRestBuilder {
         this.adapters = new ArrayList<>();
         this.metadataEncoders = new HashMap<>();
         this.moduleProviders = new ArrayList<>(5);
-        this.modules = defaultModules();
+        this.modules = new ArrayList<>(5);
         this.featureProviders = new ArrayList<>(5);
         this.features = new ArrayList<>(5);
-    }
-
-    private List<Module> defaultModules() {
-        List<Module> modules = new ArrayList<>(5);
-        modules.add(new BaseModule());
-        return modules;
     }
 
     protected Map<Class<?>, Class<?>> mapDefaultExceptions() {
@@ -431,7 +425,8 @@ public class LinkRestBuilder {
 
         Collection<Module> moduleCollector = new ArrayList<>();
 
-        // core module goes first, the rest of them override the core and each other
+        // base and core module goes first, the rest of them override the core and each other
+        moduleCollector.add(createBaseModule());
         moduleCollector.add(createCoreModule());
 
         // TODO: consistent sorting policy past core module...
@@ -478,6 +473,10 @@ public class LinkRestBuilder {
 
         collector.addAll(modules);
         moduleProviders.forEach(p -> collector.add(p.module()));
+    }
+
+    private Module createBaseModule() {
+        return new BaseModule();
     }
 
     private Module createCoreModule() {
