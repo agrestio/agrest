@@ -26,6 +26,11 @@
             </dependency>
             <dependency>
                 <groupId>com.nhl.link.rest</groupId>
+                <artifactId>link-rest-base</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.nhl.link.rest</groupId>
                 <artifactId>link-rest</artifactId>
                 <version>${project.version}</version>
             </dependency>
