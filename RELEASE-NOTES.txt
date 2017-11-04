@@ -1,6 +1,7 @@
 Release 2.11
 
 #200 Automatic JSON to POJO deserialization in LR client
+#273 Intermittent error in UtcDateConverterTest.testConverter_javaUtilDate test
 #275 Stop rendering timezone for all date/time values
 
 Release 2.10
