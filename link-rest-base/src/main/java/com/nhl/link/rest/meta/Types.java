@@ -5,6 +5,9 @@ import java.lang.reflect.Type;
 import java.lang.reflect.WildcardType;
 import java.util.Optional;
 
+/**
+ * @since 2.11
+ */
 public class Types {
 
     public static Optional<Type> unwrapTypeArgument(Type genericType) {

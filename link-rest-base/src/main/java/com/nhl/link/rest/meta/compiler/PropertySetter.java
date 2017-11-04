@@ -5,6 +5,9 @@ import com.nhl.link.rest.LinkRestException;
 import javax.ws.rs.core.Response;
 import java.lang.reflect.Method;
 
+/**
+ * @since 2.11
+ */
 public class PropertySetter {
 
     private String name;
