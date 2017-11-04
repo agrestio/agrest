@@ -18,22 +18,23 @@ public class ISODateTimeEncoderTest {
 
     @Test
     public void testISODateTimeEncoder() {
-        assertEquals("\"2016-03-26T15:27:27\"", toJson(encoder, new Date(1458995247000L)));
+        _testISODateTimeEncoder(1458995247000L, "yyyy-MM-dd'T'HH:mm:ss");
     }
 
     @Test
     public void testISODateTimeEncoder_FractionalPart1() {
-        // expecting 2016-03-26T15:27:27.001
-        _testISODateTimeEncoder_FractionaPart(1458995247001L, "yyyy-MM-dd'T'HH:mm:ss.SSS");
+        _testISODateTimeEncoder(1458995247001L, "yyyy-MM-dd'T'HH:mm:ss.SSS");
     }
 
     @Test
     public void testISODateTimeEncoder_FractionalPart2() {
-        // expecting 2016-03-26T15:27:27.1
-        _testISODateTimeEncoder_FractionaPart(1458995247100L, "yyyy-MM-dd'T'HH:mm:ss.S");
+        _testISODateTimeEncoder(1458995247100L, "yyyy-MM-dd'T'HH:mm:ss.S");
     }
 
-    private void _testISODateTimeEncoder_FractionaPart(long millis, String expectedPattern) {
+    /**
+     * Prints java.util.Date in the server's local timezone
+     */
+    private void _testISODateTimeEncoder(long millis, String expectedPattern) {
         String expected = DateTimeFormatter.ofPattern(expectedPattern).format(fromMillis(millis));
         assertEquals(jsonString(expected), toJson(encoder, new Date(millis)));
     }
