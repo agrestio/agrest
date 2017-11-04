@@ -23,4 +23,9 @@ public class Encoders {
 
         return new String(out.toByteArray());
     }
+
+    public static String jsonString(String s) {
+        // it's fine, if the string itself contains quotes
+        return "\"" + s + "\"";
+    }
 }
