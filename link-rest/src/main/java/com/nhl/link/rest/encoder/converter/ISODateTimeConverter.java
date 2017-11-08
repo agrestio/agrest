@@ -1,9 +1,11 @@
 package com.nhl.link.rest.encoder.converter;
 
+import com.nhl.link.rest.encoder.DateTimeFormatters;
+
 import java.time.Instant;
-import java.time.ZoneOffset;
-import java.time.format.DateTimeFormatter;
 import java.util.Date;
+
+import static com.nhl.link.rest.encoder.DateTimeFormatters.isoLocalDateTime;
 
 public class ISODateTimeConverter extends AbstractConverter {
 
@@ -13,15 +15,12 @@ public class ISODateTimeConverter extends AbstractConverter {
 		return instance;
 	}
 
-	private DateTimeFormatter format;
-
 	private ISODateTimeConverter() {
-		format = DateTimeFormatter.ISO_OFFSET_DATE_TIME.withZone(ZoneOffset.UTC);
 	}
 
 	@Override
 	protected String asStringNonNull(Object object) {
 		Date date = (Date) object;
-		return format.format(Instant.ofEpochMilli(date.getTime()));
+		return isoLocalDateTime().format(Instant.ofEpochMilli(date.getTime()));
 	}
 }

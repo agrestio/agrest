@@ -41,7 +41,7 @@ public class ResourceEntity<T> {
     private Map<String, ResourceEntity<?>> children;
     private Map<String, ResourceEntity<?>> aggregateChildren;
     private LrRelationship incoming;
-    private Collection<Ordering> orderings;
+    private List<Ordering> orderings;
     private Expression qualifier;
     private Map<String, EntityProperty> extraProperties;
     private int fetchOffset;
@@ -102,7 +102,7 @@ public class ResourceEntity<T> {
         }
     }
 
-    public Collection<Ordering> getOrderings() {
+    public List<Ordering> getOrderings() {
         return orderings;
     }
 

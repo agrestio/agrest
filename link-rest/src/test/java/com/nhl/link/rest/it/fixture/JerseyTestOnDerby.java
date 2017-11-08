@@ -105,6 +105,10 @@ public abstract class JerseyTestOnDerby extends JerseyTest {
         DB_STACK.insert(table, columns, values);
     }
 
+    protected void insert(String schema, String table, String columns, String values) {
+        DB_STACK.insert(schema, table, columns, values);
+    }
+
     protected ResponseAssertions onSuccess(Response response) {
         return new ResponseAssertions(response).wasSuccess();
     }

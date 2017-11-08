@@ -1,11 +1,11 @@
 package com.nhl.link.rest.provider;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.lang.annotation.Annotation;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-import java.util.Collection;
+import com.nhl.link.rest.EntityUpdate;
+import com.nhl.link.rest.LinkRestException;
+import com.nhl.link.rest.meta.Types;
+import com.nhl.link.rest.runtime.LinkRestRuntime;
+import com.nhl.link.rest.runtime.meta.IMetadataService;
+import com.nhl.link.rest.runtime.parser.IUpdateParser;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.WebApplicationException;
@@ -16,12 +16,12 @@ import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.ext.MessageBodyReader;
 import javax.ws.rs.ext.Provider;
-
-import com.nhl.link.rest.EntityUpdate;
-import com.nhl.link.rest.LinkRestException;
-import com.nhl.link.rest.runtime.LinkRestRuntime;
-import com.nhl.link.rest.runtime.meta.IMetadataService;
-import com.nhl.link.rest.runtime.parser.IUpdateParser;
+import java.io.IOException;
+import java.io.InputStream;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.util.Collection;
 
 /**
  * A provider of {@link MessageBodyReader} for Collections of
@@ -46,13 +46,11 @@ public class EntityUpdateCollectionReader<T> implements MessageBodyReader<Collec
 			return false;
 		}
 
-		Type collectionParam = unwrapCollectionParameter(genericType);
-		if (collectionParam instanceof ParameterizedType
-				&& EntityUpdate.class.equals(((ParameterizedType) collectionParam).getRawType())) {
-			return true;
-		}
-
-		return false;
+		return Types.unwrapTypeArgument(genericType)
+				.filter(collectionParam -> collectionParam instanceof ParameterizedType)
+				.map(collectionParam -> (ParameterizedType) collectionParam)
+				.filter(collectionParam -> EntityUpdate.class.equals((collectionParam).getRawType()))
+				.isPresent();
 	}
 
 	@Override
@@ -60,27 +58,10 @@ public class EntityUpdateCollectionReader<T> implements MessageBodyReader<Collec
 			Annotation[] annotations, MediaType mediaType, MultivaluedMap<String, String> httpHeaders,
 			InputStream entityStream) throws IOException, WebApplicationException {
 
-		Type entityUpdateType = unwrapCollectionParameter(genericType);
-		if (entityUpdateType == null) {
-			throw new LinkRestException(Status.INTERNAL_SERVER_ERROR,
-					"Invalid request entity collection type: " + genericType);
-		}
+		Type entityUpdateType = Types.unwrapTypeArgument(genericType)
+				.orElseThrow(() -> new LinkRestException(Status.INTERNAL_SERVER_ERROR,
+						"Invalid request entity collection type: " + genericType));
 
 		return reader.read(entityUpdateType, entityStream);
-	}
-
-	Type unwrapCollectionParameter(Type genericCollectionType) {
-
-		if (!(genericCollectionType instanceof ParameterizedType)) {
-			return null;
-		}
-
-		Type[] typeArgs = ((ParameterizedType) genericCollectionType).getActualTypeArguments();
-		if (typeArgs.length != 1) {
-			return null;
-		}
-
-		return typeArgs[0];
-
 	}
 }

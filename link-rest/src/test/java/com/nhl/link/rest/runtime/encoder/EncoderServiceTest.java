@@ -1,17 +1,16 @@
 package com.nhl.link.rest.runtime.encoder;
 
-import com.fasterxml.jackson.core.JsonEncoding;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.nhl.link.rest.DataResponse;
 import com.nhl.link.rest.ResourceEntity;
 import com.nhl.link.rest.encoder.Encoder;
 import com.nhl.link.rest.encoder.EncoderFilter;
+import com.nhl.link.rest.encoder.Encoders;
 import com.nhl.link.rest.encoder.PropertyMetadataEncoder;
 import com.nhl.link.rest.it.fixture.cayenne.E1;
 import com.nhl.link.rest.it.fixture.cayenne.E19;
 import com.nhl.link.rest.it.fixture.cayenne.E2;
 import com.nhl.link.rest.it.fixture.cayenne.E3;
-import com.nhl.link.rest.runtime.jackson.JacksonService;
 import com.nhl.link.rest.runtime.semantics.RelationshipMapper;
 import com.nhl.link.rest.unit.TestWithCayenneMapping;
 import org.apache.cayenne.Cayenne;
@@ -20,7 +19,6 @@ import org.apache.cayenne.ObjectId;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -39,7 +37,7 @@ public class EncoderServiceTest extends TestWithCayenneMapping {
 	public void before() {
 
 		this.filters = new ArrayList<>();
-		IAttributeEncoderFactory attributeEncoderFactory = new AttributeEncoderFactory();
+		IAttributeEncoderFactory attributeEncoderFactory = new AttributeEncoderFactoryProvider(Collections.emptyMap()).get();
 		IStringConverterFactory stringConverterFactory = mock(IStringConverterFactory.class);
 
 		encoderService = new EncoderService(this.filters, attributeEncoderFactory, stringConverterFactory,
@@ -286,16 +284,8 @@ public class EncoderServiceTest extends TestWithCayenneMapping {
 		assertEquals("{\"data\":[{\"id\":1,\"guid\":\"YWJjZGVmZ2hqa2xtbm9wcg==\"}],\"total\":1}", toJson(e19, descriptor));
 	}
 
-	private String toJson(Object object, ResourceEntity<?> entity) throws IOException {
-
-		Encoder encoder = encoderService.dataEncoder(entity);
-
-		ByteArrayOutputStream out = new ByteArrayOutputStream();
-
-		try (JsonGenerator generator = new JacksonService().getJsonFactory().createGenerator(out, JsonEncoding.UTF8)) {
-			encoder.encode(null, Collections.singletonList(object), generator);
-		}
-
-		return new String(out.toByteArray(), "UTF-8");
-	}
+	private String toJson(Object object, ResourceEntity<?> resourceEntity) {
+        Encoder encoder = encoderService.dataEncoder(resourceEntity);
+        return Encoders.toJson(encoder, Collections.singletonList(object));
+    }
 }

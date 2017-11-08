@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nhl.link.rest.client.ClientDataResponse;
 import com.nhl.link.rest.client.LinkRestClientException;
-import com.nhl.link.rest.client.runtime.jackson.IJsonEntityReader;
+import com.nhl.link.rest.parser.converter.JsonValueConverter;
 
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
@@ -21,9 +21,9 @@ public class DataResponseHandler<T> extends BaseResponseHandler<ClientDataRespon
 	private static final String DATA_NODE = "data";
 	private static final String TOTAL_NODE = "total";
 
-	private IJsonEntityReader<T> jsonEntityReader;
+	private JsonValueConverter<T> jsonEntityReader;
 
-	public DataResponseHandler(JsonFactory jsonFactory, IJsonEntityReader<T> jsonEntityReader) {
+	public DataResponseHandler(JsonFactory jsonFactory, JsonValueConverter<T> jsonEntityReader) {
 		super(jsonFactory);
 		this.jsonEntityReader = jsonEntityReader;
 	}
@@ -47,7 +47,7 @@ public class DataResponseHandler<T> extends BaseResponseHandler<ClientDataRespon
 
 			items = new ArrayList<>(dataNode.size() + 1);
 			for (JsonNode itemNode : dataNode) {
-				items.add(jsonEntityReader.readEntity(itemNode));
+				items.add(jsonEntityReader.value(itemNode));
 			}
 
 			JsonNode totalNode = responseNode.get(TOTAL_NODE);

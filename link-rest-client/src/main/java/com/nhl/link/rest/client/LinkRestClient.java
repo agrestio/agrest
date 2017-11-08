@@ -1,10 +1,5 @@
 package com.nhl.link.rest.client;
 
-import java.util.function.Supplier;
-
-import javax.ws.rs.client.WebTarget;
-import javax.ws.rs.core.Response;
-
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nhl.link.rest.client.protocol.Expression.ExpressionBuilder;
@@ -13,12 +8,18 @@ import com.nhl.link.rest.client.protocol.Include.IncludeBuilder;
 import com.nhl.link.rest.client.protocol.LrcRequest;
 import com.nhl.link.rest.client.protocol.LrcRequest.LrRequestBuilder;
 import com.nhl.link.rest.client.protocol.Sort;
-import com.nhl.link.rest.client.runtime.jackson.IJsonEntityReader;
-import com.nhl.link.rest.client.runtime.jackson.IJsonEntityReaderFactory;
-import com.nhl.link.rest.client.runtime.jackson.JsonEntityReaderFactory;
 import com.nhl.link.rest.client.runtime.response.DataResponseHandler;
 import com.nhl.link.rest.client.runtime.response.SimpleResponseHandler;
 import com.nhl.link.rest.client.runtime.run.InvocationBuilder;
+import com.nhl.link.rest.parser.converter.JsonValueConverter;
+import com.nhl.link.rest.runtime.parser.converter.DefaultJsonValueConverterFactoryProvider;
+import com.nhl.link.rest.runtime.parser.converter.IJsonValueConverterFactory;
+
+import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.core.Response;
+import java.util.Collections;
+import java.util.Objects;
+import java.util.function.Supplier;
 
 /**
  * @since 2.0
@@ -26,11 +27,11 @@ import com.nhl.link.rest.client.runtime.run.InvocationBuilder;
 public class LinkRestClient {
 
 	private static JsonFactory jsonFactory;
-	private static IJsonEntityReaderFactory jsonEntityReaderFactory;
+	private static IJsonValueConverterFactory jsonEntityReaderFactory;
 
 	static {
 		jsonFactory = new ObjectMapper().getFactory();
-		jsonEntityReaderFactory = new JsonEntityReaderFactory();
+		jsonEntityReaderFactory = new DefaultJsonValueConverterFactoryProvider(Collections.emptyMap()).get();
 	}
 
 	public static LinkRestClient client(WebTarget target) {
@@ -117,24 +118,15 @@ public class LinkRestClient {
 	}
 
 	private <T> ClientDataResponse<T> invoke(Class<T> targetType, Supplier<Response> invocation) {
-
-		IJsonEntityReader<T> entityReader = getEntityReader(targetType);
+		JsonValueConverter<T> entityReader = getEntityReader(targetType);
 		Response response = invocation.get();
 		DataResponseHandler<T> responseHandler = new DataResponseHandler<>(jsonFactory, entityReader);
 		return responseHandler.handleResponse(response);
 	}
 
-	private <T> IJsonEntityReader<T> getEntityReader(Class<T> entityType) {
-
-		if (entityType == null) {
-			throw new NullPointerException("Target type");
-		}
-
-		IJsonEntityReader<T> jsonEntityReader = jsonEntityReaderFactory.getReaderForType(entityType);
-		if (jsonEntityReader == null) {
-			throw new LinkRestClientException("Unsupported target type: " + entityType.getName());
-		}
-
-		return jsonEntityReader;
+	private <T> JsonValueConverter<T> getEntityReader(Class<T> entityType) {
+		Objects.requireNonNull(entityType, "Missing target type");
+		return jsonEntityReaderFactory.typedConverter(entityType)
+				.orElseThrow(() -> new LinkRestClientException("Can't build converter for type: " + entityType.getName()));
 	}
 }

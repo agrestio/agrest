@@ -4,7 +4,8 @@ import com.fasterxml.jackson.core.JsonGenerator;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
+
+import static com.nhl.link.rest.encoder.DateTimeFormatters.isoLocalDateTime;
 
 public class ISOLocalDateTimeEncoder extends AbstractEncoder {
 
@@ -20,7 +21,7 @@ public class ISOLocalDateTimeEncoder extends AbstractEncoder {
     @Override
     protected boolean encodeNonNullObject(Object object, JsonGenerator out) throws IOException {
         LocalDateTime dateTime = (LocalDateTime) object;
-        String formatted = dateTime.truncatedTo(ChronoUnit.SECONDS).toString();
+        String formatted = isoLocalDateTime().format(dateTime);
         out.writeObject(formatted);
         return true;
     }

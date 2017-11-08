@@ -76,17 +76,22 @@ public class EncoderService implements IEncoderService {
     protected CollectionEncoder resultEncoder(ResourceEntity<?> entity, Encoder elementEncoder) {
         boolean isMapBy = entity.getMapBy() != null;
 
-        // notice that we are not passing either qualifier or ordering to the
-        // encoder, as those are presumably applied at the query level.. (unlike
-        // with #nestedToManyEncoder)
+        // notice that we are not passing either qualifier or ordering to the encoder, as those are presumably applied
+        // at the query level.. (unlike with #nestedToManyEncoder)
 
         CollectionEncoder encoder = new ListEncoder(filteredEncoder(elementEncoder, entity))
                 .withOffset(entity.getFetchOffset())
                 .withLimit(entity.getFetchLimit())
                 .shouldFilter(entity.isFiltered());
 
-        return isMapBy
-                ? new MapByEncoder(entity.getMapByPath(), null, entity.getMapBy(), encoder, stringConverterFactory, attributeEncoderFactory)
+        return isMapBy ?
+                new MapByEncoder(
+                        entity.getMapByPath(),
+                        null,
+                        entity.getMapBy(),
+                        encoder,
+                        stringConverterFactory,
+                        attributeEncoderFactory)
                 : encoder;
     }
 
@@ -108,8 +113,15 @@ public class EncoderService implements IEncoderService {
             listEncoder.shouldFilter();
         }
 
-        return isMapBy ? new MapByEncoder(resourceEntity.getMapByPath(), resourceEntity.getQualifier(),
-                resourceEntity.getMapBy(), listEncoder, stringConverterFactory, attributeEncoderFactory) : listEncoder;
+        return isMapBy ?
+                new MapByEncoder(
+                        resourceEntity.getMapByPath(),
+                        resourceEntity.getQualifier(),
+                        resourceEntity.getMapBy(),
+                        listEncoder,
+                        stringConverterFactory,
+                        attributeEncoderFactory)
+                : listEncoder;
     }
 
     protected Encoder toOneEncoder(ResourceEntity<?> resourceEntity, LrRelationship relationship) {

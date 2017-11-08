@@ -9,7 +9,7 @@ import com.nhl.link.rest.encoder.PropertyMetadataEncoder;
 import com.nhl.link.rest.it.fixture.cayenne.E2;
 import com.nhl.link.rest.it.fixture.cayenne.E3;
 import com.nhl.link.rest.runtime.cayenne.ICayennePersister;
-import com.nhl.link.rest.runtime.encoder.AttributeEncoderFactory;
+import com.nhl.link.rest.runtime.encoder.AttributeEncoderFactoryProvider;
 import com.nhl.link.rest.runtime.encoder.IAttributeEncoderFactory;
 import com.nhl.link.rest.runtime.encoder.IStringConverterFactory;
 import com.nhl.link.rest.runtime.jackson.JacksonService;
@@ -46,7 +46,7 @@ public class SenchaEncoderServiceTest extends TestWithCayenneMapping {
         when(cayenneService.newContext()).thenReturn(TestWithCayenneMapping.runtime.newContext());
 
         this.filters = new ArrayList<>();
-        IAttributeEncoderFactory attributeEncoderFactory = new AttributeEncoderFactory();
+        IAttributeEncoderFactory attributeEncoderFactory = new AttributeEncoderFactoryProvider(Collections.emptyMap()).get();
         IStringConverterFactory stringConverterFactory = mock(IStringConverterFactory.class);
         IRelationshipMapper relationshipMapper = new SenchaRelationshipMapper();
 

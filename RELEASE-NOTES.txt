@@ -1,3 +1,10 @@
+Release 2.11
+
+#200 Automatic JSON to POJO deserialization in LR client
+#273 Intermittent error in UtcDateConverterTest.testConverter_javaUtilDate test
+#275 Stop rendering timezone for all date/time values
+#278 ISO encoding of Java 8 date/time in mapBy keys
+
 Release 2.10
 
 #245 module auto-loading
@@ -10,6 +17,8 @@ Release 2.10
 #260 LrEntityOverlay.addAttribute(String) must detect attribute type
 #261 Rename @Resource to @LrResource and move to link-rest-annotations
 #263 link-rest-sencha module
+#267 POST: java.util.Date to Timestamp conversion
+#269 Upgrade to Cayenne 4.0.B2
 
 Release 2.9
 

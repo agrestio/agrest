@@ -1,10 +1,9 @@
 package com.nhl.link.rest.runtime.encoder;
 
-import com.fasterxml.jackson.core.JsonEncoding;
-import com.fasterxml.jackson.core.JsonGenerator;
 import com.nhl.link.rest.ResourceEntity;
 import com.nhl.link.rest.encoder.Encoder;
 import com.nhl.link.rest.encoder.EncoderFilter;
+import com.nhl.link.rest.encoder.Encoders;
 import com.nhl.link.rest.encoder.PropertyMetadataEncoder;
 import com.nhl.link.rest.it.fixture.pojo.model.P1;
 import com.nhl.link.rest.it.fixture.pojo.model.P6;
@@ -14,13 +13,11 @@ import com.nhl.link.rest.meta.LrEntity;
 import com.nhl.link.rest.meta.LrEntityBuilder;
 import com.nhl.link.rest.meta.compiler.LrEntityCompiler;
 import com.nhl.link.rest.meta.compiler.PojoEntityCompiler;
-import com.nhl.link.rest.runtime.jackson.JacksonService;
 import com.nhl.link.rest.runtime.semantics.RelationshipMapper;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -48,7 +45,7 @@ public class EncoderService_Pojo_Test {
 
 		this.filters = new ArrayList<>();
 
-		IAttributeEncoderFactory attributeEncoderFactory = new AttributeEncoderFactory();
+		IAttributeEncoderFactory attributeEncoderFactory = new AttributeEncoderFactoryProvider(Collections.emptyMap()).get();
 		IStringConverterFactory stringConverterFactory = mock(IStringConverterFactory.class);
 
 		this.encoderService = new EncoderService(this.filters, attributeEncoderFactory, stringConverterFactory,
@@ -81,20 +78,8 @@ public class EncoderService_Pojo_Test {
 		assertEquals("{\"data\":[{\"id\":\"myid\",\"intProp\":4}],\"total\":1}", toJson(p6, descriptor));
 	}
 
-	private String toJson(Object object, ResourceEntity<?> resourceEntity) throws IOException {
-
-		Encoder encoder = encoderService.dataEncoder(resourceEntity);
-
-		// wrap in collection... root encoder expects a list...
-		object = Collections.singletonList(object);
-
-		ByteArrayOutputStream out = new ByteArrayOutputStream();
-
-		try (JsonGenerator generator = new JacksonService().getJsonFactory().createGenerator(out, JsonEncoding.UTF8)) {
-			encoder.encode(null, object, generator);
-		}
-
-		return new String(out.toByteArray(), "UTF-8");
-	}
-
+	private String toJson(Object object, ResourceEntity<?> resourceEntity) {
+        Encoder encoder = encoderService.dataEncoder(resourceEntity);
+        return Encoders.toJson(encoder, Collections.singletonList(object));
+    }
 }

@@ -4,19 +4,21 @@
 
     <groupId>com.nhl.link.rest</groupId>
     <artifactId>link-rest-parent</artifactId>
-    <version>2.10-SNAPSHOT</version>
+    <version>2.11-SNAPSHOT</version>
 
     <name>link-rest: Parent POM of LR modules</name>
     <description>Parent POM of LR modules</description>
     <packaging>pom</packaging>
 
     <modules>
+        <module>link-rest-base</module>
         <module>link-rest-annotations</module>
         <module>link-rest</module>
         <module>link-rest-client</module>
         <module>link-rest-sencha</module>
         <module>link-rest-bom</module>
         <module>link-rest-docs</module>
+        <module>link-rest-legacy-date-encoders</module>
     </modules>
 
     <properties>
@@ -30,7 +32,7 @@
         <!-- Custom properties (mostly framework versions) -->
         <servlet-api-version>3.0.0.v201112011016</servlet-api-version>
         <slf4j-version>1.7.12</slf4j-version>
-        <cayenne-version>4.0.B1</cayenne-version>
+        <cayenne-version>4.0.B2</cayenne-version>
         <jersey-version>2.22.1</jersey-version>
         <jackson-version>2.6.4</jackson-version>
     </properties>
@@ -179,6 +181,11 @@
                 <groupId>com.fasterxml.jackson.jaxrs</groupId>
                 <artifactId>jackson-jaxrs-json-provider</artifactId>
                 <version>${jackson-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.cayenne</groupId>
+                <artifactId>cayenne-di</artifactId>
+                <version>${cayenne-version}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.cayenne</groupId>
