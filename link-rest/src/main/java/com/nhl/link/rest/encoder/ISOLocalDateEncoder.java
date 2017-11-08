@@ -15,7 +15,6 @@ public class ISOLocalDateEncoder extends AbstractEncoder {
         return instance;
     }
 
-
     private ISOLocalDateEncoder() {
     }
 

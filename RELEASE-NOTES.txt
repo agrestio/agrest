@@ -3,6 +3,7 @@ Release 2.11
 #200 Automatic JSON to POJO deserialization in LR client
 #273 Intermittent error in UtcDateConverterTest.testConverter_javaUtilDate test
 #275 Stop rendering timezone for all date/time values
+#278 ISO encoding of Java 8 date/time in mapBy keys
 
 Release 2.10
 
