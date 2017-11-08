@@ -18,7 +18,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
-public class GET_IT_Aggregate extends JerseyTestOnDerby {
+public class GET_AggregateIT extends JerseyTestOnDerby {
 
     @Override
     protected void doAddResources(FeatureContext context) {
@@ -82,7 +82,8 @@ public class GET_IT_Aggregate extends JerseyTestOnDerby {
                 .request()
                 .get();
 
-        onSuccess(response).bodyEquals(2, "{\"avg(age)\":15,\"e21\":{\"name\":\"xxx\"}}," +
+        onSuccess(response).bodyEquals(2,
+                "{\"avg(age)\":15,\"e21\":{\"name\":\"xxx\"}}," +
                 "{\"avg(age)\":5,\"e21\":{\"name\":\"yyy\"}}");
     }
 
@@ -115,7 +116,8 @@ public class GET_IT_Aggregate extends JerseyTestOnDerby {
                 .request()
                 .get();
 
-        onSuccess(response).bodyEquals(2, "{\"@aggregated:e20s\":{\"sum(age)\":30},\"name\":\"xxx\"}," +
+        onSuccess(response).bodyEquals(2,
+                "{\"@aggregated:e20s\":{\"sum(age)\":30},\"name\":\"xxx\"}," +
                 "{\"@aggregated:e20s\":{\"sum(age)\":5},\"name\":\"yyy\"}");
     }
 
@@ -151,7 +153,8 @@ public class GET_IT_Aggregate extends JerseyTestOnDerby {
                 .request()
                 .get();
 
-        onSuccess(response).bodyEquals(3, "{\"@aggregated:e20s\":{\"name\":\"bbb\",\"sum(age)\":20},\"name\":\"xxx\"}," +
+        onSuccess(response).bodyEquals(3,
+                "{\"@aggregated:e20s\":{\"name\":\"bbb\",\"sum(age)\":20},\"name\":\"xxx\"}," +
                 "{\"@aggregated:e20s\":{\"name\":\"aaa\",\"sum(age)\":10},\"name\":\"xxx\"}," +
                 "{\"@aggregated:e20s\":{\"name\":\"ccc\",\"sum(age)\":5},\"name\":\"yyy\"}");
     }
