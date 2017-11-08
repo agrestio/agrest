@@ -1,9 +1,11 @@
 package com.nhl.link.rest.encoder.converter;
 
+import com.nhl.link.rest.encoder.DateTimeFormatters;
+
 import java.time.Instant;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
 import java.util.Date;
+
+import static com.nhl.link.rest.encoder.DateTimeFormatters.isoLocalTime;
 
 public class ISOTimeConverter extends AbstractConverter {
 
@@ -13,15 +15,12 @@ public class ISOTimeConverter extends AbstractConverter {
 		return instance;
 	}
 
-	private DateTimeFormatter format;
-
 	private ISOTimeConverter() {
-		format = DateTimeFormatter.ofPattern("HH:mm:ss").withZone(ZoneId.systemDefault());
 	}
 
 	@Override
 	protected String asStringNonNull(Object object) {
 		Date date = (Date) object;
-		return format.format(Instant.ofEpochMilli(date.getTime()));
+		return isoLocalTime().format(Instant.ofEpochMilli(date.getTime()));
 	}
 }

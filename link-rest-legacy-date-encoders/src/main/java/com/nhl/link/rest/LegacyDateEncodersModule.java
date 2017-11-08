@@ -1,8 +1,14 @@
 package com.nhl.link.rest;
 
 import com.nhl.link.rest.encoder.Encoder;
+import com.nhl.link.rest.encoder.converter.StringConverter;
+import com.nhl.link.rest.encoder.legacy.ISODateConverter;
+import com.nhl.link.rest.encoder.legacy.ISODateTimeConverter;
+import com.nhl.link.rest.encoder.legacy.ISOTimeConverter;
 import com.nhl.link.rest.encoder.legacy.LegacyAttributeEncoderFactoryProvider;
+import com.nhl.link.rest.encoder.legacy.LegacyStringConverterFactoryProvider;
 import com.nhl.link.rest.runtime.encoder.IAttributeEncoderFactory;
+import com.nhl.link.rest.runtime.encoder.IStringConverterFactory;
 import org.apache.cayenne.di.Binder;
 import org.apache.cayenne.di.Module;
 
@@ -17,6 +23,14 @@ public class LegacyDateEncodersModule implements Module {
 
     @Override
     public void configure(Binder binder) {
+
+        binder.bind(IStringConverterFactory.class).toProvider(LegacyStringConverterFactoryProvider.class);
+
+        binder.bindMap(StringConverter.class)
+                .put(java.util.Date.class.getName(), ISODateTimeConverter.converter())
+                .put(java.sql.Timestamp.class.getName(), ISODateTimeConverter.converter())
+                .put(java.sql.Date.class.getName(), ISODateConverter.converter())
+                .put(java.sql.Time.class.getName(), ISOTimeConverter.converter());
 
         binder.bind(IAttributeEncoderFactory.class).toProvider(LegacyAttributeEncoderFactoryProvider.class);
 

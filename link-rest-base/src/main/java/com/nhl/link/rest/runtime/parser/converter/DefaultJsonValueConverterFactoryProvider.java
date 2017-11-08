@@ -21,6 +21,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.nhl.link.rest.meta.Types.typeForName;
+
 /**
  * @since 2.10
  */
@@ -71,13 +73,5 @@ public class DefaultJsonValueConverterFactoryProvider implements Provider<IJsonV
     protected Map<Class<?>, JsonValueConverter<?>> appendInjectedConverters(Map<Class<?>, JsonValueConverter<?>> converters) {
         injectedConverters.forEach((k, v) -> converters.put(typeForName(k), v));
         return converters;
-    }
-
-    protected Class<?> typeForName(String typeName) {
-        try {
-            return Class.forName(typeName);
-        } catch (ClassNotFoundException e) {
-            throw new IllegalStateException("Can't create Class for " + typeName, e);
-        }
     }
 }

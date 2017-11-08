@@ -1,6 +1,5 @@
 package com.nhl.link.rest.meta.cayenne;
 
-import com.nhl.link.rest.LinkRestException;
 import com.nhl.link.rest.meta.LrAttribute;
 import com.nhl.link.rest.meta.LrDataMap;
 import com.nhl.link.rest.meta.LrEntity;
@@ -23,10 +22,11 @@ import org.apache.cayenne.map.ObjRelationship;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.ws.rs.core.Response;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
+import static com.nhl.link.rest.meta.Types.typeForName;
 
 /**
  * @since 1.24
@@ -34,41 +34,6 @@ import java.util.Map;
 public class CayenneEntityCompiler implements LrEntityCompiler {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CayenneEntityCompiler.class);
-
-    static Class<?> getJavaTypeForTypeName(String typeName) {
-
-        if (typeName == null) {
-            throw new NullPointerException("Attribute type cannot be null");
-        }
-
-        switch (typeName) {
-            case TypesMapping.JAVA_BYTES:
-                return byte[].class;
-            case "boolean":
-                return boolean.class;
-            case "byte":
-                return byte.class;
-            case "char":
-                return char.class;
-            case "short":
-                return short.class;
-            case "int":
-                return int.class;
-            case "long":
-                return long.class;
-            case "float":
-                return float.class;
-            case "double":
-                return double.class;
-            default: {
-                try {
-                    return Class.forName(typeName);
-                } catch (ClassNotFoundException e) {
-                    throw new LinkRestException(Response.Status.INTERNAL_SERVER_ERROR, "Unknown class: " + typeName, e);
-                }
-            }
-        }
-    }
 
     private EntityResolver resolver;
     private Map<String, LrEntityOverlay> entityOverlays;
@@ -110,7 +75,7 @@ public class CayenneEntityCompiler implements LrEntityCompiler {
 
         ObjEntity objEntity = lrEntity.getObjEntity();
         for (ObjAttribute a : objEntity.getAttributes()) {
-            Class<?> type = getJavaTypeForTypeName(a.getType());
+            Class<?> type = typeForName(a.getType());
             CayenneLrAttribute lrAttribute = new CayenneLrAttribute(a, type);
             lrEntity.addPersistentAttribute(lrAttribute);
         }
@@ -126,7 +91,7 @@ public class CayenneEntityCompiler implements LrEntityCompiler {
             // db entities are connected through intermediate tables
             DbRelationship targetRelationship = dbRelationshipsList.get(dbRelationshipsList.size() - 1);
             int targetJdbcType = targetRelationship.getJoins().get(0).getTarget().getType();
-            Class<?> type = getJavaTypeForTypeName(TypesMapping.getJavaBySqlType(targetJdbcType));
+            Class<?> type = typeForName(TypesMapping.getJavaBySqlType(targetJdbcType));
 
             LrRelationship lrRelationship = new CayenneLrRelationship(r, targetEntity, converterFactory.converter(type));
             lrEntity.addRelationship(lrRelationship);
@@ -137,10 +102,10 @@ public class CayenneEntityCompiler implements LrEntityCompiler {
             Class<?> type;
             LrAttribute id;
             if (attribute == null) {
-                type = getJavaTypeForTypeName(TypesMapping.getJavaBySqlType(pk.getType()));
+                type = typeForName(TypesMapping.getJavaBySqlType(pk.getType()));
                 id = new CayenneLrDbAttribute(pk.getName(), pk, type);
             } else {
-                type = getJavaTypeForTypeName(attribute.getType());
+                type = typeForName(attribute.getType());
                 id = new CayenneLrAttribute(attribute, type);
             }
             lrEntity.addId(id);

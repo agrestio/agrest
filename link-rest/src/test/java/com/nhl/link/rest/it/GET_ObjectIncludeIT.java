@@ -6,6 +6,7 @@ import com.nhl.link.rest.it.fixture.JerseyTestOnDerby;
 import com.nhl.link.rest.it.fixture.cayenne.E2;
 import com.nhl.link.rest.it.fixture.cayenne.E3;
 import com.nhl.link.rest.it.fixture.cayenne.E4;
+import com.nhl.link.rest.it.fixture.cayenne.E5;
 import org.apache.cayenne.query.SQLTemplate;
 import org.junit.Test;
 
@@ -169,7 +170,7 @@ public class GET_ObjectIncludeIT extends JerseyTestOnDerby {
     public void test_MapBy_ToMany_ByRelatedDate() {
 
         newContext().performGenericQuery(
-                new SQLTemplate(E3.class,
+                new SQLTemplate(E5.class,
                         "INSERT INTO utest.e5 (id,name,date) values (45, 'T','2013-01-03'),(46, 'Y','2013-01-04')"));
         newContext().performGenericQuery(
                 new SQLTemplate(E2.class, "INSERT INTO utest.e2 (id, name) values (1, 'xxx')"));
@@ -183,8 +184,8 @@ public class GET_ObjectIncludeIT extends JerseyTestOnDerby {
         assertEquals(Status.OK.getStatusCode(), response1.getStatus());
         assertEquals(
                 "{\"data\":[{\"id\":1,\"e3s\":{"
-                        + "\"2013-01-03\":[{\"id\":8,\"name\":\"aaa\",\"phoneNumber\":null},{\"id\":9,\"name\":\"zzz\",\"phoneNumber\":null}],"
-                        + "\"2013-01-04\":[{\"id\":7,\"name\":\"aaa\",\"phoneNumber\":null}]" + "}}],\"total\":1}",
+                        + "\"2013-01-03T00:00:00\":[{\"id\":8,\"name\":\"aaa\",\"phoneNumber\":null},{\"id\":9,\"name\":\"zzz\",\"phoneNumber\":null}],"
+                        + "\"2013-01-04T00:00:00\":[{\"id\":7,\"name\":\"aaa\",\"phoneNumber\":null}]" + "}}],\"total\":1}",
                 response1.readEntity(String.class));
     }
 

@@ -15,6 +15,8 @@ import org.apache.cayenne.di.Provider;
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.nhl.link.rest.meta.Types.typeForName;
+
 public class AttributeEncoderFactoryProvider implements Provider<IAttributeEncoderFactory> {
 
     private Map<String, Encoder> injectedEncoders;
@@ -58,13 +60,5 @@ public class AttributeEncoderFactoryProvider implements Provider<IAttributeEncod
     protected Map<Class<?>, Encoder> appendInjectedEncoders(Map<Class<?>, Encoder> encoders) {
         injectedEncoders.forEach((k, v) -> encoders.put(typeForName(k), v));
         return encoders;
-    }
-
-    protected Class<?> typeForName(String typeName) {
-        try {
-            return Class.forName(typeName);
-        } catch (ClassNotFoundException e) {
-            throw new IllegalStateException("Can't create Class for " + typeName, e);
-        }
     }
 }

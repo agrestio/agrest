@@ -1,28 +1,29 @@
 package com.nhl.link.rest.runtime.encoder;
 
-import java.sql.Types;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
-import javax.ws.rs.core.Response.Status;
-
 import com.nhl.link.rest.LinkRestException;
 import com.nhl.link.rest.encoder.converter.GenericConverter;
-import com.nhl.link.rest.encoder.converter.ISODateConverter;
-import com.nhl.link.rest.encoder.converter.ISODateTimeConverter;
-import com.nhl.link.rest.encoder.converter.ISOTimeConverter;
 import com.nhl.link.rest.encoder.converter.StringConverter;
 import com.nhl.link.rest.meta.LrAttribute;
 import com.nhl.link.rest.meta.LrEntity;
-import com.nhl.link.rest.meta.LrPersistentAttribute;
+
+import javax.ws.rs.core.Response.Status;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class StringConverterFactory implements IStringConverterFactory {
+
+	private Map<Class<?>, StringConverter> convertersByJavaType;
+	private StringConverter defaultConverter;
 
 	// these are explicit overrides for named attributes
 	private Map<String, StringConverter> convertersByPath;
 
-	public StringConverterFactory() {
-		this.convertersByPath = new ConcurrentHashMap<String, StringConverter>();
+	public StringConverterFactory(Map<Class<?>, StringConverter> knownConverters,
+								  StringConverter defaultConverter) {
+		// creating a concurrent copy of the provided map - we'll be expanding it dynamically.
+		this.convertersByJavaType = new ConcurrentHashMap<>(knownConverters);
+		this.defaultConverter = defaultConverter;
+		this.convertersByPath = new ConcurrentHashMap<>();
 	}
 
 	@Override
@@ -57,34 +58,20 @@ public class StringConverterFactory implements IStringConverterFactory {
 					+ attributeName + "'");
 		}
 
-		if (AttributeEncoderFactory.UTIL_DATE.equals(attribute.getType())) {
-
-			if (attribute instanceof LrPersistentAttribute) {
-				LrPersistentAttribute persistentAttribute = (LrPersistentAttribute) attribute;
-				int dbType = persistentAttribute.getJdbcType();
-
-				if (dbType == Types.DATE) {
-					return ISODateConverter.converter();
-				}
-
-				if (dbType == Types.TIME) {
-					return ISOTimeConverter.converter();
-				}
-			}
-
-			// JDBC TIMESTAMP or something entirely unrecognized
-			return ISODateTimeConverter.converter();
-		}
-		// less common cases of mapping to java.sql.* types...
-		else if (AttributeEncoderFactory.SQL_TIMESTAMP.equals(attribute.getType())) {
-			return ISODateTimeConverter.converter();
-		} else if (AttributeEncoderFactory.SQL_DATE.equals(attribute.getType())) {
-			return ISODateConverter.converter();
-		} else if (AttributeEncoderFactory.SQL_TIME.equals(attribute.getType())) {
-			return ISOTimeConverter.converter();
-		}
-
-		return GenericConverter.converter();
+		return buildConverter(attribute);
 	}
 
+	/**
+	 * @since 2.11
+     */
+	protected StringConverter buildConverter(LrAttribute attribute) {
+		return buildConverter(attribute.getType());
+	}
+
+	/**
+	 * @since 2.11
+     */
+	protected StringConverter buildConverter(Class<?> javaType) {
+		return convertersByJavaType.computeIfAbsent(javaType, vt -> defaultConverter);
+	}
 }

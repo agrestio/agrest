@@ -11,6 +11,7 @@ import com.nhl.link.rest.SimpleResponse;
 import com.nhl.link.rest.encoder.Encoder;
 import com.nhl.link.rest.encoder.EncoderFilter;
 import com.nhl.link.rest.encoder.PropertyMetadataEncoder;
+import com.nhl.link.rest.encoder.converter.StringConverter;
 import com.nhl.link.rest.meta.LrEntityOverlay;
 import com.nhl.link.rest.meta.cayenne.CayenneEntityCompiler;
 import com.nhl.link.rest.meta.compiler.LrEntityCompiler;
@@ -52,7 +53,7 @@ import com.nhl.link.rest.runtime.encoder.EncoderService;
 import com.nhl.link.rest.runtime.encoder.IAttributeEncoderFactory;
 import com.nhl.link.rest.runtime.encoder.IEncoderService;
 import com.nhl.link.rest.runtime.encoder.IStringConverterFactory;
-import com.nhl.link.rest.runtime.encoder.StringConverterFactory;
+import com.nhl.link.rest.runtime.encoder.StringConverterFactoryProvider;
 import com.nhl.link.rest.runtime.executor.UnboundedExecutorServiceProvider;
 import com.nhl.link.rest.runtime.jackson.IJacksonService;
 import com.nhl.link.rest.runtime.jackson.JacksonService;
@@ -554,8 +555,11 @@ public class LinkRestBuilder {
             binder.bindMap(Encoder.class);
             binder.bind(IAttributeEncoderFactory.class).toProvider(AttributeEncoderFactoryProvider.class);
 
+            // a map of custom converters
+            binder.bindMap(StringConverter.class);
+            binder.bind(IStringConverterFactory.class).toProvider(StringConverterFactoryProvider.class);
+
             binder.bind(IRequestParser.class).to(RequestParser.class);
-            binder.bind(IStringConverterFactory.class).to(StringConverterFactory.class);
             binder.bind(IEncoderService.class).to(EncoderService.class);
             binder.bind(IRelationshipMapper.class).to(RelationshipMapper.class);
             binder.bind(IMetadataService.class).to(MetadataService.class);
