@@ -21,7 +21,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
-public class PointerResolveTest extends JerseyTestOnDerby {
+public class PointerResolveIT extends JerseyTestOnDerby {
 
     private IMetadataService metadataService;
     private ICayennePersister cayenneService;
