@@ -1,8 +1,8 @@
 ## Upgrading to 2.11
 
-### JSON encoders stop rendering timezone for all date/time values
+### JSON encoders stop rendering timezone for all date/time values [#275](https://github.com/nhl/link-rest/issues/275)
 
-Encoding of date/time values is now uniform for all attribute types and is based on the following rules:
+Encoding of local date/time values is now uniform for all attribute types and is based on the following rules:
 
 - everything is formatted in server's default TZ
 - TZ is never specified in the formatted string
