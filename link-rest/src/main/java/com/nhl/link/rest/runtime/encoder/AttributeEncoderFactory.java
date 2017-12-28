@@ -1,15 +1,23 @@
 package com.nhl.link.rest.runtime.encoder;
 
+import java.sql.Time;
+import java.sql.Timestamp;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.OffsetDateTime;
+import java.util.Collection;
+import java.util.Date;
+import java.util.Map;
+import java.util.TreeMap;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
+
+import org.apache.cayenne.DataObject;
+
 import com.nhl.link.rest.EntityProperty;
 import com.nhl.link.rest.ResourceEntity;
 import com.nhl.link.rest.encoder.Encoder;
-import com.nhl.link.rest.encoder.GenericEncoder;
-import com.nhl.link.rest.encoder.ISODateEncoder;
-import com.nhl.link.rest.encoder.ISODateTimeEncoder;
-import com.nhl.link.rest.encoder.ISOLocalDateEncoder;
-import com.nhl.link.rest.encoder.ISOLocalDateTimeEncoder;
-import com.nhl.link.rest.encoder.ISOLocalTimeEncoder;
-import com.nhl.link.rest.encoder.ISOTimeEncoder;
 import com.nhl.link.rest.encoder.IdEncoder;
 import com.nhl.link.rest.meta.LrAttribute;
 import com.nhl.link.rest.meta.LrEntity;
@@ -21,19 +29,6 @@ import com.nhl.link.rest.property.BeanPropertyReader;
 import com.nhl.link.rest.property.IdPropertyReader;
 import com.nhl.link.rest.property.PropertyBuilder;
 import com.nhl.link.rest.property.PropertyReader;
-import org.apache.cayenne.DataObject;
-
-import java.sql.Time;
-import java.sql.Timestamp;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.util.Collection;
-import java.util.Date;
-import java.util.Map;
-import java.util.TreeMap;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 
 public class AttributeEncoderFactory implements IAttributeEncoderFactory {
 
@@ -44,6 +39,7 @@ public class AttributeEncoderFactory implements IAttributeEncoderFactory {
 	static final Class<?> LOCAL_DATE = LocalDate.class;
 	static final Class<?> LOCAL_TIME = LocalTime.class;
 	static final Class<?> LOCAL_DATETIME = LocalDateTime.class;
+	static final Class<?> OFFSET_DATETIME = OffsetDateTime.class;
 
 	private Map<Class<?>, Encoder> encodersByJavaType;
 	private Encoder defaultEncoder;
