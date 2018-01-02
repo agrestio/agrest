@@ -1,29 +1,33 @@
 package com.nhl.link.rest.runtime.encoder;
 
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.mock;
+
+import java.sql.Types;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
+import java.util.Collections;
+
+import org.junit.Before;
+import org.junit.Test;
+
 import com.nhl.link.rest.ResourceEntity;
 import com.nhl.link.rest.encoder.Encoder;
 import com.nhl.link.rest.encoder.EncoderFilter;
 import com.nhl.link.rest.encoder.Encoders;
 import com.nhl.link.rest.encoder.PropertyMetadataEncoder;
 import com.nhl.link.rest.it.fixture.cayenne.iso.Java8ISODateTestEntity;
+import com.nhl.link.rest.it.fixture.cayenne.iso.Java8ISOOffsetDateTimeTestEntity;
 import com.nhl.link.rest.it.fixture.cayenne.iso.Java8ISOTimeTestEntity;
 import com.nhl.link.rest.it.fixture.cayenne.iso.Java8ISOTimestampTestEntity;
 import com.nhl.link.rest.runtime.semantics.RelationshipMapper;
 import com.nhl.link.rest.unit.Java8TestWithCayenneMapping;
-import org.junit.Before;
-import org.junit.Test;
 
-import java.sql.Types;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
-import java.util.Collections;
-
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.mock;
-
-public class EncoderService_localDateTime_Test extends Java8TestWithCayenneMapping {
+public class EncoderService_ISODateTime_Test extends Java8TestWithCayenneMapping {
 
     private EncoderService encoderService;
 
@@ -98,6 +102,30 @@ public class EncoderService_localDateTime_Test extends Java8TestWithCayenneMappi
 
         assertEquals("{\"data\":[{\"timestamp\":\"" + dateTimeString + "\"}],\"total\":1}",
                 toJson(isoTimestampTestEntity, resourceEntity));
+    }
+    
+    @Test
+    public void testJava8ISOOffsetDateTime() {
+        // fractional part is not printed, when less than a millisecond
+        _testJava8ISOOffsetDateTime(OffsetDateTime.of(LocalDateTime.of(2017, 1, 1, 10, 0, 0), ZoneOffset.ofHours(3)));
+        _testJava8ISOOffsetDateTime(OffsetDateTime.of(LocalDateTime.of(2017, 1, 1, 10, 0, 0, 1), ZoneOffset.ofHours(3)));
+        _testJava8ISOOffsetDateTime(OffsetDateTime.of(LocalDateTime.of(2017, 1, 1, 10, 0, 0, 999_999), ZoneOffset.ofHours(3)));
+        int millisecond = 1_000_000; // millisecond is 10^6 nanoseconds
+        _testJava8ISOOffsetDateTime(OffsetDateTime.of(LocalDateTime.of(2017, 1, 1, 10, 0, 0, millisecond), ZoneOffset.ofHours(3)));
+    }
+    
+    private void _testJava8ISOOffsetDateTime(OffsetDateTime dateTime) {
+
+        ResourceEntity<Java8ISOOffsetDateTimeTestEntity> resourceEntity = getResourceEntity(Java8ISOOffsetDateTimeTestEntity.class);
+        appendPersistenceAttribute(resourceEntity, Java8ISOOffsetDateTimeTestEntity.TIMESTAMP, OffsetDateTime.class, Types.VARCHAR);
+
+        Java8ISOOffsetDateTimeTestEntity isoOffsetDateTimeTestEntity = new Java8ISOOffsetDateTimeTestEntity();
+        isoOffsetDateTimeTestEntity.setTimestamp(dateTime);
+
+        String dateTimeString = DateTimeFormatter.ISO_OFFSET_DATE_TIME.format(dateTime);
+
+        assertEquals("{\"data\":[{\"timestamp\":\"" + dateTimeString + "\"}],\"total\":1}",
+                toJson(isoOffsetDateTimeTestEntity, resourceEntity));
     }
 
     private String toJson(Object object, ResourceEntity<?> resourceEntity) {

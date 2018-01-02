@@ -6,6 +6,7 @@ import com.nhl.link.rest.encoder.converter.ISODateTimeConverter;
 import com.nhl.link.rest.encoder.converter.ISOLocalDateConverter;
 import com.nhl.link.rest.encoder.converter.ISOLocalDateTimeConverter;
 import com.nhl.link.rest.encoder.converter.ISOLocalTimeConverter;
+import com.nhl.link.rest.encoder.converter.ISOOffsetDateTimeConverter;
 import com.nhl.link.rest.encoder.converter.ISOTimeConverter;
 import com.nhl.link.rest.encoder.converter.StringConverter;
 import org.apache.cayenne.di.DIRuntimeException;
@@ -59,6 +60,7 @@ public class StringConverterFactoryProvider implements Provider<IStringConverter
         converters.put(AttributeEncoderFactory.LOCAL_DATE, ISOLocalDateConverter.converter());
         converters.put(AttributeEncoderFactory.LOCAL_TIME, ISOLocalDateTimeConverter.converter());
         converters.put(AttributeEncoderFactory.LOCAL_DATETIME, ISOLocalTimeConverter.converter());
+        converters.put(AttributeEncoderFactory.OFFSET_DATETIME, ISOOffsetDateTimeConverter.converter());
         converters.put(AttributeEncoderFactory.UTIL_DATE, ISODateTimeConverter.converter());
         converters.put(AttributeEncoderFactory.SQL_TIMESTAMP, ISODateTimeConverter.converter());
         converters.put(AttributeEncoderFactory.SQL_DATE, ISODateConverter.converter());
