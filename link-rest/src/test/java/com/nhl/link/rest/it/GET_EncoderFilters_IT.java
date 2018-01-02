@@ -109,7 +109,7 @@ public class GET_EncoderFilters_IT extends JerseyTestOnDerby {
     public void testFilteredPagination4_Listeners() {
 
         CayennePaginationListener.RESOURCE_ENTITY_IS_FILTERED = false;
-        CayennePaginationListener.QUERY_PAGE_SIZE = 0;
+        CayennePaginationListener.QUERY_PAGE_SIZE = 1;
 
         target("/e4/pagination_listener")
                 .queryParam("include", "id")
@@ -127,7 +127,7 @@ public class GET_EncoderFilters_IT extends JerseyTestOnDerby {
     public void testFilteredPagination4_CustomStage() {
 
         Resource.RESOURCE_ENTITY_IS_FILTERED = false;
-        Resource.QUERY_PAGE_SIZE = 0;
+        Resource.QUERY_PAGE_SIZE = 1;
 
         target("/e4/pagination_stage")
                 .queryParam("include", "id")

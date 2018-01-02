@@ -9,14 +9,20 @@ import com.nhl.link.rest.meta.LrRelationship;
 import com.nhl.link.rest.runtime.processor.select.SelectContext;
 import com.nhl.link.rest.unit.TestWithCayenneMapping;
 import org.apache.cayenne.exp.Expression;
+import org.apache.cayenne.query.SelectQuery;
 import org.apache.cayenne.query.Ordering;
 import org.apache.cayenne.query.PrefetchTreeNode;
-import org.apache.cayenne.query.SelectQuery;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import static org.junit.Assert.*;
+import java.util.Arrays;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
 
 public class CayenneAssembleQueryStageTest extends TestWithCayenneMapping {
 
@@ -24,7 +30,7 @@ public class CayenneAssembleQueryStageTest extends TestWithCayenneMapping {
 
 	@Before
 	public void before() {
-		this.makeQueryStage = new CayenneAssembleQueryStage(mockCayennePersister);
+		this.makeQueryStage = new CayenneAssembleQueryStage(mockCayennePersister, null);
 	}
 
 	@Test
@@ -33,26 +39,25 @@ public class CayenneAssembleQueryStageTest extends TestWithCayenneMapping {
 		Ordering o1 = E1.NAME.asc();
 		Ordering o2 = E1.NAME.desc();
 
-		SelectQuery<E1> query = new SelectQuery<E1>(E1.class);
+		SelectQuery<E1> query = SelectQuery.query(E1.class);
 		query.addOrdering(o1);
 
 		ResourceEntity<E1> resourceEntity = getResourceEntity(E1.class);
 		resourceEntity.getOrderings().add(o2);
 
-		SelectContext<E1> context = new SelectContext<E1>(E1.class);
+		SelectContext<E1> context = new SelectContext<>(E1.class);
 		context.setSelect(query);
 		context.setEntity(resourceEntity);
 
 		SelectQuery<E1> amended = makeQueryStage.buildQuery(context);
 		assertSame(query, amended);
 		assertEquals(2, amended.getOrderings().size());
-		assertSame(o1, amended.getOrderings().get(0));
-		assertSame(o2, amended.getOrderings().get(1));
+		assertTrue(amended.getOrderings().containsAll(Arrays.asList(o1, o2)));
 	}
 
 	@Test
 	public void testBuildQuery_Prefetches() {
-		SelectQuery<E2> query = new SelectQuery<E2>(E2.class);
+		SelectQuery<E2> query = SelectQuery.query(E2.class);
 
 		ResourceEntity<E2> resultFilter = getResourceEntity(E2.class);
 		LrRelationship incoming = resultFilter.getLrEntity().getRelationship(E2.E3S.getName());
@@ -60,7 +65,7 @@ public class CayenneAssembleQueryStageTest extends TestWithCayenneMapping {
 		LrPersistentEntity<E3> target = Mockito.mock(LrPersistentEntity.class);
 		resultFilter.getChildren().put(E2.E3S.getName(), new ResourceEntity<E3>(target, incoming));
 
-		SelectContext<E2> context = new SelectContext<E2>(E2.class);
+		SelectContext<E2> context = new SelectContext<>(E2.class);
 		context.setEntity(resultFilter);
 		context.setSelect(query);
 
@@ -82,7 +87,7 @@ public class CayenneAssembleQueryStageTest extends TestWithCayenneMapping {
 		resourceEntity.setFetchLimit(10);
 		resourceEntity.setFetchOffset(0);
 
-		SelectContext<E1> c = new SelectContext<E1>(E1.class);
+		SelectContext<E1> c = new SelectContext<>(E1.class);
 		c.setEntity(resourceEntity);
 
 		SelectQuery<E1> q1 = makeQueryStage.buildQuery(c);
@@ -121,7 +126,7 @@ public class CayenneAssembleQueryStageTest extends TestWithCayenneMapping {
 		SelectQuery<E1> query = makeQueryStage.buildQuery(c1);
 		assertEquals(extraQualifier, query.getQualifier());
 
-		SelectQuery<E1> query2 = new SelectQuery<E1>(E1.class);
+		SelectQuery<E1> query2 = SelectQuery.query(E1.class);
 		query2.setQualifier(E1.NAME.in("a", "b"));
 
 		SelectContext<E1> c2 = new SelectContext<>(E1.class);
@@ -146,7 +151,7 @@ public class CayenneAssembleQueryStageTest extends TestWithCayenneMapping {
 
 	@Test
 	public void testById_WithQuery() {
-		SelectQuery<E1> select = new SelectQuery<E1>(E1.class);
+		SelectQuery<E1> select = SelectQuery.query(E1.class);
 
 		SelectContext<E1> c = new SelectContext<>(E1.class);
 		c.setId(1);

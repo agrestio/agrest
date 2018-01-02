@@ -52,8 +52,9 @@ public class ApplyServerParamsStage implements Processor<SelectContext<?>> {
             }
         }
 
-        // make sure we create the encoder, even if we end up with an empty
-        // list, as we need to encode the totals
+        // make sure we create the default encoder, even if we end up with an empty
+        // list, as we need to encode the totals;
+        // the default encoder will also come in handy for Pojos and when the processing chain is terminated by a listener
 
         if (context.getEncoder() == null) {
             context.setEncoder(encoderService.dataEncoder(entity));

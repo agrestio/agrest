@@ -1,14 +1,30 @@
 package com.nhl.link.rest.runtime.encoder;
 
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.nhl.link.rest.AggregationType;
 import com.nhl.link.rest.EntityProperty;
 import com.nhl.link.rest.ResourceEntity;
-import com.nhl.link.rest.encoder.*;
+import com.nhl.link.rest.encoder.CollectionEncoder;
+import com.nhl.link.rest.encoder.DataResponseEncoder;
+import com.nhl.link.rest.encoder.Encoder;
+import com.nhl.link.rest.encoder.EncoderFilter;
+import com.nhl.link.rest.encoder.EncoderVisitor;
+import com.nhl.link.rest.encoder.EntityEncoder;
+import com.nhl.link.rest.encoder.EntityMetadataEncoder;
+import com.nhl.link.rest.encoder.EntityToOneEncoder;
+import com.nhl.link.rest.encoder.FilterChainEncoder;
+import com.nhl.link.rest.encoder.GenericEncoder;
+import com.nhl.link.rest.encoder.ListEncoder;
+import com.nhl.link.rest.encoder.MapByEncoder;
+import com.nhl.link.rest.encoder.PropertyMetadataEncoder;
+import com.nhl.link.rest.encoder.ResourceEncoder;
 import com.nhl.link.rest.meta.LrAttribute;
 import com.nhl.link.rest.meta.LrRelationship;
 import com.nhl.link.rest.property.PropertyBuilder;
 import com.nhl.link.rest.runtime.semantics.IRelationshipMapper;
 import org.apache.cayenne.di.Inject;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -27,7 +43,8 @@ public class EncoderService implements IEncoderService {
 
     public EncoderService(@Inject List<EncoderFilter> filters,
                           @Inject IAttributeEncoderFactory attributeEncoderFactory,
-                          @Inject IStringConverterFactory stringConverterFactory, @Inject IRelationshipMapper relationshipMapper,
+                          @Inject IStringConverterFactory stringConverterFactory,
+                          @Inject IRelationshipMapper relationshipMapper,
                           @Inject Map<String, PropertyMetadataEncoder> propertyMetadataEncoders) {
         this.attributeEncoderFactory = attributeEncoderFactory;
         this.relationshipMapper = relationshipMapper;
@@ -44,18 +61,25 @@ public class EncoderService implements IEncoderService {
 
     @Override
     public <T> Encoder dataEncoder(ResourceEntity<T> entity) {
-        CollectionEncoder resultEncoder = resultEncoder(entity);
+        return buildDataEncoder(entity, entityEncoder(entity));
+    }
+
+    private <T> Encoder buildDataEncoder(ResourceEntity<T> entity, Encoder entityEncoder) {
+        CollectionEncoder resultEncoder = resultEncoder(entity, entityEncoder);
+        return toDataResponseEncoder(resultEncoder);
+    }
+
+    protected DataResponseEncoder toDataResponseEncoder(CollectionEncoder resultEncoder) {
         return new DataResponseEncoder("data", resultEncoder, "total", GenericEncoder.encoder());
     }
 
-    protected CollectionEncoder resultEncoder(ResourceEntity<?> entity) {
-        Encoder elementEncoder = collectionElementEncoder(entity);
+    protected CollectionEncoder resultEncoder(ResourceEntity<?> entity, Encoder elementEncoder) {
         boolean isMapBy = entity.getMapBy() != null;
 
         // notice that we are not passing either qualifier or ordering to the encoder, as those are presumably applied
         // at the query level.. (unlike with #nestedToManyEncoder)
 
-        CollectionEncoder encoder = new ListEncoder(elementEncoder)
+        CollectionEncoder encoder = new ListEncoder(filteredEncoder(elementEncoder, entity))
                 .withOffset(entity.getFetchOffset())
                 .withLimit(entity.getFetchLimit())
                 .shouldFilter(entity.isFiltered());
@@ -73,16 +97,17 @@ public class EncoderService implements IEncoderService {
 
     protected Encoder nestedToManyEncoder(ResourceEntity<?> resourceEntity) {
 
-        Encoder elementEncoder = collectionElementEncoder(resourceEntity);
+        Encoder elementEncoder = entityEncoder(resourceEntity);
         boolean isMapBy = resourceEntity.getMapBy() != null;
 
-        // if mapBy is involved, apply filters at MapBy level, not inside sublists...
+        // if mapBy is involved, apply filters at MapBy level, not inside
+        // sublists...
         ListEncoder listEncoder = new ListEncoder(
-                elementEncoder,
+                filteredEncoder(elementEncoder, resourceEntity),
                 isMapBy ? null : resourceEntity.getQualifier(),
-                resourceEntity.getOrderings())
-                .withOffset(resourceEntity.getFetchOffset())
-                .withLimit(resourceEntity.getFetchLimit());
+                resourceEntity.getOrderings());
+
+        listEncoder.withOffset(resourceEntity.getFetchOffset()).withLimit(resourceEntity.getFetchLimit());
 
         if (resourceEntity.isFiltered()) {
             listEncoder.shouldFilter();
@@ -97,11 +122,6 @@ public class EncoderService implements IEncoderService {
                         stringConverterFactory,
                         attributeEncoderFactory)
                 : listEncoder;
-    }
-
-    protected Encoder collectionElementEncoder(ResourceEntity<?> resourceEntity) {
-        Encoder encoder = entityEncoder(resourceEntity);
-        return filteredEncoder(encoder, resourceEntity);
     }
 
     protected Encoder toOneEncoder(ResourceEntity<?> resourceEntity, LrRelationship relationship) {
@@ -132,7 +152,7 @@ public class EncoderService implements IEncoderService {
 
         // ensure we sort property encoders alphabetically for cleaner JSON
         // output
-        Map<String, EntityProperty> attributeEncoders = new TreeMap<String, EntityProperty>();
+        Map<String, EntityProperty> attributeEncoders = new TreeMap<>();
 
         for (LrAttribute attribute : resourceEntity.getAttributes().values()) {
             EntityProperty property = attributeEncoderFactory.getAttributeProperty(resourceEntity.getLrEntity(),
@@ -140,24 +160,46 @@ public class EncoderService implements IEncoderService {
             attributeEncoders.put(attribute.getName(), property);
         }
 
-        Map<String, EntityProperty> relationshipEncoders = new TreeMap<String, EntityProperty>();
-        for (Entry<String, ResourceEntity<?>> e : resourceEntity.getChildren().entrySet()) {
-            LrRelationship relationship = resourceEntity.getLrEntity().getRelationship(e.getKey());
-
-            Encoder encoder = relationship.isToMany() ? nestedToManyEncoder(e.getValue())
-                    : toOneEncoder(e.getValue(), relationship);
-
-            EntityProperty property = attributeEncoderFactory.getRelationshipProperty(resourceEntity.getLrEntity(),
-                    relationship, encoder);
-            relationshipEncoders.put(e.getKey(), property);
+        for (AggregationType aggregationType : AggregationType.values()) {
+            resourceEntity.getAggregatedAttributes(aggregationType).forEach(attribute -> {
+                EntityProperty property = attributeEncoderFactory.getAttributeProperty(resourceEntity.getLrEntity(),
+                    attribute);
+                String key = toFunctionName(aggregationType, attribute.getName());
+                attributeEncoders.put(key, property);
+            });
         }
 
-        Map<String, EntityProperty> extraEncoders = new TreeMap<String, EntityProperty>();
+        Map<String, EntityProperty> relationshipEncoders = new TreeMap<>();
+        for (Entry<String, ResourceEntity<?>> e : resourceEntity.getChildren().entrySet()) {
+            ResourceEntity<?> child = e.getValue();
 
+            // TODO: same when the parent's parent is aggregate (need to pass context throughout the hierarchy)
+            if (resourceEntity.isAggregate()) {
+                String propertyName = e.getKey();
+                relationshipEncoders.put(propertyName, new PropertyEncoder(entityEncoder(child), propertyName));
+
+            } else {
+                LrRelationship relationship = child.getIncoming();
+                Encoder encoder = relationship.isToMany() ? nestedToManyEncoder(e.getValue())
+                        : toOneEncoder(e.getValue(), relationship);
+                EntityProperty property = attributeEncoderFactory.getRelationshipProperty(resourceEntity.getLrEntity(),
+                        relationship, encoder);
+                relationshipEncoders.put(e.getKey(), property);
+            }
+        }
+
+        for (Entry<String, ResourceEntity<?>> e : resourceEntity.getAggregateChildren().entrySet()) {
+            ResourceEntity<?> child = e.getValue();
+            String propertyName = "@aggregated:" + e.getKey();
+            relationshipEncoders.put(propertyName, new PropertyEncoder(entityEncoder(child), propertyName));
+        }
+
+        Map<String, EntityProperty> extraEncoders = new TreeMap<>();
         extraEncoders.putAll(resourceEntity.getExtraProperties());
 
         EntityProperty idEncoder = resourceEntity.isIdIncluded() ? attributeEncoderFactory.getIdProperty(resourceEntity)
                 : PropertyBuilder.doNothingProperty();
+
         return new EntityEncoder(idEncoder, attributeEncoders, relationshipEncoders, extraEncoders);
     }
 
@@ -177,4 +219,33 @@ public class EncoderService implements IEncoderService {
         return matchingFilters != null ? new FilterChainEncoder(encoder, matchingFilters) : encoder;
     }
 
+    private static String toFunctionName(AggregationType aggregationType, String attributeName) {
+        return aggregationType.functionName().toLowerCase() + "(" + attributeName + ")";
+    }
+
+    private static class PropertyEncoder implements EntityProperty {
+
+        private Encoder encoder;
+        private String name;
+
+        public PropertyEncoder(Encoder encoder, String name) {
+            this.encoder = encoder;
+            this.name = name;
+        }
+
+        @Override
+        public void encode(Object root, String propertyName, JsonGenerator out) throws IOException {
+            encoder.encode(name, root, out);
+        }
+
+        @Override
+        public Object read(Object root, String propertyName) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public int visit(Object object, String propertyName, EncoderVisitor visitor) {
+            throw new UnsupportedOperationException();
+        }
+    }
 }

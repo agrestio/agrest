@@ -3,13 +3,6 @@ package com.nhl.link.rest.runtime.encoder;
 import com.nhl.link.rest.EntityProperty;
 import com.nhl.link.rest.ResourceEntity;
 import com.nhl.link.rest.encoder.Encoder;
-import com.nhl.link.rest.encoder.GenericEncoder;
-import com.nhl.link.rest.encoder.ISODateEncoder;
-import com.nhl.link.rest.encoder.ISODateTimeEncoder;
-import com.nhl.link.rest.encoder.ISOLocalDateEncoder;
-import com.nhl.link.rest.encoder.ISOLocalDateTimeEncoder;
-import com.nhl.link.rest.encoder.ISOLocalTimeEncoder;
-import com.nhl.link.rest.encoder.ISOTimeEncoder;
 import com.nhl.link.rest.encoder.IdEncoder;
 import com.nhl.link.rest.meta.LrAttribute;
 import com.nhl.link.rest.meta.LrEntity;
@@ -66,15 +59,9 @@ public class AttributeEncoderFactory implements IAttributeEncoderFactory {
 
 	@Override
 	public EntityProperty getAttributeProperty(LrEntity<?> entity, LrAttribute attribute) {
-		String key = entity.getName() + "." + attribute.getName();
-
-		EntityProperty property = attributePropertiesByPath.get(key);
-		if (property == null) {
-			property = buildAttributeProperty(entity, attribute);
-			attributePropertiesByPath.put(key, property);
-		}
-
-		return property;
+		// can't cache encoders for attributes, because we're using ad-hoc "decorated" attributes for aggregation purposes
+		// e.g. see com.nhl.link.rest.runtime.cayenne.processor.select.CayenneAssembleQueryStage#currentColumnAttribute()
+		return buildAttributeProperty(entity, attribute);
 	}
 
 	@Override
