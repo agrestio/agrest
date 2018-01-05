@@ -1,5 +1,19 @@
 package com.nhl.link.rest.runtime.parser.converter;
 
+import static com.nhl.link.rest.meta.Types.typeForName;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.OffsetDateTime;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.apache.cayenne.di.DIRuntimeException;
+import org.apache.cayenne.di.Inject;
+import org.apache.cayenne.di.Provider;
+
 import com.fasterxml.jackson.databind.JsonNode;
 import com.nhl.link.rest.parser.converter.Base64Converter;
 import com.nhl.link.rest.parser.converter.FloatConverter;
@@ -7,21 +21,10 @@ import com.nhl.link.rest.parser.converter.GenericConverter;
 import com.nhl.link.rest.parser.converter.ISOLocalDateConverter;
 import com.nhl.link.rest.parser.converter.ISOLocalDateTimeConverter;
 import com.nhl.link.rest.parser.converter.ISOLocalTimeConverter;
+import com.nhl.link.rest.parser.converter.ISOOffsetDateTimeConverter;
 import com.nhl.link.rest.parser.converter.JsonValueConverter;
 import com.nhl.link.rest.parser.converter.LongConverter;
 import com.nhl.link.rest.parser.converter.UtcDateConverter;
-import org.apache.cayenne.di.DIRuntimeException;
-import org.apache.cayenne.di.Inject;
-import org.apache.cayenne.di.Provider;
-
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-
-import static com.nhl.link.rest.meta.Types.typeForName;
 
 /**
  * @since 2.10
@@ -65,6 +68,7 @@ public class DefaultJsonValueConverterFactoryProvider implements Provider<IJsonV
         converters.put(LocalDate.class, ISOLocalDateConverter.converter());
         converters.put(LocalTime.class, ISOLocalTimeConverter.converter());
         converters.put(LocalDateTime.class, ISOLocalDateTimeConverter.converter());
+        converters.put(OffsetDateTime.class, ISOOffsetDateTimeConverter.converter());
         converters.put(JsonNode.class, DO_NOTHING_CONVERTER);
 
         return converters;

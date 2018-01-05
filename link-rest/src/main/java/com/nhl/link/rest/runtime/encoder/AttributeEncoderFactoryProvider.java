@@ -7,6 +7,7 @@ import com.nhl.link.rest.encoder.ISODateTimeEncoder;
 import com.nhl.link.rest.encoder.ISOLocalDateEncoder;
 import com.nhl.link.rest.encoder.ISOLocalDateTimeEncoder;
 import com.nhl.link.rest.encoder.ISOLocalTimeEncoder;
+import com.nhl.link.rest.encoder.ISOOffsetDateTimeEncoder;
 import com.nhl.link.rest.encoder.ISOTimeEncoder;
 import org.apache.cayenne.di.DIRuntimeException;
 import org.apache.cayenne.di.Inject;
@@ -49,6 +50,7 @@ public class AttributeEncoderFactoryProvider implements Provider<IAttributeEncod
         encoders.put(AttributeEncoderFactory.LOCAL_DATE, ISOLocalDateEncoder.encoder());
         encoders.put(AttributeEncoderFactory.LOCAL_TIME, ISOLocalTimeEncoder.encoder());
         encoders.put(AttributeEncoderFactory.LOCAL_DATETIME, ISOLocalDateTimeEncoder.encoder());
+        encoders.put(AttributeEncoderFactory.OFFSET_DATETIME, ISOOffsetDateTimeEncoder.encoder());
         encoders.put(AttributeEncoderFactory.UTIL_DATE, ISODateTimeEncoder.encoder());
         encoders.put(AttributeEncoderFactory.SQL_TIMESTAMP, ISODateTimeEncoder.encoder());
         encoders.put(AttributeEncoderFactory.SQL_DATE, ISODateEncoder.encoder());

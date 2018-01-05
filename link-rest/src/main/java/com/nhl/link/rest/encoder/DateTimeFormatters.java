@@ -1,14 +1,14 @@
 package com.nhl.link.rest.encoder;
 
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeFormatterBuilder;
-import java.time.format.DecimalStyle;
-
 import static java.time.temporal.ChronoField.HOUR_OF_DAY;
 import static java.time.temporal.ChronoField.MILLI_OF_SECOND;
 import static java.time.temporal.ChronoField.MINUTE_OF_HOUR;
 import static java.time.temporal.ChronoField.SECOND_OF_MINUTE;
+
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
+import java.time.format.DecimalStyle;
 
 /**
  * LR-specific date/time formatters
@@ -68,5 +68,9 @@ public class DateTimeFormatters {
 
     public static DateTimeFormatter isoLocalTime() {
         return LR_ISO_LOCAL_TIME;
+    }
+    
+    public static DateTimeFormatter isoOffsetDateTime() {
+        return DateTimeFormatter.ISO_OFFSET_DATE_TIME;
     }
 }

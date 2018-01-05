@@ -16,6 +16,10 @@
 		<db-attribute name="ID" type="INTEGER" isPrimaryKey="true" isMandatory="true"/>
 		<db-attribute name="Time" type="TIME"/>
 	</db-entity>
+	<db-entity name="ISO_OFFSETDATETIME_TEST">
+		<db-attribute name="ID" type="INTEGER" isPrimaryKey="true" isMandatory="true"/>
+		<db-attribute name="Timestamp" type="VARCHAR"/>
+	</db-entity>
 	<obj-entity name="ISODateTest" className="com.nhl.link.rest.it.fixture.cayenne.iso.Java8ISODateTestEntity" dbEntityName="ISO_DATE_TEST">
 		<obj-attribute name="date" type="java.time.LocalDate" db-attribute-path="Date"/>
 	</obj-entity>
@@ -24,5 +28,8 @@
 	</obj-entity>
 	<obj-entity name="ISOTimestampTest" className="com.nhl.link.rest.it.fixture.cayenne.iso.Java8ISOTimestampTestEntity" dbEntityName="ISO_TIMESTAMP_TEST">
 		<obj-attribute name="timestamp" type="java.time.LocalDateTime" db-attribute-path="Timestamp"/>
+	</obj-entity>
+	<obj-entity name="ISOOffsetDateTimeTest" className="com.nhl.link.rest.it.fixture.cayenne.iso.Java8ISOOffsetDateTimeTestEntity" dbEntityName="ISO_OFFSETDATETIME_TEST">
+		<obj-attribute name="timestamp" type="java.time.OffsetDateTime" db-attribute-path="Timestamp"/>
 	</obj-entity>
 </data-map>

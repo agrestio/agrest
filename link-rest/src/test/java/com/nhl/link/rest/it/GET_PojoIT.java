@@ -1,5 +1,26 @@
 package com.nhl.link.rest.it;
 
+import static org.junit.Assert.assertEquals;
+
+import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.core.Configuration;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.FeatureContext;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
+import javax.ws.rs.core.UriInfo;
+
+import org.junit.Test;
+
 import com.nhl.link.rest.DataResponse;
 import com.nhl.link.rest.LinkRest;
 import com.nhl.link.rest.it.fixture.pojo.JerseyTestOnPojo;
@@ -8,24 +29,7 @@ import com.nhl.link.rest.it.fixture.pojo.model.P3;
 import com.nhl.link.rest.it.fixture.pojo.model.P4;
 import com.nhl.link.rest.it.fixture.pojo.model.P6;
 import com.nhl.link.rest.it.fixture.pojo.model.P8;
-import org.junit.Test;
-
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.core.Configuration;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.FeatureContext;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
-import javax.ws.rs.core.UriInfo;
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-
-import static org.junit.Assert.assertEquals;
+import com.nhl.link.rest.it.fixture.pojo.model.P9;
 
 public class GET_PojoIT extends JerseyTestOnPojo {
 
@@ -101,6 +105,22 @@ public class GET_PojoIT extends JerseyTestOnPojo {
                 response1.readEntity(String.class));
     }
 
+    @Test
+    public void test_SelectAll_WithTime()  {
+
+        P9 o9 = new P9();
+        o9.setName("p9name1");
+        LocalDateTime ldt = LocalDateTime.of(1999, 10, 2, 12, 54, 31);
+        o9.setCreated(OffsetDateTime.of(ldt, ZoneOffset.ofHours(3)));
+        o9.setCreatedLocal(ldt);
+        pojoDB.bucketForType(P9.class).put("o9id", o9);
+
+        Response response1 = target("/pojo/p9").request().get();
+        assertEquals(Status.OK.getStatusCode(), response1.getStatus());
+        assertEquals("{\"data\":[{\"created\":\"1999-10-02T12:54:31+03:00\",\"createdLocal\":\"1999-10-02T12:54:31\",\"name\":\"p9name1\"}],\"total\":1}",
+        		response1.readEntity(String.class));
+    }
+    
     @Test
     public void test_SelectAll_MapBy() {
 
@@ -178,6 +198,12 @@ public class GET_PojoIT extends JerseyTestOnPojo {
         @Path("p8/{id}")
         public DataResponse<P8> p8ById(@PathParam("id") int id, @Context UriInfo uriInfo) {
             return LinkRest.service(config).selectById(P8.class, id, uriInfo);
+        }
+        
+        @GET
+        @Path("p9")
+        public DataResponse<P9> p9All(@Context UriInfo uriInfo) {
+            return LinkRest.select(P9.class, config).uri(uriInfo).get();
         }
     }
 }
