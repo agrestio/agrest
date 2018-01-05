@@ -1,3 +1,7 @@
+Release 2.12
+
+#276 Support OffsetDateTime
+
 Release 2.11
 
 #200 Automatic JSON to POJO deserialization in LR client
