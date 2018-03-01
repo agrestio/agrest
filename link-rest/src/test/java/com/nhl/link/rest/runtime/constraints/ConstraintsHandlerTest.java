@@ -120,9 +120,20 @@ public class ConstraintsHandlerTest {
         SizeConstraints s2 = new SizeConstraints().fetchLimit(0);
 
         ResourceEntity<E1> t1 = new ResourceEntity<>(lre0);
-        t1.setFetchLimit(0);
         constraintHandler.constrainResponse(t1, s1, null);
-        assertEquals(0, t1.getFetchLimit());
+        assertEquals(5, t1.getFetchLimit());
+        assertEquals(5, s1.getFetchLimit());
+
+        ResourceEntity<E1> t1_1 = new ResourceEntity<>(lre0);
+        t1_1.setFetchLimit(0);
+        constraintHandler.constrainResponse(t1_1, s1, null);
+        assertEquals(5, t1_1.getFetchLimit());
+        assertEquals(5, s1.getFetchLimit());
+
+        ResourceEntity<E1> t1_2 = new ResourceEntity<>(lre0);
+        t1_2.setFetchLimit(-1);
+        constraintHandler.constrainResponse(t1_2, s1, null);
+        assertEquals(5, t1_2.getFetchLimit());
         assertEquals(5, s1.getFetchLimit());
 
         ResourceEntity<E1> t2 = new ResourceEntity<>(lre0);
