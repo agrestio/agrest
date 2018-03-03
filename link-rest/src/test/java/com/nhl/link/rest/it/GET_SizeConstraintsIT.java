@@ -38,12 +38,30 @@ public class GET_SizeConstraintsIT extends JerseyTestOnDerby {
                 .request()
                 .get();
         assertEquals(Response.Status.OK.getStatusCode(), r.getStatus());
-        assertEquals("{\"data\":[{\"id\":1},{\"id\":2,\"cInt\":6}],\"total\":2}",
+        assertEquals("{\"data\":[{\"id\":1},{\"id\":2}],\"total\":3}",
                 r.readEntity(String.class));
     }
 
     @Test
-    public void testClientLimitExceedsServer() {
+    public void testClientLimitBelowServerLimit() {
+
+        SQLTemplate insert = new SQLTemplate(E4.class, "INSERT INTO utest.e4 (id) values (1),(2),(3)");
+
+        newContext().performGenericQuery(insert);
+
+        Response r = target("/e4/limit")
+                .queryParam("sort", "id")
+                .queryParam("include", "id")
+                .queryParam("limit", "1")
+                .request()
+                .get();
+        assertEquals(Response.Status.OK.getStatusCode(), r.getStatus());
+        assertEquals("{\"data\":[{\"id\":1}],\"total\":3}",
+                r.readEntity(String.class));
+    }
+
+    @Test
+    public void testClientLimitExceedsServerLimit() {
 
         SQLTemplate insert = new SQLTemplate(E4.class, "INSERT INTO utest.e4 (id) values (1),(2),(3)");
 
@@ -56,7 +74,7 @@ public class GET_SizeConstraintsIT extends JerseyTestOnDerby {
                 .request()
                 .get();
         assertEquals(Response.Status.OK.getStatusCode(), r.getStatus());
-        assertEquals("{\"data\":[{\"id\":1},{\"id\":2}],\"total\":2}",
+        assertEquals("{\"data\":[{\"id\":1},{\"id\":2}],\"total\":3}",
                 r.readEntity(String.class));
     }
 
