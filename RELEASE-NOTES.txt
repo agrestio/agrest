@@ -1,6 +1,7 @@
 Release 2.12
 
 #276 Support OffsetDateTime
+#282 Default server side size limitation works incorrectly
 
 Release 2.11
 
