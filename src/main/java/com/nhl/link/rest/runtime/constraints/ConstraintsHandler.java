@@ -1,17 +1,16 @@
 package com.nhl.link.rest.runtime.constraints;
 
-import java.util.List;
-
-import org.apache.cayenne.di.Inject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.nhl.link.rest.EntityConstraint;
 import com.nhl.link.rest.ResourceEntity;
 import com.nhl.link.rest.SizeConstraints;
 import com.nhl.link.rest.constraints.ConstraintsBuilder;
 import com.nhl.link.rest.runtime.meta.IMetadataService;
 import com.nhl.link.rest.runtime.processor.update.UpdateContext;
+import org.apache.cayenne.di.Inject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.List;
 
 /**
  * An {@link IConstraintsHandler} that ensures that no target attributes exceed
@@ -70,7 +69,7 @@ public class ConstraintsHandler implements IConstraintsHandler {
 
 		// fetchLimit - do not exceed source limit
 		int upperLimit = constraints.getFetchLimit();
-		if (upperLimit > 0 && entity.getFetchLimit() > upperLimit) {
+		if (upperLimit > 0 && (entity.getFetchLimit() <= 0 || entity.getFetchLimit() > upperLimit)) {
 			LOGGER.info(
 					"Reducing fetch limit from " + entity.getFetchLimit() + " to max allowed value of " + upperLimit);
 			entity.setFetchLimit(upperLimit);
