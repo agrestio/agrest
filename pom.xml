@@ -4,7 +4,7 @@
 
     <groupId>com.nhl.link.rest</groupId>
     <artifactId>link-rest-parent</artifactId>
-    <version>2.12</version>
+    <version>2.13-SNAPSHOT</version>
 
     <name>link-rest: Parent POM of LR modules</name>
     <description>Parent POM of LR modules</description>
@@ -62,7 +62,7 @@
         <connection>scm:git:https://github.com/nhl/link-rest</connection>
         <developerConnection>scm:git:ssh://git@github.com/nhl/link-rest</developerConnection>
         <url>https://github.com/nhl/link-rest</url>
-        <tag>link-rest-parent-2.12</tag>
+        <tag>HEAD</tag>
     </scm>
 
     <distributionManagement>
