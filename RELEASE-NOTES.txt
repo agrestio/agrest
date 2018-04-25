@@ -1,3 +1,7 @@
+Release 2.13
+
+#284 Cayenne 4.0.RC1 is out... upgrading
+
 Release 2.12
 
 #276 Support OffsetDateTime
