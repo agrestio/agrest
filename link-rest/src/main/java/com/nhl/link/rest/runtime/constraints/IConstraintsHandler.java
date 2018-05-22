@@ -3,6 +3,7 @@ package com.nhl.link.rest.runtime.constraints;
 import com.nhl.link.rest.ResourceEntity;
 import com.nhl.link.rest.SizeConstraints;
 import com.nhl.link.rest.constraints.Constraint;
+import com.nhl.link.rest.runtime.processor.select.SelectContext;
 import com.nhl.link.rest.runtime.processor.update.UpdateContext;
 
 /**
@@ -19,4 +20,11 @@ public interface IConstraintsHandler {
      * Applies constraints to the {@link UpdateContext}, potentially filtering out updates for certain properties.
      */
     <T> void constrainUpdate(UpdateContext<T> context, Constraint<T> writeConstraints);
+
+    /**
+     * @since 2.13
+     *
+     * Applies constraints to the {@link ResourceEntity}, potentially filtering out some properties from the response.
+     */
+    <T> void constrainRequest(SelectContext<T> context, Constraint<T> readConstraint);
 }

@@ -55,6 +55,20 @@ public class GET_ConstraintsIT extends JerseyTestOnDerby {
 	}
 
 	@Test
+	public void test_Explicit_QueryParam() {
+
+		SQLTemplate insert = new SQLTemplate(E4.class,
+				"INSERT INTO utest.e4 (id, c_varchar, c_int) values (1, 'xxx', 5)");
+		newContext().performGenericQuery(insert);
+
+		Response response1 = target("/e4/limit_attributes").queryParam("include", E4.C_BOOLEAN.getName())
+				.queryParam("limit", new Integer(10)).request().get();
+		assertEquals(Status.BAD_REQUEST.getStatusCode(), response1.getStatus());
+		assertEquals("{\"success\":false,\"message\":\"The query parameters set '{include=[cBoolean], limit=[10]}' is not supported\"}", response1.readEntity(String.class));
+
+	}
+
+	@Test
 	public void test_Annotated() {
 
 		insert("e10", "id, c_varchar, c_int, c_boolean, c_date", "1, 'xxx', 5, true, '2014-01-02'");
@@ -88,7 +102,9 @@ public class GET_ConstraintsIT extends JerseyTestOnDerby {
         @Path("e4/limit_attributes")
         public DataResponse<E4> getObjects_LimitAttributes(@Context UriInfo uriInfo) {
             return LinkRest.select(E4.class, config).uri(uriInfo)
-                    .constraint(Constraint.idOnly(E4.class).attributes(E4.C_INT))
+                    .constraint(Constraint.idOnly(E4.class)
+							.attributes(E4.C_INT)
+							.queryParams("include"))
                     .get();
         }
 
