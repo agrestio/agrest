@@ -12,9 +12,9 @@
     </parent>
 
     <groupId>com.nhl.link.rest.swagger</groupId>
-    <artifactId>link-rest-swagger</artifactId>
-    <name>link-rest-swagger: Swagger Integration for LinkRest</name>
-    <description>Swagger Integration for LinkRest</description>
+    <artifactId>link-rest-swagger-tests</artifactId>
+    <name>link-rest-swagger-tests: Swagger Integration Tests for LinkRest</name>
+    <description>Swagger Integration Tests for LinkRest</description>
 
     <dependencies>
         <!-- required runtime dependencies -->

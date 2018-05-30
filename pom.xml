@@ -19,7 +19,7 @@
         <module>link-rest-bom</module>
         <module>link-rest-docs</module>
         <module>link-rest-legacy-date-encoders</module>
-        <module>link-rest-swagger</module>
+        <module>link-rest-swagger-tests</module>
         <module>link-rest-swagger-codegen</module>
     </modules>
 
