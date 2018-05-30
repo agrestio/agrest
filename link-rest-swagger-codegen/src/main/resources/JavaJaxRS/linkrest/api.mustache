@@ -1,0 +1,84 @@
+package {{package}};
+
+import {{package}}.*;
+{{#imports}}import {{import}};
+{{/imports}}
+
+import com.nhl.link.rest.DataResponse;
+
+import javax.ws.rs.*;
+import javax.ws.rs.core.*;
+
+import com.nhl.link.rest.constraints.Constraint;
+import com.nhl.link.rest.LinkRest;
+import com.nhl.link.rest.SimpleResponse;
+
+@Path("{{^useAnnotatedBasePath}}/{{/useAnnotatedBasePath}}{{#useAnnotatedBasePath}}{{contextPath}}{{/useAnnotatedBasePath}}")
+public class {{classname}} {
+
+    @Context
+    private Configuration config;
+
+{{#operations}}
+{{#operation}}
+    @{{httpMethod}}
+    {{#subresourceOperation}}@Path("/{{version}}{{path}}"){{/subresourceOperation}}
+    {{#hasConsumes}}
+    @Consumes({ {{#consumes}}"{{{mediaType}}}"{{#hasMore}}, {{/hasMore}}{{/consumes}} })
+    {{/hasConsumes}}
+    {{#hasProduces}}
+    @Produces({ {{#produces}}"{{{mediaType}}}"{{#hasMore}}, {{/hasMore}}{{/produces}} })
+    {{/hasProduces}}
+{{#isRestfulIndex}}
+    public {{>returnTypes}} {{nickname}}(@Context UriInfo uriInfo) {
+
+        return LinkRest.select({{{returnType}}}.class, config)
+            .constraint(Constraint.excludeAll({{{returnType}}}.class)
+                    .includeId()
+                {{#headerParams}}
+                    .attribute("{{paramName}}")
+                {{/headerParams}}
+                {{#allParams}}{{#isQueryParam}}
+                {{!--.queryParam("paramName")--}}{{/isQueryParam}}{{/allParams}}
+            )
+            .uri(uriInfo).get();
+    }
+{{/isRestfulIndex}}
+{{#isRestfulShow}}
+    public {{>returnTypes}} {{nickname}}({{#allParams}}{{>pathParams}}{{>headerParams}}{{>bodyParams}}{{>formParams}}{{/allParams}}, @Context UriInfo uriInfo) {
+
+        return LinkRest.select({{{returnType}}}.class, config)
+            .constraint(Constraint.excludeAll({{{returnType}}}.class)
+                    .includeId()
+                {{#headerParams}}
+                    .attribute("{{paramName}}")
+                {{/headerParams}}
+                {{#allParams}}{{#isQueryParam}}
+                {{!--.queryParam("paramName")--}}{{/isQueryParam}}{{/allParams}}
+            )
+            {{#allParams}}{{#isPathParam}}.byId({{paramName}}){{/isPathParam}}{{/allParams}}
+            .uri(uriInfo).get();
+    }
+{{/isRestfulShow}}
+{{#isRestfulDestroy}}
+    public SimpleResponse {{nickname}}({{#allParams}}{{>pathParams}}{{>headerParams}}{{>bodyParams}}{{>formParams}}{{/allParams}}) {
+
+        return LinkRest.delete({{#tags}}{{name}}{{/tags}}.class, config).id({{#allParams}}{{#isPathParam}}{{paramName}}{{/isPathParam}}{{/allParams}}).delete();
+    }
+{{/isRestfulDestroy}}
+{{#isRestfulCreate}}
+    public DataResponse<{{#tags}}{{name}}{{/tags}}> {{nickname}}(String requestBody, @Context UriInfo uriInfo) {
+
+        return LinkRest.create({{#tags}}{{name}}{{/tags}}.class, config).uri(uriInfo).syncAndSelect(requestBody);
+    }
+{{/isRestfulCreate}}
+{{#isRestfulUpdate}}
+    public DataResponse<{{#tags}}{{name}}{{/tags}}> {{nickname}}({{#allParams}}{{>pathParams}}{{>headerParams}}{{>formParams}}{{/allParams}}, String requestBody) {
+
+        return LinkRest.update({{#tags}}{{name}}{{/tags}}.class, config).id({{#allParams}}{{#isPathParam}}{{paramName}}{{/isPathParam}}{{/allParams}}).syncAndSelect(requestBody);
+    }
+{{/isRestfulUpdate}}
+{{/operation}}
+}
+{{/operations}}
+
