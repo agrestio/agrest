@@ -1,0 +1,6 @@
+    .includeId()
+                {{#headerParams}}
+                .attribute("{{paramName}}")
+                {{/headerParams}}
+                {{#allParams}}{{#isQueryParam}}
+                {{!--.queryParam("paramName")--}}{{/isQueryParam}}{{/allParams}}

@@ -1,0 +1,83 @@
+package {{package}};
+
+import {{package}}.*;
+{{#imports}}import {{import}};
+{{/imports}}
+
+import com.nhl.link.rest.DataResponse;
+
+import javax.ws.rs.*;
+import javax.ws.rs.core.*;
+
+import com.nhl.link.rest.constraints.Constraint;
+import com.nhl.link.rest.LinkRest;
+import com.nhl.link.rest.SimpleResponse;
+
+@Path("{{^useAnnotatedBasePath}}/{{/useAnnotatedBasePath}}{{#useAnnotatedBasePath}}{{contextPath}}{{/useAnnotatedBasePath}}")
+public class {{classname}} {
+
+    @Context
+    private Configuration config;
+
+{{#operations}}
+{{#operation}}
+    @{{httpMethod}}
+    {{#subresourceOperation}}@Path("/{{version}}{{path}}"){{/subresourceOperation}}
+    {{#hasConsumes}}
+    @Consumes({ {{#consumes}}"{{{mediaType}}}"{{#hasMore}}, {{/hasMore}}{{/consumes}} })
+    {{/hasConsumes}}
+    {{#hasProduces}}
+    @Produces({ {{#produces}}"{{{mediaType}}}"{{#hasMore}}, {{/hasMore}}{{/produces}} })
+    {{/hasProduces}}
+{{#isRestfulIndex}}
+    public {{>returnTypes}} {{nickname}}(@Context UriInfo uriInfo) {
+
+        return LinkRest.select({{{returnType}}}.class, config)
+            .constraint(Constraint.excludeAll({{{returnType}}}.class)
+            {{>constraintParams}})
+            .uri(uriInfo)
+            .get();
+    }
+{{/isRestfulIndex}}
+{{#isRestfulShow}}
+    public {{>returnTypes}} {{nickname}}({{#allParams}}{{>pathParams}}{{>headerParams}}{{>bodyParams}}{{>formParams}}{{/allParams}}, @Context UriInfo uriInfo) {
+
+        return LinkRest.select({{{returnType}}}.class, config)
+            .constraint(Constraint.excludeAll({{{returnType}}}.class)
+            {{>constraintParams}})
+            {{#allParams}}{{#isPathParam}}.byId({{paramName}}){{/isPathParam}}{{/allParams}}
+            .uri(uriInfo).get();
+    }
+{{/isRestfulShow}}
+{{#isRestfulDestroy}}
+    public SimpleResponse {{nickname}}({{#allParams}}{{>pathParams}}{{>headerParams}}{{>bodyParams}}{{>formParams}}{{/allParams}}) {
+
+        return LinkRest.delete({{{returnType}}}.class, config)
+            .id({{#allParams}}{{#isPathParam}}{{paramName}}{{/isPathParam}}{{/allParams}})
+            .delete();
+    }
+{{/isRestfulDestroy}}
+{{#isRestfulCreate}}
+    public {{>returnTypes}} {{nickname}}(String requestBody, @Context UriInfo uriInfo) {
+
+        return LinkRest.create({{{returnType}}}.class, config)
+            .readConstraint(Constraint.excludeAll({{{returnType}}}.class)
+            {{>constraintParams}})
+            .uri(uriInfo)
+            .syncAndSelect(requestBody);
+    }
+{{/isRestfulCreate}}
+{{#isRestfulUpdate}}
+    public {{>returnTypes}} {{nickname}}({{#allParams}}{{>pathParams}}{{>headerParams}}{{>formParams}}{{/allParams}}, String requestBody) {
+
+        return LinkRest.update({{{returnType}}}.class, config)
+            .readConstraint(Constraint.excludeAll({{{returnType}}}.class)
+            {{>constraintParams}})
+            .id({{#allParams}}{{#isPathParam}}{{paramName}}{{/isPathParam}}{{/allParams}})
+            .syncAndSelect(requestBody);
+    }
+{{/isRestfulUpdate}}
+{{/operation}}
+}
+{{/operations}}
+

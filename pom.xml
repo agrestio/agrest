@@ -19,6 +19,8 @@
         <module>link-rest-bom</module>
         <module>link-rest-docs</module>
         <module>link-rest-legacy-date-encoders</module>
+        <module>link-rest-swagger-tests</module>
+        <module>link-rest-swagger-codegen</module>
     </modules>
 
     <properties>
@@ -35,6 +37,7 @@
         <cayenne-version>4.0.RC1</cayenne-version>
         <jersey-version>2.22.1</jersey-version>
         <jackson-version>2.6.4</jackson-version>
+        <swagger-codegen-maven-plugin-version>2.3.1</swagger-codegen-maven-plugin-version>
     </properties>
 
     <url>https://github.com/nhl/link-rest</url>
