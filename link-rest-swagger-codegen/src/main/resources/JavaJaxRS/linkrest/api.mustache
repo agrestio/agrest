@@ -34,14 +34,9 @@ public class {{classname}} {
 
         return LinkRest.select({{{returnType}}}.class, config)
             .constraint(Constraint.excludeAll({{{returnType}}}.class)
-                    .includeId()
-                {{#headerParams}}
-                    .attribute("{{paramName}}")
-                {{/headerParams}}
-                {{#allParams}}{{#isQueryParam}}
-                {{!--.queryParam("paramName")--}}{{/isQueryParam}}{{/allParams}}
-            )
-            .uri(uriInfo).get();
+            {{>constraintParams}})
+            .uri(uriInfo)
+            .get();
     }
 {{/isRestfulIndex}}
 {{#isRestfulShow}}
@@ -49,13 +44,7 @@ public class {{classname}} {
 
         return LinkRest.select({{{returnType}}}.class, config)
             .constraint(Constraint.excludeAll({{{returnType}}}.class)
-                    .includeId()
-                {{#headerParams}}
-                    .attribute("{{paramName}}")
-                {{/headerParams}}
-                {{#allParams}}{{#isQueryParam}}
-                {{!--.queryParam("paramName")--}}{{/isQueryParam}}{{/allParams}}
-            )
+            {{>constraintParams}})
             {{#allParams}}{{#isPathParam}}.byId({{paramName}}){{/isPathParam}}{{/allParams}}
             .uri(uriInfo).get();
     }
@@ -63,19 +52,29 @@ public class {{classname}} {
 {{#isRestfulDestroy}}
     public SimpleResponse {{nickname}}({{#allParams}}{{>pathParams}}{{>headerParams}}{{>bodyParams}}{{>formParams}}{{/allParams}}) {
 
-        return LinkRest.delete({{#tags}}{{name}}{{/tags}}.class, config).id({{#allParams}}{{#isPathParam}}{{paramName}}{{/isPathParam}}{{/allParams}}).delete();
+        return LinkRest.delete({{{returnType}}}.class, config)
+            .id({{#allParams}}{{#isPathParam}}{{paramName}}{{/isPathParam}}{{/allParams}})
+            .delete();
     }
 {{/isRestfulDestroy}}
 {{#isRestfulCreate}}
-    public DataResponse<{{#tags}}{{name}}{{/tags}}> {{nickname}}(String requestBody, @Context UriInfo uriInfo) {
+    public {{>returnTypes}} {{nickname}}(String requestBody, @Context UriInfo uriInfo) {
 
-        return LinkRest.create({{#tags}}{{name}}{{/tags}}.class, config).uri(uriInfo).syncAndSelect(requestBody);
+        return LinkRest.create({{{returnType}}}.class, config)
+            .readConstraint(Constraint.excludeAll({{{returnType}}}.class)
+            {{>constraintParams}})
+            .uri(uriInfo)
+            .syncAndSelect(requestBody);
     }
 {{/isRestfulCreate}}
 {{#isRestfulUpdate}}
-    public DataResponse<{{#tags}}{{name}}{{/tags}}> {{nickname}}({{#allParams}}{{>pathParams}}{{>headerParams}}{{>formParams}}{{/allParams}}, String requestBody) {
+    public {{>returnTypes}} {{nickname}}({{#allParams}}{{>pathParams}}{{>headerParams}}{{>formParams}}{{/allParams}}, String requestBody) {
 
-        return LinkRest.update({{#tags}}{{name}}{{/tags}}.class, config).id({{#allParams}}{{#isPathParam}}{{paramName}}{{/isPathParam}}{{/allParams}}).syncAndSelect(requestBody);
+        return LinkRest.update({{{returnType}}}.class, config)
+            .readConstraint(Constraint.excludeAll({{{returnType}}}.class)
+            {{>constraintParams}})
+            .id({{#allParams}}{{#isPathParam}}{{paramName}}{{/isPathParam}}{{/allParams}})
+            .syncAndSelect(requestBody);
     }
 {{/isRestfulUpdate}}
 {{/operation}}

@@ -149,26 +149,4 @@ public class POST_IT extends JerseyTestOnDerby {
                 "{\"data\":[{\"name\":\"aaa\"},{\"name\":\"zzz\"},{\"name\":\"bbb\"},{\"name\":\"yyy\"}],\"total\":4}",
                 r2.readEntity(String.class));
     }
-
-    @Test
-    public void testPost_ToMany() {
-
-        insert("e3", "id, name", "1, 'xxx'");
-        insert("e3", "id, name", "8, 'yyy'");
-
-        Response response = target("/v1/e2")
-                .queryParam("include", E2.E3S.getName())
-                .queryParam("exclude", E2.ADDRESS.getName(), E2.E3S.dot(E3.NAME).getName(), E2.E3S.dot(E3.PHONE_NUMBER).getName())
-                .request()
-                .post(Entity.json("{\"e3s\":[1,8],\"name\":\"MM\"}"));
-
-        E2 e2 = (E2) Cayenne.objectForQuery(newContext(), new SelectQuery<>(E2.class));
-        int id = Cayenne.intPKForObject(e2);
-
-        onResponse(response)
-                .statusEquals(Status.CREATED)
-                .bodyEquals(1, "{\"id\":" + id + ",\"e3s\":[{\"id\":1},{\"id\":8}],\"name\":\"MM\"}");
-
-        assertEquals(2, intForQuery("SELECT COUNT(1) FROM utest.e3 WHERE e2_id = " + id));
-    }
 }

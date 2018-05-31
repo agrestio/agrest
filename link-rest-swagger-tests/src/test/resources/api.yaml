@@ -348,11 +348,25 @@ paths:
           description: successful operation
 
   /e5:
+    get:
+      summary: Get all E5s
+      operationId: getAll
+      tags:
+        - E5
+      responses:
+        '200':
+          description: Success response.
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/E5"
+        default:
+          description: Unexpected error
     post:
       tags:
         - E5
       summary: Create E5
-      operationId: createE5
+      operationId: create
       produces:
         - application/xml
         - application/json

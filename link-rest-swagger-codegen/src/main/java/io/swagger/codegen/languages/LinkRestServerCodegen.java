@@ -41,7 +41,6 @@ public class LinkRestServerCodegen extends AbstractJavaJAXRSServerCodegen implem
         modelDocTemplateFiles.remove("model_doc.mustache");
         apiDocTemplateFiles.remove("api_doc.mustache");
 
-
         typeMapping.put("date", "LocalDateTime");
         importMapping.put("LocalDate", "java.time.LocalDateTime");
         importMapping.put("LocalDateTime", "java.time.LocalDateTime");
@@ -100,20 +99,19 @@ public class LinkRestServerCodegen extends AbstractJavaJAXRSServerCodegen implem
             @SuppressWarnings("unchecked")
             List<CodegenOperation> ops = (List<CodegenOperation>) operations.get("operation");
             for ( CodegenOperation operation : ops ) {
-                // Remove containers from response
-                if ( operation.returnBaseType != null && operation.returnType.startsWith("List") ) {
-                    if (operation.returnType.contains(">")) {
-                        operation.returnType = operation.baseName;
-                        operation.returnContainer = "List";
-                    }
-                }
+                // Removes container from response
+                operation.returnType = operation.baseName;
 
                 // Stores model properties as header parameters to use them as constraints
                 if (models.get(operation.baseName) != null) {
                     for (final CodegenProperty prop : models.get(operation.baseName)) {
                         final CodegenParameter codegenParam = new CodegenParameter();
-                        codegenParam.paramName = prop.baseName;
-                        operation.headerParams.add(codegenParam);
+                        // Selects plain attributes only
+                        if ((prop.complexType == null || !models.keySet().contains(prop.complexType))
+                                && !"id".equalsIgnoreCase(prop.baseName)) {
+                            codegenParam.paramName = prop.baseName;
+                            operation.headerParams.add(codegenParam);
+                        }
                     }
                 }
             }
