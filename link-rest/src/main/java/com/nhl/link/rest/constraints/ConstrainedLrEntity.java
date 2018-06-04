@@ -16,7 +16,7 @@ import java.util.Map;
  */
 public class ConstrainedLrEntity<T> {
 
-    private static final String QUERY_PARAMS = "mapBy,sort,cayenneExp,start,limit,exclude,include";
+    private static final String[] QUERY_PARAMS = {"mapBy", "sort", "cayenneExp", "start", "limit", "exclude", "include"};
 
     private boolean idIncluded;
     private Collection<String> attributes;
@@ -140,7 +140,7 @@ public class ConstrainedLrEntity<T> {
      * @since 2.13
      */
     public void includeAllQueryParams() {
-        includeQueryParams(QUERY_PARAMS.split(","));
+        includeQueryParams(QUERY_PARAMS);
     }
 
     void includeId(boolean include) {
