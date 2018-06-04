@@ -10,6 +10,7 @@ import com.nhl.link.rest.swagger.api.v1.service.E4Resource;
 import org.apache.cayenne.Cayenne;
 import org.apache.cayenne.ObjectContext;
 import org.apache.cayenne.query.ObjectSelect;
+import org.apache.cayenne.query.SQLSelect;
 import org.apache.cayenne.query.SelectQuery;
 import org.junit.Test;
 
@@ -71,12 +72,125 @@ public class POST_IT extends JerseyTestOnDerby {
                 response2.readEntity(String.class));
     }
 
+//    @Test
+//    public void testPost_ExplicitCompoundId() {
+//
+//        Response response1 = target("/e17").queryParam("id1", 1).queryParam("id2", 1).request()
+//                .post(Entity.json("{\"name\":\"xxx\"}"));
+//        assertEquals(Status.CREATED.getStatusCode(), response1.getStatus());
+//    }
+//
+//    @Test
+//    public void testPost_DateTime() {
+//        Response r1 = target("e16").request()
+//                .post(Entity.json(
+//                        "{\"cDate\":\"2015-03-14\", \"cTime\":\"T19:00:00\", \"cTimestamp\":\"2015-03-14T19:00:00.000\"}"));
+//        assertEquals(Status.CREATED.getStatusCode(), r1.getStatus());
+//    }
+
     @Test
-    public void testPost_DateTime() {
-        Response r1 = target("/v1/e4").request()
-                .post(Entity.json(
-                        "{\"c_date\":\"2015-03-14\", \"c_time\":\"T19:00:00\", \"c_timestamp\":\"2015-03-14T19:00:00.000\"}"));
+    public void testPost_Default_NoData() {
+        ObjectContext context = newContext();
+
+        Response response1 = target("/v1/e4/defaultdata").request()
+                .post(Entity.json("{\"cVarchar\":\"zzz\"}"));
+        assertEquals(Status.CREATED.getStatusCode(), response1.getStatus());
+        assertEquals("{\"success\":true}", response1.readEntity(String.class));
+
+        E4 e41 = (E4) Cayenne.objectForQuery(context, new SelectQuery<E4>(E4.class));
+        assertEquals("zzz", e41.getCVarchar());
+    }
+
+//    @Test
+//    public void testPost_WriteConstraints_Id_Allowed() {
+//        ObjectContext context = newContext();
+//
+//        Response r1 = target("/e8/w/constrainedid/578").request()
+//                .post(Entity.json("{\"name\":\"zzz\"}"));
+//        assertEquals(Status.CREATED.getStatusCode(), r1.getStatus());
+//
+//        assertEquals(Integer.valueOf(1),
+//                SQLSelect.scalarQuery(Integer.class, "SELECT count(1) FROM utest.e8").selectOne(context));
+//        assertEquals("zzz", SQLSelect.scalarQuery(String.class, "SELECT name FROM utest.e8").selectOne(context));
+//        assertEquals(578, intForQuery("SELECT id FROM utest.e8"));
+//    }
+//
+//    @Test
+//    public void testPost_WriteConstraints_Id_Blocked() {
+//
+//        Response r1 = target("/e8/w/constrainedidblocked/578").request()
+//                .post(Entity.json("{\"name\":\"zzz\"}"));
+//        assertEquals(Status.BAD_REQUEST.getStatusCode(), r1.getStatus());
+//
+//        assertEquals(0, intForQuery("SELECT count(1) FROM utest.e8"));
+//    }
+
+    @Test
+    public void testPost_WriteConstraints1() {
+
+        Response r1 = target("/v1/e3/w/constrained").request()
+                .post(Entity.json("{\"name\":\"zzz\"}"));
         assertEquals(Status.CREATED.getStatusCode(), r1.getStatus());
+
+        assertEquals(1, intForQuery("SELECT count(1) FROM utest.e3"));
+        assertEquals("zzz", stringForQuery("SELECT name FROM utest.e3"));
+        int id1 = intForQuery("SELECT id FROM utest.e3");
+
+        assertEquals("{\"data\":[{\"id\":" + id1 + ",\"name\":\"zzz\",\"phoneNumber\":null}],\"total\":1}",
+                r1.readEntity(String.class));
+    }
+
+    @Test
+    public void testPost_WriteConstraints2() {
+
+        Response r2 = target("/v1/e3/w/constrained").request()
+                .post(Entity.json("{\"name\":\"yyy\",\"phoneNumber\":\"12345\"}"));
+        assertEquals(Status.CREATED.getStatusCode(), r2.getStatus());
+
+        assertEquals(1, intForQuery("SELECT count(1) FROM utest.e3 WHERE name = 'yyy'"));
+        int id1 = intForQuery("SELECT id FROM utest.e3  WHERE name = 'yyy'");
+
+        assertEquals("{\"data\":[{\"id\":" + id1 + ",\"name\":\"yyy\",\"phoneNumber\":null}],\"total\":1}",
+                r2.readEntity(String.class));
+    }
+
+    @Test
+    public void testPost_ReadConstraints1() {
+
+        Response r1 = target("/v1/e3/constrained").request()
+                .post(Entity.json("{\"name\":\"zzz\"}"));
+        assertEquals(Status.CREATED.getStatusCode(), r1.getStatus());
+
+        assertEquals(1, intForQuery("SELECT count(1) FROM utest.e3"));
+        assertEquals("zzz", stringForQuery("SELECT name FROM utest.e3"));
+        int id1 = intForQuery("SELECT id FROM utest.e3");
+
+        assertEquals("{\"data\":[{\"id\":" + id1 + ",\"name\":\"zzz\"}],\"total\":1}", r1.readEntity(String.class));
+    }
+
+    @Test
+    public void testPost_ReadConstraints2() {
+
+        Response r2 = target("/v1/e3/constrained").queryParam("include", "name").queryParam("include", "phoneNumber")
+                .request().post(Entity.json("{\"name\":\"yyy\"}"));
+        assertEquals(Status.CREATED.getStatusCode(), r2.getStatus());
+
+        assertEquals(1, intForQuery("SELECT count(1) FROM utest.e3 WHERE name = 'yyy'"));
+
+        assertEquals("{\"data\":[{\"name\":\"yyy\"}],\"total\":1}", r2.readEntity(String.class));
+    }
+
+    @Test
+    public void testPost_ReadConstraints3() {
+
+        Response r2 = target("/v1/e3/constrained").queryParam("include", E3.E2.getName()).request()
+                .post(Entity.json("{\"name\":\"yyy\"}"));
+        assertEquals(Status.CREATED.getStatusCode(), r2.getStatus());
+
+        assertEquals(1, intForQuery("SELECT count(1) FROM utest.e3 WHERE name = 'yyy'"));
+        int id2 = intForQuery("SELECT id FROM utest.e3 WHERE name = 'yyy'");
+
+        assertEquals("{\"data\":[{\"id\":" + id2 + ",\"name\":\"yyy\"}],\"total\":1}", r2.readEntity(String.class));
     }
 
     @Test
@@ -149,4 +263,56 @@ public class POST_IT extends JerseyTestOnDerby {
                 "{\"data\":[{\"name\":\"aaa\"},{\"name\":\"zzz\"},{\"name\":\"bbb\"},{\"name\":\"yyy\"}],\"total\":4}",
                 r2.readEntity(String.class));
     }
+
+    @Test
+    public void testPost_ToMany() {
+
+        insert("e3", "id, name", "1, 'xxx'");
+        insert("e3", "id, name", "8, 'yyy'");
+
+        Response response = target("/v1/e2")
+                .queryParam("include", E2.E3S.getName())
+                .queryParam("exclude", E2.ADDRESS.getName(), E2.E3S.dot(E3.NAME).getName(), E2.E3S.dot(E3.PHONE_NUMBER).getName())
+                .request()
+                .post(Entity.json("{\"e3s\":[1,8],\"name\":\"MM\"}"));
+
+        E2 e2 = (E2) Cayenne.objectForQuery(newContext(), new SelectQuery<>(E2.class));
+        int id = Cayenne.intPKForObject(e2);
+
+        onResponse(response)
+                .statusEquals(Status.CREATED)
+                .bodyEquals(1, "{\"id\":" + id + ",\"e3s\":[{\"id\":1},{\"id\":8}],\"name\":\"MM\"}");
+
+        assertEquals(2, intForQuery("SELECT COUNT(1) FROM utest.e3 WHERE e2_id = " + id));
+    }
+
+//    @Test
+//    public void testPost_ByteArrayProperty() {
+//
+//        String base64Encoded = "c29tZVZhbHVlMTIz"; // someValue123
+//
+//        Response response = target("/e19")
+//                .queryParam("include", E19.GUID.getName())
+//                .request()
+//                .post(Entity.json("{\"guid\":\"" + base64Encoded + "\"}"));
+//
+//        onResponse(response)
+//                .statusEquals(Status.CREATED)
+//                .bodyEquals(1, "{\"guid\":\"" + base64Encoded + "\"}");
+//    }
+
+//    @Test
+//    public void testPost_FloatProperty() {
+//        String data = "{\"floatObject\":0,\"floatPrimitive\":0}";
+//        Response response = target("/e19").path("float")
+//                .queryParam("include", "floatObject")
+//                .queryParam("include", "floatPrimitive")
+//                .request()
+//                .post(Entity.json(data));
+//
+//        onResponse(response)
+//                .statusEquals(Status.CREATED)
+//                .bodyEquals(1, "{\"floatObject\":0.0,\"floatPrimitive\":0.0}");
+//    }
+
 }

@@ -1,21 +1,28 @@
 package io.swagger.codegen.languages;
 
 import com.google.common.base.Strings;
+import com.samskivert.mustache.Mustache;
+import com.samskivert.mustache.Template;
 import io.swagger.codegen.CliOption;
 import io.swagger.codegen.CodegenModel;
 import io.swagger.codegen.CodegenOperation;
 import io.swagger.codegen.CodegenParameter;
 import io.swagger.codegen.CodegenProperty;
+import io.swagger.codegen.LinkRestCodegenOperation;
 import io.swagger.codegen.languages.features.LinkRestServerFeatures;
 import io.swagger.models.Operation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.Writer;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Set;
 
 public class LinkRestServerCodegen extends AbstractJavaJAXRSServerCodegen implements LinkRestServerFeatures {
@@ -98,26 +105,45 @@ public class LinkRestServerCodegen extends AbstractJavaJAXRSServerCodegen implem
         if ( operations != null ) {
             @SuppressWarnings("unchecked")
             List<CodegenOperation> ops = (List<CodegenOperation>) operations.get("operation");
+            List<LinkRestCodegenOperation> newOps = new ArrayList<LinkRestCodegenOperation>();
             for ( CodegenOperation operation : ops ) {
                 // Removes container from response
                 operation.returnType = operation.baseName;
 
-                // Stores model properties as header parameters to use them as constraints
-                if (models.get(operation.baseName) != null) {
-                    for (final CodegenProperty prop : models.get(operation.baseName)) {
-                        final CodegenParameter codegenParam = new CodegenParameter();
-                        // Selects plain attributes only
-                        if ((prop.complexType == null || !models.keySet().contains(prop.complexType))
-                                && !"id".equalsIgnoreCase(prop.baseName)) {
-                            codegenParam.paramName = prop.baseName;
-                            operation.headerParams.add(codegenParam);
-                        }
+                LinkRestCodegenOperation lrOperation = new LinkRestCodegenOperation(operation);
+                // Stores model properties to use them as constraints
+                populateModelAttributes(lrOperation);
+                // Stores model relations to use them as constraints
+                for (final CodegenProperty prop : models.get(lrOperation.baseName)) {
+                    if (prop.complexType != null && models.keySet().contains(prop.complexType)) {
+                        LinkRestCodegenOperation lrRelation = new LinkRestCodegenOperation();
+                        lrRelation.returnType = lrRelation.baseName = prop.complexType;
+                        lrRelation.bodyParam = new CodegenParameter();
+                        lrRelation.bodyParam.paramName = prop.baseName;
+                        populateModelAttributes(lrRelation);
+                        lrOperation.modelRelations.add(lrRelation);
                     }
                 }
+                newOps.add(lrOperation);
             }
+            operations.put("operation", newOps);
         }
 
         return objsResult;
+    }
+
+    private void populateModelAttributes(LinkRestCodegenOperation lrOperation) {
+        if (models.get(lrOperation.baseName) != null) {
+            for (final CodegenProperty prop : models.get(lrOperation.baseName)) {
+                // Selects plain attributes only
+                if ((prop.complexType == null || !models.keySet().contains(prop.complexType))
+                        && !"id".equalsIgnoreCase(prop.baseName)) {
+                    final CodegenParameter codegenParam = new CodegenParameter();
+                    codegenParam.paramName = prop.baseName;
+                    lrOperation.modelAttributes.add(codegenParam);
+                }
+            }
+        }
     }
 
     @Override

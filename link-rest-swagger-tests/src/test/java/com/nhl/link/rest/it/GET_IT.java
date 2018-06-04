@@ -2,18 +2,26 @@ package com.nhl.link.rest.it;
 
 import com.nhl.link.rest.encoder.DateTimeFormatters;
 import com.nhl.link.rest.it.fixture.JerseyTestOnDerby;
+import com.nhl.link.rest.it.fixture.cayenne.E19;
+import com.nhl.link.rest.it.fixture.cayenne.E2;
+import com.nhl.link.rest.it.fixture.cayenne.E3;
 import com.nhl.link.rest.it.fixture.cayenne.E4;
 import com.nhl.link.rest.parser.converter.UtcDateConverter;
 import com.nhl.link.rest.swagger.api.v1.service.E1Resource;
 import com.nhl.link.rest.swagger.api.v1.service.E2Resource;
 import com.nhl.link.rest.swagger.api.v1.service.E3Resource;
 import com.nhl.link.rest.swagger.api.v1.service.E4Resource;
+import org.apache.cayenne.Cayenne;
+import org.apache.cayenne.ObjectContext;
 import org.apache.cayenne.query.SQLTemplate;
 import org.junit.Test;
 
 import javax.ws.rs.core.FeatureContext;
 import javax.ws.rs.core.Response;
 
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.sql.Time;
 import java.time.Instant;
 import java.time.LocalTime;
@@ -122,6 +130,24 @@ public class GET_IT extends JerseyTestOnDerby {
                 .bodyEquals("{\"success\":false,\"message\":\"Invalid path 'xyz' for 'E4'\"}");
     }
 
+//    @Test
+//    // this is a hack for Sencha bug, passing us null sorters per LF-189...
+//    // allowing for lax property name checking as a result
+//    public void test_Sort_Null() {
+//
+//        insert("e4", "id", "2");
+//        insert("e4", "id", "1");
+//        insert("e4", "id", "3");
+//
+//        Response response = target("/v1/e4")
+//                .queryParam("sort", urlEnc("[{\"property\":null,\"direction\":\"DESC\"}]"))
+//                .queryParam("include", "id")
+//                .request()
+//                .get();
+//
+//        onSuccess(response).totalEquals(3);
+//    }
+
     @Test
     public void test_SelectById() {
 
@@ -160,6 +186,149 @@ public class GET_IT extends JerseyTestOnDerby {
     }
 
     @Test
+    public void test_SelectById_Prefetching() {
+
+        insert("e2", "id, name", "1, 'xxx'");
+        insert("e3", "id, name, e2_id", "8, 'yyy', 1");
+        insert("e3", "id, name, e2_id", "9, 'zzz', 1");
+
+        Response response1 = target("/v1/e3/8").queryParam("include", "e2.id").request().get();
+        onSuccess(response1).bodyEquals(1, "{\"id\":8,\"e2\":{\"id\":1},\"name\":\"yyy\",\"phoneNumber\":null}");
+
+        Response response2 = target("/v1/e3/8").queryParam("include", "e2.name").request().get();
+        onSuccess(response2).bodyEquals(1, "{\"id\":8,\"e2\":{\"name\":\"xxx\"},\"name\":\"yyy\",\"phoneNumber\":null}");
+
+        Response response3 = target("/v1/e2/1").queryParam("include", "e3s.id").request().get();
+        onSuccess(response3).bodyEquals(1, "{\"id\":1,\"address\":null,\"e3s\":[{\"id\":8},{\"id\":9}],\"name\":\"xxx\"}");
+    }
+
+    @Test
+    public void test_Select_Prefetching() {
+
+        insert("e2", "id, name", "1, 'xxx'");
+        insert("e3", "id, name, e2_id", "8, 'yyy', 1");
+        insert("e3", "id, name, e2_id", "9, 'zzz', 1");
+
+        Response response = target("/v1/e3")
+                .queryParam("include", "id")
+                .queryParam("include", "e2.id")
+                .queryParam("sort", "id")
+                .request()
+                .get();
+
+        onSuccess(response).bodyEquals(2, "{\"id\":8,\"e2\":{\"id\":1}}", "{\"id\":9,\"e2\":{\"id\":1}}");
+    }
+
+    @Test
+    public void test_Select_RelationshipSort() {
+
+        insert("e2", "id, name", "1, 'zzz'");
+        insert("e2", "id, name", "2, 'yyy'");
+        insert("e2", "id, name", "3, 'xxx'");
+
+        insert("e3", "id, name, e2_id", "8, 'aaa', 1");
+        insert("e3", "id, name, e2_id", "9, 'bbb', 2");
+        insert("e3", "id, name, e2_id", "10, 'ccc', 3");
+
+        Response response = target("/v1/e3")
+                .queryParam("include", "id")
+                .queryParam("include", E3.E2.getName())
+                .queryParam("sort", E3.E2.dot(E2.NAME).getName())
+                .request()
+                .get();
+
+        onSuccess(response).bodyEquals(3,
+                "{\"id\":10,\"e2\":{\"id\":3,\"address\":null,\"name\":\"xxx\"}}",
+                "{\"id\":9,\"e2\":{\"id\":2,\"address\":null,\"name\":\"yyy\"}}",
+                "{\"id\":8,\"e2\":{\"id\":1,\"address\":null,\"name\":\"zzz\"}}");
+    }
+
+    @Test
+    public void test_Select_RelationshipStartLimit() throws UnsupportedEncodingException {
+
+        insert("e2", "id, name", "1, 'zzz'");
+        insert("e2", "id, name", "2, 'yyy'");
+
+        insert("e3", "id, name, e2_id", "8, 'aaa', 1");
+        insert("e3", "id, name, e2_id", "9, 'bbb', 1");
+        insert("e3", "id, name, e2_id", "10, 'ccc', 2");
+
+        Response response = target("/v1/e2")
+                .queryParam("include", "id")
+                .queryParam("include", URLEncoder.encode("{\"path\":\"" + E2.E3S.getName() + "\",\"start\":1,\"limit\":1}", "UTF-8"))
+                .queryParam("exclude", E2.E3S.dot(E3.PHONE_NUMBER).getName())
+                .request().get();
+
+        onSuccess(response).bodyEquals(2,
+                "{\"id\":1,\"e3s\":[{\"id\":9,\"name\":\"bbb\"}]}",
+                "{\"id\":2,\"e3s\":[]}");
+    }
+
+    @Test
+    public void test_Select_Prefetching_StartLimit() {
+
+        insert("e2", "id, name", "1, 'xxx'");
+
+        insert("e3", "id, name, e2_id", "8, 'yyy', 1");
+        insert("e3", "id, name, e2_id", "9, 'zzz', 1");
+        insert("e3", "id, name, e2_id", "10, 'zzz', 1");
+        insert("e3", "id, name, e2_id", "11, 'zzz', 1");
+
+        Response response = target("/v1/e3")
+                .queryParam("include", "id", "e2.id")
+                .queryParam("sort", "id")
+                .queryParam("start", "1")
+                .queryParam("limit", "2")
+                .request()
+                .get();
+
+        onSuccess(response).bodyEquals(4,
+                "{\"id\":9,\"e2\":{\"id\":1}}",
+                "{\"id\":10,\"e2\":{\"id\":1}}");
+    }
+
+    @Test
+    public void test_SelectToOne_Null() {
+
+        insert("e2", "id, name", "1, 'xxx'");
+
+        insert("e3", "id, name, e2_id", "8, 'yyy', 1");
+        insert("e3", "id, name, e2_id", "9, 'zzz', null");
+
+        Response response = target("/v1/e3")
+                .queryParam("include", "e2.id", "id")
+                .request()
+                .get();
+
+        onSuccess(response).bodyEquals(2,
+                "{\"id\":8,\"e2\":{\"id\":1}}",
+                "{\"id\":9,\"e2\":null}");
+    }
+
+//    @Test
+//    public void test_SelectCharPK() {
+//
+//        insert("e6", "char_id, char_column", "'a', 'aaa'");
+//
+//        Response response = target("/v1/e6/a").request().get();
+//        onSuccess(response).bodyEquals(1, "{\"id\":\"a\",\"charColumn\":\"aaa\"}");
+//    }
+
+//    @Test
+//    public void test_SelectByCompoundId() {
+//
+//        insert("e17", "id1, id2, name", "1, 1, 'aaa'");
+//
+//        Response response = target("/v1/e17")
+//                .queryParam("id1", 1)
+//                .queryParam("id2", 1)
+//                .request()
+//                .get();
+//
+//        onSuccess(response).bodyEquals(1, "{\"id\":{\"id1\":1,\"id2\":1},\"id1\":1,\"id2\":1,\"name\":\"aaa\"}");
+//    }
+
+    @Test
     public void test_Select_MapByRootEntity() {
 
         insert("e4", "c_varchar, c_int", "'xxx', 1");
@@ -178,6 +347,26 @@ public class GET_IT extends JerseyTestOnDerby {
     }
 
     @Test
+    public void test_Select_MapByRootEntity_Related() {
+
+        insert("e2", "id, name", "1, 'zzz'");
+        insert("e2", "id, name", "2, 'yyy'");
+        insert("e3", "id, e2_id, name", "8,  1, 'aaa'");
+        insert("e3", "id, e2_id, name", "9,  1, 'bbb'");
+        insert("e3", "id, e2_id, name", "10, 2, 'ccc'");
+
+        Response response = target("/v1/e3")
+                .queryParam("mapBy", E3.E2.dot(E2.ID_PK_COLUMN).getName())
+                .queryParam("exclude", E3.PHONE_NUMBER.getName())
+                .request()
+                .get();
+
+        onSuccess(response).bodyEqualsMapBy(3,
+                "\"1\":[{\"id\":8,\"name\":\"aaa\"},{\"id\":9,\"name\":\"bbb\"}]",
+                "\"2\":[{\"id\":10,\"name\":\"ccc\"}]");
+    }
+
+    @Test
     public void test_SelectById_EscapeLineSeparators() {
 
         insert("e4", "id, c_varchar", "1, 'First line\u2028Second line...\u2029'");
@@ -189,5 +378,21 @@ public class GET_IT extends JerseyTestOnDerby {
 
         onSuccess(response).bodyEquals(1, "{\"cVarchar\":\"First line\\u2028Second line...\\u2029\"}");
     }
+
+//    @Test
+//    public void test_SelectByteArrayProperty() throws IOException {
+//
+//        ObjectContext ctx = newContext();
+//        E19 e19 = ctx.newObject(E19.class);
+//        e19.setGuid("someValue123".getBytes("UTF-8"));
+//        ctx.commitChanges();
+//
+//        Response response = target("/v1/e19/" + Cayenne.intPKForObject(e19))
+//                .queryParam("include", E19.GUID.getName())
+//                .request()
+//                .get();
+//
+//        onSuccess(response).bodyEquals(1, "{\"guid\":\"c29tZVZhbHVlMTIz\"}");
+//    }
 
 }

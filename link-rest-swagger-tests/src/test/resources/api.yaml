@@ -102,6 +102,12 @@ paths:
       operationId: getAll
       tags:
         - E2
+      parameters:
+        - name: exclude
+          in: query
+          description: exclude attribute
+          required: false
+          type: string
       responses:
         '200':
           description: Success response.
@@ -141,6 +147,16 @@ paths:
           required: true
           type: integer
           format: int32
+        - name: include
+          in: query
+          description: include attribute
+          required: false
+          type: string
+        - name: exclude
+          in: query
+          description: exclude attribute
+          required: false
+          type: string
       responses:
         "200":
           description: Success responce
@@ -194,6 +210,39 @@ paths:
       operationId: getAll
       tags:
         - E3
+      parameters:
+        - name: sort
+          in: query
+          description: sorts result items
+          required: false
+          type: string
+        - name: include
+          in: query
+          description: include attribute
+          required: false
+          type: string
+        - name: exclude
+          in: query
+          description: exclude attribute
+          required: false
+          type: string
+        - name: limit
+          in: query
+          description: maximum number of results to return
+          required: false
+          type: integer
+          format: int32
+        - name: start
+          in: query
+          description: start offset of results to return
+          required: false
+          type: integer
+          format: int32
+        - name: mapBy
+          in: query
+          description: map responce by root entity
+          required: false
+          type: string
       responses:
         '200':
           description: Success response.
@@ -216,6 +265,11 @@ paths:
           required: true
           type: integer
           format: int32
+        - name: include
+          in: query
+          description: include attribute
+          required: false
+          type: string
       responses:
         "200":
           description: Success responce
@@ -277,6 +331,21 @@ paths:
           required: false
           type: integer
           format: int32
+        - name: sort
+          in: query
+          description: sorts result items
+          required: false
+          type: string
+        - name: include
+          in: query
+          description: include attribute
+          required: false
+          type: string
+        - name: mapBy
+          in: query
+          description: map responce by root entity
+          required: false
+          type: string
       responses:
         '200':
           description: Success response.
@@ -299,6 +368,11 @@ paths:
           required: true
           type: integer
           format: int32
+        - name: include
+          in: query
+          description: include attribute
+          required: false
+          type: string
       responses:
         "200":
           description: Success responce
@@ -415,6 +489,10 @@ definitions:
         type: string
         description: address of E2
         example: 445 Mount Eden Road, Mount Eden, Auckland
+      e3s:
+        type: array
+        items:
+          $ref: "#/definitions/E3"
   E3:
     type: object
     properties:

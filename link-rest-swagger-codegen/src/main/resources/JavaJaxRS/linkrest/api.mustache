@@ -1,6 +1,6 @@
 package {{package}};
 
-import {{package}}.*;
+import {{modelPackage}}.*;
 {{#imports}}import {{import}};
 {{/imports}}
 
@@ -33,8 +33,7 @@ public class {{classname}} {
     public {{>returnTypes}} {{nickname}}(@Context UriInfo uriInfo) {
 
         return LinkRest.select({{{returnType}}}.class, config)
-            .constraint(Constraint.excludeAll({{{returnType}}}.class)
-            {{>constraintParams}})
+            .constraint({{>constraintParams}})
             .uri(uriInfo)
             .get();
     }
@@ -43,8 +42,7 @@ public class {{classname}} {
     public {{>returnTypes}} {{nickname}}({{#allParams}}{{>pathParams}}{{>headerParams}}{{>bodyParams}}{{>formParams}}{{/allParams}}, @Context UriInfo uriInfo) {
 
         return LinkRest.select({{{returnType}}}.class, config)
-            .constraint(Constraint.excludeAll({{{returnType}}}.class)
-            {{>constraintParams}})
+            .constraint({{>constraintParams}})
             {{#allParams}}{{#isPathParam}}.byId({{paramName}}){{/isPathParam}}{{/allParams}}
             .uri(uriInfo).get();
     }
@@ -61,19 +59,18 @@ public class {{classname}} {
     public {{>returnTypes}} {{nickname}}(String requestBody, @Context UriInfo uriInfo) {
 
         return LinkRest.create({{{returnType}}}.class, config)
-            .readConstraint(Constraint.excludeAll({{{returnType}}}.class)
-            {{>constraintParams}})
+            .readConstraint({{>constraintParams}})
             .uri(uriInfo)
             .syncAndSelect(requestBody);
     }
 {{/isRestfulCreate}}
 {{#isRestfulUpdate}}
-    public {{>returnTypes}} {{nickname}}({{#allParams}}{{>pathParams}}{{>headerParams}}{{>formParams}}{{/allParams}}, String requestBody) {
+    public {{>returnTypes}} {{nickname}}({{#allParams}}{{>pathParams}}{{>headerParams}}{{>formParams}}{{/allParams}}, String requestBody, @Context UriInfo uriInfo) {
 
-        return LinkRest.update({{{returnType}}}.class, config)
-            .readConstraint(Constraint.excludeAll({{{returnType}}}.class)
-            {{>constraintParams}})
+        return LinkRest.idempotentCreateOrUpdate({{{returnType}}}.class, config)
+            .readConstraint({{>constraintParams}})
             .id({{#allParams}}{{#isPathParam}}{{paramName}}{{/isPathParam}}{{/allParams}})
+            .uri(uriInfo)
             .syncAndSelect(requestBody);
     }
 {{/isRestfulUpdate}}
