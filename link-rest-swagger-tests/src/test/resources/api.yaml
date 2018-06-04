@@ -103,6 +103,11 @@ paths:
       tags:
         - E2
       parameters:
+        - name: include
+          in: query
+          description: include attribute
+          required: false
+          type: string
         - name: exclude
           in: query
           description: exclude attribute
