@@ -35,6 +35,6 @@ public interface Constraint<T> extends Function<LrEntity<T>, ConstrainedLrEntity
      * @return a new Constraints instance.
      */
     static <T> ConstraintsBuilder<T> idAndAttributes(Class<T> type) {
-        return excludeAll(type).includeId().allAttributes();
+        return excludeAll(type).includeId().allAttributes().allQueryParams();
     }
 }

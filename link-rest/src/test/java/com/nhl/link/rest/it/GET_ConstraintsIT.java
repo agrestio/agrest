@@ -41,6 +41,19 @@ public class GET_ConstraintsIT extends JerseyTestOnDerby {
 	}
 
 	@Test
+	public void test_ImplicitConstraintParams() {
+
+		SQLTemplate insert = new SQLTemplate(E4.class,
+				"INSERT INTO utest.e4 (id, c_varchar, c_int) values (1, 'xxx', 5)");
+		newContext().performGenericQuery(insert);
+
+		Response response1 = target("/e4").queryParam("exclude", E4.C_DATE.getName()).request().get();
+		assertEquals(Status.OK.getStatusCode(), response1.getStatus());
+		assertEquals("{\"data\":[{\"id\":1,\"cBoolean\":null,\"cDecimal\":null,\"cInt\":5,\"cTime\":null,\"cTimestamp\":null,\"cVarchar\":\"xxx\"}],\"total\":1}", response1.readEntity(String.class));
+
+	}
+
+	@Test
 	public void test_Explicit() {
 
 		SQLTemplate insert = new SQLTemplate(E4.class,
@@ -112,6 +125,16 @@ public class GET_ConstraintsIT extends JerseyTestOnDerby {
         @Path("e10")
 		public DataResponse<E10> get(@Context UriInfo uriInfo) {
 			return LinkRest.select(E10.class, config).uri(uriInfo).get();
+		}
+
+		@GET
+		@Path("e4")
+		public DataResponse<E4> getImplicitConstraintParams(@Context UriInfo uriInfo) {
+			return LinkRest.service(config)
+					.select(E4.class)
+					.constraint(Constraint.idAndAttributes(E4.class))
+					.uri(uriInfo)
+					.get();
 		}
 	}
 }
