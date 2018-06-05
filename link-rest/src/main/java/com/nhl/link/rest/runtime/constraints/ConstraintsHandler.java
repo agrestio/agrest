@@ -1,14 +1,17 @@
 package com.nhl.link.rest.runtime.constraints;
 
 import com.nhl.link.rest.EntityConstraint;
+import com.nhl.link.rest.LinkRestException;
 import com.nhl.link.rest.ResourceEntity;
 import com.nhl.link.rest.SizeConstraints;
 import com.nhl.link.rest.constraints.Constraint;
+import com.nhl.link.rest.runtime.processor.select.SelectContext;
 import com.nhl.link.rest.runtime.processor.update.UpdateContext;
 import org.apache.cayenne.di.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.ws.rs.core.Response;
 import java.util.List;
 
 /**
@@ -26,12 +29,14 @@ public class ConstraintsHandler implements IConstraintsHandler {
 
 	private RequestConstraintsHandler treeConstraintsHandler;
 	private EntityConstraintHandler entityConstraintHandler;
+	private QueryParamConstraintsHandler queryParamConstraintsHandler;
 
 	public ConstraintsHandler(@Inject(DEFAULT_READ_CONSTRAINTS_LIST) List<EntityConstraint> readConstraints,
 			@Inject(DEFAULT_WRITE_CONSTRAINTS_LIST) List<EntityConstraint> writeConstraints) {
 
 		this.treeConstraintsHandler = new RequestConstraintsHandler();
 		this.entityConstraintHandler = new EntityConstraintHandler(readConstraints, writeConstraints);
+		this.queryParamConstraintsHandler = new QueryParamConstraintsHandler();
 	}
 
 	@Override
@@ -39,6 +44,14 @@ public class ConstraintsHandler implements IConstraintsHandler {
 
 		if (!treeConstraintsHandler.constrainUpdate(context, c)) {
 			entityConstraintHandler.constrainUpdate(context);
+		}
+	}
+
+	@Override
+	public <T> void constrainRequest(SelectContext<T> context, Constraint<T> readConstraints) {
+		if (!queryParamConstraintsHandler.constrainRead(context, readConstraints)) {
+			throw new LinkRestException(Response.Status.BAD_REQUEST,
+					String.format("The query parameters set '%s' is not supported", context.getUriInfo().getQueryParameters()));
 		}
 	}
 

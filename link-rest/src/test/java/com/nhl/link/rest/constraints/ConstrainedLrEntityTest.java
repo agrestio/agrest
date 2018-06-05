@@ -25,11 +25,16 @@ public class ConstrainedLrEntityTest {
 		visitor.getChildren().put("c1", mock(ConstrainedLrEntity.class));
 		visitor.getAttributes().add("a");
 		visitor.getAttributes().add("a1");
+		visitor.getQueryParams().add("qp");
+		visitor.getQueryParams().add("qp1");
 
 		visitor.excludeProperties("c", "a1");
 		assertEquals(1, visitor.getChildren().size());
 		assertTrue(visitor.getChildren().containsKey("c1"));
 		assertEquals(1, visitor.getAttributes().size());
 		assertTrue(visitor.getAttributes().contains("a"));
+
+		visitor.excludeAllQueryParams();
+		assertEquals(0, visitor.getQueryParams().size());
 	}
 }
