@@ -181,16 +181,6 @@ public class ConstraintsBuilder<T> implements Constraint<T> {
     /**
      * @since 2.13
      */
-    public ConstraintsBuilder<T> allQueryParams() {
-        return new ConstraintsBuilder<>(op.andThen(ce -> {
-            ce.includeAllQueryParams();
-            return ce;
-        }));
-    }
-
-    /**
-     * @since 2.13
-     */
     public ConstraintsBuilder<T> queryParams(String... queryParams) {
         return new ConstraintsBuilder<>(op.andThen(ce -> {
             ce.includeQueryParams(queryParams);

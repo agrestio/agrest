@@ -41,7 +41,7 @@ public class GET_ConstraintsIT extends JerseyTestOnDerby {
 	}
 
 	@Test
-	public void test_ImplicitConstraintParams() {
+	public void test_Implicit_ConstraintParams() {
 
 		SQLTemplate insert = new SQLTemplate(E4.class,
 				"INSERT INTO utest.e4 (id, c_varchar, c_int) values (1, 'xxx', 5)");
@@ -68,16 +68,29 @@ public class GET_ConstraintsIT extends JerseyTestOnDerby {
 	}
 
 	@Test
+	public void test_Explicit_QueryParams() {
+
+		SQLTemplate insert = new SQLTemplate(E4.class,
+				"INSERT INTO utest.e4 (id, c_varchar, c_int) values (1, 'xxx', 5)");
+		newContext().performGenericQuery(insert);
+
+		Response response1 = target("/e4/limit_queryparams").queryParam("include", E4.C_BOOLEAN.getName())
+				.queryParam("limit", new Integer(10)).request().get();
+		assertEquals(Status.BAD_REQUEST.getStatusCode(), response1.getStatus());
+		assertEquals("{\"success\":false,\"message\":\"The query parameters set '{include=[cBoolean], limit=[10]}' is not supported\"}", response1.readEntity(String.class));
+
+	}
+
+	@Test
 	public void test_Explicit_QueryParam() {
 
 		SQLTemplate insert = new SQLTemplate(E4.class,
 				"INSERT INTO utest.e4 (id, c_varchar, c_int) values (1, 'xxx', 5)");
 		newContext().performGenericQuery(insert);
 
-		Response response1 = target("/e4/limit_attributes").queryParam("include", E4.C_BOOLEAN.getName())
-				.queryParam("limit", new Integer(10)).request().get();
-		assertEquals(Status.BAD_REQUEST.getStatusCode(), response1.getStatus());
-		assertEquals("{\"success\":false,\"message\":\"The query parameters set '{include=[cBoolean], limit=[10]}' is not supported\"}", response1.readEntity(String.class));
+		Response response1 = target("/e4/excludeall_queryparams").queryParam("limit", new Integer(10)).request().get();
+		assertEquals(Status.OK.getStatusCode(), response1.getStatus());
+		assertEquals("{\"data\":[{\"cInt\":5}],\"total\":1}", response1.readEntity(String.class));
 
 	}
 
@@ -116,10 +129,28 @@ public class GET_ConstraintsIT extends JerseyTestOnDerby {
         public DataResponse<E4> getObjects_LimitAttributes(@Context UriInfo uriInfo) {
             return LinkRest.select(E4.class, config).uri(uriInfo)
                     .constraint(Constraint.idOnly(E4.class)
-							.attributes(E4.C_INT)
-							.queryParams("include"))
+							.attributes(E4.C_INT))
                     .get();
         }
+
+		@GET
+		@Path("e4/limit_queryparams")
+		public DataResponse<E4> getObjects_QueryParams(@Context UriInfo uriInfo) {
+			return LinkRest.select(E4.class, config).uri(uriInfo)
+					.constraint(Constraint.idOnly(E4.class)
+							.queryParams("include"))
+					.get();
+		}
+
+		@GET
+		@Path("e4/excludeall_queryparams")
+		public DataResponse<E4> getObjects_ExcludeAll(@Context UriInfo uriInfo) {
+			return LinkRest.select(E4.class, config).uri(uriInfo)
+					.constraint(Constraint.excludeAll(E4.class)
+							.attributes(E4.C_INT)
+							.queryParams("limit"))
+					.get();
+		}
 
 		@GET
         @Path("e10")

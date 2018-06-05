@@ -40,7 +40,7 @@ public class ConstraintsBuilderTest extends TestWithCayenneMapping {
 
         assertNotNull(result);
         assertEquals(getLrEntity(E4.class).getAttributes().size(), result.getAttributes().size());
-        assertFalse(result.getQueryParams().isEmpty());
+        assertTrue(result.getQueryParams().isEmpty());
         assertTrue(result.getChildren().isEmpty());
         assertTrue(result.isIdIncluded());
     }
@@ -53,7 +53,7 @@ public class ConstraintsBuilderTest extends TestWithCayenneMapping {
 
         assertNotNull(result);
         assertEquals(getLrEntity(E4.class).getAttributes().size() - 2, result.getAttributes().size());
-        assertFalse(result.getQueryParams().isEmpty());
+        assertTrue(result.getQueryParams().isEmpty());
         assertTrue(result.getChildren().isEmpty());
         assertTrue(result.isIdIncluded());
     }
