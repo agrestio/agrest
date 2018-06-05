@@ -257,6 +257,34 @@ paths:
               $ref: "#/definitions/E3"
         default:
           description: Unexpected error
+    put:
+      tags:
+        - E3
+      summary: Updates E3
+      operationId: updateAll
+      produces:
+        - application/xml
+        - application/json
+      parameters:
+        - in: body
+          name: body
+          description: Updated E3 object
+          schema:
+            $ref: "#/definitions/E3"
+        - name: include
+          in: query
+          description: include attribute
+          required: false
+          type: string
+        - name: exclude
+          in: query
+          description: exclude attribute
+          required: false
+          type: string
+      responses:
+        default:
+          description: successful operation
+
   /e3/{id}:
     get:
       description: Returns a E3

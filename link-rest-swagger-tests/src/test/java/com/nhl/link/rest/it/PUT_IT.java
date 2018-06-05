@@ -102,6 +102,30 @@ public class PUT_IT extends JerseyTestOnDerby {
     }
 
     @Test
+    public void testPUT_Bulk() {
+
+        insert("e3", "id, name", "5, 'aaa'");
+        insert("e3", "id, name", "4, 'zzz'");
+        insert("e3", "id, name", "2, 'bbb'");
+        insert("e3", "id, name", "6, 'yyy'");
+
+        Entity<String> entity = Entity.json(
+                "[{\"id\":6,\"name\":\"yyy\"},{\"id\":4,\"name\":\"zzz\"},{\"id\":5,\"name\":\"111\"},{\"id\":2,\"name\":\"333\"}]");
+        Response response = target("/v1/e3/")
+                .queryParam("exclude", "id")
+                .queryParam("include", E3.NAME.getName())
+                .request()
+                .put(entity);
+
+        // ordering must be preserved in response, so comparing with request entity
+        onSuccess(response).bodyEquals(4,
+                "{\"name\":\"yyy\"}",
+                "{\"name\":\"zzz\"}",
+                "{\"name\":\"111\"}",
+                "{\"name\":\"333\"}");
+    }
+
+    @Test
     public void testPut_ToMany() {
 
         insert("e2", "id, name", "1, 'xxx'");

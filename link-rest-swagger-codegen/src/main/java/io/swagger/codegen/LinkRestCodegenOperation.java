@@ -1,6 +1,9 @@
 package io.swagger.codegen;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class LinkRestCodegenOperation extends CodegenOperation {
@@ -67,5 +70,36 @@ public class LinkRestCodegenOperation extends CodegenOperation {
         this.nickname = codegenOperation.nickname;
         this.operationIdLowerCase = codegenOperation.operationIdLowerCase;
         this.operationIdCamelCase = codegenOperation.operationIdCamelCase;
+    }
+
+    /**
+     * Check if act as Restful bulk update method
+     *
+     * @return true if act as Restful bulk update method, false otherwise
+     */
+    public boolean isRestfulBulkUpdate() {
+        return Arrays.asList("PUT", "PATCH").contains(httpMethod.toUpperCase()) && !getHasPathParams() ;
+    }
+
+    /**
+     * Check if act as Restful child via parent update method
+     *
+     * @return true if act as Restful child via parent update method, false otherwise
+     */
+    public boolean isRestfulChildViaParentUpdate() {
+        return Arrays.asList("PUT", "PATCH").contains(httpMethod.toUpperCase()) && isParentChildPath() ;
+    }
+
+    /**
+     * Check if the path match format /xxx/:id/yyy/:tid
+     *
+     * @return true if path act as parent-child
+     */
+    private boolean isParentChildPath() {
+        if (pathParams.size() != 2 || path == null) return false;
+        String id = pathParams.get(0).baseName;
+        String tid = pathParams.get(1).baseName;
+
+        return path.contains("/{" + id + "}") && path.contains("/{" + tid + "}");
     }
 }
