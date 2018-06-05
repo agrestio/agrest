@@ -192,6 +192,33 @@ paths:
       responses:
         default:
           description: successful operation
+
+  /e2/{id}/e3s:
+    put:
+      tags:
+        - E2
+        - E3
+      summary: Updates E3s Via E2
+      operationId: updateE3sViaE2
+      produces:
+        - application/xml
+        - application/json
+      parameters:
+        - name: id
+          in: path
+          description: ID of E2 to update
+          required: true
+          type: integer
+          format: int32
+        - in: body
+          name: body
+          description: Bulk updated E3 objects
+          schema:
+            $ref: "#/definitions/E3"
+      responses:
+        default:
+          description: successful operation
+
   /e3:
     post:
       tags:
@@ -330,6 +357,38 @@ paths:
           description: Updated E3 object
           schema:
             $ref: "#/definitions/E3"
+      responses:
+        default:
+          description: successful operation
+
+  /e3/{id}/e2/{tid}:
+    put:
+      tags:
+        - E3
+        - E2
+      summary: Updates E2 Via E3
+      operationId: updateE2ViaE3
+      produces:
+        - application/xml
+        - application/json
+      parameters:
+        - name: id
+          in: path
+          description: ID of E3 to update
+          required: true
+          type: integer
+          format: int32
+        - name: tid
+          in: path
+          description: ID of E2 to update
+          required: true
+          type: integer
+          format: int32
+        - in: body
+          name: body
+          description: Updated E2 object
+          schema:
+            $ref: "#/definitions/E2"
       responses:
         default:
           description: successful operation

@@ -83,7 +83,25 @@ public class {{classname}} {
             .syncAndSelect(requestBody);
     }
 {{/isRestfulBulkUpdate}}
+{{#isRestfulRelatedUpdate}}
+    public DataResponse<{{#bodyParams}}{{dataType}}{{/bodyParams}}> {{nickname}}({{#pathParams}}@PathParam("{{baseName}}") {{{dataType}}} {{paramName}}, {{/pathParams}}String requestBody) {
 
+        return LinkRest.idempotentCreateOrUpdate({{#bodyParams}}{{dataType}}{{/bodyParams}}.class, config)
+            .readConstraint({{#modelRelations}}{{>constraintParams}}{{/modelRelations}})
+            .id({{#pathParams}}{{#-last}}{{paramName}}{{/-last}}{{/pathParams}})
+            .parent({{returnType}}.class, {{#pathParams}}{{#-first}}{{paramName}}{{/-first}}{{/pathParams}}, {{returnType}}.{{#bodyParams}}{{dataType}}{{/bodyParams}})
+            .syncAndSelect(requestBody);
+    }
+{{/isRestfulRelatedUpdate}}
+{{#isRestfulRelatedToManyUpdate}}
+    public DataResponse<{{#bodyParams}}{{dataType}}{{/bodyParams}}> {{nickname}}({{#pathParams}}@PathParam("{{baseName}}") {{{dataType}}} {{paramName}}, {{/pathParams}}String requestBody) {
+
+        return LinkRest.idempotentCreateOrUpdate({{#bodyParams}}{{dataType}}{{/bodyParams}}.class, config)
+            .readConstraint({{#modelRelations}}{{>constraintParams}}{{/modelRelations}})
+            .toManyParent({{returnType}}.class, {{#pathParams}}{{#-first}}{{paramName}}{{/-first}}{{/pathParams}}, {{returnType}}.{{#bodyParams}}{{dataType}}{{/bodyParams}}S)
+            .syncAndSelect(requestBody);
+    }
+{{/isRestfulRelatedToManyUpdate}}
 {{/operation}}
 }
 {{/operations}}

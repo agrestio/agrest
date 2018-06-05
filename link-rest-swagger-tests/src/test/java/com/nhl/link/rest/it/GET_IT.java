@@ -2,7 +2,6 @@ package com.nhl.link.rest.it;
 
 import com.nhl.link.rest.encoder.DateTimeFormatters;
 import com.nhl.link.rest.it.fixture.JerseyTestOnDerby;
-import com.nhl.link.rest.it.fixture.cayenne.E19;
 import com.nhl.link.rest.it.fixture.cayenne.E2;
 import com.nhl.link.rest.it.fixture.cayenne.E3;
 import com.nhl.link.rest.it.fixture.cayenne.E4;
@@ -11,15 +10,12 @@ import com.nhl.link.rest.swagger.api.v1.service.E1Resource;
 import com.nhl.link.rest.swagger.api.v1.service.E2Resource;
 import com.nhl.link.rest.swagger.api.v1.service.E3Resource;
 import com.nhl.link.rest.swagger.api.v1.service.E4Resource;
-import org.apache.cayenne.Cayenne;
-import org.apache.cayenne.ObjectContext;
 import org.apache.cayenne.query.SQLTemplate;
 import org.junit.Test;
 
 import javax.ws.rs.core.FeatureContext;
 import javax.ws.rs.core.Response;
 
-import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.sql.Time;
@@ -129,24 +125,6 @@ public class GET_IT extends JerseyTestOnDerby {
                 .statusEquals(Response.Status.BAD_REQUEST)
                 .bodyEquals("{\"success\":false,\"message\":\"Invalid path 'xyz' for 'E4'\"}");
     }
-
-//    @Test
-//    // this is a hack for Sencha bug, passing us null sorters per LF-189...
-//    // allowing for lax property name checking as a result
-//    public void test_Sort_Null() {
-//
-//        insert("e4", "id", "2");
-//        insert("e4", "id", "1");
-//        insert("e4", "id", "3");
-//
-//        Response response = target("/v1/e4")
-//                .queryParam("sort", urlEnc("[{\"property\":null,\"direction\":\"DESC\"}]"))
-//                .queryParam("include", "id")
-//                .request()
-//                .get();
-//
-//        onSuccess(response).totalEquals(3);
-//    }
 
     @Test
     public void test_SelectById() {
@@ -305,29 +283,6 @@ public class GET_IT extends JerseyTestOnDerby {
                 "{\"id\":9,\"e2\":null}");
     }
 
-//    @Test
-//    public void test_SelectCharPK() {
-//
-//        insert("e6", "char_id, char_column", "'a', 'aaa'");
-//
-//        Response response = target("/v1/e6/a").request().get();
-//        onSuccess(response).bodyEquals(1, "{\"id\":\"a\",\"charColumn\":\"aaa\"}");
-//    }
-
-//    @Test
-//    public void test_SelectByCompoundId() {
-//
-//        insert("e17", "id1, id2, name", "1, 1, 'aaa'");
-//
-//        Response response = target("/v1/e17")
-//                .queryParam("id1", 1)
-//                .queryParam("id2", 1)
-//                .request()
-//                .get();
-//
-//        onSuccess(response).bodyEquals(1, "{\"id\":{\"id1\":1,\"id2\":1},\"id1\":1,\"id2\":1,\"name\":\"aaa\"}");
-//    }
-
     @Test
     public void test_Select_MapByRootEntity() {
 
@@ -378,21 +333,4 @@ public class GET_IT extends JerseyTestOnDerby {
 
         onSuccess(response).bodyEquals(1, "{\"cVarchar\":\"First line\\u2028Second line...\\u2029\"}");
     }
-
-//    @Test
-//    public void test_SelectByteArrayProperty() throws IOException {
-//
-//        ObjectContext ctx = newContext();
-//        E19 e19 = ctx.newObject(E19.class);
-//        e19.setGuid("someValue123".getBytes("UTF-8"));
-//        ctx.commitChanges();
-//
-//        Response response = target("/v1/e19/" + Cayenne.intPKForObject(e19))
-//                .queryParam("include", E19.GUID.getName())
-//                .request()
-//                .get();
-//
-//        onSuccess(response).bodyEquals(1, "{\"guid\":\"c29tZVZhbHVlMTIz\"}");
-//    }
-
 }

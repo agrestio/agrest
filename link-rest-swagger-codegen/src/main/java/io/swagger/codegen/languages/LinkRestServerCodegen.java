@@ -1,8 +1,6 @@
 package io.swagger.codegen.languages;
 
 import com.google.common.base.Strings;
-import com.samskivert.mustache.Mustache;
-import com.samskivert.mustache.Template;
 import io.swagger.codegen.CliOption;
 import io.swagger.codegen.CodegenModel;
 import io.swagger.codegen.CodegenOperation;
@@ -15,14 +13,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
-import java.io.IOException;
-import java.io.Writer;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.NoSuchElementException;
 import java.util.Set;
 
 public class LinkRestServerCodegen extends AbstractJavaJAXRSServerCodegen implements LinkRestServerFeatures {
@@ -121,7 +116,15 @@ public class LinkRestServerCodegen extends AbstractJavaJAXRSServerCodegen implem
                         lrRelation.bodyParam = new CodegenParameter();
                         lrRelation.bodyParam.paramName = prop.baseName;
                         populateModelAttributes(lrRelation);
-                        lrOperation.modelRelations.add(lrRelation);
+                        if (lrOperation.isRestfulRelatedUpdate()
+                                || lrOperation.isRestfulRelatedToManyUpdate()) {
+                            // if path looks like /xxx/:id/yyy/:tid or /xxx/:id/yyy's, stores corresponding relation only
+                            if (lrRelation.baseName.equalsIgnoreCase(lrOperation.bodyParam.baseType)) {
+                                lrOperation.modelRelations.add(lrRelation);
+                            }
+                        } else {
+                            lrOperation.modelRelations.add(lrRelation);
+                        }
                     }
                 }
                 newOps.add(lrOperation);

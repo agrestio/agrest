@@ -86,8 +86,17 @@ public class LinkRestCodegenOperation extends CodegenOperation {
      *
      * @return true if act as Restful child via parent update method, false otherwise
      */
-    public boolean isRestfulChildViaParentUpdate() {
+    public boolean isRestfulRelatedUpdate() {
         return Arrays.asList("PUT", "PATCH").contains(httpMethod.toUpperCase()) && isParentChildPath() ;
+    }
+
+    /**
+     * Check if act as Restful many children via parent update method
+     *
+     * @return true if act as Restful many children via parent update method, false otherwise
+     */
+    public boolean isRestfulRelatedToManyUpdate() {
+        return Arrays.asList("PUT", "PATCH").contains(httpMethod.toUpperCase()) && isRelatedToManyPath() ;
     }
 
     /**
@@ -101,5 +110,17 @@ public class LinkRestCodegenOperation extends CodegenOperation {
         String tid = pathParams.get(1).baseName;
 
         return path.contains("/{" + id + "}") && path.contains("/{" + tid + "}");
+    }
+
+    /**
+     * Check if the path match format /xxx/:id/yyy's
+     *
+     * @return true if path act as parent-child
+     */
+    private boolean isRelatedToManyPath() {
+        if (pathParams.size() != 1 || path == null) return false;
+        String id = pathParams.get(0).baseName;
+
+        return path.contains("/{" + id + "}/");
     }
 }
