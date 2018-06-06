@@ -194,6 +194,31 @@ paths:
           description: successful operation
 
   /e2/{id}/e3s:
+    get:
+      description: Returns E3s related to E2
+      operationId: getOneToMany
+      tags:
+        - E2
+        - E3
+      parameters:
+        - name: id
+          in: path
+          description: ID of E2 to fetch E3s
+          required: true
+          type: integer
+          format: int32
+        - name: include
+          in: query
+          description: include attribute
+          required: false
+          type: string
+      responses:
+        "200":
+          description: Success responce
+          schema:
+            $ref: "#/definitions/E3"
+        default:
+          description: Unexpected error
     put:
       tags:
         - E2
@@ -218,6 +243,74 @@ paths:
       responses:
         default:
           description: successful operation
+    post:
+      tags:
+        - E2
+        - E3
+      summary: Creates E3s Via E2
+      operationId: createE3sViaE2
+      produces:
+        - application/xml
+        - application/json
+      parameters:
+        - name: id
+          in: path
+          description: ID of E2
+          required: true
+          type: integer
+          format: int32
+        - in: body
+          name: body
+          description: Created E3 objects
+          schema:
+            $ref: "#/definitions/E3"
+      responses:
+        default:
+          description: successful operation
+    delete:
+      description: Deletes E3s Via E2
+      operationId: deleteE3sViaE2
+      tags:
+        - E2
+        - E3
+      parameters:
+        - name: id
+          in: path
+          description: ID of E2 to delete E3s
+          required: true
+          type: integer
+          format: int32
+      responses:
+        "204":
+          description: All E3 items deleted
+        default:
+          description: unexpected error
+
+  /e2/{id}/e3s/{tid}:
+    delete:
+      description: Deletes E3 Via E2
+      operationId: deleteE3ViaE2
+      tags:
+        - E2
+        - E3
+      parameters:
+        - name: id
+          in: path
+          description: ID of E2 to delete E3
+          required: true
+          type: integer
+          format: int32
+        - name: tid
+          in: path
+          description: ID of E3 to delete
+          required: true
+          type: integer
+          format: int32
+      responses:
+        "204":
+          description: E3 item deleted
+        default:
+          description: unexpected error
 
   /e3:
     post:
@@ -361,6 +454,51 @@ paths:
         default:
           description: successful operation
 
+  /e3/{id}/e2:
+    get:
+      description: Returns a E2 related to E3
+      operationId: getOneByOne
+      tags:
+        - E3
+        - E2
+      parameters:
+        - name: id
+          in: path
+          description: ID of E3 to fetch E2
+          required: true
+          type: integer
+          format: int32
+        - name: include
+          in: query
+          description: include attribute
+          required: false
+          type: string
+      responses:
+        "200":
+          description: Success responce
+          schema:
+            $ref: "#/definitions/E2"
+        default:
+          description: Unexpected error
+    delete:
+      description: Deletes E2 Via E3
+      operationId: deleteE2ViaE3
+      tags:
+        - E3
+        - E2
+      parameters:
+        - name: id
+          in: path
+          description: ID of E3 to delete E2
+          required: true
+          type: integer
+          format: int32
+      responses:
+        "204":
+          description: E2 item deleted
+        default:
+          description: unexpected error
+
   /e3/{id}/e2/{tid}:
     put:
       tags:
@@ -392,6 +530,30 @@ paths:
       responses:
         default:
           description: successful operation
+    delete:
+      description: Deletes E2 Via E3
+      operationId: deleteE2ViaE3
+      tags:
+        - E3
+        - E2
+      parameters:
+        - name: id
+          in: path
+          description: ID of E3 to delete E2
+          required: true
+          type: integer
+          format: int32
+        - name: tid
+          in: path
+          description: ID of E2 to delete
+          required: true
+          type: integer
+          format: int32
+      responses:
+        "204":
+          description: E2 item deleted
+        default:
+          description: unexpected error
 
   /e4:
     post:

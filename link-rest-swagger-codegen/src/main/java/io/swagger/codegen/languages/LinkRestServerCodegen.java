@@ -115,16 +115,9 @@ public class LinkRestServerCodegen extends AbstractJavaJAXRSServerCodegen implem
                         lrRelation.returnType = lrRelation.baseName = prop.complexType;
                         lrRelation.bodyParam = new CodegenParameter();
                         lrRelation.bodyParam.paramName = prop.baseName;
+
                         populateModelAttributes(lrRelation);
-                        if (lrOperation.isRestfulRelatedUpdate()
-                                || lrOperation.isRestfulRelatedToManyUpdate()) {
-                            // if path looks like /xxx/:id/yyy/:tid or /xxx/:id/yyy's, stores corresponding relation only
-                            if (lrRelation.baseName.equalsIgnoreCase(lrOperation.bodyParam.baseType)) {
-                                lrOperation.modelRelations.add(lrRelation);
-                            }
-                        } else {
-                            lrOperation.modelRelations.add(lrRelation);
-                        }
+                        populateRelations(lrOperation, lrRelation);
                     }
                 }
                 newOps.add(lrOperation);
@@ -146,6 +139,27 @@ public class LinkRestServerCodegen extends AbstractJavaJAXRSServerCodegen implem
                     lrOperation.modelAttributes.add(codegenParam);
                 }
             }
+        }
+    }
+
+    private void populateRelations(LinkRestCodegenOperation lrOperation, LinkRestCodegenOperation lrRelation) {
+        // if path looks like /xxx/:id/yyy/:tid or /xxx/:id/yyy's, stores corresponding relation only
+        if (lrOperation.isRelationPath()) {
+            // copies queryParam's from parent operation to child relation
+            lrRelation.allParams = lrRelation.queryParams = lrOperation.queryParams;
+
+            if (lrOperation.bodyParam == null) { // In case of GET or DELETE operations
+                final String[] path = lrOperation.path.split("/");
+                if (path.length > 1
+                        && (lrRelation.bodyParam.paramName.equalsIgnoreCase(path[path.length - 1])
+                        || lrRelation.bodyParam.paramName.equalsIgnoreCase(path[path.length - 2]))) {
+                    lrOperation.modelRelations.add(lrRelation);
+                }
+            } else if (lrRelation.baseName.equalsIgnoreCase(lrOperation.bodyParam.baseType)) {
+                lrOperation.modelRelations.add(lrRelation);
+            }
+        } else {
+            lrOperation.modelRelations.add(lrRelation);
         }
     }
 

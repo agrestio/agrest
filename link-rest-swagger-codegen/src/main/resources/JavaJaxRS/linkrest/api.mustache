@@ -47,6 +47,16 @@ public class {{classname}} {
             .uri(uriInfo).get();
     }
 {{/isRestfulShow}}
+{{#isRestfulIndexToMany}}
+    public DataResponse<{{#modelRelations}}{{returnType}}{{/modelRelations}}> {{nickname}}({{#allParams}}{{>pathParams}}{{>headerParams}}{{>bodyParams}}{{>formParams}}{{/allParams}}, @Context UriInfo uriInfo) {
+
+        return LinkRest.select({{#modelRelations}}{{returnType}}{{/modelRelations}}.class, config)
+            .constraint({{#modelRelations}}{{>constraintParams}}{{/modelRelations}})
+            .parent({{returnType}}.class, {{#allParams}}{{#isPathParam}}{{paramName}}{{/isPathParam}}{{/allParams}}, "{{#modelRelations}}{{bodyParam.paramName}}{{/modelRelations}}")
+            .uri(uriInfo)
+            .get();
+    }
+{{/isRestfulIndexToMany}}
 {{#isRestfulDestroy}}
     public SimpleResponse {{nickname}}({{#allParams}}{{>pathParams}}{{>headerParams}}{{>bodyParams}}{{>formParams}}{{/allParams}}) {
 
@@ -55,6 +65,20 @@ public class {{classname}} {
             .delete();
     }
 {{/isRestfulDestroy}}
+{{#isRestfulDestroyToMany}}
+    public SimpleResponse {{nickname}}({{#allParams}}{{>pathParams}}{{>headerParams}}{{>bodyParams}}{{>formParams}}{{/allParams}}) {
+
+        return LinkRest.service(config)
+            .unrelate({{returnType}}.class, {{#allParams}}{{#isPathParam}}{{paramName}}{{/isPathParam}}{{/allParams}}, "{{#modelRelations}}{{bodyParam.paramName}}{{/modelRelations}}");
+    }
+{{/isRestfulDestroyToMany}}
+{{#isRestfulRelatedDestroy}}
+    public SimpleResponse {{nickname}}({{#allParams}}{{>pathParams}}{{>headerParams}}{{>bodyParams}}{{>formParams}}, {{/allParams}}@Context UriInfo uriInfo) {
+
+        return LinkRest.service(config)
+            .unrelate({{returnType}}.class, {{#pathParams}}{{#-first}}{{paramName}}{{/-first}}{{/pathParams}}, "{{#modelRelations}}{{bodyParam.paramName}}{{/modelRelations}}", {{#pathParams}}{{#-last}}{{paramName}}{{/-last}}{{/pathParams}});
+    }
+{{/isRestfulRelatedDestroy}}
 {{#isRestfulCreate}}
     public {{>returnTypes}} {{nickname}}(String requestBody, @Context UriInfo uriInfo) {
 
@@ -64,6 +88,15 @@ public class {{classname}} {
             .syncAndSelect(requestBody);
     }
 {{/isRestfulCreate}}
+{{#isRestfulRelatedToManyCreate}}
+    public DataResponse<{{#bodyParams}}{{dataType}}{{/bodyParams}}> {{nickname}}({{#pathParams}}@PathParam("{{baseName}}") {{{dataType}}} {{paramName}}, {{/pathParams}}String requestBody) {
+
+        return LinkRest.createOrUpdate({{#bodyParams}}{{dataType}}{{/bodyParams}}.class, config)
+            .readConstraint({{#modelRelations}}{{>constraintParams}}{{/modelRelations}})
+            .toManyParent({{returnType}}.class, {{#pathParams}}{{#-first}}{{paramName}}{{/-first}}{{/pathParams}}, {{returnType}}.{{#bodyParams}}{{dataType}}{{/bodyParams}}S)
+            .syncAndSelect(requestBody);
+    }
+{{/isRestfulRelatedToManyCreate}}
 {{#isRestfulUpdate}}
     public {{>returnTypes}} {{nickname}}({{#allParams}}{{>pathParams}}{{>headerParams}}{{>formParams}}{{/allParams}}, String requestBody, @Context UriInfo uriInfo) {
 

@@ -1,6 +1,5 @@
 package io.swagger.codegen;
 
-import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -72,6 +71,34 @@ public class LinkRestCodegenOperation extends CodegenOperation {
         this.operationIdCamelCase = codegenOperation.operationIdCamelCase;
     }
 
+
+    /**
+     * Check if act as Restful index to retrieve many children method
+     *
+     * @return true if act as Restful index to many items method, false otherwise
+     */
+    public boolean isRestfulIndexToMany() {
+        return "GET".equals(httpMethod) && isRelatedToManyPath();
+    }
+
+    /**
+     * Check if act as Restful destroy many children method
+     *
+     * @return true if act as Restful destroy many child items method, false otherwise
+     */
+    public boolean isRestfulDestroyToMany() {
+        return "DELETE".equalsIgnoreCase(httpMethod) && isRelatedToManyPath();
+    }
+
+    /**
+     * Check if act as Restful child via parent destroy method
+     *
+     * @return true if act as Restful child via parent destroy method, false otherwise
+     */
+    public boolean isRestfulRelatedDestroy() {
+        return "DELETE".equalsIgnoreCase(httpMethod) && isParentChildPath();
+    }
+
     /**
      * Check if act as Restful bulk update method
      *
@@ -100,6 +127,29 @@ public class LinkRestCodegenOperation extends CodegenOperation {
     }
 
     /**
+     * Check if act as Restful child via parent create method
+     *
+     * @return true if act as Restful child via parent create method, false otherwise
+     */
+    public boolean isRestfulRelatedCreate() {
+        return "POST".equalsIgnoreCase(httpMethod)  && isParentChildPath() ;
+    }
+
+
+    /**
+     * Check if act as Restful many children via parent create method
+     *
+     * @return true if act as Restful many children via parent create method, false otherwise
+     */
+    public boolean isRestfulRelatedToManyCreate() {
+        return "POST".equalsIgnoreCase(httpMethod) && isRelatedToManyPath() ;
+    }
+
+    public boolean isRelationPath() {
+        return isParentChildPath() || isRelatedToManyPath();
+    }
+
+    /**
      * Check if the path match format /xxx/:id/yyy/:tid
      *
      * @return true if path act as parent-child
@@ -123,4 +173,5 @@ public class LinkRestCodegenOperation extends CodegenOperation {
 
         return path.contains("/{" + id + "}/");
     }
+
 }
