@@ -1,0 +1,28 @@
+{{#isRestfulIndex}}
+    public {{>returnTypes}} {{nickname}}(@Context UriInfo uriInfo) {
+
+    return LinkRest.select({{{returnType}}}.class, config)
+    .constraint({{>constraintParams}})
+    .uri(uriInfo)
+    .get();
+    }
+{{/isRestfulIndex}}
+{{#isRestfulShow}}
+    public {{>returnTypes}} {{nickname}}({{#allParams}}{{>pathParams}}{{>headerParams}}{{>bodyParams}}{{>formParams}}{{/allParams}}, @Context UriInfo uriInfo) {
+
+    return LinkRest.select({{{returnType}}}.class, config)
+    .constraint({{>constraintParams}})
+    {{#allParams}}{{#isPathParam}}.byId({{paramName}}){{/isPathParam}}{{/allParams}}
+    .uri(uriInfo).get();
+    }
+{{/isRestfulShow}}
+{{#isRestfulIndexToMany}}
+    public DataResponse<{{#modelRelations}}{{returnType}}{{/modelRelations}}> {{nickname}}({{#allParams}}{{>pathParams}}{{>headerParams}}{{>bodyParams}}{{>formParams}}{{/allParams}}, @Context UriInfo uriInfo) {
+
+    return LinkRest.select({{#modelRelations}}{{returnType}}{{/modelRelations}}.class, config)
+    .constraint({{#modelRelations}}{{>constraintParams}}{{/modelRelations}})
+    .parent({{returnType}}.class, {{#allParams}}{{#isPathParam}}{{paramName}}{{/isPathParam}}{{/allParams}}, "{{#modelRelations}}{{bodyParam.paramName}}{{/modelRelations}}")
+    .uri(uriInfo)
+    .get();
+    }
+{{/isRestfulIndexToMany}}

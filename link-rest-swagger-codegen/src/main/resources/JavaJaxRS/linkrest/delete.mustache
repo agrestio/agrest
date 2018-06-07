@@ -1,0 +1,22 @@
+{{#isRestfulDestroy}}
+    public SimpleResponse {{nickname}}({{#allParams}}{{>pathParams}}{{>headerParams}}{{>bodyParams}}{{>formParams}}{{/allParams}}) {
+
+    return LinkRest.delete({{{returnType}}}.class, config)
+    .id({{#allParams}}{{#isPathParam}}{{paramName}}{{/isPathParam}}{{/allParams}})
+    .delete();
+    }
+{{/isRestfulDestroy}}
+{{#isRestfulDestroyToMany}}
+    public SimpleResponse {{nickname}}({{#allParams}}{{>pathParams}}{{>headerParams}}{{>bodyParams}}{{>formParams}}{{/allParams}}) {
+
+    return LinkRest.service(config)
+    .unrelate({{returnType}}.class, {{#allParams}}{{#isPathParam}}{{paramName}}{{/isPathParam}}{{/allParams}}, "{{#modelRelations}}{{bodyParam.paramName}}{{/modelRelations}}");
+    }
+{{/isRestfulDestroyToMany}}
+{{#isRestfulRelatedDestroy}}
+    public SimpleResponse {{nickname}}({{#allParams}}{{>pathParams}}{{>headerParams}}{{>bodyParams}}{{>formParams}}, {{/allParams}}@Context UriInfo uriInfo) {
+
+    return LinkRest.service(config)
+    .unrelate({{returnType}}.class, {{#pathParams}}{{#-first}}{{paramName}}{{/-first}}{{/pathParams}}, "{{#modelRelations}}{{bodyParam.paramName}}{{/modelRelations}}", {{#pathParams}}{{#-last}}{{paramName}}{{/-last}}{{/pathParams}});
+    }
+{{/isRestfulRelatedDestroy}}

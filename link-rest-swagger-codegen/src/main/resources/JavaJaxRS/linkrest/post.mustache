@@ -1,0 +1,18 @@
+{{#isRestfulCreate}}
+    public {{>returnTypes}} {{nickname}}(String requestBody, @Context UriInfo uriInfo) {
+
+    return LinkRest.create({{{returnType}}}.class, config)
+    .readConstraint({{>constraintParams}})
+    .uri(uriInfo)
+    .syncAndSelect(requestBody);
+    }
+{{/isRestfulCreate}}
+{{#isRestfulRelatedToManyCreate}}
+    public DataResponse<{{#bodyParams}}{{dataType}}{{/bodyParams}}> {{nickname}}({{#pathParams}}@PathParam("{{baseName}}") {{{dataType}}} {{paramName}}, {{/pathParams}}String requestBody) {
+
+    return LinkRest.createOrUpdate({{#bodyParams}}{{dataType}}{{/bodyParams}}.class, config)
+    .readConstraint({{#modelRelations}}{{>constraintParams}}{{/modelRelations}})
+    .parent({{returnType}}.class, {{#pathParams}}{{#-first}}{{paramName}}{{/-first}}{{/pathParams}}, "{{#modelRelations}}{{bodyParam.paramName}}{{/modelRelations}}")
+    .syncAndSelect(requestBody);
+    }
+{{/isRestfulRelatedToManyCreate}}
