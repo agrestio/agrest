@@ -1,38 +1,38 @@
 {{#isRestfulUpdate}}
-    public {{>returnTypes}} {{nickname}}({{#allParams}}{{>pathParams}}{{>headerParams}}{{>formParams}}{{/allParams}}, String requestBody, @Context UriInfo uriInfo) {
+public {{>returnTypes}} {{nickname}}({{#allParams}}{{>pathParams}}{{>headerParams}}{{>formParams}}{{/allParams}}, String requestBody, @Context UriInfo uriInfo) {
 
-    return LinkRest.idempotentCreateOrUpdate({{{returnType}}}.class, config)
-    .readConstraint({{>constraintParams}})
-    .id({{#allParams}}{{#isPathParam}}{{paramName}}{{/isPathParam}}{{/allParams}})
-    .uri(uriInfo)
-    .syncAndSelect(requestBody);
-    }
+        return LinkRest.idempotentCreateOrUpdate({{{returnType}}}.class, config)
+                    .readConstraint({{>constraintParams}})
+                    .id({{#allParams}}{{#isPathParam}}{{paramName}}{{/isPathParam}}{{/allParams}})
+                    .uri(uriInfo)
+                    .syncAndSelect(requestBody);
+}
 {{/isRestfulUpdate}}
 {{#isRestfulBulkUpdate}}
-    public {{>returnTypes}} {{nickname}}(@Context UriInfo uriInfo, String requestBody) {
+public {{>returnTypes}} {{nickname}}(@Context UriInfo uriInfo, String requestBody) {
 
-    return LinkRest.idempotentCreateOrUpdate({{{returnType}}}.class, config)
-    .readConstraint({{>constraintParams}})
-    .uri(uriInfo)
-    .syncAndSelect(requestBody);
-    }
+        return LinkRest.idempotentCreateOrUpdate({{{returnType}}}.class, config)
+                    .readConstraint({{>constraintParams}})
+                    .uri(uriInfo)
+                    .syncAndSelect(requestBody);
+}
 {{/isRestfulBulkUpdate}}
 {{#isRestfulRelatedUpdate}}
-    public DataResponse<{{#bodyParams}}{{dataType}}{{/bodyParams}}> {{nickname}}({{#pathParams}}@PathParam("{{baseName}}") {{{dataType}}} {{paramName}}, {{/pathParams}}String requestBody) {
+public DataResponse<{{#bodyParams}}{{dataType}}{{/bodyParams}}> {{nickname}}({{#pathParams}}@PathParam("{{baseName}}") {{{dataType}}} {{paramName}}, {{/pathParams}}String requestBody) {
 
-    return LinkRest.idempotentCreateOrUpdate({{#bodyParams}}{{dataType}}{{/bodyParams}}.class, config)
-    .readConstraint({{#modelRelations}}{{>constraintParams}}{{/modelRelations}})
-    .id({{#pathParams}}{{#-last}}{{paramName}}{{/-last}}{{/pathParams}})
-    .parent({{returnType}}.class, {{#pathParams}}{{#-first}}{{paramName}}{{/-first}}{{/pathParams}}, {{returnType}}.{{#bodyParams}}{{dataType}}{{/bodyParams}})
-    .syncAndSelect(requestBody);
-    }
+        return LinkRest.idempotentCreateOrUpdate({{#bodyParams}}{{dataType}}{{/bodyParams}}.class, config)
+                    .readConstraint({{#modelRelations}}{{>constraintParams}}{{/modelRelations}})
+                    .id({{#pathParams}}{{#-last}}{{paramName}}{{/-last}}{{/pathParams}})
+                    .parent({{returnType}}.class, {{#pathParams}}{{#-first}}{{paramName}}{{/-first}}{{/pathParams}}, {{returnType}}.{{#bodyParams}}{{dataType}}{{/bodyParams}})
+                    .syncAndSelect(requestBody);
+}
 {{/isRestfulRelatedUpdate}}
 {{#isRestfulRelatedToManyUpdate}}
-    public DataResponse<{{#bodyParams}}{{dataType}}{{/bodyParams}}> {{nickname}}({{#pathParams}}@PathParam("{{baseName}}") {{{dataType}}} {{paramName}}, {{/pathParams}}String requestBody) {
+public DataResponse<{{#bodyParams}}{{dataType}}{{/bodyParams}}> {{nickname}}({{#pathParams}}@PathParam("{{baseName}}") {{{dataType}}} {{paramName}}, {{/pathParams}}String requestBody) {
 
-    return LinkRest.idempotentCreateOrUpdate({{#bodyParams}}{{dataType}}{{/bodyParams}}.class, config)
-    .readConstraint({{#modelRelations}}{{>constraintParams}}{{/modelRelations}})
-    .parent({{returnType}}.class, {{#pathParams}}{{#-first}}{{paramName}}{{/-first}}{{/pathParams}}, "{{#modelRelations}}{{bodyParam.paramName}}{{/modelRelations}}")
-    .syncAndSelect(requestBody);
-    }
+        return LinkRest.idempotentCreateOrUpdate({{#bodyParams}}{{dataType}}{{/bodyParams}}.class, config)
+                    .readConstraint({{#modelRelations}}{{>constraintParams}}{{/modelRelations}})
+                    .parent({{returnType}}.class, {{#pathParams}}{{#-first}}{{paramName}}{{/-first}}{{/pathParams}}, "{{#modelRelations}}{{bodyParam.paramName}}{{/modelRelations}}")
+                    .syncAndSelect(requestBody);
+}
 {{/isRestfulRelatedToManyUpdate}}
