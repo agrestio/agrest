@@ -66,7 +66,7 @@ public class ConstrainedLrEntity<T> {
      * @since 2.13
      */
     public boolean hasQueryParam(String name) {
-        return queryParams.contains(name.trim());
+        return queryParams.isEmpty() || queryParams.contains(name.trim());
     }
 
     public ConstrainedLrEntity getChild(String name) {
