@@ -5,7 +5,7 @@ public {{>returnTypes}} {{nickname}}(String requestBody, @Context UriInfo uriInf
                     .readConstraint({{>constraintParams}})
                     .uri(uriInfo)
                     .syncAndSelect(requestBody);
-}
+    }
 {{/isRestfulCreate}}
 {{#isRestfulRelatedToManyCreate}}
 public DataResponse<{{#bodyParams}}{{dataType}}{{/bodyParams}}> {{nickname}}({{#pathParams}}@PathParam("{{baseName}}") {{{dataType}}} {{paramName}}, {{/pathParams}}String requestBody) {
@@ -14,5 +14,5 @@ public DataResponse<{{#bodyParams}}{{dataType}}{{/bodyParams}}> {{nickname}}({{#
                     .readConstraint({{#modelRelations}}{{>constraintParams}}{{/modelRelations}})
                     .parent({{returnType}}.class, {{#pathParams}}{{#-first}}{{paramName}}{{/-first}}{{/pathParams}}, "{{#modelRelations}}{{bodyParam.paramName}}{{/modelRelations}}")
                     .syncAndSelect(requestBody);
-}
+    }
 {{/isRestfulRelatedToManyCreate}}

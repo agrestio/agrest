@@ -1,11 +1,29 @@
 {{#isRestfulIndex}}
-public {{>returnTypes}} {{nickname}}(@Context UriInfo uriInfo) {
+    {{#hasCompoundId}}
+public {{>returnTypes}} {{nickname}}({{#allParams}}{{>queryParams}}, {{/allParams}}@Context UriInfo uriInfo) {
 
+        Map<String, Object> id = new HashMap<>();
+        {{#modelAttributes}}
+            {{#isQueryParam}}
+        id.put("{{paramName}}", {{paramName}});
+            {{/isQueryParam}}
+        {{/modelAttributes}}
+
+        return LinkRest.select({{{returnType}}}.class, config)
+                    .constraint({{>constraintParams}})
+                    .byId(id)
+                    .uri(uriInfo)
+                    .getOne();
+    }
+    {{/hasCompoundId}}
+    {{^hasCompoundId}}
+public {{>returnTypes}} {{nickname}}(@Context UriInfo uriInfo) {
         return LinkRest.select({{{returnType}}}.class, config)
                     .constraint({{>constraintParams}})
                     .uri(uriInfo)
                     .get();
-}
+    }
+    {{/hasCompoundId}}
 {{/isRestfulIndex}}
 {{#isRestfulShow}}
 public {{>returnTypes}} {{nickname}}({{#allParams}}{{>pathParams}}{{>headerParams}}{{>bodyParams}}{{>formParams}}{{/allParams}}, @Context UriInfo uriInfo) {
@@ -14,7 +32,7 @@ public {{>returnTypes}} {{nickname}}({{#allParams}}{{>pathParams}}{{>headerParam
                     .constraint({{>constraintParams}})
                     {{#allParams}}{{#isPathParam}}.byId({{paramName}}){{/isPathParam}}{{/allParams}}
                     .uri(uriInfo).get();
-}
+    }
 {{/isRestfulShow}}
 {{#isRestfulIndexToMany}}
 public DataResponse<{{#modelRelations}}{{returnType}}{{/modelRelations}}> {{nickname}}({{#allParams}}{{>pathParams}}{{>headerParams}}{{>bodyParams}}{{>formParams}}{{/allParams}}, @Context UriInfo uriInfo) {
@@ -24,5 +42,5 @@ public DataResponse<{{#modelRelations}}{{returnType}}{{/modelRelations}}> {{nick
                     .parent({{returnType}}.class, {{#allParams}}{{#isPathParam}}{{paramName}}{{/isPathParam}}{{/allParams}}, "{{#modelRelations}}{{bodyParam.paramName}}{{/modelRelations}}")
                     .uri(uriInfo)
                     .get();
-}
+    }
 {{/isRestfulIndexToMany}}

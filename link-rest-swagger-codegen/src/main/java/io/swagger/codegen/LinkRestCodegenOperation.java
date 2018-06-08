@@ -7,6 +7,7 @@ import java.util.List;
 
 public class LinkRestCodegenOperation extends CodegenOperation {
 
+    public boolean hasCompoundId;
     public List<CodegenParameter> modelAttributes = new ArrayList<CodegenParameter>();
     public List<LinkRestCodegenOperation> modelRelations = new ArrayList<LinkRestCodegenOperation>();
 
@@ -79,6 +80,18 @@ public class LinkRestCodegenOperation extends CodegenOperation {
      */
     public boolean isRestfulIndexToMany() {
         return "GET".equals(httpMethod) && isRelatedToManyPath();
+    }
+
+
+    /**
+     * Check if act as Restful destroy method
+     *
+     * @return true if act as Restful destroy method, false otherwise
+     */
+    public boolean isRestfulDestroy() {
+        return "DELETE".equalsIgnoreCase(httpMethod)
+                && !isRelatedToManyPath()
+                && !isParentChildPath();
     }
 
     /**

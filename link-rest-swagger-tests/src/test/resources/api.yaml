@@ -139,6 +139,7 @@ paths:
       responses:
         default:
           description: successful operation
+
   /e2/{id}:
     get:
       description: Returns a E2
@@ -708,6 +709,102 @@ paths:
         default:
           description: successful operation
 
+  /e20/{name}:
+    get:
+      description: Returns a E20 by natural ID
+      operationId: getOneByName
+      produces:
+      tags:
+        - E20
+      parameters:
+        - name: name
+          in: path
+          description: name of E20 to fetch
+          required: true
+          type: string
+        - name: exclude
+          in: query
+          description: exclude attribute
+          required: false
+          type: string
+      responses:
+        "200":
+          description: Success responce
+          schema:
+            $ref: "#/definitions/E20"
+        default:
+          description: Unexpected error
+    delete:
+      description: Deletes a E20 item based on the Name supplied
+      operationId: deleteByName
+      tags:
+        - E20
+      parameters:
+        - name: name
+          in: path
+          description: name of E20 to delete
+          required: true
+          type: string
+      responses:
+        "204":
+          description: E20 item was deleted
+        default:
+          description: unexpected error
+
+  /e21:
+    get:
+      description: Returns a E21 by natural ID
+      operationId: getOneByCompoundId
+      tags:
+        - E21
+      parameters:
+        - name: name
+          in: query
+          description: name attribute
+          required: true
+          type: string
+        - name: age
+          in: query
+          description: age attribute
+          required: true
+          type: integer
+          format: int32
+        - name: exclude
+          in: query
+          description: exclude attribute
+          required: false
+          type: string
+      responses:
+        "200":
+          description: Success responce
+          schema:
+            $ref: "#/definitions/E21"
+        default:
+          description: Unexpected error
+    delete:
+      description: Deletes a E21 item based on name and age
+      operationId: deleteByCompoundId
+      tags:
+        - E21
+      parameters:
+        - name: name
+          in: query
+          description: name attribute
+          required: true
+          type: string
+        - name: age
+          in: query
+          description: age attribute
+          required: true
+          type: integer
+          format: int32
+      responses:
+        "204":
+          description: E21 item was deleted
+        default:
+          description: unexpected error
+
+
 definitions:
   E1:
     type: object
@@ -806,3 +903,43 @@ definitions:
       date:
         type: string
         format: date-time
+
+  E20:
+    type: object
+    properties:
+      id:
+        type: string
+        description: Unique ID of E20
+        example: 1
+      name:
+        type: string
+        description: E20 name
+        example: My E20
+      description:
+        type: string
+        description: description of E20
+      age:
+        type: string
+        description: age of E20
+        example: 21
+      e21:
+        $ref: "#/definitions/E21"
+
+  E21:
+    type: object
+    properties:
+      id:
+        type: string
+        description: Unique ID of E21
+        example: 1
+      name:
+        type: string
+        description: E21 name
+        example: My E21
+      description:
+        type: string
+        description: description of E21
+      age:
+        type: string
+        description: age of E21
+        example: 15

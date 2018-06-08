@@ -136,6 +136,10 @@ public class LinkRestServerCodegen extends AbstractJavaJAXRSServerCodegen implem
                         && !"id".equalsIgnoreCase(prop.baseName)) {
                     final CodegenParameter codegenParam = new CodegenParameter();
                     codegenParam.paramName = prop.baseName;
+                    // checks if there is queryParam with the same name as model attribute
+                    if (lrOperation.queryParams.stream().anyMatch(p -> codegenParam.paramName.equalsIgnoreCase(p.paramName))) {
+                        lrOperation.hasCompoundId = codegenParam.isQueryParam = true;
+                    }
                     lrOperation.modelAttributes.add(codegenParam);
                 }
             }
