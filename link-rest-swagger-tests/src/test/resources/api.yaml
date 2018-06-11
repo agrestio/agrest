@@ -113,6 +113,11 @@ paths:
           description: exclude attribute
           required: false
           type: string
+        - name: cayenneExp
+          in: query
+          description: cayenneExp query
+          required: false
+          type: string
       responses:
         '200':
           description: Success response.
@@ -367,6 +372,11 @@ paths:
         - name: mapBy
           in: query
           description: map responce by root entity
+          required: false
+          type: string
+        - name: cayenneExp
+          in: query
+          description: cayenneExp query
           required: false
           type: string
       responses:
