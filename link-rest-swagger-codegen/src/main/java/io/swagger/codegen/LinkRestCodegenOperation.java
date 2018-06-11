@@ -82,7 +82,6 @@ public class LinkRestCodegenOperation extends CodegenOperation {
         return "GET".equals(httpMethod) && isRelatedToManyPath();
     }
 
-
     /**
      * Check if act as Restful destroy method
      *
@@ -118,7 +117,7 @@ public class LinkRestCodegenOperation extends CodegenOperation {
      * @return true if act as Restful bulk update method, false otherwise
      */
     public boolean isRestfulBulkUpdate() {
-        return Arrays.asList("PUT", "PATCH").contains(httpMethod.toUpperCase()) && !getHasPathParams() ;
+        return Arrays.asList("PUT", "PATCH").contains(httpMethod.toUpperCase()) && !getHasPathParams();
     }
 
     /**

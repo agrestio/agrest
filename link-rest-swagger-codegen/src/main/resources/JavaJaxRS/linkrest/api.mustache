@@ -30,10 +30,7 @@ public class {{classname}} {
     {{#hasProduces}}
     @Produces({ {{#produces}}"{{{mediaType}}}"{{#hasMore}}, {{/hasMore}}{{/produces}} })
     {{/hasProduces}}
-    {{>get}}
-    {{>delete}}
-    {{>post}}
-    {{>put}}
+    {{>get}}{{>delete}}{{>post}}{{>put}}
 {{/operation}}
 }
 {{/operations}}

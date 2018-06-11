@@ -9,6 +9,24 @@ public {{>returnTypes}} {{nickname}}({{#allParams}}{{>pathParams}}{{>headerParam
     }
 {{/isRestfulUpdate}}
 {{#isRestfulBulkUpdate}}
+    {{#hasCompoundId}}
+public {{>returnTypes}} {{nickname}}({{#queryParams}}{{>queryParams}}, {{/queryParams}}String requestBody, @Context UriInfo uriInfo) {
+
+        Map<String, Object> id = new HashMap<>();
+        {{#modelAttributes}}
+            {{#isQueryParam}}
+                id.put("{{paramName}}", {{paramName}});
+            {{/isQueryParam}}
+        {{/modelAttributes}}
+
+        return LinkRest.idempotentCreateOrUpdate({{{returnType}}}.class, config)
+        .readConstraint({{>constraintParams}})
+        .id(id)
+        .uri(uriInfo)
+        .syncAndSelect(requestBody);
+        }
+    {{/hasCompoundId}}
+    {{^hasCompoundId}}
 public {{>returnTypes}} {{nickname}}(@Context UriInfo uriInfo, String requestBody) {
 
         return LinkRest.idempotentCreateOrUpdate({{{returnType}}}.class, config)
@@ -16,6 +34,7 @@ public {{>returnTypes}} {{nickname}}(@Context UriInfo uriInfo, String requestBod
                     .uri(uriInfo)
                     .syncAndSelect(requestBody);
     }
+    {{/hasCompoundId}}
 {{/isRestfulBulkUpdate}}
 {{#isRestfulRelatedUpdate}}
 public DataResponse<{{#bodyParams}}{{dataType}}{{/bodyParams}}> {{nickname}}({{#pathParams}}@PathParam("{{baseName}}") {{{dataType}}} {{paramName}}, {{/pathParams}}String requestBody) {

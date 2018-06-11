@@ -663,7 +663,7 @@ paths:
       parameters:
         - name: id
           in: path
-          description: ID of E4 to delete
+          description: ID of E4 to update
           required: true
           type: integer
           format: int32
@@ -705,6 +705,24 @@ paths:
           description: Created E5 object
           schema:
             $ref: "#/definitions/E5"
+      responses:
+        default:
+          description: successful operation
+  /e20:
+    post:
+      tags:
+        - E20
+      summary: Create E20
+      operationId: create
+      produces:
+        - application/xml
+        - application/json
+      parameters:
+        - in: body
+          name: body
+          description: Created E20 object
+          schema:
+            $ref: "#/definitions/E20"
       responses:
         default:
           description: successful operation
@@ -750,6 +768,28 @@ paths:
           description: E20 item was deleted
         default:
           description: unexpected error
+    put:
+      tags:
+        - E20
+      summary: Updates E20
+      operationId: updateByName
+      produces:
+        - application/xml
+        - application/json
+      parameters:
+        - name: name
+          in: path
+          description: name of E20 to update
+          required: true
+          type: string
+        - in: body
+          name: body
+          description: Updated E20 object
+          schema:
+            $ref: "#/definitions/E20"
+      responses:
+        default:
+          description: successful operation
 
   /e21:
     get:
@@ -803,6 +843,51 @@ paths:
           description: E21 item was deleted
         default:
           description: unexpected error
+    post:
+      tags:
+        - E21
+      summary: Create E21
+      operationId: create
+      produces:
+        - application/xml
+        - application/json
+      parameters:
+        - in: body
+          name: body
+          description: Created E21 object
+          schema:
+            $ref: "#/definitions/E21"
+      responses:
+        default:
+          description: successful operation
+    put:
+      tags:
+        - E21
+      summary: Updates E21
+      operationId: updateByCompoundId
+      produces:
+        - application/xml
+        - application/json
+      parameters:
+        - name: name
+          in: query
+          description: name attribute
+          required: true
+          type: string
+        - name: age
+          in: query
+          description: age attribute
+          required: true
+          type: integer
+          format: int32
+        - in: body
+          name: body
+          description: Updated E21 object
+          schema:
+            $ref: "#/definitions/E21"
+      responses:
+        default:
+          description: successful operation
 
 
 definitions:
