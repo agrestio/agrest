@@ -27,7 +27,7 @@ import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 
-public class GET_ByQueryParamsIT extends JerseyTestOnDerby {
+public class GET_QueryParamsIT extends JerseyTestOnDerby {
 
     @Override
     protected void doAddResources(FeatureContext context) {
