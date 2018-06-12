@@ -37,6 +37,7 @@ public class SelectContext<T> extends BaseProcessingContext<T> {
 	private Encoder encoder;
 	private int prefetchSemantics;
 	private List objects;
+	private Map<String, List<String>> queryParams;
 
 	// TODO: deprecate dependency on Cayenne in generic code
 	private SelectQuery<T> select;
@@ -92,7 +93,15 @@ public class SelectContext<T> extends BaseProcessingContext<T> {
 	 * @since 2.5
 	 */
 	public Map<String, List<String>> getProtocolParameters() {
-		return uriInfo != null ? uriInfo.getQueryParameters() : Collections.emptyMap();
+		return queryParams != null ? queryParams
+				: uriInfo != null ? uriInfo.getQueryParameters() : Collections.emptyMap();
+	}
+
+	/**
+	 * @since 2.13
+	 */
+	public void setProtocolParameters(Map<String, List<String>> parameters) {
+		queryParams = parameters;
 	}
 
 	public void setUriInfo(UriInfo uriInfo) {

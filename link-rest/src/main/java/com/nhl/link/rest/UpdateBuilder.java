@@ -13,6 +13,7 @@ import org.apache.cayenne.exp.Property;
 
 import javax.ws.rs.core.UriInfo;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
@@ -83,6 +84,13 @@ public interface UpdateBuilder<T> {
      * @since 1.14
      */
     UpdateBuilder<T> uri(UriInfo uriInfo);
+
+    /**
+     * Sets request query parameters that will be used instead of passing {@link UriInfo}.
+     *
+     * @since 2.13
+     */
+    UpdateBuilder<T> queryParams(Map<String, List<String>> parameters);
 
     /**
      * @deprecated since 2.4 in favor of {@link #readConstraint(Constraint)}.

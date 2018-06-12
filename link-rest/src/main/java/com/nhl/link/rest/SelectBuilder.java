@@ -15,6 +15,7 @@ import org.apache.cayenne.exp.Property;
 
 import javax.ws.rs.core.UriInfo;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
@@ -33,6 +34,13 @@ public interface SelectBuilder<T> {
      * @since 1.14
      */
     SelectBuilder<T> uri(UriInfo uriInfo);
+
+    /**
+     * Sets request query parameters that will be used instead of passing {@link UriInfo}.
+     *
+     * @since 2.13
+     */
+    SelectBuilder<T> queryParams(Map<String, List<String>> parameters);
 
     /**
      * Sets the encoder for the entities under the "data" key in the response

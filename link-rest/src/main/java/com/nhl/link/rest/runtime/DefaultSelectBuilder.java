@@ -24,6 +24,7 @@ import javax.ws.rs.core.UriInfo;
 import java.util.Collection;
 import java.util.EnumMap;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -132,6 +133,12 @@ public class DefaultSelectBuilder<T> implements SelectBuilder<T> {
     @Override
     public SelectBuilder<T> uri(UriInfo uriInfo) {
         this.context.setUriInfo(uriInfo);
+        return this;
+    }
+
+    @Override
+    public SelectBuilder<T> queryParams(Map<String, List<String>> parameters) {
+        this.context.setProtocolParameters(parameters);
         return this;
     }
 

@@ -22,6 +22,7 @@ import javax.ws.rs.core.UriInfo;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -48,6 +49,12 @@ public class DefaultUpdateBuilder<T> implements UpdateBuilder<T> {
     @Override
     public UpdateBuilder<T> uri(UriInfo uriInfo) {
         context.setUriInfo(uriInfo);
+        return this;
+    }
+
+    @Override
+    public UpdateBuilder<T> queryParams(Map<String, List<String>> parameters) {
+        this.context.setProtocolParameters(parameters);
         return this;
     }
 
