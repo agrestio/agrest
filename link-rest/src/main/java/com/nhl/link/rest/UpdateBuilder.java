@@ -26,6 +26,9 @@ import java.util.function.Consumer;
  */
 public interface UpdateBuilder<T> {
 
+    static final String INCLUDE     = "include";
+    static final String EXCLUDE     = "exclude";
+
     /**
      * Set an explicit id for the update. In this case only a single object is
      * allowed in the update.
@@ -86,11 +89,25 @@ public interface UpdateBuilder<T> {
     UpdateBuilder<T> uri(UriInfo uriInfo);
 
     /**
-     * Sets request query parameters that will be used instead of passing {@link UriInfo}.
+     * Sets request query parameters that is used instead of passing {@link UriInfo}.
      *
      * @since 2.13
      */
     UpdateBuilder<T> queryParams(Map<String, List<String>> parameters);
+
+    /**
+     * Appends multi value query parameter to existing list of parameters.
+     *
+     * @since 2.13
+     */
+    UpdateBuilder<T> queryParam(String name, List<String> value);
+
+    /**
+     * Appends single value query parameter to existing list of parameters.
+     *
+     * @since 2.13
+     */
+    UpdateBuilder<T> queryParam(String name, String value);
 
     /**
      * @deprecated since 2.4 in favor of {@link #readConstraint(Constraint)}.
@@ -257,4 +274,17 @@ public interface UpdateBuilder<T> {
      */
     SimpleResponse sync(Collection<EntityUpdate<T>> updates);
 
+    /**
+     * Forces the builder to make selection using exclude query parameter.
+     *
+     * @since 2.13
+     */
+    UpdateBuilder<T> exclude(List<String> exclude);
+
+    /**
+     * Forces the builder to make selection using include query parameter.
+     *
+     * @since 2.13
+     */
+    UpdateBuilder<T> include(List<String> include);
 }

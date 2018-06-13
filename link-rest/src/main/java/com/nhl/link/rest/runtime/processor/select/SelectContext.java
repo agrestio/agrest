@@ -100,7 +100,14 @@ public class SelectContext<T> extends BaseProcessingContext<T> {
 	/**
 	 * @since 2.13
 	 */
-	public void setProtocolParameters(Map<String, List<String>> parameters) {
+	public Map<String, List<String>> getQueryParams() {
+		return queryParams;
+	}
+
+	/**
+	 * @since 2.13
+	 */
+	public void setQueryParams(Map<String, List<String>> parameters) {
 		queryParams = parameters;
 	}
 

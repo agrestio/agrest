@@ -19,9 +19,11 @@ import org.apache.cayenne.exp.Property;
 
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumMap;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -52,9 +54,30 @@ public class DefaultUpdateBuilder<T> implements UpdateBuilder<T> {
         return this;
     }
 
+    /**
+     * @since 2.13
+     */
     @Override
     public UpdateBuilder<T> queryParams(Map<String, List<String>> parameters) {
-        this.context.setProtocolParameters(parameters);
+        this.context.setQueryParams(parameters);
+        return this;
+    }
+
+    /**
+     * @since 2.13
+     */
+    @Override
+    public UpdateBuilder<T> queryParam(String name, List<String> value) {
+        getOrCreateQueryParams().put(name, value);
+        return this;
+    }
+
+    /**
+     * @since 2.13
+     */
+    @Override
+    public UpdateBuilder<T> queryParam(String name, String value) {
+        getOrCreateQueryParams().put(name, Arrays.asList(value));
         return this;
     }
 
@@ -204,6 +227,32 @@ public class DefaultUpdateBuilder<T> implements UpdateBuilder<T> {
     public SimpleResponse sync(Collection<EntityUpdate<T>> updates) {
         context.setUpdates(updates);
         return doSync();
+    }
+
+    /**
+     * @since 2.13
+     */
+    @Override
+    public UpdateBuilder<T> exclude(List<String> exclude) {
+        getOrCreateQueryParams().put(EXCLUDE, exclude);
+        return this;
+    }
+
+    /**
+     * @since 2.13
+     */
+    @Override
+    public UpdateBuilder<T> include(List<String> include) {
+        getOrCreateQueryParams().put(INCLUDE, include);
+        return this;
+    }
+
+    private Map<String, List<String>> getOrCreateQueryParams() {
+        if (context.getQueryParams() == null) {
+            context.setQueryParams(new HashMap<>());
+        }
+
+        return context.getQueryParams();
     }
 
     /**

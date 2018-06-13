@@ -27,6 +27,16 @@ import java.util.function.Consumer;
  */
 public interface SelectBuilder<T> {
 
+    static final String START       = "start";
+    static final String LIMIT       = "limit";
+    static final String CAYENNE_EXP = "cayenneExp";
+    static final String MAP_BY      = "mapBy";
+    static final String SORT        = "sort";
+    static final String DIR         = "dir";
+    static final String INCLUDE     = "include";
+    static final String EXCLUDE     = "exclude";
+
+
     /**
      * Sets request {@link UriInfo} that is a source of various request
      * parameters.
@@ -36,11 +46,25 @@ public interface SelectBuilder<T> {
     SelectBuilder<T> uri(UriInfo uriInfo);
 
     /**
-     * Sets request query parameters that will be used instead of passing {@link UriInfo}.
+     * Sets request query parameters that is used instead of passing {@link UriInfo}.
      *
      * @since 2.13
      */
     SelectBuilder<T> queryParams(Map<String, List<String>> parameters);
+
+    /**
+     * Appends multi value query parameter to existing list of parameters.
+     *
+     * @since 2.13
+     */
+    SelectBuilder<T> queryParam(String name, List<String> value);
+
+    /**
+     * Appends single value query parameter to existing list of parameters.
+     *
+     * @since 2.13
+     */
+    SelectBuilder<T> queryParam(String name, String value);
 
     /**
      * Sets the encoder for the entities under the "data" key in the response
@@ -271,4 +295,62 @@ public interface SelectBuilder<T> {
     default DataResponse<T> selectOne() {
         return getOne();
     }
+
+
+    /**
+     * Forces the builder to make selection using mapBy query parameter.
+     *
+     * @since 2.13
+     */
+    SelectBuilder<T> mapBy(String mapBy);
+
+    /**
+     * Forces the builder to make selection using cayenneExp query parameter.
+     *
+     * @since 2.13
+     */
+    SelectBuilder<T> cayenneExp(String cayenneExp);
+
+    /**
+     * Forces the builder to cut selection using start query parameter.
+     *
+     * @since 2.13
+     */
+    SelectBuilder<T> start(long start);
+
+    /**
+     * Forces the builder to cut selection using limit query parameter.
+     *
+     * @since 2.13
+     */
+    SelectBuilder<T> limit(long limit);
+
+    /**
+     * Forces the builder to make selection using exclude query parameter.
+     *
+     * @since 2.13
+     */
+    SelectBuilder<T> exclude(List<String> exclude);
+
+    /**
+     * Forces the builder to make selection using include query parameter.
+     *
+     * @since 2.13
+     */
+    SelectBuilder<T> include(List<String> include);
+
+    /**
+     * Forces the builder to sort selection.
+     *
+     * @since 2.13
+     */
+    SelectBuilder<T> sort(List<String> sort);
+
+    /**
+     * Forces the builder to set direction of sorting.
+     *
+     * @since 2.13
+     */
+    SelectBuilder<T> dir(String dir);
+
 }

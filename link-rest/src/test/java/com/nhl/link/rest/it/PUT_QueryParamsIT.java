@@ -19,8 +19,6 @@ import javax.ws.rs.core.Configuration;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.FeatureContext;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriInfo;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -155,10 +153,10 @@ public class PUT_QueryParamsIT extends JerseyTestOnDerby {
                 @QueryParam("exclude") List<String> exclude,
                 EntityUpdate<E20> update) {
 
-            Map<String, List<String>>  queryParams = new HashMap<>();
-            queryParams.put("exclude",  exclude);
-
-            return LinkRest.idempotentCreateOrUpdate(E20.class, config).id(name).queryParams(queryParams).syncAndSelect(update);
+            return LinkRest.idempotentCreateOrUpdate(E20.class, config)
+                    .id(name)
+                    .exclude(exclude)
+                    .syncAndSelect(update);
         }
 
         @PUT
@@ -173,12 +171,10 @@ public class PUT_QueryParamsIT extends JerseyTestOnDerby {
             id.put("age", age);
             id.put("name", name);
 
-            Map<String, List<String>>  queryParams = new HashMap<>();
-            queryParams.put("age", Arrays.asList("" + age));
-            queryParams.put("name", Arrays.asList(name));
-            queryParams.put("exclude",  exclude);
-
-            return LinkRest.idempotentCreateOrUpdate(E21.class, config).id(id).queryParams(queryParams).syncAndSelect(update);
+            return LinkRest.idempotentCreateOrUpdate(E21.class, config)
+                    .id(id)
+                    .exclude(exclude)
+                    .syncAndSelect(update);
         }
 
         @PUT
@@ -187,11 +183,10 @@ public class PUT_QueryParamsIT extends JerseyTestOnDerby {
                                        @QueryParam("exclude") List<String> exclude,
                                        String requestBody) {
 
-            Map<String, List<String>>  queryParams = new HashMap<>();
-            queryParams.put("include",  include);
-            queryParams.put("exclude",  exclude);
-
-            return LinkRest.idempotentFullSync(E3.class, config).queryParams(queryParams).syncAndSelect(requestBody);
+            return LinkRest.idempotentFullSync(E3.class, config)
+                    .include(include)
+                    .exclude(exclude)
+                    .syncAndSelect(requestBody);
         }
 
         @PUT
@@ -201,11 +196,11 @@ public class PUT_QueryParamsIT extends JerseyTestOnDerby {
                                                   @QueryParam("exclude") List<String> exclude,
                                                   String entityData) {
 
-            Map<String, List<String>>  queryParams = new HashMap<>();
-            queryParams.put("include",  include);
-            queryParams.put("exclude",  exclude);
-
-            return LinkRest.idempotentCreateOrUpdate(E2.class, config).id(id).queryParams(queryParams).syncAndSelect(entityData);
+            return LinkRest.idempotentCreateOrUpdate(E2.class, config)
+                    .id(id)
+                    .include(include)
+                    .exclude(exclude)
+                    .syncAndSelect(entityData);
         }
     }
 

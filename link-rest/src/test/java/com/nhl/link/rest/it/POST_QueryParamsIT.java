@@ -21,12 +21,8 @@ import javax.ws.rs.core.Configuration;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.FeatureContext;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriInfo;
 
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -118,20 +114,21 @@ public class POST_QueryParamsIT extends JerseyTestOnDerby {
         @Path("single-id")
         public DataResponse<E20> createE20(EntityUpdate<E20> update, @QueryParam("exclude") List<String> exclude) {
 
-            Map<String, List<String>> queryParams = new HashMap<>();
-            queryParams.put("exclude",  exclude);
-
-            return LinkRest.create(E20.class, config).queryParams(queryParams).syncAndSelect(update);
+            return LinkRest
+                    .create(E20.class, config)
+                    .exclude(exclude)
+                    .syncAndSelect(update);
         }
 
         @POST
         @Path("multi-id")
         public DataResponse<E21> createE21(EntityUpdate<E21> update, @QueryParam("exclude") List<String> exclude) {
 
-            Map<String, List<String>> queryParams = new HashMap<>();
-            queryParams.put("exclude",  exclude);
 
-            return LinkRest.create(E21.class, config).queryParams(queryParams).syncAndSelect(update);
+            return LinkRest
+                    .create(E21.class, config)
+                    .exclude(exclude)
+                    .syncAndSelect(update);
         }
 
         @POST
@@ -140,11 +137,11 @@ public class POST_QueryParamsIT extends JerseyTestOnDerby {
                                          @QueryParam("include") List<String> include,
                                          @QueryParam("exclude") List<String> exclude) {
 
-            Map<String, List<String>> queryParams = new HashMap<>();
-            queryParams.put("include",  include);
-            queryParams.put("exclude",  exclude);
-
-            return LinkRest.create(E2.class, config).queryParams(queryParams).syncAndSelect(targetData);
+            return LinkRest
+                    .create(E2.class, config)
+                    .include(include)
+                    .exclude(exclude)
+                    .syncAndSelect(targetData);
         }
 
     }

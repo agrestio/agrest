@@ -21,6 +21,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriInfo;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.EnumMap;
 import java.util.HashMap;
@@ -136,9 +137,30 @@ public class DefaultSelectBuilder<T> implements SelectBuilder<T> {
         return this;
     }
 
+    /**
+     * @since 2.13
+     */
     @Override
     public SelectBuilder<T> queryParams(Map<String, List<String>> parameters) {
-        this.context.setProtocolParameters(parameters);
+        this.context.setQueryParams(parameters);
+        return this;
+    }
+
+    /**
+     * @since 2.13
+     */
+    @Override
+    public SelectBuilder<T> queryParam(String name, List<String> value) {
+        getOrCreateQueryParams().put(name, value);
+        return this;
+    }
+
+    /**
+     * @since 2.13
+     */
+    @Override
+    public SelectBuilder<T> queryParam(String name, String value) {
+        getOrCreateQueryParams().put(name, Arrays.asList(value));
         return this;
     }
 
@@ -238,4 +260,81 @@ public class DefaultSelectBuilder<T> implements SelectBuilder<T> {
         return context.createDataResponse();
     }
 
+    /**
+     * @since 2.13
+     */
+    @Override
+    public SelectBuilder<T> mapBy(String mapBy) {
+        getOrCreateQueryParams().put(MAP_BY, Arrays.asList(mapBy));
+        return this;
+    }
+
+    /**
+     * @since 2.13
+     */
+    @Override
+    public SelectBuilder<T> cayenneExp(String cayenneExp) {
+        getOrCreateQueryParams().put(CAYENNE_EXP, Arrays.asList(cayenneExp));
+        return this;
+    }
+
+    /**
+     * @since 2.13
+     */
+    @Override
+    public SelectBuilder<T> start(long start) {
+        return null;
+    }
+
+    /**
+     * @since 2.13
+     */
+    @Override
+    public SelectBuilder<T> limit(long limit) {
+        return null;
+    }
+
+    /**
+     * @since 2.13
+     */
+    @Override
+    public SelectBuilder<T> exclude(List<String> exclude) {
+        getOrCreateQueryParams().put(EXCLUDE, exclude);
+        return this;
+    }
+
+    /**
+     * @since 2.13
+     */
+    @Override
+    public SelectBuilder<T> include(List<String> include) {
+        getOrCreateQueryParams().put(INCLUDE, include);
+        return this;
+    }
+
+    /**
+     * @since 2.13
+     */
+    @Override
+    public SelectBuilder<T> sort(List<String> sort) {
+        getOrCreateQueryParams().put(SORT, sort);
+        return this;
+    }
+
+    /**
+     * @since 2.13
+     */
+    @Override
+    public SelectBuilder<T> dir(String dir) {
+        getOrCreateQueryParams().put(DIR, Arrays.asList(dir));
+        return this;
+    }
+
+    private Map<String, List<String>> getOrCreateQueryParams() {
+        if (context.getQueryParams() == null) {
+            context.setQueryParams(new HashMap<>());
+        }
+
+        return context.getQueryParams();
+    }
 }
