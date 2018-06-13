@@ -21,9 +21,11 @@ import org.slf4j.LoggerFactory;
 
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriInfo;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.EnumMap;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -231,4 +233,65 @@ public class DefaultSelectBuilder<T> implements SelectBuilder<T> {
         return context.createDataResponse();
     }
 
+    /**
+     * @since 2.13
+     */
+    @Override
+    public SelectBuilder<T> mapBy(String mapBy) {
+        getOrCreateQueryParams().put(MAP_BY, Arrays.asList(mapBy));
+        return this;
+    }
+
+    /**
+     * @since 2.13
+     */
+    @Override
+    public SelectBuilder<T> cayenneExp(String cayenneExp) {
+        getOrCreateQueryParams().put(CAYENNE_EXP, Arrays.asList(cayenneExp));
+        return this;
+    }
+
+    /**
+     * @since 2.13
+     */
+    @Override
+    public SelectBuilder<T> exclude(List<String> exclude) {
+        getOrCreateQueryParams().put(EXCLUDE, exclude);
+        return this;
+    }
+
+    /**
+     * @since 2.13
+     */
+    @Override
+    public SelectBuilder<T> include(List<String> include) {
+        getOrCreateQueryParams().put(INCLUDE, include);
+        return this;
+    }
+
+    /**
+     * @since 2.13
+     */
+    @Override
+    public SelectBuilder<T> sort(List<String> sort) {
+        getOrCreateQueryParams().put(SORT, sort);
+        return this;
+    }
+
+    /**
+     * @since 2.13
+     */
+    @Override
+    public SelectBuilder<T> dir(String dir) {
+        getOrCreateQueryParams().put(DIR, Arrays.asList(dir));
+        return this;
+    }
+
+    private Map<String, List<String>> getOrCreateQueryParams() {
+        if (context.getQueryParams() == null) {
+            context.setQueryParams(new HashMap<>());
+        }
+
+        return context.getQueryParams();
+    }
 }

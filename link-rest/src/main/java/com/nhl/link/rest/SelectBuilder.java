@@ -15,6 +15,7 @@ import org.apache.cayenne.exp.Property;
 
 import javax.ws.rs.core.UriInfo;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
@@ -25,6 +26,14 @@ import java.util.function.Consumer;
  * the desired behavior. Finally {@link #get()} is called to get the results.
  */
 public interface SelectBuilder<T> {
+
+    static final String CAYENNE_EXP = "cayenneExp";
+    static final String MAP_BY      = "mapBy";
+    static final String SORT        = "sort";
+    static final String DIR         = "dir";
+    static final String INCLUDE     = "include";
+    static final String EXCLUDE     = "exclude";
+
 
     /**
      * Sets request {@link UriInfo} that is a source of various request
@@ -263,4 +272,48 @@ public interface SelectBuilder<T> {
     default DataResponse<T> selectOne() {
         return getOne();
     }
+
+
+    /**
+     * Forces the builder to make selection using mapBy query parameter.
+     *
+     * @since 2.13
+     */
+    SelectBuilder<T> mapBy(String mapBy);
+
+    /**
+     * Forces the builder to make selection using cayenneExp query parameter.
+     *
+     * @since 2.13
+     */
+    SelectBuilder<T> cayenneExp(String cayenneExp);
+
+    /**
+     * Forces the builder to make selection using exclude query parameter.
+     *
+     * @since 2.13
+     */
+    SelectBuilder<T> exclude(List<String> exclude);
+
+    /**
+     * Forces the builder to make selection using include query parameter.
+     *
+     * @since 2.13
+     */
+    SelectBuilder<T> include(List<String> include);
+
+    /**
+     * Forces the builder to sort selection.
+     *
+     * @since 2.13
+     */
+    SelectBuilder<T> sort(List<String> sort);
+
+    /**
+     * Forces the builder to set direction of sorting.
+     *
+     * @since 2.13
+     */
+    SelectBuilder<T> dir(String dir);
+
 }

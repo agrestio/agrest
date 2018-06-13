@@ -22,6 +22,8 @@ import javax.ws.rs.core.UriInfo;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumMap;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -197,6 +199,32 @@ public class DefaultUpdateBuilder<T> implements UpdateBuilder<T> {
     public SimpleResponse sync(Collection<EntityUpdate<T>> updates) {
         context.setUpdates(updates);
         return doSync();
+    }
+
+    /**
+     * @since 2.13
+     */
+    @Override
+    public UpdateBuilder<T> exclude(List<String> exclude) {
+        getOrCreateQueryParams().put(EXCLUDE, exclude);
+        return this;
+    }
+
+    /**
+     * @since 2.13
+     */
+    @Override
+    public UpdateBuilder<T> include(List<String> include) {
+        getOrCreateQueryParams().put(INCLUDE, include);
+        return this;
+    }
+
+    private Map<String, List<String>> getOrCreateQueryParams() {
+        if (context.getQueryParams() == null) {
+            context.setQueryParams(new HashMap<>());
+        }
+
+        return context.getQueryParams();
     }
 
     /**
