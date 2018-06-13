@@ -27,8 +27,6 @@ import java.util.function.Consumer;
  */
 public interface SelectBuilder<T> {
 
-    static final String START       = "start";
-    static final String LIMIT       = "limit";
     static final String CAYENNE_EXP = "cayenneExp";
     static final String MAP_BY      = "mapBy";
     static final String SORT        = "sort";
@@ -44,27 +42,6 @@ public interface SelectBuilder<T> {
      * @since 1.14
      */
     SelectBuilder<T> uri(UriInfo uriInfo);
-
-    /**
-     * Sets request query parameters that is used instead of passing {@link UriInfo}.
-     *
-     * @since 2.13
-     */
-    SelectBuilder<T> queryParams(Map<String, List<String>> parameters);
-
-    /**
-     * Appends multi value query parameter to existing list of parameters.
-     *
-     * @since 2.13
-     */
-    SelectBuilder<T> queryParam(String name, List<String> value);
-
-    /**
-     * Appends single value query parameter to existing list of parameters.
-     *
-     * @since 2.13
-     */
-    SelectBuilder<T> queryParam(String name, String value);
 
     /**
      * Sets the encoder for the entities under the "data" key in the response
@@ -310,20 +287,6 @@ public interface SelectBuilder<T> {
      * @since 2.13
      */
     SelectBuilder<T> cayenneExp(String cayenneExp);
-
-    /**
-     * Forces the builder to cut selection using start query parameter.
-     *
-     * @since 2.13
-     */
-    SelectBuilder<T> start(long start);
-
-    /**
-     * Forces the builder to cut selection using limit query parameter.
-     *
-     * @since 2.13
-     */
-    SelectBuilder<T> limit(long limit);
 
     /**
      * Forces the builder to make selection using exclude query parameter.

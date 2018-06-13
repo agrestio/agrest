@@ -137,33 +137,6 @@ public class DefaultSelectBuilder<T> implements SelectBuilder<T> {
         return this;
     }
 
-    /**
-     * @since 2.13
-     */
-    @Override
-    public SelectBuilder<T> queryParams(Map<String, List<String>> parameters) {
-        this.context.setQueryParams(parameters);
-        return this;
-    }
-
-    /**
-     * @since 2.13
-     */
-    @Override
-    public SelectBuilder<T> queryParam(String name, List<String> value) {
-        getOrCreateQueryParams().put(name, value);
-        return this;
-    }
-
-    /**
-     * @since 2.13
-     */
-    @Override
-    public SelectBuilder<T> queryParam(String name, String value) {
-        getOrCreateQueryParams().put(name, Arrays.asList(value));
-        return this;
-    }
-
     @Override
     public SelectBuilder<T> dataEncoder(Encoder encoder) {
         this.context.setEncoder(encoder);
@@ -276,22 +249,6 @@ public class DefaultSelectBuilder<T> implements SelectBuilder<T> {
     public SelectBuilder<T> cayenneExp(String cayenneExp) {
         getOrCreateQueryParams().put(CAYENNE_EXP, Arrays.asList(cayenneExp));
         return this;
-    }
-
-    /**
-     * @since 2.13
-     */
-    @Override
-    public SelectBuilder<T> start(long start) {
-        return null;
-    }
-
-    /**
-     * @since 2.13
-     */
-    @Override
-    public SelectBuilder<T> limit(long limit) {
-        return null;
     }
 
     /**

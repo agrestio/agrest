@@ -89,27 +89,6 @@ public interface UpdateBuilder<T> {
     UpdateBuilder<T> uri(UriInfo uriInfo);
 
     /**
-     * Sets request query parameters that is used instead of passing {@link UriInfo}.
-     *
-     * @since 2.13
-     */
-    UpdateBuilder<T> queryParams(Map<String, List<String>> parameters);
-
-    /**
-     * Appends multi value query parameter to existing list of parameters.
-     *
-     * @since 2.13
-     */
-    UpdateBuilder<T> queryParam(String name, List<String> value);
-
-    /**
-     * Appends single value query parameter to existing list of parameters.
-     *
-     * @since 2.13
-     */
-    UpdateBuilder<T> queryParam(String name, String value);
-
-    /**
      * @deprecated since 2.4 in favor of {@link #readConstraint(Constraint)}.
      */
     default UpdateBuilder<T> readConstraints(Constraint<T> constraint) {

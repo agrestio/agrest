@@ -93,6 +93,20 @@ public class GET_QueryParamsIT extends JerseyTestOnDerby {
     }
 
     @Test
+    public void test_Sort_Invalid() {
+
+        Response response = target("/e4")
+                .queryParam("sort", urlEnc("[{\"property\":\"xyz\",\"direction\":\"DESC\"}]"))
+                .queryParam("include", "id")
+                .request()
+                .get();
+
+        onResponse(response)
+                .statusEquals(Response.Status.BAD_REQUEST)
+                .bodyEquals("{\"success\":false,\"message\":\"Invalid path 'xyz' for 'E4'\"}");
+    }
+
+    @Test
     public void test_SelectById_Params() {
 
         insert("e4", "id", "2");
@@ -136,6 +150,93 @@ public class GET_QueryParamsIT extends JerseyTestOnDerby {
 
         assertEquals(Response.Status.OK.getStatusCode(), r1.getStatus());
         assertEquals("{\"data\":[{\"id\":1}],\"total\":1}", r1.readEntity(String.class));
+    }
+
+    @Test
+    public void test_ToMany_Sort() {
+
+        newContext().performGenericQuery(
+                new SQLTemplate(E2.class, "INSERT INTO utest.e2 (id, name) values (1, 'xxx')"));
+        newContext().performGenericQuery(
+                new SQLTemplate(E3.class, "INSERT INTO utest.e3 (id, e2_id, name) values "
+                        + "(8, 1, 'z'),(9, 1, 's'),(7, 1, 'b')"));
+
+        Response response1 = target("/e2").queryParam("include", urlEnc("{\"path\":\"e3s\",\"sort\":\"name\"}"))
+                .queryParam("include", "id").request().get();
+
+        assertEquals(Response.Status.OK.getStatusCode(), response1.getStatus());
+        assertEquals("{\"data\":[{\"id\":1,\"e3s\":["
+                + "{\"id\":7,\"name\":\"b\",\"phoneNumber\":null}," + "{\"id\":9,\"name\":\"s\",\"phoneNumber\":null},"
+                + "{\"id\":8,\"name\":\"z\",\"phoneNumber\":null}]}],\"total\":1}", response1.readEntity(String.class));
+    }
+
+    @Test
+    public void test_ToMany_SortPath() {
+
+        newContext().performGenericQuery(
+                new SQLTemplate(E3.class, "INSERT INTO utest.e5 (id,name) values (145, 'B'),(146, 'A')"));
+        newContext().performGenericQuery(
+                new SQLTemplate(E2.class, "INSERT INTO utest.e2 (id, name) values (11, 'xxx')"));
+        newContext().performGenericQuery(
+                new SQLTemplate(E3.class, "INSERT INTO utest.e3 (id, e2_id, e5_id, name) "
+                        + "values (18, 11, 145, 's'),(19, 11, 145, 'z'),(17, 11, 146, 'b')"));
+
+        Response response1 = target("/e2")
+                .queryParam("include", urlEnc("{\"path\":\"e3s\",\"sort\":[{\"property\":\"e5.name\"}]}"))
+                .queryParam("include", "id").request().get();
+
+        assertEquals(Response.Status.OK.getStatusCode(), response1.getStatus());
+        assertEquals("{\"data\":[{\"id\":11,\"e3s\":["
+                + "{\"id\":17,\"name\":\"b\",\"phoneNumber\":null},"
+                + "{\"id\":18,\"name\":\"s\",\"phoneNumber\":null},"
+                + "{\"id\":19,\"name\":\"z\",\"phoneNumber\":null}]}],\"total\":1}", response1.readEntity(String.class));
+    }
+
+    @Test
+    public void test_ToMany_SortPath_Dir() {
+
+        newContext().performGenericQuery(
+                new SQLTemplate(E3.class, "INSERT INTO utest.e5 (id,name) values (245, 'B'),(246, 'A')"));
+        newContext().performGenericQuery(
+                new SQLTemplate(E2.class, "INSERT INTO utest.e2 (id, name) values (21, 'xxx')"));
+        newContext().performGenericQuery(
+                new SQLTemplate(E3.class, "INSERT INTO utest.e3 (id, e2_id, e5_id, name) "
+                        + "values (28, 21, 245, 's'),(29, 21, 245, 'z'),(27, 21, 246, 'b')"));
+
+        Response response1 = target("/e2")
+                .queryParam(
+                        "include",
+                        urlEnc("{\"path\":\"e3s\",\"sort\":[{\"property\":\"e5.name\", \"direction\":\"DESC\"},{\"property\":\"name\", \"direction\":\"DESC\"}]}"))
+                .queryParam("include", "id").request().get();
+
+        assertEquals(Response.Status.OK.getStatusCode(), response1.getStatus());
+        assertEquals("{\"data\":[{\"id\":21,\"e3s\":["
+                + "{\"id\":29,\"name\":\"z\",\"phoneNumber\":null},"
+                + "{\"id\":28,\"name\":\"s\",\"phoneNumber\":null},"
+                + "{\"id\":27,\"name\":\"b\",\"phoneNumber\":null}]}],\"total\":1}", response1.readEntity(String.class));
+    }
+
+    @Test
+    public void test_Select_Prefetching_StartLimit() {
+
+        insert("e2", "id, name", "1, 'xxx'");
+
+        insert("e3", "id, name, e2_id", "8, 'yyy', 1");
+        insert("e3", "id, name, e2_id", "9, 'zzz', 1");
+        insert("e3", "id, name, e2_id", "10, 'zzz', 1");
+        insert("e3", "id, name, e2_id", "11, 'zzz', 1");
+
+        Response response = target("/e3")
+                .queryParam("include", "id", "e2.id")
+                .queryParam("sort", "id")
+                .queryParam("start", "1")
+                .queryParam("limit", "2")
+                .request()
+                .get();
+
+        onSuccess(response).bodyEquals(4,
+                "{\"id\":9,\"e2\":{\"id\":1}}",
+                "{\"id\":10,\"e2\":{\"id\":1}}");
     }
 
     @Path("")
@@ -199,11 +300,19 @@ public class GET_QueryParamsIT extends JerseyTestOnDerby {
 
         @GET
         @Path("e3")
-        public DataResponse<E3> getE3(@QueryParam("mapBy") String mapBy,
+        public DataResponse<E3> getE3(@QueryParam("sort")  List<String> sort,
+                                      @QueryParam("start") int start,
+                                      @QueryParam("limit") int limit,
+                                      @QueryParam("mapBy") String mapBy,
+                                      @QueryParam("include") List<String> include,
                                       @QueryParam("exclude") List<String> exclude) {
             return LinkRest.service(config)
                     .select(E3.class)
+                    .sort(sort)
+                    .fetchOffset(start)
+                    .fetchLimit(limit)
                     .mapBy(mapBy)
+                    .include(include)
                     .exclude(exclude)
                     .get();
         }
