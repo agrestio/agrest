@@ -41,6 +41,7 @@ public class UpdateContext<T> extends BaseProcessingContext<T> {
 	private Collection<EntityUpdate<T>> updates;
 	private Encoder encoder;
 	private List objects;
+	private Map<String, List<String>> queryParams;
 
 	public UpdateContext(Class<T> type) {
 		super(type);
@@ -102,6 +103,28 @@ public class UpdateContext<T> extends BaseProcessingContext<T> {
 		}
 
 		return updates.iterator().next();
+	}
+
+	/**
+	 * @since 2.13
+	 */
+	public Map<String, List<String>> getProtocolParameters() {
+		return queryParams != null ? queryParams
+				: uriInfo != null ? uriInfo.getQueryParameters() : Collections.emptyMap();
+	}
+
+	/**
+	 * @since 2.13
+	 */
+	public Map<String, List<String>> getQueryParams() {
+		return queryParams;
+	}
+
+	/**
+	 * @since 2.13
+	 */
+	public void setQueryParams(Map<String, List<String>> parameters) {
+		queryParams = parameters;
 	}
 
 	public UriInfo getUriInfo() {

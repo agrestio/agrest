@@ -13,6 +13,7 @@ import org.apache.cayenne.exp.Property;
 
 import javax.ws.rs.core.UriInfo;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
@@ -24,6 +25,9 @@ import java.util.function.Consumer;
  * @since 1.7
  */
 public interface UpdateBuilder<T> {
+
+    static final String INCLUDE     = "include";
+    static final String EXCLUDE     = "exclude";
 
     /**
      * Set an explicit id for the update. In this case only a single object is
@@ -249,4 +253,17 @@ public interface UpdateBuilder<T> {
      */
     SimpleResponse sync(Collection<EntityUpdate<T>> updates);
 
+    /**
+     * Forces the builder to make selection using exclude query parameter.
+     *
+     * @since 2.13
+     */
+    UpdateBuilder<T> exclude(List<String> exclude);
+
+    /**
+     * Forces the builder to make selection using include query parameter.
+     *
+     * @since 2.13
+     */
+    UpdateBuilder<T> include(List<String> include);
 }
