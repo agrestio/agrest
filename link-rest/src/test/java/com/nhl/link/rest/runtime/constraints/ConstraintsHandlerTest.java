@@ -12,13 +12,10 @@ import com.nhl.link.rest.it.fixture.cayenne.E5;
 import com.nhl.link.rest.meta.DefaultLrAttribute;
 import com.nhl.link.rest.meta.LrEntity;
 import com.nhl.link.rest.meta.LrRelationship;
-import com.nhl.link.rest.runtime.processor.select.SelectContext;
 import org.apache.cayenne.exp.Expression;
 import org.junit.Before;
 import org.junit.Test;
 
-import javax.ws.rs.core.MultivaluedHashMap;
-import javax.ws.rs.core.UriInfo;
 import java.util.Collections;
 import java.util.List;
 
@@ -41,7 +38,6 @@ public class ConstraintsHandlerTest {
     private LrEntity<E3> lre2;
     private LrEntity<E4> lre3;
     private LrEntity<E5> lre4;
-    private SelectContext<?> mockContext;
 
     @SuppressWarnings("unchecked")
     @Before
@@ -80,15 +76,6 @@ public class ConstraintsHandlerTest {
         lre4 = mock(LrEntity.class);
         when(lre4.getName()).thenReturn("E5");
         when(lre4.getType()).thenReturn(E5.class);
-
-        mockContext = mock(SelectContext.class);
-        ResourceEntity<?> entity = new ResourceEntity<>(lre0);
-        when(mockContext.getEntity()).then(invocation -> entity);
-        MultivaluedHashMap<String, String> params = new MultivaluedHashMap<>();
-        params.putSingle("include", "E1");
-        UriInfo mockUri = mock(UriInfo.class);
-        when(mockUri.getQueryParameters()).thenReturn(params);
-        when(mockContext.getUriInfo()).then(invocation -> mockUri);
 
         List<EntityConstraint> r = Collections.emptyList();
         List<EntityConstraint> w = Collections.emptyList();
@@ -331,26 +318,6 @@ public class ConstraintsHandlerTest {
         constraintHandler.constrainResponse(te1, null, tc1);
         assertSame(te1MapBy, te1.getMapBy());
         assertEquals("r1", te1.getMapByPath());
-    }
-
-    @Test
-    public void testApply_QueryParam() {
-        Constraint tc1 = Constraint.idOnly(E1.class).queryParam("include");
-        try {
-            constraintHandler.constrainRequest(mockContext, tc1);
-        } catch (Exception ex) {
-            assertTrue(false);
-        }
-    }
-
-    @Test
-    public void testApply_QueryParam_NotSupported() {
-        Constraint tc1 = Constraint.idOnly(E1.class).queryParam("limit");
-        try {
-            constraintHandler.constrainRequest(mockContext, tc1);
-        } catch (Exception ex) {
-            assertEquals("The query parameters set '{include=[E1]}' is not supported", ex.getMessage());
-        }
     }
 
     protected void appendAttribute(ResourceEntity<?> entity, String name) {

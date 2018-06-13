@@ -31,16 +31,8 @@ public class ApplyServerParamsStage implements Processor<SelectContext<?>> {
 
     @Override
     public ProcessorOutcome execute(SelectContext<?> context) {
-        doBefore(context);
         doExecute(context);
         return ProcessorOutcome.CONTINUE;
-    }
-
-    /**
-     * @since 2.13
-     */
-    protected <T> void doBefore(SelectContext<T> context) {
-        constraintsHandler.constrainRequest(context, context.getConstraint());
     }
 
     protected <T> void doExecute(SelectContext<T> context) {
