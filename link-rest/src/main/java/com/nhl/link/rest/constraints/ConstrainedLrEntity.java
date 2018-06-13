@@ -18,7 +18,6 @@ public class ConstrainedLrEntity<T> {
 
     private boolean idIncluded;
     private Collection<String> attributes;
-    private Collection<String> queryParams;
     private Map<String, ConstrainedLrEntity<?>> children;
     private Expression qualifier;
     private LrEntity<T> entity;
@@ -35,15 +34,10 @@ public class ConstrainedLrEntity<T> {
 
         // using HashSet, as we'll need fast 'contains' calls on attributes
         this.attributes = new HashSet<>();
-        this.queryParams = new HashSet<>();
     }
 
     Collection<String> getAttributes() {
         return attributes;
-    }
-
-    Collection<String> getQueryParams() {
-        return queryParams;
     }
 
     Map<String, ConstrainedLrEntity<?>> getChildren() {
@@ -60,13 +54,6 @@ public class ConstrainedLrEntity<T> {
 
     public boolean hasAttribute(String name) {
         return attributes.contains(name);
-    }
-
-    /**
-     * @since 2.13
-     */
-    public boolean hasQueryParam(String name) {
-        return queryParams.isEmpty() || queryParams.contains(name.trim());
     }
 
     public ConstrainedLrEntity getChild(String name) {
@@ -96,13 +83,6 @@ public class ConstrainedLrEntity<T> {
         attributes.clear();
     }
 
-    /**
-     * @since 2.13
-     */
-    void excludeAllQueryParams() {
-        queryParams.clear();
-    }
-
     void excludeAllChildren() {
         children.clear();
     }
@@ -122,17 +102,6 @@ public class ConstrainedLrEntity<T> {
         }
     }
 
-    /**
-     * @since 2.13
-     */
-    void includeQueryParams(String... queryParams) {
-        if (queryParams != null) {
-
-            for (String q : queryParams) {
-                this.queryParams.add(q);
-            }
-        }
-    }
 
     void includeId(boolean include) {
         this.idIncluded = include;

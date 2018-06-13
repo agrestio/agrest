@@ -109,20 +109,6 @@ public class ConstraintsBuilder<T> implements Constraint<T> {
     }
 
     /**
-     * @since 2.13
-     *
-     * Excludes all previously included query parameters.
-     *
-     * @return a new instance of Constraints.
-     */
-    public ConstraintsBuilder<T> excludeAllQueryParams() {
-        return new ConstraintsBuilder<>(op.andThen(ce -> {
-            ce.excludeAllQueryParams();
-            return ce;
-        }));
-    }
-
-    /**
      * Excludes all previously included child configs.
      *
      * @return a new instance of Constraints.
@@ -166,26 +152,6 @@ public class ConstraintsBuilder<T> implements Constraint<T> {
         }
 
         return attributes(names);
-    }
-
-    /**
-     * @since 2.13
-     */
-    public ConstraintsBuilder<T> queryParam(String queryParam) {
-        return new ConstraintsBuilder<>(op.andThen(ce -> {
-            ce.includeQueryParams(queryParam);
-            return ce;
-        }));
-    }
-
-    /**
-     * @since 2.13
-     */
-    public ConstraintsBuilder<T> queryParams(String... queryParams) {
-        return new ConstraintsBuilder<>(op.andThen(ce -> {
-            ce.includeQueryParams(queryParams);
-            return ce;
-        }));
     }
 
     public ConstraintsBuilder<T> includeId(boolean include) {
