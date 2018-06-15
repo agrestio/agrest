@@ -3,6 +3,7 @@ package io.swagger.codegen;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 
 public class LinkRestCodegenOperation extends CodegenOperation {
@@ -80,6 +81,15 @@ public class LinkRestCodegenOperation extends CodegenOperation {
      */
     public boolean isRestfulIndexToMany() {
         return "GET".equals(httpMethod) && isRelatedToManyPath();
+    }
+
+    /**
+     * Check if act as Restful index to retrieve child via parent method
+     *
+     * @return true if act as Restful index to child via parent, false otherwise
+     */
+    public boolean isRestfulIndexRelated() {
+        return "GET".equals(httpMethod) && isParentChildPath() ;
     }
 
     /**

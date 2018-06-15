@@ -38,6 +38,24 @@ public class GET_Related_IT extends JerseyTestOnDerby {
     }
 
     @Test
+    public void testGet_ValidRel_ToMany_GetOne() {
+
+        // make sure we have e3s for more than one e2 - this will help us
+        // confirm that relationship queries are properly filtered.
+
+        insert("e2", "id, name", "1, 'xxx'");
+        insert("e2", "id, name", "2, 'yyy'");
+        insert("e3", "id, e2_id, name", "7, 2, 'zzz'");
+        insert("e3", "id, e2_id, name", "8, 1, 'yyy'");
+        insert("e3", "id, e2_id, name", "9, 1, 'zzz'");
+
+        Response r1 = target("/v1/e2/1/e3s/8").queryParam("include", "id").request().get();
+
+        assertEquals(Status.OK.getStatusCode(), r1.getStatus());
+        assertEquals("{\"data\":[{\"id\":8}],\"total\":1}", r1.readEntity(String.class));
+    }
+
+    @Test
     public void testGet_ValidRel_ToOne() {
 
         // make sure we have e3s for more than one e2 - this will help us

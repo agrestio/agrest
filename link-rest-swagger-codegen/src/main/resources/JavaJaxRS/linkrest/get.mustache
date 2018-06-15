@@ -38,6 +38,18 @@ public {{>returnTypes}} {{nickname}}({{#allParams}}{{>pathParams}}{{>queryParams
                     .get();
     }
 {{/isRestfulShow}}
+{{#isRestfulIndexRelated}}
+    public DataResponse<{{#modelRelations}}{{returnType}}{{/modelRelations}}> {{nickname}}({{#allParams}}{{>pathParams}}{{>queryParams}}{{>bodyParams}}{{#hasMore}}, {{/hasMore}}{{/allParams}}) {
+
+        return LinkRest.select({{#modelRelations}}{{returnType}}{{/modelRelations}}.class, config)
+                    .constraint({{#modelRelations}}{{>constraintParams}}{{/modelRelations}}
+                    )
+                    .byId({{#pathParams}}{{#-last}}{{paramName}}{{/-last}}{{/pathParams}})
+                    .parent({{returnType}}.class, {{#pathParams}}{{#-first}}{{paramName}}{{/-first}}{{/pathParams}}, "{{#modelRelations}}{{bodyParam.paramName}}{{/modelRelations}}")
+                    {{>methodsImpl}}
+                    .getOne();
+    }
+{{/isRestfulIndexRelated}}
 {{#isRestfulIndexToMany}}
     public DataResponse<{{#modelRelations}}{{returnType}}{{/modelRelations}}> {{nickname}}({{#allParams}}{{>pathParams}}{{>queryParams}}{{#hasMore}}, {{/hasMore}}{{/allParams}}) {
 

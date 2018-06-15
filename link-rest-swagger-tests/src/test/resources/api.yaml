@@ -301,25 +301,46 @@ paths:
           description: unexpected error
 
   /e2/{id}/e3s/{tid}:
+    parameters:
+      - name: id
+        in: path
+        description: ID of E2 to delete E3
+        required: true
+        type: integer
+        format: int32
+      - name: tid
+        in: path
+        description: ID of E3 to delete
+        required: true
+        type: integer
+        format: int32
+    get:
+      description: Returns E3 via E2
+      operationId: getE3viaE2
+      tags:
+        - E2
+        - E3
+      parameters:
+        - name: include
+          in: query
+          description: include attribute
+          required: false
+          type: array
+          items:
+            type: string
+      responses:
+        "200":
+          description: Success responce
+          schema:
+            $ref: "#/definitions/E3"
+        default:
+          description: Unexpected error
     delete:
       description: Deletes E3 Via E2
       operationId: deleteE3ViaE2
       tags:
         - E2
         - E3
-      parameters:
-        - name: id
-          in: path
-          description: ID of E2 to delete E3
-          required: true
-          type: integer
-          format: int32
-        - name: tid
-          in: path
-          description: ID of E3 to delete
-          required: true
-          type: integer
-          format: int32
       responses:
         "204":
           description: E3 item deleted
@@ -546,7 +567,21 @@ paths:
         default:
           description: unexpected error
 
+
   /e3/{id}/e2/{tid}:
+    parameters:
+      - name: id
+        in: path
+        description: ID of E3 to select
+        required: true
+        type: integer
+        format: int32
+      - name: tid
+        in: path
+        description: ID of E2 to select
+        required: true
+        type: integer
+        format: int32
     put:
       tags:
         - E3
@@ -557,18 +592,6 @@ paths:
         - application/xml
         - application/json
       parameters:
-        - name: id
-          in: path
-          description: ID of E3 to update
-          required: true
-          type: integer
-          format: int32
-        - name: tid
-          in: path
-          description: ID of E2 to update
-          required: true
-          type: integer
-          format: int32
         - in: body
           name: body
           description: Updated E2 object
@@ -583,24 +606,12 @@ paths:
       tags:
         - E3
         - E2
-      parameters:
-        - name: id
-          in: path
-          description: ID of E3 to delete E2
-          required: true
-          type: integer
-          format: int32
-        - name: tid
-          in: path
-          description: ID of E2 to delete
-          required: true
-          type: integer
-          format: int32
       responses:
         "204":
           description: E2 item deleted
         default:
           description: unexpected error
+
 
   /e4:
     post:
