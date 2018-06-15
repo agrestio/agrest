@@ -27,6 +27,8 @@ import java.util.function.Consumer;
  */
 public interface SelectBuilder<T> {
 
+    static final String START       = "start";
+    static final String LIMIT       = "limit";
     static final String CAYENNE_EXP = "cayenneExp";
     static final String MAP_BY      = "mapBy";
     static final String SORT        = "sort";
@@ -287,6 +289,20 @@ public interface SelectBuilder<T> {
      * @since 2.13
      */
     SelectBuilder<T> cayenneExp(String cayenneExp);
+
+    /**
+     * Forces the builder to cut selection using start query parameter.
+     *
+     * @since 2.13
+     */
+    SelectBuilder<T> start(Integer start);
+
+    /**
+     * Forces the builder to cut selection using limit query parameter.
+     *
+     * @since 2.13
+     */
+    SelectBuilder<T> limit(Integer limit);
 
     /**
      * Forces the builder to make selection using exclude query parameter.
