@@ -4,7 +4,7 @@ public {{>returnTypes}} {{nickname}}({{#allParams}}{{>pathParams}}{{>queryParams
         return LinkRest.idempotentCreateOrUpdate({{{returnType}}}.class, config)
                     .readConstraint({{>constraintParams}}
                     )
-                    .id({{#allParams}}{{#isPathParam}}{{paramName}}{{/isPathParam}}{{/allParams}})
+                    .id({{#pathParams}}{{paramName}}{{/pathParams}})
                     {{>methodsImpl}}
                     .syncAndSelect({{#bodyParam}}{{paramName}}{{/bodyParam}});
     }
@@ -26,7 +26,7 @@ public {{>returnTypes}} {{nickname}}({{#allParams}}{{>pathParams}}{{>queryParams
                     .id(id)
                     {{>methodsImpl}}
                     .syncAndSelect({{#bodyParam}}{{paramName}}{{/bodyParam}});
-                    }
+    }
     {{/hasCompoundId}}
     {{^hasCompoundId}}
 public {{>returnTypes}} {{nickname}}({{#allParams}}{{>pathParams}}{{>queryParams}}{{>bodyParams}}{{#hasMore}}, {{/hasMore}}{{/allParams}}) {

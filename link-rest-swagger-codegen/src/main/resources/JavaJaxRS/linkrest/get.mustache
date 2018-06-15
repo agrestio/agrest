@@ -31,8 +31,9 @@ public {{>returnTypes}} {{nickname}}({{#allParams}}{{>pathParams}}{{>queryParams
     public {{>returnTypes}} {{nickname}}({{#allParams}}{{>pathParams}}{{>queryParams}}{{#hasMore}}, {{/hasMore}}{{/allParams}}) {
 
         return LinkRest.select({{{returnType}}}.class, config)
-                    .constraint({{>constraintParams}})
-                    {{#allParams}}{{#isPathParam}}.byId({{paramName}}){{/isPathParam}}{{/allParams}}
+                    .constraint({{>constraintParams}}
+                    )
+                    .byId({{#pathParams}}{{paramName}}{{/pathParams}})
                     {{>methodsImpl}}
                     .get();
     }
@@ -43,7 +44,7 @@ public {{>returnTypes}} {{nickname}}({{#allParams}}{{>pathParams}}{{>queryParams
         return LinkRest.select({{#modelRelations}}{{returnType}}{{/modelRelations}}.class, config)
                     .constraint({{#modelRelations}}{{>constraintParams}}{{/modelRelations}}
                     )
-                    .parent({{returnType}}.class, {{#allParams}}{{#isPathParam}}{{paramName}}{{/isPathParam}}{{/allParams}}, "{{#modelRelations}}{{bodyParam.paramName}}{{/modelRelations}}")
+                    .parent({{returnType}}.class, {{#pathParams}}{{paramName}}{{/pathParams}}, "{{#modelRelations}}{{bodyParam.paramName}}{{/modelRelations}}")
                     {{>methodsImpl}}
                     .get();
     }

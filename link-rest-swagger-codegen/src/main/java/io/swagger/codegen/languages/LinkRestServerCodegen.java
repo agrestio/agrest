@@ -137,6 +137,7 @@ public class LinkRestServerCodegen extends AbstractJavaJAXRSServerCodegen implem
                         && !"id".equalsIgnoreCase(prop.baseName)) {
                     final CodegenParameter codegenParam = new CodegenParameter();
                     codegenParam.paramName = prop.baseName;
+                    codegenParam.hasMore = true;
                     // checks if there is queryParam with the same name as model attribute
                     if (lrOperation.queryParams.stream().anyMatch(p -> codegenParam.paramName.equalsIgnoreCase(p.paramName))) {
                         lrOperation.hasCompoundId = codegenParam.isQueryParam = true;
@@ -149,6 +150,9 @@ public class LinkRestServerCodegen extends AbstractJavaJAXRSServerCodegen implem
                     }
                     lrOperation.modelAttributes.add(codegenParam);
                 }
+            }
+            if (!lrOperation.modelAttributes.isEmpty()) {
+                lrOperation.modelAttributes.get(lrOperation.modelAttributes.size() -1).hasMore = false;
             }
         }
     }

@@ -1,8 +1,1 @@
-Constraint.excludeAll({{{returnType}}}.class)
-                        .includeId()
-                        {{#modelAttributes}}
-                        .attribute("{{paramName}}")
-                        {{/modelAttributes}}
-                        {{#modelRelations}}
-                        .path("{{bodyParam.paramName}}", {{>constraintParams}})
-                        {{/modelRelations}}
+Constraint.excludeAll({{{returnType}}}.class).includeId().attributes({{#modelAttributes}}"{{paramName}}"{{#hasMore}}, {{/hasMore}}{{/modelAttributes}}){{>constraintPathes}}
