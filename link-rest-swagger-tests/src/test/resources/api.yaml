@@ -31,24 +31,7 @@ paths:
           description: maximum number of results to return
           required: false
           type: integer
-          format: int32
-      #  - name: start
-      #    in: query
-      #    description: start offset of results to return
-      #    required: false
-      #    type: integer
-      #    format: int32
-      # - name: sort
-      #    in: query
-      #    description: sorts result items
-      #    required: false
-      #    type: string
-      #  - name: dir
-      #    in: query
-      #    description: direction of sorting. ASC or DESC
-      #    required: false
-      #    type: string
-
+#          format: int32
       responses:
         '200':
           description: Success response.
@@ -97,22 +80,27 @@ paths:
         default:
           description: unexpected error
   /e2:
+    parameters:
+      - name: include
+        in: query
+        description: include attribute
+        required: false
+        type: array
+        items:
+          type: string
+      - name: exclude
+        in: query
+        description: exclude attribute
+        required: false
+        type: array
+        items:
+          type: string
     get:
       summary: Get all E2s
       operationId: getAll
       tags:
         - E2
       parameters:
-        - name: include
-          in: query
-          description: include attribute
-          required: false
-          type: string
-        - name: exclude
-          in: query
-          description: exclude attribute
-          required: false
-          type: string
         - name: cayenneExp
           in: query
           description: cayenneExp query
@@ -162,12 +150,16 @@ paths:
           in: query
           description: include attribute
           required: false
-          type: string
+          type: array
+          items:
+            type: string
         - name: exclude
           in: query
           description: exclude attribute
           required: false
-          type: string
+          type: array
+          items:
+            type: string
       responses:
         "200":
           description: Success responce
@@ -195,6 +187,20 @@ paths:
           description: Updated E2 object
           schema:
             $ref: "#/definitions/E2"
+        - name: include
+          in: query
+          description: include attribute
+          required: false
+          type: array
+          items:
+            type: string
+        - name: exclude
+          in: query
+          description: exclude attribute
+          required: false
+          type: array
+          items:
+            type: string
       responses:
         default:
           description: successful operation
@@ -217,7 +223,9 @@ paths:
           in: query
           description: include attribute
           required: false
-          type: string
+          type: array
+          items:
+            type: string
       responses:
         "200":
           description: Success responce
@@ -333,6 +341,20 @@ paths:
           description: Created E3 object
           schema:
             $ref: "#/definitions/E3"
+        - name: include
+          in: query
+          description: include attribute
+          required: false
+          type: array
+          items:
+            type: string
+        - name: exclude
+          in: query
+          description: exclude attribute
+          required: false
+          type: array
+          items:
+            type: string
       responses:
         default:
           description: successful operation
@@ -346,17 +368,23 @@ paths:
           in: query
           description: sorts result items
           required: false
-          type: string
+          type: array
+          items:
+            type: string
         - name: include
           in: query
           description: include attribute
           required: false
-          type: string
+          type: array
+          items:
+            type: string
         - name: exclude
           in: query
           description: exclude attribute
           required: false
-          type: string
+          type: array
+          items:
+            type: string
         - name: limit
           in: query
           description: maximum number of results to return
@@ -406,12 +434,16 @@ paths:
           in: query
           description: include attribute
           required: false
-          type: string
+          type: array
+          items:
+            type: string
         - name: exclude
           in: query
           description: exclude attribute
           required: false
-          type: string
+          type: array
+          items:
+            type: string
       responses:
         default:
           description: successful operation
@@ -433,7 +465,9 @@ paths:
           in: query
           description: include attribute
           required: false
-          type: string
+          type: array
+          items:
+            type: string
       responses:
         "200":
           description: Success responce
@@ -483,7 +517,9 @@ paths:
           in: query
           description: include attribute
           required: false
-          type: string
+          type: array
+          items:
+            type: string
       responses:
         "200":
           description: Success responce
@@ -600,12 +636,16 @@ paths:
           in: query
           description: sorts result items
           required: false
-          type: string
+          type: array
+          items:
+            type: string
         - name: include
           in: query
           description: include attribute
           required: false
-          type: string
+          type: array
+          items:
+            type: string
         - name: mapBy
           in: query
           description: map responce by root entity
@@ -637,7 +677,9 @@ paths:
           in: query
           description: include attribute
           required: false
-          type: string
+          type: array
+          items:
+            type: string
       responses:
         "200":
           description: Success responce
@@ -733,6 +775,13 @@ paths:
           description: Created E20 object
           schema:
             $ref: "#/definitions/E20"
+        - name: exclude
+          in: query
+          description: exclude attribute
+          required: false
+          type: array
+          items:
+            type: string
       responses:
         default:
           description: successful operation
@@ -754,7 +803,9 @@ paths:
           in: query
           description: exclude attribute
           required: false
-          type: string
+          type: array
+          items:
+            type: string
       responses:
         "200":
           description: Success responce
@@ -823,7 +874,9 @@ paths:
           in: query
           description: exclude attribute
           required: false
-          type: string
+          type: array
+          items:
+            type: string
       responses:
         "200":
           description: Success responce
@@ -867,6 +920,13 @@ paths:
           description: Created E21 object
           schema:
             $ref: "#/definitions/E21"
+        - name: exclude
+          in: query
+          description: exclude attribute
+          required: false
+          type: array
+          items:
+            type: string
       responses:
         default:
           description: successful operation

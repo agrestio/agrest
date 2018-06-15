@@ -3,9 +3,6 @@ Constraint.excludeAll({{{returnType}}}.class)
                         {{#modelAttributes}}
                         .attribute("{{paramName}}")
                         {{/modelAttributes}}
-
                         {{#modelRelations}}
                         .path("{{bodyParam.paramName}}", {{>constraintParams}})
                         {{/modelRelations}}
-                        {{#allParams}}{{#isQueryParam}}
-                        .queryParam("{{paramName}}"){{/isQueryParam}}{{/allParams}}

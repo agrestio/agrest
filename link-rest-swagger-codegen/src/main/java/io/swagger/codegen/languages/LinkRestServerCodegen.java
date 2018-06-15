@@ -19,6 +19,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public class LinkRestServerCodegen extends AbstractJavaJAXRSServerCodegen implements LinkRestServerFeatures {
     private static final Logger LOGGER = LoggerFactory.getLogger(io.swagger.codegen.languages.LinkRestServerCodegen.class);
@@ -139,6 +140,12 @@ public class LinkRestServerCodegen extends AbstractJavaJAXRSServerCodegen implem
                     // checks if there is queryParam with the same name as model attribute
                     if (lrOperation.queryParams.stream().anyMatch(p -> codegenParam.paramName.equalsIgnoreCase(p.paramName))) {
                         lrOperation.hasCompoundId = codegenParam.isQueryParam = true;
+                        // removes model attribute related to queryParam from params list
+                        lrOperation.queryParams
+                                = lrOperation.queryParams
+                                    .stream()
+                                    .filter(p -> !p.paramName.equalsIgnoreCase(codegenParam.paramName))
+                                    .collect(Collectors.toList());
                     }
                     lrOperation.modelAttributes.add(codegenParam);
                 }

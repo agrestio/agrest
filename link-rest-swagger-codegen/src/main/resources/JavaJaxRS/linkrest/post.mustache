@@ -1,18 +1,21 @@
 {{#isRestfulCreate}}
-public {{>returnTypes}} {{nickname}}(String requestBody, @Context UriInfo uriInfo) {
+public {{>returnTypes}} {{nickname}}({{#allParams}}{{>pathParams}}{{>queryParams}}{{>bodyParams}}{{#hasMore}}, {{/hasMore}}{{/allParams}}) {
 
         return LinkRest.create({{{returnType}}}.class, config)
-                    .readConstraint({{>constraintParams}})
-                    .uri(uriInfo)
-                    .syncAndSelect(requestBody);
+                    .readConstraint({{>constraintParams}}
+                    )
+                    {{>methodsImpl}}
+                    .syncAndSelect({{#bodyParam}}{{paramName}}{{/bodyParam}});
     }
 {{/isRestfulCreate}}
 {{#isRestfulRelatedToManyCreate}}
-public DataResponse<{{#bodyParams}}{{dataType}}{{/bodyParams}}> {{nickname}}({{#pathParams}}@PathParam("{{baseName}}") {{{dataType}}} {{paramName}}, {{/pathParams}}String requestBody) {
+public DataResponse<{{#bodyParams}}{{dataType}}{{/bodyParams}}> {{nickname}}({{#allParams}}{{>pathParams}}{{>queryParams}}{{>bodyParams}}{{#hasMore}}, {{/hasMore}}{{/allParams}}) {
 
         return LinkRest.createOrUpdate({{#bodyParams}}{{dataType}}{{/bodyParams}}.class, config)
-                    .readConstraint({{#modelRelations}}{{>constraintParams}}{{/modelRelations}})
+                    .readConstraint({{#modelRelations}}{{>constraintParams}}{{/modelRelations}}
+                    )
                     .parent({{returnType}}.class, {{#pathParams}}{{#-first}}{{paramName}}{{/-first}}{{/pathParams}}, "{{#modelRelations}}{{bodyParam.paramName}}{{/modelRelations}}")
-                    .syncAndSelect(requestBody);
+                    {{>methodsImpl}}
+                    .syncAndSelect({{#bodyParam}}{{paramName}}{{/bodyParam}});
     }
 {{/isRestfulRelatedToManyCreate}}

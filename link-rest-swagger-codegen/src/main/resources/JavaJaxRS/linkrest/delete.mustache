@@ -1,6 +1,6 @@
 {{#isRestfulDestroy}}
     {{#hasCompoundId}}
-public SimpleResponse {{nickname}}({{#allParams}}{{>queryParams}}, {{/allParams}}@Context UriInfo uriInfo) {
+public SimpleResponse {{nickname}}({{#allParams}}{{>pathParams}}{{>queryParams}}{{>headerParams}}{{>bodyParams}}{{>formParams}}{{#hasMore}}, {{/hasMore}}{{/allParams}}) {
         Map<String, Object> id = new HashMap<>();
         {{#modelAttributes}}
             {{#isQueryParam}}
@@ -14,23 +14,23 @@ public SimpleResponse {{nickname}}({{#allParams}}{{>queryParams}}, {{/allParams}
     }
     {{/hasCompoundId}}
     {{^hasCompoundId}}
-public SimpleResponse {{nickname}}({{#allParams}}{{>pathParams}}{{>headerParams}}{{>bodyParams}}{{>formParams}}{{/allParams}}) {
+public SimpleResponse {{nickname}}({{#allParams}}{{>pathParams}}{{>queryParams}}{{>headerParams}}{{>bodyParams}}{{>formParams}}{{#hasMore}}, {{/hasMore}}{{/allParams}}) {
 
         return LinkRest.delete({{{returnType}}}.class, config)
-                    .id({{#allParams}}{{#isPathParam}}{{paramName}}{{/isPathParam}}{{/allParams}})
+                    .id({{#pathParams}}{{paramName}}{{/pathParams}})
                     .delete();
     }
     {{/hasCompoundId}}
 {{/isRestfulDestroy}}
 {{#isRestfulDestroyToMany}}
-public SimpleResponse {{nickname}}({{#allParams}}{{>pathParams}}{{>headerParams}}{{>bodyParams}}{{>formParams}}{{/allParams}}) {
+public SimpleResponse {{nickname}}({{#allParams}}{{>pathParams}}{{>queryParams}}{{>headerParams}}{{>bodyParams}}{{>formParams}}{{#hasMore}}, {{/hasMore}}{{/allParams}}) {
 
         return LinkRest.service(config)
-                    .unrelate({{returnType}}.class, {{#allParams}}{{#isPathParam}}{{paramName}}{{/isPathParam}}{{/allParams}}, "{{#modelRelations}}{{bodyParam.paramName}}{{/modelRelations}}");
+                    .unrelate({{returnType}}.class, {{#pathParams}}{{paramName}}{{/pathParams}}, "{{#modelRelations}}{{bodyParam.paramName}}{{/modelRelations}}");
     }
 {{/isRestfulDestroyToMany}}
 {{#isRestfulRelatedDestroy}}
-public SimpleResponse {{nickname}}({{#allParams}}{{>pathParams}}{{>headerParams}}{{>bodyParams}}{{>formParams}}, {{/allParams}}@Context UriInfo uriInfo) {
+public SimpleResponse {{nickname}}({{#allParams}}{{>pathParams}}{{>queryParams}}{{>headerParams}}{{>bodyParams}}{{>formParams}}{{#hasMore}}, {{/hasMore}}{{/allParams}}) {
 
         return LinkRest.service(config)
                     .unrelate({{returnType}}.class, {{#pathParams}}{{#-first}}{{paramName}}{{/-first}}{{/pathParams}}, "{{#modelRelations}}{{bodyParam.paramName}}{{/modelRelations}}", {{#pathParams}}{{#-last}}{{paramName}}{{/-last}}{{/pathParams}});
