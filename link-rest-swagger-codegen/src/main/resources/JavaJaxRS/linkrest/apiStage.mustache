@@ -1,0 +1,43 @@
+package {{package}}.stage;
+
+import {{modelPackage}}.*;
+{{#imports}}import {{import}};
+{{/imports}}
+
+import java.util.*;
+import javax.ws.rs.core.*;
+
+import com.nhl.link.rest.runtime.processor.update.UpdateContext;
+import com.nhl.link.rest.runtime.processor.select.SelectContext;
+import org.apache.commons.collections.CollectionUtils;
+
+public class {{classname}}Stage {
+
+    @Context
+    private Configuration config;
+
+{{#operations}}
+{{#operation}}
+    {{#hasCustomParams}}
+    protected void {{nickname}}Impl({{#isBodyAllowed}}UpdateContext{{/isBodyAllowed}}{{^isBodyAllowed}}SelectContext{{/isBodyAllowed}}<{{returnType}}> context, {{#customParameters}}{{{dataType}}} {{paramName}}{{#hasMore}}, {{/hasMore}}{{/customParameters}}) {
+            if (context.getQueryParams() == null) {
+                context.setQueryParams(new HashMap<>());
+            }
+
+        {{#customParameters}}
+            if ({{#isListContainer}}CollectionUtils.isNotEmpty({{paramName}}){{/isListContainer}}{{^isListContainer}}{{paramName}} != null{{/isListContainer}}) {
+                context.getQueryParams().put("{{paramName}}", {{#isListContainer}}{{paramName}}{{/isListContainer}}{{^isListContainer}}Arrays.asList({{paramName}}.toString()){{/isListContainer}});
+            }
+        {{/customParameters}}
+
+            /**
+             * Add custom logic here and specify path to this file in .swagger-codegen-ignore
+             * to avoid overwriting
+             *
+             */
+    }
+    {{/hasCustomParams}}
+{{/operation}}
+{{/operations}}
+}
+

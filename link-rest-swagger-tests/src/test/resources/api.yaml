@@ -888,6 +888,19 @@ paths:
           type: array
           items:
             type: string
+        - name: xyz
+          in: query
+          description: It is user defined multiple parameters
+          required: false
+          type: array
+          items:
+            type: string
+        - name: abc
+          in: query
+          description: It is user defined parameter
+          required: true
+          type: integer
+          format: int32
       responses:
         "200":
           description: Success responce
@@ -966,6 +979,13 @@ paths:
           description: Updated E21 object
           schema:
             $ref: "#/definitions/E21"
+        - name: xyz
+          in: query
+          description: It is user defined multiple parameters
+          required: false
+          type: array
+          items:
+            type: string
       responses:
         default:
           description: successful operation

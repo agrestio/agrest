@@ -13,9 +13,16 @@ import javax.ws.rs.core.*;
 import com.nhl.link.rest.constraints.Constraint;
 import com.nhl.link.rest.LinkRest;
 import com.nhl.link.rest.SimpleResponse;
+{{#hasCustomisation}}
+import com.nhl.link.rest.runtime.processor.update.UpdateContext;
+import com.nhl.link.rest.runtime.processor.select.SelectContext;
+import com.nhl.link.rest.UpdateStage;
+import com.nhl.link.rest.SelectStage;
+import {{package}}.stage.{{classname}}Stage;
+{{/hasCustomisation}}
 
-@Path("{{^useAnnotatedBasePath}}/{{/useAnnotatedBasePath}}{{#useAnnotatedBasePath}}{{contextPath}}{{/useAnnotatedBasePath}}")
-public class {{classname}} {
+@Path("/")
+public class {{classname}}{{#hasCustomisation}} extends {{classname}}Stage{{/hasCustomisation}} {
 
     @Context
     private Configuration config;

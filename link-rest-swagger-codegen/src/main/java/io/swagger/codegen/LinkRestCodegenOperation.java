@@ -3,12 +3,13 @@ package io.swagger.codegen;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.LinkedList;
 import java.util.List;
 
 public class LinkRestCodegenOperation extends CodegenOperation {
 
     public boolean hasCompoundId;
+    public boolean hasCustomParams;
+    public List<CodegenParameter> customParameters = new ArrayList<CodegenParameter>();
     public List<CodegenParameter> modelAttributes = new ArrayList<CodegenParameter>();
     public List<LinkRestCodegenOperation> modelRelations = new ArrayList<LinkRestCodegenOperation>();
 
