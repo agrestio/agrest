@@ -44,17 +44,6 @@ public class MetadataService implements IMetadataService {
 		return e;
 	}
 
-	/**
-	 * @since 1.12
-	 */
-	@Deprecated
-	@Override
-	public <T> LrEntity<T> getLrEntity(Select<T> query) {
-		@SuppressWarnings("unchecked")
-		Class<T> type = (Class<T>) query.getMetaData(entityResolver).getClassDescriptor().getObjectClass();
-		return getLrEntity(type);
-	}
-
 	@Override
 	public <T> LrEntity<T> getEntityByType(Type entityType) {
 		@SuppressWarnings("unchecked")

@@ -104,6 +104,13 @@ public class UpdateContext<T> extends BaseProcessingContext<T> {
 		return updates.iterator().next();
 	}
 
+	/**
+	 * @since 2.13
+	 */
+	public Map<String, List<String>> getProtocolParameters() {
+		return uriInfo != null ? uriInfo.getQueryParameters() : Collections.emptyMap();
+	}
+
 	public UriInfo getUriInfo() {
 		return uriInfo;
 	}
