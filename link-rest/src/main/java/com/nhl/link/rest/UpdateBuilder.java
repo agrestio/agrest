@@ -26,9 +26,6 @@ import java.util.function.Consumer;
  */
 public interface UpdateBuilder<T> {
 
-    static final String INCLUDE     = "include";
-    static final String EXCLUDE     = "exclude";
-
     /**
      * Set an explicit id for the update. In this case only a single object is
      * allowed in the update.

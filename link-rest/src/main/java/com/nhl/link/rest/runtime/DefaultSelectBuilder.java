@@ -35,6 +35,15 @@ import java.util.Map;
  */
 public class DefaultSelectBuilder<T> implements SelectBuilder<T> {
 
+    static final String START = "start";
+    static final String LIMIT = "limit";
+    static final String CAYENNE_EXP = "cayenneExp";
+    static final String MAP_BY = "mapBy";
+    static final String SORT = "sort";
+    static final String DIR = "dir";
+    static final String INCLUDE = "include";
+    static final String EXCLUDE = "exclude";
+
     private static final Logger logger = LoggerFactory.getLogger(DefaultSelectBuilder.class);
 
     protected SelectContext<T> context;

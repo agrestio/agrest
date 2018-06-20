@@ -27,16 +27,6 @@ import java.util.function.Consumer;
  */
 public interface SelectBuilder<T> {
 
-    static final String START       = "start";
-    static final String LIMIT       = "limit";
-    static final String CAYENNE_EXP = "cayenneExp";
-    static final String MAP_BY      = "mapBy";
-    static final String SORT        = "sort";
-    static final String DIR         = "dir";
-    static final String INCLUDE     = "include";
-    static final String EXCLUDE     = "exclude";
-
-
     /**
      * Sets request {@link UriInfo} that is a source of various request
      * parameters.
