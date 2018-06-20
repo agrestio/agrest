@@ -9,7 +9,6 @@ import javax.ws.rs.core.*;
 
 import com.nhl.link.rest.runtime.processor.update.UpdateContext;
 import com.nhl.link.rest.runtime.processor.select.SelectContext;
-import org.apache.commons.collections.CollectionUtils;
 
 public class {{classname}}Stage {
 
@@ -25,7 +24,7 @@ public class {{classname}}Stage {
             }
 
         {{#customParameters}}
-            if ({{#isListContainer}}CollectionUtils.isNotEmpty({{paramName}}){{/isListContainer}}{{^isListContainer}}{{paramName}} != null{{/isListContainer}}) {
+            if ({{#isListContainer}}!{{paramName}}.isEmpty(){{/isListContainer}}{{^isListContainer}}{{paramName}} != null{{/isListContainer}}) {
                 context.getQueryParams().put("{{paramName}}", {{#isListContainer}}{{paramName}}{{/isListContainer}}{{^isListContainer}}Arrays.asList({{paramName}}.toString()){{/isListContainer}});
             }
         {{/customParameters}}

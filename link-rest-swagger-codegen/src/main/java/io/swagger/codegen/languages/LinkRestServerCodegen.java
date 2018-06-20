@@ -1,6 +1,5 @@
 package io.swagger.codegen.languages;
 
-import com.google.common.base.Strings;
 import io.swagger.codegen.CliOption;
 import io.swagger.codegen.CodegenModel;
 import io.swagger.codegen.CodegenOperation;
@@ -88,7 +87,7 @@ public class LinkRestServerCodegen extends AbstractJavaJAXRSServerCodegen implem
 
     @Override
     public void postProcessModelProperty(CodegenModel model, CodegenProperty property) {
-        if (!Strings.isNullOrEmpty(model.classname)) {
+        if (model.classname != null) {
             Set<CodegenProperty> props = models.get(model.classname);
             if (props == null) {
                 props = new HashSet<>();
