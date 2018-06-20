@@ -87,17 +87,6 @@ public interface SelectBuilder<T> {
      * Installs an optional constraint function defining how much of the request entity attributes / relationships
      * the client can see.
      *
-     * @since 1.3
-     * @deprecated since 2.4 in favor of {@link #constraint(Constraint)}.
-     */
-    default SelectBuilder<T> constraints(Constraint<T> constraint) {
-        return constraint(constraint);
-    }
-
-    /**
-     * Installs an optional constraint function defining how much of the request entity attributes / relationships
-     * the client can see.
-     *
      * @param constraint an instance of Constraint function.
      * @return this builder instance.
      * @since 2.4
@@ -237,13 +226,6 @@ public interface SelectBuilder<T> {
     DataResponse<T> get();
 
     /**
-     * @deprecated since 2.4 in favor of {@link #get()}.
-     */
-    default DataResponse<T> select() {
-        return get();
-    }
-
-    /**
      * Runs the query corresponding to the state of this builder, returning
      * response that can be serialized by the framework. The difference with
      * {@link #get()} is that the framework ensures that one and only one
@@ -257,14 +239,6 @@ public interface SelectBuilder<T> {
      * @since 1.2
      */
     DataResponse<T> getOne();
-
-    /**
-     * @deprecated since 2.4 in favor of {@link #getOne()}.
-     */
-    default DataResponse<T> selectOne() {
-        return getOne();
-    }
-
 
     /**
      * Forces the builder to make selection using mapBy query parameter.

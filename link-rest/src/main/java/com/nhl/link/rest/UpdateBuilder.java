@@ -86,20 +86,6 @@ public interface UpdateBuilder<T> {
     UpdateBuilder<T> uri(UriInfo uriInfo);
 
     /**
-     * @deprecated since 2.4 in favor of {@link #readConstraint(Constraint)}.
-     */
-    default UpdateBuilder<T> readConstraints(Constraint<T> constraint) {
-        return readConstraint(constraint);
-    }
-
-    /**
-     * @deprecated since 2.4 in favor of {@link #writeConstraint(Constraint)}.
-     */
-    default UpdateBuilder<T> writeConstraints(Constraint<T> constraint) {
-        return writeConstraint(constraint);
-    }
-
-    /**
      * Installs an optional constraint function defining how much of the request entity attributes / relationships
      * the client can see.
      *

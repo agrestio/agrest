@@ -1,10 +1,7 @@
 package com.nhl.link.rest.runtime.parser.tree;
 
 import com.nhl.link.rest.ResourceEntity;
-import com.nhl.link.rest.runtime.parser.EmptyMultiValuedMap;
 
-import javax.ws.rs.core.MultivaluedMap;
-import javax.ws.rs.core.UriInfo;
 import java.util.List;
 import java.util.Map;
 
@@ -15,18 +12,6 @@ import java.util.Map;
  * @since 1.5
  */
 public interface ITreeProcessor {
-
-    /**
-     * @deprecated since 2.5 in favor of {@link #process(ResourceEntity, Map)}.
-     */
-    @Deprecated
-    default void process(ResourceEntity<?> entity, UriInfo uriInfo) {
-        MultivaluedMap<String, String> parameters = uriInfo != null
-                ? uriInfo.getQueryParameters()
-                : EmptyMultiValuedMap.map();
-
-        process(entity, parameters);
-    }
 
     /**
      * @since 2.5
