@@ -16,8 +16,6 @@ import com.nhl.link.rest.runtime.listener.SelectListenersBuilder;
 import com.nhl.link.rest.runtime.processor.select.SelectContext;
 import com.nhl.link.rest.runtime.processor.select.SelectProcessorFactory;
 import org.apache.cayenne.exp.Property;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -249,7 +247,7 @@ public class DefaultSelectBuilder<T> implements SelectBuilder<T> {
      */
     @Override
     public SelectBuilder<T> mapBy(String mapBy) {
-        if (StringUtils.isNotEmpty(mapBy)) {
+        if (mapBy != null) {
             getOrCreateQueryParams().put(MAP_BY, Arrays.asList(mapBy));
         }
         return this;
@@ -260,7 +258,7 @@ public class DefaultSelectBuilder<T> implements SelectBuilder<T> {
      */
     @Override
     public SelectBuilder<T> cayenneExp(String cayenneExp) {
-        if (StringUtils.isNotEmpty(cayenneExp)) {
+        if (cayenneExp != null) {
             getOrCreateQueryParams().put(CAYENNE_EXP, Arrays.asList(cayenneExp));
         }
         return this;
@@ -287,7 +285,7 @@ public class DefaultSelectBuilder<T> implements SelectBuilder<T> {
      */
     @Override
     public SelectBuilder<T> exclude(List<String> exclude) {
-        if (CollectionUtils.isNotEmpty(exclude)) {
+        if (!exclude.isEmpty()) {
             getOrCreateQueryParams().put(EXCLUDE, exclude);
         }
         return this;
@@ -298,7 +296,7 @@ public class DefaultSelectBuilder<T> implements SelectBuilder<T> {
      */
     @Override
     public SelectBuilder<T> include(List<String> include) {
-        if (CollectionUtils.isNotEmpty(include)) {
+        if (!include.isEmpty()) {
             getOrCreateQueryParams().put(INCLUDE, include);
         }
         return this;
@@ -309,7 +307,7 @@ public class DefaultSelectBuilder<T> implements SelectBuilder<T> {
      */
     @Override
     public SelectBuilder<T> sort(List<String> sort) {
-        if (CollectionUtils.isNotEmpty(sort)) {
+        if (!sort.isEmpty()) {
             getOrCreateQueryParams().put(SORT, sort);
         }
         return this;
@@ -320,7 +318,7 @@ public class DefaultSelectBuilder<T> implements SelectBuilder<T> {
      */
     @Override
     public SelectBuilder<T> dir(String dir) {
-        if (StringUtils.isNotEmpty(dir)) {
+        if (dir != null) {
             getOrCreateQueryParams().put(DIR, Arrays.asList(dir));
         }
         return this;
