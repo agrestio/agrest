@@ -1,6 +1,7 @@
 Release 2.13
 
 #284 Cayenne 4.0.RC1 is out... upgrading
+#296 Implement explicit processing of query parameters without uriInfo
 
 Release 2.12
 
