@@ -31,10 +31,13 @@ import java.util.Map;
  */
 public class DefaultUpdateBuilder<T> implements UpdateBuilder<T> {
 
-    private UpdateContext<T> context;
-    private UpdateListenersBuilder listenersBuilder;
+    static final String INCLUDE = "include";
+    static final String EXCLUDE = "exclude";
+
     protected UpdateProcessorFactory processorFactory;
     protected EnumMap<UpdateStage, Processor<UpdateContext<?>>> processors;
+    private UpdateContext<T> context;
+    private UpdateListenersBuilder listenersBuilder;
 
     public DefaultUpdateBuilder(
             UpdateContext<T> context,
