@@ -74,8 +74,6 @@ import com.nhl.link.rest.runtime.parser.filter.CayenneExpProcessor;
 import com.nhl.link.rest.runtime.parser.filter.ExpressionPostProcessor;
 import com.nhl.link.rest.runtime.parser.filter.ICayenneExpProcessor;
 import com.nhl.link.rest.runtime.parser.filter.IExpressionPostProcessor;
-import com.nhl.link.rest.runtime.parser.filter.IKeyValueExpProcessor;
-import com.nhl.link.rest.runtime.parser.filter.KeyValueExpProcessor;
 import com.nhl.link.rest.runtime.parser.sort.ISortProcessor;
 import com.nhl.link.rest.runtime.parser.sort.SortProcessor;
 import com.nhl.link.rest.runtime.parser.tree.ITreeProcessor;
@@ -568,7 +566,6 @@ public class LinkRestBuilder {
             binder.bind(IConstraintsHandler.class).to(ConstraintsHandler.class);
             binder.bind(ICayenneExpProcessor.class).to(CayenneExpProcessor.class);
             binder.bind(IExpressionPostProcessor.class).to(ExpressionPostProcessor.class);
-            binder.bind(IKeyValueExpProcessor.class).to(KeyValueExpProcessor.class);
 
             binder.bind(IJacksonService.class).to(JacksonService.class);
             binder.bind(ICayennePersister.class).toInstance(cayenneService);

@@ -44,15 +44,6 @@ public interface SelectBuilder<T> {
     SelectBuilder<T> dataEncoder(Encoder encoder);
 
     /**
-     * Configures SelectBuilder for a common scenario of "autocomplete" request,
-     * allowing the server-side code to choose which object property to use for
-     * selecting matching objects.
-     *
-     * @since 1.14
-     */
-    SelectBuilder<T> autocompleteOn(Property<?> autocompleteProperty);
-
-    /**
      * Forces the builder to select a single object by ID.
      */
     SelectBuilder<T> byId(Object id);
@@ -147,7 +138,7 @@ public interface SelectBuilder<T> {
      * {@link SelectServerParamsApplied}, {@link DataFetched}. Annotated method
      * can take two forms, one that doesn't change the flow, and another one -
      * that does:
-     * <p>
+     *
      * <pre>
      * void doSomething(SelectContext<?> context) {
      * }

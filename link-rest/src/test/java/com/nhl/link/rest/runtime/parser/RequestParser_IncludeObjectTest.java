@@ -10,8 +10,6 @@ import com.nhl.link.rest.runtime.parser.cache.PathCache;
 import com.nhl.link.rest.runtime.parser.filter.CayenneExpProcessor;
 import com.nhl.link.rest.runtime.parser.filter.ExpressionPostProcessor;
 import com.nhl.link.rest.runtime.parser.filter.ICayenneExpProcessor;
-import com.nhl.link.rest.runtime.parser.filter.IKeyValueExpProcessor;
-import com.nhl.link.rest.runtime.parser.filter.KeyValueExpProcessor;
 import com.nhl.link.rest.runtime.parser.sort.ISortProcessor;
 import com.nhl.link.rest.runtime.parser.sort.SortProcessor;
 import com.nhl.link.rest.runtime.parser.tree.ITreeProcessor;
@@ -37,12 +35,11 @@ public class RequestParser_IncludeObjectTest extends TestWithCayenneMapping {
 		IPathCache pathCache = new PathCache();
 		IJacksonService jacksonService = new JacksonService();
 		ICayenneExpProcessor expProcessor = new CayenneExpProcessor(jacksonService, new ExpressionPostProcessor(pathCache));
-		IKeyValueExpProcessor kvExpProcessor = new KeyValueExpProcessor();
 
 		ISortProcessor sortProcessor = new SortProcessor(jacksonService, pathCache);
 		ITreeProcessor treeProcessor = new IncludeExcludeProcessor(jacksonService, sortProcessor, expProcessor);
 
-		parser = new RequestParser(treeProcessor, sortProcessor, expProcessor, kvExpProcessor);
+		parser = new RequestParser(treeProcessor, sortProcessor, expProcessor);
 	}
 
 	@Test
@@ -52,7 +49,7 @@ public class RequestParser_IncludeObjectTest extends TestWithCayenneMapping {
 		MultivaluedMap<String, String> params = mock(MultivaluedMap.class);
 		when(params.get("include")).thenReturn(Arrays.asList("{\"path\":\"e3s\"}"));
 
-		ResourceEntity<E2> resourceEntity = parser.parseSelect(getLrEntity(E2.class), params, null);
+		ResourceEntity<E2> resourceEntity = parser.parseSelect(getLrEntity(E2.class), params);
 
 		assertNotNull(resourceEntity);
 		assertTrue(resourceEntity.isIdIncluded());
@@ -68,7 +65,7 @@ public class RequestParser_IncludeObjectTest extends TestWithCayenneMapping {
 		MultivaluedMap<String, String> params = mock(MultivaluedMap.class);
 		when(params.get("include")).thenReturn(Arrays.asList("{\"path\":\"e3s\",\"mapBy\":\"e5\"}"));
 
-		ResourceEntity<E2> resourceEntity = parser.parseSelect(getLrEntity(E2.class), params, null);
+		ResourceEntity<E2> resourceEntity = parser.parseSelect(getLrEntity(E2.class), params);
 
 		assertNotNull(resourceEntity);
 

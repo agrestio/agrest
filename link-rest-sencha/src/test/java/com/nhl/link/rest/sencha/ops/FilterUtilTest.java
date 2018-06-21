@@ -1,10 +1,9 @@
-package com.nhl.link.rest.runtime.parser.filter;
+package com.nhl.link.rest.sencha.ops;
 
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 
-@Deprecated
 public class FilterUtilTest {
 
     @Test

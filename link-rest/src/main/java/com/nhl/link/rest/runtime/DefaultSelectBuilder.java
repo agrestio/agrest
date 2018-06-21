@@ -153,12 +153,6 @@ public class DefaultSelectBuilder<T> implements SelectBuilder<T> {
     }
 
     @Override
-    public SelectBuilder<T> autocompleteOn(Property<?> autocompleteProperty) {
-        context.setAutocompleteProperty(autocompleteProperty != null ? autocompleteProperty.getName() : null);
-        return this;
-    }
-
-    @Override
     public SelectBuilder<T> property(String name) {
         return property(name, PropertyBuilder.property());
     }
