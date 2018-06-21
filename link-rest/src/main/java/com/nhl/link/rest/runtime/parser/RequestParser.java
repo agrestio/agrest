@@ -10,16 +10,12 @@ import com.nhl.link.rest.runtime.parser.tree.ITreeProcessor;
 import com.nhl.link.rest.runtime.parser.tree.IncludeWorker;
 import org.apache.cayenne.di.Inject;
 import org.apache.cayenne.exp.Expression;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.Map;
 
 public class RequestParser implements IRequestParser {
-
-	private static final Logger LOGGER = LoggerFactory.getLogger(RequestParser.class);
-
+    
 	private static final String START = "start";
 	private static final String LIMIT = "limit";
 	private static final String CAYENNE_EXP = "cayenneExp";
