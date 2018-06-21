@@ -6,7 +6,8 @@ import com.nhl.link.rest.runtime.parser.BaseRequestProcessor;
 import com.nhl.link.rest.runtime.parser.RequestParser;
 import com.nhl.link.rest.runtime.parser.filter.ICayenneExpProcessor;
 import com.nhl.link.rest.runtime.parser.sort.ISortProcessor;
-import com.nhl.link.rest.runtime.parser.tree.ITreeProcessor;
+import com.nhl.link.rest.runtime.parser.tree.IExcludeProcessor;
+import com.nhl.link.rest.runtime.parser.tree.IIncludeProcessor;
 import org.apache.cayenne.di.Inject;
 import org.apache.cayenne.exp.Expression;
 
@@ -23,12 +24,13 @@ public class SenchaRequestParser extends RequestParser {
 	private ISenchaFilterProcessor senchaFilterProcessor;
 
 	public SenchaRequestParser(
-			@Inject ITreeProcessor treeProcessor,
-			@Inject ISortProcessor sortProcessor,
-			@Inject ICayenneExpProcessor cayenneExpProcessor,
-			@Inject ISenchaFilterProcessor senchaFilterProcessor) {
+            @Inject IIncludeProcessor includeProcessor,
+            @Inject IExcludeProcessor excludeProcessor,
+            @Inject ISortProcessor sortProcessor,
+            @Inject ICayenneExpProcessor cayenneExpProcessor,
+            @Inject ISenchaFilterProcessor senchaFilterProcessor) {
 
-		super(treeProcessor, sortProcessor, cayenneExpProcessor);
+		super(includeProcessor, excludeProcessor, sortProcessor, cayenneExpProcessor);
 
 		this.senchaFilterProcessor = senchaFilterProcessor;
 	}
