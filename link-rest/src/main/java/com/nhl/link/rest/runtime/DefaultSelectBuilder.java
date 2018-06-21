@@ -296,13 +296,10 @@ public class DefaultSelectBuilder<T> implements SelectBuilder<T> {
         return this;
     }
 
-    /**
-     * @since 2.13
-     */
     @Override
-    public SelectBuilder<T> sort(List<String> sort) {
-        if (!sort.isEmpty()) {
-            getOrCreateQueryParams().put(SORT, sort);
+    public SelectBuilder<T> sort(String sortSpec) {
+        if (sortSpec != null) {
+            getOrCreateQueryParams().put(SORT, Arrays.asList(sortSpec));
         }
         return this;
     }

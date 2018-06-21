@@ -278,7 +278,7 @@ public interface SelectBuilder<T> {
      *
      * @since 2.13
      */
-    SelectBuilder<T> sort(List<String> sort);
+    SelectBuilder<T> sort(String sortSpec);
 
     /**
      * Forces the builder to set direction of sorting.
