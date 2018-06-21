@@ -19,11 +19,7 @@ public class RequestParser implements IRequestParser {
     private static final String LIMIT = "limit";
     private static final String CAYENNE_EXP = "cayenneExp";
     private static final String MAP_BY = "mapBy";
-
-    // TODO: the name of this key is a Sencha holdover.. make it configurable
-    // and keep "query" under Sencha adapter
-    private static final String QUERY = "query";
-
+    
     private ITreeProcessor treeProcessor;
     private ISortProcessor sortProcessor;
     private ICayenneExpProcessor cayenneExpProcessor;
