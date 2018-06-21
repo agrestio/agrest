@@ -14,7 +14,7 @@ public interface IRequestParser {
     /**
      * @since 2.5
      */
-    <T> ResourceEntity<T> parseSelect(LrEntity<T> entity, Map<String, List<String>> protocolParameters, String autocompleteProperty);
+    <T> ResourceEntity<T> parseSelect(LrEntity<T> entity, Map<String, List<String>> protocolParameters);
 
     /**
      * Parses request control parameters, creating a {@link ResourceEntity}, representing updating client request.

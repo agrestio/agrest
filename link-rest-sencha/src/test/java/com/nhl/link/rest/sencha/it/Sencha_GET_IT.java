@@ -2,9 +2,11 @@ package com.nhl.link.rest.sencha.it;
 
 import com.nhl.link.rest.DataResponse;
 import com.nhl.link.rest.LinkRest;
+import com.nhl.link.rest.SelectStage;
 import com.nhl.link.rest.it.fixture.JerseyTestOnDerby;
 import com.nhl.link.rest.it.fixture.cayenne.E2;
 import com.nhl.link.rest.it.fixture.cayenne.E3;
+import com.nhl.link.rest.sencha.SenchaOps;
 import org.apache.cayenne.query.SQLTemplate;
 import org.junit.Test;
 
@@ -187,6 +189,30 @@ public class Sencha_GET_IT extends JerseyTestOnDerby {
 		assertEquals("{\"success\":true,\"data\":[{\"id\":1}],\"total\":1}", response1.readEntity(String.class));
 	}
 
+    @Test
+    public void testGet_StartsWith() {
+
+        insert("e2", "id, name", "1, 'Axx'");
+        insert("e2", "id, name", "2, 'Bxx'");
+        insert("e2", "id, name", "3, 'cxx'");
+
+        Response r1 = target("/e2_startwith")
+                .queryParam("include", "id")
+                .queryParam("query", "a")
+                .queryParam("sort", "id").request().get();
+
+        assertEquals(Status.OK.getStatusCode(), r1.getStatus());
+        assertEquals("{\"success\":true,\"data\":[{\"id\":1}],\"total\":1}", r1.readEntity(String.class));
+
+        Response r2 = target("/e2_startwith")
+                .queryParam("include", "id")
+                .queryParam("query", "C")
+                .queryParam("sort", "id").request().get();
+
+        assertEquals(Status.OK.getStatusCode(), r2.getStatus());
+        assertEquals("{\"success\":true,\"data\":[{\"id\":3}],\"total\":1}", r2.readEntity(String.class));
+    }
+
 	@Path("")
 	public static class Resource {
 
@@ -216,5 +242,15 @@ public class Sencha_GET_IT extends JerseyTestOnDerby {
         public DataResponse<E3> getById(@PathParam("id") int id, @Context UriInfo uriInfo) {
             return LinkRest.service(config).selectById(E3.class, id, uriInfo);
         }
+
+		@GET
+		@Path("e2_startwith")
+		public DataResponse<E2> getE2_StartsWith(@Context UriInfo uriInfo) {
+			return LinkRest
+					.service(config)
+					.select(E2.class)
+					.stage(SelectStage.ASSEMBLE_QUERY, SenchaOps.startsWithFilter(E2.NAME, uriInfo))
+					.uri(uriInfo).get();
+		}
 	}
 }

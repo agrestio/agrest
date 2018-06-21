@@ -9,8 +9,6 @@ import com.nhl.link.rest.runtime.parser.cache.PathCache;
 import com.nhl.link.rest.runtime.parser.filter.CayenneExpProcessor;
 import com.nhl.link.rest.runtime.parser.filter.ExpressionPostProcessor;
 import com.nhl.link.rest.runtime.parser.filter.ICayenneExpProcessor;
-import com.nhl.link.rest.runtime.parser.filter.IKeyValueExpProcessor;
-import com.nhl.link.rest.runtime.parser.filter.KeyValueExpProcessor;
 import com.nhl.link.rest.runtime.parser.sort.ISortProcessor;
 import com.nhl.link.rest.runtime.parser.tree.ITreeProcessor;
 import com.nhl.link.rest.runtime.parser.tree.IncludeExcludeProcessor;
@@ -42,13 +40,11 @@ public class SenchaRequestParserTest extends TestWithCayenneMapping {
 		ISortProcessor sortProcessor = new SenchaSortProcessor(jacksonService, pathCache);
 
 		ICayenneExpProcessor expProcessor = new CayenneExpProcessor(jacksonService, new ExpressionPostProcessor(pathCache));
-		IKeyValueExpProcessor kvExpProcessor = new KeyValueExpProcessor();
 		ISenchaFilterProcessor senchaFilterProcessor = new SenchaFilterProcessor(jacksonService, pathCache,
 				new ExpressionPostProcessor(pathCache));
 		ITreeProcessor treeProcessor = new IncludeExcludeProcessor(jacksonService, sortProcessor, expProcessor);
 
-		parser = new SenchaRequestParser(treeProcessor, sortProcessor, expProcessor, kvExpProcessor,
-				senchaFilterProcessor);
+		this.parser = new SenchaRequestParser(treeProcessor, sortProcessor, expProcessor, senchaFilterProcessor);
 	}
 
 	@Test
@@ -58,25 +54,12 @@ public class SenchaRequestParserTest extends TestWithCayenneMapping {
 		MultivaluedMap<String, String> params = mock(MultivaluedMap.class);
 		when(params.get(SenchaRequestParser.FILTER)).thenReturn(Collections.singletonList("[{\"property\":\"name\",\"value\":\"xyz\"}]"));
 
-		ResourceEntity<E2> resourceEntity = parser.parseSelect(getLrEntity(E2.class), params, null);
+		ResourceEntity<E2> resourceEntity = parser.parseSelect(getLrEntity(E2.class), params);
 
 		assertNotNull(resourceEntity.getQualifier());
 		assertEquals(exp("name likeIgnoreCase 'xyz%'"), resourceEntity.getQualifier());
 	}
 
-	@Test
-	public void testSelectRequest_Query_Filter() {
-
-		@SuppressWarnings("unchecked")
-		MultivaluedMap<String, String> params = mock(MultivaluedMap.class);
-		when(params.get("query")).thenReturn(Collections.singletonList("Bla"));
-		when(params.get(SenchaRequestParser.FILTER)).thenReturn(Collections.singletonList("[{\"property\":\"name\",\"value\":\"xyz\"}]"));
-
-		ResourceEntity<E2> resourceEntity = parser.parseSelect(getLrEntity(E2.class), params, E2.NAME.getName());
-
-		assertNotNull(resourceEntity.getQualifier());
-		assertEquals(exp("name likeIgnoreCase 'Bla%' and name likeIgnoreCase 'xyz%'"), resourceEntity.getQualifier());
-	}
 
 	@Test
 	public void testSelectRequest_Filter_CayenneExp() {
@@ -86,7 +69,7 @@ public class SenchaRequestParserTest extends TestWithCayenneMapping {
 		when(params.get("cayenneExp")).thenReturn(Collections.singletonList("{\"exp\" : \"address = '1 Main Street'\"}"));
 		when(params.get(SenchaRequestParser.FILTER)).thenReturn(Collections.singletonList("[{\"property\":\"name\",\"value\":\"xyz\"}]"));
 
-		ResourceEntity<E2> resourceEntity = parser.parseSelect(getLrEntity(E2.class), params, null);
+		ResourceEntity<E2> resourceEntity = parser.parseSelect(getLrEntity(E2.class), params);
 
 		assertNotNull(resourceEntity.getQualifier());
 		assertEquals(exp("address = '1 Main Street' and name likeIgnoreCase 'xyz%'"), resourceEntity.getQualifier());
@@ -103,7 +86,7 @@ public class SenchaRequestParserTest extends TestWithCayenneMapping {
 				Collections.singletonList("[{\"property\":\"id\",\"direction\":\"DESC\"},{\"property\":\"address\",\"direction\":\"ASC\"}]"));
 
 
-		ResourceEntity<E2> resourceEntity = parser.parseSelect(getLrEntity(E2.class), params, null);
+		ResourceEntity<E2> resourceEntity = parser.parseSelect(getLrEntity(E2.class), params);
 
 		assertEquals(3, resourceEntity.getOrderings().size());
 		Iterator<Ordering> it = resourceEntity.getOrderings().iterator();
