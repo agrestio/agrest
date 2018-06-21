@@ -5,8 +5,9 @@ import com.nhl.link.rest.meta.LrAttribute;
 import com.nhl.link.rest.meta.LrEntity;
 import com.nhl.link.rest.runtime.parser.filter.ICayenneExpProcessor;
 import com.nhl.link.rest.runtime.parser.sort.ISortProcessor;
-import com.nhl.link.rest.runtime.parser.tree.ITreeProcessor;
-import com.nhl.link.rest.runtime.parser.tree.IncludeWorker;
+import com.nhl.link.rest.runtime.parser.tree.IExcludeProcessor;
+import com.nhl.link.rest.runtime.parser.tree.IIncludeProcessor;
+import com.nhl.link.rest.runtime.parser.tree.IncludeProcessor;
 import org.apache.cayenne.di.Inject;
 import org.apache.cayenne.exp.Expression;
 
@@ -15,23 +16,28 @@ import java.util.Map;
 
 public class RequestParser implements IRequestParser {
 
+    private static final String INCLUDE = "include";
+    private static final String EXCLUDE = "exclude";
     private static final String START = "start";
     private static final String LIMIT = "limit";
     private static final String CAYENNE_EXP = "cayenneExp";
     private static final String MAP_BY = "mapBy";
     
-    private ITreeProcessor treeProcessor;
+    private IIncludeProcessor includeProcessor;
+    private IExcludeProcessor excludeProcessor;
     private ISortProcessor sortProcessor;
     private ICayenneExpProcessor cayenneExpProcessor;
 
 
     public RequestParser(
-            @Inject ITreeProcessor treeProcessor,
+            @Inject IIncludeProcessor includeProcessor,
+            @Inject IExcludeProcessor excludeProcessor,
             @Inject ISortProcessor sortProcessor,
             @Inject ICayenneExpProcessor cayenneExpProcessor) {
 
+        this.includeProcessor = includeProcessor;
+        this.excludeProcessor = excludeProcessor;
         this.sortProcessor = sortProcessor;
-        this.treeProcessor = treeProcessor;
         this.cayenneExpProcessor = cayenneExpProcessor;
     }
 
@@ -44,7 +50,11 @@ public class RequestParser implements IRequestParser {
         resourceEntity.setFetchOffset(BaseRequestProcessor.integer(protocolParameters, START));
         resourceEntity.setFetchLimit(BaseRequestProcessor.integer(protocolParameters, LIMIT));
 
-        treeProcessor.process(resourceEntity, protocolParameters);
+        // process even if no parameters exist ... this will result in
+        // default includes
+        includeProcessor.process(resourceEntity, BaseRequestProcessor.strings(protocolParameters, INCLUDE));
+        excludeProcessor.process(resourceEntity, BaseRequestProcessor.strings(protocolParameters, EXCLUDE));
+
         sortProcessor.process(resourceEntity, protocolParameters);
 
         processMapBy(resourceEntity, protocolParameters);
@@ -58,7 +68,12 @@ public class RequestParser implements IRequestParser {
     @Override
     public <T> ResourceEntity<T> parseUpdate(LrEntity<T> entity, Map<String, List<String>> protocolParameters) {
         ResourceEntity<T> resourceEntity = new ResourceEntity<>(entity);
-        treeProcessor.process(resourceEntity, protocolParameters);
+
+        // process even if no parameters exist ... this will result in
+        // default includes
+        includeProcessor.process(resourceEntity, BaseRequestProcessor.strings(protocolParameters, INCLUDE));
+        excludeProcessor.process(resourceEntity, BaseRequestProcessor.strings(protocolParameters, EXCLUDE));
+
         return resourceEntity;
     }
 
@@ -72,7 +87,7 @@ public class RequestParser implements IRequestParser {
                 descriptor.mapBy(mapBy, attribute.getName());
             } else {
                 ResourceEntity<?> mapBy = new ResourceEntity<>(descriptor.getLrEntity());
-                IncludeWorker.processIncludePath(mapBy, mapByPath);
+                IncludeProcessor.processIncludePath(mapBy, mapByPath);
                 descriptor.mapBy(mapBy, mapByPath);
             }
         }

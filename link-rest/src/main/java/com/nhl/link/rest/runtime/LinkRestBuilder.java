@@ -76,8 +76,10 @@ import com.nhl.link.rest.runtime.parser.filter.ICayenneExpProcessor;
 import com.nhl.link.rest.runtime.parser.filter.IExpressionPostProcessor;
 import com.nhl.link.rest.runtime.parser.sort.ISortProcessor;
 import com.nhl.link.rest.runtime.parser.sort.SortProcessor;
-import com.nhl.link.rest.runtime.parser.tree.ITreeProcessor;
-import com.nhl.link.rest.runtime.parser.tree.IncludeExcludeProcessor;
+import com.nhl.link.rest.runtime.parser.tree.ExcludeProcessor;
+import com.nhl.link.rest.runtime.parser.tree.IExcludeProcessor;
+import com.nhl.link.rest.runtime.parser.tree.IIncludeProcessor;
+import com.nhl.link.rest.runtime.parser.tree.IncludeProcessor;
 import com.nhl.link.rest.runtime.processor.delete.DeleteProcessorFactory;
 import com.nhl.link.rest.runtime.processor.meta.CollectMetadataStage;
 import com.nhl.link.rest.runtime.processor.meta.MetadataProcessorFactory;
@@ -572,7 +574,8 @@ public class LinkRestBuilder {
 
             binder.bind(IPathCache.class).to(PathCache.class);
             binder.bind(ISortProcessor.class).to(SortProcessor.class);
-            binder.bind(ITreeProcessor.class).to(IncludeExcludeProcessor.class);
+            binder.bind(IIncludeProcessor.class).to(IncludeProcessor.class);
+            binder.bind(IExcludeProcessor.class).to(ExcludeProcessor.class);
 
             binder.bind(IResourceParser.class).to(ResourceParser.class);
             binder.bind(IUpdateParser.class).to(UpdateParser.class);

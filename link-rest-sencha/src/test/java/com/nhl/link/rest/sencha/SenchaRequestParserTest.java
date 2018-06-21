@@ -10,8 +10,10 @@ import com.nhl.link.rest.runtime.parser.filter.CayenneExpProcessor;
 import com.nhl.link.rest.runtime.parser.filter.ExpressionPostProcessor;
 import com.nhl.link.rest.runtime.parser.filter.ICayenneExpProcessor;
 import com.nhl.link.rest.runtime.parser.sort.ISortProcessor;
-import com.nhl.link.rest.runtime.parser.tree.ITreeProcessor;
-import com.nhl.link.rest.runtime.parser.tree.IncludeExcludeProcessor;
+import com.nhl.link.rest.runtime.parser.tree.ExcludeProcessor;
+import com.nhl.link.rest.runtime.parser.tree.IExcludeProcessor;
+import com.nhl.link.rest.runtime.parser.tree.IIncludeProcessor;
+import com.nhl.link.rest.runtime.parser.tree.IncludeProcessor;
 import com.nhl.link.rest.unit.TestWithCayenneMapping;
 import org.apache.cayenne.query.Ordering;
 import org.apache.cayenne.query.SortOrder;
@@ -42,9 +44,10 @@ public class SenchaRequestParserTest extends TestWithCayenneMapping {
 		ICayenneExpProcessor expProcessor = new CayenneExpProcessor(jacksonService, new ExpressionPostProcessor(pathCache));
 		ISenchaFilterProcessor senchaFilterProcessor = new SenchaFilterProcessor(jacksonService, pathCache,
 				new ExpressionPostProcessor(pathCache));
-		ITreeProcessor treeProcessor = new IncludeExcludeProcessor(jacksonService, sortProcessor, expProcessor);
+		IIncludeProcessor includeProcessor = new IncludeProcessor(jacksonService, sortProcessor, expProcessor);
+		IExcludeProcessor excludeProcessor = new ExcludeProcessor(jacksonService);
 
-		this.parser = new SenchaRequestParser(treeProcessor, sortProcessor, expProcessor, senchaFilterProcessor);
+		this.parser = new SenchaRequestParser(includeProcessor, excludeProcessor, sortProcessor, expProcessor, senchaFilterProcessor);
 	}
 
 	@Test
