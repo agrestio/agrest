@@ -4,7 +4,8 @@
 
 Support for "query" protocol parameter (doing case insensitive "starts with" search on a server-specified property) 
 is now limited to the Sencha flavor of LinkRest. Base LinkRest no longer supports this operation. If you are using `link-rest-sencha`,
-replace calls to `SelectBuilder.autocompleteOn` with calls to `.stage(SelectStage.ASSEMBLE_QUERY, SenchaOps.startsWithFilter(T.NAME, uriInfo))`.
+replace calls to `SelectBuilder.autocompleteOn` with calls to `.stage(SelectStage.PARSE_REQUEST, SenchaOps.startsWithFilter(T.NAME, uriInfo))`.
+Either SelectStage.PARSE_REQUEST or SelectStage.ASSEMBLE_QUERY stages can be used.
 If you are not using the Sencha module, you can inspect `SenchaOps` code implement a similar function on your own.
 
 

@@ -190,13 +190,13 @@ public class Sencha_GET_IT extends JerseyTestOnDerby {
 	}
 
     @Test
-    public void testGet_StartsWith() {
+    public void testGet_StartsWith_AfterParseRequest() {
 
         insert("e2", "id, name", "1, 'Axx'");
         insert("e2", "id, name", "2, 'Bxx'");
         insert("e2", "id, name", "3, 'cxx'");
 
-        Response r1 = target("/e2_startwith")
+        Response r1 = target("/e2_startwith_pr")
                 .queryParam("include", "id")
                 .queryParam("query", "a")
                 .queryParam("sort", "id").request().get();
@@ -204,7 +204,31 @@ public class Sencha_GET_IT extends JerseyTestOnDerby {
         assertEquals(Status.OK.getStatusCode(), r1.getStatus());
         assertEquals("{\"success\":true,\"data\":[{\"id\":1}],\"total\":1}", r1.readEntity(String.class));
 
-        Response r2 = target("/e2_startwith")
+        Response r2 = target("/e2_startwith_pr")
+                .queryParam("include", "id")
+                .queryParam("query", "C")
+                .queryParam("sort", "id").request().get();
+
+        assertEquals(Status.OK.getStatusCode(), r2.getStatus());
+        assertEquals("{\"success\":true,\"data\":[{\"id\":3}],\"total\":1}", r2.readEntity(String.class));
+    }
+
+    @Test
+    public void testGet_StartsWith_AfterAssembleQuery() {
+
+        insert("e2", "id, name", "1, 'Axx'");
+        insert("e2", "id, name", "2, 'Bxx'");
+        insert("e2", "id, name", "3, 'cxx'");
+
+        Response r1 = target("/e2_startwith_aq")
+                .queryParam("include", "id")
+                .queryParam("query", "a")
+                .queryParam("sort", "id").request().get();
+
+        assertEquals(Status.OK.getStatusCode(), r1.getStatus());
+        assertEquals("{\"success\":true,\"data\":[{\"id\":1}],\"total\":1}", r1.readEntity(String.class));
+
+        Response r2 = target("/e2_startwith_aq")
                 .queryParam("include", "id")
                 .queryParam("query", "C")
                 .queryParam("sort", "id").request().get();
@@ -243,9 +267,19 @@ public class Sencha_GET_IT extends JerseyTestOnDerby {
             return LinkRest.service(config).selectById(E3.class, id, uriInfo);
         }
 
+        @GET
+        @Path("e2_startwith_pr")
+        public DataResponse<E2> getE2_StartsWith_ParseRequest(@Context UriInfo uriInfo) {
+            return LinkRest
+                    .service(config)
+                    .select(E2.class)
+                    .stage(SelectStage.PARSE_REQUEST, SenchaOps.startsWithFilter(E2.NAME, uriInfo))
+                    .uri(uriInfo).get();
+        }
+
 		@GET
-		@Path("e2_startwith")
-		public DataResponse<E2> getE2_StartsWith(@Context UriInfo uriInfo) {
+		@Path("e2_startwith_aq")
+		public DataResponse<E2> getE2_StartsWith_AssembleQuery(@Context UriInfo uriInfo) {
 			return LinkRest
 					.service(config)
 					.select(E2.class)
