@@ -1,5 +1,11 @@
 ## Upgrading to 2.13
 
+### Removed listeners and listener annotations [#300](https://github.com/nhl/link-rest/issues/300)
+
+As a part of the effort cleaning up deprecated API, support for stage listeners and stage listener annotations was removed.
+If you need to extend LinkRest processing chains, you should be using "stage" and "terminalStage" methods with custom lambdas.
+Those are more flexible and easy to understand.
+
 ### "query" protocol parameter was moved to "link-rest-sencha" [#301](https://github.com/nhl/link-rest/issues/301)
 
 Support for "query" protocol parameter (doing case insensitive "starts with" search on a server-specified property) 
