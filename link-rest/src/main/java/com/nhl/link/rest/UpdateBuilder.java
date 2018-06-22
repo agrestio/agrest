@@ -1,10 +1,5 @@
 package com.nhl.link.rest;
 
-import com.nhl.link.rest.annotation.listener.DataStoreUpdated;
-import com.nhl.link.rest.annotation.listener.UpdateChainInitialized;
-import com.nhl.link.rest.annotation.listener.UpdateRequestParsed;
-import com.nhl.link.rest.annotation.listener.UpdateResponseUpdated;
-import com.nhl.link.rest.annotation.listener.UpdateServerParamsApplied;
 import com.nhl.link.rest.constraints.Constraint;
 import com.nhl.link.rest.processor.Processor;
 import com.nhl.link.rest.processor.ProcessorOutcome;
@@ -127,29 +122,6 @@ public interface UpdateBuilder<T> {
      * @since 1.20
      */
     UpdateBuilder<T> mapper(Property<?> property);
-
-    /**
-     * Adds an annotated listener that will be notified of completion of
-     * individual stages during request processing. Recognized annotations are
-     * {@link UpdateChainInitialized}, {@link UpdateRequestParsed},
-     * {@link UpdateServerParamsApplied}, {@link DataStoreUpdated},
-     * {@link UpdateResponseUpdated}. Annotated method can take two forms, one
-     * that doesn't change the flow, and another one - that may:
-     * <p>
-     * <pre>
-     * void doSomething(UpdateContext<?> context) {
-     * }
-     *
-     * <T> ProcessingStage<UpdateContext<T>, T> doSomethingWithTheFlow(UpdateContext<T> context,
-     * 		ProcessingStage<UpdateContext<T>, T> next) {
-     * }
-     * </pre>
-     *
-     * @since 1.19
-     * @deprecated since 2.7 use annotation-free functional form of listeners: {@link #stage(UpdateStage, Consumer)},
-     * {@link #terminalStage(UpdateStage, Consumer)} and {@link #routingStage(UpdateStage, Processor)}.
-     */
-    UpdateBuilder<T> listener(Object listener);
 
     /**
      * Registers a consumer to be executed after a specified standard execution stage. The consumer can inspect and

@@ -8,7 +8,6 @@ import com.nhl.link.rest.MetadataBuilder;
 import com.nhl.link.rest.SelectBuilder;
 import com.nhl.link.rest.SimpleResponse;
 import com.nhl.link.rest.UpdateBuilder;
-import com.nhl.link.rest.runtime.listener.IListenerService;
 import com.nhl.link.rest.runtime.processor.delete.DeleteContext;
 import com.nhl.link.rest.runtime.processor.delete.DeleteProcessorFactory;
 import com.nhl.link.rest.runtime.processor.meta.MetadataContext;
@@ -32,7 +31,6 @@ import java.util.Map;
  */
 public class DefaultLinkRestService implements ILinkRestService {
 
-    private IListenerService listenerService;
     private SelectProcessorFactory selectProcessorFactory;
     private DeleteProcessorFactory deleteProcessorFactory;
     private UpdateProcessorFactoryFactory updateProcessorFactoryFactory;
@@ -44,15 +42,13 @@ public class DefaultLinkRestService implements ILinkRestService {
             @Inject DeleteProcessorFactory deleteProcessorFactory,
             @Inject UpdateProcessorFactoryFactory updateProcessorFactoryFactory,
             @Inject MetadataProcessorFactory metadataProcessorFactory,
-            @Inject UnrelateProcessorFactory unrelateProcessorFactory,
-            @Inject IListenerService listenerService) {
+            @Inject UnrelateProcessorFactory unrelateProcessorFactory) {
 
         this.selectProcessorFactory = selectProcessorFactory;
         this.deleteProcessorFactory = deleteProcessorFactory;
         this.updateProcessorFactoryFactory = updateProcessorFactoryFactory;
         this.metadataProcessorFactory = metadataProcessorFactory;
         this.unrelateProcessorFactory = unrelateProcessorFactory;
-        this.listenerService = listenerService;
     }
 
     @Override
@@ -72,7 +68,7 @@ public class DefaultLinkRestService implements ILinkRestService {
     }
 
     private <T> SelectBuilder<T> toSelectBuilder(SelectContext<T> context) {
-        return new DefaultSelectBuilder<>(context, selectProcessorFactory, listenerService);
+        return new DefaultSelectBuilder<>(context, selectProcessorFactory);
     }
 
     /**
@@ -145,8 +141,7 @@ public class DefaultLinkRestService implements ILinkRestService {
     public <T> UpdateBuilder<T> create(Class<T> type) {
         UpdateContext<T> context = new UpdateContext<>(type);
         return new DefaultUpdateBuilder<>(context,
-                updateProcessorFactoryFactory.getFactory(UpdateOperation.create),
-                listenerService);
+                updateProcessorFactoryFactory.getFactory(UpdateOperation.create));
     }
 
     /**
@@ -156,8 +151,7 @@ public class DefaultLinkRestService implements ILinkRestService {
     public <T> UpdateBuilder<T> createOrUpdate(Class<T> type) {
         UpdateContext<T> context = new UpdateContext<>(type);
         return new DefaultUpdateBuilder<>(context,
-                updateProcessorFactoryFactory.getFactory(UpdateOperation.createOrUpdate),
-                listenerService);
+                updateProcessorFactoryFactory.getFactory(UpdateOperation.createOrUpdate));
     }
 
     /**
@@ -167,8 +161,7 @@ public class DefaultLinkRestService implements ILinkRestService {
     public <T> UpdateBuilder<T> idempotentCreateOrUpdate(Class<T> type) {
         UpdateContext<T> context = new UpdateContext<>(type);
         return new DefaultUpdateBuilder<>(context,
-                updateProcessorFactoryFactory.getFactory(UpdateOperation.idempotentCreateOrUpdate),
-                listenerService);
+                updateProcessorFactoryFactory.getFactory(UpdateOperation.idempotentCreateOrUpdate));
     }
 
     /**
@@ -178,8 +171,7 @@ public class DefaultLinkRestService implements ILinkRestService {
     public <T> UpdateBuilder<T> idempotentFullSync(Class<T> type) {
         UpdateContext<T> context = new UpdateContext<>(type);
         return new DefaultUpdateBuilder<>(context,
-                updateProcessorFactoryFactory.getFactory(UpdateOperation.idempotentFullSync),
-                listenerService);
+                updateProcessorFactoryFactory.getFactory(UpdateOperation.idempotentFullSync));
     }
 
     /**
@@ -189,8 +181,7 @@ public class DefaultLinkRestService implements ILinkRestService {
     public <T> UpdateBuilder<T> update(Class<T> type) {
         UpdateContext<T> context = new UpdateContext<>(type);
         return new DefaultUpdateBuilder<>(context,
-                updateProcessorFactoryFactory.getFactory(UpdateOperation.update),
-                listenerService);
+                updateProcessorFactoryFactory.getFactory(UpdateOperation.update));
     }
 
     /**

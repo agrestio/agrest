@@ -1,9 +1,5 @@
 package com.nhl.link.rest;
 
-import com.nhl.link.rest.annotation.listener.DataFetched;
-import com.nhl.link.rest.annotation.listener.SelectChainInitialized;
-import com.nhl.link.rest.annotation.listener.SelectRequestParsed;
-import com.nhl.link.rest.annotation.listener.SelectServerParamsApplied;
 import com.nhl.link.rest.constraints.Constraint;
 import com.nhl.link.rest.encoder.Encoder;
 import com.nhl.link.rest.meta.LrEntityOverlay;
@@ -129,29 +125,6 @@ public interface SelectBuilder<T> {
      * @since 1.2
      */
     SelectBuilder<T> fetchLimit(int limit);
-
-    /**
-     * Adds an annotated listener that will be notified of completion of
-     * individual stages during request processing. Recognized annotations are
-     * {@link SelectChainInitialized}, {@link SelectRequestParsed},
-     * {@link SelectServerParamsApplied}, {@link DataFetched}. Annotated method
-     * can take two forms, one that doesn't change the flow, and another one -
-     * that does:
-     *
-     * <pre>
-     * void doSomething(SelectContext<?> context) {
-     * }
-     *
-     * <T> ProcessingStage<SelectContext<T>, T> doSomethingWithTheFlow(SelectContext<T> context,
-     * 		ProcessingStage<SelectContext<T>, T> next) {
-     * }
-     * </pre>
-     *
-     * @since 1.19
-     * @deprecated since 2.7 use annotation-free functional form of listeners: {@link #stage(SelectStage, Consumer)},
-     * {@link #terminalStage(SelectStage, Consumer)} and {@link #routingStage(SelectStage, Processor)}.
-     */
-    SelectBuilder<T> listener(Object listener);
 
     /**
      * Registers a consumer to be executed after a specified standard execution stage. The consumer can inspect and

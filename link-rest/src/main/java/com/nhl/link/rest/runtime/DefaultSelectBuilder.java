@@ -11,8 +11,6 @@ import com.nhl.link.rest.constraints.Constraint;
 import com.nhl.link.rest.encoder.Encoder;
 import com.nhl.link.rest.processor.Processor;
 import com.nhl.link.rest.property.PropertyBuilder;
-import com.nhl.link.rest.runtime.listener.IListenerService;
-import com.nhl.link.rest.runtime.listener.SelectListenersBuilder;
 import com.nhl.link.rest.runtime.processor.select.SelectContext;
 import com.nhl.link.rest.runtime.processor.select.SelectProcessorFactory;
 import org.apache.cayenne.exp.Property;
@@ -35,16 +33,13 @@ public class DefaultSelectBuilder<T> implements SelectBuilder<T> {
 
     protected SelectContext<T> context;
     protected SelectProcessorFactory processorFactory;
-    protected SelectListenersBuilder listenersBuilder;
     protected EnumMap<SelectStage, Processor<SelectContext<?>>> processors;
 
     public DefaultSelectBuilder(
             SelectContext<T> context,
-            SelectProcessorFactory processorFactory,
-            IListenerService listenerService) {
+            SelectProcessorFactory processorFactory) {
         this.context = context;
         this.processorFactory = processorFactory;
-        this.listenersBuilder = new SelectListenersBuilder(this, listenerService, context);
         this.processors = new EnumMap<>(SelectStage.class);
     }
 
@@ -183,15 +178,6 @@ public class DefaultSelectBuilder<T> implements SelectBuilder<T> {
         }
 
         context.setCompoundId(ids);
-        return this;
-    }
-
-    /**
-     * @since 1.19
-     */
-    @Override
-    public SelectBuilder<T> listener(Object listener) {
-        listenersBuilder.addListener(listener);
         return this;
     }
 
