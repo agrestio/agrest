@@ -4,7 +4,6 @@ import com.nhl.link.rest.UpdateStage;
 import com.nhl.link.rest.it.fixture.cayenne.E2;
 import com.nhl.link.rest.processor.Processor;
 import com.nhl.link.rest.processor.ProcessorOutcome;
-import com.nhl.link.rest.runtime.listener.IListenerService;
 import com.nhl.link.rest.runtime.processor.update.UpdateContext;
 import com.nhl.link.rest.runtime.processor.update.UpdateProcessorFactory;
 import org.apache.cayenne.CayenneDataObject;
@@ -25,7 +24,7 @@ public class DefaultUpdateBuilderTest {
         UpdateProcessorFactory processorFactory = mock(UpdateProcessorFactory.class);
         when(processorFactory.createProcessor(any())).thenReturn(mock(Processor.class));
 
-        return new DefaultUpdateBuilder<T>(context, processorFactory, mock(IListenerService.class));
+        return new DefaultUpdateBuilder<T>(context, processorFactory);
     }
 
     @Test

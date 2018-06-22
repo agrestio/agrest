@@ -24,27 +24,6 @@ public class ConstraintsBuilder<T> implements Constraint<T> {
         this.op = op;
     }
 
-    /**
-     * @deprecated since 2.4 in favor of {@link Constraint#excludeAll(Class)}.
-     */
-    public static <T> ConstraintsBuilder<T> excludeAll(Class<T> type) {
-        return Constraint.excludeAll(type);
-    }
-
-    /**
-     * @deprecated since 2.4 in favor of {@link Constraint#idOnly(Class)}.
-     */
-    public static <T> ConstraintsBuilder<T> idOnly(Class<T> type) {
-        return Constraint.idOnly(type);
-    }
-
-    /**
-     * @deprecated since 2.4 in favor of {@link Constraint#idAndAttributes(Class)}.
-     */
-    public static <T> ConstraintsBuilder<T> idAndAttributes(Class<T> type) {
-        return Constraint.idAndAttributes(type);
-    }
-
     @Override
     public ConstrainedLrEntity<T> apply(LrEntity<T> lrEntity) {
         return op.apply(new ConstrainedLrEntity<T>(lrEntity));

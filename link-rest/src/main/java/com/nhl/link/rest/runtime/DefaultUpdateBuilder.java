@@ -11,8 +11,6 @@ import com.nhl.link.rest.UpdateStage;
 import com.nhl.link.rest.constraints.Constraint;
 import com.nhl.link.rest.processor.Processor;
 import com.nhl.link.rest.runtime.cayenne.ByKeyObjectMapperFactory;
-import com.nhl.link.rest.runtime.listener.IListenerService;
-import com.nhl.link.rest.runtime.listener.UpdateListenersBuilder;
 import com.nhl.link.rest.runtime.processor.update.UpdateContext;
 import com.nhl.link.rest.runtime.processor.update.UpdateProcessorFactory;
 import org.apache.cayenne.exp.Property;
@@ -37,15 +35,12 @@ public class DefaultUpdateBuilder<T> implements UpdateBuilder<T> {
     protected UpdateProcessorFactory processorFactory;
     protected EnumMap<UpdateStage, Processor<UpdateContext<?>>> processors;
     private UpdateContext<T> context;
-    private UpdateListenersBuilder listenersBuilder;
 
     public DefaultUpdateBuilder(
             UpdateContext<T> context,
-            UpdateProcessorFactory processorFactory,
-            IListenerService listenerService) {
+            UpdateProcessorFactory processorFactory) {
 
         this.context = context;
-        this.listenersBuilder = new UpdateListenersBuilder(this, listenerService, context);
         this.processorFactory = processorFactory;
         this.processors = new EnumMap<>(UpdateStage.class);
     }
@@ -153,16 +148,6 @@ public class DefaultUpdateBuilder<T> implements UpdateBuilder<T> {
     @Override
     public UpdateBuilder<T> mapper(String propertyName) {
         return mapper(ByKeyObjectMapperFactory.byKey(propertyName));
-    }
-
-    /**
-     * @since 1.19
-     */
-    @Override
-    @Deprecated
-    public UpdateBuilder<T> listener(Object listener) {
-        listenersBuilder.addListener(listener);
-        return this;
     }
 
     /**
