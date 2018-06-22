@@ -5,16 +5,12 @@ import com.nhl.link.rest.DataResponse;
 import com.nhl.link.rest.LinkRest;
 import com.nhl.link.rest.ResourceEntity;
 import com.nhl.link.rest.SelectStage;
-import com.nhl.link.rest.annotation.listener.QueryAssembled;
-import com.nhl.link.rest.annotation.listener.SelectServerParamsApplied;
 import com.nhl.link.rest.encoder.Encoder;
 import com.nhl.link.rest.encoder.EncoderFilter;
 import com.nhl.link.rest.it.fixture.JerseyTestOnDerby;
 import com.nhl.link.rest.it.fixture.cayenne.E3;
 import com.nhl.link.rest.it.fixture.cayenne.E4;
-import com.nhl.link.rest.processor.ProcessingStage;
 import com.nhl.link.rest.runtime.LinkRestBuilder;
-import com.nhl.link.rest.runtime.processor.select.SelectContext;
 import org.apache.cayenne.Cayenne;
 import org.apache.cayenne.query.SQLTemplate;
 import org.junit.Test;
@@ -104,25 +100,6 @@ public class GET_EncoderFilters_IT extends JerseyTestOnDerby {
                 response1.readEntity(String.class));
     }
 
-    @Deprecated
-    @Test
-    public void testFilteredPagination4_Listeners() {
-
-        CayennePaginationListener.RESOURCE_ENTITY_IS_FILTERED = false;
-        CayennePaginationListener.QUERY_PAGE_SIZE = 0;
-
-        target("/e4/pagination_listener")
-                .queryParam("include", "id")
-                .queryParam("sort", "id")
-                .queryParam("start", "2")
-                .queryParam("limit", "10")
-                .request()
-                .get();
-
-        assertTrue(CayennePaginationListener.RESOURCE_ENTITY_IS_FILTERED);
-        assertEquals(0, CayennePaginationListener.QUERY_PAGE_SIZE);
-    }
-
     @Test
     public void testFilteredPagination4_CustomStage() {
 
@@ -189,17 +166,6 @@ public class GET_EncoderFilters_IT extends JerseyTestOnDerby {
             return LinkRest.service(config).select(E4.class).uri(uriInfo).get();
         }
 
-        /**
-         * @deprecated since 2.7 as listeners are deprecated.
-         */
-        @GET
-        @Path("e4/pagination_listener")
-        @Deprecated
-        public DataResponse<E4> get_WithPaginationListener(@Context UriInfo uriInfo) {
-            return LinkRest.service(config).select(E4.class).uri(uriInfo).listener(new CayennePaginationListener())
-                    .get();
-        }
-
         @GET
         @Path("e4/pagination_stage")
         public DataResponse<E4> get_WithPaginationStage(@Context UriInfo uriInfo) {
@@ -211,36 +177,6 @@ public class GET_EncoderFilters_IT extends JerseyTestOnDerby {
                     .stage(SelectStage.ASSEMBLE_QUERY,
                             c -> QUERY_PAGE_SIZE = c.getSelect().getPageSize())
                     .get();
-        }
-    }
-
-    /**
-     * @deprecated since 2.7 as listeners are deprecated.
-     */
-    @Deprecated
-    public static class CayennePaginationListener {
-
-        public static boolean RESOURCE_ENTITY_IS_FILTERED;
-        public static int QUERY_PAGE_SIZE;
-
-        @Deprecated
-        @SelectServerParamsApplied
-        public <T> ProcessingStage<SelectContext<T>, T> selectServerParamsApplied(
-                SelectContext<T> context,
-                ProcessingStage<SelectContext<T>, T> next) {
-
-            RESOURCE_ENTITY_IS_FILTERED = context.getEntity().isFiltered();
-            return next;
-        }
-
-        @Deprecated
-        @QueryAssembled
-        public <T> ProcessingStage<SelectContext<T>, T> queryAssembled(
-                SelectContext<T> context,
-                ProcessingStage<SelectContext<T>, T> next) {
-
-            QUERY_PAGE_SIZE = context.getSelect().getPageSize();
-            return next;
         }
     }
 }

@@ -5,9 +5,9 @@ import com.nhl.link.rest.meta.LrEntity;
 import com.nhl.link.rest.runtime.parser.BaseRequestProcessor;
 import com.nhl.link.rest.runtime.parser.RequestParser;
 import com.nhl.link.rest.runtime.parser.filter.ICayenneExpProcessor;
-import com.nhl.link.rest.runtime.parser.filter.IKeyValueExpProcessor;
 import com.nhl.link.rest.runtime.parser.sort.ISortProcessor;
-import com.nhl.link.rest.runtime.parser.tree.ITreeProcessor;
+import com.nhl.link.rest.runtime.parser.tree.IExcludeProcessor;
+import com.nhl.link.rest.runtime.parser.tree.IIncludeProcessor;
 import org.apache.cayenne.di.Inject;
 import org.apache.cayenne.exp.Expression;
 
@@ -23,19 +23,22 @@ public class SenchaRequestParser extends RequestParser {
 
 	private ISenchaFilterProcessor senchaFilterProcessor;
 
-	public SenchaRequestParser(@Inject ITreeProcessor treeProcessor, @Inject ISortProcessor sortProcessor,
-			@Inject ICayenneExpProcessor cayenneExpProcessor, @Inject IKeyValueExpProcessor keyValueExpProcessor,
-			@Inject ISenchaFilterProcessor senchaFilterProcessor) {
+	public SenchaRequestParser(
+            @Inject IIncludeProcessor includeProcessor,
+            @Inject IExcludeProcessor excludeProcessor,
+            @Inject ISortProcessor sortProcessor,
+            @Inject ICayenneExpProcessor cayenneExpProcessor,
+            @Inject ISenchaFilterProcessor senchaFilterProcessor) {
 
-		super(treeProcessor, sortProcessor, cayenneExpProcessor, keyValueExpProcessor);
+		super(includeProcessor, excludeProcessor, sortProcessor, cayenneExpProcessor);
 
 		this.senchaFilterProcessor = senchaFilterProcessor;
 	}
 
 	@Override
-	public <T> ResourceEntity<T> parseSelect(LrEntity<T> entity, Map<String, List<String>> protocolParameters, String autocompleteProperty) {
+	public <T> ResourceEntity<T> parseSelect(LrEntity<T> entity, Map<String, List<String>> protocolParameters) {
 
-		ResourceEntity<T> resourceEntity = super.parseSelect(entity, protocolParameters, autocompleteProperty);
+		ResourceEntity<T> resourceEntity = super.parseSelect(entity, protocolParameters);
 
 		Expression e1 = parseFilter(entity, protocolParameters);
 		if (e1 != null) {
@@ -49,5 +52,4 @@ public class SenchaRequestParser extends RequestParser {
 		String value = BaseRequestProcessor.string(protocolParameters, FILTER);
 		return senchaFilterProcessor.process(entity, value);
 	}
-
 }

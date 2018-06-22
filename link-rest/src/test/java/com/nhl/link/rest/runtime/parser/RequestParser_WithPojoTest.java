@@ -15,12 +15,12 @@ import com.nhl.link.rest.runtime.parser.cache.PathCache;
 import com.nhl.link.rest.runtime.parser.filter.CayenneExpProcessor;
 import com.nhl.link.rest.runtime.parser.filter.ExpressionPostProcessor;
 import com.nhl.link.rest.runtime.parser.filter.ICayenneExpProcessor;
-import com.nhl.link.rest.runtime.parser.filter.IKeyValueExpProcessor;
-import com.nhl.link.rest.runtime.parser.filter.KeyValueExpProcessor;
 import com.nhl.link.rest.runtime.parser.sort.ISortProcessor;
 import com.nhl.link.rest.runtime.parser.sort.SortProcessor;
-import com.nhl.link.rest.runtime.parser.tree.ITreeProcessor;
-import com.nhl.link.rest.runtime.parser.tree.IncludeExcludeProcessor;
+import com.nhl.link.rest.runtime.parser.tree.ExcludeProcessor;
+import com.nhl.link.rest.runtime.parser.tree.IExcludeProcessor;
+import com.nhl.link.rest.runtime.parser.tree.IIncludeProcessor;
+import com.nhl.link.rest.runtime.parser.tree.IncludeProcessor;
 import com.nhl.link.rest.unit.TestWithCayenneMapping;
 import org.junit.Before;
 import org.junit.Test;
@@ -31,7 +31,9 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -45,11 +47,12 @@ public class RequestParser_WithPojoTest extends TestWithCayenneMapping {
 		IPathCache pathCache = new PathCache();
 		IJacksonService jacksonService = new JacksonService();
 		ICayenneExpProcessor expProcessor = new CayenneExpProcessor(jacksonService, new ExpressionPostProcessor(pathCache));
-		IKeyValueExpProcessor kvExpProcessor = new KeyValueExpProcessor();
 		ISortProcessor sortProcessor = new SortProcessor(jacksonService, pathCache);
-		ITreeProcessor treeProcessor = new IncludeExcludeProcessor(jacksonService, sortProcessor, expProcessor);
+		IIncludeProcessor includeProcessor = new IncludeProcessor(jacksonService, sortProcessor, expProcessor);
+		IExcludeProcessor excludeProcessor = new ExcludeProcessor(jacksonService);
 
-		parser = new RequestParser(treeProcessor, sortProcessor, expProcessor, kvExpProcessor);
+
+		parser = new RequestParser(includeProcessor, excludeProcessor, sortProcessor, expProcessor);
 	}
 
 	@Override
@@ -68,13 +71,13 @@ public class RequestParser_WithPojoTest extends TestWithCayenneMapping {
 		@SuppressWarnings("unchecked")
 		MultivaluedMap<String, String> params = mock(MultivaluedMap.class);
 
-		ResourceEntity<P1> ce1 = parser.parseSelect(getLrEntity(P1.class), params, null);
+		ResourceEntity<P1> ce1 = parser.parseSelect(getLrEntity(P1.class), params);
 		assertNotNull(ce1);
 		assertTrue(ce1.isIdIncluded());
 		assertEquals(1, ce1.getAttributes().size());
 		assertTrue(ce1.getChildren().isEmpty());
 
-		ResourceEntity<P2> ce2 = parser.parseSelect(getLrEntity(P2.class), params, null);
+		ResourceEntity<P2> ce2 = parser.parseSelect(getLrEntity(P2.class), params);
 
 		assertNotNull(ce2);
 		assertTrue(ce2.isIdIncluded());
@@ -89,7 +92,7 @@ public class RequestParser_WithPojoTest extends TestWithCayenneMapping {
 		MultivaluedMap<String, String> params = mock(MultivaluedMap.class);
 		when(params.get("include")).thenReturn(Arrays.asList("p1"));
 
-		ResourceEntity<P2> ce2 = parser.parseSelect(getLrEntity(P2.class), params, null);
+		ResourceEntity<P2> ce2 = parser.parseSelect(getLrEntity(P2.class), params);
 
 		assertNotNull(ce2);
 		assertTrue(ce2.isIdIncluded());

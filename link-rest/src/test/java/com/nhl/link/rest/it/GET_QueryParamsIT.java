@@ -277,7 +277,7 @@ public class GET_QueryParamsIT extends JerseyTestOnDerby {
         @GET
         @Path("e4")
         public DataResponse<E4> getE4(@QueryParam("include") List<String> include,
-                                      @QueryParam("sort") List<String> sort) {
+                                      @QueryParam("sort") String sort) {
 
             return LinkRest.service(config)
                     .select(E4.class)
@@ -300,7 +300,7 @@ public class GET_QueryParamsIT extends JerseyTestOnDerby {
 
         @GET
         @Path("e3")
-        public DataResponse<E3> getE3(@QueryParam("sort")  List<String> sort,
+        public DataResponse<E3> getE3(@QueryParam("sort")  String sort,
                                       @QueryParam("start") int start,
                                       @QueryParam("limit") int limit,
                                       @QueryParam("mapBy") String mapBy,
