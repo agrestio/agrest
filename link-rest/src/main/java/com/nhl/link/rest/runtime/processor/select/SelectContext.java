@@ -29,7 +29,6 @@ public class SelectContext<T> extends BaseProcessingContext<T> {
 	private EntityParent<?> parent;
 	private ResourceEntity<T> entity;
 	private UriInfo uriInfo;
-	private String autocompleteProperty;
 	private Map<String, EntityProperty> extraProperties;
 	private SizeConstraints sizeConstraints;
 	private Constraint<T> constraint;
@@ -113,14 +112,6 @@ public class SelectContext<T> extends BaseProcessingContext<T> {
 
 	public void setUriInfo(UriInfo uriInfo) {
 		this.uriInfo = uriInfo;
-	}
-
-	public String getAutocompleteProperty() {
-		return autocompleteProperty;
-	}
-
-	public void setAutocompleteProperty(String autocompleteProperty) {
-		this.autocompleteProperty = autocompleteProperty;
 	}
 
 	public Map<String, EntityProperty> getExtraProperties() {

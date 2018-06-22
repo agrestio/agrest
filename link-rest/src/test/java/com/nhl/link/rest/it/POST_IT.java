@@ -376,7 +376,7 @@ public class POST_IT extends JerseyTestOnDerby {
                 String requestBody) {
 
             Constraint<E8> tc = Constraint.idOnly(E8.class).attribute(E8.NAME);
-            return LinkRest.create(E8.class, config).uri(uriInfo).id(id).writeConstraints(tc).sync(requestBody);
+            return LinkRest.create(E8.class, config).uri(uriInfo).id(id).writeConstraint(tc).sync(requestBody);
         }
 
         @POST
@@ -386,7 +386,7 @@ public class POST_IT extends JerseyTestOnDerby {
                 @Context UriInfo uriInfo,
                 String requestBody) {
             Constraint<E8> tc = Constraint.excludeAll(E8.class).attribute(E8.NAME);
-            return LinkRest.create(E8.class, config).uri(uriInfo).id(id).writeConstraints(tc).syncAndSelect(requestBody);
+            return LinkRest.create(E8.class, config).uri(uriInfo).id(id).writeConstraint(tc).syncAndSelect(requestBody);
         }
 
         @POST

@@ -12,12 +12,12 @@ import com.nhl.link.rest.runtime.parser.cache.PathCache;
 import com.nhl.link.rest.runtime.parser.filter.CayenneExpProcessor;
 import com.nhl.link.rest.runtime.parser.filter.ExpressionPostProcessor;
 import com.nhl.link.rest.runtime.parser.filter.ICayenneExpProcessor;
-import com.nhl.link.rest.runtime.parser.filter.IKeyValueExpProcessor;
-import com.nhl.link.rest.runtime.parser.filter.KeyValueExpProcessor;
 import com.nhl.link.rest.runtime.parser.sort.ISortProcessor;
 import com.nhl.link.rest.runtime.parser.sort.SortProcessor;
-import com.nhl.link.rest.runtime.parser.tree.ITreeProcessor;
-import com.nhl.link.rest.runtime.parser.tree.IncludeExcludeProcessor;
+import com.nhl.link.rest.runtime.parser.tree.ExcludeProcessor;
+import com.nhl.link.rest.runtime.parser.tree.IExcludeProcessor;
+import com.nhl.link.rest.runtime.parser.tree.IIncludeProcessor;
+import com.nhl.link.rest.runtime.parser.tree.IncludeProcessor;
 import com.nhl.link.rest.unit.TestWithCayenneMapping;
 import org.apache.cayenne.query.Ordering;
 import org.apache.cayenne.query.SortOrder;
@@ -44,11 +44,11 @@ public class RequestParserTest extends TestWithCayenneMapping {
 		IPathCache pathCache = new PathCache();
 		IJacksonService jacksonService = new JacksonService();
 		ICayenneExpProcessor expProcessor = new CayenneExpProcessor(jacksonService, new ExpressionPostProcessor(pathCache));
-		IKeyValueExpProcessor kvExpProcessor = new KeyValueExpProcessor();
 		ISortProcessor sortProcessor = new SortProcessor(jacksonService, pathCache);
-		ITreeProcessor treeProcessor = new IncludeExcludeProcessor(jacksonService, sortProcessor, expProcessor);
+		IIncludeProcessor includeProcessor = new IncludeProcessor(jacksonService, sortProcessor, expProcessor);
+		IExcludeProcessor excludeProcessor = new ExcludeProcessor(jacksonService);
 
-		parser = new RequestParser(treeProcessor, sortProcessor, expProcessor, kvExpProcessor);
+		parser = new RequestParser(includeProcessor, excludeProcessor, sortProcessor, expProcessor);
 	}
 
 	@Test
@@ -57,7 +57,7 @@ public class RequestParserTest extends TestWithCayenneMapping {
 		@SuppressWarnings("unchecked")
 		MultivaluedMap<String, String> params = mock(MultivaluedMap.class);
 
-		ResourceEntity<E1> resourceEntity = parser.parseSelect(getLrEntity(E1.class), params, null);
+		ResourceEntity<E1> resourceEntity = parser.parseSelect(getLrEntity(E1.class), params);
 		assertNotNull(resourceEntity);
 		assertTrue(resourceEntity.isIdIncluded());
 		assertEquals(3, resourceEntity.getAttributes().size());
@@ -71,7 +71,7 @@ public class RequestParserTest extends TestWithCayenneMapping {
 		MultivaluedMap<String, String> params = mock(MultivaluedMap.class);
 		when(params.get("include")).thenReturn(Arrays.asList("description", "age"));
 
-		ResourceEntity<E1> resourceEntity = parser.parseSelect(getLrEntity(E1.class), params, null);
+		ResourceEntity<E1> resourceEntity = parser.parseSelect(getLrEntity(E1.class), params);
 		assertNotNull(resourceEntity);
 		assertFalse(resourceEntity.isIdIncluded());
 
@@ -89,7 +89,7 @@ public class RequestParserTest extends TestWithCayenneMapping {
 		MultivaluedMap<String, String> params = mock(MultivaluedMap.class);
 		when(params.get("include")).thenReturn(Arrays.asList("[\"description\", \"age\"]"));
 
-		ResourceEntity<E1> resourceEntity = parser.parseSelect(getLrEntity(E1.class), params, null);
+		ResourceEntity<E1> resourceEntity = parser.parseSelect(getLrEntity(E1.class), params);
 		assertNotNull(resourceEntity);
 		assertFalse(resourceEntity.isIdIncluded());
 
@@ -106,7 +106,7 @@ public class RequestParserTest extends TestWithCayenneMapping {
 		MultivaluedMap<String, String> params = mock(MultivaluedMap.class);
 		when(params.get("exclude")).thenReturn(Arrays.asList("description", "age"));
 
-		ResourceEntity<E1> resourceEntity = parser.parseSelect(getLrEntity(E1.class), params, null);
+		ResourceEntity<E1> resourceEntity = parser.parseSelect(getLrEntity(E1.class), params);
 		assertNotNull(resourceEntity);
 		assertTrue(resourceEntity.isIdIncluded());
 
@@ -122,7 +122,7 @@ public class RequestParserTest extends TestWithCayenneMapping {
 		MultivaluedMap<String, String> params = mock(MultivaluedMap.class);
 		when(params.get("exclude")).thenReturn(Arrays.asList("[\"description\", \"age\"]"));
 
-		ResourceEntity<E1> resourceEntity = parser.parseSelect(getLrEntity(E1.class), params, null);
+		ResourceEntity<E1> resourceEntity = parser.parseSelect(getLrEntity(E1.class), params);
 		assertNotNull(resourceEntity);
 		assertTrue(resourceEntity.isIdIncluded());
 
@@ -139,7 +139,7 @@ public class RequestParserTest extends TestWithCayenneMapping {
 		when(params.get("include")).thenReturn(Arrays.asList("description", "age", "id"));
 		when(params.get("exclude")).thenReturn(Arrays.asList("description", "name"));
 
-		ResourceEntity<E1> resourceEntity = parser.parseSelect(getLrEntity(E1.class), params, null);
+		ResourceEntity<E1> resourceEntity = parser.parseSelect(getLrEntity(E1.class), params);
 		assertNotNull(resourceEntity);
 		assertTrue(resourceEntity.isIdIncluded());
 		assertEquals(1, resourceEntity.getAttributes().size());
@@ -155,7 +155,7 @@ public class RequestParserTest extends TestWithCayenneMapping {
 		MultivaluedMap<String, String> params = mock(MultivaluedMap.class);
 		when(params.get("include")).thenReturn(Arrays.asList("e3s"));
 
-		ResourceEntity<E2> resourceEntity = parser.parseSelect(getLrEntity(E2.class), params, null);
+		ResourceEntity<E2> resourceEntity = parser.parseSelect(getLrEntity(E2.class), params);
 		assertNotNull(resourceEntity);
 		assertTrue(resourceEntity.isIdIncluded());
 		assertEquals(2, resourceEntity.getAttributes().size());
@@ -182,7 +182,7 @@ public class RequestParserTest extends TestWithCayenneMapping {
 		MultivaluedMap<String, String> params = mock(MultivaluedMap.class);
 		when(params.get("include")).thenReturn(Arrays.asList("name", "e3s.name"));
 
-		ResourceEntity<E2> resourceEntity = parser.parseSelect(getLrEntity(E2.class), params, null);
+		ResourceEntity<E2> resourceEntity = parser.parseSelect(getLrEntity(E2.class), params);
 		assertNotNull(resourceEntity);
 		assertFalse(resourceEntity.isIdIncluded());
 		assertEquals(1, resourceEntity.getAttributes().size());
@@ -208,7 +208,7 @@ public class RequestParserTest extends TestWithCayenneMapping {
 		when(params.get("include")).thenReturn(Arrays.asList("e3s.name"));
 		when(params.get("exclude")).thenReturn(Arrays.asList("name"));
 
-		ResourceEntity<E2> resourceEntity = parser.parseSelect(getLrEntity(E2.class), params, null);
+		ResourceEntity<E2> resourceEntity = parser.parseSelect(getLrEntity(E2.class), params);
 		assertNotNull(resourceEntity);
 		assertTrue(resourceEntity.isIdIncluded());
 		assertEquals(1, resourceEntity.getAttributes().size());
@@ -234,7 +234,7 @@ public class RequestParserTest extends TestWithCayenneMapping {
 		when(params.get("include")).thenReturn(Arrays.asList("e3s"));
 		when(params.get("exclude")).thenReturn(Arrays.asList("address", "e3s.name"));
 
-		ResourceEntity<E2> resourceEntity = parser.parseSelect(getLrEntity(E2.class), params, null);
+		ResourceEntity<E2> resourceEntity = parser.parseSelect(getLrEntity(E2.class), params);
 		assertNotNull(resourceEntity);
 		assertTrue(resourceEntity.isIdIncluded());
 		assertEquals(1, resourceEntity.getAttributes().size());
@@ -259,7 +259,7 @@ public class RequestParserTest extends TestWithCayenneMapping {
 		MultivaluedMap<String, String> params = mock(MultivaluedMap.class);
 		when(params.get("include")).thenReturn(Arrays.asList("id", "e3s.id"));
 
-		ResourceEntity<E2> resourceEntity = parser.parseSelect(getLrEntity(E2.class), params, null);
+		ResourceEntity<E2> resourceEntity = parser.parseSelect(getLrEntity(E2.class), params);
 		assertNotNull(resourceEntity);
 		assertTrue(resourceEntity.isIdIncluded());
 		assertTrue(resourceEntity.getAttributes().isEmpty());
@@ -281,7 +281,7 @@ public class RequestParserTest extends TestWithCayenneMapping {
 		MultivaluedMap<String, String> params = mock(MultivaluedMap.class);
 		when(params.get("sort")).thenReturn(Collections.singletonList(E2.NAME.getName()));
 
-		ResourceEntity<E2> resourceEntity = parser.parseSelect(getLrEntity(E2.class), params, null);
+		ResourceEntity<E2> resourceEntity = parser.parseSelect(getLrEntity(E2.class), params);
 
 		assertEquals(1, resourceEntity.getOrderings().size());
 		Ordering o1 = resourceEntity.getOrderings().iterator().next();
@@ -297,7 +297,7 @@ public class RequestParserTest extends TestWithCayenneMapping {
 		when(params.get("sort")).thenReturn(Collections.singletonList(E2.NAME.getName()));
 		when(params.get("dir")).thenReturn(Collections.singletonList("ASC"));
 
-		ResourceEntity<E2> resourceEntity = parser.parseSelect(getLrEntity(E2.class), params, null);
+		ResourceEntity<E2> resourceEntity = parser.parseSelect(getLrEntity(E2.class), params);
 		assertEquals(1, resourceEntity.getOrderings().size());
 		Ordering o1 = resourceEntity.getOrderings().iterator().next();
 		assertEquals(SortOrder.ASCENDING, o1.getSortOrder());
@@ -312,7 +312,7 @@ public class RequestParserTest extends TestWithCayenneMapping {
 		when(params.get("sort")).thenReturn(Collections.singletonList(E2.NAME.getName()));
 		when(params.get("dir")).thenReturn(Collections.singletonList("DESC"));
 
-		ResourceEntity<E2> resourceEntity = parser.parseSelect(getLrEntity(E2.class), params, null);
+		ResourceEntity<E2> resourceEntity = parser.parseSelect(getLrEntity(E2.class), params);
 		assertEquals(1, resourceEntity.getOrderings().size());
 		Ordering o1 = resourceEntity.getOrderings().iterator().next();
 		assertEquals(SortOrder.DESCENDING, o1.getSortOrder());
@@ -327,7 +327,7 @@ public class RequestParserTest extends TestWithCayenneMapping {
 		when(params.get("sort")).thenReturn(Collections.singletonList("s1"));
 		when(params.get("dir")).thenReturn(Collections.singletonList("XYZ"));
 
-		parser.parseSelect(getLrEntity(E2.class), params, null);
+		parser.parseSelect(getLrEntity(E2.class), params);
 	}
 
 	@Test
@@ -338,7 +338,7 @@ public class RequestParserTest extends TestWithCayenneMapping {
 		when(params.get("sort")).thenReturn(
                 Collections.singletonList("[{\"property\":\"name\",\"direction\":\"DESC\"},{\"property\":\"address\",\"direction\":\"ASC\"}]"));
 
-		ResourceEntity<E2> resourceEntity = parser.parseSelect(getLrEntity(E2.class), params, null);
+		ResourceEntity<E2> resourceEntity = parser.parseSelect(getLrEntity(E2.class), params);
 
 		assertEquals(2, resourceEntity.getOrderings().size());
 		Iterator<Ordering> it = resourceEntity.getOrderings().iterator();
@@ -358,7 +358,7 @@ public class RequestParserTest extends TestWithCayenneMapping {
 		when(params.get("sort")).thenReturn(
                 Collections.singletonList("[{\"property\":\"name\",\"direction\":\"DESC\"},{\"property\":\"name\",\"direction\":\"ASC\"}]"));
 
-		ResourceEntity<E2> resourceEntity = parser.parseSelect(getLrEntity(E2.class), params, null);
+		ResourceEntity<E2> resourceEntity = parser.parseSelect(getLrEntity(E2.class), params);
 
 		assertEquals(1, resourceEntity.getOrderings().size());
 		Iterator<Ordering> it = resourceEntity.getOrderings().iterator();
@@ -375,7 +375,7 @@ public class RequestParserTest extends TestWithCayenneMapping {
 		when(params.get("sort")).thenReturn(
                 Collections.singletonList("[{\"property\":\"p1\",\"direction\":\"DESC\"},{\"property\":\"p2\",\"direction\":\"XXX\"}]"));
 
-		parser.parseSelect(getLrEntity(E2.class), params, null);
+		parser.parseSelect(getLrEntity(E2.class), params);
 	}
 
 	@Test(expected = LinkRestException.class)
@@ -386,7 +386,7 @@ public class RequestParserTest extends TestWithCayenneMapping {
 		when(params.get("cayenneExp"))
 				.thenReturn(Collections.singletonList("{exp : \"numericProp = 12345 and stringProp = 'John Smith' and booleanProp = true\"}"));
 
-		parser.parseSelect(getLrEntity(E2.class), params, null);
+		parser.parseSelect(getLrEntity(E2.class), params);
 	}
 
 	@Test
@@ -396,38 +396,9 @@ public class RequestParserTest extends TestWithCayenneMapping {
 		MultivaluedMap<String, String> params = mock(MultivaluedMap.class);
 		when(params.get("cayenneExp")).thenReturn(Collections.singletonList("{\"exp\" : \"name = 'John Smith'\"}"));
 
-		ResourceEntity<E2> resourceEntity = parser.parseSelect(getLrEntity(E2.class), params, null);
+		ResourceEntity<E2> resourceEntity = parser.parseSelect(getLrEntity(E2.class), params);
 
 		assertNotNull(resourceEntity.getQualifier());
 		assertEquals(exp("name = 'John Smith'"), resourceEntity.getQualifier());
 	}
-
-	@Test
-	public void testSelectRequest_Query() {
-
-		@SuppressWarnings("unchecked")
-		MultivaluedMap<String, String> params = mock(MultivaluedMap.class);
-		when(params.get("query")).thenReturn(Collections.singletonList("Bla"));
-
-		ResourceEntity<E2> resourceEntity = parser.parseSelect(getLrEntity(E2.class), params, E2.NAME.getName());
- 
-		assertNotNull(resourceEntity.getQualifier());
-		assertEquals(exp("name likeIgnoreCase 'Bla%'"), resourceEntity.getQualifier());
-	}
-
-	@Test
-	public void testSelectRequest_Query_Ignored() {
-
-		@SuppressWarnings("unchecked")
-		MultivaluedMap<String, String> params = mock(MultivaluedMap.class);
-		when(params.get("query")).thenReturn(Collections.singletonList("Bla"));
-
-		// if "query" parameter exists, but no property to match against is
-		// passed, it should be ignored per #60
-
-		ResourceEntity<E2> resourceEntity = parser.parseSelect(getLrEntity(E2.class), params, null);
-
-		assertNull(resourceEntity.getQualifier());
-	}
-
 }

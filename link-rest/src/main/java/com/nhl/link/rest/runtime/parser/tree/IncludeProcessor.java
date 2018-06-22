@@ -10,6 +10,7 @@ import com.nhl.link.rest.runtime.jackson.IJacksonService;
 import com.nhl.link.rest.runtime.parser.PathConstants;
 import com.nhl.link.rest.runtime.parser.filter.ICayenneExpProcessor;
 import com.nhl.link.rest.runtime.parser.sort.ISortProcessor;
+import org.apache.cayenne.di.Inject;
 import org.apache.cayenne.exp.Expression;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,9 +18,9 @@ import org.slf4j.LoggerFactory;
 import javax.ws.rs.core.Response.Status;
 import java.util.List;
 
-public class IncludeWorker {
+public class IncludeProcessor implements IIncludeProcessor {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(IncludeWorker.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(IncludeProcessor.class);
 
 	private static final String PATH = "path";
 	private static final String MAP_BY = "mapBy";
@@ -32,12 +33,16 @@ public class IncludeWorker {
 	private ISortProcessor sortProcessor;
 	private ICayenneExpProcessor expProcessor;
 
-	public IncludeWorker(IJacksonService jsonParser, ISortProcessor sortProcessor, ICayenneExpProcessor expProcessor) {
+	public IncludeProcessor(
+	        @Inject IJacksonService jsonParser,
+            @Inject ISortProcessor sortProcessor,
+            @Inject ICayenneExpProcessor expProcessor) {
 		this.jsonParser = jsonParser;
 		this.sortProcessor = sortProcessor;
 		this.expProcessor = expProcessor;
 	}
 
+	@Override
 	public void process(ResourceEntity<?> resourceEntity, List<String> includes) {
 		for (String include : includes) {
 
@@ -152,7 +157,7 @@ public class IncludeWorker {
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public static ResourceEntity<?> processIncludePath(ResourceEntity<?> parent, String path) {
 
-		ExcludeWorker.checkTooLong(path);
+		ExcludeProcessor.checkTooLong(path);
 
 		int dot = path.indexOf(PathConstants.DOT);
 

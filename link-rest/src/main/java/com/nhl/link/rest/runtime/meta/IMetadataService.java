@@ -4,7 +4,6 @@ import com.nhl.link.rest.EntityParent;
 import com.nhl.link.rest.LinkRestException;
 import com.nhl.link.rest.meta.LrEntity;
 import com.nhl.link.rest.meta.LrRelationship;
-import org.apache.cayenne.query.Select;
 
 import javax.ws.rs.core.Response;
 import java.lang.reflect.Type;
@@ -18,13 +17,6 @@ public interface IMetadataService {
 	 * @since 1.12
 	 */
 	<T> LrEntity<T> getLrEntity(Class<T> type);
-
-	/**
-	 * @since 1.12
-     * @deprecated since 2.5 unused and unneeded.
-	 */
-	@Deprecated
-	<T> LrEntity<T> getLrEntity(Select<T> query);
 
 	/**
 	 * Returns a named relationship for a given object type. If the type is not

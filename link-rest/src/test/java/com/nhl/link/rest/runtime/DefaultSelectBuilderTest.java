@@ -4,7 +4,6 @@ import com.nhl.link.rest.SelectStage;
 import com.nhl.link.rest.it.fixture.cayenne.E2;
 import com.nhl.link.rest.processor.Processor;
 import com.nhl.link.rest.processor.ProcessorOutcome;
-import com.nhl.link.rest.runtime.listener.IListenerService;
 import com.nhl.link.rest.runtime.processor.select.SelectContext;
 import com.nhl.link.rest.runtime.processor.select.SelectProcessorFactory;
 import org.apache.cayenne.CayenneDataObject;
@@ -25,7 +24,7 @@ public class DefaultSelectBuilderTest {
         SelectProcessorFactory processorFactory = mock(SelectProcessorFactory.class);
         when(processorFactory.createProcessor(any())).thenReturn(mock(Processor.class));
 
-        return new DefaultSelectBuilder<T>(context, processorFactory, mock(IListenerService.class));
+        return new DefaultSelectBuilder<T>(context, processorFactory);
     }
 
     @Test

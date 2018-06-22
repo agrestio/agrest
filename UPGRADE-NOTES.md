@@ -1,3 +1,20 @@
+## Upgrading to 2.13
+
+### Removed listeners and listener annotations [#300](https://github.com/nhl/link-rest/issues/300)
+
+As a part of the effort cleaning up deprecated API, support for stage listeners and stage listener annotations was removed.
+If you need to extend LinkRest processing chains, you should be using "stage" and "terminalStage" methods with custom lambdas.
+Those are more flexible and easy to understand.
+
+### "query" protocol parameter was moved to "link-rest-sencha" [#301](https://github.com/nhl/link-rest/issues/301)
+
+Support for "query" protocol parameter (doing case insensitive "starts with" search on a server-specified property) 
+is now limited to the Sencha flavor of LinkRest. Base LinkRest no longer supports this operation. If you are using `link-rest-sencha`,
+replace calls to `SelectBuilder.autocompleteOn` with calls to `.stage(SelectStage.PARSE_REQUEST, SenchaOps.startsWithFilter(T.NAME, uriInfo))`.
+Either SelectStage.PARSE_REQUEST or SelectStage.ASSEMBLE_QUERY stages can be used.
+If you are not using the Sencha module, you can inspect `SenchaOps` code implement a similar function on your own.
+
+
 ## Upgrading to 2.11
 
 ### JSON encoders stop rendering timezone for all date/time values [#275](https://github.com/nhl/link-rest/issues/275)
