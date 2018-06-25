@@ -87,7 +87,7 @@ public class LinkRestServerCodegen extends AbstractJavaJAXRSServerCodegen implem
 
     @Override
     public void postProcessModelProperty(CodegenModel model, CodegenProperty property) {
-        if (model.classname != null) {
+        if (model.classname != null && !model.classname.isEmpty()) {
             Set<CodegenProperty> props = models.get(model.classname);
             if (props == null) {
                 props = new HashSet<>();

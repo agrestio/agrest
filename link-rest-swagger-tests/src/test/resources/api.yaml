@@ -389,9 +389,7 @@ paths:
           in: query
           description: sorts result items
           required: false
-          type: array
-          items:
-            type: string
+          type: string
         - name: include
           in: query
           description: include attribute
@@ -647,9 +645,7 @@ paths:
           in: query
           description: sorts result items
           required: false
-          type: array
-          items:
-            type: string
+          type: string
         - name: include
           in: query
           description: include attribute
