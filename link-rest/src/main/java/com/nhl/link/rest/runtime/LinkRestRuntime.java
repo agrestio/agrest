@@ -1,5 +1,6 @@
 package com.nhl.link.rest.runtime;
 
+import com.nhl.link.rest.provider.CayenneExpProvider;
 import com.nhl.link.rest.provider.EntityUpdateCollectionReader;
 import com.nhl.link.rest.provider.EntityUpdateReader;
 import com.nhl.link.rest.provider.ResponseStatusDynamicFeature;
@@ -91,6 +92,10 @@ public class LinkRestRuntime implements Feature {
         for (Class<?> type : bodyWriters.values()) {
             context.register(type);
         }
+
+        CayenneExpProvider cayenneExpProvider =
+                injector.getInstance(CayenneExpProvider.class);
+        context.register(cayenneExpProvider);
 
         context.register(ResponseStatusDynamicFeature.class);
 

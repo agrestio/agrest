@@ -8,6 +8,7 @@ import com.nhl.link.rest.runtime.parser.sort.ISortProcessor;
 import com.nhl.link.rest.runtime.parser.tree.IExcludeProcessor;
 import com.nhl.link.rest.runtime.parser.tree.IIncludeProcessor;
 import com.nhl.link.rest.runtime.parser.tree.IncludeProcessor;
+import com.nhl.link.rest.runtime.query.Query;
 import org.apache.cayenne.di.Inject;
 import org.apache.cayenne.exp.Expression;
 
@@ -75,6 +76,23 @@ public class RequestParser implements IRequestParser {
         excludeProcessor.process(resourceEntity, BaseRequestProcessor.strings(protocolParameters, EXCLUDE));
 
         return resourceEntity;
+    }
+
+    @Override
+    public <T> ResourceEntity<T> parseSelect(LrEntity<T> entity, Map<String, List<String>> plainParameters, Query complexParameters) {
+        ResourceEntity<T> resourceEntity = parseSelect(entity, plainParameters);
+
+        if (complexParameters != null) {
+            Expression exp = cayenneExpProcessor.process(entity, complexParameters.getCayenneExp());
+            resourceEntity.andQualifier(exp);
+        }
+
+        return resourceEntity;
+    }
+
+    @Override
+    public <T> ResourceEntity<T> parseUpdate(LrEntity<T> entity, Map<String, List<String>> plainParameters, Query complexParameters) {
+        return parseUpdate(entity, plainParameters);
     }
 
     private void processMapBy(ResourceEntity<?> descriptor, Map<String, List<String>> protocolParameters) {

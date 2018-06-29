@@ -13,6 +13,8 @@ import com.nhl.link.rest.processor.Processor;
 import com.nhl.link.rest.property.PropertyBuilder;
 import com.nhl.link.rest.runtime.processor.select.SelectContext;
 import com.nhl.link.rest.runtime.processor.select.SelectProcessorFactory;
+import com.nhl.link.rest.runtime.query.CayenneExp;
+import com.nhl.link.rest.runtime.query.Query;
 import org.apache.cayenne.exp.Property;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -244,6 +246,17 @@ public class DefaultSelectBuilder<T> implements SelectBuilder<T> {
         return this;
     }
 
+    /**
+     * @since 2.13
+     */
+    @Override
+    public SelectBuilder<T> cayenneExp(CayenneExp cayenneExp) {
+        if (cayenneExp != null) {
+            getOrCreateQuery().setCayenneExp(cayenneExp);
+        }
+        return this;
+    }
+
     @Override
     public SelectBuilder<T> start(Integer start) {
         if (start != null) {
@@ -307,5 +320,13 @@ public class DefaultSelectBuilder<T> implements SelectBuilder<T> {
         }
 
         return context.getQueryParams();
+    }
+
+    private Query getOrCreateQuery() {
+        if (context.getQuery() == null) {
+            context.setQuery(new Query());
+        }
+
+        return context.getQuery();
     }
 }

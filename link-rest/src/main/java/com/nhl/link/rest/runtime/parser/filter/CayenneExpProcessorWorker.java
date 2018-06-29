@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.nhl.link.rest.LinkRestException;
 import com.nhl.link.rest.runtime.jackson.IJacksonService;
+import com.nhl.link.rest.runtime.query.CayenneExp;
 import org.apache.cayenne.exp.Expression;
 import org.apache.cayenne.exp.ExpressionFactory;
 
@@ -58,6 +59,20 @@ class CayenneExpProcessorWorker {
 		} else {
 			exp = processExp(cayenneExp.asText());
 		}
+
+		return exp;
+	}
+
+	/**
+	 * @since 2.13
+	 */
+	Expression exp(CayenneExp cayenneExp) {
+		if (cayenneExp == null) {
+			return null;
+		}
+
+		Expression exp = ExpressionFactory.exp(cayenneExp.getExp());
+		exp = exp.params(cayenneExp.getParams());
 
 		return exp;
 	}

@@ -7,6 +7,7 @@ import com.nhl.link.rest.processor.Processor;
 import com.nhl.link.rest.processor.ProcessorOutcome;
 import com.nhl.link.rest.runtime.LinkRestBuilder;
 import com.nhl.link.rest.runtime.processor.select.SelectContext;
+import com.nhl.link.rest.runtime.query.CayenneExp;
 import org.apache.cayenne.exp.Property;
 
 import javax.ws.rs.core.UriInfo;
@@ -217,6 +218,11 @@ public interface SelectBuilder<T> {
      * @since 2.13
      */
     SelectBuilder<T> cayenneExp(String cayenneExp);
+
+    /**
+     * @since 2.13
+     */
+    SelectBuilder<T> cayenneExp(CayenneExp cayenneExp);
 
     /**
      * Forces the builder to cut selection using start query parameter.
