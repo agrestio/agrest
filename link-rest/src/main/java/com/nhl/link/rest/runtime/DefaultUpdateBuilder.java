@@ -24,13 +24,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.nhl.link.rest.Term.EXCLUDE;
+import static com.nhl.link.rest.Term.INCLUDE;
+
 /**
  * @since 1.7
  */
 public class DefaultUpdateBuilder<T> implements UpdateBuilder<T> {
-
-    static final String INCLUDE = "include";
-    static final String EXCLUDE = "exclude";
 
     protected UpdateProcessorFactory processorFactory;
     protected EnumMap<UpdateStage, Processor<UpdateContext<?>>> processors;
@@ -194,7 +194,7 @@ public class DefaultUpdateBuilder<T> implements UpdateBuilder<T> {
      */
     @Override
     public UpdateBuilder<T> exclude(List<String> exclude) {
-        getOrCreateQueryParams().put(EXCLUDE, exclude);
+        getOrCreateQueryParams().put(EXCLUDE.toString(), exclude);
         return this;
     }
 
@@ -203,7 +203,7 @@ public class DefaultUpdateBuilder<T> implements UpdateBuilder<T> {
      */
     @Override
     public UpdateBuilder<T> include(List<String> include) {
-        getOrCreateQueryParams().put(INCLUDE, include);
+        getOrCreateQueryParams().put(INCLUDE.toString(), include);
         return this;
     }
 

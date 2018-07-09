@@ -1,13 +1,12 @@
 package com.nhl.link.rest.runtime.parser;
 
 import com.nhl.link.rest.ResourceEntity;
-import com.nhl.link.rest.meta.LrAttribute;
 import com.nhl.link.rest.meta.LrEntity;
 import com.nhl.link.rest.runtime.parser.filter.ICayenneExpProcessor;
 import com.nhl.link.rest.runtime.parser.sort.ISortProcessor;
 import com.nhl.link.rest.runtime.parser.tree.IExcludeProcessor;
 import com.nhl.link.rest.runtime.parser.tree.IIncludeProcessor;
-import com.nhl.link.rest.runtime.parser.tree.IncludeProcessor;
+import com.nhl.link.rest.runtime.parser.tree.IMapByProcessor;
 import com.nhl.link.rest.runtime.query.Query;
 import org.apache.cayenne.di.Inject;
 import org.apache.cayenne.exp.Expression;
@@ -15,31 +14,35 @@ import org.apache.cayenne.exp.Expression;
 import java.util.List;
 import java.util.Map;
 
-public class RequestParser implements IRequestParser {
+import static com.nhl.link.rest.Term.CAYENNE_EXP;
+import static com.nhl.link.rest.Term.DIR;
+import static com.nhl.link.rest.Term.EXCLUDE;
+import static com.nhl.link.rest.Term.INCLUDE;
+import static com.nhl.link.rest.Term.LIMIT;
+import static com.nhl.link.rest.Term.MAP_BY;
+import static com.nhl.link.rest.Term.SORT;
+import static com.nhl.link.rest.Term.START;
 
-    private static final String INCLUDE = "include";
-    private static final String EXCLUDE = "exclude";
-    private static final String START = "start";
-    private static final String LIMIT = "limit";
-    private static final String CAYENNE_EXP = "cayenneExp";
-    private static final String MAP_BY = "mapBy";
+public class RequestParser implements IRequestParser {
     
     private IIncludeProcessor includeProcessor;
     private IExcludeProcessor excludeProcessor;
     private ISortProcessor sortProcessor;
     private ICayenneExpProcessor cayenneExpProcessor;
-
+    private IMapByProcessor mapByProcessor;
 
     public RequestParser(
             @Inject IIncludeProcessor includeProcessor,
             @Inject IExcludeProcessor excludeProcessor,
             @Inject ISortProcessor sortProcessor,
-            @Inject ICayenneExpProcessor cayenneExpProcessor) {
+            @Inject ICayenneExpProcessor cayenneExpProcessor,
+            @Inject IMapByProcessor mapByProcessor) {
 
         this.includeProcessor = includeProcessor;
         this.excludeProcessor = excludeProcessor;
         this.sortProcessor = sortProcessor;
         this.cayenneExpProcessor = cayenneExpProcessor;
+        this.mapByProcessor = mapByProcessor;
     }
 
     @Override
@@ -56,11 +59,12 @@ public class RequestParser implements IRequestParser {
         includeProcessor.process(resourceEntity, BaseRequestProcessor.strings(protocolParameters, INCLUDE));
         excludeProcessor.process(resourceEntity, BaseRequestProcessor.strings(protocolParameters, EXCLUDE));
 
-        sortProcessor.process(resourceEntity, protocolParameters);
+        sortProcessor.process(resourceEntity, BaseRequestProcessor.string(protocolParameters, SORT),
+                                                BaseRequestProcessor.string(protocolParameters, DIR));
 
-        processMapBy(resourceEntity, protocolParameters);
+        mapByProcessor.process(resourceEntity, BaseRequestProcessor.string(protocolParameters, MAP_BY));
 
-        Expression exp = parseCayenneExp(entity, protocolParameters);
+        Expression exp = cayenneExpProcessor.process(entity, BaseRequestProcessor.string(protocolParameters, CAYENNE_EXP));
         resourceEntity.andQualifier(exp);
 
         return resourceEntity;
@@ -80,12 +84,25 @@ public class RequestParser implements IRequestParser {
 
     @Override
     public <T> ResourceEntity<T> parseSelect(LrEntity<T> entity, Map<String, List<String>> plainParameters, Query complexParameters) {
-        ResourceEntity<T> resourceEntity = parseSelect(entity, plainParameters);
-
-        if (complexParameters != null) {
-            Expression exp = cayenneExpProcessor.process(entity, complexParameters.getCayenneExp());
-            resourceEntity.andQualifier(exp);
+        if (complexParameters == null) {
+            return parseSelect(entity, plainParameters);
         }
+
+        ResourceEntity<T> resourceEntity = new ResourceEntity<>(entity);
+
+        // TODO: "ISizeProcessor"
+        resourceEntity.setFetchOffset(BaseRequestProcessor.integer(plainParameters, START));
+        resourceEntity.setFetchLimit(BaseRequestProcessor.integer(plainParameters, LIMIT));
+
+        includeProcessor.process(resourceEntity, complexParameters);
+        excludeProcessor.process(resourceEntity, complexParameters);
+
+        sortProcessor.process(resourceEntity, complexParameters);
+        mapByProcessor.process(resourceEntity, BaseRequestProcessor.string(plainParameters, MAP_BY));
+
+
+        Expression exp = cayenneExpProcessor.process(entity, complexParameters.getCayenneExp());
+        resourceEntity.andQualifier(exp);
 
         return resourceEntity;
     }
@@ -95,24 +112,4 @@ public class RequestParser implements IRequestParser {
         return parseUpdate(entity, plainParameters);
     }
 
-    private void processMapBy(ResourceEntity<?> descriptor, Map<String, List<String>> protocolParameters) {
-        String mapByPath = BaseRequestProcessor.string(protocolParameters, MAP_BY);
-        if (mapByPath != null) {
-            LrAttribute attribute = descriptor.getLrEntity().getAttribute(mapByPath);
-            if (attribute != null) {
-                ResourceEntity<?> mapBy = new ResourceEntity<>(descriptor.getLrEntity());
-                mapBy.getAttributes().put(attribute.getName(), attribute);
-                descriptor.mapBy(mapBy, attribute.getName());
-            } else {
-                ResourceEntity<?> mapBy = new ResourceEntity<>(descriptor.getLrEntity());
-                IncludeProcessor.processIncludePath(mapBy, mapByPath);
-                descriptor.mapBy(mapBy, mapByPath);
-            }
-        }
-    }
-
-    protected Expression parseCayenneExp(LrEntity<?> entity, Map<String, List<String>> protocolParameters) {
-        String exp = BaseRequestProcessor.string(protocolParameters, CAYENNE_EXP);
-        return cayenneExpProcessor.process(entity, exp);
-    }
 }

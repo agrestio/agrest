@@ -2,26 +2,33 @@ package com.nhl.link.rest.it;
 
 import com.nhl.link.rest.DataResponse;
 import com.nhl.link.rest.LinkRest;
+import com.nhl.link.rest.constraints.Constraint;
 import com.nhl.link.rest.it.fixture.JerseyTestOnDerby;
 import com.nhl.link.rest.it.fixture.cayenne.E2;
 import com.nhl.link.rest.it.fixture.cayenne.E3;
 import com.nhl.link.rest.it.fixture.cayenne.E4;
 import com.nhl.link.rest.it.fixture.cayenne.E5;
+import com.nhl.link.rest.runtime.query.CayenneExp;
+import com.nhl.link.rest.runtime.query.Exclude;
+import com.nhl.link.rest.runtime.query.Include;
+import com.nhl.link.rest.runtime.query.Sort;
 import org.apache.cayenne.query.SQLTemplate;
 import org.junit.Test;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Configuration;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.FeatureContext;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
-import javax.ws.rs.core.UriInfo;
+
+import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 
-public class GET_ObjectIncludeIT extends JerseyTestOnDerby {
+public class GET_IncludeObjectIT extends JerseyTestOnDerby {
 
     @Override
     protected void doAddResources(FeatureContext context) {
@@ -369,20 +376,44 @@ public class GET_ObjectIncludeIT extends JerseyTestOnDerby {
 
         @GET
         @Path("e2")
-        public DataResponse<E2> getE2(@Context UriInfo uriInfo) {
-            return LinkRest.service(config).select(E2.class).uri(uriInfo).get();
+        public DataResponse<E2> getE2(@QueryParam("sort") Sort sort,
+                                      @QueryParam("include") List<Include> include,
+                                      @QueryParam("exclude") List<Exclude> exclude,
+                                      @QueryParam("cayenneExp") CayenneExp cayenneExp) {
+
+            return LinkRest.select(E2.class, config)
+                    .sort(sort)
+                    .include(include)
+                    .exclude(exclude)
+                    .cayenneExp(cayenneExp)
+                    .get();
         }
 
         @GET
         @Path("e3")
-        public DataResponse<E3> getE3(@Context UriInfo uriInfo) {
-            return LinkRest.service(config).select(E3.class).uri(uriInfo).get();
+        public DataResponse<E3> getE3(@QueryParam("sort") Sort sort,
+                                      @QueryParam("include") List<Include> include,
+                                      @QueryParam("cayenneExp") CayenneExp cayenneExp) {
+            return LinkRest.select(E3.class, config)
+                    .constraint(Constraint.excludeAll(E3.class).includeId().attributes("phoneNumber", "name")
+                            .path("e2",Constraint.excludeAll(E2.class).includeId().attributes("address", "name")
+                            )
+                            .path("e5",Constraint.excludeAll(E5.class).includeId().attributes("name", "date")
+                            )
+                    )
+                    .sort(sort)
+                    .include(include)
+                    .cayenneExp(cayenneExp)
+                    .get();
         }
 
         @GET
         @Path("e4")
-        public DataResponse<E4> getE4(@Context UriInfo uriInfo) {
-            return LinkRest.service(config).select(E4.class).uri(uriInfo).get();
+        public DataResponse<E4> getE4(@QueryParam("include") List<Include> include) {
+            return LinkRest.select(E4.class, config)
+                    .include(include)
+                    .get();
         }
+
     }
 }

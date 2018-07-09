@@ -6,6 +6,8 @@ import org.apache.cayenne.exp.Expression;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.nhl.link.rest.meta.LrEntity;
 
+import javax.ws.rs.ext.ParamConverter;
+
 /**
  * @since 1.17
  */
@@ -19,4 +21,9 @@ public interface ICayenneExpProcessor {
 	 * @since 2.13
 	 */
 	Expression process(LrEntity<?> entity, CayenneExp expressionParam);
+
+	/**
+	 * @since 2.13
+	 */
+	ParamConverter<CayenneExp> getConverter();
 }

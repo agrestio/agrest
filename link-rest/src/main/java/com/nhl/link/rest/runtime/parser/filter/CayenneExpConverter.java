@@ -6,61 +6,47 @@ import com.nhl.link.rest.LinkRestException;
 import com.nhl.link.rest.runtime.jackson.IJacksonService;
 import com.nhl.link.rest.runtime.query.CayenneExp;
 import org.apache.cayenne.exp.Expression;
-import org.apache.cayenne.exp.ExpressionFactory;
 
 import javax.ws.rs.core.Response.Status;
+import javax.ws.rs.ext.ParamConverter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-class CayenneExpProcessorWorker {
+class CayenneExpConverter implements ParamConverter<CayenneExp> {
 
 	private static final String EXP = "exp";
 	private static final String PARAMS = "params";
 
 	private IJacksonService jsonParser;
 
-	CayenneExpProcessorWorker(IJacksonService jsonParser) {
+	public CayenneExpConverter(IJacksonService jsonParser) {
 		this.jsonParser = jsonParser;
 	}
 
-	Expression exp(String cayenneExp) {
+	Expression exp(String value) {
 
-		if (cayenneExp == null) {
-			return null;
-		}
-
-		Expression exp;
-
-		if (cayenneExp.startsWith("[")) {
-			exp = processArray(jsonParser.parseJson(cayenneExp));
-		} else if (cayenneExp.startsWith("{")) {
-			exp = processMap(jsonParser.parseJson(cayenneExp));
-		} else {
-			exp = processExp(cayenneExp);
-		}
-
-		return exp;
+		return exp(fromString(value));
 	}
 
-	Expression exp(JsonNode cayenneExp) {
-		if (cayenneExp == null) {
+	Expression exp(JsonNode value) {
+		if (value == null) {
 			return null;
 		}
 
-		Expression exp;
+		CayenneExp cayenneExp;
 
-		if (cayenneExp.isArray()) {
-			exp = processArray(cayenneExp);
-		} else if (cayenneExp.isObject()) {
-			exp = processMap(cayenneExp);
+		if (value.isArray()) {
+			cayenneExp = processArray(value);
+		} else if (value.isObject()) {
+			cayenneExp = processMap(value);
 		} else {
-			exp = processExp(cayenneExp.asText());
+			cayenneExp = processExp(value.asText());
 		}
 
-		return exp;
+		return cayenneExp.toExpression();
 	}
 
 	/**
@@ -71,25 +57,54 @@ class CayenneExpProcessorWorker {
 			return null;
 		}
 
-		Expression exp = ExpressionFactory.exp(cayenneExp.getExp());
-		exp = exp.params(cayenneExp.getParams());
-
-		return exp;
+		return cayenneExp.toExpression();
 	}
 
-	private Expression processExp(String cayenneExp) {
-		return ExpressionFactory.exp(cayenneExp);
+	/**
+	 * @since 2.13
+	 */
+	@Override
+	public CayenneExp fromString(String value) {
+		if (value == null || value.isEmpty()) {
+			return null;
+		}
+
+		CayenneExp cayenneExp;
+
+		if (value.startsWith("[")) {
+			cayenneExp = processArray(jsonParser.parseJson(value));
+		} else if (value.startsWith("{")) {
+			cayenneExp = processMap(jsonParser.parseJson(value));
+		} else {
+			cayenneExp = processExp(value);
+		}
+
+		return cayenneExp;
 	}
 
-	private Expression processMap(JsonNode map) {
+	/**
+	 * @since 2.13
+	 */
+	@Override
+	public String toString(CayenneExp value) {
+		return null;
+	}
 
+	private CayenneExp processExp(String value) {
+		CayenneExp cayenneExp = new CayenneExp();
+		cayenneExp.setExp(value);
+		return cayenneExp;
+	}
+
+	private CayenneExp processMap(JsonNode map) {
 		// 'exp' key is required; 'params' key is optional
 		JsonNode expNode = map.get(EXP);
 		if (expNode == null) {
 			throw new LinkRestException(Status.BAD_REQUEST, "'exp' key is missing in 'cayenneExp' map");
 		}
 
-		Expression exp = ExpressionFactory.exp(expNode.asText());
+		CayenneExp cayenneExp = new CayenneExp();
+		cayenneExp.setExp(expNode.asText());
 
 		JsonNode paramsNode = map.get(PARAMS);
 		if (paramsNode != null) {
@@ -100,17 +115,17 @@ class CayenneExpProcessorWorker {
 			while (it.hasNext()) {
 				String key = it.next();
 				JsonNode valueNode = paramsNode.get(key);
-				Object value = extractValue(valueNode);
-				paramsMap.put(key, value);
+				Object val = extractValue(valueNode);
+				paramsMap.put(key, val);
 			}
 
-			exp = exp.params(paramsMap);
+			cayenneExp.setParams(paramsMap);
 		}
 
-		return exp;
+		return cayenneExp;
 	}
 
-	private Expression processArray(JsonNode array) {
+	private CayenneExp processArray(JsonNode array) {
 
 		int len = array.size();
 		if (len < 1) {
@@ -118,8 +133,11 @@ class CayenneExpProcessorWorker {
 		}
 
 		String expString = array.get(0).asText();
+
+		CayenneExp cayenneExp = new CayenneExp();
+		cayenneExp.setExp(expString);
 		if (len < 2) {
-			return ExpressionFactory.exp(expString);
+			return cayenneExp;
 		}
 
 		Object[] params = new Object[len - 1];
@@ -129,8 +147,9 @@ class CayenneExpProcessorWorker {
 			JsonNode paramNode = array.get(i);
 			params[i - 1] = extractValue(paramNode);
 		}
+		cayenneExp.setParams(params);
 
-		return ExpressionFactory.exp(expString, params);
+		return cayenneExp;
 	}
 
 	private static Object extractValue(JsonNode valueNode) {
@@ -165,4 +184,5 @@ class CayenneExpProcessorWorker {
 
 		return values;
 	}
+
 }

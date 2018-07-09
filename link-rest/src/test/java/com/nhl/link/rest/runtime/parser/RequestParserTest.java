@@ -17,7 +17,9 @@ import com.nhl.link.rest.runtime.parser.sort.SortProcessor;
 import com.nhl.link.rest.runtime.parser.tree.ExcludeProcessor;
 import com.nhl.link.rest.runtime.parser.tree.IExcludeProcessor;
 import com.nhl.link.rest.runtime.parser.tree.IIncludeProcessor;
+import com.nhl.link.rest.runtime.parser.tree.IMapByProcessor;
 import com.nhl.link.rest.runtime.parser.tree.IncludeProcessor;
+import com.nhl.link.rest.runtime.parser.tree.MapByProcessor;
 import com.nhl.link.rest.unit.TestWithCayenneMapping;
 import org.apache.cayenne.query.Ordering;
 import org.apache.cayenne.query.SortOrder;
@@ -45,10 +47,11 @@ public class RequestParserTest extends TestWithCayenneMapping {
 		IJacksonService jacksonService = new JacksonService();
 		ICayenneExpProcessor expProcessor = new CayenneExpProcessor(jacksonService, new ExpressionPostProcessor(pathCache));
 		ISortProcessor sortProcessor = new SortProcessor(jacksonService, pathCache);
-		IIncludeProcessor includeProcessor = new IncludeProcessor(jacksonService, sortProcessor, expProcessor);
+		IMapByProcessor mapByProcessor = new MapByProcessor();
+		IIncludeProcessor includeProcessor = new IncludeProcessor(jacksonService, sortProcessor, expProcessor, mapByProcessor);
 		IExcludeProcessor excludeProcessor = new ExcludeProcessor(jacksonService);
 
-		parser = new RequestParser(includeProcessor, excludeProcessor, sortProcessor, expProcessor);
+		parser = new RequestParser(includeProcessor, excludeProcessor, sortProcessor, expProcessor, mapByProcessor);
 	}
 
 	@Test

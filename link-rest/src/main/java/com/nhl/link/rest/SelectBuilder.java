@@ -8,6 +8,9 @@ import com.nhl.link.rest.processor.ProcessorOutcome;
 import com.nhl.link.rest.runtime.LinkRestBuilder;
 import com.nhl.link.rest.runtime.processor.select.SelectContext;
 import com.nhl.link.rest.runtime.query.CayenneExp;
+import com.nhl.link.rest.runtime.query.Exclude;
+import com.nhl.link.rest.runtime.query.Include;
+import com.nhl.link.rest.runtime.query.Sort;
 import org.apache.cayenne.exp.Property;
 
 import javax.ws.rs.core.UriInfo;
@@ -213,13 +216,6 @@ public interface SelectBuilder<T> {
     SelectBuilder<T> mapBy(String mapBy);
 
     /**
-     * Forces the builder to make selection using cayenneExp query parameter.
-     *
-     * @since 2.13
-     */
-    SelectBuilder<T> cayenneExp(String cayenneExp);
-
-    /**
      * @since 2.13
      */
     SelectBuilder<T> cayenneExp(CayenneExp cayenneExp);
@@ -243,21 +239,21 @@ public interface SelectBuilder<T> {
      *
      * @since 2.13
      */
-    SelectBuilder<T> exclude(List<String> exclude);
+    SelectBuilder<T> exclude(List<Exclude> exclude);
 
     /**
      * Forces the builder to make selection using include query parameter.
      *
      * @since 2.13
      */
-    SelectBuilder<T> include(List<String> include);
+    SelectBuilder<T> include(List<Include> include);
 
     /**
      * Forces the builder to sort selection.
      *
      * @since 2.13
      */
-    SelectBuilder<T> sort(String sortSpec);
+    SelectBuilder<T> sort(Sort sortSpec);
 
     /**
      * Forces the builder to set direction of sorting.

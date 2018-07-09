@@ -8,6 +8,9 @@ import com.nhl.link.rest.it.fixture.cayenne.E2;
 import com.nhl.link.rest.it.fixture.cayenne.E3;
 import com.nhl.link.rest.it.fixture.cayenne.E5;
 import com.nhl.link.rest.runtime.query.CayenneExp;
+import com.nhl.link.rest.runtime.query.Exclude;
+import com.nhl.link.rest.runtime.query.Include;
+import com.nhl.link.rest.runtime.query.Sort;
 import org.apache.cayenne.query.SQLTemplate;
 import org.junit.Test;
 
@@ -67,8 +70,7 @@ public class GET_CayenneExpObjectIT extends JerseyTestOnDerby {
 				.request().get();
 
 		assertEquals(Status.OK.getStatusCode(), r1.getStatus());
-		// TODO: Plain cayenneExp string parameter is not processed by CayenneExp object yet
-		assertEquals("{\"data\":[{\"id\":1},{\"id\":2},{\"id\":3}],\"total\":3}", r1.readEntity(String.class));
+		assertEquals("{\"data\":[{\"id\":2}],\"total\":1}", r1.readEntity(String.class));
 	}
 
 	@Test
@@ -81,8 +83,7 @@ public class GET_CayenneExpObjectIT extends JerseyTestOnDerby {
 				.request().get();
 
 		assertEquals(Status.OK.getStatusCode(), r1.getStatus());
-		// TODO: Array cayenneExp parameter is not processed by CayenneExp object yet
-		assertEquals("{\"data\":[{\"id\":1},{\"id\":2},{\"id\":3}],\"total\":3}", r1.readEntity(String.class));
+		assertEquals("{\"data\":[{\"id\":2}],\"total\":1}", r1.readEntity(String.class));
 	}
 
 	@Test
@@ -95,8 +96,7 @@ public class GET_CayenneExpObjectIT extends JerseyTestOnDerby {
 				.queryParam("cayenneExp", urlEnc("[\"name = $b\", \"xxx\"]")).request().get();
 
 		assertEquals(Status.OK.getStatusCode(), r1.getStatus());
-		// TODO: cayenneExp array parameter is not processed by CayenneExp object yet
-		assertEquals("{\"data\":[{\"id\":1},{\"id\":2},{\"id\":3}],\"total\":3}", r1.readEntity(String.class));
+		assertEquals("{\"data\":[{\"id\":1}],\"total\":1}", r1.readEntity(String.class));
 	}
 
 	@Test
@@ -253,8 +253,8 @@ public class GET_CayenneExpObjectIT extends JerseyTestOnDerby {
 
 		@GET
 		@Path("e2")
-		public DataResponse<E2> getE2(@QueryParam("include") List<String> include,
-									  @QueryParam("exclude") List<String> exclude,
+		public DataResponse<E2> getE2(@QueryParam("include") List<Include> include,
+									  @QueryParam("exclude") List<Exclude> exclude,
 									  @QueryParam("cayenneExp") CayenneExp cayenneExp) {
 
 			return LinkRest.select(E2.class, config)
@@ -269,9 +269,9 @@ public class GET_CayenneExpObjectIT extends JerseyTestOnDerby {
 
 		@GET
 		@Path("e3")
-		public DataResponse<E3> getE3(@QueryParam("sort") String sort,
-									   @QueryParam("include") List<String> include,
-									   @QueryParam("exclude") List<String> exclude,
+		public DataResponse<E3> getE3(@QueryParam("sort") Sort sort,
+									   @QueryParam("include") List<Include> include,
+									   @QueryParam("exclude") List<Exclude> exclude,
 									   @QueryParam("cayenneExp") CayenneExp cayenneExp) {
 			return LinkRest.select(E3.class, config)
 					.constraint(Constraint.excludeAll(E3.class).includeId().attributes("phoneNumber", "name")

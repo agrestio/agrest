@@ -21,13 +21,13 @@ import com.nhl.link.rest.unit.TestWithCayenneMapping;
 
 public class SortProcessorTest extends TestWithCayenneMapping {
 
-	private SortWorker processor;
+	private SortProcessor processor;
 	private ResourceEntity<?> entity;
 
 	@Before
 	public void before() {
 		JacksonService jacksonService = new JacksonService();
-		this.processor = new SortWorker(jacksonService, new PathCache());
+		this.processor = new SortProcessor(jacksonService, new PathCache());
 
 		@SuppressWarnings("unchecked")
 		LrEntity<E2> lre2 = mock(LrEntity.class);

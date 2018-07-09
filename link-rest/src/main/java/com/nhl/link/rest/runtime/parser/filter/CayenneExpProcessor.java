@@ -7,13 +7,15 @@ import com.nhl.link.rest.runtime.query.CayenneExp;
 import org.apache.cayenne.di.Inject;
 import org.apache.cayenne.exp.Expression;
 
+import javax.ws.rs.ext.ParamConverter;
+
 public class CayenneExpProcessor implements ICayenneExpProcessor {
 
-	private CayenneExpProcessorWorker worker;
+	private CayenneExpConverter converter;
 	private IExpressionPostProcessor postProcessor;
 
 	public CayenneExpProcessor(@Inject IJacksonService jsonParser, @Inject IExpressionPostProcessor postProcessor) {
-		this.worker = new CayenneExpProcessorWorker(jsonParser);
+		this.converter = new CayenneExpConverter(jsonParser);
 		this.postProcessor = postProcessor;
 	}
 
@@ -24,7 +26,7 @@ public class CayenneExpProcessor implements ICayenneExpProcessor {
 			return null;
 		}
 
-		return postProcessor.process(entity, worker.exp(expressionString));
+		return postProcessor.process(entity, converter.exp(expressionString));
 	}
 
 	@Override
@@ -34,7 +36,7 @@ public class CayenneExpProcessor implements ICayenneExpProcessor {
 			return null;
 		}
 
-		return postProcessor.process(entity, worker.exp(expressionNode));
+		return postProcessor.process(entity, converter.exp(expressionNode));
 	}
 
 	/**
@@ -46,6 +48,14 @@ public class CayenneExpProcessor implements ICayenneExpProcessor {
 			return null;
 		}
 
-		return postProcessor.process(entity, worker.exp(expressionParam));
+		return postProcessor.process(entity, converter.exp(expressionParam));
+	}
+
+	/**
+	 * @since 2.13
+	 */
+	@Override
+	public ParamConverter<CayenneExp> getConverter() {
+		return converter;
 	}
 }
