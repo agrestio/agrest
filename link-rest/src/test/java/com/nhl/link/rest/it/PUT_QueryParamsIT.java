@@ -8,6 +8,8 @@ import com.nhl.link.rest.it.fixture.cayenne.E2;
 import com.nhl.link.rest.it.fixture.cayenne.E20;
 import com.nhl.link.rest.it.fixture.cayenne.E21;
 import com.nhl.link.rest.it.fixture.cayenne.E3;
+import com.nhl.link.rest.runtime.query.Exclude;
+import com.nhl.link.rest.runtime.query.Include;
 import org.junit.Test;
 
 import javax.ws.rs.PUT;
@@ -150,7 +152,7 @@ public class PUT_QueryParamsIT extends JerseyTestOnDerby {
         @Path("single-id/{id}")
         public DataResponse<E20> createOrUpdate_E20(
                 @PathParam("id") String name,
-                @QueryParam("exclude") List<String> exclude,
+                @QueryParam("exclude") List<Exclude> exclude,
                 EntityUpdate<E20> update) {
 
             return LinkRest.idempotentCreateOrUpdate(E20.class, config)
@@ -164,7 +166,7 @@ public class PUT_QueryParamsIT extends JerseyTestOnDerby {
         public DataResponse<E21> createOrUpdate_E21(
                 @QueryParam("age") int age,
                 @QueryParam("name") String name,
-                @QueryParam("exclude") List<String> exclude,
+                @QueryParam("exclude") List<Exclude> exclude,
                 EntityUpdate<E21> update) {
 
             Map<String, Object> id = new HashMap<>(3);
@@ -179,8 +181,8 @@ public class PUT_QueryParamsIT extends JerseyTestOnDerby {
 
         @PUT
         @Path("e3")
-        public DataResponse<E3> syncE3(@QueryParam("include") List<String> include,
-                                       @QueryParam("exclude") List<String> exclude,
+        public DataResponse<E3> syncE3(@QueryParam("include") List<Include> include,
+                                       @QueryParam("exclude") List<Exclude> exclude,
                                        String requestBody) {
 
             return LinkRest.idempotentFullSync(E3.class, config)
@@ -192,8 +194,8 @@ public class PUT_QueryParamsIT extends JerseyTestOnDerby {
         @PUT
         @Path("e2/{id}")
         public DataResponse<E2> createOrUpdate_E2(@PathParam("id") int id,
-                                                  @QueryParam("include") List<String> include,
-                                                  @QueryParam("exclude") List<String> exclude,
+                                                  @QueryParam("include") List<Include> include,
+                                                  @QueryParam("exclude") List<Exclude> exclude,
                                                   String entityData) {
 
             return LinkRest.idempotentCreateOrUpdate(E2.class, config)

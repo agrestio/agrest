@@ -13,6 +13,9 @@ import com.nhl.link.rest.processor.Processor;
 import com.nhl.link.rest.runtime.cayenne.ByKeyObjectMapperFactory;
 import com.nhl.link.rest.runtime.processor.update.UpdateContext;
 import com.nhl.link.rest.runtime.processor.update.UpdateProcessorFactory;
+import com.nhl.link.rest.runtime.query.Exclude;
+import com.nhl.link.rest.runtime.query.Include;
+import com.nhl.link.rest.runtime.query.Query;
 import org.apache.cayenne.exp.Property;
 
 import javax.ws.rs.core.Response;
@@ -20,12 +23,9 @@ import javax.ws.rs.core.UriInfo;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumMap;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.nhl.link.rest.Term.EXCLUDE;
-import static com.nhl.link.rest.Term.INCLUDE;
 
 /**
  * @since 1.7
@@ -193,8 +193,8 @@ public class DefaultUpdateBuilder<T> implements UpdateBuilder<T> {
      * @since 2.13
      */
     @Override
-    public UpdateBuilder<T> exclude(List<String> exclude) {
-        getOrCreateQueryParams().put(EXCLUDE.toString(), exclude);
+    public UpdateBuilder<T> exclude(List<Exclude> exclude) {
+        getOrCreateQuery().setExclude(exclude);
         return this;
     }
 
@@ -202,17 +202,17 @@ public class DefaultUpdateBuilder<T> implements UpdateBuilder<T> {
      * @since 2.13
      */
     @Override
-    public UpdateBuilder<T> include(List<String> include) {
-        getOrCreateQueryParams().put(INCLUDE.toString(), include);
+    public UpdateBuilder<T> include(List<Include> include) {
+        getOrCreateQuery().setInclude(include);
         return this;
     }
 
-    private Map<String, List<String>> getOrCreateQueryParams() {
-        if (context.getQueryParams() == null) {
-            context.setQueryParams(new HashMap<>());
+    private Query getOrCreateQuery() {
+        if (context.getQuery() == null) {
+            context.setQuery(new Query());
         }
 
-        return context.getQueryParams();
+        return context.getQuery();
     }
 
     /**

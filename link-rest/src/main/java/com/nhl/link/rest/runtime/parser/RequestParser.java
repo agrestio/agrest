@@ -109,7 +109,18 @@ public class RequestParser implements IRequestParser {
 
     @Override
     public <T> ResourceEntity<T> parseUpdate(LrEntity<T> entity, Map<String, List<String>> plainParameters, Query complexParameters) {
-        return parseUpdate(entity, plainParameters);
+        if (complexParameters == null) {
+            return parseUpdate(entity, plainParameters);
+        }
+
+        ResourceEntity<T> resourceEntity = new ResourceEntity<>(entity);
+
+        // process even if no parameters exist ... this will result in
+        // default includes
+        includeProcessor.process(resourceEntity, complexParameters);
+        excludeProcessor.process(resourceEntity, complexParameters);
+
+        return resourceEntity;
     }
 
 }

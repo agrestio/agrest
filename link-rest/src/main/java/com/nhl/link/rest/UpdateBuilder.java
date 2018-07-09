@@ -4,6 +4,8 @@ import com.nhl.link.rest.constraints.Constraint;
 import com.nhl.link.rest.processor.Processor;
 import com.nhl.link.rest.processor.ProcessorOutcome;
 import com.nhl.link.rest.runtime.processor.update.UpdateContext;
+import com.nhl.link.rest.runtime.query.Exclude;
+import com.nhl.link.rest.runtime.query.Include;
 import org.apache.cayenne.exp.Property;
 
 import javax.ws.rs.core.UriInfo;
@@ -213,12 +215,12 @@ public interface UpdateBuilder<T> {
      *
      * @since 2.13
      */
-    UpdateBuilder<T> exclude(List<String> exclude);
+    UpdateBuilder<T> exclude(List<Exclude> exclude);
 
     /**
      * Forces the builder to make selection using include query parameter.
      *
      * @since 2.13
      */
-    UpdateBuilder<T> include(List<String> include);
+    UpdateBuilder<T> include(List<Include> include);
 }
