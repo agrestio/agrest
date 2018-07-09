@@ -112,7 +112,7 @@ public class IncludeConverter implements ParamConverter<Include> {
 
         JsonNode expNode = root.get(CAYENNE_EXP.toString());
         if (expNode != null) {
-            CayenneExp cayenneExp = expProcessor.getConverter().fromString(expNode.isTextual() ? expNode.asText() : expNode.toString());
+            CayenneExp cayenneExp = (CayenneExp) expProcessor.getConverter().fromString(expNode.isTextual() ? expNode.asText() : expNode.toString());
             include.setCayenneExp(cayenneExp);
         }
 

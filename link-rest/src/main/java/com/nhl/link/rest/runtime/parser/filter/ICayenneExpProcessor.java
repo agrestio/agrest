@@ -1,29 +1,17 @@
 package com.nhl.link.rest.runtime.parser.filter;
 
-import com.nhl.link.rest.runtime.query.CayenneExp;
-import org.apache.cayenne.exp.Expression;
+import com.nhl.link.rest.ResourceEntity;
+import com.nhl.link.rest.runtime.parser.IQueryProcessor;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.nhl.link.rest.meta.LrEntity;
-
-import javax.ws.rs.ext.ParamConverter;
 
 /**
  * @since 1.17
  */
-public interface ICayenneExpProcessor {
+public interface ICayenneExpProcessor extends IQueryProcessor {
 
-	Expression process(LrEntity<?> entity, String expressionString);
+	void process(ResourceEntity<?> resourceEntity, String expressionString);
 
-	Expression process(LrEntity<?> entity, JsonNode expressionNode);
+	void process(ResourceEntity<?> resourceEntity, JsonNode expressionNode);
 
-	/**
-	 * @since 2.13
-	 */
-	Expression process(LrEntity<?> entity, CayenneExp expressionParam);
-
-	/**
-	 * @since 2.13
-	 */
-	ParamConverter<CayenneExp> getConverter();
 }

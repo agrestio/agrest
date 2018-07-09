@@ -9,7 +9,6 @@ import com.nhl.link.rest.runtime.parser.tree.IIncludeProcessor;
 import com.nhl.link.rest.runtime.parser.tree.IMapByProcessor;
 import com.nhl.link.rest.runtime.query.Query;
 import org.apache.cayenne.di.Inject;
-import org.apache.cayenne.exp.Expression;
 
 import java.util.List;
 import java.util.Map;
@@ -64,8 +63,7 @@ public class RequestParser implements IRequestParser {
 
         mapByProcessor.process(resourceEntity, BaseRequestProcessor.string(protocolParameters, MAP_BY));
 
-        Expression exp = cayenneExpProcessor.process(entity, BaseRequestProcessor.string(protocolParameters, CAYENNE_EXP));
-        resourceEntity.andQualifier(exp);
+        cayenneExpProcessor.process(resourceEntity, BaseRequestProcessor.string(protocolParameters, CAYENNE_EXP));
 
         return resourceEntity;
     }
@@ -101,8 +99,7 @@ public class RequestParser implements IRequestParser {
         mapByProcessor.process(resourceEntity, BaseRequestProcessor.string(plainParameters, MAP_BY));
 
 
-        Expression exp = cayenneExpProcessor.process(entity, complexParameters.getCayenneExp());
-        resourceEntity.andQualifier(exp);
+        cayenneExpProcessor.process(resourceEntity, complexParameters);
 
         return resourceEntity;
     }

@@ -11,7 +11,6 @@ import com.nhl.link.rest.runtime.query.Include;
 import com.nhl.link.rest.runtime.query.Query;
 import com.nhl.link.rest.runtime.query.Sort;
 import org.apache.cayenne.di.Inject;
-import org.apache.cayenne.exp.Expression;
 
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.ext.ParamConverter;
@@ -112,10 +111,9 @@ public class IncludeProcessor implements IIncludeProcessor {
 
 			final CayenneExp cayenneExp = include.getCayenneExp();
 			if (cayenneExp != null) {
-				Expression exp = expProcessor.process(includeEntity.getLrEntity(), cayenneExp);
-				if (exp != null) {
-					includeEntity.andQualifier(exp);
-				}
+				Query query = new Query();
+				query.setCayenneExp(cayenneExp);
+				expProcessor.process(includeEntity, query);
 			}
 
 			final Integer start = include.getStart();
