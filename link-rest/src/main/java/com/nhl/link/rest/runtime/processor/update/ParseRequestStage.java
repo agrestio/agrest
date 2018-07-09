@@ -42,7 +42,7 @@ public class ParseRequestStage implements Processor<UpdateContext<?>> {
         LrEntity<T> entity = metadataService.getLrEntity(context.getType());
 
         // TODO: should we skip this for SimpleResponse-returning updates?
-        ResourceEntity<T> resourceEntity = requestParser.parseUpdate(entity, context.getProtocolParameters());
+        ResourceEntity<T> resourceEntity = requestParser.parseUpdate(entity, context.getProtocolParameters(), context.getQuery());
         context.setEntity(resourceEntity);
 
         // skip parsing if we already received EntityUpdates collection parsed by MessageBodyReader

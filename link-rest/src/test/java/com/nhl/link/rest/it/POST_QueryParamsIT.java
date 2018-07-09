@@ -8,6 +8,8 @@ import com.nhl.link.rest.it.fixture.cayenne.E2;
 import com.nhl.link.rest.it.fixture.cayenne.E20;
 import com.nhl.link.rest.it.fixture.cayenne.E21;
 import com.nhl.link.rest.it.fixture.cayenne.E3;
+import com.nhl.link.rest.runtime.query.Exclude;
+import com.nhl.link.rest.runtime.query.Include;
 import org.apache.cayenne.Cayenne;
 import org.apache.cayenne.query.ObjectSelect;
 import org.apache.cayenne.query.SelectQuery;
@@ -112,7 +114,7 @@ public class POST_QueryParamsIT extends JerseyTestOnDerby {
 
         @POST
         @Path("single-id")
-        public DataResponse<E20> createE20(EntityUpdate<E20> update, @QueryParam("exclude") List<String> exclude) {
+        public DataResponse<E20> createE20(EntityUpdate<E20> update, @QueryParam("exclude") List<Exclude> exclude) {
 
             return LinkRest
                     .create(E20.class, config)
@@ -122,7 +124,7 @@ public class POST_QueryParamsIT extends JerseyTestOnDerby {
 
         @POST
         @Path("multi-id")
-        public DataResponse<E21> createE21(EntityUpdate<E21> update, @QueryParam("exclude") List<String> exclude) {
+        public DataResponse<E21> createE21(EntityUpdate<E21> update, @QueryParam("exclude") List<Exclude> exclude) {
 
 
             return LinkRest
@@ -134,8 +136,8 @@ public class POST_QueryParamsIT extends JerseyTestOnDerby {
         @POST
         @Path("e2")
         public DataResponse<E2> createE2(String targetData,
-                                         @QueryParam("include") List<String> include,
-                                         @QueryParam("exclude") List<String> exclude) {
+                                         @QueryParam("include") List<Include> include,
+                                         @QueryParam("exclude") List<Exclude> exclude) {
 
             return LinkRest
                     .create(E2.class, config)

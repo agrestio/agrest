@@ -18,11 +18,15 @@ import com.nhl.link.rest.meta.compiler.LrEntityCompiler;
 import com.nhl.link.rest.meta.compiler.PojoEntityCompiler;
 import com.nhl.link.rest.meta.parser.IResourceParser;
 import com.nhl.link.rest.meta.parser.ResourceParser;
+import com.nhl.link.rest.provider.CayenneExpProvider;
 import com.nhl.link.rest.provider.CayenneRuntimeExceptionMapper;
 import com.nhl.link.rest.provider.DataResponseWriter;
+import com.nhl.link.rest.provider.ExcludeProvider;
+import com.nhl.link.rest.provider.IncludeProvider;
 import com.nhl.link.rest.provider.LinkRestExceptionMapper;
 import com.nhl.link.rest.provider.MetadataResponseWriter;
 import com.nhl.link.rest.provider.SimpleResponseWriter;
+import com.nhl.link.rest.provider.SortProvider;
 import com.nhl.link.rest.provider.ValidationExceptionMapper;
 import com.nhl.link.rest.runtime.adapter.LinkRestAdapter;
 import com.nhl.link.rest.runtime.cayenne.CayennePersister;
@@ -77,7 +81,9 @@ import com.nhl.link.rest.runtime.parser.sort.SortProcessor;
 import com.nhl.link.rest.runtime.parser.tree.ExcludeProcessor;
 import com.nhl.link.rest.runtime.parser.tree.IExcludeProcessor;
 import com.nhl.link.rest.runtime.parser.tree.IIncludeProcessor;
+import com.nhl.link.rest.runtime.parser.tree.IMapByProcessor;
 import com.nhl.link.rest.runtime.parser.tree.IncludeProcessor;
+import com.nhl.link.rest.runtime.parser.tree.MapByProcessor;
 import com.nhl.link.rest.runtime.processor.delete.DeleteProcessorFactory;
 import com.nhl.link.rest.runtime.processor.meta.CollectMetadataStage;
 import com.nhl.link.rest.runtime.processor.meta.MetadataProcessorFactory;
@@ -573,9 +579,15 @@ public class LinkRestBuilder {
             binder.bind(ISortProcessor.class).to(SortProcessor.class);
             binder.bind(IIncludeProcessor.class).to(IncludeProcessor.class);
             binder.bind(IExcludeProcessor.class).to(ExcludeProcessor.class);
+            binder.bind(IMapByProcessor.class).to(MapByProcessor.class);
 
             binder.bind(IResourceParser.class).to(ResourceParser.class);
             binder.bind(IUpdateParser.class).to(UpdateParser.class);
+
+            binder.bind(CayenneExpProvider.class).to(CayenneExpProvider.class);
+            binder.bind(IncludeProvider.class).to(IncludeProvider.class);
+            binder.bind(ExcludeProvider.class).to(ExcludeProvider.class);
+            binder.bind(SortProvider.class).to(SortProvider.class);
 
             Optional<String> maybeBaseUrl = Optional.ofNullable(baseUrl);
             binder.bind(BaseUrlProvider.class).toInstance(BaseUrlProvider.forUrl(maybeBaseUrl));

@@ -8,6 +8,10 @@ import com.nhl.link.rest.it.fixture.cayenne.E20;
 import com.nhl.link.rest.it.fixture.cayenne.E21;
 import com.nhl.link.rest.it.fixture.cayenne.E3;
 import com.nhl.link.rest.it.fixture.cayenne.E4;
+import com.nhl.link.rest.runtime.query.CayenneExp;
+import com.nhl.link.rest.runtime.query.Exclude;
+import com.nhl.link.rest.runtime.query.Include;
+import com.nhl.link.rest.runtime.query.Sort;
 import org.apache.cayenne.query.SQLTemplate;
 import org.junit.Test;
 
@@ -248,7 +252,7 @@ public class GET_QueryParamsIT extends JerseyTestOnDerby {
 
         @GET
         @Path("single-id/{id}")
-        public DataResponse<E20> getE20ById(@PathParam("id") String name, @QueryParam("exclude") List<String> exclude) {
+        public DataResponse<E20> getE20ById(@PathParam("id") String name, @QueryParam("exclude") List<Exclude> exclude) {
 
             return LinkRest.service(config)
                     .select(E20.class)
@@ -261,7 +265,7 @@ public class GET_QueryParamsIT extends JerseyTestOnDerby {
         @Path("multi-id/byid")
         public DataResponse<E21> getE21ById(@QueryParam("age") int age,
                                             @QueryParam("name") String name,
-                                            @QueryParam("exclude") List<String> exclude) {
+                                            @QueryParam("exclude") List<Exclude> exclude) {
 
             Map<String, Object> id = new HashMap<>(3);
             id.put("age", age);
@@ -276,8 +280,8 @@ public class GET_QueryParamsIT extends JerseyTestOnDerby {
 
         @GET
         @Path("e4")
-        public DataResponse<E4> getE4(@QueryParam("include") List<String> include,
-                                      @QueryParam("sort") String sort) {
+        public DataResponse<E4> getE4(@QueryParam("include") List<Include> include,
+                                      @QueryParam("sort") Sort sort) {
 
             return LinkRest.service(config)
                     .select(E4.class)
@@ -289,7 +293,7 @@ public class GET_QueryParamsIT extends JerseyTestOnDerby {
         @GET
         @Path("e4/{id}")
         public DataResponse<E4> getE4_WithIncludeExclude(@PathParam("id") int id,
-                                                         @QueryParam("include") List<String> include) {
+                                                         @QueryParam("include") List<Include> include) {
 
             return LinkRest.service(config)
                     .select(E4.class)
@@ -300,12 +304,12 @@ public class GET_QueryParamsIT extends JerseyTestOnDerby {
 
         @GET
         @Path("e3")
-        public DataResponse<E3> getE3(@QueryParam("sort")  String sort,
+        public DataResponse<E3> getE3(@QueryParam("sort")  Sort sort,
                                       @QueryParam("start") int start,
                                       @QueryParam("limit") int limit,
                                       @QueryParam("mapBy") String mapBy,
-                                      @QueryParam("include") List<String> include,
-                                      @QueryParam("exclude") List<String> exclude) {
+                                      @QueryParam("include") List<Include> include,
+                                      @QueryParam("exclude") List<Exclude> exclude) {
             return LinkRest.service(config)
                     .select(E3.class)
                     .sort(sort)
@@ -319,8 +323,8 @@ public class GET_QueryParamsIT extends JerseyTestOnDerby {
 
         @GET
         @Path("e2")
-        public DataResponse<E2> getE2(@QueryParam("include") List<String> include,
-                                      @QueryParam("cayenneExp") String cayenneExp) {
+        public DataResponse<E2> getE2(@QueryParam("include") List<Include> include,
+                                      @QueryParam("cayenneExp") CayenneExp cayenneExp) {
 
             return LinkRest.service(config)
                     .select(E2.class)

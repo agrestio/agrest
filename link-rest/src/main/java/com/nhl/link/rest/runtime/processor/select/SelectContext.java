@@ -11,6 +11,7 @@ import com.nhl.link.rest.SizeConstraints;
 import com.nhl.link.rest.constraints.Constraint;
 import com.nhl.link.rest.encoder.Encoder;
 import com.nhl.link.rest.processor.BaseProcessingContext;
+import com.nhl.link.rest.runtime.query.Query;
 import org.apache.cayenne.query.SelectQuery;
 
 import javax.ws.rs.core.UriInfo;
@@ -37,6 +38,7 @@ public class SelectContext<T> extends BaseProcessingContext<T> {
 	private int prefetchSemantics;
 	private List objects;
 	private Map<String, List<String>> queryParams;
+	private Query query;
 
 	// TODO: deprecate dependency on Cayenne in generic code
 	private SelectQuery<T> select;
@@ -108,6 +110,20 @@ public class SelectContext<T> extends BaseProcessingContext<T> {
 	 */
 	public void setQueryParams(Map<String, List<String>> parameters) {
 		queryParams = parameters;
+	}
+
+	/**
+	 * @since 2.13
+	 */
+	public Query getQuery() {
+		return query;
+	}
+
+	/**
+	 * @since 2.13
+	 */
+	public void setQuery(Query query) {
+		this.query = query;
 	}
 
 	public void setUriInfo(UriInfo uriInfo) {

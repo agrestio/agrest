@@ -13,6 +13,11 @@ import com.nhl.link.rest.processor.Processor;
 import com.nhl.link.rest.property.PropertyBuilder;
 import com.nhl.link.rest.runtime.processor.select.SelectContext;
 import com.nhl.link.rest.runtime.processor.select.SelectProcessorFactory;
+import com.nhl.link.rest.runtime.query.CayenneExp;
+import com.nhl.link.rest.runtime.query.Exclude;
+import com.nhl.link.rest.runtime.query.Include;
+import com.nhl.link.rest.runtime.query.Query;
+import com.nhl.link.rest.runtime.query.Sort;
 import org.apache.cayenne.exp.Property;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,19 +31,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.nhl.link.rest.Term.MAP_BY;
+import static com.nhl.link.rest.Term.START;
+import static com.nhl.link.rest.Term.LIMIT;
+import static com.nhl.link.rest.Term.DIR;
+
 /**
  * @since 1.16
  */
 public class DefaultSelectBuilder<T> implements SelectBuilder<T> {
-
-    static final String START = "start";
-    static final String LIMIT = "limit";
-    static final String CAYENNE_EXP = "cayenneExp";
-    static final String MAP_BY = "mapBy";
-    static final String SORT = "sort";
-    static final String DIR = "dir";
-    static final String INCLUDE = "include";
-    static final String EXCLUDE = "exclude";
 
     private static final Logger logger = LoggerFactory.getLogger(DefaultSelectBuilder.class);
 
@@ -228,7 +229,7 @@ public class DefaultSelectBuilder<T> implements SelectBuilder<T> {
     @Override
     public SelectBuilder<T> mapBy(String mapBy) {
         if (mapBy != null) {
-            getOrCreateQueryParams().put(MAP_BY, Arrays.asList(mapBy));
+            getOrCreateQueryParams().put(MAP_BY.toString(), Arrays.asList(mapBy));
         }
         return this;
     }
@@ -237,9 +238,9 @@ public class DefaultSelectBuilder<T> implements SelectBuilder<T> {
      * @since 2.13
      */
     @Override
-    public SelectBuilder<T> cayenneExp(String cayenneExp) {
+    public SelectBuilder<T> cayenneExp(CayenneExp cayenneExp) {
         if (cayenneExp != null) {
-            getOrCreateQueryParams().put(CAYENNE_EXP, Arrays.asList(cayenneExp));
+            getOrCreateQuery().setCayenneExp(cayenneExp);
         }
         return this;
     }
@@ -247,7 +248,7 @@ public class DefaultSelectBuilder<T> implements SelectBuilder<T> {
     @Override
     public SelectBuilder<T> start(Integer start) {
         if (start != null) {
-            getOrCreateQueryParams().put(START, Arrays.asList(start.toString()));
+            getOrCreateQueryParams().put(START.toString(), Arrays.asList(start.toString()));
         }
         return this;
     }
@@ -255,7 +256,7 @@ public class DefaultSelectBuilder<T> implements SelectBuilder<T> {
     @Override
     public SelectBuilder<T> limit(Integer limit) {
         if (limit != null) {
-            getOrCreateQueryParams().put(LIMIT, Arrays.asList(limit.toString()));
+            getOrCreateQueryParams().put(LIMIT.toString(), Arrays.asList(limit.toString()));
         }
         return this;
     }
@@ -264,9 +265,9 @@ public class DefaultSelectBuilder<T> implements SelectBuilder<T> {
      * @since 2.13
      */
     @Override
-    public SelectBuilder<T> exclude(List<String> exclude) {
-        if (!exclude.isEmpty()) {
-            getOrCreateQueryParams().put(EXCLUDE, exclude);
+    public SelectBuilder<T> exclude(List<Exclude> exclude) {
+        if (exclude != null && !exclude.isEmpty()) {
+            getOrCreateQuery().setExclude(exclude);
         }
         return this;
     }
@@ -275,17 +276,17 @@ public class DefaultSelectBuilder<T> implements SelectBuilder<T> {
      * @since 2.13
      */
     @Override
-    public SelectBuilder<T> include(List<String> include) {
-        if (!include.isEmpty()) {
-            getOrCreateQueryParams().put(INCLUDE, include);
+    public SelectBuilder<T> include(List<Include> include) {
+        if (include != null && !include.isEmpty()) {
+            getOrCreateQuery().setInclude(include);
         }
         return this;
     }
 
     @Override
-    public SelectBuilder<T> sort(String sortSpec) {
+    public SelectBuilder<T> sort(Sort sortSpec) {
         if (sortSpec != null) {
-            getOrCreateQueryParams().put(SORT, Arrays.asList(sortSpec));
+            getOrCreateQuery().setSort(sortSpec);
         }
         return this;
     }
@@ -296,7 +297,7 @@ public class DefaultSelectBuilder<T> implements SelectBuilder<T> {
     @Override
     public SelectBuilder<T> dir(String dir) {
         if (dir != null) {
-            getOrCreateQueryParams().put(DIR, Arrays.asList(dir));
+            getOrCreateQueryParams().put(DIR.toString(), Arrays.asList(dir));
         }
         return this;
     }
@@ -307,5 +308,13 @@ public class DefaultSelectBuilder<T> implements SelectBuilder<T> {
         }
 
         return context.getQueryParams();
+    }
+
+    private Query getOrCreateQuery() {
+        if (context.getQuery() == null) {
+            context.setQuery(new Query());
+        }
+
+        return context.getQuery();
     }
 }

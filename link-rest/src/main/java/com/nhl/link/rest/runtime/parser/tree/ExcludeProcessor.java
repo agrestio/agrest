@@ -1,61 +1,58 @@
 package com.nhl.link.rest.runtime.parser.tree;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.nhl.link.rest.LinkRestException;
 import com.nhl.link.rest.ResourceEntity;
 import com.nhl.link.rest.runtime.jackson.IJacksonService;
 import com.nhl.link.rest.runtime.parser.PathConstants;
+import com.nhl.link.rest.runtime.query.Exclude;
+import com.nhl.link.rest.runtime.query.Query;
 import org.apache.cayenne.di.Inject;
 
 import javax.ws.rs.core.Response.Status;
+import javax.ws.rs.ext.ParamConverter;
 import java.util.List;
 
 public class ExcludeProcessor implements IExcludeProcessor {
 
-    private IJacksonService jsonParser;
+    private ExcludeConverter converter;
 
     public ExcludeProcessor(@Inject IJacksonService jsonParser) {
-        this.jsonParser = jsonParser;
+        this.converter = new ExcludeConverter(jsonParser);
     }
 
-    /**
-     * Sanity check. We don't want to get a stack overflow.
-     */
-    static void checkTooLong(String path) {
-        if (path != null && path.length() > PathConstants.MAX_PATH_LENGTH) {
-            throw new LinkRestException(Status.BAD_REQUEST, "Include/exclude path too long: " + path);
+    @Override
+    public void process(ResourceEntity<?> resourceEntity, List<String> values) {
+        for (String value : values) {
+            Exclude exclude = converter.fromString(value);
+            processOne(resourceEntity, exclude);
         }
     }
 
     @Override
-    public void process(ResourceEntity<?> resourceEntity, List<String> excludes) {
-        for (String exclude : excludes) {
-            if (exclude.startsWith("[")) {
-                processExcludeArray(resourceEntity, exclude);
-            } else {
-                processExcludePath(resourceEntity, exclude);
-            }
+    public void process(ResourceEntity<?> resourceEntity, Query query) {
+        for (Exclude exclude : query.getExclude()) {
+            processOne(resourceEntity, exclude);
         }
     }
 
-    private void processExcludeArray(ResourceEntity<?> resourceEntity, String exclude) {
-        JsonNode root = jsonParser.parseJson(exclude);
+    @Override
+    public ParamConverter<?> getConverter() {
+        return converter;
+    }
 
-        if (root != null && root.isArray()) {
-
-            for (JsonNode child : root) {
-                if (child.isTextual()) {
-                    processExcludePath(resourceEntity, child.asText());
-                } else {
-                    throw new LinkRestException(Status.BAD_REQUEST, "Bad exclude spec: " + child);
-                }
-            }
+    private void processOne(ResourceEntity<?> resourceEntity, Exclude exclude) {
+        processExcludePath(resourceEntity, exclude.getPath());
+        // processes nested includes
+        if (exclude != null) {
+            exclude.getExcludes().stream().forEach(e -> processExcludePath(resourceEntity, e.getPath()));
         }
     }
 
-    void processExcludePath(ResourceEntity<?> resourceEntity, String path) {
+    private void processExcludePath(ResourceEntity<?> resourceEntity, String path) {
+        if (path == null) {
+            return;
+        }
 
-        checkTooLong(path);
         int dot = path.indexOf(PathConstants.DOT);
 
         if (dot == 0) {
@@ -99,5 +96,4 @@ public class ExcludeProcessor implements IExcludeProcessor {
 
         throw new LinkRestException(Status.BAD_REQUEST, "Invalid exclude path: " + path);
     }
-
 }

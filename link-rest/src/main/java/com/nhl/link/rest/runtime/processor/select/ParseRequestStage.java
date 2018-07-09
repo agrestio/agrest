@@ -32,7 +32,7 @@ public class ParseRequestStage implements Processor<SelectContext<?>> {
 
     protected <T> void doExecute(SelectContext<T> context) {
         LrEntity<T> entity = metadataService.getLrEntity(context.getType());
-        ResourceEntity<T> resourceEntity = requestParser.parseSelect(entity, context.getProtocolParameters());
+        ResourceEntity<T> resourceEntity = requestParser.parseSelect(entity, context.getProtocolParameters(), context.getQuery());
         context.setEntity(resourceEntity);
     }
 }
