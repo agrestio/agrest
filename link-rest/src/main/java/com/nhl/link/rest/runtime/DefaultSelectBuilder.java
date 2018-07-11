@@ -19,26 +19,15 @@ import org.slf4j.LoggerFactory;
 
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriInfo;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.EnumMap;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
  * @since 1.16
  */
 public class DefaultSelectBuilder<T> implements SelectBuilder<T> {
-
-    static final String START = "start";
-    static final String LIMIT = "limit";
-    static final String CAYENNE_EXP = "cayenneExp";
-    static final String MAP_BY = "mapBy";
-    static final String SORT = "sort";
-    static final String DIR = "dir";
-    static final String INCLUDE = "include";
-    static final String EXCLUDE = "exclude";
 
     private static final Logger logger = LoggerFactory.getLogger(DefaultSelectBuilder.class);
 
@@ -222,90 +211,4 @@ public class DefaultSelectBuilder<T> implements SelectBuilder<T> {
         return context.createDataResponse();
     }
 
-    /**
-     * @since 2.13
-     */
-    @Override
-    public SelectBuilder<T> mapBy(String mapBy) {
-        if (mapBy != null) {
-            getOrCreateQueryParams().put(MAP_BY, Arrays.asList(mapBy));
-        }
-        return this;
-    }
-
-    /**
-     * @since 2.13
-     */
-    @Override
-    public SelectBuilder<T> cayenneExp(String cayenneExp) {
-        if (cayenneExp != null) {
-            getOrCreateQueryParams().put(CAYENNE_EXP, Arrays.asList(cayenneExp));
-        }
-        return this;
-    }
-
-    @Override
-    public SelectBuilder<T> start(Integer start) {
-        if (start != null) {
-            getOrCreateQueryParams().put(START, Arrays.asList(start.toString()));
-        }
-        return this;
-    }
-
-    @Override
-    public SelectBuilder<T> limit(Integer limit) {
-        if (limit != null) {
-            getOrCreateQueryParams().put(LIMIT, Arrays.asList(limit.toString()));
-        }
-        return this;
-    }
-
-    /**
-     * @since 2.13
-     */
-    @Override
-    public SelectBuilder<T> exclude(List<String> exclude) {
-        if (!exclude.isEmpty()) {
-            getOrCreateQueryParams().put(EXCLUDE, exclude);
-        }
-        return this;
-    }
-
-    /**
-     * @since 2.13
-     */
-    @Override
-    public SelectBuilder<T> include(List<String> include) {
-        if (!include.isEmpty()) {
-            getOrCreateQueryParams().put(INCLUDE, include);
-        }
-        return this;
-    }
-
-    @Override
-    public SelectBuilder<T> sort(String sortSpec) {
-        if (sortSpec != null) {
-            getOrCreateQueryParams().put(SORT, Arrays.asList(sortSpec));
-        }
-        return this;
-    }
-
-    /**
-     * @since 2.13
-     */
-    @Override
-    public SelectBuilder<T> dir(String dir) {
-        if (dir != null) {
-            getOrCreateQueryParams().put(DIR, Arrays.asList(dir));
-        }
-        return this;
-    }
-
-    private Map<String, List<String>> getOrCreateQueryParams() {
-        if (context.getQueryParams() == null) {
-            context.setQueryParams(new HashMap<>());
-        }
-
-        return context.getQueryParams();
-    }
 }

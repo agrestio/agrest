@@ -8,7 +8,6 @@ import org.apache.cayenne.exp.Property;
 
 import javax.ws.rs.core.UriInfo;
 import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
@@ -208,17 +207,4 @@ public interface UpdateBuilder<T> {
      */
     SimpleResponse sync(Collection<EntityUpdate<T>> updates);
 
-    /**
-     * Forces the builder to make selection using exclude query parameter.
-     *
-     * @since 2.13
-     */
-    UpdateBuilder<T> exclude(List<String> exclude);
-
-    /**
-     * Forces the builder to make selection using include query parameter.
-     *
-     * @since 2.13
-     */
-    UpdateBuilder<T> include(List<String> include);
 }
