@@ -9,7 +9,12 @@ import com.nhl.link.rest.runtime.parser.cache.PathCache;
 import com.nhl.link.rest.runtime.parser.filter.CayenneExpProcessor;
 import com.nhl.link.rest.runtime.parser.filter.ExpressionPostProcessor;
 import com.nhl.link.rest.runtime.parser.filter.ICayenneExpProcessor;
+import com.nhl.link.rest.runtime.parser.mapBy.IMapByProcessor;
+import com.nhl.link.rest.runtime.parser.mapBy.MapByProcessor;
+import com.nhl.link.rest.runtime.parser.size.ISizeProcessor;
+import com.nhl.link.rest.runtime.parser.size.SizeProcessor;
 import com.nhl.link.rest.runtime.parser.sort.ISortProcessor;
+import com.nhl.link.rest.runtime.parser.sort.SortProcessor;
 import com.nhl.link.rest.runtime.parser.tree.ExcludeProcessor;
 import com.nhl.link.rest.runtime.parser.tree.IExcludeProcessor;
 import com.nhl.link.rest.runtime.parser.tree.IIncludeProcessor;
@@ -39,15 +44,17 @@ public class SenchaRequestParserTest extends TestWithCayenneMapping {
 
 		IPathCache pathCache = new PathCache();
 		IJacksonService jacksonService = new JacksonService();
-		ISortProcessor sortProcessor = new SenchaSortProcessor(jacksonService, pathCache);
+		ISortProcessor sortProcessor = new SortProcessor(jacksonService, pathCache);
+		IMapByProcessor mapByProcessor = new MapByProcessor();
+		ISizeProcessor sizeProcessor = new SizeProcessor();
 
 		ICayenneExpProcessor expProcessor = new CayenneExpProcessor(jacksonService, new ExpressionPostProcessor(pathCache));
 		ISenchaFilterProcessor senchaFilterProcessor = new SenchaFilterProcessor(jacksonService, pathCache,
 				new ExpressionPostProcessor(pathCache));
-		IIncludeProcessor includeProcessor = new IncludeProcessor(jacksonService, sortProcessor, expProcessor);
+		IIncludeProcessor includeProcessor = new IncludeProcessor(jacksonService, sortProcessor, expProcessor, mapByProcessor, sizeProcessor);
 		IExcludeProcessor excludeProcessor = new ExcludeProcessor(jacksonService);
 
-		this.parser = new SenchaRequestParser(includeProcessor, excludeProcessor, sortProcessor, expProcessor, senchaFilterProcessor);
+		this.parser = new SenchaRequestParser(includeProcessor, excludeProcessor, sortProcessor, expProcessor, mapByProcessor, sizeProcessor, senchaFilterProcessor);
 	}
 
 	@Test
@@ -85,7 +92,7 @@ public class SenchaRequestParserTest extends TestWithCayenneMapping {
 		MultivaluedMap<String, String> params = mock(MultivaluedMap.class);
 		when(params.get("sort")).thenReturn(
 				Collections.singletonList("[{\"property\":\"name\",\"direction\":\"DESC\"},{\"property\":\"address\",\"direction\":\"ASC\"}]"));
-		when(params.get(SenchaSortProcessor.GROUP)).thenReturn(
+		when(params.get(SenchaRequestParser.GROUP)).thenReturn(
 				Collections.singletonList("[{\"property\":\"id\",\"direction\":\"DESC\"},{\"property\":\"address\",\"direction\":\"ASC\"}]"));
 
 

@@ -10,6 +10,10 @@ import com.nhl.link.rest.runtime.parser.cache.PathCache;
 import com.nhl.link.rest.runtime.parser.filter.CayenneExpProcessor;
 import com.nhl.link.rest.runtime.parser.filter.ExpressionPostProcessor;
 import com.nhl.link.rest.runtime.parser.filter.ICayenneExpProcessor;
+import com.nhl.link.rest.runtime.parser.mapBy.IMapByProcessor;
+import com.nhl.link.rest.runtime.parser.mapBy.MapByProcessor;
+import com.nhl.link.rest.runtime.parser.size.ISizeProcessor;
+import com.nhl.link.rest.runtime.parser.size.SizeProcessor;
 import com.nhl.link.rest.runtime.parser.sort.ISortProcessor;
 import com.nhl.link.rest.runtime.parser.sort.SortProcessor;
 import com.nhl.link.rest.runtime.parser.tree.ExcludeProcessor;
@@ -39,12 +43,14 @@ public class RequestParser_IncludeObjectTest extends TestWithCayenneMapping {
 		IPathCache pathCache = new PathCache();
 		IJacksonService jacksonService = new JacksonService();
 		ICayenneExpProcessor expProcessor = new CayenneExpProcessor(jacksonService, new ExpressionPostProcessor(pathCache));
+		IMapByProcessor mapByProcessor = new MapByProcessor();
+		ISizeProcessor sizeProcessor = new SizeProcessor();
 
 		ISortProcessor sortProcessor = new SortProcessor(jacksonService, pathCache);
-		IIncludeProcessor includeProcessor = new IncludeProcessor(jacksonService, sortProcessor, expProcessor);
+		IIncludeProcessor includeProcessor = new IncludeProcessor(jacksonService, sortProcessor, expProcessor, mapByProcessor, sizeProcessor);
 		IExcludeProcessor excludeProcessor = new ExcludeProcessor(jacksonService);
 
-		parser = new RequestParser(includeProcessor, excludeProcessor, sortProcessor, expProcessor);
+		parser = new RequestParser(includeProcessor, excludeProcessor, sortProcessor, expProcessor, mapByProcessor, sizeProcessor);
 	}
 
 	@Test
