@@ -1,38 +1,79 @@
 package com.nhl.link.rest.runtime.parser.filter;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.nhl.link.rest.meta.LrEntity;
+import com.nhl.link.rest.ResourceEntity;
 import com.nhl.link.rest.runtime.jackson.IJacksonService;
+import com.nhl.link.rest.runtime.query.CayenneExp;
+import com.nhl.link.rest.runtime.query.Query;
 import org.apache.cayenne.di.Inject;
 import org.apache.cayenne.exp.Expression;
+import org.apache.cayenne.exp.ExpressionFactory;
+
+import java.util.List;
+import java.util.Map;
 
 public class CayenneExpProcessor implements ICayenneExpProcessor {
 
-	private CayenneExpProcessorWorker worker;
+	private CayenneExpConverter converter;
 	private IExpressionPostProcessor postProcessor;
 
 	public CayenneExpProcessor(@Inject IJacksonService jsonParser, @Inject IExpressionPostProcessor postProcessor) {
-		this.worker = new CayenneExpProcessorWorker(jsonParser);
+		this.converter = new CayenneExpConverter(jsonParser);
 		this.postProcessor = postProcessor;
 	}
 
 	@Override
-	public Expression process(LrEntity<?> entity, String expressionString) {
+	public void process(ResourceEntity<?> resourceEntity, String expressionString) {
 
-		if (expressionString == null || expressionString.length() == 0) {
-			return null;
-		}
-
-		return postProcessor.process(entity, worker.exp(expressionString));
+		CayenneExp cayenneExp = converter.fromString(expressionString);
+		Expression exp = postProcessor.process(resourceEntity.getLrEntity(), exp(cayenneExp));
+		resourceEntity.andQualifier(exp);
 	}
 
-	@Override
-	public Expression process(LrEntity<?> entity, JsonNode expressionNode) {
 
-		if (expressionNode == null) {
+	/**
+	 * @since 2.13
+	 */
+	@Override
+	public void process(ResourceEntity<?> resourceEntity, Query query) {
+
+		Expression exp = postProcessor.process(resourceEntity.getLrEntity(), exp(query.getCayenneExp()));
+		resourceEntity.andQualifier(exp);
+	}
+
+	/**
+	 * @since 2.13
+	 */
+	@Override
+	public CayenneExpConverter getConverter() {
+		return converter;
+	}
+
+
+	/**
+	 * @since 2.13
+	 */
+	Expression exp(CayenneExp cayenneExp) {
+		if (cayenneExp == null) {
 			return null;
 		}
+		
+		final String exp = cayenneExp.getExp();
+        if (exp == null || exp.isEmpty()) {
+            return null;
+        }
 
-		return postProcessor.process(entity, worker.exp(expressionNode));
+        final List<Object> inPositionParams = cayenneExp.getInPositionParams();
+        if (inPositionParams != null && !inPositionParams.isEmpty()) {
+            return ExpressionFactory.exp(exp, inPositionParams.toArray());
+        }
+
+        Expression expression = ExpressionFactory.exp(exp);
+
+		final Map<String, Object> params = cayenneExp.getParams();
+        if (params != null && !params.isEmpty()) {
+            expression = expression.params(params);
+        }
+
+        return expression;
 	}
 }

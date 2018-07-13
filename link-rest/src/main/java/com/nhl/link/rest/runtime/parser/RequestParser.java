@@ -1,44 +1,49 @@
 package com.nhl.link.rest.runtime.parser;
 
 import com.nhl.link.rest.ResourceEntity;
-import com.nhl.link.rest.meta.LrAttribute;
 import com.nhl.link.rest.meta.LrEntity;
 import com.nhl.link.rest.runtime.parser.filter.ICayenneExpProcessor;
+import com.nhl.link.rest.runtime.parser.size.ISizeProcessor;
 import com.nhl.link.rest.runtime.parser.sort.ISortProcessor;
 import com.nhl.link.rest.runtime.parser.tree.IExcludeProcessor;
 import com.nhl.link.rest.runtime.parser.tree.IIncludeProcessor;
-import com.nhl.link.rest.runtime.parser.tree.IncludeProcessor;
+import com.nhl.link.rest.runtime.parser.mapBy.IMapByProcessor;
+import com.nhl.link.rest.runtime.query.CayenneExp;
+import com.nhl.link.rest.runtime.query.Exclude;
+import com.nhl.link.rest.runtime.query.Include;
+import com.nhl.link.rest.runtime.query.Limit;
+import com.nhl.link.rest.runtime.query.MapBy;
+import com.nhl.link.rest.runtime.query.Sort;
+import com.nhl.link.rest.runtime.query.Start;
 import org.apache.cayenne.di.Inject;
-import org.apache.cayenne.exp.Expression;
 
 import java.util.List;
 import java.util.Map;
 
-public class RequestParser implements IRequestParser {
 
-    private static final String INCLUDE = "include";
-    private static final String EXCLUDE = "exclude";
-    private static final String START = "start";
-    private static final String LIMIT = "limit";
-    private static final String CAYENNE_EXP = "cayenneExp";
-    private static final String MAP_BY = "mapBy";
+public class RequestParser implements IRequestParser {
     
     private IIncludeProcessor includeProcessor;
     private IExcludeProcessor excludeProcessor;
     private ISortProcessor sortProcessor;
     private ICayenneExpProcessor cayenneExpProcessor;
-
+    private IMapByProcessor mapByProcessor;
+    private ISizeProcessor sizeProcessor;
 
     public RequestParser(
             @Inject IIncludeProcessor includeProcessor,
             @Inject IExcludeProcessor excludeProcessor,
             @Inject ISortProcessor sortProcessor,
-            @Inject ICayenneExpProcessor cayenneExpProcessor) {
+            @Inject ICayenneExpProcessor cayenneExpProcessor,
+            @Inject IMapByProcessor mapByProcessor,
+            @Inject ISizeProcessor sizeProcessor) {
 
         this.includeProcessor = includeProcessor;
         this.excludeProcessor = excludeProcessor;
         this.sortProcessor = sortProcessor;
         this.cayenneExpProcessor = cayenneExpProcessor;
+        this.mapByProcessor = mapByProcessor;
+        this.sizeProcessor = sizeProcessor;
     }
 
     @Override
@@ -46,21 +51,20 @@ public class RequestParser implements IRequestParser {
 
         ResourceEntity<T> resourceEntity = new ResourceEntity<>(entity);
 
-        // TODO: "ISizeProcessor"
-        resourceEntity.setFetchOffset(BaseRequestProcessor.integer(protocolParameters, START));
-        resourceEntity.setFetchLimit(BaseRequestProcessor.integer(protocolParameters, LIMIT));
+        sizeProcessor.process(resourceEntity, BaseRequestProcessor.integer(protocolParameters, Start.getName()),
+                                                BaseRequestProcessor.integer(protocolParameters, Limit.getName()));
 
         // process even if no parameters exist ... this will result in
         // default includes
-        includeProcessor.process(resourceEntity, BaseRequestProcessor.strings(protocolParameters, INCLUDE));
-        excludeProcessor.process(resourceEntity, BaseRequestProcessor.strings(protocolParameters, EXCLUDE));
+        includeProcessor.process(resourceEntity, BaseRequestProcessor.strings(protocolParameters, Include.getName()));
+        excludeProcessor.process(resourceEntity, BaseRequestProcessor.strings(protocolParameters, Exclude.getName()));
 
-        sortProcessor.process(resourceEntity, protocolParameters);
+        sortProcessor.process(resourceEntity, BaseRequestProcessor.string(protocolParameters, Sort.getName()),
+                                                BaseRequestProcessor.string(protocolParameters, "dir"));
 
-        processMapBy(resourceEntity, protocolParameters);
+        mapByProcessor.process(resourceEntity, BaseRequestProcessor.string(protocolParameters, MapBy.getName()));
 
-        Expression exp = parseCayenneExp(entity, protocolParameters);
-        resourceEntity.andQualifier(exp);
+        cayenneExpProcessor.process(resourceEntity, BaseRequestProcessor.string(protocolParameters, CayenneExp.getName()));
 
         return resourceEntity;
     }
@@ -71,30 +75,9 @@ public class RequestParser implements IRequestParser {
 
         // process even if no parameters exist ... this will result in
         // default includes
-        includeProcessor.process(resourceEntity, BaseRequestProcessor.strings(protocolParameters, INCLUDE));
-        excludeProcessor.process(resourceEntity, BaseRequestProcessor.strings(protocolParameters, EXCLUDE));
+        includeProcessor.process(resourceEntity, BaseRequestProcessor.strings(protocolParameters, Include.getName()));
+        excludeProcessor.process(resourceEntity, BaseRequestProcessor.strings(protocolParameters, Exclude.getName()));
 
         return resourceEntity;
-    }
-
-    private void processMapBy(ResourceEntity<?> descriptor, Map<String, List<String>> protocolParameters) {
-        String mapByPath = BaseRequestProcessor.string(protocolParameters, MAP_BY);
-        if (mapByPath != null) {
-            LrAttribute attribute = descriptor.getLrEntity().getAttribute(mapByPath);
-            if (attribute != null) {
-                ResourceEntity<?> mapBy = new ResourceEntity<>(descriptor.getLrEntity());
-                mapBy.getAttributes().put(attribute.getName(), attribute);
-                descriptor.mapBy(mapBy, attribute.getName());
-            } else {
-                ResourceEntity<?> mapBy = new ResourceEntity<>(descriptor.getLrEntity());
-                IncludeProcessor.processIncludePath(mapBy, mapByPath);
-                descriptor.mapBy(mapBy, mapByPath);
-            }
-        }
-    }
-
-    protected Expression parseCayenneExp(LrEntity<?> entity, Map<String, List<String>> protocolParameters) {
-        String exp = BaseRequestProcessor.string(protocolParameters, CAYENNE_EXP);
-        return cayenneExpProcessor.process(entity, exp);
     }
 }
