@@ -1,34 +1,32 @@
 package com.nhl.link.rest.runtime.processor.update;
 
-import com.nhl.link.rest.EntityUpdate;
-import com.nhl.link.rest.ResourceEntity;
-import com.nhl.link.rest.meta.LrEntity;
 import com.nhl.link.rest.processor.Processor;
 import com.nhl.link.rest.processor.ProcessorOutcome;
-import com.nhl.link.rest.runtime.meta.IMetadataService;
-import com.nhl.link.rest.runtime.parser.IRequestParser;
-import com.nhl.link.rest.runtime.parser.IUpdateParser;
+import com.nhl.link.rest.runtime.parser.BaseRequestProcessor;
+import com.nhl.link.rest.runtime.parser.tree.IExcludeParser;
+import com.nhl.link.rest.runtime.parser.tree.IIncludeParser;
+import com.nhl.link.rest.runtime.query.Exclude;
+import com.nhl.link.rest.runtime.query.Include;
+import com.nhl.link.rest.runtime.query.Query;
 import org.apache.cayenne.di.Inject;
 
-import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @since 2.7
  */
 public class ParseRequestStage implements Processor<UpdateContext<?>> {
 
-    private IRequestParser requestParser;
-    private IUpdateParser updateParser;
-    private IMetadataService metadataService;
+    private IIncludeParser includeParser;
+    private IExcludeParser excludeParser;
 
     public ParseRequestStage(
-            @Inject IRequestParser requestParser,
-            @Inject IUpdateParser updateParser,
-            @Inject IMetadataService metadataService) {
+            @Inject IIncludeParser includeParser,
+            @Inject IExcludeParser excludeParser) {
 
-        this.requestParser = requestParser;
-        this.updateParser = updateParser;
-        this.metadataService = metadataService;
+        this.includeParser = includeParser;
+        this.excludeParser = excludeParser;
     }
 
     @Override
@@ -39,16 +37,13 @@ public class ParseRequestStage implements Processor<UpdateContext<?>> {
 
     protected <T> void doExecute(UpdateContext<T> context) {
 
-        LrEntity<T> entity = metadataService.getLrEntity(context.getType());
-
         // TODO: should we skip this for SimpleResponse-returning updates?
-        ResourceEntity<T> resourceEntity = requestParser.parseUpdate(entity, context.getProtocolParameters());
-        context.setEntity(resourceEntity);
+        Map<String, List<String>> protocolParameters = context.getProtocolParameters();
 
-        // skip parsing if we already received EntityUpdates collection parsed by MessageBodyReader
-        if (context.getUpdates() == null) {
-            Collection<EntityUpdate<T>> updates = updateParser.parse(entity, context.getEntityData());
-            context.setUpdates(updates);
-        }
+        Query query = new Query(null, null, null, null, null, null,
+                includeParser.fromStrings(BaseRequestProcessor.strings(protocolParameters, Include.INCLUDE)),
+                excludeParser.fromStrings(BaseRequestProcessor.strings(protocolParameters, Exclude.EXCLUDE)));
+
+        context.setRawQuery(query);
     }
 }

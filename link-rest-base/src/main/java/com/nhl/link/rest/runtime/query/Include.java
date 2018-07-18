@@ -9,7 +9,7 @@ import java.util.List;
  * Represents Include query parameter
  */
 public class Include {
-    private static final String INCLUDE = "include";
+    public static final String INCLUDE = "include";
 
     private String value;
     private CayenneExp cayenneExp;
@@ -35,10 +35,6 @@ public class Include {
         this.path = path;
         this.start = start;
         this.limit = limit;
-    }
-
-    public static String getName() {
-        return INCLUDE;
     }
 
     public String getValue() {

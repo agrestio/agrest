@@ -12,7 +12,7 @@ import java.util.Map;
  * Represents Cayenne Expression query parameter
  */
 public class CayenneExp {
-    private static final String CAYENNE_EXP = "cayenneExp";
+    public static final String CAYENNE_EXP = "cayenneExp";
 
     private String exp;
     private Map<String, Object> params = new HashMap<>();
@@ -30,10 +30,6 @@ public class CayenneExp {
     public CayenneExp(String exp, Map<String, Object> params) {
         this.exp = exp;
         this.params = params;
-    }
-
-    public static String getName() {
-        return CAYENNE_EXP;
     }
 
     public String getExp() {

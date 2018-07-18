@@ -1,19 +1,15 @@
 package com.nhl.link.rest.runtime.query;
 
 public class Start {
-    private static final String START = "start";
+    public static final String START = "start";
 
-    private Integer value;
+    private int value;
 
-    public Start(Integer value) {
+    public Start(int value) {
         this.value = value;
     }
 
-    public static String getName() {
-        return START;
-    }
-
-    public Integer getValue() {
+    public int getValue() {
         return value;
     }
 }

@@ -12,6 +12,7 @@ import com.nhl.link.rest.SimpleObjectId;
 import com.nhl.link.rest.constraints.Constraint;
 import com.nhl.link.rest.encoder.Encoder;
 import com.nhl.link.rest.processor.BaseProcessingContext;
+import com.nhl.link.rest.runtime.query.Query;
 
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriInfo;
@@ -41,6 +42,7 @@ public class UpdateContext<T> extends BaseProcessingContext<T> {
 	private Collection<EntityUpdate<T>> updates;
 	private Encoder encoder;
 	private List objects;
+	private Query rawQuery;
 
 	public UpdateContext(Class<T> type) {
 		super(type);
@@ -237,5 +239,19 @@ public class UpdateContext<T> extends BaseProcessingContext<T> {
 	 */
 	public void setObjects(List<? extends T> objects) {
 		this.objects = objects;
+	}
+
+	/**
+	 * @since 2.13
+	 */
+	public Query getRawQuery() {
+		return rawQuery;
+	}
+
+	/**
+	 * @since 2.13
+	 */
+	public void setRawQuery(Query rawQuery) {
+		this.rawQuery = rawQuery;
 	}
 }

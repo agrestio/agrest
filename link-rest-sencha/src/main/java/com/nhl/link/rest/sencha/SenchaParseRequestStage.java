@@ -1,13 +1,13 @@
-package com.nhl.link.rest.runtime.processor.select;
+package com.nhl.link.rest.sencha;
 
-import com.nhl.link.rest.processor.Processor;
-import com.nhl.link.rest.processor.ProcessorOutcome;
 import com.nhl.link.rest.runtime.parser.BaseRequestProcessor;
 import com.nhl.link.rest.runtime.parser.filter.ICayenneExpParser;
 import com.nhl.link.rest.runtime.parser.mapBy.IMapByParser;
 import com.nhl.link.rest.runtime.parser.sort.ISortParser;
 import com.nhl.link.rest.runtime.parser.tree.IExcludeParser;
 import com.nhl.link.rest.runtime.parser.tree.IIncludeParser;
+import com.nhl.link.rest.runtime.processor.select.ParseRequestStage;
+import com.nhl.link.rest.runtime.processor.select.SelectContext;
 import com.nhl.link.rest.runtime.query.CayenneExp;
 import com.nhl.link.rest.runtime.query.Dir;
 import com.nhl.link.rest.runtime.query.Exclude;
@@ -15,17 +15,16 @@ import com.nhl.link.rest.runtime.query.Include;
 import com.nhl.link.rest.runtime.query.Limit;
 import com.nhl.link.rest.runtime.query.MapBy;
 import com.nhl.link.rest.runtime.query.Query;
-import com.nhl.link.rest.runtime.query.Sort;
 import com.nhl.link.rest.runtime.query.Start;
 import org.apache.cayenne.di.Inject;
 
 import java.util.List;
 import java.util.Map;
 
-/**
- * @since 2.7
- */
-public class ParseRequestStage implements Processor<SelectContext<?>> {
+public class SenchaParseRequestStage extends ParseRequestStage {
+
+    static final String GROUP = "group";
+    static final String GROUP_DIR = "groupDir";
 
     private ICayenneExpParser expParser;
     private ISortParser sortParser;
@@ -33,13 +32,14 @@ public class ParseRequestStage implements Processor<SelectContext<?>> {
     private IIncludeParser includeParser;
     private IExcludeParser excludeParser;
 
-    public ParseRequestStage(
+    public SenchaParseRequestStage(
             @Inject ICayenneExpParser expParser,
             @Inject ISortParser sortParser,
             @Inject IMapByParser mapByParser,
             @Inject IIncludeParser includeParser,
             @Inject IExcludeParser excludeParser) {
 
+        super(expParser, sortParser, mapByParser, includeParser, excludeParser);
         this.expParser = expParser;
         this.sortParser = sortParser;
         this.mapByParser = mapByParser;
@@ -48,18 +48,13 @@ public class ParseRequestStage implements Processor<SelectContext<?>> {
     }
 
     @Override
-    public ProcessorOutcome execute(SelectContext<?> context) {
-        doExecute(context);
-        return ProcessorOutcome.CONTINUE;
-    }
-
     protected <T> void doExecute(SelectContext<T> context) {
         Map<String, List<String>> protocolParameters = context.getProtocolParameters();
 
         Query query = new Query(
                 expParser.fromString(BaseRequestProcessor.string(protocolParameters, CayenneExp.CAYENNE_EXP)),
-                sortParser.fromString(BaseRequestProcessor.string(protocolParameters, Sort.SORT),
-                        BaseRequestProcessor.string(protocolParameters, Dir.DIR)),
+                sortParser.fromString(BaseRequestProcessor.string(protocolParameters, GROUP),
+                        BaseRequestProcessor.string(protocolParameters, GROUP_DIR)),
                 sortParser.dirFromString(BaseRequestProcessor.string(protocolParameters, Dir.DIR)),
                 mapByParser.fromString(BaseRequestProcessor.string(protocolParameters, MapBy.MAP_BY)),
                 new Start(BaseRequestProcessor.integer(protocolParameters, Start.START)),

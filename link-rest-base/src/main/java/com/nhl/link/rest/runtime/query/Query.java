@@ -11,67 +11,55 @@ import java.util.List;
 public class Query {
 
     private CayenneExp cayenneExp;
-    private List<Include> include = new ArrayList<>();
-    private List<Exclude> exclude = new ArrayList<>();
     private Sort sort;
+    private Dir dir;
     private MapBy mapBy;
     private Start start;
     private Limit limit;
+    private List<Include> include;
+    private List<Exclude> exclude;
+
+    public Query(CayenneExp cayenneExp, Sort sort, Dir dir, MapBy mapBy, Start start, Limit limit, List<Include> include, List<Exclude> exclude) {
+        this.cayenneExp = cayenneExp;
+        this.sort = sort;
+        this.dir = dir;
+        this.mapBy = mapBy;
+        this.start = start;
+        this.limit = limit;
+        this.include = include;
+        this.exclude = exclude;
+    }
 
     public CayenneExp getCayenneExp() {
         return cayenneExp;
     }
 
-    public void setCayenneExp(CayenneExp cayenneExp) {
-        this.cayenneExp = cayenneExp;
-    }
-
     public List<Include> getInclude() {
-        return include;
-    }
-
-    public void setInclude(List<Include> include) {
-        this.include = include;
+        return include == null ? new ArrayList<>() : include;
     }
 
     public List<Exclude> getExclude() {
-        return exclude;
-    }
-
-    public void setExclude(List<Exclude> exclude) {
-        this.exclude = exclude;
+        return exclude == null ? new ArrayList<>() : exclude;
     }
 
     public Sort getSort() {
         return sort;
     }
 
-    public void setSort(Sort sort) {
-        this.sort = sort;
+    public Dir getDir() {
+        return dir;
     }
 
     public MapBy getMapBy() {
         return mapBy;
     }
 
-    public void setMapBy(MapBy mapBy) {
-        this.mapBy = mapBy;
-    }
-
     public Start getStart() {
         return start;
     }
 
-    public void setStart(Start start) {
-        this.start = start;
-    }
-
     public Limit getLimit() {
         return limit;
-    }
-
-    public void setLimit(Limit limit) {
-        this.limit = limit;
     }
 
 }

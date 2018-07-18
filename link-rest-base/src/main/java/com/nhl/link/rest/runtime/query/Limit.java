@@ -1,19 +1,15 @@
 package com.nhl.link.rest.runtime.query;
 
 public class Limit {
-    private static final String LIMIT = "limit";
+    public static final String LIMIT = "limit";
 
-    private Integer value;
+    private int value;
 
-    public Limit(Integer value) {
+    public Limit(int value) {
         this.value = value;
     }
 
-    public static String getName() {
-        return LIMIT;
-    }
-
-    public Integer getValue() {
+    public int getValue() {
         return value;
     }
 }

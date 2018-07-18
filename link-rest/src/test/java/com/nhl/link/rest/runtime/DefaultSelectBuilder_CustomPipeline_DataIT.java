@@ -38,7 +38,7 @@ public class DefaultSelectBuilder_CustomPipeline_DataIT {
         DB.insert("e2", "id, name", "2, 'yyy'");
 
         DataResponse<E2> dr = createBuilder(E2.class)
-                .stage(SelectStage.PARSE_REQUEST, c -> c.getEntity().setQualifier(E2.NAME.eq("yyy")))
+                .stage(SelectStage.CONSTRUCT_ENTITY, c -> c.getEntity().setQualifier(E2.NAME.eq("yyy")))
                 .get();
 
         assertEquals(1, dr.getObjects().size());

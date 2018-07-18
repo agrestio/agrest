@@ -62,27 +62,42 @@ import com.nhl.link.rest.runtime.meta.IMetadataService;
 import com.nhl.link.rest.runtime.meta.IResourceMetadataService;
 import com.nhl.link.rest.runtime.meta.MetadataService;
 import com.nhl.link.rest.runtime.meta.ResourceMetadataService;
-import com.nhl.link.rest.runtime.parser.IRequestParser;
 import com.nhl.link.rest.runtime.parser.IUpdateParser;
-import com.nhl.link.rest.runtime.parser.RequestParser;
 import com.nhl.link.rest.runtime.parser.UpdateParser;
 import com.nhl.link.rest.runtime.parser.cache.IPathCache;
 import com.nhl.link.rest.runtime.parser.cache.PathCache;
-import com.nhl.link.rest.runtime.parser.filter.CayenneExpProcessor;
+import com.nhl.link.rest.runtime.parser.filter.CayenneExpParser;
+import com.nhl.link.rest.runtime.parser.filter.CayenneExpConstructor;
 import com.nhl.link.rest.runtime.parser.filter.ExpressionPostProcessor;
-import com.nhl.link.rest.runtime.parser.filter.ICayenneExpProcessor;
+import com.nhl.link.rest.runtime.parser.filter.ICayenneExpConstructor;
+import com.nhl.link.rest.runtime.parser.filter.ICayenneExpParser;
 import com.nhl.link.rest.runtime.parser.filter.IExpressionPostProcessor;
-import com.nhl.link.rest.runtime.parser.sort.ISortProcessor;
-import com.nhl.link.rest.runtime.parser.sort.SortProcessor;
-import com.nhl.link.rest.runtime.parser.tree.ExcludeProcessor;
-import com.nhl.link.rest.runtime.parser.tree.IExcludeProcessor;
-import com.nhl.link.rest.runtime.parser.tree.IIncludeProcessor;
-import com.nhl.link.rest.runtime.parser.tree.IncludeProcessor;
+import com.nhl.link.rest.runtime.parser.mapBy.IMapByConstructor;
+import com.nhl.link.rest.runtime.parser.mapBy.IMapByParser;
+import com.nhl.link.rest.runtime.parser.mapBy.MapByConstructor;
+import com.nhl.link.rest.runtime.parser.mapBy.MapByParser;
+import com.nhl.link.rest.runtime.parser.size.ISizeConstructor;
+import com.nhl.link.rest.runtime.parser.size.ISizeParser;
+import com.nhl.link.rest.runtime.parser.size.SizeConstructor;
+import com.nhl.link.rest.runtime.parser.size.SizeParser;
+import com.nhl.link.rest.runtime.parser.sort.ISortParser;
+import com.nhl.link.rest.runtime.parser.sort.ISortConstructor;
+import com.nhl.link.rest.runtime.parser.sort.SortParser;
+import com.nhl.link.rest.runtime.parser.sort.SortConstructor;
+import com.nhl.link.rest.runtime.parser.tree.ExcludeParser;
+import com.nhl.link.rest.runtime.parser.tree.ExcludeConstructor;
+import com.nhl.link.rest.runtime.parser.tree.IExcludeParser;
+import com.nhl.link.rest.runtime.parser.tree.IExcludeConstructor;
+import com.nhl.link.rest.runtime.parser.tree.IIncludeParser;
+import com.nhl.link.rest.runtime.parser.tree.IIncludeConstructor;
+import com.nhl.link.rest.runtime.parser.tree.IncludeParser;
+import com.nhl.link.rest.runtime.parser.tree.IncludeConstructor;
 import com.nhl.link.rest.runtime.processor.delete.DeleteProcessorFactory;
 import com.nhl.link.rest.runtime.processor.meta.CollectMetadataStage;
 import com.nhl.link.rest.runtime.processor.meta.MetadataProcessorFactory;
 import com.nhl.link.rest.runtime.processor.meta.MetadataProcessorFactoryProvider;
 import com.nhl.link.rest.runtime.processor.select.ApplyServerParamsStage;
+import com.nhl.link.rest.runtime.processor.select.ConstructResourceEntityStage;
 import com.nhl.link.rest.runtime.processor.select.ParseRequestStage;
 import com.nhl.link.rest.runtime.processor.select.SelectProcessorFactory;
 import com.nhl.link.rest.runtime.processor.select.StartStage;
@@ -515,6 +530,7 @@ public class LinkRestBuilder {
             binder.bind(SelectProcessorFactory.class).toProvider(CayenneSelectProcessorFactoryProvider.class);
             binder.bind(StartStage.class).to(StartStage.class);
             binder.bind(ParseRequestStage.class).to(ParseRequestStage.class);
+            binder.bind(ConstructResourceEntityStage.class).to(ConstructResourceEntityStage.class);
             binder.bind(ApplyServerParamsStage.class).to(ApplyServerParamsStage.class);
             binder.bind(CayenneAssembleQueryStage.class).to(CayenneAssembleQueryStage.class);
             binder.bind(CayenneFetchDataStage.class).to(CayenneFetchDataStage.class);
@@ -530,6 +546,8 @@ public class LinkRestBuilder {
             binder.bind(CayenneUpdateStartStage.class).to(CayenneUpdateStartStage.class);
             binder.bind(com.nhl.link.rest.runtime.processor.update.ParseRequestStage.class)
                     .to(com.nhl.link.rest.runtime.processor.update.ParseRequestStage.class);
+            binder.bind(com.nhl.link.rest.runtime.processor.update.ConstructResourceEntityStage.class)
+                    .to(com.nhl.link.rest.runtime.processor.update.ConstructResourceEntityStage.class);
             binder.bind(com.nhl.link.rest.runtime.processor.update.ApplyServerParamsStage.class)
                     .to(com.nhl.link.rest.runtime.processor.update.ApplyServerParamsStage.class);
             binder.bind(CayenneCreateStage.class).to(CayenneCreateStage.class);
@@ -557,22 +575,34 @@ public class LinkRestBuilder {
             binder.bindMap(StringConverter.class);
             binder.bind(IStringConverterFactory.class).toProvider(StringConverterFactoryProvider.class);
 
-            binder.bind(IRequestParser.class).to(RequestParser.class);
             binder.bind(IEncoderService.class).to(EncoderService.class);
             binder.bind(IRelationshipMapper.class).to(RelationshipMapper.class);
             binder.bind(IMetadataService.class).to(MetadataService.class);
             binder.bind(IResourceMetadataService.class).to(ResourceMetadataService.class);
             binder.bind(IConstraintsHandler.class).to(ConstraintsHandler.class);
-            binder.bind(ICayenneExpProcessor.class).to(CayenneExpProcessor.class);
             binder.bind(IExpressionPostProcessor.class).to(ExpressionPostProcessor.class);
 
             binder.bind(IJacksonService.class).to(JacksonService.class);
             binder.bind(ICayennePersister.class).toInstance(cayenneService);
 
             binder.bind(IPathCache.class).to(PathCache.class);
-            binder.bind(ISortProcessor.class).to(SortProcessor.class);
-            binder.bind(IIncludeProcessor.class).to(IncludeProcessor.class);
-            binder.bind(IExcludeProcessor.class).to(ExcludeProcessor.class);
+
+            // Query parameter parsers from the UriInfo
+            binder.bind(ICayenneExpParser.class).to(CayenneExpParser.class);
+            binder.bind(IMapByParser.class).to(MapByParser.class);
+            binder.bind(ISizeParser.class).to(SizeParser.class);
+            binder.bind(ISortParser.class).to(SortParser.class);
+            binder.bind(IExcludeParser.class).to(ExcludeParser.class);
+            binder.bind(IIncludeParser.class).to(IncludeParser.class);
+
+            // Constructors to create ResourceEntity from Query parameters
+            binder.bind(ICayenneExpConstructor.class).to(CayenneExpConstructor.class);
+            binder.bind(ISortConstructor.class).to(SortConstructor.class);
+            binder.bind(IMapByConstructor.class).to(MapByConstructor.class);
+            binder.bind(ISizeConstructor.class).to(SizeConstructor.class);
+            binder.bind(IIncludeConstructor.class).to(IncludeConstructor.class);
+            binder.bind(IExcludeConstructor.class).to(ExcludeConstructor.class);
+
 
             binder.bind(IResourceParser.class).to(ResourceParser.class);
             binder.bind(IUpdateParser.class).to(UpdateParser.class);

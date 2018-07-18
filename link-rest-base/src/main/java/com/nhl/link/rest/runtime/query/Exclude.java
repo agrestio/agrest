@@ -9,7 +9,7 @@ import java.util.List;
  * Represents Exclude query parameter
  */
 public class Exclude {
-    private static final String EXCLUDE = "exclude";
+    public static final String EXCLUDE = "exclude";
 
     private String path;
     private List<Exclude> excludes = new ArrayList<>();
@@ -21,10 +21,6 @@ public class Exclude {
 
     public Exclude(List<Exclude> excludes) {
         this.excludes = excludes;
-    }
-
-    public static String getName() {
-        return EXCLUDE;
     }
 
     public String getPath() {

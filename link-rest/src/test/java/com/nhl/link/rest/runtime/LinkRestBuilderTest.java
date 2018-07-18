@@ -2,7 +2,7 @@ package com.nhl.link.rest.runtime;
 
 import com.nhl.link.rest.provider.ValidationExceptionMapper;
 import com.nhl.link.rest.runtime.adapter.LinkRestAdapter;
-import com.nhl.link.rest.runtime.parser.IRequestParser;
+import com.nhl.link.rest.runtime.parser.filter.ICayenneExpParser;
 import org.apache.cayenne.di.Binder;
 import org.apache.cayenne.validation.ValidationException;
 import org.junit.Test;
@@ -64,16 +64,16 @@ public class LinkRestBuilderTest {
             return null;
         }).when(adapter).contributeToJaxRs(anyCollectionOf(Feature.class));
 
-        final IRequestParser mockParser = mock(IRequestParser.class);
+        final ICayenneExpParser mockParser = mock(ICayenneExpParser.class);
         doAnswer((Answer<Object>) invocation -> {
             Binder b = (Binder) invocation.getArguments()[0];
-            b.bind(IRequestParser.class).toInstance(mockParser);
+            b.bind(ICayenneExpParser.class).toInstance(mockParser);
             return null;
         }).when(adapter).contributeToRuntime(any(Binder.class));
 
         LinkRestRuntime runtime = new LinkRestBuilder().adapter(adapter).build();
 
-        assertSame(mockParser, runtime.service(IRequestParser.class));
+        assertSame(mockParser, runtime.service(ICayenneExpParser.class));
 
         FeatureContext context = mock(FeatureContext.class);
         runtime.configure(context);

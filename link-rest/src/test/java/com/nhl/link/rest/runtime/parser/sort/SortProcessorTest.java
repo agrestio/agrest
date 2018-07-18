@@ -6,6 +6,7 @@ import static org.mockito.Mockito.when;
 
 import java.util.Iterator;
 
+import com.nhl.link.rest.runtime.query.Sort;
 import org.apache.cayenne.query.Ordering;
 import org.junit.Before;
 import org.junit.Test;
@@ -21,13 +22,15 @@ import com.nhl.link.rest.unit.TestWithCayenneMapping;
 
 public class SortProcessorTest extends TestWithCayenneMapping {
 
-	private SortWorker processor;
+	private SortParser parser;
+	private SortConstructor constructor;
 	private ResourceEntity<?> entity;
 
 	@Before
 	public void before() {
 		JacksonService jacksonService = new JacksonService();
-		this.processor = new SortWorker(jacksonService, new PathCache());
+		this.parser = new SortParser(jacksonService);
+		this.constructor = new SortConstructor(new PathCache());
 
 		@SuppressWarnings("unchecked")
 		LrEntity<E2> lre2 = mock(LrEntity.class);
@@ -42,7 +45,8 @@ public class SortProcessorTest extends TestWithCayenneMapping {
 	@Test
 	public void testProcess_Array() {
 
-		processor.process(entity, "[{\"property\":\"name\"},{\"property\":\"address\"}]", null);
+        Sort sort = parser.fromString("[{\"property\":\"name\"},{\"property\":\"address\"}]", null);
+	    constructor.construct(entity, sort);
 
 		assertEquals(2, entity.getOrderings().size());
 
@@ -57,7 +61,8 @@ public class SortProcessorTest extends TestWithCayenneMapping {
 	@Test
 	public void testProcess_Object() {
 
-		processor.process(entity, "{\"property\":\"name\"}", null);
+        Sort sort = parser.fromString("{\"property\":\"name\"}", null);
+        constructor.construct(entity, sort);
 
 		assertEquals(1, entity.getOrderings().size());
 
@@ -70,7 +75,8 @@ public class SortProcessorTest extends TestWithCayenneMapping {
 	@Test
 	public void testProcess_Simple() {
 
-		processor.process(entity, "name", null);
+        Sort sort = parser.fromString("name", null);
+        constructor.construct(entity, sort);
 
 		assertEquals(1, entity.getOrderings().size());
 
