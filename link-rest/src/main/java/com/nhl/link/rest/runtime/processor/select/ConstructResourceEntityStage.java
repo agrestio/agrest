@@ -51,20 +51,18 @@ public class ConstructResourceEntityStage implements Processor<SelectContext<?>>
     }
 
     protected <T> void doExecute(SelectContext<T> context) {
-        Query query = context.getRawQuery();
-        if (query == null) {
-            return;
-        }
-
         ResourceEntity<T> resourceEntity
                 = new ResourceEntity<>(metadataService.getLrEntity(context.getType()));
 
-        sizeConstructor.construct(resourceEntity, query.getStart(), query.getLimit());
-        includeConstructor.construct(resourceEntity, query.getInclude());
-        excludeConstructor.construct(resourceEntity, query.getExclude());
-        sortConstructor.construct(resourceEntity, query.getSort());
-        mapByConstructor.construct(resourceEntity, query.getMapBy());
-        expConstructor.construct(resourceEntity, query.getCayenneExp());
+        Query query = context.getRawQuery();
+        if (query != null) {
+            sizeConstructor.construct(resourceEntity, query.getStart(), query.getLimit());
+            includeConstructor.construct(resourceEntity, query.getInclude());
+            excludeConstructor.construct(resourceEntity, query.getExclude());
+            sortConstructor.construct(resourceEntity, query.getSort());
+            mapByConstructor.construct(resourceEntity, query.getMapBy());
+            expConstructor.construct(resourceEntity, query.getCayenneExp());
+        }
 
         context.setEntity(resourceEntity);
     }

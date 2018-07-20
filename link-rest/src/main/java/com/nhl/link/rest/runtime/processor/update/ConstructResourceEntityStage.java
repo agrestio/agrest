@@ -44,14 +44,14 @@ public class ConstructResourceEntityStage implements Processor<UpdateContext<?>>
 
     protected <T> void doExecute(UpdateContext<T> context) {
         LrEntity<T> entity = metadataService.getLrEntity(context.getType());
+        ResourceEntity<T> resourceEntity = new ResourceEntity<>(entity);
 
         Query query = context.getRawQuery();
         if (query != null) {
-            ResourceEntity<T> resourceEntity = new ResourceEntity<>(entity);
             includeConstructor.construct(resourceEntity, query.getInclude());
             excludeConstructor.construct(resourceEntity, query.getExclude());
-            context.setEntity(resourceEntity);
         }
+        context.setEntity(resourceEntity);
 
         // skip parsing if we already received EntityUpdates collection parsed by MessageBodyReader
         if (context.getUpdates() == null) {
