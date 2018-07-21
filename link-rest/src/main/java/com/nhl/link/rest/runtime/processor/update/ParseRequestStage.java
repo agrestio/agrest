@@ -40,9 +40,10 @@ public class ParseRequestStage implements Processor<UpdateContext<?>> {
         // TODO: should we skip this for SimpleResponse-returning updates?
         Map<String, List<String>> protocolParameters = context.getProtocolParameters();
 
-        LrRequest request = new LrRequest(null, null, null, null, null, null,
-                includeParser.fromStrings(BaseRequestProcessor.strings(protocolParameters, Include.INCLUDE)),
-                excludeParser.fromStrings(BaseRequestProcessor.strings(protocolParameters, Exclude.EXCLUDE)));
+        LrRequest request = LrRequest.builder()
+                .includes(includeParser.fromStrings(BaseRequestProcessor.strings(protocolParameters, Include.INCLUDE)))
+                .excludes(excludeParser.fromStrings(BaseRequestProcessor.strings(protocolParameters, Exclude.EXCLUDE)))
+                .build();
 
         context.setRawRequest(request);
     }

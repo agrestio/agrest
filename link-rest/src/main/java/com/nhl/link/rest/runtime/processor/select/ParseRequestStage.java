@@ -56,17 +56,25 @@ public class ParseRequestStage implements Processor<SelectContext<?>> {
     protected <T> void doExecute(SelectContext<T> context) {
         Map<String, List<String>> protocolParameters = context.getProtocolParameters();
 
-        LrRequest request = new LrRequest(
-                expParser.fromString(BaseRequestProcessor.string(protocolParameters, CayenneExp.CAYENNE_EXP)),
-                sortParser.fromString(BaseRequestProcessor.string(protocolParameters, Sort.SORT),
-                        BaseRequestProcessor.string(protocolParameters, Dir.DIR)),
-                sortParser.dirFromString(BaseRequestProcessor.string(protocolParameters, Dir.DIR)),
-                mapByParser.fromString(BaseRequestProcessor.string(protocolParameters, MapBy.MAP_BY)),
-                new Start(BaseRequestProcessor.integer(protocolParameters, Start.START)),
-                new Limit(BaseRequestProcessor.integer(protocolParameters, Limit.LIMIT)),
-                includeParser.fromStrings(BaseRequestProcessor.strings(protocolParameters, Include.INCLUDE)),
-                excludeParser.fromStrings(BaseRequestProcessor.strings(protocolParameters, Exclude.EXCLUDE)));
+        LrRequest.Builder requestBuilder = LrRequest.builder()
+                .cayenneExp(expParser.fromString(BaseRequestProcessor.string(protocolParameters, CayenneExp.CAYENNE_EXP)))
+                // TODO: we are parsing "dir" twice...
+                .sort(sortParser.fromString(BaseRequestProcessor.string(protocolParameters, Sort.SORT), BaseRequestProcessor.string(protocolParameters, Dir.DIR)))
+                .sortDirection(sortParser.dirFromString(BaseRequestProcessor.string(protocolParameters, Dir.DIR)))
+                .mapBy(mapByParser.fromString(BaseRequestProcessor.string(protocolParameters, MapBy.MAP_BY)))
+                .includes(includeParser.fromStrings(BaseRequestProcessor.strings(protocolParameters, Include.INCLUDE)))
+                .excludes(excludeParser.fromStrings(BaseRequestProcessor.strings(protocolParameters, Exclude.EXCLUDE)));
 
-        context.setRawRequest(request);
+        int start = BaseRequestProcessor.integer(protocolParameters, Start.START);
+        if (start >= 0) {
+            requestBuilder.start(new Start(start));
+        }
+
+        int limit = BaseRequestProcessor.integer(protocolParameters, Limit.LIMIT);
+        if (limit >= 0) {
+            requestBuilder.limit(new Limit(limit));
+        }
+
+        context.setRawRequest(requestBuilder.build());
     }
 }

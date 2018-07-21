@@ -1,5 +1,13 @@
 package com.nhl.link.rest.sencha;
 
+import com.nhl.link.rest.LrRequest;
+import com.nhl.link.rest.protocol.CayenneExp;
+import com.nhl.link.rest.protocol.Dir;
+import com.nhl.link.rest.protocol.Exclude;
+import com.nhl.link.rest.protocol.Include;
+import com.nhl.link.rest.protocol.Limit;
+import com.nhl.link.rest.protocol.MapBy;
+import com.nhl.link.rest.protocol.Start;
 import com.nhl.link.rest.runtime.parser.BaseRequestProcessor;
 import com.nhl.link.rest.runtime.parser.filter.ICayenneExpParser;
 import com.nhl.link.rest.runtime.parser.mapBy.IMapByParser;
@@ -8,14 +16,6 @@ import com.nhl.link.rest.runtime.parser.tree.IExcludeParser;
 import com.nhl.link.rest.runtime.parser.tree.IIncludeParser;
 import com.nhl.link.rest.runtime.processor.select.ParseRequestStage;
 import com.nhl.link.rest.runtime.processor.select.SelectContext;
-import com.nhl.link.rest.protocol.CayenneExp;
-import com.nhl.link.rest.protocol.Dir;
-import com.nhl.link.rest.protocol.Exclude;
-import com.nhl.link.rest.protocol.Include;
-import com.nhl.link.rest.protocol.Limit;
-import com.nhl.link.rest.protocol.MapBy;
-import com.nhl.link.rest.LrRequest;
-import com.nhl.link.rest.protocol.Start;
 import org.apache.cayenne.di.Inject;
 
 import java.util.List;
@@ -51,17 +51,26 @@ public class SenchaParseRequestStage extends ParseRequestStage {
     protected <T> void doExecute(SelectContext<T> context) {
         Map<String, List<String>> protocolParameters = context.getProtocolParameters();
 
-        LrRequest request = new LrRequest(
-                expParser.fromString(BaseRequestProcessor.string(protocolParameters, CayenneExp.CAYENNE_EXP)),
-                sortParser.fromString(BaseRequestProcessor.string(protocolParameters, GROUP),
-                        BaseRequestProcessor.string(protocolParameters, GROUP_DIR)),
-                sortParser.dirFromString(BaseRequestProcessor.string(protocolParameters, Dir.DIR)),
-                mapByParser.fromString(BaseRequestProcessor.string(protocolParameters, MapBy.MAP_BY)),
-                new Start(BaseRequestProcessor.integer(protocolParameters, Start.START)),
-                new Limit(BaseRequestProcessor.integer(protocolParameters, Limit.LIMIT)),
-                includeParser.fromStrings(BaseRequestProcessor.strings(protocolParameters, Include.INCLUDE)),
-                excludeParser.fromStrings(BaseRequestProcessor.strings(protocolParameters, Exclude.EXCLUDE)));
+        LrRequest.Builder requestBuilder = LrRequest.builder()
+                .cayenneExp(expParser.fromString(BaseRequestProcessor.string(protocolParameters, CayenneExp.CAYENNE_EXP)))
+                // TODO: we are parsing "dir" twice...
+                // TODO: GROUP and SORT must be processed together
+                .sort(sortParser.fromString(BaseRequestProcessor.string(protocolParameters, GROUP), BaseRequestProcessor.string(protocolParameters, GROUP_DIR)))
+                .sortDirection(sortParser.dirFromString(BaseRequestProcessor.string(protocolParameters, Dir.DIR)))
+                .mapBy(mapByParser.fromString(BaseRequestProcessor.string(protocolParameters, MapBy.MAP_BY)))
+                .includes(includeParser.fromStrings(BaseRequestProcessor.strings(protocolParameters, Include.INCLUDE)))
+                .excludes(excludeParser.fromStrings(BaseRequestProcessor.strings(protocolParameters, Exclude.EXCLUDE)));
 
-        context.setRawRequest(request);
+        int start = BaseRequestProcessor.integer(protocolParameters, Start.START);
+        if (start >= 0) {
+            requestBuilder.start(new Start(start));
+        }
+
+        int limit = BaseRequestProcessor.integer(protocolParameters, Limit.LIMIT);
+        if (limit >= 0) {
+            requestBuilder.limit(new Limit(limit));
+        }
+
+        context.setRawRequest(requestBuilder.build());
     }
 }

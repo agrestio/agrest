@@ -48,8 +48,8 @@ public class ConstructResourceEntityStage implements Processor<UpdateContext<?>>
 
         LrRequest request = context.getRawRequest();
         if (request != null) {
-            includeConstructor.construct(resourceEntity, request.getInclude());
-            excludeConstructor.construct(resourceEntity, request.getExclude());
+            includeConstructor.construct(resourceEntity, request.getIncludes());
+            excludeConstructor.construct(resourceEntity, request.getExcludes());
         }
         context.setEntity(resourceEntity);
 
