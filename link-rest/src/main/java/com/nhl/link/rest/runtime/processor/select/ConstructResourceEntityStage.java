@@ -10,7 +10,7 @@ import com.nhl.link.rest.runtime.parser.size.ISizeConstructor;
 import com.nhl.link.rest.runtime.parser.sort.ISortConstructor;
 import com.nhl.link.rest.runtime.parser.tree.IExcludeConstructor;
 import com.nhl.link.rest.runtime.parser.tree.IIncludeConstructor;
-import com.nhl.link.rest.protocol.Query;
+import com.nhl.link.rest.LrRequest;
 import org.apache.cayenne.di.Inject;
 
 /**
@@ -54,14 +54,14 @@ public class ConstructResourceEntityStage implements Processor<SelectContext<?>>
         ResourceEntity<T> resourceEntity
                 = new ResourceEntity<>(metadataService.getLrEntity(context.getType()));
 
-        Query query = context.getRawQuery();
-        if (query != null) {
-            sizeConstructor.construct(resourceEntity, query.getStart(), query.getLimit());
-            includeConstructor.construct(resourceEntity, query.getInclude());
-            excludeConstructor.construct(resourceEntity, query.getExclude());
-            sortConstructor.construct(resourceEntity, query.getSort());
-            mapByConstructor.construct(resourceEntity, query.getMapBy());
-            expConstructor.construct(resourceEntity, query.getCayenneExp());
+        LrRequest request = context.getRawRequest();
+        if (request != null) {
+            sizeConstructor.construct(resourceEntity, request.getStart(), request.getLimit());
+            includeConstructor.construct(resourceEntity, request.getInclude());
+            excludeConstructor.construct(resourceEntity, request.getExclude());
+            sortConstructor.construct(resourceEntity, request.getSort());
+            mapByConstructor.construct(resourceEntity, request.getMapBy());
+            expConstructor.construct(resourceEntity, request.getCayenneExp());
         }
 
         context.setEntity(resourceEntity);

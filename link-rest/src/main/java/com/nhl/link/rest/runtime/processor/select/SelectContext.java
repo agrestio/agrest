@@ -11,7 +11,7 @@ import com.nhl.link.rest.SizeConstraints;
 import com.nhl.link.rest.constraints.Constraint;
 import com.nhl.link.rest.encoder.Encoder;
 import com.nhl.link.rest.processor.BaseProcessingContext;
-import com.nhl.link.rest.protocol.Query;
+import com.nhl.link.rest.LrRequest;
 import org.apache.cayenne.query.SelectQuery;
 
 import javax.ws.rs.core.UriInfo;
@@ -37,7 +37,7 @@ public class SelectContext<T> extends BaseProcessingContext<T> {
 	private Encoder encoder;
 	private int prefetchSemantics;
 	private List objects;
-	private Query rawQuery;
+	private LrRequest rawRequest;
 
 	// TODO: deprecate dependency on Cayenne in generic code
 	private SelectQuery<T> select;
@@ -204,14 +204,14 @@ public class SelectContext<T> extends BaseProcessingContext<T> {
 	/**
 	 * @since 2.13
 	 */
-	public Query getRawQuery() {
-		return rawQuery;
+	public LrRequest getRawRequest() {
+		return rawRequest;
 	}
 
 	/**
 	 * @since 2.13
 	 */
-	public void setRawQuery(Query rawQuery) {
-		this.rawQuery = rawQuery;
+	public void setRawRequest(LrRequest request) {
+		this.rawRequest = request;
 	}
 }

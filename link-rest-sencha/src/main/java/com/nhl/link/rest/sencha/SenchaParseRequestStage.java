@@ -14,7 +14,7 @@ import com.nhl.link.rest.protocol.Exclude;
 import com.nhl.link.rest.protocol.Include;
 import com.nhl.link.rest.protocol.Limit;
 import com.nhl.link.rest.protocol.MapBy;
-import com.nhl.link.rest.protocol.Query;
+import com.nhl.link.rest.LrRequest;
 import com.nhl.link.rest.protocol.Start;
 import org.apache.cayenne.di.Inject;
 
@@ -51,7 +51,7 @@ public class SenchaParseRequestStage extends ParseRequestStage {
     protected <T> void doExecute(SelectContext<T> context) {
         Map<String, List<String>> protocolParameters = context.getProtocolParameters();
 
-        Query query = new Query(
+        LrRequest request = new LrRequest(
                 expParser.fromString(BaseRequestProcessor.string(protocolParameters, CayenneExp.CAYENNE_EXP)),
                 sortParser.fromString(BaseRequestProcessor.string(protocolParameters, GROUP),
                         BaseRequestProcessor.string(protocolParameters, GROUP_DIR)),
@@ -62,6 +62,6 @@ public class SenchaParseRequestStage extends ParseRequestStage {
                 includeParser.fromStrings(BaseRequestProcessor.strings(protocolParameters, Include.INCLUDE)),
                 excludeParser.fromStrings(BaseRequestProcessor.strings(protocolParameters, Exclude.EXCLUDE)));
 
-        context.setRawQuery(query);
+        context.setRawRequest(request);
     }
 }

@@ -1,14 +1,23 @@
-package com.nhl.link.rest.protocol;
+package com.nhl.link.rest;
+
+import com.nhl.link.rest.protocol.CayenneExp;
+import com.nhl.link.rest.protocol.Dir;
+import com.nhl.link.rest.protocol.Exclude;
+import com.nhl.link.rest.protocol.Include;
+import com.nhl.link.rest.protocol.Limit;
+import com.nhl.link.rest.protocol.MapBy;
+import com.nhl.link.rest.protocol.Sort;
+import com.nhl.link.rest.protocol.Start;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * A container of LinkRest protocol parameters.
+ * A container of LinkRest protocol parameters for a single request.
  *
  * @since 2.13
  */
-public class Query {
+public class LrRequest {
 
     private CayenneExp cayenneExp;
     private Sort sort;
@@ -19,7 +28,7 @@ public class Query {
     private List<Include> include;
     private List<Exclude> exclude;
 
-    public Query(CayenneExp cayenneExp, Sort sort, Dir dir, MapBy mapBy, Start start, Limit limit, List<Include> include, List<Exclude> exclude) {
+    public LrRequest(CayenneExp cayenneExp, Sort sort, Dir dir, MapBy mapBy, Start start, Limit limit, List<Include> include, List<Exclude> exclude) {
         this.cayenneExp = cayenneExp;
         this.sort = sort;
         this.dir = dir;

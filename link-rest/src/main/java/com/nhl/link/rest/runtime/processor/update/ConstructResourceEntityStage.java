@@ -9,7 +9,7 @@ import com.nhl.link.rest.runtime.meta.IMetadataService;
 import com.nhl.link.rest.runtime.parser.IUpdateParser;
 import com.nhl.link.rest.runtime.parser.tree.IExcludeConstructor;
 import com.nhl.link.rest.runtime.parser.tree.IIncludeConstructor;
-import com.nhl.link.rest.protocol.Query;
+import com.nhl.link.rest.LrRequest;
 import org.apache.cayenne.di.Inject;
 
 import java.util.Collection;
@@ -46,10 +46,10 @@ public class ConstructResourceEntityStage implements Processor<UpdateContext<?>>
         LrEntity<T> entity = metadataService.getLrEntity(context.getType());
         ResourceEntity<T> resourceEntity = new ResourceEntity<>(entity);
 
-        Query query = context.getRawQuery();
-        if (query != null) {
-            includeConstructor.construct(resourceEntity, query.getInclude());
-            excludeConstructor.construct(resourceEntity, query.getExclude());
+        LrRequest request = context.getRawRequest();
+        if (request != null) {
+            includeConstructor.construct(resourceEntity, request.getInclude());
+            excludeConstructor.construct(resourceEntity, request.getExclude());
         }
         context.setEntity(resourceEntity);
 
