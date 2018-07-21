@@ -1,10 +1,10 @@
 package com.nhl.link.rest.protocol;
 
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static java.util.Arrays.asList;
 
 /**
  * Represents 'cayenneExp' LinkRest protocol parameter.
@@ -15,8 +15,8 @@ public class CayenneExp {
     public static final String CAYENNE_EXP = "cayenneExp";
 
     private String exp;
-    private Map<String, Object> params = new HashMap<>();
-    private List<Object> inPositionParams = new ArrayList<>();
+    private Map<String, Object> params;
+    private List<Object> inPositionParams;
 
     public CayenneExp(String exp) {
         this.exp = exp;
@@ -24,7 +24,7 @@ public class CayenneExp {
 
     public CayenneExp(String exp, Object... params) {
         this.exp = exp;
-        Collections.addAll(this.inPositionParams, params);
+        this.inPositionParams = asList(params);
     }
 
     public CayenneExp(String exp, Map<String, Object> params) {
@@ -37,10 +37,10 @@ public class CayenneExp {
     }
 
     public Map<String, Object> getParams() {
-        return params;
+        return params != null ? params : Collections.emptyMap();
     }
 
     public List<Object> getInPositionParams() {
-        return inPositionParams;
+        return inPositionParams != null ? inPositionParams : Collections.emptyList();
     }
 }
