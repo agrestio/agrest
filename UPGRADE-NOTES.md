@@ -14,6 +14,9 @@ replace calls to `SelectBuilder.autocompleteOn` with calls to `.stage(SelectStag
 Either SelectStage.PARSE_REQUEST or SelectStage.ASSEMBLE_QUERY stages can be used.
 If you are not using the Sencha module, you can inspect `SenchaOps` code implement a similar function on your own.
 
+### PARSE_REQUEST stage got split in two [#309](https://github.com/nhl/link-rest/issues/309)
+
+If you have callbacks attached to `SelectStage.PARSE_REQUEST` or `UpdateStage.PARSE_REQUEST` stages that rely on the presence of `ResourceEntity` in the context, reattach them to `SelectStage.CONSTRUCT_ENTITY` or `UpdateStage.CONSTRUCT_ENTITY` respectively, as `ResourceEntity` only becomes available after that new stage.
 
 ## Upgrading to 2.11
 

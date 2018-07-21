@@ -3,6 +3,7 @@ Release 2.13
 #284 Cayenne 4.0.RC1 is out... upgrading
 #300 Removing API deprecated as of 2.7 or earlier
 #301 Move "query" protocol parameter to "link-rest-sencha"
+#309 Capture request state in a new Query object
 
 Release 2.12
 
