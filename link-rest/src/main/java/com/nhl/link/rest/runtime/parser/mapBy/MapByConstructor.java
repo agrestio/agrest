@@ -3,7 +3,7 @@ package com.nhl.link.rest.runtime.parser.mapBy;
 import com.nhl.link.rest.ResourceEntity;
 import com.nhl.link.rest.meta.LrAttribute;
 import com.nhl.link.rest.runtime.parser.BaseRequestProcessor;
-import com.nhl.link.rest.runtime.query.MapBy;
+import com.nhl.link.rest.protocol.MapBy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

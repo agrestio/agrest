@@ -1,6 +1,6 @@
 package com.nhl.link.rest.runtime.parser.tree;
 
-import com.nhl.link.rest.runtime.query.Exclude;
+import com.nhl.link.rest.protocol.Exclude;
 
 import java.util.List;
 

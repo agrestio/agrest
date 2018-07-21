@@ -4,7 +4,7 @@ import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.nhl.link.rest.LinkRestException;
 import com.nhl.link.rest.runtime.jackson.IJacksonService;
-import com.nhl.link.rest.runtime.query.CayenneExp;
+import com.nhl.link.rest.protocol.CayenneExp;
 import org.apache.cayenne.di.Inject;
 
 import javax.ws.rs.core.Response.Status;

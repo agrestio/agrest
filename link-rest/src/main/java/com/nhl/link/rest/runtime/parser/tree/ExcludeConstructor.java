@@ -3,7 +3,7 @@ package com.nhl.link.rest.runtime.parser.tree;
 import com.nhl.link.rest.LinkRestException;
 import com.nhl.link.rest.ResourceEntity;
 import com.nhl.link.rest.runtime.parser.PathConstants;
-import com.nhl.link.rest.runtime.query.Exclude;
+import com.nhl.link.rest.protocol.Exclude;
 
 import javax.ws.rs.core.Response.Status;
 import java.util.List;

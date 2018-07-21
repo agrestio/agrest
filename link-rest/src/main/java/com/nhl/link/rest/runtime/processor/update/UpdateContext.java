@@ -12,7 +12,7 @@ import com.nhl.link.rest.SimpleObjectId;
 import com.nhl.link.rest.constraints.Constraint;
 import com.nhl.link.rest.encoder.Encoder;
 import com.nhl.link.rest.processor.BaseProcessingContext;
-import com.nhl.link.rest.runtime.query.Query;
+import com.nhl.link.rest.protocol.Query;
 
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriInfo;

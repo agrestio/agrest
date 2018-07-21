@@ -1,7 +1,7 @@
 package com.nhl.link.rest.runtime.parser.filter;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.nhl.link.rest.runtime.query.CayenneExp;
+import com.nhl.link.rest.protocol.CayenneExp;
 
 /**
  * Parsing of CayenneExp query parameter from string or nested in Json values.

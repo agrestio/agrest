@@ -13,8 +13,8 @@ import com.nhl.link.rest.runtime.parser.tree.IExcludeConstructor;
 import com.nhl.link.rest.runtime.parser.tree.IIncludeConstructor;
 import com.nhl.link.rest.runtime.processor.select.ConstructResourceEntityStage;
 import com.nhl.link.rest.runtime.processor.select.SelectContext;
-import com.nhl.link.rest.runtime.query.Dir;
-import com.nhl.link.rest.runtime.query.Sort;
+import com.nhl.link.rest.protocol.Dir;
+import com.nhl.link.rest.protocol.Sort;
 import org.apache.cayenne.di.Inject;
 import org.apache.cayenne.exp.Expression;
 

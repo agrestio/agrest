@@ -6,7 +6,7 @@ import static org.mockito.Mockito.when;
 
 import java.util.Iterator;
 
-import com.nhl.link.rest.runtime.query.Sort;
+import com.nhl.link.rest.protocol.Sort;
 import org.apache.cayenne.query.Ordering;
 import org.junit.Before;
 import org.junit.Test;

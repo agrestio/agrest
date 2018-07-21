@@ -5,9 +5,9 @@ import com.nhl.link.rest.processor.ProcessorOutcome;
 import com.nhl.link.rest.runtime.parser.BaseRequestProcessor;
 import com.nhl.link.rest.runtime.parser.tree.IExcludeParser;
 import com.nhl.link.rest.runtime.parser.tree.IIncludeParser;
-import com.nhl.link.rest.runtime.query.Exclude;
-import com.nhl.link.rest.runtime.query.Include;
-import com.nhl.link.rest.runtime.query.Query;
+import com.nhl.link.rest.protocol.Exclude;
+import com.nhl.link.rest.protocol.Include;
+import com.nhl.link.rest.protocol.Query;
 import org.apache.cayenne.di.Inject;
 
 import java.util.List;

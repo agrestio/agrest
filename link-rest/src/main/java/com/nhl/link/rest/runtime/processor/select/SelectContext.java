@@ -11,7 +11,7 @@ import com.nhl.link.rest.SizeConstraints;
 import com.nhl.link.rest.constraints.Constraint;
 import com.nhl.link.rest.encoder.Encoder;
 import com.nhl.link.rest.processor.BaseProcessingContext;
-import com.nhl.link.rest.runtime.query.Query;
+import com.nhl.link.rest.protocol.Query;
 import org.apache.cayenne.query.SelectQuery;
 
 import javax.ws.rs.core.UriInfo;

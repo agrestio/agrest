@@ -3,8 +3,8 @@ package com.nhl.link.rest.runtime.parser.sort;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
-import com.nhl.link.rest.runtime.query.Dir;
-import com.nhl.link.rest.runtime.query.Sort;
+import com.nhl.link.rest.protocol.Dir;
+import com.nhl.link.rest.protocol.Sort;
 import org.apache.cayenne.di.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

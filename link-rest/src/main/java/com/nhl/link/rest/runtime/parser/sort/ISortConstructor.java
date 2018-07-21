@@ -1,7 +1,7 @@
 package com.nhl.link.rest.runtime.parser.sort;
 
 import com.nhl.link.rest.ResourceEntity;
-import com.nhl.link.rest.runtime.query.Sort;
+import com.nhl.link.rest.protocol.Sort;
 
 /**
  * @since 2.13

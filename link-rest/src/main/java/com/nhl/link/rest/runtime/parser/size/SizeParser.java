@@ -2,8 +2,8 @@ package com.nhl.link.rest.runtime.parser.size;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.nhl.link.rest.LinkRestException;
-import com.nhl.link.rest.runtime.query.Limit;
-import com.nhl.link.rest.runtime.query.Start;
+import com.nhl.link.rest.protocol.Limit;
+import com.nhl.link.rest.protocol.Start;
 
 import javax.ws.rs.core.Response;
 

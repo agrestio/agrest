@@ -1,4 +1,4 @@
-package com.nhl.link.rest.runtime.query;
+package com.nhl.link.rest.protocol;
 
 /**
  * Represents 'mapBy' LinkRest protocol parameter

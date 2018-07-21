@@ -1,8 +1,8 @@
 package com.nhl.link.rest.runtime.parser.sort;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.nhl.link.rest.runtime.query.Dir;
-import com.nhl.link.rest.runtime.query.Sort;
+import com.nhl.link.rest.protocol.Dir;
+import com.nhl.link.rest.protocol.Sort;
 
 /**
  * Parsing of Sort and Dir query parameters from string or nested in Json values.

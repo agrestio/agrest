@@ -1,4 +1,4 @@
-package com.nhl.link.rest.runtime.query;
+package com.nhl.link.rest.protocol;
 
 /**
  * Represents 'dir' LinkRest protocol parameter.

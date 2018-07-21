@@ -7,7 +7,7 @@ import com.nhl.link.rest.runtime.parser.mapBy.IMapByParser;
 import com.nhl.link.rest.runtime.parser.size.ISizeParser;
 import com.nhl.link.rest.runtime.parser.sort.ISortParser;
 import com.nhl.link.rest.runtime.jackson.IJacksonService;
-import com.nhl.link.rest.runtime.query.Include;
+import com.nhl.link.rest.protocol.Include;
 import org.apache.cayenne.di.Inject;
 
 import javax.ws.rs.core.Response;

@@ -10,7 +10,7 @@ import com.nhl.link.rest.runtime.parser.size.ISizeConstructor;
 import com.nhl.link.rest.runtime.parser.sort.ISortConstructor;
 import com.nhl.link.rest.runtime.parser.tree.IExcludeConstructor;
 import com.nhl.link.rest.runtime.parser.tree.IIncludeConstructor;
-import com.nhl.link.rest.runtime.query.Query;
+import com.nhl.link.rest.protocol.Query;
 import org.apache.cayenne.di.Inject;
 
 /**

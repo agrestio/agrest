@@ -6,7 +6,7 @@ import com.nhl.link.rest.it.fixture.cayenne.E4;
 import com.nhl.link.rest.runtime.jackson.IJacksonService;
 import com.nhl.link.rest.runtime.jackson.JacksonService;
 import com.nhl.link.rest.runtime.parser.cache.PathCache;
-import com.nhl.link.rest.runtime.query.CayenneExp;
+import com.nhl.link.rest.protocol.CayenneExp;
 import com.nhl.link.rest.unit.TestWithCayenneMapping;
 import org.apache.cayenne.exp.Expression;
 import org.junit.Before;

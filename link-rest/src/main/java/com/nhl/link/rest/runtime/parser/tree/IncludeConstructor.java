@@ -7,7 +7,7 @@ import com.nhl.link.rest.runtime.parser.filter.ICayenneExpConstructor;
 import com.nhl.link.rest.runtime.parser.mapBy.IMapByConstructor;
 import com.nhl.link.rest.runtime.parser.size.ISizeConstructor;
 import com.nhl.link.rest.runtime.parser.sort.ISortConstructor;
-import com.nhl.link.rest.runtime.query.Include;
+import com.nhl.link.rest.protocol.Include;
 import org.apache.cayenne.di.Inject;
 
 import javax.ws.rs.core.Response.Status;

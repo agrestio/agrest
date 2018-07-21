@@ -1,4 +1,4 @@
-package com.nhl.link.rest.runtime.query;
+package com.nhl.link.rest.protocol;
 
 import java.util.ArrayList;
 import java.util.List;
