@@ -4,9 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * @since 2.13
+ * Represents 'exclude' LinkRest protocol parameter.
  *
- * Represents Exclude query parameter
+ * @since 2.13
  */
 public class Exclude {
     public static final String EXCLUDE = "exclude";

@@ -4,9 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * @since 2.13
+ * Represents 'include' LinkRest protocol parameter.
  *
- * Represents Include query parameter
+ * @since 2.13
  */
 public class Include {
     public static final String INCLUDE = "include";

@@ -4,9 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * @since 2.13
+ * A container of LinkRest protocol parameters.
  *
- * Holds all query parameters
+ * @since 2.13
  */
 public class Query {
 

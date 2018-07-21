@@ -7,9 +7,9 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * @since 2.13
+ * Represents 'cayenneExp' LinkRest protocol parameter.
  *
- * Represents Cayenne Expression query parameter
+ * @since 2.13
  */
 public class CayenneExp {
     public static final String CAYENNE_EXP = "cayenneExp";

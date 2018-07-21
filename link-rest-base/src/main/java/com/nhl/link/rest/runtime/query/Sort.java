@@ -4,9 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * @since 2.13
+ * Represents 'sort' LinkRest protocol parameter.
  *
- * Represents Sort query parameter
+ * @since 2.13
  */
 public class Sort {
     public static final String SORT = "sort";
