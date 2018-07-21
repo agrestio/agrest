@@ -5,6 +5,8 @@ import com.nhl.link.rest.runtime.parser.IUpdateParser;
 import com.nhl.link.rest.runtime.processor.select.ConstructResourceEntityStage;
 import com.nhl.link.rest.runtime.processor.select.ParseRequestStage;
 import com.nhl.link.rest.runtime.semantics.IRelationshipMapper;
+import com.nhl.link.rest.sencha.parser.filter.ISenchaFilterParser;
+import com.nhl.link.rest.sencha.parser.filter.SenchaFilterParser;
 import org.apache.cayenne.di.Binder;
 import org.apache.cayenne.di.Module;
 
@@ -19,7 +21,8 @@ public class SenchaModule implements Module {
         binder.bind(ConstructResourceEntityStage.class).to(SenchaConstructResourceEntityStage.class);
         binder.bind(IEncoderService.class).to(SenchaEncoderService.class);
         binder.bind(IRelationshipMapper.class).to(SenchaRelationshipMapper.class);
-        binder.bind(ISenchaFilterProcessor.class).to(SenchaFilterProcessor.class);
+        binder.bind(ISenchaFilterConstructor.class).to(SenchaFilterConstructor.class);
+        binder.bind(ISenchaFilterParser.class).to(SenchaFilterParser.class);
         binder.bind(IUpdateParser.class).to(SenchaUpdateParser.class);
     }
 }

@@ -4,7 +4,6 @@ import com.nhl.link.rest.ResourceEntity;
 import com.nhl.link.rest.meta.LrEntity;
 import com.nhl.link.rest.protocol.Sort;
 import com.nhl.link.rest.runtime.meta.IMetadataService;
-import com.nhl.link.rest.runtime.parser.BaseRequestProcessor;
 import com.nhl.link.rest.runtime.parser.filter.ICayenneExpConstructor;
 import com.nhl.link.rest.runtime.parser.mapBy.IMapByConstructor;
 import com.nhl.link.rest.runtime.parser.size.ISizeConstructor;
@@ -16,16 +15,12 @@ import com.nhl.link.rest.runtime.processor.select.SelectContext;
 import org.apache.cayenne.di.Inject;
 import org.apache.cayenne.exp.Expression;
 
-import java.util.List;
-import java.util.Map;
-
 import static java.util.Arrays.asList;
 
 public class SenchaConstructResourceEntityStage extends ConstructResourceEntityStage {
 
-    static final String FILTER = "filter";
 
-    private ISenchaFilterProcessor senchaFilterProcessor;
+    private ISenchaFilterConstructor senchaFilterProcessor;
 
     public SenchaConstructResourceEntityStage(
             @Inject IMetadataService metadataService,
@@ -35,7 +30,7 @@ public class SenchaConstructResourceEntityStage extends ConstructResourceEntityS
             @Inject ISizeConstructor sizeConstructor,
             @Inject IIncludeConstructor includeConstructor,
             @Inject IExcludeConstructor excludeConstructor,
-            @Inject ISenchaFilterProcessor senchaFilterProcessor) {
+            @Inject ISenchaFilterConstructor senchaFilterProcessor) {
 
         super(metadataService, expConstructor, sortConstructor, mapByConstructor,
                 sizeConstructor, includeConstructor, excludeConstructor);
@@ -47,19 +42,17 @@ public class SenchaConstructResourceEntityStage extends ConstructResourceEntityS
     protected <T> void doExecute(SelectContext<T> context) {
         super.doExecute(context);
 
-        Map<String, List<String>> protocolParameters = context.getProtocolParameters();
-
         ResourceEntity<T> resourceEntity = context.getEntity();
 
-        Expression e1 = parseFilter(resourceEntity.getLrEntity(), protocolParameters);
+        Expression e1 = parseFilter(resourceEntity.getLrEntity(), context);
         if (e1 != null) {
             resourceEntity.andQualifier(e1);
         }
     }
 
-    protected Expression parseFilter(LrEntity<?> entity, Map<String, List<String>> protocolParameters) {
-        String value = BaseRequestProcessor.string(protocolParameters, FILTER);
-        return senchaFilterProcessor.process(entity, value);
+    protected <T> Expression parseFilter(LrEntity<?> entity, SelectContext<T> context) {
+        SenchaRequest senchaRequest = SenchaRequest.get(context);
+        return senchaFilterProcessor.process(entity, senchaRequest.getFilters());
     }
 
     @Override

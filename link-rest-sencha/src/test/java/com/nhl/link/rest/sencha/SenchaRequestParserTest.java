@@ -32,6 +32,8 @@ import com.nhl.link.rest.runtime.parser.tree.IIncludeParser;
 import com.nhl.link.rest.runtime.parser.tree.IncludeConstructor;
 import com.nhl.link.rest.runtime.parser.tree.IncludeParser;
 import com.nhl.link.rest.runtime.processor.select.SelectContext;
+import com.nhl.link.rest.sencha.parser.filter.ISenchaFilterParser;
+import com.nhl.link.rest.sencha.parser.filter.SenchaFilterParser;
 import com.nhl.link.rest.unit.TestWithCayenneMapping;
 
 import org.apache.cayenne.query.Ordering;
@@ -73,8 +75,9 @@ public class SenchaRequestParserTest extends TestWithCayenneMapping {
         ISizeParser sizeParser = new SizeParser();
         IIncludeParser includeParser = new IncludeParser(jacksonService, expParser, sortParser, mapByParser, sizeParser);
         IExcludeParser excludeParser = new ExcludeParser(jacksonService);
+        ISenchaFilterParser filterParser = new SenchaFilterParser(jacksonService);
 
-        this.parseStage = new SenchaParseRequestStage(expParser, sortParser, mapByParser, includeParser, excludeParser);
+        this.parseStage = new SenchaParseRequestStage(expParser, sortParser, mapByParser, includeParser, excludeParser, filterParser);
 
         // prepare entity constructor stage
         ICayenneExpConstructor expConstructor = new CayenneExpConstructor(new ExpressionPostProcessor(pathCache));
@@ -84,8 +87,7 @@ public class SenchaRequestParserTest extends TestWithCayenneMapping {
         IIncludeConstructor includeConstructor = new IncludeConstructor(expConstructor, sortConstructor, mapByConstructor, sizeConstructor);
         IExcludeConstructor excludeConstructor = new ExcludeConstructor();
 
-		ISenchaFilterProcessor senchaFilterProcessor = new SenchaFilterProcessor(jacksonService, pathCache,
-				new ExpressionPostProcessor(pathCache));
+		ISenchaFilterConstructor senchaFilterProcessor = new SenchaFilterConstructor(pathCache, new ExpressionPostProcessor(pathCache));
 
         this.constructEntityStage
                 = new SenchaConstructResourceEntityStage(
@@ -131,7 +133,7 @@ public class SenchaRequestParserTest extends TestWithCayenneMapping {
 
 		@SuppressWarnings("unchecked")
 		MultivaluedMap<String, String> params = mock(MultivaluedMap.class);
-		when(params.get(SenchaConstructResourceEntityStage.FILTER)).thenReturn(Collections.singletonList("[{\"property\":\"name\",\"value\":\"xyz\"}]"));
+		when(params.get(SenchaParseRequestStage.FILTER)).thenReturn(Collections.singletonList("[{\"property\":\"name\",\"value\":\"xyz\"}]"));
 
         SelectContext<E2> context = prepareContext(params);
 
@@ -151,7 +153,7 @@ public class SenchaRequestParserTest extends TestWithCayenneMapping {
 		@SuppressWarnings("unchecked")
 		MultivaluedMap<String, String> params = mock(MultivaluedMap.class);
 		when(params.get("cayenneExp")).thenReturn(Collections.singletonList("{\"exp\" : \"address = '1 Main Street'\"}"));
-		when(params.get(SenchaConstructResourceEntityStage.FILTER)).thenReturn(Collections.singletonList("[{\"property\":\"name\",\"value\":\"xyz\"}]"));
+		when(params.get(SenchaParseRequestStage.FILTER)).thenReturn(Collections.singletonList("[{\"property\":\"name\",\"value\":\"xyz\"}]"));
 
         SelectContext<E2> context = prepareContext(params);
 

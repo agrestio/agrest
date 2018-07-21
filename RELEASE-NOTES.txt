@@ -4,6 +4,7 @@ Release 2.13
 #300 Removing API deprecated as of 2.7 or earlier
 #301 Move "query" protocol parameter to "link-rest-sencha"
 #309 Capture request state in a new LrRequest object
+#313 Refactor Sencha extension to follow the new pipeline logic 
 
 Release 2.12
 

@@ -3,6 +3,10 @@ package com.nhl.link.rest.sencha;
 import com.nhl.link.rest.protocol.Dir;
 import com.nhl.link.rest.protocol.Sort;
 import com.nhl.link.rest.runtime.processor.select.SelectContext;
+import com.nhl.link.rest.sencha.protocol.Filter;
+
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Sencha extensions of the standard {@link com.nhl.link.rest.LrRequest}.
@@ -15,6 +19,7 @@ public class SenchaRequest {
 
     private Sort group;
     private Dir groupDirection;
+    private List<Filter> filters;
 
     protected SenchaRequest() {
     }
@@ -39,6 +44,10 @@ public class SenchaRequest {
         return group;
     }
 
+    public List<Filter> getFilters() {
+        return filters != null ? filters : Collections.emptyList();
+    }
+
     public static class Builder {
         private SenchaRequest request;
 
@@ -57,6 +66,11 @@ public class SenchaRequest {
 
         public Builder groupDirection(Dir direction) {
             this.request.groupDirection = direction;
+            return this;
+        }
+
+        public Builder filters(List<Filter> filters) {
+            this.request.filters = filters;
             return this;
         }
     }
