@@ -54,6 +54,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+// TODO: separate tests for parse and construct entity stages into separate tests
 public class SenchaRequestParserTest extends TestWithCayenneMapping {
 
     private SenchaParseRequestStage parseStage;
@@ -95,12 +96,13 @@ public class SenchaRequestParserTest extends TestWithCayenneMapping {
                         sizeConstructor,
                         includeConstructor,
                         excludeConstructor,
-                        sortParser,
                         senchaFilterProcessor);
 	}
 
 	protected SelectContext<E2> prepareContext(MultivaluedMap<String, String> params) {
         SelectContext<E2> context = new SelectContext<>(E2.class);
+
+        // TODO: replace this with mock!!
         context.setUriInfo(new UriInfo() {
             @Override public String getPath() { return null; }
             @Override public String getPath(boolean decode) { return null; }

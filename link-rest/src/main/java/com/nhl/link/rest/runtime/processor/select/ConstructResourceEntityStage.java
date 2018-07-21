@@ -69,16 +69,17 @@ public class ConstructResourceEntityStage implements Processor<SelectContext<?>>
     }
 
     protected <T> Sort createSort(SelectContext<T> context) {
+        return createSort(context.getRawRequest().getSort(), context.getRawRequest().getSortDirection());
+    }
 
-        Sort sort = context.getRawRequest().getSort();
-        Dir dir = context.getRawRequest().getSortDirection();
+    protected Sort createSort(Sort sort, Dir sortDirection) {
 
         // ignoring direction on (1) no sort, (2) list sort, (3) no explicit direction
-        if (sort == null || sort.getProperty() == null || dir == null) {
+        if (sort == null || sort.getProperty() == null || sortDirection == null) {
             return sort;
         }
 
         // combine sort property with direction if they were specified separately
-        return new Sort(sort.getProperty(), dir);
+        return new Sort(sort.getProperty(), sortDirection);
     }
 }

@@ -26,46 +26,43 @@ public class SortConstructor implements ISortConstructor {
      */
     @Override
     public void construct(ResourceEntity<?> resourceEntity, Sort sort) {
-
-        collectOrderings(resourceEntity, sort);
-        // processes nested sorts
-        if (sort != null) {
-            sort.getSorts().stream().forEach(s -> collectOrderings(resourceEntity, s));
+        if(sort != null) {
+            collectOrderings(resourceEntity, sort);
         }
     }
 
     private void collectOrderings(ResourceEntity<?> resourceEntity, Sort sort) {
+        collectOrdering(resourceEntity, sort);
+        sort.getSorts().forEach(s -> collectOrderings(resourceEntity, s));
+    }
 
-        if (sort == null) {
-            return;
-        }
+    private void collectOrdering(ResourceEntity<?> resourceEntity, Sort sort) {
 
         String property = sort.getProperty();
-        if (property == null || property.isEmpty()) {
-            return;
-        }
+        if (property != null && !property.isEmpty()) {
 
-        // TODO: do we need to support nested ID?
-        LrEntity<?> entity = resourceEntity.getLrEntity();
+            // TODO: do we need to support nested ID?
+            LrEntity<?> entity = resourceEntity.getLrEntity();
 
-        // note using "toString" instead of "getPath" to convert ASTPath to
-        // String representation. This ensures "db:" prefix is preserved if
-        // present
-        property = pathCache.getPathDescriptor(entity, new ASTObjPath(sort.getProperty())).getPathExp().toString();
+            // note using "toString" instead of "getPath" to convert ASTPath to
+            // String representation. This ensures "db:" prefix is preserved if
+            // present
+            property = pathCache.getPathDescriptor(entity, new ASTObjPath(sort.getProperty())).getPathExp().toString();
 
-        // check for dupes...
-        for (Ordering o : resourceEntity.getOrderings()) {
-            if (property.equals(o.getSortSpecString())) {
-                return;
+            // check for dupes...
+            for (Ordering o : resourceEntity.getOrderings()) {
+                if (property.equals(o.getSortSpecString())) {
+                    return;
+                }
             }
-        }
 
-        Dir direction = sort.getDirection();
-        if (direction == null) {
-            direction = Dir.ASC;
-        }
+            Dir direction = sort.getDirection();
+            if (direction == null) {
+                direction = Dir.ASC;
+            }
 
-        SortOrder so = direction == Dir.ASC ? SortOrder.ASCENDING : SortOrder.DESCENDING;
-        resourceEntity.getOrderings().add(new Ordering(property, so));
+            SortOrder so = direction == Dir.ASC ? SortOrder.ASCENDING : SortOrder.DESCENDING;
+            resourceEntity.getOrderings().add(new Ordering(property, so));
+        }
     }
 }
