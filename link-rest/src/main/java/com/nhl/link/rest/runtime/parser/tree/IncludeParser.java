@@ -17,7 +17,12 @@ import java.util.List;
 
 public class IncludeParser implements IIncludeParser {
 
-    private static final String PATH = "path";
+    private static final String JSON_KEY_CAYENNE_EXP = "cayenneExp";
+    private static final String JSON_KEY_PATH = "path";
+    private static final String JSON_KEY_LIMIT = "limit";
+    private static final String JSON_KEY_MAP_BY = "mapBy";
+    private static final String JSON_KEY_SORT = "sort";
+    private static final String JSON_KEY_START = "start";
 
     private IJacksonService jsonParser;
     private ICayenneExpParser expParser;
@@ -75,14 +80,15 @@ public class IncludeParser implements IIncludeParser {
             return null;
         }
 
-        JsonNode pathNode = node.get(PATH);
+        JsonNode pathNode = node.get(JSON_KEY_PATH);
+        String path = pathNode != null && pathNode.isTextual() ? pathNode.asText() : null;
 
-        return new Include( expParser.fromRootNode(node),
-                            sortParser.fromRootNode(node),
-                            mapByParser.fromRootNode(node),
-                            pathNode != null && pathNode.isTextual() ? pathNode.asText() : null,
-                            sizeParser.startFromRootNode(node),
-                            sizeParser.limitFromRootNode(node));
+        return new Include(expParser.fromJson(node.get(JSON_KEY_CAYENNE_EXP)),
+                sortParser.fromJson(node.get(JSON_KEY_SORT)),
+                mapByParser.fromJson(node.get(JSON_KEY_MAP_BY)),
+                path,
+                sizeParser.startFromJson(node.get(JSON_KEY_START)),
+                sizeParser.limitFromJson(node.get(JSON_KEY_LIMIT)));
     }
 
     private List<Include> fromArray(JsonNode root) {

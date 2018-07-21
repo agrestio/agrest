@@ -11,7 +11,7 @@ import com.nhl.link.rest.protocol.Start;
  */
 public interface ISizeParser {
 
-    Start startFromRootNode(JsonNode root);
+    Start startFromJson(JsonNode json);
 
-    Limit limitFromRootNode(JsonNode root);
+    Limit limitFromJson(JsonNode json);
 }

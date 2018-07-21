@@ -9,7 +9,6 @@ import java.util.List;
  * @since 2.13
  */
 public class Exclude {
-    public static final String EXCLUDE = "exclude";
 
     private String path;
     private List<Exclude> excludes;

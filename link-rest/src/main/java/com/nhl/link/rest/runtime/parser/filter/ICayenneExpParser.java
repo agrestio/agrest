@@ -12,5 +12,5 @@ public interface ICayenneExpParser {
 
     CayenneExp fromString(String value);
 
-    CayenneExp fromRootNode(JsonNode root);
+    CayenneExp fromJson(JsonNode json);
 }

@@ -7,6 +7,4 @@ package com.nhl.link.rest.protocol;
  */
 public enum Dir {
     ASC, DESC;
-
-    public static final String DIR = "dir";
 }

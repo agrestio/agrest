@@ -7,37 +7,36 @@ import com.nhl.link.rest.protocol.Start;
 
 import javax.ws.rs.core.Response;
 
-public class SizeParser implements ISizeParser{
+/**
+ * @since 2.13
+ */
+public class SizeParser implements ISizeParser {
 
     @Override
-    public Start startFromRootNode(JsonNode root) {
-        JsonNode startNode = root.get(Start.START);
+    public Start startFromJson(JsonNode json) {
 
-        if (startNode != null) {
-            if (!startNode.isNumber()) {
-                throw new LinkRestException(Response.Status.BAD_REQUEST, "Expected 'int' as 'start' value, got: " + startNode.asText());
+        if (json != null) {
+            if (!json.isNumber()) {
+                throw new LinkRestException(Response.Status.BAD_REQUEST, "Expected 'int' as 'start' value, got: " + json);
             }
 
-            return new Start(startNode.asInt());
+            return new Start(json.asInt());
         }
 
         return null;
     }
 
     @Override
-    public Limit limitFromRootNode(JsonNode root) {
-        JsonNode limitNode = root.get(Limit.LIMIT);
+    public Limit limitFromJson(JsonNode json) {
 
-        if (limitNode != null) {
-            if (!limitNode.isNumber()) {
-                throw new LinkRestException(Response.Status.BAD_REQUEST, "Expected 'int' as 'limit' value, got: " + limitNode.asText());
+        if (json != null) {
+            if (!json.isNumber()) {
+                throw new LinkRestException(Response.Status.BAD_REQUEST, "Expected 'int' as 'limit' value, got: " + json);
             }
 
-            return new Limit(limitNode.asInt());
+            return new Limit(json.asInt());
         }
 
         return null;
     }
-
-
 }

@@ -9,7 +9,6 @@ import java.util.List;
  * @since 2.13
  */
 public class Include {
-    public static final String INCLUDE = "include";
 
     private String value;
     private CayenneExp cayenneExp;

@@ -9,7 +9,6 @@ import java.util.List;
  * @since 2.13
  */
 public class Sort {
-    public static final String SORT = "sort";
 
     private String property;
     private Dir direction;

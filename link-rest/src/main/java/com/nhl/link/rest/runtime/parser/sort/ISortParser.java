@@ -11,9 +11,10 @@ import com.nhl.link.rest.protocol.Sort;
  */
 public interface ISortParser {
 
-    Sort fromString(String sortValue);
+    Sort fromString(String path);
+
+    Sort fromJson(JsonNode json);
 
     Dir dirFromString(String dirValue);
 
-    Sort fromRootNode(JsonNode root);
 }

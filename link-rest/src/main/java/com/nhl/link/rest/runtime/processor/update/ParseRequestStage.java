@@ -1,13 +1,11 @@
 package com.nhl.link.rest.runtime.processor.update;
 
+import com.nhl.link.rest.LrRequest;
 import com.nhl.link.rest.processor.Processor;
 import com.nhl.link.rest.processor.ProcessorOutcome;
 import com.nhl.link.rest.runtime.parser.BaseRequestProcessor;
 import com.nhl.link.rest.runtime.parser.tree.IExcludeParser;
 import com.nhl.link.rest.runtime.parser.tree.IIncludeParser;
-import com.nhl.link.rest.protocol.Exclude;
-import com.nhl.link.rest.protocol.Include;
-import com.nhl.link.rest.LrRequest;
 import org.apache.cayenne.di.Inject;
 
 import java.util.List;
@@ -17,6 +15,9 @@ import java.util.Map;
  * @since 2.7
  */
 public class ParseRequestStage implements Processor<UpdateContext<?>> {
+
+    protected static final String PROTOCOL_KEY_EXCLUDE = "exclude";
+    protected static final String PROTOCOL_KEY_INCLUDE = "include";
 
     private IIncludeParser includeParser;
     private IExcludeParser excludeParser;
@@ -41,8 +42,8 @@ public class ParseRequestStage implements Processor<UpdateContext<?>> {
         Map<String, List<String>> protocolParameters = context.getProtocolParameters();
 
         LrRequest request = LrRequest.builder()
-                .includes(includeParser.fromStrings(BaseRequestProcessor.strings(protocolParameters, Include.INCLUDE)))
-                .excludes(excludeParser.fromStrings(BaseRequestProcessor.strings(protocolParameters, Exclude.EXCLUDE)))
+                .includes(includeParser.fromStrings(BaseRequestProcessor.strings(protocolParameters, PROTOCOL_KEY_INCLUDE)))
+                .excludes(excludeParser.fromStrings(BaseRequestProcessor.strings(protocolParameters, PROTOCOL_KEY_EXCLUDE)))
                 .build();
 
         context.setRawRequest(request);

@@ -16,131 +16,143 @@ import java.util.Map;
 
 public class CayenneExpParser implements ICayenneExpParser {
 
-	private static final String EXP = "exp";
-	private static final String PARAMS = "params";
+    private static final String JSON_KEY_EXP = "exp";
+    private static final String JSON_KEY_PARAMS = "params";
 
-	private IJacksonService jsonParser;
+    private IJacksonService jsonParser;
 
-	public CayenneExpParser(@Inject IJacksonService jsonParser) {
-		this.jsonParser = jsonParser;
-	}
+    public CayenneExpParser(@Inject IJacksonService jsonParser) {
+        this.jsonParser = jsonParser;
+    }
 
-	/**
-	 * @since 2.13
-	 */
-	@Override
-	public CayenneExp fromString(String value) {
-		if (value == null || value.isEmpty()) {
-			return null;
-		}
+    private static Object extractValue(JsonNode valueNode) {
+        JsonToken type = valueNode.asToken();
 
-		CayenneExp cayenneExp;
+        switch (type) {
+            case VALUE_NUMBER_INT:
+                return valueNode.asInt();
+            case VALUE_NUMBER_FLOAT:
+                return valueNode.asDouble();
+            case VALUE_TRUE:
+                return Boolean.TRUE;
+            case VALUE_FALSE:
+                return Boolean.FALSE;
+            case VALUE_NULL:
+                return null;
+            case START_ARRAY:
+                return extractArray(valueNode);
+            default:
+                // String parameters may need to be parsed further. Defer parsing
+                // until it is placed in the context of an expression...
+                return valueNode;
+        }
+    }
 
-		if (value.startsWith("[")) {
-			cayenneExp = fromArray(jsonParser.parseJson(value));
-		} else if (value.startsWith("{")) {
-			cayenneExp = fromJson(jsonParser.parseJson(value));
-		} else {
-			cayenneExp = new CayenneExp(value);
-		}
+    private static List<Object> extractArray(JsonNode arrayNode) {
+        List<Object> values = new ArrayList<>(arrayNode.size());
 
-		return cayenneExp;
-	}
+        for (JsonNode value : arrayNode) {
+            values.add(extractValue(value));
+        }
 
-	/**
-	 * @since 2.13
-	 */
-	@Override
-	public CayenneExp fromRootNode(JsonNode root) {
-		JsonNode expNode = root.get(CayenneExp.CAYENNE_EXP);
+        return values;
+    }
 
-		if (expNode != null) {
-			return fromString(expNode.isTextual() ? expNode.asText() : expNode.toString());
-		}
+    /**
+     * @since 2.13
+     */
+    @Override
+    public CayenneExp fromString(String value) {
+        if (value == null || value.isEmpty()) {
+            return null;
+        }
 
-		return null;
-	}
+        CayenneExp cayenneExp;
 
-	private CayenneExp fromJson(JsonNode node) {
-		// 'exp' key is required; 'params' key is optional
-		JsonNode expNode = node.get(EXP);
-		if (expNode == null) {
-			throw new LinkRestException(Status.BAD_REQUEST, "'exp' key is missing in 'cayenneExp' map");
-		}
+        if (value.startsWith("[")) {
+            cayenneExp = fromJsonArray(jsonParser.parseJson(value));
+        } else if (value.startsWith("{")) {
+            cayenneExp = fromJsonObject(jsonParser.parseJson(value));
+        } else {
+            cayenneExp = new CayenneExp(value);
+        }
 
-		JsonNode paramsNode = node.get(PARAMS);
-		if (paramsNode != null) {
+        return cayenneExp;
+    }
 
-			Map<String, Object> paramsMap = new HashMap<>();
+    /**
+     * @since 2.13
+     */
+    @Override
+    public CayenneExp fromJson(JsonNode json) {
 
-			Iterator<String> it = paramsNode.fieldNames();
-			while (it.hasNext()) {
-				String key = it.next();
-				JsonNode valueNode = paramsNode.get(key);
-				Object val = extractValue(valueNode);
-				paramsMap.put(key, val);
-			}
+        if (json == null || json.isNull()) {
+            return null;
+        }
 
-			return new CayenneExp(expNode.asText(), paramsMap);
-		}
+        if(json.isTextual()) {
+            return new CayenneExp(json.asText());
+        }
 
-		return new CayenneExp(expNode.asText());
-	}
+        if(json.isArray()) {
+            return fromJsonArray(json);
+        }
 
-	public CayenneExp fromArray(JsonNode array) {
-		int len = array.size();
+        if(json.isObject()) {
+            return fromJsonObject(json);
+        }
 
-		if (len < 1) {
-			throw new LinkRestException(Status.BAD_REQUEST, "array 'cayenneExp' mast have at least one element");
-		}
+        // TODO: throw?
+        return null;
+    }
 
-		String expString = array.get(0).asText();
+    private CayenneExp fromJsonObject(JsonNode node) {
+        // 'exp' key is required; 'params' key is optional
+        JsonNode expNode = node.get(JSON_KEY_EXP);
+        if (expNode == null) {
+            throw new LinkRestException(Status.BAD_REQUEST, "'exp' key is missing in 'cayenneExp' map");
+        }
 
-		if (len < 2) {
-			return new CayenneExp(expString);
-		}
+        JsonNode paramsNode = node.get(JSON_KEY_PARAMS);
+        if (paramsNode != null) {
 
-		Object[] params = new Object[len - 1];
+            Map<String, Object> paramsMap = new HashMap<>();
 
-		for (int i = 1; i < len; i++) {
+            Iterator<String> it = paramsNode.fieldNames();
+            while (it.hasNext()) {
+                String key = it.next();
+                JsonNode valueNode = paramsNode.get(key);
+                Object val = extractValue(valueNode);
+                paramsMap.put(key, val);
+            }
 
-			JsonNode paramNode = array.get(i);
-			params[i - 1] = extractValue(paramNode);
-		}
+            return new CayenneExp(expNode.asText(), paramsMap);
+        }
 
-		return new CayenneExp(expString, params);
-	}
+        return new CayenneExp(expNode.asText());
+    }
 
-	private static Object extractValue(JsonNode valueNode) {
-		JsonToken type = valueNode.asToken();
+    private CayenneExp fromJsonArray(JsonNode array) {
+        int len = array.size();
 
-		switch (type) {
-		case VALUE_NUMBER_INT:
-			return valueNode.asInt();
-		case VALUE_NUMBER_FLOAT:
-			return valueNode.asDouble();
-		case VALUE_TRUE:
-			return Boolean.TRUE;
-		case VALUE_FALSE:
-			return Boolean.FALSE;
-		case VALUE_NULL:
-			return null;
-		case START_ARRAY:
-			return extractArray(valueNode);
-		default:
-			// String parameters may need to be parsed further. Defer parsing
-			// until it is placed in the context of an expression...
-			return valueNode;
-		}
-	}
+        if (len < 1) {
+            throw new LinkRestException(Status.BAD_REQUEST, "array 'cayenneExp' mast have at least one element");
+        }
 
-	private static List<Object> extractArray(JsonNode arrayNode) {
-		List<Object> values = new ArrayList<>(arrayNode.size());
+        String expString = array.get(0).asText();
 
-		for (JsonNode value : arrayNode) {
-			values.add(extractValue(value));
-		}
+        if (len < 2) {
+            return new CayenneExp(expString);
+        }
 
-		return values;
-	}
+        Object[] params = new Object[len - 1];
+
+        for (int i = 1; i < len; i++) {
+
+            JsonNode paramNode = array.get(i);
+            params[i - 1] = extractValue(paramNode);
+        }
+
+        return new CayenneExp(expString, params);
+    }
 }

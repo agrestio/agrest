@@ -1,13 +1,11 @@
 package com.nhl.link.rest.protocol;
 
 /**
- * Represents 'limit' LinkRest protocol parameter
+ * Represents 'limit' LinkRest protocol parameter.
  *
  * @since 2.13
  */
 public class Limit {
-
-    public static final String LIMIT = "limit";
 
     private int value;
 

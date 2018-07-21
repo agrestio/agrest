@@ -7,8 +7,6 @@ package com.nhl.link.rest.protocol;
  */
 public class Start {
 
-    public static final String START = "start";
-
     private int value;
 
     public Start(int value) {

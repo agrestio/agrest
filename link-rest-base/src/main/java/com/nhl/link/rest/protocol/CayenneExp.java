@@ -12,7 +12,6 @@ import static java.util.Arrays.asList;
  * @since 2.13
  */
 public class CayenneExp {
-    public static final String CAYENNE_EXP = "cayenneExp";
 
     private String exp;
     private Map<String, Object> params;

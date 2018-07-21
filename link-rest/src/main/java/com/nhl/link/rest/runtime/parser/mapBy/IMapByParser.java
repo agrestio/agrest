@@ -12,5 +12,5 @@ public interface IMapByParser {
 
     MapBy fromString(String value);
 
-    MapBy fromRootNode(JsonNode root);
+    MapBy fromJson(JsonNode json);
 }
