@@ -53,8 +53,8 @@ public class SenchaConstructResourceEntityStage extends ConstructResourceEntityS
         super.doExecute(context);
 
         Map<String, List<String>> protocolParameters = context.getProtocolParameters();
-        Sort sort = sortParser.fromString(BaseRequestProcessor.string(protocolParameters, Sort.SORT),
-                                    BaseRequestProcessor.string(protocolParameters, Dir.DIR));
+        Sort sort = sortParser.fromString(BaseRequestProcessor.string(protocolParameters, Sort.SORT));
+        Dir dir = sortParser.dirFromString(BaseRequestProcessor.string(protocolParameters, Dir.DIR));
 
         ResourceEntity<T>  resourceEntity = context.getEntity();
 

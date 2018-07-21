@@ -53,6 +53,7 @@ import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+// TODO: split this test by stage. Currently testing combined PARSED_REQUEST and CONSTRUCT_ENTITY
 public class RequestParserTest extends TestWithCayenneMapping {
 
     private ParseRequestStage parseStage;

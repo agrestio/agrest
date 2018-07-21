@@ -26,25 +26,27 @@ public class SortConstructor implements ISortConstructor {
      */
     @Override
     public void construct(ResourceEntity<?> resourceEntity, Sort sort) {
-        processSortObject(resourceEntity, sort);
+
+        collectOrderings(resourceEntity, sort);
         // processes nested sorts
         if (sort != null) {
-            sort.getSorts().stream().forEach(s -> processSortObject(resourceEntity, s));
+            sort.getSorts().stream().forEach(s -> collectOrderings(resourceEntity, s));
         }
     }
 
-    private void processSortObject(ResourceEntity<?> resourceEntity, Sort sort) {
+    private void collectOrderings(ResourceEntity<?> resourceEntity, Sort sort) {
+
         if (sort == null) {
             return;
         }
-
-        // TODO: do we need to support nested ID?
-        LrEntity<?> entity = resourceEntity.getLrEntity();
 
         String property = sort.getProperty();
         if (property == null || property.isEmpty()) {
             return;
         }
+
+        // TODO: do we need to support nested ID?
+        LrEntity<?> entity = resourceEntity.getLrEntity();
 
         // note using "toString" instead of "getPath" to convert ASTPath to
         // String representation. This ensures "db:" prefix is preserved if
@@ -63,8 +65,7 @@ public class SortConstructor implements ISortConstructor {
             direction = Dir.ASC;
         }
 
-        SortOrder so = direction.equals(Dir.ASC) ? SortOrder.ASCENDING : SortOrder.DESCENDING;
-
+        SortOrder so = direction == Dir.ASC ? SortOrder.ASCENDING : SortOrder.DESCENDING;
         resourceEntity.getOrderings().add(new Ordering(property, so));
     }
 }

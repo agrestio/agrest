@@ -1,6 +1,6 @@
 package com.nhl.link.rest.protocol;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -18,7 +18,7 @@ public class Include {
     private String path;
     private Start start;
     private Limit limit;
-    private List<Include> includes = new ArrayList<>();
+    private List<Include> includes;
 
     public Include(String value) {
         this.value = value;
@@ -66,6 +66,6 @@ public class Include {
     }
 
     public List<Include> getIncludes() {
-        return includes;
+        return includes != null ? includes : Collections.emptyList();
     }
 }

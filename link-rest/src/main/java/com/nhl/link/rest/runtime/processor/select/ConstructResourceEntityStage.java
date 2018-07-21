@@ -1,8 +1,11 @@
 package com.nhl.link.rest.runtime.processor.select;
 
+import com.nhl.link.rest.LrRequest;
 import com.nhl.link.rest.ResourceEntity;
 import com.nhl.link.rest.processor.Processor;
 import com.nhl.link.rest.processor.ProcessorOutcome;
+import com.nhl.link.rest.protocol.Dir;
+import com.nhl.link.rest.protocol.Sort;
 import com.nhl.link.rest.runtime.meta.IMetadataService;
 import com.nhl.link.rest.runtime.parser.filter.ICayenneExpConstructor;
 import com.nhl.link.rest.runtime.parser.mapBy.IMapByConstructor;
@@ -10,7 +13,6 @@ import com.nhl.link.rest.runtime.parser.size.ISizeConstructor;
 import com.nhl.link.rest.runtime.parser.sort.ISortConstructor;
 import com.nhl.link.rest.runtime.parser.tree.IExcludeConstructor;
 import com.nhl.link.rest.runtime.parser.tree.IIncludeConstructor;
-import com.nhl.link.rest.LrRequest;
 import org.apache.cayenne.di.Inject;
 
 /**
@@ -51,19 +53,32 @@ public class ConstructResourceEntityStage implements Processor<SelectContext<?>>
     }
 
     protected <T> void doExecute(SelectContext<T> context) {
-        ResourceEntity<T> resourceEntity
-                = new ResourceEntity<>(metadataService.getLrEntity(context.getType()));
+        ResourceEntity<T> resourceEntity = new ResourceEntity<>(metadataService.getLrEntity(context.getType()));
 
         LrRequest request = context.getRawRequest();
         if (request != null) {
             sizeConstructor.construct(resourceEntity, request.getStart(), request.getLimit());
             includeConstructor.construct(resourceEntity, request.getIncludes());
             excludeConstructor.construct(resourceEntity, request.getExcludes());
-            sortConstructor.construct(resourceEntity, request.getSort());
+            sortConstructor.construct(resourceEntity, createSort(context));
             mapByConstructor.construct(resourceEntity, request.getMapBy());
             expConstructor.construct(resourceEntity, request.getCayenneExp());
         }
 
         context.setEntity(resourceEntity);
+    }
+
+    protected <T> Sort createSort(SelectContext<T> context) {
+
+        Sort sort = context.getRawRequest().getSort();
+        Dir dir = context.getRawRequest().getSortDirection();
+
+        // ignoring direction on (1) no sort, (2) list sort, (3) no explicit direction
+        if (sort == null || sort.getProperty() == null || dir == null) {
+            return sort;
+        }
+
+        // combine sort property with direction if they were specified separately
+        return new Sort(sort.getProperty(), dir);
     }
 }

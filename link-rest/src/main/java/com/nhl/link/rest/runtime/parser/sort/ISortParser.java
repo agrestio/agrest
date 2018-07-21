@@ -11,7 +11,7 @@ import com.nhl.link.rest.protocol.Sort;
  */
 public interface ISortParser {
 
-    Sort fromString(String sortValue, String dirValue);
+    Sort fromString(String sortValue);
 
     Dir dirFromString(String dirValue);
 

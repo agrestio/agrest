@@ -2,7 +2,6 @@ package com.nhl.link.rest.sencha;
 
 import com.nhl.link.rest.LrRequest;
 import com.nhl.link.rest.protocol.CayenneExp;
-import com.nhl.link.rest.protocol.Dir;
 import com.nhl.link.rest.protocol.Exclude;
 import com.nhl.link.rest.protocol.Include;
 import com.nhl.link.rest.protocol.Limit;
@@ -53,10 +52,9 @@ public class SenchaParseRequestStage extends ParseRequestStage {
 
         LrRequest.Builder requestBuilder = LrRequest.builder()
                 .cayenneExp(expParser.fromString(BaseRequestProcessor.string(protocolParameters, CayenneExp.CAYENNE_EXP)))
-                // TODO: we are parsing "dir" twice...
                 // TODO: GROUP and SORT must be processed together
-                .sort(sortParser.fromString(BaseRequestProcessor.string(protocolParameters, GROUP), BaseRequestProcessor.string(protocolParameters, GROUP_DIR)))
-                .sortDirection(sortParser.dirFromString(BaseRequestProcessor.string(protocolParameters, Dir.DIR)))
+                .sort(sortParser.fromString(BaseRequestProcessor.string(protocolParameters, GROUP)))
+                .sortDirection(sortParser.dirFromString(BaseRequestProcessor.string(protocolParameters, GROUP_DIR)))
                 .mapBy(mapByParser.fromString(BaseRequestProcessor.string(protocolParameters, MapBy.MAP_BY)))
                 .includes(includeParser.fromStrings(BaseRequestProcessor.strings(protocolParameters, Include.INCLUDE)))
                 .excludes(excludeParser.fromStrings(BaseRequestProcessor.strings(protocolParameters, Exclude.EXCLUDE)));

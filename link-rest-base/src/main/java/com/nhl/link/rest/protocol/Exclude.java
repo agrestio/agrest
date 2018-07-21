@@ -1,6 +1,6 @@
 package com.nhl.link.rest.protocol;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -12,12 +12,11 @@ public class Exclude {
     public static final String EXCLUDE = "exclude";
 
     private String path;
-    private List<Exclude> excludes = new ArrayList<>();
+    private List<Exclude> excludes;
 
     public Exclude(String path) {
         this.path = path;
     }
-
 
     public Exclude(List<Exclude> excludes) {
         this.excludes = excludes;
@@ -28,7 +27,7 @@ public class Exclude {
     }
 
     public List<Exclude> getExcludes() {
-        return excludes;
+        return excludes != null ? excludes : Collections.emptyList();
     }
 
 }

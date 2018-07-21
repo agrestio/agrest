@@ -8,9 +8,5 @@ import com.nhl.link.rest.protocol.Sort;
  */
 public interface ISortConstructor {
 
-    /**
-     * @since 2.13
-     */
     void construct(ResourceEntity<?> entity, Sort sort);
-
 }

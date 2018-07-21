@@ -58,8 +58,7 @@ public class ParseRequestStage implements Processor<SelectContext<?>> {
 
         LrRequest.Builder requestBuilder = LrRequest.builder()
                 .cayenneExp(expParser.fromString(BaseRequestProcessor.string(protocolParameters, CayenneExp.CAYENNE_EXP)))
-                // TODO: we are parsing "dir" twice...
-                .sort(sortParser.fromString(BaseRequestProcessor.string(protocolParameters, Sort.SORT), BaseRequestProcessor.string(protocolParameters, Dir.DIR)))
+                .sort(sortParser.fromString(BaseRequestProcessor.string(protocolParameters, Sort.SORT)))
                 .sortDirection(sortParser.dirFromString(BaseRequestProcessor.string(protocolParameters, Dir.DIR)))
                 .mapBy(mapByParser.fromString(BaseRequestProcessor.string(protocolParameters, MapBy.MAP_BY)))
                 .includes(includeParser.fromStrings(BaseRequestProcessor.strings(protocolParameters, Include.INCLUDE)))

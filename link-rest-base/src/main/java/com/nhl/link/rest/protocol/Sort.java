@@ -1,6 +1,6 @@
 package com.nhl.link.rest.protocol;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -13,7 +13,7 @@ public class Sort {
 
     private String property;
     private Dir direction;
-    private List<Sort> sorts = new ArrayList<>();
+    private List<Sort> sorts;
 
     public Sort(String property) {
         this.property = property;
@@ -37,7 +37,7 @@ public class Sort {
     }
 
     public List<Sort> getSorts() {
-        return sorts;
+        return sorts != null ? sorts : Collections.emptyList();
     }
 
 }

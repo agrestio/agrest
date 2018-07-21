@@ -1,18 +1,16 @@
 package com.nhl.link.rest.runtime.parser.sort;
 
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
-
+import com.fasterxml.jackson.databind.JsonNode;
+import com.nhl.link.rest.LinkRestException;
 import com.nhl.link.rest.protocol.Dir;
 import com.nhl.link.rest.protocol.Sort;
+import com.nhl.link.rest.runtime.jackson.IJacksonService;
 import org.apache.cayenne.di.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.nhl.link.rest.LinkRestException;
-import com.nhl.link.rest.runtime.jackson.IJacksonService;
-
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,7 +28,7 @@ public class SortParser implements ISortParser {
 	}
 
 	@Override
-	public Sort fromString(String sortValue, String dirValue) {
+	public Sort fromString(String sortValue) {
 		if (sortValue == null || sortValue.isEmpty()) {
 			return null;
 		}
@@ -41,8 +39,7 @@ public class SortParser implements ISortParser {
 		} else if (sortValue.startsWith("{")) {
 			return fromJson(jsonParser.parseJson(sortValue));
 		} else {
-			Dir dir = dirFromString(dirValue);
-			return dir == null ? new Sort(sortValue) : new Sort(sortValue, dir);
+			return new Sort(sortValue);
 		}
 	}
 
@@ -51,7 +48,7 @@ public class SortParser implements ISortParser {
 		JsonNode sortNode = root.get(Sort.SORT);
 
 		if (sortNode != null) {
-			return fromString(sortNode.isTextual() ? sortNode.asText() : sortNode.toString(), null);
+			return fromString(sortNode.isTextual() ? sortNode.asText() : sortNode.toString());
 		}
 
 		return null;

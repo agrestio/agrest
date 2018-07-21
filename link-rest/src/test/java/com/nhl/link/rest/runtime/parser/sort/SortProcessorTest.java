@@ -1,24 +1,23 @@
 package com.nhl.link.rest.runtime.parser.sort;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
-import java.util.Iterator;
-
-import com.nhl.link.rest.protocol.Sort;
-import org.apache.cayenne.query.Ordering;
-import org.junit.Before;
-import org.junit.Test;
-
 import com.nhl.link.rest.ResourceEntity;
 import com.nhl.link.rest.it.fixture.cayenne.E2;
 import com.nhl.link.rest.it.fixture.cayenne.auto._E2;
 import com.nhl.link.rest.meta.LrAttribute;
 import com.nhl.link.rest.meta.LrEntity;
+import com.nhl.link.rest.protocol.Sort;
 import com.nhl.link.rest.runtime.jackson.JacksonService;
 import com.nhl.link.rest.runtime.parser.cache.PathCache;
 import com.nhl.link.rest.unit.TestWithCayenneMapping;
+import org.apache.cayenne.query.Ordering;
+import org.junit.Before;
+import org.junit.Test;
+
+import java.util.Iterator;
+
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class SortProcessorTest extends TestWithCayenneMapping {
 
@@ -45,7 +44,7 @@ public class SortProcessorTest extends TestWithCayenneMapping {
 	@Test
 	public void testProcess_Array() {
 
-        Sort sort = parser.fromString("[{\"property\":\"name\"},{\"property\":\"address\"}]", null);
+        Sort sort = parser.fromString("[{\"property\":\"name\"},{\"property\":\"address\"}]");
 	    constructor.construct(entity, sort);
 
 		assertEquals(2, entity.getOrderings().size());
@@ -61,7 +60,7 @@ public class SortProcessorTest extends TestWithCayenneMapping {
 	@Test
 	public void testProcess_Object() {
 
-        Sort sort = parser.fromString("{\"property\":\"name\"}", null);
+        Sort sort = parser.fromString("{\"property\":\"name\"}");
         constructor.construct(entity, sort);
 
 		assertEquals(1, entity.getOrderings().size());
@@ -75,7 +74,7 @@ public class SortProcessorTest extends TestWithCayenneMapping {
 	@Test
 	public void testProcess_Simple() {
 
-        Sort sort = parser.fromString("name", null);
+        Sort sort = parser.fromString("name");
         constructor.construct(entity, sort);
 
 		assertEquals(1, entity.getOrderings().size());
