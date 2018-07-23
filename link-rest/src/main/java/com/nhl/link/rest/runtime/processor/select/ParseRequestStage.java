@@ -5,12 +5,12 @@ import com.nhl.link.rest.processor.Processor;
 import com.nhl.link.rest.processor.ProcessorOutcome;
 import com.nhl.link.rest.protocol.Limit;
 import com.nhl.link.rest.protocol.Start;
-import com.nhl.link.rest.runtime.parser.ParameterExtractor;
-import com.nhl.link.rest.runtime.parser.filter.ICayenneExpParser;
-import com.nhl.link.rest.runtime.parser.mapBy.IMapByParser;
-import com.nhl.link.rest.runtime.parser.sort.ISortParser;
-import com.nhl.link.rest.runtime.parser.tree.IExcludeParser;
-import com.nhl.link.rest.runtime.parser.tree.IIncludeParser;
+import com.nhl.link.rest.runtime.protocol.ParameterExtractor;
+import com.nhl.link.rest.runtime.protocol.ICayenneExpParser;
+import com.nhl.link.rest.runtime.protocol.IMapByParser;
+import com.nhl.link.rest.runtime.protocol.ISortParser;
+import com.nhl.link.rest.runtime.protocol.IExcludeParser;
+import com.nhl.link.rest.runtime.protocol.IIncludeParser;
 import org.apache.cayenne.di.Inject;
 
 import java.util.List;

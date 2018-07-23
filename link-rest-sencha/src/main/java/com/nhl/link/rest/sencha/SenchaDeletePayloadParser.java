@@ -8,8 +8,8 @@ import com.nhl.link.rest.meta.LrEntity;
 import com.nhl.link.rest.runtime.LinkRestRuntime;
 import com.nhl.link.rest.runtime.jackson.IJacksonService;
 import com.nhl.link.rest.runtime.meta.IMetadataService;
-import com.nhl.link.rest.runtime.parser.entityupdate.EntityUpdateJsonTraverser;
-import com.nhl.link.rest.runtime.parser.entityupdate.EntityUpdateJsonVisitor;
+import com.nhl.link.rest.runtime.protocol.EntityUpdateJsonTraverser;
+import com.nhl.link.rest.runtime.protocol.EntityUpdateJsonVisitor;
 import com.nhl.link.rest.runtime.parser.converter.IJsonValueConverterFactory;
 import com.nhl.link.rest.runtime.semantics.IRelationshipMapper;
 

@@ -1,6 +1,6 @@
 package com.nhl.link.rest.sencha;
 
-import com.nhl.link.rest.runtime.parser.ParameterExtractor;
+import com.nhl.link.rest.runtime.protocol.ParameterExtractor;
 import com.nhl.link.rest.runtime.processor.select.SelectContext;
 import com.nhl.link.rest.sencha.ops.StartsWithFilter;
 import org.apache.cayenne.exp.Expression;

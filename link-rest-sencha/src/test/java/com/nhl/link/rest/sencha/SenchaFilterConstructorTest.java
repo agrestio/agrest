@@ -6,7 +6,7 @@ import com.nhl.link.rest.meta.LrEntity;
 import com.nhl.link.rest.runtime.jackson.IJacksonService;
 import com.nhl.link.rest.runtime.jackson.JacksonService;
 import com.nhl.link.rest.runtime.path.PathDescriptorManager;
-import com.nhl.link.rest.runtime.parser.filter.ExpressionPostProcessor;
+import com.nhl.link.rest.runtime.entity.ExpressionPostProcessor;
 import com.nhl.link.rest.sencha.protocol.Filter;
 import com.nhl.link.rest.unit.TestWithCayenneMapping;
 import org.apache.cayenne.exp.Expression;

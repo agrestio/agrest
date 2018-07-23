@@ -2,7 +2,7 @@ package com.nhl.link.rest.it.fixture.pojo;
 
 import com.nhl.link.rest.processor.Processor;
 import com.nhl.link.rest.processor.ProcessorOutcome;
-import com.nhl.link.rest.runtime.processor.select.ConstructResourceEntityStage;
+import com.nhl.link.rest.runtime.processor.select.CreateResourceEntityStage;
 import com.nhl.link.rest.runtime.processor.select.SelectContext;
 import com.nhl.link.rest.runtime.processor.select.ApplyServerParamsStage;
 import com.nhl.link.rest.runtime.processor.select.ParseRequestStage;
@@ -22,14 +22,14 @@ public class PojoSelectProcessorFactoryProvider implements Provider<SelectProces
     public PojoSelectProcessorFactoryProvider(
             @Inject StartStage startStage,
             @Inject ParseRequestStage parseRequestStage,
-            @Inject ConstructResourceEntityStage constructResourceEntityStage,
+            @Inject CreateResourceEntityStage createResourceEntityStage,
             @Inject ApplyServerParamsStage applyServerParamsStage,
             @Inject PojoFetchStage pojoFetchStage) {
 
         stages = new EnumMap<>(SelectStage.class);
         stages.put(SelectStage.START, startStage);
         stages.put(SelectStage.PARSE_REQUEST, parseRequestStage);
-        stages.put(SelectStage.CONSTRUCT_ENTITY, constructResourceEntityStage);
+        stages.put(SelectStage.CONSTRUCT_ENTITY, createResourceEntityStage);
         stages.put(SelectStage.APPLY_SERVER_PARAMS, applyServerParamsStage);
         stages.put(SelectStage.ASSEMBLE_QUERY, c -> ProcessorOutcome.CONTINUE);
         stages.put(SelectStage.FETCH_DATA, pojoFetchStage);

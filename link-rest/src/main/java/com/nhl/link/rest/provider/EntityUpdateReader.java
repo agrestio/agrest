@@ -20,7 +20,7 @@ import com.nhl.link.rest.EntityUpdate;
 import com.nhl.link.rest.LinkRestException;
 import com.nhl.link.rest.runtime.LinkRestRuntime;
 import com.nhl.link.rest.runtime.meta.IMetadataService;
-import com.nhl.link.rest.runtime.parser.entityupdate.IEntityUpdateParser;
+import com.nhl.link.rest.runtime.protocol.IEntityUpdateParser;
 
 /**
  * A provider of {@link MessageBodyReader} for {@link EntityUpdate} parameters.

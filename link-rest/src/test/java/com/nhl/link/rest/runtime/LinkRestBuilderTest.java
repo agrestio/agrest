@@ -2,7 +2,7 @@ package com.nhl.link.rest.runtime;
 
 import com.nhl.link.rest.provider.ValidationExceptionMapper;
 import com.nhl.link.rest.runtime.adapter.LinkRestAdapter;
-import com.nhl.link.rest.runtime.parser.filter.ICayenneExpParser;
+import com.nhl.link.rest.runtime.protocol.ICayenneExpParser;
 import org.apache.cayenne.di.Binder;
 import org.apache.cayenne.validation.ValidationException;
 import org.junit.Test;

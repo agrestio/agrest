@@ -6,10 +6,10 @@ import com.nhl.link.rest.meta.LrEntity;
 import com.nhl.link.rest.processor.Processor;
 import com.nhl.link.rest.processor.ProcessorOutcome;
 import com.nhl.link.rest.runtime.meta.IMetadataService;
-import com.nhl.link.rest.runtime.parser.entityupdate.IEntityUpdateParser;
-import com.nhl.link.rest.runtime.parser.ParameterExtractor;
-import com.nhl.link.rest.runtime.parser.tree.IExcludeParser;
-import com.nhl.link.rest.runtime.parser.tree.IIncludeParser;
+import com.nhl.link.rest.runtime.protocol.IEntityUpdateParser;
+import com.nhl.link.rest.runtime.protocol.ParameterExtractor;
+import com.nhl.link.rest.runtime.protocol.IExcludeParser;
+import com.nhl.link.rest.runtime.protocol.IIncludeParser;
 import org.apache.cayenne.di.Inject;
 
 import java.util.Collection;

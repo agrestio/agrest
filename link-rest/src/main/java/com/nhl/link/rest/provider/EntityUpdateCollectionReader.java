@@ -5,7 +5,7 @@ import com.nhl.link.rest.LinkRestException;
 import com.nhl.link.rest.meta.Types;
 import com.nhl.link.rest.runtime.LinkRestRuntime;
 import com.nhl.link.rest.runtime.meta.IMetadataService;
-import com.nhl.link.rest.runtime.parser.entityupdate.IEntityUpdateParser;
+import com.nhl.link.rest.runtime.protocol.IEntityUpdateParser;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.WebApplicationException;

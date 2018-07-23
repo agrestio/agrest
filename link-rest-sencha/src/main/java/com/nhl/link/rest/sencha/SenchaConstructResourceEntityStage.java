@@ -4,32 +4,32 @@ import com.nhl.link.rest.ResourceEntity;
 import com.nhl.link.rest.meta.LrEntity;
 import com.nhl.link.rest.protocol.Sort;
 import com.nhl.link.rest.runtime.meta.IMetadataService;
-import com.nhl.link.rest.runtime.parser.filter.ICayenneExpConstructor;
-import com.nhl.link.rest.runtime.parser.mapBy.IMapByConstructor;
-import com.nhl.link.rest.runtime.parser.size.ISizeConstructor;
-import com.nhl.link.rest.runtime.parser.sort.ISortConstructor;
-import com.nhl.link.rest.runtime.parser.tree.IExcludeConstructor;
-import com.nhl.link.rest.runtime.parser.tree.IIncludeConstructor;
-import com.nhl.link.rest.runtime.processor.select.ConstructResourceEntityStage;
+import com.nhl.link.rest.runtime.entity.ICayenneExpMerger;
+import com.nhl.link.rest.runtime.entity.IMapByMerger;
+import com.nhl.link.rest.runtime.entity.ISizeMerger;
+import com.nhl.link.rest.runtime.entity.ISortMerger;
+import com.nhl.link.rest.runtime.entity.IExcludeMerger;
+import com.nhl.link.rest.runtime.entity.IIncludeMerger;
+import com.nhl.link.rest.runtime.processor.select.CreateResourceEntityStage;
 import com.nhl.link.rest.runtime.processor.select.SelectContext;
 import org.apache.cayenne.di.Inject;
 import org.apache.cayenne.exp.Expression;
 
 import static java.util.Arrays.asList;
 
-public class SenchaConstructResourceEntityStage extends ConstructResourceEntityStage {
+public class SenchaConstructResourceEntityStage extends CreateResourceEntityStage {
 
 
     private ISenchaFilterConstructor senchaFilterProcessor;
 
     public SenchaConstructResourceEntityStage(
             @Inject IMetadataService metadataService,
-            @Inject ICayenneExpConstructor expConstructor,
-            @Inject ISortConstructor sortConstructor,
-            @Inject IMapByConstructor mapByConstructor,
-            @Inject ISizeConstructor sizeConstructor,
-            @Inject IIncludeConstructor includeConstructor,
-            @Inject IExcludeConstructor excludeConstructor,
+            @Inject ICayenneExpMerger expConstructor,
+            @Inject ISortMerger sortConstructor,
+            @Inject IMapByMerger mapByConstructor,
+            @Inject ISizeMerger sizeConstructor,
+            @Inject IIncludeMerger includeConstructor,
+            @Inject IExcludeMerger excludeConstructor,
             @Inject ISenchaFilterConstructor senchaFilterProcessor) {
 
         super(metadataService, expConstructor, sortConstructor, mapByConstructor,

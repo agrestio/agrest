@@ -3,7 +3,7 @@ package com.nhl.link.rest.runtime.cayenne.processor.update;
 import com.nhl.link.rest.UpdateStage;
 import com.nhl.link.rest.processor.Processor;
 import com.nhl.link.rest.runtime.UpdateOperation;
-import com.nhl.link.rest.runtime.processor.update.ConstructResourceEntityStage;
+import com.nhl.link.rest.runtime.processor.update.CreateResourceEntityStage;
 import com.nhl.link.rest.runtime.processor.update.ApplyServerParamsStage;
 import com.nhl.link.rest.runtime.processor.update.ParseRequestStage;
 import com.nhl.link.rest.runtime.processor.update.UpdateContext;
@@ -29,7 +29,7 @@ public class CayenneUpdateProcessorFactoryFactoryProvider implements Provider<Up
     public CayenneUpdateProcessorFactoryFactoryProvider(
             @Inject CayenneUpdateStartStage startStage,
             @Inject ParseRequestStage parseRequestStage,
-            @Inject ConstructResourceEntityStage constructResourceEntityStage,
+            @Inject CreateResourceEntityStage createResourceEntityStage,
             @Inject ApplyServerParamsStage applyServerParamsStage,
             @Inject CayenneCreateStage createStage,
             @Inject CayenneUpdateStage updateStage,
@@ -43,7 +43,7 @@ public class CayenneUpdateProcessorFactoryFactoryProvider implements Provider<Up
         this.createStages = new EnumMap<>(UpdateStage.class);
         this.createStages.put(UpdateStage.START, startStage);
         this.createStages.put(UpdateStage.PARSE_REQUEST, parseRequestStage);
-        this.createStages.put(UpdateStage.CONSTRUCT_ENTITY, constructResourceEntityStage);
+        this.createStages.put(UpdateStage.CONSTRUCT_ENTITY, createResourceEntityStage);
         this.createStages.put(UpdateStage.APPLY_SERVER_PARAMS, applyServerParamsStage);
         this.createStages.put(UpdateStage.UPDATE_DATA_STORE, createStage);
         this.createStages.put(UpdateStage.FILL_RESPONSE, createdResponseStage);
@@ -51,7 +51,7 @@ public class CayenneUpdateProcessorFactoryFactoryProvider implements Provider<Up
         this.updateStages = new EnumMap<>(UpdateStage.class);
         this.updateStages.put(UpdateStage.START, startStage);
         this.updateStages.put(UpdateStage.PARSE_REQUEST, parseRequestStage);
-        this.updateStages.put(UpdateStage.CONSTRUCT_ENTITY, constructResourceEntityStage);
+        this.updateStages.put(UpdateStage.CONSTRUCT_ENTITY, createResourceEntityStage);
         this.updateStages.put(UpdateStage.APPLY_SERVER_PARAMS, applyServerParamsStage);
         this.updateStages.put(UpdateStage.UPDATE_DATA_STORE, updateStage);
         this.updateStages.put(UpdateStage.FILL_RESPONSE, okResponseStage);
@@ -59,7 +59,7 @@ public class CayenneUpdateProcessorFactoryFactoryProvider implements Provider<Up
         this.createOrUpdateStages = new EnumMap<>(UpdateStage.class);
         this.createOrUpdateStages.put(UpdateStage.START, startStage);
         this.createOrUpdateStages.put(UpdateStage.PARSE_REQUEST, parseRequestStage);
-        this.createOrUpdateStages.put(UpdateStage.CONSTRUCT_ENTITY, constructResourceEntityStage);
+        this.createOrUpdateStages.put(UpdateStage.CONSTRUCT_ENTITY, createResourceEntityStage);
         this.createOrUpdateStages.put(UpdateStage.APPLY_SERVER_PARAMS, applyServerParamsStage);
         this.createOrUpdateStages.put(UpdateStage.UPDATE_DATA_STORE, createOrUpdateStage);
         this.createOrUpdateStages.put(UpdateStage.FILL_RESPONSE, okResponseStage);
@@ -67,7 +67,7 @@ public class CayenneUpdateProcessorFactoryFactoryProvider implements Provider<Up
         this.idempotentCreateOrUpdateStages = new EnumMap<>(UpdateStage.class);
         this.idempotentCreateOrUpdateStages.put(UpdateStage.START, startStage);
         this.idempotentCreateOrUpdateStages.put(UpdateStage.PARSE_REQUEST, parseRequestStage);
-        this.idempotentCreateOrUpdateStages.put(UpdateStage.CONSTRUCT_ENTITY, constructResourceEntityStage);
+        this.idempotentCreateOrUpdateStages.put(UpdateStage.CONSTRUCT_ENTITY, createResourceEntityStage);
         this.idempotentCreateOrUpdateStages.put(UpdateStage.APPLY_SERVER_PARAMS, applyServerParamsStage);
         this.idempotentCreateOrUpdateStages.put(UpdateStage.UPDATE_DATA_STORE, idempotentCreateOrUpdateStage);
         this.idempotentCreateOrUpdateStages.put(UpdateStage.FILL_RESPONSE, okResponseStage);
@@ -75,7 +75,7 @@ public class CayenneUpdateProcessorFactoryFactoryProvider implements Provider<Up
         this.idempotentFullSyncStages = new EnumMap<>(UpdateStage.class);
         this.idempotentFullSyncStages.put(UpdateStage.START, startStage);
         this.idempotentFullSyncStages.put(UpdateStage.PARSE_REQUEST, parseRequestStage);
-        this.idempotentFullSyncStages.put(UpdateStage.CONSTRUCT_ENTITY, constructResourceEntityStage);
+        this.idempotentFullSyncStages.put(UpdateStage.CONSTRUCT_ENTITY, createResourceEntityStage);
         this.idempotentFullSyncStages.put(UpdateStage.APPLY_SERVER_PARAMS, applyServerParamsStage);
         this.idempotentFullSyncStages.put(UpdateStage.UPDATE_DATA_STORE, idempotentFullSyncStage);
         this.idempotentFullSyncStages.put(UpdateStage.FILL_RESPONSE, okResponseStage);

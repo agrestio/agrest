@@ -1,11 +1,11 @@
 package com.nhl.link.rest.sencha;
 
-import com.nhl.link.rest.runtime.parser.ParameterExtractor;
-import com.nhl.link.rest.runtime.parser.filter.ICayenneExpParser;
-import com.nhl.link.rest.runtime.parser.mapBy.IMapByParser;
-import com.nhl.link.rest.runtime.parser.sort.ISortParser;
-import com.nhl.link.rest.runtime.parser.tree.IExcludeParser;
-import com.nhl.link.rest.runtime.parser.tree.IIncludeParser;
+import com.nhl.link.rest.runtime.protocol.ParameterExtractor;
+import com.nhl.link.rest.runtime.protocol.ICayenneExpParser;
+import com.nhl.link.rest.runtime.protocol.IMapByParser;
+import com.nhl.link.rest.runtime.protocol.ISortParser;
+import com.nhl.link.rest.runtime.protocol.IExcludeParser;
+import com.nhl.link.rest.runtime.protocol.IIncludeParser;
 import com.nhl.link.rest.runtime.processor.select.ParseRequestStage;
 import com.nhl.link.rest.runtime.processor.select.SelectContext;
 import com.nhl.link.rest.sencha.parser.filter.ISenchaFilterParser;

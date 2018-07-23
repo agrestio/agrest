@@ -3,7 +3,7 @@ package com.nhl.link.rest.sencha;
 import com.nhl.link.rest.LinkRestException;
 import com.nhl.link.rest.meta.LrEntity;
 import com.nhl.link.rest.runtime.path.IPathDescriptorManager;
-import com.nhl.link.rest.runtime.parser.filter.IExpressionPostProcessor;
+import com.nhl.link.rest.runtime.entity.IExpressionPostProcessor;
 import com.nhl.link.rest.sencha.ops.FilterUtil;
 import com.nhl.link.rest.sencha.protocol.Filter;
 import org.apache.cayenne.di.Inject;

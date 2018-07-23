@@ -2,7 +2,7 @@ package com.nhl.link.rest.provider;
 
 import com.nhl.link.rest.EntityUpdate;
 import com.nhl.link.rest.runtime.meta.IMetadataService;
-import com.nhl.link.rest.runtime.parser.entityupdate.IEntityUpdateParser;
+import com.nhl.link.rest.runtime.protocol.IEntityUpdateParser;
 
 import javax.ws.rs.WebApplicationException;
 import java.io.InputStream;
