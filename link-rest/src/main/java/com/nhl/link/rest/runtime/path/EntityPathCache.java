@@ -1,4 +1,4 @@
-package com.nhl.link.rest.runtime.parser.cache;
+package com.nhl.link.rest.runtime.path;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;

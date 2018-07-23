@@ -7,7 +7,7 @@ import com.nhl.link.rest.meta.LrAttribute;
 import com.nhl.link.rest.meta.LrEntity;
 import com.nhl.link.rest.protocol.Sort;
 import com.nhl.link.rest.runtime.jackson.JacksonService;
-import com.nhl.link.rest.runtime.parser.cache.PathCache;
+import com.nhl.link.rest.runtime.path.PathDescriptorManager;
 import com.nhl.link.rest.unit.TestWithCayenneMapping;
 import org.apache.cayenne.query.Ordering;
 import org.junit.Before;
@@ -29,7 +29,7 @@ public class SortProcessorTest extends TestWithCayenneMapping {
 	public void before() {
 		JacksonService jacksonService = new JacksonService();
 		this.parser = new SortParser(jacksonService);
-		this.constructor = new SortConstructor(new PathCache());
+		this.constructor = new SortConstructor(new PathDescriptorManager());
 
 		@SuppressWarnings("unchecked")
 		LrEntity<E2> lre2 = mock(LrEntity.class);

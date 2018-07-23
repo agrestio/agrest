@@ -5,7 +5,7 @@ import com.nhl.link.rest.it.fixture.cayenne.E4;
 import com.nhl.link.rest.meta.LrEntity;
 import com.nhl.link.rest.runtime.jackson.IJacksonService;
 import com.nhl.link.rest.runtime.jackson.JacksonService;
-import com.nhl.link.rest.runtime.parser.cache.PathCache;
+import com.nhl.link.rest.runtime.path.PathDescriptorManager;
 import com.nhl.link.rest.runtime.parser.filter.ExpressionPostProcessor;
 import com.nhl.link.rest.sencha.protocol.Filter;
 import com.nhl.link.rest.unit.TestWithCayenneMapping;
@@ -30,9 +30,9 @@ public class SenchaFilterConstructorTest extends TestWithCayenneMapping {
     public void before() {
 
         IJacksonService jsonParser = new JacksonService();
-        PathCache pathCache = new PathCache();
+        PathDescriptorManager pathDescriptorManager = new PathDescriptorManager();
 
-        this.processor = new SenchaFilterConstructor(pathCache, new ExpressionPostProcessor(pathCache));
+        this.processor = new SenchaFilterConstructor(pathDescriptorManager, new ExpressionPostProcessor(pathDescriptorManager));
         this.e4Entity = getLrEntity(E4.class);
     }
 

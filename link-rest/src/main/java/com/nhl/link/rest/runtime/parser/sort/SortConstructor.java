@@ -2,7 +2,7 @@ package com.nhl.link.rest.runtime.parser.sort;
 
 import com.nhl.link.rest.ResourceEntity;
 import com.nhl.link.rest.meta.LrEntity;
-import com.nhl.link.rest.runtime.parser.cache.IPathCache;
+import com.nhl.link.rest.runtime.path.IPathDescriptorManager;
 import com.nhl.link.rest.protocol.Dir;
 import com.nhl.link.rest.protocol.Sort;
 import org.apache.cayenne.di.Inject;
@@ -15,9 +15,9 @@ import org.apache.cayenne.query.SortOrder;
  */
 public class SortConstructor implements ISortConstructor {
 
-    private IPathCache pathCache;
+    private IPathDescriptorManager pathCache;
 
-    public SortConstructor(@Inject IPathCache pathCache) {
+    public SortConstructor(@Inject IPathDescriptorManager pathCache) {
         this.pathCache = pathCache;
     }
 

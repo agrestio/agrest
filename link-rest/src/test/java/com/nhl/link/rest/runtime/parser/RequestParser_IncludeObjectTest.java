@@ -5,8 +5,8 @@ import com.nhl.link.rest.it.fixture.cayenne.E2;
 import com.nhl.link.rest.it.fixture.cayenne.E3;
 import com.nhl.link.rest.runtime.jackson.IJacksonService;
 import com.nhl.link.rest.runtime.jackson.JacksonService;
-import com.nhl.link.rest.runtime.parser.cache.IPathCache;
-import com.nhl.link.rest.runtime.parser.cache.PathCache;
+import com.nhl.link.rest.runtime.path.IPathDescriptorManager;
+import com.nhl.link.rest.runtime.path.PathDescriptorManager;
 import com.nhl.link.rest.runtime.parser.filter.CayenneExpConstructor;
 import com.nhl.link.rest.runtime.parser.filter.CayenneExpParser;
 import com.nhl.link.rest.runtime.parser.filter.ExpressionPostProcessor;
@@ -56,7 +56,7 @@ public class RequestParser_IncludeObjectTest extends TestWithCayenneMapping {
 	@Before
 	public void setUp() {
 
-		IPathCache pathCache = new PathCache();
+		IPathDescriptorManager pathCache = new PathDescriptorManager();
 		IJacksonService jacksonService = new JacksonService();
 
         // prepare parse request stage

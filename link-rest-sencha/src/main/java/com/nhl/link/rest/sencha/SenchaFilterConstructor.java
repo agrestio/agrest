@@ -2,7 +2,7 @@ package com.nhl.link.rest.sencha;
 
 import com.nhl.link.rest.LinkRestException;
 import com.nhl.link.rest.meta.LrEntity;
-import com.nhl.link.rest.runtime.parser.cache.IPathCache;
+import com.nhl.link.rest.runtime.path.IPathDescriptorManager;
 import com.nhl.link.rest.runtime.parser.filter.IExpressionPostProcessor;
 import com.nhl.link.rest.sencha.ops.FilterUtil;
 import com.nhl.link.rest.sencha.protocol.Filter;
@@ -27,11 +27,11 @@ public class SenchaFilterConstructor implements ISenchaFilterConstructor {
 
     private static final int MAX_VALUE_LENGTH = 1024;
 
-    private IPathCache pathCache;
+    private IPathDescriptorManager pathCache;
     private IExpressionPostProcessor postProcessor;
 
     public SenchaFilterConstructor(
-            @Inject IPathCache pathCache,
+            @Inject IPathDescriptorManager pathCache,
             @Inject IExpressionPostProcessor postProcessor) {
         this.pathCache = pathCache;
         this.postProcessor = postProcessor;

@@ -1,4 +1,4 @@
-package com.nhl.link.rest.runtime.parser.cache;
+package com.nhl.link.rest.runtime.path;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -7,6 +7,8 @@ import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
+import com.nhl.link.rest.runtime.path.EntityPathCache;
+import com.nhl.link.rest.runtime.path.PathDescriptor;
 import org.apache.cayenne.exp.parser.ASTObjPath;
 import org.junit.Test;
 

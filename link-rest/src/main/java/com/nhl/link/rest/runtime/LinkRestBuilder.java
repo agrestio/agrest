@@ -64,8 +64,8 @@ import com.nhl.link.rest.runtime.meta.MetadataService;
 import com.nhl.link.rest.runtime.meta.ResourceMetadataService;
 import com.nhl.link.rest.runtime.parser.IUpdateParser;
 import com.nhl.link.rest.runtime.parser.UpdateParser;
-import com.nhl.link.rest.runtime.parser.cache.IPathCache;
-import com.nhl.link.rest.runtime.parser.cache.PathCache;
+import com.nhl.link.rest.runtime.path.IPathDescriptorManager;
+import com.nhl.link.rest.runtime.path.PathDescriptorManager;
 import com.nhl.link.rest.runtime.parser.filter.CayenneExpParser;
 import com.nhl.link.rest.runtime.parser.filter.CayenneExpConstructor;
 import com.nhl.link.rest.runtime.parser.filter.ExpressionPostProcessor;
@@ -585,7 +585,7 @@ public class LinkRestBuilder {
             binder.bind(IJacksonService.class).to(JacksonService.class);
             binder.bind(ICayennePersister.class).toInstance(cayenneService);
 
-            binder.bind(IPathCache.class).to(PathCache.class);
+            binder.bind(IPathDescriptorManager.class).to(PathDescriptorManager.class);
 
             // Query parameter parsers from the UriInfo
             binder.bind(ICayenneExpParser.class).to(CayenneExpParser.class);
