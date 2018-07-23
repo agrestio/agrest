@@ -5,7 +5,6 @@ import com.nhl.link.rest.runtime.meta.IMetadataService;
 import com.nhl.link.rest.runtime.parser.IUpdateParser;
 
 import javax.ws.rs.WebApplicationException;
-import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Type;
 import java.util.Collection;
@@ -20,8 +19,7 @@ class EntityUpdateReaderProcessor {
 		this.metadataService = metadataService;
 	}
 
-	<T> Collection<EntityUpdate<T>> read(Type entityUpdateType, InputStream entityStream)
-			throws IOException, WebApplicationException {
+	<T> Collection<EntityUpdate<T>> read(Type entityUpdateType, InputStream entityStream) throws WebApplicationException {
 		return parser.parse(metadataService.getEntityByType(entityUpdateType), entityStream);
 	}
 }
