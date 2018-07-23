@@ -8,8 +8,8 @@ import com.nhl.link.rest.protocol.MapBy;
  */
 public interface IMapByMerger {
 
-    void construct(ResourceEntity<?> resourceEntity, MapBy mapBy);
+    void merge(ResourceEntity<?> resourceEntity, MapBy mapBy);
 
-    void constructIncluded(ResourceEntity<?> resourceEntity, MapBy mapBy);
+    void mergeIncluded(ResourceEntity<?> resourceEntity, MapBy mapBy);
 
 }

@@ -14,7 +14,7 @@ public class MapByMerger implements IMapByMerger {
     private static final Logger LOGGER = LoggerFactory.getLogger(MapByMerger.class);
 
     @Override
-    public void construct(ResourceEntity<?> resourceEntity, MapBy mapBy) {
+    public void merge(ResourceEntity<?> resourceEntity, MapBy mapBy) {
         if (mapBy == null) {
             return;
         }
@@ -37,7 +37,7 @@ public class MapByMerger implements IMapByMerger {
     }
 
     @Override
-    public void constructIncluded(ResourceEntity<?> resourceEntity, MapBy mapBy) {
+    public void mergeIncluded(ResourceEntity<?> resourceEntity, MapBy mapBy) {
         if (mapBy == null) {
             return;
         }

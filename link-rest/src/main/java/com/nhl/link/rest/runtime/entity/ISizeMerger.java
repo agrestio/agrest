@@ -9,5 +9,5 @@ import com.nhl.link.rest.protocol.Start;
  */
 public interface ISizeMerger {
 
-    void construct(ResourceEntity<?> resourceEntity, Start start, Limit limit);
+    void merge(ResourceEntity<?> resourceEntity, Start start, Limit limit);
 }

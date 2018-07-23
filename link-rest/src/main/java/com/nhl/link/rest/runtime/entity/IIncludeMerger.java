@@ -10,5 +10,5 @@ import java.util.List;
  */
 public interface IIncludeMerger {
 
-    void construct(ResourceEntity<?> resourceEntity, List<Include> includes);
+    void merge(ResourceEntity<?> resourceEntity, List<Include> includes);
 }

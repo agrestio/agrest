@@ -8,5 +8,5 @@ import com.nhl.link.rest.protocol.Sort;
  */
 public interface ISortMerger {
 
-    void construct(ResourceEntity<?> entity, Sort sort);
+    void merge(ResourceEntity<?> entity, Sort sort);
 }

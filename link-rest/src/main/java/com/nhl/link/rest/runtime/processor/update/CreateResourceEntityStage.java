@@ -41,7 +41,7 @@ public class CreateResourceEntityStage implements Processor<UpdateContext<?>> {
 
         LrRequest request = context.getRawRequest();
         if (request != null) {
-            includeConstructor.construct(resourceEntity, request.getIncludes());
+            includeConstructor.merge(resourceEntity, request.getIncludes());
             excludeConstructor.merge(resourceEntity, request.getExcludes());
         }
         context.setEntity(resourceEntity);

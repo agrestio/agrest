@@ -7,7 +7,7 @@ import com.nhl.link.rest.protocol.Start;
 public class SizeMerger implements ISizeMerger {
 
     @Override
-    public void construct(ResourceEntity<?> resourceEntity, Start start, Limit limit) {
+    public void merge(ResourceEntity<?> resourceEntity, Start start, Limit limit) {
         if (start != null) {
             resourceEntity.setFetchOffset(start.getValue());
         }

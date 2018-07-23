@@ -25,7 +25,7 @@ public class SortMerger implements ISortMerger {
      * @since 2.13
      */
     @Override
-    public void construct(ResourceEntity<?> resourceEntity, Sort sort) {
+    public void merge(ResourceEntity<?> resourceEntity, Sort sort) {
         if(sort != null) {
             collectOrderings(resourceEntity, sort);
         }

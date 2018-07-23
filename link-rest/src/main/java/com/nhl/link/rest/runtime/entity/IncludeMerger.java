@@ -120,7 +120,7 @@ public class IncludeMerger implements IIncludeMerger {
      * @since 2.13
      */
     @Override
-    public void construct(ResourceEntity<?> resourceEntity, List<Include> includes) {
+    public void merge(ResourceEntity<?> resourceEntity, List<Include> includes) {
         for (Include include : includes) {
             processOne(resourceEntity, include);
         }
@@ -159,10 +159,10 @@ public class IncludeMerger implements IIncludeMerger {
                 }
             }
 
-            mapByConstructor.constructIncluded(includeEntity, include.getMapBy());
-            sortConstructor.construct(includeEntity, include.getSort());
+            mapByConstructor.mergeIncluded(includeEntity, include.getMapBy());
+            sortConstructor.merge(includeEntity, include.getSort());
             expConstructor.merge(includeEntity, include.getCayenneExp());
-            sizeConstructor.construct(includeEntity, include.getStart(), include.getLimit());
+            sizeConstructor.merge(includeEntity, include.getStart(), include.getLimit());
         }
     }
 }

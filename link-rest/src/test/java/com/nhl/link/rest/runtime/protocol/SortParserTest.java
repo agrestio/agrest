@@ -20,7 +20,8 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class SortProcessorTest extends TestWithCayenneMapping {
+// TODO: split merger test
+public class SortParserTest extends TestWithCayenneMapping {
 
 	private SortParser parser;
 	private SortMerger constructor;
@@ -46,7 +47,7 @@ public class SortProcessorTest extends TestWithCayenneMapping {
 	public void testProcess_Array() {
 
         Sort sort = parser.fromString("[{\"property\":\"name\"},{\"property\":\"address\"}]");
-	    constructor.construct(entity, sort);
+	    constructor.merge(entity, sort);
 
 		assertEquals(2, entity.getOrderings().size());
 
@@ -62,7 +63,7 @@ public class SortProcessorTest extends TestWithCayenneMapping {
 	public void testProcess_Object() {
 
         Sort sort = parser.fromString("{\"property\":\"name\"}");
-        constructor.construct(entity, sort);
+        constructor.merge(entity, sort);
 
 		assertEquals(1, entity.getOrderings().size());
 
@@ -76,7 +77,7 @@ public class SortProcessorTest extends TestWithCayenneMapping {
 	public void testProcess_Simple() {
 
         Sort sort = parser.fromString("name");
-        constructor.construct(entity, sort);
+        constructor.merge(entity, sort);
 
 		assertEquals(1, entity.getOrderings().size());
 

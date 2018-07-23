@@ -57,11 +57,11 @@ public class CreateResourceEntityStage implements Processor<SelectContext<?>> {
 
         LrRequest request = context.getRawRequest();
         if (request != null) {
-            sizeConstructor.construct(resourceEntity, request.getStart(), request.getLimit());
-            includeConstructor.construct(resourceEntity, request.getIncludes());
+            sizeConstructor.merge(resourceEntity, request.getStart(), request.getLimit());
+            includeConstructor.merge(resourceEntity, request.getIncludes());
             excludeConstructor.merge(resourceEntity, request.getExcludes());
-            sortConstructor.construct(resourceEntity, createSort(context));
-            mapByConstructor.construct(resourceEntity, request.getMapBy());
+            sortConstructor.merge(resourceEntity, createSort(context));
+            mapByConstructor.merge(resourceEntity, request.getMapBy());
             expConstructor.merge(resourceEntity, request.getCayenneExp());
         }
 
