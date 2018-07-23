@@ -1,8 +1,8 @@
-package com.nhl.link.rest.runtime.parser;
+package com.nhl.link.rest.runtime.parser.entityupdate;
 
 import java.util.Map;
 
-public interface EntityJsonVisitor {
+public interface EntityUpdateJsonVisitor {
 
     void beginObject();
 

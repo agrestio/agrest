@@ -20,7 +20,7 @@ import com.nhl.link.rest.EntityUpdate;
 import com.nhl.link.rest.LinkRestException;
 import com.nhl.link.rest.runtime.LinkRestRuntime;
 import com.nhl.link.rest.runtime.meta.IMetadataService;
-import com.nhl.link.rest.runtime.parser.IUpdateParser;
+import com.nhl.link.rest.runtime.parser.entityupdate.IEntityUpdateParser;
 
 /**
  * A provider of {@link MessageBodyReader} for {@link EntityUpdate} parameters.
@@ -34,7 +34,7 @@ public class EntityUpdateReader implements MessageBodyReader<EntityUpdate<?>> {
 	private EntityUpdateReaderProcessor reader;
 
 	public EntityUpdateReader(@Context Configuration config) {
-		this.reader = new EntityUpdateReaderProcessor(LinkRestRuntime.service(IUpdateParser.class, config),
+		this.reader = new EntityUpdateReaderProcessor(LinkRestRuntime.service(IEntityUpdateParser.class, config),
 				LinkRestRuntime.service(IMetadataService.class, config));
 	}
 

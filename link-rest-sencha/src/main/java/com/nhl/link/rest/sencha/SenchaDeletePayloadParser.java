@@ -8,8 +8,8 @@ import com.nhl.link.rest.meta.LrEntity;
 import com.nhl.link.rest.runtime.LinkRestRuntime;
 import com.nhl.link.rest.runtime.jackson.IJacksonService;
 import com.nhl.link.rest.runtime.meta.IMetadataService;
-import com.nhl.link.rest.runtime.parser.EntityJsonTraverser;
-import com.nhl.link.rest.runtime.parser.EntityJsonVisitor;
+import com.nhl.link.rest.runtime.parser.entityupdate.EntityUpdateJsonTraverser;
+import com.nhl.link.rest.runtime.parser.entityupdate.EntityUpdateJsonVisitor;
 import com.nhl.link.rest.runtime.parser.converter.IJsonValueConverterFactory;
 import com.nhl.link.rest.runtime.semantics.IRelationshipMapper;
 
@@ -38,12 +38,12 @@ public class SenchaDeletePayloadParser implements MessageBodyReader<Collection<E
 
     private IJacksonService jacksonService;
 	private IMetadataService metadataService;
-	private EntityJsonTraverser entityJsonTraverser;
+	private EntityUpdateJsonTraverser entityUpdateJsonTraverser;
 
     public SenchaDeletePayloadParser(@Context Configuration config) {
         this.jacksonService = LinkRestRuntime.service(IJacksonService.class, config);
 		this.metadataService = LinkRestRuntime.service(IMetadataService.class, config);
-		this.entityJsonTraverser = new EntityJsonTraverser(LinkRestRuntime.service(IRelationshipMapper.class, config),
+		this.entityUpdateJsonTraverser = new EntityUpdateJsonTraverser(LinkRestRuntime.service(IRelationshipMapper.class, config),
 				LinkRestRuntime.service(IJsonValueConverterFactory.class, config));
     }
 
@@ -72,7 +72,7 @@ public class SenchaDeletePayloadParser implements MessageBodyReader<Collection<E
 		LrEntity<?> entity = metadataService.getEntityByType(entityType);
 
 		DeleteVisitor visitor = new DeleteVisitor(entity);
-        entityJsonTraverser.traverse(entity, jacksonService.parseJson(entityStream), visitor);
+        entityUpdateJsonTraverser.traverse(entity, jacksonService.parseJson(entityStream), visitor);
 		return visitor.getDeleted();
     }
 
@@ -90,7 +90,7 @@ public class SenchaDeletePayloadParser implements MessageBodyReader<Collection<E
 		return typeArgs[0];
 	}
 
-	private static class DeleteVisitor implements EntityJsonVisitor {
+	private static class DeleteVisitor implements EntityUpdateJsonVisitor {
 
 		private LrEntity<?> entity;
 		private Collection<EntityDelete<?>> deleted;

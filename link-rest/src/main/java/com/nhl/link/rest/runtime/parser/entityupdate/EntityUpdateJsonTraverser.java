@@ -1,4 +1,4 @@
-package com.nhl.link.rest.runtime.parser;
+package com.nhl.link.rest.runtime.parser.entityupdate;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
@@ -20,19 +20,19 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.function.BiConsumer;
 
-public class EntityJsonTraverser {
+public class EntityUpdateJsonTraverser {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(EntityJsonTraverser.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(EntityUpdateJsonTraverser.class);
 
     private IRelationshipMapper relationshipMapper;
 	private IJsonValueConverterFactory converterFactory;
 
-    public EntityJsonTraverser(IRelationshipMapper relationshipMapper, IJsonValueConverterFactory converterFactory) {
+    public EntityUpdateJsonTraverser(IRelationshipMapper relationshipMapper, IJsonValueConverterFactory converterFactory) {
         this.relationshipMapper = relationshipMapper;
 		this.converterFactory = converterFactory;
     }
 
-    public void traverse(LrEntity<?> entity, JsonNode json, EntityJsonVisitor visitor) {
+    public void traverse(LrEntity<?> entity, JsonNode json, EntityUpdateJsonVisitor visitor) {
         if (json != null) { // empty requests are fine. we just do nothing...
             if (json.isArray()) {
                 processArray(entity, json, visitor);
@@ -44,7 +44,7 @@ public class EntityJsonTraverser {
         }
 	}
 
-	private void processArray(LrEntity<?> entity, JsonNode arrayNode, EntityJsonVisitor visitor) {
+	private void processArray(LrEntity<?> entity, JsonNode arrayNode, EntityUpdateJsonVisitor visitor) {
 		for (JsonNode node : arrayNode) {
 			if (node.isObject()) {
 				processObject(entity, node, visitor);
@@ -54,7 +54,7 @@ public class EntityJsonTraverser {
 		}
 	}
 
-	private void processObject(LrEntity<?> entity, JsonNode objectNode, EntityJsonVisitor visitor) {
+	private void processObject(LrEntity<?> entity, JsonNode objectNode, EntityUpdateJsonVisitor visitor) {
 
         visitor.beginObject();
 
@@ -89,7 +89,7 @@ public class EntityJsonTraverser {
 		visitor.endObject();
 	}
 
-	private void processRelationship(EntityJsonVisitor visitor, LrPersistentRelationship relationship, JsonNode valueNode) {
+	private void processRelationship(EntityUpdateJsonVisitor visitor, LrPersistentRelationship relationship, JsonNode valueNode) {
 		if (relationship.isPrimaryKey()) {
 			if (valueNode.isArray()) {
 				ArrayNode arrayNode = (ArrayNode) valueNode;
@@ -125,13 +125,13 @@ public class EntityJsonTraverser {
         }
 	}
 
-	private void addRelatedObject(EntityJsonVisitor visitor, LrRelationship relationship, Object value) {
+	private void addRelatedObject(EntityUpdateJsonVisitor visitor, LrRelationship relationship, Object value) {
 
 		// record FK, whether it is a PK or not
 		visitor.visitRelationship(relationship.getName(), value);
 	}
 
-	protected void extractPK(LrEntity<?> entity, EntityJsonVisitor visitor, JsonNode valueNode) {
+	protected void extractPK(LrEntity<?> entity, EntityUpdateJsonVisitor visitor, JsonNode valueNode) {
 
 		Collection<LrAttribute> ids = entity.getIds();
 		if (ids.size() == 1) {

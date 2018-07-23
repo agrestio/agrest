@@ -62,8 +62,8 @@ import com.nhl.link.rest.runtime.meta.IMetadataService;
 import com.nhl.link.rest.runtime.meta.IResourceMetadataService;
 import com.nhl.link.rest.runtime.meta.MetadataService;
 import com.nhl.link.rest.runtime.meta.ResourceMetadataService;
-import com.nhl.link.rest.runtime.parser.IUpdateParser;
-import com.nhl.link.rest.runtime.parser.UpdateParser;
+import com.nhl.link.rest.runtime.parser.entityupdate.IEntityUpdateParser;
+import com.nhl.link.rest.runtime.parser.entityupdate.EntityUpdateParser;
 import com.nhl.link.rest.runtime.path.IPathDescriptorManager;
 import com.nhl.link.rest.runtime.path.PathDescriptorManager;
 import com.nhl.link.rest.runtime.parser.filter.CayenneExpParser;
@@ -605,7 +605,7 @@ public class LinkRestBuilder {
 
 
             binder.bind(IResourceParser.class).to(ResourceParser.class);
-            binder.bind(IUpdateParser.class).to(UpdateParser.class);
+            binder.bind(IEntityUpdateParser.class).to(EntityUpdateParser.class);
 
             Optional<String> maybeBaseUrl = Optional.ofNullable(baseUrl);
             binder.bind(BaseUrlProvider.class).toInstance(BaseUrlProvider.forUrl(maybeBaseUrl));

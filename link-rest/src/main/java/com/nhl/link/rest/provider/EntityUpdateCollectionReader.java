@@ -5,7 +5,7 @@ import com.nhl.link.rest.LinkRestException;
 import com.nhl.link.rest.meta.Types;
 import com.nhl.link.rest.runtime.LinkRestRuntime;
 import com.nhl.link.rest.runtime.meta.IMetadataService;
-import com.nhl.link.rest.runtime.parser.IUpdateParser;
+import com.nhl.link.rest.runtime.parser.entityupdate.IEntityUpdateParser;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.WebApplicationException;
@@ -36,7 +36,7 @@ public class EntityUpdateCollectionReader<T> implements MessageBodyReader<Collec
 	private EntityUpdateReaderProcessor reader;
 
 	public EntityUpdateCollectionReader(@Context Configuration config) {
-		this.reader = new EntityUpdateReaderProcessor(LinkRestRuntime.service(IUpdateParser.class, config),
+		this.reader = new EntityUpdateReaderProcessor(LinkRestRuntime.service(IEntityUpdateParser.class, config),
 				LinkRestRuntime.service(IMetadataService.class, config));
 	}
 

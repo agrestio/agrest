@@ -2,7 +2,7 @@ package com.nhl.link.rest.provider;
 
 import com.nhl.link.rest.EntityUpdate;
 import com.nhl.link.rest.runtime.meta.IMetadataService;
-import com.nhl.link.rest.runtime.parser.IUpdateParser;
+import com.nhl.link.rest.runtime.parser.entityupdate.IEntityUpdateParser;
 
 import javax.ws.rs.WebApplicationException;
 import java.io.InputStream;
@@ -11,10 +11,10 @@ import java.util.Collection;
 
 class EntityUpdateReaderProcessor {
 
-	private IUpdateParser parser;
+	private IEntityUpdateParser parser;
 	private IMetadataService metadataService;
 
-	EntityUpdateReaderProcessor(IUpdateParser parser, IMetadataService metadataService) {
+	EntityUpdateReaderProcessor(IEntityUpdateParser parser, IMetadataService metadataService) {
 		this.parser = parser;
 		this.metadataService = metadataService;
 	}

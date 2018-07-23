@@ -1,4 +1,4 @@
-package com.nhl.link.rest.runtime.parser;
+package com.nhl.link.rest.runtime.parser.entityupdate;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.nhl.link.rest.EntityUpdate;
@@ -16,17 +16,17 @@ import java.util.Map;
 /**
  * @since 1.20
  */
-public class UpdateParser implements IUpdateParser {
+public class EntityUpdateParser implements IEntityUpdateParser {
 
     protected IJacksonService jacksonService;
 
-    private EntityJsonTraverser entityJsonTraverser;
+    private EntityUpdateJsonTraverser entityUpdateJsonTraverser;
 
-    public UpdateParser(@Inject IRelationshipMapper relationshipMapper,
-                        @Inject IJacksonService jacksonService,
-                        @Inject IJsonValueConverterFactory converterFactory) {
+    public EntityUpdateParser(@Inject IRelationshipMapper relationshipMapper,
+                              @Inject IJacksonService jacksonService,
+                              @Inject IJsonValueConverterFactory converterFactory) {
         this.jacksonService = jacksonService;
-        this.entityJsonTraverser = new EntityJsonTraverser(relationshipMapper, converterFactory);
+        this.entityUpdateJsonTraverser = new EntityUpdateJsonTraverser(relationshipMapper, converterFactory);
     }
 
     @Override
@@ -47,15 +47,15 @@ public class UpdateParser implements IUpdateParser {
         return visitor.getUpdates();
     }
 
-    protected EntityJsonTraverser entityJsonTraverser() {
-        return entityJsonTraverser;
+    protected EntityUpdateJsonTraverser entityJsonTraverser() {
+        return entityUpdateJsonTraverser;
     }
 
     protected <T> UpdateVisitor<T> updateVisitor(LrEntity<T> entity) {
         return new UpdateVisitor<>(entity);
     }
 
-    protected static class UpdateVisitor<T> implements EntityJsonVisitor {
+    protected static class UpdateVisitor<T> implements EntityUpdateJsonVisitor {
 
         private LrEntity<T> entity;
         private Collection<EntityUpdate<T>> updates;

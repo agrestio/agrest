@@ -3,9 +3,9 @@ package com.nhl.link.rest.sencha;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.nhl.link.rest.meta.LrEntity;
 import com.nhl.link.rest.runtime.jackson.IJacksonService;
-import com.nhl.link.rest.runtime.parser.EntityJsonTraverser;
-import com.nhl.link.rest.runtime.parser.EntityJsonVisitor;
-import com.nhl.link.rest.runtime.parser.UpdateParser;
+import com.nhl.link.rest.runtime.parser.entityupdate.EntityUpdateJsonTraverser;
+import com.nhl.link.rest.runtime.parser.entityupdate.EntityUpdateJsonVisitor;
+import com.nhl.link.rest.runtime.parser.entityupdate.EntityUpdateParser;
 import com.nhl.link.rest.runtime.parser.converter.IJsonValueConverterFactory;
 import com.nhl.link.rest.runtime.semantics.IRelationshipMapper;
 import org.apache.cayenne.di.Inject;
@@ -17,17 +17,17 @@ import java.util.regex.Pattern;
  * 
  * @since 1.20
  */
-public class SenchaUpdateParser extends UpdateParser {
+public class SenchaUpdateParser extends EntityUpdateParser {
 
 	private static final Pattern DASH_ID_PATTERN = Pattern.compile(".-[\\d]+$");
 
-	private EntityJsonTraverser senchaEntityJsonTraverser;
+	private EntityUpdateJsonTraverser senchaEntityUpdateJsonTraverser;
 
 	public SenchaUpdateParser(@Inject IRelationshipMapper relationshipMapper,
 							  @Inject IJacksonService jacksonService,
 							  @Inject IJsonValueConverterFactory converterFactory) {
 		super(relationshipMapper, jacksonService, converterFactory);
-		senchaEntityJsonTraverser = new SenchaEntityJsonTraverser(relationshipMapper, converterFactory);
+		senchaEntityUpdateJsonTraverser = new SenchaEntityJsonTraverser(relationshipMapper, converterFactory);
 	}
 
 	protected boolean isTempId(JsonNode value) {
@@ -42,18 +42,18 @@ public class SenchaUpdateParser extends UpdateParser {
 	}
 
 	@Override
-	protected EntityJsonTraverser entityJsonTraverser() {
-		return senchaEntityJsonTraverser;
+	protected EntityUpdateJsonTraverser entityJsonTraverser() {
+		return senchaEntityUpdateJsonTraverser;
 	}
 
-	private class SenchaEntityJsonTraverser extends EntityJsonTraverser {
+	private class SenchaEntityJsonTraverser extends EntityUpdateJsonTraverser {
 
 		public SenchaEntityJsonTraverser(IRelationshipMapper relationshipMapper, IJsonValueConverterFactory converterFactory) {
 			super(relationshipMapper, converterFactory);
 		}
 
 		@Override
-		protected void extractPK(LrEntity<?> entity, EntityJsonVisitor visitor, JsonNode valueNode) {
+		protected void extractPK(LrEntity<?> entity, EntityUpdateJsonVisitor visitor, JsonNode valueNode) {
 			// if PK is a Sencha temporary value, completely ignore it...
 			if (!isTempId(valueNode)) {
 				super.extractPK(entity, visitor, valueNode);

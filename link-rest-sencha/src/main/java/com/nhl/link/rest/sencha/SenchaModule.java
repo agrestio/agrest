@@ -1,7 +1,7 @@
 package com.nhl.link.rest.sencha;
 
 import com.nhl.link.rest.runtime.encoder.IEncoderService;
-import com.nhl.link.rest.runtime.parser.IUpdateParser;
+import com.nhl.link.rest.runtime.parser.entityupdate.IEntityUpdateParser;
 import com.nhl.link.rest.runtime.processor.select.ConstructResourceEntityStage;
 import com.nhl.link.rest.runtime.processor.select.ParseRequestStage;
 import com.nhl.link.rest.runtime.semantics.IRelationshipMapper;
@@ -23,6 +23,6 @@ public class SenchaModule implements Module {
         binder.bind(IRelationshipMapper.class).to(SenchaRelationshipMapper.class);
         binder.bind(ISenchaFilterConstructor.class).to(SenchaFilterConstructor.class);
         binder.bind(ISenchaFilterParser.class).to(SenchaFilterParser.class);
-        binder.bind(IUpdateParser.class).to(SenchaUpdateParser.class);
+        binder.bind(IEntityUpdateParser.class).to(SenchaUpdateParser.class);
     }
 }
