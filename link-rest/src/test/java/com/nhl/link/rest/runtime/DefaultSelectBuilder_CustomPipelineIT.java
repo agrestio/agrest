@@ -44,7 +44,7 @@ public class DefaultSelectBuilder_CustomPipelineIT {
         DataResponse<E2> dr = createBuilder(E2.class)
                 // Order of registration across stages is not significant. Stage natural order will be preserved.
                 .stage(SelectStage.PARSE_REQUEST, c -> stageRecorder.accept(SelectStage.PARSE_REQUEST))
-                .stage(SelectStage.CONSTRUCT_ENTITY, c -> stageRecorder.accept(SelectStage.CONSTRUCT_ENTITY))
+                .stage(SelectStage.CREATE_ENTITY, c -> stageRecorder.accept(SelectStage.CREATE_ENTITY))
                 .stage(SelectStage.START, c -> stageRecorder.accept(SelectStage.START))
                 .stage(SelectStage.FETCH_DATA, c -> stageRecorder.accept(SelectStage.FETCH_DATA))
                 .stage(SelectStage.ASSEMBLE_QUERY, c -> stageRecorder.accept(SelectStage.ASSEMBLE_QUERY))

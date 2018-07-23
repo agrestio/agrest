@@ -14,7 +14,7 @@ public enum UpdateStage {
 
     PARSE_REQUEST,
 
-    CONSTRUCT_ENTITY,
+    CREATE_ENTITY,
 
     APPLY_SERVER_PARAMS,
 

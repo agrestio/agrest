@@ -32,7 +32,7 @@ public class CayenneSelectProcessorFactoryProvider implements Provider<SelectPro
         stages = new EnumMap<>(SelectStage.class);
         stages.put(SelectStage.START, startStage);
         stages.put(SelectStage.PARSE_REQUEST, parseRequestStage);
-        stages.put(SelectStage.CONSTRUCT_ENTITY, createResourceEntityStage);
+        stages.put(SelectStage.CREATE_ENTITY, createResourceEntityStage);
         stages.put(SelectStage.APPLY_SERVER_PARAMS, applyServerParamsStage);
         stages.put(SelectStage.ASSEMBLE_QUERY, assembleQueryStage);
         stages.put(SelectStage.FETCH_DATA, fetchDataStage);
