@@ -1,4 +1,4 @@
-package com.nhl.link.rest.sencha.parser.filter;
+package com.nhl.link.rest.sencha.runtime.protocol;
 
 import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.JsonNode;

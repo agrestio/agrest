@@ -1,4 +1,4 @@
-package com.nhl.link.rest.sencha;
+package com.nhl.link.rest.sencha.runtime.semantics;
 
 import com.nhl.link.rest.meta.LrEntity;
 import com.nhl.link.rest.meta.LrRelationship;

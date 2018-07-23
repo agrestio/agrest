@@ -1,4 +1,4 @@
-package com.nhl.link.rest.sencha;
+package com.nhl.link.rest.sencha.runtime.processor.select;
 
 import com.nhl.link.rest.runtime.protocol.ParameterExtractor;
 import com.nhl.link.rest.runtime.protocol.ICayenneExpParser;
@@ -8,7 +8,8 @@ import com.nhl.link.rest.runtime.protocol.IExcludeParser;
 import com.nhl.link.rest.runtime.protocol.IIncludeParser;
 import com.nhl.link.rest.runtime.processor.select.ParseRequestStage;
 import com.nhl.link.rest.runtime.processor.select.SelectContext;
-import com.nhl.link.rest.sencha.parser.filter.ISenchaFilterParser;
+import com.nhl.link.rest.sencha.SenchaRequest;
+import com.nhl.link.rest.sencha.runtime.protocol.ISenchaFilterParser;
 import org.apache.cayenne.di.Inject;
 
 import java.util.List;

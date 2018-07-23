@@ -1,4 +1,4 @@
-package com.nhl.link.rest.sencha;
+package com.nhl.link.rest.sencha.runtime.entity;
 
 import com.nhl.link.rest.LinkRestException;
 import com.nhl.link.rest.meta.LrEntity;
@@ -23,14 +23,14 @@ import static org.apache.cayenne.exp.ExpressionFactory.likeIgnoreCaseExp;
 import static org.apache.cayenne.exp.ExpressionFactory.matchExp;
 import static org.apache.cayenne.exp.ExpressionFactory.noMatchExp;
 
-public class SenchaFilterConstructor implements ISenchaFilterConstructor {
+public class SenchaFilterExpressionCompiler implements ISenchaFilterExpressionCompiler {
 
     private static final int MAX_VALUE_LENGTH = 1024;
 
     private IPathDescriptorManager pathCache;
     private IExpressionPostProcessor postProcessor;
 
-    public SenchaFilterConstructor(
+    public SenchaFilterExpressionCompiler(
             @Inject IPathDescriptorManager pathCache,
             @Inject IExpressionPostProcessor postProcessor) {
         this.pathCache = pathCache;

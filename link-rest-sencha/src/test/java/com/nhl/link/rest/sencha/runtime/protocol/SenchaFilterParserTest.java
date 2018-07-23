@@ -1,8 +1,9 @@
-package com.nhl.link.rest.sencha.parser.filter;
+package com.nhl.link.rest.sencha.runtime.protocol;
 
 import com.nhl.link.rest.runtime.jackson.IJacksonService;
 import com.nhl.link.rest.runtime.jackson.JacksonService;
 import com.nhl.link.rest.sencha.protocol.Filter;
+import com.nhl.link.rest.sencha.runtime.protocol.SenchaFilterParser;
 import org.junit.Before;
 import org.junit.Test;
 

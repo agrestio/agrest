@@ -1,4 +1,4 @@
-package com.nhl.link.rest.sencha;
+package com.nhl.link.rest.sencha.runtime.encoder;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.nhl.link.rest.EntityProperty;
@@ -9,6 +9,7 @@ import com.nhl.link.rest.runtime.encoder.EncoderService;
 import com.nhl.link.rest.runtime.encoder.IAttributeEncoderFactory;
 import com.nhl.link.rest.runtime.encoder.IStringConverterFactory;
 import com.nhl.link.rest.runtime.semantics.IRelationshipMapper;
+import com.nhl.link.rest.sencha.encoder.SenchaEntityToOneEncoder;
 import org.apache.cayenne.di.Inject;
 
 import java.io.IOException;

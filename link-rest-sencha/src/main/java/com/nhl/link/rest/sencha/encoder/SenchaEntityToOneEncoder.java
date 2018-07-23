@@ -1,4 +1,4 @@
-package com.nhl.link.rest.sencha;
+package com.nhl.link.rest.sencha.encoder;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.nhl.link.rest.EntityProperty;

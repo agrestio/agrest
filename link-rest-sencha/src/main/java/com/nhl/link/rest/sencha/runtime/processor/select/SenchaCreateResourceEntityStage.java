@@ -1,4 +1,4 @@
-package com.nhl.link.rest.sencha;
+package com.nhl.link.rest.sencha.runtime.processor.select;
 
 import com.nhl.link.rest.ResourceEntity;
 import com.nhl.link.rest.meta.LrEntity;
@@ -12,17 +12,19 @@ import com.nhl.link.rest.runtime.entity.IExcludeMerger;
 import com.nhl.link.rest.runtime.entity.IIncludeMerger;
 import com.nhl.link.rest.runtime.processor.select.CreateResourceEntityStage;
 import com.nhl.link.rest.runtime.processor.select.SelectContext;
+import com.nhl.link.rest.sencha.SenchaRequest;
+import com.nhl.link.rest.sencha.runtime.entity.ISenchaFilterExpressionCompiler;
 import org.apache.cayenne.di.Inject;
 import org.apache.cayenne.exp.Expression;
 
 import static java.util.Arrays.asList;
 
-public class SenchaConstructResourceEntityStage extends CreateResourceEntityStage {
+public class SenchaCreateResourceEntityStage extends CreateResourceEntityStage {
 
 
-    private ISenchaFilterConstructor senchaFilterProcessor;
+    private ISenchaFilterExpressionCompiler senchaFilterProcessor;
 
-    public SenchaConstructResourceEntityStage(
+    public SenchaCreateResourceEntityStage(
             @Inject IMetadataService metadataService,
             @Inject ICayenneExpMerger expConstructor,
             @Inject ISortMerger sortConstructor,
@@ -30,7 +32,7 @@ public class SenchaConstructResourceEntityStage extends CreateResourceEntityStag
             @Inject ISizeMerger sizeConstructor,
             @Inject IIncludeMerger includeConstructor,
             @Inject IExcludeMerger excludeConstructor,
-            @Inject ISenchaFilterConstructor senchaFilterProcessor) {
+            @Inject ISenchaFilterExpressionCompiler senchaFilterProcessor) {
 
         super(metadataService, expConstructor, sortConstructor, mapByConstructor,
                 sizeConstructor, includeConstructor, excludeConstructor);

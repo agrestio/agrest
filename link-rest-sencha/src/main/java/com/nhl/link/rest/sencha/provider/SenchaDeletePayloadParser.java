@@ -1,4 +1,4 @@
-package com.nhl.link.rest.sencha;
+package com.nhl.link.rest.sencha.provider;
 
 import com.nhl.link.rest.CompoundObjectId;
 import com.nhl.link.rest.EntityDelete;

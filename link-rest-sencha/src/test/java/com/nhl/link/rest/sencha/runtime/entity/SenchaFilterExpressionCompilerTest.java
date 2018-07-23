@@ -1,12 +1,12 @@
-package com.nhl.link.rest.sencha;
+package com.nhl.link.rest.sencha.runtime.entity;
 
 import com.nhl.link.rest.LinkRestException;
 import com.nhl.link.rest.it.fixture.cayenne.E4;
 import com.nhl.link.rest.meta.LrEntity;
+import com.nhl.link.rest.runtime.entity.ExpressionPostProcessor;
 import com.nhl.link.rest.runtime.jackson.IJacksonService;
 import com.nhl.link.rest.runtime.jackson.JacksonService;
 import com.nhl.link.rest.runtime.path.PathDescriptorManager;
-import com.nhl.link.rest.runtime.entity.ExpressionPostProcessor;
 import com.nhl.link.rest.sencha.protocol.Filter;
 import com.nhl.link.rest.unit.TestWithCayenneMapping;
 import org.apache.cayenne.exp.Expression;
@@ -21,10 +21,10 @@ import static org.apache.cayenne.exp.ExpressionFactory.exp;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
-public class SenchaFilterConstructorTest extends TestWithCayenneMapping {
+public class SenchaFilterExpressionCompilerTest extends TestWithCayenneMapping {
 
     private LrEntity<E4> e4Entity;
-    private SenchaFilterConstructor processor;
+    private SenchaFilterExpressionCompiler processor;
 
     @Before
     public void before() {
@@ -32,7 +32,7 @@ public class SenchaFilterConstructorTest extends TestWithCayenneMapping {
         IJacksonService jsonParser = new JacksonService();
         PathDescriptorManager pathDescriptorManager = new PathDescriptorManager();
 
-        this.processor = new SenchaFilterConstructor(pathDescriptorManager, new ExpressionPostProcessor(pathDescriptorManager));
+        this.processor = new SenchaFilterExpressionCompiler(pathDescriptorManager, new ExpressionPostProcessor(pathDescriptorManager));
         this.e4Entity = getLrEntity(E4.class);
     }
 

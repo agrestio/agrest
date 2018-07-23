@@ -1,4 +1,4 @@
-package com.nhl.link.rest.sencha;
+package com.nhl.link.rest.sencha.runtime.encoder;
 
 import com.fasterxml.jackson.core.JsonEncoding;
 import com.fasterxml.jackson.core.JsonGenerator;
@@ -14,6 +14,8 @@ import com.nhl.link.rest.runtime.encoder.IAttributeEncoderFactory;
 import com.nhl.link.rest.runtime.encoder.IStringConverterFactory;
 import com.nhl.link.rest.runtime.jackson.JacksonService;
 import com.nhl.link.rest.runtime.semantics.IRelationshipMapper;
+import com.nhl.link.rest.sencha.runtime.encoder.SenchaEncoderService;
+import com.nhl.link.rest.sencha.runtime.semantics.SenchaRelationshipMapper;
 import com.nhl.link.rest.unit.TestWithCayenneMapping;
 import org.apache.cayenne.Cayenne;
 import org.apache.cayenne.ObjectContext;

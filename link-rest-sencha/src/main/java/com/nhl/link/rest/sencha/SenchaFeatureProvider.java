@@ -1,12 +1,13 @@
 package com.nhl.link.rest.sencha;
 
 import com.nhl.link.rest.LrFeatureProvider;
+import com.nhl.link.rest.sencha.provider.SenchaDeletePayloadParser;
 import org.apache.cayenne.di.Injector;
 
 import javax.ws.rs.core.Feature;
 
-/**@
- * since 2.10
+/**
+ * @since 2.10
  */
 public class SenchaFeatureProvider implements LrFeatureProvider {
 

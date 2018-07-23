@@ -1,4 +1,4 @@
-package com.nhl.link.rest.sencha;
+package com.nhl.link.rest.sencha.runtime.processor.select;
 
 import com.nhl.link.rest.ResourceEntity;
 import com.nhl.link.rest.it.fixture.cayenne.E2;
@@ -32,8 +32,10 @@ import com.nhl.link.rest.runtime.protocol.IIncludeParser;
 import com.nhl.link.rest.runtime.entity.IncludeMerger;
 import com.nhl.link.rest.runtime.protocol.IncludeParser;
 import com.nhl.link.rest.runtime.processor.select.SelectContext;
-import com.nhl.link.rest.sencha.parser.filter.ISenchaFilterParser;
-import com.nhl.link.rest.sencha.parser.filter.SenchaFilterParser;
+import com.nhl.link.rest.sencha.runtime.entity.ISenchaFilterExpressionCompiler;
+import com.nhl.link.rest.sencha.runtime.entity.SenchaFilterExpressionCompiler;
+import com.nhl.link.rest.sencha.runtime.protocol.ISenchaFilterParser;
+import com.nhl.link.rest.sencha.runtime.protocol.SenchaFilterParser;
 import com.nhl.link.rest.unit.TestWithCayenneMapping;
 
 import org.apache.cayenne.query.Ordering;
@@ -57,10 +59,10 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 // TODO: separate tests for parse and construct entity stages into separate tests
-public class SenchaRequestParserTest extends TestWithCayenneMapping {
+public class SenchaParseRequestStageTest extends TestWithCayenneMapping {
 
     private SenchaParseRequestStage parseStage;
-    private SenchaConstructResourceEntityStage constructEntityStage;
+    private SenchaCreateResourceEntityStage constructEntityStage;
 
 	@Before
 	public void before() {
@@ -87,10 +89,10 @@ public class SenchaRequestParserTest extends TestWithCayenneMapping {
         IIncludeMerger includeConstructor = new IncludeMerger(expConstructor, sortConstructor, mapByConstructor, sizeConstructor);
         IExcludeMerger excludeConstructor = new ExcludeMerger();
 
-		ISenchaFilterConstructor senchaFilterProcessor = new SenchaFilterConstructor(pathCache, new ExpressionPostProcessor(pathCache));
+		ISenchaFilterExpressionCompiler senchaFilterProcessor = new SenchaFilterExpressionCompiler(pathCache, new ExpressionPostProcessor(pathCache));
 
         this.constructEntityStage
-                = new SenchaConstructResourceEntityStage(
+                = new SenchaCreateResourceEntityStage(
                         createMetadataService(),
                         expConstructor ,
                         sortConstructor,

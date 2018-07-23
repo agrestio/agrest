@@ -1,4 +1,4 @@
-package com.nhl.link.rest.sencha;
+package com.nhl.link.rest.sencha.runtime.protocol;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.nhl.link.rest.meta.LrEntity;
