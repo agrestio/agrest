@@ -1,21 +1,20 @@
 package com.nhl.link.rest.runtime.parser.cache;
 
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
-
+import com.nhl.link.rest.meta.LrEntity;
 import org.apache.cayenne.exp.parser.ASTObjPath;
 
-import com.nhl.link.rest.meta.LrEntity;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @since 1.5
  */
 public class PathCache implements IPathCache {
 
-	private ConcurrentMap<String, EntityPathCache> pathCacheByEntity;
+	private Map<String, EntityPathCache> pathCacheByEntity;
 
 	public PathCache() {
-		this.pathCacheByEntity = new ConcurrentHashMap<String, EntityPathCache>();
+		this.pathCacheByEntity = new ConcurrentHashMap<>();
 	}
 
 	@Override
@@ -24,19 +23,7 @@ public class PathCache implements IPathCache {
 	}
 
 	EntityPathCache entityPathCache(LrEntity<?> entity) {
-
-		EntityPathCache pathCache = pathCacheByEntity.get(entity.getName());
-		if (pathCache != null) {
-			return pathCache;
-		}
-
-		pathCache = new EntityPathCache(entity);
-		EntityPathCache previousCache = pathCacheByEntity.putIfAbsent(entity.getName(), pathCache);
-		if (previousCache != null) {
-			pathCache = previousCache;
-		}
-
-		return pathCache;
+		return pathCacheByEntity.computeIfAbsent(entity.getName(), k -> new EntityPathCache(entity));
 	}
 
 }
