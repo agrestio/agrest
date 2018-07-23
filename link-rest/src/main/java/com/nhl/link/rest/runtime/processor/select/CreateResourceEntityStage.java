@@ -21,29 +21,29 @@ import org.apache.cayenne.di.Inject;
 public class CreateResourceEntityStage implements Processor<SelectContext<?>> {
 
     private IMetadataService metadataService;
-    private ICayenneExpMerger expConstructor;
-    private ISortMerger sortConstructor;
-    private IMapByMerger mapByConstructor;
-    private ISizeMerger sizeConstructor;
-    private IIncludeMerger includeConstructor;
-    private IExcludeMerger excludeConstructor;
+    private ICayenneExpMerger expMerger;
+    private ISortMerger sortMerger;
+    private IMapByMerger mapByMerger;
+    private ISizeMerger sizeMerger;
+    private IIncludeMerger includeMerger;
+    private IExcludeMerger excludeMerger;
 
     public CreateResourceEntityStage(
             @Inject IMetadataService metadataService,
-            @Inject ICayenneExpMerger expConstructor,
-            @Inject ISortMerger sortConstructor,
-            @Inject IMapByMerger mapByConstructor,
-            @Inject ISizeMerger sizeConstructor,
-            @Inject IIncludeMerger includeConstructor,
-            @Inject IExcludeMerger excludeConstructor) {
+            @Inject ICayenneExpMerger expMerger,
+            @Inject ISortMerger sortMerger,
+            @Inject IMapByMerger mapByMerger,
+            @Inject ISizeMerger sizeMerger,
+            @Inject IIncludeMerger includeMerger,
+            @Inject IExcludeMerger excludeMerger) {
 
         this.metadataService = metadataService;
-        this.sortConstructor = sortConstructor;
-        this.expConstructor = expConstructor;
-        this.mapByConstructor = mapByConstructor;
-        this.sizeConstructor = sizeConstructor;
-        this.includeConstructor = includeConstructor;
-        this.excludeConstructor = excludeConstructor;
+        this.sortMerger = sortMerger;
+        this.expMerger = expMerger;
+        this.mapByMerger = mapByMerger;
+        this.sizeMerger = sizeMerger;
+        this.includeMerger = includeMerger;
+        this.excludeMerger = excludeMerger;
     }
 
     @Override
@@ -57,12 +57,12 @@ public class CreateResourceEntityStage implements Processor<SelectContext<?>> {
 
         LrRequest request = context.getRawRequest();
         if (request != null) {
-            sizeConstructor.merge(resourceEntity, request.getStart(), request.getLimit());
-            includeConstructor.merge(resourceEntity, request.getIncludes());
-            excludeConstructor.merge(resourceEntity, request.getExcludes());
-            sortConstructor.merge(resourceEntity, createSort(context));
-            mapByConstructor.merge(resourceEntity, request.getMapBy());
-            expConstructor.merge(resourceEntity, request.getCayenneExp());
+            sizeMerger.merge(resourceEntity, request.getStart(), request.getLimit());
+            includeMerger.merge(resourceEntity, request.getIncludes());
+            excludeMerger.merge(resourceEntity, request.getExcludes());
+            sortMerger.merge(resourceEntity, createSort(context));
+            mapByMerger.merge(resourceEntity, request.getMapBy());
+            expMerger.merge(resourceEntity, request.getCayenneExp());
         }
 
         context.setEntity(resourceEntity);

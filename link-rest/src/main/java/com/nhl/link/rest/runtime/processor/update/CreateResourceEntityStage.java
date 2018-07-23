@@ -16,17 +16,17 @@ import org.apache.cayenne.di.Inject;
 public class CreateResourceEntityStage implements Processor<UpdateContext<?>> {
 
     private IMetadataService metadataService;
-    private IIncludeMerger includeConstructor;
-    private IExcludeMerger excludeConstructor;
+    private IIncludeMerger includeMerger;
+    private IExcludeMerger excludeMerger;
 
     public CreateResourceEntityStage(
             @Inject IMetadataService metadataService,
-            @Inject IIncludeMerger includeConstructor,
-            @Inject IExcludeMerger excludeConstructor) {
+            @Inject IIncludeMerger includeMerger,
+            @Inject IExcludeMerger excludeMerger) {
 
         this.metadataService = metadataService;
-        this.includeConstructor = includeConstructor;
-        this.excludeConstructor = excludeConstructor;
+        this.includeMerger = includeMerger;
+        this.excludeMerger = excludeMerger;
     }
 
     @Override
@@ -41,8 +41,8 @@ public class CreateResourceEntityStage implements Processor<UpdateContext<?>> {
 
         LrRequest request = context.getRawRequest();
         if (request != null) {
-            includeConstructor.merge(resourceEntity, request.getIncludes());
-            excludeConstructor.merge(resourceEntity, request.getExcludes());
+            includeMerger.merge(resourceEntity, request.getIncludes());
+            excludeMerger.merge(resourceEntity, request.getExcludes());
         }
         context.setEntity(resourceEntity);
     }
