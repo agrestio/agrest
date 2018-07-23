@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.nhl.link.rest.LinkRestException;
 import com.nhl.link.rest.runtime.jackson.IJacksonService;
 import com.nhl.link.rest.runtime.parser.BaseRequestProcessor;
-import com.nhl.link.rest.runtime.parser.PathConstants;
+import com.nhl.link.rest.PathConstants;
 import com.nhl.link.rest.protocol.Exclude;
 import org.apache.cayenne.di.Inject;
 

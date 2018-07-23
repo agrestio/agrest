@@ -12,7 +12,7 @@ import com.nhl.link.rest.LinkRestException;
 import com.nhl.link.rest.meta.LrAttribute;
 import com.nhl.link.rest.meta.LrEntity;
 import com.nhl.link.rest.meta.LrRelationship;
-import com.nhl.link.rest.runtime.parser.PathConstants;
+import com.nhl.link.rest.PathConstants;
 
 class EntityPathCache {
 

@@ -7,7 +7,7 @@ import java.util.TreeMap;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.nhl.link.rest.EntityProperty;
-import com.nhl.link.rest.runtime.parser.PathConstants;
+import com.nhl.link.rest.PathConstants;
 
 public class EntityEncoder extends AbstractEncoder {
 

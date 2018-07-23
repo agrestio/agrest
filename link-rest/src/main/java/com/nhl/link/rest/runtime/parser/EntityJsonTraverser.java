@@ -3,6 +3,7 @@ package com.nhl.link.rest.runtime.parser;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.nhl.link.rest.LinkRestException;
+import com.nhl.link.rest.PathConstants;
 import com.nhl.link.rest.meta.LrAttribute;
 import com.nhl.link.rest.meta.LrEntity;
 import com.nhl.link.rest.meta.LrPersistentAttribute;

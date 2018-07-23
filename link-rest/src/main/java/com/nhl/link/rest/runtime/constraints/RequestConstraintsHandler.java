@@ -6,7 +6,7 @@ import com.nhl.link.rest.ResourceEntity;
 import com.nhl.link.rest.constraints.ConstrainedLrEntity;
 import com.nhl.link.rest.constraints.Constraint;
 import com.nhl.link.rest.meta.LrAttribute;
-import com.nhl.link.rest.runtime.parser.PathConstants;
+import com.nhl.link.rest.PathConstants;
 import com.nhl.link.rest.runtime.processor.update.UpdateContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
