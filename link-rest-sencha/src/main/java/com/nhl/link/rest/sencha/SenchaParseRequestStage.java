@@ -1,6 +1,6 @@
 package com.nhl.link.rest.sencha;
 
-import com.nhl.link.rest.runtime.parser.BaseRequestProcessor;
+import com.nhl.link.rest.runtime.parser.ParameterExtractor;
 import com.nhl.link.rest.runtime.parser.filter.ICayenneExpParser;
 import com.nhl.link.rest.runtime.parser.mapBy.IMapByParser;
 import com.nhl.link.rest.runtime.parser.sort.ISortParser;
@@ -44,9 +44,9 @@ public class SenchaParseRequestStage extends ParseRequestStage {
         Map<String, List<String>> protocolParameters = context.getProtocolParameters();
 
         SenchaRequest.Builder builder = SenchaRequest.builder()
-                .group(sortParser.fromString(BaseRequestProcessor.string(protocolParameters, GROUP)))
-                .groupDirection(sortParser.dirFromString(BaseRequestProcessor.string(protocolParameters, GROUP_DIR)))
-                .filters(filterParser.fromString(BaseRequestProcessor.string(protocolParameters, FILTER)));
+                .group(sortParser.fromString(ParameterExtractor.string(protocolParameters, GROUP)))
+                .groupDirection(sortParser.dirFromString(ParameterExtractor.string(protocolParameters, GROUP_DIR)))
+                .filters(filterParser.fromString(ParameterExtractor.string(protocolParameters, FILTER)));
 
         SenchaRequest.set(context, builder.build());
     }

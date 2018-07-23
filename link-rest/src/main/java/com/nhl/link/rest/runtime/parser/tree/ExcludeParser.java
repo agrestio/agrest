@@ -3,7 +3,6 @@ package com.nhl.link.rest.runtime.parser.tree;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.nhl.link.rest.LinkRestException;
 import com.nhl.link.rest.runtime.jackson.IJacksonService;
-import com.nhl.link.rest.runtime.parser.BaseRequestProcessor;
 import com.nhl.link.rest.PathConstants;
 import com.nhl.link.rest.protocol.Exclude;
 import org.apache.cayenne.di.Inject;
@@ -77,7 +76,7 @@ public class ExcludeParser implements IExcludeParser {
             return null;
         }
 
-        BaseRequestProcessor.checkTooLong(value);
+        IncludeConstructor.checkTooLong(value);
 
         int dot = value.indexOf(PathConstants.DOT);
 

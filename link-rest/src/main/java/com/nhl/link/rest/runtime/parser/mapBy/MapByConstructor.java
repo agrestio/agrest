@@ -2,8 +2,8 @@ package com.nhl.link.rest.runtime.parser.mapBy;
 
 import com.nhl.link.rest.ResourceEntity;
 import com.nhl.link.rest.meta.LrAttribute;
-import com.nhl.link.rest.runtime.parser.BaseRequestProcessor;
 import com.nhl.link.rest.protocol.MapBy;
+import com.nhl.link.rest.runtime.parser.tree.IncludeConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,8 +29,8 @@ public class MapByConstructor implements IMapByConstructor {
                 resourceEntity.mapBy(mapByEntity, attribute.getName());
             } else {
                 ResourceEntity<?> mapByEntity = new ResourceEntity<>(resourceEntity.getLrEntity());
-                BaseRequestProcessor.checkTooLong(mapByPath);
-                BaseRequestProcessor.processIncludePath(mapByEntity, mapByPath);
+                IncludeConstructor.checkTooLong(mapByPath);
+                IncludeConstructor.processIncludePath(mapByEntity, mapByPath);
                 resourceEntity.mapBy(mapByEntity, mapByPath);
             }
         }
@@ -53,8 +53,8 @@ public class MapByConstructor implements IMapByConstructor {
         if (resourceEntity.getIncoming() == null || resourceEntity.getIncoming().isToMany()) {
 
             ResourceEntity<?> mapByRoot = new ResourceEntity<>(resourceEntity.getLrEntity());
-            BaseRequestProcessor.checkTooLong(mapByPath);
-            BaseRequestProcessor.processIncludePath(mapByRoot, mapByPath);
+            IncludeConstructor.checkTooLong(mapByPath);
+            IncludeConstructor.processIncludePath(mapByRoot, mapByPath);
             resourceEntity.mapBy(mapByRoot, mapByPath);
 
         } else {

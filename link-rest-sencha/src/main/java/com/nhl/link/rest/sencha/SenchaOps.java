@@ -1,6 +1,6 @@
 package com.nhl.link.rest.sencha;
 
-import com.nhl.link.rest.runtime.parser.BaseRequestProcessor;
+import com.nhl.link.rest.runtime.parser.ParameterExtractor;
 import com.nhl.link.rest.runtime.processor.select.SelectContext;
 import com.nhl.link.rest.sencha.ops.StartsWithFilter;
 import org.apache.cayenne.exp.Expression;
@@ -19,7 +19,7 @@ public class SenchaOps {
     private static final String QUERY = "query";
 
     public static <T> Consumer<SelectContext<T>> startsWithFilter(Property<?> property, UriInfo uriInfo) {
-        String value = BaseRequestProcessor.string(uriInfo.getQueryParameters(), QUERY);
+        String value = ParameterExtractor.string(uriInfo.getQueryParameters(), QUERY);
         return startsWithFilter(property, value);
     }
 

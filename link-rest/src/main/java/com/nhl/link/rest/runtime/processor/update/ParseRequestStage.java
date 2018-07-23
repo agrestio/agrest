@@ -3,7 +3,7 @@ package com.nhl.link.rest.runtime.processor.update;
 import com.nhl.link.rest.LrRequest;
 import com.nhl.link.rest.processor.Processor;
 import com.nhl.link.rest.processor.ProcessorOutcome;
-import com.nhl.link.rest.runtime.parser.BaseRequestProcessor;
+import com.nhl.link.rest.runtime.parser.ParameterExtractor;
 import com.nhl.link.rest.runtime.parser.tree.IExcludeParser;
 import com.nhl.link.rest.runtime.parser.tree.IIncludeParser;
 import org.apache.cayenne.di.Inject;
@@ -42,8 +42,8 @@ public class ParseRequestStage implements Processor<UpdateContext<?>> {
         Map<String, List<String>> protocolParameters = context.getProtocolParameters();
 
         LrRequest request = LrRequest.builder()
-                .includes(includeParser.fromStrings(BaseRequestProcessor.strings(protocolParameters, PROTOCOL_KEY_INCLUDE)))
-                .excludes(excludeParser.fromStrings(BaseRequestProcessor.strings(protocolParameters, PROTOCOL_KEY_EXCLUDE)))
+                .includes(includeParser.fromStrings(ParameterExtractor.strings(protocolParameters, PROTOCOL_KEY_INCLUDE)))
+                .excludes(excludeParser.fromStrings(ParameterExtractor.strings(protocolParameters, PROTOCOL_KEY_EXCLUDE)))
                 .build();
 
         context.setRawRequest(request);
