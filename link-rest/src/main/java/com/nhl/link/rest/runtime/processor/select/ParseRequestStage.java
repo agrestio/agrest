@@ -3,7 +3,13 @@ package com.nhl.link.rest.runtime.processor.select;
 import com.nhl.link.rest.LrRequest;
 import com.nhl.link.rest.processor.Processor;
 import com.nhl.link.rest.processor.ProcessorOutcome;
+import com.nhl.link.rest.protocol.CayenneExp;
+import com.nhl.link.rest.protocol.Dir;
+import com.nhl.link.rest.protocol.Exclude;
+import com.nhl.link.rest.protocol.Include;
 import com.nhl.link.rest.protocol.Limit;
+import com.nhl.link.rest.protocol.MapBy;
+import com.nhl.link.rest.protocol.Sort;
 import com.nhl.link.rest.protocol.Start;
 import com.nhl.link.rest.runtime.protocol.ParameterExtractor;
 import com.nhl.link.rest.runtime.protocol.ICayenneExpParser;
@@ -57,26 +63,76 @@ public class ParseRequestStage implements Processor<SelectContext<?>> {
     }
 
     protected <T> void doExecute(SelectContext<T> context) {
+        LrRequest request = context.getRequest();
         Map<String, List<String>> protocolParameters = context.getProtocolParameters();
 
         LrRequest.Builder requestBuilder = LrRequest.builder()
-                .cayenneExp(expParser.fromString(ParameterExtractor.string(protocolParameters, PROTOCOL_KEY_CAYENNE_EXP)))
-                .sort(sortParser.fromString(ParameterExtractor.string(protocolParameters, PROTOCOL_KEY_SORT)))
-                .sortDirection(sortParser.dirFromString(ParameterExtractor.string(protocolParameters, PROTOCOL_KEY_DIR)))
-                .mapBy(mapByParser.fromString(ParameterExtractor.string(protocolParameters, PROTOCOL_KEY_MAP_BY)))
-                .includes(includeParser.fromStrings(ParameterExtractor.strings(protocolParameters, PROTOCOL_KEY_INCLUDE)))
-                .excludes(excludeParser.fromStrings(ParameterExtractor.strings(protocolParameters, PROTOCOL_KEY_EXCLUDE)));
-
-        int start = ParameterExtractor.integer(protocolParameters, PROTOCOL_KEY_START);
-        if (start >= 0) {
-            requestBuilder.start(new Start(start));
-        }
-
-        int limit = ParameterExtractor.integer(protocolParameters, PROTOCOL_KEY_LIMIT);
-        if (limit >= 0) {
-            requestBuilder.limit(new Limit(limit));
-        }
+                .cayenneExp(getCayenneExp(request, protocolParameters))
+                .sort(getSort(request, protocolParameters))
+                .sortDirection(getSortDirection(request, protocolParameters))
+                .mapBy(getMapBy(request, protocolParameters))
+                .includes(getIncludes(request, protocolParameters))
+                .excludes(getExcludes(request, protocolParameters))
+                .start(getStart(request, protocolParameters))
+                .limit(getLimit(request, protocolParameters));
 
         context.setRawRequest(requestBuilder.build());
+    }
+
+    private CayenneExp getCayenneExp(LrRequest request, Map<String, List<String>> protocolParameters) {
+        return request != null && request.getCayenneExp() != null ?
+                request.getCayenneExp() :
+                expParser.fromString(ParameterExtractor.string(protocolParameters, PROTOCOL_KEY_CAYENNE_EXP));
+    }
+    private Sort getSort(LrRequest request, Map<String, List<String>> protocolParameters) {
+        return request != null && request.getSort() != null ?
+                request.getSort() :
+                sortParser.fromString(ParameterExtractor.string(protocolParameters, PROTOCOL_KEY_SORT));
+    }
+
+    private Dir getSortDirection(LrRequest request, Map<String, List<String>> protocolParameters) {
+        return request != null && request.getSortDirection() != null ?
+                request.getSortDirection() :
+                sortParser.dirFromString(ParameterExtractor.string(protocolParameters, PROTOCOL_KEY_DIR));
+    }
+
+    private MapBy getMapBy(LrRequest request, Map<String, List<String>> protocolParameters) {
+        return request != null && request.getMapBy() != null ?
+                request.getMapBy() :
+                mapByParser.fromString(ParameterExtractor.string(protocolParameters, PROTOCOL_KEY_MAP_BY));
+    }
+
+    private List<Include> getIncludes(LrRequest request, Map<String, List<String>> protocolParameters) {
+        return request != null && !request.getIncludes().isEmpty() ?
+                request.getIncludes() :
+                includeParser.fromStrings(ParameterExtractor.strings(protocolParameters, PROTOCOL_KEY_INCLUDE));
+    }
+
+    private List<Exclude> getExcludes(LrRequest request, Map<String, List<String>> protocolParameters) {
+        return request != null && !request.getExcludes().isEmpty() ?
+                request.getExcludes() :
+                excludeParser.fromStrings(ParameterExtractor.strings(protocolParameters, PROTOCOL_KEY_EXCLUDE));
+    }
+
+    private Start getStart(LrRequest request, Map<String, List<String>> protocolParameters) {
+        int start = ParameterExtractor.integer(protocolParameters, PROTOCOL_KEY_START);
+        if (request != null && request.getStart() != null && request.getStart().getValue() >= 0) {
+            return request.getStart();
+        } else if (start >= 0) {
+            return new Start(start);
+        }
+
+        return null;
+    }
+
+    private Limit getLimit(LrRequest request, Map<String, List<String>> protocolParameters) {
+        int limit = ParameterExtractor.integer(protocolParameters, PROTOCOL_KEY_LIMIT);
+        if (request != null && request.getLimit() != null && request.getLimit().getValue() >= 0) {
+            return request.getLimit();
+        } else if (limit >= 0) {
+            return new Limit(limit);
+        }
+
+        return null;
     }
 }

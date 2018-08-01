@@ -38,6 +38,7 @@ public class SelectContext<T> extends BaseProcessingContext<T> {
 	private int prefetchSemantics;
 	private List objects;
 	private LrRequest rawRequest;
+	private LrRequest request;
 
 	// TODO: deprecate dependency on Cayenne in generic code
 	private SelectQuery<T> select;
@@ -213,5 +214,19 @@ public class SelectContext<T> extends BaseProcessingContext<T> {
 	 */
 	public void setRawRequest(LrRequest request) {
 		this.rawRequest = request;
+	}
+
+	/**
+	 * @since 2.13
+	 */
+	public LrRequest getRequest() {
+		return request;
+	}
+
+	/**
+	 * @since 2.13
+	 */
+	public void setRequest(LrRequest request) {
+		this.request = request;
 	}
 }

@@ -7,31 +7,28 @@ import com.nhl.link.rest.meta.LrAttribute;
 import com.nhl.link.rest.meta.LrEntity;
 import com.nhl.link.rest.protocol.Sort;
 import com.nhl.link.rest.runtime.entity.SortMerger;
-import com.nhl.link.rest.runtime.jackson.JacksonService;
 import com.nhl.link.rest.runtime.path.PathDescriptorManager;
 import com.nhl.link.rest.unit.TestWithCayenneMapping;
 import org.apache.cayenne.query.Ordering;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.Arrays;
 import java.util.Iterator;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-// TODO: split merger test
-public class SortParserTest extends TestWithCayenneMapping {
+public class SortCreateEntityStageTest extends TestWithCayenneMapping {
 
-	private SortParser parser;
-	private SortMerger constructor;
+	private SortMerger merger;
 	private ResourceEntity<?> entity;
 
 	@Before
 	public void before() {
-		JacksonService jacksonService = new JacksonService();
-		this.parser = new SortParser(jacksonService);
-		this.constructor = new SortMerger(new PathDescriptorManager());
+
+		this.merger = new SortMerger(new PathDescriptorManager());
 
 		@SuppressWarnings("unchecked")
 		LrEntity<E2> lre2 = mock(LrEntity.class);
@@ -46,8 +43,10 @@ public class SortParserTest extends TestWithCayenneMapping {
 	@Test
 	public void testProcess_Array() {
 
-        Sort sort = parser.fromString("[{\"property\":\"name\"},{\"property\":\"address\"}]");
-	    constructor.merge(entity, sort);
+        Sort sort =  new Sort(Arrays.asList(
+        		new Sort("name"),
+				new Sort("address")));
+		merger.merge(entity, sort);
 
 		assertEquals(2, entity.getOrderings().size());
 
@@ -60,24 +59,10 @@ public class SortParserTest extends TestWithCayenneMapping {
 	}
 
 	@Test
-	public void testProcess_Object() {
-
-        Sort sort = parser.fromString("{\"property\":\"name\"}");
-        constructor.merge(entity, sort);
-
-		assertEquals(1, entity.getOrderings().size());
-
-		Iterator<Ordering> it = entity.getOrderings().iterator();
-		Ordering o1 = it.next();
-
-		assertEquals(_E2.NAME.getName(), o1.getSortSpecString());
-	}
-
-	@Test
 	public void testProcess_Simple() {
 
-        Sort sort = parser.fromString("name");
-        constructor.merge(entity, sort);
+        Sort sort = new Sort("name");
+		merger.merge(entity, sort);
 
 		assertEquals(1, entity.getOrderings().size());
 
