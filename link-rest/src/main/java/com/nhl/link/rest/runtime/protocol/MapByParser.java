@@ -13,6 +13,9 @@ public class MapByParser implements IMapByParser {
 
     @Override
     public MapBy fromString(String value) {
+        if (value == null || value.isEmpty()) {
+            return null;
+        }
         return new MapBy(value);
     }
 

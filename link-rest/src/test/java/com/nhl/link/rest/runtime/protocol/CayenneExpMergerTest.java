@@ -21,7 +21,7 @@ import static org.apache.cayenne.exp.ExpressionFactory.exp;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-public class CayenneExpCreateEntityStageTest extends TestWithCayenneMapping {
+public class CayenneExpMergerTest extends TestWithCayenneMapping {
 
 	private ResourceEntity<E4> e4Entity;
 	private CayenneExpMerger merger;

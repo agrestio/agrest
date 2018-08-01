@@ -29,6 +29,7 @@ import java.util.Collections;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -64,6 +65,14 @@ public class ParseRequestStageTest extends TestWithCayenneMapping {
         parseStage.execute(context);
 
 		assertNotNull(context.getRawRequest());
+		assertNull(context.getRawRequest().getCayenneExp());
+		assertNull(context.getRawRequest().getSortDirection());
+		assertNull(context.getRawRequest().getSort());
+		assertNull(context.getRawRequest().getMapBy());
+		assertNull(context.getRawRequest().getLimit());
+		assertNull(context.getRawRequest().getStart());
+		assertTrue(context.getRawRequest().getIncludes().isEmpty());
+		assertTrue(context.getRawRequest().getExcludes().isEmpty());
 	}
 
 	@Test
@@ -80,8 +89,8 @@ public class ParseRequestStageTest extends TestWithCayenneMapping {
 		assertNotNull(context.getRawRequest());
 
 		assertEquals(2, context.getRawRequest().getIncludes().size());
-		assertTrue(context.getRawRequest().getIncludes().get(0).getValue().equalsIgnoreCase(E1.DESCRIPTION.getName()));
-		assertTrue(context.getRawRequest().getIncludes().get(1).getValue().equalsIgnoreCase(E1.AGE.getName()));
+		assertEquals("description", context.getRawRequest().getIncludes().get(0).getValue());
+		assertEquals("age", context.getRawRequest().getIncludes().get(1).getValue());
 	}
 
 	@Test
@@ -99,8 +108,8 @@ public class ParseRequestStageTest extends TestWithCayenneMapping {
 
 		assertEquals(1, context.getRawRequest().getIncludes().size());
 		assertEquals(2, context.getRawRequest().getIncludes().get(0).getIncludes().size());
-		assertTrue(context.getRawRequest().getIncludes().get(0).getIncludes().get(0).getValue().equalsIgnoreCase(E1.DESCRIPTION.getName()));
-		assertTrue(context.getRawRequest().getIncludes().get(0).getIncludes().get(1).getValue().equalsIgnoreCase(E1.AGE.getName()));
+		assertEquals("description", context.getRawRequest().getIncludes().get(0).getIncludes().get(0).getValue());
+		assertEquals("age", context.getRawRequest().getIncludes().get(0).getIncludes().get(1).getValue());
 	}
 
 	@Test
@@ -117,8 +126,8 @@ public class ParseRequestStageTest extends TestWithCayenneMapping {
 		assertNotNull(context.getRawRequest());
 
 		assertEquals(2, context.getRawRequest().getExcludes().size());
-		assertTrue(context.getRawRequest().getExcludes().get(0).getPath().equalsIgnoreCase(E1.DESCRIPTION.getName()));
-		assertTrue(context.getRawRequest().getExcludes().get(1).getPath().equalsIgnoreCase(E1.AGE.getName()));
+		assertEquals("description", context.getRawRequest().getExcludes().get(0).getPath());
+		assertEquals("age", context.getRawRequest().getExcludes().get(1).getPath());
 	}
 
 	@Test
@@ -136,8 +145,8 @@ public class ParseRequestStageTest extends TestWithCayenneMapping {
 
 		assertEquals(1, context.getRawRequest().getExcludes().size());
 		assertEquals(2, context.getRawRequest().getExcludes().get(0).getExcludes().size());
-		assertTrue(context.getRawRequest().getExcludes().get(0).getExcludes().get(0).getPath().equalsIgnoreCase(E1.DESCRIPTION.getName()));
-		assertTrue(context.getRawRequest().getExcludes().get(0).getExcludes().get(1).getPath().equalsIgnoreCase(E1.AGE.getName()));
+		assertEquals("description", context.getRawRequest().getExcludes().get(0).getExcludes().get(0).getPath());
+		assertEquals("age", context.getRawRequest().getExcludes().get(0).getExcludes().get(1).getPath());
 	}
 
 	@Test
@@ -155,13 +164,13 @@ public class ParseRequestStageTest extends TestWithCayenneMapping {
 		assertNotNull(context.getRawRequest());
 
 		assertEquals(3, context.getRawRequest().getIncludes().size());
-		assertTrue(context.getRawRequest().getIncludes().get(0).getValue().equalsIgnoreCase(E1.DESCRIPTION.getName()));
-		assertTrue(context.getRawRequest().getIncludes().get(1).getValue().equalsIgnoreCase(E1.AGE.getName()));
-		assertTrue(context.getRawRequest().getIncludes().get(2).getValue().equalsIgnoreCase(E1.ID_PK_COLUMN));
+		assertEquals("description", context.getRawRequest().getIncludes().get(0).getValue());
+		assertEquals("age", context.getRawRequest().getIncludes().get(1).getValue());
+		assertEquals("id", context.getRawRequest().getIncludes().get(2).getValue());
 
 		assertEquals(2, context.getRawRequest().getExcludes().size());
-		assertTrue(context.getRawRequest().getExcludes().get(0).getPath().equalsIgnoreCase(E1.DESCRIPTION.getName()));
-		assertTrue(context.getRawRequest().getExcludes().get(1).getPath().equalsIgnoreCase(E1.NAME.getName()));
+		assertEquals("description", context.getRawRequest().getExcludes().get(0).getPath());
+		assertEquals("name", context.getRawRequest().getExcludes().get(1).getPath());
 	}
 
 	@Test
@@ -178,7 +187,7 @@ public class ParseRequestStageTest extends TestWithCayenneMapping {
 		assertNotNull(context.getRawRequest());
 
 		assertEquals(1, context.getRawRequest().getIncludes().size());
-		assertTrue(context.getRawRequest().getIncludes().get(0).getValue().equalsIgnoreCase(E2.E3S.getName()));
+		assertEquals("e3s", context.getRawRequest().getIncludes().get(0).getValue());
 	}
 
 
@@ -187,7 +196,7 @@ public class ParseRequestStageTest extends TestWithCayenneMapping {
 
 		@SuppressWarnings("unchecked")
 		MultivaluedMap<String, String> params = mock(MultivaluedMap.class);
-		when(params.get("sort")).thenReturn(Collections.singletonList(E2.NAME.getName()));
+		when(params.get("sort")).thenReturn(Collections.singletonList("e2"));
 
 		SelectContext<E2> context = prepareContext(params, E2.class);
 
@@ -196,7 +205,7 @@ public class ParseRequestStageTest extends TestWithCayenneMapping {
 		assertNotNull(context.getRawRequest());
 		assertNotNull(context.getRawRequest().getSort());
 
-		assertTrue(context.getRawRequest().getSort().getProperty().equalsIgnoreCase(E2.NAME.getName()));
+		assertEquals("e2", context.getRawRequest().getSort().getProperty());
 	}
 
 	@Test
@@ -204,7 +213,7 @@ public class ParseRequestStageTest extends TestWithCayenneMapping {
 
 		@SuppressWarnings("unchecked")
 		MultivaluedMap<String, String> params = mock(MultivaluedMap.class);
-		when(params.get("sort")).thenReturn(Collections.singletonList(E2.NAME.getName()));
+		when(params.get("sort")).thenReturn(Collections.singletonList("e2"));
 		when(params.get("dir")).thenReturn(Collections.singletonList("ASC"));
 
 		SelectContext<E2> context = prepareContext(params, E2.class);
@@ -215,8 +224,8 @@ public class ParseRequestStageTest extends TestWithCayenneMapping {
 		assertNotNull(context.getRawRequest().getSort());
 		assertNotNull(context.getRawRequest().getSortDirection());
 
-		assertTrue(context.getRawRequest().getSort().getProperty().equalsIgnoreCase(E2.NAME.getName()));
-		assertTrue(context.getRawRequest().getSortDirection().equals(Dir.ASC));
+		assertEquals("e2", context.getRawRequest().getSort().getProperty());
+		assertEquals(Dir.ASC, context.getRawRequest().getSortDirection());
 	}
 
 	@Test
@@ -224,7 +233,7 @@ public class ParseRequestStageTest extends TestWithCayenneMapping {
 
 		@SuppressWarnings("unchecked")
 		MultivaluedMap<String, String> params = mock(MultivaluedMap.class);
-		when(params.get("sort")).thenReturn(Collections.singletonList(E2.NAME.getName()));
+		when(params.get("sort")).thenReturn(Collections.singletonList("e2"));
 		when(params.get("dir")).thenReturn(Collections.singletonList("DESC"));
 
 		SelectContext<E2> context = prepareContext(params, E2.class);
@@ -235,8 +244,8 @@ public class ParseRequestStageTest extends TestWithCayenneMapping {
 		assertNotNull(context.getRawRequest().getSort());
 		assertNotNull(context.getRawRequest().getSortDirection());
 
-		assertTrue(context.getRawRequest().getSort().getProperty().equalsIgnoreCase(E2.NAME.getName()));
-		assertTrue(context.getRawRequest().getSortDirection().equals(Dir.DESC));
+		assertEquals("e2", context.getRawRequest().getSort().getProperty());
+		assertEquals(Dir.DESC, context.getRawRequest().getSortDirection());
 	}
 
 	@Test(expected = LinkRestException.class)
@@ -268,10 +277,10 @@ public class ParseRequestStageTest extends TestWithCayenneMapping {
 		assertNotNull(context.getRawRequest().getSort());
 		assertEquals(2, context.getRawRequest().getSort().getSorts().size());
 
-		assertTrue(context.getRawRequest().getSort().getSorts().get(0).getProperty().equalsIgnoreCase(E2.NAME.getName()));
-		assertTrue(context.getRawRequest().getSort().getSorts().get(0).getDirection().equals(Dir.DESC));
-		assertTrue(context.getRawRequest().getSort().getSorts().get(1).getProperty().equalsIgnoreCase(E2.ADDRESS.getName()));
-		assertTrue(context.getRawRequest().getSort().getSorts().get(1).getDirection().equals(Dir.ASC));
+		assertEquals("name", context.getRawRequest().getSort().getSorts().get(0).getProperty());
+		assertEquals(Dir.DESC, context.getRawRequest().getSort().getSorts().get(0).getDirection());
+		assertEquals("address", context.getRawRequest().getSort().getSorts().get(1).getProperty());
+		assertEquals(Dir.ASC, context.getRawRequest().getSort().getSorts().get(1).getDirection());
 	}
 
 	@Test
@@ -290,10 +299,10 @@ public class ParseRequestStageTest extends TestWithCayenneMapping {
 		assertNotNull(context.getRawRequest().getSort());
 		assertEquals(2, context.getRawRequest().getSort().getSorts().size());
 
-		assertTrue(context.getRawRequest().getSort().getSorts().get(0).getProperty().equalsIgnoreCase(E2.NAME.getName()));
-		assertTrue(context.getRawRequest().getSort().getSorts().get(0).getDirection().equals(Dir.DESC));
-		assertTrue(context.getRawRequest().getSort().getSorts().get(1).getProperty().equalsIgnoreCase(E2.NAME.getName()));
-		assertTrue(context.getRawRequest().getSort().getSorts().get(1).getDirection().equals(Dir.ASC));
+		assertEquals("name", context.getRawRequest().getSort().getSorts().get(0).getProperty());
+		assertEquals(Dir.DESC, context.getRawRequest().getSort().getSorts().get(0).getDirection());
+		assertEquals("name", context.getRawRequest().getSort().getSorts().get(1).getProperty());
+		assertEquals(Dir.ASC, context.getRawRequest().getSort().getSorts().get(1).getDirection());
 	}
 
 	@Test(expected = LinkRestException.class)

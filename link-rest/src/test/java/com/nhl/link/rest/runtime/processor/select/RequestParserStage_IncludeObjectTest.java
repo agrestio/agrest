@@ -63,7 +63,7 @@ public class RequestParserStage_IncludeObjectTest extends TestWithCayenneMapping
 		assertNotNull(context.getRawRequest());
 
 		assertEquals(1, context.getRawRequest().getIncludes().size());
-		assertTrue(context.getRawRequest().getIncludes().get(0).getPath().equalsIgnoreCase(E2.E3S.getName()));
+		assertEquals("e3s", context.getRawRequest().getIncludes().get(0).getPath());
 	}
 
 	@Test

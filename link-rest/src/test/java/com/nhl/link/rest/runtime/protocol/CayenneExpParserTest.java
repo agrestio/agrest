@@ -12,7 +12,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
-public class CayenneExpParseRequestStageTest extends TestWithCayenneMapping {
+public class CayenneExpParserTest extends TestWithCayenneMapping {
 
     private CayenneExpParser parser;
 
