@@ -26,7 +26,6 @@ public class LinkRestRuntime implements Feature {
     public static final String BODY_WRITERS_MAP = "linkrest.jaxrs.bodywriters";
 
     private Injector injector;
-    private Collection<Class<?>> extraComponents;
     private Collection<Feature> extraFeatures;
 
     /**
@@ -48,10 +47,9 @@ public class LinkRestRuntime implements Feature {
         return injector.getInstance(type);
     }
 
-    LinkRestRuntime(Injector injector, Collection<Feature> extraFeatures, Collection<Class<?>> extraComponents) {
+    LinkRestRuntime(Injector injector, Collection<Feature> extraFeatures) {
         this.injector = injector;
         this.extraFeatures = extraFeatures;
-        this.extraComponents = extraComponents;
     }
 
     /**
@@ -96,10 +94,6 @@ public class LinkRestRuntime implements Feature {
 
         context.register(EntityUpdateReader.class);
         context.register(EntityUpdateCollectionReader.class);
-
-        for (Class<?> c : extraComponents) {
-            context.register(c);
-        }
 
         for (Feature f : extraFeatures) {
             f.configure(context);

@@ -54,6 +54,20 @@ import com.nhl.link.rest.runtime.encoder.IAttributeEncoderFactory;
 import com.nhl.link.rest.runtime.encoder.IEncoderService;
 import com.nhl.link.rest.runtime.encoder.IStringConverterFactory;
 import com.nhl.link.rest.runtime.encoder.StringConverterFactoryProvider;
+import com.nhl.link.rest.runtime.entity.CayenneExpMerger;
+import com.nhl.link.rest.runtime.entity.ExcludeMerger;
+import com.nhl.link.rest.runtime.entity.ExpressionPostProcessor;
+import com.nhl.link.rest.runtime.entity.ICayenneExpMerger;
+import com.nhl.link.rest.runtime.entity.IExcludeMerger;
+import com.nhl.link.rest.runtime.entity.IExpressionPostProcessor;
+import com.nhl.link.rest.runtime.entity.IIncludeMerger;
+import com.nhl.link.rest.runtime.entity.IMapByMerger;
+import com.nhl.link.rest.runtime.entity.ISizeMerger;
+import com.nhl.link.rest.runtime.entity.ISortMerger;
+import com.nhl.link.rest.runtime.entity.IncludeMerger;
+import com.nhl.link.rest.runtime.entity.MapByMerger;
+import com.nhl.link.rest.runtime.entity.SizeMerger;
+import com.nhl.link.rest.runtime.entity.SortMerger;
 import com.nhl.link.rest.runtime.executor.UnboundedExecutorServiceProvider;
 import com.nhl.link.rest.runtime.jackson.IJacksonService;
 import com.nhl.link.rest.runtime.jackson.JacksonService;
@@ -62,36 +76,8 @@ import com.nhl.link.rest.runtime.meta.IMetadataService;
 import com.nhl.link.rest.runtime.meta.IResourceMetadataService;
 import com.nhl.link.rest.runtime.meta.MetadataService;
 import com.nhl.link.rest.runtime.meta.ResourceMetadataService;
-import com.nhl.link.rest.runtime.protocol.IEntityUpdateParser;
-import com.nhl.link.rest.runtime.protocol.EntityUpdateParser;
 import com.nhl.link.rest.runtime.path.IPathDescriptorManager;
 import com.nhl.link.rest.runtime.path.PathDescriptorManager;
-import com.nhl.link.rest.runtime.protocol.CayenneExpParser;
-import com.nhl.link.rest.runtime.entity.CayenneExpMerger;
-import com.nhl.link.rest.runtime.entity.ExpressionPostProcessor;
-import com.nhl.link.rest.runtime.entity.ICayenneExpMerger;
-import com.nhl.link.rest.runtime.protocol.ICayenneExpParser;
-import com.nhl.link.rest.runtime.entity.IExpressionPostProcessor;
-import com.nhl.link.rest.runtime.entity.IMapByMerger;
-import com.nhl.link.rest.runtime.protocol.IMapByParser;
-import com.nhl.link.rest.runtime.entity.MapByMerger;
-import com.nhl.link.rest.runtime.protocol.MapByParser;
-import com.nhl.link.rest.runtime.entity.ISizeMerger;
-import com.nhl.link.rest.runtime.protocol.ISizeParser;
-import com.nhl.link.rest.runtime.entity.SizeMerger;
-import com.nhl.link.rest.runtime.protocol.SizeParser;
-import com.nhl.link.rest.runtime.protocol.ISortParser;
-import com.nhl.link.rest.runtime.entity.ISortMerger;
-import com.nhl.link.rest.runtime.protocol.SortParser;
-import com.nhl.link.rest.runtime.entity.SortMerger;
-import com.nhl.link.rest.runtime.protocol.ExcludeParser;
-import com.nhl.link.rest.runtime.entity.ExcludeMerger;
-import com.nhl.link.rest.runtime.protocol.IExcludeParser;
-import com.nhl.link.rest.runtime.entity.IExcludeMerger;
-import com.nhl.link.rest.runtime.protocol.IIncludeParser;
-import com.nhl.link.rest.runtime.entity.IIncludeMerger;
-import com.nhl.link.rest.runtime.protocol.IncludeParser;
-import com.nhl.link.rest.runtime.entity.IncludeMerger;
 import com.nhl.link.rest.runtime.processor.delete.DeleteProcessorFactory;
 import com.nhl.link.rest.runtime.processor.meta.CollectMetadataStage;
 import com.nhl.link.rest.runtime.processor.meta.MetadataProcessorFactory;
@@ -103,6 +89,20 @@ import com.nhl.link.rest.runtime.processor.select.SelectProcessorFactory;
 import com.nhl.link.rest.runtime.processor.select.StartStage;
 import com.nhl.link.rest.runtime.processor.unrelate.UnrelateProcessorFactory;
 import com.nhl.link.rest.runtime.processor.update.UpdateProcessorFactoryFactory;
+import com.nhl.link.rest.runtime.protocol.CayenneExpParser;
+import com.nhl.link.rest.runtime.protocol.EntityUpdateParser;
+import com.nhl.link.rest.runtime.protocol.ExcludeParser;
+import com.nhl.link.rest.runtime.protocol.ICayenneExpParser;
+import com.nhl.link.rest.runtime.protocol.IEntityUpdateParser;
+import com.nhl.link.rest.runtime.protocol.IExcludeParser;
+import com.nhl.link.rest.runtime.protocol.IIncludeParser;
+import com.nhl.link.rest.runtime.protocol.IMapByParser;
+import com.nhl.link.rest.runtime.protocol.ISizeParser;
+import com.nhl.link.rest.runtime.protocol.ISortParser;
+import com.nhl.link.rest.runtime.protocol.IncludeParser;
+import com.nhl.link.rest.runtime.protocol.MapByParser;
+import com.nhl.link.rest.runtime.protocol.SizeParser;
+import com.nhl.link.rest.runtime.protocol.SortParser;
 import com.nhl.link.rest.runtime.semantics.IRelationshipMapper;
 import com.nhl.link.rest.runtime.semantics.RelationshipMapper;
 import com.nhl.link.rest.runtime.shutdown.ShutdownManager;
@@ -110,6 +110,8 @@ import org.apache.cayenne.CayenneRuntimeException;
 import org.apache.cayenne.configuration.server.ServerRuntime;
 import org.apache.cayenne.di.DIBootstrap;
 import org.apache.cayenne.di.Injector;
+import org.apache.cayenne.di.Key;
+import org.apache.cayenne.di.MapBuilder;
 import org.apache.cayenne.di.Module;
 import org.apache.cayenne.di.spi.ModuleLoader;
 import org.apache.cayenne.reflect.Accessor;
@@ -145,13 +147,29 @@ public class LinkRestBuilder {
     private List<Feature> features;
     private List<EncoderFilter> encoderFilters;
     private Map<String, LrEntityOverlay> entityOverlays;
-    private Map<Class<?>, Class<?>> exceptionMappers;
+    private Map<String, Class<? extends ExceptionMapper>> exceptionMappers;
     private Collection<LinkRestAdapter> adapters;
     private Map<String, PropertyMetadataEncoder> metadataEncoders;
     private ExecutorService executor;
     private String baseUrl;
     private boolean autoLoadModules;
     private boolean autoLoadFeatures;
+
+    public LinkRestBuilder() {
+        this.autoLoadModules = true;
+        this.autoLoadFeatures = true;
+        this.entityOverlays = new HashMap<>();
+        this.encoderFilters = new ArrayList<>();
+        this.linkRestServiceType = DefaultLinkRestService.class;
+        this.cayenneService = NoCayennePersister.instance();
+        this.exceptionMappers = new HashMap<>();
+        this.adapters = new ArrayList<>();
+        this.metadataEncoders = new HashMap<>();
+        this.moduleProviders = new ArrayList<>(5);
+        this.modules = new ArrayList<>(5);
+        this.featureProviders = new ArrayList<>(5);
+        this.features = new ArrayList<>(5);
+    }
 
     /**
      * A shortcut that creates a LinkRest stack based on Cayenne runtime and
@@ -171,32 +189,6 @@ public class LinkRestBuilder {
      */
     public static LinkRestBuilder builder(ServerRuntime cayenneRuntime) {
         return new LinkRestBuilder().cayenneRuntime(cayenneRuntime);
-    }
-
-    public LinkRestBuilder() {
-        this.autoLoadModules = true;
-        this.autoLoadFeatures = true;
-        this.entityOverlays = new HashMap<>();
-        this.encoderFilters = new ArrayList<>();
-        this.linkRestServiceType = DefaultLinkRestService.class;
-        this.cayenneService = NoCayennePersister.instance();
-        this.exceptionMappers = mapDefaultExceptions();
-        this.adapters = new ArrayList<>();
-        this.metadataEncoders = new HashMap<>();
-        this.moduleProviders = new ArrayList<>(5);
-        this.modules = new ArrayList<>(5);
-        this.featureProviders = new ArrayList<>(5);
-        this.features = new ArrayList<>(5);
-    }
-
-    protected Map<Class<?>, Class<?>> mapDefaultExceptions() {
-
-        Map<Class<?>, Class<?>> map = new HashMap<>();
-        map.put(CayenneRuntimeException.class, CayenneRuntimeExceptionMapper.class);
-        map.put(LinkRestException.class, LinkRestExceptionMapper.class);
-        map.put(ValidationException.class, ValidationExceptionMapper.class);
-
-        return map;
     }
 
     /**
@@ -242,11 +234,10 @@ public class LinkRestBuilder {
                 ParameterizedType pt = (ParameterizedType) t;
                 if (ExceptionMapper.class.equals(pt.getRawType())) {
                     Type[] args = pt.getActualTypeArguments();
-                    exceptionMappers.put((Class<?>) args[0], mapper);
+                    exceptionMappers.put(args[0].getTypeName(), mapper);
                     return this;
                 }
             }
-
         }
 
         throw new IllegalArgumentException("Failed to register ExceptionMapper: " + mapper.getName());
@@ -411,12 +402,7 @@ public class LinkRestBuilder {
 
     public LinkRestRuntime build() {
         Injector i = createInjector();
-        return new LinkRestRuntime(i, createExtraFeatures(i), createExtraComponents());
-    }
-
-    private Collection<Class<?>> createExtraComponents() {
-        // for now the only extra components are exception mappers
-        return exceptionMappers.values();
+        return new LinkRestRuntime(i, createExtraFeatures(i));
     }
 
     private Collection<Feature> createExtraFeatures(Injector injector) {
@@ -430,6 +416,8 @@ public class LinkRestBuilder {
         if (autoLoadFeatures) {
             loadAutoLoadableFeatures(featureCollector, injector);
         }
+
+        loadExceptionMapperFeature(featureCollector, injector);
 
         loadBuilderFeatures(featureCollector, injector);
 
@@ -462,6 +450,16 @@ public class LinkRestBuilder {
 
     private void loadAutoLoadableFeatures(Collection<Feature> collector, Injector i) {
         ServiceLoader.load(LrFeatureProvider.class).forEach(fp -> collector.add(fp.feature(i)));
+    }
+
+    private void loadExceptionMapperFeature(Collection<Feature> collector, Injector i) {
+
+        i.getInstance(Key.getMapOf(String.class, ExceptionMapper.class))
+                .values()
+                .forEach(em -> collector.add(c -> {
+                    c.register(em);
+                    return true;
+                }));
     }
 
     private void loadAdapterProvidedFeatures(Collection<Feature> collector) {
@@ -525,6 +523,14 @@ public class LinkRestBuilder {
             } else {
                 binder.bind(ILinkRestService.class).toInstance(linkRestService);
             }
+
+            MapBuilder<ExceptionMapper> mapperBuilder = binder.bindMap(ExceptionMapper.class)
+                    .put(CayenneRuntimeException.class.getName(), CayenneRuntimeExceptionMapper.class)
+                    .put(LinkRestException.class.getName(), LinkRestExceptionMapper.class)
+                    .put(ValidationException.class.getName(), ValidationExceptionMapper.class);
+
+            // override with custom mappers
+            exceptionMappers.forEach((n, m) -> mapperBuilder.put(n, m));
 
             // select stages
             binder.bind(SelectProcessorFactory.class).toProvider(CayenneSelectProcessorFactoryProvider.class);
