@@ -33,8 +33,8 @@
         <servlet-api-version>3.0.0.v201112011016</servlet-api-version>
         <slf4j-version>1.7.12</slf4j-version>
         <cayenne-version>4.0.RC1</cayenne-version>
-        <jersey-version>2.22.1</jersey-version>
-        <jaxrs-version>2.0</jaxrs-version>
+        <jersey-version>2.27</jersey-version>
+        <jaxrs-version>2.1</jaxrs-version>
         <jackson-version>2.6.4</jackson-version>
     </properties>
 
@@ -147,6 +147,11 @@
             <dependency>
                 <groupId>org.glassfish.jersey.test-framework.providers</groupId>
                 <artifactId>jersey-test-framework-provider-inmemory</artifactId>
+                <version>${jersey-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.glassfish.jersey.inject</groupId>
+                <artifactId>jersey-hk2</artifactId>
                 <version>${jersey-version}</version>
             </dependency>
             <dependency>

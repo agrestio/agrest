@@ -6,6 +6,7 @@ Release 2.13
 #309 Capture request state in a new LrRequest object
 #313 Refactor Sencha extension to follow the new pipeline logic 
 #314 Refactoring runtime.parser.cache.IPathCache to runtime.path.IPathDescriptorManager
+#315 Upgrade JAX-RS to 2.1
 #322 Manage exception mappers via DI to simplify overriding
 
 Release 2.12
