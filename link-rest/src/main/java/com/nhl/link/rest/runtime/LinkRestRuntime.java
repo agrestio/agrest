@@ -5,6 +5,8 @@ import com.nhl.link.rest.provider.EntityUpdateReader;
 import com.nhl.link.rest.provider.ResponseStatusDynamicFeature;
 import com.nhl.link.rest.runtime.provider.CayenneExpProvider;
 import com.nhl.link.rest.runtime.provider.IncludeProvider;
+import com.nhl.link.rest.runtime.provider.MapByProvider;
+import com.nhl.link.rest.runtime.provider.SizeProvider;
 import com.nhl.link.rest.runtime.provider.SortProvider;
 import org.apache.cayenne.di.Injector;
 import org.apache.cayenne.di.Key;
@@ -106,6 +108,14 @@ public class LinkRestRuntime implements Feature {
         SortProvider sortProvider =
                 injector.getInstance(SortProvider.class);
         context.register(sortProvider);
+
+        MapByProvider mapByProvider =
+                injector.getInstance(MapByProvider.class);
+        context.register(mapByProvider);
+
+        SizeProvider sizeProvider =
+                injector.getInstance(SizeProvider.class);
+        context.register(sizeProvider);
 
         context.register(ResponseStatusDynamicFeature.class);
 

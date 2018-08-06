@@ -1,5 +1,6 @@
 package com.nhl.link.rest.runtime.provider;
 
+import com.nhl.link.rest.protocol.Dir;
 import com.nhl.link.rest.protocol.Sort;
 import com.nhl.link.rest.runtime.protocol.ISortParser;
 import com.nhl.link.rest.runtime.provider.converter.SortConverter;
@@ -27,6 +28,22 @@ public class SortProvider implements ParamConverterProvider {
     @Override
     public <T> ParamConverter<T> getConverter(Class<T> rawType, Type genericType, Annotation[] annotations) {
 
-        return (rawType == Sort.class) ? (ParamConverter<T>)sortConverter: null;
+        if (rawType == Sort.class) {
+            return (ParamConverter<T>) sortConverter;
+        } else if (rawType == Dir.class) {
+            return (ParamConverter<T>) new ParamConverter<Dir>() {
+                @Override
+                public Dir fromString(String value) {
+                    return Dir.valueOf(value);
+                }
+
+                @Override
+                public String toString(Dir value) {
+                    return null;
+                }
+            };
+        }
+
+        return null;
     }
 }

@@ -21,6 +21,8 @@ import com.nhl.link.rest.meta.parser.ResourceParser;
 import com.nhl.link.rest.runtime.provider.CayenneExpProvider;
 import com.nhl.link.rest.runtime.provider.ExcludeProvider;
 import com.nhl.link.rest.runtime.provider.IncludeProvider;
+import com.nhl.link.rest.runtime.provider.MapByProvider;
+import com.nhl.link.rest.runtime.provider.SizeProvider;
 import com.nhl.link.rest.runtime.provider.SortProvider;
 import com.nhl.link.rest.provider.CayenneRuntimeExceptionMapper;
 import com.nhl.link.rest.provider.DataResponseWriter;
@@ -604,6 +606,8 @@ public class LinkRestBuilder {
             binder.bind(IncludeProvider.class).to(IncludeProvider.class);
             binder.bind(ExcludeProvider.class).to(ExcludeProvider.class);
             binder.bind(SortProvider.class).to(SortProvider.class);
+            binder.bind(MapByProvider.class).to(MapByProvider.class);
+            binder.bind(SizeProvider.class).to(SizeProvider.class);
 
             // Constructors to create ResourceEntity from Query parameters
             binder.bind(ICayenneExpMerger.class).to(CayenneExpMerger.class);
