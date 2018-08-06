@@ -3,6 +3,9 @@ package com.nhl.link.rest.runtime;
 import com.nhl.link.rest.provider.EntityUpdateCollectionReader;
 import com.nhl.link.rest.provider.EntityUpdateReader;
 import com.nhl.link.rest.provider.ResponseStatusDynamicFeature;
+import com.nhl.link.rest.runtime.provider.CayenneExpProvider;
+import com.nhl.link.rest.runtime.provider.IncludeProvider;
+import com.nhl.link.rest.runtime.provider.SortProvider;
 import org.apache.cayenne.di.Injector;
 import org.apache.cayenne.di.Key;
 import org.slf4j.Logger;
@@ -91,6 +94,18 @@ public class LinkRestRuntime implements Feature {
         for (Class<?> type : bodyWriters.values()) {
             context.register(type);
         }
+
+        CayenneExpProvider cayenneExpProvider =
+                injector.getInstance(CayenneExpProvider.class);
+        context.register(cayenneExpProvider);
+
+        IncludeProvider includeProvider =
+                injector.getInstance(IncludeProvider.class);
+        context.register(includeProvider);
+
+        SortProvider sortProvider =
+                injector.getInstance(SortProvider.class);
+        context.register(sortProvider);
 
         context.register(ResponseStatusDynamicFeature.class);
 
