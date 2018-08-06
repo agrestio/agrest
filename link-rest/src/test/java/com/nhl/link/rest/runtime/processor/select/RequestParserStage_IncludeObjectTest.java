@@ -1,25 +1,9 @@
 package com.nhl.link.rest.runtime.processor.select;
 
-import com.nhl.link.rest.ResourceEntity;
 import com.nhl.link.rest.it.fixture.cayenne.E2;
 import com.nhl.link.rest.it.fixture.cayenne.E3;
-import com.nhl.link.rest.runtime.entity.CayenneExpMerger;
-import com.nhl.link.rest.runtime.entity.ExcludeMerger;
-import com.nhl.link.rest.runtime.entity.ExpressionPostProcessor;
-import com.nhl.link.rest.runtime.entity.ICayenneExpMerger;
-import com.nhl.link.rest.runtime.entity.IExcludeMerger;
-import com.nhl.link.rest.runtime.entity.IIncludeMerger;
-import com.nhl.link.rest.runtime.entity.IMapByMerger;
-import com.nhl.link.rest.runtime.entity.ISizeMerger;
-import com.nhl.link.rest.runtime.entity.ISortMerger;
-import com.nhl.link.rest.runtime.entity.IncludeMerger;
-import com.nhl.link.rest.runtime.entity.MapByMerger;
-import com.nhl.link.rest.runtime.entity.SizeMerger;
-import com.nhl.link.rest.runtime.entity.SortMerger;
 import com.nhl.link.rest.runtime.jackson.IJacksonService;
 import com.nhl.link.rest.runtime.jackson.JacksonService;
-import com.nhl.link.rest.runtime.path.IPathDescriptorManager;
-import com.nhl.link.rest.runtime.path.PathDescriptorManager;
 import com.nhl.link.rest.runtime.protocol.CayenneExpParser;
 import com.nhl.link.rest.runtime.protocol.ExcludeParser;
 import com.nhl.link.rest.runtime.protocol.ICayenneExpParser;
@@ -45,15 +29,13 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class RequestParser_IncludeObjectTest extends TestWithCayenneMapping {
+public class RequestParserStage_IncludeObjectTest extends TestWithCayenneMapping {
 
     private ParseRequestStage parseStage;
-    private CreateResourceEntityStage constructEntityStage;
 
 	@Before
 	public void setUp() {
 
-		IPathDescriptorManager pathCache = new PathDescriptorManager();
 		IJacksonService jacksonService = new JacksonService();
 
         // prepare parse request stage
@@ -65,24 +47,6 @@ public class RequestParser_IncludeObjectTest extends TestWithCayenneMapping {
         IExcludeParser excludeParser = new ExcludeParser(jacksonService);
 
         this.parseStage = new ParseRequestStage(expParser, sortParser, mapByParser, includeParser, excludeParser);
-
-        // prepare entity constructor stage
-        ICayenneExpMerger expConstructor = new CayenneExpMerger(new ExpressionPostProcessor(pathCache));
-        ISortMerger sortConstructor = new SortMerger(pathCache);
-        IMapByMerger mapByConstructor = new MapByMerger();
-        ISizeMerger sizeConstructor = new SizeMerger();
-        IIncludeMerger includeConstructor = new IncludeMerger(expConstructor, sortConstructor, mapByConstructor, sizeConstructor);
-        IExcludeMerger excludeConstructor = new ExcludeMerger();
-
-        this.constructEntityStage
-                = new CreateResourceEntityStage(
-                createMetadataService(),
-                expConstructor ,
-                sortConstructor,
-                mapByConstructor,
-                sizeConstructor,
-                includeConstructor,
-                excludeConstructor);
     }
 
 	@Test
@@ -95,15 +59,11 @@ public class RequestParser_IncludeObjectTest extends TestWithCayenneMapping {
         SelectContext<E2> context = prepareContext(params, E2.class);
 
         parseStage.execute(context);
-        constructEntityStage.execute(context);
 
-        ResourceEntity<E2> resourceEntity = context.getEntity();
+		assertNotNull(context.getRawRequest());
 
-		assertNotNull(resourceEntity);
-		assertTrue(resourceEntity.isIdIncluded());
-
-		assertEquals(1, resourceEntity.getChildren().size());
-		assertTrue(resourceEntity.getChildren().containsKey(E2.E3S.getName()));
+		assertEquals(1, context.getRawRequest().getIncludes().size());
+		assertEquals("e3s", context.getRawRequest().getIncludes().get(0).getPath());
 	}
 
 	@Test
@@ -116,15 +76,10 @@ public class RequestParser_IncludeObjectTest extends TestWithCayenneMapping {
         SelectContext<E2> context = prepareContext(params, E2.class);
 
         parseStage.execute(context);
-        constructEntityStage.execute(context);
+        assertNotNull(context.getRawRequest());
 
-        ResourceEntity<E2> resourceEntity = context.getEntity();
-
-
-		assertNotNull(resourceEntity);
-
-		ResourceEntity<?> mapBy = resourceEntity.getChildren().get(E2.E3S.getName()).getMapBy();
-		assertNotNull(mapBy);
-		assertNotNull(mapBy.getChildren().get(E3.E5.getName()));
+        assertEquals(1, context.getRawRequest().getIncludes().size());
+        assertTrue(context.getRawRequest().getIncludes().get(0).getPath().equalsIgnoreCase(E2.E3S.getName()));
+        assertTrue(context.getRawRequest().getIncludes().get(0).getMapBy().getPath().equalsIgnoreCase(E3.E5.getName()));
 	}
 }

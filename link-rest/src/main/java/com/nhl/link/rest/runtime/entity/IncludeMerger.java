@@ -132,7 +132,7 @@ public class IncludeMerger implements IIncludeMerger {
         processIncludeObject(resourceEntity, include);
         // processes nested includes
         if (include != null) {
-            include.getIncludes().stream().forEach(i -> processIncludeObject(resourceEntity, i));
+            include.getIncludes().forEach(i -> processIncludeObject(resourceEntity, i));
         }
     }
 

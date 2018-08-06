@@ -1,5 +1,6 @@
 package com.nhl.link.rest.unit;
 
+import com.nhl.link.rest.LrRequest;
 import com.nhl.link.rest.ResourceEntity;
 import com.nhl.link.rest.it.fixture.cayenne.E2;
 import com.nhl.link.rest.meta.DefaultLrAttribute;
@@ -107,26 +108,11 @@ public class TestWithCayenneMapping {
 
 	protected <T> SelectContext<T> prepareContext(MultivaluedMap<String, String> params, Class<T> type) {
 		SelectContext<T> context = new SelectContext<>(type);
-		context.setUriInfo(new UriInfo() {
-			@Override public String getPath() { return null; }
-			@Override public String getPath(boolean decode) { return null; }
-			@Override public List<PathSegment> getPathSegments() { return null; }
-			@Override public List<PathSegment> getPathSegments(boolean decode) { return null; }
-			@Override public URI getRequestUri() { return null; }
-			@Override public UriBuilder getRequestUriBuilder() { return null; }
-			@Override public URI getAbsolutePath() { return null; }
-			@Override public UriBuilder getAbsolutePathBuilder() { return null; }
-			@Override public URI getBaseUri() { return null; }
-			@Override public UriBuilder getBaseUriBuilder() { return null; }
-			@Override public MultivaluedMap<String, String> getPathParameters() { return null; }
-			@Override public MultivaluedMap<String, String> getPathParameters(boolean decode) { return null; }
-			@Override public MultivaluedMap<String, String> getQueryParameters() { return params; }
-			@Override public MultivaluedMap<String, String> getQueryParameters(boolean decode) { return null; }
-			@Override public List<String> getMatchedURIs() { return null; }
-			@Override public List<String> getMatchedURIs(boolean decode) { return null; }
-			@Override public List<Object> getMatchedResources() { return null; }
-			@Override public URI resolve(URI uri) { return null; }
-			@Override public URI relativize(URI uri) { return null; }});
+
+		UriInfo uriInfo = mock(UriInfo.class);
+		when(uriInfo.getQueryParameters()).thenReturn(params);
+
+		context.setUriInfo(uriInfo);
 		return context;
 	}
 
