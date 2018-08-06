@@ -18,6 +18,10 @@ import com.nhl.link.rest.meta.compiler.LrEntityCompiler;
 import com.nhl.link.rest.meta.compiler.PojoEntityCompiler;
 import com.nhl.link.rest.meta.parser.IResourceParser;
 import com.nhl.link.rest.meta.parser.ResourceParser;
+import com.nhl.link.rest.runtime.provider.CayenneExpProvider;
+import com.nhl.link.rest.runtime.provider.ExcludeProvider;
+import com.nhl.link.rest.runtime.provider.IncludeProvider;
+import com.nhl.link.rest.runtime.provider.SortProvider;
 import com.nhl.link.rest.provider.CayenneRuntimeExceptionMapper;
 import com.nhl.link.rest.provider.DataResponseWriter;
 import com.nhl.link.rest.provider.LinkRestExceptionMapper;
@@ -595,6 +599,12 @@ public class LinkRestBuilder {
             binder.bind(IExcludeParser.class).to(ExcludeParser.class);
             binder.bind(IIncludeParser.class).to(IncludeParser.class);
 
+            // Converter providers to get value objects from explicit query parameters
+            binder.bind(CayenneExpProvider.class).to(CayenneExpProvider.class);
+            binder.bind(IncludeProvider.class).to(IncludeProvider.class);
+            binder.bind(ExcludeProvider.class).to(ExcludeProvider.class);
+            binder.bind(SortProvider.class).to(SortProvider.class);
+
             // Constructors to create ResourceEntity from Query parameters
             binder.bind(ICayenneExpMerger.class).to(CayenneExpMerger.class);
             binder.bind(ISortMerger.class).to(SortMerger.class);
@@ -602,7 +612,6 @@ public class LinkRestBuilder {
             binder.bind(ISizeMerger.class).to(SizeMerger.class);
             binder.bind(IIncludeMerger.class).to(IncludeMerger.class);
             binder.bind(IExcludeMerger.class).to(ExcludeMerger.class);
-
 
             binder.bind(IResourceParser.class).to(ResourceParser.class);
             binder.bind(IEntityUpdateParser.class).to(EntityUpdateParser.class);

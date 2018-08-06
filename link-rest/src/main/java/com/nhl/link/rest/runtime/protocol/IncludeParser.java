@@ -52,7 +52,8 @@ public class IncludeParser implements IIncludeParser {
         return !result.isEmpty() ? result : null;
     }
 
-    private Include oneFromString(String value) {
+    @Override
+    public Include oneFromString(String value) {
         if (value == null || value.isEmpty()) {
             return null;
         }
