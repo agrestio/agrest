@@ -17,7 +17,8 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import javax.ws.rs.ext.ExceptionMapper;
 
-public class LinkRestBuilder_ExceptionMappersIT extends JerseyTestOnDerby {
+@Deprecated
+public class LinkRestBuilder_ExceptionMappers_LegacyIT extends JerseyTestOnDerby {
 
     @Override
     protected void doAddResources(FeatureContext context) {
@@ -26,11 +27,10 @@ public class LinkRestBuilder_ExceptionMappersIT extends JerseyTestOnDerby {
 
     @Override
     protected LinkRestBuilder doConfigure() {
+        // this API is deprecated. Keeping the test around until it is fully removed.
         return super.doConfigure()
-                .module(b -> b.bindMap(ExceptionMapper.class)
-                        // TODO: Bootique-like extender API
-                        .put(LinkRestException.class.getName(), TestLrExceptionMapper.class)
-                        .put(TestException.class.getName(), TestExceptionMapper.class));
+                .mapException(TestLrExceptionMapper.class)
+                .mapException(TestExceptionMapper.class);
     }
 
     @Test

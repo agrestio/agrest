@@ -225,7 +225,10 @@ public class LinkRestBuilder {
      * {@link ValidationException}.
      *
      * @since 1.1
+     * @deprecated since 2.13. Custom exception handlers can be added via a custom module or module provider. E.g.
+     * <code>b.bindMap(ExceptionMapper.class).put(LinkRestException.class.getName(), MyExceptionMapper.class)</code>
      */
+    @Deprecated
     public <E extends Throwable> LinkRestBuilder mapException(Class<? extends ExceptionMapper<E>> mapper) {
 
         for (Type t : mapper.getGenericInterfaces()) {
