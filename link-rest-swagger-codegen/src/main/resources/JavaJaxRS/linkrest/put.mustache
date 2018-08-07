@@ -1,0 +1,64 @@
+{{#isRestfulUpdate}}
+public {{>returnTypes}} {{nickname}}({{#allParams}}{{>pathParams}}{{>queryParams}}{{>bodyParams}}{{#hasMore}}, {{/hasMore}}{{/allParams}}) {
+
+        return LinkRest.idempotentCreateOrUpdate({{{returnType}}}.class, config)
+                    .readConstraint({{>constraintParams}}
+                    )
+                    .id({{#pathParams}}{{paramName}}{{/pathParams}})
+                    {{>methodsImpl}}
+                    .syncAndSelect({{#bodyParam}}{{paramName}}{{/bodyParam}});
+    }
+{{/isRestfulUpdate}}
+{{#isRestfulBulkUpdate}}
+    {{#hasCompoundId}}
+public {{>returnTypes}} {{nickname}}({{#allParams}}{{>pathParams}}{{>queryParams}}{{>bodyParams}}{{#hasMore}}, {{/hasMore}}{{/allParams}}) {
+
+        Map<String, Object> id = new HashMap<>();
+        {{#modelAttributes}}
+            {{#isQueryParam}}
+                id.put("{{paramName}}", {{paramName}});
+            {{/isQueryParam}}
+        {{/modelAttributes}}
+
+        return LinkRest.idempotentCreateOrUpdate({{{returnType}}}.class, config)
+                    .readConstraint({{>constraintParams}}
+                    )
+                    .id(id)
+                    {{>methodsImpl}}
+                    .syncAndSelect({{#bodyParam}}{{paramName}}{{/bodyParam}});
+    }
+    {{/hasCompoundId}}
+    {{^hasCompoundId}}
+public {{>returnTypes}} {{nickname}}({{#allParams}}{{>pathParams}}{{>queryParams}}{{>bodyParams}}{{#hasMore}}, {{/hasMore}}{{/allParams}}) {
+
+        return LinkRest.idempotentCreateOrUpdate({{{returnType}}}.class, config)
+                    .readConstraint({{>constraintParams}}
+                    )
+                    {{>methodsImpl}}
+                    .syncAndSelect({{#bodyParam}}{{paramName}}{{/bodyParam}});
+    }
+    {{/hasCompoundId}}
+{{/isRestfulBulkUpdate}}
+{{#isRestfulRelatedUpdate}}
+public DataResponse<{{#bodyParams}}{{dataType}}{{/bodyParams}}> {{nickname}}({{#allParams}}{{>pathParams}}{{>queryParams}}{{>bodyParams}}{{#hasMore}}, {{/hasMore}}{{/allParams}}) {
+
+        return LinkRest.idempotentCreateOrUpdate({{#bodyParams}}{{dataType}}{{/bodyParams}}.class, config)
+                    .readConstraint({{#modelRelations}}{{>constraintParams}}{{/modelRelations}}
+                    )
+                    .id({{#pathParams}}{{#-last}}{{paramName}}{{/-last}}{{/pathParams}})
+                    .parent({{returnType}}.class, {{#pathParams}}{{#-first}}{{paramName}}{{/-first}}{{/pathParams}}, {{returnType}}.{{#bodyParams}}{{dataType}}{{/bodyParams}})
+                    {{>methodsImpl}}
+                    .syncAndSelect({{#bodyParam}}{{paramName}}{{/bodyParam}});
+    }
+{{/isRestfulRelatedUpdate}}
+{{#isRestfulRelatedToManyUpdate}}
+public DataResponse<{{#bodyParams}}{{dataType}}{{/bodyParams}}> {{nickname}}({{#allParams}}{{>pathParams}}{{>queryParams}}{{>bodyParams}}{{#hasMore}}, {{/hasMore}}{{/allParams}}) {
+
+        return LinkRest.idempotentCreateOrUpdate({{#bodyParams}}{{dataType}}{{/bodyParams}}.class, config)
+                    .readConstraint({{#modelRelations}}{{>constraintParams}}{{/modelRelations}}
+                    )
+                    .parent({{returnType}}.class, {{#pathParams}}{{#-first}}{{paramName}}{{/-first}}{{/pathParams}}, "{{#modelRelations}}{{bodyParam.paramName}}{{/modelRelations}}")
+                    {{>methodsImpl}}
+                    .syncAndSelect({{#bodyParam}}{{paramName}}{{/bodyParam}});
+    }
+{{/isRestfulRelatedToManyUpdate}}
