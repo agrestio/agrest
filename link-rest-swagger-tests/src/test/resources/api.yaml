@@ -1,0 +1,1107 @@
+swagger: "2.0"
+info:
+  title: LinkRest based Api
+  description: An API for interacting with the backend server
+  version: v1
+
+host: 127.0.0.1
+schemes:
+  - http
+consumes:
+  - application/json
+produces:
+  - application/json
+
+basePath: /v1
+tags:
+  - name: E1
+    description: |
+      This resourse allows you to retrive and update E1 information.
+
+paths:
+  /e1:
+    get:
+      summary: Get all E1s
+      operationId: getAll
+      tags:
+        - E1
+      parameters:
+        - name: limit
+          in: query
+          description: maximum number of results to return
+          required: false
+          type: integer
+#          format: int32
+      responses:
+        '200':
+          description: Success response.
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/E1"
+        default:
+          description: Unexpected error
+
+  /e1/{id}:
+    get:
+      description: Returns a E1
+      operationId: getOne
+      tags:
+        - E1
+      parameters:
+        - name: id
+          in: path
+          description: ID of E1 to fetch
+          required: true
+          type: integer
+          format: int32
+      responses:
+        "200":
+          description: Success responce
+          schema:
+            $ref: "#/definitions/E1"
+        default:
+          description: Unexpected error
+    delete:
+      description: Deletes a E1 item based on the ID supplied
+      operationId: delete
+      tags:
+        - E1
+      parameters:
+        - name: id
+          in: path
+          description: ID of E1 to delete
+          required: true
+          type: integer
+          format: int32
+      responses:
+        "204":
+          description: E1 itesm deleted
+        default:
+          description: unexpected error
+  /e2:
+    parameters:
+      - name: include
+        in: query
+        description: include attribute
+        required: false
+        type: array
+        items:
+          type: string
+      - name: exclude
+        in: query
+        description: exclude attribute
+        required: false
+        type: array
+        items:
+          type: string
+    get:
+      summary: Get all E2s
+      operationId: getAll
+      tags:
+        - E2
+      parameters:
+        - name: cayenneExp
+          in: query
+          description: cayenneExp query
+          required: false
+          type: string
+      responses:
+        '200':
+          description: Success response.
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/E2"
+        default:
+          description: Unexpected error
+    post:
+      tags:
+        - E2
+      summary: Creates E2
+      operationId: create
+      produces:
+        - application/xml
+        - application/json
+      parameters:
+        - in: body
+          name: body
+          description: Created E2 object
+          schema:
+            $ref: "#/definitions/E2"
+      responses:
+        default:
+          description: successful operation
+
+  /e2/{id}:
+    get:
+      description: Returns a E2
+      operationId: getOne
+      tags:
+        - E2
+      parameters:
+        - name: id
+          in: path
+          description: ID of E2 to fetch
+          required: true
+          type: integer
+          format: int32
+        - name: include
+          in: query
+          description: include attribute
+          required: false
+          type: array
+          items:
+            type: string
+        - name: exclude
+          in: query
+          description: exclude attribute
+          required: false
+          type: array
+          items:
+            type: string
+      responses:
+        "200":
+          description: Success responce
+          schema:
+            $ref: "#/definitions/E2"
+        default:
+          description: Unexpected error
+    put:
+      tags:
+        - E2
+      summary: Updates E2
+      operationId: update
+      produces:
+        - application/xml
+        - application/json
+      parameters:
+        - name: id
+          in: path
+          description: ID of E2 to update
+          required: true
+          type: integer
+          format: int32
+        - in: body
+          name: body
+          description: Updated E2 object
+          schema:
+            $ref: "#/definitions/E2"
+        - name: include
+          in: query
+          description: include attribute
+          required: false
+          type: array
+          items:
+            type: string
+        - name: exclude
+          in: query
+          description: exclude attribute
+          required: false
+          type: array
+          items:
+            type: string
+      responses:
+        default:
+          description: successful operation
+
+  /e2/{id}/e3s:
+    get:
+      description: Returns E3s related to E2
+      operationId: getOneToMany
+      tags:
+        - E2
+        - E3
+      parameters:
+        - name: id
+          in: path
+          description: ID of E2 to fetch E3s
+          required: true
+          type: integer
+          format: int32
+        - name: include
+          in: query
+          description: include attribute
+          required: false
+          type: array
+          items:
+            type: string
+      responses:
+        "200":
+          description: Success responce
+          schema:
+            $ref: "#/definitions/E3"
+        default:
+          description: Unexpected error
+    put:
+      tags:
+        - E2
+        - E3
+      summary: Updates E3s Via E2
+      operationId: updateE3sViaE2
+      produces:
+        - application/xml
+        - application/json
+      parameters:
+        - name: id
+          in: path
+          description: ID of E2 to update
+          required: true
+          type: integer
+          format: int32
+        - in: body
+          name: body
+          description: Bulk updated E3 objects
+          schema:
+            $ref: "#/definitions/E3"
+      responses:
+        default:
+          description: successful operation
+    post:
+      tags:
+        - E2
+        - E3
+      summary: Creates E3s Via E2
+      operationId: createE3sViaE2
+      produces:
+        - application/xml
+        - application/json
+      parameters:
+        - name: id
+          in: path
+          description: ID of E2
+          required: true
+          type: integer
+          format: int32
+        - in: body
+          name: body
+          description: Created E3 objects
+          schema:
+            $ref: "#/definitions/E3"
+      responses:
+        default:
+          description: successful operation
+    delete:
+      description: Deletes E3s Via E2
+      operationId: deleteE3sViaE2
+      tags:
+        - E2
+        - E3
+      parameters:
+        - name: id
+          in: path
+          description: ID of E2 to delete E3s
+          required: true
+          type: integer
+          format: int32
+      responses:
+        "204":
+          description: All E3 items deleted
+        default:
+          description: unexpected error
+
+  /e2/{id}/e3s/{tid}:
+    parameters:
+      - name: id
+        in: path
+        description: ID of E2 to delete E3
+        required: true
+        type: integer
+        format: int32
+      - name: tid
+        in: path
+        description: ID of E3 to delete
+        required: true
+        type: integer
+        format: int32
+    get:
+      description: Returns E3 via E2
+      operationId: getE3viaE2
+      tags:
+        - E2
+        - E3
+      parameters:
+        - name: include
+          in: query
+          description: include attribute
+          required: false
+          type: array
+          items:
+            type: string
+      responses:
+        "200":
+          description: Success responce
+          schema:
+            $ref: "#/definitions/E3"
+        default:
+          description: Unexpected error
+    delete:
+      description: Deletes E3 Via E2
+      operationId: deleteE3ViaE2
+      tags:
+        - E2
+        - E3
+      responses:
+        "204":
+          description: E3 item deleted
+        default:
+          description: unexpected error
+
+  /e3:
+    post:
+      tags:
+        - E3
+      summary: Creates E3
+      operationId: create
+      produces:
+        - application/xml
+        - application/json
+      parameters:
+        - in: body
+          name: body
+          description: Created E3 object
+          schema:
+            $ref: "#/definitions/E3"
+        - name: include
+          in: query
+          description: include attribute
+          required: false
+          type: array
+          items:
+            type: string
+        - name: exclude
+          in: query
+          description: exclude attribute
+          required: false
+          type: array
+          items:
+            type: string
+      responses:
+        default:
+          description: successful operation
+    get:
+      summary: Get all E3s
+      operationId: getAll
+      tags:
+        - E3
+      parameters:
+        - name: sort
+          in: query
+          description: sorts result items
+          required: false
+          type: string
+        - name: include
+          in: query
+          description: include attribute
+          required: false
+          type: array
+          items:
+            type: string
+        - name: exclude
+          in: query
+          description: exclude attribute
+          required: false
+          type: array
+          items:
+            type: string
+        - name: limit
+          in: query
+          description: maximum number of results to return
+          required: false
+          type: integer
+          format: int32
+        - name: start
+          in: query
+          description: start offset of results to return
+          required: false
+          type: integer
+          format: int32
+        - name: mapBy
+          in: query
+          description: map responce by root entity
+          required: false
+          type: string
+        - name: cayenneExp
+          in: query
+          description: cayenneExp query
+          required: false
+          type: string
+      responses:
+        '200':
+          description: Success response.
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/E3"
+        default:
+          description: Unexpected error
+    put:
+      tags:
+        - E3
+      summary: Updates E3
+      operationId: updateAll
+      produces:
+        - application/xml
+        - application/json
+      parameters:
+        - in: body
+          name: body
+          description: Updated E3 object
+          schema:
+            $ref: "#/definitions/E3"
+        - name: include
+          in: query
+          description: include attribute
+          required: false
+          type: array
+          items:
+            type: string
+        - name: exclude
+          in: query
+          description: exclude attribute
+          required: false
+          type: array
+          items:
+            type: string
+      responses:
+        default:
+          description: successful operation
+
+  /e3/{id}:
+    get:
+      description: Returns a E3
+      operationId: getOne
+      tags:
+        - E3
+      parameters:
+        - name: id
+          in: path
+          description: ID of E3 to fetch
+          required: true
+          type: integer
+          format: int32
+        - name: include
+          in: query
+          description: include attribute
+          required: false
+          type: array
+          items:
+            type: string
+      responses:
+        "200":
+          description: Success responce
+          schema:
+            $ref: "#/definitions/E3"
+        default:
+          description: Unexpected error
+    put:
+      tags:
+        - E3
+      summary: Updates E3
+      operationId: update
+      produces:
+        - application/xml
+        - application/json
+      parameters:
+        - name: id
+          in: path
+          description: ID of E3 to update
+          required: true
+          type: integer
+          format: int32
+        - in: body
+          name: body
+          description: Updated E3 object
+          schema:
+            $ref: "#/definitions/E3"
+      responses:
+        default:
+          description: successful operation
+
+  /e3/{id}/e2:
+    get:
+      description: Returns a E2 related to E3
+      operationId: getOneByOne
+      tags:
+        - E3
+        - E2
+      parameters:
+        - name: id
+          in: path
+          description: ID of E3 to fetch E2
+          required: true
+          type: integer
+          format: int32
+        - name: include
+          in: query
+          description: include attribute
+          required: false
+          type: array
+          items:
+            type: string
+      responses:
+        "200":
+          description: Success responce
+          schema:
+            $ref: "#/definitions/E2"
+        default:
+          description: Unexpected error
+    delete:
+      description: Deletes E2 Via E3
+      operationId: deleteE2ViaE3
+      tags:
+        - E3
+        - E2
+      parameters:
+        - name: id
+          in: path
+          description: ID of E3 to delete E2
+          required: true
+          type: integer
+          format: int32
+      responses:
+        "204":
+          description: E2 item deleted
+        default:
+          description: unexpected error
+
+
+  /e3/{id}/e2/{tid}:
+    parameters:
+      - name: id
+        in: path
+        description: ID of E3 to select
+        required: true
+        type: integer
+        format: int32
+      - name: tid
+        in: path
+        description: ID of E2 to select
+        required: true
+        type: integer
+        format: int32
+    put:
+      tags:
+        - E3
+        - E2
+      summary: Updates E2 Via E3
+      operationId: updateE2ViaE3
+      produces:
+        - application/xml
+        - application/json
+      parameters:
+        - in: body
+          name: body
+          description: Updated E2 object
+          schema:
+            $ref: "#/definitions/E2"
+      responses:
+        default:
+          description: successful operation
+    delete:
+      description: Deletes E2 Via E3
+      operationId: deleteE2ViaE3
+      tags:
+        - E3
+        - E2
+      responses:
+        "204":
+          description: E2 item deleted
+        default:
+          description: unexpected error
+
+
+  /e4:
+    post:
+      tags:
+        - E4
+      summary: Creates E4
+      operationId: create
+      produces:
+        - application/xml
+        - application/json
+      parameters:
+        - in: body
+          name: body
+          description: Created E4 object
+          schema:
+            $ref: "#/definitions/E4"
+      responses:
+        default:
+          description: successful operation
+    get:
+      summary: Get all E4s
+      operationId: getAll
+      tags:
+        - E4
+      parameters:
+        - name: limit
+          in: query
+          description: maximum number of results to return
+          required: false
+          type: integer
+          format: int32
+        - name: sort
+          in: query
+          description: sorts result items
+          required: false
+          type: string
+        - name: include
+          in: query
+          description: include attribute
+          required: false
+          type: array
+          items:
+            type: string
+        - name: mapBy
+          in: query
+          description: map responce by root entity
+          required: false
+          type: string
+      responses:
+        '200':
+          description: Success response.
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/E4"
+        default:
+          description: Unexpected error
+  /e4/{id}:
+    get:
+      description: Returns a E4
+      operationId: getOne
+      tags:
+        - E4
+      parameters:
+        - name: id
+          in: path
+          description: ID of E4 to fetch
+          required: true
+          type: integer
+          format: int32
+        - name: include
+          in: query
+          description: include attribute
+          required: false
+          type: array
+          items:
+            type: string
+      responses:
+        "200":
+          description: Success responce
+          schema:
+            $ref: "#/definitions/E4"
+        default:
+          description: Unexpected error
+    delete:
+      description: Deletes a E4 item based on the ID supplied
+      operationId: delete
+      tags:
+        - E4
+      parameters:
+        - name: id
+          in: path
+          description: ID of E4 to update
+          required: true
+          type: integer
+          format: int32
+      responses:
+        "204":
+          description: E4 itesm deleted
+        default:
+          description: unexpected error
+    put:
+      tags:
+        - E4
+      summary: Updates E4
+      operationId: update
+      produces:
+        - application/xml
+        - application/json
+      parameters:
+        - name: id
+          in: path
+          description: ID of E4 to update
+          required: true
+          type: integer
+          format: int32
+        - in: body
+          name: body
+          description: Updated E4 object
+          schema:
+            $ref: "#/definitions/E4"
+      responses:
+        default:
+          description: successful operation
+
+  /e5:
+    get:
+      summary: Get all E5s
+      operationId: getAll
+      tags:
+        - E5
+      responses:
+        '200':
+          description: Success response.
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/E5"
+        default:
+          description: Unexpected error
+    post:
+      tags:
+        - E5
+      summary: Create E5
+      operationId: create
+      produces:
+        - application/xml
+        - application/json
+      parameters:
+        - in: body
+          name: body
+          description: Created E5 object
+          schema:
+            $ref: "#/definitions/E5"
+      responses:
+        default:
+          description: successful operation
+  /e20:
+    post:
+      tags:
+        - E20
+      summary: Create E20
+      operationId: create
+      produces:
+        - application/xml
+        - application/json
+      parameters:
+        - in: body
+          name: body
+          description: Created E20 object
+          schema:
+            $ref: "#/definitions/E20"
+        - name: exclude
+          in: query
+          description: exclude attribute
+          required: false
+          type: array
+          items:
+            type: string
+      responses:
+        default:
+          description: successful operation
+
+  /e20/{name}:
+    get:
+      description: Returns a E20 by natural ID
+      operationId: getOneByName
+      produces:
+      tags:
+        - E20
+      parameters:
+        - name: name
+          in: path
+          description: name of E20 to fetch
+          required: true
+          type: string
+        - name: exclude
+          in: query
+          description: exclude attribute
+          required: false
+          type: array
+          items:
+            type: string
+      responses:
+        "200":
+          description: Success responce
+          schema:
+            $ref: "#/definitions/E20"
+        default:
+          description: Unexpected error
+    delete:
+      description: Deletes a E20 item based on the Name supplied
+      operationId: deleteByName
+      tags:
+        - E20
+      parameters:
+        - name: name
+          in: path
+          description: name of E20 to delete
+          required: true
+          type: string
+      responses:
+        "204":
+          description: E20 item was deleted
+        default:
+          description: unexpected error
+    put:
+      tags:
+        - E20
+      summary: Updates E20
+      operationId: updateByName
+      produces:
+        - application/xml
+        - application/json
+      parameters:
+        - name: name
+          in: path
+          description: name of E20 to update
+          required: true
+          type: string
+        - in: body
+          name: body
+          description: Updated E20 object
+          schema:
+            $ref: "#/definitions/E20"
+      responses:
+        default:
+          description: successful operation
+
+  /e21:
+    get:
+      description: Returns a E21 by natural ID
+      operationId: getOneByCompoundId
+      tags:
+        - E21
+      parameters:
+        - name: name
+          in: query
+          description: name attribute
+          required: true
+          type: string
+        - name: age
+          in: query
+          description: age attribute
+          required: true
+          type: integer
+          format: int32
+        - name: exclude
+          in: query
+          description: exclude attribute
+          required: false
+          type: array
+          items:
+            type: string
+      responses:
+        "200":
+          description: Success responce
+          schema:
+            $ref: "#/definitions/E21"
+        default:
+          description: Unexpected error
+    delete:
+      description: Deletes a E21 item based on name and age
+      operationId: deleteByCompoundId
+      tags:
+        - E21
+      parameters:
+        - name: name
+          in: query
+          description: name attribute
+          required: true
+          type: string
+        - name: age
+          in: query
+          description: age attribute
+          required: true
+          type: integer
+          format: int32
+      responses:
+        "204":
+          description: E21 item was deleted
+        default:
+          description: unexpected error
+    post:
+      tags:
+        - E21
+      summary: Create E21
+      operationId: create
+      produces:
+        - application/xml
+        - application/json
+      parameters:
+        - in: body
+          name: body
+          description: Created E21 object
+          schema:
+            $ref: "#/definitions/E21"
+        - name: exclude
+          in: query
+          description: exclude attribute
+          required: false
+          type: array
+          items:
+            type: string
+      responses:
+        default:
+          description: successful operation
+    put:
+      tags:
+        - E21
+      summary: Updates E21
+      operationId: updateByCompoundId
+      produces:
+        - application/xml
+        - application/json
+      parameters:
+        - name: name
+          in: query
+          description: name attribute
+          required: true
+          type: string
+        - name: age
+          in: query
+          description: age attribute
+          required: true
+          type: integer
+          format: int32
+        - in: body
+          name: body
+          description: Updated E21 object
+          schema:
+            $ref: "#/definitions/E21"
+      responses:
+        default:
+          description: successful operation
+
+
+definitions:
+  E1:
+    type: object
+    properties:
+      id:
+        type: string
+        description: Unique ID of E1
+        example: 1
+      name:
+        type: string
+        description: E1 name
+        example: My E1 #1
+      age:
+        type: string
+        description: age of E1
+        example: 21
+      description:
+        type: string
+        description: My E1 description
+        example: My E1 description
+  E2:
+    type: object
+    properties:
+      id:
+        type: string
+        description: Unique ID of E2
+        example: 1
+      name:
+        type: string
+        description: E2 name
+        example: My E2
+      address:
+        type: string
+        description: address of E2
+        example: 445 Mount Eden Road, Mount Eden, Auckland
+      e3s:
+        type: array
+        items:
+          $ref: "#/definitions/E3"
+  E3:
+    type: object
+    properties:
+      id:
+        type: string
+        description: Unique ID of E3
+        example: 1
+      name:
+        type: string
+        description: E3 name
+        example: My E3
+      phoneNumber:
+        type: string
+        description: phone number of E2
+        example: +15417543010
+      e2:
+        $ref: "#/definitions/E2"
+      e5:
+        $ref: "#/definitions/E5"
+  E4:
+    type: object
+    properties:
+      id:
+        type: string
+        description: Unique ID of E4
+        example: 1
+      cBoolean:
+        type: boolean
+      cDate:
+        type: string
+        format: date-time
+      cDecimal:
+        type: number
+        format: float
+      cInt:
+        type: integer
+        format: int32
+      cTime:
+        type: string
+        format: date-time
+      cTimestamp:
+        type: string
+        format: date-time
+      cVarchar:
+        type: string
+  E5:
+    type: object
+    properties:
+      id:
+        type: string
+        description: Unique ID of E5
+        example: 1
+      name:
+        type: string
+        description: E5 name
+        example: My E5
+      date:
+        type: string
+        format: date-time
+
+  E20:
+    type: object
+    properties:
+      id:
+        type: string
+        description: Unique ID of E20
+        example: 1
+      name:
+        type: string
+        description: E20 name
+        example: My E20
+      description:
+        type: string
+        description: description of E20
+      age:
+        type: string
+        description: age of E20
+        example: 21
+      e21:
+        $ref: "#/definitions/E21"
+
+  E21:
+    type: object
+    properties:
+      id:
+        type: string
+        description: Unique ID of E21
+        example: 1
+      name:
+        type: string
+        description: E21 name
+        example: My E21
+      description:
+        type: string
+        description: description of E21
+      age:
+        type: string
+        description: age of E21
+        example: 15
