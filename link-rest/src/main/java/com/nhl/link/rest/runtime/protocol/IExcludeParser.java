@@ -12,4 +12,6 @@ import java.util.List;
 public interface IExcludeParser {
 
     List<Exclude> fromStrings(List<String> values);
+
+    Exclude oneFromString(String value);
 }
