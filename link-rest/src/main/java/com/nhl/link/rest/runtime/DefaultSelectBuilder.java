@@ -4,6 +4,7 @@ import com.nhl.link.rest.DataResponse;
 import com.nhl.link.rest.EntityParent;
 import com.nhl.link.rest.EntityProperty;
 import com.nhl.link.rest.LinkRestException;
+import com.nhl.link.rest.LrRequest;
 import com.nhl.link.rest.SelectBuilder;
 import com.nhl.link.rest.SelectStage;
 import com.nhl.link.rest.SizeConstraints;
@@ -194,6 +195,15 @@ public class DefaultSelectBuilder<T> implements SelectBuilder<T> {
         return this;
     }
 
+    /**
+     * @since 2.13
+     */
+    @Override
+    public SelectBuilder<T> request(LrRequest lrRequest) {
+        this.context.setRequest(lrRequest);
+        return this;
+    }
+
     @Override
     public DataResponse<T> get() {
 
@@ -210,5 +220,4 @@ public class DefaultSelectBuilder<T> implements SelectBuilder<T> {
         processorFactory.createProcessor(processors).execute(context);
         return context.createDataResponse();
     }
-
 }

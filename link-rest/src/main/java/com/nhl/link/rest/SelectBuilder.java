@@ -204,9 +204,9 @@ public interface SelectBuilder<T> {
     DataResponse<T> getOne();
 
     /**
-     * @deprecated since 2.4 in favor of {@link #getOne()}.
+     * Forces the builder to make selection using query parameters encapsulated in LrRequest.
+     *
+     * @since 2.13
      */
-    default DataResponse<T> selectOne() {
-        return getOne();
-    }
+    SelectBuilder<T> request(LrRequest lrRequest);
 }
