@@ -9,7 +9,7 @@ public {{>returnTypes}} {{nickname}}({{#allParams}}{{>pathParams}}{{>queryParams
             {{/isQueryParam}}
         {{/modelAttributes}}
 
-        {{>methodsImpl}}
+        {{>protocolImpl}}
 
         return LinkRest.select({{{returnType}}}.class, config)
                     .constraint({{>constraintParams}}
@@ -22,7 +22,7 @@ public {{>returnTypes}} {{nickname}}({{#allParams}}{{>pathParams}}{{>queryParams
     {{^hasCompoundId}}
 public {{>returnTypes}} {{nickname}}({{#allParams}}{{>pathParams}}{{>queryParams}}{{#hasMore}}, {{/hasMore}}{{/allParams}}) {
 
-        {{>methodsImpl}}
+        {{>protocolImpl}}
 
         return LinkRest.select({{{returnType}}}.class, config)
                     .constraint({{>constraintParams}}
@@ -35,7 +35,7 @@ public {{>returnTypes}} {{nickname}}({{#allParams}}{{>pathParams}}{{>queryParams
 {{#isRestfulShow}}
     public {{>returnTypes}} {{nickname}}({{#allParams}}{{>pathParams}}{{>queryParams}}{{#hasMore}}, {{/hasMore}}{{/allParams}}) {
 
-        {{>methodsImpl}}
+        {{>protocolImpl}}
 
         return LinkRest.select({{{returnType}}}.class, config)
                     .constraint({{>constraintParams}}
@@ -48,7 +48,7 @@ public {{>returnTypes}} {{nickname}}({{#allParams}}{{>pathParams}}{{>queryParams
 {{#isRestfulIndexRelated}}
     public DataResponse<{{#modelRelations}}{{returnType}}{{/modelRelations}}> {{nickname}}({{#allParams}}{{>pathParams}}{{>queryParams}}{{>bodyParams}}{{#hasMore}}, {{/hasMore}}{{/allParams}}) {
 
-        {{>methodsImpl}}
+        {{>protocolImpl}}
 
         return LinkRest.select({{#modelRelations}}{{returnType}}{{/modelRelations}}.class, config)
                     .constraint({{#modelRelations}}{{>constraintParams}}{{/modelRelations}}
@@ -62,7 +62,7 @@ public {{>returnTypes}} {{nickname}}({{#allParams}}{{>pathParams}}{{>queryParams
 {{#isRestfulIndexToMany}}
     public DataResponse<{{#modelRelations}}{{returnType}}{{/modelRelations}}> {{nickname}}({{#allParams}}{{>pathParams}}{{>queryParams}}{{#hasMore}}, {{/hasMore}}{{/allParams}}) {
 
-        {{>methodsImpl}}
+        {{>protocolImpl}}
 
         return LinkRest.select({{#modelRelations}}{{returnType}}{{/modelRelations}}.class, config)
                     .constraint({{#modelRelations}}{{>constraintParams}}{{/modelRelations}}

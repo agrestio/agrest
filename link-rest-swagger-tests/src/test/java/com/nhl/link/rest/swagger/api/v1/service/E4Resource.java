@@ -2,7 +2,11 @@ package com.nhl.link.rest.swagger.api.v1.service;
 
 import com.nhl.link.rest.it.fixture.cayenne.*;
 import com.nhl.link.rest.it.fixture.cayenne.E4;
+import com.nhl.link.rest.protocol.Limit;
+import com.nhl.link.rest.protocol.MapBy;
+import com.nhl.link.rest.protocol.Sort;
 
+import com.nhl.link.rest.LrRequest;
 import com.nhl.link.rest.DataResponse;
 
 import java.util.*;
@@ -24,12 +28,14 @@ public class E4Resource {
     @Consumes({ "application/json" })
     public DataResponse<E4> create(String e4) {
 
+        LrRequest lrRequest = LrRequest.builder()
+                .build();
+
         return LinkRest.create(E4.class, config)
                     .readConstraint(Constraint.excludeAll(E4.class).includeId().attributes("cDecimal", "cDate", "cTimestamp", "cTime", "cVarchar", "cBoolean", "cInt")
 
                     )
-                    
-
+                    .request(lrRequest)
                     .syncAndSelect(e4);
     }
 
@@ -45,33 +51,38 @@ public class E4Resource {
     @GET
     @Path("/v1/e4")
     @Produces({ "application/json" })
-    public DataResponse<E4> getAll(@QueryParam("limit") Integer limit, @QueryParam("sort") String sort, @QueryParam("include") List<String> include, @QueryParam("mapBy") String mapBy) {
+    public DataResponse<E4> getAll(@QueryParam("limit") Limit limit, @QueryParam("sort") Sort sort, @QueryParam("include") List<com.nhl.link.rest.protocol.Include> includes, @QueryParam("mapBy") MapBy mapBy) {
+
+        LrRequest lrRequest = LrRequest.builder()
+                .limit(limit)
+                .sort(sort)
+                .includes(includes)
+                .mapBy(mapBy)
+                .build();
+
         return LinkRest.select(E4.class, config)
                     .constraint(Constraint.excludeAll(E4.class).includeId().attributes("cDecimal", "cDate", "cTimestamp", "cTime", "cVarchar", "cBoolean", "cInt")
 
                     )
-                    
-                    .limit(limit)
-                    .sort(sort)
-                    .include(include)
-                    .mapBy(mapBy)
-
+                    .request(lrRequest)
                     .get();
     }
 
     @GET
     @Path("/v1/e4/{id}")
     @Produces({ "application/json" })
-        public DataResponse<E4> getOne(@PathParam("id") Integer id, @QueryParam("include") List<String> include) {
+        public DataResponse<E4> getOne(@PathParam("id") Integer id, @QueryParam("include") List<com.nhl.link.rest.protocol.Include> includes) {
+
+        LrRequest lrRequest = LrRequest.builder()
+                .includes(includes)
+                .build();
 
         return LinkRest.select(E4.class, config)
                     .constraint(Constraint.excludeAll(E4.class).includeId().attributes("cDecimal", "cDate", "cTimestamp", "cTime", "cVarchar", "cBoolean", "cInt")
 
                     )
                     .byId(id)
-                    
-                    .include(include)
-
+                    .request(lrRequest)
                     .get();
     }
 
@@ -80,13 +91,15 @@ public class E4Resource {
     @Consumes({ "application/json" })
     public DataResponse<E4> update(@PathParam("id") Integer id, String e4) {
 
+        LrRequest lrRequest = LrRequest.builder()
+                .build();
+
         return LinkRest.idempotentCreateOrUpdate(E4.class, config)
                     .readConstraint(Constraint.excludeAll(E4.class).includeId().attributes("cDecimal", "cDate", "cTimestamp", "cTime", "cVarchar", "cBoolean", "cInt")
 
                     )
                     .id(id)
-                    
-
+                    .request(lrRequest)
                     .syncAndSelect(e4);
     }
 

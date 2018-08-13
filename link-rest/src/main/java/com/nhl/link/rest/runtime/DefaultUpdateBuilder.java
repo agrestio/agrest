@@ -4,6 +4,7 @@ import com.nhl.link.rest.DataResponse;
 import com.nhl.link.rest.EntityParent;
 import com.nhl.link.rest.EntityUpdate;
 import com.nhl.link.rest.LinkRestException;
+import com.nhl.link.rest.LrRequest;
 import com.nhl.link.rest.ObjectMapperFactory;
 import com.nhl.link.rest.SimpleResponse;
 import com.nhl.link.rest.UpdateBuilder;
@@ -152,6 +153,15 @@ public class DefaultUpdateBuilder<T> implements UpdateBuilder<T> {
     @Override
     public <U> UpdateBuilder<T> routingStage(UpdateStage afterStage, Processor<UpdateContext<U>> customStage) {
         return routingStage_NoGenerics(afterStage, customStage);
+    }
+
+    /**
+     * @since 2.13
+     */
+    @Override
+    public UpdateBuilder<T> request(LrRequest lrRequest) {
+        this.context.setRequest(lrRequest);
+        return this;
     }
 
     private <U> UpdateBuilder<T> routingStage_NoGenerics(UpdateStage afterStage, Processor customStage) {

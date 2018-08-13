@@ -34,7 +34,7 @@ components:
       required: false
 
     Excludes:
-      name: excludes
+      name: exclude
       in: query
       style: form
       explode: false
@@ -55,7 +55,7 @@ components:
       required: false
 
     Includes:
-      name: includes
+      name: include
       in: query
       style: form
       explode: false
@@ -73,4 +73,70 @@ components:
         type: object
         properties:
       description: An include parameter
+      required: false
+
+    Limit:
+      name: limit
+      in: query
+      style: form
+      explode: false
+      schema:
+        type: object
+        properties:
+          value:
+            type: integer
+            format: int32
+            description:
+      description: limit query param. Used for pagination.
+      required: false
+
+    Start:
+      name: start
+      in: query
+      style: form
+      explode: false
+      schema:
+        type: object
+        properties:
+          value:
+            type: integer
+            format: int32
+            description:
+      description: start query param. Used for pagination.
+      required: false
+
+    MapBy:
+      name: mapBy
+      in: query
+      style: form
+      explode: false
+      schema:
+        type: object
+        properties:
+          path:
+            type: string
+            description:
+      description:
+      required: false
+
+    Sort:
+      name: sort
+      in: query
+      style: form
+      explode: false
+      schema:
+        type: object
+        properties:
+          property:
+            type: string
+            description:
+          direction:
+            type: object
+            $ref: '#/components/queryParams/Dir'
+
+#          sorts:
+#            type: array
+#            items:
+#              $ref: '#/components/queryParams/Sort'
+      description: sort
       required: false

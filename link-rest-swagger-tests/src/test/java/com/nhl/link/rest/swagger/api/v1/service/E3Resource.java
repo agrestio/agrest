@@ -1,9 +1,15 @@
 package com.nhl.link.rest.swagger.api.v1.service;
 
 import com.nhl.link.rest.it.fixture.cayenne.*;
+import com.nhl.link.rest.protocol.CayenneExp;
 import com.nhl.link.rest.it.fixture.cayenne.E2;
 import com.nhl.link.rest.it.fixture.cayenne.E3;
+import com.nhl.link.rest.protocol.Limit;
+import com.nhl.link.rest.protocol.MapBy;
+import com.nhl.link.rest.protocol.Sort;
+import com.nhl.link.rest.protocol.Start;
 
+import com.nhl.link.rest.LrRequest;
 import com.nhl.link.rest.DataResponse;
 
 import java.util.*;
@@ -23,7 +29,12 @@ public class E3Resource {
     @POST
     @Path("/v1/e3")
     @Consumes({ "application/json" })
-    public DataResponse<E3> create(String e3, @QueryParam("include") List<String> include, @QueryParam("exclude") List<String> exclude) {
+    public DataResponse<E3> create(String e3, @QueryParam("include") List<com.nhl.link.rest.protocol.Include> includes, @QueryParam("exclude") List<com.nhl.link.rest.protocol.Exclude> excludes) {
+
+        LrRequest lrRequest = LrRequest.builder()
+                .includes(includes)
+                .excludes(excludes)
+                .build();
 
         return LinkRest.create(E3.class, config)
                     .readConstraint(Constraint.excludeAll(E3.class).includeId().attributes("name", "phoneNumber")
@@ -35,10 +46,7 @@ public class E3Resource {
                         )
 
                     )
-                    
-                    .include(include)
-                    .exclude(exclude)
-
+                    .request(lrRequest)
                     .syncAndSelect(e3);
     }
 
@@ -61,7 +69,18 @@ public class E3Resource {
     @GET
     @Path("/v1/e3")
     @Produces({ "application/json" })
-    public DataResponse<E3> getAll(@QueryParam("sort") String sort, @QueryParam("include") List<String> include, @QueryParam("exclude") List<String> exclude, @QueryParam("limit") Integer limit, @QueryParam("start") Integer start, @QueryParam("mapBy") String mapBy, @QueryParam("cayenneExp") String cayenneExp) {
+    public DataResponse<E3> getAll(@QueryParam("sort") Sort sort, @QueryParam("include") List<com.nhl.link.rest.protocol.Include> includes, @QueryParam("exclude") List<com.nhl.link.rest.protocol.Exclude> excludes, @QueryParam("limit") Limit limit, @QueryParam("start") Start start, @QueryParam("mapBy") MapBy mapBy, @QueryParam("cayenneExp") CayenneExp cayenneExp) {
+
+        LrRequest lrRequest = LrRequest.builder()
+                .sort(sort)
+                .includes(includes)
+                .excludes(excludes)
+                .limit(limit)
+                .start(start)
+                .mapBy(mapBy)
+                .cayenneExp(cayenneExp)
+                .build();
+
         return LinkRest.select(E3.class, config)
                     .constraint(Constraint.excludeAll(E3.class).includeId().attributes("name", "phoneNumber")
                         .path("e2",Constraint.excludeAll(E2.class).includeId().attributes("name", "address")
@@ -72,22 +91,18 @@ public class E3Resource {
                         )
 
                     )
-                    
-                    .sort(sort)
-                    .include(include)
-                    .exclude(exclude)
-                    .limit(limit)
-                    .start(start)
-                    .mapBy(mapBy)
-                    .cayenneExp(cayenneExp)
-
+                    .request(lrRequest)
                     .get();
     }
 
     @GET
     @Path("/v1/e3/{id}")
     @Produces({ "application/json" })
-        public DataResponse<E3> getOne(@PathParam("id") Integer id, @QueryParam("include") List<String> include) {
+        public DataResponse<E3> getOne(@PathParam("id") Integer id, @QueryParam("include") List<com.nhl.link.rest.protocol.Include> includes) {
+
+        LrRequest lrRequest = LrRequest.builder()
+                .includes(includes)
+                .build();
 
         return LinkRest.select(E3.class, config)
                     .constraint(Constraint.excludeAll(E3.class).includeId().attributes("name", "phoneNumber")
@@ -100,25 +115,25 @@ public class E3Resource {
 
                     )
                     .byId(id)
-                    
-                    .include(include)
-
+                    .request(lrRequest)
                     .get();
     }
 
     @GET
     @Path("/v1/e3/{id}/e2")
     @Produces({ "application/json" })
-        public DataResponse<E2> getOneByOne(@PathParam("id") Integer id, @QueryParam("include") List<String> include) {
+        public DataResponse<E2> getOneByOne(@PathParam("id") Integer id, @QueryParam("include") List<com.nhl.link.rest.protocol.Include> includes) {
+
+        LrRequest lrRequest = LrRequest.builder()
+                .includes(includes)
+                .build();
 
         return LinkRest.select(E2.class, config)
                     .constraint(Constraint.excludeAll(E2.class).includeId().attributes("name", "address")
 
                     )
                     .parent(E3.class, id, "e2")
-                    
-                    .include(include)
-
+                    .request(lrRequest)
                     .get();
     }
 
@@ -126,6 +141,9 @@ public class E3Resource {
     @Path("/v1/e3/{id}")
     @Consumes({ "application/json" })
     public DataResponse<E3> update(@PathParam("id") Integer id, String e3) {
+
+        LrRequest lrRequest = LrRequest.builder()
+                .build();
 
         return LinkRest.idempotentCreateOrUpdate(E3.class, config)
                     .readConstraint(Constraint.excludeAll(E3.class).includeId().attributes("name", "phoneNumber")
@@ -138,15 +156,19 @@ public class E3Resource {
 
                     )
                     .id(id)
-                    
-
+                    .request(lrRequest)
                     .syncAndSelect(e3);
     }
 
     @PUT
     @Path("/v1/e3")
     @Consumes({ "application/json" })
-    public DataResponse<E3> updateAll(String e3, @QueryParam("include") List<String> include, @QueryParam("exclude") List<String> exclude) {
+    public DataResponse<E3> updateAll(String e3, @QueryParam("include") List<com.nhl.link.rest.protocol.Include> includes, @QueryParam("exclude") List<com.nhl.link.rest.protocol.Exclude> excludes) {
+
+        LrRequest lrRequest = LrRequest.builder()
+                .includes(includes)
+                .excludes(excludes)
+                .build();
 
         return LinkRest.idempotentCreateOrUpdate(E3.class, config)
                     .readConstraint(Constraint.excludeAll(E3.class).includeId().attributes("name", "phoneNumber")
@@ -158,10 +180,7 @@ public class E3Resource {
                         )
 
                     )
-                    
-                    .include(include)
-                    .exclude(exclude)
-
+                    .request(lrRequest)
                     .syncAndSelect(e3);
     }
 
@@ -170,14 +189,16 @@ public class E3Resource {
     @Consumes({ "application/json" })
     public DataResponse<E2> updateE2ViaE3(@PathParam("id") Integer id, @PathParam("tid") Integer tid, String e2) {
 
+        LrRequest lrRequest = LrRequest.builder()
+                .build();
+
         return LinkRest.idempotentCreateOrUpdate(E2.class, config)
                     .readConstraint(Constraint.excludeAll(E2.class).includeId().attributes("name", "address")
 
                     )
                     .id(tid)
                     .parent(E3.class, id, E3.E2)
-                    
-
+                    .request(lrRequest)
                     .syncAndSelect(e2);
     }
 

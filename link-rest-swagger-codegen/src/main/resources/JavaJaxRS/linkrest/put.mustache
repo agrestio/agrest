@@ -1,7 +1,7 @@
 {{#isRestfulUpdate}}
 public {{>returnTypes}} {{nickname}}({{#allParams}}{{>pathParams}}{{>queryParams}}{{>bodyParams}}{{#hasMore}}, {{/hasMore}}{{/allParams}}) {
 
-        {{>methodsImpl}}
+        {{>protocolImpl}}
 
         return LinkRest.idempotentCreateOrUpdate({{{returnType}}}.class, config)
                     .readConstraint({{>constraintParams}}
@@ -23,7 +23,7 @@ public {{>returnTypes}} {{nickname}}({{#allParams}}{{>pathParams}}{{>queryParams
         {{/modelAttributes}}
 
 
-        {{>methodsImpl}}
+        {{>protocolImpl}}
 
         return LinkRest.idempotentCreateOrUpdate({{{returnType}}}.class, config)
                     .readConstraint({{>constraintParams}}
@@ -36,7 +36,7 @@ public {{>returnTypes}} {{nickname}}({{#allParams}}{{>pathParams}}{{>queryParams
     {{^hasCompoundId}}
 public {{>returnTypes}} {{nickname}}({{#allParams}}{{>pathParams}}{{>queryParams}}{{>bodyParams}}{{#hasMore}}, {{/hasMore}}{{/allParams}}) {
 
-        {{>methodsImpl}}
+        {{>protocolImpl}}
 
         return LinkRest.idempotentCreateOrUpdate({{{returnType}}}.class, config)
                     .readConstraint({{>constraintParams}}
@@ -49,7 +49,7 @@ public {{>returnTypes}} {{nickname}}({{#allParams}}{{>pathParams}}{{>queryParams
 {{#isRestfulRelatedUpdate}}
 public DataResponse<{{#bodyParams}}{{dataType}}{{/bodyParams}}> {{nickname}}({{#allParams}}{{>pathParams}}{{>queryParams}}{{>bodyParams}}{{#hasMore}}, {{/hasMore}}{{/allParams}}) {
 
-        {{>methodsImpl}}
+        {{>protocolImpl}}
 
         return LinkRest.idempotentCreateOrUpdate({{#bodyParams}}{{dataType}}{{/bodyParams}}.class, config)
                     .readConstraint({{#modelRelations}}{{>constraintParams}}{{/modelRelations}}
@@ -63,7 +63,7 @@ public DataResponse<{{#bodyParams}}{{dataType}}{{/bodyParams}}> {{nickname}}({{#
 {{#isRestfulRelatedToManyUpdate}}
 public DataResponse<{{#bodyParams}}{{dataType}}{{/bodyParams}}> {{nickname}}({{#allParams}}{{>pathParams}}{{>queryParams}}{{>bodyParams}}{{#hasMore}}, {{/hasMore}}{{/allParams}}) {
 
-        {{>methodsImpl}}
+        {{>protocolImpl}}
 
         return LinkRest.idempotentCreateOrUpdate({{#bodyParams}}{{dataType}}{{/bodyParams}}.class, config)
                     .readConstraint({{#modelRelations}}{{>constraintParams}}{{/modelRelations}}

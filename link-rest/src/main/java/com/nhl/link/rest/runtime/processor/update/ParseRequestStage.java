@@ -5,6 +5,8 @@ import com.nhl.link.rest.LrRequest;
 import com.nhl.link.rest.meta.LrEntity;
 import com.nhl.link.rest.processor.Processor;
 import com.nhl.link.rest.processor.ProcessorOutcome;
+import com.nhl.link.rest.protocol.Exclude;
+import com.nhl.link.rest.protocol.Include;
 import com.nhl.link.rest.runtime.meta.IMetadataService;
 import com.nhl.link.rest.runtime.protocol.IEntityUpdateParser;
 import com.nhl.link.rest.runtime.protocol.ParameterExtractor;
@@ -51,15 +53,16 @@ public class ParseRequestStage implements Processor<UpdateContext<?>> {
 
         // Parse response parameters..
 
+        LrRequest request = context.getRequest();
+
         // TODO: should we skip this for SimpleResponse-returning updates?
         Map<String, List<String>> protocolParameters = context.getProtocolParameters();
 
-        LrRequest request = LrRequest.builder()
-                .includes(includeParser.fromStrings(ParameterExtractor.strings(protocolParameters, PROTOCOL_KEY_INCLUDE)))
-                .excludes(excludeParser.fromStrings(ParameterExtractor.strings(protocolParameters, PROTOCOL_KEY_EXCLUDE)))
-                .build();
+        LrRequest.Builder requestBuilder = LrRequest.builder()
+                .includes(getIncludes(request, protocolParameters))
+                .excludes(getExcludes(request, protocolParameters));
 
-        context.setRawRequest(request);
+        context.setRawRequest(requestBuilder.build());
 
         // Parse updates payload..
         // skip parsing if we already received EntityUpdates collection parsed by MessageBodyReader
@@ -69,4 +72,17 @@ public class ParseRequestStage implements Processor<UpdateContext<?>> {
             context.setUpdates(updates);
         }
     }
+
+    private List<Include> getIncludes(LrRequest request, Map<String, List<String>> protocolParameters) {
+        return request != null && !request.getIncludes().isEmpty() ?
+                request.getIncludes() :
+                includeParser.fromStrings(ParameterExtractor.strings(protocolParameters, PROTOCOL_KEY_INCLUDE));
+    }
+
+    private List<Exclude> getExcludes(LrRequest request, Map<String, List<String>> protocolParameters) {
+        return request != null && !request.getExcludes().isEmpty() ?
+                request.getExcludes() :
+                excludeParser.fromStrings(ParameterExtractor.strings(protocolParameters, PROTOCOL_KEY_EXCLUDE));
+    }
 }
+

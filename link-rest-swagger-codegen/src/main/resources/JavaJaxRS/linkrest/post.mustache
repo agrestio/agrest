@@ -1,7 +1,7 @@
 {{#isRestfulCreate}}
 public {{>returnTypes}} {{nickname}}({{#allParams}}{{>pathParams}}{{>queryParams}}{{>bodyParams}}{{#hasMore}}, {{/hasMore}}{{/allParams}}) {
 
-        {{>methodsImpl}}
+        {{>protocolImpl}}
 
         return LinkRest.create({{{returnType}}}.class, config)
                     .readConstraint({{>constraintParams}}
@@ -13,7 +13,7 @@ public {{>returnTypes}} {{nickname}}({{#allParams}}{{>pathParams}}{{>queryParams
 {{#isRestfulRelatedToManyCreate}}
 public DataResponse<{{#bodyParams}}{{dataType}}{{/bodyParams}}> {{nickname}}({{#allParams}}{{>pathParams}}{{>queryParams}}{{>bodyParams}}{{#hasMore}}, {{/hasMore}}{{/allParams}}) {
 
-        {{>methodsImpl}}
+        {{>protocolImpl}}
 
         return LinkRest.createOrUpdate({{#bodyParams}}{{dataType}}{{/bodyParams}}.class, config)
                     .readConstraint({{#modelRelations}}{{>constraintParams}}{{/modelRelations}}

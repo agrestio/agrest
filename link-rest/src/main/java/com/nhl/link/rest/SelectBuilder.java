@@ -204,8 +204,25 @@ public interface SelectBuilder<T> {
     DataResponse<T> getOne();
 
     /**
-     * Forces the builder to make selection using query parameters encapsulated in LrRequest.
+     * Forces the builder to make selection using explicit query parameters encapsulated in LrRequest.
+     * These explicit parameters overwrite query parameters from UriInfo object.
      *
+     * <pre>{@code
+     *
+     * 		public DataResponse<E2> getE2(@Context UriInfo uriInfo, @QueryParam CayenneExp cayenneExp) {
+     * 			// Explicit query parameter
+     * 			LrRequest lrRequest = LrRequest.builder().cayenneExp(cayenneExp).build();
+     *
+     * 			return LinkRest.service(config).select(E2.class)
+     * 							.uri(uriInfo)
+     * 							.request(lrRequest) // overrides parameters from uriInfo
+     * 							.get();
+     * 		}
+     *
+     * }</pre>
+     *
+     * @param lrRequest an instance of LrRequest that holds all explicit query parameters.
+     * @return this builder instance.
      * @since 2.13
      */
     SelectBuilder<T> request(LrRequest lrRequest);

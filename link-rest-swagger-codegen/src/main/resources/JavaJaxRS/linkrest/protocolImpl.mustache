@@ -1,0 +1,5 @@
+LrRequest lrRequest = LrRequest.builder()
+{{#queryParams}}
+                .{{baseName}}{{#isContainer}}s{{/isContainer}}({{paramName}}{{#isContainer}}s{{/isContainer}})
+{{/queryParams}}
+                .build();

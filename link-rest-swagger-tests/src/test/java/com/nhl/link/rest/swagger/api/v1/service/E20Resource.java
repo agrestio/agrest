@@ -3,6 +3,7 @@ package com.nhl.link.rest.swagger.api.v1.service;
 import com.nhl.link.rest.it.fixture.cayenne.*;
 import com.nhl.link.rest.it.fixture.cayenne.E20;
 
+import com.nhl.link.rest.LrRequest;
 import com.nhl.link.rest.DataResponse;
 
 import java.util.*;
@@ -22,7 +23,11 @@ public class E20Resource {
     @POST
     @Path("/v1/e20")
     @Consumes({ "application/json" })
-    public DataResponse<E20> create(String e20, @QueryParam("exclude") List<String> exclude) {
+    public DataResponse<E20> create(String e20, @QueryParam("exclude") List<com.nhl.link.rest.protocol.Exclude> excludes) {
+
+        LrRequest lrRequest = LrRequest.builder()
+                .excludes(excludes)
+                .build();
 
         return LinkRest.create(E20.class, config)
                     .readConstraint(Constraint.excludeAll(E20.class).includeId().attributes("description", "age", "name")
@@ -31,9 +36,7 @@ public class E20Resource {
                         )
 
                     )
-                    
-                    .exclude(exclude)
-
+                    .request(lrRequest)
                     .syncAndSelect(e20);
     }
 
@@ -49,7 +52,11 @@ public class E20Resource {
     @GET
     @Path("/v1/e20/{name}")
     @Produces({ "application/json" })
-        public DataResponse<E20> getOneByName(@PathParam("name") String name, @QueryParam("exclude") List<String> exclude) {
+        public DataResponse<E20> getOneByName(@PathParam("name") String name, @QueryParam("exclude") List<com.nhl.link.rest.protocol.Exclude> excludes) {
+
+        LrRequest lrRequest = LrRequest.builder()
+                .excludes(excludes)
+                .build();
 
         return LinkRest.select(E20.class, config)
                     .constraint(Constraint.excludeAll(E20.class).includeId().attributes("description", "age", "name")
@@ -59,9 +66,7 @@ public class E20Resource {
 
                     )
                     .byId(name)
-                    
-                    .exclude(exclude)
-
+                    .request(lrRequest)
                     .get();
     }
 
@@ -69,6 +74,9 @@ public class E20Resource {
     @Path("/v1/e20/{name}")
     @Consumes({ "application/json" })
     public DataResponse<E20> updateByName(@PathParam("name") String name, String e20) {
+
+        LrRequest lrRequest = LrRequest.builder()
+                .build();
 
         return LinkRest.idempotentCreateOrUpdate(E20.class, config)
                     .readConstraint(Constraint.excludeAll(E20.class).includeId().attributes("description", "age", "name")
@@ -78,8 +86,7 @@ public class E20Resource {
 
                     )
                     .id(name)
-                    
-
+                    .request(lrRequest)
                     .syncAndSelect(e20);
     }
 
