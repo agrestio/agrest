@@ -1,0 +1,25 @@
+{{#isRestfulCreate}}
+public {{>returnTypes}} {{nickname}}({{#allParams}}{{>pathParams}}{{>queryParams}}{{>bodyParams}}{{#hasMore}}, {{/hasMore}}{{/allParams}}) {
+
+        {{>methodsImpl}}
+
+        return LinkRest.create({{{returnType}}}.class, config)
+                    .readConstraint({{>constraintParams}}
+                    )
+                    .request(lrRequest)
+                    .syncAndSelect({{#bodyParam}}{{paramName}}{{/bodyParam}});
+    }
+{{/isRestfulCreate}}
+{{#isRestfulRelatedToManyCreate}}
+public DataResponse<{{#bodyParams}}{{dataType}}{{/bodyParams}}> {{nickname}}({{#allParams}}{{>pathParams}}{{>queryParams}}{{>bodyParams}}{{#hasMore}}, {{/hasMore}}{{/allParams}}) {
+
+        {{>methodsImpl}}
+
+        return LinkRest.createOrUpdate({{#bodyParams}}{{dataType}}{{/bodyParams}}.class, config)
+                    .readConstraint({{#modelRelations}}{{>constraintParams}}{{/modelRelations}}
+                    )
+                    .parent({{returnType}}.class, {{#pathParams}}{{#-first}}{{paramName}}{{/-first}}{{/pathParams}}, "{{#modelRelations}}{{bodyParam.paramName}}{{/modelRelations}}")
+                    .request(lrRequest)
+                    .syncAndSelect({{#bodyParam}}{{paramName}}{{/bodyParam}});
+    }
+{{/isRestfulRelatedToManyCreate}}

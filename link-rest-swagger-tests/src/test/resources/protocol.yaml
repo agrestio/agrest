@@ -1,0 +1,76 @@
+components:
+  queryParams:
+
+    CayenneExp:
+      name: cayenneExp
+      in: query
+      style: form
+      explode: false
+      schema:
+        type: object
+        properties:
+          exp:
+            type: string
+            description: A conditional expression that is used to filter the response objects
+            example: articles.body like $b
+          params:
+            type: object
+            additionalProperties:
+              type: string
+      description: cayenneExp query
+      required: false
+
+    Dir:
+      name: dir
+      in: query
+      style: form
+      explode: false
+      schema:
+        type: string
+        enum:
+          - ASC
+          - DESC
+      description: sorting direction
+      required: false
+
+    Excludes:
+      name: excludes
+      in: query
+      style: form
+      explode: false
+      schema:
+        type: array
+        items:
+          $ref: '#/components/queryParams/Exclude'
+      description: list of excludes
+      required: false
+
+    Exclude:
+      name: exclude
+      in: query
+      schema:
+        type: object
+        properties:
+      description: An exclude parameter
+      required: false
+
+    Includes:
+      name: includes
+      in: query
+      style: form
+      explode: false
+      schema:
+        type: array
+        items:
+          $ref: '#/components/queryParams/Include'
+      description: list of includes
+      required: false
+
+    Include:
+      name: include
+      in: query
+      schema:
+        type: object
+        properties:
+      description: An include parameter
+      required: false

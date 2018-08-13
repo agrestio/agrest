@@ -1,0 +1,5 @@
+LrRequest lrRequest = LrRequest.builder()
+{{#queryParams}}
+                .{{baseName}}({{paramName}})
+{{/queryParams}}
+                .build();
