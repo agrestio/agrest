@@ -133,10 +133,9 @@ components:
           direction:
             type: object
             $ref: '#/components/queryParams/Dir'
-
-#          sorts:
-#            type: array
-#            items:
-#              $ref: '#/components/queryParams/Sort'
+          sorts:
+            type: array
+            items:
+              $ref: '#/components/queryParams/Sort'
       description: sort
       required: false
