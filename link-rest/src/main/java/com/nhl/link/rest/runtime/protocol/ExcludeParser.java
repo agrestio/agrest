@@ -35,7 +35,8 @@ public class ExcludeParser implements IExcludeParser {
         return !result.isEmpty() ? result : null;
     }
 
-    private Exclude oneFromString(String value) {
+    @Override
+    public Exclude oneFromString(String value) {
         if (value == null || value.isEmpty()) {
             return null;
         }
