@@ -21,6 +21,6 @@ public class IncludeConverter implements ParamConverter<Include> {
 
     @Override
     public String toString(Include value) {
-        return null;
+        throw new UnsupportedOperationException();
     }
 }
