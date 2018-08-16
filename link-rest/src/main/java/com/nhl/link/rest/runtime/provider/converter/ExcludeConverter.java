@@ -21,6 +21,6 @@ public class ExcludeConverter implements ParamConverter<Exclude> {
 
     @Override
     public String toString(Exclude value) {
-        return null;
+        throw new UnsupportedOperationException();
     }
 }

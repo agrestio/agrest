@@ -7,6 +7,8 @@ Release 2.13
 #313 Refactor Sencha extension to follow the new pipeline logic 
 #314 Refactoring runtime.parser.cache.IPathCache to runtime.path.IPathDescriptorManager
 #315 Upgrade JAX-RS to 2.1
+#318 Add 'request' method to SelectBuilder and UpdateBuilder to process LrRequest with explicit query parameters
+#321 Create protocol value object converters and providers
 #322 Manage exception mappers via DI to simplify overriding
 
 Release 2.12

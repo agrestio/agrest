@@ -20,6 +20,6 @@ public class CayenneExpConverter implements ParamConverter<CayenneExp> {
 
     @Override
     public String toString(CayenneExp value) {
-        return null;
+        throw new UnsupportedOperationException();
     }
 }
