@@ -20,6 +20,6 @@ public class SortConverter implements ParamConverter<Sort> {
 
     @Override
     public String toString(Sort value) {
-        return null;
+        throw new UnsupportedOperationException();
     }
 }

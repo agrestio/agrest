@@ -20,6 +20,6 @@ public class MapByConverter implements ParamConverter<MapBy> {
 
     @Override
     public String toString(MapBy value) {
-        return null;
+        throw new UnsupportedOperationException();
     }
 }
