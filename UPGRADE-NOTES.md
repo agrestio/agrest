@@ -4,7 +4,7 @@
 
 As a part of the effort cleaning up deprecated API, support for stage listeners and stage listener annotations was removed.
 If you need to extend LinkRest processing chains, you should be using "stage" and "terminalStage" methods with custom lambdas.
-Those are more flexible and easy to understand. See [2.7 upgrade notes](#upgrading-to-27) below in this document for hints on how to use stages.
+Those are more flexible and easy to understand. See [2.7 upgrade notes](#replacing-listeners-with-functions-240-241-242-243) below in this document for hints on how to use stages.
 
 ### "query" protocol parameter was moved to "link-rest-sencha" [#301](https://github.com/nhl/link-rest/issues/301)
 
