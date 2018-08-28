@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>com.nhl.link.rest</groupId>
+        <artifactId>link-rest-parent</artifactId>
+        <version>2.13-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+
+    <groupId>com.nhl.link.rest.swagger</groupId>
+    <artifactId>link-rest-swagger-codefirst-test</artifactId>
+    <name>link-rest-swagger-codefirst-test: Integration tests of Swagger code-first approach</name>
+    <description>Integration tests of Swagger code-first approach</description>
+
+    <dependencies>
+        <!-- required runtime dependencies -->
+        <dependency>
+            <groupId>com.nhl.link.rest</groupId>
+            <artifactId>link-rest</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>com.nhl.link.rest.swagger</groupId>
+                <artifactId>link-rest-swagger-codefirst</artifactId>
+                <version>${project.version}</version>
+                <configuration>
+                    <info>
+                        <title>Swagger Maven Plugin to implement Code-First Approach</title>
+                        <version>1</version>
+                        <description>This is a sample for link-rest-swagger-codefirst plugin</description>
+                        <termsOfService>
+                            http://www.github.com/nhl/link-rest
+                        </termsOfService>
+                        <contact>
+                            <email></email>
+                            <name></name>
+                            <url></url>
+                        </contact>
+                        <license>
+                            <url>http://www.apache.org/licenses/LICENSE-2.0.html</url>
+                            <name>Apache 2.0</name>
+                        </license>
+                    </info>
+                    <resourceSources>
+                        <resourceSource>
+                            <srcClasses></srcClasses>
+                            <srcPackages></srcPackages>
+                            <outputName></outputName>
+                            <outputFormats></outputFormats>
+                        </resourceSource>
+                    </resourceSources>
+                    <componentSources>
+                        <componentSource>
+                            <srcParameters>
+                                <srcParameter>com.nhl.link.rest.protocol.CayenneExp</srcParameter>
+                                <srcParameter>com.nhl.link.rest.protocol.Exclude</srcParameter>
+                                <srcParameter>com.nhl.link.rest.protocol.Include</srcParameter>
+                                <srcParameter>com.nhl.link.rest.protocol.MapBy</srcParameter>
+                                <srcParameter>com.nhl.link.rest.protocol.Sort</srcParameter>
+                                <srcParameter>com.nhl.link.rest.protocol.Limit</srcParameter>
+                                <srcParameter>com.nhl.link.rest.protocol.Start</srcParameter>
+                                <srcParameter>com.nhl.link.rest.protocol.Dir</srcParameter>
+                            </srcParameters>
+                            <srcSchemas></srcSchemas>
+                            <outputName>${project.basedir}/protocol</outputName>
+                            <outputFormats></outputFormats>
+                        </componentSource>
+                        <componentSource>
+                            <srcParameters></srcParameters>
+                            <srcSchemas>
+                                <srcSchema>com.nhl.link.rest.it.fixture.cayenne.E1</srcSchema>
+                                <srcSchema>com.nhl.link.rest.it.fixture.cayenne.E2</srcSchema>
+                                <srcSchema>com.nhl.link.rest.it.fixture.cayenne.E3</srcSchema>
+                            </srcSchemas>
+                            <outputName>${project.basedir}/schema</outputName>
+                            <outputFormats></outputFormats>
+                        </componentSource>
+                    </componentSources>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                    </execution>
+                </executions>
+
+                <dependencies>
+                    <dependency>
+                        <groupId>com.nhl.link.rest.swagger</groupId>
+                        <artifactId>link-rest-swagger-codefirst</artifactId>
+                        <version>${project.version}</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>com.nhl.link.rest</groupId>
+                        <artifactId>link-rest</artifactId>
+                        <type>test-jar</type>
+                        <version>${project.version}</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
+
+        </plugins>
+    </build>
+
+</project>

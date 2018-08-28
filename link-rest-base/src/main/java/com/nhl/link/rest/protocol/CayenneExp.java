@@ -1,5 +1,9 @@
 package com.nhl.link.rest.protocol;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -11,10 +15,16 @@ import static java.util.Arrays.asList;
  *
  * @since 2.13
  */
+@Schema(name="CayenneExp", description="Cayenne defines a simple yet powerful object-based expression language. " +
+        "Cayenne expressions are database independent and are used as query qualifiers and orderings " +
+        "and also to perform in-memory evaluation with DataObjects.")
 public class CayenneExp {
 
+    @Schema(required = true, example = "name = 'yyy'")
     private String exp;
+
     private Map<String, Object> params;
+
     private List<Object> inPositionParams;
 
     public CayenneExp(String exp) {
