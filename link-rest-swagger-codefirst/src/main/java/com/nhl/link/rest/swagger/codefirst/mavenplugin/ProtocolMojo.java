@@ -127,10 +127,6 @@ public class ProtocolMojo extends AbstractMojo {
                     .buildContext(true)
                     .read();
 
-            System.out.println("###### ");
-
-            Json.prettyPrint(openAPI);
-
             return openAPI;
 
         } catch (OpenApiConfigurationException e) {
@@ -194,11 +190,7 @@ public class ProtocolMojo extends AbstractMojo {
 
     private void validateResourceSource(ResourceSource resourceSource) throws MojoFailureException {
 
-//        if ((componentSource.getSrcParameters() == null || componentSource.getSrcParameters().isEmpty())
-//                && (componentSource.getSrcSchemas() == null || componentSource.getSrcSchemas().isEmpty())) {
-//
-//            throw new MojoFailureException("Must be configured at least one scrParameter element or scrSchema element");
-//        }
+        //Todo: Implement validation of resource source items.
     }
 
     private void validateComponentSource(ComponentSource componentSource) throws MojoFailureException {
