@@ -19,8 +19,8 @@
         <module>link-rest-bom</module>
         <module>link-rest-docs</module>
         <module>link-rest-legacy-date-encoders</module>
-        <module>link-rest-swagger-tests</module>
-        <module>link-rest-swagger-codegen</module>
+        <module>link-rest-swagger-designfirst-test</module>
+        <module>link-rest-swagger-designfirst</module>
     </modules>
 
     <properties>
