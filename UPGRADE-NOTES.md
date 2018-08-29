@@ -4,7 +4,7 @@
 
 As a part of the effort cleaning up deprecated API, support for stage listeners and stage listener annotations was removed.
 If you need to extend LinkRest processing chains, you should be using "stage" and "terminalStage" methods with custom lambdas.
-Those are more flexible and easy to understand.
+Those are more flexible and easy to understand. See [2.7 upgrade notes](#replacing-listeners-with-functions-240-241-242-243) below in this document for hints on how to use stages.
 
 ### "query" protocol parameter was moved to "link-rest-sencha" [#301](https://github.com/nhl/link-rest/issues/301)
 
@@ -14,6 +14,9 @@ replace calls to `SelectBuilder.autocompleteOn` with calls to `.stage(SelectStag
 Either SelectStage.PARSE_REQUEST or SelectStage.ASSEMBLE_QUERY stages can be used.
 If you are not using the Sencha module, you can inspect `SenchaOps` code implement a similar function on your own.
 
+### PARSE_REQUEST stage got split in two [#309](https://github.com/nhl/link-rest/issues/309)
+
+If you have callbacks attached to `SelectStage.PARSE_REQUEST` or `UpdateStage.PARSE_REQUEST` stages that rely on the presence of `ResourceEntity` in the context, reattach them to `SelectStage.CONSTRUCT_ENTITY` or `UpdateStage.CREATE_ENTITY` respectively, as `ResourceEntity` only becomes available after that new stage.
 
 ## Upgrading to 2.11
 

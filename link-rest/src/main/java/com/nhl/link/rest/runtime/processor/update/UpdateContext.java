@@ -12,6 +12,7 @@ import com.nhl.link.rest.SimpleObjectId;
 import com.nhl.link.rest.constraints.Constraint;
 import com.nhl.link.rest.encoder.Encoder;
 import com.nhl.link.rest.processor.BaseProcessingContext;
+import com.nhl.link.rest.LrRequest;
 
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriInfo;
@@ -41,7 +42,8 @@ public class UpdateContext<T> extends BaseProcessingContext<T> {
 	private Collection<EntityUpdate<T>> updates;
 	private Encoder encoder;
 	private List objects;
-	private Map<String, List<String>> queryParams;
+	private LrRequest rawRequest;
+	private LrRequest request;
 
 	public UpdateContext(Class<T> type) {
 		super(type);
@@ -109,22 +111,7 @@ public class UpdateContext<T> extends BaseProcessingContext<T> {
 	 * @since 2.13
 	 */
 	public Map<String, List<String>> getProtocolParameters() {
-		return queryParams != null ? queryParams
-				: uriInfo != null ? uriInfo.getQueryParameters() : Collections.emptyMap();
-	}
-
-	/**
-	 * @since 2.13
-	 */
-	public Map<String, List<String>> getQueryParams() {
-		return queryParams;
-	}
-
-	/**
-	 * @since 2.13
-	 */
-	public void setQueryParams(Map<String, List<String>> parameters) {
-		queryParams = parameters;
+		return uriInfo != null ? uriInfo.getQueryParameters() : Collections.emptyMap();
 	}
 
 	public UriInfo getUriInfo() {
@@ -253,5 +240,62 @@ public class UpdateContext<T> extends BaseProcessingContext<T> {
 	 */
 	public void setObjects(List<? extends T> objects) {
 		this.objects = objects;
+	}
+
+	/**
+	 * Returns LrRequest that contains query parameters.
+	 * This parameters are used on the CreateEntityStage to create an entity.
+	 *
+	 * @since 2.13
+	 */
+	public LrRequest getRawRequest() {
+		return rawRequest;
+	}
+
+	/**
+	 * Saves LrRequest that contains query parameters.
+	 *
+	 * This LrRequest object is build from two sources.
+	 * 1. Parse UriInfo and create query parameters objects.
+	 * 2. If some of query parameters are passed explicitly they will be used instead of parsing from UriInfo.
+	 * These explicit query parameters are saved in rawRequest object during ParseRequestStage.
+	 *
+	 * @since 2.13
+	 */
+	public void setRawRequest(LrRequest rawRequest) {
+		this.rawRequest = rawRequest;
+	}
+
+	/**
+	 * Returns LrRequest object that contains query parameters explicitly passed through API method call
+	 *
+	 * @since 2.13
+	 */
+	public LrRequest getRequest() {
+		return request;
+	}
+
+	/**
+	 * Saves LrRequest object that contains query parameters explicitly passed through API method call.
+	 * These parameters are created during ConvertQueryParamsStage.
+	 *
+	 * <pre>{@code
+	 *
+	 * 		public DataResponse<E2> getE2(@Context UriInfo uriInfo, @QueryParam CayenneExp cayenneExp) {
+	 * 			// Explicit query parameter
+	 * 			LrRequest lrRequest = LrRequest.builder().cayenneExp(cayenneExp).build();
+	 *
+	 * 			return LinkRest.service(config).select(E2.class)
+	 * 							.uri(uriInfo)
+	 * 							.request(lrRequest) // overrides parameters from uriInfo
+	 * 							.get();
+	 * 		}
+	 *
+	 * }</pre>
+	 *
+	 * @since 2.13
+	 */
+	public void setRequest(LrRequest request) {
+		this.request = request;
 	}
 }

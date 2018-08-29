@@ -3,6 +3,11 @@ package com.nhl.link.rest.runtime;
 import com.nhl.link.rest.provider.EntityUpdateCollectionReader;
 import com.nhl.link.rest.provider.EntityUpdateReader;
 import com.nhl.link.rest.provider.ResponseStatusDynamicFeature;
+import com.nhl.link.rest.runtime.provider.CayenneExpProvider;
+import com.nhl.link.rest.runtime.provider.IncludeProvider;
+import com.nhl.link.rest.runtime.provider.MapByProvider;
+import com.nhl.link.rest.runtime.provider.SizeProvider;
+import com.nhl.link.rest.runtime.provider.SortProvider;
 import org.apache.cayenne.di.Injector;
 import org.apache.cayenne.di.Key;
 import org.slf4j.Logger;
@@ -26,7 +31,6 @@ public class LinkRestRuntime implements Feature {
     public static final String BODY_WRITERS_MAP = "linkrest.jaxrs.bodywriters";
 
     private Injector injector;
-    private Collection<Class<?>> extraComponents;
     private Collection<Feature> extraFeatures;
 
     /**
@@ -48,10 +52,9 @@ public class LinkRestRuntime implements Feature {
         return injector.getInstance(type);
     }
 
-    LinkRestRuntime(Injector injector, Collection<Feature> extraFeatures, Collection<Class<?>> extraComponents) {
+    LinkRestRuntime(Injector injector, Collection<Feature> extraFeatures) {
         this.injector = injector;
         this.extraFeatures = extraFeatures;
-        this.extraComponents = extraComponents;
     }
 
     /**
@@ -92,14 +95,30 @@ public class LinkRestRuntime implements Feature {
             context.register(type);
         }
 
+        CayenneExpProvider cayenneExpProvider =
+                injector.getInstance(CayenneExpProvider.class);
+        context.register(cayenneExpProvider);
+
+        IncludeProvider includeProvider =
+                injector.getInstance(IncludeProvider.class);
+        context.register(includeProvider);
+
+        SortProvider sortProvider =
+                injector.getInstance(SortProvider.class);
+        context.register(sortProvider);
+
+        MapByProvider mapByProvider =
+                injector.getInstance(MapByProvider.class);
+        context.register(mapByProvider);
+
+        SizeProvider sizeProvider =
+                injector.getInstance(SizeProvider.class);
+        context.register(sizeProvider);
+
         context.register(ResponseStatusDynamicFeature.class);
 
         context.register(EntityUpdateReader.class);
         context.register(EntityUpdateCollectionReader.class);
-
-        for (Class<?> c : extraComponents) {
-            context.register(c);
-        }
 
         for (Feature f : extraFeatures) {
             f.configure(context);

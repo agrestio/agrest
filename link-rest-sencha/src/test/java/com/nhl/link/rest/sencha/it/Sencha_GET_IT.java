@@ -273,7 +273,7 @@ public class Sencha_GET_IT extends JerseyTestOnDerby {
             return LinkRest
                     .service(config)
                     .select(E2.class)
-                    .stage(SelectStage.PARSE_REQUEST, SenchaOps.startsWithFilter(E2.NAME, uriInfo))
+                    .stage(SelectStage.CREATE_ENTITY, SenchaOps.startsWithFilter(E2.NAME, uriInfo))
                     .uri(uriInfo).get();
         }
 

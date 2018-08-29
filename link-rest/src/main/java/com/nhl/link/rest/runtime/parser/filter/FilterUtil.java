@@ -2,8 +2,8 @@ package com.nhl.link.rest.runtime.parser.filter;
 
 /**
  * @since 1.5
- * @deprecated since 2.13 deprecated. It is only u sed in Sencha extensions, so a
- * new com.nhl.link.rest.sencha.ops.FilterUtil was created.
+ * @deprecated since 2.13 deprecated. It is only used in Sencha extensions, so a new
+ * com.nhl.link.rest.sencha.ops.FilterUtil was created.
  */
 @Deprecated
 public class FilterUtil {

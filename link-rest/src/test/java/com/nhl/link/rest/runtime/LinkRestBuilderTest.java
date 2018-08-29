@@ -1,8 +1,7 @@
 package com.nhl.link.rest.runtime;
 
-import com.nhl.link.rest.provider.ValidationExceptionMapper;
 import com.nhl.link.rest.runtime.adapter.LinkRestAdapter;
-import com.nhl.link.rest.runtime.parser.IRequestParser;
+import com.nhl.link.rest.runtime.protocol.ICayenneExpParser;
 import org.apache.cayenne.di.Binder;
 import org.apache.cayenne.validation.ValidationException;
 import org.junit.Test;
@@ -19,38 +18,19 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.function.Consumer;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyCollectionOf;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 
 public class LinkRestBuilderTest {
 
-    @Test
-    public void testMapException_Standard() {
-        LinkRestBuilder builder = new LinkRestBuilder();
-        Feature f = builder.build();
-
-        FeatureContext context = mock(FeatureContext.class);
-
-        f.configure(context);
-
-        verify(context).register(ValidationExceptionMapper.class);
-    }
-
-    @Test
-    public void testMapException_Custom() {
-        LinkRestBuilder builder = new LinkRestBuilder().mapException(TestValidationExceptionMapper.class);
-        Feature f = builder.build();
-
-        FeatureContext context = mock(FeatureContext.class);
-
-        f.configure(context);
-
-        verify(context).register(TestValidationExceptionMapper.class);
-        verify(context, never()).register(ValidationExceptionMapper.class);
-    }
-
+    @Deprecated
     @Test
     public void testBuild_Adapter() {
 
@@ -64,16 +44,16 @@ public class LinkRestBuilderTest {
             return null;
         }).when(adapter).contributeToJaxRs(anyCollectionOf(Feature.class));
 
-        final IRequestParser mockParser = mock(IRequestParser.class);
+        final ICayenneExpParser mockParser = mock(ICayenneExpParser.class);
         doAnswer((Answer<Object>) invocation -> {
             Binder b = (Binder) invocation.getArguments()[0];
-            b.bind(IRequestParser.class).toInstance(mockParser);
+            b.bind(ICayenneExpParser.class).toInstance(mockParser);
             return null;
         }).when(adapter).contributeToRuntime(any(Binder.class));
 
         LinkRestRuntime runtime = new LinkRestBuilder().adapter(adapter).build();
 
-        assertSame(mockParser, runtime.service(IRequestParser.class));
+        assertSame(mockParser, runtime.service(ICayenneExpParser.class));
 
         FeatureContext context = mock(FeatureContext.class);
         runtime.configure(context);

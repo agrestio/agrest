@@ -2,7 +2,7 @@ package com.nhl.link.rest.constraints;
 
 import com.nhl.link.rest.meta.LrEntity;
 import com.nhl.link.rest.meta.LrRelationship;
-import com.nhl.link.rest.runtime.parser.PathConstants;
+import com.nhl.link.rest.PathConstants;
 import org.apache.cayenne.exp.Expression;
 import org.apache.cayenne.exp.Property;
 

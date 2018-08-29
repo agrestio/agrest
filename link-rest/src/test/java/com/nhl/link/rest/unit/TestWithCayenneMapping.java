@@ -1,6 +1,8 @@
 package com.nhl.link.rest.unit;
 
+import com.nhl.link.rest.LrRequest;
 import com.nhl.link.rest.ResourceEntity;
+import com.nhl.link.rest.it.fixture.cayenne.E2;
 import com.nhl.link.rest.meta.DefaultLrAttribute;
 import com.nhl.link.rest.meta.LrEntity;
 import com.nhl.link.rest.meta.LrPersistentAttribute;
@@ -17,6 +19,7 @@ import com.nhl.link.rest.runtime.meta.MetadataService;
 import com.nhl.link.rest.runtime.meta.ResourceMetadataService;
 import com.nhl.link.rest.runtime.parser.converter.DefaultJsonValueConverterFactoryProvider;
 import com.nhl.link.rest.runtime.parser.converter.IJsonValueConverterFactory;
+import com.nhl.link.rest.runtime.processor.select.SelectContext;
 import org.apache.cayenne.ObjectContext;
 import org.apache.cayenne.configuration.server.DataSourceFactory;
 import org.apache.cayenne.configuration.server.ServerRuntime;
@@ -28,6 +31,11 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 
+import javax.ws.rs.core.MultivaluedMap;
+import javax.ws.rs.core.PathSegment;
+import javax.ws.rs.core.UriBuilder;
+import javax.ws.rs.core.UriInfo;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -96,6 +104,16 @@ public class TestWithCayenneMapping {
 
 	protected IResourceMetadataService createResourceMetadataService() {
 		return new ResourceMetadataService(resourceParser, BaseUrlProvider.forUrl(Optional.empty()));
+	}
+
+	protected <T> SelectContext<T> prepareContext(MultivaluedMap<String, String> params, Class<T> type) {
+		SelectContext<T> context = new SelectContext<>(type);
+
+		UriInfo uriInfo = mock(UriInfo.class);
+		when(uriInfo.getQueryParameters()).thenReturn(params);
+
+		context.setUriInfo(uriInfo);
+		return context;
 	}
 
 	protected <T> LrEntity<T> getLrEntity(Class<T> type) {

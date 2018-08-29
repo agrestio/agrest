@@ -4,6 +4,7 @@ import com.nhl.link.rest.DataResponse;
 import com.nhl.link.rest.EntityParent;
 import com.nhl.link.rest.EntityUpdate;
 import com.nhl.link.rest.LinkRestException;
+import com.nhl.link.rest.LrRequest;
 import com.nhl.link.rest.ObjectMapperFactory;
 import com.nhl.link.rest.SimpleResponse;
 import com.nhl.link.rest.UpdateBuilder;
@@ -20,8 +21,6 @@ import javax.ws.rs.core.UriInfo;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumMap;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -29,12 +28,10 @@ import java.util.Map;
  */
 public class DefaultUpdateBuilder<T> implements UpdateBuilder<T> {
 
-    static final String INCLUDE = "include";
-    static final String EXCLUDE = "exclude";
-
+    private UpdateContext<T> context;
     protected UpdateProcessorFactory processorFactory;
     protected EnumMap<UpdateStage, Processor<UpdateContext<?>>> processors;
-    private UpdateContext<T> context;
+
 
     public DefaultUpdateBuilder(
             UpdateContext<T> context,
@@ -158,6 +155,15 @@ public class DefaultUpdateBuilder<T> implements UpdateBuilder<T> {
         return routingStage_NoGenerics(afterStage, customStage);
     }
 
+    /**
+     * @since 2.13
+     */
+    @Override
+    public UpdateBuilder<T> request(LrRequest lrRequest) {
+        this.context.setRequest(lrRequest);
+        return this;
+    }
+
     private <U> UpdateBuilder<T> routingStage_NoGenerics(UpdateStage afterStage, Processor customStage) {
         processors.compute(afterStage, (s, existing) -> existing != null ? existing.andThen(customStage) : customStage);
         return this;
@@ -187,32 +193,6 @@ public class DefaultUpdateBuilder<T> implements UpdateBuilder<T> {
     public SimpleResponse sync(Collection<EntityUpdate<T>> updates) {
         context.setUpdates(updates);
         return doSync();
-    }
-
-    /**
-     * @since 2.13
-     */
-    @Override
-    public UpdateBuilder<T> exclude(List<String> exclude) {
-        getOrCreateQueryParams().put(EXCLUDE, exclude);
-        return this;
-    }
-
-    /**
-     * @since 2.13
-     */
-    @Override
-    public UpdateBuilder<T> include(List<String> include) {
-        getOrCreateQueryParams().put(INCLUDE, include);
-        return this;
-    }
-
-    private Map<String, List<String>> getOrCreateQueryParams() {
-        if (context.getQueryParams() == null) {
-            context.setQueryParams(new HashMap<>());
-        }
-
-        return context.getQueryParams();
     }
 
     /**

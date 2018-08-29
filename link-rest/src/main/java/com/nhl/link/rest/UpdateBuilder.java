@@ -8,7 +8,6 @@ import org.apache.cayenne.exp.Property;
 
 import javax.ws.rs.core.UriInfo;
 import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
@@ -179,6 +178,30 @@ public interface UpdateBuilder<T> {
     <U> UpdateBuilder<T> routingStage(UpdateStage afterStage, Processor<UpdateContext<U>> customStage);
 
     /**
+     * Installs explicit query parameters encapsulated in LrRequest.
+     * These explicit parameters overwrite query parameters from UriInfo object.
+     *
+     * <pre>{@code
+     *
+     * 		public DataResponse<E2> getE2(@Context UriInfo uriInfo, @QueryParam CayenneExp cayenneExp) {
+     * 			// Explicit query parameter
+     * 			LrRequest lrRequest = LrRequest.builder().cayenneExp(cayenneExp).build();
+     *
+     * 			return LinkRest.service(config).select(E2.class)
+     * 							.uri(uriInfo)
+     * 							.request(lrRequest) // overwrite parameters from uriInfo
+     * 							.get();
+     * 		}
+     *
+     * }</pre>
+     *
+     * @param lrRequest an instance of LrRequest that holds all explicit query parameters.
+     * @return this builder instance.
+     * @since 2.13
+     */
+    UpdateBuilder<T> request(LrRequest lrRequest);
+
+    /**
      * @since 1.19
      */
     DataResponse<T> syncAndSelect(String entityData);
@@ -208,17 +231,4 @@ public interface UpdateBuilder<T> {
      */
     SimpleResponse sync(Collection<EntityUpdate<T>> updates);
 
-    /**
-     * Forces the builder to make selection using exclude query parameter.
-     *
-     * @since 2.13
-     */
-    UpdateBuilder<T> exclude(List<String> exclude);
-
-    /**
-     * Forces the builder to make selection using include query parameter.
-     *
-     * @since 2.13
-     */
-    UpdateBuilder<T> include(List<String> include);
 }

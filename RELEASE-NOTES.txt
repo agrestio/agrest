@@ -1,9 +1,16 @@
 Release 2.13
 
 #284 Cayenne 4.0.RC1 is out... upgrading
-#296 Implement explicit processing of query parameters without uriInfo
 #300 Removing API deprecated as of 2.7 or earlier
 #301 Move "query" protocol parameter to "link-rest-sencha"
+#309 Capture request state in a new LrRequest object
+#313 Refactor Sencha extension to follow the new pipeline logic 
+#314 Refactoring runtime.parser.cache.IPathCache to runtime.path.IPathDescriptorManager
+#315 Upgrade JAX-RS to 2.1
+#318 Add 'request' method to SelectBuilder and UpdateBuilder to process LrRequest with explicit query parameters
+#321 Create protocol value object converters and providers
+#322 Manage exception mappers via DI to simplify overriding
+#328 Upgrade to Cayenne 4.0 final
 
 Release 2.12
 
