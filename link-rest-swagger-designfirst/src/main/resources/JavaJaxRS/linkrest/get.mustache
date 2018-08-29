@@ -1,0 +1,64 @@
+{{#isRestfulIndex}}
+    {{#hasCompoundId}}
+public {{>returnTypes}} {{nickname}}({{#allParams}}{{>pathParams}}{{>queryParams}}{{#hasMore}}, {{/hasMore}}{{/allParams}}) {
+
+        Map<String, Object> id = new HashMap<>();
+        {{#modelAttributes}}
+            {{#isQueryParam}}
+        id.put("{{paramName}}", {{paramName}});
+            {{/isQueryParam}}
+        {{/modelAttributes}}
+
+        {{>protocolImpl}}
+
+        return LinkRest.select({{{returnType}}}.class, config)
+                    .byId(id)
+                    .request(lrRequest)
+                    .getOne();
+    }
+    {{/hasCompoundId}}
+    {{^hasCompoundId}}
+public {{>returnTypes}} {{nickname}}({{#allParams}}{{>pathParams}}{{>queryParams}}{{#hasMore}}, {{/hasMore}}{{/allParams}}) {
+
+        {{>protocolImpl}}
+
+        return LinkRest.select({{{returnType}}}.class, config)
+                    .request(lrRequest)
+                    .get();
+    }
+    {{/hasCompoundId}}
+{{/isRestfulIndex}}
+{{#isRestfulShow}}
+    public {{>returnTypes}} {{nickname}}({{#allParams}}{{>pathParams}}{{>queryParams}}{{#hasMore}}, {{/hasMore}}{{/allParams}}) {
+
+        {{>protocolImpl}}
+
+        return LinkRest.select({{{returnType}}}.class, config)
+                    .byId({{#pathParams}}{{paramName}}{{/pathParams}})
+                    .request(lrRequest)
+                    .get();
+    }
+{{/isRestfulShow}}
+{{#isRestfulIndexRelated}}
+    public DataResponse<{{#modelRelations}}{{returnType}}{{/modelRelations}}> {{nickname}}({{#allParams}}{{>pathParams}}{{>queryParams}}{{>bodyParams}}{{#hasMore}}, {{/hasMore}}{{/allParams}}) {
+
+        {{>protocolImpl}}
+
+        return LinkRest.select({{#modelRelations}}{{returnType}}{{/modelRelations}}.class, config)
+                    .byId({{#pathParams}}{{#-last}}{{paramName}}{{/-last}}{{/pathParams}})
+                    .parent({{returnType}}.class, {{#pathParams}}{{#-first}}{{paramName}}{{/-first}}{{/pathParams}}, "{{#modelRelations}}{{bodyParam.paramName}}{{/modelRelations}}")
+                    .request(lrRequest)
+                    .getOne();
+    }
+{{/isRestfulIndexRelated}}
+{{#isRestfulIndexToMany}}
+    public DataResponse<{{#modelRelations}}{{returnType}}{{/modelRelations}}> {{nickname}}({{#allParams}}{{>pathParams}}{{>queryParams}}{{#hasMore}}, {{/hasMore}}{{/allParams}}) {
+
+        {{>protocolImpl}}
+
+        return LinkRest.select({{#modelRelations}}{{returnType}}{{/modelRelations}}.class, config)
+                    .parent({{returnType}}.class, {{#pathParams}}{{paramName}}{{/pathParams}}, "{{#modelRelations}}{{bodyParam.paramName}}{{/modelRelations}}")
+                    .request(lrRequest)
+                    .get();
+    }
+{{/isRestfulIndexToMany}}

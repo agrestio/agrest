@@ -13,6 +13,7 @@ import com.nhl.link.rest.protocol.Exclude;
 import com.nhl.link.rest.protocol.Include;
 import com.nhl.link.rest.protocol.MapBy;
 import com.nhl.link.rest.protocol.Sort;
+
 import org.apache.cayenne.query.SQLTemplate;
 import org.junit.Test;
 

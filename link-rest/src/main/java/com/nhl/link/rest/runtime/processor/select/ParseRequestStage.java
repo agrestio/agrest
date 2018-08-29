@@ -116,6 +116,7 @@ public class ParseRequestStage implements Processor<SelectContext<?>> {
 
     private Start getStart(LrRequest request, Map<String, List<String>> protocolParameters) {
         int start = ParameterExtractor.integer(protocolParameters, PROTOCOL_KEY_START);
+
         if (request != null && request.getStart() != null) {
             return request.getStart();
         } else if (start >= 0) {
@@ -127,6 +128,7 @@ public class ParseRequestStage implements Processor<SelectContext<?>> {
 
     private Limit getLimit(LrRequest request, Map<String, List<String>> protocolParameters) {
         int limit = ParameterExtractor.integer(protocolParameters, PROTOCOL_KEY_LIMIT);
+
         if (request != null && request.getLimit() != null) {
             return request.getLimit();
         } else if (limit >= 0) {
