@@ -10,6 +10,7 @@ Release 2.13
 #318 Add 'request' method to SelectBuilder and UpdateBuilder to process LrRequest with explicit query parameters
 #321 Create protocol value object converters and providers
 #322 Manage exception mappers via DI to simplify overriding
+#328 Upgrade to Cayenne 4.0 final
 
 Release 2.12
 
