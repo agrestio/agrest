@@ -11,9 +11,14 @@ import javax.ws.rs.core.*;
 
 import com.nhl.link.rest.LinkRest;
 import com.nhl.link.rest.SimpleResponse;
+    import com.nhl.link.rest.runtime.processor.update.UpdateContext;
+    import com.nhl.link.rest.runtime.processor.select.SelectContext;
+    import com.nhl.link.rest.UpdateStage;
+    import com.nhl.link.rest.SelectStage;
+    import com.nhl.link.rest.swagger.api.v1.service.stage.E21ResourceStage;
 
 @Path("/")
-public class E21Resource {
+public class E21Resource extends E21ResourceStage {
 
     @Context
     private Configuration config;
@@ -47,7 +52,7 @@ public class E21Resource {
     @GET
     @Path("/v1/e21")
     @Produces({ "application/json" })
-    public DataResponse<E21> getOneByCompoundId(@QueryParam("name") String name, @QueryParam("age") Integer age, @QueryParam("exclude") List<com.nhl.link.rest.protocol.Exclude> excludes) {
+    public DataResponse<E21> getOneByCompoundId(@QueryParam("name") String name, @QueryParam("age") Integer age, @QueryParam("abc") Integer abc, @QueryParam("exclude") List<com.nhl.link.rest.protocol.Exclude> excludes, @QueryParam("xyz") List<String> xyzs) {
 
         Map<String, Object> id = new HashMap<>();
         id.put("name", name);
@@ -60,13 +65,15 @@ public class E21Resource {
         return LinkRest.select(E21.class, config)
                     .byId(id)
                     .request(lrRequest)
+                    .stage(SelectStage.PARSE_REQUEST, (SelectContext<E21> c) -> getOneByCompoundIdImpl(c, xyzs, abc))
+
                     .getOne();
     }
 
     @PUT
     @Path("/v1/e21")
     @Consumes({ "application/json" })
-    public DataResponse<E21> updateByCompoundId(@QueryParam("name") String name, @QueryParam("age") Integer age, String e21) {
+    public DataResponse<E21> updateByCompoundId(@QueryParam("name") String name, @QueryParam("age") Integer age, String e21, @QueryParam("xyz") List<String> xyzs) {
 
         Map<String, Object> id = new HashMap<>();
                 id.put("name", name);
@@ -79,6 +86,8 @@ public class E21Resource {
         return LinkRest.idempotentCreateOrUpdate(E21.class, config)
                     .id(id)
                     .request(lrRequest)
+                    .stage(UpdateStage.PARSE_REQUEST, (UpdateContext<E21> c) -> updateByCompoundIdImpl(c, xyzs))
+
                     .syncAndSelect(e21);
     }
 

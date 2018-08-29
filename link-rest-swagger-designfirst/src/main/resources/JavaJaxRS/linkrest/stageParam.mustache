@@ -1,0 +1,3 @@
+{{#hasCustomParams}}
+.stage({{#isBodyAllowed}}UpdateStage{{/isBodyAllowed}}{{^isBodyAllowed}}SelectStage{{/isBodyAllowed}}.PARSE_REQUEST, ({{#isBodyAllowed}}UpdateContext{{/isBodyAllowed}}{{^isBodyAllowed}}SelectContext{{/isBodyAllowed}}<{{{returnType}}}> c) -> {{nickname}}Impl(c, {{#customParameters}}{{paramName}}{{#isContainer}}s{{/isContainer}}{{#hasMore}}, {{/hasMore}}{{/customParameters}}))
+{{/hasCustomParams}}

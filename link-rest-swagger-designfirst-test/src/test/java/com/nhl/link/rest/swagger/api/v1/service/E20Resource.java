@@ -53,6 +53,7 @@ public class E20Resource {
         return LinkRest.select(E20.class, config)
                     .byId(name)
                     .request(lrRequest)
+                    
                     .get();
     }
 
@@ -67,6 +68,7 @@ public class E20Resource {
         return LinkRest.idempotentCreateOrUpdate(E20.class, config)
                     .id(name)
                     .request(lrRequest)
+                    
                     .syncAndSelect(e20);
     }
 

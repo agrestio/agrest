@@ -25,9 +25,13 @@ import java.util.stream.Collectors;
 public class LinkRestServerCodegen extends AbstractJavaJAXRSServerCodegen implements LinkRestServerFeatures {
     private static final Logger LOGGER = LoggerFactory.getLogger(io.swagger.codegen.languages.LinkRestServerCodegen.class);
 
+    private static final String QUERY_PARAMS_SELECT = "|start|limit|cayenneExp|mapBy|sort|dir|include|exclude|";
+    private static final String QUERY_PARAMS_UPDATE = "|include|exclude|";
+
     private final Map<String, Set<CodegenProperty>> models = new HashMap<>();
 
     protected boolean generateForTesting = false;
+    protected boolean hasCustomisation = false;
 
     public LinkRestServerCodegen() {
         super();
@@ -44,6 +48,8 @@ public class LinkRestServerCodegen extends AbstractJavaJAXRSServerCodegen implem
 
         modelDocTemplateFiles.remove("model_doc.mustache");
         apiDocTemplateFiles.remove("api_doc.mustache");
+
+        apiTemplateFiles.put("apiStage.mustache", ".java");
 
         typeMapping.put("date", "LocalDateTime");
         typeMapping.put("DateTime", "LocalDateTime");
@@ -132,6 +138,10 @@ public class LinkRestServerCodegen extends AbstractJavaJAXRSServerCodegen implem
                 LinkRestCodegenOperation lrOperation = new LinkRestCodegenOperation(operation);
                 // Stores model properties to use them as constraints
                 populateModelAttributes(lrOperation);
+                // Check if operation has user defined parameters
+                if (hasCustomParameters(lrOperation)) {
+                    hasCustomisation = true;
+                }
                 // Stores model relations to use them as constraints
                 for (final CodegenProperty prop : models.get(lrOperation.baseName)) {
                     if (prop.complexType != null && models.keySet().contains(prop.complexType)) {
@@ -149,6 +159,10 @@ public class LinkRestServerCodegen extends AbstractJavaJAXRSServerCodegen implem
             operations.put("operation", newOps);
         }
 
+        // Marks if resource has custom parameters
+        if (hasCustomisation) {
+            objsResult.put("hasCustomisation", true);
+        }
         return objsResult;
     }
 
@@ -201,12 +215,50 @@ public class LinkRestServerCodegen extends AbstractJavaJAXRSServerCodegen implem
         }
     }
 
+    private boolean hasCustomParameters(LinkRestCodegenOperation lrOperation) {
+        for( CodegenParameter parameter : lrOperation.queryParams) {
+            if (("GET".equalsIgnoreCase(lrOperation.httpMethod) && !QUERY_PARAMS_SELECT.contains('|' + parameter.paramName + '|') )
+                    || (lrOperation.isBodyAllowed() && !QUERY_PARAMS_UPDATE.contains('|' + parameter.paramName + '|'))) {
+                // saves user defined parameter
+                final CodegenParameter codegenParam = parameter.copy();
+                codegenParam.hasMore = true;
+                lrOperation.hasCustomParams = true;
+                lrOperation.customParameters.add(parameter);
+            }
+        }
+        if (lrOperation.customParameters.isEmpty()) {
+            return false;
+        } else {
+            // removes user defined parameter from query parameters list
+            lrOperation.queryParams
+                    = lrOperation.queryParams
+                    .stream()
+                    .filter(p -> !lrOperation.customParameters.stream().anyMatch(c -> c.paramName.equalsIgnoreCase(p.paramName)))
+                    .collect(Collectors.toList());
+            lrOperation.customParameters.get(lrOperation.customParameters.size() -1).hasMore = false;
+            return true;
+        }
+    }
+
     @Override
     public String toApiName(String name) {
         if (name.length() == 0) {
             return "DefaultApi";
         }
         return camelize(name) + "Resource";
+    }
+
+    @Override
+    public String apiFilename(String templateName, String tag) {
+        String result = super.apiFilename(templateName, tag);
+        if ( hasCustomisation && templateName.endsWith("Stage.mustache") ) {
+            int ix = result.lastIndexOf('/');
+            result = result.substring(0, ix) + "/stage" + result.substring(ix, result.length() - 5) + "Stage.java";
+            result = result.replace(apiFileFolder(),
+                    outputFolder + "/" + testFolder + "/" + apiPackage().replace('.', '/'));
+            hasCustomisation = false;
+        }
+        return result;
     }
 
     @Override

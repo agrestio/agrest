@@ -14,6 +14,7 @@ public {{>returnTypes}} {{nickname}}({{#allParams}}{{>pathParams}}{{>queryParams
         return LinkRest.select({{{returnType}}}.class, config)
                     .byId(id)
                     .request(lrRequest)
+                    {{>stageParam}}
                     .getOne();
     }
     {{/hasCompoundId}}
@@ -24,6 +25,7 @@ public {{>returnTypes}} {{nickname}}({{#allParams}}{{>pathParams}}{{>queryParams
 
         return LinkRest.select({{{returnType}}}.class, config)
                     .request(lrRequest)
+                    {{>stageParam}}
                     .get();
     }
     {{/hasCompoundId}}
@@ -36,6 +38,7 @@ public {{>returnTypes}} {{nickname}}({{#allParams}}{{>pathParams}}{{>queryParams
         return LinkRest.select({{{returnType}}}.class, config)
                     .byId({{#pathParams}}{{paramName}}{{/pathParams}})
                     .request(lrRequest)
+                    {{>stageParam}}
                     .get();
     }
 {{/isRestfulShow}}
@@ -48,6 +51,7 @@ public {{>returnTypes}} {{nickname}}({{#allParams}}{{>pathParams}}{{>queryParams
                     .byId({{#pathParams}}{{#-last}}{{paramName}}{{/-last}}{{/pathParams}})
                     .parent({{returnType}}.class, {{#pathParams}}{{#-first}}{{paramName}}{{/-first}}{{/pathParams}}, "{{#modelRelations}}{{bodyParam.paramName}}{{/modelRelations}}")
                     .request(lrRequest)
+                    {{>stageParam}}
                     .getOne();
     }
 {{/isRestfulIndexRelated}}
@@ -59,6 +63,7 @@ public {{>returnTypes}} {{nickname}}({{#allParams}}{{>pathParams}}{{>queryParams
         return LinkRest.select({{#modelRelations}}{{returnType}}{{/modelRelations}}.class, config)
                     .parent({{returnType}}.class, {{#pathParams}}{{paramName}}{{/pathParams}}, "{{#modelRelations}}{{bodyParam.paramName}}{{/modelRelations}}")
                     .request(lrRequest)
+                    {{>stageParam}}
                     .get();
     }
 {{/isRestfulIndexToMany}}

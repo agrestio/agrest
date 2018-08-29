@@ -41,6 +41,7 @@ public class E5Resource {
 
         return LinkRest.select(E5.class, config)
                     .request(lrRequest)
+                    
                     .get();
     }
 

@@ -6,6 +6,7 @@ public {{>returnTypes}} {{nickname}}({{#allParams}}{{>pathParams}}{{>queryParams
         return LinkRest.idempotentCreateOrUpdate({{{returnType}}}.class, config)
                     .id({{#pathParams}}{{paramName}}{{/pathParams}})
                     .request(lrRequest)
+                    {{>stageParam}}
                     .syncAndSelect({{#bodyParam}}{{paramName}}{{/bodyParam}});
     }
 {{/isRestfulUpdate}}
@@ -26,6 +27,7 @@ public {{>returnTypes}} {{nickname}}({{#allParams}}{{>pathParams}}{{>queryParams
         return LinkRest.idempotentCreateOrUpdate({{{returnType}}}.class, config)
                     .id(id)
                     .request(lrRequest)
+                    {{>stageParam}}
                     .syncAndSelect({{#bodyParam}}{{paramName}}{{/bodyParam}});
     }
     {{/hasCompoundId}}
@@ -36,6 +38,7 @@ public {{>returnTypes}} {{nickname}}({{#allParams}}{{>pathParams}}{{>queryParams
 
         return LinkRest.idempotentCreateOrUpdate({{{returnType}}}.class, config)
                     .request(lrRequest)
+                    {{>stageParam}}
                     .syncAndSelect({{#bodyParam}}{{paramName}}{{/bodyParam}});
     }
     {{/hasCompoundId}}
@@ -49,6 +52,7 @@ public DataResponse<{{#bodyParams}}{{dataType}}{{/bodyParams}}> {{nickname}}({{#
                     .id({{#pathParams}}{{#-last}}{{paramName}}{{/-last}}{{/pathParams}})
                     .parent({{returnType}}.class, {{#pathParams}}{{#-first}}{{paramName}}{{/-first}}{{/pathParams}}, {{returnType}}.{{#bodyParams}}{{dataType}}{{/bodyParams}})
                     .request(lrRequest)
+                    {{>stageParam}}
                     .syncAndSelect({{#bodyParam}}{{paramName}}{{/bodyParam}});
     }
 {{/isRestfulRelatedUpdate}}
@@ -60,6 +64,7 @@ public DataResponse<{{#bodyParams}}{{dataType}}{{/bodyParams}}> {{nickname}}({{#
         return LinkRest.idempotentCreateOrUpdate({{#bodyParams}}{{dataType}}{{/bodyParams}}.class, config)
                     .parent({{returnType}}.class, {{#pathParams}}{{#-first}}{{paramName}}{{/-first}}{{/pathParams}}, "{{#modelRelations}}{{bodyParam.paramName}}{{/modelRelations}}")
                     .request(lrRequest)
+                    {{>stageParam}}
                     .syncAndSelect({{#bodyParam}}{{paramName}}{{/bodyParam}});
     }
 {{/isRestfulRelatedToManyUpdate}}

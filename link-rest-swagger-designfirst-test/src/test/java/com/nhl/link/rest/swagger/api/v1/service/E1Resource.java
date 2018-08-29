@@ -39,6 +39,7 @@ public class E1Resource {
 
         return LinkRest.select(E1.class, config)
                     .request(lrRequest)
+                    
                     .get();
     }
 
@@ -53,6 +54,7 @@ public class E1Resource {
         return LinkRest.select(E1.class, config)
                     .byId(id)
                     .request(lrRequest)
+                    
                     .get();
     }
 

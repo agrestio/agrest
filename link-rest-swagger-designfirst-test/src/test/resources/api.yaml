@@ -690,6 +690,21 @@ paths:
             type: integer
             format: int32
         - $ref: '../resources/protocol.yaml#/components/queryParams/Excludes'
+        - name: xyz
+          in: query
+          description: It is user defined multiple parameters
+          required: false
+          schema:
+            type: array
+            items:
+              type: string
+        - name: abc
+          in: query
+          description: It is user defined parameter
+          required: true
+          schema:
+            type: integer
+            format: int32
       responses:
         "200":
           description: Success responce
@@ -756,6 +771,14 @@ paths:
           schema:
             type: integer
             format: int32
+        - name: xyz
+          in: query
+          description: It is user defined multiple parameters
+          required: false
+          schema:
+            type: array
+            items:
+              type: string
       responses:
         default:
           description: successful operation

@@ -72,6 +72,7 @@ public class E3Resource {
 
         return LinkRest.select(E3.class, config)
                     .request(lrRequest)
+                    
                     .get();
     }
 
@@ -87,6 +88,7 @@ public class E3Resource {
         return LinkRest.select(E3.class, config)
                     .byId(id)
                     .request(lrRequest)
+                    
                     .get();
     }
 
@@ -102,6 +104,7 @@ public class E3Resource {
         return LinkRest.select(E2.class, config)
                     .parent(E3.class, id, "e2")
                     .request(lrRequest)
+                    
                     .get();
     }
 
@@ -116,6 +119,7 @@ public class E3Resource {
         return LinkRest.idempotentCreateOrUpdate(E3.class, config)
                     .id(id)
                     .request(lrRequest)
+                    
                     .syncAndSelect(e3);
     }
 
@@ -131,6 +135,7 @@ public class E3Resource {
 
         return LinkRest.idempotentCreateOrUpdate(E3.class, config)
                     .request(lrRequest)
+                    
                     .syncAndSelect(e3);
     }
 
@@ -146,6 +151,7 @@ public class E3Resource {
                     .id(tid)
                     .parent(E3.class, id, E3.E2)
                     .request(lrRequest)
+                    
                     .syncAndSelect(e2);
     }
 
