@@ -1,11 +1,11 @@
 package io.agrest.unit;
 
 import io.agrest.ResourceEntity;
-import io.agrest.meta.DefaultLrAttribute;
-import io.agrest.meta.LrEntity;
-import io.agrest.meta.LrPersistentAttribute;
+import io.agrest.meta.DefaultAgAttribute;
+import io.agrest.meta.AgEntity;
+import io.agrest.meta.AgPersistentAttribute;
 import io.agrest.meta.cayenne.CayenneEntityCompiler;
-import io.agrest.meta.compiler.LrEntityCompiler;
+import io.agrest.meta.compiler.AgEntityCompiler;
 import io.agrest.meta.parser.IResourceParser;
 import io.agrest.meta.parser.ResourceParser;
 import io.agrest.runtime.cayenne.ICayennePersister;
@@ -89,7 +89,7 @@ public class Java8TestWithCayenneMapping {
 
 	protected IMetadataService createMetadataService() {
 
-		List<LrEntityCompiler> compilers = asList(new CayenneEntityCompiler(mockCayennePersister, Collections.emptyMap(), converterFactory));
+		List<AgEntityCompiler> compilers = asList(new CayenneEntityCompiler(mockCayennePersister, Collections.emptyMap(), converterFactory));
 		return new MetadataService(compilers, mockCayennePersister);
 	}
 
@@ -97,7 +97,7 @@ public class Java8TestWithCayenneMapping {
 		return new ResourceMetadataService(resourceParser, BaseUrlProvider.forUrl(Optional.empty()));
 	}
 
-	protected <T> LrEntity<T> getLrEntity(Class<T> type) {
+	protected <T> AgEntity<T> getLrEntity(Class<T> type) {
 		return metadataService.getLrEntity(type);
 	}
 
@@ -114,7 +114,7 @@ public class Java8TestWithCayenneMapping {
 	}
 
 	protected void appendAttribute(ResourceEntity<?> entity, String name, Class<?> type) {
-		entity.getAttributes().put(name, new DefaultLrAttribute(name, type));
+		entity.getAttributes().put(name, new DefaultAgAttribute(name, type));
 	}
 
 	protected <T> void appendPersistenceAttribute(ResourceEntity<?> entity, Property<T> property, Class<T> javaType,
@@ -124,13 +124,13 @@ public class Java8TestWithCayenneMapping {
 
 	protected void appendPersistenceAttribute(ResourceEntity<?> entity, String name, Class<?> javaType, int jdbcType) {
 		entity.getAttributes().put(name,
-				new TestLrPersistentAttribute(name, javaType, jdbcType));
+				new TestAgPersistentAttribute(name, javaType, jdbcType));
 	}
 
-	private class TestLrPersistentAttribute extends DefaultLrAttribute implements LrPersistentAttribute {
+	private class TestAgPersistentAttribute extends DefaultAgAttribute implements AgPersistentAttribute {
 		private int jdbcType;
 
-		public TestLrPersistentAttribute(String name, Class<?> javaType, int jdbcType) {
+		public TestAgPersistentAttribute(String name, Class<?> javaType, int jdbcType) {
 			super(name, javaType);
 			this.jdbcType = jdbcType;
 		}

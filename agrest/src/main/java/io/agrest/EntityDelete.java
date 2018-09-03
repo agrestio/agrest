@@ -1,22 +1,22 @@
 package io.agrest;
 
-import io.agrest.meta.LrEntity;
+import io.agrest.meta.AgEntity;
 
 public class EntityDelete<T> {
 
-    private LrEntity<T> entity;
-    private LrObjectId id;
+    private AgEntity<T> entity;
+    private AgObjectId id;
 
-    public EntityDelete(LrEntity<T> entity, LrObjectId id) {
+    public EntityDelete(AgEntity<T> entity, AgObjectId id) {
         this.entity = entity;
         this.id = id;
     }
 
-    public LrObjectId getId() {
+    public AgObjectId getId() {
         return id;
     }
 
-    public LrEntity<T> getEntity() {
+    public AgEntity<T> getEntity() {
         return entity;
     }
 }

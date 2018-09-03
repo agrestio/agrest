@@ -1,12 +1,12 @@
 package io.agrest.it.fixture.pojo.model;
 
-import io.agrest.annotation.LrAttribute;
+import io.agrest.annotation.AgAttribute;
 
 public class P3 {
 
 	private String name;
 
-	@LrAttribute
+	@AgAttribute
 	public String getName() {
 		return name;
 	}

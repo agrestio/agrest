@@ -1,7 +1,7 @@
 package io.agrest.annotation;
 
 /**
- * Classifies endpoints annotated with {@link LrResource}.
+ * Classifies endpoints annotated with {@link AgResource}.
  *
  * @since 2.10
  */

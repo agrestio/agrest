@@ -2,8 +2,8 @@ package io.agrest.runtime.meta;
 
 import io.agrest.EntityParent;
 import io.agrest.LinkRestException;
-import io.agrest.meta.LrEntity;
-import io.agrest.meta.LrRelationship;
+import io.agrest.meta.AgEntity;
+import io.agrest.meta.AgRelationship;
 
 import javax.ws.rs.core.Response;
 import java.lang.reflect.Type;
@@ -16,7 +16,7 @@ public interface IMetadataService {
 	/**
 	 * @since 1.12
 	 */
-	<T> LrEntity<T> getLrEntity(Class<T> type);
+	<T> AgEntity<T> getLrEntity(Class<T> type);
 
 	/**
 	 * Returns a named relationship for a given object type. If the type is not
@@ -24,9 +24,9 @@ public interface IMetadataService {
 	 * 
 	 * @since 1.12
 	 */
-	default LrRelationship getLrRelationship(Class<?> type, String relationship) {
-		LrEntity<?> e = getLrEntity(type);
-		LrRelationship r = e.getRelationship(relationship);
+	default AgRelationship getLrRelationship(Class<?> type, String relationship) {
+		AgEntity<?> e = getLrEntity(type);
+		AgRelationship r = e.getRelationship(relationship);
 		if (r == null) {
 			throw new LinkRestException(Response.Status.BAD_REQUEST, "Invalid relationship: '" + relationship + "'");
 		}
@@ -41,12 +41,12 @@ public interface IMetadataService {
 	 * 
 	 * @since 1.12
 	 */
-	default LrRelationship getLrRelationship(EntityParent<?> parent) {
+	default AgRelationship getLrRelationship(EntityParent<?> parent) {
 		return getLrRelationship(parent.getType(), parent.getRelationship());
 	}
 
 	/**
      * @since 2.3
      */
-	<T> LrEntity<T> getEntityByType(Type entityType);
+	<T> AgEntity<T> getEntityByType(Type entityType);
 }

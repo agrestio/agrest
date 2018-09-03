@@ -1,7 +1,7 @@
 package io.agrest.runtime.entity;
 
 import io.agrest.ResourceEntity;
-import io.agrest.meta.LrAttribute;
+import io.agrest.meta.AgAttribute;
 import io.agrest.protocol.MapBy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,13 +21,13 @@ public class MapByMerger implements IMapByMerger {
 
         final String mapByPath = mapBy.getPath();
         if (mapByPath != null) {
-            LrAttribute attribute = resourceEntity.getLrEntity().getAttribute(mapByPath);
+            AgAttribute attribute = resourceEntity.getAgEntity().getAttribute(mapByPath);
             if (attribute != null) {
-                ResourceEntity<?> mapByEntity = new ResourceEntity<>(resourceEntity.getLrEntity());
+                ResourceEntity<?> mapByEntity = new ResourceEntity<>(resourceEntity.getAgEntity());
                 mapByEntity.getAttributes().put(attribute.getName(), attribute);
                 resourceEntity.mapBy(mapByEntity, attribute.getName());
             } else {
-                ResourceEntity<?> mapByEntity = new ResourceEntity<>(resourceEntity.getLrEntity());
+                ResourceEntity<?> mapByEntity = new ResourceEntity<>(resourceEntity.getAgEntity());
                 IncludeMerger.checkTooLong(mapByPath);
                 IncludeMerger.processIncludePath(mapByEntity, mapByPath);
                 resourceEntity.mapBy(mapByEntity, mapByPath);
@@ -51,7 +51,7 @@ public class MapByMerger implements IMapByMerger {
         // either root list, or to-many relationship
         if (resourceEntity.getIncoming() == null || resourceEntity.getIncoming().isToMany()) {
 
-            ResourceEntity<?> mapByRoot = new ResourceEntity<>(resourceEntity.getLrEntity());
+            ResourceEntity<?> mapByRoot = new ResourceEntity<>(resourceEntity.getAgEntity());
             IncludeMerger.checkTooLong(mapByPath);
             IncludeMerger.processIncludePath(mapByRoot, mapByPath);
             resourceEntity.mapBy(mapByRoot, mapByPath);

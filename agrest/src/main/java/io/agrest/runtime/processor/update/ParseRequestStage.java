@@ -1,8 +1,8 @@
 package io.agrest.runtime.processor.update;
 
+import io.agrest.AgRequest;
 import io.agrest.EntityUpdate;
-import io.agrest.LrRequest;
-import io.agrest.meta.LrEntity;
+import io.agrest.meta.AgEntity;
 import io.agrest.processor.Processor;
 import io.agrest.processor.ProcessorOutcome;
 import io.agrest.protocol.Exclude;
@@ -53,12 +53,12 @@ public class ParseRequestStage implements Processor<UpdateContext<?>> {
 
         // Parse response parameters..
 
-        LrRequest request = context.getRequest();
+        AgRequest request = context.getRequest();
 
         // TODO: should we skip this for SimpleResponse-returning updates?
         Map<String, List<String>> protocolParameters = context.getProtocolParameters();
 
-        LrRequest.Builder requestBuilder = LrRequest.builder()
+        AgRequest.Builder requestBuilder = AgRequest.builder()
                 .includes(getIncludes(request, protocolParameters))
                 .excludes(getExcludes(request, protocolParameters));
 
@@ -67,19 +67,19 @@ public class ParseRequestStage implements Processor<UpdateContext<?>> {
         // Parse updates payload..
         // skip parsing if we already received EntityUpdates collection parsed by MessageBodyReader
         if (context.getUpdates() == null) {
-            LrEntity<T> entity = metadataService.getLrEntity(context.getType());
+            AgEntity<T> entity = metadataService.getLrEntity(context.getType());
             Collection<EntityUpdate<T>> updates = updateParser.parse(entity, context.getEntityData());
             context.setUpdates(updates);
         }
     }
 
-    private List<Include> getIncludes(LrRequest request, Map<String, List<String>> protocolParameters) {
+    private List<Include> getIncludes(AgRequest request, Map<String, List<String>> protocolParameters) {
         return request != null && !request.getIncludes().isEmpty() ?
                 request.getIncludes() :
                 includeParser.fromStrings(ParameterExtractor.strings(protocolParameters, PROTOCOL_KEY_INCLUDE));
     }
 
-    private List<Exclude> getExcludes(LrRequest request, Map<String, List<String>> protocolParameters) {
+    private List<Exclude> getExcludes(AgRequest request, Map<String, List<String>> protocolParameters) {
         return request != null && !request.getExcludes().isEmpty() ?
                 request.getExcludes() :
                 excludeParser.fromStrings(ParameterExtractor.strings(protocolParameters, PROTOCOL_KEY_EXCLUDE));

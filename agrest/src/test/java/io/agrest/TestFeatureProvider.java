@@ -7,7 +7,7 @@ import javax.ws.rs.core.FeatureContext;
 
 import static org.junit.Assert.assertNotNull;
 
-public class TestFeatureProvider implements LrFeatureProvider {
+public class TestFeatureProvider implements AgFeatureProvider {
 
     @Override
     public Feature feature(Injector injector) {

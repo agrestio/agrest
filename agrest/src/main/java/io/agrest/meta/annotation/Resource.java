@@ -1,5 +1,6 @@
 package io.agrest.meta.annotation;
 
+import io.agrest.annotation.AgResource;
 import io.agrest.meta.LinkType;
 
 import java.lang.annotation.ElementType;
@@ -10,7 +11,7 @@ import java.lang.annotation.Target;
 /**
  * Used to indicate that web method is an LR resource.
  *
- * @deprecated since 2.10 in favor of {@link io.agrest.annotation.LrResource} annotation.
+ * @deprecated since 2.10 in favor of {@link AgResource} annotation.
  */
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)

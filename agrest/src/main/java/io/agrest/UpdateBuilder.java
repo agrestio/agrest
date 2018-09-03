@@ -178,28 +178,28 @@ public interface UpdateBuilder<T> {
     <U> UpdateBuilder<T> routingStage(UpdateStage afterStage, Processor<UpdateContext<U>> customStage);
 
     /**
-     * Installs explicit query parameters encapsulated in LrRequest.
+     * Installs explicit query parameters encapsulated in AgRequest.
      * These explicit parameters overwrite query parameters from UriInfo object.
      *
      * <pre>{@code
      *
      * 		public DataResponse<E2> getE2(@Context UriInfo uriInfo, @QueryParam CayenneExp cayenneExp) {
      * 			// Explicit query parameter
-     * 			LrRequest lrRequest = LrRequest.builder().cayenneExp(cayenneExp).build();
+     * 			AgRequest agRequest = AgRequest.builder().cayenneExp(cayenneExp).build();
      *
      * 			return LinkRest.service(config).select(E2.class)
      * 							.uri(uriInfo)
-     * 							.request(lrRequest) // overwrite parameters from uriInfo
+     * 							.request(agRequest) // overwrite parameters from uriInfo
      * 							.get();
      * 		}
      *
      * }</pre>
      *
-     * @param lrRequest an instance of LrRequest that holds all explicit query parameters.
+     * @param agRequest an instance of AgRequest that holds all explicit query parameters.
      * @return this builder instance.
      * @since 2.13
      */
-    UpdateBuilder<T> request(LrRequest lrRequest);
+    UpdateBuilder<T> request(AgRequest agRequest);
 
     /**
      * @since 1.19

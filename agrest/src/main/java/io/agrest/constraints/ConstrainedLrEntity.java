@@ -1,7 +1,7 @@
 package io.agrest.constraints;
 
-import io.agrest.meta.LrAttribute;
-import io.agrest.meta.LrEntity;
+import io.agrest.meta.AgAttribute;
+import io.agrest.meta.AgEntity;
 import org.apache.cayenne.exp.Expression;
 
 import java.util.Collection;
@@ -10,7 +10,7 @@ import java.util.HashSet;
 import java.util.Map;
 
 /**
- * A view of an LrEntity after applying request constraints.
+ * A view of an AgEntity after applying request constraints.
  *
  * @since 2.4
  */
@@ -20,9 +20,9 @@ public class ConstrainedLrEntity<T> {
     private Collection<String> attributes;
     private Map<String, ConstrainedLrEntity<?>> children;
     private Expression qualifier;
-    private LrEntity<T> entity;
+    private AgEntity<T> entity;
 
-    public ConstrainedLrEntity(LrEntity<T> entity) {
+    public ConstrainedLrEntity(AgEntity<T> entity) {
 
         if (entity == null) {
             throw new NullPointerException("Null entity");
@@ -44,7 +44,7 @@ public class ConstrainedLrEntity<T> {
         return children;
     }
 
-    public LrEntity<T> getEntity() {
+    public AgEntity<T> getEntity() {
         return entity;
     }
 
@@ -97,7 +97,7 @@ public class ConstrainedLrEntity<T> {
     }
 
     public void includeAllAttributes() {
-        for (LrAttribute a : entity.getAttributes()) {
+        for (AgAttribute a : entity.getAttributes()) {
             this.attributes.add(a.getName());
         }
     }

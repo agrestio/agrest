@@ -4,7 +4,7 @@ import io.agrest.DataResponse;
 import io.agrest.EntityParent;
 import io.agrest.EntityProperty;
 import io.agrest.LinkRestException;
-import io.agrest.LrRequest;
+import io.agrest.AgRequest;
 import io.agrest.SelectBuilder;
 import io.agrest.SelectStage;
 import io.agrest.SizeConstraints;
@@ -199,8 +199,8 @@ public class DefaultSelectBuilder<T> implements SelectBuilder<T> {
      * @since 2.13
      */
     @Override
-    public SelectBuilder<T> request(LrRequest lrRequest) {
-        this.context.setRequest(lrRequest);
+    public SelectBuilder<T> request(AgRequest agRequest) {
+        this.context.setRequest(agRequest);
         return this;
     }
 

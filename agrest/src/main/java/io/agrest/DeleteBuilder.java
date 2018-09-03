@@ -21,7 +21,7 @@ public interface DeleteBuilder<T> {
 	/**
 	 * @since 2.3
      */
-	DeleteBuilder<T> id(LrObjectId id);
+	DeleteBuilder<T> id(AgObjectId id);
 
 	DeleteBuilder<T> parent(Class<?> parentType, Object parentId, String relationshipFromParent);
 

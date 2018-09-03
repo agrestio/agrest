@@ -4,7 +4,7 @@ import io.agrest.CompoundObjectId;
 import io.agrest.EntityDelete;
 import io.agrest.LinkRestException;
 import io.agrest.SimpleObjectId;
-import io.agrest.meta.LrEntity;
+import io.agrest.meta.AgEntity;
 import io.agrest.runtime.LinkRestRuntime;
 import io.agrest.runtime.jackson.IJacksonService;
 import io.agrest.runtime.meta.IMetadataService;
@@ -69,7 +69,7 @@ public class SenchaDeletePayloadParser implements MessageBodyReader<Collection<E
 					"Invalid request entity collection type: " + genericType);
 		}
 
-		LrEntity<?> entity = metadataService.getEntityByType(entityType);
+		AgEntity<?> entity = metadataService.getEntityByType(entityType);
 
 		DeleteVisitor visitor = new DeleteVisitor(entity);
         entityUpdateJsonTraverser.traverse(entity, jacksonService.parseJson(entityStream), visitor);
@@ -92,12 +92,12 @@ public class SenchaDeletePayloadParser implements MessageBodyReader<Collection<E
 
 	private static class DeleteVisitor implements EntityUpdateJsonVisitor {
 
-		private LrEntity<?> entity;
+		private AgEntity<?> entity;
 		private Collection<EntityDelete<?>> deleted;
 
 		private Map<String, Object> deletedId;
 
-		protected DeleteVisitor(LrEntity<?> entity) {
+		protected DeleteVisitor(AgEntity<?> entity) {
 			this.entity = entity;
 			this.deleted = new ArrayList<>();
 		}

@@ -2,7 +2,7 @@ package io.agrest.runtime.processor.delete;
 
 import io.agrest.CompoundObjectId;
 import io.agrest.EntityParent;
-import io.agrest.LrObjectId;
+import io.agrest.AgObjectId;
 import io.agrest.SimpleObjectId;
 import io.agrest.processor.BaseProcessingContext;
 
@@ -15,7 +15,7 @@ import java.util.Map;
  */
 public class DeleteContext<T> extends BaseProcessingContext<T> {
 
-	protected Collection<LrObjectId> ids;
+	protected Collection<AgObjectId> ids;
 	protected EntityParent<?> parent;
 
 	public DeleteContext(Class<T> type) {
@@ -26,7 +26,7 @@ public class DeleteContext<T> extends BaseProcessingContext<T> {
 		return ids != null;
 	}
 
-	public Collection<LrObjectId> getIds() {
+	public Collection<AgObjectId> getIds() {
 		return ids;
 	}
 
@@ -44,7 +44,7 @@ public class DeleteContext<T> extends BaseProcessingContext<T> {
 		this.ids.add(new CompoundObjectId(ids));
 	}
 
-	public void addId(LrObjectId id) {
+	public void addId(AgObjectId id) {
 		if (this.ids == null) {
 			this.ids = new ArrayList<>();
 		}

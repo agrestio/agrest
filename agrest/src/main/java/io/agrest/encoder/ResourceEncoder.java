@@ -2,8 +2,8 @@ package io.agrest.encoder;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import io.agrest.ResourceEntity;
-import io.agrest.meta.LrOperation;
-import io.agrest.meta.LrResource;
+import io.agrest.meta.AgOperation;
+import io.agrest.meta.AgResource;
 
 import java.io.IOException;
 import java.util.Collection;
@@ -31,22 +31,22 @@ public class ResourceEncoder<T> extends AbstractEncoder {
     protected boolean encodeNonNullObject(Object object, JsonGenerator out) throws IOException {
         writeEntity(entity, out);
 
-        writeResources((Collection<LrResource<?>>) object, out);
+        writeResources((Collection<AgResource<?>>) object, out);
 
         return true;
     }
 
-    private void writeResources(Collection<LrResource<?>> resources, JsonGenerator out) throws IOException {
+    private void writeResources(Collection<AgResource<?>> resources, JsonGenerator out) throws IOException {
         out.writeArrayFieldStart("links");
 
-        for (LrResource<?> resource : resources) {
+        for (AgResource<?> resource : resources) {
             writeResource(resource, out);
         }
 
         out.writeEndArray();
     }
 
-    private void writeResource(LrResource<?> resource, JsonGenerator out) throws IOException {
+    private void writeResource(AgResource<?> resource, JsonGenerator out) throws IOException {
 
         out.writeStartObject();
 
@@ -60,15 +60,15 @@ public class ResourceEncoder<T> extends AbstractEncoder {
 
     }
 
-    private void writeOperations(Collection<LrOperation> operations, JsonGenerator out) throws IOException {
+    private void writeOperations(Collection<AgOperation> operations, JsonGenerator out) throws IOException {
         out.writeArrayFieldStart("operations");
 
         // sort operations for encoding consistency
-        Collection<LrOperation> sorted = operations.size() > 1
+        Collection<AgOperation> sorted = operations.size() > 1
                 ? operations.stream().sorted(comparing(op -> op.getMethod().name())).collect(toList())
                 : operations;
 
-        for (LrOperation operation : sorted) {
+        for (AgOperation operation : sorted) {
             out.writeStartObject();
             out.writeStringField("method", operation.getMethod().name());
             out.writeEndObject();
@@ -76,7 +76,7 @@ public class ResourceEncoder<T> extends AbstractEncoder {
         out.writeEndArray();
     }
 
-    private void writeOperation(LrOperation operation, JsonGenerator out) throws IOException {
+    private void writeOperation(AgOperation operation, JsonGenerator out) throws IOException {
         out.writeStartObject();
         out.writeStringField("method", operation.getMethod().name());
         out.writeEndObject();

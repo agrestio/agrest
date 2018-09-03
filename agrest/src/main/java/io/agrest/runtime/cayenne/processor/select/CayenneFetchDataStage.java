@@ -1,7 +1,7 @@
 package io.agrest.runtime.cayenne.processor.select;
 
 import io.agrest.LinkRestException;
-import io.agrest.meta.LrEntity;
+import io.agrest.meta.AgEntity;
 import io.agrest.processor.Processor;
 import io.agrest.processor.ProcessorOutcome;
 import io.agrest.runtime.cayenne.ICayennePersister;
@@ -40,7 +40,7 @@ public class CayenneFetchDataStage implements Processor<SelectContext<?>> {
 
         if (context.isAtMostOneObject() && objects.size() != 1) {
 
-            LrEntity<?> entity = context.getEntity().getLrEntity();
+            AgEntity<?> entity = context.getEntity().getAgEntity();
 
             if (objects.isEmpty()) {
                 throw new LinkRestException(Response.Status.NOT_FOUND,

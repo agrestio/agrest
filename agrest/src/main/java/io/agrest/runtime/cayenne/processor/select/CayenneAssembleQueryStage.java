@@ -1,12 +1,12 @@
 package io.agrest.runtime.cayenne.processor.select;
 
 import io.agrest.LinkRestException;
-import io.agrest.LrObjectId;
+import io.agrest.AgObjectId;
 import io.agrest.ResourceEntity;
-import io.agrest.meta.LrAttribute;
-import io.agrest.meta.LrEntity;
-import io.agrest.meta.LrPersistentAttribute;
-import io.agrest.meta.LrPersistentEntity;
+import io.agrest.meta.AgAttribute;
+import io.agrest.meta.AgEntity;
+import io.agrest.meta.AgPersistentAttribute;
+import io.agrest.meta.AgPersistentEntity;
 import io.agrest.processor.Processor;
 import io.agrest.processor.ProcessorOutcome;
 import io.agrest.runtime.cayenne.ICayennePersister;
@@ -96,34 +96,34 @@ public class CayenneAssembleQueryStage implements Processor<SelectContext<?>> {
 
             Class<T> root = context.getType();
             SelectQuery<T> query = new SelectQuery<>(root);
-            query.andQualifier(buildIdQualifer(context.getEntity().getLrEntity(), context.getId()));
+            query.andQualifier(buildIdQualifer(context.getEntity().getAgEntity(), context.getId()));
             return query;
         }
 
         return context.getSelect() != null ? context.getSelect() : new SelectQuery<>(context.getType());
     }
 
-    private Expression buildIdQualifer(LrEntity<?> entity, LrObjectId id) {
+    private Expression buildIdQualifer(AgEntity<?> entity, AgObjectId id) {
 
-        Collection<LrAttribute> idAttributes = entity.getIds();
+        Collection<AgAttribute> idAttributes = entity.getIds();
         if (idAttributes.size() != id.size()) {
             throw new LinkRestException(Response.Status.BAD_REQUEST,
                     "Wrong ID size: expected " + idAttributes.size() + ", got: " + id.size());
         }
 
         Collection<Expression> qualifiers = new ArrayList<>();
-        for (LrAttribute idAttribute : idAttributes) {
+        for (AgAttribute idAttribute : idAttributes) {
             Object idValue = id.get(idAttribute.getName());
             if (idValue == null) {
                 throw new LinkRestException(Response.Status.BAD_REQUEST,
                         "Failed to build a Cayenne qualifier for entity " + entity.getName()
                                 + ": one of the entity's ID parts is missing in this ID: " + idAttribute.getName());
             }
-            if (idAttribute instanceof LrPersistentAttribute) {
+            if (idAttribute instanceof AgPersistentAttribute) {
                 qualifiers.add(ExpressionFactory.matchDbExp(
-                        ((LrPersistentAttribute) idAttribute).getColumnName(), idValue));
+                        ((AgPersistentAttribute) idAttribute).getColumnName(), idValue));
             } else {
-                // can be non-persistent attribute if assembled from @LrId by LrEntityBuilder
+                // can be non-persistent attribute if assembled from @AgId by AgEntityBuilder
                 qualifiers.add(ExpressionFactory.matchDbExp(idAttribute.getName(), idValue));
             }
         }
@@ -134,7 +134,7 @@ public class CayenneAssembleQueryStage implements Processor<SelectContext<?>> {
         for (Map.Entry<String, ResourceEntity<?>> e : entity.getChildren().entrySet()) {
 
             // skip prefetches of non-persistent entities
-            if (e.getValue().getLrEntity() instanceof LrPersistentEntity) {
+            if (e.getValue().getAgEntity() instanceof AgPersistentEntity) {
 
                 PrefetchTreeNode child = root.addPath(e.getKey());
 

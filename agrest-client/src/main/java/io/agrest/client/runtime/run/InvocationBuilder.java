@@ -1,6 +1,6 @@
 package io.agrest.client.runtime.run;
 
-import io.agrest.client.protocol.LrcRequest;
+import io.agrest.client.protocol.AgcRequest;
 
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.Invocation;
@@ -23,7 +23,7 @@ public class InvocationBuilder {
         targetBuilder = TargetBuilder.target(target);
     }
 
-    public InvocationBuilder request(LrcRequest request) {
+    public InvocationBuilder request(AgcRequest request) {
         targetBuilder.request(request);
         return this;
     }

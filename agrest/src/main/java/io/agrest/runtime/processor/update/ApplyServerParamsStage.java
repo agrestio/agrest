@@ -3,9 +3,9 @@ package io.agrest.runtime.processor.update;
 import io.agrest.EntityParent;
 import io.agrest.EntityUpdate;
 import io.agrest.ResourceEntity;
-import io.agrest.meta.LrEntity;
-import io.agrest.meta.LrPersistentRelationship;
-import io.agrest.meta.LrRelationship;
+import io.agrest.meta.AgEntity;
+import io.agrest.meta.AgPersistentRelationship;
+import io.agrest.meta.AgRelationship;
 import io.agrest.processor.Processor;
 import io.agrest.processor.ProcessorOutcome;
 import io.agrest.runtime.constraints.IConstraintsHandler;
@@ -70,10 +70,10 @@ public class ApplyServerParamsStage implements Processor<UpdateContext<?>> {
             // * if more than one - throw...
 
             if (context.getUpdates().isEmpty()) {
-                context.setUpdates(Collections.singleton(new EntityUpdate<>(context.getEntity().getLrEntity())));
+                context.setUpdates(Collections.singleton(new EntityUpdate<>(context.getEntity().getAgEntity())));
             }
 
-            LrEntity<T> entity = context.getEntity().getLrEntity();
+            AgEntity<T> entity = context.getEntity().getAgEntity();
             EntityUpdate<T> u = context.getFirst();
             Map<String, Object> idMap = u.getOrCreateId();
             idMap.putAll(context.getId().asMap(entity));
@@ -87,9 +87,9 @@ public class ApplyServerParamsStage implements Processor<UpdateContext<?>> {
         EntityParent<?> parent = context.getParent();
 
         if (parent != null && parent.getId() != null) {
-            LrRelationship fromParent = relationshipFromParent(context);
-            if (fromParent instanceof LrPersistentRelationship) {
-                LrPersistentRelationship r = (LrPersistentRelationship) fromParent;
+            AgRelationship fromParent = relationshipFromParent(context);
+            if (fromParent instanceof AgPersistentRelationship) {
+                AgPersistentRelationship r = (AgPersistentRelationship) fromParent;
                 if (r.isToDependentEntity()) {
                     for (EntityUpdate<T> u : context.getUpdates()) {
                         u.getOrCreateId().putAll(r.extractId(parent.getId()));
@@ -99,7 +99,7 @@ public class ApplyServerParamsStage implements Processor<UpdateContext<?>> {
         }
     }
 
-    private LrRelationship relationshipFromParent(UpdateContext<?> context) {
+    private AgRelationship relationshipFromParent(UpdateContext<?> context) {
 
         EntityParent<?> parent = context.getParent();
 
@@ -107,8 +107,8 @@ public class ApplyServerParamsStage implements Processor<UpdateContext<?>> {
             return null;
         }
 
-        LrRelationship r = metadataService.getLrRelationship(parent);
-        if (r instanceof LrPersistentRelationship) {
+        AgRelationship r = metadataService.getLrRelationship(parent);
+        if (r instanceof AgPersistentRelationship) {
             return r;
         }
 

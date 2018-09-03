@@ -1,7 +1,7 @@
 package io.agrest.runtime.encoder;
 
 import io.agrest.encoder.converter.StringConverter;
-import io.agrest.meta.LrEntity;
+import io.agrest.meta.AgEntity;
 
 public interface IStringConverterFactory {
 
@@ -11,13 +11,13 @@ public interface IStringConverterFactory {
 	 * 
 	 * @since 1.12
 	 */
-	StringConverter getConverter(LrEntity<?> entity);
+	StringConverter getConverter(AgEntity<?> entity);
 
 	/**
 	 * Returns a {@link StringConverter} for a given attribute.
 	 * 
 	 * @since 1.12
 	 */
-	StringConverter getConverter(LrEntity<?> entity, String attributeName);
+	StringConverter getConverter(AgEntity<?> entity, String attributeName);
 
 }

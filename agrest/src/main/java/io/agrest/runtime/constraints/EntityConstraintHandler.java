@@ -11,7 +11,7 @@ import io.agrest.EntityUpdate;
 import io.agrest.ResourceEntity;
 import io.agrest.annotation.ClientReadable;
 import io.agrest.annotation.ClientWritable;
-import io.agrest.meta.LrAttribute;
+import io.agrest.meta.AgAttribute;
 import io.agrest.runtime.processor.update.UpdateContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -72,7 +72,7 @@ class EntityConstraintHandler {
 
 	void constrainUpdate(UpdateContext<?> context) {
 
-		EntityConstraint c = forWrite.getOrCreate(context.getEntity().getLrEntity());
+		EntityConstraint c = forWrite.getOrCreate(context.getEntity().getAgEntity());
 
 		if (!c.allowsId()) {
 			context.setIdUpdatesDisallowed(true);
@@ -116,14 +116,14 @@ class EntityConstraintHandler {
 
 	void constrainForRead(ResourceEntity<?> entity) {
 
-		EntityConstraint c = forRead.getOrCreate(entity.getLrEntity());
+		EntityConstraint c = forRead.getOrCreate(entity.getAgEntity());
 
 		if (!c.allowsId()) {
 			entity.excludeId();
 		}
 
 		if (!c.allowsAllAttributes()) {
-			Iterator<LrAttribute> ait = entity.getAttributes().values().iterator();
+			Iterator<AgAttribute> ait = entity.getAttributes().values().iterator();
 			while (ait.hasNext()) {
 
 				String a = ait.next().getName();

@@ -1,19 +1,19 @@
 package io.agrest.it.fixture.pojo.model;
 
-import io.agrest.annotation.LrAttribute;
-import io.agrest.annotation.LrId;
+import io.agrest.annotation.AgAttribute;
+import io.agrest.annotation.AgId;
 
 public class P7 {
 
 	int id;
 	String string;
 
-	@LrId
+	@AgId
 	public int getId() {
 		return id;
 	}
 
-	@LrAttribute
+	@AgAttribute
 	public String getString() {
 		return string;
 	}

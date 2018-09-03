@@ -3,8 +3,8 @@ package io.agrest.runtime.protocol;
 import io.agrest.ResourceEntity;
 import io.agrest.it.fixture.cayenne.E2;
 import io.agrest.it.fixture.cayenne.auto._E2;
-import io.agrest.meta.LrAttribute;
-import io.agrest.meta.LrEntity;
+import io.agrest.meta.AgAttribute;
+import io.agrest.meta.AgEntity;
 import io.agrest.protocol.Sort;
 import io.agrest.runtime.entity.SortMerger;
 import io.agrest.runtime.path.PathDescriptorManager;
@@ -32,11 +32,11 @@ public class SortMergerTest extends TestWithCayenneMapping {
 		this.merger = new SortMerger(new PathDescriptorManager());
 
 		@SuppressWarnings("unchecked")
-		LrEntity<E2> lre2 = mock(LrEntity.class);
+		AgEntity<E2> lre2 = mock(AgEntity.class);
 		when(lre2.getType()).thenReturn(E2.class);
 		when(lre2.getName()).thenReturn("E2");
-		when(lre2.getAttribute("name")).thenReturn(mock(LrAttribute.class));
-		when(lre2.getAttribute("address")).thenReturn(mock(LrAttribute.class));
+		when(lre2.getAttribute("name")).thenReturn(mock(AgAttribute.class));
+		when(lre2.getAttribute("address")).thenReturn(mock(AgAttribute.class));
 
 		this.entity = new ResourceEntity<>(lre2);
 	}

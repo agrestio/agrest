@@ -2,8 +2,8 @@ package io.agrest.runtime.cayenne.processor.delete;
 
 import io.agrest.EntityParent;
 import io.agrest.LinkRestException;
-import io.agrest.LrObjectId;
-import io.agrest.meta.LrEntity;
+import io.agrest.AgObjectId;
+import io.agrest.meta.AgEntity;
 import io.agrest.processor.Processor;
 import io.agrest.processor.ProcessorOutcome;
 import io.agrest.runtime.cayenne.processor.Util;
@@ -48,13 +48,13 @@ public class CayenneDeleteStage implements Processor<DeleteContext<?>> {
 
         // delete by id
         if (context.isById()) {
-            LrEntity<T> lrEntity = metadataService.getLrEntity(context.getType());
-            deleteById(context, cayenneContext, lrEntity);
+            AgEntity<T> agEntity = metadataService.getLrEntity(context.getType());
+            deleteById(context, cayenneContext, agEntity);
         }
         // delete by parent
         else if (context.getParent() != null) {
-            LrEntity<?> parentLrEntity = metadataService.getLrEntity(context.getParent().getType());
-            deleteByParent(context, cayenneContext, parentLrEntity);
+            AgEntity<?> parentAgEntity = metadataService.getLrEntity(context.getParent().getType());
+            deleteByParent(context, cayenneContext, parentAgEntity);
         }
         // delete all !!
         else {
@@ -62,10 +62,10 @@ public class CayenneDeleteStage implements Processor<DeleteContext<?>> {
         }
     }
 
-    private <T extends DataObject> void deleteById(DeleteContext<T> context, ObjectContext cayenneContext, LrEntity<T> lrEntity) {
+    private <T extends DataObject> void deleteById(DeleteContext<T> context, ObjectContext cayenneContext, AgEntity<T> agEntity) {
 
-        for (LrObjectId id : context.getIds()) {
-            Object o = Util.findById(cayenneContext, context.getType(), lrEntity, id.get());
+        for (AgObjectId id : context.getIds()) {
+            Object o = Util.findById(cayenneContext, context.getType(), agEntity, id.get());
 
             if (o == null) {
                 ObjEntity entity = cayenneContext.getEntityResolver().getObjEntity(context.getType());
@@ -78,7 +78,7 @@ public class CayenneDeleteStage implements Processor<DeleteContext<?>> {
         cayenneContext.commitChanges();
     }
 
-    private <T extends DataObject> void deleteByParent(DeleteContext<T> context, ObjectContext cayenneContext, LrEntity<?> lrParentEntity) {
+    private <T extends DataObject> void deleteByParent(DeleteContext<T> context, ObjectContext cayenneContext, AgEntity<?> lrParentEntity) {
 
         EntityParent<?> parent = context.getParent();
         Object parentObject = Util.findById(cayenneContext, parent.getType(), lrParentEntity, parent.getId().get());

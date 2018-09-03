@@ -1,7 +1,7 @@
 package io.agrest.runtime.entity;
 
 import io.agrest.ResourceEntity;
-import io.agrest.meta.LrEntity;
+import io.agrest.meta.AgEntity;
 import io.agrest.protocol.Dir;
 import io.agrest.protocol.Sort;
 import io.agrest.runtime.path.IPathDescriptorManager;
@@ -42,7 +42,7 @@ public class SortMerger implements ISortMerger {
         if (property != null && !property.isEmpty()) {
 
             // TODO: do we need to support nested ID?
-            LrEntity<?> entity = resourceEntity.getLrEntity();
+            AgEntity<?> entity = resourceEntity.getAgEntity();
 
             // note using "toString" instead of "getPath" to convert ASTPath to
             // String representation. This ensures "db:" prefix is preserved if

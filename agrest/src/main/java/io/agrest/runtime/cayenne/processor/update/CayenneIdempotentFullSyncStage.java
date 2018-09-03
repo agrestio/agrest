@@ -77,7 +77,7 @@ public class CayenneIdempotentFullSyncStage extends CayenneIdempotentCreateOrUpd
         if (context.isById() && objects.size() > 1) {
             throw new LinkRestException(Response.Status.INTERNAL_SERVER_ERROR, String.format(
                     "Found more than one object for ID '%s' and entity '%s'",
-                    context.getId(), context.getEntity().getLrEntity().getName()));
+                    context.getId(), context.getEntity().getAgEntity().getName()));
         }
         return objects;
     }

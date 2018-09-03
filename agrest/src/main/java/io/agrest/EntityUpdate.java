@@ -5,7 +5,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import io.agrest.meta.LrEntity;
+import io.agrest.meta.AgEntity;
 
 /**
  * Contains update data of a single object.
@@ -19,9 +19,9 @@ public class EntityUpdate<T> {
 	private Map<String, Object> id;
 	private boolean explicitId;
 	private Object mergedTo;
-	private LrEntity<T> entity;
+	private AgEntity<T> entity;
 
-	public EntityUpdate(LrEntity<T> entity) {
+	public EntityUpdate(AgEntity<T> entity) {
 		this.values = new HashMap<>();
 		this.relatedIds = new HashMap<>();
 		this.entity = entity;
@@ -30,7 +30,7 @@ public class EntityUpdate<T> {
 	/**
 	 * @since 1.19
 	 */
-	public LrEntity<T> getEntity() {
+	public AgEntity<T> getEntity() {
 		return entity;
 	}
 

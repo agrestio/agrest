@@ -6,7 +6,7 @@ import io.agrest.PathConstants;
 import io.agrest.ResourceEntity;
 import io.agrest.constraints.ConstrainedLrEntity;
 import io.agrest.constraints.Constraint;
-import io.agrest.meta.LrAttribute;
+import io.agrest.meta.AgAttribute;
 import io.agrest.runtime.processor.update.UpdateContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,7 +37,7 @@ class RequestConstraintsHandler {
 			return false;
 		}
 
-		applyForRead(resourceEntity, c.apply(resourceEntity.getLrEntity()));
+		applyForRead(resourceEntity, c.apply(resourceEntity.getAgEntity()));
 		return true;
 	}
 
@@ -51,7 +51,7 @@ class RequestConstraintsHandler {
 			return false;
 		}
 
-		applyForWrite(context, c.apply(context.getEntity().getLrEntity()));
+		applyForWrite(context, c.apply(context.getEntity().getAgEntity()));
 		return true;
 	}
 
@@ -99,10 +99,10 @@ class RequestConstraintsHandler {
 			target.excludeId();
 		}
 
-		Iterator<LrAttribute> ait = target.getAttributes().values().iterator();
+		Iterator<AgAttribute> ait = target.getAttributes().values().iterator();
 		while (ait.hasNext()) {
 
-			LrAttribute a = ait.next();
+			AgAttribute a = ait.next();
 			if (!constraints.hasAttribute(a.getName())) {
 
 				// do not report default properties, as this wasn't a client's

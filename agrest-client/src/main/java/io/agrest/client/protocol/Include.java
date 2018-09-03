@@ -6,7 +6,7 @@ import java.util.Optional;
 /**
  * @since 2.0
  */
-public class Include extends LrcEntityRequest {
+public class Include extends AgcEntityRequest {
 
 	public static IncludeBuilder path(String path) {
 		return new IncludeBuilder(path);
@@ -14,7 +14,7 @@ public class Include extends LrcEntityRequest {
 
 	private String path;
 
-	// TODO: for now LR only supports 'mapBy' in nested includes. Once it is
+	// TODO: for now AgREST only supports 'mapBy' in nested includes. Once it is
 	// supported at the root level this will have to be moved to the superclass
 	protected String mapBy;
 

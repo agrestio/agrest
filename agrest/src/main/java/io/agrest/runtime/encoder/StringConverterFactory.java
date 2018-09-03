@@ -3,8 +3,8 @@ package io.agrest.runtime.encoder;
 import io.agrest.LinkRestException;
 import io.agrest.encoder.converter.GenericConverter;
 import io.agrest.encoder.converter.StringConverter;
-import io.agrest.meta.LrAttribute;
-import io.agrest.meta.LrEntity;
+import io.agrest.meta.AgAttribute;
+import io.agrest.meta.AgEntity;
 
 import javax.ws.rs.core.Response.Status;
 import java.util.Map;
@@ -27,12 +27,12 @@ public class StringConverterFactory implements IStringConverterFactory {
 	}
 
 	@Override
-	public StringConverter getConverter(LrEntity<?> entity) {
+	public StringConverter getConverter(AgEntity<?> entity) {
 		return getConverter(entity, null);
 	}
 
 	@Override
-	public StringConverter getConverter(LrEntity<?> entity, String attributeName) {
+	public StringConverter getConverter(AgEntity<?> entity, String attributeName) {
 		String key = attributeName != null ? entity.getName() + "." + attributeName : entity.getName();
 
 		StringConverter converter = convertersByPath.get(key);
@@ -44,14 +44,14 @@ public class StringConverterFactory implements IStringConverterFactory {
 		return converter;
 	}
 
-	protected StringConverter buildConverter(LrEntity<?> entity, String attributeName) {
+	protected StringConverter buildConverter(AgEntity<?> entity, String attributeName) {
 
 		if (attributeName == null) {
 			// root object encoder... assuming we'll get ID as number
 			return GenericConverter.converter();
 		}
 
-		LrAttribute attribute = entity.getAttribute(attributeName);
+		AgAttribute attribute = entity.getAttribute(attributeName);
 
 		if (attribute == null) {
 			throw new LinkRestException(Status.BAD_REQUEST, "Invalid attribute: '" + entity.getName() + "."
@@ -64,7 +64,7 @@ public class StringConverterFactory implements IStringConverterFactory {
 	/**
 	 * @since 2.11
      */
-	protected StringConverter buildConverter(LrAttribute attribute) {
+	protected StringConverter buildConverter(AgAttribute attribute) {
 		return buildConverter(attribute.getType());
 	}
 

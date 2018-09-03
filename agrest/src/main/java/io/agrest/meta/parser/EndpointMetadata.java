@@ -1,7 +1,7 @@
 package io.agrest.meta.parser;
 
+import io.agrest.annotation.AgResource;
 import io.agrest.annotation.LinkType;
-import io.agrest.annotation.LrResource;
 import io.agrest.meta.annotation.Resource;
 
 import java.lang.reflect.Method;
@@ -17,7 +17,7 @@ class EndpointMetadata {
         EndpointMetadata mdNew = fromNewAnnotation(resourceMethod);
 
         if (mdLegacy != null && mdNew != null) {
-            throw new IllegalStateException("Method '" + resourceMethod.getName() + "' is annotated with both @Resource and @LrResource");
+            throw new IllegalStateException("Method '" + resourceMethod.getName() + "' is annotated with both @Resource and @AgResource");
         }
 
         return mdNew != null ? mdNew : mdLegacy;
@@ -30,7 +30,7 @@ class EndpointMetadata {
     }
 
     private static EndpointMetadata fromNewAnnotation(Method resourceMethod) {
-        LrResource annotation = resourceMethod.getAnnotation(LrResource.class);
+        AgResource annotation = resourceMethod.getAnnotation(AgResource.class);
         return annotation == null ? null : new EndpointMetadata(annotation.type(), annotation.entityClass());
     }
 

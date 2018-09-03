@@ -1,14 +1,14 @@
 package io.agrest.it.fixture.pojo.model;
 
-import io.agrest.annotation.LrAttribute;
-import io.agrest.annotation.LrRelationship;
+import io.agrest.annotation.AgAttribute;
+import io.agrest.annotation.AgRelationship;
 
 public class P2 {
 
 	private String name;
 	private P1 p1;
 
-	@LrAttribute
+	@AgAttribute
 	public String getName() {
 		return name;
 	}
@@ -17,7 +17,7 @@ public class P2 {
 		this.name = name;
 	}
 
-	@LrRelationship
+	@AgRelationship
 	public P1 getP1() {
 		return p1;
 	}

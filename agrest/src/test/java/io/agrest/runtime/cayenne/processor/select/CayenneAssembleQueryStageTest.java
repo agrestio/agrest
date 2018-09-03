@@ -4,8 +4,8 @@ import io.agrest.ResourceEntity;
 import io.agrest.it.fixture.cayenne.E1;
 import io.agrest.it.fixture.cayenne.E2;
 import io.agrest.it.fixture.cayenne.E3;
-import io.agrest.meta.LrPersistentEntity;
-import io.agrest.meta.LrRelationship;
+import io.agrest.meta.AgPersistentEntity;
+import io.agrest.meta.AgRelationship;
 import io.agrest.runtime.processor.select.SelectContext;
 import io.agrest.unit.TestWithCayenneMapping;
 import org.apache.cayenne.exp.Expression;
@@ -55,9 +55,9 @@ public class CayenneAssembleQueryStageTest extends TestWithCayenneMapping {
 		SelectQuery<E2> query = new SelectQuery<E2>(E2.class);
 
 		ResourceEntity<E2> resultFilter = getResourceEntity(E2.class);
-		LrRelationship incoming = resultFilter.getLrEntity().getRelationship(E2.E3S.getName());
+		AgRelationship incoming = resultFilter.getAgEntity().getRelationship(E2.E3S.getName());
 		@SuppressWarnings("unchecked")
-        LrPersistentEntity<E3> target = Mockito.mock(LrPersistentEntity.class);
+        AgPersistentEntity<E3> target = Mockito.mock(AgPersistentEntity.class);
 		resultFilter.getChildren().put(E2.E3S.getName(), new ResourceEntity<E3>(target, incoming));
 
 		SelectContext<E2> context = new SelectContext<E2>(E2.class);

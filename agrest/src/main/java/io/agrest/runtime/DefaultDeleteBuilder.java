@@ -3,7 +3,7 @@ package io.agrest.runtime;
 import io.agrest.DeleteBuilder;
 import io.agrest.EntityParent;
 import io.agrest.LinkRestException;
-import io.agrest.LrObjectId;
+import io.agrest.AgObjectId;
 import io.agrest.SimpleResponse;
 import io.agrest.runtime.processor.delete.DeleteContext;
 import io.agrest.runtime.processor.delete.DeleteProcessorFactory;
@@ -46,7 +46,7 @@ public class DefaultDeleteBuilder<T> implements DeleteBuilder<T> {
 	}
 
 	@Override
-	public DeleteBuilder<T> id(LrObjectId id) {
+	public DeleteBuilder<T> id(AgObjectId id) {
 		context.addId(id);
 		return this;
 	}

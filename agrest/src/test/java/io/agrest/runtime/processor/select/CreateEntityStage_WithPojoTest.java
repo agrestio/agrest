@@ -1,11 +1,11 @@
 package io.agrest.runtime.processor.select;
 
-import io.agrest.LrRequest;
+import io.agrest.AgRequest;
 import io.agrest.ResourceEntity;
 import io.agrest.it.fixture.pojo.model.P1;
 import io.agrest.it.fixture.pojo.model.P2;
 import io.agrest.meta.cayenne.CayenneEntityCompiler;
-import io.agrest.meta.compiler.LrEntityCompiler;
+import io.agrest.meta.compiler.AgEntityCompiler;
 import io.agrest.meta.compiler.PojoEntityCompiler;
 import io.agrest.protocol.Include;
 import io.agrest.runtime.entity.CayenneExpMerger;
@@ -72,7 +72,7 @@ public class CreateEntityStage_WithPojoTest extends TestWithCayenneMapping {
 	@Override
 	protected IMetadataService createMetadataService() {
 
-		List<LrEntityCompiler> compilers = new ArrayList<>();
+		List<AgEntityCompiler> compilers = new ArrayList<>();
 		compilers.add(new PojoEntityCompiler(Collections.emptyMap()));
 		compilers.add(new CayenneEntityCompiler(mockCayennePersister, Collections.emptyMap(), converterFactory));
 
@@ -87,7 +87,7 @@ public class CreateEntityStage_WithPojoTest extends TestWithCayenneMapping {
 
         SelectContext<P1> context = prepareContext(params, P1.class);
 
-		context.setRawRequest(LrRequest.builder().build());
+		context.setRawRequest(AgRequest.builder().build());
 		createEntityStage.execute(context);
 
         ResourceEntity<P1> ce1 = context.getEntity();
@@ -101,7 +101,7 @@ public class CreateEntityStage_WithPojoTest extends TestWithCayenneMapping {
 
         SelectContext<P2> context2 = prepareContext(params, P2.class);
 
-		context2.setRawRequest(LrRequest.builder().build());
+		context2.setRawRequest(AgRequest.builder().build());
 		createEntityStage.execute(context2);
 
         ResourceEntity<P2> ce2 = context2.getEntity();
@@ -123,7 +123,7 @@ public class CreateEntityStage_WithPojoTest extends TestWithCayenneMapping {
 		SelectContext<P2> context2 = new SelectContext<>(P2.class);
 
 		Include include = new Include("p1");
-		context2.setRawRequest(LrRequest.builder().includes(Collections.singletonList(include)).build());
+		context2.setRawRequest(AgRequest.builder().includes(Collections.singletonList(include)).build());
 
 
 		createEntityStage.execute(context2);

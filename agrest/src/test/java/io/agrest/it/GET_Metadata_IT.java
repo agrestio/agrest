@@ -5,8 +5,8 @@ import io.agrest.DataResponse;
 import io.agrest.LinkRest;
 import io.agrest.MetadataResponse;
 import io.agrest.SimpleResponse;
+import io.agrest.annotation.AgResource;
 import io.agrest.annotation.LinkType;
-import io.agrest.annotation.LrResource;
 import io.agrest.constraints.Constraint;
 import io.agrest.it.fixture.JerseyTestOnDerby;
 import io.agrest.it.fixture.cayenne.E15;
@@ -117,14 +117,14 @@ public class GET_Metadata_IT extends JerseyTestOnDerby {
         private Configuration config;
 
         @GET
-        @LrResource(type = LinkType.COLLECTION)
+        @AgResource(type = LinkType.COLLECTION)
         public DataResponse<E5> get(@Context UriInfo uriInfo) {
             throw new UnsupportedOperationException("Response is not relevant for the test");
         }
 
         @GET
         @Path("{id}")
-        @LrResource(type = LinkType.ITEM)
+        @AgResource(type = LinkType.ITEM)
         public DataResponse<E5> getById(@PathParam("id") int id, @Context UriInfo uriInfo) {
             throw new UnsupportedOperationException("Response is not relevant for the test");
         }
@@ -137,14 +137,14 @@ public class GET_Metadata_IT extends JerseyTestOnDerby {
 
         @GET
         @Path("metadata")
-        @LrResource(entityClass = E5.class, type = LinkType.METADATA)
+        @AgResource(entityClass = E5.class, type = LinkType.METADATA)
         public MetadataResponse<E5> getMetadata(@Context UriInfo uriInfo) {
             return LinkRest.metadata(E5.class, config).forResource(E5Resource.class).uri(uriInfo).process();
         }
 
         @GET
         @Path("metadata-constraints")
-        @LrResource(entityClass = E5.class, type = LinkType.METADATA)
+        @AgResource(entityClass = E5.class, type = LinkType.METADATA)
         public MetadataResponse<E5> getMetadataWithConstraints(@Context UriInfo uriInfo) {
 
             Constraint<E5> constraint = Constraint.excludeAll(E5.class)
@@ -168,7 +168,7 @@ public class GET_Metadata_IT extends JerseyTestOnDerby {
 
         @GET
         @Path("metadata")
-        @LrResource(entityClass = E19.class, type = LinkType.METADATA)
+        @AgResource(entityClass = E19.class, type = LinkType.METADATA)
         public MetadataResponse<E19> getMetadata(@Context UriInfo uriInfo) {
             return LinkRest.metadata(E19.class, config)
                     .forResource(E19Resource.class)

@@ -1,6 +1,6 @@
 package io.agrest.runtime.processor.select;
 
-import io.agrest.LrRequest;
+import io.agrest.AgRequest;
 import io.agrest.ResourceEntity;
 import io.agrest.processor.Processor;
 import io.agrest.processor.ProcessorOutcome;
@@ -55,7 +55,7 @@ public class CreateResourceEntityStage implements Processor<SelectContext<?>> {
     protected <T> void doExecute(SelectContext<T> context) {
         ResourceEntity<T> resourceEntity = new ResourceEntity<>(metadataService.getLrEntity(context.getType()));
 
-        LrRequest request = context.getRawRequest();
+        AgRequest request = context.getRawRequest();
         if (request != null) {
             sizeMerger.merge(resourceEntity, request.getStart(), request.getLimit());
             includeMerger.merge(resourceEntity, request.getIncludes());

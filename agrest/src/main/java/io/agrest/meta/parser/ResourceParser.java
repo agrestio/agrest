@@ -2,11 +2,11 @@ package io.agrest.meta.parser;
 
 import io.agrest.DataResponse;
 import io.agrest.annotation.LinkType;
-import io.agrest.meta.DefaultLrOperation;
-import io.agrest.meta.DefaultLrResource;
+import io.agrest.meta.AgEntity;
+import io.agrest.meta.DefaultAgOperation;
+import io.agrest.meta.DefaultAgResource;
 import io.agrest.meta.LinkMethodType;
-import io.agrest.meta.LrEntity;
-import io.agrest.meta.LrResource;
+import io.agrest.meta.AgResource;
 import io.agrest.runtime.meta.IMetadataService;
 import org.apache.cayenne.di.Inject;
 
@@ -40,7 +40,7 @@ public class ResourceParser implements IResourceParser {
 	}
 
 	@Override
-	public <T> Collection<LrResource<?>> parse(Class<T> resourceClass) {
+	public <T> Collection<AgResource<?>> parse(Class<T> resourceClass) {
 
 		Path root = resourceClass.getAnnotation(Path.class);
 		if (root == null) {
@@ -65,7 +65,7 @@ public class ResourceParser implements IResourceParser {
 			}
 		}
 
-		Collection<LrResource<?>> resources = new ArrayList<>();
+		Collection<AgResource<?>> resources = new ArrayList<>();
 		for (Map.Entry<String, Set<Method>> methodsByPath : methodsMap.entrySet()) {
 			resources.add(createResource(methodsByPath.getKey(), methodsByPath.getValue()));
 		}
@@ -73,14 +73,14 @@ public class ResourceParser implements IResourceParser {
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	private LrResource<?> createResource(String path, Set<Method> methods) {
-		DefaultLrResource resource = new DefaultLrResource();
+	private AgResource<?> createResource(String path, Set<Method> methods) {
+		DefaultAgResource resource = new DefaultAgResource();
 
 		LinkType resourceType = LinkType.UNDEFINED;
 		for (Method method : methods) {
 
 			EndpointMetadata md = EndpointMetadata.fromAnnotation(method);
-			LrEntity<?> entity = null;
+			AgEntity<?> entity = null;
 			if (md != null) {
 				LinkType annotatedType = md.getLinkType();
 				if (resourceType == LinkType.UNDEFINED) {
@@ -124,7 +124,7 @@ public class ResourceParser implements IResourceParser {
 			if (methodType == null) {
 				continue;
 			}
-			resource.addOperation(new DefaultLrOperation(methodType));
+			resource.addOperation(new DefaultAgOperation(methodType));
 
 		}
 

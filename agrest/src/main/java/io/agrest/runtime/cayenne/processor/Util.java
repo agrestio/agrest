@@ -1,8 +1,8 @@
 package io.agrest.runtime.cayenne.processor;
 
 import io.agrest.LinkRestException;
-import io.agrest.meta.LrAttribute;
-import io.agrest.meta.LrEntity;
+import io.agrest.meta.AgAttribute;
+import io.agrest.meta.AgEntity;
 import org.apache.cayenne.ObjectContext;
 import org.apache.cayenne.exp.ExpressionFactory;
 import org.apache.cayenne.exp.parser.ASTEqual;
@@ -21,7 +21,7 @@ public final class Util {
 	}
 
 	@SuppressWarnings("unchecked")
-	public static <A> A findById(ObjectContext context, Class<A> type, LrEntity<?> lrEntity, Object id) {
+	public static <A> A findById(ObjectContext context, Class<A> type, AgEntity<?> agEntity, Object id) {
 		ObjEntity entity = context.getEntityResolver().getObjEntity(type);
 
 		// sanity checking...
@@ -43,7 +43,7 @@ public final class Util {
 			}
 			return query.selectOne(context);
 		} else {
-			LrAttribute attribute = lrEntity.getIds().iterator().next();
+			AgAttribute attribute = agEntity.getIds().iterator().next();
 			return ObjectSelect.query(type, new ASTEqual(attribute.getPathExp(), id)).selectOne(context);
 		}
 	}

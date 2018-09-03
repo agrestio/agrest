@@ -3,9 +3,9 @@ package io.agrest.runtime.entity;
 import io.agrest.LinkRestException;
 import io.agrest.PathConstants;
 import io.agrest.ResourceEntity;
-import io.agrest.meta.LrAttribute;
-import io.agrest.meta.LrEntity;
-import io.agrest.meta.LrRelationship;
+import io.agrest.meta.AgAttribute;
+import io.agrest.meta.AgEntity;
+import io.agrest.meta.AgRelationship;
 import io.agrest.protocol.Include;
 import org.apache.cayenne.di.Inject;
 
@@ -51,8 +51,8 @@ public class IncludeMerger implements IIncludeMerger {
         }
 
         String property = dot > 0 ? path.substring(0, dot) : path;
-        LrEntity<?> lrEntity = parent.getLrEntity();
-        LrAttribute attribute = lrEntity.getAttribute(property);
+        AgEntity<?> agEntity = parent.getAgEntity();
+        AgAttribute attribute = agEntity.getAttribute(property);
         if (attribute != null) {
 
             if (dot > 0) {
@@ -63,12 +63,12 @@ public class IncludeMerger implements IIncludeMerger {
             return null;
         }
 
-        LrRelationship relationship = lrEntity.getRelationship(property);
+        AgRelationship relationship = agEntity.getRelationship(property);
         if (relationship != null) {
 
             ResourceEntity<?> childEntity = parent.getChild(property);
             if (childEntity == null) {
-                LrEntity<?> targetType = relationship.getTargetEntity();
+                AgEntity<?> targetType = relationship.getTargetEntity();
                 childEntity = new ResourceEntity(targetType, relationship);
                 parent.getChildren().put(property, childEntity);
             }
@@ -97,7 +97,7 @@ public class IncludeMerger implements IIncludeMerger {
         // are relationships
         if (!resourceEntity.isIdIncluded() && resourceEntity.getAttributes().isEmpty()) {
 
-            for (LrAttribute a : resourceEntity.getLrEntity().getAttributes()) {
+            for (AgAttribute a : resourceEntity.getAgEntity().getAttributes()) {
                 resourceEntity.getAttributes().put(a.getName(), a);
                 resourceEntity.getDefaultProperties().add(a.getName());
             }

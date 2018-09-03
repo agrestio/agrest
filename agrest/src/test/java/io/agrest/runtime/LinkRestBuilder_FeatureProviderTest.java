@@ -1,6 +1,6 @@
 package io.agrest.runtime;
 
-import io.agrest.LrFeatureProvider;
+import io.agrest.AgFeatureProvider;
 import io.agrest.TestFeatureProvider;
 import org.apache.cayenne.di.Injector;
 import org.junit.Test;
@@ -84,7 +84,7 @@ public class LinkRestBuilder_FeatureProviderTest {
         }
     }
 
-    static class LocalTestFeatureProvider implements LrFeatureProvider {
+    static class LocalTestFeatureProvider implements AgFeatureProvider {
 
         @Override
         public Feature feature(Injector injector) {

@@ -4,7 +4,7 @@ import io.agrest.EntityUpdate;
 import io.agrest.LinkRestException;
 import io.agrest.ObjectMapper;
 import io.agrest.ObjectMapperFactory;
-import io.agrest.meta.LrEntity;
+import io.agrest.meta.AgEntity;
 import io.agrest.runtime.cayenne.ByIdObjectMapperFactory;
 import io.agrest.runtime.meta.IMetadataService;
 import io.agrest.runtime.processor.update.UpdateContext;
@@ -64,7 +64,7 @@ public class CayenneUpdateStage extends CayenneUpdateDataStoreStage {
                 throw new LinkRestException(Response.Status.BAD_REQUEST, "Can't update. No id for object");
             }
 
-            LrEntity<?> entity = context.getEntity().getLrEntity();
+            AgEntity<?> entity = context.getEntity().getAgEntity();
             throw new LinkRestException(Response.Status.NOT_FOUND, "No object for ID '" + firstKey + "' and entity '"
                     + entity.getName() + "'");
         }
@@ -128,7 +128,7 @@ public class CayenneUpdateStage extends CayenneUpdateDataStoreStage {
         if (context.isById() && objects.size() > 1) {
             throw new LinkRestException(Response.Status.INTERNAL_SERVER_ERROR, String.format(
                     "Found more than one object for ID '%s' and entity '%s'",
-                    context.getId(), context.getEntity().getLrEntity().getName()));
+                    context.getId(), context.getEntity().getAgEntity().getName()));
         }
         return objects;
     }

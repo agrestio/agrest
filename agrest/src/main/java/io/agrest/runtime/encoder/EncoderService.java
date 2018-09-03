@@ -15,8 +15,8 @@ import io.agrest.encoder.ListEncoder;
 import io.agrest.encoder.MapByEncoder;
 import io.agrest.encoder.PropertyMetadataEncoder;
 import io.agrest.encoder.ResourceEncoder;
-import io.agrest.meta.LrAttribute;
-import io.agrest.meta.LrRelationship;
+import io.agrest.meta.AgAttribute;
+import io.agrest.meta.AgRelationship;
 import io.agrest.property.PropertyBuilder;
 import io.agrest.runtime.semantics.IRelationshipMapper;
 import org.apache.cayenne.di.Inject;
@@ -116,7 +116,7 @@ public class EncoderService implements IEncoderService {
         return filteredEncoder(encoder, resourceEntity);
     }
 
-    protected Encoder toOneEncoder(ResourceEntity<?> resourceEntity, LrRelationship relationship) {
+    protected Encoder toOneEncoder(ResourceEntity<?> resourceEntity, AgRelationship relationship) {
 
         // to-one encoder is made of the following decorator layers (from outer
         // to inner):
@@ -146,20 +146,20 @@ public class EncoderService implements IEncoderService {
         // output
         Map<String, EntityProperty> attributeEncoders = new TreeMap<String, EntityProperty>();
 
-        for (LrAttribute attribute : resourceEntity.getAttributes().values()) {
-            EntityProperty property = attributeEncoderFactory.getAttributeProperty(resourceEntity.getLrEntity(),
+        for (AgAttribute attribute : resourceEntity.getAttributes().values()) {
+            EntityProperty property = attributeEncoderFactory.getAttributeProperty(resourceEntity.getAgEntity(),
                     attribute);
             attributeEncoders.put(attribute.getName(), property);
         }
 
         Map<String, EntityProperty> relationshipEncoders = new TreeMap<String, EntityProperty>();
         for (Entry<String, ResourceEntity<?>> e : resourceEntity.getChildren().entrySet()) {
-            LrRelationship relationship = resourceEntity.getLrEntity().getRelationship(e.getKey());
+            AgRelationship relationship = resourceEntity.getAgEntity().getRelationship(e.getKey());
 
             Encoder encoder = relationship.isToMany() ? nestedToManyEncoder(e.getValue())
                     : toOneEncoder(e.getValue(), relationship);
 
-            EntityProperty property = attributeEncoderFactory.getRelationshipProperty(resourceEntity.getLrEntity(),
+            EntityProperty property = attributeEncoderFactory.getRelationshipProperty(resourceEntity.getAgEntity(),
                     relationship, encoder);
             relationshipEncoders.put(e.getKey(), property);
         }

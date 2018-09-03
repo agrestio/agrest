@@ -1,6 +1,6 @@
 package io.agrest.runtime.meta;
 
-import io.agrest.meta.LrResource;
+import io.agrest.meta.AgResource;
 import io.agrest.meta.parser.IResourceParser;
 import org.apache.cayenne.di.Inject;
 
@@ -15,7 +15,7 @@ import java.util.concurrent.ConcurrentMap;
 public class ResourceMetadataService implements IResourceMetadataService {
 
     private IResourceParser resourceParser;
-    private ConcurrentMap<Class<?>, Collection<LrResource<?>>> classResources;
+    private ConcurrentMap<Class<?>, Collection<AgResource<?>>> classResources;
     private Optional<String> baseUrl;
 
     public ResourceMetadataService(@Inject IResourceParser resourceParser, @Inject BaseUrlProvider baseUrlProvider) {
@@ -26,7 +26,7 @@ public class ResourceMetadataService implements IResourceMetadataService {
 
     @SuppressWarnings({"rawtypes", "unchecked"})
     @Override
-    public Collection<LrResource<?>> getLrResources(Class<?> resourceClass) {
+    public Collection<AgResource<?>> getLrResources(Class<?> resourceClass) {
 
         Collection resources = classResources.get(resourceClass);
         if (resources == null) {

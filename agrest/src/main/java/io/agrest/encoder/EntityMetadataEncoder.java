@@ -2,8 +2,8 @@ package io.agrest.encoder;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import io.agrest.ResourceEntity;
-import io.agrest.meta.LrAttribute;
-import io.agrest.meta.LrRelationship;
+import io.agrest.meta.AgAttribute;
+import io.agrest.meta.AgRelationship;
 import org.apache.cayenne.dba.TypesMapping;
 
 import java.io.IOException;
@@ -21,7 +21,7 @@ public class EntityMetadataEncoder extends AbstractEncoder {
         this.propertyMetadataEncoders = propertyMetadataEncoders;
 
         this.properties = new TreeMap<>();
-        for (LrAttribute attribute : entity.getAttributes().values()) {
+        for (AgAttribute attribute : entity.getAttributes().values()) {
             properties.put(attribute.getName(), new AttributeProperty(attribute));
         }
         for (ResourceEntity<?> child : entity.getChildren().values()) {
@@ -34,13 +34,13 @@ public class EntityMetadataEncoder extends AbstractEncoder {
         // sanity check
         if (!entity.equals(object)) {
             throw new IllegalArgumentException(
-                    "Expected entity: " + entity.getLrEntity().getName() + ", was object of class: " + object.getClass().getName()
+                    "Expected entity: " + entity.getAgEntity().getName() + ", was object of class: " + object.getClass().getName()
             );
         }
 
         out.writeStartObject();
 
-        out.writeStringField("name", entity.getLrEntity().getName());
+        out.writeStringField("name", entity.getAgEntity().getName());
 
         out.writeArrayFieldStart("properties");
         for (Map.Entry<String, PropertyHelper> e : properties.entrySet()) {
@@ -70,9 +70,9 @@ public class EntityMetadataEncoder extends AbstractEncoder {
     }
 
     private static class AttributeProperty extends PropertyHelper {
-        private LrAttribute attribute;
+        private AgAttribute attribute;
 
-        AttributeProperty(LrAttribute attribute) {
+        AttributeProperty(AgAttribute attribute) {
             this.attribute = attribute;
         }
 
@@ -88,9 +88,9 @@ public class EntityMetadataEncoder extends AbstractEncoder {
     }
 
     private static class RelationshipProperty extends PropertyHelper {
-        private LrRelationship relationship;
+        private AgRelationship relationship;
 
-        RelationshipProperty(LrRelationship relationship) {
+        RelationshipProperty(AgRelationship relationship) {
             this.relationship = relationship;
         }
 

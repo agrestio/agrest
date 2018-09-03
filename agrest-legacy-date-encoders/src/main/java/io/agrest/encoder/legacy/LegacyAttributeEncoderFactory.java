@@ -1,8 +1,8 @@
 package io.agrest.encoder.legacy;
 
 import io.agrest.encoder.Encoder;
-import io.agrest.meta.LrAttribute;
-import io.agrest.meta.LrPersistentAttribute;
+import io.agrest.meta.AgAttribute;
+import io.agrest.meta.AgPersistentAttribute;
 import io.agrest.runtime.encoder.AttributeEncoderFactory;
 
 import java.sql.Types;
@@ -20,12 +20,12 @@ public class LegacyAttributeEncoderFactory extends AttributeEncoderFactory {
     }
 
     @Override
-    protected Encoder buildEncoder(LrAttribute attribute) {
+    protected Encoder buildEncoder(AgAttribute attribute) {
 
         if (java.util.Date.class.equals(attribute.getType())
-                && attribute instanceof LrPersistentAttribute) {
+                && attribute instanceof AgPersistentAttribute) {
 
-            int jdbcType = ((LrPersistentAttribute) attribute).getJdbcType();
+            int jdbcType = ((AgPersistentAttribute) attribute).getJdbcType();
 
             if (jdbcType == Types.DATE) {
                 return ISODateEncoder.encoder();

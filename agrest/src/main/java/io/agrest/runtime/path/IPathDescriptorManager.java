@@ -1,6 +1,6 @@
 package io.agrest.runtime.path;
 
-import io.agrest.meta.LrEntity;
+import io.agrest.meta.AgEntity;
 import org.apache.cayenne.exp.parser.ASTObjPath;
 
 
@@ -9,5 +9,5 @@ import org.apache.cayenne.exp.parser.ASTObjPath;
  */
 public interface IPathDescriptorManager {
 
-    PathDescriptor getPathDescriptor(LrEntity<?> entity, ASTObjPath path);
+    PathDescriptor getPathDescriptor(AgEntity<?> entity, ASTObjPath path);
 }

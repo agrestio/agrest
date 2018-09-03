@@ -1,6 +1,6 @@
 package io.agrest.sencha;
 
-import io.agrest.LrRequest;
+import io.agrest.AgRequest;
 import io.agrest.protocol.Dir;
 import io.agrest.protocol.Sort;
 import io.agrest.runtime.processor.select.SelectContext;
@@ -10,7 +10,7 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * Sencha extensions of the standard {@link LrRequest}.
+ * Sencha extensions of the standard {@link AgRequest}.
  *
  * @since 2.13
  */

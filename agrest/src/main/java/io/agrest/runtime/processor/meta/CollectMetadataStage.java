@@ -1,10 +1,10 @@
 package io.agrest.runtime.processor.meta;
 
 import io.agrest.ResourceEntity;
-import io.agrest.meta.LrAttribute;
-import io.agrest.meta.LrEntity;
-import io.agrest.meta.LrRelationship;
-import io.agrest.meta.LrResource;
+import io.agrest.meta.AgAttribute;
+import io.agrest.meta.AgEntity;
+import io.agrest.meta.AgRelationship;
+import io.agrest.meta.AgResource;
 import io.agrest.processor.Processor;
 import io.agrest.processor.ProcessorOutcome;
 import io.agrest.runtime.constraints.IConstraintsHandler;
@@ -46,14 +46,14 @@ public class CollectMetadataStage implements Processor<MetadataContext<?>> {
 
     @SuppressWarnings("unchecked")
     protected <T> void doExecute(MetadataContext<T> context) {
-        LrEntity<T> entity = metadataService.getLrEntity(context.getType());
-        Collection<LrResource<?>> resources = resourceMetadataService.getLrResources(context.getResource());
-        Collection<LrResource<T>> filteredResources = new ArrayList<>(resources.size());
+        AgEntity<T> entity = metadataService.getLrEntity(context.getType());
+        Collection<AgResource<?>> resources = resourceMetadataService.getLrResources(context.getResource());
+        Collection<AgResource<T>> filteredResources = new ArrayList<>(resources.size());
 
-        for (LrResource<?> resource : resources) {
-            LrEntity<?> resourceEntity = resource.getEntity();
+        for (AgResource<?> resource : resources) {
+            AgEntity<?> resourceEntity = resource.getEntity();
             if (resourceEntity != null && resourceEntity.getName().equals(entity.getName())) {
-                filteredResources.add((LrResource<T>) resource);
+                filteredResources.add((AgResource<T>) resource);
             }
         }
 
@@ -72,14 +72,14 @@ public class CollectMetadataStage implements Processor<MetadataContext<?>> {
         );
     }
 
-    private <T> ResourceEntity<T> createDefaultResourceEntity(LrEntity<T> entity) {
+    private <T> ResourceEntity<T> createDefaultResourceEntity(AgEntity<T> entity) {
         ResourceEntity<T> resourceEntity = new ResourceEntity<>(entity);
 
-        for (LrAttribute a : entity.getAttributes()) {
+        for (AgAttribute a : entity.getAttributes()) {
             resourceEntity.getAttributes().put(a.getName(), a);
         }
 
-        for (LrRelationship r : entity.getRelationships()) {
+        for (AgRelationship r : entity.getRelationships()) {
             ResourceEntity<?> child = new ResourceEntity<>(r.getTargetEntity(), r);
             resourceEntity.getChildren().put(r.getName(), child);
         }

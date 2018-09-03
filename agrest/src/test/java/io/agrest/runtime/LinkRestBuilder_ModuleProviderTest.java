@@ -1,6 +1,6 @@
 package io.agrest.runtime;
 
-import io.agrest.LrModuleProvider;
+import io.agrest.AgModuleProvider;
 import io.agrest.TestModuleProvider;
 import io.agrest.encoder.PropertyMetadataEncoder;
 import org.apache.cayenne.di.Binder;
@@ -74,7 +74,7 @@ public class LinkRestBuilder_ModuleProviderTest {
         }
     }
 
-    static class LocalTestModuleProvider implements LrModuleProvider {
+    static class LocalTestModuleProvider implements AgModuleProvider {
 
         @Override
         public Module module() {

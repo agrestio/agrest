@@ -3,7 +3,7 @@ package io.agrest.it.fixture.pojo.model;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 
-import io.agrest.annotation.LrAttribute;
+import io.agrest.annotation.AgAttribute;
 
 public class P9 {
 
@@ -13,7 +13,7 @@ public class P9 {
 	
 	private LocalDateTime createdLocal;
 
-	@LrAttribute
+	@AgAttribute
 	public String getName() {
 		return name;
 	}
@@ -22,7 +22,7 @@ public class P9 {
 		this.name = name;
 	}
 	
-	@LrAttribute
+	@AgAttribute
 	public OffsetDateTime getCreated() {
 		return created;
 	}
@@ -31,7 +31,7 @@ public class P9 {
 		this.created = created;
 	}
 
-	@LrAttribute
+	@AgAttribute
 	public LocalDateTime getCreatedLocal() {
 		return createdLocal;
 	}

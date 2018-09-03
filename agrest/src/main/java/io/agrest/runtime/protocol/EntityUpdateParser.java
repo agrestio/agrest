@@ -2,7 +2,7 @@ package io.agrest.runtime.protocol;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import io.agrest.EntityUpdate;
-import io.agrest.meta.LrEntity;
+import io.agrest.meta.AgEntity;
 import io.agrest.runtime.jackson.IJacksonService;
 import io.agrest.runtime.parser.converter.IJsonValueConverterFactory;
 import io.agrest.runtime.semantics.IRelationshipMapper;
@@ -30,18 +30,18 @@ public class EntityUpdateParser implements IEntityUpdateParser {
     }
 
     @Override
-    public <T> Collection<EntityUpdate<T>> parse(LrEntity<T> entity, InputStream entityStream) {
+    public <T> Collection<EntityUpdate<T>> parse(AgEntity<T> entity, InputStream entityStream) {
         JsonNode node = jacksonService.parseJson(entityStream);
         return parse(entity, node);
     }
 
     @Override
-    public <T> Collection<EntityUpdate<T>> parse(LrEntity<T> entity, String entityData) {
+    public <T> Collection<EntityUpdate<T>> parse(AgEntity<T> entity, String entityData) {
         JsonNode node = jacksonService.parseJson(entityData);
         return parse(entity, node);
     }
 
-    protected <T> Collection<EntityUpdate<T>> parse(LrEntity<T> entity, JsonNode json) {
+    protected <T> Collection<EntityUpdate<T>> parse(AgEntity<T> entity, JsonNode json) {
         UpdateVisitor<T> visitor = updateVisitor(entity);
         entityJsonTraverser().traverse(entity, json, visitor);
         return visitor.getUpdates();
@@ -51,18 +51,18 @@ public class EntityUpdateParser implements IEntityUpdateParser {
         return entityUpdateJsonTraverser;
     }
 
-    protected <T> UpdateVisitor<T> updateVisitor(LrEntity<T> entity) {
+    protected <T> UpdateVisitor<T> updateVisitor(AgEntity<T> entity) {
         return new UpdateVisitor<>(entity);
     }
 
     protected static class UpdateVisitor<T> implements EntityUpdateJsonVisitor {
 
-        private LrEntity<T> entity;
+        private AgEntity<T> entity;
         private Collection<EntityUpdate<T>> updates;
 
         private EntityUpdate<T> currentUpdate;
 
-        protected UpdateVisitor(LrEntity<T> entity) {
+        protected UpdateVisitor(AgEntity<T> entity) {
             this.entity = entity;
             this.updates = new ArrayList<>();
         }

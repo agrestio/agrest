@@ -1,6 +1,6 @@
 package io.agrest.runtime.entity;
 
-import io.agrest.meta.LrEntity;
+import io.agrest.meta.AgEntity;
 import org.apache.cayenne.exp.Expression;
 
 /**
@@ -15,5 +15,5 @@ public interface IExpressionPostProcessor {
      *
      * @since 2.2
      */
-    Expression process(LrEntity<?> entity, Expression exp);
+    Expression process(AgEntity<?> entity, Expression exp);
 }

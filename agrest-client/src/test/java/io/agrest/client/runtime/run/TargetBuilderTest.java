@@ -6,7 +6,7 @@ import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.FeatureContext;
 
 import io.agrest.client.protocol.Include;
-import io.agrest.client.protocol.LrcRequest;
+import io.agrest.client.protocol.AgcRequest;
 import io.agrest.client.protocol.Sort;
 import io.agrest.it.fixture.JerseyTestOnDerby;
 import org.junit.Test;
@@ -18,7 +18,7 @@ public class TargetBuilderTest extends JerseyTestOnDerby {
 
 		WebTarget target = target("/path/to/resource");
 
-		WebTarget newTarget = TargetBuilder.target(target).request(LrcRequest.builder().build()).build();
+		WebTarget newTarget = TargetBuilder.target(target).request(AgcRequest.builder().build()).build();
 
 		assertEquals(target.getUri(), newTarget.getUri());
 	}
@@ -26,7 +26,7 @@ public class TargetBuilderTest extends JerseyTestOnDerby {
 	@Test
 	public void testBuild_Target_Constrained1() throws Exception {
 
-		LrcRequest request = LrcRequest.builder().exclude("ex1", "ex2").exclude("ex3").include("in1")
+		AgcRequest request = AgcRequest.builder().exclude("ex1", "ex2").exclude("ex3").include("in1")
 				.include(Include.path("in2"))
 				.include(Include.path("in3").sort(Sort.property("in3.s1").desc()).limit(100)).build();
 

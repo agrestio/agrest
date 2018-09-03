@@ -1,6 +1,6 @@
 package io.agrest.runtime.meta;
 
-import io.agrest.meta.LrResource;
+import io.agrest.meta.AgResource;
 
 import java.util.Collection;
 import java.util.Optional;
@@ -12,7 +12,7 @@ import java.util.Optional;
  */
 public interface IResourceMetadataService {
 
-    Collection<LrResource<?>> getLrResources(Class<?> resourceClass);
+    Collection<AgResource<?>> getLrResources(Class<?> resourceClass);
 
     /**
      * Returns base URL of this REST service, if it was set when LinkRest was started.

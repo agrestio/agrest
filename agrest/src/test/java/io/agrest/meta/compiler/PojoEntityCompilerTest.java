@@ -1,11 +1,11 @@
 package io.agrest.meta.compiler;
 
 import io.agrest.LinkRestException;
-import io.agrest.annotation.LrAttribute;
-import io.agrest.annotation.LrId;
+import io.agrest.annotation.AgAttribute;
+import io.agrest.annotation.AgId;
 import io.agrest.it.fixture.pojo.model.P8;
-import io.agrest.meta.LazyLrDataMap;
-import io.agrest.meta.LrEntity;
+import io.agrest.meta.AgEntity;
+import io.agrest.meta.LazyAgDataMap;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -19,7 +19,7 @@ import static org.junit.Assert.*;
 
 public class PojoEntityCompilerTest {
 
-	private static Collection<LrEntityCompiler> compilers;
+	private static Collection<AgEntityCompiler> compilers;
 
 	@BeforeClass
 	public static void setUpClass() {
@@ -29,8 +29,8 @@ public class PojoEntityCompilerTest {
 
 	@Test
 	public void testCompile() {
-		LrEntity<Entity> entity = new PojoEntityCompiler(Collections.emptyMap())
-				.compile(Entity.class, new LazyLrDataMap(compilers));
+		AgEntity<Entity> entity = new PojoEntityCompiler(Collections.emptyMap())
+				.compile(Entity.class, new LazyAgDataMap(compilers));
 		assertNotNull(entity);
 		assertEquals(1, entity.getIds().size());
 		assertEquals(1, entity.getAttributes().size());
@@ -39,8 +39,8 @@ public class PojoEntityCompilerTest {
 
 	@Test
 	public void testCompile_CollectionAttributes() {
-		LrEntity<P8> entity = new PojoEntityCompiler(Collections.emptyMap())
-				.compile(P8.class, new LazyLrDataMap(compilers));
+		AgEntity<P8> entity = new PojoEntityCompiler(Collections.emptyMap())
+				.compile(P8.class, new LazyAgDataMap(compilers));
 		assertNotNull(entity);
 		assertEquals(0, entity.getIds().size());
 		assertEquals(7, entity.getAttributes().size());
@@ -56,8 +56,8 @@ public class PojoEntityCompilerTest {
 
 	@Test
 	public void testCompile_NotAnEntity() {
-		LrEntity<NotAnEntity> entity = new PojoEntityCompiler(Collections.emptyMap())
-				.compile(NotAnEntity.class, new LazyLrDataMap(compilers));
+		AgEntity<NotAnEntity> entity = new PojoEntityCompiler(Collections.emptyMap())
+				.compile(NotAnEntity.class, new LazyAgDataMap(compilers));
 		assertNotNull(entity);
 
 		try {
@@ -70,12 +70,12 @@ public class PojoEntityCompilerTest {
 
 	static class Entity {
 
-		@LrId
+		@AgId
 		public String getX() {
 			return "x";
 		}
 
-		@LrAttribute
+		@AgAttribute
 		public int getY() {
 			return 6;
 		}

@@ -1,6 +1,6 @@
 package io.agrest.runtime.processor.select;
 
-import io.agrest.LrRequest;
+import io.agrest.AgRequest;
 import io.agrest.processor.Processor;
 import io.agrest.processor.ProcessorOutcome;
 import io.agrest.protocol.CayenneExp;
@@ -63,10 +63,10 @@ public class ParseRequestStage implements Processor<SelectContext<?>> {
     }
 
     protected <T> void doExecute(SelectContext<T> context) {
-        LrRequest request = context.getRequest();
+        AgRequest request = context.getRequest();
         Map<String, List<String>> protocolParameters = context.getProtocolParameters();
 
-        LrRequest.Builder requestBuilder = LrRequest.builder()
+        AgRequest.Builder requestBuilder = AgRequest.builder()
                 .cayenneExp(getCayenneExp(request, protocolParameters))
                 .sort(getSort(request, protocolParameters))
                 .sortDirection(getSortDirection(request, protocolParameters))
@@ -79,42 +79,42 @@ public class ParseRequestStage implements Processor<SelectContext<?>> {
         context.setRawRequest(requestBuilder.build());
     }
 
-    private CayenneExp getCayenneExp(LrRequest request, Map<String, List<String>> protocolParameters) {
+    private CayenneExp getCayenneExp(AgRequest request, Map<String, List<String>> protocolParameters) {
         return request != null && request.getCayenneExp() != null ?
                 request.getCayenneExp() :
                 expParser.fromString(ParameterExtractor.string(protocolParameters, PROTOCOL_KEY_CAYENNE_EXP));
     }
-    private Sort getSort(LrRequest request, Map<String, List<String>> protocolParameters) {
+    private Sort getSort(AgRequest request, Map<String, List<String>> protocolParameters) {
         return request != null && request.getSort() != null ?
                 request.getSort() :
                 sortParser.fromString(ParameterExtractor.string(protocolParameters, PROTOCOL_KEY_SORT));
     }
 
-    private Dir getSortDirection(LrRequest request, Map<String, List<String>> protocolParameters) {
+    private Dir getSortDirection(AgRequest request, Map<String, List<String>> protocolParameters) {
         return request != null && request.getSortDirection() != null ?
                 request.getSortDirection() :
                 sortParser.dirFromString(ParameterExtractor.string(protocolParameters, PROTOCOL_KEY_DIR));
     }
 
-    private MapBy getMapBy(LrRequest request, Map<String, List<String>> protocolParameters) {
+    private MapBy getMapBy(AgRequest request, Map<String, List<String>> protocolParameters) {
         return request != null && request.getMapBy() != null ?
                 request.getMapBy() :
                 mapByParser.fromString(ParameterExtractor.string(protocolParameters, PROTOCOL_KEY_MAP_BY));
     }
 
-    private List<Include> getIncludes(LrRequest request, Map<String, List<String>> protocolParameters) {
+    private List<Include> getIncludes(AgRequest request, Map<String, List<String>> protocolParameters) {
         return request != null && !request.getIncludes().isEmpty() ?
                 request.getIncludes() :
                 includeParser.fromStrings(ParameterExtractor.strings(protocolParameters, PROTOCOL_KEY_INCLUDE));
     }
 
-    private List<Exclude> getExcludes(LrRequest request, Map<String, List<String>> protocolParameters) {
+    private List<Exclude> getExcludes(AgRequest request, Map<String, List<String>> protocolParameters) {
         return request != null && !request.getExcludes().isEmpty() ?
                 request.getExcludes() :
                 excludeParser.fromStrings(ParameterExtractor.strings(protocolParameters, PROTOCOL_KEY_EXCLUDE));
     }
 
-    private Start getStart(LrRequest request, Map<String, List<String>> protocolParameters) {
+    private Start getStart(AgRequest request, Map<String, List<String>> protocolParameters) {
         int start = ParameterExtractor.integer(protocolParameters, PROTOCOL_KEY_START);
 
         if (request != null && request.getStart() != null) {
@@ -126,7 +126,7 @@ public class ParseRequestStage implements Processor<SelectContext<?>> {
         return null;
     }
 
-    private Limit getLimit(LrRequest request, Map<String, List<String>> protocolParameters) {
+    private Limit getLimit(AgRequest request, Map<String, List<String>> protocolParameters) {
         int limit = ParameterExtractor.integer(protocolParameters, PROTOCOL_KEY_LIMIT);
 
         if (request != null && request.getLimit() != null) {

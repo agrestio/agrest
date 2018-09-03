@@ -1,20 +1,20 @@
 package io.agrest.runtime;
 
+import io.agrest.AgFeatureProvider;
+import io.agrest.AgModuleProvider;
 import io.agrest.BaseModule;
 import io.agrest.DataResponse;
 import io.agrest.EntityConstraint;
 import io.agrest.LinkRestException;
-import io.agrest.LrFeatureProvider;
-import io.agrest.LrModuleProvider;
 import io.agrest.MetadataResponse;
 import io.agrest.SimpleResponse;
 import io.agrest.encoder.Encoder;
 import io.agrest.encoder.EncoderFilter;
 import io.agrest.encoder.PropertyMetadataEncoder;
 import io.agrest.encoder.converter.StringConverter;
-import io.agrest.meta.LrEntityOverlay;
+import io.agrest.meta.AgEntityOverlay;
 import io.agrest.meta.cayenne.CayenneEntityCompiler;
-import io.agrest.meta.compiler.LrEntityCompiler;
+import io.agrest.meta.compiler.AgEntityCompiler;
 import io.agrest.meta.compiler.PojoEntityCompiler;
 import io.agrest.meta.parser.IResourceParser;
 import io.agrest.meta.parser.ResourceParser;
@@ -147,12 +147,12 @@ public class LinkRestBuilder {
     private ICayennePersister cayenneService;
     private Class<? extends ILinkRestService> linkRestServiceType;
     private ILinkRestService linkRestService;
-    private List<LrModuleProvider> moduleProviders;
+    private List<AgModuleProvider> moduleProviders;
     private List<Module> modules;
-    private List<LrFeatureProvider> featureProviders;
+    private List<AgFeatureProvider> featureProviders;
     private List<Feature> features;
     private List<EncoderFilter> encoderFilters;
-    private Map<String, LrEntityOverlay> entityOverlays;
+    private Map<String, AgEntityOverlay> entityOverlays;
     private Map<String, Class<? extends ExceptionMapper>> exceptionMappers;
     private Collection<LinkRestAdapter> adapters;
     private Map<String, PropertyMetadataEncoder> metadataEncoders;
@@ -199,7 +199,7 @@ public class LinkRestBuilder {
 
     /**
      * Suppresses JAX-RS Feature auto-loading. By default features are auto-loaded based on the service descriptors under
-     * "META-INF/services/com.nhl.link.rest.LrFeatureProvider". Calling this method would suppress auto-loading behavior,
+     * "META-INF/services/io.agrest.AgFeatureProvider". Calling this method would suppress auto-loading behavior,
      * letting the programmer explicitly pick which extensions need to be loaded.
      *
      * @return this builder instance.
@@ -212,7 +212,7 @@ public class LinkRestBuilder {
 
     /**
      * Suppresses module auto-loading. By default modules are auto-loaded based on the service descriptors under
-     * "META-INF/services/com.nhl.link.rest.LrModuleProvider". Calling this method would suppress auto-loading behavior,
+     * "META-INF/services/io.agrest.AgModuleProvider". Calling this method would suppress auto-loading behavior,
      * letting the programmer explicitly pick which extensions need to be loaded.
      *
      * @return this builder instance.
@@ -314,8 +314,8 @@ public class LinkRestBuilder {
 
     /**
      * @since 1.12
-     * @deprecated since 2.10. Instead use {@link LrEntityOverlay#addAttribute(String)}, and register
-     * the overlay via {@link #entityOverlay(LrEntityOverlay)}.
+     * @deprecated since 2.10. Instead use {@link AgEntityOverlay#addAttribute(String)}, and register
+     * the overlay via {@link #entityOverlay(AgEntityOverlay)}.
      */
     @Deprecated
     public LinkRestBuilder transientProperty(Class<?> type, String propertyName) {
@@ -330,13 +330,13 @@ public class LinkRestBuilder {
      *
      * @since 2.10
      */
-    public <T> LinkRestBuilder entityOverlay(LrEntityOverlay<T> overlay) {
+    public <T> LinkRestBuilder entityOverlay(AgEntityOverlay<T> overlay) {
         getOrCreateOverlay(overlay.getType()).merge(overlay);
         return this;
     }
 
-    private <T> LrEntityOverlay<T> getOrCreateOverlay(Class<T> type) {
-        return entityOverlays.computeIfAbsent(type.getName(), n -> new LrEntityOverlay<>(type));
+    private <T> AgEntityOverlay<T> getOrCreateOverlay(Class<T> type) {
+        return entityOverlays.computeIfAbsent(type.getName(), n -> new AgEntityOverlay<>(type));
     }
 
     /**
@@ -346,8 +346,8 @@ public class LinkRestBuilder {
      * @return this builder instance.
      * @since 1.3
      * @deprecated since 2.10 LinkRestAdapter is deprecated in favor of
-     * {@link io.agrest.LrFeatureProvider} and
-     * {@link io.agrest.LrModuleProvider}. Either can be registered with
+     * {@link AgFeatureProvider} and
+     * {@link AgModuleProvider}. Either can be registered with
      * {@link io.agrest.runtime.LinkRestBuilder} explicitly or used to implemented auto-loadable extensions.
      */
     @Deprecated
@@ -375,7 +375,7 @@ public class LinkRestBuilder {
      * @return this builder instance.
      * @since 2.10
      */
-    public LinkRestBuilder feature(LrFeatureProvider featureProvider) {
+    public LinkRestBuilder feature(AgFeatureProvider featureProvider) {
         featureProviders.add(featureProvider);
         return this;
     }
@@ -399,7 +399,7 @@ public class LinkRestBuilder {
      * @return this builder instance.
      * @since 2.10
      */
-    public LinkRestBuilder module(LrModuleProvider provider) {
+    public LinkRestBuilder module(AgModuleProvider provider) {
         moduleProviders.add(provider);
         return this;
     }
@@ -458,7 +458,7 @@ public class LinkRestBuilder {
     }
 
     private void loadAutoLoadableFeatures(Collection<Feature> collector, Injector i) {
-        ServiceLoader.load(LrFeatureProvider.class).forEach(fp -> collector.add(fp.feature(i)));
+        ServiceLoader.load(AgFeatureProvider.class).forEach(fp -> collector.add(fp.feature(i)));
     }
 
     private void loadExceptionMapperFeature(Collection<Feature> collector, Injector i) {
@@ -481,7 +481,7 @@ public class LinkRestBuilder {
     }
 
     private void loadAutoLoadableModules(Collection<Module> collector) {
-        collector.addAll(new ModuleLoader().load(LrModuleProvider.class));
+        collector.addAll(new ModuleLoader().load(AgModuleProvider.class));
     }
 
     private void loadAdapterProvidedModules(Collection<Module> collector) {
@@ -513,11 +513,11 @@ public class LinkRestBuilder {
 
             binder.bind(CayenneEntityCompiler.class).to(CayenneEntityCompiler.class);
             binder.bind(PojoEntityCompiler.class).to(PojoEntityCompiler.class);
-            binder.bindList(LrEntityCompiler.class)
+            binder.bindList(AgEntityCompiler.class)
                     .add(CayenneEntityCompiler.class)
                     .add(PojoEntityCompiler.class);
 
-            binder.bindMap(LrEntityOverlay.class).putAll(entityOverlays);
+            binder.bindMap(AgEntityOverlay.class).putAll(entityOverlays);
             binder.bindMap(Class.class, LinkRestRuntime.BODY_WRITERS_MAP)
                     .put(SimpleResponse.class.getName(), SimpleResponseWriter.class)
                     .put(DataResponse.class.getName(), DataResponseWriter.class)

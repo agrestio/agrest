@@ -4,7 +4,7 @@ import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.agrest.client.protocol.Expression;
 import io.agrest.client.protocol.Include;
-import io.agrest.client.protocol.LrcRequest;
+import io.agrest.client.protocol.AgcRequest;
 import io.agrest.client.protocol.Sort;
 import io.agrest.client.runtime.response.DataResponseHandler;
 import io.agrest.client.runtime.response.SimpleResponseHandler;
@@ -37,11 +37,11 @@ public class LinkRestClient {
 	}
 
 	private WebTarget target;
-	private LrcRequest.LrRequestBuilder request;
+	private AgcRequest.LrRequestBuilder request;
 
 	private LinkRestClient(WebTarget target) {
 		this.target = target;
-		request = LrcRequest.builder();
+		request = AgcRequest.builder();
 	}
 
 	public LinkRestClient exclude(String... excludePaths) {

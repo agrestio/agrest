@@ -1,14 +1,14 @@
 package io.agrest.it.fixture.pojo.model;
 
-import io.agrest.annotation.LrAttribute;
-import io.agrest.annotation.LrId;
+import io.agrest.annotation.AgAttribute;
+import io.agrest.annotation.AgId;
 
 public class P6 {
 
 	private String stringId;
 	private int intProp;
 
-	@LrId
+	@AgId
 	public String getStringId() {
 		return stringId;
 	}
@@ -17,7 +17,7 @@ public class P6 {
 		this.stringId = stringId;
 	}
 
-	@LrAttribute
+	@AgAttribute
 	public int getIntProp() {
 		return intProp;
 	}

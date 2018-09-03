@@ -1,7 +1,7 @@
 package io.agrest.it.fixture.cayenne;
 
-import io.agrest.annotation.LrAttribute;
-import io.agrest.annotation.LrRelationship;
+import io.agrest.annotation.AgAttribute;
+import io.agrest.annotation.AgRelationship;
 import io.agrest.it.fixture.cayenne.auto._E14;
 import io.agrest.it.fixture.pojo.model.P7;
 
@@ -11,12 +11,12 @@ public class E14 extends _E14 {
 
 	private P7 p7;
 
-	@LrAttribute
+	@AgAttribute
 	public String getPrettyName() {
 		return getName() + "_pretty";
 	}
 
-	@LrRelationship
+	@AgRelationship
 	public P7 getP7() {
 		return p7;
 	}

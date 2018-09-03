@@ -4,8 +4,8 @@ import io.agrest.CompoundObjectId;
 import io.agrest.EntityParent;
 import io.agrest.EntityUpdate;
 import io.agrest.LinkRestException;
-import io.agrest.meta.LrEntity;
-import io.agrest.meta.LrRelationship;
+import io.agrest.meta.AgEntity;
+import io.agrest.meta.AgRelationship;
 import io.agrest.processor.Processor;
 import io.agrest.processor.ProcessorOutcome;
 import io.agrest.runtime.cayenne.processor.Util;
@@ -96,7 +96,7 @@ public abstract class CayenneUpdateDataStoreStage implements Processor<UpdateCon
             } else {
                 // need to make an additional check that the lrId is unique
                 // TODO: I guess this should be done in a separate new context
-                T existing = Util.findById(objectContext, context.getType(), context.getEntity().getLrEntity(), idMap);
+                T existing = Util.findById(objectContext, context.getType(), context.getEntity().getAgEntity(), idMap);
                 if (existing != null) {
                     throw new LinkRestException(Response.Status.BAD_REQUEST, "Can't create '" + entity.getName()
                             + "' with id " + CompoundObjectId.mapToString(idMap) + " -- object already exists");
@@ -186,30 +186,30 @@ public abstract class CayenneUpdateDataStoreStage implements Processor<UpdateCon
         for (Map.Entry<String, Set<Object>> e : entityUpdate.getRelatedIds().entrySet()) {
 
             ObjRelationship relationship = entity.getRelationship(e.getKey());
-            LrRelationship lrRelationship = entityUpdate.getEntity().getRelationship(e.getKey());
+            AgRelationship agRelationship = entityUpdate.getEntity().getRelationship(e.getKey());
 
             // sanity check
-            if (lrRelationship == null) {
+            if (agRelationship == null) {
                 continue;
             }
 
             final Set<Object> relatedIds = e.getValue();
             if (relatedIds == null || relatedIds.isEmpty() || allElementsNull(relatedIds)) {
 
-                relator.unrelateAll(lrRelationship, o);
+                relator.unrelateAll(agRelationship, o);
                 continue;
             }
 
-            if (!lrRelationship.isToMany() && relatedIds.size() > 1) {
+            if (!agRelationship.isToMany() && relatedIds.size() > 1) {
                 throw new LinkRestException(Response.Status.BAD_REQUEST,
                         "Relationship is to-one, but received update with multiple objects: " +
-                                lrRelationship.getName());
+                                agRelationship.getName());
             }
 
             ClassDescriptor relatedDescriptor = context.getEntityResolver().getClassDescriptor(
                     relationship.getTargetEntityName());
 
-            relator.unrelateAll(lrRelationship, o, new RelationshipUpdate() {
+            relator.unrelateAll(agRelationship, o, new RelationshipUpdate() {
                 @Override
                 public boolean containsRelatedObject(DataObject relatedObject) {
                     return relatedIds.contains(Cayenne.pkForObject(relatedObject));
@@ -235,7 +235,7 @@ public abstract class CayenneUpdateDataStoreStage implements Processor<UpdateCon
                             + relationship.getTargetEntityName() + "' with ID '" + e.getValue() + "' is not found");
                 }
 
-                relator.relate(lrRelationship, o, related);
+                relator.relate(agRelationship, o, related);
             }
         }
 
@@ -266,9 +266,9 @@ public abstract class CayenneUpdateDataStoreStage implements Processor<UpdateCon
         ObjectContext objectContext = CayenneUpdateStartStage.cayenneContext(context);
 
         ObjEntity parentEntity = objectContext.getEntityResolver().getObjEntity(parent.getType());
-        LrEntity<?> parentLrEntity = metadataService.getLrEntity(context.getParent().getType());
+        AgEntity<?> parentAgEntity = metadataService.getLrEntity(context.getParent().getType());
         final DataObject parentObject = (DataObject) Util.findById(objectContext, parent.getType(),
-                parentLrEntity, parent.getId().get());
+                parentAgEntity, parent.getId().get());
 
         if (parentObject == null) {
             throw new LinkRestException(Response.Status.NOT_FOUND, "No parent object for ID '" + parent.getId()
@@ -299,30 +299,30 @@ public abstract class CayenneUpdateDataStoreStage implements Processor<UpdateCon
             // do nothing
         }
 
-        void relate(LrRelationship lrRelationship, DataObject object, DataObject relatedObject) {
-            if (lrRelationship.isToMany()) {
-                object.addToManyTarget(lrRelationship.getName(), relatedObject, true);
+        void relate(AgRelationship agRelationship, DataObject object, DataObject relatedObject) {
+            if (agRelationship.isToMany()) {
+                object.addToManyTarget(agRelationship.getName(), relatedObject, true);
             } else {
-                object.setToOneTarget(lrRelationship.getName(), relatedObject, true);
+                object.setToOneTarget(agRelationship.getName(), relatedObject, true);
             }
         }
 
-        void unrelateAll(LrRelationship lrRelationship, DataObject object) {
-            unrelateAll(lrRelationship, object, null);
+        void unrelateAll(AgRelationship agRelationship, DataObject object) {
+            unrelateAll(agRelationship, object, null);
         }
 
-        void unrelateAll(LrRelationship lrRelationship, DataObject object, RelationshipUpdate relationshipUpdate) {
+        void unrelateAll(AgRelationship agRelationship, DataObject object, RelationshipUpdate relationshipUpdate) {
 
-            if (lrRelationship.isToMany()) {
+            if (agRelationship.isToMany()) {
 
                 @SuppressWarnings("unchecked")
                 List<? extends DataObject> relatedObjects =
-                        (List<? extends DataObject>) object.readProperty(lrRelationship.getName());
+                        (List<? extends DataObject>) object.readProperty(agRelationship.getName());
 
                 for (int i = 0; i < relatedObjects.size(); i++) {
                     DataObject relatedObject = relatedObjects.get(i);
                     if (relationshipUpdate == null || !relationshipUpdate.containsRelatedObject(relatedObject)) {
-                        object.removeToManyTarget(lrRelationship.getName(), relatedObject, true);
+                        object.removeToManyTarget(agRelationship.getName(), relatedObject, true);
                         i--;
                     } else {
                         relationshipUpdate.removeUpdateForRelatedObject(relatedObject);
@@ -330,7 +330,7 @@ public abstract class CayenneUpdateDataStoreStage implements Processor<UpdateCon
                 }
 
             } else {
-                object.setToOneTarget(lrRelationship.getName(), null, true);
+                object.setToOneTarget(agRelationship.getName(), null, true);
             }
         }
     }

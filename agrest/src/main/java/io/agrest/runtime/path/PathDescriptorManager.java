@@ -1,6 +1,6 @@
 package io.agrest.runtime.path;
 
-import io.agrest.meta.LrEntity;
+import io.agrest.meta.AgEntity;
 import org.apache.cayenne.exp.parser.ASTObjPath;
 
 import java.util.Map;
@@ -19,11 +19,11 @@ public class PathDescriptorManager implements IPathDescriptorManager {
     }
 
     @Override
-    public PathDescriptor getPathDescriptor(LrEntity<?> entity, ASTObjPath path) {
+    public PathDescriptor getPathDescriptor(AgEntity<?> entity, ASTObjPath path) {
         return entityPathCache(entity).getPathDescriptor(path);
     }
 
-    EntityPathCache entityPathCache(LrEntity<?> entity) {
+    EntityPathCache entityPathCache(AgEntity<?> entity) {
         return pathCacheByEntity.computeIfAbsent(entity.getName(), k -> new EntityPathCache(entity));
     }
 

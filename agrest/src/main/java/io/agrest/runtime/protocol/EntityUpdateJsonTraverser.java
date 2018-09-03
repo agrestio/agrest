@@ -4,11 +4,11 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import io.agrest.LinkRestException;
 import io.agrest.PathConstants;
-import io.agrest.meta.LrAttribute;
-import io.agrest.meta.LrEntity;
-import io.agrest.meta.LrPersistentAttribute;
-import io.agrest.meta.LrPersistentRelationship;
-import io.agrest.meta.LrRelationship;
+import io.agrest.meta.AgAttribute;
+import io.agrest.meta.AgEntity;
+import io.agrest.meta.AgPersistentAttribute;
+import io.agrest.meta.AgPersistentRelationship;
+import io.agrest.meta.AgRelationship;
 import io.agrest.parser.converter.JsonValueConverter;
 import io.agrest.runtime.parser.converter.IJsonValueConverterFactory;
 import io.agrest.runtime.semantics.IRelationshipMapper;
@@ -32,7 +32,7 @@ public class EntityUpdateJsonTraverser {
 		this.converterFactory = converterFactory;
     }
 
-    public void traverse(LrEntity<?> entity, JsonNode json, EntityUpdateJsonVisitor visitor) {
+    public void traverse(AgEntity<?> entity, JsonNode json, EntityUpdateJsonVisitor visitor) {
         if (json != null) { // empty requests are fine. we just do nothing...
             if (json.isArray()) {
                 processArray(entity, json, visitor);
@@ -44,7 +44,7 @@ public class EntityUpdateJsonTraverser {
         }
 	}
 
-	private void processArray(LrEntity<?> entity, JsonNode arrayNode, EntityUpdateJsonVisitor visitor) {
+	private void processArray(AgEntity<?> entity, JsonNode arrayNode, EntityUpdateJsonVisitor visitor) {
 		for (JsonNode node : arrayNode) {
 			if (node.isObject()) {
 				processObject(entity, node, visitor);
@@ -54,7 +54,7 @@ public class EntityUpdateJsonTraverser {
 		}
 	}
 
-	private void processObject(LrEntity<?> entity, JsonNode objectNode, EntityUpdateJsonVisitor visitor) {
+	private void processObject(AgEntity<?> entity, JsonNode objectNode, EntityUpdateJsonVisitor visitor) {
 
         visitor.beginObject();
 
@@ -68,7 +68,7 @@ public class EntityUpdateJsonTraverser {
 				continue;
 			}
 
-			LrAttribute attribute = entity.getAttribute(key);
+			AgAttribute attribute = entity.getAttribute(key);
 			if (attribute != null) {
 				JsonNode valueNode = objectNode.get(key);
 				Object value = converter(attribute).value(valueNode);
@@ -76,10 +76,10 @@ public class EntityUpdateJsonTraverser {
 				continue;
 			}
 
-			LrRelationship relationship = relationshipMapper.toRelationship(entity, key);
-			if (relationship instanceof LrPersistentRelationship) {
+			AgRelationship relationship = relationshipMapper.toRelationship(entity, key);
+			if (relationship instanceof AgPersistentRelationship) {
 				JsonNode valueNode = objectNode.get(key);
-				processRelationship(visitor, (LrPersistentRelationship) relationship, valueNode);
+				processRelationship(visitor, (AgPersistentRelationship) relationship, valueNode);
 				continue;
 			}
 
@@ -89,7 +89,7 @@ public class EntityUpdateJsonTraverser {
 		visitor.endObject();
 	}
 
-	private void processRelationship(EntityUpdateJsonVisitor visitor, LrPersistentRelationship relationship, JsonNode valueNode) {
+	private void processRelationship(EntityUpdateJsonVisitor visitor, AgPersistentRelationship relationship, JsonNode valueNode) {
 		if (relationship.isPrimaryKey()) {
 			if (valueNode.isArray()) {
 				ArrayNode arrayNode = (ArrayNode) valueNode;
@@ -125,21 +125,21 @@ public class EntityUpdateJsonTraverser {
         }
 	}
 
-	private void addRelatedObject(EntityUpdateJsonVisitor visitor, LrRelationship relationship, Object value) {
+	private void addRelatedObject(EntityUpdateJsonVisitor visitor, AgRelationship relationship, Object value) {
 
 		// record FK, whether it is a PK or not
 		visitor.visitRelationship(relationship.getName(), value);
 	}
 
-	protected void extractPK(LrEntity<?> entity, EntityUpdateJsonVisitor visitor, JsonNode valueNode) {
+	protected void extractPK(AgEntity<?> entity, EntityUpdateJsonVisitor visitor, JsonNode valueNode) {
 
-		Collection<LrAttribute> ids = entity.getIds();
+		Collection<AgAttribute> ids = entity.getIds();
 		if (ids.size() == 1) {
 			extractPKPart(visitor::visitId, ids.iterator().next(), valueNode);
 			return;
 		}
 
-		for (LrAttribute id : ids) {
+		for (AgAttribute id : ids) {
 
 			JsonNode idNode = valueNode.get(id.getName());
 			if (idNode == null) {
@@ -151,10 +151,10 @@ public class EntityUpdateJsonTraverser {
 		}
 	}
 
-	protected void extractPKPart(BiConsumer<String, Object> idConsumer, LrAttribute id, JsonNode valueNode) {
+	protected void extractPKPart(BiConsumer<String, Object> idConsumer, AgAttribute id, JsonNode valueNode) {
 		String name;
-		if (id instanceof LrPersistentAttribute) {
-			name = ((LrPersistentAttribute) id).getColumnName();
+		if (id instanceof AgPersistentAttribute) {
+			name = ((AgPersistentAttribute) id).getColumnName();
 		} else {
 			name = id.getName();
 		}
@@ -164,13 +164,13 @@ public class EntityUpdateJsonTraverser {
         idConsumer.accept(name, value);
 	}
 
-	private JsonValueConverter<?> converter(LrAttribute attribute) {
+	private JsonValueConverter<?> converter(AgAttribute attribute) {
 		return converterFactory.converter(attribute.getType());
 	}
 
-	private JsonValueConverter<?> converter(LrRelationship relationship) {
+	private JsonValueConverter<?> converter(AgRelationship relationship) {
 
-    	LrEntity<?> target = relationship.getTargetEntity();
+    	AgEntity<?> target = relationship.getTargetEntity();
 
 		int ids = target.getIds().size();
 		if (ids != 1) {

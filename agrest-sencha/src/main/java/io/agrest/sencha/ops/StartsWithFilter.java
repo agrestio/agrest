@@ -1,8 +1,8 @@
 package io.agrest.sencha.ops;
 
 import io.agrest.LinkRestException;
-import io.agrest.meta.LrAttribute;
-import io.agrest.meta.LrEntity;
+import io.agrest.meta.AgAttribute;
+import io.agrest.meta.AgEntity;
 import io.agrest.runtime.processor.select.SelectContext;
 import org.apache.cayenne.exp.Expression;
 import org.apache.cayenne.exp.ExpressionFactory;
@@ -27,7 +27,7 @@ public class StartsWithFilter {
             return Optional.empty();
         }
 
-        LrEntity<?> entity = context.getEntity().getLrEntity();
+        AgEntity<?> entity = context.getEntity().getAgEntity();
 
         validateAttribute(entity, queryProperty);
 
@@ -39,8 +39,8 @@ public class StartsWithFilter {
      * Checks that the user picked a valid property to compare against. Since
      * any bad args were selected by the server-side code, return 500 response.
      */
-    private void validateAttribute(LrEntity<?> entity, String queryProperty) {
-        LrAttribute attribute = entity.getAttribute(queryProperty);
+    private void validateAttribute(AgEntity<?> entity, String queryProperty) {
+        AgAttribute attribute = entity.getAttribute(queryProperty);
         if (attribute == null) {
             throw new LinkRestException(Response.Status.INTERNAL_SERVER_ERROR, "No such property '" + queryProperty
                     + "' for entity '" + entity.getName() + "'");

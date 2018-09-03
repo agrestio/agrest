@@ -1,8 +1,10 @@
 package io.agrest.meta;
 
+import io.agrest.annotation.AgResource;
+
 /**
  * @deprecated since 2.10 in favor of {@link io.agrest.annotation.LinkType} used by
- * {@link io.agrest.annotation.LrResource} annotation.
+ * {@link AgResource} annotation.
  */
 @Deprecated
 public enum LinkType {

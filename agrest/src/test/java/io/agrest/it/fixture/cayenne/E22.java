@@ -1,6 +1,6 @@
 package io.agrest.it.fixture.cayenne;
 
-import io.agrest.annotation.LrAttribute;
+import io.agrest.annotation.AgAttribute;
 import io.agrest.it.fixture.cayenne.auto._E22;
 
 public class E22 extends _E22 {
@@ -21,7 +21,7 @@ public class E22 extends _E22 {
 		}
 	}
 
-	@LrAttribute
+	@AgAttribute
 	public String getProp1() {
 		return prop1;
 	}
@@ -30,7 +30,7 @@ public class E22 extends _E22 {
 		this.prop1 = prop1;
 	}
 	
-	@LrAttribute
+	@AgAttribute
 	public String getProp2() {
 		return prop2;
 	}

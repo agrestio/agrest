@@ -1,7 +1,7 @@
 package io.agrest.sencha.runtime.protocol;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import io.agrest.meta.LrEntity;
+import io.agrest.meta.AgEntity;
 import io.agrest.runtime.jackson.IJacksonService;
 import io.agrest.runtime.parser.converter.IJsonValueConverterFactory;
 import io.agrest.runtime.protocol.EntityUpdateJsonTraverser;
@@ -53,7 +53,7 @@ public class SenchaUpdateParser extends EntityUpdateParser {
 		}
 
 		@Override
-		protected void extractPK(LrEntity<?> entity, EntityUpdateJsonVisitor visitor, JsonNode valueNode) {
+		protected void extractPK(AgEntity<?> entity, EntityUpdateJsonVisitor visitor, JsonNode valueNode) {
 			// if PK is a Sencha temporary value, completely ignore it...
 			if (!isTempId(valueNode)) {
 				super.extractPK(entity, visitor, valueNode);

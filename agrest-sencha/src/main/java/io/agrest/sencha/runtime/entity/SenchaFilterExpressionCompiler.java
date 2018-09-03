@@ -1,7 +1,7 @@
 package io.agrest.sencha.runtime.entity;
 
 import io.agrest.LinkRestException;
-import io.agrest.meta.LrEntity;
+import io.agrest.meta.AgEntity;
 import io.agrest.runtime.entity.IExpressionPostProcessor;
 import io.agrest.runtime.path.IPathDescriptorManager;
 import io.agrest.sencha.ops.FilterUtil;
@@ -38,7 +38,7 @@ public class SenchaFilterExpressionCompiler implements ISenchaFilterExpressionCo
     }
 
     @Override
-    public Expression process(LrEntity<?> entity, List<Filter> filters) {
+    public Expression process(AgEntity<?> entity, List<Filter> filters) {
 
         Expression combined = null;
 

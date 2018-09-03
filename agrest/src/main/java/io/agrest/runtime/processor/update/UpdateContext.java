@@ -1,12 +1,12 @@
 package io.agrest.runtime.processor.update;
 
+import io.agrest.AgRequest;
 import io.agrest.CompoundObjectId;
 import io.agrest.DataResponse;
 import io.agrest.EntityParent;
 import io.agrest.EntityUpdate;
 import io.agrest.LinkRestException;
-import io.agrest.LrObjectId;
-import io.agrest.LrRequest;
+import io.agrest.AgObjectId;
 import io.agrest.ObjectMapperFactory;
 import io.agrest.ResourceEntity;
 import io.agrest.SimpleObjectId;
@@ -31,7 +31,7 @@ public class UpdateContext<T> extends BaseProcessingContext<T> {
 
 	private ResourceEntity<T> entity;
 	private UriInfo uriInfo;
-	private LrObjectId id;
+	private AgObjectId id;
 	private EntityParent<?> parent;
 	private Constraint<T> readConstraints;
 	private Constraint<T> writeConstraints;
@@ -42,8 +42,8 @@ public class UpdateContext<T> extends BaseProcessingContext<T> {
 	private Collection<EntityUpdate<T>> updates;
 	private Encoder encoder;
 	private List objects;
-	private LrRequest rawRequest;
-	private LrRequest request;
+	private AgRequest rawRequest;
+	private AgRequest request;
 
 	public UpdateContext(Class<T> type) {
 		super(type);
@@ -126,7 +126,7 @@ public class UpdateContext<T> extends BaseProcessingContext<T> {
 		return id != null;
 	}
 
-	public LrObjectId getId() {
+	public AgObjectId getId() {
 		return id;
 	}
 
@@ -243,51 +243,51 @@ public class UpdateContext<T> extends BaseProcessingContext<T> {
 	}
 
 	/**
-	 * Returns LrRequest that contains query parameters.
+	 * Returns AgRequest that contains query parameters.
 	 * This parameters are used on the CreateEntityStage to create an entity.
 	 *
 	 * @since 2.13
 	 */
-	public LrRequest getRawRequest() {
+	public AgRequest getRawRequest() {
 		return rawRequest;
 	}
 
 	/**
-	 * Saves LrRequest that contains query parameters.
+	 * Saves AgRequest that contains query parameters.
 	 *
-	 * This LrRequest object is build from two sources.
+	 * This AgRequest object is build from two sources.
 	 * 1. Parse UriInfo and create query parameters objects.
 	 * 2. If some of query parameters are passed explicitly they will be used instead of parsing from UriInfo.
 	 * These explicit query parameters are saved in rawRequest object during ParseRequestStage.
 	 *
 	 * @since 2.13
 	 */
-	public void setRawRequest(LrRequest rawRequest) {
+	public void setRawRequest(AgRequest rawRequest) {
 		this.rawRequest = rawRequest;
 	}
 
 	/**
-	 * Returns LrRequest object that contains query parameters explicitly passed through API method call
+	 * Returns AgRequest object that contains query parameters explicitly passed through API method call
 	 *
 	 * @since 2.13
 	 */
-	public LrRequest getRequest() {
+	public AgRequest getRequest() {
 		return request;
 	}
 
 	/**
-	 * Saves LrRequest object that contains query parameters explicitly passed through API method call.
+	 * Saves AgRequest object that contains query parameters explicitly passed through API method call.
 	 * These parameters are created during ConvertQueryParamsStage.
 	 *
 	 * <pre>{@code
 	 *
 	 * 		public DataResponse<E2> getE2(@Context UriInfo uriInfo, @QueryParam CayenneExp cayenneExp) {
 	 * 			// Explicit query parameter
-	 * 			LrRequest lrRequest = LrRequest.builder().cayenneExp(cayenneExp).build();
+	 * 			AgRequest agRequest = AgRequest.builder().cayenneExp(cayenneExp).build();
 	 *
 	 * 			return LinkRest.service(config).select(E2.class)
 	 * 							.uri(uriInfo)
-	 * 							.request(lrRequest) // overrides parameters from uriInfo
+	 * 							.request(agRequest) // overrides parameters from uriInfo
 	 * 							.get();
 	 * 		}
 	 *
@@ -295,7 +295,7 @@ public class UpdateContext<T> extends BaseProcessingContext<T> {
 	 *
 	 * @since 2.13
 	 */
-	public void setRequest(LrRequest request) {
+	public void setRequest(AgRequest request) {
 		this.request = request;
 	}
 }

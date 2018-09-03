@@ -25,7 +25,7 @@ public class CayenneExpMerger implements ICayenneExpMerger {
 	 */
 	@Override
 	public void merge(ResourceEntity<?> resourceEntity, CayenneExp cayenneExp) {
-		Expression exp = postProcessor.process(resourceEntity.getLrEntity(), exp(cayenneExp));
+		Expression exp = postProcessor.process(resourceEntity.getAgEntity(), exp(cayenneExp));
 		if (exp != null) {
 			resourceEntity.andQualifier(exp);
 		}

@@ -1,6 +1,6 @@
 package io.agrest.sencha.runtime.processor.select;
 
-import io.agrest.LrRequest;
+import io.agrest.AgRequest;
 import io.agrest.it.fixture.cayenne.E2;
 import io.agrest.protocol.Dir;
 import io.agrest.protocol.Sort;
@@ -98,10 +98,10 @@ public class SenchaParseRequestStageTest extends TestWithCayenneMapping {
 		assertEquals("xyz", senchaRequest.getFilters().get(0).getValue());
 		assertEquals("like", senchaRequest.getFilters().get(0).getOperator());
 
-		LrRequest lrRequest = context.getRawRequest();
+		AgRequest agRequest = context.getRawRequest();
 
-		assertNotNull(lrRequest.getCayenneExp());
-		assertEquals("address = '1 Main Street'", lrRequest.getCayenneExp().getExp());
+		assertNotNull(agRequest.getCayenneExp());
+		assertEquals("address = '1 Main Street'", agRequest.getCayenneExp().getExp());
 	}
 
 	@Test

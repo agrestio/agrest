@@ -1,7 +1,7 @@
 package io.agrest.runtime.cayenne.processor.unrelate;
 
 import io.agrest.LinkRestException;
-import io.agrest.meta.LrRelationship;
+import io.agrest.meta.AgRelationship;
 import io.agrest.processor.Processor;
 import io.agrest.processor.ProcessorOutcome;
 import io.agrest.runtime.meta.IMetadataService;
@@ -50,7 +50,7 @@ public class CayenneUnrelateDataStoreStage implements Processor<UnrelateContext<
     private <T extends DataObject> void unrelateSingle(UnrelateContext<T> context, ObjectContext cayenneContext) {
 
         // validate relationship before doing anything else
-        LrRelationship relationship = metadataService.getLrRelationship(context.getParent());
+        AgRelationship relationship = metadataService.getLrRelationship(context.getParent());
 
         DataObject parent = (DataObject) getExistingObject(context.getParent().getType(), cayenneContext, context
                 .getParent().getId().get());
@@ -84,29 +84,29 @@ public class CayenneUnrelateDataStoreStage implements Processor<UnrelateContext<
 
     private <T extends DataObject> void unrelateAll(UnrelateContext<T> context, ObjectContext cayenneContext) {
         // validate relationship before doing anything else
-        LrRelationship lrRelationship = metadataService.getLrRelationship(context.getParent());
+        AgRelationship agRelationship = metadataService.getLrRelationship(context.getParent());
 
         DataObject parent = (DataObject) getExistingObject(context.getParent().getType(), cayenneContext, context
                 .getParent().getId().get());
 
-        if (lrRelationship.isToMany()) {
+        if (agRelationship.isToMany()) {
 
             // clone relationship before we start deleting to avoid concurrent
             // modification of the iterator, and to be able to batch-delete
             // objects if needed
             @SuppressWarnings("unchecked")
             Collection<DataObject> relatedCollection = new ArrayList<>(
-                    (Collection<DataObject>) parent.readProperty(lrRelationship.getName()));
+                    (Collection<DataObject>) parent.readProperty(agRelationship.getName()));
 
             for (DataObject o : relatedCollection) {
-                parent.removeToManyTarget(lrRelationship.getName(), o, true);
+                parent.removeToManyTarget(agRelationship.getName(), o, true);
             }
 
         } else {
 
-            DataObject target = (DataObject) parent.readProperty(lrRelationship.getName());
+            DataObject target = (DataObject) parent.readProperty(agRelationship.getName());
             if (target != null) {
-                parent.setToOneTarget(lrRelationship.getName(), null, true);
+                parent.setToOneTarget(agRelationship.getName(), null, true);
             }
         }
 

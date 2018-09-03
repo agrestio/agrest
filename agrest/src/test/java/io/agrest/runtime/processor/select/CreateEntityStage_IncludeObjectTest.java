@@ -1,6 +1,6 @@
 package io.agrest.runtime.processor.select;
 
-import io.agrest.LrRequest;
+import io.agrest.AgRequest;
 import io.agrest.ResourceEntity;
 import io.agrest.it.fixture.cayenne.E2;
 import io.agrest.it.fixture.cayenne.E3;
@@ -69,7 +69,7 @@ public class CreateEntityStage_IncludeObjectTest extends TestWithCayenneMapping 
         SelectContext<E2> context = new SelectContext<>(E2.class);
 
         Include include = new Include("e3s");
-        context.setRawRequest(LrRequest.builder().includes(Collections.singletonList(include)).build());
+        context.setRawRequest(AgRequest.builder().includes(Collections.singletonList(include)).build());
 
         createEntityStage.execute(context);
 
@@ -92,7 +92,7 @@ public class CreateEntityStage_IncludeObjectTest extends TestWithCayenneMapping 
         SelectContext<E2> context = new SelectContext<>(E2.class);
 
         Include include = new Include(null, null, new MapBy("e5"), "e3s", null, null);
-        context.setRawRequest(LrRequest.builder().includes(Collections.singletonList(include)).build());
+        context.setRawRequest(AgRequest.builder().includes(Collections.singletonList(include)).build());
 
         createEntityStage.execute(context);
 

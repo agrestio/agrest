@@ -3,7 +3,7 @@ package io.agrest.runtime.processor.meta;
 import io.agrest.MetadataResponse;
 import io.agrest.constraints.Constraint;
 import io.agrest.encoder.Encoder;
-import io.agrest.meta.LrResource;
+import io.agrest.meta.AgResource;
 import io.agrest.processor.BaseProcessingContext;
 
 import javax.ws.rs.core.UriInfo;
@@ -18,7 +18,7 @@ public class MetadataContext<T> extends BaseProcessingContext<T> {
     private UriInfo uriInfo;
     private Encoder encoder;
     private Constraint<T> constraint;
-    private Collection<LrResource<T>> resources;
+    private Collection<AgResource<T>> resources;
 
     public MetadataContext(Class<T> type) {
         super(type);
@@ -63,14 +63,14 @@ public class MetadataContext<T> extends BaseProcessingContext<T> {
     /**
      * @since 1.24
      */
-    public Collection<LrResource<T>> getResources() {
+    public Collection<AgResource<T>> getResources() {
         return resources;
     }
 
     /**
      * @since 1.24
      */
-    public void setResources(Collection<LrResource<T>> resources) {
+    public void setResources(Collection<AgResource<T>> resources) {
         this.resources = resources;
     }
 

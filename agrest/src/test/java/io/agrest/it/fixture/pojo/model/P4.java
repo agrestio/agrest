@@ -1,12 +1,12 @@
 package io.agrest.it.fixture.pojo.model;
 
-import io.agrest.annotation.LrRelationship;
+import io.agrest.annotation.AgRelationship;
 
 public class P4 {
 
 	private P3 p3;
 
-	@LrRelationship
+	@AgRelationship
 	public P3 getP3() {
 		return p3;
 	}

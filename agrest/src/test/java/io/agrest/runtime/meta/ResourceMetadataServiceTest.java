@@ -5,10 +5,10 @@ import io.agrest.MetadataResponse;
 import io.agrest.SimpleResponse;
 import io.agrest.annotation.LinkType;
 import io.agrest.it.fixture.cayenne.E5;
+import io.agrest.meta.AgEntity;
 import io.agrest.meta.LinkMethodType;
-import io.agrest.meta.LrEntity;
-import io.agrest.meta.LrOperation;
-import io.agrest.meta.LrResource;
+import io.agrest.meta.AgOperation;
+import io.agrest.meta.AgResource;
 import io.agrest.unit.TestWithCayenneMapping;
 import org.junit.Assert;
 import org.junit.Test;
@@ -28,12 +28,12 @@ public class ResourceMetadataServiceTest extends TestWithCayenneMapping {
 
     @Test
     public void testGetResources() {
-        LrEntity<?> e5 = metadataService.getLrEntity(E5.class);
-        Collection<LrResource<?>> resources = resourceMetadataService.getLrResources(E5Resource.class);
+        AgEntity<?> e5 = metadataService.getLrEntity(E5.class);
+        Collection<AgResource<?>> resources = resourceMetadataService.getLrResources(E5Resource.class);
 
         assertEquals(4, resources.size());
 
-        for (LrResource<?> resource : resources) {
+        for (AgResource<?> resource : resources) {
             assertEquals(e5, resource.getEntity());
 
             switch (resource.getPath()) {
@@ -45,7 +45,7 @@ public class ResourceMetadataServiceTest extends TestWithCayenneMapping {
                 case "e5/{id}":
                     assertEquals(LinkType.ITEM, resource.getType());
                     assertEquals(2, resource.getOperations().size());
-                    for (LrOperation operation : resource.getOperations()) {
+                    for (AgOperation operation : resource.getOperations()) {
                         switch (operation.getMethod()) {
                             case GET:
                             case DELETE:
@@ -73,14 +73,14 @@ public class ResourceMetadataServiceTest extends TestWithCayenneMapping {
     public static class E5Resource {
 
         @GET
-        @io.agrest.annotation.LrResource(type = LinkType.COLLECTION)
+        @io.agrest.annotation.AgResource(type = LinkType.COLLECTION)
         public DataResponse<E5> get(@Context UriInfo uriInfo) {
             throw new UnsupportedOperationException("Response is not relevant here");
         }
 
         @GET
         @Path("{id}")
-        @io.agrest.annotation.LrResource(type = LinkType.ITEM)
+        @io.agrest.annotation.AgResource(type = LinkType.ITEM)
         public DataResponse<E5> getById(@PathParam("id") int id, @Context UriInfo uriInfo) {
             throw new UnsupportedOperationException("Response is not relevant here");
         }
@@ -93,14 +93,14 @@ public class ResourceMetadataServiceTest extends TestWithCayenneMapping {
 
         @GET
         @Path("md1")
-        @io.agrest.annotation.LrResource(entityClass = E5.class, type = LinkType.METADATA)
+        @io.agrest.annotation.AgResource(entityClass = E5.class, type = LinkType.METADATA)
         public MetadataResponse<E5> md1(@Context UriInfo uriInfo) {
             throw new UnsupportedOperationException("Response is not relevant here");
         }
 
         @GET
         @Path("md2")
-        @io.agrest.annotation.LrResource(entityClass = E5.class, type = LinkType.METADATA)
+        @io.agrest.annotation.AgResource(entityClass = E5.class, type = LinkType.METADATA)
         public MetadataResponse<E5> md2(@Context UriInfo uriInfo) {
             throw new UnsupportedOperationException("Response is not relevant here");
         }

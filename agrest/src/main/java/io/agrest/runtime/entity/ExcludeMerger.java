@@ -41,7 +41,7 @@ public class ExcludeMerger implements IExcludeMerger {
         }
 
         String property = dot > 0 ? path.substring(0, dot) : path;
-        if (resourceEntity.getLrEntity().getAttribute(property) != null) {
+        if (resourceEntity.getAgEntity().getAttribute(property) != null) {
 
             if (dot > 0) {
                 throw new LinkRestException(Status.BAD_REQUEST, "Invalid exclude path: " + path);
@@ -51,7 +51,7 @@ public class ExcludeMerger implements IExcludeMerger {
             return;
         }
 
-        if (resourceEntity.getLrEntity().getRelationship(property) != null) {
+        if (resourceEntity.getAgEntity().getRelationship(property) != null) {
 
             ResourceEntity<?> relatedFilter = resourceEntity.getChild(property);
             if (relatedFilter == null) {

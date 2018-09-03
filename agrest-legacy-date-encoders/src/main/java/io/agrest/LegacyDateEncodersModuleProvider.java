@@ -7,7 +7,7 @@ import org.apache.cayenne.di.Module;
  * @deprecated since 2.11 in favor of using new date encoding strategy (default in the core module)
  */
 @Deprecated
-public class LegacyDateEncodersModuleProvider implements LrModuleProvider {
+public class LegacyDateEncodersModuleProvider implements AgModuleProvider {
 
     @Override
     public Module module() {

@@ -2,7 +2,7 @@ package io.agrest.sencha.runtime.entity;
 
 import io.agrest.LinkRestException;
 import io.agrest.it.fixture.cayenne.E4;
-import io.agrest.meta.LrEntity;
+import io.agrest.meta.AgEntity;
 import io.agrest.runtime.entity.ExpressionPostProcessor;
 import io.agrest.runtime.jackson.IJacksonService;
 import io.agrest.runtime.jackson.JacksonService;
@@ -23,7 +23,7 @@ import static org.junit.Assert.assertNull;
 
 public class SenchaFilterExpressionCompilerTest extends TestWithCayenneMapping {
 
-    private LrEntity<E4> e4Entity;
+    private AgEntity<E4> e4Entity;
     private SenchaFilterExpressionCompiler processor;
 
     @Before

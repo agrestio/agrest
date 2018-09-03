@@ -1,7 +1,7 @@
 package io.agrest.sencha.runtime.semantics;
 
-import io.agrest.meta.LrEntity;
-import io.agrest.meta.LrRelationship;
+import io.agrest.meta.AgEntity;
+import io.agrest.meta.AgRelationship;
 import io.agrest.runtime.semantics.IRelationshipMapper;
 
 /**
@@ -12,12 +12,12 @@ public class SenchaRelationshipMapper implements IRelationshipMapper {
 	private static final String SUFFIX = "_id";
 
 	@Override
-	public String toRelatedIdName(LrRelationship relationship) {
+	public String toRelatedIdName(AgRelationship relationship) {
 		return relationship.getName() + SUFFIX;
 	}
 
 	@Override
-	public LrRelationship toRelationship(LrEntity<?> root, String relatedIdName) {
+	public AgRelationship toRelationship(AgEntity<?> root, String relatedIdName) {
 
 		// allow both relname_id and relname forms ...
 

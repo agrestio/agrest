@@ -7,18 +7,18 @@ import javax.ws.rs.core.Response.Status;
 
 import io.agrest.LinkRestException;
 import io.agrest.PathConstants;
-import io.agrest.meta.LrAttribute;
-import io.agrest.meta.LrEntity;
-import io.agrest.meta.LrRelationship;
+import io.agrest.meta.AgAttribute;
+import io.agrest.meta.AgEntity;
+import io.agrest.meta.AgRelationship;
 import org.apache.cayenne.exp.parser.ASTObjPath;
 import org.apache.cayenne.exp.parser.ASTPath;
 
 class EntityPathCache {
 
-	private LrEntity<?> entity;
+	private AgEntity<?> entity;
 	private Map<String, PathDescriptor> pathCache;
 
-	EntityPathCache(final LrEntity<?> entity) {
+	EntityPathCache(final AgEntity<?> entity) {
 		this.entity = entity;
 		this.pathCache = new ConcurrentHashMap<>();
 
@@ -35,7 +35,7 @@ class EntityPathCache {
 
 			pathCache.put(PathConstants.ID_PK_ATTRIBUTE, new PathDescriptor() {
 
-				LrAttribute id = entity.getIds().iterator().next();
+				AgAttribute id = entity.getIds().iterator().next();
 
 				@Override
 				public boolean isAttribute() {
@@ -63,10 +63,10 @@ class EntityPathCache {
 			String stringPath = (String) path.getOperand(0);
 			final Object last = lastPathComponent(entity, stringPath);
 
-			if (last instanceof LrAttribute) {
+			if (last instanceof AgAttribute) {
 				entry = new PathDescriptor() {
 
-					LrAttribute attribute = (LrAttribute) last;
+					AgAttribute attribute = (AgAttribute) last;
 
 					@Override
 					public boolean isAttribute() {
@@ -86,7 +86,7 @@ class EntityPathCache {
 			} else {
 				entry = new PathDescriptor() {
 
-					LrRelationship relationship = (LrRelationship) last;
+					AgRelationship relationship = (AgRelationship) last;
 					Class<?> type = relationship.getTargetEntity().getType();
 
 					@Override
@@ -112,7 +112,7 @@ class EntityPathCache {
 		return entry;
 	}
 
-	Object lastPathComponent(LrEntity<?> entity, String path) {
+	Object lastPathComponent(AgEntity<?> entity, String path) {
 
 		int dot = path.indexOf(PathConstants.DOT);
 
@@ -125,23 +125,23 @@ class EntityPathCache {
 			String segment = toRelationshipName(path.substring(0, dot));
 
 			// must be a relationship ..
-			LrRelationship relationship = entity.getRelationship(segment);
+			AgRelationship relationship = entity.getRelationship(segment);
 			if (relationship == null) {
 				throw new LinkRestException(Status.BAD_REQUEST, "Invalid path '" + path + "' for '" + entity.getName()
 						+ "'. Not a relationship");
 			}
 
-			LrEntity<?> targetEntity = relationship.getTargetEntity();
+			AgEntity<?> targetEntity = relationship.getTargetEntity();
 			return lastPathComponent(targetEntity, path.substring(dot + 1));
 		}
 
 		// can be a relationship or an attribute
-		LrAttribute attribute = entity.getAttribute(path);
+		AgAttribute attribute = entity.getAttribute(path);
 		if (attribute != null) {
 			return attribute;
 		}
 
-		LrRelationship relationship = entity.getRelationship(toRelationshipName(path));
+		AgRelationship relationship = entity.getRelationship(toRelationshipName(path));
 		if (relationship != null) {
 			return relationship;
 		}

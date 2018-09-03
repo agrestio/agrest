@@ -5,29 +5,29 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import io.agrest.meta.LrAttribute;
-import io.agrest.meta.LrEntity;
-import io.agrest.meta.LrPersistentEntity;
+import io.agrest.meta.AgAttribute;
+import io.agrest.meta.AgEntity;
+import io.agrest.meta.AgPersistentEntity;
 
 public class IdPropertyReader implements PropertyReader {
 
-    private LrEntity<?> entity;
+    private AgEntity<?> entity;
     private boolean isPersistent;
 
-    public IdPropertyReader(LrEntity<?> entity) {
+    public IdPropertyReader(AgEntity<?> entity) {
         this.entity = entity;
-        this.isPersistent = entity instanceof LrPersistentEntity;
+        this.isPersistent = entity instanceof AgPersistentEntity;
     }
 
     @Override
     public Object value(Object root, String name) {
 
-        Collection<LrAttribute> ids = entity.getIds();
+        Collection<AgAttribute> ids = entity.getIds();
         if (ids.size() == 0) {
             return Collections.emptyMap();
         } else {
             Map<String, Object> idMap = new HashMap<>((int)(ids.size() / 0.75d) + 1);
-            for (LrAttribute id : ids) {
+            for (AgAttribute id : ids) {
                 idMap.put(id.getName(), readPropertyOrId(root, id.getName()));
             }
             return idMap;

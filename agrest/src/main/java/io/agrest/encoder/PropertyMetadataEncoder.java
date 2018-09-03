@@ -1,9 +1,9 @@
 package io.agrest.encoder;
 
 import com.fasterxml.jackson.core.JsonGenerator;
-import io.agrest.meta.LrAttribute;
-import io.agrest.meta.LrPersistentAttribute;
-import io.agrest.meta.LrRelationship;
+import io.agrest.meta.AgAttribute;
+import io.agrest.meta.AgPersistentAttribute;
+import io.agrest.meta.AgRelationship;
 
 import java.io.IOException;
 import java.time.LocalDate;
@@ -19,10 +19,10 @@ public abstract class PropertyMetadataEncoder extends AbstractEncoder {
 
         @Override
         protected String getPropertyName(Object property) {
-            if (property instanceof LrAttribute) {
-                return ((LrAttribute) property).getName();
-            } else if (property instanceof LrRelationship) {
-                return ((LrRelationship) property).getName();
+            if (property instanceof AgAttribute) {
+                return ((AgAttribute) property).getName();
+            } else if (property instanceof AgRelationship) {
+                return ((AgRelationship) property).getName();
             } else {
                 return null;
             }
@@ -30,21 +30,21 @@ public abstract class PropertyMetadataEncoder extends AbstractEncoder {
 
         @Override
         protected TypeDescription getPropertyType(Object property) {
-            if (property instanceof LrAttribute) {
-                return getAttributeType((LrAttribute) property);
-            } else if (property instanceof LrRelationship) {
-                return getRelationshipType((LrRelationship) property);
+            if (property instanceof AgAttribute) {
+                return getAttributeType((AgAttribute) property);
+            } else if (property instanceof AgRelationship) {
+                return getRelationshipType((AgRelationship) property);
             }
 
             throw new UnsupportedOperationException("Unsupported property type, must be attribute or relationship: " + property);
         }
 
-        protected TypeDescription getRelationshipType(LrRelationship relationship) {
+        protected TypeDescription getRelationshipType(AgRelationship relationship) {
             String entityName = relationship.getTargetEntity().getName();
             return new TypeDescription(entityName);
         }
 
-        protected TypeDescription getAttributeType(LrAttribute attribute) {
+        protected TypeDescription getAttributeType(AgAttribute attribute) {
             Class<?> type = attribute.getType();
             switch (type.getName()) {
                 case "byte":
@@ -98,13 +98,13 @@ public abstract class PropertyMetadataEncoder extends AbstractEncoder {
 
         @Override
         protected void doEncode(Object property, JsonGenerator out) throws IOException {
-            if (property instanceof LrPersistentAttribute) {
-                if (((LrPersistentAttribute) property).isMandatory()) {
+            if (property instanceof AgPersistentAttribute) {
+                if (((AgPersistentAttribute) property).isMandatory()) {
                     out.writeBooleanField("mandatory", true);
                 }
-            } else if (property instanceof LrRelationship) {
+            } else if (property instanceof AgRelationship) {
                 out.writeBooleanField("relationship", true);
-                if (((LrRelationship) property).isToMany()) {
+                if (((AgRelationship) property).isToMany()) {
                     out.writeBooleanField("collection", true);
                 }
             }

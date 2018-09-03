@@ -17,12 +17,12 @@ import io.agrest.EntityProperty;
 import io.agrest.ResourceEntity;
 import io.agrest.encoder.Encoder;
 import io.agrest.encoder.IdEncoder;
-import io.agrest.meta.LrAttribute;
-import io.agrest.meta.LrEntity;
-import io.agrest.meta.LrPersistentAttribute;
-import io.agrest.meta.LrPersistentEntity;
-import io.agrest.meta.LrPersistentRelationship;
-import io.agrest.meta.LrRelationship;
+import io.agrest.meta.AgAttribute;
+import io.agrest.meta.AgEntity;
+import io.agrest.meta.AgPersistentAttribute;
+import io.agrest.meta.AgPersistentEntity;
+import io.agrest.meta.AgPersistentRelationship;
+import io.agrest.meta.AgRelationship;
 import io.agrest.property.BeanPropertyReader;
 import io.agrest.property.IdPropertyReader;
 import io.agrest.property.PropertyBuilder;
@@ -46,7 +46,7 @@ public class AttributeEncoderFactory implements IAttributeEncoderFactory {
 	// these are explicit overrides for named attributes
 	private Map<String, EntityProperty> attributePropertiesByPath;
 	private Map<String, EntityProperty> idPropertiesByEntity;
-	private ConcurrentMap<LrEntity<?>, IdPropertyReader> idPropertyReaders;
+	private ConcurrentMap<AgEntity<?>, IdPropertyReader> idPropertyReaders;
 
 	public AttributeEncoderFactory(Map<Class<?>, Encoder> knownEncoders,
 								   Encoder defaultEncoder) {
@@ -60,7 +60,7 @@ public class AttributeEncoderFactory implements IAttributeEncoderFactory {
 	}
 
 	@Override
-	public EntityProperty getAttributeProperty(LrEntity<?> entity, LrAttribute attribute) {
+	public EntityProperty getAttributeProperty(AgEntity<?> entity, AgAttribute attribute) {
 		String key = entity.getName() + "." + attribute.getName();
 
 		EntityProperty property = attributePropertiesByPath.get(key);
@@ -73,7 +73,7 @@ public class AttributeEncoderFactory implements IAttributeEncoderFactory {
 	}
 
 	@Override
-	public EntityProperty getRelationshipProperty(LrEntity<?> entity, LrRelationship relationship, Encoder encoder) {
+	public EntityProperty getRelationshipProperty(AgEntity<?> entity, AgRelationship relationship, Encoder encoder) {
 
 		// TODO: can't cache, as target encoder is dynamic...
 		return buildRelationshipProperty(entity, relationship, encoder);
@@ -82,7 +82,7 @@ public class AttributeEncoderFactory implements IAttributeEncoderFactory {
 	@Override
 	public EntityProperty getIdProperty(ResourceEntity<?> entity) {
 
-		String key = entity.getLrEntity().getName();
+		String key = entity.getAgEntity().getName();
 
 		EntityProperty property = idPropertiesByEntity.get(key);
 		if (property == null) {
@@ -93,18 +93,18 @@ public class AttributeEncoderFactory implements IAttributeEncoderFactory {
 		return property;
 	}
 
-	protected EntityProperty buildRelationshipProperty(LrEntity<?> entity, LrRelationship relationship, Encoder encoder) {
-		boolean persistent = relationship instanceof LrPersistentRelationship;
+	protected EntityProperty buildRelationshipProperty(AgEntity<?> entity, AgRelationship relationship, Encoder encoder) {
+		boolean persistent = relationship instanceof AgPersistentRelationship;
 		return getProperty(entity, relationship.getPropertyReader(), persistent, encoder);
 	}
 
-	protected EntityProperty buildAttributeProperty(LrEntity<?> entity, LrAttribute attribute) {
-		boolean persistent = attribute instanceof LrPersistentAttribute;
+	protected EntityProperty buildAttributeProperty(AgEntity<?> entity, AgAttribute attribute) {
+		boolean persistent = attribute instanceof AgPersistentAttribute;
 		Encoder encoder = buildEncoder(attribute);
 		return getProperty(entity, attribute.getPropertyReader(), persistent, encoder);
 	}
 
-	private EntityProperty getProperty(LrEntity<?> entity, PropertyReader reader, boolean persistent, Encoder encoder) {
+	private EntityProperty getProperty(AgEntity<?> entity, PropertyReader reader, boolean persistent, Encoder encoder) {
 		if (persistent && DataObject.class.isAssignableFrom(entity.getType())) {
 			return PropertyBuilder.dataObjectProperty().encodedWith(encoder);
 		} else if(reader != null) {
@@ -116,9 +116,9 @@ public class AttributeEncoderFactory implements IAttributeEncoderFactory {
 
 	protected EntityProperty buildIdProperty(ResourceEntity<?> entity) {
 
-		Collection<LrAttribute> ids = entity.getLrEntity().getIds();
+		Collection<AgAttribute> ids = entity.getAgEntity().getIds();
 
-		if (entity.getLrEntity() instanceof LrPersistentEntity) {
+		if (entity.getAgEntity() instanceof AgPersistentEntity) {
 
 			// Cayenne object - PK is an ObjectId (even if it is also a
 			// meaningful object property)
@@ -126,19 +126,19 @@ public class AttributeEncoderFactory implements IAttributeEncoderFactory {
 			if (ids.size() > 1) {
 				// keeping attribute encoders in alphabetical order
 				Map<String, Encoder> valueEncoders = new TreeMap<>();
-				for (LrAttribute id : ids) {
+				for (AgAttribute id : ids) {
 					Encoder valueEncoder = buildEncoder(id);
 					valueEncoders.put(id.getName(), valueEncoder);
 				}
 
-				return PropertyBuilder.property(getOrCreateIdPropertyReader(entity.getLrEntity()))
+				return PropertyBuilder.property(getOrCreateIdPropertyReader(entity.getAgEntity()))
 						.encodedWith(new IdEncoder(valueEncoders));
 			} else {
 
-				LrAttribute id = ids.iterator().next();
+				AgAttribute id = ids.iterator().next();
 				Encoder valueEncoder = buildEncoder(id);
 
-				return PropertyBuilder.property(getOrCreateIdPropertyReader(entity.getLrEntity()))
+				return PropertyBuilder.property(getOrCreateIdPropertyReader(entity.getAgEntity()))
 						.encodedWith(new IdEncoder(valueEncoder));
 			}
 		} else {
@@ -152,7 +152,7 @@ public class AttributeEncoderFactory implements IAttributeEncoderFactory {
 
 			// TODO: multi-attribute ID?
 
-			LrAttribute id = ids.iterator().next();
+			AgAttribute id = ids.iterator().next();
 			return PropertyBuilder.property(BeanPropertyReader.reader(id.getName()));
 		}
 	}
@@ -160,11 +160,11 @@ public class AttributeEncoderFactory implements IAttributeEncoderFactory {
 	/**
 	 * @since 2.11
      */
-	protected Encoder buildEncoder(LrAttribute attribute) {
+	protected Encoder buildEncoder(AgAttribute attribute) {
 		return buildEncoder(attribute.getType());
 	}
 
-	private IdPropertyReader getOrCreateIdPropertyReader(LrEntity<?> entity) {
+	private IdPropertyReader getOrCreateIdPropertyReader(AgEntity<?> entity) {
 
 		IdPropertyReader reader = idPropertyReaders.get(entity);
 		if (reader == null) {

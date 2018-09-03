@@ -5,7 +5,7 @@ import io.agrest.ResourceEntity;
 import io.agrest.constraints.Constraint;
 import io.agrest.it.fixture.cayenne.E1;
 import io.agrest.it.fixture.cayenne.E2;
-import io.agrest.meta.LrPersistentEntity;
+import io.agrest.meta.AgPersistentEntity;
 import io.agrest.unit.TestWithCayenneMapping;
 import org.apache.cayenne.map.ObjEntity;
 import org.junit.Before;
@@ -23,8 +23,8 @@ import static org.mockito.Mockito.when;
 public class ConstraintsHandlerWithDefaultsTest extends TestWithCayenneMapping {
 
 	private ConstraintsHandler constraintHandler;
-	private LrPersistentEntity<E1> lre1;
-	private LrPersistentEntity<E2> lre2;
+	private AgPersistentEntity<E1> lre1;
+	private AgPersistentEntity<E2> lre2;
 
 	@SuppressWarnings("unchecked")
 	@Before
@@ -41,12 +41,12 @@ public class ConstraintsHandlerWithDefaultsTest extends TestWithCayenneMapping {
 		ObjEntity e1 = runtime.getChannel().getEntityResolver().getObjEntity(E1.class);
 		ObjEntity e2 = runtime.getChannel().getEntityResolver().getObjEntity(E2.class);
 
-		lre1 = mock(LrPersistentEntity.class);
+		lre1 = mock(AgPersistentEntity.class);
 		when(lre1.getObjEntity()).thenReturn(e1);
 		when(lre1.getType()).thenReturn(E1.class);
 		when(lre1.getName()).thenReturn(e1.getName());
 
-		lre2 = mock(LrPersistentEntity.class);
+		lre2 = mock(AgPersistentEntity.class);
 		when(lre2.getObjEntity()).thenReturn(e2);
 		when(lre2.getType()).thenReturn(E2.class);
 		when(lre2.getName()).thenReturn(e2.getName());

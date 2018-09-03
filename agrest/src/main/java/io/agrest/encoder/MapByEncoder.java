@@ -5,8 +5,8 @@ import io.agrest.EntityProperty;
 import io.agrest.LinkRestException;
 import io.agrest.ResourceEntity;
 import io.agrest.encoder.converter.StringConverter;
-import io.agrest.meta.LrAttribute;
-import io.agrest.meta.LrRelationship;
+import io.agrest.meta.AgAttribute;
+import io.agrest.meta.AgRelationship;
 import io.agrest.runtime.encoder.IAttributeEncoderFactory;
 import io.agrest.runtime.encoder.IStringConverterFactory;
 import org.apache.cayenne.exp.Expression;
@@ -70,7 +70,7 @@ public class MapByEncoder implements CollectionEncoder {
             validateLeafMapBy(mapBy);
             byId = true;
             this.mapByReaders.add(getPropertyReader(null, encoderFactory.getIdProperty(mapBy)));
-            this.fieldNameConverter = converterFactory.getConverter(mapBy.getLrEntity());
+            this.fieldNameConverter = converterFactory.getConverter(mapBy.getAgEntity());
             return;
         }
 
@@ -79,11 +79,11 @@ public class MapByEncoder implements CollectionEncoder {
             validateLeafMapBy(mapBy);
             byId = false;
 
-            Map.Entry<String, LrAttribute> attribute = mapBy.getAttributes().entrySet().iterator().next();
+            Map.Entry<String, AgAttribute> attribute = mapBy.getAttributes().entrySet().iterator().next();
             mapByReaders.add(getPropertyReader(attribute.getKey(),
-                    encoderFactory.getAttributeProperty(mapBy.getLrEntity(), attribute.getValue())));
+                    encoderFactory.getAttributeProperty(mapBy.getAgEntity(), attribute.getValue())));
 
-            this.fieldNameConverter = converterFactory.getConverter(mapBy.getLrEntity(), attribute.getKey());
+            this.fieldNameConverter = converterFactory.getConverter(mapBy.getAgEntity(), attribute.getKey());
             return;
         }
 
@@ -92,9 +92,9 @@ public class MapByEncoder implements CollectionEncoder {
             byId = false;
 
             Map.Entry<String, ResourceEntity<?>> child = mapBy.getChildren().entrySet().iterator().next();
-            LrRelationship relationship = mapBy.getLrEntity().getRelationship(child.getKey());
+            AgRelationship relationship = mapBy.getAgEntity().getRelationship(child.getKey());
             mapByReaders.add(getPropertyReader(child.getKey(),
-                    encoderFactory.getRelationshipProperty(mapBy.getLrEntity(), relationship, null)));
+                    encoderFactory.getRelationshipProperty(mapBy.getAgEntity(), relationship, null)));
 
             ResourceEntity<?> childMapBy = mapBy.getChildren().get(child.getKey());
             config(converterFactory, encoderFactory, childMapBy);

@@ -1,7 +1,7 @@
 package io.agrest.runtime.protocol;
 
 import io.agrest.EntityUpdate;
-import io.agrest.meta.LrEntity;
+import io.agrest.meta.AgEntity;
 
 import java.io.InputStream;
 import java.util.Collection;
@@ -11,7 +11,7 @@ import java.util.Collection;
  */
 public interface IEntityUpdateParser {
 
-	<T> Collection<EntityUpdate<T>> parse(LrEntity<T> entity, String entityData);
+	<T> Collection<EntityUpdate<T>> parse(AgEntity<T> entity, String entityData);
 
-	<T> Collection<EntityUpdate<T>> parse(LrEntity<T> entity, InputStream entityStream);
+	<T> Collection<EntityUpdate<T>> parse(AgEntity<T> entity, InputStream entityStream);
 }

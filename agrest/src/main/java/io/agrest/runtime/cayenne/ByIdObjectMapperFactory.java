@@ -4,7 +4,7 @@ import java.util.Collection;
 
 import io.agrest.ObjectMapper;
 import io.agrest.ObjectMapperFactory;
-import io.agrest.meta.LrAttribute;
+import io.agrest.meta.AgAttribute;
 import io.agrest.runtime.processor.update.UpdateContext;
 import org.apache.cayenne.exp.parser.ASTPath;
 
@@ -25,11 +25,11 @@ public class ByIdObjectMapperFactory implements ObjectMapperFactory {
 	@Override
 	public <T> ObjectMapper<T> createMapper(UpdateContext<T> context) {
 
-		Collection<LrAttribute> ids = context.getEntity().getLrEntity().getIds();
+		Collection<AgAttribute> ids = context.getEntity().getAgEntity().getIds();
 		ASTPath[] paths = new ASTPath[ids.size()];
 
 		int i = 0;
-		for (LrAttribute id : ids) {
+		for (AgAttribute id : ids) {
 			paths[i++] = id.getPathExp();
 		}
 

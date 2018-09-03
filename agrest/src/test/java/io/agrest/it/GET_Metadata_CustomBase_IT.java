@@ -2,8 +2,8 @@ package io.agrest.it;
 
 import io.agrest.LinkRest;
 import io.agrest.MetadataResponse;
+import io.agrest.annotation.AgResource;
 import io.agrest.annotation.LinkType;
-import io.agrest.annotation.LrResource;
 import io.agrest.it.fixture.JerseyTestOnDerby;
 import io.agrest.it.fixture.cayenne.E5;
 import io.agrest.runtime.LinkRestBuilder;
@@ -50,7 +50,7 @@ public class GET_Metadata_CustomBase_IT extends JerseyTestOnDerby {
 
         @GET
         @Path("meta")
-        @LrResource(entityClass = E5.class, type = LinkType.METADATA)
+        @AgResource(entityClass = E5.class, type = LinkType.METADATA)
         public MetadataResponse<E5> getMetadata(@Context UriInfo uriInfo) {
             return LinkRest.metadata(E5.class, config).forResource(R1.class).uri(uriInfo).process();
         }

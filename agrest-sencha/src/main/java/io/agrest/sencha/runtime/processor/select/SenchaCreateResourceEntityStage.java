@@ -1,7 +1,7 @@
 package io.agrest.sencha.runtime.processor.select;
 
 import io.agrest.ResourceEntity;
-import io.agrest.meta.LrEntity;
+import io.agrest.meta.AgEntity;
 import io.agrest.protocol.Sort;
 import io.agrest.runtime.entity.ICayenneExpMerger;
 import io.agrest.runtime.entity.IExcludeMerger;
@@ -46,13 +46,13 @@ public class SenchaCreateResourceEntityStage extends CreateResourceEntityStage {
 
         ResourceEntity<T> resourceEntity = context.getEntity();
 
-        Expression e1 = parseFilter(resourceEntity.getLrEntity(), context);
+        Expression e1 = parseFilter(resourceEntity.getAgEntity(), context);
         if (e1 != null) {
             resourceEntity.andQualifier(e1);
         }
     }
 
-    protected <T> Expression parseFilter(LrEntity<?> entity, SelectContext<T> context) {
+    protected <T> Expression parseFilter(AgEntity<?> entity, SelectContext<T> context) {
         SenchaRequest senchaRequest = SenchaRequest.get(context);
         return senchaFilterProcessor.process(entity, senchaRequest.getFilters());
     }

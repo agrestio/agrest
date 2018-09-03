@@ -1,13 +1,13 @@
 package io.agrest.meta.compiler;
 
-import io.agrest.meta.LrEntity;
+import io.agrest.meta.AgEntity;
 
 import java.util.function.Supplier;
 
 /**
  * @since 2.0
  */
-public abstract class BaseLazyLrEntity<T, E extends LrEntity<T>> {
+public abstract class BaseLazyLrEntity<T, E extends AgEntity<T>> {
 
     private Supplier<E> delegateSupplier;
     private E delegate;

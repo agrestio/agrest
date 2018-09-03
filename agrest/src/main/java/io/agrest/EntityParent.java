@@ -22,7 +22,7 @@ import java.util.Map;
 public class EntityParent<P> {
 
 	private Class<P> type;
-	private LrObjectId id;
+	private AgObjectId id;
 	private String relationship;
 
 	public EntityParent(Class<P> parentType, Map<String, Object> parentIds, String relationshipFromParent) {
@@ -65,7 +65,7 @@ public class EntityParent<P> {
 		return type;
 	}
 
-	public LrObjectId getId() {
+	public AgObjectId getId() {
 		return id;
 	}
 

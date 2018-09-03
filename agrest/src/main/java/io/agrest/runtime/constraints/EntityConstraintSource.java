@@ -8,9 +8,9 @@ import javax.ws.rs.core.Response.Status;
 
 import io.agrest.EntityConstraint;
 import io.agrest.LinkRestException;
-import io.agrest.meta.LrAttribute;
-import io.agrest.meta.LrEntity;
-import io.agrest.meta.LrRelationship;
+import io.agrest.meta.AgAttribute;
+import io.agrest.meta.AgEntity;
+import io.agrest.meta.AgRelationship;
 
 /**
  * @since 1.6
@@ -23,7 +23,7 @@ abstract class EntityConstraintSource {
 		this.constraints = constraints;
 	}
 
-	EntityConstraint getOrCreate(LrEntity<?> entity) {
+	EntityConstraint getOrCreate(AgEntity<?> entity) {
 
 		EntityConstraint c = constraints.get(entity.getName());
 
@@ -47,7 +47,7 @@ abstract class EntityConstraintSource {
 
 	protected abstract AnnotationData processAnnotation(Class<?> type);
 
-	private EntityConstraint create(LrEntity<?> entity) {
+	private EntityConstraint create(AgEntity<?> entity) {
 		AnnotationData ad = processAnnotation(entity.getType());
 
 		if (ad == null) {
@@ -58,13 +58,13 @@ abstract class EntityConstraintSource {
 		Set<String> relationships = new HashSet<>();
 
 		for (String p : ad.properties) {
-			LrAttribute a = entity.getAttribute(p);
+			AgAttribute a = entity.getAttribute(p);
 			if (a != null) {
 				attributes.add(p);
 				continue;
 			}
 
-			LrRelationship r = entity.getRelationship(p);
+			AgRelationship r = entity.getRelationship(p);
 			if (r != null) {
 				relationships.add(p);
 				continue;

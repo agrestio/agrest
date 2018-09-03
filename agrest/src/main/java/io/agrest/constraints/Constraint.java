@@ -1,15 +1,15 @@
 package io.agrest.constraints;
 
-import io.agrest.meta.LrEntity;
+import io.agrest.meta.AgEntity;
 
 import java.util.function.Function;
 
 /**
- * Metadata constraint, essentially a function that creates {@link ConstrainedLrEntity} from {@link LrEntity}.
+ * Metadata constraint, essentially a function that creates {@link ConstrainedLrEntity} from {@link AgEntity}.
  *
  * @since 2.4
  */
-public interface Constraint<T> extends Function<LrEntity<T>, ConstrainedLrEntity<T>> {
+public interface Constraint<T> extends Function<AgEntity<T>, ConstrainedLrEntity<T>> {
 
     /**
      * @param type a root type for constraints.

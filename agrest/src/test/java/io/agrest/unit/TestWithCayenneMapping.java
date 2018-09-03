@@ -1,11 +1,11 @@
 package io.agrest.unit;
 
 import io.agrest.ResourceEntity;
-import io.agrest.meta.DefaultLrAttribute;
-import io.agrest.meta.LrEntity;
-import io.agrest.meta.LrPersistentAttribute;
+import io.agrest.meta.AgEntity;
+import io.agrest.meta.DefaultAgAttribute;
+import io.agrest.meta.AgPersistentAttribute;
 import io.agrest.meta.cayenne.CayenneEntityCompiler;
-import io.agrest.meta.compiler.LrEntityCompiler;
+import io.agrest.meta.compiler.AgEntityCompiler;
 import io.agrest.meta.compiler.PojoEntityCompiler;
 import io.agrest.meta.parser.IResourceParser;
 import io.agrest.meta.parser.ResourceParser;
@@ -30,10 +30,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 
 import javax.ws.rs.core.MultivaluedMap;
-import javax.ws.rs.core.PathSegment;
-import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -93,7 +90,7 @@ public class TestWithCayenneMapping {
 
 	protected IMetadataService createMetadataService() {
 
-		List<LrEntityCompiler> compilers = new ArrayList<>();
+		List<AgEntityCompiler> compilers = new ArrayList<>();
 		compilers.add(new CayenneEntityCompiler(mockCayennePersister, Collections.emptyMap(), converterFactory));
 		compilers.add(new PojoEntityCompiler(Collections.emptyMap()));
 
@@ -114,7 +111,7 @@ public class TestWithCayenneMapping {
 		return context;
 	}
 
-	protected <T> LrEntity<T> getLrEntity(Class<T> type) {
+	protected <T> AgEntity<T> getLrEntity(Class<T> type) {
 		return metadataService.getLrEntity(type);
 	}
 
@@ -131,7 +128,7 @@ public class TestWithCayenneMapping {
 	}
 
 	protected void appendAttribute(ResourceEntity<?> entity, String name, Class<?> type) {
-		entity.getAttributes().put(name, new DefaultLrAttribute(name, type));
+		entity.getAttributes().put(name, new DefaultAgAttribute(name, type));
 	}
 
 	protected <T> void appendPersistenceAttribute(ResourceEntity<?> entity, Property<T> property, Class<T> javaType,
@@ -141,13 +138,13 @@ public class TestWithCayenneMapping {
 
 	protected void appendPersistenceAttribute(ResourceEntity<?> entity, String name, Class<?> javaType, int jdbcType) {
 		entity.getAttributes().put(name,
-				new TestLrPersistentAttribute(name, javaType, jdbcType));
+				new TestAgPersistentAttribute(name, javaType, jdbcType));
 	}
 
-	private class TestLrPersistentAttribute extends DefaultLrAttribute implements LrPersistentAttribute {
+	private class TestAgPersistentAttribute extends DefaultAgAttribute implements AgPersistentAttribute {
 		private int jdbcType;
 
-		public TestLrPersistentAttribute(String name, Class<?> javaType, int jdbcType) {
+		public TestAgPersistentAttribute(String name, Class<?> javaType, int jdbcType) {
 			super(name, javaType);
 			this.jdbcType = jdbcType;
 		}

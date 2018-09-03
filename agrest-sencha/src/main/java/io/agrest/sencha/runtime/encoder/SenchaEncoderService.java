@@ -9,7 +9,7 @@ import io.agrest.encoder.Encoder;
 import io.agrest.encoder.EncoderFilter;
 import io.agrest.encoder.GenericEncoder;
 import io.agrest.encoder.PropertyMetadataEncoder;
-import io.agrest.meta.LrRelationship;
+import io.agrest.meta.AgRelationship;
 import io.agrest.runtime.encoder.EncoderService;
 import io.agrest.runtime.encoder.IAttributeEncoderFactory;
 import io.agrest.runtime.encoder.IStringConverterFactory;
@@ -47,7 +47,7 @@ public class SenchaEncoderService extends EncoderService {
 	}
 
 	@Override
-	protected Encoder toOneEncoder(ResourceEntity<?> resourceEntity, final LrRelationship relationship) {
+	protected Encoder toOneEncoder(ResourceEntity<?> resourceEntity, final AgRelationship relationship) {
 		// to-one encoder is made of the following decorator layers (from outer
 		// to inner):
 		// (1) custom filters ->

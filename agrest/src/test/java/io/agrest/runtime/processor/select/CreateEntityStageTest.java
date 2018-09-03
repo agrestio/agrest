@@ -1,7 +1,7 @@
 package io.agrest.runtime.processor.select;
 
+import io.agrest.AgRequest;
 import io.agrest.LinkRestException;
-import io.agrest.LrRequest;
 import io.agrest.ResourceEntity;
 import io.agrest.it.fixture.cayenne.E1;
 import io.agrest.it.fixture.cayenne.E2;
@@ -80,7 +80,7 @@ public class CreateEntityStageTest extends TestWithCayenneMapping {
 
         SelectContext<E1> context = prepareContext(params, E1.class);
 
-        context.setRawRequest(LrRequest.builder().build());
+        context.setRawRequest(AgRequest.builder().build());
 
 		createEntityStage.execute(context);
 
@@ -99,7 +99,7 @@ public class CreateEntityStageTest extends TestWithCayenneMapping {
 
 		Include include1 = new Include("description");
 		Include include2 = new Include("age");
-		context.setRawRequest(LrRequest.builder().includes(Arrays.asList(include1, include2)).build());
+		context.setRawRequest(AgRequest.builder().includes(Arrays.asList(include1, include2)).build());
 
 		createEntityStage.execute(context);
 
@@ -123,7 +123,7 @@ public class CreateEntityStageTest extends TestWithCayenneMapping {
 		Include include = new Include(Arrays.asList(
 				new Include("description"),
 				new Include("age")));
-		context.setRawRequest(LrRequest.builder().includes(Collections.singletonList(include)).build());
+		context.setRawRequest(AgRequest.builder().includes(Collections.singletonList(include)).build());
 
 		createEntityStage.execute(context);
 
@@ -145,7 +145,7 @@ public class CreateEntityStageTest extends TestWithCayenneMapping {
 
 		Exclude exclude1 = new Exclude("description");
 		Exclude exclude2 = new Exclude("age");
-		context.setRawRequest(LrRequest.builder().excludes(Arrays.asList(exclude1, exclude2)).build());
+		context.setRawRequest(AgRequest.builder().excludes(Arrays.asList(exclude1, exclude2)).build());
 
 		createEntityStage.execute(context);
 
@@ -167,7 +167,7 @@ public class CreateEntityStageTest extends TestWithCayenneMapping {
 		Exclude exclude = new Exclude(Arrays.asList(
 				new Exclude("description"),
 				new Exclude("age")));
-		context.setRawRequest(LrRequest.builder().excludes(Collections.singletonList(exclude)).build());
+		context.setRawRequest(AgRequest.builder().excludes(Collections.singletonList(exclude)).build());
 
 		createEntityStage.execute(context);
 
@@ -193,7 +193,7 @@ public class CreateEntityStageTest extends TestWithCayenneMapping {
 		Exclude exclude2 = new Exclude("name");
 
 
-		context.setRawRequest(LrRequest.builder()
+		context.setRawRequest(AgRequest.builder()
 				.includes(Arrays.asList(include1, include2, include3))
 				.excludes(Arrays.asList(exclude1, exclude2))
 				.build());
@@ -217,7 +217,7 @@ public class CreateEntityStageTest extends TestWithCayenneMapping {
 
 		Include include = new Include("e3s");
 
-		context.setRawRequest(LrRequest.builder().includes(Collections.singletonList(include)).build());
+		context.setRawRequest(AgRequest.builder().includes(Collections.singletonList(include)).build());
 
 		createEntityStage.execute(context);
 
@@ -249,7 +249,7 @@ public class CreateEntityStageTest extends TestWithCayenneMapping {
 
 		Include include1 = new Include("name");
 		Include include2 = new Include("e3s.name");
-		context.setRawRequest(LrRequest.builder().includes(Arrays.asList(include1, include2)).build());
+		context.setRawRequest(AgRequest.builder().includes(Arrays.asList(include1, include2)).build());
 
 		createEntityStage.execute(context);
 
@@ -279,7 +279,7 @@ public class CreateEntityStageTest extends TestWithCayenneMapping {
 
 		Include include = new Include("e3s.name");
 		Exclude exclude = new Exclude("name");
-		context.setRawRequest(LrRequest.builder()
+		context.setRawRequest(AgRequest.builder()
 				.includes(Collections.singletonList(include))
 				.excludes(Collections.singletonList(exclude))
 				.build());
@@ -313,7 +313,7 @@ public class CreateEntityStageTest extends TestWithCayenneMapping {
 		Include include = new Include("e3s");
 		Exclude exclude1 = new Exclude("address");
 		Exclude exclude2 = new Exclude("e3s.name");
-		context.setRawRequest(LrRequest.builder()
+		context.setRawRequest(AgRequest.builder()
 				.includes(Collections.singletonList(include))
 				.excludes(Arrays.asList(exclude1, exclude2))
 				.build());
@@ -346,7 +346,7 @@ public class CreateEntityStageTest extends TestWithCayenneMapping {
 
 		Include include1 = new Include("id");
 		Include include2 = new Include("e3s.id");
-		context.setRawRequest(LrRequest.builder().includes(Arrays.asList(include1, include2)).build());
+		context.setRawRequest(AgRequest.builder().includes(Arrays.asList(include1, include2)).build());
 
 		createEntityStage.execute(context);
 
@@ -373,7 +373,7 @@ public class CreateEntityStageTest extends TestWithCayenneMapping {
 
 		Sort sort = new Sort(E2.NAME.getName());
 
-		context.setRawRequest(LrRequest.builder().sort(sort).build());
+		context.setRawRequest(AgRequest.builder().sort(sort).build());
 
 		createEntityStage.execute(context);
 
@@ -392,7 +392,7 @@ public class CreateEntityStageTest extends TestWithCayenneMapping {
 
 		Sort sort = new Sort(E2.NAME.getName());
 
-		context.setRawRequest(LrRequest.builder()
+		context.setRawRequest(AgRequest.builder()
 				.sort(sort)
 				.sortDirection(Dir.ASC)
 				.build());
@@ -414,7 +414,7 @@ public class CreateEntityStageTest extends TestWithCayenneMapping {
 
 		Sort sort = new Sort(E2.NAME.getName());
 
-		context.setRawRequest(LrRequest.builder()
+		context.setRawRequest(AgRequest.builder()
 				.sort(sort)
 				.sortDirection(Dir.DESC)
 				.build());
@@ -438,7 +438,7 @@ public class CreateEntityStageTest extends TestWithCayenneMapping {
 				new Sort("name", Dir.DESC),
 				new Sort("address", Dir.ASC)));
 
-		context.setRawRequest(LrRequest.builder().sort(sort).build());
+		context.setRawRequest(AgRequest.builder().sort(sort).build());
 
 		createEntityStage.execute(context);
 
@@ -463,7 +463,7 @@ public class CreateEntityStageTest extends TestWithCayenneMapping {
 				new Sort("name", Dir.DESC),
 				new Sort("name", Dir.ASC)));
 
-		context.setRawRequest(LrRequest.builder().sort(sort).build());
+		context.setRawRequest(AgRequest.builder().sort(sort).build());
 
 		createEntityStage.execute(context);
 
@@ -485,7 +485,7 @@ public class CreateEntityStageTest extends TestWithCayenneMapping {
 				new Sort("{\"property\":\"p1\",\"direction\":\"DESC\"}"),
 				new Sort("{\"property\":\"p2\",\"direction\":\"XXX\"}")));
 
-		context.setRawRequest(LrRequest.builder().sort(sort).build());
+		context.setRawRequest(AgRequest.builder().sort(sort).build());
 
 		createEntityStage.execute(context);
 	}
@@ -497,7 +497,7 @@ public class CreateEntityStageTest extends TestWithCayenneMapping {
 
 		CayenneExp cayenneExp  = new CayenneExp("numericProp = 12345 and stringProp = 'John Smith' and booleanProp = true");
 
-		context.setRawRequest(LrRequest.builder().cayenneExp(cayenneExp).build());
+		context.setRawRequest(AgRequest.builder().cayenneExp(cayenneExp).build());
 
 		createEntityStage.execute(context);
 	}
@@ -509,7 +509,7 @@ public class CreateEntityStageTest extends TestWithCayenneMapping {
 
 		CayenneExp cayenneExp  = new CayenneExp("name = 'John Smith'");
 
-		context.setRawRequest(LrRequest.builder().cayenneExp(cayenneExp).build());
+		context.setRawRequest(AgRequest.builder().cayenneExp(cayenneExp).build());
 
 		createEntityStage.execute(context);
 

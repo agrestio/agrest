@@ -3,12 +3,12 @@ package io.agrest.it;
 import io.agrest.DataResponse;
 import io.agrest.LinkRest;
 import io.agrest.MetadataResponse;
-import io.agrest.annotation.LrAttribute;
+import io.agrest.annotation.AgAttribute;
 import io.agrest.it.fixture.JerseyTestOnDerby;
 import io.agrest.it.fixture.cayenne.E2;
 import io.agrest.it.fixture.cayenne.E3;
 import io.agrest.it.fixture.cayenne.E4;
-import io.agrest.meta.LrEntityOverlay;
+import io.agrest.meta.AgEntityOverlay;
 import io.agrest.runtime.LinkRestBuilder;
 import org.junit.Test;
 
@@ -35,14 +35,14 @@ public class GET_Props_AdHocProperties_IT extends JerseyTestOnDerby {
     @Override
     protected LinkRestBuilder doConfigure() {
         // try all possible adhoc properties...
-        LrEntityOverlay<E4> e4Overlay = new LrEntityOverlay<>(E4.class)
+        AgEntityOverlay<E4> e4Overlay = new AgEntityOverlay<>(E4.class)
                 .addAttribute("adhocString", String.class, e4 -> e4.getCVarchar() + "*")
                 .addToOneRelationship("adhocToOne", EX.class, EX::forE4)
                 .addToManyRelationship("adhocToMany", EY.class, EY::forE4)
                 .addAttribute("derived");
 
         // this entity has incoming relationships
-        LrEntityOverlay<E2> e2Overlay = new LrEntityOverlay<>(E2.class)
+        AgEntityOverlay<E2> e2Overlay = new AgEntityOverlay<>(E2.class)
                 .addAttribute("adhocString", String.class, e2 -> e2.getName() + "*");
 
         return super.doConfigure().entityOverlay(e4Overlay).entityOverlay(e2Overlay);
@@ -170,7 +170,7 @@ public class GET_Props_AdHocProperties_IT extends JerseyTestOnDerby {
             this.p1 = p1;
         }
 
-        @LrAttribute
+        @AgAttribute
         public String getP1() {
             return p1;
         }
@@ -191,7 +191,7 @@ public class GET_Props_AdHocProperties_IT extends JerseyTestOnDerby {
             this.p1 = p1;
         }
 
-        @LrAttribute
+        @AgAttribute
         public String getP1() {
             return p1;
         }

@@ -3,7 +3,7 @@ package io.agrest.runtime.entity;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.TextNode;
 import io.agrest.LinkRestException;
-import io.agrest.meta.LrEntity;
+import io.agrest.meta.AgEntity;
 import io.agrest.parser.converter.JsonValueConverter;
 import io.agrest.parser.converter.UtcDateConverter;
 import io.agrest.runtime.path.IPathDescriptorManager;
@@ -28,7 +28,7 @@ public class ExpressionPostProcessor implements IExpressionPostProcessor {
     private IPathDescriptorManager pathCache;
 	private Map<Class<?>, JsonValueConverter<?>> converters;
 
-    private Map<LrEntity<?>, ExpressionProcessor> postProcessors;
+    private Map<AgEntity<?>, ExpressionProcessor> postProcessors;
 
     public ExpressionPostProcessor(@Inject IPathDescriptorManager pathCache) {
         this.pathCache = pathCache;
@@ -49,11 +49,11 @@ public class ExpressionPostProcessor implements IExpressionPostProcessor {
     }
 
     @Override
-    public Expression process(LrEntity<?> entity, Expression exp) {
+    public Expression process(AgEntity<?> entity, Expression exp) {
         return (exp == null) ? null : validateAndCleanup(entity, exp);
     }
 
-    private Expression validateAndCleanup(LrEntity<?> entity, Expression exp) {
+    private Expression validateAndCleanup(AgEntity<?> entity, Expression exp) {
 
 		// change expression in-place
 		// note - this will not fully handle an expression whose root is
@@ -70,7 +70,7 @@ public class ExpressionPostProcessor implements IExpressionPostProcessor {
 		return exp;
 	}
 
-    private ExpressionProcessor getOrCreateExpressionProcessor(LrEntity<?> entity) {
+    private ExpressionProcessor getOrCreateExpressionProcessor(AgEntity<?> entity) {
 
 		ExpressionProcessor postProcessor = postProcessors.get(entity);
 		if (postProcessor == null) {
@@ -85,9 +85,9 @@ public class ExpressionPostProcessor implements IExpressionPostProcessor {
 
     private class ExpressionProcessor extends TraversalHelper {
 
-        private LrEntity<?> entity;
+        private AgEntity<?> entity;
 
-        ExpressionProcessor(LrEntity<?> entity) {
+        ExpressionProcessor(AgEntity<?> entity) {
             this.entity = entity;
         }
 

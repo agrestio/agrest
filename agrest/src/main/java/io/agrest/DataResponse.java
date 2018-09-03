@@ -13,7 +13,7 @@ import java.util.List;
  * A response object that represents a 'Collection Document' from LinkRest
  * protocol.
  */
-public class DataResponse<T> extends LrResponse {
+public class DataResponse<T> extends AgResponse {
 
     private Class<T> type;
     private List objects;

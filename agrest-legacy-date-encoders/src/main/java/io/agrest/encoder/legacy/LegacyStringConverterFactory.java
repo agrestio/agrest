@@ -1,8 +1,8 @@
 package io.agrest.encoder.legacy;
 
 import io.agrest.encoder.converter.StringConverter;
-import io.agrest.meta.LrAttribute;
-import io.agrest.meta.LrPersistentAttribute;
+import io.agrest.meta.AgAttribute;
+import io.agrest.meta.AgPersistentAttribute;
 import io.agrest.runtime.encoder.StringConverterFactory;
 
 import java.sql.Types;
@@ -21,12 +21,12 @@ public class LegacyStringConverterFactory extends StringConverterFactory {
     }
 
     @Override
-    protected StringConverter buildConverter(LrAttribute attribute) {
+    protected StringConverter buildConverter(AgAttribute attribute) {
 
         if (java.util.Date.class.equals(attribute.getType())
-                && attribute instanceof LrPersistentAttribute) {
+                && attribute instanceof AgPersistentAttribute) {
 
-            int jdbcType = ((LrPersistentAttribute) attribute).getJdbcType();
+            int jdbcType = ((AgPersistentAttribute) attribute).getJdbcType();
 
             if (jdbcType == Types.DATE) {
                 return ISODateConverter.converter();

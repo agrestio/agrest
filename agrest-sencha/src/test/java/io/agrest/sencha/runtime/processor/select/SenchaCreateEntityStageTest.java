@@ -1,6 +1,6 @@
 package io.agrest.sencha.runtime.processor.select;
 
-import io.agrest.LrRequest;
+import io.agrest.AgRequest;
 import io.agrest.ResourceEntity;
 import io.agrest.it.fixture.cayenne.E2;
 import io.agrest.protocol.CayenneExp;
@@ -92,7 +92,7 @@ public class SenchaCreateEntityStageTest extends TestWithCayenneMapping {
 		SelectContext<E2> context = new SelectContext<>(E2.class);
 
 		CayenneExp cayenneExp = new CayenneExp("address = '1 Main Street'");
-		context.setRawRequest(LrRequest.builder().cayenneExp(cayenneExp).build());
+		context.setRawRequest(AgRequest.builder().cayenneExp(cayenneExp).build());
 
 		Filter filter = new Filter("name", "xyz", "like", false, false);
 		SenchaRequest.set(context, SenchaRequest.builder().filters(Collections.singletonList(filter)).build());
@@ -112,7 +112,7 @@ public class SenchaCreateEntityStageTest extends TestWithCayenneMapping {
 		Sort sort = new Sort(Arrays.asList(
 				new Sort("name", Dir.DESC),
 				new Sort("address", Dir.ASC)));
-		context.setRawRequest(LrRequest.builder().sort(sort).build());
+		context.setRawRequest(AgRequest.builder().sort(sort).build());
 
 		Sort group = new Sort(Arrays.asList(
 				new Sort("id", Dir.DESC),

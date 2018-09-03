@@ -1,12 +1,12 @@
 package io.agrest.encoder;
 
 import io.agrest.it.fixture.cayenne.E4;
-import io.agrest.meta.DefaultLrAttribute;
-import io.agrest.meta.DefaultLrEntity;
-import io.agrest.meta.DefaultLrRelationship;
-import io.agrest.meta.LrAttribute;
-import io.agrest.meta.LrEntity;
-import io.agrest.meta.LrRelationship;
+import io.agrest.meta.AgEntity;
+import io.agrest.meta.DefaultAgAttribute;
+import io.agrest.meta.DefaultAgEntity;
+import io.agrest.meta.DefaultAgRelationship;
+import io.agrest.meta.AgAttribute;
+import io.agrest.meta.AgRelationship;
 import org.junit.Test;
 
 import static io.agrest.encoder.Encoders.toJson;
@@ -18,27 +18,27 @@ public class PropertyMetadataEncoderTest {
 
     @Test
     public void testEncode_StringAttribute() {
-        LrAttribute attribute = new DefaultLrAttribute("prop", String.class);
+        AgAttribute attribute = new DefaultAgAttribute("prop", String.class);
         assertEquals("{\"name\":\"prop\",\"type\":\"string\"}", toJson(encoder, attribute));
     }
 
     @Test
     public void testEncode_ObjectAttribute() {
-        LrAttribute attribute = new DefaultLrAttribute("prop", Object.class);
+        AgAttribute attribute = new DefaultAgAttribute("prop", Object.class);
         assertEquals("{\"name\":\"prop\",\"type\":\"unknown\"}", toJson(encoder, attribute));
     }
 
     @Test
     public void testEncode_ToOneRelationship() {
-        LrEntity<E4> target = new DefaultLrEntity<>(E4.class);
-        LrRelationship r = new DefaultLrRelationship("rel", target, false);
+        AgEntity<E4> target = new DefaultAgEntity<>(E4.class);
+        AgRelationship r = new DefaultAgRelationship("rel", target, false);
         assertEquals("{\"name\":\"rel\",\"type\":\"E4\",\"relationship\":true}", toJson(encoder, r));
     }
 
     @Test
     public void testEncode_ToManyRelationship() {
-        LrEntity<E4> target = new DefaultLrEntity<>(E4.class);
-        LrRelationship r = new DefaultLrRelationship("rel", target, true);
+        AgEntity<E4> target = new DefaultAgEntity<>(E4.class);
+        AgRelationship r = new DefaultAgRelationship("rel", target, true);
         assertEquals("{\"name\":\"rel\",\"type\":\"E4\",\"relationship\":true,\"collection\":true}", toJson(encoder, r));
     }
 

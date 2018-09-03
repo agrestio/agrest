@@ -1,14 +1,14 @@
 package io.agrest.meta.cayenne;
 
-import io.agrest.meta.LrAttribute;
-import io.agrest.meta.LrDataMap;
-import io.agrest.meta.LrEntity;
-import io.agrest.meta.LrEntityBuilder;
-import io.agrest.meta.LrEntityOverlay;
-import io.agrest.meta.LrPersistentEntity;
-import io.agrest.meta.LrRelationship;
-import io.agrest.meta.compiler.LazyLrPersistentEntity;
-import io.agrest.meta.compiler.LrEntityCompiler;
+import io.agrest.meta.AgAttribute;
+import io.agrest.meta.AgDataMap;
+import io.agrest.meta.AgEntity;
+import io.agrest.meta.AgPersistentEntity;
+import io.agrest.meta.AgEntityBuilder;
+import io.agrest.meta.AgEntityOverlay;
+import io.agrest.meta.AgRelationship;
+import io.agrest.meta.compiler.LazyAgPersistentEntity;
+import io.agrest.meta.compiler.AgEntityCompiler;
 import io.agrest.runtime.cayenne.ICayennePersister;
 import io.agrest.runtime.parser.converter.IJsonValueConverterFactory;
 import org.apache.cayenne.dba.TypesMapping;
@@ -31,17 +31,17 @@ import static io.agrest.meta.Types.typeForName;
 /**
  * @since 1.24
  */
-public class CayenneEntityCompiler implements LrEntityCompiler {
+public class CayenneEntityCompiler implements AgEntityCompiler {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CayenneEntityCompiler.class);
 
     private EntityResolver resolver;
-    private Map<String, LrEntityOverlay> entityOverlays;
+    private Map<String, AgEntityOverlay> entityOverlays;
     private IJsonValueConverterFactory converterFactory;
 
     public CayenneEntityCompiler(
             @Inject ICayennePersister cayennePersister,
-            @Inject Map<String, LrEntityOverlay> entityOverlays,
+            @Inject Map<String, AgEntityOverlay> entityOverlays,
             @Inject IJsonValueConverterFactory converterFactory) {
 
         this.resolver = cayennePersister.entityResolver();
@@ -50,33 +50,33 @@ public class CayenneEntityCompiler implements LrEntityCompiler {
     }
 
     @Override
-    public <T> LrEntity<T> compile(Class<T> type, LrDataMap dataMap) {
+    public <T> AgEntity<T> compile(Class<T> type, AgDataMap dataMap) {
 
         ObjEntity objEntity = resolver.getObjEntity(type);
         if (objEntity == null) {
             return null;
         }
-        return new LazyLrPersistentEntity<>(type, () -> doCompile(type, dataMap));
+        return new LazyAgPersistentEntity<>(type, () -> doCompile(type, dataMap));
     }
 
-    private <T> LrPersistentEntity<T> doCompile(Class<T> type, LrDataMap dataMap) {
+    private <T> AgPersistentEntity<T> doCompile(Class<T> type, AgDataMap dataMap) {
 
         LOGGER.debug("compiling Cayenne entity for type: " + type);
 
         ObjEntity objEntity = resolver.getObjEntity(type);
-        CayenneLrEntity<T> lrEntity = new CayenneLrEntity<>(type, objEntity);
+        CayenneAgEntity<T> lrEntity = new CayenneAgEntity<>(type, objEntity);
         loadCayenneEntity(lrEntity, dataMap);
         loadAnnotatedProperties(lrEntity, dataMap);
         loadOverlays(dataMap, lrEntity);
         return lrEntity;
     }
 
-    protected <T> void loadCayenneEntity(CayenneLrEntity<T> lrEntity, LrDataMap dataMap) {
+    protected <T> void loadCayenneEntity(CayenneAgEntity<T> lrEntity, AgDataMap dataMap) {
 
         ObjEntity objEntity = lrEntity.getObjEntity();
         for (ObjAttribute a : objEntity.getAttributes()) {
             Class<?> type = typeForName(a.getType());
-            CayenneLrAttribute lrAttribute = new CayenneLrAttribute(a, type);
+            CayenneAgAttribute lrAttribute = new CayenneAgAttribute(a, type);
             lrEntity.addPersistentAttribute(lrAttribute);
         }
 
@@ -84,7 +84,7 @@ public class CayenneEntityCompiler implements LrEntityCompiler {
             List<DbRelationship> dbRelationshipsList = r.getDbRelationships();
 
             Class<?> targetEntityType = resolver.getClassDescriptor(r.getTargetEntityName()).getObjectClass();
-            LrEntity<?> targetEntity = dataMap.getEntity(targetEntityType);
+            AgEntity<?> targetEntity = dataMap.getEntity(targetEntityType);
 
             // take last element from list of db relationships
             // in order to behave correctly if
@@ -93,72 +93,72 @@ public class CayenneEntityCompiler implements LrEntityCompiler {
             int targetJdbcType = targetRelationship.getJoins().get(0).getTarget().getType();
             Class<?> type = typeForName(TypesMapping.getJavaBySqlType(targetJdbcType));
 
-            LrRelationship lrRelationship = new CayenneLrRelationship(r, targetEntity, converterFactory.converter(type));
-            lrEntity.addRelationship(lrRelationship);
+            AgRelationship agRelationship = new CayenneAgRelationship(r, targetEntity, converterFactory.converter(type));
+            lrEntity.addRelationship(agRelationship);
         }
 
         for (DbAttribute pk : objEntity.getDbEntity().getPrimaryKeys()) {
             ObjAttribute attribute = objEntity.getAttributeForDbAttribute(pk);
             Class<?> type;
-            LrAttribute id;
+            AgAttribute id;
             if (attribute == null) {
                 type = typeForName(TypesMapping.getJavaBySqlType(pk.getType()));
-                id = new CayenneLrDbAttribute(pk.getName(), pk, type);
+                id = new CayenneAgDbAttribute(pk.getName(), pk, type);
             } else {
                 type = typeForName(attribute.getType());
-                id = new CayenneLrAttribute(attribute, type);
+                id = new CayenneAgAttribute(attribute, type);
             }
             lrEntity.addId(id);
         }
 
     }
 
-    protected <T> void loadAnnotatedProperties(CayenneLrEntity<T> entity, LrDataMap dataMap) {
+    protected <T> void loadAnnotatedProperties(CayenneAgEntity<T> entity, AgDataMap dataMap) {
 
         // load a separate entity built purely from annotations, then merge it
         // with our entity... Note that we are not cloning attributes or
         // relationship during merge... they have no references to parent and
         // can be used as is.
 
-        LrEntity<T> annotatedEntity = new LrEntityBuilder<>(entity.getType(), dataMap).build();
+        AgEntity<T> annotatedEntity = new AgEntityBuilder<>(entity.getType(), dataMap).build();
 
         if (annotatedEntity.getIds().size() > 0) {
-            for (LrAttribute id : annotatedEntity.getIds()) {
+            for (AgAttribute id : annotatedEntity.getIds()) {
 
-                LrAttribute existing = entity.addId(id);
+                AgAttribute existing = entity.addId(id);
                 if (existing != null && LOGGER.isDebugEnabled()) {
                     LOGGER.debug("ID attribute '" + existing.getName() + "' is overridden from annotations.");
                 }
             }
 
-            Iterator<LrAttribute> iter = entity.getIds().iterator();
+            Iterator<AgAttribute> iter = entity.getIds().iterator();
             while (iter.hasNext()) {
-                LrAttribute id = iter.next();
+                AgAttribute id = iter.next();
                 if (!annotatedEntity.getIds().contains(id)) {
                     iter.remove();
                 }
             }
         }
 
-        for (LrAttribute attribute : annotatedEntity.getAttributes()) {
+        for (AgAttribute attribute : annotatedEntity.getAttributes()) {
 
-            LrAttribute existing = entity.addAttribute(attribute);
+            AgAttribute existing = entity.addAttribute(attribute);
             if (existing != null && LOGGER.isDebugEnabled()) {
                 LOGGER.debug("Attribute '" + existing.getName() + "' is overridden from annotations.");
             }
         }
 
-        for (LrRelationship relationship : annotatedEntity.getRelationships()) {
+        for (AgRelationship relationship : annotatedEntity.getRelationships()) {
 
-            LrRelationship existing = entity.addRelationship(relationship);
+            AgRelationship existing = entity.addRelationship(relationship);
             if (existing != null && LOGGER.isDebugEnabled()) {
                 LOGGER.debug("Relationship '" + existing.getName() + "' is overridden from annotations.");
             }
         }
     }
 
-    protected <T> void loadOverlays(LrDataMap dataMap, CayenneLrEntity<T> entity) {
-        LrEntityOverlay<?> overlay = entityOverlays.get(entity.getType().getName());
+    protected <T> void loadOverlays(AgDataMap dataMap, CayenneAgEntity<T> entity) {
+        AgEntityOverlay<?> overlay = entityOverlays.get(entity.getType().getName());
         if (overlay != null) {
             overlay.getAttributes().forEach(entity::addAttribute);
             overlay.getRelatonships(dataMap).forEach(entity::addRelationship);

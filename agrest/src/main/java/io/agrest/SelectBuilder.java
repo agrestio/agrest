@@ -2,7 +2,7 @@ package io.agrest;
 
 import io.agrest.constraints.Constraint;
 import io.agrest.encoder.Encoder;
-import io.agrest.meta.LrEntityOverlay;
+import io.agrest.meta.AgEntityOverlay;
 import io.agrest.processor.Processor;
 import io.agrest.processor.ProcessorOutcome;
 import io.agrest.runtime.LinkRestBuilder;
@@ -53,7 +53,7 @@ public interface SelectBuilder<T> {
     /**
      * Adds a custom property that is appended to the root {@link ResourceEntity}.
      *
-     * @see LinkRestBuilder#entityOverlay(LrEntityOverlay)
+     * @see LinkRestBuilder#entityOverlay(AgEntityOverlay)
      * @since 1.14
      */
     SelectBuilder<T> property(String name, EntityProperty clientProperty);
@@ -64,7 +64,7 @@ public interface SelectBuilder<T> {
      * "property", and default encoder is used. For more control over property
      * access and encoding use {@link #property(String, EntityProperty)}.
      *
-     * @see LinkRestBuilder#entityOverlay(LrEntityOverlay)
+     * @see LinkRestBuilder#entityOverlay(AgEntityOverlay)
      * @since 1.14
      */
     SelectBuilder<T> property(String name);
@@ -204,26 +204,26 @@ public interface SelectBuilder<T> {
     DataResponse<T> getOne();
 
     /**
-     * Forces the builder to make selection using explicit query parameters encapsulated in LrRequest.
+     * Forces the builder to make selection using explicit query parameters encapsulated in AgRequest.
      * These explicit parameters overwrite query parameters from UriInfo object.
      *
      * <pre>{@code
      *
      * 		public DataResponse<E2> getE2(@Context UriInfo uriInfo, @QueryParam CayenneExp cayenneExp) {
      * 			// Explicit query parameter
-     * 			LrRequest lrRequest = LrRequest.builder().cayenneExp(cayenneExp).build();
+     * 			AgRequest agRequest = AgRequest.builder().cayenneExp(cayenneExp).build();
      *
      * 			return LinkRest.service(config).select(E2.class)
      * 							.uri(uriInfo)
-     * 							.request(lrRequest) // overrides parameters from uriInfo
+     * 							.request(agRequest) // overrides parameters from uriInfo
      * 							.get();
      * 		}
      *
      * }</pre>
      *
-     * @param lrRequest an instance of LrRequest that holds all explicit query parameters.
+     * @param agRequest an instance of AgRequest that holds all explicit query parameters.
      * @return this builder instance.
      * @since 2.13
      */
-    SelectBuilder<T> request(LrRequest lrRequest);
+    SelectBuilder<T> request(AgRequest agRequest);
 }

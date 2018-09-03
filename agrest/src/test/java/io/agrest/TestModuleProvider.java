@@ -9,7 +9,7 @@ import java.util.Collections;
 
 import static org.mockito.Mockito.mock;
 
-public class TestModuleProvider implements LrModuleProvider {
+public class TestModuleProvider implements AgModuleProvider {
 
     public static final String METADATA_ENCODER_KEY = "TestModuleProvider.test";
 

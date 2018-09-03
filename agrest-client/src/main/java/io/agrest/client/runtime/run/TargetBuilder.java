@@ -7,7 +7,7 @@ import javax.ws.rs.client.WebTarget;
 
 import io.agrest.client.protocol.Expression;
 import io.agrest.client.protocol.Include;
-import io.agrest.client.protocol.LrcRequest;
+import io.agrest.client.protocol.AgcRequest;
 
 /**
  * @since 2.0
@@ -26,13 +26,13 @@ public class TargetBuilder {
 	}
 
 	private WebTarget target;
-	private LrcRequest request;
+	private AgcRequest request;
 
 	private TargetBuilder(WebTarget target) {
 		this.target = Objects.requireNonNull(target);
 	}
 
-	public TargetBuilder request(LrcRequest request) {
+	public TargetBuilder request(AgcRequest request) {
 
 		this.request = Objects.requireNonNull(request);
 		return this;

@@ -9,9 +9,9 @@ import io.agrest.it.fixture.cayenne.E2;
 import io.agrest.it.fixture.cayenne.E3;
 import io.agrest.it.fixture.cayenne.E4;
 import io.agrest.it.fixture.cayenne.E5;
-import io.agrest.meta.DefaultLrAttribute;
-import io.agrest.meta.LrEntity;
-import io.agrest.meta.LrRelationship;
+import io.agrest.meta.AgEntity;
+import io.agrest.meta.DefaultAgAttribute;
+import io.agrest.meta.AgRelationship;
 import org.apache.cayenne.exp.Expression;
 import org.junit.Before;
 import org.junit.Test;
@@ -33,47 +33,47 @@ public class ConstraintsHandlerTest {
 
     private ConstraintsHandler constraintHandler;
 
-    private LrEntity<E1> lre0;
-    private LrEntity<E2> lre1;
-    private LrEntity<E3> lre2;
-    private LrEntity<E4> lre3;
-    private LrEntity<E5> lre4;
+    private AgEntity<E1> lre0;
+    private AgEntity<E2> lre1;
+    private AgEntity<E3> lre2;
+    private AgEntity<E4> lre3;
+    private AgEntity<E5> lre4;
 
     @SuppressWarnings("unchecked")
     @Before
     public void before() {
 
-        lre0 = mock(LrEntity.class);
+        lre0 = mock(AgEntity.class);
         when(lre0.getName()).thenReturn("E1");
         when(lre0.getType()).thenReturn(E1.class);
-        LrRelationship r1 = mock(LrRelationship.class);
+        AgRelationship r1 = mock(AgRelationship.class);
         when(lre0.getRelationship("r1")).thenReturn(r1);
         when(r1.getName()).thenReturn("r1");
         when(r1.getTargetEntity()).then(invocation -> lre1);
 
-        LrRelationship r2 = mock(LrRelationship.class);
+        AgRelationship r2 = mock(AgRelationship.class);
         when(lre0.getRelationship("r2")).thenReturn(r2);
         when(r2.getName()).thenReturn("r2");
         when(r2.getTargetEntity()).then(invocation -> lre3);
 
-        lre1 = mock(LrEntity.class);
+        lre1 = mock(AgEntity.class);
         when(lre1.getName()).thenReturn("E2");
         when(lre1.getType()).thenReturn(E2.class);
 
-        LrRelationship r11 = mock(LrRelationship.class);
+        AgRelationship r11 = mock(AgRelationship.class);
         when(lre1.getRelationship("r11")).thenReturn(r11);
         when(r11.getName()).thenReturn("r11");
         when(r11.getTargetEntity()).then(invocation -> lre2);
 
-        lre2 = mock(LrEntity.class);
+        lre2 = mock(AgEntity.class);
         when(lre2.getName()).thenReturn("E3");
         when(lre2.getType()).thenReturn(E3.class);
 
-        lre3 = mock(LrEntity.class);
+        lre3 = mock(AgEntity.class);
         when(lre3.getName()).thenReturn("E4");
         when(lre3.getType()).thenReturn(E4.class);
 
-        lre4 = mock(LrEntity.class);
+        lre4 = mock(AgEntity.class);
         when(lre4.getName()).thenReturn("E5");
         when(lre4.getType()).thenReturn(E5.class);
 
@@ -321,6 +321,6 @@ public class ConstraintsHandlerTest {
     }
 
     protected void appendAttribute(ResourceEntity<?> entity, String name) {
-        entity.getAttributes().put(name, new DefaultLrAttribute(name, String.class));
+        entity.getAttributes().put(name, new DefaultAgAttribute(name, String.class));
     }
 }

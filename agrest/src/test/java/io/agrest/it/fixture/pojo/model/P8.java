@@ -1,6 +1,6 @@
 package io.agrest.it.fixture.pojo.model;
 
-import io.agrest.annotation.LrAttribute;
+import io.agrest.annotation.AgAttribute;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -24,7 +24,7 @@ public class P8 {
     private Collection<Double> doubles;
     private Collection<Character> characters;
 
-    @LrAttribute
+    @AgAttribute
     public Set<String> getStringSet() {
         return stringSet;
     }
@@ -33,7 +33,7 @@ public class P8 {
         this.stringSet = stringSet;
     }
 
-    @LrAttribute
+    @AgAttribute
     public List<Number> getNumberList() {
         return numberList;
     }
@@ -42,7 +42,7 @@ public class P8 {
         this.numberList = numberList;
     }
 
-    @LrAttribute
+    @AgAttribute
     public Collection<? extends Number> getWildcardCollection() {
         return wildcardCollection;
     }
@@ -51,12 +51,12 @@ public class P8 {
         this.wildcardCollection = wildcardCollection;
     }
 
-    @LrAttribute
+    @AgAttribute
     public <T extends Number> Collection<T> getGenericCollection() {
         return Collections.emptyList();
     }
 
-    @LrAttribute
+    @AgAttribute
     public Collection<Boolean> getBooleans() {
         return booleans;
     }
@@ -65,7 +65,7 @@ public class P8 {
         this.booleans = booleans;
     }
 
-    @LrAttribute
+    @AgAttribute
     public Collection<Double> getDoubles() {
         return doubles;
     }
@@ -74,7 +74,7 @@ public class P8 {
         this.doubles = doubles;
     }
 
-    @LrAttribute
+    @AgAttribute
     public Collection<Character> getCharacters() {
         return characters;
     }

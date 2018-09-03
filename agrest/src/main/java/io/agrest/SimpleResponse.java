@@ -3,7 +3,7 @@ package io.agrest;
 /**
  * A response object that represents a 'Simple Document' from LinkRest protocol .
  */
-public class SimpleResponse extends LrResponse {
+public class SimpleResponse extends AgResponse {
 
 	protected boolean success;
 	protected String message;

@@ -1,10 +1,10 @@
 package io.agrest.runtime;
 
+import io.agrest.AgRequest;
 import io.agrest.DataResponse;
 import io.agrest.EntityParent;
 import io.agrest.EntityUpdate;
 import io.agrest.LinkRestException;
-import io.agrest.LrRequest;
 import io.agrest.ObjectMapperFactory;
 import io.agrest.SimpleResponse;
 import io.agrest.UpdateBuilder;
@@ -159,8 +159,8 @@ public class DefaultUpdateBuilder<T> implements UpdateBuilder<T> {
      * @since 2.13
      */
     @Override
-    public UpdateBuilder<T> request(LrRequest lrRequest) {
-        this.context.setRequest(lrRequest);
+    public UpdateBuilder<T> request(AgRequest agRequest) {
+        this.context.setRequest(agRequest);
         return this;
     }
 

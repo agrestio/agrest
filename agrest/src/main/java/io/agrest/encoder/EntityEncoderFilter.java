@@ -4,7 +4,7 @@ import java.io.IOException;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import io.agrest.ResourceEntity;
-import io.agrest.meta.LrEntity;
+import io.agrest.meta.AgEntity;
 import io.agrest.runtime.meta.IMetadataService;
 
 /**
@@ -15,10 +15,10 @@ import io.agrest.runtime.meta.IMetadataService;
  */
 public abstract class EntityEncoderFilter<T> implements EncoderFilter {
 
-	private LrEntity<T> lrEntity;
+	private AgEntity<T> agEntity;
 
 	public EntityEncoderFilter(IMetadataService metadataService) {
-		this.lrEntity = metadataService.getLrEntity(getType());
+		this.agEntity = metadataService.getLrEntity(getType());
 	}
 
 	protected abstract Class<T> getType();
@@ -27,7 +27,7 @@ public abstract class EntityEncoderFilter<T> implements EncoderFilter {
 
 	@Override
 	public boolean matches(ResourceEntity<?> resourceEntity) {
-		return lrEntity == resourceEntity.getLrEntity();
+		return agEntity == resourceEntity.getAgEntity();
 	}
 
 	@SuppressWarnings("unchecked")

@@ -1,8 +1,8 @@
 package io.agrest.runtime.processor.update;
 
-import io.agrest.LrRequest;
+import io.agrest.AgRequest;
 import io.agrest.ResourceEntity;
-import io.agrest.meta.LrEntity;
+import io.agrest.meta.AgEntity;
 import io.agrest.processor.Processor;
 import io.agrest.processor.ProcessorOutcome;
 import io.agrest.runtime.entity.IExcludeMerger;
@@ -36,10 +36,10 @@ public class CreateResourceEntityStage implements Processor<UpdateContext<?>> {
     }
 
     protected <T> void doExecute(UpdateContext<T> context) {
-        LrEntity<T> entity = metadataService.getLrEntity(context.getType());
+        AgEntity<T> entity = metadataService.getLrEntity(context.getType());
         ResourceEntity<T> resourceEntity = new ResourceEntity<>(entity);
 
-        LrRequest request = context.getRawRequest();
+        AgRequest request = context.getRawRequest();
         if (request != null) {
             includeMerger.merge(resourceEntity, request.getIncludes());
             excludeMerger.merge(resourceEntity, request.getExcludes());

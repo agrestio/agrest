@@ -1,7 +1,7 @@
 package io.agrest;
 
-import io.agrest.meta.LrAttribute;
-import io.agrest.meta.LrPersistentAttribute;
+import io.agrest.meta.AgAttribute;
+import io.agrest.meta.AgPersistentAttribute;
 import io.agrest.parser.converter.Normalizer;
 
 import javax.ws.rs.core.Response;
@@ -39,18 +39,18 @@ public class CompoundObjectId extends BaseObjectId {
 	}
 
 	@Override
-	protected Map<String, Object> asMap(Collection<LrAttribute> idAttributes) {
+	protected Map<String, Object> asMap(Collection<AgAttribute> idAttributes) {
 
 		Map<String, Object> idMap = new HashMap<>();
-		for (LrAttribute idAttribute : idAttributes) {
+		for (AgAttribute idAttribute : idAttributes) {
 			Object idValue = Normalizer.normalize(id.get(idAttribute.getName()), idAttribute.getType());
 			if (idValue == null) {
 				throw new LinkRestException(Response.Status.INTERNAL_SERVER_ERROR,
 						"Failed to build a compound ID: one of the entity's ID parts is missing in this ID object: "
 								+ idAttribute.getName());
 			}
-			if (idAttribute instanceof LrPersistentAttribute) {
-				idMap.put(((LrPersistentAttribute) idAttribute).getColumnName(), idValue);
+			if (idAttribute instanceof AgPersistentAttribute) {
+				idMap.put(((AgPersistentAttribute) idAttribute).getColumnName(), idValue);
 			} else {
 				idMap.put(idAttribute.getName(), idValue);
 			}

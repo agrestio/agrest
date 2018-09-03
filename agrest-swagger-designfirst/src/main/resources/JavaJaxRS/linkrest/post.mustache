@@ -4,7 +4,7 @@ public {{>returnTypes}} {{nickname}}({{#allParams}}{{>pathParams}}{{>queryParams
         {{>protocolImpl}}
 
         return LinkRest.create({{{returnType}}}.class, config)
-                    .request(lrRequest)
+                    .request(agRequest)
                     .syncAndSelect({{#bodyParam}}{{paramName}}{{/bodyParam}});
     }
 {{/isRestfulCreate}}
@@ -15,7 +15,7 @@ public DataResponse<{{#bodyParams}}{{dataType}}{{/bodyParams}}> {{nickname}}({{#
 
         return LinkRest.createOrUpdate({{#bodyParams}}{{dataType}}{{/bodyParams}}.class, config)
                     .parent({{returnType}}.class, {{#pathParams}}{{#-first}}{{paramName}}{{/-first}}{{/pathParams}}, "{{#modelRelations}}{{bodyParam.paramName}}{{/modelRelations}}")
-                    .request(lrRequest)
+                    .request(agRequest)
                     .syncAndSelect({{#bodyParam}}{{paramName}}{{/bodyParam}});
     }
 {{/isRestfulRelatedToManyCreate}}

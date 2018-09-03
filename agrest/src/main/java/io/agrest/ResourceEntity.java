@@ -1,8 +1,8 @@
 package io.agrest;
 
-import io.agrest.meta.LrAttribute;
-import io.agrest.meta.LrEntity;
-import io.agrest.meta.LrRelationship;
+import io.agrest.meta.AgAttribute;
+import io.agrest.meta.AgEntity;
+import io.agrest.meta.AgRelationship;
 import org.apache.cayenne.exp.Expression;
 import org.apache.cayenne.query.Ordering;
 import org.apache.cayenne.util.ToStringBuilder;
@@ -28,15 +28,15 @@ public class ResourceEntity<T> {
 
     private boolean idIncluded;
 
-    private LrEntity<T> lrEntity;
-    private Map<String, LrAttribute> attributes;
+    private AgEntity<T> agEntity;
+    private Map<String, AgAttribute> attributes;
     private Collection<String> defaultProperties;
 
     private String applicationBase;
     private String mapByPath;
     private ResourceEntity<?> mapBy;
     private Map<String, ResourceEntity<?>> children;
-    private LrRelationship incoming;
+    private AgRelationship incoming;
     private List<Ordering> orderings;
     private Expression qualifier;
     private Map<String, EntityProperty> extraProperties;
@@ -44,29 +44,29 @@ public class ResourceEntity<T> {
     private int fetchLimit;
     private boolean filtered;
 
-    public ResourceEntity(LrEntity<T> lrEntity) {
+    public ResourceEntity(AgEntity<T> agEntity) {
         this.idIncluded = false;
         this.attributes = new HashMap<>();
         this.defaultProperties = new HashSet<>();
         this.children = new HashMap<>();
         this.orderings = new ArrayList<>(2);
         this.extraProperties = new HashMap<>();
-        this.lrEntity = lrEntity;
+        this.agEntity = agEntity;
     }
 
-    public ResourceEntity(LrEntity<T> lrEntity, LrRelationship incoming) {
-        this(lrEntity);
+    public ResourceEntity(AgEntity<T> agEntity, AgRelationship incoming) {
+        this(agEntity);
         this.incoming = incoming;
     }
 
     /**
      * @since 1.12
      */
-    public LrEntity<T> getLrEntity() {
-        return lrEntity;
+    public AgEntity<T> getAgEntity() {
+        return agEntity;
     }
 
-    public LrRelationship getIncoming() {
+    public AgRelationship getIncoming() {
         return incoming;
     }
 
@@ -99,7 +99,7 @@ public class ResourceEntity<T> {
     /**
      * @since 1.12
      */
-    public Map<String, LrAttribute> getAttributes() {
+    public Map<String, AgAttribute> getAttributes() {
         return attributes;
     }
 
@@ -172,15 +172,15 @@ public class ResourceEntity<T> {
     public String toString() {
 
         ToStringBuilder tsb = new ToStringBuilder(this);
-        if (lrEntity != null) {
-            tsb.append("name", lrEntity.getName());
+        if (agEntity != null) {
+            tsb.append("name", agEntity.getName());
         }
 
         return tsb.toString();
     }
 
     public Class<T> getType() {
-        return lrEntity.getType();
+        return agEntity.getType();
     }
 
     /**

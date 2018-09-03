@@ -2,9 +2,9 @@ package io.agrest.runtime.meta;
 
 import io.agrest.LinkRestException;
 import io.agrest.annotation.LinkType;
-import io.agrest.annotation.LrResource;
 import io.agrest.it.fixture.cayenne.E1;
 import io.agrest.it.fixture.cayenne.E2;
+import io.agrest.meta.AgResource;
 import io.agrest.unit.TestWithCayenneMapping;
 import org.junit.Test;
 
@@ -21,10 +21,10 @@ public class ResourceParserTest extends TestWithCayenneMapping {
          @Path("r1")
             class R1 {
                 @GET
-                @LrResource(type = LinkType.COLLECTION)
+                @io.agrest.annotation.AgResource(type = LinkType.COLLECTION)
                 public void method1() {}
                 @GET
-                @LrResource(type = LinkType.ITEM)
+                @io.agrest.annotation.AgResource(type = LinkType.ITEM)
                 public void method2() {}
             }
 
@@ -36,11 +36,11 @@ public class ResourceParserTest extends TestWithCayenneMapping {
          @Path("r1")
             class R1 {
                 @GET
-                @LrResource(entityClass = String.class)
+                @io.agrest.annotation.AgResource(entityClass = String.class)
                 public void method1() {}
             }
 
-        Collection<io.agrest.meta.LrResource<?>> resources = resourceParser.parse(R1.class);
+        Collection<AgResource<?>> resources = resourceParser.parse(R1.class);
         try {
             resources.iterator().next().getEntity().getIds();
             fail("Exception expected");
@@ -54,10 +54,10 @@ public class ResourceParserTest extends TestWithCayenneMapping {
          @Path("r1")
             class R1 {
                 @GET
-                @LrResource(entityClass = E1.class)
+                @io.agrest.annotation.AgResource(entityClass = E1.class)
                 public void method1() {}
                 @GET
-                @LrResource(entityClass = E2.class)
+                @io.agrest.annotation.AgResource(entityClass = E2.class)
                 public void method2() {}
             }
 
@@ -66,7 +66,7 @@ public class ResourceParserTest extends TestWithCayenneMapping {
 
     @Test
     public void testParse_NoResource() {
-        Collection<io.agrest.meta.LrResource<?>> resources = resourceParser.parse(Object.class);
+        Collection<AgResource<?>> resources = resourceParser.parse(Object.class);
         assertEquals(0, resources.size());
     }
 }

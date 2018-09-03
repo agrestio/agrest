@@ -1,8 +1,8 @@
 package io.agrest.constraints;
 
 import io.agrest.PathConstants;
-import io.agrest.meta.LrEntity;
-import io.agrest.meta.LrRelationship;
+import io.agrest.meta.AgEntity;
+import io.agrest.meta.AgRelationship;
 import org.apache.cayenne.exp.Expression;
 import org.apache.cayenne.exp.Property;
 
@@ -25,8 +25,8 @@ public class ConstraintsBuilder<T> implements Constraint<T> {
     }
 
     @Override
-    public ConstrainedLrEntity<T> apply(LrEntity<T> lrEntity) {
-        return op.apply(new ConstrainedLrEntity<T>(lrEntity));
+    public ConstrainedLrEntity<T> apply(AgEntity<T> agEntity) {
+        return op.apply(new ConstrainedLrEntity<T>(agEntity));
     }
 
     /**
@@ -192,14 +192,14 @@ public class ConstraintsBuilder<T> implements Constraint<T> {
 
         String pathSegment = dot > 0 ? path.substring(0, dot) : path;
 
-        LrRelationship relationship = parent.getEntity().getRelationship(pathSegment);
+        AgRelationship relationship = parent.getEntity().getRelationship(pathSegment);
         if (relationship == null) {
             throw new IllegalArgumentException("Path contains non-relationship component: " + pathSegment);
         }
 
         ConstrainedLrEntity<?> child = parent.getChild(relationship.getName());
         if (child == null) {
-            LrEntity<?> targetEntity = relationship.getTargetEntity();
+            AgEntity<?> targetEntity = relationship.getTargetEntity();
             child = new ConstrainedLrEntity(targetEntity);
             parent.getChildren().put(relationship.getName(), child);
         }
