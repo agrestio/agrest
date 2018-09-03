@@ -1,0 +1,416 @@
+<?xml version="1.0" encoding="utf-8"?>
+<data-map xmlns="http://cayenne.apache.org/schema/9/modelMap"
+	 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	 xsi:schemaLocation="http://cayenne.apache.org/schema/9/modelMap http://cayenne.apache.org/schema/9/modelMap.xsd"
+	 project-version="9">
+	<property name="defaultPackage" value="io.agrest.it.fixture.cayenne"/>
+	<property name="defaultSchema" value="utest"/>
+	<db-entity name="e1" schema="utest">
+		<db-attribute name="age" type="INTEGER"/>
+		<db-attribute name="description" type="VARCHAR" length="100"/>
+		<db-attribute name="id" type="INTEGER" isPrimaryKey="true" isGenerated="true" isMandatory="true"/>
+		<db-attribute name="name" type="VARCHAR" length="100"/>
+	</db-entity>
+	<db-entity name="e10" schema="utest">
+		<db-attribute name="c_boolean" type="BOOLEAN"/>
+		<db-attribute name="c_date" type="DATE"/>
+		<db-attribute name="c_decimal" type="DECIMAL" length="10" scale="2"/>
+		<db-attribute name="c_int" type="INTEGER"/>
+		<db-attribute name="c_time" type="TIME"/>
+		<db-attribute name="c_timestamp" type="TIMESTAMP"/>
+		<db-attribute name="c_varchar" type="VARCHAR" length="100"/>
+		<db-attribute name="id" type="INTEGER" isPrimaryKey="true" isGenerated="true" isMandatory="true"/>
+	</db-entity>
+	<db-entity name="e11" schema="utest">
+		<db-attribute name="address" type="VARCHAR" length="255"/>
+		<db-attribute name="e10_id" type="INTEGER"/>
+		<db-attribute name="id" type="INTEGER" isPrimaryKey="true" isGenerated="true" isMandatory="true"/>
+		<db-attribute name="name" type="VARCHAR" length="100"/>
+	</db-entity>
+	<db-entity name="e12" schema="utest">
+		<db-attribute name="id" type="INTEGER" isPrimaryKey="true" isMandatory="true"/>
+	</db-entity>
+	<db-entity name="e12_e13" schema="utest">
+		<db-attribute name="e12_id" type="INTEGER" isPrimaryKey="true" isMandatory="true"/>
+		<db-attribute name="e13_id" type="INTEGER" isPrimaryKey="true" isMandatory="true"/>
+	</db-entity>
+	<db-entity name="e13" schema="utest">
+		<db-attribute name="id" type="INTEGER" isPrimaryKey="true" isMandatory="true"/>
+	</db-entity>
+	<db-entity name="e14" schema="utest">
+		<db-attribute name="e15_id" type="BIGINT"/>
+		<db-attribute name="long_id" type="BIGINT" isPrimaryKey="true" isMandatory="true"/>
+		<db-attribute name="name" type="VARCHAR" length="100"/>
+	</db-entity>
+	<db-entity name="e15" schema="utest">
+		<db-attribute name="long_id" type="BIGINT" isPrimaryKey="true" isMandatory="true"/>
+		<db-attribute name="name" type="VARCHAR" length="100"/>
+	</db-entity>
+	<db-entity name="e15_e1" schema="utest">
+		<db-attribute name="e15_id" type="BIGINT" isPrimaryKey="true" isMandatory="true"/>
+		<db-attribute name="e1_id" type="INTEGER" isPrimaryKey="true" isMandatory="true"/>
+	</db-entity>
+	<db-entity name="e15_e5" schema="utest">
+		<db-attribute name="e15_id" type="BIGINT" isPrimaryKey="true" isMandatory="true"/>
+		<db-attribute name="e5_id" type="INTEGER" isPrimaryKey="true" isMandatory="true"/>
+	</db-entity>
+	<db-entity name="e16" schema="utest">
+		<db-attribute name="c_date" type="DATE"/>
+		<db-attribute name="c_time" type="TIME"/>
+		<db-attribute name="c_timestamp" type="TIMESTAMP"/>
+		<db-attribute name="id" type="INTEGER" isPrimaryKey="true" isGenerated="true" isMandatory="true"/>
+	</db-entity>
+	<db-entity name="e17" schema="utest">
+		<db-attribute name="id1" type="INTEGER" isPrimaryKey="true" isMandatory="true"/>
+		<db-attribute name="id2" type="INTEGER" isPrimaryKey="true" isMandatory="true"/>
+		<db-attribute name="name" type="VARCHAR" length="100"/>
+	</db-entity>
+	<db-entity name="e18" schema="utest">
+		<db-attribute name="e17_id1" type="INTEGER"/>
+		<db-attribute name="e17_id2" type="INTEGER"/>
+		<db-attribute name="id" type="INTEGER" isPrimaryKey="true" isGenerated="true" isMandatory="true"/>
+		<db-attribute name="name" type="VARCHAR" length="100"/>
+	</db-entity>
+	<db-entity name="e19" schema="utest">
+		<db-attribute name="big_decimal" type="DECIMAL" length="18" scale="2"/>
+		<db-attribute name="big_integer" type="DECIMAL" length="18"/>
+		<db-attribute name="boolean_object" type="TINYINT"/>
+		<db-attribute name="boolean_primitive" type="TINYINT"/>
+		<db-attribute name="byte_object" type="SMALLINT"/>
+		<db-attribute name="byte_primitive" type="SMALLINT"/>
+		<db-attribute name="c_date" type="DATE"/>
+		<db-attribute name="c_string" type="VARCHAR" length="45"/>
+		<db-attribute name="c_time" type="TIME"/>
+		<db-attribute name="c_timestamp" type="TIMESTAMP"/>
+		<db-attribute name="char_object" type="CHAR" length="1"/>
+		<db-attribute name="char_primitive" type="CHAR" length="1"/>
+		<db-attribute name="double_object" type="DOUBLE"/>
+		<db-attribute name="double_primitive" type="DOUBLE"/>
+		<db-attribute name="float_object" type="FLOAT"/>
+		<db-attribute name="float_primitive" type="FLOAT"/>
+		<db-attribute name="guid" type="VARBINARY" length="16"/>
+		<db-attribute name="id" type="INTEGER" isPrimaryKey="true" isGenerated="true" isMandatory="true"/>
+		<db-attribute name="int_object" type="INTEGER"/>
+		<db-attribute name="int_primitive" type="INTEGER"/>
+		<db-attribute name="long_object" type="BIGINT"/>
+		<db-attribute name="long_primitive" type="BIGINT"/>
+		<db-attribute name="short_object" type="SMALLINT"/>
+		<db-attribute name="short_primitive" type="SMALLINT"/>
+	</db-entity>
+	<db-entity name="e2" schema="utest">
+		<db-attribute name="address" type="VARCHAR" length="255"/>
+		<db-attribute name="id" type="INTEGER" isPrimaryKey="true" isGenerated="true" isMandatory="true"/>
+		<db-attribute name="name" type="VARCHAR" length="100"/>
+	</db-entity>
+	<db-entity name="e20" schema="utest">
+		<db-attribute name="age" type="INTEGER"/>
+		<db-attribute name="description" type="VARCHAR" length="100"/>
+		<db-attribute name="e21_id" type="INTEGER"/>
+		<db-attribute name="id" type="INTEGER" isPrimaryKey="true" isGenerated="true" isMandatory="true"/>
+		<db-attribute name="name" type="VARCHAR" length="100"/>
+	</db-entity>
+	<db-entity name="e21" schema="utest">
+		<db-attribute name="age" type="INTEGER"/>
+		<db-attribute name="description" type="VARCHAR" length="100"/>
+		<db-attribute name="id" type="INTEGER" isPrimaryKey="true" isGenerated="true" isMandatory="true"/>
+		<db-attribute name="name" type="VARCHAR" length="100"/>
+	</db-entity>
+	<db-entity name="e22" schema="utest">
+		<db-attribute name="id" type="INTEGER" isPrimaryKey="true" isMandatory="true"/>
+		<db-attribute name="name" type="VARCHAR" length="100"/>
+	</db-entity>
+	<db-entity name="e23" schema="utest">
+		<db-attribute name="id" type="INTEGER" isPrimaryKey="true" isMandatory="true"/>
+		<db-attribute name="name" type="VARCHAR" length="100"/>
+	</db-entity>
+	<db-entity name="e24" schema="utest">
+		<db-attribute name="TYPE" type="INTEGER" isPrimaryKey="true" isMandatory="true"/>
+		<db-attribute name="name" type="VARCHAR" length="100"/>
+	</db-entity>
+	<db-entity name="e25" schema="utest">
+		<db-attribute name="e22_id" type="INTEGER"/>
+		<db-attribute name="id" type="INTEGER" isPrimaryKey="true" isMandatory="true"/>
+		<db-attribute name="name" type="VARCHAR" length="100"/>
+	</db-entity>
+	<db-entity name="e3" schema="utest">
+		<db-attribute name="e2_id" type="INTEGER"/>
+		<db-attribute name="e5_id" type="INTEGER"/>
+		<db-attribute name="id" type="INTEGER" isPrimaryKey="true" isGenerated="true" isMandatory="true"/>
+		<db-attribute name="name" type="VARCHAR" length="200"/>
+		<db-attribute name="phone_number" type="VARCHAR" length="12"/>
+	</db-entity>
+	<db-entity name="e4" schema="utest">
+		<db-attribute name="c_boolean" type="BOOLEAN"/>
+		<db-attribute name="c_date" type="DATE"/>
+		<db-attribute name="c_decimal" type="DECIMAL" length="10" scale="2"/>
+		<db-attribute name="c_int" type="INTEGER"/>
+		<db-attribute name="c_time" type="TIME"/>
+		<db-attribute name="c_timestamp" type="TIMESTAMP"/>
+		<db-attribute name="c_varchar" type="VARCHAR" length="100"/>
+		<db-attribute name="id" type="INTEGER" isPrimaryKey="true" isGenerated="true" isMandatory="true"/>
+	</db-entity>
+	<db-entity name="e5" schema="utest">
+		<db-attribute name="date" type="DATE"/>
+		<db-attribute name="id" type="INTEGER" isPrimaryKey="true" isMandatory="true"/>
+		<db-attribute name="name" type="VARCHAR" length="50"/>
+	</db-entity>
+	<db-entity name="e6" schema="utest">
+		<db-attribute name="char_column" type="VARCHAR" length="100"/>
+		<db-attribute name="char_id" type="VARCHAR" isPrimaryKey="true" isMandatory="true" length="100"/>
+	</db-entity>
+	<db-entity name="e7" schema="utest">
+		<db-attribute name="e8_id" type="INTEGER"/>
+		<db-attribute name="id" type="INTEGER" isPrimaryKey="true" isMandatory="true"/>
+		<db-attribute name="name" type="VARCHAR" length="100"/>
+	</db-entity>
+	<db-entity name="e8" schema="utest">
+		<db-attribute name="id" type="INTEGER" isPrimaryKey="true" isMandatory="true"/>
+		<db-attribute name="name" type="VARCHAR" length="100"/>
+	</db-entity>
+	<db-entity name="e9" schema="utest">
+		<db-attribute name="e8_id" type="INTEGER" isPrimaryKey="true" isMandatory="true"/>
+	</db-entity>
+	<obj-entity name="E1" className="io.agrest.it.fixture.cayenne.E1" dbEntityName="e1">
+		<obj-attribute name="age" type="java.lang.Integer" db-attribute-path="age"/>
+		<obj-attribute name="description" type="java.lang.String" db-attribute-path="description"/>
+		<obj-attribute name="name" type="java.lang.String" db-attribute-path="name"/>
+	</obj-entity>
+	<obj-entity name="E10" className="io.agrest.it.fixture.cayenne.E10" dbEntityName="e10">
+		<obj-attribute name="cBoolean" type="java.lang.Boolean" db-attribute-path="c_boolean"/>
+		<obj-attribute name="cDate" type="java.util.Date" db-attribute-path="c_date"/>
+		<obj-attribute name="cDecimal" type="java.math.BigDecimal" db-attribute-path="c_decimal"/>
+		<obj-attribute name="cInt" type="java.lang.Integer" db-attribute-path="c_int"/>
+		<obj-attribute name="cTime" type="java.util.Date" db-attribute-path="c_time"/>
+		<obj-attribute name="cTimestamp" type="java.util.Date" db-attribute-path="c_timestamp"/>
+		<obj-attribute name="cVarchar" type="java.lang.String" db-attribute-path="c_varchar"/>
+	</obj-entity>
+	<obj-entity name="E11" className="io.agrest.it.fixture.cayenne.E11" dbEntityName="e11">
+		<obj-attribute name="address" type="java.lang.String" db-attribute-path="address"/>
+		<obj-attribute name="name" type="java.lang.String" db-attribute-path="name"/>
+	</obj-entity>
+	<obj-entity name="E12" className="io.agrest.it.fixture.cayenne.E12" dbEntityName="e12">
+	</obj-entity>
+	<obj-entity name="E12E13" className="io.agrest.it.fixture.cayenne.E12E13" dbEntityName="e12_e13">
+	</obj-entity>
+	<obj-entity name="E13" className="io.agrest.it.fixture.cayenne.E13" dbEntityName="e13">
+	</obj-entity>
+	<obj-entity name="E14" className="io.agrest.it.fixture.cayenne.E14" dbEntityName="e14">
+		<obj-attribute name="name" type="java.lang.String" db-attribute-path="name"/>
+	</obj-entity>
+	<obj-entity name="E15" className="io.agrest.it.fixture.cayenne.E15" dbEntityName="e15">
+		<obj-attribute name="name" type="java.lang.String" db-attribute-path="name"/>
+	</obj-entity>
+	<obj-entity name="E15E1" className="io.agrest.it.fixture.cayenne.E15E1" dbEntityName="e15_e1">
+	</obj-entity>
+	<obj-entity name="E16" className="io.agrest.it.fixture.cayenne.E16" dbEntityName="e16">
+		<obj-attribute name="cDate" type="java.sql.Date" db-attribute-path="c_date"/>
+		<obj-attribute name="cTime" type="java.sql.Time" db-attribute-path="c_time"/>
+		<obj-attribute name="cTimestamp" type="java.sql.Timestamp" db-attribute-path="c_timestamp"/>
+	</obj-entity>
+	<obj-entity name="E17" className="io.agrest.it.fixture.cayenne.E17" dbEntityName="e17">
+		<obj-attribute name="id1" type="java.lang.Integer" db-attribute-path="id1"/>
+		<obj-attribute name="id2" type="java.lang.Integer" db-attribute-path="id2"/>
+		<obj-attribute name="name" type="java.lang.String" db-attribute-path="name"/>
+	</obj-entity>
+	<obj-entity name="E18" className="io.agrest.it.fixture.cayenne.E18" dbEntityName="e18">
+		<obj-attribute name="name" type="java.lang.String" db-attribute-path="name"/>
+	</obj-entity>
+	<obj-entity name="E19" className="io.agrest.it.fixture.cayenne.E19" dbEntityName="e19">
+		<obj-attribute name="bigDecimal" type="java.math.BigDecimal" db-attribute-path="big_decimal"/>
+		<obj-attribute name="bigInteger" type="java.math.BigInteger" db-attribute-path="big_integer"/>
+		<obj-attribute name="booleanObject" type="java.lang.Boolean" db-attribute-path="boolean_object"/>
+		<obj-attribute name="booleanPrimitive" type="boolean" db-attribute-path="boolean_primitive"/>
+		<obj-attribute name="byteObject" type="java.lang.Byte" db-attribute-path="byte_object"/>
+		<obj-attribute name="bytePrimitive" type="byte" db-attribute-path="byte_primitive"/>
+		<obj-attribute name="cDate" type="java.sql.Date" db-attribute-path="c_date"/>
+		<obj-attribute name="cString" type="java.lang.String" db-attribute-path="c_string"/>
+		<obj-attribute name="cTime" type="java.sql.Time" db-attribute-path="c_time"/>
+		<obj-attribute name="cTimestamp" type="java.sql.Timestamp" db-attribute-path="c_timestamp"/>
+		<obj-attribute name="charObject" type="java.lang.Character" db-attribute-path="char_object"/>
+		<obj-attribute name="charPrimitive" type="char" db-attribute-path="char_primitive"/>
+		<obj-attribute name="doubleObject" type="java.lang.Double" db-attribute-path="double_object"/>
+		<obj-attribute name="doublePrimitive" type="double" db-attribute-path="double_primitive"/>
+		<obj-attribute name="floatObject" type="java.lang.Float" db-attribute-path="float_object"/>
+		<obj-attribute name="floatPrimitive" type="float" db-attribute-path="float_primitive"/>
+		<obj-attribute name="guid" type="byte[]" db-attribute-path="guid"/>
+		<obj-attribute name="intObject" type="java.lang.Integer" db-attribute-path="int_object"/>
+		<obj-attribute name="intPrimitive" type="int" db-attribute-path="int_primitive"/>
+		<obj-attribute name="longObject" type="java.lang.Long" db-attribute-path="long_object"/>
+		<obj-attribute name="longPrimitive" type="long" db-attribute-path="long_primitive"/>
+		<obj-attribute name="shortObject" type="java.lang.Short" db-attribute-path="short_object"/>
+		<obj-attribute name="shortPrimitive" type="short" db-attribute-path="short_primitive"/>
+	</obj-entity>
+	<obj-entity name="E2" className="io.agrest.it.fixture.cayenne.E2" dbEntityName="e2">
+		<obj-attribute name="address" type="java.lang.String" db-attribute-path="address"/>
+		<obj-attribute name="name" type="java.lang.String" db-attribute-path="name"/>
+	</obj-entity>
+	<obj-entity name="E20" className="io.agrest.it.fixture.cayenne.E20" dbEntityName="e20">
+		<obj-attribute name="age" type="java.lang.Integer" db-attribute-path="age"/>
+		<obj-attribute name="description" type="java.lang.String" db-attribute-path="description"/>
+		<obj-attribute name="name" type="java.lang.String" db-attribute-path="name"/>
+	</obj-entity>
+	<obj-entity name="E21" className="io.agrest.it.fixture.cayenne.E21" dbEntityName="e21">
+		<obj-attribute name="age" type="java.lang.Integer" db-attribute-path="age"/>
+		<obj-attribute name="description" type="java.lang.String" db-attribute-path="description"/>
+		<obj-attribute name="name" type="java.lang.String" db-attribute-path="name"/>
+	</obj-entity>
+	<obj-entity name="E22" className="io.agrest.it.fixture.cayenne.E22" dbEntityName="e22">
+		<obj-attribute name="name" type="java.lang.String" db-attribute-path="name"/>
+	</obj-entity>
+	<obj-entity name="E23" className="io.agrest.it.fixture.cayenne.E23" dbEntityName="e23">
+		<obj-attribute name="exposedId" type="java.lang.Integer" db-attribute-path="id"/>
+		<obj-attribute name="name" type="java.lang.String" db-attribute-path="name"/>
+	</obj-entity>
+	<obj-entity name="E24" className="io.agrest.it.fixture.cayenne.E24" dbEntityName="e24">
+		<obj-attribute name="name" type="java.lang.String" db-attribute-path="name"/>
+		<obj-attribute name="type" type="java.lang.String" db-attribute-path="TYPE"/>
+	</obj-entity>
+	<obj-entity name="E25" className="io.agrest.it.fixture.cayenne.E25" dbEntityName="e25">
+	</obj-entity>
+	<obj-entity name="E3" className="io.agrest.it.fixture.cayenne.E3" dbEntityName="e3">
+		<obj-attribute name="name" type="java.lang.String" db-attribute-path="name"/>
+		<obj-attribute name="phoneNumber" type="java.lang.String" db-attribute-path="phone_number"/>
+	</obj-entity>
+	<obj-entity name="E4" className="io.agrest.it.fixture.cayenne.E4" dbEntityName="e4">
+		<obj-attribute name="cBoolean" type="java.lang.Boolean" db-attribute-path="c_boolean"/>
+		<obj-attribute name="cDate" type="java.util.Date" db-attribute-path="c_date"/>
+		<obj-attribute name="cDecimal" type="java.math.BigDecimal" db-attribute-path="c_decimal"/>
+		<obj-attribute name="cInt" type="java.lang.Integer" db-attribute-path="c_int"/>
+		<obj-attribute name="cTime" type="java.util.Date" db-attribute-path="c_time"/>
+		<obj-attribute name="cTimestamp" type="java.util.Date" db-attribute-path="c_timestamp"/>
+		<obj-attribute name="cVarchar" type="java.lang.String" db-attribute-path="c_varchar"/>
+	</obj-entity>
+	<obj-entity name="E5" className="io.agrest.it.fixture.cayenne.E5" dbEntityName="e5">
+		<obj-attribute name="date" type="java.util.Date" db-attribute-path="date"/>
+		<obj-attribute name="name" type="java.lang.String" db-attribute-path="name"/>
+	</obj-entity>
+	<obj-entity name="E6" className="io.agrest.it.fixture.cayenne.E6" dbEntityName="e6">
+		<obj-attribute name="charColumn" type="java.lang.String" db-attribute-path="char_column"/>
+	</obj-entity>
+	<obj-entity name="E7" className="io.agrest.it.fixture.cayenne.E7" dbEntityName="e7">
+		<obj-attribute name="name" type="java.lang.String" db-attribute-path="name"/>
+	</obj-entity>
+	<obj-entity name="E8" className="io.agrest.it.fixture.cayenne.E8" dbEntityName="e8">
+		<obj-attribute name="name" type="java.lang.String" db-attribute-path="name"/>
+	</obj-entity>
+	<obj-entity name="E9" className="io.agrest.it.fixture.cayenne.E9" dbEntityName="e9">
+	</obj-entity>
+	<db-relationship name="e15e1" source="e1" target="e15_e1" toDependentPK="true" toMany="true">
+		<db-attribute-pair source="id" target="e1_id"/>
+	</db-relationship>
+	<db-relationship name="e11s" source="e10" target="e11" toMany="false">
+		<db-attribute-pair source="id" target="e10_id"/>
+	</db-relationship>
+	<db-relationship name="e10" source="e11" target="e10" toMany="true">
+		<db-attribute-pair source="e10_id" target="id"/>
+	</db-relationship>
+	<db-relationship name="e1213" source="e12" target="e12_e13" toDependentPK="true" toMany="true">
+		<db-attribute-pair source="id" target="e12_id"/>
+	</db-relationship>
+	<db-relationship name="e12" source="e12_e13" target="e12" toMany="false">
+		<db-attribute-pair source="e12_id" target="id"/>
+	</db-relationship>
+	<db-relationship name="e13" source="e12_e13" target="e13" toMany="false">
+		<db-attribute-pair source="e13_id" target="id"/>
+	</db-relationship>
+	<db-relationship name="e1213" source="e13" target="e12_e13" toDependentPK="true" toMany="true">
+		<db-attribute-pair source="id" target="e13_id"/>
+	</db-relationship>
+	<db-relationship name="e15" source="e14" target="e15" toMany="false">
+		<db-attribute-pair source="e15_id" target="long_id"/>
+	</db-relationship>
+	<db-relationship name="e14s" source="e15" target="e14" toMany="true">
+		<db-attribute-pair source="long_id" target="e15_id"/>
+	</db-relationship>
+	<db-relationship name="e15e1" source="e15" target="e15_e1" toDependentPK="true" toMany="true">
+		<db-attribute-pair source="long_id" target="e15_id"/>
+	</db-relationship>
+	<db-relationship name="e15e5" source="e15" target="e15_e5" toDependentPK="true" toMany="true">
+		<db-attribute-pair source="long_id" target="e15_id"/>
+	</db-relationship>
+	<db-relationship name="e1" source="e15_e1" target="e1" toMany="false">
+		<db-attribute-pair source="e1_id" target="id"/>
+	</db-relationship>
+	<db-relationship name="e15" source="e15_e1" target="e15" toMany="false">
+		<db-attribute-pair source="e15_id" target="long_id"/>
+	</db-relationship>
+	<db-relationship name="e15" source="e15_e5" target="e15" toMany="false">
+		<db-attribute-pair source="e15_id" target="long_id"/>
+	</db-relationship>
+	<db-relationship name="e5" source="e15_e5" target="e5" toMany="false">
+		<db-attribute-pair source="e5_id" target="id"/>
+	</db-relationship>
+	<db-relationship name="e18s" source="e17" target="e18" toMany="true">
+		<db-attribute-pair source="id1" target="e17_id1"/>
+		<db-attribute-pair source="id2" target="e17_id2"/>
+	</db-relationship>
+	<db-relationship name="e17" source="e18" target="e17" toMany="false">
+		<db-attribute-pair source="e17_id1" target="id1"/>
+		<db-attribute-pair source="e17_id2" target="id2"/>
+	</db-relationship>
+	<db-relationship name="e3s" source="e2" target="e3" toMany="true">
+		<db-attribute-pair source="id" target="e2_id"/>
+	</db-relationship>
+	<db-relationship name="e21" source="e20" target="e21" toMany="false">
+		<db-attribute-pair source="e21_id" target="id"/>
+	</db-relationship>
+	<db-relationship name="e20" source="e21" target="e20" toMany="true">
+		<db-attribute-pair source="id" target="e21_id"/>
+	</db-relationship>
+	<db-relationship name="e25s" source="e22" target="e25" toMany="true">
+		<db-attribute-pair source="id" target="e22_id"/>
+	</db-relationship>
+	<db-relationship name="e22" source="e25" target="e22" toMany="false">
+		<db-attribute-pair source="e22_id" target="id"/>
+	</db-relationship>
+	<db-relationship name="e2" source="e3" target="e2" toMany="false">
+		<db-attribute-pair source="e2_id" target="id"/>
+	</db-relationship>
+	<db-relationship name="e5" source="e3" target="e5" toMany="false">
+		<db-attribute-pair source="e5_id" target="id"/>
+	</db-relationship>
+	<db-relationship name="e15e5" source="e5" target="e15_e5" toDependentPK="true" toMany="true">
+		<db-attribute-pair source="id" target="e5_id"/>
+	</db-relationship>
+	<db-relationship name="e2s" source="e5" target="e3" toMany="true">
+		<db-attribute-pair source="id" target="e5_id"/>
+	</db-relationship>
+	<db-relationship name="e8" source="e7" target="e8" toMany="false">
+		<db-attribute-pair source="e8_id" target="id"/>
+	</db-relationship>
+	<db-relationship name="e7s" source="e8" target="e7" toMany="true">
+		<db-attribute-pair source="id" target="e8_id"/>
+	</db-relationship>
+	<db-relationship name="e9" source="e8" target="e9" toDependentPK="true" toMany="false">
+		<db-attribute-pair source="id" target="e8_id"/>
+	</db-relationship>
+	<db-relationship name="e8" source="e9" target="e8" toMany="false">
+		<db-attribute-pair source="e8_id" target="id"/>
+	</db-relationship>
+	<obj-relationship name="e15e1" source="E1" target="E15E1" deleteRule="Deny" db-relationship-path="e15e1"/>
+	<obj-relationship name="e11s" source="E10" target="E11" deleteRule="Nullify" db-relationship-path="e11s"/>
+	<obj-relationship name="e10" source="E11" target="E10" deleteRule="Deny" db-relationship-path="e10"/>
+	<obj-relationship name="e1213" source="E12" target="E12E13" deleteRule="Deny" db-relationship-path="e1213"/>
+	<obj-relationship name="e12" source="E12E13" target="E12" deleteRule="Nullify" db-relationship-path="e12"/>
+	<obj-relationship name="e13" source="E12E13" target="E13" deleteRule="Nullify" db-relationship-path="e13"/>
+	<obj-relationship name="e1213" source="E13" target="E12E13" deleteRule="Deny" db-relationship-path="e1213"/>
+	<obj-relationship name="e15" source="E14" target="E15" deleteRule="Nullify" db-relationship-path="e15"/>
+	<obj-relationship name="e14s" source="E15" target="E14" deleteRule="Cascade" db-relationship-path="e14s"/>
+	<obj-relationship name="e15e1" source="E15" target="E15E1" deleteRule="Deny" db-relationship-path="e15e1"/>
+	<obj-relationship name="e5s" source="E15" target="E5" db-relationship-path="e15e5.e5"/>
+	<obj-relationship name="e1" source="E15E1" target="E1" deleteRule="Nullify" db-relationship-path="e1"/>
+	<obj-relationship name="e15" source="E15E1" target="E15" deleteRule="Nullify" db-relationship-path="e15"/>
+	<obj-relationship name="e18s" source="E17" target="E18" deleteRule="Deny" db-relationship-path="e18s"/>
+	<obj-relationship name="e17" source="E18" target="E17" deleteRule="Nullify" db-relationship-path="e17"/>
+	<obj-relationship name="e3s" source="E2" target="E3" deleteRule="Deny" db-relationship-path="e3s"/>
+	<obj-relationship name="e21" source="E20" target="E21" deleteRule="Nullify" db-relationship-path="e21"/>
+	<obj-relationship name="e20s" source="E21" target="E20" deleteRule="Nullify" db-relationship-path="e20"/>
+	<obj-relationship name="e2" source="E3" target="E2" deleteRule="Nullify" db-relationship-path="e2"/>
+	<obj-relationship name="e5" source="E3" target="E5" deleteRule="Nullify" db-relationship-path="e5"/>
+	<obj-relationship name="e15s" source="E5" target="E15" db-relationship-path="e15e5.e15"/>
+	<obj-relationship name="e2s" source="E5" target="E3" deleteRule="Deny" db-relationship-path="e2s"/>
+	<obj-relationship name="e8" source="E7" target="E8" deleteRule="Nullify" db-relationship-path="e8"/>
+	<obj-relationship name="e7s" source="E8" target="E7" deleteRule="Deny" db-relationship-path="e7s"/>
+	<obj-relationship name="e9" source="E8" target="E9" deleteRule="Nullify" db-relationship-path="e9"/>
+	<obj-relationship name="e8" source="E9" target="E8" deleteRule="Nullify" db-relationship-path="e8"/>
+</data-map>

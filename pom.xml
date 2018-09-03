@@ -2,25 +2,25 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.nhl.link.rest</groupId>
-    <artifactId>link-rest-parent</artifactId>
+    <groupId>io.agrest</groupId>
+    <artifactId>agrest-parent</artifactId>
     <version>2.14-SNAPSHOT</version>
 
-    <name>link-rest: Parent POM of LR modules</name>
-    <description>Parent POM of LR modules</description>
+    <name>agrest: Parent POM of AgREST modules</name>
+    <description>Parent POM of AgREST modules</description>
     <packaging>pom</packaging>
 
     <modules>
-        <module>link-rest-base</module>
-        <module>link-rest-annotations</module>
-        <module>link-rest</module>
-        <module>link-rest-client</module>
-        <module>link-rest-sencha</module>
-        <module>link-rest-bom</module>
-        <module>link-rest-docs</module>
-        <module>link-rest-legacy-date-encoders</module>
-        <module>link-rest-swagger-designfirst-test</module>
-        <module>link-rest-swagger-designfirst</module>
+        <module>agrest-base</module>
+        <module>agrest-annotations</module>
+        <module>agrest</module>
+        <module>agrest-client</module>
+        <module>agrest-sencha</module>
+        <module>agrest-bom</module>
+        <module>agrest-docs</module>
+        <module>agrest-legacy-date-encoders</module>
+        <module>agrest-swagger-designfirst-test</module>
+        <module>agrest-swagger-designfirst</module>
     </modules>
 
     <properties>
