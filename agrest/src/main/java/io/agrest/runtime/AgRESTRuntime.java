@@ -26,7 +26,7 @@ public class AgRESTRuntime implements Feature {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AgRESTRuntime.class);
 
-    static final String LINK_REST_CONTAINER_PROPERTY = "agrest.container";
+    static final String AGREST_CONTAINER_PROPERTY = "agrest.container";
 
     public static final String BODY_WRITERS_MAP = "agrest.jaxrs.bodywriters";
 
@@ -43,10 +43,10 @@ public class AgRESTRuntime implements Feature {
             throw new NullPointerException("Null config");
         }
 
-        Injector injector = (Injector) config.getProperty(LINK_REST_CONTAINER_PROPERTY);
+        Injector injector = (Injector) config.getProperty(AGREST_CONTAINER_PROPERTY);
         if (injector == null) {
             throw new IllegalStateException(
-                    "AgREST is misconfigured. No injector found for property: " + LINK_REST_CONTAINER_PROPERTY);
+                    "AgREST is misconfigured. No injector found for property: " + AGREST_CONTAINER_PROPERTY);
         }
 
         return injector.getInstance(type);
@@ -85,7 +85,7 @@ public class AgRESTRuntime implements Feature {
     public boolean configure(FeatureContext context) {
 
         // this gives everyone access to the AgREST services
-        context.property(AgRESTRuntime.LINK_REST_CONTAINER_PROPERTY, injector);
+        context.property(AgRESTRuntime.AGREST_CONTAINER_PROPERTY, injector);
 
         @SuppressWarnings("unchecked")
         Map<String, Class> bodyWriters =
