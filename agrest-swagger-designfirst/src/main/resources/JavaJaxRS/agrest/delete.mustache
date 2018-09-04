@@ -8,7 +8,7 @@ public SimpleResponse {{nickname}}({{#allParams}}{{>pathParams}}{{>queryParams}}
             {{/isQueryParam}}
         {{/modelAttributes}}
 
-        return LinkRest.delete({{{returnType}}}.class, config)
+        return AgREST.delete({{{returnType}}}.class, config)
                     .id(id)
                     .delete();
     }
@@ -16,7 +16,7 @@ public SimpleResponse {{nickname}}({{#allParams}}{{>pathParams}}{{>queryParams}}
     {{^hasCompoundId}}
 public SimpleResponse {{nickname}}({{#allParams}}{{>pathParams}}{{>queryParams}}{{>headerParams}}{{>bodyParams}}{{>formParams}}{{#hasMore}}, {{/hasMore}}{{/allParams}}) {
 
-        return LinkRest.delete({{{returnType}}}.class, config)
+        return AgREST.delete({{{returnType}}}.class, config)
                     .id({{#pathParams}}{{paramName}}{{/pathParams}})
                     .delete();
     }
@@ -25,14 +25,14 @@ public SimpleResponse {{nickname}}({{#allParams}}{{>pathParams}}{{>queryParams}}
 {{#isRestfulDestroyToMany}}
 public SimpleResponse {{nickname}}({{#allParams}}{{>pathParams}}{{>queryParams}}{{>headerParams}}{{>bodyParams}}{{>formParams}}{{#hasMore}}, {{/hasMore}}{{/allParams}}) {
 
-        return LinkRest.service(config)
+        return AgREST.service(config)
                     .unrelate({{returnType}}.class, {{#pathParams}}{{paramName}}{{/pathParams}}, "{{#modelRelations}}{{bodyParam.paramName}}{{/modelRelations}}");
     }
 {{/isRestfulDestroyToMany}}
 {{#isRestfulRelatedDestroy}}
 public SimpleResponse {{nickname}}({{#allParams}}{{>pathParams}}{{>queryParams}}{{>headerParams}}{{>bodyParams}}{{>formParams}}{{#hasMore}}, {{/hasMore}}{{/allParams}}) {
 
-        return LinkRest.service(config)
+        return AgREST.service(config)
                     .unrelate({{returnType}}.class, {{#pathParams}}{{#-first}}{{paramName}}{{/-first}}{{/pathParams}}, "{{#modelRelations}}{{bodyParam.paramName}}{{/modelRelations}}", {{#pathParams}}{{#-last}}{{paramName}}{{/-last}}{{/pathParams}});
     }
 {{/isRestfulRelatedDestroy}}

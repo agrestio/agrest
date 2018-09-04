@@ -1,6 +1,6 @@
 package io.agrest.sencha.ops;
 
-import io.agrest.LinkRestException;
+import io.agrest.AgRESTException;
 import io.agrest.meta.AgAttribute;
 import io.agrest.meta.AgEntity;
 import io.agrest.runtime.processor.select.SelectContext;
@@ -42,10 +42,10 @@ public class StartsWithFilter {
     private void validateAttribute(AgEntity<?> entity, String queryProperty) {
         AgAttribute attribute = entity.getAttribute(queryProperty);
         if (attribute == null) {
-            throw new LinkRestException(Response.Status.INTERNAL_SERVER_ERROR, "No such property '" + queryProperty
+            throw new AgRESTException(Response.Status.INTERNAL_SERVER_ERROR, "No such property '" + queryProperty
                     + "' for entity '" + entity.getName() + "'");
         } else if (!String.class.equals(attribute.getType())) {
-            throw new LinkRestException(Response.Status.INTERNAL_SERVER_ERROR,
+            throw new AgRESTException(Response.Status.INTERNAL_SERVER_ERROR,
                     "Invalid property type for query comparison: '" + queryProperty + "' for entity '"
                             + entity.getName() + "'");
         }

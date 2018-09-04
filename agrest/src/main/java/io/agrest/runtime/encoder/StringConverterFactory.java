@@ -1,6 +1,6 @@
 package io.agrest.runtime.encoder;
 
-import io.agrest.LinkRestException;
+import io.agrest.AgRESTException;
 import io.agrest.encoder.converter.GenericConverter;
 import io.agrest.encoder.converter.StringConverter;
 import io.agrest.meta.AgAttribute;
@@ -54,7 +54,7 @@ public class StringConverterFactory implements IStringConverterFactory {
 		AgAttribute attribute = entity.getAttribute(attributeName);
 
 		if (attribute == null) {
-			throw new LinkRestException(Status.BAD_REQUEST, "Invalid attribute: '" + entity.getName() + "."
+			throw new AgRESTException(Status.BAD_REQUEST, "Invalid attribute: '" + entity.getName() + "."
 					+ attributeName + "'");
 		}
 

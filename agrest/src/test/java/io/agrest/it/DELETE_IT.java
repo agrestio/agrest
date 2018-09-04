@@ -1,6 +1,6 @@
 package io.agrest.it;
 
-import io.agrest.LinkRest;
+import io.agrest.AgREST;
 import io.agrest.SimpleResponse;
 import io.agrest.it.fixture.JerseyTestOnDerby;
 import io.agrest.it.fixture.cayenne.E17;
@@ -110,7 +110,7 @@ public class DELETE_IT extends JerseyTestOnDerby {
         @DELETE
         @Path("e4/{id}")
         public SimpleResponse deleteById(@PathParam("id") int id) {
-            return LinkRest.service(config).delete(E4.class, id);
+            return AgREST.service(config).delete(E4.class, id);
         }
 
         @DELETE
@@ -124,13 +124,13 @@ public class DELETE_IT extends JerseyTestOnDerby {
             ids.put(E17.ID1_PK_COLUMN, id1);
             ids.put(E17.ID2_PK_COLUMN, id2);
 
-            return LinkRest.service(config).delete(E17.class, ids);
+            return AgREST.service(config).delete(E17.class, ids);
         }
 
         @DELETE
         @Path("e24/{id}")
         public SimpleResponse deleteE24ById(@PathParam("id") int id) {
-            return LinkRest.delete(E24.class, config).id(id).delete();
+            return AgREST.delete(E24.class, config).id(id).delete();
         }
     }
 }

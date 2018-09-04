@@ -53,7 +53,7 @@ public class Java8TestWithCayenneMapping {
 
 		runtime = ServerRuntime
 				.builder()
-				.addConfig("cayenne-linkrest-java8-tests.xml")
+				.addConfig("cayenne-agrest-java8-tests.xml")
 				.addModule(module)
 				.build();
 	}

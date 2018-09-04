@@ -1,7 +1,7 @@
 package io.agrest.encoder.legacy;
 
 import io.agrest.DataResponse;
-import io.agrest.LinkRest;
+import io.agrest.AgREST;
 import io.agrest.it.fixture.JerseyTestOnDerby;
 import io.agrest.it.fixture.cayenne.iso.SqlDateTestEntity;
 import io.agrest.it.fixture.cayenne.iso.UtilDateTestEntity;
@@ -82,13 +82,13 @@ public class LegacyDateEncoders_IT extends JerseyTestOnDerby {
         @GET
         @Path("sqldate")
         public DataResponse<SqlDateTestEntity> getSqlDateTestEntities(@Context UriInfo uriInfo) {
-            return LinkRest.select(SqlDateTestEntity.class, configuration).uri(uriInfo).get();
+            return AgREST.select(SqlDateTestEntity.class, configuration).uri(uriInfo).get();
         }
 
         @GET
         @Path("utildate")
         public DataResponse<UtilDateTestEntity> getUtilDateTestEntities(@Context UriInfo uriInfo) {
-            return LinkRest.select(UtilDateTestEntity.class, configuration).uri(uriInfo).get();
+            return AgREST.select(UtilDateTestEntity.class, configuration).uri(uriInfo).get();
         }
     }
 }

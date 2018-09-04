@@ -7,13 +7,10 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.Map;
 
-import io.agrest.client.LinkRestClientException;
+import io.agrest.client.AgRESTClientException;
 import io.agrest.client.protocol.Expression;
 import io.agrest.client.protocol.Include;
 import io.agrest.client.protocol.Sort;
-
-import static io.agrest.client.protocol.Expression.ParamsType.NO_PARAMS;
-import static io.agrest.client.protocol.Expression.ParamsType.POSITIONAL;
 
 /**
  * @since 2.0
@@ -129,7 +126,7 @@ class RequestEncoder {
 				break;
 			}
 			default: {
-				throw new LinkRestClientException("Unexpected expression params type: " + expression.getParamsType().name());
+				throw new AgRESTClientException("Unexpected expression params type: " + expression.getParamsType().name());
 			}
 		}
 
@@ -203,7 +200,7 @@ class RequestEncoder {
 		try {
 			return URLEncoder.encode(s, "UTF-8").replace("+", "%20");
 		} catch (UnsupportedEncodingException e) {
-			throw new LinkRestClientException("Unexpected error", e);
+			throw new AgRESTClientException("Unexpected error", e);
 		}
 	}
 }

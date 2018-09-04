@@ -2,9 +2,9 @@ package io.agrest.client.it.noadapter;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import io.agrest.DataResponse;
-import io.agrest.LinkRest;
+import io.agrest.AgREST;
 import io.agrest.client.ClientDataResponse;
-import io.agrest.client.LinkRestClient;
+import io.agrest.client.AgRESTClient;
 import io.agrest.it.fixture.JerseyTestOnDerby;
 import io.agrest.it.fixture.cayenne.E3;
 import org.junit.Test;
@@ -31,7 +31,7 @@ public class PUT_Client_IT extends JerseyTestOnDerby {
     public void testClient_Put() {
 
         // Create new entity
-        ClientDataResponse<JsonNode> r1 = LinkRestClient.client(target("/e3"))
+        ClientDataResponse<JsonNode> r1 = AgRESTClient.client(target("/e3"))
                 .exclude(E3.PHONE_NUMBER.getName())
                 .post(JsonNode.class, "{\"name\":\"ccc\"}");
 
@@ -43,7 +43,7 @@ public class PUT_Client_IT extends JerseyTestOnDerby {
         assertEquals(e3_before_update, r1.getData().get(0));
 
         // Update existing entity
-        ClientDataResponse<JsonNode> r2 = LinkRestClient.client(target("/e3"))
+        ClientDataResponse<JsonNode> r2 = AgRESTClient.client(target("/e3"))
                 .exclude(E3.PHONE_NUMBER.getName())
                 .put(JsonNode.class, "{\"id\":" + id + ",\"name\":\"ddd\"}");
 
@@ -63,13 +63,13 @@ public class PUT_Client_IT extends JerseyTestOnDerby {
         @POST
         @Path("e3")
         public DataResponse<E3> create(@Context UriInfo uriInfo, String requestBody) {
-            return LinkRest.create(E3.class, config).uri(uriInfo).syncAndSelect(requestBody);
+            return AgREST.create(E3.class, config).uri(uriInfo).syncAndSelect(requestBody);
         }
 
         @PUT
         @Path("e3")
         public DataResponse<E3> sync(@Context UriInfo uriInfo, String requestBody) {
-            return LinkRest.idempotentFullSync(E3.class, config).uri(uriInfo).syncAndSelect(requestBody);
+            return AgREST.idempotentFullSync(E3.class, config).uri(uriInfo).syncAndSelect(requestBody);
         }
     }
 }

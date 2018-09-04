@@ -1,7 +1,7 @@
 package io.agrest.it;
 
+import io.agrest.AgREST;
 import io.agrest.DataResponse;
-import io.agrest.LinkRest;
 import io.agrest.it.fixture.JerseyTestOnDerby;
 import io.agrest.it.fixture.cayenne.E2;
 import io.agrest.it.fixture.cayenne.E3;
@@ -192,7 +192,7 @@ public class GET_ObjectIncludeIT extends JerseyTestOnDerby {
     @Test
     public void test_MapBy_ToMany_WithCayenneExp() {
 
-        // see LF-294 - filter applied too late may cause a LinkRestException
+        // see LF-294 - filter applied too late may cause a AgRESTException
 
         newContext().performGenericQuery(
                 new SQLTemplate(E2.class, "INSERT INTO utest.e2 (id, name) values (1, 'xxx')"));
@@ -370,19 +370,19 @@ public class GET_ObjectIncludeIT extends JerseyTestOnDerby {
         @GET
         @Path("e2")
         public DataResponse<E2> getE2(@Context UriInfo uriInfo) {
-            return LinkRest.service(config).select(E2.class).uri(uriInfo).get();
+            return AgREST.service(config).select(E2.class).uri(uriInfo).get();
         }
 
         @GET
         @Path("e3")
         public DataResponse<E3> getE3(@Context UriInfo uriInfo) {
-            return LinkRest.service(config).select(E3.class).uri(uriInfo).get();
+            return AgREST.service(config).select(E3.class).uri(uriInfo).get();
         }
 
         @GET
         @Path("e4")
         public DataResponse<E4> getE4(@Context UriInfo uriInfo) {
-            return LinkRest.service(config).select(E4.class).uri(uriInfo).get();
+            return AgREST.service(config).select(E4.class).uri(uriInfo).get();
         }
     }
 }

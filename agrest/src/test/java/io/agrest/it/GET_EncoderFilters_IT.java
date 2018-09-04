@@ -1,8 +1,8 @@
 package io.agrest.it;
 
 import com.fasterxml.jackson.core.JsonGenerator;
+import io.agrest.AgREST;
 import io.agrest.DataResponse;
-import io.agrest.LinkRest;
 import io.agrest.ResourceEntity;
 import io.agrest.SelectStage;
 import io.agrest.encoder.Encoder;
@@ -10,7 +10,7 @@ import io.agrest.encoder.EncoderFilter;
 import io.agrest.it.fixture.JerseyTestOnDerby;
 import io.agrest.it.fixture.cayenne.E3;
 import io.agrest.it.fixture.cayenne.E4;
-import io.agrest.runtime.LinkRestBuilder;
+import io.agrest.runtime.AgRESTBuilder;
 import org.apache.cayenne.Cayenne;
 import org.apache.cayenne.query.SQLTemplate;
 import org.junit.Test;
@@ -36,7 +36,7 @@ public class GET_EncoderFilters_IT extends JerseyTestOnDerby {
     }
 
     @Override
-    protected LinkRestBuilder doConfigure() {
+    protected AgRESTBuilder doConfigure() {
         return super.doConfigure().encoderFilter(new E4OddFilter());
     }
 
@@ -163,13 +163,13 @@ public class GET_EncoderFilters_IT extends JerseyTestOnDerby {
         @GET
         @Path("e4")
         public DataResponse<E4> get(@Context UriInfo uriInfo) {
-            return LinkRest.service(config).select(E4.class).uri(uriInfo).get();
+            return AgREST.service(config).select(E4.class).uri(uriInfo).get();
         }
 
         @GET
         @Path("e4/pagination_stage")
         public DataResponse<E4> get_WithPaginationStage(@Context UriInfo uriInfo) {
-            return LinkRest.service(config)
+            return AgREST.service(config)
                     .select(E4.class)
                     .uri(uriInfo)
                     .stage(SelectStage.APPLY_SERVER_PARAMS,

@@ -2,10 +2,10 @@ package io.agrest.runtime;
 
 import io.agrest.AgFeatureProvider;
 import io.agrest.AgModuleProvider;
+import io.agrest.AgRESTException;
 import io.agrest.BaseModule;
 import io.agrest.DataResponse;
 import io.agrest.EntityConstraint;
-import io.agrest.LinkRestException;
 import io.agrest.MetadataResponse;
 import io.agrest.SimpleResponse;
 import io.agrest.encoder.Encoder;
@@ -20,11 +20,11 @@ import io.agrest.meta.parser.IResourceParser;
 import io.agrest.meta.parser.ResourceParser;
 import io.agrest.provider.CayenneRuntimeExceptionMapper;
 import io.agrest.provider.DataResponseWriter;
-import io.agrest.provider.LinkRestExceptionMapper;
+import io.agrest.provider.AgRESTExceptionMapper;
 import io.agrest.provider.MetadataResponseWriter;
 import io.agrest.provider.SimpleResponseWriter;
 import io.agrest.provider.ValidationExceptionMapper;
-import io.agrest.runtime.adapter.LinkRestAdapter;
+import io.agrest.runtime.adapter.AgRESTAdapter;
 import io.agrest.runtime.cayenne.CayennePersister;
 import io.agrest.runtime.cayenne.ICayennePersister;
 import io.agrest.runtime.cayenne.NoCayennePersister;
@@ -139,14 +139,14 @@ import java.util.ServiceLoader;
 import java.util.concurrent.ExecutorService;
 
 /**
- * A builder of LinkRest runtime that can be loaded into JAX-RS 2 container as a
+ * A builder of AgREST runtime that can be loaded into JAX-RS 2 container as a
  * {@link Feature}.
  */
-public class LinkRestBuilder {
+public class AgRESTBuilder {
 
     private ICayennePersister cayenneService;
-    private Class<? extends ILinkRestService> linkRestServiceType;
-    private ILinkRestService linkRestService;
+    private Class<? extends IAgRESTService> agRESTServiceType;
+    private IAgRESTService agRESTService;
     private List<AgModuleProvider> moduleProviders;
     private List<Module> modules;
     private List<AgFeatureProvider> featureProviders;
@@ -154,19 +154,19 @@ public class LinkRestBuilder {
     private List<EncoderFilter> encoderFilters;
     private Map<String, AgEntityOverlay> entityOverlays;
     private Map<String, Class<? extends ExceptionMapper>> exceptionMappers;
-    private Collection<LinkRestAdapter> adapters;
+    private Collection<AgRESTAdapter> adapters;
     private Map<String, PropertyMetadataEncoder> metadataEncoders;
     private ExecutorService executor;
     private String baseUrl;
     private boolean autoLoadModules;
     private boolean autoLoadFeatures;
 
-    public LinkRestBuilder() {
+    public AgRESTBuilder() {
         this.autoLoadModules = true;
         this.autoLoadFeatures = true;
         this.entityOverlays = new HashMap<>();
         this.encoderFilters = new ArrayList<>();
-        this.linkRestServiceType = DefaultLinkRestService.class;
+        this.agRESTServiceType = DefaultAgRESTService.class;
         this.cayenneService = NoCayennePersister.instance();
         this.exceptionMappers = new HashMap<>();
         this.adapters = new ArrayList<>();
@@ -178,23 +178,23 @@ public class LinkRestBuilder {
     }
 
     /**
-     * A shortcut that creates a LinkRest stack based on Cayenne runtime and
+     * A shortcut that creates a AgREST stack based on Cayenne runtime and
      * default settings.
      *
      * @since 1.14
      */
-    public static LinkRestRuntime build(ServerRuntime cayenneRuntime) {
+    public static AgRESTRuntime build(ServerRuntime cayenneRuntime) {
         return builder(cayenneRuntime).build();
     }
 
     /**
-     * A shortcut that creates a LinkRestBuilder, setting its Cayenne runtime. A
+     * A shortcut that creates a AgRESTBuilder, setting its Cayenne runtime. A
      * caller can continue customizing the returned builder.
      *
      * @since 1.14
      */
-    public static LinkRestBuilder builder(ServerRuntime cayenneRuntime) {
-        return new LinkRestBuilder().cayenneRuntime(cayenneRuntime);
+    public static AgRESTBuilder builder(ServerRuntime cayenneRuntime) {
+        return new AgRESTBuilder().cayenneRuntime(cayenneRuntime);
     }
 
     /**
@@ -205,7 +205,7 @@ public class LinkRestBuilder {
      * @return this builder instance.
      * @since 2.10
      */
-    public LinkRestBuilder doNotAutoLoadFeatures() {
+    public AgRESTBuilder doNotAutoLoadFeatures() {
         this.autoLoadFeatures = false;
         return this;
     }
@@ -218,7 +218,7 @@ public class LinkRestBuilder {
      * @return this builder instance.
      * @since 2.10
      */
-    public LinkRestBuilder doNotAutoLoadModules() {
+    public AgRESTBuilder doNotAutoLoadModules() {
         this.autoLoadModules = false;
         return this;
     }
@@ -226,16 +226,16 @@ public class LinkRestBuilder {
     /**
      * Maps an ExceptionMapper for a given type of Exceptions. While this method
      * can be used for arbitrary exceptions, it is most useful to override the
-     * default exception handlers defined in LinkRest for the following
-     * exceptions: {@link LinkRestException}, {@link CayenneRuntimeException},
+     * default exception handlers defined in AgREST for the following
+     * exceptions: {@link AgRESTException}, {@link CayenneRuntimeException},
      * {@link ValidationException}.
      *
      * @since 1.1
      * @deprecated since 2.13. Custom exception handlers can be added via a custom module or module provider. E.g.
-     * <code>b.bindMap(ExceptionMapper.class).put(LinkRestException.class.getName(), MyExceptionMapper.class)</code>
+     * <code>b.bindMap(ExceptionMapper.class).put(AgRESTException.class.getName(), MyExceptionMapper.class)</code>
      */
     @Deprecated
-    public <E extends Throwable> LinkRestBuilder mapException(Class<? extends ExceptionMapper<E>> mapper) {
+    public <E extends Throwable> AgRESTBuilder mapException(Class<? extends ExceptionMapper<E>> mapper) {
 
         for (Type t : mapper.getGenericInterfaces()) {
 
@@ -252,40 +252,40 @@ public class LinkRestBuilder {
         throw new IllegalArgumentException("Failed to register ExceptionMapper: " + mapper.getName());
     }
 
-    public LinkRestBuilder linkRestService(ILinkRestService linkRestService) {
-        this.linkRestService = linkRestService;
-        this.linkRestServiceType = null;
+    public AgRESTBuilder agRESTService(IAgRESTService agRESTService) {
+        this.agRESTService = agRESTService;
+        this.agRESTServiceType = null;
         return this;
     }
 
-    public LinkRestBuilder linkRestService(Class<? extends ILinkRestService> linkRestServiceType) {
-        this.linkRestService = null;
-        this.linkRestServiceType = linkRestServiceType;
+    public AgRESTBuilder agRESTService(Class<? extends IAgRESTService> agRESTServiceType) {
+        this.agRESTService = null;
+        this.agRESTServiceType = agRESTServiceType;
         return this;
     }
 
-    public LinkRestBuilder cayenneRuntime(ServerRuntime cayenneRuntime) {
+    public AgRESTBuilder cayenneRuntime(ServerRuntime cayenneRuntime) {
         this.cayenneService = new CayennePersister(cayenneRuntime);
         return this;
     }
 
-    public LinkRestBuilder cayenneService(ICayennePersister cayenneService) {
+    public AgRESTBuilder cayenneService(ICayennePersister cayenneService) {
         this.cayenneService = cayenneService;
         return this;
     }
 
-    public LinkRestBuilder encoderFilter(EncoderFilter filter) {
+    public AgRESTBuilder encoderFilter(EncoderFilter filter) {
         this.encoderFilters.add(filter);
         return this;
     }
 
-    public LinkRestBuilder encoderFilters(Collection<EncoderFilter> filters) {
+    public AgRESTBuilder encoderFilters(Collection<EncoderFilter> filters) {
         this.encoderFilters.addAll(filters);
         return this;
     }
 
     /**
-     * Sets the public base URL of the application serving this LinkRest stack. This should be a URL of the root REST
+     * Sets the public base URL of the application serving this AgREST stack. This should be a URL of the root REST
      * resource of the application. This value is used to build hypermedia controls (i.e. links) in the metadata
      * responses. It is optional, and for most apps can be calculated automatically. Usually has to be set explicitly
      * in case of a misconfigured reverse proxy (missing "X-Forwarded-Proto" header to tell apart HTTP from HTTPS), and
@@ -295,7 +295,7 @@ public class LinkRestBuilder {
      * @return this builder instance
      * @since 2.10
      */
-    public LinkRestBuilder baseUrl(String url) {
+    public AgRESTBuilder baseUrl(String url) {
         this.baseUrl = url;
         return this;
     }
@@ -307,7 +307,7 @@ public class LinkRestBuilder {
      * @return this builder instance.
      * @since 2.0
      */
-    public LinkRestBuilder executor(ExecutorService executor) {
+    public AgRESTBuilder executor(ExecutorService executor) {
         this.executor = executor;
         return this;
     }
@@ -318,7 +318,7 @@ public class LinkRestBuilder {
      * the overlay via {@link #entityOverlay(AgEntityOverlay)}.
      */
     @Deprecated
-    public LinkRestBuilder transientProperty(Class<?> type, String propertyName) {
+    public AgRESTBuilder transientProperty(Class<?> type, String propertyName) {
         Accessor accessor = PropertyUtils.accessor(propertyName);
         getOrCreateOverlay(type).addAttribute(propertyName, Object.class, accessor::getValue);
         return this;
@@ -330,7 +330,7 @@ public class LinkRestBuilder {
      *
      * @since 2.10
      */
-    public <T> LinkRestBuilder entityOverlay(AgEntityOverlay<T> overlay) {
+    public <T> AgRESTBuilder entityOverlay(AgEntityOverlay<T> overlay) {
         getOrCreateOverlay(overlay.getType()).merge(overlay);
         return this;
     }
@@ -341,77 +341,77 @@ public class LinkRestBuilder {
 
     /**
      * Adds an adapter that may contribute custom configuration to
-     * {@link LinkRestRuntime}.
+     * {@link AgRESTRuntime}.
      *
      * @return this builder instance.
      * @since 1.3
-     * @deprecated since 2.10 LinkRestAdapter is deprecated in favor of
+     * @deprecated since 2.10 AgRESTAdapter is deprecated in favor of
      * {@link AgFeatureProvider} and
      * {@link AgModuleProvider}. Either can be registered with
-     * {@link io.agrest.runtime.LinkRestBuilder} explicitly or used to implemented auto-loadable extensions.
+     * {@link AgRESTBuilder} explicitly or used to implemented auto-loadable extensions.
      */
     @Deprecated
-    public LinkRestBuilder adapter(LinkRestAdapter adapter) {
+    public AgRESTBuilder adapter(AgRESTAdapter adapter) {
         this.adapters.add(adapter);
         return this;
     }
 
     /**
-     * Registers a JAX-RS feature extending LinkRest JAX-RS integration.
+     * Registers a JAX-RS feature extending AgREST JAX-RS integration.
      *
      * @param feature a custom JAX-RS feature.
      * @return this builder instance.
      * @since 2.10
      */
-    public LinkRestBuilder feature(Feature feature) {
+    public AgRESTBuilder feature(Feature feature) {
         features.add(feature);
         return this;
     }
 
     /**
-     * Registers a provider of a custom JAX-RS feature extending LinkRest JAX-RS integration.
+     * Registers a provider of a custom JAX-RS feature extending AgREST JAX-RS integration.
      *
      * @param featureProvider a provider of a custom JAX-RS feature.
      * @return this builder instance.
      * @since 2.10
      */
-    public LinkRestBuilder feature(AgFeatureProvider featureProvider) {
+    public AgRESTBuilder feature(AgFeatureProvider featureProvider) {
         featureProviders.add(featureProvider);
         return this;
     }
 
     /**
-     * Registers a DI extension module for {@link LinkRestRuntime}.
+     * Registers a DI extension module for {@link AgRESTRuntime}.
      *
-     * @param module an extension DI module for {@link LinkRestRuntime}.
+     * @param module an extension DI module for {@link AgRESTRuntime}.
      * @return this builder instance.
      * @since 2.10
      */
-    public LinkRestBuilder module(Module module) {
+    public AgRESTBuilder module(Module module) {
         modules.add(module);
         return this;
     }
 
     /**
-     * Registers a provider of a DI extension module for {@link LinkRestRuntime}.
+     * Registers a provider of a DI extension module for {@link AgRESTRuntime}.
      *
-     * @param provider a provider of an extension module for {@link LinkRestRuntime}.
+     * @param provider a provider of an extension module for {@link AgRESTRuntime}.
      * @return this builder instance.
      * @since 2.10
      */
-    public LinkRestBuilder module(AgModuleProvider provider) {
+    public AgRESTBuilder module(AgModuleProvider provider) {
         moduleProviders.add(provider);
         return this;
     }
 
-    public LinkRestBuilder metadataEncoder(String type, PropertyMetadataEncoder encoder) {
+    public AgRESTBuilder metadataEncoder(String type, PropertyMetadataEncoder encoder) {
         this.metadataEncoders.put(type, encoder);
         return this;
     }
 
-    public LinkRestRuntime build() {
+    public AgRESTRuntime build() {
         Injector i = createInjector();
-        return new LinkRestRuntime(i, createExtraFeatures(i));
+        return new AgRESTRuntime(i, createExtraFeatures(i));
     }
 
     private Collection<Feature> createExtraFeatures(Injector injector) {
@@ -503,8 +503,8 @@ public class LinkRestBuilder {
 
     private Module createCoreModule() {
 
-        if (linkRestService == null && linkRestServiceType == null) {
-            throw new IllegalStateException("Required 'linkRestService' is not set");
+        if (agRESTService == null && agRESTServiceType == null) {
+            throw new IllegalStateException("Required 'agRESTService' is not set");
         }
 
         return binder -> {
@@ -518,7 +518,7 @@ public class LinkRestBuilder {
                     .add(PojoEntityCompiler.class);
 
             binder.bindMap(AgEntityOverlay.class).putAll(entityOverlays);
-            binder.bindMap(Class.class, LinkRestRuntime.BODY_WRITERS_MAP)
+            binder.bindMap(Class.class, AgRESTRuntime.BODY_WRITERS_MAP)
                     .put(SimpleResponse.class.getName(), SimpleResponseWriter.class)
                     .put(DataResponse.class.getName(), DataResponseWriter.class)
                     .put(MetadataResponse.class.getName(), MetadataResponseWriter.class);
@@ -527,15 +527,15 @@ public class LinkRestBuilder {
             binder.bindList(EntityConstraint.class, ConstraintsHandler.DEFAULT_WRITE_CONSTRAINTS_LIST);
             binder.bindMap(PropertyMetadataEncoder.class).putAll(metadataEncoders);
 
-            if (linkRestServiceType != null) {
-                binder.bind(ILinkRestService.class).to(linkRestServiceType);
+            if (agRESTServiceType != null) {
+                binder.bind(IAgRESTService.class).to(agRESTServiceType);
             } else {
-                binder.bind(ILinkRestService.class).toInstance(linkRestService);
+                binder.bind(IAgRESTService.class).toInstance(agRESTService);
             }
 
             MapBuilder<ExceptionMapper> mapperBuilder = binder.bindMap(ExceptionMapper.class)
                     .put(CayenneRuntimeException.class.getName(), CayenneRuntimeExceptionMapper.class)
-                    .put(LinkRestException.class.getName(), LinkRestExceptionMapper.class)
+                    .put(AgRESTException.class.getName(), AgRESTExceptionMapper.class)
                     .put(ValidationException.class.getName(), ValidationExceptionMapper.class);
 
             // override with custom mappers

@@ -1,7 +1,7 @@
 package io.agrest.it;
 
 import io.agrest.SimpleResponse;
-import io.agrest.runtime.LinkRestBuilder;
+import io.agrest.runtime.AgRESTBuilder;
 import org.apache.cayenne.DataChannel;
 import org.apache.cayenne.configuration.server.ServerRuntime;
 import org.apache.cayenne.map.EntityResolver;
@@ -38,7 +38,7 @@ public class GET_SimpleResponseIT extends JerseyTest {
 		ServerRuntime runtime = mock(ServerRuntime.class);
 		when(runtime.getChannel()).thenReturn(mockChannel);
 
-		Feature lrFeature = LinkRestBuilder.build(runtime);
+		Feature lrFeature = AgRESTBuilder.build(runtime);
 
 		Feature feature = new Feature() {
 

@@ -1,6 +1,6 @@
 package io.agrest.meta.compiler;
 
-import io.agrest.LinkRestException;
+import io.agrest.AgRESTException;
 
 import javax.ws.rs.core.Response;
 import java.lang.reflect.Method;
@@ -40,7 +40,7 @@ public class PropertyGetter {
         try {
             return method.invoke(object, (Object[]) null);
         } catch (Throwable th) {
-            throw new LinkRestException(Response.Status.INTERNAL_SERVER_ERROR, "Error reading property: " + name, th);
+            throw new AgRESTException(Response.Status.INTERNAL_SERVER_ERROR, "Error reading property: " + name, th);
         }
     }
 }

@@ -19,8 +19,8 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriInfo;
 
+import io.agrest.AgREST;
 import io.agrest.DataResponse;
-import io.agrest.LinkRest;
 import io.agrest.it.fixture.pojo.JerseyTestOnPojo;
 import io.agrest.it.fixture.pojo.model.P1;
 import io.agrest.it.fixture.pojo.model.P3;
@@ -172,37 +172,37 @@ public class GET_PojoIT extends JerseyTestOnPojo {
         @GET
         @Path("p1")
         public DataResponse<P1> p1All(@Context UriInfo uriInfo) {
-            return LinkRest.select(P1.class, config).uri(uriInfo).get();
+            return AgREST.select(P1.class, config).uri(uriInfo).get();
         }
 
         @GET
         @Path("p4")
         public DataResponse<P4> p4All(@Context UriInfo uriInfo) {
-            return LinkRest.select(P4.class, config).uri(uriInfo).get();
+            return AgREST.select(P4.class, config).uri(uriInfo).get();
         }
 
         @GET
         @Path("p6")
         public DataResponse<P6> p6All(@Context UriInfo uriInfo) {
-            return LinkRest.select(P6.class, config).uri(uriInfo).get();
+            return AgREST.select(P6.class, config).uri(uriInfo).get();
         }
 
         @GET
         @Path("p6/{id}")
         public DataResponse<P6> p6ById(@PathParam("id") String id, @Context UriInfo uriInfo) {
-            return LinkRest.service(config).selectById(P6.class, id, uriInfo);
+            return AgREST.service(config).selectById(P6.class, id, uriInfo);
         }
 
         @GET
         @Path("p8/{id}")
         public DataResponse<P8> p8ById(@PathParam("id") int id, @Context UriInfo uriInfo) {
-            return LinkRest.service(config).selectById(P8.class, id, uriInfo);
+            return AgREST.service(config).selectById(P8.class, id, uriInfo);
         }
         
         @GET
         @Path("p9")
         public DataResponse<P9> p9All(@Context UriInfo uriInfo) {
-            return LinkRest.select(P9.class, config).uri(uriInfo).get();
+            return AgREST.select(P9.class, config).uri(uriInfo).get();
         }
     }
 }

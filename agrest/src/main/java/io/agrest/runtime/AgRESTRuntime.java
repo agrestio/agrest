@@ -20,21 +20,21 @@ import java.util.Collection;
 import java.util.Map;
 
 /**
- * Stores LinkRest runtime stack packaged as a JAX RS {@link Feature}.
+ * Stores AgREST runtime stack packaged as a JAX RS {@link Feature}.
  */
-public class LinkRestRuntime implements Feature {
+public class AgRESTRuntime implements Feature {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(LinkRestRuntime.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(AgRESTRuntime.class);
 
-    static final String LINK_REST_CONTAINER_PROPERTY = "linkrest.container";
+    static final String LINK_REST_CONTAINER_PROPERTY = "agrest.container";
 
-    public static final String BODY_WRITERS_MAP = "linkrest.jaxrs.bodywriters";
+    public static final String BODY_WRITERS_MAP = "agrest.jaxrs.bodywriters";
 
     private Injector injector;
     private Collection<Feature> extraFeatures;
 
     /**
-     * Returns a service of a specified type present in LinkRest container that
+     * Returns a service of a specified type present in AgREST container that
      * is stored in JAX RS Configuration.
      */
     public static <T> T service(Class<T> type, Configuration config) {
@@ -46,26 +46,26 @@ public class LinkRestRuntime implements Feature {
         Injector injector = (Injector) config.getProperty(LINK_REST_CONTAINER_PROPERTY);
         if (injector == null) {
             throw new IllegalStateException(
-                    "LinkRest is misconfigured. No injector found for property: " + LINK_REST_CONTAINER_PROPERTY);
+                    "AgREST is misconfigured. No injector found for property: " + LINK_REST_CONTAINER_PROPERTY);
         }
 
         return injector.getInstance(type);
     }
 
-    LinkRestRuntime(Injector injector, Collection<Feature> extraFeatures) {
+    AgRESTRuntime(Injector injector, Collection<Feature> extraFeatures) {
         this.injector = injector;
         this.extraFeatures = extraFeatures;
     }
 
     /**
-     * Returns a LinkRest service instance of a given type stored in the internal DI container.
+     * Returns a AgREST service instance of a given type stored in the internal DI container.
      */
     public <T> T service(Class<T> type) {
         return injector.getInstance(type);
     }
 
     /**
-     * Returns a LinkRest service instance of a given type stored in the internal DI container.
+     * Returns a AgREST service instance of a given type stored in the internal DI container.
      *
      * @since 2.10
      */
@@ -77,19 +77,19 @@ public class LinkRestRuntime implements Feature {
      * @since 2.0
      */
     public void shutdown() {
-        LOGGER.info("Shutting down LinkRest");
+        LOGGER.info("Shutting down AgREST");
         injector.shutdown();
     }
 
     @Override
     public boolean configure(FeatureContext context) {
 
-        // this gives everyone access to the LinkRest services
-        context.property(LinkRestRuntime.LINK_REST_CONTAINER_PROPERTY, injector);
+        // this gives everyone access to the AgREST services
+        context.property(AgRESTRuntime.LINK_REST_CONTAINER_PROPERTY, injector);
 
         @SuppressWarnings("unchecked")
         Map<String, Class> bodyWriters =
-                injector.getInstance(Key.getMapOf(String.class, Class.class, LinkRestRuntime.BODY_WRITERS_MAP));
+                injector.getInstance(Key.getMapOf(String.class, Class.class, AgRESTRuntime.BODY_WRITERS_MAP));
 
         for (Class<?> type : bodyWriters.values()) {
             context.register(type);

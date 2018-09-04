@@ -2,7 +2,7 @@ package io.agrest.runtime;
 
 import io.agrest.DeleteBuilder;
 import io.agrest.EntityParent;
-import io.agrest.LinkRestException;
+import io.agrest.AgRESTException;
 import io.agrest.AgObjectId;
 import io.agrest.SimpleResponse;
 import io.agrest.runtime.processor.delete.DeleteContext;
@@ -37,7 +37,7 @@ public class DefaultDeleteBuilder<T> implements DeleteBuilder<T> {
 
 		ids.forEach((name, value) -> {
 			if (value == null) {
-				throw new LinkRestException(Response.Status.NOT_FOUND, "Part of compound ID is null: " + name);
+				throw new AgRESTException(Response.Status.NOT_FOUND, "Part of compound ID is null: " + name);
 			}
 		});
 

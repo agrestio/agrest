@@ -4,7 +4,7 @@ import org.apache.cayenne.ObjectContext;
 import org.apache.cayenne.map.EntityResolver;
 
 /**
- * A placeholder for {@link ICayennePersister} for LinkRest containers that work
+ * A placeholder for {@link ICayennePersister} for AgREST containers that work
  * with POJOs.
  */
 public final class NoCayennePersister implements ICayennePersister {

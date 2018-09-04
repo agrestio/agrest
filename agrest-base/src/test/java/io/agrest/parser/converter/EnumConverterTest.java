@@ -1,7 +1,7 @@
 package io.agrest.parser.converter;
 
 import com.fasterxml.jackson.databind.node.TextNode;
-import io.agrest.LinkRestException;
+import io.agrest.AgRESTException;
 import org.junit.Test;
 
 import static org.junit.Assert.assertNull;
@@ -18,7 +18,7 @@ public class EnumConverterTest {
         assertNull(c.value(new TextNode("")));
     }
 
-    @Test(expected = LinkRestException.class)
+    @Test(expected = AgRESTException.class)
     public void testConvert_Invalid() {
         EnumConverter c = new EnumConverter(E1.class);
 

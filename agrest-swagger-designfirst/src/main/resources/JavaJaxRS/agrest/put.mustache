@@ -3,7 +3,7 @@ public {{>returnTypes}} {{nickname}}({{#allParams}}{{>pathParams}}{{>queryParams
 
         {{>protocolImpl}}
 
-        return LinkRest.idempotentCreateOrUpdate({{{returnType}}}.class, config)
+        return AgREST.idempotentCreateOrUpdate({{{returnType}}}.class, config)
                     .id({{#pathParams}}{{paramName}}{{/pathParams}})
                     .request(agRequest)
                     .syncAndSelect({{#bodyParam}}{{paramName}}{{/bodyParam}});
@@ -23,7 +23,7 @@ public {{>returnTypes}} {{nickname}}({{#allParams}}{{>pathParams}}{{>queryParams
 
         {{>protocolImpl}}
 
-        return LinkRest.idempotentCreateOrUpdate({{{returnType}}}.class, config)
+        return AgREST.idempotentCreateOrUpdate({{{returnType}}}.class, config)
                     .id(id)
                     .request(agRequest)
                     .syncAndSelect({{#bodyParam}}{{paramName}}{{/bodyParam}});
@@ -34,7 +34,7 @@ public {{>returnTypes}} {{nickname}}({{#allParams}}{{>pathParams}}{{>queryParams
 
         {{>protocolImpl}}
 
-        return LinkRest.idempotentCreateOrUpdate({{{returnType}}}.class, config)
+        return AgREST.idempotentCreateOrUpdate({{{returnType}}}.class, config)
                     .request(agRequest)
                     .syncAndSelect({{#bodyParam}}{{paramName}}{{/bodyParam}});
     }
@@ -45,7 +45,7 @@ public DataResponse<{{#bodyParams}}{{dataType}}{{/bodyParams}}> {{nickname}}({{#
 
         {{>protocolImpl}}
 
-        return LinkRest.idempotentCreateOrUpdate({{#bodyParams}}{{dataType}}{{/bodyParams}}.class, config)
+        return AgREST.idempotentCreateOrUpdate({{#bodyParams}}{{dataType}}{{/bodyParams}}.class, config)
                     .id({{#pathParams}}{{#-last}}{{paramName}}{{/-last}}{{/pathParams}})
                     .parent({{returnType}}.class, {{#pathParams}}{{#-first}}{{paramName}}{{/-first}}{{/pathParams}}, {{returnType}}.{{#bodyParams}}{{dataType}}{{/bodyParams}})
                     .request(agRequest)
@@ -57,7 +57,7 @@ public DataResponse<{{#bodyParams}}{{dataType}}{{/bodyParams}}> {{nickname}}({{#
 
         {{>protocolImpl}}
 
-        return LinkRest.idempotentCreateOrUpdate({{#bodyParams}}{{dataType}}{{/bodyParams}}.class, config)
+        return AgREST.idempotentCreateOrUpdate({{#bodyParams}}{{dataType}}{{/bodyParams}}.class, config)
                     .parent({{returnType}}.class, {{#pathParams}}{{#-first}}{{paramName}}{{/-first}}{{/pathParams}}, "{{#modelRelations}}{{bodyParam.paramName}}{{/modelRelations}}")
                     .request(agRequest)
                     .syncAndSelect({{#bodyParam}}{{paramName}}{{/bodyParam}});

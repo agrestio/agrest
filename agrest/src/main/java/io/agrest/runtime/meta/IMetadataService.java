@@ -1,7 +1,7 @@
 package io.agrest.runtime.meta;
 
+import io.agrest.AgRESTException;
 import io.agrest.EntityParent;
-import io.agrest.LinkRestException;
 import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgRelationship;
 
@@ -9,7 +9,7 @@ import javax.ws.rs.core.Response;
 import java.lang.reflect.Type;
 
 /**
- * Provides access to LinkRest entity metadata.
+ * Provides access to AgREST entity metadata.
  */
 public interface IMetadataService {
 
@@ -28,7 +28,7 @@ public interface IMetadataService {
 		AgEntity<?> e = getLrEntity(type);
 		AgRelationship r = e.getRelationship(relationship);
 		if (r == null) {
-			throw new LinkRestException(Response.Status.BAD_REQUEST, "Invalid relationship: '" + relationship + "'");
+			throw new AgRESTException(Response.Status.BAD_REQUEST, "Invalid relationship: '" + relationship + "'");
 		}
 
 		return r;

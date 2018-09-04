@@ -1,7 +1,7 @@
 package io.agrest.it;
 
+import io.agrest.AgREST;
 import io.agrest.DataResponse;
-import io.agrest.LinkRest;
 import io.agrest.it.fixture.JerseyTestOnDerby;
 import io.agrest.it.fixture.cayenne.E14;
 import io.agrest.it.fixture.cayenne.E17;
@@ -398,55 +398,55 @@ public class PUT_IT extends JerseyTestOnDerby {
         @PUT
         @Path("e2/{id}")
         public DataResponse<E2> createOrUpdate_E2(@PathParam("id") int id, String entityData, @Context UriInfo uriInfo) {
-            return LinkRest.idempotentCreateOrUpdate(E2.class, config).id(id).uri(uriInfo).syncAndSelect(entityData);
+            return AgREST.idempotentCreateOrUpdate(E2.class, config).id(id).uri(uriInfo).syncAndSelect(entityData);
         }
 
         @PUT
         @Path("e3")
         public DataResponse<E3> syncE3(@Context UriInfo uriInfo, String requestBody) {
-            return LinkRest.idempotentFullSync(E3.class, config).uri(uriInfo).syncAndSelect(requestBody);
+            return AgREST.idempotentFullSync(E3.class, config).uri(uriInfo).syncAndSelect(requestBody);
         }
 
         @PUT
         @Path("e3/{id}")
         public DataResponse<E3> updateE3(@PathParam("id") int id, String requestBody) {
-            return LinkRest.update(E3.class, config).id(id).syncAndSelect(requestBody);
+            return AgREST.update(E3.class, config).id(id).syncAndSelect(requestBody);
         }
 
         @PUT
         @Path("e4/{id}")
         public DataResponse<E4> updateE4(@PathParam("id") int id, String requestBody) {
-            return LinkRest.update(E4.class, config).id(id).syncAndSelect(requestBody);
+            return AgREST.update(E4.class, config).id(id).syncAndSelect(requestBody);
         }
 
         @PUT
         @Path("e7")
         public DataResponse<E7> syncE7(@Context UriInfo uriInfo, String data) {
-            return LinkRest.idempotentFullSync(E7.class, config).uri(uriInfo).syncAndSelect(data);
+            return AgREST.idempotentFullSync(E7.class, config).uri(uriInfo).syncAndSelect(data);
         }
 
         @PUT
         @Path("e7/{id}")
         public DataResponse<E7> syncOneE7(@PathParam("id") int id, @Context UriInfo uriInfo, String data) {
-            return LinkRest.idempotentFullSync(E7.class, config).id(id).uri(uriInfo).syncAndSelect(data);
+            return AgREST.idempotentFullSync(E7.class, config).id(id).uri(uriInfo).syncAndSelect(data);
         }
 
         @PUT
         @Path("e8")
         public DataResponse<E8> sync(@Context UriInfo uriInfo, String data) {
-            return LinkRest.idempotentFullSync(E8.class, config).uri(uriInfo).syncAndSelect(data);
+            return AgREST.idempotentFullSync(E8.class, config).uri(uriInfo).syncAndSelect(data);
         }
 
         @PUT
         @Path("e14")
         public DataResponse<E14> sync(String data) {
-            return LinkRest.idempotentFullSync(E14.class, config).syncAndSelect(data);
+            return AgREST.idempotentFullSync(E14.class, config).syncAndSelect(data);
         }
 
         @PUT
         @Path("e14/{id}")
         public DataResponse<E14> update(@PathParam("id") int id, String data) {
-            return LinkRest.update(E14.class, config).id(id).syncAndSelect(data);
+            return AgREST.update(E14.class, config).id(id).syncAndSelect(data);
         }
 
         @PUT
@@ -461,7 +461,7 @@ public class PUT_IT extends JerseyTestOnDerby {
             ids.put(E17.ID1_PK_COLUMN, id1);
             ids.put(E17.ID2_PK_COLUMN, id2);
 
-            return LinkRest.update(E17.class, config).uri(uriInfo).id(ids).syncAndSelect(targetData);
+            return AgREST.update(E17.class, config).uri(uriInfo).id(ids).syncAndSelect(targetData);
         }
     }
 }

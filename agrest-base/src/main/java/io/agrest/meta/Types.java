@@ -1,6 +1,6 @@
 package io.agrest.meta;
 
-import io.agrest.LinkRestException;
+import io.agrest.AgRESTException;
 
 import javax.ws.rs.core.Response.Status;
 import java.lang.reflect.ParameterizedType;
@@ -75,7 +75,7 @@ public class Types {
      */
 	public static Class<?> typeForName(String typeName) {
         if (typeName == null) {
-            throw new LinkRestException(Status.INTERNAL_SERVER_ERROR, "Type name cannot be null");
+            throw new AgRESTException(Status.INTERNAL_SERVER_ERROR, "Type name cannot be null");
         }
 
         switch (typeName) {
@@ -101,7 +101,7 @@ public class Types {
                 try {
                     return Class.forName(typeName);
                 } catch (ClassNotFoundException e) {
-                    throw new LinkRestException(Status.INTERNAL_SERVER_ERROR, "Unknown class: " + typeName, e);
+                    throw new AgRESTException(Status.INTERNAL_SERVER_ERROR, "Unknown class: " + typeName, e);
                 }
             }
         }

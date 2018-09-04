@@ -1,6 +1,6 @@
 package io.agrest.runtime.processor.select;
 
-import io.agrest.LinkRestException;
+import io.agrest.AgRESTException;
 import io.agrest.it.fixture.cayenne.E1;
 import io.agrest.it.fixture.cayenne.E2;
 import io.agrest.protocol.Dir;
@@ -247,7 +247,7 @@ public class ParseRequestStageTest extends TestWithCayenneMapping {
 		assertEquals(Dir.DESC, context.getRawRequest().getSortDirection());
 	}
 
-	@Test(expected = LinkRestException.class)
+	@Test(expected = AgRESTException.class)
 	public void testSelectRequest_SortSimple_Garbage() {
 
 		@SuppressWarnings("unchecked")
@@ -304,7 +304,7 @@ public class ParseRequestStageTest extends TestWithCayenneMapping {
 		assertEquals(Dir.ASC, context.getRawRequest().getSort().getSorts().get(1).getDirection());
 	}
 
-	@Test(expected = LinkRestException.class)
+	@Test(expected = AgRESTException.class)
 	public void testSelectRequest_Sort_BadSpec() {
 
 		@SuppressWarnings("unchecked")
@@ -317,7 +317,7 @@ public class ParseRequestStageTest extends TestWithCayenneMapping {
 		parseStage.execute(context);
 	}
 
-	@Test(expected = LinkRestException.class)
+	@Test(expected = AgRESTException.class)
 	public void testSelectRequest_CayenneExp_BadSpec() {
 
 		@SuppressWarnings("unchecked")

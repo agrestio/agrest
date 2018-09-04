@@ -4,7 +4,7 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * Represents 'include' LinkRest protocol parameter.
+ * Represents 'include' AgREST protocol parameter.
  *
  * @since 2.13
  */

@@ -2,7 +2,7 @@ package io.agrest.runtime.protocol;
 
 import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.JsonNode;
-import io.agrest.LinkRestException;
+import io.agrest.AgRESTException;
 import io.agrest.protocol.CayenneExp;
 import io.agrest.runtime.jackson.IJacksonService;
 import org.apache.cayenne.di.Inject;
@@ -110,7 +110,7 @@ public class CayenneExpParser implements ICayenneExpParser {
         // 'exp' key is required; 'params' key is optional
         JsonNode expNode = node.get(JSON_KEY_EXP);
         if (expNode == null) {
-            throw new LinkRestException(Status.BAD_REQUEST, "'exp' key is missing in 'cayenneExp' map");
+            throw new AgRESTException(Status.BAD_REQUEST, "'exp' key is missing in 'cayenneExp' map");
         }
 
         JsonNode paramsNode = node.get(JSON_KEY_PARAMS);
@@ -136,7 +136,7 @@ public class CayenneExpParser implements ICayenneExpParser {
         int len = array.size();
 
         if (len < 1) {
-            throw new LinkRestException(Status.BAD_REQUEST, "array 'cayenneExp' mast have at least one element");
+            throw new AgRESTException(Status.BAD_REQUEST, "array 'cayenneExp' mast have at least one element");
         }
 
         String expString = array.get(0).asText();

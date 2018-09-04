@@ -1,7 +1,7 @@
 package io.agrest.runtime.cayenne.processor.update;
 
+import io.agrest.AgRESTException;
 import io.agrest.EntityUpdate;
-import io.agrest.LinkRestException;
 import io.agrest.ObjectMapper;
 import io.agrest.runtime.meta.IMetadataService;
 import io.agrest.runtime.processor.update.UpdateContext;
@@ -75,7 +75,7 @@ public class CayenneIdempotentFullSyncStage extends CayenneIdempotentCreateOrUpd
 
         List<T> objects = CayenneUpdateStartStage.cayenneContext(context).select(query);
         if (context.isById() && objects.size() > 1) {
-            throw new LinkRestException(Response.Status.INTERNAL_SERVER_ERROR, String.format(
+            throw new AgRESTException(Response.Status.INTERNAL_SERVER_ERROR, String.format(
                     "Found more than one object for ID '%s' and entity '%s'",
                     context.getId(), context.getEntity().getAgEntity().getName()));
         }

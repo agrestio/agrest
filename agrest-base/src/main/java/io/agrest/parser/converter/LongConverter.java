@@ -3,7 +3,7 @@ package io.agrest.parser.converter;
 import javax.ws.rs.core.Response.Status;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import io.agrest.LinkRestException;
+import io.agrest.AgRESTException;
 
 /**
  * @since 1.10
@@ -20,7 +20,7 @@ public class LongConverter extends AbstractConverter<Long> {
 	protected Long valueNonNull(JsonNode node) {
 
 		if (!node.isNumber()) {
-			throw new LinkRestException(Status.BAD_REQUEST, "Expected 'long' value, got: " + node.asText());
+			throw new AgRESTException(Status.BAD_REQUEST, "Expected 'long' value, got: " + node.asText());
 		}
 
 		return node.asLong();

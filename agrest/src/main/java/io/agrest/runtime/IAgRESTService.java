@@ -14,10 +14,10 @@ import java.util.Collection;
 import java.util.Map;
 
 /**
- * The main entry point to LinkRest stack. Used from the user REST resource
+ * The main entry point to AgREST stack. Used from the user REST resource
  * classes to build request processors.
  */
-public interface ILinkRestService {
+public interface IAgRESTService {
 
 	/**
 	 * Selects a single object by ID.

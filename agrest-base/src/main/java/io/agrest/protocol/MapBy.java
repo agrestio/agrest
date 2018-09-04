@@ -1,7 +1,7 @@
 package io.agrest.protocol;
 
 /**
- * Represents 'mapBy' LinkRest protocol parameter
+ * Represents 'mapBy' AgREST protocol parameter
  */
 public class MapBy {
 

@@ -8,16 +8,16 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class LinkRestCodegenOperation extends CodegenOperation {
+public class AgRESTCodegenOperation extends CodegenOperation {
 
     public boolean hasCompoundId;
     public List<CodegenParameter> modelAttributes = new ArrayList<CodegenParameter>();
-    public List<LinkRestCodegenOperation> modelRelations = new ArrayList<LinkRestCodegenOperation>();
+    public List<AgRESTCodegenOperation> modelRelations = new ArrayList<AgRESTCodegenOperation>();
 
-    public LinkRestCodegenOperation() {
+    public AgRESTCodegenOperation() {
     }
 
-    public LinkRestCodegenOperation(CodegenOperation codegenOperation) {
+    public AgRESTCodegenOperation(CodegenOperation codegenOperation) {
         super();
 
         // Makes copy all of CodegenOperation fields

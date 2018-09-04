@@ -6,19 +6,19 @@ import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
 
-import io.agrest.LinkRestException;
+import io.agrest.AgRESTException;
 import io.agrest.SimpleResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 
 @Provider
-public class LinkRestExceptionMapper implements ExceptionMapper<LinkRestException> {
+public class AgRESTExceptionMapper implements ExceptionMapper<AgRESTException> {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(LinkRestExceptionMapper.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(AgRESTExceptionMapper.class);
 
 	@Override
-	public Response toResponse(LinkRestException exception) {
+	public Response toResponse(AgRESTException exception) {
 
 		String message = exception.getMessage();
 		String causeMessage = exception.getCause() != null && exception.getCause() != exception

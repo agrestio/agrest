@@ -1,7 +1,7 @@
 package io.agrest.sencha.it;
 
+import io.agrest.AgREST;
 import io.agrest.DataResponse;
-import io.agrest.LinkRest;
 import io.agrest.it.fixture.JerseyTestOnDerby;
 import io.agrest.it.fixture.cayenne.E3;
 import org.apache.cayenne.Cayenne;
@@ -114,7 +114,7 @@ public class Sencha_PUT_IT extends JerseyTestOnDerby {
         @PUT
         @Path("e3/{id}")
         public DataResponse<E3> updateE3(@PathParam("id") int id, String requestBody) {
-            return LinkRest.update(E3.class, config).id(id).syncAndSelect(requestBody);
+            return AgREST.update(E3.class, config).id(id).syncAndSelect(requestBody);
         }
     }
 }

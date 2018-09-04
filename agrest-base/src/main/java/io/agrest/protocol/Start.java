@@ -1,7 +1,7 @@
 package io.agrest.protocol;
 
 /**
- * Represents 'start' LinkRest protocol parameter.
+ * Represents 'start' AgREST protocol parameter.
  *
  * @since 2.13
  */

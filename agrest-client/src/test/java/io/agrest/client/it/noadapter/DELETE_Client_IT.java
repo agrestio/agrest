@@ -2,12 +2,12 @@ package io.agrest.client.it.noadapter;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import io.agrest.DataResponse;
-import io.agrest.LinkRest;
+import io.agrest.AgREST;
 import io.agrest.SimpleResponse;
 import io.agrest.client.ClientDataResponse;
 import io.agrest.client.ClientSimpleResponse;
-import io.agrest.client.LinkRestClient;
-import io.agrest.client.LinkRestClientException;
+import io.agrest.client.AgRESTClient;
+import io.agrest.client.AgRESTClientException;
 import io.agrest.it.fixture.JerseyTestOnDerby;
 import io.agrest.it.fixture.cayenne.E2;
 import org.junit.Test;
@@ -36,7 +36,7 @@ public class DELETE_Client_IT extends JerseyTestOnDerby {
     public void testClient_Delete() {
 
         // Create new entity
-        ClientDataResponse<JsonNode> r1 = LinkRestClient.client(target("/e2"))
+        ClientDataResponse<JsonNode> r1 = AgRESTClient.client(target("/e2"))
                 .exclude(E2.ADDRESS.getName(), E2.E3S.getName())
                 .post(JsonNode.class, "{\"name\":\"xxx\"}");
 
@@ -48,19 +48,19 @@ public class DELETE_Client_IT extends JerseyTestOnDerby {
         assertEquals(e2, r1.getData().get(0));
 
         // Delete existing entity
-        ClientSimpleResponse r2 = LinkRestClient.client(target("/e2/" + id))
+        ClientSimpleResponse r2 = AgRESTClient.client(target("/e2/" + id))
                 .exclude(E2.ADDRESS.getName(), E2.E3S.getName())
                 .delete();
 
         assertEquals(Status.OK, r2.getStatus());
 
         // Try to fetch deleted entity
-        LinkRestClientException e = null;
+        AgRESTClientException e = null;
         try {
-            LinkRestClient.client(target("/e2/" + id))
+            AgRESTClient.client(target("/e2/" + id))
                     .exclude(E2.ADDRESS.getName(), E2.E3S.getName())
                     .get(JsonNode.class);
-        } catch (LinkRestClientException e1) {
+        } catch (AgRESTClientException e1) {
             e = e1;
         }
         assertNotNull(e);
@@ -76,18 +76,18 @@ public class DELETE_Client_IT extends JerseyTestOnDerby {
         @GET
         @Path("{id}")
         public DataResponse<E2> getE2ById(@PathParam("id") int id, @Context UriInfo uriInfo) {
-            return LinkRest.service(config).selectById(E2.class, id, uriInfo);
+            return AgREST.service(config).selectById(E2.class, id, uriInfo);
         }
 
         @POST
         public DataResponse<E2> createE2(String targetData, @Context UriInfo uriInfo) {
-            return LinkRest.create(E2.class, config).uri(uriInfo).syncAndSelect(targetData);
+            return AgREST.create(E2.class, config).uri(uriInfo).syncAndSelect(targetData);
         }
 
         @DELETE
         @Path("{id}")
         public SimpleResponse deleteE2ById(@PathParam("id") int id, @Context UriInfo uriInfo) {
-            return LinkRest.service(config).delete(E2.class, id);
+            return AgREST.service(config).delete(E2.class, id);
         }
     }
 }

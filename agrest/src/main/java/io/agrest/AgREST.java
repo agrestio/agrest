@@ -2,17 +2,17 @@ package io.agrest;
 
 import javax.ws.rs.core.Configuration;
 
-import io.agrest.runtime.ILinkRestService;
-import io.agrest.runtime.LinkRestRuntime;
+import io.agrest.runtime.IAgRESTService;
+import io.agrest.runtime.AgRESTRuntime;
 
 /**
- * Defines static methods to start LinkRest request processor builders. Users of
+ * Defines static methods to start AgREST request processor builders. Users of
  * this class must inject {@link Configuration} instance to pass to the static
  * methods.
  * 
  * @since 1.14
  */
-public class LinkRest {
+public class AgREST {
 
 	public static <T> SelectBuilder<T> select(Class<T> root, Configuration config) {
 		return service(config).select(root);
@@ -50,13 +50,13 @@ public class LinkRest {
 	}
 
 	/**
-	 * Returns {@link ILinkRestService} bound to a given JAX RS configuration.
-	 * ILinkRestService is the main engine behind all the operations in
-	 * LinkRest, however you would rarely need to use it directly. Instead use
+	 * Returns {@link IAgRESTService} bound to a given JAX RS configuration.
+	 * IAgRESTService is the main engine behind all the operations in
+	 * AgREST, however you would rarely need to use it directly. Instead use
 	 * other static methods defined in this class to start processor chains for
-	 * LinkRest requests.
+	 * AgREST requests.
 	 */
-	public static ILinkRestService service(Configuration config) {
-		return LinkRestRuntime.service(ILinkRestService.class, config);
+	public static IAgRESTService service(Configuration config) {
+		return AgRESTRuntime.service(IAgRESTService.class, config);
 	}
 }

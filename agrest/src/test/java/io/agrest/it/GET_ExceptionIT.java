@@ -1,7 +1,7 @@
 package io.agrest.it;
 
-import io.agrest.LinkRestException;
-import io.agrest.runtime.LinkRestBuilder;
+import io.agrest.AgRESTException;
+import io.agrest.runtime.AgRESTBuilder;
 import org.apache.cayenne.DataChannel;
 import org.apache.cayenne.configuration.server.ServerRuntime;
 import org.apache.cayenne.map.EntityResolver;
@@ -39,7 +39,7 @@ public class GET_ExceptionIT extends JerseyTest {
 		ServerRuntime runtime = mock(ServerRuntime.class);
 		when(runtime.getChannel()).thenReturn(mockChannel);
 
-		Feature lrFeature = LinkRestBuilder.build(runtime);
+		Feature lrFeature = AgRESTBuilder.build(runtime);
 
 		Feature testFeature = new Feature() {
 
@@ -78,7 +78,7 @@ public class GET_ExceptionIT extends JerseyTest {
 
 		@GET
 		public Response get() {
-			throw new LinkRestException(Status.NOT_FOUND, "request failed");
+			throw new AgRESTException(Status.NOT_FOUND, "request failed");
 		}
 
 		@GET
@@ -87,7 +87,7 @@ public class GET_ExceptionIT extends JerseyTest {
 			try {
 				throw new Throwable("Dummy");
 			} catch (Throwable th) {
-				throw new LinkRestException(Status.INTERNAL_SERVER_ERROR, "request failed with th", th);
+				throw new AgRESTException(Status.INTERNAL_SERVER_ERROR, "request failed with th", th);
 			}
 		}
 	}

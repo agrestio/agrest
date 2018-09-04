@@ -5,7 +5,7 @@ import java.util.Collection;
 import org.apache.cayenne.map.ObjEntity;
 
 /**
- * An entity model shared across LinkRest stack.
+ * An entity model shared across AgREST stack.
  * 
  * @since 1.12
  */

@@ -26,10 +26,10 @@ import java.util.Collection;
 import java.util.Map;
 
 /**
- * A backend-agnostic abstract {@link ILinkRestService} that can serve to
+ * A backend-agnostic abstract {@link IAgRESTService} that can serve to
  * implement more specific versions.
  */
-public class DefaultLinkRestService implements ILinkRestService {
+public class DefaultAgRESTService implements IAgRESTService {
 
     private SelectProcessorFactory selectProcessorFactory;
     private DeleteProcessorFactory deleteProcessorFactory;
@@ -37,7 +37,7 @@ public class DefaultLinkRestService implements ILinkRestService {
     private MetadataProcessorFactory metadataProcessorFactory;
     private UnrelateProcessorFactory unrelateProcessorFactory;
 
-    public DefaultLinkRestService(
+    public DefaultAgRESTService(
             @Inject SelectProcessorFactory selectProcessorFactory,
             @Inject DeleteProcessorFactory deleteProcessorFactory,
             @Inject UpdateProcessorFactoryFactory updateProcessorFactoryFactory,

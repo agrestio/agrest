@@ -10,7 +10,7 @@ import javax.ws.rs.ext.Provider;
 import io.agrest.AgResponse;
 
 /**
- * Ensures correct default response status for LinkRest responses.
+ * Ensures correct default response status for AgREST responses.
  * 
  * @since 1.1
  */

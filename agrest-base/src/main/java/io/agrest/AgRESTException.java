@@ -6,25 +6,25 @@ import javax.ws.rs.core.Response.Status;
  * An exception that renders ExtJS-friendly JSON response. Can be used by the
  * application code and is also used by the framework internally.
  */
-public class LinkRestException extends RuntimeException {
+public class AgRESTException extends RuntimeException {
 
 	private static final long serialVersionUID = 1L;
 
 	private Status status;
 
-	public LinkRestException() {
+	public AgRESTException() {
 		this(Status.INTERNAL_SERVER_ERROR);
 	}
 
-	public LinkRestException(Status status) {
+	public AgRESTException(Status status) {
 		this(status, null, null);
 	}
 
-	public LinkRestException(Status status, String message) {
+	public AgRESTException(Status status, String message) {
 		this(status, message, null);
 	}
 
-	public LinkRestException(Status status, String message, Throwable cause) {
+	public AgRESTException(Status status, String message, Throwable cause) {
 		super(message, cause);
 		this.status = status;
 	}

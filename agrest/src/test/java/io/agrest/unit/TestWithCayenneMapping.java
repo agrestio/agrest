@@ -55,7 +55,7 @@ public class TestWithCayenneMapping {
         };
 		runtime = ServerRuntime
 				.builder()
-				.addConfig("cayenne-linkrest-tests.xml")
+				.addConfig("cayenne-agrest-tests.xml")
 				.addModule(module)
 				.build();
 	}

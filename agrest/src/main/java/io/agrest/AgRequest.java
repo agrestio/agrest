@@ -13,7 +13,7 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * A container of LinkRest protocol parameters for a single request.
+ * A container of AgREST protocol parameters for a single request.
  *
  * @since 2.13
  */

@@ -18,52 +18,52 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class LinkRestBuilder_FeatureProviderTest {
+public class AgRESTBuilder_FeatureProviderTest {
 
     @Test
     public void testFeature() {
         inRuntime(
-                new LinkRestBuilder().feature(new LocalTestFeature()),
+                new AgRESTBuilder().feature(new LocalTestFeature()),
                 this::assertLocalTestFeatureActive);
     }
 
     @Test
     public void testFeatureProvider() {
         inRuntime(
-                new LinkRestBuilder().feature(new LocalTestFeatureProvider()),
+                new AgRESTBuilder().feature(new LocalTestFeatureProvider()),
                 this::assertLocalTestFeatureActive);
     }
 
     @Test
     public void testAutoLoadFeaturesDefault() {
         inRuntime(
-                new LinkRestBuilder(),
+                new AgRESTBuilder(),
                 this::assertTestFeatureActive);
     }
 
     @Test
     public void testDoNotAutoLoadFeatures() {
         inRuntime(
-                new LinkRestBuilder().doNotAutoLoadFeatures(),
+                new AgRESTBuilder().doNotAutoLoadFeatures(),
                 this::assertTestFeatureNotActive);
     }
 
-    private void assertTestFeatureActive(LinkRestRuntime runtime) {
+    private void assertTestFeatureActive(AgRESTRuntime runtime) {
         Set<Object> registered = extractRegisteredInJaxRS(runtime);
         assertTrue(registered.contains(TestFeatureProvider.RegisteredByFeature.class));
     }
 
-    private void assertTestFeatureNotActive(LinkRestRuntime runtime) {
+    private void assertTestFeatureNotActive(AgRESTRuntime runtime) {
         Set<Object> registered = extractRegisteredInJaxRS(runtime);
         assertFalse("Auto-loading was on", registered.contains(TestFeatureProvider.RegisteredByFeature.class));
     }
 
-    private void assertLocalTestFeatureActive(LinkRestRuntime runtime) {
+    private void assertLocalTestFeatureActive(AgRESTRuntime runtime) {
         Set<Object> registered = extractRegisteredInJaxRS(runtime);
         assertTrue("Auto-loading was off", registered.contains(LocalRegisteredByFeature.class));
     }
 
-    private Set<Object> extractRegisteredInJaxRS(LinkRestRuntime runtime) {
+    private Set<Object> extractRegisteredInJaxRS(AgRESTRuntime runtime) {
         Set<Object> registered = new HashSet<>();
         FeatureContext fc = mock(FeatureContext.class);
         when(fc.register(any(Class.class))).then(i -> {
@@ -75,8 +75,8 @@ public class LinkRestBuilder_FeatureProviderTest {
         return registered;
     }
 
-    private void inRuntime(LinkRestBuilder builder, Consumer<LinkRestRuntime> test) {
-        LinkRestRuntime r = builder.build();
+    private void inRuntime(AgRESTBuilder builder, Consumer<AgRESTRuntime> test) {
+        AgRESTRuntime r = builder.build();
         try {
             test.accept(r);
         } finally {

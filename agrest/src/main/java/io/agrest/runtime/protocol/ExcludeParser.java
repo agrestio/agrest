@@ -1,7 +1,7 @@
 package io.agrest.runtime.protocol;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import io.agrest.LinkRestException;
+import io.agrest.AgRESTException;
 import io.agrest.PathConstants;
 import io.agrest.protocol.Exclude;
 import io.agrest.runtime.entity.IncludeMerger;
@@ -65,7 +65,7 @@ public class ExcludeParser implements IExcludeParser {
                         excludes.add(exclude);
                     }
                 } else {
-                    throw new LinkRestException(Response.Status.BAD_REQUEST, "Bad exclude spec: " + child);
+                    throw new AgRESTException(Response.Status.BAD_REQUEST, "Bad exclude spec: " + child);
                 }
             }
         }
@@ -83,11 +83,11 @@ public class ExcludeParser implements IExcludeParser {
         int dot = value.indexOf(PathConstants.DOT);
 
         if (dot == 0) {
-            throw new LinkRestException(Response.Status.BAD_REQUEST, "Exclude starts with dot: " + value);
+            throw new AgRESTException(Response.Status.BAD_REQUEST, "Exclude starts with dot: " + value);
         }
 
         if (dot == value.length() - 1) {
-            throw new LinkRestException(Response.Status.BAD_REQUEST, "Exclude ends with dot: " + value);
+            throw new AgRESTException(Response.Status.BAD_REQUEST, "Exclude ends with dot: " + value);
         }
 
         return new Exclude(value);

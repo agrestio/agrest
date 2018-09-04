@@ -1,8 +1,8 @@
 package io.agrest.it;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import io.agrest.AgREST;
 import io.agrest.DataResponse;
-import io.agrest.LinkRest;
 import io.agrest.MetadataResponse;
 import io.agrest.SimpleResponse;
 import io.agrest.annotation.AgResource;
@@ -139,7 +139,7 @@ public class GET_Metadata_IT extends JerseyTestOnDerby {
         @Path("metadata")
         @AgResource(entityClass = E5.class, type = LinkType.METADATA)
         public MetadataResponse<E5> getMetadata(@Context UriInfo uriInfo) {
-            return LinkRest.metadata(E5.class, config).forResource(E5Resource.class).uri(uriInfo).process();
+            return AgREST.metadata(E5.class, config).forResource(E5Resource.class).uri(uriInfo).process();
         }
 
         @GET
@@ -151,7 +151,7 @@ public class GET_Metadata_IT extends JerseyTestOnDerby {
                     .attribute(E5.NAME)
                     .toManyPath(E5.E15S, Constraint.idAndAttributes(E15.class));
 
-            return LinkRest
+            return AgREST
                     .metadata(E5.class, config)
                     .forResource(E5Resource.class)
                     .uri(uriInfo)
@@ -170,7 +170,7 @@ public class GET_Metadata_IT extends JerseyTestOnDerby {
         @Path("metadata")
         @AgResource(entityClass = E19.class, type = LinkType.METADATA)
         public MetadataResponse<E19> getMetadata(@Context UriInfo uriInfo) {
-            return LinkRest.metadata(E19.class, config)
+            return AgREST.metadata(E19.class, config)
                     .forResource(E19Resource.class)
                     .uri(uriInfo)
                     .process();

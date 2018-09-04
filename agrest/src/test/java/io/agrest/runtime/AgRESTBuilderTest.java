@@ -1,6 +1,6 @@
 package io.agrest.runtime;
 
-import io.agrest.runtime.adapter.LinkRestAdapter;
+import io.agrest.runtime.adapter.AgRESTAdapter;
 import io.agrest.runtime.protocol.ICayenneExpParser;
 import org.apache.cayenne.di.Binder;
 import org.apache.cayenne.validation.ValidationException;
@@ -28,7 +28,7 @@ import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
-public class LinkRestBuilderTest {
+public class AgRESTBuilderTest {
 
     @Deprecated
     @Test
@@ -36,7 +36,7 @@ public class LinkRestBuilderTest {
 
         final Feature adapterFeature = mock(Feature.class);
 
-        LinkRestAdapter adapter = mock(LinkRestAdapter.class);
+        AgRESTAdapter adapter = mock(AgRESTAdapter.class);
         doAnswer((Answer<Object>) invocation -> {
             @SuppressWarnings("unchecked")
             Collection<Feature> c = (Collection<Feature>) invocation.getArguments()[0];
@@ -51,7 +51,7 @@ public class LinkRestBuilderTest {
             return null;
         }).when(adapter).contributeToRuntime(any(Binder.class));
 
-        LinkRestRuntime runtime = new LinkRestBuilder().adapter(adapter).build();
+        AgRESTRuntime runtime = new AgRESTBuilder().adapter(adapter).build();
 
         assertSame(mockParser, runtime.service(ICayenneExpParser.class));
 
@@ -62,8 +62,8 @@ public class LinkRestBuilderTest {
 
     @Test
     public void testExecutorService_Default() throws InterruptedException, ExecutionException, TimeoutException {
-        LinkRestBuilder builder = new LinkRestBuilder();
-        LinkRestRuntime r = builder.build();
+        AgRESTBuilder builder = new AgRESTBuilder();
+        AgRESTRuntime r = builder.build();
 
         ExecutorService exec;
         try {
@@ -79,8 +79,8 @@ public class LinkRestBuilderTest {
     public void testExecutorService_DefaultShutdown()
             throws InterruptedException, ExecutionException, TimeoutException {
 
-        LinkRestBuilder builder = new LinkRestBuilder();
-        LinkRestRuntime r = builder.build();
+        AgRESTBuilder builder = new AgRESTBuilder();
+        AgRESTRuntime r = builder.build();
 
         ExecutorService exec;
         try {
@@ -98,9 +98,9 @@ public class LinkRestBuilderTest {
     public void testExecutorService_Custom() throws InterruptedException, ExecutionException, TimeoutException {
 
         ExecutorService mockExec = mock(ExecutorService.class);
-        LinkRestBuilder builder = new LinkRestBuilder().executor(mockExec);
+        AgRESTBuilder builder = new AgRESTBuilder().executor(mockExec);
 
-        LinkRestRuntime r = builder.build();
+        AgRESTRuntime r = builder.build();
         try {
             ExecutorService exec = r.service(ExecutorService.class);
 
@@ -110,8 +110,8 @@ public class LinkRestBuilderTest {
         }
     }
 
-    private void assertRuntime(LinkRestBuilder builder, Consumer<LinkRestRuntime> test) {
-        LinkRestRuntime r = builder.build();
+    private void assertRuntime(AgRESTBuilder builder, Consumer<AgRESTRuntime> test) {
+        AgRESTRuntime r = builder.build();
         try {
             test.accept(r);
         } finally {

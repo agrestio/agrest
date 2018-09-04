@@ -1,7 +1,7 @@
 package io.agrest.runtime.protocol;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import io.agrest.LinkRestException;
+import io.agrest.AgRESTException;
 import io.agrest.protocol.Dir;
 import io.agrest.protocol.Sort;
 import io.agrest.runtime.jackson.IJacksonService;
@@ -75,7 +75,7 @@ public class SortParser implements ISortParser {
             } else if (dirValue.equals(Dir.DESC.name())) {
                 return Dir.DESC;
             } else {
-                throw new LinkRestException(Response.Status.BAD_REQUEST, "Direction is invalid: " + dirValue);
+                throw new AgRESTException(Response.Status.BAD_REQUEST, "Direction is invalid: " + dirValue);
             }
         }
         return null;
@@ -98,7 +98,7 @@ public class SortParser implements ISortParser {
                 return null;
             }
 
-            throw new LinkRestException(Status.BAD_REQUEST, "Bad sort spec: " + node);
+            throw new AgRESTException(Status.BAD_REQUEST, "Bad sort spec: " + node);
         }
 
         JsonNode directionNode = node.get(JSON_KEY_DIRECTION);

@@ -1,7 +1,7 @@
 package io.agrest.sencha.it;
 
 import io.agrest.EntityDelete;
-import io.agrest.LinkRest;
+import io.agrest.AgREST;
 import io.agrest.SimpleResponse;
 import io.agrest.it.fixture.JerseyTestOnDerby;
 import io.agrest.it.fixture.cayenne.E17;
@@ -69,7 +69,7 @@ public class Sencha_DELETE_IT extends JerseyTestOnDerby {
 
         @DELETE
         public SimpleResponse deleteE2_Batch(Collection<EntityDelete<E2>> deleted, @Context UriInfo uriInfo) {
-            return LinkRest.service(config).delete(E2.class, deleted);
+            return AgREST.service(config).delete(E2.class, deleted);
         }
     }
 
@@ -81,7 +81,7 @@ public class Sencha_DELETE_IT extends JerseyTestOnDerby {
 
         @DELETE
         public SimpleResponse delete_Batch(Collection<EntityDelete<E17>> deleted) {
-            return LinkRest.service(config).delete(E17.class, deleted);
+            return AgREST.service(config).delete(E17.class, deleted);
         }
     }
 

@@ -1,7 +1,7 @@
 package io.swagger.codegen.languages;
 
-import io.swagger.codegen.LinkRestCodegenOperation;
-import io.swagger.codegen.languages.features.LinkRestServerFeatures;
+import io.swagger.codegen.AgRESTCodegenOperation;
+import io.swagger.codegen.languages.features.AgRESTServerFeatures;
 import io.swagger.v3.oas.models.Operation;
 import org.openapitools.codegen.CliOption;
 import org.openapitools.codegen.CodegenModel;
@@ -21,23 +21,23 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public class LinkRestServerCodegen extends AbstractJavaJAXRSServerCodegen implements LinkRestServerFeatures {
-    private static final Logger LOGGER = LoggerFactory.getLogger(io.swagger.codegen.languages.LinkRestServerCodegen.class);
+public class AgRESTServerCodegen extends AbstractJavaJAXRSServerCodegen implements AgRESTServerFeatures {
+    private static final Logger LOGGER = LoggerFactory.getLogger(AgRESTServerCodegen.class);
 
     private final Map<String, Set<CodegenProperty>> models = new HashMap<>();
 
     protected boolean generateForTesting = false;
 
-    public LinkRestServerCodegen() {
+    public AgRESTServerCodegen() {
         super();
-        artifactId = "swagger-jaxrs-linkrest-server";
+        artifactId = "swagger-jaxrs-agrest-server";
 
         supportsInheritance = true;
         sourceFolder = "src/main/java";
         implFolder = "src/main/java";
         testFolder = "src/test/java";
 
-        outputFolder = "generated-code/JavaJaxRS-LinkRest";
+        outputFolder = "generated-code/JavaJaxRS-AgREST";
 
         apiTestTemplateFiles.clear();
 
@@ -69,19 +69,19 @@ public class LinkRestServerCodegen extends AbstractJavaJAXRSServerCodegen implem
         importMapping.put("Start",      "io.agrest.protocol.Start");
         importMapping.put("Limit",      "io.agrest.protocol.Limit");
 
-        embeddedTemplateDir = templateDir = AbstractJavaJAXRSServerCodegen.JAXRS_TEMPLATE_DIRECTORY_NAME + File.separator + "linkrest";
+        embeddedTemplateDir = templateDir = AbstractJavaJAXRSServerCodegen.JAXRS_TEMPLATE_DIRECTORY_NAME + File.separator + "agrest";
 
         cliOptions.add(CliOption.newBoolean(GENERATE_FOR_TESTING, "Generates models and API's for testing purpose"));
     }
 
     @Override
     public String getName() {
-        return "linkrest";
+        return "agrest";
     }
 
     @Override
     public String getHelp() {
-        return "Generates LinkRest jaxrs API.";
+        return "Generates AgREST jaxrs API.";
     }
 
     @Override
@@ -120,7 +120,7 @@ public class LinkRestServerCodegen extends AbstractJavaJAXRSServerCodegen implem
         if ( operations != null && !models.isEmpty()) {
             @SuppressWarnings("unchecked")
             List<CodegenOperation> ops = (List<CodegenOperation>) operations.get("operation");
-            List<LinkRestCodegenOperation> newOps = new ArrayList<LinkRestCodegenOperation>();
+            List<AgRESTCodegenOperation> newOps = new ArrayList<AgRESTCodegenOperation>();
             for ( CodegenOperation operation : ops ) {
                 if (models.get(operation.baseName) == null) {
                     continue;
@@ -128,13 +128,13 @@ public class LinkRestServerCodegen extends AbstractJavaJAXRSServerCodegen implem
 
                 // Removes container from response
                 operation.returnType = operation.baseName;
-                LinkRestCodegenOperation lrOperation = new LinkRestCodegenOperation(operation);
+                AgRESTCodegenOperation lrOperation = new AgRESTCodegenOperation(operation);
                 // Stores model properties to use them as constraints
                 populateModelAttributes(lrOperation);
                 // Stores model relations to use them as constraints
                 for (final CodegenProperty prop : models.get(lrOperation.baseName)) {
                     if (prop.complexType != null && models.keySet().contains(prop.complexType)) {
-                        LinkRestCodegenOperation lrRelation = new LinkRestCodegenOperation();
+                        AgRESTCodegenOperation lrRelation = new AgRESTCodegenOperation();
                         lrRelation.returnType = lrRelation.baseName = prop.complexType;
                         lrRelation.bodyParam = new CodegenParameter();
                         lrRelation.bodyParam.paramName = prop.baseName;
@@ -151,7 +151,7 @@ public class LinkRestServerCodegen extends AbstractJavaJAXRSServerCodegen implem
         return objsResult;
     }
 
-    private void populateModelAttributes(LinkRestCodegenOperation lrOperation) {
+    private void populateModelAttributes(AgRESTCodegenOperation lrOperation) {
         if (models.get(lrOperation.baseName) != null) {
             for (final CodegenProperty prop : models.get(lrOperation.baseName)) {
                 // Selects plain attributes only
@@ -179,7 +179,7 @@ public class LinkRestServerCodegen extends AbstractJavaJAXRSServerCodegen implem
         }
     }
 
-    private void populateRelations(LinkRestCodegenOperation lrOperation, LinkRestCodegenOperation lrRelation) {
+    private void populateRelations(AgRESTCodegenOperation lrOperation, AgRESTCodegenOperation lrRelation) {
         // if path looks like /xxx/:id/yyy/:tid or /xxx/:id/yyy's, stores corresponding relation only
         if (lrOperation.isRelationPath()) {
             // copies queryParam's from parent operation to child relation

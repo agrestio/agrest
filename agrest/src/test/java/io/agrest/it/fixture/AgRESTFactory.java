@@ -9,24 +9,24 @@ import java.util.concurrent.ExecutorService;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.UriInfo;
 
-import io.agrest.runtime.ILinkRestService;
-import io.agrest.runtime.LinkRestBuilder;
-import io.agrest.runtime.LinkRestRuntime;
+import io.agrest.runtime.AgRESTBuilder;
+import io.agrest.runtime.IAgRESTService;
+import io.agrest.runtime.AgRESTRuntime;
 import org.apache.cayenne.configuration.server.ServerRuntime;
 import org.junit.rules.ExternalResource;
 
-public class LinkRestFactory extends ExternalResource {
+public class AgRESTFactory extends ExternalResource {
 
-	private LinkRestRuntime runtime;
+	private AgRESTRuntime runtime;
 	private ServerRuntime cayenneRuntime;
 
-	public LinkRestFactory(CayenneDerbyStack cayenneStack) {
+	public AgRESTFactory(CayenneDerbyStack cayenneStack) {
 		this.cayenneRuntime = cayenneStack.getCayenneStack();
 	}
 
 	@Override
 	protected void before() throws Throwable {
-		runtime = doBefore(LinkRestBuilder.builder(cayenneRuntime)).build();
+		runtime = doBefore(AgRESTBuilder.builder(cayenneRuntime)).build();
 	}
 
 	@Override
@@ -38,16 +38,16 @@ public class LinkRestFactory extends ExternalResource {
 	/**
 	 * Customized LR builder. A method for subclasses to override.
 	 */
-	protected LinkRestBuilder doBefore(LinkRestBuilder builder) {
+	protected AgRESTBuilder doBefore(AgRESTBuilder builder) {
 		return builder;
 	}
 
-	public LinkRestRuntime getRuntime() {
+	public AgRESTRuntime getRuntime() {
 		return Objects.requireNonNull(runtime);
 	}
 	
-	public ILinkRestService getLinkRestService() {
-		return getRuntime().service(ILinkRestService.class);
+	public IAgRESTService getAgRESTService() {
+		return getRuntime().service(IAgRESTService.class);
 	}
 	
 	public ExecutorService getExecutor() {

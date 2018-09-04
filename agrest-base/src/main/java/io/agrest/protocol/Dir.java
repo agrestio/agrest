@@ -1,7 +1,7 @@
 package io.agrest.protocol;
 
 /**
- * Represents 'dir' LinkRest protocol parameter.
+ * Represents 'dir' AgREST protocol parameter.
  *
  * @since 2.13
  */

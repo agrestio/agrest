@@ -19,8 +19,8 @@ import java.util.List;
  */
 public class ConstraintsHandler implements IConstraintsHandler {
 
-	public static final String DEFAULT_READ_CONSTRAINTS_LIST = "linkrest.constraints.read.list";
-	public static final String DEFAULT_WRITE_CONSTRAINTS_LIST = "linkrest.constraints.write.list";
+	public static final String DEFAULT_READ_CONSTRAINTS_LIST = "agrest.constraints.read.list";
+	public static final String DEFAULT_WRITE_CONSTRAINTS_LIST = "agrest.constraints.write.list";
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(ConstraintsHandler.class);
 

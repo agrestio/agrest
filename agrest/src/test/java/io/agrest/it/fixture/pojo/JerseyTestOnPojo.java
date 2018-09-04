@@ -1,7 +1,7 @@
 package io.agrest.it.fixture.pojo;
 
-import io.agrest.runtime.LinkRestBuilder;
-import io.agrest.runtime.adapter.LinkRestAdapter;
+import io.agrest.runtime.AgRESTBuilder;
+import io.agrest.runtime.adapter.AgRESTAdapter;
 import io.agrest.runtime.processor.select.SelectProcessorFactory;
 import org.apache.cayenne.di.Binder;
 import org.glassfish.jersey.server.ResourceConfig;
@@ -40,7 +40,7 @@ public abstract class JerseyTestOnPojo extends JerseyTest {
     @Override
     public Application configure() {
 
-        Feature lrFeature = new LinkRestBuilder().adapter(new LinkRestAdapter() {
+        Feature lrFeature = new AgRESTBuilder().adapter(new AgRESTAdapter() {
 
             @Override
             public void contributeToRuntime(Binder binder) {

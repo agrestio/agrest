@@ -3,7 +3,7 @@ public {{>returnTypes}} {{nickname}}({{#allParams}}{{>pathParams}}{{>queryParams
 
         {{>protocolImpl}}
 
-        return LinkRest.create({{{returnType}}}.class, config)
+        return AgREST.create({{{returnType}}}.class, config)
                     .request(agRequest)
                     .syncAndSelect({{#bodyParam}}{{paramName}}{{/bodyParam}});
     }
@@ -13,7 +13,7 @@ public DataResponse<{{#bodyParams}}{{dataType}}{{/bodyParams}}> {{nickname}}({{#
 
         {{>protocolImpl}}
 
-        return LinkRest.createOrUpdate({{#bodyParams}}{{dataType}}{{/bodyParams}}.class, config)
+        return AgREST.createOrUpdate({{#bodyParams}}{{dataType}}{{/bodyParams}}.class, config)
                     .parent({{returnType}}.class, {{#pathParams}}{{#-first}}{{paramName}}{{/-first}}{{/pathParams}}, "{{#modelRelations}}{{bodyParam.paramName}}{{/modelRelations}}")
                     .request(agRequest)
                     .syncAndSelect({{#bodyParam}}{{paramName}}{{/bodyParam}});

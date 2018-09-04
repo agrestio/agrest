@@ -1,6 +1,6 @@
 package io.agrest.runtime.cayenne.processor.unrelate;
 
-import io.agrest.LinkRestException;
+import io.agrest.AgRESTException;
 import io.agrest.meta.AgRelationship;
 import io.agrest.processor.Processor;
 import io.agrest.processor.ProcessorOutcome;
@@ -65,7 +65,7 @@ public class CayenneUnrelateDataStoreStage implements Processor<UnrelateContext<
             // sanity check...
             Collection<?> relatedCollection = (Collection<?>) parent.readProperty(relationship.getName());
             if (!relatedCollection.contains(child)) {
-                throw new LinkRestException(Response.Status.EXPECTATION_FAILED, "Source and target are not related");
+                throw new AgRESTException(Response.Status.EXPECTATION_FAILED, "Source and target are not related");
             }
 
             parent.removeToManyTarget(relationship.getName(), child, true);
@@ -73,7 +73,7 @@ public class CayenneUnrelateDataStoreStage implements Processor<UnrelateContext<
 
             // sanity check...
             if (parent.readProperty(relationship.getName()) != child) {
-                throw new LinkRestException(Response.Status.EXPECTATION_FAILED, "Source and target are not related");
+                throw new AgRESTException(Response.Status.EXPECTATION_FAILED, "Source and target are not related");
             }
 
             parent.setToOneTarget(relationship.getName(), null, true);
@@ -119,7 +119,7 @@ public class CayenneUnrelateDataStoreStage implements Processor<UnrelateContext<
         Object object = getOptionalExistingObject(type, context, id);
         if (object == null) {
             ObjEntity entity = context.getEntityResolver().getObjEntity(type);
-            throw new LinkRestException(Response.Status.NOT_FOUND, "No object for ID '" + id + "' and entity '"
+            throw new AgRESTException(Response.Status.NOT_FOUND, "No object for ID '" + id + "' and entity '"
                     + entity.getName() + "'");
         }
 
@@ -134,7 +134,7 @@ public class CayenneUnrelateDataStoreStage implements Processor<UnrelateContext<
 
         // sanity checking...
         if (entity == null) {
-            throw new LinkRestException(Response.Status.INTERNAL_SERVER_ERROR, "Unknown entity class: " + type);
+            throw new AgRESTException(Response.Status.INTERNAL_SERVER_ERROR, "Unknown entity class: " + type);
         }
 
         // TODO: should we start using optimistic locking on PK by default

@@ -1,11 +1,11 @@
 package io.agrest.runtime.processor.update;
 
+import io.agrest.AgRESTException;
 import io.agrest.AgRequest;
 import io.agrest.CompoundObjectId;
 import io.agrest.DataResponse;
 import io.agrest.EntityParent;
 import io.agrest.EntityUpdate;
-import io.agrest.LinkRestException;
 import io.agrest.AgObjectId;
 import io.agrest.ObjectMapperFactory;
 import io.agrest.ResourceEntity;
@@ -100,7 +100,7 @@ public class UpdateContext<T> extends BaseProcessingContext<T> {
 		Collection<EntityUpdate<T>> updates = getUpdates();
 
 		if (updates.size() != 1) {
-			throw new LinkRestException(Status.INTERNAL_SERVER_ERROR,
+			throw new AgRESTException(Status.INTERNAL_SERVER_ERROR,
 					"Expected one object in update. Actual: " + updates.size());
 		}
 
@@ -285,7 +285,7 @@ public class UpdateContext<T> extends BaseProcessingContext<T> {
 	 * 			// Explicit query parameter
 	 * 			AgRequest agRequest = AgRequest.builder().cayenneExp(cayenneExp).build();
 	 *
-	 * 			return LinkRest.service(config).select(E2.class)
+	 * 			return AgREST.service(config).select(E2.class)
 	 * 							.uri(uriInfo)
 	 * 							.request(agRequest) // overrides parameters from uriInfo
 	 * 							.get();

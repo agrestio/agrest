@@ -1,7 +1,7 @@
 package io.agrest.runtime.protocol;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import io.agrest.LinkRestException;
+import io.agrest.AgRESTException;
 import io.agrest.protocol.Include;
 import io.agrest.runtime.jackson.IJacksonService;
 import org.apache.cayenne.di.Inject;
@@ -99,7 +99,7 @@ public class IncludeParser implements IIncludeParser {
                 } else if (child.isTextual()) {
                     include = new Include(child.asText());
                 } else {
-                    throw new LinkRestException(Response.Status.BAD_REQUEST, "Bad include spec: " + child);
+                    throw new AgRESTException(Response.Status.BAD_REQUEST, "Bad include spec: " + child);
                 }
 
                 if (include != null) {

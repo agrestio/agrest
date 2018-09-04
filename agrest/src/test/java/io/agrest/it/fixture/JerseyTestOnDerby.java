@@ -1,7 +1,7 @@
 package io.agrest.it.fixture;
 
-import io.agrest.runtime.LinkRestBuilder;
-import io.agrest.runtime.LinkRestRuntime;
+import io.agrest.runtime.AgRESTBuilder;
+import io.agrest.runtime.AgRESTRuntime;
 import org.apache.cayenne.ObjectContext;
 import org.apache.cayenne.exp.Expression;
 import org.apache.cayenne.exp.Property;
@@ -21,7 +21,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 
 /**
- * A main superclass of LinkRest unit tests that require full stack Jersey
+ * A main superclass of AgREST unit tests that require full stack Jersey
  * container.
  */
 public abstract class JerseyTestOnDerby extends JerseyTest {
@@ -53,7 +53,7 @@ public abstract class JerseyTestOnDerby extends JerseyTest {
     @Override
     public Application configure() {
 
-        LinkRestRuntime lrFeature = doConfigure().build();
+        AgRESTRuntime lrFeature = doConfigure().build();
 
         Feature unitFeature = context -> {
             doAddResources(context);
@@ -65,8 +65,8 @@ public abstract class JerseyTestOnDerby extends JerseyTest {
                 .register(lrFeature);
     }
 
-    protected LinkRestBuilder doConfigure() {
-        return LinkRestBuilder.builder(DB_STACK.getCayenneStack());
+    protected AgRESTBuilder doConfigure() {
+        return AgRESTBuilder.builder(DB_STACK.getCayenneStack());
     }
 
     protected abstract void doAddResources(FeatureContext context);

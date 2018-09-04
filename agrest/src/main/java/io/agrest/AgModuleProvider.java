@@ -1,6 +1,6 @@
 package io.agrest;
 
-import io.agrest.runtime.LinkRestRuntime;
+import io.agrest.runtime.AgRESTRuntime;
 import org.apache.cayenne.di.Module;
 import org.apache.cayenne.di.spi.ModuleProvider;
 
@@ -8,7 +8,7 @@ import java.util.Collection;
 import java.util.Collections;
 
 /**
- * Provider of extension modules for {@link LinkRestRuntime}. Used either directly or via {@link java.util.ServiceLoader}
+ * Provider of extension modules for {@link AgRESTRuntime}. Used either directly or via {@link java.util.ServiceLoader}
  * API.
  *
  * @since 2.10

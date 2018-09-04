@@ -1,7 +1,7 @@
 package io.agrest.sencha.it;
 
+import io.agrest.AgREST;
 import io.agrest.DataResponse;
-import io.agrest.LinkRest;
 import io.agrest.SelectStage;
 import io.agrest.it.fixture.JerseyTestOnDerby;
 import io.agrest.it.fixture.cayenne.E2;
@@ -246,31 +246,31 @@ public class Sencha_GET_IT extends JerseyTestOnDerby {
 		@GET
         @Path("e2")
 		public DataResponse<E2> getE2(@Context UriInfo uriInfo) {
-			return LinkRest.service(config).select(E2.class).uri(uriInfo).get();
+			return AgREST.service(config).select(E2.class).uri(uriInfo).get();
 		}
 
 		@GET
 		@Path("e2/{id}")
 		public DataResponse<E2> getE2ById(@PathParam("id") int id, @Context UriInfo uriInfo) {
-			return LinkRest.service(config).selectById(E2.class, id, uriInfo);
+			return AgREST.service(config).selectById(E2.class, id, uriInfo);
 		}
 
         @GET
         @Path("e3")
         public DataResponse<E3> get(@Context UriInfo uriInfo) {
-            return LinkRest.service(config).select(E3.class).uri(uriInfo).get();
+            return AgREST.service(config).select(E3.class).uri(uriInfo).get();
         }
 
         @GET
         @Path("e3/{id}")
         public DataResponse<E3> getById(@PathParam("id") int id, @Context UriInfo uriInfo) {
-            return LinkRest.service(config).selectById(E3.class, id, uriInfo);
+            return AgREST.service(config).selectById(E3.class, id, uriInfo);
         }
 
         @GET
         @Path("e2_startwith_pr")
         public DataResponse<E2> getE2_StartsWith_ParseRequest(@Context UriInfo uriInfo) {
-            return LinkRest
+            return AgREST
                     .service(config)
                     .select(E2.class)
                     .stage(SelectStage.CREATE_ENTITY, SenchaOps.startsWithFilter(E2.NAME, uriInfo))
@@ -280,7 +280,7 @@ public class Sencha_GET_IT extends JerseyTestOnDerby {
 		@GET
 		@Path("e2_startwith_aq")
 		public DataResponse<E2> getE2_StartsWith_AssembleQuery(@Context UriInfo uriInfo) {
-			return LinkRest
+			return AgREST
 					.service(config)
 					.select(E2.class)
 					.stage(SelectStage.ASSEMBLE_QUERY, SenchaOps.startsWithFilter(E2.NAME, uriInfo))

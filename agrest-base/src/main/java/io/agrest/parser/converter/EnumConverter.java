@@ -1,7 +1,7 @@
 package io.agrest.parser.converter;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import io.agrest.LinkRestException;
+import io.agrest.AgRESTException;
 
 import javax.ws.rs.core.Response;
 
@@ -26,7 +26,7 @@ public class EnumConverter<T extends Enum<T>> extends AbstractConverter<T> {
         try {
             return Enum.valueOf(enumType, string);
         } catch (IllegalArgumentException e) {
-            throw new LinkRestException(Response.Status.BAD_REQUEST,
+            throw new AgRESTException(Response.Status.BAD_REQUEST,
                     "Invalid enum value: " + string);
         }
     }

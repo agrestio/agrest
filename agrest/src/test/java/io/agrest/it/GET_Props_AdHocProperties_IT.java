@@ -1,7 +1,7 @@
 package io.agrest.it;
 
+import io.agrest.AgREST;
 import io.agrest.DataResponse;
-import io.agrest.LinkRest;
 import io.agrest.MetadataResponse;
 import io.agrest.annotation.AgAttribute;
 import io.agrest.it.fixture.JerseyTestOnDerby;
@@ -9,7 +9,7 @@ import io.agrest.it.fixture.cayenne.E2;
 import io.agrest.it.fixture.cayenne.E3;
 import io.agrest.it.fixture.cayenne.E4;
 import io.agrest.meta.AgEntityOverlay;
-import io.agrest.runtime.LinkRestBuilder;
+import io.agrest.runtime.AgRESTBuilder;
 import org.junit.Test;
 
 import javax.ws.rs.GET;
@@ -33,7 +33,7 @@ public class GET_Props_AdHocProperties_IT extends JerseyTestOnDerby {
     }
 
     @Override
-    protected LinkRestBuilder doConfigure() {
+    protected AgRESTBuilder doConfigure() {
         // try all possible adhoc properties...
         AgEntityOverlay<E4> e4Overlay = new AgEntityOverlay<>(E4.class)
                 .addAttribute("adhocString", String.class, e4 -> e4.getCVarchar() + "*")
@@ -205,19 +205,19 @@ public class GET_Props_AdHocProperties_IT extends JerseyTestOnDerby {
         @GET
         @Path("e3")
         public DataResponse<E3> getE3(@Context UriInfo uriInfo) {
-            return LinkRest.service(config).select(E3.class).uri(uriInfo).get();
+            return AgREST.service(config).select(E3.class).uri(uriInfo).get();
         }
 
         @GET
         @Path("e4")
         public DataResponse<E4> getE4(@Context UriInfo uriInfo) {
-            return LinkRest.service(config).select(E4.class).uri(uriInfo).get();
+            return AgREST.service(config).select(E4.class).uri(uriInfo).get();
         }
 
         @GET
         @Path("e4/meta")
         public MetadataResponse<E4> getMetaE4(@Context UriInfo uriInfo) {
-            return LinkRest.metadata(E4.class, config).forResource(Resource.class).uri(uriInfo).process();
+            return AgREST.metadata(E4.class, config).forResource(Resource.class).uri(uriInfo).process();
         }
     }
 }

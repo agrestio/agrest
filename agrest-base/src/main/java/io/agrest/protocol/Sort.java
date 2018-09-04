@@ -4,7 +4,7 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * Represents 'sort' LinkRest protocol parameter.
+ * Represents 'sort' AgREST protocol parameter.
  *
  * @since 2.13
  */

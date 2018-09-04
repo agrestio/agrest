@@ -10,7 +10,7 @@ import io.agrest.encoder.GenericEncoder;
 import io.agrest.meta.AgResource;
 
 /**
- * A response object that represents a 'Metadata Document' from LinkRest
+ * A response object that represents a 'Metadata Document' from AgREST
  * protocol.
  * 
  * @since 1.18

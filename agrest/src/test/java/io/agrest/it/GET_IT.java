@@ -1,7 +1,7 @@
 package io.agrest.it;
 
+import io.agrest.AgREST;
 import io.agrest.DataResponse;
-import io.agrest.LinkRest;
 import io.agrest.encoder.DateTimeFormatters;
 import io.agrest.it.fixture.JerseyTestOnDerby;
 import io.agrest.it.fixture.cayenne.E17;
@@ -413,49 +413,49 @@ public class GET_IT extends JerseyTestOnDerby {
         @GET
         @Path("e2")
         public DataResponse<E2> getE2(@Context UriInfo uriInfo) {
-            return LinkRest.service(config).select(E2.class).uri(uriInfo).get();
+            return AgREST.service(config).select(E2.class).uri(uriInfo).get();
         }
 
         @GET
         @Path("e2/{id}")
         public DataResponse<E2> getE2ById(@PathParam("id") int id, @Context UriInfo uriInfo) {
-            return LinkRest.service(config).selectById(E2.class, id, uriInfo);
+            return AgREST.service(config).selectById(E2.class, id, uriInfo);
         }
 
         @GET
         @Path("e3")
         public DataResponse<E3> getE3(@Context UriInfo uriInfo) {
-            return LinkRest.service(config).select(E3.class).uri(uriInfo).get();
+            return AgREST.service(config).select(E3.class).uri(uriInfo).get();
         }
 
         @GET
         @Path("e3/{id}")
         public DataResponse<E3> getE3ById(@PathParam("id") int id, @Context UriInfo uriInfo) {
-            return LinkRest.service(config).selectById(E3.class, id, uriInfo);
+            return AgREST.service(config).selectById(E3.class, id, uriInfo);
         }
 
         @GET
         @Path("e4")
         public DataResponse<E4> getE4(@Context UriInfo uriInfo) {
-            return LinkRest.service(config).select(E4.class).uri(uriInfo).get();
+            return AgREST.service(config).select(E4.class).uri(uriInfo).get();
         }
 
         @GET
         @Path("e4/{id}")
         public DataResponse<E4> getE4_WithIncludeExclude(@PathParam("id") int id, @Context UriInfo uriInfo) {
-            return LinkRest.service(config).selectById(E4.class, id, uriInfo);
+            return AgREST.service(config).selectById(E4.class, id, uriInfo);
         }
 
         @GET
         @Path("e6/{id}")
         public DataResponse<E6> getOneE6(@PathParam("id") String id) {
-            return LinkRest.service(config).selectById(E6.class, id);
+            return AgREST.service(config).selectById(E6.class, id);
         }
 
         @GET
         @Path("e19/{id}")
         public DataResponse<E19> getById(@Context UriInfo uriInfo, @PathParam("id") Integer id) {
-            return LinkRest.select(E19.class, config).uri(uriInfo).byId(id).getOne();
+            return AgREST.select(E19.class, config).uri(uriInfo).byId(id).getOne();
         }
 
         @GET
@@ -469,7 +469,7 @@ public class GET_IT extends JerseyTestOnDerby {
             ids.put(E17.ID1_PK_COLUMN, id1);
             ids.put(E17.ID2_PK_COLUMN, id2);
 
-            return LinkRest.select(E17.class, config).uri(uriInfo).byId(ids).getOne();
+            return AgREST.select(E17.class, config).uri(uriInfo).byId(ids).getOne();
         }
     }
 

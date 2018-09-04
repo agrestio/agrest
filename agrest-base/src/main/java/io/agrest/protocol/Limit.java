@@ -1,7 +1,7 @@
 package io.agrest.protocol;
 
 /**
- * Represents 'limit' LinkRest protocol parameter.
+ * Represents 'limit' AgREST protocol parameter.
  *
  * @since 2.13
  */

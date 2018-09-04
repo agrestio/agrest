@@ -1,6 +1,6 @@
 package io.agrest.sencha.runtime.entity;
 
-import io.agrest.LinkRestException;
+import io.agrest.AgRESTException;
 import io.agrest.it.fixture.cayenne.E4;
 import io.agrest.meta.AgEntity;
 import io.agrest.runtime.entity.ExpressionPostProcessor;
@@ -72,7 +72,7 @@ public class SenchaFilterExpressionCompilerTest extends TestWithCayenneMapping {
                 new Filter("cVarchar", "123", "like", false, false));
     }
 
-    @Test(expected = LinkRestException.class)
+    @Test(expected = AgRESTException.class)
     public void testProcess_InvalidProperty() {
         assertNull(process(new Filter("cDummp", "xyz", "like", false, false)));
     }

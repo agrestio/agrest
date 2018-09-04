@@ -25,7 +25,7 @@ public class CayenneDerbyStack extends ExternalResource {
     public void before() {
         derby = new DerbyManager(dbPath);
 
-        cayenne = ServerRuntime.builder().addConfig("cayenne-linkrest-tests.xml")
+        cayenne = ServerRuntime.builder().addConfig("cayenne-agrest-tests.xml")
                 .addModule(binder ->
                         binder.bind(SchemaUpdateStrategyFactory.class).toInstance(descriptor -> new CreateIfNoSchemaStrategy()))
                 .addModule(binder -> ServerModule.contributeDomainFilters(binder).add(new DynamicModelLoader()))

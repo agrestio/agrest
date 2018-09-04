@@ -16,9 +16,9 @@ import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.ext.MessageBodyReader;
 import javax.ws.rs.ext.Provider;
 
+import io.agrest.AgRESTException;
 import io.agrest.EntityUpdate;
-import io.agrest.LinkRestException;
-import io.agrest.runtime.LinkRestRuntime;
+import io.agrest.runtime.AgRESTRuntime;
 import io.agrest.runtime.meta.IMetadataService;
 import io.agrest.runtime.protocol.IEntityUpdateParser;
 
@@ -34,8 +34,8 @@ public class EntityUpdateReader implements MessageBodyReader<EntityUpdate<?>> {
 	private EntityUpdateReaderProcessor reader;
 
 	public EntityUpdateReader(@Context Configuration config) {
-		this.reader = new EntityUpdateReaderProcessor(LinkRestRuntime.service(IEntityUpdateParser.class, config),
-				LinkRestRuntime.service(IMetadataService.class, config));
+		this.reader = new EntityUpdateReaderProcessor(AgRESTRuntime.service(IEntityUpdateParser.class, config),
+				AgRESTRuntime.service(IMetadataService.class, config));
 	}
 
 	@Override
@@ -51,11 +51,11 @@ public class EntityUpdateReader implements MessageBodyReader<EntityUpdate<?>> {
 		Collection<EntityUpdate<Object>> updates = reader.read(genericType, entityStream);
 
 		if (updates.isEmpty()) {
-			throw new LinkRestException(Status.BAD_REQUEST, "No update");
+			throw new AgRESTException(Status.BAD_REQUEST, "No update");
 		}
 
 		if (updates.size() > 1) {
-			throw new LinkRestException(Status.BAD_REQUEST, "Expected single update. Found: " + updates.size());
+			throw new AgRESTException(Status.BAD_REQUEST, "Expected single update. Found: " + updates.size());
 		}
 
 		return updates.iterator().next();

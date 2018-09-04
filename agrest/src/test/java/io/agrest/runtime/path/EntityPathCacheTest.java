@@ -7,7 +7,7 @@ import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
-import io.agrest.LinkRestException;
+import io.agrest.AgRESTException;
 import io.agrest.it.fixture.cayenne.E1;
 import io.agrest.it.fixture.cayenne.E17;
 import io.agrest.it.fixture.cayenne.E2;
@@ -77,7 +77,7 @@ public class EntityPathCacheTest extends TestWithCayenneMapping {
 		assertSame(pd, cache.getPathDescriptor(new ASTObjPath("e2.name")));
 	}
 
-	@Test(expected = LinkRestException.class)
+	@Test(expected = AgRESTException.class)
 	public void testGetPathDescriptor_BadPath() {
 		EntityPathCache cache = new EntityPathCache(getLrEntity(E3.class));
 		cache.getPathDescriptor(new ASTObjPath("e2.xyz"));

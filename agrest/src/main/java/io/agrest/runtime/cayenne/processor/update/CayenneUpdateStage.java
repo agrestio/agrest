@@ -1,7 +1,7 @@
 package io.agrest.runtime.cayenne.processor.update;
 
+import io.agrest.AgRESTException;
 import io.agrest.EntityUpdate;
-import io.agrest.LinkRestException;
 import io.agrest.ObjectMapper;
 import io.agrest.ObjectMapperFactory;
 import io.agrest.meta.AgEntity;
@@ -45,7 +45,7 @@ public class CayenneUpdateStage extends CayenneUpdateDataStoreStage {
 
             // a null can only mean some algorithm malfunction
             if (updates == null) {
-                throw new LinkRestException(Response.Status.INTERNAL_SERVER_ERROR, "Invalid key item: " + key);
+                throw new AgRESTException(Response.Status.INTERNAL_SERVER_ERROR, "Invalid key item: " + key);
             }
 
             updateSingle(context, o, updates);
@@ -61,11 +61,11 @@ public class CayenneUpdateStage extends CayenneUpdateDataStoreStage {
             Object firstKey = keyMap.keySet().iterator().next();
 
             if (firstKey == null) {
-                throw new LinkRestException(Response.Status.BAD_REQUEST, "Can't update. No id for object");
+                throw new AgRESTException(Response.Status.BAD_REQUEST, "Can't update. No id for object");
             }
 
             AgEntity<?> entity = context.getEntity().getAgEntity();
-            throw new LinkRestException(Response.Status.NOT_FOUND, "No object for ID '" + firstKey + "' and entity '"
+            throw new AgRESTException(Response.Status.NOT_FOUND, "No object for ID '" + firstKey + "' and entity '"
                     + entity.getName() + "'");
         }
     }
@@ -126,7 +126,7 @@ public class CayenneUpdateStage extends CayenneUpdateDataStoreStage {
 
         List<T> objects = CayenneUpdateStartStage.cayenneContext(context).select(query);
         if (context.isById() && objects.size() > 1) {
-            throw new LinkRestException(Response.Status.INTERNAL_SERVER_ERROR, String.format(
+            throw new AgRESTException(Response.Status.INTERNAL_SERVER_ERROR, String.format(
                     "Found more than one object for ID '%s' and entity '%s'",
                     context.getId(), context.getEntity().getAgEntity().getName()));
         }

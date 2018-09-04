@@ -144,7 +144,7 @@ public interface UpdateBuilder<T> {
     /**
      * Registers a consumer to be executed after the specified standard execution stage. The rest of the standard pipeline
      * following the named stage will be skipped. This is useful for quick assembly of custom backends that reuse the
-     * initial stages of LinkRest processing, but query the data store on their own. The consumer can inspect and modify
+     * initial stages of AgREST processing, but query the data store on their own. The consumer can inspect and modify
      * provided {@link UpdateContext}.
      * <p>This operation is composable. For each stage all custom processors will be invoked in the order they were
      * registered.</p>
@@ -187,7 +187,7 @@ public interface UpdateBuilder<T> {
      * 			// Explicit query parameter
      * 			AgRequest agRequest = AgRequest.builder().cayenneExp(cayenneExp).build();
      *
-     * 			return LinkRest.service(config).select(E2.class)
+     * 			return AgREST.service(config).select(E2.class)
      * 							.uri(uriInfo)
      * 							.request(agRequest) // overwrite parameters from uriInfo
      * 							.get();

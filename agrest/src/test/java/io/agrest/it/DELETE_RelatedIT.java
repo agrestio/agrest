@@ -1,7 +1,7 @@
 package io.agrest.it;
 
+import io.agrest.AgREST;
 import io.agrest.EntityDelete;
-import io.agrest.LinkRest;
 import io.agrest.SimpleResponse;
 import io.agrest.it.fixture.JerseyTestOnDerby;
 import io.agrest.it.fixture.cayenne.E2;
@@ -146,19 +146,19 @@ public class DELETE_RelatedIT extends JerseyTestOnDerby {
         @DELETE
         @Path("{id}")
         public SimpleResponse deleteE2ById(@PathParam("id") int id, @Context UriInfo uriInfo) {
-            return LinkRest.service(config).delete(E2.class, id);
+            return AgREST.service(config).delete(E2.class, id);
         }
 
         @DELETE
         public SimpleResponse deleteE2_Batch(Collection<EntityDelete<E2>> deleted, @Context UriInfo uriInfo) {
-            return LinkRest.service(config).delete(E2.class, deleted);
+            return AgREST.service(config).delete(E2.class, deleted);
         }
 
         @DELETE
         @Path("{id}/{rel}/{tid}")
         public SimpleResponse deleteToMany(@PathParam("id") int id, @PathParam("rel") String relationship,
                                            @PathParam("tid") int tid) {
-            return LinkRest.service(config).unrelate(E2.class, id, relationship, tid);
+            return AgREST.service(config).unrelate(E2.class, id, relationship, tid);
         }
     }
 
@@ -171,14 +171,14 @@ public class DELETE_RelatedIT extends JerseyTestOnDerby {
         @DELETE
         @Path("{id}/e2")
         public SimpleResponse deleteE2_Implicit(@PathParam("id") int id) {
-            return LinkRest.service(config).unrelate(E3.class, id, E3.E2);
+            return AgREST.service(config).unrelate(E3.class, id, E3.E2);
         }
 
 
         @DELETE
         @Path("{id}/e2/{tid}")
         public SimpleResponse deleteE2(@PathParam("id") int id, @PathParam("tid") int tid) {
-            return LinkRest.service(config).unrelate(E3.class, id, E3.E2, tid);
+            return AgREST.service(config).unrelate(E3.class, id, E3.E2, tid);
         }
     }
 
@@ -191,7 +191,7 @@ public class DELETE_RelatedIT extends JerseyTestOnDerby {
         @DELETE
         @Path("{id}/e7s")
         public SimpleResponse deleteE7s(@PathParam("id") int id, String entityData) {
-            return LinkRest.delete(E7.class, config).toManyParent(E8.class, id, E8.E7S).delete();
+            return AgREST.delete(E7.class, config).toManyParent(E8.class, id, E8.E7S).delete();
         }
     }
 

@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.node.DoubleNode;
 import com.fasterxml.jackson.databind.node.FloatNode;
 import com.fasterxml.jackson.databind.node.IntNode;
 import com.fasterxml.jackson.databind.node.TextNode;
-import io.agrest.LinkRestException;
+import io.agrest.AgRESTException;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -63,22 +63,22 @@ public class FloatConverterTest {
         assertEquals(Float.valueOf(Float.NEGATIVE_INFINITY), convert("-Infinity"));
     }
 
-    @Test(expected = LinkRestException.class)
+    @Test(expected = AgRESTException.class)
     public void testConverter_TooLarge_Positive() {
         FloatConverter.converter().value(new DoubleNode(Float.MAX_VALUE * 1.1d));
     }
 
-    @Test(expected = LinkRestException.class)
+    @Test(expected = AgRESTException.class)
     public void testConverter_TooSmall_Positive() {
         FloatConverter.converter().value(new DoubleNode(Float.MIN_VALUE * 0.9d));
     }
 
-    @Test(expected = LinkRestException.class)
+    @Test(expected = AgRESTException.class)
     public void testConverter_TooLarge_Negative() {
         FloatConverter.converter().value(new DoubleNode(Float.MAX_VALUE * -1.1d));
     }
 
-    @Test(expected = LinkRestException.class)
+    @Test(expected = AgRESTException.class)
     public void testConverter_TooSmall_Negative() {
         FloatConverter.converter().value(new DoubleNode(Float.MIN_VALUE * -0.9d));
     }

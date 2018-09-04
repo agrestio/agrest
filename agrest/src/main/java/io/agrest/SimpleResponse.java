@@ -1,7 +1,7 @@
 package io.agrest;
 
 /**
- * A response object that represents a 'Simple Document' from LinkRest protocol .
+ * A response object that represents a 'Simple Document' from AgREST protocol .
  */
 public class SimpleResponse extends AgResponse {
 

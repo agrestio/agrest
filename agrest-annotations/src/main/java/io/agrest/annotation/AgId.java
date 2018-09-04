@@ -8,7 +8,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
  * Annotates a getter of a property in a POJO to indicate that the property is a
- * LinkRest-exposed ID attribute.
+ * AgREST-exposed ID attribute.
  * 
  * @since 1.15
  */

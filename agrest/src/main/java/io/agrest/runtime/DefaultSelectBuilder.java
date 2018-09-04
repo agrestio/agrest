@@ -1,9 +1,9 @@
 package io.agrest.runtime;
 
+import io.agrest.AgRESTException;
 import io.agrest.DataResponse;
 import io.agrest.EntityParent;
 import io.agrest.EntityProperty;
-import io.agrest.LinkRestException;
 import io.agrest.AgRequest;
 import io.agrest.SelectBuilder;
 import io.agrest.SelectStage;
@@ -162,7 +162,7 @@ public class DefaultSelectBuilder<T> implements SelectBuilder<T> {
         // select
 
         if (id == null) {
-            throw new LinkRestException(Status.NOT_FOUND, "Null 'id'");
+            throw new AgRESTException(Status.NOT_FOUND, "Null 'id'");
         }
 
         context.setId(id);
@@ -174,7 +174,7 @@ public class DefaultSelectBuilder<T> implements SelectBuilder<T> {
 
         for (Object id : ids.entrySet()) {
             if (id == null) {
-                throw new LinkRestException(Status.NOT_FOUND, "Part of compound ID is null");
+                throw new AgRESTException(Status.NOT_FOUND, "Part of compound ID is null");
             }
         }
 

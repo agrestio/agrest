@@ -1,7 +1,7 @@
 package io.agrest.runtime.protocol;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import io.agrest.LinkRestException;
+import io.agrest.AgRESTException;
 import io.agrest.protocol.MapBy;
 
 import javax.ws.rs.core.Response;
@@ -25,7 +25,7 @@ public class MapByParser implements IMapByParser {
         if (json != null) {
 
             if (!json.isTextual()) {
-                throw new LinkRestException(Response.Status.BAD_REQUEST, "Expected textual value, got: " + json);
+                throw new AgRESTException(Response.Status.BAD_REQUEST, "Expected textual value, got: " + json);
             }
 
             return fromString(json.asText());

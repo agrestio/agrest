@@ -1,6 +1,6 @@
 package io.agrest.meta.compiler;
 
-import io.agrest.LinkRestException;
+import io.agrest.AgRESTException;
 import io.agrest.annotation.AgAttribute;
 import io.agrest.annotation.AgId;
 import io.agrest.it.fixture.pojo.model.P8;
@@ -63,7 +63,7 @@ public class PojoEntityCompilerTest {
 		try {
 			entity.getAttributes();
 			fail("Exception expected");
-		} catch (LinkRestException e) {
+		} catch (AgRESTException e) {
 			assertTrue(e.getMessage(), e.getMessage().startsWith("Invalid entity '"));
 		}
 	}

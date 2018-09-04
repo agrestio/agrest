@@ -1,7 +1,7 @@
 package io.agrest.it;
 
+import io.agrest.AgREST;
 import io.agrest.DataResponse;
-import io.agrest.LinkRest;
 import io.agrest.it.fixture.JerseyTestOnDerby;
 import io.agrest.it.fixture.cayenne.E20;
 import io.agrest.it.fixture.cayenne.E21;
@@ -83,7 +83,7 @@ public class GET_NaturalIdIT extends JerseyTestOnDerby {
         @GET
         @Path("single-id/{id}")
         public DataResponse<E20> getE20ById(@PathParam("id") String name, @Context UriInfo uriInfo) {
-            return LinkRest.service(config).selectById(E20.class, name, uriInfo);
+            return AgREST.service(config).selectById(E20.class, name, uriInfo);
         }
 
         @GET
@@ -93,7 +93,7 @@ public class GET_NaturalIdIT extends JerseyTestOnDerby {
             Map<String, Object> id = new HashMap<>(3);
             id.put("age", age);
             id.put("name", name);
-            return LinkRest.service(config).select(E21.class).byId(id).uri(uriInfo).getOne();
+            return AgREST.service(config).select(E21.class).byId(id).uri(uriInfo).getOne();
         }
     }
 }

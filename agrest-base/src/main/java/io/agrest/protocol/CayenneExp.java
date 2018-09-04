@@ -7,7 +7,7 @@ import java.util.Map;
 import static java.util.Arrays.asList;
 
 /**
- * Represents 'cayenneExp' LinkRest protocol parameter.
+ * Represents 'cayenneExp' AgREST protocol parameter.
  *
  * @since 2.13
  */

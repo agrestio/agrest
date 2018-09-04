@@ -13,7 +13,7 @@ public interface Constraint<T> extends Function<AgEntity<T>, ConstrainedLrEntity
 
     /**
      * @param type a root type for constraints.
-     * @param <T>  LinkRest entity type.
+     * @param <T>  AgREST entity type.
      * @return a new Constraints instance.
      */
     static <T> ConstraintsBuilder<T> excludeAll(Class<T> type) {
@@ -22,7 +22,7 @@ public interface Constraint<T> extends Function<AgEntity<T>, ConstrainedLrEntity
 
     /**
      * @param type a root type for constraints.
-     * @param <T>  LinkRest entity type.
+     * @param <T>  AgREST entity type.
      * @return a new Constraints instance.
      */
     static <T> ConstraintsBuilder<T> idOnly(Class<T> type) {
@@ -31,7 +31,7 @@ public interface Constraint<T> extends Function<AgEntity<T>, ConstrainedLrEntity
 
     /**
      * @param type a root type for constraints.
-     * @param <T>  LinkRest entity type.
+     * @param <T>  AgREST entity type.
      * @return a new Constraints instance.
      */
     static <T> ConstraintsBuilder<T> idAndAttributes(Class<T> type) {

@@ -1,10 +1,10 @@
 package io.agrest.it;
 
+import io.agrest.AgREST;
 import io.agrest.DataResponse;
-import io.agrest.LinkRest;
 import io.agrest.it.fixture.JerseyTestOnDerby;
 import io.agrest.it.fixture.cayenne.E4;
-import io.agrest.runtime.LinkRestBuilder;
+import io.agrest.runtime.AgRESTBuilder;
 import org.junit.Test;
 
 import javax.ws.rs.GET;
@@ -28,7 +28,7 @@ public class GET_Props_TransientProperty_IT extends JerseyTestOnDerby {
     }
 
     @Override
-    protected LinkRestBuilder doConfigure() {
+    protected AgRESTBuilder doConfigure() {
         return super.doConfigure().transientProperty(E4.class, "derived");
     }
 
@@ -59,7 +59,7 @@ public class GET_Props_TransientProperty_IT extends JerseyTestOnDerby {
         @GET
         @Path("e4")
         public DataResponse<E4> get(@Context UriInfo uriInfo) {
-            return LinkRest.service(config).select(E4.class).uri(uriInfo).get();
+            return AgREST.service(config).select(E4.class).uri(uriInfo).get();
         }
     }
 }

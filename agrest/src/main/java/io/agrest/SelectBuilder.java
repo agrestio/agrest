@@ -5,7 +5,7 @@ import io.agrest.encoder.Encoder;
 import io.agrest.meta.AgEntityOverlay;
 import io.agrest.processor.Processor;
 import io.agrest.processor.ProcessorOutcome;
-import io.agrest.runtime.LinkRestBuilder;
+import io.agrest.runtime.AgRESTBuilder;
 import io.agrest.runtime.processor.select.SelectContext;
 import org.apache.cayenne.exp.Property;
 
@@ -15,7 +15,7 @@ import java.util.Map;
 import java.util.function.Consumer;
 
 /**
- * An object that allows to customize/extend LinkRest request processing.
+ * An object that allows to customize/extend AgREST request processing.
  * SelectBuilder instance is bootstrapped by the framework based on a user query
  * or a root entity and then configured by the user server-side code to achieve
  * the desired behavior. Finally {@link #get()} is called to get the results.
@@ -53,7 +53,7 @@ public interface SelectBuilder<T> {
     /**
      * Adds a custom property that is appended to the root {@link ResourceEntity}.
      *
-     * @see LinkRestBuilder#entityOverlay(AgEntityOverlay)
+     * @see AgRESTBuilder#entityOverlay(AgEntityOverlay)
      * @since 1.14
      */
     SelectBuilder<T> property(String name, EntityProperty clientProperty);
@@ -64,7 +64,7 @@ public interface SelectBuilder<T> {
      * "property", and default encoder is used. For more control over property
      * access and encoding use {@link #property(String, EntityProperty)}.
      *
-     * @see LinkRestBuilder#entityOverlay(AgEntityOverlay)
+     * @see AgRESTBuilder#entityOverlay(AgEntityOverlay)
      * @since 1.14
      */
     SelectBuilder<T> property(String name);
@@ -147,7 +147,7 @@ public interface SelectBuilder<T> {
     /**
      * Registers a consumer to be executed after the specified standard execution stage. The rest of the standard pipeline
      * following the named stage will be skipped. This is useful for quick assembly of custom backends that reuse the
-     * initial stages of LinkRest processing, but query the data store on their own. The consumer can inspect and modify
+     * initial stages of AgREST processing, but query the data store on their own. The consumer can inspect and modify
      * provided {@link SelectContext}.
      * <p>This operation is composable. For each stage all custom processors will be invoked in the order they were
      * registered.</p>
@@ -213,7 +213,7 @@ public interface SelectBuilder<T> {
      * 			// Explicit query parameter
      * 			AgRequest agRequest = AgRequest.builder().cayenneExp(cayenneExp).build();
      *
-     * 			return LinkRest.service(config).select(E2.class)
+     * 			return AgREST.service(config).select(E2.class)
      * 							.uri(uriInfo)
      * 							.request(agRequest) // overrides parameters from uriInfo
      * 							.get();

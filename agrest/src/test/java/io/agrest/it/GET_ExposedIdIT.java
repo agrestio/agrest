@@ -1,7 +1,7 @@
 package io.agrest.it;
 
 import io.agrest.DataResponse;
-import io.agrest.LinkRest;
+import io.agrest.AgREST;
 import io.agrest.it.fixture.JerseyTestOnDerby;
 import io.agrest.it.fixture.cayenne.E23;
 import org.junit.Test;
@@ -44,7 +44,7 @@ public class GET_ExposedIdIT extends JerseyTestOnDerby {
         @GET
         @Path("{id}")
         public DataResponse<E23> getById(@PathParam("id") int id, @Context UriInfo uriInfo) {
-            return LinkRest.select(E23.class, config).byId(id).uri(uriInfo).getOne();
+            return AgREST.select(E23.class, config).byId(id).uri(uriInfo).getOne();
         }
     }
 }

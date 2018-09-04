@@ -1,7 +1,7 @@
 package io.agrest.it;
 
+import io.agrest.AgREST;
 import io.agrest.DataResponse;
-import io.agrest.LinkRest;
 import io.agrest.constraints.Constraint;
 import io.agrest.it.fixture.JerseyTestOnDerby;
 import io.agrest.it.fixture.cayenne.E10;
@@ -87,7 +87,7 @@ public class GET_ConstraintsIT extends JerseyTestOnDerby {
         @GET
         @Path("e4/limit_attributes")
         public DataResponse<E4> getObjects_LimitAttributes(@Context UriInfo uriInfo) {
-            return LinkRest.select(E4.class, config).uri(uriInfo)
+            return AgREST.select(E4.class, config).uri(uriInfo)
                     .constraint(Constraint.idOnly(E4.class).attributes(E4.C_INT))
                     .get();
         }
@@ -95,7 +95,7 @@ public class GET_ConstraintsIT extends JerseyTestOnDerby {
 		@GET
         @Path("e10")
 		public DataResponse<E10> get(@Context UriInfo uriInfo) {
-			return LinkRest.select(E10.class, config).uri(uriInfo).get();
+			return AgREST.select(E10.class, config).uri(uriInfo).get();
 		}
 	}
 }

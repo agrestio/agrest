@@ -1,8 +1,8 @@
 package io.agrest.it;
 
+import io.agrest.AgREST;
 import io.agrest.DataResponse;
 import io.agrest.EntityUpdate;
-import io.agrest.LinkRest;
 import io.agrest.it.fixture.JerseyTestOnDerby;
 import io.agrest.it.fixture.cayenne.E20;
 import io.agrest.it.fixture.cayenne.E21;
@@ -82,13 +82,13 @@ public class POST_NaturalIdIT extends JerseyTestOnDerby {
         @POST
         @Path("single-id")
         public DataResponse<E20> createE20(EntityUpdate<E20> update, @Context UriInfo uriInfo) {
-            return LinkRest.create(E20.class, config).uri(uriInfo).syncAndSelect(update);
+            return AgREST.create(E20.class, config).uri(uriInfo).syncAndSelect(update);
         }
 
         @POST
         @Path("multi-id")
         public DataResponse<E21> createE21(EntityUpdate<E21> update, @Context UriInfo uriInfo) {
-            return LinkRest.create(E21.class, config).uri(uriInfo).syncAndSelect(update);
+            return AgREST.create(E21.class, config).uri(uriInfo).syncAndSelect(update);
         }
     }
 

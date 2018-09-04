@@ -10,7 +10,7 @@ import java.util.Map;
 import javax.ws.rs.core.Response.Status;
 
 import io.agrest.EntityUpdate;
-import io.agrest.LinkRestException;
+import io.agrest.AgRESTException;
 import io.agrest.ObjectMapper;
 import io.agrest.property.DataObjectPropertyReader;
 import io.agrest.property.PersistentObjectIdPropertyReader;
@@ -63,7 +63,7 @@ class ByIdObjectMapper<T> implements ObjectMapper<T> {
 
 		Object value = idMap.get(path.getPath());
 		if (value == null) {
-			throw new LinkRestException(Status.BAD_REQUEST, "No ID value for path: " + path);
+			throw new AgRESTException(Status.BAD_REQUEST, "No ID value for path: " + path);
 		}
 
 		return new ASTEqual(path, value);

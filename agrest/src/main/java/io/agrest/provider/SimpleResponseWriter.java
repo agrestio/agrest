@@ -14,7 +14,7 @@ import javax.ws.rs.ext.Provider;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import io.agrest.SimpleResponse;
-import io.agrest.runtime.LinkRestRuntime;
+import io.agrest.runtime.AgRESTRuntime;
 import io.agrest.runtime.jackson.IJacksonService;
 import io.agrest.runtime.jackson.JsonConvertable;
 
@@ -59,7 +59,7 @@ public class SimpleResponseWriter implements MessageBodyWriter<SimpleResponse> {
 
 	private IJacksonService getJacksonService() {
 		if (jacksonService == null) {
-			jacksonService = LinkRestRuntime.service(IJacksonService.class, configuration);
+			jacksonService = AgRESTRuntime.service(IJacksonService.class, configuration);
 		}
 
 		return jacksonService;

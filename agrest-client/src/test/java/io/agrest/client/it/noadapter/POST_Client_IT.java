@@ -2,10 +2,10 @@ package io.agrest.client.it.noadapter;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
+import io.agrest.AgREST;
 import io.agrest.DataResponse;
-import io.agrest.LinkRest;
 import io.agrest.client.ClientDataResponse;
-import io.agrest.client.LinkRestClient;
+import io.agrest.client.AgRESTClient;
 import io.agrest.client.protocol.Include;
 import io.agrest.it.fixture.JerseyTestOnDerby;
 import io.agrest.it.fixture.cayenne.E2;
@@ -35,7 +35,7 @@ public class POST_Client_IT extends JerseyTestOnDerby {
     public void testClient_Post() {
 
         // Create related entity
-        ClientDataResponse<JsonNode> r1 = LinkRestClient.client(target("/e3"))
+        ClientDataResponse<JsonNode> r1 = AgRESTClient.client(target("/e3"))
                 .exclude(E3.PHONE_NUMBER.getName())
                 .post(JsonNode.class, "{\"name\":\"ccc\"}");
 
@@ -47,7 +47,7 @@ public class POST_Client_IT extends JerseyTestOnDerby {
         assertEquals(e3, r1.getData().get(0));
 
         // Create parent entity
-        ClientDataResponse<JsonNode> r2 = LinkRestClient.client(target("/e2"))
+        ClientDataResponse<JsonNode> r2 = AgRESTClient.client(target("/e2"))
                 .exclude(E2.ADDRESS.getName(), E2.E3S.dot(E3.PHONE_NUMBER).getName())
                 .include(Include.path(E2.E3S.getName()))
                 .post(JsonNode.class, "{\"name\":\"xxx\",\"address\":\"yyy\",\"e3s\":[1]}");
@@ -68,13 +68,13 @@ public class POST_Client_IT extends JerseyTestOnDerby {
         @POST
         @Path("e2")
         public DataResponse<E2> createE2(String targetData, @Context UriInfo uriInfo) {
-            return LinkRest.create(E2.class, config).uri(uriInfo).syncAndSelect(targetData);
+            return AgREST.create(E2.class, config).uri(uriInfo).syncAndSelect(targetData);
         }
 
         @POST
         @Path("e3")
         public DataResponse<E3> create(@Context UriInfo uriInfo, String requestBody) {
-            return LinkRest.create(E3.class, config).uri(uriInfo).syncAndSelect(requestBody);
+            return AgREST.create(E3.class, config).uri(uriInfo).syncAndSelect(requestBody);
         }
     }
 }

@@ -3,7 +3,7 @@ package io.agrest;
 import javax.ws.rs.core.Response.Status;
 
 /**
- * A base response object in LinkRest.
+ * A base response object in AgREST.
  * 
  * @since 1.19
  */

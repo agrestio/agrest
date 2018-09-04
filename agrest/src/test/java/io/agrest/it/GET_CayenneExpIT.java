@@ -1,7 +1,7 @@
 package io.agrest.it;
 
 import io.agrest.DataResponse;
-import io.agrest.LinkRest;
+import io.agrest.AgREST;
 import io.agrest.it.fixture.JerseyTestOnDerby;
 import io.agrest.it.fixture.cayenne.E2;
 import io.agrest.it.fixture.cayenne.E3;
@@ -246,13 +246,13 @@ public class GET_CayenneExpIT extends JerseyTestOnDerby {
 		@GET
 		@Path("e2")
 		public DataResponse<E2> getE2(@Context UriInfo uriInfo) {
-			return LinkRest.service(config).select(E2.class).uri(uriInfo).get();
+			return AgREST.service(config).select(E2.class).uri(uriInfo).get();
 		}
 
         @GET
         @Path("e3")
         public DataResponse<E3> getE3(@Context UriInfo uriInfo) {
-            return LinkRest.service(config).select(E3.class).uri(uriInfo).get();
+            return AgREST.service(config).select(E3.class).uri(uriInfo).get();
         }
 	}
 }

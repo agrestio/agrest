@@ -1,7 +1,7 @@
 package io.agrest.it;
 
+import io.agrest.AgREST;
 import io.agrest.DataResponse;
-import io.agrest.LinkRest;
 import io.agrest.it.fixture.JerseyTestOnDerby;
 import io.agrest.it.fixture.cayenne.E3;
 import io.agrest.it.fixture.cayenne.E4;
@@ -57,7 +57,7 @@ public class GET_Props_EntityProperty_IT extends JerseyTestOnDerby {
         @Path("e4/calc_property")
         public DataResponse<E4> property_WithReader(@Context UriInfo uriInfo) {
             PropertyReader xReader = (root, name) -> "y_" + Cayenne.intPKForObject((DataObject) root);
-            return LinkRest.select(E4.class, config).uri(uriInfo).property("x", property(xReader)).get();
+            return AgREST.select(E4.class, config).uri(uriInfo).property("x", property(xReader)).get();
         }
     }
 }

@@ -1,7 +1,7 @@
 package io.agrest.runtime;
 
+import io.agrest.AgRESTException;
 import io.agrest.DataResponse;
-import io.agrest.LinkRestException;
 import io.agrest.it.fixture.JerseyTestOnDerby;
 import io.agrest.it.fixture.cayenne.E2;
 import org.junit.Test;
@@ -17,8 +17,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import javax.ws.rs.ext.ExceptionMapper;
 
-@Deprecated
-public class LinkRestBuilder_ExceptionMappers_LegacyIT extends JerseyTestOnDerby {
+public class AgRESTBuilder_ExceptionMappersIT extends JerseyTestOnDerby {
 
     @Override
     protected void doAddResources(FeatureContext context) {
@@ -26,11 +25,12 @@ public class LinkRestBuilder_ExceptionMappers_LegacyIT extends JerseyTestOnDerby
     }
 
     @Override
-    protected LinkRestBuilder doConfigure() {
-        // this API is deprecated. Keeping the test around until it is fully removed.
+    protected AgRESTBuilder doConfigure() {
         return super.doConfigure()
-                .mapException(TestLrExceptionMapper.class)
-                .mapException(TestExceptionMapper.class);
+                .module(b -> b.bindMap(ExceptionMapper.class)
+                        // TODO: Bootique-like extender API
+                        .put(AgRESTException.class.getName(), TestLrExceptionMapper.class)
+                        .put(TestException.class.getName(), TestExceptionMapper.class));
     }
 
     @Test
@@ -59,7 +59,7 @@ public class LinkRestBuilder_ExceptionMappers_LegacyIT extends JerseyTestOnDerby
         @GET
         @Path("lrexception")
         public DataResponse<E2> lrException(@Context UriInfo uriInfo) {
-            throw new LinkRestException(Response.Status.FORBIDDEN, "_lr_exception_");
+            throw new AgRESTException(Response.Status.FORBIDDEN, "_lr_exception_");
         }
 
         @GET
@@ -69,10 +69,10 @@ public class LinkRestBuilder_ExceptionMappers_LegacyIT extends JerseyTestOnDerby
         }
     }
 
-    public static class TestLrExceptionMapper implements ExceptionMapper<LinkRestException> {
+    public static class TestLrExceptionMapper implements ExceptionMapper<AgRESTException> {
 
         @Override
-        public Response toResponse(LinkRestException exception) {
+        public Response toResponse(AgRESTException exception) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                     .entity("_lr_" + exception.getMessage())
                     .type(MediaType.TEXT_PLAIN_TYPE).build();

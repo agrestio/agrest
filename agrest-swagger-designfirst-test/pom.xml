@@ -87,7 +87,7 @@
                         </goals>
                         <configuration>
                             <inputSpec>${swagger-spec}</inputSpec>
-                            <generatorName>io.swagger.codegen.languages.LinkRestServerCodegen</generatorName>
+                            <generatorName>io.swagger.codegen.languages.AgRESTServerCodegen</generatorName>
                             <output>${project.basedir}</output>
                             <apiPackage>${base-package}.swagger.api.v${schema-version}.service</apiPackage>
                             <modelPackage>${base-package}.it.fixture.cayenne</modelPackage>

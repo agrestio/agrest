@@ -1,7 +1,7 @@
 package io.agrest.multisource;
 
+import io.agrest.AgRESTException;
 import io.agrest.DataResponse;
-import io.agrest.LinkRestException;
 import io.agrest.ResourceEntity;
 import io.agrest.SelectBuilder;
 import io.agrest.SelectStage;
@@ -223,7 +223,7 @@ public class MultiSelectBuilder<T> {
             return selectAsync().get(timeout, timeoutUnit);
         } catch (InterruptedException | ExecutionException | TimeoutException e) {
             LOGGER.info("Async fetcher error", e);
-            throw new LinkRestException(Status.INTERNAL_SERVER_ERROR, "Error fetching games", e);
+            throw new AgRESTException(Status.INTERNAL_SERVER_ERROR, "Error fetching games", e);
         }
     }
 

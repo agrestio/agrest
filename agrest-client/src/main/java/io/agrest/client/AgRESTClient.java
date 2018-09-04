@@ -22,7 +22,7 @@ import java.util.function.Supplier;
 /**
  * @since 2.0
  */
-public class LinkRestClient {
+public class AgRESTClient {
 
 	private static JsonFactory jsonFactory;
 	private static IJsonValueConverterFactory jsonEntityReaderFactory;
@@ -32,59 +32,59 @@ public class LinkRestClient {
 		jsonEntityReaderFactory = new DefaultJsonValueConverterFactoryProvider(Collections.emptyMap()).get();
 	}
 
-	public static LinkRestClient client(WebTarget target) {
-		return new LinkRestClient(target);
+	public static AgRESTClient client(WebTarget target) {
+		return new AgRESTClient(target);
 	}
 
 	private WebTarget target;
 	private AgcRequest.LrRequestBuilder request;
 
-	private LinkRestClient(WebTarget target) {
+	private AgRESTClient(WebTarget target) {
 		this.target = target;
 		request = AgcRequest.builder();
 	}
 
-	public LinkRestClient exclude(String... excludePaths) {
+	public AgRESTClient exclude(String... excludePaths) {
 		request.exclude(excludePaths);
 		return this;
 	}
 
-	public LinkRestClient include(String... includePaths) {
+	public AgRESTClient include(String... includePaths) {
 		request.include(includePaths);
 		return this;
 	}
 
-	public LinkRestClient include(Include include) {
+	public AgRESTClient include(Include include) {
 		request.include(include);
 		return this;
 	}
 
-	public LinkRestClient include(Include.IncludeBuilder include) {
+	public AgRESTClient include(Include.IncludeBuilder include) {
 		request.include(include.build());
 		return this;
 	}
 
-	public LinkRestClient cayenneExp(Expression.ExpressionBuilder cayenneExp) {
+	public AgRESTClient cayenneExp(Expression.ExpressionBuilder cayenneExp) {
 		request.cayenneExp(cayenneExp.build());
 		return this;
 	}
 
-	public LinkRestClient sort(String... properties) {
+	public AgRESTClient sort(String... properties) {
 		request.sort(properties);
 		return this;
 	}
 
-	public LinkRestClient sort(Sort ordering) {
+	public AgRESTClient sort(Sort ordering) {
 		request.sort(ordering);
 		return this;
 	}
 
-	public LinkRestClient start(long startIndex) {
+	public AgRESTClient start(long startIndex) {
 		request.start(startIndex);
 		return this;
 	}
 
-	public LinkRestClient limit(long limit) {
+	public AgRESTClient limit(long limit) {
 		request.limit(limit);
 		return this;
 	}
@@ -125,6 +125,6 @@ public class LinkRestClient {
 	private <T> JsonValueConverter<T> getEntityReader(Class<T> entityType) {
 		Objects.requireNonNull(entityType, "Missing target type");
 		return jsonEntityReaderFactory.typedConverter(entityType)
-				.orElseThrow(() -> new LinkRestClientException("Can't build converter for type: " + entityType.getName()));
+				.orElseThrow(() -> new AgRESTClientException("Can't build converter for type: " + entityType.getName()));
 	}
 }
