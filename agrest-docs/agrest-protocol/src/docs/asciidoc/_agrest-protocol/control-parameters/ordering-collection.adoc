@@ -1,0 +1,17 @@
+=== Ordering Collection with `sort / dir`
+
+Example 1: Sort on a single property.
+
+`sort=vhost`
+
+Example 2: Sort descending on a property.
+
+`sort=id&amp;dir=DESC`
+
+Example 3: Same as 2, but sort is a JSON object.
+
+`sort={"property":"vhost","direction":"DESC"}`
+
+Example 4: Multiple sortings as a single JSON structure.
+
+`sort=[{"property":"name"},"property":"vhost","direction":"DESC"}]`

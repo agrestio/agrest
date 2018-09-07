@@ -1,0 +1,29 @@
+=== Response: Simple Document
+
+This document is used in responses that contain no data, just a boolean status and a
+message. On success it might look like this:
+
+[source, JSON]
+----
+HTTP/1.1 200 OK
+Content-Type: application/json
+
+{
+   "success" : true,
+   "message" : "all is good"
+}
+----
+
+
+On failure it might look like this:
+
+[source, JSON]
+----
+HTTP/1.1 500 Server error
+Content-Type: application/json
+
+{
+   "success" : false,
+   "message" : "Database connection failure"
+}
+----

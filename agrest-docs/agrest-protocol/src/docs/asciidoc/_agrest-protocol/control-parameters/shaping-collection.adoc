@@ -1,0 +1,73 @@
+=== Shaping Collection with `include / exclude`
+
+Model entities may have "simple" properties (attributes) and properties that point to
+related entities (relationships). By default Collection Document contains entity
+representation that includes its "id", all of its attributes, and none of the
+relationships. "include" and "exclude" parameters allow the client to request a specific
+subset of entity properties, including related entities. Some examples are given below,
+showing include/exclude parameters and resulting entity contents.
+
+Example 1: Include default properties (all entity attributes) minus "vhost" attribute.
+
+`exclude=vhost`
+
+[source, JSON]
+----
+{ "id" : 45, "name" : "AgREST Site" }
+----
+
+Example 2: Exclude all properties, but "id".
+
+`include=id`
+
+[source, JSON]
+----
+{ "id" : 45 }
+----
+
+Example 3: Multiple includes, one of them points to attributes of related entity.
+
+`include=id&amp;include=articles.title`
+
+[source, JSON]
+----
+{
+   "id" : 45,
+   "articles" : [
+      { "title" : "AgREST Includes" },
+      { "title" : "Other Tech News" },
+      { "title" : "Introducing AgREST" }
+   ]
+}
+----
+
+Example 4: Advanced include. Include specification can itself be a JSON object and
+contain `"cayenneExp"`, `"sort"`, `"start"` and `"limit"` keys shaping up a collection
+of related objects for each root object.
+
+`include={"path":"articles","cayenneExp":"title like '%AgREST%'","sort":"title"}&amp;include=articles.title`
+
+[source, JSON]
+----
+{
+   "id":45,
+   "articles" : [
+      { "title" : "Introducing AgREST" },
+      { "title" : "AgREST Includes" }
+   ]
+}
+----
+
+Example 5: Related objects as a map. Here we'll map article bodies by title.
+
+`include={"path":"articles","mapBy":"title"}&amp;include=articles.body`
+
+[source, JSON]
+----
+{
+   "articles" : {
+      "Introducing AgREST" : { "body" : "AgREST is a .." },
+      "AgREST Includes" : { "body" : "Includes are .." }
+   }
+}
+----

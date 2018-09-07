@@ -1,0 +1,27 @@
+== Writing Resource Endpoints
+
+Let's create a resource class called DomainResource, annotated with JAX-RS @Path and
+@Produces annotations. One extra thing we need for AgREST to work is a an instance of
+`javax.ws.rs.core.Configuration`, that can be injected with `@Context` annotation:
+
+[source, Java]
+----
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.Configuration;
+import javax.ws.rs.core.Context;
+
+@Path("domain")
+@Produces(MediaType.APPLICATION_JSON)
+public class DomainResource {
+
+    @Context
+    private Configuration config;
+}
+----
+
+include::writing-resource-endpoints/create-entity.adoc[]
+
+include::writing-resource-endpoints/read-collection-of-entities.adoc[]
+
+include::writing-resource-endpoints/read-single-entity.adoc[]

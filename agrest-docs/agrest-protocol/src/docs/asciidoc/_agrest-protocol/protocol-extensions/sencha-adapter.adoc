@@ -1,0 +1,12 @@
+=== Sencha Adapter
+
+https://github.com/io/agrest/blob/master/agrest/src/main/java/io/agrest/runtime/adapter/sencha/SenchaAdapter.java[SenchaAdapter]
+provides a few extensions to the AgREST protocol to better handle certain Sencha features:
+
+* If a to-one relationship property is included in the Collection, the
+  framework would also generate a companion "synthetic" FK property called
+  "propertyName_id"
+
+* `"filter"` key - an alternative to `"cayenneExp"`.
+
+* `"group"` / `"groupDir"` keys that are functionally equivalent to `"sort"` / `"dir"`.
