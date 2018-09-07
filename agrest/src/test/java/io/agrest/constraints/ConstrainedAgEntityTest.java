@@ -10,19 +10,19 @@ import static org.mockito.Mockito.mock;
 
 public class ConstrainedAgEntityTest {
 
-	private ConstrainedLrEntity visitor;
+	private ConstrainedAgEntity visitor;
 
 	@Before
 	public void before() {
 		AgEntity<?> entity = mock(AgEntity.class);
-		visitor = new ConstrainedLrEntity(entity);
+		visitor = new ConstrainedAgEntity(entity);
 	}
 
 	@Test
 	public void testVisitExcludePropertiesConstraint() {
 
-		visitor.getChildren().put("c", mock(ConstrainedLrEntity.class));
-		visitor.getChildren().put("c1", mock(ConstrainedLrEntity.class));
+		visitor.getChildren().put("c", mock(ConstrainedAgEntity.class));
+		visitor.getChildren().put("c1", mock(ConstrainedAgEntity.class));
 		visitor.getAttributes().add("a");
 		visitor.getAttributes().add("a1");
 

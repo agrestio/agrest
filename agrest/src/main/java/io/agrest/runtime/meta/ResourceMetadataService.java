@@ -26,7 +26,7 @@ public class ResourceMetadataService implements IResourceMetadataService {
 
     @SuppressWarnings({"rawtypes", "unchecked"})
     @Override
-    public Collection<AgResource<?>> getLrResources(Class<?> resourceClass) {
+    public Collection<AgResource<?>> getAgResources(Class<?> resourceClass) {
 
         Collection resources = classResources.get(resourceClass);
         if (resources == null) {

@@ -272,7 +272,7 @@ public class EncoderServiceTest extends TestWithCayenneMapping {
 		descriptor.includeId();
 		descriptor.getAttributes().put(
 				E19.GUID.getName(),
-				getLrEntity(E19.class).getAttribute(E19.GUID.getName())
+				getAgEntity(E19.class).getAttribute(E19.GUID.getName())
 		);
 
 		E19 e19 = new E19();

@@ -67,7 +67,7 @@ public class ParseRequestStage implements Processor<UpdateContext<?>> {
         // Parse updates payload..
         // skip parsing if we already received EntityUpdates collection parsed by MessageBodyReader
         if (context.getUpdates() == null) {
-            AgEntity<T> entity = metadataService.getLrEntity(context.getType());
+            AgEntity<T> entity = metadataService.getAgEntity(context.getType());
             Collection<EntityUpdate<T>> updates = updateParser.parse(entity, context.getEntityData());
             context.setUpdates(updates);
         }

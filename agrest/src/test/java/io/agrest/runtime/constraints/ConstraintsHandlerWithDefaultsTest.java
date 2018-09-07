@@ -23,8 +23,8 @@ import static org.mockito.Mockito.when;
 public class ConstraintsHandlerWithDefaultsTest extends TestWithCayenneMapping {
 
 	private ConstraintsHandler constraintHandler;
-	private AgPersistentEntity<E1> lre1;
-	private AgPersistentEntity<E2> lre2;
+	private AgPersistentEntity<E1> age1;
+	private AgPersistentEntity<E2> age2;
 
 	@SuppressWarnings("unchecked")
 	@Before
@@ -41,15 +41,15 @@ public class ConstraintsHandlerWithDefaultsTest extends TestWithCayenneMapping {
 		ObjEntity e1 = runtime.getChannel().getEntityResolver().getObjEntity(E1.class);
 		ObjEntity e2 = runtime.getChannel().getEntityResolver().getObjEntity(E2.class);
 
-		lre1 = mock(AgPersistentEntity.class);
-		when(lre1.getObjEntity()).thenReturn(e1);
-		when(lre1.getType()).thenReturn(E1.class);
-		when(lre1.getName()).thenReturn(e1.getName());
+		age1 = mock(AgPersistentEntity.class);
+		when(age1.getObjEntity()).thenReturn(e1);
+		when(age1.getType()).thenReturn(E1.class);
+		when(age1.getName()).thenReturn(e1.getName());
 
-		lre2 = mock(AgPersistentEntity.class);
-		when(lre2.getObjEntity()).thenReturn(e2);
-		when(lre2.getType()).thenReturn(E2.class);
-		when(lre2.getName()).thenReturn(e2.getName());
+		age2 = mock(AgPersistentEntity.class);
+		when(age2.getObjEntity()).thenReturn(e2);
+		when(age2.getType()).thenReturn(E2.class);
+		when(age2.getName()).thenReturn(e2.getName());
 
 		this.constraintHandler = new ConstraintsHandler(r, w);
 	}
@@ -59,7 +59,7 @@ public class ConstraintsHandlerWithDefaultsTest extends TestWithCayenneMapping {
 
 		Constraint<E1> tc1 = Constraint.excludeAll(E1.class).attributes(E1.DESCRIPTION);
 
-		ResourceEntity<E1> te1 = new ResourceEntity<>(lre1);
+		ResourceEntity<E1> te1 = new ResourceEntity<>(age1);
 		appendAttribute(te1, E1.AGE, Integer.class);
 		appendAttribute(te1, E1.DESCRIPTION, String.class);
 
@@ -72,7 +72,7 @@ public class ConstraintsHandlerWithDefaultsTest extends TestWithCayenneMapping {
 	@Test
 	public void testConstrainResponse_Default() {
 
-		ResourceEntity<E1> te1 = new ResourceEntity<>(lre1);
+		ResourceEntity<E1> te1 = new ResourceEntity<>(age1);
 		appendAttribute(te1, E1.AGE, Integer.class);
 		appendAttribute(te1, E1.DESCRIPTION, String.class);
 
@@ -85,7 +85,7 @@ public class ConstraintsHandlerWithDefaultsTest extends TestWithCayenneMapping {
 	@Test
 	public void testConstrainResponse_None() {
 
-		ResourceEntity<E2> te1 = new ResourceEntity<>(lre2);
+		ResourceEntity<E2> te1 = new ResourceEntity<>(age2);
 		appendAttribute(te1, E2.ADDRESS, String.class);
 		appendAttribute(te1, E2.NAME, String.class);
 

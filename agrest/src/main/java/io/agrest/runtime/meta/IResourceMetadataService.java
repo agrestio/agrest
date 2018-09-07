@@ -12,7 +12,7 @@ import java.util.Optional;
  */
 public interface IResourceMetadataService {
 
-    Collection<AgResource<?>> getLrResources(Class<?> resourceClass);
+    Collection<AgResource<?>> getAgResources(Class<?> resourceClass);
 
     /**
      * Returns base URL of this REST service, if it was set when AgREST was started.

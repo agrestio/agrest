@@ -36,7 +36,7 @@ public class CreateResourceEntityStage implements Processor<UpdateContext<?>> {
     }
 
     protected <T> void doExecute(UpdateContext<T> context) {
-        AgEntity<T> entity = metadataService.getLrEntity(context.getType());
+        AgEntity<T> entity = metadataService.getAgEntity(context.getType());
         ResourceEntity<T> resourceEntity = new ResourceEntity<>(entity);
 
         AgRequest request = context.getRawRequest();

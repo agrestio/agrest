@@ -29,7 +29,7 @@ public class PUT_AgRequestIT extends JerseyTestOnDerby {
     }
 
     @Test
-    public void testPUT_Includes_OverrideByLrRequest() {
+    public void testPUT_Includes_OverrideByAgRequest() {
 
         insert("e3", "id, name", "5, 'aaa'");
         insert("e3", "id, name", "4, 'zzz'");
@@ -52,7 +52,7 @@ public class PUT_AgRequestIT extends JerseyTestOnDerby {
     }
 
     @Test
-    public void testPUT_Excludes_OverrideByLrRequest() {
+    public void testPUT_Excludes_OverrideByAgRequest() {
 
         insert("e3", "id, name", "5, 'aaa'");
         insert("e3", "id, name", "4, 'zzz'");

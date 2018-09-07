@@ -38,7 +38,7 @@ public class GET_AgRequestIT extends JerseyTestOnDerby {
 	}
 
 	@Test
-	public void test_CayenneExp_OverrideByLrRequest() {
+	public void test_CayenneExp_OverrideByAgRequest() {
 
 		newContext().performGenericQuery(
 				new SQLTemplate(E2.class, "INSERT INTO utest.e2 (id, name) values (1, 'xxx'),(2, 'yyy'),(3, 'zzz')"));
@@ -52,7 +52,7 @@ public class GET_AgRequestIT extends JerseyTestOnDerby {
 	}
 
 	@Test
-	public void test_Includes_OverrideByLrRequest() {
+	public void test_Includes_OverrideByAgRequest() {
 
 		newContext().performGenericQuery(
 				new SQLTemplate(E2.class, "INSERT INTO utest.e2 (id, name) values (1, 'xxx'),(2, 'yyy'),(3, 'zzzz')"));
@@ -69,7 +69,7 @@ public class GET_AgRequestIT extends JerseyTestOnDerby {
 	}
 
 	@Test
-	public void test_Excludes_OverrideByLrRequest() {
+	public void test_Excludes_OverrideByAgRequest() {
 
 		newContext().performGenericQuery(
 				new SQLTemplate(E2.class, "INSERT INTO utest.e2 (id, name) values (1, 'xxx'),(2, 'yyy'),(3, 'zzzz')"));
@@ -86,7 +86,7 @@ public class GET_AgRequestIT extends JerseyTestOnDerby {
 	}
 
 	@Test
-	public void test_Sort_OverrideByLrRequest() {
+	public void test_Sort_OverrideByAgRequest() {
 
 		insert("e4", "id", "2");
 		insert("e4", "id", "1");
@@ -102,7 +102,7 @@ public class GET_AgRequestIT extends JerseyTestOnDerby {
 	}
 
 	@Test
-	public void test_MapBy_OverrideByLrRequest() {
+	public void test_MapBy_OverrideByAgRequest() {
 
 		insert("e4", "c_varchar, c_int", "'xxx', 1");
 		insert("e4", "c_varchar, c_int", "'yyy', 2");

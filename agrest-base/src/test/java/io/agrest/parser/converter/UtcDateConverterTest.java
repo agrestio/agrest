@@ -18,7 +18,7 @@ import static org.junit.Assert.assertEquals;
 public class UtcDateConverterTest {
 
     // copied from DataTimeFormatters class that is not accessible here...
-    private static final DateTimeFormatter LR_ISO_LOCAL_TIME =
+    private static final DateTimeFormatter AGREST_ISO_LOCAL_TIME =
             new DateTimeFormatterBuilder()
                     .appendValue(HOUR_OF_DAY, 2)
                     .appendLiteral(':')
@@ -32,18 +32,18 @@ public class UtcDateConverterTest {
                     .withDecimalStyle(DecimalStyle.STANDARD)
                     .withZone(ZoneId.systemDefault());
 
-    private static final DateTimeFormatter LR_ISO_LOCAL_DATE_TIME =
+    private static final DateTimeFormatter AGREST_ISO_LOCAL_DATE_TIME =
             new DateTimeFormatterBuilder()
                     .parseCaseInsensitive()
                     .append(DateTimeFormatter.ISO_LOCAL_DATE)
                     .appendLiteral('T')
-                    .append(LR_ISO_LOCAL_TIME)
+                    .append(AGREST_ISO_LOCAL_TIME)
                     .toFormatter()
                     .withDecimalStyle(DecimalStyle.STANDARD)
                     .withZone(ZoneId.systemDefault());
 
     private static String isoFormat(java.util.Date date) {
-        return LR_ISO_LOCAL_DATE_TIME.format(Instant.ofEpochMilli(date.getTime()));
+        return AGREST_ISO_LOCAL_DATE_TIME.format(Instant.ofEpochMilli(date.getTime()));
     }
 
     @SuppressWarnings("unchecked")

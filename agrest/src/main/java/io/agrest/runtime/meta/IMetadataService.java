@@ -16,7 +16,7 @@ public interface IMetadataService {
 	/**
 	 * @since 1.12
 	 */
-	<T> AgEntity<T> getLrEntity(Class<T> type);
+	<T> AgEntity<T> getAgEntity(Class<T> type);
 
 	/**
 	 * Returns a named relationship for a given object type. If the type is not
@@ -24,8 +24,8 @@ public interface IMetadataService {
 	 * 
 	 * @since 1.12
 	 */
-	default AgRelationship getLrRelationship(Class<?> type, String relationship) {
-		AgEntity<?> e = getLrEntity(type);
+	default AgRelationship getAgRelationship(Class<?> type, String relationship) {
+		AgEntity<?> e = getAgEntity(type);
 		AgRelationship r = e.getRelationship(relationship);
 		if (r == null) {
 			throw new AgRESTException(Response.Status.BAD_REQUEST, "Invalid relationship: '" + relationship + "'");
@@ -41,8 +41,8 @@ public interface IMetadataService {
 	 * 
 	 * @since 1.12
 	 */
-	default AgRelationship getLrRelationship(EntityParent<?> parent) {
-		return getLrRelationship(parent.getType(), parent.getRelationship());
+	default AgRelationship getAgRelationship(EntityParent<?> parent) {
+		return getAgRelationship(parent.getType(), parent.getRelationship());
 	}
 
 	/**

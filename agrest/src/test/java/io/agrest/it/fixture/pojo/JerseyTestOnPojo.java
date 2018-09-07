@@ -40,7 +40,7 @@ public abstract class JerseyTestOnPojo extends JerseyTest {
     @Override
     public Application configure() {
 
-        Feature lrFeature = new AgRESTBuilder().adapter(new AgRESTAdapter() {
+        Feature agFeature = new AgRESTBuilder().adapter(new AgRESTAdapter() {
 
             @Override
             public void contributeToRuntime(Binder binder) {
@@ -60,7 +60,7 @@ public abstract class JerseyTestOnPojo extends JerseyTest {
             return true;
         };
 
-        return new ResourceConfig().register(unitFeature).register(lrFeature);
+        return new ResourceConfig().register(unitFeature).register(agFeature);
     }
 
     protected abstract void doAddResources(FeatureContext context);

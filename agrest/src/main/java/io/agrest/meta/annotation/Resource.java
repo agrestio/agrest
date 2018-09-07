@@ -9,7 +9,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Used to indicate that web method is an LR resource.
+ * Used to indicate that web method is an AgREST resource.
  *
  * @deprecated since 2.10 in favor of {@link AgResource} annotation.
  */
@@ -18,7 +18,7 @@ import java.lang.annotation.Target;
 public @interface Resource {
 
     /**
-     * @return Class of LR entity that this resource works with.
+     * @return Class of AgREST entity that this resource works with.
      */
     Class<?> entityClass() default Object.class;
 

@@ -37,7 +37,7 @@ public class AgRESTClient {
 	}
 
 	private WebTarget target;
-	private AgcRequest.LrRequestBuilder request;
+	private AgcRequest.AgRequestBuilder request;
 
 	private AgRESTClient(WebTarget target) {
 		this.target = target;

@@ -18,15 +18,15 @@ import java.util.function.Function;
  */
 public class ConstraintsBuilder<T> implements Constraint<T> {
 
-    protected Function<ConstrainedLrEntity<T>, ConstrainedLrEntity<T>> op;
+    protected Function<ConstrainedAgEntity<T>, ConstrainedAgEntity<T>> op;
 
-    protected ConstraintsBuilder(Function<ConstrainedLrEntity<T>, ConstrainedLrEntity<T>> op) {
+    protected ConstraintsBuilder(Function<ConstrainedAgEntity<T>, ConstrainedAgEntity<T>> op) {
         this.op = op;
     }
 
     @Override
-    public ConstrainedLrEntity<T> apply(AgEntity<T> agEntity) {
-        return op.apply(new ConstrainedLrEntity<T>(agEntity));
+    public ConstrainedAgEntity<T> apply(AgEntity<T> agEntity) {
+        return op.apply(new ConstrainedAgEntity<T>(agEntity));
     }
 
     /**
@@ -177,7 +177,7 @@ public class ConstraintsBuilder<T> implements Constraint<T> {
         }));
     }
 
-    private <P, C> ConstrainedLrEntity<C> getOrCreateChild(ConstrainedLrEntity<P> parent, String path) {
+    private <P, C> ConstrainedAgEntity<C> getOrCreateChild(ConstrainedAgEntity<P> parent, String path) {
 
         int dot = path.indexOf(PathConstants.DOT);
 
@@ -197,13 +197,13 @@ public class ConstraintsBuilder<T> implements Constraint<T> {
             throw new IllegalArgumentException("Path contains non-relationship component: " + pathSegment);
         }
 
-        ConstrainedLrEntity<?> child = parent.getChild(relationship.getName());
+        ConstrainedAgEntity<?> child = parent.getChild(relationship.getName());
         if (child == null) {
             AgEntity<?> targetEntity = relationship.getTargetEntity();
-            child = new ConstrainedLrEntity(targetEntity);
+            child = new ConstrainedAgEntity(targetEntity);
             parent.getChildren().put(relationship.getName(), child);
         }
 
-        return dot < 0 ? (ConstrainedLrEntity<C>) child : getOrCreateChild(child, path.substring(dot + 1));
+        return dot < 0 ? (ConstrainedAgEntity<C>) child : getOrCreateChild(child, path.substring(dot + 1));
     }
 }

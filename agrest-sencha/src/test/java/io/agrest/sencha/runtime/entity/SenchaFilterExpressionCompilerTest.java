@@ -33,7 +33,7 @@ public class SenchaFilterExpressionCompilerTest extends TestWithCayenneMapping {
         PathDescriptorManager pathDescriptorManager = new PathDescriptorManager();
 
         this.processor = new SenchaFilterExpressionCompiler(pathDescriptorManager, new ExpressionPostProcessor(pathDescriptorManager));
-        this.e4Entity = getLrEntity(E4.class);
+        this.e4Entity = getAgEntity(E4.class);
     }
 
     private Expression process(Filter... filters) {

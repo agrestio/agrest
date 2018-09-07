@@ -31,7 +31,7 @@ public class DataResponseIT extends EncoderITBase {
 		DB.insert("e2", "id, name", "2, 'yyy'");
 		DB.insert("e2", "id, name", "3, 'zzz'");
 
-		DataResponse<E2> response = createLRService().select(E2.class).get();
+		DataResponse<E2> response = createAgService().select(E2.class).get();
 		Collection<E2> objects = response.getIncludedObjects(E2.class, "");
 
 		assertEquals("E2:1;E2:2;E2:3", toIdsString(objects));
@@ -50,7 +50,7 @@ public class DataResponseIT extends EncoderITBase {
 		UriInfo mockUri = mock(UriInfo.class);
 		when(mockUri.getQueryParameters()).thenReturn(params);
 
-		DataResponse<E2> response = createLRService().select(E2.class).uri(mockUri).get();
+		DataResponse<E2> response = createAgService().select(E2.class).uri(mockUri).get();
 		Collection<E2> objects = response.getIncludedObjects(E2.class, "");
 
 		assertEquals("E2:1;E2:2;E2:3", toIdsString(objects));
@@ -71,7 +71,7 @@ public class DataResponseIT extends EncoderITBase {
 
 		UriInfo mockUri = mock(UriInfo.class);
 		when(mockUri.getQueryParameters()).thenReturn(params);
-		DataResponse<E2> response = createLRService().select(E2.class).uri(mockUri).get();
+		DataResponse<E2> response = createAgService().select(E2.class).uri(mockUri).get();
 
 		Collection<E2> objects = response.getIncludedObjects(E2.class, "");
 
@@ -95,7 +95,7 @@ public class DataResponseIT extends EncoderITBase {
 		UriInfo mockUri = mock(UriInfo.class);
 		when(mockUri.getQueryParameters()).thenReturn(params);
 
-		DataResponse<E2> response = createLRService().select(E2.class).uri(mockUri).get();
+		DataResponse<E2> response = createAgService().select(E2.class).uri(mockUri).get();
 		Collection<E3> objects = response.getIncludedObjects(E3.class, "e3s");
 
 		assertEquals("E3:8;E3:9;E3:7", toIdsString(objects));
@@ -112,7 +112,7 @@ public class DataResponseIT extends EncoderITBase {
 		DB.insert("e3", "id, e2_id, name", "8, 1, 'yyy'");
 		DB.insert("e3", "id, e2_id, name", "9, 1, 'zzz'");
 
-		DataResponse<E2> response = createLRService().select(E2.class).get();
+		DataResponse<E2> response = createAgService().select(E2.class).get();
 		Collection<E3> objects = response.getIncludedObjects(E3.class, "e3s");
 
 		assertEquals("", toIdsString(objects));

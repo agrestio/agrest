@@ -64,20 +64,20 @@ public class CayenneEntityCompiler implements AgEntityCompiler {
         LOGGER.debug("compiling Cayenne entity for type: " + type);
 
         ObjEntity objEntity = resolver.getObjEntity(type);
-        CayenneAgEntity<T> lrEntity = new CayenneAgEntity<>(type, objEntity);
-        loadCayenneEntity(lrEntity, dataMap);
-        loadAnnotatedProperties(lrEntity, dataMap);
-        loadOverlays(dataMap, lrEntity);
-        return lrEntity;
+        CayenneAgEntity<T> agEntity = new CayenneAgEntity<>(type, objEntity);
+        loadCayenneEntity(agEntity, dataMap);
+        loadAnnotatedProperties(agEntity, dataMap);
+        loadOverlays(dataMap, agEntity);
+        return agEntity;
     }
 
-    protected <T> void loadCayenneEntity(CayenneAgEntity<T> lrEntity, AgDataMap dataMap) {
+    protected <T> void loadCayenneEntity(CayenneAgEntity<T> agEntity, AgDataMap dataMap) {
 
-        ObjEntity objEntity = lrEntity.getObjEntity();
+        ObjEntity objEntity = agEntity.getObjEntity();
         for (ObjAttribute a : objEntity.getAttributes()) {
             Class<?> type = typeForName(a.getType());
-            CayenneAgAttribute lrAttribute = new CayenneAgAttribute(a, type);
-            lrEntity.addPersistentAttribute(lrAttribute);
+            CayenneAgAttribute agAttribute = new CayenneAgAttribute(a, type);
+            agEntity.addPersistentAttribute(agAttribute);
         }
 
         for (ObjRelationship r : objEntity.getRelationships()) {
@@ -94,7 +94,7 @@ public class CayenneEntityCompiler implements AgEntityCompiler {
             Class<?> type = typeForName(TypesMapping.getJavaBySqlType(targetJdbcType));
 
             AgRelationship agRelationship = new CayenneAgRelationship(r, targetEntity, converterFactory.converter(type));
-            lrEntity.addRelationship(agRelationship);
+            agEntity.addRelationship(agRelationship);
         }
 
         for (DbAttribute pk : objEntity.getDbEntity().getPrimaryKeys()) {
@@ -108,7 +108,7 @@ public class CayenneEntityCompiler implements AgEntityCompiler {
                 type = typeForName(attribute.getType());
                 id = new CayenneAgAttribute(attribute, type);
             }
-            lrEntity.addId(id);
+            agEntity.addId(id);
         }
 
     }

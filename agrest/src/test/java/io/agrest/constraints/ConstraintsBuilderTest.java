@@ -12,7 +12,7 @@ public class ConstraintsBuilderTest extends TestWithCayenneMapping {
     @Test
     public void testExcludeAll() {
         ConstraintsBuilder<E4> tc = Constraint.excludeAll(E4.class);
-        ConstrainedLrEntity<E4> result = tc.apply(getLrEntity(E4.class));
+        ConstrainedAgEntity<E4> result = tc.apply(getAgEntity(E4.class));
 
         assertNotNull(result);
         assertTrue(result.getAttributes().isEmpty());
@@ -23,7 +23,7 @@ public class ConstraintsBuilderTest extends TestWithCayenneMapping {
     @Test
     public void testIdOnly() {
         ConstraintsBuilder<E4> tc = Constraint.idOnly(E4.class);
-        ConstrainedLrEntity<E4> result = tc.apply(getLrEntity(E4.class));
+        ConstrainedAgEntity<E4> result = tc.apply(getAgEntity(E4.class));
 
         assertNotNull(result);
         assertTrue(result.getAttributes().isEmpty());
@@ -35,10 +35,10 @@ public class ConstraintsBuilderTest extends TestWithCayenneMapping {
     public void testIdAndAttributes() {
 
         ConstraintsBuilder<E4> tc = Constraint.idAndAttributes(E4.class);
-        ConstrainedLrEntity<E4> result = tc.apply(getLrEntity(E4.class));
+        ConstrainedAgEntity<E4> result = tc.apply(getAgEntity(E4.class));
 
         assertNotNull(result);
-        Assert.assertEquals(getLrEntity(E4.class).getAttributes().size(), result.getAttributes().size());
+        Assert.assertEquals(getAgEntity(E4.class).getAttributes().size(), result.getAttributes().size());
         assertTrue(result.getChildren().isEmpty());
         assertTrue(result.isIdIncluded());
     }
@@ -47,10 +47,10 @@ public class ConstraintsBuilderTest extends TestWithCayenneMapping {
     public void testExcludeProperties() {
 
         ConstraintsBuilder<E4> tc = Constraint.idAndAttributes(E4.class).excludeProperties(E4.C_BOOLEAN, E4.C_DECIMAL);
-        ConstrainedLrEntity<E4> result = tc.apply(getLrEntity(E4.class));
+        ConstrainedAgEntity<E4> result = tc.apply(getAgEntity(E4.class));
 
         assertNotNull(result);
-        Assert.assertEquals(getLrEntity(E4.class).getAttributes().size() - 2, result.getAttributes().size());
+        Assert.assertEquals(getAgEntity(E4.class).getAttributes().size() - 2, result.getAttributes().size());
         assertTrue(result.getChildren().isEmpty());
         assertTrue(result.isIdIncluded());
     }

@@ -15,8 +15,8 @@ public class AgcRequest extends AgcEntityRequest {
 	private Set<String> excludes;
 	private Map<String, Include> includeMap;
 
-	public static LrRequestBuilder builder() {
-		return new LrRequestBuilder();
+	public static AgRequestBuilder builder() {
+		return new AgRequestBuilder();
 	}
 
 	protected AgcRequest() {
@@ -61,11 +61,11 @@ public class AgcRequest extends AgcEntityRequest {
 		return includeMap == null ? Collections.emptyList() : includeMap.values();
 	}
 
-	public static class LrRequestBuilder {
+	public static class AgRequestBuilder {
 
 		private AgcRequest request;
 
-		private LrRequestBuilder() {
+		private AgRequestBuilder() {
 			this.request = new AgcRequest();
 		}
 
@@ -73,12 +73,12 @@ public class AgcRequest extends AgcEntityRequest {
 			return request;
 		}
 
-		public LrRequestBuilder exclude(String... excludePaths) {
+		public AgRequestBuilder exclude(String... excludePaths) {
 			request.addExcludes(excludePaths);
 			return this;
 		}
 
-		public LrRequestBuilder include(String... includePaths) {
+		public AgRequestBuilder include(String... includePaths) {
 			if (includePaths != null) {
 				Include[] includes = new Include[includePaths.length];
 				for (int i = 0; i < includePaths.length; i++) {
@@ -91,32 +91,32 @@ public class AgcRequest extends AgcEntityRequest {
 			return this;
 		}
 
-		public LrRequestBuilder include(Include include) {
+		public AgRequestBuilder include(Include include) {
 			request.addIncludes(include);
 			return this;
 		}
 
-		public LrRequestBuilder include(Include.IncludeBuilder include) {
+		public AgRequestBuilder include(Include.IncludeBuilder include) {
 			request.addIncludes(include.build());
 			return this;
 		}
 
-		public LrRequestBuilder start(long start) {
+		public AgRequestBuilder start(long start) {
 			request.setStart(start);
 			return this;
 		}
 
-		public LrRequestBuilder limit(long limit) {
+		public AgRequestBuilder limit(long limit) {
 			request.setLimit(limit);
 			return this;
 		}
 
-		public LrRequestBuilder cayenneExp(Expression exp) {
+		public AgRequestBuilder cayenneExp(Expression exp) {
 			request.setCayenneExp(exp);
 			return this;
 		}
 
-		public LrRequestBuilder sort(String... properties) {
+		public AgRequestBuilder sort(String... properties) {
 
 			if (properties != null) {
 
@@ -132,7 +132,7 @@ public class AgcRequest extends AgcEntityRequest {
 			return this;
 		}
 
-		public LrRequestBuilder sort(Sort... properties) {
+		public AgRequestBuilder sort(Sort... properties) {
 			request.addOrderings(properties);
 			return this;
 		}

@@ -83,8 +83,8 @@ public abstract class CayenneUpdateDataStoreStage implements Processor<UpdateCon
             ObjEntity entity = objectContext.getEntityResolver().getObjEntity(context.getType());
 
             if (isPrimaryKey(entity.getDbEntity(), idMap.keySet())) {
-                // lrId is the same as the PK,
-                // no need to make an additional check that the lrId is unique
+                // AgId is the same as the PK,
+                // no need to make an additional check that the AGId is unique
                 for (DbAttribute pk : entity.getDbEntity().getPrimaryKeys()) {
                     Object id = idMap.get(pk.getName());
                     if (id == null) {
@@ -94,7 +94,7 @@ public abstract class CayenneUpdateDataStoreStage implements Processor<UpdateCon
                 }
 
             } else {
-                // need to make an additional check that the lrId is unique
+                // need to make an additional check that the AgId is unique
                 // TODO: I guess this should be done in a separate new context
                 T existing = Util.findById(objectContext, context.getType(), context.getEntity().getAgEntity(), idMap);
                 if (existing != null) {
@@ -266,7 +266,7 @@ public abstract class CayenneUpdateDataStoreStage implements Processor<UpdateCon
         ObjectContext objectContext = CayenneUpdateStartStage.cayenneContext(context);
 
         ObjEntity parentEntity = objectContext.getEntityResolver().getObjEntity(parent.getType());
-        AgEntity<?> parentAgEntity = metadataService.getLrEntity(context.getParent().getType());
+        AgEntity<?> parentAgEntity = metadataService.getAgEntity(context.getParent().getType());
         final DataObject parentObject = (DataObject) Util.findById(objectContext, parent.getType(),
                 parentAgEntity, parent.getId().get());
 

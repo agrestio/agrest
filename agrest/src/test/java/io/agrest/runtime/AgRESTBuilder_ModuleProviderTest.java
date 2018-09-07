@@ -20,7 +20,7 @@ import static org.mockito.Mockito.mock;
 public class AgRESTBuilder_ModuleProviderTest {
 
     @Test
-    public void testLrModule_Provider() {
+    public void testAgModule_Provider() {
         inRuntime(
                 new AgRESTBuilder().module(new LocalTestModuleProvider()),
                 this::assertLocalTestModuleActive);

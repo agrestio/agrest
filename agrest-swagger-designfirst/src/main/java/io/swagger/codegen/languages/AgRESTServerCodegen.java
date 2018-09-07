@@ -128,22 +128,22 @@ public class AgRESTServerCodegen extends AbstractJavaJAXRSServerCodegen implemen
 
                 // Removes container from response
                 operation.returnType = operation.baseName;
-                AgRESTCodegenOperation lrOperation = new AgRESTCodegenOperation(operation);
+                AgRESTCodegenOperation newOperation = new AgRESTCodegenOperation(operation);
                 // Stores model properties to use them as constraints
-                populateModelAttributes(lrOperation);
+                populateModelAttributes(newOperation);
                 // Stores model relations to use them as constraints
-                for (final CodegenProperty prop : models.get(lrOperation.baseName)) {
+                for (final CodegenProperty prop : models.get(newOperation.baseName)) {
                     if (prop.complexType != null && models.keySet().contains(prop.complexType)) {
-                        AgRESTCodegenOperation lrRelation = new AgRESTCodegenOperation();
-                        lrRelation.returnType = lrRelation.baseName = prop.complexType;
-                        lrRelation.bodyParam = new CodegenParameter();
-                        lrRelation.bodyParam.paramName = prop.baseName;
+                        AgRESTCodegenOperation relation = new AgRESTCodegenOperation();
+                        relation.returnType = relation.baseName = prop.complexType;
+                        relation.bodyParam = new CodegenParameter();
+                        relation.bodyParam.paramName = prop.baseName;
 
-                        populateModelAttributes(lrRelation);
-                        populateRelations(lrOperation, lrRelation);
+                        populateModelAttributes(relation);
+                        populateRelations(newOperation, relation);
                     }
                 }
-                newOps.add(lrOperation);
+                newOps.add(newOperation);
             }
             operations.put("operation", newOps);
         }
@@ -151,9 +151,9 @@ public class AgRESTServerCodegen extends AbstractJavaJAXRSServerCodegen implemen
         return objsResult;
     }
 
-    private void populateModelAttributes(AgRESTCodegenOperation lrOperation) {
-        if (models.get(lrOperation.baseName) != null) {
-            for (final CodegenProperty prop : models.get(lrOperation.baseName)) {
+    private void populateModelAttributes(AgRESTCodegenOperation operation) {
+        if (models.get(operation.baseName) != null) {
+            for (final CodegenProperty prop : models.get(operation.baseName)) {
                 // Selects plain attributes only
                 if ((prop.complexType == null || !models.keySet().contains(prop.complexType))
                         && !"id".equalsIgnoreCase(prop.baseName)) {
@@ -161,42 +161,42 @@ public class AgRESTServerCodegen extends AbstractJavaJAXRSServerCodegen implemen
                     codegenParam.paramName = prop.baseName;
                     codegenParam.hasMore = true;
                     // checks if there is queryParam with the same name as model attribute
-                    if (lrOperation.queryParams.stream().anyMatch(p -> codegenParam.paramName.equalsIgnoreCase(p.paramName))) {
-                        lrOperation.hasCompoundId = codegenParam.isQueryParam = true;
+                    if (operation.queryParams.stream().anyMatch(p -> codegenParam.paramName.equalsIgnoreCase(p.paramName))) {
+                        operation.hasCompoundId = codegenParam.isQueryParam = true;
                         // removes model attribute related to queryParam from params list
-                        lrOperation.queryParams
-                                = lrOperation.queryParams
+                        operation.queryParams
+                                = operation.queryParams
                                     .stream()
                                     .filter(p -> !p.paramName.equalsIgnoreCase(codegenParam.paramName))
                                     .collect(Collectors.toList());
                     }
-                    lrOperation.modelAttributes.add(codegenParam);
+                    operation.modelAttributes.add(codegenParam);
                 }
             }
-            if (!lrOperation.modelAttributes.isEmpty()) {
-                lrOperation.modelAttributes.get(lrOperation.modelAttributes.size() -1).hasMore = false;
+            if (!operation.modelAttributes.isEmpty()) {
+                operation.modelAttributes.get(operation.modelAttributes.size() -1).hasMore = false;
             }
         }
     }
 
-    private void populateRelations(AgRESTCodegenOperation lrOperation, AgRESTCodegenOperation lrRelation) {
+    private void populateRelations(AgRESTCodegenOperation operation, AgRESTCodegenOperation relation) {
         // if path looks like /xxx/:id/yyy/:tid or /xxx/:id/yyy's, stores corresponding relation only
-        if (lrOperation.isRelationPath()) {
+        if (operation.isRelationPath()) {
             // copies queryParam's from parent operation to child relation
-            lrRelation.allParams = lrRelation.queryParams = lrOperation.queryParams;
+            relation.allParams = relation.queryParams = operation.queryParams;
 
-            if (lrOperation.bodyParam == null) { // In case of GET or DELETE operations
-                final String[] path = lrOperation.path.split("/");
+            if (operation.bodyParam == null) { // In case of GET or DELETE operations
+                final String[] path = operation.path.split("/");
                 if (path.length > 1
-                        && (lrRelation.bodyParam.paramName.equalsIgnoreCase(path[path.length - 1])
-                        || lrRelation.bodyParam.paramName.equalsIgnoreCase(path[path.length - 2]))) {
-                    lrOperation.modelRelations.add(lrRelation);
+                        && (relation.bodyParam.paramName.equalsIgnoreCase(path[path.length - 1])
+                        || relation.bodyParam.paramName.equalsIgnoreCase(path[path.length - 2]))) {
+                    operation.modelRelations.add(relation);
                 }
-            } else if (lrRelation.baseName.equalsIgnoreCase(lrOperation.bodyParam.baseType)) {
-                lrOperation.modelRelations.add(lrRelation);
+            } else if (relation.baseName.equalsIgnoreCase(operation.bodyParam.baseType)) {
+                operation.modelRelations.add(relation);
             }
         } else {
-            lrOperation.modelRelations.add(lrRelation);
+            operation.modelRelations.add(relation);
         }
     }
 

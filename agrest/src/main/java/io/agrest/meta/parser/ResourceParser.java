@@ -96,7 +96,7 @@ public class ResourceParser implements IResourceParser {
 			if (md != null && !md.getEntityClass().equals(Object.class)) {
 
 				Class<?> entityClass = md.getEntityClass();
-				entity = metadataService.getLrEntity(entityClass);
+				entity = metadataService.getAgEntity(entityClass);
 				if (entity == null) {
 					throw new IllegalStateException("Unknown entity class: " + entityClass.getName());
 				}
@@ -105,7 +105,7 @@ public class ResourceParser implements IResourceParser {
 
 				Type returnType = method.getGenericReturnType();
 				if (returnType instanceof ParameterizedType) {
-					entity = metadataService.getLrEntity((Class) ((ParameterizedType) returnType)
+					entity = metadataService.getAgEntity((Class) ((ParameterizedType) returnType)
 							.getActualTypeArguments()[0]);
 				}
 			}

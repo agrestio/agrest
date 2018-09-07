@@ -39,7 +39,7 @@ public class GET_ExceptionIT extends JerseyTest {
 		ServerRuntime runtime = mock(ServerRuntime.class);
 		when(runtime.getChannel()).thenReturn(mockChannel);
 
-		Feature lrFeature = AgRESTBuilder.build(runtime);
+		Feature agFeature = AgRESTBuilder.build(runtime);
 
 		Feature testFeature = new Feature() {
 
@@ -50,7 +50,7 @@ public class GET_ExceptionIT extends JerseyTest {
 			}
 		};
 
-		return new ResourceConfig().register(testFeature).register(lrFeature);
+		return new ResourceConfig().register(testFeature).register(agFeature);
 	}
 
 	@Test
