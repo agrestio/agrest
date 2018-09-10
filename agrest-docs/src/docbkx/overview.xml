@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<part xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink"
+    version="5.0" xml:id="overview">
+    <title>LinkRest Overview</title>
+ 
+    <chapter xml:id="overview-what-is-linkrest">
+        <title>What is LinkRest</title>
+        <para>LinkRest is a set of tools to build web APIs for your data. You would use it to expose
+            a data store (such as a relational database) as a RESTful web service. To achieve that
+            goal LinkRest defines a simple HTTP/JSON-based protocol (described in <xref
+                linkend="protocol"/>) and a server-side framework (described in <xref
+                linkend="framework"/>). The protocol ensures that any client, be it JavaScript, a mobile
+            app or maybe a server-side app, can make sense of any LinkRest-enabled service. The
+            framework is written in Java and helps you to build services adhering to the
+            protocol.</para>
+        <para>LinkRest is open source and is distributed under the terms of <link
+                xlink:href="https://github.com/nhl/link-rest/blob/master/LICENSE.txt">BSD
+                license</link>
+        </para>
+       
+    </chapter>
+    <chapter xml:id="overview-what-linkrest-is-not">
+        <title>What LinkRest is Not</title>
+        <para>LinkRest is not an automated engine to take your DB online with a single command. You
+            still have to write code for JAX-RS endpoints (however simple and trivial that code
+            might end up being). Having this code around allows you to customize processing,
+            implement security around endpoints, hide certain methods, etc. This is a defensive
+            approach that goes a long way to avoid unintended consequences when opening up your data
+            on the web.</para>
+        <para>Having said that, such an engine can be written on top of LinkRest with relative
+            ease.</para>
+        
+    </chapter>
+    <chapter xml:id="data-stores">
+        <title>Supported Data Stores</title>
+        <para>LinkRest is written on top of <link xlink:href="http://cayenne.apache.org">Apache
+                Cayenne ORM</link> and supports any relational data store, such as MySQL or Oracle.
+            Support for alternative data stores can be provided with relative ease. E.g. NoSQL
+            databases, flat files, etc. E.g. we've written POJO and LDAP backends.</para>
+        
+    </chapter>
+    
+    <chapter xml:id="security-features">
+        <title>Security</title>
+        <para>From the very beginning LinkRest was designed with security in mind. It can be easily
+            integrated with common web and enterprise security solutions (OAuth, <link
+                xlink:href="http://shiro.apache.org/">Apache Shiro</link>, Spring Security, etc.),
+            giving Java developers a straightforward API to implement custom object and
+            attribute-level access. </para>
+        
+    </chapter>
+</part>

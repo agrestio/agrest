@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<part xmlns="http://docbook.org/ns/docbook"
+        xmlns:xlink="http://www.w3.org/1999/xlink"
+        xmlns:xi="http://www.w3.org/2001/XInclude"
+        version="5.0"
+        xml:id="framework">
+
+    <title>LinkRest Framework</title>
+    
+    <xi:include href="framework-prerequisites.xml"/>
+    <xi:include href="framework-getting-started.xml"/>
+    <xi:include href="framework-programming-endpoints.xml"/>
+    <xi:include href="framework-chains.xml"/>
+    <xi:include href="framework-pojo.xml"/>
+    <xi:include href="framework-relationship-resources.xml"/>
+    <xi:include href="framework-security.xml"/>
+    <xi:include href="framework-customize-stack.xml"/>
+    
+</part>

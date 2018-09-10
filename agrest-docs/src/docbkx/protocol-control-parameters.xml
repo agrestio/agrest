@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<chapter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink"
+    version="5.0" xml:id="protocol-control-parameters">
+      <title>Control Parameters</title>
+      <para>Control parameters, usually passed as URL keys, apply to the Collection Document and let
+         the server to provide a single generic endpoint per entity, while still allowing the client
+         to shape up the response Collection to its liking. These parameters are normally used with
+         GET, however POST/PUT can also return a Collection Document, so many of the parameters are
+         also applicable when modifying the data.</para>
+       <section xml:id="protocol-cayenneExp">
+          <title>Filtering Collection with <code>cayenneExp</code></title>
+         <para>A conditional expression that is used to filter the response objects. Expression
+            String should follow the <link
+               xlink:href="http://cayenne.apache.org/docs/4.0/cayenne-guide/expressions.html">format
+               understood by Cayenne</link> (hence the name - "cayenneExp"). The root for the
+            property paths is the request entity (unless "cayenneExp" is used within a relationship
+            "include", in which case the root is that related entity). </para>
+         <para>Example 1: Filtering on a single property.</para>
+         <para><code>cayenneExp=vhost='linkrest.org'</code></para>
+         <para>Example 2: Filtering using outer join (the "+" sign is Cayenne notation for
+            outer).</para>
+         <para><code>cayenneExp=articles+ = null</code></para>
+         <para>Example 3: Filtering with parameters using positional bindings.</para>
+         <para><code>cayenneExp=["articles.body like $b","%LinkRest%"]</code></para>
+         <para>Example 4: Filtering with parameters using named bindings.</para>
+         <para><code>cayenneExp={ "exp" : "articles.body like $b", "params":
+               {"b":"%LinkRest%"}}</code></para>
+       </section>
+       <section xml:id="protocol-sort-dir">
+          <title>Ordering Collection with <code>sort</code> / <code>dir</code></title>
+         <para>Example 1: Sort on a single property.</para>
+         <para><code>sort=vhost</code></para>
+         <para>Example 2: Sort descending on a property.</para>
+         <para><code>sort=id&amp;dir=DESC</code></para>
+         <para>Example 3: Same as 2, but sort is a JSON object.</para>
+         <para><code>sort={"property":"vhost","direction":"DESC"}</code></para>
+         <para>Example 4: Multiple sortings as a single JSON structure.</para>
+         <para><code>sort=[{"property":"name"},"property":"vhost","direction":"DESC"}]
+            </code></para>
+       </section>
+       <section xml:id="protocol-start-limit" xreflabel="Pagination">
+         <title>Pagination with <code>start</code> / <code>limit</code></title>
+         <para>These two parameters are used together to request from the server a range of objects
+            for a potentially huge collection. They allow to implement efficient data pagination on
+            the client.</para>
+         <para><code>"start"</code> is an offset within the "data" array. All the objects below this
+            offset are discarded from the collection. Default "start" is 0. </para>
+         <para><code>"limit"</code> is a maximum number of objects in the collection "data". Default
+            is infinity (no limit). </para>
+         <para>"limit" is applied after "start". So for a collection with a total of 10 objects,
+               <code>?start=2&amp;limit=5</code> would result in objects 2..6 returned from the
+            server. Returned Collection "total" would still be 10.</para>
+      </section>
+       <section xml:id="protocol-include-exclude">
+          <title>Shaping Collection Entities with <code>include</code> /
+            <code>exclude</code></title>
+         <para>Model entities may have "simple" properties (attributes) and properties that point to
+            related entities (relationships). By default Collection Document contains entity
+            representation that includes its "id", all of its attributes, and none of the
+            relationships. "include" and "exclude" parameters allow the client to request a specific
+            subset of entity properties, including related entities. Some examples are given below,
+            showing include/exclude parameters and resulting entity contents.</para>
+         <para>Example 1: Include default properties (all entity attributes) minus "vhost"
+            attribute. </para>
+         <para><code>exclude=vhost</code><programlisting>{ "id" : 45, "name" : "LinkRest Site" } </programlisting></para>
+         <para>Example 2: Exclude all properties, but "id".</para>
+         <para/>
+          <para><code>include=id</code><programlisting>{ "id" : 45 } </programlisting></para>
+         <para>Example 3: Multiple includes, one of them points to attributes of related
+            entity.</para>
+         <para><code>include=id&amp;include=articles.title</code><programlisting>{
+   "id" : 45,
+   "articles" : [
+      { "title" : "LinkRest Includes" }, 
+      { "title" : "Other Tech News" },
+      { "title" : "Introducing LinkRest" }
+   ]
+}</programlisting></para>
+         <para>Example 4: Advanced include. Include specification can itself be a JSON object and
+         contain "<code>cayenneExp</code>", "<code>sort</code>", "<code>start</code>" and
+            "<code>limit</code>" keys shaping up a collection of related objects for each root
+         object.</para>
+          <para><code>include={"path":"articles","cayenneExp":"title like
+            '%LinkRest%'","sort":"title"}&amp;include=articles.title</code></para>
+         <programlisting language="json">{
+   "id":45,
+   "articles" : [
+      { "title" : "Introducing LinkRest" },
+      { "title" : "LinkRest Includes" }
+   ]
+}</programlisting>
+         <para>Example 5: Related objects as a map. Here we'll map article bodies by title.</para>
+         <para><code>include={"path":"articles","mapBy":"title"}&amp;include=articles.body</code><programlisting>{
+   "articles" : {
+      "Introducing LinkRest" : { "body" : "LinkRest is a .." },
+      "LinkRest Includes" : { "body" : "Includes are .." }
+   }
+}</programlisting></para>
+       </section>
+</chapter>
