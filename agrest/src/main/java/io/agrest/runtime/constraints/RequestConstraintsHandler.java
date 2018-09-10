@@ -4,7 +4,7 @@ import io.agrest.EntityUpdate;
 import io.agrest.AgRESTException;
 import io.agrest.PathConstants;
 import io.agrest.ResourceEntity;
-import io.agrest.constraints.ConstrainedLrEntity;
+import io.agrest.constraints.ConstrainedAgEntity;
 import io.agrest.constraints.Constraint;
 import io.agrest.meta.AgAttribute;
 import io.agrest.runtime.processor.update.UpdateContext;
@@ -55,7 +55,7 @@ class RequestConstraintsHandler {
 		return true;
 	}
 
-	private void applyForWrite(UpdateContext<?> context, ConstrainedLrEntity constraints) {
+	private void applyForWrite(UpdateContext<?> context, ConstrainedAgEntity constraints) {
 
 		if (!constraints.isIdIncluded()) {
 			context.setIdUpdatesDisallowed(true);
@@ -93,7 +93,7 @@ class RequestConstraintsHandler {
 		}
 	}
 
-	private void applyForRead(ResourceEntity<?> target, ConstrainedLrEntity constraints) {
+	private void applyForRead(ResourceEntity<?> target, ConstrainedAgEntity constraints) {
 
 		if (!constraints.isIdIncluded()) {
 			target.excludeId();
@@ -119,7 +119,7 @@ class RequestConstraintsHandler {
 		while (rit.hasNext()) {
 
 			Entry<String, ResourceEntity<?>> e = rit.next();
-			ConstrainedLrEntity sourceChild = constraints.getChild(e.getKey());
+			ConstrainedAgEntity sourceChild = constraints.getChild(e.getKey());
 			if (sourceChild != null) {
 
 				// removing recursively ... the depth or recursion depends on
@@ -153,7 +153,7 @@ class RequestConstraintsHandler {
 		}
 	}
 
-	private boolean allowedMapBy(ConstrainedLrEntity source, String path) {
+	private boolean allowedMapBy(ConstrainedAgEntity source, String path) {
 
 		int dot = path.indexOf(PathConstants.DOT);
 
@@ -168,7 +168,7 @@ class RequestConstraintsHandler {
 		if (dot > 0) {
 			// process intermediate component
 			String property = path.substring(0, dot);
-			ConstrainedLrEntity child = source.getChild(property);
+			ConstrainedAgEntity child = source.getChild(property);
 			return child != null && allowedMapBy(child, path.substring(dot + 1));
 
 		} else {
@@ -176,7 +176,7 @@ class RequestConstraintsHandler {
 		}
 	}
 
-	private boolean allowedMapBy_LastComponent(ConstrainedLrEntity source, String path) {
+	private boolean allowedMapBy_LastComponent(ConstrainedAgEntity source, String path) {
 
 		// process last component
 		String property = path;
@@ -189,7 +189,7 @@ class RequestConstraintsHandler {
 			return true;
 		}
 
-		ConstrainedLrEntity child = source.getChild(property);
+		ConstrainedAgEntity child = source.getChild(property);
 		return child != null && allowedMapBy_LastComponent(child, null);
 	}
 }

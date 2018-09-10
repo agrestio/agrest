@@ -29,7 +29,7 @@ public class AgRESTBuilder_ExceptionMappersIT extends JerseyTestOnDerby {
         return super.doConfigure()
                 .module(b -> b.bindMap(ExceptionMapper.class)
                         // TODO: Bootique-like extender API
-                        .put(AgRESTException.class.getName(), TestLrExceptionMapper.class)
+                        .put(AgRESTException.class.getName(), TestAgExceptionMapper.class)
                         .put(TestException.class.getName(), TestExceptionMapper.class));
     }
 
@@ -37,10 +37,10 @@ public class AgRESTBuilder_ExceptionMappersIT extends JerseyTestOnDerby {
     public void testExceptionMapper() {
 
         // override standard mapper
-        Response r1 = target("/lrexception").request().get();
+        Response r1 = target("/agexception").request().get();
         onResponse(r1)
                 .statusEquals(Response.Status.INTERNAL_SERVER_ERROR)
-                .bodyEquals("_lr__lr_exception_");
+                .bodyEquals("_ag__ag_exception_");
 
         // install custom mapper
         Response r2 = target("/testexception").request().get();
@@ -57,9 +57,9 @@ public class AgRESTBuilder_ExceptionMappersIT extends JerseyTestOnDerby {
         private Configuration config;
 
         @GET
-        @Path("lrexception")
-        public DataResponse<E2> lrException(@Context UriInfo uriInfo) {
-            throw new AgRESTException(Response.Status.FORBIDDEN, "_lr_exception_");
+        @Path("agexception")
+        public DataResponse<E2> agException(@Context UriInfo uriInfo) {
+            throw new AgRESTException(Response.Status.FORBIDDEN, "_ag_exception_");
         }
 
         @GET
@@ -69,12 +69,12 @@ public class AgRESTBuilder_ExceptionMappersIT extends JerseyTestOnDerby {
         }
     }
 
-    public static class TestLrExceptionMapper implements ExceptionMapper<AgRESTException> {
+    public static class TestAgExceptionMapper implements ExceptionMapper<AgRESTException> {
 
         @Override
         public Response toResponse(AgRESTException exception) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                    .entity("_lr_" + exception.getMessage())
+                    .entity("_ag_" + exception.getMessage())
                     .type(MediaType.TEXT_PLAIN_TYPE).build();
         }
     }

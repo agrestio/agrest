@@ -48,12 +48,12 @@ public class CayenneDeleteStage implements Processor<DeleteContext<?>> {
 
         // delete by id
         if (context.isById()) {
-            AgEntity<T> agEntity = metadataService.getLrEntity(context.getType());
+            AgEntity<T> agEntity = metadataService.getAgEntity(context.getType());
             deleteById(context, cayenneContext, agEntity);
         }
         // delete by parent
         else if (context.getParent() != null) {
-            AgEntity<?> parentAgEntity = metadataService.getLrEntity(context.getParent().getType());
+            AgEntity<?> parentAgEntity = metadataService.getAgEntity(context.getParent().getType());
             deleteByParent(context, cayenneContext, parentAgEntity);
         }
         // delete all !!
@@ -78,10 +78,10 @@ public class CayenneDeleteStage implements Processor<DeleteContext<?>> {
         cayenneContext.commitChanges();
     }
 
-    private <T extends DataObject> void deleteByParent(DeleteContext<T> context, ObjectContext cayenneContext, AgEntity<?> lrParentEntity) {
+    private <T extends DataObject> void deleteByParent(DeleteContext<T> context, ObjectContext cayenneContext, AgEntity<?> agParentEntity) {
 
         EntityParent<?> parent = context.getParent();
-        Object parentObject = Util.findById(cayenneContext, parent.getType(), lrParentEntity, parent.getId().get());
+        Object parentObject = Util.findById(cayenneContext, parent.getType(), agParentEntity, parent.getId().get());
 
         if (parentObject == null) {
             ObjEntity entity = cayenneContext.getEntityResolver().getObjEntity(parent.getType());

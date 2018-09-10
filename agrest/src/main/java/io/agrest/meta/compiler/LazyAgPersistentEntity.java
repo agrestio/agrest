@@ -12,7 +12,7 @@ import java.util.function.Supplier;
 /**
  * @since 2.0
  */
-public class LazyAgPersistentEntity<T> extends BaseLazyLrEntity<T, AgPersistentEntity<T>> implements AgPersistentEntity<T> {
+public class LazyAgPersistentEntity<T> extends BaseLazyAgEntity<T, AgPersistentEntity<T>> implements AgPersistentEntity<T> {
 
     private Class<T> type;
 

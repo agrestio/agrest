@@ -32,13 +32,13 @@ public class SortMergerTest extends TestWithCayenneMapping {
 		this.merger = new SortMerger(new PathDescriptorManager());
 
 		@SuppressWarnings("unchecked")
-		AgEntity<E2> lre2 = mock(AgEntity.class);
-		when(lre2.getType()).thenReturn(E2.class);
-		when(lre2.getName()).thenReturn("E2");
-		when(lre2.getAttribute("name")).thenReturn(mock(AgAttribute.class));
-		when(lre2.getAttribute("address")).thenReturn(mock(AgAttribute.class));
+		AgEntity<E2> age2 = mock(AgEntity.class);
+		when(age2.getType()).thenReturn(E2.class);
+		when(age2.getName()).thenReturn("E2");
+		when(age2.getAttribute("name")).thenReturn(mock(AgAttribute.class));
+		when(age2.getAttribute("address")).thenReturn(mock(AgAttribute.class));
 
-		this.entity = new ResourceEntity<>(lre2);
+		this.entity = new ResourceEntity<>(age2);
 	}
 
 	@Test

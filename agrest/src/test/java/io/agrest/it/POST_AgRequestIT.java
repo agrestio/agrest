@@ -32,7 +32,7 @@ public class POST_AgRequestIT extends JerseyTestOnDerby {
 
 
     @Test
-    public void testPost_Includes_OverrideByLrRequest() {
+    public void testPost_Includes_OverrideByAgRequest() {
 
         Response r2 = target("/e3_includes")
                 .queryParam("include", "id")
@@ -48,7 +48,7 @@ public class POST_AgRequestIT extends JerseyTestOnDerby {
     }
 
     @Test
-    public void testPost_Excludes_OverrideByLrRequest() {
+    public void testPost_Excludes_OverrideByAgRequest() {
 
         Response r2 = target("/e3_excludes")
                 .queryParam("exclude", "name")

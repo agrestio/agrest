@@ -36,7 +36,7 @@ public class AgRESTFactory extends ExternalResource {
 	}
 
 	/**
-	 * Customized LR builder. A method for subclasses to override.
+	 * Customized AgREST builder. A method for subclasses to override.
 	 */
 	protected AgRESTBuilder doBefore(AgRESTBuilder builder) {
 		return builder;

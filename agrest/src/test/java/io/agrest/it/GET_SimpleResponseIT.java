@@ -38,7 +38,7 @@ public class GET_SimpleResponseIT extends JerseyTest {
 		ServerRuntime runtime = mock(ServerRuntime.class);
 		when(runtime.getChannel()).thenReturn(mockChannel);
 
-		Feature lrFeature = AgRESTBuilder.build(runtime);
+		Feature agFeature = AgRESTBuilder.build(runtime);
 
 		Feature feature = new Feature() {
 
@@ -49,7 +49,7 @@ public class GET_SimpleResponseIT extends JerseyTest {
 			}
 		};
 
-		return new ResourceConfig().register(feature).register(lrFeature);
+		return new ResourceConfig().register(feature).register(agFeature);
 	}
 
 	@Test

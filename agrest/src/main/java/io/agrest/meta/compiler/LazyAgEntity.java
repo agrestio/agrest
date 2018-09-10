@@ -10,7 +10,7 @@ import java.util.function.Supplier;
 /**
  * @since 2.0
  */
-public class LazyAgEntity<T> extends BaseLazyLrEntity<T, AgEntity<T>> implements AgEntity<T> {
+public class LazyAgEntity<T> extends BaseLazyAgEntity<T, AgEntity<T>> implements AgEntity<T> {
 
     private Class<T> type;
 

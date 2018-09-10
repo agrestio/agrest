@@ -15,7 +15,7 @@ public abstract class EncoderITBase {
 	@Rule
 	public DbCleaner dbCleaner = new DbCleaner(DB.newContext());
 
-	protected IAgRESTService createLRService(EncoderFilter... filters) {
+	protected IAgRESTService createAgService(EncoderFilter... filters) {
 		AgRESTBuilder builder = AgRESTBuilder.builder(DB.getCayenneStack());
 		for (EncoderFilter filter : filters) {
 			builder.encoderFilter(filter);

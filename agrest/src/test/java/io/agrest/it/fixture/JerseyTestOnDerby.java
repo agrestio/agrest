@@ -53,7 +53,7 @@ public abstract class JerseyTestOnDerby extends JerseyTest {
     @Override
     public Application configure() {
 
-        AgRESTRuntime lrFeature = doConfigure().build();
+        AgRESTRuntime agFeature = doConfigure().build();
 
         Feature unitFeature = context -> {
             doAddResources(context);
@@ -62,7 +62,7 @@ public abstract class JerseyTestOnDerby extends JerseyTest {
 
         return new ResourceConfig()
                 .register(unitFeature)
-                .register(lrFeature);
+                .register(agFeature);
     }
 
     protected AgRESTBuilder doConfigure() {

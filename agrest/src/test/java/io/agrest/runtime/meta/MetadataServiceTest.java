@@ -13,9 +13,9 @@ import org.junit.Test;
 public class MetadataServiceTest extends TestWithCayenneMapping {
 
 	@Test
-	public void testGetLrEntity_NoRelationships() {
+	public void testGetAgEntity_NoRelationships() {
 
-		AgPersistentEntity<E4> e4 = (AgPersistentEntity<E4>) metadataService.getLrEntity(E4.class);
+		AgPersistentEntity<E4> e4 = (AgPersistentEntity<E4>) metadataService.getAgEntity(E4.class);
 		assertNotNull(e4);
 		assertEquals("E4", e4.getName());
 		assertSame(E4.class, e4.getType());
@@ -31,9 +31,9 @@ public class MetadataServiceTest extends TestWithCayenneMapping {
 	}
 
 	@Test
-	public void testGetLrEntity_Relationships() {
+	public void testGetAgEntity_Relationships() {
 
-		AgPersistentEntity<E5> e5 = (AgPersistentEntity<E5>) metadataService.getLrEntity(E5.class);
+		AgPersistentEntity<E5> e5 = (AgPersistentEntity<E5>) metadataService.getAgEntity(E5.class);
 		assertNotNull(e5);
 		assertEquals("E5", e5.getName());
 		assertSame(E5.class, e5.getType());

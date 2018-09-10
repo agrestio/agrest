@@ -29,7 +29,7 @@ public class MetadataService implements IMetadataService {
 	 * @since 1.12
 	 */
 	@Override
-	public <T> AgEntity<T> getLrEntity(Class<T> type) {
+	public <T> AgEntity<T> getAgEntity(Class<T> type) {
 		if (type == null) {
 			throw new NullPointerException("Null type");
 		}
@@ -46,7 +46,7 @@ public class MetadataService implements IMetadataService {
 	@Override
 	public <T> AgEntity<T> getEntityByType(Type entityType) {
 		@SuppressWarnings("unchecked")
-		AgEntity<T> entity = getLrEntity( (Class<T>) Types.getClassForTypeArgument(entityType).orElse(Object.class));
+		AgEntity<T> entity = getAgEntity( (Class<T>) Types.getClassForTypeArgument(entityType).orElse(Object.class));
 		if (entity == null) {
 			throw new AgRESTException(Status.INTERNAL_SERVER_ERROR,
 					"EntityUpdate type '" + entityType.getTypeName() + "' is not an entity");

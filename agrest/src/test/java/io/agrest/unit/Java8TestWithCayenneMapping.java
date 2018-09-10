@@ -72,7 +72,7 @@ public class Java8TestWithCayenneMapping {
 	private IJsonValueConverterFactory converterFactory;
 
 	@Before
-	public void initLrDataMap() {
+	public void initAgDataMap() {
 
 		ObjectContext sharedContext = runtime.newContext();
 
@@ -97,8 +97,8 @@ public class Java8TestWithCayenneMapping {
 		return new ResourceMetadataService(resourceParser, BaseUrlProvider.forUrl(Optional.empty()));
 	}
 
-	protected <T> AgEntity<T> getLrEntity(Class<T> type) {
-		return metadataService.getLrEntity(type);
+	protected <T> AgEntity<T> getAgEntity(Class<T> type) {
+		return metadataService.getAgEntity(type);
 	}
 
 	protected ObjEntity getEntity(Class<?> type) {
@@ -106,7 +106,7 @@ public class Java8TestWithCayenneMapping {
 	}
 
 	protected <T> ResourceEntity<T> getResourceEntity(Class<T> type) {
-		return new ResourceEntity<>(getLrEntity(type));
+		return new ResourceEntity<>(getAgEntity(type));
 	}
 
 	protected <T> void appendAttribute(ResourceEntity<?> entity, Property<T> property, Class<T> type) {

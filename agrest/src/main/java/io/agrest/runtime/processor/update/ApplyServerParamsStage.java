@@ -107,7 +107,7 @@ public class ApplyServerParamsStage implements Processor<UpdateContext<?>> {
             return null;
         }
 
-        AgRelationship r = metadataService.getLrRelationship(parent);
+        AgRelationship r = metadataService.getAgRelationship(parent);
         if (r instanceof AgPersistentRelationship) {
             return r;
         }

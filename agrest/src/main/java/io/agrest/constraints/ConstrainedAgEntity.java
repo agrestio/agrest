@@ -14,15 +14,15 @@ import java.util.Map;
  *
  * @since 2.4
  */
-public class ConstrainedLrEntity<T> {
+public class ConstrainedAgEntity<T> {
 
     private boolean idIncluded;
     private Collection<String> attributes;
-    private Map<String, ConstrainedLrEntity<?>> children;
+    private Map<String, ConstrainedAgEntity<?>> children;
     private Expression qualifier;
     private AgEntity<T> entity;
 
-    public ConstrainedLrEntity(AgEntity<T> entity) {
+    public ConstrainedAgEntity(AgEntity<T> entity) {
 
         if (entity == null) {
             throw new NullPointerException("Null entity");
@@ -40,7 +40,7 @@ public class ConstrainedLrEntity<T> {
         return attributes;
     }
 
-    Map<String, ConstrainedLrEntity<?>> getChildren() {
+    Map<String, ConstrainedAgEntity<?>> getChildren() {
         return children;
     }
 
@@ -56,7 +56,7 @@ public class ConstrainedLrEntity<T> {
         return attributes.contains(name);
     }
 
-    public ConstrainedLrEntity getChild(String name) {
+    public ConstrainedAgEntity getChild(String name) {
         return children.get(name);
     }
 

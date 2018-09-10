@@ -18,7 +18,7 @@ public abstract class EntityEncoderFilter<T> implements EncoderFilter {
 	private AgEntity<T> agEntity;
 
 	public EntityEncoderFilter(IMetadataService metadataService) {
-		this.agEntity = metadataService.getLrEntity(getType());
+		this.agEntity = metadataService.getAgEntity(getType());
 	}
 
 	protected abstract Class<T> getType();

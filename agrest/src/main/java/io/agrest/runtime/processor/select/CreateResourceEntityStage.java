@@ -53,7 +53,7 @@ public class CreateResourceEntityStage implements Processor<SelectContext<?>> {
     }
 
     protected <T> void doExecute(SelectContext<T> context) {
-        ResourceEntity<T> resourceEntity = new ResourceEntity<>(metadataService.getLrEntity(context.getType()));
+        ResourceEntity<T> resourceEntity = new ResourceEntity<>(metadataService.getAgEntity(context.getType()));
 
         AgRequest request = context.getRawRequest();
         if (request != null) {

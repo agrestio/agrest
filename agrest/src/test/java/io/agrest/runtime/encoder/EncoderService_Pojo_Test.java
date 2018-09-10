@@ -54,8 +54,8 @@ public class EncoderService_Pojo_Test {
 
 	@Test
 	public void testEncode_SimplePojo_noId() throws IOException {
-		AgEntity<P1> p1lre = new AgEntityBuilder<>(P1.class, new LazyAgDataMap(compilers)).build();
-		ResourceEntity<P1> descriptor = new ResourceEntity<P1>(p1lre);
+		AgEntity<P1> p1age = new AgEntityBuilder<>(P1.class, new LazyAgDataMap(compilers)).build();
+		ResourceEntity<P1> descriptor = new ResourceEntity<P1>(p1age);
 		descriptor.getAttributes().put("name", new DefaultAgAttribute("name", String.class));
 
 		P1 p1 = new P1();
@@ -70,8 +70,8 @@ public class EncoderService_Pojo_Test {
 		p6.setStringId("myid");
 		p6.setIntProp(4);
 
-		AgEntity<P6> p6lre = new AgEntityBuilder<>(P6.class, new LazyAgDataMap(compilers)).build();
-		ResourceEntity<P6> descriptor = new ResourceEntity<P6>(p6lre);
+		AgEntity<P6> p6age = new AgEntityBuilder<>(P6.class, new LazyAgDataMap(compilers)).build();
+		ResourceEntity<P6> descriptor = new ResourceEntity<P6>(p6age);
 		descriptor.getAttributes().put("intProp", new DefaultAgAttribute("intProp", Integer.class));
 		descriptor.includeId();
 

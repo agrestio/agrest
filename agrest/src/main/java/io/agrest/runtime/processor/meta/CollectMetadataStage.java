@@ -46,8 +46,8 @@ public class CollectMetadataStage implements Processor<MetadataContext<?>> {
 
     @SuppressWarnings("unchecked")
     protected <T> void doExecute(MetadataContext<T> context) {
-        AgEntity<T> entity = metadataService.getLrEntity(context.getType());
-        Collection<AgResource<?>> resources = resourceMetadataService.getLrResources(context.getResource());
+        AgEntity<T> entity = metadataService.getAgEntity(context.getType());
+        Collection<AgResource<?>> resources = resourceMetadataService.getAgResources(context.getResource());
         Collection<AgResource<T>> filteredResources = new ArrayList<>(resources.size());
 
         for (AgResource<?> resource : resources) {

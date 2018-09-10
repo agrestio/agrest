@@ -20,7 +20,7 @@ public class EntityPathCacheTest extends TestWithCayenneMapping {
 	
 	@Test
 	public void testMultiColumnId() {
-		EntityPathCache cache = new EntityPathCache(getLrEntity(E17.class));
+		EntityPathCache cache = new EntityPathCache(getAgEntity(E17.class));
 		
 		PathDescriptor pdName = cache.getPathDescriptor(new ASTObjPath("name"));
 		assertNotNull(pdName);
@@ -46,7 +46,7 @@ public class EntityPathCacheTest extends TestWithCayenneMapping {
 
 	@Test
 	public void testGetPathDescriptor_Attribute() {
-		EntityPathCache cache = new EntityPathCache(getLrEntity(E1.class));
+		EntityPathCache cache = new EntityPathCache(getAgEntity(E1.class));
 		PathDescriptor pd = cache.getPathDescriptor(new ASTObjPath("name"));
 		assertNotNull(pd);
 		assertTrue(pd.isAttribute());
@@ -57,7 +57,7 @@ public class EntityPathCacheTest extends TestWithCayenneMapping {
 
 	@Test
 	public void testGetPathDescriptor_Relationship() {
-		EntityPathCache cache = new EntityPathCache(getLrEntity(E3.class));
+		EntityPathCache cache = new EntityPathCache(getAgEntity(E3.class));
 		PathDescriptor pd = cache.getPathDescriptor(new ASTObjPath("e2"));
 		assertNotNull(pd);
 		assertFalse(pd.isAttribute());
@@ -68,7 +68,7 @@ public class EntityPathCacheTest extends TestWithCayenneMapping {
 
 	@Test
 	public void testGetPathDescriptor_RelatedAttribute() {
-		EntityPathCache cache = new EntityPathCache(getLrEntity(E3.class));
+		EntityPathCache cache = new EntityPathCache(getAgEntity(E3.class));
 		PathDescriptor pd = cache.getPathDescriptor(new ASTObjPath("e2.name"));
 		assertNotNull(pd);
 		assertTrue(pd.isAttribute());
@@ -79,13 +79,13 @@ public class EntityPathCacheTest extends TestWithCayenneMapping {
 
 	@Test(expected = AgRESTException.class)
 	public void testGetPathDescriptor_BadPath() {
-		EntityPathCache cache = new EntityPathCache(getLrEntity(E3.class));
+		EntityPathCache cache = new EntityPathCache(getAgEntity(E3.class));
 		cache.getPathDescriptor(new ASTObjPath("e2.xyz"));
 	}
 
 	@Test
 	public void testGetPathDescriptor_OuterRelatedAttribute() {
-		EntityPathCache cache = new EntityPathCache(getLrEntity(E3.class));
+		EntityPathCache cache = new EntityPathCache(getAgEntity(E3.class));
 		PathDescriptor pd = cache.getPathDescriptor(new ASTObjPath("e2+.name"));
 		assertNotNull(pd);
 		assertTrue(pd.isAttribute());
