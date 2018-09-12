@@ -1,0 +1,165 @@
+components:
+  queryParams:
+
+    CayenneExp:
+      name: cayenneExp
+      in: query
+      style: form
+      explode: false
+      schema:
+        type: object
+        properties:
+          exp:
+            type: string
+            description: A conditional expression that is used to filter the response objects
+            example: articles.body like $b
+          params:
+            type: object
+            additionalProperties:
+              type: string
+      description: cayenneExp query
+      required: false
+
+    Dir:
+      name: dir
+      in: query
+      style: form
+      explode: false
+      schema:
+        type: string
+        enum:
+          - ASC
+          - DESC
+      description: sorting direction
+      required: false
+
+    Excludes:
+      name: exclude
+      in: query
+      style: form
+      explode: false
+      schema:
+        type: array
+        items:
+          $ref: '#/components/queryParams/Exclude'
+      description: list of excludes
+      required: false
+
+    Exclude:
+      name: exclude
+      in: query
+      schema:
+        type: object
+        properties:
+          path:
+            type: string
+          excludes:
+            type: array
+            items:
+              $ref: '#/components/queryParams/Exclude'
+      description: An exclude parameter
+      required: false
+
+    Includes:
+      name: include
+      in: query
+      style: form
+      explode: false
+      schema:
+        type: array
+        items:
+          $ref: '#/components/queryParams/Include'
+      description: list of includes
+      required: false
+
+    Include:
+      name: include
+      in: query
+      schema:
+        type: object
+        properties:
+          value:
+            type: string
+          cayenneExp:
+            $ref: '#/components/queryParams/CayenneExp'
+          sort:
+            $ref: '#/components/queryParams/Sort'
+          mapBy:
+            $ref: '#/components/queryParams/MapBy'
+          path:
+            type: string
+          start:
+            $ref: '#/components/queryParams/Start'
+          limit:
+            $ref: '#/components/queryParams/Limit'
+          includes:
+            type: array
+            items:
+              $ref: '#/components/queryParams/Include'
+      description: An include parameter
+      required: false
+
+    Limit:
+      name: limit
+      in: query
+      style: form
+      explode: false
+      schema:
+        type: object
+        properties:
+          value:
+            type: integer
+            format: int32
+            description:
+      description: limit query param. Used for pagination.
+      required: false
+
+    Start:
+      name: start
+      in: query
+      style: form
+      explode: false
+      schema:
+        type: object
+        properties:
+          value:
+            type: integer
+            format: int32
+            description:
+      description: start query param. Used for pagination.
+      required: false
+
+    MapBy:
+      name: mapBy
+      in: query
+      style: form
+      explode: false
+      schema:
+        type: object
+        properties:
+          path:
+            type: string
+            description:
+      description:
+      required: false
+
+    Sort:
+      name: sort
+      in: query
+      style: form
+      explode: false
+      schema:
+        type: object
+        properties:
+          property:
+            type: string
+            description:
+          direction:
+            type: object
+            $ref: '#/components/queryParams/Dir'
+          sorts:
+            type: array
+            items:
+              $ref: '#/components/queryParams/Sort'
+      description: sort
+      required: false

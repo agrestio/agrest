@@ -1,0 +1,26 @@
+=== Introduction
+
+The API Design-First (or API-First) approach prescribes writing your API definition first as a contract before writing any code.
+This approach is more modern than the traditional Code-First.
+If main consumers of your API are third parties partners and customers, the Desing-First approach is the best choise.
+It allows you to provide good design for mission critical APIs.
+
+* The contract that represents API specification is the best point for discussion. It can be visualized by using such tools as Swagger UI.
+
+* Based on API specification can be even run a mock service. So the developers and stakeholders can learn and discuss suggested design.
+
+* Most of high level issues in design could be fixed before writting any code.
+
+* The final contract that approved by all players tends to lead do better API.
+
+* API documentation and appropriated tests could be generated from the contract. That alows to implement client application early.
+
+
+In the beggining of API developing is very important to understand the difference beetween Desing-First, Code-First and DB-First approaches.
+And to help with it there are listed three principles you have to follow to reach all benefits of API Design-First approach:
+
+    1. The API is the first user interface of the application
+
+    2. The API comes first, than the implementation
+
+    3. The API is self-descriptive

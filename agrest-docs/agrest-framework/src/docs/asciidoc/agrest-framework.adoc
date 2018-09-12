@@ -15,3 +15,5 @@ include::_agrest-framework/relationship-resources.adoc[]
 include::_agrest-framework/securing-endpoints.adoc[]
 
 include::_agrest-framework/customizing-request-processing.adoc[]
+
+include::_agrest-framework/design-first-approach.adoc[]

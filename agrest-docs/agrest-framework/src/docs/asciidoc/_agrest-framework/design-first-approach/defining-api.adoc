@@ -1,0 +1,202 @@
+=== Defining the API
+
+AgREST provides `AgRESTServerCodegen` and a set of custom mustache templates to generate API implementation
+based on `OpenAPI 3.0` specification.
+
+https://github.com/io/agrest/tree/master/agrest-swagger-designfirst-test[Example]
+of Design-First approach implementation is provided as separate module with set of tests.
+To run it use `mvn clean install` command.
+The API description (contract) is defined in file `src/test/java/resources/api.yaml`.
+All generated APIs will be located on `src/test/java` together with corresponding integration tests.
+
+There is outlined the top-down workflow of creating API:
+
+==== 1. Start with domain models
+Create `my-bookstore-api.yaml` file to define your API.
+Add general information with regards of your API:
+[source, yaml]
+----
+openapi: 3.0.0
+servers:
+  - url: 'http://127.0.0.1/v1'
+info:
+  title: AgREST based API of MyBookstore
+  description: An API for interacting with the MyBookstore backend server
+  version: v1
+----
+
+Then add definition of your model. You can specify existing Java-DB mapping classes (based on `CayenneDataObject` for example)
+or generate POJO models. For further information, please refer to <<Configure and run the API generation>> section.
+
+But, for both cases you have to define models in `.yaml` file:
+
+[source, yaml]
+----
+tags:
+  - name: BookCategory
+    description: |
+      This model represents BookCategory type and is used to retrieve, create and update BookCategory information.
+
+components:
+  schemas:
+    BookCategory:
+      type: object
+      properties:
+       id:
+         type: string
+         description: Unique ID of BookCategory
+         example: 1
+       name:
+         type: string
+         description: BookCategory name
+         example: Science Fiction
+       description:
+         type: string
+         description: Description of BookCategory
+         example: Science fiction (often shortened to Sci-Fi or SF) is a genre of speculative fiction, typically dealing with imaginative concepts such as advanced science and technology, spaceflight, time travel, and extraterrestrial life.
+----
+
+==== 2. Attach AgREST protocol definition
+The AgREST protocol file <<protocol>> contains definition of all <<Control Parameters>>.
+Just place this `protocol.yaml` in the catalog were other your main `my-bookstore-api.yaml` file is located.
+
+==== 3. Define resources
+Add REST API resource definition to your `my-bookstore-api.yaml` file.
+Pay attention that AgREST protocol parameters are defined as references.
+[source, yaml]
+----
+paths:
+ /bookcategories:
+    get:
+      summary: Get list of all BookCategories
+      operationId: getAll
+      tags:
+        - BookCategory
+      parameters:
+        - $ref: '../resources/protocol.yaml#/components/queryParams/Limit'
+        - $ref: '../resources/protocol.yaml#/components/queryParams/Start'
+      responses:
+        '200':
+          description: Success response.
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/BookCategory’
+        default:
+          description: Unexpected error
+
+ /bookcategories/{id}:
+    get:
+      description: Returns a particular BookCategory
+      operationId: getOne
+      tags:
+        - BookCategory
+      parameters:
+        - name: id
+          in: path
+          description: ID of BookCategory to fetch
+          required: true
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: Success responce
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BookCategory'
+          description: Unexpected error
+----
+
+==== 4. Run build-time API generation
+To generate AgREST based API is used special maven plugin that should be configured
+in accordance with your `.yaml` files location <<inputSpec>>, packages <<apiPackage>>, output catalog <<output>>, etc.
+
+`mvn clean install` runs generation of API.
+
+For more details, please refer to <<Configure and run the API generation>> section
+
+==== 5. Validate the API implementation
+After successful finishing of generation `BookCategoryResource.java` could be found in the output catalog.
+This class has the ready to use implementation (not a stub) of all methods defined `.yaml` file.
+
+[source, Java]
+----
+@Path("/")
+public class BookCategoryResource {
+
+    @Context
+    private Configuration config;
+
+    @GET
+    @Path("/v1/bookcategory")
+    @Produces({ "application/json" })
+    public DataResponse<BookCategory> getAll(@QueryParam("limit") Limit limit, @QueryParam("start") Start start) {
+
+        AgRequest agRequest = AgRequest.builder()
+                .limit(limit)
+                .start(start)
+                .build();
+
+        return AgREST.select(BookCategory.class, config)
+                    .request(agRequest)
+                    .get();
+    }
+
+    @GET
+    @Path("/v1/bookcategory/{id}")
+    @Produces({ "application/json" })
+    public DataResponse<BookCategory> getOne(@PathParam("id") Integer id) {
+
+        AgRequest agRequest = AgRequest.builder()
+                .build();
+
+        return AgREST.select(BookCategory.class, config)
+                    .byId(id)
+                    .request(agRequest)
+                    .get();
+    }
+}
+----
+
+If you configure maven plugin to generate models <<generateModels>>, the POJO `BookCategory.java` will be generated.
+
+[source, Java]
+----
+public class BookCategory   {
+
+    private Integer id = null;
+    private String name = null;
+    private String description = null;
+
+/******************* id *******************/
+   /**
+     * Unique ID of BookCategory
+     * @return id
+     **/
+    @AgAttribute
+    @ApiModelProperty(example = "1", value = "Unique ID of BookCategory")
+    public Integer getId() {
+        return id;
+    }
+
+...
+
+/******************* name *******************/
+    /**
+     * BookCategory name
+     * @return name
+     **/
+    @AgAttribute
+    @ApiModelProperty(example = "Science Fiction", value = "BookCategory name")
+    public String getName() {
+        return name;
+    }
+
+...
+
+}
+----
+
+
