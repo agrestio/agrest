@@ -93,6 +93,7 @@
                             <modelPackage>${base-package}.it.fixture.cayenne</modelPackage>
                             <invokerPackage>${base-package}</invokerPackage>
                             <generateModels>false</generateModels>
+                            <skipOverwrite>false</skipOverwrite>
                             <configOptions>
                                 <generateForTesting>true</generateForTesting>
                                 <generateSpringApplication>false</generateSpringApplication>

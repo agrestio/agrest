@@ -3,12 +3,6 @@
 AgREST provides `AgRESTServerCodegen` and a set of custom mustache templates to generate API implementation
 based on `OpenAPI 3.0` specification.
 
-https://github.com/io/agrest/tree/master/agrest-swagger-designfirst-test[Example]
-of Design-First approach implementation is provided as separate module with set of tests.
-To run it use `mvn clean install` command.
-The API description (contract) is defined in file `src/test/java/resources/api.yaml`.
-All generated APIs will be located on `src/test/java` together with corresponding integration tests.
-
 There is outlined the top-down workflow of creating API:
 
 ==== 1. Start with domain models
@@ -25,8 +19,10 @@ info:
   version: v1
 ----
 
-Then add definition of your model. You can specify existing Java-DB mapping classes (based on `CayenneDataObject` for example)
-or generate POJO models. For further information, please refer to <<Configure and run the API generation>> section.
+Then add definition of your models. You can ether specify existing Java-DB mapping classes (based on `CayenneDataObject` for example)
+or generate POJO models  by maven plugin.
+
+For further information, please refer to <<Configure and run the API generation>> section.
 
 But, for both cases you have to define models in `.yaml` file:
 

@@ -19,6 +19,7 @@ There is an example of the maven plugin configuration:
                 <modelPackage>${base-package}.swagger.api.v${schema-version}.model</modelPackage>
                 <invokerPackage>${base-package}</invokerPackage>
                 <generateModels>true</generateModels>
+                <skipOverwrite>false</skipOverwrite>
             </configuration>
         </execution>
     </executions>
@@ -57,3 +58,8 @@ Otherwise, will be used existing model classes from this package.
 [#generateModels]
 ==== <generateModels>
 Generates POJO of models or uses existing ones.
+
+[#skipOverwrite]
+==== <skipOverwrite>
+If it is set in `false`, all generated files will be overwritten each time during `mvn clean install`.
+So, if you are planning to customize the generated API implementation, this parameter should be set in `true`.
