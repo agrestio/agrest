@@ -28,7 +28,7 @@ public {{>returnTypes}} {{nickname}}({{#allParams}}{{>pathParams}}{{>queryParams
     }
     {{/hasCompoundId}}
 {{/isRestfulIndex}}
-{{#isRestfulShow}}
+{{#isRestfulIndexBetOne}}
     public {{>returnTypes}} {{nickname}}({{#allParams}}{{>pathParams}}{{>queryParams}}{{#hasMore}}, {{/hasMore}}{{/allParams}}) {
 
         {{>protocolImpl}}
@@ -38,7 +38,7 @@ public {{>returnTypes}} {{nickname}}({{#allParams}}{{>pathParams}}{{>queryParams
                     .request(agRequest)
                     .get();
     }
-{{/isRestfulShow}}
+{{/isRestfulIndexBetOne}}
 {{#isRestfulIndexRelated}}
     public DataResponse<{{#modelRelations}}{{returnType}}{{/modelRelations}}> {{nickname}}({{#allParams}}{{>pathParams}}{{>queryParams}}{{>bodyParams}}{{#hasMore}}, {{/hasMore}}{{/allParams}}) {
 

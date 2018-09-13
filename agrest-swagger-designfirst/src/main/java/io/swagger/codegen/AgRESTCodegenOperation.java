@@ -75,6 +75,23 @@ public class AgRESTCodegenOperation extends CodegenOperation {
         this.operationIdCamelCase = codegenOperation.operationIdCamelCase;
     }
 
+    /**
+     * Check if act as Restful index to retrieve all items
+     *
+     * @return true if act as Restful index without path params, false otherwise
+     */
+    public boolean isRestfulIndex() {
+        return "GET".equals(httpMethod) && pathParams.isEmpty();
+    }
+
+    /**
+     * Check if act as Restful index to retrieve one item by id
+     *
+     * @return true if act as Restful index with one path param, false otherwise
+     */
+    public boolean isRestfulIndexBetOne() {
+        return "GET".equals(httpMethod) && isGetByIdPath();
+    }
 
     /**
      * Check if act as Restful index to retrieve many children method
@@ -196,6 +213,18 @@ public class AgRESTCodegenOperation extends CodegenOperation {
         String id = pathParams.get(0).baseName;
 
         return path.contains("/{" + id + "}/");
+    }
+
+    /**
+     * Check if the path match format /xxx/:id
+     *
+     * @return true if path act as parent-child
+     */
+    private boolean isGetByIdPath() {
+        if (pathParams.size() != 1 || path == null) return false;
+        String id = pathParams.get(0).baseName;
+
+        return path.endsWith("/{" + id + "}");
     }
 
 }
