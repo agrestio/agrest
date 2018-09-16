@@ -38,12 +38,12 @@
         <jackson-version>2.6.4</jackson-version>
     </properties>
 
-    <url>https://github.com/nhl/link-rest</url>
+    <url>https://github.com/agrestio/agrest/</url>
 
     <licenses>
         <license>
             <name>Apache 2.0 License</name>
-            <url>https://github.com/nhl/link-rest/blob/master/LICENSE.txt</url>
+            <url>https://github.com/agrestio/agrest/blob/master/LICENSE.txt</url>
             <distribution>repo</distribution>
         </license>
     </licenses>
@@ -60,9 +60,9 @@
     </developers>
 
     <scm>
-        <connection>scm:git:https://github.com/nhl/link-rest</connection>
-        <developerConnection>scm:git:ssh://git@github.com/nhl/link-rest</developerConnection>
-        <url>https://github.com/nhl/link-rest</url>
+        <connection>scm:git:https://github.com/agrestio/agrest</connection>
+        <developerConnection>scm:git:ssh://git@github.com/agrestio/agrest</developerConnection>
+        <url>https://github.com/agrestio/agrest</url>
         <tag>HEAD</tag>
     </scm>
 
@@ -74,22 +74,22 @@
             <url>https://oss.sonatype.org/service/local/staging/deploy/maven2</url>
         </repository>
         <snapshotRepository>
-            <id>linkrest-snapshots</id>
+            <id>agrest-snapshots</id>
             <url>http://maven.objectstyle.org/nexus/content/repositories/linkrest-snapshots</url>
         </snapshotRepository>
     </distributionManagement>
 
     <repositories>
         <repository>
-            <id>linkrest-dependencies</id>
-            <name>Link Rest Dependencies Repo</name>
+            <id>agrest-dependencies</id>
+            <name>AgREST Dependencies Repo</name>
             <url>http://maven.objectstyle.org/nexus/content/groups/linkrest</url>
         </repository>
     </repositories>
     <pluginRepositories>
         <pluginRepository>
-            <id>linkrest-dependencies</id>
-            <name>Link Rest Dependencies Repo</name>
+            <id>agrest-dependencies</id>
+            <name>AgRest Dependencies Repo</name>
             <url>http://maven.objectstyle.org/nexus/content/groups/linkrest</url>
             <snapshots>
                 <enabled>false</enabled>
