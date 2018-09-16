@@ -19,8 +19,6 @@
         <module>agrest-bom</module>
         <module>agrest-docs</module>
         <module>agrest-legacy-date-encoders</module>
-        <module>agrest-swagger-designfirst-test</module>
-        <module>agrest-swagger-designfirst</module>
     </modules>
 
     <properties>
@@ -38,7 +36,6 @@
         <jersey-version>2.27</jersey-version>
         <jaxrs-version>2.1</jaxrs-version>
         <jackson-version>2.6.4</jackson-version>
-        <openapi-generator-version>3.0.2</openapi-generator-version>
     </properties>
 
     <url>https://github.com/nhl/link-rest</url>
