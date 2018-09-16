@@ -56,7 +56,7 @@ public class MultiSelectBuilder_IT {
 		MultivaluedMap<String, String> params = new MultivaluedHashMap<>();
 		params.putSingle("sort", "id");
 
-		SelectBuilder<E22> rootSelect = agREST.getAgRESTService().select(E22.class).uri(agREST.mockUri(params));
+		SelectBuilder<E22> rootSelect = agREST.getService().select(E22.class).uri(agREST.mockUri(params));
 
 		DataResponse<E22> response = new MultiSelectBuilder<>(rootSelect, agREST.getExecutor())
 				.parallel(this::parallelFetcher, this::merge).select(5, TimeUnit.SECONDS);
@@ -88,7 +88,7 @@ public class MultiSelectBuilder_IT {
 		MultivaluedMap<String, String> params = new MultivaluedHashMap<>();
 		params.putSingle("sort", "id");
 
-		SelectBuilder<E22> rootSelect = agREST.getAgRESTService().select(E22.class).uri(agREST.mockUri(params));
+		SelectBuilder<E22> rootSelect = agREST.getService().select(E22.class).uri(agREST.mockUri(params));
 
 		DataResponse<E22> response = new MultiSelectBuilder<>(rootSelect, agREST.getExecutor())
 				.afterParent(this::afterFetcher1, this::merge).afterParent(this::afterFetcher2, this::merge)

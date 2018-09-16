@@ -10,8 +10,7 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * A response object that represents a 'Collection Document' from AgREST
- * protocol.
+ * A response object that represents a 'Collection Document' from AgREST protocol.
  */
 public class DataResponse<T> extends AgResponse {
 

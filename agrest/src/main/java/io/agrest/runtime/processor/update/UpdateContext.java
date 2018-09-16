@@ -285,7 +285,7 @@ public class UpdateContext<T> extends BaseProcessingContext<T> {
 	 * 			// Explicit query parameter
 	 * 			AgRequest agRequest = AgRequest.builder().cayenneExp(cayenneExp).build();
 	 *
-	 * 			return AgREST.service(config).select(E2.class)
+	 * 			return Ag.service(config).select(E2.class)
 	 * 							.uri(uriInfo)
 	 * 							.request(agRequest) // overrides parameters from uriInfo
 	 * 							.get();

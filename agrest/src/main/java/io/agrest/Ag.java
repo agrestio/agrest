@@ -50,7 +50,7 @@ public class Ag {
 
     /**
      * Returns {@link IAgService} bound to a given JAX RS configuration.
-     * IAgRESTService is the main engine behind all the operations in
+     * IAgService is the main engine behind all the operations in
      * AgREST, however you would rarely need to use it directly. Instead use
      * other static methods defined in this class to start processor chains for
      * AgREST requests.

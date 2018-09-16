@@ -21,8 +21,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 
 /**
- * A main superclass of AgREST unit tests that require full stack Jersey
- * container.
+ * A main superclass of AgREST unit tests that require full stack Jersey container.
  */
 public abstract class JerseyTestOnDerby extends JerseyTest {
 

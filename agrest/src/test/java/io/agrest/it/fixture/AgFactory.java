@@ -45,7 +45,7 @@ public class AgFactory extends ExternalResource {
         return Objects.requireNonNull(runtime);
     }
 
-    public IAgService getAgRESTService() {
+    public IAgService getService() {
         return getRuntime().service(IAgService.class);
     }
 

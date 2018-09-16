@@ -26,7 +26,7 @@ public class DefaultSelectBuilder_CustomPipeline_DataIT {
     public AgFactory agREST = new AgFactory(DB);
 
     private <T> DefaultSelectBuilder<T> createBuilder(Class<T> type) {
-        SelectBuilder<T> builder = agREST.getAgRESTService().select(type);
+        SelectBuilder<T> builder = agREST.getService().select(type);
         assertTrue(builder instanceof DefaultSelectBuilder);
         return (DefaultSelectBuilder<T>) builder;
     }

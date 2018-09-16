@@ -139,8 +139,7 @@ import java.util.ServiceLoader;
 import java.util.concurrent.ExecutorService;
 
 /**
- * A builder of AgREST runtime that can be loaded into JAX-RS 2 container as a
- * {@link Feature}.
+ * A builder of AgREST runtime that can be loaded into JAX-RS 2 container as a {@link Feature}.
  */
 public class AgBuilder {
 
@@ -188,7 +187,7 @@ public class AgBuilder {
     }
 
     /**
-     * A shortcut that creates a AgRESTBuilder, setting its Cayenne runtime. A
+     * A shortcut that creates a AgBuilder, setting its Cayenne runtime. A
      * caller can continue customizing the returned builder.
      *
      * @since 1.14
@@ -232,7 +231,7 @@ public class AgBuilder {
      *
      * @since 1.1
      * @deprecated since 2.13. Custom exception handlers can be added via a custom module or module provider. E.g.
-     * <code>b.bindMap(ExceptionMapper.class).put(AgRESTException.class.getName(), MyExceptionMapper.class)</code>
+     * <code>b.bindMap(ExceptionMapper.class).put(AgException.class.getName(), MyExceptionMapper.class)</code>
      */
     @Deprecated
     public <E extends Throwable> AgBuilder mapException(Class<? extends ExceptionMapper<E>> mapper) {
@@ -345,7 +344,7 @@ public class AgBuilder {
      *
      * @return this builder instance.
      * @since 1.3
-     * @deprecated since 2.10 AgRESTAdapter is deprecated in favor of
+     * @deprecated since 2.10 AgAdapter is deprecated in favor of
      * {@link AgFeatureProvider} and
      * {@link AgModuleProvider}. Either can be registered with
      * {@link AgBuilder} explicitly or used to implemented auto-loadable extensions.

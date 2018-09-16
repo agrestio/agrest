@@ -192,7 +192,7 @@ public class GET_ObjectIncludeIT extends JerseyTestOnDerby {
     @Test
     public void test_MapBy_ToMany_WithCayenneExp() {
 
-        // see LF-294 - filter applied too late may cause a AgRESTException
+        // see LF-294 - filter applied too late may cause a AgException
 
         newContext().performGenericQuery(
                 new SQLTemplate(E2.class, "INSERT INTO utest.e2 (id, name) values (1, 'xxx')"));
