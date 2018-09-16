@@ -16,46 +16,46 @@ import static org.mockito.Mockito.when;
 
 public class AgFactory extends ExternalResource {
 
-	private AgRuntime runtime;
-	private ServerRuntime cayenneRuntime;
+    private AgRuntime runtime;
+    private ServerRuntime cayenneRuntime;
 
-	public AgFactory(CayenneDerbyStack cayenneStack) {
-		this.cayenneRuntime = cayenneStack.getCayenneStack();
-	}
+    public AgFactory(CayenneDerbyStack cayenneStack) {
+        this.cayenneRuntime = cayenneStack.getCayenneStack();
+    }
 
-	@Override
-	protected void before() throws Throwable {
-		runtime = doBefore(AgBuilder.builder(cayenneRuntime)).build();
-	}
+    @Override
+    protected void before() {
+        runtime = doBefore(AgBuilder.builder(cayenneRuntime)).build();
+    }
 
-	@Override
-	protected void after() {
-		runtime.shutdown();
-		runtime = null;
-	}
+    @Override
+    protected void after() {
+        runtime.shutdown();
+        runtime = null;
+    }
 
-	/**
-	 * Customized AgREST builder. A method for subclasses to override.
-	 */
-	protected AgBuilder doBefore(AgBuilder builder) {
-		return builder;
-	}
+    /**
+     * Customized AgBuilder builder. A method for subclasses to override.
+     */
+    protected AgBuilder doBefore(AgBuilder builder) {
+        return builder;
+    }
 
-	public AgRuntime getRuntime() {
-		return Objects.requireNonNull(runtime);
-	}
-	
-	public IAgService getAgRESTService() {
-		return getRuntime().service(IAgService.class);
-	}
-	
-	public ExecutorService getExecutor() {
-		return getRuntime().service(ExecutorService.class);
-	}
-	
-	public UriInfo mockUri(MultivaluedMap<String, String> params) {
-		UriInfo mockUri = mock(UriInfo.class);
-		when(mockUri.getQueryParameters()).thenReturn(params);
-		return mockUri;
-	}
+    public AgRuntime getRuntime() {
+        return Objects.requireNonNull(runtime);
+    }
+
+    public IAgService getAgRESTService() {
+        return getRuntime().service(IAgService.class);
+    }
+
+    public ExecutorService getExecutor() {
+        return getRuntime().service(ExecutorService.class);
+    }
+
+    public UriInfo mockUri(MultivaluedMap<String, String> params) {
+        UriInfo mockUri = mock(UriInfo.class);
+        when(mockUri.getQueryParameters()).thenReturn(params);
+        return mockUri;
+    }
 }

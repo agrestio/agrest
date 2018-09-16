@@ -5,13 +5,13 @@ package io.agrest.client;
  */
 public class AgClientException extends RuntimeException {
 
-	private static final long serialVersionUID = 8027409723345873322L;
+    private static final long serialVersionUID = 8027409723345873322L;
 
-	public AgClientException(String message) {
-		super(message);
-	}
+    public AgClientException(String message) {
+        super(message);
+    }
 
-	public AgClientException(String message, Throwable cause) {
-		super(message, cause);
-	}
+    public AgClientException(String message, Throwable cause) {
+        super(message, cause);
+    }
 }
