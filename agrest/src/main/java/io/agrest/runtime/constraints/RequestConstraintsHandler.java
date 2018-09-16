@@ -1,7 +1,7 @@
 package io.agrest.runtime.constraints;
 
 import io.agrest.EntityUpdate;
-import io.agrest.AgRESTException;
+import io.agrest.AgException;
 import io.agrest.PathConstants;
 import io.agrest.ResourceEntity;
 import io.agrest.constraints.ConstrainedAgEntity;
@@ -158,11 +158,11 @@ class RequestConstraintsHandler {
 		int dot = path.indexOf(PathConstants.DOT);
 
 		if (dot == 0) {
-			throw new AgRESTException(Status.BAD_REQUEST, "Path starts with dot: " + path);
+			throw new AgException(Status.BAD_REQUEST, "Path starts with dot: " + path);
 		}
 
 		if (dot == path.length() - 1) {
-			throw new AgRESTException(Status.BAD_REQUEST, "Path ends with dot: " + path);
+			throw new AgException(Status.BAD_REQUEST, "Path ends with dot: " + path);
 		}
 
 		if (dot > 0) {

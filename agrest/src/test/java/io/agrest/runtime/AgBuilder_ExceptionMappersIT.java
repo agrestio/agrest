@@ -1,6 +1,6 @@
 package io.agrest.runtime;
 
-import io.agrest.AgRESTException;
+import io.agrest.AgException;
 import io.agrest.DataResponse;
 import io.agrest.it.fixture.JerseyTestOnDerby;
 import io.agrest.it.fixture.cayenne.E2;
@@ -17,7 +17,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import javax.ws.rs.ext.ExceptionMapper;
 
-public class AgRESTBuilder_ExceptionMappersIT extends JerseyTestOnDerby {
+public class AgBuilder_ExceptionMappersIT extends JerseyTestOnDerby {
 
     @Override
     protected void doAddResources(FeatureContext context) {
@@ -25,11 +25,11 @@ public class AgRESTBuilder_ExceptionMappersIT extends JerseyTestOnDerby {
     }
 
     @Override
-    protected AgRESTBuilder doConfigure() {
+    protected AgBuilder doConfigure() {
         return super.doConfigure()
                 .module(b -> b.bindMap(ExceptionMapper.class)
                         // TODO: Bootique-like extender API
-                        .put(AgRESTException.class.getName(), TestAgExceptionMapper.class)
+                        .put(AgException.class.getName(), TestAgExceptionMapper.class)
                         .put(TestException.class.getName(), TestExceptionMapper.class));
     }
 
@@ -59,7 +59,7 @@ public class AgRESTBuilder_ExceptionMappersIT extends JerseyTestOnDerby {
         @GET
         @Path("agexception")
         public DataResponse<E2> agException(@Context UriInfo uriInfo) {
-            throw new AgRESTException(Response.Status.FORBIDDEN, "_ag_exception_");
+            throw new AgException(Response.Status.FORBIDDEN, "_ag_exception_");
         }
 
         @GET
@@ -69,10 +69,10 @@ public class AgRESTBuilder_ExceptionMappersIT extends JerseyTestOnDerby {
         }
     }
 
-    public static class TestAgExceptionMapper implements ExceptionMapper<AgRESTException> {
+    public static class TestAgExceptionMapper implements ExceptionMapper<AgException> {
 
         @Override
-        public Response toResponse(AgRESTException exception) {
+        public Response toResponse(AgException exception) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                     .entity("_ag_" + exception.getMessage())
                     .type(MediaType.TEXT_PLAIN_TYPE).build();

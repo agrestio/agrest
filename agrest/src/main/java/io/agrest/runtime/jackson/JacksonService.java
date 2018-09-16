@@ -17,7 +17,7 @@ import com.fasterxml.jackson.core.io.SerializedString;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import io.agrest.AgRESTException;
+import io.agrest.AgException;
 
 public class JacksonService implements IJacksonService {
 
@@ -97,7 +97,7 @@ public class JacksonService implements IJacksonService {
 			JsonParser parser = getJsonFactory().createParser(json);
 			return new ObjectMapper().readTree(parser);
 		} catch (IOException ioex) {
-			throw new AgRESTException(Status.BAD_REQUEST, "Error parsing JSON");
+			throw new AgException(Status.BAD_REQUEST, "Error parsing JSON");
 		}
 	}
 
@@ -111,7 +111,7 @@ public class JacksonService implements IJacksonService {
 			JsonParser parser = getJsonFactory().createParser(json);
 			return new ObjectMapper().readTree(parser);
 		} catch (IOException ioex) {
-			throw new AgRESTException(Status.BAD_REQUEST, "Error parsing JSON");
+			throw new AgException(Status.BAD_REQUEST, "Error parsing JSON");
 		}
 	}
 }

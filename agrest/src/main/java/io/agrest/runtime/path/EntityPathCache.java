@@ -5,7 +5,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import javax.ws.rs.core.Response.Status;
 
-import io.agrest.AgRESTException;
+import io.agrest.AgException;
 import io.agrest.PathConstants;
 import io.agrest.meta.AgAttribute;
 import io.agrest.meta.AgEntity;
@@ -117,7 +117,7 @@ class EntityPathCache {
 		int dot = path.indexOf(PathConstants.DOT);
 
 		if (dot == 0 || dot == path.length() - 1) {
-			throw new AgRESTException(Status.BAD_REQUEST, "Invalid path '" + path + "' for '" + entity.getName()
+			throw new AgException(Status.BAD_REQUEST, "Invalid path '" + path + "' for '" + entity.getName()
 					+ "'");
 		}
 
@@ -127,7 +127,7 @@ class EntityPathCache {
 			// must be a relationship ..
 			AgRelationship relationship = entity.getRelationship(segment);
 			if (relationship == null) {
-				throw new AgRESTException(Status.BAD_REQUEST, "Invalid path '" + path + "' for '" + entity.getName()
+				throw new AgException(Status.BAD_REQUEST, "Invalid path '" + path + "' for '" + entity.getName()
 						+ "'. Not a relationship");
 			}
 
@@ -146,7 +146,7 @@ class EntityPathCache {
 			return relationship;
 		}
 
-		throw new AgRESTException(Status.BAD_REQUEST, "Invalid path '" + path + "' for '" + entity.getName() + "'");
+		throw new AgException(Status.BAD_REQUEST, "Invalid path '" + path + "' for '" + entity.getName() + "'");
 	}
 
 	private String toRelationshipName(String pathSegment) {

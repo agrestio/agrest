@@ -1,6 +1,6 @@
 package io.agrest.it;
 
-import io.agrest.AgREST;
+import io.agrest.Ag;
 import io.agrest.DataResponse;
 import io.agrest.it.fixture.JerseyTestOnDerby;
 import io.agrest.it.fixture.cayenne.E12;
@@ -356,7 +356,7 @@ public class PUT_Related_IT extends JerseyTestOnDerby {
         @PUT
         @Path("e2/{id}/e3s")
         public DataResponse<E3> createOrUpdate_Idempotent_E3s(@PathParam("id") int id, String entityData) {
-            return AgREST.idempotentCreateOrUpdate(E3.class, config).toManyParent(E2.class, id, E2.E3S)
+            return Ag.idempotentCreateOrUpdate(E3.class, config).toManyParent(E2.class, id, E2.E3S)
                     .syncAndSelect(entityData);
         }
 
@@ -366,14 +366,14 @@ public class PUT_Related_IT extends JerseyTestOnDerby {
                 @PathParam("id") int parentId,
                 @PathParam("tid") int id,
                 String entityData) {
-            return AgREST.idempotentCreateOrUpdate(E2.class, config).id(id).parent(E3.class, parentId, E3.E2)
+            return Ag.idempotentCreateOrUpdate(E2.class, config).id(id).parent(E3.class, parentId, E3.E2)
                     .syncAndSelect(entityData);
         }
 
         @PUT
         @Path("e7/{id}/e8/{tid}")
         public DataResponse<E8> relateToOneExisting(@PathParam("id") int parentId, @PathParam("tid") int id, String data) {
-            return AgREST.idempotentCreateOrUpdate(E8.class, config).id(id).parent(E7.class, parentId, E7.E8)
+            return Ag.idempotentCreateOrUpdate(E8.class, config).id(id).parent(E7.class, parentId, E7.E8)
                     .syncAndSelect(data);
         }
 
@@ -381,42 +381,42 @@ public class PUT_Related_IT extends JerseyTestOnDerby {
         @Path("e8/{id}/e9")
         public DataResponse<E9> relateToOneDependent(@PathParam("id") int id, String entityData) {
             // this will test support for ID propagation in a 1..1
-            return AgREST.idempotentCreateOrUpdate(E9.class, config).parent(E8.class, id, E8.E9)
+            return Ag.idempotentCreateOrUpdate(E9.class, config).parent(E8.class, id, E8.E9)
                     .syncAndSelect(entityData);
         }
 
         @PUT
         @Path("e8/createorupdate/{id}/e7s")
         public DataResponse<E7> createOrUpdateE7s(@PathParam("id") int id, String entityData) {
-            return AgREST.idempotentCreateOrUpdate(E7.class, config).toManyParent(E8.class, id, E8.E7S)
+            return Ag.idempotentCreateOrUpdate(E7.class, config).toManyParent(E8.class, id, E8.E7S)
                     .syncAndSelect(entityData);
         }
 
         @PUT
         @Path("e8/{id}/e7s")
         public DataResponse<E7> fullSyncE7s(@PathParam("id") int id, String entityData) {
-            return AgREST.idempotentFullSync(E7.class, config).toManyParent(E8.class, id, E8.E7S)
+            return Ag.idempotentFullSync(E7.class, config).toManyParent(E8.class, id, E8.E7S)
                     .syncAndSelect(entityData);
         }
 
         @PUT
         @Path("e12/{id}/e1213")
         public DataResponse<E12E13> fullSync_Joins(@PathParam("id") int id, @Context UriInfo info, String entityData) {
-            return AgREST.idempotentFullSync(E12E13.class, config).toManyParent(E12.class, id, E12.E1213).uri(info)
+            return Ag.idempotentFullSync(E12E13.class, config).toManyParent(E12.class, id, E12.E1213).uri(info)
                     .syncAndSelect(entityData);
         }
 
         @PUT
         @Path("e15/{id}/e15e1")
         public DataResponse<E15E1> createOrUpdate_Joins(@PathParam("id") long id, @Context UriInfo info, String entityData) {
-            return AgREST.createOrUpdate(E15E1.class, config).toManyParent(E15.class, id, E15.E15E1).uri(info)
+            return Ag.createOrUpdate(E15E1.class, config).toManyParent(E15.class, id, E15.E15E1).uri(info)
                     .syncAndSelect(entityData);
         }
 
         @PUT
         @Path("e15/{id}")
         public DataResponse<E15> createOrUpdate_Joins_FlattenedRel(@PathParam("id") long id, @Context UriInfo info, String entityData) {
-            return AgREST.createOrUpdate(E15.class, config).id(id).uri(info).syncAndSelect(entityData);
+            return Ag.createOrUpdate(E15.class, config).id(id).uri(info).syncAndSelect(entityData);
         }
     }
 }

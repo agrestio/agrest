@@ -1,7 +1,7 @@
 package io.agrest;
 
-import io.agrest.runtime.AgRESTRuntime;
-import io.agrest.runtime.IAgRESTService;
+import io.agrest.runtime.AgRuntime;
+import io.agrest.runtime.IAgService;
 
 import javax.ws.rs.core.Configuration;
 
@@ -11,7 +11,7 @@ import javax.ws.rs.core.Configuration;
  *
  * @since 1.14
  */
-public class AgREST {
+public class Ag {
 
     public static <T> SelectBuilder<T> select(Class<T> root, Configuration config) {
         return service(config).select(root);
@@ -49,13 +49,13 @@ public class AgREST {
     }
 
     /**
-     * Returns {@link IAgRESTService} bound to a given JAX RS configuration.
+     * Returns {@link IAgService} bound to a given JAX RS configuration.
      * IAgRESTService is the main engine behind all the operations in
      * AgREST, however you would rarely need to use it directly. Instead use
      * other static methods defined in this class to start processor chains for
      * AgREST requests.
      */
-    public static IAgRESTService service(Configuration config) {
-        return AgRESTRuntime.service(IAgRESTService.class, config);
+    public static IAgService service(Configuration config) {
+        return AgRuntime.service(IAgService.class, config);
     }
 }

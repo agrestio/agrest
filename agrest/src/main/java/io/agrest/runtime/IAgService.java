@@ -17,7 +17,7 @@ import java.util.Map;
  * The main entry point to AgREST stack. Used from the user REST resource
  * classes to build request processors.
  */
-public interface IAgRESTService {
+public interface IAgService {
 
 	/**
 	 * Selects a single object by ID.

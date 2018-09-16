@@ -1,10 +1,10 @@
 package io.agrest.client.it.noadapter;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import io.agrest.AgREST;
+import io.agrest.Ag;
 import io.agrest.DataResponse;
 import io.agrest.client.ClientDataResponse;
-import io.agrest.client.AgRESTClient;
+import io.agrest.client.AgClient;
 import io.agrest.client.protocol.Expression;
 import io.agrest.client.protocol.Include;
 import io.agrest.client.protocol.Sort;
@@ -38,7 +38,7 @@ public class GET_Client_IT extends JerseyTestOnDerby {
         insert("e4", "id, c_varchar, c_int", "1, 'xxx', 5");
         insert("e4", "id, c_varchar, c_int", "2, 'yyy', 7");
 
-		ClientDataResponse<JsonNode> response = AgRESTClient.client(target("/e4"))
+		ClientDataResponse<JsonNode> response = AgClient.client(target("/e4"))
                 .exclude(E4.C_BOOLEAN.getName(), E4.C_DATE.getName(), E4.C_DECIMAL.getName(),
                         E4.C_TIME.getName(), E4.C_TIMESTAMP.getName())
                 .get(JsonNode.class);
@@ -60,7 +60,7 @@ public class GET_Client_IT extends JerseyTestOnDerby {
         insert("e4", "id, c_varchar, c_int", "1, 'xxx', 5");
         insert("e4", "id, c_varchar, c_int", "2, 'yyy', 7");
 
-		ClientDataResponse<JsonNode> response = AgRESTClient.client(target("/e4"))
+		ClientDataResponse<JsonNode> response = AgClient.client(target("/e4"))
                 .exclude(E4.C_BOOLEAN.getName(), E4.C_DATE.getName(), E4.C_DECIMAL.getName(),
                         E4.C_TIME.getName(), E4.C_TIMESTAMP.getName())
                 .sort(Sort.property(E4.ID_PK_COLUMN).desc())
@@ -87,7 +87,7 @@ public class GET_Client_IT extends JerseyTestOnDerby {
         insert("e3", "id, e2_id, name", "8, 1, 'ddd'");
         insert("e3", "id, e2_id, name", "9, 1, 'eee'");
 
-		ClientDataResponse<JsonNode> response = AgRESTClient.client(target("/e2"))
+		ClientDataResponse<JsonNode> response = AgClient.client(target("/e2"))
                 .include(Include.path(E2.E3S.getName())
                         .start(2).limit(2)
                         .sort(Sort.property(E3.NAME.getName()).desc()))
@@ -108,7 +108,7 @@ public class GET_Client_IT extends JerseyTestOnDerby {
         insert("e3", "id, e2_id, name", "6, 2, 'bbb'");
         insert("e3", "id, e2_id, name", "7, 1, 'ccc'");
 
-        ClientDataResponse<JsonNode> response = AgRESTClient.client(target("/e2"))
+        ClientDataResponse<JsonNode> response = AgClient.client(target("/e2"))
                 .exclude(E2.ADDRESS.getName(), E2.E3S.dot(E3.PHONE_NUMBER).getName())
                 .cayenneExp(Expression.query("name like 'xx%'"))
                 .include(Include.path(E2.E3S.getName()).cayenneExp(Expression.query("name = $b").params("ccc")))
@@ -126,7 +126,7 @@ public class GET_Client_IT extends JerseyTestOnDerby {
         insert("e4", "id, c_varchar, c_int, c_boolean", "2, 'yyy', 2, false");
         insert("e4", "id, c_varchar, c_int, c_boolean", "3, 'xxz', 3, true");
 
-        ClientDataResponse<JsonNode> response = AgRESTClient.client(target("/e4"))
+        ClientDataResponse<JsonNode> response = AgClient.client(target("/e4"))
                 .include(E4.ID_PK_COLUMN, E4.C_VARCHAR.getName(), E4.C_INT.getName())
                 .cayenneExp(Expression.query("cVarchar like $a and cInt >= $b and cBoolean <> $c")
                                       .param("a", "xx%").param("b", 2).param("c", false))
@@ -146,13 +146,13 @@ public class GET_Client_IT extends JerseyTestOnDerby {
         @GET
         @Path("e2")
         public DataResponse<E2> getE2(@Context UriInfo uriInfo) {
-            return AgREST.service(config).select(E2.class).uri(uriInfo).get();
+            return Ag.service(config).select(E2.class).uri(uriInfo).get();
         }
 
         @GET
         @Path("e4")
         public DataResponse<E4> getE4(@Context UriInfo uriInfo) {
-            return AgREST.service(config).select(E4.class).uri(uriInfo).get();
+            return Ag.service(config).select(E4.class).uri(uriInfo).get();
         }
     }
 }

@@ -45,7 +45,7 @@ public class CompoundObjectId extends BaseObjectId {
 		for (AgAttribute idAttribute : idAttributes) {
 			Object idValue = Normalizer.normalize(id.get(idAttribute.getName()), idAttribute.getType());
 			if (idValue == null) {
-				throw new AgRESTException(Response.Status.INTERNAL_SERVER_ERROR,
+				throw new AgException(Response.Status.INTERNAL_SERVER_ERROR,
 						"Failed to build a compound ID: one of the entity's ID parts is missing in this ID object: "
 								+ idAttribute.getName());
 			}

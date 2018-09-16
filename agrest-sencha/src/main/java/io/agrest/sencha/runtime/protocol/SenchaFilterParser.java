@@ -2,7 +2,7 @@ package io.agrest.sencha.runtime.protocol;
 
 import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.JsonNode;
-import io.agrest.AgRESTException;
+import io.agrest.AgException;
 import io.agrest.runtime.jackson.IJacksonService;
 import io.agrest.sencha.protocol.Filter;
 import org.apache.cayenne.di.Inject;
@@ -75,12 +75,12 @@ public class SenchaFilterParser implements ISenchaFilterParser {
         for (JsonNode filterNode : rootNode) {
             JsonNode propertyNode = filterNode.get(PROPERTY);
             if (propertyNode == null) {
-                throw new AgRESTException(Response.Status.BAD_REQUEST, "filter 'property' is missing" + filterNode.asText());
+                throw new AgException(Response.Status.BAD_REQUEST, "filter 'property' is missing" + filterNode.asText());
             }
 
             JsonNode valueNode = filterNode.get(VALUE);
             if (valueNode == null) {
-                throw new AgRESTException(Response.Status.BAD_REQUEST, "filter 'value' is missing" + filterNode.asText());
+                throw new AgException(Response.Status.BAD_REQUEST, "filter 'value' is missing" + filterNode.asText());
             }
 
             JsonNode disabledNode = filterNode.get(DISABLED);

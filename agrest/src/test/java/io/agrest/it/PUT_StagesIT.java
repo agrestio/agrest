@@ -1,6 +1,6 @@
 package io.agrest.it;
 
-import io.agrest.AgREST;
+import io.agrest.Ag;
 import io.agrest.DataResponse;
 import io.agrest.UpdateStage;
 import io.agrest.it.fixture.JerseyTestOnDerby;
@@ -59,7 +59,7 @@ public class PUT_StagesIT extends JerseyTestOnDerby {
         @PUT
         @Path("e3/callbackstage")
         public DataResponse<E3> syncWithCallbackStage(@Context UriInfo uriInfo, String requestBody) {
-            return AgREST.idempotentFullSync(E3.class, config)
+            return Ag.idempotentFullSync(E3.class, config)
                     .stage(UpdateStage.APPLY_SERVER_PARAMS, c -> BEFORE_UPDATE_CALLED = true)
                     .uri(uriInfo)
                     .syncAndSelect(requestBody);

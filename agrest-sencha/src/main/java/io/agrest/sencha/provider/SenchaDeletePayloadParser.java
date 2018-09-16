@@ -1,11 +1,11 @@
 package io.agrest.sencha.provider;
 
-import io.agrest.AgRESTException;
+import io.agrest.AgException;
 import io.agrest.CompoundObjectId;
 import io.agrest.EntityDelete;
 import io.agrest.SimpleObjectId;
 import io.agrest.meta.AgEntity;
-import io.agrest.runtime.AgRESTRuntime;
+import io.agrest.runtime.AgRuntime;
 import io.agrest.runtime.jackson.IJacksonService;
 import io.agrest.runtime.meta.IMetadataService;
 import io.agrest.runtime.parser.converter.IJsonValueConverterFactory;
@@ -41,10 +41,10 @@ public class SenchaDeletePayloadParser implements MessageBodyReader<Collection<E
 	private EntityUpdateJsonTraverser entityUpdateJsonTraverser;
 
     public SenchaDeletePayloadParser(@Context Configuration config) {
-        this.jacksonService = AgRESTRuntime.service(IJacksonService.class, config);
-		this.metadataService = AgRESTRuntime.service(IMetadataService.class, config);
-		this.entityUpdateJsonTraverser = new EntityUpdateJsonTraverser(AgRESTRuntime.service(IRelationshipMapper.class, config),
-				AgRESTRuntime.service(IJsonValueConverterFactory.class, config));
+        this.jacksonService = AgRuntime.service(IJacksonService.class, config);
+		this.metadataService = AgRuntime.service(IMetadataService.class, config);
+		this.entityUpdateJsonTraverser = new EntityUpdateJsonTraverser(AgRuntime.service(IRelationshipMapper.class, config),
+				AgRuntime.service(IJsonValueConverterFactory.class, config));
     }
 
     @Override
@@ -65,7 +65,7 @@ public class SenchaDeletePayloadParser implements MessageBodyReader<Collection<E
 
 		Type entityType = unwrapCollectionParameter(genericType);
 		if (entityType == null) {
-			throw new AgRESTException(Status.INTERNAL_SERVER_ERROR,
+			throw new AgException(Status.INTERNAL_SERVER_ERROR,
 					"Invalid request entity collection type: " + genericType);
 		}
 
@@ -130,7 +130,7 @@ public class SenchaDeletePayloadParser implements MessageBodyReader<Collection<E
 		@Override
 		public void endObject() {
 			if (deletedId.isEmpty()) {
-				throw new AgRESTException(Status.BAD_REQUEST, "Object id is empty");
+				throw new AgException(Status.BAD_REQUEST, "Object id is empty");
 			} else if (deletedId.size() == 1) {
 				deleted.add(new EntityDelete<>(entity, new SimpleObjectId(deletedId.values().iterator().next())));
 			} else {

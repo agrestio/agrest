@@ -26,10 +26,10 @@ import java.util.Collection;
 import java.util.Map;
 
 /**
- * A backend-agnostic abstract {@link IAgRESTService} that can serve to
+ * A backend-agnostic abstract {@link IAgService} that can serve to
  * implement more specific versions.
  */
-public class DefaultAgRESTService implements IAgRESTService {
+public class DefaultAgService implements IAgService {
 
     private SelectProcessorFactory selectProcessorFactory;
     private DeleteProcessorFactory deleteProcessorFactory;
@@ -37,7 +37,7 @@ public class DefaultAgRESTService implements IAgRESTService {
     private MetadataProcessorFactory metadataProcessorFactory;
     private UnrelateProcessorFactory unrelateProcessorFactory;
 
-    public DefaultAgRESTService(
+    public DefaultAgService(
             @Inject SelectProcessorFactory selectProcessorFactory,
             @Inject DeleteProcessorFactory deleteProcessorFactory,
             @Inject UpdateProcessorFactoryFactory updateProcessorFactoryFactory,

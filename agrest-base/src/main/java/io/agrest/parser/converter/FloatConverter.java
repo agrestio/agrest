@@ -1,7 +1,7 @@
 package io.agrest.parser.converter;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import io.agrest.AgRESTException;
+import io.agrest.AgException;
 
 import javax.ws.rs.core.Response.Status;
 
@@ -30,7 +30,7 @@ public class FloatConverter extends AbstractConverter<Float> {
 		}
 
 		if (!node.isIntegralNumber() && !node.isFloatingPointNumber()) {
-			throw new AgRESTException(Status.BAD_REQUEST, "Expected numeric value, got: " + node.asText());
+			throw new AgException(Status.BAD_REQUEST, "Expected numeric value, got: " + node.asText());
 		}
 
 		Double doubleValue = node.asDouble();
@@ -40,7 +40,7 @@ public class FloatConverter extends AbstractConverter<Float> {
 
 		Double absDoubleValue = Math.abs(doubleValue);
 		if (absDoubleValue < Float.MIN_VALUE || absDoubleValue > Float.MAX_VALUE) {
-			throw new AgRESTException(Status.BAD_REQUEST,
+			throw new AgException(Status.BAD_REQUEST,
 					"Value is either too small or too large for the java.lang.Float datatype: " + node.asText());
 		}
 		return doubleValue.floatValue();

@@ -1,6 +1,6 @@
 package io.agrest.runtime.cayenne.processor;
 
-import io.agrest.AgRESTException;
+import io.agrest.AgException;
 import io.agrest.meta.AgAttribute;
 import io.agrest.meta.AgEntity;
 import org.apache.cayenne.ObjectContext;
@@ -26,11 +26,11 @@ public final class Util {
 
 		// sanity checking...
 		if (entity == null) {
-			throw new AgRESTException(Status.INTERNAL_SERVER_ERROR, "Unknown entity class: " + type);
+			throw new AgException(Status.INTERNAL_SERVER_ERROR, "Unknown entity class: " + type);
 		}
 
 		if (id == null) {
-			throw new AgRESTException(Status.BAD_REQUEST, "No id specified");
+			throw new AgException(Status.BAD_REQUEST, "No id specified");
 		}
 
 		if (id instanceof Map) {

@@ -1,7 +1,7 @@
 package io.agrest.it;
 
 import io.agrest.DataResponse;
-import io.agrest.AgREST;
+import io.agrest.Ag;
 import io.agrest.it.fixture.JerseyTestOnDerby;
 import io.agrest.it.fixture.cayenne.E4;
 import org.apache.cayenne.query.SQLTemplate;
@@ -87,7 +87,7 @@ public class GET_SizeConstraintsIT extends JerseyTestOnDerby {
         @GET
         @Path("e4/limit")
         public DataResponse<E4> limit(@Context UriInfo uriInfo) {
-            return AgREST.select(E4.class, config).uri(uriInfo)
+            return Ag.select(E4.class, config).uri(uriInfo)
                     .fetchLimit(2)
                     .get();
         }

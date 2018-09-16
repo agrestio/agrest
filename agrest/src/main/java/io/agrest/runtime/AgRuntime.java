@@ -22,9 +22,9 @@ import java.util.Map;
 /**
  * Stores AgREST runtime stack packaged as a JAX RS {@link Feature}.
  */
-public class AgRESTRuntime implements Feature {
+public class AgRuntime implements Feature {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(AgRESTRuntime.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(AgRuntime.class);
 
     static final String AGREST_CONTAINER_PROPERTY = "agrest.container";
 
@@ -52,7 +52,7 @@ public class AgRESTRuntime implements Feature {
         return injector.getInstance(type);
     }
 
-    AgRESTRuntime(Injector injector, Collection<Feature> extraFeatures) {
+    AgRuntime(Injector injector, Collection<Feature> extraFeatures) {
         this.injector = injector;
         this.extraFeatures = extraFeatures;
     }
@@ -85,11 +85,11 @@ public class AgRESTRuntime implements Feature {
     public boolean configure(FeatureContext context) {
 
         // this gives everyone access to the AgREST services
-        context.property(AgRESTRuntime.AGREST_CONTAINER_PROPERTY, injector);
+        context.property(AgRuntime.AGREST_CONTAINER_PROPERTY, injector);
 
         @SuppressWarnings("unchecked")
         Map<String, Class> bodyWriters =
-                injector.getInstance(Key.getMapOf(String.class, Class.class, AgRESTRuntime.BODY_WRITERS_MAP));
+                injector.getInstance(Key.getMapOf(String.class, Class.class, AgRuntime.BODY_WRITERS_MAP));
 
         for (Class<?> type : bodyWriters.values()) {
             context.register(type);

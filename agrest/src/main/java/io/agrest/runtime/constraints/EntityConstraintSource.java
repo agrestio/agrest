@@ -6,7 +6,7 @@ import java.util.concurrent.ConcurrentMap;
 
 import javax.ws.rs.core.Response.Status;
 
-import io.agrest.AgRESTException;
+import io.agrest.AgException;
 import io.agrest.EntityConstraint;
 import io.agrest.meta.AgAttribute;
 import io.agrest.meta.AgEntity;
@@ -70,7 +70,7 @@ abstract class EntityConstraintSource {
 				continue;
 			}
 
-			throw new AgRESTException(Status.INTERNAL_SERVER_ERROR, "Invalid property: " + entity.getName() + "." + p);
+			throw new AgException(Status.INTERNAL_SERVER_ERROR, "Invalid property: " + entity.getName() + "." + p);
 
 		}
 

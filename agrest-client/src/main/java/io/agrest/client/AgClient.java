@@ -22,7 +22,7 @@ import java.util.function.Supplier;
 /**
  * @since 2.0
  */
-public class AgRESTClient {
+public class AgClient {
 
 	private static JsonFactory jsonFactory;
 	private static IJsonValueConverterFactory jsonEntityReaderFactory;
@@ -32,59 +32,59 @@ public class AgRESTClient {
 		jsonEntityReaderFactory = new DefaultJsonValueConverterFactoryProvider(Collections.emptyMap()).get();
 	}
 
-	public static AgRESTClient client(WebTarget target) {
-		return new AgRESTClient(target);
+	public static AgClient client(WebTarget target) {
+		return new AgClient(target);
 	}
 
 	private WebTarget target;
 	private AgcRequest.AgRequestBuilder request;
 
-	private AgRESTClient(WebTarget target) {
+	private AgClient(WebTarget target) {
 		this.target = target;
 		request = AgcRequest.builder();
 	}
 
-	public AgRESTClient exclude(String... excludePaths) {
+	public AgClient exclude(String... excludePaths) {
 		request.exclude(excludePaths);
 		return this;
 	}
 
-	public AgRESTClient include(String... includePaths) {
+	public AgClient include(String... includePaths) {
 		request.include(includePaths);
 		return this;
 	}
 
-	public AgRESTClient include(Include include) {
+	public AgClient include(Include include) {
 		request.include(include);
 		return this;
 	}
 
-	public AgRESTClient include(Include.IncludeBuilder include) {
+	public AgClient include(Include.IncludeBuilder include) {
 		request.include(include.build());
 		return this;
 	}
 
-	public AgRESTClient cayenneExp(Expression.ExpressionBuilder cayenneExp) {
+	public AgClient cayenneExp(Expression.ExpressionBuilder cayenneExp) {
 		request.cayenneExp(cayenneExp.build());
 		return this;
 	}
 
-	public AgRESTClient sort(String... properties) {
+	public AgClient sort(String... properties) {
 		request.sort(properties);
 		return this;
 	}
 
-	public AgRESTClient sort(Sort ordering) {
+	public AgClient sort(Sort ordering) {
 		request.sort(ordering);
 		return this;
 	}
 
-	public AgRESTClient start(long startIndex) {
+	public AgClient start(long startIndex) {
 		request.start(startIndex);
 		return this;
 	}
 
-	public AgRESTClient limit(long limit) {
+	public AgClient limit(long limit) {
 		request.limit(limit);
 		return this;
 	}
@@ -125,6 +125,6 @@ public class AgRESTClient {
 	private <T> JsonValueConverter<T> getEntityReader(Class<T> entityType) {
 		Objects.requireNonNull(entityType, "Missing target type");
 		return jsonEntityReaderFactory.typedConverter(entityType)
-				.orElseThrow(() -> new AgRESTClientException("Can't build converter for type: " + entityType.getName()));
+				.orElseThrow(() -> new AgClientException("Can't build converter for type: " + entityType.getName()));
 	}
 }

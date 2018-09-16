@@ -1,18 +1,17 @@
 package io.agrest.multisource;
 
-import java.util.concurrent.ExecutorService;
+import io.agrest.SelectBuilder;
+import io.agrest.runtime.AgRuntime;
 
 import javax.ws.rs.core.Configuration;
-
-import io.agrest.SelectBuilder;
-import io.agrest.runtime.AgRESTRuntime;
+import java.util.concurrent.ExecutorService;
 
 /**
  * A builder of multi-source request chains.
  * 
  * @since 2.0
  */
-public class AgRESTMultiSource {
+public class AgMultiSource {
 
 	/**
 	 * Starts a {@link MultiSelectBuilder} that allows to fetch data from
@@ -28,7 +27,7 @@ public class AgRESTMultiSource {
 	 */
 	public static <T> MultiSelectBuilder<T> select(SelectBuilder<T> rootSelectChain, Configuration config) {
 
-		ExecutorService executor = AgRESTRuntime.service(ExecutorService.class, config);
+		ExecutorService executor = AgRuntime.service(ExecutorService.class, config);
 		return new MultiSelectBuilder<>(rootSelectChain, executor);
 	}
 }

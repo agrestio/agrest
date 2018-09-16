@@ -2,7 +2,7 @@ package io.agrest.runtime;
 
 import io.agrest.AgFeatureProvider;
 import io.agrest.AgModuleProvider;
-import io.agrest.AgRESTException;
+import io.agrest.AgException;
 import io.agrest.BaseModule;
 import io.agrest.DataResponse;
 import io.agrest.EntityConstraint;
@@ -20,11 +20,11 @@ import io.agrest.meta.parser.IResourceParser;
 import io.agrest.meta.parser.ResourceParser;
 import io.agrest.provider.CayenneRuntimeExceptionMapper;
 import io.agrest.provider.DataResponseWriter;
-import io.agrest.provider.AgRESTExceptionMapper;
+import io.agrest.provider.AgExceptionMapper;
 import io.agrest.provider.MetadataResponseWriter;
 import io.agrest.provider.SimpleResponseWriter;
 import io.agrest.provider.ValidationExceptionMapper;
-import io.agrest.runtime.adapter.AgRESTAdapter;
+import io.agrest.runtime.adapter.AgAdapter;
 import io.agrest.runtime.cayenne.CayennePersister;
 import io.agrest.runtime.cayenne.ICayennePersister;
 import io.agrest.runtime.cayenne.NoCayennePersister;
@@ -142,11 +142,11 @@ import java.util.concurrent.ExecutorService;
  * A builder of AgREST runtime that can be loaded into JAX-RS 2 container as a
  * {@link Feature}.
  */
-public class AgRESTBuilder {
+public class AgBuilder {
 
     private ICayennePersister cayenneService;
-    private Class<? extends IAgRESTService> agRESTServiceType;
-    private IAgRESTService agRESTService;
+    private Class<? extends IAgService> agRESTServiceType;
+    private IAgService agRESTService;
     private List<AgModuleProvider> moduleProviders;
     private List<Module> modules;
     private List<AgFeatureProvider> featureProviders;
@@ -154,19 +154,19 @@ public class AgRESTBuilder {
     private List<EncoderFilter> encoderFilters;
     private Map<String, AgEntityOverlay> entityOverlays;
     private Map<String, Class<? extends ExceptionMapper>> exceptionMappers;
-    private Collection<AgRESTAdapter> adapters;
+    private Collection<AgAdapter> adapters;
     private Map<String, PropertyMetadataEncoder> metadataEncoders;
     private ExecutorService executor;
     private String baseUrl;
     private boolean autoLoadModules;
     private boolean autoLoadFeatures;
 
-    public AgRESTBuilder() {
+    public AgBuilder() {
         this.autoLoadModules = true;
         this.autoLoadFeatures = true;
         this.entityOverlays = new HashMap<>();
         this.encoderFilters = new ArrayList<>();
-        this.agRESTServiceType = DefaultAgRESTService.class;
+        this.agRESTServiceType = DefaultAgService.class;
         this.cayenneService = NoCayennePersister.instance();
         this.exceptionMappers = new HashMap<>();
         this.adapters = new ArrayList<>();
@@ -183,7 +183,7 @@ public class AgRESTBuilder {
      *
      * @since 1.14
      */
-    public static AgRESTRuntime build(ServerRuntime cayenneRuntime) {
+    public static AgRuntime build(ServerRuntime cayenneRuntime) {
         return builder(cayenneRuntime).build();
     }
 
@@ -193,8 +193,8 @@ public class AgRESTBuilder {
      *
      * @since 1.14
      */
-    public static AgRESTBuilder builder(ServerRuntime cayenneRuntime) {
-        return new AgRESTBuilder().cayenneRuntime(cayenneRuntime);
+    public static AgBuilder builder(ServerRuntime cayenneRuntime) {
+        return new AgBuilder().cayenneRuntime(cayenneRuntime);
     }
 
     /**
@@ -205,7 +205,7 @@ public class AgRESTBuilder {
      * @return this builder instance.
      * @since 2.10
      */
-    public AgRESTBuilder doNotAutoLoadFeatures() {
+    public AgBuilder doNotAutoLoadFeatures() {
         this.autoLoadFeatures = false;
         return this;
     }
@@ -218,7 +218,7 @@ public class AgRESTBuilder {
      * @return this builder instance.
      * @since 2.10
      */
-    public AgRESTBuilder doNotAutoLoadModules() {
+    public AgBuilder doNotAutoLoadModules() {
         this.autoLoadModules = false;
         return this;
     }
@@ -227,7 +227,7 @@ public class AgRESTBuilder {
      * Maps an ExceptionMapper for a given type of Exceptions. While this method
      * can be used for arbitrary exceptions, it is most useful to override the
      * default exception handlers defined in AgREST for the following
-     * exceptions: {@link AgRESTException}, {@link CayenneRuntimeException},
+     * exceptions: {@link AgException}, {@link CayenneRuntimeException},
      * {@link ValidationException}.
      *
      * @since 1.1
@@ -235,7 +235,7 @@ public class AgRESTBuilder {
      * <code>b.bindMap(ExceptionMapper.class).put(AgRESTException.class.getName(), MyExceptionMapper.class)</code>
      */
     @Deprecated
-    public <E extends Throwable> AgRESTBuilder mapException(Class<? extends ExceptionMapper<E>> mapper) {
+    public <E extends Throwable> AgBuilder mapException(Class<? extends ExceptionMapper<E>> mapper) {
 
         for (Type t : mapper.getGenericInterfaces()) {
 
@@ -252,34 +252,34 @@ public class AgRESTBuilder {
         throw new IllegalArgumentException("Failed to register ExceptionMapper: " + mapper.getName());
     }
 
-    public AgRESTBuilder agRESTService(IAgRESTService agRESTService) {
+    public AgBuilder agRESTService(IAgService agRESTService) {
         this.agRESTService = agRESTService;
         this.agRESTServiceType = null;
         return this;
     }
 
-    public AgRESTBuilder agRESTService(Class<? extends IAgRESTService> agRESTServiceType) {
+    public AgBuilder agRESTService(Class<? extends IAgService> agRESTServiceType) {
         this.agRESTService = null;
         this.agRESTServiceType = agRESTServiceType;
         return this;
     }
 
-    public AgRESTBuilder cayenneRuntime(ServerRuntime cayenneRuntime) {
+    public AgBuilder cayenneRuntime(ServerRuntime cayenneRuntime) {
         this.cayenneService = new CayennePersister(cayenneRuntime);
         return this;
     }
 
-    public AgRESTBuilder cayenneService(ICayennePersister cayenneService) {
+    public AgBuilder cayenneService(ICayennePersister cayenneService) {
         this.cayenneService = cayenneService;
         return this;
     }
 
-    public AgRESTBuilder encoderFilter(EncoderFilter filter) {
+    public AgBuilder encoderFilter(EncoderFilter filter) {
         this.encoderFilters.add(filter);
         return this;
     }
 
-    public AgRESTBuilder encoderFilters(Collection<EncoderFilter> filters) {
+    public AgBuilder encoderFilters(Collection<EncoderFilter> filters) {
         this.encoderFilters.addAll(filters);
         return this;
     }
@@ -295,7 +295,7 @@ public class AgRESTBuilder {
      * @return this builder instance
      * @since 2.10
      */
-    public AgRESTBuilder baseUrl(String url) {
+    public AgBuilder baseUrl(String url) {
         this.baseUrl = url;
         return this;
     }
@@ -307,7 +307,7 @@ public class AgRESTBuilder {
      * @return this builder instance.
      * @since 2.0
      */
-    public AgRESTBuilder executor(ExecutorService executor) {
+    public AgBuilder executor(ExecutorService executor) {
         this.executor = executor;
         return this;
     }
@@ -318,7 +318,7 @@ public class AgRESTBuilder {
      * the overlay via {@link #entityOverlay(AgEntityOverlay)}.
      */
     @Deprecated
-    public AgRESTBuilder transientProperty(Class<?> type, String propertyName) {
+    public AgBuilder transientProperty(Class<?> type, String propertyName) {
         Accessor accessor = PropertyUtils.accessor(propertyName);
         getOrCreateOverlay(type).addAttribute(propertyName, Object.class, accessor::getValue);
         return this;
@@ -330,7 +330,7 @@ public class AgRESTBuilder {
      *
      * @since 2.10
      */
-    public <T> AgRESTBuilder entityOverlay(AgEntityOverlay<T> overlay) {
+    public <T> AgBuilder entityOverlay(AgEntityOverlay<T> overlay) {
         getOrCreateOverlay(overlay.getType()).merge(overlay);
         return this;
     }
@@ -341,17 +341,17 @@ public class AgRESTBuilder {
 
     /**
      * Adds an adapter that may contribute custom configuration to
-     * {@link AgRESTRuntime}.
+     * {@link AgRuntime}.
      *
      * @return this builder instance.
      * @since 1.3
      * @deprecated since 2.10 AgRESTAdapter is deprecated in favor of
      * {@link AgFeatureProvider} and
      * {@link AgModuleProvider}. Either can be registered with
-     * {@link AgRESTBuilder} explicitly or used to implemented auto-loadable extensions.
+     * {@link AgBuilder} explicitly or used to implemented auto-loadable extensions.
      */
     @Deprecated
-    public AgRESTBuilder adapter(AgRESTAdapter adapter) {
+    public AgBuilder adapter(AgAdapter adapter) {
         this.adapters.add(adapter);
         return this;
     }
@@ -363,7 +363,7 @@ public class AgRESTBuilder {
      * @return this builder instance.
      * @since 2.10
      */
-    public AgRESTBuilder feature(Feature feature) {
+    public AgBuilder feature(Feature feature) {
         features.add(feature);
         return this;
     }
@@ -375,43 +375,43 @@ public class AgRESTBuilder {
      * @return this builder instance.
      * @since 2.10
      */
-    public AgRESTBuilder feature(AgFeatureProvider featureProvider) {
+    public AgBuilder feature(AgFeatureProvider featureProvider) {
         featureProviders.add(featureProvider);
         return this;
     }
 
     /**
-     * Registers a DI extension module for {@link AgRESTRuntime}.
+     * Registers a DI extension module for {@link AgRuntime}.
      *
-     * @param module an extension DI module for {@link AgRESTRuntime}.
+     * @param module an extension DI module for {@link AgRuntime}.
      * @return this builder instance.
      * @since 2.10
      */
-    public AgRESTBuilder module(Module module) {
+    public AgBuilder module(Module module) {
         modules.add(module);
         return this;
     }
 
     /**
-     * Registers a provider of a DI extension module for {@link AgRESTRuntime}.
+     * Registers a provider of a DI extension module for {@link AgRuntime}.
      *
-     * @param provider a provider of an extension module for {@link AgRESTRuntime}.
+     * @param provider a provider of an extension module for {@link AgRuntime}.
      * @return this builder instance.
      * @since 2.10
      */
-    public AgRESTBuilder module(AgModuleProvider provider) {
+    public AgBuilder module(AgModuleProvider provider) {
         moduleProviders.add(provider);
         return this;
     }
 
-    public AgRESTBuilder metadataEncoder(String type, PropertyMetadataEncoder encoder) {
+    public AgBuilder metadataEncoder(String type, PropertyMetadataEncoder encoder) {
         this.metadataEncoders.put(type, encoder);
         return this;
     }
 
-    public AgRESTRuntime build() {
+    public AgRuntime build() {
         Injector i = createInjector();
-        return new AgRESTRuntime(i, createExtraFeatures(i));
+        return new AgRuntime(i, createExtraFeatures(i));
     }
 
     private Collection<Feature> createExtraFeatures(Injector injector) {
@@ -518,7 +518,7 @@ public class AgRESTBuilder {
                     .add(PojoEntityCompiler.class);
 
             binder.bindMap(AgEntityOverlay.class).putAll(entityOverlays);
-            binder.bindMap(Class.class, AgRESTRuntime.BODY_WRITERS_MAP)
+            binder.bindMap(Class.class, AgRuntime.BODY_WRITERS_MAP)
                     .put(SimpleResponse.class.getName(), SimpleResponseWriter.class)
                     .put(DataResponse.class.getName(), DataResponseWriter.class)
                     .put(MetadataResponse.class.getName(), MetadataResponseWriter.class);
@@ -528,14 +528,14 @@ public class AgRESTBuilder {
             binder.bindMap(PropertyMetadataEncoder.class).putAll(metadataEncoders);
 
             if (agRESTServiceType != null) {
-                binder.bind(IAgRESTService.class).to(agRESTServiceType);
+                binder.bind(IAgService.class).to(agRESTServiceType);
             } else {
-                binder.bind(IAgRESTService.class).toInstance(agRESTService);
+                binder.bind(IAgService.class).toInstance(agRESTService);
             }
 
             MapBuilder<ExceptionMapper> mapperBuilder = binder.bindMap(ExceptionMapper.class)
                     .put(CayenneRuntimeException.class.getName(), CayenneRuntimeExceptionMapper.class)
-                    .put(AgRESTException.class.getName(), AgRESTExceptionMapper.class)
+                    .put(AgException.class.getName(), AgExceptionMapper.class)
                     .put(ValidationException.class.getName(), ValidationExceptionMapper.class);
 
             // override with custom mappers

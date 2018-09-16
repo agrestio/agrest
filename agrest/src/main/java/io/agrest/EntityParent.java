@@ -30,7 +30,7 @@ public class EntityParent<P> {
 		this(parentType, relationshipFromParent);
 
 		if (parentIds == null) {
-			throw new AgRESTException(Status.INTERNAL_SERVER_ERROR, "Related parent ID is missing");
+			throw new AgException(Status.INTERNAL_SERVER_ERROR, "Related parent ID is missing");
 		}
 
 		this.id = new CompoundObjectId(parentIds);
@@ -41,7 +41,7 @@ public class EntityParent<P> {
 		this(parentType, relationshipFromParent);
 
 		if (parentId == null) {
-			throw new AgRESTException(Status.INTERNAL_SERVER_ERROR, "Related parent ID is missing");
+			throw new AgException(Status.INTERNAL_SERVER_ERROR, "Related parent ID is missing");
 		}
 
 		this.id = new SimpleObjectId(parentId);
@@ -50,11 +50,11 @@ public class EntityParent<P> {
 	public EntityParent(Class<P> parentType, String relationshipFromParent) {
 
 		if (parentType == null) {
-			throw new AgRESTException(Status.INTERNAL_SERVER_ERROR, "Related parent type is missing");
+			throw new AgException(Status.INTERNAL_SERVER_ERROR, "Related parent type is missing");
 		}
 
 		if (relationshipFromParent == null) {
-			throw new AgRESTException(Status.INTERNAL_SERVER_ERROR, "Related parent relationship is missing");
+			throw new AgException(Status.INTERNAL_SERVER_ERROR, "Related parent relationship is missing");
 		}
 
 		this.type = parentType;
@@ -79,7 +79,7 @@ public class EntityParent<P> {
 		ObjRelationship objRelationship = parentEntity.getRelationship(relationship);
 
 		if (objRelationship == null) {
-			throw new AgRESTException(Status.BAD_REQUEST, "Invalid relationship: '" + relationship + "'");
+			throw new AgException(Status.BAD_REQUEST, "Invalid relationship: '" + relationship + "'");
 		}
 
 		// navigate through DbRelationships ... there may be no reverse
@@ -92,7 +92,7 @@ public class EntityParent<P> {
 				for (DbJoin join : reverseRelationship.getJoins()) {
 					Object joinValue = id.get(join.getTargetName());
 					if (joinValue == null) {
-						throw new AgRESTException(Status.BAD_REQUEST,
+						throw new AgException(Status.BAD_REQUEST,
 								"Failed to build a Cayenne qualifier for a by-parent relationship '" + relationship +
 										"'; one of the parent's ID parts is missing in it's ID: " + join.getTargetName());
 					}

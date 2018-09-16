@@ -4,7 +4,7 @@ import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.agrest.client.ClientDataResponse;
-import io.agrest.client.AgRESTClientException;
+import io.agrest.client.AgClientException;
 import io.agrest.parser.converter.JsonValueConverter;
 
 import javax.ws.rs.core.Response;
@@ -41,7 +41,7 @@ public class DataResponseHandler<T> extends BaseResponseHandler<ClientDataRespon
 
 			JsonNode dataNode = responseNode.get(DATA_NODE);
 			if (dataNode == null || !dataNode.isArray()) {
-				throw new AgRESTClientException(
+				throw new AgClientException(
 						"Failed to parse response -- '" + DATA_NODE + "' is missing or has a wrong type");
 			}
 
@@ -52,14 +52,14 @@ public class DataResponseHandler<T> extends BaseResponseHandler<ClientDataRespon
 
 			JsonNode totalNode = responseNode.get(TOTAL_NODE);
 			if (totalNode == null || !totalNode.isNumber()) {
-				throw new AgRESTClientException(
+				throw new AgClientException(
 						"Failed to parse response -- '" + TOTAL_NODE + "' is missing or has a wrong type");
 			}
 
 			total = totalNode.asLong();
 
 		} catch (IOException e) {
-			throw new AgRESTClientException("Failed to parse response", e);
+			throw new AgClientException("Failed to parse response", e);
 		}
 
 		return new ClientDataResponse<>(status, items, total);

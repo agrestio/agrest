@@ -1,6 +1,6 @@
 package io.agrest.runtime.processor.select;
 
-import io.agrest.AgRESTException;
+import io.agrest.AgException;
 import io.agrest.AgRequest;
 import io.agrest.ResourceEntity;
 import io.agrest.it.fixture.cayenne.E1;
@@ -476,7 +476,7 @@ public class CreateEntityStageTest extends TestWithCayenneMapping {
 		assertEquals(E2.NAME.getName(), o1.getSortSpecString());
 	}
 
-	@Test(expected = AgRESTException.class)
+	@Test(expected = AgException.class)
 	public void testSelectRequest_Sort_BadSpec() {
 
 		SelectContext<E2> context = new SelectContext<>(E2.class);
@@ -490,7 +490,7 @@ public class CreateEntityStageTest extends TestWithCayenneMapping {
 		createEntityStage.execute(context);
 	}
 
-	@Test(expected = AgRESTException.class)
+	@Test(expected = AgException.class)
 	public void testSelectRequest_CayenneExp_BadSpec() {
 
 		SelectContext<E2> context = new SelectContext<>(E2.class);

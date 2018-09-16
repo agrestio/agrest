@@ -1,7 +1,7 @@
 package io.agrest.runtime;
 
 import io.agrest.DataResponse;
-import io.agrest.AgRESTException;
+import io.agrest.AgException;
 import io.agrest.it.fixture.JerseyTestOnDerby;
 import io.agrest.it.fixture.cayenne.E2;
 import org.junit.Test;
@@ -18,7 +18,7 @@ import javax.ws.rs.core.UriInfo;
 import javax.ws.rs.ext.ExceptionMapper;
 
 @Deprecated
-public class AgRESTBuilder_ExceptionMappers_LegacyIT extends JerseyTestOnDerby {
+public class AgBuilder_ExceptionMappers_LegacyIT extends JerseyTestOnDerby {
 
     @Override
     protected void doAddResources(FeatureContext context) {
@@ -26,7 +26,7 @@ public class AgRESTBuilder_ExceptionMappers_LegacyIT extends JerseyTestOnDerby {
     }
 
     @Override
-    protected AgRESTBuilder doConfigure() {
+    protected AgBuilder doConfigure() {
         // this API is deprecated. Keeping the test around until it is fully removed.
         return super.doConfigure()
                 .mapException(TestAgExceptionMapper.class)
@@ -59,7 +59,7 @@ public class AgRESTBuilder_ExceptionMappers_LegacyIT extends JerseyTestOnDerby {
         @GET
         @Path("agexception")
         public DataResponse<E2> agException(@Context UriInfo uriInfo) {
-            throw new AgRESTException(Response.Status.FORBIDDEN, "_ag_exception_");
+            throw new AgException(Response.Status.FORBIDDEN, "_ag_exception_");
         }
 
         @GET
@@ -69,10 +69,10 @@ public class AgRESTBuilder_ExceptionMappers_LegacyIT extends JerseyTestOnDerby {
         }
     }
 
-    public static class TestAgExceptionMapper implements ExceptionMapper<AgRESTException> {
+    public static class TestAgExceptionMapper implements ExceptionMapper<AgException> {
 
         @Override
-        public Response toResponse(AgRESTException exception) {
+        public Response toResponse(AgException exception) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                     .entity("_ag_" + exception.getMessage())
                     .type(MediaType.TEXT_PLAIN_TYPE).build();

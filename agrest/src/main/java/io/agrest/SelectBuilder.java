@@ -5,7 +5,7 @@ import io.agrest.encoder.Encoder;
 import io.agrest.meta.AgEntityOverlay;
 import io.agrest.processor.Processor;
 import io.agrest.processor.ProcessorOutcome;
-import io.agrest.runtime.AgRESTBuilder;
+import io.agrest.runtime.AgBuilder;
 import io.agrest.runtime.processor.select.SelectContext;
 import org.apache.cayenne.exp.Property;
 
@@ -53,7 +53,7 @@ public interface SelectBuilder<T> {
     /**
      * Adds a custom property that is appended to the root {@link ResourceEntity}.
      *
-     * @see AgRESTBuilder#entityOverlay(AgEntityOverlay)
+     * @see AgBuilder#entityOverlay(AgEntityOverlay)
      * @since 1.14
      */
     SelectBuilder<T> property(String name, EntityProperty clientProperty);
@@ -64,7 +64,7 @@ public interface SelectBuilder<T> {
      * "property", and default encoder is used. For more control over property
      * access and encoding use {@link #property(String, EntityProperty)}.
      *
-     * @see AgRESTBuilder#entityOverlay(AgEntityOverlay)
+     * @see AgBuilder#entityOverlay(AgEntityOverlay)
      * @since 1.14
      */
     SelectBuilder<T> property(String name);

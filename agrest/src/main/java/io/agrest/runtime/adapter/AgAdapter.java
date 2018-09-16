@@ -2,7 +2,7 @@ package io.agrest.runtime.adapter;
 
 import io.agrest.AgFeatureProvider;
 import io.agrest.AgModuleProvider;
-import io.agrest.runtime.AgRESTBuilder;
+import io.agrest.runtime.AgBuilder;
 import org.apache.cayenne.di.Binder;
 
 import javax.ws.rs.core.Feature;
@@ -16,10 +16,10 @@ import java.util.Collection;
  * @since 1.3
  * @deprecated since 2.10 in favor of {@link AgFeatureProvider} and
  * {@link AgModuleProvider}. Either can be registered with
- * {@link AgRESTBuilder} explicitly or used to implemented auto-loadable extensions.
+ * {@link AgBuilder} explicitly or used to implemented auto-loadable extensions.
  */
 @Deprecated
-public interface AgRESTAdapter {
+public interface AgAdapter {
 
     void contributeToRuntime(Binder binder);
 

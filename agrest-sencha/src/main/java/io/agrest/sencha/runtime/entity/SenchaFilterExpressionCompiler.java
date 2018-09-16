@@ -1,6 +1,6 @@
 package io.agrest.sencha.runtime.entity;
 
-import io.agrest.AgRESTException;
+import io.agrest.AgException;
 import io.agrest.meta.AgEntity;
 import io.agrest.runtime.entity.IExpressionPostProcessor;
 import io.agrest.runtime.path.IPathDescriptorManager;
@@ -75,7 +75,7 @@ public class SenchaFilterExpressionCompiler implements ISenchaFilterExpressionCo
                     qualifier = in(filter);
                     break;
                 default:
-                    throw new AgRESTException(Status.BAD_REQUEST, "Invalid filter operator: " + filter.getOperator());
+                    throw new AgException(Status.BAD_REQUEST, "Invalid filter operator: " + filter.getOperator());
             }
 
             // validate property path
@@ -136,7 +136,7 @@ public class SenchaFilterExpressionCompiler implements ISenchaFilterExpressionCo
 
     private void checkValueLength(String value) {
         if (value.length() > MAX_VALUE_LENGTH) {
-            throw new AgRESTException(Status.BAD_REQUEST, "filter 'value' is to long: " + value);
+            throw new AgException(Status.BAD_REQUEST, "filter 'value' is to long: " + value);
         }
     }
 }

@@ -1,6 +1,6 @@
 package io.agrest.provider;
 
-import io.agrest.AgRESTException;
+import io.agrest.AgException;
 import io.agrest.DataResponse;
 import io.agrest.it.fixture.JerseyTestOnDerby;
 import io.agrest.it.fixture.cayenne.E2;
@@ -16,7 +16,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
-public class AgRESTExceptionMapperIT extends JerseyTestOnDerby {
+public class AgExceptionMapperIT extends JerseyTestOnDerby {
 
     @Override
     protected void doAddResources(FeatureContext context) {
@@ -41,7 +41,7 @@ public class AgRESTExceptionMapperIT extends JerseyTestOnDerby {
         @GET
         @Path("g1")
         public DataResponse<E2> getE2(@Context UriInfo uriInfo) {
-            throw new AgRESTException(Response.Status.FORBIDDEN, "_was_forbidden_");
+            throw new AgException(Response.Status.FORBIDDEN, "_was_forbidden_");
         }
     }
 }

@@ -1,24 +1,24 @@
 package io.agrest.provider;
 
+import io.agrest.AgException;
+import io.agrest.SimpleResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
 
-import io.agrest.AgRESTException;
-import io.agrest.SimpleResponse;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 
 @Provider
-public class AgRESTExceptionMapper implements ExceptionMapper<AgRESTException> {
+public class AgExceptionMapper implements ExceptionMapper<AgException> {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(AgRESTExceptionMapper.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(AgExceptionMapper.class);
 
 	@Override
-	public Response toResponse(AgRESTException exception) {
+	public Response toResponse(AgException exception) {
 
 		String message = exception.getMessage();
 		String causeMessage = exception.getCause() != null && exception.getCause() != exception

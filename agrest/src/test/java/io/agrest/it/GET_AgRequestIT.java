@@ -1,6 +1,6 @@
 package io.agrest.it;
 
-import io.agrest.AgREST;
+import io.agrest.Ag;
 import io.agrest.AgRequest;
 import io.agrest.DataResponse;
 import io.agrest.it.fixture.JerseyTestOnDerby;
@@ -134,7 +134,7 @@ public class GET_AgRequestIT extends JerseyTestOnDerby {
 			CayenneExp cayenneExp = new CayenneExp("name = 'xxx'");
 			AgRequest agRequest = AgRequest.builder().cayenneExp(cayenneExp).build();
 
-			return AgREST.service(config).select(E2.class)
+			return Ag.service(config).select(E2.class)
 					.uri(uriInfo)
 					.request(agRequest) // overrides parameters from uriInfo
 					.get();
@@ -146,7 +146,7 @@ public class GET_AgRequestIT extends JerseyTestOnDerby {
 			List<Include> includes = Collections.singletonList(new Include("name"));
 			AgRequest agRequest = AgRequest.builder().includes(includes).build();
 
-			return AgREST.service(config).select(E3.class)
+			return Ag.service(config).select(E3.class)
 					.uri(uriInfo)
 					.request(agRequest) // overrides parameters from uriInfo
 					.get();
@@ -158,7 +158,7 @@ public class GET_AgRequestIT extends JerseyTestOnDerby {
 			List<Exclude> excludes = Collections.singletonList(new Exclude("id"));
 			AgRequest agRequest = AgRequest.builder().excludes(excludes).build();
 
-			return AgREST.service(config).select(E3.class)
+			return Ag.service(config).select(E3.class)
 					.uri(uriInfo)
 					.request(agRequest) // overrides parameters from uriInfo
 					.get();
@@ -170,7 +170,7 @@ public class GET_AgRequestIT extends JerseyTestOnDerby {
 			Sort sort = new Sort("id", Dir.ASC);
 			AgRequest agRequest = AgRequest.builder().sort(sort).build();
 
-			return AgREST.service(config).select(E4.class)
+			return Ag.service(config).select(E4.class)
 					.uri(uriInfo)
 					.request(agRequest) // overrides parameters from uriInfo
 					.get();
@@ -182,7 +182,7 @@ public class GET_AgRequestIT extends JerseyTestOnDerby {
 			MapBy mapBy =  new MapBy(E4.C_VARCHAR.getName());
 			AgRequest agRequest = AgRequest.builder().mapBy(mapBy).build();
 
-			return AgREST.service(config).select(E4.class)
+			return Ag.service(config).select(E4.class)
 					.uri(uriInfo)
 					.request(agRequest) // overrides parameters from uriInfo
 					.get();

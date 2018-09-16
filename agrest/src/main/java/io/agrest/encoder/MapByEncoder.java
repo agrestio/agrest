@@ -1,7 +1,7 @@
 package io.agrest.encoder;
 
 import com.fasterxml.jackson.core.JsonGenerator;
-import io.agrest.AgRESTException;
+import io.agrest.AgException;
 import io.agrest.EntityProperty;
 import io.agrest.ResourceEntity;
 import io.agrest.encoder.converter.StringConverter;
@@ -114,7 +114,7 @@ public class MapByEncoder implements CollectionEncoder {
             message.append(mapBy.getIncoming().getName()).append(
                     "should not have children. Full 'mapBy' path: " + mapByPath);
 
-            throw new AgRESTException(Status.BAD_REQUEST, message.toString());
+            throw new AgException(Status.BAD_REQUEST, message.toString());
         }
     }
 
@@ -189,7 +189,7 @@ public class MapByEncoder implements CollectionEncoder {
             // note that converter below will throw an NPE if we pass NULL
             // further down... the error here has more context.
             if (key == null) {
-                throw new AgRESTException(Status.INTERNAL_SERVER_ERROR, "Null mapBy value for key '" + mapByPath + "'");
+                throw new AgException(Status.INTERNAL_SERVER_ERROR, "Null mapBy value for key '" + mapByPath + "'");
             }
 
             String keyString = fieldNameConverter.asString(key);

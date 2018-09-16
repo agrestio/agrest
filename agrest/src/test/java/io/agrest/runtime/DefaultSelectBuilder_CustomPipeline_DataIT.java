@@ -5,7 +5,7 @@ import io.agrest.SelectBuilder;
 import io.agrest.SelectStage;
 import io.agrest.it.fixture.CayenneDerbyStack;
 import io.agrest.it.fixture.DbCleaner;
-import io.agrest.it.fixture.AgRESTFactory;
+import io.agrest.it.fixture.AgFactory;
 import io.agrest.it.fixture.cayenne.E2;
 import org.junit.ClassRule;
 import org.junit.Rule;
@@ -23,7 +23,7 @@ public class DefaultSelectBuilder_CustomPipeline_DataIT {
     public DbCleaner dbCleaner = new DbCleaner(DB.newContext());
 
     @Rule
-    public AgRESTFactory agREST = new AgRESTFactory(DB);
+    public AgFactory agREST = new AgFactory(DB);
 
     private <T> DefaultSelectBuilder<T> createBuilder(Class<T> type) {
         SelectBuilder<T> builder = agREST.getAgRESTService().select(type);

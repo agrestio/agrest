@@ -1,6 +1,6 @@
 package io.agrest.runtime;
 
-import io.agrest.runtime.adapter.AgRESTAdapter;
+import io.agrest.runtime.adapter.AgAdapter;
 import io.agrest.runtime.protocol.ICayenneExpParser;
 import org.apache.cayenne.di.Binder;
 import org.apache.cayenne.validation.ValidationException;
@@ -28,7 +28,7 @@ import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
-public class AgRESTBuilderTest {
+public class AgBuilderTest {
 
     @Deprecated
     @Test
@@ -36,7 +36,7 @@ public class AgRESTBuilderTest {
 
         final Feature adapterFeature = mock(Feature.class);
 
-        AgRESTAdapter adapter = mock(AgRESTAdapter.class);
+        AgAdapter adapter = mock(AgAdapter.class);
         doAnswer((Answer<Object>) invocation -> {
             @SuppressWarnings("unchecked")
             Collection<Feature> c = (Collection<Feature>) invocation.getArguments()[0];
@@ -51,7 +51,7 @@ public class AgRESTBuilderTest {
             return null;
         }).when(adapter).contributeToRuntime(any(Binder.class));
 
-        AgRESTRuntime runtime = new AgRESTBuilder().adapter(adapter).build();
+        AgRuntime runtime = new AgBuilder().adapter(adapter).build();
 
         assertSame(mockParser, runtime.service(ICayenneExpParser.class));
 
@@ -62,8 +62,8 @@ public class AgRESTBuilderTest {
 
     @Test
     public void testExecutorService_Default() throws InterruptedException, ExecutionException, TimeoutException {
-        AgRESTBuilder builder = new AgRESTBuilder();
-        AgRESTRuntime r = builder.build();
+        AgBuilder builder = new AgBuilder();
+        AgRuntime r = builder.build();
 
         ExecutorService exec;
         try {
@@ -79,8 +79,8 @@ public class AgRESTBuilderTest {
     public void testExecutorService_DefaultShutdown()
             throws InterruptedException, ExecutionException, TimeoutException {
 
-        AgRESTBuilder builder = new AgRESTBuilder();
-        AgRESTRuntime r = builder.build();
+        AgBuilder builder = new AgBuilder();
+        AgRuntime r = builder.build();
 
         ExecutorService exec;
         try {
@@ -98,9 +98,9 @@ public class AgRESTBuilderTest {
     public void testExecutorService_Custom() throws InterruptedException, ExecutionException, TimeoutException {
 
         ExecutorService mockExec = mock(ExecutorService.class);
-        AgRESTBuilder builder = new AgRESTBuilder().executor(mockExec);
+        AgBuilder builder = new AgBuilder().executor(mockExec);
 
-        AgRESTRuntime r = builder.build();
+        AgRuntime r = builder.build();
         try {
             ExecutorService exec = r.service(ExecutorService.class);
 
@@ -110,8 +110,8 @@ public class AgRESTBuilderTest {
         }
     }
 
-    private void assertRuntime(AgRESTBuilder builder, Consumer<AgRESTRuntime> test) {
-        AgRESTRuntime r = builder.build();
+    private void assertRuntime(AgBuilder builder, Consumer<AgRuntime> test) {
+        AgRuntime r = builder.build();
         try {
             test.accept(r);
         } finally {

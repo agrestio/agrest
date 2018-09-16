@@ -1,7 +1,7 @@
 package io.agrest.it.fixture;
 
-import io.agrest.runtime.AgRESTBuilder;
-import io.agrest.runtime.AgRESTRuntime;
+import io.agrest.runtime.AgBuilder;
+import io.agrest.runtime.AgRuntime;
 import org.apache.cayenne.ObjectContext;
 import org.apache.cayenne.exp.Expression;
 import org.apache.cayenne.exp.Property;
@@ -53,7 +53,7 @@ public abstract class JerseyTestOnDerby extends JerseyTest {
     @Override
     public Application configure() {
 
-        AgRESTRuntime agFeature = doConfigure().build();
+        AgRuntime agFeature = doConfigure().build();
 
         Feature unitFeature = context -> {
             doAddResources(context);
@@ -65,8 +65,8 @@ public abstract class JerseyTestOnDerby extends JerseyTest {
                 .register(agFeature);
     }
 
-    protected AgRESTBuilder doConfigure() {
-        return AgRESTBuilder.builder(DB_STACK.getCayenneStack());
+    protected AgBuilder doConfigure() {
+        return AgBuilder.builder(DB_STACK.getCayenneStack());
     }
 
     protected abstract void doAddResources(FeatureContext context);

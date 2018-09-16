@@ -17,56 +17,56 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 
-public class AgRESTBuilder_ModuleProviderTest {
+public class AgBuilder_ModuleProviderTest {
 
     @Test
     public void testAgModule_Provider() {
         inRuntime(
-                new AgRESTBuilder().module(new LocalTestModuleProvider()),
+                new AgBuilder().module(new LocalTestModuleProvider()),
                 this::assertLocalTestModuleActive);
     }
 
     @Test
     public void testModule() {
         inRuntime(
-                new AgRESTBuilder().module(new LocalTestModule()),
+                new AgBuilder().module(new LocalTestModule()),
                 this::assertLocalTestModuleActive);
     }
 
     @Test
     public void testAutoLoading() {
         inRuntime(
-                new AgRESTBuilder(),
+                new AgBuilder(),
                 this::assertTestModuleActive);
     }
 
     @Test
     public void testSuppressAutoLoading() {
         inRuntime(
-                new AgRESTBuilder().doNotAutoLoadModules(),
+                new AgBuilder().doNotAutoLoadModules(),
                 this::assertTestModuleNotActive);
     }
 
-    private void assertLocalTestModuleActive(AgRESTRuntime runtime) {
+    private void assertLocalTestModuleActive(AgRuntime runtime) {
         Map<String, PropertyMetadataEncoder> encoders =
                 runtime.service(Key.getMapOf(String.class, PropertyMetadataEncoder.class));
         assertTrue(encoders.containsKey("local.test"));
     }
 
-    private void assertTestModuleActive(AgRESTRuntime runtime) {
+    private void assertTestModuleActive(AgRuntime runtime) {
         Map<String, PropertyMetadataEncoder> encoders =
                 runtime.service(Key.getMapOf(String.class, PropertyMetadataEncoder.class));
         assertTrue("Auto-loading was off", encoders.containsKey(TestModuleProvider.METADATA_ENCODER_KEY));
     }
 
-    private void assertTestModuleNotActive(AgRESTRuntime runtime) {
+    private void assertTestModuleNotActive(AgRuntime runtime) {
         Map<String, PropertyMetadataEncoder> encoders =
                 runtime.service(Key.getMapOf(String.class, PropertyMetadataEncoder.class));
         assertFalse("Auto-loading was on", encoders.containsKey(TestModuleProvider.METADATA_ENCODER_KEY));
     }
 
-    private void inRuntime(AgRESTBuilder builder, Consumer<AgRESTRuntime> test) {
-        AgRESTRuntime r = builder.build();
+    private void inRuntime(AgBuilder builder, Consumer<AgRuntime> test) {
+        AgRuntime r = builder.build();
         try {
             test.accept(r);
         } finally {
