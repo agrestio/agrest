@@ -1,0 +1,5 @@
+AgRequest agRequest = AgRequest.builder()
+{{#queryParams}}
+                .{{baseName}}{{#isContainer}}s{{/isContainer}}({{paramName}}{{#isContainer}}s{{/isContainer}})
+{{/queryParams}}
+                .build();
