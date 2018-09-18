@@ -144,8 +144,8 @@ import java.util.concurrent.ExecutorService;
 public class AgBuilder {
 
     private ICayennePersister cayenneService;
-    private Class<? extends IAgService> agRESTServiceType;
-    private IAgService agRESTService;
+    private Class<? extends IAgService> agServiceType;
+    private IAgService agService;
     private List<AgModuleProvider> moduleProviders;
     private List<Module> modules;
     private List<AgFeatureProvider> featureProviders;
@@ -165,7 +165,7 @@ public class AgBuilder {
         this.autoLoadFeatures = true;
         this.entityOverlays = new HashMap<>();
         this.encoderFilters = new ArrayList<>();
-        this.agRESTServiceType = DefaultAgService.class;
+        this.agServiceType = DefaultAgService.class;
         this.cayenneService = NoCayennePersister.instance();
         this.exceptionMappers = new HashMap<>();
         this.adapters = new ArrayList<>();
@@ -251,15 +251,15 @@ public class AgBuilder {
         throw new IllegalArgumentException("Failed to register ExceptionMapper: " + mapper.getName());
     }
 
-    public AgBuilder agRESTService(IAgService agRESTService) {
-        this.agRESTService = agRESTService;
-        this.agRESTServiceType = null;
+    public AgBuilder agService(IAgService agService) {
+        this.agService = agService;
+        this.agServiceType = null;
         return this;
     }
 
-    public AgBuilder agRESTService(Class<? extends IAgService> agRESTServiceType) {
-        this.agRESTService = null;
-        this.agRESTServiceType = agRESTServiceType;
+    public AgBuilder agService(Class<? extends IAgService> agServiceType) {
+        this.agService = null;
+        this.agServiceType = agServiceType;
         return this;
     }
 
@@ -502,8 +502,8 @@ public class AgBuilder {
 
     private Module createCoreModule() {
 
-        if (agRESTService == null && agRESTServiceType == null) {
-            throw new IllegalStateException("Required 'agRESTService' is not set");
+        if (agService == null && agServiceType == null) {
+            throw new IllegalStateException("Required 'agService' is not set");
         }
 
         return binder -> {
@@ -526,10 +526,10 @@ public class AgBuilder {
             binder.bindList(EntityConstraint.class, ConstraintsHandler.DEFAULT_WRITE_CONSTRAINTS_LIST);
             binder.bindMap(PropertyMetadataEncoder.class).putAll(metadataEncoders);
 
-            if (agRESTServiceType != null) {
-                binder.bind(IAgService.class).to(agRESTServiceType);
+            if (agServiceType != null) {
+                binder.bind(IAgService.class).to(agServiceType);
             } else {
-                binder.bind(IAgService.class).toInstance(agRESTService);
+                binder.bind(IAgService.class).toInstance(agService);
             }
 
             MapBuilder<ExceptionMapper> mapperBuilder = binder.bindMap(ExceptionMapper.class)
