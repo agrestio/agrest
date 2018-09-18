@@ -1,12 +1,12 @@
 package io.agrest.it;
 
-import io.agrest.AgREST;
+import io.agrest.Ag;
 import io.agrest.MetadataResponse;
 import io.agrest.annotation.AgResource;
 import io.agrest.annotation.LinkType;
 import io.agrest.it.fixture.JerseyTestOnDerby;
 import io.agrest.it.fixture.cayenne.E5;
-import io.agrest.runtime.AgRESTBuilder;
+import io.agrest.runtime.AgBuilder;
 import org.junit.Test;
 
 import javax.ws.rs.GET;
@@ -28,7 +28,7 @@ public class GET_Metadata_CustomBase_IT extends JerseyTestOnDerby {
     }
 
     @Override
-    protected AgRESTBuilder doConfigure() {
+    protected AgBuilder doConfigure() {
         return super.doConfigure().baseUrl("https://example.org");
     }
 
@@ -52,7 +52,7 @@ public class GET_Metadata_CustomBase_IT extends JerseyTestOnDerby {
         @Path("meta")
         @AgResource(entityClass = E5.class, type = LinkType.METADATA)
         public MetadataResponse<E5> getMetadata(@Context UriInfo uriInfo) {
-            return AgREST.metadata(E5.class, config).forResource(R1.class).uri(uriInfo).process();
+            return Ag.metadata(E5.class, config).forResource(R1.class).uri(uriInfo).process();
         }
     }
 

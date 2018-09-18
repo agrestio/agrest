@@ -1,6 +1,6 @@
 package io.agrest.runtime.meta;
 
-import io.agrest.AgRESTException;
+import io.agrest.AgException;
 import io.agrest.annotation.LinkType;
 import io.agrest.it.fixture.cayenne.E1;
 import io.agrest.it.fixture.cayenne.E2;
@@ -44,7 +44,7 @@ public class ResourceParserTest extends TestWithCayenneMapping {
         try {
             resources.iterator().next().getEntity().getIds();
             fail("Exception expected");
-        } catch (AgRESTException e) {
+        } catch (AgException e) {
             assertTrue(e.getMessage(), e.getMessage().startsWith("Invalid entity '"));
         }
     }

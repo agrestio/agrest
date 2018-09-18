@@ -12,9 +12,9 @@ import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.ext.MessageBodyWriter;
 
 import com.fasterxml.jackson.core.JsonGenerator;
-import io.agrest.AgRESTException;
+import io.agrest.AgException;
 import io.agrest.MetadataResponse;
-import io.agrest.runtime.AgRESTRuntime;
+import io.agrest.runtime.AgRuntime;
 import io.agrest.runtime.jackson.IJacksonService;
 import io.agrest.runtime.jackson.JsonConvertable;
 
@@ -56,13 +56,13 @@ public class MetadataResponseWriter implements MessageBodyWriter<MetadataRespons
 		}, entityStream);
 	}
 
-	protected void writeData(MetadataResponse<?> t, JsonGenerator out) throws IOException, AgRESTException {
+	protected void writeData(MetadataResponse<?> t, JsonGenerator out) throws IOException, AgException {
 		t.writeData(out);
 	}
 
 	private IJacksonService getJacksonService() {
 		if (jacksonService == null) {
-			jacksonService = AgRESTRuntime.service(IJacksonService.class, configuration);
+			jacksonService = AgRuntime.service(IJacksonService.class, configuration);
 		}
 
 		return jacksonService;

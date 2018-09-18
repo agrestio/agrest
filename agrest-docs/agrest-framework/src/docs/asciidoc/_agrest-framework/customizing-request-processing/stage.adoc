@@ -18,13 +18,13 @@ private Configuration config;
 @GET
 @Path("{id}")
 public DataResponse<Domain> getOne(@PathParam("id") int id, @Context UriInfo uriInfo) {
-    return AgREST.select(Domain.class, config)
-                 .byId(id)
-                 .uri(uriInfo)
-                 .stage(SelectStage.PARSE_REQUEST, (SelectContext<Domain> c) -> {
-                        // TODO: Add a customization with regards of the parse request stage
-                 })
-                 .getOne();
+    return Ag.select(Domain.class, config)
+             .byId(id)
+             .uri(uriInfo)
+             .stage(SelectStage.PARSE_REQUEST, (SelectContext<Domain> c) -> {
+                // TODO: Add a customization with regards of the parse request stage
+             })
+             .getOne();
 }
 ----
 

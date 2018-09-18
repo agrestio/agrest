@@ -1,0 +1,35 @@
+package {{package}};
+
+{{#imports}}import {{import}};
+{{/imports}}
+
+import io.agrest.AgRequest;
+import io.agrest.DataResponse;
+
+import java.util.*;
+import javax.ws.rs.*;
+import javax.ws.rs.core.*;
+
+import io.agrest.Ag;
+import io.agrest.SimpleResponse;
+
+@Path("{{^useAnnotatedBasePath}}/{{/useAnnotatedBasePath}}{{#useAnnotatedBasePath}}{{contextPath}}{{/useAnnotatedBasePath}}")
+public class {{classname}} {
+
+    @Context
+    private Configuration config;
+
+{{#operations}}
+{{#operation}}
+    @{{httpMethod}}
+    {{#subresourceOperation}}@Path("/{{version}}{{path}}"){{/subresourceOperation}}
+    {{#hasConsumes}}
+    @Consumes({ {{#consumes}}"{{{mediaType}}}"{{#hasMore}}, {{/hasMore}}{{/consumes}} })
+    {{/hasConsumes}}
+    {{#hasProduces}}
+    @Produces({ {{#produces}}"{{{mediaType}}}"{{#hasMore}}, {{/hasMore}}{{/produces}} })
+    {{/hasProduces}}
+    {{>get}}{{>delete}}{{>post}}{{>put}}
+{{/operation}}
+}
+{{/operations}}

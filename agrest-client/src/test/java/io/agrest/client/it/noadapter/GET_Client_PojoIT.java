@@ -1,9 +1,9 @@
 package io.agrest.client.it.noadapter;
 
-import io.agrest.AgREST;
+import io.agrest.Ag;
 import io.agrest.DataResponse;
 import io.agrest.client.ClientDataResponse;
-import io.agrest.client.AgRESTClient;
+import io.agrest.client.AgClient;
 import io.agrest.it.fixture.pojo.JerseyTestOnPojo;
 import io.agrest.it.fixture.pojo.model.P1;
 import io.agrest.it.fixture.pojo.model.P2;
@@ -38,7 +38,7 @@ public class GET_Client_PojoIT extends JerseyTestOnPojo {
         expected.setP1(related);
         pojoDB.bucketForType(P2.class).put(1, expected);
 
-        ClientDataResponse<P2> response = AgRESTClient.client(target("/p2")).include("p1").get(P2.class);
+        ClientDataResponse<P2> response = AgClient.client(target("/p2")).include("p1").get(P2.class);
         assertEquals(Status.OK, response.getStatus());
         assertEquals(1, response.getTotal());
 
@@ -60,7 +60,7 @@ public class GET_Client_PojoIT extends JerseyTestOnPojo {
         @GET
         @Path("p2")
         public DataResponse<P2> getP2(@Context UriInfo uriInfo) {
-            return AgREST.service(config).select(P2.class).uri(uriInfo).get();
+            return Ag.service(config).select(P2.class).uri(uriInfo).get();
         }
     }
 }

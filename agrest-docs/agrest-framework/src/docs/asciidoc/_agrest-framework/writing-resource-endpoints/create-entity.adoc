@@ -4,14 +4,14 @@ Now let's implement a `POST` method in DomainResource class:
 
 [source, Java]
 ----
-import io.agrest.AgREST;
+import io.agrest.Ag;
 import io.agrest.SimpleResponse;
 
 ...
 
 @POST
 public SimpleResponse create(String data) {
-    return AgREST.create(Domain.class, config).sync(data);
+    return Ag.create(Domain.class, config).sync(data);
 }
 ----
 

@@ -1,6 +1,6 @@
 package io.agrest.it;
 
-import io.agrest.AgREST;
+import io.agrest.Ag;
 import io.agrest.DataResponse;
 import io.agrest.EntityUpdate;
 import io.agrest.it.fixture.JerseyTestOnDerby;
@@ -97,7 +97,7 @@ public class PUT_NaturalIdIT extends JerseyTestOnDerby {
                 EntityUpdate<E20> update,
                 @Context UriInfo uriInfo) {
 
-            return AgREST.idempotentCreateOrUpdate(E20.class, config).id(name).uri(uriInfo).syncAndSelect(update);
+            return Ag.idempotentCreateOrUpdate(E20.class, config).id(name).uri(uriInfo).syncAndSelect(update);
         }
 
         @PUT
@@ -111,7 +111,7 @@ public class PUT_NaturalIdIT extends JerseyTestOnDerby {
             Map<String, Object> id = new HashMap<>(3);
             id.put("age", age);
             id.put("name", name);
-            return AgREST.idempotentCreateOrUpdate(E21.class, config).id(id).uri(uriInfo).syncAndSelect(update);
+            return Ag.idempotentCreateOrUpdate(E21.class, config).id(id).uri(uriInfo).syncAndSelect(update);
         }
     }
 

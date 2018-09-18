@@ -1,7 +1,7 @@
 package io.agrest.sencha.it;
 
 import io.agrest.DataResponse;
-import io.agrest.AgREST;
+import io.agrest.Ag;
 import io.agrest.it.fixture.JerseyTestOnDerby;
 import io.agrest.it.fixture.cayenne.E14;
 import io.agrest.it.fixture.cayenne.E3;
@@ -91,13 +91,13 @@ public class Sencha_POST_IT extends JerseyTestOnDerby {
         @POST
         @Path("e3")
         public DataResponse<E3> create(@Context UriInfo uriInfo, String requestBody) {
-            return AgREST.create(E3.class, config).uri(uriInfo).syncAndSelect(requestBody);
+            return Ag.create(E3.class, config).uri(uriInfo).syncAndSelect(requestBody);
         }
 
         @POST
         @Path("e14")
         public DataResponse<E14> post(String data) {
-            return AgREST.create(E14.class, config).syncAndSelect(data);
+            return Ag.create(E14.class, config).syncAndSelect(data);
         }
     }
 }

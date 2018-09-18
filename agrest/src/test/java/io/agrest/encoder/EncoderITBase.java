@@ -2,8 +2,8 @@ package io.agrest.encoder;
 
 import io.agrest.it.fixture.CayenneDerbyStack;
 import io.agrest.it.fixture.DbCleaner;
-import io.agrest.runtime.AgRESTBuilder;
-import io.agrest.runtime.IAgRESTService;
+import io.agrest.runtime.AgBuilder;
+import io.agrest.runtime.IAgService;
 import org.junit.ClassRule;
 import org.junit.Rule;
 
@@ -15,13 +15,13 @@ public abstract class EncoderITBase {
 	@Rule
 	public DbCleaner dbCleaner = new DbCleaner(DB.newContext());
 
-	protected IAgRESTService createAgService(EncoderFilter... filters) {
-		AgRESTBuilder builder = AgRESTBuilder.builder(DB.getCayenneStack());
+	protected IAgService createAgService(EncoderFilter... filters) {
+		AgBuilder builder = AgBuilder.builder(DB.getCayenneStack());
 		for (EncoderFilter filter : filters) {
 			builder.encoderFilter(filter);
 		}
 
-		return builder.build().service(IAgRESTService.class);
+		return builder.build().service(IAgService.class);
 	}
 
 }

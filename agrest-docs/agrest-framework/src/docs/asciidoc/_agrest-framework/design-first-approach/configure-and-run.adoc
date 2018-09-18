@@ -13,7 +13,7 @@ There is an example of the maven plugin configuration:
             </goals>
             <configuration>
                 <inputSpec>${swagger-spec}</inputSpec>
-                <generatorName>io.swagger.codegen.languages.AgRESTServerCodegen</generatorName>
+                <generatorName>io.swagger.codegen.languages.AgServerCodegen</generatorName>
                 <output>${project.basedir}</output>
                 <apiPackage>${base-package}.swagger.api.v${schema-version}.service</apiPackage>
                 <modelPackage>${base-package}.swagger.api.v${schema-version}.model</modelPackage>

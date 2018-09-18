@@ -1,6 +1,6 @@
 === Defining the API
 
-AgREST provides `AgRESTServerCodegen` and a set of custom mustache templates to generate API implementation
+AgREST provides `AgServerCodegen` and a set of custom mustache templates to generate API implementation
 based on `OpenAPI 3.0` specification.
 
 There is outlined the top-down workflow of creating API:
@@ -135,9 +135,9 @@ public class BookCategoryResource {
                 .start(start)
                 .build();
 
-        return AgREST.select(BookCategory.class, config)
-                    .request(agRequest)
-                    .get();
+        return Ag.select(BookCategory.class, config)
+                 .request(agRequest)
+                 .get();
     }
 
     @GET
@@ -148,10 +148,10 @@ public class BookCategoryResource {
         AgRequest agRequest = AgRequest.builder()
                 .build();
 
-        return AgREST.select(BookCategory.class, config)
-                    .byId(id)
-                    .request(agRequest)
-                    .get();
+        return Ag.select(BookCategory.class, config)
+                 .byId(id)
+                 .request(agRequest)
+                 .get();
     }
 }
 ----

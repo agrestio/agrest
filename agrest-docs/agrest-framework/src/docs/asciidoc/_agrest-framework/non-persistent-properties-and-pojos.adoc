@@ -65,5 +65,5 @@ chain using chain listener API. It is up to the caller what strategy the backend
 // 'io.agrest.annotation.listener' annotations
 SomeCustomBackend altBackend = new SomeCustomBackend();
 
-AgREST.select(SomeClass.class, config).listener(altBackend).uri(urlInfo).get();
+Ag.select(SomeClass.class, config).listener(altBackend).uri(urlInfo).get();
 ----

@@ -1,6 +1,6 @@
 package io.agrest.runtime;
 
-import io.agrest.AgRESTException;
+import io.agrest.AgException;
 import io.agrest.AgRequest;
 import io.agrest.DataResponse;
 import io.agrest.EntityParent;
@@ -59,7 +59,7 @@ public class DefaultUpdateBuilder<T> implements UpdateBuilder<T> {
 
         for (Object id : ids.entrySet()) {
             if (id == null) {
-                throw new AgRESTException(Response.Status.NOT_FOUND, "Part of compound ID is null");
+                throw new AgException(Response.Status.NOT_FOUND, "Part of compound ID is null");
             }
         }
 

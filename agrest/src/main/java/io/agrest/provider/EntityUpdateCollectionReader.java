@@ -1,9 +1,9 @@
 package io.agrest.provider;
 
 import io.agrest.EntityUpdate;
-import io.agrest.AgRESTException;
+import io.agrest.AgException;
 import io.agrest.meta.Types;
-import io.agrest.runtime.AgRESTRuntime;
+import io.agrest.runtime.AgRuntime;
 import io.agrest.runtime.meta.IMetadataService;
 import io.agrest.runtime.protocol.IEntityUpdateParser;
 
@@ -36,8 +36,8 @@ public class EntityUpdateCollectionReader<T> implements MessageBodyReader<Collec
 	private EntityUpdateReaderProcessor reader;
 
 	public EntityUpdateCollectionReader(@Context Configuration config) {
-		this.reader = new EntityUpdateReaderProcessor(AgRESTRuntime.service(IEntityUpdateParser.class, config),
-				AgRESTRuntime.service(IMetadataService.class, config));
+		this.reader = new EntityUpdateReaderProcessor(AgRuntime.service(IEntityUpdateParser.class, config),
+				AgRuntime.service(IMetadataService.class, config));
 	}
 
 	@Override
@@ -59,7 +59,7 @@ public class EntityUpdateCollectionReader<T> implements MessageBodyReader<Collec
 			InputStream entityStream) throws IOException, WebApplicationException {
 
 		Type entityUpdateType = Types.unwrapTypeArgument(genericType)
-				.orElseThrow(() -> new AgRESTException(Status.INTERNAL_SERVER_ERROR,
+				.orElseThrow(() -> new AgException(Status.INTERNAL_SERVER_ERROR,
 						"Invalid request entity collection type: " + genericType));
 
 		return reader.read(entityUpdateType, entityStream);

@@ -2,7 +2,7 @@ package io.agrest.runtime.protocol;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
-import io.agrest.AgRESTException;
+import io.agrest.AgException;
 import io.agrest.PathConstants;
 import io.agrest.meta.AgAttribute;
 import io.agrest.meta.AgEntity;
@@ -39,7 +39,7 @@ public class EntityUpdateJsonTraverser {
             } else if (json.isObject()) {
                 processObject(entity, json, visitor);
             } else {
-                throw new AgRESTException(Response.Status.BAD_REQUEST, "Expected Object or Array. Got: " + json.asText());
+                throw new AgException(Response.Status.BAD_REQUEST, "Expected Object or Array. Got: " + json.asText());
             }
         }
 	}
@@ -49,7 +49,7 @@ public class EntityUpdateJsonTraverser {
 			if (node.isObject()) {
 				processObject(entity, node, visitor);
 			} else {
-				throw new AgRESTException(Response.Status.BAD_REQUEST, "Expected Object, got: " + node.asText());
+				throw new AgException(Response.Status.BAD_REQUEST, "Expected Object, got: " + node.asText());
 			}
 		}
 	}
@@ -94,7 +94,7 @@ public class EntityUpdateJsonTraverser {
 			if (valueNode.isArray()) {
 				ArrayNode arrayNode = (ArrayNode) valueNode;
 				if (arrayNode.size() > 1) {
-                    throw new AgRESTException(Response.Status.BAD_REQUEST,
+                    throw new AgException(Response.Status.BAD_REQUEST,
                         "Relationship is a part of the primary key, only one related object allowed: "
                                 + relationship.getName());
                 } else if (arrayNode.size() == 1) {
@@ -143,7 +143,7 @@ public class EntityUpdateJsonTraverser {
 
 			JsonNode idNode = valueNode.get(id.getName());
 			if (idNode == null) {
-				throw new AgRESTException(Response.Status.BAD_REQUEST,
+				throw new AgException(Response.Status.BAD_REQUEST,
 						"Failed to parse update payload -- ID part is missing: " + id.getName());
 			}
 

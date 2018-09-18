@@ -1,7 +1,7 @@
 package io.agrest.parser.converter;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import io.agrest.AgRESTException;
+import io.agrest.AgException;
 
 import javax.ws.rs.core.Response;
 import java.time.LocalDate;
@@ -144,7 +144,7 @@ public class UtcDateConverter<T extends java.util.Date> extends AbstractConverte
 				return localTime.get();
 			}
 
-			throw new AgRESTException(Response.Status.BAD_REQUEST, "Failed to build date/time/datetime: " + parsed);
+			throw new AgException(Response.Status.BAD_REQUEST, "Failed to build date/time/datetime: " + parsed);
 		}
 
 		private Optional<ZonedDateTime> getZonedDateTime(TemporalAccessor parsed) {

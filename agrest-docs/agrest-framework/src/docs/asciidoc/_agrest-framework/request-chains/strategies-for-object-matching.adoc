@@ -14,9 +14,9 @@ explicit mapper on the chain:
 
 [source, Java]
 ----
-AgREST.idempotentCreateOrUpdate(Domain.class, config)
-      .mapper(ByKeyObjectMapperFactory.byKey(Domain.VHOST))
-      .sync(entityData);
+Ag.idempotentCreateOrUpdate(Domain.class, config)
+  .mapper(ByKeyObjectMapperFactory.byKey(Domain.VHOST))
+  .sync(entityData);
 ----
 
 `ByKeyObjectMapperFactory` mapper is provided by AgREST. If something other than mapping by property is needed, a

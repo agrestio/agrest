@@ -1,6 +1,6 @@
 package io.agrest.runtime.processor.update;
 
-import io.agrest.AgRESTException;
+import io.agrest.AgException;
 import io.agrest.AgRequest;
 import io.agrest.CompoundObjectId;
 import io.agrest.DataResponse;
@@ -100,7 +100,7 @@ public class UpdateContext<T> extends BaseProcessingContext<T> {
 		Collection<EntityUpdate<T>> updates = getUpdates();
 
 		if (updates.size() != 1) {
-			throw new AgRESTException(Status.INTERNAL_SERVER_ERROR,
+			throw new AgException(Status.INTERNAL_SERVER_ERROR,
 					"Expected one object in update. Actual: " + updates.size());
 		}
 
@@ -285,7 +285,7 @@ public class UpdateContext<T> extends BaseProcessingContext<T> {
 	 * 			// Explicit query parameter
 	 * 			AgRequest agRequest = AgRequest.builder().cayenneExp(cayenneExp).build();
 	 *
-	 * 			return AgREST.service(config).select(E2.class)
+	 * 			return Ag.service(config).select(E2.class)
 	 * 							.uri(uriInfo)
 	 * 							.request(agRequest) // overrides parameters from uriInfo
 	 * 							.get();

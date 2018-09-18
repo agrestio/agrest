@@ -6,7 +6,7 @@ E.g. we have usual get-by-id request chain:
 [source, Java]
 ----
 import io.agrest.DataResponse;
-import io.agrest.AgREST;
+import io.agrest.Ag;
 
 ...
 
@@ -16,10 +16,10 @@ private Configuration config;
 @GET
 @Path("{id}")
 public DataResponse<Domain> getOne(@PathParam("id") int id, @Context UriInfo uriInfo) {
-    return AgREST.select(Domain.class, config)
-                 .byId(id)
-                 .uri(uriInfo)
-                 .getOne();
+    return Ag.select(Domain.class, config)
+             .byId(id)
+             .uri(uriInfo)
+             .getOne();
 }
 ----
 

@@ -2,7 +2,7 @@ package io.agrest.it;
 
 import io.agrest.AgRequest;
 import io.agrest.DataResponse;
-import io.agrest.AgREST;
+import io.agrest.Ag;
 import io.agrest.it.fixture.JerseyTestOnDerby;
 import io.agrest.it.fixture.cayenne.E3;
 import io.agrest.protocol.Exclude;
@@ -88,7 +88,7 @@ public class PUT_AgRequestIT extends JerseyTestOnDerby {
             List<Include> includes = Collections.singletonList(new Include("name"));
             AgRequest agRequest = AgRequest.builder().includes(includes).build();
 
-            return AgREST.idempotentFullSync(E3.class, config)
+            return Ag.idempotentFullSync(E3.class, config)
                     .uri(uriInfo)
                     .request(agRequest) // overrides parameters from uriInfo
                     .syncAndSelect(requestBody);
@@ -100,7 +100,7 @@ public class PUT_AgRequestIT extends JerseyTestOnDerby {
             List<Exclude> excludes = Collections.singletonList(new Exclude("id"));
             AgRequest agRequest = AgRequest.builder().excludes(excludes).build();
 
-            return AgREST.idempotentFullSync(E3.class, config)
+            return Ag.idempotentFullSync(E3.class, config)
                     .uri(uriInfo)
                     .request(agRequest) // overrides parameters from uriInfo
                     .syncAndSelect(requestBody);

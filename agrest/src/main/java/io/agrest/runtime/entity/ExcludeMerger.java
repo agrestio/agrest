@@ -1,6 +1,6 @@
 package io.agrest.runtime.entity;
 
-import io.agrest.AgRESTException;
+import io.agrest.AgException;
 import io.agrest.PathConstants;
 import io.agrest.ResourceEntity;
 import io.agrest.protocol.Exclude;
@@ -33,18 +33,18 @@ public class ExcludeMerger implements IExcludeMerger {
         int dot = path.indexOf(PathConstants.DOT);
 
         if (dot == 0) {
-            throw new AgRESTException(Status.BAD_REQUEST, "Exclude starts with dot: " + path);
+            throw new AgException(Status.BAD_REQUEST, "Exclude starts with dot: " + path);
         }
 
         if (dot == path.length() - 1) {
-            throw new AgRESTException(Status.BAD_REQUEST, "Exclude ends with dot: " + path);
+            throw new AgException(Status.BAD_REQUEST, "Exclude ends with dot: " + path);
         }
 
         String property = dot > 0 ? path.substring(0, dot) : path;
         if (resourceEntity.getAgEntity().getAttribute(property) != null) {
 
             if (dot > 0) {
-                throw new AgRESTException(Status.BAD_REQUEST, "Invalid exclude path: " + path);
+                throw new AgException(Status.BAD_REQUEST, "Invalid exclude path: " + path);
             }
 
             resourceEntity.getAttributes().remove(property);
@@ -71,6 +71,6 @@ public class ExcludeMerger implements IExcludeMerger {
             return;
         }
 
-        throw new AgRESTException(Status.BAD_REQUEST, "Invalid exclude path: " + path);
+        throw new AgException(Status.BAD_REQUEST, "Invalid exclude path: " + path);
     }
 }

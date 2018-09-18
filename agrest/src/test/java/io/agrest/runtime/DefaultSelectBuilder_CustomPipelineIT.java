@@ -4,7 +4,7 @@ import io.agrest.DataResponse;
 import io.agrest.SelectBuilder;
 import io.agrest.SelectStage;
 import io.agrest.it.fixture.CayenneDerbyStack;
-import io.agrest.it.fixture.AgRESTFactory;
+import io.agrest.it.fixture.AgFactory;
 import io.agrest.it.fixture.cayenne.E2;
 import org.junit.ClassRule;
 import org.junit.Rule;
@@ -27,10 +27,10 @@ public class DefaultSelectBuilder_CustomPipelineIT {
     public static CayenneDerbyStack DB = new CayenneDerbyStack("DefaultSelectBuilder_CustomPipelineIT");
 
     @Rule
-    public AgRESTFactory agREST = new AgRESTFactory(DB);
+    public AgFactory agREST = new AgFactory(DB);
 
     private <T> DefaultSelectBuilder<T> createBuilder(Class<T> type) {
-        SelectBuilder<T> builder = agREST.getAgRESTService().select(type);
+        SelectBuilder<T> builder = agREST.getService().select(type);
         assertTrue(builder instanceof DefaultSelectBuilder);
         return (DefaultSelectBuilder<T>) builder;
     }

@@ -1,6 +1,6 @@
 package io.agrest.runtime.entity;
 
-import io.agrest.AgRESTException;
+import io.agrest.AgException;
 import io.agrest.PathConstants;
 import io.agrest.ResourceEntity;
 import io.agrest.meta.AgAttribute;
@@ -43,11 +43,11 @@ public class IncludeMerger implements IIncludeMerger {
         int dot = path.indexOf(PathConstants.DOT);
 
         if (dot == 0) {
-            throw new AgRESTException(Status.BAD_REQUEST, "Include starts with dot: " + path);
+            throw new AgException(Status.BAD_REQUEST, "Include starts with dot: " + path);
         }
 
         if (dot == path.length() - 1) {
-            throw new AgRESTException(Status.BAD_REQUEST, "Include ends with dot: " + path);
+            throw new AgException(Status.BAD_REQUEST, "Include ends with dot: " + path);
         }
 
         String property = dot > 0 ? path.substring(0, dot) : path;
@@ -56,7 +56,7 @@ public class IncludeMerger implements IIncludeMerger {
         if (attribute != null) {
 
             if (dot > 0) {
-                throw new AgRESTException(Status.BAD_REQUEST, "Invalid include path: " + path);
+                throw new AgException(Status.BAD_REQUEST, "Invalid include path: " + path);
             }
 
             parent.getAttributes().put(property, attribute);
@@ -89,7 +89,7 @@ public class IncludeMerger implements IIncludeMerger {
             return null;
         }
 
-        throw new AgRESTException(Status.BAD_REQUEST, "Invalid include path: " + path);
+        throw new AgException(Status.BAD_REQUEST, "Invalid include path: " + path);
     }
 
     public static void processDefaultIncludes(ResourceEntity<?> resourceEntity) {
@@ -112,7 +112,7 @@ public class IncludeMerger implements IIncludeMerger {
      */
     public static void checkTooLong(String path) {
         if (path != null && path.length() > PathConstants.MAX_PATH_LENGTH) {
-            throw new AgRESTException(Response.Status.BAD_REQUEST, "Include/exclude path too long: " + path);
+            throw new AgException(Response.Status.BAD_REQUEST, "Include/exclude path too long: " + path);
         }
     }
 
@@ -154,7 +154,7 @@ public class IncludeMerger implements IIncludeMerger {
                 IncludeMerger.checkTooLong(path);
                 includeEntity = IncludeMerger.processIncludePath(rootEntity, path);
                 if (includeEntity == null) {
-                    throw new AgRESTException(Status.BAD_REQUEST,
+                    throw new AgException(Status.BAD_REQUEST,
                             "Bad include spec, non-relationship 'path' in include object: " + path);
                 }
             }

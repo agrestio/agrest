@@ -2,7 +2,7 @@ package io.agrest.runtime.entity;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.TextNode;
-import io.agrest.AgRESTException;
+import io.agrest.AgException;
 import io.agrest.meta.AgEntity;
 import io.agrest.parser.converter.JsonValueConverter;
 import io.agrest.parser.converter.UtcDateConverter;
@@ -95,7 +95,7 @@ public class ExpressionPostProcessor implements IExpressionPostProcessor {
 		public void startNode(Expression node, Expression parentNode) {
 			if (node instanceof ASTDbPath) {
 				// probably a good idea to disallow DbPath's
-				throw new AgRESTException(Response.Status.BAD_REQUEST,
+				throw new AgException(Response.Status.BAD_REQUEST,
 						"Expression contains a DB_PATH expression that is not allowed here: " + parentNode);
 			}
 
@@ -160,7 +160,7 @@ public class ExpressionPostProcessor implements IExpressionPostProcessor {
                         try {
                             return converter.value(node);
                         } catch (Exception e) {
-                            throw new AgRESTException(Response.Status.BAD_REQUEST,
+                            throw new AgException(Response.Status.BAD_REQUEST,
                                     "Expression parameters contain an incorrectly formatted value: '" + node.asText() + "'", e);
                         }
                     }

@@ -11,7 +11,7 @@
 
 	<groupId>io.agrest.docs</groupId>
 	<artifactId>agrest-docs</artifactId>
-	<name>agrest-docs: Docbook documentation</name>
+	<name>agrest-docs: Asciidoc documentation</name>
 	<description>AgREST framework documentation</description>
 	<packaging>pom</packaging>
 
@@ -27,16 +27,9 @@
         <asciidoctor.maven.plugin.version>1.5.6</asciidoctor.maven.plugin.version>
         <asciidoctorj.pdf.version>1.5.0-alpha.16</asciidoctorj.pdf.version>
         <jruby.version>9.2.0.0</jruby.version>
-        <!--<cayenne.version>${project.version}</cayenne.version>-->
-        <!--<cayenne.major.version>4.1</cayenne.major.version>-->
     </properties>
 
     <dependencies>
-        <!--<dependency>-->
-            <!--<groupId>org.apache.cayenne</groupId>-->
-            <!--<artifactId>cayenne-server</artifactId>-->
-            <!--<version>${project.version}</version>-->
-        <!--</dependency>-->
         <dependency>
             <groupId>org.asciidoctor</groupId>
             <artifactId>asciidoctorj</artifactId>
@@ -75,8 +68,6 @@
 
                         <basedir>${project.basedir}</basedir>
                         <sourcedir>${project.build.sourceDirectory}</sourcedir>
-                        <!--<project-version>${cayenne.version}</project-version>-->
-                        <!--<project-major-version>${cayenne.major.version}</project-major-version>-->
 
                         <imagesdir>images</imagesdir>
                         <icons>font</icons>

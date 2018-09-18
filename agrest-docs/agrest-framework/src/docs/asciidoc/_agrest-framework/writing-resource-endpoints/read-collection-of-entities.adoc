@@ -6,13 +6,13 @@ let's write a `GET` method to search for domains:
 [source, Java]
 ----
 import io.agrest.DataResponse;
-import io.agrest.AgREST;
+import io.agrest.Ag;
 
 ...
 
 @GET
 public DataResponse<Domain> getAll(@Context UriInfo uriInfo) {
-    return AgREST.select(Domain.class, config).uri(uriInfo).select();
+    return Ag.select(Domain.class, config).uri(uriInfo).select();
 }
 ----
 

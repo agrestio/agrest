@@ -1,0 +1,307 @@
+Release 3.0
+
+* #331 LinkRest to AgREST rebranding: Rename packages and files
+
+Release 2.13
+
+* #284 Cayenne 4.0.RC1 is out... upgrading
+* #300 Removing API deprecated as of 2.7 or earlier
+* #301 Move "query" protocol parameter to "link-rest-sencha"
+* #309 Capture request state in a new LrRequest object
+* #313 Refactor Sencha extension to follow the new pipeline logic
+* #314 Refactoring runtime.parser.cache.IPathCache to runtime.path.IPathDescriptorManager
+* #315 Upgrade JAX-RS to 2.1
+* #318 Add 'request' method to SelectBuilder and UpdateBuilder to process LrRequest with explicit query parameters
+* #321 Create protocol value object converters and providers
+* #322 Manage exception mappers via DI to simplify overriding
+* #328 Upgrade to Cayenne 4.0 final
+
+Release 2.12
+
+* #276 Support OffsetDateTime
+* #282 Default server side size limitation works incorrectly
+
+Release 2.11
+
+* #200 Automatic JSON to POJO deserialization in LR client
+* #273 Intermittent error in UtcDateConverterTest.testConverter_javaUtilDate test
+* #275 Stop rendering timezone for all date/time values
+* #278 ISO encoding of Java 8 date/time in mapBy keys
+
+Release 2.10
+
+* #245 module auto-loading
+* #253 meta: explicit base URL for misconfigured proxies
+* #254 Upgrade to Jackson 2.6.4
+* #255 Support for constraints in MetadataBuilder
+* #256 Built-in JsonValueConverter for enums
+* #258 "AdHoc" properties
+* #259 NPE in metadata resource when the model has unknown attribute types
+* #260 LrEntityOverlay.addAttribute(String) must detect attribute type
+* #261 Rename @Resource to @LrResource and move to link-rest-annotations
+* #263 link-rest-sencha module
+* #267 POST: java.util.Date to Timestamp conversion
+* #269 Upgrade to Cayenne 4.0.B2
+
+Release 2.9
+
+* #247 Split Lr annotations in a separate jar
+* #252 link-rest-bom
+
+Release 2.8
+
+* #250 Fix stage method generics boundaries
+
+Release 2.7
+
+* #235 Allow Pojo attributes of type java.util.Collection
+* #238 Dynamic relationships do not work with "mapBy"
+* #239 Add ResourceEntity.setQualifier(..) method.
+* #240 Functional select pipeline interceptors
+* #241 Functional update pipeline interceptors
+* #242 Functional delete pipeline
+* #243 Functional pipeline for unrelate and meta chains
+* #244 Remove API deprecated on or before 2.0
+
+Release 2.6
+
+* #234 Error reading relationships: Multi-join relationship propagation is not supported yet
+
+Release 2.5
+
+* #225 Support constraining FK updates
+* #229 POST and PUT methods doesn't supports content type header with charset
+* #230 Generic object API and type conversion problems
+* #233 (2.x) Upgrade to Cayenne 4.0.B1
+
+Release 2.4
+
+* #212 Upgrade to Cayenne 4.0.M4
+* #214 Immutable constraint objects
+* #218 NPE in LR client when HTTP request fails with something different from LinkRestException
+* #219 LinkRest 2.x upgrade to Cayenne 4.0.M5
+* #220 Support multi-component paths for root "mapBy"
+* #222 Support for Java 8 date time types in the metadata requests
+* #223 Rename SelectBuilder.select() to get()
+
+Release 2.3
+
+* #208 NPE on deleting
+* #209 Batch delete (Sencha-only)
+
+Release 2.2
+
+* #201 Change license from BSD to Apache 2.0
+* #202 Sencha adapter "filter" key can't use "id" property
+* #206 Cayenne exception on select by exposed ID
+
+Release 2.1
+
+* #191 Replace Joda Time with java.time in JSON encoders and converters
+* #194 Refactor root encoder for easier customization
+* #199 Support post/put/delete in LR Client
+
+Release 2.0
+
+* #166 Multiple backends with parallel fetch
+* #167 Move to Java 8
+* #175 Removing API deprecated prior to 2.0
+* #176 LR client
+* #178 Encoder "visitor" API
+* #182 Support for "mapBy" at the top level of request
+* #184 Metadata request: related entity type is NULL for POJO related entities
+* #185 Store information about the target entity in LrRelationship
+* #188 ExecutorService service
+* #189 Shutdown service and API
+* #190 "mapBy" breaks on POJOs
+
+Release 1.24
+
+* #104 Compile annotated POJO entities on the fly; no need for explicit entity declarations.
+* #137 Change LrAttribute.getJavaType() to return Class object
+* #157 Not enough diagnostics on misconfigured listeners
+* #161 Unmapped PK causes response encoding to fail
+* #163 Redefining public ID attribute
+* #164 Auto-compile Lr-annotated properties of entity objects
+* #168 Refactor DataResponse use
+* #169 Deprecate LinkRest and ILinkRestService methods that take SelectQuery parameter
+* #170 Support compound IDs in Create/Update JSON payload
+* #172 Disallow null value for to-many relationships in update
+
+Release 1.23
+
+* #144 Merge link-rest-docs repo into link-rest
+* #148 Optimizing paginated fetches
+* #153 Treat byte[] properties as Base64-encoded when parsing request payload
+* #154 Add JSON Converters for Java 8 Dates
+* #156 Support encoding of entities with no IDs
+* #158 POJO's with relationships can't be encoded.
+
+Release 1.22
+
+* #126 LinkRest JSON Path
+* #132 Listener param and return type are forced to be BaseLinearProcessingStage instead of ProcessingStage
+* #134 LinkRestException logging should include cause message
+* #141 Implement `start`/`limit` for advanced `include`s
+* #142 PUT fails when existing many-to-many relationship passed into JSON
+
+Release 1.21
+
+* #117 Sync: Linking with to-many relationships
+* #120 Custom escape sequences for Unicode characters in JSON
+* #121 PropertyMetadataEncoder should work with primitive types
+* #123 Update dependency versions
+
+Release 1.20
+
+* #78  Parsed update payload objects as resource method parameters
+* #101 Add supporting of id-value for foreign key value during post and put.
+* #109 Support for compound IDs in LR service operations
+* #115 Refactoring of the service layer
+* #116 UpdateBuilder.mapper(String) and UpdateBuilder.mapper(Property)
+
+Release 1.19
+
+* #103 Support for annotation-based stage listeners - select listeners
+* #110 Refactor Select stage names to be more meaningful
+* #111 Annotation-based listeners for update chains
+* #112 Externalizing Processor Chain invocation
+* #113 UpdateBuilder / UpdateResponse / EntityUpdate refactoring
+* #114 Collection Document: remove "success":true key, keep it under SenchaAdapter
+
+Release 1.18
+
+* #100 LR metadata
+* #102 Remove DataResponse.queryProperty
+* #105 SenchaAdapter: filter should disengage if “disabled":true option is passed
+* #107 Select is run twice within CayenneFetchStage
+
+Release 1.17
+
+* #98 Start weeding out "id is a single attribue" assumption
+* #99 Refactor RequestParser expression 'workers' to function-like injectable services
+
+Release 1.16
+
+* #93 Remove methods deprecated since 1.14
+* #94 Chain-of-responsibility execution pipeline
+* #95 refactoring DAO concept to IProcessorFactory
+* #96 Switching IRequestParser to the use of contexts
+
+Release 1.15
+
+* #58 'cayenneExp' positional parameter binding
+* #88 Error when using 'cayenneExp' with outer joins ending in relationship
+* #89 ConstraintsBuilder to allow individual attribute and relationship excludes
+* #91 Expand EntityDAO concept
+* #92 Simplify POJO metadata compilation: LR annotations
+
+
+Release 1.14 2015-03-16
+
+* #79 Simplified API to start request processor builders
+* #80 ILinkRestService and related builders API refactoring for consistency
+* #81 LinkRestRuntime should implement JAX RS Feature
+* #82 LinkRestBuilder: a static shortcut for simple LinkRest stack
+* #83 Start deploying releases to Maven central
+* #84 Problems with entity attributes of type java.sql.Time
+* #87 Upgrade to release version of Cayenne
+
+Release 1.13
+
+* #73 cayenneExp with paths containing plus signs (outer joins) are reportedly broken in 1.12
+
+Release 1.12 2015-01-22
+
+* #63 Object matching with explicit ID fails when callers do not use correct ID type
+* #67 Support for per-entity non-persistent properties
+* #68 Rename Entity to ResourceEntity
+* #69 Own metadata layer
+* #70 Added JSON converters for java.sql date/time types
+* #71 POJOs should be modeled as LrEntities, not ObjEntities
+* #72 Refactor TreeConstraints into visitor-based ConstraintsBuilder
+
+Release 1.11 2015-01-20
+
+* #24 Sencha fake ids and Longs
+* #66 LinkRestExceptionMapper should log exception stack traces at DEBUG level
+
+Release 1.10 2014-12-08
+
+* #55 Object matching fails when callers do not use correct implicit ID type
+* #57 Support for Long IDs in updates
+* #60 Ignore 'query' parameter when no property to match is specified
+* #61 Upgrade to to Cayenne 4.0.M2.1ab1caa
+
+Release 1.9 2014-11-24
+
+* #52 Removing hard size limit for 'cayenneExp'
+* #56 Upgrade to to Cayenne 4.0.M2.fba700d
+
+Release 1.8 2014-10-14
+
+* #43 upgrade to Jersey 2.12, jackson 2.4.2
+* #46 Sencha: update objects order is important on bulk updates
+* #47 support for Filter operator option
+* #48 Support for implicit propagated ids on create/update
+* #49 IRelationshipMapper should use relationship name by default
+
+Release 1.7 2014-09-05
+
+* #29 Batch lookup of relationship objects.
+* #38 'idempotentFullSync' method to synchronize collections
+* #40 Optionally suppress entity bodies on update requests
+* #41 rename CreateOrUpdateBuilder to just UpdateBuilder
+
+Release 1.6 2014-08-29
+
+* #36 StackOverflow on compiling circular constraint annotations
+* #37 Redesign default constraints as EntityConstraint's
+
+Release 1.5 2014-08-28
+
+* #9 Chatty merging of config
+* #30 Add type generic parameter to TreeConstraint
+* #31 Customizable request chain
+* #32 Support for default per-entity constraints
+* #33 EncoderService: Do not include related_id property by default
+* #34 Remove @AnyRole annotation
+* #35 Annotations for default constraints
+
+Release 1.4 2014-08-22
+
+* #25 forSelectRelated/constraints causes unqualified fetch ;
+* #26 Refactor delete operation to DeleteBuilder with "delete by id" and "delete by parent" options.
+* #27 ID that is not a PK can't be used in idempotent requests
+	Refactor 'forSelectRelated' to be setup inside SelectBuilder 
+
+Release 1.3 2014-08-20
+
+* #7 Allow TreeConstraints to be applied to insert/update requests
+* #17 Support "group" as an object
+* #18 CreateOrUpdateBuilder
+* #19 Backend support for batch updates of a single entity
+* #20 IEncoderService to return Encoder instead of DataResponse
+* #21 SelectBuilder.withEntity - rename to SelectBuilder.canRead.
+* #22 SenchaAdapter with Incoming id filter
+* #23 Refactor EntityConfig and friends into 'constraints'
+* #24 LinkRestAdapter - a generic LR extension mechanism
+
+Release 1.2 2014-08-01
+
+* #8 EntityConfig API improvements
+* #10 Support for char PK
+* #11 Refactoring: rename NoRolesEntityAuthorizationEncoderFilter to EntityEncoderFilter
+* #12 Add 'SelectBuilder.selectOne' method
+* #13 'filter' processor improvements
+* #14 ILinkRestService API for managing relationship operations
+* #15 IMetadataService must throw LinkRestException on bad entities
+* #16 DataResponseConfig should be attached to SelectBuilder
+
+Release 1.1
+
+* #1 Intercept Cayenne ValidationException
+* #3 DataResponseConfig - a server-side request template
+* #4 Responses for inserts should return '201 Created' instead of 200
+* #5 Rename ClientEntity to Entity, ClientProperty to EntityProperty
+* #6 Entity: convert setters to builder methods similar to EntityConfig

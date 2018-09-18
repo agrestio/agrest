@@ -1,6 +1,6 @@
 package io.agrest.runtime.cayenne.processor.select;
 
-import io.agrest.AgRESTException;
+import io.agrest.AgException;
 import io.agrest.meta.AgEntity;
 import io.agrest.processor.Processor;
 import io.agrest.processor.ProcessorOutcome;
@@ -43,10 +43,10 @@ public class CayenneFetchDataStage implements Processor<SelectContext<?>> {
             AgEntity<?> entity = context.getEntity().getAgEntity();
 
             if (objects.isEmpty()) {
-                throw new AgRESTException(Response.Status.NOT_FOUND,
+                throw new AgException(Response.Status.NOT_FOUND,
                         String.format("No object for ID '%s' and entity '%s'", context.getId(), entity.getName()));
             } else {
-                throw new AgRESTException(Response.Status.INTERNAL_SERVER_ERROR, String.format(
+                throw new AgException(Response.Status.INTERNAL_SERVER_ERROR, String.format(
                         "Found more than one object for ID '%s' and entity '%s'", context.getId(), entity.getName()));
             }
         }

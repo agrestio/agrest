@@ -1,7 +1,7 @@
 package io.agrest.it.fixture.pojo;
 
-import io.agrest.runtime.AgRESTBuilder;
-import io.agrest.runtime.adapter.AgRESTAdapter;
+import io.agrest.runtime.AgBuilder;
+import io.agrest.runtime.adapter.AgAdapter;
 import io.agrest.runtime.processor.select.SelectProcessorFactory;
 import org.apache.cayenne.di.Binder;
 import org.glassfish.jersey.server.ResourceConfig;
@@ -40,7 +40,7 @@ public abstract class JerseyTestOnPojo extends JerseyTest {
     @Override
     public Application configure() {
 
-        Feature agFeature = new AgRESTBuilder().adapter(new AgRESTAdapter() {
+        Feature agFeature = new AgBuilder().adapter(new AgAdapter() {
 
             @Override
             public void contributeToRuntime(Binder binder) {

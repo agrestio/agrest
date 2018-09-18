@@ -1,0 +1,21 @@
+{{#isRestfulCreate}}
+public {{>returnTypes}} {{nickname}}({{#allParams}}{{>pathParams}}{{>queryParams}}{{>bodyParams}}{{#hasMore}}, {{/hasMore}}{{/allParams}}) {
+
+        {{>protocolImpl}}
+
+        return Ag.create({{{returnType}}}.class, config)
+                 .request(agRequest)
+                 .syncAndSelect({{#bodyParam}}{{paramName}}{{/bodyParam}});
+    }
+{{/isRestfulCreate}}
+{{#isRestfulRelatedToManyCreate}}
+public DataResponse<{{#bodyParams}}{{dataType}}{{/bodyParams}}> {{nickname}}({{#allParams}}{{>pathParams}}{{>queryParams}}{{>bodyParams}}{{#hasMore}}, {{/hasMore}}{{/allParams}}) {
+
+        {{>protocolImpl}}
+
+        return Ag.createOrUpdate({{#bodyParams}}{{dataType}}{{/bodyParams}}.class, config)
+                 .parent({{returnType}}.class, {{#pathParams}}{{#-first}}{{paramName}}{{/-first}}{{/pathParams}}, "{{#modelRelations}}{{bodyParam.paramName}}{{/modelRelations}}")
+                 .request(agRequest)
+                 .syncAndSelect({{#bodyParam}}{{paramName}}{{/bodyParam}});
+    }
+{{/isRestfulRelatedToManyCreate}}

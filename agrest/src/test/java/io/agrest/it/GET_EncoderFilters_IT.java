@@ -1,7 +1,7 @@
 package io.agrest.it;
 
 import com.fasterxml.jackson.core.JsonGenerator;
-import io.agrest.AgREST;
+import io.agrest.Ag;
 import io.agrest.DataResponse;
 import io.agrest.ResourceEntity;
 import io.agrest.SelectStage;
@@ -10,7 +10,7 @@ import io.agrest.encoder.EncoderFilter;
 import io.agrest.it.fixture.JerseyTestOnDerby;
 import io.agrest.it.fixture.cayenne.E3;
 import io.agrest.it.fixture.cayenne.E4;
-import io.agrest.runtime.AgRESTBuilder;
+import io.agrest.runtime.AgBuilder;
 import org.apache.cayenne.Cayenne;
 import org.apache.cayenne.query.SQLTemplate;
 import org.junit.Test;
@@ -36,7 +36,7 @@ public class GET_EncoderFilters_IT extends JerseyTestOnDerby {
     }
 
     @Override
-    protected AgRESTBuilder doConfigure() {
+    protected AgBuilder doConfigure() {
         return super.doConfigure().encoderFilter(new E4OddFilter());
     }
 
@@ -163,13 +163,13 @@ public class GET_EncoderFilters_IT extends JerseyTestOnDerby {
         @GET
         @Path("e4")
         public DataResponse<E4> get(@Context UriInfo uriInfo) {
-            return AgREST.service(config).select(E4.class).uri(uriInfo).get();
+            return Ag.service(config).select(E4.class).uri(uriInfo).get();
         }
 
         @GET
         @Path("e4/pagination_stage")
         public DataResponse<E4> get_WithPaginationStage(@Context UriInfo uriInfo) {
-            return AgREST.service(config)
+            return Ag.service(config)
                     .select(E4.class)
                     .uri(uriInfo)
                     .stage(SelectStage.APPLY_SERVER_PARAMS,

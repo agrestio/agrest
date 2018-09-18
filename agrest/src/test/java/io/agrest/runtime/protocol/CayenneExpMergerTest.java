@@ -1,6 +1,6 @@
 package io.agrest.runtime.protocol;
 
-import io.agrest.AgRESTException;
+import io.agrest.AgException;
 import io.agrest.ResourceEntity;
 import io.agrest.it.fixture.cayenne.E4;
 import io.agrest.protocol.CayenneExp;
@@ -161,7 +161,7 @@ public class CayenneExpMergerTest extends TestWithCayenneMapping {
 		assertEquals(exp("cBoolean=false"), e);
 	}
 
-	@Test(expected = AgRESTException.class)
+	@Test(expected = AgException.class)
 	public void testProcess_Params_InvalidPath() {
         CayenneExp exp = new CayenneExp("invalid/path=$b", Collections.singletonMap("b", false));
         merger.merge(e4Entity, exp);
@@ -179,7 +179,7 @@ public class CayenneExpMergerTest extends TestWithCayenneMapping {
 		assertEquals(exp("cBoolean=null"), e);
 	}
 
-	@Test(expected = AgRESTException.class)
+	@Test(expected = AgException.class)
 	public void testProcess_Map_Params_Date_NonISO() {
         CayenneExp exp = new CayenneExp("cTimestamp=$d", Collections.singletonMap("d", "2014:02:03"));
         merger.merge(e4Entity, exp);
@@ -257,7 +257,7 @@ public class CayenneExpMergerTest extends TestWithCayenneMapping {
 		assertEquals(expected, e);
 	}
 
-	@Test(expected = AgRESTException.class)
+	@Test(expected = AgException.class)
 	public void testProcess_DisallowDBPath() {
         CayenneExp exp = new CayenneExp("db:id=$i", Collections.singletonMap("i", 5));
         merger.merge(e4Entity, exp);

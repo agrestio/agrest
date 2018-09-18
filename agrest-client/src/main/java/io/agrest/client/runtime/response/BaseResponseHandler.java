@@ -4,7 +4,7 @@ import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.agrest.client.ClientSimpleResponse;
-import io.agrest.client.AgRESTClientException;
+import io.agrest.client.AgClientException;
 
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
@@ -28,7 +28,7 @@ public abstract class BaseResponseHandler<T extends ClientSimpleResponse> implem
 
         Status status = Status.fromStatusCode(response.getStatus());
         if (status.getFamily() != Status.Family.SUCCESSFUL) {
-            throw new AgRESTClientException(buildErrorMessage(status, response));
+            throw new AgClientException(buildErrorMessage(status, response));
         }
         return doHandleResponse(status, response);
     }

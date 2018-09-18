@@ -14,14 +14,14 @@ To load AgREST in your project, follow these simple steps:
 </dependency>
 ----
 
-. Create `AgRESTRuntime`, and load it in JAX-RS container. Assuming the
+. Create `AgRuntime`, and load it in JAX-RS container. Assuming the
   container is Jersey, this may look like this:
 +
 [source, Java]
 ----
 import javax.ws.rs.ApplicationPath;
 import org.glassfish.jersey.server.ResourceConfig;
-import io.agrest.runtime.AgRESTBuilder;
+import io.agrest.runtime.AgBuilder;
 
 /**
  * A Jersey-specific JAX-RS Application class that loads AgREST.
@@ -32,7 +32,7 @@ public class JaxRsApplication extends ResourceConfig {
 	public JaxRsApplication() {
 
             ServerRuntime cayenneRuntime = ...
-            AgRESTRuntime agRuntime = AgRESTBuilder.build(cayenneRuntime);
+            AgRuntime agRuntime = AgBuilder.build(cayenneRuntime);
             super.register(agRuntime);
 
             // continue with Application setup...

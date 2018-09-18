@@ -7,7 +7,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.Map;
 
-import io.agrest.client.AgRESTClientException;
+import io.agrest.client.AgClientException;
 import io.agrest.client.protocol.Expression;
 import io.agrest.client.protocol.Include;
 import io.agrest.client.protocol.Sort;
@@ -126,7 +126,7 @@ class RequestEncoder {
 				break;
 			}
 			default: {
-				throw new AgRESTClientException("Unexpected expression params type: " + expression.getParamsType().name());
+				throw new AgClientException("Unexpected expression params type: " + expression.getParamsType().name());
 			}
 		}
 
@@ -200,7 +200,7 @@ class RequestEncoder {
 		try {
 			return URLEncoder.encode(s, "UTF-8").replace("+", "%20");
 		} catch (UnsupportedEncodingException e) {
-			throw new AgRESTClientException("Unexpected error", e);
+			throw new AgClientException("Unexpected error", e);
 		}
 	}
 }

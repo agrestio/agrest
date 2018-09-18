@@ -7,8 +7,7 @@ import static java.lang.annotation.ElementType.METHOD;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
- * Annotates a getter of a property in a POJO to indicate that the property is a
- * AgREST-exposed attribute.
+ * Annotates a getter of a property in a POJO to indicate that the property is a AgREST-exposed attribute.
  * 
  * @since 1.15
  */

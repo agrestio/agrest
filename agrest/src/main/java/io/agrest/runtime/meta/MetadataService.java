@@ -1,6 +1,6 @@
 package io.agrest.runtime.meta;
 
-import io.agrest.AgRESTException;
+import io.agrest.AgException;
 import io.agrest.meta.AgEntity;
 import io.agrest.meta.LazyAgDataMap;
 import io.agrest.meta.AgDataMap;
@@ -37,7 +37,7 @@ public class MetadataService implements IMetadataService {
 		AgEntity<T> e = dataMap.getEntity(type);
 
 		if (e == null) {
-			throw new AgRESTException(Status.BAD_REQUEST, "Invalid entity: " + type.getName());
+			throw new AgException(Status.BAD_REQUEST, "Invalid entity: " + type.getName());
 		}
 
 		return e;
@@ -48,7 +48,7 @@ public class MetadataService implements IMetadataService {
 		@SuppressWarnings("unchecked")
 		AgEntity<T> entity = getAgEntity( (Class<T>) Types.getClassForTypeArgument(entityType).orElse(Object.class));
 		if (entity == null) {
-			throw new AgRESTException(Status.INTERNAL_SERVER_ERROR,
+			throw new AgException(Status.INTERNAL_SERVER_ERROR,
 					"EntityUpdate type '" + entityType.getTypeName() + "' is not an entity");
 		}
 		return entity;

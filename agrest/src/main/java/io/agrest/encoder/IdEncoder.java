@@ -1,7 +1,7 @@
 package io.agrest.encoder;
 
 import com.fasterxml.jackson.core.JsonGenerator;
-import io.agrest.AgRESTException;
+import io.agrest.AgException;
 
 import javax.ws.rs.core.Response;
 import java.io.IOException;
@@ -74,7 +74,7 @@ public class IdEncoder implements Encoder {
             Encoder valueEncoder = entry.getValue();
             Object value = values.get(entry.getKey());
             if (value == null) {
-                throw new AgRESTException(Response.Status.BAD_REQUEST,
+                throw new AgException(Response.Status.BAD_REQUEST,
                         "Missing value for compound ID property: " + entry.getKey());
             }
             valueEncoder.encode(entry.getKey(), value, out);

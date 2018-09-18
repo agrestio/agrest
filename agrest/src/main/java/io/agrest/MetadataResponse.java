@@ -1,17 +1,16 @@
 package io.agrest;
 
-import java.io.IOException;
-import java.util.Collection;
-import java.util.Collections;
-
 import com.fasterxml.jackson.core.JsonGenerator;
 import io.agrest.encoder.Encoder;
 import io.agrest.encoder.GenericEncoder;
 import io.agrest.meta.AgResource;
 
+import java.io.IOException;
+import java.util.Collection;
+import java.util.Collections;
+
 /**
- * A response object that represents a 'Metadata Document' from AgREST
- * protocol.
+ * A response object that represents a 'Metadata Document' from AgREST protocol.
  * 
  * @since 1.18
  */
