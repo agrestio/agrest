@@ -19,6 +19,7 @@
         <module>agrest-overview</module>
         <module>agrest-protocol</module>
         <module>agrest-framework</module>
+        <module>api-specification</module>
     </modules>
 
     <properties>

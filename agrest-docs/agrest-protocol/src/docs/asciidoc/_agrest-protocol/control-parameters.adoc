@@ -12,4 +12,6 @@ include::control-parameters/ordering-collection.adoc[]
 
 include::control-parameters/pagination.adoc[]
 
+include::control-parameters/structuring-collection.adoc[]
+
 include::control-parameters/shaping-collection.adoc[]
