@@ -1,11 +1,64 @@
-<html><head>
-      <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-   <title xmlns:d="http://docbook.org/ns/docbook">Part&nbsp;I.&nbsp;LinkRest Overview</title><link rel="stylesheet" type="text/css" href="css/doc.css"><meta xmlns:d="http://docbook.org/ns/docbook" name="keywords" content="LinkRest documentation LinkRest docs"><meta xmlns:d="http://docbook.org/ns/docbook" name="description" content="LinkRest user documentation, version 1"><link rel="home" href="index.html" title="LinkRest Documentation"><link rel="up" href="index.html" title="LinkRest Documentation"><link rel="prev" href="index.html" title="LinkRest Documentation"><link rel="next" href="overview-what-is-linkrest.html" title="Chapter&nbsp;1.&nbsp;What is LinkRest"><script xmlns:d="http://docbook.org/ns/docbook" type="text/javascript">
-  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
-
-  ga('create', 'UA-67243676-1', 'auto');
-  ga('send', 'pageview');
-        </script></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div xmlns:d="http://docbook.org/ns/docbook" class="navheader"><table width="100%" summary="Navigation header"><tr><th class="versioninfo">v.1 (2.3-SNAPSHOT)</th><th align="center">Part&nbsp;I.&nbsp;LinkRest Overview</th><th></th></tr><tr><td width="20%" align="left"><a accesskey="p" href="index.html">Prev</a>&nbsp;</td><th width="60%" align="center">&nbsp;</th><td width="20%" align="right">&nbsp;<a accesskey="n" href="overview-what-is-linkrest.html">Next</a></td></tr></table><hr></div><div class="part" title="Part&nbsp;I.&nbsp;LinkRest Overview"><div class="titlepage"><div><div><h1 class="title"><a name="overview"></a>Part&nbsp;I.&nbsp;LinkRest Overview</h1></div></div></div><div class="toc"><p><b>Table of Contents</b></p><dl><dt><span class="chapter"><a href="overview-what-is-linkrest.html">1. What is LinkRest</a></span></dt><dt><span class="chapter"><a href="overview-what-linkrest-is-not.html">2. What LinkRest is Not</a></span></dt><dt><span class="chapter"><a href="data-stores.html">3. Supported Data Stores</a></span></dt><dt><span class="chapter"><a href="security-features.html">4. Security</a></span></dt></dl></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="index.html">Prev</a>&nbsp;</td><td width="20%" align="center">&nbsp;</td><td width="40%" align="right">&nbsp;<a accesskey="n" href="overview-what-is-linkrest.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">LinkRest Documentation&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top">&nbsp;Chapter&nbsp;1.&nbsp;What is LinkRest</td></tr></table></div></body></html>
+<div id="toc" class="toc">
+    <div id="toctitle">Table of Contents</div>
+    <ul class="sectlevel1">
+        <li><a href="#what-is-agrest">1. What is AgREST</a></li>
+        <li><a href="#what-agrest-is-not">2. What AgREST is Not</a></li>
+        <li><a href="#supported-data-stores">3. Supported Data Stores</a></li>
+        <li><a href="#security">4. Security</a></li>
+    </ul>
+</div>
+<div class="sect1">
+    <h2 id="what-is-agrest"><a class="anchor" href="#what-is-agrest"></a>1. What is AgREST</h2>
+    <div class="sectionbody">
+        <div class="paragraph">
+            <p>AgREST is a set of tools to build web APIs for your data. You would use it to expose a data store
+                (such as a relational database) as a RESTful web service. To achieve that
+                goal AgREST defines a simple HTTP/JSON-based protocol
+                (described in <a href="protocol.html">AgREST Protocol</a>) and a server-side framework (described in <a href="framework.html">AgREST Framework</a>).
+                The protocol ensures that any client, be it JavaScript, a mobile
+                app or maybe a server-side app, can make sense of any AgREST-enabled service. The
+                framework is written in Java and helps you to build services adhering to the
+                protocol.</p>
+        </div>
+        <div class="paragraph">
+            <p>AgREST is open source and is distributed under the terms of
+                <a href="https://raw.githubusercontent.com/agrestio/agrest/master/LICENSE.txt">Apache 2.0 license</a></p>
+        </div>
+    </div>
+</div>
+<div class="sect1">
+    <h2 id="what-agrest-is-not"><a class="anchor" href="#what-agrest-is-not"></a>2. What AgREST is Not</h2>
+    <div class="sectionbody">
+        <div class="paragraph">
+            <p>AgREST is not an automated engine to take your DB online with a single command.
+                You still have to write code for JAX-RS endpoints (however simple and trivial that code might end up being).
+                Having this code around allows you to customize processing, implement security around endpoints, hide certain methods, etc.
+                This is a defensive approach that goes a long way to avoid unintended consequences when opening up your data on the web.</p>
+        </div>
+        <div class="paragraph">
+            <p>Having said that, such an engine can be written on top of AgREST with relative ease.</p>
+        </div>
+    </div>
+</div>
+<div class="sect1">
+    <h2 id="supported-data-stores"><a class="anchor" href="#supported-data-stores"></a>3. Supported Data Stores</h2>
+    <div class="sectionbody">
+        <div class="paragraph">
+            <p>AgREST is written on top of <a href="http://cayenne.apache.org">Apache Cayenne ORM</a>
+                and supports any relational data store, such as MySQL or Oracle.
+                Support for alternative data stores can be provided with relative ease. E.g. NoSQL
+                databases, flat files, etc. E.g. we&#8217;ve written POJO and LDAP backends.</p>
+        </div>
+    </div>
+</div>
+<div class="sect1">
+    <h2 id="security"><a class="anchor" href="#security"></a>4. Security</h2>
+    <div class="sectionbody">
+        <div class="paragraph">
+            <p>From the very beginning AgREST was designed with security in mind. It can be easily
+                integrated with common web and enterprise security solutions
+                (OAuth, <a href="http://shiro.apache.org/">Apache Shiro</a>, Spring Security, etc.),
+                giving Java developers a straightforward API to implement custom object and attribute-level access.</p>
+        </div>
+    </div>
+</div>
