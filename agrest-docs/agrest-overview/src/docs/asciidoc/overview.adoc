@@ -9,10 +9,10 @@
 // base path to java code include
 :agrest-root: {basedir}/../../..
 
-include::_agrest-overview/what-is-agrest.adoc[]
+include::_overview/what-is-agrest.adoc[]
 
-include::_agrest-overview/what-agrest-is-not.adoc[]
+include::_overview/what-agrest-is-not.adoc[]
 
-include::_agrest-overview/supported-data-stores.adoc[]
+include::_overview/supported-data-stores.adoc[]
 
-include::_agrest-overview/security.adoc[]
+include::_overview/security.adoc[]

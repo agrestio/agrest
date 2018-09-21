@@ -1,7 +1,7 @@
 == Protocol Extensions
 
 With the help of
-https://github.com/io/agrest/blob/master/agrest/src/main/java/io/agrest/runtime/adapter/AgAdapter.java[AgAdapter]
+https://raw.githubusercontent.com/agrestio/agrest/master/agrest/src/main/java/io/agrest/runtime/adapter/AgAdapter.java[AgAdapter]
 and other AgREST extension techniques one can extend or
 customize the protocol to recognize extra control parameters, etc.
 `AgAdapter` ships with one such optional extension that adapts the framework

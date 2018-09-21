@@ -18,7 +18,7 @@ public SimpleResponse create(String data) {
 Here we've built a very simple "create chain" using AgREST fluent API. It starts with a
 static "create" method on AgREST class, taking a type of entity to create (Domain) and
 previously injected Configuration. Finally it calls "sync" method to execute the
-request. "data" String is expected to be an "Update Document" (see <<Request: Update Document>>), i.e. a single object or an array of objects.
+request. "data" String is expected to be an "Update Document" (see <<protocol#request-update-document, Request: Update Document>>), i.e. a single object or an array of objects.
 Now if you compile your app and deploy it in a web container (e.g. Tomcat), you may call
 this endpoint to create new Domain objects:
 

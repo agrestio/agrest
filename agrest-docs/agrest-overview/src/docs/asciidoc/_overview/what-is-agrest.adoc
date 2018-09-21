@@ -3,11 +3,11 @@
 AgREST is a set of tools to build web APIs for your data. You would use it to expose a data store
 (such as a relational database) as a RESTful web service. To achieve that
 goal AgREST defines a simple HTTP/JSON-based protocol
-(described in <<AgREST Protocol>>) and a server-side framework (described in <<AgREST Framework>>).
+(described in <<protocol#, AgREST Protocol>>) and a server-side framework (described in <<framework#, AgREST Framework>>).
 The protocol ensures that any client, be it JavaScript, a mobile
 app or maybe a server-side app, can make sense of any AgREST-enabled service. The
 framework is written in Java and helps you to build services adhering to the
 protocol.
 
 AgREST is open source and is distributed under the terms of
-https://github.com/io/agrest/blob/master/LICENSE.txt[BSD license]
+https://raw.githubusercontent.com/agrestio/agrest/master/LICENSE.txt[Apache 2.0 license]
