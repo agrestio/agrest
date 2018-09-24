@@ -8,8 +8,6 @@ import org.apache.cayenne.di.Key;
 import org.apache.cayenne.di.Module;
 import org.junit.Test;
 
-import java.util.Collection;
-import java.util.Collections;
 import java.util.Map;
 import java.util.function.Consumer;
 
@@ -84,11 +82,6 @@ public class AgBuilder_ModuleProviderTest {
         @Override
         public Class<? extends Module> moduleType() {
             return LocalTestModule.class;
-        }
-
-        @Override
-        public Collection<Class<? extends Module>> overrides() {
-            return Collections.emptyList();
         }
     }
 

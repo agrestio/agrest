@@ -18,7 +18,6 @@
         <module>agrest-sencha</module>
         <module>agrest-bom</module>
         <module>agrest-docs</module>
-        <module>agrest-legacy-date-encoders</module>
         <module>agrest-openapi-designfirst</module>
         <module>agrest-openapi-designfirst-test</module>
     </modules>

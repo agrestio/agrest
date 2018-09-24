@@ -34,12 +34,6 @@
                 <artifactId>agrest</artifactId>
                 <version>${project.version}</version>
             </dependency>
-            <!-- Deprecated -->
-            <dependency>
-                <groupId>io.agrest</groupId>
-                <artifactId>agrest-legacy-date-encoders</artifactId>
-                <version>${project.version}</version>
-            </dependency>
             <dependency>
                 <groupId>io.agrest</groupId>
                 <artifactId>agrest-client</artifactId>

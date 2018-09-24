@@ -1,8 +1,8 @@
 package io.agrest.runtime;
 
+import io.agrest.AgException;
 import io.agrest.AgFeatureProvider;
 import io.agrest.AgModuleProvider;
-import io.agrest.AgException;
 import io.agrest.BaseModule;
 import io.agrest.DataResponse;
 import io.agrest.EntityConstraint;
@@ -18,13 +18,12 @@ import io.agrest.meta.compiler.AgEntityCompiler;
 import io.agrest.meta.compiler.PojoEntityCompiler;
 import io.agrest.meta.parser.IResourceParser;
 import io.agrest.meta.parser.ResourceParser;
+import io.agrest.provider.AgExceptionMapper;
 import io.agrest.provider.CayenneRuntimeExceptionMapper;
 import io.agrest.provider.DataResponseWriter;
-import io.agrest.provider.AgExceptionMapper;
 import io.agrest.provider.MetadataResponseWriter;
 import io.agrest.provider.SimpleResponseWriter;
 import io.agrest.provider.ValidationExceptionMapper;
-import io.agrest.runtime.adapter.AgAdapter;
 import io.agrest.runtime.cayenne.CayennePersister;
 import io.agrest.runtime.cayenne.ICayennePersister;
 import io.agrest.runtime.cayenne.NoCayennePersister;
@@ -120,14 +119,10 @@ import org.apache.cayenne.di.Key;
 import org.apache.cayenne.di.MapBuilder;
 import org.apache.cayenne.di.Module;
 import org.apache.cayenne.di.spi.ModuleLoader;
-import org.apache.cayenne.reflect.Accessor;
-import org.apache.cayenne.reflect.PropertyUtils;
 import org.apache.cayenne.validation.ValidationException;
 
 import javax.ws.rs.core.Feature;
 import javax.ws.rs.ext.ExceptionMapper;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -153,7 +148,6 @@ public class AgBuilder {
     private List<EncoderFilter> encoderFilters;
     private Map<String, AgEntityOverlay> entityOverlays;
     private Map<String, Class<? extends ExceptionMapper>> exceptionMappers;
-    private Collection<AgAdapter> adapters;
     private Map<String, PropertyMetadataEncoder> metadataEncoders;
     private ExecutorService executor;
     private String baseUrl;
@@ -168,7 +162,6 @@ public class AgBuilder {
         this.agServiceType = DefaultAgService.class;
         this.cayenneService = NoCayennePersister.instance();
         this.exceptionMappers = new HashMap<>();
-        this.adapters = new ArrayList<>();
         this.metadataEncoders = new HashMap<>();
         this.moduleProviders = new ArrayList<>(5);
         this.modules = new ArrayList<>(5);
@@ -220,35 +213,6 @@ public class AgBuilder {
     public AgBuilder doNotAutoLoadModules() {
         this.autoLoadModules = false;
         return this;
-    }
-
-    /**
-     * Maps an ExceptionMapper for a given type of Exceptions. While this method
-     * can be used for arbitrary exceptions, it is most useful to override the
-     * default exception handlers defined in AgREST for the following
-     * exceptions: {@link AgException}, {@link CayenneRuntimeException},
-     * {@link ValidationException}.
-     *
-     * @since 1.1
-     * @deprecated since 2.13. Custom exception handlers can be added via a custom module or module provider. E.g.
-     * <code>b.bindMap(ExceptionMapper.class).put(AgException.class.getName(), MyExceptionMapper.class)</code>
-     */
-    @Deprecated
-    public <E extends Throwable> AgBuilder mapException(Class<? extends ExceptionMapper<E>> mapper) {
-
-        for (Type t : mapper.getGenericInterfaces()) {
-
-            if (t instanceof ParameterizedType) {
-                ParameterizedType pt = (ParameterizedType) t;
-                if (ExceptionMapper.class.equals(pt.getRawType())) {
-                    Type[] args = pt.getActualTypeArguments();
-                    exceptionMappers.put(args[0].getTypeName(), mapper);
-                    return this;
-                }
-            }
-        }
-
-        throw new IllegalArgumentException("Failed to register ExceptionMapper: " + mapper.getName());
     }
 
     public AgBuilder agService(IAgService agService) {
@@ -312,18 +276,6 @@ public class AgBuilder {
     }
 
     /**
-     * @since 1.12
-     * @deprecated since 2.10. Instead use {@link AgEntityOverlay#addAttribute(String)}, and register
-     * the overlay via {@link #entityOverlay(AgEntityOverlay)}.
-     */
-    @Deprecated
-    public AgBuilder transientProperty(Class<?> type, String propertyName) {
-        Accessor accessor = PropertyUtils.accessor(propertyName);
-        getOrCreateOverlay(type).addAttribute(propertyName, Object.class, accessor::getValue);
-        return this;
-    }
-
-    /**
      * Adds a descriptor of extra properties of a particular entity. If multiple overlays are registered for the
      * same entity, they are merged together. If they have overlapping properties, the last overlay wins.
      *
@@ -336,23 +288,6 @@ public class AgBuilder {
 
     private <T> AgEntityOverlay<T> getOrCreateOverlay(Class<T> type) {
         return entityOverlays.computeIfAbsent(type.getName(), n -> new AgEntityOverlay<>(type));
-    }
-
-    /**
-     * Adds an adapter that may contribute custom configuration to
-     * {@link AgRuntime}.
-     *
-     * @return this builder instance.
-     * @since 1.3
-     * @deprecated since 2.10 AgAdapter is deprecated in favor of
-     * {@link AgFeatureProvider} and
-     * {@link AgModuleProvider}. Either can be registered with
-     * {@link AgBuilder} explicitly or used to implemented auto-loadable extensions.
-     */
-    @Deprecated
-    public AgBuilder adapter(AgAdapter adapter) {
-        this.adapters.add(adapter);
-        return this;
     }
 
     /**
@@ -417,10 +352,6 @@ public class AgBuilder {
 
         Collection<Feature> featureCollector = new ArrayList<>();
 
-        if (!adapters.isEmpty()) {
-            loadAdapterProvidedFeatures(featureCollector);
-        }
-
         if (autoLoadFeatures) {
             loadAutoLoadableFeatures(featureCollector, injector);
         }
@@ -442,10 +373,6 @@ public class AgBuilder {
 
         // TODO: consistent sorting policy past core module...
         // Cayenne ModuleProvider provides a sorting facility but how do we apply it across loading strategies ?
-
-        if (!adapters.isEmpty()) {
-            loadAdapterProvidedModules(moduleCollector);
-        }
 
         if (autoLoadModules) {
             loadAutoLoadableModules(moduleCollector);
@@ -470,10 +397,6 @@ public class AgBuilder {
                 }));
     }
 
-    private void loadAdapterProvidedFeatures(Collection<Feature> collector) {
-        adapters.forEach(a -> a.contributeToJaxRs(collector));
-    }
-
     private void loadBuilderFeatures(Collection<Feature> collector, Injector i) {
         collector.addAll(this.features);
         featureProviders.forEach(fp -> collector.add(fp.feature(i)));
@@ -481,10 +404,6 @@ public class AgBuilder {
 
     private void loadAutoLoadableModules(Collection<Module> collector) {
         collector.addAll(new ModuleLoader().load(AgModuleProvider.class));
-    }
-
-    private void loadAdapterProvidedModules(Collection<Module> collector) {
-        collector.add(b -> adapters.forEach(a -> a.contributeToRuntime(b)));
     }
 
     private void loadBuilderModules(Collection<Module> collector) {
