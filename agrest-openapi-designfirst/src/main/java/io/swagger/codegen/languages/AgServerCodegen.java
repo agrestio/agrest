@@ -9,8 +9,6 @@ import org.openapitools.codegen.CodegenOperation;
 import org.openapitools.codegen.CodegenParameter;
 import org.openapitools.codegen.CodegenProperty;
 import org.openapitools.codegen.languages.AbstractJavaJAXRSServerCodegen;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -22,7 +20,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 public class AgServerCodegen extends AbstractJavaJAXRSServerCodegen implements AgServerFeatures {
-    private static final Logger LOGGER = LoggerFactory.getLogger(AgServerCodegen.class);
 
     private final Map<String, Set<CodegenProperty>> models = new HashMap<>();
 
