@@ -11,8 +11,8 @@ import java.util.List;
 public class AgCodegenOperation extends CodegenOperation {
 
     public boolean hasCompoundId;
-    public List<CodegenParameter> modelAttributes = new ArrayList<CodegenParameter>();
-    public List<AgCodegenOperation> modelRelations = new ArrayList<AgCodegenOperation>();
+    public List<CodegenParameter> modelAttributes = new ArrayList<>();
+    public List<AgCodegenOperation> modelRelations = new ArrayList<>();
 
     public AgCodegenOperation() {
     }

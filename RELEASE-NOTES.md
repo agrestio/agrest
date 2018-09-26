@@ -1,6 +1,7 @@
 Release 3.0
 
 * #331 LinkRest to AgREST rebranding: Rename packages and files
+* #340 Removing API deprecated in 2.x
 
 Release 2.13
 

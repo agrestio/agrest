@@ -1,3 +1,25 @@
+## Upgrading to 3.0
+
+### Renaming "LinkRest" to "AgRest"
+
+This is the release in which "LinkRest" got renamed to "AgRest", causing the renaming of
+modules, packages , and class prefixes. When upgrading please change the following:
+
+* Change dependency imports from `com.nhl.link.rest:link-rest-*` to `io.agrest:agrest-*`
+* Change package imports from `com.nhl.link.rest.*` to `io.agrest.*`.
+* Update your class references that start with `Lr` to `Ag` prefix.
+
+### LinkRestAdapter is removed [#245](https://github.com/nhl/link-rest/issues/340)
+
+The adapter was deprecated for a while in favor of `AgFeatureProvider` and `AgModuleProvider`. Not it is
+finally removed.
+
+### "link-rest-legacy-date-encoders" module is removed [#245](https://github.com/nhl/link-rest/issues/340)
+
+We no longer support legacy date/time encoders. See upgrade instructions for version 2.11 for details on how to
+update your code.
+
+
 ## Upgrading to 2.13
 
 ### Removed listeners and listener annotations [#300](https://github.com/nhl/link-rest/issues/300)
@@ -29,7 +51,10 @@ Encoding of local date/time values is now uniform for all attribute types and is
 - time is not truncated to seconds, so a fractional part may appear in the formatted string
 - fractional part is truncated to milliseconds during encoding
 
-To revert these changes and go back to the old behavior you may use `com.nhl.link.rest.LegacyDateEncodersModule`. In case the modules auto-loading feature is not disabled, it should be sufficient to add the `com.nhl.link.rest:link-rest-legacy-date-encoders` JAR on your application's classpath. Here's how to do it, if you're using Maven build:
+To revert these changes and go back to the old behavior you may use `com.nhl.link.rest.LegacyDateEncodersModule`. In case
+the modules auto-loading feature is not disabled, it should be sufficient to add the
+`com.nhl.link.rest:link-rest-legacy-date-encoders` JAR on your application's classpath. Here's how to do it,
+if you're using Maven build:
 
 ```xml
 <dependency>
@@ -43,7 +68,7 @@ To revert these changes and go back to the old behavior you may use `com.nhl.lin
 
 ### LinkRestAdapter is deprecated, replaced with LrFeatureProvider and LrModuleProvider [#245](https://github.com/nhl/link-rest/issues/245)
 
-Instead of a monolithic adapter, LinkRest new extension mechanism is based on two separate interfaces, LrFeatureProvider and LrModuleProvider,
+Instead of a monolithic adapter, LinkRest new extension mechanism is based on two separate interfaces, `LrFeatureProvider` and `LrModuleProvider`,
 one to provide JAX-RS extensions, the other - for the LinkRest stack extensions. `LinkRestAdapter` got deprecated. Consider upgrading to the new
 mechanism. Also note that both new providers can be configured for auto-loading using standard Java ServiceLoader mechanism .See 
 [#245](https://github.com/nhl/link-rest/issues/245) for details.
