@@ -15,4 +15,4 @@ Values of some control parameters below are also represented as JSON.
 All examples below use an imaginary CMS data model that is made of 2 entities: Domain
 and Article, with a 1..N relationship between them:
 
-image::../img/model.png[align="center"]
+image::../images/model.png[align="center"]

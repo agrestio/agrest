@@ -10,10 +10,10 @@
         <version>3.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>api-specification</artifactId>
+    <artifactId>agrest-workflow</artifactId>
 
     <packaging>jar</packaging>
-    <name>api-specification: AsciiDoc - API specification using AgREST</name>
+    <name>agrest-workflow: AsciiDoc - AgREST Workflow</name>
 
     <build>
         <plugins>

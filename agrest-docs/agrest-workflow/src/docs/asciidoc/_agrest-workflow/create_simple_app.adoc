@@ -1,0 +1,7 @@
+== Create a Simple `AgREST` App
+
+include::create_simple_app/setup.adoc[]
+
+include::create_simple_app/starting_project.adoc[]
+
+include::create_simple_app/implementation.adoc[]
