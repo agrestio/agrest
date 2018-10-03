@@ -13,10 +13,12 @@ import io.agrest.parser.converter.JsonValueConverter;
 import io.agrest.runtime.parser.converter.DefaultJsonValueConverterFactoryProvider;
 import io.agrest.runtime.parser.converter.IJsonValueConverterFactory;
 
+import javax.ws.rs.client.Invocation;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Response;
 import java.util.Collections;
 import java.util.Objects;
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 /**
@@ -38,6 +40,7 @@ public class AgClient {
 
 	private WebTarget target;
 	private AgcRequest.AgRequestBuilder request;
+	private Consumer<Invocation.Builder> config;
 
 	private AgClient(WebTarget target) {
 		this.target = target;
@@ -89,29 +92,40 @@ public class AgClient {
 		return this;
 	}
 
+	/**
+	 * @since 3.0
+	 *
+	 * @param config
+	 * @return AgClient object
+	 */
+	public AgClient configure(Consumer<Invocation.Builder> config) {
+		this.config = config;
+		return this;
+	}
+
 	public <T> ClientDataResponse<T> get(Class<T> targetType) {
-		return invoke(targetType, InvocationBuilder.target(target).request(request.build()).buildGet());
+		return invoke(targetType, InvocationBuilder.target(target).config(config).request(request.build()).buildGet());
 	}
 
 	/**
 	 * @since 2.1
      */
 	public <T> ClientDataResponse<T> post(Class<T> targetType, String data) {
-		return invoke(targetType, InvocationBuilder.target(target).request(request.build()).buildPost(data));
+		return invoke(targetType, InvocationBuilder.target(target).config(config).request(request.build()).buildPost(data));
 	}
 
 	/**
 	 * @since 2.1
      */
 	public <T> ClientDataResponse<T> put(Class<T> targetType, String data) {
-		return invoke(targetType, InvocationBuilder.target(target).request(request.build()).buildPut(data));
+		return invoke(targetType, InvocationBuilder.target(target).config(config).request(request.build()).buildPut(data));
 	}
 
 	/**
 	 * @since 2.1
      */
 	public ClientSimpleResponse delete() {
-		Supplier<Response> invocation = InvocationBuilder.target(target).request(request.build()).buildDelete();
+		Supplier<Response> invocation = InvocationBuilder.target(target).config(config).request(request.build()).buildDelete();
 		return new SimpleResponseHandler(jsonFactory).handleResponse(invocation.get());
 	}
 
