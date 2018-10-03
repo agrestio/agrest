@@ -5,3 +5,5 @@ include::create_simple_app/setup.adoc[]
 include::create_simple_app/starting_project.adoc[]
 
 include::create_simple_app/implementation.adoc[]
+
+include::create_simple_app/running_app.adoc[]

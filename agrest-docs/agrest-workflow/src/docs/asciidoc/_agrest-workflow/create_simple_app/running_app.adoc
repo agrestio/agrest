@@ -1,0 +1,75 @@
+=== Running the Application
+
+The goal of this chapter is to run and test our application.
+If the steps described above are done, a structure of the project will look like this:
+
+image::../images/bookstore_ide_prjct.png[align="center"]
+
+==== Building and running
+
+To build the application use a command `mvn clean install`.
+
+To run a jetty server with our application use a command `mvn jetty:run`
+
+==== Configure IntelliJ IDEA maven plugin
+
+To running using IDE just add a new `Maven` configuration on a menu path `Run -> Edit Configurations...`.
+Then set a `Name:` (e.g. *Bookstore*) and a `Command line:` in *jetty:run*
+
+==== Testing
+
+After the application running you may call this endpoint to get a list of categories:
+
+```
+curl -i -X GET 'http://localhost:8080/api/category'
+```
+
+And get the following response:
+
+[source, JSON]
+----
+HTTP/1.1 200 OK
+Date: Wed, 03 Oct 2018 10:14:51 GMT
+Content-Type: application/json
+Content-Length: 21
+Server: Jetty(9.3.14.v20161028)
+
+{"data":[],"total":0}
+----
+
+Obviously, the list is empty. So, use a 'POST' command to add some categories:
+
+```
+curl -i -X POST 'http://localhost:8080/api/category'  -d '{"id":"1","name":"Science Fiction"}'
+```
+And one more if it is needed:
+
+```
+curl -i -X POST 'http://localhost:8080/api/category' -d '{"id”:”2”,”name":"Horror"}'
+```
+
+Response will be:
+
+[source, JSON]
+----
+HTTP/1.1 201 Created
+Date: Wed, 03 Oct 2018 10:42:17 GMT
+Content-Type: application/json
+Content-Length: 16
+Server: Jetty(9.3.14.v20161028)
+
+{"success":true}
+----
+
+Now make the 'GET' request again and receive the following:
+
+[source, JSON]
+----
+HTTP/1.1 200 OK
+Date: Wed, 03 Oct 2018 10:44:44 GMT
+Content-Type: application/json
+Content-Length: 117
+Server: Jetty(9.3.14.v20161028)
+
+{"data":[{"id":1,"description":null,"name":"Science Fiction"},{"id":2,"description":null,"name":"Horror"}],"total":2}
+----
