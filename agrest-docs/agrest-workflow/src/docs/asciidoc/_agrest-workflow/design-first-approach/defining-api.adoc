@@ -5,22 +5,27 @@ based on `OpenAPI 3.0` specification.
 
 There is outlined the top-down workflow of creating API:
 
+==== Prerequisites
+Setup and build an application example from previous chapter <<Create a Simple `AgREST` App>>.
+Then remove `CategoryResource.java` we have created manually. All our API resources will be generated
+from `.yaml` definition according to the Design-First approach.
+
 ==== 1. Start with domain models
-Create `my-bookstore-api.yaml` file to define your API.
-Add general information with regards of your API:
+Create `bookstore-api.yaml` file to define your API and put it in the `src/main/java/resources` folder.
+Add a general information with regards of your API:
 [source, yaml]
 ----
 openapi: 3.0.0
 servers:
   - url: 'http://127.0.0.1/v1'
 info:
-  title: AgREST based API of MyBookstore
-  description: An API for interacting with the MyBookstore backend server
+  title: AgREST based API of Bookstore
+  description: An API for interacting with the Bookstore backend server
   version: v1
 ----
 
-Then add definition of your models. You can ether specify existing Java-DB mapping classes (based on `CayenneDataObject` for example)
-or generate POJO models  by maven plugin.
+Then add definition of your models. You can ether specify existing Java-DB mapping classes
+(based on `CayenneDataObject` e.g. our `Category` and `Book`) or generate simple POJO models  by maven plugin.
 
 For further information, please refer to <<Configure and run the API generation>> section.
 
@@ -29,9 +34,9 @@ But, for both cases you have to define models in `.yaml` file:
 [source, yaml]
 ----
 tags:
-  - name: BookCategory
+  - name: Category
     description: |
-      This model represents BookCategory type and is used to retrieve, create and update BookCategory information.
+      This model represents a Category type and is used to retrieve, create and update a book Category information.
 
 components:
   schemas:
@@ -40,34 +45,35 @@ components:
       properties:
        id:
          type: string
-         description: Unique ID of BookCategory
+         description: Unique ID of Category
          example: 1
        name:
          type: string
-         description: BookCategory name
+         description: Book Category name
          example: Science Fiction
        description:
          type: string
-         description: Description of BookCategory
+         description: Description of Category
          example: Science fiction (often shortened to Sci-Fi or SF) is a genre of speculative fiction, typically dealing with imaginative concepts such as advanced science and technology, spaceflight, time travel, and extraterrestrial life.
 ----
 
 ==== 2. Attach AgREST protocol definition
 The AgREST protocol file <<protocol>> contains definition of all <<Control Parameters>>.
-Just place this `protocol.yaml` in the catalog were other your main `my-bookstore-api.yaml` file is located.
+Just place this `protocol.yaml` in the catalog were other your main `bookstore-api.yaml` file is located (e.g. 'src/main/java/resources').
 
 ==== 3. Define resources
-Add REST API resource definition to your `my-bookstore-api.yaml` file.
+Add REST API resource definition to your `bookstore-api.yaml` file.
 Pay attention that AgREST protocol parameters are defined as references.
 [source, yaml]
 ----
 paths:
- /bookcategories:
+paths:
+ /categories:
     get:
-      summary: Get list of all BookCategories
+      summary: Get list of all Book Categories
       operationId: getAll
       tags:
-        - BookCategory
+        - Category
       parameters:
         - $ref: '../resources/protocol.yaml#/components/queryParams/Limit'
         - $ref: '../resources/protocol.yaml#/components/queryParams/Start'
@@ -77,20 +83,20 @@ paths:
           schema:
             type: array
             items:
-              $ref: '#/components/schemas/BookCategory’
+              $ref: '#/components/schemas/Category'
         default:
           description: Unexpected error
 
- /bookcategories/{id}:
+ /categories/{id}:
     get:
-      description: Returns a particular BookCategory
+      description: Returns a particular Book Category
       operationId: getOne
       tags:
-        - BookCategory
+        - Category
       parameters:
         - name: id
           in: path
-          description: ID of BookCategory to fetch
+          description: ID of Category to fetch
           required: true
           schema:
             type: integer
@@ -101,7 +107,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/BookCategory'
+                $ref: '#/components/schemas/Category'
           description: Unexpected error
 ----
 

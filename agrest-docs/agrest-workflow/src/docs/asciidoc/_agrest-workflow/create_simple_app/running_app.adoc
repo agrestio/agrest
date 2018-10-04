@@ -45,7 +45,7 @@ curl -i -X POST 'http://localhost:8080/api/category'  -d '{"id":"1","name":"Scie
 And one more if it is needed:
 
 ```
-curl -i -X POST 'http://localhost:8080/api/category' -d '{"id”:”2”,”name":"Horror"}'
+curl -i -X POST 'http://localhost:8080/api/category' -d '{"id":"2","name":"Horror"}'
 ```
 
 Response will be:

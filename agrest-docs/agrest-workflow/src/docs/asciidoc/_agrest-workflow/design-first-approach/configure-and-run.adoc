@@ -5,20 +5,20 @@ There is an example of the maven plugin configuration:
 <plugin>
     <groupId>org.openapitools</groupId>
     <artifactId>openapi-generator-maven-plugin</artifactId>
-    <version>${openapi-generator-version}</version>
+    <version>3.0.2</version>
     <executions>
         <execution>
             <goals>
                 <goal>generate</goal>
             </goals>
             <configuration>
-                <inputSpec>${swagger-spec}</inputSpec>
+                <inputSpec>${project.basedir}/src/main/resources/bookstore-api.yaml</inputSpec>
                 <generatorName>io.swagger.codegen.languages.AgServerCodegen</generatorName>
                 <output>${project.basedir}</output>
-                <apiPackage>${base-package}.swagger.api.v${schema-version}.service</apiPackage>
-                <modelPackage>${base-package}.swagger.api.v${schema-version}.model</modelPackage>
-                <invokerPackage>${base-package}</invokerPackage>
-                <generateModels>true</generateModels>
+                <apiPackage>org.example.agrest</apiPackage>
+                <modelPackage>org.example.agrest.persistente</modelPackage>
+                <invokerPackage>org.example.agrest</invokerPackage>
+                <generateModels>false</generateModels>
                 <skipOverwrite>false</skipOverwrite>
             </configuration>
         </execution>
@@ -26,9 +26,9 @@ There is an example of the maven plugin configuration:
 
     <dependencies>
         <dependency>
-            <groupId>io.agrest.swagger</groupId>
-            <artifactId>agrest-swagger-designfirst</artifactId>
-            <version>${project.version}</version>
+            <groupId>org.example.agrest</groupId>
+            <artifactId>bookstore</artifactId>
+            <version>${version}</version>
         </dependency>
     </dependencies>
 </plugin>
