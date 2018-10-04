@@ -6,6 +6,7 @@ import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.Invocation;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Response;
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 /**
@@ -18,6 +19,7 @@ public class InvocationBuilder {
     }
 
     private TargetBuilder targetBuilder;
+    private Consumer<Invocation.Builder> config;
 
     private InvocationBuilder(WebTarget target) {
         targetBuilder = TargetBuilder.target(target);
@@ -25,6 +27,11 @@ public class InvocationBuilder {
 
     public InvocationBuilder request(AgcRequest request) {
         targetBuilder.request(request);
+        return this;
+    }
+
+    public InvocationBuilder config(Consumer<Invocation.Builder> config) {
+        this.config = config;
         return this;
     }
 
@@ -45,6 +52,10 @@ public class InvocationBuilder {
     }
 
     private Invocation.Builder toInvocation() {
-        return targetBuilder.build().request();
+        Invocation.Builder bldr = targetBuilder.build().request();
+        if (config != null) {
+            config.accept(bldr);
+        }
+        return bldr;
     }
 }
