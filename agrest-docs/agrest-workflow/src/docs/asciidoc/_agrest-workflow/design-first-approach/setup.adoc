@@ -1,0 +1,71 @@
+=== Setting up the environment
+
+The goal of this chapter of the tutorial is to check that you already have
+installed an AgREST based application that can be used to demonstrate the Design-First approach.
+
+==== Prerequisites
+Setup and build an application example from previous chapter <<Create a Simple `AgREST` App>>.
+You can either follow step-by-step process of the application creation or get a ready application from
+github https://github.com/agrestio/agrest-bookstore-example[Bookstore app]
+
+==== Prepare the Bookstore application
+As described above, the Design-First approach means the API specification is first, then the code.
+
+So, we have to remove from the application classes defined an API resources.
+In our case it is `CategoryResource.java` we have created manually.
+Later all our API resources will be generated from `.yaml` definition automatically according to
+the Design-First approach.
+
+Then update the `pom.xml`.
+1. Add the `agrest-openapi-designfirst` dependency.
+
+[source, xml]
+----
+<dependency>
+    <groupId>io.agrest.openapi</groupId>
+    <artifactId>agrest-openapi-designfirst</artifactId>
+    <version>3.0-SNAPSHOT</version>
+</dependency>
+----
+
+2. Add the `openapi-generator-maven-plugin` plugin and an appropriate settings.
+For more details, please refer to the next <<Configure and run the API generation>> section
+
+[source, xml]
+----
+<plugin>
+    <groupId>org.openapitools</groupId>
+    <artifactId>openapi-generator-maven-plugin</artifactId>
+    <version>3.0.2</version>
+    <executions>
+        <execution>
+            <goals>
+                <goal>generate</goal>
+            </goals>
+            <configuration>
+                <inputSpec>${project.basedir}/src/main/resources/bookstore-api.yaml</inputSpec>
+                <generatorName>io.swagger.codegen.languages.AgServerCodegen</generatorName>
+                <output>${project.basedir}</output>
+                <apiPackage>org.example.agrest</apiPackage>
+                <modelPackage>org.example.agrest.persistent</modelPackage>
+                <invokerPackage>org.example.agrest</invokerPackage>
+                <generateModels>false</generateModels>
+                <skipOverwrite>false</skipOverwrite>
+            </configuration>
+        </execution>
+    </executions>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.example.agrest</groupId>
+            <artifactId>bookstore</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+    </dependencies>
+</plugin>
+----
+
+==== The resulted application
+
+The final application regarding the Design-First approach could be downloaded from github:
+https://github.com/agrestio/agrest-openapi-designfirst-bookstore-example[Bookstore Design-first app]
