@@ -57,10 +57,11 @@ Configure a `jetty` maven plugin to start app using `mvn jetty:run` command
 <plugin>
     <groupId>org.eclipse.jetty</groupId>
     <artifactId>jetty-maven-plugin</artifactId>
-    <version>9.3.14.v20161028</version>
+    <version>9.4.12.v20180830</version>
     <configuration>
         <scanIntervalSeconds>5</scanIntervalSeconds>
         <classesDirectory>${project.basedir}/target/classes</classesDirectory>
+        <supportedPackagings><supportedPackaging>jar</supportedPackaging></supportedPackagings>
     </configuration>
 </plugin>
 ```

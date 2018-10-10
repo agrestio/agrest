@@ -6,9 +6,9 @@ include::design-first-approach/setup.adoc[]
 
 include::design-first-approach/defining-api.adoc[]
 
-include::design-first-approach/configure-and-run.adoc[]
-
 include::design-first-approach/validate-implementation.adoc[]
+
+include::design-first-approach/configure-and-run.adoc[]
 
 include::design-first-approach/example-with-integration-tests.adoc[]
 

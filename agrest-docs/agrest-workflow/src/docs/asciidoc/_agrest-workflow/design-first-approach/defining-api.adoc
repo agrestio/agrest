@@ -136,7 +136,7 @@ in accordance with your `.yaml` files location <<inputSpec>>, packages <<apiPack
 
 `mvn clean install` runs generation of the API.
 
-For more details, please refer to the next <<Configure and run the API generation>> section
+For more details, please refer to the <<Configure and run the API generation>> section
 
 
 
