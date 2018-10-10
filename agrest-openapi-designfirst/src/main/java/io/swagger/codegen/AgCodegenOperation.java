@@ -75,6 +75,26 @@ public class AgCodegenOperation extends CodegenOperation {
         this.operationIdCamelCase = codegenOperation.operationIdCamelCase;
     }
 
+    /**
+     * Check if act as Restful index method
+     *
+     * @return true if act as Restful index method, false otherwise
+     */
+    @Override
+    public boolean isRestfulIndex() {
+        return "GET".equals(httpMethod) && pathParams.size() == 0;
+    }
+
+    /**
+     * Check if act as Restful show method
+     *
+     * @return true if act as Restful show method, false otherwise
+     */
+    @Override
+    public boolean isRestfulShow() {
+        return "GET".equals(httpMethod) && isByIdPath();
+    }
+
 
     /**
      * Check if act as Restful index to retrieve many children method
@@ -179,7 +199,9 @@ public class AgCodegenOperation extends CodegenOperation {
      * @return true if path act as parent-child
      */
     private boolean isParentChildPath() {
-        if (pathParams.size() != 2 || path == null) return false;
+        if (pathParams.size() != 2 || path == null) {
+            return false;
+        }
         String id = pathParams.get(0).baseName;
         String tid = pathParams.get(1).baseName;
 
@@ -192,10 +214,25 @@ public class AgCodegenOperation extends CodegenOperation {
      * @return true if path act as parent-child
      */
     private boolean isRelatedToManyPath() {
-        if (pathParams.size() != 1 || path == null) return false;
+        if (pathParams.size() != 1 || path == null) {
+            return false;
+        }
         String id = pathParams.get(0).baseName;
 
         return path.contains("/{" + id + "}/");
+    }
+
+    /**
+     * Check if the path match format /xxx/:id
+     *
+     * @return true if path act as member
+     */
+    private boolean isByIdPath() {
+        if (pathParams.size() != 1 || path == null)  {
+            return false;
+        }
+        String id = pathParams.get(0).baseName;
+        return ("/{" + id + "}").equals(path.substring(path.lastIndexOf('/')));
     }
 
 }
