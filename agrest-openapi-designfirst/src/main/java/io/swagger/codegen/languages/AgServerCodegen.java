@@ -223,6 +223,16 @@ public class AgServerCodegen extends AbstractJavaJAXRSServerCodegen implements A
     }
 
     @Override
+    public Map<String, Object> postProcessAllModels(Map<String, Object> objs) {
+        // prevents to generate models for protocol parameters
+        objs.entrySet()
+                .removeIf(e -> typeMapping.keySet().stream()
+                                .anyMatch(k -> k.equalsIgnoreCase(e.getKey())));
+
+        return super.postProcessAllModels(objs);
+    }
+
+    @Override
     public void setGenerateForTesting(boolean generateForTesting) {
         this.generateForTesting = generateForTesting;
     }
