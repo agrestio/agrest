@@ -1,6 +1,6 @@
 package io.agrest.runtime.cayenne.processor.delete;
 
-import io.agrest.AgRESTException;
+import io.agrest.AgException;
 import io.agrest.EntityParent;
 import io.agrest.AgObjectId;
 import io.agrest.meta.AgEntity;
@@ -69,7 +69,7 @@ public class CayenneDeleteStage implements Processor<DeleteContext<?>> {
 
             if (o == null) {
                 ObjEntity entity = cayenneContext.getEntityResolver().getObjEntity(context.getType());
-                throw new AgRESTException(Response.Status.NOT_FOUND, "No object for ID '" + id + "' and entity '"
+                throw new AgException(Response.Status.NOT_FOUND, "No object for ID '" + id + "' and entity '"
                         + entity.getName() + "'");
             }
 
@@ -85,7 +85,7 @@ public class CayenneDeleteStage implements Processor<DeleteContext<?>> {
 
         if (parentObject == null) {
             ObjEntity entity = cayenneContext.getEntityResolver().getObjEntity(parent.getType());
-            throw new AgRESTException(Response.Status.NOT_FOUND, "No parent object for ID '" + parent.getId()
+            throw new AgException(Response.Status.NOT_FOUND, "No parent object for ID '" + parent.getId()
                     + "' and entity '" + entity.getName() + "'");
         }
 

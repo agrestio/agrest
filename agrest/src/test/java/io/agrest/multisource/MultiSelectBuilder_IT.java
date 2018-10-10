@@ -19,7 +19,7 @@ import io.agrest.ResourceEntity;
 import io.agrest.SelectBuilder;
 import io.agrest.it.fixture.CayenneDerbyStack;
 import io.agrest.it.fixture.DbCleaner;
-import io.agrest.it.fixture.AgRESTFactory;
+import io.agrest.it.fixture.AgFactory;
 import io.agrest.it.fixture.cayenne.E22;
 import org.apache.cayenne.Cayenne;
 import org.apache.cayenne.ObjectId;
@@ -41,7 +41,7 @@ public class MultiSelectBuilder_IT {
 	public DbCleaner dbCleaner = new DbCleaner(DB_STACK.newContext());
 
 	@Rule
-	public AgRESTFactory agREST = new AgRESTFactory(DB_STACK);
+	public AgFactory agREST = new AgFactory(DB_STACK);
 	
 	// TODO: test attaching to subtree objects
 	// TODO: test parent batches
@@ -56,7 +56,7 @@ public class MultiSelectBuilder_IT {
 		MultivaluedMap<String, String> params = new MultivaluedHashMap<>();
 		params.putSingle("sort", "id");
 
-		SelectBuilder<E22> rootSelect = agREST.getAgRESTService().select(E22.class).uri(agREST.mockUri(params));
+		SelectBuilder<E22> rootSelect = agREST.getService().select(E22.class).uri(agREST.mockUri(params));
 
 		DataResponse<E22> response = new MultiSelectBuilder<>(rootSelect, agREST.getExecutor())
 				.parallel(this::parallelFetcher, this::merge).select(5, TimeUnit.SECONDS);
@@ -88,7 +88,7 @@ public class MultiSelectBuilder_IT {
 		MultivaluedMap<String, String> params = new MultivaluedHashMap<>();
 		params.putSingle("sort", "id");
 
-		SelectBuilder<E22> rootSelect = agREST.getAgRESTService().select(E22.class).uri(agREST.mockUri(params));
+		SelectBuilder<E22> rootSelect = agREST.getService().select(E22.class).uri(agREST.mockUri(params));
 
 		DataResponse<E22> response = new MultiSelectBuilder<>(rootSelect, agREST.getExecutor())
 				.afterParent(this::afterFetcher1, this::merge).afterParent(this::afterFetcher2, this::merge)

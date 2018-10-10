@@ -1,6 +1,6 @@
 package io.agrest.it;
 
-import io.agrest.AgREST;
+import io.agrest.Ag;
 import io.agrest.SimpleResponse;
 import io.agrest.it.fixture.JerseyTestOnDerby;
 import io.agrest.it.fixture.cayenne.E20;
@@ -75,13 +75,13 @@ public class DELETE_NaturalIdIT extends JerseyTestOnDerby {
             Map<String, Object> id = new HashMap<>(3);
             id.put("age", age);
             id.put("name", name);
-            return AgREST.service(config).delete(E21.class).id(id).delete();
+            return Ag.service(config).delete(E21.class).id(id).delete();
         }
 
         @DELETE
         @Path("single-id/{id}")
         public SimpleResponse deleteE20ById(@PathParam("id") String name, @Context UriInfo uriInfo) {
-            return AgREST.service(config).delete(E20.class, name);
+            return Ag.service(config).delete(E20.class, name);
         }
     }
 }

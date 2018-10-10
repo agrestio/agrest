@@ -83,18 +83,6 @@ public class MetadataContext<T> extends BaseProcessingContext<T> {
     }
 
     /**
-     * @return application base URL calculated from the current request.
-     * @deprecated since 2.10 unused. Base URL for metadata is calculated differently.
-     */
-    @Deprecated
-    public String getApplicationBase() {
-        if (uriInfo == null) {
-            return null;
-        }
-        return uriInfo.getBaseUri().toString();
-    }
-
-    /**
      * @return this context's constraint function.
      * @since 2.10
      */

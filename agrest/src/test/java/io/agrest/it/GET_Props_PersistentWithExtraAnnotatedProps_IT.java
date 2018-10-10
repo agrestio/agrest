@@ -1,7 +1,7 @@
 package io.agrest.it;
 
 import io.agrest.DataResponse;
-import io.agrest.AgREST;
+import io.agrest.Ag;
 import io.agrest.SelectStage;
 import io.agrest.it.fixture.JerseyTestOnDerby;
 import io.agrest.it.fixture.cayenne.E14;
@@ -76,13 +76,13 @@ public class GET_Props_PersistentWithExtraAnnotatedProps_IT extends JerseyTestOn
         @GET
         @Path("e15")
         public DataResponse<E15> getE15(@Context UriInfo uriInfo) {
-            return AgREST.select(E15.class, config).uri(uriInfo).get();
+            return Ag.select(E15.class, config).uri(uriInfo).get();
         }
 
         @GET
         @Path("e14")
         public DataResponse<E14> getE14(@Context UriInfo uriInfo) {
-            return AgREST.select(E14.class, config)
+            return Ag.select(E14.class, config)
                     .stage(SelectStage.FETCH_DATA, (SelectContext<E14> c) -> afterE14Fetched(c))
                     .uri(uriInfo).get();
         }

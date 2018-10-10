@@ -1,6 +1,6 @@
 package io.agrest.it;
 
-import io.agrest.AgREST;
+import io.agrest.Ag;
 import io.agrest.DataResponse;
 import io.agrest.SimpleResponse;
 import io.agrest.constraints.Constraint;
@@ -334,39 +334,39 @@ public class POST_IT extends JerseyTestOnDerby {
         @POST
         @Path("e2")
         public DataResponse<E2> createE2(String targetData, @Context UriInfo uriInfo) {
-            return AgREST.create(E2.class, config).uri(uriInfo).syncAndSelect(targetData);
+            return Ag.create(E2.class, config).uri(uriInfo).syncAndSelect(targetData);
         }
 
         @POST
         @Path("e3")
         public DataResponse<E3> create(@Context UriInfo uriInfo, String requestBody) {
-            return AgREST.create(E3.class, config).uri(uriInfo).syncAndSelect(requestBody);
+            return Ag.create(E3.class, config).uri(uriInfo).syncAndSelect(requestBody);
         }
 
         @POST
         @Path("e3/constrained")
         public DataResponse<E3> insertE3ReadConstrained(@Context UriInfo uriInfo, String requestBody) {
             Constraint<E3> tc = Constraint.idOnly(E3.class).attribute(E3.NAME);
-            return AgREST.create(E3.class, config).uri(uriInfo).readConstraint(tc).syncAndSelect(requestBody);
+            return Ag.create(E3.class, config).uri(uriInfo).readConstraint(tc).syncAndSelect(requestBody);
         }
 
         @POST
         @Path("e3/w/constrained")
         public DataResponse<E3> insertE3WriteConstrained(@Context UriInfo uriInfo, String requestBody) {
             Constraint<E3> tc = Constraint.idOnly(E3.class).attribute(E3.NAME);
-            return AgREST.create(E3.class, config).uri(uriInfo).writeConstraint(tc).syncAndSelect(requestBody);
+            return Ag.create(E3.class, config).uri(uriInfo).writeConstraint(tc).syncAndSelect(requestBody);
         }
 
         @POST
         @Path("e4")
         public DataResponse<E4> createE4(String requestBody) {
-            return AgREST.create(E4.class, config).syncAndSelect(requestBody);
+            return Ag.create(E4.class, config).syncAndSelect(requestBody);
         }
 
         @POST
         @Path("e4/defaultdata")
         public SimpleResponse createE4_DefaultData(String requestBody) {
-            return AgREST.create(E4.class, config).sync(requestBody);
+            return Ag.create(E4.class, config).sync(requestBody);
         }
 
         @POST
@@ -377,7 +377,7 @@ public class POST_IT extends JerseyTestOnDerby {
                 String requestBody) {
 
             Constraint<E8> tc = Constraint.idOnly(E8.class).attribute(E8.NAME);
-            return AgREST.create(E8.class, config).uri(uriInfo).id(id).writeConstraint(tc).sync(requestBody);
+            return Ag.create(E8.class, config).uri(uriInfo).id(id).writeConstraint(tc).sync(requestBody);
         }
 
         @POST
@@ -387,19 +387,19 @@ public class POST_IT extends JerseyTestOnDerby {
                 @Context UriInfo uriInfo,
                 String requestBody) {
             Constraint<E8> tc = Constraint.excludeAll(E8.class).attribute(E8.NAME);
-            return AgREST.create(E8.class, config).uri(uriInfo).id(id).writeConstraint(tc).syncAndSelect(requestBody);
+            return Ag.create(E8.class, config).uri(uriInfo).id(id).writeConstraint(tc).syncAndSelect(requestBody);
         }
 
         @POST
         @Path("e19")
         public DataResponse<E19> createE19(@Context UriInfo uriInfo, String data) {
-            return AgREST.create(E19.class, config).uri(uriInfo).syncAndSelect(data);
+            return Ag.create(E19.class, config).uri(uriInfo).syncAndSelect(data);
         }
 
         @POST
         @Path("e19/float")
         public DataResponse<E19> createE19_FloatAttribute(@Context UriInfo uriInfo, String data) {
-            DataResponse<E19> response = AgREST.create(E19.class, config).uri(uriInfo).syncAndSelect(data);
+            DataResponse<E19> response = Ag.create(E19.class, config).uri(uriInfo).syncAndSelect(data);
 
             int objectCount = response.getObjects().size();
             if (objectCount > 1) {
@@ -425,13 +425,13 @@ public class POST_IT extends JerseyTestOnDerby {
             ids.put(E17.ID1_PK_COLUMN, id1);
             ids.put(E17.ID2_PK_COLUMN, id2);
 
-            return AgREST.create(E17.class, config).id(ids).syncAndSelect(requestBody);
+            return Ag.create(E17.class, config).id(ids).syncAndSelect(requestBody);
         }
 
         @POST
         @Path("e16")
         public DataResponse<E16> createE16(String requestBody) {
-            return AgREST.create(E16.class, config).syncAndSelect(requestBody);
+            return Ag.create(E16.class, config).syncAndSelect(requestBody);
         }
     }
 }

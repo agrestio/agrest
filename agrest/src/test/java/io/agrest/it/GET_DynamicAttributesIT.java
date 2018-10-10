@@ -1,7 +1,7 @@
 package io.agrest.it;
 
 import io.agrest.DataResponse;
-import io.agrest.AgREST;
+import io.agrest.Ag;
 import io.agrest.it.fixture.JerseyTestOnDerby;
 import io.agrest.it.fixture.cayenne.E22;
 import io.agrest.it.fixture.cayenne.E25;
@@ -96,7 +96,7 @@ public class GET_DynamicAttributesIT extends JerseyTestOnDerby {
 
         @GET
         public DataResponse<E25> getAll(@Context UriInfo uriInfo) {
-            return AgREST.select(E25.class, config).uri(uriInfo).get();
+            return Ag.select(E25.class, config).uri(uriInfo).get();
         }
     }
 }

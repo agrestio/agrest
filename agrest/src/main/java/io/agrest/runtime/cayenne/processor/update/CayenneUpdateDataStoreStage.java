@@ -3,7 +3,7 @@ package io.agrest.runtime.cayenne.processor.update;
 import io.agrest.CompoundObjectId;
 import io.agrest.EntityParent;
 import io.agrest.EntityUpdate;
-import io.agrest.AgRESTException;
+import io.agrest.AgException;
 import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgRelationship;
 import io.agrest.processor.Processor;
@@ -77,7 +77,7 @@ public abstract class CayenneUpdateDataStoreStage implements Processor<UpdateCon
         if (idMap != null) {
 
             if (context.isIdUpdatesDisallowed() && u.isExplicitId()) {
-                throw new AgRESTException(Response.Status.BAD_REQUEST, "Setting ID explicitly is not allowed: " + idMap);
+                throw new AgException(Response.Status.BAD_REQUEST, "Setting ID explicitly is not allowed: " + idMap);
             }
 
             ObjEntity entity = objectContext.getEntityResolver().getObjEntity(context.getType());
@@ -98,7 +98,7 @@ public abstract class CayenneUpdateDataStoreStage implements Processor<UpdateCon
                 // TODO: I guess this should be done in a separate new context
                 T existing = Util.findById(objectContext, context.getType(), context.getEntity().getAgEntity(), idMap);
                 if (existing != null) {
-                    throw new AgRESTException(Response.Status.BAD_REQUEST, "Can't create '" + entity.getName()
+                    throw new AgException(Response.Status.BAD_REQUEST, "Can't create '" + entity.getName()
                             + "' with id " + CompoundObjectId.mapToString(idMap) + " -- object already exists");
                 }
 
@@ -115,12 +115,12 @@ public abstract class CayenneUpdateDataStoreStage implements Processor<UpdateCon
                     if (pk == null) {
                         DbAttribute dbAttribute = entity.getDbEntity().getAttribute(idPart.getKey());
                         if (dbAttribute == null) {
-                            throw new AgRESTException(Response.Status.BAD_REQUEST, "Can't create '" + entity.getName()
+                            throw new AgException(Response.Status.BAD_REQUEST, "Can't create '" + entity.getName()
                                     + "' with id " + CompoundObjectId.mapToString(idMap) + " -- unknown db attribute: " + idPart.getKey());
                         }
                         ObjAttribute objAttribute = entity.getAttributeForDbAttribute(dbAttribute);
                         if (objAttribute == null) {
-                            throw new AgRESTException(Response.Status.BAD_REQUEST, "Can't create '" + entity.getName()
+                            throw new AgException(Response.Status.BAD_REQUEST, "Can't create '" + entity.getName()
                                     + "' with id " + CompoundObjectId.mapToString(idMap) + " -- unknown object attribute: " + idPart.getKey());
                         }
                         o.writeProperty(objAttribute.getName(), idPart.getValue());
@@ -148,7 +148,7 @@ public abstract class CayenneUpdateDataStoreStage implements Processor<UpdateCon
         // expected to fail - generated meaningless PK should not be
         // pushed from the client
         else if (pk.isGenerated()) {
-            throw new AgRESTException(Response.Status.BAD_REQUEST, "Can't create '" + entity.getName()
+            throw new AgException(Response.Status.BAD_REQUEST, "Can't create '" + entity.getName()
                     + "' with fixed id");
         }
         // 3. probably a propagated ID.
@@ -201,7 +201,7 @@ public abstract class CayenneUpdateDataStoreStage implements Processor<UpdateCon
             }
 
             if (!agRelationship.isToMany() && relatedIds.size() > 1) {
-                throw new AgRESTException(Response.Status.BAD_REQUEST,
+                throw new AgException(Response.Status.BAD_REQUEST,
                         "Relationship is to-one, but received update with multiple objects: " +
                                 agRelationship.getName());
             }
@@ -231,7 +231,7 @@ public abstract class CayenneUpdateDataStoreStage implements Processor<UpdateCon
                         relatedId);
 
                 if (related == null) {
-                    throw new AgRESTException(Response.Status.NOT_FOUND, "Related object '"
+                    throw new AgException(Response.Status.NOT_FOUND, "Related object '"
                             + relationship.getTargetEntityName() + "' with ID '" + e.getValue() + "' is not found");
                 }
 
@@ -271,7 +271,7 @@ public abstract class CayenneUpdateDataStoreStage implements Processor<UpdateCon
                 parentAgEntity, parent.getId().get());
 
         if (parentObject == null) {
-            throw new AgRESTException(Response.Status.NOT_FOUND, "No parent object for ID '" + parent.getId()
+            throw new AgException(Response.Status.NOT_FOUND, "No parent object for ID '" + parent.getId()
                     + "' and entity '" + parentEntity.getName() + "'");
         }
 

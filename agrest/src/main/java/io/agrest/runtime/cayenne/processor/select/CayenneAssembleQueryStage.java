@@ -1,6 +1,6 @@
 package io.agrest.runtime.cayenne.processor.select;
 
-import io.agrest.AgRESTException;
+import io.agrest.AgException;
 import io.agrest.AgObjectId;
 import io.agrest.ResourceEntity;
 import io.agrest.meta.AgAttribute;
@@ -107,7 +107,7 @@ public class CayenneAssembleQueryStage implements Processor<SelectContext<?>> {
 
         Collection<AgAttribute> idAttributes = entity.getIds();
         if (idAttributes.size() != id.size()) {
-            throw new AgRESTException(Response.Status.BAD_REQUEST,
+            throw new AgException(Response.Status.BAD_REQUEST,
                     "Wrong ID size: expected " + idAttributes.size() + ", got: " + id.size());
         }
 
@@ -115,7 +115,7 @@ public class CayenneAssembleQueryStage implements Processor<SelectContext<?>> {
         for (AgAttribute idAttribute : idAttributes) {
             Object idValue = id.get(idAttribute.getName());
             if (idValue == null) {
-                throw new AgRESTException(Response.Status.BAD_REQUEST,
+                throw new AgException(Response.Status.BAD_REQUEST,
                         "Failed to build a Cayenne qualifier for entity " + entity.getName()
                                 + ": one of the entity's ID parts is missing in this ID: " + idAttribute.getName());
             }

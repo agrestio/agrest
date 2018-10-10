@@ -1,0 +1,38 @@
+{{#isRestfulDestroy}}
+    {{#hasCompoundId}}
+public SimpleResponse {{nickname}}({{#allParams}}{{>pathParams}}{{>queryParams}}{{>headerParams}}{{>bodyParams}}{{>formParams}}{{#hasMore}}, {{/hasMore}}{{/allParams}}) {
+        Map<String, Object> id = new HashMap<>();
+        {{#modelAttributes}}
+            {{#isQueryParam}}
+        id.put("{{paramName}}", {{paramName}});
+            {{/isQueryParam}}
+        {{/modelAttributes}}
+
+        return Ag.delete({{{returnType}}}.class, config)
+                 .id(id)
+                 .delete();
+    }
+    {{/hasCompoundId}}
+    {{^hasCompoundId}}
+public SimpleResponse {{nickname}}({{#allParams}}{{>pathParams}}{{>queryParams}}{{>headerParams}}{{>bodyParams}}{{>formParams}}{{#hasMore}}, {{/hasMore}}{{/allParams}}) {
+
+        return Ag.delete({{{returnType}}}.class, config)
+                 .id({{#pathParams}}{{paramName}}{{/pathParams}})
+                 .delete();
+    }
+    {{/hasCompoundId}}
+{{/isRestfulDestroy}}
+{{#isRestfulDestroyToMany}}
+public SimpleResponse {{nickname}}({{#allParams}}{{>pathParams}}{{>queryParams}}{{>headerParams}}{{>bodyParams}}{{>formParams}}{{#hasMore}}, {{/hasMore}}{{/allParams}}) {
+
+        return Ag.service(config)
+                 .unrelate({{returnType}}.class, {{#pathParams}}{{paramName}}{{/pathParams}}, "{{#modelRelations}}{{bodyParam.paramName}}{{/modelRelations}}");
+    }
+{{/isRestfulDestroyToMany}}
+{{#isRestfulRelatedDestroy}}
+public SimpleResponse {{nickname}}({{#allParams}}{{>pathParams}}{{>queryParams}}{{>headerParams}}{{>bodyParams}}{{>formParams}}{{#hasMore}}, {{/hasMore}}{{/allParams}}) {
+
+        return Ag.service(config)
+                 .unrelate({{returnType}}.class, {{#pathParams}}{{#-first}}{{paramName}}{{/-first}}{{/pathParams}}, "{{#modelRelations}}{{bodyParam.paramName}}{{/modelRelations}}", {{#pathParams}}{{#-last}}{{paramName}}{{/-last}}{{/pathParams}});
+    }
+{{/isRestfulRelatedDestroy}}

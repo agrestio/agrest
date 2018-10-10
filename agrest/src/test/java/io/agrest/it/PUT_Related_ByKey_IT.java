@@ -1,6 +1,6 @@
 package io.agrest.it;
 
-import io.agrest.AgREST;
+import io.agrest.Ag;
 import io.agrest.DataResponse;
 import io.agrest.it.fixture.JerseyTestOnDerby;
 import io.agrest.it.fixture.cayenne.E14;
@@ -125,7 +125,7 @@ public class PUT_Related_ByKey_IT extends JerseyTestOnDerby {
         @PUT
         @Path("e8/bykey/{id}/e7s")
         public DataResponse<E7> e8CreateOrUpdateE7sByKey_Idempotent(@PathParam("id") int id, String entityData) {
-            return AgREST.idempotentCreateOrUpdate(E7.class, config)
+            return Ag.idempotentCreateOrUpdate(E7.class, config)
                     .mapper(ByKeyObjectMapperFactory.byKey(E7.NAME))
                     .toManyParent(E8.class, id, E8.E7S)
                     .syncAndSelect(entityData);
@@ -134,7 +134,7 @@ public class PUT_Related_ByKey_IT extends JerseyTestOnDerby {
         @PUT
         @Path("e8/bypropkey/{id}/e7s")
         public DataResponse<E7> e8CreateOrUpdateE7sByPropKey_Idempotent(@PathParam("id") int id, String entityData) {
-            return AgREST.idempotentCreateOrUpdate(E7.class, config).mapper(E7.NAME).toManyParent(E8.class, id, E8.E7S)
+            return Ag.idempotentCreateOrUpdate(E7.class, config).mapper(E7.NAME).toManyParent(E8.class, id, E8.E7S)
                     .syncAndSelect(entityData);
         }
 
@@ -143,7 +143,7 @@ public class PUT_Related_ByKey_IT extends JerseyTestOnDerby {
         // note that parent id is "int" here , but is BIGINT (long) in the DB. This
         // is intentional
         public DataResponse<E14> relateToOneExisting(@PathParam("id") int id, String data) {
-            return AgREST.idempotentFullSync(E14.class, config).toManyParent(E15.class, id, E15.E14S).syncAndSelect(data);
+            return Ag.idempotentFullSync(E14.class, config).toManyParent(E15.class, id, E15.E14S).syncAndSelect(data);
         }
     }
 }

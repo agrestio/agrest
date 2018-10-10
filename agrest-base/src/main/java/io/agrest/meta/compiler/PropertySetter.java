@@ -1,6 +1,6 @@
 package io.agrest.meta.compiler;
 
-import io.agrest.AgRESTException;
+import io.agrest.AgException;
 
 import javax.ws.rs.core.Response;
 import java.lang.reflect.Method;
@@ -40,7 +40,7 @@ public class PropertySetter {
         try {
             method.invoke(object, value);
         } catch (Throwable th) {
-            throw new AgRESTException(Response.Status.INTERNAL_SERVER_ERROR, "Error writing property: " + name, th);
+            throw new AgException(Response.Status.INTERNAL_SERVER_ERROR, "Error writing property: " + name, th);
         }
     }
 }

@@ -1,6 +1,6 @@
 package io.agrest.runtime.cayenne.processor.update;
 
-import io.agrest.AgRESTException;
+import io.agrest.AgException;
 import io.agrest.EntityUpdate;
 import io.agrest.runtime.meta.IMetadataService;
 import io.agrest.runtime.processor.update.UpdateContext;
@@ -30,7 +30,7 @@ public class CayenneIdempotentCreateOrUpdateStage extends CayenneCreateOrUpdateS
         // explicit key - each update applies to the same object;
 
         if (updates.getKey() == null) {
-            throw new AgRESTException(Response.Status.BAD_REQUEST, "Request is not idempotent.");
+            throw new AgException(Response.Status.BAD_REQUEST, "Request is not idempotent.");
         }
 
         super.createOrUpdate(context, relator, updates);

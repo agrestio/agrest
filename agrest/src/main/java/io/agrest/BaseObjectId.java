@@ -16,13 +16,13 @@ public abstract class BaseObjectId implements AgObjectId {
     public Map<String, Object> asMap(AgEntity<?> entity) {
 
         if (entity == null) {
-            throw new AgRESTException(Response.Status.INTERNAL_SERVER_ERROR,
+            throw new AgException(Response.Status.INTERNAL_SERVER_ERROR,
                     "Can't build ID: entity is null");
         }
 
         Collection<AgAttribute> idAttributes = entity.getIds();
         if (idAttributes.size() != size()) {
-            throw new AgRESTException(Response.Status.BAD_REQUEST,
+            throw new AgException(Response.Status.BAD_REQUEST,
                     "Wrong ID size: expected " + idAttributes.size() + ", got: " + size());
         }
 

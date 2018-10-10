@@ -4,7 +4,7 @@ import javax.ws.rs.core.Response.Status;
 import javax.xml.bind.DatatypeConverter;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import io.agrest.AgRESTException;
+import io.agrest.AgException;
 
 public class Base64Converter extends AbstractConverter<byte[]> {
 
@@ -18,13 +18,13 @@ public class Base64Converter extends AbstractConverter<byte[]> {
 	protected byte[] valueNonNull(JsonNode node) {
 
 		if (!node.isTextual()) {
-			throw new AgRESTException(Status.BAD_REQUEST, "Expected textual value, got: " + node.asText());
+			throw new AgException(Status.BAD_REQUEST, "Expected textual value, got: " + node.asText());
 		}
 		try {
 			// TODO: replace with Base64.Decoder when we upgrade to java 8
 			return DatatypeConverter.parseBase64Binary(node.asText());
 		} catch (IllegalArgumentException e) {
-			throw new AgRESTException(Status.BAD_REQUEST, "Failed to decode Base64 value: " + node.asText(), e);
+			throw new AgException(Status.BAD_REQUEST, "Failed to decode Base64 value: " + node.asText(), e);
 		}
 	}
 }

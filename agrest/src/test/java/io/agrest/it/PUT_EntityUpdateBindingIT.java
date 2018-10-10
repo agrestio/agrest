@@ -1,6 +1,6 @@
 package io.agrest.it;
 
-import io.agrest.AgREST;
+import io.agrest.Ag;
 import io.agrest.EntityUpdate;
 import io.agrest.SimpleResponse;
 import io.agrest.it.fixture.JerseyTestOnDerby;
@@ -67,7 +67,7 @@ public class PUT_EntityUpdateBindingIT extends JerseyTestOnDerby {
         public SimpleResponse sync_EntityUpdateCollection(
                 @Context UriInfo uriInfo,
                 Collection<EntityUpdate<E3>> entityUpdates) {
-            return AgREST.idempotentFullSync(E3.class, config).uri(uriInfo).sync(entityUpdates);
+            return Ag.idempotentFullSync(E3.class, config).uri(uriInfo).sync(entityUpdates);
         }
 
         @PUT
@@ -76,7 +76,7 @@ public class PUT_EntityUpdateBindingIT extends JerseyTestOnDerby {
                 @PathParam("id") int id,
                 EntityUpdate<E3> update) {
 
-            return AgREST.createOrUpdate(E3.class, config).id(id).sync(update);
+            return Ag.createOrUpdate(E3.class, config).id(id).sync(update);
         }
     }
 }

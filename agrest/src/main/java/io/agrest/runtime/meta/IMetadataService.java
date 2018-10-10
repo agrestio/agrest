@@ -1,6 +1,6 @@
 package io.agrest.runtime.meta;
 
-import io.agrest.AgRESTException;
+import io.agrest.AgException;
 import io.agrest.EntityParent;
 import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgRelationship;
@@ -28,7 +28,7 @@ public interface IMetadataService {
 		AgEntity<?> e = getAgEntity(type);
 		AgRelationship r = e.getRelationship(relationship);
 		if (r == null) {
-			throw new AgRESTException(Response.Status.BAD_REQUEST, "Invalid relationship: '" + relationship + "'");
+			throw new AgException(Response.Status.BAD_REQUEST, "Invalid relationship: '" + relationship + "'");
 		}
 
 		return r;
