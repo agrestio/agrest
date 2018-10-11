@@ -187,8 +187,8 @@
 public class JaxRsApplication extends ResourceConfig {
     public JaxRsApplication() {
         ServerRuntime cayenneRuntime = ..
-        LinkRestRuntime lrRuntime = LinkRestBuilder.build(cayenneRuntime);
-        register(lrRuntime);
+        AgRestRuntime agRuntime = AgRestBuilder.build(cayenneRuntime);
+        register(agRuntime);
     }
 }</code></pre>
                             </div>
@@ -209,7 +209,7 @@ public class MyEntityResource {
 
     @GET
     public DataResponse&lt;MyEntity&gt; getAll(@Context UriInfo uriInfo) {
-        return LinkRest.select(MyEntity.class, config).uri(uriInfo).select();
+        return Ag.select(MyEntity.class, config).uri(uriInfo).get();
     }
 }</code></pre>
                             </div>
