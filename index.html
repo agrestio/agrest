@@ -169,9 +169,9 @@
 
 </code></pre>
                                 <pre class="prettyprint"><code>&lt;dependency&gt;
-    &lt;groupId&gt;com.nhl.link.rest&lt;/groupId&gt;
-    &lt;artifactId&gt;link-rest&lt;/artifactId&gt;
-    &lt;version&gt;2.13&lt;/version&gt;
+    &lt;groupId&gt;io.agrest&lt;/groupId&gt;
+    &lt;artifactId&gt;agrest&lt;/artifactId&gt;
+    &lt;version&gt;3.0&lt;/version&gt;
 &lt;/dependency&gt;</code></pre>
                             </div>
 
@@ -187,7 +187,7 @@
 public class JaxRsApplication extends ResourceConfig {
     public JaxRsApplication() {
         ServerRuntime cayenneRuntime = ..
-        AgRestRuntime agRuntime = AgRestBuilder.build(cayenneRuntime);
+        AgRuntime agRuntime = AgBuilder.build(cayenneRuntime);
         register(agRuntime);
     }
 }</code></pre>
