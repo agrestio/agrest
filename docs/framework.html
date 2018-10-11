@@ -1,11 +1,657 @@
-<html><head>
-      <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-   <title xmlns:d="http://docbook.org/ns/docbook">Part&nbsp;III.&nbsp;LinkRest Framework</title><link rel="stylesheet" type="text/css" href="css/doc.css"><meta xmlns:d="http://docbook.org/ns/docbook" name="keywords" content="LinkRest documentation LinkRest docs"><meta xmlns:d="http://docbook.org/ns/docbook" name="description" content="LinkRest user documentation, version 1"><link rel="home" href="index.html" title="LinkRest Documentation"><link rel="up" href="index.html" title="LinkRest Documentation"><link rel="prev" href="protocol-extensions.html" title="Chapter&nbsp;9.&nbsp;Protocol Extensions"><link rel="next" href="framework-prerequisites.html" title="Chapter&nbsp;10.&nbsp;Prerequisites"><script xmlns:d="http://docbook.org/ns/docbook" type="text/javascript">
-  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+<div id="toc" class="toc">
+    <div id="toctitle">Table of Contents</div>
+    <ul class="sectlevel1">
+        <li><a href="#prerequisites">1. Prerequisites</a></li>
+        <li><a href="#getting-started">2. Getting Started</a></li>
+        <li><a href="#writing-resource-endpoints">3. Writing Resource Endpoints</a>
+            <ul class="sectlevel2">
+                <li><a href="#create-entity-with-post">3.1. Create Entity with <code>POST</code></a></li>
+                <li><a href="#read-collection-of-entities-with-get">3.2. Read Collection of Entities with <code>GET</code></a></li>
+                <li><a href="#read-a-single-entity-with-get">3.3. Read a Single Entity with <code>GET</code></a></li>
+                <li><a href="#update-entity-with-put">3.4. Update Entity with <code>PUT</code></a></li>
+            </ul>
+        </li>
+        <li><a href="#request-chains">4. Request Chains</a>
+            <ul class="sectlevel2">
+                <li><a href="#available-chains">4.1. Available Chains</a></li>
+                <li><a href="#strategies-for-object-matching">4.2. Strategies for Object Matching</a></li>
+                <li><a href="#idempotency-of-updating-chains">4.3. Idempotency of Updating Chains</a></li>
+            </ul>
+        </li>
+        <li><a href="#non-persistent-properties-and-pojos">5. Non-Persistent Properties and POJOs</a></li>
+        <li><a href="#relationship-resources">6. Relationship Resources</a></li>
+        <li><a href="#securing-endpoints">7. Securing Endpoints</a></li>
+        <li><a href="#customizing-request-processing">8. Customizing Request Processing</a>
+            <ul class="sectlevel2">
+                <li><a href="#stage">8.1. stage</a></li>
+                <li><a href="#terminalstage">8.2. terminalStage</a></li>
+                <li><a href="#routingstage">8.3. routingStage</a></li>
+            </ul>
+        </li>
+    </ul>
+</div>
+<div class="sect1">
+    <h2 id="prerequisites"><a class="anchor" href="#prerequisites"></a>1. Prerequisites</h2>
+    <div class="sectionbody">
+        <div class="ulist">
+            <ul>
+                <li>
+                    <p>Java 1.8 or newer</p>
+                </li>
+                <li>
+                    <p>A Java web app project that will serve your REST requests.</p>
+                </li>
+                <li>
+                    <p>A JAX-RS 2.0 container, such as Jersey 2.x.</p>
+                </li>
+                <li>
+                    <p>Cayenne 4.0.M4 or newer. Mapping your database and starting Cayenne
+                        ServerRuntime is outside the scope of this document. Please refer to the
+                        <a href="http://cayenne.apache.org/docs/4.0/cayenne-guide/index.html">corresponding Cayenne docs</a></p>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+<div class="sect1">
+    <h2 id="getting-started"><a class="anchor" href="#getting-started"></a>2. Getting Started</h2>
+    <div class="sectionbody">
+        <div class="paragraph">
+            <p>To load AgREST in your project, follow these simple steps:</p>
+        </div>
+        <div class="olist arabic">
+            <ol class="arabic">
+                <li>
+                    <p>Declare AgREST dependency. Here is a Maven example. If you are using Gradle or
+                        Ant, you do what needs to be done there to include AgREST dependency.</p>
+                    <div class="listingblock">
+                        <div class="content">
+<pre class="highlight"><code class="language-XML" data-lang="XML">&lt;dependency&gt;
+   &lt;groupId&gt;io.agrest&lt;/groupId&gt;
+   &lt;artifactId&gt;agrest&lt;/artifactId&gt;
+   &lt;version&gt;3.0&lt;/version&gt;
+&lt;/dependency&gt;</code></pre>
+                        </div>
+                    </div>
+                </li>
+                <li>
+                    <p>Create <code>AgRuntime</code>, and load it in JAX-RS container. Assuming the
+                        container is Jersey, this may look like this:</p>
+                    <div class="listingblock">
+                        <div class="content">
+<pre class="highlight"><code class="language-Java" data-lang="Java">import javax.ws.rs.ApplicationPath;
+import org.glassfish.jersey.server.ResourceConfig;
+import io.agrest.runtime.AgBuilder;
 
-  ga('create', 'UA-67243676-1', 'auto');
-  ga('send', 'pageview');
-        </script></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div xmlns:d="http://docbook.org/ns/docbook" class="navheader"><table width="100%" summary="Navigation header"><tr><th class="versioninfo">v.1 (2.3-SNAPSHOT)</th><th align="center">Part&nbsp;III.&nbsp;LinkRest Framework</th><th></th></tr><tr><td width="20%" align="left"><a accesskey="p" href="protocol-extensions.html">Prev</a>&nbsp;</td><th width="60%" align="center">&nbsp;</th><td width="20%" align="right">&nbsp;<a accesskey="n" href="framework-prerequisites.html">Next</a></td></tr></table><hr></div><div class="part" title="Part&nbsp;III.&nbsp;LinkRest Framework"><div class="titlepage"><div><div><h1 class="title"><a name="framework"></a>Part&nbsp;III.&nbsp;LinkRest Framework</h1></div></div></div><div class="toc"><p><b>Table of Contents</b></p><dl><dt><span class="chapter"><a href="framework-prerequisites.html">10. Prerequisites</a></span></dt><dt><span class="chapter"><a href="framework-getting-started.html">11. Getting Started</a></span></dt><dt><span class="chapter"><a href="framework-programming-endpoints.html">12. Writing Resource Endpoints</a></span></dt><dd><dl><dt><span class="section"><a href="framework-programming-endpoints.html#framework-endpoints-post">Create Entity with POST</a></span></dt><dt><span class="section"><a href="framework-programming-endpoints.html#framework-endpoints-get">Read Collection of Entities with GET</a></span></dt><dt><span class="section"><a href="framework-programming-endpoints.html#framework-endpoints-get-one">Read a Single Entity with GET</a></span></dt></dl></dd><dt><span class="chapter"><a href="framework-chains.html">13. Request Chains</a></span></dt><dd><dl><dt><span class="section"><a href="framework-chains.html#framework-chains-available">Available Chains</a></span></dt><dt><span class="section"><a href="framework-chains.html#framework-chains-mapper">Strategies for Object Matching</a></span></dt><dt><span class="section"><a href="framework-chains.html#framework-chains-idempotency">Idempotency of Updating Chains</a></span></dt></dl></dd><dt><span class="chapter"><a href="framework-pojo.html">14. Non-Persistent Properties and POJOs</a></span></dt><dt><span class="chapter"><a href="framework-relationship-resources.html">15. Relationship Resources</a></span></dt><dt><span class="chapter"><a href="framework-security.html">16. Securing Endpoints</a></span></dt><dt><span class="chapter"><a href="framework-customize-stack.html">17. Customizing Request Processing</a></span></dt></dl></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="protocol-extensions.html">Prev</a>&nbsp;</td><td width="20%" align="center">&nbsp;</td><td width="40%" align="right">&nbsp;<a accesskey="n" href="framework-prerequisites.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Chapter&nbsp;9.&nbsp;Protocol Extensions&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top">&nbsp;Chapter&nbsp;10.&nbsp;Prerequisites</td></tr></table></div></body></html>
+/**
+ * A Jersey-specific JAX-RS Application class that loads AgREST.
+ */
+@ApplicationPath("/")
+public class JaxRsApplication extends ResourceConfig {
+
+	public JaxRsApplication() {
+
+            ServerRuntime cayenneRuntime = ...
+            AgRuntime agRuntime = AgBuilder.build(cayenneRuntime);
+            super.register(agRuntime);
+
+            // continue with Application setup...
+            ...
+	}
+}</code></pre>
+                        </div>
+                    </div>
+                </li>
+            </ol>
+        </div>
+        <div class="paragraph">
+            <p>Now you are ready to write AgREST endpoints.</p>
+        </div>
+    </div>
+</div>
+<div class="sect1">
+    <h2 id="writing-resource-endpoints"><a class="anchor" href="#writing-resource-endpoints"></a>3. Writing Resource Endpoints</h2>
+    <div class="sectionbody">
+        <div class="paragraph">
+            <p>Let&#8217;s create a resource class called DomainResource, annotated with JAX-RS @Path and
+                @Produces annotations. One extra thing we need for AgREST to work is a an instance of
+                <code>javax.ws.rs.core.Configuration</code>, that can be injected with <code>@Context</code> annotation:</p>
+        </div>
+        <div class="listingblock">
+            <div class="content">
+<pre class="highlight"><code class="language-Java" data-lang="Java">import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.Configuration;
+import javax.ws.rs.core.Context;
+
+@Path("domain")
+@Produces(MediaType.APPLICATION_JSON)
+public class DomainResource {
+
+    @Context
+    private Configuration config;
+}</code></pre>
+            </div>
+        </div>
+        <div class="sect2">
+            <h3 id="create-entity-with-post"><a class="anchor" href="#create-entity-with-post"></a>3.1. Create Entity with <code>POST</code></h3>
+            <div class="paragraph">
+                <p>Now let&#8217;s implement a <code>POST</code> method in DomainResource class:</p>
+            </div>
+            <div class="listingblock">
+                <div class="content">
+<pre class="highlight"><code class="language-Java" data-lang="Java">import io.agrest.Ag;
+import io.agrest.SimpleResponse;
+
+...
+
+@POST
+public SimpleResponse create(String data) {
+    return Ag.create(Domain.class, config).sync(data);
+}</code></pre>
+                </div>
+            </div>
+            <div class="paragraph">
+                <p>Here we&#8217;ve built a very simple "create chain" using AgREST fluent API. It starts with a
+                    static "create" method on AgREST class, taking a type of entity to create (Domain) and
+                    previously injected Configuration. Finally it calls "sync" method to execute the
+                    request. "data" String is expected to be an "Update Document" (see <a href="protocol.html#request-update-document">Request: Update Document</a>), i.e. a single object or an array of objects.
+                    Now if you compile your app and deploy it in a web container (e.g. Tomcat), you may call
+                    this endpoint to create new Domain objects:</p>
+            </div>
+            <div class="listingblock">
+                <div class="content">
+<pre class="highlight"><code>curl -i -X POST 'http://example.org/myapp/domain' \
+&gt;          -d '{"vhost":"mysite1.example.org","name":"My Site #1"}'</code></pre>
+                </div>
+            </div>
+            <div class="listingblock">
+                <div class="content">
+<pre class="highlight"><code class="language-JSON" data-lang="JSON">HTTP/1.1 201 Created
+Content-Type: application/json
+
+{"success":true}</code></pre>
+                </div>
+            </div>
+            <div class="paragraph">
+                <p>In your container log you might see output from Cayenne, actually inserting a newly created object:</p>
+            </div>
+            <div class="listingblock">
+                <div class="content">
+<pre class="highlight"><code class="language-sh" data-lang="sh">INFO CommonsJdbcEventLogger - INSERT INTO "domain" ("name", "vhost") VALUES (?, ?)
+INFO CommonsJdbcEventLogger - [bind: 1-&gt;name:'My Site #1', 2-&gt;vhost:'mysite1.example.org']
+INFO CommonsJdbcEventLogger - Generated PK: domain.id = 1
+INFO CommonsJdbcEventLogger - === updated 1 row.</code></pre>
+                </div>
+            </div>
+        </div>
+        <div class="sect2">
+            <h3 id="read-collection-of-entities-with-get"><a class="anchor" href="#read-collection-of-entities-with-get"></a>3.2. Read Collection of Entities with <code>GET</code></h3>
+            <div class="paragraph">
+                <p>You may create more Domain objects, executing <code>POST</code> request above. Now
+                    let&#8217;s write a <code>GET</code> method to search for domains:</p>
+            </div>
+            <div class="listingblock">
+                <div class="content">
+<pre class="highlight"><code class="language-Java" data-lang="Java">import io.agrest.DataResponse;
+import io.agrest.Ag;
+
+...
+
+@GET
+public DataResponse&lt;Domain&gt; getAll(@Context UriInfo uriInfo) {
+    return Ag.select(Domain.class, config).uri(uriInfo).get();
+}</code></pre>
+                </div>
+            </div>
+            <div class="paragraph">
+                <p>The above is a typical "select chain". Now <code>GET</code> can be invoked from the
+                    client like this:</p>
+            </div>
+            <div class="paragraph">
+                <p><code>curl -i -X GET 'http://example.org/myapp/domain'</code></p>
+            </div>
+            <div class="listingblock">
+                <div class="content">
+<pre class="highlight"><code class="language-JSON" data-lang="JSON">HTTP/1.1 200 OK
+Content-Type: application/json
+
+{
+    "data" : [
+        { "id" : 1, "name" : "My Site #1", "vhost" : "mysite1.example.org" },
+        { "id" : 2, "name" : "My Site #2", "vhost" : "mysite2.example.org" }
+    ],
+    "total" : 2
+}</code></pre>
+                </div>
+            </div>
+            <div class="paragraph">
+                <p>Since select chain above incorporates UriInfo, it will recognize AgREST control
+                    parameters passed from the client (see <a href="protocol.html#control-parameters">Control Parameters</a>). Let&#8217;s try using "cayenneExp" filter and "include":</p>
+            </div>
+            <div class="paragraph">
+                <p><code>curl -i -X GET 'http://example.org/myapp/domain?cayenneExp=vhost="mysite1.example.org"&amp;include=id'</code></p>
+            </div>
+            <div class="listingblock">
+                <div class="content">
+<pre class="highlight"><code class="language-JSON" data-lang="JSON">HTTP/1.1 200 OK
+Content-Type: application/json
+
+{
+    "data" : [
+        { "id" : 1 }
+    ],
+    "total" : 1
+}</code></pre>
+                </div>
+            </div>
+        </div>
+        <div class="sect2">
+            <h3 id="read-a-single-entity-with-get"><a class="anchor" href="#read-a-single-entity-with-get"></a>3.3. Read a Single Entity with <code>GET</code></h3>
+            <div class="paragraph">
+                <p>A common request is to locate a single instance of an entity by ID. Here is how
+                    this can be done with AgREST:</p>
+            </div>
+            <div class="listingblock">
+                <div class="content">
+<pre class="highlight"><code class="language-Java" data-lang="Java">import io.agrest.DataResponse;
+import io.agrest.Ag;
+
+...
+
+@GET
+@Path("{id}")
+public DataResponse&lt;Domain&gt; getOne(@PathParam("id") int id, @Context UriInfo uriInfo) {
+    return Ag.select(Domain.class, config).byId(id).uri(uriInfo).getOne();
+}</code></pre>
+                </div>
+            </div>
+            <div class="paragraph">
+                <p>Here we are binding "id" as a URL path parameter, but also notice that AgREST doesn&#8217;t
+                    mandate any specific place in the URL for ID. This is a decision made by the developer.
+                    Calling this endpoint, we&#8217;ll get an expected result:</p>
+            </div>
+            <div class="paragraph">
+                <p><code>curl -i -X GET 'http://example.org/myapp/domain/1'</code></p>
+            </div>
+            <div class="listingblock">
+                <div class="content">
+<pre class="highlight"><code class="language-JSON" data-lang="JSON">HTTP/1.1 200 OK
+Content-Type: application/json
+
+{
+    "data" : [
+        { "id" : 1, "name" : "My Site #1", "vhost" : "mysite1.example.org" }
+    ],
+    "total" : 1
+}</code></pre>
+                </div>
+            </div>
+            <div class="paragraph">
+                <p>Even though we expect at most one object to be returned, the response is the same Collection
+                    Document as we&#8217;ve seen before.</p>
+            </div>
+        </div>
+        <div class="sect2">
+            <h3 id="update-entity-with-put"><a class="anchor" href="#update-entity-with-put"></a>3.4. Update Entity with <code>PUT</code></h3>
+            <div class="paragraph">
+                <p>To update the entity we created before <a href="#create-entity-with-post">Create Entity with <code>POST</code></a> we have to implement a <code>PUT</code> method in DomainResource class:</p>
+            </div>
+            <div class="listingblock">
+                <div class="content">
+<pre class="highlight"><code class="language-Java" data-lang="Java">import io.agrest.Ag;
+import io.agrest.SimpleResponse;
+
+...
+
+@PUT
+@Path("{id}")
+public SimpleResponse update(@PathParam("id") int id, String data) {
+    return Ag.update(Domain.class, config).id(id).sync(data);
+}</code></pre>
+                </div>
+            </div>
+            <div class="paragraph">
+                <p>This simple "update chain" is very similar to the <a href="#create-entity-with-post">Create Entity with <code>POST</code></a> and the <a href="#read-a-single-entity-with-get">Read a Single Entity with <code>GET</code></a> chains.
+                    Try to sent a request to this endpoint and get a result as expected</p>
+            </div>
+            <div class="listingblock">
+                <div class="content">
+<pre class="highlight"><code>curl -i -X PUT 'http://example.org/myapp/domain/1' \
+&gt;          -d '{"vhost":"mysite2.example.org","name":"My Site #2"}'</code></pre>
+                </div>
+            </div>
+            <div class="listingblock">
+                <div class="content">
+<pre class="highlight"><code class="language-JSON" data-lang="JSON">HTTP/1.1 200 OK
+Content-Type: application/json
+
+{"success":true}</code></pre>
+                </div>
+            </div>
+            <div class="paragraph">
+                <p>Apart of that, AgREST provides other ways to update entity with <code>PUT</code>. Please, refer to <a href="#idempotency-of-updating-chains">Idempotency of Updating Chains</a> for more information.</p>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="sect1">
+    <h2 id="request-chains"><a class="anchor" href="#request-chains"></a>4. Request Chains</h2>
+    <div class="sectionbody">
+        <div class="sect2">
+            <h3 id="available-chains"><a class="anchor" href="#available-chains"></a>4.1. Available Chains</h3>
+            <div class="paragraph">
+                <p>As demonstrated by earlier examples, to process a given request you need to build an
+                    appropriate AgREST "chain". Each chain starts with a call to a static method of AgREST
+                    class, that determines chain type, parameters it can take, and the type of response it
+                    generates. Each chain type naturally maps to a single HTTP method. Although ultimately the
+                    mapping of chains to methods is not enforced by AgREST and is left to the application
+                    developer. The following chains are available:</p>
+            </div>
+            <div class="listingblock">
+                <div class="content">
+<pre class="highlight"><code class="language-Java" data-lang="Java">// use with @GET
+Ag.select(SomeEntity.class, config)...
+
+// use with @DELETE
+Ag.delete(SomeEntity.class, config)...
+
+// use with @POST
+Ag.create(SomeEntity.class, config)...
+
+// use with @POST
+Ag.createOrUpdate(SomeEntity.class, config)...
+
+// use with @PUT
+Ag.idempotentCreateOrUpdate(SomeEntity.class, config)...
+
+// use with @PUT
+Ag.idempotentFullSync(SomeEntity.class, config)...
+
+// use with @GET for metadata endpoints
+Ag.metadata(SomeEntity.class, config)...</code></pre>
+                </div>
+            </div>
+        </div>
+        <div class="sect2">
+            <h3 id="strategies-for-object-matching"><a class="anchor" href="#strategies-for-object-matching"></a>4.2. Strategies for Object Matching</h3>
+            <div class="paragraph">
+                <p>Many of the updating chains need to match objects coming as Update Documents (see <a href="protocol.html#request-update-document">Request: Update Document</a>) against
+                    objects in the database. E.g. "createOrUpdate" needs to know whether a JSON object is new (and needs to be created)
+                    or it already exists (and needs to be updated). By default AgREST would attempt to match each JSON
+                    "id" attribute with a DB record primary key. This is a reasonable and useful strategy. Its
+                    main limitation though - it can&#8217;t be used for entities with ids generated on the server when
+                    combined with idempotent requests (see the next section on idempotency). To work around this
+                    limitation one may use a meaningful unique property that is known to the client at the object
+                    creation time. E.g. our Domain entity has a unique property "vhost".</p>
+            </div>
+            <div class="paragraph">
+                <p>To ensure the chain uses a property other than "id" for matching, a user may should set an
+                    explicit mapper on the chain:</p>
+            </div>
+            <div class="listingblock">
+                <div class="content">
+<pre class="highlight"><code class="language-Java" data-lang="Java">Ag.idempotentCreateOrUpdate(Domain.class, config)
+  .mapper(ByKeyObjectMapperFactory.byKey(Domain.VHOST))
+  .sync(entityData);</code></pre>
+                </div>
+            </div>
+            <div class="paragraph">
+                <p><code>ByKeyObjectMapperFactory</code> mapper is provided by AgREST. If something other than mapping by property is needed, a
+                    custom <code>ObjectMapperFactory</code> can be coded by the user.</p>
+            </div>
+        </div>
+        <div class="sect2">
+            <h3 id="idempotency-of-updating-chains"><a class="anchor" href="#idempotency-of-updating-chains"></a>4.3. Idempotency of Updating Chains</h3>
+            <div class="paragraph">
+                <p>It is easy to distinguish updating chains that are idempotent from those that are not
+                    (chain factory method starts with "idempotent" for the former). Both work the same way, except
+                    that "idempotent" ones perform an extra check on the input to ensure that it is repeatable,
+                    i.e. it will be safe to run it multiple times with the same effect as running it once. At the
+                    minimum this means that all the "new" objects have their ids set in the request. This is where
+                    <code>ByKeyObjectMapperFactory</code> discussed above comes in handy. Pretty much all
+                    idempotent chains need to use <code>ByKeyObjectMapperFactory</code> or an equivalent mapper to
+                    match by some unique property of the entity, that is known to the client at the object
+                    creation time.</p>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="sect1">
+    <h2 id="non-persistent-properties-and-pojos"><a class="anchor" href="#non-persistent-properties-and-pojos"></a>5. Non-Persistent Properties and POJOs</h2>
+    <div class="sectionbody">
+        <div class="paragraph">
+            <p>AgREST maintains a model of all entities that can be exposed via REST. All persistent
+                entities present in the underlying ORM (usually Cayenne) are automatically added to AgREST
+                model. What if you want to expose additional non-persistent properties of peristent objects or
+                build entire request chains that are not based on persistent entities? There are three
+                annotations to help with it: <code>@AgAttribute</code> or <code>@AgRelationship</code> and <code>@AgId</code>.</p>
+        </div>
+        <div class="paragraph">
+            <p>The first example is a typical Cayenne persistent class that has some transient properties:</p>
+        </div>
+        <div class="listingblock">
+            <div class="content">
+<pre class="highlight"><code class="language-Java" data-lang="Java">import io.agrest.annotation.AgAttribute;
+
+// a typical Cayenne persistent class
+public class Domain extends _Domain {
+
+  @AgAttribute
+  public String getLowercaseName() {
+    return getName().toLowerCase();
+  }
+}</code></pre>
+            </div>
+        </div>
+        <div class="paragraph">
+            <p>This one was simple. The second example is an entire POJO not known to Cayenne:</p>
+        </div>
+        <div class="listingblock">
+            <div class="content">
+<pre class="highlight"><code class="language-Java" data-lang="Java">import io.agrest.annotation.AgAttribute;
+import io.agrest.annotation.AgRelationship;
+
+// a POJO not mapped in Cayenne
+public class SomeClass {
+
+  private int id;
+  private String string;
+  private SomeOtherClass related;
+
+  @AgId
+  public int getId() {
+    return id;
+  }
+
+  @AgAttribute
+  public String getString() {
+    return string;
+  }
+
+  @AgRelationship
+  public SomeOtherClass getRelated() {
+    return related;
+  }
+}</code></pre>
+            </div>
+        </div>
+        <div class="paragraph">
+            <p>Creating and annotating a POJO was easy. But AgREST still requires a backend that knows
+                how to select and/or update those POJOs. Such custom "backends" can be configured per request
+                chain using chain listener API. It is up to the caller what strategy the backend would utilize
+                (maybe a REST call, or reading/writing from a NoSQL DB, etc.) :</p>
+        </div>
+        <div class="listingblock">
+            <div class="content">
+<pre class="highlight"><code class="language-Java" data-lang="Java">// an object with methods annotated with one of the
+// 'io.agrest.annotation.listener' annotations
+SomeCustomBackend altBackend = new SomeCustomBackend();
+
+Ag.select(SomeClass.class, config).listener(altBackend).uri(urlInfo).get();</code></pre>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="sect1">
+    <h2 id="relationship-resources"><a class="anchor" href="#relationship-resources"></a>6. Relationship Resources</h2>
+    <div class="sectionbody">
+
+    </div>
+</div>
+<div class="sect1">
+    <h2 id="securing-endpoints"><a class="anchor" href="#securing-endpoints"></a>7. Securing Endpoints</h2>
+    <div class="sectionbody">
+
+    </div>
+</div>
+<div class="sect1">
+    <h2 id="customizing-request-processing"><a class="anchor" href="#customizing-request-processing"></a>8. Customizing Request Processing</h2>
+    <div class="sectionbody">
+        <div class="paragraph">
+            <p>To customize request processing chain AgREST provides the <code>stage</code> mechanism.
+                E.g. we have usual get-by-id request chain:</p>
+        </div>
+        <div class="listingblock">
+            <div class="content">
+<pre class="highlight"><code class="language-Java" data-lang="Java">import io.agrest.DataResponse;
+import io.agrest.Ag;
+
+...
+
+@Context
+private Configuration config;
+
+@GET
+@Path("{id}")
+public DataResponse&lt;Domain&gt; getOne(@PathParam("id") int id, @Context UriInfo uriInfo) {
+    return Ag.select(Domain.class, config)
+             .byId(id)
+             .uri(uriInfo)
+             .getOne();
+}</code></pre>
+            </div>
+        </div>
+        <div class="sect2">
+            <h3 id="stage"><a class="anchor" href="#stage"></a>8.1. stage</h3>
+            <div class="paragraph">
+                <p>Just add <code>stage</code> method to the chain and put two parameters:</p>
+            </div>
+            <div class="ulist">
+                <ul>
+                    <li>
+                        <p>Name of stage after which your custom processing apply.</p>
+                    </li>
+                    <li>
+                        <p>Lambda expression that implements the processing.</p>
+                    </li>
+                </ul>
+            </div>
+            <div class="paragraph">
+                <p>The implementation can use provided <code>SelectContext</code> for inspecting and modifying.
+                    Please, pay attention that the context may have different state for different stages.</p>
+            </div>
+            <div class="listingblock">
+                <div class="content">
+<pre class="highlight"><code class="language-Java" data-lang="Java">...
+
+@Context
+private Configuration config;
+
+@GET
+@Path("{id}")
+public DataResponse&lt;Domain&gt; getOne(@PathParam("id") int id, @Context UriInfo uriInfo) {
+    return Ag.select(Domain.class, config)
+             .byId(id)
+             .uri(uriInfo)
+             .stage(SelectStage.PARSE_REQUEST, (SelectContext&lt;Domain&gt; c) -&gt; {
+                // TODO: Add a customization with regards of the parse request stage
+             })
+             .getOne();
+}</code></pre>
+                </div>
+            </div>
+            <div class="paragraph">
+                <p>AgREST supports the following stage types:</p>
+            </div>
+            <table class="tableblock frame-all grid-all" style="width: 50%;">
+                <colgroup>
+                    <col style="width: 50%;">
+                    <col style="width: 50%;">
+                </colgroup>
+                <tbody>
+                <tr>
+                    <td class="tableblock halign-left valign-top" rowspan="6"><p class="tableblock">SelectStage</p></td>
+                    <td class="tableblock halign-left valign-top"><p class="tableblock">START</p></td>
+                </tr>
+                <tr>
+                    <td class="tableblock halign-left valign-top"><p class="tableblock">PARSE_REQUEST</p></td>
+                </tr>
+                <tr>
+                    <td class="tableblock halign-left valign-top"><p class="tableblock">CREATE_ENTITY</p></td>
+                </tr>
+                <tr>
+                    <td class="tableblock halign-left valign-top"><p class="tableblock">APPLY_SERVER_PARAMS</p></td>
+                </tr>
+                <tr>
+                    <td class="tableblock halign-left valign-top"><p class="tableblock">ASSEMBLE_QUERY</p></td>
+                </tr>
+                <tr>
+                    <td class="tableblock halign-left valign-top"><p class="tableblock">FETCH_DATA</p></td>
+                </tr>
+                <tr>
+                    <td class="tableblock halign-left valign-top" rowspan="6"><p class="tableblock">UpdateStage</p></td>
+                    <td class="tableblock halign-left valign-top"><p class="tableblock">START</p></td>
+                </tr>
+                <tr>
+                    <td class="tableblock halign-left valign-top"><p class="tableblock">PARSE_REQUEST</p></td>
+                </tr>
+                <tr>
+                    <td class="tableblock halign-left valign-top"><p class="tableblock">CREATE_ENTITY</p></td>
+                </tr>
+                <tr>
+                    <td class="tableblock halign-left valign-top"><p class="tableblock">APPLY_SERVER_PARAMS</p></td>
+                </tr>
+                <tr>
+                    <td class="tableblock halign-left valign-top"><p class="tableblock">UPDATE_DATA_STORE</p></td>
+                </tr>
+                <tr>
+                    <td class="tableblock halign-left valign-top"><p class="tableblock">FILL_RESPONSE</p></td>
+                </tr>
+                <tr>
+                    <td class="tableblock halign-left valign-top" rowspan="2"><p class="tableblock">DeleteStage</p></td>
+                    <td class="tableblock halign-left valign-top"><p class="tableblock">START</p></td>
+                </tr>
+                <tr>
+                    <td class="tableblock halign-left valign-top"><p class="tableblock">DELETE_IN_DATA_STORE</p></td>
+                </tr>
+                </tbody>
+            </table>
+            <div class="paragraph">
+                <p>Apart of the <code>stage</code> method AgREST provides additional two <code>terminalStage</code> and <code>routingStage</code> methods.
+                    These two could be customised in the same way.</p>
+            </div>
+            <div class="paragraph">
+                <p>Please, pay attention that these stage operations are composable. For each stage all custom processors will be invoked in the order they were registered.</p>
+            </div>
+        </div>
+        <div class="sect2">
+            <h3 id="terminalstage"><a class="anchor" href="#terminalstage"></a>8.2. terminalStage</h3>
+            <div class="paragraph">
+                <p>Registers a consumer to be executed after the specified standard execution stage.
+                    The rest of the standard pipeline following the named stage will be skipped.
+                    This is useful for quick assembly of custom back-ends that reuse the initial stages of AgREST processing,
+                    but query the data store on their own. The consumer can inspect and modify provided context <code>SelectContext</code> or <code>UpdateContext</code>.</p>
+            </div>
+        </div>
+        <div class="sect2">
+            <h3 id="routingstage"><a class="anchor" href="#routingstage"></a>8.3. routingStage</h3>
+            <div class="paragraph">
+                <p>Registers a processor to be executed after the specified standard execution stage.
+                    The processor can inspect and modify provided context <code>SelectContext</code> or <code>UpdateContext</code>.
+                    When finished, processor can either pass control to the next stage by returning
+                    <code>ProcessorOutcome.CONTINUE</code>, or terminate the pipeline by returning <code>ProcessorOutcome.STOP</code>.</p>
+            </div>
+        </div>
+    </div>
+</div>
