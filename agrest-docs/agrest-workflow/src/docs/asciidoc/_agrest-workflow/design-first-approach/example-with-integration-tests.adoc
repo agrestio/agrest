@@ -1,7 +1,7 @@
-=== Example with integration tests
+=== More examples with integration tests
 
-https://github.com/io/agrest/tree/master/agrest-swagger-designfirst-test[Example]
-of Design-First approach implementation is provided as separate module with set of tests.
+AgREST has more https://github.com/io/agrest/tree/master/agrest-swagger-designfirst-test[Examples]
+of Design-First approach implementation that are provided as separate module with set of tests.
 To run it use `mvn clean install` command.
 The API description (contract) is defined in file `src/test/java/resources/api.yaml`.
 

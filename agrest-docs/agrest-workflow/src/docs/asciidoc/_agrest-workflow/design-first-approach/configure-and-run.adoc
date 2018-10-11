@@ -34,32 +34,49 @@ There is an example of the maven plugin configuration:
 </plugin>
 ----
 [#inputSpec]
-==== <inputSpec>
+===== <inputSpec>
 Points to your API definition in `.yaml` or `.json` formats.
 
 [#generatorName]
-==== <generatorName>
+===== <generatorName>
 Sets the AgREST custom code generator.
 
 [#output]
-==== <output>
+===== <output>
 Sets the output catalog for all generated items.
 
 [#apiPackage]
-==== <apiPackage>
+===== <apiPackage>
 Contains full package name of resource implementation classes to be generated.
 
 [#modelPackage]
-==== <modelPackage>
+===== <modelPackage>
 Contains full package name of model classes.
 If set <<generateModels>> true, the POJO stubs of models will be generated.
 Otherwise, will be used existing model classes from this package.
 
 [#generateModels]
-==== <generateModels>
+===== <generateModels>
 Generates POJO of models or uses existing ones.
 
 [#skipOverwrite]
-==== <skipOverwrite>
+===== <skipOverwrite>
 If it is set in `false`, all generated files will be overwritten each time during `mvn clean install`.
 So, if you are planning to customize the generated API implementation, this parameter should be set in `true`.
+
+
+==== Run the Application
+
+As is mentioned in the chapter <<Building and running>> the Application is run by command `mvn jetty:run`.
+After the Jetty server start, the following `curl` commands can be used for the API testing:
+
+```
+curl -i -X GET 'http://localhost:8080/api/v1/category'
+```
+
+```
+curl -i -X POST -H 'Content-Type: application/json' 'http://localhost:8080/api/v1/category'  -d '{"id":"1","name":"Science Fiction"}'
+```
+
+Please, pay attention that the `POST` command has to contain the `Content-Type` parameter according to the annotation
+of the 'create' method of the `CategoryResource` class.

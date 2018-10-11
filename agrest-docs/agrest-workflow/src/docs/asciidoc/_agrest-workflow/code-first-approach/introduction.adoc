@@ -5,7 +5,7 @@ of your application and start creating classes for your domain entity rather tha
 And only after domain classes creating will be created a DB structure and an appropriate API specification.
 
 With regards of creating API specification it means that the specification can automatically generated from the class sources.
-This generation has to use a classes meta information that can be provided using annotations for example.
+This generating has to use a classes meta information that can be provided using annotations for example.
 
 AgREST provides following annotations:
 

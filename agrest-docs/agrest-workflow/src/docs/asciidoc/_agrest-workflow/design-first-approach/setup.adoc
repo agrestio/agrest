@@ -17,53 +17,54 @@ Later all our API resources will be generated from `.yaml` definition automatica
 the Design-First approach.
 
 Then update the `pom.xml`.
-1. Add the `agrest-openapi-designfirst` dependency.
 
-[source, xml]
-----
-<dependency>
-    <groupId>io.agrest.openapi</groupId>
-    <artifactId>agrest-openapi-designfirst</artifactId>
-    <version>3.0-SNAPSHOT</version>
-</dependency>
-----
+ 1. Add the `agrest-openapi-designfirst` dependency.
 
-2. Add the `openapi-generator-maven-plugin` plugin and an appropriate settings.
+    [source, xml]
+    ----
+    <dependency>
+        <groupId>io.agrest.openapi</groupId>
+        <artifactId>agrest-openapi-designfirst</artifactId>
+        <version>3.0-SNAPSHOT</version>
+    </dependency>
+    ----
+
+ 2. Add the `openapi-generator-maven-plugin` plugin and an appropriate settings.
 For more details, please refer to the next <<Configure and run the API generation>> section
 
-[source, xml]
-----
-<plugin>
-    <groupId>org.openapitools</groupId>
-    <artifactId>openapi-generator-maven-plugin</artifactId>
-    <version>3.0.2</version>
-    <executions>
-        <execution>
-            <goals>
-                <goal>generate</goal>
-            </goals>
-            <configuration>
-                <inputSpec>${project.basedir}/src/main/resources/bookstore-api.yaml</inputSpec>
-                <generatorName>io.swagger.codegen.languages.AgServerCodegen</generatorName>
-                <output>${project.basedir}</output>
-                <apiPackage>org.example.agrest</apiPackage>
-                <modelPackage>org.example.agrest.persistent</modelPackage>
-                <invokerPackage>org.example.agrest</invokerPackage>
-                <generateModels>false</generateModels>
-                <skipOverwrite>false</skipOverwrite>
-            </configuration>
-        </execution>
-    </executions>
+    [source, xml]
+    ----
+    <plugin>
+        <groupId>org.openapitools</groupId>
+        <artifactId>openapi-generator-maven-plugin</artifactId>
+        <version>3.0.2</version>
+        <executions>
+            <execution>
+                <goals>
+                    <goal>generate</goal>
+                </goals>
+                <configuration>
+                    <inputSpec>${project.basedir}/src/main/resources/bookstore-api.yaml</inputSpec>
+                    <generatorName>io.swagger.codegen.languages.AgServerCodegen</generatorName>
+                    <output>${project.basedir}</output>
+                    <apiPackage>org.example.agrest</apiPackage>
+                    <modelPackage>org.example.agrest.persistent</modelPackage>
+                    <invokerPackage>org.example.agrest</invokerPackage>
+                    <generateModels>false</generateModels>
+                    <skipOverwrite>false</skipOverwrite>
+                </configuration>
+            </execution>
+        </executions>
 
-    <dependencies>
-        <dependency>
-            <groupId>org.example.agrest</groupId>
-            <artifactId>bookstore</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-    </dependencies>
-</plugin>
-----
+        <dependencies>
+            <dependency>
+                <groupId>org.example.agrest</groupId>
+                <artifactId>bookstore</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+        </dependencies>
+    </plugin>
+    ----
 
 ==== The resulted application
 

@@ -52,39 +52,44 @@ public class CategoryResource {
 }
 ----
 
-If you configure maven plugin to generate models <<generateModels>>, the POJO `BookCategory.java` will be generated.
+If you configure maven plugin to generate models <<generateModels>>, the POJO `Category.java` will be generated.
 
 [source, Java]
 ----
-public class BookCategory   {
+public class Category   {
 
     private Integer id = null;
     private String name = null;
     private String description = null;
 
-   /**
-     * Unique ID of BookCategory
+...
+    /**
+     * Unique ID of Category
      * @return id
      **/
     @AgAttribute
-    @ApiModelProperty(example = "1", value = "Unique ID of BookCategory")
-    public Integer getId() {
+    @ApiModelProperty(example = "1", value = "Unique ID of Category")
+    public String getId() {
         return id;
     }
 
-...
+    public void setId(String id) {
+        this.id = id;
+    }
 
+...
     /**
-     * BookCategory name
+     * Book Category name
      * @return name
      **/
     @AgAttribute
-    @ApiModelProperty(example = "Science Fiction", value = "BookCategory name")
+    @ApiModelProperty(example = "Science Fiction", value = "Book Category name")
     public String getName() {
         return name;
     }
 
-...
-
+    public void setName(String name) {
+        this.name = name;
+    }
 }
 ----

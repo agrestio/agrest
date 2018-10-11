@@ -12,7 +12,7 @@ import io.agrest.Ag;
 
 @GET
 public DataResponse<Domain> getAll(@Context UriInfo uriInfo) {
-    return Ag.select(Domain.class, config).uri(uriInfo).select();
+    return Ag.select(Domain.class, config).uri(uriInfo).get();
 }
 ----
 
