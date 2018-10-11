@@ -82,7 +82,7 @@ public class AgCodegenOperation extends CodegenOperation {
      */
     @Override
     public boolean isRestfulIndex() {
-        return "GET".equals(httpMethod) && pathParams.size() == 0;
+        return "GET".equals(httpMethod) && pathParams.isEmpty();
     }
 
     /**
@@ -94,7 +94,6 @@ public class AgCodegenOperation extends CodegenOperation {
     public boolean isRestfulShow() {
         return "GET".equals(httpMethod) && isByIdPath();
     }
-
 
     /**
      * Check if act as Restful index to retrieve many children method
@@ -232,7 +231,6 @@ public class AgCodegenOperation extends CodegenOperation {
             return false;
         }
         String id = pathParams.get(0).baseName;
-        return ("/{" + id + "}").equals(path.substring(path.lastIndexOf('/')));
+        return path.endsWith("/{" + id + "}");
     }
-
 }
