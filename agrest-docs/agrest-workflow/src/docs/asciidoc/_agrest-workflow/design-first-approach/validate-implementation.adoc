@@ -1,0 +1,95 @@
+=== Validate the API implementation
+
+After successful finishing of generation the `CategoryResource.java` could be found in the output catalog.
+This class has the ready-to-use implementation (not a stub) of all methods defined in the `.yaml` file.
+
+[source, Java]
+----
+@Path("/")
+public class CategoryResource {
+
+    @Context
+    private Configuration config;
+
+    @POST
+    @Path("/v1/category")
+    @Consumes({ "application/json" })
+    public DataResponse<Category> create(String category) {
+        AgRequest agRequest = AgRequest.builder()
+                .build();
+
+        return Ag.create(Category.class, config)
+                 .request(agRequest)
+                 .syncAndSelect(category);
+    }
+
+    @GET
+    @Path("/v1/category")
+    @Produces({ "application/json" })
+    public DataResponse<Category> getAll(@QueryParam("limit") Limit limit, @QueryParam("start") Start start) {
+        AgRequest agRequest = AgRequest.builder()
+                .limit(limit)
+                .start(start)
+                .build();
+
+        return Ag.select(Category.class, config)
+                 .request(agRequest)
+                 .get();
+    }
+
+    @GET
+    @Path("/v1/category/{id}")
+    @Produces({ "application/json" })
+        public DataResponse<Category> getOne(@PathParam("id") Integer id) {
+        AgRequest agRequest = AgRequest.builder()
+                .build();
+
+        return Ag.select(Category.class, config)
+                 .byId(id)
+                 .request(agRequest)
+                 .get();
+    }
+}
+----
+
+If you configure maven plugin to generate models <<generateModels>>, the POJO `Category.java` will be generated.
+
+[source, Java]
+----
+public class Category   {
+
+    private Integer id = null;
+    private String name = null;
+    private String description = null;
+
+...
+    /**
+     * Unique ID of Category
+     * @return id
+     **/
+    @AgAttribute
+    @ApiModelProperty(example = "1", value = "Unique ID of Category")
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+...
+    /**
+     * Book Category name
+     * @return name
+     **/
+    @AgAttribute
+    @ApiModelProperty(example = "Science Fiction", value = "Book Category name")
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+}
+----

@@ -1,0 +1,143 @@
+=== Defining the API
+
+AgREST provides the `AgServerCodegen` class and a set of custom mustache templates to generate an API implementation
+based on `OpenAPI 3.0` specification.
+
+There is outlined the top-down workflow of creating the API:
+
+==== 1. Start with domain models
+Create a `bookstore-api.yaml` file to define your API and put it in the `src/main/java/resources` folder.
+Add general information with regards of your API:
+[source, yaml]
+----
+openapi: 3.0.0
+servers:
+  - url: 'http://127.0.0.1/v1'
+info:
+  title: AgREST based API of Bookstore
+  description: An API for interacting with the Bookstore backend server
+  version: v1
+----
+
+Then add definition of your models. If you want to create an updating API (e.g. POST, PUT) of your model
+you have to define a 'requestBodies' element in addition to a 'schemas' one.
+
+Please, pay attention that you can ether specify existing Java-DB mapping classes
+(based on `CayenneDataObject` e.g. our `Category` and `Book`) or generate simple POJO models  by maven plugin.
+
+For further information, please refer to <<Configure and run the API generation>> section.
+
+But, for both cases you have to define models in `.yaml` file:
+
+[source, yaml]
+----
+tags:
+  - name: Category
+    description: |
+      This model represents a Category type and is used to retrieve, create and update a book Category information.
+
+components:
+  schemas:
+    Category:
+      type: object
+      properties:
+       id:
+         type: string
+         description: Unique ID of Category
+         example: 1
+       name:
+         type: string
+         description: Book Category name
+         example: Science Fiction
+       description:
+         type: string
+         description: Description of Category
+         example: Science fiction (often shortened to Sci-Fi or SF) is a genre of speculative fiction.
+
+  requestBodies:
+    Category:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Category'
+      description: Category object that needs to be created or updated
+      required: true
+----
+
+
+==== 2. Attach AgREST protocol definition
+The AgREST protocol file <<protocol>> contains definition of all <<Control Parameters>>.
+Just place this `protocol.yaml` in the catalog were your main `bookstore-api.yaml` file is located (e.g. 'src/main/java/resources').
+
+==== 3. Define resources
+Add REST API resource definition to your `bookstore-api.yaml` file.
+Pay attention that AgREST protocol parameters are defined as references.
+[source, yaml]
+----
+paths:
+  /category:
+    get:
+      summary: Get list of all Book Categories
+      operationId: getAll
+      tags:
+        - Category
+      parameters:
+        - $ref: '../resources/protocol.yaml#/components/queryParams/Limit'
+        - $ref: '../resources/protocol.yaml#/components/queryParams/Start'
+      responses:
+        '200':
+          description: Success response.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Category'
+        default:
+          description: Unexpected error
+    post:
+      tags:
+        - Category
+      summary: Create a new Book Category
+      operationId: create
+      requestBody:
+        $ref: "#/components/requestBodies/Category"
+      responses:
+        default:
+          description: successful operation
+
+  /category/{id}:
+    get:
+      description: Returns a particular Book Category
+      operationId: getOne
+      tags:
+        - Category
+      parameters:
+        - name: id
+          in: path
+          description: ID of Category to fetch
+          required: true
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: Success responce
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Category'
+          description: Unexpected error
+----
+
+==== 4. Run build-time API generation
+To generate an AgREST based API is used a special maven plugin that should be configured
+in accordance with your `.yaml` files location <<inputSpec>>, packages <<apiPackage>>, output catalog <<output>>, etc.
+
+`mvn clean install` runs generation of the API.
+
+For more details, please refer to the <<Configure and run the API generation>> section
+
+
+
+

@@ -1,0 +1,3 @@
+== Code-First Approach
+
+include::code-first-approach/introduction.adoc[]

@@ -1,0 +1,54 @@
+=== stage
+
+Just add `stage` method to the chain and put two parameters:
+
+ * Name of stage after which your custom processing apply.
+ * Lambda expression that implements the processing.
+
+The implementation can use provided `SelectContext` for inspecting and modifying.
+Please, pay attention that the context may have different state for different stages.
+
+[source, Java]
+----
+...
+
+@Context
+private Configuration config;
+
+@GET
+@Path("{id}")
+public DataResponse<Domain> getOne(@PathParam("id") int id, @Context UriInfo uriInfo) {
+    return Ag.select(Domain.class, config)
+             .byId(id)
+             .uri(uriInfo)
+             .stage(SelectStage.PARSE_REQUEST, (SelectContext<Domain> c) -> {
+                // TODO: Add a customization with regards of the parse request stage
+             })
+             .getOne();
+}
+----
+
+AgREST supports the following stage types:
+
+[width="50%"]
+|===
+.6+|SelectStage |START
+                |PARSE_REQUEST
+                |CREATE_ENTITY
+                |APPLY_SERVER_PARAMS
+                |ASSEMBLE_QUERY
+                |FETCH_DATA
+.6+|UpdateStage |START
+                |PARSE_REQUEST
+                |CREATE_ENTITY
+                |APPLY_SERVER_PARAMS
+                |UPDATE_DATA_STORE
+                |FILL_RESPONSE
+.2+|DeleteStage |START
+                |DELETE_IN_DATA_STORE
+|===
+
+Apart of the `stage` method AgREST provides additional two `terminalStage` and `routingStage` methods.
+These two could be customised in the same way.
+
+Please, pay attention that these stage operations are composable. For each stage all custom processors will be invoked in the order they were registered.

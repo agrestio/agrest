@@ -1,0 +1,176 @@
+=== Implementation
+
+The goal of this chapter is to implement a simple application to demonstrate AgREST features.
+The application uses `Cayenne` as an ORM framework and for the further information
+regarding a DB mapping please, refer to http://cayenne.apache.org[Apache Cayenne ORM]
+
+==== Configure `Cayenne`
+
+In an application `resources` folder create a Cayenne project file:
+
+*cayenne-project.xml*
+[source, XML]
+----
+<?xml version="1.0" encoding="utf-8"?>
+<domain project-version="9">
+    <map name="datamap"/>
+
+    <node name="datanode"
+          factory="org.apache.cayenne.configuration.server.XMLPoolingDataSourceFactory"
+          schema-update-strategy="org.apache.cayenne.access.dbsync.CreateIfNoSchemaStrategy"
+    >
+        <map-ref name="datamap"/>
+        <data-source>
+            <driver value="org.apache.derby.jdbc.EmbeddedDriver"/>
+            <url value="jdbc:derby:memory:testdb;create=true"/>
+            <connectionPool min="1" max="1"/>
+            <login/>
+        </data-source>
+    </node>
+</domain>
+----
+
+Then in the same folder add a file contains a basic Cayenne mapping.
+The mapping is done based on the ER diagram from the <<Starting a project>> charter:
+
+*datamap.map.xml*
+[source, XML]
+----
+<?xml version="1.0" encoding="utf-8"?>
+<data-map xmlns="http://cayenne.apache.org/schema/9/modelMap"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://cayenne.apache.org/schema/9/modelMap https://cayenne.apache.org/schema/9/modelMap.xsd"
+          project-version="9">
+    <property name="defaultPackage" value="org.example.agrest.persistent"/>
+    <db-entity name="BOOK">
+        <db-attribute name="AUTHOR" type="VARCHAR" length="128"/>
+        <db-attribute name="CATEGORY_ID" type="INTEGER"/>
+        <db-attribute name="ID" type="INTEGER" isPrimaryKey="true" isMandatory="true"/>
+        <db-attribute name="TITLE" type="VARCHAR" isMandatory="true" length="128"/>
+    </db-entity>
+    <db-entity name="CATEGORY">
+        <db-attribute name="DESCRIPTION" type="NCLOB"/>
+        <db-attribute name="ID" type="INTEGER" isPrimaryKey="true" isMandatory="true"/>
+        <db-attribute name="NAME" type="VARCHAR" isMandatory="true" length="128"/>
+    </db-entity>
+    <obj-entity name="Book" className="org.example.agrest.persistent.Book" dbEntityName="BOOK">
+        <obj-attribute name="author" type="java.lang.String" db-attribute-path="AUTHOR"/>
+        <obj-attribute name="title" type="java.lang.String" db-attribute-path="TITLE"/>
+    </obj-entity>
+    <obj-entity name="Category" className="org.example.agrest.persistent.Category" dbEntityName="CATEGORY">
+        <obj-attribute name="description" type="java.lang.String" db-attribute-path="DESCRIPTION"/>
+        <obj-attribute name="name" type="java.lang.String" db-attribute-path="NAME"/>
+    </obj-entity>
+    <db-relationship name="category" source="BOOK" target="CATEGORY" toMany="false">
+        <db-attribute-pair source="CATEGORY_ID" target="ID"/>
+    </db-relationship>
+    <db-relationship name="books" source="CATEGORY" target="BOOK" toMany="true">
+        <db-attribute-pair source="ID" target="CATEGORY_ID"/>
+    </db-relationship>
+    <obj-relationship name="category" source="Book" target="Category" deleteRule="Nullify" db-relationship-path="category"/>
+    <obj-relationship name="books" source="Category" target="Book" deleteRule="Deny" db-relationship-path="books"/>
+</data-map>
+----
+
+==== Define domain models
+
+Create two classes to present data objects in a package `org.example.agrest.persistent`:
+
+[source, Java]
+----
+public class Category extends CayenneDataObject {
+
+    public static final String ID_PK_COLUMN = "ID";
+
+    public static final Property<String> DESCRIPTION = Property.create("description", String.class);
+    public static final Property<String> NAME = Property.create("name", String.class);
+    public static final Property<List<Book>> BOOKS = Property.create("books", List.class);
+}
+----
+
+[source, Java]
+----
+public class Book extends CayenneDataObject {
+
+    public static final String ID_PK_COLUMN = "ID";
+
+    public static final Property<String> AUTHOR = Property.create("author", String.class);
+    public static final Property<String> TITLE = Property.create("title", String.class);
+    public static final Property<Category> CATEGORY = Property.create("category", Category.class);
+}
+----
+
+==== Implement `AgREST` application classes
+
+Create an application and a resource classes in package `org.example.agrest`:
+
+[source, Java]
+----
+@ApplicationPath("/api/*")
+public class BookstoreApplication extends ResourceConfig {
+
+    public BookstoreApplication() {
+
+        ServerRuntime cayenneRuntime
+                = ServerRuntime.builder()
+                               .addConfig("cayenne-project.xml")
+                               .build();
+
+        AgRuntime agRuntime = AgBuilder.build(cayenneRuntime);
+        super.register(agRuntime);
+
+        packages("org.example.agrest");
+    }
+}
+----
+
+[source, Java]
+----
+@Path("category")
+@Produces(MediaType.APPLICATION_JSON)
+public class CategoryResource {
+
+    @Context
+    private Configuration config;
+
+    @POST
+    public SimpleResponse create(String data) {
+        return Ag.create(Category.class, config).sync(data);
+    }
+
+    @GET
+    public DataResponse<Category> getAll(@Context UriInfo uriInfo) {
+        return Ag.select(Category.class, config).uri(uriInfo).get();
+    }
+}
+----
+
+==== Configure `web.xml`
+
+Provide a servlet configuration and a mapping based on the application class created before.
+
+[source, XML]
+----
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd"
+         metadata-complete="false"
+         version="3.1">
+
+    <servlet>
+        <servlet-name>BookstoreApp</servlet-name>
+        <servlet-class>org.glassfish.jersey.servlet.ServletContainer</servlet-class>
+        <init-param>
+            <param-name>javax.ws.rs.Application</param-name>
+            <param-value>org.example.agrest.BookstoreApplication</param-value>
+        </init-param>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>BookstoreApp</servlet-name>
+        <url-pattern>/api/*</url-pattern>
+    </servlet-mapping>
+
+</web-app>
+----

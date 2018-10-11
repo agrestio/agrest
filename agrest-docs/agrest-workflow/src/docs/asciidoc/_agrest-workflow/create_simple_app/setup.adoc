@@ -1,0 +1,18 @@
+=== Setting up the environment
+
+The goal of this chapter of the tutorial is to install (or check that you already have
+installed) a minimally needed set of software to build an Agrest based application.
+
+==== Install Java
+
+Obviously, JDK has to be installed. In this tutorial we use JDK 1.8.
+
+==== Install IntelliJ IDEA
+
+Download and install IntelliJ IDEA Community Edition.
+This tutorial is based on version 2016.3, still it should work with any recent IntelliJ IDEA version.
+
+==== The resulted application
+
+The final application could be downloaded from github:
+https://github.com/agrestio/agrest-bookstore-example[Bookstore app]

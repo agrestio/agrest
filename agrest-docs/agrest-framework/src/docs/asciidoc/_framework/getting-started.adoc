@@ -1,0 +1,44 @@
+== Getting Started
+
+To load AgREST in your project, follow these simple steps:
+
+. Declare AgREST dependency. Here is a Maven example. If you are using Gradle or
+  Ant, you do what needs to be done there to include AgREST dependency.
++
+[source, XML]
+----
+<dependency>
+   <groupId>io.agrest</groupId>
+   <artifactId>agrest</artifactId>
+   <version>3.0</version>
+</dependency>
+----
+
+. Create `AgRuntime`, and load it in JAX-RS container. Assuming the
+  container is Jersey, this may look like this:
++
+[source, Java]
+----
+import javax.ws.rs.ApplicationPath;
+import org.glassfish.jersey.server.ResourceConfig;
+import io.agrest.runtime.AgBuilder;
+
+/**
+ * A Jersey-specific JAX-RS Application class that loads AgREST.
+ */
+@ApplicationPath("/")
+public class JaxRsApplication extends ResourceConfig {
+
+	public JaxRsApplication() {
+
+            ServerRuntime cayenneRuntime = ...
+            AgRuntime agRuntime = AgBuilder.build(cayenneRuntime);
+            super.register(agRuntime);
+
+            // continue with Application setup...
+            ...
+	}
+}
+----
+
+Now you are ready to write AgREST endpoints.

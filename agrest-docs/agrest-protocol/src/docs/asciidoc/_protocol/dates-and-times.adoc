@@ -1,0 +1,15 @@
+== Dates and Times
+
+JSON doesn't have datatypes for either date or time. Both are represented as strings.
+Server and client must ensure that date/time strings are in
+http://en.wikipedia.org/wiki/ISO_8601[ISO 8601 format] E.g.:
+
+[source, JSON]
+----
+2015-04-19T11:08:53Z
+2015-04-10T11:08
+2015-04-19
+----
+
+Developers should not assume that the server is in the same time zone as the browser.
+All timezone-aware expressions should contain time zone offset or "Z" suffix (for "Zulu" time).

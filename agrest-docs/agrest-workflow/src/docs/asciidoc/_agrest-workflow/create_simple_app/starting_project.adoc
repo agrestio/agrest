@@ -1,0 +1,68 @@
+=== Starting a project
+
+The goal of this chapter is to create a new Java project in IntelliJ IDEA
+and introduce a simple Bookstore application that will be used as an example.
+
+==== Define a `Bookstore` Domain Model
+
+The application contains two types of entities `Category` and `Book`.
+A relationship between `Category` and `Book` entities is *one-to-many*.
+
+image::../images/bookstore_er_diagram.png[align="center"]
+
+==== Create a new Project in IntelliJ IDEA
+
+In IntelliJ IDEA select `File > New > Project..` and then
+select `Maven` and click `Next`.
+In the dialog shown on the screenshot below, fill the `Group Id`
+and `Artifact Id` fields and click `Next`.
+
+image::../images/tutorial-idea-project.png[align="center"]
+
+On next dialog screen you can customize directory for your project and click `Finish`.
+Now you should have a new empty project.
+
+==== Configure maven `pom.xml`
+
+Add the following dependencies:
+
+```
+<dependency>
+    <groupId>io.agrest</groupId>
+    <artifactId>agrest</artifactId>
+    <version>3.0-SNAPSHOT</version>
+</dependency>
+
+<dependency>
+    <groupId>org.glassfish.jersey.containers</groupId>
+    <artifactId>jersey-container-servlet-core</artifactId>
+    <version>2.27</version>
+</dependency>
+<dependency>
+    <groupId>org.glassfish.jersey.inject</groupId>
+    <artifactId>jersey-hk2</artifactId>
+    <version>2.27</version>
+</dependency>
+
+<dependency>
+    <groupId>org.apache.derby</groupId>
+    <artifactId>derby</artifactId>
+    <version>10.13.1.1</version>
+</dependency>
+```
+
+Configure a `jetty` maven plugin to start app using `mvn jetty:run` command
+
+```
+<plugin>
+    <groupId>org.eclipse.jetty</groupId>
+    <artifactId>jetty-maven-plugin</artifactId>
+    <version>9.4.12.v20180830</version>
+    <configuration>
+        <scanIntervalSeconds>5</scanIntervalSeconds>
+        <classesDirectory>${project.basedir}/target/classes</classesDirectory>
+        <supportedPackagings><supportedPackaging>jar</supportedPackaging></supportedPackagings>
+    </configuration>
+</plugin>
+```
+

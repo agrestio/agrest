@@ -1,0 +1,11 @@
+=== Idempotency of Updating Chains
+
+It is easy to distinguish updating chains that are idempotent from those that are not
+(chain factory method starts with "idempotent" for the former). Both work the same way, except
+that "idempotent" ones perform an extra check on the input to ensure that it is repeatable,
+i.e. it will be safe to run it multiple times with the same effect as running it once. At the
+minimum this means that all the "new" objects have their ids set in the request. This is where
+  `ByKeyObjectMapperFactory` discussed above comes in handy. Pretty much all
+idempotent chains need to use `ByKeyObjectMapperFactory` or an equivalent mapper to
+match by some unique property of the entity, that is known to the client at the object
+creation time.

@@ -1,0 +1,14 @@
+[#Pagination]
+=== Pagination with `start / limit`
+
+These two parameters are used together to request from the server a range of objects
+for a potentially huge collection. They allow to implement efficient data pagination on the client.
+
+`"start"` is an offset within the "data" array. All the objects below this
+offset are discarded from the collection. Default "start" is 0.
+
+
+`"limit"` is a maximum number of objects in the collection "data". Default is infinity (no limit).
+
+"limit" is applied after "start". So for a collection with a total of 10 objects,
+`?start=2&amp;limit=5` would result in objects 2..6 returned from the server. Returned Collection "total" would still be 10.

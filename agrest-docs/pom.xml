@@ -9,112 +9,133 @@
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 
+	<groupId>io.agrest.docs</groupId>
 	<artifactId>agrest-docs</artifactId>
-	<name>agrest-docs: Docbook documentation</name>
+	<name>agrest-docs: Asciidoc documentation</name>
 	<description>AgREST framework documentation</description>
 	<packaging>pom</packaging>
 
-	<properties>
-        <!-- This property allows to only expose major version in the docs metadata to avoid confusing SEO -->
-        <linkrest.version.major>1</linkrest.version.major>
-	</properties>
+    <modules>
+        <module>agrest-overview</module>
+        <module>agrest-protocol</module>
+        <module>agrest-framework</module>
+        <module>agrest-workflow</module>
+    </modules>
 
-	<build>
-		<resources>
-            <resource>
-                <directory>src</directory>
-                <includes>
-                	<include>xsl/**</include>
-                </includes>
-                <filtering>true</filtering>
-            </resource>
-        </resources>
+    <properties>
+        <!--<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>-->
+        <asciidoctorj.version>1.6.0-alpha.7</asciidoctorj.version>
+        <asciidoctor.maven.plugin.version>1.5.6</asciidoctor.maven.plugin.version>
+        <asciidoctorj.pdf.version>1.5.0-alpha.16</asciidoctorj.pdf.version>
+        <jruby.version>9.2.0.0</jruby.version>
+    </properties>
 
-		<pluginManagement>
-			<plugins>
-		
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-deploy-plugin</artifactId>
-					<version>2.8.1</version>
-				</plugin>
+    <dependencies>
+        <dependency>
+            <groupId>org.asciidoctor</groupId>
+            <artifactId>asciidoctorj</artifactId>
+            <version>${asciidoctorj.version}</version>
+        </dependency>
+    </dependencies>
 
-      			<plugin>
-       				<groupId>org.apache.maven.plugins</groupId>
-        			<artifactId>maven-resources-plugin</artifactId>
-        			<version>2.7</version>
-      			</plugin>
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.asciidoctor</groupId>
+                    <artifactId>asciidoctor-maven-plugin</artifactId>
+                    <version>${asciidoctor.maven.plugin.version}</version>
+                    <dependencies>
+                        <dependency>
+                            <groupId>org.asciidoctor</groupId>
+                            <artifactId>asciidoctorj-pdf</artifactId>
+                            <version>${asciidoctorj.pdf.version}</version>
+                        </dependency>
+                    </dependencies>
+                </plugin>
+            </plugins>
+        </pluginManagement>
 
-				<plugin>
-					<groupId>com.agilejava.docbkx</groupId>
-					<artifactId>docbkx-maven-plugin</artifactId>
-					<version>2.0.14</version>
-					<dependencies>
-						<dependency>
-							<groupId>org.docbook</groupId>
-							<artifactId>docbook-xml</artifactId>
-							<version>4.4</version>
-							<scope>runtime</scope>
-						</dependency>
-					</dependencies>
-				</plugin>
+        <plugins>
+            <plugin>
+                <groupId>org.asciidoctor</groupId>
+                <artifactId>asciidoctor-maven-plugin</artifactId>
+                <configuration>
+                    <sourceDirectory>src/docs/asciidoc</sourceDirectory>
+                    <doctype>book</doctype>
+                    <!-- Attributes common to all output formats -->
+                    <attributes>
+                        <endpoint-url>http://cayenne.apache.org</endpoint-url>
 
-			</plugins>
-		</pluginManagement>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-deploy-plugin</artifactId>
-				<configuration>
-					<skip>true</skip>
-				</configuration>
-			</plugin>
-			<plugin>
-       			<groupId>org.apache.maven.plugins</groupId>
-        		<artifactId>maven-resources-plugin</artifactId>
-        		<executions>
-    				<execution>
-    					<id>prepare-css</id>
-    					<!-- Ensure CSS/XSL filters are applied prior to DocBook -->
-    					<goals>
-							<goal>resources</goal>
-						</goals>
-       					<phase>process-resources</phase>
-    				</execution>
-				</executions>
-      		</plugin>
-			<plugin>
-				<groupId>com.agilejava.docbkx</groupId>
-				<artifactId>docbkx-maven-plugin</artifactId>
-				<configuration>
-					<xincludeSupported>true</xincludeSupported>
-					<highlightSource>true</highlightSource>
-					<targetDirectory>${basedir}/target/site</targetDirectory>
-					<includes>index.xml</includes>				
-				</configuration>
-				<executions>
-					<execution>
-						<id>build-html</id>
-						<configuration>
-							<htmlCustomization>${project.build.outputDirectory}/xsl/html.xsl</htmlCustomization>
-							<chunkedOutput>true</chunkedOutput>
-							<postProcess>
-								<copy todir="${basedir}/target/site/index/css">
-									<fileset dir="${basedir}/src/docbkx/css" />
-								</copy>
-								<copy todir="${basedir}/target/site/index/img">
-									<fileset dir="${basedir}/src/docbkx/img" />
-								</copy>
-							</postProcess>
-						</configuration>
-						<phase>process-resources</phase>
-						<goals>
-							<goal>generate-html</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-		</plugins>
-	</build>
+                        <basedir>${project.basedir}</basedir>
+                        <sourcedir>${project.build.sourceDirectory}</sourcedir>
+
+                        <imagesdir>images</imagesdir>
+                        <icons>font</icons>
+
+                        <sectanchors>true</sectanchors>
+                        <idprefix /> <!-- set the idprefix to blank -->
+                        <idseparator>-</idseparator>
+                    </attributes>
+                </configuration>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.jruby</groupId>
+                        <artifactId>jruby-complete</artifactId>
+                        <version>${jruby.version}</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.asciidoctor</groupId>
+                        <artifactId>asciidoctorj</artifactId>
+                        <version>${asciidoctorj.version}</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
+            <!-- Move images to proper path for site -->
+            <plugin>
+                <artifactId>maven-resources-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>copy docs for site</id>
+                        <phase>install</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/site/</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>${project.build.directory}/tmp/</directory>
+                                    <includes>
+                                        <include>${project.artifactId}.html</include>
+                                        <include>${project.artifactId}.toc.html</include>
+                                    </includes>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+
+                    <execution>
+                        <id>copy images for site</id>
+                        <phase>install</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/site/${project.artifactId}/images/</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>${project.build.directory}/tmp/images/</directory>
+                                    <filtering>true</filtering>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>

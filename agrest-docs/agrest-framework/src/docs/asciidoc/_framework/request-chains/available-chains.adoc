@@ -1,0 +1,32 @@
+=== Available Chains
+
+As demonstrated by earlier examples, to process a given request you need to build an
+appropriate AgREST "chain". Each chain starts with a call to a static method of AgREST
+class, that determines chain type, parameters it can take, and the type of response it
+generates. Each chain type naturally maps to a single HTTP method. Although ultimately the
+mapping of chains to methods is not enforced by AgREST and is left to the application
+developer. The following chains are available:
+
+[source, Java]
+----
+// use with @GET
+Ag.select(SomeEntity.class, config)...
+
+// use with @DELETE
+Ag.delete(SomeEntity.class, config)...
+
+// use with @POST
+Ag.create(SomeEntity.class, config)...
+
+// use with @POST
+Ag.createOrUpdate(SomeEntity.class, config)...
+
+// use with @PUT
+Ag.idempotentCreateOrUpdate(SomeEntity.class, config)...
+
+// use with @PUT
+Ag.idempotentFullSync(SomeEntity.class, config)...
+
+// use with @GET for metadata endpoints
+Ag.metadata(SomeEntity.class, config)...
+----

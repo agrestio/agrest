@@ -1,0 +1,6 @@
+=== routingStage
+
+Registers a processor to be executed after the specified standard execution stage.
+The processor can inspect and modify provided context `SelectContext` or `UpdateContext`.
+When finished, processor can either pass control to the next stage by returning
+`ProcessorOutcome.CONTINUE`, or terminate the pipeline by returning `ProcessorOutcome.STOP`.

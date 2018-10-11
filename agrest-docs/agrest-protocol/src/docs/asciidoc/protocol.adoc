@@ -1,0 +1,15 @@
+= AgREST Protocol
+
+// enable section numbering, limiting depth to 2
+:sectnums:
+:sectnumlevels: 2
+
+include::_protocol/overview.adoc[]
+
+include::_protocol/json-documents.adoc[]
+
+include::_protocol/dates-and-times.adoc[]
+
+include::_protocol/control-parameters.adoc[]
+
+include::_protocol/protocol-extensions.adoc[]
