@@ -57,13 +57,13 @@
     <h2 id="getting-started"><a class="anchor" href="#getting-started"></a>2. Getting Started</h2>
     <div class="sectionbody">
         <div class="paragraph">
-            <p>To load AgREST in your project, follow these simple steps:</p>
+            <p>To load Agrest in your project, follow these simple steps:</p>
         </div>
         <div class="olist arabic">
             <ol class="arabic">
                 <li>
-                    <p>Declare AgREST dependency. Here is a Maven example. If you are using Gradle or
-                        Ant, you do what needs to be done there to include AgREST dependency.</p>
+                    <p>Declare Agrest dependency. Here is a Maven example. If you are using Gradle or
+                        Ant, you do what needs to be done there to include Agrest dependency.</p>
                     <div class="listingblock">
                         <div class="content">
 <pre class="highlight"><code class="language-XML" data-lang="XML">&lt;dependency&gt;
@@ -84,7 +84,7 @@ import org.glassfish.jersey.server.ResourceConfig;
 import io.agrest.runtime.AgBuilder;
 
 /**
- * A Jersey-specific JAX-RS Application class that loads AgREST.
+ * A Jersey-specific JAX-RS Application class that loads Agrest.
  */
 @ApplicationPath("/")
 public class JaxRsApplication extends ResourceConfig {
@@ -105,7 +105,7 @@ public class JaxRsApplication extends ResourceConfig {
             </ol>
         </div>
         <div class="paragraph">
-            <p>Now you are ready to write AgREST endpoints.</p>
+            <p>Now you are ready to write Agrest endpoints.</p>
         </div>
     </div>
 </div>
@@ -114,7 +114,7 @@ public class JaxRsApplication extends ResourceConfig {
     <div class="sectionbody">
         <div class="paragraph">
             <p>Let&#8217;s create a resource class called DomainResource, annotated with JAX-RS @Path and
-                @Produces annotations. One extra thing we need for AgREST to work is a an instance of
+                @Produces annotations. One extra thing we need for Agrest to work is a an instance of
                 <code>javax.ws.rs.core.Configuration</code>, that can be injected with <code>@Context</code> annotation:</p>
         </div>
         <div class="listingblock">
@@ -152,8 +152,8 @@ public SimpleResponse create(String data) {
                 </div>
             </div>
             <div class="paragraph">
-                <p>Here we&#8217;ve built a very simple "create chain" using AgREST fluent API. It starts with a
-                    static "create" method on AgREST class, taking a type of entity to create (Domain) and
+                <p>Here we&#8217;ve built a very simple "create chain" using Agrest fluent API. It starts with a
+                    static "create" method on Agrest class, taking a type of entity to create (Domain) and
                     previously injected Configuration. Finally it calls "sync" method to execute the
                     request. "data" String is expected to be an "Update Document" (see <a href="protocol.html#request-update-document">Request: Update Document</a>), i.e. a single object or an array of objects.
                     Now if you compile your app and deploy it in a web container (e.g. Tomcat), you may call
@@ -226,7 +226,7 @@ Content-Type: application/json
                 </div>
             </div>
             <div class="paragraph">
-                <p>Since select chain above incorporates UriInfo, it will recognize AgREST control
+                <p>Since select chain above incorporates UriInfo, it will recognize Agrest control
                     parameters passed from the client (see <a href="protocol.html#control-parameters">Control Parameters</a>). Let&#8217;s try using "cayenneExp" filter and "include":</p>
             </div>
             <div class="paragraph">
@@ -250,7 +250,7 @@ Content-Type: application/json
             <h3 id="read-a-single-entity-with-get"><a class="anchor" href="#read-a-single-entity-with-get"></a>3.3. Read a Single Entity with <code>GET</code></h3>
             <div class="paragraph">
                 <p>A common request is to locate a single instance of an entity by ID. Here is how
-                    this can be done with AgREST:</p>
+                    this can be done with Agrest:</p>
             </div>
             <div class="listingblock">
                 <div class="content">
@@ -267,7 +267,7 @@ public DataResponse&lt;Domain&gt; getOne(@PathParam("id") int id, @Context UriIn
                 </div>
             </div>
             <div class="paragraph">
-                <p>Here we are binding "id" as a URL path parameter, but also notice that AgREST doesn&#8217;t
+                <p>Here we are binding "id" as a URL path parameter, but also notice that Agrest doesn&#8217;t
                     mandate any specific place in the URL for ID. This is a decision made by the developer.
                     Calling this endpoint, we&#8217;ll get an expected result:</p>
             </div>
@@ -330,7 +330,7 @@ Content-Type: application/json
                 </div>
             </div>
             <div class="paragraph">
-                <p>Apart of that, AgREST provides other ways to update entity with <code>PUT</code>. Please, refer to <a href="#idempotency-of-updating-chains">Idempotency of Updating Chains</a> for more information.</p>
+                <p>Apart of that, Agrest provides other ways to update entity with <code>PUT</code>. Please, refer to <a href="#idempotency-of-updating-chains">Idempotency of Updating Chains</a> for more information.</p>
             </div>
         </div>
     </div>
@@ -342,10 +342,10 @@ Content-Type: application/json
             <h3 id="available-chains"><a class="anchor" href="#available-chains"></a>4.1. Available Chains</h3>
             <div class="paragraph">
                 <p>As demonstrated by earlier examples, to process a given request you need to build an
-                    appropriate AgREST "chain". Each chain starts with a call to a static method of AgREST
+                    appropriate Agrest "chain". Each chain starts with a call to a static method of Agrest
                     class, that determines chain type, parameters it can take, and the type of response it
                     generates. Each chain type naturally maps to a single HTTP method. Although ultimately the
-                    mapping of chains to methods is not enforced by AgREST and is left to the application
+                    mapping of chains to methods is not enforced by Agrest and is left to the application
                     developer. The following chains are available:</p>
             </div>
             <div class="listingblock">
@@ -378,7 +378,7 @@ Ag.metadata(SomeEntity.class, config)...</code></pre>
             <div class="paragraph">
                 <p>Many of the updating chains need to match objects coming as Update Documents (see <a href="protocol.html#request-update-document">Request: Update Document</a>) against
                     objects in the database. E.g. "createOrUpdate" needs to know whether a JSON object is new (and needs to be created)
-                    or it already exists (and needs to be updated). By default AgREST would attempt to match each JSON
+                    or it already exists (and needs to be updated). By default Agrest would attempt to match each JSON
                     "id" attribute with a DB record primary key. This is a reasonable and useful strategy. Its
                     main limitation though - it can&#8217;t be used for entities with ids generated on the server when
                     combined with idempotent requests (see the next section on idempotency). To work around this
@@ -397,7 +397,7 @@ Ag.metadata(SomeEntity.class, config)...</code></pre>
                 </div>
             </div>
             <div class="paragraph">
-                <p><code>ByKeyObjectMapperFactory</code> mapper is provided by AgREST. If something other than mapping by property is needed, a
+                <p><code>ByKeyObjectMapperFactory</code> mapper is provided by Agrest. If something other than mapping by property is needed, a
                     custom <code>ObjectMapperFactory</code> can be coded by the user.</p>
             </div>
         </div>
@@ -421,8 +421,8 @@ Ag.metadata(SomeEntity.class, config)...</code></pre>
     <h2 id="non-persistent-properties-and-pojos"><a class="anchor" href="#non-persistent-properties-and-pojos"></a>5. Non-Persistent Properties and POJOs</h2>
     <div class="sectionbody">
         <div class="paragraph">
-            <p>AgREST maintains a model of all entities that can be exposed via REST. All persistent
-                entities present in the underlying ORM (usually Cayenne) are automatically added to AgREST
+            <p>Agrest maintains a model of all entities that can be exposed via REST. All persistent
+                entities present in the underlying ORM (usually Cayenne) are automatically added to Agrest
                 model. What if you want to expose additional non-persistent properties of peristent objects or
                 build entire request chains that are not based on persistent entities? There are three
                 annotations to help with it: <code>@AgAttribute</code> or <code>@AgRelationship</code> and <code>@AgId</code>.</p>
@@ -477,7 +477,7 @@ public class SomeClass {
             </div>
         </div>
         <div class="paragraph">
-            <p>Creating and annotating a POJO was easy. But AgREST still requires a backend that knows
+            <p>Creating and annotating a POJO was easy. But Agrest still requires a backend that knows
                 how to select and/or update those POJOs. Such custom "backends" can be configured per request
                 chain using chain listener API. It is up to the caller what strategy the backend would utilize
                 (maybe a REST call, or reading/writing from a NoSQL DB, etc.) :</p>
@@ -509,7 +509,7 @@ Ag.select(SomeClass.class, config).listener(altBackend).uri(urlInfo).get();</cod
     <h2 id="customizing-request-processing"><a class="anchor" href="#customizing-request-processing"></a>8. Customizing Request Processing</h2>
     <div class="sectionbody">
         <div class="paragraph">
-            <p>To customize request processing chain AgREST provides the <code>stage</code> mechanism.
+            <p>To customize request processing chain Agrest provides the <code>stage</code> mechanism.
                 E.g. we have usual get-by-id request chain:</p>
         </div>
         <div class="listingblock">
@@ -572,7 +572,7 @@ public DataResponse&lt;Domain&gt; getOne(@PathParam("id") int id, @Context UriIn
                 </div>
             </div>
             <div class="paragraph">
-                <p>AgREST supports the following stage types:</p>
+                <p>Agrest supports the following stage types:</p>
             </div>
             <table class="tableblock frame-all grid-all" style="width: 50%;">
                 <colgroup>
@@ -628,7 +628,7 @@ public DataResponse&lt;Domain&gt; getOne(@PathParam("id") int id, @Context UriIn
                 </tbody>
             </table>
             <div class="paragraph">
-                <p>Apart of the <code>stage</code> method AgREST provides additional two <code>terminalStage</code> and <code>routingStage</code> methods.
+                <p>Apart of the <code>stage</code> method Agrest provides additional two <code>terminalStage</code> and <code>routingStage</code> methods.
                     These two could be customised in the same way.</p>
             </div>
             <div class="paragraph">
@@ -640,7 +640,7 @@ public DataResponse&lt;Domain&gt; getOne(@PathParam("id") int id, @Context UriIn
             <div class="paragraph">
                 <p>Registers a consumer to be executed after the specified standard execution stage.
                     The rest of the standard pipeline following the named stage will be skipped.
-                    This is useful for quick assembly of custom back-ends that reuse the initial stages of AgREST processing,
+                    This is useful for quick assembly of custom back-ends that reuse the initial stages of Agrest processing,
                     but query the data store on their own. The consumer can inspect and modify provided context <code>SelectContext</code> or <code>UpdateContext</code>.</p>
             </div>
         </div>

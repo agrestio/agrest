@@ -30,7 +30,7 @@
     <h2 id="overview"><a class="anchor" href="#overview"></a>1. Overview</h2>
     <div class="sectionbody">
         <div class="paragraph">
-            <p>AgREST Protocol is a simple HTTP/JSON-based message protocol. It operates on an object
+            <p>Agrest Protocol is a simple HTTP/JSON-based message protocol. It operates on an object
                 model implicitly shared between a client and a server. It defines the format of JSON
                 documents exchanged between client and server, and a set of control parameters that let the
                 client to control representation of the model returned from the server. E.g. the client may
@@ -93,7 +93,7 @@ Content-Type: application/json
             <h3 id="response-collection-document"><a class="anchor" href="#response-collection-document"></a>2.2. Response: Collection Document</h3>
             <div class="paragraph">
                 <p>A document that passes the data from the server to the client. This is the main
-                    representation of data in AgREST.</p>
+                    representation of data in Agrest.</p>
             </div>
             <div class="listingblock">
                 <div class="content">
@@ -203,13 +203,13 @@ Content-Type: application/json
                 <p>Example 3: Filtering with parameters using positional bindings.</p>
             </div>
             <div class="paragraph">
-                <p><code>cayenneExp=["articles.body like $b","%AgREST%"]</code></p>
+                <p><code>cayenneExp=["articles.body like $b","%Agrest%"]</code></p>
             </div>
             <div class="paragraph">
                 <p>Example 4: Filtering with parameters using named bindings.</p>
             </div>
             <div class="paragraph">
-                <p><code>cayenneExp={ "exp" : "articles.body like $b", "params":{"b":"%AgREST%"}}</code></p>
+                <p><code>cayenneExp={ "exp" : "articles.body like $b", "params":{"b":"%Agrest%"}}</code></p>
             </div>
         </div>
         <div class="sect2">
@@ -260,16 +260,16 @@ Content-Type: application/json
         <div class="sect2">
             <h3 id="structuring-collection-with-mapby"><a class="anchor" href="#structuring-collection-with-mapby"></a>4.4. Structuring Collection with <code>mapBy</code></h3>
             <div class="paragraph">
-                <p>AgREST presents the response as an array of entities <a href="#response-collection-document">Response: Collection Document</a>.
+                <p>Agrest presents the response as an array of entities <a href="#response-collection-document">Response: Collection Document</a>.
                     E.g. Request of articles returns the following array:</p>
             </div>
             <div class="listingblock">
                 <div class="content">
 <pre class="highlight"><code class="language-JSON" data-lang="JSON">{
 "data" : [
-    { "title" : "AgREST mapBy",  "body" : "mapBy is used ..", "publishedOn" : "6 July, 2018" },
+    { "title" : "Agrest mapBy",  "body" : "mapBy is used ..", "publishedOn" : "6 July, 2018" },
     { "title" : "Other Tech News",  "body" : "Java community ..", "publishedOn" : "8 October, 2017" },
-    { "title" : "Introducing AgREST",  "body" : "AgREST is a ..", "publishedOn" : "6 July, 2018" }
+    { "title" : "Introducing Agrest",  "body" : "Agrest is a ..", "publishedOn" : "6 July, 2018" }
   ],
   "total":3
 }</code></pre>
@@ -289,8 +289,8 @@ Content-Type: application/json
         { "title" : "Other Tech News",  "body" : "Java community …", "publishedOn" : "8 October, 2017" }
     ],
     "6 July, 2018" : [
-        { "title" : "AgREST mapBy",  "body" : "mapBy is used …", "publishedOn" : "6 July, 2018" },
-        { "title" : "Introducing AgREST",  "body" : "AgREST is a …", "publishedOn" : "6 July, 2018" }
+        { "title" : "Agrest mapBy",  "body" : "mapBy is used …", "publishedOn" : "6 July, 2018" },
+        { "title" : "Introducing Agrest",  "body" : "Agrest is a …", "publishedOn" : "6 July, 2018" }
     ]
   },
   "total" : 3
@@ -316,7 +316,7 @@ Content-Type: application/json
             </div>
             <div class="listingblock">
                 <div class="content">
-                    <pre class="highlight"><code class="language-JSON" data-lang="JSON">{ "id" : 45, "name" : "AgREST Site" }</code></pre>
+                    <pre class="highlight"><code class="language-JSON" data-lang="JSON">{ "id" : 45, "name" : "Agrest Site" }</code></pre>
                 </div>
             </div>
             <div class="paragraph">
@@ -341,9 +341,9 @@ Content-Type: application/json
 <pre class="highlight"><code class="language-JSON" data-lang="JSON">{
    "id" : 45,
    "articles" : [
-      { "title" : "AgREST Includes" },
+      { "title" : "Agrest Includes" },
       { "title" : "Other Tech News" },
-      { "title" : "Introducing AgREST" }
+      { "title" : "Introducing Agrest" }
    ]
 }</code></pre>
                 </div>
@@ -354,15 +354,15 @@ Content-Type: application/json
                     of related objects for each root object.</p>
             </div>
             <div class="paragraph">
-                <p><code>include={"path":"articles","cayenneExp":"title like '%AgREST%'","sort":"title"}&amp;include=articles.title</code></p>
+                <p><code>include={"path":"articles","cayenneExp":"title like '%Agrest%'","sort":"title"}&amp;include=articles.title</code></p>
             </div>
             <div class="listingblock">
                 <div class="content">
 <pre class="highlight"><code class="language-JSON" data-lang="JSON">{
    "id":45,
    "articles" : [
-      { "title" : "Introducing AgREST" },
-      { "title" : "AgREST Includes" }
+      { "title" : "Introducing Agrest" },
+      { "title" : "Agrest Includes" }
    ]
 }</code></pre>
                 </div>
@@ -377,8 +377,8 @@ Content-Type: application/json
                 <div class="content">
 <pre class="highlight"><code class="language-JSON" data-lang="JSON">{
    "articles" : {
-      "Introducing AgREST" : { "body" : "AgREST is a .." },
-      "AgREST Includes" : { "body" : "Includes are .." }
+      "Introducing Agrest" : { "body" : "Agrest is a .." },
+      "Agrest Includes" : { "body" : "Includes are .." }
    }
 }</code></pre>
                 </div>
@@ -390,13 +390,13 @@ Content-Type: application/json
     <h2 id="protocol-extensions"><a class="anchor" href="#protocol-extensions"></a>5. Protocol Extensions</h2>
     <div class="sectionbody">
         <div class="paragraph">
-            <p><code>AgREST</code> ships with one such optional extension that adapts the framework
+            <p><code>Agrest</code> ships with one such optional extension that adapts the framework
                 for the use with Sencha/ExtJS JavaScript client. This extension is described below.</p>
         </div>
         <div class="sect2">
             <h3 id="sencha-adapter"><a class="anchor" href="#sencha-adapter"></a>5.1. Sencha Adapter</h3>
             <div class="paragraph">
-                <p>Provides a few extensions to the AgREST protocol to better handle certain Sencha features:</p>
+                <p>Provides a few extensions to the Agrest protocol to better handle certain Sencha features:</p>
             </div>
             <div class="ulist">
                 <ul>
