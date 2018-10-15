@@ -1,10 +1,6 @@
 == Protocol Extensions
 
-With the help of
-https://raw.githubusercontent.com/agrestio/agrest/master/agrest/src/main/java/io/agrest/runtime/adapter/AgAdapter.java[AgAdapter]
-and other AgREST extension techniques one can extend or
-customize the protocol to recognize extra control parameters, etc.
-`AgAdapter` ships with one such optional extension that adapts the framework
+`AgREST` ships with one such optional extension that adapts the framework
 for the use with Sencha/ExtJS JavaScript client. This extension is described below.
 
 include::protocol-extensions/sencha-adapter.adoc[]

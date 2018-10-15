@@ -66,7 +66,7 @@ components:
 
 
 ==== 2. Attach AgREST protocol definition
-The AgREST protocol file <<protocol>> contains definition of all <<Control Parameters>>.
+The AgREST protocol file <<protocol>> contains definition of all <<protocol#control-parameters, Control Parameters>>.
 Just place this `protocol.yaml` in the catalog were your main `bookstore-api.yaml` file is located (e.g. 'src/main/java/resources').
 
 ==== 3. Define resources
