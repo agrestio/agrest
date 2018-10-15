@@ -1,7 +1,7 @@
 === Validate the API implementation
 
-After successful finishing of generation the `CategoryResource.java` could be found in the output catalog.
-This class has the ready-to-use implementation (not a stub) of all methods defined in the `.yaml` file.
+After it has been successfully generated, `CategoryResource.java` could be found in the output catalog.
+This class has a ready-to-use implementation (not a stub) of all methods defined in the `.yaml` file.
 
 [source, Java]
 ----
@@ -52,7 +52,7 @@ public class CategoryResource {
 }
 ----
 
-If you configure maven plugin to generate models <<generateModels>>, the POJO `Category.java` will be generated.
+If you configure Maven plugin to generate models <<generateModels>>, the POJO `Category.java` will be generated.
 
 [source, Java]
 ----

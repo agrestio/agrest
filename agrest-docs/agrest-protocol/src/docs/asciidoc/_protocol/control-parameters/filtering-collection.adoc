@@ -18,9 +18,9 @@ Example 2: Filtering using outer join (the "+" sign is Cayenne notation for oute
 
 Example 3: Filtering with parameters using positional bindings.
 
-`cayenneExp=["articles.body like $b","%AgREST%"]`
+`cayenneExp=["articles.body like $b","%Agrest%"]`
 
 
 Example 4: Filtering with parameters using named bindings.
 
-`cayenneExp={ "exp" : "articles.body like $b", "params":{"b":"%AgREST%"}}`
+`cayenneExp={ "exp" : "articles.body like $b", "params":{"b":"%Agrest%"}}`

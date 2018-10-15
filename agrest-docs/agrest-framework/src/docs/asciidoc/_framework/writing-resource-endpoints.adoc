@@ -1,7 +1,7 @@
 == Writing Resource Endpoints
 
 Let's create a resource class called DomainResource, annotated with JAX-RS @Path and
-@Produces annotations. One extra thing we need for AgREST to work is a an instance of
+@Produces annotations. One extra thing we need for Agrest to work is a an instance of
 `javax.ws.rs.core.Configuration`, that can be injected with `@Context` annotation:
 
 [source, Java]

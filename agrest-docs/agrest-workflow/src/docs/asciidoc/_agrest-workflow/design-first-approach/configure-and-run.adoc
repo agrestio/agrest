@@ -1,5 +1,5 @@
-=== Configure and run the API generation
-There is an example of the maven plugin configuration:
+=== Configure and run API generation
+There is an example of the Maven plugin configuration:
 [source, XML]
 ----
 <plugin>
@@ -39,7 +39,7 @@ Points to your API definition in `.yaml` or `.json` formats.
 
 [#generatorName]
 ===== <generatorName>
-Sets the AgREST custom code generator.
+Sets the Agrest custom code generator.
 
 [#output]
 ===== <output>
@@ -52,8 +52,8 @@ Contains full package name of resource implementation classes to be generated.
 [#modelPackage]
 ===== <modelPackage>
 Contains full package name of model classes.
-If set <<generateModels>> true, the POJO stubs of models will be generated.
-Otherwise, will be used existing model classes from this package.
+If <<generateModels>> is set to `true`, the POJO stubs of models will be generated.
+Otherwise, existing model classes from this package will be used.
 
 [#generateModels]
 ===== <generateModels>
@@ -61,14 +61,14 @@ Generates POJO of models or uses existing ones.
 
 [#skipOverwrite]
 ===== <skipOverwrite>
-If it is set in `false`, all generated files will be overwritten each time during `mvn clean install`.
-So, if you are planning to customize the generated API implementation, this parameter should be set in `true`.
+If it is set to `false`, all generated files will be overwritten each time during `mvn clean install`.
+So, if you are planning to customize the generated API implementation, this parameter should be set to `true`.
 
 
 ==== Run the Application
 
-As is mentioned in the chapter <<Building and running>> the Application is run by command `mvn jetty:run`.
-After the Jetty server start, the following `curl` commands can be used for the API testing:
+As we mentioned in the chapter <<Building and running>> the Application is run by command `mvn jetty:run`.
+After the Jetty server starts, the following `curl` commands can be used for the API testing:
 
 ```
 curl -i -X GET 'http://localhost:8080/api/v1/category'

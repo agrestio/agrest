@@ -1,10 +1,10 @@
 === Available Chains
 
 As demonstrated by earlier examples, to process a given request you need to build an
-appropriate AgREST "chain". Each chain starts with a call to a static method of AgREST
+appropriate Agrest "chain". Each chain starts with a call to a static method of Agrest
 class, that determines chain type, parameters it can take, and the type of response it
 generates. Each chain type naturally maps to a single HTTP method. Although ultimately the
-mapping of chains to methods is not enforced by AgREST and is left to the application
+mapping of chains to methods is not enforced by Agrest and is left to the application
 developer. The following chains are available:
 
 [source, Java]

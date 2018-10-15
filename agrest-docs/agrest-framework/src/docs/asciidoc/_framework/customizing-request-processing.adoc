@@ -1,6 +1,6 @@
 == Customizing Request Processing
 
-To customize request processing chain AgREST provides the `stage` mechanism.
+To customize request processing chain Agrest provides the `stage` mechanism.
 E.g. we have usual get-by-id request chain:
 
 [source, Java]

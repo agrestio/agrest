@@ -1,13 +1,13 @@
 === Introduction
 
-The Code-First is mainly useful in Domain Driven Design. In the Code-First approach, you focus on the domain
+The Code-First approach is useful mainly in Domain Driven Design. In the Code-First approach, you focus on the domain
 of your application and start creating classes for your domain entity rather than creating your database (DB-First) or creating your API (Design-First) first.
-And only after domain classes creating will be created a DB structure and an appropriate API specification.
+And only after you can create domain classes, a DB structure and an appropriate API specification will be created.
 
-With regards of creating API specification it means that the specification can automatically generated from the class sources.
-This generating has to use a classes meta information that can be provided using annotations for example.
+With regards of creating API specification, it means that the specification can be automatically generated from the class sources.
+This generation has to use a classes meta information that can be provided using annotations, for example.
 
-AgREST provides following annotations:
+Agrest provides the following annotations:
 
 `@AgAttribute`
 
@@ -17,4 +17,5 @@ AgREST provides following annotations:
 
 `@AgResource`
 
-If you specify by these annotations your models and resources, AgREST maven plugin will generate an API specification in openapi v.3.0 format.
+If you specify your models and resources using these annotations, the Agrest Maven plugin will generate
+an API specification in the openapi v.3.0 format.

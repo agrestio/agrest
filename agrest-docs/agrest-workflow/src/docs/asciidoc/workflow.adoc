@@ -1,4 +1,4 @@
-= AgREST Workflow
+= Agrest Workflow
 
 // enable section numbering, limiting depth to 2
 :sectnums:

@@ -1,4 +1,4 @@
-= AgREST Overview
+= Agrest Overview
 :revnumber: {project-major-version} ({project-version})
 // enable section numbering, limiting depth to 2
 :sectnums:

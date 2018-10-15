@@ -1,6 +1,6 @@
 == Supported Data Stores
 
-AgREST is written on top of http://cayenne.apache.org[Apache Cayenne ORM]
+Agrest is written on top of http://cayenne.apache.org[Apache Cayenne ORM]
 and supports any relational data store, such as MySQL or Oracle.
 Support for alternative data stores can be provided with relative ease. E.g. NoSQL
 databases, flat files, etc. E.g. we've written POJO and LDAP backends.
