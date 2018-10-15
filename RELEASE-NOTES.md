@@ -1,7 +1,12 @@
 Release 3.0
 
+* #285 OpenApi integration: Design First Approach
 * #331 LinkRest to AgREST rebranding: Rename packages and files
+* #333 Actualize documentation
+* #338 Update gh-pages static documentation
 * #340 Removing API deprecated in 2.x
+* #341 Create example of application
+* #342 Add add an extra method to AgClient that takes a configuration callback
 
 Release 2.13
 
