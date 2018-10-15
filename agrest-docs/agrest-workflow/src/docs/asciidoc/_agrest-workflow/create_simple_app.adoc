@@ -1,4 +1,4 @@
-== Create a Simple `AgREST` App
+== Create a Simple `Agrest` App
 
 include::create_simple_app/setup.adoc[]
 

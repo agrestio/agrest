@@ -28,7 +28,7 @@ public DataResponse<Domain> getOne(@PathParam("id") int id, @Context UriInfo uri
 }
 ----
 
-AgREST supports the following stage types:
+Agrest supports the following stage types:
 
 [width="50%"]
 |===
@@ -48,7 +48,7 @@ AgREST supports the following stage types:
                 |DELETE_IN_DATA_STORE
 |===
 
-Apart of the `stage` method AgREST provides additional two `terminalStage` and `routingStage` methods.
+Apart of the `stage` method Agrest provides additional two `terminalStage` and `routingStage` methods.
 These two could be customised in the same way.
 
 Please, pay attention that these stage operations are composable. For each stage all custom processors will be invoked in the order they were registered.

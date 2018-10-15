@@ -1,4 +1,4 @@
-= AgREST Protocol
+= Agrest Protocol
 
 // enable section numbering, limiting depth to 2
 :sectnums:

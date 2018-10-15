@@ -1,7 +1,7 @@
 === Response: Collection Document
 
 A document that passes the data from the server to the client. This is the main
-representation of data in AgREST.
+representation of data in Agrest.
 
 [source, JSON]
 ----

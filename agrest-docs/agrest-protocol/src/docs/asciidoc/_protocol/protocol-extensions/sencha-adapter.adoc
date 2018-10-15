@@ -1,6 +1,6 @@
 === Sencha Adapter
 
-Provides a few extensions to the AgREST protocol to better handle certain Sencha features:
+Provides a few extensions to the Agrest protocol to better handle certain Sencha features:
 
 * If a to-one relationship property is included in the Collection, the
   framework would also generate a companion "synthetic" FK property called

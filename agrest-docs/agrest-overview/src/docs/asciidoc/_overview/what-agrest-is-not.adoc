@@ -1,8 +1,8 @@
-== What AgREST is Not
+== What Agrest is Not
 
-AgREST is not an automated engine to take your DB online with a single command.
+Agrest is not an automated engine to take your DB online with a single command.
 You still have to write code for JAX-RS endpoints (however simple and trivial that code might end up being).
 Having this code around allows you to customize processing, implement security around endpoints, hide certain methods, etc.
 This is a defensive approach that goes a long way to avoid unintended consequences when opening up your data on the web.
 
-Having said that, such an engine can be written on top of AgREST with relative ease.
+Having said that, such an engine can be written on top of Agrest with relative ease.

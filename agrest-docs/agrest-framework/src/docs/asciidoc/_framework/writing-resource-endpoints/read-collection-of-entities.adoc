@@ -36,7 +36,7 @@ Content-Type: application/json
 }
 ----
 
-Since select chain above incorporates UriInfo, it will recognize AgREST control
+Since select chain above incorporates UriInfo, it will recognize Agrest control
 parameters passed from the client (see <<protocol#control-parameters, Control Parameters>>). Let's try using "cayenneExp" filter and "include":
 
 

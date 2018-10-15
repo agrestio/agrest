@@ -32,4 +32,4 @@ Content-Type: application/json
 {"success":true}
 ----
 
-Apart of that, AgREST provides other ways to update entity with `PUT`. Please, refer to <<Idempotency of Updating Chains>> for more information.
+Apart of that, Agrest provides other ways to update entity with `PUT`. Please, refer to <<Idempotency of Updating Chains>> for more information.

@@ -1,24 +1,24 @@
 === Running the Application
 
-The goal of this chapter is to run and test our application.
-If the steps described above are done, a structure of the project will look like this:
+In this chapter, we run and test our application.
+After you have completed the above steps, the structure of your project will look like this:
 
 image::../images/bookstore_ide_prjct.png[align="center"]
 
 ==== Building and running
 
-To build the application use a command `mvn clean install`.
+To build the application, use the `mvn clean install` command.
 
-To run a jetty server with our application use a command `mvn jetty:run`
+To run a jetty server with our application, use the mvn jetty:run command.
 
-==== Configure IntelliJ IDEA maven plugin
+==== Configure IntelliJ IDEA Maven plugin
 
-To running using IDE just add a new `Maven` configuration on a menu path `Run -> Edit Configurations...`.
+To run the application using IDE, add a new `Maven` configuration on a menu path `Run -> Edit Configurations...`.
 Then set a `Name:` (e.g. *Bookstore*) and a `Command line:` in *jetty:run*
 
 ==== Testing
 
-After the application running you may call this endpoint to get a list of categories:
+After running the application, you can call this endpoint to get a list of categories:
 
 ```
 curl -i -X GET 'http://localhost:8080/api/category'
@@ -37,18 +37,19 @@ Server: Jetty(9.3.14.v20161028)
 {"data":[],"total":0}
 ----
 
-Obviously, the list is empty. So, use a 'POST' command to add some categories:
+As you may see, the list is empty. So, use the 'POST' command to add some categories:
 
 ```
 curl -i -X POST 'http://localhost:8080/api/category'  -d '{"id":"1","name":"Science Fiction"}'
 ```
-And one more if it is needed:
+
+Repeat the command, if necessary:
 
 ```
 curl -i -X POST 'http://localhost:8080/api/category' -d '{"id":"2","name":"Horror"}'
 ```
 
-Response will be:
+The response will be:
 
 [source, JSON]
 ----
@@ -61,7 +62,7 @@ Server: Jetty(9.3.14.v20161028)
 {"success":true}
 ----
 
-Now make the 'GET' request again and receive the following:
+Now make the 'GET' request again and you will receive the following:
 
 [source, JSON]
 ----

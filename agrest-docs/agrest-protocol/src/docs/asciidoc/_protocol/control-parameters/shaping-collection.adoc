@@ -13,7 +13,7 @@ Example 1: Include default properties (all entity attributes) minus "vhost" attr
 
 [source, JSON]
 ----
-{ "id" : 45, "name" : "AgREST Site" }
+{ "id" : 45, "name" : "Agrest Site" }
 ----
 
 Example 2: Exclude all properties, but "id".
@@ -34,9 +34,9 @@ Example 3: Multiple includes, one of them points to attributes of related entity
 {
    "id" : 45,
    "articles" : [
-      { "title" : "AgREST Includes" },
+      { "title" : "Agrest Includes" },
       { "title" : "Other Tech News" },
-      { "title" : "Introducing AgREST" }
+      { "title" : "Introducing Agrest" }
    ]
 }
 ----
@@ -45,15 +45,15 @@ Example 4: Advanced include. Include specification can itself be a JSON object a
 contain `"cayenneExp"`, `"sort"`, `"start"` and `"limit"` keys shaping up a collection
 of related objects for each root object.
 
-`include={"path":"articles","cayenneExp":"title like '%AgREST%'","sort":"title"}&amp;include=articles.title`
+`include={"path":"articles","cayenneExp":"title like '%Agrest%'","sort":"title"}&amp;include=articles.title`
 
 [source, JSON]
 ----
 {
    "id":45,
    "articles" : [
-      { "title" : "Introducing AgREST" },
-      { "title" : "AgREST Includes" }
+      { "title" : "Introducing Agrest" },
+      { "title" : "Agrest Includes" }
    ]
 }
 ----
@@ -66,8 +66,8 @@ Example 5: Related objects as a map. Here we'll map article bodies by title.
 ----
 {
    "articles" : {
-      "Introducing AgREST" : { "body" : "AgREST is a .." },
-      "AgREST Includes" : { "body" : "Includes are .." }
+      "Introducing Agrest" : { "body" : "Agrest is a .." },
+      "Agrest Includes" : { "body" : "Includes are .." }
    }
 }
 ----

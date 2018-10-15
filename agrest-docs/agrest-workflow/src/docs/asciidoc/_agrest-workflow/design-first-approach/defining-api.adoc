@@ -1,33 +1,34 @@
 === Defining the API
 
-AgREST provides the `AgServerCodegen` class and a set of custom mustache templates to generate an API implementation
+Agrest provides the `AgServerCodegen` class and a set of custom Mustache templates to generate an API implementation
 based on `OpenAPI 3.0` specification.
 
-There is outlined the top-down workflow of creating the API:
+The top-down workflow for creating the API is as follows:
 
 ==== 1. Start with domain models
 Create a `bookstore-api.yaml` file to define your API and put it in the `src/main/java/resources` folder.
-Add general information with regards of your API:
+Add general information regarding your API:
 [source, yaml]
 ----
 openapi: 3.0.0
 servers:
   - url: 'http://127.0.0.1/v1'
 info:
-  title: AgREST based API of Bookstore
+  title: Agrest-based API of Bookstore
   description: An API for interacting with the Bookstore backend server
   version: v1
 ----
 
-Then add definition of your models. If you want to create an updating API (e.g. POST, PUT) of your model
-you have to define a 'requestBodies' element in addition to a 'schemas' one.
+Then add definition of your models.
+If you want to create an updated API (e.g. POST, PUT) of your model, you have to define a 'requestBodies' element
+in addition to a 'schemas' element.
 
-Please, pay attention that you can ether specify existing Java-DB mapping classes
-(based on `CayenneDataObject` e.g. our `Category` and `Book`) or generate simple POJO models  by maven plugin.
+Please make sure that you can either specify existing Java-DB mapping classes
+(based on `CayenneDataObject` e.g. our `Category` and `Book`) or generate simple POJO models  by Maven plugin.
 
-For further information, please refer to <<Configure and run the API generation>> section.
+For further information, please refer to <<Configure and run API generation>> section.
 
-But, for both cases you have to define models in `.yaml` file:
+But in either case you have to define models in the `.yaml` file:
 
 [source, yaml]
 ----
@@ -65,13 +66,14 @@ components:
 ----
 
 
-==== 2. Attach AgREST protocol definition
-The AgREST protocol file <<protocol>> contains definition of all <<protocol#control-parameters, Control Parameters>>.
+==== 2. Attach Agrest protocol definition
+The Agrest protocol file <<protocol>> contains definition of all <<protocol#control-parameters, Control Parameters>>.
 Just place this `protocol.yaml` in the catalog were your main `bookstore-api.yaml` file is located (e.g. 'src/main/java/resources').
 
 ==== 3. Define resources
 Add REST API resource definition to your `bookstore-api.yaml` file.
-Pay attention that AgREST protocol parameters are defined as references.
+Make sure that Agrest protocol parameters are defined as references.
+
 [source, yaml]
 ----
 paths:
@@ -131,12 +133,12 @@ paths:
 ----
 
 ==== 4. Run build-time API generation
-To generate an AgREST based API is used a special maven plugin that should be configured
+To generate an Agrest-based API is used a special Maven plugin that should be configured
 in accordance with your `.yaml` files location <<inputSpec>>, packages <<apiPackage>>, output catalog <<output>>, etc.
 
 `mvn clean install` runs generation of the API.
 
-For more details, please refer to the <<Configure and run the API generation>> section
+For more details, please refer to the <<Configure and run API generation>> section
 
 
 

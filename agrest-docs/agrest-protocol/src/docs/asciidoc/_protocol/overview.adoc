@@ -1,6 +1,6 @@
 == Overview
 
-AgREST Protocol is a simple HTTP/JSON-based message protocol. It operates on an object
+Agrest Protocol is a simple HTTP/JSON-based message protocol. It operates on an object
 model implicitly shared between a client and a server. It defines the format of JSON
 documents exchanged between client and server, and a set of control parameters that let the
 client to control representation of the model returned from the server. E.g. the client may

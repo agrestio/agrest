@@ -1,6 +1,6 @@
 == Protocol Extensions
 
-`AgREST` ships with one such optional extension that adapts the framework
+`Agrest` ships with one such optional extension that adapts the framework
 for the use with Sencha/ExtJS JavaScript client. This extension is described below.
 
 include::protocol-extensions/sencha-adapter.adoc[]
