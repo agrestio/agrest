@@ -133,8 +133,9 @@ paths:
 ----
 
 ==== 4. Run build-time API generation
-To generate an Agrest-based API is used a special Maven plugin that should be configured
-in accordance with your `.yaml` files location <<inputSpec>>, packages <<apiPackage>>, output catalog <<output>>, etc.
+To generate an Agrest-based API, a special Maven plugin is used.
+This plugin should be configured in accordance with your `.yaml` files location
+<<inputSpec>>, packages <<apiPackage>>, output catalog <<output>>, etc.
 
 `mvn clean install` runs generation of the API.
 
