@@ -4,7 +4,7 @@ The Code-First approach is useful mainly in Domain Driven Design. In the Code-Fi
 of your application and start creating classes for your domain entity rather than creating your database (DB-First) or creating your API (Design-First) first.
 And only after you can create domain classes, a DB structure and an appropriate API specification will be created.
 
-With regards of creating API specification, it means that the specification can be automatically generated from the class sources.
+With regards to creating API specification, it means that the specification can be automatically generated from the class sources.
 This generation has to use a classes meta information that can be provided using annotations, for example.
 
 Agrest provides the following annotations:
