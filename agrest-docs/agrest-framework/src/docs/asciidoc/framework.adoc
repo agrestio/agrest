@@ -1,4 +1,4 @@
-= AgREST Framework
+= Agrest Framework
 
 // enable section numbering, limiting depth to 2
 :sectnums:

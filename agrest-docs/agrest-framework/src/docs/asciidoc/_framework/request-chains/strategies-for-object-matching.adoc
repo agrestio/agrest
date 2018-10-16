@@ -2,7 +2,7 @@
 
 Many of the updating chains need to match objects coming as Update Documents (see <<protocol#request-update-document, Request: Update Document>>) against
 objects in the database. E.g. "createOrUpdate" needs to know whether a JSON object is new (and needs to be created)
-or it already exists (and needs to be updated). By default AgREST would attempt to match each JSON
+or it already exists (and needs to be updated). By default Agrest would attempt to match each JSON
 "id" attribute with a DB record primary key. This is a reasonable and useful strategy. Its
 main limitation though - it can't be used for entities with ids generated on the server when
 combined with idempotent requests (see the next section on idempotency). To work around this
@@ -19,5 +19,5 @@ Ag.idempotentCreateOrUpdate(Domain.class, config)
   .sync(entityData);
 ----
 
-`ByKeyObjectMapperFactory` mapper is provided by AgREST. If something other than mapping by property is needed, a
+`ByKeyObjectMapperFactory` mapper is provided by Agrest. If something other than mapping by property is needed, a
  custom `ObjectMapperFactory` can be coded by the user.

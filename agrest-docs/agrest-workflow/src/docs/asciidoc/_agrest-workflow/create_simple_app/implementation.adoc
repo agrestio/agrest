@@ -1,12 +1,12 @@
 === Implementation
 
-The goal of this chapter is to implement a simple application to demonstrate AgREST features.
-The application uses `Cayenne` as an ORM framework and for the further information
+In this chapter, we implement a simple application to demonstrate Agrest features.
+The application uses `Cayenne` as an ORM framework and for further information
 regarding a DB mapping please, refer to http://cayenne.apache.org[Apache Cayenne ORM]
 
 ==== Configure `Cayenne`
 
-In an application `resources` folder create a Cayenne project file:
+In the application's `resources` folder, create a Cayenne project file:
 
 *cayenne-project.xml*
 [source, XML]
@@ -30,7 +30,7 @@ In an application `resources` folder create a Cayenne project file:
 </domain>
 ----
 
-Then in the same folder add a file contains a basic Cayenne mapping.
+In the same folder, add a file that contains a basic Cayenne mapping.
 The mapping is done based on the ER diagram from the <<Starting a project>> charter:
 
 *datamap.map.xml*
@@ -74,7 +74,7 @@ The mapping is done based on the ER diagram from the <<Starting a project>> char
 
 ==== Define domain models
 
-Create two classes to present data objects in a package `org.example.agrest.persistent`:
+Create two classes to present data objects in package `org.example.agrest.persistent`:
 
 [source, Java]
 ----
@@ -100,9 +100,9 @@ public class Book extends CayenneDataObject {
 }
 ----
 
-==== Implement `AgREST` application classes
+==== Implement `Agrest` application classes
 
-Create an application and a resource classes in package `org.example.agrest`:
+Create an application and a resource class in package `org.example.agrest`:
 
 [source, Java]
 ----
@@ -147,7 +147,7 @@ public class CategoryResource {
 
 ==== Configure `web.xml`
 
-Provide a servlet configuration and a mapping based on the application class created before.
+Provide a servlet configuration and a mapping based on the application class that you already created.
 
 [source, XML]
 ----

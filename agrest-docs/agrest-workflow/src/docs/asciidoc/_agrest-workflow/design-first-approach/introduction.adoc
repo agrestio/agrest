@@ -1,22 +1,22 @@
 === Introduction
 
 The API Design-First (or API-First) approach prescribes writing your API definition first as a contract before writing any code.
-This approach is more modern than the traditional Code-First.
-If main consumers of your API are third parties partners and customers, the Desing-First approach is the best choise.
-It allows you to provide good design for mission critical APIs.
+This approach is more modern than the traditional Code-First approach.
+If main consumers of your API are third parties, partners or customers, the Design-First approach is the best choise.
+It allows you to provide good design for mission-critical APIs.
 
 * The contract that represents API specification is the best point for discussion. It can be visualized by using such tools as Swagger UI.
 
-* Based on API specification can be even run a mock service. So the developers and stakeholders can learn and discuss suggested design.
+* Based on API specification, you can even run a mock service. This way, developers and stakeholders will be able to preview and discuss the suggested design.
 
-* Most of high level issues in design could be fixed before writting any code.
+* You can fix most high-level design issues before writing any code.
 
-* The final contract that approved by all players tends to lead do better API.
+* The final contract that is approved by all players tends to lead do better API.
 
-* API documentation and appropriated tests could be generated from the contract. That alows to implement client application early.
+* API documentation and appropriated tests could be generated from the contract. This means you can have the application ready sooner.
 
 
-In the beggining of API developing is very important to understand the difference beetween Desing-First, Code-First and DB-First approaches.
+In the beginning of developing an API, it is very important to understand the difference between Design-First, Code-First and DB-First approaches.
 And to help with it there are listed three principles you have to follow to reach all benefits of API Design-First approach:
 
     1. The API is the first user interface of the application
