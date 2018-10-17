@@ -1,7 +1,7 @@
 [![Build Status](https://travis-ci.org/agrestio/agrest.svg?branch=master)](https://travis-ci.org/agrestio/agrest)
 [![Maven Central](https://img.shields.io/maven-central/v/io.agrest/agrest.svg)](https://agrest.io/#get-started)
 
-AgREST is a flexible model-driven REST data service framework. Visit [our site](http://linkrest.io/) for more information.
+Agrest (foremerly "LinkRest") is a flexible model-driven REST data service framework. Visit [our site](http://linkrest.io/) for more information.
 
 Quick links:
 
