@@ -361,6 +361,69 @@ public class GET_ObjectIncludeIT extends JerseyTestOnDerby {
                 + "{\"e5\":{\"name\":\"A\"},\"name\":\"m\"}]}],\"total\":1}", response1.readEntity(String.class));
     }
 
+    @Test
+    public void test_ToMany_IncludeArrayRelated() {
+        newContext().performGenericQuery(
+                new SQLTemplate(E3.class, "INSERT INTO utest.e5 (id,name) values (345, 'B'),(346, 'A')"));
+        newContext().performGenericQuery(
+                new SQLTemplate(E2.class, "INSERT INTO utest.e2 (id, name) values (1, 'xxx')"));
+        newContext().performGenericQuery(
+                new SQLTemplate(E3.class, "INSERT INTO utest.e3 (id, e2_id, e5_id, name) "
+                        + "values (8, 1, 345, 'a'),(9, 1, 345, 'z'),(7, 1, 346, 'm')"));
+
+        Response response1 = target("/e2")
+                .queryParam("include", urlEnc("[\"id\", {\"path\":\"e3s\"}, \"e3s.e5.name\"]"))
+                .queryParam("exclude", urlEnc("[\"e3s.id\", \"e3s.phoneNumber\"]"))
+                .request().get();
+
+        assertEquals(Status.OK.getStatusCode(), response1.getStatus());
+        assertEquals("{\"data\":[{\"id\":1,\"e3s\":[{\"e5\":{\"name\":\"B\"},\"name\":\"a\"},"
+                + "{\"e5\":{\"name\":\"B\"},\"name\":\"z\"},"
+                + "{\"e5\":{\"name\":\"A\"},\"name\":\"m\"}]}],\"total\":1}", response1.readEntity(String.class));
+    }
+
+    @Test
+    public void test_ToMany_IncludeMapRelated() {
+        newContext().performGenericQuery(
+                new SQLTemplate(E3.class, "INSERT INTO utest.e5 (id,name) values (345, 'B'),(346, 'A')"));
+        newContext().performGenericQuery(
+                new SQLTemplate(E2.class, "INSERT INTO utest.e2 (id, name) values (1, 'xxx')"));
+        newContext().performGenericQuery(
+                new SQLTemplate(E3.class, "INSERT INTO utest.e3 (id, e2_id, e5_id, name) "
+                        + "values (8, 1, 345, 'a'),(9, 1, 345, 'z'),(7, 1, 346, 'm')"));
+
+        Response response1 = target("/e2")
+                .queryParam("include", urlEnc("[\"id\", {\"path\":\"e3s\"}, {\"e3s.e5\":[\"name\"]}]"))
+                .queryParam("exclude", urlEnc("[{\"e3s\": [\"id\", \"phoneNumber\"]}]"))
+                .request().get();
+
+        assertEquals(Status.OK.getStatusCode(), response1.getStatus());
+        assertEquals("{\"data\":[{\"id\":1,\"e3s\":[{\"e5\":{\"name\":\"B\"},\"name\":\"a\"},"
+                + "{\"e5\":{\"name\":\"B\"},\"name\":\"z\"},"
+                + "{\"e5\":{\"name\":\"A\"},\"name\":\"m\"}]}],\"total\":1}", response1.readEntity(String.class));
+    }
+
+    @Test
+    public void test_ToMany_IncludeExtMapRelated() {
+        newContext().performGenericQuery(
+                new SQLTemplate(E3.class, "INSERT INTO utest.e5 (id,name) values (345, 'B'),(346, 'A')"));
+        newContext().performGenericQuery(
+                new SQLTemplate(E2.class, "INSERT INTO utest.e2 (id, name) values (1, 'xxx')"));
+        newContext().performGenericQuery(
+                new SQLTemplate(E3.class, "INSERT INTO utest.e3 (id, e2_id, e5_id, name) "
+                        + "values (8, 1, 345, 'a'),(9, 1, 345, 'z'),(7, 1, 346, 'm')"));
+
+        Response response1 = target("/e2")
+                .queryParam("include", urlEnc("[\"id\", {\"path\":\"e3s\", \"include\":[\"e5.name\"]}]"))
+                .queryParam("exclude", urlEnc("[{\"e3s\": [\"id\", \"phoneNumber\"]}]"))
+                .request().get();
+
+        assertEquals(Status.OK.getStatusCode(), response1.getStatus());
+        assertEquals("{\"data\":[{\"id\":1,\"e3s\":[{\"e5\":{\"name\":\"B\"},\"name\":\"a\"},"
+                + "{\"e5\":{\"name\":\"B\"},\"name\":\"z\"},"
+                + "{\"e5\":{\"name\":\"A\"},\"name\":\"m\"}]}],\"total\":1}", response1.readEntity(String.class));
+    }
+
     @Path("")
     public static class Resource {
 

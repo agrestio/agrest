@@ -18,10 +18,10 @@ public class ExcludeMerger implements IExcludeMerger {
     }
 
     private void processOne(ResourceEntity<?> resourceEntity, Exclude exclude) {
-        processExcludePath(resourceEntity, exclude.getPath());
-        // processes nested includes
         if (exclude != null) {
-            exclude.getExcludes().forEach(e -> processExcludePath(resourceEntity, e.getPath()));
+            processExcludePath(resourceEntity, exclude.getPath());
+            // processes nested includes
+            exclude.getExcludes().forEach(e -> processOne(resourceEntity, e));
         }
     }
 
