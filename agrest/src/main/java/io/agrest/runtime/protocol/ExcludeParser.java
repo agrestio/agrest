@@ -44,7 +44,7 @@ public class ExcludeParser implements IExcludeParser {
         Exclude exclude;
 
         if (value.startsWith("[")) {
-            List<Exclude> excludes = fromArray(jsonParser.parseJson(value));
+            List<Exclude> excludes = fromArray(jsonParser.parseJson(value), null);
             exclude = new Exclude(excludes);
         } else {
             exclude = getExcludeObject(value);
@@ -53,19 +53,26 @@ public class ExcludeParser implements IExcludeParser {
         return exclude;
     }
 
-    private List<Exclude> fromArray(JsonNode root) {
+    private List<Exclude> fromArray(JsonNode root, String parentPath) {
         List<Exclude> excludes = new ArrayList<>();
 
         if (root != null && root.isArray()) {
 
             for (JsonNode child : root) {
-                if (child.isTextual()) {
-                    Exclude exclude = getExcludeObject(child.asText());
-                    if (exclude != null) {
-                        excludes.add(exclude);
+                Exclude exclude = null;
+                if (child.isObject()) {
+                    // checks if JSON presents nested array
+                    if (child.size() == 1 && child.elements().next().isArray()) {
+                        exclude = new Exclude(fromArray(child.elements().next(), child.fieldNames().next()));
                     }
+                } else if (child.isTextual()) {
+                    exclude = getExcludeObject(parentPath != null ? parentPath + '.' + child.asText() : child.asText());
                 } else {
                     throw new AgException(Response.Status.BAD_REQUEST, "Bad exclude spec: " + child);
+                }
+
+                if (exclude != null) {
+                    excludes.add(exclude);
                 }
             }
         }

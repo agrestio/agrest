@@ -129,40 +129,38 @@ public class IncludeMerger implements IIncludeMerger {
     }
 
     private void processOne(ResourceEntity<?> resourceEntity, Include include) {
-        processIncludeObject(resourceEntity, include);
-        // processes nested includes
         if (include != null) {
-            include.getIncludes().forEach(i -> processIncludeObject(resourceEntity, i));
+            processIncludeObject(resourceEntity, include);
+            // processes nested includes
+            include.getIncludes().forEach(i -> processOne(resourceEntity, i));
         }
     }
 
     private void processIncludeObject(ResourceEntity<?> rootEntity, Include include) {
-        if (include != null) {
-            ResourceEntity<?> includeEntity;
+        ResourceEntity<?> includeEntity;
 
-            final String value = include.getValue();
-            if (value != null && !value.isEmpty()) {
-                IncludeMerger.checkTooLong(value);
-                IncludeMerger.processIncludePath(rootEntity, value);
-            }
-
-            final String path = include.getPath();
-            if (path == null || path.isEmpty()) {
-                // root node
-                includeEntity = rootEntity;
-            } else {
-                IncludeMerger.checkTooLong(path);
-                includeEntity = IncludeMerger.processIncludePath(rootEntity, path);
-                if (includeEntity == null) {
-                    throw new AgException(Status.BAD_REQUEST,
-                            "Bad include spec, non-relationship 'path' in include object: " + path);
-                }
-            }
-
-            mapByConstructor.mergeIncluded(includeEntity, include.getMapBy());
-            sortConstructor.merge(includeEntity, include.getSort());
-            expConstructor.merge(includeEntity, include.getCayenneExp());
-            sizeConstructor.merge(includeEntity, include.getStart(), include.getLimit());
+        final String value = include.getValue();
+        if (value != null && !value.isEmpty()) {
+            IncludeMerger.checkTooLong(value);
+            IncludeMerger.processIncludePath(rootEntity, value);
         }
+
+        final String path = include.getPath();
+        if (path == null || path.isEmpty()) {
+            // root node
+            includeEntity = rootEntity;
+        } else {
+            IncludeMerger.checkTooLong(path);
+            includeEntity = IncludeMerger.processIncludePath(rootEntity, path);
+            if (includeEntity == null) {
+                throw new AgException(Status.BAD_REQUEST,
+                        "Bad include spec, non-relationship 'path' in include object: " + path);
+            }
+        }
+
+        mapByConstructor.mergeIncluded(includeEntity, include.getMapBy());
+        sortConstructor.merge(includeEntity, include.getSort());
+        expConstructor.merge(includeEntity, include.getCayenneExp());
+        sizeConstructor.merge(includeEntity, include.getStart(), include.getLimit());
     }
 }

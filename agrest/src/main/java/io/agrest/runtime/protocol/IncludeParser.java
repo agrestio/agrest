@@ -19,6 +19,7 @@ public class IncludeParser implements IIncludeParser {
     private static final String JSON_KEY_MAP_BY = "mapBy";
     private static final String JSON_KEY_SORT = "sort";
     private static final String JSON_KEY_START = "start";
+    private static final String JSON_KEY_INCLUDE = "include";
 
     private IJacksonService jsonParser;
     private ICayenneExpParser expParser;
@@ -61,10 +62,10 @@ public class IncludeParser implements IIncludeParser {
         Include include;
 
         if (value.startsWith("[")) {
-            List<Include> includes = fromArray(jsonParser.parseJson(value));
+            List<Include> includes = fromArray(jsonParser.parseJson(value), null);
             include = new Include(includes);
         } else if (value.startsWith("{")) {
-            include = fromJson(jsonParser.parseJson(value));
+            include = fromJson(jsonParser.parseJson(value), null);
         } else {
             include = new Include(value);
         }
@@ -72,32 +73,41 @@ public class IncludeParser implements IIncludeParser {
         return include;
     }
 
-    private Include fromJson(JsonNode node) {
+    private Include fromJson(JsonNode node, String parentPath) {
         if (node == null) {
             return null;
+        }
+
+        // checks if JSON presents nested array
+        if (node.size() == 1 && node.elements().next().isArray()) {
+            List<Include> includes = fromArray(node.elements().next(), node.fieldNames().next());
+
+            return new Include(includes);
         }
 
         JsonNode pathNode = node.get(JSON_KEY_PATH);
         String path = pathNode != null && pathNode.isTextual() ? pathNode.asText() : null;
 
-        return new Include(expParser.fromJson(node.get(JSON_KEY_CAYENNE_EXP)),
+        return new Include(
+                expParser.fromJson(node.get(JSON_KEY_CAYENNE_EXP)),
                 sortParser.fromJson(node.get(JSON_KEY_SORT)),
                 mapByParser.fromJson(node.get(JSON_KEY_MAP_BY)),
-                path,
+                parentPath != null ? parentPath + '.' + path : path,
                 sizeParser.startFromJson(node.get(JSON_KEY_START)),
-                sizeParser.limitFromJson(node.get(JSON_KEY_LIMIT)));
+                sizeParser.limitFromJson(node.get(JSON_KEY_LIMIT)),
+                fromArray(node.get(JSON_KEY_INCLUDE), path));
     }
 
-    private List<Include> fromArray(JsonNode root) {
+    private List<Include> fromArray(JsonNode node, String parentPath) {
         List<Include> includes = new ArrayList<>();
 
-        if (root != null && root.isArray()) {
-            for (JsonNode child : root) {
-                Include include;
+        if (node != null && node.isArray()) {
+            for (JsonNode child : node) {
+                Include include = null;
                 if (child.isObject()) {
-                    include = fromJson(child);
+                    include = fromJson(child, parentPath);
                 } else if (child.isTextual()) {
-                    include = new Include(child.asText());
+                    include = new Include(parentPath != null ? parentPath + '.' + child.asText() : child.asText());
                 } else {
                     throw new AgException(Response.Status.BAD_REQUEST, "Bad include spec: " + child);
                 }
