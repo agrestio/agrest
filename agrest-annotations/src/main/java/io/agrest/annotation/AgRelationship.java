@@ -8,7 +8,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
  * Annotates a getter of a property in a POJO to indicate that the property is a
- * AgREST-exposed relationship. The property type should be either another
+ * Agrest-exposed relationship. The property type should be either another
  * entity, or a collection of entities.
  * 
  * @since 1.15

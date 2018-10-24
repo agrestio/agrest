@@ -65,7 +65,7 @@ public abstract class BaseResponseHandler<T extends ClientSimpleResponse> implem
                 // do nothing...
             }
         }
-        // return the response body if the AgREST message is not present
+        // return the response body if the Agrest message is not present
         return (message == null) ? entity : message;
     }
 

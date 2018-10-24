@@ -6,7 +6,7 @@ import io.agrest.runtime.IAgService;
 import javax.ws.rs.core.Configuration;
 
 /**
- * Defines static methods to start AgREST request processor builders. Users of this class must inject
+ * Defines static methods to start Agrest request processor builders. Users of this class must inject
  * {@link Configuration} instance to pass to the static methods.
  *
  * @since 1.14
@@ -51,9 +51,9 @@ public class Ag {
     /**
      * Returns {@link IAgService} bound to a given JAX RS configuration.
      * IAgService is the main engine behind all the operations in
-     * AgREST, however you would rarely need to use it directly. Instead use
+     * Agrest, however you would rarely need to use it directly. Instead use
      * other static methods defined in this class to start processor chains for
-     * AgREST requests.
+     * Agrest requests.
      */
     public static IAgService service(Configuration config) {
         return AgRuntime.service(IAgService.class, config);

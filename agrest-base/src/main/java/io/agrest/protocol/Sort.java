@@ -4,7 +4,7 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * Represents 'sort' AgREST protocol parameter.
+ * Represents 'sort' Agrest protocol parameter.
  *
  * @since 2.13
  */

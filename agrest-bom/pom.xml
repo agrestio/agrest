@@ -11,9 +11,9 @@
 
     <artifactId>agrest-bom</artifactId>
     <packaging>pom</packaging>
-    <name>agrest-bom: Bill of Materials (BOM) for AgREST modules.</name>
+    <name>agrest-bom: Bill of Materials (BOM) for Agrest modules.</name>
     <description>
-        Bill of Materials (BOM) for AgREST modules that allows the end users to capture the version of multiple AgREST modules
+        Bill of Materials (BOM) for Agrest modules that allows the end users to capture the version of multiple Agrest modules
         at once.
     </description>
 

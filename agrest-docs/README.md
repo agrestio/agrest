@@ -1,9 +1,9 @@
-This project contains Docbook documentation for [AgREST](http://nhl.github.io/link-rest/).
+This project contains Docbook documentation for [Agrest](https://agrest.io).
 
 To publish:
 
 ```
-# assuming 'agrest-pages' is a checkout of 'gh-pages' branch of AgREST
+# assuming 'agrest-pages' is a checkout of 'gh-pages' branch of Agrest
 
 mvn clean package
 cp -r target/site/index/ ../../agrest-pages/docs/

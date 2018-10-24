@@ -3,7 +3,7 @@ package io.agrest;
 import javax.ws.rs.core.Response.Status;
 
 /**
- * An exception that encapsulates AgREST error mapped to the HTTP status code. Used by the framework internally and can
+ * An exception that encapsulates Agrest error mapped to the HTTP status code. Used by the framework internally and can
  * also be used by the application code.
  */
 public class AgException extends RuntimeException {

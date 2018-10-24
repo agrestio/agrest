@@ -10,7 +10,7 @@ import java.util.Collection;
 import java.util.Collections;
 
 /**
- * A response object that represents a 'Metadata Document' from AgREST protocol.
+ * A response object that represents a 'Metadata Document' from Agrest protocol.
  * 
  * @since 1.18
  */

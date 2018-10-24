@@ -2,7 +2,7 @@ package io.agrest;
 
 /**
  * Defines the names of standard select stages that can be used to insert custom processors. Stages ordinals are
- * meaningful and correspond to the order of their execution by AgREST.
+ * meaningful and correspond to the order of their execution by Agrest.
  *
  * @since 2.7
  */

@@ -10,7 +10,7 @@ import javax.ws.rs.ext.Provider;
 import io.agrest.AgResponse;
 
 /**
- * Ensures correct default response status for AgREST responses.
+ * Ensures correct default response status for Agrest responses.
  * 
  * @since 1.1
  */

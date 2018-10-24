@@ -11,7 +11,7 @@
     <artifactId>agrest-workflow</artifactId>
 
     <packaging>jar</packaging>
-    <name>agrest-workflow: AsciiDoc - AgREST Workflow</name>
+    <name>agrest-workflow: AsciiDoc - Agrest Workflow</name>
 
     <build>
         <plugins>

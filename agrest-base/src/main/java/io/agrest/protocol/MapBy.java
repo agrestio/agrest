@@ -1,7 +1,7 @@
 package io.agrest.protocol;
 
 /**
- * Represents 'mapBy' AgREST protocol parameter
+ * Represents 'mapBy' Agrest protocol parameter
  */
 public class MapBy {
 

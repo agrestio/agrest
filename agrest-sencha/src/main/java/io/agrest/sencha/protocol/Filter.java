@@ -1,7 +1,7 @@
 package io.agrest.sencha.protocol;
 
 /**
- * Represents 'filter' Sencha AgREST protocol parameter.
+ * Represents 'filter' Sencha Agrest protocol parameter.
  *
  * @since 2.13
  */

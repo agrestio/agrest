@@ -9,7 +9,7 @@ import javax.ws.rs.core.Response;
 import java.lang.reflect.Type;
 
 /**
- * Provides access to AgREST entity metadata.
+ * Provides access to Agrest entity metadata.
  */
 public interface IMetadataService {
 

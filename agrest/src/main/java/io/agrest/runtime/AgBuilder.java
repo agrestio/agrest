@@ -134,7 +134,7 @@ import java.util.ServiceLoader;
 import java.util.concurrent.ExecutorService;
 
 /**
- * A builder of AgREST runtime that can be loaded into JAX-RS 2 container as a {@link Feature}.
+ * A builder of Agrest runtime that can be loaded into JAX-RS 2 container as a {@link Feature}.
  */
 public class AgBuilder {
 
@@ -170,7 +170,7 @@ public class AgBuilder {
     }
 
     /**
-     * A shortcut that creates a AgREST stack based on Cayenne runtime and
+     * A shortcut that creates a Agrest stack based on Cayenne runtime and
      * default settings.
      *
      * @since 1.14
@@ -248,7 +248,7 @@ public class AgBuilder {
     }
 
     /**
-     * Sets the public base URL of the application serving this AgREST stack. This should be a URL of the root REST
+     * Sets the public base URL of the application serving this Agrest stack. This should be a URL of the root REST
      * resource of the application. This value is used to build hypermedia controls (i.e. links) in the metadata
      * responses. It is optional, and for most apps can be calculated automatically. Usually has to be set explicitly
      * in case of a misconfigured reverse proxy (missing "X-Forwarded-Proto" header to tell apart HTTP from HTTPS), and
@@ -291,7 +291,7 @@ public class AgBuilder {
     }
 
     /**
-     * Registers a JAX-RS feature extending AgREST JAX-RS integration.
+     * Registers a JAX-RS feature extending Agrest JAX-RS integration.
      *
      * @param feature a custom JAX-RS feature.
      * @return this builder instance.
@@ -303,7 +303,7 @@ public class AgBuilder {
     }
 
     /**
-     * Registers a provider of a custom JAX-RS feature extending AgREST JAX-RS integration.
+     * Registers a provider of a custom JAX-RS feature extending Agrest JAX-RS integration.
      *
      * @param featureProvider a provider of a custom JAX-RS feature.
      * @return this builder instance.

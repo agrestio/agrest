@@ -1,7 +1,7 @@
 package io.agrest;
 
 /**
- * A response object that represents a 'Simple Document' from AgREST protocol .
+ * A response object that represents a 'Simple Document' from Agrest protocol .
  */
 public class SimpleResponse extends AgResponse {
 

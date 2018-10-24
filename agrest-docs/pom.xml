@@ -12,7 +12,7 @@
 	<groupId>io.agrest.docs</groupId>
 	<artifactId>agrest-docs</artifactId>
 	<name>agrest-docs: Asciidoc documentation</name>
-	<description>AgREST framework documentation</description>
+	<description>Agrest framework documentation</description>
 	<packaging>pom</packaging>
 
     <modules>

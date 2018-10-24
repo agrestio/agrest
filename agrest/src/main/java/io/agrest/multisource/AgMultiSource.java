@@ -18,10 +18,10 @@ public class AgMultiSource {
 	 * multiple sources in patallel with minimal or no blocking.
 	 * 
 	 * @param rootSelectChain
-	 *            A root AgREST select chain. Any other results will be
+	 *            A root Agrest select chain. Any other results will be
 	 *            attached to the response from the root chain.
 	 * @param config
-	 *            JAX RS configuration that allows the method to locate AgREST
+	 *            JAX RS configuration that allows the method to locate Agrest
 	 *            stack.
 	 * @return MultiSelectBuilder instance.
 	 */

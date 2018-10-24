@@ -4,7 +4,7 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * Represents 'exclude' AgREST protocol parameter.
+ * Represents 'exclude' Agrest protocol parameter.
  *
  * @since 2.13
  */

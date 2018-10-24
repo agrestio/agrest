@@ -1,17 +1,17 @@
 package io.agrest.encoder;
 
-import static java.time.temporal.ChronoField.HOUR_OF_DAY;
-import static java.time.temporal.ChronoField.MILLI_OF_SECOND;
-import static java.time.temporal.ChronoField.MINUTE_OF_HOUR;
-import static java.time.temporal.ChronoField.SECOND_OF_MINUTE;
-
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
 import java.time.format.DecimalStyle;
 
+import static java.time.temporal.ChronoField.HOUR_OF_DAY;
+import static java.time.temporal.ChronoField.MILLI_OF_SECOND;
+import static java.time.temporal.ChronoField.MINUTE_OF_HOUR;
+import static java.time.temporal.ChronoField.SECOND_OF_MINUTE;
+
 /**
- * AgREST-specific date/time formatters
+ * Agrest-specific date/time formatters
  *
  * @since 2.11
  */

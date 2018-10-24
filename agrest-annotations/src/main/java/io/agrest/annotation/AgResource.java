@@ -6,7 +6,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Used to indicate that web method is an AgREST resource.
+ * Used to indicate that web method is an Agrest resource.
  *
  * @since 2.10
  */
@@ -14,7 +14,7 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface AgResource {
     /**
-     * @return Class of AgREST entity that this resource works with.
+     * @return Class of Agrest entity that this resource works with.
      */
     Class<?> entityClass() default Object.class;
 

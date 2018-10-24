@@ -14,7 +14,7 @@ public class Include extends AgcEntityRequest {
 
 	private String path;
 
-	// TODO: for now AgREST only supports 'mapBy' in nested includes. Once it is
+	// TODO: for now Agrest only supports 'mapBy' in nested includes. Once it is
 	// supported at the root level this will have to be moved to the superclass
 	protected String mapBy;
 

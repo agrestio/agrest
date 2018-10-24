@@ -6,8 +6,8 @@
     <artifactId>agrest-parent</artifactId>
     <version>3.1-SNAPSHOT</version>
 
-    <name>agrest: Parent POM of AgREST modules</name>
-    <description>Parent POM of AgREST modules</description>
+    <name>agrest: Parent POM of Agrest modules</name>
+    <description>Parent POM of Agrest modules</description>
     <packaging>pom</packaging>
 
     <modules>
@@ -84,7 +84,7 @@
     <repositories>
         <repository>
             <id>agrest-dependencies</id>
-            <name>AgREST Dependencies Repo</name>
+            <name>Agrest Dependencies Repo</name>
             <url>http://maven.objectstyle.org/nexus/content/groups/linkrest</url>
         </repository>
     </repositories>

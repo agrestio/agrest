@@ -11,7 +11,7 @@
     <artifactId>agrest-protocol</artifactId>
 
     <packaging>jar</packaging>
-    <name>agrest-protocol: AsciiDoc - AgREST Protocol Description</name>
+    <name>agrest-protocol: AsciiDoc - Agrest Protocol Description</name>
 
     <build>
         <plugins>

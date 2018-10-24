@@ -10,8 +10,8 @@
     </parent>
 
     <artifactId>agrest-client</artifactId>
-    <name>agrest-client: client library to access AgREST services</name>
-    <description>AgREST Java client</description>
+    <name>agrest-client: client library to access Agrest services</name>
+    <description>Agrest Java client</description>
 
     <dependencies>
         <dependency>
@@ -31,7 +31,7 @@
             <scope>compile</scope>
         </dependency>
 
-        <!-- we reuse AgREST Core tests infrastructure;
+        <!-- we reuse Agrest Core tests infrastructure;
             need to declare all transitive dependencies here -->
         <dependency>
             <groupId>io.agrest</groupId>

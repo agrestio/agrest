@@ -1,7 +1,7 @@
 package io.agrest.protocol;
 
 /**
- * Represents 'start' AgREST protocol parameter.
+ * Represents 'start' Agrest protocol parameter.
  *
  * @since 2.13
  */

@@ -34,7 +34,7 @@ public class AgServerCodegen extends AbstractJavaJAXRSServerCodegen implements A
         implFolder = "src/main/java";
         testFolder = "src/test/java";
 
-        outputFolder = "generated-code/JavaJaxRS-AgREST";
+        outputFolder = "generated-code/JavaJaxRS-Agrest";
 
         apiTestTemplateFiles.clear();
 
@@ -78,7 +78,7 @@ public class AgServerCodegen extends AbstractJavaJAXRSServerCodegen implements A
 
     @Override
     public String getHelp() {
-        return "Generates AgREST jaxrs API.";
+        return "Generates Agrest jaxrs API.";
     }
 
     @Override

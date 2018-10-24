@@ -11,7 +11,7 @@
     <artifactId>agrest-overview</artifactId>
 
     <packaging>jar</packaging>
-    <name>agrest-overview: AsciiDoc - AgREST Framework Overview</name>
+    <name>agrest-overview: AsciiDoc - Agrest Framework Overview</name>
 
     <build>
         <plugins>

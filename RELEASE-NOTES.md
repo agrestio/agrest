@@ -7,7 +7,7 @@ Release 3.0
 _LinkRest got renamed to Agrest in 3.0_
 
 * #285 OpenApi integration: Design First Approach
-* #331 LinkRest to AgREST rebranding: Rename packages and files
+* #331 LinkRest to Agrest rebranding: Rename packages and files
 * #333 Actualize documentation
 * #338 Update gh-pages static documentation
 * #340 Removing API deprecated in 2.x

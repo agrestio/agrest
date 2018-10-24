@@ -20,7 +20,7 @@ import java.util.Collection;
 import java.util.Map;
 
 /**
- * Stores AgREST runtime stack packaged as a JAX RS {@link Feature}.
+ * Stores Agrest runtime stack packaged as a JAX RS {@link Feature}.
  */
 public class AgRuntime implements Feature {
 
@@ -34,7 +34,7 @@ public class AgRuntime implements Feature {
     private Collection<Feature> extraFeatures;
 
     /**
-     * Returns a service of a specified type present in AgREST container that
+     * Returns a service of a specified type present in Agrest container that
      * is stored in JAX RS Configuration.
      */
     public static <T> T service(Class<T> type, Configuration config) {
@@ -46,7 +46,7 @@ public class AgRuntime implements Feature {
         Injector injector = (Injector) config.getProperty(AGREST_CONTAINER_PROPERTY);
         if (injector == null) {
             throw new IllegalStateException(
-                    "AgREST is misconfigured. No injector found for property: " + AGREST_CONTAINER_PROPERTY);
+                    "Agrest is misconfigured. No injector found for property: " + AGREST_CONTAINER_PROPERTY);
         }
 
         return injector.getInstance(type);
@@ -58,14 +58,14 @@ public class AgRuntime implements Feature {
     }
 
     /**
-     * Returns a AgREST service instance of a given type stored in the internal DI container.
+     * Returns a Agrest service instance of a given type stored in the internal DI container.
      */
     public <T> T service(Class<T> type) {
         return injector.getInstance(type);
     }
 
     /**
-     * Returns a AgREST service instance of a given type stored in the internal DI container.
+     * Returns a Agrest service instance of a given type stored in the internal DI container.
      *
      * @since 2.10
      */
@@ -77,14 +77,14 @@ public class AgRuntime implements Feature {
      * @since 2.0
      */
     public void shutdown() {
-        LOGGER.info("Shutting down AgREST");
+        LOGGER.info("Shutting down Agrest");
         injector.shutdown();
     }
 
     @Override
     public boolean configure(FeatureContext context) {
 
-        // this gives everyone access to the AgREST services
+        // this gives everyone access to the Agrest services
         context.property(AgRuntime.AGREST_CONTAINER_PROPERTY, injector);
 
         @SuppressWarnings("unchecked")

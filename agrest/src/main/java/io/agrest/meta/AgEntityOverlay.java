@@ -13,7 +13,7 @@ import java.util.stream.Stream;
 
 /**
  * A mutable collection of entity properties that are not derived from the object structure. {@link AgEntityOverlay}
- * objects are provided to AgREST by the app, and are merged into corresponding {@link AgEntity} entities.
+ * objects are provided to Agrest by the app, and are merged into corresponding {@link AgEntity} entities.
  *
  * @since 1.12
  */
@@ -75,7 +75,7 @@ public class AgEntityOverlay<T> {
 
     /**
      * Adds an attribute to the overlaid entity. The value of the attribute will be read from the object itself.
-     * This overlay is only needed if AgREST can't otherwise determine property presence in the entity.
+     * This overlay is only needed if Agrest can't otherwise determine property presence in the entity.
      * An alternative to calling this method explicitly is annotating property getters with
      * {@link io.agrest.annotation.AgAttribute}, {@link io.agrest.annotation.AgRelationship} or
      * {@link AgId}. Also all Cayenne attributes are automatically added to the entity.
@@ -97,7 +97,7 @@ public class AgEntityOverlay<T> {
 
     /**
      * Adds an "ad-hoc" attribute to the overlaid entity. The value of the attribute will be calculated from
-     * each entity object by applying the "valueSupplier" function. This allows AgREST entities
+     * each entity object by applying the "valueSupplier" function. This allows Agrest entities
      * to declare properties not present in the underlying Java objects.
      *
      * @since 2.10
@@ -110,7 +110,7 @@ public class AgEntityOverlay<T> {
 
     /**
      * Adds an "ad-hoc" to-one relationship to the overlaid entity. The value of the relationship will be
-     * calculated from each entity object by applying the "valueSupplier" function. This allows AgREST entities
+     * calculated from each entity object by applying the "valueSupplier" function. This allows Agrest entities
      * to declare properties not present in the underlying Java objects.
      *
      * @since 2.10
@@ -122,7 +122,7 @@ public class AgEntityOverlay<T> {
 
     /**
      * Adds an "ad-hoc" to-many relationship to the overlaid entity. The value of the relationship will be
-     * calculated from each entity object by applying the "valueSupplier" function. This allows AgREST entities
+     * calculated from each entity object by applying the "valueSupplier" function. This allows Agrest entities
      * to declare properties not present in the underlying Java objects.
      *
      * @since 2.10

@@ -144,7 +144,7 @@ public interface UpdateBuilder<T> {
     /**
      * Registers a consumer to be executed after the specified standard execution stage. The rest of the standard pipeline
      * following the named stage will be skipped. This is useful for quick assembly of custom backends that reuse the
-     * initial stages of AgREST processing, but query the data store on their own. The consumer can inspect and modify
+     * initial stages of Agrest processing, but query the data store on their own. The consumer can inspect and modify
      * provided {@link UpdateContext}.
      * <p>This operation is composable. For each stage all custom processors will be invoked in the order they were
      * registered.</p>

@@ -9,8 +9,8 @@
     </parent>
 
     <artifactId>agrest-base</artifactId>
-    <name>agrest-base: Collection of re-usable AgREST artifacts</name>
-    <description>Collection of re-usable AgREST artifacts</description>
+    <name>agrest-base: Collection of re-usable Agrest artifacts</name>
+    <description>Collection of re-usable Agrest artifacts</description>
 
     <dependencies>
 
