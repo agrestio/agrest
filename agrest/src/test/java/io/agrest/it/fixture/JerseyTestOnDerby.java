@@ -28,10 +28,10 @@ public abstract class JerseyTestOnDerby extends JerseyTest {
     // TODO: switch to Bootique test framework...
 
     @ClassRule
-    public static CayenneDerbyStack DB_STACK = new CayenneDerbyStack("derby-for-jersey");
+    public static CayenneDerbyStack DB = new CayenneDerbyStack("derby-for-jersey");
 
     @Rule
-    public DbCleaner dbCleaner = new DbCleaner(DB_STACK.newContext());
+    public DbCleaner dbCleaner = new DbCleaner(DB.newContext());
 
     public JerseyTestOnDerby() throws TestContainerException {
         super(new InMemoryTestContainerFactory());
@@ -65,25 +65,25 @@ public abstract class JerseyTestOnDerby extends JerseyTest {
     }
 
     protected AgBuilder doConfigure() {
-        return AgBuilder.builder(DB_STACK.getCayenneStack());
+        return AgBuilder.builder(DB.getCayenneStack());
     }
 
     protected abstract void doAddResources(FeatureContext context);
 
     protected String stringForQuery(String querySql) {
-        return DB_STACK.stringForQuery(querySql);
+        return DB.stringForQuery(querySql);
     }
 
     protected int intForQuery(String querySql) {
-        return DB_STACK.intForQuery(querySql);
+        return DB.intForQuery(querySql);
     }
 
     protected long countRows(String table) {
-        return DB_STACK.longForQuery("SELECT count(1) FROM utest." + table);
+        return DB.longForQuery("SELECT count(1) FROM utest." + table);
     }
 
     protected long countRows(String table, String where) {
-        return DB_STACK.longForQuery("SELECT count(1) FROM utest." + table + " " + where);
+        return DB.longForQuery("SELECT count(1) FROM utest." + table + " " + where);
     }
 
     protected long countRows(Class<?> entity) {
@@ -97,15 +97,15 @@ public abstract class JerseyTestOnDerby extends JerseyTest {
     }
 
     protected ObjectContext newContext() {
-        return DB_STACK.newContext();
+        return DB.newContext();
     }
 
     protected void insert(String table, String columns, String values) {
-        DB_STACK.insert(table, columns, values);
+        DB.insert(table, columns, values);
     }
 
     protected void insert(String schema, String table, String columns, String values) {
-        DB_STACK.insert(schema, table, columns, values);
+        DB.insert(schema, table, columns, values);
     }
 
     protected ResponseAssertions onSuccess(Response response) {

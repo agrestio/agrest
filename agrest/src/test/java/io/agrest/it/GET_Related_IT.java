@@ -94,7 +94,7 @@ public class GET_Related_IT extends JerseyTestOnDerby {
     public void testGet_CompoundId_UnmappedPk() {
 
         // remove a part of PK from the ObjEntity
-        DataMap dataMap = DB_STACK.getCayenneStack().getChannel().getEntityResolver().getDataMap("datamap");
+        DataMap dataMap = DB.getCayenneStack().getChannel().getEntityResolver().getDataMap("datamap");
         ObjEntity E17 = dataMap.getObjEntity("E17");
         ObjAttribute unmappedAttribute = E17.getAttribute("id2");
         E17.removeAttribute("id2");
