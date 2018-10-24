@@ -1,4 +1,10 @@
+Release 3.1
+
+* #358 Protocol Enhancement: 'include\exclude' parameters should take an array of values 
+
 Release 3.0
+
+_LinkRest got renamed to Agrest in 3.0_
 
 * #285 OpenApi integration: Design First Approach
 * #331 LinkRest to AgREST rebranding: Rename packages and files
