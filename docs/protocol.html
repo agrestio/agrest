@@ -359,7 +359,7 @@ Content-Type: application/json
             <div class="listingblock">
                 <div class="content">
 <pre class="highlight"><code class="language-JSON" data-lang="JSON">{
-   "id":45,
+   "id" : 45,
    "articles" : [
       { "title" : "Introducing Agrest" },
       { "title" : "Agrest Includes" }
@@ -382,6 +382,64 @@ Content-Type: application/json
    }
 }</code></pre>
                 </div>
+            </div>
+            <div class="paragraph">
+                <p>Example 6: Include and Exclude parameters have ability to take an array of values:</p>
+            </div>
+            <div class="paragraph">
+                <p><code>include=["id","name"]</code></p>
+            </div>
+            <div class="listingblock">
+                <div class="content">
+                    <pre class="highlight"><code class="language-JSON" data-lang="JSON">{ "id" : 45, "name" : "Agrest Site" }</code></pre>
+                </div>
+            </div>
+            <div class="paragraph">
+                <p>Example 7: The array can contain both the simple include and the advanced include values</p>
+            </div>
+            <div class="paragraph">
+                <p><code>include=["id","articles.title",{"path":"articles","cayenneExp":"title like '%Agrest%'"}]</code></p>
+            </div>
+            <div class="listingblock">
+                <div class="content">
+<pre class="highlight"><code class="language-JSON" data-lang="JSON">{
+   "id" : 45,
+   "articles" : [
+      { "title" : "Introducing Agrest" },
+      { "title" : "Agrest Includes" }
+   ]
+}</code></pre>
+                </div>
+            </div>
+            <div class="paragraph">
+                <p>Example 8: Attributes of a related entity can be presented as an inner array in JSON format:</p>
+            </div>
+            <div class="paragraph">
+                <p><code>include=["id","name",{"articles":["title","body"]}]</code></p>
+            </div>
+            <div class="listingblock">
+                <div class="content">
+<pre class="highlight"><code class="language-JSON" data-lang="JSON">{
+   "id" : 45,
+   "name" : "Agrest Site",
+   "articles" : [
+      { "title" : "Introducing Agrest", "body" : "Agrest is a .." },
+      { "title" : "Agrest Includes", "body" : "Includes are .." }
+   ]
+}</code></pre>
+                </div>
+            </div>
+            <div class="paragraph">
+                <p>Example 9: The related entity can be specified as a path value:</p>
+            </div>
+            <div class="paragraph">
+                <p><code>include=["id","name",{"articles.categories":["id","name"]}]</code></p>
+            </div>
+            <div class="paragraph">
+                <p>Example 10: The advanced include can contain the array of include values:</p>
+            </div>
+            <div class="paragraph">
+                <p><code>include={"path":"articles","sort":"title","include":["title",{"categories":["id","name"]}]}</code></p>
             </div>
         </div>
     </div>
