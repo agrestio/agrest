@@ -2,6 +2,8 @@
 /* JavaCCOptions:MULTI=true,NODE_USES_PARSER=false,VISITOR=false,TRACK_TOKENS=false,NODE_PREFIX=AST,NODE_EXTENDS=,NODE_FACTORY=,SUPPORT_CLASS_VISIBILITY_PUBLIC=true */
 package io.agrest.backend.exp.parser;
 
+import io.agrest.backend.exp.Expression;
+
 public
 class ASTCurrentTimestamp extends SimpleNode {
   public ASTCurrentTimestamp(int id) {
@@ -12,5 +14,9 @@ class ASTCurrentTimestamp extends SimpleNode {
     super(p, id);
   }
 
+  @Override
+  public Expression shallowCopy() {
+    return new ASTCurrentTimestamp(id);
+  }
 }
 /* JavaCC - OriginalChecksum=b31fd04bc6070c3c4e6e3102777fa088 (do not edit this line) */

@@ -2,15 +2,43 @@
 /* JavaCCOptions:MULTI=true,NODE_USES_PARSER=false,VISITOR=false,TRACK_TOKENS=false,NODE_PREFIX=AST,NODE_EXTENDS=,NODE_FACTORY=,SUPPORT_CLASS_VISIBILITY_PUBLIC=true */
 package io.agrest.backend.exp.parser;
 
-public
-class ASTLikeIgnoreCase extends SimpleNode {
-  public ASTLikeIgnoreCase(int id) {
-    super(id);
-  }
+import io.agrest.backend.exp.Expression;
 
-  public ASTLikeIgnoreCase(ExpressionParser p, int id) {
-    super(p, id);
-  }
+public class ASTLikeIgnoreCase extends PatternMatchNode {
+
+    ASTLikeIgnoreCase(int id) {
+        super(id, true);
+    }
+
+    ASTLikeIgnoreCase(int id, char escapeChar) {
+        super(id, true, escapeChar);
+    }
+
+    public ASTLikeIgnoreCase() {
+        super(ExpressionParserTreeConstants.JJTLIKEIGNORECASE, true);
+    }
+
+    public ASTLikeIgnoreCase(SimpleNode path, Object pattern) {
+        super(ExpressionParserTreeConstants.JJTLIKEIGNORECASE, true);
+        jjtAddChild(path, 0);
+        jjtAddChild(new ASTScalar(pattern), 1);
+        connectChildren();
+    }
+
+    public ASTLikeIgnoreCase(SimpleNode path, Object pattern, char escapeChar) {
+        super(ExpressionParserTreeConstants.JJTLIKEIGNORECASE, true, escapeChar);
+        jjtAddChild(path, 0);
+        jjtAddChild(new ASTScalar(pattern), 1);
+        connectChildren();
+    }
+
+    /**
+     * Creates a copy of this expression node, without copying children.
+     */
+    @Override
+    public Expression shallowCopy() {
+        return new ASTLikeIgnoreCase(id, escapeChar);
+    }
 
 }
 /* JavaCC - OriginalChecksum=8e8d020d228b3cf00e4bff3c7ed6015d (do not edit this line) */

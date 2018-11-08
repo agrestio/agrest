@@ -2,15 +2,20 @@
 /* JavaCCOptions:MULTI=true,NODE_USES_PARSER=false,VISITOR=false,TRACK_TOKENS=false,NODE_PREFIX=AST,NODE_EXTENDS=,NODE_FACTORY=,SUPPORT_CLASS_VISIBILITY_PUBLIC=true */
 package io.agrest.backend.exp.parser;
 
-public
-class ASTNotLikeIgnoreCase extends SimpleNode {
-  public ASTNotLikeIgnoreCase(int id) {
-    super(id);
-  }
+import io.agrest.backend.exp.Expression;
 
-  public ASTNotLikeIgnoreCase(ExpressionParser p, int id) {
-    super(p, id);
-  }
+public class ASTNotLikeIgnoreCase extends SimpleNode {
+    public ASTNotLikeIgnoreCase(int id) {
+        super(id);
+    }
 
+    public ASTNotLikeIgnoreCase(ExpressionParser p, int id) {
+        super(p, id);
+    }
+
+    @Override
+    public Expression shallowCopy() {
+        return new ASTNotLikeIgnoreCase(id);
+    }
 }
 /* JavaCC - OriginalChecksum=fb6fa62dfcb4757c14cb3fc5536b0779 (do not edit this line) */

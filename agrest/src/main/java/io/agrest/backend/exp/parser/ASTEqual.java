@@ -2,14 +2,32 @@
 /* JavaCCOptions:MULTI=true,NODE_USES_PARSER=false,VISITOR=false,TRACK_TOKENS=false,NODE_PREFIX=AST,NODE_EXTENDS=,NODE_FACTORY=,SUPPORT_CLASS_VISIBILITY_PUBLIC=true */
 package io.agrest.backend.exp.parser;
 
-public
-class ASTEqual extends SimpleNode {
+import io.agrest.backend.exp.Expression;
+
+
+public class ASTEqual extends SimpleNode {
+
   public ASTEqual(int id) {
     super(id);
   }
 
-  public ASTEqual(ExpressionParser p, int id) {
-    super(p, id);
+  /**
+   * Creates "Equal To" expression.
+   */
+  public ASTEqual(SimpleNode path, Object value) {
+    super(ExpressionParserTreeConstants.JJTEQUAL);
+    jjtAddChild(path, 0);
+    jjtAddChild(new ASTScalar(value), 1);
+    connectChildren();
+  }
+
+
+  /**
+   * Creates a copy of this expression node, without copying children.
+   */
+  @Override
+  public Expression shallowCopy() {
+    return new ASTEqual(id);
   }
 
 }

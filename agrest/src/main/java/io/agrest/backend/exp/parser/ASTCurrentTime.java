@@ -2,15 +2,20 @@
 /* JavaCCOptions:MULTI=true,NODE_USES_PARSER=false,VISITOR=false,TRACK_TOKENS=false,NODE_PREFIX=AST,NODE_EXTENDS=,NODE_FACTORY=,SUPPORT_CLASS_VISIBILITY_PUBLIC=true */
 package io.agrest.backend.exp.parser;
 
-public
-class ASTCurrentTime extends SimpleNode {
-  public ASTCurrentTime(int id) {
-    super(id);
-  }
+import io.agrest.backend.exp.Expression;
 
-  public ASTCurrentTime(ExpressionParser p, int id) {
-    super(p, id);
-  }
+public class ASTCurrentTime extends SimpleNode {
+    public ASTCurrentTime(int id) {
+        super(id);
+    }
 
+    public ASTCurrentTime(ExpressionParser p, int id) {
+        super(p, id);
+    }
+
+    @Override
+    public Expression shallowCopy() {
+        return new ASTCurrentTime(id);
+    }
 }
 /* JavaCC - OriginalChecksum=888f2fb00be27b36d026c86a9ee1eac2 (do not edit this line) */

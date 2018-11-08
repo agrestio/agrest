@@ -2,15 +2,28 @@
 /* JavaCCOptions:MULTI=true,NODE_USES_PARSER=false,VISITOR=false,TRACK_TOKENS=false,NODE_PREFIX=AST,NODE_EXTENDS=,NODE_FACTORY=,SUPPORT_CLASS_VISIBILITY_PUBLIC=true */
 package io.agrest.backend.exp.parser;
 
-public
-class ASTDbPath extends SimpleNode {
-  public ASTDbPath(int id) {
-    super(id);
-  }
+import io.agrest.backend.exp.Expression;
 
-  public ASTDbPath(ExpressionParser p, int id) {
-    super(p, id);
-  }
+public class ASTDbPath extends ASTPath {
+
+    public ASTDbPath(int id) {
+        super(id);
+    }
+
+    public ASTDbPath(Object value) {
+        super(ExpressionParserTreeConstants.JJTDBPATH);
+        setPath(value);
+    }
+
+    /**
+     * Creates a copy of this expression node, without copying children.
+     */
+    @Override
+    public Expression shallowCopy() {
+        ASTDbPath copy = new ASTDbPath(id);
+        copy.path = path;
+        return copy;
+    }
 
 }
 /* JavaCC - OriginalChecksum=f6b74d4b5dd8475109499d882651802a (do not edit this line) */

@@ -2,15 +2,20 @@
 /* JavaCCOptions:MULTI=true,NODE_USES_PARSER=false,VISITOR=false,TRACK_TOKENS=false,NODE_PREFIX=AST,NODE_EXTENDS=,NODE_FACTORY=,SUPPORT_CLASS_VISIBILITY_PUBLIC=true */
 package io.agrest.backend.exp.parser;
 
-public
-class ASTBitwiseNot extends SimpleNode {
-  public ASTBitwiseNot(int id) {
-    super(id);
-  }
+import io.agrest.backend.exp.Expression;
 
-  public ASTBitwiseNot(ExpressionParser p, int id) {
-    super(p, id);
-  }
+public class ASTBitwiseNot extends SimpleNode {
+    public ASTBitwiseNot(int id) {
+        super(id);
+    }
 
+    public ASTBitwiseNot(ExpressionParser p, int id) {
+        super(p, id);
+    }
+
+    @Override
+    public Expression shallowCopy() {
+        return new ASTBitwiseNot(id);
+    }
 }
 /* JavaCC - OriginalChecksum=b5dc5fa3a045576ad0704bd27af05a91 (do not edit this line) */

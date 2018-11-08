@@ -2,51 +2,34 @@
 /* JavaCCOptions:MULTI=true,NODE_USES_PARSER=false,VISITOR=false,TRACK_TOKENS=false,NODE_PREFIX=AST,NODE_EXTENDS=,NODE_FACTORY=,SUPPORT_CLASS_VISIBILITY_PUBLIC=true */
 package io.agrest.backend.exp.parser;
 
-
-import org.apache.cayenne.exp.Expression;
+import io.agrest.backend.exp.Expression;
 
 public class ASTObjPath extends ASTPath {
 
-  protected String path;
+    protected String path;
 
-  /**
-   * Constructor used by expression parser. Do not invoke directly.
-   */
-  ASTObjPath(int id) {
-    super(id);
-  }
+    /**
+     * Constructor used by expression parser. Do not invoke directly.
+     */
+    ASTObjPath(int id) {
+        super(id);
+    }
 
-  public ASTObjPath() {
-    super(ExpressionParserTreeConstants.JJTOBJPATH);
-  }
+    public ASTObjPath() {
+        super(ExpressionParserTreeConstants.JJTOBJPATH);
+    }
 
-  public ASTObjPath(Object value) {
-    super(ExpressionParserTreeConstants.JJTOBJPATH);
-    setPath(value);
-  }
+    public ASTObjPath(Object value) {
+        super(ExpressionParserTreeConstants.JJTOBJPATH);
+        setPath(value);
+    }
 
-  @Override
-  protected String getExpressionOperator(int index) {
-    return null;
-  }
 
-  @Override
-  protected Object evaluateNode(Object o) throws Exception {
-    return null;
-  }
-
-  @Override
-  public Expression shallowCopy() {
-    return null;
-  }
-
-  protected void setPath(Object path) {
-    this.path = (path != null) ? path.toString() : null;
-  }
-
-  public String getPath() {
-    return path;
-  }
-
+    @Override
+    public Expression shallowCopy() {
+        ASTObjPath copy = new ASTObjPath(id);
+        copy.path = path;
+        return copy;
+    }
 }
 /* JavaCC - OriginalChecksum=26a4d483c0ff09db8e8fb40ad0d08920 (do not edit this line) */

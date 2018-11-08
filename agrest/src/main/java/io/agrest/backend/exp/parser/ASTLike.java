@@ -2,15 +2,39 @@
 /* JavaCCOptions:MULTI=true,NODE_USES_PARSER=false,VISITOR=false,TRACK_TOKENS=false,NODE_PREFIX=AST,NODE_EXTENDS=,NODE_FACTORY=,SUPPORT_CLASS_VISIBILITY_PUBLIC=true */
 package io.agrest.backend.exp.parser;
 
-public
-class ASTLike extends SimpleNode {
-  public ASTLike(int id) {
-    super(id);
-  }
+import io.agrest.backend.exp.Expression;
 
-  public ASTLike(ExpressionParser p, int id) {
-    super(p, id);
-  }
+public class ASTLike extends PatternMatchNode {
 
+    ASTLike(int id) {
+        super(id, false);
+    }
+
+    ASTLike(int id, char escapeChar) {
+        super(id, false, escapeChar);
+    }
+
+    public ASTLike() {
+        super(ExpressionParserTreeConstants.JJTLIKE, false);
+    }
+
+    public ASTLike(SimpleNode path, Object pattern) {
+        super(ExpressionParserTreeConstants.JJTLIKE, false);
+        jjtAddChild(path, 0);
+        jjtAddChild(new ASTScalar(pattern), 1);
+        connectChildren();
+    }
+
+    public ASTLike(SimpleNode path, Object pattern, char escapeChar) {
+        super(ExpressionParserTreeConstants.JJTLIKE, false, escapeChar);
+        jjtAddChild(path, 0);
+        jjtAddChild(new ASTScalar(pattern), 1);
+        connectChildren();
+    }
+
+    @Override
+    public Expression shallowCopy() {
+        return new ASTLike(id, escapeChar);
+    }
 }
 /* JavaCC - OriginalChecksum=d7026b92b15023fdd0aa96691aed3849 (do not edit this line) */

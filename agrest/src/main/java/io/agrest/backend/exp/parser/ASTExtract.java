@@ -2,15 +2,90 @@
 /* JavaCCOptions:MULTI=true,NODE_USES_PARSER=false,VISITOR=false,TRACK_TOKENS=false,NODE_PREFIX=AST,NODE_EXTENDS=,NODE_FACTORY=,SUPPORT_CLASS_VISIBILITY_PUBLIC=true */
 package io.agrest.backend.exp.parser;
 
-public
-class ASTExtract extends SimpleNode {
-  public ASTExtract(int id) {
-    super(id);
-  }
+import io.agrest.AgException;
+import io.agrest.backend.exp.Expression;
+import org.apache.cayenne.exp.parser.ASTFunctionCall;
 
-  public ASTExtract(ExpressionParser p, int id) {
-    super(p, id);
-  }
+import java.util.HashMap;
+import java.util.Map;
 
+public class ASTExtract extends SimpleNode {
+
+    /**
+     * Available components of date/time.
+     * Names must be in sync with tokens used in dateTimeExtractingFunction() rule in ExpressionParser.jjt
+     */
+    public enum DateTimePart {
+        YEAR, MONTH, WEEK,
+        // day options, day is synonym for dayOfMonth
+        DAY_OF_YEAR, DAY, DAY_OF_MONTH, DAY_OF_WEEK,
+        HOUR, MINUTE, SECOND
+    }
+
+    /**
+     * Map from camelCase name to enum elements.
+     * @see ASTFunctionCall#nameToCamelCase(String)
+     */
+    private static final Map<String, ASTExtract.DateTimePart> NAME_TO_PART = new HashMap<>();
+
+    static {
+        for(ASTExtract.DateTimePart part : ASTExtract.DateTimePart.values()) {
+            NAME_TO_PART.put(nameToCamelCase(part.name()), part);
+        }
+    }
+
+    /**
+     * camelCase name, found in ExpressionParser.jjt tokens
+     */
+    private String partName;
+
+    private ASTExtract.DateTimePart part;
+
+    public ASTExtract(int id) {
+        super(id);
+    }
+
+    public ASTExtract(ExpressionParser p, int id) {
+        super(p, id);
+    }
+
+    @Override
+    public Expression shallowCopy() {
+        return null;
+    }
+
+    /**
+     * This method is used by {@link ExpressionParser}
+     * @param partToken {@link Token#image} from {@link ExpressionParser}
+     */
+    void setPartToken(String partToken) {
+        part = NAME_TO_PART.get(partToken);
+        if(part == null) {
+            throw new AgException("Unknown timestamp part: %s", partToken);
+        }
+        this.partName = partToken;
+    }
+
+    /**
+     *
+     * @param functionName in UPPER_UNDERSCORE convention
+     * @return functionName in camelCase convention
+     */
+    protected static String nameToCamelCase(String functionName) {
+        String[] parts = functionName.split("_");
+        StringBuilder sb = new StringBuilder();
+        boolean first = true;
+        for(String part : parts) {
+            if(first) {
+                sb.append(part.toLowerCase());
+                first = false;
+            } else {
+                char[] chars = part.toLowerCase().toCharArray();
+                chars[0] = Character.toTitleCase(chars[0]);
+                sb.append(chars);
+            }
+        }
+        return sb.toString();
+    }
 }
 /* JavaCC - OriginalChecksum=c0a8e9c96cae8eaa1732c88d58dbbefa (do not edit this line) */

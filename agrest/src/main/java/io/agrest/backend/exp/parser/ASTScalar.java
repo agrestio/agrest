@@ -2,28 +2,42 @@
 /* JavaCCOptions:MULTI=true,NODE_USES_PARSER=false,VISITOR=false,TRACK_TOKENS=false,NODE_PREFIX=AST,NODE_EXTENDS=,NODE_FACTORY=,SUPPORT_CLASS_VISIBILITY_PUBLIC=true */
 package io.agrest.backend.exp.parser;
 
-import org.apache.cayenne.Persistent;
+import io.agrest.backend.exp.Expression;
 
-public
-class ASTScalar extends SimpleNode {
-  public ASTScalar(int id) {
-    super(id);
-  }
+import java.io.IOException;
 
-  public ASTScalar(ExpressionParser p, int id) {
-    super(p, id);
-  }
+public class ASTScalar extends SimpleNode {
 
-    public void setValue(Object value) {
-        if (value instanceof Persistent){
-            this.value = ((Persistent)value).getObjectId();
-        } else {
-            this.value = value;
-        }
+    public ASTScalar(int id) {
+        super(id);
     }
+
+    public ASTScalar(ExpressionParser p, int id) {
+        super(p, id);
+    }
+
+    public ASTScalar(Object value) {
+        super(ExpressionParserTreeConstants.JJTSCALAR);
+        this.value = value;
+    }
+
+    /**
+     * Creates a copy of this expression node, without copying children.
+     */
+    @Override
+    public Expression shallowCopy() {
+        ASTScalar copy = new ASTScalar(id);
+        copy.value = value;
+        return copy;
+    }
+
 
     public Object getValue() {
         return value;
+    }
+
+    public void setValue(Object value) {
+        this.value = value;
     }
 
 }

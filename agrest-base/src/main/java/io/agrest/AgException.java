@@ -29,6 +29,23 @@ public class AgException extends RuntimeException {
         this.status = status;
     }
 
+    /**
+     * Constructs an exception with the specified message and an optional list of message
+     * formatting arguments. Message formatting rules follow "String.format(..)"
+     * conventions.
+     */
+    public AgException(String messageFormat, Object... messageArgs) {
+        super(messageFormat == null ? null : String.format(messageFormat, messageArgs));
+    }
+
+    /**
+     * Constructs an <code>AgException</code> that wraps
+     * <code>exception</code> thrown elsewhere.
+     */
+    public AgException(Throwable cause) {
+        super(cause);
+    }
+
     public Status getStatus() {
         return status;
     }

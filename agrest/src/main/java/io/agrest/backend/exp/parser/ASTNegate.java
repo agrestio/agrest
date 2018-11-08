@@ -2,15 +2,20 @@
 /* JavaCCOptions:MULTI=true,NODE_USES_PARSER=false,VISITOR=false,TRACK_TOKENS=false,NODE_PREFIX=AST,NODE_EXTENDS=,NODE_FACTORY=,SUPPORT_CLASS_VISIBILITY_PUBLIC=true */
 package io.agrest.backend.exp.parser;
 
-public
-class ASTNegate extends SimpleNode {
-  public ASTNegate(int id) {
-    super(id);
-  }
+import io.agrest.backend.exp.Expression;
 
-  public ASTNegate(ExpressionParser p, int id) {
-    super(p, id);
-  }
+public class ASTNegate extends SimpleNode {
+    public ASTNegate(int id) {
+        super(id);
+    }
 
+    public ASTNegate(ExpressionParser p, int id) {
+        super(p, id);
+    }
+
+    @Override
+    public Expression shallowCopy() {
+        return new ASTNegate(id);
+    }
 }
 /* JavaCC - OriginalChecksum=534e1239e87f5d68165e31da6019c615 (do not edit this line) */

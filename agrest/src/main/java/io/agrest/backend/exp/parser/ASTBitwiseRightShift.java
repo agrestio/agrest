@@ -2,15 +2,20 @@
 /* JavaCCOptions:MULTI=true,NODE_USES_PARSER=false,VISITOR=false,TRACK_TOKENS=false,NODE_PREFIX=AST,NODE_EXTENDS=,NODE_FACTORY=,SUPPORT_CLASS_VISIBILITY_PUBLIC=true */
 package io.agrest.backend.exp.parser;
 
-public
-class ASTBitwiseRightShift extends SimpleNode {
-  public ASTBitwiseRightShift(int id) {
-    super(id);
-  }
+import io.agrest.backend.exp.Expression;
 
-  public ASTBitwiseRightShift(ExpressionParser p, int id) {
-    super(p, id);
-  }
+public class ASTBitwiseRightShift extends SimpleNode {
+    public ASTBitwiseRightShift(int id) {
+        super(id);
+    }
 
+    public ASTBitwiseRightShift(ExpressionParser p, int id) {
+        super(p, id);
+    }
+
+    @Override
+    public Expression shallowCopy() {
+        return new ASTBitwiseRightShift(id);
+    }
 }
 /* JavaCC - OriginalChecksum=734feb37d9ebdcb59cf781ee7196b0eb (do not edit this line) */

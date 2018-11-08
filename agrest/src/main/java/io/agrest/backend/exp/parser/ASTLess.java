@@ -2,15 +2,23 @@
 /* JavaCCOptions:MULTI=true,NODE_USES_PARSER=false,VISITOR=false,TRACK_TOKENS=false,NODE_PREFIX=AST,NODE_EXTENDS=,NODE_FACTORY=,SUPPORT_CLASS_VISIBILITY_PUBLIC=true */
 package io.agrest.backend.exp.parser;
 
-public
-class ASTLess extends SimpleNode {
-  public ASTLess(int id) {
-    super(id);
-  }
+import io.agrest.backend.exp.Expression;
 
-  public ASTLess(ExpressionParser p, int id) {
-    super(p, id);
-  }
+public class ASTLess extends SimpleNode {
+    public ASTLess(int id) {
+        super(id);
+    }
 
+    public ASTLess(ExpressionParser p, int id) {
+        super(p, id);
+    }
+
+    /**
+     * Creates a copy of this expression node, without copying children.
+     */
+    @Override
+    public Expression shallowCopy() {
+        return new ASTLess(id);
+    }
 }
 /* JavaCC - OriginalChecksum=de59bf32f79edfe8fff2496c77c29d77 (do not edit this line) */

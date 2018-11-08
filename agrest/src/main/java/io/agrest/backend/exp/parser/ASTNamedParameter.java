@@ -2,19 +2,15 @@
 /* JavaCCOptions:MULTI=true,NODE_USES_PARSER=false,VISITOR=false,TRACK_TOKENS=false,NODE_PREFIX=AST,NODE_EXTENDS=,NODE_FACTORY=,SUPPORT_CLASS_VISIBILITY_PUBLIC=true */
 package io.agrest.backend.exp.parser;
 
-import org.apache.cayenne.exp.ExpressionException;
-import org.apache.cayenne.exp.ExpressionParameter;
-import org.apache.cayenne.exp.parser.ASTScalar;
 
-public
-class ASTNamedParameter extends ASTScalar {
-  public ASTNamedParameter(int id) {
-    super(id);
-  }
+import io.agrest.backend.exp.ExpressionException;
+import io.agrest.backend.exp.ExpressionParameter;
 
-//  public ASTNamedParameter(ExpressionParser p, int id) {
-//    super(p, id);
-//  }
+public class ASTNamedParameter extends ASTScalar {
+    public ASTNamedParameter(int id) {
+        super(id);
+    }
+
 
     @Override
     public void setValue(Object value) {

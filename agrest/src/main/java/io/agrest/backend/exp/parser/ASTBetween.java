@@ -2,6 +2,8 @@
 /* JavaCCOptions:MULTI=true,NODE_USES_PARSER=false,VISITOR=false,TRACK_TOKENS=false,NODE_PREFIX=AST,NODE_EXTENDS=,NODE_FACTORY=,SUPPORT_CLASS_VISIBILITY_PUBLIC=true */
 package io.agrest.backend.exp.parser;
 
+import io.agrest.backend.exp.Expression;
+
 public
 class ASTBetween extends SimpleNode {
   public ASTBetween(int id) {
@@ -12,5 +14,9 @@ class ASTBetween extends SimpleNode {
     super(p, id);
   }
 
+  @Override
+  public Expression shallowCopy() {
+    return new ASTBetween(id);
+  }
 }
 /* JavaCC - OriginalChecksum=7df505698c123de56f954f06b12be9ab (do not edit this line) */
