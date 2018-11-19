@@ -4,13 +4,14 @@ package io.agrest.backend.exp.parser;
 
 import io.agrest.backend.exp.Expression;
 
-public class ASTLength extends SimpleNode {
-    public ASTLength(int id) {
-        super(id);
+public class ASTLength extends ASTFunctionCall {
+
+    ASTLength(int id) {
+        super(id, "LENGTH");
     }
 
-    public ASTLength(ExpressionParser p, int id) {
-        super(p, id);
+    public ASTLength(Expression expression) {
+        super(ExpressionParserTreeConstants.JJTLENGTH, "LENGTH", expression);
     }
 
     @Override

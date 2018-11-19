@@ -4,14 +4,16 @@ package io.agrest.backend.exp.parser;
 
 import io.agrest.backend.exp.Expression;
 
-public class ASTSubstring extends SimpleNode {
-    public ASTSubstring(int id) {
-        super(id);
+public class ASTSubstring extends ASTFunctionCall {
+
+    ASTSubstring(int id) {
+        super(id, "SUBSTRING");
     }
 
-    public ASTSubstring(ExpressionParser p, int id) {
-        super(p, id);
+    public ASTSubstring(Expression path, Expression length, Expression offset) {
+        super(ExpressionParserTreeConstants.JJTSUBSTRING, "SUBSTRING", path, length, offset);
     }
+
 
     @Override
     public Expression shallowCopy() {

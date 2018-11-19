@@ -6,6 +6,7 @@ import io.agrest.ObjectMapper;
 import io.agrest.ObjectMapperFactory;
 import io.agrest.meta.AgEntity;
 import io.agrest.runtime.cayenne.ByIdObjectMapperFactory;
+import io.agrest.runtime.cayenne.converter.CayenneExpressionConverter;
 import io.agrest.runtime.meta.IMetadataService;
 import io.agrest.runtime.processor.update.UpdateContext;
 import org.apache.cayenne.DataObject;
@@ -107,10 +108,12 @@ public class CayenneUpdateStage extends CayenneUpdateDataStoreStage {
         // not using streaming API to read data from Cayenne, we are already
         // limited in how much data can fit in the memory map.
 
+        CayenneExpressionConverter expConverter = new CayenneExpressionConverter();
+
         List<Expression> expressions = new ArrayList<>(keys.size());
         for (Object key : keys) {
 
-            Expression e = mapper.expressionForKey(key);
+            Expression e = expConverter.convert(mapper.expressionForKey(key));
             if (e != null) {
                 expressions.add(e);
             }

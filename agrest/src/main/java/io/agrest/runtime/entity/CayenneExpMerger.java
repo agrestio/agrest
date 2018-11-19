@@ -3,8 +3,8 @@ package io.agrest.runtime.entity;
 import io.agrest.ResourceEntity;
 import io.agrest.protocol.CayenneExp;
 import org.apache.cayenne.di.Inject;
-import org.apache.cayenne.exp.Expression;
-import org.apache.cayenne.exp.ExpressionFactory;
+import io.agrest.backend.exp.Expression;
+import io.agrest.backend.exp.ExpressionFactory;
 
 import java.util.List;
 import java.util.Map;

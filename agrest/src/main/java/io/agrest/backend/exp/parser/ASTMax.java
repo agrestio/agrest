@@ -4,13 +4,14 @@ package io.agrest.backend.exp.parser;
 
 import io.agrest.backend.exp.Expression;
 
-public class ASTMax extends SimpleNode {
-    public ASTMax(int id) {
-        super(id);
+public class ASTMax extends ASTFunctionCall {
+
+    ASTMax(int id) {
+        super(id, "MAX");
     }
 
-    public ASTMax(ExpressionParser p, int id) {
-        super(p, id);
+    public ASTMax(Expression expression) {
+        super(ExpressionParserTreeConstants.JJTMAX, "MAX", expression);
     }
 
     @Override

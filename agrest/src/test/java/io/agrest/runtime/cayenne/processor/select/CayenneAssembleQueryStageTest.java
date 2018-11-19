@@ -1,6 +1,7 @@
 package io.agrest.runtime.cayenne.processor.select;
 
 import io.agrest.ResourceEntity;
+import io.agrest.backend.exp.ExpressionFactory;
 import io.agrest.it.fixture.cayenne.E1;
 import io.agrest.it.fixture.cayenne.E2;
 import io.agrest.it.fixture.cayenne.E3;
@@ -37,7 +38,9 @@ public class CayenneAssembleQueryStageTest extends TestWithCayenneMapping {
 		query.addOrdering(o1);
 
 		ResourceEntity<E1> resourceEntity = getResourceEntity(E1.class);
-		resourceEntity.getOrderings().add(o2);
+		resourceEntity.getOrderings().add(new io.agrest.backend.query.Ordering(
+				o2.getSortSpecString(),
+				io.agrest.backend.query.SortOrder.valueOf(o2.getSortOrder().toString())));
 
 		SelectContext<E1> context = new SelectContext<E1>(E1.class);
 		context.setSelect(query);
@@ -47,7 +50,7 @@ public class CayenneAssembleQueryStageTest extends TestWithCayenneMapping {
 		assertSame(query, amended);
 		assertEquals(2, amended.getOrderings().size());
 		assertSame(o1, amended.getOrderings().get(0));
-		assertSame(o2, amended.getOrderings().get(1));
+		assertEquals(o2, amended.getOrderings().get(1));
 	}
 
 	@Test
@@ -113,7 +116,7 @@ public class CayenneAssembleQueryStageTest extends TestWithCayenneMapping {
 		Expression extraQualifier = E1.NAME.eq("X");
 		ResourceEntity<E1> resourceEntity = getResourceEntity(E1.class);
 
-		resourceEntity.andQualifier(extraQualifier);
+		resourceEntity.andQualifier(ExpressionFactory.exp(extraQualifier.toString()));
 
 		SelectContext<E1> c1 = new SelectContext<>(E1.class);
 		c1.setEntity(resourceEntity);

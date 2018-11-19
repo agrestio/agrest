@@ -19,17 +19,14 @@
 
 package io.agrest.backend.exp;
 
-import io.agrest.backend.util.ConversionUtil;
+import io.agrest.backend.util.EqualsBuilder;
 
-import java.io.Serializable;
 import java.util.Objects;
 
 /**
  * Named parameter for parameterized expressions.
  */
-public class ExpressionParameter implements Serializable {
-
-	private static final long serialVersionUID = -8324061115570177022L;
+public class ExpressionParameter {
 	
 	protected String name;
 
@@ -59,11 +56,35 @@ public class ExpressionParameter implements Serializable {
 		}
 
 		ExpressionParameter parameter = (ExpressionParameter) o;
-		return ConversionUtil.nullSafeEquals(name, parameter.name);
+		return nullSafeEquals(name, parameter.name);
 	}
 
 	@Override
 	public int hashCode() {
 		return Objects.hash(name);
+	}
+
+	/**
+	 * Compares two objects similar to "Object.equals(Object)". Unlike
+	 * Object.equals(..), this method doesn't throw an exception if any of the
+	 * two objects is null.
+	 */
+	protected boolean nullSafeEquals(Object o1, Object o2) {
+
+		if (o1 == null) {
+			return o2 == null;
+		}
+
+		// Arrays must be handled differently since equals() only does
+		// an "==" for an array and ignores equivalence. If an array, use
+		// the Jakarta Commons Language component EqualsBuilder to determine
+		// the types contained in the array and do individual comparisons.
+		if (o1.getClass().isArray()) {
+			EqualsBuilder builder = new EqualsBuilder();
+			builder.append(o1, o2);
+			return builder.isEquals();
+		} else { // It is NOT an array, so use regular equals()
+			return o1.equals(o2);
+		}
 	}
 }

@@ -4,18 +4,37 @@ package io.agrest.backend.exp.parser;
 
 import io.agrest.backend.exp.Expression;
 
-public class ASTTrue extends SimpleNode {
-    public ASTTrue(int id) {
+/**
+ * Boolean true expression element Notice that there is one ASTTrue and one
+ * ASTFalse instead of a ASTBoolean with a Boolean value. The main reason for
+ * doing this is that a common ASTBoolean will have operand count of 1 and that
+ * will default to a prepared statmenet like " where ? and (...)", but we only
+ * need " where true and (...)".
+ *
+ * @see ASTFalse
+ */
+public class ASTTrue extends ConditionNode {
+
+    /**
+     * Constructor used by expression parser. Do not invoke directly.
+     */
+    ASTTrue(int id) {
         super(id);
     }
 
-    public ASTTrue(ExpressionParser p, int id) {
-        super(p, id);
+    public ASTTrue() {
+        super(ExpressionParserTreeConstants.JJTTRUE);
     }
 
     @Override
     public Expression shallowCopy() {
         return new ASTTrue(id);
     }
+
+    @Override
+    public int getType() {
+        return Expression.TRUE;
+    }
+
 }
 /* JavaCC - OriginalChecksum=81e37820bac582e75db8d3c5c0899fc3 (do not edit this line) */

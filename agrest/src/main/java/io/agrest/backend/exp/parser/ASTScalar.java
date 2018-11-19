@@ -4,21 +4,24 @@ package io.agrest.backend.exp.parser;
 
 import io.agrest.backend.exp.Expression;
 
-import java.io.IOException;
-
 public class ASTScalar extends SimpleNode {
 
-    public ASTScalar(int id) {
+    protected Object value;
+
+    /**
+     * Constructor used by expression parser. Do not invoke directly.
+     */
+    ASTScalar(int id) {
         super(id);
     }
 
-    public ASTScalar(ExpressionParser p, int id) {
-        super(p, id);
+    public ASTScalar() {
+        super(ExpressionParserTreeConstants.JJTSCALAR);
     }
 
     public ASTScalar(Object value) {
         super(ExpressionParserTreeConstants.JJTSCALAR);
-        this.value = value;
+        setValue(value);
     }
 
     /**

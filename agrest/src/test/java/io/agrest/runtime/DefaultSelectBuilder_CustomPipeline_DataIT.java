@@ -3,6 +3,7 @@ package io.agrest.runtime;
 import io.agrest.DataResponse;
 import io.agrest.SelectBuilder;
 import io.agrest.SelectStage;
+import io.agrest.backend.exp.ExpressionFactory;
 import io.agrest.it.fixture.CayenneDerbyStack;
 import io.agrest.it.fixture.DbCleaner;
 import io.agrest.it.fixture.AgFactory;
@@ -38,7 +39,9 @@ public class DefaultSelectBuilder_CustomPipeline_DataIT {
         DB.insert("e2", "id, name", "2, 'yyy'");
 
         DataResponse<E2> dr = createBuilder(E2.class)
-                .stage(SelectStage.CREATE_ENTITY, c -> c.getEntity().setQualifier(E2.NAME.eq("yyy")))
+                .stage(SelectStage.CREATE_ENTITY,
+                        c -> c.getEntity().setQualifier(
+                                ExpressionFactory.exp(E2.NAME.eq("yyy").toString())))
                 .get();
 
         assertEquals(1, dr.getObjects().size());

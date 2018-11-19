@@ -9,7 +9,7 @@ import io.agrest.protocol.Sort;
 import io.agrest.runtime.entity.SortMerger;
 import io.agrest.runtime.path.PathDescriptorManager;
 import io.agrest.unit.TestWithCayenneMapping;
-import org.apache.cayenne.query.Ordering;
+import io.agrest.backend.query.Ordering;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;

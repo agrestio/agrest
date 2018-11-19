@@ -4,18 +4,39 @@ package io.agrest.backend.exp.parser;
 
 import io.agrest.backend.exp.Expression;
 
-public class ASTGreaterOrEqual extends SimpleNode {
-    public ASTGreaterOrEqual(int id) {
+/**
+ * "Greater Than Or Equal To" expression.
+ *
+ */
+public class ASTGreaterOrEqual extends ConditionNode {
+
+    /**
+     * Constructor used by expression parser. Do not invoke directly.
+     */
+    ASTGreaterOrEqual(int id) {
         super(id);
     }
 
-    public ASTGreaterOrEqual(ExpressionParser p, int id) {
-        super(p, id);
+    public ASTGreaterOrEqual() {
+        super(ExpressionParserTreeConstants.JJTGREATEROREQUAL);
+    }
+
+    public ASTGreaterOrEqual(SimpleNode path, Object value) {
+        super(ExpressionParserTreeConstants.JJTGREATEROREQUAL);
+        jjtAddChild(path, 0);
+        jjtAddChild(new ASTScalar(value), 1);
+        connectChildren();
     }
 
     @Override
     public Expression shallowCopy() {
         return new ASTGreaterOrEqual(id);
     }
+
+    @Override
+    public int getType() {
+        return Expression.GREATER_THAN_EQUAL_TO;
+    }
+
 }
 /* JavaCC - OriginalChecksum=3c1dc235314e7ab983185faacd2b0f42 (do not edit this line) */

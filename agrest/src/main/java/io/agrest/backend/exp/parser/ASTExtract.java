@@ -4,12 +4,11 @@ package io.agrest.backend.exp.parser;
 
 import io.agrest.AgException;
 import io.agrest.backend.exp.Expression;
-import org.apache.cayenne.exp.parser.ASTFunctionCall;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class ASTExtract extends SimpleNode {
+public class ASTExtract extends ASTFunctionCall {
 
     /**
      * Available components of date/time.
@@ -26,10 +25,9 @@ public class ASTExtract extends SimpleNode {
      * Map from camelCase name to enum elements.
      * @see ASTFunctionCall#nameToCamelCase(String)
      */
-    private static final Map<String, ASTExtract.DateTimePart> NAME_TO_PART = new HashMap<>();
-
+    private static final Map<String, DateTimePart> NAME_TO_PART = new HashMap<>();
     static {
-        for(ASTExtract.DateTimePart part : ASTExtract.DateTimePart.values()) {
+        for(DateTimePart part : DateTimePart.values()) {
             NAME_TO_PART.put(nameToCamelCase(part.name()), part);
         }
     }
@@ -39,19 +37,19 @@ public class ASTExtract extends SimpleNode {
      */
     private String partName;
 
-    private ASTExtract.DateTimePart part;
+    private DateTimePart part;
 
-    public ASTExtract(int id) {
-        super(id);
+    ASTExtract(int id) {
+        super(id, "EXTRACT");
     }
 
-    public ASTExtract(ExpressionParser p, int id) {
-        super(p, id);
+    public ASTExtract(Expression expression) {
+        super(ExpressionParserTreeConstants.JJTEXTRACT, "EXTRACT", expression);
     }
 
     @Override
-    public Expression shallowCopy() {
-        return null;
+    public String getFunctionName() {
+        return part.name();
     }
 
     /**
@@ -67,25 +65,28 @@ public class ASTExtract extends SimpleNode {
     }
 
     /**
-     *
-     * @param functionName in UPPER_UNDERSCORE convention
-     * @return functionName in camelCase convention
+     * This method is used by FunctionExpressionFactory
+     * @param part date/time part to extract
      */
-    protected static String nameToCamelCase(String functionName) {
-        String[] parts = functionName.split("_");
-        StringBuilder sb = new StringBuilder();
-        boolean first = true;
-        for(String part : parts) {
-            if(first) {
-                sb.append(part.toLowerCase());
-                first = false;
-            } else {
-                char[] chars = part.toLowerCase().toCharArray();
-                chars[0] = Character.toTitleCase(chars[0]);
-                sb.append(chars);
-            }
-        }
-        return sb.toString();
+    public void setPart(DateTimePart part) {
+        this.part = part;
+        this.partName = nameToCamelCase(part.name());
+    }
+
+    public DateTimePart getPart() {
+        return part;
+    }
+
+    public String getPartCamelCaseName() {
+        return partName;
+    }
+
+    @Override
+    public Expression shallowCopy() {
+        ASTExtract copy = new ASTExtract(id);
+        copy.partName = partName;
+        copy.part = part;
+        return copy;
     }
 }
 /* JavaCC - OriginalChecksum=c0a8e9c96cae8eaa1732c88d58dbbefa (do not edit this line) */

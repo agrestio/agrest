@@ -9,8 +9,8 @@ public class ASTDivide extends SimpleNode {
         super(id);
     }
 
-    public ASTDivide(ExpressionParser p, int id) {
-        super(p, id);
+    public ASTDivide() {
+        super(ExpressionParserTreeConstants.JJTDIVIDE);
     }
 
     @Override

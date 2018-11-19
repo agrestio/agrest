@@ -7,21 +7,21 @@ import io.agrest.runtime.path.IPathDescriptorManager;
 import io.agrest.sencha.ops.FilterUtil;
 import io.agrest.sencha.protocol.Filter;
 import org.apache.cayenne.di.Inject;
-import org.apache.cayenne.exp.Expression;
-import org.apache.cayenne.exp.parser.ASTObjPath;
+import io.agrest.backend.exp.Expression;
+import io.agrest.backend.exp.parser.ASTObjPath;
 
 import javax.ws.rs.core.Response.Status;
 import java.util.List;
 
-import static org.apache.cayenne.exp.ExpressionFactory.expFalse;
-import static org.apache.cayenne.exp.ExpressionFactory.greaterExp;
-import static org.apache.cayenne.exp.ExpressionFactory.greaterOrEqualExp;
-import static org.apache.cayenne.exp.ExpressionFactory.inExp;
-import static org.apache.cayenne.exp.ExpressionFactory.lessExp;
-import static org.apache.cayenne.exp.ExpressionFactory.lessOrEqualExp;
-import static org.apache.cayenne.exp.ExpressionFactory.likeIgnoreCaseExp;
-import static org.apache.cayenne.exp.ExpressionFactory.matchExp;
-import static org.apache.cayenne.exp.ExpressionFactory.noMatchExp;
+import static io.agrest.backend.exp.ExpressionFactory.expFalse;
+import static io.agrest.backend.exp.ExpressionFactory.greaterExp;
+import static io.agrest.backend.exp.ExpressionFactory.greaterOrEqualExp;
+import static io.agrest.backend.exp.ExpressionFactory.inExp;
+import static io.agrest.backend.exp.ExpressionFactory.lessExp;
+import static io.agrest.backend.exp.ExpressionFactory.lessOrEqualExp;
+import static io.agrest.backend.exp.ExpressionFactory.likeIgnoreCaseExp;
+import static io.agrest.backend.exp.ExpressionFactory.matchExp;
+import static io.agrest.backend.exp.ExpressionFactory.noMatchExp;
 
 public class SenchaFilterExpressionCompiler implements ISenchaFilterExpressionCompiler {
 

@@ -9,8 +9,8 @@ public class ASTBitwiseAnd extends SimpleNode {
         super(id);
     }
 
-    public ASTBitwiseAnd(ExpressionParser p, int id) {
-        super(p, id);
+    public ASTBitwiseAnd() {
+        super(ExpressionParserTreeConstants.JJTBITWISEAND);
     }
 
     @Override

@@ -1,10 +1,11 @@
 package io.agrest.sencha;
 
+import io.agrest.runtime.cayenne.converter.CayenneExpressionConverter;
 import io.agrest.runtime.processor.select.SelectContext;
 import io.agrest.runtime.protocol.ParameterExtractor;
 import io.agrest.sencha.ops.StartsWithFilter;
-import org.apache.cayenne.exp.Expression;
-import org.apache.cayenne.exp.Property;
+import io.agrest.backend.exp.Expression;
+import io.agrest.backend.exp.Property;
 
 import javax.ws.rs.core.UriInfo;
 import java.util.function.Consumer;
@@ -40,7 +41,8 @@ public class SenchaOps {
         // else - error?
 
         if (context.getSelect() != null) {
-            context.getSelect().andQualifier(expression);
+            CayenneExpressionConverter expressionConverter = new CayenneExpressionConverter();
+            context.getSelect().andQualifier(expressionConverter.convert(expression));
         }
     }
 }

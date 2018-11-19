@@ -4,18 +4,58 @@ package io.agrest.backend.exp.parser;
 
 import io.agrest.backend.exp.Expression;
 
-public class ASTIn extends SimpleNode {
-    public ASTIn(int id) {
+import java.util.function.Function;
+
+/**
+ * "In" expression.
+ *
+ */
+public class ASTIn extends ConditionNode {
+
+    /**
+     * Constructor used by expression parser. Do not invoke directly.
+     */
+    ASTIn(int id) {
         super(id);
     }
 
-    public ASTIn(ExpressionParser p, int id) {
-        super(p, id);
+    public ASTIn() {
+        super(ExpressionParserTreeConstants.JJTIN);
+    }
+
+    public ASTIn(SimpleNode path, ASTList list) {
+        super(ExpressionParserTreeConstants.JJTIN);
+        jjtAddChild(path, 0);
+        jjtAddChild(list, 1);
+        connectChildren();
     }
 
     @Override
     public Expression shallowCopy() {
         return new ASTIn(id);
+    }
+
+    @Override
+    public int getType() {
+        return Expression.IN;
+    }
+
+    @Override
+    protected Object transformExpression(Function<Object, Object> transformer) {
+        Object transformed = super.transformExpression(transformer);
+
+        // transform empty ASTIn to ASTFalse
+        if (transformed instanceof ASTIn) {
+            ASTIn exp = (ASTIn) transformed;
+            if (exp.jjtGetNumChildren() == 2) {
+                ASTList list = (ASTList) exp.jjtGetChild(1);
+                if (list.getValues() == null && list.jjtGetNumChildren() == 0) {
+                    transformed = new ASTFalse();
+                }
+            }
+        }
+
+        return transformed;
     }
 }
 /* JavaCC - OriginalChecksum=dedebc4c45ea6bea10c3e83ec314e25f (do not edit this line) */

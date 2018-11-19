@@ -4,18 +4,38 @@ package io.agrest.backend.exp.parser;
 
 import io.agrest.backend.exp.Expression;
 
-public class ASTNotEqual extends SimpleNode {
-    public ASTNotEqual(int id) {
+/**
+ * "Not equal to" expression.
+ *
+ */
+public class ASTNotEqual extends ConditionNode {
+
+    ASTNotEqual(int id) {
         super(id);
     }
 
-    public ASTNotEqual(ExpressionParser p, int id) {
-        super(p, id);
+    public ASTNotEqual() {
+        super(ExpressionParserTreeConstants.JJTNOTEQUAL);
+    }
+
+    /**
+     * Creates "Not Equal To" expression.
+     */
+    public ASTNotEqual(SimpleNode path, Object value) {
+        super(ExpressionParserTreeConstants.JJTNOTEQUAL);
+        jjtAddChild(path, 0);
+        jjtAddChild(new ASTScalar(value), 1);
+        connectChildren();
     }
 
     @Override
     public Expression shallowCopy() {
         return new ASTNotEqual(id);
+    }
+
+    @Override
+    public int getType() {
+        return Expression.NOT_EQUAL_TO;
     }
 }
 /* JavaCC - OriginalChecksum=9e95ce9ec6ad624a12d34046c31419a7 (do not edit this line) */

@@ -6,9 +6,9 @@ import io.agrest.protocol.Dir;
 import io.agrest.protocol.Sort;
 import io.agrest.runtime.path.IPathDescriptorManager;
 import org.apache.cayenne.di.Inject;
-import org.apache.cayenne.exp.parser.ASTObjPath;
-import org.apache.cayenne.query.Ordering;
-import org.apache.cayenne.query.SortOrder;
+import io.agrest.backend.exp.parser.ASTObjPath;
+import io.agrest.backend.query.Ordering;
+import io.agrest.backend.query.SortOrder;
 
 /**
  * @since 2.13

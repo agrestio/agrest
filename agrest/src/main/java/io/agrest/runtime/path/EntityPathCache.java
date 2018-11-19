@@ -10,8 +10,8 @@ import io.agrest.PathConstants;
 import io.agrest.meta.AgAttribute;
 import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgRelationship;
-import org.apache.cayenne.exp.parser.ASTObjPath;
-import org.apache.cayenne.exp.parser.ASTPath;
+import io.agrest.backend.exp.parser.ASTObjPath;
+import io.agrest.backend.exp.parser.ASTPath;
 
 class EntityPathCache {
 

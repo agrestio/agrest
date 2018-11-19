@@ -4,13 +4,19 @@ package io.agrest.backend.exp.parser;
 
 import io.agrest.backend.exp.Expression;
 
-public class ASTCurrentTime extends SimpleNode {
-    public ASTCurrentTime(int id) {
-        super(id);
+public class ASTCurrentTime extends ASTFunctionCall {
+
+    public ASTCurrentTime() {
+        this(ExpressionParserTreeConstants.JJTCURRENTTIME);
     }
 
-    public ASTCurrentTime(ExpressionParser p, int id) {
-        super(p, id);
+    ASTCurrentTime(int id) {
+        super(id, "CURRENT_TIME");
+    }
+
+    @Override
+    public boolean needParenthesis() {
+        return false;
     }
 
     @Override

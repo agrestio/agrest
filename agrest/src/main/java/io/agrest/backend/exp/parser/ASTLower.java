@@ -4,13 +4,15 @@ package io.agrest.backend.exp.parser;
 
 import io.agrest.backend.exp.Expression;
 
-public class ASTLower extends SimpleNode {
-    public ASTLower(int id) {
-        super(id);
+public class ASTLower extends ASTFunctionCall {
+
+
+    ASTLower(int id) {
+        super(id, "LOWER");
     }
 
-    public ASTLower(ExpressionParser p, int id) {
-        super(p, id);
+    public ASTLower(Expression expression) {
+        super(ExpressionParserTreeConstants.JJTLOWER, "LOWER", expression);
     }
 
     @Override

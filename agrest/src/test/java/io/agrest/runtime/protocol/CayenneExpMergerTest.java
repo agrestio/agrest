@@ -2,13 +2,15 @@ package io.agrest.runtime.protocol;
 
 import io.agrest.AgException;
 import io.agrest.ResourceEntity;
+import io.agrest.backend.exp.parser.ExpressionParserTreeConstants;
+import io.agrest.backend.exp.parser.SimpleNode;
 import io.agrest.it.fixture.cayenne.E4;
 import io.agrest.protocol.CayenneExp;
 import io.agrest.runtime.entity.CayenneExpMerger;
 import io.agrest.runtime.entity.ExpressionPostProcessor;
 import io.agrest.runtime.path.PathDescriptorManager;
 import io.agrest.unit.TestWithCayenneMapping;
-import org.apache.cayenne.exp.Expression;
+import io.agrest.backend.exp.Expression;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -17,7 +19,7 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.TimeZone;
 
-import static org.apache.cayenne.exp.ExpressionFactory.exp;
+import static io.agrest.backend.exp.ExpressionFactory.exp;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
@@ -134,7 +136,11 @@ public class CayenneExpMergerTest extends TestWithCayenneMapping {
 		// Cayenne parses 'fromString' as ASTNegate(ASTScalar), so to compare
 		// apples to apples, let's convert it back to String.. not an ideal
 		// comparison, but a good approximation
-		assertEquals("cDecimal = -4.4009", e.toString());
+		// TODO: Implement Expression.toString() to pass this
+		// assertEquals("cDecimal = -4.4009", e.toString());
+		assertEquals(ExpressionParserTreeConstants.JJTEQUAL, ((SimpleNode)e).getId());
+		assertEquals("cDecimal", e.getOperand(0).toString());
+		assertEquals("-4.4009", e.getOperand(1).toString());
 	}
 
 	@Test

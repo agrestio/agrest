@@ -4,18 +4,31 @@ package io.agrest.backend.exp.parser;
 
 import io.agrest.backend.exp.Expression;
 
+/**
+ * Asterisk operator for COUNT(*) expression.
+ */
 public class ASTAsterisk extends SimpleNode {
-    public ASTAsterisk(int id) {
+
+    /**
+     * Constructor used by expression parser. Do not invoke directly.
+     */
+    ASTAsterisk(int id) {
         super(id);
     }
 
-    public ASTAsterisk(ExpressionParser p, int id) {
-        super(p, id);
+    public ASTAsterisk() {
+        super(ExpressionParserTreeConstants.JJTASTERISK);
     }
 
     @Override
     public Expression shallowCopy() {
         return new ASTAsterisk(id);
     }
+
+    @Override
+    public int getType() {
+        return Expression.ASTERISK;
+    }
+
 }
 /* JavaCC - OriginalChecksum=3d693f47e8d3d1abe95584e29f6f511c (do not edit this line) */

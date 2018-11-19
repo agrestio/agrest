@@ -4,18 +4,43 @@ package io.agrest.backend.exp.parser;
 
 import io.agrest.backend.exp.Expression;
 
-public class ASTNotLikeIgnoreCase extends SimpleNode {
+/**
+ * "Not like, ignore case" expression.
+ *
+ */
+public class ASTNotLikeIgnoreCase extends PatternMatchNode {
+
     public ASTNotLikeIgnoreCase(int id) {
-        super(id);
+        super(id, true);
     }
 
-    public ASTNotLikeIgnoreCase(ExpressionParser p, int id) {
-        super(p, id);
+    public ASTNotLikeIgnoreCase() {
+        super(ExpressionParserTreeConstants.JJTNOTLIKEIGNORECASE, true);
+    }
+
+    public ASTNotLikeIgnoreCase(SimpleNode path, Object value) {
+        super(ExpressionParserTreeConstants.JJTNOTLIKEIGNORECASE, true);
+        jjtAddChild(path, 0);
+        jjtAddChild(new ASTScalar(value), 1);
+        connectChildren();
+    }
+
+    public ASTNotLikeIgnoreCase(SimpleNode path, Object value, char escapeChar) {
+        super(ExpressionParserTreeConstants.JJTNOTLIKEIGNORECASE, true, escapeChar);
+        jjtAddChild(path, 0);
+        jjtAddChild(new ASTScalar(value), 1);
+        connectChildren();
     }
 
     @Override
     public Expression shallowCopy() {
         return new ASTNotLikeIgnoreCase(id);
     }
+
+    @Override
+    public int getType() {
+        return Expression.NOT_LIKE_IGNORE_CASE;
+    }
+
 }
 /* JavaCC - OriginalChecksum=fb6fa62dfcb4757c14cb3fc5536b0779 (do not edit this line) */

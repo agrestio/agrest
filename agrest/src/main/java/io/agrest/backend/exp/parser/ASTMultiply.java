@@ -9,8 +9,8 @@ public class ASTMultiply extends SimpleNode {
         super(id);
     }
 
-    public ASTMultiply(ExpressionParser p, int id) {
-        super(p, id);
+    public ASTMultiply() {
+        super(ExpressionParserTreeConstants.JJTMULTIPLY);
     }
 
     @Override

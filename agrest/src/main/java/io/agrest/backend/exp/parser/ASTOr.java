@@ -4,18 +4,49 @@ package io.agrest.backend.exp.parser;
 
 import io.agrest.backend.exp.Expression;
 
-public class ASTOr extends SimpleNode {
+import java.util.Collection;
+import java.util.Iterator;
+
+/**
+ * "Or" expression.
+ */
+public class ASTOr extends AggregateConditionNode {
     public ASTOr(int id) {
         super(id);
     }
 
-    public ASTOr(ExpressionParser p, int id) {
-        super(p, id);
+    public ASTOr() {
+        super(ExpressionParserTreeConstants.JJTOR);
+    }
+
+    public ASTOr(Object[] nodes) {
+        super(ExpressionParserTreeConstants.JJTOR);
+        int len = nodes.length;
+        for (int i = 0; i < len; i++) {
+            jjtAddChild((Node) nodes[i], i);
+        }
+        connectChildren();
+    }
+
+    public ASTOr(Collection<? extends Node> nodes) {
+        super(ExpressionParserTreeConstants.JJTOR);
+        int len = nodes.size();
+        Iterator<? extends Node> it = nodes.iterator();
+        for (int i = 0; i < len; i++) {
+            jjtAddChild(it.next(), i);
+        }
+        connectChildren();
     }
 
     @Override
     public Expression shallowCopy() {
         return new ASTOr(id);
     }
+
+    @Override
+    public int getType() {
+        return Expression.OR;
+    }
+
 }
 /* JavaCC - OriginalChecksum=19fa01026acd29f172655b75786c9b41 (do not edit this line) */

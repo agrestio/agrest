@@ -6,7 +6,7 @@ import io.agrest.backend.util.RegexUtil;
 
 import java.util.regex.Pattern;
 
-public abstract class PatternMatchNode extends SimpleNode {
+public abstract class PatternMatchNode extends ConditionNode {
 
     protected transient Pattern pattern;
     protected transient boolean patternCompiled;

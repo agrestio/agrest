@@ -1,9 +1,9 @@
 package io.agrest.meta;
 
 import io.agrest.property.PropertyReader;
-import org.apache.cayenne.exp.parser.ASTObjPath;
-import org.apache.cayenne.exp.parser.ASTPath;
-import org.apache.cayenne.util.ToStringBuilder;
+import io.agrest.backend.exp.parser.ASTObjPath;
+import io.agrest.backend.exp.parser.ASTPath;
+import io.agrest.backend.util.ToStringBuilder;
 
 /**
  * @since 1.12

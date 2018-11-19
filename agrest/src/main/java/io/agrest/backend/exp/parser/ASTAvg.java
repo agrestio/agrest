@@ -4,13 +4,14 @@ package io.agrest.backend.exp.parser;
 
 import io.agrest.backend.exp.Expression;
 
-public class ASTAvg extends SimpleNode {
-    public ASTAvg(int id) {
-        super(id);
+public class ASTAvg extends ASTFunctionCall {
+
+    ASTAvg(int id) {
+        super(id, "AVG");
     }
 
-    public ASTAvg(ExpressionParser p, int id) {
-        super(p, id);
+    public ASTAvg(Expression expression) {
+        super(ExpressionParserTreeConstants.JJTAVG, "AVG", expression);
     }
 
     @Override

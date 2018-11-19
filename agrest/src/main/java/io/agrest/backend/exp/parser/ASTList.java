@@ -4,7 +4,10 @@ package io.agrest.backend.exp.parser;
 
 import io.agrest.backend.exp.Expression;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
 
 public class ASTList extends SimpleNode {
 
@@ -14,8 +17,8 @@ public class ASTList extends SimpleNode {
         super(id);
     }
 
-    public ASTList(ExpressionParser p, int id) {
-        super(p, id);
+    public ASTList() {
+        super(ExpressionParserTreeConstants.JJTLIST);
     }
 
     /**
@@ -23,12 +26,7 @@ public class ASTList extends SimpleNode {
      */
     public ASTList(Object[] objects) {
         super(ExpressionParserTreeConstants.JJTLIST);
-
-        if (objects != null) {
-            int size = objects.length;
-            this.values = new Object[size];
-            System.arraycopy(objects, 0, this.values, 0, size);
-        }
+        setValues(objects);
     }
 
     /**
@@ -36,16 +34,52 @@ public class ASTList extends SimpleNode {
      */
     public ASTList(Collection<?> objects) {
         super(ExpressionParserTreeConstants.JJTLIST);
-        if (objects != null) {
-            Collection<?> c = objects;
-            this.values = c.toArray(new Object[c.size()]);
-        }
+        setValues(objects);
+    }
+//
+//    /**
+//     * Initializes a list expression with a Java Iterator.
+//     */
+//    public ASTList(Iterator<?> objects) {
+//        super(ExpressionParserTreeConstants.JJTLIST);
+//        setValues(objects);
+//    }
+
+    /**
+     * Gets an internal collection of values.
+     */
+    public Object[] getValues() {
+        return values;
     }
 
 
     @Override
     public Expression shallowCopy() {
         return new ASTList(id);
+    }
+
+    protected void setValues(Object value) {
+        if (value == null) {
+            this.values = null;
+        } else if (value instanceof Object[]) {
+            int size = ((Object[]) value).length;
+            this.values = new Object[size];
+            System.arraycopy((Object[]) value, 0, this.values, 0, size);
+        } else if (value instanceof Collection) {
+            Collection<?> c = (Collection<?>) value;
+            this.values = c.toArray(new Object[c.size()]);
+        } else if (value instanceof Iterator) {
+            List<Object> values = new ArrayList<>();
+            Iterator<?> it = (Iterator<?>) value;
+            while (it.hasNext()) {
+                values.add(it.next());
+            }
+
+            this.values = values.toArray();
+        } else {
+            throw new IllegalArgumentException("Invalid value class '" + value.getClass().getName()
+                    + "', expected null, Object[], Collection, Iterator");
+        }
     }
 }
 /* JavaCC - OriginalChecksum=7b50fb9c5962712ce9982bf1519b48e0 (do not edit this line) */

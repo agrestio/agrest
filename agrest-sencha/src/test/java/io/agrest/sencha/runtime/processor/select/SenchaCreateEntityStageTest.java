@@ -27,8 +27,8 @@ import io.agrest.sencha.protocol.Filter;
 import io.agrest.sencha.runtime.entity.ISenchaFilterExpressionCompiler;
 import io.agrest.sencha.runtime.entity.SenchaFilterExpressionCompiler;
 import io.agrest.unit.TestWithCayenneMapping;
-import org.apache.cayenne.query.Ordering;
-import org.apache.cayenne.query.SortOrder;
+import io.agrest.backend.query.Ordering;
+import io.agrest.backend.query.SortOrder;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -36,7 +36,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 
-import static org.apache.cayenne.exp.ExpressionFactory.exp;
+import static io.agrest.backend.exp.ExpressionFactory.exp;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 

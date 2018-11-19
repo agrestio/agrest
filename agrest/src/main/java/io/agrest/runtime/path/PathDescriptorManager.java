@@ -1,7 +1,7 @@
 package io.agrest.runtime.path;
 
 import io.agrest.meta.AgEntity;
-import org.apache.cayenne.exp.parser.ASTObjPath;
+import io.agrest.backend.exp.parser.ASTObjPath;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;

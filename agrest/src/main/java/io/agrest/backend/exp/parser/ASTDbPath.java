@@ -6,8 +6,14 @@ import io.agrest.backend.exp.Expression;
 
 public class ASTDbPath extends ASTPath {
 
+    public static final String DB_PREFIX = "db:";
+
     public ASTDbPath(int id) {
         super(id);
+    }
+
+    public ASTDbPath() {
+        super(ExpressionParserTreeConstants.JJTDBPATH);
     }
 
     public ASTDbPath(Object value) {
@@ -25,5 +31,9 @@ public class ASTDbPath extends ASTPath {
         return copy;
     }
 
+    @Override
+    public String toString() {
+        return DB_PREFIX + path;
+    }
 }
 /* JavaCC - OriginalChecksum=f6b74d4b5dd8475109499d882651802a (do not edit this line) */

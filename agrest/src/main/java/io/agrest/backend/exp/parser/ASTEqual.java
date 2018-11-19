@@ -5,30 +5,45 @@ package io.agrest.backend.exp.parser;
 import io.agrest.backend.exp.Expression;
 
 
-public class ASTEqual extends SimpleNode {
+/**
+ * "Equal To" expression.
+ */
+public class ASTEqual extends ConditionNode {
 
-  public ASTEqual(int id) {
-    super(id);
-  }
+    /**
+     * Constructor used by expression parser. Do not invoke directly.
+     */
+    ASTEqual(int id) {
+        super(id);
+    }
 
-  /**
-   * Creates "Equal To" expression.
-   */
-  public ASTEqual(SimpleNode path, Object value) {
-    super(ExpressionParserTreeConstants.JJTEQUAL);
-    jjtAddChild(path, 0);
-    jjtAddChild(new ASTScalar(value), 1);
-    connectChildren();
-  }
+    public ASTEqual() {
+        super(ExpressionParserTreeConstants.JJTEQUAL);
+    }
+
+    /**
+     * Creates "Equal To" expression.
+     */
+    public ASTEqual(SimpleNode path, Object value) {
+        super(ExpressionParserTreeConstants.JJTEQUAL);
+        jjtAddChild(path, 0);
+        jjtAddChild(new ASTScalar(value), 1);
+        connectChildren();
+    }
 
 
-  /**
-   * Creates a copy of this expression node, without copying children.
-   */
-  @Override
-  public Expression shallowCopy() {
-    return new ASTEqual(id);
-  }
+    /**
+     * Creates a copy of this expression node, without copying children.
+     */
+    @Override
+    public Expression shallowCopy() {
+        return new ASTEqual(id);
+    }
+
+    @Override
+    public int getType() {
+        return Expression.EQUAL_TO;
+    }
 
 }
 /* JavaCC - OriginalChecksum=46fee1bedd8bed6bb9aa2b52ed15844f (do not edit this line) */

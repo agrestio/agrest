@@ -4,13 +4,18 @@ package io.agrest.backend.exp.parser;
 
 import io.agrest.backend.exp.Expression;
 
-public class ASTLocate extends SimpleNode {
-    public ASTLocate(int id) {
-        super(id);
+public class ASTLocate extends ASTFunctionCall {
+
+    ASTLocate(int id) {
+        super(id, "LOCATE");
     }
 
-    public ASTLocate(ExpressionParser p, int id) {
-        super(p, id);
+    public ASTLocate(Expression substring, Expression path) {
+        super(ExpressionParserTreeConstants.JJTLOCATE, "LOCATE", substring, path);
+    }
+
+    public ASTLocate(Expression substring, Expression path, Expression offset) {
+        super(ExpressionParserTreeConstants.JJTLOCATE, "LOCATE", substring, path, offset);
     }
 
     @Override

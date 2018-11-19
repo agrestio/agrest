@@ -4,14 +4,16 @@ package io.agrest.backend.exp.parser;
 
 import io.agrest.backend.exp.Expression;
 
-public class ASTAbs extends SimpleNode {
+public class ASTAbs extends ASTFunctionCall {
+
     public ASTAbs(int id) {
-        super(id);
+        super(id, "ABS");
     }
 
-    public ASTAbs(ExpressionParser p, int id) {
-        super(p, id);
+    public ASTAbs(Expression expression) {
+        super(ExpressionParserTreeConstants.JJTABS, "ABS", expression);
     }
+
 
     @Override
     public Expression shallowCopy() {

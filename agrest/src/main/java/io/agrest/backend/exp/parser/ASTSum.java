@@ -4,13 +4,14 @@ package io.agrest.backend.exp.parser;
 
 import io.agrest.backend.exp.Expression;
 
-public class ASTSum extends SimpleNode {
-    public ASTSum(int id) {
-        super(id);
+public class ASTSum extends ASTFunctionCall {
+
+    ASTSum(int id) {
+        super(id, "SUM");
     }
 
-    public ASTSum(ExpressionParser p, int id) {
-        super(p, id);
+    public ASTSum(Expression expression) {
+        super(ExpressionParserTreeConstants.JJTSUM, "SUM", expression);
     }
 
     @Override

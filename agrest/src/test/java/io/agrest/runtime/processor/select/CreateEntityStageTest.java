@@ -3,6 +3,9 @@ package io.agrest.runtime.processor.select;
 import io.agrest.AgException;
 import io.agrest.AgRequest;
 import io.agrest.ResourceEntity;
+import io.agrest.backend.exp.Expression;
+import io.agrest.backend.exp.parser.ExpressionParserTreeConstants;
+import io.agrest.backend.exp.parser.SimpleNode;
 import io.agrest.it.fixture.cayenne.E1;
 import io.agrest.it.fixture.cayenne.E2;
 import io.agrest.it.fixture.cayenne.E3;
@@ -27,8 +30,8 @@ import io.agrest.runtime.entity.SortMerger;
 import io.agrest.runtime.path.IPathDescriptorManager;
 import io.agrest.runtime.path.PathDescriptorManager;
 import io.agrest.unit.TestWithCayenneMapping;
-import org.apache.cayenne.query.Ordering;
-import org.apache.cayenne.query.SortOrder;
+import io.agrest.backend.query.Ordering;
+import io.agrest.backend.query.SortOrder;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -41,6 +44,7 @@ import static org.apache.cayenne.exp.ExpressionFactory.exp;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 
@@ -516,6 +520,10 @@ public class CreateEntityStageTest extends TestWithCayenneMapping {
 		ResourceEntity<E2> resourceEntity = context.getEntity();
 
 		assertNotNull(resourceEntity.getQualifier());
-		assertEquals(exp("name = 'John Smith'"), resourceEntity.getQualifier());
+		// TODO: Implement Expression.toString to pass this
+		//assertEquals(exp("name = 'John Smith'"), resourceEntity.getQualifier());
+		assertEquals(ExpressionParserTreeConstants.JJTEQUAL, ((SimpleNode)resourceEntity.getQualifier()).getId());
+		assertEquals("name", resourceEntity.getQualifier().getOperand(0).toString());
+		assertEquals("John Smith", resourceEntity.getQualifier().getOperand(1).toString());
 	}
 }

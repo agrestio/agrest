@@ -3,7 +3,7 @@ package io.agrest.constraints;
 import io.agrest.PathConstants;
 import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgRelationship;
-import org.apache.cayenne.exp.Expression;
+import io.agrest.backend.exp.Expression;
 import org.apache.cayenne.exp.Property;
 
 import java.util.List;
@@ -46,6 +46,7 @@ public class ConstraintsBuilder<T> implements Constraint<T> {
      * @param attributeOrRelationship a name of the property to exclude.
      * @return a new instance of Constraints.
      */
+    // TODO: Do we really need a Cayenne Property?
     public ConstraintsBuilder<T> excludeProperty(Property<?> attributeOrRelationship) {
         return excludeProperty(attributeOrRelationship.getName());
     }
@@ -65,6 +66,7 @@ public class ConstraintsBuilder<T> implements Constraint<T> {
      * @param attributesOrRelationships an array of properties to exclude.
      * @return a new instance of Constraints.
      */
+    // TODO: Do we really need a Cayenne Property here?
     public ConstraintsBuilder<T> excludeProperties(Property<?>... attributesOrRelationships) {
 
         String[] names = new String[attributesOrRelationships.length];
@@ -106,6 +108,7 @@ public class ConstraintsBuilder<T> implements Constraint<T> {
         }));
     }
 
+    // TODO: Do we really need a Cayenne Property?
     public ConstraintsBuilder<T> attribute(Property<?> attribute) {
         return attribute(attribute.getName());
     }
@@ -124,6 +127,7 @@ public class ConstraintsBuilder<T> implements Constraint<T> {
         }));
     }
 
+    // TODO: Do we really need a Cayenne Property?
     public ConstraintsBuilder<T> attributes(Property<?>... attributes) {
         String[] names = new String[attributes.length];
         for (int i = 0; i < attributes.length; i++) {
@@ -162,10 +166,12 @@ public class ConstraintsBuilder<T> implements Constraint<T> {
         }));
     }
 
+    // TODO: Do we really need a Cayenne Property?
     public <S> ConstraintsBuilder<T> path(Property<S> path, ConstraintsBuilder<S> subentityBuilder) {
         return path(path.getName(), subentityBuilder);
     }
 
+    // TODO: Do we really need a Cayenne Property?
     public <S> ConstraintsBuilder<T> toManyPath(Property<List<S>> path, ConstraintsBuilder<S> subentityBuilder) {
         return path(path.getName(), subentityBuilder);
     }

@@ -3,9 +3,11 @@ package io.agrest.runtime.cayenne.processor;
 import io.agrest.AgException;
 import io.agrest.meta.AgAttribute;
 import io.agrest.meta.AgEntity;
+import io.agrest.runtime.cayenne.converter.CayenneExpressionConverter;
 import org.apache.cayenne.ObjectContext;
 import org.apache.cayenne.exp.ExpressionFactory;
 import org.apache.cayenne.exp.parser.ASTEqual;
+import org.apache.cayenne.exp.parser.SimpleNode;
 import org.apache.cayenne.map.ObjEntity;
 import org.apache.cayenne.query.ObjectSelect;
 
@@ -43,8 +45,10 @@ public final class Util {
 			}
 			return query.selectOne(context);
 		} else {
+			CayenneExpressionConverter expConverter = new CayenneExpressionConverter();
+
 			AgAttribute attribute = agEntity.getIds().iterator().next();
-			return ObjectSelect.query(type, new ASTEqual(attribute.getPathExp(), id)).selectOne(context);
+			return ObjectSelect.query(type, new ASTEqual((SimpleNode) expConverter.convert(attribute.getPathExp()), id)).selectOne(context);
 		}
 	}
 }

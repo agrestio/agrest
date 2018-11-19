@@ -5,12 +5,13 @@ package io.agrest.backend.exp.parser;
 import io.agrest.backend.exp.Expression;
 
 public class ASTAdd extends SimpleNode {
-    public ASTAdd(int id) {
+
+    ASTAdd(int id) {
         super(id);
     }
 
-    public ASTAdd(ExpressionParser p, int id) {
-        super(p, id);
+    public ASTAdd() {
+        super(ExpressionParserTreeConstants.JJTADD);
     }
 
     @Override

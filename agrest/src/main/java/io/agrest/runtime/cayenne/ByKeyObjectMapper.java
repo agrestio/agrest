@@ -3,8 +3,8 @@ package io.agrest.runtime.cayenne;
 import io.agrest.EntityUpdate;
 import io.agrest.ObjectMapper;
 import org.apache.cayenne.DataObject;
-import org.apache.cayenne.exp.Expression;
-import org.apache.cayenne.exp.ExpressionFactory;
+import io.agrest.backend.exp.Expression;
+import io.agrest.backend.exp.ExpressionFactory;
 
 /**
  * @since 1.4

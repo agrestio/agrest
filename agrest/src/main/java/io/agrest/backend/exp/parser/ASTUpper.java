@@ -4,13 +4,14 @@ package io.agrest.backend.exp.parser;
 
 import io.agrest.backend.exp.Expression;
 
-public class ASTUpper extends SimpleNode {
-    public ASTUpper(int id) {
-        super(id);
+public class ASTUpper extends ASTFunctionCall {
+
+    ASTUpper(int id) {
+        super(id, "UPPER");
     }
 
-    public ASTUpper(ExpressionParser p, int id) {
-        super(p, id);
+    public ASTUpper(Expression expression) {
+        super(ExpressionParserTreeConstants.JJTUPPER, "UPPER", expression);
     }
 
     @Override

@@ -4,19 +4,24 @@ package io.agrest.backend.exp.parser;
 
 import io.agrest.backend.exp.Expression;
 
-public
-class ASTCurrentTimestamp extends SimpleNode {
-  public ASTCurrentTimestamp(int id) {
-    super(id);
-  }
+public class ASTCurrentTimestamp extends ASTFunctionCall {
 
-  public ASTCurrentTimestamp(ExpressionParser p, int id) {
-    super(p, id);
-  }
+    public ASTCurrentTimestamp() {
+        this(ExpressionParserTreeConstants.JJTCURRENTTIMESTAMP);
+    }
 
-  @Override
-  public Expression shallowCopy() {
-    return new ASTCurrentTimestamp(id);
-  }
+    ASTCurrentTimestamp(int id) {
+        super(id, "CURRENT_TIMESTAMP");
+    }
+
+    @Override
+    public boolean needParenthesis() {
+        return false;
+    }
+
+    @Override
+    public Expression shallowCopy() {
+        return new ASTCurrentTimestamp(id);
+    }
 }
 /* JavaCC - OriginalChecksum=b31fd04bc6070c3c4e6e3102777fa088 (do not edit this line) */

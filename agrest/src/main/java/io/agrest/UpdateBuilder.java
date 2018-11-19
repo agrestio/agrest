@@ -49,6 +49,7 @@ public interface UpdateBuilder<T> {
     /**
      * Sets up a relationship clause for all objects in this update.
      */
+    // TODO: Do we really need a Cayenne Property here?
     UpdateBuilder<T> parent(Class<?> parentType, Object parentId, Property<T> relationshipFromParent);
 
     /**
@@ -56,6 +57,7 @@ public interface UpdateBuilder<T> {
      *
      * @since 1.20
      */
+    // TODO: Do we really need a Cayenne Property here?
     UpdateBuilder<T> parent(Class<?> parentType, Map<String, Object> parentIds, Property<T> relationshipFromParent);
 
     /**
@@ -121,6 +123,7 @@ public interface UpdateBuilder<T> {
      *
      * @since 1.20
      */
+    // TODO: Do we really need a Cayenne Property here?
     UpdateBuilder<T> mapper(Property<?> property);
 
     /**

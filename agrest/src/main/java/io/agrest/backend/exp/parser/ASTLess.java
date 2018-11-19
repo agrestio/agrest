@@ -4,13 +4,28 @@ package io.agrest.backend.exp.parser;
 
 import io.agrest.backend.exp.Expression;
 
-public class ASTLess extends SimpleNode {
-    public ASTLess(int id) {
+/**
+ * "Less Then" expression.
+ *
+ */
+public class ASTLess extends ConditionNode {
+
+    /**
+     * Constructor used by expression parser. Do not invoke directly.
+     */
+    ASTLess(int id) {
         super(id);
     }
 
-    public ASTLess(ExpressionParser p, int id) {
-        super(p, id);
+    public ASTLess() {
+        super(ExpressionParserTreeConstants.JJTLESS);
+    }
+
+    public ASTLess(SimpleNode path, Object value) {
+        super(ExpressionParserTreeConstants.JJTLESS);
+        jjtAddChild(path, 0);
+        jjtAddChild(new ASTScalar(value), 1);
+        connectChildren();
     }
 
     /**
@@ -20,5 +35,11 @@ public class ASTLess extends SimpleNode {
     public Expression shallowCopy() {
         return new ASTLess(id);
     }
+
+    @Override
+    public int getType() {
+        return Expression.LESS_THAN;
+    }
+
 }
 /* JavaCC - OriginalChecksum=de59bf32f79edfe8fff2496c77c29d77 (do not edit this line) */

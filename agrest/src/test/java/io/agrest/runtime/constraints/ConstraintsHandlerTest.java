@@ -12,14 +12,14 @@ import io.agrest.it.fixture.cayenne.E5;
 import io.agrest.meta.AgEntity;
 import io.agrest.meta.DefaultAgAttribute;
 import io.agrest.meta.AgRelationship;
-import org.apache.cayenne.exp.Expression;
+import io.agrest.backend.exp.Expression;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.util.Collections;
 import java.util.List;
 
-import static org.apache.cayenne.exp.ExpressionFactory.exp;
+import static io.agrest.backend.exp.ExpressionFactory.exp;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;

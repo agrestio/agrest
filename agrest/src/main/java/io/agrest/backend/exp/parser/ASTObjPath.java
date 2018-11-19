@@ -6,7 +6,7 @@ import io.agrest.backend.exp.Expression;
 
 public class ASTObjPath extends ASTPath {
 
-    protected String path;
+    public static final String OBJ_PREFIX = "obj:";
 
     /**
      * Constructor used by expression parser. Do not invoke directly.
@@ -30,6 +30,11 @@ public class ASTObjPath extends ASTPath {
         ASTObjPath copy = new ASTObjPath(id);
         copy.path = path;
         return copy;
+    }
+
+    @Override
+    public String toString() {
+        return path;
     }
 }
 /* JavaCC - OriginalChecksum=26a4d483c0ff09db8e8fb40ad0d08920 (do not edit this line) */

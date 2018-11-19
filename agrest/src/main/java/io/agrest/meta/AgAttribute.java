@@ -1,7 +1,7 @@
 package io.agrest.meta;
 
 import io.agrest.property.PropertyReader;
-import org.apache.cayenne.exp.parser.ASTPath;
+import io.agrest.backend.exp.parser.ASTPath;
 
 /**
  * Represents an entity "simple" property.

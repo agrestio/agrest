@@ -2,7 +2,7 @@ package io.agrest.runtime.entity;
 
 import io.agrest.AgException;
 import io.agrest.meta.AgEntity;
-import org.apache.cayenne.exp.Expression;
+import io.agrest.backend.exp.Expression;
 
 /**
  * @since 2.2

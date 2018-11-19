@@ -4,13 +4,14 @@ package io.agrest.backend.exp.parser;
 
 import io.agrest.backend.exp.Expression;
 
-public class ASTSqrt extends SimpleNode {
-    public ASTSqrt(int id) {
-        super(id);
+public class ASTSqrt extends ASTFunctionCall {
+
+    ASTSqrt(int id) {
+        super(id, "SQRT");
     }
 
-    public ASTSqrt(ExpressionParser p, int id) {
-        super(p, id);
+    public ASTSqrt(Expression expression) {
+        super(ExpressionParserTreeConstants.JJTSQRT, "SQRT", expression);
     }
 
     @Override

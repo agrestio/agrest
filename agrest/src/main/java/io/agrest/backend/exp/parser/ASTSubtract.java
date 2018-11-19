@@ -9,8 +9,8 @@ public class ASTSubtract extends SimpleNode {
         super(id);
     }
 
-    public ASTSubtract(ExpressionParser p, int id) {
-        super(p, id);
+    public ASTSubtract() {
+        super(ExpressionParserTreeConstants.JJTSUBTRACT);
     }
 
     @Override

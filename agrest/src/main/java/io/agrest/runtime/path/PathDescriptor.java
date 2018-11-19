@@ -1,6 +1,6 @@
 package io.agrest.runtime.path;
 
-import org.apache.cayenne.exp.parser.ASTPath;
+import io.agrest.backend.exp.parser.ASTPath;
 
 public interface PathDescriptor {
 

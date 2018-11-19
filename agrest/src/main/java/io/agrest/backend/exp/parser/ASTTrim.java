@@ -4,13 +4,19 @@ package io.agrest.backend.exp.parser;
 
 import io.agrest.backend.exp.Expression;
 
-public class ASTTrim extends SimpleNode {
-    public ASTTrim(int id) {
-        super(id);
+public class ASTTrim extends ASTFunctionCall {
+
+    ASTTrim(int id) {
+        super(id, "TRIM");
     }
 
-    public ASTTrim(ExpressionParser p, int id) {
-        super(p, id);
+    public ASTTrim(Expression path) {
+        super(ExpressionParserTreeConstants.JJTTRIM, "TRIM", path);
+    }
+
+    @Override
+    public int getType() {
+        return Expression.FUNCTION_CALL;
     }
 
     @Override

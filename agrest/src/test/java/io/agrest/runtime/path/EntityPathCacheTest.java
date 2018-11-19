@@ -13,7 +13,7 @@ import io.agrest.it.fixture.cayenne.E17;
 import io.agrest.it.fixture.cayenne.E2;
 import io.agrest.it.fixture.cayenne.E3;
 import io.agrest.unit.TestWithCayenneMapping;
-import org.apache.cayenne.exp.parser.ASTObjPath;
+import io.agrest.backend.exp.parser.ASTObjPath;
 import org.junit.Test;
 
 public class EntityPathCacheTest extends TestWithCayenneMapping {

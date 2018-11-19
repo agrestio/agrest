@@ -4,13 +4,14 @@ package io.agrest.backend.exp.parser;
 
 import io.agrest.backend.exp.Expression;
 
-public class ASTConcat extends SimpleNode {
-    public ASTConcat(int id) {
-        super(id);
+public class ASTConcat extends ASTFunctionCall {
+
+    ASTConcat(int id) {
+        super(id, "CONCAT");
     }
 
-    public ASTConcat(ExpressionParser p, int id) {
-        super(p, id);
+    public ASTConcat(Expression... expressions) {
+        super(ExpressionParserTreeConstants.JJTCONCAT, "CONCAT", (Object[])expressions);
     }
 
     @Override

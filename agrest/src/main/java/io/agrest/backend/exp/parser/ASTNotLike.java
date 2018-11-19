@@ -4,18 +4,43 @@ package io.agrest.backend.exp.parser;
 
 import io.agrest.backend.exp.Expression;
 
-public class ASTNotLike extends SimpleNode {
-    public ASTNotLike(int id) {
-        super(id);
+/**
+ * "Not Like" expression.
+ *
+ */
+public class ASTNotLike extends PatternMatchNode {
+
+    ASTNotLike(int id) {
+        super(id, false);
     }
 
-    public ASTNotLike(ExpressionParser p, int id) {
-        super(p, id);
+    public ASTNotLike() {
+        super(ExpressionParserTreeConstants.JJTNOTLIKE, false);
+    }
+
+    public ASTNotLike(SimpleNode path, Object value) {
+        super(ExpressionParserTreeConstants.JJTNOTLIKE, false);
+        jjtAddChild(path, 0);
+        jjtAddChild(new ASTScalar(value), 1);
+        connectChildren();
+    }
+
+    public ASTNotLike(SimpleNode path, Object value, char escapeChar) {
+        super(ExpressionParserTreeConstants.JJTNOTLIKE, false, escapeChar);
+        jjtAddChild(path, 0);
+        jjtAddChild(new ASTScalar(value), 1);
+        connectChildren();
     }
 
     @Override
     public Expression shallowCopy() {
         return new ASTNotLike(id);
     }
+
+    @Override
+    public int getType() {
+        return Expression.NOT_LIKE;
+    }
+
 }
 /* JavaCC - OriginalChecksum=8a6933c77d10dca5246bd01ecd53abcf (do not edit this line) */

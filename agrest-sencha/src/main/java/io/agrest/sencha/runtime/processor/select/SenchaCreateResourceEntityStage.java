@@ -3,6 +3,7 @@ package io.agrest.sencha.runtime.processor.select;
 import io.agrest.ResourceEntity;
 import io.agrest.meta.AgEntity;
 import io.agrest.protocol.Sort;
+import io.agrest.runtime.cayenne.converter.CayenneExpressionConverter;
 import io.agrest.runtime.entity.ICayenneExpMerger;
 import io.agrest.runtime.entity.IExcludeMerger;
 import io.agrest.runtime.entity.IIncludeMerger;
@@ -15,7 +16,7 @@ import io.agrest.runtime.processor.select.SelectContext;
 import io.agrest.sencha.SenchaRequest;
 import io.agrest.sencha.runtime.entity.ISenchaFilterExpressionCompiler;
 import org.apache.cayenne.di.Inject;
-import org.apache.cayenne.exp.Expression;
+import io.agrest.backend.exp.Expression;
 
 import static java.util.Arrays.asList;
 

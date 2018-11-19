@@ -4,18 +4,55 @@ package io.agrest.backend.exp.parser;
 
 import io.agrest.backend.exp.Expression;
 
-public class ASTNotIn extends SimpleNode {
-    public ASTNotIn(int id) {
+import java.util.function.Function;
+
+/**
+ * "Not In" expression.
+ *
+ */
+public class ASTNotIn extends ConditionNode {
+
+    ASTNotIn(int id) {
         super(id);
     }
 
-    public ASTNotIn(ExpressionParser p, int id) {
-        super(p, id);
+    public ASTNotIn() {
+        super(ExpressionParserTreeConstants.JJTNOTIN);
+    }
+
+    public ASTNotIn(SimpleNode path, ASTList list) {
+        super(ExpressionParserTreeConstants.JJTNOTIN);
+        jjtAddChild(path, 0);
+        jjtAddChild(list, 1);
+        connectChildren();
     }
 
     @Override
     public Expression shallowCopy() {
         return new ASTNotIn(id);
+    }
+
+    @Override
+    public int getType() {
+        return Expression.NOT_IN;
+    }
+
+    @Override
+    protected Object transformExpression(Function<Object, Object> transformer) {
+        Object transformed = super.transformExpression(transformer);
+
+        // transform empty ASTNotIn to ASTTrue
+        if (transformed instanceof ASTNotIn) {
+            ASTNotIn exp = (ASTNotIn) transformed;
+            if (exp.jjtGetNumChildren() == 2) {
+                ASTList list = (ASTList) exp.jjtGetChild(1);
+                if (list.getValues() == null && list.jjtGetNumChildren() == 0) {
+                    transformed = new ASTTrue();
+                }
+            }
+        }
+
+        return transformed;
     }
 }
 /* JavaCC - OriginalChecksum=fd47345fd0404ec550fdcefbebbdae33 (do not edit this line) */

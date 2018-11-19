@@ -1,6 +1,6 @@
 package io.agrest;
 
-import org.apache.cayenne.exp.Expression;
+import io.agrest.backend.exp.Expression;
 
 /**
  * A helper to locate objects within a context of a single update request.

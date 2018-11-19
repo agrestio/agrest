@@ -40,5 +40,10 @@ public class ASTLikeIgnoreCase extends PatternMatchNode {
         return new ASTLikeIgnoreCase(id, escapeChar);
     }
 
+    @Override
+    public int getType() {
+        return Expression.LIKE_IGNORE_CASE;
+    }
+
 }
 /* JavaCC - OriginalChecksum=8e8d020d228b3cf00e4bff3c7ed6015d (do not edit this line) */

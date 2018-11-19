@@ -4,13 +4,14 @@ package io.agrest.backend.exp.parser;
 
 import io.agrest.backend.exp.Expression;
 
-public class ASTMod extends SimpleNode {
-    public ASTMod(int id) {
-        super(id);
+public class ASTMod extends ASTFunctionCall {
+
+    ASTMod(int id) {
+        super(id, "MOD");
     }
 
-    public ASTMod(ExpressionParser p, int id) {
-        super(p, id);
+    public ASTMod(Expression expression, Expression divisor) {
+        super(ExpressionParserTreeConstants.JJTMOD, "MOD", expression, divisor);
     }
 
     @Override

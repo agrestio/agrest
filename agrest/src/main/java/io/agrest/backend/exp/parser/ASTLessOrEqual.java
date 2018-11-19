@@ -4,18 +4,39 @@ package io.agrest.backend.exp.parser;
 
 import io.agrest.backend.exp.Expression;
 
-public class ASTLessOrEqual extends SimpleNode {
-    public ASTLessOrEqual(int id) {
+/**
+ * "Less than or equal to" expression.
+ *
+ */
+public class ASTLessOrEqual extends ConditionNode {
+
+    /**
+     * Constructor used by expression parser. Do not invoke directly.
+     */
+    ASTLessOrEqual(int id) {
         super(id);
     }
 
-    public ASTLessOrEqual(ExpressionParser p, int id) {
-        super(p, id);
+    public ASTLessOrEqual() {
+        super(ExpressionParserTreeConstants.JJTLESSOREQUAL);
+    }
+
+    public ASTLessOrEqual(SimpleNode path, Object value) {
+        super(ExpressionParserTreeConstants.JJTLESSOREQUAL);
+        jjtAddChild(path, 0);
+        jjtAddChild(new ASTScalar(value), 1);
+        connectChildren();
     }
 
     @Override
     public Expression shallowCopy() {
         return new ASTLessOrEqual(id);
     }
+
+    @Override
+    public int getType() {
+        return Expression.LESS_THAN_EQUAL_TO;
+    }
+
 }
 /* JavaCC - OriginalChecksum=5e61943feef38b3eabab385951d8b5f9 (do not edit this line) */

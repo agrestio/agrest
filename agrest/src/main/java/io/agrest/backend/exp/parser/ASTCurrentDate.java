@@ -9,8 +9,8 @@ public class ASTCurrentDate extends SimpleNode {
         super(id);
     }
 
-    public ASTCurrentDate(ExpressionParser p, int id) {
-        super(p, id);
+    public ASTCurrentDate() {
+        this(ExpressionParserTreeConstants.JJTCURRENTDATE);
     }
 
     @Override

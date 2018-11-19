@@ -18,6 +18,8 @@ import io.agrest.encoder.ResourceEncoder;
 import io.agrest.meta.AgAttribute;
 import io.agrest.meta.AgRelationship;
 import io.agrest.property.PropertyBuilder;
+import io.agrest.runtime.cayenne.converter.CayenneExpressionConverter;
+import io.agrest.runtime.cayenne.converter.CayenneOrderingConverter;
 import io.agrest.runtime.semantics.IRelationshipMapper;
 import org.apache.cayenne.di.Inject;
 
@@ -27,6 +29,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TreeMap;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 public class EncoderService implements IEncoderService {
 
@@ -87,12 +90,16 @@ public class EncoderService implements IEncoderService {
 
         Encoder elementEncoder = collectionElementEncoder(resourceEntity);
         boolean isMapBy = resourceEntity.getMapBy() != null;
+        boolean isQualifier = resourceEntity.getQualifier() != null;
+
+        CayenneOrderingConverter orderingConverter = new CayenneOrderingConverter();
+        CayenneExpressionConverter expressionConverter = new CayenneExpressionConverter();
 
         // if mapBy is involved, apply filters at MapBy level, not inside sublists...
         ListEncoder listEncoder = new ListEncoder(
                 elementEncoder,
-                isMapBy ? null : resourceEntity.getQualifier(),
-                resourceEntity.getOrderings())
+                isMapBy ? null : isQualifier ? expressionConverter.convert(resourceEntity.getQualifier()) : null,
+                resourceEntity.getOrderings().stream().map(o -> orderingConverter.convert(o)).collect(Collectors.toList()))
                 .withOffset(resourceEntity.getFetchOffset())
                 .withLimit(resourceEntity.getFetchLimit());
 
@@ -103,7 +110,7 @@ public class EncoderService implements IEncoderService {
         return isMapBy ?
                 new MapByEncoder(
                         resourceEntity.getMapByPath(),
-                        resourceEntity.getQualifier(),
+                        isQualifier ? expressionConverter.convert(resourceEntity.getQualifier()) : null,
                         resourceEntity.getMapBy(),
                         listEncoder,
                         stringConverterFactory,

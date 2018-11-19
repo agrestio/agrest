@@ -10,6 +10,8 @@ import io.agrest.meta.AgPersistentEntity;
 import io.agrest.processor.Processor;
 import io.agrest.processor.ProcessorOutcome;
 import io.agrest.runtime.cayenne.ICayennePersister;
+import io.agrest.runtime.cayenne.converter.CayenneExpressionConverter;
+import io.agrest.runtime.cayenne.converter.CayenneOrderingConverter;
 import io.agrest.runtime.processor.select.SelectContext;
 import org.apache.cayenne.di.Inject;
 import org.apache.cayenne.exp.Expression;
@@ -63,12 +65,14 @@ public class CayenneAssembleQueryStage implements Processor<SelectContext<?>> {
             query.andQualifier(qualifier);
         }
 
+        CayenneExpressionConverter expConverter = new CayenneExpressionConverter();
         if (entity.getQualifier() != null) {
-            query.andQualifier(entity.getQualifier());
+            query.andQualifier(expConverter.convert(entity.getQualifier()));
         }
 
-        for (Ordering o : entity.getOrderings()) {
-            query.addOrdering(o);
+        CayenneOrderingConverter orderingConverter = new CayenneOrderingConverter();
+        for (io.agrest.backend.query.Ordering o : entity.getOrderings()) {
+            query.addOrdering(orderingConverter.convert(o));
         }
 
         if (!entity.getChildren().isEmpty()) {
@@ -145,6 +149,8 @@ public class CayenneAssembleQueryStage implements Processor<SelectContext<?>> {
                 child.setSemantics(prefetchSemantics);
                 appendPrefetches(child, e.getValue(), prefetchSemantics);
             }
+
+            // converts expressions
         }
 
         if (entity.getMapBy() != null) {

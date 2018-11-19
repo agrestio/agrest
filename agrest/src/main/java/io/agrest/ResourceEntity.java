@@ -3,9 +3,9 @@ package io.agrest;
 import io.agrest.meta.AgAttribute;
 import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgRelationship;
-import org.apache.cayenne.exp.Expression;
-import org.apache.cayenne.query.Ordering;
-import org.apache.cayenne.util.ToStringBuilder;
+import io.agrest.backend.exp.Expression;
+import io.agrest.backend.query.Ordering;
+import io.agrest.backend.util.ToStringBuilder;
 
 import java.util.ArrayList;
 import java.util.Collection;

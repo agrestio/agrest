@@ -23,7 +23,7 @@ import org.apache.cayenne.configuration.server.DataSourceFactory;
 import org.apache.cayenne.configuration.server.ServerRuntime;
 import org.apache.cayenne.di.Module;
 import org.apache.cayenne.exp.Property;
-import org.apache.cayenne.exp.parser.ASTPath;
+import io.agrest.backend.exp.parser.ASTPath;
 import org.apache.cayenne.map.ObjEntity;
 import org.junit.AfterClass;
 import org.junit.Before;

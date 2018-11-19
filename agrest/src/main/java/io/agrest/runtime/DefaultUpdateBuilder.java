@@ -67,12 +67,14 @@ public class DefaultUpdateBuilder<T> implements UpdateBuilder<T> {
         return this;
     }
 
+    // TODO: Do we really need a Cayenne Property here?
     @Override
     public UpdateBuilder<T> parent(Class<?> parentType, Object parentId, Property<T> relationshipFromParent) {
         context.setParent(new EntityParent<>(parentType, parentId, relationshipFromParent.getName()));
         return this;
     }
 
+    // TODO: Do we really need a Cayenne Property here?
     @Override
     public UpdateBuilder<T> parent(Class<?> parentType, Map<String, Object> parentIds,
                                    Property<T> relationshipFromParent) {
@@ -134,6 +136,7 @@ public class DefaultUpdateBuilder<T> implements UpdateBuilder<T> {
     /**
      * @since 1.20
      */
+    // TODO: Do we really need a Cayenne Property here?
     @Override
     public UpdateBuilder<T> mapper(Property<?> property) {
         return mapper(ByKeyObjectMapperFactory.byKey(property));

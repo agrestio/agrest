@@ -4,13 +4,14 @@ package io.agrest.backend.exp.parser;
 
 import io.agrest.backend.exp.Expression;
 
-public class ASTMin extends SimpleNode {
-    public ASTMin(int id) {
-        super(id);
+public class ASTMin extends ASTFunctionCall {
+
+    ASTMin(int id) {
+        super(id, "MIN");
     }
 
-    public ASTMin(ExpressionParser p, int id) {
-        super(p, id);
+    public ASTMin(Expression expression) {
+        super(ExpressionParserTreeConstants.JJTMIN, "MIN", expression);
     }
 
     @Override

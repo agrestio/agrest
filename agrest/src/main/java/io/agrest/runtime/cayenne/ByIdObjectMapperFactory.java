@@ -6,7 +6,7 @@ import io.agrest.ObjectMapper;
 import io.agrest.ObjectMapperFactory;
 import io.agrest.meta.AgAttribute;
 import io.agrest.runtime.processor.update.UpdateContext;
-import org.apache.cayenne.exp.parser.ASTPath;
+import io.agrest.backend.exp.parser.ASTPath;
 
 /**
  * A default singleton implementation of the {@link ObjectMapperFactory} that

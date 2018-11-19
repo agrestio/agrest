@@ -9,8 +9,8 @@ public class ASTBitwiseNot extends SimpleNode {
         super(id);
     }
 
-    public ASTBitwiseNot(ExpressionParser p, int id) {
-        super(p, id);
+    public ASTBitwiseNot() {
+        super(ExpressionParserTreeConstants.JJTBITWISENOT);
     }
 
     @Override

@@ -36,5 +36,11 @@ public class ASTLike extends PatternMatchNode {
     public Expression shallowCopy() {
         return new ASTLike(id, escapeChar);
     }
+
+    @Override
+    public int getType() {
+        return Expression.LIKE;
+    }
+
 }
 /* JavaCC - OriginalChecksum=d7026b92b15023fdd0aa96691aed3849 (do not edit this line) */

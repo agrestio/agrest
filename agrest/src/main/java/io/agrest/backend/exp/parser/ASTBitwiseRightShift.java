@@ -9,8 +9,8 @@ public class ASTBitwiseRightShift extends SimpleNode {
         super(id);
     }
 
-    public ASTBitwiseRightShift(ExpressionParser p, int id) {
-        super(p, id);
+    public ASTBitwiseRightShift() {
+        super(ExpressionParserTreeConstants.JJTBITWISERIGHTSHIFT);
     }
 
     @Override

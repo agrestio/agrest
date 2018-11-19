@@ -4,18 +4,37 @@ package io.agrest.backend.exp.parser;
 
 import io.agrest.backend.exp.Expression;
 
-public class ASTNotBetween extends SimpleNode {
-    public ASTNotBetween(int id) {
+/**
+ * "Not Between" expression.
+ *
+ */
+public class ASTNotBetween extends ConditionNode {
+
+    ASTNotBetween(int id) {
         super(id);
     }
 
-    public ASTNotBetween(ExpressionParser p, int id) {
-        super(p, id);
+    public ASTNotBetween() {
+        super(ExpressionParserTreeConstants.JJTNOTBETWEEN);
+    }
+
+    public ASTNotBetween(SimpleNode path, Object value1, Object value2) {
+        super(ExpressionParserTreeConstants.JJTNOTBETWEEN);
+        jjtAddChild(path, 0);
+        jjtAddChild(new ASTScalar(value1), 1);
+        jjtAddChild(new ASTScalar(value2), 2);
+        connectChildren();
     }
 
     @Override
     public Expression shallowCopy() {
         return new ASTNotBetween(id);
     }
+
+    @Override
+    public int getType() {
+        return Expression.NOT_BETWEEN;
+    }
+
 }
 /* JavaCC - OriginalChecksum=94270953b964e1185f65e119d74d96f6 (do not edit this line) */

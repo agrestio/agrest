@@ -9,8 +9,8 @@ public class ASTNegate extends SimpleNode {
         super(id);
     }
 
-    public ASTNegate(ExpressionParser p, int id) {
-        super(p, id);
+    public ASTNegate() {
+        super(ExpressionParserTreeConstants.JJTNEGATE);
     }
 
     @Override

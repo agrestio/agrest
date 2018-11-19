@@ -4,13 +4,18 @@ package io.agrest.backend.exp.parser;
 
 import io.agrest.backend.exp.Expression;
 
-public class ASTCount extends SimpleNode {
-    public ASTCount(int id) {
-        super(id);
+public class ASTCount extends ASTFunctionCall {
+
+    ASTCount(int id) {
+        super(id, "COUNT");
     }
 
-    public ASTCount(ExpressionParser p, int id) {
-        super(p, id);
+    public ASTCount(Expression expression) {
+        super(ExpressionParserTreeConstants.JJTCOUNT, "COUNT", expression);
+    }
+
+    public ASTCount() {
+        this(new ASTAsterisk());
     }
 
     @Override

@@ -4,18 +4,38 @@ package io.agrest.backend.exp.parser;
 
 import io.agrest.backend.exp.Expression;
 
-public class ASTGreater extends SimpleNode {
-    public ASTGreater(int id) {
+/**
+ * "Greater Than" expression.
+ */
+public class ASTGreater extends ConditionNode {
+
+    /**
+     * Constructor used by expression parser. Do not invoke directly.
+     */
+    ASTGreater(int id) {
         super(id);
     }
 
-    public ASTGreater(ExpressionParser p, int id) {
-        super(p, id);
+    public ASTGreater() {
+        super(ExpressionParserTreeConstants.JJTGREATER);
+    }
+
+    public ASTGreater(SimpleNode path, Object value) {
+        super(ExpressionParserTreeConstants.JJTGREATER);
+        jjtAddChild(path, 0);
+        jjtAddChild(new ASTScalar(value), 1);
+        connectChildren();
     }
 
     @Override
     public Expression shallowCopy() {
         return new ASTGreater(id);
     }
+
+    @Override
+    public int getType() {
+        return Expression.GREATER_THAN;
+    }
+
 }
 /* JavaCC - OriginalChecksum=b5edb65e77757d0c765b86a9aa88717c (do not edit this line) */

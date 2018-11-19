@@ -1,6 +1,6 @@
 package io.agrest.runtime.cayenne;
 
-import static org.apache.cayenne.exp.ExpressionFactory.joinExp;
+import static io.agrest.backend.exp.ExpressionFactory.joinExp;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -14,9 +14,9 @@ import io.agrest.AgException;
 import io.agrest.ObjectMapper;
 import io.agrest.property.DataObjectPropertyReader;
 import io.agrest.property.PersistentObjectIdPropertyReader;
-import org.apache.cayenne.exp.Expression;
-import org.apache.cayenne.exp.parser.ASTEqual;
-import org.apache.cayenne.exp.parser.ASTPath;
+import io.agrest.backend.exp.Expression;
+import io.agrest.backend.exp.parser.ASTEqual;
+import io.agrest.backend.exp.parser.ASTPath;
 
 /**
  * @since 1.7

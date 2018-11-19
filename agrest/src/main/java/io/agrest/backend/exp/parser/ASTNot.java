@@ -4,18 +4,33 @@ package io.agrest.backend.exp.parser;
 
 import io.agrest.backend.exp.Expression;
 
-public class ASTNot extends SimpleNode {
+/**
+ * "Not" expression.
+ */
+public class ASTNot extends AggregateConditionNode {
     public ASTNot(int id) {
         super(id);
     }
 
-    public ASTNot(ExpressionParser p, int id) {
-        super(p, id);
+    public ASTNot() {
+        super(ExpressionParserTreeConstants.JJTNOT);
+    }
+
+    public ASTNot(Node expression) {
+        super(ExpressionParserTreeConstants.JJTNOT);
+        jjtAddChild(expression, 0);
+        connectChildren();
     }
 
     @Override
     public Expression shallowCopy() {
         return new ASTNot(id);
     }
+
+    @Override
+    public int getType() {
+        return Expression.NOT;
+    }
+
 }
 /* JavaCC - OriginalChecksum=b89178142e4818b840ce26d8c61a3723 (do not edit this line) */
