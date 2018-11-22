@@ -144,7 +144,7 @@ public class E3Resource {
 
         return Ag.idempotentCreateOrUpdate(E2.class, config)
                  .id(tid)
-                 .parent(E3.class, id, E3.E2)
+                 .parent(E3.class, id, E3.E2.getName())
                  .request(agRequest)
                  .syncAndSelect(e2);
     }

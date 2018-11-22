@@ -57,7 +57,7 @@ public class ConstraintsHandlerWithDefaultsTest extends TestWithCayenneMapping {
 	@Test
 	public void testConstrainResponse_PerRequest() {
 
-		Constraint<E1> tc1 = Constraint.excludeAll(E1.class).attributes(E1.DESCRIPTION);
+		Constraint<E1> tc1 = Constraint.excludeAll(E1.class).attributes(E1.DESCRIPTION.getName());
 
 		ResourceEntity<E1> te1 = new ResourceEntity<>(age1);
 		appendAttribute(te1, E1.AGE, Integer.class);

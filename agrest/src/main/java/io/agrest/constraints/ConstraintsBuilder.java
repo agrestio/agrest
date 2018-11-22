@@ -4,9 +4,7 @@ import io.agrest.PathConstants;
 import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgRelationship;
 import io.agrest.backend.exp.Expression;
-import org.apache.cayenne.exp.Property;
 
-import java.util.List;
 import java.util.function.Function;
 
 /**
@@ -41,17 +39,6 @@ public class ConstraintsBuilder<T> implements Constraint<T> {
     }
 
     /**
-     * Excludes an attribute or relationship.
-     *
-     * @param attributeOrRelationship a name of the property to exclude.
-     * @return a new instance of Constraints.
-     */
-    // TODO: Do we really need a Cayenne Property?
-    public ConstraintsBuilder<T> excludeProperty(Property<?> attributeOrRelationship) {
-        return excludeProperty(attributeOrRelationship.getName());
-    }
-
-    /**
      * @param attributesOrRelationships an array of properties to exclude.
      * @return a new instance of Constraints.
      */
@@ -60,21 +47,6 @@ public class ConstraintsBuilder<T> implements Constraint<T> {
             ce.excludeProperties(attributesOrRelationships);
             return ce;
         }));
-    }
-
-    /**
-     * @param attributesOrRelationships an array of properties to exclude.
-     * @return a new instance of Constraints.
-     */
-    // TODO: Do we really need a Cayenne Property here?
-    public ConstraintsBuilder<T> excludeProperties(Property<?>... attributesOrRelationships) {
-
-        String[] names = new String[attributesOrRelationships.length];
-        for (int i = 0; i < attributesOrRelationships.length; i++) {
-            names[i] = attributesOrRelationships[i].getName();
-        }
-
-        return excludeProperties(names);
     }
 
     /**
@@ -108,11 +80,6 @@ public class ConstraintsBuilder<T> implements Constraint<T> {
         }));
     }
 
-    // TODO: Do we really need a Cayenne Property?
-    public ConstraintsBuilder<T> attribute(Property<?> attribute) {
-        return attribute(attribute.getName());
-    }
-
     public ConstraintsBuilder<T> allAttributes() {
         return new ConstraintsBuilder<>(op.andThen(ce -> {
             ce.includeAllAttributes();
@@ -125,16 +92,6 @@ public class ConstraintsBuilder<T> implements Constraint<T> {
             ce.includeAttributes(attributes);
             return ce;
         }));
-    }
-
-    // TODO: Do we really need a Cayenne Property?
-    public ConstraintsBuilder<T> attributes(Property<?>... attributes) {
-        String[] names = new String[attributes.length];
-        for (int i = 0; i < attributes.length; i++) {
-            names[i] = attributes[i].getName();
-        }
-
-        return attributes(names);
     }
 
     public ConstraintsBuilder<T> includeId(boolean include) {
@@ -166,14 +123,8 @@ public class ConstraintsBuilder<T> implements Constraint<T> {
         }));
     }
 
-    // TODO: Do we really need a Cayenne Property?
-    public <S> ConstraintsBuilder<T> path(Property<S> path, ConstraintsBuilder<S> subentityBuilder) {
-        return path(path.getName(), subentityBuilder);
-    }
-
-    // TODO: Do we really need a Cayenne Property?
-    public <S> ConstraintsBuilder<T> toManyPath(Property<List<S>> path, ConstraintsBuilder<S> subentityBuilder) {
-        return path(path.getName(), subentityBuilder);
+    public <S> ConstraintsBuilder<T> toManyPath(String path, ConstraintsBuilder<S> subentityBuilder) {
+        return path(path, subentityBuilder);
     }
 
     public <S> ConstraintsBuilder<T> path(String path, ConstraintsBuilder<S> subEntityBuilder) {

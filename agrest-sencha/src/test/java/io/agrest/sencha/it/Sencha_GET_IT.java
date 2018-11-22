@@ -3,7 +3,6 @@ package io.agrest.sencha.it;
 import io.agrest.Ag;
 import io.agrest.DataResponse;
 import io.agrest.SelectStage;
-import io.agrest.backend.exp.Property;
 import io.agrest.it.fixture.JerseyTestOnDerby;
 import io.agrest.it.fixture.cayenne.E2;
 import io.agrest.it.fixture.cayenne.E3;
@@ -274,7 +273,7 @@ public class Sencha_GET_IT extends JerseyTestOnDerby {
             return Ag
                     .service(config)
                     .select(E2.class)
-                    .stage(SelectStage.CREATE_ENTITY, SenchaOps.startsWithFilter(() -> E2.NAME.getName(), uriInfo))
+                    .stage(SelectStage.CREATE_ENTITY, SenchaOps.startsWithFilter(E2.NAME.getName(), uriInfo))
                     .uri(uriInfo).get();
         }
 
@@ -284,7 +283,7 @@ public class Sencha_GET_IT extends JerseyTestOnDerby {
 			return Ag
 					.service(config)
 					.select(E2.class)
-					.stage(SelectStage.ASSEMBLE_QUERY, SenchaOps.startsWithFilter(() -> E2.NAME.getName(), uriInfo))
+					.stage(SelectStage.ASSEMBLE_QUERY, SenchaOps.startsWithFilter(E2.NAME.getName(), uriInfo))
 					.uri(uriInfo).get();
 		}
 	}

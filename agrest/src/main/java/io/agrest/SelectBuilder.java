@@ -7,10 +7,8 @@ import io.agrest.processor.Processor;
 import io.agrest.processor.ProcessorOutcome;
 import io.agrest.runtime.AgBuilder;
 import io.agrest.runtime.processor.select.SelectContext;
-import org.apache.cayenne.exp.Property;
 
 import javax.ws.rs.core.UriInfo;
-import java.util.Collection;
 import java.util.Map;
 import java.util.function.Consumer;
 
@@ -89,15 +87,6 @@ public interface SelectBuilder<T> {
      */
     SelectBuilder<T> parent(Class<?> parentType, Map<String, Object> parentIds, String relationshipFromParent);
 
-    /**
-     * @since 1.4
-     */
-    SelectBuilder<T> parent(Class<?> parentType, Object parentId, Property<T> relationshipFromParent);
-
-    /**
-     * @since 1.20
-     */
-    SelectBuilder<T> parent(Class<?> parentType, Map<String, Object> parentIds, Property<T> relationshipFromParent);
 
     /**
      * @since 1.7
@@ -107,14 +96,12 @@ public interface SelectBuilder<T> {
     /**
      * @since 1.7
      */
-    SelectBuilder<T> toManyParent(Class<?> parentType, Object parentId,
-                                  Property<? extends Collection<T>> relationshipFromParent);
+    SelectBuilder<T> toManyParent(Class<?> parentType, Object parentId, String relationshipFromParent);
 
     /**
      * @since 1.20
      */
-    SelectBuilder<T> toManyParent(Class<?> parentType, Map<String, Object> parentIds,
-                                  Property<? extends Collection<T>> relationshipFromParent);
+    SelectBuilder<T> toManyParent(Class<?> parentType, Map<String, Object> parentIds, String relationshipFromParent);
 
     /**
      * @since 1.2

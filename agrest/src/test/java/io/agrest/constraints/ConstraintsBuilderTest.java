@@ -46,7 +46,7 @@ public class ConstraintsBuilderTest extends TestWithCayenneMapping {
     @Test
     public void testExcludeProperties() {
 
-        ConstraintsBuilder<E4> tc = Constraint.idAndAttributes(E4.class).excludeProperties(E4.C_BOOLEAN, E4.C_DECIMAL);
+        ConstraintsBuilder<E4> tc = Constraint.idAndAttributes(E4.class).excludeProperties(E4.C_BOOLEAN.getName(), E4.C_DECIMAL.getName());
         ConstrainedAgEntity<E4> result = tc.apply(getAgEntity(E4.class));
 
         assertNotNull(result);

@@ -346,14 +346,14 @@ public class POST_IT extends JerseyTestOnDerby {
         @POST
         @Path("e3/constrained")
         public DataResponse<E3> insertE3ReadConstrained(@Context UriInfo uriInfo, String requestBody) {
-            Constraint<E3> tc = Constraint.idOnly(E3.class).attribute(E3.NAME);
+            Constraint<E3> tc = Constraint.idOnly(E3.class).attribute(E3.NAME.getName());
             return Ag.create(E3.class, config).uri(uriInfo).readConstraint(tc).syncAndSelect(requestBody);
         }
 
         @POST
         @Path("e3/w/constrained")
         public DataResponse<E3> insertE3WriteConstrained(@Context UriInfo uriInfo, String requestBody) {
-            Constraint<E3> tc = Constraint.idOnly(E3.class).attribute(E3.NAME);
+            Constraint<E3> tc = Constraint.idOnly(E3.class).attribute(E3.NAME.getName());
             return Ag.create(E3.class, config).uri(uriInfo).writeConstraint(tc).syncAndSelect(requestBody);
         }
 
@@ -376,7 +376,7 @@ public class POST_IT extends JerseyTestOnDerby {
                 @Context UriInfo uriInfo,
                 String requestBody) {
 
-            Constraint<E8> tc = Constraint.idOnly(E8.class).attribute(E8.NAME);
+            Constraint<E8> tc = Constraint.idOnly(E8.class).attribute(E8.NAME.getName());
             return Ag.create(E8.class, config).uri(uriInfo).id(id).writeConstraint(tc).sync(requestBody);
         }
 
@@ -386,7 +386,7 @@ public class POST_IT extends JerseyTestOnDerby {
                 @PathParam("id") int id,
                 @Context UriInfo uriInfo,
                 String requestBody) {
-            Constraint<E8> tc = Constraint.excludeAll(E8.class).attribute(E8.NAME);
+            Constraint<E8> tc = Constraint.excludeAll(E8.class).attribute(E8.NAME.getName());
             return Ag.create(E8.class, config).uri(uriInfo).id(id).writeConstraint(tc).syncAndSelect(requestBody);
         }
 

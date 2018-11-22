@@ -4,7 +4,6 @@ import io.agrest.constraints.Constraint;
 import io.agrest.processor.Processor;
 import io.agrest.processor.ProcessorOutcome;
 import io.agrest.runtime.processor.update.UpdateContext;
-import org.apache.cayenne.exp.Property;
 
 import javax.ws.rs.core.UriInfo;
 import java.util.Collection;
@@ -49,30 +48,14 @@ public interface UpdateBuilder<T> {
     /**
      * Sets up a relationship clause for all objects in this update.
      */
-    // TODO: Do we really need a Cayenne Property here?
-    UpdateBuilder<T> parent(Class<?> parentType, Object parentId, Property<T> relationshipFromParent);
+    UpdateBuilder<T> toManyParent(Class<?> parentType, Object parentId, String relationshipFromParent);
 
     /**
      * Sets up a relationship clause for all objects in this update.
      *
      * @since 1.20
      */
-    // TODO: Do we really need a Cayenne Property here?
-    UpdateBuilder<T> parent(Class<?> parentType, Map<String, Object> parentIds, Property<T> relationshipFromParent);
-
-    /**
-     * Sets up a relationship clause for all objects in this update.
-     */
-    UpdateBuilder<T> toManyParent(Class<?> parentType, Object parentId,
-                                  Property<? extends Collection<T>> relationshipFromParent);
-
-    /**
-     * Sets up a relationship clause for all objects in this update.
-     *
-     * @since 1.20
-     */
-    UpdateBuilder<T> toManyParent(Class<?> parentType, Map<String, Object> parentIds,
-                                  Property<? extends Collection<T>> relationshipFromParent);
+    UpdateBuilder<T> toManyParent(Class<?> parentType, Map<String, Object> parentIds, String relationshipFromParent);
 
     /**
      * Sets request {@link UriInfo} that will be used to shape response.
@@ -115,16 +98,6 @@ public interface UpdateBuilder<T> {
      * @since 1.20
      */
     UpdateBuilder<T> mapper(String propertyName);
-
-    /**
-     * Sets a property that should be used to map objects in update collection
-     * to backend objects. This overrides a default mapping by ID, and is
-     * equivalent to calling 'mapped(ByKeyObjectMapperFactory.byKey(property))'.
-     *
-     * @since 1.20
-     */
-    // TODO: Do we really need a Cayenne Property here?
-    UpdateBuilder<T> mapper(Property<?> property);
 
     /**
      * Registers a consumer to be executed after a specified standard execution stage. The consumer can inspect and

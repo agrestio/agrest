@@ -7,7 +7,6 @@ import io.agrest.MetadataBuilder;
 import io.agrest.SelectBuilder;
 import io.agrest.SimpleResponse;
 import io.agrest.UpdateBuilder;
-import org.apache.cayenne.exp.Property;
 
 import javax.ws.rs.core.UriInfo;
 import java.util.Collection;
@@ -56,25 +55,11 @@ public interface IAgService {
 	<T> SimpleResponse unrelate(Class<T> type, Object sourceId, String relationship);
 
 	/**
-	 * Breaks the relationship between source and all its target objects.
-	 * 
-	 * @since 1.2
-	 */
-	SimpleResponse unrelate(Class<?> type, Object sourceId, Property<?> relationship);
-
-	/**
 	 * Breaks the relationship between source and a target object.
 	 * 
 	 * @since 1.2
 	 */
 	<T> SimpleResponse unrelate(Class<T> type, Object sourceId, String relationship, Object targetId);
-
-	/**
-	 * Breaks the relationship between source and a target object.
-	 * 
-	 * @since 1.2
-	 */
-	SimpleResponse unrelate(Class<?> type, Object sourceId, Property<?> relationship, Object targetId);
 
 	/**
 	 * @since 1.3

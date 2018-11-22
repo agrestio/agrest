@@ -5,7 +5,6 @@ import io.agrest.runtime.processor.select.SelectContext;
 import io.agrest.runtime.protocol.ParameterExtractor;
 import io.agrest.sencha.ops.StartsWithFilter;
 import io.agrest.backend.exp.Expression;
-import io.agrest.backend.exp.Property;
 
 import javax.ws.rs.core.UriInfo;
 import java.util.function.Consumer;
@@ -19,15 +18,15 @@ public class SenchaOps {
 
     private static final String QUERY = "query";
 
-    public static <T> Consumer<SelectContext<T>> startsWithFilter(Property<?> property, UriInfo uriInfo) {
+    public static <T> Consumer<SelectContext<T>> startsWithFilter(String property, UriInfo uriInfo) {
         String value = ParameterExtractor.string(uriInfo.getQueryParameters(), QUERY);
         return startsWithFilter(property, value);
     }
 
-    public static <T> Consumer<SelectContext<T>> startsWithFilter(Property<?> property, String value) {
+    public static <T> Consumer<SelectContext<T>> startsWithFilter(String property, String value) {
         return c -> StartsWithFilter
                 .getInstance()
-                .filter(c, property.getName(), value)
+                .filter(c, property, value)
                 .ifPresent(exp -> processStartsWith(c, exp));
     }
 

@@ -14,7 +14,6 @@ import io.agrest.processor.Processor;
 import io.agrest.runtime.cayenne.ByKeyObjectMapperFactory;
 import io.agrest.runtime.processor.update.UpdateContext;
 import io.agrest.runtime.processor.update.UpdateProcessorFactory;
-import org.apache.cayenne.exp.Property;
 
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
@@ -67,21 +66,6 @@ public class DefaultUpdateBuilder<T> implements UpdateBuilder<T> {
         return this;
     }
 
-    // TODO: Do we really need a Cayenne Property here?
-    @Override
-    public UpdateBuilder<T> parent(Class<?> parentType, Object parentId, Property<T> relationshipFromParent) {
-        context.setParent(new EntityParent<>(parentType, parentId, relationshipFromParent.getName()));
-        return this;
-    }
-
-    // TODO: Do we really need a Cayenne Property here?
-    @Override
-    public UpdateBuilder<T> parent(Class<?> parentType, Map<String, Object> parentIds,
-                                   Property<T> relationshipFromParent) {
-        context.setParent(new EntityParent<>(parentType, parentIds, relationshipFromParent.getName()));
-        return this;
-    }
-
     @Override
     public UpdateBuilder<T> parent(Class<?> parentType, Object parentId, String relationshipFromParent) {
         context.setParent(new EntityParent<>(parentType, parentId, relationshipFromParent));
@@ -95,15 +79,13 @@ public class DefaultUpdateBuilder<T> implements UpdateBuilder<T> {
     }
 
     @Override
-    public UpdateBuilder<T> toManyParent(Class<?> parentType, Object parentId,
-                                         Property<? extends Collection<T>> relationshipFromParent) {
-        return parent(parentType, parentId, relationshipFromParent.getName());
+    public UpdateBuilder<T> toManyParent(Class<?> parentType, Object parentId, String relationshipFromParent) {
+        return parent(parentType, parentId, relationshipFromParent);
     }
 
     @Override
-    public UpdateBuilder<T> toManyParent(Class<?> parentType, Map<String, Object> parentIds,
-                                         Property<? extends Collection<T>> relationshipFromParent) {
-        return parent(parentType, parentIds, relationshipFromParent.getName());
+    public UpdateBuilder<T> toManyParent(Class<?> parentType, Map<String, Object> parentIds, String relationshipFromParent) {
+        return parent(parentType, parentIds, relationshipFromParent);
     }
 
     /**
@@ -131,15 +113,6 @@ public class DefaultUpdateBuilder<T> implements UpdateBuilder<T> {
     public UpdateBuilder<T> mapper(ObjectMapperFactory mapper) {
         context.setMapper(mapper);
         return this;
-    }
-
-    /**
-     * @since 1.20
-     */
-    // TODO: Do we really need a Cayenne Property here?
-    @Override
-    public UpdateBuilder<T> mapper(Property<?> property) {
-        return mapper(ByKeyObjectMapperFactory.byKey(property));
     }
 
     /**

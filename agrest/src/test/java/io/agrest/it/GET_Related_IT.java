@@ -208,13 +208,13 @@ public class GET_Related_IT extends JerseyTestOnDerby {
         @GET
         @Path("e3/{id}/e2")
         public DataResponse<E2> getE2OfE3(@PathParam("id") int id, @Context UriInfo uriInfo) {
-            return Ag.select(E2.class, config).parent(E3.class, id, E3.E2).uri(uriInfo).get();
+            return Ag.select(E2.class, config).parent(E3.class, id, E3.E2.getName()).uri(uriInfo).get();
         }
 
         @GET
         @Path("e12/{id}/e1213")
         public DataResponse<E12E13> get_Joins_NoId(@PathParam("id") int id, @Context UriInfo info) {
-            return Ag.select(E12E13.class, config).toManyParent(E12.class, id, E12.E1213).uri(info).get();
+            return Ag.select(E12E13.class, config).toManyParent(E12.class, id, E12.E1213.getName()).uri(info).get();
         }
 
         @GET
