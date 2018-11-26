@@ -1,0 +1,6 @@
+// ANIMATON
+
+// addAnimation
+@mixin addAnimation($property, $duration: .3s, $ease-func: ease-out) {
+  transition: $property $duration $ease-func;
+}

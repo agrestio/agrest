@@ -1,0 +1,90 @@
+// HELPERS
+
+// maxwidth
+.max-w-700px {
+  max-width: 43rem;
+}
+
+.max-w-370px {
+  max-width: 23.125rem;
+}
+
+// BORDERS
+.br-5px {
+	border-radius: 5px;
+}
+
+
+// SHADOWS
+.featured-shadow {
+	box-shadow: 0 1.625rem 3.25rem rgba($black, .48);
+	overflow: hidden;
+	@extend .br-5px;
+}
+
+
+// BG-IMG
+.bg-img {
+  background-size: cover !important; //100% auto
+  background-repeat: no-repeat !important;
+  // background-position: 50% 50% !important;
+}
+
+
+// TINT
+.tinted {
+  position: relative;
+
+  &:before {
+    position: absolute;
+    content: '';
+    width: 100%;
+    height: 100%;
+    z-index: 2;
+    top: 0;
+    left: 0;
+  }
+
+  // DARK
+  &-dark {
+
+    &:before {
+      @extend .tinted:before;
+      background: $primary;
+    }
+
+    // opacity level
+
+    &-70 {
+  		@extend .tinted;
+
+	    &:before {
+	      @extend .tinted-dark:before;
+	      opacity: .7;
+	    }
+    }
+  }
+
+    // CONTENT COLOR
+      @at-root {
+
+      	// base:not(.base_green):not(.base_blue)
+
+        [class*='tinted-dark'] *:not(.btn):not(.nav-link) {
+          color: $white;
+          z-index: 3;
+
+          a:not(.btn):not(.nav-link) {
+            color: $white;
+            border-bottom-color: $white;
+
+            &:hover,
+            &:focus,
+            &:active {
+              color: $white;
+              border-bottom-color: $white;
+            }
+          }
+        }
+      }
+}

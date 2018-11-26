@@ -1,181 +1,157 @@
 <!doctype html>
 <html lang="en">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Open source protocol and Java framework for model-driven REST data services. 
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="description" content="Open source protocol and Java framework for model-driven REST data services. 
             Works on top of JAX RS and integrates with various backends, such as Apache Cayenne.">
+        <title>agrest - Model-Driven REST Data Services</title>
+        <link rel="canonical" href="http://agrest.io" />
+        <link rel="stylesheet" href="assets/styles/main.css" />
+        <script type="text/javascript" src="assets/scripts/prettify.js"></script>
 
-    <title>LinkRest - Model-Driven REST Data Services</title>
+        <script type="text/javascript">
+            (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+            m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+            })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+          
+            ga('create', 'UA-67243676-1', 'auto');
+            ga('send', 'pageview');
+        </script>
+    </head>
 
-    
-    <link rel="stylesheet" href="build/custom-fonts-min.css">
-    
-    <link rel="stylesheet" href="build/pure-min.css">
-
-    <!--[if lte IE 8]>
-        <link rel="stylesheet" href="build/grids-responsive-old-ie-min.css">
-        <link rel="stylesheet" href="build/layout-old-ie-min.css">
-    <![endif]-->
-    <!--[if gt IE 8]><!-->
-        <link rel="stylesheet" href="build/grids-responsive-min.css">
-        <link rel="stylesheet" href="build/layout-min.css">
-    <!--<![endif]-->
-
-
-    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
-    <!--[if lt IE 9]>
-    <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
-    <![endif]-->
-
-    <script type="text/javascript" src="js/prettify.js"></script>
-
-    <style>
-        @-ms-viewport{width:device-width !important;}
-    </style>
-
-    <script type="text/javascript">
-  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
-
-  ga('create', 'UA-67243676-1', 'auto');
-  ga('send', 'pageview');
-     </script>
-
-</head>
-<body onload="prettyPrint()">
-
-
-
-    <!-- Main Nav -->
-    <div class="header">
-        <div class="home-menu pure-menu pure-menu-horizontal pure-menu-fixed">
+    <body onload="prettyPrint()">
+        <!-- Modal -->
+        <div class="modal fade" id="videoModal" tabindex="-1" role="dialog" aria-labelledby="videoModalTitle" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-full" role="document">
+                <div class="modal-content">
+                    <div class="modal-body">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                        <div class="embed-responsive embed-responsive-16by9">
+                            <iframe id="video" class="embed-responsive-item" src="https://www.youtube.com/embed/tyG9exmmmWo?enablejsapi=1&modestbranding=1&rel=0" frameborder="0" allowfullscreen></iframe>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Main -->
+        <section class="d-flex flex-column align-items-center justify-content-center" id="intro">
+            <nav class="navbar navbar-expand-md navbar-light">
+                <div class="container">
+                    <a class="navbar-brand" href="#">
+                        <img src="assets/img/logo.svg" alt="agrest">
+                    </a>
+                    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#mainmenu" aria-controls="mainmenu" aria-expanded="false" aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                    <div class="navbar-collapse collapse" id="mainmenu">
+                        <div class="navbar-right">
+                            <ul class="navbar-nav">
+                                <li class="nav-item"><a href="#get-started" class="nav-link">Getting Started</a></li>
+                                <li class="nav-item"><a href="docs/index.html" class="nav-link">Documentation</a></li>
+                                <li class="nav-item"><a href="https://groups.google.com/forum/?#!forum/agrest-user" class="nav-link">Forum</a></li>
+                            </ul>
+                            <ul class="navbar-nav" id="navbar-social-links">
+                                <li class="nav-item"><a href="https://github.com/agrestio/agrest" class="nav-link"><img class="inline svg-icon" src="assets/img/fa/fab/github-brands.svg" alt="GitHub"></a></li>
+                                <li class="nav-item"><a href="https://twitter.com/AgrestProject" class="nav-link"><img class="inline svg-icon" src="assets/img/fa/fab/twitter-brands.svg" alt="Twitter"></a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div> <!-- /container -->
+            </nav>
+            <div class="navbar-overlay"><!-- v --></div>
             <div class="container">
-                <a class="pure-menu-heading" href="#">
-                    <img src="img/logo.png" alt="LinkRest" />
-                </a>
-
-                <ul class="pure-menu-list">
-                    <!-- need to add .pure-menu-selected to `li` for `selected state` -->
-                    <li class="pure-menu-item"><a href="#get-started" class="pure-menu-link">Getting Started</a></li>
-                    <li class="pure-menu-item"><a href="#features" class="pure-menu-link">Features</a></li>
-                    <li class="pure-menu-item"><a href="docs/index.html" class="pure-menu-link">Documentation</a></li>
-                    <li class="pure-menu-item"><a href="https://groups.google.com/forum/?#!forum/linkrest-user" class="pure-menu-link">Forum</a></li>
-                    <li class="pure-menu-item fork-on-github-btn"><a href="https://github.com/nhl/link-rest" class="pure-menu-link">GitHub <i class="fa fa-code-fork fa-inverse"></i></a></li>
-                </ul>
-            </div>
-        </div>
-
-    </div>
-
-    <!-- PROMO BLOCK -->
-    <div class="promo-container">
-        <div class="promo container">
-            <div class="pure-g">
-                <div class="pure-u-1 pure-u-md-1-2">
-                    <div class="principle">
-                        <div class="text-vert-block">
-                            <img src="img/principle.png" class="vert-centered" alt="LinkRest principle scheme" />
-                        </div>
-                    </div>
-                </div>
-                <div class="pure-u-1 pure-u-md-1-2">
-                    <div class="welcome">
-                        <div class="text-vert-block">
-                            <h1 class="vert-centered"><span class="is-center">...open-source <strong>protocol</strong> and <strong>framework</strong> for flexible model-driven<br />REST data services</span></h1>
-                        </div>
+                <div class="row justify-content-center">
+                    <div class="col-11 col-md-9  text-center">
+                        <h1 class="mb-2_2">An open-source protocol and framework for REST data services</h1>
+                        <p class="lead max-w-560px mx-auto mb-2_2">Optimize REST interactions. Avoid excessive requests to server when navigating backend data graphs.</p>
+                        <img class="img-fluid  mb-3 mb-md-4" src="assets/img/viz-intro.svg" alt="Agrest Flow">
+                        <a href="#" data-toggle="modal" data-target="#videoModal" class="play-btn rounded-circle-corners">
+                            <span class="play-btn-icon">
+                                <img class="svg-icon inline" src="assets/img/fa/fas/play-solid.svg" alt="Play">
+                            </span>
+                            <span class="play-btn-txt"><span class="text-uppercase">Video from</span> JEEConf</span>
+                        </a>
                     </div>
                 </div>
             </div>
-        </div>
-    </div>
-
-    <div class="content-wrapper">
-        <!-- GET STARTED BLOCK -->
-        <div class="content container">
-        <span id="get-started"></span>
-            <a href="#get-started" class="go"></a>
-
-            <h2 class="content-head is-center">getting started</h2>
-
-            <div class="pure-g get-started">
-
-                <div class="get-started-env">
+        </section>
+        <section id="get-started">
+            <div class="container">
+                <div class="row justify-content-center">
+                    <div class="col-10">
+                        <h2 class="text-center">Getting Started</h2>
+                        <!-- Tabs : Getting Started -->
+                        <div class="get-started-env">
                     
-                    <!-- env-wndw-top -->
-                    <div class="env-wndw-top">
-                        <div class="btns red"></div>
-                        <div class="btns yellow"></div>
-                        <div class="btns green"></div>
-                    </div>
-                    <!-- /.wnv-wndw-top -->
-                    
-                    <div class="code-tabs">
-                        <input id="tab1" type="radio" name="tabs" checked>
-                        <label for="tab1">
-                            <span class="step-counter">1</span>
-                            <span class="tab-text">Add Maven <br />Dependency</span>
-                        </label>
-                            
-                        <input id="tab2" type="radio" name="tabs">
-                        <label for="tab2">
-                            <span class="step-counter">2</span>
-                            <span class="tab-text">Load in JAX RS Application</span>
-                        </label>
-                            
-                        <input id="tab3" type="radio" name="tabs">
-                        <label for="tab3">
-                            <span class="step-counter">3</span>
-                            <span class="tab-text">Write a JAX-RS Resource</span>
-                        </label>
-
-                        <input id="tab4" type="radio" name="tabs">
-                        <label for="tab4">
-                            <span class="step-counter">4</span>
-                            <span class="tab-text">Start Sending Requests</span>
-                        </label>
-                            
-                        <section id="content1">
-                        
-                            <div class="hldr">
-                                <pre class="is-md-hidden prettyprint"><code>&lt;!-- Add Maven Dependency --&gt;
-
-</code></pre>
-                                <pre class="prettyprint"><code>&lt;dependency&gt;
-    &lt;groupId&gt;com.nhl.link.rest&lt;/groupId&gt;
-    &lt;artifactId&gt;link-rest&lt;/artifactId&gt;
-    &lt;version&gt;1.18&lt;/version&gt;
-&lt;/dependency&gt;</code></pre>
+                            <div class="env-wndw-top">
+                                <div class="btns red"></div>
+                                <div class="btns yellow"></div>
+                                <div class="btns green"></div>
                             </div>
-
-                        </section>
-
-                        <section id="content2">
-
-                            <div>
-                                <pre class="is-md-hidden prettyprint"><code>// Load in JAX RS Application
-
-</code></pre>
-                                <pre class="prettyprint"><code>@ApplicationPath("/")
+                            
+                            <div class="code-tabs">
+                                <input id="tab1" type="radio" name="tabs" checked>
+                                <label for="tab1">
+                                    <span class="step-counter">1</span>
+                                    <span class="tab-text">Add Maven <br />Dependency</span>
+                                </label>
+                                    
+                                <input id="tab2" type="radio" name="tabs">
+                                <label for="tab2">
+                                    <span class="step-counter">2</span>
+                                    <span class="tab-text">Load in JAX RS Application</span>
+                                </label>
+                                    
+                                <input id="tab3" type="radio" name="tabs">
+                                <label for="tab3">
+                                    <span class="step-counter">3</span>
+                                    <span class="tab-text">Write a JAX-RS Resource</span>
+                                </label>
+        
+                                <input id="tab4" type="radio" name="tabs">
+                                <label for="tab4">
+                                    <span class="step-counter">4</span>
+                                    <span class="tab-text">Start Sending Requests</span>
+                                </label>
+                                    
+                                <div id="content1">
+                                
+                                    <div class="hldr">
+                                        <pre class="is-md-hidden prettyprint"><code>&lt;!-- Add Maven Dependency --&gt;</code></pre>
+                                        <pre class="prettyprint"><code>&lt;dependency&gt;
+    &lt;groupId&gt;io.agrest&lt;/groupId&gt;
+    &lt;artifactId&gt;agrest&lt;/artifactId&gt;
+    &lt;version&gt;3.0&lt;/version&gt;
+&lt;/dependency&gt;</code></pre>
+                                    </div>
+        
+                                </div>
+        
+                                <div id="content2">
+        
+                                    <div>
+                                        <pre class="is-md-hidden prettyprint"><code>// Load in JAX RS Application</code></pre>
+                                        <pre class="prettyprint"><code>@ApplicationPath("/")
 public class JaxRsApplication extends ResourceConfig {
     public JaxRsApplication() {
         ServerRuntime cayenneRuntime = ..
-        LinkRestRuntime lrRuntime = LinkRestBuilder.build(cayenneRuntime);
-        register(lrRuntime);
+        AgRuntime agRuntime = AgBuilder.build(cayenneRuntime);
+        register(agRuntime);
     }
 }</code></pre>
-                            </div>
-
-                        </section>
-
-                        <section id="content3">
-                            <div class="hldr">
-                                <pre class="is-md-hidden prettyprint"><code>// Write a JAX-RS Resourcy
-
-</code></pre>
-                                <pre class="prettyprint"><code>@Path("myentity")
+                                    </div>
+        
+                                </div>
+        
+                                <div id="content3">
+                                    <div class="hldr">
+                                        <pre class="is-md-hidden prettyprint"><code>// Write a JAX-RS Resourcy</code></pre>
+                                        <pre class="prettyprint"><code>@Path("myentity")
 @Produces(MediaType.APPLICATION_JSON)
 public class MyEntityResource {
     
@@ -184,111 +160,104 @@ public class MyEntityResource {
 
     @GET
     public DataResponse&lt;MyEntity&gt; getAll(@Context UriInfo uriInfo) {
-        return LinkRest.select(MyEntity.class, config).uri(uriInfo).select();
+        return Ag.select(MyEntity.class, config).uri(uriInfo).get();
     }
 }</code></pre>
-                            </div>
-                        </section>
-
-                        <section id="content4">
-                            <div class="hldr">
-                                <pre class="is-md-hidden prettyprint"><code># Start Sending Requests
-
-</code></pre>
-                                <pre class="prettyprint"><code>curl -i -X GET \
+                                    </div>
+                                </div>
+        
+                                <div id="content4">
+                                    <div class="hldr">
+                                        <pre class="is-md-hidden prettyprint"><code># Start Sending Requests</code></pre>
+                                        <pre class="prettyprint"><code>curl -i -X GET \
 'http://127.0.0.1:8080/myapp/my-entity'</code></pre>
+                                    </div>
+                                </div>
                             </div>
-                        </section>
+                        </div> <!-- .Tabs : Getting Started -->
+                        <p class="text-center  mb-0">Read full documentation in <a href="#">Docs</a> section</p>
                     </div>
-
-                </div>
-
-            </div>
-        </div>
-
-        <!-- MAIN FEATURES BLOCK -->
-        <div class="content container">
-            <span id="features"></span>
-            
-            <h2 class="content-head is-center">features</h2>
-
-            <div class="pure-g features with-divider">
-
-                <div class="pure-u-1 pure-u-md-1-2"> <!-- could bу + .divider-vert -->
-                    
-                    <h2 class="is-center is-uppercase">Protocol</h2>
-
-                    <div class="pure-g">
-                        
-                        <div class="l-box pure-u-1 pure-u-xl-1-2 ">
-                            <h3 class="content-subhead">Client Shapes the Response</h3>
-                            <p>
-                                Provides REST API that allows client to filter, sort, paginate the response. Client can request specific properties of "root" entity and recursively include data of related entities.
-                            </p>
-                        </div>
-                        
-                        <div class="l-box pure-u-1 pure-u-xl-1-2">
-                            <h3 class="content-subhead">GET, POST, PUT, DELETE</h3>
-                            <p>
-                                Supports reading / modifying data objects, collections and relationships.
-                            </p>
-                        </div>
-                        
-                        <div class="l-box pure-u-1 pure-u-xl-1-2">
-                            <h3 class="content-subhead">Vanilla HTTP / JSON</h3>
-                            <p>
-                                Based on common REST HTTP interactions. Serves data as JSON.
-                            </p>
-                        </div>
-
-                    </div>
-                </div>
-
-                <div class="pure-u-1 pure-u-md-1-2"> 
-                    
-                    <h2 class="is-center is-uppercase">framework</h2>
-                    
-                    <div class="pure-g">
-                        <div class="l-box pure-u-1 pure-u-xl-1-2">
-                            <h3 class="content-subhead">Java DSL for Building REST APIs for Data Stores</h3>
-                            <p>
-                                Features easy-to-use fluent Java API to build customized processors for entity web methods. API works on top of JAX-RS standard. Reuses / extends entity model of a pluggable backend provider.
-                            </p>
-                        </div>
-                        <div class="l-box pure-u-1 pure-u-xl-1-2">
-                            <h3 class="content-subhead">Supports Relational Databases</h3>
-                            <p>
-                                Supports relational databases via Cayenne ORM backend provider out of the box.
-                            </p>
-                        </div>
-                        <div class="l-box pure-u-1 pure-u-xl-1-2">
-                            <h3 class="content-subhead">Pluggable Backend Providers for Other Data Stores</h3>
-                            <p>
-                                Supports alternative user-defined backends. E.g. for NoSQL stores, analytical queries, LDAP / Active Directory, etc.
-                            </p>
-                        </div>
-                        <div class="l-box pure-u-1 pure-u-xl-1-2">
-                            <h3 class="content-subhead">Fine Grained Security</h3>
-                            <p>
-                                Straightforward integration with any Java authorization framework to provide attribute-level and object-level access control.
-                            </p>
-                        </div>
-                    </div>
-
                 </div>
             </div>
-        </div>
-
-        <div class="footer is-center">
+        </section>
+        <section id="features">
             <div class="container">
-                <p class="copy">
-                   &copy; 2015 NHL, ObjectStyle and other LinkRest Developers.<br />
-                </p>
+                <div class="row justify-content-center">
+                    <div class="col-10">
+                        <h2 class="text-center">Features</h2>
+                        <h3><img src="assets/img/viz-icon-framework.svg" alt="Agrest as framework" class="mixed-size-icon ">Framework</h3>
+                        <div class="row txt-grid  mb-2_21 mb-md-h3_bottom1">
+                            <div class="col-md-6 col-lg-3">
+                                <h4 class="h6">Java DSL for Building REST APIs for Data Stores</h4>
+                                <p>Features easy-to-use fluent Java API to build customized processors for entity web methods. API works on top of JAX-RS standard. Reuses / extends entity model of a pluggable backend provider.</p>
+                            </div>
+                            <div class="col-md-6 col-lg-3">
+                                <h4 class="h6">Supports Relational Databases</h4>
+                                <p>Supports relational databases via Cayenne ORM backend provider out of the box.</p>
+                            </div>
+                            <div class="col-md-6 col-lg-3">
+                                <h4 class="h6">Pluggable Backend Providers for Other Data Stores</h4>
+                                <p>Supports alternative user-defined backends. E.g. for NoSQL stores, analytical queries, LDAP / Active Directory, etc.</p>
+                            </div>
+                            <div class="col-md-6 col-lg-3">
+                                <h4 class="h6">Fine Grained Security</h4>
+                                <p>Straightforward integration with any Java authorization framework to provide attribute-level and object-level access control.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-10">
+                        <h3><img src="assets/img/viz-icon-protocol.svg" alt="Agrest as protocol" class="mixed-size-icon ">Protocol</h3>
+                        <div class="row txt-grid">
+                            <div class="col-md-6 col-lg-3">
+                                <h4 class="h6">Client Shapes the Response</h4>
+                                <p>Provides REST API that allows client to filter, sort, paginate the response. Client can request specific properties of "root" entity and recursively include data of related entities.</p>
+                            </div>
+                            <div class="col-md-6 col-lg-3">
+                                <h4 class="h6">GET, POST, PUT, DELETE</h4>
+                                <p>Supports reading / modifying data objects, collections and relationships.</p>
+                            </div>
+                            <div class="col-md-6 col-lg-3">
+                                <h4 class="h6">Vanilla HTTP / JSON</h4>
+                                <p>Based on common REST HTTP interactions. Serves data as JSON.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
-        </div>
+        </section>
+        <footer id="footer" class="pt-0 pb-3">
+            <div class="container">
+                <div class="row justify-content-center text-center">
+                    <div class="col-8 col-md-12">
+                        <p class="text-muted">&copy;  <span class="current-year">2018</span> ObjectStyle and other Agrest Developers.</p>
+                        <ul id="social-icons" class="list-unstyled list-inline  mb-0">
+                            <li class="list-inline-item">
+                                <a href="https://github.com/agrestio/agrest">
+                                    <img class="svg-icon" src="assets/img/fa/fab/github-brands.svg" />
+                                </a>
+                            </li>
+                            <li class="list-inline-item">
+                                <a href="https://twitter.com/AgrestProject">
+                                    <img class="svg-icon" src="assets/img/fa/fab/twitter-brands.svg" />
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </footer>
 
-    </div>
-
-
-</body>
+        <!-- BS4JS -->
+        <script src="node_modules/jquery/dist/jquery.min.js"></script>
+        <script src="node_modules/popper.js/dist/umd/popper.min.js"></script>
+        <script src="node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
+        <!-- CUSTOM -->
+        <!-- JS conditional comments IE -->
+        <script type="text/javascript">
+            if(/MSIE \d|Trident.*rv:/.test(navigator.userAgent))
+                document.write('<script src="node_modules/es6-promise/dist/es6-promise.auto.min.js"><\/script>\
+                                <script src="node_modules/cross-fetch/dist/cross-fetch.js"><\/script>');
+        </script>
+        <script src="assets/scripts/svg-processing.js"></script>
+    </body>
 </html>

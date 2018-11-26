@@ -1,0 +1,22 @@
+{
+  "name": "Agrest",
+  "version": "3.0.0",
+  "description": "",
+  "main": "index.html",
+  "scripts": {
+    "sass-dev": "node-sass -w assets/styles/scss -o assets/styles --output-style expanded",
+    "sass-build": "node-sass assets/styles/scss -o assets/styles --output-style compressed"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {},
+  "devDependencies": {
+    "bootstrap": "^4.1.3",
+    "cross-fetch": "^2.2.2",
+    "es6-promise": "^4.2.5",
+    "jquery": "^3.3.1",
+    "node-sass": "^4.9.0",
+    "popper.js": "^1.14.5"
+  }
+}

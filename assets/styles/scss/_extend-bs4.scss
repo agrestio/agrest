@@ -1,0 +1,92 @@
+// EXTEND BS4
+
+//
+// [Extend] Sizing utilities
+// 
+	// width
+	.w-70px { width: 4.375rem; } 																		// = 70px
+
+	// min-height
+	.min-h-100px {min-height: 6.25rem !important;} 														// = 100px
+	.min-h-100vh {min-height: 100vh !important;}
+
+	// min-width
+	.min-w-180px {
+		min-width: 180px;
+	}
+
+	// max-width
+	.max-w-128px { max-width: 8rem !important; } 														// = 128px
+	.max-w-560px { max-width: 35rem !important; } 													// = 560px
+	.max-w-750px { max-width: 46.875rem !important; } 													// = 750px
+
+
+//
+// [Extend] Spacing utilities
+// 
+.mb--2_2 {
+	$temp-map-get: map-get($spacers, 2_2);
+	margin-bottom: (-$temp-map-get);
+}
+
+//
+// [Extend] Border-radius
+// 
+	.rounded-circle-corners {
+		border-radius: 50rem;
+	}
+
+
+//
+// [Extend] Buttons
+// 
+	.btn-secondary-shadow {
+		box-shadow: 0 1px 6px rgba(#2D8A8A, .2), 0 5px 9px rgba($secondary, .23);
+	}
+
+
+//
+// [Extend] Grid
+//
+	.flex-col-v-centered {
+		flex-direction: column;
+		justify-content: center;
+		display: flex;
+
+		img {
+			@extend .align-self-start;
+			@extend .align-self-md-center;
+
+			@extend .mt-2_3;
+			@extend .mt-md-0;
+		}
+	}
+
+	.hor-gutter-lg-80 {
+		@include media-breakpoint-up(lg) {
+			padding-left: 40px;
+			padding-right: 40px;
+
+			.row {
+				&:not([class*='ml']),
+				&:not([class*='mr']) {
+					margin-left: -40px;
+					margin-right: -40px;
+				}
+
+				> [class*='col-'] {
+					padding-left: 40px;
+					padding-right: 40px;
+				}
+			}
+		}
+	}
+
+
+//
+// [Extend] Forms
+//
+	textarea {
+		@extend .min-h-100px;
+	}
+

@@ -1,0 +1,135 @@
+/* ---------------------------------------------------------------------- 
+    TABS WITH RADIO AND CSS
+    (+): 0 js
+    (-): rather static
+---------------------------------------------------------------------- */
+
+
+// VARS
+$tab-bg:              #424854;
+$tab-color:           rgba($white, .5);
+$tab-active-bg:       #3a3f49;
+$tab-active-color:    rgba($white, .8);
+$tab-conent-bg:       $darkest-blue;
+$tab-left-side:       #2B303B;
+$tab-stepper-color:   #424854;
+
+.code-tabs {
+    letter-spacing: normal;
+    border-left: 24px solid $tab-left-side;
+    border-radius: 0 0 .25em .25em;
+    background-color: $tab-bg;
+
+    > div  {
+      display: none;
+      padding: 20px 0 10px .25em;
+      background-color: $tab-conent-bg;
+      margin-left: -5px;
+      padding: 2.2222222em;
+      border-radius: 0 0 .25em 0;
+      
+      @include media-breakpoint-down(md) {
+        padding: 1.2222222em;
+        // font-size: .888888em;
+        font-size: .777777em;
+      }
+    }
+
+    > input[type=radio] {
+      display: none;
+    }
+
+    > label {
+      display: inline-block;
+      position: relative;
+      margin: 0 0 0 -5px;
+      text-align: center;
+
+      .tab-text {
+        padding: 10px 17px;
+        display: block;
+        
+        font-size: .777777em;
+        @include addAnimation(all, .3s);
+
+        color: $tab-color;
+        background-color: $tab-bg;
+
+        br {
+          display: none;
+        }
+      }
+    }
+
+    > label .tab-text:hover {
+      cursor: pointer;
+      color: rgba(255, 255, 255, 0.34);
+      background-color: #404550; // darken($tab-active-bg, .1%);
+    }
+
+    > input[type=radio]:checked + label .tab-text {
+      color: $tab-active-color;
+      background: $tab-active-bg;
+    }
+
+    > input[type=radio]:checked + label {
+      .step-counter {
+        color: $tab-stepper-color;
+        border-color: $tab-stepper-color;
+        
+        &:before {
+          border-color: $tab-stepper-color;
+        }
+      }
+    }
+
+    #tab1:checked ~ #content1,
+    #tab2:checked ~ #content2,
+    #tab3:checked ~ #content3,
+    #tab4:checked ~ #content4 {
+      display: block;
+    }
+
+}
+
+
+// RESPONSIVE UTILS
+@media screen and (min-width: 769px) {
+  .is-md-hidden{
+    display: none !important;
+  }
+}
+
+
+@media screen and (max-width: 63.938em) { // = 1024px
+
+    // TABS RWD
+    .code-tabs {
+        > label {
+            width: 25%;
+
+            .tab-text {
+              padding: 10px 23px;
+            }
+
+            .tab-text br {
+              display: inline;
+            }
+        }
+    }
+}
+
+@media screen and (max-width: 48em) {
+    // hiding tabs on small screen devices
+    // leaving only step counters which can be tapped
+    .code-tabs {
+        > label {
+          height: 1px;
+          float: left;
+
+          .tab-text {
+            display: none;
+          }
+        }
+    }
+}
