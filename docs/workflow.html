@@ -1,0 +1,1153 @@
+<div id="toc" class="toc">
+<div id="toctitle">Table of Contents</div>
+<ul class="sectlevel1">
+<li><a href="#create-a-simple-agrest-app">1. Create a Simple <code>Agrest</code> App</a>
+<ul class="sectlevel2">
+<li><a href="#setting-up-the-environment">1.1. Setting up the environment</a></li>
+<li><a href="#starting-a-project">1.2. Starting a project</a></li>
+<li><a href="#implementation">1.3. Implementation</a></li>
+<li><a href="#running-the-application">1.4. Running the Application</a></li>
+</ul>
+</li>
+<li><a href="#design-first-approach">2. Design-First Approach</a>
+<ul class="sectlevel2">
+<li><a href="#introduction">2.1. Introduction</a></li>
+<li><a href="#setting-up-the-environment-2">2.2. Setting up the environment</a></li>
+<li><a href="#defining-the-api">2.3. Defining the API</a></li>
+<li><a href="#validate-the-api-implementation">2.4. Validate the API implementation</a></li>
+<li><a href="#configure-and-run-api-generation">2.5. Configure and run API generation</a></li>
+<li><a href="#more-examples-with-integration-tests">2.6. More examples with integration tests</a></li>
+<li><a href="#protocol">2.7. protocol.yaml</a></li>
+</ul>
+</li>
+<li><a href="#code-first-approach">3. Code-First Approach</a>
+<ul class="sectlevel2">
+<li><a href="#introduction-2">3.1. Introduction</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="sect1">
+<h2 id="create-a-simple-agrest-app"><a class="anchor" href="#create-a-simple-agrest-app"></a>1. Create a Simple <code>Agrest</code> App</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="setting-up-the-environment"><a class="anchor" href="#setting-up-the-environment"></a>1.1. Setting up the environment</h3>
+<div class="paragraph">
+<p>In this chapter, we install (or check that you already have installed) a minimally needed set of software to build an Agrest-based application.</p>
+</div>
+<div class="sect3">
+<h4 id="install-java"><a class="anchor" href="#install-java"></a>Install Java</h4>
+<div class="paragraph">
+<p>JDK has to be installed. In this tutorial we use JDK 1.8.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="install-intellij-idea"><a class="anchor" href="#install-intellij-idea"></a>Install IntelliJ IDEA</h4>
+<div class="paragraph">
+<p>Download and install IntelliJ IDEA Community Edition.
+This tutorial is based on version 2016.3, still it should work with any recent IntelliJ IDEA version.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="the-resulting-application"><a class="anchor" href="#the-resulting-application"></a>The resulting application</h4>
+<div class="paragraph">
+<p>The final application could be downloaded from GitHub:
+<a href="https://github.com/agrestio/agrest-bookstore-example">Bookstore app</a></p>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="starting-a-project"><a class="anchor" href="#starting-a-project"></a>1.2. Starting a project</h3>
+<div class="paragraph">
+<p>In this chapter, we create a new Java project in IntelliJ IDEA
+and introduce a simple Bookstore application that will be used as an example.</p>
+</div>
+<div class="sect3">
+<h4 id="define-a-bookstore-domain-model"><a class="anchor" href="#define-a-bookstore-domain-model"></a>Define a <code>Bookstore</code> Domain Model</h4>
+<div class="paragraph">
+<p>The application contains two types of entities: <code>Category</code> and <code>Book</code>.
+The relationship between <code>Category</code> and <code>Book</code> entities is <strong>one-to-many</strong>.</p>
+</div>
+<div class="imageblock" style="text-align: center">
+<div class="content">
+<img src="img/bookstore_er_diagram.png" alt="bookstore er diagram">
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="create-a-new-project-in-intellij-idea"><a class="anchor" href="#create-a-new-project-in-intellij-idea"></a>Create a new Project in IntelliJ IDEA</h4>
+<div class="paragraph">
+<p>In IntelliJ IDEA, select <code>File &gt; New &gt; Project..</code>. Then select <code>Maven</code> and click <code>Next</code>.</p>
+</div>
+<div class="paragraph">
+<p>In the dialog shown on the screenshot below, fill in the <code>Group Id</code>
+and <code>Artifact Id</code> fields and click <code>Next</code>.</p>
+</div>
+<div class="imageblock" style="text-align: center">
+<div class="content">
+<img src="img/tutorial-idea-project.png" alt="tutorial idea project">
+</div>
+</div>
+<div class="paragraph">
+<p>During the next step, you will be able to customize the directory for your project.
+Click <code>Finish</code> where you are done. Now you should have a new empty project.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="configure-maven-pom-xml"><a class="anchor" href="#configure-maven-pom-xml"></a>Configure Maven <code>pom.xml</code></h4>
+<div class="paragraph">
+<p>Add the following dependencies:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code>&lt;dependency&gt;
+    &lt;groupId&gt;io.agrest&lt;/groupId&gt;
+    &lt;artifactId&gt;agrest&lt;/artifactId&gt;
+    &lt;version&gt;3.0-SNAPSHOT&lt;/version&gt;
+&lt;/dependency&gt;
+
+&lt;dependency&gt;
+    &lt;groupId&gt;org.glassfish.jersey.containers&lt;/groupId&gt;
+    &lt;artifactId&gt;jersey-container-servlet-core&lt;/artifactId&gt;
+    &lt;version&gt;2.27&lt;/version&gt;
+&lt;/dependency&gt;
+&lt;dependency&gt;
+    &lt;groupId&gt;org.glassfish.jersey.inject&lt;/groupId&gt;
+    &lt;artifactId&gt;jersey-hk2&lt;/artifactId&gt;
+    &lt;version&gt;2.27&lt;/version&gt;
+&lt;/dependency&gt;
+
+&lt;dependency&gt;
+    &lt;groupId&gt;org.apache.derby&lt;/groupId&gt;
+    &lt;artifactId&gt;derby&lt;/artifactId&gt;
+    &lt;version&gt;10.13.1.1&lt;/version&gt;
+&lt;/dependency&gt;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Configure a <code>jetty</code> Maven plugin to start app using <code>mvn jetty:run</code> command</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code>&lt;plugin&gt;
+    &lt;groupId&gt;org.eclipse.jetty&lt;/groupId&gt;
+    &lt;artifactId&gt;jetty-maven-plugin&lt;/artifactId&gt;
+    &lt;version&gt;9.4.12.v20180830&lt;/version&gt;
+    &lt;configuration&gt;
+        &lt;scanIntervalSeconds&gt;5&lt;/scanIntervalSeconds&gt;
+        &lt;classesDirectory&gt;${project.basedir}/target/classes&lt;/classesDirectory&gt;
+        &lt;supportedPackagings&gt;&lt;supportedPackaging&gt;jar&lt;/supportedPackaging&gt;&lt;/supportedPackagings&gt;
+    &lt;/configuration&gt;
+&lt;/plugin&gt;</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="implementation"><a class="anchor" href="#implementation"></a>1.3. Implementation</h3>
+<div class="paragraph">
+<p>In this chapter, we implement a simple application to demonstrate Agrest features.
+The application uses <code>Cayenne</code> as an ORM framework and for further information
+regarding a DB mapping please, refer to <a href="http://cayenne.apache.org">Apache Cayenne ORM</a></p>
+</div>
+<div class="sect3">
+<h4 id="configure-cayenne"><a class="anchor" href="#configure-cayenne"></a>Configure <code>Cayenne</code></h4>
+<div class="paragraph">
+<p>In the application&#8217;s <code>resources</code> folder, create a Cayenne project file:</p>
+</div>
+<div class="paragraph">
+<p><strong>cayenne-project.xml</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-XML" data-lang="XML">&lt;?xml version="1.0" encoding="utf-8"?&gt;
+&lt;domain project-version="9"&gt;
+    &lt;map name="datamap"/&gt;
+
+    &lt;node name="datanode"
+          factory="org.apache.cayenne.configuration.server.XMLPoolingDataSourceFactory"
+          schema-update-strategy="org.apache.cayenne.access.dbsync.CreateIfNoSchemaStrategy"
+    &gt;
+        &lt;map-ref name="datamap"/&gt;
+        &lt;data-source&gt;
+            &lt;driver value="org.apache.derby.jdbc.EmbeddedDriver"/&gt;
+            &lt;url value="jdbc:derby:memory:testdb;create=true"/&gt;
+            &lt;connectionPool min="1" max="1"/&gt;
+            &lt;login/&gt;
+        &lt;/data-source&gt;
+    &lt;/node&gt;
+&lt;/domain&gt;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>In the same folder, add a file that contains a basic Cayenne mapping.
+The mapping is done based on the ER diagram from the <a href="#starting-a-project">Starting a project</a> charter:</p>
+</div>
+<div class="paragraph">
+<p><strong>datamap.map.xml</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-XML" data-lang="XML">&lt;?xml version="1.0" encoding="utf-8"?&gt;
+&lt;data-map xmlns="http://cayenne.apache.org/schema/9/modelMap"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://cayenne.apache.org/schema/9/modelMap https://cayenne.apache.org/schema/9/modelMap.xsd"
+          project-version="9"&gt;
+    &lt;property name="defaultPackage" value="org.example.agrest.persistent"/&gt;
+    &lt;db-entity name="BOOK"&gt;
+        &lt;db-attribute name="AUTHOR" type="VARCHAR" length="128"/&gt;
+        &lt;db-attribute name="CATEGORY_ID" type="INTEGER"/&gt;
+        &lt;db-attribute name="ID" type="INTEGER" isPrimaryKey="true" isMandatory="true"/&gt;
+        &lt;db-attribute name="TITLE" type="VARCHAR" isMandatory="true" length="128"/&gt;
+    &lt;/db-entity&gt;
+    &lt;db-entity name="CATEGORY"&gt;
+        &lt;db-attribute name="DESCRIPTION" type="NCLOB"/&gt;
+        &lt;db-attribute name="ID" type="INTEGER" isPrimaryKey="true" isMandatory="true"/&gt;
+        &lt;db-attribute name="NAME" type="VARCHAR" isMandatory="true" length="128"/&gt;
+    &lt;/db-entity&gt;
+    &lt;obj-entity name="Book" className="org.example.agrest.persistent.Book" dbEntityName="BOOK"&gt;
+        &lt;obj-attribute name="author" type="java.lang.String" db-attribute-path="AUTHOR"/&gt;
+        &lt;obj-attribute name="title" type="java.lang.String" db-attribute-path="TITLE"/&gt;
+    &lt;/obj-entity&gt;
+    &lt;obj-entity name="Category" className="org.example.agrest.persistent.Category" dbEntityName="CATEGORY"&gt;
+        &lt;obj-attribute name="description" type="java.lang.String" db-attribute-path="DESCRIPTION"/&gt;
+        &lt;obj-attribute name="name" type="java.lang.String" db-attribute-path="NAME"/&gt;
+    &lt;/obj-entity&gt;
+    &lt;db-relationship name="category" source="BOOK" target="CATEGORY" toMany="false"&gt;
+        &lt;db-attribute-pair source="CATEGORY_ID" target="ID"/&gt;
+    &lt;/db-relationship&gt;
+    &lt;db-relationship name="books" source="CATEGORY" target="BOOK" toMany="true"&gt;
+        &lt;db-attribute-pair source="ID" target="CATEGORY_ID"/&gt;
+    &lt;/db-relationship&gt;
+    &lt;obj-relationship name="category" source="Book" target="Category" deleteRule="Nullify" db-relationship-path="category"/&gt;
+    &lt;obj-relationship name="books" source="Category" target="Book" deleteRule="Deny" db-relationship-path="books"/&gt;
+&lt;/data-map&gt;</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="define-domain-models"><a class="anchor" href="#define-domain-models"></a>Define domain models</h4>
+<div class="paragraph">
+<p>Create two classes to present data objects in package <code>org.example.agrest.persistent</code>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-Java" data-lang="Java">public class Category extends CayenneDataObject {
+
+    public static final String ID_PK_COLUMN = "ID";
+
+    public static final Property&lt;String&gt; DESCRIPTION = Property.create("description", String.class);
+    public static final Property&lt;String&gt; NAME = Property.create("name", String.class);
+    public static final Property&lt;List&lt;Book&gt;&gt; BOOKS = Property.create("books", List.class);
+}</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-Java" data-lang="Java">public class Book extends CayenneDataObject {
+
+    public static final String ID_PK_COLUMN = "ID";
+
+    public static final Property&lt;String&gt; AUTHOR = Property.create("author", String.class);
+    public static final Property&lt;String&gt; TITLE = Property.create("title", String.class);
+    public static final Property&lt;Category&gt; CATEGORY = Property.create("category", Category.class);
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="implement-agrest-application-classes"><a class="anchor" href="#implement-agrest-application-classes"></a>Implement <code>Agrest</code> application classes</h4>
+<div class="paragraph">
+<p>Create an application and a resource class in package <code>org.example.agrest</code>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-Java" data-lang="Java">@ApplicationPath("/api/*")
+public class BookstoreApplication extends ResourceConfig {
+
+    public BookstoreApplication() {
+
+        ServerRuntime cayenneRuntime
+                = ServerRuntime.builder()
+                               .addConfig("cayenne-project.xml")
+                               .build();
+
+        AgRuntime agRuntime = AgBuilder.build(cayenneRuntime);
+        super.register(agRuntime);
+
+        packages("org.example.agrest");
+    }
+}</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-Java" data-lang="Java">@Path("category")
+@Produces(MediaType.APPLICATION_JSON)
+public class CategoryResource {
+
+    @Context
+    private Configuration config;
+
+    @POST
+    public SimpleResponse create(String data) {
+        return Ag.create(Category.class, config).sync(data);
+    }
+
+    @GET
+    public DataResponse&lt;Category&gt; getAll(@Context UriInfo uriInfo) {
+        return Ag.select(Category.class, config).uri(uriInfo).get();
+    }
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="configure-web-xml"><a class="anchor" href="#configure-web-xml"></a>Configure <code>web.xml</code></h4>
+<div class="paragraph">
+<p>Provide a servlet configuration and a mapping based on the application class that you already created.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-XML" data-lang="XML">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;web-app xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd"
+         metadata-complete="false"
+         version="3.1"&gt;
+
+    &lt;servlet&gt;
+        &lt;servlet-name&gt;BookstoreApp&lt;/servlet-name&gt;
+        &lt;servlet-class&gt;org.glassfish.jersey.servlet.ServletContainer&lt;/servlet-class&gt;
+        &lt;init-param&gt;
+            &lt;param-name&gt;javax.ws.rs.Application&lt;/param-name&gt;
+            &lt;param-value&gt;org.example.agrest.BookstoreApplication&lt;/param-value&gt;
+        &lt;/init-param&gt;
+    &lt;/servlet&gt;
+
+    &lt;servlet-mapping&gt;
+        &lt;servlet-name&gt;BookstoreApp&lt;/servlet-name&gt;
+        &lt;url-pattern&gt;/api/*&lt;/url-pattern&gt;
+    &lt;/servlet-mapping&gt;
+
+&lt;/web-app&gt;</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="running-the-application"><a class="anchor" href="#running-the-application"></a>1.4. Running the Application</h3>
+<div class="paragraph">
+<p>In this chapter, we run and test our application.
+After you have completed the above steps, the structure of your project will look like this:</p>
+</div>
+<div class="imageblock" style="text-align: center">
+<div class="content">
+<img src="img/bookstore_ide_prjct.png" alt="bookstore ide prjct">
+</div>
+</div>
+<div class="sect3">
+<h4 id="building-and-running"><a class="anchor" href="#building-and-running"></a>Building and running</h4>
+<div class="paragraph">
+<p>To build the application, use the <code>mvn clean install</code> command.</p>
+</div>
+<div class="paragraph">
+<p>To run a jetty server with our application, use the mvn jetty:run command.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="configure-intellij-idea-maven-plugin"><a class="anchor" href="#configure-intellij-idea-maven-plugin"></a>Configure IntelliJ IDEA Maven plugin</h4>
+<div class="paragraph">
+<p>To run the application using IDE, add a new <code>Maven</code> configuration on a menu path <code>Run &#8594; Edit Configurations&#8230;&#8203;</code>.
+Then set a <code>Name:</code> (e.g. <strong>Bookstore</strong>) and a <code>Command line:</code> in <strong>jetty:run</strong></p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="testing"><a class="anchor" href="#testing"></a>Testing</h4>
+<div class="paragraph">
+<p>After running the application, you can call this endpoint to get a list of categories:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code>curl -i -X GET 'http://localhost:8080/api/category'</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>And get the following response:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-JSON" data-lang="JSON">HTTP/1.1 200 OK
+Date: Wed, 03 Oct 2018 10:14:51 GMT
+Content-Type: application/json
+Content-Length: 21
+Server: Jetty(9.3.14.v20161028)
+
+{"data":[],"total":0}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>As you may see, the list is empty. So, use the 'POST' command to add some categories:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code>curl -i -X POST 'http://localhost:8080/api/category'  -d '{"id":"1","name":"Science Fiction"}'</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Repeat the command, if necessary:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code>curl -i -X POST 'http://localhost:8080/api/category' -d '{"id":"2","name":"Horror"}'</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The response will be:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-JSON" data-lang="JSON">HTTP/1.1 201 Created
+Date: Wed, 03 Oct 2018 10:42:17 GMT
+Content-Type: application/json
+Content-Length: 16
+Server: Jetty(9.3.14.v20161028)
+
+{"success":true}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Now make the 'GET' request again and you will receive the following:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-JSON" data-lang="JSON">HTTP/1.1 200 OK
+Date: Wed, 03 Oct 2018 10:44:44 GMT
+Content-Type: application/json
+Content-Length: 117
+Server: Jetty(9.3.14.v20161028)
+
+{"data":[{"id":1,"description":null,"name":"Science Fiction"},{"id":2,"description":null,"name":"Horror"}],"total":2}</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="design-first-approach"><a class="anchor" href="#design-first-approach"></a>2. Design-First Approach</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="introduction"><a class="anchor" href="#introduction"></a>2.1. Introduction</h3>
+<div class="paragraph">
+<p>The API Design-First (or API-First) approach prescribes writing your API definition first as a contract before writing any code.
+This approach is more modern than the traditional Code-First approach.
+If main consumers of your API are third parties, partners or customers, the Design-First approach is the best choice.
+It allows you to provide good design for mission-critical APIs.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>The contract that represents API specification is the best point for discussion. It can be visualized by using such tools as Swagger UI.</p>
+</li>
+<li>
+<p>Based on API specification, you can even run a mock service. This way, developers and stakeholders will be able to preview and discuss the suggested design.</p>
+</li>
+<li>
+<p>You can fix most high-level design issues before writing any code.</p>
+</li>
+<li>
+<p>The final contract that is approved by all players tends to lead do better API.</p>
+</li>
+<li>
+<p>API documentation and appropriated tests could be generated from the contract. This means you can have the application ready sooner.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>In the beginning of developing an API, it is very important to understand the difference between Design-First, Code-First and DB-First approaches.
+And to help with it there are listed three principles you have to follow to reach all benefits of API Design-First approach:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>The API is the first user interface of the application</p>
+</li>
+<li>
+<p>The API comes first, than the implementation</p>
+</li>
+<li>
+<p>The API is self-descriptive</p>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect2">
+<h3 id="setting-up-the-environment-2"><a class="anchor" href="#setting-up-the-environment-2"></a>2.2. Setting up the environment</h3>
+<div class="paragraph">
+<p>In this chapter, we check that you already have installed an Agrest-based application that can be used to demonstrate the Design-First approach.</p>
+</div>
+<div class="sect3">
+<h4 id="prerequisites"><a class="anchor" href="#prerequisites"></a>Prerequisites</h4>
+<div class="paragraph">
+<p>Set up and build an application example from previous chapter <a href="#create-a-simple-agrest-app">Create a Simple <code>Agrest</code> App</a>.
+You can either follow a step-by-step process to create an application from scratch or get a ready-made application from
+GitHub <a href="https://github.com/agrestio/agrest-bookstore-example">Bookstore app</a></p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="prepare-the-bookstore-application"><a class="anchor" href="#prepare-the-bookstore-application"></a>Prepare the Bookstore application</h4>
+<div class="paragraph">
+<p>As we described above, the Design-First approach means the API specification comes first, and the code comes second.</p>
+</div>
+<div class="paragraph">
+<p>So, we have to remove from the application classes that defined API resources.
+In our case it is <code>CategoryResource.java</code> we have created manually.
+Later all our API resources will be generated from <code>.yaml</code> definition automatically according to
+the Design-First approach.</p>
+</div>
+<div class="paragraph">
+<p>Then update the <code>pom.xml</code>.</p>
+</div>
+<div class="paragraph">
+<p>Add the <code>openapi-generator-maven-plugin</code> plugin and appropriate settings.
+For more details, please refer to the next section <a href="#configure-and-run-api-generation">Configure and run API generation</a></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-xml" data-lang="xml">&lt;plugin&gt;
+    &lt;groupId&gt;org.openapitools&lt;/groupId&gt;
+    &lt;artifactId&gt;openapi-generator-maven-plugin&lt;/artifactId&gt;
+    &lt;version&gt;3.0.2&lt;/version&gt;
+    &lt;executions&gt;
+        &lt;execution&gt;
+            &lt;goals&gt;
+                &lt;goal&gt;generate&lt;/goal&gt;
+            &lt;/goals&gt;
+            &lt;configuration&gt;
+                &lt;inputSpec&gt;${project.basedir}/src/main/resources/bookstore-api.yaml&lt;/inputSpec&gt;
+                &lt;generatorName&gt;io.swagger.codegen.languages.AgServerCodegen&lt;/generatorName&gt;
+                &lt;output&gt;${project.basedir}&lt;/output&gt;
+                &lt;apiPackage&gt;org.example.agrest&lt;/apiPackage&gt;
+                &lt;modelPackage&gt;org.example.agrest.persistent&lt;/modelPackage&gt;
+                &lt;invokerPackage&gt;org.example.agrest&lt;/invokerPackage&gt;
+                &lt;generateModels&gt;false&lt;/generateModels&gt;
+                &lt;skipOverwrite&gt;false&lt;/skipOverwrite&gt;
+            &lt;/configuration&gt;
+        &lt;/execution&gt;
+    &lt;/executions&gt;
+
+    &lt;dependencies&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;io.agrest.openapi&lt;/groupId&gt;
+            &lt;artifactId&gt;agrest-openapi-designfirst&lt;/artifactId&gt;
+            &lt;version&gt;3.0-SNAPSHOT&lt;/version&gt;
+        &lt;/dependency&gt;
+    &lt;/dependencies&gt;
+&lt;/plugin&gt;</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="the-resulting-application-2"><a class="anchor" href="#the-resulting-application-2"></a>The resulting application</h4>
+<div class="paragraph">
+<p>The final application that implements Design-First approach is available on GitHub at:
+<a href="https://github.com/agrestio/agrest-openapi-designfirst-bookstore-example">Bookstore Design-first app</a></p>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="defining-the-api"><a class="anchor" href="#defining-the-api"></a>2.3. Defining the API</h3>
+<div class="paragraph">
+<p>Agrest provides the <code>AgServerCodegen</code> class and a set of custom Mustache templates to generate an API implementation
+based on <code>OpenAPI 3.0</code> specification.</p>
+</div>
+<div class="paragraph">
+<p>The top-down workflow for creating the API is as follows:</p>
+</div>
+<div class="sect3">
+<h4 id="1-start-with-domain-models"><a class="anchor" href="#1-start-with-domain-models"></a>1. Start with domain models</h4>
+<div class="paragraph">
+<p>Create a <code>bookstore-api.yaml</code> file to define your API and put it in the <code>src/main/java/resources</code> folder.
+Add general information regarding your API:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-yaml" data-lang="yaml">openapi: 3.0.0
+servers:
+  - url: 'http://127.0.0.1/v1'
+info:
+  title: Agrest-based API of Bookstore
+  description: An API for interacting with the Bookstore backend server
+  version: v1</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Then add definition of your models.
+If you want to create an updated API (e.g. POST, PUT) of your model, you have to define a 'requestBodies' element
+in addition to a 'schemas' element.</p>
+</div>
+<div class="paragraph">
+<p>Please make sure that you can either specify existing Java-DB mapping classes
+(based on <code>CayenneDataObject</code> e.g. our <code>Category</code> and <code>Book</code>) or generate simple POJO models  by Maven plugin.</p>
+</div>
+<div class="paragraph">
+<p>For further information, please refer to <a href="#configure-and-run-api-generation">Configure and run API generation</a> section.</p>
+</div>
+<div class="paragraph">
+<p>But in either case you have to define models in the <code>.yaml</code> file:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-yaml" data-lang="yaml">tags:
+  - name: Category
+    description: |
+      This model represents a Category type and is used to retrieve, create and update a book Category information.
+
+components:
+  schemas:
+    Category:
+      type: object
+      properties:
+       id:
+         type: string
+         description: Unique ID of Category
+         example: 1
+       name:
+         type: string
+         description: Book Category name
+         example: Science Fiction
+       description:
+         type: string
+         description: Description of Category
+         example: Science fiction (often shortened to Sci-Fi or SF) is a genre of speculative fiction.
+
+  requestBodies:
+    Category:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Category'
+      description: Category object that needs to be created or updated
+      required: true</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="2-attach-agrest-protocol-definition"><a class="anchor" href="#2-attach-agrest-protocol-definition"></a>2. Attach Agrest protocol definition</h4>
+<div class="paragraph">
+<p>The Agrest protocol file <a href="#protocol">protocol.yaml</a> contains definition of all <a href="protocol.html#control-parameters">Control Parameters</a>.
+Just place this <code>protocol.yaml</code> in the catalog were your main <code>bookstore-api.yaml</code> file is located (e.g. 'src/main/java/resources').</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="3-define-resources"><a class="anchor" href="#3-define-resources"></a>3. Define resources</h4>
+<div class="paragraph">
+<p>Add REST API resource definition to your <code>bookstore-api.yaml</code> file.
+Make sure that Agrest protocol parameters are defined as references.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-yaml" data-lang="yaml">paths:
+  /category:
+    get:
+      summary: Get list of all Book Categories
+      operationId: getAll
+      tags:
+        - Category
+      parameters:
+        - $ref: '../resources/protocol.yaml#/components/queryParams/Limit'
+        - $ref: '../resources/protocol.yaml#/components/queryParams/Start'
+      responses:
+        '200':
+          description: Success response.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Category'
+        default:
+          description: Unexpected error
+    post:
+      tags:
+        - Category
+      summary: Create a new Book Category
+      operationId: create
+      requestBody:
+        $ref: "#/components/requestBodies/Category"
+      responses:
+        default:
+          description: successful operation
+
+  /category/{id}:
+    get:
+      description: Returns a particular Book Category
+      operationId: getOne
+      tags:
+        - Category
+      parameters:
+        - name: id
+          in: path
+          description: ID of Category to fetch
+          required: true
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: Success responce
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Category'
+          description: Unexpected error</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="4-run-build-time-api-generation"><a class="anchor" href="#4-run-build-time-api-generation"></a>4. Run build-time API generation</h4>
+<div class="paragraph">
+<p>To generate an Agrest-based API, a special Maven plugin is used.
+This plugin should be configured in accordance with your <code>.yaml</code> files location
+<a href="#inputSpec">&lt;inputSpec&gt;</a>, packages <a href="#apiPackage">&lt;apiPackage&gt;</a>, output catalog <a href="#output">&lt;output&gt;</a>, etc.</p>
+</div>
+<div class="paragraph">
+<p><code>mvn clean install</code> runs generation of the API.</p>
+</div>
+<div class="paragraph">
+<p>For more details, please refer to the <a href="#configure-and-run-api-generation">Configure and run API generation</a> section</p>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="validate-the-api-implementation"><a class="anchor" href="#validate-the-api-implementation"></a>2.4. Validate the API implementation</h3>
+<div class="paragraph">
+<p>After it has been successfully generated, <code>CategoryResource.java</code> could be found in the output catalog.
+This class has a ready-to-use implementation (not a stub) of all methods defined in the <code>.yaml</code> file.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-Java" data-lang="Java">@Path("/")
+public class CategoryResource {
+
+    @Context
+    private Configuration config;
+
+    @POST
+    @Path("/v1/category")
+    @Consumes({ "application/json" })
+    public DataResponse&lt;Category&gt; create(String category) {
+        AgRequest agRequest = AgRequest.builder()
+                .build();
+
+        return Ag.create(Category.class, config)
+                 .request(agRequest)
+                 .syncAndSelect(category);
+    }
+
+    @GET
+    @Path("/v1/category")
+    @Produces({ "application/json" })
+    public DataResponse&lt;Category&gt; getAll(@QueryParam("limit") Limit limit, @QueryParam("start") Start start) {
+        AgRequest agRequest = AgRequest.builder()
+                .limit(limit)
+                .start(start)
+                .build();
+
+        return Ag.select(Category.class, config)
+                 .request(agRequest)
+                 .get();
+    }
+
+    @GET
+    @Path("/v1/category/{id}")
+    @Produces({ "application/json" })
+        public DataResponse&lt;Category&gt; getOne(@PathParam("id") Integer id) {
+        AgRequest agRequest = AgRequest.builder()
+                .build();
+
+        return Ag.select(Category.class, config)
+                 .byId(id)
+                 .request(agRequest)
+                 .get();
+    }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>If you configure Maven plugin to generate models <a href="#generateModels">&lt;generateModels&gt;</a>, the POJO <code>Category.java</code> will be generated.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-Java" data-lang="Java">public class Category   {
+
+    private Integer id = null;
+    private String name = null;
+    private String description = null;
+
+...
+    /**
+     * Unique ID of Category
+     * @return id
+     **/
+    @AgAttribute
+    @ApiModelProperty(example = "1", value = "Unique ID of Category")
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+...
+    /**
+     * Book Category name
+     * @return name
+     **/
+    @AgAttribute
+    @ApiModelProperty(example = "Science Fiction", value = "Book Category name")
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="configure-and-run-api-generation"><a class="anchor" href="#configure-and-run-api-generation"></a>2.5. Configure and run API generation</h3>
+<div class="paragraph">
+<p>There is an example of the Maven plugin configuration:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-XML" data-lang="XML">&lt;plugin&gt;
+    &lt;groupId&gt;org.openapitools&lt;/groupId&gt;
+    &lt;artifactId&gt;openapi-generator-maven-plugin&lt;/artifactId&gt;
+    &lt;version&gt;3.0.2&lt;/version&gt;
+    &lt;executions&gt;
+        &lt;execution&gt;
+            &lt;goals&gt;
+                &lt;goal&gt;generate&lt;/goal&gt;
+            &lt;/goals&gt;
+            &lt;configuration&gt;
+                &lt;inputSpec&gt;${project.basedir}/src/main/resources/bookstore-api.yaml&lt;/inputSpec&gt;
+                &lt;generatorName&gt;io.swagger.codegen.languages.AgServerCodegen&lt;/generatorName&gt;
+                &lt;output&gt;${project.basedir}&lt;/output&gt;
+                &lt;apiPackage&gt;org.example.agrest&lt;/apiPackage&gt;
+                &lt;modelPackage&gt;org.example.agrest.persistente&lt;/modelPackage&gt;
+                &lt;invokerPackage&gt;org.example.agrest&lt;/invokerPackage&gt;
+                &lt;generateModels&gt;false&lt;/generateModels&gt;
+                &lt;skipOverwrite&gt;false&lt;/skipOverwrite&gt;
+            &lt;/configuration&gt;
+        &lt;/execution&gt;
+    &lt;/executions&gt;
+
+    &lt;dependencies&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;io.agrest.openapi&lt;/groupId&gt;
+            &lt;artifactId&gt;agrest-openapi-designfirst&lt;/artifactId&gt;
+            &lt;version&gt;3.0-SNAPSHOT&lt;/version&gt;
+        &lt;/dependency&gt;
+    &lt;/dependencies&gt;
+&lt;/plugin&gt;</code></pre>
+</div>
+</div>
+<div class="sect4">
+<h5 id="inputSpec"><a class="anchor" href="#inputSpec"></a>&lt;inputSpec&gt;</h5>
+<div class="paragraph">
+<p>Points to your API definition in <code>.yaml</code> or <code>.json</code> formats.</p>
+</div>
+</div>
+<div class="sect4">
+<h5 id="generatorName"><a class="anchor" href="#generatorName"></a>&lt;generatorName&gt;</h5>
+<div class="paragraph">
+<p>Sets the Agrest custom code generator.</p>
+</div>
+</div>
+<div class="sect4">
+<h5 id="output"><a class="anchor" href="#output"></a>&lt;output&gt;</h5>
+<div class="paragraph">
+<p>Sets the output catalog for all generated items.</p>
+</div>
+</div>
+<div class="sect4">
+<h5 id="apiPackage"><a class="anchor" href="#apiPackage"></a>&lt;apiPackage&gt;</h5>
+<div class="paragraph">
+<p>Contains full package name of resource implementation classes to be generated.</p>
+</div>
+</div>
+<div class="sect4">
+<h5 id="modelPackage"><a class="anchor" href="#modelPackage"></a>&lt;modelPackage&gt;</h5>
+<div class="paragraph">
+<p>Contains full package name of model classes.
+If <a href="#generateModels">&lt;generateModels&gt;</a> is set to <code>true</code>, the POJO stubs of models will be generated.
+Otherwise, existing model classes from this package will be used.</p>
+</div>
+</div>
+<div class="sect4">
+<h5 id="generateModels"><a class="anchor" href="#generateModels"></a>&lt;generateModels&gt;</h5>
+<div class="paragraph">
+<p>Generates POJO of models or uses existing ones.</p>
+</div>
+</div>
+<div class="sect4">
+<h5 id="skipOverwrite"><a class="anchor" href="#skipOverwrite"></a>&lt;skipOverwrite&gt;</h5>
+<div class="paragraph">
+<p>If it is set to <code>false</code>, all generated files will be overwritten each time during <code>mvn clean install</code>.
+So, if you are planning to customize the generated API implementation, this parameter should be set to <code>true</code>.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="run-the-application"><a class="anchor" href="#run-the-application"></a>Run the Application</h4>
+<div class="paragraph">
+<p>As we mentioned in the chapter <a href="#building-and-running">Building and running</a> the Application is run by command <code>mvn jetty:run</code>.
+After the Jetty server starts, the following <code>curl</code> commands can be used for the API testing:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code>curl -i -X GET 'http://localhost:8080/api/v1/category'</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code>curl -i -X POST -H 'Content-Type: application/json' 'http://localhost:8080/api/v1/category'  -d '{"id":"1","name":"Science Fiction"}'</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Please, pay attention that the <code>POST</code> command has to contain the <code>Content-Type</code> parameter according to the annotation
+of the 'create' method of the <code>CategoryResource</code> class.</p>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="more-examples-with-integration-tests"><a class="anchor" href="#more-examples-with-integration-tests"></a>2.6. More examples with integration tests</h3>
+<div class="paragraph">
+<p>Agrest has more <a href="https://github.com/agrestio/agrest/tree/master/agrest-openapi-designfirst-test">Examples</a>
+of Design-First approach implementation that are provided as separate module with set of tests.
+To run it use <code>mvn clean install</code> command.
+The API description (contract) is defined in file <code>src/test/java/resources/api.yaml</code>.</p>
+</div>
+<div class="paragraph">
+<p>All generated APIs will be located on <code>src/test/java</code> together with corresponding integration tests.</p>
+</div>
+<div class="paragraph">
+<p>During the build time the API implementation is generated by Maven plugin and then this implementation is checked by integration tests.
+We use testing fixtures from <a href="https://github.com/agrestio/agrest/tree/master/agrest">agrest</a> module as models.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="protocol"><a class="anchor" href="#protocol"></a>2.7. protocol.yaml</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-yaml" data-lang="yaml">components:
+  queryParams:
+
+    CayenneExp:
+      name: cayenneExp
+      in: query
+      style: form
+      explode: false
+      schema:
+        type: object
+        properties:
+          exp:
+            type: string
+            description: A conditional expression that is used to filter the response objects
+            example: articles.body like $b
+          params:
+            type: object
+            additionalProperties:
+              type: string
+      description: cayenneExp query
+      required: false
+
+    Dir:
+      name: dir
+      in: query
+      style: form
+      explode: false
+      schema:
+        type: string
+        enum:
+          - ASC
+          - DESC
+      description: sorting direction
+      required: false
+
+    Excludes:
+      name: exclude
+      in: query
+      style: form
+      explode: false
+      schema:
+        type: array
+        items:
+          $ref: '#/components/queryParams/Exclude'
+      description: list of excludes
+      required: false
+
+    Exclude:
+      name: exclude
+      in: query
+      schema:
+        type: object
+        properties:
+          path:
+            type: string
+          excludes:
+            type: array
+            items:
+              $ref: '#/components/queryParams/Exclude'
+      description: An exclude parameter
+      required: false
+
+    Includes:
+      name: include
+      in: query
+      style: form
+      explode: false
+      schema:
+        type: array
+        items:
+          $ref: '#/components/queryParams/Include'
+      description: list of includes
+      required: false
+
+    Include:
+      name: include
+      in: query
+      schema:
+        type: object
+        properties:
+          value:
+            type: string
+          cayenneExp:
+            $ref: '#/components/queryParams/CayenneExp'
+          sort:
+            $ref: '#/components/queryParams/Sort'
+          mapBy:
+            $ref: '#/components/queryParams/MapBy'
+          path:
+            type: string
+          start:
+            $ref: '#/components/queryParams/Start'
+          limit:
+            $ref: '#/components/queryParams/Limit'
+          includes:
+            type: array
+            items:
+              $ref: '#/components/queryParams/Include'
+      description: An include parameter
+      required: false
+
+    Limit:
+      name: limit
+      in: query
+      style: form
+      explode: false
+      schema:
+        type: object
+        properties:
+          value:
+            type: integer
+            format: int32
+            description:
+      description: limit query param. Used for pagination.
+      required: false
+
+    Start:
+      name: start
+      in: query
+      style: form
+      explode: false
+      schema:
+        type: object
+        properties:
+          value:
+            type: integer
+            format: int32
+            description:
+      description: start query param. Used for pagination.
+      required: false
+
+    MapBy:
+      name: mapBy
+      in: query
+      style: form
+      explode: false
+      schema:
+        type: object
+        properties:
+          path:
+            type: string
+            description:
+      description:
+      required: false
+
+    Sort:
+      name: sort
+      in: query
+      style: form
+      explode: false
+      schema:
+        type: object
+        properties:
+          property:
+            type: string
+            description:
+          direction:
+            type: object
+            $ref: '#/components/queryParams/Dir'
+          sorts:
+            type: array
+            items:
+              $ref: '#/components/queryParams/Sort'
+      description: sort
+      required: false</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="code-first-approach"><a class="anchor" href="#code-first-approach"></a>3. Code-First Approach</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="introduction-2"><a class="anchor" href="#introduction-2"></a>3.1. Introduction</h3>
+<div class="paragraph">
+<p>The Code-First approach is useful mainly in Domain Driven Design. In the Code-First approach, you focus on the domain
+of your application and start creating classes for your domain entity rather than creating your database (DB-First) or creating your API (Design-First) first.
+And only after you can create domain classes, a DB structure and an appropriate API specification will be created.</p>
+</div>
+<div class="paragraph">
+<p>With regards to creating API specification, it means that the specification can be automatically generated from the class sources.
+This generation has to use a classes meta information that can be provided using annotations, for example.</p>
+</div>
+<div class="paragraph">
+<p>Agrest provides the following annotations:</p>
+</div>
+<div class="paragraph">
+<p><code>@AgAttribute</code></p>
+</div>
+<div class="paragraph">
+<p><code>@AgId</code></p>
+</div>
+<div class="paragraph">
+<p><code>@AgRelationship</code></p>
+</div>
+<div class="paragraph">
+<p><code>@AgResource</code></p>
+</div>
+<div class="paragraph">
+<p>If you specify your models and resources using these annotations, the Agrest Maven plugin will generate
+an API specification in the openapi v.3.0 format.</p>
+</div>
+</div>
+</div>
+</div>

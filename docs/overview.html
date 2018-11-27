@@ -1,0 +1,64 @@
+<div id="toc" class="toc">
+    <div id="toctitle">Table of Contents</div>
+    <ul class="sectlevel1">
+        <li><a href="#what-is-agrest">1. What is Agrest</a></li>
+        <li><a href="#what-agrest-is-not">2. What Agrest is Not</a></li>
+        <li><a href="#supported-data-stores">3. Supported Data Stores</a></li>
+        <li><a href="#security">4. Security</a></li>
+    </ul>
+</div>
+<div class="sect1">
+    <h2 id="what-is-agrest"><a class="anchor" href="#what-is-agrest"></a>1. What is Agrest</h2>
+    <div class="sectionbody">
+        <div class="paragraph">
+            <p>Agrest is a set of tools to build web APIs for your data. You would use it to expose a data store
+                (such as a relational database) as a RESTful web service. To achieve that
+                goal Agrest defines a simple HTTP/JSON-based protocol
+                (described in <a href="protocol.html">Agrest Protocol</a>) and a server-side framework (described in <a href="framework.html">Agrest Framework</a>).
+                The protocol ensures that any client, be it JavaScript, a mobile
+                app or maybe a server-side app, can make sense of any Agrest-enabled service. The
+                framework is written in Java and helps you to build services adhering to the
+                protocol.</p>
+        </div>
+        <div class="paragraph">
+            <p>Agrest is open source and is distributed under the terms of
+                <a href="https://raw.githubusercontent.com/agrestio/agrest/master/LICENSE.txt">Apache 2.0 license</a></p>
+        </div>
+    </div>
+</div>
+<div class="sect1">
+    <h2 id="what-agrest-is-not"><a class="anchor" href="#what-agrest-is-not"></a>2. What Agrest is Not</h2>
+    <div class="sectionbody">
+        <div class="paragraph">
+            <p>Agrest is not an automated engine to take your DB online with a single command.
+                You still have to write code for JAX-RS endpoints (however simple and trivial that code might end up being).
+                Having this code around allows you to customize processing, implement security around endpoints, hide certain methods, etc.
+                This is a defensive approach that goes a long way to avoid unintended consequences when opening up your data on the web.</p>
+        </div>
+        <div class="paragraph">
+            <p>Having said that, such an engine can be written on top of Agrest with relative ease.</p>
+        </div>
+    </div>
+</div>
+<div class="sect1">
+    <h2 id="supported-data-stores"><a class="anchor" href="#supported-data-stores"></a>3. Supported Data Stores</h2>
+    <div class="sectionbody">
+        <div class="paragraph">
+            <p>Agrest is written on top of <a href="http://cayenne.apache.org">Apache Cayenne ORM</a>
+                and supports any relational data store, such as MySQL or Oracle.
+                Support for alternative data stores can be provided with relative ease. E.g. NoSQL
+                databases, flat files, etc. E.g. we&#8217;ve written POJO and LDAP backends.</p>
+        </div>
+    </div>
+</div>
+<div class="sect1">
+    <h2 id="security"><a class="anchor" href="#security"></a>4. Security</h2>
+    <div class="sectionbody">
+        <div class="paragraph">
+            <p>From the very beginning Agrest was designed with security in mind. It can be easily
+                integrated with common web and enterprise security solutions
+                (OAuth, <a href="http://shiro.apache.org/">Apache Shiro</a>, Spring Security, etc.),
+                giving Java developers a straightforward API to implement custom object and attribute-level access.</p>
+        </div>
+    </div>
+</div>
