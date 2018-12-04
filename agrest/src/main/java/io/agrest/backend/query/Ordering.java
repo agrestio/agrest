@@ -83,7 +83,7 @@ public class Ordering implements Comparator<Object> {
     }
 
     /**
-     * Returns sortSpec string representation.
+     * Returns sortSpec string representation.34
      *
      */
     public String getSortSpecString() {

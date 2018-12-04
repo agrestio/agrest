@@ -3,6 +3,8 @@ package io.agrest.runtime.cayenne.processor.select;
 import io.agrest.AgException;
 import io.agrest.AgObjectId;
 import io.agrest.ResourceEntity;
+import io.agrest.backend.util.converter.ExpressionConverter;
+import io.agrest.backend.util.converter.OrderingConverter;
 import io.agrest.meta.AgAttribute;
 import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgPersistentAttribute;
@@ -10,8 +12,6 @@ import io.agrest.meta.AgPersistentEntity;
 import io.agrest.processor.Processor;
 import io.agrest.processor.ProcessorOutcome;
 import io.agrest.runtime.cayenne.ICayennePersister;
-import io.agrest.runtime.cayenne.converter.CayenneExpressionConverter;
-import io.agrest.runtime.cayenne.converter.CayenneOrderingConverter;
 import io.agrest.runtime.processor.select.SelectContext;
 import org.apache.cayenne.di.Inject;
 import org.apache.cayenne.exp.Expression;
@@ -32,9 +32,15 @@ import java.util.Map;
 public class CayenneAssembleQueryStage implements Processor<SelectContext<?>> {
 
     private EntityResolver entityResolver;
+    private ExpressionConverter<Expression> expressionConverter;
+    private OrderingConverter<Ordering> orderingConverter;
 
-    public CayenneAssembleQueryStage(@Inject ICayennePersister persister) {
+    public CayenneAssembleQueryStage(@Inject ICayennePersister persister,
+                                     @Inject ExpressionConverter expressionConverter,
+                                     @Inject OrderingConverter orderingConverter) {
         this.entityResolver = persister.entityResolver();
+        this.expressionConverter = expressionConverter;
+        this.orderingConverter = orderingConverter;
     }
 
     @Override
@@ -65,15 +71,11 @@ public class CayenneAssembleQueryStage implements Processor<SelectContext<?>> {
             query.andQualifier(qualifier);
         }
 
-        CayenneExpressionConverter expConverter = new CayenneExpressionConverter();
         if (entity.getQualifier() != null) {
-            query.andQualifier(expConverter.convert(entity.getQualifier()));
+            query.andQualifier(expressionConverter.apply(entity.getQualifier()));
         }
 
-        CayenneOrderingConverter orderingConverter = new CayenneOrderingConverter();
-        for (io.agrest.backend.query.Ordering o : entity.getOrderings()) {
-            query.addOrdering(orderingConverter.convert(o));
-        }
+        query.addOrderings(orderingConverter.apply(entity.getOrderings()));
 
         if (!entity.getChildren().isEmpty()) {
             PrefetchTreeNode root = new PrefetchTreeNode();

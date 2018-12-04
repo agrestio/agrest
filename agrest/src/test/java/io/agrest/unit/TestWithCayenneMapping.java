@@ -1,6 +1,10 @@
 package io.agrest.unit;
 
 import io.agrest.ResourceEntity;
+import io.agrest.backend.util.converter.ExpressionConverter;
+import io.agrest.backend.util.converter.ExpressionMatcher;
+import io.agrest.backend.util.converter.OrderingConverter;
+import io.agrest.backend.util.converter.OrderingSorter;
 import io.agrest.meta.AgEntity;
 import io.agrest.meta.DefaultAgAttribute;
 import io.agrest.meta.AgPersistentAttribute;
@@ -10,6 +14,10 @@ import io.agrest.meta.compiler.PojoEntityCompiler;
 import io.agrest.meta.parser.IResourceParser;
 import io.agrest.meta.parser.ResourceParser;
 import io.agrest.runtime.cayenne.ICayennePersister;
+import io.agrest.runtime.cayenne.converter.CayenneExpressionConverter;
+import io.agrest.runtime.cayenne.converter.CayenneExpressionMatcher;
+import io.agrest.runtime.cayenne.converter.CayenneOrderingConverter;
+import io.agrest.runtime.cayenne.converter.CayenneOrderingSorter;
 import io.agrest.runtime.meta.BaseUrlProvider;
 import io.agrest.runtime.meta.IMetadataService;
 import io.agrest.runtime.meta.IResourceMetadataService;
@@ -71,6 +79,10 @@ public class TestWithCayenneMapping {
 	protected IResourceMetadataService resourceMetadataService;
 	protected IResourceParser resourceParser;
 	protected IJsonValueConverterFactory converterFactory;
+	protected ExpressionConverter expressionConverter;
+	protected ExpressionMatcher expressionMatcher;
+	protected OrderingConverter orderingConverter;
+	protected OrderingSorter orderingSorter;
 
 	@Before
 	public void initAgDataMap() {
@@ -86,6 +98,10 @@ public class TestWithCayenneMapping {
 		this.metadataService = createMetadataService();
 		this.resourceParser = new ResourceParser(metadataService);
 		this.resourceMetadataService = createResourceMetadataService();
+		this.expressionConverter = new CayenneExpressionConverter();
+		this.expressionMatcher = new CayenneExpressionMatcher();
+		this.orderingConverter = new CayenneOrderingConverter();
+		this.orderingSorter = new CayenneOrderingSorter();
 	}
 
 	protected IMetadataService createMetadataService() {

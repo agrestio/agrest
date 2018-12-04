@@ -19,7 +19,7 @@ public class CayenneExpressionConverter implements ExpressionConverter<Expressio
 
 
     @Override
-    public Expression convert(io.agrest.backend.exp.Expression from) {
+    public Expression apply(io.agrest.backend.exp.Expression from) {
         if (from == null) {
             return null;
         }

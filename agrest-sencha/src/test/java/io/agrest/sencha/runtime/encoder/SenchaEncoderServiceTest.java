@@ -52,7 +52,8 @@ public class SenchaEncoderServiceTest extends TestWithCayenneMapping {
         IRelationshipMapper relationshipMapper = new SenchaRelationshipMapper();
 
         encoderService = new SenchaEncoderService(this.filters, attributeEncoderFactory, stringConverterFactory,
-                relationshipMapper, Collections.<String, PropertyMetadataEncoder>emptyMap());
+                relationshipMapper, Collections.<String, PropertyMetadataEncoder>emptyMap(),
+                expressionConverter, expressionMatcher, orderingConverter, orderingSorter);
     }
 
     @Test

@@ -5,22 +5,21 @@ import io.agrest.backend.exp.parser.SimpleNode;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Function;
 
 /**
  *
  *
  */
-public interface ExpressionConverter<B> extends Converter<Expression, B> {
+public interface ExpressionConverter<R> extends Function<Expression, R> {
 
-    @Override
-    B convert(Expression from);
 
-    default List<B> convertChildren(Expression from, ExpressionConverter<B> converter) {
-        List<B> result = new ArrayList<>();
+    default List<R> convertChildren(Expression from, ExpressionConverter<R> converter) {
+        List<R> result = new ArrayList<>();
 
         SimpleNode fromNode = (SimpleNode)from;
         for (int i = 0; i < fromNode.jjtGetNumChildren(); i++) {
-            result.add(converter.convert((Expression)fromNode.jjtGetChild(i)));
+            result.add(converter.apply((Expression)fromNode.jjtGetChild(i)));
         }
         return result;
     }

@@ -8,6 +8,10 @@ import io.agrest.DataResponse;
 import io.agrest.EntityConstraint;
 import io.agrest.MetadataResponse;
 import io.agrest.SimpleResponse;
+import io.agrest.backend.util.converter.ExpressionConverter;
+import io.agrest.backend.util.converter.ExpressionMatcher;
+import io.agrest.backend.util.converter.OrderingConverter;
+import io.agrest.backend.util.converter.OrderingSorter;
 import io.agrest.encoder.Encoder;
 import io.agrest.encoder.EncoderFilter;
 import io.agrest.encoder.PropertyMetadataEncoder;
@@ -27,6 +31,10 @@ import io.agrest.provider.ValidationExceptionMapper;
 import io.agrest.runtime.cayenne.CayennePersister;
 import io.agrest.runtime.cayenne.ICayennePersister;
 import io.agrest.runtime.cayenne.NoCayennePersister;
+import io.agrest.runtime.cayenne.converter.CayenneExpressionConverter;
+import io.agrest.runtime.cayenne.converter.CayenneExpressionMatcher;
+import io.agrest.runtime.cayenne.converter.CayenneOrderingConverter;
+import io.agrest.runtime.cayenne.converter.CayenneOrderingSorter;
 import io.agrest.runtime.cayenne.processor.delete.CayenneDeleteProcessorFactoryProvider;
 import io.agrest.runtime.cayenne.processor.delete.CayenneDeleteStage;
 import io.agrest.runtime.cayenne.processor.delete.CayenneDeleteStartStage;
@@ -519,6 +527,12 @@ public class AgBuilder {
             binder.bind(ICayennePersister.class).toInstance(cayenneService);
 
             binder.bind(IPathDescriptorManager.class).to(PathDescriptorManager.class);
+
+            // Backend converters and matchers
+            binder.bind(ExpressionConverter.class).to(CayenneExpressionConverter.class);
+            binder.bind(ExpressionMatcher.class).to(CayenneExpressionMatcher.class);
+            binder.bind(OrderingConverter.class).to(CayenneOrderingConverter.class);
+            binder.bind(OrderingSorter.class).to(CayenneOrderingSorter.class);
 
             // Query parameter parsers from the UriInfo
             binder.bind(ICayenneExpParser.class).to(CayenneExpParser.class);

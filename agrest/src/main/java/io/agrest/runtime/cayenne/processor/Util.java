@@ -45,10 +45,9 @@ public final class Util {
 			}
 			return query.selectOne(context);
 		} else {
-			CayenneExpressionConverter expConverter = new CayenneExpressionConverter();
 
 			AgAttribute attribute = agEntity.getIds().iterator().next();
-			return ObjectSelect.query(type, new ASTEqual((SimpleNode) expConverter.convert(attribute.getPathExp()), id)).selectOne(context);
+			return ObjectSelect.query(type, new ASTEqual((SimpleNode) new CayenneExpressionConverter().apply(attribute.getPathExp()), id)).selectOne(context);
 		}
 	}
 }

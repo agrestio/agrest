@@ -36,7 +36,8 @@ public class EncoderService_ISODateTime_Test extends Java8TestWithCayenneMapping
         IStringConverterFactory stringConverterFactory = mock(IStringConverterFactory.class);
 
         encoderService = new EncoderService(Collections.<EncoderFilter>emptyList(), attributeEncoderFactory, stringConverterFactory,
-                new RelationshipMapper(), Collections.<String, PropertyMetadataEncoder> emptyMap());
+                new RelationshipMapper(), Collections.<String, PropertyMetadataEncoder> emptyMap(),
+                expressionConverter, expressionMatcher, orderingConverter, orderingSorter);
     }
 
     @Test

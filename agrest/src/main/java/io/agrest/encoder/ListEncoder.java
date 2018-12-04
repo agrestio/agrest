@@ -1,19 +1,17 @@
 package io.agrest.encoder;
 
 import com.fasterxml.jackson.core.JsonGenerator;
-import org.apache.cayenne.exp.Expression;
-import org.apache.cayenne.query.Ordering;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
+import java.util.function.Consumer;
+import java.util.function.Function;
 
 public class ListEncoder implements CollectionEncoder {
 
 	private Encoder elementEncoder;
-	private List<Ordering> orderings;
-	private Expression filter;
+	private Consumer<List<?>> orderings;
+	private Function<Object, Boolean> filter;
 
 	private int offset;
 	private int limit;
@@ -22,10 +20,9 @@ public class ListEncoder implements CollectionEncoder {
 
 	public ListEncoder(Encoder elementEncoder) {
 		this.elementEncoder = elementEncoder;
-		this.orderings = Collections.emptyList();
 	}
 
-	public ListEncoder(Encoder elementEncoder, Expression filter, List<Ordering> orderings) {
+	public ListEncoder(Encoder elementEncoder, Function<Object, Boolean> filter, Consumer<List<?>> orderings) {
 		this.elementEncoder = elementEncoder;
 		this.orderings = orderings;
 		this.filter = filter;
@@ -104,12 +101,8 @@ public class ListEncoder implements CollectionEncoder {
 		List<?> list = (List) object;
 
 		// sort list before encoding, but do not filter it - we can filter during encoding
-		if (!orderings.isEmpty() && list.size() > 1) {
-
-			// don't mess up underlying relationship, sort a copy...
-			list = new ArrayList<>(list);
-
-			Ordering.orderList(list, orderings);
+		if (orderings != null) {
+			orderings.accept(list);
 		}
 
 		return list;
@@ -123,7 +116,7 @@ public class ListEncoder implements CollectionEncoder {
 
 			if (shouldFilter) {
 				Object o = objects.get(c.position);
-				if (filter == null || filter.match(o)) {
+				if (filter == null || filter.apply(o)) {
 					if (elementEncoder.willEncode(null, o)) {
 						c.rewound++;
 					}
@@ -141,7 +134,7 @@ public class ListEncoder implements CollectionEncoder {
 		for (; c.position < length && c.encoded < limit; c.position++) {
 
 			Object o = objects.get(c.position);
-			if (filter == null || filter.match(o)) {
+			if (filter == null || filter.apply(o)) {
 				if (elementEncoder.encode(null, objects.get(c.position), out)) {
 					c.encoded++;
 				}
@@ -156,7 +149,7 @@ public class ListEncoder implements CollectionEncoder {
 		for (; c.position < length && c.encoded < limit; c.position++) {
 
 			Object o = objects.get(c.position);
-			if (filter == null || filter.match(o)) {
+			if (filter == null || filter.apply(o)) {
 
 				int bitmask = elementEncoder.visitEntities(o, visitor);
 				c.encoded++;

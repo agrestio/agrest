@@ -40,8 +40,7 @@ public class SenchaOps {
         // else - error?
 
         if (context.getSelect() != null) {
-            CayenneExpressionConverter expressionConverter = new CayenneExpressionConverter();
-            context.getSelect().andQualifier(expressionConverter.convert(expression));
+            context.getSelect().andQualifier(new CayenneExpressionConverter().apply(expression));
         }
     }
 }

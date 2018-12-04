@@ -25,7 +25,7 @@ public class CayenneAssembleQueryStageTest extends TestWithCayenneMapping {
 
 	@Before
 	public void before() {
-		this.makeQueryStage = new CayenneAssembleQueryStage(mockCayennePersister);
+		this.makeQueryStage = new CayenneAssembleQueryStage(mockCayennePersister, expressionConverter, orderingConverter);
 	}
 
 	@Test

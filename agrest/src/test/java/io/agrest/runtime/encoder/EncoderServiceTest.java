@@ -41,7 +41,8 @@ public class EncoderServiceTest extends TestWithCayenneMapping {
 		IStringConverterFactory stringConverterFactory = mock(IStringConverterFactory.class);
 
 		encoderService = new EncoderService(this.filters, attributeEncoderFactory, stringConverterFactory,
-				new RelationshipMapper(), Collections.<String, PropertyMetadataEncoder> emptyMap());
+				new RelationshipMapper(), Collections.<String, PropertyMetadataEncoder> emptyMap(),
+				expressionConverter, expressionMatcher, orderingConverter, orderingSorter);
 	}
 
 	@Test

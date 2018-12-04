@@ -38,8 +38,7 @@ public class SenchaFilterExpressionCompilerTest extends TestWithCayenneMapping {
     }
 
     private Expression process(Filter... filters) {
-        CayenneExpressionConverter expressionConverter = new CayenneExpressionConverter();
-        return expressionConverter.convert(processor.process(e4Entity, Arrays.asList(filters)));
+        return new CayenneExpressionConverter().apply(processor.process(e4Entity, Arrays.asList(filters)));
     }
 
     private void assertProcess(String expectedExpression, Filter... filters) {

@@ -3,6 +3,10 @@ package io.agrest.sencha.runtime.encoder;
 import com.fasterxml.jackson.core.JsonGenerator;
 import io.agrest.EntityProperty;
 import io.agrest.ResourceEntity;
+import io.agrest.backend.util.converter.ExpressionConverter;
+import io.agrest.backend.util.converter.ExpressionMatcher;
+import io.agrest.backend.util.converter.OrderingConverter;
+import io.agrest.backend.util.converter.OrderingSorter;
 import io.agrest.encoder.CollectionEncoder;
 import io.agrest.encoder.DataResponseEncoder;
 import io.agrest.encoder.Encoder;
@@ -28,9 +32,22 @@ public class SenchaEncoderService extends EncoderService {
 
 	public SenchaEncoderService(@Inject List<EncoderFilter> filters,
 								@Inject IAttributeEncoderFactory attributeEncoderFactory,
-								@Inject IStringConverterFactory stringConverterFactory, @Inject IRelationshipMapper relationshipMapper,
-								@Inject Map<String, PropertyMetadataEncoder> propertyMetadataEncoders) {
-		super(filters, attributeEncoderFactory, stringConverterFactory, relationshipMapper, propertyMetadataEncoders);
+								@Inject IStringConverterFactory stringConverterFactory,
+								@Inject IRelationshipMapper relationshipMapper,
+								@Inject Map<String, PropertyMetadataEncoder> propertyMetadataEncoders,
+								@Inject ExpressionConverter expressionConverter,
+								@Inject ExpressionMatcher expressionMatcher,
+								@Inject OrderingConverter orderingConverter,
+								@Inject OrderingSorter orderingSorter) {
+		super(filters,
+				attributeEncoderFactory,
+				stringConverterFactory,
+				relationshipMapper,
+				propertyMetadataEncoders,
+				expressionConverter,
+				expressionMatcher,
+				orderingConverter,
+				orderingSorter);
 	}
 
 	@Override
