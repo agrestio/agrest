@@ -11,7 +11,7 @@ modules, packages , and class prefixes. When upgrading please change the followi
 
 ### LinkRestAdapter is removed [#245](https://github.com/nhl/link-rest/issues/340)
 
-The adapter was deprecated for a while in favor of `AgFeatureProvider` and `AgModuleProvider`. Not it is
+The adapter was deprecated for a while in favor of `AgFeatureProvider` and `AgModuleProvider`. Now it is
 finally removed.
 
 ### "link-rest-legacy-date-encoders" module is removed [#245](https://github.com/nhl/link-rest/issues/340)
