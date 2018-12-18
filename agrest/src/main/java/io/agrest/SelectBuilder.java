@@ -18,7 +18,7 @@ import java.util.function.Consumer;
  * or a root entity and then configured by the user server-side code to achieve
  * the desired behavior. Finally {@link #get()} is called to get the results.
  */
-public interface SelectBuilder<T> {
+public interface SelectBuilder<T, E> {
 
     /**
      * Sets request {@link UriInfo} that is a source of various request
@@ -26,7 +26,7 @@ public interface SelectBuilder<T> {
      *
      * @since 1.14
      */
-    SelectBuilder<T> uri(UriInfo uriInfo);
+    SelectBuilder<T, E> uri(UriInfo uriInfo);
 
     /**
      * Sets the encoder for the entities under the "data" key in the response
@@ -34,19 +34,19 @@ public interface SelectBuilder<T> {
      *
      * @since 1.14
      */
-    SelectBuilder<T> dataEncoder(Encoder encoder);
+    SelectBuilder<T, E> dataEncoder(Encoder encoder);
 
     /**
      * Forces the builder to select a single object by ID.
      */
-    SelectBuilder<T> byId(Object id);
+    SelectBuilder<T, E> byId(Object id);
 
     /**
      * Forces the builder to select a single object by compound ID.
      *
      * @since 1.20
      */
-    SelectBuilder<T> byId(Map<String, Object> ids);
+    SelectBuilder<T, E> byId(Map<String, Object> ids);
 
     /**
      * Adds a custom property that is appended to the root {@link ResourceEntity}.
@@ -54,7 +54,7 @@ public interface SelectBuilder<T> {
      * @see AgBuilder#entityOverlay(AgEntityOverlay)
      * @since 1.14
      */
-    SelectBuilder<T> property(String name, EntityProperty clientProperty);
+    SelectBuilder<T, E> property(String name, EntityProperty clientProperty);
 
     /**
      * Adds a custom property that is appended to the root
@@ -65,7 +65,7 @@ public interface SelectBuilder<T> {
      * @see AgBuilder#entityOverlay(AgEntityOverlay)
      * @since 1.14
      */
-    SelectBuilder<T> property(String name);
+    SelectBuilder<T, E> property(String name);
 
     /**
      * Installs an optional constraint function defining how much of the request entity attributes / relationships
@@ -75,43 +75,43 @@ public interface SelectBuilder<T> {
      * @return this builder instance.
      * @since 2.4
      */
-    SelectBuilder<T> constraint(Constraint<T> constraint);
+    SelectBuilder<T, E> constraint(Constraint<T, E> constraint);
 
     /**
      * @since 1.4
      */
-    SelectBuilder<T> parent(Class<?> parentType, Object parentId, String relationshipFromParent);
+    SelectBuilder<T, E> parent(Class<?> parentType, Object parentId, String relationshipFromParent);
 
     /**
      * @since 1.20
      */
-    SelectBuilder<T> parent(Class<?> parentType, Map<String, Object> parentIds, String relationshipFromParent);
+    SelectBuilder<T, E> parent(Class<?> parentType, Map<String, Object> parentIds, String relationshipFromParent);
 
 
     /**
      * @since 1.7
      */
-    SelectBuilder<T> parent(EntityParent<?> parent);
+    SelectBuilder<T, E> parent(EntityParent<?> parent);
 
     /**
      * @since 1.7
      */
-    SelectBuilder<T> toManyParent(Class<?> parentType, Object parentId, String relationshipFromParent);
+    SelectBuilder<T, E> toManyParent(Class<?> parentType, Object parentId, String relationshipFromParent);
 
     /**
      * @since 1.20
      */
-    SelectBuilder<T> toManyParent(Class<?> parentType, Map<String, Object> parentIds, String relationshipFromParent);
+    SelectBuilder<T, E> toManyParent(Class<?> parentType, Map<String, Object> parentIds, String relationshipFromParent);
 
     /**
      * @since 1.2
      */
-    SelectBuilder<T> fetchOffset(int offset);
+    SelectBuilder<T, E> fetchOffset(int offset);
 
     /**
      * @since 1.2
      */
-    SelectBuilder<T> fetchLimit(int limit);
+    SelectBuilder<T, E> fetchLimit(int limit);
 
     /**
      * Registers a consumer to be executed after a specified standard execution stage. The consumer can inspect and
@@ -124,8 +124,8 @@ public interface SelectBuilder<T> {
      * @return this builder instance.
      * @since 2.7
      */
-    default <U> SelectBuilder<T> stage(SelectStage afterStage, Consumer<SelectContext<U>> customStage) {
-        return routingStage(afterStage, (SelectContext<U> c) -> {
+    default <U> SelectBuilder<T, E> stage(SelectStage afterStage, Consumer<SelectContext<U, E>> customStage) {
+        return routingStage(afterStage, (SelectContext<U, E> c) -> {
             customStage.accept(c);
             return ProcessorOutcome.CONTINUE;
         });
@@ -145,8 +145,8 @@ public interface SelectBuilder<T> {
      * @return this builder instance.
      * @since 2.7
      */
-    default <U> SelectBuilder<T> terminalStage(SelectStage afterStage, Consumer<SelectContext<U>> customTerminalStage) {
-        return routingStage(afterStage, (SelectContext<U> c) -> {
+    default <U> SelectBuilder<T, E> terminalStage(SelectStage afterStage, Consumer<SelectContext<U, E>> customTerminalStage) {
+        return routingStage(afterStage, (SelectContext<U, E> c) -> {
             customTerminalStage.accept(c);
             return ProcessorOutcome.STOP;
         });
@@ -165,7 +165,7 @@ public interface SelectBuilder<T> {
      * @return this builder instance.
      * @since 2.7
      */
-    <U> SelectBuilder<T> routingStage(SelectStage afterStage, Processor<SelectContext<U>> customStage);
+    <U> SelectBuilder<T, E> routingStage(SelectStage afterStage, Processor<SelectContext<U, E>> customStage);
 
     /**
      * Runs the query corresponding to the state of this builder, returning
@@ -212,5 +212,5 @@ public interface SelectBuilder<T> {
      * @return this builder instance.
      * @since 2.13
      */
-    SelectBuilder<T> request(AgRequest agRequest);
+    SelectBuilder<T, E> request(AgRequest agRequest);
 }

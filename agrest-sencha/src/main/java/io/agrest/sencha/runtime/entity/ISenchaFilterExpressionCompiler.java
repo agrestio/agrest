@@ -2,7 +2,7 @@ package io.agrest.sencha.runtime.entity;
 
 import io.agrest.meta.AgEntity;
 import io.agrest.sencha.protocol.Filter;
-import io.agrest.backend.exp.Expression;
+import org.apache.cayenne.exp.Expression;
 
 
 import java.util.List;

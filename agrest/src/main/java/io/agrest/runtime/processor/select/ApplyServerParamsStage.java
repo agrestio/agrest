@@ -13,7 +13,7 @@ import java.util.List;
 /**
  * @since 2.7
  */
-public class ApplyServerParamsStage implements Processor<SelectContext<?>> {
+public class ApplyServerParamsStage implements Processor<SelectContext<?, ?>> {
 
     private IConstraintsHandler constraintsHandler;
     private IEncoderService encoderService;
@@ -30,14 +30,14 @@ public class ApplyServerParamsStage implements Processor<SelectContext<?>> {
     }
 
     @Override
-    public ProcessorOutcome execute(SelectContext<?> context) {
+    public ProcessorOutcome execute(SelectContext<?, ?> context) {
         doExecute(context);
         return ProcessorOutcome.CONTINUE;
     }
 
-    protected <T> void doExecute(SelectContext<T> context) {
+    protected <T, E> void doExecute(SelectContext<T, E> context) {
 
-        ResourceEntity<T> entity = context.getEntity();
+        ResourceEntity<T, E> entity = context.getEntity();
 
         constraintsHandler.constrainResponse(entity, context.getSizeConstraints(), context.getConstraint());
 

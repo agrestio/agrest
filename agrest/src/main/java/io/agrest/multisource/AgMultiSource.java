@@ -25,7 +25,7 @@ public class AgMultiSource {
 	 *            stack.
 	 * @return MultiSelectBuilder instance.
 	 */
-	public static <T> MultiSelectBuilder<T> select(SelectBuilder<T> rootSelectChain, Configuration config) {
+	public static <T, E> MultiSelectBuilder<T, E> select(SelectBuilder<T, E> rootSelectChain, Configuration config) {
 
 		ExecutorService executor = AgRuntime.service(ExecutorService.class, config);
 		return new MultiSelectBuilder<>(rootSelectChain, executor);

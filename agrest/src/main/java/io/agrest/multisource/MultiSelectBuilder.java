@@ -28,24 +28,24 @@ import java.util.regex.Pattern;
 /**
  * @since 2.0
  */
-public class MultiSelectBuilder<T> {
+public class MultiSelectBuilder<T, E> {
 
     private static final Pattern SPLIT_PATH = Pattern.compile("\\.");
     private static final Logger LOGGER = LoggerFactory.getLogger(MultiSelectBuilder.class);
 
-    private SelectBuilder<T> rootChain;
+    private SelectBuilder<T, E> rootChain;
     private ExecutorService executor;
     private Collection<StandaloneChain<?>> standaloneChains;
     private Collection<ParentDependentChain<?>> parentDependentChains;
 
-    MultiSelectBuilder(SelectBuilder<T> rootChain, ExecutorService executor) {
+    MultiSelectBuilder(SelectBuilder<T, E> rootChain, ExecutorService executor) {
         this.rootChain = Objects.requireNonNull(rootChain);
         this.executor = Objects.requireNonNull(executor);
         this.standaloneChains = new ArrayList<>();
         this.parentDependentChains = new ArrayList<>();
     }
 
-    public <U> MultiSelectBuilder<T> parallel(Supplier<U> fetcher, BiConsumer<List<T>, U> merger) {
+    public <U> MultiSelectBuilder<T, E> parallel(Supplier<U> fetcher, BiConsumer<List<T>, U> merger) {
         return parallel("", fetcher, merger);
     }
 
@@ -63,7 +63,7 @@ public class MultiSelectBuilder<T> {
      * @param <U>           the type of result provided by this stage.
      * @return this instance.
      */
-    public <U, P> MultiSelectBuilder<T> parallel(String pathToParents, Supplier<U> fetcher,
+    public <U, P> MultiSelectBuilder<T, E> parallel(String pathToParents, Supplier<U> fetcher,
                                                  BiConsumer<List<P>, U> merger) {
 
         BiConsumer<DataResponse<T>, U> lazyMerger = (r, u) -> {
@@ -96,38 +96,38 @@ public class MultiSelectBuilder<T> {
      * @param <P>           the type of parent entity consumed by this fetcher.
      * @return this instance.
      */
-    public <U, P> MultiSelectBuilder<T> afterParent(String pathToParents,
-                                                    BiFunction<List<P>, ResourceEntity<P>, U> fetcher, BiConsumer<List<P>, U> merger) {
+    public <U, P> MultiSelectBuilder<T, E> afterParent(String pathToParents,
+                                                    BiFunction<List<P>, ResourceEntity<P, E>, U> fetcher, BiConsumer<List<P>, U> merger) {
         return afterParent(pathToParents, fetcher, merger, Integer.MAX_VALUE);
     }
 
-    public <U> MultiSelectBuilder<T> afterParent(BiFunction<List<T>, ResourceEntity<T>, U> fetcher,
+    public <U> MultiSelectBuilder<T, E> afterParent(BiFunction<List<T>, ResourceEntity<T, E>, U> fetcher,
                                                  BiConsumer<List<T>, U> merger) {
         return afterParent(fetcher, merger, Integer.MAX_VALUE);
     }
 
-    public <U> MultiSelectBuilder<T> afterParent(BiFunction<List<T>, ResourceEntity<T>, U> fetcher,
+    public <U> MultiSelectBuilder<T, E> afterParent(BiFunction<List<T>, ResourceEntity<T, E>, U> fetcher,
                                                  BiConsumer<List<T>, U> merger, int parentBatchSize) {
         return afterParent("", fetcher, merger, parentBatchSize);
     }
 
-    public <U, P> MultiSelectBuilder<T> afterParent(String pathToParents,
-                                                    BiFunction<List<P>, ResourceEntity<P>, U> fetcher, BiConsumer<List<P>, U> merger, int parentBatchSize) {
+    public <U, P> MultiSelectBuilder<T, E> afterParent(String pathToParents,
+                                                    BiFunction<List<P>, ResourceEntity<P, E>, U> fetcher, BiConsumer<List<P>, U> merger, int parentBatchSize) {
 
-        SelectContext<T>[] contextHolder = new SelectContext[1];
+        SelectContext<T, E>[] contextHolder = new SelectContext[1];
 
         // TODO: Modifying SelectBuilder passed to us externally is bad.
         // What if it is reused between requests? Though most chains contain
         // request parameter bindings, so hopefully they are one-off.
 
-        rootChain.stage(SelectStage.START, (SelectContext<T> c) -> contextHolder[0] = c);
+        rootChain.stage(SelectStage.START, (SelectContext<T, E> c) -> contextHolder[0] = c);
 
         @SuppressWarnings("unchecked")
         Function<List<P>, U> curriedFetcher = (parents) -> {
 
             Objects.requireNonNull(contextHolder[0]);
-            ResourceEntity<T> rootEntity = contextHolder[0].getEntity();
-            ResourceEntity<?> subEntity = rootEntity;
+            ResourceEntity<T, E> rootEntity = contextHolder[0].getEntity();
+            ResourceEntity<?, ?> subEntity = rootEntity;
 
             String[] paths = pathToParents == null || pathToParents.length() == 0 ? new String[0]
                     : SPLIT_PATH.split(pathToParents);
@@ -137,28 +137,28 @@ public class MultiSelectBuilder<T> {
                         "Invalid entity for path component: " + path);
             }
 
-            return fetcher.apply(parents, (ResourceEntity<P>) subEntity);
+            return fetcher.apply(parents, (ResourceEntity<P, E>) subEntity);
         };
 
         return afterParent(pathToParents, curriedFetcher, merger, parentBatchSize);
     }
 
-    public <U, P> MultiSelectBuilder<T> afterParent(String pathToParents, Function<List<P>, U> fetcher,
+    public <U, P> MultiSelectBuilder<T, E> afterParent(String pathToParents, Function<List<P>, U> fetcher,
                                                     BiConsumer<List<P>, U> merger) {
         return afterParent(pathToParents, fetcher, merger, Integer.MAX_VALUE);
     }
 
-    public <U> MultiSelectBuilder<T> afterParent(Function<List<T>, U> fetcher, BiConsumer<List<T>, U> merger) {
+    public <U> MultiSelectBuilder<T, E> afterParent(Function<List<T>, U> fetcher, BiConsumer<List<T>, U> merger) {
         return afterParent(fetcher, merger, Integer.MAX_VALUE);
     }
 
-    public <U> MultiSelectBuilder<T> afterParent(Function<List<T>, U> fetcher, BiConsumer<List<T>, U> merger,
+    public <U> MultiSelectBuilder<T, E> afterParent(Function<List<T>, U> fetcher, BiConsumer<List<T>, U> merger,
                                                  int parentBatchSize) {
 
         return afterParent("", fetcher, merger, parentBatchSize);
     }
 
-    public <U, P> MultiSelectBuilder<T> afterParent(String pathToParents, Function<List<P>, U> fetcher,
+    public <U, P> MultiSelectBuilder<T, E> afterParent(String pathToParents, Function<List<P>, U> fetcher,
                                                     BiConsumer<List<P>, U> merger, int parentBatchSize) {
 
         // zero or negative == no batching

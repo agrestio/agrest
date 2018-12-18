@@ -14,7 +14,7 @@ public class MapByMerger implements IMapByMerger {
     private static final Logger LOGGER = LoggerFactory.getLogger(MapByMerger.class);
 
     @Override
-    public void merge(ResourceEntity<?> resourceEntity, MapBy mapBy) {
+    public void merge(ResourceEntity<?, ?> resourceEntity, MapBy mapBy) {
         if (mapBy == null) {
             return;
         }
@@ -23,11 +23,11 @@ public class MapByMerger implements IMapByMerger {
         if (mapByPath != null) {
             AgAttribute attribute = resourceEntity.getAgEntity().getAttribute(mapByPath);
             if (attribute != null) {
-                ResourceEntity<?> mapByEntity = new ResourceEntity<>(resourceEntity.getAgEntity());
+                ResourceEntity<?, ?> mapByEntity = new ResourceEntity<>(resourceEntity.getAgEntity());
                 mapByEntity.getAttributes().put(attribute.getName(), attribute);
                 resourceEntity.mapBy(mapByEntity, attribute.getName());
             } else {
-                ResourceEntity<?> mapByEntity = new ResourceEntity<>(resourceEntity.getAgEntity());
+                ResourceEntity<?, ?> mapByEntity = new ResourceEntity<>(resourceEntity.getAgEntity());
                 IncludeMerger.checkTooLong(mapByPath);
                 IncludeMerger.processIncludePath(mapByEntity, mapByPath);
                 resourceEntity.mapBy(mapByEntity, mapByPath);
@@ -37,7 +37,7 @@ public class MapByMerger implements IMapByMerger {
     }
 
     @Override
-    public void mergeIncluded(ResourceEntity<?> resourceEntity, MapBy mapBy) {
+    public void mergeIncluded(ResourceEntity<?, ?> resourceEntity, MapBy mapBy) {
         if (mapBy == null) {
             return;
         }
@@ -51,7 +51,7 @@ public class MapByMerger implements IMapByMerger {
         // either root list, or to-many relationship
         if (resourceEntity.getIncoming() == null || resourceEntity.getIncoming().isToMany()) {
 
-            ResourceEntity<?> mapByRoot = new ResourceEntity<>(resourceEntity.getAgEntity());
+            ResourceEntity<?, ?> mapByRoot = new ResourceEntity<>(resourceEntity.getAgEntity());
             IncludeMerger.checkTooLong(mapByPath);
             IncludeMerger.processIncludePath(mapByRoot, mapByPath);
             resourceEntity.mapBy(mapByRoot, mapByPath);

@@ -9,15 +9,15 @@ import java.util.function.Function;
  *
  * @since 2.4
  */
-public interface Constraint<T> extends Function<AgEntity<T>, ConstrainedAgEntity<T>> {
+public interface Constraint<T, E> extends Function<AgEntity<T>, ConstrainedAgEntity<T, E>> {
 
     /**
      * @param type a root type for constraints.
      * @param <T>  Agrest entity type.
      * @return a new Constraints instance.
      */
-    static <T> ConstraintsBuilder<T> excludeAll(Class<T> type) {
-        return new ConstraintsBuilder<T>(Function.identity());
+    static <T, E> ConstraintsBuilder<T, E> excludeAll(Class<T> type) {
+        return new ConstraintsBuilder<T, E>(Function.identity());
     }
 
     /**
@@ -25,8 +25,8 @@ public interface Constraint<T> extends Function<AgEntity<T>, ConstrainedAgEntity
      * @param <T>  Agrest entity type.
      * @return a new Constraints instance.
      */
-    static <T> ConstraintsBuilder<T> idOnly(Class<T> type) {
-        return excludeAll(type).includeId();
+    static <T, E> ConstraintsBuilder<T, E> idOnly(Class<T> type) {
+        return (ConstraintsBuilder<T, E>)excludeAll(type).includeId();
     }
 
     /**
@@ -34,7 +34,7 @@ public interface Constraint<T> extends Function<AgEntity<T>, ConstrainedAgEntity
      * @param <T>  Agrest entity type.
      * @return a new Constraints instance.
      */
-    static <T> ConstraintsBuilder<T> idAndAttributes(Class<T> type) {
-        return excludeAll(type).includeId().allAttributes();
+    static <T, E> ConstraintsBuilder<T, E> idAndAttributes(Class<T> type) {
+        return (ConstraintsBuilder<T, E>)excludeAll(type).includeId().allAttributes();
     }
 }

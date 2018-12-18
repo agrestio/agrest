@@ -5,7 +5,7 @@ package io.agrest.meta;
  * 
  * @since 1.12
  */
-public interface AgPersistentAttribute extends AgAttribute {
+public interface AgPersistentAttribute<P> extends AgAttribute<P> {
 
 	/**
 	 * @since 1.12

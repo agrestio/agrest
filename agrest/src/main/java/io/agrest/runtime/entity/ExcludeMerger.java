@@ -11,13 +11,13 @@ import java.util.List;
 public class ExcludeMerger implements IExcludeMerger {
 
     @Override
-    public void merge(ResourceEntity<?> resourceEntity, List<Exclude> excludes) {
+    public void merge(ResourceEntity<?, ?> resourceEntity, List<Exclude> excludes) {
         for (Exclude exclude : excludes) {
             processOne(resourceEntity, exclude);
         }
     }
 
-    private void processOne(ResourceEntity<?> resourceEntity, Exclude exclude) {
+    private void processOne(ResourceEntity<?, ?> resourceEntity, Exclude exclude) {
         if (exclude != null) {
             processExcludePath(resourceEntity, exclude.getPath());
             // processes nested includes
@@ -25,7 +25,7 @@ public class ExcludeMerger implements IExcludeMerger {
         }
     }
 
-    private void processExcludePath(ResourceEntity<?> resourceEntity, String path) {
+    private void processExcludePath(ResourceEntity<?, ?> resourceEntity, String path) {
         if (path == null) {
             return;
         }
@@ -53,7 +53,7 @@ public class ExcludeMerger implements IExcludeMerger {
 
         if (resourceEntity.getAgEntity().getRelationship(property) != null) {
 
-            ResourceEntity<?> relatedFilter = resourceEntity.getChild(property);
+            ResourceEntity<?, ?> relatedFilter = resourceEntity.getChild(property);
             if (relatedFilter == null) {
                 // valid path, but not included... ignoring
                 return;

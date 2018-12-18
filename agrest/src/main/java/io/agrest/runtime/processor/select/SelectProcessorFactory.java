@@ -9,9 +9,9 @@ import java.util.EnumMap;
 /**
  * @since 2.7
  */
-public class SelectProcessorFactory extends ProcessorFactory<SelectStage, SelectContext<?>> {
+public class SelectProcessorFactory extends ProcessorFactory<SelectStage, SelectContext<?, ?>> {
 
-    public SelectProcessorFactory(EnumMap<SelectStage, Processor<SelectContext<?>>> defaultStages) {
+    public SelectProcessorFactory(EnumMap<SelectStage, Processor<SelectContext<?, ?>>> defaultStages) {
         super(defaultStages);
     }
 }

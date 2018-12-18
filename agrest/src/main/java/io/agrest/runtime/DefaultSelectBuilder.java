@@ -26,52 +26,52 @@ import java.util.Map;
 /**
  * @since 1.16
  */
-public class DefaultSelectBuilder<T> implements SelectBuilder<T> {
+public class DefaultSelectBuilder<T, E> implements SelectBuilder<T, E> {
 
     private static final Logger logger = LoggerFactory.getLogger(DefaultSelectBuilder.class);
 
-    protected SelectContext<T> context;
+    protected SelectContext<T, E> context;
     protected SelectProcessorFactory processorFactory;
-    protected EnumMap<SelectStage, Processor<SelectContext<?>>> processors;
+    protected EnumMap<SelectStage, Processor<SelectContext<?, ?>>> processors;
 
     public DefaultSelectBuilder(
-            SelectContext<T> context,
+            SelectContext<T, E> context,
             SelectProcessorFactory processorFactory) {
         this.context = context;
         this.processorFactory = processorFactory;
         this.processors = new EnumMap<>(SelectStage.class);
     }
 
-    public SelectContext<T> getContext() {
+    public SelectContext<T, E> getContext() {
         return context;
     }
 
     @Override
-    public SelectBuilder<T> parent(Class<?> parentType, Object parentId, String relationshipFromParent) {
+    public SelectBuilder<T, E> parent(Class<?> parentType, Object parentId, String relationshipFromParent) {
         context.setParent(new EntityParent<>(parentType, parentId, relationshipFromParent));
         return this;
     }
 
     @Override
-    public SelectBuilder<T> parent(Class<?> parentType, Map<String, Object> parentIds, String relationshipFromParent) {
+    public SelectBuilder<T, E> parent(Class<?> parentType, Map<String, Object> parentIds, String relationshipFromParent) {
         context.setParent(new EntityParent<>(parentType, parentIds, relationshipFromParent));
         return this;
     }
 
     @Override
-    public SelectBuilder<T> parent(EntityParent<?> parent) {
+    public SelectBuilder<T, E> parent(EntityParent<?> parent) {
         context.setParent(parent);
         return this;
     }
 
     @Override
-    public SelectBuilder<T> toManyParent(Class<?> parentType, Object parentId,
+    public SelectBuilder<T, E> toManyParent(Class<?> parentType, Object parentId,
                                          String relationshipFromParent) {
         return parent(parentType, parentId, relationshipFromParent);
     }
 
     @Override
-    public SelectBuilder<T> toManyParent(Class<?> parentType, Map<String, Object> parentIds,
+    public SelectBuilder<T, E> toManyParent(Class<?> parentType, Map<String, Object> parentIds,
                                          String relationshipFromParent) {
         return parent(parentType, parentIds, relationshipFromParent);
     }
@@ -85,19 +85,19 @@ public class DefaultSelectBuilder<T> implements SelectBuilder<T> {
      * @since 2.4
      */
     @Override
-    public SelectBuilder<T> constraint(Constraint<T> constraint) {
+    public SelectBuilder<T, E> constraint(Constraint<T, E> constraint) {
         context.setConstraint(constraint);
         return this;
     }
 
     @Override
-    public SelectBuilder<T> fetchLimit(int limit) {
+    public SelectBuilder<T, E> fetchLimit(int limit) {
         getOrCreateSizeConstraints().fetchLimit(limit);
         return this;
     }
 
     @Override
-    public SelectBuilder<T> fetchOffset(int offset) {
+    public SelectBuilder<T, E> fetchOffset(int offset) {
         getOrCreateSizeConstraints().fetchOffset(offset);
         return this;
     }
@@ -111,24 +111,24 @@ public class DefaultSelectBuilder<T> implements SelectBuilder<T> {
     }
 
     @Override
-    public SelectBuilder<T> uri(UriInfo uriInfo) {
+    public SelectBuilder<T, E> uri(UriInfo uriInfo) {
         this.context.setUriInfo(uriInfo);
         return this;
     }
 
     @Override
-    public SelectBuilder<T> dataEncoder(Encoder encoder) {
+    public SelectBuilder<T, E> dataEncoder(Encoder encoder) {
         this.context.setEncoder(encoder);
         return this;
     }
 
     @Override
-    public SelectBuilder<T> property(String name) {
+    public SelectBuilder<T, E> property(String name) {
         return property(name, PropertyBuilder.property());
     }
 
     @Override
-    public SelectBuilder<T> property(String name, EntityProperty clientProperty) {
+    public SelectBuilder<T, E> property(String name, EntityProperty clientProperty) {
         if (context.getExtraProperties() == null) {
             context.setExtraProperties(new HashMap<>());
         }
@@ -142,7 +142,7 @@ public class DefaultSelectBuilder<T> implements SelectBuilder<T> {
     }
 
     @Override
-    public SelectBuilder<T> byId(Object id) {
+    public SelectBuilder<T, E> byId(Object id) {
         // TODO: return a special builder that will preserve 'byId' strategy on
         // select
 
@@ -155,7 +155,7 @@ public class DefaultSelectBuilder<T> implements SelectBuilder<T> {
     }
 
     @Override
-    public SelectBuilder<T> byId(Map<String, Object> ids) {
+    public SelectBuilder<T, E> byId(Map<String, Object> ids) {
 
         for (Object id : ids.entrySet()) {
             if (id == null) {
@@ -171,11 +171,11 @@ public class DefaultSelectBuilder<T> implements SelectBuilder<T> {
      * @since 2.7
      */
     @Override
-    public <U> SelectBuilder<T> routingStage(SelectStage afterStage, Processor<SelectContext<U>> customStage) {
+    public <U> SelectBuilder<T, E> routingStage(SelectStage afterStage, Processor<SelectContext<U, E>> customStage) {
         return routingStage_NoGenerics(afterStage, customStage);
     }
 
-    private SelectBuilder<T> routingStage_NoGenerics(SelectStage afterStage, Processor customStage) {
+    private SelectBuilder<T, E> routingStage_NoGenerics(SelectStage afterStage, Processor customStage) {
         processors.compute(afterStage, (s, existing) -> existing != null ? existing.andThen(customStage) : customStage);
         return this;
     }
@@ -184,7 +184,7 @@ public class DefaultSelectBuilder<T> implements SelectBuilder<T> {
      * @since 2.13
      */
     @Override
-    public SelectBuilder<T> request(AgRequest agRequest) {
+    public SelectBuilder<T, E> request(AgRequest agRequest) {
         this.context.setRequest(agRequest);
         return this;
     }

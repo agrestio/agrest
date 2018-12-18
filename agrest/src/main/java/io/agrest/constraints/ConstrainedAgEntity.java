@@ -2,11 +2,12 @@ package io.agrest.constraints;
 
 import io.agrest.meta.AgAttribute;
 import io.agrest.meta.AgEntity;
-import io.agrest.backend.exp.Expression;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -14,12 +15,13 @@ import java.util.Map;
  *
  * @since 2.4
  */
-public class ConstrainedAgEntity<T> {
+public class ConstrainedAgEntity<T, E> {
 
     private boolean idIncluded;
     private Collection<String> attributes;
-    private Map<String, ConstrainedAgEntity<?>> children;
-    private Expression qualifier;
+    private Map<String, ConstrainedAgEntity<?, ?>> children;
+    private List<E> andQualifiers;
+    private List<E> orQualifiers;
     private AgEntity<T> entity;
 
     public ConstrainedAgEntity(AgEntity<T> entity) {
@@ -34,13 +36,16 @@ public class ConstrainedAgEntity<T> {
 
         // using HashSet, as we'll need fast 'contains' calls on attributes
         this.attributes = new HashSet<>();
+
+        this.andQualifiers = Collections.EMPTY_LIST;
+        this.orQualifiers = Collections.EMPTY_LIST;
     }
 
     Collection<String> getAttributes() {
         return attributes;
     }
 
-    Map<String, ConstrainedAgEntity<?>> getChildren() {
+    Map<String, ConstrainedAgEntity<?, ?>> getChildren() {
         return children;
     }
 
@@ -64,8 +69,12 @@ public class ConstrainedAgEntity<T> {
         return children.containsKey(name);
     }
 
-    public Expression getQualifier() {
-        return qualifier;
+    public List<E> getAndQualifiers() {
+        return this.andQualifiers;
+    }
+
+    public List<E> getOrQualifiers() {
+        return this.orQualifiers;
     }
 
     void excludeProperties(String... attributesOrRelationships) {
@@ -107,20 +116,11 @@ public class ConstrainedAgEntity<T> {
         this.idIncluded = include;
     }
 
-    void andQualifier(Expression qualifier) {
-        if (this.qualifier == null) {
-            this.qualifier = qualifier;
-        } else {
-            this.qualifier = this.qualifier.andExp(qualifier);
-        }
+    void andQualifier(E qualifier) {
+        this.andQualifiers.add(qualifier);
     }
 
-    void orQualifier(Expression qualifier) {
-
-        if (this.qualifier == null) {
-            this.qualifier = qualifier;
-        } else {
-            this.qualifier = this.qualifier.orExp(qualifier);
-        }
+    void orQualifier(E qualifier) {
+        this.orQualifiers.add(qualifier);
     }
 }

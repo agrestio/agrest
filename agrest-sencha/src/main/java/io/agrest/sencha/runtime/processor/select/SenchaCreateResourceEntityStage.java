@@ -3,8 +3,7 @@ package io.agrest.sencha.runtime.processor.select;
 import io.agrest.ResourceEntity;
 import io.agrest.meta.AgEntity;
 import io.agrest.protocol.Sort;
-import io.agrest.runtime.cayenne.converter.CayenneExpressionConverter;
-import io.agrest.runtime.entity.ICayenneExpMerger;
+import io.agrest.runtime.entity.IAgExpMerger;
 import io.agrest.runtime.entity.IExcludeMerger;
 import io.agrest.runtime.entity.IIncludeMerger;
 import io.agrest.runtime.entity.IMapByMerger;
@@ -16,7 +15,6 @@ import io.agrest.runtime.processor.select.SelectContext;
 import io.agrest.sencha.SenchaRequest;
 import io.agrest.sencha.runtime.entity.ISenchaFilterExpressionCompiler;
 import org.apache.cayenne.di.Inject;
-import io.agrest.backend.exp.Expression;
 
 import static java.util.Arrays.asList;
 
@@ -27,7 +25,7 @@ public class SenchaCreateResourceEntityStage extends CreateResourceEntityStage {
 
     public SenchaCreateResourceEntityStage(
             @Inject IMetadataService metadataService,
-            @Inject ICayenneExpMerger expConstructor,
+            @Inject IAgExpMerger expConstructor,
             @Inject ISortMerger sortConstructor,
             @Inject IMapByMerger mapByConstructor,
             @Inject ISizeMerger sizeConstructor,
@@ -42,24 +40,24 @@ public class SenchaCreateResourceEntityStage extends CreateResourceEntityStage {
     }
 
     @Override
-    protected <T> void doExecute(SelectContext<T> context) {
+    protected <T, E> void doExecute(SelectContext<T, E> context) {
         super.doExecute(context);
 
-        ResourceEntity<T> resourceEntity = context.getEntity();
+        ResourceEntity<T, E> resourceEntity = context.getEntity();
 
-        Expression e1 = parseFilter(resourceEntity.getAgEntity(), context);
+        E e1 = parseFilter(resourceEntity.getAgEntity(), context);
         if (e1 != null) {
             resourceEntity.andQualifier(e1);
         }
     }
 
-    protected <T> Expression parseFilter(AgEntity<?> entity, SelectContext<T> context) {
+    protected <T, E> E parseFilter(AgEntity<?> entity, SelectContext<T, E> context) {
         SenchaRequest senchaRequest = SenchaRequest.get(context);
         return senchaFilterProcessor.process(entity, senchaRequest.getFilters());
     }
 
     @Override
-    protected <T> Sort createSort(SelectContext<T> context) {
+    protected <T, E> Sort createSort(SelectContext<T, E> context) {
         Sort sort = super.createSort(context);
         Sort groupSort = createGroupSort(context);
 
@@ -75,7 +73,7 @@ public class SenchaCreateResourceEntityStage extends CreateResourceEntityStage {
         return new Sort(asList(groupSort, sort));
     }
 
-    protected <T> Sort createGroupSort(SelectContext<T> context) {
+    protected <T, E> Sort createGroupSort(SelectContext<T, E> context) {
         SenchaRequest senchaRequest = SenchaRequest.get(context);
         return createSort(senchaRequest.getGroup(), senchaRequest.getGroupDirection());
     }

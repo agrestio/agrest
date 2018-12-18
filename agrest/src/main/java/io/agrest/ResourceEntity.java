@@ -3,16 +3,18 @@ package io.agrest;
 import io.agrest.meta.AgAttribute;
 import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgRelationship;
-import io.agrest.backend.exp.Expression;
 import io.agrest.backend.query.Ordering;
 import io.agrest.backend.util.ToStringBuilder;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.function.BiFunction;
+import java.util.function.Function;
 
 /**
  * A metadata object that describes a data structure of a given REST resource.
@@ -24,7 +26,7 @@ import java.util.Map;
  * ResourceEntity scope is usually a single request. It is built on the fly by
  * the framework or by the application code.
  */
-public class ResourceEntity<T> {
+public class ResourceEntity<T, E> {
 
     private boolean idIncluded;
 
@@ -34,11 +36,13 @@ public class ResourceEntity<T> {
 
     private String applicationBase;
     private String mapByPath;
-    private ResourceEntity<?> mapBy;
-    private Map<String, ResourceEntity<?>> children;
+    private ResourceEntity<?, ?> mapBy;
+    private Map<String, ResourceEntity<?, ?>> children;
     private AgRelationship incoming;
     private List<Ordering> orderings;
-    private Expression qualifier;
+    private E qualifier;
+    private List<E> andQualifiers;
+    private List<E> orQualifiers;
     private Map<String, EntityProperty> extraProperties;
     private int fetchOffset;
     private int fetchLimit;
@@ -52,6 +56,8 @@ public class ResourceEntity<T> {
         this.orderings = new ArrayList<>(2);
         this.extraProperties = new HashMap<>();
         this.agEntity = agEntity;
+        this.andQualifiers = Collections.EMPTY_LIST;
+        this.orQualifiers = Collections.EMPTY_LIST;
     }
 
     public ResourceEntity(AgEntity<T> agEntity, AgRelationship incoming) {
@@ -70,8 +76,26 @@ public class ResourceEntity<T> {
         return incoming;
     }
 
-    public Expression getQualifier() {
+    public E getQualifier() {
         return qualifier;
+    }
+
+    public boolean isQualified() {
+        if (this.andQualifiers.isEmpty() && this.orQualifiers.isEmpty()) {
+            return true;
+        }
+        return false;
+    }
+
+    public E qualify(BiFunction<E, E, E> and, BiFunction<E, E, E> or) {
+
+        this.andQualifiers.stream().forEach(a -> this.qualifier = and.apply(this.qualifier, a));
+        this.andQualifiers.clear();
+
+        this.orQualifiers.stream().forEach(o -> this.qualifier = or.apply(this.qualifier, o));
+        this.orQualifiers.clear();
+
+        return this.qualifier;
     }
 
     /**
@@ -80,15 +104,23 @@ public class ResourceEntity<T> {
      * @param qualifier a new qualifier expression. Can be null.
      * @since 2.7
      */
-    public void setQualifier(Expression qualifier) {
+    public void setQualifier(E qualifier) {
         this.qualifier = qualifier;
     }
 
-    public void andQualifier(Expression qualifier) {
+    public void andQualifier(E qualifier) {
         if (this.qualifier == null) {
             this.qualifier = qualifier;
         } else {
-            this.qualifier = this.qualifier.andExp(qualifier);
+            this.andQualifiers.add(qualifier);
+        }
+    }
+
+    public void orQualifier(E qualifier) {
+        if (this.qualifier == null) {
+            this.qualifier = qualifier;
+        } else {
+            this.orQualifiers.add(qualifier);
         }
     }
 
@@ -117,14 +149,14 @@ public class ResourceEntity<T> {
         return defaultProperties.contains(propertyName);
     }
 
-    public Map<String, ResourceEntity<?>> getChildren() {
+    public Map<String, ResourceEntity<?, ?>> getChildren() {
         return children;
     }
 
     /**
      * @since 1.1
      */
-    public ResourceEntity<?> getChild(String name) {
+    public ResourceEntity<?, ?> getChild(String name) {
         return children.get(name);
     }
 
@@ -136,29 +168,29 @@ public class ResourceEntity<T> {
         return idIncluded;
     }
 
-    public ResourceEntity<T> includeId(boolean include) {
+    public ResourceEntity<T, E> includeId(boolean include) {
         this.idIncluded = include;
         return this;
     }
 
-    public ResourceEntity<T> includeId() {
+    public ResourceEntity<T, E> includeId() {
         this.idIncluded = true;
         return this;
     }
 
-    public ResourceEntity<T> excludeId() {
+    public ResourceEntity<T, E> excludeId() {
         this.idIncluded = false;
         return this;
     }
 
-    public ResourceEntity<?> getMapBy() {
+    public ResourceEntity<?, ?> getMapBy() {
         return mapBy;
     }
 
     /**
      * @since 1.1
      */
-    public ResourceEntity<T> mapBy(ResourceEntity<?> mapBy, String mapByPath) {
+    public ResourceEntity<T, E> mapBy(ResourceEntity<?, ?> mapBy, String mapByPath) {
         this.mapByPath = mapByPath;
         this.mapBy = mapBy;
         return this;

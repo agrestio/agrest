@@ -16,11 +16,11 @@ import static java.util.stream.Collectors.toList;
  */
 public class ResourceEncoder<T> extends AbstractEncoder {
 
-    private ResourceEntity<T> entity;
+    private ResourceEntity<T, ?> entity;
     private String applicationBase;
     private Encoder entityEncoder;
 
-    public ResourceEncoder(ResourceEntity<T> entity, String applicationBase, Encoder entityEncoder) {
+    public ResourceEncoder(ResourceEntity<T, ?> entity, String applicationBase, Encoder entityEncoder) {
         this.entity = entity;
         this.applicationBase = applicationBase == null ? "" : applicationBase;
         this.entityEncoder = entityEncoder;
@@ -82,7 +82,7 @@ public class ResourceEncoder<T> extends AbstractEncoder {
         out.writeEndObject();
     }
 
-    private void writeEntity(ResourceEntity<T> entity, JsonGenerator out) throws IOException {
+    private void writeEntity(ResourceEntity<T, ?> entity, JsonGenerator out) throws IOException {
         entityEncoder.encode("entity", entity, out);
     }
 }

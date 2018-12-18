@@ -64,7 +64,7 @@ import io.agrest.runtime.encoder.StringConverterFactoryProvider;
 import io.agrest.runtime.entity.CayenneExpMerger;
 import io.agrest.runtime.entity.ExcludeMerger;
 import io.agrest.runtime.entity.ExpressionPostProcessor;
-import io.agrest.runtime.entity.ICayenneExpMerger;
+import io.agrest.runtime.entity.IAgExpMerger;
 import io.agrest.runtime.entity.IExcludeMerger;
 import io.agrest.runtime.entity.IExpressionPostProcessor;
 import io.agrest.runtime.entity.IIncludeMerger;
@@ -93,7 +93,6 @@ import io.agrest.runtime.processor.select.ApplyServerParamsStage;
 import io.agrest.runtime.processor.select.CreateResourceEntityStage;
 import io.agrest.runtime.processor.select.ParseRequestStage;
 import io.agrest.runtime.processor.select.SelectProcessorFactory;
-import io.agrest.runtime.processor.select.StartStage;
 import io.agrest.runtime.processor.unrelate.UnrelateProcessorFactory;
 import io.agrest.runtime.processor.update.UpdateProcessorFactoryFactory;
 import io.agrest.runtime.protocol.CayenneExpParser;
@@ -469,7 +468,6 @@ public class AgBuilder {
 
             // select stages
             binder.bind(SelectProcessorFactory.class).toProvider(CayenneSelectProcessorFactoryProvider.class);
-            binder.bind(StartStage.class).to(StartStage.class);
             binder.bind(ParseRequestStage.class).to(ParseRequestStage.class);
             binder.bind(CreateResourceEntityStage.class).to(CreateResourceEntityStage.class);
             binder.bind(ApplyServerParamsStage.class).to(ApplyServerParamsStage.class);
@@ -551,7 +549,7 @@ public class AgBuilder {
             binder.bind(SizeProvider.class).to(SizeProvider.class);
 
             // Constructors to create ResourceEntity from Query parameters
-            binder.bind(ICayenneExpMerger.class).to(CayenneExpMerger.class);
+            binder.bind(IAgExpMerger.class).to(CayenneExpMerger.class);
             binder.bind(ISortMerger.class).to(SortMerger.class);
             binder.bind(IMapByMerger.class).to(MapByMerger.class);
             binder.bind(ISizeMerger.class).to(SizeMerger.class);

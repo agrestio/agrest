@@ -29,7 +29,7 @@ public class MapByEncoder implements CollectionEncoder {
     private StringConverter fieldNameConverter;
     private Function<Object, Boolean> filter;
 
-    public MapByEncoder(String mapByPath, Function<Object, Boolean> filter, ResourceEntity<?> mapBy, CollectionEncoder collectionEncoder,
+    public MapByEncoder(String mapByPath, Function<Object, Boolean> filter, ResourceEntity<?, ?> mapBy, CollectionEncoder collectionEncoder,
                         IStringConverterFactory converterFactory, IAttributeEncoderFactory encoderFactory) {
 
         if (mapBy == null) {
@@ -63,7 +63,7 @@ public class MapByEncoder implements CollectionEncoder {
     }
 
     private void config(IStringConverterFactory converterFactory, IAttributeEncoderFactory encoderFactory,
-                        ResourceEntity<?> mapBy) {
+                        ResourceEntity<?, ?> mapBy) {
 
         if (mapBy.isIdIncluded()) {
             validateLeafMapBy(mapBy);
@@ -90,12 +90,12 @@ public class MapByEncoder implements CollectionEncoder {
 
             byId = false;
 
-            Map.Entry<String, ResourceEntity<?>> child = mapBy.getChildren().entrySet().iterator().next();
+            Map.Entry<String, ResourceEntity<?, ?>> child = mapBy.getChildren().entrySet().iterator().next();
             AgRelationship relationship = mapBy.getAgEntity().getRelationship(child.getKey());
             mapByReaders.add(getPropertyReader(child.getKey(),
                     encoderFactory.getRelationshipProperty(mapBy.getAgEntity(), relationship, null)));
 
-            ResourceEntity<?> childMapBy = mapBy.getChildren().get(child.getKey());
+            ResourceEntity<?, ?> childMapBy = mapBy.getChildren().get(child.getKey());
             config(converterFactory, encoderFactory, childMapBy);
             return;
         }
@@ -105,7 +105,7 @@ public class MapByEncoder implements CollectionEncoder {
         mapByReaders.add(getPropertyReader(null, encoderFactory.getIdProperty(mapBy)));
     }
 
-    private void validateLeafMapBy(ResourceEntity<?> mapBy) {
+    private void validateLeafMapBy(ResourceEntity<?, ?> mapBy) {
 
         if (!mapBy.getChildren().isEmpty()) {
 

@@ -27,14 +27,14 @@ import java.util.Map;
  * 
  * @since 1.16
  */
-public class UpdateContext<T> extends BaseProcessingContext<T> {
+public class UpdateContext<T, E> extends BaseProcessingContext<T> {
 
-	private ResourceEntity<T> entity;
+	private ResourceEntity<T, E> entity;
 	private UriInfo uriInfo;
 	private AgObjectId id;
 	private EntityParent<?> parent;
-	private Constraint<T> readConstraints;
-	private Constraint<T> writeConstraints;
+	private Constraint<T, E> readConstraints;
+	private Constraint<T, E> writeConstraints;
 	private boolean includingDataInResponse;
 	private ObjectMapperFactory mapper;
 	private String entityData;
@@ -146,19 +146,19 @@ public class UpdateContext<T> extends BaseProcessingContext<T> {
 		this.parent = parent;
 	}
 
-	public Constraint<T> getReadConstraints() {
+	public Constraint<T, E> getReadConstraints() {
 		return readConstraints;
 	}
 
-	public void setReadConstraints(Constraint<T> readConstraints) {
+	public void setReadConstraints(Constraint<T, E> readConstraints) {
 		this.readConstraints = readConstraints;
 	}
 
-	public Constraint<T> getWriteConstraints() {
+	public Constraint<T, E> getWriteConstraints() {
 		return writeConstraints;
 	}
 
-	public void setWriteConstraints(Constraint<T> writeConstraints) {
+	public void setWriteConstraints(Constraint<T, E> writeConstraints) {
 		this.writeConstraints = writeConstraints;
 	}
 
@@ -203,14 +203,14 @@ public class UpdateContext<T> extends BaseProcessingContext<T> {
 	/**
 	 * @since 1.20
 	 */
-	public ResourceEntity<T> getEntity() {
+	public ResourceEntity<T, E> getEntity() {
 		return entity;
 	}
 
 	/**
 	 * @since 1.20
 	 */
-	public void setEntity(ResourceEntity<T> entity) {
+	public void setEntity(ResourceEntity<T, E> entity) {
 		this.entity = entity;
 	}
 

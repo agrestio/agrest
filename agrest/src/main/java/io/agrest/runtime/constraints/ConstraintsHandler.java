@@ -35,7 +35,7 @@ public class ConstraintsHandler implements IConstraintsHandler {
 	}
 
 	@Override
-	public <T> void constrainUpdate(UpdateContext<T> context, Constraint<T> c) {
+	public <T, E> void constrainUpdate(UpdateContext<T, E> context, Constraint<T, E> c) {
 
 		if (!treeConstraintsHandler.constrainUpdate(context, c)) {
 			entityConstraintHandler.constrainUpdate(context);
@@ -43,7 +43,7 @@ public class ConstraintsHandler implements IConstraintsHandler {
 	}
 
 	@Override
-	public <T> void constrainResponse(ResourceEntity<T> entity, SizeConstraints sizeConstraints, Constraint<T> c) {
+	public <T, E> void constrainResponse(ResourceEntity<T, E> entity, SizeConstraints sizeConstraints, Constraint<T, E> c) {
 
 		if (sizeConstraints != null) {
 			applySizeConstraintsForRead(entity, sizeConstraints);
@@ -54,7 +54,7 @@ public class ConstraintsHandler implements IConstraintsHandler {
 		}
 	}
 
-	protected void applySizeConstraintsForRead(ResourceEntity<?> entity, SizeConstraints constraints) {
+	protected void applySizeConstraintsForRead(ResourceEntity<?, ?> entity, SizeConstraints constraints) {
 
 		// fetchOffset - do not exceed source offset
 		int upperOffset = constraints.getFetchOffset();

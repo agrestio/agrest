@@ -2,7 +2,6 @@ package io.agrest.runtime.encoder;
 
 import io.agrest.EntityProperty;
 import io.agrest.ResourceEntity;
-import io.agrest.backend.util.converter.ExpressionConverter;
 import io.agrest.backend.util.converter.ExpressionMatcher;
 import io.agrest.backend.util.converter.OrderingConverter;
 import io.agrest.backend.util.converter.OrderingSorter;
@@ -39,8 +38,7 @@ public class EncoderService implements IEncoderService {
     private IStringConverterFactory stringConverterFactory;
     private List<EncoderFilter> filters;
     private Map<String, PropertyMetadataEncoder> propertyMetadataEncoders;
-    private Map<ResourceEntity<?>, Encoder> entityMetadataEncoders;
-    private ExpressionConverter expressionConverter;
+    private Map<ResourceEntity<?, ?>, Encoder> entityMetadataEncoders;
     private ExpressionMatcher expressionMatcher;
     private OrderingConverter orderingConverter;
     private OrderingSorter orderingSorter;
@@ -50,7 +48,6 @@ public class EncoderService implements IEncoderService {
                           @Inject IStringConverterFactory stringConverterFactory,
                           @Inject IRelationshipMapper relationshipMapper,
                           @Inject Map<String, PropertyMetadataEncoder> propertyMetadataEncoders,
-                          @Inject ExpressionConverter expressionConverter,
                           @Inject ExpressionMatcher expressionMatcher,
                           @Inject OrderingConverter orderingConverter,
                           @Inject OrderingSorter orderingSorter) {
@@ -60,24 +57,23 @@ public class EncoderService implements IEncoderService {
         this.filters = filters;
         this.propertyMetadataEncoders = propertyMetadataEncoders;
         this.entityMetadataEncoders = new ConcurrentHashMap<>();
-        this.expressionConverter = expressionConverter;
         this.expressionMatcher = expressionMatcher;
         this.orderingConverter = orderingConverter;
         this.orderingSorter = orderingSorter;
     }
 
     @Override
-    public <T> Encoder metadataEncoder(ResourceEntity<T> entity) {
+    public <T, E> Encoder metadataEncoder(ResourceEntity<T, E> entity) {
         return new ResourceEncoder<>(entity, entity.getApplicationBase(), entityMetadataEncoder(entity));
     }
 
     @Override
-    public <T> Encoder dataEncoder(ResourceEntity<T> entity) {
+    public <T, E> Encoder dataEncoder(ResourceEntity<T, E> entity) {
         CollectionEncoder resultEncoder = resultEncoder(entity);
         return new DataResponseEncoder("data", resultEncoder, "total", GenericEncoder.encoder());
     }
 
-    protected CollectionEncoder resultEncoder(ResourceEntity<?> entity) {
+    protected CollectionEncoder resultEncoder(ResourceEntity<?, ?> entity) {
         Encoder elementEncoder = collectionElementEncoder(entity);
         boolean isMapBy = entity.getMapBy() != null;
 
@@ -100,7 +96,7 @@ public class EncoderService implements IEncoderService {
                 : encoder;
     }
 
-    protected Encoder nestedToManyEncoder(ResourceEntity<?> resourceEntity) {
+    protected Encoder nestedToManyEncoder(ResourceEntity<?, ?> resourceEntity) {
 
         Encoder elementEncoder = collectionElementEncoder(resourceEntity);
         boolean isMapBy = resourceEntity.getMapBy() != null;
@@ -109,7 +105,7 @@ public class EncoderService implements IEncoderService {
         // if mapBy is involved, apply filters at MapBy level, not inside sublists...
         ListEncoder listEncoder = new ListEncoder(
                 elementEncoder,
-                isMapBy ? null : isQualifier ? expressionMatcher.match(expressionConverter.apply(resourceEntity.getQualifier())) : null,
+                isMapBy ? null : isQualifier ? expressionMatcher.match(resourceEntity.getQualifier()) : null,
                 orderingSorter.sort(orderingConverter.apply(resourceEntity.getOrderings())))
                 .withOffset(resourceEntity.getFetchOffset())
                 .withLimit(resourceEntity.getFetchLimit());
@@ -121,7 +117,7 @@ public class EncoderService implements IEncoderService {
         return isMapBy ?
                 new MapByEncoder(
                         resourceEntity.getMapByPath(),
-                        isQualifier ? expressionMatcher.match(expressionConverter.apply(resourceEntity.getQualifier())) : null,
+                        isQualifier ? expressionMatcher.match(resourceEntity.getQualifier()) : null,
                         resourceEntity.getMapBy(),
                         listEncoder,
                         stringConverterFactory,
@@ -129,12 +125,12 @@ public class EncoderService implements IEncoderService {
                 : listEncoder;
     }
 
-    protected Encoder collectionElementEncoder(ResourceEntity<?> resourceEntity) {
+    protected Encoder collectionElementEncoder(ResourceEntity<?, ?> resourceEntity) {
         Encoder encoder = entityEncoder(resourceEntity);
         return filteredEncoder(encoder, resourceEntity);
     }
 
-    protected Encoder toOneEncoder(ResourceEntity<?> resourceEntity, AgRelationship relationship) {
+    protected Encoder toOneEncoder(ResourceEntity<?, ?> resourceEntity, AgRelationship relationship) {
 
         // to-one encoder is made of the following decorator layers (from outer
         // to inner):
@@ -147,7 +143,7 @@ public class EncoderService implements IEncoderService {
         return filteredEncoder(compositeValueEncoder, resourceEntity);
     }
 
-    protected Encoder entityMetadataEncoder(ResourceEntity<?> resourceEntity) {
+    protected Encoder entityMetadataEncoder(ResourceEntity<?, ?> resourceEntity) {
         Encoder encoder = entityMetadataEncoders.get(resourceEntity);
 
         if (encoder == null) {
@@ -158,7 +154,7 @@ public class EncoderService implements IEncoderService {
         return encoder;
     }
 
-    protected Encoder entityEncoder(ResourceEntity<?> resourceEntity) {
+    protected Encoder entityEncoder(ResourceEntity<?, ?> resourceEntity) {
 
         // ensure we sort property encoders alphabetically for cleaner JSON
         // output
@@ -171,7 +167,7 @@ public class EncoderService implements IEncoderService {
         }
 
         Map<String, EntityProperty> relationshipEncoders = new TreeMap<String, EntityProperty>();
-        for (Entry<String, ResourceEntity<?>> e : resourceEntity.getChildren().entrySet()) {
+        for (Entry<String, ResourceEntity<?, ?>> e : resourceEntity.getChildren().entrySet()) {
             AgRelationship relationship = resourceEntity.getAgEntity().getRelationship(e.getKey());
 
             Encoder encoder = relationship.isToMany() ? nestedToManyEncoder(e.getValue())
@@ -191,7 +187,7 @@ public class EncoderService implements IEncoderService {
         return new EntityEncoder(idEncoder, attributeEncoders, relationshipEncoders, extraEncoders);
     }
 
-    protected Encoder filteredEncoder(Encoder encoder, ResourceEntity<?> resourceEntity) {
+    protected Encoder filteredEncoder(Encoder encoder, ResourceEntity<?, ?> resourceEntity) {
         List<EncoderFilter> matchingFilters = null;
 
         for (EncoderFilter filter : filters) {

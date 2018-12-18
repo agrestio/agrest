@@ -6,7 +6,7 @@ import io.agrest.processor.Processor;
 import io.agrest.processor.ProcessorOutcome;
 import io.agrest.protocol.Dir;
 import io.agrest.protocol.Sort;
-import io.agrest.runtime.entity.ICayenneExpMerger;
+import io.agrest.runtime.entity.IAgExpMerger;
 import io.agrest.runtime.entity.IExcludeMerger;
 import io.agrest.runtime.entity.IIncludeMerger;
 import io.agrest.runtime.entity.IMapByMerger;
@@ -18,10 +18,10 @@ import org.apache.cayenne.di.Inject;
 /**
  * @since 2.13
  */
-public class CreateResourceEntityStage implements Processor<SelectContext<?>> {
+public class CreateResourceEntityStage implements Processor<SelectContext<?, ?>> {
 
     private IMetadataService metadataService;
-    private ICayenneExpMerger expMerger;
+    private IAgExpMerger expMerger;
     private ISortMerger sortMerger;
     private IMapByMerger mapByMerger;
     private ISizeMerger sizeMerger;
@@ -30,7 +30,7 @@ public class CreateResourceEntityStage implements Processor<SelectContext<?>> {
 
     public CreateResourceEntityStage(
             @Inject IMetadataService metadataService,
-            @Inject ICayenneExpMerger expMerger,
+            @Inject IAgExpMerger expMerger,
             @Inject ISortMerger sortMerger,
             @Inject IMapByMerger mapByMerger,
             @Inject ISizeMerger sizeMerger,
@@ -47,13 +47,13 @@ public class CreateResourceEntityStage implements Processor<SelectContext<?>> {
     }
 
     @Override
-    public ProcessorOutcome execute(SelectContext<?> context) {
+    public ProcessorOutcome execute(SelectContext<?, ?> context) {
         doExecute(context);
         return ProcessorOutcome.CONTINUE;
     }
 
-    protected <T> void doExecute(SelectContext<T> context) {
-        ResourceEntity<T> resourceEntity = new ResourceEntity<>(metadataService.getAgEntity(context.getType()));
+    protected <T, E> void doExecute(SelectContext<T, E> context) {
+        ResourceEntity<T, E> resourceEntity = new ResourceEntity<>(metadataService.getAgEntity(context.getType()));
 
         AgRequest request = context.getRawRequest();
         if (request != null) {
@@ -68,7 +68,7 @@ public class CreateResourceEntityStage implements Processor<SelectContext<?>> {
         context.setEntity(resourceEntity);
     }
 
-    protected <T> Sort createSort(SelectContext<T> context) {
+    protected <T, E> Sort createSort(SelectContext<T, E> context) {
         return createSort(context.getRawRequest().getSort(), context.getRawRequest().getSortDirection());
     }
 

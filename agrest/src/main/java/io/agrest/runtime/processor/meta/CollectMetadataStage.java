@@ -45,7 +45,7 @@ public class CollectMetadataStage implements Processor<MetadataContext<?>> {
     }
 
     @SuppressWarnings("unchecked")
-    protected <T> void doExecute(MetadataContext<T> context) {
+    protected <T, E> void doExecute(MetadataContext<T> context) {
         AgEntity<T> entity = metadataService.getAgEntity(context.getType());
         Collection<AgResource<?>> resources = resourceMetadataService.getAgResources(context.getResource());
         Collection<AgResource<T>> filteredResources = new ArrayList<>(resources.size());
@@ -57,7 +57,7 @@ public class CollectMetadataStage implements Processor<MetadataContext<?>> {
             }
         }
 
-        ResourceEntity<T> resourceEntity = createDefaultResourceEntity(entity);
+        ResourceEntity<T, E> resourceEntity = createDefaultResourceEntity(entity);
         constraintsHandler.constrainResponse(resourceEntity, null, context.getConstraint());
         resourceEntity.setApplicationBase(getBaseUrl(context));
 
@@ -72,15 +72,15 @@ public class CollectMetadataStage implements Processor<MetadataContext<?>> {
         );
     }
 
-    private <T> ResourceEntity<T> createDefaultResourceEntity(AgEntity<T> entity) {
-        ResourceEntity<T> resourceEntity = new ResourceEntity<>(entity);
+    private <T, E> ResourceEntity<T, E> createDefaultResourceEntity(AgEntity<T> entity) {
+        ResourceEntity<T, E> resourceEntity = new ResourceEntity<>(entity);
 
         for (AgAttribute a : entity.getAttributes()) {
             resourceEntity.getAttributes().put(a.getName(), a);
         }
 
         for (AgRelationship r : entity.getRelationships()) {
-            ResourceEntity<?> child = new ResourceEntity<>(r.getTargetEntity(), r);
+            ResourceEntity<?, E> child = new ResourceEntity<>(r.getTargetEntity(), r);
             resourceEntity.getChildren().put(r.getName(), child);
         }
 

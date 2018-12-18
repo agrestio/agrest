@@ -20,7 +20,7 @@ public interface MetadataBuilder<T> {
      * @return this builder instance.
      * @since 2.10
      */
-    MetadataBuilder<T> constraint(Constraint<T> constraint);
+    <E> MetadataBuilder<T> constraint(Constraint<T, E> constraint);
 
     MetadataResponse<T> process();
 }

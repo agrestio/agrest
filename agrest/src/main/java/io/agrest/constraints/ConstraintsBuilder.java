@@ -3,7 +3,6 @@ package io.agrest.constraints;
 import io.agrest.PathConstants;
 import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgRelationship;
-import io.agrest.backend.exp.Expression;
 
 import java.util.function.Function;
 
@@ -14,24 +13,24 @@ import java.util.function.Function;
  *
  * @since 1.3
  */
-public class ConstraintsBuilder<T> implements Constraint<T> {
+public class ConstraintsBuilder<T, E> implements Constraint<T, E> {
 
-    protected Function<ConstrainedAgEntity<T>, ConstrainedAgEntity<T>> op;
+    protected Function<ConstrainedAgEntity<T, E>, ConstrainedAgEntity<T, E>> op;
 
-    protected ConstraintsBuilder(Function<ConstrainedAgEntity<T>, ConstrainedAgEntity<T>> op) {
+    protected ConstraintsBuilder(Function<ConstrainedAgEntity<T, E>, ConstrainedAgEntity<T, E>> op) {
         this.op = op;
     }
 
     @Override
-    public ConstrainedAgEntity<T> apply(AgEntity<T> agEntity) {
-        return op.apply(new ConstrainedAgEntity<T>(agEntity));
+    public ConstrainedAgEntity<T, E> apply(AgEntity<T> agEntity) {
+        return op.apply(new ConstrainedAgEntity<T, E>(agEntity));
     }
 
     /**
      * @param attributeOrRelationship a name of the property to exclude.
      * @return a new instance of Constraints.
      */
-    public ConstraintsBuilder<T> excludeProperty(String attributeOrRelationship) {
+    public ConstraintsBuilder<T, E> excludeProperty(String attributeOrRelationship) {
         return new ConstraintsBuilder<>(op.andThen(ce -> {
             ce.excludeProperties(attributeOrRelationship);
             return ce;
@@ -42,7 +41,7 @@ public class ConstraintsBuilder<T> implements Constraint<T> {
      * @param attributesOrRelationships an array of properties to exclude.
      * @return a new instance of Constraints.
      */
-    public ConstraintsBuilder<T> excludeProperties(String... attributesOrRelationships) {
+    public ConstraintsBuilder<T, E> excludeProperties(String... attributesOrRelationships) {
         return new ConstraintsBuilder<>(op.andThen(ce -> {
             ce.excludeProperties(attributesOrRelationships);
             return ce;
@@ -54,7 +53,7 @@ public class ConstraintsBuilder<T> implements Constraint<T> {
      *
      * @return a new instance of Constraints.
      */
-    public ConstraintsBuilder<T> excludeAllAttributes() {
+    public ConstraintsBuilder<T, E> excludeAllAttributes() {
         return new ConstraintsBuilder<>(op.andThen(ce -> {
             ce.excludeAllAttributes();
             return ce;
@@ -66,75 +65,75 @@ public class ConstraintsBuilder<T> implements Constraint<T> {
      *
      * @return a new instance of Constraints.
      */
-    public ConstraintsBuilder<T> excludeAllChildren() {
+    public ConstraintsBuilder<T, E> excludeAllChildren() {
         return new ConstraintsBuilder<>(op.andThen(ce -> {
             ce.excludeAllChildren();
             return ce;
         }));
     }
 
-    public ConstraintsBuilder<T> attribute(String attribute) {
+    public ConstraintsBuilder<T, E> attribute(String attribute) {
         return new ConstraintsBuilder<>(op.andThen(ce -> {
             ce.includeAttributes(attribute);
             return ce;
         }));
     }
 
-    public ConstraintsBuilder<T> allAttributes() {
+    public ConstraintsBuilder<T, E> allAttributes() {
         return new ConstraintsBuilder<>(op.andThen(ce -> {
             ce.includeAllAttributes();
             return ce;
         }));
     }
 
-    public ConstraintsBuilder<T> attributes(String... attributes) {
+    public ConstraintsBuilder<T, E> attributes(String... attributes) {
         return new ConstraintsBuilder<>(op.andThen(ce -> {
             ce.includeAttributes(attributes);
             return ce;
         }));
     }
 
-    public ConstraintsBuilder<T> includeId(boolean include) {
+    public ConstraintsBuilder<T, E> includeId(boolean include) {
         return new ConstraintsBuilder<>(op.andThen(ce -> {
             ce.includeId(include);
             return ce;
         }));
     }
 
-    public ConstraintsBuilder<T> includeId() {
+    public ConstraintsBuilder<T, E> includeId() {
         return includeId(true);
     }
 
-    public ConstraintsBuilder<T> excludeId() {
+    public ConstraintsBuilder<T, E> excludeId() {
         return includeId(false);
     }
 
-    public ConstraintsBuilder<T> and(Expression qualifier) {
+    public ConstraintsBuilder<T, E> and(E qualifier) {
         return new ConstraintsBuilder<>(op.andThen(ce -> {
             ce.andQualifier(qualifier);
             return ce;
         }));
     }
 
-    public ConstraintsBuilder<T> or(Expression qualifier) {
+    public ConstraintsBuilder<T, E> or(E qualifier) {
         return new ConstraintsBuilder<>(op.andThen(ce -> {
             ce.orQualifier(qualifier);
             return ce;
         }));
     }
 
-    public <S> ConstraintsBuilder<T> toManyPath(String path, ConstraintsBuilder<S> subentityBuilder) {
+    public <S> ConstraintsBuilder<T, E> toManyPath(String path, ConstraintsBuilder<S, E> subentityBuilder) {
         return path(path, subentityBuilder);
     }
 
-    public <S> ConstraintsBuilder<T> path(String path, ConstraintsBuilder<S> subEntityBuilder) {
+    public <S> ConstraintsBuilder<T, E> path(String path, ConstraintsBuilder<S, E> subEntityBuilder) {
         return new ConstraintsBuilder<>(op.andThen(ce -> {
             subEntityBuilder.op.apply(getOrCreateChild(ce, path));
             return ce;
         }));
     }
 
-    private <P, C> ConstrainedAgEntity<C> getOrCreateChild(ConstrainedAgEntity<P> parent, String path) {
+    private <P, C> ConstrainedAgEntity<C, E> getOrCreateChild(ConstrainedAgEntity<P, E> parent, String path) {
 
         int dot = path.indexOf(PathConstants.DOT);
 
@@ -154,13 +153,13 @@ public class ConstraintsBuilder<T> implements Constraint<T> {
             throw new IllegalArgumentException("Path contains non-relationship component: " + pathSegment);
         }
 
-        ConstrainedAgEntity<?> child = parent.getChild(relationship.getName());
+        ConstrainedAgEntity<P, E> child = parent.getChild(relationship.getName());
         if (child == null) {
             AgEntity<?> targetEntity = relationship.getTargetEntity();
             child = new ConstrainedAgEntity(targetEntity);
             parent.getChildren().put(relationship.getName(), child);
         }
 
-        return dot < 0 ? (ConstrainedAgEntity<C>) child : getOrCreateChild(child, path.substring(dot + 1));
+        return dot < 0 ? (ConstrainedAgEntity<C, E>) child : getOrCreateChild(child, path.substring(dot + 1));
     }
 }

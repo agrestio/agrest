@@ -12,7 +12,6 @@ import io.agrest.SizeConstraints;
 import io.agrest.constraints.Constraint;
 import io.agrest.encoder.Encoder;
 import io.agrest.processor.BaseProcessingContext;
-import org.apache.cayenne.query.SelectQuery;
 
 import javax.ws.rs.core.UriInfo;
 import java.util.Collections;
@@ -24,24 +23,21 @@ import java.util.Map;
  * 
  * @since 1.16
  */
-public class SelectContext<T> extends BaseProcessingContext<T> {
+public class SelectContext<T, E> extends BaseProcessingContext<T> {
 
 	private AgObjectId id;
 	private EntityParent<?> parent;
-	private ResourceEntity<T> entity;
+	private ResourceEntity<T, E> entity;
 	private UriInfo uriInfo;
 	private Map<String, EntityProperty> extraProperties;
 	private SizeConstraints sizeConstraints;
-	private Constraint<T> constraint;
+	private Constraint<T, E> constraint;
 	private boolean atMostOneObject;
 	private Encoder encoder;
 	private int prefetchSemantics;
 	private List objects;
 	private AgRequest rawRequest;
 	private AgRequest request;
-
-	// TODO: deprecate dependency on Cayenne in generic code
-	private SelectQuery<T> select;
 
 	public SelectContext(Class<T> type) {
 		super(type);
@@ -122,7 +118,7 @@ public class SelectContext<T> extends BaseProcessingContext<T> {
 	 * @since 2.4
 	 * @return this context's constraint function.
 	 */
-	public Constraint<T> getConstraint() {
+	public Constraint<T, E> getConstraint() {
 		return constraint;
 	}
 
@@ -130,18 +126,8 @@ public class SelectContext<T> extends BaseProcessingContext<T> {
 	 * @since 2.4
 	 * @param constraint constraint function.
 	 */
-	public void setConstraint(Constraint<T> constraint) {
+	public void setConstraint(Constraint<T, E> constraint) {
 		this.constraint = constraint;
-	}
-
-	// TODO: deprecate dependency on Cayenne in generic code
-	public SelectQuery<T> getSelect() {
-		return select;
-	}
-
-	// TODO: deprecate dependency on Cayenne in generic code
-	public void setSelect(SelectQuery<T> select) {
-		this.select = select;
 	}
 
 	public boolean isAtMostOneObject() {
@@ -163,14 +149,14 @@ public class SelectContext<T> extends BaseProcessingContext<T> {
 	/**
 	 * @since 1.20
 	 */
-	public ResourceEntity<T> getEntity() {
+	public ResourceEntity<T, E> getEntity() {
 		return entity;
 	}
 
 	/**
 	 * @since 1.20
 	 */
-	public void setEntity(ResourceEntity<T> entity) {
+	public void setEntity(ResourceEntity<T, E> entity) {
 		this.entity = entity;
 	}
 

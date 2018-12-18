@@ -1,12 +1,10 @@
 package io.agrest.runtime.path;
 
-import io.agrest.backend.exp.parser.ASTPath;
-
-public interface PathDescriptor {
+public interface PathDescriptor<P> {
 
 	boolean isAttribute();
 
 	Class<?> getType();
 
-	ASTPath getPathExp();
+	P getPathExp();
 }

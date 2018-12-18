@@ -36,7 +36,7 @@ public interface IAgService {
 	 * 
 	 * @since 1.14
 	 */
-	<T> SelectBuilder<T> select(Class<T> type);
+	<T, E> SelectBuilder<T, E> select(Class<T> type);
 
 	SimpleResponse delete(Class<?> type, Object id);
 
@@ -64,17 +64,17 @@ public interface IAgService {
 	/**
 	 * @since 1.3
 	 */
-	<T> UpdateBuilder<T> update(Class<T> type);
+	<T, E> UpdateBuilder<T, E> update(Class<T> type);
 
 	/**
 	 * @since 1.3
 	 */
-	<T> UpdateBuilder<T> create(Class<T> type);
+	<T, E> UpdateBuilder<T, E> create(Class<T> type);
 
 	/**
 	 * @since 1.3
 	 */
-	<T> UpdateBuilder<T> createOrUpdate(Class<T> type);
+	<T, E> UpdateBuilder<T, E> createOrUpdate(Class<T> type);
 
 	/**
 	 * Returns an UpdateBuilder that would perform an idempotent
@@ -86,7 +86,7 @@ public interface IAgService {
 	 * 
 	 * @since 1.3
 	 */
-	<T> UpdateBuilder<T> idempotentCreateOrUpdate(Class<T> type);
+	<T, E> UpdateBuilder<T, E> idempotentCreateOrUpdate(Class<T> type);
 
 	/**
 	 * Returns an UpdateBuilder that would perform create/update/delete
@@ -99,7 +99,7 @@ public interface IAgService {
 	 * 
 	 * @since 1.7
 	 */
-	<T> UpdateBuilder<T> idempotentFullSync(Class<T> type);
+	<T, E> UpdateBuilder<T, E> idempotentFullSync(Class<T> type);
 
 	/**
 	 * @since 1.4

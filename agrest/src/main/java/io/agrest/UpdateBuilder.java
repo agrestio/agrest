@@ -17,13 +17,13 @@ import java.util.function.Consumer;
  *
  * @since 1.7
  */
-public interface UpdateBuilder<T> {
+public interface UpdateBuilder<T, E> {
 
     /**
      * Set an explicit id for the update. In this case only a single object is
      * allowed in the update.
      */
-    UpdateBuilder<T> id(Object id);
+    UpdateBuilder<T, E> id(Object id);
 
     /**
      * Set an explicit compound id for the update. In this case only a single
@@ -31,38 +31,38 @@ public interface UpdateBuilder<T> {
      *
      * @since 1.20
      */
-    UpdateBuilder<T> id(Map<String, Object> ids);
+    UpdateBuilder<T, E> id(Map<String, Object> ids);
 
     /**
      * Sets up a relationship clause for all objects in this update.
      */
-    UpdateBuilder<T> parent(Class<?> parentType, Object parentId, String relationshipFromParent);
-
-    /**
-     * Sets up a relationship clause for all objects in this update.
-     *
-     * @since 1.20
-     */
-    UpdateBuilder<T> parent(Class<?> parentType, Map<String, Object> parentIds, String relationshipFromParent);
-
-    /**
-     * Sets up a relationship clause for all objects in this update.
-     */
-    UpdateBuilder<T> toManyParent(Class<?> parentType, Object parentId, String relationshipFromParent);
+    UpdateBuilder<T, E> parent(Class<?> parentType, Object parentId, String relationshipFromParent);
 
     /**
      * Sets up a relationship clause for all objects in this update.
      *
      * @since 1.20
      */
-    UpdateBuilder<T> toManyParent(Class<?> parentType, Map<String, Object> parentIds, String relationshipFromParent);
+    UpdateBuilder<T, E> parent(Class<?> parentType, Map<String, Object> parentIds, String relationshipFromParent);
+
+    /**
+     * Sets up a relationship clause for all objects in this update.
+     */
+    UpdateBuilder<T, E> toManyParent(Class<?> parentType, Object parentId, String relationshipFromParent);
+
+    /**
+     * Sets up a relationship clause for all objects in this update.
+     *
+     * @since 1.20
+     */
+    UpdateBuilder<T, E> toManyParent(Class<?> parentType, Map<String, Object> parentIds, String relationshipFromParent);
 
     /**
      * Sets request {@link UriInfo} that will be used to shape response.
      *
      * @since 1.14
      */
-    UpdateBuilder<T> uri(UriInfo uriInfo);
+    UpdateBuilder<T, E> uri(UriInfo uriInfo);
 
     /**
      * Installs an optional constraint function defining how much of the request entity attributes / relationships
@@ -72,7 +72,7 @@ public interface UpdateBuilder<T> {
      * @return this builder instance.
      * @since 2.4
      */
-    UpdateBuilder<T> readConstraint(Constraint<T> constraint);
+    UpdateBuilder<T, E> readConstraint(Constraint<T, E> constraint);
 
     /**
      * Installs an optional constraint function defining how much of the request entity attributes / relationships
@@ -81,23 +81,23 @@ public interface UpdateBuilder<T> {
      * @param constraint an instance of Constraint function.
      * @return this builder instance.
      */
-    UpdateBuilder<T> writeConstraint(Constraint<T> constraint);
+    UpdateBuilder<T, E> writeConstraint(Constraint<T, E> constraint);
 
-    /**
-     * Sets a custom mapper that locates existing objects based on request data.
-     * If not set, objects will be located by their IDs.
-     */
-    UpdateBuilder<T> mapper(ObjectMapperFactory mapper);
-
-    /**
-     * Sets a property name that should be used to map objects in update
-     * collection to backend objects. This overrides a default mapping by ID,
-     * and is equivalent to calling
-     * 'mapped(ByKeyObjectMapperFactory.byKey(propertyName))'.
-     *
-     * @since 1.20
-     */
-    UpdateBuilder<T> mapper(String propertyName);
+//    /**
+//     * Sets a custom mapper that locates existing objects based on request data.
+//     * If not set, objects will be located by their IDs.
+//     */
+//    UpdateBuilder<T, E> mapper(ObjectMapperFactory mapper);
+//
+//    /**
+//     * Sets a property name that should be used to map objects in update
+//     * collection to backend objects. This overrides a default mapping by ID,
+//     * and is equivalent to calling
+//     * 'mapped(ByKeyObjectMapperFactory.byKey(propertyName))'.
+//     *
+//     * @since 1.20
+//     */
+//    UpdateBuilder<T, E> mapper(String propertyName);
 
     /**
      * Registers a consumer to be executed after a specified standard execution stage. The consumer can inspect and
@@ -110,8 +110,8 @@ public interface UpdateBuilder<T> {
      * @return this builder instance.
      * @since 2.7
      */
-    default <U> UpdateBuilder<T> stage(UpdateStage afterStage, Consumer<UpdateContext<U>> customStage) {
-        return routingStage(afterStage, (UpdateContext<U> c) -> {
+    default <U, E> UpdateBuilder<T, E> stage(UpdateStage afterStage, Consumer<UpdateContext<U, E>> customStage) {
+        return routingStage(afterStage, (UpdateContext<U, E> c) -> {
             customStage.accept(c);
             return ProcessorOutcome.CONTINUE;
         });
@@ -131,8 +131,8 @@ public interface UpdateBuilder<T> {
      * @return this builder instance.
      * @since 2.7
      */
-    default <U> UpdateBuilder<T> terminalStage(UpdateStage afterStage, Consumer<UpdateContext<U>> customTerminalStage) {
-        return routingStage(afterStage, (UpdateContext<U> c) -> {
+    default <U, E> UpdateBuilder<T, E> terminalStage(UpdateStage afterStage, Consumer<UpdateContext<U, E>> customTerminalStage) {
+        return routingStage(afterStage, (UpdateContext<U, E> c) -> {
             customTerminalStage.accept(c);
             return ProcessorOutcome.STOP;
         });
@@ -151,7 +151,7 @@ public interface UpdateBuilder<T> {
      * @return this builder instance.
      * @since 2.7
      */
-    <U> UpdateBuilder<T> routingStage(UpdateStage afterStage, Processor<UpdateContext<U>> customStage);
+    <U, E> UpdateBuilder<T, E> routingStage(UpdateStage afterStage, Processor<UpdateContext<U, E>> customStage);
 
     /**
      * Installs explicit query parameters encapsulated in AgRequest.
@@ -175,7 +175,7 @@ public interface UpdateBuilder<T> {
      * @return this builder instance.
      * @since 2.13
      */
-    UpdateBuilder<T> request(AgRequest agRequest);
+    UpdateBuilder<T, E> request(AgRequest agRequest);
 
     /**
      * @since 1.19

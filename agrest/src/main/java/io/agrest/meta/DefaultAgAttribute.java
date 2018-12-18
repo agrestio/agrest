@@ -1,14 +1,12 @@
 package io.agrest.meta;
 
 import io.agrest.property.PropertyReader;
-import io.agrest.backend.exp.parser.ASTObjPath;
-import io.agrest.backend.exp.parser.ASTPath;
 import io.agrest.backend.util.ToStringBuilder;
 
 /**
  * @since 1.12
  */
-public class DefaultAgAttribute implements AgAttribute {
+public class DefaultAgAttribute implements AgAttribute<String> {
 
 	private String name;
 	private Class<?> javaType;
@@ -30,8 +28,8 @@ public class DefaultAgAttribute implements AgAttribute {
 	}
 
 	@Override
-	public ASTPath getPathExp() {
-		return new ASTObjPath(name);
+	public String getPathExp() {
+		return name;
 	}
 
 	@Override

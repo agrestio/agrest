@@ -21,7 +21,7 @@ import java.util.Map;
 /**
  * @since 2.7
  */
-public class ParseRequestStage implements Processor<UpdateContext<?>> {
+public class ParseRequestStage implements Processor<UpdateContext<?, ?>> {
 
     protected static final String PROTOCOL_KEY_EXCLUDE = "exclude";
     protected static final String PROTOCOL_KEY_INCLUDE = "include";
@@ -44,12 +44,12 @@ public class ParseRequestStage implements Processor<UpdateContext<?>> {
     }
 
     @Override
-    public ProcessorOutcome execute(UpdateContext<?> context) {
+    public ProcessorOutcome execute(UpdateContext<?, ?> context) {
         doExecute(context);
         return ProcessorOutcome.CONTINUE;
     }
 
-    protected <T> void doExecute(UpdateContext<T> context) {
+    protected <T, E> void doExecute(UpdateContext<T, E> context) {
 
         // Parse response parameters..
 

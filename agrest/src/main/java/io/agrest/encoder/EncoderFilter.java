@@ -17,7 +17,7 @@ public interface EncoderFilter {
 	 * Returns whether the filter should be applied for a given
 	 * {@link ResourceEntity}.
 	 */
-	boolean matches(ResourceEntity<?> entity);
+	boolean matches(ResourceEntity<?, ?> entity);
 
 	boolean encode(String propertyName, Object object, JsonGenerator out, Encoder delegate) throws IOException;
 

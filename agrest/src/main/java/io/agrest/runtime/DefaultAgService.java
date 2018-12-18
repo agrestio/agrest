@@ -61,12 +61,12 @@ public class DefaultAgService implements IAgService {
     }
 
     @Override
-    public <T> SelectBuilder<T> select(Class<T> type) {
-        SelectContext<T> context = new SelectContext<>(type);
+    public <T, E> SelectBuilder<T, E> select(Class<T> type) {
+        SelectContext<T, E> context = new SelectContext<>(type);
         return toSelectBuilder(context);
     }
 
-    private <T> SelectBuilder<T> toSelectBuilder(SelectContext<T> context) {
+    private <T, E> SelectBuilder<T, E> toSelectBuilder(SelectContext<T, E> context) {
         return new DefaultSelectBuilder<>(context, selectProcessorFactory);
     }
 
@@ -121,8 +121,8 @@ public class DefaultAgService implements IAgService {
      * @since 1.3
      */
     @Override
-    public <T> UpdateBuilder<T> create(Class<T> type) {
-        UpdateContext<T> context = new UpdateContext<>(type);
+    public <T, E> UpdateBuilder<T, E> create(Class<T> type) {
+        UpdateContext<T, E> context = new UpdateContext<>(type);
         return new DefaultUpdateBuilder<>(context,
                 updateProcessorFactoryFactory.getFactory(UpdateOperation.create));
     }
@@ -131,8 +131,8 @@ public class DefaultAgService implements IAgService {
      * @since 1.3
      */
     @Override
-    public <T> UpdateBuilder<T> createOrUpdate(Class<T> type) {
-        UpdateContext<T> context = new UpdateContext<>(type);
+    public <T, E> UpdateBuilder<T, E> createOrUpdate(Class<T> type) {
+        UpdateContext<T, E> context = new UpdateContext<>(type);
         return new DefaultUpdateBuilder<>(context,
                 updateProcessorFactoryFactory.getFactory(UpdateOperation.createOrUpdate));
     }
@@ -141,8 +141,8 @@ public class DefaultAgService implements IAgService {
      * @since 1.3
      */
     @Override
-    public <T> UpdateBuilder<T> idempotentCreateOrUpdate(Class<T> type) {
-        UpdateContext<T> context = new UpdateContext<>(type);
+    public <T, E> UpdateBuilder<T, E> idempotentCreateOrUpdate(Class<T> type) {
+        UpdateContext<T, E> context = new UpdateContext<>(type);
         return new DefaultUpdateBuilder<>(context,
                 updateProcessorFactoryFactory.getFactory(UpdateOperation.idempotentCreateOrUpdate));
     }
@@ -151,8 +151,8 @@ public class DefaultAgService implements IAgService {
      * @since 1.7
      */
     @Override
-    public <T> UpdateBuilder<T> idempotentFullSync(Class<T> type) {
-        UpdateContext<T> context = new UpdateContext<>(type);
+    public <T, E> UpdateBuilder<T, E> idempotentFullSync(Class<T> type) {
+        UpdateContext<T, E> context = new UpdateContext<>(type);
         return new DefaultUpdateBuilder<>(context,
                 updateProcessorFactoryFactory.getFactory(UpdateOperation.idempotentFullSync));
     }
@@ -161,8 +161,8 @@ public class DefaultAgService implements IAgService {
      * @since 1.3
      */
     @Override
-    public <T> UpdateBuilder<T> update(Class<T> type) {
-        UpdateContext<T> context = new UpdateContext<>(type);
+    public <T, E> UpdateBuilder<T, E> update(Class<T> type) {
+        UpdateContext<T, E> context = new UpdateContext<>(type);
         return new DefaultUpdateBuilder<>(context,
                 updateProcessorFactoryFactory.getFactory(UpdateOperation.update));
     }

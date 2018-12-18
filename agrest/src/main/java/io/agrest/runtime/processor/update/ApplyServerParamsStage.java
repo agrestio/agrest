@@ -19,7 +19,7 @@ import java.util.Map;
 /**
  * @since 2.7
  */
-public class ApplyServerParamsStage implements Processor<UpdateContext<?>> {
+public class ApplyServerParamsStage implements Processor<UpdateContext<?, ?>> {
 
     private IEncoderService encoderService;
     private IConstraintsHandler constraintsHandler;
@@ -36,14 +36,14 @@ public class ApplyServerParamsStage implements Processor<UpdateContext<?>> {
     }
 
     @Override
-    public ProcessorOutcome execute(UpdateContext<?> context) {
+    public ProcessorOutcome execute(UpdateContext<?, ?> context) {
         doExecute(context);
         return ProcessorOutcome.CONTINUE;
     }
 
-    protected <T> void doExecute(UpdateContext<T> context) {
+    protected <T, E> void doExecute(UpdateContext<T, E> context) {
 
-        ResourceEntity<T> entity = context.getEntity();
+        ResourceEntity<T, E> entity = context.getEntity();
 
         processExplicitId(context);
         processParentId(context);
@@ -59,7 +59,7 @@ public class ApplyServerParamsStage implements Processor<UpdateContext<?>> {
         context.setEncoder(encoderService.dataEncoder(entity));
     }
 
-    private <T> void processExplicitId(UpdateContext<T> context) {
+    private <T, E> void processExplicitId(UpdateContext<T, E> context) {
 
         if (context.isById()) {
 
@@ -82,7 +82,7 @@ public class ApplyServerParamsStage implements Processor<UpdateContext<?>> {
         }
     }
 
-    private <T> void processParentId(UpdateContext<T> context) {
+    private <T, E> void processParentId(UpdateContext<T, E> context) {
 
         EntityParent<?> parent = context.getParent();
 
@@ -99,7 +99,7 @@ public class ApplyServerParamsStage implements Processor<UpdateContext<?>> {
         }
     }
 
-    private AgRelationship relationshipFromParent(UpdateContext<?> context) {
+    private AgRelationship relationshipFromParent(UpdateContext<?, ?> context) {
 
         EntityParent<?> parent = context.getParent();
 

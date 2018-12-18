@@ -1,14 +1,13 @@
 package io.agrest.meta;
 
 import io.agrest.property.PropertyReader;
-import io.agrest.backend.exp.parser.ASTPath;
 
 /**
  * Represents an entity "simple" property.
  * 
  * @since 1.12
  */
-public interface AgAttribute {
+public interface AgAttribute<P> {
 
 	/**
 	 * @since 1.12
@@ -23,7 +22,7 @@ public interface AgAttribute {
 	/**
 	 * @since 1.12
      */
-	ASTPath getPathExp();
+	P getPathExp();
 
 	/**
 	 * @since 2.10

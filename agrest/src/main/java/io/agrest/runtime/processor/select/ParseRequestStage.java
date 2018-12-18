@@ -25,7 +25,7 @@ import java.util.Map;
 /**
  * @since 2.7
  */
-public class ParseRequestStage implements Processor<SelectContext<?>> {
+public class ParseRequestStage implements Processor<SelectContext<?, ?>> {
 
     protected static final String PROTOCOL_KEY_CAYENNE_EXP = "cayenneExp";
     protected static final String PROTOCOL_KEY_DIR = "dir";
@@ -57,12 +57,12 @@ public class ParseRequestStage implements Processor<SelectContext<?>> {
     }
 
     @Override
-    public ProcessorOutcome execute(SelectContext<?> context) {
+    public ProcessorOutcome execute(SelectContext<?, ?> context) {
         doExecute(context);
         return ProcessorOutcome.CONTINUE;
     }
 
-    protected <T> void doExecute(SelectContext<T> context) {
+    protected <T, E> void doExecute(SelectContext<T, E> context) {
         AgRequest request = context.getRequest();
         Map<String, List<String>> protocolParameters = context.getProtocolParameters();
 

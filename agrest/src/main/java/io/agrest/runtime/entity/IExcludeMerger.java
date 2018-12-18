@@ -10,5 +10,5 @@ import java.util.List;
  */
 public interface IExcludeMerger {
 
-    void merge(ResourceEntity<?> resourceEntity, List<Exclude> excludes);
+    void merge(ResourceEntity<?, ?> resourceEntity, List<Exclude> excludes);
 }

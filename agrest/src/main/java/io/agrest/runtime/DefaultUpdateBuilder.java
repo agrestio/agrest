@@ -5,13 +5,11 @@ import io.agrest.AgRequest;
 import io.agrest.DataResponse;
 import io.agrest.EntityParent;
 import io.agrest.EntityUpdate;
-import io.agrest.ObjectMapperFactory;
 import io.agrest.SimpleResponse;
 import io.agrest.UpdateBuilder;
 import io.agrest.UpdateStage;
 import io.agrest.constraints.Constraint;
 import io.agrest.processor.Processor;
-import io.agrest.runtime.cayenne.ByKeyObjectMapperFactory;
 import io.agrest.runtime.processor.update.UpdateContext;
 import io.agrest.runtime.processor.update.UpdateProcessorFactory;
 
@@ -25,15 +23,15 @@ import java.util.Map;
 /**
  * @since 1.7
  */
-public class DefaultUpdateBuilder<T> implements UpdateBuilder<T> {
+public class DefaultUpdateBuilder<T, E> implements UpdateBuilder<T, E> {
 
-    private UpdateContext<T> context;
+    private UpdateContext<T, E> context;
     protected UpdateProcessorFactory processorFactory;
-    protected EnumMap<UpdateStage, Processor<UpdateContext<?>>> processors;
+    protected EnumMap<UpdateStage, Processor<UpdateContext<?, ?>>> processors;
 
 
     public DefaultUpdateBuilder(
-            UpdateContext<T> context,
+            UpdateContext<T, E> context,
             UpdateProcessorFactory processorFactory) {
 
         this.context = context;
@@ -42,19 +40,19 @@ public class DefaultUpdateBuilder<T> implements UpdateBuilder<T> {
     }
 
     @Override
-    public UpdateBuilder<T> uri(UriInfo uriInfo) {
+    public UpdateBuilder<T, E> uri(UriInfo uriInfo) {
         context.setUriInfo(uriInfo);
         return this;
     }
 
     @Override
-    public UpdateBuilder<T> id(Object id) {
+    public UpdateBuilder<T, E> id(Object id) {
         context.setId(id);
         return this;
     }
 
     @Override
-    public UpdateBuilder<T> id(Map<String, Object> ids) {
+    public UpdateBuilder<T, E> id(Map<String, Object> ids) {
 
         for (Object id : ids.entrySet()) {
             if (id == null) {
@@ -67,24 +65,24 @@ public class DefaultUpdateBuilder<T> implements UpdateBuilder<T> {
     }
 
     @Override
-    public UpdateBuilder<T> parent(Class<?> parentType, Object parentId, String relationshipFromParent) {
+    public UpdateBuilder<T, E> parent(Class<?> parentType, Object parentId, String relationshipFromParent) {
         context.setParent(new EntityParent<>(parentType, parentId, relationshipFromParent));
         return this;
     }
 
     @Override
-    public UpdateBuilder<T> parent(Class<?> parentType, Map<String, Object> parentIds, String relationshipFromParent) {
+    public UpdateBuilder<T, E> parent(Class<?> parentType, Map<String, Object> parentIds, String relationshipFromParent) {
         context.setParent(new EntityParent<>(parentType, parentIds, relationshipFromParent));
         return this;
     }
 
     @Override
-    public UpdateBuilder<T> toManyParent(Class<?> parentType, Object parentId, String relationshipFromParent) {
+    public UpdateBuilder<T, E> toManyParent(Class<?> parentType, Object parentId, String relationshipFromParent) {
         return parent(parentType, parentId, relationshipFromParent);
     }
 
     @Override
-    public UpdateBuilder<T> toManyParent(Class<?> parentType, Map<String, Object> parentIds, String relationshipFromParent) {
+    public UpdateBuilder<T, E> toManyParent(Class<?> parentType, Map<String, Object> parentIds, String relationshipFromParent) {
         return parent(parentType, parentIds, relationshipFromParent);
     }
 
@@ -92,7 +90,7 @@ public class DefaultUpdateBuilder<T> implements UpdateBuilder<T> {
      * @since 2.4
      */
     @Override
-    public UpdateBuilder<T> readConstraint(Constraint<T> constraint) {
+    public UpdateBuilder<T, E> readConstraint(Constraint<T, E> constraint) {
         context.setReadConstraints(constraint);
         return this;
     }
@@ -101,46 +99,46 @@ public class DefaultUpdateBuilder<T> implements UpdateBuilder<T> {
      * @since 2.4
      */
     @Override
-    public UpdateBuilder<T> writeConstraint(Constraint<T> constraint) {
+    public UpdateBuilder<T, E> writeConstraint(Constraint<T, E> constraint) {
         context.setWriteConstraints(constraint);
         return this;
     }
 
-    /**
-     * @since 1.4
-     */
-    @Override
-    public UpdateBuilder<T> mapper(ObjectMapperFactory mapper) {
-        context.setMapper(mapper);
-        return this;
-    }
-
-    /**
-     * @since 1.20
-     */
-    @Override
-    public UpdateBuilder<T> mapper(String propertyName) {
-        return mapper(ByKeyObjectMapperFactory.byKey(propertyName));
-    }
+//    /**
+//     * @since 1.4
+//     */
+//    @Override
+//    public UpdateBuilder<T, E> mapper(ObjectMapperFactory mapper) {
+//        context.setMapper(mapper);
+//        return this;
+//    }
+//
+//    /**
+//     * @since 1.20
+//     */
+//    @Override
+//    public UpdateBuilder<T, E> mapper(String propertyName) {
+//        return mapper(ByKeyObjectMapperFactory.byKey(propertyName));
+//    }
 
     /**
      * @since 2.7
      */
     @Override
-    public <U> UpdateBuilder<T> routingStage(UpdateStage afterStage, Processor<UpdateContext<U>> customStage) {
-        return routingStage_NoGenerics(afterStage, customStage);
+    public <U, E> UpdateBuilder<T, E> routingStage(UpdateStage afterStage, Processor<UpdateContext<U, E>> customStage) {
+        return (UpdateBuilder<T, E>) routingStage_NoGenerics(afterStage, customStage);
     }
 
     /**
      * @since 2.13
      */
     @Override
-    public UpdateBuilder<T> request(AgRequest agRequest) {
+    public UpdateBuilder<T, E> request(AgRequest agRequest) {
         this.context.setRequest(agRequest);
         return this;
     }
 
-    private <U> UpdateBuilder<T> routingStage_NoGenerics(UpdateStage afterStage, Processor customStage) {
+    private <U> UpdateBuilder<T, E> routingStage_NoGenerics(UpdateStage afterStage, Processor customStage) {
         processors.compute(afterStage, (s, existing) -> existing != null ? existing.andThen(customStage) : customStage);
         return this;
     }

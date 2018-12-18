@@ -66,11 +66,11 @@ class EntityConstraintHandler {
 		};
 	}
 
-	void constrainResponse(ResourceEntity<?> resourceEntity) {
+	void constrainResponse(ResourceEntity<?, ?> resourceEntity) {
 		constrainForRead(resourceEntity);
 	}
 
-	void constrainUpdate(UpdateContext<?> context) {
+	void constrainUpdate(UpdateContext<?, ?> context) {
 
 		EntityConstraint c = forWrite.getOrCreate(context.getEntity().getAgEntity());
 
@@ -114,7 +114,7 @@ class EntityConstraintHandler {
 		}
 	}
 
-	void constrainForRead(ResourceEntity<?> entity) {
+	void constrainForRead(ResourceEntity<?, ?> entity) {
 
 		EntityConstraint c = forRead.getOrCreate(entity.getAgEntity());
 
@@ -140,10 +140,10 @@ class EntityConstraintHandler {
 			}
 		}
 
-		Iterator<Entry<String, ResourceEntity<?>>> rit = entity.getChildren().entrySet().iterator();
+		Iterator<Entry<String, ResourceEntity<?, ?>>> rit = entity.getChildren().entrySet().iterator();
 		while (rit.hasNext()) {
 
-			Entry<String, ResourceEntity<?>> e = rit.next();
+			Entry<String, ResourceEntity<?, ?>> e = rit.next();
 
 			if (c.allowsRelationship(e.getKey())) {
 				constrainForRead(e.getValue());

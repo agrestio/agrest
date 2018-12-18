@@ -13,10 +13,10 @@ public interface IConstraintsHandler {
     /**
      * Applies constraints to the {@link ResourceEntity}, potentially filtering out some properties from the response.
      */
-    <T> void constrainResponse(ResourceEntity<T> entity, SizeConstraints sizeConstraints, Constraint<T> readConstraints);
+    <T, E> void constrainResponse(ResourceEntity<T, E> entity, SizeConstraints sizeConstraints, Constraint<T, E> readConstraints);
 
     /**
      * Applies constraints to the {@link UpdateContext}, potentially filtering out updates for certain properties.
      */
-    <T> void constrainUpdate(UpdateContext<T> context, Constraint<T> writeConstraints);
+    <T, E> void constrainUpdate(UpdateContext<T, E> context, Constraint<T, E> writeConstraints);
 }

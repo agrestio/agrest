@@ -12,5 +12,5 @@ public interface ObjectMapperFactory {
 	/**
 	 * Returns a mapper to handle objects of a given response.
 	 */
-	<T> ObjectMapper<T> createMapper(UpdateContext<T> context);
+	<T, E> ObjectMapper<T, E> createMapper(UpdateContext<T, E> context);
 }

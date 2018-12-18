@@ -34,7 +34,7 @@ public class DefaultMetadataBuilder<T> implements MetadataBuilder<T> {
     }
 
     @Override
-    public MetadataBuilder<T> constraint(Constraint<T> constraint) {
+    public <E> MetadataBuilder<T> constraint(Constraint<T, E> constraint) {
         context.setConstraint(constraint);
         return this;
     }

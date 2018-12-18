@@ -4,7 +4,6 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import io.agrest.ResourceEntity;
 import io.agrest.meta.AgAttribute;
 import io.agrest.meta.AgRelationship;
-import org.apache.cayenne.dba.TypesMapping;
 
 import java.io.IOException;
 import java.util.Map;
@@ -12,11 +11,13 @@ import java.util.TreeMap;
 
 public class EntityMetadataEncoder extends AbstractEncoder {
 
-    private ResourceEntity<?> entity;
+    public static final String JAVA_BYTES = "byte[]";
+
+    private ResourceEntity<?, ?> entity;
     private Map<String, PropertyMetadataEncoder> propertyMetadataEncoders;
     private Map<String, PropertyHelper> properties;
 
-    public EntityMetadataEncoder(ResourceEntity<?> entity, Map<String, PropertyMetadataEncoder> propertyMetadataEncoders) {
+    public EntityMetadataEncoder(ResourceEntity<?, ?> entity, Map<String, PropertyMetadataEncoder> propertyMetadataEncoders) {
         this.entity = entity;
         this.propertyMetadataEncoders = propertyMetadataEncoders;
 
@@ -24,7 +25,7 @@ public class EntityMetadataEncoder extends AbstractEncoder {
         for (AgAttribute attribute : entity.getAttributes().values()) {
             properties.put(attribute.getName(), new AttributeProperty(attribute));
         }
-        for (ResourceEntity<?> child : entity.getChildren().values()) {
+        for (ResourceEntity<?, ?> child : entity.getChildren().values()) {
             properties.put(child.getIncoming().getName(), new RelationshipProperty(child.getIncoming()));
         }
     }
@@ -47,7 +48,7 @@ public class EntityMetadataEncoder extends AbstractEncoder {
 
             String typeName;
             if (byte[].class.equals(e.getValue().getType())) {
-                typeName = TypesMapping.JAVA_BYTES;
+                typeName = JAVA_BYTES;
             } else {
                 typeName = e.getValue().getType().getName();
             }

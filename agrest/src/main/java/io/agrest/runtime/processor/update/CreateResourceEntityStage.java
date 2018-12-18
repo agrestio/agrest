@@ -13,7 +13,7 @@ import org.apache.cayenne.di.Inject;
 /**
  * @since 2.13
  */
-public class CreateResourceEntityStage implements Processor<UpdateContext<?>> {
+public class CreateResourceEntityStage implements Processor<UpdateContext<?, ?>> {
 
     private IMetadataService metadataService;
     private IIncludeMerger includeMerger;
@@ -30,14 +30,14 @@ public class CreateResourceEntityStage implements Processor<UpdateContext<?>> {
     }
 
     @Override
-    public ProcessorOutcome execute(UpdateContext<?> context) {
+    public ProcessorOutcome execute(UpdateContext<?, ?> context) {
         doExecute(context);
         return ProcessorOutcome.CONTINUE;
     }
 
-    protected <T> void doExecute(UpdateContext<T> context) {
+    protected <T, E> void doExecute(UpdateContext<T, E> context) {
         AgEntity<T> entity = metadataService.getAgEntity(context.getType());
-        ResourceEntity<T> resourceEntity = new ResourceEntity<>(entity);
+        ResourceEntity<T, E> resourceEntity = new ResourceEntity<>(entity);
 
         AgRequest request = context.getRawRequest();
         if (request != null) {

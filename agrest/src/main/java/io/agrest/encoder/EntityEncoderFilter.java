@@ -26,7 +26,7 @@ public abstract class EntityEncoderFilter<T> implements EncoderFilter {
 	protected abstract boolean willEncode(T object);
 
 	@Override
-	public boolean matches(ResourceEntity<?> resourceEntity) {
+	public boolean matches(ResourceEntity<?, ?> resourceEntity) {
 		return agEntity == resourceEntity.getAgEntity();
 	}
 

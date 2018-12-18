@@ -25,7 +25,7 @@ class RequestConstraintsHandler {
 	RequestConstraintsHandler() {
 	}
 
-	<T> boolean constrainResponse(ResourceEntity<T> resourceEntity, Constraint<T> c) {
+	<T, E> boolean constrainResponse(ResourceEntity<T, E> resourceEntity, Constraint<T, E> c) {
 
 		// Null entity means we don't need to worry about unauthorized
 		// attributes and relationships
@@ -41,7 +41,7 @@ class RequestConstraintsHandler {
 		return true;
 	}
 
-	<T> boolean constrainUpdate(UpdateContext<T> context, Constraint<T> c) {
+	<T, E> boolean constrainUpdate(UpdateContext<T, E> context, Constraint<T, E> c) {
 
 		if (context.getUpdates().isEmpty()) {
 			return true;
@@ -55,7 +55,7 @@ class RequestConstraintsHandler {
 		return true;
 	}
 
-	private void applyForWrite(UpdateContext<?> context, ConstrainedAgEntity constraints) {
+	private void applyForWrite(UpdateContext<?, ?> context, ConstrainedAgEntity constraints) {
 
 		if (!constraints.isIdIncluded()) {
 			context.setIdUpdatesDisallowed(true);
@@ -93,7 +93,7 @@ class RequestConstraintsHandler {
 		}
 	}
 
-	private void applyForRead(ResourceEntity<?> target, ConstrainedAgEntity constraints) {
+	private <T, E> void applyForRead(ResourceEntity<T, E> target, ConstrainedAgEntity<T, E> constraints) {
 
 		if (!constraints.isIdIncluded()) {
 			target.excludeId();
@@ -115,10 +115,10 @@ class RequestConstraintsHandler {
 			}
 		}
 
-		Iterator<Entry<String, ResourceEntity<?>>> rit = target.getChildren().entrySet().iterator();
+		Iterator<Entry<String, ResourceEntity<?, ?>>> rit = target.getChildren().entrySet().iterator();
 		while (rit.hasNext()) {
 
-			Entry<String, ResourceEntity<?>> e = rit.next();
+			Entry<String, ResourceEntity<?, ?>> e = rit.next();
 			ConstrainedAgEntity sourceChild = constraints.getChild(e.getKey());
 			if (sourceChild != null) {
 
@@ -138,9 +138,8 @@ class RequestConstraintsHandler {
 			}
 		}
 
-		if (constraints.getQualifier() != null) {
-			target.andQualifier(constraints.getQualifier());
-		}
+		constraints.getAndQualifiers().stream().forEach(a -> target.andQualifier(a));
+		constraints.getOrQualifiers().stream().forEach(o -> target.orQualifier(o));
 
 		// process 'mapByPath' ... treat it as a regular relationship/attribute
 		// path.. Ignoring 'mapBy', presuming it matches the path. This way we

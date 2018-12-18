@@ -4,7 +4,6 @@ import io.agrest.processor.Processor;
 import io.agrest.processor.ProcessorOutcome;
 import io.agrest.runtime.processor.select.SelectContext;
 import org.apache.cayenne.di.Inject;
-import io.agrest.backend.exp.Expression;
 import io.agrest.backend.query.Ordering;
 
 import java.util.ArrayList;
@@ -13,7 +12,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-public class PojoFetchStage implements Processor<SelectContext<?>> {
+public class PojoFetchStage implements Processor<SelectContext<?, ?>> {
 
     private PojoDB db;
 
@@ -22,12 +21,12 @@ public class PojoFetchStage implements Processor<SelectContext<?>> {
     }
 
     @Override
-    public ProcessorOutcome execute(SelectContext<?> context) {
+    public ProcessorOutcome execute(SelectContext<?, ?> context) {
         findObjects(context);
         return ProcessorOutcome.CONTINUE;
     }
 
-    <T> void findObjects(SelectContext<T> context) {
+    <T, E> void findObjects(SelectContext<T, E> context) {
 
         Map<Object, T> typeBucket = db.bucketForType(context.getType());
         if (context.isById()) {
@@ -39,7 +38,7 @@ public class PojoFetchStage implements Processor<SelectContext<?>> {
         // clone the list and then filter/sort it as needed
         List<T> list = new ArrayList<>(typeBucket.values());
 
-        Expression filter = context.getEntity().getQualifier();
+        E filter = context.getEntity().getQualifier();
         if (filter != null) {
 
             Iterator<T> it = list.iterator();

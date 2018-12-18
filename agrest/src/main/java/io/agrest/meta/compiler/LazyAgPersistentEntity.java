@@ -4,7 +4,6 @@ import io.agrest.meta.AgAttribute;
 import io.agrest.meta.AgPersistentAttribute;
 import io.agrest.meta.AgPersistentEntity;
 import io.agrest.meta.AgRelationship;
-import org.apache.cayenne.map.ObjEntity;
 
 import java.util.Collection;
 import java.util.function.Supplier;
@@ -12,17 +11,17 @@ import java.util.function.Supplier;
 /**
  * @since 2.0
  */
-public class LazyAgPersistentEntity<T> extends BaseLazyAgEntity<T, AgPersistentEntity<T>> implements AgPersistentEntity<T> {
+public class LazyAgPersistentEntity<T, O> extends BaseLazyAgEntity<T, AgPersistentEntity<T, O>> implements AgPersistentEntity<T, O> {
 
     private Class<T> type;
 
-    public LazyAgPersistentEntity(Class<T> type, Supplier<AgPersistentEntity<T>> delegateSupplier) {
+    public LazyAgPersistentEntity(Class<T> type, Supplier<AgPersistentEntity<T, O>> delegateSupplier) {
         super(delegateSupplier);
         this.type = type;
     }
 
     @Override
-    public ObjEntity getObjEntity() {
+    public O getObjEntity() {
         return getDelegate().getObjEntity();
     }
 

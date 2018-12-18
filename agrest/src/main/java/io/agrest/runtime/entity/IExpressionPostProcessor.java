@@ -2,12 +2,11 @@ package io.agrest.runtime.entity;
 
 import io.agrest.AgException;
 import io.agrest.meta.AgEntity;
-import io.agrest.backend.exp.Expression;
 
 /**
  * @since 2.2
  */
-public interface IExpressionPostProcessor {
+public interface IExpressionPostProcessor<E> {
 
     /**
      * Perform any post-processing and cleanup that might be necessary for the successful execution of expression
@@ -16,5 +15,5 @@ public interface IExpressionPostProcessor {
      *
      * @since 2.2
      */
-    Expression process(AgEntity<?> entity, Expression exp);
+    E process(AgEntity<?> entity, E exp);
 }

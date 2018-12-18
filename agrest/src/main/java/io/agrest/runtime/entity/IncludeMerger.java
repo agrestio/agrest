@@ -17,12 +17,12 @@ import java.util.List;
 public class IncludeMerger implements IIncludeMerger {
 
     private ISortMerger sortConstructor;
-    private ICayenneExpMerger expConstructor;
+    private IAgExpMerger expConstructor;
     private IMapByMerger mapByConstructor;
     private ISizeMerger sizeConstructor;
 
     public IncludeMerger(
-            @Inject ICayenneExpMerger expConstructor,
+            @Inject IAgExpMerger expConstructor,
             @Inject ISortMerger sortConstructor,
             @Inject IMapByMerger mapByConstructor,
             @Inject ISizeMerger sizeConstructor) {
@@ -39,7 +39,7 @@ public class IncludeMerger implements IIncludeMerger {
      * to relationship.
      */
     @SuppressWarnings({"unchecked", "rawtypes"})
-    public static ResourceEntity<?> processIncludePath(ResourceEntity<?> parent, String path) {
+    public static ResourceEntity<?, ?> processIncludePath(ResourceEntity<?, ?> parent, String path) {
         int dot = path.indexOf(PathConstants.DOT);
 
         if (dot == 0) {
@@ -66,7 +66,7 @@ public class IncludeMerger implements IIncludeMerger {
         AgRelationship relationship = agEntity.getRelationship(property);
         if (relationship != null) {
 
-            ResourceEntity<?> childEntity = parent.getChild(property);
+            ResourceEntity<?, ?> childEntity = parent.getChild(property);
             if (childEntity == null) {
                 AgEntity<?> targetType = relationship.getTargetEntity();
                 childEntity = new ResourceEntity(targetType, relationship);
@@ -92,7 +92,7 @@ public class IncludeMerger implements IIncludeMerger {
         throw new AgException(Status.BAD_REQUEST, "Invalid include path: " + path);
     }
 
-    public static void processDefaultIncludes(ResourceEntity<?> resourceEntity) {
+    public static void processDefaultIncludes(ResourceEntity<?, ?> resourceEntity) {
         // either there are no includes (taking into account Id) or all includes
         // are relationships
         if (!resourceEntity.isIdIncluded() && resourceEntity.getAttributes().isEmpty()) {
@@ -120,7 +120,7 @@ public class IncludeMerger implements IIncludeMerger {
      * @since 2.13
      */
     @Override
-    public void merge(ResourceEntity<?> resourceEntity, List<Include> includes) {
+    public void merge(ResourceEntity<?, ?> resourceEntity, List<Include> includes) {
         for (Include include : includes) {
             processOne(resourceEntity, include);
         }
@@ -128,7 +128,7 @@ public class IncludeMerger implements IIncludeMerger {
         IncludeMerger.processDefaultIncludes(resourceEntity);
     }
 
-    private void processOne(ResourceEntity<?> resourceEntity, Include include) {
+    private void processOne(ResourceEntity<?, ?> resourceEntity, Include include) {
         if (include != null) {
             processIncludeObject(resourceEntity, include);
             // processes nested includes
@@ -136,8 +136,8 @@ public class IncludeMerger implements IIncludeMerger {
         }
     }
 
-    private void processIncludeObject(ResourceEntity<?> rootEntity, Include include) {
-        ResourceEntity<?> includeEntity;
+    private void processIncludeObject(ResourceEntity<?, ?> rootEntity, Include include) {
+        ResourceEntity<?, ?> includeEntity;
 
         final String value = include.getValue();
         if (value != null && !value.isEmpty()) {
