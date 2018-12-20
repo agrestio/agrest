@@ -63,8 +63,7 @@ public class CayenneModule implements Module {
         binder.bind(CayenneEntityCompiler.class).to(CayenneEntityCompiler.class);
 
         binder.bindList(AgEntityCompiler.class)
-                .add(CayenneEntityCompiler.class)
-                .add(PojoEntityCompiler.class);
+                .insertBefore(CayenneEntityCompiler.class, PojoEntityCompiler.class);
 
         MapBuilder<ExceptionMapper> mapperBuilder = binder.bindMap(ExceptionMapper.class)
                 .put(CayenneRuntimeException.class.getName(), CayenneRuntimeExceptionMapper.class)

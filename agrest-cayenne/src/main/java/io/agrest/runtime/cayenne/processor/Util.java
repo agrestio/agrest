@@ -8,6 +8,7 @@ import org.apache.cayenne.ObjectContext;
 import org.apache.cayenne.exp.Expression;
 import org.apache.cayenne.exp.ExpressionFactory;
 import org.apache.cayenne.exp.parser.ASTEqual;
+import org.apache.cayenne.exp.parser.ASTObjPath;
 import org.apache.cayenne.exp.parser.SimpleNode;
 import org.apache.cayenne.map.DbJoin;
 import org.apache.cayenne.map.DbRelationship;
@@ -53,8 +54,10 @@ public final class Util {
 			return query.selectOne(context);
 		} else {
 
-			AgAttribute<SimpleNode> attribute = agEntity.getIds().iterator().next();
-			return ObjectSelect.query(type, new ASTEqual(attribute.getPathExp(), id)).selectOne(context);
+			Object path = agEntity.getIds().iterator().next().getPathExp();
+
+			return ObjectSelect.query(type,
+					new ASTEqual(path instanceof String ? new ASTObjPath(path) : (SimpleNode)path , id)).selectOne(context);
 		}
 	}
 
