@@ -11,8 +11,9 @@ import io.agrest.meta.CayenneAgAttribute;
 import io.agrest.meta.CayenneAgDbAttribute;
 import io.agrest.meta.CayenneAgEntity;
 import io.agrest.meta.CayenneAgRelationship;
-import io.agrest.runtime.cayenne.ICayennePersister;
+import io.agrest.runtime.IAgPersister;
 import io.agrest.runtime.parser.converter.IJsonValueConverterFactory;
+import org.apache.cayenne.ObjectContext;
 import org.apache.cayenne.dba.TypesMapping;
 import org.apache.cayenne.di.Inject;
 import org.apache.cayenne.map.DbAttribute;
@@ -42,7 +43,7 @@ public class CayenneEntityCompiler implements AgEntityCompiler {
     private IJsonValueConverterFactory converterFactory;
 
     public CayenneEntityCompiler(
-            @Inject ICayennePersister cayennePersister,
+            @Inject IAgPersister<ObjectContext, EntityResolver>  cayennePersister,
             @Inject Map<String, AgEntityOverlay> entityOverlays,
             @Inject IJsonValueConverterFactory converterFactory) {
 

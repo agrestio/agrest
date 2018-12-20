@@ -10,9 +10,10 @@ import io.agrest.meta.AgPersistentAttribute;
 import io.agrest.meta.AgPersistentEntity;
 import io.agrest.processor.Processor;
 import io.agrest.processor.ProcessorOutcome;
-import io.agrest.runtime.cayenne.ICayennePersister;
+import io.agrest.runtime.IAgPersister;
 import io.agrest.runtime.cayenne.processor.Util;
 import io.agrest.runtime.processor.select.SelectContext;
+import org.apache.cayenne.ObjectContext;
 import org.apache.cayenne.di.Inject;
 import org.apache.cayenne.exp.Expression;
 import org.apache.cayenne.exp.ExpressionFactory;
@@ -34,7 +35,7 @@ public abstract class CayenneAssembleQueryStage implements Processor<SelectConte
     private EntityResolver entityResolver;
     private OrderingConverter<Ordering> orderingConverter;
 
-    public CayenneAssembleQueryStage(@Inject ICayennePersister persister,
+    public CayenneAssembleQueryStage(@Inject IAgPersister<ObjectContext, EntityResolver>  persister,
                                      @Inject OrderingConverter orderingConverter) {
         this.entityResolver = persister.entityResolver();
         this.orderingConverter = orderingConverter;

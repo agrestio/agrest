@@ -11,7 +11,7 @@ import io.agrest.meta.compiler.CayenneEntityCompiler;
 import io.agrest.meta.compiler.AgEntityCompiler;
 import io.agrest.meta.parser.IResourceParser;
 import io.agrest.meta.parser.ResourceParser;
-import io.agrest.runtime.cayenne.ICayennePersister;
+import io.agrest.runtime.IAgPersister;
 import io.agrest.runtime.cayenne.converter.CayenneExpressionMatcher;
 import io.agrest.runtime.cayenne.converter.CayenneOrderingConverter;
 import io.agrest.runtime.cayenne.converter.CayenneOrderingSorter;
@@ -69,7 +69,7 @@ public class Java8TestWithCayenneMapping {
 		runtime = null;
 	}
 
-	protected ICayennePersister mockCayennePersister;
+	protected IAgPersister mockCayennePersister;
 	protected IMetadataService metadataService;
 	protected IResourceMetadataService resourceMetadataService;
 	protected IResourceParser resourceParser;
@@ -84,7 +84,7 @@ public class Java8TestWithCayenneMapping {
 
 		ObjectContext sharedContext = runtime.newContext();
 
-		this.mockCayennePersister = mock(ICayennePersister.class);
+		this.mockCayennePersister = mock(IAgPersister.class);
 		when(mockCayennePersister.entityResolver()).thenReturn(runtime.getChannel().getEntityResolver());
 		when(mockCayennePersister.sharedContext()).thenReturn(sharedContext);
 		when(mockCayennePersister.newContext()).thenReturn(runtime.newContext());

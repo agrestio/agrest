@@ -3,13 +3,14 @@ package io.agrest.runtime.cayenne.processor.select;
 import io.agrest.AgException;
 import io.agrest.backend.util.converter.OrderingConverter;
 import io.agrest.meta.AgEntity;
-import io.agrest.processor.Processor;
 import io.agrest.processor.ProcessorOutcome;
-import io.agrest.runtime.cayenne.ICayennePersister;
+import io.agrest.runtime.IAgPersister;
 import io.agrest.runtime.processor.select.SelectContext;
 import org.apache.cayenne.DataObject;
+import org.apache.cayenne.ObjectContext;
 import org.apache.cayenne.di.Inject;
 import org.apache.cayenne.exp.Expression;
+import org.apache.cayenne.map.EntityResolver;
 import org.apache.cayenne.query.SelectQuery;
 
 import javax.ws.rs.core.Response;
@@ -20,9 +21,9 @@ import java.util.List;
  */
 public class CayenneFetchDataStage extends CayenneAssembleQueryStage {
 
-    private ICayennePersister persister;
+    private IAgPersister<ObjectContext, EntityResolver> persister;
 
-    public CayenneFetchDataStage(@Inject ICayennePersister persister,
+    public CayenneFetchDataStage(@Inject IAgPersister persister,
                                  @Inject OrderingConverter orderingConverter) {
 
         // Store persister, don't extract ObjectContext from it right away.

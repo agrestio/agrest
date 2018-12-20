@@ -4,11 +4,9 @@ import io.agrest.processor.ProcessingContext;
 import io.agrest.processor.Processor;
 import io.agrest.processor.ProcessorOutcome;
 import io.agrest.runtime.IAgPersister;
-import io.agrest.runtime.cayenne.ICayennePersister;
 import io.agrest.runtime.processor.update.UpdateContext;
 import org.apache.cayenne.ObjectContext;
 import org.apache.cayenne.di.Inject;
-import org.apache.cayenne.exp.Expression;
 
 /**
  * @since 2.7

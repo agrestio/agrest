@@ -8,7 +8,7 @@ import io.agrest.encoder.EncoderFilter;
 import io.agrest.encoder.PropertyMetadataEncoder;
 import io.agrest.it.fixture.cayenne.E2;
 import io.agrest.it.fixture.cayenne.E3;
-import io.agrest.runtime.cayenne.ICayennePersister;
+import io.agrest.runtime.IAgPersister;
 import io.agrest.runtime.encoder.AttributeEncoderFactoryProvider;
 import io.agrest.runtime.encoder.IAttributeEncoderFactory;
 import io.agrest.runtime.encoder.IStringConverterFactory;
@@ -19,6 +19,7 @@ import io.agrest.unit.TestWithCayenneMapping;
 import org.apache.cayenne.Cayenne;
 import org.apache.cayenne.ObjectContext;
 import org.apache.cayenne.ObjectId;
+import org.apache.cayenne.map.EntityResolver;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -35,14 +36,14 @@ import static org.mockito.Mockito.when;
 public class SenchaEncoderServiceTest extends TestWithCayenneMapping {
 
     private SenchaEncoderService encoderService;
-    private ICayennePersister cayenneService;
+    private IAgPersister<ObjectContext, EntityResolver>  cayenneService;
     private List<EncoderFilter> filters;
 
     @Before
     public void before() {
 
         ObjectContext sharedContext = TestWithCayenneMapping.runtime.newContext();
-        cayenneService = mock(ICayennePersister.class);
+        cayenneService = mock(IAgPersister.class);
         when(cayenneService.sharedContext()).thenReturn(sharedContext);
         when(cayenneService.newContext()).thenReturn(TestWithCayenneMapping.runtime.newContext());
 
@@ -53,7 +54,7 @@ public class SenchaEncoderServiceTest extends TestWithCayenneMapping {
 
         encoderService = new SenchaEncoderService(this.filters, attributeEncoderFactory, stringConverterFactory,
                 relationshipMapper, Collections.<String, PropertyMetadataEncoder>emptyMap(),
-                expressionConverter, expressionMatcher, orderingConverter, orderingSorter);
+                expressionMatcher, orderingConverter, orderingSorter);
     }
 
     @Test
@@ -62,7 +63,7 @@ public class SenchaEncoderServiceTest extends TestWithCayenneMapping {
         filters.add(new EncoderFilter() {
 
             @Override
-            public boolean matches(ResourceEntity<?> entity) {
+            public boolean matches(ResourceEntity<?, ?> entity) {
                 return true;
             }
 
@@ -98,10 +99,10 @@ public class SenchaEncoderServiceTest extends TestWithCayenneMapping {
             }
         });
 
-        ResourceEntity<E2> e2Descriptor = getResourceEntity(E2.class);
+        ResourceEntity<E2, ?> e2Descriptor = getResourceEntity(E2.class);
         e2Descriptor.includeId();
 
-        ResourceEntity<E3> e3Descriptor = getResourceEntity(E3.class);
+        ResourceEntity<E3, ?> e3Descriptor = getResourceEntity(E3.class);
         e3Descriptor.includeId();
         e3Descriptor.getChildren().put(E3.E2.getName(), e2Descriptor);
 
@@ -131,7 +132,7 @@ public class SenchaEncoderServiceTest extends TestWithCayenneMapping {
         assertEquals("{\"success\":true,\"data\":[{\"id\":6}],\"total\":1}", toJson(e32, e3Descriptor));
     }
 
-    private String toJson(Object object, ResourceEntity<?> entity) throws IOException {
+    private String toJson(Object object, ResourceEntity<?, ?> entity) throws IOException {
 
         Encoder encoder = encoderService.dataEncoder(entity);
 

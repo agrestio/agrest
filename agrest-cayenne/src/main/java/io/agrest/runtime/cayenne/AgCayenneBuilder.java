@@ -1,5 +1,6 @@
 package io.agrest.runtime.cayenne;
 
+import io.agrest.runtime.AgBuilder;
 import io.agrest.runtime.AgRuntime;
 import io.agrest.runtime.IAgPersister;
 import org.apache.cayenne.configuration.server.ServerRuntime;
@@ -26,11 +27,11 @@ public class AgCayenneBuilder {
      *
      * @since 1.14
      */
-    public static io.agrest.runtime.AgBuilder builder(ServerRuntime cayenneRuntime) {
+    public static AgBuilder builder(ServerRuntime cayenneRuntime) {
 
         CayennePersister cayennePersister = new CayennePersister(cayenneRuntime);
 
-        return new io.agrest.runtime.AgBuilder()
+        return new AgBuilder()
                 .agPersister(cayennePersister)
                 .module(binder -> {
                     binder.bind(IAgPersister.class).toInstance(cayennePersister);

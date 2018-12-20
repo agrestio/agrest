@@ -48,10 +48,15 @@ public class CayenneAssembleQueryStageTest extends TestWithCayenneMapping {
 		context.setEntity(resourceEntity);
 
 		SelectQuery<E1> amended = makeQueryStage.buildQuery(context);
-		assertSame(query, amended);
-		assertEquals(2, amended.getOrderings().size());
-		assertSame(o1, amended.getOrderings().get(0));
-		assertEquals(o2, amended.getOrderings().get(1));
+
+		//
+		// SelectQuery object is not stored in the Context
+		//
+
+		assertNotSame(query, amended);
+		assertEquals(1, amended.getOrderings().size());
+		assertEquals(o2, amended.getOrderings().get(0));
+//		assertEquals(o2, amended.getOrderings().get(1));
 	}
 
 	@Test
@@ -69,7 +74,12 @@ public class CayenneAssembleQueryStageTest extends TestWithCayenneMapping {
 //		context.setSelect(query);
 
 		SelectQuery<E2> amended = makeQueryStage.buildQuery(context);
-		assertSame(query, amended);
+
+		//
+		// SelectQuery object is not stored in the Context
+		//
+
+		assertNotEquals(query, amended);
 		PrefetchTreeNode rootPrefetch = amended.getPrefetchTree();
 
 		assertNotNull(rootPrefetch);
@@ -125,15 +135,20 @@ public class CayenneAssembleQueryStageTest extends TestWithCayenneMapping {
 		SelectQuery<E1> query = makeQueryStage.buildQuery(c1);
 		assertEquals(extraQualifier, query.getQualifier());
 
-		SelectQuery<E1> query2 = new SelectQuery<E1>(E1.class);
-		query2.setQualifier(E1.NAME.in("a", "b"));
+		//
+		// SelectQuery object is not stored in the Context
+		//
 
-		SelectContext<E1, Expression> c2 = new SelectContext<>(E1.class);
-//		c2.setSelect(query2);
-		c2.setEntity(resourceEntity);
-
-		SelectQuery<E1> query2Amended = makeQueryStage.buildQuery(c2);
-		assertEquals(E1.NAME.in("a", "b").andExp(E1.NAME.eq("X")), query2Amended.getQualifier());
+//		SelectQuery<E1> query2 = new SelectQuery<E1>(E1.class);
+//		query2.setQualifier(E1.NAME.in("a", "b"));
+//
+//		SelectContext<E1, Expression> c2 = new SelectContext<>(E1.class);
+////		c2.setSelect(query2);
+//		c2.setEntity(resourceEntity);
+//
+//		SelectQuery<E1> query2Amended = makeQueryStage.buildQuery(c2);
+//
+//		assertEquals(E1.NAME.in("a", "b").andExp(E1.NAME.eq("X")), query2Amended.getQualifier());
 	}
 
 	@Test

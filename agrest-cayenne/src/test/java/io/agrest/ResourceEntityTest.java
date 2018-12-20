@@ -15,13 +15,20 @@ public class ResourceEntityTest {
 	@Test
 	public void testQualifier() {
 		@SuppressWarnings("unchecked")
-		ResourceEntity<E2, Expression> e2 = new ResourceEntity<>(mock(AgPersistentEntity.class));
-		assertNull(e2.getQualifier());
+		ResourceEntity<E2, Expression> resourceEntity = new ResourceEntity<>(mock(AgPersistentEntity.class));
+		assertNull(resourceEntity.getQualifier());
 
-		e2.andQualifier(ExpressionFactory.exp("a = 1"));
-		assertEquals("a = 1", e2.getQualifier().toString());
+		resourceEntity.andQualifier(ExpressionFactory.exp("a = 1"));
+		assertEquals("a = 1", resourceEntity.getQualifier().toString());
 
-		e2.andQualifier(ExpressionFactory.exp("b = 2"));
-		assertEquals("(a = 1) and (b = 2)", e2.getQualifier().toString());
+		resourceEntity.andQualifier(ExpressionFactory.exp("b = 2"));
+
+		if (!resourceEntity.isQualified()) {
+			resourceEntity.qualify(
+					(Expression e1, Expression e2) -> e1.andExp(e2),
+					(Expression e1, Expression e2) -> e1.orExp(e2));
+		}
+
+		assertEquals("(a = 1) and (b = 2)", resourceEntity.getQualifier().toString());
 	}
 }
