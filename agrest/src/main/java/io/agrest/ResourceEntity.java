@@ -56,8 +56,8 @@ public class ResourceEntity<T, E> {
         this.orderings = new ArrayList<>(2);
         this.extraProperties = new HashMap<>();
         this.agEntity = agEntity;
-        this.andQualifiers = Collections.EMPTY_LIST;
-        this.orQualifiers = Collections.EMPTY_LIST;
+        this.andQualifiers = new ArrayList<>();
+        this.orQualifiers = new ArrayList<>();
     }
 
     public ResourceEntity(AgEntity<T> agEntity, AgRelationship incoming) {

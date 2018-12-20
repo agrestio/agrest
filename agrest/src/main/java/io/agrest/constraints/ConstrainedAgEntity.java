@@ -3,6 +3,7 @@ package io.agrest.constraints;
 import io.agrest.meta.AgAttribute;
 import io.agrest.meta.AgEntity;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -37,8 +38,8 @@ public class ConstrainedAgEntity<T, E> {
         // using HashSet, as we'll need fast 'contains' calls on attributes
         this.attributes = new HashSet<>();
 
-        this.andQualifiers = Collections.EMPTY_LIST;
-        this.orQualifiers = Collections.EMPTY_LIST;
+        this.andQualifiers = new ArrayList<>();
+        this.orQualifiers = new ArrayList<>();
     }
 
     Collection<String> getAttributes() {

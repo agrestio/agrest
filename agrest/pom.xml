@@ -106,35 +106,6 @@
                     </execution>
                 </executions>
             </plugin>
-            <!--
-
-            # Uncomment to rebuild ExpressionParser using JavaCC
-            # Copy generated classes to src/main/java/io/agrest/backend/exp/parser
-			# except all AST*, Node, SimpleNode, JavaCharStream
-
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>javacc-maven-plugin</artifactId>
-                <version>2.6</version>
-                <executions>
-                    <execution>
-                        <id>jjtree</id>
-                        <phase>generate-sources</phase>
-                        <goals>
-                            <goal>jjtree-javacc</goal>
-                        </goals>
-                        <configuration>
-                            <sourceDirectory>
-                                ${basedir}/src/main/jjtree/io/agrest/exp/parser
-                            </sourceDirectory>
-                            <outputDirectory>
-                                ${basedir}/src/main/java
-                            </outputDirectory>
-                            <grammarEncoding>UTF-8</grammarEncoding>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>-->
         </plugins>
     </build>
 

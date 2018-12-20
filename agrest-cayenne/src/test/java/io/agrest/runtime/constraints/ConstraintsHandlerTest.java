@@ -4,6 +4,7 @@ import io.agrest.EntityConstraint;
 import io.agrest.ResourceEntity;
 import io.agrest.SizeConstraints;
 import io.agrest.constraints.Constraint;
+import io.agrest.constraints.ConstraintsBuilder;
 import io.agrest.it.fixture.cayenne.E1;
 import io.agrest.it.fixture.cayenne.E2;
 import io.agrest.it.fixture.cayenne.E3;
@@ -236,15 +237,22 @@ public class ConstraintsHandlerTest {
 
         Expression q1 = exp("a = 5");
 
-        Constraint<E1, Object> tc1 = Constraint.excludeAll(E1.class).and(q1);
+        Constraint<E1, Expression> tc1 = Constraint.excludeAll(E1.class, Expression.class).and(q1);
 
-        ResourceEntity<E1, Object> te1 = new ResourceEntity<>(age0);
+        ResourceEntity<E1, Expression> te1 = new ResourceEntity<>(age0);
         constraintHandler.constrainResponse(te1, null, tc1);
         assertEquals(exp("a = 5"), te1.getQualifier());
 
-        ResourceEntity<E1, Object> te2 = new ResourceEntity<>(age0);
+        ResourceEntity<E1, Expression> te2 = new ResourceEntity<>(age0);
         te2.andQualifier(exp("b = 'd'"));
         constraintHandler.constrainResponse(te2, null, tc1);
+
+        Expression expression = te2.isQualified()
+                ? te2.getQualifier()
+                : te2.qualify(
+                    (Expression e1, Expression e2) -> e1.andExp(e2),
+                    (Expression e1, Expression e2) -> e1.orExp(e2));
+
         assertEquals(exp("b = 'd' and a = 5"), te2.getQualifier());
     }
 
