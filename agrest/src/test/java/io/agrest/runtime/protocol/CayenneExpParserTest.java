@@ -3,7 +3,7 @@ package io.agrest.runtime.protocol;
 import io.agrest.protocol.CayenneExp;
 import io.agrest.runtime.jackson.IJacksonService;
 import io.agrest.runtime.jackson.JacksonService;
-import io.agrest.unit.TestWithCayenneMapping;
+//import io.agrest.unit.TestWithCayenneMapping;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -12,7 +12,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
-public class CayenneExpParserTest extends TestWithCayenneMapping {
+public class CayenneExpParserTest /*extends TestWithCayenneMapping*/ {
 
     private CayenneExpParser parser;
 

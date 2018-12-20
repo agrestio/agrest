@@ -3,7 +3,6 @@ package io.agrest.runtime.cayenne;
 import io.agrest.ObjectMapper;
 import io.agrest.ObjectMapperFactory;
 import io.agrest.runtime.processor.update.UpdateContext;
-import org.apache.cayenne.exp.Expression;
 import org.apache.cayenne.exp.Property;
 
 /**

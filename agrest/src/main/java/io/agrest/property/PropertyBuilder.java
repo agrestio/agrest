@@ -51,10 +51,6 @@ public class PropertyBuilder implements EntityProperty {
 		return new PropertyBuilder(reader, GenericEncoder.encoder());
 	}
 
-	public static PropertyBuilder dataObjectProperty() {
-		return property(DataObjectPropertyReader.reader());
-	}
-
 	private PropertyBuilder(PropertyReader reader, Encoder encoder) {
 		this.encoder = encoder;
 		this.reader = reader;

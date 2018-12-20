@@ -2,14 +2,14 @@ package io.agrest.runtime.protocol;
 
 import io.agrest.protocol.Sort;
 import io.agrest.runtime.jackson.JacksonService;
-import io.agrest.unit.TestWithCayenneMapping;
+//import io.agrest.unit.TestWithCayenneMapping;
 import org.junit.Before;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-public class SortParserTest extends TestWithCayenneMapping {
+public class SortParserTest /*extends TestWithCayenneMapping*/ {
 
 	private SortParser parser;
 

@@ -6,9 +6,7 @@ import io.agrest.meta.LazyAgDataMap;
 import io.agrest.meta.AgDataMap;
 import io.agrest.meta.Types;
 import io.agrest.meta.compiler.AgEntityCompiler;
-import io.agrest.runtime.cayenne.ICayennePersister;
 import org.apache.cayenne.di.Inject;
-import org.apache.cayenne.map.EntityResolver;
 
 import javax.ws.rs.core.Response.Status;
 import java.lang.reflect.Type;
@@ -16,12 +14,10 @@ import java.util.List;
 
 public class MetadataService implements IMetadataService {
 
-	private EntityResolver entityResolver;
 	private AgDataMap dataMap;
 
-	public MetadataService(@Inject List<AgEntityCompiler> entityCompilers, @Inject ICayennePersister cayenneService) {
+	public MetadataService(@Inject List<AgEntityCompiler> entityCompilers) {
 
-		this.entityResolver = cayenneService.entityResolver();
 		this.dataMap = new LazyAgDataMap(entityCompilers);
 	}
 

@@ -1,13 +1,6 @@
 package io.agrest.runtime.encoder;
 
-import java.sql.Time;
-import java.sql.Timestamp;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.OffsetDateTime;
 import java.util.Collection;
-import java.util.Date;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.concurrent.ConcurrentHashMap;
@@ -24,6 +17,7 @@ import io.agrest.meta.AgPersistentEntity;
 import io.agrest.meta.AgPersistentRelationship;
 import io.agrest.meta.AgRelationship;
 import io.agrest.property.BeanPropertyReader;
+import io.agrest.property.DataObjectPropertyReader;
 import io.agrest.property.IdPropertyReader;
 import io.agrest.property.PropertyBuilder;
 import io.agrest.property.PropertyReader;
@@ -97,7 +91,7 @@ public class AttributeEncoderFactory implements IAttributeEncoderFactory {
 
 	private EntityProperty getProperty(AgEntity<?> entity, PropertyReader reader, boolean persistent, Encoder encoder) {
 		if (persistent && DataObject.class.isAssignableFrom(entity.getType())) {
-			return PropertyBuilder.dataObjectProperty().encodedWith(encoder);
+			return PropertyBuilder.property(DataObjectPropertyReader.reader()).encodedWith(encoder);
 		} else if(reader != null) {
 			return PropertyBuilder.property(reader);
 		} else {

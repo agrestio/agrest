@@ -1,10 +1,11 @@
 package io.agrest.runtime.cayenne;
 
+import io.agrest.runtime.IAgPersister;
 import org.apache.cayenne.ObjectContext;
 import org.apache.cayenne.configuration.server.ServerRuntime;
 import org.apache.cayenne.map.EntityResolver;
 
-public class CayennePersister implements ICayennePersister {
+public class CayennePersister implements IAgPersister<ObjectContext, EntityResolver> {
 
 	private ServerRuntime runtime;
 	private ObjectContext sharedContext;

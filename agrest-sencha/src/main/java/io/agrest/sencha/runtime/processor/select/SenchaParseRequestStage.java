@@ -38,7 +38,7 @@ public class SenchaParseRequestStage extends ParseRequestStage {
     }
 
     @Override
-    protected <T> void doExecute(SelectContext<T> context) {
+    protected <T, E> void doExecute(SelectContext<T, E> context) {
 
         super.doExecute(context);
 

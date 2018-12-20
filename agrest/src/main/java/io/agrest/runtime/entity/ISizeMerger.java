@@ -9,5 +9,5 @@ import io.agrest.protocol.Start;
  */
 public interface ISizeMerger {
 
-    void merge(ResourceEntity<?> resourceEntity, Start start, Limit limit);
+    void merge(ResourceEntity<?, ?> resourceEntity, Start start, Limit limit);
 }

@@ -1,13 +1,8 @@
 package io.agrest.backend.query;
 
-import io.agrest.backend.exp.Expression;
-import io.agrest.backend.exp.ExpressionException;
-import io.agrest.backend.exp.parser.ASTDbPath;
-import io.agrest.backend.exp.parser.ASTObjPath;
 import io.agrest.backend.util.ConversionUtil;
 
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
@@ -21,9 +16,12 @@ import java.util.List;
  */
 public class Ordering implements Comparator<Object> {
 
+    protected static final String DB_PREFIX = "db:";
+    protected static final String OBJ_PREFIX = "obj:";
+
     protected String sortSpecString;
     protected SortOrder sortOrder;
-    protected transient Expression sortSpec;
+    protected transient String sortSpec;
     protected boolean nullSortedFirst = true;
 
 
@@ -96,13 +94,13 @@ public class Ordering implements Comparator<Object> {
      */
     @Override
     public int compare(Object o1, Object o2) {
-        Expression exp = getSortSpec();
+        String exp = getSortSpec();
 
         Object value1 = null;
         Object value2 = null;
         try {
             value1 = Arrays.stream(o1.getClass().getMethods())
-                            .filter(m -> ("get" + exp.toString()).equalsIgnoreCase(m.getName()))
+                            .filter(m -> ("get" + exp).equalsIgnoreCase(m.getName()))
                             .findAny()
                             .get()
                             .invoke(o1);
@@ -112,7 +110,7 @@ public class Ordering implements Comparator<Object> {
 
         try {
             value2 = Arrays.stream(o2.getClass().getMethods())
-                            .filter(m -> ("get" + exp.toString()).equalsIgnoreCase(m.getName()))
+                            .filter(m -> ("get" + exp).equalsIgnoreCase(m.getName()))
                             .findAny()
                             .get()
                             .invoke(o2);
@@ -167,7 +165,7 @@ public class Ordering implements Comparator<Object> {
     /**
      * Returns the expression defining a ordering Java Bean property.
      */
-    public Expression getSortSpec() {
+    public String getSortSpec() {
         if (sortSpecString == null) {
             return null;
         }
@@ -177,12 +175,12 @@ public class Ordering implements Comparator<Object> {
         // Expression.fromString, and parse them manually
         if (sortSpec == null) {
 
-            if (sortSpecString.startsWith(ASTDbPath.DB_PREFIX)) {
-                sortSpec = new ASTDbPath(sortSpecString.substring(ASTDbPath.DB_PREFIX.length()));
-            } else if (sortSpecString.startsWith(ASTObjPath.OBJ_PREFIX)) {
-                sortSpec = new ASTObjPath(sortSpecString.substring(ASTObjPath.OBJ_PREFIX.length()));
+            if (sortSpecString.startsWith(DB_PREFIX)) {
+                sortSpec = sortSpecString.substring(DB_PREFIX.length());
+            } else if (sortSpecString.startsWith(OBJ_PREFIX)) {
+                sortSpec = sortSpecString.substring(OBJ_PREFIX.length());
             } else {
-                sortSpec = new ASTObjPath(sortSpecString);
+                sortSpec = sortSpecString;
             }
         }
 

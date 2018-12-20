@@ -3,7 +3,6 @@ package io.agrest.sencha.runtime.encoder;
 import com.fasterxml.jackson.core.JsonGenerator;
 import io.agrest.EntityProperty;
 import io.agrest.ResourceEntity;
-import io.agrest.backend.util.converter.ExpressionConverter;
 import io.agrest.backend.util.converter.ExpressionMatcher;
 import io.agrest.backend.util.converter.OrderingConverter;
 import io.agrest.backend.util.converter.OrderingSorter;
@@ -35,7 +34,6 @@ public class SenchaEncoderService extends EncoderService {
 								@Inject IStringConverterFactory stringConverterFactory,
 								@Inject IRelationshipMapper relationshipMapper,
 								@Inject Map<String, PropertyMetadataEncoder> propertyMetadataEncoders,
-								@Inject ExpressionConverter expressionConverter,
 								@Inject ExpressionMatcher expressionMatcher,
 								@Inject OrderingConverter orderingConverter,
 								@Inject OrderingSorter orderingSorter) {
@@ -44,14 +42,13 @@ public class SenchaEncoderService extends EncoderService {
 				stringConverterFactory,
 				relationshipMapper,
 				propertyMetadataEncoders,
-				expressionConverter,
 				expressionMatcher,
 				orderingConverter,
 				orderingSorter);
 	}
 
 	@Override
-	public <T> Encoder dataEncoder(ResourceEntity<T> entity) {
+	public <T, E> Encoder dataEncoder(ResourceEntity<T, E> entity) {
 		CollectionEncoder resultEncoder = resultEncoder(entity);
 		return new DataResponseEncoder("data", resultEncoder, "total", GenericEncoder.encoder()) {
 			@Override
@@ -64,7 +61,7 @@ public class SenchaEncoderService extends EncoderService {
 	}
 
 	@Override
-	protected Encoder toOneEncoder(ResourceEntity<?> resourceEntity, final AgRelationship relationship) {
+	protected Encoder toOneEncoder(ResourceEntity<?, ?> resourceEntity, final AgRelationship relationship) {
 		// to-one encoder is made of the following decorator layers (from outer
 		// to inner):
 		// (1) custom filters ->

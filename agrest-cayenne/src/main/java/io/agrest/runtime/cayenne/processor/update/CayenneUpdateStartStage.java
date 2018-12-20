@@ -3,6 +3,7 @@ package io.agrest.runtime.cayenne.processor.update;
 import io.agrest.processor.ProcessingContext;
 import io.agrest.processor.Processor;
 import io.agrest.processor.ProcessorOutcome;
+import io.agrest.runtime.IAgPersister;
 import io.agrest.runtime.cayenne.ICayennePersister;
 import io.agrest.runtime.processor.update.UpdateContext;
 import org.apache.cayenne.ObjectContext;
@@ -24,9 +25,9 @@ public class CayenneUpdateStartStage implements Processor<UpdateContext<?, ?>> {
         return (ObjectContext) context.getAttribute(CayenneUpdateStartStage.UPDATE_OBJECT_CONTEXT_ATTRIBITE);
     }
 
-    private ICayennePersister persister;
+    private IAgPersister persister;
 
-    public CayenneUpdateStartStage(@Inject ICayennePersister persister) {
+    public CayenneUpdateStartStage(@Inject IAgPersister persister) {
         this.persister = persister;
     }
 

@@ -35,13 +35,13 @@
             need to declare all transitive dependencies here -->
         <dependency>
             <groupId>io.agrest</groupId>
-            <artifactId>agrest</artifactId>
+            <artifactId>agrest-cayenne</artifactId>
             <scope>test</scope>
             <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>io.agrest</groupId>
-            <artifactId>agrest</artifactId>
+            <artifactId>agrest-cayenne</artifactId>
             <type>test-jar</type>
             <scope>test</scope>
             <version>${project.version}</version>

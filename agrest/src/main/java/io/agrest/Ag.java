@@ -13,15 +13,15 @@ import javax.ws.rs.core.Configuration;
  */
 public class Ag {
 
-    public static <T> SelectBuilder<T> select(Class<T> root, Configuration config) {
+    public static <T, E> SelectBuilder<T, E> select(Class<T> root, Configuration config) {
         return service(config).select(root);
     }
 
-    public static <T> UpdateBuilder<T> create(Class<T> type, Configuration config) {
+    public static <T, E> UpdateBuilder<T, E> create(Class<T> type, Configuration config) {
         return service(config).create(type);
     }
 
-    public static <T> UpdateBuilder<T> createOrUpdate(Class<T> type, Configuration config) {
+    public static <T, E> UpdateBuilder<T, E> createOrUpdate(Class<T> type, Configuration config) {
         return service(config).createOrUpdate(type);
     }
 
@@ -29,15 +29,15 @@ public class Ag {
         return service(config).delete(root);
     }
 
-    public static <T> UpdateBuilder<T> idempotentCreateOrUpdate(Class<T> type, Configuration config) {
+    public static <T, E> UpdateBuilder<T, E> idempotentCreateOrUpdate(Class<T> type, Configuration config) {
         return service(config).idempotentCreateOrUpdate(type);
     }
 
-    public static <T> UpdateBuilder<T> idempotentFullSync(Class<T> type, Configuration config) {
+    public static <T, E> UpdateBuilder<T, E> idempotentFullSync(Class<T> type, Configuration config) {
         return service(config).idempotentFullSync(type);
     }
 
-    public static <T> UpdateBuilder<T> update(Class<T> type, Configuration config) {
+    public static <T, E> UpdateBuilder<T, E> update(Class<T> type, Configuration config) {
         return service(config).update(type);
     }
 

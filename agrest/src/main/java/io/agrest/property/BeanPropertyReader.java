@@ -1,7 +1,7 @@
 package io.agrest.property;
 
-import org.apache.cayenne.reflect.Accessor;
-import org.apache.cayenne.reflect.PropertyUtils;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 
 public class BeanPropertyReader implements PropertyReader {
 
@@ -12,12 +12,30 @@ public class BeanPropertyReader implements PropertyReader {
     }
 
     public static PropertyReader reader(String fixedPropertyName) {
-        Accessor accessor = PropertyUtils.accessor(fixedPropertyName);
-        return (root, name) -> accessor.getValue(root);
+        return (root, name) -> getPropertyValue(root, fixedPropertyName);
     }
 
     @Override
     public Object value(Object root, String name) {
-        return PropertyUtils.getProperty(root, name);
+        return getPropertyValue(root, name);
+    }
+
+    private static Object getPropertyValue(Object root, String name) {
+        Object result = null;
+
+        if (root != null) {
+            Class  rootClass = root.getClass();
+            for (Method m : rootClass.getMethods()) {
+                if (m.getName().equalsIgnoreCase("get" + name)) {
+                    try {
+                        return m.invoke(root);
+                    } catch (IllegalAccessException | InvocationTargetException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }
+
+        return result;
     }
 }

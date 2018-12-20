@@ -22,11 +22,11 @@ public class PojoFetchStage implements Processor<SelectContext<?, ?>> {
 
     @Override
     public ProcessorOutcome execute(SelectContext<?, ?> context) {
-        findObjects(context);
+        findObjects((SelectContext<?, String>)context);
         return ProcessorOutcome.CONTINUE;
     }
 
-    <T, E> void findObjects(SelectContext<T, E> context) {
+    <T> void findObjects(SelectContext<T, String> context) {
 
         Map<Object, T> typeBucket = db.bucketForType(context.getType());
         if (context.isById()) {
@@ -38,13 +38,13 @@ public class PojoFetchStage implements Processor<SelectContext<?, ?>> {
         // clone the list and then filter/sort it as needed
         List<T> list = new ArrayList<>(typeBucket.values());
 
-        E filter = context.getEntity().getQualifier();
+        String filter = context.getEntity().getQualifier();
         if (filter != null) {
 
             Iterator<T> it = list.iterator();
             while (it.hasNext()) {
                 T t = it.next();
-                if (!filter.match(t)) {
+                if (!filter.equalsIgnoreCase((String)t)) {
                     it.remove();
                 }
             }

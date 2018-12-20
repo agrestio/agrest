@@ -4,8 +4,8 @@ import io.agrest.AgException;
 import io.agrest.meta.AgAttribute;
 import io.agrest.meta.AgEntity;
 import io.agrest.runtime.processor.select.SelectContext;
-import io.agrest.backend.exp.Expression;
-import io.agrest.backend.exp.ExpressionFactory;
+import org.apache.cayenne.exp.Expression;
+import org.apache.cayenne.exp.ExpressionFactory;
 
 import javax.ws.rs.core.Response;
 import java.util.Optional;
@@ -21,7 +21,7 @@ public class StartsWithFilter {
         return INSTANCE;
     }
 
-    public Optional<Expression> filter(SelectContext<?> context, String queryProperty, String value) {
+    public Optional<Expression> filter(SelectContext<?, ?> context, String queryProperty, String value) {
 
         if (value == null || value.length() == 0 || queryProperty == null) {
             return Optional.empty();

@@ -110,7 +110,7 @@ public class ExpressionPostProcessor implements IExpressionPostProcessor<Express
 				// validate and replace if needed ... note that we can only
 				// replace non-root nodes during the traversal. Root node is
 				// validated and replaced explicitly by the caller.
-				ASTPath replacement = (ASTObjPath) pathCache.getPathDescriptor(entity, (ASTObjPath) childNode).getPathExp();
+				ASTPath replacement = (ASTPath) pathCache.getPathDescriptor(entity, (ASTObjPath) childNode).getPathExp();
 				if (replacement != childNode) {
 					parentNode.setOperand(childIndex, replacement);
 				}

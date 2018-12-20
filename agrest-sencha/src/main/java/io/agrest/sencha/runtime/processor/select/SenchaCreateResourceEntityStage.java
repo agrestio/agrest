@@ -2,6 +2,7 @@ package io.agrest.sencha.runtime.processor.select;
 
 import io.agrest.ResourceEntity;
 import io.agrest.meta.AgEntity;
+import io.agrest.processor.ProcessorOutcome;
 import io.agrest.protocol.Sort;
 import io.agrest.runtime.entity.IAgExpMerger;
 import io.agrest.runtime.entity.IExcludeMerger;
@@ -14,14 +15,16 @@ import io.agrest.runtime.processor.select.CreateResourceEntityStage;
 import io.agrest.runtime.processor.select.SelectContext;
 import io.agrest.sencha.SenchaRequest;
 import io.agrest.sencha.runtime.entity.ISenchaFilterExpressionCompiler;
+import org.apache.cayenne.DataObject;
 import org.apache.cayenne.di.Inject;
+import org.apache.cayenne.exp.Expression;
 
 import static java.util.Arrays.asList;
 
 public class SenchaCreateResourceEntityStage extends CreateResourceEntityStage {
 
 
-    private ISenchaFilterExpressionCompiler senchaFilterProcessor;
+    private ISenchaFilterExpressionCompiler<Expression> senchaFilterProcessor;
 
     public SenchaCreateResourceEntityStage(
             @Inject IMetadataService metadataService,
@@ -40,18 +43,23 @@ public class SenchaCreateResourceEntityStage extends CreateResourceEntityStage {
     }
 
     @Override
-    protected <T, E> void doExecute(SelectContext<T, E> context) {
+    public ProcessorOutcome execute(SelectContext<?, ?> context) {
+        doSenchaExecute((SelectContext<DataObject, Expression>)context);
+        return ProcessorOutcome.CONTINUE;
+    }
+
+    protected <T extends DataObject> void doSenchaExecute(SelectContext<T, Expression> context) {
         super.doExecute(context);
 
-        ResourceEntity<T, E> resourceEntity = context.getEntity();
+        ResourceEntity<T, Expression> resourceEntity = context.getEntity();
 
-        E e1 = parseFilter(resourceEntity.getAgEntity(), context);
+        Expression e1 = parseFilter(resourceEntity.getAgEntity(), context);
         if (e1 != null) {
             resourceEntity.andQualifier(e1);
         }
     }
 
-    protected <T, E> E parseFilter(AgEntity<?> entity, SelectContext<T, E> context) {
+    protected <T extends DataObject> Expression parseFilter(AgEntity<?> entity, SelectContext<T, Expression> context) {
         SenchaRequest senchaRequest = SenchaRequest.get(context);
         return senchaFilterProcessor.process(entity, senchaRequest.getFilters());
     }

@@ -7,6 +7,7 @@ import io.agrest.processor.Processor;
 import io.agrest.processor.ProcessorOutcome;
 import io.agrest.runtime.cayenne.ICayennePersister;
 import io.agrest.runtime.processor.select.SelectContext;
+import org.apache.cayenne.DataObject;
 import org.apache.cayenne.di.Inject;
 import org.apache.cayenne.exp.Expression;
 import org.apache.cayenne.query.SelectQuery;
@@ -31,12 +32,12 @@ public class CayenneFetchDataStage extends CayenneAssembleQueryStage {
     }
 
     @Override
-    public ProcessorOutcome execute(SelectContext<?, Expression> context) {
-        doExecute(context);
+    public ProcessorOutcome execute(SelectContext<?, ?> context) {
+        doExecute((SelectContext<DataObject, Expression>)context);
         return ProcessorOutcome.CONTINUE;
     }
 
-    protected <T> void doExecute(SelectContext<T, Expression> context) {
+    protected <T extends DataObject> void doExecute(SelectContext<T, Expression> context) {
         SelectQuery<T> select = buildQuery(context);
 
         List<T> objects = persister.sharedContext().select(select);

@@ -35,7 +35,7 @@ class EntityPathCache {
 
 			pathCache.put(PathConstants.ID_PK_ATTRIBUTE, new PathDescriptor() {
 
-				AgAttribute id = entity.getIds().iterator().next();
+				AgAttribute<ASTPath> id = entity.getIds().iterator().next();
 
 				@Override
 				public boolean isAttribute() {

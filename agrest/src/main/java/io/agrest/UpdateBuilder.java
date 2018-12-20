@@ -83,12 +83,12 @@ public interface UpdateBuilder<T, E> {
      */
     UpdateBuilder<T, E> writeConstraint(Constraint<T, E> constraint);
 
-//    /**
-//     * Sets a custom mapper that locates existing objects based on request data.
-//     * If not set, objects will be located by their IDs.
-//     */
-//    UpdateBuilder<T, E> mapper(ObjectMapperFactory mapper);
-//
+    /**
+     * Sets a custom mapper that locates existing objects based on request data.
+     * If not set, objects will be located by their IDs.
+     */
+    UpdateBuilder<T, E> mapper(ObjectMapperFactory mapper);
+
 //    /**
 //     * Sets a property name that should be used to map objects in update
 //     * collection to backend objects. This overrides a default mapping by ID,

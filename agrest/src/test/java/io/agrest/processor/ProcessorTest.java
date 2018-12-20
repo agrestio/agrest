@@ -10,10 +10,10 @@ import static org.mockito.Mockito.*;
 public class ProcessorTest {
 
 
-    private Processor<SelectContext<?>> shouldContinue1;
-    private Processor<SelectContext<?>> shouldContinue2;
-    private Processor<SelectContext<?>> shouldStop;
-    private SelectContext<?> mockContext;
+    private Processor<SelectContext<?, ?>> shouldContinue1;
+    private Processor<SelectContext<?, ?>> shouldContinue2;
+    private Processor<SelectContext<?, ?>> shouldStop;
+    private SelectContext<?, ?> mockContext;
 
     @Before
     public void createProcessors() {
@@ -32,7 +32,7 @@ public class ProcessorTest {
     @Test
     public void testAndThen() {
 
-        Processor<SelectContext<?>> start = c -> ProcessorOutcome.CONTINUE;
+        Processor<SelectContext<?, ?>> start = c -> ProcessorOutcome.CONTINUE;
         start.andThen(shouldContinue1).andThen(shouldContinue2).execute(mockContext);
 
         verify(shouldContinue1).execute(mockContext);
@@ -42,7 +42,7 @@ public class ProcessorTest {
     @Test
     public void testAndThen_Stop() {
 
-        Processor<SelectContext<?>> start = c -> ProcessorOutcome.CONTINUE;
+        Processor<SelectContext<?, ?>> start = c -> ProcessorOutcome.CONTINUE;
         start.andThen(shouldContinue1)
                 .andThen(shouldStop)
                 .andThen(shouldContinue2)

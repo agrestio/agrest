@@ -23,12 +23,12 @@ import static org.apache.cayenne.exp.ExpressionFactory.likeIgnoreCaseExp;
 import static org.apache.cayenne.exp.ExpressionFactory.matchExp;
 import static org.apache.cayenne.exp.ExpressionFactory.noMatchExp;
 
-public class SenchaFilterExpressionCompiler implements ISenchaFilterExpressionCompiler {
+public class SenchaFilterExpressionCompiler implements ISenchaFilterExpressionCompiler<Expression> {
 
     private static final int MAX_VALUE_LENGTH = 1024;
 
     private IPathDescriptorManager pathCache;
-    private IExpressionPostProcessor postProcessor;
+    private IExpressionPostProcessor<Expression> postProcessor;
 
     public SenchaFilterExpressionCompiler(
             @Inject IPathDescriptorManager pathCache,

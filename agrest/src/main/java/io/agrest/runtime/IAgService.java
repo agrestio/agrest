@@ -38,6 +38,8 @@ public interface IAgService {
 	 */
 	<T, E> SelectBuilder<T, E> select(Class<T> type);
 
+	<T, E> SelectBuilder<T, E> select(Class<T> type, Class<E> expression);
+
 	SimpleResponse delete(Class<?> type, Object id);
 
 	SimpleResponse delete(Class<?> type, Map<String, Object> ids);

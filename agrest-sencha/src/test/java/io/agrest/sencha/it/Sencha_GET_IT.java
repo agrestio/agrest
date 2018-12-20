@@ -7,6 +7,7 @@ import io.agrest.it.fixture.JerseyTestOnDerby;
 import io.agrest.it.fixture.cayenne.E2;
 import io.agrest.it.fixture.cayenne.E3;
 import io.agrest.sencha.SenchaOps;
+import org.apache.cayenne.exp.Expression;
 import org.apache.cayenne.query.SQLTemplate;
 import org.junit.Test;
 
@@ -272,7 +273,7 @@ public class Sencha_GET_IT extends JerseyTestOnDerby {
         public DataResponse<E2> getE2_StartsWith_ParseRequest(@Context UriInfo uriInfo) {
             return Ag
                     .service(config)
-                    .select(E2.class)
+                    .select(E2.class, Expression.class)
                     .stage(SelectStage.CREATE_ENTITY, SenchaOps.startsWithFilter(E2.NAME.getName(), uriInfo))
                     .uri(uriInfo).get();
         }
@@ -282,7 +283,7 @@ public class Sencha_GET_IT extends JerseyTestOnDerby {
 		public DataResponse<E2> getE2_StartsWith_AssembleQuery(@Context UriInfo uriInfo) {
 			return Ag
 					.service(config)
-					.select(E2.class)
+					.select(E2.class, Expression.class)
 					.stage(SelectStage.ASSEMBLE_QUERY, SenchaOps.startsWithFilter(E2.NAME.getName(), uriInfo))
 					.uri(uriInfo).get();
 		}

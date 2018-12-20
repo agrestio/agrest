@@ -8,73 +8,33 @@ import io.agrest.DataResponse;
 import io.agrest.EntityConstraint;
 import io.agrest.MetadataResponse;
 import io.agrest.SimpleResponse;
-import io.agrest.backend.util.converter.ExpressionConverter;
-import io.agrest.backend.util.converter.ExpressionMatcher;
-import io.agrest.backend.util.converter.OrderingConverter;
-import io.agrest.backend.util.converter.OrderingSorter;
 import io.agrest.encoder.Encoder;
 import io.agrest.encoder.EncoderFilter;
 import io.agrest.encoder.PropertyMetadataEncoder;
 import io.agrest.encoder.converter.StringConverter;
 import io.agrest.meta.AgEntityOverlay;
-import io.agrest.meta.cayenne.CayenneEntityCompiler;
 import io.agrest.meta.compiler.AgEntityCompiler;
 import io.agrest.meta.compiler.PojoEntityCompiler;
 import io.agrest.meta.parser.IResourceParser;
 import io.agrest.meta.parser.ResourceParser;
 import io.agrest.provider.AgExceptionMapper;
-import io.agrest.provider.CayenneRuntimeExceptionMapper;
 import io.agrest.provider.DataResponseWriter;
 import io.agrest.provider.MetadataResponseWriter;
 import io.agrest.provider.SimpleResponseWriter;
-import io.agrest.provider.ValidationExceptionMapper;
-import io.agrest.runtime.cayenne.CayennePersister;
-import io.agrest.runtime.cayenne.ICayennePersister;
-import io.agrest.runtime.cayenne.NoCayennePersister;
-import io.agrest.runtime.cayenne.converter.CayenneExpressionConverter;
-import io.agrest.runtime.cayenne.converter.CayenneExpressionMatcher;
-import io.agrest.runtime.cayenne.converter.CayenneOrderingConverter;
-import io.agrest.runtime.cayenne.converter.CayenneOrderingSorter;
-import io.agrest.runtime.cayenne.processor.delete.CayenneDeleteProcessorFactoryProvider;
-import io.agrest.runtime.cayenne.processor.delete.CayenneDeleteStage;
-import io.agrest.runtime.cayenne.processor.delete.CayenneDeleteStartStage;
-import io.agrest.runtime.cayenne.processor.select.CayenneAssembleQueryStage;
-import io.agrest.runtime.cayenne.processor.select.CayenneFetchDataStage;
-import io.agrest.runtime.cayenne.processor.select.CayenneSelectProcessorFactoryProvider;
-import io.agrest.runtime.cayenne.processor.unrelate.CayenneUnrelateDataStoreStage;
-import io.agrest.runtime.cayenne.processor.unrelate.CayenneUnrelateProcessorFactoryProvider;
-import io.agrest.runtime.cayenne.processor.unrelate.CayenneUnrelateStartStage;
-import io.agrest.runtime.cayenne.processor.update.CayenneCreateOrUpdateStage;
-import io.agrest.runtime.cayenne.processor.update.CayenneCreateStage;
-import io.agrest.runtime.cayenne.processor.update.CayenneCreatedResponseStage;
-import io.agrest.runtime.cayenne.processor.update.CayenneIdempotentCreateOrUpdateStage;
-import io.agrest.runtime.cayenne.processor.update.CayenneIdempotentFullSyncStage;
-import io.agrest.runtime.cayenne.processor.update.CayenneOkResponseStage;
-import io.agrest.runtime.cayenne.processor.update.CayenneUpdateProcessorFactoryFactoryProvider;
-import io.agrest.runtime.cayenne.processor.update.CayenneUpdateStage;
-import io.agrest.runtime.cayenne.processor.update.CayenneUpdateStartStage;
 import io.agrest.runtime.constraints.ConstraintsHandler;
 import io.agrest.runtime.constraints.IConstraintsHandler;
-import io.agrest.runtime.encoder.AttributeEncoderFactoryProvider;
 import io.agrest.runtime.encoder.EncoderService;
-import io.agrest.runtime.encoder.IAttributeEncoderFactory;
 import io.agrest.runtime.encoder.IEncoderService;
 import io.agrest.runtime.encoder.IStringConverterFactory;
 import io.agrest.runtime.encoder.StringConverterFactoryProvider;
-import io.agrest.runtime.entity.CayenneExpMerger;
 import io.agrest.runtime.entity.ExcludeMerger;
-import io.agrest.runtime.entity.ExpressionPostProcessor;
-import io.agrest.runtime.entity.IAgExpMerger;
 import io.agrest.runtime.entity.IExcludeMerger;
-import io.agrest.runtime.entity.IExpressionPostProcessor;
 import io.agrest.runtime.entity.IIncludeMerger;
 import io.agrest.runtime.entity.IMapByMerger;
 import io.agrest.runtime.entity.ISizeMerger;
-import io.agrest.runtime.entity.ISortMerger;
 import io.agrest.runtime.entity.IncludeMerger;
 import io.agrest.runtime.entity.MapByMerger;
 import io.agrest.runtime.entity.SizeMerger;
-import io.agrest.runtime.entity.SortMerger;
 import io.agrest.runtime.executor.UnboundedExecutorServiceProvider;
 import io.agrest.runtime.jackson.IJacksonService;
 import io.agrest.runtime.jackson.JacksonService;
@@ -83,18 +43,12 @@ import io.agrest.runtime.meta.IMetadataService;
 import io.agrest.runtime.meta.IResourceMetadataService;
 import io.agrest.runtime.meta.MetadataService;
 import io.agrest.runtime.meta.ResourceMetadataService;
-import io.agrest.runtime.path.IPathDescriptorManager;
-import io.agrest.runtime.path.PathDescriptorManager;
-import io.agrest.runtime.processor.delete.DeleteProcessorFactory;
 import io.agrest.runtime.processor.meta.CollectMetadataStage;
 import io.agrest.runtime.processor.meta.MetadataProcessorFactory;
 import io.agrest.runtime.processor.meta.MetadataProcessorFactoryProvider;
 import io.agrest.runtime.processor.select.ApplyServerParamsStage;
 import io.agrest.runtime.processor.select.CreateResourceEntityStage;
 import io.agrest.runtime.processor.select.ParseRequestStage;
-import io.agrest.runtime.processor.select.SelectProcessorFactory;
-import io.agrest.runtime.processor.unrelate.UnrelateProcessorFactory;
-import io.agrest.runtime.processor.update.UpdateProcessorFactoryFactory;
 import io.agrest.runtime.protocol.CayenneExpParser;
 import io.agrest.runtime.protocol.EntityUpdateParser;
 import io.agrest.runtime.protocol.ExcludeParser;
@@ -118,15 +72,12 @@ import io.agrest.runtime.provider.SortProvider;
 import io.agrest.runtime.semantics.IRelationshipMapper;
 import io.agrest.runtime.semantics.RelationshipMapper;
 import io.agrest.runtime.shutdown.ShutdownManager;
-import org.apache.cayenne.CayenneRuntimeException;
-import org.apache.cayenne.configuration.server.ServerRuntime;
 import org.apache.cayenne.di.DIBootstrap;
 import org.apache.cayenne.di.Injector;
 import org.apache.cayenne.di.Key;
 import org.apache.cayenne.di.MapBuilder;
 import org.apache.cayenne.di.Module;
 import org.apache.cayenne.di.spi.ModuleLoader;
-import org.apache.cayenne.validation.ValidationException;
 
 import javax.ws.rs.core.Feature;
 import javax.ws.rs.ext.ExceptionMapper;
@@ -145,7 +96,7 @@ import java.util.concurrent.ExecutorService;
  */
 public class AgBuilder {
 
-    private ICayennePersister cayenneService;
+    private IAgPersister agPersister;
     private Class<? extends IAgService> agServiceType;
     private IAgService agService;
     private List<AgModuleProvider> moduleProviders;
@@ -167,7 +118,7 @@ public class AgBuilder {
         this.entityOverlays = new HashMap<>();
         this.encoderFilters = new ArrayList<>();
         this.agServiceType = DefaultAgService.class;
-        this.cayenneService = NoCayennePersister.instance();
+        this.agPersister = NoAgPersister.instance();
         this.exceptionMappers = new HashMap<>();
         this.metadataEncoders = new HashMap<>();
         this.moduleProviders = new ArrayList<>(5);
@@ -176,25 +127,25 @@ public class AgBuilder {
         this.features = new ArrayList<>(5);
     }
 
-    /**
-     * A shortcut that creates a Agrest stack based on Cayenne runtime and
-     * default settings.
-     *
-     * @since 1.14
-     */
-    public static AgRuntime build(ServerRuntime cayenneRuntime) {
-        return builder(cayenneRuntime).build();
-    }
-
-    /**
-     * A shortcut that creates a AgBuilder, setting its Cayenne runtime. A
-     * caller can continue customizing the returned builder.
-     *
-     * @since 1.14
-     */
-    public static AgBuilder builder(ServerRuntime cayenneRuntime) {
-        return new AgBuilder().cayenneRuntime(cayenneRuntime);
-    }
+//    /**
+//     * A shortcut that creates a Agrest stack based on Cayenne runtime and
+//     * default settings.
+//     *
+//     * @since 1.14
+//     */
+//    public static AgRuntime build(ServerRuntime cayenneRuntime) {
+//        return builder(cayenneRuntime).build();
+//    }
+//
+//    /**
+//     * A shortcut that creates a AgBuilder, setting its Cayenne runtime. A
+//     * caller can continue customizing the returned builder.
+//     *
+//     * @since 1.14
+//     */
+//    public static AgBuilder builder(ServerRuntime cayenneRuntime) {
+//        return new AgBuilder().cayenneRuntime(cayenneRuntime);
+//    }
 
     /**
      * Suppresses JAX-RS Feature auto-loading. By default features are auto-loaded based on the service descriptors under
@@ -234,13 +185,13 @@ public class AgBuilder {
         return this;
     }
 
-    public AgBuilder cayenneRuntime(ServerRuntime cayenneRuntime) {
-        this.cayenneService = new CayennePersister(cayenneRuntime);
-        return this;
-    }
+//    public AgBuilder cayenneRuntime(ServerRuntime cayenneRuntime) {
+//        this.cayenneService = new CayennePersister(cayenneRuntime);
+//        return this;
+//    }
 
-    public AgBuilder cayenneService(ICayennePersister cayenneService) {
-        this.cayenneService = cayenneService;
+    public AgBuilder agPersister(IAgPersister agPersister) {
+        this.agPersister = agPersister;
         return this;
     }
 
@@ -436,10 +387,10 @@ public class AgBuilder {
 
             binder.bindList(EncoderFilter.class).addAll(encoderFilters);
 
-            binder.bind(CayenneEntityCompiler.class).to(CayenneEntityCompiler.class);
+//            binder.bind(CayenneEntityCompiler.class).to(CayenneEntityCompiler.class);
             binder.bind(PojoEntityCompiler.class).to(PojoEntityCompiler.class);
             binder.bindList(AgEntityCompiler.class)
-                    .add(CayenneEntityCompiler.class)
+//                    .add(CayenneEntityCompiler.class)
                     .add(PojoEntityCompiler.class);
 
             binder.bindMap(AgEntityOverlay.class).putAll(entityOverlays);
@@ -459,56 +410,56 @@ public class AgBuilder {
             }
 
             MapBuilder<ExceptionMapper> mapperBuilder = binder.bindMap(ExceptionMapper.class)
-                    .put(CayenneRuntimeException.class.getName(), CayenneRuntimeExceptionMapper.class)
-                    .put(AgException.class.getName(), AgExceptionMapper.class)
-                    .put(ValidationException.class.getName(), ValidationExceptionMapper.class);
+//                    .put(CayenneRuntimeException.class.getName(), CayenneRuntimeExceptionMapper.class)
+//                    .put(ValidationException.class.getName(), ValidationExceptionMapper.class)
+                    .put(AgException.class.getName(), AgExceptionMapper.class);
 
             // override with custom mappers
             exceptionMappers.forEach((n, m) -> mapperBuilder.put(n, m));
 
             // select stages
-            binder.bind(SelectProcessorFactory.class).toProvider(CayenneSelectProcessorFactoryProvider.class);
+//            binder.bind(SelectProcessorFactory.class).toProvider(CayenneSelectProcessorFactoryProvider.class);
             binder.bind(ParseRequestStage.class).to(ParseRequestStage.class);
             binder.bind(CreateResourceEntityStage.class).to(CreateResourceEntityStage.class);
             binder.bind(ApplyServerParamsStage.class).to(ApplyServerParamsStage.class);
-            binder.bind(CayenneAssembleQueryStage.class).to(CayenneAssembleQueryStage.class);
-            binder.bind(CayenneFetchDataStage.class).to(CayenneFetchDataStage.class);
+//            binder.bind(CayenneAssembleQueryStage.class).to(CayenneAssembleQueryStage.class);
+//            binder.bind(CayenneFetchDataStage.class).to(CayenneFetchDataStage.class);
 
             // delete stages
-            binder.bind(DeleteProcessorFactory.class).toProvider(CayenneDeleteProcessorFactoryProvider.class);
-            binder.bind(CayenneDeleteStartStage.class).to(CayenneDeleteStartStage.class);
-            binder.bind(CayenneDeleteStage.class).to(CayenneDeleteStage.class);
+//            binder.bind(DeleteProcessorFactory.class).toProvider(CayenneDeleteProcessorFactoryProvider.class);
+//            binder.bind(CayenneDeleteStartStage.class).to(CayenneDeleteStartStage.class);
+//            binder.bind(CayenneDeleteStage.class).to(CayenneDeleteStage.class);
 
             // update stages
-            binder.bind(UpdateProcessorFactoryFactory.class)
-                    .toProvider(CayenneUpdateProcessorFactoryFactoryProvider.class);
-            binder.bind(CayenneUpdateStartStage.class).to(CayenneUpdateStartStage.class);
+//            binder.bind(UpdateProcessorFactoryFactory.class)
+//                    .toProvider(CayenneUpdateProcessorFactoryFactoryProvider.class);
+//            binder.bind(CayenneUpdateStartStage.class).to(CayenneUpdateStartStage.class);
             binder.bind(io.agrest.runtime.processor.update.ParseRequestStage.class)
                     .to(io.agrest.runtime.processor.update.ParseRequestStage.class);
             binder.bind(io.agrest.runtime.processor.update.CreateResourceEntityStage.class)
                     .to(io.agrest.runtime.processor.update.CreateResourceEntityStage.class);
             binder.bind(io.agrest.runtime.processor.update.ApplyServerParamsStage.class)
                     .to(io.agrest.runtime.processor.update.ApplyServerParamsStage.class);
-            binder.bind(CayenneCreateStage.class).to(CayenneCreateStage.class);
-            binder.bind(CayenneUpdateStage.class).to(CayenneUpdateStage.class);
-            binder.bind(CayenneCreateOrUpdateStage.class).to(CayenneCreateOrUpdateStage.class);
-            binder.bind(CayenneIdempotentCreateOrUpdateStage.class).to(CayenneIdempotentCreateOrUpdateStage.class);
-            binder.bind(CayenneIdempotentFullSyncStage.class).to(CayenneIdempotentFullSyncStage.class);
-            binder.bind(CayenneOkResponseStage.class).to(CayenneOkResponseStage.class);
-            binder.bind(CayenneCreatedResponseStage.class).to(CayenneCreatedResponseStage.class);
+//            binder.bind(CayenneCreateStage.class).to(CayenneCreateStage.class);
+//            binder.bind(CayenneUpdateStage.class).to(CayenneUpdateStage.class);
+//            binder.bind(CayenneCreateOrUpdateStage.class).to(CayenneCreateOrUpdateStage.class);
+//            binder.bind(CayenneIdempotentCreateOrUpdateStage.class).to(CayenneIdempotentCreateOrUpdateStage.class);
+//            binder.bind(CayenneIdempotentFullSyncStage.class).to(CayenneIdempotentFullSyncStage.class);
+//            binder.bind(CayenneOkResponseStage.class).to(CayenneOkResponseStage.class);
+//            binder.bind(CayenneCreatedResponseStage.class).to(CayenneCreatedResponseStage.class);
 
             // metadata stages
             binder.bind(MetadataProcessorFactory.class).toProvider(MetadataProcessorFactoryProvider.class);
             binder.bind(CollectMetadataStage.class).to(CollectMetadataStage.class);
 
             // unrelate stages
-            binder.bind(UnrelateProcessorFactory.class).toProvider(CayenneUnrelateProcessorFactoryProvider.class);
-            binder.bind(CayenneUnrelateStartStage.class).to(CayenneUnrelateStartStage.class);
-            binder.bind(CayenneUnrelateDataStoreStage.class).to(CayenneUnrelateDataStoreStage.class);
+//            binder.bind(UnrelateProcessorFactory.class).toProvider(CayenneUnrelateProcessorFactoryProvider.class);
+//            binder.bind(CayenneUnrelateStartStage.class).to(CayenneUnrelateStartStage.class);
+//            binder.bind(CayenneUnrelateDataStoreStage.class).to(CayenneUnrelateDataStoreStage.class);
 
             // a map of custom encoders
             binder.bindMap(Encoder.class);
-            binder.bind(IAttributeEncoderFactory.class).toProvider(AttributeEncoderFactoryProvider.class);
+//            binder.bind(IAttributeEncoderFactory.class).toProvider(AttributeEncoderFactoryProvider.class);
 
             // a map of custom converters
             binder.bindMap(StringConverter.class);
@@ -519,18 +470,17 @@ public class AgBuilder {
             binder.bind(IMetadataService.class).to(MetadataService.class);
             binder.bind(IResourceMetadataService.class).to(ResourceMetadataService.class);
             binder.bind(IConstraintsHandler.class).to(ConstraintsHandler.class);
-            binder.bind(IExpressionPostProcessor.class).to(ExpressionPostProcessor.class);
+//            binder.bind(IExpressionPostProcessor.class).to(ExpressionPostProcessor.class);
 
             binder.bind(IJacksonService.class).to(JacksonService.class);
-            binder.bind(ICayennePersister.class).toInstance(cayenneService);
+//            binder.bind(ICayennePersister.class).toInstance(cayenneService);
 
-            binder.bind(IPathDescriptorManager.class).to(PathDescriptorManager.class);
+//            binder.bind(IPathDescriptorManager.class).to(PathDescriptorManager.class);
 
             // Backend converters and matchers
-            binder.bind(ExpressionConverter.class).to(CayenneExpressionConverter.class);
-            binder.bind(ExpressionMatcher.class).to(CayenneExpressionMatcher.class);
-            binder.bind(OrderingConverter.class).to(CayenneOrderingConverter.class);
-            binder.bind(OrderingSorter.class).to(CayenneOrderingSorter.class);
+//            binder.bind(ExpressionMatcher.class).to(CayenneExpressionMatcher.class);
+//            binder.bind(OrderingConverter.class).to(CayenneOrderingConverter.class);
+//            binder.bind(OrderingSorter.class).to(CayenneOrderingSorter.class);
 
             // Query parameter parsers from the UriInfo
             binder.bind(ICayenneExpParser.class).to(CayenneExpParser.class);
@@ -548,9 +498,9 @@ public class AgBuilder {
             binder.bind(MapByProvider.class).to(MapByProvider.class);
             binder.bind(SizeProvider.class).to(SizeProvider.class);
 
-            // Constructors to create ResourceEntity from Query parameters
-            binder.bind(IAgExpMerger.class).to(CayenneExpMerger.class);
-            binder.bind(ISortMerger.class).to(SortMerger.class);
+//            // Constructors to create ResourceEntity from Query parameters
+//            binder.bind(IAgExpMerger.class).to(CayenneExpMerger.class);
+//            binder.bind(ISortMerger.class).to(SortMerger.class);
             binder.bind(IMapByMerger.class).to(MapByMerger.class);
             binder.bind(ISizeMerger.class).to(SizeMerger.class);
             binder.bind(IIncludeMerger.class).to(IncludeMerger.class);

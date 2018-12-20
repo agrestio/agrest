@@ -8,5 +8,5 @@ import io.agrest.protocol.Sort;
  */
 public interface ISortMerger {
 
-    void merge(ResourceEntity<?> entity, Sort sort);
+    void merge(ResourceEntity<?, ?> entity, Sort sort);
 }

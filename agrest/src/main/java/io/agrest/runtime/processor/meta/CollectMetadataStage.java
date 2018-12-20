@@ -1,6 +1,7 @@
 package io.agrest.runtime.processor.meta;
 
 import io.agrest.ResourceEntity;
+import io.agrest.constraints.Constraint;
 import io.agrest.meta.AgAttribute;
 import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgRelationship;
@@ -58,7 +59,8 @@ public class CollectMetadataStage implements Processor<MetadataContext<?>> {
         }
 
         ResourceEntity<T, E> resourceEntity = createDefaultResourceEntity(entity);
-        constraintsHandler.constrainResponse(resourceEntity, null, context.getConstraint());
+        Constraint<T, E> constraint = (Constraint<T, E>)context.getConstraint();
+        constraintsHandler.constrainResponse(resourceEntity, null, constraint);
         resourceEntity.setApplicationBase(getBaseUrl(context));
 
         context.setResources(filteredResources);

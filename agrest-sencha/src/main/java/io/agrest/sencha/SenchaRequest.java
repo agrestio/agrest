@@ -25,11 +25,11 @@ public class SenchaRequest {
     protected SenchaRequest() {
     }
 
-    public static SenchaRequest get(SelectContext<?> context) {
+    public static SenchaRequest get(SelectContext<?, ?> context) {
         return (SenchaRequest) context.getAttribute(ATTRIBUTE_KEY);
     }
 
-    public static void set(SelectContext<?> context, SenchaRequest request) {
+    public static void set(SelectContext<?, ?> context, SenchaRequest request) {
         context.setAttribute(ATTRIBUTE_KEY, request);
     }
 

@@ -66,6 +66,12 @@ public class DefaultAgService implements IAgService {
         return toSelectBuilder(context);
     }
 
+    @Override
+    public <T, E> SelectBuilder<T, E> select(Class<T> type, Class<E> expression) {
+        SelectContext<T, E> context = new SelectContext<>(type);
+        return toSelectBuilder(context);
+    }
+
     private <T, E> SelectBuilder<T, E> toSelectBuilder(SelectContext<T, E> context) {
         return new DefaultSelectBuilder<>(context, selectProcessorFactory);
     }

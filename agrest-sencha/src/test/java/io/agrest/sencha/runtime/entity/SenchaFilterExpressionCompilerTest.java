@@ -3,7 +3,6 @@ package io.agrest.sencha.runtime.entity;
 import io.agrest.AgException;
 import io.agrest.it.fixture.cayenne.E4;
 import io.agrest.meta.AgEntity;
-import io.agrest.runtime.cayenne.converter.CayenneExpressionConverter;
 import io.agrest.runtime.entity.ExpressionPostProcessor;
 import io.agrest.runtime.jackson.IJacksonService;
 import io.agrest.runtime.jackson.JacksonService;
@@ -38,7 +37,7 @@ public class SenchaFilterExpressionCompilerTest extends TestWithCayenneMapping {
     }
 
     private Expression process(Filter... filters) {
-        return new CayenneExpressionConverter().apply(processor.process(e4Entity, Arrays.asList(filters)));
+        return processor.process(e4Entity, Arrays.asList(filters));
     }
 
     private void assertProcess(String expectedExpression, Filter... filters) {
