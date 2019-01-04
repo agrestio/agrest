@@ -6,7 +6,7 @@ import io.agrest.ResourceEntity;
 import io.agrest.meta.AgAttribute;
 import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgPersistentAttribute;
-import io.agrest.meta.AgPersistentEntity;
+import io.agrest.meta.AgRelationship;
 import io.agrest.processor.Processor;
 import io.agrest.processor.ProcessorOutcome;
 import io.agrest.runtime.cayenne.ICayennePersister;
@@ -14,14 +14,15 @@ import io.agrest.runtime.processor.select.SelectContext;
 import org.apache.cayenne.di.Inject;
 import org.apache.cayenne.exp.Expression;
 import org.apache.cayenne.exp.ExpressionFactory;
+import org.apache.cayenne.exp.Property;
 import org.apache.cayenne.map.EntityResolver;
 import org.apache.cayenne.query.Ordering;
-import org.apache.cayenne.query.PrefetchTreeNode;
 import org.apache.cayenne.query.SelectQuery;
 
 import javax.ws.rs.core.Response;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -42,17 +43,16 @@ public class CayenneAssembleQueryStage implements Processor<SelectContext<?>> {
     }
 
     protected <T> void doExecute(SelectContext<T> context) {
-        context.setSelect(buildQuery(context));
+
+        buildQuery(context, context.getEntity(), context.getId());
     }
 
-    <T> SelectQuery<T> buildQuery(SelectContext<T> context) {
+    <T> SelectQuery<T> buildQuery(SelectContext<T> context, ResourceEntity<T> entity, AgObjectId rootId) {
 
-        ResourceEntity<T> entity = context.getEntity();
-
-        SelectQuery<T> query = basicSelect(context);
+        SelectQuery<T> query = basicSelect(entity, rootId);
 
         if (!entity.isFiltered()) {
-            int limit = context.getEntity().getFetchLimit();
+            int limit = entity.getFetchLimit();
             if (limit > 0) {
                 query.setPageSize(limit);
             }
@@ -72,35 +72,35 @@ public class CayenneAssembleQueryStage implements Processor<SelectContext<?>> {
         }
 
         if (!entity.getChildren().isEmpty()) {
-            PrefetchTreeNode root = new PrefetchTreeNode();
+            for (Map.Entry<String, ResourceEntity<?>> e : entity.getChildren().entrySet()) {
+                ResourceEntity child  = e.getValue();
 
-            int prefetchSemantics = context.getPrefetchSemantics();
-            if (prefetchSemantics <= 0) {
-                // it makes more sense to use joint prefetches for single object
-                // queries...
-                prefetchSemantics = context.isById() && context.getId().size() == 1
-                        ? PrefetchTreeNode.JOINT_PREFETCH_SEMANTICS : PrefetchTreeNode.DISJOINT_PREFETCH_SEMANTICS;
+                SelectQuery childQuery = buildQuery(context, child, null);
+                AgRelationship relationship = child.getAgEntity().getRelationship(entity.getAgEntity());
+
+                childQuery.setColumns(
+                        Property.createSelf(child.getType()),
+                        relationship.isToMany()
+                                ? Property.create(relationship.getName(), List.class).flat(entity.getType())
+                                : Property.create(relationship.getName(), entity.getType()));
             }
-
-            appendPrefetches(root, entity, prefetchSemantics);
-            query.setPrefetchTree(root);
         }
 
+        entity.setSelect(query);
         return query;
     }
 
-    <T> SelectQuery<T> basicSelect(SelectContext<T> context) {
+    <T> SelectQuery<T> basicSelect(ResourceEntity<T> resourceEntity, AgObjectId rootId) {
 
         // selecting by ID overrides any explicit SelectQuery...
-        if (context.isById()) {
+        if (rootId != null) {
 
-            Class<T> root = context.getType();
-            SelectQuery<T> query = new SelectQuery<>(root);
-            query.andQualifier(buildIdQualifer(context.getEntity().getAgEntity(), context.getId()));
+            SelectQuery<T> query = new SelectQuery<>(resourceEntity.getAgEntity().getType());
+            query.andQualifier(buildIdQualifer(resourceEntity.getAgEntity(), rootId));
             return query;
         }
 
-        return context.getSelect() != null ? context.getSelect() : new SelectQuery<>(context.getType());
+        return resourceEntity.getSelect() != null ? resourceEntity.getSelect() : new SelectQuery<>(resourceEntity.getAgEntity().getType());
     }
 
     private Expression buildIdQualifer(AgEntity<?> entity, AgObjectId id) {
@@ -128,27 +128,5 @@ public class CayenneAssembleQueryStage implements Processor<SelectContext<?>> {
             }
         }
         return ExpressionFactory.and(qualifiers);
-    }
-
-    private void appendPrefetches(PrefetchTreeNode root, ResourceEntity<?> entity, int prefetchSemantics) {
-        for (Map.Entry<String, ResourceEntity<?>> e : entity.getChildren().entrySet()) {
-
-            // skip prefetches of non-persistent entities
-            if (e.getValue().getAgEntity() instanceof AgPersistentEntity) {
-
-                PrefetchTreeNode child = root.addPath(e.getKey());
-
-                // always full prefetch related entities... we can't use phantom
-                // as this will hit object cache and hence won't be cache
-                // controlled via query cache anymore...
-                child.setPhantom(false);
-                child.setSemantics(prefetchSemantics);
-                appendPrefetches(child, e.getValue(), prefetchSemantics);
-            }
-        }
-
-        if (entity.getMapBy() != null) {
-            appendPrefetches(root, entity.getMapBy(), prefetchSemantics);
-        }
     }
 }

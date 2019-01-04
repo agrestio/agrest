@@ -57,6 +57,15 @@ public class DefaultAgEntity<T> implements AgEntity<T> {
 	}
 
 	@Override
+	public AgRelationship getRelationship(AgEntity entity) {
+		return relationships.values()
+				.stream()
+				.filter(r -> r.getTargetEntity().getName().equalsIgnoreCase(entity.getName()))
+				.findFirst()
+				.get();
+	}
+
+	@Override
 	public Collection<AgAttribute> getAttributes() {
 		return attributes.values();
 	}

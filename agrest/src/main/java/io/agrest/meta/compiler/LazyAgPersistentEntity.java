@@ -1,6 +1,7 @@
 package io.agrest.meta.compiler;
 
 import io.agrest.meta.AgAttribute;
+import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgPersistentAttribute;
 import io.agrest.meta.AgPersistentEntity;
 import io.agrest.meta.AgRelationship;
@@ -69,5 +70,10 @@ public class LazyAgPersistentEntity<T> extends BaseLazyAgEntity<T, AgPersistentE
     @Override
     public AgRelationship getRelationship(String name) {
         return getDelegate().getRelationship(name);
+    }
+
+    @Override
+    public AgRelationship getRelationship(AgEntity entity) {
+        return getDelegate().getRelationship(entity);
     }
 }

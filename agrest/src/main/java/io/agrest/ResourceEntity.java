@@ -5,6 +5,7 @@ import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgRelationship;
 import org.apache.cayenne.exp.Expression;
 import org.apache.cayenne.query.Ordering;
+import org.apache.cayenne.query.SelectQuery;
 import org.apache.cayenne.util.ToStringBuilder;
 
 import java.util.ArrayList;
@@ -43,6 +44,9 @@ public class ResourceEntity<T> {
     private int fetchOffset;
     private int fetchLimit;
     private boolean filtered;
+
+    private SelectQuery<T> select;
+    private List result;
 
     public ResourceEntity(AgEntity<T> agEntity) {
         this.idIncluded = false;
@@ -94,6 +98,22 @@ public class ResourceEntity<T> {
 
     public List<Ordering> getOrderings() {
         return orderings;
+    }
+
+    public SelectQuery<T> getSelect() {
+        return select;
+    }
+
+    public void setSelect(SelectQuery<T> select) {
+        this.select = select;
+    }
+
+    public List<T> getResult() {
+        return result;
+    }
+
+    public void setResult(List<? extends T> objects) {
+        this.result = objects;
     }
 
     /**

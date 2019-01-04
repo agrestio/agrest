@@ -75,7 +75,6 @@ public class EncoderService implements IEncoderService {
         return isMapBy ?
                 new MapByEncoder(
                         entity.getMapByPath(),
-                        null,
                         entity.getMapBy(),
                         encoder,
                         stringConverterFactory,
@@ -89,10 +88,7 @@ public class EncoderService implements IEncoderService {
         boolean isMapBy = resourceEntity.getMapBy() != null;
 
         // if mapBy is involved, apply filters at MapBy level, not inside sublists...
-        ListEncoder listEncoder = new ListEncoder(
-                elementEncoder,
-                isMapBy ? null : resourceEntity.getQualifier(),
-                resourceEntity.getOrderings())
+        ListEncoder listEncoder = new ListEncoder(elementEncoder)
                 .withOffset(resourceEntity.getFetchOffset())
                 .withLimit(resourceEntity.getFetchLimit());
 
@@ -103,7 +99,6 @@ public class EncoderService implements IEncoderService {
         return isMapBy ?
                 new MapByEncoder(
                         resourceEntity.getMapByPath(),
-                        resourceEntity.getQualifier(),
                         resourceEntity.getMapBy(),
                         listEncoder,
                         stringConverterFactory,

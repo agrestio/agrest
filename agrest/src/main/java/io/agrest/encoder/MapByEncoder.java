@@ -9,7 +9,6 @@ import io.agrest.meta.AgAttribute;
 import io.agrest.meta.AgRelationship;
 import io.agrest.runtime.encoder.IAttributeEncoderFactory;
 import io.agrest.runtime.encoder.IStringConverterFactory;
-import org.apache.cayenne.exp.Expression;
 
 import javax.ws.rs.core.Response.Status;
 import java.io.IOException;
@@ -28,9 +27,8 @@ public class MapByEncoder implements CollectionEncoder {
     private CollectionEncoder collectionEncoder;
     private boolean byId;
     private StringConverter fieldNameConverter;
-    private Expression filter;
 
-    public MapByEncoder(String mapByPath, Expression filter, ResourceEntity<?> mapBy, CollectionEncoder collectionEncoder,
+    public MapByEncoder(String mapByPath, ResourceEntity<?> mapBy, CollectionEncoder collectionEncoder,
                         IStringConverterFactory converterFactory, IAttributeEncoderFactory encoderFactory) {
 
         if (mapBy == null) {
@@ -40,7 +38,6 @@ public class MapByEncoder implements CollectionEncoder {
         this.mapByPath = mapByPath;
         this.mapByReaders = new ArrayList<>();
         this.collectionEncoder = collectionEncoder;
-        this.filter = filter;
 
         config(converterFactory, encoderFactory, mapBy);
     }
@@ -172,12 +169,6 @@ public class MapByEncoder implements CollectionEncoder {
         Map<String, List<Object>> map = new LinkedHashMap<>();
 
         for (Object o : objects) {
-
-            // filter objects even before we apply mapping...
-            if (filter != null && !filter.match(o)) {
-                continue;
-            }
-
             Object key = mapByValue(o);
             if (byId) {
                 @SuppressWarnings("unchecked")

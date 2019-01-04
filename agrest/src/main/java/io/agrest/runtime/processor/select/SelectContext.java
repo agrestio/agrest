@@ -12,7 +12,6 @@ import io.agrest.SizeConstraints;
 import io.agrest.constraints.Constraint;
 import io.agrest.encoder.Encoder;
 import io.agrest.processor.BaseProcessingContext;
-import org.apache.cayenne.query.SelectQuery;
 
 import javax.ws.rs.core.UriInfo;
 import java.util.Collections;
@@ -35,13 +34,10 @@ public class SelectContext<T> extends BaseProcessingContext<T> {
 	private Constraint<T> constraint;
 	private boolean atMostOneObject;
 	private Encoder encoder;
-	private int prefetchSemantics;
 	private List objects;
 	private AgRequest rawRequest;
 	private AgRequest request;
 
-	// TODO: deprecate dependency on Cayenne in generic code
-	private SelectQuery<T> select;
 
 	public SelectContext(Class<T> type) {
 		super(type);
@@ -134,16 +130,6 @@ public class SelectContext<T> extends BaseProcessingContext<T> {
 		this.constraint = constraint;
 	}
 
-	// TODO: deprecate dependency on Cayenne in generic code
-	public SelectQuery<T> getSelect() {
-		return select;
-	}
-
-	// TODO: deprecate dependency on Cayenne in generic code
-	public void setSelect(SelectQuery<T> select) {
-		this.select = select;
-	}
-
 	public boolean isAtMostOneObject() {
 		return atMostOneObject;
 	}
@@ -172,20 +158,6 @@ public class SelectContext<T> extends BaseProcessingContext<T> {
 	 */
 	public void setEntity(ResourceEntity<T> entity) {
 		this.entity = entity;
-	}
-
-	/**
-	 * @since 1.24
-	 */
-	public int getPrefetchSemantics() {
-		return prefetchSemantics;
-	}
-
-	/**
-	 * @since 1.24
-	 */
-	public void setPrefetchSemantics(int prefetchSemantics) {
-		this.prefetchSemantics = prefetchSemantics;
 	}
 
 	/**

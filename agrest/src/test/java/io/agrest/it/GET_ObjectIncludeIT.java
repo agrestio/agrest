@@ -238,10 +238,11 @@ public class GET_ObjectIncludeIT extends JerseyTestOnDerby {
     public void test_ToMany_SortPath() {
 
         DB.insert("e5", "id, name", "145, 'B'");
+        DB.insert("e5", "id, name", "143, 'D'");
         DB.insert("e5", "id, name", "146, 'A'");
         DB.insert("e2", "id, name", "11, 'xxx'");
         DB.insert("e3", "id, e2_id, e5_id, name", "18, 11, 145, 's'");
-        DB.insert("e3", "id, e2_id, e5_id, name", "19, 11, 145, 'z'");
+        DB.insert("e3", "id, e2_id, e5_id, name", "19, 11, 143, 'z'");
         DB.insert("e3", "id, e2_id, e5_id, name", "17, 11, 146, 'b'");
 
         Response r = target("/e2")
