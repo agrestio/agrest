@@ -8,7 +8,6 @@ import io.agrest.it.fixture.cayenne.E4;
 import io.agrest.property.PropertyReader;
 import org.apache.cayenne.Cayenne;
 import org.apache.cayenne.DataObject;
-import org.apache.cayenne.query.SQLTemplate;
 import org.junit.Test;
 
 import javax.ws.rs.GET;
@@ -21,9 +20,9 @@ import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriInfo;
 
 import static io.agrest.property.PropertyBuilder.property;
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
-public class GET_Props_EntityProperty_IT extends JerseyTestOnDerby {
+public class GET_Props_RequestProperty_IT extends JerseyTestOnDerby {
 
     @Override
     protected void doAddResources(FeatureContext context) {
@@ -31,9 +30,10 @@ public class GET_Props_EntityProperty_IT extends JerseyTestOnDerby {
     }
 
     @Test
-    public void testRequestEntityProperty() {
+    public void testRequest_Property() {
 
-        newContext().performGenericQuery(new SQLTemplate(E3.class, "INSERT INTO utest.e4 (id) values (1), (2)"));
+        insert("e4", "id", "1");
+        insert("e4", "id", "2");
 
         Response r = target("/e4/calc_property")
                 .queryParam("include", "id")
@@ -44,6 +44,24 @@ public class GET_Props_EntityProperty_IT extends JerseyTestOnDerby {
         assertEquals(Status.OK.getStatusCode(), r.getStatus());
         assertEquals(
                 "{\"data\":[{\"id\":1,\"x\":\"y_1\"},{\"id\":2,\"x\":\"y_2\"}],\"total\":2}",
+                r.readEntity(String.class));
+    }
+
+    @Test
+    public void testRequest_Property_ForCustomEncoding() {
+
+        insert("e3", "id, name", "1, 'x'");
+        insert("e3", "id, name", "2, 'y'");
+
+        Response r = target("/e3/custom_encoding")
+                .queryParam("include", "name")
+                .queryParam("sort", "id")
+                .request()
+                .get();
+
+        assertEquals(Status.OK.getStatusCode(), r.getStatus());
+        assertEquals(
+                "{\"data\":[{\"name\":\"_x_\"},{\"name\":\"_y_\"}],\"total\":2}",
                 r.readEntity(String.class));
     }
 
@@ -58,6 +76,15 @@ public class GET_Props_EntityProperty_IT extends JerseyTestOnDerby {
         public DataResponse<E4> property_WithReader(@Context UriInfo uriInfo) {
             PropertyReader xReader = (root, name) -> "y_" + Cayenne.intPKForObject((DataObject) root);
             return Ag.select(E4.class, config).uri(uriInfo).property("x", property(xReader)).get();
+        }
+
+        @GET
+        @Path("e3/custom_encoding")
+        public DataResponse<E3> replaceProperty_WithReader(@Context UriInfo uriInfo) {
+
+            // use case: custom encoder for the existing property...
+            PropertyReader xReader = (o, name) -> "_" + ((E3) o).getName() + "_";
+            return Ag.select(E3.class, config).uri(uriInfo).property(E3.NAME.getName(), property(xReader)).get();
         }
     }
 }
