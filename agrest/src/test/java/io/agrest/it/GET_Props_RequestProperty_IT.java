@@ -37,6 +37,7 @@ public class GET_Props_RequestProperty_IT extends JerseyTestOnDerby {
 
         Response r = target("/e4/calc_property")
                 .queryParam("include", "id")
+                .queryParam("include", "x")
                 .queryParam("sort", "id")
                 .request()
                 .get();
@@ -48,7 +49,25 @@ public class GET_Props_RequestProperty_IT extends JerseyTestOnDerby {
     }
 
     @Test
-    public void testRequest_Property_ForCustomEncoding() {
+    public void testRequest_Property_Exclude() {
+
+        insert("e4", "id", "1");
+        insert("e4", "id", "2");
+
+        Response r = target("/e4/calc_property")
+                .queryParam("include", "id")
+                .queryParam("sort", "id")
+                .request()
+                .get();
+
+        assertEquals(Status.OK.getStatusCode(), r.getStatus());
+        assertEquals(
+                "{\"data\":[{\"id\":1},{\"id\":2}],\"total\":2}",
+                r.readEntity(String.class));
+    }
+
+    @Test
+    public void testRequest_ShadowProperty() {
 
         insert("e3", "id, name", "1, 'x'");
         insert("e3", "id, name", "2, 'y'");
@@ -62,6 +81,24 @@ public class GET_Props_RequestProperty_IT extends JerseyTestOnDerby {
         assertEquals(Status.OK.getStatusCode(), r.getStatus());
         assertEquals(
                 "{\"data\":[{\"name\":\"_x_\"},{\"name\":\"_y_\"}],\"total\":2}",
+                r.readEntity(String.class));
+    }
+
+    @Test
+    public void testRequest_ShadowProperty_Exclude() {
+
+        insert("e3", "id, name", "1, 'x'");
+        insert("e3", "id, name", "2, 'y'");
+
+        Response r = target("/e3/custom_encoding")
+                .queryParam("include", "id")
+                .queryParam("sort", "id")
+                .request()
+                .get();
+
+        assertEquals(Status.OK.getStatusCode(), r.getStatus());
+        assertEquals(
+                "{\"data\":[{\"id\":1},{\"id\":2}],\"total\":2}",
                 r.readEntity(String.class));
     }
 
