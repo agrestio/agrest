@@ -71,23 +71,42 @@ public class CayenneAssembleQueryStage implements Processor<SelectContext<?>> {
             query.addOrdering(o);
         }
 
+        entity.setSelect(query);
+
+        if (entity.getMapBy() != null) {
+            buildChildrenQuery(context, entity.getMapBy());
+        }
+
+        buildChildrenQuery(context, entity);
+
+        return query;
+    }
+
+
+    private void buildChildrenQuery(SelectContext context, ResourceEntity<?> entity) {
         if (!entity.getChildren().isEmpty()) {
             for (Map.Entry<String, ResourceEntity<?>> e : entity.getChildren().entrySet()) {
                 ResourceEntity child  = e.getValue();
 
-                SelectQuery childQuery = buildQuery(context, child, null);
-                AgRelationship relationship = child.getAgEntity().getRelationship(entity.getAgEntity());
+                List<Property> properties = new ArrayList<>();
+                properties.add(Property.createSelf(child.getType()));
 
-                childQuery.setColumns(
-                        Property.createSelf(child.getType()),
-                        relationship.isToMany()
-                                ? Property.create(relationship.getName(), List.class).flat(entity.getType())
-                                : Property.create(relationship.getName(), entity.getType()));
+                AgRelationship relationship = child.getAgEntity().getRelationship(entity.getAgEntity());
+                if (relationship != null) {
+                    for (AgAttribute attribute : (Collection<AgAttribute>) entity.getAgEntity().getIds()) {
+                        properties.add(Property.create(ExpressionFactory.dbPathExp(relationship.getName() + "." + attribute.getName()), (Class) attribute.getType()));
+                    }
+                    // transfer expression from parent
+                    if (entity.getSelect().getQualifier() != null) {
+                        child.andQualifier((Expression) relationship.translateExpressionToTarget(entity.getSelect().getQualifier()));
+                    }
+
+                }
+
+                SelectQuery childQuery = buildQuery(context, child, null);
+                childQuery.setColumns(properties);
             }
         }
-
-        entity.setSelect(query);
-        return query;
     }
 
     <T> SelectQuery<T> basicSelect(ResourceEntity<T> resourceEntity, AgObjectId rootId) {

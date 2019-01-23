@@ -14,8 +14,6 @@ public interface AgPersistentRelationship extends AgRelationship {
 
 	boolean isPrimaryKey();
 
-//	AgPersistentRelationship getReverseRelationship(); // ???
-
 	Map<String, Object> extractId(AgObjectId id); // TODO: move this to a separate place?
 
 	Map<String, Object> extractId(JsonNode id); // TODO: move this to a separate place?
