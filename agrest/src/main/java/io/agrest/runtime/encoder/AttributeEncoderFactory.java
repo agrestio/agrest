@@ -7,14 +7,17 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.OffsetDateTime;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
+import io.agrest.CompoundObjectId;
 import io.agrest.EntityProperty;
 import io.agrest.ResourceEntity;
+import io.agrest.SimpleObjectId;
 import io.agrest.encoder.Encoder;
 import io.agrest.encoder.IdEncoder;
 import io.agrest.meta.AgAttribute;
@@ -60,8 +63,8 @@ public class AttributeEncoderFactory implements IAttributeEncoderFactory {
 	}
 
 	@Override
-	public EntityProperty getAttributeProperty(AgEntity<?> entity, AgAttribute attribute) {
-		String key = entity.getName() + "." + attribute.getName();
+	public EntityProperty getAttributeProperty(ResourceEntity<?> entity, AgAttribute attribute) {
+		String key = entity.getAgEntity().getName() + "." + attribute.getName();
 
 		EntityProperty property = attributePropertiesByPath.get(key);
 		if (property == null) {
@@ -73,7 +76,7 @@ public class AttributeEncoderFactory implements IAttributeEncoderFactory {
 	}
 
 	@Override
-	public EntityProperty getRelationshipProperty(AgEntity<?> entity, AgRelationship relationship, Encoder encoder) {
+	public EntityProperty getRelationshipProperty(ResourceEntity<?> entity, AgRelationship relationship, Encoder encoder) {
 
 		// TODO: can't cache, as target encoder is dynamic...
 		return buildRelationshipProperty(entity, relationship, encoder);
@@ -93,20 +96,36 @@ public class AttributeEncoderFactory implements IAttributeEncoderFactory {
 		return property;
 	}
 
-	protected EntityProperty buildRelationshipProperty(AgEntity<?> entity, AgRelationship relationship, Encoder encoder) {
+	protected EntityProperty buildRelationshipProperty(ResourceEntity<?> entity, AgRelationship relationship, Encoder encoder) {
 		boolean persistent = relationship instanceof AgPersistentRelationship;
 		return getProperty(entity, relationship.getPropertyReader(), persistent, encoder);
 	}
 
-	protected EntityProperty buildAttributeProperty(AgEntity<?> entity, AgAttribute attribute) {
+	protected EntityProperty buildAttributeProperty(ResourceEntity<?> entity, AgAttribute attribute) {
 		boolean persistent = attribute instanceof AgPersistentAttribute;
 		Encoder encoder = buildEncoder(attribute);
 		return getProperty(entity, attribute.getPropertyReader(), persistent, encoder);
 	}
 
-	private EntityProperty getProperty(AgEntity<?> entity, PropertyReader reader, boolean persistent, Encoder encoder) {
+	private EntityProperty getProperty(ResourceEntity<?> entity, PropertyReader reader, boolean persistent, Encoder encoder) {
 		if (persistent && DataObject.class.isAssignableFrom(entity.getType())) {
-			return PropertyBuilder.dataObjectProperty().encodedWith(encoder);
+			return PropertyBuilder
+					.dataObjectProperty()
+					.encodedWith(encoder)
+					.resolveChildren(
+							// wraps function to to get AgObjectId from DataObject
+							(o, n) -> {
+								Object object = getOrCreateIdPropertyReader(entity.getAgEntity()).value(o, "");
+								if (object instanceof Map) {
+									Map ids = (Map)object;
+									if (ids.size() == 1) {
+										return entity.getChildResolver().apply(new SimpleObjectId(ids.values().iterator().next()), n);
+									} else if (ids.size() > 1) {
+										return entity.getChildResolver().apply(new CompoundObjectId(ids), n);
+									}
+								}
+								return null;
+							});
 		} else if(reader != null) {
 			return PropertyBuilder.property(reader);
 		} else {

@@ -78,7 +78,7 @@ public class MapByEncoder implements CollectionEncoder {
 
             Map.Entry<String, AgAttribute> attribute = mapBy.getAttributes().entrySet().iterator().next();
             mapByReaders.add(getPropertyReader(attribute.getKey(),
-                    encoderFactory.getAttributeProperty(mapBy.getAgEntity(), attribute.getValue())));
+                    encoderFactory.getAttributeProperty(mapBy, attribute.getValue())));
 
             this.fieldNameConverter = converterFactory.getConverter(mapBy.getAgEntity(), attribute.getKey());
             return;
@@ -91,7 +91,7 @@ public class MapByEncoder implements CollectionEncoder {
             Map.Entry<String, ResourceEntity<?>> child = mapBy.getChildren().entrySet().iterator().next();
             AgRelationship relationship = mapBy.getAgEntity().getRelationship(child.getKey());
             mapByReaders.add(getPropertyReader(child.getKey(),
-                    encoderFactory.getRelationshipProperty(mapBy.getAgEntity(), relationship, null)));
+                    encoderFactory.getRelationshipProperty(mapBy, relationship, null)));
 
             ResourceEntity<?> childMapBy = mapBy.getChildren().get(child.getKey());
             config(converterFactory, encoderFactory, childMapBy);

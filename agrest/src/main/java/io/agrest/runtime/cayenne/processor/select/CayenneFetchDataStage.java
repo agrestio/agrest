@@ -1,19 +1,21 @@
 package io.agrest.runtime.cayenne.processor.select;
 
 import io.agrest.AgException;
+import io.agrest.CompoundObjectId;
 import io.agrest.ResourceEntity;
+import io.agrest.SimpleObjectId;
+import io.agrest.meta.AgAttribute;
 import io.agrest.meta.AgEntity;
-import io.agrest.meta.AgRelationship;
 import io.agrest.processor.Processor;
 import io.agrest.processor.ProcessorOutcome;
 import io.agrest.runtime.cayenne.ICayennePersister;
 import io.agrest.runtime.processor.select.SelectContext;
-import org.apache.cayenne.CayenneDataObject;
 import org.apache.cayenne.di.Inject;
 import org.apache.cayenne.query.SelectQuery;
 
 import javax.ws.rs.core.Response;
-import java.util.ArrayList;
+import java.util.Collection;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -54,6 +56,10 @@ public class CayenneFetchDataStage implements Processor<SelectContext<?>> {
                         "Found more than one object for ID '%s' and entity '%s'", context.getId(), entity.getName()));
             }
         }
+
+        // saves a result for the root entity
+        context.getEntity().addToResult(objects);
+
         context.setObjects(objects);
     }
 
@@ -64,42 +70,39 @@ public class CayenneFetchDataStage implements Processor<SelectContext<?>> {
 
         if (!resourceEntity.getChildren().isEmpty()) {
             for (Map.Entry<String, ResourceEntity<?>> e : resourceEntity.getChildren().entrySet()) {
-                ResourceEntity child = e.getValue();
+                ResourceEntity childEntity = e.getValue();
 
-                List childObjects = fetchEntity(child);
+                List childObjects = fetchEntity(childEntity);
 
-                AgRelationship relationship = resourceEntity.getAgEntity().getRelationship(child.getAgEntity());
-                assignChildrenToParent(objects, relationship, childObjects);
+                assignChildrenToParent(resourceEntity, childEntity, childObjects);
             }
         }
 
-        resourceEntity.setResult(objects);
         return objects;
     }
 
-    // Assigns child items to the appropriate parent item
-    protected <T> List<T> assignChildrenToParent(List<T> parents, AgRelationship relationship, List children) {
-
-        for (T parent : parents) {
-            if (parent instanceof CayenneDataObject) {
-                List relations = new ArrayList();
-
-                for (Object child : children) {
-                    if (child instanceof Object[]) {
-                        for (Object childRelation : (Object[])child) {
-                            if (childRelation.equals(parent)) {
-                                relations.add(((Object[])child)[0]);
-                            }
+    /**
+     * Assigns child items to the appropriate parent item
+     */
+    protected <T> void assignChildrenToParent(ResourceEntity<T> parentEntity, ResourceEntity childEntity, List children) {
+        // saves a result
+        for (Object child : children) {
+            if (child instanceof Object[]) {
+                Object[] ids = (Object[])child;
+                if (ids.length == 2) {
+                    childEntity.addToResult( new SimpleObjectId(ids[1]), (T) ids[0]);
+                } else if (ids.length > 2) {
+                    // saves entity with a compound ID
+                    Map<String, Object> compoundKeys = new LinkedHashMap<>();
+                    Collection<AgAttribute> idAttributes = parentEntity.getAgEntity().getIds();
+                    if (idAttributes.size() == (ids.length - 1)) {
+                        for (int i = 1; i < ids.length; i++) {
+                            compoundKeys.put(idAttributes.iterator().next().getName(), ids[i]);
                         }
                     }
+                    childEntity.addToResult( new CompoundObjectId(compoundKeys), (T) ids[0]);
                 }
-                ((CayenneDataObject) parent).writePropertyDirectly(
-                        relationship.getName(),
-                        relationship.isToMany() ? relations : relations.isEmpty() ? null : relations.iterator().next());
-
             }
         }
-
-        return parents;
     }
 }

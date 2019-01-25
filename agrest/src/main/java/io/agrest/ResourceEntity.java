@@ -12,8 +12,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.BiFunction;
 
 /**
  * A metadata object that describes a data structure of a given REST resource.
@@ -46,7 +48,7 @@ public class ResourceEntity<T> {
     private boolean filtered;
 
     private SelectQuery<T> select;
-    private List result;
+    private Map<AgObjectId, List> result;
 
     public ResourceEntity(AgEntity<T> agEntity) {
         this.idIncluded = false;
@@ -56,6 +58,7 @@ public class ResourceEntity<T> {
         this.orderings = new ArrayList<>(2);
         this.extraProperties = new HashMap<>();
         this.agEntity = agEntity;
+        this.result = new LinkedHashMap<>();
     }
 
     public ResourceEntity(AgEntity<T> agEntity, AgRelationship incoming) {
@@ -108,12 +111,39 @@ public class ResourceEntity<T> {
         this.select = select;
     }
 
-    public List<T> getResult() {
-        return result;
+
+    public List<T> getResult(AgObjectId parentId) {
+        return result.get(parentId);
     }
 
-    public void setResult(List<? extends T> objects) {
-        this.result = objects;
+    /**
+     * Uses 0 bucket to retrieve result list of objects for the root entity
+     *
+     * @return
+     */
+    public List<T> getResult() {
+        return result.get(null);
+    }
+
+    public void addToResult(AgObjectId parentId, T object) {
+        if (!result.containsKey(parentId)) {
+            result.put(parentId, new ArrayList());
+        }
+        result.get(parentId).add(object);
+    }
+
+    /**
+     * Stores plain result list without parent ID's for the root entity.
+     * uses 0 bucket to sore the result list.
+     *
+     * @param objects
+     */
+    public void addToResult(List<T> objects) {
+        if (result.containsKey(null)) {
+            result.get(null).addAll(objects);
+        } else {
+            result.put(null, objects);
+        }
     }
 
     /**
@@ -186,6 +216,16 @@ public class ResourceEntity<T> {
 
     public String getMapByPath() {
         return mapByPath;
+    }
+
+    public BiFunction<AgObjectId, String, List<?>> getChildResolver() {
+        return (id, name) -> {
+                ResourceEntity child = getChildren().get(name);
+                if (child != null) {
+                    return child.getResult(id);
+                }
+            return null;
+        };
     }
 
     @Override
