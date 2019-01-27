@@ -2,6 +2,7 @@ Release 3.1
 
 * #358 Protocol Enhancement: 'include\exclude' parameters should take an array of values 
 * #392 Request include/exclude settings are ignored for dynamic request properties
+* #394 Upgrade Jackson to 2.9.8
 
 Release 3.0
 
