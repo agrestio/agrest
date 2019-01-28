@@ -93,6 +93,7 @@ public class CayenneAssembleQueryStageTest extends TestWithCayenneMapping {
 
 		resourceEntity.setFetchLimit(0);
 		resourceEntity.setFetchOffset(0);
+		resourceEntity.setSelect(null);
 
 		SelectQuery<E1> q2 = makeQueryStage.buildQuery(c, c.getEntity(), c.getId());
 		assertEquals(0, q2.getPageSize());

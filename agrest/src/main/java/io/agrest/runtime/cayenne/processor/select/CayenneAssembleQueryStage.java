@@ -74,18 +74,18 @@ public class CayenneAssembleQueryStage implements Processor<SelectContext<?>> {
         entity.setSelect(query);
 
         if (entity.getMapBy() != null) {
-            buildChildrenQuery(context, entity.getMapBy());
+            buildChildrenQuery(context, entity, entity.getMapBy().getChildren());
         }
 
-        buildChildrenQuery(context, entity);
+        buildChildrenQuery(context, entity, entity.getChildren());
 
         return query;
     }
 
 
-    private void buildChildrenQuery(SelectContext context, ResourceEntity<?> entity) {
-        if (!entity.getChildren().isEmpty()) {
-            for (Map.Entry<String, ResourceEntity<?>> e : entity.getChildren().entrySet()) {
+    private void buildChildrenQuery(SelectContext context, ResourceEntity<?> entity, Map<String, ResourceEntity<?>> children) {
+        if (!children.isEmpty()) {
+            for (Map.Entry<String, ResourceEntity<?>> e : children.entrySet()) {
                 ResourceEntity child  = e.getValue();
 
                 List<Property> properties = new ArrayList<>();

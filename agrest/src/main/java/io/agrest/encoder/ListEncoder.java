@@ -20,6 +20,11 @@ public class ListEncoder implements CollectionEncoder {
 
 	@Override
 	public int visitEntities(Object root, EncoderVisitor visitor) {
+		// Excludes null elements from visiting
+		if (root == null) {
+			return 0;
+		}
+
 		List<?> objects = toList(root);
 
 		Counter counter = new Counter();
