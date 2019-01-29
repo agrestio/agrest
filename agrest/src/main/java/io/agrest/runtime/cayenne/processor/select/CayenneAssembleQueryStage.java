@@ -58,7 +58,9 @@ public class CayenneAssembleQueryStage implements Processor<SelectContext<?>> {
             }
         }
 
-        if (context.getParent() != null) {
+        if (context.getParent() != null
+                // TODO override equals() for AgEntity
+                && context.getEntity().getAgEntity().getName().equalsIgnoreCase(entity.getAgEntity().getName())) {
             Expression qualifier = context.getParent().qualifier(entityResolver);
             query.andQualifier(qualifier);
         }

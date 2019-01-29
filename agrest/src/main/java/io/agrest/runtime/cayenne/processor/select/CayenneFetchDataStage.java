@@ -102,10 +102,10 @@ public class CayenneFetchDataStage implements Processor<SelectContext<?>> {
                 } else if (ids.length > 2) {
                     // saves entity with a compound ID
                     Map<String, Object> compoundKeys = new LinkedHashMap<>();
-                    Collection<AgAttribute> idAttributes = parentEntity.getAgEntity().getIds();
-                    if (idAttributes.size() == (ids.length - 1)) {
+                    AgAttribute[] idAttributes = parentEntity.getAgEntity().getIds().toArray(new AgAttribute[0]);
+                    if (idAttributes.length == (ids.length - 1)) {
                         for (int i = 1; i < ids.length; i++) {
-                            compoundKeys.put(idAttributes.iterator().next().getName(), ids[i]);
+                            compoundKeys.put(idAttributes[i - 1].getName(), ids[i]);
                         }
                     }
                     childEntity.addToResult( new CompoundObjectId(compoundKeys), (T) ids[0]);
