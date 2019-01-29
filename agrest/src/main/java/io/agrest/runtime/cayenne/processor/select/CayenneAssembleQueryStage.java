@@ -6,6 +6,7 @@ import io.agrest.ResourceEntity;
 import io.agrest.meta.AgAttribute;
 import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgPersistentAttribute;
+import io.agrest.meta.AgPersistentEntity;
 import io.agrest.meta.AgRelationship;
 import io.agrest.processor.Processor;
 import io.agrest.processor.ProcessorOutcome;
@@ -89,6 +90,9 @@ public class CayenneAssembleQueryStage implements Processor<SelectContext<?>> {
         if (!children.isEmpty()) {
             for (Map.Entry<String, ResourceEntity<?>> e : children.entrySet()) {
                 ResourceEntity child  = e.getValue();
+                if (!(child.getAgEntity() instanceof AgPersistentEntity)) {
+                    continue;
+                }
 
                 List<Property> properties = new ArrayList<>();
                 properties.add(Property.createSelf(child.getType()));
