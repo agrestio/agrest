@@ -15,7 +15,6 @@ import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.BiFunction;
 
 /**
  * A metadata object that describes a data structure of a given REST resource.
@@ -126,10 +125,7 @@ public class ResourceEntity<T> {
     }
 
     public void addToResult(AgObjectId parentId, T object) {
-        if (!result.containsKey(parentId)) {
-            result.put(parentId, new ArrayList());
-        }
-        result.get(parentId).add(object);
+        result.computeIfAbsent(parentId, i -> new ArrayList()).add(object);
     }
 
     /**
@@ -139,11 +135,7 @@ public class ResourceEntity<T> {
      * @param objects
      */
     public void addToResult(List<T> objects) {
-        if (result.containsKey(null)) {
-            result.get(null).addAll(objects);
-        } else {
-            result.put(null, objects);
-        }
+        result.computeIfAbsent(null, i -> new ArrayList()).addAll(objects);
     }
 
     /**
@@ -216,16 +208,6 @@ public class ResourceEntity<T> {
 
     public String getMapByPath() {
         return mapByPath;
-    }
-
-    public BiFunction<AgObjectId, String, List<?>> getChildResolver() {
-        return (id, name) -> {
-                ResourceEntity child = getChildren().get(name);
-                if (child != null) {
-                    return child.getResult(id);
-                }
-            return null;
-        };
     }
 
     @Override

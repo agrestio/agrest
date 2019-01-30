@@ -7,7 +7,6 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.OffsetDateTime;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Date;
 import java.util.Map;
 import java.util.TreeMap;
@@ -116,12 +115,13 @@ public class AttributeEncoderFactory implements IAttributeEncoderFactory {
 							// wraps function to to get AgObjectId from DataObject
 							(o, n) -> {
 								Object object = getOrCreateIdPropertyReader(entity.getAgEntity()).value(o, "");
-								if (object instanceof Map) {
+								ResourceEntity child = entity.getChildren().get(n);
+								if (object instanceof Map && child != null) {
 									Map ids = (Map)object;
 									if (ids.size() == 1) {
-										return entity.getChildResolver().apply(new SimpleObjectId(ids.values().iterator().next()), n);
+										return child.getResult(new SimpleObjectId(ids.values().iterator().next()));
 									} else if (ids.size() > 1) {
-										return entity.getChildResolver().apply(new CompoundObjectId(ids), n);
+										return child.getResult(new CompoundObjectId(ids));
 									}
 								}
 								return null;
