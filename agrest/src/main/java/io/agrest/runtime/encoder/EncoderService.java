@@ -147,8 +147,7 @@ public class EncoderService implements IEncoderService {
         Map<String, EntityProperty> attributeEncoders = new TreeMap<String, EntityProperty>();
 
         for (AgAttribute attribute : resourceEntity.getAttributes().values()) {
-            EntityProperty property = attributeEncoderFactory.getAttributeProperty(resourceEntity.getAgEntity(),
-                    attribute);
+            EntityProperty property = attributeEncoderFactory.getAttributeProperty(resourceEntity, attribute);
             attributeEncoders.put(attribute.getName(), property);
         }
 
@@ -159,8 +158,7 @@ public class EncoderService implements IEncoderService {
             Encoder encoder = relationship.isToMany() ? nestedToManyEncoder(e.getValue())
                     : toOneEncoder(e.getValue(), relationship);
 
-            EntityProperty property = attributeEncoderFactory.getRelationshipProperty(resourceEntity.getAgEntity(),
-                    relationship, encoder);
+            EntityProperty property = attributeEncoderFactory.getRelationshipProperty(resourceEntity, relationship, encoder);
             relationshipEncoders.put(e.getKey(), property);
         }
 

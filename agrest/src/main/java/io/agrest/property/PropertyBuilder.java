@@ -1,6 +1,9 @@
 package io.agrest.property;
 
 import java.io.IOException;
+import java.util.Collections;
+import java.util.List;
+import java.util.function.BiFunction;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import io.agrest.EntityProperty;
@@ -38,30 +41,37 @@ public class PropertyBuilder implements EntityProperty {
 
 	private Encoder encoder;
 	private PropertyReader reader;
+	private BiFunction<Object, String, List<?>> childResolver;
 
 	public static EntityProperty doNothingProperty() {
 		return DO_NOTHING_PROPERTY;
 	}
 
 	public static PropertyBuilder property() {
-		return new PropertyBuilder(BeanPropertyReader.reader(), GenericEncoder.encoder());
+		return new PropertyBuilder(BeanPropertyReader.reader(), GenericEncoder.encoder(), (i, n) -> Collections.emptyList());
 	}
 
 	public static PropertyBuilder property(PropertyReader reader) {
-		return new PropertyBuilder(reader, GenericEncoder.encoder());
+		return new PropertyBuilder(reader, GenericEncoder.encoder(), (i, n) -> Collections.emptyList());
 	}
 
 	public static PropertyBuilder dataObjectProperty() {
 		return property(DataObjectPropertyReader.reader());
 	}
 
-	private PropertyBuilder(PropertyReader reader, Encoder encoder) {
+	private PropertyBuilder(PropertyReader reader, Encoder encoder, BiFunction<Object, String, List<?>> childResolver) {
 		this.encoder = encoder;
 		this.reader = reader;
+		this.childResolver = childResolver;
 	}
 
 	public PropertyBuilder encodedWith(Encoder encoder) {
 		this.encoder = encoder;
+		return this;
+	}
+
+	public PropertyBuilder resolveChildren(BiFunction<Object, String, List<?>> childResolver) {
+		this.childResolver = childResolver;
 		return this;
 	}
 
@@ -73,7 +83,13 @@ public class PropertyBuilder implements EntityProperty {
 
 	@Override
 	public Object read(Object root, String propertyName) {
-		return reader.value(root, propertyName);
+		Object value = reader.value(root, propertyName);
+
+		if (value == null) {
+			// try to read children
+			value = childResolver.apply(root, propertyName);
+		}
+		return value;
 	}
 
 	@Override
