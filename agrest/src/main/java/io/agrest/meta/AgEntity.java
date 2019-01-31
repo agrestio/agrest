@@ -22,4 +22,6 @@ public interface AgEntity<T> {
 	Collection<AgRelationship> getRelationships();
 
 	AgRelationship getRelationship(String name);
+
+	AgRelationship getRelationship(AgEntity entity);
 }

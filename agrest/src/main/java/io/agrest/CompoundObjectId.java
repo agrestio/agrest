@@ -63,6 +63,45 @@ public class CompoundObjectId extends BaseObjectId {
 		return mapToString(id);
 	}
 
+	@Override
+	public boolean equals(Object object) {
+		if (this == object) {
+			return true;
+		}
+
+		if (!(object instanceof CompoundObjectId)) {
+			return false;
+		}
+
+		CompoundObjectId compoundObjectId = (CompoundObjectId)object;
+
+		if (this.id.keySet().size() != compoundObjectId.size()) {
+			return false;
+		}
+
+		for (Map.Entry<String, Object> entry : ((Map<String, Object>)compoundObjectId.get()).entrySet()) {
+			String entryKey = entry.getKey();
+			Object entryValue = entry.getValue();
+
+			if (entryValue == null) {
+				if (this.id.get(entryKey) != null || !this.id.containsKey(entryKey)) {
+					return false;
+				}
+			} else {
+				if (!this.id.get(entryKey).equals(entryValue)) {
+					return false;
+				}
+			}
+		}
+
+		return true;
+	}
+
+	@Override
+	public int hashCode() {
+		return id.hashCode();
+	}
+
 	public static String mapToString(Map<String, Object> m) {
 
 		StringBuilder buf = new StringBuilder("{");
