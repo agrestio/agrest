@@ -32,7 +32,8 @@ public class PojoFetchStage implements Processor<SelectContext<?>> {
         Map<Object, T> typeBucket = db.bucketForType(context.getType());
         if (context.isById()) {
             T object = typeBucket.get(context.getId().get());
-            context.setObjects(object != null ? Collections.singletonList(object) : Collections.<T>emptyList());
+            // stores as a result into ResourceEntity
+            context.getEntity().addToResult(object != null ? Collections.singletonList(object) : Collections.<T>emptyList());
             return;
         }
 
@@ -55,6 +56,7 @@ public class PojoFetchStage implements Processor<SelectContext<?>> {
             o.orderList(list);
         }
 
-        context.setObjects(list);
+        // stores as a result into ResourceEntity
+        context.getEntity().addToResult(list);
     }
 }

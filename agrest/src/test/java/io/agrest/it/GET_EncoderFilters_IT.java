@@ -175,7 +175,7 @@ public class GET_EncoderFilters_IT extends JerseyTestOnDerby {
                     .stage(SelectStage.APPLY_SERVER_PARAMS,
                             c -> RESOURCE_ENTITY_IS_FILTERED = c.getEntity().isFiltered())
                     .stage(SelectStage.ASSEMBLE_QUERY,
-                            c -> QUERY_PAGE_SIZE = c.getSelect().getPageSize())
+                            c -> QUERY_PAGE_SIZE = c.getEntity().getSelect().getPageSize())
                     .get();
         }
     }

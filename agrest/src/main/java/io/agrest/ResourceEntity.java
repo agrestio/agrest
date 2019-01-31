@@ -5,12 +5,14 @@ import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgRelationship;
 import org.apache.cayenne.exp.Expression;
 import org.apache.cayenne.query.Ordering;
+import org.apache.cayenne.query.SelectQuery;
 import org.apache.cayenne.util.ToStringBuilder;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -44,6 +46,9 @@ public class ResourceEntity<T> {
     private int fetchLimit;
     private boolean filtered;
 
+    private SelectQuery<T> select;
+    private Map<AgObjectId, List> result;
+
     public ResourceEntity(AgEntity<T> agEntity) {
         this.idIncluded = false;
         this.attributes = new HashMap<>();
@@ -52,6 +57,7 @@ public class ResourceEntity<T> {
         this.orderings = new ArrayList<>(2);
         this.extraProperties = new HashMap<>();
         this.agEntity = agEntity;
+        this.result = new LinkedHashMap<>();
     }
 
     public ResourceEntity(AgEntity<T> agEntity, AgRelationship incoming) {
@@ -94,6 +100,42 @@ public class ResourceEntity<T> {
 
     public List<Ordering> getOrderings() {
         return orderings;
+    }
+
+    public SelectQuery<T> getSelect() {
+        return select;
+    }
+
+    public void setSelect(SelectQuery<T> select) {
+        this.select = select;
+    }
+
+
+    public List<T> getResult(AgObjectId parentId) {
+        return result.get(parentId);
+    }
+
+    /**
+     * Uses 0 bucket to retrieve result list of objects for the root entity
+     *
+     * @return
+     */
+    public List<T> getResult() {
+        return result.get(null);
+    }
+
+    public void addToResult(AgObjectId parentId, T object) {
+        result.computeIfAbsent(parentId, i -> new ArrayList()).add(object);
+    }
+
+    /**
+     * Stores plain result list without parent ID's for the root entity.
+     * uses 0 bucket to sore the result list.
+     *
+     * @param objects
+     */
+    public void addToResult(List<T> objects) {
+        result.computeIfAbsent(null, i -> new ArrayList()).addAll(objects);
     }
 
     /**
