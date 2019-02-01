@@ -12,7 +12,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -48,7 +47,7 @@ public class ResourceEntity<T> {
     private boolean filtered;
 
     private SelectQuery<T> select;
-    private Map<AgObjectId, List> result;
+    private List<T> result;
 
     public ResourceEntity(AgEntity<T> agEntity) {
         this.idIncluded = false;
@@ -59,7 +58,6 @@ public class ResourceEntity<T> {
         this.extraProperties = new HashMap<>();
         this.includedExtraProperties = new HashMap<>();
         this.agEntity = agEntity;
-        this.result = new LinkedHashMap<>();
     }
 
     public ResourceEntity(AgEntity<T> agEntity, AgRelationship incoming) {
@@ -112,32 +110,18 @@ public class ResourceEntity<T> {
         this.select = select;
     }
 
-
-    public List<T> getResult(AgObjectId parentId) {
-        return result.get(parentId);
-    }
-
     /**
-     * Uses 0 bucket to retrieve result list of objects for the root entity
-     *
-     * @return
+     * @since 3.1
      */
     public List<T> getResult() {
-        return result.get(null);
-    }
-
-    public void addToResult(AgObjectId parentId, T object) {
-        result.computeIfAbsent(parentId, i -> new ArrayList()).add(object);
+        return result;
     }
 
     /**
-     * Stores plain result list without parent ID's for the root entity.
-     * uses 0 bucket to sore the result list.
-     *
-     * @param objects
+     * @since 3.1
      */
-    public void addToResult(List<T> objects) {
-        result.computeIfAbsent(null, i -> new ArrayList()).addAll(objects);
+    public void setResult(List<T> result) {
+        this.result = result;
     }
 
     /**

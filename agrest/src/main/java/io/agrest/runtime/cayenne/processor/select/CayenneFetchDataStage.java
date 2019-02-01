@@ -52,6 +52,6 @@ public class CayenneFetchDataStage implements Processor<SelectContext<?>> {
         }
 
         // saves a result for the root entity
-        context.getEntity().addToResult(objects);
+        context.getEntity().setResult(objects);
     }
 }
