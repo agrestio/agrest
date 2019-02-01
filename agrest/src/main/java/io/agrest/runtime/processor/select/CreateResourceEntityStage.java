@@ -55,6 +55,12 @@ public class CreateResourceEntityStage implements Processor<SelectContext<?>> {
     protected <T> void doExecute(SelectContext<T> context) {
         ResourceEntity<T> resourceEntity = new ResourceEntity<>(metadataService.getAgEntity(context.getType()));
 
+        // TODO: no reason why extra properties can't be hierarchical, i.e. we need to parse dot-path here and assign
+        //  children to child ResourceEntities
+        if (context.getExtraProperties() != null) {
+            resourceEntity.getExtraProperties().putAll(context.getExtraProperties());
+        }
+
         AgRequest request = context.getRawRequest();
         if (request != null) {
             sizeMerger.merge(resourceEntity, request.getStart(), request.getLimit());

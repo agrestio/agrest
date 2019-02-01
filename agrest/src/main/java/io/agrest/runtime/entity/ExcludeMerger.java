@@ -3,6 +3,7 @@ package io.agrest.runtime.entity;
 import io.agrest.AgException;
 import io.agrest.PathConstants;
 import io.agrest.ResourceEntity;
+import io.agrest.meta.AgEntity;
 import io.agrest.protocol.Exclude;
 
 import javax.ws.rs.core.Response.Status;
@@ -41,17 +42,23 @@ public class ExcludeMerger implements IExcludeMerger {
         }
 
         String property = dot > 0 ? path.substring(0, dot) : path;
-        if (resourceEntity.getAgEntity().getAttribute(property) != null) {
+        AgEntity<?> entity = resourceEntity.getAgEntity();
 
-            if (dot > 0) {
-                throw new AgException(Status.BAD_REQUEST, "Invalid exclude path: " + path);
+        if (dot < 0) {
+
+            if (resourceEntity.getIncludedExtraProperties().remove(property) != null) {
+                return;
             }
 
-            resourceEntity.getAttributes().remove(property);
-            return;
+            if (resourceEntity.getAttributes().remove(property) != null) {
+                return;
+            }
         }
 
-        if (resourceEntity.getAgEntity().getRelationship(property) != null) {
+        if (entity.getRelationship(property) != null) {
+
+            // TODO: I guess we are not removing the relationships based on the assumption that they are not included
+            //  by default and an exclude shouldn't be needed. But this is too much second-guessing the caller.
 
             ResourceEntity<?> relatedFilter = resourceEntity.getChild(property);
             if (relatedFilter == null) {
@@ -62,6 +69,7 @@ public class ExcludeMerger implements IExcludeMerger {
             if (dot > 0) {
                 processExcludePath(relatedFilter, path.substring(dot + 1));
             }
+
             return;
         }
 
@@ -71,6 +79,12 @@ public class ExcludeMerger implements IExcludeMerger {
             return;
         }
 
-        throw new AgException(Status.BAD_REQUEST, "Invalid exclude path: " + path);
+        // the property was either not included or is invalid... throw in the latter case for symmetry with "include"
+        if (entity.getAttribute(property) == null
+                && !resourceEntity.getExtraProperties().containsKey(property)
+            // not checking relationship names; the condition above does it already...
+        ) {
+            throw new AgException(Status.BAD_REQUEST, "Invalid exclude path: " + path);
+        }
     }
 }

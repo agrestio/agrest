@@ -41,6 +41,7 @@ public class ResourceEntity<T> {
     private AgRelationship incoming;
     private List<Ordering> orderings;
     private Expression qualifier;
+    private Map<String, EntityProperty> includedExtraProperties;
     private Map<String, EntityProperty> extraProperties;
     private int fetchOffset;
     private int fetchLimit;
@@ -56,6 +57,7 @@ public class ResourceEntity<T> {
         this.children = new HashMap<>();
         this.orderings = new ArrayList<>(2);
         this.extraProperties = new HashMap<>();
+        this.includedExtraProperties = new HashMap<>();
         this.agEntity = agEntity;
         this.result = new LinkedHashMap<>();
     }
@@ -172,6 +174,10 @@ public class ResourceEntity<T> {
 
     public Map<String, EntityProperty> getExtraProperties() {
         return extraProperties;
+    }
+
+    public Map<String, EntityProperty> getIncludedExtraProperties() {
+        return includedExtraProperties;
     }
 
     public boolean isIdIncluded() {
