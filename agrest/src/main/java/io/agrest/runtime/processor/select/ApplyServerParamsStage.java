@@ -41,10 +41,6 @@ public class ApplyServerParamsStage implements Processor<SelectContext<?>> {
 
         constraintsHandler.constrainResponse(entity, context.getSizeConstraints(), context.getConstraint());
 
-        if (context.getExtraProperties() != null) {
-            entity.getExtraProperties().putAll(context.getExtraProperties());
-        }
-
         for (EncoderFilter filter : filters) {
             if (filter.matches(entity)) {
                 entity.setFiltered(true);
