@@ -71,9 +71,4 @@ public class LazyAgPersistentEntity<T> extends BaseLazyAgEntity<T, AgPersistentE
     public AgRelationship getRelationship(String name) {
         return getDelegate().getRelationship(name);
     }
-
-    @Override
-    public AgRelationship getRelationship(AgEntity entity) {
-        return getDelegate().getRelationship(entity);
-    }
 }
