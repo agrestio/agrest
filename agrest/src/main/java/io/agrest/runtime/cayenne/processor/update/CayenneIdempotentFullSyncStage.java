@@ -9,6 +9,7 @@ import io.agrest.SimpleObjectId;
 import io.agrest.meta.AgAttribute;
 import io.agrest.meta.AgPersistentEntity;
 import io.agrest.meta.AgRelationship;
+import io.agrest.meta.cayenne.CayenneAgRelationship;
 import io.agrest.runtime.meta.IMetadataService;
 import io.agrest.runtime.processor.update.UpdateContext;
 import org.apache.cayenne.DataObject;
@@ -117,16 +118,16 @@ public class CayenneIdempotentFullSyncStage extends CayenneIdempotentCreateOrUpd
                 List<Property> properties = new ArrayList<>();
                 properties.add(Property.createSelf(child.getType()));
 
-                AgRelationship relationship = child.getAgEntity().getRelationship(entity.getAgEntity());
-                if (relationship != null) {
+                AgRelationship relationship = entity.getAgEntity().getRelationship(e.getKey());
+                if (relationship != null && relationship instanceof CayenneAgRelationship) {
+                    CayenneAgRelationship rel = (CayenneAgRelationship)relationship;
                     for (AgAttribute attribute : (Collection<AgAttribute>) entity.getAgEntity().getIds()) {
-                        properties.add(Property.create(ExpressionFactory.dbPathExp(relationship.getName() + "." + attribute.getName()), (Class) attribute.getType()));
+                        properties.add(Property.create(ExpressionFactory.dbPathExp(rel.getReverseName() + "." + attribute.getName()), (Class) attribute.getType()));
                     }
                     // transfer expression from parent
                     if (entity.getSelect().getQualifier() != null) {
-                        child.andQualifier((Expression) relationship.translateExpressionToTarget(entity.getSelect().getQualifier()));
+                        child.andQualifier((Expression) rel.translateExpressionToSource(entity.getSelect().getQualifier()));
                     }
-
                 }
 
                 SelectQuery childQuery = buildQuery(context, child);

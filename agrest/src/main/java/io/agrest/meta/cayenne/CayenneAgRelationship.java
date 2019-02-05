@@ -79,6 +79,10 @@ public class CayenneAgRelationship implements AgPersistentRelationship {
         return getDbRelationship().getReverseRelationship().isToDependentPK();
     }
 
+    private DbRelationship getDbRelationship() {
+        return objRelationship.getDbRelationships().get(0);
+    }
+
     @Override
     public Map<String, Object> extractId(AgObjectId id) {
         return extractId(id::get);
@@ -100,9 +104,11 @@ public class CayenneAgRelationship implements AgPersistentRelationship {
         }
     }
 
-    @Override
-    public Object translateExpressionToTarget(Object expression) {
+    public String getReverseName() {
+        return getDbRelationship().getReverseRelationship().getName();
+    }
 
+    public Object translateExpressionToTarget(Object expression) {
         if (expression instanceof Expression) {
             return objRelationship
                     .getTargetEntity()
@@ -114,8 +120,16 @@ public class CayenneAgRelationship implements AgPersistentRelationship {
         return null;
     }
 
-    private DbRelationship getDbRelationship() {
-        return objRelationship.getDbRelationships().get(0);
+    public Object translateExpressionToSource(Object expression) {
+        if (expression instanceof Expression) {
+            return objRelationship
+                    .getSourceEntity()
+                    .translateToRelatedEntity(
+                            (Expression) expression,
+                            objRelationship.getName());
+        }
+
+        return null;
     }
 
     private Map<String, Object> extractId(Function<String, Object> idPartSupplier) {

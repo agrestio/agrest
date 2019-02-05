@@ -51,10 +51,4 @@ public class DefaultAgRelationship implements AgRelationship {
         return propertyReader;
     }
 
-    @Override
-    public Object translateExpressionToTarget(Object Expression) {
-        return null;
-    }
-
-
 }

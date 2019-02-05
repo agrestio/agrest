@@ -8,6 +8,7 @@ import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgPersistentAttribute;
 import io.agrest.meta.AgPersistentEntity;
 import io.agrest.meta.AgRelationship;
+import io.agrest.meta.cayenne.CayenneAgRelationship;
 import io.agrest.processor.Processor;
 import io.agrest.processor.ProcessorOutcome;
 import io.agrest.runtime.cayenne.ICayennePersister;
@@ -97,14 +98,15 @@ public class CayenneAssembleQueryStage implements Processor<SelectContext<?>> {
                 List<Property> properties = new ArrayList<>();
                 properties.add(Property.createSelf(child.getType()));
 
-                AgRelationship relationship = child.getAgEntity().getRelationship(entity.getAgEntity());
-                if (relationship != null) {
+                AgRelationship relationship = entity.getAgEntity().getRelationship(e.getKey());
+                if (relationship != null && relationship instanceof CayenneAgRelationship) {
+                    CayenneAgRelationship rel = (CayenneAgRelationship)relationship;
                     for (AgAttribute attribute : (Collection<AgAttribute>) entity.getAgEntity().getIds()) {
-                        properties.add(Property.create(ExpressionFactory.dbPathExp(relationship.getName() + "." + attribute.getName()), (Class) attribute.getType()));
+                        properties.add(Property.create(ExpressionFactory.dbPathExp(rel.getReverseName() + "." + attribute.getName()), (Class) attribute.getType()));
                     }
                     // transfer expression from parent
                     if (entity.getSelect().getQualifier() != null) {
-                        child.andQualifier((Expression) relationship.translateExpressionToTarget(entity.getSelect().getQualifier()));
+                        child.andQualifier((Expression) rel.translateExpressionToSource(entity.getSelect().getQualifier()));
                     }
 
                 }
