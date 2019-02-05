@@ -53,9 +53,4 @@ public class LazyAgEntity<T> extends BaseLazyAgEntity<T, AgEntity<T>> implements
     public AgRelationship getRelationship(String name) {
         return getDelegate().getRelationship(name);
     }
-
-    @Override
-    public AgRelationship getRelationship(AgEntity entity) {
-        return getDelegate().getRelationship(entity);
-    }
 }
