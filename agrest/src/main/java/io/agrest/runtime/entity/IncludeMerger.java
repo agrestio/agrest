@@ -1,6 +1,7 @@
 package io.agrest.runtime.entity;
 
 import io.agrest.AgException;
+import io.agrest.EntityProperty;
 import io.agrest.PathConstants;
 import io.agrest.ResourceEntity;
 import io.agrest.meta.AgAttribute;
@@ -52,15 +53,19 @@ public class IncludeMerger implements IIncludeMerger {
 
         String property = dot > 0 ? path.substring(0, dot) : path;
         AgEntity<?> agEntity = parent.getAgEntity();
-        AgAttribute attribute = agEntity.getAttribute(property);
-        if (attribute != null) {
 
-            if (dot > 0) {
-                throw new AgException(Status.BAD_REQUEST, "Invalid include path: " + path);
+        if (dot < 0) {
+            EntityProperty requestProperty = parent.getExtraProperties().get(property);
+            if (requestProperty != null) {
+                parent.getIncludedExtraProperties().put(property, requestProperty);
+                return null;
             }
 
-            parent.getAttributes().put(property, attribute);
-            return null;
+            AgAttribute attribute = agEntity.getAttribute(property);
+            if (attribute != null) {
+                parent.getAttributes().put(property, attribute);
+                return null;
+            }
         }
 
         AgRelationship relationship = agEntity.getRelationship(property);
@@ -93,14 +98,19 @@ public class IncludeMerger implements IIncludeMerger {
     }
 
     public static void processDefaultIncludes(ResourceEntity<?> resourceEntity) {
-        // either there are no includes (taking into account Id) or all includes
-        // are relationships
-        if (!resourceEntity.isIdIncluded() && resourceEntity.getAttributes().isEmpty()) {
+
+        // either there are no includes (taking into account Id) or all includes are relationships
+        if (!resourceEntity.isIdIncluded()
+                && resourceEntity.getAttributes().isEmpty()
+                && resourceEntity.getIncludedExtraProperties().isEmpty()) {
 
             for (AgAttribute a : resourceEntity.getAgEntity().getAttributes()) {
                 resourceEntity.getAttributes().put(a.getName(), a);
                 resourceEntity.getDefaultProperties().add(a.getName());
             }
+
+            resourceEntity.getIncludedExtraProperties().putAll(resourceEntity.getExtraProperties());
+            resourceEntity.getDefaultProperties().addAll(resourceEntity.getExtraProperties().keySet());
 
             // Id should be included by default
             resourceEntity.includeId();

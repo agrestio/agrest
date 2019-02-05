@@ -298,10 +298,10 @@
 	<db-relationship name="e15e1" source="e1" target="e15_e1" toDependentPK="true" toMany="true">
 		<db-attribute-pair source="id" target="e1_id"/>
 	</db-relationship>
-	<db-relationship name="e11s" source="e10" target="e11" toMany="false">
+	<db-relationship name="e11s" source="e10" target="e11" toMany="true">
 		<db-attribute-pair source="id" target="e10_id"/>
 	</db-relationship>
-	<db-relationship name="e10" source="e11" target="e10" toMany="true">
+	<db-relationship name="e10" source="e11" target="e10" toMany="false">
 		<db-attribute-pair source="e10_id" target="id"/>
 	</db-relationship>
 	<db-relationship name="e1213" source="e12" target="e12_e13" toDependentPK="true" toMany="true">

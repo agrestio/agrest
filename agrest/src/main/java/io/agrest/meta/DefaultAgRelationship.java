@@ -1,3 +1,4 @@
+
 package io.agrest.meta;
 
 import io.agrest.property.PropertyReader;

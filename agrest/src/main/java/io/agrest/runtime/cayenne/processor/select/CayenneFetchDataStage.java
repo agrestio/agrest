@@ -14,7 +14,6 @@ import org.apache.cayenne.di.Inject;
 import org.apache.cayenne.query.SelectQuery;
 
 import javax.ws.rs.core.Response;
-import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -58,9 +57,7 @@ public class CayenneFetchDataStage implements Processor<SelectContext<?>> {
         }
 
         // saves a result for the root entity
-        context.getEntity().addToResult(objects);
-
-        context.setObjects(objects);
+        context.getEntity().setResult(objects);
     }
 
     protected <T> List<T>  fetchEntity(ResourceEntity<T> resourceEntity) {

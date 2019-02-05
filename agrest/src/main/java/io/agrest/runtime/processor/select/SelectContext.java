@@ -34,7 +34,6 @@ public class SelectContext<T> extends BaseProcessingContext<T> {
 	private Constraint<T> constraint;
 	private boolean atMostOneObject;
 	private Encoder encoder;
-	private List objects;
 	private AgRequest rawRequest;
 	private AgRequest request;
 
@@ -158,20 +157,6 @@ public class SelectContext<T> extends BaseProcessingContext<T> {
 	 */
 	public void setEntity(ResourceEntity<T> entity) {
 		this.entity = entity;
-	}
-
-	/**
-	 * @since 1.24
-	 */
-	public List<T> getObjects() {
-		return objects;
-	}
-
-	/**
-	 * @since 1.24
-	 */
-	public void setObjects(List<? extends T> objects) {
-		this.objects = objects;
 	}
 
 	/**

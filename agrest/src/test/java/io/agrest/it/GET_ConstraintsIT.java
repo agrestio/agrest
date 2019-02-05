@@ -74,7 +74,7 @@ public class GET_ConstraintsIT extends JerseyTestOnDerby {
 
 		Response response1 = target("/e10").queryParam("include", E10.E11S.getName()).request().get();
 		assertEquals(Status.OK.getStatusCode(), response1.getStatus());
-		assertEquals("{\"data\":[{\"id\":1,\"cBoolean\":true,\"cInt\":5,\"e11s\":{\"address\":\"aaa\"}}],\"total\":1}",
+		assertEquals("{\"data\":[{\"id\":1,\"cBoolean\":true,\"cInt\":5,\"e11s\":[{\"address\":\"aaa\"}]}],\"total\":1}",
 				response1.readEntity(String.class));
 	}
 
