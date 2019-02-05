@@ -21,5 +21,4 @@ public interface AgRelationship {
 	 */
 	PropertyReader getPropertyReader();
 
-	Object translateExpressionToTarget(Object Expression);
 }

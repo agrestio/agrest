@@ -104,15 +104,29 @@ public class CayenneAgRelationship implements AgPersistentRelationship {
         }
     }
 
-    @Override
-    public Object translateExpressionToTarget(Object expression) {
+    public String getReverseName() {
+        return getDbRelationship().getReverseRelationship().getName();
+    }
 
+    public Object translateExpressionToTarget(Object expression) {
         if (expression instanceof Expression) {
             return objRelationship
                     .getTargetEntity()
                     .translateToRelatedEntity(
                             (Expression) expression,
                             objRelationship.getReverseRelationshipName());
+        }
+
+        return null;
+    }
+
+    public Object translateExpressionToSource(Object expression) {
+        if (expression instanceof Expression) {
+            return objRelationship
+                    .getSourceEntity()
+                    .translateToRelatedEntity(
+                            (Expression) expression,
+                            objRelationship.getName());
         }
 
         return null;

@@ -73,28 +73,7 @@ public class CompoundObjectId extends BaseObjectId {
 			return false;
 		}
 
-		CompoundObjectId compoundObjectId = (CompoundObjectId)object;
-
-		if (this.id.keySet().size() != compoundObjectId.size()) {
-			return false;
-		}
-
-		for (Map.Entry<String, Object> entry : ((Map<String, Object>)compoundObjectId.get()).entrySet()) {
-			String entryKey = entry.getKey();
-			Object entryValue = entry.getValue();
-
-			if (entryValue == null) {
-				if (this.id.get(entryKey) != null || !this.id.containsKey(entryKey)) {
-					return false;
-				}
-			} else {
-				if (!this.id.get(entryKey).equals(entryValue)) {
-					return false;
-				}
-			}
-		}
-
-		return true;
+		return id.equals(((CompoundObjectId)object).id);
 	}
 
 	@Override
