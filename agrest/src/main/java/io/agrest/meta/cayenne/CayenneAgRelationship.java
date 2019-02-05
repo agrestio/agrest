@@ -6,7 +6,6 @@ import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgPersistentRelationship;
 import io.agrest.parser.converter.JsonValueConverter;
 import io.agrest.property.PropertyReader;
-import org.apache.cayenne.exp.Expression;
 import org.apache.cayenne.map.DbJoin;
 import org.apache.cayenne.map.DbRelationship;
 import org.apache.cayenne.map.ObjRelationship;
@@ -102,34 +101,6 @@ public class CayenneAgRelationship implements AgPersistentRelationship {
                     getDbRelationship().getReverseRelationship().getJoins().iterator().next().getTargetName(),
                     converter.value(id));
         }
-    }
-
-    public String getReverseName() {
-        return getDbRelationship().getReverseRelationship().getName();
-    }
-
-    public Object translateExpressionToTarget(Object expression) {
-        if (expression instanceof Expression) {
-            return objRelationship
-                    .getTargetEntity()
-                    .translateToRelatedEntity(
-                            (Expression) expression,
-                            objRelationship.getReverseRelationshipName());
-        }
-
-        return null;
-    }
-
-    public Object translateExpressionToSource(Object expression) {
-        if (expression instanceof Expression) {
-            return objRelationship
-                    .getSourceEntity()
-                    .translateToRelatedEntity(
-                            (Expression) expression,
-                            objRelationship.getName());
-        }
-
-        return null;
     }
 
     private Map<String, Object> extractId(Function<String, Object> idPartSupplier) {
