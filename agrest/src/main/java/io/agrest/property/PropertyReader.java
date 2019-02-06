@@ -1,6 +1,5 @@
 package io.agrest.property;
 
-import java.util.List;
 import java.util.function.Function;
 
 public interface PropertyReader {
@@ -14,14 +13,7 @@ public interface PropertyReader {
     static PropertyReader forValueProducer(Function<?, ?> valueProducer) {
         // lose generics ... PropertyReader is not parameterized
         Function f = valueProducer;
-        return (o, n) -> {
-            // unwraps a single object from collection
-            // TODO provide a fix in right place to avoid that situation
-            if (o instanceof List) {
-                o = ((List)o).get(0);
-            }
-            return f.apply(o);
-        };
+        return (o, n) -> f.apply(o);
     }
 
     Object value(Object root, String name);

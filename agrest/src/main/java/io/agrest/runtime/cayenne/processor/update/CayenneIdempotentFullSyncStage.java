@@ -1,6 +1,7 @@
 package io.agrest.runtime.cayenne.processor.update;
 
 import io.agrest.AgException;
+import io.agrest.AgObjectId;
 import io.agrest.CompoundObjectId;
 import io.agrest.EntityUpdate;
 import io.agrest.ObjectMapper;
@@ -26,6 +27,7 @@ import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.BiConsumer;
 
 /**
  * @since 2.7
@@ -154,7 +156,14 @@ public class CayenneIdempotentFullSyncStage extends CayenneIdempotentCreateOrUpd
 
                 List childObjects = fetchEntity(context, childEntity);
 
-                assignChildrenToParent(parent, childEntity, childObjects);
+                AgRelationship rel = parent.getAgEntity().getRelationship(e.getKey());
+
+                assignChildrenToParent(
+                        parent,
+                        childObjects,
+                        rel.isToMany()
+                                ? (i, o) -> childEntity.addToManyResult(i, o)
+                                : (i, o) -> childEntity.addToOneResult(i, o));
             }
         }
     }
@@ -162,13 +171,13 @@ public class CayenneIdempotentFullSyncStage extends CayenneIdempotentCreateOrUpd
     /**
      * Assigns child items to the appropriate parent item
      */
-    protected <T> void assignChildrenToParent(ResourceEntity<T> parentEntity, ResourceEntity childEntity, List children) {
+    protected <T> void assignChildrenToParent(ResourceEntity<T> parentEntity, List children, BiConsumer<AgObjectId, Object> resultKeeper) {
         // saves a result
         for (Object child : children) {
             if (child instanceof Object[]) {
                 Object[] ids = (Object[])child;
                 if (ids.length == 2) {
-                    childEntity.addToResult( new SimpleObjectId(ids[1]), (T) ids[0]);
+                    resultKeeper.accept(new SimpleObjectId(ids[1]), (T) ids[0]);
                 } else if (ids.length > 2) {
                     // saves entity with a compound ID
                     Map<String, Object> compoundKeys = new LinkedHashMap<>();
@@ -178,7 +187,7 @@ public class CayenneIdempotentFullSyncStage extends CayenneIdempotentCreateOrUpd
                             compoundKeys.put(idAttributes[i - 1].getName(), ids[i]);
                         }
                     }
-                    childEntity.addToResult( new CompoundObjectId(compoundKeys), (T) ids[0]);
+                    resultKeeper.accept(new CompoundObjectId(compoundKeys), (T) ids[0]);
                 }
             }
         }

@@ -48,7 +48,7 @@ public class ResourceEntity<T> {
     private boolean filtered;
 
     private SelectQuery<T> select;
-    private Map<AgObjectId, List> result;
+    private Map<AgObjectId, Object> result;
 
     public ResourceEntity(AgEntity<T> agEntity) {
         this.idIncluded = false;
@@ -113,7 +113,7 @@ public class ResourceEntity<T> {
     }
 
 
-    public List<T> getResult(AgObjectId parentId) {
+    public Object getResult(AgObjectId parentId) {
         return result.get(parentId);
     }
 
@@ -123,11 +123,19 @@ public class ResourceEntity<T> {
      * @return
      */
     public List<T> getResult() {
-        return result.get(null);
+        //in the 0 bucket is stored List of root elements only
+        return (List<T>)result.get(null);
     }
 
-    public void addToResult(AgObjectId parentId, T object) {
-        result.computeIfAbsent(parentId, i -> new ArrayList()).add(object);
+    public void addToOneResult(AgObjectId parentId, T object) {
+        result.computeIfAbsent(parentId, i -> object);
+    }
+
+    public void addToManyResult(AgObjectId parentId, T object) {
+        List value = (List)result.computeIfAbsent(parentId, i -> new ArrayList());
+        if (object != null) {
+            value.add(object);
+        }
     }
 
     /**

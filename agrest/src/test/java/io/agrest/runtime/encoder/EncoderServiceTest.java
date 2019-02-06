@@ -3,6 +3,7 @@ package io.agrest.runtime.encoder;
 import com.fasterxml.jackson.core.JsonGenerator;
 import io.agrest.DataResponse;
 import io.agrest.ResourceEntity;
+import io.agrest.SimpleObjectId;
 import io.agrest.encoder.Encoder;
 import io.agrest.encoder.EncoderFilter;
 import io.agrest.encoder.Encoders;
@@ -90,6 +91,11 @@ public class EncoderServiceTest extends TestWithCayenneMapping {
 		e31.setPhoneNumber("+87654321");
 		context.registerNewObject(e32);
 		e2.addToE3s(e32);
+
+		// saves result set in ResourceEntity
+		descriptor.setResult(Collections.singletonList(e2));
+		e3Descriptor.addToManyResult(new SimpleObjectId(7), e31);
+		e3Descriptor.addToManyResult(new SimpleObjectId(7), e32);
 
 		assertEquals("{\"data\":[{\"id\":7,\"e3s\":[{\"id\":5,\"name\":\"31\"},{\"id\":6,\"name\":\"32\"}]}],\"total\":1}",
 				toJson(e2, descriptor));
@@ -210,6 +216,9 @@ public class EncoderServiceTest extends TestWithCayenneMapping {
 		e31.setObjectId(new ObjectId("E3", E3.ID_PK_COLUMN, 5));
 		context.registerNewObject(e31);
 		e31.setE2(e21);
+		// saves result set in ResourceEntity
+		e3Descriptor.setResult(Collections.singletonList(e31));
+		e2Descriptor.addToOneResult(new SimpleObjectId(5), e21);
 
 		assertEquals("{\"data\":[{\"id\":5,\"e2\":{\"id\":7}}],\"total\":1}", toJson(e31, e3Descriptor));
 
@@ -221,6 +230,9 @@ public class EncoderServiceTest extends TestWithCayenneMapping {
 		e32.setObjectId(new ObjectId("E3", E3.ID_PK_COLUMN, 6));
 		context.registerNewObject(e32);
 		e32.setE2(e22);
+		// saves result set in ResourceEntity
+		e3Descriptor.setResult(Collections.singletonList(e32));
+		e2Descriptor.addToOneResult(new SimpleObjectId(6), e22);
 
 		assertEquals("{\"data\":[{\"id\":6}],\"total\":1}", toJson(e32, e3Descriptor));
 	}

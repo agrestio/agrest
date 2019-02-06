@@ -3,6 +3,7 @@ package io.agrest.sencha.runtime.encoder;
 import com.fasterxml.jackson.core.JsonEncoding;
 import com.fasterxml.jackson.core.JsonGenerator;
 import io.agrest.ResourceEntity;
+import io.agrest.SimpleObjectId;
 import io.agrest.encoder.Encoder;
 import io.agrest.encoder.EncoderFilter;
 import io.agrest.encoder.PropertyMetadataEncoder;
@@ -115,6 +116,10 @@ public class SenchaEncoderServiceTest extends TestWithCayenneMapping {
         context.registerNewObject(e31);
         e31.setE2(e21);
 
+        // saves result set in ResourceEntity
+        e3Descriptor.setResult(Collections.singletonList(e31));
+        e2Descriptor.addToOneResult(new SimpleObjectId(5), e21);
+
         assertEquals("{\"success\":true,\"data\":[{\"id\":5,\"e2\":{\"id\":7},\"e2_id\":7}],\"total\":1}",
                 toJson(e31, e3Descriptor));
 
@@ -126,6 +131,10 @@ public class SenchaEncoderServiceTest extends TestWithCayenneMapping {
         e32.setObjectId(new ObjectId("E3", E3.ID_PK_COLUMN, 6));
         context.registerNewObject(e32);
         e32.setE2(e22);
+
+        // saves result set in ResourceEntity
+        e3Descriptor.setResult(Collections.singletonList(e32));
+        e2Descriptor.addToOneResult(new SimpleObjectId(6), e22);
 
         assertEquals("{\"success\":true,\"data\":[{\"id\":6}],\"total\":1}", toJson(e32, e3Descriptor));
     }

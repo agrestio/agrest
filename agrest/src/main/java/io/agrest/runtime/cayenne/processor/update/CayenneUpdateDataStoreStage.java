@@ -1,9 +1,12 @@
 package io.agrest.runtime.cayenne.processor.update;
 
+import io.agrest.AgObjectId;
 import io.agrest.CompoundObjectId;
 import io.agrest.EntityParent;
 import io.agrest.EntityUpdate;
 import io.agrest.AgException;
+import io.agrest.ResourceEntity;
+import io.agrest.SimpleObjectId;
 import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgRelationship;
 import io.agrest.processor.Processor;
@@ -13,6 +16,7 @@ import io.agrest.runtime.meta.IMetadataService;
 import io.agrest.runtime.processor.update.UpdateContext;
 import org.apache.cayenne.Cayenne;
 import org.apache.cayenne.DataObject;
+import org.apache.cayenne.Fault;
 import org.apache.cayenne.ObjectContext;
 import org.apache.cayenne.map.DbAttribute;
 import org.apache.cayenne.map.DbEntity;
@@ -22,6 +26,7 @@ import org.apache.cayenne.map.ObjRelationship;
 import org.apache.cayenne.reflect.ClassDescriptor;
 
 import javax.ws.rs.core.Response;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -42,7 +47,54 @@ public abstract class CayenneUpdateDataStoreStage implements Processor<UpdateCon
     public ProcessorOutcome execute(UpdateContext<?> context) {
         sync((UpdateContext<DataObject>) context);
         CayenneUpdateStartStage.cayenneContext(context).commitChanges();
+
+        // Stores parent-child result list in ResourceEntity
+        // TODO Replace this by dedicated select child stage during of update stages refactoring
+        ResourceEntity entity = context.getEntity();
+        Map<String, ResourceEntity<?>> children = entity.getChildren();
+        List rootResult = new ArrayList();
+        for (EntityUpdate<?> u : context.getUpdates()) {
+            DataObject o = (DataObject) u.getMergedTo();
+            //saves root elements
+            rootResult.add(o);
+            //assigns children
+            assignChildrenToParent(o, entity, children);
+        }
+        entity.setResult(rootResult);
+
         return ProcessorOutcome.CONTINUE;
+    }
+
+    protected void assignChildrenToParent(DataObject root, ResourceEntity<?> parent, Map<String, ResourceEntity<?>> children) {
+        if (!children.isEmpty()) {
+            for (Map.Entry<String, ResourceEntity<?>> e : children.entrySet()) {
+                ResourceEntity childEntity = e.getValue();
+
+                Object result = root.readPropertyDirectly(e.getKey());
+                if (result == null || result instanceof Fault) {
+                    continue;
+                }
+                AgObjectId id = root.getObjectId().getIdSnapshot().size() > 1
+                        ? new CompoundObjectId(root.getObjectId().getIdSnapshot())
+                        : new SimpleObjectId(root.getObjectId().getIdSnapshot().values().iterator().next());
+
+                AgRelationship rel = parent.getAgEntity().getRelationship(e.getKey());
+                if (rel.isToMany() && result instanceof List) {
+                    List r = (List)result;
+                    if (r.isEmpty()) {
+                        childEntity.addToManyResult(id, null);
+                    } else {
+                        for (Object ro : r) {
+                            childEntity.addToManyResult(id, ro);
+                            assignChildrenToParent((DataObject) ro, childEntity, childEntity.getChildren());
+                        }
+                    }
+                } else {
+                    childEntity.addToOneResult(id, result);
+                    assignChildrenToParent((DataObject) result, childEntity, childEntity.getChildren());
+                }
+            }
+        }
     }
 
     protected abstract <T extends DataObject> void sync(UpdateContext<T> context);

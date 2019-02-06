@@ -97,7 +97,29 @@ public class AttributeEncoderFactory implements IAttributeEncoderFactory {
 
 	protected EntityProperty buildRelationshipProperty(ResourceEntity<?> entity, AgRelationship relationship, Encoder encoder) {
 		boolean persistent = relationship instanceof AgPersistentRelationship;
-		return getProperty(entity, relationship.getPropertyReader(), persistent, encoder);
+		if (persistent && DataObject.class.isAssignableFrom(entity.getType())) {
+			return PropertyBuilder
+					.property(
+							// wraps function to to get AgObjectId from DataObject
+							(o, n) -> {
+								Object object = getOrCreateIdPropertyReader(entity.getAgEntity()).value(o, "");
+								ResourceEntity child = entity.getChildren().get(n);
+								if (object instanceof Map && child != null) {
+									Map ids = (Map) object;
+									if (ids.size() == 1) {
+										return child.getResult(new SimpleObjectId(ids.values().iterator().next()));
+									} else if (ids.size() > 1) {
+										return child.getResult(new CompoundObjectId(ids));
+									}
+								}
+								return null;
+							})
+					.encodedWith(encoder);
+		} else if (relationship.getPropertyReader() != null) {
+			return PropertyBuilder.property(relationship.getPropertyReader());
+		} else {
+			return PropertyBuilder.property().encodedWith(encoder);
+		}
 	}
 
 	protected EntityProperty buildAttributeProperty(ResourceEntity<?> entity, AgAttribute attribute) {
@@ -108,24 +130,7 @@ public class AttributeEncoderFactory implements IAttributeEncoderFactory {
 
 	private EntityProperty getProperty(ResourceEntity<?> entity, PropertyReader reader, boolean persistent, Encoder encoder) {
 		if (persistent && DataObject.class.isAssignableFrom(entity.getType())) {
-			return PropertyBuilder
-					.dataObjectProperty()
-					.encodedWith(encoder)
-					.resolveChildren(
-							// wraps function to to get AgObjectId from DataObject
-							(o, n) -> {
-								Object object = getOrCreateIdPropertyReader(entity.getAgEntity()).value(o, "");
-								ResourceEntity child = entity.getChildren().get(n);
-								if (object instanceof Map && child != null) {
-									Map ids = (Map)object;
-									if (ids.size() == 1) {
-										return child.getResult(new SimpleObjectId(ids.values().iterator().next()));
-									} else if (ids.size() > 1) {
-										return child.getResult(new CompoundObjectId(ids));
-									}
-								}
-								return null;
-							});
+			return PropertyBuilder.dataObjectProperty().encodedWith(encoder);
 		} else if(reader != null) {
 			return PropertyBuilder.property(reader);
 		} else {
