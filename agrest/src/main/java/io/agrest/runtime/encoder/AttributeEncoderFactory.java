@@ -62,8 +62,8 @@ public class AttributeEncoderFactory implements IAttributeEncoderFactory {
 	}
 
 	@Override
-	public EntityProperty getAttributeProperty(ResourceEntity<?> entity, AgAttribute attribute) {
-		String key = entity.getAgEntity().getName() + "." + attribute.getName();
+	public EntityProperty getAttributeProperty(AgEntity<?> entity, AgAttribute attribute) {
+		String key = entity.getName() + "." + attribute.getName();
 
 		EntityProperty property = attributePropertiesByPath.get(key);
 		if (property == null) {
@@ -122,13 +122,13 @@ public class AttributeEncoderFactory implements IAttributeEncoderFactory {
 		}
 	}
 
-	protected EntityProperty buildAttributeProperty(ResourceEntity<?> entity, AgAttribute attribute) {
+	protected EntityProperty buildAttributeProperty(AgEntity<?> entity, AgAttribute attribute) {
 		boolean persistent = attribute instanceof AgPersistentAttribute;
 		Encoder encoder = buildEncoder(attribute);
 		return getProperty(entity, attribute.getPropertyReader(), persistent, encoder);
 	}
 
-	private EntityProperty getProperty(ResourceEntity<?> entity, PropertyReader reader, boolean persistent, Encoder encoder) {
+	private EntityProperty getProperty(AgEntity<?> entity, PropertyReader reader, boolean persistent, Encoder encoder) {
 		if (persistent && DataObject.class.isAssignableFrom(entity.getType())) {
 			return PropertyBuilder.dataObjectProperty().encodedWith(encoder);
 		} else if(reader != null) {

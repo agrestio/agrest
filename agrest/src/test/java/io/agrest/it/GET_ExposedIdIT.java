@@ -30,10 +30,7 @@ public class GET_ExposedIdIT extends JerseyTestOnDerby {
         insert("e23", "id, name", "1, 'abc'");
         insert("e23", "id, name", "2, 'xyz'");
 
-        Response r = target("/e23")
-                .path("1")
-                .request()
-                .get();
+        Response r = target("/e23").path("1").request().get();
         assertEquals(Response.Status.OK.getStatusCode(), r.getStatus());
 		assertEquals("{\"data\":[{\"id\":1,\"exposedId\":1,\"name\":\"abc\"}],\"total\":1}", r.readEntity(String.class));
     }

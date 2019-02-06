@@ -4,6 +4,7 @@ import io.agrest.EntityProperty;
 import io.agrest.ResourceEntity;
 import io.agrest.encoder.Encoder;
 import io.agrest.meta.AgAttribute;
+import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgRelationship;
 
 /**
@@ -15,7 +16,7 @@ public interface IAttributeEncoderFactory {
 	/**
 	 * @since 1.23
 	 */
-	EntityProperty getAttributeProperty(ResourceEntity<?> entity, AgAttribute attribute);
+	EntityProperty getAttributeProperty(AgEntity<?> entity, AgAttribute attribute);
 
 	/**
 	 * @since 1.23

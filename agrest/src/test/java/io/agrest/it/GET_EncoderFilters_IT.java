@@ -62,12 +62,8 @@ public class GET_EncoderFilters_IT extends JerseyTestOnDerby {
                 new SQLTemplate(E3.class, "INSERT INTO utest.e4 (id) "
                         + "values (1), (2), (3), (4), (5), (6), (7), (8), (9), (10)"));
 
-        Response response1 = target("/e4")
-                .queryParam("include", "id")
-                .queryParam("sort", "id")
-                .queryParam("start", "0")
-                .queryParam("limit", "2")
-                .request().get();
+        Response response1 = target("/e4").queryParam("include", "id").queryParam("sort", "id")
+                .queryParam("start", "0").queryParam("limit", "2").request().get();
 
         assertEquals(Status.OK.getStatusCode(), response1.getStatus());
         assertEquals("{\"data\":[{\"id\":2},{\"id\":4}],\"total\":5}",

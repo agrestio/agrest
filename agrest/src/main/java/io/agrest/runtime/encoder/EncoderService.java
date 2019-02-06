@@ -142,7 +142,8 @@ public class EncoderService implements IEncoderService {
         Map<String, EntityProperty> attributeEncoders = new TreeMap<String, EntityProperty>();
 
         for (AgAttribute attribute : resourceEntity.getAttributes().values()) {
-            EntityProperty property = attributeEncoderFactory.getAttributeProperty(resourceEntity, attribute);
+            EntityProperty property = attributeEncoderFactory.getAttributeProperty(resourceEntity.getAgEntity(),
+                    attribute);
             attributeEncoders.put(attribute.getName(), property);
         }
 
