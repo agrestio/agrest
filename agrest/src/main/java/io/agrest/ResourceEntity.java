@@ -48,7 +48,8 @@ public class ResourceEntity<T> {
     private boolean filtered;
 
     private SelectQuery<T> select;
-    private Map<AgObjectId, Object> result;
+    private List<T> rootResult;
+    private Map<AgObjectId, Object> parentToChildResult;
 
     public ResourceEntity(AgEntity<T> agEntity) {
         this.idIncluded = false;
@@ -59,7 +60,8 @@ public class ResourceEntity<T> {
         this.extraProperties = new HashMap<>();
         this.includedExtraProperties = new HashMap<>();
         this.agEntity = agEntity;
-        this.result = new LinkedHashMap<>();
+        this.rootResult = new ArrayList<>();
+        this.parentToChildResult = new LinkedHashMap<>();
     }
 
     public ResourceEntity(AgEntity<T> agEntity, AgRelationship incoming) {
@@ -113,39 +115,57 @@ public class ResourceEntity<T> {
     }
 
 
-    public Object getResult(AgObjectId parentId) {
-        return result.get(parentId);
+    /**
+     * @since 3.1
+     */
+    public List<T> getResult() {
+        return rootResult;
     }
 
     /**
-     * Uses 0 bucket to retrieve result list of objects for the root entity
+     * @since 3.1
      *
+     *  @param result objects
+     */
+    public void setResult(List<T> result) {
+        this.rootResult = result;
+    }
+
+    /**
+     * @since 3.1
+     *
+     * @param parentId
      * @return
      */
-    public List<T> getResult() {
-        //in the 0 bucket is stored List of root elements only
-        return (List<T>)result.get(null);
+    public Object getResult(AgObjectId parentId) {
+        return parentToChildResult.get(parentId);
     }
 
+    /**
+     * @since 3.1
+     * Stores object related to particular parent object.
+     * It is used for one-to-one relation between a parent and a child.
+     *
+     * @param parentId
+     * @param object
+     */
     public void addToOneResult(AgObjectId parentId, T object) {
-        result.computeIfAbsent(parentId, i -> object);
+        parentToChildResult.computeIfAbsent(parentId, i -> object);
     }
 
+    /**
+     * @since 3.1
+     * Stores result object as a List of objects.
+     * It is used for one-to-many relation between a parent and children
+     *
+     * @param parentId
+     * @param object
+     */
     public void addToManyResult(AgObjectId parentId, T object) {
-        List value = (List)result.computeIfAbsent(parentId, i -> new ArrayList());
+        List value = (List)parentToChildResult.computeIfAbsent(parentId, i -> new ArrayList());
         if (object != null) {
             value.add(object);
         }
-    }
-
-    /**
-     * Stores plain result list without parent ID's for the root entity.
-     * uses 0 bucket to sore the result list.
-     *
-     * @param objects
-     */
-    public void setResult(List<T> objects) {
-        result.computeIfAbsent(null, i -> objects);
     }
 
     /**
