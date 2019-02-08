@@ -166,7 +166,7 @@ public class EncoderService implements IEncoderService {
 
         Map<String, EntityProperty> extraEncoders = new TreeMap<String, EntityProperty>();
 
-        extraEncoders.putAll(resourceEntity.getExtraProperties());
+        extraEncoders.putAll(resourceEntity.getIncludedExtraProperties());
 
         EntityProperty idEncoder = resourceEntity.isIdIncluded() ? attributeEncoderFactory.getIdProperty(resourceEntity)
                 : PropertyBuilder.doNothingProperty();

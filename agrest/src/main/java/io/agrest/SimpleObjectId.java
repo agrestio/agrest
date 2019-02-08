@@ -46,4 +46,22 @@ public class SimpleObjectId extends BaseObjectId {
 	public String toString() {
 		return id.toString();
 	}
+
+	@Override
+	public boolean equals(Object object) {
+		if (this == object) {
+			return true;
+		}
+
+		if (!(object instanceof SimpleObjectId)) {
+			return false;
+		}
+
+		return id.equals(((SimpleObjectId)object).get());
+	}
+
+	@Override
+	public int hashCode() {
+		return id.hashCode();
+	}
 }

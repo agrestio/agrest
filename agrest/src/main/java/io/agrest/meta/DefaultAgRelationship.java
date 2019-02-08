@@ -1,3 +1,4 @@
+
 package io.agrest.meta;
 
 import io.agrest.property.PropertyReader;
@@ -50,4 +51,5 @@ public class DefaultAgRelationship implements AgRelationship {
     public PropertyReader getPropertyReader() {
         return propertyReader;
     }
+
 }

@@ -34,7 +34,7 @@ public class CayenneFetchDataStage implements Processor<SelectContext<?>> {
     }
 
     protected <T> void doExecute(SelectContext<T> context) {
-        SelectQuery<T> select = context.getSelect();
+        SelectQuery<T> select = context.getEntity().getSelect();
 
         List<T> objects = persister.sharedContext().select(select);
 
@@ -50,6 +50,8 @@ public class CayenneFetchDataStage implements Processor<SelectContext<?>> {
                         "Found more than one object for ID '%s' and entity '%s'", context.getId(), entity.getName()));
             }
         }
-        context.setObjects(objects);
+
+        // saves a result for the root entity
+        context.getEntity().setResult(objects);
     }
 }

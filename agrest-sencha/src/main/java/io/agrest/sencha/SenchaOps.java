@@ -39,8 +39,8 @@ public class SenchaOps {
         }
         // else - error?
 
-        if (context.getSelect() != null) {
-            context.getSelect().andQualifier(expression);
+        if (context.getEntity().getSelect() != null) {
+            context.getEntity().getSelect().andQualifier(expression);
         }
     }
 }

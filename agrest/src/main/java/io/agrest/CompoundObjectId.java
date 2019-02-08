@@ -63,6 +63,24 @@ public class CompoundObjectId extends BaseObjectId {
 		return mapToString(id);
 	}
 
+	@Override
+	public boolean equals(Object object) {
+		if (this == object) {
+			return true;
+		}
+
+		if (!(object instanceof CompoundObjectId)) {
+			return false;
+		}
+
+		return id.equals(((CompoundObjectId)object).id);
+	}
+
+	@Override
+	public int hashCode() {
+		return id.hashCode();
+	}
+
 	public static String mapToString(Map<String, Object> m) {
 
 		StringBuilder buf = new StringBuilder("{");

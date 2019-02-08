@@ -20,4 +20,5 @@ public interface AgRelationship {
 	 * @since 2.10
 	 */
 	PropertyReader getPropertyReader();
+
 }

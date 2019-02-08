@@ -5,6 +5,7 @@ import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgRelationship;
 import org.apache.cayenne.exp.Expression;
 import org.apache.cayenne.query.Ordering;
+import org.apache.cayenne.query.SelectQuery;
 import org.apache.cayenne.util.ToStringBuilder;
 
 import java.util.ArrayList;
@@ -39,10 +40,14 @@ public class ResourceEntity<T> {
     private AgRelationship incoming;
     private List<Ordering> orderings;
     private Expression qualifier;
+    private Map<String, EntityProperty> includedExtraProperties;
     private Map<String, EntityProperty> extraProperties;
     private int fetchOffset;
     private int fetchLimit;
     private boolean filtered;
+
+    private SelectQuery<T> select;
+    private List<T> result;
 
     public ResourceEntity(AgEntity<T> agEntity) {
         this.idIncluded = false;
@@ -51,6 +56,7 @@ public class ResourceEntity<T> {
         this.children = new HashMap<>();
         this.orderings = new ArrayList<>(2);
         this.extraProperties = new HashMap<>();
+        this.includedExtraProperties = new HashMap<>();
         this.agEntity = agEntity;
     }
 
@@ -96,6 +102,28 @@ public class ResourceEntity<T> {
         return orderings;
     }
 
+    public SelectQuery<T> getSelect() {
+        return select;
+    }
+
+    public void setSelect(SelectQuery<T> select) {
+        this.select = select;
+    }
+
+    /**
+     * @since 3.1
+     */
+    public List<T> getResult() {
+        return result;
+    }
+
+    /**
+     * @since 3.1
+     */
+    public void setResult(List<T> result) {
+        this.result = result;
+    }
+
     /**
      * @since 1.12
      */
@@ -130,6 +158,10 @@ public class ResourceEntity<T> {
 
     public Map<String, EntityProperty> getExtraProperties() {
         return extraProperties;
+    }
+
+    public Map<String, EntityProperty> getIncludedExtraProperties() {
+        return includedExtraProperties;
     }
 
     public boolean isIdIncluded() {
