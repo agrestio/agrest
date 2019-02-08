@@ -92,6 +92,7 @@ public class Get_MultiTier_IT  extends JerseyTestOnDerby {
         DB.insert("e3", "id, e2_id, e5_id, name", "58, 51, 545, 's'");
         DB.insert("e3", "id, e2_id, e5_id, name", "59, 51, 545, 'z'");
         DB.insert("e3", "id, e2_id, e5_id, name", "57, 51, 546, 'b'");
+        DB.insert("e3", "id, e2_id, name", "60, 51, 'z'");
 
         Response r = target("/e2")
                 .queryParam("include", "id")
@@ -102,7 +103,7 @@ public class Get_MultiTier_IT  extends JerseyTestOnDerby {
 
         assertEquals(Response.Status.OK.getStatusCode(), r.getStatus());
         assertEquals("{\"data\":[{\"id\":51,\"e3s\":["
-                + "{\"id\":59,\"name\":\"z\",\"phoneNumber\":null}],\"name\":\"xxx\"},{\"id\":52,\"e3s\":[],\"name\":\"yyy\"}],\"total\":2}", r.readEntity(String.class));
+                + "{\"id\":59,\"name\":\"z\",\"phoneNumber\":null},{\"id\":60,\"name\":\"z\",\"phoneNumber\":null}],\"name\":\"xxx\"},{\"id\":52,\"e3s\":[],\"name\":\"yyy\"}],\"total\":2}", r.readEntity(String.class));
     }
 
 
