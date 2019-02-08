@@ -81,6 +81,31 @@ public class Get_MultiTier_IT  extends JerseyTestOnDerby {
                 + "{\"id\":57,\"name\":\"b\",\"phoneNumber\":null}]}],\"total\":1}", r.readEntity(String.class));
     }
 
+    @Test
+    public void test_parentWithoutChild_CayenneExpByName() {
+
+        DB.insert("e5", "id, name", "545, 'B'");
+        DB.insert("e5", "id, name", "546, 'A'");
+        DB.insert("e5", "id, name", "547, 'C'");
+        DB.insert("e2", "id, name", "51, 'xxx'");
+        DB.insert("e2", "id, name", "52, 'yyy'");
+        DB.insert("e3", "id, e2_id, e5_id, name", "58, 51, 545, 's'");
+        DB.insert("e3", "id, e2_id, e5_id, name", "59, 51, 545, 'z'");
+        DB.insert("e3", "id, e2_id, e5_id, name", "57, 51, 546, 'b'");
+
+        Response r = target("/e2")
+                .queryParam("include", "id")
+                .queryParam("include", "name")
+                .queryParam("include", urlEnc("{\"path\":\"e3s\",\"cayenneExp\":{\"exp\":\"name = 'z'\"}}"))
+                .request()
+                .get();
+
+        assertEquals(Response.Status.OK.getStatusCode(), r.getStatus());
+        assertEquals("{\"data\":[{\"id\":51,\"e3s\":["
+                + "{\"id\":59,\"name\":\"z\",\"phoneNumber\":null}],\"name\":\"xxx\"},{\"id\":52,\"e3s\":[],\"name\":\"yyy\"}],\"total\":2}", r.readEntity(String.class));
+    }
+
+
 
     @Path("")
     public static class Resource {
