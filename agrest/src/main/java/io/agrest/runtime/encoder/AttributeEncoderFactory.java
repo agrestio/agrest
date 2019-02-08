@@ -7,6 +7,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.OffsetDateTime;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Map;
 import java.util.TreeMap;
@@ -104,15 +105,22 @@ public class AttributeEncoderFactory implements IAttributeEncoderFactory {
 							(o, n) -> {
 								Object object = getOrCreateIdPropertyReader(entity.getAgEntity()).value(o, "");
 								ResourceEntity child = entity.getChildren().get(n);
+								AgRelationship rel = entity.getAgEntity().getRelationship(n);
+								Object result = null;
 								if (object instanceof Map && child != null) {
 									Map ids = (Map) object;
+
 									if (ids.size() == 1) {
-										return child.getResult(new SimpleObjectId(ids.values().iterator().next()));
+										result = child.getResult(new SimpleObjectId(ids.values().iterator().next()));
 									} else if (ids.size() > 1) {
-										return child.getResult(new CompoundObjectId(ids));
+										result = child.getResult(new CompoundObjectId(ids));
+									}
+
+									if(result == null && rel.isToMany()) {
+										result = Collections.emptyList();
 									}
 								}
-								return null;
+								return result;
 							})
 					.encodedWith(encoder);
 		} else if (relationship.getPropertyReader() != null) {
