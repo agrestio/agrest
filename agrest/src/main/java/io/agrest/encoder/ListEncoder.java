@@ -20,7 +20,6 @@ public class ListEncoder implements CollectionEncoder {
 
 	@Override
 	public int visitEntities(Object root, EncoderVisitor visitor) {
-		// Excludes null elements from visiting
 		if (root == null) {
 			return 0;
 		}

@@ -104,32 +104,14 @@ public class CayenneAgRelationship implements AgPersistentRelationship {
         }
     }
 
-    public String getReverseName() {
+    public String getReverseDbName() {
         return getDbRelationship().getReverseRelationship().getName();
     }
 
-    public Object translateExpressionToTarget(Object expression) {
-        if (expression instanceof Expression) {
-            return objRelationship
-                    .getTargetEntity()
-                    .translateToRelatedEntity(
-                            (Expression) expression,
-                            objRelationship.getReverseRelationshipName());
-        }
-
-        return null;
-    }
-
-    public Object translateExpressionToSource(Object expression) {
-        if (expression instanceof Expression) {
-            return objRelationship
-                    .getSourceEntity()
-                    .translateToRelatedEntity(
-                            (Expression) expression,
-                            objRelationship.getName());
-        }
-
-        return null;
+    public Expression translateExpressionToSource(Expression expression) {
+        return expression != null
+                ? objRelationship.getSourceEntity().translateToRelatedEntity(expression, objRelationship.getName())
+                : null;
     }
 
     private Map<String, Object> extractId(Function<String, Object> idPartSupplier) {

@@ -149,23 +149,28 @@ public class ResourceEntity<T> {
      * @param parentId
      * @param object
      */
-    public void addToOneResult(AgObjectId parentId, T object) {
-        parentToChildResult.computeIfAbsent(parentId, i -> object);
+    public void setToOneResult(AgObjectId parentId, T object) {
+        parentToChildResult.put(parentId, object);
     }
 
     /**
-     * @since 3.1
-     * Stores result object as a List of objects.
-     * It is used for one-to-many relation between a parent and children
+     *  Stores result object as a List of objects. It is used for one-to-many relation between a parent and children.
      *
      * @param parentId
      * @param object
+     * @since 3.1
      */
     public void addToManyResult(AgObjectId parentId, T object) {
-        List value = (List)parentToChildResult.computeIfAbsent(parentId, i -> new ArrayList());
-        if (object != null) {
-            value.add(object);
-        }
+        ((List<T> )parentToChildResult.computeIfAbsent(parentId, k -> new ArrayList<>())).add(object);
+    }
+
+    /**
+     * @param parentId
+     * @param objects
+     * @since 3.1
+     */
+    public void setToManyResult(AgObjectId parentId, List<T> objects) {
+        parentToChildResult.put(parentId, objects);
     }
 
     /**

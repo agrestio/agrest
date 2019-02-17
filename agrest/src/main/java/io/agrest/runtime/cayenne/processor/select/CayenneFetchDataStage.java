@@ -78,21 +78,19 @@ public class CayenneFetchDataStage implements Processor<SelectContext<?>> {
     }
 
     protected <T> void fetchChildren(ResourceEntity<T> parent, Map<String, ResourceEntity<?>> children) {
-        if (!children.isEmpty()) {
-            for (Map.Entry<String, ResourceEntity<?>> e : children.entrySet()) {
-                ResourceEntity childEntity = e.getValue();
+        for (Map.Entry<String, ResourceEntity<?>> e : children.entrySet()) {
+            ResourceEntity childEntity = e.getValue();
 
-                List childObjects = fetchEntity(childEntity);
+            List childObjects = fetchEntity(childEntity);
 
-                AgRelationship rel = parent.getAgEntity().getRelationship(e.getKey());
+            AgRelationship rel = parent.getAgEntity().getRelationship(e.getKey());
 
-                assignChildrenToParent(
-                        parent,
-                        childObjects,
-                        rel.isToMany()
-                                ? (i, o) -> childEntity.addToManyResult(i, o)
-                                : (i, o) -> childEntity.addToOneResult(i, o));
-            }
+            assignChildrenToParent(
+                    parent,
+                    childObjects,
+                    rel.isToMany()
+                            ? (i, o) -> childEntity.addToManyResult(i, o)
+                            : (i, o) -> childEntity.setToOneResult(i, o));
         }
     }
 

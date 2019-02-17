@@ -118,7 +118,7 @@ public class SenchaEncoderServiceTest extends TestWithCayenneMapping {
 
         // saves result set in ResourceEntity
         e3Descriptor.setResult(Collections.singletonList(e31));
-        e2Descriptor.addToOneResult(new SimpleObjectId(5), e21);
+        e2Descriptor.setToOneResult(new SimpleObjectId(5), e21);
 
         assertEquals("{\"success\":true,\"data\":[{\"id\":5,\"e2\":{\"id\":7},\"e2_id\":7}],\"total\":1}",
                 toJson(e31, e3Descriptor));
@@ -134,7 +134,7 @@ public class SenchaEncoderServiceTest extends TestWithCayenneMapping {
 
         // saves result set in ResourceEntity
         e3Descriptor.setResult(Collections.singletonList(e32));
-        e2Descriptor.addToOneResult(new SimpleObjectId(6), e22);
+        e2Descriptor.setToOneResult(new SimpleObjectId(6), e22);
 
         assertEquals("{\"success\":true,\"data\":[{\"id\":6}],\"total\":1}", toJson(e32, e3Descriptor));
     }

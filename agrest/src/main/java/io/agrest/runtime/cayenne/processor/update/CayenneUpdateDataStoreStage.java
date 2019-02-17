@@ -80,17 +80,15 @@ public abstract class CayenneUpdateDataStoreStage implements Processor<UpdateCon
 
                 AgRelationship rel = parent.getAgEntity().getRelationship(e.getKey());
                 if (rel.isToMany() && result instanceof List) {
-                    List r = (List)result;
-                    if (r.isEmpty()) {
-                        childEntity.addToManyResult(id, null);
-                    } else {
-                        for (Object ro : r) {
-                            childEntity.addToManyResult(id, ro);
-                            assignChildrenToParent((DataObject) ro, childEntity, childEntity.getChildren());
-                        }
+                    List r = (List) result;
+
+                    childEntity.setToManyResult(id, r);
+                    for (Object ro : r) {
+                        assignChildrenToParent((DataObject) ro, childEntity, childEntity.getChildren());
                     }
+
                 } else {
-                    childEntity.addToOneResult(id, result);
+                    childEntity.setToOneResult(id, result);
                     assignChildrenToParent((DataObject) result, childEntity, childEntity.getChildren());
                 }
             }
