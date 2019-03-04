@@ -104,8 +104,8 @@ public class CayenneAgRelationship implements AgPersistentRelationship {
         }
     }
 
-    public String getReverseDbName() {
-        return getDbRelationship().getReverseRelationship().getName();
+    public String getReverseDbPath() {
+        return objRelationship.getReverseDbRelationshipPath();
     }
 
     public Expression translateExpressionToSource(Expression expression) {

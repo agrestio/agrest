@@ -101,7 +101,7 @@ public class CayenneAssembleQueryStage implements Processor<SelectContext<?>> {
             if (relationship instanceof CayenneAgRelationship) {
                 CayenneAgRelationship rel = (CayenneAgRelationship) relationship;
                 for (AgAttribute attribute : entity.getAgEntity().getIds()) {
-                    properties.add(Property.create(ExpressionFactory.dbPathExp(rel.getReverseDbName() + "." + attribute.getName()), (Class) attribute.getType()));
+                    properties.add(Property.create(ExpressionFactory.dbPathExp(rel.getReverseDbPath() + "." + attribute.getName()), (Class) attribute.getType()));
                 }
                 // transfer expression from parent
                 if (entity.getSelect().getQualifier() != null) {
