@@ -61,20 +61,6 @@ public class PUT_ObjectIncludeIT extends JerseyTestOnDerby {
         assertEquals(1, intForQuery("SELECT COUNT(1) FROM utest.e3 WHERE id = 3 AND e2_id = 1"));
     }
 
-    @Test
-    public void testPut_ToOne2() {
-        insert("e2", "id, name", "8, 'yyy'");
-        insert("e3", "id, name, e2_id", "3, 'zzz', 8");
-
-        Response response = target("/e3/3")
-                .queryParam("include", "e2.id")
-                .request()
-                .put(Entity.json("{\"id\":3}"));
-
-        onSuccess(response).bodyEquals(1, "{\"id\":3,\"e2\":{\"id\":1,\"address\":null,\"name\":\"xxx\"},\"name\":\"zzz\",\"phoneNumber\":null}");
-        assertEquals(1, intForQuery("SELECT COUNT(1) FROM utest.e3 WHERE id = 3 AND e2_id = 1"));
-    }
-
 
     @Test
     public void testPut_ToMany() {
