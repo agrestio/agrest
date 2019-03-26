@@ -4,6 +4,7 @@ Release 3.1
 * #384 Change "inlcude" processing strategy from Cayenne prefetches to individual queries
 * #392 Request include/exclude settings are ignored for dynamic request properties
 * #394 Upgrade Jackson to 2.9.8
+* #402 An Included relation is missed in case of update operation
 
 Release 3.0
 
