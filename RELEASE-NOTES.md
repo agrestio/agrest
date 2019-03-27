@@ -1,3 +1,7 @@
+Release 3.2
+
+* #405 Upgrade to Cayenne 4.0.1
+
 Release 3.1
 
 * #358 Protocol Enhancement: 'include\exclude' parameters should take an array of values 
