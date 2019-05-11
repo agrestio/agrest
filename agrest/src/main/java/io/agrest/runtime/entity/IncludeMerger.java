@@ -71,12 +71,9 @@ public class IncludeMerger implements IIncludeMerger {
         AgRelationship relationship = agEntity.getRelationship(property);
         if (relationship != null) {
 
-            ResourceEntity<?> childEntity = parent.getChild(property);
-            if (childEntity == null) {
-                AgEntity<?> targetType = relationship.getTargetEntity();
-                childEntity = new ResourceEntity(targetType, relationship);
-                parent.getChildren().put(property, childEntity);
-            }
+            ResourceEntity<?> childEntity = parent
+                    .getChildren()
+                    .computeIfAbsent(property, p -> new ResourceEntity(relationship.getTargetEntity(), relationship));
 
             if (dot > 0) {
                 return processIncludePath(childEntity, path.substring(dot + 1));
