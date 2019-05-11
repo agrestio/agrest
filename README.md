@@ -8,5 +8,5 @@ Quick links:
 * [website](https://agrest.io)
 * [quick tutorial with Bootique and Derby DB](https://github.com/bootique-examples/bootique-linkrest-demo)
 * [documentation](https://agrest.io/docs/)
-* [support](https://groups.google.com/forum/?#!forum/linkrest-user)
+* [support](https://groups.google.com/forum/?#!forum/agrest-user)
 * [upgrade instructions](https://github.com/agrestio/agrest/blob/master/UPGRADE-NOTES.md)
