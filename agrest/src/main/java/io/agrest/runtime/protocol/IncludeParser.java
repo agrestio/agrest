@@ -73,15 +73,15 @@ public class IncludeParser implements IIncludeParser {
 
     private Include fromJson(JsonNode node, String parentPath) {
 
-        // checks if JSON presents nested array
+        // checks if JSON is a structure like {"rel" : ["a1","a2","a3"]}
+        // TODO: Guess we don't allow ordering, filtering, etc. in this case?
         if (node.size() == 1 && node.elements().next().isArray()) {
-            List<Include> includes = fromArray(node.elements().next(), node.fieldNames().next());
-
-            return new Include(includes);
+            String field = node.fieldNames().next();
+            return new Include(fromArray(node.get(field), field));
         }
 
         JsonNode pathNode = node.get(JSON_KEY_PATH);
-        String path = pathNode != null && pathNode.isTextual() ? pathNode.asText() : null;
+        String path = pathNode != null ? pathNode.asText() : null;
 
         return new Include(
                 expParser.fromJson(node.get(JSON_KEY_CAYENNE_EXP)),
