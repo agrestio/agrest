@@ -17,21 +17,21 @@ import java.util.List;
 
 public class IncludeMerger implements IIncludeMerger {
 
-    private ISortMerger sortConstructor;
-    private ICayenneExpMerger expConstructor;
-    private IMapByMerger mapByConstructor;
-    private ISizeMerger sizeConstructor;
+    private ISortMerger sortMerger;
+    private ICayenneExpMerger expMerger;
+    private IMapByMerger mapByMerger;
+    private ISizeMerger sizeMerger;
 
     public IncludeMerger(
-            @Inject ICayenneExpMerger expConstructor,
-            @Inject ISortMerger sortConstructor,
-            @Inject IMapByMerger mapByConstructor,
-            @Inject ISizeMerger sizeConstructor) {
+            @Inject ICayenneExpMerger expMerger,
+            @Inject ISortMerger sortMerger,
+            @Inject IMapByMerger mapByMerger,
+            @Inject ISizeMerger sizeMerger) {
 
-        this.sortConstructor = sortConstructor;
-        this.expConstructor = expConstructor;
-        this.mapByConstructor = mapByConstructor;
-        this.sizeConstructor = sizeConstructor;
+        this.sortMerger = sortMerger;
+        this.expMerger = expMerger;
+        this.mapByMerger = mapByMerger;
+        this.sizeMerger = sizeMerger;
     }
 
     /**
@@ -127,47 +127,43 @@ public class IncludeMerger implements IIncludeMerger {
      * @since 2.13
      */
     @Override
-    public void merge(ResourceEntity<?> resourceEntity, List<Include> includes) {
+    public void merge(ResourceEntity<?> entity, List<Include> includes) {
         for (Include include : includes) {
-            processOne(resourceEntity, include);
+            process(entity, include);
         }
 
-        IncludeMerger.processDefaultIncludes(resourceEntity);
+        IncludeMerger.processDefaultIncludes(entity);
     }
 
-    private void processOne(ResourceEntity<?> resourceEntity, Include include) {
-        if (include != null) {
-            processIncludeObject(resourceEntity, include);
-            // processes nested includes
-            include.getIncludes().forEach(i -> processOne(resourceEntity, i));
-        }
-    }
-
-    private void processIncludeObject(ResourceEntity<?> rootEntity, Include include) {
+    private void process(ResourceEntity<?> entity, Include include) {
         ResourceEntity<?> includeEntity;
 
-        final String value = include.getValue();
+        String value = include.getValue();
         if (value != null && !value.isEmpty()) {
             IncludeMerger.checkTooLong(value);
-            IncludeMerger.processIncludePath(rootEntity, value);
+            IncludeMerger.processIncludePath(entity, value);
         }
 
-        final String path = include.getPath();
+        String path = include.getPath();
         if (path == null || path.isEmpty()) {
             // root node
-            includeEntity = rootEntity;
+            includeEntity = entity;
         } else {
             IncludeMerger.checkTooLong(path);
-            includeEntity = IncludeMerger.processIncludePath(rootEntity, path);
+            includeEntity = IncludeMerger.processIncludePath(entity, path);
             if (includeEntity == null) {
                 throw new AgException(Status.BAD_REQUEST,
                         "Bad include spec, non-relationship 'path' in include object: " + path);
             }
         }
 
-        mapByConstructor.mergeIncluded(includeEntity, include.getMapBy());
-        sortConstructor.merge(includeEntity, include.getSort());
-        expConstructor.merge(includeEntity, include.getCayenneExp());
-        sizeConstructor.merge(includeEntity, include.getStart(), include.getLimit());
+        mapByMerger.mergeIncluded(includeEntity, include.getMapBy());
+        sortMerger.merge(includeEntity, include.getSort());
+        expMerger.merge(includeEntity, include.getCayenneExp());
+        sizeMerger.merge(includeEntity, include.getStart(), include.getLimit());
+
+        // TODO: Descend into the tree is not implemented properly. Why do we pass the same root entity to child includes?
+        //  Should we pass the "includeEntity"?
+        include.getIncludes().forEach(i -> process(entity, i));
     }
 }

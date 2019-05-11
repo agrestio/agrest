@@ -8,6 +8,7 @@ import org.apache.cayenne.di.Inject;
 
 import javax.ws.rs.core.Response;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 
@@ -41,16 +42,13 @@ public class IncludeParser implements IIncludeParser {
 
     @Override
     public List<Include> fromStrings(List<String> values) {
-        List<Include> result = new ArrayList<>();
+        List<Include> result = new ArrayList<>(values.size());
 
         for (String value : values) {
-            Include include = oneFromString(value);
-            if (include != null) {
-                result.add(include);
-            }
+            result.add(oneFromString(value));
         }
 
-        return !result.isEmpty() ? result : null;
+        return result;
     }
 
     @Override
@@ -74,9 +72,6 @@ public class IncludeParser implements IIncludeParser {
     }
 
     private Include fromJson(JsonNode node, String parentPath) {
-        if (node == null) {
-            return null;
-        }
 
         // checks if JSON presents nested array
         if (node.size() == 1 && node.elements().next().isArray()) {
@@ -99,25 +94,25 @@ public class IncludeParser implements IIncludeParser {
     }
 
     private List<Include> fromArray(JsonNode node, String parentPath) {
-        List<Include> includes = new ArrayList<>();
 
-        if (node != null && node.isArray()) {
-            for (JsonNode child : node) {
-                Include include = null;
-                if (child.isObject()) {
-                    include = fromJson(child, parentPath);
-                } else if (child.isTextual()) {
-                    include = new Include(parentPath != null ? parentPath + '.' + child.asText() : child.asText());
-                } else {
-                    throw new AgException(Response.Status.BAD_REQUEST, "Bad include spec: " + child);
-                }
+        if(node == null) {
+            return Collections.emptyList();
+        }
 
-                if (include != null) {
-                    includes.add(include);
-                }
+        List<Include> includes = new ArrayList<>(node.size());
+
+        for (JsonNode child : node) {
+            if (child.isObject()) {
+                includes.add(fromJson(child, parentPath));
+            } else if (child.isTextual()) {
+                includes.add(new Include(parentPath != null ? parentPath + '.' + child.asText() : child.asText()));
+            } else {
+                throw new AgException(Response.Status.BAD_REQUEST, "Bad include spec: " + child);
             }
         }
 
         return includes;
     }
+
+
 }

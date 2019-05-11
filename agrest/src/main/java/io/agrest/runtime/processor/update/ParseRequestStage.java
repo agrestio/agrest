@@ -74,15 +74,15 @@ public class ParseRequestStage implements Processor<UpdateContext<?>> {
     }
 
     private List<Include> getIncludes(AgRequest request, Map<String, List<String>> protocolParameters) {
-        return request != null && !request.getIncludes().isEmpty() ?
-                request.getIncludes() :
-                includeParser.fromStrings(ParameterExtractor.strings(protocolParameters, PROTOCOL_KEY_INCLUDE));
+        return request != null && !request.getIncludes().isEmpty()
+                ? request.getIncludes()
+                : includeParser.fromStrings(ParameterExtractor.strings(protocolParameters, PROTOCOL_KEY_INCLUDE));
     }
 
     private List<Exclude> getExcludes(AgRequest request, Map<String, List<String>> protocolParameters) {
-        return request != null && !request.getExcludes().isEmpty() ?
-                request.getExcludes() :
-                excludeParser.fromStrings(ParameterExtractor.strings(protocolParameters, PROTOCOL_KEY_EXCLUDE));
+        return request != null && !request.getExcludes().isEmpty()
+                ? request.getExcludes()
+                : excludeParser.fromStrings(ParameterExtractor.strings(protocolParameters, PROTOCOL_KEY_EXCLUDE));
     }
 }
 

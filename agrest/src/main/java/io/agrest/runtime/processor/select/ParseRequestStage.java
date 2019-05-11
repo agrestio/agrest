@@ -80,38 +80,39 @@ public class ParseRequestStage implements Processor<SelectContext<?>> {
     }
 
     private CayenneExp getCayenneExp(AgRequest request, Map<String, List<String>> protocolParameters) {
-        return request != null && request.getCayenneExp() != null ?
-                request.getCayenneExp() :
-                expParser.fromString(ParameterExtractor.string(protocolParameters, PROTOCOL_KEY_CAYENNE_EXP));
+        return request != null && request.getCayenneExp() != null
+                ? request.getCayenneExp()
+                : expParser.fromString(ParameterExtractor.string(protocolParameters, PROTOCOL_KEY_CAYENNE_EXP));
     }
+
     private Sort getSort(AgRequest request, Map<String, List<String>> protocolParameters) {
-        return request != null && request.getSort() != null ?
-                request.getSort() :
-                sortParser.fromString(ParameterExtractor.string(protocolParameters, PROTOCOL_KEY_SORT));
+        return request != null && request.getSort() != null
+                ? request.getSort()
+                : sortParser.fromString(ParameterExtractor.string(protocolParameters, PROTOCOL_KEY_SORT));
     }
 
     private Dir getSortDirection(AgRequest request, Map<String, List<String>> protocolParameters) {
-        return request != null && request.getSortDirection() != null ?
-                request.getSortDirection() :
-                sortParser.dirFromString(ParameterExtractor.string(protocolParameters, PROTOCOL_KEY_DIR));
+        return request != null && request.getSortDirection() != null
+                ? request.getSortDirection()
+                : sortParser.dirFromString(ParameterExtractor.string(protocolParameters, PROTOCOL_KEY_DIR));
     }
 
     private MapBy getMapBy(AgRequest request, Map<String, List<String>> protocolParameters) {
-        return request != null && request.getMapBy() != null ?
-                request.getMapBy() :
-                mapByParser.fromString(ParameterExtractor.string(protocolParameters, PROTOCOL_KEY_MAP_BY));
+        return request != null && request.getMapBy() != null
+                ? request.getMapBy()
+                : mapByParser.fromString(ParameterExtractor.string(protocolParameters, PROTOCOL_KEY_MAP_BY));
     }
 
     private List<Include> getIncludes(AgRequest request, Map<String, List<String>> protocolParameters) {
-        return request != null && !request.getIncludes().isEmpty() ?
-                request.getIncludes() :
-                includeParser.fromStrings(ParameterExtractor.strings(protocolParameters, PROTOCOL_KEY_INCLUDE));
+        return request != null && !request.getIncludes().isEmpty()
+                ? request.getIncludes()
+                : includeParser.fromStrings(ParameterExtractor.strings(protocolParameters, PROTOCOL_KEY_INCLUDE));
     }
 
     private List<Exclude> getExcludes(AgRequest request, Map<String, List<String>> protocolParameters) {
-        return request != null && !request.getExcludes().isEmpty() ?
-                request.getExcludes() :
-                excludeParser.fromStrings(ParameterExtractor.strings(protocolParameters, PROTOCOL_KEY_EXCLUDE));
+        return request != null && !request.getExcludes().isEmpty()
+                ? request.getExcludes()
+                : excludeParser.fromStrings(ParameterExtractor.strings(protocolParameters, PROTOCOL_KEY_EXCLUDE));
     }
 
     private Start getStart(AgRequest request, Map<String, List<String>> protocolParameters) {
