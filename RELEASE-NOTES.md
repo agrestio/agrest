@@ -4,7 +4,7 @@ Release 3.2
 
 Release 3.1
 
-* #358 Protocol Enhancement: 'include\exclude' parameters should take an array of values 
+* #358 Protocol Enhancement: 'include/exclude' parameters should take an array of values 
 * #384 Change "include" processing strategy from Cayenne prefetches to individual queries
 * #392 Request include/exclude settings are ignored for dynamic request properties
 * #394 Upgrade Jackson to 2.9.8
