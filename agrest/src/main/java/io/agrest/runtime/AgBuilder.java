@@ -95,11 +95,9 @@ import io.agrest.runtime.protocol.ICayenneExpParser;
 import io.agrest.runtime.protocol.IEntityUpdateParser;
 import io.agrest.runtime.protocol.IExcludeParser;
 import io.agrest.runtime.protocol.IIncludeParser;
-import io.agrest.runtime.protocol.IMapByParser;
 import io.agrest.runtime.protocol.ISizeParser;
 import io.agrest.runtime.protocol.ISortParser;
 import io.agrest.runtime.protocol.IncludeParser;
-import io.agrest.runtime.protocol.MapByParser;
 import io.agrest.runtime.protocol.SizeParser;
 import io.agrest.runtime.protocol.SortParser;
 import io.agrest.runtime.provider.CayenneExpProvider;
@@ -108,6 +106,8 @@ import io.agrest.runtime.provider.IncludeProvider;
 import io.agrest.runtime.provider.MapByProvider;
 import io.agrest.runtime.provider.SizeProvider;
 import io.agrest.runtime.provider.SortProvider;
+import io.agrest.runtime.request.DefaultRequestBuilderFactory;
+import io.agrest.runtime.request.IAgRequestBuilderFactory;
 import io.agrest.runtime.semantics.IRelationshipMapper;
 import io.agrest.runtime.semantics.RelationshipMapper;
 import io.agrest.runtime.shutdown.ShutdownManager;
@@ -522,11 +522,12 @@ public class AgBuilder {
 
             // Query parameter parsers from the UriInfo
             binder.bind(ICayenneExpParser.class).to(CayenneExpParser.class);
-            binder.bind(IMapByParser.class).to(MapByParser.class);
             binder.bind(ISizeParser.class).to(SizeParser.class);
             binder.bind(ISortParser.class).to(SortParser.class);
             binder.bind(IExcludeParser.class).to(ExcludeParser.class);
             binder.bind(IIncludeParser.class).to(IncludeParser.class);
+
+            binder.bind(IAgRequestBuilderFactory.class).to(DefaultRequestBuilderFactory.class);
 
             // Converter providers to get value objects from explicit query parameters
             binder.bind(CayenneExpProvider.class).to(CayenneExpProvider.class);

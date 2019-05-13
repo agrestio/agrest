@@ -2,6 +2,7 @@ package io.agrest;
 
 import io.agrest.runtime.AgRuntime;
 import io.agrest.runtime.IAgService;
+import io.agrest.runtime.request.IAgRequestBuilderFactory;
 
 import javax.ws.rs.core.Configuration;
 
@@ -12,6 +13,15 @@ import javax.ws.rs.core.Configuration;
  * @since 1.14
  */
 public class Ag {
+
+    /**
+     * @param config JAX-RS config object that holds Agrest runtime.
+     * @return a newly created builder of {@link AgRequest}.
+     * @since 3.2
+     */
+    public static AgRequestBuilder requestBuilder(Configuration config) {
+        return AgRuntime.service(IAgRequestBuilderFactory.class, config).builder();
+    }
 
     public static <T> SelectBuilder<T> select(Class<T> root, Configuration config) {
         return service(config).select(root);
