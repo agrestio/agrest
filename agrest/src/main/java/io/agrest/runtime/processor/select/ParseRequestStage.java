@@ -25,7 +25,7 @@ public class ParseRequestStage implements Processor<SelectContext<?>> {
     protected static final String PROTOCOL_SORT = "sort";
     protected static final String PROTOCOL_START = "start";
 
-    private IAgRequestBuilderFactory requestBuilderFactory;
+    protected IAgRequestBuilderFactory requestBuilderFactory;
 
     public ParseRequestStage(@Inject IAgRequestBuilderFactory requestBuilderFactory) {
         this.requestBuilderFactory = requestBuilderFactory;
@@ -47,15 +47,16 @@ public class ParseRequestStage implements Processor<SelectContext<?>> {
         Map<String, List<String>> parameters = context.getProtocolParameters();
 
         if (request == null) {
-            return requestFromParams(parameters);
+            return requestFromParams(parameters).build();
         } else if (!parameters.isEmpty()) {
-            return new RequestParametersMerger(request, parameters).merge();
+            return requestFromRequestAndParams(request, parameters).build();
         } else {
             return request;
         }
     }
 
-    private AgRequest requestFromParams(Map<String, List<String>> parameters) {
+    // keeping as protected, and returning a mutable builder to allow subclasses to interfere
+    protected AgRequestBuilder requestFromParams(Map<String, List<String>> parameters) {
         return requestBuilderFactory.builder()
                 .cayenneExp(ParameterExtractor.string(parameters, PROTOCOL_CAYENNE_EXP))
                 .sort(ParameterExtractor.string(parameters, PROTOCOL_SORT), ParameterExtractor.string(parameters, PROTOCOL_DIR))
@@ -63,8 +64,12 @@ public class ParseRequestStage implements Processor<SelectContext<?>> {
                 .addIncludes(ParameterExtractor.strings(parameters, PROTOCOL_INCLUDE))
                 .addExcludes(ParameterExtractor.strings(parameters, PROTOCOL_EXCLUDE))
                 .start(ParameterExtractor.integerObject(parameters, PROTOCOL_START))
-                .limit(ParameterExtractor.integerObject(parameters, PROTOCOL_LIMIT))
-                .build();
+                .limit(ParameterExtractor.integerObject(parameters, PROTOCOL_LIMIT));
+    }
+
+    // keeping as protected, and returning a mutable builder to allow subclasses to interfere
+    protected AgRequestBuilder requestFromRequestAndParams(AgRequest request, Map<String, List<String>> parameters) {
+        return new RequestParametersMerger(request, parameters).merge();
     }
 
     private class RequestParametersMerger {
@@ -77,7 +82,7 @@ public class ParseRequestStage implements Processor<SelectContext<?>> {
             this.request = request;
         }
 
-        AgRequest merge() {
+        AgRequestBuilder merge() {
             AgRequestBuilder builder = requestBuilderFactory.builder();
 
             setCayenneExp(builder);
@@ -88,7 +93,7 @@ public class ParseRequestStage implements Processor<SelectContext<?>> {
             setStart(builder);
             setLimit(builder);
 
-            return builder.build();
+            return builder;
         }
 
         private void setCayenneExp(AgRequestBuilder builder) {

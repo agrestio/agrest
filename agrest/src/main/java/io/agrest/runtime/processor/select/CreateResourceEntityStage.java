@@ -4,8 +4,6 @@ import io.agrest.AgRequest;
 import io.agrest.ResourceEntity;
 import io.agrest.processor.Processor;
 import io.agrest.processor.ProcessorOutcome;
-import io.agrest.protocol.Dir;
-import io.agrest.protocol.Sort;
 import io.agrest.runtime.entity.ICayenneExpMerger;
 import io.agrest.runtime.entity.IExcludeMerger;
 import io.agrest.runtime.entity.IIncludeMerger;
@@ -72,16 +70,5 @@ public class CreateResourceEntityStage implements Processor<SelectContext<?>> {
         }
 
         context.setEntity(resourceEntity);
-    }
-
-    protected Sort createSort(Sort sort, Dir sortDirection) {
-
-        // ignoring direction on (1) no sort, (2) list sort, (3) no explicit direction
-        if (sort == null || sort.getProperty() == null || sortDirection == null) {
-            return sort;
-        }
-
-        // combine sort property with direction if they were specified separately
-        return new Sort(sort.getProperty(), sortDirection);
     }
 }
