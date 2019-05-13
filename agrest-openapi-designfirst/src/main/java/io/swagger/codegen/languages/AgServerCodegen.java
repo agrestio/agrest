@@ -58,13 +58,9 @@ public class AgServerCodegen extends AbstractJavaJAXRSServerCodegen implements A
         importMapping.put("LocalDateTime", "java.time.LocalDateTime");
 
         importMapping.put("CayenneExp", "io.agrest.protocol.CayenneExp");
-        importMapping.put("Dir",        "io.agrest.protocol.Dir");
         importMapping.put("Exclude",    "io.agrest.protocol.Exclude");
         importMapping.put("Include",    "io.agrest.protocol.Include");
         importMapping.put("Sort",       "io.agrest.protocol.Sort");
-        importMapping.put("MapBy",      "io.agrest.protocol.MapBy");
-        importMapping.put("Start",      "io.agrest.protocol.Start");
-        importMapping.put("Limit",      "io.agrest.protocol.Limit");
 
         embeddedTemplateDir = templateDir = AbstractJavaJAXRSServerCodegen.JAXRS_TEMPLATE_DIRECTORY_NAME + File.separator + "agrest";
 

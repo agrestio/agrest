@@ -23,7 +23,7 @@ public class E5Resource {
     @Consumes({ "application/json" })
     public DataResponse<E5> create(String e5) {
 
-        AgRequest agRequest = AgRequest.builder()
+        AgRequest agRequest = Ag.request(config)
                 .build();
 
         return Ag.create(E5.class, config)
@@ -36,7 +36,7 @@ public class E5Resource {
     @Produces({ "application/json" })
     public DataResponse<E5> getAll() {
 
-        AgRequest agRequest = AgRequest.builder()
+        AgRequest agRequest = Ag.request(config)
                 .build();
 
         return Ag.select(E5.class, config)

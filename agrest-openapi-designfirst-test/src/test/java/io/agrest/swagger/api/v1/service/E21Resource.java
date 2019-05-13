@@ -23,7 +23,7 @@ public class E21Resource {
     @Consumes({ "application/json" })
     public DataResponse<E21> create(String e21, @QueryParam("exclude") List<io.agrest.protocol.Exclude> excludes) {
 
-        AgRequest agRequest = AgRequest.builder()
+        AgRequest agRequest = Ag.request(config)
                 .excludes(excludes)
                 .build();
 
@@ -53,7 +53,7 @@ public class E21Resource {
         id.put("name", name);
         id.put("age", age);
 
-        AgRequest agRequest = AgRequest.builder()
+        AgRequest agRequest = Ag.request(config)
                 .excludes(excludes)
                 .build();
 
@@ -73,7 +73,7 @@ public class E21Resource {
                 id.put("age", age);
 
 
-        AgRequest agRequest = AgRequest.builder()
+        AgRequest agRequest = Ag.request(config)
                 .build();
 
         return Ag.idempotentCreateOrUpdate(E21.class, config)

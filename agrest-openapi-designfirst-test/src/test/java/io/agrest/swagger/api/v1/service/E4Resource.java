@@ -26,7 +26,7 @@ public class E4Resource {
     @Consumes({ "application/json" })
     public DataResponse<E4> create(String e4) {
 
-        AgRequest agRequest = AgRequest.builder()
+        AgRequest agRequest = Ag.request(config)
                 .build();
 
         return Ag.create(E4.class, config)
@@ -48,7 +48,7 @@ public class E4Resource {
     @Produces({ "application/json" })
     public DataResponse<E4> getAll(@QueryParam("limit") Limit limit, @QueryParam("sort") Sort sort, @QueryParam("include") List<io.agrest.protocol.Include> includes, @QueryParam("mapBy") MapBy mapBy) {
 
-        AgRequest agRequest = AgRequest.builder()
+        AgRequest agRequest = Ag.request(config)
                 .limit(limit)
                 .sort(sort)
                 .includes(includes)
@@ -65,7 +65,7 @@ public class E4Resource {
     @Produces({ "application/json" })
         public DataResponse<E4> getOne(@PathParam("id") Integer id, @QueryParam("include") List<io.agrest.protocol.Include> includes) {
 
-        AgRequest agRequest = AgRequest.builder()
+        AgRequest agRequest = Ag.request(config)
                 .includes(includes)
                 .build();
 
@@ -80,7 +80,7 @@ public class E4Resource {
     @Consumes({ "application/json" })
     public DataResponse<E4> update(@PathParam("id") Integer id, String e4) {
 
-        AgRequest agRequest = AgRequest.builder()
+        AgRequest agRequest = Ag.request(config)
                 .build();
 
         return Ag.idempotentCreateOrUpdate(E4.class, config)

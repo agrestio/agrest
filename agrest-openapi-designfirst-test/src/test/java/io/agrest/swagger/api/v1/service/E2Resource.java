@@ -25,7 +25,7 @@ public class E2Resource {
     @Consumes({ "application/json" })
     public DataResponse<E2> create(String e2, @QueryParam("include") List<io.agrest.protocol.Include> includes, @QueryParam("exclude") List<io.agrest.protocol.Exclude> excludes) {
 
-        AgRequest agRequest = AgRequest.builder()
+        AgRequest agRequest = Ag.request(config)
                 .includes(includes)
                 .excludes(excludes)
                 .build();
@@ -40,7 +40,7 @@ public class E2Resource {
     @Consumes({ "application/json" })
     public DataResponse<E3> createE3sViaE2(@PathParam("id") Integer id, String e3) {
 
-        AgRequest agRequest = AgRequest.builder()
+        AgRequest agRequest = Ag.request(config)
                 .build();
 
         return Ag.createOrUpdate(E3.class, config)
@@ -70,7 +70,7 @@ public class E2Resource {
     @Produces({ "application/json" })
     public DataResponse<E2> getAll(@QueryParam("include") List<io.agrest.protocol.Include> includes, @QueryParam("exclude") List<io.agrest.protocol.Exclude> excludes, @QueryParam("cayenneExp") CayenneExp cayenneExp) {
 
-        AgRequest agRequest = AgRequest.builder()
+        AgRequest agRequest = Ag.request(config)
                 .includes(includes)
                 .excludes(excludes)
                 .cayenneExp(cayenneExp)
@@ -86,7 +86,7 @@ public class E2Resource {
     @Produces({ "application/json" })
         public DataResponse<E3> getE3viaE2(@PathParam("id") Integer id, @PathParam("tid") Integer tid, @QueryParam("include") List<io.agrest.protocol.Include> includes) {
 
-        AgRequest agRequest = AgRequest.builder()
+        AgRequest agRequest = Ag.request(config)
                 .includes(includes)
                 .build();
 
@@ -102,7 +102,7 @@ public class E2Resource {
     @Produces({ "application/json" })
         public DataResponse<E2> getOne(@PathParam("id") Integer id, @QueryParam("include") List<io.agrest.protocol.Include> includes, @QueryParam("exclude") List<io.agrest.protocol.Exclude> excludes) {
 
-        AgRequest agRequest = AgRequest.builder()
+        AgRequest agRequest = Ag.request(config)
                 .includes(includes)
                 .excludes(excludes)
                 .build();
@@ -118,7 +118,7 @@ public class E2Resource {
     @Produces({ "application/json" })
         public DataResponse<E3> getOneToMany(@PathParam("id") Integer id, @QueryParam("include") List<io.agrest.protocol.Include> includes) {
 
-        AgRequest agRequest = AgRequest.builder()
+        AgRequest agRequest = Ag.request(config)
                 .includes(includes)
                 .build();
 
@@ -133,7 +133,7 @@ public class E2Resource {
     @Consumes({ "application/json" })
     public DataResponse<E2> update(@PathParam("id") Integer id, String e2, @QueryParam("include") List<io.agrest.protocol.Include> includes, @QueryParam("exclude") List<io.agrest.protocol.Exclude> excludes) {
 
-        AgRequest agRequest = AgRequest.builder()
+        AgRequest agRequest = Ag.request(config)
                 .includes(includes)
                 .excludes(excludes)
                 .build();
@@ -149,7 +149,7 @@ public class E2Resource {
     @Consumes({ "application/json" })
     public DataResponse<E3> updateE3sViaE2(@PathParam("id") Integer id, String e3) {
 
-        AgRequest agRequest = AgRequest.builder()
+        AgRequest agRequest = Ag.request(config)
                 .build();
 
         return Ag.idempotentCreateOrUpdate(E3.class, config)

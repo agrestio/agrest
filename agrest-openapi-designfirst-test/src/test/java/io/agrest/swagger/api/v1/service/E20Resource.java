@@ -23,7 +23,7 @@ public class E20Resource {
     @Consumes({ "application/json" })
     public DataResponse<E20> create(String e20, @QueryParam("exclude") List<io.agrest.protocol.Exclude> excludes) {
 
-        AgRequest agRequest = AgRequest.builder()
+        AgRequest agRequest = Ag.request(config)
                 .excludes(excludes)
                 .build();
 
@@ -46,7 +46,7 @@ public class E20Resource {
     @Produces({ "application/json" })
         public DataResponse<E20> getOneByName(@PathParam("name") String name, @QueryParam("exclude") List<io.agrest.protocol.Exclude> excludes) {
 
-        AgRequest agRequest = AgRequest.builder()
+        AgRequest agRequest = Ag.request(config)
                 .excludes(excludes)
                 .build();
 
@@ -61,7 +61,7 @@ public class E20Resource {
     @Consumes({ "application/json" })
     public DataResponse<E20> updateByName(@PathParam("name") String name, String e20) {
 
-        AgRequest agRequest = AgRequest.builder()
+        AgRequest agRequest = Ag.request(config)
                 .build();
 
         return Ag.idempotentCreateOrUpdate(E20.class, config)

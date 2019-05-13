@@ -1,19 +1,17 @@
 package io.agrest.swagger.api.v1.service;
 
-import io.agrest.Ag;
+import io.agrest.it.fixture.cayenne.E1;
+import io.agrest.protocol.Limit;
+
 import io.agrest.AgRequest;
 import io.agrest.DataResponse;
-import io.agrest.SimpleResponse;
-import io.agrest.it.fixture.cayenne.E1;
 
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.Configuration;
-import javax.ws.rs.core.Context;
+import java.util.*;
+import javax.ws.rs.*;
+import javax.ws.rs.core.*;
+
+import io.agrest.Ag;
+import io.agrest.SimpleResponse;
 
 @Path("/")
 public class E1Resource {
@@ -33,7 +31,7 @@ public class E1Resource {
     @GET
     @Path("/v1/e1")
     @Produces({ "application/json" })
-    public DataResponse<E1> getAll(@QueryParam("limit") Integer limit) {
+    public DataResponse<E1> getAll(@QueryParam("limit") Limit limit) {
 
         AgRequest agRequest = Ag.request(config)
                 .limit(limit)
