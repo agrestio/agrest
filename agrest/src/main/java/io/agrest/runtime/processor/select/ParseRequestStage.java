@@ -1,22 +1,11 @@
 package io.agrest.runtime.processor.select;
 
 import io.agrest.AgRequest;
+import io.agrest.AgRequestBuilder;
 import io.agrest.processor.Processor;
 import io.agrest.processor.ProcessorOutcome;
-import io.agrest.protocol.CayenneExp;
-import io.agrest.protocol.Dir;
-import io.agrest.protocol.Exclude;
-import io.agrest.protocol.Include;
-import io.agrest.protocol.Limit;
-import io.agrest.protocol.MapBy;
-import io.agrest.protocol.Sort;
-import io.agrest.protocol.Start;
-import io.agrest.runtime.protocol.ICayenneExpParser;
-import io.agrest.runtime.protocol.IExcludeParser;
-import io.agrest.runtime.protocol.IIncludeParser;
-import io.agrest.runtime.protocol.IMapByParser;
-import io.agrest.runtime.protocol.ISortParser;
 import io.agrest.runtime.protocol.ParameterExtractor;
+import io.agrest.runtime.request.IAgRequestBuilderFactory;
 import org.apache.cayenne.di.Inject;
 
 import java.util.List;
@@ -27,33 +16,19 @@ import java.util.Map;
  */
 public class ParseRequestStage implements Processor<SelectContext<?>> {
 
-    protected static final String PROTOCOL_KEY_CAYENNE_EXP = "cayenneExp";
-    protected static final String PROTOCOL_KEY_DIR = "dir";
-    protected static final String PROTOCOL_KEY_EXCLUDE = "exclude";
-    protected static final String PROTOCOL_KEY_INCLUDE = "include";
-    protected static final String PROTOCOL_KEY_LIMIT = "limit";
-    protected static final String PROTOCOL_KEY_MAP_BY = "mapBy";
-    protected static final String PROTOCOL_KEY_SORT = "sort";
-    protected static final String PROTOCOL_KEY_START = "start";
+    protected static final String PROTOCOL_CAYENNE_EXP = "cayenneExp";
+    protected static final String PROTOCOL_DIR = "dir";
+    protected static final String PROTOCOL_EXCLUDE = "exclude";
+    protected static final String PROTOCOL_INCLUDE = "include";
+    protected static final String PROTOCOL_LIMIT = "limit";
+    protected static final String PROTOCOL_MAP_BY = "mapBy";
+    protected static final String PROTOCOL_SORT = "sort";
+    protected static final String PROTOCOL_START = "start";
 
-    private ICayenneExpParser expParser;
-    private ISortParser sortParser;
-    private IMapByParser mapByParser;
-    private IIncludeParser includeParser;
-    private IExcludeParser excludeParser;
+    private IAgRequestBuilderFactory requestBuilderFactory;
 
-    public ParseRequestStage(
-            @Inject ICayenneExpParser expParser,
-            @Inject ISortParser sortParser,
-            @Inject IMapByParser mapByParser,
-            @Inject IIncludeParser includeParser,
-            @Inject IExcludeParser excludeParser) {
-
-        this.expParser = expParser;
-        this.sortParser = sortParser;
-        this.mapByParser = mapByParser;
-        this.includeParser = includeParser;
-        this.excludeParser = excludeParser;
+    public ParseRequestStage(@Inject IAgRequestBuilderFactory requestBuilderFactory) {
+        this.requestBuilderFactory = requestBuilderFactory;
     }
 
     @Override
@@ -63,79 +38,116 @@ public class ParseRequestStage implements Processor<SelectContext<?>> {
     }
 
     protected <T> void doExecute(SelectContext<T> context) {
+        context.setRawRequest(mergedRequest(context));
+    }
+
+    private AgRequest mergedRequest(SelectContext<?> context) {
+
         AgRequest request = context.getRequest();
-        Map<String, List<String>> protocolParameters = context.getProtocolParameters();
+        Map<String, List<String>> parameters = context.getProtocolParameters();
 
-        AgRequest.Builder requestBuilder = AgRequest.builder()
-                .cayenneExp(getCayenneExp(request, protocolParameters))
-                .sort(getSort(request, protocolParameters))
-                .sortDirection(getSortDirection(request, protocolParameters))
-                .mapBy(getMapBy(request, protocolParameters))
-                .includes(getIncludes(request, protocolParameters))
-                .excludes(getExcludes(request, protocolParameters))
-                .start(getStart(request, protocolParameters))
-                .limit(getLimit(request, protocolParameters));
-
-        context.setRawRequest(requestBuilder.build());
+        if (request == null) {
+            return requestFromParams(parameters);
+        } else if (!parameters.isEmpty()) {
+            return new RequestParametersMerger(request, parameters).merge();
+        } else {
+            return request;
+        }
     }
 
-    private CayenneExp getCayenneExp(AgRequest request, Map<String, List<String>> protocolParameters) {
-        return request != null && request.getCayenneExp() != null
-                ? request.getCayenneExp()
-                : expParser.fromString(ParameterExtractor.string(protocolParameters, PROTOCOL_KEY_CAYENNE_EXP));
+    private AgRequest requestFromParams(Map<String, List<String>> parameters) {
+        return requestBuilderFactory.builder()
+                .cayenneExp(ParameterExtractor.string(parameters, PROTOCOL_CAYENNE_EXP))
+                .sort(ParameterExtractor.string(parameters, PROTOCOL_SORT), ParameterExtractor.string(parameters, PROTOCOL_DIR))
+                .mapBy(ParameterExtractor.string(parameters, PROTOCOL_MAP_BY))
+                .addIncludes(ParameterExtractor.strings(parameters, PROTOCOL_INCLUDE))
+                .addExcludes(ParameterExtractor.strings(parameters, PROTOCOL_EXCLUDE))
+                .start(ParameterExtractor.integerObject(parameters, PROTOCOL_START))
+                .limit(ParameterExtractor.integerObject(parameters, PROTOCOL_LIMIT))
+                .build();
     }
 
-    private Sort getSort(AgRequest request, Map<String, List<String>> protocolParameters) {
-        return request != null && request.getSort() != null
-                ? request.getSort()
-                : sortParser.fromString(ParameterExtractor.string(protocolParameters, PROTOCOL_KEY_SORT));
-    }
+    private class RequestParametersMerger {
 
-    private Dir getSortDirection(AgRequest request, Map<String, List<String>> protocolParameters) {
-        return request != null && request.getSortDirection() != null
-                ? request.getSortDirection()
-                : sortParser.dirFromString(ParameterExtractor.string(protocolParameters, PROTOCOL_KEY_DIR));
-    }
+        private Map<String, List<String>> parameters;
+        private AgRequest request;
 
-    private MapBy getMapBy(AgRequest request, Map<String, List<String>> protocolParameters) {
-        return request != null && request.getMapBy() != null
-                ? request.getMapBy()
-                : mapByParser.fromString(ParameterExtractor.string(protocolParameters, PROTOCOL_KEY_MAP_BY));
-    }
-
-    private List<Include> getIncludes(AgRequest request, Map<String, List<String>> protocolParameters) {
-        return request != null && !request.getIncludes().isEmpty()
-                ? request.getIncludes()
-                : includeParser.fromStrings(ParameterExtractor.strings(protocolParameters, PROTOCOL_KEY_INCLUDE));
-    }
-
-    private List<Exclude> getExcludes(AgRequest request, Map<String, List<String>> protocolParameters) {
-        return request != null && !request.getExcludes().isEmpty()
-                ? request.getExcludes()
-                : excludeParser.fromStrings(ParameterExtractor.strings(protocolParameters, PROTOCOL_KEY_EXCLUDE));
-    }
-
-    private Start getStart(AgRequest request, Map<String, List<String>> protocolParameters) {
-        int start = ParameterExtractor.integer(protocolParameters, PROTOCOL_KEY_START);
-
-        if (request != null && request.getStart() != null) {
-            return request.getStart();
-        } else if (start >= 0) {
-            return new Start(start);
+        RequestParametersMerger(AgRequest request, Map<String, List<String>> parameters) {
+            this.parameters = parameters;
+            this.request = request;
         }
 
-        return null;
-    }
+        AgRequest merge() {
+            AgRequestBuilder builder = requestBuilderFactory.builder();
 
-    private Limit getLimit(AgRequest request, Map<String, List<String>> protocolParameters) {
-        int limit = ParameterExtractor.integer(protocolParameters, PROTOCOL_KEY_LIMIT);
+            setCayenneExp(builder);
+            setSort(builder);
+            setMapBy(builder);
+            setIncludes(builder);
+            setExcludes(builder);
+            setStart(builder);
+            setLimit(builder);
 
-        if (request != null && request.getLimit() != null) {
-            return request.getLimit();
-        } else if (limit >= 0) {
-            return new Limit(limit);
+            return builder.build();
         }
 
-        return null;
+        private void setCayenneExp(AgRequestBuilder builder) {
+            if (request.getCayenneExp() != null) {
+                builder.cayenneExp(request.getCayenneExp());
+            } else {
+                builder.cayenneExp(ParameterExtractor.string(parameters, PROTOCOL_CAYENNE_EXP));
+            }
+        }
+
+        private void setSort(AgRequestBuilder builder) {
+
+            if (request.getSort() != null) {
+                builder.sort(request.getSort());
+            } else {
+                builder.sort(
+                        ParameterExtractor.string(parameters, PROTOCOL_SORT),
+                        ParameterExtractor.string(parameters, PROTOCOL_DIR));
+            }
+        }
+
+        private void setMapBy(AgRequestBuilder builder) {
+            if (request.getMapBy() != null) {
+                builder.mapBy(request.getMapBy());
+            } else {
+                builder.mapBy(ParameterExtractor.string(parameters, PROTOCOL_MAP_BY));
+            }
+        }
+
+        private void setIncludes(AgRequestBuilder builder) {
+            if (!request.getIncludes().isEmpty()) {
+                request.getIncludes().forEach(builder::addInclude);
+            } else {
+                builder.addIncludes(ParameterExtractor.strings(parameters, PROTOCOL_INCLUDE));
+            }
+        }
+
+        private void setExcludes(AgRequestBuilder builder) {
+            if (!request.getExcludes().isEmpty()) {
+                request.getExcludes().forEach(builder::addExclude);
+            } else {
+                builder.addExcludes(ParameterExtractor.strings(parameters, PROTOCOL_EXCLUDE));
+            }
+        }
+
+        private void setStart(AgRequestBuilder builder) {
+            if (request.getStart() != null) {
+                builder.start(request.getStart());
+            } else {
+                builder.start(ParameterExtractor.integerObject(parameters, PROTOCOL_START));
+            }
+        }
+
+        private void setLimit(AgRequestBuilder builder) {
+            if (request.getLimit() != null) {
+                builder.limit(request.getLimit());
+            } else {
+                builder.limit(ParameterExtractor.integerObject(parameters, PROTOCOL_LIMIT));
+            }
+        }
     }
 }

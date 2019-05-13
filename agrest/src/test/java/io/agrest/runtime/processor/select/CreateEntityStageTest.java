@@ -1,7 +1,6 @@
 package io.agrest.runtime.processor.select;
 
 import io.agrest.AgException;
-import io.agrest.AgRequest;
 import io.agrest.ResourceEntity;
 import io.agrest.it.fixture.cayenne.E1;
 import io.agrest.it.fixture.cayenne.E2;
@@ -26,6 +25,12 @@ import io.agrest.runtime.entity.SizeMerger;
 import io.agrest.runtime.entity.SortMerger;
 import io.agrest.runtime.path.IPathDescriptorManager;
 import io.agrest.runtime.path.PathDescriptorManager;
+import io.agrest.runtime.protocol.ICayenneExpParser;
+import io.agrest.runtime.protocol.IExcludeParser;
+import io.agrest.runtime.protocol.IIncludeParser;
+import io.agrest.runtime.protocol.ISortParser;
+import io.agrest.runtime.request.DefaultRequestBuilderFactory;
+import io.agrest.runtime.request.IAgRequestBuilderFactory;
 import io.agrest.unit.TestWithCayenneMapping;
 import org.apache.cayenne.query.Ordering;
 import org.apache.cayenne.query.SortOrder;
@@ -34,24 +39,21 @@ import org.junit.Test;
 
 import javax.ws.rs.core.MultivaluedMap;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Iterator;
 
 import static org.apache.cayenne.exp.ExpressionFactory.exp;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
 
 public class CreateEntityStageTest extends TestWithCayenneMapping {
 
     private CreateResourceEntityStage createEntityStage;
+    private IAgRequestBuilderFactory requestBuilderFactory;
 
-	@Before
-	public void setUp() {
+    @Before
+    public void setUp() {
 
-		IPathDescriptorManager pathCache = new PathDescriptorManager();
+        IPathDescriptorManager pathCache = new PathDescriptorManager();
 
         // prepare create entity stage
         ICayenneExpMerger expMerger = new CayenneExpMerger(new ExpressionPostProcessor(pathCache));
@@ -64,458 +66,472 @@ public class CreateEntityStageTest extends TestWithCayenneMapping {
         this.createEntityStage
                 = new CreateResourceEntityStage(
                 createMetadataService(),
-                expMerger ,
+                expMerger,
                 sortMerger,
                 mapByMerger,
                 sizeMerger,
                 includeMerger,
                 excludeMerger);
-	}
 
-	@Test
-	public void testSelectRequest_Default() {
+        this.requestBuilderFactory = new DefaultRequestBuilderFactory(
+                mock(ICayenneExpParser.class),
+                mock(ISortParser.class),
+                mock(IIncludeParser.class),
+                mock(IExcludeParser.class)
+        );
+    }
 
-		@SuppressWarnings("unchecked")
-		MultivaluedMap<String, String> params = mock(MultivaluedMap.class);
+    @Test
+    public void testSelectRequest_Default() {
+
+        @SuppressWarnings("unchecked")
+        MultivaluedMap<String, String> params = mock(MultivaluedMap.class);
 
         SelectContext<E1> context = prepareContext(params, E1.class);
 
-        context.setRawRequest(AgRequest.builder().build());
+        context.setRawRequest(requestBuilderFactory.builder().build());
 
-		createEntityStage.execute(context);
-
-        ResourceEntity<E1> resourceEntity = context.getEntity();
-
-		assertNotNull(resourceEntity);
-		assertTrue(resourceEntity.isIdIncluded());
-		assertEquals(3, resourceEntity.getAttributes().size());
-		assertTrue(resourceEntity.getChildren().isEmpty());
-	}
-
-	@Test
-	public void testSelectRequest_IncludeAttrs() {
-
-		SelectContext<E1> context = new SelectContext<>(E1.class);
-
-		Include include1 = new Include("description");
-		Include include2 = new Include("age");
-		context.setRawRequest(AgRequest.builder().includes(Arrays.asList(include1, include2)).build());
-
-		createEntityStage.execute(context);
+        createEntityStage.execute(context);
 
         ResourceEntity<E1> resourceEntity = context.getEntity();
 
-		assertNotNull(resourceEntity);
-		assertFalse(resourceEntity.isIdIncluded());
+        assertNotNull(resourceEntity);
+        assertTrue(resourceEntity.isIdIncluded());
+        assertEquals(3, resourceEntity.getAttributes().size());
+        assertTrue(resourceEntity.getChildren().isEmpty());
+    }
 
-		assertEquals(2, resourceEntity.getAttributes().size());
-		assertTrue(resourceEntity.getAttributes().containsKey(E1.DESCRIPTION.getName()));
-		assertTrue(resourceEntity.getAttributes().containsKey(E1.AGE.getName()));
-
-		assertTrue(resourceEntity.getChildren().isEmpty());
-	}
-
-	@Test
-	public void testSelectRequest_IncludeAttrs_AsArray() {
+    @Test
+    public void testSelectRequest_IncludeAttrs() {
 
         SelectContext<E1> context = new SelectContext<>(E1.class);
 
-		Include include = new Include(Arrays.asList(
-				new Include("description"),
-				new Include("age")));
-		context.setRawRequest(AgRequest.builder().includes(Collections.singletonList(include)).build());
+        Include include1 = new Include("description");
+        Include include2 = new Include("age");
+        context.setRawRequest(requestBuilderFactory.builder().addInclude(include1).addInclude(include2).build());
 
-		createEntityStage.execute(context);
-
-        ResourceEntity<E1> resourceEntity = context.getEntity();
-
-		assertNotNull(resourceEntity);
-		assertFalse(resourceEntity.isIdIncluded());
-
-		assertEquals(2, resourceEntity.getAttributes().size());
-		assertTrue(resourceEntity.getAttributes().containsKey(E1.DESCRIPTION.getName()));
-		assertTrue(resourceEntity.getAttributes().containsKey(E1.AGE.getName()));
-		assertTrue(resourceEntity.getChildren().isEmpty());
-	}
-
-	@Test
-	public void testSelectRequest_ExcludeAttrs() {
-
-		SelectContext<E1> context = new SelectContext<>(E1.class);
-
-		Exclude exclude1 = new Exclude("description");
-		Exclude exclude2 = new Exclude("age");
-		context.setRawRequest(AgRequest.builder().excludes(Arrays.asList(exclude1, exclude2)).build());
-
-		createEntityStage.execute(context);
+        createEntityStage.execute(context);
 
         ResourceEntity<E1> resourceEntity = context.getEntity();
 
-		assertNotNull(resourceEntity);
-		assertTrue(resourceEntity.isIdIncluded());
+        assertNotNull(resourceEntity);
+        assertFalse(resourceEntity.isIdIncluded());
 
-		assertEquals(1, resourceEntity.getAttributes().size());
-		assertTrue(resourceEntity.getAttributes().containsKey(E1.NAME.getName()));
-		assertTrue(resourceEntity.getChildren().isEmpty());
-	}
+        assertEquals(2, resourceEntity.getAttributes().size());
+        assertTrue(resourceEntity.getAttributes().containsKey(E1.DESCRIPTION.getName()));
+        assertTrue(resourceEntity.getAttributes().containsKey(E1.AGE.getName()));
 
-	@Test
-	public void testSelectRequest_ExcludeAttrs_AsArray() {
+        assertTrue(resourceEntity.getChildren().isEmpty());
+    }
 
-		SelectContext<E1> context = new SelectContext<>(E1.class);
+    @Test
+    public void testSelectRequest_IncludeAttrs_AsArray() {
 
-		Exclude exclude = new Exclude(Arrays.asList(
-				new Exclude("description"),
-				new Exclude("age")));
-		context.setRawRequest(AgRequest.builder().excludes(Collections.singletonList(exclude)).build());
+        SelectContext<E1> context = new SelectContext<>(E1.class);
 
-		createEntityStage.execute(context);
+        Include include = new Include(Arrays.asList(
+                new Include("description"),
+                new Include("age")));
+        context.setRawRequest(requestBuilderFactory.builder().addInclude(include).build());
+
+        createEntityStage.execute(context);
 
         ResourceEntity<E1> resourceEntity = context.getEntity();
 
-		assertNotNull(resourceEntity);
-		assertTrue(resourceEntity.isIdIncluded());
+        assertNotNull(resourceEntity);
+        assertFalse(resourceEntity.isIdIncluded());
 
-		assertEquals(1, resourceEntity.getAttributes().size());
-		assertTrue(resourceEntity.getAttributes().containsKey(E1.NAME.getName()));
-		assertTrue(resourceEntity.getChildren().isEmpty());
-	}
+        assertEquals(2, resourceEntity.getAttributes().size());
+        assertTrue(resourceEntity.getAttributes().containsKey(E1.DESCRIPTION.getName()));
+        assertTrue(resourceEntity.getAttributes().containsKey(E1.AGE.getName()));
+        assertTrue(resourceEntity.getChildren().isEmpty());
+    }
 
-	@Test
-	public void testSelectRequest_IncludeExcludeAttrs() {
+    @Test
+    public void testSelectRequest_ExcludeAttrs() {
 
-		SelectContext<E1> context = new SelectContext<>(E1.class);
+        SelectContext<E1> context = new SelectContext<>(E1.class);
 
-		Include include1 = new Include("description");
-		Include include2 = new Include("age");
-		Include include3 = new Include("id");
-		Exclude exclude1 = new Exclude("description");
-		Exclude exclude2 = new Exclude("name");
+        Exclude exclude1 = new Exclude("description");
+        Exclude exclude2 = new Exclude("age");
+        context.setRawRequest(requestBuilderFactory.builder()
+                .addExclude(exclude1)
+                .addExclude(exclude2).build());
 
+        createEntityStage.execute(context);
 
-		context.setRawRequest(AgRequest.builder()
-				.includes(Arrays.asList(include1, include2, include3))
-				.excludes(Arrays.asList(exclude1, exclude2))
-				.build());
+        ResourceEntity<E1> resourceEntity = context.getEntity();
 
-		createEntityStage.execute(context);
+        assertNotNull(resourceEntity);
+        assertTrue(resourceEntity.isIdIncluded());
 
-		ResourceEntity<E1> resourceEntity = context.getEntity();
+        assertEquals(1, resourceEntity.getAttributes().size());
+        assertTrue(resourceEntity.getAttributes().containsKey(E1.NAME.getName()));
+        assertTrue(resourceEntity.getChildren().isEmpty());
+    }
 
-		assertNotNull(resourceEntity);
-		assertTrue(resourceEntity.isIdIncluded());
-		assertEquals(1, resourceEntity.getAttributes().size());
-		assertTrue(resourceEntity.getAttributes().containsKey(E1.AGE.getName()));
+    @Test
+    public void testSelectRequest_ExcludeAttrs_AsArray() {
 
-		assertTrue(resourceEntity.getChildren().isEmpty());
-	}
+        SelectContext<E1> context = new SelectContext<>(E1.class);
 
-	@Test
-	public void testSelectRequest_IncludeRels() {
+        Exclude exclude = new Exclude(Arrays.asList(
+                new Exclude("description"),
+                new Exclude("age")));
+        context.setRawRequest(requestBuilderFactory.builder().addExclude(exclude).build());
 
-		SelectContext<E2> context = new SelectContext<>(E2.class);
+        createEntityStage.execute(context);
 
-		Include include = new Include("e3s");
+        ResourceEntity<E1> resourceEntity = context.getEntity();
 
-		context.setRawRequest(AgRequest.builder().includes(Collections.singletonList(include)).build());
+        assertNotNull(resourceEntity);
+        assertTrue(resourceEntity.isIdIncluded());
 
-		createEntityStage.execute(context);
+        assertEquals(1, resourceEntity.getAttributes().size());
+        assertTrue(resourceEntity.getAttributes().containsKey(E1.NAME.getName()));
+        assertTrue(resourceEntity.getChildren().isEmpty());
+    }
 
-		ResourceEntity<E2> resourceEntity = context.getEntity();
+    @Test
+    public void testSelectRequest_IncludeExcludeAttrs() {
 
-		assertNotNull(resourceEntity);
-		assertTrue(resourceEntity.isIdIncluded());
-		assertEquals(2, resourceEntity.getAttributes().size());
-		assertTrue(resourceEntity.getAttributes().containsKey(E2.NAME.getName()));
-		assertTrue(resourceEntity.getAttributes().containsKey(E2.ADDRESS.getName()));
+        SelectContext<E1> context = new SelectContext<>(E1.class);
 
-		assertEquals(1, resourceEntity.getChildren().size());
-		assertEquals(1, resourceEntity.getChildren().entrySet().size());
-		assertTrue(resourceEntity.getChildren().keySet().contains(E2.E3S.getName()));
+        Include include1 = new Include("description");
+        Include include2 = new Include("age");
+        Include include3 = new Include("id");
+        Exclude exclude1 = new Exclude("description");
+        Exclude exclude2 = new Exclude("name");
 
-		ResourceEntity<?> e3ResourceEntity = resourceEntity.getChildren().get(E2.E3S.getName());
-		assertTrue(e3ResourceEntity.isIdIncluded());
-		assertEquals(2, e3ResourceEntity.getAttributes().size());
+        context.setRawRequest(requestBuilderFactory.builder()
+                .addInclude(include1)
+                .addInclude(include2)
+                .addInclude(include3)
+                .addExclude(exclude1)
+                .addExclude(exclude2)
+                .build());
 
-		assertTrue(e3ResourceEntity.getAttributes().containsKey(E3.NAME.getName()));
-		assertTrue(e3ResourceEntity.getAttributes().containsKey(E3.PHONE_NUMBER.getName()));
-		assertTrue(e3ResourceEntity.getChildren().isEmpty());
-	}
+        createEntityStage.execute(context);
 
-	@Test
-	public void testSelectRequest_IncludeBothAttrs() {
+        ResourceEntity<E1> resourceEntity = context.getEntity();
 
-		SelectContext<E2> context = new SelectContext<>(E2.class);
+        assertNotNull(resourceEntity);
+        assertTrue(resourceEntity.isIdIncluded());
+        assertEquals(1, resourceEntity.getAttributes().size());
+        assertTrue(resourceEntity.getAttributes().containsKey(E1.AGE.getName()));
 
-		Include include1 = new Include("name");
-		Include include2 = new Include("e3s.name");
-		context.setRawRequest(AgRequest.builder().includes(Arrays.asList(include1, include2)).build());
+        assertTrue(resourceEntity.getChildren().isEmpty());
+    }
 
-		createEntityStage.execute(context);
+    @Test
+    public void testSelectRequest_IncludeRels() {
 
-		ResourceEntity<E2> resourceEntity = context.getEntity();
+        SelectContext<E2> context = new SelectContext<>(E2.class);
 
-		assertNotNull(resourceEntity);
-		assertFalse(resourceEntity.isIdIncluded());
-		assertEquals(1, resourceEntity.getAttributes().size());
-		assertTrue(resourceEntity.getAttributes().containsKey(E2.NAME.getName()));
+        Include include = new Include("e3s");
 
-		assertEquals(1, resourceEntity.getChildren().size());
-		assertEquals(1, resourceEntity.getChildren().entrySet().size());
-		assertTrue(resourceEntity.getChildren().keySet().contains(E2.E3S.getName()));
+        context.setRawRequest(requestBuilderFactory.builder().addInclude(include).build());
 
-		ResourceEntity<?> e3ResourceEntity = resourceEntity.getChildren().get(E2.E3S.getName());
-		assertFalse(e3ResourceEntity.isIdIncluded());
-		assertEquals(1, e3ResourceEntity.getAttributes().size());
+        createEntityStage.execute(context);
 
-		assertTrue(e3ResourceEntity.getAttributes().containsKey(E3.NAME.getName()));
-		assertTrue(e3ResourceEntity.getChildren().isEmpty());
-	}
+        ResourceEntity<E2> resourceEntity = context.getEntity();
 
-	@Test
-	public void testSelectRequest_IncludeExcludeBothAttrs() {
+        assertNotNull(resourceEntity);
+        assertTrue(resourceEntity.isIdIncluded());
+        assertEquals(2, resourceEntity.getAttributes().size());
+        assertTrue(resourceEntity.getAttributes().containsKey(E2.NAME.getName()));
+        assertTrue(resourceEntity.getAttributes().containsKey(E2.ADDRESS.getName()));
 
-		SelectContext<E2> context = new SelectContext<>(E2.class);
+        assertEquals(1, resourceEntity.getChildren().size());
+        assertEquals(1, resourceEntity.getChildren().entrySet().size());
+        assertTrue(resourceEntity.getChildren().keySet().contains(E2.E3S.getName()));
 
-		Include include = new Include("e3s.name");
-		Exclude exclude = new Exclude("name");
-		context.setRawRequest(AgRequest.builder()
-				.includes(Collections.singletonList(include))
-				.excludes(Collections.singletonList(exclude))
-				.build());
+        ResourceEntity<?> e3ResourceEntity = resourceEntity.getChildren().get(E2.E3S.getName());
+        assertTrue(e3ResourceEntity.isIdIncluded());
+        assertEquals(2, e3ResourceEntity.getAttributes().size());
 
-		createEntityStage.execute(context);
+        assertTrue(e3ResourceEntity.getAttributes().containsKey(E3.NAME.getName()));
+        assertTrue(e3ResourceEntity.getAttributes().containsKey(E3.PHONE_NUMBER.getName()));
+        assertTrue(e3ResourceEntity.getChildren().isEmpty());
+    }
 
-		ResourceEntity<E2> resourceEntity = context.getEntity();
+    @Test
+    public void testSelectRequest_IncludeBothAttrs() {
 
-		assertNotNull(resourceEntity);
-		assertTrue(resourceEntity.isIdIncluded());
-		assertEquals(1, resourceEntity.getAttributes().size());
-		assertTrue(resourceEntity.getAttributes().containsKey(E2.ADDRESS.getName()));
+        SelectContext<E2> context = new SelectContext<>(E2.class);
 
-		assertEquals(1, resourceEntity.getChildren().size());
-		assertEquals(1, resourceEntity.getChildren().entrySet().size());
-		assertTrue(resourceEntity.getChildren().keySet().contains(E2.E3S.getName()));
+        Include include1 = new Include("name");
+        Include include2 = new Include("e3s.name");
+        context.setRawRequest(requestBuilderFactory.builder()
+                .addInclude(include1)
+                .addInclude(include2).build());
 
-		ResourceEntity<?> e3ResourceEntity = resourceEntity.getChildren().get(E2.E3S.getName());
-		assertFalse(e3ResourceEntity.isIdIncluded());
-		assertEquals(1, e3ResourceEntity.getAttributes().size());
+        createEntityStage.execute(context);
 
-		assertTrue(e3ResourceEntity.getAttributes().containsKey(E3.NAME.getName()));
-		assertTrue(e3ResourceEntity.getChildren().isEmpty());
-	}
+        ResourceEntity<E2> resourceEntity = context.getEntity();
 
-	@Test
-	public void testSelectRequest_IncludeExcludeBothAttrs2() {
+        assertNotNull(resourceEntity);
+        assertFalse(resourceEntity.isIdIncluded());
+        assertEquals(1, resourceEntity.getAttributes().size());
+        assertTrue(resourceEntity.getAttributes().containsKey(E2.NAME.getName()));
 
-		SelectContext<E2> context = new SelectContext<>(E2.class);
+        assertEquals(1, resourceEntity.getChildren().size());
+        assertEquals(1, resourceEntity.getChildren().entrySet().size());
+        assertTrue(resourceEntity.getChildren().keySet().contains(E2.E3S.getName()));
 
-		Include include = new Include("e3s");
-		Exclude exclude1 = new Exclude("address");
-		Exclude exclude2 = new Exclude("e3s.name");
-		context.setRawRequest(AgRequest.builder()
-				.includes(Collections.singletonList(include))
-				.excludes(Arrays.asList(exclude1, exclude2))
-				.build());
+        ResourceEntity<?> e3ResourceEntity = resourceEntity.getChildren().get(E2.E3S.getName());
+        assertFalse(e3ResourceEntity.isIdIncluded());
+        assertEquals(1, e3ResourceEntity.getAttributes().size());
 
-		createEntityStage.execute(context);
+        assertTrue(e3ResourceEntity.getAttributes().containsKey(E3.NAME.getName()));
+        assertTrue(e3ResourceEntity.getChildren().isEmpty());
+    }
 
-		ResourceEntity<E2> resourceEntity = context.getEntity();
+    @Test
+    public void testSelectRequest_IncludeExcludeBothAttrs() {
 
-		assertNotNull(resourceEntity);
-		assertTrue(resourceEntity.isIdIncluded());
-		assertEquals(1, resourceEntity.getAttributes().size());
-		assertTrue(resourceEntity.getAttributes().containsKey(E2.NAME.getName()));
+        SelectContext<E2> context = new SelectContext<>(E2.class);
 
-		assertEquals(1, resourceEntity.getChildren().size());
-		assertEquals(1, resourceEntity.getChildren().entrySet().size());
-		assertTrue(resourceEntity.getChildren().keySet().contains(E2.E3S.getName()));
+        Include include = new Include("e3s.name");
+        Exclude exclude = new Exclude("name");
+        context.setRawRequest(requestBuilderFactory.builder()
+                .addInclude(include)
+                .addExclude(exclude)
+                .build());
 
-		ResourceEntity<?> e3ResourceEntity = resourceEntity.getChildren().get(E2.E3S.getName());
-		assertTrue(e3ResourceEntity.isIdIncluded());
-		assertEquals(1, e3ResourceEntity.getAttributes().size());
+        createEntityStage.execute(context);
 
-		assertTrue(e3ResourceEntity.getAttributes().containsKey(E3.PHONE_NUMBER.getName()));
-		assertTrue(e3ResourceEntity.getChildren().isEmpty());
-	}
+        ResourceEntity<E2> resourceEntity = context.getEntity();
 
-	@Test
-	public void testSelectRequest_IncludeRelationshipIds() {
+        assertNotNull(resourceEntity);
+        assertTrue(resourceEntity.isIdIncluded());
+        assertEquals(1, resourceEntity.getAttributes().size());
+        assertTrue(resourceEntity.getAttributes().containsKey(E2.ADDRESS.getName()));
 
-		SelectContext<E2> context = new SelectContext<>(E2.class);
+        assertEquals(1, resourceEntity.getChildren().size());
+        assertEquals(1, resourceEntity.getChildren().entrySet().size());
+        assertTrue(resourceEntity.getChildren().keySet().contains(E2.E3S.getName()));
 
-		Include include1 = new Include("id");
-		Include include2 = new Include("e3s.id");
-		context.setRawRequest(AgRequest.builder().includes(Arrays.asList(include1, include2)).build());
+        ResourceEntity<?> e3ResourceEntity = resourceEntity.getChildren().get(E2.E3S.getName());
+        assertFalse(e3ResourceEntity.isIdIncluded());
+        assertEquals(1, e3ResourceEntity.getAttributes().size());
 
-		createEntityStage.execute(context);
+        assertTrue(e3ResourceEntity.getAttributes().containsKey(E3.NAME.getName()));
+        assertTrue(e3ResourceEntity.getChildren().isEmpty());
+    }
 
-		ResourceEntity<E2> resourceEntity = context.getEntity();
+    @Test
+    public void testSelectRequest_IncludeExcludeBothAttrs2() {
 
-		assertNotNull(resourceEntity);
-		assertTrue(resourceEntity.isIdIncluded());
-		assertTrue(resourceEntity.getAttributes().isEmpty());
+        SelectContext<E2> context = new SelectContext<>(E2.class);
 
-		assertEquals(1, resourceEntity.getChildren().size());
-		assertEquals(1, resourceEntity.getChildren().entrySet().size());
-		assertTrue(resourceEntity.getChildren().keySet().contains(E2.E3S.getName()));
+        Include include = new Include("e3s");
+        Exclude exclude1 = new Exclude("address");
+        Exclude exclude2 = new Exclude("e3s.name");
+        context.setRawRequest(requestBuilderFactory.builder()
+                .addInclude(include)
+                .addExclude(exclude1)
+                .addExclude(exclude2)
+                .build());
 
-		ResourceEntity<?> e3ResourceEntity = resourceEntity.getChildren().get(E2.E3S.getName());
-		assertTrue(e3ResourceEntity.isIdIncluded());
-		assertTrue(e3ResourceEntity.getAttributes().isEmpty());
-		assertTrue(e3ResourceEntity.getChildren().isEmpty());
-	}
+        createEntityStage.execute(context);
 
-	@Test
-	public void testSelectRequest_SortSimple_NoDir() {
+        ResourceEntity<E2> resourceEntity = context.getEntity();
 
-		SelectContext<E2> context = new SelectContext<>(E2.class);
+        assertNotNull(resourceEntity);
+        assertTrue(resourceEntity.isIdIncluded());
+        assertEquals(1, resourceEntity.getAttributes().size());
+        assertTrue(resourceEntity.getAttributes().containsKey(E2.NAME.getName()));
 
-		Sort sort = new Sort(E2.NAME.getName());
+        assertEquals(1, resourceEntity.getChildren().size());
+        assertEquals(1, resourceEntity.getChildren().entrySet().size());
+        assertTrue(resourceEntity.getChildren().keySet().contains(E2.E3S.getName()));
 
-		context.setRawRequest(AgRequest.builder().sort(sort).build());
+        ResourceEntity<?> e3ResourceEntity = resourceEntity.getChildren().get(E2.E3S.getName());
+        assertTrue(e3ResourceEntity.isIdIncluded());
+        assertEquals(1, e3ResourceEntity.getAttributes().size());
 
-		createEntityStage.execute(context);
+        assertTrue(e3ResourceEntity.getAttributes().containsKey(E3.PHONE_NUMBER.getName()));
+        assertTrue(e3ResourceEntity.getChildren().isEmpty());
+    }
 
-		ResourceEntity<E2> resourceEntity = context.getEntity();
+    @Test
+    public void testSelectRequest_IncludeRelationshipIds() {
 
-		assertEquals(1, resourceEntity.getOrderings().size());
-		Ordering o1 = resourceEntity.getOrderings().iterator().next();
-		assertEquals(SortOrder.ASCENDING, o1.getSortOrder());
-		assertEquals(E2.NAME.getName(), o1.getSortSpecString());
-	}
+        SelectContext<E2> context = new SelectContext<>(E2.class);
 
-	@Test
-	public void testSelectRequest_SortSimple_ASC() {
+        Include include1 = new Include("id");
+        Include include2 = new Include("e3s.id");
+        context.setRawRequest(requestBuilderFactory.builder()
+                .addInclude(include1)
+                .addInclude(include2).build());
 
-		SelectContext<E2> context = new SelectContext<>(E2.class);
+        createEntityStage.execute(context);
 
-		Sort sort = new Sort(E2.NAME.getName());
+        ResourceEntity<E2> resourceEntity = context.getEntity();
 
-		context.setRawRequest(AgRequest.builder()
-				.sort(sort)
-				.sortDirection(Dir.ASC)
-				.build());
+        assertNotNull(resourceEntity);
+        assertTrue(resourceEntity.isIdIncluded());
+        assertTrue(resourceEntity.getAttributes().isEmpty());
 
-		createEntityStage.execute(context);
+        assertEquals(1, resourceEntity.getChildren().size());
+        assertEquals(1, resourceEntity.getChildren().entrySet().size());
+        assertTrue(resourceEntity.getChildren().keySet().contains(E2.E3S.getName()));
 
-		ResourceEntity<E2> resourceEntity = context.getEntity();
+        ResourceEntity<?> e3ResourceEntity = resourceEntity.getChildren().get(E2.E3S.getName());
+        assertTrue(e3ResourceEntity.isIdIncluded());
+        assertTrue(e3ResourceEntity.getAttributes().isEmpty());
+        assertTrue(e3ResourceEntity.getChildren().isEmpty());
+    }
 
-		assertEquals(1, resourceEntity.getOrderings().size());
-		Ordering o1 = resourceEntity.getOrderings().iterator().next();
-		assertEquals(SortOrder.ASCENDING, o1.getSortOrder());
-		assertEquals(E2.NAME.getName(), o1.getSortSpecString());
-	}
+    @Test
+    public void testSelectRequest_SortSimple_NoDir() {
 
-	@Test
-	public void testSelectRequest_SortSimple_DESC() {
+        SelectContext<E2> context = new SelectContext<>(E2.class);
 
-		SelectContext<E2> context = new SelectContext<>(E2.class);
+        Sort sort = new Sort(E2.NAME.getName());
 
-		Sort sort = new Sort(E2.NAME.getName());
+        context.setRawRequest(requestBuilderFactory.builder().sort(sort).build());
 
-		context.setRawRequest(AgRequest.builder()
-				.sort(sort)
-				.sortDirection(Dir.DESC)
-				.build());
+        createEntityStage.execute(context);
 
-		createEntityStage.execute(context);
+        ResourceEntity<E2> resourceEntity = context.getEntity();
 
-		ResourceEntity<E2> resourceEntity = context.getEntity();
+        assertEquals(1, resourceEntity.getOrderings().size());
+        Ordering o1 = resourceEntity.getOrderings().iterator().next();
+        assertEquals(SortOrder.ASCENDING, o1.getSortOrder());
+        assertEquals(E2.NAME.getName(), o1.getSortSpecString());
+    }
 
-		assertEquals(1, resourceEntity.getOrderings().size());
-		Ordering o1 = resourceEntity.getOrderings().iterator().next();
-		assertEquals(SortOrder.DESCENDING, o1.getSortOrder());
-		assertEquals(E2.NAME.getName(), o1.getSortSpecString());
-	}
+    @Test
+    public void testSelectRequest_SortSimple_ASC() {
 
-	@Test
-	public void testSelectRequest_Sort() {
+        SelectContext<E2> context = new SelectContext<>(E2.class);
 
-		SelectContext<E2> context = new SelectContext<>(E2.class);
+        Sort sort = new Sort(E2.NAME.getName(), Dir.ASC);
 
-		Sort sort = new Sort(Arrays.asList(
-				new Sort("name", Dir.DESC),
-				new Sort("address", Dir.ASC)));
+        context.setRawRequest(requestBuilderFactory.builder()
+                .sort(sort)
+                .build());
 
-		context.setRawRequest(AgRequest.builder().sort(sort).build());
+        createEntityStage.execute(context);
 
-		createEntityStage.execute(context);
+        ResourceEntity<E2> resourceEntity = context.getEntity();
 
-		ResourceEntity<E2> resourceEntity = context.getEntity();
+        assertEquals(1, resourceEntity.getOrderings().size());
+        Ordering o1 = resourceEntity.getOrderings().iterator().next();
+        assertEquals(SortOrder.ASCENDING, o1.getSortOrder());
+        assertEquals(E2.NAME.getName(), o1.getSortSpecString());
+    }
 
-		assertEquals(2, resourceEntity.getOrderings().size());
-		Iterator<Ordering> it = resourceEntity.getOrderings().iterator();
-		Ordering o1 = it.next();
-		Ordering o2 = it.next();
-		assertEquals(SortOrder.DESCENDING, o1.getSortOrder());
-		assertEquals("name", o1.getSortSpecString());
-		assertEquals(SortOrder.ASCENDING, o2.getSortOrder());
-		assertEquals("address", o2.getSortSpecString());
-	}
+    @Test
+    public void testSelectRequest_SortSimple_DESC() {
 
-	@Test
-	public void testSelectRequest_Sort_Dupes() {
+        SelectContext<E2> context = new SelectContext<>(E2.class);
 
-		SelectContext<E2> context = new SelectContext<>(E2.class);
+        Sort sort = new Sort(E2.NAME.getName(), Dir.DESC);
 
-		Sort sort = new Sort(Arrays.asList(
-				new Sort("name", Dir.DESC),
-				new Sort("name", Dir.ASC)));
+        context.setRawRequest(requestBuilderFactory.builder()
+                .sort(sort)
+                .build());
 
-		context.setRawRequest(AgRequest.builder().sort(sort).build());
+        createEntityStage.execute(context);
 
-		createEntityStage.execute(context);
+        ResourceEntity<E2> resourceEntity = context.getEntity();
 
-		ResourceEntity<E2> resourceEntity = context.getEntity();
+        assertEquals(1, resourceEntity.getOrderings().size());
+        Ordering o1 = resourceEntity.getOrderings().iterator().next();
+        assertEquals(SortOrder.DESCENDING, o1.getSortOrder());
+        assertEquals(E2.NAME.getName(), o1.getSortSpecString());
+    }
 
-		assertEquals(1, resourceEntity.getOrderings().size());
-		Iterator<Ordering> it = resourceEntity.getOrderings().iterator();
-		Ordering o1 = it.next();
-		assertEquals(SortOrder.DESCENDING, o1.getSortOrder());
-		assertEquals(E2.NAME.getName(), o1.getSortSpecString());
-	}
+    @Test
+    public void testSelectRequest_Sort() {
 
-	@Test(expected = AgException.class)
-	public void testSelectRequest_Sort_BadSpec() {
+        SelectContext<E2> context = new SelectContext<>(E2.class);
 
-		SelectContext<E2> context = new SelectContext<>(E2.class);
+        Sort sort = new Sort(Arrays.asList(
+                new Sort("name", Dir.DESC),
+                new Sort("address", Dir.ASC)));
 
-		Sort sort = new Sort(Arrays.asList(
-				new Sort("{\"property\":\"p1\",\"direction\":\"DESC\"}"),
-				new Sort("{\"property\":\"p2\",\"direction\":\"XXX\"}")));
+        context.setRawRequest(requestBuilderFactory.builder().sort(sort).build());
 
-		context.setRawRequest(AgRequest.builder().sort(sort).build());
+        createEntityStage.execute(context);
 
-		createEntityStage.execute(context);
-	}
+        ResourceEntity<E2> resourceEntity = context.getEntity();
 
-	@Test(expected = AgException.class)
-	public void testSelectRequest_CayenneExp_BadSpec() {
+        assertEquals(2, resourceEntity.getOrderings().size());
+        Iterator<Ordering> it = resourceEntity.getOrderings().iterator();
+        Ordering o1 = it.next();
+        Ordering o2 = it.next();
+        assertEquals(SortOrder.DESCENDING, o1.getSortOrder());
+        assertEquals("name", o1.getSortSpecString());
+        assertEquals(SortOrder.ASCENDING, o2.getSortOrder());
+        assertEquals("address", o2.getSortSpecString());
+    }
 
-		SelectContext<E2> context = new SelectContext<>(E2.class);
+    @Test
+    public void testSelectRequest_Sort_Dupes() {
 
-		CayenneExp cayenneExp  = new CayenneExp("numericProp = 12345 and stringProp = 'John Smith' and booleanProp = true");
+        SelectContext<E2> context = new SelectContext<>(E2.class);
 
-		context.setRawRequest(AgRequest.builder().cayenneExp(cayenneExp).build());
+        Sort sort = new Sort(Arrays.asList(
+                new Sort("name", Dir.DESC),
+                new Sort("name", Dir.ASC)));
 
-		createEntityStage.execute(context);
-	}
+        context.setRawRequest(requestBuilderFactory.builder().sort(sort).build());
 
-	@Test
-	public void testSelectRequest_CayenneExp() {
+        createEntityStage.execute(context);
 
-		SelectContext<E2> context = new SelectContext<>(E2.class);
+        ResourceEntity<E2> resourceEntity = context.getEntity();
 
-		CayenneExp cayenneExp  = new CayenneExp("name = 'John Smith'");
+        assertEquals(1, resourceEntity.getOrderings().size());
+        Iterator<Ordering> it = resourceEntity.getOrderings().iterator();
+        Ordering o1 = it.next();
+        assertEquals(SortOrder.DESCENDING, o1.getSortOrder());
+        assertEquals(E2.NAME.getName(), o1.getSortSpecString());
+    }
 
-		context.setRawRequest(AgRequest.builder().cayenneExp(cayenneExp).build());
+    @Test(expected = AgException.class)
+    public void testSelectRequest_Sort_BadSpec() {
 
-		createEntityStage.execute(context);
+        SelectContext<E2> context = new SelectContext<>(E2.class);
 
-		ResourceEntity<E2> resourceEntity = context.getEntity();
+        Sort sort = new Sort(Arrays.asList(
+                new Sort("{\"property\":\"p1\",\"direction\":\"DESC\"}"),
+                new Sort("{\"property\":\"p2\",\"direction\":\"XXX\"}")));
 
-		assertNotNull(resourceEntity.getQualifier());
-		assertEquals(exp("name = 'John Smith'"), resourceEntity.getQualifier());
-	}
+        context.setRawRequest(requestBuilderFactory.builder().sort(sort).build());
+
+        createEntityStage.execute(context);
+    }
+
+    @Test(expected = AgException.class)
+    public void testSelectRequest_CayenneExp_BadSpec() {
+
+        SelectContext<E2> context = new SelectContext<>(E2.class);
+
+        CayenneExp cayenneExp = new CayenneExp("numericProp = 12345 and stringProp = 'John Smith' and booleanProp = true");
+
+        context.setRawRequest(requestBuilderFactory.builder().cayenneExp(cayenneExp).build());
+
+        createEntityStage.execute(context);
+    }
+
+    @Test
+    public void testSelectRequest_CayenneExp() {
+
+        SelectContext<E2> context = new SelectContext<>(E2.class);
+
+        CayenneExp cayenneExp = new CayenneExp("name = 'John Smith'");
+
+        context.setRawRequest(requestBuilderFactory.builder().cayenneExp(cayenneExp).build());
+
+        createEntityStage.execute(context);
+
+        ResourceEntity<E2> resourceEntity = context.getEntity();
+
+        assertNotNull(resourceEntity.getQualifier());
+        assertEquals(exp("name = 'John Smith'"), resourceEntity.getQualifier());
+    }
 }

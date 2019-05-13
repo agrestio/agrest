@@ -19,7 +19,7 @@ public class Ag {
      * @return a newly created builder of {@link AgRequest}.
      * @since 3.2
      */
-    public static AgRequestBuilder requestBuilder(Configuration config) {
+    public static AgRequestBuilder request(Configuration config) {
         return AgRuntime.service(IAgRequestBuilderFactory.class, config).builder();
     }
 

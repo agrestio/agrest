@@ -18,10 +18,8 @@ import javax.ws.rs.core.FeatureContext;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriInfo;
-import java.util.Collections;
-import java.util.List;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 public class POST_AgRequestIT extends JerseyTestOnDerby {
 
@@ -73,8 +71,7 @@ public class POST_AgRequestIT extends JerseyTestOnDerby {
         @POST
         @Path("e3_includes")
         public DataResponse<E3> create_includes(@Context UriInfo uriInfo, String requestBody) {
-            List<Include> includes = Collections.singletonList(new Include("name"));
-            AgRequest agRequest = AgRequest.builder().includes(includes).build();
+            AgRequest agRequest = Ag.request(config).addInclude(new Include("name")).build();
 
             return Ag.create(E3.class, config)
                     .uri(uriInfo)
@@ -85,8 +82,7 @@ public class POST_AgRequestIT extends JerseyTestOnDerby {
         @POST
         @Path("e3_excludes")
         public DataResponse<E3> create_excludes(@Context UriInfo uriInfo, String requestBody) {
-            List<Exclude> excludes = Collections.singletonList(new Exclude("id"));
-            AgRequest agRequest = AgRequest.builder().excludes(excludes).build();
+            AgRequest agRequest = Ag.request(config).addExclude(new Exclude("id")).build();
 
             return Ag.create(E3.class, config)
                     .uri(uriInfo)

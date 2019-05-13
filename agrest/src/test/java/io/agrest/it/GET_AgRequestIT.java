@@ -9,9 +9,6 @@ import io.agrest.it.fixture.cayenne.E3;
 import io.agrest.it.fixture.cayenne.E4;
 import io.agrest.protocol.CayenneExp;
 import io.agrest.protocol.Dir;
-import io.agrest.protocol.Exclude;
-import io.agrest.protocol.Include;
-import io.agrest.protocol.MapBy;
 import io.agrest.protocol.Sort;
 import org.apache.cayenne.query.SQLTemplate;
 import org.junit.Test;
@@ -25,10 +22,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriInfo;
 
-import java.util.Collections;
-import java.util.List;
-
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 public class GET_AgRequestIT extends JerseyTestOnDerby {
 
@@ -132,7 +126,7 @@ public class GET_AgRequestIT extends JerseyTestOnDerby {
 		@Path("e2_cayenneExp")
 		public DataResponse<E2> getE2(@Context UriInfo uriInfo) {
 			CayenneExp cayenneExp = new CayenneExp("name = 'xxx'");
-			AgRequest agRequest = AgRequest.builder().cayenneExp(cayenneExp).build();
+			AgRequest agRequest = Ag.request(config).cayenneExp(cayenneExp).build();
 
 			return Ag.service(config).select(E2.class)
 					.uri(uriInfo)
@@ -143,8 +137,8 @@ public class GET_AgRequestIT extends JerseyTestOnDerby {
         @GET
         @Path("e3_includes")
         public DataResponse<E3> getE3_includes(@Context UriInfo uriInfo) {
-			List<Include> includes = Collections.singletonList(new Include("name"));
-			AgRequest agRequest = AgRequest.builder().includes(includes).build();
+
+			AgRequest agRequest = Ag.request(config).addInclude("name").build();
 
 			return Ag.service(config).select(E3.class)
 					.uri(uriInfo)
@@ -155,8 +149,7 @@ public class GET_AgRequestIT extends JerseyTestOnDerby {
 		@GET
 		@Path("e3_excludes")
 		public DataResponse<E3> getE3_excludes(@Context UriInfo uriInfo) {
-			List<Exclude> excludes = Collections.singletonList(new Exclude("id"));
-			AgRequest agRequest = AgRequest.builder().excludes(excludes).build();
+			AgRequest agRequest = Ag.request(config).addExclude("id").build();
 
 			return Ag.service(config).select(E3.class)
 					.uri(uriInfo)
@@ -167,8 +160,7 @@ public class GET_AgRequestIT extends JerseyTestOnDerby {
 		@GET
 		@Path("e4_sort")
 		public DataResponse<E4> getE4_sort(@Context UriInfo uriInfo) {
-			Sort sort = new Sort("id", Dir.ASC);
-			AgRequest agRequest = AgRequest.builder().sort(sort).build();
+			AgRequest agRequest = Ag.request(config).sort(new Sort("id", Dir.ASC)).build();
 
 			return Ag.service(config).select(E4.class)
 					.uri(uriInfo)
@@ -179,8 +171,7 @@ public class GET_AgRequestIT extends JerseyTestOnDerby {
 		@GET
 		@Path("e4_mapBy")
 		public DataResponse<E4> getE4_mapBy(@Context UriInfo uriInfo) {
-			MapBy mapBy =  new MapBy(E4.C_VARCHAR.getName());
-			AgRequest agRequest = AgRequest.builder().mapBy(mapBy).build();
+			AgRequest agRequest = Ag.request(config).mapBy(E4.C_VARCHAR.getName()).build();
 
 			return Ag.service(config).select(E4.class)
 					.uri(uriInfo)

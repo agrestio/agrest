@@ -1,18 +1,16 @@
 package io.agrest.runtime.entity;
 
 import io.agrest.ResourceEntity;
-import io.agrest.protocol.Limit;
-import io.agrest.protocol.Start;
 
 public class SizeMerger implements ISizeMerger {
 
     @Override
-    public void merge(ResourceEntity<?> resourceEntity, Start start, Limit limit) {
+    public void merge(ResourceEntity<?> resourceEntity, Integer start, Integer limit) {
         if (start != null) {
-            resourceEntity.setFetchOffset(start.getValue());
+            resourceEntity.setFetchOffset(start);
         }
         if (limit != null) {
-            resourceEntity.setFetchLimit(limit.getValue());
+            resourceEntity.setFetchLimit(limit);
         }
     }
 }

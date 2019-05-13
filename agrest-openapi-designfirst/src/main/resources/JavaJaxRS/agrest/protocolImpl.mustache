@@ -1,4 +1,4 @@
-AgRequest agRequest = AgRequest.builder()
+AgRequest agRequest = Ag.request(config)
 {{#queryParams}}
                 .{{baseName}}{{#isContainer}}s{{/isContainer}}({{paramName}}{{#isContainer}}s{{/isContainer}})
 {{/queryParams}}

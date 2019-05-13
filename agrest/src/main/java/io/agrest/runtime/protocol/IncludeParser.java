@@ -25,18 +25,17 @@ public class IncludeParser implements IIncludeParser {
     private IJacksonService jsonParser;
     private ICayenneExpParser expParser;
     private ISortParser sortParser;
-    private IMapByParser mapByParser;
     private ISizeParser sizeParser;
 
-    public IncludeParser(@Inject IJacksonService jsonParser,
-                         @Inject ICayenneExpParser expParser,
-                         @Inject ISortParser sortParser,
-                         @Inject IMapByParser mapByParser,
-                         @Inject ISizeParser sizeParser) {
+    public IncludeParser(
+            @Inject IJacksonService jsonParser,
+            @Inject ICayenneExpParser expParser,
+            @Inject ISortParser sortParser,
+            @Inject ISizeParser sizeParser) {
+
         this.jsonParser = jsonParser;
         this.expParser = expParser;
         this.sortParser = sortParser;
-        this.mapByParser = mapByParser;
         this.sizeParser = sizeParser;
     }
 
@@ -86,7 +85,7 @@ public class IncludeParser implements IIncludeParser {
         return new Include(
                 expParser.fromJson(node.get(JSON_KEY_CAYENNE_EXP)),
                 sortParser.fromJson(node.get(JSON_KEY_SORT)),
-                mapByParser.fromJson(node.get(JSON_KEY_MAP_BY)),
+                getText(node.get(JSON_KEY_MAP_BY)),
                 parentPath != null ? parentPath + '.' + path : path,
                 sizeParser.startFromJson(node.get(JSON_KEY_START)),
                 sizeParser.limitFromJson(node.get(JSON_KEY_LIMIT)),
@@ -95,7 +94,7 @@ public class IncludeParser implements IIncludeParser {
 
     private List<Include> fromArray(JsonNode node, String parentPath) {
 
-        if(node == null) {
+        if (node == null) {
             return Collections.emptyList();
         }
 
@@ -114,5 +113,7 @@ public class IncludeParser implements IIncludeParser {
         return includes;
     }
 
-
+    private String getText(JsonNode node) {
+        return node != null ? node.asText() : null;
+    }
 }

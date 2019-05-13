@@ -5,8 +5,6 @@ import io.agrest.provider.EntityUpdateReader;
 import io.agrest.provider.ResponseStatusDynamicFeature;
 import io.agrest.runtime.provider.CayenneExpProvider;
 import io.agrest.runtime.provider.IncludeProvider;
-import io.agrest.runtime.provider.MapByProvider;
-import io.agrest.runtime.provider.SizeProvider;
 import io.agrest.runtime.provider.SortProvider;
 import org.apache.cayenne.di.Injector;
 import org.apache.cayenne.di.Key;
@@ -106,14 +104,6 @@ public class AgRuntime implements Feature {
         SortProvider sortProvider =
                 injector.getInstance(SortProvider.class);
         context.register(sortProvider);
-
-        MapByProvider mapByProvider =
-                injector.getInstance(MapByProvider.class);
-        context.register(mapByProvider);
-
-        SizeProvider sizeProvider =
-                injector.getInstance(SizeProvider.class);
-        context.register(sizeProvider);
 
         context.register(ResponseStatusDynamicFeature.class);
 

@@ -11,13 +11,13 @@ import io.agrest.runtime.protocol.ExcludeParser;
 import io.agrest.runtime.protocol.ICayenneExpParser;
 import io.agrest.runtime.protocol.IExcludeParser;
 import io.agrest.runtime.protocol.IIncludeParser;
-import io.agrest.runtime.protocol.IMapByParser;
 import io.agrest.runtime.protocol.ISizeParser;
 import io.agrest.runtime.protocol.ISortParser;
 import io.agrest.runtime.protocol.IncludeParser;
-import io.agrest.runtime.protocol.MapByParser;
 import io.agrest.runtime.protocol.SizeParser;
 import io.agrest.runtime.protocol.SortParser;
+import io.agrest.runtime.request.DefaultRequestBuilderFactory;
+import io.agrest.runtime.request.IAgRequestBuilderFactory;
 import io.agrest.unit.TestWithCayenneMapping;
 import org.junit.Before;
 import org.junit.Test;
@@ -26,10 +26,7 @@ import javax.ws.rs.core.MultivaluedMap;
 import java.util.Arrays;
 import java.util.Collections;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -45,12 +42,13 @@ public class ParseRequestStageTest extends TestWithCayenneMapping {
         // prepare parse request stage
         ICayenneExpParser expParser = new CayenneExpParser(jacksonService);
         ISortParser sortParser = new SortParser(jacksonService);
-        IMapByParser mapByParser = new MapByParser();
         ISizeParser sizeParser = new SizeParser();
-        IIncludeParser includeParser = new IncludeParser(jacksonService, expParser, sortParser, mapByParser, sizeParser);
+        IIncludeParser includeParser = new IncludeParser(jacksonService, expParser, sortParser, sizeParser);
         IExcludeParser excludeParser = new ExcludeParser(jacksonService);
 
-        this.parseStage = new ParseRequestStage(expParser, sortParser, mapByParser, includeParser, excludeParser);
+		IAgRequestBuilderFactory requestBuilderFactory
+				= new DefaultRequestBuilderFactory(expParser, sortParser, includeParser, excludeParser);
+		this.parseStage = new ParseRequestStage(requestBuilderFactory);
 	}
 
 	@Test
@@ -65,7 +63,6 @@ public class ParseRequestStageTest extends TestWithCayenneMapping {
 
 		assertNotNull(context.getRawRequest());
 		assertNull(context.getRawRequest().getCayenneExp());
-		assertNull(context.getRawRequest().getSortDirection());
 		assertNull(context.getRawRequest().getSort());
 		assertNull(context.getRawRequest().getMapBy());
 		assertNull(context.getRawRequest().getLimit());
@@ -221,10 +218,9 @@ public class ParseRequestStageTest extends TestWithCayenneMapping {
 
 		assertNotNull(context.getRawRequest());
 		assertNotNull(context.getRawRequest().getSort());
-		assertNotNull(context.getRawRequest().getSortDirection());
 
 		assertEquals("e2", context.getRawRequest().getSort().getProperty());
-		assertEquals(Dir.ASC, context.getRawRequest().getSortDirection());
+		assertEquals(Dir.ASC, context.getRawRequest().getSort().getDirection());
 	}
 
 	@Test
@@ -241,10 +237,9 @@ public class ParseRequestStageTest extends TestWithCayenneMapping {
 
 		assertNotNull(context.getRawRequest());
 		assertNotNull(context.getRawRequest().getSort());
-		assertNotNull(context.getRawRequest().getSortDirection());
 
 		assertEquals("e2", context.getRawRequest().getSort().getProperty());
-		assertEquals(Dir.DESC, context.getRawRequest().getSortDirection());
+		assertEquals(Dir.DESC, context.getRawRequest().getSort().getDirection());
 	}
 
 	@Test(expected = AgException.class)

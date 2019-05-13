@@ -1,8 +1,8 @@
 package io.agrest.it;
 
+import io.agrest.Ag;
 import io.agrest.AgRequest;
 import io.agrest.DataResponse;
-import io.agrest.Ag;
 import io.agrest.it.fixture.JerseyTestOnDerby;
 import io.agrest.it.fixture.cayenne.E3;
 import io.agrest.protocol.Exclude;
@@ -17,8 +17,6 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.FeatureContext;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
-import java.util.Collections;
-import java.util.List;
 
 
 public class PUT_AgRequestIT extends JerseyTestOnDerby {
@@ -85,8 +83,7 @@ public class PUT_AgRequestIT extends JerseyTestOnDerby {
         @PUT
         @Path("e3_includes")
         public DataResponse<E3> syncE3_includes(@Context UriInfo uriInfo, String requestBody) {
-            List<Include> includes = Collections.singletonList(new Include("name"));
-            AgRequest agRequest = AgRequest.builder().includes(includes).build();
+            AgRequest agRequest = Ag.request(config).addInclude(new Include("name")).build();
 
             return Ag.idempotentFullSync(E3.class, config)
                     .uri(uriInfo)
@@ -97,8 +94,7 @@ public class PUT_AgRequestIT extends JerseyTestOnDerby {
         @PUT
         @Path("e3_excludes")
         public DataResponse<E3> syncE3_excludes(@Context UriInfo uriInfo, String requestBody) {
-            List<Exclude> excludes = Collections.singletonList(new Exclude("id"));
-            AgRequest agRequest = AgRequest.builder().excludes(excludes).build();
+            AgRequest agRequest = Ag.request(config).addExclude(new Exclude("id")).build();
 
             return Ag.idempotentFullSync(E3.class, config)
                     .uri(uriInfo)

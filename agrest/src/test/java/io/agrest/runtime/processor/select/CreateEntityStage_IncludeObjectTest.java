@@ -1,11 +1,9 @@
 package io.agrest.runtime.processor.select;
 
-import io.agrest.AgRequest;
 import io.agrest.ResourceEntity;
 import io.agrest.it.fixture.cayenne.E2;
 import io.agrest.it.fixture.cayenne.E3;
 import io.agrest.protocol.Include;
-import io.agrest.protocol.MapBy;
 import io.agrest.runtime.entity.CayenneExpMerger;
 import io.agrest.runtime.entity.ExcludeMerger;
 import io.agrest.runtime.entity.ExpressionPostProcessor;
@@ -21,28 +19,32 @@ import io.agrest.runtime.entity.SizeMerger;
 import io.agrest.runtime.entity.SortMerger;
 import io.agrest.runtime.path.IPathDescriptorManager;
 import io.agrest.runtime.path.PathDescriptorManager;
+import io.agrest.runtime.protocol.ICayenneExpParser;
+import io.agrest.runtime.protocol.IExcludeParser;
+import io.agrest.runtime.protocol.IIncludeParser;
+import io.agrest.runtime.protocol.ISortParser;
+import io.agrest.runtime.request.DefaultRequestBuilderFactory;
+import io.agrest.runtime.request.IAgRequestBuilderFactory;
 import io.agrest.unit.TestWithCayenneMapping;
 import org.junit.Before;
 import org.junit.Test;
 
 import javax.ws.rs.core.MultivaluedMap;
 import java.util.Arrays;
-import java.util.Collections;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 public class CreateEntityStage_IncludeObjectTest extends TestWithCayenneMapping {
 
     private CreateResourceEntityStage createEntityStage;
+    private IAgRequestBuilderFactory requestBuilderFactory;
 
-	@Before
-	public void setUp() {
+    @Before
+    public void setUp() {
 
-		IPathDescriptorManager pathCache = new PathDescriptorManager();
+        IPathDescriptorManager pathCache = new PathDescriptorManager();
 
         // prepare create entity stage
         ICayenneExpMerger expConstructor = new CayenneExpMerger(new ExpressionPostProcessor(pathCache));
@@ -52,57 +54,61 @@ public class CreateEntityStage_IncludeObjectTest extends TestWithCayenneMapping 
         IIncludeMerger includeConstructor = new IncludeMerger(expConstructor, sortConstructor, mapByConstructor, sizeConstructor);
         IExcludeMerger excludeConstructor = new ExcludeMerger();
 
-        this.createEntityStage
-                = new CreateResourceEntityStage(
+        this.createEntityStage = new CreateResourceEntityStage(
                 createMetadataService(),
-                expConstructor ,
+                expConstructor,
                 sortConstructor,
                 mapByConstructor,
                 sizeConstructor,
                 includeConstructor,
                 excludeConstructor);
+
+        this.requestBuilderFactory = new DefaultRequestBuilderFactory(
+                mock(ICayenneExpParser.class),
+                mock(ISortParser.class),
+                mock(IIncludeParser.class),
+                mock(IExcludeParser.class)
+        );
     }
 
-	@Test
-	public void testToDataRequest_IncludeObject_Path() {
+    @Test
+    public void testToDataRequest_IncludeObject_Path() {
 
         SelectContext<E2> context = new SelectContext<>(E2.class);
-
-        Include include = new Include("e3s");
-        context.setRawRequest(AgRequest.builder().includes(Collections.singletonList(include)).build());
+        context.setRawRequest(requestBuilderFactory.builder().addInclude(new Include("e3s")).build());
 
         createEntityStage.execute(context);
 
         ResourceEntity<E2> resourceEntity = context.getEntity();
 
-		assertNotNull(resourceEntity);
-		assertTrue(resourceEntity.isIdIncluded());
+        assertNotNull(resourceEntity);
+        assertTrue(resourceEntity.isIdIncluded());
 
-		assertEquals(1, resourceEntity.getChildren().size());
-		assertTrue(resourceEntity.getChildren().containsKey(E2.E3S.getName()));
-	}
+        assertEquals(1, resourceEntity.getChildren().size());
+        assertTrue(resourceEntity.getChildren().containsKey(E2.E3S.getName()));
+    }
 
-	@Test
-	public void testToDataRequest_IncludeObject_MapBy() {
+    @Test
+    public void testToDataRequest_IncludeObject_MapBy() {
 
-		@SuppressWarnings("unchecked")
-		MultivaluedMap<String, String> params = mock(MultivaluedMap.class);
-		when(params.get("include")).thenReturn(Arrays.asList("{\"path\":\"e3s\",\"mapBy\":\"e5\"}"));
+        @SuppressWarnings("unchecked")
+        MultivaluedMap<String, String> params = mock(MultivaluedMap.class);
+        when(params.get("include")).thenReturn(Arrays.asList("{\"path\":\"e3s\",\"mapBy\":\"e5\"}"));
 
         SelectContext<E2> context = new SelectContext<>(E2.class);
 
-        Include include = new Include(null, null, new MapBy("e5"), "e3s", null, null, null);
-        context.setRawRequest(AgRequest.builder().includes(Collections.singletonList(include)).build());
+        Include include = new Include(null, null, "e5", "e3s", null, null, null);
+        context.setRawRequest(requestBuilderFactory.builder().addInclude(include).build());
 
         createEntityStage.execute(context);
 
         ResourceEntity<E2> resourceEntity = context.getEntity();
 
 
-		assertNotNull(resourceEntity);
+        assertNotNull(resourceEntity);
 
-		ResourceEntity<?> reMapBy = resourceEntity.getChildren().get(E2.E3S.getName()).getMapBy();
-		assertNotNull(reMapBy);
-		assertNotNull(reMapBy.getChildren().get(E3.E5.getName()));
-	}
+        ResourceEntity<?> reMapBy = resourceEntity.getChildren().get(E2.E3S.getName()).getMapBy();
+        assertNotNull(reMapBy);
+        assertNotNull(reMapBy.getChildren().get(E3.E5.getName()));
+    }
 }

@@ -13,10 +13,10 @@ public class Include {
     private String value;
     private CayenneExp cayenneExp;
     private Sort sort;
-    private MapBy mapBy;
+    private String mapBy;
     private String path;
-    private Start start;
-    private Limit limit;
+    private Integer start;
+    private Integer limit;
     private List<Include> includes;
 
     public Include(String value) {
@@ -27,7 +27,15 @@ public class Include {
         this.includes = includes;
     }
 
-    public Include(CayenneExp cayenneExp, Sort sort, MapBy mapBy, String path, Start start, Limit limit, List<Include> includes) {
+    public Include(
+            CayenneExp cayenneExp,
+            Sort sort,
+            String mapBy,
+            String path,
+            Integer start,
+            Integer limit,
+            List<Include> includes) {
+
         this.cayenneExp = cayenneExp;
         this.sort = sort;
         this.mapBy = mapBy;
@@ -41,7 +49,7 @@ public class Include {
         return value;
     }
 
-    public MapBy getMapBy() {
+    public String getMapBy() {
         return mapBy;
     }
 
@@ -49,11 +57,11 @@ public class Include {
         return path;
     }
 
-    public Start getStart() {
+    public Integer getStart() {
         return start;
     }
 
-    public Limit getLimit() {
+    public Integer getLimit() {
         return limit;
     }
 

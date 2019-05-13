@@ -7,8 +7,6 @@ import io.agrest.it.fixture.cayenne.E3;
 import io.agrest.protocol.Dir;
 import io.agrest.protocol.Exclude;
 import io.agrest.protocol.Include;
-import io.agrest.protocol.Limit;
-import io.agrest.protocol.Start;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -25,9 +23,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 public class IncludeExcludeProviderIT extends JerseyTestOnDerby {
 
@@ -88,7 +84,6 @@ public class IncludeExcludeProviderIT extends JerseyTestOnDerby {
     }
 
 
-
     @Path("")
     @Produces(MediaType.APPLICATION_JSON)
     public static class Resource {
@@ -107,9 +102,9 @@ public class IncludeExcludeProviderIT extends JerseyTestOnDerby {
             assertEquals(E2.E3S.getName(), includes.get(1).getPath());
 
             assertNotNull(includes.get(1).getStart());
-            assertEquals(1, includes.get(1).getStart().getValue());
+            assertEquals(Integer.valueOf(1), includes.get(1).getStart());
             assertNotNull(includes.get(1).getLimit());
-            assertEquals(1, includes.get(1).getLimit().getValue());
+            assertEquals(Integer.valueOf(1), includes.get(1).getLimit());
 
             assertNotNull(excludes);
             assertEquals(1, excludes.size());
@@ -128,7 +123,7 @@ public class IncludeExcludeProviderIT extends JerseyTestOnDerby {
             assertEquals(E2.E3S.getName(), includes.get(1).getPath());
 
             assertNotNull(includes.get(1).getMapBy());
-            assertEquals("name", includes.get(1).getMapBy().getPath());
+            assertEquals("name", includes.get(1).getMapBy());
 
             assertNotNull(includes.get(1).getCayenneExp());
             assertEquals("name != NULL", includes.get(1).getCayenneExp().getExp());
@@ -159,18 +154,19 @@ public class IncludeExcludeProviderIT extends JerseyTestOnDerby {
 
         @GET
         @Path("e3_Prefetching_StartLimit")
-        public DataResponse<E3> getE3_Prefetching_StartLimit(@QueryParam("include") List<Include> includes,
-                                                             @QueryParam("start") Start start,
-                                                             @QueryParam("limit") Limit limit) {
+        public DataResponse<E3> getE3_Prefetching_StartLimit(
+                @QueryParam("include") List<Include> includes,
+                @QueryParam("start") Integer start,
+                @QueryParam("limit") Integer limit) {
 
             assertNotNull(includes);
             assertEquals(2, includes.size());
             assertEquals("id", includes.get(0).getValue());
             assertEquals("e2.id", includes.get(1).getValue());
             assertNotNull(start);
-            assertEquals(1, start.getValue());
+            assertEquals(Integer.valueOf(1), start);
             assertNotNull(limit);
-            assertEquals(2, limit.getValue());
+            assertEquals(Integer.valueOf(2), limit);
 
             return DataResponse.forType(E3.class);
 

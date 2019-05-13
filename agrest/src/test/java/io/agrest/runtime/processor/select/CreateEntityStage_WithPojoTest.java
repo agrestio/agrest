@@ -1,6 +1,5 @@
 package io.agrest.runtime.processor.select;
 
-import io.agrest.AgRequest;
 import io.agrest.ResourceEntity;
 import io.agrest.it.fixture.pojo.model.P1;
 import io.agrest.it.fixture.pojo.model.P2;
@@ -25,30 +24,33 @@ import io.agrest.runtime.meta.IMetadataService;
 import io.agrest.runtime.meta.MetadataService;
 import io.agrest.runtime.path.IPathDescriptorManager;
 import io.agrest.runtime.path.PathDescriptorManager;
+import io.agrest.runtime.protocol.ICayenneExpParser;
+import io.agrest.runtime.protocol.IExcludeParser;
+import io.agrest.runtime.protocol.IIncludeParser;
+import io.agrest.runtime.protocol.ISortParser;
+import io.agrest.runtime.request.DefaultRequestBuilderFactory;
+import io.agrest.runtime.request.IAgRequestBuilderFactory;
 import io.agrest.unit.TestWithCayenneMapping;
 import org.junit.Before;
 import org.junit.Test;
 
 import javax.ws.rs.core.MultivaluedMap;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 public class CreateEntityStage_WithPojoTest extends TestWithCayenneMapping {
 
     private CreateResourceEntityStage createEntityStage;
+    private IAgRequestBuilderFactory requestBuilderFactory;
 
-	@Before
-	public void setUp() {
+    @Before
+    public void setUp() {
 
-		IPathDescriptorManager pathCache = new PathDescriptorManager();
+        IPathDescriptorManager pathCache = new PathDescriptorManager();
 
         // prepare create entity stage
         ICayenneExpMerger expConstructor = new CayenneExpMerger(new ExpressionPostProcessor(pathCache));
@@ -58,85 +60,83 @@ public class CreateEntityStage_WithPojoTest extends TestWithCayenneMapping {
         IIncludeMerger includeConstructor = new IncludeMerger(expConstructor, sortConstructor, mapByConstructor, sizeConstructor);
         IExcludeMerger excludeConstructor = new ExcludeMerger();
 
-        this.createEntityStage
-                = new CreateResourceEntityStage(
+        this.createEntityStage = new CreateResourceEntityStage(
                 createMetadataService(),
-                expConstructor ,
+                expConstructor,
                 sortConstructor,
                 mapByConstructor,
                 sizeConstructor,
                 includeConstructor,
                 excludeConstructor);
-	}
 
-	@Override
-	protected IMetadataService createMetadataService() {
+        this.requestBuilderFactory = new DefaultRequestBuilderFactory(
+                mock(ICayenneExpParser.class),
+                mock(ISortParser.class),
+                mock(IIncludeParser.class),
+                mock(IExcludeParser.class)
+        );
+    }
 
-		List<AgEntityCompiler> compilers = new ArrayList<>();
-		compilers.add(new PojoEntityCompiler(Collections.emptyMap()));
-		compilers.add(new CayenneEntityCompiler(mockCayennePersister, Collections.emptyMap(), converterFactory));
+    @Override
+    protected IMetadataService createMetadataService() {
 
-		return new MetadataService(compilers, mockCayennePersister);
-	}
+        List<AgEntityCompiler> compilers = new ArrayList<>();
+        compilers.add(new PojoEntityCompiler(Collections.emptyMap()));
+        compilers.add(new CayenneEntityCompiler(mockCayennePersister, Collections.emptyMap(), converterFactory));
 
-	@Test
-	public void testSelectRequest_Default() {
+        return new MetadataService(compilers, mockCayennePersister);
+    }
 
-		@SuppressWarnings("unchecked")
-		MultivaluedMap<String, String> params = mock(MultivaluedMap.class);
+    @Test
+    public void testSelectRequest_Default() {
+
+        @SuppressWarnings("unchecked")
+        MultivaluedMap<String, String> params = mock(MultivaluedMap.class);
 
         SelectContext<P1> context = prepareContext(params, P1.class);
 
-		context.setRawRequest(AgRequest.builder().build());
-		createEntityStage.execute(context);
+        context.setRawRequest(requestBuilderFactory.builder().build());
+        createEntityStage.execute(context);
 
         ResourceEntity<P1> ce1 = context.getEntity();
 
 
-		assertNotNull(ce1);
-		assertTrue(ce1.isIdIncluded());
-		assertEquals(1, ce1.getAttributes().size());
-		assertTrue(ce1.getChildren().isEmpty());
+        assertNotNull(ce1);
+        assertTrue(ce1.isIdIncluded());
+        assertEquals(1, ce1.getAttributes().size());
+        assertTrue(ce1.getChildren().isEmpty());
 
 
         SelectContext<P2> context2 = prepareContext(params, P2.class);
 
-		context2.setRawRequest(AgRequest.builder().build());
-		createEntityStage.execute(context2);
+        context2.setRawRequest(requestBuilderFactory.builder().build());
+        createEntityStage.execute(context2);
 
         ResourceEntity<P2> ce2 = context2.getEntity();
 
-		assertNotNull(ce2);
-		assertTrue(ce2.isIdIncluded());
-		assertEquals(1, ce2.getAttributes().size());
-		assertEquals(0, ce2.getChildren().size());
-	}
+        assertNotNull(ce2);
+        assertTrue(ce2.isIdIncluded());
+        assertEquals(1, ce2.getAttributes().size());
+        assertEquals(0, ce2.getChildren().size());
+    }
 
-	@Test
-	public void testSelectRequest_IncludeRels() {
+    @Test
+    public void testSelectRequest_IncludeRels() {
 
-		@SuppressWarnings("unchecked")
-		MultivaluedMap<String, String> params = mock(MultivaluedMap.class);
-		when(params.get("include")).thenReturn(Arrays.asList("p1"));
+        SelectContext<P2> context2 = new SelectContext<>(P2.class);
+        context2.setRawRequest(requestBuilderFactory.builder().addInclude(new Include("p1")).build());
 
-
-		SelectContext<P2> context2 = new SelectContext<>(P2.class);
-
-		Include include = new Include("p1");
-		context2.setRawRequest(AgRequest.builder().includes(Collections.singletonList(include)).build());
-
-
-		createEntityStage.execute(context2);
+        createEntityStage.execute(context2);
 
         ResourceEntity<P2> ce2 = context2.getEntity();
 
-		assertNotNull(ce2);
-		assertTrue(ce2.isIdIncluded());
-		assertEquals(1, ce2.getAttributes().size());
-		assertEquals(1, ce2.getChildren().size());
+        assertNotNull(ce2);
+        assertTrue(ce2.isIdIncluded());
+        assertEquals(1, ce2.getAttributes().size());
+        assertEquals(1, ce2.getChildren().size());
 
-		assertTrue(ce2.getChildren().keySet().contains("p1"));
+        assertTrue(ce2.getChildren().keySet().contains("p1"));
 
-	}
+    }
 
 }

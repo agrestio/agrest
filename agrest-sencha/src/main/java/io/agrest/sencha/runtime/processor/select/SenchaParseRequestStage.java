@@ -2,12 +2,9 @@ package io.agrest.sencha.runtime.processor.select;
 
 import io.agrest.runtime.processor.select.ParseRequestStage;
 import io.agrest.runtime.processor.select.SelectContext;
-import io.agrest.runtime.protocol.ICayenneExpParser;
-import io.agrest.runtime.protocol.IExcludeParser;
-import io.agrest.runtime.protocol.IIncludeParser;
-import io.agrest.runtime.protocol.IMapByParser;
 import io.agrest.runtime.protocol.ISortParser;
 import io.agrest.runtime.protocol.ParameterExtractor;
+import io.agrest.runtime.request.IAgRequestBuilderFactory;
 import io.agrest.sencha.SenchaRequest;
 import io.agrest.sencha.runtime.protocol.ISenchaFilterParser;
 import org.apache.cayenne.di.Inject;
@@ -25,14 +22,11 @@ public class SenchaParseRequestStage extends ParseRequestStage {
     private ISenchaFilterParser filterParser;
 
     public SenchaParseRequestStage(
-            @Inject ICayenneExpParser expParser,
+            @Inject IAgRequestBuilderFactory requestBuilderFactory,
             @Inject ISortParser sortParser,
-            @Inject IMapByParser mapByParser,
-            @Inject IIncludeParser includeParser,
-            @Inject IExcludeParser excludeParser,
             @Inject ISenchaFilterParser filterParser) {
 
-        super(expParser, sortParser, mapByParser, includeParser, excludeParser);
+        super(requestBuilderFactory);
         this.sortParser = sortParser;
         this.filterParser = filterParser;
     }

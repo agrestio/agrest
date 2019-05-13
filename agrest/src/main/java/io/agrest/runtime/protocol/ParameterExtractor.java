@@ -45,4 +45,23 @@ public abstract class ParameterExtractor {
             return -1;
         }
     }
+
+    /**
+     * @since 3.2
+     */
+    public static Integer integerObject(Map<String, List<String>> parameters, String name) {
+
+        List<String> strings = strings(parameters, name);
+        String value = strings.isEmpty() ? null : strings.get(0);
+
+        if (value == null) {
+            return null;
+        }
+
+        try {
+            return Integer.valueOf(value);
+        } catch (NumberFormatException nfex) {
+            return -1;
+        }
+    }
 }

@@ -14,13 +14,13 @@ public interface AgRequestBuilder {
 
     AgRequest build();
 
-    AgRequestBuilder includes(List<String> unparsedIncludes);
+    AgRequestBuilder addIncludes(List<String> unparsedIncludes);
 
     AgRequestBuilder addInclude(Include include);
 
     AgRequestBuilder addInclude(String unparsedInclude);
 
-    AgRequestBuilder excludes(List<String> unparsedExcludes);
+    AgRequestBuilder addExcludes(List<String> unparsedExcludes);
 
     AgRequestBuilder addExclude(Exclude exclude);
 

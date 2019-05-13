@@ -92,20 +92,20 @@ public class DefaultRequestBuilder implements AgRequestBuilder {
 
     @Override
     public AgRequestBuilder start(Integer start) {
+        // TODO: validate negative numbers, resetting to null?
         request.start = start;
         return this;
     }
 
     @Override
     public AgRequestBuilder limit(Integer limit) {
+        // TODO: validate negative numbers, resetting to null?
         request.limit = limit;
         return this;
     }
 
     @Override
-    public AgRequestBuilder includes(List<String> unparsedIncludes) {
-
-        request.includes.clear();
+    public AgRequestBuilder addIncludes(List<String> unparsedIncludes) {
 
         for (String ui : unparsedIncludes) {
             addInclude(ui);
@@ -132,8 +132,7 @@ public class DefaultRequestBuilder implements AgRequestBuilder {
     }
 
     @Override
-    public AgRequestBuilder excludes(List<String> unparsedExcludes) {
-        request.includes.clear();
+    public AgRequestBuilder addExcludes(List<String> unparsedExcludes) {
 
         for (String ui : unparsedExcludes) {
             addExclude(ui);
