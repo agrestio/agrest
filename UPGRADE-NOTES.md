@@ -1,6 +1,6 @@
 ## Upgrading to 3.2
 
-### @QueryParameter injection changed to Strings and Integers [#408](https://github.com/agrestio/agrest/issues/408)
+### @QueryParameter types changed to Strings and Integers [#408](https://github.com/agrestio/agrest/issues/408)
 
 * Inspect your `@QueryParam` injection code and change Agrest types, such as `Include`, `Exclude`, etc. to Strings.
 Change `Start` and `Limit` to `Integers`.
