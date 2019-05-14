@@ -100,10 +100,6 @@ import io.agrest.runtime.protocol.ISortParser;
 import io.agrest.runtime.protocol.IncludeParser;
 import io.agrest.runtime.protocol.SizeParser;
 import io.agrest.runtime.protocol.SortParser;
-import io.agrest.runtime.provider.CayenneExpProvider;
-import io.agrest.runtime.provider.ExcludeProvider;
-import io.agrest.runtime.provider.IncludeProvider;
-import io.agrest.runtime.provider.SortProvider;
 import io.agrest.runtime.request.DefaultRequestBuilderFactory;
 import io.agrest.runtime.request.IAgRequestBuilderFactory;
 import io.agrest.runtime.semantics.IRelationshipMapper;
@@ -526,12 +522,6 @@ public class AgBuilder {
             binder.bind(IIncludeParser.class).to(IncludeParser.class);
 
             binder.bind(IAgRequestBuilderFactory.class).to(DefaultRequestBuilderFactory.class);
-
-            // Converter providers to get value objects from explicit query parameters
-            binder.bind(CayenneExpProvider.class).to(CayenneExpProvider.class);
-            binder.bind(IncludeProvider.class).to(IncludeProvider.class);
-            binder.bind(ExcludeProvider.class).to(ExcludeProvider.class);
-            binder.bind(SortProvider.class).to(SortProvider.class);
 
             // Constructors to create ResourceEntity from Query parameters
             binder.bind(ICayenneExpMerger.class).to(CayenneExpMerger.class);

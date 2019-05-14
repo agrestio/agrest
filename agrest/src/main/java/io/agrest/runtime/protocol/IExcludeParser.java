@@ -2,8 +2,6 @@ package io.agrest.runtime.protocol;
 
 import io.agrest.protocol.Exclude;
 
-import java.util.List;
-
 /**
  * Parsing of Exclude query parameter from string value.
  *
@@ -11,7 +9,5 @@ import java.util.List;
  */
 public interface IExcludeParser {
 
-    List<Exclude> fromStrings(List<String> values);
-
-    Exclude oneFromString(String value);
+    Exclude parse(String value);
 }

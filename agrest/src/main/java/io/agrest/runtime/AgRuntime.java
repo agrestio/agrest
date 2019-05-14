@@ -3,9 +3,6 @@ package io.agrest.runtime;
 import io.agrest.provider.EntityUpdateCollectionReader;
 import io.agrest.provider.EntityUpdateReader;
 import io.agrest.provider.ResponseStatusDynamicFeature;
-import io.agrest.runtime.provider.CayenneExpProvider;
-import io.agrest.runtime.provider.IncludeProvider;
-import io.agrest.runtime.provider.SortProvider;
 import org.apache.cayenne.di.Injector;
 import org.apache.cayenne.di.Key;
 import org.slf4j.Logger;
@@ -92,18 +89,6 @@ public class AgRuntime implements Feature {
         for (Class<?> type : bodyWriters.values()) {
             context.register(type);
         }
-
-        CayenneExpProvider cayenneExpProvider =
-                injector.getInstance(CayenneExpProvider.class);
-        context.register(cayenneExpProvider);
-
-        IncludeProvider includeProvider =
-                injector.getInstance(IncludeProvider.class);
-        context.register(includeProvider);
-
-        SortProvider sortProvider =
-                injector.getInstance(SortProvider.class);
-        context.register(sortProvider);
 
         context.register(ResponseStatusDynamicFeature.class);
 

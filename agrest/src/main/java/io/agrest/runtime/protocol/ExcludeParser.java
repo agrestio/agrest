@@ -22,21 +22,7 @@ public class ExcludeParser implements IExcludeParser {
     }
 
     @Override
-    public List<Exclude> fromStrings(List<String> values) {
-        List<Exclude> result = new ArrayList<>();
-
-        for (String value : values) {
-            Exclude exclude = oneFromString(value);
-            if (exclude != null) {
-                result.add(exclude);
-            }
-        }
-
-        return !result.isEmpty() ? result : null;
-    }
-
-    @Override
-    public Exclude oneFromString(String value) {
+    public Exclude parse(String value) {
         if (value == null || value.isEmpty()) {
             return null;
         }

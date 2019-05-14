@@ -40,18 +40,7 @@ public class IncludeParser implements IIncludeParser {
     }
 
     @Override
-    public List<Include> fromStrings(List<String> values) {
-        List<Include> result = new ArrayList<>(values.size());
-
-        for (String value : values) {
-            result.add(oneFromString(value));
-        }
-
-        return result;
-    }
-
-    @Override
-    public Include oneFromString(String value) {
+    public Include parse(String value) {
         if (value == null || value.isEmpty()) {
             return null;
         }

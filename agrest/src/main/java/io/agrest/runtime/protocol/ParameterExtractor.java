@@ -61,7 +61,7 @@ public abstract class ParameterExtractor {
         try {
             return Integer.valueOf(value);
         } catch (NumberFormatException nfex) {
-            return -1;
+            return null;
         }
     }
 }
