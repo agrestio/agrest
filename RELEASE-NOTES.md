@@ -1,6 +1,7 @@
 Release 3.2
 
 * #405 Upgrade to Cayenne 4.0.1
+* #407 Stop using Include / Exclude as dummy containers of other Includes / Excludes
 
 Release 3.1
 
