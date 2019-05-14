@@ -5,6 +5,8 @@ import io.agrest.meta.AgAttribute;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.HashSet;
+
 /**
  * @since 2.13
  */
@@ -27,7 +29,10 @@ public class MapByMerger implements IMapByMerger {
             } else {
                 ResourceEntity<?> mapByEntity = new ResourceEntity<>(resourceEntity.getAgEntity());
                 IncludeMerger.checkTooLong(mapByPath);
-                IncludeMerger.processIncludePath(mapByEntity, mapByPath);
+
+                // TODO: Non-phantom entity tracking HashSet is not really used here... Should we unwind it from include path
+                //  processing somehow? (an option is to track it inside ResourceEntity seems dirty)
+                IncludeMerger.processIncludePath(mapByEntity, mapByPath, new HashSet<>());
                 resourceEntity.mapBy(mapByEntity, mapByPath);
             }
         }
@@ -50,7 +55,9 @@ public class MapByMerger implements IMapByMerger {
 
             ResourceEntity<?> mapByRoot = new ResourceEntity<>(resourceEntity.getAgEntity());
             IncludeMerger.checkTooLong(mapByPath);
-            IncludeMerger.processIncludePath(mapByRoot, mapByPath);
+            // TODO: Non-phantom entity tracking HashSet is not really used here... Should we unwind it from include path
+            //  processing somehow? (an option is to track it inside ResourceEntity seems dirty)
+            IncludeMerger.processIncludePath(mapByRoot, mapByPath, new HashSet<>());
             resourceEntity.mapBy(mapByRoot, mapByPath);
 
         } else {

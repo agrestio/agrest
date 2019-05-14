@@ -12,7 +12,9 @@ import org.apache.cayenne.di.Inject;
 
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 
 public class IncludeMerger implements IIncludeMerger {
@@ -40,7 +42,7 @@ public class IncludeMerger implements IIncludeMerger {
      * to relationship.
      */
     @SuppressWarnings({"unchecked", "rawtypes"})
-    public static ResourceEntity<?> processIncludePath(ResourceEntity<?> parent, String path) {
+    public static ResourceEntity<?> processIncludePath(ResourceEntity<?> parent, String path, Set<ResourceEntity<?>> mayNeedDefaults) {
         int dot = path.indexOf(PathConstants.DOT);
 
         if (dot == 0) {
@@ -76,11 +78,11 @@ public class IncludeMerger implements IIncludeMerger {
                     .computeIfAbsent(property, p -> new ResourceEntity(relationship.getTargetEntity(), relationship));
 
             if (dot > 0) {
-                return processIncludePath(childEntity, path.substring(dot + 1));
+                // phantom entities do not need defaults
+                return processIncludePath(childEntity, path.substring(dot + 1), mayNeedDefaults);
             } else {
-                processDefaultIncludes(childEntity);
-                // Id should be included implicitly
-                childEntity.includeId();
+                // explicit relationship includes may need defaults
+                mayNeedDefaults.add(childEntity);
                 return childEntity;
             }
         }
@@ -94,9 +96,7 @@ public class IncludeMerger implements IIncludeMerger {
         throw new AgException(Status.BAD_REQUEST, "Invalid include path: " + path);
     }
 
-    public static void processDefaultIncludes(ResourceEntity<?> resourceEntity) {
-
-        // either there are no includes (taking into account Id) or all includes are relationships
+    private static void processDefaultIncludes(ResourceEntity<?> resourceEntity) {
         if (!resourceEntity.isIdIncluded()
                 && resourceEntity.getAttributes().isEmpty()
                 && resourceEntity.getIncludedExtraProperties().isEmpty()) {
@@ -128,14 +128,26 @@ public class IncludeMerger implements IIncludeMerger {
      */
     @Override
     public void merge(ResourceEntity<?> entity, List<Include> includes) {
+
+        // included attribute sets of the root entity and entities that are included explicitly via relationship includes
+        // may need to get expanded if they don't have any explicit includes otherwise. Will track them here... Entities
+        // that are NOT expanded are those that are "phantom" entities included as a part of the longer path.
+
+        Set<ResourceEntity<?>> mayNeedDefaults = new HashSet<>();
+
+        // root entity always needed default includes
+        mayNeedDefaults.add(entity);
+
         for (Include include : includes) {
-            process(entity, include);
+            mergeInclude(entity, include, mayNeedDefaults);
         }
 
-        IncludeMerger.processDefaultIncludes(entity);
+        for (ResourceEntity<?> e : mayNeedDefaults) {
+            processDefaultIncludes(e);
+        }
     }
 
-    private void process(ResourceEntity<?> entity, Include include) {
+    private void mergeInclude(ResourceEntity<?> entity, Include include, Set<ResourceEntity<?>> mayNeedDefaults) {
         ResourceEntity<?> includeEntity;
 
         String path = include.getPath();
@@ -144,7 +156,7 @@ public class IncludeMerger implements IIncludeMerger {
             includeEntity = entity;
         } else {
             IncludeMerger.checkTooLong(path);
-            ResourceEntity<?> maybeIncludeEntity = IncludeMerger.processIncludePath(entity, path);
+            ResourceEntity<?> maybeIncludeEntity = IncludeMerger.processIncludePath(entity, path, mayNeedDefaults);
 
             // either attribute or relationship... if
             includeEntity = maybeIncludeEntity != null ? maybeIncludeEntity : entity;

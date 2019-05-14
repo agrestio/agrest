@@ -28,7 +28,7 @@ public class PUT_ObjectIncludeIT extends JerseyTestOnDerby {
 
 
     @Test
-    public void testPut_Dummy() {
+    public void testPut_Overlap() {
         insert("e5", "id, name, date", "45, 'T', '2013-01-03'");
         insert("e2", "id, name", "8, 'yyy'");
         insert("e3", "id, name, e2_id, e5_id", "3, 'zzz', 8, 45");
@@ -41,7 +41,7 @@ public class PUT_ObjectIncludeIT extends JerseyTestOnDerby {
                 .request()
                 .put(Entity.json("{\"id\":3}"));
 
-        onSuccess(response).bodyEquals(1, "{\"id\":3,\"e2\":{\"id\":8,\"address\":null,\"name\":\"yyy\"},\"e5\":{\"id\":45},\"name\":\"zzz\",\"phoneNumber\":null}");
+        onSuccess(response).bodyEquals(1, "{\"id\":3,\"e2\":{\"id\":8},\"e5\":{\"id\":45},\"name\":\"zzz\",\"phoneNumber\":null}");
         assertEquals(1, intForQuery("SELECT COUNT(1) FROM utest.e3 WHERE id = 3 AND e2_id = 8"));
     }
 
@@ -52,8 +52,7 @@ public class PUT_ObjectIncludeIT extends JerseyTestOnDerby {
         insert("e3", "id, name, e2_id", "3, 'zzz', 8");
 
         Response response = target("/e3/3")
-                .queryParam("include", E3.E2.getName())
-                .queryParam("include", "e2.id")
+                .queryParam("include", "e2")
                 .request()
                 .put(Entity.json("{\"id\":3,\"e2\":1}"));
 
@@ -73,8 +72,7 @@ public class PUT_ObjectIncludeIT extends JerseyTestOnDerby {
         insert("e3", "id, name, e2_id", "5, 'bbb', 8");
 
         Response response = target("/e2/1")
-                .queryParam("include", E2.E3S.getName())
-                .queryParam("include", E2.ADDRESS.getName(), E2.NAME.getName(), E2.E3S.dot(E3.NAME).getName(), E2.E3S.dot(E3.PHONE_NUMBER).getName())
+                .queryParam("include", E2.ADDRESS.getName(), E2.NAME.getName(), E2.E3S.getName())
                 .request().put(Entity.json("{\"e3s\":[3,4,5]}"));
 
         onSuccess(response).bodyEquals(1, "{\"address\":null,\"e3s\":[{\"id\":3,\"name\":\"zzz\",\"phoneNumber\":null},{\"id\":4,\"name\":\"aaa\",\"phoneNumber\":null},{\"id\":5,\"name\":\"bbb\",\"phoneNumber\":null}],\"name\":\"xxx\"}");
