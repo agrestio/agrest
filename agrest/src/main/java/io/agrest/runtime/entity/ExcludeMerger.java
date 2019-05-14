@@ -14,22 +14,11 @@ public class ExcludeMerger implements IExcludeMerger {
     @Override
     public void merge(ResourceEntity<?> resourceEntity, List<Exclude> excludes) {
         for (Exclude exclude : excludes) {
-            processOne(resourceEntity, exclude);
-        }
-    }
-
-    private void processOne(ResourceEntity<?> resourceEntity, Exclude exclude) {
-        if (exclude != null) {
             processExcludePath(resourceEntity, exclude.getPath());
-            // processes nested includes
-            exclude.getExcludes().forEach(e -> processOne(resourceEntity, e));
         }
     }
 
     private void processExcludePath(ResourceEntity<?> resourceEntity, String path) {
-        if (path == null) {
-            return;
-        }
 
         int dot = path.indexOf(PathConstants.DOT);
 

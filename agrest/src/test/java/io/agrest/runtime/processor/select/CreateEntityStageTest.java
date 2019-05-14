@@ -174,11 +174,10 @@ public class CreateEntityStageTest extends TestWithCayenneMapping {
     public void testSelectRequest_ExcludeAttrs_AsArray() {
 
         SelectContext<E1> context = new SelectContext<>(E1.class);
-
-        Exclude exclude = new Exclude(Arrays.asList(
-                new Exclude("description"),
-                new Exclude("age")));
-        context.setRawRequest(requestBuilderFactory.builder().addExclude(exclude).build());
+        
+        context.setRawRequest(requestBuilderFactory.builder()
+                .addExclude(new Exclude("description"))
+                .addExclude(new Exclude("age")).build());
 
         createEntityStage.execute(context);
 

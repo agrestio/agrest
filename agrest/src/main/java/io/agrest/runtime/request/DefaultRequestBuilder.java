@@ -144,7 +144,7 @@ public class DefaultRequestBuilder implements AgRequestBuilder {
     @Override
     public AgRequestBuilder addExclude(String unparsedExclude) {
         if (unparsedExclude != null) {
-            request.excludes.add(excludeParser.parse(unparsedExclude));
+            request.excludes.addAll(excludeParser.parse(unparsedExclude));
         }
         return this;
     }
