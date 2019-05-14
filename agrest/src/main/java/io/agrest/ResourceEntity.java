@@ -48,7 +48,7 @@ public class ResourceEntity<T> {
     private boolean filtered;
 
     private SelectQuery<T> select;
-    private List<T> rootResult;
+    private List<T> result;
     private Map<AgObjectId, Object> parentToChildResult;
 
     public ResourceEntity(AgEntity<T> agEntity) {
@@ -60,7 +60,7 @@ public class ResourceEntity<T> {
         this.extraProperties = new HashMap<>();
         this.includedExtraProperties = new HashMap<>();
         this.agEntity = agEntity;
-        this.rootResult = new ArrayList<>();
+        this.result = new ArrayList<>();
         this.parentToChildResult = new LinkedHashMap<>();
     }
 
@@ -119,7 +119,7 @@ public class ResourceEntity<T> {
      * @since 3.1
      */
     public List<T> getResult() {
-        return rootResult;
+        return result;
     }
 
     /**
@@ -128,7 +128,7 @@ public class ResourceEntity<T> {
      *  @param result objects
      */
     public void setResult(List<T> result) {
-        this.rootResult = result;
+        this.result = result;
     }
 
     /**
