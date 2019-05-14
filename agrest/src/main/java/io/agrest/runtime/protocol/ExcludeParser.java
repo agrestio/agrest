@@ -38,15 +38,17 @@ public class ExcludeParser implements IExcludeParser {
         return excludes;
     }
 
-    private void appendFromArray(List<Exclude> excludes, JsonNode root, String parentPath) {
+    private void appendFromArray(List<Exclude> excludes, JsonNode node, String parentPath) {
 
-        for (JsonNode child : root) {
+        for (JsonNode child : node) {
 
             if (child.isObject()) {
 
                 // nested exclude syntax: ___"rel" : ["e1", "e2", "e3"]___
                 if (child.size() == 1 && child.elements().next().isArray()) {
-                    appendFromArray(excludes, child.elements().next(), child.fieldNames().next());
+                    String field = child.fieldNames().next();
+                    // TODO: prepend parentPath to field name
+                    appendFromArray(excludes, child.get(field), field);
                 }
 
             } else if (child.isTextual()) {

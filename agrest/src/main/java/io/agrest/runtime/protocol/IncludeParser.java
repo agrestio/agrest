@@ -2,7 +2,9 @@ package io.agrest.runtime.protocol;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import io.agrest.AgException;
+import io.agrest.PathConstants;
 import io.agrest.protocol.Include;
+import io.agrest.runtime.entity.IncludeMerger;
 import io.agrest.runtime.jackson.IJacksonService;
 import org.apache.cayenne.di.Inject;
 
@@ -39,70 +41,88 @@ public class IncludeParser implements IIncludeParser {
         this.sizeParser = sizeParser;
     }
 
+    private static String getText(JsonNode node) {
+        return node != null ? node.asText() : null;
+    }
+
     @Override
-    public Include parse(String value) {
+    public List<Include> parse(String value) {
+
         if (value == null || value.isEmpty()) {
-            return null;
-        }
-
-        Include include;
-
-        if (value.startsWith("[")) {
-            List<Include> includes = fromArray(jsonParser.parseJson(value), null);
-            include = new Include(includes);
-        } else if (value.startsWith("{")) {
-            include = fromJson(jsonParser.parseJson(value), null);
-        } else {
-            include = new Include(value);
-        }
-
-        return include;
-    }
-
-    private Include fromJson(JsonNode node, String parentPath) {
-
-        // checks if JSON is a structure like {"rel" : ["a1","a2","a3"]}
-        // TODO: Guess we don't allow ordering, filtering, etc. in this case?
-        if (node.size() == 1 && node.elements().next().isArray()) {
-            String field = node.fieldNames().next();
-            return new Include(fromArray(node.get(field), field));
-        }
-
-        JsonNode pathNode = node.get(JSON_KEY_PATH);
-        String path = pathNode != null ? pathNode.asText() : null;
-
-        return new Include(
-                expParser.fromJson(node.get(JSON_KEY_CAYENNE_EXP)),
-                sortParser.fromJson(node.get(JSON_KEY_SORT)),
-                getText(node.get(JSON_KEY_MAP_BY)),
-                parentPath != null ? parentPath + '.' + path : path,
-                sizeParser.startFromJson(node.get(JSON_KEY_START)),
-                sizeParser.limitFromJson(node.get(JSON_KEY_LIMIT)),
-                fromArray(node.get(JSON_KEY_INCLUDE), path));
-    }
-
-    private List<Include> fromArray(JsonNode node, String parentPath) {
-
-        if (node == null) {
             return Collections.emptyList();
         }
 
-        List<Include> includes = new ArrayList<>(node.size());
+        List<Include> includes = new ArrayList<>();
+
+        if (value.startsWith("[")) {
+            appendFromArray(includes, jsonParser.parseJson(value), null);
+        } else if (value.startsWith("{")) {
+            appendFromObject(includes, jsonParser.parseJson(value), null);
+        } else {
+            appendPath(includes, value);
+        }
+
+        return includes;
+    }
+
+    private void appendFromArray(List<Include> includes, JsonNode node, String parentPath) {
 
         for (JsonNode child : node) {
             if (child.isObject()) {
-                includes.add(fromJson(child, parentPath));
+                appendFromObject(includes, child, parentPath);
             } else if (child.isTextual()) {
                 includes.add(new Include(parentPath != null ? parentPath + '.' + child.asText() : child.asText()));
             } else {
                 throw new AgException(Response.Status.BAD_REQUEST, "Bad include spec: " + child);
             }
         }
-
-        return includes;
     }
 
-    private String getText(JsonNode node) {
-        return node != null ? node.asText() : null;
+    private void appendFromObject(List<Include> includes, JsonNode node, String parentPath) {
+
+        // nested include syntax: ___{"rel" : ["a1", "a2", "a3"]}___
+        // TODO: We don't allow ordering, filtering, etc. in this case?
+        if (node.size() == 1 && node.elements().next().isArray()) {
+
+            String path = node.fieldNames().next();
+            String absPath = parentPath != null ? parentPath + '.' + path : path;
+
+            appendFromArray(includes, node.get(path), absPath);
+
+        } else {
+
+            String path = getText(node.get(JSON_KEY_PATH));
+            String absPath = parentPath != null ? parentPath + '.' + path : path;
+
+            includes.add(new Include(
+                    expParser.fromJson(node.get(JSON_KEY_CAYENNE_EXP)),
+                    sortParser.fromJson(node.get(JSON_KEY_SORT)),
+                    getText(node.get(JSON_KEY_MAP_BY)),
+                    absPath,
+                    sizeParser.startFromJson(node.get(JSON_KEY_START)),
+                    sizeParser.limitFromJson(node.get(JSON_KEY_LIMIT))));
+
+            JsonNode childIncludes = node.get(JSON_KEY_INCLUDE);
+
+            if (childIncludes != null) {
+                appendFromArray(includes, childIncludes, absPath);
+            }
+        }
+    }
+
+    private void appendPath(List<Include> includes, String path) {
+        IncludeMerger.checkTooLong(path);
+
+        int dot = path.indexOf(PathConstants.DOT);
+
+        if (dot == 0) {
+            throw new AgException(Response.Status.BAD_REQUEST, "Exclude starts with dot: " + path);
+        }
+
+        if (dot == path.length() - 1) {
+            throw new AgException(Response.Status.BAD_REQUEST, "Exclude ends with dot: " + path);
+        }
+
+        includes.add(new Include(path));
     }
 }

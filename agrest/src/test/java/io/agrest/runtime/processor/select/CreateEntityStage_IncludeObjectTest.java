@@ -97,7 +97,7 @@ public class CreateEntityStage_IncludeObjectTest extends TestWithCayenneMapping 
 
         SelectContext<E2> context = new SelectContext<>(E2.class);
 
-        Include include = new Include(null, null, "e5", "e3s", null, null, null);
+        Include include = new Include(null, null, "e5", "e3s", null, null);
         context.setRawRequest(requestBuilderFactory.builder().addInclude(include).build());
 
         createEntityStage.execute(context);

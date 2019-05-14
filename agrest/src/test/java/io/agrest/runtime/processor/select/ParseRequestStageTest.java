@@ -102,10 +102,9 @@ public class ParseRequestStageTest extends TestWithCayenneMapping {
 
 		assertNotNull(context.getRawRequest());
 
-		assertEquals(1, context.getRawRequest().getIncludes().size());
-		assertEquals(2, context.getRawRequest().getIncludes().get(0).getIncludes().size());
-		assertEquals("description", context.getRawRequest().getIncludes().get(0).getIncludes().get(0).getValue());
-		assertEquals("age", context.getRawRequest().getIncludes().get(0).getIncludes().get(1).getValue());
+		assertEquals(2, context.getRawRequest().getIncludes().size());
+		assertEquals("description", context.getRawRequest().getIncludes().get(0).getValue());
+		assertEquals("age", context.getRawRequest().getIncludes().get(1).getValue());
 	}
 
 	@Test

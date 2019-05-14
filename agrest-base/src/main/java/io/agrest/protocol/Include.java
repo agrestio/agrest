@@ -1,8 +1,5 @@
 package io.agrest.protocol;
 
-import java.util.Collections;
-import java.util.List;
-
 /**
  * Represents 'include' Agrest protocol parameter.
  *
@@ -17,14 +14,9 @@ public class Include {
     private String path;
     private Integer start;
     private Integer limit;
-    private List<Include> includes;
 
     public Include(String value) {
         this.value = value;
-    }
-
-    public Include(List<Include> includes) {
-        this.includes = includes;
     }
 
     public Include(
@@ -33,8 +25,7 @@ public class Include {
             String mapBy,
             String path,
             Integer start,
-            Integer limit,
-            List<Include> includes) {
+            Integer limit) {
 
         this.cayenneExp = cayenneExp;
         this.sort = sort;
@@ -42,7 +33,6 @@ public class Include {
         this.path = path;
         this.start = start;
         this.limit = limit;
-        this.includes = includes;
     }
 
     public String getValue() {
@@ -71,9 +61,5 @@ public class Include {
 
     public Sort getSort() {
         return sort;
-    }
-
-    public List<Include> getIncludes() {
-        return includes != null ? includes : Collections.emptyList();
     }
 }

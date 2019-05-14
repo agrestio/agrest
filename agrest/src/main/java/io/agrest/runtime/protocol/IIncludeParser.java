@@ -2,6 +2,8 @@ package io.agrest.runtime.protocol;
 
 import io.agrest.protocol.Include;
 
+import java.util.List;
+
 /**
  * Parsing of Include query parameter from string value.
  *
@@ -9,5 +11,5 @@ import io.agrest.protocol.Include;
  */
 public interface IIncludeParser {
 
-    Include parse(String value);
+    List<Include> parse(String value);
 }

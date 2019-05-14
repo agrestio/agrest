@@ -129,10 +129,9 @@ public class CreateEntityStageTest extends TestWithCayenneMapping {
 
         SelectContext<E1> context = new SelectContext<>(E1.class);
 
-        Include include = new Include(Arrays.asList(
-                new Include("description"),
-                new Include("age")));
-        context.setRawRequest(requestBuilderFactory.builder().addInclude(include).build());
+        context.setRawRequest(requestBuilderFactory.builder()
+                .addInclude(new Include("description"))
+                .addInclude(new Include("age")).build());
 
         createEntityStage.execute(context);
 

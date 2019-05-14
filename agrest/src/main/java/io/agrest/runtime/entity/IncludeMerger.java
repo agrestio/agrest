@@ -161,9 +161,5 @@ public class IncludeMerger implements IIncludeMerger {
         sortMerger.merge(includeEntity, include.getSort());
         expMerger.merge(includeEntity, include.getCayenneExp());
         sizeMerger.merge(includeEntity, include.getStart(), include.getLimit());
-
-        // TODO: Descend into the tree is not implemented properly. Why do we pass the same root entity to child includes?
-        //  Should we pass the "includeEntity"?
-        include.getIncludes().forEach(i -> process(entity, i));
     }
 }
