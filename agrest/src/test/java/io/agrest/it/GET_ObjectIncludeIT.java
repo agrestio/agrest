@@ -31,11 +31,10 @@ public class GET_ObjectIncludeIT extends JerseyTestOnDerby {
 
         DB.insert("e4", "c_int", "55");
 
-        Response response1 = target("/e4").queryParam("include", urlEnc("{\"path\":\"cInt\"}")).request().get();
-        assertEquals(Status.BAD_REQUEST.getStatusCode(), response1.getStatus());
-        assertEquals(
-                "{\"success\":false,\"message\":\"Bad include spec, non-relationship 'path' in include object: cInt\"}",
-                response1.readEntity(String.class));
+        Response r = target("/e4").queryParam("include", urlEnc("{\"path\":\"cInt\"}")).request().get();
+        assertEquals(Status.OK.getStatusCode(), r.getStatus());
+        assertEquals("{\"data\":[{\"cInt\":55}],\"total\":1}",
+                r.readEntity(String.class));
     }
 
     @Test

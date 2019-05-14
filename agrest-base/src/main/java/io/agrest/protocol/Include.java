@@ -7,7 +7,6 @@ package io.agrest.protocol;
  */
 public class Include {
 
-    private String value;
     private CayenneExp cayenneExp;
     private Sort sort;
     private String mapBy;
@@ -15,8 +14,8 @@ public class Include {
     private Integer start;
     private Integer limit;
 
-    public Include(String value) {
-        this.value = value;
+    public Include(String path) {
+        this.path = path;
     }
 
     public Include(
@@ -33,10 +32,6 @@ public class Include {
         this.path = path;
         this.start = start;
         this.limit = limit;
-    }
-
-    public String getValue() {
-        return value;
     }
 
     public String getMapBy() {
@@ -65,6 +60,6 @@ public class Include {
 
     @Override
     public String toString() {
-        return "[Include:" + value + "]";
+        return "[Include:" + path + "]";
     }
 }

@@ -85,8 +85,8 @@ public class ParseRequestStageTest extends TestWithCayenneMapping {
 		assertNotNull(context.getRawRequest());
 
 		assertEquals(2, context.getRawRequest().getIncludes().size());
-		assertEquals("description", context.getRawRequest().getIncludes().get(0).getValue());
-		assertEquals("age", context.getRawRequest().getIncludes().get(1).getValue());
+		assertEquals("description", context.getRawRequest().getIncludes().get(0).getPath());
+		assertEquals("age", context.getRawRequest().getIncludes().get(1).getPath());
 	}
 
 	@Test
@@ -103,8 +103,8 @@ public class ParseRequestStageTest extends TestWithCayenneMapping {
 		assertNotNull(context.getRawRequest());
 
 		assertEquals(2, context.getRawRequest().getIncludes().size());
-		assertEquals("description", context.getRawRequest().getIncludes().get(0).getValue());
-		assertEquals("age", context.getRawRequest().getIncludes().get(1).getValue());
+		assertEquals("description", context.getRawRequest().getIncludes().get(0).getPath());
+		assertEquals("age", context.getRawRequest().getIncludes().get(1).getPath());
 	}
 
 	@Test
@@ -158,9 +158,9 @@ public class ParseRequestStageTest extends TestWithCayenneMapping {
 		assertNotNull(context.getRawRequest());
 
 		assertEquals(3, context.getRawRequest().getIncludes().size());
-		assertEquals("description", context.getRawRequest().getIncludes().get(0).getValue());
-		assertEquals("age", context.getRawRequest().getIncludes().get(1).getValue());
-		assertEquals("id", context.getRawRequest().getIncludes().get(2).getValue());
+		assertEquals("description", context.getRawRequest().getIncludes().get(0).getPath());
+		assertEquals("age", context.getRawRequest().getIncludes().get(1).getPath());
+		assertEquals("id", context.getRawRequest().getIncludes().get(2).getPath());
 
 		assertEquals(2, context.getRawRequest().getExcludes().size());
 		assertEquals("description", context.getRawRequest().getExcludes().get(0).getPath());
@@ -181,7 +181,7 @@ public class ParseRequestStageTest extends TestWithCayenneMapping {
 		assertNotNull(context.getRawRequest());
 
 		assertEquals(1, context.getRawRequest().getIncludes().size());
-		assertEquals("e3s", context.getRawRequest().getIncludes().get(0).getValue());
+		assertEquals("e3s", context.getRawRequest().getIncludes().get(0).getPath());
 	}
 
 

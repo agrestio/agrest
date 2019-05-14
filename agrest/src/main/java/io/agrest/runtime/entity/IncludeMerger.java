@@ -138,23 +138,16 @@ public class IncludeMerger implements IIncludeMerger {
     private void process(ResourceEntity<?> entity, Include include) {
         ResourceEntity<?> includeEntity;
 
-        String value = include.getValue();
-        if (value != null && !value.isEmpty()) {
-            IncludeMerger.checkTooLong(value);
-            IncludeMerger.processIncludePath(entity, value);
-        }
-
         String path = include.getPath();
         if (path == null || path.isEmpty()) {
             // root node
             includeEntity = entity;
         } else {
             IncludeMerger.checkTooLong(path);
-            includeEntity = IncludeMerger.processIncludePath(entity, path);
-            if (includeEntity == null) {
-                throw new AgException(Status.BAD_REQUEST,
-                        "Bad include spec, non-relationship 'path' in include object: " + path);
-            }
+            ResourceEntity<?> maybeIncludeEntity = IncludeMerger.processIncludePath(entity, path);
+
+            // either attribute or relationship... if
+            includeEntity = maybeIncludeEntity != null ? maybeIncludeEntity : entity;
         }
 
         mapByMerger.mergeIncluded(includeEntity, include.getMapBy());
