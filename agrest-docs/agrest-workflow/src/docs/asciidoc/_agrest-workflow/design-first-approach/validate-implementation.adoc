@@ -15,7 +15,7 @@ public class CategoryResource {
     @Path("/v1/category")
     @Consumes({ "application/json" })
     public DataResponse<Category> create(String category) {
-        AgRequest agRequest = AgRequest.builder()
+        AgRequest agRequest = Ag.request(config)
                 .build();
 
         return Ag.create(Category.class, config)
@@ -26,8 +26,8 @@ public class CategoryResource {
     @GET
     @Path("/v1/category")
     @Produces({ "application/json" })
-    public DataResponse<Category> getAll(@QueryParam("limit") Limit limit, @QueryParam("start") Start start) {
-        AgRequest agRequest = AgRequest.builder()
+    public DataResponse<Category> getAll(@QueryParam("limit") Integer limit, @QueryParam("start") Integer start) {
+        AgRequest agRequest = Ag.request(config)
                 .limit(limit)
                 .start(start)
                 .build();
@@ -41,7 +41,7 @@ public class CategoryResource {
     @Path("/v1/category/{id}")
     @Produces({ "application/json" })
         public DataResponse<Category> getOne(@PathParam("id") Integer id) {
-        AgRequest agRequest = AgRequest.builder()
+        AgRequest agRequest = Ag.request(config)
                 .build();
 
         return Ag.select(Category.class, config)
