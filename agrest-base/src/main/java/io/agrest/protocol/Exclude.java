@@ -16,4 +16,9 @@ public class Exclude {
     public String getPath() {
         return path;
     }
+
+    @Override
+    public String toString() {
+        return "[Exclude:" + path + "]";
+    }
 }

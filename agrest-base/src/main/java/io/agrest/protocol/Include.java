@@ -62,4 +62,9 @@ public class Include {
     public Sort getSort() {
         return sort;
     }
+
+    @Override
+    public String toString() {
+        return "[Include:" + value + "]";
+    }
 }
