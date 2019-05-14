@@ -60,7 +60,7 @@ public class AgCodegenOperation extends CodegenOperation {
         this.allParams = codegenOperation.allParams;
         this.bodyParams = codegenOperation.bodyParams;
         this.pathParams = codegenOperation.pathParams;
-        this.queryParams = codegenOperation.queryParams;
+        this.queryParams = QueryParamExtensions.extend(codegenOperation.queryParams);
         this.headerParams = codegenOperation.headerParams;
         this.formParams = codegenOperation.formParams;
         this.authMethods = codegenOperation.authMethods;
@@ -118,6 +118,7 @@ public class AgCodegenOperation extends CodegenOperation {
      *
      * @return true if act as Restful destroy method, false otherwise
      */
+    @Override
     public boolean isRestfulDestroy() {
         return "DELETE".equalsIgnoreCase(httpMethod)
                 && !isRelatedToManyPath()

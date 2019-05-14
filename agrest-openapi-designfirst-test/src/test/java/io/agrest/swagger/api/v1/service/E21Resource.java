@@ -21,10 +21,10 @@ public class E21Resource {
     @POST
     @Path("/v1/e21")
     @Consumes({ "application/json" })
-    public DataResponse<E21> create(String e21, @QueryParam("exclude") List<io.agrest.protocol.Exclude> excludes) {
+    public DataResponse<E21> create(String e21, @QueryParam("exclude") List<String> excludes) {
 
         AgRequest agRequest = Ag.request(config)
-                .excludes(excludes)
+                .addExcludes(excludes)
                 .build();
 
         return Ag.create(E21.class, config)
@@ -47,14 +47,14 @@ public class E21Resource {
     @GET
     @Path("/v1/e21")
     @Produces({ "application/json" })
-    public DataResponse<E21> getOneByCompoundId(@QueryParam("name") String name, @QueryParam("age") Integer age, @QueryParam("exclude") List<io.agrest.protocol.Exclude> excludes) {
+    public DataResponse<E21> getOneByCompoundId(@QueryParam("name") String name, @QueryParam("age") Integer age, @QueryParam("exclude") List<String> excludes) {
 
         Map<String, Object> id = new HashMap<>();
         id.put("name", name);
         id.put("age", age);
 
         AgRequest agRequest = Ag.request(config)
-                .excludes(excludes)
+                .addExcludes(excludes)
                 .build();
 
         return Ag.select(E21.class, config)

@@ -1,6 +1,5 @@
 package io.agrest.swagger.api.v1.service;
 
-import io.agrest.protocol.CayenneExp;
 import io.agrest.it.fixture.cayenne.E2;
 import io.agrest.it.fixture.cayenne.E3;
 
@@ -23,11 +22,11 @@ public class E2Resource {
     @POST
     @Path("/v1/e2")
     @Consumes({ "application/json" })
-    public DataResponse<E2> create(String e2, @QueryParam("include") List<io.agrest.protocol.Include> includes, @QueryParam("exclude") List<io.agrest.protocol.Exclude> excludes) {
+    public DataResponse<E2> create(String e2, @QueryParam("include") List<String> includes, @QueryParam("exclude") List<String> excludes) {
 
         AgRequest agRequest = Ag.request(config)
-                .includes(includes)
-                .excludes(excludes)
+                .addIncludes(includes)
+                .addExcludes(excludes)
                 .build();
 
         return Ag.create(E2.class, config)
@@ -68,11 +67,11 @@ public class E2Resource {
     @GET
     @Path("/v1/e2")
     @Produces({ "application/json" })
-    public DataResponse<E2> getAll(@QueryParam("include") List<io.agrest.protocol.Include> includes, @QueryParam("exclude") List<io.agrest.protocol.Exclude> excludes, @QueryParam("cayenneExp") CayenneExp cayenneExp) {
+    public DataResponse<E2> getAll(@QueryParam("include") List<String> includes, @QueryParam("exclude") List<String> excludes, @QueryParam("cayenneExp") String cayenneExp) {
 
         AgRequest agRequest = Ag.request(config)
-                .includes(includes)
-                .excludes(excludes)
+                .addIncludes(includes)
+                .addExcludes(excludes)
                 .cayenneExp(cayenneExp)
                 .build();
 
@@ -84,10 +83,10 @@ public class E2Resource {
     @GET
     @Path("/v1/e2/{id}/e3s/{tid}")
     @Produces({ "application/json" })
-        public DataResponse<E3> getE3viaE2(@PathParam("id") Integer id, @PathParam("tid") Integer tid, @QueryParam("include") List<io.agrest.protocol.Include> includes) {
+        public DataResponse<E3> getE3viaE2(@PathParam("id") Integer id, @PathParam("tid") Integer tid, @QueryParam("include") List<String> includes) {
 
         AgRequest agRequest = Ag.request(config)
-                .includes(includes)
+                .addIncludes(includes)
                 .build();
 
         return Ag.select(E3.class, config)
@@ -100,11 +99,11 @@ public class E2Resource {
     @GET
     @Path("/v1/e2/{id}")
     @Produces({ "application/json" })
-        public DataResponse<E2> getOne(@PathParam("id") Integer id, @QueryParam("include") List<io.agrest.protocol.Include> includes, @QueryParam("exclude") List<io.agrest.protocol.Exclude> excludes) {
+        public DataResponse<E2> getOne(@PathParam("id") Integer id, @QueryParam("include") List<String> includes, @QueryParam("exclude") List<String> excludes) {
 
         AgRequest agRequest = Ag.request(config)
-                .includes(includes)
-                .excludes(excludes)
+                .addIncludes(includes)
+                .addExcludes(excludes)
                 .build();
 
         return Ag.select(E2.class, config)
@@ -116,10 +115,10 @@ public class E2Resource {
     @GET
     @Path("/v1/e2/{id}/e3s")
     @Produces({ "application/json" })
-        public DataResponse<E3> getOneToMany(@PathParam("id") Integer id, @QueryParam("include") List<io.agrest.protocol.Include> includes) {
+        public DataResponse<E3> getOneToMany(@PathParam("id") Integer id, @QueryParam("include") List<String> includes) {
 
         AgRequest agRequest = Ag.request(config)
-                .includes(includes)
+                .addIncludes(includes)
                 .build();
 
         return Ag.select(E3.class, config)
@@ -131,11 +130,11 @@ public class E2Resource {
     @PUT
     @Path("/v1/e2/{id}")
     @Consumes({ "application/json" })
-    public DataResponse<E2> update(@PathParam("id") Integer id, String e2, @QueryParam("include") List<io.agrest.protocol.Include> includes, @QueryParam("exclude") List<io.agrest.protocol.Exclude> excludes) {
+    public DataResponse<E2> update(@PathParam("id") Integer id, String e2, @QueryParam("include") List<String> includes, @QueryParam("exclude") List<String> excludes) {
 
         AgRequest agRequest = Ag.request(config)
-                .includes(includes)
-                .excludes(excludes)
+                .addIncludes(includes)
+                .addExcludes(excludes)
                 .build();
 
         return Ag.idempotentCreateOrUpdate(E2.class, config)

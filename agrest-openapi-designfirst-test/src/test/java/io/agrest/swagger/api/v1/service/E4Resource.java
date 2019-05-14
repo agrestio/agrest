@@ -1,9 +1,6 @@
 package io.agrest.swagger.api.v1.service;
 
 import io.agrest.it.fixture.cayenne.E4;
-import io.agrest.protocol.Limit;
-import io.agrest.protocol.MapBy;
-import io.agrest.protocol.Sort;
 
 import io.agrest.AgRequest;
 import io.agrest.DataResponse;
@@ -46,12 +43,12 @@ public class E4Resource {
     @GET
     @Path("/v1/e4")
     @Produces({ "application/json" })
-    public DataResponse<E4> getAll(@QueryParam("limit") Limit limit, @QueryParam("sort") Sort sort, @QueryParam("include") List<io.agrest.protocol.Include> includes, @QueryParam("mapBy") MapBy mapBy) {
+    public DataResponse<E4> getAll(@QueryParam("limit") Integer limit, @QueryParam("sort") String sort, @QueryParam("include") List<String> includes, @QueryParam("mapBy") String mapBy) {
 
         AgRequest agRequest = Ag.request(config)
                 .limit(limit)
                 .sort(sort)
-                .includes(includes)
+                .addIncludes(includes)
                 .mapBy(mapBy)
                 .build();
 
@@ -63,10 +60,10 @@ public class E4Resource {
     @GET
     @Path("/v1/e4/{id}")
     @Produces({ "application/json" })
-        public DataResponse<E4> getOne(@PathParam("id") Integer id, @QueryParam("include") List<io.agrest.protocol.Include> includes) {
+        public DataResponse<E4> getOne(@PathParam("id") Integer id, @QueryParam("include") List<String> includes) {
 
         AgRequest agRequest = Ag.request(config)
-                .includes(includes)
+                .addIncludes(includes)
                 .build();
 
         return Ag.select(E4.class, config)

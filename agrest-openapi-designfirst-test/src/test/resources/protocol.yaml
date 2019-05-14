@@ -7,17 +7,8 @@ components:
       style: form
       explode: false
       schema:
-        type: object
-        properties:
-          exp:
-            type: string
-            description: A conditional expression that is used to filter the response objects
-            example: articles.body like $b
-          params:
-            type: object
-            additionalProperties:
-              type: string
-      description: cayenneExp query
+        type: string
+      description: Condition applied to data in the format of Cayenne expression with parameters
       required: false
 
     Dir:
@@ -41,23 +32,8 @@ components:
       schema:
         type: array
         items:
-          $ref: '#/components/queryParams/Exclude'
-      description: list of excludes
-      required: false
-
-    Exclude:
-      name: exclude
-      in: query
-      schema:
-        type: object
-        properties:
-          path:
-            type: string
-          excludes:
-            type: array
-            items:
-              $ref: '#/components/queryParams/Exclude'
-      description: An exclude parameter
+          type: string
+      description: a list of excludes (either simple paths or JSON structures)
       required: false
 
     Includes:
@@ -68,35 +44,8 @@ components:
       schema:
         type: array
         items:
-          $ref: '#/components/queryParams/Include'
-      description: list of includes
-      required: false
-
-    Include:
-      name: include
-      in: query
-      schema:
-        type: object
-        properties:
-          value:
-            type: string
-          cayenneExp:
-            $ref: '#/components/queryParams/CayenneExp'
-          sort:
-            $ref: '#/components/queryParams/Sort'
-          mapBy:
-            $ref: '#/components/queryParams/MapBy'
-          path:
-            type: string
-          start:
-            $ref: '#/components/queryParams/Start'
-          limit:
-            $ref: '#/components/queryParams/Limit'
-          includes:
-            type: array
-            items:
-              $ref: '#/components/queryParams/Include'
-      description: An include parameter
+          type: string
+      description: a list of includes (either simple paths or JSON structures)
       required: false
 
     Limit:
@@ -105,12 +54,8 @@ components:
       style: form
       explode: false
       schema:
-        type: object
-        properties:
-          value:
-            type: integer
-            format: int32
-            description:
+        type: integer
+        format: int32
       description: limit query param. Used for pagination.
       required: false
 
@@ -120,12 +65,8 @@ components:
       style: form
       explode: false
       schema:
-        type: object
-        properties:
-          value:
-            type: integer
-            format: int32
-            description:
+        type: integer
+        format: int32
       description: start query param. Used for pagination.
       required: false
 
@@ -135,11 +76,7 @@ components:
       style: form
       explode: false
       schema:
-        type: object
-        properties:
-          path:
-            type: string
-            description:
+        type: string
       description:
       required: false
 
@@ -149,17 +86,6 @@ components:
       style: form
       explode: false
       schema:
-        type: object
-        properties:
-          property:
-            type: string
-            description:
-          direction:
-            type: object
-            $ref: '#/components/queryParams/Dir'
-          sorts:
-            type: array
-            items:
-              $ref: '#/components/queryParams/Sort'
+        type: string
       description: sort
       required: false

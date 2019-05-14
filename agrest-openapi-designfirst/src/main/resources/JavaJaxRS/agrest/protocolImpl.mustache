@@ -1,5 +1,9 @@
 AgRequest agRequest = Ag.request(config)
 {{#queryParams}}
-                .{{baseName}}{{#isContainer}}s{{/isContainer}}({{paramName}}{{#isContainer}}s{{/isContainer}})
+    {{#vendorExtensions}}
+        {{#addToRequestMethod}}
+                .{{addToRequestMethod}}({{paramName}}{{#isContainer}}s{{/isContainer}}{{requestMethodSecondArg}})
+        {{/addToRequestMethod}}
+    {{/vendorExtensions}}
 {{/queryParams}}
                 .build();

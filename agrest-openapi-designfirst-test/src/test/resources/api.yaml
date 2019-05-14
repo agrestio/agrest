@@ -315,6 +315,7 @@ paths:
         - E3
       parameters:
         - $ref: '../resources/protocol.yaml#/components/queryParams/Sort'
+        - $ref: '../resources/protocol.yaml#/components/queryParams/Dir'
         - $ref: '../resources/protocol.yaml#/components/queryParams/Includes'
         - $ref: '../resources/protocol.yaml#/components/queryParams/Excludes'
         - $ref: '../resources/protocol.yaml#/components/queryParams/Limit'

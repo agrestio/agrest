@@ -21,10 +21,10 @@ public class E20Resource {
     @POST
     @Path("/v1/e20")
     @Consumes({ "application/json" })
-    public DataResponse<E20> create(String e20, @QueryParam("exclude") List<io.agrest.protocol.Exclude> excludes) {
+    public DataResponse<E20> create(String e20, @QueryParam("exclude") List<String> excludes) {
 
         AgRequest agRequest = Ag.request(config)
-                .excludes(excludes)
+                .addExcludes(excludes)
                 .build();
 
         return Ag.create(E20.class, config)
@@ -44,10 +44,10 @@ public class E20Resource {
     @GET
     @Path("/v1/e20/{name}")
     @Produces({ "application/json" })
-        public DataResponse<E20> getOneByName(@PathParam("name") String name, @QueryParam("exclude") List<io.agrest.protocol.Exclude> excludes) {
+        public DataResponse<E20> getOneByName(@PathParam("name") String name, @QueryParam("exclude") List<String> excludes) {
 
         AgRequest agRequest = Ag.request(config)
-                .excludes(excludes)
+                .addExcludes(excludes)
                 .build();
 
         return Ag.select(E20.class, config)

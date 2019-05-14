@@ -57,11 +57,6 @@ public class AgServerCodegen extends AbstractJavaJAXRSServerCodegen implements A
         importMapping.put("LocalDate", "java.time.LocalDateTime");
         importMapping.put("LocalDateTime", "java.time.LocalDateTime");
 
-        importMapping.put("CayenneExp", "io.agrest.protocol.CayenneExp");
-        importMapping.put("Exclude",    "io.agrest.protocol.Exclude");
-        importMapping.put("Include",    "io.agrest.protocol.Include");
-        importMapping.put("Sort",       "io.agrest.protocol.Sort");
-
         embeddedTemplateDir = templateDir = AbstractJavaJAXRSServerCodegen.JAXRS_TEMPLATE_DIRECTORY_NAME + File.separator + "agrest";
 
         cliOptions.add(CliOption.newBoolean(GENERATE_FOR_TESTING, "Generates models and API's for testing purpose"));
@@ -110,11 +105,11 @@ public class AgServerCodegen extends AbstractJavaJAXRSServerCodegen implements A
 
         Map<String, Object> operations = (Map<String, Object>) objsResult.get("operations");
 
-        if ( operations != null && !models.isEmpty()) {
+        if (operations != null && !models.isEmpty()) {
             @SuppressWarnings("unchecked")
             List<CodegenOperation> ops = (List<CodegenOperation>) operations.get("operation");
             List<AgCodegenOperation> newOps = new ArrayList<AgCodegenOperation>();
-            for ( CodegenOperation operation : ops ) {
+            for (CodegenOperation operation : ops) {
                 if (models.get(operation.baseName) == null) {
                     continue;
                 }
@@ -146,11 +141,11 @@ public class AgServerCodegen extends AbstractJavaJAXRSServerCodegen implements A
 
     private void populateModelAttributes(AgCodegenOperation operation) {
         if (models.get(operation.baseName) != null) {
-            for (final CodegenProperty prop : models.get(operation.baseName)) {
+            for (CodegenProperty prop : models.get(operation.baseName)) {
                 // Selects plain attributes only
                 if ((prop.complexType == null || !models.keySet().contains(prop.complexType))
                         && !"id".equalsIgnoreCase(prop.baseName)) {
-                    final CodegenParameter codegenParam = new CodegenParameter();
+                    CodegenParameter codegenParam = new CodegenParameter();
                     codegenParam.paramName = prop.baseName;
                     codegenParam.hasMore = true;
                     // checks if there is queryParam with the same name as model attribute
@@ -159,15 +154,15 @@ public class AgServerCodegen extends AbstractJavaJAXRSServerCodegen implements A
                         // removes model attribute related to queryParam from params list
                         operation.queryParams
                                 = operation.queryParams
-                                    .stream()
-                                    .filter(p -> !p.paramName.equalsIgnoreCase(codegenParam.paramName))
-                                    .collect(Collectors.toList());
+                                .stream()
+                                .filter(p -> !p.paramName.equalsIgnoreCase(codegenParam.paramName))
+                                .collect(Collectors.toList());
                     }
                     operation.modelAttributes.add(codegenParam);
                 }
             }
             if (!operation.modelAttributes.isEmpty()) {
-                operation.modelAttributes.get(operation.modelAttributes.size() -1).hasMore = false;
+                operation.modelAttributes.get(operation.modelAttributes.size() - 1).hasMore = false;
             }
         }
     }
@@ -179,7 +174,7 @@ public class AgServerCodegen extends AbstractJavaJAXRSServerCodegen implements A
             relation.allParams = relation.queryParams = operation.queryParams;
 
             if (operation.bodyParam == null) { // In case of GET or DELETE operations
-                final String[] path = operation.path.split("/");
+                String[] path = operation.path.split("/");
                 if (path.length > 1
                         && (relation.bodyParam.paramName.equalsIgnoreCase(path[path.length - 1])
                         || relation.bodyParam.paramName.equalsIgnoreCase(path[path.length - 2]))) {
@@ -223,7 +218,7 @@ public class AgServerCodegen extends AbstractJavaJAXRSServerCodegen implements A
         // prevents to generate models for protocol parameters
         objs.entrySet()
                 .removeIf(e -> typeMapping.keySet().stream()
-                                .anyMatch(k -> k.equalsIgnoreCase(e.getKey())));
+                        .anyMatch(k -> k.equalsIgnoreCase(e.getKey())));
 
         return super.postProcessAllModels(objs);
     }

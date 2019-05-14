@@ -1,12 +1,7 @@
 package io.agrest.swagger.api.v1.service;
 
-import io.agrest.protocol.CayenneExp;
 import io.agrest.it.fixture.cayenne.E2;
 import io.agrest.it.fixture.cayenne.E3;
-import io.agrest.protocol.Limit;
-import io.agrest.protocol.MapBy;
-import io.agrest.protocol.Sort;
-import io.agrest.protocol.Start;
 
 import io.agrest.AgRequest;
 import io.agrest.DataResponse;
@@ -27,11 +22,11 @@ public class E3Resource {
     @POST
     @Path("/v1/e3")
     @Consumes({ "application/json" })
-    public DataResponse<E3> create(String e3, @QueryParam("include") List<io.agrest.protocol.Include> includes, @QueryParam("exclude") List<io.agrest.protocol.Exclude> excludes) {
+    public DataResponse<E3> create(String e3, @QueryParam("include") List<String> includes, @QueryParam("exclude") List<String> excludes) {
 
         AgRequest agRequest = Ag.request(config)
-                .includes(includes)
-                .excludes(excludes)
+                .addIncludes(includes)
+                .addExcludes(excludes)
                 .build();
 
         return Ag.create(E3.class, config)
@@ -58,12 +53,12 @@ public class E3Resource {
     @GET
     @Path("/v1/e3")
     @Produces({ "application/json" })
-    public DataResponse<E3> getAll(@QueryParam("sort") Sort sort, @QueryParam("include") List<io.agrest.protocol.Include> includes, @QueryParam("exclude") List<io.agrest.protocol.Exclude> excludes, @QueryParam("limit") Limit limit, @QueryParam("start") Start start, @QueryParam("mapBy") MapBy mapBy, @QueryParam("cayenneExp") CayenneExp cayenneExp) {
+    public DataResponse<E3> getAll(@QueryParam("sort") String sort, @QueryParam("dir") String dir, @QueryParam("include") List<String> includes, @QueryParam("exclude") List<String> excludes, @QueryParam("limit") Integer limit, @QueryParam("start") Integer start, @QueryParam("mapBy") String mapBy, @QueryParam("cayenneExp") String cayenneExp) {
 
         AgRequest agRequest = Ag.request(config)
-                .sort(sort)
-                .includes(includes)
-                .excludes(excludes)
+                .sort(sort, dir)
+                .addIncludes(includes)
+                .addExcludes(excludes)
                 .limit(limit)
                 .start(start)
                 .mapBy(mapBy)
@@ -78,10 +73,10 @@ public class E3Resource {
     @GET
     @Path("/v1/e3/{id}")
     @Produces({ "application/json" })
-        public DataResponse<E3> getOne(@PathParam("id") Integer id, @QueryParam("include") List<io.agrest.protocol.Include> includes) {
+        public DataResponse<E3> getOne(@PathParam("id") Integer id, @QueryParam("include") List<String> includes) {
 
         AgRequest agRequest = Ag.request(config)
-                .includes(includes)
+                .addIncludes(includes)
                 .build();
 
         return Ag.select(E3.class, config)
@@ -93,10 +88,10 @@ public class E3Resource {
     @GET
     @Path("/v1/e3/{id}/e2")
     @Produces({ "application/json" })
-        public DataResponse<E2> getOneByOne(@PathParam("id") Integer id, @QueryParam("include") List<io.agrest.protocol.Include> includes) {
+        public DataResponse<E2> getOneByOne(@PathParam("id") Integer id, @QueryParam("include") List<String> includes) {
 
         AgRequest agRequest = Ag.request(config)
-                .includes(includes)
+                .addIncludes(includes)
                 .build();
 
         return Ag.select(E2.class, config)
@@ -122,11 +117,11 @@ public class E3Resource {
     @PUT
     @Path("/v1/e3")
     @Consumes({ "application/json" })
-    public DataResponse<E3> updateAll(String e3, @QueryParam("include") List<io.agrest.protocol.Include> includes, @QueryParam("exclude") List<io.agrest.protocol.Exclude> excludes) {
+    public DataResponse<E3> updateAll(String e3, @QueryParam("include") List<String> includes, @QueryParam("exclude") List<String> excludes) {
 
         AgRequest agRequest = Ag.request(config)
-                .includes(includes)
-                .excludes(excludes)
+                .addIncludes(includes)
+                .addExcludes(excludes)
                 .build();
 
         return Ag.idempotentCreateOrUpdate(E3.class, config)

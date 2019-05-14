@@ -1,7 +1,6 @@
 package io.agrest.swagger.api.v1.service;
 
 import io.agrest.it.fixture.cayenne.E1;
-import io.agrest.protocol.Limit;
 
 import io.agrest.AgRequest;
 import io.agrest.DataResponse;
@@ -31,7 +30,7 @@ public class E1Resource {
     @GET
     @Path("/v1/e1")
     @Produces({ "application/json" })
-    public DataResponse<E1> getAll(@QueryParam("limit") Limit limit) {
+    public DataResponse<E1> getAll(@QueryParam("limit") Integer limit) {
 
         AgRequest agRequest = Ag.request(config)
                 .limit(limit)
