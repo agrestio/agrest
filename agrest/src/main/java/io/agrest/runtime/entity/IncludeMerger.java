@@ -108,8 +108,6 @@ public class IncludeMerger implements IIncludeMerger {
 
             resourceEntity.getIncludedExtraProperties().putAll(resourceEntity.getExtraProperties());
             resourceEntity.getDefaultProperties().addAll(resourceEntity.getExtraProperties().keySet());
-
-            // Id should be included by default
             resourceEntity.includeId();
         }
     }
