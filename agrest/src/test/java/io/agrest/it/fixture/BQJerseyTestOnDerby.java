@@ -4,6 +4,7 @@ import com.google.inject.Binder;
 import com.google.inject.Module;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
+import io.agrest.it.fixture.cayenne.E14;
 import io.agrest.it.fixture.cayenne.E17;
 import io.agrest.it.fixture.cayenne.E19;
 import io.agrest.it.fixture.cayenne.E2;
@@ -113,6 +114,10 @@ public abstract class BQJerseyTestOnDerby {
 
     protected Table e6() {
         return dataManager.getTable(E6.class);
+    }
+
+    protected Table e14() {
+        return dataManager.getTable(E14.class);
     }
 
     protected Table e17() {

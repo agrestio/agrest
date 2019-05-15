@@ -3,10 +3,11 @@ package io.agrest.it;
 import io.agrest.Ag;
 import io.agrest.AgRequest;
 import io.agrest.DataResponse;
-import io.agrest.it.fixture.JerseyTestOnDerby;
+import io.agrest.it.fixture.BQJerseyTestOnDerby;
 import io.agrest.it.fixture.cayenne.E3;
 import io.agrest.protocol.Exclude;
 import io.agrest.protocol.Include;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import javax.ws.rs.PUT;
@@ -14,25 +15,30 @@ import javax.ws.rs.Path;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.Configuration;
 import javax.ws.rs.core.Context;
-import javax.ws.rs.core.FeatureContext;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
 
-public class PUT_AgRequestIT extends JerseyTestOnDerby {
+public class PUT_AgRequestIT extends BQJerseyTestOnDerby {
+
+    @BeforeClass
+    public static void startTestRuntime() {
+        startTestRuntime(Resource.class);
+    }
 
     @Override
-    protected void doAddResources(FeatureContext context) {
-        context.register(Resource.class);
+    protected Class<?>[] testEntities() {
+        return new Class[]{E3.class};
     }
 
     @Test
     public void testPUT_Includes_OverrideByAgRequest() {
 
-        insert("e3", "id, name", "5, 'aaa'");
-        insert("e3", "id, name", "4, 'zzz'");
-        insert("e3", "id, name", "2, 'bbb'");
-        insert("e3", "id, name", "6, 'yyy'");
+        e3().insertColumns("id", "name")
+                .values(5, "aaa")
+                .values(4, "zzz")
+                .values(2, "bbb")
+                .values(6, "yyy").exec();
 
         Entity<String> entity = Entity.json(
                 "[{\"id\":6,\"name\":\"yyy\"},{\"id\":4,\"name\":\"zzz\"},{\"id\":5,\"name\":\"111\"},{\"id\":2,\"name\":\"333\"}]");
@@ -52,10 +58,11 @@ public class PUT_AgRequestIT extends JerseyTestOnDerby {
     @Test
     public void testPUT_Excludes_OverrideByAgRequest() {
 
-        insert("e3", "id, name", "5, 'aaa'");
-        insert("e3", "id, name", "4, 'zzz'");
-        insert("e3", "id, name", "2, 'bbb'");
-        insert("e3", "id, name", "6, 'yyy'");
+        e3().insertColumns("id", "name")
+                .values(5, "aaa")
+                .values(4, "zzz")
+                .values(2, "bbb")
+                .values(6, "yyy").exec();
 
         Entity<String> entity = Entity.json(
                 "[{\"id\":6,\"name\":\"yyy\"},{\"id\":4,\"name\":\"zzz\"},{\"id\":5,\"name\":\"111\"},{\"id\":2,\"name\":\"333\"}]");

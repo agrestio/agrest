@@ -1,12 +1,12 @@
 package io.agrest.sencha.it;
 
-import io.agrest.DataResponse;
 import io.agrest.Ag;
-import io.agrest.it.fixture.JerseyTestOnDerby;
+import io.agrest.DataResponse;
+import io.agrest.it.fixture.BQJerseyTestOnDerby;
 import io.agrest.it.fixture.cayenne.E14;
+import io.agrest.it.fixture.cayenne.E2;
 import io.agrest.it.fixture.cayenne.E3;
-import org.apache.cayenne.Cayenne;
-import org.apache.cayenne.query.SelectQuery;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import javax.ws.rs.POST;
@@ -14,26 +14,30 @@ import javax.ws.rs.Path;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.Configuration;
 import javax.ws.rs.core.Context;
-import javax.ws.rs.core.FeatureContext;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriInfo;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
-public class Sencha_POST_IT extends JerseyTestOnDerby {
+public class Sencha_POST_IT extends BQJerseyTestOnDerby {
+
+    @BeforeClass
+    public static void startTestRuntime() {
+        startTestRuntime(Resource.class);
+    }
 
     @Override
-    protected void doAddResources(FeatureContext context) {
-        context.register(Resource.class);
+    protected Class<?>[] testEntities() {
+        return new Class[]{E2.class, E3.class, E14.class};
     }
 
     @Test
     public void testPost_ToOne() {
 
-        insert("e2", "id, name", "1, 'xxx'");
-        insert("e2", "id, name", "8, 'yyy'");
+        e2().insertColumns("id", "name")
+                .values(1, "xxx")
+                .values(8, "yyy").exec();
 
         Response response = target("/e3")
                 .request()
@@ -41,30 +45,29 @@ public class Sencha_POST_IT extends JerseyTestOnDerby {
 
         assertEquals(Status.CREATED.getStatusCode(), response.getStatus());
 
-        E3 e3 = (E3) Cayenne.objectForQuery(newContext(), new SelectQuery<E3>(E3.class));
-        int id = Cayenne.intPKForObject(e3);
+        Object[] row = e3().selectColumns("id", "name", "e2_id").get(0);
 
         assertEquals(
-                "{\"success\":true,\"data\":[{\"id\":" + id + ",\"name\":\"MM\",\"phoneNumber\":null}],\"total\":1}",
+                "{\"success\":true,\"data\":[{\"id\":" + row[0] + ",\"name\":\"MM\",\"phoneNumber\":null}],\"total\":1}",
                 response.readEntity(String.class));
 
-        newContext().invalidateObjects(e3);
-        assertEquals("MM", e3.getName());
-        assertEquals(8, Cayenne.intPKForObject(e3.getE2()));
+        assertEquals("MM", row[1]);
+        assertEquals(8, row[2]);
     }
 
     @Test
     public void testPost_ToOne_BadFK() {
 
-        insert("e2", "id, name", "1, 'xxx'");
-        insert("e2", "id, name", "8, 'yyy'");
+        e2().insertColumns("id", "name")
+                .values(1, "xxx")
+                .values(8, "yyy").exec();
 
         Response response = target("/e3").request()
                 .post(Entity.json("{\"e2_id\":15,\"name\":\"MM\"}"));
 
         assertEquals(Status.NOT_FOUND.getStatusCode(), response.getStatus());
 
-        assertEquals(0, newContext().select(new SelectQuery<>(E3.class)).size());
+        e3().matcher().assertNoMatches();
     }
 
     @Test
@@ -79,7 +82,7 @@ public class Sencha_POST_IT extends JerseyTestOnDerby {
         String data = response.readEntity(String.class);
         assertTrue(data.contains("\"total\":2"));
 
-        assertEquals(2, countRows(E14.class));
+        e14().matcher().assertMatches(2);
     }
 
     @Path("")
