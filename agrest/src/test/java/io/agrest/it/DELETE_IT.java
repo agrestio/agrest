@@ -2,12 +2,11 @@ package io.agrest.it;
 
 import io.agrest.Ag;
 import io.agrest.SimpleResponse;
-import io.agrest.it.fixture.JerseyTestOnDerby;
+import io.agrest.it.fixture.BQJerseyTestOnDerby;
 import io.agrest.it.fixture.cayenne.E17;
 import io.agrest.it.fixture.cayenne.E24;
 import io.agrest.it.fixture.cayenne.E4;
-import org.apache.cayenne.Cayenne;
-import org.apache.cayenne.query.EJBQLQuery;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import javax.ws.rs.DELETE;
@@ -16,89 +15,81 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Configuration;
 import javax.ws.rs.core.Context;
-import javax.ws.rs.core.FeatureContext;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriInfo;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.junit.Assert.assertEquals;
+public class DELETE_IT extends BQJerseyTestOnDerby {
 
-public class DELETE_IT extends JerseyTestOnDerby {
+    @BeforeClass
+    public static void startTestRuntime() {
+        startTestRuntime(Resource.class);
+    }
 
     @Override
-    protected void doAddResources(FeatureContext context) {
-        context.register(Resource.class);
+    protected Class<?>[] testEntities() {
+        return new Class[]{E4.class, E17.class, E24.class};
     }
 
     @Test
     public void testDelete() {
 
-        insert("e4", "id, c_varchar", "1, 'xxx'");
-        insert("e4", "id, c_varchar", "8, 'yyy'");
+        e4().insertColumns("id", "c_varchar")
+                .values(1, "xxx")
+                .values(8, "yyy").exec();
 
-        Response response = target("/e4/8").request().delete();
-        assertEquals(Status.OK.getStatusCode(), response.getStatus());
-        assertEquals("{\"success\":true}", response.readEntity(String.class));
+        Response r = target("/e4/8").request().delete();
+        onSuccess(r).bodyEquals("{\"success\":true}");
 
-        assertEquals(1L, countRows(E4.class));
+        e4().matcher().assertOneMatch();
     }
 
     @Test
     public void testDelete_CompoundId() {
 
-        insert("e17", "id1, id2, name", "1, 1, 'aaa'");
-        insert("e17", "id1, id2, name", "2, 2, 'bbb'");
+        e17().insertColumns("id1", "id2", "name").values(1, 1, "aaa").values(2, 2, "bbb").exec();
 
-        Response response1 = target("/e17").queryParam("id1", 1).queryParam("id2", 1).request().delete();
-        assertEquals(Status.OK.getStatusCode(), response1.getStatus());
-        assertEquals("{\"success\":true}", response1.readEntity(String.class));
+        Response r = target("/e17").queryParam("id1", 1).queryParam("id2", 1).request().delete();
+        onSuccess(r).bodyEquals("{\"success\":true}");
 
-        assertEquals(1l, Cayenne.objectForQuery(newContext(), new EJBQLQuery("select count(a) from E17 a")));
-        assertEquals("bbb", Cayenne.objectForQuery(newContext(),
-                new EJBQLQuery("select a.name from E17 a where a.id1 =2 and a.id2 = 2")));
+        e17().matcher().assertOneMatch();
+        e17().matcher().eq("id2", 2).eq("id2", 2).eq("name", "bbb").assertOneMatch();
     }
 
     @Test
     public void testDelete_BadID() {
 
-        insert("e4", "id, c_varchar", "1, 'xxx'");
-        insert("e4", "id, c_varchar", "8, 'yyy'");
+        e4().insertColumns("id", "c_varchar").values(1, "xxx").exec();
 
-        assertEquals(2l, Cayenne.objectForQuery(newContext(), new EJBQLQuery("select count(a) from E4 a")));
+        Response r = target("/e4/7").request().delete();
+        onResponse(r).statusEquals(Status.NOT_FOUND).bodyEquals("{\"success\":false,\"message\":\"No object for ID '7' and entity 'E4'\"}");
 
-        Response response1 = target("/e4/7").request().delete();
-        assertEquals(Status.NOT_FOUND.getStatusCode(), response1.getStatus());
-        assertEquals("{\"success\":false,\"message\":\"No object for ID '7' and entity 'E4'\"}",
-                response1.readEntity(String.class));
-
-        assertEquals(2l, Cayenne.objectForQuery(newContext(), new EJBQLQuery("select count(a) from E4 a")));
+        e4().matcher().assertMatches(1);
     }
 
     @Test
     public void testDelete_Twice() {
 
-        insert("e4", "id, c_varchar", "1, 'xxx'");
-        insert("e4", "id, c_varchar", "8, 'yyy'");
+        e4().insertColumns("id", "c_varchar")
+                .values(1, "xxx")
+                .values(8, "yyy").exec();
 
-        Response response1 = target("/e4/8").request().delete();
-        assertEquals(Status.OK.getStatusCode(), response1.getStatus());
-        assertEquals("{\"success\":true}", response1.readEntity(String.class));
+        Response r1 = target("/e4/8").request().delete();
+        onSuccess(r1).bodyEquals("{\"success\":true}");
 
-        Response response2 = target("/e4/8").request().delete();
-        assertEquals(Status.NOT_FOUND.getStatusCode(), response2.getStatus());
-        assertEquals("{\"success\":false,\"message\":\"No object for ID '8' and entity 'E4'\"}",
-                response2.readEntity(String.class));
+        Response r2 = target("/e4/8").request().delete();
+        onResponse(r2).statusEquals(Status.NOT_FOUND).bodyEquals("{\"success\":false,\"message\":\"No object for ID '8' and entity 'E4'\"}");
     }
 
     @Test
     public void test_Delete_UpperCasePK() {
 
-        insert("e24", "TYPE, NAME", "1, 'xyz'");
+        e24().insertColumns("TYPE", "name").values(1, "xyz").exec();
 
-        Response response1 = target("/e24/1").request().delete();
-        assertEquals(Status.OK.getStatusCode(), response1.getStatus());
+        Response r = target("/e24/1").request().delete();
+        onSuccess(r).bodyEquals("{\"success\":true}");
     }
 
     @Path("")
