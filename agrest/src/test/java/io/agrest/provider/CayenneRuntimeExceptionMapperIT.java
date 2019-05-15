@@ -1,10 +1,11 @@
 package io.agrest.provider;
 
 import io.agrest.DataResponse;
-import io.agrest.it.fixture.JerseyTestOnDerby;
+import io.agrest.it.fixture.BQJerseyTestOnDerby;
 import io.agrest.it.fixture.cayenne.E2;
 import org.apache.cayenne.CayenneException;
 import org.apache.cayenne.CayenneRuntimeException;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import javax.ws.rs.GET;
@@ -12,16 +13,20 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Configuration;
 import javax.ws.rs.core.Context;
-import javax.ws.rs.core.FeatureContext;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
-public class CayenneRuntimeExceptionMapperIT extends JerseyTestOnDerby {
+public class CayenneRuntimeExceptionMapperIT extends BQJerseyTestOnDerby {
+
+    @BeforeClass
+    public static void startTestRuntime() {
+        startTestRuntime(Resource.class);
+    }
 
     @Override
-    protected void doAddResources(FeatureContext context) {
-        context.register(Resource.class);
+    protected Class<?>[] testEntities() {
+        return new Class[0];
     }
 
     @Test
