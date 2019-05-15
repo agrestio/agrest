@@ -19,6 +19,7 @@ import io.bootique.cayenne.CayenneModule;
 import io.bootique.cayenne.test.CayenneTestDataManager;
 import io.bootique.jdbc.test.Table;
 import io.bootique.jersey.JerseyModule;
+import io.bootique.jersey.JerseyModuleExtender;
 import io.bootique.test.junit.BQTestFactory;
 import org.apache.cayenne.configuration.server.ServerRuntime;
 import org.junit.ClassRule;
@@ -40,21 +41,27 @@ public abstract class BQJerseyTestOnDerby {
     @Rule
     public CayenneTestDataManager dataManager = createDataManager(TEST_RUNTIME);
 
-    protected static void startTestRuntime(Class<?> resource) {
-        startTestRuntime(resource, b -> b);
+    protected static void startTestRuntime(Class<?>... resources) {
+        startTestRuntime(b -> b, resources);
     }
 
-    protected static void startTestRuntime(Class<?> resource, UnaryOperator<AgBuilder> agCustomizer) {
+    protected static void startTestRuntime(UnaryOperator<AgBuilder> agCustomizer, Class<?>... resources) {
         TEST_RUNTIME = TEST_FACTORY.app("-s", "-c", "classpath:io/agrest/it/fixture/server.yml")
                 .autoLoadModules()
                 .module(new AgModule(agCustomizer))
                 .module(b -> CayenneModule.extend(b).addProject("cayenne-agrest-tests.xml"))
-                .module(b -> JerseyModule.extend(b)
-                        .addResource(resource)
-                        .addFeature(AgRuntime.class))
+                .module(b -> addResources(JerseyModule.extend(b), resources).addFeature(AgRuntime.class))
                 .createRuntime();
 
         TEST_RUNTIME.run();
+    }
+
+    private static JerseyModuleExtender addResources(JerseyModuleExtender extender, Class<?>... resources) {
+        for (Class<?> c : resources) {
+            extender.addResource(c);
+        }
+
+        return extender;
     }
 
     protected CayenneTestDataManager createDataManager(BQRuntime runtime) {
@@ -73,7 +80,7 @@ public abstract class BQJerseyTestOnDerby {
     protected abstract Class<?>[] testEntities();
 
     protected ResponseAssertions onSuccess(Response response) {
-        return new ResponseAssertions(response).wasSuccess();
+        return onResponse(response).wasSuccess();
     }
 
     protected ResponseAssertions onResponse(Response response) {

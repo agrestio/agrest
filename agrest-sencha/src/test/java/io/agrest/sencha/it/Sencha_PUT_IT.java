@@ -2,10 +2,10 @@ package io.agrest.sencha.it;
 
 import io.agrest.Ag;
 import io.agrest.DataResponse;
-import io.agrest.it.fixture.JerseyTestOnDerby;
+import io.agrest.it.fixture.cayenne.E2;
 import io.agrest.it.fixture.cayenne.E3;
-import org.apache.cayenne.Cayenne;
-import org.apache.cayenne.query.SelectById;
+import io.agrest.sencha.it.fixture.SenchaBQJerseyTestOnDerby;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import javax.ws.rs.PUT;
@@ -14,95 +14,89 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.Configuration;
 import javax.ws.rs.core.Context;
-import javax.ws.rs.core.FeatureContext;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
+import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.Assert.*;
 
-public class Sencha_PUT_IT extends JerseyTestOnDerby {
+public class Sencha_PUT_IT extends SenchaBQJerseyTestOnDerby {
+
+    @BeforeClass
+    public static void startTestRuntime() {
+        startTestRuntime(Resource.class);
+    }
 
     @Override
-    protected void doAddResources(FeatureContext context) {
-        context.register(Resource.class);
+    protected Class<?>[] testEntities() {
+        return new Class[]{E2.class, E3.class};
     }
+
 
     @Test
     public void testPut_ToOne_FromNull() {
-        insert("e2", "id, name", "1, 'xxx'");
-        insert("e2", "id, name", "8, 'yyy'");
-        insert("e3", "id, name, e2_id", "3, 'zzz', null");
 
-        E3 e3 = Cayenne.objectForPK(newContext(), E3.class, 3);
-        newContext().invalidateObjects(e3);
-        assertNull(e3.getE2());
+        e2().insertColumns("id", "name")
+                .values(1, "xxx")
+                .values(8, "yyy").exec();
 
-        Response r = target("/e3/3").request()
-                .put(Entity.json("{\"id\":3,\"e2_id\":8}"));
-        assertEquals(Status.OK.getStatusCode(), r.getStatus());
-        assertEquals("{\"success\":true,\"data\":[{\"id\":3,\"name\":\"zzz\",\"phoneNumber\":null}],\"total\":1}",
-                r.readEntity(String.class));
+        e3().insertColumns("id", "name", "e2_id").values(3, "zzz", null).exec();
 
-        e3 = Cayenne.objectForPK(newContext(), E3.class, 3);
-        newContext().invalidateObjects(e3);
-        assertEquals(8, Cayenne.intPKForObject(e3.getE2()));
+        Response r = target("/e3/3").request().put(Entity.json("{\"id\":3,\"e2_id\":8}"));
+        onSuccess(r).bodyEquals(1, "{\"id\":3,\"name\":\"zzz\",\"phoneNumber\":null}");
+
+        e3().matcher().eq("id", 3).eq("e2_id", 8).assertOneMatch();
     }
 
     @Test
     public void testPut_ToOne_ToNull() {
 
-        insert("e2", "id, name", "1, 'xxx'");
-        insert("e2", "id, name", "8, 'yyy'");
-        insert("e3", "id, name, e2_id", "3, 'zzz', 8");
+        e2().insertColumns("id", "name")
+                .values(1, "xxx")
+                .values(8, "yyy").exec();
 
-        Response response1 = target("/e3/3").request()
-                .put(Entity.json("{\"id\":3,\"e2_id\":null}"));
+        e3().insertColumns("id", "name", "e2_id").values(3, "zzz", 8).exec();
 
-        assertEquals(Status.OK.getStatusCode(), response1.getStatus());
-        assertEquals("{\"success\":true,\"data\":[{\"id\":3,\"name\":\"zzz\",\"phoneNumber\":null}],\"total\":1}",
-                response1.readEntity(String.class));
+        Response r = target("/e3/3").request().put(Entity.json("{\"id\":3,\"e2_id\":null}"));
+        onSuccess(r).bodyEquals(1, "{\"id\":3,\"name\":\"zzz\",\"phoneNumber\":null}");
 
-        E3 e3 = SelectById.query(E3.class, 3).prefetch(E3.E2.joint()).selectOne(newContext());
-        assertNull(e3.getE2());
+        // TODO: can't use matcher until BQ 1.1 upgrade (because of https://github.com/bootique/bootique-jdbc/issues/91 )
+        //  so using select...
+
+        List<Object[]> rows = e3().selectColumns("id", "e2_id");
+        assertEquals(1, rows.size());
+        assertEquals(3, rows.get(0)[0]);
+        assertNull(rows.get(0)[1]);
     }
 
     @Test
     public void testPut_ToOne() {
 
-        insert("e2", "id, name", "1, 'xxx'");
-        insert("e2", "id, name", "8, 'yyy'");
-        insert("e3", "id, name, e2_id", "3, 'zzz', 8");
+        e2().insertColumns("id", "name")
+                .values(1, "xxx")
+                .values(8, "yyy").exec();
 
-        E3 e3 = Cayenne.objectForPK(newContext(), E3.class, 3);
-        newContext().invalidateObjects(e3);
-        assertEquals(8, Cayenne.intPKForObject(e3.getE2()));
+        e3().insertColumns("id", "name", "e2_id").values(3, "zzz", 8).exec();
 
-        Response response1 = target("/e3/3").request()
-                .put(Entity.json("{\"id\":3,\"e2_id\":1}"));
-        assertEquals(Status.OK.getStatusCode(), response1.getStatus());
-        assertEquals("{\"success\":true,\"data\":[{\"id\":3,\"name\":\"zzz\",\"phoneNumber\":null}],\"total\":1}",
-                response1.readEntity(String.class));
+        Response r = target("/e3/3").request().put(Entity.json("{\"id\":3,\"e2_id\":1}"));
+        onSuccess(r).bodyEquals(1, "{\"id\":3,\"name\":\"zzz\",\"phoneNumber\":null}");
 
-        e3 = Cayenne.objectForPK(newContext(), E3.class, 3);
-        newContext().invalidateObjects(e3);
-        assertEquals(1, Cayenne.intPKForObject(e3.getE2()));
+        e3().matcher().eq("id", 3).eq("e2_id", 1).assertOneMatch();
     }
 
     @Test
     public void testPut_ToOne_Relationship_Name() {
 
-        insert("e2", "id, name", "1, 'xxx'");
-        insert("e2", "id, name", "8, 'yyy'");
-        insert("e3", "id, name, e2_id", "3, 'zzz', 8");
+        e2().insertColumns("id", "name")
+                .values(1, "xxx")
+                .values(8, "yyy").exec();
 
-        Response response1 = target("/e3/3").request()
-                .put(Entity.json("{\"id\":3,\"e2\":1}"));
-        assertEquals(Status.OK.getStatusCode(), response1.getStatus());
-        assertEquals("{\"success\":true,\"data\":[{\"id\":3,\"name\":\"zzz\",\"phoneNumber\":null}],\"total\":1}",
-                response1.readEntity(String.class));
+        e3().insertColumns("id", "name", "e2_id")
+                .values(3, "zzz", 8).exec();
 
-        assertEquals(1, intForQuery("SELECT COUNT(1) FROM utest.e3 WHERE id = 3 AND e2_id  = 1"));
+        Response r = target("/e3/3").request().put(Entity.json("{\"id\":3,\"e2\":1}"));
+        onSuccess(r).bodyEquals(1, "{\"id\":3,\"name\":\"zzz\",\"phoneNumber\":null}");
+
+        e3().matcher().eq("id", 3).eq("e2_id", 1).assertOneMatch();
     }
 
     @Path("")

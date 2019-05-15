@@ -35,19 +35,21 @@ public class ResponseAssertions {
     }
 
     public ResponseAssertions bodyEquals(long total, String... jsonObjects) {
+        return bodyEquals(buildExpectedJson(total, jsonObjects));
+    }
 
+    protected String buildExpectedJson(long total, String... jsonObjects) {
         StringBuilder expectedJson = new StringBuilder("{\"data\":[");
         for (String o : jsonObjects) {
             expectedJson.append(o).append(",");
         }
 
-        // rempve last comma
+        // remove last comma
         expectedJson.deleteCharAt(expectedJson.length() - 1)
                 .append("],\"total\":")
                 .append(total)
                 .append("}");
-
-        return bodyEquals(expectedJson.toString());
+        return expectedJson.toString();
     }
 
     public ResponseAssertions bodyEqualsMapBy(long total, String... jsonKeyValues) {

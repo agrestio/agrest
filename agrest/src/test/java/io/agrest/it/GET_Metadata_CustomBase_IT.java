@@ -22,7 +22,7 @@ public class GET_Metadata_CustomBase_IT extends BQJerseyTestOnDerby {
 
     @BeforeClass
     public static void startTestRuntime() {
-        startTestRuntime(R1.class, ab -> ab.baseUrl("https://example.org"));
+        startTestRuntime(ab -> ab.baseUrl("https://example.org"), Resource.class);
     }
 
     @Override
@@ -41,7 +41,7 @@ public class GET_Metadata_CustomBase_IT extends BQJerseyTestOnDerby {
     }
 
     @Path("r1")
-    public static class R1 {
+    public static class Resource {
 
         @Context
         private Configuration config;
@@ -50,7 +50,7 @@ public class GET_Metadata_CustomBase_IT extends BQJerseyTestOnDerby {
         @Path("meta")
         @AgResource(entityClass = E5.class, type = LinkType.METADATA)
         public MetadataResponse<E5> getMetadata(@Context UriInfo uriInfo) {
-            return Ag.metadata(E5.class, config).forResource(R1.class).uri(uriInfo).process();
+            return Ag.metadata(E5.class, config).forResource(Resource.class).uri(uriInfo).process();
         }
     }
 

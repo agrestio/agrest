@@ -3,11 +3,12 @@ package io.agrest.sencha.it;
 import io.agrest.Ag;
 import io.agrest.DataResponse;
 import io.agrest.SelectStage;
-import io.agrest.it.fixture.JerseyTestOnDerby;
 import io.agrest.it.fixture.cayenne.E2;
 import io.agrest.it.fixture.cayenne.E3;
+import io.agrest.it.fixture.cayenne.E5;
 import io.agrest.sencha.SenchaOps;
-import org.apache.cayenne.query.SQLTemplate;
+import io.agrest.sencha.it.fixture.SenchaBQJerseyTestOnDerby;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import javax.ws.rs.GET;
@@ -15,245 +16,213 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Configuration;
 import javax.ws.rs.core.Context;
-import javax.ws.rs.core.FeatureContext;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriInfo;
 
-import static org.junit.Assert.assertEquals;
+public class Sencha_GET_IT extends SenchaBQJerseyTestOnDerby {
 
-public class Sencha_GET_IT extends JerseyTestOnDerby {
+    @BeforeClass
+    public static void startTestRuntime() {
+        startTestRuntime(Resource.class);
+    }
 
-	@Override
-	protected void doAddResources(FeatureContext context) {
-		context.register(Resource.class);
-	}
+    @Override
+    protected Class<?>[] testEntities() {
+        return new Class[]{E2.class, E3.class, E5.class};
+    }
 
-	@Test
-	public void test_SelectById_Prefetching() {
+    @Test
+    public void test_SelectById_Prefetching() {
 
-		newContext().performGenericQuery(
-				new SQLTemplate(E2.class, "INSERT INTO utest.e2 (id, name) values (1, 'xxx')"));
-		newContext().performGenericQuery(
-				new SQLTemplate(E3.class, "INSERT INTO utest.e3 (id, e2_id, name) values (8, 1, 'yyy')"));
-		newContext().performGenericQuery(
-				new SQLTemplate(E3.class, "INSERT INTO utest.e3 (id, e2_id, name) values (9, 1, 'zzz')"));
+        e2().insertColumns("id", "name").values(1, "xxx").exec();
+        e3().insertColumns("id", "name", "e2_id")
+                .values(8, "yyy", 1)
+                .values(9, "zzz", 1).exec();
 
-		Response response1 = target("/e3/8").queryParam("include", "e2.id").request().get();
+        Response response1 = target("/e3/8").queryParam("include", "e2.id").request().get();
+        onSuccess(response1).bodyEquals(1, "{\"id\":8,\"e2\":{\"id\":1},\"e2_id\":1,\"name\":\"yyy\",\"phoneNumber\":null}");
 
-		assertEquals(Status.OK.getStatusCode(), response1.getStatus());
-		assertEquals(
-				"{\"success\":true,\"data\":[{\"id\":8,\"e2\":{\"id\":1},\"e2_id\":1,\"name\":\"yyy\",\"phoneNumber\":null}],\"total\":1}",
-				response1.readEntity(String.class));
+        Response response2 = target("/e3/8").queryParam("include", "e2.name").request().get();
+        onSuccess(response2).bodyEquals(1, "{\"id\":8,\"e2\":{\"name\":\"xxx\"},\"e2_id\":1,\"name\":\"yyy\",\"phoneNumber\":null}");
 
-		Response response2 = target("/e3/8").queryParam("include", "e2.name").request().get();
+        Response response3 = target("/e2/1").queryParam("include", "e3s.id").request().get();
+        onSuccess(response3).bodyEquals(1, "{\"id\":1,\"address\":null,\"e3s\":[{\"id\":8},{\"id\":9}],\"name\":\"xxx\"}");
+    }
 
-		assertEquals(Status.OK.getStatusCode(), response2.getStatus());
-		assertEquals(
-				"{\"success\":true,\"data\":[{\"id\":8,\"e2\":{\"name\":\"xxx\"},\"e2_id\":1,\"name\":\"yyy\",\"phoneNumber\":null}],\"total\":1}",
-				response2.readEntity(String.class));
+    @Test
+    public void test_Select_Prefetching() {
 
-		Response response3 = target("/e2/1").queryParam("include", "e3s.id").request().get();
+        e2().insertColumns("id", "name").values(1, "xxx").exec();
+        e3().insertColumns("id", "name", "e2_id")
+                .values(8, "yyy", 1)
+                .values(9, "zzz", 1).exec();
 
-		assertEquals(Status.OK.getStatusCode(), response3.getStatus());
-		assertEquals("{\"success\":true,\"data\":[{\"id\":1,\"address\":null,\"e3s\":"
-				+ "[{\"id\":8},{\"id\":9}],\"name\":\"xxx\"}],\"total\":1}", response3.readEntity(String.class));
-	}
+        Response r = target("/e3")
+                .queryParam("include", "id")
+                .queryParam("include", "e2.id")
+                .queryParam("sort", "id").request().get();
 
-	@Test
-	public void test_Select_Prefetching() {
+        onSuccess(r).bodyEquals(2, "{\"id\":8,\"e2\":{\"id\":1},\"e2_id\":1},{\"id\":9,\"e2\":{\"id\":1},\"e2_id\":1}");
+    }
 
-		newContext().performGenericQuery(
-				new SQLTemplate(E2.class, "INSERT INTO utest.e2 (id, name) values (1, 'xxx')"));
-		newContext().performGenericQuery(
-				new SQLTemplate(E3.class, "INSERT INTO utest.e3 (id, e2_id, name) values (8, 1, 'yyy')"));
-		newContext().performGenericQuery(
-				new SQLTemplate(E3.class, "INSERT INTO utest.e3 (id, e2_id, name) values (9, 1, 'zzz')"));
+    @Test
+    public void test_Select_Prefetching_StartLimit() {
 
-		Response response1 = target("/e3").queryParam("include", "id").queryParam("include", "e2.id")
-				.queryParam("sort", "id").request().get();
+        e2().insertColumns("id", "name").values(1, "xxx").exec();
+        e3().insertColumns("id", "name", "e2_id")
+                .values(8, "yyy", 1)
+                .values(9, "zzz", 1)
+                .values(10, "zzz", 1)
+                .values(11, "zzz", 1).exec();
 
-		assertEquals(Status.OK.getStatusCode(), response1.getStatus());
-		assertEquals("{\"success\":true,\"data\":[{\"id\":8,\"e2\":{\"id\":1},\"e2_id\":1},"
-				+ "{\"id\":9,\"e2\":{\"id\":1},\"e2_id\":1}],\"total\":2}", response1.readEntity(String.class));
-	}
+        Response r = target("/e3")
+                .queryParam("include", "id")
+                .queryParam("include", "e2.id")
+                .queryParam("sort", "id")
+                .queryParam("start", "1")
+                .queryParam("limit", "2").request().get();
 
-	@Test
-	public void test_Select_Prefetching_StartLimit() {
+        onSuccess(r).bodyEquals(4, "{\"id\":9,\"e2\":{\"id\":1},\"e2_id\":1},{\"id\":10,\"e2\":{\"id\":1},\"e2_id\":1}");
+    }
 
-		newContext().performGenericQuery(
-				new SQLTemplate(E2.class, "INSERT INTO utest.e2 (id, name) values (1, 'xxx')"));
-		newContext().performGenericQuery(
-				new SQLTemplate(E3.class, "INSERT INTO utest.e3 (id, e2_id, name) values (8, 1, 'yyy')"));
-		newContext().performGenericQuery(
-				new SQLTemplate(E3.class, "INSERT INTO utest.e3 (id, e2_id, name) values (9, 1, 'zzz')"));
-		newContext().performGenericQuery(
-				new SQLTemplate(E3.class, "INSERT INTO utest.e3 (id, e2_id, name) values (10, 1, 'zzz')"));
-		newContext().performGenericQuery(
-				new SQLTemplate(E3.class, "INSERT INTO utest.e3 (id, e2_id, name) values (11, 1, 'zzz')"));
+    @Test
+    public void test_SelectToOne_Null() {
 
-		Response response1 = target("/e3").queryParam("include", "id").queryParam("include", "e2.id")
-				.queryParam("sort", "id").queryParam("start", "1").queryParam("limit", "2").request().get();
+        e2().insertColumns("id", "name").values(1, "xxx").exec();
+        e3().insertColumns("id", "name", "e2_id")
+                .values(8, "yyy", 1)
+                .values(9, "zzz", null).exec();
 
-		assertEquals(Status.OK.getStatusCode(), response1.getStatus());
-		assertEquals("{\"success\":true,\"data\":[{\"id\":9,\"e2\":{\"id\":1},\"e2_id\":1},"
-				+ "{\"id\":10,\"e2\":{\"id\":1},\"e2_id\":1}],\"total\":4}", response1.readEntity(String.class));
-	}
+        Response r = target("/e3").queryParam("include", "e2.id").queryParam("include", "id").request().get();
+        onSuccess(r).bodyEquals(2, "{\"id\":8,\"e2\":{\"id\":1},\"e2_id\":1},{\"id\":9,\"e2\":null,\"e2_id\":null}");
+    }
 
-	@Test
-	public void test_SelectToOne_Null() {
+    @Test
+    public void test_MapBy_ToOne() {
 
-		newContext().performGenericQuery(
-				new SQLTemplate(E2.class, "INSERT INTO utest.e2 (id, name) values (1, 'xxx')"));
-		newContext().performGenericQuery(
-				new SQLTemplate(E3.class, "INSERT INTO utest.e3 (id, e2_id, name) values (8, 1, 'yyy')"));
-		newContext().performGenericQuery(
-				new SQLTemplate(E3.class, "INSERT INTO utest.e3 (id, e2_id, name) values (9, null, 'zzz')"));
+        e2().insertColumns("id", "name").values(1, "xxx").exec();
+        e3().insertColumns("id", "name", "e2_id")
+                .values(8, "yyy", 1).exec();
 
-		Response response1 = target("/e3").queryParam("include", "e2.id").queryParam("include", "id").request().get();
+        Response r = target("/e3")
+                .queryParam("include", urlEnc("{\"path\":\"e2\",\"mapBy\":\"name\"}"))
+                .queryParam("include", "id").request().get();
 
-		assertEquals(Status.OK.getStatusCode(), response1.getStatus());
-		assertEquals(
-				"{\"success\":true,\"data\":[{\"id\":8,\"e2\":{\"id\":1},\"e2_id\":1},{\"id\":9,\"e2\":null,\"e2_id\":null}],\"total\":2}",
-				response1.readEntity(String.class));
-	}
+        onSuccess(r).bodyEquals(1, "{\"id\":8,\"e2\":{\"id\":1,\"address\":null,\"name\":\"xxx\"},\"e2_id\":1}");
+    }
 
-	@Test
-	public void test_MapBy_ToOne() {
+    @Test
+    public void test_ToMany_IncludeRelated() {
 
-		newContext().performGenericQuery(
-				new SQLTemplate(E2.class, "INSERT INTO utest.e2 (id, name) values (1, 'xxx')"));
-		newContext().performGenericQuery(
-				new SQLTemplate(E3.class, "INSERT INTO utest.e3 (id, e2_id, name) values (8, 1, 'yyy')"));
+        e2().insertColumns("id", "name").values(1, "xxx").exec();
+        e5().insertColumns("id", "name").values(345, "B").values(346, "A").exec();
+        e3().insertColumns("id", "name", "e2_id", "e5_id")
+                .values(8, "a", 1, 345)
+                .values(9, "z", 1, 345)
+                .values(7, "m", 1, 346).exec();
 
-		Response response1 = target("/e3").queryParam("include", urlEnc("{\"path\":\"e2\",\"mapBy\":\"name\"}"))
-				.queryParam("include", "id").request().get();
+        Response r = target("/e2")
+                .queryParam("include", urlEnc("{\"path\":\"e3s\"}"))
+                .queryParam("include", "id")
+                .queryParam("exclude", "e3s.id")
+                .queryParam("exclude", "e3s.phoneNumber")
+                .queryParam("include", "e3s.e5.name").request().get();
 
-		assertEquals(Status.OK.getStatusCode(), response1.getStatus());
+        onSuccess(r).bodyEquals(1, "{\"id\":1,\"e3s\":[{\"e5\":{\"name\":\"B\"},\"e5_id\":345,\"name\":\"a\"},"
+                + "{\"e5\":{\"name\":\"B\"},\"e5_id\":345,\"name\":\"z\"},"
+                + "{\"e5\":{\"name\":\"A\"},\"e5_id\":346,\"name\":\"m\"}]}");
+    }
 
-		// no support for MapBy for to-one... simply ignoring it...
-		assertEquals("{\"success\":true,\"data\":[{\"id\":8,\"e2\":{"
-				+ "\"id\":1,\"address\":null,\"name\":\"xxx\"},\"e2_id\":1}],\"total\":1}",
-				response1.readEntity(String.class));
-	}
+    @Test
+    public void test_PathRelationship() {
 
-	@Test
-	public void test_ToMany_IncludeRelated() {
-		newContext().performGenericQuery(
-				new SQLTemplate(E3.class, "INSERT INTO utest.e5 (id,name) values (345, 'B'),(346, 'A')"));
-		newContext().performGenericQuery(
-				new SQLTemplate(E2.class, "INSERT INTO utest.e2 (id, name) values (1, 'xxx')"));
-		newContext().performGenericQuery(
-				new SQLTemplate(E3.class, "INSERT INTO utest.e3 (id, e2_id, e5_id, name) "
-						+ "values (8, 1, 345, 'a'),(9, 1, 345, 'z'),(7, 1, 346, 'm')"));
+        e2().insertColumns("id", "name").values(1, "xxx").exec();
+        e3().insertColumns("id", "name", "e2_id").values(8, "yyy", 1).exec();
 
-		Response response1 = target("/e2").queryParam("include", urlEnc("{\"path\":\"e3s\"}"))
-				.queryParam("include", "id").queryParam("exclude", "e3s.id").queryParam("exclude", "e3s.phoneNumber")
-				.queryParam("include", "e3s.e5.name").request().get();
+        Response r = target("/e3")
+                .queryParam("include", urlEnc("{\"path\":\"e2\"}"))
+                .queryParam("include", "id").request().get();
 
-		assertEquals(Status.OK.getStatusCode(), response1.getStatus());
-		assertEquals(
-				"{\"success\":true,\"data\":[{\"id\":1,\"e3s\":[{\"e5\":{\"name\":\"B\"},\"e5_id\":345,\"name\":\"a\"},"
-						+ "{\"e5\":{\"name\":\"B\"},\"e5_id\":345,\"name\":\"z\"},"
-						+ "{\"e5\":{\"name\":\"A\"},\"e5_id\":346,\"name\":\"m\"}]}],\"total\":1}",
-				response1.readEntity(String.class));
-	}
+        onSuccess(r).bodyEquals(1, "{\"id\":8,\"e2\":{\"id\":1,\"address\":null,\"name\":\"xxx\"},\"e2_id\":1}");
+    }
 
-	@Test
-	public void test_PathRelationship() {
+    @Test
+    public void test_Filter_ById() {
 
-		newContext().performGenericQuery(
-				new SQLTemplate(E2.class, "INSERT INTO utest.e2 (id, name) values (1, 'xxx')"));
-		newContext().performGenericQuery(
-				new SQLTemplate(E3.class, "INSERT INTO utest.e3 (id, e2_id, name) values (8, 1, 'yyy')"));
+        e2().insertColumns("id", "name").values(1, "xxx").exec();
 
-		Response response1 = target("/e3").queryParam("include", urlEnc("{\"path\":\"e2\"}"))
-				.queryParam("include", "id").request().get();
+        Response r = target("/e2")
+                .queryParam("include", "id")
+                .queryParam("filter", urlEnc("[{\"exactMatch\":true,\"disabled\":false,\"property\":\"id\",\"operator\":\"=\",\"value\":1}]"))
+                .request().get();
 
-		assertEquals(Status.OK.getStatusCode(), response1.getStatus());
-		assertEquals("{\"success\":true,\"data\":[{\"id\":8,\"e2\":{\"id\":1,\"address\":null,\"name\":\"xxx\"},"
-				+ "\"e2_id\":1}],\"total\":1}", response1.readEntity(String.class));
-	}
-
-	@Test
-	public void test_Filter_ById() {
-
-		newContext().performGenericQuery(
-				new SQLTemplate(E2.class, "INSERT INTO utest.e2 (id, name) values (1, 'xxx')"));
-
-		Response response1 = target("/e2").queryParam("include", "id")
-   			.queryParam("filter", urlEnc("[{\"exactMatch\":true,\"disabled\":false," +
-					"\"property\":\"id\",\"operator\":\"=\",\"value\":1}]")).request().get();
-
-		assertEquals(Status.OK.getStatusCode(), response1.getStatus());
-		assertEquals("{\"success\":true,\"data\":[{\"id\":1}],\"total\":1}", response1.readEntity(String.class));
-	}
+        onSuccess(r).bodyEquals(1, "{\"id\":1}");
+    }
 
     @Test
     public void testGet_StartsWith_AfterParseRequest() {
 
-        insert("e2", "id, name", "1, 'Axx'");
-        insert("e2", "id, name", "2, 'Bxx'");
-        insert("e2", "id, name", "3, 'cxx'");
+        e2().insertColumns("id", "name")
+                .values(1, "Axx")
+                .values(2, "Bxx")
+                .values(3, "cxx").exec();
 
         Response r1 = target("/e2_startwith_pr")
                 .queryParam("include", "id")
                 .queryParam("query", "a")
                 .queryParam("sort", "id").request().get();
 
-        assertEquals(Status.OK.getStatusCode(), r1.getStatus());
-        assertEquals("{\"success\":true,\"data\":[{\"id\":1}],\"total\":1}", r1.readEntity(String.class));
+        onSuccess(r1).bodyEquals(1, "{\"id\":1}");
+
 
         Response r2 = target("/e2_startwith_pr")
                 .queryParam("include", "id")
                 .queryParam("query", "C")
                 .queryParam("sort", "id").request().get();
 
-        assertEquals(Status.OK.getStatusCode(), r2.getStatus());
-        assertEquals("{\"success\":true,\"data\":[{\"id\":3}],\"total\":1}", r2.readEntity(String.class));
+        onSuccess(r2).bodyEquals(1, "{\"id\":3}");
     }
 
     @Test
     public void testGet_StartsWith_AfterAssembleQuery() {
 
-        insert("e2", "id, name", "1, 'Axx'");
-        insert("e2", "id, name", "2, 'Bxx'");
-        insert("e2", "id, name", "3, 'cxx'");
+        e2().insertColumns("id", "name")
+                .values(1, "Axx")
+                .values(2, "Bxx")
+                .values(3, "cxx").exec();
 
         Response r1 = target("/e2_startwith_aq")
                 .queryParam("include", "id")
                 .queryParam("query", "a")
                 .queryParam("sort", "id").request().get();
 
-        assertEquals(Status.OK.getStatusCode(), r1.getStatus());
-        assertEquals("{\"success\":true,\"data\":[{\"id\":1}],\"total\":1}", r1.readEntity(String.class));
+        onSuccess(r1).bodyEquals(1, "{\"id\":1}");
 
         Response r2 = target("/e2_startwith_aq")
                 .queryParam("include", "id")
                 .queryParam("query", "C")
                 .queryParam("sort", "id").request().get();
 
-        assertEquals(Status.OK.getStatusCode(), r2.getStatus());
-        assertEquals("{\"success\":true,\"data\":[{\"id\":3}],\"total\":1}", r2.readEntity(String.class));
+        onSuccess(r2).bodyEquals(1, "{\"id\":3}");
     }
 
-	@Path("")
-	public static class Resource {
+    @Path("")
+    public static class Resource {
 
-		@Context
-		private Configuration config;
+        @Context
+        private Configuration config;
 
-		@GET
+        @GET
         @Path("e2")
-		public DataResponse<E2> getE2(@Context UriInfo uriInfo) {
-			return Ag.service(config).select(E2.class).uri(uriInfo).get();
-		}
+        public DataResponse<E2> getE2(@Context UriInfo uriInfo) {
+            return Ag.service(config).select(E2.class).uri(uriInfo).get();
+        }
 
-		@GET
-		@Path("e2/{id}")
-		public DataResponse<E2> getE2ById(@PathParam("id") int id, @Context UriInfo uriInfo) {
-			return Ag.service(config).selectById(E2.class, id, uriInfo);
-		}
+        @GET
+        @Path("e2/{id}")
+        public DataResponse<E2> getE2ById(@PathParam("id") int id, @Context UriInfo uriInfo) {
+            return Ag.service(config).selectById(E2.class, id, uriInfo);
+        }
 
         @GET
         @Path("e3")
@@ -277,14 +246,14 @@ public class Sencha_GET_IT extends JerseyTestOnDerby {
                     .uri(uriInfo).get();
         }
 
-		@GET
-		@Path("e2_startwith_aq")
-		public DataResponse<E2> getE2_StartsWith_AssembleQuery(@Context UriInfo uriInfo) {
-			return Ag
-					.service(config)
-					.select(E2.class)
-					.stage(SelectStage.ASSEMBLE_QUERY, SenchaOps.startsWithFilter(E2.NAME, uriInfo))
-					.uri(uriInfo).get();
-		}
-	}
+        @GET
+        @Path("e2_startwith_aq")
+        public DataResponse<E2> getE2_StartsWith_AssembleQuery(@Context UriInfo uriInfo) {
+            return Ag
+                    .service(config)
+                    .select(E2.class)
+                    .stage(SelectStage.ASSEMBLE_QUERY, SenchaOps.startsWithFilter(E2.NAME, uriInfo))
+                    .uri(uriInfo).get();
+        }
+    }
 }

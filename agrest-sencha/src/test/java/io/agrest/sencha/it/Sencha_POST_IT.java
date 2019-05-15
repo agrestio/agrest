@@ -2,10 +2,10 @@ package io.agrest.sencha.it;
 
 import io.agrest.Ag;
 import io.agrest.DataResponse;
-import io.agrest.it.fixture.BQJerseyTestOnDerby;
 import io.agrest.it.fixture.cayenne.E14;
 import io.agrest.it.fixture.cayenne.E2;
 import io.agrest.it.fixture.cayenne.E3;
+import io.agrest.sencha.it.fixture.SenchaBQJerseyTestOnDerby;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -20,7 +20,7 @@ import javax.ws.rs.core.UriInfo;
 
 import static org.junit.Assert.*;
 
-public class Sencha_POST_IT extends BQJerseyTestOnDerby {
+public class Sencha_POST_IT extends SenchaBQJerseyTestOnDerby {
 
     @BeforeClass
     public static void startTestRuntime() {
@@ -39,17 +39,12 @@ public class Sencha_POST_IT extends BQJerseyTestOnDerby {
                 .values(1, "xxx")
                 .values(8, "yyy").exec();
 
-        Response response = target("/e3")
+        Response r = target("/e3")
                 .request()
                 .post(Entity.json("{\"e2_id\":8,\"name\":\"MM\"}"));
 
-        assertEquals(Status.CREATED.getStatusCode(), response.getStatus());
-
         Object[] row = e3().selectColumns("id", "name", "e2_id").get(0);
-
-        assertEquals(
-                "{\"success\":true,\"data\":[{\"id\":" + row[0] + ",\"name\":\"MM\",\"phoneNumber\":null}],\"total\":1}",
-                response.readEntity(String.class));
+        onResponse(r).statusEquals(Status.CREATED).bodyEquals(1, "{\"id\":" + row[0] + ",\"name\":\"MM\",\"phoneNumber\":null}");
 
         assertEquals("MM", row[1]);
         assertEquals(8, row[2]);
