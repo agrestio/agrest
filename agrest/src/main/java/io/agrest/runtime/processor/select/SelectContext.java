@@ -160,8 +160,9 @@ public class SelectContext<T> extends BaseProcessingContext<T> {
     }
 
     /**
-     * Returns AgRequest instance that is a result of merging context AgRequest with URL parameters. Used in
-     * {@link CreateResourceEntityStage} to create a tree of {@link ResourceEntity} instances for the request.
+     * Returns AgRequest instance that is the source of request data for {@link io.agrest.SelectStage#CREATE_ENTITY}
+     * stage that produces a tree of {@link ResourceEntity} instances. Usually merged request is a result of merging
+     * context AgRequest with URL parameters during {@link io.agrest.SelectStage#PARSE_REQUEST} stage.
      *
      * @since 3.2
      */
@@ -170,14 +171,10 @@ public class SelectContext<T> extends BaseProcessingContext<T> {
     }
 
     /**
-     * Sets AgRequest that contains query parameters.
-     * <p>
-     * This AgRequest object is build from two sources.
-     * 1. Parse UriInfo and create query parameters objects.
-     * 2. If some of query parameters are passed explicitly they will be used instead of parsing from UriInfo.
-     * These explicit query parameters are saved in mergedRequest object during ParseRequestStage.
+     * Sets AgRequest instance that is the source of request data for {@link io.agrest.SelectStage#CREATE_ENTITY} stage
+     * to create a tree of {@link ResourceEntity} instances.
      *
-     * @since 2.13
+     * @since 3.2
      */
     public void setMergedRequest(AgRequest request) {
         this.mergedRequest = request;
@@ -220,6 +217,6 @@ public class SelectContext<T> extends BaseProcessingContext<T> {
      */
     @Deprecated
     public void setRawRequest(AgRequest request) {
-        this.mergedRequest = request;
+        setMergedRequest(request);
     }
 }

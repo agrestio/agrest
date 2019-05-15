@@ -24,278 +24,293 @@ import java.util.Map;
 /**
  * Maintains state of the request processing chain for various updating
  * requests.
- * 
+ *
  * @since 1.16
  */
 public class UpdateContext<T> extends BaseProcessingContext<T> {
 
-	private ResourceEntity<T> entity;
-	private UriInfo uriInfo;
-	private AgObjectId id;
-	private EntityParent<?> parent;
-	private Constraint<T> readConstraints;
-	private Constraint<T> writeConstraints;
-	private boolean includingDataInResponse;
-	private ObjectMapperFactory mapper;
-	private String entityData;
-	private boolean idUpdatesDisallowed;
-	private Collection<EntityUpdate<T>> updates;
-	private Encoder encoder;
-	private List objects;
-	private AgRequest rawRequest;
-	private AgRequest request;
+    private ResourceEntity<T> entity;
+    private UriInfo uriInfo;
+    private AgObjectId id;
+    private EntityParent<?> parent;
+    private Constraint<T> readConstraints;
+    private Constraint<T> writeConstraints;
+    private boolean includingDataInResponse;
+    private ObjectMapperFactory mapper;
+    private String entityData;
+    private boolean idUpdatesDisallowed;
+    private Collection<EntityUpdate<T>> updates;
+    private Encoder encoder;
+    private List objects;
+    private AgRequest mergedRequest;
+    private AgRequest request;
 
-	public UpdateContext(Class<T> type) {
-		super(type);
-	}
+    public UpdateContext(Class<T> type) {
+        super(type);
+    }
 
-	/**
-	 * Returns a newly created DataResponse object reflecting the context state.
-	 * 
-	 * @since 1.24
-	 * @return a newly created DataResponse object reflecting the context state.
-	 */
-	public DataResponse<T> createDataResponse() {
-		List<T> objects = this.objects != null ? this.objects : Collections.<T> emptyList();
-		DataResponse<T> response = DataResponse.forType(getType());
-		response.setObjects(objects);
-		response.setEncoder(encoder);
-		response.setStatus(getStatus());
-		return response;
-	}
+    /**
+     * Returns a newly created DataResponse object reflecting the context state.
+     *
+     * @return a newly created DataResponse object reflecting the context state.
+     * @since 1.24
+     */
+    public DataResponse<T> createDataResponse() {
+        List<T> objects = this.objects != null ? this.objects : Collections.<T>emptyList();
+        DataResponse<T> response = DataResponse.forType(getType());
+        response.setObjects(objects);
+        response.setEncoder(encoder);
+        response.setStatus(getStatus());
+        return response;
+    }
 
-	/**
-	 * @since 1.19
-	 */
-	public boolean hasChanges() {
+    /**
+     * @since 1.19
+     */
+    public boolean hasChanges() {
 
-		for (EntityUpdate<T> u : updates) {
-			if (u.hasChanges()) {
-				return true;
-			}
-		}
+        for (EntityUpdate<T> u : updates) {
+            if (u.hasChanges()) {
+                return true;
+            }
+        }
 
-		return false;
-	}
+        return false;
+    }
 
-	/**
-	 * @since 1.19
-	 */
-	public Collection<EntityUpdate<T>> getUpdates() {
-		return updates;
-	}
+    /**
+     * @since 1.19
+     */
+    public Collection<EntityUpdate<T>> getUpdates() {
+        return updates;
+    }
 
-	public void setUpdates(Collection<EntityUpdate<T>> updates) {
-		this.updates = updates;
-	}
+    public void setUpdates(Collection<EntityUpdate<T>> updates) {
+        this.updates = updates;
+    }
 
-	/**
-	 * Returns first update object. Throws unless this response contains exactly
-	 * one update.
-	 * 
-	 * @since 1.19
-	 */
-	public EntityUpdate<T> getFirst() {
+    /**
+     * Returns first update object. Throws unless this response contains exactly
+     * one update.
+     *
+     * @since 1.19
+     */
+    public EntityUpdate<T> getFirst() {
 
-		Collection<EntityUpdate<T>> updates = getUpdates();
+        Collection<EntityUpdate<T>> updates = getUpdates();
 
-		if (updates.size() != 1) {
-			throw new AgException(Status.INTERNAL_SERVER_ERROR,
-					"Expected one object in update. Actual: " + updates.size());
-		}
+        if (updates.size() != 1) {
+            throw new AgException(Status.INTERNAL_SERVER_ERROR,
+                    "Expected one object in update. Actual: " + updates.size());
+        }
 
-		return updates.iterator().next();
-	}
+        return updates.iterator().next();
+    }
 
-	/**
-	 * @since 2.13
-	 */
-	public Map<String, List<String>> getProtocolParameters() {
-		return uriInfo != null ? uriInfo.getQueryParameters() : Collections.emptyMap();
-	}
+    /**
+     * @since 2.13
+     */
+    public Map<String, List<String>> getProtocolParameters() {
+        return uriInfo != null ? uriInfo.getQueryParameters() : Collections.emptyMap();
+    }
 
-	public UriInfo getUriInfo() {
-		return uriInfo;
-	}
+    public UriInfo getUriInfo() {
+        return uriInfo;
+    }
 
-	public void setUriInfo(UriInfo uriInfo) {
-		this.uriInfo = uriInfo;
-	}
+    public void setUriInfo(UriInfo uriInfo) {
+        this.uriInfo = uriInfo;
+    }
 
-	public boolean isById() {
-		return id != null;
-	}
+    public boolean isById() {
+        return id != null;
+    }
 
-	public AgObjectId getId() {
-		return id;
-	}
+    public AgObjectId getId() {
+        return id;
+    }
 
-	public void setId(Object id) {
-		this.id = new SimpleObjectId(id);
-	}
+    public void setId(Object id) {
+        this.id = new SimpleObjectId(id);
+    }
 
-	public void setCompoundId(Map<String, Object> ids) {
-		this.id = new CompoundObjectId(ids);
-	}
+    public void setCompoundId(Map<String, Object> ids) {
+        this.id = new CompoundObjectId(ids);
+    }
 
-	public EntityParent<?> getParent() {
-		return parent;
-	}
+    public EntityParent<?> getParent() {
+        return parent;
+    }
 
-	public void setParent(EntityParent<?> parent) {
-		this.parent = parent;
-	}
+    public void setParent(EntityParent<?> parent) {
+        this.parent = parent;
+    }
 
-	public Constraint<T> getReadConstraints() {
-		return readConstraints;
-	}
+    public Constraint<T> getReadConstraints() {
+        return readConstraints;
+    }
 
-	public void setReadConstraints(Constraint<T> readConstraints) {
-		this.readConstraints = readConstraints;
-	}
+    public void setReadConstraints(Constraint<T> readConstraints) {
+        this.readConstraints = readConstraints;
+    }
 
-	public Constraint<T> getWriteConstraints() {
-		return writeConstraints;
-	}
+    public Constraint<T> getWriteConstraints() {
+        return writeConstraints;
+    }
 
-	public void setWriteConstraints(Constraint<T> writeConstraints) {
-		this.writeConstraints = writeConstraints;
-	}
+    public void setWriteConstraints(Constraint<T> writeConstraints) {
+        this.writeConstraints = writeConstraints;
+    }
 
-	public boolean isIncludingDataInResponse() {
-		return includingDataInResponse;
-	}
+    public boolean isIncludingDataInResponse() {
+        return includingDataInResponse;
+    }
 
-	public void setIncludingDataInResponse(boolean includeData) {
-		this.includingDataInResponse = includeData;
-	}
+    public void setIncludingDataInResponse(boolean includeData) {
+        this.includingDataInResponse = includeData;
+    }
 
-	public ObjectMapperFactory getMapper() {
-		return mapper;
-	}
+    public ObjectMapperFactory getMapper() {
+        return mapper;
+    }
 
-	public void setMapper(ObjectMapperFactory mapper) {
-		this.mapper = mapper;
-	}
+    public void setMapper(ObjectMapperFactory mapper) {
+        this.mapper = mapper;
+    }
 
-	public String getEntityData() {
-		return entityData;
-	}
+    public String getEntityData() {
+        return entityData;
+    }
 
-	public void setEntityData(String entityData) {
-		this.entityData = entityData;
-	}
+    public void setEntityData(String entityData) {
+        this.entityData = entityData;
+    }
 
-	/**
-	 * @since 1.19
-	 */
-	public boolean isIdUpdatesDisallowed() {
-		return idUpdatesDisallowed;
-	}
+    /**
+     * @since 1.19
+     */
+    public boolean isIdUpdatesDisallowed() {
+        return idUpdatesDisallowed;
+    }
 
-	/**
-	 * @since 1.19
-	 */
-	public void setIdUpdatesDisallowed(boolean idUpdatesDisallowed) {
-		this.idUpdatesDisallowed = idUpdatesDisallowed;
-	}
+    /**
+     * @since 1.19
+     */
+    public void setIdUpdatesDisallowed(boolean idUpdatesDisallowed) {
+        this.idUpdatesDisallowed = idUpdatesDisallowed;
+    }
 
-	/**
-	 * @since 1.20
-	 */
-	public ResourceEntity<T> getEntity() {
-		return entity;
-	}
+    /**
+     * @since 1.20
+     */
+    public ResourceEntity<T> getEntity() {
+        return entity;
+    }
 
-	/**
-	 * @since 1.20
-	 */
-	public void setEntity(ResourceEntity<T> entity) {
-		this.entity = entity;
-	}
+    /**
+     * @since 1.20
+     */
+    public void setEntity(ResourceEntity<T> entity) {
+        this.entity = entity;
+    }
 
-	/**
-	 * @since 1.24
-	 */
-	public Encoder getEncoder() {
-		return encoder;
-	}
+    /**
+     * @since 1.24
+     */
+    public Encoder getEncoder() {
+        return encoder;
+    }
 
-	/**
-	 * @since 1.24
-	 */
-	public void setEncoder(Encoder encoder) {
-		this.encoder = encoder;
-	}
+    /**
+     * @since 1.24
+     */
+    public void setEncoder(Encoder encoder) {
+        this.encoder = encoder;
+    }
 
-	/**
-	 * @since 1.24
-	 */
-	public List<T> getObjects() {
-		return objects;
-	}
+    /**
+     * @since 1.24
+     */
+    public List<T> getObjects() {
+        return objects;
+    }
 
-	/**
-	 * @since 1.24
-	 */
-	public void setObjects(List<? extends T> objects) {
-		this.objects = objects;
-	}
+    /**
+     * @since 1.24
+     */
+    public void setObjects(List<? extends T> objects) {
+        this.objects = objects;
+    }
 
-	/**
-	 * Returns AgRequest that contains query parameters.
-	 * This parameters are used on the CreateEntityStage to create an entity.
-	 *
-	 * @since 2.13
-	 */
-	public AgRequest getRawRequest() {
-		return rawRequest;
-	}
+    /**
+     * Returns AgRequest instance that is the source of request data for {@link io.agrest.UpdateStage#CREATE_ENTITY}
+     * stage that produces a tree of {@link ResourceEntity} instances. Usually merged request is a result of merging
+     * context AgRequest with URL parameters during {@link io.agrest.UpdateStage#PARSE_REQUEST} stage.
+     *
+     * @since 3.2
+     */
+    public AgRequest getMergedRequest() {
+        return mergedRequest;
+    }
 
-	/**
-	 * Saves AgRequest that contains query parameters.
-	 *
-	 * This AgRequest object is build from two sources.
-	 * 1. Parse UriInfo and create query parameters objects.
-	 * 2. If some of query parameters are passed explicitly they will be used instead of parsing from UriInfo.
-	 * These explicit query parameters are saved in rawRequest object during ParseRequestStage.
-	 *
-	 * @since 2.13
-	 */
-	public void setRawRequest(AgRequest rawRequest) {
-		this.rawRequest = rawRequest;
-	}
+    /**
+     * Sets AgRequest instance that is the source of request data for {@link io.agrest.UpdateStage#CREATE_ENTITY} stage
+     * to create a tree of {@link ResourceEntity} instances.
+     *
+     * @since 3.2
+     */
+    public void setMergedRequest(AgRequest request) {
+        this.mergedRequest = request;
+    }
 
-	/**
-	 * Returns AgRequest object that contains query parameters explicitly passed through API method call
-	 *
-	 * @since 2.13
-	 */
-	public AgRequest getRequest() {
-		return request;
-	}
+    /**
+     * Returns AgRequest object that contains query parameters explicitly passed through API method call
+     *
+     * @since 2.13
+     */
+    public AgRequest getRequest() {
+        return request;
+    }
 
-	/**
-	 * Saves AgRequest object that contains query parameters explicitly passed through API method call.
-	 * These parameters are created during ConvertQueryParamsStage.
-	 *
-	 * <pre>{@code
-	 *
-	 * 		public DataResponse<E2> getE2(@Context UriInfo uriInfo, @QueryParam CayenneExp cayenneExp) {
-	 * 			// Explicit query parameter
-	 * 			AgRequest agRequest = AgRequest.builder().cayenneExp(cayenneExp).build();
-	 *
-	 * 			return Ag.service(config).select(E2.class)
-	 * 							.uri(uriInfo)
-	 * 							.request(agRequest) // overrides parameters from uriInfo
-	 * 							.get();
-	 * 		}
-	 *
-	 * }</pre>
-	 *
-	 * @since 2.13
-	 */
-	public void setRequest(AgRequest request) {
-		this.request = request;
-	}
+    /**
+     * Saves AgRequest object that contains query parameters explicitly passed through API method call.
+     * These parameters are created during ConvertQueryParamsStage.
+     *
+     * <pre>{@code
+     *
+     * 		public DataResponse<E2> getE2(@Context UriInfo uriInfo, @QueryParam CayenneExp cayenneExp) {
+     * 			// Explicit query parameter
+     * 			AgRequest agRequest = AgRequest.builder().cayenneExp(cayenneExp).build();
+     *
+     * 			return Ag.service(config).select(E2.class)
+     * 							.uri(uriInfo)
+     * 							.request(agRequest) // overrides parameters from uriInfo
+     * 							.get();
+     *        }
+     *
+     * }</pre>
+     *
+     * @since 2.13
+     */
+    public void setRequest(AgRequest request) {
+        this.request = request;
+    }
+
+    /**
+     * @since 2.13
+     * @deprecated since 3.2 in favor of {@link #getMergedRequest()}.
+     */
+    @Deprecated
+    public AgRequest getRawRequest() {
+        return getMergedRequest();
+    }
+
+    /**
+     * @since 2.13
+     * @deprecated since 3.2 in favor of {@link #setMergedRequest(AgRequest)}
+     */
+    @Deprecated
+    public void setRawRequest(AgRequest request) {
+        setMergedRequest(request);
+    }
 }

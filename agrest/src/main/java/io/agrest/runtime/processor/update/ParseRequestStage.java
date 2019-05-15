@@ -48,7 +48,7 @@ public class ParseRequestStage implements Processor<UpdateContext<?>> {
 
         // TODO: we should skip this stage for SimpleResponse-returning updates
 
-        context.setRawRequest(mergedRequest(context));
+        context.setMergedRequest(mergedRequest(context));
 
         // Parse updates payload..
         // skip parsing if we already received EntityUpdates collection parsed by MessageBodyReader

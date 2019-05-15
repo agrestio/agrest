@@ -39,7 +39,7 @@ public class CreateResourceEntityStage implements Processor<UpdateContext<?>> {
         AgEntity<T> entity = metadataService.getAgEntity(context.getType());
         ResourceEntity<T> resourceEntity = new ResourceEntity<>(entity);
 
-        AgRequest request = context.getRawRequest();
+        AgRequest request = context.getMergedRequest();
         if (request != null) {
             includeMerger.merge(resourceEntity, request.getIncludes());
             excludeMerger.merge(resourceEntity, request.getExcludes());
