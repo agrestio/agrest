@@ -9,8 +9,8 @@
 
     <groupId>io.agrest.openapi</groupId>
     <artifactId>agrest-openapi-designfirst-test</artifactId>
-    <name>agrest-openapi-designfirst-test: Openapi Integration Tests with regards of Design-First approach</name>
-    <description>Openapi Integration Tests with regards of Design-First</description>
+    <name>agrest-openapi-designfirst-test: Integration Tests for generated resources</name>
+    <description>Openapi Integration Tests for generated resources</description>
 
     <dependencies>
         <!-- required runtime dependencies -->
@@ -43,6 +43,28 @@
             <artifactId>slf4j-simple</artifactId>
             <scope>test</scope>
         </dependency>
+
+        <dependency>
+            <groupId>io.bootique</groupId>
+            <artifactId>bootique-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.bootique.jersey</groupId>
+            <artifactId>bootique-jersey</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.bootique.cayenne</groupId>
+            <artifactId>bootique-cayenne-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.bootique.jdbc</groupId>
+            <artifactId>bootique-jdbc-hikaricp</artifactId>
+            <scope>test</scope>
+        </dependency>
+
         <dependency>
             <groupId>org.glassfish.jersey.test-framework</groupId>
             <artifactId>jersey-test-framework-core</artifactId>
