@@ -9,8 +9,8 @@
 
     <groupId>io.agrest.openapi</groupId>
     <artifactId>agrest-openapi-designfirst-test</artifactId>
-    <name>agrest-openapi-designfirst-test: Integration Tests for generated resources</name>
-    <description>Openapi Integration Tests for generated resources</description>
+    <name>agrest-openapi-designfirst-test: Tests for generated resources</name>
+    <description>Openapi Integration tests for generated resources</description>
 
     <dependencies>
         <!-- required runtime dependencies -->
