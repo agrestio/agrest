@@ -264,7 +264,9 @@ public class UpdateContext<T> extends BaseProcessingContext<T> {
     }
 
     /**
-     * Returns AgRequest object that contains query parameters explicitly passed through API method call
+     * Returns a request object, previously explicitly passed to the select chain in the endpoint method. Depending on
+     * the calling chain configuration, this object is either used directly to serve the request, or is combined with
+     * URL parameters during {@link io.agrest.UpdateStage#PARSE_REQUEST}, producing a "mergedRequest".
      *
      * @since 2.13
      */
@@ -273,22 +275,9 @@ public class UpdateContext<T> extends BaseProcessingContext<T> {
     }
 
     /**
-     * Saves AgRequest object that contains query parameters explicitly passed through API method call.
-     * These parameters are created during ConvertQueryParamsStage.
-     *
-     * <pre>{@code
-     *
-     * 		public DataResponse<E2> getE2(@Context UriInfo uriInfo, @QueryParam CayenneExp cayenneExp) {
-     * 			// Explicit query parameter
-     * 			AgRequest agRequest = AgRequest.builder().cayenneExp(cayenneExp).build();
-     *
-     * 			return Ag.service(config).select(E2.class)
-     * 							.uri(uriInfo)
-     * 							.request(agRequest) // overrides parameters from uriInfo
-     * 							.get();
-     *        }
-     *
-     * }</pre>
+     * Sets a request object. Depending on the calling chain configuration, this object is either used directly to
+     * serve the request, or is combined with URL parameters during {@link io.agrest.SelectStage#PARSE_REQUEST},
+     * producing a "mergedRequest".
      *
      * @since 2.13
      */
