@@ -11,7 +11,7 @@ public class ResponseAssertions {
 
     private Response response;
 
-    ResponseAssertions(Response response) {
+    public ResponseAssertions(Response response) {
         this.response = response;
     }
 

@@ -1,0 +1,144 @@
+package io.agrest.it.fixture;
+
+import com.google.inject.Binder;
+import com.google.inject.Module;
+import com.google.inject.Provides;
+import com.google.inject.Singleton;
+import io.agrest.it.fixture.cayenne.E17;
+import io.agrest.it.fixture.cayenne.E19;
+import io.agrest.it.fixture.cayenne.E2;
+import io.agrest.it.fixture.cayenne.E3;
+import io.agrest.it.fixture.cayenne.E4;
+import io.agrest.it.fixture.cayenne.E5;
+import io.agrest.it.fixture.cayenne.E6;
+import io.agrest.runtime.AgBuilder;
+import io.agrest.runtime.AgRuntime;
+import io.bootique.BQRuntime;
+import io.bootique.cayenne.CayenneModule;
+import io.bootique.cayenne.test.CayenneTestDataManager;
+import io.bootique.jdbc.test.Table;
+import io.bootique.jersey.JerseyModule;
+import io.bootique.test.junit.BQTestFactory;
+import org.apache.cayenne.configuration.server.ServerRuntime;
+import org.junit.ClassRule;
+import org.junit.Rule;
+
+import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.core.Response;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.util.function.UnaryOperator;
+
+public abstract class BQJerseyTestOnDerby {
+
+    @ClassRule
+    public static BQTestFactory TEST_FACTORY = new BQTestFactory();
+    private static BQRuntime TEST_RUNTIME;
+
+    @Rule
+    public CayenneTestDataManager dataManager = createDataManager(TEST_RUNTIME);
+
+    protected static void startTestRuntime(Class<?> resource) {
+        startTestRuntime(resource, b -> b);
+    }
+
+    protected static void startTestRuntime(Class<?> resource, UnaryOperator<AgBuilder> agCustomizer) {
+        TEST_RUNTIME = TEST_FACTORY.app("-s", "-c", "classpath:io/agrest/it/fixture/server.yml")
+                .autoLoadModules()
+                .module(new AgModule(agCustomizer))
+                .module(b -> CayenneModule.extend(b).addProject("cayenne-agrest-tests.xml"))
+                .module(b -> JerseyModule.extend(b)
+                        .addResource(resource)
+                        .addFeature(AgRuntime.class))
+                .createRuntime();
+
+        TEST_RUNTIME.run();
+    }
+
+    protected CayenneTestDataManager createDataManager(BQRuntime runtime) {
+        return CayenneTestDataManager.builder(TEST_RUNTIME)
+                .entities(testEntities())
+                .build();
+    }
+
+    /**
+     * A method for subclasses to override to customize Agrest stack.
+     */
+    protected AgBuilder doConfigure(AgBuilder builder) {
+        return builder;
+    }
+
+    protected abstract Class<?>[] testEntities();
+
+    protected ResponseAssertions onSuccess(Response response) {
+        return new ResponseAssertions(response).wasSuccess();
+    }
+
+    protected ResponseAssertions onResponse(Response response) {
+        return new ResponseAssertions(response);
+    }
+
+    protected String urlEnc(String queryParam) {
+        try {
+            // URLEncoder replaces spaces with "+"... Those are not decoded
+            // properly by Jersey in 'uriInfo.getQueryParameters()' (TODO: why?)
+            return URLEncoder.encode(queryParam, "UTF-8").replace("+", "%20");
+        } catch (UnsupportedEncodingException e) {
+
+            // unexpected... we know that UTF-8 is present
+            throw new RuntimeException(e);
+        }
+    }
+
+    protected WebTarget target(String path) {
+        return ClientBuilder.newClient().target("http://127.0.0.1:8080/").path(path);
+    }
+
+    protected Table e2() {
+        return dataManager.getTable(E2.class);
+    }
+
+    protected Table e3() {
+        return dataManager.getTable(E3.class);
+    }
+
+    protected Table e4() {
+        return dataManager.getTable(E4.class);
+    }
+
+    protected Table e5() {
+        return dataManager.getTable(E5.class);
+    }
+
+    protected Table e6() {
+        return dataManager.getTable(E6.class);
+    }
+
+    protected Table e17() {
+        return dataManager.getTable(E17.class);
+    }
+
+    protected Table e19() {
+        return dataManager.getTable(E19.class);
+    }
+
+    public static class AgModule implements Module {
+
+        private UnaryOperator<AgBuilder> agCustomizer;
+
+        public AgModule(UnaryOperator<AgBuilder> agCustomizer) {
+            this.agCustomizer = agCustomizer;
+        }
+
+        @Override
+        public void configure(Binder binder) {
+        }
+
+        @Provides
+        @Singleton
+        AgRuntime createRuntime(ServerRuntime runtime) {
+            return agCustomizer.apply(new AgBuilder().cayenneRuntime(runtime)).build();
+        }
+    }
+}

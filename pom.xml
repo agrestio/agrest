@@ -31,13 +31,14 @@
         <maven.compiler.target>1.8</maven.compiler.target>
 
         <!-- Custom properties (mostly framework versions) -->
-        <servlet-api-version>3.0.0.v201112011016</servlet-api-version>
+        <servlet-version>3.1.0</servlet-version>
         <slf4j-version>1.7.12</slf4j-version>
         <cayenne-version>4.0.1</cayenne-version>
         <jersey-version>2.27</jersey-version>
         <jaxrs-version>2.1</jaxrs-version>
         <jackson-version>2.9.8</jackson-version>
         <openapi-generator-version>3.0.2</openapi-generator-version>
+        <bootique-version>1.0</bootique-version>
     </properties>
 
     <url>https://github.com/agrestio/agrest/</url>
@@ -112,15 +113,12 @@
                 <version>1.9.5-rc1</version>
             </dependency>
 
-            <!-- Let's only use the servlet spec used by Jetty. There is some confusion
-                with it. Origin and version of this jar bundled with production jetty is
-                "glassfish javax.servlet.3.1.0.b33", while appserver-launcher jetty artifacts
-                rely on the Orbit version and won't work with anything else. -->
             <dependency>
-                <groupId>org.eclipse.jetty.orbit</groupId>
-                <artifactId>javax.servlet</artifactId>
-                <version>${servlet-api-version}</version>
+                <groupId>javax.servlet</groupId>
+                <artifactId>javax.servlet-api</artifactId>
+                <version>${servlet-version}</version>
             </dependency>
+
             <dependency>
                 <groupId>org.slf4j</groupId>
                 <artifactId>slf4j-api</artifactId>
@@ -209,6 +207,13 @@
                 <groupId>commons-io</groupId>
                 <artifactId>commons-io</artifactId>
                 <version>1.3.2</version>
+            </dependency>
+            <dependency>
+                <groupId>io.bootique.bom</groupId>
+                <artifactId>bootique-bom</artifactId>
+                <version>${bootique-version}</version>
+                <scope>import</scope>
+                <type>pom</type>
             </dependency>
         </dependencies>
     </dependencyManagement>

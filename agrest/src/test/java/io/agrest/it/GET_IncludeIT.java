@@ -2,9 +2,11 @@ package io.agrest.it;
 
 import io.agrest.Ag;
 import io.agrest.DataResponse;
-import io.agrest.it.fixture.JerseyTestOnDerby;
+import io.agrest.it.fixture.BQJerseyTestOnDerby;
 import io.agrest.it.fixture.cayenne.E2;
 import io.agrest.it.fixture.cayenne.E3;
+import io.agrest.it.fixture.cayenne.E5;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import javax.ws.rs.GET;
@@ -12,23 +14,28 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Configuration;
 import javax.ws.rs.core.Context;
-import javax.ws.rs.core.FeatureContext;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
-public class GET_IncludeIT extends JerseyTestOnDerby {
+public class GET_IncludeIT extends BQJerseyTestOnDerby {
+
+    @BeforeClass
+    public static void startTestRuntime() {
+        startTestRuntime(Resource.class);
+    }
 
     @Override
-    protected void doAddResources(FeatureContext context) {
-        context.register(Resource.class);
+    protected Class<?>[] testEntities() {
+        return new Class[]{E2.class, E3.class, E5.class};
     }
 
     @Test
     public void test_Include_OrderOfInclude() {
-        insert("e5", "id, name, date", "45, 'T', '2013-01-03'");
-        insert("e2", "id, name", "8, 'yyy'");
-        insert("e3", "id, name, e2_id, e5_id", "3, 'zzz', 8, 45");
+
+        e5().insertColumns("id", "name", "date").values(45, "T", "2013-01-03").exec();
+        e2().insertColumns("id", "name").values(8, "yyy").exec();
+        e3().insertColumns("id", "name", "e2_id", "e5_id").values(3, "zzz", 8, 45).exec();
 
         Response r1 = target("/e3")
                 .queryParam("include", "id")
@@ -52,9 +59,9 @@ public class GET_IncludeIT extends JerseyTestOnDerby {
 
     @Test
     public void test_Include_Phantom() {
-        insert("e2", "id, name", "8, 'yyy'");
-        insert("e5", "id, name, date", "45, 'T', '2013-01-03'");
-        insert("e3", "id, name, e2_id, e5_id", "3, 'zzz', 8, 45");
+        e5().insertColumns("id", "name", "date").values(45, "T", "2013-01-03").exec();
+        e2().insertColumns("id", "name").values(8, "yyy").exec();
+        e3().insertColumns("id", "name", "e2_id", "e5_id").values(3, "zzz", 8, 45).exec();
 
         Response r1 = target("/e2")
                 .queryParam("include", "id")

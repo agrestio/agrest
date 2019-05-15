@@ -4,32 +4,30 @@ import io.agrest.Ag;
 import io.agrest.MetadataResponse;
 import io.agrest.annotation.AgResource;
 import io.agrest.annotation.LinkType;
-import io.agrest.it.fixture.JerseyTestOnDerby;
+import io.agrest.it.fixture.BQJerseyTestOnDerby;
 import io.agrest.it.fixture.cayenne.E5;
-import io.agrest.runtime.AgBuilder;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.Configuration;
 import javax.ws.rs.core.Context;
-import javax.ws.rs.core.FeatureContext;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
-public class GET_Metadata_CustomBase_IT extends JerseyTestOnDerby {
+public class GET_Metadata_CustomBase_IT extends BQJerseyTestOnDerby {
 
-    @Override
-    protected void doAddResources(FeatureContext context) {
-        context.register(R1.class);
+    @BeforeClass
+    public static void startTestRuntime() {
+        startTestRuntime(R1.class, ab -> ab.baseUrl("https://example.org"));
     }
 
     @Override
-    protected AgBuilder doConfigure() {
-        return super.doConfigure().baseUrl("https://example.org");
+    protected Class<?>[] testEntities() {
+        return new Class[0];
     }
 
     @Test
