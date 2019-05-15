@@ -2,8 +2,10 @@ package io.agrest.runtime.protocol;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import io.agrest.AgException;
+import io.agrest.PathConstants;
 import io.agrest.protocol.Dir;
 import io.agrest.protocol.Sort;
+import io.agrest.runtime.entity.IncludeMerger;
 import io.agrest.runtime.jackson.IJacksonService;
 import org.apache.cayenne.di.Inject;
 import org.slf4j.Logger;
@@ -12,6 +14,7 @@ import org.slf4j.LoggerFactory;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class SortParser implements ISortParser {
@@ -28,101 +31,97 @@ public class SortParser implements ISortParser {
     }
 
     @Override
-    public Sort fromString(String sortValue) {
-        if (sortValue == null || sortValue.isEmpty()) {
-            return null;
+    public List<Sort> parse(String unparsedSort, String unparsedDir) {
+
+        if (unparsedSort == null || unparsedSort.isEmpty()) {
+            return Collections.emptyList();
         }
 
-        if (sortValue.startsWith("[")) {
-            List<Sort> sorts = fromJsonArray(jsonParser.parseJson(sortValue));
-            return new Sort(sorts);
-        } else if (sortValue.startsWith("{")) {
-            return fromJsonObject(jsonParser.parseJson(sortValue));
+        List<Sort> orderings = new ArrayList<>(3);
+
+        if (unparsedSort.startsWith("[")) {
+            appendFromArray(orderings, jsonParser.parseJson(unparsedSort));
+        } else if (unparsedSort.startsWith("{")) {
+            appendFromObject(orderings, jsonParser.parseJson(unparsedSort));
         } else {
-            return new Sort(sortValue);
+            // "dir" is only applicable to "simple" sorts.. ignoring it for arrays and objects
+            appendPath(orderings, unparsedSort, unparsedDir);
         }
+
+        return orderings;
     }
 
     @Override
-    public Sort fromJson(JsonNode json) {
+    public List<Sort> parseJson(JsonNode json) {
 
         if (json == null || json.isNull()) {
-            return null;
+            return Collections.emptyList();
         }
 
-        if (json.isTextual()) {
-            return new Sort(json.asText());
-        }
+        List<Sort> orderings = new ArrayList<>(3);
 
         if (json.isArray()) {
-            List<Sort> sorts = fromJsonArray(json);
-            return new Sort(sorts);
+            appendFromArray(orderings, json);
+        } else if (json.isObject()) {
+            appendFromObject(orderings, json);
+        } else {
+            appendPath(orderings, json.asText(), null);
         }
 
-        if (json.isObject()) {
-            return fromJsonObject(json);
-        }
-
-        // TODO: throw?
-        return null;
+        return orderings;
     }
 
-    @Override
-    public Dir dirFromString(String dirValue) {
-        if (dirValue != null) {
-            if (dirValue.equals(Dir.ASC.name())) {
-                return Dir.ASC;
-            } else if (dirValue.equals(Dir.DESC.name())) {
-                return Dir.DESC;
-            } else {
-                throw new AgException(Response.Status.BAD_REQUEST, "Direction is invalid: " + dirValue);
-            }
+    private Dir parseDir(String unparsedDir) {
+        try {
+            return Dir.valueOf(unparsedDir);
+        } catch (IllegalArgumentException e) {
+            throw new AgException(Response.Status.BAD_REQUEST, "'dir' is invalid: " + unparsedDir);
         }
-        return null;
     }
 
-    private Sort fromJsonObject(JsonNode node) {
-
-        if (node.isNull()) {
-            return null;
+    private void appendFromArray(List<Sort> orderings, JsonNode node) {
+        for (JsonNode sortNode : node) {
+            appendFromObject(orderings, sortNode);
         }
+    }
+
+    private void appendFromObject(List<Sort> orderings, JsonNode node) {
 
         JsonNode propertyNode = node.get(JSON_KEY_PROPERTY);
         if (propertyNode == null || !propertyNode.isTextual()) {
 
             // this is a hack for Sencha bug, passing us null sorters
-            // per LF-189...
-            // So allowing for lax property name checking as a result
+            // per LF-189... So allowing for lax property name checking as a result
+            // TODO: move this to Sencha package?
             if (propertyNode != null && propertyNode.isNull()) {
                 LOGGER.info("ignoring NULL sort property");
-                return null;
+                return;
             }
 
             throw new AgException(Status.BAD_REQUEST, "Bad sort spec: " + node);
         }
 
         JsonNode directionNode = node.get(JSON_KEY_DIRECTION);
-        if (directionNode != null) {
-            Dir dir = dirFromString(directionNode.asText());
-            if (dir != null) {
-                return new Sort(propertyNode.asText(), dir);
-            }
-        }
-
-        return new Sort(propertyNode.asText());
+        appendPath(
+                orderings,
+                propertyNode.asText(),
+                directionNode != null ? directionNode.asText() : null);
     }
 
-    private List<Sort> fromJsonArray(JsonNode array) {
+    private void appendPath(List<Sort> orderings, String path, String unparsedDir) {
+        IncludeMerger.checkTooLong(path);
 
-        List<Sort> sorts = new ArrayList<>(array.size());
+        int dot = path.indexOf(PathConstants.DOT);
 
-        for (JsonNode sortNode : array) {
-            Sort sort = fromJsonObject(sortNode);
-            if (sort != null) {
-                sorts.add(sort);
-            }
+        if (dot == 0) {
+            throw new AgException(Response.Status.BAD_REQUEST, "Ordering starts with dot: " + path);
         }
 
-        return sorts;
+        if (dot == path.length() - 1) {
+            throw new AgException(Response.Status.BAD_REQUEST, "Ordering ends with dot: " + path);
+        }
+
+        Dir dir = unparsedDir != null && !unparsedDir.isEmpty() ? parseDir(unparsedDir) : Dir.ASC;
+        orderings.add(new Sort(path, dir));
     }
 }

@@ -15,7 +15,7 @@ import java.util.List;
 public class DefaultRequest implements AgRequest {
 
     CayenneExp cayenneExp;
-    Sort sort;
+    List<Sort> orderings;
     String mapBy;
     Integer start;
     Integer limit;
@@ -25,6 +25,7 @@ public class DefaultRequest implements AgRequest {
     protected DefaultRequest() {
         this.includes = new ArrayList<>();
         this.excludes = new ArrayList<>();
+        this.orderings = new ArrayList<>();
     }
 
     @Override
@@ -43,8 +44,8 @@ public class DefaultRequest implements AgRequest {
     }
 
     @Override
-    public Sort getSort() {
-        return sort;
+    public List<Sort> getOrderings() {
+        return orderings;
     }
 
     @Override

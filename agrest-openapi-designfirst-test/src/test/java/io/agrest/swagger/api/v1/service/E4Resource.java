@@ -47,7 +47,7 @@ public class E4Resource {
 
         AgRequest agRequest = Ag.request(config)
                 .limit(limit)
-                .sort(sort)
+                .addOrdering(sort)
                 .addIncludes(includes)
                 .mapBy(mapBy)
                 .build();

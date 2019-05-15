@@ -59,7 +59,7 @@ public class ParseRequestStage implements Processor<SelectContext<?>> {
     protected AgRequestBuilder requestFromParams(Map<String, List<String>> parameters) {
         return requestBuilderFactory.builder()
                 .cayenneExp(ParameterExtractor.string(parameters, PROTOCOL_CAYENNE_EXP))
-                .sort(ParameterExtractor.string(parameters, PROTOCOL_SORT), ParameterExtractor.string(parameters, PROTOCOL_DIR))
+                .addOrdering(ParameterExtractor.string(parameters, PROTOCOL_SORT), ParameterExtractor.string(parameters, PROTOCOL_DIR))
                 .mapBy(ParameterExtractor.string(parameters, PROTOCOL_MAP_BY))
                 .addIncludes(ParameterExtractor.strings(parameters, PROTOCOL_INCLUDE))
                 .addExcludes(ParameterExtractor.strings(parameters, PROTOCOL_EXCLUDE))
@@ -86,7 +86,7 @@ public class ParseRequestStage implements Processor<SelectContext<?>> {
             AgRequestBuilder builder = requestBuilderFactory.builder();
 
             setCayenneExp(builder);
-            setSort(builder);
+            setOrderings(builder);
             setMapBy(builder);
             setIncludes(builder);
             setExcludes(builder);
@@ -104,12 +104,12 @@ public class ParseRequestStage implements Processor<SelectContext<?>> {
             }
         }
 
-        private void setSort(AgRequestBuilder builder) {
+        private void setOrderings(AgRequestBuilder builder) {
 
-            if (request.getSort() != null) {
-                builder.sort(request.getSort());
+            if (!request.getOrderings().isEmpty()) {
+                request.getOrderings().forEach(builder::addOrdering);
             } else {
-                builder.sort(
+                builder.addOrdering(
                         ParameterExtractor.string(parameters, PROTOCOL_SORT),
                         ParameterExtractor.string(parameters, PROTOCOL_DIR));
             }

@@ -161,7 +161,7 @@ public class IncludeMerger implements IIncludeMerger {
         }
 
         mapByMerger.mergeIncluded(includeEntity, include.getMapBy());
-        sortMerger.merge(includeEntity, include.getSort());
+        sortMerger.merge(includeEntity, include.getOrderings());
         expMerger.merge(includeEntity, include.getCayenneExp());
         sizeMerger.merge(includeEntity, include.getStart(), include.getLimit());
     }

@@ -95,10 +95,9 @@ public class IncludeParser implements IIncludeParser {
             String absPath = parentPath != null ? parentPath + '.' + path : path;
 
             includes.add(new Include(
-                    expParser.fromJson(node.get(JSON_KEY_CAYENNE_EXP)),
-                    sortParser.fromJson(node.get(JSON_KEY_SORT)),
+                    absPath, expParser.fromJson(node.get(JSON_KEY_CAYENNE_EXP)),
+                    sortParser.parseJson(node.get(JSON_KEY_SORT)),
                     getText(node.get(JSON_KEY_MAP_BY)),
-                    absPath,
                     sizeParser.startFromJson(node.get(JSON_KEY_START)),
                     sizeParser.limitFromJson(node.get(JSON_KEY_LIMIT))));
 

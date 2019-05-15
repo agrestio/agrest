@@ -1,5 +1,9 @@
 package io.agrest.protocol;
 
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
+
 /**
  * Represents 'include' Agrest protocol parameter.
  *
@@ -8,28 +12,28 @@ package io.agrest.protocol;
 public class Include {
 
     private CayenneExp cayenneExp;
-    private Sort sort;
+    private List<Sort> orderings;
     private String mapBy;
     private String path;
     private Integer start;
     private Integer limit;
 
     public Include(String path) {
-        this.path = path;
+        this(path, null, Collections.emptyList(), null, null, null);
     }
 
     public Include(
-            CayenneExp cayenneExp,
-            Sort sort,
-            String mapBy,
             String path,
+            CayenneExp cayenneExp,
+            List<Sort> orderings,
+            String mapBy,
             Integer start,
             Integer limit) {
 
+        this.path = Objects.requireNonNull(path);
         this.cayenneExp = cayenneExp;
-        this.sort = sort;
+        this.orderings = Objects.requireNonNull(orderings);
         this.mapBy = mapBy;
-        this.path = path;
         this.start = start;
         this.limit = limit;
     }
@@ -54,8 +58,8 @@ public class Include {
         return cayenneExp;
     }
 
-    public Sort getSort() {
-        return sort;
+    public List<Sort> getOrderings() {
+        return orderings;
     }
 
     @Override

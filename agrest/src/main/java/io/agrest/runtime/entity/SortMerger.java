@@ -10,6 +10,8 @@ import org.apache.cayenne.exp.parser.ASTObjPath;
 import org.apache.cayenne.query.Ordering;
 import org.apache.cayenne.query.SortOrder;
 
+import java.util.List;
+
 /**
  * @since 2.13
  */
@@ -25,29 +27,21 @@ public class SortMerger implements ISortMerger {
      * @since 2.13
      */
     @Override
-    public void merge(ResourceEntity<?> resourceEntity, Sort sort) {
-        if(sort != null) {
-            collectOrderings(resourceEntity, sort);
-        }
+    public void merge(ResourceEntity<?> resourceEntity, List<Sort> orderings) {
+        orderings.forEach(o -> collectOrdering(resourceEntity, o));
     }
 
-    private void collectOrderings(ResourceEntity<?> resourceEntity, Sort sort) {
-        collectOrdering(resourceEntity, sort);
-        sort.getSorts().forEach(s -> collectOrderings(resourceEntity, s));
-    }
+    private void collectOrdering(ResourceEntity<?> resourceEntity, Sort ordering) {
 
-    private void collectOrdering(ResourceEntity<?> resourceEntity, Sort sort) {
-
-        String property = sort.getProperty();
+        String property = ordering.getProperty();
         if (property != null && !property.isEmpty()) {
 
             // TODO: do we need to support nested ID?
             AgEntity<?> entity = resourceEntity.getAgEntity();
 
-            // note using "toString" instead of "getPath" to convert ASTPath to
-            // String representation. This ensures "db:" prefix is preserved if
-            // present
-            property = pathCache.getPathDescriptor(entity, new ASTObjPath(sort.getProperty())).getPathExp().toString();
+            // note using "toString" instead of "getPath" to convert ASTPath to  String representation. This ensures
+            // "db:" prefix is preserved if present
+            property = pathCache.getPathDescriptor(entity, new ASTObjPath(ordering.getProperty())).getPathExp().toString();
 
             // check for dupes...
             for (Ordering o : resourceEntity.getOrderings()) {
@@ -56,12 +50,7 @@ public class SortMerger implements ISortMerger {
                 }
             }
 
-            Dir direction = sort.getDirection();
-            if (direction == null) {
-                direction = Dir.ASC;
-            }
-
-            SortOrder so = direction == Dir.ASC ? SortOrder.ASCENDING : SortOrder.DESCENDING;
+            SortOrder so = ordering.getDirection() == Dir.ASC ? SortOrder.ASCENDING : SortOrder.DESCENDING;
             resourceEntity.getOrderings().add(new Ordering(property, so));
         }
     }

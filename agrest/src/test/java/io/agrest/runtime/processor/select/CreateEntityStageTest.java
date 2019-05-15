@@ -38,7 +38,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import javax.ws.rs.core.MultivaluedMap;
-import java.util.Arrays;
 import java.util.Iterator;
 
 import static org.apache.cayenne.exp.ExpressionFactory.exp;
@@ -386,7 +385,7 @@ public class CreateEntityStageTest extends TestWithCayenneMapping {
 
         Sort sort = new Sort(E2.NAME.getName());
 
-        context.setRawRequest(requestBuilderFactory.builder().sort(sort).build());
+        context.setRawRequest(requestBuilderFactory.builder().addOrdering(sort).build());
 
         createEntityStage.execute(context);
 
@@ -406,7 +405,7 @@ public class CreateEntityStageTest extends TestWithCayenneMapping {
         Sort sort = new Sort(E2.NAME.getName(), Dir.ASC);
 
         context.setRawRequest(requestBuilderFactory.builder()
-                .sort(sort)
+                .addOrdering(sort)
                 .build());
 
         createEntityStage.execute(context);
@@ -427,7 +426,7 @@ public class CreateEntityStageTest extends TestWithCayenneMapping {
         Sort sort = new Sort(E2.NAME.getName(), Dir.DESC);
 
         context.setRawRequest(requestBuilderFactory.builder()
-                .sort(sort)
+                .addOrdering(sort)
                 .build());
 
         createEntityStage.execute(context);
@@ -445,11 +444,9 @@ public class CreateEntityStageTest extends TestWithCayenneMapping {
 
         SelectContext<E2> context = new SelectContext<>(E2.class);
 
-        Sort sort = new Sort(Arrays.asList(
-                new Sort("name", Dir.DESC),
-                new Sort("address", Dir.ASC)));
-
-        context.setRawRequest(requestBuilderFactory.builder().sort(sort).build());
+        context.setRawRequest(requestBuilderFactory.builder()
+                .addOrdering(new Sort("name", Dir.DESC))
+                .addOrdering(new Sort("address", Dir.ASC)).build());
 
         createEntityStage.execute(context);
 
@@ -470,11 +467,9 @@ public class CreateEntityStageTest extends TestWithCayenneMapping {
 
         SelectContext<E2> context = new SelectContext<>(E2.class);
 
-        Sort sort = new Sort(Arrays.asList(
-                new Sort("name", Dir.DESC),
-                new Sort("name", Dir.ASC)));
-
-        context.setRawRequest(requestBuilderFactory.builder().sort(sort).build());
+        context.setRawRequest(requestBuilderFactory.builder()
+                .addOrdering(new Sort("name", Dir.DESC))
+                .addOrdering(new Sort("name", Dir.ASC)).build());
 
         createEntityStage.execute(context);
 
@@ -485,20 +480,6 @@ public class CreateEntityStageTest extends TestWithCayenneMapping {
         Ordering o1 = it.next();
         assertEquals(SortOrder.DESCENDING, o1.getSortOrder());
         assertEquals(E2.NAME.getName(), o1.getSortSpecString());
-    }
-
-    @Test(expected = AgException.class)
-    public void testSelectRequest_Sort_BadSpec() {
-
-        SelectContext<E2> context = new SelectContext<>(E2.class);
-
-        Sort sort = new Sort(Arrays.asList(
-                new Sort("{\"property\":\"p1\",\"direction\":\"DESC\"}"),
-                new Sort("{\"property\":\"p2\",\"direction\":\"XXX\"}")));
-
-        context.setRawRequest(requestBuilderFactory.builder().sort(sort).build());
-
-        createEntityStage.execute(context);
     }
 
     @Test(expected = AgException.class)

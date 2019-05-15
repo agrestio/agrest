@@ -1,53 +1,83 @@
 package io.agrest.runtime.protocol;
 
+import io.agrest.protocol.Dir;
 import io.agrest.protocol.Sort;
 import io.agrest.runtime.jackson.JacksonService;
 import io.agrest.unit.TestWithCayenneMapping;
 import org.junit.Before;
 import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import java.util.List;
+
+import static org.junit.Assert.*;
 
 public class SortParserTest extends TestWithCayenneMapping {
 
-	private SortParser parser;
+    private SortParser parser;
 
-	@Before
-	public void before() {
-		JacksonService jacksonService = new JacksonService();
-		this.parser = new SortParser(jacksonService);
-	}
+    @Before
+    public void before() {
+        JacksonService jacksonService = new JacksonService();
+        this.parser = new SortParser(jacksonService);
+    }
 
-	@Test
-	public void testProcess_Array() {
+    @Test
+    public void testProcess_Array() {
 
-        Sort sort = parser.fromString("[{\"property\":\"name\"},{\"property\":\"address\"}]");
+        List<Sort> orderings = parser.parse("[{\"property\":\"name\"}," +
+                "{\"property\":\"address\",\"direction\":\"ASC\"}," +
+                "{\"property\":\"city\",\"direction\":\"DESC\"}]", null);
 
-		assertNotNull(sort);
-		assertEquals(2, sort.getSorts().size());
-		assertNotNull(sort.getSorts().get(0));
-		assertEquals("name", sort.getSorts().get(0).getProperty());
-		assertNotNull(sort.getSorts().get(1));
-		assertEquals("address", sort.getSorts().get(1).getProperty());
-	}
+        assertNotNull(orderings);
+        assertEquals(3, orderings.size());
 
-	@Test
-	public void testProcess_Object() {
+        assertEquals("name", orderings.get(0).getProperty());
+        assertEquals(Dir.ASC, orderings.get(0).getDirection());
 
-        Sort sort = parser.fromString("{\"property\":\"name\"}");
+        assertEquals("address", orderings.get(1).getProperty());
+        assertEquals(Dir.ASC, orderings.get(1).getDirection());
 
-		assertNotNull(sort);
-		assertEquals("name", sort.getProperty());
-	}
+        assertEquals("city", orderings.get(2).getProperty());
+        assertEquals(Dir.DESC, orderings.get(2).getDirection());
+    }
 
-	@Test
-	public void testProcess_Simple() {
+    @Test
+    public void testProcess_Object() {
 
-        Sort sort = parser.fromString("name");
+        List<Sort> orderings = parser.parse("{\"property\":\"name\"}", null);
 
-		assertNotNull(sort);
-		assertEquals("name", sort.getProperty());
-	}
+        assertEquals(1, orderings.size());
+        assertEquals("name", orderings.get(0).getProperty());
+        assertEquals(Dir.ASC, orderings.get(0).getDirection());
+    }
 
+    @Test
+    public void testProcess_Simple() {
+
+        List<Sort> orderings = parser.parse("name", null);
+
+        assertEquals(1, orderings.size());
+        assertEquals("name", orderings.get(0).getProperty());
+        assertEquals(Dir.ASC, orderings.get(0).getDirection());
+    }
+
+    @Test
+    public void testProcess_Simple_ASC() {
+
+        List<Sort> orderings = parser.parse("name", "ASC");
+
+        assertEquals(1, orderings.size());
+        assertEquals("name", orderings.get(0).getProperty());
+        assertEquals(Dir.ASC, orderings.get(0).getDirection());
+    }
+
+    @Test
+    public void testProcess_Simple_DESC() {
+
+        List<Sort> orderings = parser.parse("name", "DESC");
+
+        assertEquals(1, orderings.size());
+        assertEquals("name", orderings.get(0).getProperty());
+        assertEquals(Dir.DESC, orderings.get(0).getDirection());
+    }
 }

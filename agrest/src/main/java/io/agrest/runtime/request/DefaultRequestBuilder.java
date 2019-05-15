@@ -3,7 +3,6 @@ package io.agrest.runtime.request;
 import io.agrest.AgRequest;
 import io.agrest.AgRequestBuilder;
 import io.agrest.protocol.CayenneExp;
-import io.agrest.protocol.Dir;
 import io.agrest.protocol.Exclude;
 import io.agrest.protocol.Include;
 import io.agrest.protocol.Sort;
@@ -57,30 +56,26 @@ public class DefaultRequestBuilder implements AgRequestBuilder {
     }
 
     @Override
-    public AgRequestBuilder sort(String unparsedSort) {
-        Sort sort = unparsedSort != null ? sortParser.fromString(unparsedSort) : null;
-        return sort(sort);
-    }
-
-    @Override
-    public AgRequestBuilder sort(String unparsedSort, String unparsedDir) {
-        Sort sort = unparsedSort != null ? sortParser.fromString(unparsedSort) : null;
-
-        // "dir" makes sense only if we are dealing with a simple sort
-        if (sort != null && sort.getSorts().isEmpty()) {
-            Dir dir = unparsedDir != null ? sortParser.dirFromString(unparsedDir) : null;
-            if (dir != null) {
-                sort = new Sort(sort.getProperty(), dir);
-            }
-        }
-
-        request.sort = sort;
+    public AgRequestBuilder addOrdering(String unparsedOrdering) {
+        request.orderings.addAll(sortParser.parse(unparsedOrdering, null));
         return this;
     }
 
     @Override
-    public AgRequestBuilder sort(Sort sort) {
-        request.sort = sort;
+    public AgRequestBuilder addOrdering(String unparsedOrdering, String unparsedDir) {
+        request.orderings.addAll(sortParser.parse(unparsedOrdering, unparsedDir));
+        return this;
+    }
+
+    @Override
+    public AgRequestBuilder addOrdering(Sort ordering) {
+        request.orderings.add(ordering);
+        return this;
+    }
+
+    @Override
+    public AgRequestBuilder addOrdering(int index, Sort ordering) {
+        request.orderings.add(index, ordering);
         return this;
     }
 

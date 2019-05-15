@@ -14,8 +14,6 @@ import org.apache.cayenne.di.Inject;
 import java.util.List;
 import java.util.Map;
 
-import static java.util.Arrays.asList;
-
 public class SenchaParseRequestStage extends ParseRequestStage {
 
     static final String FILTER = "filter";
@@ -49,49 +47,34 @@ public class SenchaParseRequestStage extends ParseRequestStage {
 
     @Override
     protected AgRequestBuilder requestFromParams(Map<String, List<String>> parameters) {
-
         AgRequestBuilder builder = super.requestFromParams(parameters);
-
-        Sort altSorter = altSorter(parameters);
-        if (altSorter != null) {
-            builder.sort(altSorter);
-        }
-
-        return builder;
+        return appendGroupOrderings(builder, parameters);
     }
 
     @Override
     protected AgRequestBuilder requestFromRequestAndParams(AgRequest request, Map<String, List<String>> parameters) {
         AgRequestBuilder builder = super.requestFromRequestAndParams(request, parameters);
 
-        // if we are allowed to override
-        if (request.getSort() == null) {
-            Sort altSorter = altSorter(parameters);
-            if (altSorter != null) {
-                builder.sort(altSorter);
-            }
+        // if we are allowed to override, add "group" orderings
+        return request.getOrderings().isEmpty()
+                ? appendGroupOrderings(builder, parameters)
+                : builder;
+    }
+
+    private AgRequestBuilder appendGroupOrderings(AgRequestBuilder builder, Map<String, List<String>> parameters) {
+
+        // Sencha introduces an extra "group" sorter that needs to be merged with regular sorter
+        // "group" orderings go before "sort" orderings
+
+        List<Sort> groupOrderings = requestBuilderFactory.builder()
+                .addOrdering(ParameterExtractor.string(parameters, GROUP), ParameterExtractor.string(parameters, GROUP_DIR))
+                .build()
+                .getOrderings();
+
+        for (int i = groupOrderings.size() - 1; i >= 0; i--) {
+            builder.addOrdering(0, groupOrderings.get(i));
         }
 
         return builder;
-    }
-
-    private Sort altSorter(Map<String, List<String>> parameters) {
-
-        // Sencha introduces an extra "group" sorter that needs to be merged with regular sorter
-        Sort senchaSorter = requestBuilderFactory.builder()
-                .sort(ParameterExtractor.string(parameters, GROUP), ParameterExtractor.string(parameters, GROUP_DIR))
-                .build()
-                .getSort();
-
-        if (senchaSorter == null) {
-            return null;
-        }
-
-        Sort sorter = requestBuilderFactory.builder()
-                .sort(ParameterExtractor.string(parameters, PROTOCOL_SORT), ParameterExtractor.string(parameters, PROTOCOL_DIR))
-                .build().getSort();
-
-        // merge group and sort; group goes first
-        return sorter != null ? new Sort(asList(senchaSorter, sorter)) : senchaSorter;
     }
 }

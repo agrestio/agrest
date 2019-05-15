@@ -26,11 +26,13 @@ public interface AgRequestBuilder {
 
     AgRequestBuilder addExclude(String unparsedExclude);
 
-    AgRequestBuilder sort(String unparsedSort);
+    AgRequestBuilder addOrdering(String unparsedOrdering);
 
-    AgRequestBuilder sort(String unparsedSort, String unparsedDir);
+    AgRequestBuilder addOrdering(String unparsedOrdering, String unparsedDir);
 
-    AgRequestBuilder sort(Sort sort);
+    AgRequestBuilder addOrdering(Sort ordering);
+
+    AgRequestBuilder addOrdering(int index, Sort ordering);
 
     AgRequestBuilder cayenneExp(String unparsedExp);
 

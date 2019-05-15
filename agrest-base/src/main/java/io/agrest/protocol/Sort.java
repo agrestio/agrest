@@ -1,7 +1,6 @@
 package io.agrest.protocol;
 
-import java.util.Collections;
-import java.util.List;
+import java.util.Objects;
 
 /**
  * Represents 'sort' Agrest protocol parameter.
@@ -12,19 +11,14 @@ public class Sort {
 
     private String property;
     private Dir direction;
-    private List<Sort> sorts;
 
     public Sort(String property) {
-        this.property = property;
+        this(property, Dir.ASC);
     }
 
     public Sort(String property, Dir direction) {
-        this.property = property;
-        this.direction = direction;
-    }
-
-    public Sort(List<Sort> sorts) {
-        this.sorts = sorts;
+        this.property = Objects.requireNonNull(property);
+        this.direction = Objects.requireNonNull(direction);
     }
 
     public String getProperty() {
@@ -34,9 +28,4 @@ public class Sort {
     public Dir getDirection() {
         return direction;
     }
-
-    public List<Sort> getSorts() {
-        return sorts != null ? sorts : Collections.emptyList();
-    }
-
 }

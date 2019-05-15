@@ -160,7 +160,7 @@ public class GET_AgRequestIT extends JerseyTestOnDerby {
 		@GET
 		@Path("e4_sort")
 		public DataResponse<E4> getE4_sort(@Context UriInfo uriInfo) {
-			AgRequest agRequest = Ag.request(config).sort(new Sort("id", Dir.ASC)).build();
+			AgRequest agRequest = Ag.request(config).addOrdering(new Sort("id", Dir.ASC)).build();
 
 			return Ag.service(config).select(E4.class)
 					.uri(uriInfo)

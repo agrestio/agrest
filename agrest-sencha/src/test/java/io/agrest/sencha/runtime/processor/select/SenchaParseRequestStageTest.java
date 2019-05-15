@@ -28,6 +28,7 @@ import org.junit.Test;
 
 import javax.ws.rs.core.MultivaluedMap;
 import java.util.Collections;
+import java.util.List;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
@@ -116,23 +117,17 @@ public class SenchaParseRequestStageTest extends TestWithCayenneMapping {
 
         parseStage.doExecute(context);
 
-		Sort sort = context.getRawRequest().getSort();
-		assertNotNull(sort);
-		assertEquals(2, sort.getSorts().size());
+		List<Sort> orderings = context.getRawRequest().getOrderings();
+		assertEquals(4, orderings.size());
 
-		Sort sortSencha = sort.getSorts().get(0);
-		assertEquals(2, sortSencha.getSorts().size());
-		assertEquals("id", sortSencha.getSorts().get(0).getProperty());
-		assertEquals(Dir.DESC, sortSencha.getSorts().get(0).getDirection());
-		assertEquals("address", sortSencha.getSorts().get(1).getProperty());
-		assertEquals(Dir.ASC, sortSencha.getSorts().get(1).getDirection());
+		assertEquals("id", orderings.get(0).getProperty());
+		assertEquals(Dir.DESC, orderings.get(0).getDirection());
+		assertEquals("address", orderings.get(1).getProperty());
+		assertEquals(Dir.ASC, orderings.get(1).getDirection());
 
-
-		Sort sortSort = sort.getSorts().get(1);
-		assertEquals(2, sortSort.getSorts().size());
-		assertEquals("name", sortSort.getSorts().get(0).getProperty());
-		assertEquals(Dir.DESC, sortSort.getSorts().get(0).getDirection());
-		assertEquals("address", sortSort.getSorts().get(1).getProperty());
-		assertEquals(Dir.ASC, sortSort.getSorts().get(1).getDirection());
+		assertEquals("name", orderings.get(2).getProperty());
+		assertEquals(Dir.DESC, orderings.get(2).getDirection());
+		assertEquals("address", orderings.get(3).getProperty());
+		assertEquals(Dir.ASC, orderings.get(3).getDirection());
 	}
 }

@@ -11,5 +11,5 @@ import java.util.List;
  */
 public interface IExcludeParser {
 
-    List<Exclude> parse(String value);
+    List<Exclude> parse(String unparsed);
 }

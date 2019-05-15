@@ -1,8 +1,9 @@
 package io.agrest.runtime.protocol;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import io.agrest.protocol.Dir;
 import io.agrest.protocol.Sort;
+
+import java.util.List;
 
 /**
  * Parsing of Sort and Dir query parameters from string or nested in Json values.
@@ -11,10 +12,7 @@ import io.agrest.protocol.Sort;
  */
 public interface ISortParser {
 
-    Sort fromString(String path);
+    List<Sort> parse(String unparsedSort, String unparsedDir);
 
-    Sort fromJson(JsonNode json);
-
-    Dir dirFromString(String dirValue);
-
+    List<Sort> parseJson(JsonNode json);
 }

@@ -31,6 +31,7 @@ import org.junit.Test;
 
 import javax.ws.rs.core.MultivaluedMap;
 import java.util.Arrays;
+import java.util.Collections;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
@@ -97,7 +98,7 @@ public class CreateEntityStage_IncludeObjectTest extends TestWithCayenneMapping 
 
         SelectContext<E2> context = new SelectContext<>(E2.class);
 
-        Include include = new Include(null, null, "e5", "e3s", null, null);
+        Include include = new Include("e3s", null, Collections.emptyList(), "e5", null, null);
         context.setRawRequest(requestBuilderFactory.builder().addInclude(include).build());
 
         createEntityStage.execute(context);

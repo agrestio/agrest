@@ -16,6 +16,7 @@ class QueryParamExtensions {
         {
             put("include", "addIncludes");
             put("exclude", "addExcludes");
+            put("sort", "addOrdering");
         }
     };
 

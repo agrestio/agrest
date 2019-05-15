@@ -56,7 +56,7 @@ public class E3Resource {
     public DataResponse<E3> getAll(@QueryParam("sort") String sort, @QueryParam("dir") String dir, @QueryParam("include") List<String> includes, @QueryParam("exclude") List<String> excludes, @QueryParam("limit") Integer limit, @QueryParam("start") Integer start, @QueryParam("mapBy") String mapBy, @QueryParam("cayenneExp") String cayenneExp) {
 
         AgRequest agRequest = Ag.request(config)
-                .sort(sort, dir)
+                .addOrdering(sort, dir)
                 .addIncludes(includes)
                 .addExcludes(excludes)
                 .limit(limit)

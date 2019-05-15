@@ -20,7 +20,7 @@ public interface AgRequest {
 
     CayenneExp getCayenneExp();
 
-    Sort getSort();
+    List<Sort> getOrderings();
 
     String getMapBy();
 
