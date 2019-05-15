@@ -32,13 +32,6 @@
             <scope>compile</scope>
         </dependency>
 
-        <!-- Provided dependencies -->
-        <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>javax.servlet-api</artifactId>
-            <scope>provided</scope>
-        </dependency>
-
         <!-- unit test deps -->
         <dependency>
             <groupId>junit</groupId>
