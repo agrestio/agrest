@@ -41,7 +41,6 @@ public class UpdateContext<T> extends BaseProcessingContext<T> {
     private boolean idUpdatesDisallowed;
     private Collection<EntityUpdate<T>> updates;
     private Encoder encoder;
-    private List objects;
     private AgRequest mergedRequest;
     private AgRequest request;
 
@@ -56,7 +55,7 @@ public class UpdateContext<T> extends BaseProcessingContext<T> {
      * @since 1.24
      */
     public DataResponse<T> createDataResponse() {
-        List<T> objects = this.objects != null ? this.objects : Collections.<T>emptyList();
+        List<? extends T> objects = this.entity != null ? this.entity.getResult() : Collections.emptyList();
         DataResponse<T> response = DataResponse.forType(getType());
         response.setObjects(objects);
         response.setEncoder(encoder);
@@ -230,16 +229,20 @@ public class UpdateContext<T> extends BaseProcessingContext<T> {
 
     /**
      * @since 1.24
+     * @deprecated since 3.2 use "getEntity().getResult()"
      */
+    @Deprecated
     public List<T> getObjects() {
-        return objects;
+        return entity != null ? entity.getResult() : Collections.emptyList();
     }
 
     /**
      * @since 1.24
+     * @deprecated since 3.2 use "getEntity().setResult()"
      */
+    @Deprecated
     public void setObjects(List<? extends T> objects) {
-        this.objects = objects;
+        this.entity.setResult((List<T>) objects);
     }
 
     /**

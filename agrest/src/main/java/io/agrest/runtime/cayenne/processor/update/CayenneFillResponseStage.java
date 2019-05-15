@@ -60,7 +60,7 @@ public class CayenneFillResponseStage implements Processor<UpdateContext<?>> {
                 }
             }
 
-            context.setObjects(objects);
+            context.getEntity().setResult(objects);
         }
     }
 }
