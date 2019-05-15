@@ -98,7 +98,7 @@ public class SenchaCreateEntityStageTest extends TestWithCayenneMapping {
         SelectContext<E2> context = new SelectContext<>(E2.class);
 
         CayenneExp cayenneExp = new CayenneExp("address = '1 Main Street'");
-        context.setRawRequest(requestBuilderFactory.builder().cayenneExp(cayenneExp).build());
+        context.setMergedRequest(requestBuilderFactory.builder().cayenneExp(cayenneExp).build());
 
         Filter filter = new Filter("name", "xyz", "like", false, false);
         SenchaRequest.set(context, SenchaRequest.builder().filters(Collections.singletonList(filter)).build());

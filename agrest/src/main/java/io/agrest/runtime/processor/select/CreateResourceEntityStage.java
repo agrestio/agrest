@@ -59,7 +59,7 @@ public class CreateResourceEntityStage implements Processor<SelectContext<?>> {
             resourceEntity.getExtraProperties().putAll(context.getExtraProperties());
         }
 
-        AgRequest request = context.getRawRequest();
+        AgRequest request = context.getMergedRequest();
         if (request != null) {
             sizeMerger.merge(resourceEntity, request.getStart(), request.getLimit());
             includeMerger.merge(resourceEntity, request.getIncludes());

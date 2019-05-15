@@ -59,10 +59,10 @@ public class ParseRequestStage_IncludeObjectTest extends TestWithCayenneMapping 
 
         parseStage.execute(context);
 
-        assertNotNull(context.getRawRequest());
+        assertNotNull(context.getMergedRequest());
 
-        assertEquals(1, context.getRawRequest().getIncludes().size());
-        assertEquals("e3s", context.getRawRequest().getIncludes().get(0).getPath());
+        assertEquals(1, context.getMergedRequest().getIncludes().size());
+        assertEquals("e3s", context.getMergedRequest().getIncludes().get(0).getPath());
     }
 
     @Test
@@ -75,10 +75,10 @@ public class ParseRequestStage_IncludeObjectTest extends TestWithCayenneMapping 
         SelectContext<E2> context = prepareContext(params, E2.class);
 
         parseStage.execute(context);
-        assertNotNull(context.getRawRequest());
+        assertNotNull(context.getMergedRequest());
 
-        assertEquals(1, context.getRawRequest().getIncludes().size());
-        assertTrue(context.getRawRequest().getIncludes().get(0).getPath().equalsIgnoreCase(E2.E3S.getName()));
-        assertTrue(context.getRawRequest().getIncludes().get(0).getMapBy().equalsIgnoreCase(E3.E5.getName()));
+        assertEquals(1, context.getMergedRequest().getIncludes().size());
+        assertTrue(context.getMergedRequest().getIncludes().get(0).getPath().equalsIgnoreCase(E2.E3S.getName()));
+        assertTrue(context.getMergedRequest().getIncludes().get(0).getMapBy().equalsIgnoreCase(E3.E5.getName()));
     }
 }

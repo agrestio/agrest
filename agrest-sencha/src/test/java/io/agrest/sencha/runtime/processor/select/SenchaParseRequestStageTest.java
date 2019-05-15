@@ -97,10 +97,10 @@ public class SenchaParseRequestStageTest extends TestWithCayenneMapping {
 		assertEquals("xyz", senchaRequest.getFilters().get(0).getValue());
 		assertEquals("like", senchaRequest.getFilters().get(0).getOperator());
 
-		AgRequest agRequest = context.getRawRequest();
+		AgRequest request = context.getMergedRequest();
 
-		assertNotNull(agRequest.getCayenneExp());
-		assertEquals("address = '1 Main Street'", agRequest.getCayenneExp().getExp());
+		assertNotNull(request.getCayenneExp());
+		assertEquals("address = '1 Main Street'", request.getCayenneExp().getExp());
 	}
 
 	@Test
@@ -117,7 +117,7 @@ public class SenchaParseRequestStageTest extends TestWithCayenneMapping {
 
         parseStage.doExecute(context);
 
-		List<Sort> orderings = context.getRawRequest().getOrderings();
+		List<Sort> orderings = context.getMergedRequest().getOrderings();
 		assertEquals(4, orderings.size());
 
 		assertEquals("id", orderings.get(0).getProperty());

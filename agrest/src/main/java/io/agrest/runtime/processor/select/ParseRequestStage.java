@@ -38,10 +38,10 @@ public class ParseRequestStage implements Processor<SelectContext<?>> {
     }
 
     protected <T> void doExecute(SelectContext<T> context) {
-        context.setRawRequest(mergedRequest(context));
+        context.setMergedRequest(mergeRequest(context));
     }
 
-    private AgRequest mergedRequest(SelectContext<?> context) {
+    private AgRequest mergeRequest(SelectContext<?> context) {
 
         AgRequest request = context.getRequest();
         Map<String, List<String>> parameters = context.getProtocolParameters();

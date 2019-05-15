@@ -62,14 +62,14 @@ public class ParseRequestStageTest extends TestWithCayenneMapping {
 
         parseStage.execute(context);
 
-        assertNotNull(context.getRawRequest());
-        assertNull(context.getRawRequest().getCayenneExp());
-        assertTrue(context.getRawRequest().getOrderings().isEmpty());
-        assertNull(context.getRawRequest().getMapBy());
-        assertNull(context.getRawRequest().getLimit());
-        assertNull(context.getRawRequest().getStart());
-        assertTrue(context.getRawRequest().getIncludes().isEmpty());
-        assertTrue(context.getRawRequest().getExcludes().isEmpty());
+        assertNotNull(context.getMergedRequest());
+        assertNull(context.getMergedRequest().getCayenneExp());
+        assertTrue(context.getMergedRequest().getOrderings().isEmpty());
+        assertNull(context.getMergedRequest().getMapBy());
+        assertNull(context.getMergedRequest().getLimit());
+        assertNull(context.getMergedRequest().getStart());
+        assertTrue(context.getMergedRequest().getIncludes().isEmpty());
+        assertTrue(context.getMergedRequest().getExcludes().isEmpty());
     }
 
     @Test
@@ -83,11 +83,11 @@ public class ParseRequestStageTest extends TestWithCayenneMapping {
 
         parseStage.execute(context);
 
-        assertNotNull(context.getRawRequest());
+        assertNotNull(context.getMergedRequest());
 
-        assertEquals(2, context.getRawRequest().getIncludes().size());
-        assertEquals("description", context.getRawRequest().getIncludes().get(0).getPath());
-        assertEquals("age", context.getRawRequest().getIncludes().get(1).getPath());
+        assertEquals(2, context.getMergedRequest().getIncludes().size());
+        assertEquals("description", context.getMergedRequest().getIncludes().get(0).getPath());
+        assertEquals("age", context.getMergedRequest().getIncludes().get(1).getPath());
     }
 
     @Test
@@ -101,11 +101,11 @@ public class ParseRequestStageTest extends TestWithCayenneMapping {
 
         parseStage.execute(context);
 
-        assertNotNull(context.getRawRequest());
+        assertNotNull(context.getMergedRequest());
 
-        assertEquals(2, context.getRawRequest().getIncludes().size());
-        assertEquals("description", context.getRawRequest().getIncludes().get(0).getPath());
-        assertEquals("age", context.getRawRequest().getIncludes().get(1).getPath());
+        assertEquals(2, context.getMergedRequest().getIncludes().size());
+        assertEquals("description", context.getMergedRequest().getIncludes().get(0).getPath());
+        assertEquals("age", context.getMergedRequest().getIncludes().get(1).getPath());
     }
 
     @Test
@@ -119,11 +119,11 @@ public class ParseRequestStageTest extends TestWithCayenneMapping {
 
         parseStage.execute(context);
 
-        assertNotNull(context.getRawRequest());
+        assertNotNull(context.getMergedRequest());
 
-        assertEquals(2, context.getRawRequest().getExcludes().size());
-        assertEquals("description", context.getRawRequest().getExcludes().get(0).getPath());
-        assertEquals("age", context.getRawRequest().getExcludes().get(1).getPath());
+        assertEquals(2, context.getMergedRequest().getExcludes().size());
+        assertEquals("description", context.getMergedRequest().getExcludes().get(0).getPath());
+        assertEquals("age", context.getMergedRequest().getExcludes().get(1).getPath());
     }
 
     @Test
@@ -137,11 +137,11 @@ public class ParseRequestStageTest extends TestWithCayenneMapping {
 
         parseStage.execute(context);
 
-        assertNotNull(context.getRawRequest());
+        assertNotNull(context.getMergedRequest());
 
-        assertEquals(2, context.getRawRequest().getExcludes().size());
-        assertEquals("description", context.getRawRequest().getExcludes().get(0).getPath());
-        assertEquals("age", context.getRawRequest().getExcludes().get(1).getPath());
+        assertEquals(2, context.getMergedRequest().getExcludes().size());
+        assertEquals("description", context.getMergedRequest().getExcludes().get(0).getPath());
+        assertEquals("age", context.getMergedRequest().getExcludes().get(1).getPath());
     }
 
     @Test
@@ -156,16 +156,16 @@ public class ParseRequestStageTest extends TestWithCayenneMapping {
 
         parseStage.execute(context);
 
-        assertNotNull(context.getRawRequest());
+        assertNotNull(context.getMergedRequest());
 
-        assertEquals(3, context.getRawRequest().getIncludes().size());
-        assertEquals("description", context.getRawRequest().getIncludes().get(0).getPath());
-        assertEquals("age", context.getRawRequest().getIncludes().get(1).getPath());
-        assertEquals("id", context.getRawRequest().getIncludes().get(2).getPath());
+        assertEquals(3, context.getMergedRequest().getIncludes().size());
+        assertEquals("description", context.getMergedRequest().getIncludes().get(0).getPath());
+        assertEquals("age", context.getMergedRequest().getIncludes().get(1).getPath());
+        assertEquals("id", context.getMergedRequest().getIncludes().get(2).getPath());
 
-        assertEquals(2, context.getRawRequest().getExcludes().size());
-        assertEquals("description", context.getRawRequest().getExcludes().get(0).getPath());
-        assertEquals("name", context.getRawRequest().getExcludes().get(1).getPath());
+        assertEquals(2, context.getMergedRequest().getExcludes().size());
+        assertEquals("description", context.getMergedRequest().getExcludes().get(0).getPath());
+        assertEquals("name", context.getMergedRequest().getExcludes().get(1).getPath());
     }
 
     @Test
@@ -179,10 +179,10 @@ public class ParseRequestStageTest extends TestWithCayenneMapping {
 
         parseStage.execute(context);
 
-        assertNotNull(context.getRawRequest());
+        assertNotNull(context.getMergedRequest());
 
-        assertEquals(1, context.getRawRequest().getIncludes().size());
-        assertEquals("e3s", context.getRawRequest().getIncludes().get(0).getPath());
+        assertEquals(1, context.getMergedRequest().getIncludes().size());
+        assertEquals("e3s", context.getMergedRequest().getIncludes().get(0).getPath());
     }
 
 
@@ -197,10 +197,10 @@ public class ParseRequestStageTest extends TestWithCayenneMapping {
 
         parseStage.execute(context);
 
-        assertNotNull(context.getRawRequest());
-        assertNotNull(context.getRawRequest().getOrderings());
+        assertNotNull(context.getMergedRequest());
+        assertNotNull(context.getMergedRequest().getOrderings());
 
-        Sort ordering = context.getRawRequest().getOrderings().get(0);
+        Sort ordering = context.getMergedRequest().getOrderings().get(0);
         assertEquals("e2", ordering.getProperty());
     }
 
@@ -216,11 +216,11 @@ public class ParseRequestStageTest extends TestWithCayenneMapping {
 
         parseStage.execute(context);
 
-        assertNotNull(context.getRawRequest());
-        assertNotNull(context.getRawRequest().getOrderings());
+        assertNotNull(context.getMergedRequest());
+        assertNotNull(context.getMergedRequest().getOrderings());
 
-        assertEquals(1, context.getRawRequest().getOrderings().size());
-        Sort ordering = context.getRawRequest().getOrderings().get(0);
+        assertEquals(1, context.getMergedRequest().getOrderings().size());
+        Sort ordering = context.getMergedRequest().getOrderings().get(0);
         assertEquals("e2", ordering.getProperty());
         assertEquals(Dir.ASC, ordering.getDirection());
     }
@@ -237,10 +237,10 @@ public class ParseRequestStageTest extends TestWithCayenneMapping {
 
         parseStage.execute(context);
 
-        assertNotNull(context.getRawRequest());
-        assertNotNull(context.getRawRequest().getOrderings());
+        assertNotNull(context.getMergedRequest());
+        assertNotNull(context.getMergedRequest().getOrderings());
 
-        Sort ordering = context.getRawRequest().getOrderings().get(0);
+        Sort ordering = context.getMergedRequest().getOrderings().get(0);
         assertEquals("e2", ordering.getProperty());
         assertEquals(Dir.DESC, ordering.getDirection());
     }
@@ -270,12 +270,12 @@ public class ParseRequestStageTest extends TestWithCayenneMapping {
 
         parseStage.execute(context);
 
-        assertNotNull(context.getRawRequest());
-        assertNotNull(context.getRawRequest().getOrderings());
-        assertEquals(2, context.getRawRequest().getOrderings().size());
+        assertNotNull(context.getMergedRequest());
+        assertNotNull(context.getMergedRequest().getOrderings());
+        assertEquals(2, context.getMergedRequest().getOrderings().size());
 
-        Sort o1 = context.getRawRequest().getOrderings().get(0);
-        Sort o2 = context.getRawRequest().getOrderings().get(1);
+        Sort o1 = context.getMergedRequest().getOrderings().get(0);
+        Sort o2 = context.getMergedRequest().getOrderings().get(1);
 
         assertEquals("name", o1.getProperty());
         assertEquals(Dir.DESC, o1.getDirection());
@@ -295,12 +295,12 @@ public class ParseRequestStageTest extends TestWithCayenneMapping {
 
         parseStage.execute(context);
 
-        assertNotNull(context.getRawRequest());
-        assertNotNull(context.getRawRequest().getOrderings());
-        assertEquals(2, context.getRawRequest().getOrderings().size());
+        assertNotNull(context.getMergedRequest());
+        assertNotNull(context.getMergedRequest().getOrderings());
+        assertEquals(2, context.getMergedRequest().getOrderings().size());
 
-        Sort o1 = context.getRawRequest().getOrderings().get(0);
-        Sort o2 = context.getRawRequest().getOrderings().get(1);
+        Sort o1 = context.getMergedRequest().getOrderings().get(0);
+        Sort o2 = context.getMergedRequest().getOrderings().get(1);
 
         assertEquals("name", o1.getProperty());
         assertEquals(Dir.DESC, o1.getDirection());
@@ -345,9 +345,9 @@ public class ParseRequestStageTest extends TestWithCayenneMapping {
 
         parseStage.execute(context);
 
-        assertNotNull(context.getRawRequest());
-        assertNotNull(context.getRawRequest().getCayenneExp());
+        assertNotNull(context.getMergedRequest());
+        assertNotNull(context.getMergedRequest().getCayenneExp());
 
-        assertEquals("name = 'John Smith'", context.getRawRequest().getCayenneExp().getExp());
+        assertEquals("name = 'John Smith'", context.getMergedRequest().getCayenneExp().getExp());
     }
 }

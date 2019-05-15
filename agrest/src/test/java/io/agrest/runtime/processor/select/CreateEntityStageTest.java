@@ -88,7 +88,7 @@ public class CreateEntityStageTest extends TestWithCayenneMapping {
 
         SelectContext<E1> context = prepareContext(params, E1.class);
 
-        context.setRawRequest(requestBuilderFactory.builder().build());
+        context.setMergedRequest(requestBuilderFactory.builder().build());
 
         createEntityStage.execute(context);
 
@@ -107,7 +107,7 @@ public class CreateEntityStageTest extends TestWithCayenneMapping {
 
         Include include1 = new Include("description");
         Include include2 = new Include("age");
-        context.setRawRequest(requestBuilderFactory.builder().addInclude(include1).addInclude(include2).build());
+        context.setMergedRequest(requestBuilderFactory.builder().addInclude(include1).addInclude(include2).build());
 
         createEntityStage.execute(context);
 
@@ -128,7 +128,7 @@ public class CreateEntityStageTest extends TestWithCayenneMapping {
 
         SelectContext<E1> context = new SelectContext<>(E1.class);
 
-        context.setRawRequest(requestBuilderFactory.builder()
+        context.setMergedRequest(requestBuilderFactory.builder()
                 .addInclude(new Include("description"))
                 .addInclude(new Include("age")).build());
 
@@ -152,7 +152,7 @@ public class CreateEntityStageTest extends TestWithCayenneMapping {
 
         Exclude exclude1 = new Exclude("description");
         Exclude exclude2 = new Exclude("age");
-        context.setRawRequest(requestBuilderFactory.builder()
+        context.setMergedRequest(requestBuilderFactory.builder()
                 .addExclude(exclude1)
                 .addExclude(exclude2).build());
 
@@ -173,7 +173,7 @@ public class CreateEntityStageTest extends TestWithCayenneMapping {
 
         SelectContext<E1> context = new SelectContext<>(E1.class);
         
-        context.setRawRequest(requestBuilderFactory.builder()
+        context.setMergedRequest(requestBuilderFactory.builder()
                 .addExclude(new Exclude("description"))
                 .addExclude(new Exclude("age")).build());
 
@@ -200,7 +200,7 @@ public class CreateEntityStageTest extends TestWithCayenneMapping {
         Exclude exclude1 = new Exclude("description");
         Exclude exclude2 = new Exclude("name");
 
-        context.setRawRequest(requestBuilderFactory.builder()
+        context.setMergedRequest(requestBuilderFactory.builder()
                 .addInclude(include1)
                 .addInclude(include2)
                 .addInclude(include3)
@@ -224,7 +224,7 @@ public class CreateEntityStageTest extends TestWithCayenneMapping {
     public void testSelectRequest_IncludeRels() {
 
         SelectContext<E2> context = new SelectContext<>(E2.class);
-        context.setRawRequest(requestBuilderFactory.builder().addInclude(new Include("e3s")).build());
+        context.setMergedRequest(requestBuilderFactory.builder().addInclude(new Include("e3s")).build());
 
         createEntityStage.execute(context);
 
@@ -256,7 +256,7 @@ public class CreateEntityStageTest extends TestWithCayenneMapping {
 
         Include include1 = new Include("name");
         Include include2 = new Include("e3s.name");
-        context.setRawRequest(requestBuilderFactory.builder()
+        context.setMergedRequest(requestBuilderFactory.builder()
                 .addInclude(include1)
                 .addInclude(include2).build());
 
@@ -288,7 +288,7 @@ public class CreateEntityStageTest extends TestWithCayenneMapping {
 
         Include include = new Include("e3s.name");
         Exclude exclude = new Exclude("name");
-        context.setRawRequest(requestBuilderFactory.builder()
+        context.setMergedRequest(requestBuilderFactory.builder()
                 .addInclude(include)
                 .addExclude(exclude)
                 .build());
@@ -322,7 +322,7 @@ public class CreateEntityStageTest extends TestWithCayenneMapping {
         Include include = new Include("e3s");
         Exclude exclude1 = new Exclude("address");
         Exclude exclude2 = new Exclude("e3s.name");
-        context.setRawRequest(requestBuilderFactory.builder()
+        context.setMergedRequest(requestBuilderFactory.builder()
                 .addInclude(include)
                 .addExclude(exclude1)
                 .addExclude(exclude2)
@@ -356,7 +356,7 @@ public class CreateEntityStageTest extends TestWithCayenneMapping {
 
         Include include1 = new Include("id");
         Include include2 = new Include("e3s.id");
-        context.setRawRequest(requestBuilderFactory.builder()
+        context.setMergedRequest(requestBuilderFactory.builder()
                 .addInclude(include1)
                 .addInclude(include2).build());
 
@@ -385,7 +385,7 @@ public class CreateEntityStageTest extends TestWithCayenneMapping {
 
         Sort sort = new Sort(E2.NAME.getName());
 
-        context.setRawRequest(requestBuilderFactory.builder().addOrdering(sort).build());
+        context.setMergedRequest(requestBuilderFactory.builder().addOrdering(sort).build());
 
         createEntityStage.execute(context);
 
@@ -404,7 +404,7 @@ public class CreateEntityStageTest extends TestWithCayenneMapping {
 
         Sort sort = new Sort(E2.NAME.getName(), Dir.ASC);
 
-        context.setRawRequest(requestBuilderFactory.builder()
+        context.setMergedRequest(requestBuilderFactory.builder()
                 .addOrdering(sort)
                 .build());
 
@@ -425,7 +425,7 @@ public class CreateEntityStageTest extends TestWithCayenneMapping {
 
         Sort sort = new Sort(E2.NAME.getName(), Dir.DESC);
 
-        context.setRawRequest(requestBuilderFactory.builder()
+        context.setMergedRequest(requestBuilderFactory.builder()
                 .addOrdering(sort)
                 .build());
 
@@ -444,7 +444,7 @@ public class CreateEntityStageTest extends TestWithCayenneMapping {
 
         SelectContext<E2> context = new SelectContext<>(E2.class);
 
-        context.setRawRequest(requestBuilderFactory.builder()
+        context.setMergedRequest(requestBuilderFactory.builder()
                 .addOrdering(new Sort("name", Dir.DESC))
                 .addOrdering(new Sort("address", Dir.ASC)).build());
 
@@ -467,7 +467,7 @@ public class CreateEntityStageTest extends TestWithCayenneMapping {
 
         SelectContext<E2> context = new SelectContext<>(E2.class);
 
-        context.setRawRequest(requestBuilderFactory.builder()
+        context.setMergedRequest(requestBuilderFactory.builder()
                 .addOrdering(new Sort("name", Dir.DESC))
                 .addOrdering(new Sort("name", Dir.ASC)).build());
 
@@ -489,7 +489,7 @@ public class CreateEntityStageTest extends TestWithCayenneMapping {
 
         CayenneExp cayenneExp = new CayenneExp("numericProp = 12345 and stringProp = 'John Smith' and booleanProp = true");
 
-        context.setRawRequest(requestBuilderFactory.builder().cayenneExp(cayenneExp).build());
+        context.setMergedRequest(requestBuilderFactory.builder().cayenneExp(cayenneExp).build());
 
         createEntityStage.execute(context);
     }
@@ -501,7 +501,7 @@ public class CreateEntityStageTest extends TestWithCayenneMapping {
 
         CayenneExp cayenneExp = new CayenneExp("name = 'John Smith'");
 
-        context.setRawRequest(requestBuilderFactory.builder().cayenneExp(cayenneExp).build());
+        context.setMergedRequest(requestBuilderFactory.builder().cayenneExp(cayenneExp).build());
 
         createEntityStage.execute(context);
 

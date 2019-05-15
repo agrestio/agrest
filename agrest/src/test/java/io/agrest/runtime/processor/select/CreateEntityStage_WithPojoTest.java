@@ -95,7 +95,7 @@ public class CreateEntityStage_WithPojoTest extends TestWithCayenneMapping {
 
         SelectContext<P1> context = prepareContext(params, P1.class);
 
-        context.setRawRequest(requestBuilderFactory.builder().build());
+        context.setMergedRequest(requestBuilderFactory.builder().build());
         createEntityStage.execute(context);
 
         ResourceEntity<P1> ce1 = context.getEntity();
@@ -109,7 +109,7 @@ public class CreateEntityStage_WithPojoTest extends TestWithCayenneMapping {
 
         SelectContext<P2> context2 = prepareContext(params, P2.class);
 
-        context2.setRawRequest(requestBuilderFactory.builder().build());
+        context2.setMergedRequest(requestBuilderFactory.builder().build());
         createEntityStage.execute(context2);
 
         ResourceEntity<P2> ce2 = context2.getEntity();
@@ -124,7 +124,7 @@ public class CreateEntityStage_WithPojoTest extends TestWithCayenneMapping {
     public void testSelectRequest_IncludeRels() {
 
         SelectContext<P2> context2 = new SelectContext<>(P2.class);
-        context2.setRawRequest(requestBuilderFactory.builder().addInclude(new Include("p1")).build());
+        context2.setMergedRequest(requestBuilderFactory.builder().addInclude(new Include("p1")).build());
 
         createEntityStage.execute(context2);
 

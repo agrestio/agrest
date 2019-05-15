@@ -76,7 +76,7 @@ public class CreateEntityStage_IncludeObjectTest extends TestWithCayenneMapping 
     public void testToDataRequest_IncludeObject_Path() {
 
         SelectContext<E2> context = new SelectContext<>(E2.class);
-        context.setRawRequest(requestBuilderFactory.builder().addInclude(new Include("e3s")).build());
+        context.setMergedRequest(requestBuilderFactory.builder().addInclude(new Include("e3s")).build());
 
         createEntityStage.execute(context);
 
@@ -99,7 +99,7 @@ public class CreateEntityStage_IncludeObjectTest extends TestWithCayenneMapping 
         SelectContext<E2> context = new SelectContext<>(E2.class);
 
         Include include = new Include("e3s", null, Collections.emptyList(), "e5", null, null);
-        context.setRawRequest(requestBuilderFactory.builder().addInclude(include).build());
+        context.setMergedRequest(requestBuilderFactory.builder().addInclude(include).build());
 
         createEntityStage.execute(context);
 

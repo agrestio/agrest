@@ -20,199 +20,217 @@ import java.util.Map;
 
 /**
  * Maintains state of the request processing chain for select requests.
- * 
+ *
  * @since 1.16
  */
 public class SelectContext<T> extends BaseProcessingContext<T> {
 
-	private AgObjectId id;
-	private EntityParent<?> parent;
-	private ResourceEntity<T> entity;
-	private UriInfo uriInfo;
-	private Map<String, EntityProperty> extraProperties;
-	private SizeConstraints sizeConstraints;
-	private Constraint<T> constraint;
-	private boolean atMostOneObject;
-	private Encoder encoder;
-	private AgRequest rawRequest;
-	private AgRequest request;
+    private AgObjectId id;
+    private EntityParent<?> parent;
+    private ResourceEntity<T> entity;
+    private UriInfo uriInfo;
+    private Map<String, EntityProperty> extraProperties;
+    private SizeConstraints sizeConstraints;
+    private Constraint<T> constraint;
+    private boolean atMostOneObject;
+    private Encoder encoder;
+    private AgRequest mergedRequest;
+    private AgRequest request;
 
 
-	public SelectContext(Class<T> type) {
-		super(type);
-	}
+    public SelectContext(Class<T> type) {
+        super(type);
+    }
 
-	/**
-	 * Returns a new response object reflecting the context state.
-	 * 
-	 * @since 1.24
-	 * @return a new response object reflecting the context state.
-	 */
-	public DataResponse<T> createDataResponse() {
-		List<? extends T> objects = this.entity != null ? this.entity.getResult() : Collections.<T> emptyList();
-		DataResponse<T> response = DataResponse.forType(getType());
-		response.setObjects(objects);
-		response.setEncoder(encoder);
-		response.setStatus(getStatus());
-		return response;
-	}
+    /**
+     * Returns a new response object reflecting the context state.
+     *
+     * @return a new response object reflecting the context state.
+     * @since 1.24
+     */
+    public DataResponse<T> createDataResponse() {
+        List<? extends T> objects = this.entity != null ? this.entity.getResult() : Collections.<T>emptyList();
+        DataResponse<T> response = DataResponse.forType(getType());
+        response.setObjects(objects);
+        response.setEncoder(encoder);
+        response.setStatus(getStatus());
+        return response;
+    }
 
-	public boolean isById() {
-		return id != null;
-	}
+    public boolean isById() {
+        return id != null;
+    }
 
-	public AgObjectId getId() {
-		return id;
-	}
+    public AgObjectId getId() {
+        return id;
+    }
 
-	public void setId(Object id) {
-		this.id = new SimpleObjectId(id);
-	}
+    public void setId(Object id) {
+        this.id = new SimpleObjectId(id);
+    }
 
-	public void setCompoundId(Map<String, Object> ids) {
-		this.id = new CompoundObjectId(ids);
-	}
+    public void setCompoundId(Map<String, Object> ids) {
+        this.id = new CompoundObjectId(ids);
+    }
 
-	public EntityParent<?> getParent() {
-		return parent;
-	}
+    public EntityParent<?> getParent() {
+        return parent;
+    }
 
-	public void setParent(EntityParent<?> parent) {
-		this.parent = parent;
-	}
+    public void setParent(EntityParent<?> parent) {
+        this.parent = parent;
+    }
 
-	public UriInfo getUriInfo() {
-		return uriInfo;
-	}
+    public UriInfo getUriInfo() {
+        return uriInfo;
+    }
 
-	/**
-	 * @since 2.5
-	 */
-	public Map<String, List<String>> getProtocolParameters() {
-		return uriInfo != null ? uriInfo.getQueryParameters() : Collections.emptyMap();
-	}
+    public void setUriInfo(UriInfo uriInfo) {
+        this.uriInfo = uriInfo;
+    }
 
-	public void setUriInfo(UriInfo uriInfo) {
-		this.uriInfo = uriInfo;
-	}
+    /**
+     * @since 2.5
+     */
+    public Map<String, List<String>> getProtocolParameters() {
+        return uriInfo != null ? uriInfo.getQueryParameters() : Collections.emptyMap();
+    }
 
-	public Map<String, EntityProperty> getExtraProperties() {
-		return extraProperties;
-	}
+    public Map<String, EntityProperty> getExtraProperties() {
+        return extraProperties;
+    }
 
-	public void setExtraProperties(Map<String, EntityProperty> extraProperties) {
-		this.extraProperties = extraProperties;
-	}
+    public void setExtraProperties(Map<String, EntityProperty> extraProperties) {
+        this.extraProperties = extraProperties;
+    }
 
-	public SizeConstraints getSizeConstraints() {
-		return sizeConstraints;
-	}
+    public SizeConstraints getSizeConstraints() {
+        return sizeConstraints;
+    }
 
-	public void setSizeConstraints(SizeConstraints sizeConstraints) {
-		this.sizeConstraints = sizeConstraints;
-	}
+    public void setSizeConstraints(SizeConstraints sizeConstraints) {
+        this.sizeConstraints = sizeConstraints;
+    }
 
 
-	/**
-	 * @since 2.4
-	 * @return this context's constraint function.
-	 */
-	public Constraint<T> getConstraint() {
-		return constraint;
-	}
+    /**
+     * @return this context's constraint function.
+     * @since 2.4
+     */
+    public Constraint<T> getConstraint() {
+        return constraint;
+    }
 
-	/**
-	 * @since 2.4
-	 * @param constraint constraint function.
-	 */
-	public void setConstraint(Constraint<T> constraint) {
-		this.constraint = constraint;
-	}
+    /**
+     * @param constraint constraint function.
+     * @since 2.4
+     */
+    public void setConstraint(Constraint<T> constraint) {
+        this.constraint = constraint;
+    }
 
-	public boolean isAtMostOneObject() {
-		return atMostOneObject;
-	}
+    public boolean isAtMostOneObject() {
+        return atMostOneObject;
+    }
 
-	public void setAtMostOneObject(boolean expectingOne) {
-		this.atMostOneObject = expectingOne;
-	}
+    public void setAtMostOneObject(boolean expectingOne) {
+        this.atMostOneObject = expectingOne;
+    }
 
-	public Encoder getEncoder() {
-		return encoder;
-	}
+    public Encoder getEncoder() {
+        return encoder;
+    }
 
-	public void setEncoder(Encoder encoder) {
-		this.encoder = encoder;
-	}
+    public void setEncoder(Encoder encoder) {
+        this.encoder = encoder;
+    }
 
-	/**
-	 * @since 1.20
-	 */
-	public ResourceEntity<T> getEntity() {
-		return entity;
-	}
+    /**
+     * @since 1.20
+     */
+    public ResourceEntity<T> getEntity() {
+        return entity;
+    }
 
-	/**
-	 * @since 1.20
-	 */
-	public void setEntity(ResourceEntity<T> entity) {
-		this.entity = entity;
-	}
+    /**
+     * @since 1.20
+     */
+    public void setEntity(ResourceEntity<T> entity) {
+        this.entity = entity;
+    }
 
-	/**
-	 * Returns AgRequest that contains query parameters.
-	 * This parameters are used on the CreateEntityStage to create an entity.
-	 *
-	 * @since 2.13
-	 */
-	public AgRequest getRawRequest() {
-		return rawRequest;
-	}
+    /**
+     * Returns AgRequest instance that is a result of merging context AgRequest with URL parameters. Used in
+     * {@link CreateResourceEntityStage} to create a tree of {@link ResourceEntity} instances for the request.
+     *
+     * @since 3.2
+     */
+    public AgRequest getMergedRequest() {
+        return mergedRequest;
+    }
 
-	/**
-	 * Saves AgRequest that contains query parameters.
-	 *
-	 * This AgRequest object is build from two sources.
-	 * 1. Parse UriInfo and create query parameters objects.
-	 * 2. If some of query parameters are passed explicitly they will be used instead of parsing from UriInfo.
-	 * These explicit query parameters are saved in rawRequest object during ParseRequestStage.
-	 *
-	 * @since 2.13
-	 */
-	public void setRawRequest(AgRequest request) {
-		this.rawRequest = request;
-	}
+    /**
+     * Saves AgRequest that contains query parameters.
+     * <p>
+     * This AgRequest object is build from two sources.
+     * 1. Parse UriInfo and create query parameters objects.
+     * 2. If some of query parameters are passed explicitly they will be used instead of parsing from UriInfo.
+     * These explicit query parameters are saved in mergedRequest object during ParseRequestStage.
+     *
+     * @since 2.13
+     */
+    public void setMergedRequest(AgRequest request) {
+        this.mergedRequest = request;
+    }
 
-	/**
-	 * Returns AgRequest object that contains query parameters explicitly passed through API method call
-	 *
-	 * @since 2.13
-	 */
-	public AgRequest getRequest() {
-		return request;
-	}
+    /**
+     * Returns AgRequest object that contains query parameters explicitly passed through API method call
+     *
+     * @since 2.13
+     */
+    public AgRequest getRequest() {
+        return request;
+    }
 
-	/**
-	 * Saves AgRequest object that contains query parameters explicitly passed through API method call
-	 * These parameters are created during ConvertQueryParamsStage
-	 *
-	 * <pre>{@code
-	 *
-	 * 		public DataResponse<E2> getE2(@Context UriInfo uriInfo, @QueryParam CayenneExp cayenneExp) {
-	 * 			// Explicit query parameter
-	 * 			AgRequest agRequest = AgRequest.builder().cayenneExp(cayenneExp).build();
-	 *
-	 * 			return Ag.service(config).select(E2.class)
-	 * 							.uri(uriInfo)
-	 * 							.request(agRequest) // overrides parameters from uriInfo
-	 * 							.get();
-	 * 		}
-	 *
-	 * }</pre>
-	 *
-	 * @since 2.13
-	 */
-	public void setRequest(AgRequest request) {
-		this.request = request;
-	}
+    /**
+     * Saves AgRequest object that contains query parameters explicitly passed through API method call
+     * These parameters are created during ConvertQueryParamsStage
+     *
+     * <pre>{@code
+     *
+     * 		public DataResponse<E2> getE2(@Context UriInfo uriInfo, @QueryParam CayenneExp cayenneExp) {
+     * 			// Explicit query parameter
+     * 			AgRequest agRequest = AgRequest.builder().cayenneExp(cayenneExp).build();
+     *
+     * 			return Ag.service(config).select(E2.class)
+     * 							.uri(uriInfo)
+     * 							.request(agRequest) // overrides parameters from uriInfo
+     * 							.get();
+     *        }
+     *
+     * }</pre>
+     *
+     * @since 2.13
+     */
+    public void setRequest(AgRequest request) {
+        this.request = request;
+    }
+
+    /**
+     * @since 2.13
+     * @deprecated since 3.2 in favor of {@link #getMergedRequest()}.
+     */
+    @Deprecated
+    public AgRequest getRawRequest() {
+        return getMergedRequest();
+    }
+
+    /**
+     * @since 2.13
+     * @deprecated since 3.2 in favor of {@link #setMergedRequest(AgRequest)}
+     */
+    @Deprecated
+    public void setRawRequest(AgRequest request) {
+        this.mergedRequest = request;
+    }
 }
