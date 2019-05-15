@@ -35,6 +35,8 @@ import java.util.function.UnaryOperator;
 
 public abstract class BQJerseyTestOnDerby {
 
+    // TODO: reuse Derby DataSource between all tests ... don't recreate it once per test class
+
     @ClassRule
     public static BQTestFactory TEST_FACTORY = new BQTestFactory();
     private static BQRuntime TEST_RUNTIME;
