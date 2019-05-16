@@ -2,31 +2,29 @@ package io.agrest.client.it.noadapter;
 
 import io.agrest.Ag;
 import io.agrest.DataResponse;
-import io.agrest.client.ClientDataResponse;
 import io.agrest.client.AgClient;
-import io.agrest.it.fixture.pojo.JerseyTestOnPojo;
+import io.agrest.client.ClientDataResponse;
+import io.agrest.it.fixture.BQJerseyTestOnPojo;
 import io.agrest.it.fixture.pojo.model.P1;
 import io.agrest.it.fixture.pojo.model.P2;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.Configuration;
 import javax.ws.rs.core.Context;
-import javax.ws.rs.core.FeatureContext;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriInfo;
-
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.*;
 
-public class GET_Client_PojoIT extends JerseyTestOnPojo {
+public class GET_Client_PojoIT extends BQJerseyTestOnPojo {
 
-    @Override
-    protected void doAddResources(FeatureContext context) {
-        context.register(Resource.class);
+    @BeforeClass
+    public static void startTestRuntime() {
+        startTestRuntime(Resource.class);
     }
 
     @Test
@@ -36,7 +34,7 @@ public class GET_Client_PojoIT extends JerseyTestOnPojo {
         P1 related = new P1();
         related.setName("xyz");
         expected.setP1(related);
-        pojoDB.bucketForType(P2.class).put(1, expected);
+        p2().put(1, expected);
 
         ClientDataResponse<P2> response = AgClient.client(target("/p2")).include("p1").get(P2.class);
         assertEquals(Status.OK, response.getStatus());

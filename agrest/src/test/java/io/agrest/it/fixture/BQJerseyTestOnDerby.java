@@ -73,13 +73,6 @@ public abstract class BQJerseyTestOnDerby {
                 .build();
     }
 
-    /**
-     * A method for subclasses to override to customize Agrest stack.
-     */
-    protected AgBuilder doConfigure(AgBuilder builder) {
-        return builder;
-    }
-
     protected abstract Class<?>[] testEntities();
 
     protected ResponseAssertions onSuccess(Response response) {
