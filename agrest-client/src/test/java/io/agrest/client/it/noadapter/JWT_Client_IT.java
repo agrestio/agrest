@@ -6,8 +6,9 @@ import io.agrest.DataResponse;
 import io.agrest.client.AgClient;
 import io.agrest.client.AgClientException;
 import io.agrest.client.ClientDataResponse;
-import io.agrest.it.fixture.JerseyTestOnDerby;
+import io.agrest.it.fixture.BQJerseyTestOnDerby;
 import io.agrest.it.fixture.cayenne.E4;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import javax.annotation.Priority;
@@ -18,32 +19,40 @@ import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerRequestFilter;
 import javax.ws.rs.core.Configuration;
 import javax.ws.rs.core.Context;
-import javax.ws.rs.core.FeatureContext;
+import javax.ws.rs.core.Feature;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import java.io.IOException;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
-public class JWT_Client_IT extends JerseyTestOnDerby {
+public class JWT_Client_IT extends BQJerseyTestOnDerby {
 
     final static String AUTH_TOKEN = "itIsMyVerySecretToken";
 
+    @BeforeClass
+    public static void startTestRuntime() {
+        Feature f = c -> {
+            c.register(JWTAuthFilter.class);
+            return true;
+        };
+        startTestRuntime(ab -> ab.feature(f), Resource.class);
+    }
+
     @Override
-    protected void doAddResources(FeatureContext context) {
-        context.register(JWTAuthFilter.class);
-        context.register(Resource.class);
+    protected Class<?>[] testEntities() {
+        return new Class[]{E4.class};
     }
 
     @Test
     public void testAuthClient() {
 
-        insert("e4", "id, c_varchar, c_int", "1, 'xxx', 5");
-        insert("e4", "id, c_varchar, c_int", "2, 'yyy', 7");
+        e4().insertColumns("id", "c_varchar", "c_int")
+                .values(1, "xxx", 5)
+                .values(2, "yyy", 7)
+                .exec();
 
         ClientDataResponse<JsonNode> response = AgClient.client(target("/e4"))
                 .configure(b -> b.header(HttpHeaders.AUTHORIZATION, "Bearer " + AUTH_TOKEN))
@@ -60,20 +69,19 @@ public class JWT_Client_IT extends JerseyTestOnDerby {
     @Test
     public void testNotAuthClient() {
 
-        insert("e4", "id, c_varchar, c_int", "1, 'xxx', 5");
-        insert("e4", "id, c_varchar, c_int", "2, 'yyy', 7");
-
+        e4().insertColumns("id", "c_varchar", "c_int")
+                .values(1, "xxx", 5)
+                .values(2, "yyy", 7)
+                .exec();
 
         AgClientException e = null;
         try {
-            ClientDataResponse<JsonNode> response = AgClient.client(target("/e4"))
-                    .get(JsonNode.class);
+            AgClient.client(target("/e4")).get(JsonNode.class);
         } catch (AgClientException e1) {
             e = e1;
         }
         assertNotNull(e);
         assertTrue(e.getMessage().startsWith("Server returned 401 (Unauthorized)"));
-
     }
 
     @Path("")
@@ -98,7 +106,7 @@ public class JWT_Client_IT extends JerseyTestOnDerby {
 
             String authHeaderVal = requestContext.getHeaderString(HttpHeaders.AUTHORIZATION);
 
-            if ( authHeaderVal == null
+            if (authHeaderVal == null
                     || !authHeaderVal.startsWith("Bearer")
                     || !authHeaderVal.contains(AUTH_TOKEN)) {
                 System.out.println("No JWT token !");
