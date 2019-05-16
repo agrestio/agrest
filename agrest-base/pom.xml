@@ -9,7 +9,7 @@
     </parent>
 
     <artifactId>agrest-base</artifactId>
-    <name>agrest-base: Common Agrest components</name>
+    <name>agrest-base: common client/server components</name>
     <description>Collection of common Agrest components</description>
 
     <dependencies>

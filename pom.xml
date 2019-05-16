@@ -6,8 +6,8 @@
     <artifactId>agrest-parent</artifactId>
     <version>3.2-SNAPSHOT</version>
 
-    <name>agrest: Parent POM of Agrest modules</name>
-    <description>Parent POM of Agrest modules</description>
+    <name>agrest: parent POM of all modules</name>
+    <description>Agrest is a Model-driven RESTful data services framework. This is the parent POM of all Agrest modules</description>
     <packaging>pom</packaging>
 
     <modules>

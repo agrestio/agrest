@@ -10,7 +10,7 @@
 	</parent>
 
 	<artifactId>agrest-sencha</artifactId>
-	<name>agrest-sencha: Sencha/ExtJS Integration for Agrest</name>
+	<name>agrest-sencha: Sencha/ExtJS extensions</name>
 	<description>Sencha/ExtJS Integration for Agrest</description>
 
 	<dependencies>

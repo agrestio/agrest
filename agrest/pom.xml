@@ -10,8 +10,8 @@
     </parent>
 
     <artifactId>agrest</artifactId>
-    <name>agrest: Model-driven REST data services framework</name>
-    <description>Model-driven REST data services framework</description>
+    <name>agrest: core framework</name>
+    <description>Core Agrest framework</description>
 
     <dependencies>
 

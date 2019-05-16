@@ -11,7 +11,7 @@
     <artifactId>agrest-framework</artifactId>
 
     <packaging>jar</packaging>
-    <name>agrest-framework: AsciiDoc - Agrest Framework Guide</name>
+    <name>agrest-framework: framework guide</name>
 
     <build>
         <plugins>

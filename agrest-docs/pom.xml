@@ -11,7 +11,7 @@
 
 	<groupId>io.agrest.docs</groupId>
 	<artifactId>agrest-docs</artifactId>
-	<name>agrest-docs: Asciidoc documentation</name>
+	<name>agrest-docs: parent of AsciiDoc documentation</name>
 	<description>Agrest framework documentation</description>
 	<packaging>pom</packaging>
 

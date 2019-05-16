@@ -9,6 +9,7 @@
 
     <groupId>io.agrest.openapi</groupId>
     <artifactId>agrest-openapi-designfirst</artifactId>
+    <name>agrest-openapi-designfirst: code generator</name>
 
     <dependencies>
         <dependency>
