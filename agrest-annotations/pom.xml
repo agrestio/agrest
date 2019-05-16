@@ -11,7 +11,7 @@
 
 	<artifactId>agrest-annotations</artifactId>
 	<packaging>jar</packaging>
-	<name>agrest-annotations: Dependency-free Agrest model annotations</name>
+	<name>agrest-annotations: Agrest model annotations</name>
 	<description>
 		A dependency-free collection of Agrest annotations that allow to annotate model objects without
 		introducing a dependency on Agrest runtime.
