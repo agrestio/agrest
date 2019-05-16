@@ -13,6 +13,9 @@ import io.agrest.it.fixture.cayenne.E3;
 import io.agrest.it.fixture.cayenne.E4;
 import io.agrest.it.fixture.cayenne.E5;
 import io.agrest.it.fixture.cayenne.E6;
+import io.agrest.it.fixture.cayenne.E7;
+import io.agrest.it.fixture.cayenne.E8;
+import io.agrest.it.fixture.cayenne.E9;
 import io.agrest.runtime.AgBuilder;
 import io.agrest.runtime.AgRuntime;
 import io.bootique.BQRuntime;
@@ -117,6 +120,18 @@ public abstract class BQJerseyTestOnDerby {
 
     protected Table e6() {
         return dataManager.getTable(E6.class);
+    }
+
+    protected Table e7() {
+        return dataManager.getTable(E7.class);
+    }
+
+    protected Table e8() {
+        return dataManager.getTable(E8.class);
+    }
+
+    protected Table e9() {
+        return dataManager.getTable(E9.class);
     }
 
     protected Table e14() {
