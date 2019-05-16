@@ -187,6 +187,24 @@ public class E3Resource_GeneratedIT extends BQJerseyTestOnDerby {
     }
 
     @Test
+    public void testPUT_Relate() {
+
+        e2().insertColumns("id", "name")
+                .values(24, "xxx").exec();
+
+        e3().insertColumns("id", "name")
+                .values(7, "zzz")
+                .values(8, "yyy").exec();
+
+        // PUT with empty body ... how bad is that?
+        Response r = target("/v1/e3/8/e2/24").request().put(Entity.json(""));
+
+        onSuccess(r).bodyEquals(1, "{\"id\":24,\"address\":null,\"name\":\"xxx\"}");
+
+        e3().matcher().eq("e2_id", 24).eq("name", "yyy").assertOneMatch();
+    }
+
+    @Test
     public void testDELETE_UnrelateById() {
 
         // make sure we have e3s for more than one e2 - this will help us
