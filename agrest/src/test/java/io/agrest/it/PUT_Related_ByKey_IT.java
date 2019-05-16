@@ -20,7 +20,6 @@ import javax.ws.rs.core.Configuration;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
-import java.util.List;
 
 import static org.junit.Assert.*;
 
@@ -53,15 +52,7 @@ public class PUT_Related_ByKey_IT extends BQJerseyTestOnDerby {
                 .put(Entity.json("[  {\"name\":\"newname\"}, {\"name\":\"aaa\"} ]"));
 
         e7().matcher().assertMatches(4);
-
-        // TODO: hopefully there will be a an easier way to select ID per
-        //   https://github.com/bootique/bootique-jdbc/issues/93
-        List<Integer> ids = e7()
-                .selectStatement(rs -> rs.getInt(1)).append("SELECT id FROM utest.e7 WHERE name = 'newname'")
-                .select(100);
-        assertEquals(1, ids.size());
-        int id = ids.get(0);
-        onSuccess(r1).bodyEquals(2, "{\"id\":" + id + ",\"name\":\"newname\"},{\"id\":9,\"name\":\"aaa\"}");
+        onSuccess(r1).replaceId("XID").bodyEquals(2, "{\"id\":XID,\"name\":\"newname\"},{\"id\":9,\"name\":\"aaa\"}");
 
         // testing idempotency
 
@@ -70,7 +61,7 @@ public class PUT_Related_ByKey_IT extends BQJerseyTestOnDerby {
                 .put(Entity.json("[  {\"name\":\"newname\"}, {\"name\":\"aaa\"} ]"));
 
         e7().matcher().assertMatches(4);
-        onSuccess(r2).bodyEquals(2, "{\"id\":" + id + ",\"name\":\"newname\"},{\"id\":9,\"name\":\"aaa\"}");
+        onSuccess(r2).replaceId("XID").bodyEquals(2, "{\"id\":XID,\"name\":\"newname\"},{\"id\":9,\"name\":\"aaa\"}");
     }
 
     @Test
@@ -89,15 +80,7 @@ public class PUT_Related_ByKey_IT extends BQJerseyTestOnDerby {
                 .put(Entity.json("[  {\"name\":\"newname\"}, {\"name\":\"aaa\"} ]"));
 
         e7().matcher().assertMatches(4);
-
-        // TODO: hopefully there will be a an easier way to select ID per
-        //   https://github.com/bootique/bootique-jdbc/issues/93
-        List<Integer> ids = e7()
-                .selectStatement(rs -> rs.getInt(1)).append("SELECT id FROM utest.e7 WHERE name = 'newname'")
-                .select(100);
-        assertEquals(1, ids.size());
-        int id = ids.get(0);
-        onSuccess(r1).bodyEquals(2, "{\"id\":" + id + ",\"name\":\"newname\"},{\"id\":9,\"name\":\"aaa\"}");
+        onSuccess(r1).replaceId("XID").bodyEquals(2, "{\"id\":XID,\"name\":\"newname\"},{\"id\":9,\"name\":\"aaa\"}");
     }
 
     @Test

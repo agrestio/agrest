@@ -20,26 +20,7 @@ public class POST_Related_IT extends JerseyTestOnDerby {
         context.register(E2Resource.class);
     }
 
-    @Test
-    public void testRelate_ToMany_New() {
 
-        insert("e2", "id, name", "24, 'xxx'");
-
-        Response response = target("/v1/e2/24/e3s")
-                .request()
-                .post(Entity.json("{\"name\":\"zzz\"}"));
-
-        assertEquals(Status.OK.getStatusCode(), response.getStatus());
-        assertEquals("{\"data\":[{REPLACED_ID,\"name\":\"zzz\",\"phoneNumber\":null}],\"total\":1}",
-                response.readEntity(String.class).replaceFirst("\"id\":[\\d]+", "REPLACED_ID"));
-
-        assertEquals(1, intForQuery("SELECT count(1) FROM utest.e3"));
-
-        DataRow row = SQLSelect.dataRowQuery("SELECT e2_id, name FROM utest.e3").lowerColumnNames()
-                .selectOne(newContext());
-        assertEquals("zzz", row.get("name"));
-        assertEquals(24, row.get("e2_id"));
-    }
 
     @Test
     public void testRelate_ToMany_MixedCollection() {

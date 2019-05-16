@@ -3,13 +3,16 @@ package io.agrest.it.fixture;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import javax.ws.rs.core.Response;
+import java.util.regex.Pattern;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.*;
 
 public class ResponseAssertions {
 
+    private static Pattern ID_REPLACER = Pattern.compile("\"id\":[\\d]+");
+
     private Response response;
+    private String idPlaceholder;
 
     public ResponseAssertions(Response response) {
         this.response = response;
@@ -29,8 +32,20 @@ public class ResponseAssertions {
         return this;
     }
 
+    /**
+     * Replaces id value in the actual result with a known placeholder, this allowing to compare JSON coming for
+     * unknonw ids.
+     */
+    public ResponseAssertions replaceId(String idPlaceholder) {
+        this.idPlaceholder = idPlaceholder;
+        return this;
+    }
+
     public ResponseAssertions bodyEquals(String expected) {
-        assertEquals("Response contains unexpected JSON", expected, response.readEntity(String.class));
+        String actual = response.readEntity(String.class);
+        String normalized = idPlaceholder != null ? ID_REPLACER.matcher(actual).replaceFirst("\"id\":" + idPlaceholder) : actual;
+
+        assertEquals("Response contains unexpected JSON", expected, normalized);
         return this;
     }
 

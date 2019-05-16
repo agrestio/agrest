@@ -31,7 +31,6 @@ public class PUT_StagesIT extends BQJerseyTestOnDerby {
     }
 
     @Test
-    @Deprecated
     public void testPut_ToOne() {
 
         e3().insertColumns("id", "name")
