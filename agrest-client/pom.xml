@@ -10,8 +10,8 @@
     </parent>
 
     <artifactId>agrest-client</artifactId>
-    <name>agrest-client: client library to access Agrest services</name>
-    <description>Agrest Java client</description>
+    <name>agrest-client: Agrest Java client</name>
+    <description>Client library to access Agrest protocol-compliant RESTful services</description>
 
     <dependencies>
         <dependency>
