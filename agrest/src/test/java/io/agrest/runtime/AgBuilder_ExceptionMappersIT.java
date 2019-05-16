@@ -2,8 +2,11 @@ package io.agrest.runtime;
 
 import io.agrest.AgException;
 import io.agrest.DataResponse;
-import io.agrest.it.fixture.JerseyTestOnDerby;
-import io.agrest.it.fixture.cayenne.E2;
+import io.agrest.it.fixture.BQJerseyTestOnPojo;
+import io.agrest.it.fixture.pojo.model.P1;
+import io.agrest.it.fixture.pojo.model.P2;
+import org.apache.cayenne.di.Module;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import javax.ws.rs.GET;
@@ -11,26 +14,25 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Configuration;
 import javax.ws.rs.core.Context;
-import javax.ws.rs.core.FeatureContext;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import javax.ws.rs.ext.ExceptionMapper;
+import java.util.function.UnaryOperator;
 
-public class AgBuilder_ExceptionMappersIT extends JerseyTestOnDerby {
+public class AgBuilder_ExceptionMappersIT extends BQJerseyTestOnPojo {
 
-    @Override
-    protected void doAddResources(FeatureContext context) {
-        context.register(Resource.class);
+    @BeforeClass
+    public static void startTestRuntime() {
+        UnaryOperator<AgBuilder> customizer = b -> b.module(exceptionsModule());
+        startTestRuntime(customizer, Resource.class);
     }
 
-    @Override
-    protected AgBuilder doConfigure() {
-        return super.doConfigure()
-                .module(b -> b.bindMap(ExceptionMapper.class)
-                        // TODO: Bootique-like extender API
-                        .put(AgException.class.getName(), TestAgExceptionMapper.class)
-                        .put(TestException.class.getName(), TestExceptionMapper.class));
+    private static Module exceptionsModule() {
+        return cb -> cb.bindMap(ExceptionMapper.class)
+                // TODO: Bootique-like extender API
+                .put(AgException.class.getName(), TestAgExceptionMapper.class)
+                .put(TestException.class.getName(), TestExceptionMapper.class);
     }
 
     @Test
@@ -58,13 +60,13 @@ public class AgBuilder_ExceptionMappersIT extends JerseyTestOnDerby {
 
         @GET
         @Path("agexception")
-        public DataResponse<E2> agException(@Context UriInfo uriInfo) {
+        public DataResponse<P1> agException(@Context UriInfo uriInfo) {
             throw new AgException(Response.Status.FORBIDDEN, "_ag_exception_");
         }
 
         @GET
         @Path("testexception")
-        public DataResponse<E2> testException(@Context UriInfo uriInfo) {
+        public DataResponse<P2> testException(@Context UriInfo uriInfo) {
             throw new TestException("_test_exception_");
         }
     }

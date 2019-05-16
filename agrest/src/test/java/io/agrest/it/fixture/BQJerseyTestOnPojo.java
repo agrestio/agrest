@@ -47,14 +47,15 @@ public class BQJerseyTestOnPojo {
         startTestRuntime(b -> b, resources);
     }
 
-    protected static void startTestRuntime(UnaryOperator<AgBuilder> userCustomizer, Class<?>... resources) {
+    protected static void startTestRuntime(UnaryOperator<AgBuilder> customizer, Class<?>... resources) {
 
         POJO_DB = new PojoDB();
 
-        Function<AgBuilder, AgBuilder> customizer = userCustomizer.andThen(BQJerseyTestOnPojo::customizeForPojo);
+        Function<AgBuilder, AgBuilder> customizerChain = customizer.compose(BQJerseyTestOnPojo::customizeForPojo);
+
         TEST_RUNTIME = TEST_FACTORY.app("-s", "-c", "classpath:io/agrest/it/fixture/pojoserver.yml")
                 .autoLoadModules()
-                .module(new AgModule(customizer))
+                .module(new AgModule(customizerChain))
                 .module(b -> addResources(JerseyModule.extend(b), resources).addFeature(AgRuntime.class))
                 .createRuntime();
 
