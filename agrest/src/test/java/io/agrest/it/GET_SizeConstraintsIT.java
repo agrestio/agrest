@@ -1,27 +1,29 @@
 package io.agrest.it;
 
-import io.agrest.DataResponse;
 import io.agrest.Ag;
-import io.agrest.it.fixture.JerseyTestOnDerby;
+import io.agrest.DataResponse;
+import io.agrest.it.fixture.BQJerseyTestOnDerby;
 import io.agrest.it.fixture.cayenne.E4;
-import org.apache.cayenne.query.SQLTemplate;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.Configuration;
 import javax.ws.rs.core.Context;
-import javax.ws.rs.core.FeatureContext;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
-import static org.junit.Assert.assertEquals;
+public class GET_SizeConstraintsIT extends BQJerseyTestOnDerby {
 
-public class GET_SizeConstraintsIT extends JerseyTestOnDerby {
+    @BeforeClass
+    public static void startTestRuntime() {
+        startTestRuntime(Resource.class);
+    }
 
     @Override
-    protected void doAddResources(FeatureContext context) {
-        context.register(Resource.class);
+    protected Class<?>[] testEntities() {
+        return new Class[]{E4.class};
     }
 
     // TODO: unclear what server-side fetch offset protects? so not testing it here.
@@ -29,25 +31,27 @@ public class GET_SizeConstraintsIT extends JerseyTestOnDerby {
     @Test
     public void testNoClientLimit() {
 
-        SQLTemplate insert = new SQLTemplate(E4.class, "INSERT INTO utest.e4 (id) values (1),(2),(3)");
-        newContext().performGenericQuery(insert);
+        e4().insertColumns("id")
+                .values(1)
+                .values(2)
+                .values(3).exec();
 
         Response r = target("/e4/limit")
                 .queryParam("sort", "id")
                 .queryParam("include", "id")
                 .request()
                 .get();
-        assertEquals(Response.Status.OK.getStatusCode(), r.getStatus());
-        assertEquals("{\"data\":[{\"id\":1},{\"id\":2}],\"total\":3}",
-                r.readEntity(String.class));
+
+        onSuccess(r).bodyEquals(3, "{\"id\":1},{\"id\":2}");
     }
 
     @Test
     public void testClientLimitBelowServerLimit() {
 
-        SQLTemplate insert = new SQLTemplate(E4.class, "INSERT INTO utest.e4 (id) values (1),(2),(3)");
-
-        newContext().performGenericQuery(insert);
+        e4().insertColumns("id")
+                .values(1)
+                .values(2)
+                .values(3).exec();
 
         Response r = target("/e4/limit")
                 .queryParam("sort", "id")
@@ -55,17 +59,17 @@ public class GET_SizeConstraintsIT extends JerseyTestOnDerby {
                 .queryParam("limit", "1")
                 .request()
                 .get();
-        assertEquals(Response.Status.OK.getStatusCode(), r.getStatus());
-        assertEquals("{\"data\":[{\"id\":1}],\"total\":3}",
-                r.readEntity(String.class));
+
+        onSuccess(r).bodyEquals(3, "{\"id\":1}");
     }
 
     @Test
     public void testClientLimitExceedsServerLimit() {
 
-        SQLTemplate insert = new SQLTemplate(E4.class, "INSERT INTO utest.e4 (id) values (1),(2),(3)");
-
-        newContext().performGenericQuery(insert);
+        e4().insertColumns("id")
+                .values(1)
+                .values(2)
+                .values(3).exec();
 
         Response r = target("/e4/limit")
                 .queryParam("sort", "id")
@@ -73,9 +77,8 @@ public class GET_SizeConstraintsIT extends JerseyTestOnDerby {
                 .queryParam("limit", "5")
                 .request()
                 .get();
-        assertEquals(Response.Status.OK.getStatusCode(), r.getStatus());
-        assertEquals("{\"data\":[{\"id\":1},{\"id\":2}],\"total\":3}",
-                r.readEntity(String.class));
+
+        onSuccess(r).bodyEquals(3, "{\"id\":1},{\"id\":2}");
     }
 
     @Path("")
