@@ -2,14 +2,14 @@ package io.agrest.it;
 
 import io.agrest.Ag;
 import io.agrest.DataResponse;
-import io.agrest.it.fixture.JerseyTestOnDerby;
+import io.agrest.it.fixture.BQJerseyTestOnDerby;
 import io.agrest.it.fixture.cayenne.E14;
 import io.agrest.it.fixture.cayenne.E15;
 import io.agrest.it.fixture.cayenne.E3;
 import io.agrest.it.fixture.cayenne.E7;
 import io.agrest.it.fixture.cayenne.E8;
 import io.agrest.runtime.cayenne.ByKeyObjectMapperFactory;
-import org.apache.cayenne.query.SQLTemplate;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import javax.ws.rs.PUT;
@@ -18,89 +18,100 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.Configuration;
 import javax.ws.rs.core.Context;
-import javax.ws.rs.core.FeatureContext;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
+import java.util.List;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
-public class PUT_Related_ByKey_IT extends JerseyTestOnDerby {
+public class PUT_Related_ByKey_IT extends BQJerseyTestOnDerby {
+
+    @BeforeClass
+    public static void startTestRuntime() {
+        startTestRuntime(Resource.class);
+    }
 
     @Override
-    protected void doAddResources(FeatureContext context) {
-        context.register(Resource.class);
+    protected Class<?>[] testEntities() {
+        return new Class[]{E7.class, E8.class, E14.class, E15.class};
     }
 
     @Test
     public void testRelate_ToMany_MixedCollection() {
 
+        e8().insertColumns("id", "name")
+                .values(15, "xxx")
+                .values(16, "xxx").exec();
 
-        insert("e8", "id, name", "15, 'xxx'");
-        insert("e8", "id, name", "16, 'xxx'");
-
-        insert("e7", "id, name, e8_id", "7, 'zzz', 16");
-        insert("e7", "id, name, e8_id", "8, 'yyy', 15");
-        insert("e7", "id, name, e8_id", "9, 'aaa', 15");
+        e7().insertColumns("id", "name", "e8_id")
+                .values(7, "zzz", 16)
+                .values(8, "yyy", 15)
+                .values(9, "aaa", 15).exec();
 
         Response r1 = target("/e8/bykey/15/e7s")
                 .request()
                 .put(Entity.json("[  {\"name\":\"newname\"}, {\"name\":\"aaa\"} ]"));
 
-        assertEquals(Status.OK.getStatusCode(), r1.getStatus());
+        e7().matcher().assertMatches(4);
 
-        assertEquals(4, intForQuery("SELECT count(1) FROM utest.e7"));
-        int id = intForQuery("SELECT id FROM utest.e7 WHERE name = 'newname'");
-        assertEquals("{\"data\":[{\"id\":" + id + ",\"name\":\"newname\"},{\"id\":9,\"name\":\"aaa\"}],\"total\":2}",
-                r1.readEntity(String.class));
+        // TODO: hopefully there will be a an easier way to select ID per
+        //   https://github.com/bootique/bootique-jdbc/issues/93
+        List<Integer> ids = e7()
+                .selectStatement(rs -> rs.getInt(1)).append("SELECT id FROM utest.e7 WHERE name = 'newname'")
+                .select(100);
+        assertEquals(1, ids.size());
+        int id = ids.get(0);
+        onSuccess(r1).bodyEquals(2, "{\"id\":" + id + ",\"name\":\"newname\"},{\"id\":9,\"name\":\"aaa\"}");
 
         // testing idempotency
 
-        Response r2 = target("/e8/bykey/15/e7s").request()
+        Response r2 = target("/e8/bykey/15/e7s")
+                .request()
                 .put(Entity.json("[  {\"name\":\"newname\"}, {\"name\":\"aaa\"} ]"));
 
-        assertEquals(Status.OK.getStatusCode(), r2.getStatus());
-        assertEquals(
-                "{\"data\":[" + "{\"id\":" + id + ",\"name\":\"newname\"},{\"id\":9,\"name\":\"aaa\"}],\"total\":2}",
-                r2.readEntity(String.class));
-        assertEquals(4, intForQuery("SELECT count(1) FROM utest.e7"));
+        e7().matcher().assertMatches(4);
+        onSuccess(r2).bodyEquals(2, "{\"id\":" + id + ",\"name\":\"newname\"},{\"id\":9,\"name\":\"aaa\"}");
     }
 
     @Test
     public void testRelate_ToMany_PropertyMapper() {
 
-        insert("e8", "id, name", "15, 'xxx'");
-        insert("e8", "id, name", "16, 'xxx'");
-        insert("e7", "id, e8_id, name", "7, 16, 'zzz'");
-        insert("e7", "id, e8_id, name", "8, 15, 'yyy'");
-        insert("e7", "id, e8_id, name", "9, 15, 'aaa'");
+        e8().insertColumns("id", "name")
+                .values(15, "xxx")
+                .values(16, "xxx").exec();
+
+        e7().insertColumns("id", "name", "e8_id")
+                .values(7, "zzz", 16)
+                .values(8, "yyy", 15)
+                .values(9, "aaa", 15).exec();
 
         Response r1 = target("/e8/bypropkey/15/e7s").request()
                 .put(Entity.json("[  {\"name\":\"newname\"}, {\"name\":\"aaa\"} ]"));
 
-        assertEquals(Status.OK.getStatusCode(), r1.getStatus());
+        e7().matcher().assertMatches(4);
 
-        assertEquals(4, intForQuery("SELECT count(1) FROM utest.e7"));
-        int id = intForQuery("SELECT id FROM utest.e7 WHERE name = 'newname'");
-        assertEquals("{\"data\":[{\"id\":" + id + ",\"name\":\"newname\"},{\"id\":9,\"name\":\"aaa\"}],\"total\":2}",
-                r1.readEntity(String.class));
+        // TODO: hopefully there will be a an easier way to select ID per
+        //   https://github.com/bootique/bootique-jdbc/issues/93
+        List<Integer> ids = e7()
+                .selectStatement(rs -> rs.getInt(1)).append("SELECT id FROM utest.e7 WHERE name = 'newname'")
+                .select(100);
+        assertEquals(1, ids.size());
+        int id = ids.get(0);
+        onSuccess(r1).bodyEquals(2, "{\"id\":" + id + ",\"name\":\"newname\"},{\"id\":9,\"name\":\"aaa\"}");
     }
 
     @Test
     public void testPUT_ToMany_LongId() {
 
-        newContext().performGenericQuery(
-                new SQLTemplate(E3.class, "INSERT INTO utest.e15 (long_id, name) values (5, 'aaa')"));
-        newContext().performGenericQuery(
-                new SQLTemplate(E3.class, "INSERT INTO utest.e15 (long_id, name) values (44, 'aaa')"));
+        e15().insertColumns("long_id", "name")
+                .values(5L, "aaa")
+                .values(44L, "aaa").exec();
 
-        newContext().performGenericQuery(
-                new SQLTemplate(E3.class, "INSERT INTO utest.e14 (long_id, e15_id, name) values (5, 5, 'aaa')"));
-        newContext().performGenericQuery(
-                new SQLTemplate(E3.class, "INSERT INTO utest.e14 (long_id, e15_id, name) values (4, 44, 'zzz')"));
-        newContext().performGenericQuery(
-                new SQLTemplate(E3.class, "INSERT INTO utest.e14 (long_id, e15_id, name) values (2, 44, 'bbb')"));
-        newContext().performGenericQuery(
-                new SQLTemplate(E3.class, "INSERT INTO utest.e14 (long_id, e15_id, name) values (6, 5, 'yyy')"));
+        e14().insertColumns("long_id", "e15_id", "name")
+                .values(5L, 5L, "aaa")
+                .values(4L, 44L, "zzz")
+                .values(2L, 44L, "bbb")
+                .values(6L, 5L, "yyy").exec();
 
         Response r1 = target("/e15/44/e14s").queryParam("exclude", "id").queryParam("include", E3.NAME.getName())
                 .request().put(Entity.json("[{\"id\":4,\"name\":\"zzz\"},{\"id\":11,\"name\":\"new\"}]"));
@@ -112,8 +123,12 @@ public class PUT_Related_ByKey_IT extends JerseyTestOnDerby {
                         + ",{\"id\":11,\"name\":\"new\",\"prettyName\":\"new_pretty\"}],\"total\":2}",
                 r1.readEntity(String.class));
 
-        assertEquals(2, intForQuery("SELECT count(1) FROM utest.e14 WHERE e15_id = 44"));
-        assertEquals(2, intForQuery("SELECT count(1) FROM utest.e14 WHERE e15_id = 44 and long_id IN (4,11)"));
+        e14().matcher().eq("e15_id", 44).assertMatches(2);
+
+        // TODO: checking individual records one by one until "in()" becomes available in BQ 1.1 per
+        //  https://github.com/bootique/bootique-jdbc/issues/92
+        e14().matcher().eq("e15_id", 44).eq("long_id", 4L).assertOneMatch();
+        e14().matcher().eq("e15_id", 44).eq("long_id", 11L).assertOneMatch();
     }
 
     @Path("")

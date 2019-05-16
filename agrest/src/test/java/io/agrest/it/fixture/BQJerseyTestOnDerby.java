@@ -4,10 +4,18 @@ import com.google.inject.Binder;
 import com.google.inject.Module;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
+import io.agrest.it.fixture.cayenne.E1;
+import io.agrest.it.fixture.cayenne.E12;
+import io.agrest.it.fixture.cayenne.E12E13;
+import io.agrest.it.fixture.cayenne.E13;
 import io.agrest.it.fixture.cayenne.E14;
+import io.agrest.it.fixture.cayenne.E15;
+import io.agrest.it.fixture.cayenne.E15E1;
 import io.agrest.it.fixture.cayenne.E17;
 import io.agrest.it.fixture.cayenne.E19;
 import io.agrest.it.fixture.cayenne.E2;
+import io.agrest.it.fixture.cayenne.E20;
+import io.agrest.it.fixture.cayenne.E21;
 import io.agrest.it.fixture.cayenne.E24;
 import io.agrest.it.fixture.cayenne.E3;
 import io.agrest.it.fixture.cayenne.E4;
@@ -73,10 +81,15 @@ public abstract class BQJerseyTestOnDerby {
     protected CayenneTestDataManager createDataManager(BQRuntime runtime) {
         return CayenneTestDataManager.builder(TEST_RUNTIME)
                 .entities(testEntities())
+                .entitiesAndDependencies(testEntitiesAndDependencies())
                 .build();
     }
 
     protected abstract Class<?>[] testEntities();
+
+    protected Class<?>[] testEntitiesAndDependencies() {
+        return new Class[0];
+    }
 
     protected ResponseAssertions onSuccess(Response response) {
         return onResponse(response).wasSuccess();
@@ -100,6 +113,10 @@ public abstract class BQJerseyTestOnDerby {
 
     protected WebTarget target(String path) {
         return ClientBuilder.newClient().target("http://127.0.0.1:8080/").path(path);
+    }
+
+    protected Table e1() {
+        return dataManager.getTable(E1.class);
     }
 
     protected Table e2() {
@@ -134,8 +151,32 @@ public abstract class BQJerseyTestOnDerby {
         return dataManager.getTable(E9.class);
     }
 
+    protected Table e12() {
+        return dataManager.getTable(E12.class);
+    }
+
+    protected Table e13() {
+        return dataManager.getTable(E13.class);
+    }
+
+    protected Table e12_13() {
+        return dataManager.getTable(E12E13.class);
+    }
+
     protected Table e14() {
         return dataManager.getTable(E14.class);
+    }
+
+    protected Table e15() {
+        return dataManager.getTable(E15.class);
+    }
+
+    protected Table e15_1() {
+        return dataManager.getTable(E15E1.class);
+    }
+
+    protected Table e15_5() {
+        return dataManager.getRelatedTable(E15.class, E15.E5S);
     }
 
     protected Table e17() {
@@ -144,6 +185,14 @@ public abstract class BQJerseyTestOnDerby {
 
     protected Table e19() {
         return dataManager.getTable(E19.class);
+    }
+
+    protected Table e20() {
+        return dataManager.getTable(E20.class);
+    }
+
+    protected Table e21() {
+        return dataManager.getTable(E21.class);
     }
 
     protected Table e24() {

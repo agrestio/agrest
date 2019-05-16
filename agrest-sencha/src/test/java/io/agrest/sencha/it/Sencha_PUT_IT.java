@@ -59,7 +59,7 @@ public class Sencha_PUT_IT extends SenchaBQJerseyTestOnDerby {
         Response r = target("/e3/3").request().put(Entity.json("{\"id\":3,\"e2_id\":null}"));
         onSuccess(r).bodyEquals(1, "{\"id\":3,\"name\":\"zzz\",\"phoneNumber\":null}");
 
-        // TODO: can't use matcher until BQ 1.1 upgrade (because of https://github.com/bootique/bootique-jdbc/issues/91 )
+        // TODO: can't use matcher for NULLs until BQ 1.1 upgrade (because of https://github.com/bootique/bootique-jdbc/issues/91 )
         //  so using select...
 
         List<Object[]> rows = e3().selectColumns("id", "e2_id");

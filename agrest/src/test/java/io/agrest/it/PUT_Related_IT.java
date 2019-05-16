@@ -2,9 +2,11 @@ package io.agrest.it;
 
 import io.agrest.Ag;
 import io.agrest.DataResponse;
-import io.agrest.it.fixture.JerseyTestOnDerby;
+import io.agrest.it.fixture.BQJerseyTestOnDerby;
+import io.agrest.it.fixture.cayenne.E1;
 import io.agrest.it.fixture.cayenne.E12;
 import io.agrest.it.fixture.cayenne.E12E13;
+import io.agrest.it.fixture.cayenne.E13;
 import io.agrest.it.fixture.cayenne.E15;
 import io.agrest.it.fixture.cayenne.E15E1;
 import io.agrest.it.fixture.cayenne.E2;
@@ -12,6 +14,7 @@ import io.agrest.it.fixture.cayenne.E3;
 import io.agrest.it.fixture.cayenne.E7;
 import io.agrest.it.fixture.cayenne.E8;
 import io.agrest.it.fixture.cayenne.E9;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import javax.ws.rs.PUT;
@@ -20,43 +23,56 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.Configuration;
 import javax.ws.rs.core.Context;
-import javax.ws.rs.core.FeatureContext;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriInfo;
+import java.util.List;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
-public class PUT_Related_IT extends JerseyTestOnDerby {
+public class PUT_Related_IT extends BQJerseyTestOnDerby {
+
+    @BeforeClass
+    public static void startTestRuntime() {
+        startTestRuntime(Resource.class);
+    }
 
     @Override
-    protected void doAddResources(FeatureContext context) {
-        context.register(Resource.class);
+    protected Class<?>[] testEntities() {
+        return new Class[]{E1.class, E2.class, E3.class, E7.class, E8.class, E9.class};
+    }
+
+    @Override
+    protected Class<?>[] testEntitiesAndDependencies() {
+        return new Class[]{E12.class, E13.class, E15.class};
     }
 
     @Test
     public void testRelate_EmptyPutWithID() {
 
-        insert("e2", "id, name", "24, 'xxx'");
-        insert("e3", "id, name", "7, 'zzz'");
-        insert("e3", "id, name", "8, 'yyy'");
+        e2().insertColumns("id", "name")
+                .values(24, "xxx").exec();
+
+        e3().insertColumns("id", "name")
+                .values(7, "zzz")
+                .values(8, "yyy").exec();
 
         // POST with empty body ... how bad is that?
-        Response r1 = target("/e3/8/e2/24").request().put(Entity.json(""));
+        Response r = target("/e3/8/e2/24").request().put(Entity.json(""));
 
-        assertEquals(Status.OK.getStatusCode(), r1.getStatus());
-        assertEquals("{\"data\":[{\"id\":24,\"address\":null,\"name\":\"xxx\"}],\"total\":1}",
-                r1.readEntity(String.class));
+        onSuccess(r).bodyEquals(1, "{\"id\":24,\"address\":null,\"name\":\"xxx\"}");
 
-        assertEquals("yyy", stringForQuery("SELECT name FROM utest.e3 WHERE e2_id = 24"));
+        e3().matcher().eq("e2_id", 24).eq("name", "yyy").assertOneMatch();
     }
 
     @Test
     public void testRelate_ValidRel_ToOne_Existing() {
+        e2().insertColumns("id", "name")
+                .values(24, "xxx").exec();
 
-        insert("e2", "id, name", "24, 'xxx'");
-        insert("e3", "id, name", "7, 'zzz'");
-        insert("e3", "id, name", "8, 'yyy'");
+        e3().insertColumns("id", "name")
+                .values(7, "zzz")
+                .values(8, "yyy").exec();
 
         Response response = target("/e3/8/e2/24").request().put(Entity.json("{}"));
 
@@ -64,15 +80,18 @@ public class PUT_Related_IT extends JerseyTestOnDerby {
         assertEquals("{\"data\":[{\"id\":24,\"address\":null,\"name\":\"xxx\"}],\"total\":1}",
                 response.readEntity(String.class));
 
-        assertEquals("yyy", stringForQuery("SELECT name FROM utest.e3 WHERE e2_id = 24"));
+        e3().matcher().eq("e2_id", 24).eq("name", "yyy").assertOneMatch();
     }
 
     @Test
     public void testRelate_ValidRel_ToOne_Existing_WithUpdate() {
 
-        insert("e2", "id, name", "24, 'xxx'");
-        insert("e3", "id, name", "7, 'zzz'");
-        insert("e3", "id, name", "8, 'yyy'");
+        e2().insertColumns("id", "name")
+                .values(24, "xxx").exec();
+
+        e3().insertColumns("id", "name")
+                .values(7, "zzz")
+                .values(8, "yyy").exec();
 
         Response r1 = target("/e3/8/e2/24")
                 .request()
@@ -82,28 +101,28 @@ public class PUT_Related_IT extends JerseyTestOnDerby {
         assertEquals("{\"data\":[{\"id\":24,\"address\":null,\"name\":\"123\"}],\"total\":1}",
                 r1.readEntity(String.class));
 
-        assertEquals(1, countRows(E2.class));
-        assertEquals("yyy", stringForQuery("SELECT name FROM utest.e3 WHERE e2_id = 24"));
+        e2().matcher().assertOneMatch();
+        e3().matcher().eq("e2_id", 24).eq("name", "yyy").assertOneMatch();
     }
 
     @Test
     public void testRelate_ToMany_MixedCollection() {
 
-        insert("e8", "id, name", "15, 'xxx'");
-        insert("e8", "id, name", "16, 'xxx'");
+        e8().insertColumns("id", "name")
+                .values(15, "xxx")
+                .values(16, "xxx").exec();
 
-        insert("e7", "id, e8_id, name", "7, 16, 'zzz'");
-        insert("e7", "id, e8_id, name", "8, 15, 'yyy'");
-        insert("e7", "id, e8_id, name", "9, 15, 'zzz'");
+        e7().insertColumns("id", "name", "e8_id")
+                .values(7, "zzz", 16)
+                .values(8, "yyy", 15)
+                .values(9, "aaa", 15).exec();
 
         Response r1 = target("/e8/createorupdate/15/e7s")
                 .request()
                 .put(Entity.json("[  {\"id\":1,\"name\":\"newname\"}, {\"id\":8,\"name\":\"123\"} ]"));
 
-        assertEquals(Status.OK.getStatusCode(), r1.getStatus());
-        assertEquals("{\"data\":[" + "{\"id\":1,\"name\":\"newname\"},{\"id\":8,\"name\":\"123\"}],\"total\":2}",
-                r1.readEntity(String.class));
-        assertEquals(4, countRows(E7.class));
+        onSuccess(r1).bodyEquals(2, "{\"id\":1,\"name\":\"newname\"},{\"id\":8,\"name\":\"123\"}");
+        e7().matcher().assertMatches(4);
 
         // testing idempotency
 
@@ -111,32 +130,30 @@ public class PUT_Related_IT extends JerseyTestOnDerby {
                 .request()
                 .put(Entity.json("[  {\"id\":1,\"name\":\"newname\"}, {\"id\":8,\"name\":\"123\"} ]"));
 
-        assertEquals(Status.OK.getStatusCode(), r2.getStatus());
-        assertEquals("{\"data\":[{\"id\":1,\"name\":\"newname\"}," + "{\"id\":8,\"name\":\"123\"}],\"total\":2}",
-                r2.readEntity(String.class));
-        assertEquals(4, countRows(E7.class));
+        onSuccess(r2).bodyEquals(2, "{\"id\":1,\"name\":\"newname\"}," + "{\"id\":8,\"name\":\"123\"}");
+        e7().matcher().assertMatches(4);
     }
 
     @Test
     public void test_ToMany_CreateUpdateDelete() {
 
-        insert("e8", "id, name", "15, 'xxx'");
-        insert("e8", "id, name", "16, 'xxx'");
+        e8().insertColumns("id", "name")
+                .values(15, "xxx")
+                .values(16, "xxx").exec();
 
-        insert("e7", "id, e8_id, name", "7, 16, 'zzz'");
-        insert("e7", "id, e8_id, name", "8, 15, 'yyy'");
-        insert("e7", "id, e8_id, name", "9, 15, 'zzz'");
+        e7().insertColumns("id", "name", "e8_id")
+                .values(7, "zzz", 16)
+                .values(8, "yyy", 15)
+                .values(9, "zzz", 15).exec();
 
         // this must add E7 with id=1, update - with id=8, delete - with id=9
         Response r1 = target("/e8/15/e7s")
                 .request()
                 .put(Entity.json("[  {\"id\":1,\"name\":\"newname\"}, {\"id\":8,\"name\":\"123\"} ]"));
+        onSuccess(r1).bodyEquals(2, "{\"id\":1,\"name\":\"newname\"},{\"id\":8,\"name\":\"123\"}");
 
-        assertEquals(Status.OK.getStatusCode(), r1.getStatus());
-        assertEquals("{\"data\":[" + "{\"id\":1,\"name\":\"newname\"},{\"id\":8,\"name\":\"123\"}],\"total\":2}",
-                r1.readEntity(String.class));
-        assertEquals(2, intForQuery("SELECT count(1) FROM utest.e7 WHERE e8_id = 15"));
-        assertEquals(0, intForQuery("SELECT count(1) FROM utest.e7 WHERE id = 9"));
+        e7().matcher().eq("e8_id", 15).assertMatches(2);
+        e7().matcher().eq("id", 9).assertNoMatches();
 
         // testing idempotency
 
@@ -144,51 +161,61 @@ public class PUT_Related_IT extends JerseyTestOnDerby {
                 .request()
                 .put(Entity.json("[  {\"id\":1,\"name\":\"newname\"}, {\"id\":8,\"name\":\"123\"} ]"));
 
-        assertEquals(Status.OK.getStatusCode(), r2.getStatus());
-        assertEquals("{\"data\":[" + "{\"id\":1,\"name\":\"newname\"},{\"id\":8,\"name\":\"123\"}],\"total\":2}",
-                r2.readEntity(String.class));
-        assertEquals(2, intForQuery("SELECT count(1) FROM utest.e7 WHERE e8_id = 15"));
-        assertEquals(0, intForQuery("SELECT count(1) FROM utest.e7 WHERE id = 9"));
+        onSuccess(r2).bodyEquals(2, "{\"id\":1,\"name\":\"newname\"},{\"id\":8,\"name\":\"123\"}");
+
+        e7().matcher().eq("e8_id", 15).assertMatches(2);
+        e7().matcher().eq("id", 9).assertNoMatches();
     }
 
     @Test
     public void testRelate_ValidRel_ToOne_New_AutogenId() {
 
-        insert("e3", "id, name", "7, 'zzz'");
-        insert("e3", "id, name", "8, 'yyy'");
+        e3().insertColumns("id", "name")
+                .values(7, "zzz")
+                .values(8, "yyy").exec();
 
-        Response r1 = target("/e3/8/e2/24")
+        Response r = target("/e3/8/e2/24")
                 .request()
                 .put(Entity.json("{\"name\":\"123\"}"));
 
-        assertEquals(Status.BAD_REQUEST.getStatusCode(), r1.getStatus());
-        assertEquals("{\"success\":false,\"message\":\"Can't create 'E2' with fixed id\"}",
-                r1.readEntity(String.class));
+        onResponse(r).statusEquals(Status.BAD_REQUEST)
+                .bodyEquals("{\"success\":false,\"message\":\"Can't create 'E2' with fixed id\"}");
 
-        assertEquals(0, intForQuery("SELECT count(1) FROM utest.e2"));
+        e2().matcher().assertNoMatches();
     }
 
     @Test
     public void testRelate_ValidRel_ToOne_New_DefaultId() {
 
-        insert("e7", "id", "7");
-        insert("e7", "id", "8");
+        e7().insertColumns("id")
+                .values(7)
+                .values(8).exec();
 
         Response r1 = target("/e7/8/e8/24")
                 .request()
                 .put(Entity.json("{\"name\":\"aaa\"}"));
 
-        assertEquals(Status.OK.getStatusCode(), r1.getStatus());
-        assertEquals("{\"data\":[{\"id\":24,\"name\":\"aaa\"}],\"total\":1}", r1.readEntity(String.class));
+        onSuccess(r1).bodyEquals(1, "{\"id\":24,\"name\":\"aaa\"}");
 
-        assertEquals(1, intForQuery("SELECT count(1) FROM utest.e8"));
-        assertEquals("aaa", stringForQuery("SELECT name FROM utest.e8"));
-        assertEquals(24, intForQuery("SELECT id FROM utest.e8"));
-        assertEquals(24, intForQuery("SELECT e8_id FROM utest.e7 WHERE id = 8"));
-        assertEquals(-1, intForQuery("SELECT e8_id FROM utest.e7 WHERE id = 7"));
+        e8().matcher().assertOneMatch();
+        e8().matcher().eq("name", "aaa").assertOneMatch();
+        e8().matcher().eq("id", 24).assertOneMatch();
 
-        // PUT is idempotent... doing another update should not change the
-        // picture
+        e7().matcher().eq("id", 8).eq("e8_id", 24).assertOneMatch();
+
+        // TODO: can't use matcher for NULLs until BQ 1.1 upgrade (because of https://github.com/bootique/bootique-jdbc/issues/91 )
+        //  so using select...
+
+        List<Integer> ids1 = e7()
+                .selectStatement(rs -> {
+                    int i = rs.getInt(1);
+                    return rs.wasNull() ? null : i;
+                }).append("SELECT e8_id FROM utest.e7 WHERE id = 7")
+                .select(100);
+        assertEquals(1, ids1.size());
+        assertNull(ids1.get(0));
+
+        // PUT is idempotent... doing another update should not change the picture
         Response r2 = target("/e7/8/e8/24")
                 .request()
                 .put(Entity.json("{\"name\":\"aaa\"}"));
@@ -196,80 +223,86 @@ public class PUT_Related_IT extends JerseyTestOnDerby {
         assertEquals(Status.OK.getStatusCode(), r2.getStatus());
         assertEquals("{\"data\":[{\"id\":24,\"name\":\"aaa\"}],\"total\":1}", r2.readEntity(String.class));
 
-        assertEquals(1, countRows(E8.class));
-        assertEquals("aaa", stringForQuery("SELECT name FROM utest.e8"));
-        assertEquals(24, intForQuery("SELECT id FROM utest.e8"));
-        assertEquals(24, intForQuery("SELECT e8_id FROM utest.e7 WHERE id = 8"));
-        assertEquals(-1, intForQuery("SELECT e8_id FROM utest.e7 WHERE id = 7"));
+        e8().matcher().assertOneMatch();
+        e8().matcher().eq("name", "aaa").assertOneMatch();
+        e8().matcher().eq("id", 24).assertOneMatch();
+        e7().matcher().eq("id", 8).eq("e8_id", 24).assertOneMatch();
+
+        // TODO: can't use matcher for NULLs until BQ 1.1 upgrade (because of https://github.com/bootique/bootique-jdbc/issues/91 )
+        //  so using select...
+
+        List<Integer> ids2 = e7()
+                .selectStatement(rs -> {
+                    int i = rs.getInt(1);
+                    return rs.wasNull() ? null : i;
+                }).append("SELECT e8_id FROM utest.e7 WHERE id = 7")
+                .select(100);
+        assertEquals(1, ids2.size());
+        assertNull(ids2.get(0));
     }
 
     @Test
     public void testRelate_ValidRel_ToOne_New_PropagatedId() {
 
-        insert("e8", "id", "7");
-        insert("e8", "id", "8");
+        e8().insertColumns("id")
+                .values(7)
+                .values(8).exec();
 
         Response r1 = target("/e8/8/e9").request().put(Entity.json("{}"));
+        onSuccess(r1).bodyEquals(1, "{\"id\":8}");
 
-        assertEquals(Status.OK.getStatusCode(), r1.getStatus());
-        assertEquals("{\"data\":[{\"id\":8}],\"total\":1}", r1.readEntity(String.class));
+        e9().matcher().assertOneMatch();
+        e9().matcher().eq("e8_id", 8).assertOneMatch();
 
-        assertEquals(1, intForQuery("SELECT count(1) FROM utest.e9"));
-        assertEquals(8, intForQuery("SELECT e8_id FROM utest.e9"));
-
-        // PUT is idempotent... doing another update should not change the
-        // picture
+        // PUT is idempotent... doing another update should not change the picture
         Response r2 = target("/e8/8/e9").request().put(Entity.json("{}"));
+        onSuccess(r2).bodyEquals(1, "{\"id\":8}");
 
-        assertEquals(Status.OK.getStatusCode(), r2.getStatus());
-        assertEquals("{\"data\":[{\"id\":8}],\"total\":1}", r2.readEntity(String.class));
-
-        assertEquals(1, countRows(E9.class));
-        assertEquals(8, intForQuery("SELECT e8_id FROM utest.e9"));
+        e9().matcher().assertOneMatch();
+        e9().matcher().eq("e8_id", 8).assertOneMatch();
     }
 
     @Test
     public void testRelate_ToMany_NoIds() {
 
-        insert("e2", "id, name", "15, 'xxx'");
-        insert("e2", "id, name", "16, 'xxx'");
+        e2().insertColumns("id", "name")
+                .values(15, "xxx")
+                .values(16, "xxx").exec();
 
-        insert("e3", "id, name, e2_id", "7, 'zzz', 16");
-        insert("e3", "id, name, e2_id", "8, 'yyy', 15");
-        insert("e3", "id, name, e2_id", "9, 'aaa', 15");
+        e3().insertColumns("id", "name", "e2_id")
+                .values(7, "zzz", 16)
+                .values(8, "yyy", 15)
+                .values(9, "aaa", 15).exec();
 
         // we can't PUT an object with generated ID , as the request is non-repeatable
-        Response r1 = target("/e2/15/e3s")
+        Response r = target("/e2/15/e3s")
                 .request()
                 .put(Entity.json("[ {\"name\":\"newname\"} ]"));
 
-        assertEquals(Status.BAD_REQUEST.getStatusCode(), r1.getStatus());
-        assertEquals("{\"success\":false,\"message\":\"Request is not idempotent.\"}", r1.readEntity(String.class));
-        assertEquals(3, countRows(E3.class));
-        assertEquals(2, intForQuery("SELECT count(1) FROM utest.e3 WHERE e2_id = 15"));
+        onResponse(r).statusEquals(Status.BAD_REQUEST)
+                .bodyEquals("{\"success\":false,\"message\":\"Request is not idempotent.\"}");
+
+        e3().matcher().assertMatches(3);
+        e3().matcher().eq("e2_id", 15).assertMatches(2);
     }
 
     @Test
     public void testPUT_ToMany_Join() {
 
-        insert("e12", "id", "11");
-        insert("e12", "id", "12");
-
-        insert("e13", "id", "14");
-        insert("e13", "id", "15");
-        insert("e13", "id", "16");
+        e12().insertColumns("id").values(11).values(12).exec();
+        e13().insertColumns("id").values(14).values(15).values(16).exec();
 
         Response r1 = target("/e12/12/e1213")
                 .queryParam("exclude", "id")
                 .request()
                 .put(Entity.json("[{\"e13\":15},{\"e13\":14}]"));
 
-        assertEquals(Status.OK.getStatusCode(), r1.getStatus());
-        assertEquals("{\"data\":[{},{}],\"total\":2}", r1.readEntity(String.class));
+        onSuccess(r1).bodyEquals(2, "{},{}");
 
-        assertEquals(2, intForQuery("SELECT count(1) FROM utest.e12_e13"));
-        assertEquals(1, intForQuery("SELECT count(1) FROM utest.e12_e13 " + "WHERE e12_id = 12 AND e13_id = 14"));
-        assertEquals(1, intForQuery("SELECT count(1) FROM utest.e12_e13 " + "WHERE e12_id = 12 AND e13_id = 15"));
+
+        e12_13().matcher().assertMatches(2);
+        e12_13().matcher().eq("e12_id", 12).eq("e13_id", 14).assertOneMatch();
+        e12_13().matcher().eq("e12_id", 12).eq("e13_id", 15).assertOneMatch();
 
         // testing idempotency
         Response r2 = target("/e12/12/e1213")
@@ -277,12 +310,12 @@ public class PUT_Related_IT extends JerseyTestOnDerby {
                 .request()
                 .put(Entity.json("[{\"e13\":15},{\"e13\":14}]"));
 
-        assertEquals(Status.OK.getStatusCode(), r2.getStatus());
-        assertEquals("{\"data\":[{},{}],\"total\":2}", r2.readEntity(String.class));
+        onSuccess(r2).bodyEquals(2, "{},{}");
 
-        assertEquals(2, intForQuery("SELECT count(1) FROM utest.e12_e13"));
-        assertEquals(1, intForQuery("SELECT count(1) FROM utest.e12_e13 WHERE e12_id = 12 AND e13_id = 14"));
-        assertEquals(1, intForQuery("SELECT count(1) FROM utest.e12_e13 WHERE e12_id = 12 AND e13_id = 15"));
+
+        e12_13().matcher().assertMatches(2);
+        e12_13().matcher().eq("e12_id", 12).eq("e13_id", 14).assertOneMatch();
+        e12_13().matcher().eq("e12_id", 12).eq("e13_id", 15).assertOneMatch();
 
         // add one and delete another record
         Response r3 = target("/e12/12/e1213")
@@ -290,61 +323,65 @@ public class PUT_Related_IT extends JerseyTestOnDerby {
                 .request()
                 .put(Entity.json("[{\"e13\":16},{\"e13\":14}]"));
 
-        assertEquals(Status.OK.getStatusCode(), r3.getStatus());
-        assertEquals("{\"data\":[{},{}],\"total\":2}", r3.readEntity(String.class));
+        onSuccess(r3).bodyEquals(2, "{},{}");
 
-        assertEquals(2, intForQuery("SELECT count(1) FROM utest.e12_e13"));
-        assertEquals(1, intForQuery("SELECT count(1) FROM utest.e12_e13 WHERE e12_id = 12 AND e13_id = 14"));
-        assertEquals(1, intForQuery("SELECT count(1) FROM utest.e12_e13 WHERE e12_id = 12 AND e13_id = 16"));
+        e12_13().matcher().assertMatches(2);
+        e12_13().matcher().eq("e12_id", 12).eq("e13_id", 14).assertOneMatch();
+        e12_13().matcher().eq("e12_id", 12).eq("e13_id", 16).assertOneMatch();
     }
 
     @Test
     public void testPUT_ToMany_DifferentIdTypes() {
 
-        insert("e1", "id, name", "1, 'xxx'");
-        insert("e1", "id, name", "2, 'yyy'");
+        e1().insertColumns("id", "name")
+                .values(1, "xxx")
+                .values(2, "yyy").exec();
 
-        insert("e15", "long_id, name", "14, 'aaa'");
-        insert("e15", "long_id, name", "15, 'bbb'");
-        insert("e15", "long_id, name", "16, 'ccc'");
 
-        insert("e15_e1", "e15_id, e1_id", "14, 1");
+        e15().insertColumns("long_id", "name")
+                .values(14L, "aaa")
+                .values(15L, "bbb")
+                .values(16L, "ccc").exec();
 
-        Response r1 = target("/e15/14/e15e1")
+        e15_1().insertColumns("e15_id", "e1_id")
+                .values(14, 1).exec();
+
+        Response r = target("/e15/14/e15e1")
                 .queryParam("exclude", "id")
                 .request()
                 .put(Entity.json("[{\"e1\":1}]"));
 
-        assertEquals(Status.OK.getStatusCode(), r1.getStatus());
+        onSuccess(r);
 
-        assertEquals(1, intForQuery("SELECT count(1) FROM utest.e15_e1"));
-        assertEquals(2, intForQuery("SELECT count(1) FROM utest.e1"));
-        assertEquals(3, intForQuery("SELECT count(1) FROM utest.e15"));
+        e15_1().matcher().assertOneMatch();
+        e15_1().matcher().eq("e15_id", 14).eq("e1_id", 1).assertOneMatch();
 
-        assertEquals(1, intForQuery("SELECT count(1) FROM utest.e15_e1 WHERE e15_id = 14 AND e1_id = 1"));
+        e1().matcher().assertMatches(2);
+        e15().matcher().assertMatches(3);
     }
 
     @Test
     public void testPUT_ToMany_Flattened_DifferentIdTypes() {
 
-        insert("e5", "id, name", "1, 'xxx'");
-        insert("e5", "id, name", "2, 'yyy'");
+        e5().insertColumns("id", "name")
+                .values(1, "xxx")
+                .values(2, "yyy").exec();
 
-        insert("e15", "long_id, name", "14, 'aaa'");
-        insert("e15", "long_id, name", "15, 'bbb'");
-        insert("e15", "long_id, name", "16, 'ccc'");
+        e15().insertColumns("long_id", "name")
+                .values(14L, "aaa")
+                .values(15L, "bbb")
+                .values(16L, "ccc").exec();
 
-        insert("e15_e5", "e15_id, e5_id", "14, 1");
+        e15_5().insertColumns("e15_id", "e5_id").values(14, 1).exec();
 
-        Response r1 = target("/e15/14").request().put(Entity.json("{\"e5s\":[1]}"));
 
-        assertEquals(Status.OK.getStatusCode(), r1.getStatus());
+        Response r = target("/e15/14").request().put(Entity.json("{\"e5s\":[1]}"));
+        onSuccess(r);
 
-        assertEquals(1, intForQuery("SELECT count(1) FROM utest.e15_e5"));
-        assertEquals(2, intForQuery("SELECT count(1) FROM utest.e5"));
-        assertEquals(3, intForQuery("SELECT count(1) FROM utest.e15"));
-
-        assertEquals(1, intForQuery("SELECT count(1) FROM utest.e15_e5 WHERE e15_id = 14 AND e5_id = 1"));
+        e15_5().matcher().assertOneMatch();
+        e5().matcher().assertMatches(2);
+        e15().matcher().assertMatches(3);
+        e15_5().matcher().eq("e15_id", 14).eq("e5_id", 1).assertOneMatch();
     }
 
     @Path("")
