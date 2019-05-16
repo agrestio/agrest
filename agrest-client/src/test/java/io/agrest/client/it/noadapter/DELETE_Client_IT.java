@@ -1,15 +1,17 @@
 package io.agrest.client.it.noadapter;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import io.agrest.DataResponse;
 import io.agrest.Ag;
+import io.agrest.DataResponse;
 import io.agrest.SimpleResponse;
-import io.agrest.client.ClientDataResponse;
-import io.agrest.client.ClientSimpleResponse;
 import io.agrest.client.AgClient;
 import io.agrest.client.AgClientException;
-import io.agrest.it.fixture.JerseyTestOnDerby;
+import io.agrest.client.ClientDataResponse;
+import io.agrest.client.ClientSimpleResponse;
+import io.agrest.it.fixture.BQJerseyTestOnDerby;
 import io.agrest.it.fixture.cayenne.E2;
+import io.agrest.it.fixture.cayenne.E3;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import javax.ws.rs.DELETE;
@@ -19,17 +21,21 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Configuration;
 import javax.ws.rs.core.Context;
-import javax.ws.rs.core.FeatureContext;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriInfo;
 
 import static org.junit.Assert.*;
 
-public class DELETE_Client_IT extends JerseyTestOnDerby {
+public class DELETE_Client_IT extends BQJerseyTestOnDerby {
+
+    @BeforeClass
+    public static void startTestRuntime() {
+        startTestRuntime(Resource.class);
+    }
 
     @Override
-    protected void doAddResources(FeatureContext context) {
-        context.register(E2Resource.class);
+    protected Class<?>[] testEntities() {
+        return new Class[]{E2.class, E3.class};
     }
 
     @Test
@@ -68,7 +74,7 @@ public class DELETE_Client_IT extends JerseyTestOnDerby {
     }
 
     @Path("e2")
-    public static class E2Resource {
+    public static class Resource {
 
         @Context
         private Configuration config;
