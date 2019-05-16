@@ -8,10 +8,10 @@
         <version>3.2-SNAPSHOT</version>
     </parent>
 
-    <artifactId>agrest-overview</artifactId>
+    <artifactId>agrest-docs-framework</artifactId>
 
     <packaging>jar</packaging>
-    <name>agrest-overview: AsciiDoc - Agrest Framework Overview</name>
+    <name>agrest-docs-framework: core framework docs</name>
 
     <build>
         <plugins>
@@ -89,6 +89,5 @@
             </build>
         </profile>
     </profiles>
-
 
 </project>

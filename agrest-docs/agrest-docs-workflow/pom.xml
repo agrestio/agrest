@@ -8,10 +8,10 @@
         <version>3.2-SNAPSHOT</version>
     </parent>
 
-    <artifactId>agrest-framework</artifactId>
+    <artifactId>agrest-docs-workflow</artifactId>
 
     <packaging>jar</packaging>
-    <name>agrest-framework: framework guide</name>
+    <name>agrest-docs-workflow: workflow docs</name>
 
     <build>
         <plugins>

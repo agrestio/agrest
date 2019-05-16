@@ -8,10 +8,10 @@
         <version>3.2-SNAPSHOT</version>
     </parent>
 
-    <artifactId>agrest-workflow</artifactId>
+    <artifactId>agrest-docs-protocol</artifactId>
 
     <packaging>jar</packaging>
-    <name>agrest-workflow: AsciiDoc - Agrest Workflow</name>
+    <name>agrest-docs-protocol: protocol docs</name>
 
     <build>
         <plugins>

@@ -16,10 +16,10 @@
 	<packaging>pom</packaging>
 
     <modules>
-        <module>agrest-overview</module>
-        <module>agrest-protocol</module>
-        <module>agrest-framework</module>
-        <module>agrest-workflow</module>
+        <module>agrest-docs-overview</module>
+        <module>agrest-docs-protocol</module>
+        <module>agrest-docs-framework</module>
+        <module>agrest-docs-workflow</module>
     </modules>
 
     <properties>
