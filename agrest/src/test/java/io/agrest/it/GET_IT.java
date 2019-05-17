@@ -348,8 +348,8 @@ public class GET_IT extends BQJerseyTestOnDerby {
                 .values("zzz", 2).exec();
 
         Response response = target("/e4")
-                .queryParam("mapBy", "c_int")
-                .queryParam("include", "c_varchar")
+                .queryParam("mapBy", "cInt")
+                .queryParam("include", "cVarchar")
                 .request()
                 .get();
 
