@@ -102,7 +102,7 @@ public class EncoderServiceTest extends TestWithCayenneMapping {
 	}
 
 	@Test
-	public void testEncoder_FilteredRoots() throws IOException {
+	public void testEncoder_FilteredRoots() {
 
 		filters.add(new EncoderFilter() {
 

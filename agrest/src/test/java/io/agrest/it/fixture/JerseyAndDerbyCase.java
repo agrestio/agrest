@@ -19,10 +19,8 @@ import io.agrest.it.fixture.cayenne.E19;
 import io.agrest.it.fixture.cayenne.E2;
 import io.agrest.it.fixture.cayenne.E20;
 import io.agrest.it.fixture.cayenne.E21;
-import io.agrest.it.fixture.cayenne.E22;
 import io.agrest.it.fixture.cayenne.E23;
 import io.agrest.it.fixture.cayenne.E24;
-import io.agrest.it.fixture.cayenne.E25;
 import io.agrest.it.fixture.cayenne.E3;
 import io.agrest.it.fixture.cayenne.E4;
 import io.agrest.it.fixture.cayenne.E5;
@@ -32,6 +30,7 @@ import io.agrest.it.fixture.cayenne.E8;
 import io.agrest.it.fixture.cayenne.E9;
 import io.agrest.runtime.AgBuilder;
 import io.agrest.runtime.AgRuntime;
+import io.agrest.runtime.IAgService;
 import io.bootique.BQRuntime;
 import io.bootique.cayenne.CayenneModule;
 import io.bootique.cayenne.test.CayenneTestDataManager;
@@ -54,8 +53,6 @@ import java.util.function.UnaryOperator;
  * An abstract superclass of integration tests that starts Bootique test runtime with JAX-RS service and Derby DB.
  */
 public abstract class JerseyAndDerbyCase {
-
-    // TODO: reuse Derby DataSource between all tests ... don't recreate it once per test class
 
     @ClassRule
     public static BQTestFactory TEST_FACTORY = new BQTestFactory();
@@ -118,6 +115,10 @@ public abstract class JerseyAndDerbyCase {
             // unexpected... we know that UTF-8 is present
             throw new RuntimeException(e);
         }
+    }
+
+    protected IAgService ag() {
+        return TEST_RUNTIME.getInstance(AgRuntime.class).service(IAgService.class);
     }
 
     protected WebTarget target(String path) {
@@ -216,20 +217,12 @@ public abstract class JerseyAndDerbyCase {
         return dataManager.getTable(E21.class);
     }
 
-    protected Table e22() {
-        return dataManager.getTable(E22.class);
-    }
-
     protected Table e23() {
         return dataManager.getTable(E23.class);
     }
 
     protected Table e24() {
         return dataManager.getTable(E24.class);
-    }
-
-    protected Table e25() {
-        return dataManager.getTable(E25.class);
     }
 
     public static class AgModule implements Module {

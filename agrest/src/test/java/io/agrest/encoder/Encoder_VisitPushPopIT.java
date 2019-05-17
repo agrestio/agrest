@@ -1,117 +1,136 @@
 package io.agrest.encoder;
 
-import static java.util.stream.Collectors.joining;
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import io.agrest.DataResponse;
+import io.agrest.it.fixture.JerseyAndDerbyCase;
+import io.agrest.it.fixture.cayenne.E2;
+import io.agrest.it.fixture.cayenne.E3;
+import io.agrest.it.fixture.cayenne.E5;
+import org.apache.cayenne.Cayenne;
+import org.apache.cayenne.Persistent;
+import org.junit.BeforeClass;
+import org.junit.Test;
 
+import javax.ws.rs.core.MultivaluedHashMap;
+import javax.ws.rs.core.UriInfo;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Deque;
 import java.util.List;
 
-import javax.ws.rs.core.MultivaluedHashMap;
-import javax.ws.rs.core.UriInfo;
+import static java.util.stream.Collectors.joining;
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
-import io.agrest.DataResponse;
-import io.agrest.it.fixture.cayenne.E2;
-import org.apache.cayenne.Cayenne;
-import org.apache.cayenne.Persistent;
-import org.junit.Test;
+public class Encoder_VisitPushPopIT extends JerseyAndDerbyCase {
 
-public class Encoder_VisitPushPopIT extends EncoderITBase {
+    @BeforeClass
+    public static void startTestRuntime() {
+        JerseyAndDerbyCase.startTestRuntime();
+    }
 
-	private String responseContents(DataResponse<?> response, PushPopVisitor visitor) {
-		response.getEncoder().visitEntities(response.getObjects(), visitor);
-		return visitor.ids.stream().collect(joining(";"));
-	}
+    @Override
+    protected Class<?>[] testEntities() {
+        return new Class[]{E2.class, E3.class, E5.class};
+    }
 
-	@Test
-	public void testVisit_Tree() {
+    private String responseContents(DataResponse<?> response, PushPopVisitor visitor) {
+        response.getEncoder().visitEntities(response.getObjects(), visitor);
+        return visitor.ids.stream().collect(joining(";"));
+    }
 
-		DB.insert("e2", "id, name", "1, 'xxx'");
-		DB.insert("e2", "id, name", "2, 'yyy'");
-		DB.insert("e2", "id, name", "3, 'zzz'");
+    @Test
+    public void testVisit_Tree() {
 
-		DB.insert("e5", "id, name", "1, 'xxx'");
-		DB.insert("e5", "id, name", "2, 'yyy'");
+        e2().insertColumns("id", "name")
+                .values(1, "xxx")
+                .values(2, "yyy")
+                .values(3, "zzz").exec();
 
-		DB.insert("e3", "id, e2_id, e5_id, name", "7, 2, 1, 'zzz'");
-		DB.insert("e3", "id, e2_id, e5_id, name", "8, 1, 1, 'yyy'");
-		DB.insert("e3", "id, e2_id, e5_id, name", "9, 1, 2, 'zzz'");
+        e5().insertColumns("id", "name")
+                .values(1, "xxx")
+                .values(2, "yyy").exec();
 
-		MultivaluedHashMap<String, String> params = new MultivaluedHashMap<>();
-		params.putSingle("include", "{\"path\":\"e3s\",\"sort\":\"id\"}");
-		params.putSingle("include", "e3s.e5");
+        e3().insertColumns("id", "name", "e2_id", "e5_id")
+                .values(7, "zzz", 2, 1)
+                .values(8, "yyy", 1, 1)
+                .values(9, "zzz", 1, 2).exec();
 
-		UriInfo mockUri = mock(UriInfo.class);
-		when(mockUri.getQueryParameters()).thenReturn(params);
+        MultivaluedHashMap<String, String> params = new MultivaluedHashMap<>();
+        params.putSingle("include", "{\"path\":\"e3s\",\"sort\":\"id\"}");
+        params.putSingle("include", "e3s.e5");
 
-		DataResponse<E2> response = createAgService().select(E2.class).uri(mockUri).get();
+        UriInfo mockUri = mock(UriInfo.class);
+        when(mockUri.getQueryParameters()).thenReturn(params);
 
-		PushPopVisitor visitor = new PushPopVisitor();
+        DataResponse<E2> response = ag().select(E2.class).uri(mockUri).get();
 
-		assertEquals("E3:8;E3:9;E3:7", responseContents(response, visitor));
-	}
-	
-	@Test
-	public void testVisit_Tree_MapBy() {
+        PushPopVisitor visitor = new PushPopVisitor();
 
-		DB.insert("e2", "id, name", "1, 'xxx'");
-		DB.insert("e2", "id, name", "2, 'yyy'");
-		DB.insert("e2", "id, name", "3, 'zzz'");
+        assertEquals("E3:8;E3:9;E3:7", responseContents(response, visitor));
+    }
 
-		DB.insert("e5", "id, name", "1, 'xxx'");
-		DB.insert("e5", "id, name", "2, 'yyy'");
+    @Test
+    public void testVisit_Tree_MapBy() {
 
-		DB.insert("e3", "id, e2_id, e5_id, name", "7, 2, 1, 'zzz'");
-		DB.insert("e3", "id, e2_id, e5_id, name", "8, 1, 1, 'yyy'");
-		DB.insert("e3", "id, e2_id, e5_id, name", "9, 1, 2, 'zzz'");
+        e2().insertColumns("id", "name")
+                .values(1, "xxx")
+                .values(2, "yyy")
+                .values(3, "zzz").exec();
 
-		MultivaluedHashMap<String, String> params = new MultivaluedHashMap<>();
-		params.putSingle("include", "{\"path\":\"e3s\",\"sort\":\"id\"}");
-		params.putSingle("include", "e3s.e5");
-		params.putSingle("mapBy", "name");
+        e5().insertColumns("id", "name")
+                .values(1, "xxx")
+                .values(2, "yyy").exec();
 
-		UriInfo mockUri = mock(UriInfo.class);
-		when(mockUri.getQueryParameters()).thenReturn(params);
+        e3().insertColumns("id", "name", "e2_id", "e5_id")
+                .values(7, "zzz", 2, 1)
+                .values(8, "yyy", 1, 1)
+                .values(9, "zzz", 1, 2).exec();
 
-		DataResponse<E2> response = createAgService().select(E2.class).uri(mockUri).get();
+        MultivaluedHashMap<String, String> params = new MultivaluedHashMap<>();
+        params.putSingle("include", "{\"path\":\"e3s\",\"sort\":\"id\"}");
+        params.putSingle("include", "e3s.e5");
+        params.putSingle("mapBy", "name");
 
-		PushPopVisitor visitor = new PushPopVisitor();
+        UriInfo mockUri = mock(UriInfo.class);
+        when(mockUri.getQueryParameters()).thenReturn(params);
 
-		assertEquals("E3:8;E3:9;E3:7", responseContents(response, visitor));
-	}
+        DataResponse<E2> response = ag().select(E2.class).uri(mockUri).get();
 
-	class PushPopVisitor implements EncoderVisitor {
+        PushPopVisitor visitor = new PushPopVisitor();
 
-		String processPath = "e3s";
-		Deque<String> stack = new ArrayDeque<>();
-		List<String> ids = new ArrayList<>();
-		boolean terminal;
+        assertEquals("E3:8;E3:9;E3:7", responseContents(response, visitor));
+    }
 
-		@Override
-		public int visit(Object object) {
+    class PushPopVisitor implements EncoderVisitor {
 
-			if (terminal) {
-				Persistent p = (Persistent) object;
-				ids.add(p.getObjectId().getEntityName() + ":" + Cayenne.intPKForObject(p));
-				return Encoder.VISIT_SKIP_CHILDREN;
-			}
+        String processPath = "e3s";
+        Deque<String> stack = new ArrayDeque<>();
+        List<String> ids = new ArrayList<>();
+        boolean terminal;
 
-			return Encoder.VISIT_CONTINUE;
-		}
+        @Override
+        public int visit(Object object) {
 
-		@Override
-		public void push(String relationship) {
-			stack.push(relationship);
-			terminal = String.join(".", stack).equals(processPath);
-		}
+            if (terminal) {
+                Persistent p = (Persistent) object;
+                ids.add(p.getObjectId().getEntityName() + ":" + Cayenne.intPKForObject(p));
+                return Encoder.VISIT_SKIP_CHILDREN;
+            }
 
-		@Override
-		public void pop() {
-			stack.pop();
-			terminal = String.join(".", stack).equals(processPath);
-		}
-	}
+            return Encoder.VISIT_CONTINUE;
+        }
+
+        @Override
+        public void push(String relationship) {
+            stack.push(relationship);
+            terminal = String.join(".", stack).equals(processPath);
+        }
+
+        @Override
+        public void pop() {
+            stack.pop();
+            terminal = String.join(".", stack).equals(processPath);
+        }
+    }
 }

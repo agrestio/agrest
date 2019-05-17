@@ -14,8 +14,7 @@ import java.util.Collection;
 import java.util.Map;
 
 /**
- * The main entry point to Agrest stack. Used from the user REST resource
- * classes to build request processors.
+ * The main entry point to Agrest stack. Indirectly used from the user REST resource classes to build request processors.
  */
 public interface IAgService {
 
