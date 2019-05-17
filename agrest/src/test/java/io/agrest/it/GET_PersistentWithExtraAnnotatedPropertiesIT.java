@@ -49,7 +49,7 @@ public class GET_PersistentWithExtraAnnotatedPropertiesIT extends JerseyAndDerby
     }
 
     @Test
-    public void testGET_PrefetchPojoRel() {
+    public void testIncludeRelationship() {
 
         e15().insertColumns("long_id", "name").values(1L, "xxx").exec();
         e14().insertColumns("e15_id", "long_id", "name").values(1L, 8L, "yyy").exec();

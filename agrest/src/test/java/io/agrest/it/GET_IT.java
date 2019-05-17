@@ -191,7 +191,7 @@ public class GET_IT extends JerseyAndDerbyCase {
     }
 
     @Test
-    public void testById_Prefetching() {
+    public void testById_IncludeRelationship() {
 
         e2().insertColumns("id", "name").values(1, "xxx").exec();
         e3().insertColumns("id", "name", "e2_id")

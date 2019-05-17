@@ -32,7 +32,7 @@ public class Sencha_GET_IT extends SenchaBQJerseyTestOnDerby {
     }
 
     @Test
-    public void test_SelectById_Prefetching() {
+    public void testIncludeRelationships_ById() {
 
         e2().insertColumns("id", "name").values(1, "xxx").exec();
         e3().insertColumns("id", "name", "e2_id")
@@ -50,7 +50,7 @@ public class Sencha_GET_IT extends SenchaBQJerseyTestOnDerby {
     }
 
     @Test
-    public void test_Select_Prefetching() {
+    public void testIncludeRelationships() {
 
         e2().insertColumns("id", "name").values(1, "xxx").exec();
         e3().insertColumns("id", "name", "e2_id")
@@ -66,7 +66,7 @@ public class Sencha_GET_IT extends SenchaBQJerseyTestOnDerby {
     }
 
     @Test
-    public void test_Select_Prefetching_StartLimit() {
+    public void testIncludeRelationships_StartLimit() {
 
         e2().insertColumns("id", "name").values(1, "xxx").exec();
         e3().insertColumns("id", "name", "e2_id")
@@ -86,7 +86,7 @@ public class Sencha_GET_IT extends SenchaBQJerseyTestOnDerby {
     }
 
     @Test
-    public void test_SelectToOne_Null() {
+    public void testToOne_Null() {
 
         e2().insertColumns("id", "name").values(1, "xxx").exec();
         e3().insertColumns("id", "name", "e2_id")
@@ -98,7 +98,7 @@ public class Sencha_GET_IT extends SenchaBQJerseyTestOnDerby {
     }
 
     @Test
-    public void test_MapBy_ToOne() {
+    public void testMapBy_ToOne() {
 
         e2().insertColumns("id", "name").values(1, "xxx").exec();
         e3().insertColumns("id", "name", "e2_id")
@@ -112,7 +112,7 @@ public class Sencha_GET_IT extends SenchaBQJerseyTestOnDerby {
     }
 
     @Test
-    public void test_ToMany_IncludeRelated() {
+    public void testToMany_IncludeRelated() {
 
         e2().insertColumns("id", "name").values(1, "xxx").exec();
         e5().insertColumns("id", "name").values(345, "B").values(346, "A").exec();
@@ -134,7 +134,7 @@ public class Sencha_GET_IT extends SenchaBQJerseyTestOnDerby {
     }
 
     @Test
-    public void test_PathRelationship() {
+    public void testIncludePathRelationship() {
 
         e2().insertColumns("id", "name").values(1, "xxx").exec();
         e3().insertColumns("id", "name", "e2_id").values(8, "yyy", 1).exec();
@@ -147,7 +147,7 @@ public class Sencha_GET_IT extends SenchaBQJerseyTestOnDerby {
     }
 
     @Test
-    public void test_Filter_ById() {
+    public void testFilter_ById() {
 
         e2().insertColumns("id", "name").values(1, "xxx").exec();
 
@@ -160,7 +160,7 @@ public class Sencha_GET_IT extends SenchaBQJerseyTestOnDerby {
     }
 
     @Test
-    public void testGet_StartsWith_AfterParseRequest() {
+    public void testStartsWith_AfterParseRequest() {
 
         e2().insertColumns("id", "name")
                 .values(1, "Axx")
@@ -184,7 +184,7 @@ public class Sencha_GET_IT extends SenchaBQJerseyTestOnDerby {
     }
 
     @Test
-    public void testGet_StartsWith_AfterAssembleQuery() {
+    public void testStartsWith_AfterAssembleQuery() {
 
         e2().insertColumns("id", "name")
                 .values(1, "Axx")

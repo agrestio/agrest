@@ -2,19 +2,13 @@ package io.agrest.runtime.cayenne.processor.select;
 
 import io.agrest.ResourceEntity;
 import io.agrest.it.fixture.cayenne.E1;
-import io.agrest.it.fixture.cayenne.E2;
-import io.agrest.it.fixture.cayenne.E3;
-import io.agrest.meta.AgPersistentEntity;
-import io.agrest.meta.AgRelationship;
 import io.agrest.runtime.processor.select.SelectContext;
 import io.agrest.unit.TestWithCayenneMapping;
 import org.apache.cayenne.exp.Expression;
 import org.apache.cayenne.query.Ordering;
-import org.apache.cayenne.query.PrefetchTreeNode;
 import org.apache.cayenne.query.SelectQuery;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mockito;
 
 import static org.junit.Assert.*;
 
@@ -49,31 +43,6 @@ public class CayenneAssembleQueryStageTest extends TestWithCayenneMapping {
 		assertSame(o1, amended.getOrderings().get(0));
 		assertSame(o2, amended.getOrderings().get(1));
 	}
-
-//	@Test
-//	public void testBuildQuery_Prefetches() {
-//		SelectQuery<E2> query = new SelectQuery<E2>(E2.class);
-//
-//		ResourceEntity<E2> resultFilter = getResourceEntity(E2.class);
-//		AgRelationship incoming = resultFilter.getAgEntity().getRelationship(E2.E3S.getName());
-//		@SuppressWarnings("unchecked")
-//        AgPersistentEntity<E3> target = Mockito.mock(AgPersistentEntity.class);
-//		resultFilter.getChildren().put(E2.E3S.getName(), new ResourceEntity<E3>(target, incoming));
-//
-//		SelectContext<E2> context = new SelectContext<E2>(E2.class);
-//		resultFilter.setSelect(query);
-//		context.setEntity(resultFilter);
-//
-//		SelectQuery<E2> amended = makeQueryStage.buildQuery(context);
-//		assertSame(query, amended);
-//		PrefetchTreeNode rootPrefetch = amended.getPrefetchTree();
-//
-//		assertNotNull(rootPrefetch);
-//		assertEquals(1, rootPrefetch.getChildren().size());
-//
-//		PrefetchTreeNode child1 = rootPrefetch.getChildren().iterator().next();
-//		assertEquals(E2.E3S.getName(), child1.getPath());
-//	}
 
 	@Test
 	public void testBuildQuery_Pagination() {
