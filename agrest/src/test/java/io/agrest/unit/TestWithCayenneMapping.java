@@ -94,7 +94,7 @@ public class TestWithCayenneMapping {
 		compilers.add(new CayenneEntityCompiler(mockCayennePersister, Collections.emptyMap(), converterFactory));
 		compilers.add(new PojoEntityCompiler(Collections.emptyMap()));
 
-		return new MetadataService(compilers, mockCayennePersister);
+		return new MetadataService(compilers);
 	}
 
 	protected IResourceMetadataService createResourceMetadataService() {

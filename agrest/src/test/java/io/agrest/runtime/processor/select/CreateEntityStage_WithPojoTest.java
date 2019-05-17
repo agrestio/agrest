@@ -84,7 +84,7 @@ public class CreateEntityStage_WithPojoTest extends TestWithCayenneMapping {
         compilers.add(new PojoEntityCompiler(Collections.emptyMap()));
         compilers.add(new CayenneEntityCompiler(mockCayennePersister, Collections.emptyMap(), converterFactory));
 
-        return new MetadataService(compilers, mockCayennePersister);
+        return new MetadataService(compilers);
     }
 
     @Test

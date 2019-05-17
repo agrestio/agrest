@@ -90,7 +90,7 @@ public class Java8TestWithCayenneMapping {
 	protected IMetadataService createMetadataService() {
 
 		List<AgEntityCompiler> compilers = asList(new CayenneEntityCompiler(mockCayennePersister, Collections.emptyMap(), converterFactory));
-		return new MetadataService(compilers, mockCayennePersister);
+		return new MetadataService(compilers);
 	}
 
 	protected IResourceMetadataService createResourceMetadataService() {
