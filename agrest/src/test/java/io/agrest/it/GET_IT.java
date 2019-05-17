@@ -150,7 +150,7 @@ public class GET_IT extends BQJerseyTestOnDerby {
     }
 
     @Test
-    public void test_SelectById() {
+    public void testById() {
 
         e4().insertColumns("id")
                 .values(2)
@@ -168,7 +168,7 @@ public class GET_IT extends BQJerseyTestOnDerby {
     }
 
     @Test
-    public void test_SelectById_Params() {
+    public void testById_Params() {
 
         e4().insertColumns("id")
                 .values(2)
@@ -183,7 +183,7 @@ public class GET_IT extends BQJerseyTestOnDerby {
     }
 
     @Test
-    public void test_SelectById_NotFound() {
+    public void testById_NotFound() {
 
         Response response = target("/e4/2").request().get();
         onResponse(response).statusEquals(Response.Status.NOT_FOUND)
@@ -191,7 +191,7 @@ public class GET_IT extends BQJerseyTestOnDerby {
     }
 
     @Test
-    public void test_SelectById_Prefetching() {
+    public void testById_Prefetching() {
 
         e2().insertColumns("id", "name").values(1, "xxx").exec();
         e3().insertColumns("id", "name", "e2_id")
@@ -209,7 +209,7 @@ public class GET_IT extends BQJerseyTestOnDerby {
     }
 
     @Test
-    public void test_Select_Prefetching() {
+    public void testInclude() {
 
         e2().insertColumns("id", "name").values(1, "xxx").exec();
         e3().insertColumns("id", "name", "e2_id")
@@ -217,8 +217,7 @@ public class GET_IT extends BQJerseyTestOnDerby {
                 .values(9, "zzz", 1).exec();
 
         Response response = target("/e3")
-                .queryParam("include", "id")
-                .queryParam("include", "e2.id")
+                .queryParam("include", "id", "e2.id")
                 .queryParam("sort", "id")
                 .request()
                 .get();
@@ -227,7 +226,7 @@ public class GET_IT extends BQJerseyTestOnDerby {
     }
 
     @Test
-    public void test_Select_RelationshipSort() {
+    public void testRelationshipSort() {
 
         e2().insertColumns("id", "name")
                 .values(1, "zzz")
@@ -253,7 +252,7 @@ public class GET_IT extends BQJerseyTestOnDerby {
     }
 
     @Test
-    public void test_Select_RelationshipStartLimit() throws UnsupportedEncodingException {
+    public void testRelationshipStartLimit() throws UnsupportedEncodingException {
 
         e2().insertColumns("id", "name")
                 .values(1, "zzz")
@@ -276,7 +275,7 @@ public class GET_IT extends BQJerseyTestOnDerby {
     }
 
     @Test
-    public void test_Select_Prefetching_StartLimit() {
+    public void testInclude_StartLimit() {
 
         e2().insertColumns("id", "name").values(1, "xxx").exec();
 
@@ -300,7 +299,7 @@ public class GET_IT extends BQJerseyTestOnDerby {
     }
 
     @Test
-    public void test_SelectToOne_Null() {
+    public void testToOne_Null() {
 
         e2().insertColumns("id", "name").values(1, "xxx").exec();
 
@@ -319,7 +318,7 @@ public class GET_IT extends BQJerseyTestOnDerby {
     }
 
     @Test
-    public void test_SelectCharPK() {
+    public void testCharPK() {
 
         e6().insertColumns("char_id", "char_column").values("a", "aaa").exec();
 
@@ -328,7 +327,7 @@ public class GET_IT extends BQJerseyTestOnDerby {
     }
 
     @Test
-    public void test_SelectByCompoundId() {
+    public void testByCompoundId() {
 
         e17().insertColumns("id1", "id2", "name").values(1, 1, "aaa").exec();
 
@@ -406,7 +405,7 @@ public class GET_IT extends BQJerseyTestOnDerby {
     }
 
     @Test
-    public void test_SelectById_EscapeLineSeparators() {
+    public void testById_EscapeLineSeparators() {
 
         e4().insertColumns("id", "c_varchar").values(1, "First line\u2028Second line...\u2029").exec();
 
@@ -419,7 +418,7 @@ public class GET_IT extends BQJerseyTestOnDerby {
     }
 
     @Test
-    public void test_SelectByteArrayProperty() throws IOException {
+    public void testByteArrayProperty() throws IOException {
 
         e19().insertColumns("id", "guid").values(35, "someValue123".getBytes("UTF-8")).exec();
 
