@@ -1,5 +1,6 @@
 Release 3.2
 
+* #262 Switch to bootique-test
 * #405 Upgrade to Cayenne 4.0.1
 * #406 Overlapping relationship / attribute includes are order dependent
 * #407 Stop using Include / Exclude as dummy containers of other Includes / Excludes
