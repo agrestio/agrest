@@ -209,23 +209,6 @@ public class GET_IT extends JerseyAndDerbyCase {
     }
 
     @Test
-    public void testInclude() {
-
-        e2().insertColumns("id", "name").values(1, "xxx").exec();
-        e3().insertColumns("id", "name", "e2_id")
-                .values(8, "yyy", 1)
-                .values(9, "zzz", 1).exec();
-
-        Response response = target("/e3")
-                .queryParam("include", "id", "e2.id")
-                .queryParam("sort", "id")
-                .request()
-                .get();
-
-        onSuccess(response).bodyEquals(2, "{\"id\":8,\"e2\":{\"id\":1}}", "{\"id\":9,\"e2\":{\"id\":1}}");
-    }
-
-    @Test
     public void testRelationshipSort() {
 
         e2().insertColumns("id", "name")
@@ -272,30 +255,6 @@ public class GET_IT extends JerseyAndDerbyCase {
         onSuccess(response).bodyEquals(2,
                 "{\"id\":1,\"e3s\":[{\"id\":9,\"name\":\"bbb\"}]}",
                 "{\"id\":2,\"e3s\":[]}");
-    }
-
-    @Test
-    public void testInclude_StartLimit() {
-
-        e2().insertColumns("id", "name").values(1, "xxx").exec();
-
-        e3().insertColumns("id", "name", "e2_id")
-                .values(8, "yyy", 1)
-                .values(9, "zzz", 1)
-                .values(10, "zzz", 1)
-                .values(11, "zzz", 1).exec();
-
-        Response response = target("/e3")
-                .queryParam("include", "id", "e2.id")
-                .queryParam("sort", "id")
-                .queryParam("start", "1")
-                .queryParam("limit", "2")
-                .request()
-                .get();
-
-        onSuccess(response).bodyEquals(4,
-                "{\"id\":9,\"e2\":{\"id\":1}}",
-                "{\"id\":10,\"e2\":{\"id\":1}}");
     }
 
     @Test

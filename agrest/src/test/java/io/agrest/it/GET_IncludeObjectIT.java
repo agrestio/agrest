@@ -17,7 +17,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
-public class GET_ObjectIncludeIT extends JerseyAndDerbyCase {
+public class GET_IncludeObjectIT extends JerseyAndDerbyCase {
 
     @BeforeClass
     public static void startTestRuntime() {
@@ -30,7 +30,7 @@ public class GET_ObjectIncludeIT extends JerseyAndDerbyCase {
     }
 
     @Test
-    public void test_PathAttribute() {
+    public void testPathAttribute() {
 
         e4().insertColumns("c_int").values(55).exec();
 
@@ -39,7 +39,7 @@ public class GET_ObjectIncludeIT extends JerseyAndDerbyCase {
     }
 
     @Test
-    public void test_PathRelationship() {
+    public void testPathRelationship() {
 
         e2().insertColumns("id", "name").values(1, "xxx").exec();
         e3().insertColumns("id", "name", "e2_id").values(8, "yyy", 1).exec();
@@ -53,7 +53,7 @@ public class GET_ObjectIncludeIT extends JerseyAndDerbyCase {
     }
 
     @Test
-    public void test_MapBy_ToOne() {
+    public void testMapBy_ToOne() {
 
         e2().insertColumns("id", "name").values(1, "xxx").exec();
         e3().insertColumns("id", "name", "e2_id").values(8, "yyy", 1).exec();
@@ -69,7 +69,7 @@ public class GET_ObjectIncludeIT extends JerseyAndDerbyCase {
     }
 
     @Test
-    public void test_MapBy_ToMany() {
+    public void testMapBy_ToMany() {
 
         e2().insertColumns("id", "name").values(1, "xxx").exec();
         e3().insertColumns("id", "name", "e2_id")
@@ -89,7 +89,7 @@ public class GET_ObjectIncludeIT extends JerseyAndDerbyCase {
     }
 
     @Test
-    public void test_MapBy_ToMany_ById() {
+    public void testMapBy_ToMany_ById() {
 
         e2().insertColumns("id", "name").values(1, "xxx").exec();
         e3().insertColumns("id", "name", "e2_id")
@@ -110,7 +110,7 @@ public class GET_ObjectIncludeIT extends JerseyAndDerbyCase {
     }
 
     @Test
-    public void test_MapBy_ToMany_ByRelatedId() {
+    public void testMapBy_ToMany_ByRelatedId() {
 
         e5().insertColumns("id").values(45).values(46).exec();
         e2().insertColumns("id", "name").values(1, "xxx").exec();
@@ -131,7 +131,7 @@ public class GET_ObjectIncludeIT extends JerseyAndDerbyCase {
     }
 
     @Test
-    public void test_MapBy_ToMany_ByRelatedAttribute() {
+    public void testMapBy_ToMany_ByRelatedAttribute() {
 
         e5().insertColumns("id", "name")
                 .values(45, "T")
@@ -156,7 +156,7 @@ public class GET_ObjectIncludeIT extends JerseyAndDerbyCase {
     }
 
     @Test
-    public void test_MapBy_ToMany_ByRelatedDate() {
+    public void testMapBy_ToMany_ByRelatedDate() {
 
         e5().insertColumns("id", "name", "date")
                 .values(45, "T", "2013-01-03")
@@ -181,7 +181,7 @@ public class GET_ObjectIncludeIT extends JerseyAndDerbyCase {
     }
 
     @Test
-    public void tes_MapBy_ToMany_WithCayenneExp() {
+    public void testMapBy_ToMany_WithCayenneExp() {
 
         // see LF-294 - filter applied too late may cause a AgException
 
@@ -389,7 +389,7 @@ public class GET_ObjectIncludeIT extends JerseyAndDerbyCase {
     }
 
     @Test
-    public void test_ToMany_IncludeMapRelated() {
+    public void testToMany_IncludeMapRelated() {
 
         e5().insertColumns("id", "name")
                 .values(345, "B")
@@ -414,7 +414,7 @@ public class GET_ObjectIncludeIT extends JerseyAndDerbyCase {
     }
 
     @Test
-    public void test_ToMany_IncludeExtMapRelated() {
+    public void testToMany_IncludeExtMapRelated() {
 
         e5().insertColumns("id", "name")
                 .values(345, "B")

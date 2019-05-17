@@ -31,6 +31,25 @@ public class GET_IncludeIT extends JerseyAndDerbyCase {
     }
 
     @Test
+    public void testRelated() {
+
+        e2().insertColumns("id", "name")
+                .values(1, "xxx").exec();
+
+        e3().insertColumns("id", "name", "e2_id")
+                .values(8, "yyy", 1)
+                .values(9, "zzz", 1).exec();
+
+        Response r = target("/e3")
+                .queryParam("include", "id", "e2.id")
+                .queryParam("sort", "id")
+                .request()
+                .get();
+
+        onSuccess(r).bodyEquals(2, "{\"id\":8,\"e2\":{\"id\":1}}", "{\"id\":9,\"e2\":{\"id\":1}}");
+    }
+
+    @Test
     public void testOrderOfInclude() {
 
         e5().insertColumns("id", "name", "date").values(45, "T", "2013-01-03").exec();
@@ -38,9 +57,7 @@ public class GET_IncludeIT extends JerseyAndDerbyCase {
         e3().insertColumns("id", "name", "e2_id", "e5_id").values(3, "zzz", 8, 45).exec();
 
         Response r1 = target("/e3")
-                .queryParam("include", "id")
-                .queryParam("include", "e2")
-                .queryParam("include", "e2.id")
+                .queryParam("include", "id", "e2", "e2.id")
                 .request()
                 .get();
 
@@ -48,9 +65,7 @@ public class GET_IncludeIT extends JerseyAndDerbyCase {
 
         // change the order of includes
         Response r2 = target("/e3")
-                .queryParam("include", "id")
-                .queryParam("include", "e2.id")
-                .queryParam("include", "e2")
+                .queryParam("include", "id", "e2.id", "e2")
                 .request()
                 .get();
 
@@ -63,13 +78,37 @@ public class GET_IncludeIT extends JerseyAndDerbyCase {
         e2().insertColumns("id", "name").values(8, "yyy").exec();
         e3().insertColumns("id", "name", "e2_id", "e5_id").values(3, "zzz", 8, 45).exec();
 
-        Response r1 = target("/e2")
+        Response r = target("/e2")
                 .queryParam("include", "id")
                 .queryParam("include", "e3s.e5.id")
                 .request()
                 .get();
 
-        onSuccess(r1).bodyEquals(1, "{\"id\":8,\"e3s\":[{\"e5\":{\"id\":45}}]}");
+        onSuccess(r).bodyEquals(1, "{\"id\":8,\"e3s\":[{\"e5\":{\"id\":45}}]}");
+    }
+
+    @Test
+    public void testStartLimit() {
+
+        e2().insertColumns("id", "name").values(1, "xxx").exec();
+
+        e3().insertColumns("id", "name", "e2_id")
+                .values(8, "yyy", 1)
+                .values(9, "zzz", 1)
+                .values(10, "zzz", 1)
+                .values(11, "zzz", 1).exec();
+
+        Response r = target("/e3")
+                .queryParam("include", "id", "e2.id")
+                .queryParam("sort", "id")
+                .queryParam("start", "1")
+                .queryParam("limit", "2")
+                .request()
+                .get();
+
+        onSuccess(r).bodyEquals(4,
+                "{\"id\":9,\"e2\":{\"id\":1}}",
+                "{\"id\":10,\"e2\":{\"id\":1}}");
     }
 
 
