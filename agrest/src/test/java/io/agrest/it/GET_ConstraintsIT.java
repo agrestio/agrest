@@ -3,86 +3,82 @@ package io.agrest.it;
 import io.agrest.Ag;
 import io.agrest.DataResponse;
 import io.agrest.constraints.Constraint;
-import io.agrest.it.fixture.JerseyTestOnDerby;
+import io.agrest.it.fixture.BQJerseyTestOnDerby;
 import io.agrest.it.fixture.cayenne.E10;
+import io.agrest.it.fixture.cayenne.E11;
 import io.agrest.it.fixture.cayenne.E4;
-import org.apache.cayenne.query.SQLTemplate;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.Configuration;
 import javax.ws.rs.core.Context;
-import javax.ws.rs.core.FeatureContext;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriInfo;
 
-import static org.junit.Assert.assertEquals;
+public class GET_ConstraintsIT extends BQJerseyTestOnDerby {
 
-public class GET_ConstraintsIT extends JerseyTestOnDerby {
+    @BeforeClass
+    public static void startTestRuntime() {
+        startTestRuntime(Resource.class);
+    }
 
-	@Override
-	protected void doAddResources(FeatureContext context) {
-		context.register(Resource.class);
-	}
+    @Override
+    protected Class<?>[] testEntities() {
+        return new Class[]{E4.class, E10.class, E11.class};
+    }
 
-	@Test
-	public void test_Implicit() {
+    @Test
+    public void test_Implicit() {
 
-		SQLTemplate insert = new SQLTemplate(E4.class,
-				"INSERT INTO utest.e4 (id, c_varchar, c_int) values (1, 'xxx', 5)");
-		newContext().performGenericQuery(insert);
+        e4().insertColumns("id", "c_varchar", "c_int").values(1, "xxx", 5).exec();
 
-		Response response1 = target("/e4/limit_attributes").request().get();
-		assertEquals(Status.OK.getStatusCode(), response1.getStatus());
-		assertEquals("{\"data\":[{\"id\":1,\"cInt\":5}],\"total\":1}", response1.readEntity(String.class));
+        Response r = target("/e4/limit_attributes").request().get();
+        onSuccess(r).bodyEquals(1, "{\"id\":1,\"cInt\":5}");
+    }
 
-	}
+    @Test
+    public void test_Explicit() {
 
-	@Test
-	public void test_Explicit() {
+        e4().insertColumns("id", "c_varchar", "c_int").values(1, "xxx", 5).exec();
 
-		SQLTemplate insert = new SQLTemplate(E4.class,
-				"INSERT INTO utest.e4 (id, c_varchar, c_int) values (1, 'xxx', 5)");
-		newContext().performGenericQuery(insert);
+        Response r = target("/e4/limit_attributes")
+                .queryParam("include", E4.C_BOOLEAN.getName())
+                .queryParam("include", E4.C_INT.getName())
+                .request().get();
 
-		Response response1 = target("/e4/limit_attributes").queryParam("include", E4.C_BOOLEAN.getName())
-				.queryParam("include", E4.C_INT.getName()).request().get();
-		assertEquals(Status.OK.getStatusCode(), response1.getStatus());
-		assertEquals("{\"data\":[{\"cInt\":5}],\"total\":1}", response1.readEntity(String.class));
+        onSuccess(r).bodyEquals(1, "{\"cInt\":5}");
+    }
 
-	}
+    @Test
+    public void test_Annotated() {
 
-	@Test
-	public void test_Annotated() {
+        e10().insertColumns("id", "c_varchar", "c_int", "c_boolean", "c_date")
+                .values(1, "xxx", 5, true, "2014-01-02").exec();
 
-		insert("e10", "id, c_varchar, c_int, c_boolean, c_date", "1, 'xxx', 5, true, '2014-01-02'");
+        Response r = target("/e10").request().get();
+        onSuccess(r).bodyEquals(1, "{\"id\":1,\"cBoolean\":true,\"cInt\":5}");
+    }
 
-		Response response1 = target("/e10").request().get();
-		assertEquals(Status.OK.getStatusCode(), response1.getStatus());
-		assertEquals("{\"data\":[{\"id\":1,\"cBoolean\":true,\"cInt\":5}],\"total\":1}",
-				response1.readEntity(String.class));
+    @Test
+    public void test_Annotated_Relationship() {
 
-	}
+        e10().insertColumns("id", "c_varchar", "c_int", "c_boolean", "c_date")
+                .values(1, "xxx", 5, true, "2014-01-02").exec();
 
-	@Test
-	public void test_Annotated_Relationship() {
+        e11().insertColumns("id", "e10_id", "address", "name")
+                .values(15, 1, "aaa", "nnn").exec();
 
-		insert("e10", "id, c_varchar, c_int, c_boolean, c_date", "1, 'xxx', 5, true, '2014-01-02'");
-		insert("e11", "id, e10_id, address, name", "15, 1, 'aaa', 'nnn'");
+        Response r = target("/e10").queryParam("include", E10.E11S.getName()).request().get();
+        onSuccess(r).bodyEquals(1, "{\"id\":1,\"cBoolean\":true,\"cInt\":5,\"e11s\":[{\"address\":\"aaa\"}]}");
+    }
 
-		Response response1 = target("/e10").queryParam("include", E10.E11S.getName()).request().get();
-		assertEquals(Status.OK.getStatusCode(), response1.getStatus());
-		assertEquals("{\"data\":[{\"id\":1,\"cBoolean\":true,\"cInt\":5,\"e11s\":[{\"address\":\"aaa\"}]}],\"total\":1}",
-				response1.readEntity(String.class));
-	}
+    @Path("")
+    public static class Resource {
 
-	@Path("")
-	public static class Resource {
-
-		@Context
-		private Configuration config;
+        @Context
+        private Configuration config;
 
         @GET
         @Path("e4/limit_attributes")
@@ -92,10 +88,10 @@ public class GET_ConstraintsIT extends JerseyTestOnDerby {
                     .get();
         }
 
-		@GET
+        @GET
         @Path("e10")
-		public DataResponse<E10> get(@Context UriInfo uriInfo) {
-			return Ag.select(E10.class, config).uri(uriInfo).get();
-		}
-	}
+        public DataResponse<E10> get(@Context UriInfo uriInfo) {
+            return Ag.select(E10.class, config).uri(uriInfo).get();
+        }
+    }
 }
