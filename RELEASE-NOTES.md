@@ -5,6 +5,7 @@ Release 3.2
 * #407 Stop using Include / Exclude as dummy containers of other Includes / Excludes
 * #408 Change parameter injection to Strings / Integers
 * #409 Stop using Sort as a dummy container of other Sorts
+* #410 "mapBy" doesn't work with relationship path 
 
 Release 3.1
 

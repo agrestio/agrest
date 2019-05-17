@@ -19,8 +19,10 @@ import io.agrest.it.fixture.cayenne.E19;
 import io.agrest.it.fixture.cayenne.E2;
 import io.agrest.it.fixture.cayenne.E20;
 import io.agrest.it.fixture.cayenne.E21;
+import io.agrest.it.fixture.cayenne.E22;
 import io.agrest.it.fixture.cayenne.E23;
 import io.agrest.it.fixture.cayenne.E24;
+import io.agrest.it.fixture.cayenne.E25;
 import io.agrest.it.fixture.cayenne.E3;
 import io.agrest.it.fixture.cayenne.E4;
 import io.agrest.it.fixture.cayenne.E5;
@@ -211,12 +213,20 @@ public abstract class BQJerseyTestOnDerby {
         return dataManager.getTable(E21.class);
     }
 
+    protected Table e22() {
+        return dataManager.getTable(E22.class);
+    }
+
     protected Table e23() {
         return dataManager.getTable(E23.class);
     }
 
     protected Table e24() {
         return dataManager.getTable(E24.class);
+    }
+
+    protected Table e25() {
+        return dataManager.getTable(E25.class);
     }
 
     public static class AgModule implements Module {

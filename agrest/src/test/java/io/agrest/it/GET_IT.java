@@ -342,15 +342,15 @@ public class GET_IT extends BQJerseyTestOnDerby {
     }
 
     @Test
-    public void test_Select_MapByRootEntity() {
+    public void testMapByRootEntity() {
 
         e4().insertColumns("c_varchar", "c_int").values("xxx", 1)
                 .values("yyy", 2)
                 .values("zzz", 2).exec();
 
         Response response = target("/e4")
-                .queryParam("mapBy", E4.C_INT.getName())
-                .queryParam("include", E4.C_VARCHAR.getName())
+                .queryParam("mapBy", "c_int")
+                .queryParam("include", "c_varchar")
                 .request()
                 .get();
 
@@ -360,7 +360,7 @@ public class GET_IT extends BQJerseyTestOnDerby {
     }
 
     @Test
-    public void test_Select_MapByRootEntity_Related() {
+    public void testMapBy_RelatedId() {
 
         e2().insertColumns("id", "name")
                 .values(1, "zzz")
@@ -372,8 +372,31 @@ public class GET_IT extends BQJerseyTestOnDerby {
                 .values(10, "ccc", 2).exec();
 
         Response response = target("/e3")
-                .queryParam("mapBy", E3.E2.dot(E2.ID_PK_COLUMN).getName())
-                .queryParam("exclude", E3.PHONE_NUMBER.getName())
+                .queryParam("mapBy", "e2.id")
+                .queryParam("exclude", "phoneNumber")
+                .request()
+                .get();
+
+        onSuccess(response).bodyEqualsMapBy(3,
+                "\"1\":[{\"id\":8,\"name\":\"aaa\"},{\"id\":9,\"name\":\"bbb\"}]",
+                "\"2\":[{\"id\":10,\"name\":\"ccc\"}]");
+    }
+
+    @Test
+    public void testMapBy_OverRelationship() {
+
+        e2().insertColumns("id", "name")
+                .values(1, "zzz")
+                .values(2, "yyy").exec();
+
+        e3().insertColumns("id", "name", "e2_id")
+                .values(8, "aaa", 1)
+                .values(9, "bbb", 1)
+                .values(10, "ccc", 2).exec();
+
+        Response response = target("/e3")
+                .queryParam("mapBy", "e2")
+                .queryParam("exclude", "phoneNumber")
                 .request()
                 .get();
 

@@ -101,6 +101,7 @@ public class MapByEncoder implements CollectionEncoder {
         // by default we are dealing with ID
         byId = true;
         mapByReaders.add(getPropertyReader(null, encoderFactory.getIdProperty(mapBy)));
+        fieldNameConverter = converterFactory.getConverter(mapBy.getAgEntity());
     }
 
     private void validateLeafMapBy(ResourceEntity<?> mapBy) {
