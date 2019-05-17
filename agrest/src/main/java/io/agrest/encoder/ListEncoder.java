@@ -117,7 +117,6 @@ public class ListEncoder implements CollectionEncoder {
 		int length = objects.size();
 
 		for (; c.position < length && c.encoded < limit; c.position++) {
-			Object o = objects.get(c.position);
 			if (elementEncoder.encode(null, objects.get(c.position), out)) {
 				c.encoded++;
 			}

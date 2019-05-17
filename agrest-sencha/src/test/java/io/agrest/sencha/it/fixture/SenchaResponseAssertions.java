@@ -1,13 +1,14 @@
 package io.agrest.sencha.it.fixture;
 
-import io.agrest.it.fixture.ResponseAssertions;
+import io.agrest.it.fixture.CayenneAwareResponseAssertions;
+import io.agrest.it.fixture.CayenneOpCounter;
 
 import javax.ws.rs.core.Response;
 
-public class SenchaResponseAssertions extends ResponseAssertions {
+public class SenchaResponseAssertions extends CayenneAwareResponseAssertions {
 
-    public SenchaResponseAssertions(Response response) {
-        super(response);
+    public SenchaResponseAssertions(Response response, CayenneOpCounter opCounter) {
+        super(response, opCounter);
     }
 
     @Override

@@ -11,7 +11,7 @@ import java.util.regex.Pattern;
 
 import static org.junit.Assert.*;
 
-public class ResponseAssertions {
+public class ResponseAssertions<T extends ResponseAssertions<T>> {
 
     private static Pattern NUMERIC_ID_MATCHER = Pattern.compile("\"id\":([\\d]+)");
 
@@ -22,53 +22,6 @@ public class ResponseAssertions {
 
     public ResponseAssertions(Response response) {
         this.response = response;
-    }
-
-    public ResponseAssertions wasSuccess() {
-        assertEquals("Failed request: " + response.getStatus(),
-                Response.Status.OK.getStatusCode(),
-                response.getStatus());
-        return this;
-    }
-
-    public ResponseAssertions wasCreated() {
-        assertEquals("Expected 'CREATED' status, was: " + response.getStatus(),
-                Response.Status.CREATED.getStatusCode(),
-                response.getStatus());
-        return this;
-    }
-
-    public ResponseAssertions statusEquals(Response.Status expectedStatus) {
-        assertEquals(
-                expectedStatus.getStatusCode(),
-                response.getStatus());
-        return this;
-    }
-
-    public ResponseAssertions mediaTypeEquals(MediaType expected) {
-        assertEquals(expected, response.getMediaType());
-        return this;
-    }
-
-    /**
-     * Replaces id value in the actual result with a known placeholder, this allowing to compare JSON coming for
-     * unknonw ids.
-     */
-    public ResponseAssertions replaceId(String idPlaceholder) {
-        this.idPlaceholder = idPlaceholder;
-        return this;
-    }
-
-    public ResponseAssertions bodyEquals(String expected) {
-        String actual = getContentAsString();
-        String normalized = idPlaceholder != null ? NUMERIC_ID_MATCHER.matcher(actual).replaceFirst("\"id\":" + idPlaceholder) : actual;
-
-        assertEquals("Response contains unexpected JSON", expected, normalized);
-        return this;
-    }
-
-    public ResponseAssertions bodyEquals(long total, String... jsonObjects) {
-        return bodyEquals(buildExpectedJson(total, jsonObjects));
     }
 
     /**
@@ -106,7 +59,54 @@ public class ResponseAssertions {
         return responseContent;
     }
 
-    public ResponseAssertions bodyEqualsMapBy(long total, String... jsonKeyValues) {
+    public T wasSuccess() {
+        assertEquals("Failed request: " + response.getStatus(),
+                Response.Status.OK.getStatusCode(),
+                response.getStatus());
+        return (T) this;
+    }
+
+    public T wasCreated() {
+        assertEquals("Expected 'CREATED' status, was: " + response.getStatus(),
+                Response.Status.CREATED.getStatusCode(),
+                response.getStatus());
+        return (T) this;
+    }
+
+    public T statusEquals(Response.Status expectedStatus) {
+        assertEquals(
+                expectedStatus.getStatusCode(),
+                response.getStatus());
+        return (T) this;
+    }
+
+    public T mediaTypeEquals(MediaType expected) {
+        assertEquals(expected, response.getMediaType());
+        return (T) this;
+    }
+
+    /**
+     * Replaces id value in the actual result with a known placeholder, this allowing to compare JSON coming for
+     * unknonw ids.
+     */
+    public T replaceId(String idPlaceholder) {
+        this.idPlaceholder = idPlaceholder;
+        return (T) this;
+    }
+
+    public T bodyEquals(String expected) {
+        String actual = getContentAsString();
+        String normalized = idPlaceholder != null ? NUMERIC_ID_MATCHER.matcher(actual).replaceFirst("\"id\":" + idPlaceholder) : actual;
+
+        assertEquals("Response contains unexpected JSON", expected, normalized);
+        return (T) this;
+    }
+
+    public T bodyEquals(long total, String... jsonObjects) {
+        return bodyEquals(buildExpectedJson(total, jsonObjects));
+    }
+
+    public T bodyEqualsMapBy(long total, String... jsonKeyValues) {
 
         StringBuilder expectedJson = new StringBuilder("{\"data\":{");
         for (String o : jsonKeyValues) {
@@ -122,7 +122,7 @@ public class ResponseAssertions {
         return bodyEquals(expectedJson.toString());
     }
 
-    public ResponseAssertions totalEquals(long total) {
+    public T totalEquals(long total) {
 
         String string = getContentAsString();
         JsonNode rootNode = null;
@@ -138,6 +138,6 @@ public class ResponseAssertions {
 
         assertEquals("Unexpected total", total, totalNode.asLong());
 
-        return this;
+        return (T) this;
     }
 }

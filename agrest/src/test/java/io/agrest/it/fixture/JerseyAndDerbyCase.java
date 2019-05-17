@@ -39,6 +39,7 @@ import io.bootique.jdbc.test.Table;
 import io.bootique.jersey.JerseyModule;
 import io.bootique.jersey.JerseyModuleExtender;
 import io.bootique.test.junit.BQTestFactory;
+import org.apache.cayenne.configuration.server.ServerModule;
 import org.apache.cayenne.configuration.server.ServerRuntime;
 import org.junit.ClassRule;
 import org.junit.Rule;
@@ -56,11 +57,15 @@ import java.util.function.UnaryOperator;
 public abstract class JerseyAndDerbyCase {
 
     @ClassRule
-    public static BQTestFactory TEST_FACTORY = new BQTestFactory();
+    public static final BQTestFactory TEST_FACTORY = new BQTestFactory();
+    private static final CayenneOpCounter CAYENNE_OP_COUNTER = new CayenneOpCounter();
     protected static BQRuntime TEST_RUNTIME;
 
     @Rule
     public CayenneTestDataManager dataManager = createDataManager(TEST_RUNTIME);
+
+    @Rule
+    public CayenneOpCounter cayenneOpCounter = CAYENNE_OP_COUNTER;
 
     protected static void startTestRuntime(Class<?>... resources) {
         startTestRuntime(b -> b, resources);
@@ -70,11 +75,15 @@ public abstract class JerseyAndDerbyCase {
         TEST_RUNTIME = TEST_FACTORY.app("-s", "-c", "classpath:io/agrest/it/fixture/server.yml")
                 .autoLoadModules()
                 .module(new AgModule(agCustomizer))
-                .module(b -> CayenneModule.extend(b).addProject("cayenne-agrest-tests.xml"))
+                .module(b -> CayenneModule.extend(b).addModule(initCayenneOpCounter()).addProject("cayenne-agrest-tests.xml"))
                 .module(b -> addResources(JerseyModule.extend(b), resources).addFeature(AgRuntime.class))
                 .createRuntime();
 
         TEST_RUNTIME.run();
+    }
+
+    private static org.apache.cayenne.di.Module initCayenneOpCounter() {
+        return b -> ServerModule.contributeDomainFilters(b).add(CAYENNE_OP_COUNTER);
     }
 
     private static JerseyModuleExtender addResources(JerseyModuleExtender extender, Class<?>... resources) {
@@ -98,12 +107,12 @@ public abstract class JerseyAndDerbyCase {
         return new Class[0];
     }
 
-    protected ResponseAssertions onSuccess(Response response) {
+    protected CayenneAwareResponseAssertions onSuccess(Response response) {
         return onResponse(response).wasSuccess();
     }
 
-    protected ResponseAssertions onResponse(Response response) {
-        return new ResponseAssertions(response);
+    protected CayenneAwareResponseAssertions onResponse(Response response) {
+        return new CayenneAwareResponseAssertions(response, cayenneOpCounter);
     }
 
     protected String urlEnc(String queryParam) {
