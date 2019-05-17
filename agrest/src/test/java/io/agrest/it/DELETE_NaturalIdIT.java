@@ -2,7 +2,7 @@ package io.agrest.it;
 
 import io.agrest.Ag;
 import io.agrest.SimpleResponse;
-import io.agrest.it.fixture.BQJerseyTestOnDerby;
+import io.agrest.it.fixture.JerseyAndDerbyCase;
 import io.agrest.it.fixture.cayenne.E17;
 import io.agrest.it.fixture.cayenne.E20;
 import io.agrest.it.fixture.cayenne.E21;
@@ -22,7 +22,7 @@ import javax.ws.rs.core.UriInfo;
 import java.util.HashMap;
 import java.util.Map;
 
-public class DELETE_NaturalIdIT extends BQJerseyTestOnDerby {
+public class DELETE_NaturalIdIT extends JerseyAndDerbyCase {
 
     @BeforeClass
     public static void startTestRuntime() {

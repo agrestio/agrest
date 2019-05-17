@@ -2,7 +2,7 @@ package io.agrest.it;
 
 import io.agrest.Ag;
 import io.agrest.DataResponse;
-import io.agrest.it.fixture.BQJerseyTestOnDerby;
+import io.agrest.it.fixture.JerseyAndDerbyCase;
 import io.agrest.it.fixture.cayenne.E12;
 import io.agrest.it.fixture.cayenne.E12E13;
 import io.agrest.it.fixture.cayenne.E13;
@@ -25,7 +25,7 @@ import javax.ws.rs.core.UriInfo;
 import java.util.HashMap;
 import java.util.Map;
 
-public class POST_Related_IT extends BQJerseyTestOnDerby {
+public class POST_Related_IT extends JerseyAndDerbyCase {
 
     @BeforeClass
     public static void startTestRuntime() {

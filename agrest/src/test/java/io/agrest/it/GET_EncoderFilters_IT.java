@@ -7,7 +7,7 @@ import io.agrest.ResourceEntity;
 import io.agrest.SelectStage;
 import io.agrest.encoder.Encoder;
 import io.agrest.encoder.EncoderFilter;
-import io.agrest.it.fixture.BQJerseyTestOnDerby;
+import io.agrest.it.fixture.JerseyAndDerbyCase;
 import io.agrest.it.fixture.cayenne.E4;
 import io.agrest.runtime.AgBuilder;
 import org.apache.cayenne.Cayenne;
@@ -25,7 +25,7 @@ import java.util.function.UnaryOperator;
 
 import static org.junit.Assert.*;
 
-public class GET_EncoderFilters_IT extends BQJerseyTestOnDerby {
+public class GET_EncoderFilters_IT extends JerseyAndDerbyCase {
 
     @BeforeClass
     public static void startTestRuntime() {

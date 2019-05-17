@@ -2,7 +2,7 @@ package io.agrest.it;
 
 import io.agrest.Ag;
 import io.agrest.DataResponse;
-import io.agrest.it.fixture.BQJerseyTestOnDerby;
+import io.agrest.it.fixture.JerseyAndDerbyCase;
 import io.agrest.it.fixture.cayenne.E3;
 import io.agrest.it.fixture.cayenne.E4;
 import io.agrest.property.PropertyReader;
@@ -20,7 +20,7 @@ import javax.ws.rs.core.UriInfo;
 
 import static io.agrest.property.PropertyBuilder.property;
 
-public class GET_RequestPropertyIT extends BQJerseyTestOnDerby {
+public class GET_RequestPropertyIT extends JerseyAndDerbyCase {
 
     @BeforeClass
     public static void startTestRuntime() {

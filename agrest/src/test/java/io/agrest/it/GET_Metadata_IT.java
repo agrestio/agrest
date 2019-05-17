@@ -8,7 +8,7 @@ import io.agrest.SimpleResponse;
 import io.agrest.annotation.AgResource;
 import io.agrest.annotation.LinkType;
 import io.agrest.constraints.Constraint;
-import io.agrest.it.fixture.BQJerseyTestOnDerby;
+import io.agrest.it.fixture.JerseyAndDerbyCase;
 import io.agrest.it.fixture.cayenne.E15;
 import io.agrest.it.fixture.cayenne.E19;
 import io.agrest.it.fixture.cayenne.E5;
@@ -27,7 +27,7 @@ import javax.ws.rs.core.UriInfo;
 
 import static org.junit.Assert.*;
 
-public class GET_Metadata_IT extends BQJerseyTestOnDerby {
+public class GET_Metadata_IT extends JerseyAndDerbyCase {
 
     @BeforeClass
     public static void startTestRuntime() {

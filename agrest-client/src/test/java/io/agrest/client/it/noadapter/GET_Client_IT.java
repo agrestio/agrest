@@ -8,7 +8,7 @@ import io.agrest.client.ClientDataResponse;
 import io.agrest.client.protocol.Expression;
 import io.agrest.client.protocol.Include;
 import io.agrest.client.protocol.Sort;
-import io.agrest.it.fixture.BQJerseyTestOnDerby;
+import io.agrest.it.fixture.JerseyAndDerbyCase;
 import io.agrest.it.fixture.cayenne.E2;
 import io.agrest.it.fixture.cayenne.E3;
 import io.agrest.it.fixture.cayenne.E4;
@@ -25,7 +25,7 @@ import java.util.List;
 
 import static org.junit.Assert.*;
 
-public class GET_Client_IT extends BQJerseyTestOnDerby {
+public class GET_Client_IT extends JerseyAndDerbyCase {
 
     @BeforeClass
     public static void startTestRuntime() {

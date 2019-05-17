@@ -3,7 +3,7 @@ package io.agrest.it;
 import io.agrest.Ag;
 import io.agrest.EntityDelete;
 import io.agrest.SimpleResponse;
-import io.agrest.it.fixture.BQJerseyTestOnDerby;
+import io.agrest.it.fixture.JerseyAndDerbyCase;
 import io.agrest.it.fixture.cayenne.E2;
 import io.agrest.it.fixture.cayenne.E3;
 import io.agrest.it.fixture.cayenne.E7;
@@ -24,7 +24,7 @@ import java.util.List;
 
 import static org.junit.Assert.*;
 
-public class DELETE_RelatedIT extends BQJerseyTestOnDerby {
+public class DELETE_RelatedIT extends JerseyAndDerbyCase {
 
     @BeforeClass
     public static void startTestRuntime() {

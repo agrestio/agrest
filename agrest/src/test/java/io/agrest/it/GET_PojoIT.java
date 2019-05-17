@@ -2,7 +2,7 @@ package io.agrest.it;
 
 import io.agrest.Ag;
 import io.agrest.DataResponse;
-import io.agrest.it.fixture.BQJerseyTestOnPojo;
+import io.agrest.it.fixture.JerseyAndPojoCase;
 import io.agrest.it.fixture.pojo.model.P1;
 import io.agrest.it.fixture.pojo.model.P3;
 import io.agrest.it.fixture.pojo.model.P4;
@@ -29,7 +29,7 @@ import java.util.List;
 
 import static org.junit.Assert.*;
 
-public class GET_PojoIT extends BQJerseyTestOnPojo {
+public class GET_PojoIT extends JerseyAndPojoCase {
 
     @BeforeClass
     public static void startTestRuntime() {

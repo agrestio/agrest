@@ -3,7 +3,7 @@ package io.agrest.it;
 import io.agrest.Ag;
 import io.agrest.DataResponse;
 import io.agrest.UpdateStage;
-import io.agrest.it.fixture.BQJerseyTestOnDerby;
+import io.agrest.it.fixture.JerseyAndDerbyCase;
 import io.agrest.it.fixture.cayenne.E3;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -18,7 +18,7 @@ import javax.ws.rs.core.UriInfo;
 
 import static org.junit.Assert.*;
 
-public class PUT_StagesIT extends BQJerseyTestOnDerby {
+public class PUT_StagesIT extends JerseyAndDerbyCase {
 
     @BeforeClass
     public static void startTestRuntime() {

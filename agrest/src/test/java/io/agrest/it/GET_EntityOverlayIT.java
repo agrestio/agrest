@@ -4,7 +4,7 @@ import io.agrest.Ag;
 import io.agrest.DataResponse;
 import io.agrest.MetadataResponse;
 import io.agrest.annotation.AgAttribute;
-import io.agrest.it.fixture.BQJerseyTestOnDerby;
+import io.agrest.it.fixture.JerseyAndDerbyCase;
 import io.agrest.it.fixture.cayenne.E2;
 import io.agrest.it.fixture.cayenne.E3;
 import io.agrest.it.fixture.cayenne.E4;
@@ -25,7 +25,7 @@ import java.util.function.UnaryOperator;
 import static java.util.Arrays.asList;
 import static org.junit.Assert.*;
 
-public class GET_EntityOverlayIT extends BQJerseyTestOnDerby {
+public class GET_EntityOverlayIT extends JerseyAndDerbyCase {
 
     @BeforeClass
     public static void startTestRuntime() {

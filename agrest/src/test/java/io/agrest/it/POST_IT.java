@@ -4,7 +4,7 @@ import io.agrest.Ag;
 import io.agrest.DataResponse;
 import io.agrest.SimpleResponse;
 import io.agrest.constraints.Constraint;
-import io.agrest.it.fixture.BQJerseyTestOnDerby;
+import io.agrest.it.fixture.JerseyAndDerbyCase;
 import io.agrest.it.fixture.cayenne.E16;
 import io.agrest.it.fixture.cayenne.E17;
 import io.agrest.it.fixture.cayenne.E19;
@@ -30,7 +30,7 @@ import java.util.Map;
 
 import static org.junit.Assert.*;
 
-public class POST_IT extends BQJerseyTestOnDerby {
+public class POST_IT extends JerseyAndDerbyCase {
 
     @BeforeClass
     public static void startTestRuntime() {

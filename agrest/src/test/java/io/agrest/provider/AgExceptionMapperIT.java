@@ -2,7 +2,7 @@ package io.agrest.provider;
 
 import io.agrest.AgException;
 import io.agrest.DataResponse;
-import io.agrest.it.fixture.BQJerseyTestOnDerby;
+import io.agrest.it.fixture.JerseyAndDerbyCase;
 import io.agrest.it.fixture.cayenne.E2;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -16,7 +16,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
-public class AgExceptionMapperIT extends BQJerseyTestOnDerby {
+public class AgExceptionMapperIT extends JerseyAndDerbyCase {
 
     @BeforeClass
     public static void startTestRuntime() {

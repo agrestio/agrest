@@ -6,7 +6,7 @@ import io.agrest.DataResponse;
 import io.agrest.client.AgClient;
 import io.agrest.client.ClientDataResponse;
 import io.agrest.client.protocol.Include;
-import io.agrest.it.fixture.BQJerseyTestOnDerby;
+import io.agrest.it.fixture.JerseyAndDerbyCase;
 import io.agrest.it.fixture.cayenne.E2;
 import io.agrest.it.fixture.cayenne.E3;
 import org.junit.BeforeClass;
@@ -23,7 +23,7 @@ import static io.agrest.client.it.noadapter.EntityUtil.createE2;
 import static io.agrest.client.it.noadapter.EntityUtil.createE3;
 import static org.junit.Assert.*;
 
-public class POST_Client_IT extends BQJerseyTestOnDerby {
+public class POST_Client_IT extends JerseyAndDerbyCase {
 
     @BeforeClass
     public static void startTestRuntime() {

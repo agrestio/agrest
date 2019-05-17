@@ -3,7 +3,7 @@ package io.agrest.it;
 import io.agrest.Ag;
 import io.agrest.AgRequest;
 import io.agrest.DataResponse;
-import io.agrest.it.fixture.BQJerseyTestOnDerby;
+import io.agrest.it.fixture.JerseyAndDerbyCase;
 import io.agrest.it.fixture.cayenne.E3;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -16,7 +16,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
-public class POST_AgRequestIT extends BQJerseyTestOnDerby {
+public class POST_AgRequestIT extends JerseyAndDerbyCase {
 
     @BeforeClass
     public static void startTestRuntime() {

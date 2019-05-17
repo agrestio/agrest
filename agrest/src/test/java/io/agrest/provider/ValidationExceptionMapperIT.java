@@ -1,7 +1,7 @@
 package io.agrest.provider;
 
 import io.agrest.DataResponse;
-import io.agrest.it.fixture.BQJerseyTestOnDerby;
+import io.agrest.it.fixture.JerseyAndDerbyCase;
 import io.agrest.it.fixture.cayenne.E2;
 import org.apache.cayenne.validation.SimpleValidationFailure;
 import org.apache.cayenne.validation.ValidationException;
@@ -18,7 +18,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
-public class ValidationExceptionMapperIT extends BQJerseyTestOnDerby {
+public class ValidationExceptionMapperIT extends JerseyAndDerbyCase {
 
     @BeforeClass
     public static void startTestRuntime() {

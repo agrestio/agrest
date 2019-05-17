@@ -3,7 +3,7 @@ package io.agrest.it;
 import io.agrest.Ag;
 import io.agrest.DataResponse;
 import io.agrest.encoder.DateTimeFormatters;
-import io.agrest.it.fixture.BQJerseyTestOnDerby;
+import io.agrest.it.fixture.JerseyAndDerbyCase;
 import io.agrest.it.fixture.cayenne.E17;
 import io.agrest.it.fixture.cayenne.E19;
 import io.agrest.it.fixture.cayenne.E2;
@@ -34,7 +34,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-public class GET_IT extends BQJerseyTestOnDerby {
+public class GET_IT extends JerseyAndDerbyCase {
 
     @BeforeClass
     public static void startTestRuntime() {

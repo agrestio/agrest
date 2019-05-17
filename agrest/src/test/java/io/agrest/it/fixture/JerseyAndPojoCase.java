@@ -34,7 +34,11 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.function.UnaryOperator;
 
-public class BQJerseyTestOnPojo {
+/**
+ * An abstract superclass of integration tests that starts Bootique test runtime with JAX-RS service and an in-memory
+ * "pojo database".
+ */
+public class JerseyAndPojoCase {
 
     @ClassRule
     public static BQTestFactory TEST_FACTORY = new BQTestFactory();
@@ -51,7 +55,7 @@ public class BQJerseyTestOnPojo {
 
         POJO_DB = new PojoDB();
 
-        Function<AgBuilder, AgBuilder> customizerChain = customizer.compose(BQJerseyTestOnPojo::customizeForPojo);
+        Function<AgBuilder, AgBuilder> customizerChain = customizer.compose(JerseyAndPojoCase::customizeForPojo);
 
         TEST_RUNTIME = TEST_FACTORY.app("-s", "-c", "classpath:io/agrest/it/fixture/pojoserver.yml")
                 .autoLoadModules()

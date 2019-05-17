@@ -3,7 +3,7 @@ package io.agrest.it;
 import io.agrest.Ag;
 import io.agrest.DataResponse;
 import io.agrest.SelectStage;
-import io.agrest.it.fixture.BQJerseyTestOnDerby;
+import io.agrest.it.fixture.JerseyAndDerbyCase;
 import io.agrest.it.fixture.cayenne.E14;
 import io.agrest.it.fixture.cayenne.E15;
 import io.agrest.it.fixture.pojo.model.P7;
@@ -19,7 +19,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
-public class GET_PersistentWithExtraAnnotatedPropertiesIT extends BQJerseyTestOnDerby {
+public class GET_PersistentWithExtraAnnotatedPropertiesIT extends JerseyAndDerbyCase {
 
     @BeforeClass
     public static void startTestRuntime() {

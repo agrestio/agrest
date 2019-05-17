@@ -50,7 +50,10 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.function.UnaryOperator;
 
-public abstract class BQJerseyTestOnDerby {
+/**
+ * An abstract superclass of integration tests that starts Bootique test runtime with JAX-RS service and Derby DB.
+ */
+public abstract class JerseyAndDerbyCase {
 
     // TODO: reuse Derby DataSource between all tests ... don't recreate it once per test class
 

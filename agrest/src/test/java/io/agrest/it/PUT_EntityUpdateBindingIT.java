@@ -3,7 +3,7 @@ package io.agrest.it;
 import io.agrest.Ag;
 import io.agrest.EntityUpdate;
 import io.agrest.SimpleResponse;
-import io.agrest.it.fixture.BQJerseyTestOnDerby;
+import io.agrest.it.fixture.JerseyAndDerbyCase;
 import io.agrest.it.fixture.cayenne.E3;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -18,7 +18,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import java.util.Collection;
 
-public class PUT_EntityUpdateBindingIT extends BQJerseyTestOnDerby {
+public class PUT_EntityUpdateBindingIT extends JerseyAndDerbyCase {
 
     @BeforeClass
     public static void startTestRuntime() {

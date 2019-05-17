@@ -4,7 +4,7 @@ import io.agrest.Ag;
 import io.agrest.MetadataResponse;
 import io.agrest.annotation.AgResource;
 import io.agrest.annotation.LinkType;
-import io.agrest.it.fixture.BQJerseyTestOnDerby;
+import io.agrest.it.fixture.JerseyAndDerbyCase;
 import io.agrest.it.fixture.cayenne.E5;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -18,7 +18,7 @@ import javax.ws.rs.core.UriInfo;
 
 import static org.junit.Assert.*;
 
-public class GET_Metadata_CustomBase_IT extends BQJerseyTestOnDerby {
+public class GET_Metadata_CustomBase_IT extends JerseyAndDerbyCase {
 
     @BeforeClass
     public static void startTestRuntime() {

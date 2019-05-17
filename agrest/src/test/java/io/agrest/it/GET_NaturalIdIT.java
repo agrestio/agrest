@@ -2,7 +2,7 @@ package io.agrest.it;
 
 import io.agrest.Ag;
 import io.agrest.DataResponse;
-import io.agrest.it.fixture.BQJerseyTestOnDerby;
+import io.agrest.it.fixture.JerseyAndDerbyCase;
 import io.agrest.it.fixture.cayenne.E20;
 import io.agrest.it.fixture.cayenne.E21;
 import org.junit.BeforeClass;
@@ -19,7 +19,7 @@ import javax.ws.rs.core.UriInfo;
 import java.util.HashMap;
 import java.util.Map;
 
-public class GET_NaturalIdIT extends BQJerseyTestOnDerby {
+public class GET_NaturalIdIT extends JerseyAndDerbyCase {
 
 
     @BeforeClass

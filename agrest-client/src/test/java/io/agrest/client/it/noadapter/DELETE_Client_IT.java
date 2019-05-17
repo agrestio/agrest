@@ -8,7 +8,7 @@ import io.agrest.client.AgClient;
 import io.agrest.client.AgClientException;
 import io.agrest.client.ClientDataResponse;
 import io.agrest.client.ClientSimpleResponse;
-import io.agrest.it.fixture.BQJerseyTestOnDerby;
+import io.agrest.it.fixture.JerseyAndDerbyCase;
 import io.agrest.it.fixture.cayenne.E2;
 import io.agrest.it.fixture.cayenne.E3;
 import org.junit.BeforeClass;
@@ -26,7 +26,7 @@ import javax.ws.rs.core.UriInfo;
 
 import static org.junit.Assert.*;
 
-public class DELETE_Client_IT extends BQJerseyTestOnDerby {
+public class DELETE_Client_IT extends JerseyAndDerbyCase {
 
     @BeforeClass
     public static void startTestRuntime() {

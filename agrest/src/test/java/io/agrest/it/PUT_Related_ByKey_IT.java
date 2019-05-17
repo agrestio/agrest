@@ -2,7 +2,7 @@ package io.agrest.it;
 
 import io.agrest.Ag;
 import io.agrest.DataResponse;
-import io.agrest.it.fixture.BQJerseyTestOnDerby;
+import io.agrest.it.fixture.JerseyAndDerbyCase;
 import io.agrest.it.fixture.cayenne.E14;
 import io.agrest.it.fixture.cayenne.E15;
 import io.agrest.it.fixture.cayenne.E3;
@@ -23,7 +23,7 @@ import javax.ws.rs.core.Response.Status;
 
 import static org.junit.Assert.*;
 
-public class PUT_Related_ByKey_IT extends BQJerseyTestOnDerby {
+public class PUT_Related_ByKey_IT extends JerseyAndDerbyCase {
 
     @BeforeClass
     public static void startTestRuntime() {

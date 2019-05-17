@@ -3,7 +3,7 @@ package io.agrest.it;
 import io.agrest.Ag;
 import io.agrest.DataResponse;
 import io.agrest.constraints.Constraint;
-import io.agrest.it.fixture.BQJerseyTestOnDerby;
+import io.agrest.it.fixture.JerseyAndDerbyCase;
 import io.agrest.it.fixture.cayenne.E12;
 import io.agrest.it.fixture.cayenne.E12E13;
 import io.agrest.it.fixture.cayenne.E13;
@@ -28,7 +28,7 @@ import java.util.Map;
 
 import static org.junit.Assert.*;
 
-public class GET_Related_IT extends BQJerseyTestOnDerby {
+public class GET_Related_IT extends JerseyAndDerbyCase {
 
     @BeforeClass
     public static void startTestRuntime() {

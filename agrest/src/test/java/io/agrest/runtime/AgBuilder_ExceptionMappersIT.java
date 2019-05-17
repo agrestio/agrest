@@ -2,7 +2,7 @@ package io.agrest.runtime;
 
 import io.agrest.AgException;
 import io.agrest.DataResponse;
-import io.agrest.it.fixture.BQJerseyTestOnPojo;
+import io.agrest.it.fixture.JerseyAndPojoCase;
 import io.agrest.it.fixture.pojo.model.P1;
 import io.agrest.it.fixture.pojo.model.P2;
 import org.apache.cayenne.di.Module;
@@ -20,7 +20,7 @@ import javax.ws.rs.core.UriInfo;
 import javax.ws.rs.ext.ExceptionMapper;
 import java.util.function.UnaryOperator;
 
-public class AgBuilder_ExceptionMappersIT extends BQJerseyTestOnPojo {
+public class AgBuilder_ExceptionMappersIT extends JerseyAndPojoCase {
 
     @BeforeClass
     public static void startTestRuntime() {

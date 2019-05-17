@@ -6,7 +6,7 @@ import io.agrest.DataResponse;
 import io.agrest.client.AgClient;
 import io.agrest.client.AgClientException;
 import io.agrest.client.ClientDataResponse;
-import io.agrest.it.fixture.BQJerseyTestOnDerby;
+import io.agrest.it.fixture.JerseyAndDerbyCase;
 import io.agrest.it.fixture.cayenne.E4;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -28,7 +28,7 @@ import java.util.List;
 
 import static org.junit.Assert.*;
 
-public class JWT_Client_IT extends BQJerseyTestOnDerby {
+public class JWT_Client_IT extends JerseyAndDerbyCase {
 
     final static String AUTH_TOKEN = "itIsMyVerySecretToken";
 
