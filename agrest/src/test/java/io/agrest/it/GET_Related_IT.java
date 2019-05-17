@@ -11,10 +11,6 @@ import io.agrest.it.fixture.cayenne.E17;
 import io.agrest.it.fixture.cayenne.E18;
 import io.agrest.it.fixture.cayenne.E2;
 import io.agrest.it.fixture.cayenne.E3;
-import org.apache.cayenne.configuration.server.ServerRuntime;
-import org.apache.cayenne.map.DataMap;
-import org.apache.cayenne.map.ObjAttribute;
-import org.apache.cayenne.map.ObjEntity;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -106,38 +102,7 @@ public class GET_Related_IT extends BQJerseyTestOnDerby {
     }
 
     @Test
-    public void testGet_CompoundId_UnmappedPk() {
-
-        e17().insertColumns("id1", "id2", "name")
-                .values(1, 1, "aaa")
-                .values(2, 2, "bbb").exec();
-
-        e18().insertColumns("id", "e17_id1", "e17_id2", "name")
-                .values(1, 1, 1, "xxx")
-                .values(2, 1, 1, "yyy")
-                .values(3, 2, 2, "zzz").exec();
-
-
-        // remove a part of PK from the ObjEntity
-        DataMap dataMap = TEST_RUNTIME.getInstance(ServerRuntime.class).getChannel().getEntityResolver().getDataMap("datamap");
-        ObjEntity E17 = dataMap.getObjEntity("E17");
-        ObjAttribute unmappedAttribute = E17.getAttribute("id2");
-
-        try {
-            E17.removeAttribute("id2");
-
-            Response r = target("/e18/1").queryParam("include", E18.E17.getName()).request().get();
-            onSuccess(r)
-                    .bodyEquals(1, "{\"id\":1,\"e17\":{\"id\":{\"id1\":1,\"id2\":1},\"id1\":1,\"name\":\"aaa\"},\"name\":\"xxx\"}");
-
-        } finally {
-            // restore initial state
-            E17.addAttribute(unmappedAttribute);
-        }
-    }
-
-    @Test
-    public void testGet_ValidRel_ToMany() {
+    public void testValidRel_ToMany() {
 
         // make sure we have e3s for more than one e2 - this will help us
         // confirm that relationship queries are properly filtered.
