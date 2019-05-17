@@ -3,16 +3,19 @@ package io.agrest.it;
 import io.agrest.Ag;
 import io.agrest.DataResponse;
 import io.agrest.constraints.Constraint;
-import io.agrest.it.fixture.JerseyTestOnDerby;
+import io.agrest.it.fixture.BQJerseyTestOnDerby;
 import io.agrest.it.fixture.cayenne.E12;
 import io.agrest.it.fixture.cayenne.E12E13;
+import io.agrest.it.fixture.cayenne.E13;
 import io.agrest.it.fixture.cayenne.E17;
 import io.agrest.it.fixture.cayenne.E18;
 import io.agrest.it.fixture.cayenne.E2;
 import io.agrest.it.fixture.cayenne.E3;
+import org.apache.cayenne.configuration.server.ServerRuntime;
 import org.apache.cayenne.map.DataMap;
 import org.apache.cayenne.map.ObjAttribute;
 import org.apache.cayenne.map.ObjEntity;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import javax.ws.rs.GET;
@@ -21,98 +24,116 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Configuration;
 import javax.ws.rs.core.Context;
-import javax.ws.rs.core.FeatureContext;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriInfo;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
-public class GET_Related_IT extends JerseyTestOnDerby {
+public class GET_Related_IT extends BQJerseyTestOnDerby {
+
+    @BeforeClass
+    public static void startTestRuntime() {
+        startTestRuntime(Resource.class);
+    }
 
     @Override
-    protected void doAddResources(FeatureContext context) {
-        context.register(Resource.class);
+    protected Class<?>[] testEntities() {
+        return new Class[]{E2.class, E3.class, E17.class, E18.class};
+    }
+
+    @Override
+    protected Class<?>[] testEntitiesAndDependencies() {
+        return new Class[]{E12.class, E13.class};
     }
 
     @Test
-    public void testGet_ToMany_Constrained() {
+    public void testToMany_Constrained() {
 
         // make sure we have e3s for more than one e2 - this will help us
         // confirm that relationship queries are properly filtered.
 
-        insert("e2", "id, name", "1, 'xxx'");
-        insert("e2", "id, name", "2, 'yyy'");
+        e2().insertColumns("id", "name")
+                .values(1, "xxx")
+                .values(2, "yyy").exec();
 
-        insert("e3", "id, e2_id, name", "7, 2, 'zzz'");
-        insert("e3", "id, e2_id, name", "8, 1, 'yyy'");
-        insert("e3", "id, e2_id, name", "9, 1, 'zzz'");
+        e3().insertColumns("id", "name", "e2_id")
+                .values(7, "zzz", 2)
+                .values(8, "yyy", 1)
+                .values(9, "zzz", 1).exec();
 
-        Response r1 = target("/e2/constraints/1/e3s").request().get();
-
-        assertEquals(Status.OK.getStatusCode(), r1.getStatus());
-        assertEquals("{\"data\":[{\"id\":8},{\"id\":9}],\"total\":2}", r1.readEntity(String.class));
+        Response r = target("/e2/constraints/1/e3s").request().get();
+        onSuccess(r).bodyEquals(2, "{\"id\":8},{\"id\":9}");
     }
 
     @Test
-    public void testGet_ToMany_CompoundId() {
+    public void testToMany_CompoundId() {
 
-        insert("e17", "id1, id2, name", "1, 1, 'aaa'");
-        insert("e17", "id1, id2, name", "2, 2, 'bbb'");
-        insert("e18", "id, e17_id1, e17_id2, name", "1, 1, 1, 'xxx'");
-        insert("e18", "id, e17_id1, e17_id2, name", "2, 1, 1, 'yyy'");
-        insert("e18", "id, e17_id1, e17_id2, name", "3, 2, 2, 'zzz'");
+        e17().insertColumns("id1", "id2", "name")
+                .values(1, 1, "aaa")
+                .values(2, 2, "bbb").exec();
 
-        Response r1 = target("/e17/e18s").matrixParam("parentId1", 1).matrixParam("parentId2", 1).request().get();
+        e18().insertColumns("id", "e17_id1", "e17_id2", "name")
+                .values(1, 1, 1, "xxx")
+                .values(2, 1, 1, "yyy")
+                .values(3, 2, 2, "zzz").exec();
 
-        assertEquals(Status.OK.getStatusCode(), r1.getStatus());
-        assertEquals("{\"data\":[{\"id\":1,\"name\":\"xxx\"},{\"id\":2,\"name\":\"yyy\"}],\"total\":2}",
-                r1.readEntity(String.class));
+        Response r = target("/e17/e18s")
+                .matrixParam("parentId1", 1)
+                .matrixParam("parentId2", 1)
+                .request().get();
+
+        onSuccess(r).bodyEquals(2, "{\"id\":1,\"name\":\"xxx\"},{\"id\":2,\"name\":\"yyy\"}");
     }
 
     @Test
-    public void testGet_ValidRel_ToOne_CompoundId() {
+    public void testValidRel_ToOne_CompoundId() {
 
-        insert("e17", "id1, id2, name", "1, 1, 'aaa'");
-        insert("e17", "id1, id2, name", "2, 2, 'bbb'");
-        insert("e18", "id, e17_id1, e17_id2, name", "1, 1, 1, 'xxx'");
-        insert("e18", "id, e17_id1, e17_id2, name", "2, 1, 1, 'yyy'");
-        insert("e18", "id, e17_id1, e17_id2, name", "3, 2, 2, 'zzz'");
+        e17().insertColumns("id1", "id2", "name")
+                .values(1, 1, "aaa")
+                .values(2, 2, "bbb").exec();
 
-        Response r1 = target("/e18/1").queryParam("include", E18.E17.getName()).request().get();
+        e18().insertColumns("id", "e17_id1", "e17_id2", "name")
+                .values(1, 1, 1, "xxx")
+                .values(2, 1, 1, "yyy")
+                .values(3, 2, 2, "zzz").exec();
 
-        assertEquals(Status.OK.getStatusCode(), r1.getStatus());
-        assertEquals(
-                "{\"data\":[{\"id\":1," + "\"e17\":{\"id\":{\"id1\":1,\"id2\":1},\"id1\":1,\"id2\":1,\"name\":\"aaa\"},"
-                        + "\"name\":\"xxx\"}],\"total\":1}",
-                r1.readEntity(String.class));
+        Response r = target("/e18/1").queryParam("include", E18.E17.getName()).request().get();
+        onSuccess(r)
+                .bodyEquals(1, "{\"id\":1,\"e17\":{\"id\":{\"id1\":1,\"id2\":1},\"id1\":1,\"id2\":1,\"name\":\"aaa\"},\"name\":\"xxx\"}");
     }
 
     @Test
     public void testGet_CompoundId_UnmappedPk() {
 
+        e17().insertColumns("id1", "id2", "name")
+                .values(1, 1, "aaa")
+                .values(2, 2, "bbb").exec();
+
+        e18().insertColumns("id", "e17_id1", "e17_id2", "name")
+                .values(1, 1, 1, "xxx")
+                .values(2, 1, 1, "yyy")
+                .values(3, 2, 2, "zzz").exec();
+
+
         // remove a part of PK from the ObjEntity
-        DataMap dataMap = DB.getCayenneStack().getChannel().getEntityResolver().getDataMap("datamap");
+        DataMap dataMap = TEST_RUNTIME.getInstance(ServerRuntime.class).getChannel().getEntityResolver().getDataMap("datamap");
         ObjEntity E17 = dataMap.getObjEntity("E17");
         ObjAttribute unmappedAttribute = E17.getAttribute("id2");
-        E17.removeAttribute("id2");
 
-        insert("e17", "id1, id2, name", "1, 1, 'aaa'");
-        insert("e17", "id1, id2, name", "2, 2, 'bbb'");
-        insert("e18", "id, e17_id1, e17_id2, name", "1, 1, 1, 'xxx'");
-        insert("e18", "id, e17_id1, e17_id2, name", "2, 1, 1, 'yyy'");
-        insert("e18", "id, e17_id1, e17_id2, name", "3, 2, 2, 'zzz'");
+        try {
+            E17.removeAttribute("id2");
 
-        Response r1 = target("/e18/1").queryParam("include", E18.E17.getName()).request().get();
+            Response r = target("/e18/1").queryParam("include", E18.E17.getName()).request().get();
+            onSuccess(r)
+                    .bodyEquals(1, "{\"id\":1,\"e17\":{\"id\":{\"id1\":1,\"id2\":1},\"id1\":1,\"name\":\"aaa\"},\"name\":\"xxx\"}");
 
-        assertEquals(Status.OK.getStatusCode(), r1.getStatus());
-        assertEquals("{\"data\":[{\"id\":1,\"" + "e17\":{\"id\":{\"id1\":1,\"id2\":1},\"id1\":1,\"name\":\"aaa\"},"
-                + "\"name\":\"xxx\"}],\"total\":1}", r1.readEntity(String.class));
-
-        // restore initial state
-        E17.addAttribute(unmappedAttribute);
+        } finally {
+            // restore initial state
+            E17.addAttribute(unmappedAttribute);
+        }
     }
 
     @Test
@@ -121,16 +142,17 @@ public class GET_Related_IT extends JerseyTestOnDerby {
         // make sure we have e3s for more than one e2 - this will help us
         // confirm that relationship queries are properly filtered.
 
-        insert("e2", "id, name", "1, 'xxx'");
-        insert("e2", "id, name", "2, 'yyy'");
-        insert("e3", "id, e2_id, name", "7, 2, 'zzz'");
-        insert("e3", "id, e2_id, name", "8, 1, 'yyy'");
-        insert("e3", "id, e2_id, name", "9, 1, 'zzz'");
+        e2().insertColumns("id", "name")
+                .values(1, "xxx")
+                .values(2, "yyy").exec();
 
-        Response r1 = target("/e2/1/e3s").queryParam("include", "id").request().get();
+        e3().insertColumns("id", "name", "e2_id")
+                .values(7, "zzz", 2)
+                .values(8, "yyy", 1)
+                .values(9, "zzz", 1).exec();
 
-        assertEquals(Status.OK.getStatusCode(), r1.getStatus());
-        assertEquals("{\"data\":[{\"id\":8},{\"id\":9}],\"total\":2}", r1.readEntity(String.class));
+        Response r = target("/e2/1/e3s").queryParam("include", "id").request().get();
+        onSuccess(r).bodyEquals(2, "{\"id\":8},{\"id\":9}");
     }
 
     @Test
@@ -139,38 +161,43 @@ public class GET_Related_IT extends JerseyTestOnDerby {
         // make sure we have e3s for more than one e2 - this will help us
         // confirm that relationship queries are properly filtered.
 
-        insert("e2", "id, name", "1, 'xxx'");
-        insert("e2", "id, name", "2, 'yyy'");
-        insert("e3", "id, e2_id, name", "7, 2, 'zzz'");
-        insert("e3", "id, e2_id, name", "8, 1, 'yyy'");
-        insert("e3", "id, e2_id, name", "9, 1, 'zzz'");
+        e2().insertColumns("id", "name")
+                .values(1, "xxx")
+                .values(2, "yyy").exec();
 
-        Response r1 = target("/e3/7/e2").queryParam("include", "id").request().get();
+        e3().insertColumns("id", "name", "e2_id")
+                .values(7, "zzz", 2)
+                .values(8, "yyy", 1)
+                .values(9, "zzz", 1).exec();
 
-        assertEquals(Status.OK.getStatusCode(), r1.getStatus());
-        assertEquals("{\"data\":[{\"id\":2}],\"total\":1}", r1.readEntity(String.class));
+        Response r = target("/e3/7/e2").queryParam("include", "id").request().get();
+        onSuccess(r).bodyEquals(1, "{\"id\":2}");
     }
 
     @Test
     public void testGet_InvalidRel() {
-        Response r1 = target("/e2/1/dummyrel").request().get();
-
-        assertEquals(Status.BAD_REQUEST.getStatusCode(), r1.getStatus());
-        assertEquals("{\"success\":false,\"message\":\"Invalid relationship: 'dummyrel'\"}",
-                r1.readEntity(String.class));
+        Response r = target("/e2/1/dummyrel").request().get();
+        onResponse(r)
+                .statusEquals(Status.BAD_REQUEST)
+                .bodyEquals("{\"success\":false,\"message\":\"Invalid relationship: 'dummyrel'\"}");
     }
 
     @Test
     public void testGET_ToManyJoin() {
 
-        insert("e12", "id", "11");
-        insert("e12", "id", "12");
-        insert("e13", "id", "14");
-        insert("e13", "id", "15");
-        insert("e13", "id", "16");
+        e12().insertColumns("id")
+                .values(11)
+                .values(12).exec();
 
-        insert("e12_e13", "e12_id, e13_id", "11, 14");
-        insert("e12_e13", "e12_id, e13_id", "12, 16");
+        e13().insertColumns("id")
+                .values(14)
+                .values(15)
+                .values(16).exec();
+
+        e12_13().insertColumns("e12_id", "e13_id")
+                .values(11, 14)
+                .values(12, 16)
+                .exec();
 
         // excluding ID - can't render multi-column IDs yet
         Response r1 = target("/e12/12/e1213").queryParam("exclude", "id").queryParam("include", "e12")

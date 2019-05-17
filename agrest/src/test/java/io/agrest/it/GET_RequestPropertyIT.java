@@ -2,38 +2,40 @@ package io.agrest.it;
 
 import io.agrest.Ag;
 import io.agrest.DataResponse;
-import io.agrest.it.fixture.JerseyTestOnDerby;
+import io.agrest.it.fixture.BQJerseyTestOnDerby;
 import io.agrest.it.fixture.cayenne.E3;
 import io.agrest.it.fixture.cayenne.E4;
 import io.agrest.property.PropertyReader;
 import org.apache.cayenne.Cayenne;
 import org.apache.cayenne.DataObject;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.Configuration;
 import javax.ws.rs.core.Context;
-import javax.ws.rs.core.FeatureContext;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriInfo;
 
 import static io.agrest.property.PropertyBuilder.property;
-import static org.junit.Assert.*;
 
-public class GET_Props_RequestProperty_IT extends JerseyTestOnDerby {
+public class GET_RequestPropertyIT extends BQJerseyTestOnDerby {
+
+    @BeforeClass
+    public static void startTestRuntime() {
+        startTestRuntime(Resource.class);
+    }
 
     @Override
-    protected void doAddResources(FeatureContext context) {
-        context.register(Resource.class);
+    protected Class<?>[] testEntities() {
+        return new Class[]{E3.class, E4.class};
     }
 
     @Test
     public void testRequest_Property() {
 
-        insert("e4", "id", "1");
-        insert("e4", "id", "2");
+        e4().insertColumns("id").values(1).values(2).exec();
 
         Response r = target("/e4/calc_property")
                 .queryParam("include", "id")
@@ -42,17 +44,13 @@ public class GET_Props_RequestProperty_IT extends JerseyTestOnDerby {
                 .request()
                 .get();
 
-        assertEquals(Status.OK.getStatusCode(), r.getStatus());
-        assertEquals(
-                "{\"data\":[{\"id\":1,\"x\":\"y_1\"},{\"id\":2,\"x\":\"y_2\"}],\"total\":2}",
-                r.readEntity(String.class));
+        onSuccess(r).bodyEquals(2, "{\"id\":1,\"x\":\"y_1\"},{\"id\":2,\"x\":\"y_2\"}");
     }
 
     @Test
     public void testRequest_Property_Exclude() {
 
-        insert("e4", "id", "1");
-        insert("e4", "id", "2");
+        e4().insertColumns("id").values(1).values(2).exec();
 
         Response r = target("/e4/calc_property")
                 .queryParam("include", "id")
@@ -60,17 +58,15 @@ public class GET_Props_RequestProperty_IT extends JerseyTestOnDerby {
                 .request()
                 .get();
 
-        assertEquals(Status.OK.getStatusCode(), r.getStatus());
-        assertEquals(
-                "{\"data\":[{\"id\":1},{\"id\":2}],\"total\":2}",
-                r.readEntity(String.class));
+        onSuccess(r).bodyEquals(2, "{\"id\":1},{\"id\":2}");
     }
 
     @Test
     public void testRequest_ShadowProperty() {
 
-        insert("e3", "id, name", "1, 'x'");
-        insert("e3", "id, name", "2, 'y'");
+        e3().insertColumns("id", "name")
+                .values(1, "x")
+                .values(8, "y").exec();
 
         Response r = target("/e3/custom_encoding")
                 .queryParam("include", "name")
@@ -78,17 +74,15 @@ public class GET_Props_RequestProperty_IT extends JerseyTestOnDerby {
                 .request()
                 .get();
 
-        assertEquals(Status.OK.getStatusCode(), r.getStatus());
-        assertEquals(
-                "{\"data\":[{\"name\":\"_x_\"},{\"name\":\"_y_\"}],\"total\":2}",
-                r.readEntity(String.class));
+        onSuccess(r).bodyEquals(2, "{\"name\":\"_x_\"},{\"name\":\"_y_\"}");
     }
 
     @Test
     public void testRequest_ShadowProperty_Exclude() {
 
-        insert("e3", "id, name", "1, 'x'");
-        insert("e3", "id, name", "2, 'y'");
+        e3().insertColumns("id", "name")
+                .values(1, "x")
+                .values(2, "y").exec();
 
         Response r = target("/e3/custom_encoding")
                 .queryParam("include", "id")
@@ -96,10 +90,7 @@ public class GET_Props_RequestProperty_IT extends JerseyTestOnDerby {
                 .request()
                 .get();
 
-        assertEquals(Status.OK.getStatusCode(), r.getStatus());
-        assertEquals(
-                "{\"data\":[{\"id\":1},{\"id\":2}],\"total\":2}",
-                r.readEntity(String.class));
+        onSuccess(r).bodyEquals(2, "{\"id\":1},{\"id\":2}");
     }
 
     @Path("")

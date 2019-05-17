@@ -56,7 +56,7 @@ public abstract class BQJerseyTestOnDerby {
 
     @ClassRule
     public static BQTestFactory TEST_FACTORY = new BQTestFactory();
-    private static BQRuntime TEST_RUNTIME;
+    protected static BQRuntime TEST_RUNTIME;
 
     @Rule
     public CayenneTestDataManager dataManager = createDataManager(TEST_RUNTIME);

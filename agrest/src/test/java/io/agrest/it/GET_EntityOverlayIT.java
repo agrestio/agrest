@@ -4,37 +4,32 @@ import io.agrest.Ag;
 import io.agrest.DataResponse;
 import io.agrest.MetadataResponse;
 import io.agrest.annotation.AgAttribute;
-import io.agrest.it.fixture.JerseyTestOnDerby;
+import io.agrest.it.fixture.BQJerseyTestOnDerby;
 import io.agrest.it.fixture.cayenne.E2;
 import io.agrest.it.fixture.cayenne.E3;
 import io.agrest.it.fixture.cayenne.E4;
 import io.agrest.meta.AgEntityOverlay;
 import io.agrest.runtime.AgBuilder;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.Configuration;
 import javax.ws.rs.core.Context;
-import javax.ws.rs.core.FeatureContext;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import java.util.List;
+import java.util.function.UnaryOperator;
 
 import static java.util.Arrays.asList;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
-public class GET_Props_AdHocProperties_IT extends JerseyTestOnDerby {
+public class GET_EntityOverlayIT extends BQJerseyTestOnDerby {
 
-    @Override
-    protected void doAddResources(FeatureContext context) {
-        context.register(Resource.class);
-    }
+    @BeforeClass
+    public static void startTestRuntime() {
 
-    @Override
-    protected AgBuilder doConfigure() {
-        // try all possible adhoc properties...
         AgEntityOverlay<E4> e4Overlay = new AgEntityOverlay<>(E4.class)
                 .addAttribute("adhocString", String.class, e4 -> e4.getCVarchar() + "*")
                 .addToOneRelationship("adhocToOne", EX.class, EX::forE4)
@@ -45,7 +40,13 @@ public class GET_Props_AdHocProperties_IT extends JerseyTestOnDerby {
         AgEntityOverlay<E2> e2Overlay = new AgEntityOverlay<>(E2.class)
                 .addAttribute("adhocString", String.class, e2 -> e2.getName() + "*");
 
-        return super.doConfigure().entityOverlay(e4Overlay).entityOverlay(e2Overlay);
+        UnaryOperator<AgBuilder> customizer = ab -> ab.entityOverlay(e4Overlay).entityOverlay(e2Overlay);
+        startTestRuntime(customizer, Resource.class);
+    }
+
+    @Override
+    protected Class<?>[] testEntities() {
+        return new Class[]{E2.class, E3.class, E4.class};
     }
 
     @Test
@@ -53,8 +54,8 @@ public class GET_Props_AdHocProperties_IT extends JerseyTestOnDerby {
 
         Response r = target("/e4/meta").request().get();
 
-        assertEquals(Response.Status.OK.getStatusCode(), r.getStatus());
-        String data = r.readEntity(String.class);
+        String data = onSuccess(r).getContentAsString();
+
         assertTrue(data.contains("{\"name\":\"derived\",\"type\":\"string\"}"));
         assertTrue(data.contains("{\"name\":\"adhocString\",\"type\":\"string\"}"));
         assertTrue(data.contains("{\"name\":\"adhocToOne\",\"type\":\"EX\",\"relationship\":true}"));
@@ -64,8 +65,9 @@ public class GET_Props_AdHocProperties_IT extends JerseyTestOnDerby {
     @Test
     public void testTransientAttribute() {
 
-        insert("e4", "id, c_varchar", "1, 'x'");
-        insert("e4", "id, c_varchar", "2, 'y'");
+        e4().insertColumns("id", "c_varchar")
+                .values(1, "x")
+                .values(2, "y").exec();
 
         Response r = target("/e4")
                 .queryParam("include", "derived")
@@ -73,17 +75,14 @@ public class GET_Props_AdHocProperties_IT extends JerseyTestOnDerby {
                 .request()
                 .get();
 
-        assertEquals(Response.Status.OK.getStatusCode(), r.getStatus());
-        assertEquals(
-                "{\"data\":[{\"derived\":\"x$\"},{\"derived\":\"y$\"}],\"total\":2}",
-                r.readEntity(String.class));
+        onSuccess(r).bodyEquals(2, "{\"derived\":\"x$\"},{\"derived\":\"y$\"}");
     }
 
     @Test
     public void testAdHocAttribute_Related() {
 
-        insert("e2", "id, name", "1, 'xxx'");
-        insert("e3", "id, name, e2_id", "3, 'zzz', 1");
+        e2().insertColumns("id", "name").values(1, "xxx").exec();
+        e3().insertColumns("id", "name", "e2_id").values(3, "zzz", 1).exec();
 
         Response r = target("/e3")
                 .queryParam("include", "id")
@@ -92,17 +91,15 @@ public class GET_Props_AdHocProperties_IT extends JerseyTestOnDerby {
                 .request()
                 .get();
 
-        assertEquals(Response.Status.OK.getStatusCode(), r.getStatus());
-        assertEquals(
-                "{\"data\":[{\"id\":3,\"e2\":{\"adhocString\":\"xxx*\"}}],\"total\":1}",
-                r.readEntity(String.class));
+        onSuccess(r).bodyEquals(1, "{\"id\":3,\"e2\":{\"adhocString\":\"xxx*\"}}");
     }
 
     @Test
     public void testAdHocAttribute() {
 
-        insert("e4", "id, c_varchar", "1, 'x'");
-        insert("e4", "id, c_varchar", "2, 'y'");
+        e4().insertColumns("id", "c_varchar")
+                .values(1, "x")
+                .values(2, "y").exec();
 
         Response r = target("/e4")
                 .queryParam("include", "adhocString")
@@ -110,17 +107,15 @@ public class GET_Props_AdHocProperties_IT extends JerseyTestOnDerby {
                 .request()
                 .get();
 
-        assertEquals(Response.Status.OK.getStatusCode(), r.getStatus());
-        assertEquals(
-                "{\"data\":[{\"adhocString\":\"x*\"},{\"adhocString\":\"y*\"}],\"total\":2}",
-                r.readEntity(String.class));
+        onSuccess(r).bodyEquals(2, "{\"adhocString\":\"x*\"},{\"adhocString\":\"y*\"}");
     }
 
     @Test
     public void testAdHocToOne() {
 
-        insert("e4", "id, c_varchar", "1, 'x'");
-        insert("e4", "id, c_varchar", "2, 'y'");
+        e4().insertColumns("id", "c_varchar")
+                .values(1, "x")
+                .values(2, "y").exec();
 
         Response r = target("/e4")
                 .queryParam("include", "id")
@@ -129,19 +124,17 @@ public class GET_Props_AdHocProperties_IT extends JerseyTestOnDerby {
                 .request()
                 .get();
 
-        assertEquals(Response.Status.OK.getStatusCode(), r.getStatus());
-        assertEquals(
-                "{\"data\":[{\"id\":1,\"adhocToOne\":{\"p1\":\"x_\"}}," +
-                        "{\"id\":2,\"adhocToOne\":{\"p1\":\"y_\"}}]," +
-                        "\"total\":2}",
-                r.readEntity(String.class));
+        onSuccess(r).bodyEquals(2,
+                "{\"id\":1,\"adhocToOne\":{\"p1\":\"x_\"}}",
+                "{\"id\":2,\"adhocToOne\":{\"p1\":\"y_\"}}");
     }
 
     @Test
     public void testAdHocToMany() {
 
-        insert("e4", "id, c_varchar", "1, 'x'");
-        insert("e4", "id, c_varchar", "2, 'y'");
+        e4().insertColumns("id", "c_varchar")
+                .values(1, "x")
+                .values(2, "y").exec();
 
         Response r = target("/e4")
                 .queryParam("include", "id")
@@ -150,24 +143,21 @@ public class GET_Props_AdHocProperties_IT extends JerseyTestOnDerby {
                 .request()
                 .get();
 
-        assertEquals(Response.Status.OK.getStatusCode(), r.getStatus());
-        assertEquals(
-                "{\"data\":[{\"id\":1,\"adhocToMany\":[{\"p1\":\"x-\"},{\"p1\":\"x%\"}]}," +
-                        "{\"id\":2,\"adhocToMany\":[{\"p1\":\"y-\"},{\"p1\":\"y%\"}]}]," +
-                        "\"total\":2}",
-                r.readEntity(String.class));
+        onSuccess(r).bodyEquals(2,
+                "{\"id\":1,\"adhocToMany\":[{\"p1\":\"x-\"},{\"p1\":\"x%\"}]}",
+                "{\"id\":2,\"adhocToMany\":[{\"p1\":\"y-\"},{\"p1\":\"y%\"}]}");
     }
 
     public static final class EX {
-
-        static EX forE4(E4 e4) {
-            return new EX(e4.getCVarchar() + "_");
-        }
 
         private String p1;
 
         public EX(String p1) {
             this.p1 = p1;
+        }
+
+        static EX forE4(E4 e4) {
+            return new EX(e4.getCVarchar() + "_");
         }
 
         @AgAttribute
@@ -178,17 +168,17 @@ public class GET_Props_AdHocProperties_IT extends JerseyTestOnDerby {
 
     public static final class EY {
 
+        private String p1;
+
+        public EY(String p1) {
+            this.p1 = p1;
+        }
+
         static List<EY> forE4(E4 e4) {
             return asList(
                     new EY(e4.getCVarchar() + "-"),
                     new EY(e4.getCVarchar() + "%")
             );
-        }
-
-        private String p1;
-
-        public EY(String p1) {
-            this.p1 = p1;
         }
 
         @AgAttribute
