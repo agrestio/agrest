@@ -23,7 +23,7 @@ import javax.ws.rs.core.Response.Status;
 
 import static org.junit.Assert.*;
 
-public class PUT_Related_ByKey_IT extends JerseyAndDerbyCase {
+public class PUT_Related_ByKeyIT extends JerseyAndDerbyCase {
 
     @BeforeClass
     public static void startTestRuntime() {
@@ -84,7 +84,7 @@ public class PUT_Related_ByKey_IT extends JerseyAndDerbyCase {
     }
 
     @Test
-    public void testPUT_ToMany_LongId() {
+    public void testToMany_LongId() {
 
         e15().insertColumns("long_id", "name")
                 .values(5L, "aaa")

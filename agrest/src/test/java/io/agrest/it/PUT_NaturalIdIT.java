@@ -34,7 +34,7 @@ public class PUT_NaturalIdIT extends JerseyAndDerbyCase {
     }
 
     @Test
-    public void test_PUT_SingleId() {
+    public void testSingleId() {
 
         e20().insertColumns("name")
                 .values("John")
@@ -49,7 +49,7 @@ public class PUT_NaturalIdIT extends JerseyAndDerbyCase {
     }
 
     @Test
-    public void test_PUT_Single_Id_SeveralExistingObjects() {
+    public void testSingle_Id_SeveralExistingObjects() {
         e20().insertColumns("name")
                 .values("John")
                 .values("John").exec();
@@ -60,7 +60,7 @@ public class PUT_NaturalIdIT extends JerseyAndDerbyCase {
     }
 
     @Test
-    public void test_PUT_MultiId() {
+    public void testMultiId() {
 
         e21().insertColumns("age", "name")
                 .values(18, "John")
@@ -76,7 +76,7 @@ public class PUT_NaturalIdIT extends JerseyAndDerbyCase {
     }
 
     @Test
-    public void test_PUT_SeveralExistingObjects_MultiId() {
+    public void testSeveralExistingObjects_MultiId() {
         e21().insertColumns("age", "name")
                 .values(18, "John")
                 .values(18, "John").exec();

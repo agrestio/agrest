@@ -42,7 +42,7 @@ public class PUT_IT extends JerseyAndDerbyCase {
     }
 
     @Test
-    public void test_PUT() {
+    public void test() {
 
         e4().insertColumns("id", "c_varchar")
                 .values(1, "xxx")
@@ -63,7 +63,7 @@ public class PUT_IT extends JerseyAndDerbyCase {
     }
 
     @Test
-    public void test_PUT_ExplicitCompoundId() {
+    public void testExplicitCompoundId() {
 
         e17().insertColumns("id1", "id2", "name")
                 .values(1, 1, "aaa")
@@ -79,7 +79,7 @@ public class PUT_IT extends JerseyAndDerbyCase {
     }
 
     @Test
-    public void testPut_ToOne() {
+    public void testToOne() {
 
         e2().insertColumns("id", "name")
                 .values(1, "xxx")
@@ -95,7 +95,7 @@ public class PUT_IT extends JerseyAndDerbyCase {
     }
 
     @Test
-    public void testPut_ToOne_ArraySyntax() {
+    public void testToOne_ArraySyntax() {
 
         e2().insertColumns("id", "name")
                 .values(1, "xxx")
@@ -111,7 +111,7 @@ public class PUT_IT extends JerseyAndDerbyCase {
     }
 
     @Test
-    public void testPut_ToOne_ToNull() {
+    public void testToOne_ToNull() {
 
         e2().insertColumns("id", "name")
                 .values(1, "xxx")
@@ -134,7 +134,7 @@ public class PUT_IT extends JerseyAndDerbyCase {
     }
 
     @Test
-    public void testPut_ToOne_FromNull() {
+    public void testToOne_FromNull() {
 
         e2().insertColumns("id", "name")
                 .values(1, "xxx")
@@ -149,7 +149,7 @@ public class PUT_IT extends JerseyAndDerbyCase {
     }
 
     @Test
-    public void testPUT_Bulk() {
+    public void testBulk() {
 
         e3().insertColumns("id", "name")
                 .values(5, "aaa")
@@ -174,7 +174,7 @@ public class PUT_IT extends JerseyAndDerbyCase {
     }
 
     @Test
-    public void testPUT_Single_LongId_Small() {
+    public void testSingle_LongId_Small() {
 
         e14().insertColumns("long_id", "name").values(5L, "aaa").exec();
 
@@ -191,7 +191,7 @@ public class PUT_IT extends JerseyAndDerbyCase {
     }
 
     @Test
-    public void testPUT_Bulk_LongId_Small() {
+    public void testBulk_LongId_Small() {
 
         e14().insertColumns("long_id", "name")
                 .values(5L, "aaa")
@@ -227,7 +227,7 @@ public class PUT_IT extends JerseyAndDerbyCase {
     }
 
     @Test
-    public void testPUT_Bulk_LongId() {
+    public void testBulk_LongId() {
 
         e14().insertColumns("long_id", "name")
                 .values(8147483647L, "aaa")
@@ -261,7 +261,7 @@ public class PUT_IT extends JerseyAndDerbyCase {
     }
 
     @Test
-    public void testPUT_Bulk_ResponseAttributesFilter() {
+    public void testBulk_ResponseAttributesFilter() {
 
         Response response1 = target("/e7")
                 .queryParam("exclude", "id")
@@ -282,7 +282,7 @@ public class PUT_IT extends JerseyAndDerbyCase {
     }
 
     @Test
-    public void testPUT_Bulk_ResponseToOneRelationshipFilter() {
+    public void testBulk_ResponseToOneRelationshipFilter() {
 
         e8().insertColumns("id", "name").values(5, "aaa").values(6, "ert").exec();
         e9().insertColumns("e8_id").values(5).values(6).exec();
@@ -329,7 +329,7 @@ public class PUT_IT extends JerseyAndDerbyCase {
     }
 
     @Test
-    public void testPUT_Bulk_ResponseToManyRelationshipFilter() {
+    public void testBulk_ResponseToManyRelationshipFilter() {
 
         e8().insertColumns("id", "name")
                 .values(5, "aaa")
@@ -352,7 +352,7 @@ public class PUT_IT extends JerseyAndDerbyCase {
     }
 
     @Test
-    public void testPUT_Single_ResponseToOneRelationshipFilter() {
+    public void testSingle_ResponseToOneRelationshipFilter() {
 
         e8().insertColumns("id", "name").values(5, "aaa").values(6, "ert").exec();
         e9().insertColumns("e8_id").values(5).values(6).exec();
@@ -367,7 +367,7 @@ public class PUT_IT extends JerseyAndDerbyCase {
     }
 
     @Test
-    public void testPut_ToMany() {
+    public void testToMany() {
 
         e2().insertColumns("id", "name")
                 .values(1, "xxx")
@@ -387,7 +387,7 @@ public class PUT_IT extends JerseyAndDerbyCase {
     }
 
     @Test
-    public void testPut_ToMany_UnrelateAll() {
+    public void testToMany_UnrelateAll() {
 
         e2().insertColumns("id", "name")
                 .values(1, "xxx")
@@ -410,7 +410,7 @@ public class PUT_IT extends JerseyAndDerbyCase {
     }
 
     @Test
-    public void testPut_ToMany_UnrelateOne() {
+    public void testToMany_UnrelateOne() {
 
         e2().insertColumns("id", "name")
                 .values(1, "xxx")

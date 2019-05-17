@@ -31,7 +31,7 @@ public class PUT_StagesIT extends JerseyAndDerbyCase {
     }
 
     @Test
-    public void testPut_ToOne() {
+    public void testToOne() {
 
         e3().insertColumns("id", "name")
                 .values(3, "z")

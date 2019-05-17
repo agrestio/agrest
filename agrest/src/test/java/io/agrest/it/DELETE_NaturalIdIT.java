@@ -35,7 +35,7 @@ public class DELETE_NaturalIdIT extends JerseyAndDerbyCase {
     }
 
     @Test
-    public void testDelete_SingleId() {
+    public void testSingleId() {
 
         e20().insertColumns("name")
                 .values("John")
@@ -49,7 +49,7 @@ public class DELETE_NaturalIdIT extends JerseyAndDerbyCase {
     }
 
     @Test
-    public void testDelete_MultiId() {
+    public void testMultiId() {
 
         e21().insertColumns("age", "name")
                 .values(18, "John")

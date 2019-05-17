@@ -30,7 +30,7 @@ public class GET_ConstraintsIT extends JerseyAndDerbyCase {
     }
 
     @Test
-    public void test_Implicit() {
+    public void testImplicit() {
 
         e4().insertColumns("id", "c_varchar", "c_int").values(1, "xxx", 5).exec();
 
@@ -39,7 +39,7 @@ public class GET_ConstraintsIT extends JerseyAndDerbyCase {
     }
 
     @Test
-    public void test_Explicit() {
+    public void testExplicit() {
 
         e4().insertColumns("id", "c_varchar", "c_int").values(1, "xxx", 5).exec();
 
@@ -52,7 +52,7 @@ public class GET_ConstraintsIT extends JerseyAndDerbyCase {
     }
 
     @Test
-    public void test_Annotated() {
+    public void testAnnotated() {
 
         e10().insertColumns("id", "c_varchar", "c_int", "c_boolean", "c_date")
                 .values(1, "xxx", 5, true, "2014-01-02").exec();
@@ -62,7 +62,7 @@ public class GET_ConstraintsIT extends JerseyAndDerbyCase {
     }
 
     @Test
-    public void test_Annotated_Relationship() {
+    public void testAnnotated_Relationship() {
 
         e10().insertColumns("id", "c_varchar", "c_int", "c_boolean", "c_date")
                 .values(1, "xxx", 5, true, "2014-01-02").exec();

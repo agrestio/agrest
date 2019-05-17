@@ -18,7 +18,6 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Configuration;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriInfo;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
@@ -26,8 +25,6 @@ import java.time.ZoneOffset;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-
-import static org.junit.Assert.*;
 
 public class GET_PojoIT extends JerseyAndPojoCase {
 
@@ -37,7 +34,7 @@ public class GET_PojoIT extends JerseyAndPojoCase {
     }
 
     @Test
-    public void test_SelectById() {
+    public void testById() {
 
         P6 o1 = new P6();
         o1.setIntProp(15);
@@ -53,7 +50,7 @@ public class GET_PojoIT extends JerseyAndPojoCase {
     }
 
     @Test
-    public void test_SelectAll() {
+    public void test() {
 
         P6 o1 = new P6();
         o1.setIntProp(15);
@@ -64,14 +61,13 @@ public class GET_PojoIT extends JerseyAndPojoCase {
         p6().put("o1id", o1);
         p6().put("o2id", o2);
 
-        Response response1 = target("/pojo/p6").queryParam("sort", "id").request().get();
-        assertEquals(Status.OK.getStatusCode(), response1.getStatus());
-        assertEquals("{\"data\":[{\"id\":\"o1id\",\"intProp\":15}," + "{\"id\":\"o2id\",\"intProp\":16}],\"total\":2}",
-                response1.readEntity(String.class));
+        Response r = target("/pojo/p6").queryParam("sort", "id").request().get();
+
+        onSuccess(r).bodyEquals(2, "{\"id\":\"o1id\",\"intProp\":15},{\"id\":\"o2id\",\"intProp\":16}");
     }
 
     @Test
-    public void test_SelectAll_IncludeToOne() {
+    public void testIncludeToOne() {
 
         P3 o0 = new P3();
         o0.setName("xx3");
@@ -81,13 +77,12 @@ public class GET_PojoIT extends JerseyAndPojoCase {
 
         p4().put("o1id", o1);
 
-        Response response1 = target("/pojo/p4").queryParam("include", "p3").request().get();
-        assertEquals(Status.OK.getStatusCode(), response1.getStatus());
-        assertEquals("{\"data\":[{\"p3\":{\"name\":\"xx3\"}}],\"total\":1}", response1.readEntity(String.class));
+        Response r = target("/pojo/p4").queryParam("include", "p3").request().get();
+        onSuccess(r).bodyEquals(1, "{\"p3\":{\"name\":\"xx3\"}}");
     }
 
     @Test
-    public void test_SelectAll_NoId() {
+    public void testNoId() {
 
         P1 o1 = new P1();
         o1.setName("n2");
@@ -96,14 +91,12 @@ public class GET_PojoIT extends JerseyAndPojoCase {
         p1().put("o1id", o1);
         p1().put("o2id", o2);
 
-        Response response1 = target("/pojo/p1").queryParam("sort", "name").request().get();
-        assertEquals(Status.OK.getStatusCode(), response1.getStatus());
-        assertEquals("{\"data\":[{\"name\":\"n1\"}," + "{\"name\":\"n2\"}],\"total\":2}",
-                response1.readEntity(String.class));
+        Response r = target("/pojo/p1").queryParam("sort", "name").request().get();
+        onSuccess(r).bodyEquals(2, "{\"name\":\"n1\"}," + "{\"name\":\"n2\"}");
     }
 
     @Test
-    public void test_SelectAll_WithTime() {
+    public void testWithTime() {
 
         P9 o9 = new P9();
         o9.setName("p9name1");
@@ -112,14 +105,12 @@ public class GET_PojoIT extends JerseyAndPojoCase {
         o9.setCreatedLocal(ldt);
         p9().put("o9id", o9);
 
-        Response response1 = target("/pojo/p9").request().get();
-        assertEquals(Status.OK.getStatusCode(), response1.getStatus());
-        assertEquals("{\"data\":[{\"created\":\"1999-10-02T12:54:31+03:00\",\"createdLocal\":\"1999-10-02T12:54:31\",\"name\":\"p9name1\"}],\"total\":1}",
-                response1.readEntity(String.class));
+        Response r = target("/pojo/p9").request().get();
+        onSuccess(r).bodyEquals(1, "{\"created\":\"1999-10-02T12:54:31+03:00\",\"createdLocal\":\"1999-10-02T12:54:31\",\"name\":\"p9name1\"}");
     }
 
     @Test
-    public void test_SelectAll_MapBy() {
+    public void testMapBy() {
 
         P1 o1 = new P1();
         o1.setName("n2");
@@ -128,14 +119,12 @@ public class GET_PojoIT extends JerseyAndPojoCase {
         p1().put("o1id", o1);
         p1().put("o2id", o2);
 
-        Response response1 = target("/pojo/p1").queryParam("mapBy", "name").request().get();
-        assertEquals(Status.OK.getStatusCode(), response1.getStatus());
-        assertEquals("{\"data\":{\"n1\":[{\"name\":\"n1\"}],\"n2\":[{\"name\":\"n2\"}]},\"total\":2}",
-                response1.readEntity(String.class));
+        Response r = target("/pojo/p1").queryParam("mapBy", "name").request().get();
+        onSuccess(r).bodyEqualsMapBy(2, "\"n1\":[{\"name\":\"n1\"}],\"n2\":[{\"name\":\"n2\"}]");
     }
 
     @Test
-    public void test_CollectionAttributes() {
+    public void testCollectionAttributes() {
 
         P8 o1 = new P8();
         o1.setBooleans(Arrays.asList(true, false));
@@ -149,16 +138,15 @@ public class GET_PojoIT extends JerseyAndPojoCase {
 
         p8().put(1, o1);
 
-        Response response1 = target("/pojo/p8/1").request().get();
-        assertEquals(Status.OK.getStatusCode(), response1.getStatus());
-        assertEquals("{\"data\":[{" +
+        Response r = target("/pojo/p8/1").request().get();
+        onSuccess(r).bodyEquals(1, "{" +
                 "\"booleans\":[true,false]," +
                 "\"characters\":[\"a\",\"b\",\"c\"]," +
                 "\"doubles\":[1.0,2.5,3.5]," +
                 "\"genericCollection\":[]," +
                 "\"numberList\":[0,1,2,3,4.0,5.0]," +
                 "\"stringSet\":[\"abc\"]," +
-                "\"wildcardCollection\":[0,1,2,3,4.0,5.0]}],\"total\":1}", response1.readEntity(String.class));
+                "\"wildcardCollection\":[0,1,2,3,4.0,5.0]}");
     }
 
     @Path("pojo")

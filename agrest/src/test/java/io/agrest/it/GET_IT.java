@@ -100,7 +100,7 @@ public class GET_IT extends JerseyAndDerbyCase {
     // TODO: add tests for java.sql attributes
 
     @Test
-    public void test_Sort_ById() {
+    public void testSort_ById() {
 
         e4().insertColumns("id")
                 .values(2)
@@ -117,7 +117,7 @@ public class GET_IT extends JerseyAndDerbyCase {
     }
 
     @Test
-    public void test_Sort_Invalid() {
+    public void testSort_Invalid() {
 
         Response response = target("/e4")
                 .queryParam("sort", urlEnc("[{\"property\":\"xyz\",\"direction\":\"DESC\"}]"))
@@ -133,7 +133,7 @@ public class GET_IT extends JerseyAndDerbyCase {
     @Test
     // this is a hack for Sencha bug, passing us null sorters per LF-189...
     // allowing for lax property name checking as a result
-    public void test_Sort_Null() {
+    public void testSort_Null() {
 
         e4().insertColumns("id")
                 .values(2)

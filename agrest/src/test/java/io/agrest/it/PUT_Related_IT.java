@@ -287,7 +287,7 @@ public class PUT_Related_IT extends JerseyAndDerbyCase {
     }
 
     @Test
-    public void testPUT_ToMany_Join() {
+    public void testToMany_Join() {
 
         e12().insertColumns("id").values(11).values(12).exec();
         e13().insertColumns("id").values(14).values(15).values(16).exec();
@@ -331,7 +331,7 @@ public class PUT_Related_IT extends JerseyAndDerbyCase {
     }
 
     @Test
-    public void testPUT_ToMany_DifferentIdTypes() {
+    public void testToMany_DifferentIdTypes() {
 
         e1().insertColumns("id", "name")
                 .values(1, "xxx")
@@ -361,7 +361,7 @@ public class PUT_Related_IT extends JerseyAndDerbyCase {
     }
 
     @Test
-    public void testPUT_ToMany_Flattened_DifferentIdTypes() {
+    public void testToMany_Flattened_DifferentIdTypes() {
 
         e5().insertColumns("id", "name")
                 .values(1, "xxx")

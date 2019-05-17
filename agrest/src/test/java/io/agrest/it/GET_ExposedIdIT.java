@@ -28,7 +28,7 @@ public class GET_ExposedIdIT extends JerseyAndDerbyCase {
     }
 
     @Test
-    public void testGetById() {
+    public void testById() {
 
         e23().insertColumns("id", "name")
                 .values(1, "abc")

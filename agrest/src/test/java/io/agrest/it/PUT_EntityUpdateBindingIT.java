@@ -31,7 +31,7 @@ public class PUT_EntityUpdateBindingIT extends JerseyAndDerbyCase {
     }
 
     @Test
-    public void testPut_Single() {
+    public void testSingle() {
 
         e3().insertColumns("id", "name").values(3, "zzz").exec();
 
@@ -44,7 +44,7 @@ public class PUT_EntityUpdateBindingIT extends JerseyAndDerbyCase {
     }
 
     @Test
-    public void testPut_Collection() {
+    public void testCollection() {
 
         e3().insertColumns("id", "name")
                 .values(3, "zzz")

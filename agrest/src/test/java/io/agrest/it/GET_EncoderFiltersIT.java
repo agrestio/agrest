@@ -25,7 +25,7 @@ import java.util.function.UnaryOperator;
 
 import static org.junit.Assert.*;
 
-public class GET_EncoderFilters_IT extends JerseyAndDerbyCase {
+public class GET_EncoderFiltersIT extends JerseyAndDerbyCase {
 
     @BeforeClass
     public static void startTestRuntime() {

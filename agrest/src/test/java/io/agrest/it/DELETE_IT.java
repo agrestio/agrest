@@ -34,7 +34,7 @@ public class DELETE_IT extends JerseyAndDerbyCase {
     }
 
     @Test
-    public void testDelete() {
+    public void test() {
 
         e4().insertColumns("id", "c_varchar")
                 .values(1, "xxx")
@@ -47,7 +47,7 @@ public class DELETE_IT extends JerseyAndDerbyCase {
     }
 
     @Test
-    public void testDelete_CompoundId() {
+    public void testCompoundId() {
 
         e17().insertColumns("id1", "id2", "name").values(1, 1, "aaa").values(2, 2, "bbb").exec();
 
@@ -59,7 +59,7 @@ public class DELETE_IT extends JerseyAndDerbyCase {
     }
 
     @Test
-    public void testDelete_BadID() {
+    public void testBadId() {
 
         e4().insertColumns("id", "c_varchar").values(1, "xxx").exec();
 
@@ -70,7 +70,7 @@ public class DELETE_IT extends JerseyAndDerbyCase {
     }
 
     @Test
-    public void testDelete_Twice() {
+    public void testTwice() {
 
         e4().insertColumns("id", "c_varchar")
                 .values(1, "xxx")
@@ -84,7 +84,7 @@ public class DELETE_IT extends JerseyAndDerbyCase {
     }
 
     @Test
-    public void test_Delete_UpperCasePK() {
+    public void testUpperCasePK() {
 
         e24().insertColumns("TYPE", "name").values(1, "xyz").exec();
 

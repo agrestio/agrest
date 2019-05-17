@@ -31,7 +31,7 @@ public class PUT_ObjectIncludeIT extends JerseyAndDerbyCase {
     }
 
     @Test
-    public void testPut_Overlap() {
+    public void testOverlap() {
         e5().insertColumns("id", "name", "date").values(45, "T", "2013-01-03").exec();
         e2().insertColumns("id", "name").values(8, "yyy").exec();
         e3().insertColumns("id", "name", "e2_id", "e5_id").values(3, "zzz", 8, 45).exec();
@@ -50,7 +50,7 @@ public class PUT_ObjectIncludeIT extends JerseyAndDerbyCase {
     }
 
     @Test
-    public void testPut_ToOne() {
+    public void testToOne() {
 
         e2().insertColumns("id", "name")
                 .values(1, "xxx")
@@ -67,7 +67,7 @@ public class PUT_ObjectIncludeIT extends JerseyAndDerbyCase {
     }
 
     @Test
-    public void testPut_ToMany() {
+    public void testToMany() {
 
         e2().insertColumns("id", "name")
                 .values(1, "xxx")

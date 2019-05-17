@@ -18,7 +18,7 @@ import javax.ws.rs.core.UriInfo;
 
 import static org.junit.Assert.*;
 
-public class GET_Metadata_CustomBase_IT extends JerseyAndDerbyCase {
+public class GET_Metadata_CustomBaseIT extends JerseyAndDerbyCase {
 
     @BeforeClass
     public static void startTestRuntime() {

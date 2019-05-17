@@ -31,7 +31,7 @@ public class GET_IncludeIT extends JerseyAndDerbyCase {
     }
 
     @Test
-    public void test_Include_OrderOfInclude() {
+    public void testOrderOfInclude() {
 
         e5().insertColumns("id", "name", "date").values(45, "T", "2013-01-03").exec();
         e2().insertColumns("id", "name").values(8, "yyy").exec();
@@ -58,7 +58,7 @@ public class GET_IncludeIT extends JerseyAndDerbyCase {
     }
 
     @Test
-    public void test_Include_Phantom() {
+    public void testPhantom() {
         e5().insertColumns("id", "name", "date").values(45, "T", "2013-01-03").exec();
         e2().insertColumns("id", "name").values(8, "yyy").exec();
         e3().insertColumns("id", "name", "e2_id", "e5_id").values(3, "zzz", 8, 45).exec();

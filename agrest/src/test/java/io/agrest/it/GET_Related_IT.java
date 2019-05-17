@@ -121,7 +121,7 @@ public class GET_Related_IT extends JerseyAndDerbyCase {
     }
 
     @Test
-    public void testGet_ValidRel_ToOne() {
+    public void testValidRel_ToOne() {
 
         // make sure we have e3s for more than one e2 - this will help us
         // confirm that relationship queries are properly filtered.
@@ -140,7 +140,7 @@ public class GET_Related_IT extends JerseyAndDerbyCase {
     }
 
     @Test
-    public void testGet_InvalidRel() {
+    public void testInvalidRel() {
         Response r = target("/e2/1/dummyrel").request().get();
         onResponse(r)
                 .statusEquals(Status.BAD_REQUEST)
@@ -148,7 +148,7 @@ public class GET_Related_IT extends JerseyAndDerbyCase {
     }
 
     @Test
-    public void testGET_ToManyJoin() {
+    public void testToManyJoin() {
 
         e12().insertColumns("id")
                 .values(11)
