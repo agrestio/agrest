@@ -1,9 +1,10 @@
 package io.agrest.it;
 
-import io.agrest.DataResponse;
 import io.agrest.Ag;
-import io.agrest.it.fixture.JerseyTestOnDerby;
+import io.agrest.DataResponse;
+import io.agrest.it.fixture.BQJerseyTestOnDerby;
 import io.agrest.it.fixture.cayenne.E23;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import javax.ws.rs.GET;
@@ -11,32 +12,34 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Configuration;
 import javax.ws.rs.core.Context;
-import javax.ws.rs.core.FeatureContext;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
-import static org.junit.Assert.assertEquals;
+public class GET_ExposedIdIT extends BQJerseyTestOnDerby {
 
-public class GET_ExposedIdIT extends JerseyTestOnDerby {
+    @BeforeClass
+    public static void startTestRuntime() {
+        startTestRuntime(Resource.class);
+    }
 
     @Override
-    protected void doAddResources(FeatureContext context) {
-        context.register(E23Resource.class);
+    protected Class<?>[] testEntities() {
+        return new Class[]{E23.class};
     }
 
     @Test
     public void testGetById() {
 
-        insert("e23", "id, name", "1, 'abc'");
-        insert("e23", "id, name", "2, 'xyz'");
+        e23().insertColumns("id", "name")
+                .values(1, "abc")
+                .values(2, "xyz").exec();
 
         Response r = target("/e23").path("1").request().get();
-        assertEquals(Response.Status.OK.getStatusCode(), r.getStatus());
-		assertEquals("{\"data\":[{\"id\":1,\"exposedId\":1,\"name\":\"abc\"}],\"total\":1}", r.readEntity(String.class));
+        onSuccess(r).bodyEquals(1, "{\"id\":1,\"exposedId\":1,\"name\":\"abc\"}");
     }
 
     @Path("e23")
-    public static class E23Resource {
+    public static class Resource {
 
         @Context
         private Configuration config;

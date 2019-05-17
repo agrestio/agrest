@@ -89,7 +89,7 @@ public class ResponseAssertions {
         return expectedJson.toString();
     }
 
-    protected String getContentAsString() {
+    public String getContentAsString() {
         // cache read content, as Response won't allow to read it twice..
         if (responseContent == null) {
             responseContent = response.readEntity(String.class);

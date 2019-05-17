@@ -7,97 +7,125 @@ import io.agrest.ResourceEntity;
 import io.agrest.SelectStage;
 import io.agrest.encoder.Encoder;
 import io.agrest.encoder.EncoderFilter;
-import io.agrest.it.fixture.JerseyTestOnDerby;
-import io.agrest.it.fixture.cayenne.E3;
+import io.agrest.it.fixture.BQJerseyTestOnDerby;
 import io.agrest.it.fixture.cayenne.E4;
 import io.agrest.runtime.AgBuilder;
 import org.apache.cayenne.Cayenne;
-import org.apache.cayenne.query.SQLTemplate;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.Configuration;
 import javax.ws.rs.core.Context;
-import javax.ws.rs.core.FeatureContext;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriInfo;
 import java.io.IOException;
+import java.util.function.UnaryOperator;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
-public class GET_EncoderFilters_IT extends JerseyTestOnDerby {
+public class GET_EncoderFilters_IT extends BQJerseyTestOnDerby {
 
-    @Override
-    protected void doAddResources(FeatureContext context) {
-        context.register(Resource.class);
+    @BeforeClass
+    public static void startTestRuntime() {
+        UnaryOperator<AgBuilder> customizer = ab -> ab.encoderFilter(new E4OddFilter());
+        startTestRuntime(customizer, Resource.class);
     }
 
     @Override
-    protected AgBuilder doConfigure() {
-        return super.doConfigure().encoderFilter(new E4OddFilter());
+    protected Class<?>[] testEntities() {
+        return new Class[]{E4.class};
     }
 
     @Test
     public void testFilteredTotal() {
 
-        newContext()
-                .performGenericQuery(new SQLTemplate(E3.class, "INSERT INTO utest.e4 (id) values (1), (2)"));
+        e4().insertColumns("id").values(1).values(2).exec();
 
-        Response response = target("/e4")
+        Response r = target("/e4")
                 .queryParam("include", "id")
                 .queryParam("sort", "id")
                 .request()
                 .get();
 
-        onSuccess(response).bodyEquals(1, "{\"id\":2}");
+        onSuccess(r).bodyEquals(1, "{\"id\":2}");
     }
 
     @Test
     public void testFilteredPagination1() {
 
-        newContext().performGenericQuery(
-                new SQLTemplate(E3.class, "INSERT INTO utest.e4 (id) "
-                        + "values (1), (2), (3), (4), (5), (6), (7), (8), (9), (10)"));
+        e4().insertColumns("id")
+                .values(1)
+                .values(2)
+                .values(3)
+                .values(4)
+                .values(5)
+                .values(6)
+                .values(7)
+                .values(8)
+                .values(9)
+                .values(10).exec();
 
-        Response response1 = target("/e4").queryParam("include", "id").queryParam("sort", "id")
-                .queryParam("start", "0").queryParam("limit", "2").request().get();
+        Response r = target("/e4")
+                .queryParam("include", "id")
+                .queryParam("sort", "id")
+                .queryParam("start", "0")
+                .queryParam("limit", "2")
+                .request()
+                .get();
 
-        assertEquals(Status.OK.getStatusCode(), response1.getStatus());
-        assertEquals("{\"data\":[{\"id\":2},{\"id\":4}],\"total\":5}",
-                response1.readEntity(String.class));
+        onSuccess(r).bodyEquals(5, "{\"id\":2},{\"id\":4}");
     }
 
     @Test
     public void testFilteredPagination2() {
 
-        newContext().performGenericQuery(
-                new SQLTemplate(E3.class, "INSERT INTO utest.e4 (id) "
-                        + "values (1), (2), (3), (4), (5), (6), (7), (8), (9), (10)"));
+        e4().insertColumns("id")
+                .values(1)
+                .values(2)
+                .values(3)
+                .values(4)
+                .values(5)
+                .values(6)
+                .values(7)
+                .values(8)
+                .values(9)
+                .values(10).exec();
 
-        Response response1 = target("/e4").queryParam("include", "id").queryParam("sort", "id")
-                .queryParam("start", "2").queryParam("limit", "3").request().get();
+        Response r = target("/e4")
+                .queryParam("include", "id")
+                .queryParam("sort", "id")
+                .queryParam("start", "2")
+                .queryParam("limit", "3")
+                .request().get();
 
-        assertEquals(Status.OK.getStatusCode(), response1.getStatus());
-        assertEquals("{\"data\":[{\"id\":6},{\"id\":8},{\"id\":10}],\"total\":5}",
-                response1.readEntity(String.class));
+        onSuccess(r).bodyEquals(5, "{\"id\":6},{\"id\":8},{\"id\":10}");
     }
 
     @Test
     public void testFilteredPagination3() {
 
-        newContext().performGenericQuery(
-                new SQLTemplate(E3.class, "INSERT INTO utest.e4 (id) "
-                        + "values (1), (2), (3), (4), (5), (6), (7), (8), (9), (10)"));
+        e4().insertColumns("id")
+                .values(1)
+                .values(2)
+                .values(3)
+                .values(4)
+                .values(5)
+                .values(6)
+                .values(7)
+                .values(8)
+                .values(9)
+                .values(10).exec();
 
-        Response response1 = target("/e4").queryParam("include", "id").queryParam("sort", "id")
-                .queryParam("start", "2").queryParam("limit", "10").request().get();
+        Response r = target("/e4")
+                .queryParam("include", "id")
+                .queryParam("sort", "id")
+                .queryParam("start", "2")
+                .queryParam("limit", "10")
+                .request().get();
 
-        assertEquals(Status.OK.getStatusCode(), response1.getStatus());
-        assertEquals("{\"data\":[{\"id\":6},{\"id\":8},{\"id\":10}],\"total\":5}",
-                response1.readEntity(String.class));
+        onSuccess(r).bodyEquals(5, "{\"id\":6},{\"id\":8},{\"id\":10}");
     }
 
     @Test
@@ -117,7 +145,7 @@ public class GET_EncoderFilters_IT extends JerseyTestOnDerby {
         assertEquals(0, Resource.QUERY_PAGE_SIZE);
     }
 
-    private final class E4OddFilter implements EncoderFilter {
+    private static class E4OddFilter implements EncoderFilter {
         @Override
         public boolean matches(ResourceEntity<?> entity) {
             return entity.getAgEntity().getName().equals("E4");
