@@ -3,10 +3,10 @@ package io.agrest.it;
 import io.agrest.Ag;
 import io.agrest.DataResponse;
 import io.agrest.EntityUpdate;
-import io.agrest.it.fixture.JerseyTestOnDerby;
+import io.agrest.it.fixture.BQJerseyTestOnDerby;
 import io.agrest.it.fixture.cayenne.E20;
 import io.agrest.it.fixture.cayenne.E21;
-import org.apache.cayenne.query.ObjectSelect;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import javax.ws.rs.POST;
@@ -14,62 +14,66 @@ import javax.ws.rs.Path;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.Configuration;
 import javax.ws.rs.core.Context;
-import javax.ws.rs.core.FeatureContext;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
-import static org.junit.Assert.*;
+public class POST_NaturalIdIT extends BQJerseyTestOnDerby {
 
-public class POST_NaturalIdIT extends JerseyTestOnDerby {
+    @BeforeClass
+    public static void startTestRuntime() {
+        startTestRuntime(Resource.class);
+    }
 
     @Override
-    protected void doAddResources(FeatureContext context) {
-        context.register(Resource.class);
+    protected Class<?>[] testEntities() {
+        return new Class[]{E20.class, E21.class};
     }
 
     @Test
-    public void testPost_SingleId() {
+    public void testSingleId() {
 
-        Response response1 = target("/single-id")
+        Response r1 = target("/single-id")
                 .queryParam("exclude", "age", "description")
                 .request()
                 .post(Entity.json("{\"id\":\"John\"}"));
-        assertEquals(Response.Status.CREATED.getStatusCode(), response1.getStatus());
 
-        E20 e20 = ObjectSelect.query(E20.class).selectFirst(newContext());
-        assertNotNull(e20);
-        assertEquals("John", e20.getName());
+        onResponse(r1)
+                .wasCreated()
+                .replaceId("RID")
+                .bodyEquals(1, "{\"id\":\"John\",\"name\":\"John\"}");
 
-        assertEquals("{\"data\":[{\"id\":\"John\",\"name\":\"John\"}],\"total\":1}",
-                response1.readEntity(String.class));
+        e20().matcher().eq("name", "John").assertOneMatch();
 
-        Response response2 = target("/single-id").queryParam("exclude", "age", "description").request().post(
-                Entity.json("{\"id\":\"John\"}"));
+        Response r2 = target("/single-id")
+                .queryParam("exclude", "age", "description")
+                .request()
+                .post(Entity.json("{\"id\":\"John\"}"));
 
-        assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response2.getStatus());
-        assertTrue(response2.readEntity(String.class).contains("object already exists"));
+        onResponse(r2)
+                .statusEquals(Response.Status.BAD_REQUEST)
+                .bodyEquals("{\"success\":false,\"message\":\"Can't create 'E20' with id {name:John} - already exists\"}");
     }
 
     @Test
-    public void testPost_MultiId() {
+    public void testMultiId() {
 
-        Response response1 = target("/multi-id").queryParam("exclude", "description").request().post(
-                Entity.json("{\"id\":{\"age\":18,\"name\":\"John\"}}"));
-        assertEquals(Response.Status.CREATED.getStatusCode(), response1.getStatus());
+        Response r1 = target("/multi-id")
+                .queryParam("exclude", "description")
+                .request().post(Entity.json("{\"id\":{\"age\":18,\"name\":\"John\"}}"));
 
-        E21 e21 = ObjectSelect.query(E21.class).selectFirst(newContext());
-        assertNotNull(e21);
-        assertEquals(Integer.valueOf(18), e21.getAge());
-        assertEquals("John", e21.getName());
+        onResponse(r1)
+                .wasCreated()
+                .bodyEquals(1, "{\"id\":{\"age\":18,\"name\":\"John\"},\"age\":18,\"name\":\"John\"}");
 
-        assertEquals("{\"data\":[{\"id\":{\"age\":18,\"name\":\"John\"},\"age\":18,\"name\":\"John\"}],\"total\":1}",
-                response1.readEntity(String.class));
+        e21().matcher().eq("name", "John").eq("age", 18).assertOneMatch();
 
-        Response response2 = target("/multi-id").queryParam("exclude", "description").request().post(
-                Entity.json("{\"id\":{\"age\":18,\"name\":\"John\"}}"));
+        Response r2 = target("/multi-id").queryParam("exclude", "description")
+                .request()
+                .post(Entity.json("{\"id\":{\"age\":18,\"name\":\"John\"}}"));
 
-        assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response2.getStatus());
-        assertTrue(response2.readEntity(String.class).contains("object already exists"));
+        onResponse(r2)
+                .statusEquals(Response.Status.BAD_REQUEST)
+                .bodyEquals("{\"success\":false,\"message\":\"Can't create 'E21' with id {name:John,age:18} - already exists\"}");
     }
 
     @Path("")

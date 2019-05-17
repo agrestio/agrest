@@ -108,7 +108,7 @@ class RequestConstraintsHandler {
 				// do not report default properties, as this wasn't a client's
 				// fault it go there..
 				if (!target.isDefault(a.getName())) {
-					LOGGER.info("Attribute not allowed, removing: " + a);
+					LOGGER.info("Attribute not allowed, removing: " + a.getName());
 				}
 
 				ait.remove();

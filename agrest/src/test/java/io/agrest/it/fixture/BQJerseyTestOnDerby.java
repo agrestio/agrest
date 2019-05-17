@@ -12,6 +12,7 @@ import io.agrest.it.fixture.cayenne.E14;
 import io.agrest.it.fixture.cayenne.E15;
 import io.agrest.it.fixture.cayenne.E15E1;
 import io.agrest.it.fixture.cayenne.E17;
+import io.agrest.it.fixture.cayenne.E18;
 import io.agrest.it.fixture.cayenne.E19;
 import io.agrest.it.fixture.cayenne.E2;
 import io.agrest.it.fixture.cayenne.E20;
@@ -181,6 +182,10 @@ public abstract class BQJerseyTestOnDerby {
 
     protected Table e17() {
         return dataManager.getTable(E17.class);
+    }
+
+    protected Table e18() {
+        return dataManager.getTable(E18.class);
     }
 
     protected Table e19() {

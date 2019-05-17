@@ -3,10 +3,9 @@ package io.agrest.it;
 import io.agrest.Ag;
 import io.agrest.AgRequest;
 import io.agrest.DataResponse;
-import io.agrest.it.fixture.JerseyTestOnDerby;
+import io.agrest.it.fixture.BQJerseyTestOnDerby;
 import io.agrest.it.fixture.cayenne.E3;
-import io.agrest.protocol.Exclude;
-import io.agrest.protocol.Include;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import javax.ws.rs.POST;
@@ -14,52 +13,49 @@ import javax.ws.rs.Path;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.Configuration;
 import javax.ws.rs.core.Context;
-import javax.ws.rs.core.FeatureContext;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriInfo;
 
-import static org.junit.Assert.*;
+public class POST_AgRequestIT extends BQJerseyTestOnDerby {
 
-public class POST_AgRequestIT extends JerseyTestOnDerby {
+    @BeforeClass
+    public static void startTestRuntime() {
+        startTestRuntime(Resource.class);
+    }
 
     @Override
-    protected void doAddResources(FeatureContext context) {
-        context.register(Resource.class);
+    protected Class<?>[] testEntities() {
+        return new Class[]{E3.class};
     }
 
-
     @Test
-    public void testPost_Includes_OverrideByAgRequest() {
+    public void testIncludes_OverriddenByAgRequest() {
 
-        Response r2 = target("/e3_includes")
+        Response r = target("/e3_includes")
                 .queryParam("include", "id")
                 .request()
-                .post(Entity.json("[{\"name\":\"aaa\"},{\"name\":\"zzz\"},{\"name\":\"bbb\"},{\"name\":\"yyy\"}]"));
+                .post(Entity.json("[{\"name\":\"aaa\"},{\"name\":\"zzz\"},{\"name\":\"bbb\"}]"));
 
-        assertEquals(Status.CREATED.getStatusCode(), r2.getStatus());
-
-        // returns names instead of id's due to overriding include by AgRequest
-        assertEquals(
-                "{\"data\":[{\"name\":\"aaa\"},{\"name\":\"zzz\"},{\"name\":\"bbb\"},{\"name\":\"yyy\"}],\"total\":4}",
-                r2.readEntity(String.class));
+        onResponse(r)
+                .wasCreated()
+                .bodyEquals(3, "{\"name\":\"aaa\"},{\"name\":\"zzz\"},{\"name\":\"bbb\"}");
     }
 
     @Test
-    public void testPost_Excludes_OverrideByAgRequest() {
+    public void testExcludes_OverriddenByAgRequest() {
 
-        Response r2 = target("/e3_excludes")
+        Response r = target("/e3_excludes")
                 .queryParam("exclude", "name")
                 .request()
-                .post(Entity.json("[{\"name\":\"aaa\"},{\"name\":\"zzz\"},{\"name\":\"bbb\"},{\"name\":\"yyy\"}]"));
-        assertEquals(Status.CREATED.getStatusCode(), r2.getStatus());
+                .post(Entity.json("[{\"name\":\"aaa\"},{\"name\":\"zzz\"},{\"name\":\"bbb\"}]"));
 
-        // returns 'name' and 'phoneNumber' fields except 'id' due to overriding exclude by AgRequest
-        assertEquals(
-                "{\"data\":[{\"name\":\"aaa\",\"phoneNumber\":null},{\"name\":\"zzz\",\"phoneNumber\":null},{\"name\":\"bbb\",\"phoneNumber\":null},{\"name\":\"yyy\",\"phoneNumber\":null}],\"total\":4}",
-                r2.readEntity(String.class));
+        onResponse(r)
+                .wasCreated()
+                .bodyEquals(3,
+                        "{\"name\":\"aaa\",\"phoneNumber\":null}",
+                        "{\"name\":\"zzz\",\"phoneNumber\":null}",
+                        "{\"name\":\"bbb\",\"phoneNumber\":null}");
     }
-
 
     @Path("")
     public static class Resource {
@@ -71,7 +67,8 @@ public class POST_AgRequestIT extends JerseyTestOnDerby {
         @POST
         @Path("e3_includes")
         public DataResponse<E3> create_includes(@Context UriInfo uriInfo, String requestBody) {
-            AgRequest agRequest = Ag.request(config).addInclude(new Include("name")).build();
+
+            AgRequest agRequest = Ag.request(config).addInclude("name").build();
 
             return Ag.create(E3.class, config)
                     .uri(uriInfo)
@@ -82,7 +79,8 @@ public class POST_AgRequestIT extends JerseyTestOnDerby {
         @POST
         @Path("e3_excludes")
         public DataResponse<E3> create_excludes(@Context UriInfo uriInfo, String requestBody) {
-            AgRequest agRequest = Ag.request(config).addExclude(new Exclude("id")).build();
+
+            AgRequest agRequest = Ag.request(config).addExclude("id").build();
 
             return Ag.create(E3.class, config)
                     .uri(uriInfo)

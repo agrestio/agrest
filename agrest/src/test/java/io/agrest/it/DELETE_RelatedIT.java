@@ -3,11 +3,12 @@ package io.agrest.it;
 import io.agrest.Ag;
 import io.agrest.EntityDelete;
 import io.agrest.SimpleResponse;
-import io.agrest.it.fixture.JerseyTestOnDerby;
+import io.agrest.it.fixture.BQJerseyTestOnDerby;
 import io.agrest.it.fixture.cayenne.E2;
 import io.agrest.it.fixture.cayenne.E3;
 import io.agrest.it.fixture.cayenne.E7;
 import io.agrest.it.fixture.cayenne.E8;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import javax.ws.rs.DELETE;
@@ -15,126 +16,153 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Configuration;
 import javax.ws.rs.core.Context;
-import javax.ws.rs.core.FeatureContext;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriInfo;
 import java.util.Collection;
+import java.util.List;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
-public class DELETE_RelatedIT extends JerseyTestOnDerby {
+public class DELETE_RelatedIT extends BQJerseyTestOnDerby {
+
+    @BeforeClass
+    public static void startTestRuntime() {
+        startTestRuntime(E2Resource.class, E3Resource.class, E8Resource.class);
+    }
 
     @Override
-    protected void doAddResources(FeatureContext context) {
-        context.register(E2Resource.class);
-        context.register(E3Resource.class);
-        context.register(E8Resource.class);
+    protected Class<?>[] testEntities() {
+        return new Class[]{E2.class, E3.class, E7.class, E8.class};
     }
 
     @Test
-    public void testDelete_All_ToMany() {
+    public void testAll_ToMany() {
 
         // make sure we have e3s for more than one e2 - this will help us
         // confirm that relationship queries are properly filtered.
 
-        insert("e8", "id, name", "1, 'xxx'");
-        insert("e8", "id, name", "2, 'yyy'");
-        insert("e7", "id, e8_id, name", "7, 2, 'zzz'");
-        insert("e7", "id, e8_id, name", "8, 1, 'yyy'");
-        insert("e7", "id, e8_id, name", "9, 1, 'zzz'");
+        e8().insertColumns("id", "name")
+                .values(1, "xxx")
+                .values(2, "yyy").exec();
 
-        assertEquals(2, intForQuery("SELECT COUNT(1) FROM utest.e7 WHERE e8_id = 1"));
-        Response r1 = target("/e8/1/e7s").request().delete();
+        e7().insertColumns("id", "name", "e8_id")
+                .values(7, "zzz", 2)
+                .values(8, "yyy", 1)
+                .values(9, "zzz", 1).exec();
 
-        assertEquals(Status.OK.getStatusCode(), r1.getStatus());
-        assertEquals("{\"success\":true}", r1.readEntity(String.class));
+        Response r = target("/e8/1/e7s").request().delete();
+        onSuccess(r).bodyEquals("{\"success\":true}");
 
-        assertEquals(0, intForQuery("SELECT COUNT(1) FROM utest.e7 WHERE e8_id = 1"));
+        e7().matcher().eq("e8_id", 1).assertNoMatches();
     }
 
     @Test
-    public void testDelete_ValidRel_ToMany() {
+    public void testValidRel_ToMany() {
 
         // make sure we have e3s for more than one e2 - this will help us
         // confirm that relationship queries are properly filtered.
 
-        insert("e2", "id, name", "1, 'xxx'");
-        insert("e2", "id, name", "2, 'yyy'");
-        insert("e3", "id, e2_id, name", "7, 2, 'zzz'");
-        insert("e3", "id, e2_id, name", "8, 1, 'yyy'");
-        insert("e3", "id, e2_id, name", "9, 1, 'zzz'");
+        e2().insertColumns("id", "name")
+                .values(1, "xxx")
+                .values(2, "yyy").exec();
 
-        assertEquals(1, intForQuery("SELECT e2_id FROM utest.e3 WHERE id = 9"));
+        e3().insertColumns("id", "name", "e2_id")
+                .values(7, "zzz", 2)
+                .values(8, "yyy", 1)
+                .values(9, "zzz", 1).exec();
 
-        Response r1 = target("/e2/1/e3s/9").request().delete();
+        Response r = target("/e2/1/e3s/9").request().delete();
+        onSuccess(r).bodyEquals("{\"success\":true}");
 
-        assertEquals(Status.OK.getStatusCode(), r1.getStatus());
-        assertEquals("{\"success\":true}", r1.readEntity(String.class));
+        // TODO: can't use matcher for NULLs until BQ 1.1 upgrade (because of https://github.com/bootique/bootique-jdbc/issues/91 )
+        //  so using select...
 
-        assertEquals(-1, intForQuery("SELECT e2_id FROM utest.e3 WHERE id = 9"));
+        List<Integer> ids1 = e3()
+                .selectStatement(rs -> {
+                    int i = rs.getInt(1);
+                    return rs.wasNull() ? null : i;
+                }).append("SELECT e2_id FROM utest.e3 WHERE id = 9")
+                .select(100);
+        assertEquals(1, ids1.size());
+        assertNull(ids1.get(0));
     }
 
     @Test
-    public void testDelete_ValidRel_ToOne() {
+    public void testValidRel_ToOne() {
 
         // make sure we have e3s for more than one e2 - this will help us
         // confirm that relationship queries are properly filtered.
 
-        insert("e2", "id, name", "1, 'xxx'");
-        insert("e2", "id, name", "2, 'yyy'");
-        insert("e3", "id, e2_id, name", "7, 2, 'zzz'");
-        insert("e3", "id, e2_id, name", "8, 1, 'yyy'");
-        insert("e3", "id, e2_id, name", "9, 1, 'zzz'");
+        e2().insertColumns("id", "name")
+                .values(1, "xxx")
+                .values(2, "yyy").exec();
 
-        assertEquals(1, intForQuery("SELECT e2_id FROM utest.e3 WHERE id = 9"));
+        e3().insertColumns("id", "name", "e2_id")
+                .values(7, "zzz", 2)
+                .values(8, "yyy", 1)
+                .values(9, "zzz", 1).exec();
 
-        Response r1 = target("/e3/9/e2/1").request().delete();
+        Response r = target("/e3/9/e2/1").request().delete();
+        onSuccess(r).bodyEquals("{\"success\":true}");
 
-        assertEquals(Status.OK.getStatusCode(), r1.getStatus());
-        assertEquals("{\"success\":true}", r1.readEntity(String.class));
+        // TODO: can't use matcher for NULLs until BQ 1.1 upgrade (because of https://github.com/bootique/bootique-jdbc/issues/91 )
+        //  so using select...
 
-        assertEquals(-1, intForQuery("SELECT e2_id FROM utest.e3 WHERE id = 9"));
+        List<Integer> ids1 = e3()
+                .selectStatement(rs -> {
+                    int i = rs.getInt(1);
+                    return rs.wasNull() ? null : i;
+                }).append("SELECT e2_id FROM utest.e3 WHERE id = 9")
+                .select(100);
+        assertEquals(1, ids1.size());
+        assertNull(ids1.get(0));
     }
 
     @Test
-    public void testDelete_ValidRel_ToOne_All() {
+    public void testValidRel_ToOne_All() {
 
         // make sure we have e3s for more than one e2 - this will help us
         // confirm that relationship queries are properly filtered.
 
-        insert("e2", "id, name", "1, 'xxx'");
-        insert("e2", "id, name", "2, 'yyy'");
-        insert("e3", "id, e2_id, name", "7, 2, 'zzz'");
-        insert("e3", "id, e2_id, name", "8, 1, 'yyy'");
-        insert("e3", "id, e2_id, name", "9, 1, 'zzz'");
+        e2().insertColumns("id", "name")
+                .values(1, "xxx")
+                .values(2, "yyy").exec();
 
-        assertEquals(1, intForQuery("SELECT e2_id FROM utest.e3 WHERE id = 9"));
+        e3().insertColumns("id", "name", "e2_id")
+                .values(7, "zzz", 2)
+                .values(8, "yyy", 1)
+                .values(9, "zzz", 1).exec();
 
-        Response r1 = target("/e3/9/e2").request().delete();
+        Response r = target("/e3/9/e2").request().delete();
+        onSuccess(r).bodyEquals("{\"success\":true}");
 
-        assertEquals(Status.OK.getStatusCode(), r1.getStatus());
-        assertEquals("{\"success\":true}", r1.readEntity(String.class));
+        // TODO: can't use matcher for NULLs until BQ 1.1 upgrade (because of https://github.com/bootique/bootique-jdbc/issues/91 )
+        //  so using select...
 
-        assertEquals(-1, intForQuery("SELECT e2_id FROM utest.e3 WHERE id = 9"));
+        List<Integer> ids1 = e3()
+                .selectStatement(rs -> {
+                    int i = rs.getInt(1);
+                    return rs.wasNull() ? null : i;
+                }).append("SELECT e2_id FROM utest.e3 WHERE id = 9")
+                .select(100);
+        assertEquals(1, ids1.size());
+        assertNull(ids1.get(0));
     }
 
     @Test
-    public void testDelete_InvalidRel() {
-        Response r1 = target("/e2/1/dummyRel/9").request().delete();
-
-        assertEquals(Status.BAD_REQUEST.getStatusCode(), r1.getStatus());
-        assertEquals("{\"success\":false,\"message\":\"Invalid relationship: 'dummyRel'\"}",
-                r1.readEntity(String.class));
+    public void testInvalidRel() {
+        Response r = target("/e2/1/dummyRel/9").request().delete();
+        onResponse(r).statusEquals(Status.BAD_REQUEST)
+                .bodyEquals("{\"success\":false,\"message\":\"Invalid relationship: 'dummyRel'\"}");
     }
 
     @Test
-    public void testDelete_NoSuchId_Source() {
-        Response r1 = target("/e2/22/e3s/9").request().delete();
-        assertEquals(Status.NOT_FOUND.getStatusCode(), r1.getStatus());
+    public void testNoSuchId_Source() {
+        Response r = target("/e2/22/e3s/9").request().delete();
 
-        String responseEntity = r1.readEntity(String.class).replaceFirst("\\'[\\d]+\\'", "''");
-        assertEquals("{\"success\":false,\"message\":\"No object for ID '' and entity 'E2'\"}", responseEntity);
+        onResponse(r).statusEquals(Status.NOT_FOUND)
+                .bodyEquals("{\"success\":false,\"message\":\"No object for ID '22' and entity 'E2'\"}");
     }
 
     @Path("e2")

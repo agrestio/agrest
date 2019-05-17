@@ -149,7 +149,7 @@ public abstract class CayenneUpdateDataStoreStage implements Processor<UpdateCon
                 T existing = Util.findById(objectContext, context.getType(), context.getEntity().getAgEntity(), idMap);
                 if (existing != null) {
                     throw new AgException(Response.Status.BAD_REQUEST, "Can't create '" + entity.getName()
-                            + "' with id " + CompoundObjectId.mapToString(idMap) + " -- object already exists");
+                            + "' with id " + CompoundObjectId.mapToString(idMap) + " - already exists");
                 }
 
                 for (Map.Entry<String, Object> idPart : idMap.entrySet()) {
