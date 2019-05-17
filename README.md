@@ -5,8 +5,8 @@ Agrest (foremerly "LinkRest") is a flexible model-driven REST data service frame
 
 Quick links:
 
-* [website](https://agrest.io)
-* [quick tutorial with Bootique and Derby DB](https://github.com/bootique-examples/bootique-linkrest-demo)
+* [website](https://agrest.io) | [twitter](https://twitter.com/agrestproject)
+* [quick tutorial with Bootique and Derby DB](https://github.com/bootique-examples/bootique-agrest-demo)
 * [documentation](https://agrest.io/docs/)
 * [support](https://groups.google.com/forum/?#!forum/agrest-user)
 * [upgrade instructions](https://github.com/agrestio/agrest/blob/master/UPGRADE-NOTES.md)
