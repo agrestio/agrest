@@ -1,95 +1,55 @@
 package io.agrest.it;
 
 import io.agrest.AgException;
-import io.agrest.runtime.AgBuilder;
-import org.apache.cayenne.DataChannel;
-import org.apache.cayenne.configuration.server.ServerRuntime;
-import org.apache.cayenne.map.EntityResolver;
-import org.glassfish.jersey.server.ResourceConfig;
-import org.glassfish.jersey.test.JerseyTest;
-import org.glassfish.jersey.test.inmemory.InMemoryTestContainerFactory;
+import io.agrest.it.fixture.JerseyAndPojoCase;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
-import javax.ws.rs.core.Application;
-import javax.ws.rs.core.Feature;
-import javax.ws.rs.core.FeatureContext;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+public class GET_ExceptionIT extends JerseyAndPojoCase {
 
-public class GET_ExceptionIT extends JerseyTest {
+    @BeforeClass
+    public static void startTestRuntime() {
+        startTestRuntime(Resource.class);
+    }
 
-	public GET_ExceptionIT() {
-		super(new InMemoryTestContainerFactory());
-	}
+    @Test
+    public void testNoData() {
+        Response r = target("/nodata").request().get();
+        onResponse(r).statusEquals(Status.NOT_FOUND).bodyEquals("{\"success\":false,\"message\":\"request failed\"}");
+    }
 
-	@Override
-	public Application configure() {
+    @Test
+    public void testNoData_WithThrowable() {
+        Response r = target("/nodata/th").request().get();
 
-		EntityResolver mockResolver = mock(EntityResolver.class);
-		DataChannel mockChannel = mock(DataChannel.class);
-		when(mockChannel.getEntityResolver()).thenReturn(mockResolver);
+        onResponse(r).statusEquals(Status.INTERNAL_SERVER_ERROR)
+                .mediaTypeEquals(MediaType.APPLICATION_JSON_TYPE)
+                .bodyEquals("{\"success\":false,\"message\":\"request failed with th\"}");
+    }
 
-		ServerRuntime runtime = mock(ServerRuntime.class);
-		when(runtime.getChannel()).thenReturn(mockChannel);
+    @Path("nodata")
+    public static class Resource {
 
-		Feature agFeature = AgBuilder.build(runtime);
+        @GET
+        public Response get() {
+            throw new AgException(Status.NOT_FOUND, "request failed");
+        }
 
-		Feature testFeature = new Feature() {
-
-			@Override
-			public boolean configure(FeatureContext context) {
-				context.register(ExceptionResource.class);
-				return true;
-			}
-		};
-
-		return new ResourceConfig().register(testFeature).register(agFeature);
-	}
-
-	@Test
-	public void testNoData() {
-
-		Response response = target("/nodata").request().get();
-
-		assertEquals(Status.NOT_FOUND.getStatusCode(), response.getStatus());
-		assertEquals(MediaType.APPLICATION_JSON_TYPE, response.getMediaType());
-		assertEquals("{\"success\":false,\"message\":\"request failed\"}", response.readEntity(String.class));
-	}
-
-	@Test
-	public void testNoData_WithThrowable() {
-		Response response = target("/nodata/th").request().get();
-
-		assertEquals(Status.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatus());
-
-		assertEquals(MediaType.APPLICATION_JSON_TYPE, response.getMediaType());
-		assertEquals("{\"success\":false,\"message\":\"request failed with th\"}", response.readEntity(String.class));
-	}
-
-	@Path("nodata")
-	public static class ExceptionResource {
-
-		@GET
-		public Response get() {
-			throw new AgException(Status.NOT_FOUND, "request failed");
-		}
-
-		@GET
-		@Path("th")
-		public Response getTh() {
-			try {
-				throw new Throwable("Dummy");
-			} catch (Throwable th) {
-				throw new AgException(Status.INTERNAL_SERVER_ERROR, "request failed with th", th);
-			}
-		}
-	}
+        @GET
+        @Path("th")
+        public Response getTh() {
+            try {
+                throw new Throwable("Dummy");
+            } catch (Throwable th) {
+                throw new AgException(Status.INTERNAL_SERVER_ERROR, "request failed with th", th);
+            }
+        }
+    }
 
 }

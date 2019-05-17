@@ -1,71 +1,33 @@
 package io.agrest.it;
 
 import io.agrest.SimpleResponse;
-import io.agrest.runtime.AgBuilder;
-import org.apache.cayenne.DataChannel;
-import org.apache.cayenne.configuration.server.ServerRuntime;
-import org.apache.cayenne.map.EntityResolver;
-import org.glassfish.jersey.server.ResourceConfig;
-import org.glassfish.jersey.test.JerseyTest;
-import org.glassfish.jersey.test.inmemory.InMemoryTestContainerFactory;
+import io.agrest.it.fixture.JerseyAndPojoCase;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
-import javax.ws.rs.core.Application;
-import javax.ws.rs.core.Feature;
-import javax.ws.rs.core.FeatureContext;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+public class GET_SimpleResponseIT extends JerseyAndPojoCase {
 
-public class GET_SimpleResponseIT extends JerseyTest {
-
-	public GET_SimpleResponseIT() {
-		super(new InMemoryTestContainerFactory());
-	}
-
-	@Override
-	public Application configure() {
-
-		EntityResolver mockResolver = mock(EntityResolver.class);
-		DataChannel mockChannel = mock(DataChannel.class);
-		when(mockChannel.getEntityResolver()).thenReturn(mockResolver);
-
-		ServerRuntime runtime = mock(ServerRuntime.class);
-		when(runtime.getChannel()).thenReturn(mockChannel);
-
-		Feature agFeature = AgBuilder.build(runtime);
-
-		Feature feature = new Feature() {
-
-			@Override
-			public boolean configure(FeatureContext context) {
-				context.register(SimpleResponseResource.class);
-				return true;
-			}
-		};
-
-		return new ResourceConfig().register(feature).register(agFeature);
+	@BeforeClass
+	public static void startTestRuntime() {
+		startTestRuntime(Resource.class);
 	}
 
 	@Test
 	public void testWrite() {
 
-		Response response1 = target("/simple").request().get();
-		assertEquals(Status.OK.getStatusCode(), response1.getStatus());
-		assertEquals("{\"success\":true,\"message\":\"Hi!\"}", response1.readEntity(String.class));
+		Response r1 = target("/simple").request().get();
+		onSuccess(r1).bodyEquals("{\"success\":true,\"message\":\"Hi!\"}");
 
-		Response response2 = target("/simple/2").request().get();
-		assertEquals(Status.OK.getStatusCode(), response2.getStatus());
-		assertEquals("{\"success\":false,\"message\":\"Hi2!\"}", response2.readEntity(String.class));
+		Response r2 = target("/simple/2").request().get();
+		onSuccess(r2).bodyEquals("{\"success\":false,\"message\":\"Hi2!\"}");
 	}
 
 	@Path("simple")
-	public static class SimpleResponseResource {
+	public static class Resource {
 
 		@GET
 		public SimpleResponse get() {

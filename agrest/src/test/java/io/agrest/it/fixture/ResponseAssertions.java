@@ -1,8 +1,11 @@
 package io.agrest.it.fixture;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -39,6 +42,11 @@ public class ResponseAssertions {
         assertEquals(
                 expectedStatus.getStatusCode(),
                 response.getStatus());
+        return this;
+    }
+
+    public ResponseAssertions mediaTypeEquals(MediaType expected) {
+        assertEquals(expected, response.getMediaType());
         return this;
     }
 
@@ -116,8 +124,13 @@ public class ResponseAssertions {
 
     public ResponseAssertions totalEquals(long total) {
 
-        // Note: Response content type must be application/json
-        JsonNode rootNode = response.readEntity(JsonNode.class);
+        String string = getContentAsString();
+        JsonNode rootNode = null;
+        try {
+            rootNode = new ObjectMapper().readTree(string);
+        } catch (IOException e) {
+            throw new RuntimeException("Error reading JSON", e);
+        }
         assertNotNull("No response data", rootNode);
 
         JsonNode totalNode = rootNode.get("total");
