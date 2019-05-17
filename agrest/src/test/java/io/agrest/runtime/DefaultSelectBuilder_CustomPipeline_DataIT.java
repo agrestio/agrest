@@ -3,30 +3,28 @@ package io.agrest.runtime;
 import io.agrest.DataResponse;
 import io.agrest.SelectBuilder;
 import io.agrest.SelectStage;
-import io.agrest.it.fixture.CayenneDerbyStack;
-import io.agrest.it.fixture.DbCleaner;
-import io.agrest.it.fixture.AgFactory;
+import io.agrest.it.fixture.JerseyAndDerbyCase;
 import io.agrest.it.fixture.cayenne.E2;
-import org.junit.ClassRule;
-import org.junit.Rule;
+import io.agrest.it.fixture.cayenne.E3;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
-public class DefaultSelectBuilder_CustomPipeline_DataIT {
+public class DefaultSelectBuilder_CustomPipeline_DataIT extends JerseyAndDerbyCase {
 
-    @ClassRule
-    public static CayenneDerbyStack DB = new CayenneDerbyStack("DefaultSelectBuilder_CustomPipeline_DataIT");
+    @BeforeClass
+    public static void startTestRuntime() {
+        JerseyAndDerbyCase.startTestRuntime();
+    }
 
-    @Rule
-    public DbCleaner dbCleaner = new DbCleaner(DB.newContext());
-
-    @Rule
-    public AgFactory agREST = new AgFactory(DB);
+    @Override
+    protected Class<?>[] testEntities() {
+        return new Class[]{E2.class, E3.class};
+    }
 
     private <T> DefaultSelectBuilder<T> createBuilder(Class<T> type) {
-        SelectBuilder<T> builder = agREST.getService().select(type);
+        SelectBuilder<T> builder = ag().select(type);
         assertTrue(builder instanceof DefaultSelectBuilder);
         return (DefaultSelectBuilder<T>) builder;
     }
@@ -34,8 +32,9 @@ public class DefaultSelectBuilder_CustomPipeline_DataIT {
     @Test
     public void testStage() {
 
-        DB.insert("e2", "id, name", "1, 'xxx'");
-        DB.insert("e2", "id, name", "2, 'yyy'");
+        e2().insertColumns("id", "name")
+                .values(1, "xxx")
+                .values(2, "yyy").exec();
 
         DataResponse<E2> dr = createBuilder(E2.class)
                 .stage(SelectStage.CREATE_ENTITY, c -> c.getEntity().setQualifier(E2.NAME.eq("yyy")))
@@ -48,7 +47,7 @@ public class DefaultSelectBuilder_CustomPipeline_DataIT {
     @Test
     public void testTerminalStage() {
 
-        DB.insert("e2", "id, name", "1, 'xxx'");
+        e2().insertColumns("id", "name").values(1, "xxx").exec();
 
         DataResponse<E2> dr = createBuilder(E2.class)
                 .terminalStage(SelectStage.PARSE_REQUEST, c -> {

@@ -3,11 +3,9 @@ package io.agrest.runtime;
 import io.agrest.DataResponse;
 import io.agrest.SelectBuilder;
 import io.agrest.SelectStage;
-import io.agrest.it.fixture.CayenneDerbyStack;
-import io.agrest.it.fixture.AgFactory;
+import io.agrest.it.fixture.JerseyAndDerbyCase;
 import io.agrest.it.fixture.cayenne.E2;
-import org.junit.ClassRule;
-import org.junit.Rule;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.util.EnumMap;
@@ -21,16 +19,20 @@ import static org.junit.Assert.*;
  * The test class for operations that execute and verify the callbacks and custom stack functions, but do not check
  * the data. So no need to run DB cleanup.
  */
-public class DefaultSelectBuilder_CustomPipelineIT {
+public class DefaultSelectBuilder_CustomPipelineIT extends JerseyAndDerbyCase {
 
-    @ClassRule
-    public static CayenneDerbyStack DB = new CayenneDerbyStack("DefaultSelectBuilder_CustomPipelineIT");
+    @BeforeClass
+    public static void startTestRuntime() {
+        JerseyAndDerbyCase.startTestRuntime();
+    }
 
-    @Rule
-    public AgFactory agREST = new AgFactory(DB);
+    @Override
+    protected Class<?>[] testEntities() {
+        return new Class[0];
+    }
 
     private <T> DefaultSelectBuilder<T> createBuilder(Class<T> type) {
-        SelectBuilder<T> builder = agREST.getService().select(type);
+        SelectBuilder<T> builder = ag().select(type);
         assertTrue(builder instanceof DefaultSelectBuilder);
         return (DefaultSelectBuilder<T>) builder;
     }

@@ -1,173 +1,182 @@
 package io.agrest.multisource;
 
-import static java.util.stream.Collectors.toList;
-import static java.util.stream.Collectors.toMap;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
-import java.util.stream.IntStream;
-
-import javax.ws.rs.core.MultivaluedHashMap;
-import javax.ws.rs.core.MultivaluedMap;
-
 import io.agrest.DataResponse;
 import io.agrest.ResourceEntity;
 import io.agrest.SelectBuilder;
-import io.agrest.it.fixture.CayenneDerbyStack;
-import io.agrest.it.fixture.DbCleaner;
-import io.agrest.it.fixture.AgFactory;
+import io.agrest.it.fixture.JerseyAndDerbyCase;
 import io.agrest.it.fixture.cayenne.E22;
 import org.apache.cayenne.Cayenne;
 import org.apache.cayenne.ObjectId;
 import org.junit.Assert;
-import org.junit.ClassRule;
-import org.junit.Rule;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class MultiSelectBuilder_IT {
+import javax.ws.rs.core.MultivaluedHashMap;
+import javax.ws.rs.core.MultivaluedMap;
+import javax.ws.rs.core.UriInfo;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.IntStream;
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(MultiSelectBuilder_IT.class);
+import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toMap;
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
-	@ClassRule
-	public static CayenneDerbyStack DB_STACK = new CayenneDerbyStack("derby-for-multi-select");
+public class MultiSelectBuilder_IT extends JerseyAndDerbyCase {
 
-	@Rule
-	public DbCleaner dbCleaner = new DbCleaner(DB_STACK.newContext());
+    private static final Logger LOGGER = LoggerFactory.getLogger(MultiSelectBuilder_IT.class);
 
-	@Rule
-	public AgFactory agREST = new AgFactory(DB_STACK);
-	
-	// TODO: test attaching to subtree objects
-	// TODO: test parent batches
+    @BeforeClass
+    public static void startTestRuntime() {
+        JerseyAndDerbyCase.startTestRuntime();
+    }
 
-	@Test
-	public void testParallelThenMerge() {
+    private static UriInfo mockUri(MultivaluedMap<String, String> params) {
+        UriInfo mockUri = mock(UriInfo.class);
+        when(mockUri.getQueryParameters()).thenReturn(params);
+        return mockUri;
+    }
 
-		DB_STACK.insert("e22", "id, name", "5, 'aa'");
-		DB_STACK.insert("e22", "id, name", "6, 'bb'");
-		DB_STACK.insert("e22", "id, name", "4, 'cc'");
+    @Override
+    protected Class<?>[] testEntities() {
+        return new Class[]{E22.class};
+    }
 
-		MultivaluedMap<String, String> params = new MultivaluedHashMap<>();
-		params.putSingle("sort", "id");
+    // TODO: test attaching to subtree objects
+    // TODO: test parent batches
 
-		SelectBuilder<E22> rootSelect = agREST.getService().select(E22.class).uri(agREST.mockUri(params));
+    @Test
+    public void testParallelThenMerge() {
 
-		DataResponse<E22> response = new MultiSelectBuilder<>(rootSelect, agREST.getExecutor())
-				.parallel(this::parallelFetcher, this::merge).select(5, TimeUnit.SECONDS);
+        e22().insertColumns("id", "name")
+                .values(5, "aa")
+                .values(6, "bb")
+                .values(4, "cc").exec();
 
-		Map<Integer, E22> rootsById = response.getIncludedObjects().stream()
-				.collect(toMap(Cayenne::intPKForObject, o -> o));
+        MultivaluedMap<String, String> params = new MultivaluedHashMap<>();
+        params.putSingle("sort", "id");
 
-		E22 e4 = rootsById.get(4);
-		Assert.assertEquals("cc", e4.getName());
-		assertEquals("_4", e4.getProp1());
+        SelectBuilder<E22> rootSelect = ag().select(E22.class).uri(mockUri(params));
 
-		E22 e5 = rootsById.get(5);
-		Assert.assertEquals("aa", e5.getName());
-		assertEquals("_5", e5.getProp1());
+        DataResponse<E22> response = new MultiSelectBuilder<>(rootSelect, agService(ExecutorService.class))
+                .parallel(this::parallelFetcher, this::merge)
+                .select(5, TimeUnit.SECONDS);
 
-		// this one is unmerged - no matches in the child fetcher
-		E22 e6 = rootsById.get(6);
-		Assert.assertEquals("bb", e6.getName());
-		assertNull(e6.getProp1());
-	}
+        Map<Integer, E22> rootsById = response.getIncludedObjects().stream()
+                .collect(toMap(Cayenne::intPKForObject, o -> o));
 
-	@Test
-	public void testAfterParent_TwoSubfetchers() {
+        E22 e4 = rootsById.get(4);
+        Assert.assertEquals("cc", e4.getName());
+        assertEquals("_4", e4.getProp1());
 
-		DB_STACK.insert("e22", "id, name", "5, 'aa'");
-		DB_STACK.insert("e22", "id, name", "6, 'bb'");
-		DB_STACK.insert("e22", "id, name", "4, 'cc'");
+        E22 e5 = rootsById.get(5);
+        Assert.assertEquals("aa", e5.getName());
+        assertEquals("_5", e5.getProp1());
 
-		MultivaluedMap<String, String> params = new MultivaluedHashMap<>();
-		params.putSingle("sort", "id");
+        // this one is unmerged - no matches in the child fetcher
+        E22 e6 = rootsById.get(6);
+        Assert.assertEquals("bb", e6.getName());
+        assertNull(e6.getProp1());
+    }
 
-		SelectBuilder<E22> rootSelect = agREST.getService().select(E22.class).uri(agREST.mockUri(params));
+    @Test
+    public void testAfterParent_TwoSubfetchers() {
 
-		DataResponse<E22> response = new MultiSelectBuilder<>(rootSelect, agREST.getExecutor())
-				.afterParent(this::afterFetcher1, this::merge).afterParent(this::afterFetcher2, this::merge)
-				.select(5, TimeUnit.SECONDS);
+        e22().insertColumns("id", "name")
+                .values(5, "aa")
+                .values(6, "bb")
+                .values(4, "cc").exec();
 
-		Map<Integer, E22> rootsById = response.getIncludedObjects().stream()
-				.collect(toMap(Cayenne::intPKForObject, o -> o));
+        MultivaluedMap<String, String> params = new MultivaluedHashMap<>();
+        params.putSingle("sort", "id");
 
-		E22 e4 = rootsById.get(4);
-		Assert.assertEquals("cc", e4.getName());
-		assertEquals("_cc", e4.getProp1());
-		assertEquals("__cc", e4.getProp2());
+        SelectBuilder<E22> rootSelect = ag().select(E22.class).uri(mockUri(params));
 
-		E22 e5 = rootsById.get(5);
-		Assert.assertEquals("aa", e5.getName());
-		assertEquals("_aa", e5.getProp1());
-		assertEquals("__aa", e5.getProp2());
+        DataResponse<E22> response = new MultiSelectBuilder<>(rootSelect, agService(ExecutorService.class))
+                .afterParent(this::afterFetcher1, this::merge)
+                .afterParent(this::afterFetcher2, this::merge)
+                .select(5, TimeUnit.SECONDS);
 
-		E22 e6 = rootsById.get(6);
-		Assert.assertEquals("bb", e6.getName());
-		assertEquals("_bb", e6.getProp1());
-		assertEquals("__bb", e6.getProp2());
-	}
+        Map<Integer, E22> rootsById = response.getIncludedObjects().stream()
+                .collect(toMap(Cayenne::intPKForObject, o -> o));
 
-	public List<E22> parallelFetcher() {
+        E22 e4 = rootsById.get(4);
+        Assert.assertEquals("cc", e4.getName());
+        assertEquals("_cc", e4.getProp1());
+        assertEquals("__cc", e4.getProp2());
 
-		LOGGER.info("running parallel fetcher");
+        E22 e5 = rootsById.get(5);
+        Assert.assertEquals("aa", e5.getName());
+        assertEquals("_aa", e5.getProp1());
+        assertEquals("__aa", e5.getProp2());
 
-		return IntStream.range(0, 6).mapToObj(i -> {
-			E22 proto = new E22();
+        E22 e6 = rootsById.get(6);
+        Assert.assertEquals("bb", e6.getName());
+        assertEquals("_bb", e6.getProp1());
+        assertEquals("__bb", e6.getProp2());
+    }
 
-			proto.setObjectId(new ObjectId("E22", "id", i));
-			proto.setProp1("_" + i);
+    public List<E22> parallelFetcher() {
 
-			return proto;
-		}).collect(toList());
-	}
+        LOGGER.info("running parallel fetcher");
 
-	public List<E22> afterFetcher1(List<E22> parents) {
+        return IntStream.range(0, 6).mapToObj(i -> {
+            E22 proto = new E22();
 
-		LOGGER.info("running after-fetcher 2");
+            proto.setObjectId(new ObjectId("E22", "id", i));
+            proto.setProp1("_" + i);
 
-		return parents.stream().map(p -> {
-			E22 proto = new E22();
+            return proto;
+        }).collect(toList());
+    }
 
-			proto.setObjectId(p.getObjectId());
-			proto.setProp1("_" + p.getName());
+    public List<E22> afterFetcher1(List<E22> parents) {
 
-			return proto;
-		}).collect(toList());
-	}
+        LOGGER.info("running after-fetcher 2");
 
-	public List<E22> afterFetcher2(List<E22> parents, ResourceEntity<E22> entity) {
+        return parents.stream().map(p -> {
+            E22 proto = new E22();
 
-		assertNotNull(entity);
+            proto.setObjectId(p.getObjectId());
+            proto.setProp1("_" + p.getName());
 
-		LOGGER.info("running after-fetcher 2");
+            return proto;
+        }).collect(toList());
+    }
 
-		return parents.stream().map(p -> {
-			E22 proto = new E22();
+    public List<E22> afterFetcher2(List<E22> parents, ResourceEntity<E22> entity) {
 
-			proto.setObjectId(p.getObjectId());
-			proto.setProp2("__" + p.getName());
+        assertNotNull(entity);
 
-			return proto;
-		}).collect(toList());
-	}
+        LOGGER.info("running after-fetcher 2");
 
-	public void merge(List<E22> parents, List<E22> toMerge) {
-		LOGGER.info("merging subfetcher results");
+        return parents.stream().map(p -> {
+            E22 proto = new E22();
 
-		Map<Integer, E22> parentsById = parents.stream().collect(toMap(Cayenne::intPKForObject, o -> o));
+            proto.setObjectId(p.getObjectId());
+            proto.setProp2("__" + p.getName());
 
-		toMerge.forEach(proto -> {
-			E22 original = parentsById.get(Cayenne.intPKForObject(proto));
-			if (original != null) {
-				original.mergeTransient(proto);
-			}
-		});
-	}
+            return proto;
+        }).collect(toList());
+    }
+
+    public void merge(List<E22> parents, List<E22> toMerge) {
+        LOGGER.info("merging subfetcher results");
+
+        Map<Integer, E22> parentsById = parents.stream().collect(toMap(Cayenne::intPKForObject, o -> o));
+
+        toMerge.forEach(proto -> {
+            E22 original = parentsById.get(Cayenne.intPKForObject(proto));
+            if (original != null) {
+                original.mergeTransient(proto);
+            }
+        });
+    }
 
 }

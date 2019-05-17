@@ -19,6 +19,7 @@ import io.agrest.it.fixture.cayenne.E19;
 import io.agrest.it.fixture.cayenne.E2;
 import io.agrest.it.fixture.cayenne.E20;
 import io.agrest.it.fixture.cayenne.E21;
+import io.agrest.it.fixture.cayenne.E22;
 import io.agrest.it.fixture.cayenne.E23;
 import io.agrest.it.fixture.cayenne.E24;
 import io.agrest.it.fixture.cayenne.E3;
@@ -118,7 +119,11 @@ public abstract class JerseyAndDerbyCase {
     }
 
     protected IAgService ag() {
-        return TEST_RUNTIME.getInstance(AgRuntime.class).service(IAgService.class);
+        return agService(IAgService.class);
+    }
+
+    protected <T> T agService(Class<T> type) {
+        return TEST_RUNTIME.getInstance(AgRuntime.class).service(type);
     }
 
     protected WebTarget target(String path) {
@@ -215,6 +220,10 @@ public abstract class JerseyAndDerbyCase {
 
     protected Table e21() {
         return dataManager.getTable(E21.class);
+    }
+
+    protected Table e22() {
+        return dataManager.getTable(E22.class);
     }
 
     protected Table e23() {
