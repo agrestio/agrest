@@ -13,6 +13,7 @@ includes to match the data that you need.
 Change `Start` and `Limit` to `Integers`.
 * Replace calls to `AgRequest.builder()` with `Ag.request(configuration)`.
 
+If you are not directly injecting `Include`, `Exclude` and friends (injecting `UriInfo` instead), are you are not affected.
 
 ## Upgrading to 3.0
 
