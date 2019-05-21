@@ -7,6 +7,7 @@ Release 3.2
 * #408 Change parameter injection to Strings / Integers
 * #409 Stop using Sort as a dummy container of other Sorts
 * #410 "mapBy" doesn't work with relationship path 
+* #412 "include" with exposed root id: ExpressionException: Can't resolve path component
 
 Release 3.1
 

@@ -2,6 +2,7 @@ package io.agrest.it.fixture.cayenne.auto;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 import org.apache.cayenne.CayenneDataObject;
 import org.apache.cayenne.exp.Property;
@@ -27,7 +28,7 @@ public abstract class _E10 extends CayenneDataObject {
     public static final Property<Date> C_TIME = Property.create("cTime", Date.class);
     public static final Property<Date> C_TIMESTAMP = Property.create("cTimestamp", Date.class);
     public static final Property<String> C_VARCHAR = Property.create("cVarchar", String.class);
-    public static final Property<E11> E11S = Property.create("e11s", E11.class);
+    public static final Property<List<E11>> E11S = Property.create("e11s", List.class);
 
     public void setCBoolean(Boolean cBoolean) {
         writeProperty("cBoolean", cBoolean);
@@ -78,12 +79,15 @@ public abstract class _E10 extends CayenneDataObject {
         return (String)readProperty("cVarchar");
     }
 
-    public void setE11s(E11 e11s) {
-        setToOneTarget("e11s", e11s, true);
+    public void addToE11s(E11 obj) {
+        addToManyTarget("e11s", obj, true);
     }
-
-    public E11 getE11s() {
-        return (E11)readProperty("e11s");
+    public void removeFromE11s(E11 obj) {
+        removeToManyTarget("e11s", obj, true);
+    }
+    @SuppressWarnings("unchecked")
+    public List<E11> getE11s() {
+        return (List<E11>)readProperty("e11s");
     }
 
 

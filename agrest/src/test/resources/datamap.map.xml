@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <data-map xmlns="http://cayenne.apache.org/schema/9/modelMap"
 	 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	 xsi:schemaLocation="http://cayenne.apache.org/schema/9/modelMap http://cayenne.apache.org/schema/9/modelMap.xsd"
+	 xsi:schemaLocation="http://cayenne.apache.org/schema/9/modelMap https://cayenne.apache.org/schema/9/modelMap.xsd"
 	 project-version="9">
 	<property name="defaultPackage" value="io.agrest.it.fixture.cayenne"/>
 	<property name="defaultSchema" value="utest"/>
@@ -131,6 +131,10 @@
 		<db-attribute name="e22_id" type="INTEGER"/>
 		<db-attribute name="id" type="INTEGER" isPrimaryKey="true" isMandatory="true"/>
 		<db-attribute name="name" type="VARCHAR" length="100"/>
+	</db-entity>
+	<db-entity name="e26" schema="utest">
+		<db-attribute name="e23_id" type="INTEGER"/>
+		<db-attribute name="id" type="INTEGER" isPrimaryKey="true" isMandatory="true"/>
 	</db-entity>
 	<db-entity name="e3" schema="utest">
 		<db-attribute name="e2_id" type="INTEGER"/>
@@ -267,6 +271,8 @@
 	</obj-entity>
 	<obj-entity name="E25" className="io.agrest.it.fixture.cayenne.E25" dbEntityName="e25">
 	</obj-entity>
+	<obj-entity name="E26" className="io.agrest.it.fixture.cayenne.E26" dbEntityName="e26">
+	</obj-entity>
 	<obj-entity name="E3" className="io.agrest.it.fixture.cayenne.E3" dbEntityName="e3">
 		<obj-attribute name="name" type="java.lang.String" db-attribute-path="name"/>
 		<obj-attribute name="phoneNumber" type="java.lang.String" db-attribute-path="phone_number"/>
@@ -360,8 +366,14 @@
 	<db-relationship name="e25s" source="e22" target="e25" toMany="true">
 		<db-attribute-pair source="id" target="e22_id"/>
 	</db-relationship>
+	<db-relationship name="e26s" source="e23" target="e26" toMany="true">
+		<db-attribute-pair source="id" target="e23_id"/>
+	</db-relationship>
 	<db-relationship name="e22" source="e25" target="e22" toMany="false">
 		<db-attribute-pair source="e22_id" target="id"/>
+	</db-relationship>
+	<db-relationship name="e23" source="e26" target="e23" toMany="false">
+		<db-attribute-pair source="e23_id" target="id"/>
 	</db-relationship>
 	<db-relationship name="e2" source="e3" target="e2" toMany="false">
 		<db-attribute-pair source="e2_id" target="id"/>
@@ -405,6 +417,8 @@
 	<obj-relationship name="e3s" source="E2" target="E3" deleteRule="Deny" db-relationship-path="e3s"/>
 	<obj-relationship name="e21" source="E20" target="E21" deleteRule="Nullify" db-relationship-path="e21"/>
 	<obj-relationship name="e20s" source="E21" target="E20" deleteRule="Nullify" db-relationship-path="e20"/>
+	<obj-relationship name="e26s" source="E23" target="E26" deleteRule="Deny" db-relationship-path="e26s"/>
+	<obj-relationship name="e23" source="E26" target="E23" deleteRule="Nullify" db-relationship-path="e23"/>
 	<obj-relationship name="e2" source="E3" target="E2" deleteRule="Nullify" db-relationship-path="e2"/>
 	<obj-relationship name="e5" source="E3" target="E5" deleteRule="Nullify" db-relationship-path="e5"/>
 	<obj-relationship name="e15s" source="E5" target="E15" db-relationship-path="e15e5.e15"/>

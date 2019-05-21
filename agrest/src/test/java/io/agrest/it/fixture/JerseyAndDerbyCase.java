@@ -22,6 +22,7 @@ import io.agrest.it.fixture.cayenne.E21;
 import io.agrest.it.fixture.cayenne.E22;
 import io.agrest.it.fixture.cayenne.E23;
 import io.agrest.it.fixture.cayenne.E24;
+import io.agrest.it.fixture.cayenne.E26;
 import io.agrest.it.fixture.cayenne.E3;
 import io.agrest.it.fixture.cayenne.E4;
 import io.agrest.it.fixture.cayenne.E5;
@@ -241,6 +242,10 @@ public abstract class JerseyAndDerbyCase {
 
     protected Table e24() {
         return dataManager.getTable(E24.class);
+    }
+
+    protected Table e26() {
+        return dataManager.getTable(E26.class);
     }
 
     public static class AgModule implements Module {
