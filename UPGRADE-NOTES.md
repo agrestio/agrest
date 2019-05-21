@@ -1,5 +1,12 @@
 ## Upgrading to 3.2
 
+### Response with overlapping relationship / attribute "includes" is include order dependent [#406](https://github.com/agrestio/agrest/issues/406)
+
+If you are using combinations of relationship and attribute includes (e.g. `include=e2&include=e2.id`), you may have received 
+more fields in response than you should, depending on the include order. And your code may have relied on such an incorrect 
+behavior. If suddenly now you are getting less data than you expected for a given request, you will need to adjust client-side 
+includes to match the data that you need.
+
 ### @QueryParameter types changed to Strings and Integers [#408](https://github.com/agrestio/agrest/issues/408)
 
 * Inspect your `@QueryParam` injection code and change Agrest types, such as `Include`, `Exclude`, etc. to Strings.
