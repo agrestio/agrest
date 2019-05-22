@@ -85,25 +85,24 @@ public class CayenneFetchDataStage implements Processor<SelectContext<?>> {
 
             AgRelationship rel = parent.getAgEntity().getRelationship(e.getKey());
 
-            assignChildrenToParent(
-                    parent,
-                    childObjects,
-                    rel.isToMany()
-                            ? (i, o) -> childEntity.addToManyResult(i, o)
-                            : (i, o) -> childEntity.setToOneResult(i, o));
+            BiConsumer<AgObjectId, Object> resultAccum = rel.isToMany()
+                    ? (i, o) -> childEntity.addToManyResult(i, o)
+                    : (i, o) -> childEntity.setToOneResult(i, o);
+
+            assignChildrenToParent(parent, childObjects, resultAccum);
         }
     }
 
     /**
      * Assigns child items to the appropriate parent item
      */
-    protected <T> void assignChildrenToParent(ResourceEntity<T> parentEntity, List children, BiConsumer<AgObjectId, Object> resultKeeper) {
+    protected <T> void assignChildrenToParent(ResourceEntity<T> parentEntity, List children, BiConsumer<AgObjectId, Object> resultAccum) {
         // saves a result
         for (Object child : children) {
             if (child instanceof Object[]) {
                 Object[] ids = (Object[])child;
                 if (ids.length == 2) {
-                    resultKeeper.accept(new SimpleObjectId(ids[1]), (T) ids[0]);
+                    resultAccum.accept(new SimpleObjectId(ids[1]), (T) ids[0]);
                 } else if (ids.length > 2) {
                     // saves entity with a compound ID
                     Map<String, Object> compoundKeys = new LinkedHashMap<>();
@@ -113,7 +112,7 @@ public class CayenneFetchDataStage implements Processor<SelectContext<?>> {
                             compoundKeys.put(idAttributes[i - 1].getName(), ids[i]);
                         }
                     }
-                    resultKeeper.accept(new CompoundObjectId(compoundKeys), (T) ids[0]);
+                    resultAccum.accept(new CompoundObjectId(compoundKeys), (T) ids[0]);
                 }
             }
         }
