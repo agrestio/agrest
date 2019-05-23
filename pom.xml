@@ -77,7 +77,7 @@
         </repository>
         <snapshotRepository>
             <id>agrest-snapshots</id>
-            <url>http://maven.objectstyle.org/nexus/content/repositories/linkrest-snapshots</url>
+            <url>https://maven.objectstyle.org/nexus/content/repositories/linkrest-snapshots</url>
         </snapshotRepository>
     </distributionManagement>
 
@@ -85,14 +85,14 @@
         <repository>
             <id>agrest-dependencies</id>
             <name>Agrest Dependencies Repo</name>
-            <url>http://maven.objectstyle.org/nexus/content/groups/linkrest</url>
+            <url>https://maven.objectstyle.org/nexus/content/groups/linkrest</url>
         </repository>
     </repositories>
     <pluginRepositories>
         <pluginRepository>
             <id>agrest-dependencies</id>
             <name>AgRest Dependencies Repo</name>
-            <url>http://maven.objectstyle.org/nexus/content/groups/linkrest</url>
+            <url>https://maven.objectstyle.org/nexus/content/groups/linkrest</url>
             <snapshots>
                 <enabled>false</enabled>
             </snapshots>
