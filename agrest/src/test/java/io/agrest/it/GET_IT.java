@@ -193,8 +193,8 @@ public class GET_IT extends JerseyAndDerbyCase {
     @Test
     public void testById_IncludeRelationship() {
 
-        e2().insertColumns("id", "name").values(1, "xxx").exec();
-        e3().insertColumns("id", "name", "e2_id")
+        e2().insertColumns("id_", "name").values(1, "xxx").exec();
+        e3().insertColumns("id_", "name", "e2_id")
                 .values(8, "yyy", 1)
                 .values(9, "zzz", 1).exec();
 
@@ -211,12 +211,12 @@ public class GET_IT extends JerseyAndDerbyCase {
     @Test
     public void testRelationshipSort() {
 
-        e2().insertColumns("id", "name")
+        e2().insertColumns("id_", "name")
                 .values(1, "zzz")
                 .values(2, "yyy")
                 .values(3, "xxx").exec();
 
-        e3().insertColumns("id", "name", "e2_id")
+        e3().insertColumns("id_", "name", "e2_id")
                 .values(8, "aaa", 1)
                 .values(9, "bbb", 2)
                 .values(10, "ccc", 3).exec();
@@ -237,11 +237,11 @@ public class GET_IT extends JerseyAndDerbyCase {
     @Test
     public void testRelationshipStartLimit() throws UnsupportedEncodingException {
 
-        e2().insertColumns("id", "name")
+        e2().insertColumns("id_", "name")
                 .values(1, "zzz")
                 .values(2, "yyy").exec();
 
-        e3().insertColumns("id", "name", "e2_id")
+        e3().insertColumns("id_", "name", "e2_id")
                 .values(8, "aaa", 1)
                 .values(9, "bbb", 1)
                 .values(10, "ccc", 2).exec();
@@ -260,9 +260,9 @@ public class GET_IT extends JerseyAndDerbyCase {
     @Test
     public void testToOne_Null() {
 
-        e2().insertColumns("id", "name").values(1, "xxx").exec();
+        e2().insertColumns("id_", "name").values(1, "xxx").exec();
 
-        e3().insertColumns("id", "name", "e2_id")
+        e3().insertColumns("id_", "name", "e2_id")
                 .values(8, "yyy", 1)
                 .values(9, "zzz", null).exec();
 
@@ -320,11 +320,11 @@ public class GET_IT extends JerseyAndDerbyCase {
     @Test
     public void testMapBy_RelatedId() {
 
-        e2().insertColumns("id", "name")
+        e2().insertColumns("id_", "name")
                 .values(1, "zzz")
                 .values(2, "yyy").exec();
 
-        e3().insertColumns("id", "name", "e2_id")
+        e3().insertColumns("id_", "name", "e2_id")
                 .values(8, "aaa", 1)
                 .values(9, "bbb", 1)
                 .values(10, "ccc", 2).exec();
@@ -343,11 +343,11 @@ public class GET_IT extends JerseyAndDerbyCase {
     @Test
     public void testMapBy_OverRelationship() {
 
-        e2().insertColumns("id", "name")
+        e2().insertColumns("id_", "name")
                 .values(1, "zzz")
                 .values(2, "yyy").exec();
 
-        e3().insertColumns("id", "name", "e2_id")
+        e3().insertColumns("id_", "name", "e2_id")
                 .values(8, "aaa", 1)
                 .values(9, "bbb", 1)
                 .values(10, "ccc", 2).exec();

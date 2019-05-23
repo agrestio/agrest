@@ -33,7 +33,7 @@ public class PUT_StagesIT extends JerseyAndDerbyCase {
     @Test
     public void testToOne() {
 
-        e3().insertColumns("id", "name")
+        e3().insertColumns("id_", "name")
                 .values(3, "z")
                 .values(4, "a").exec();
 
@@ -45,8 +45,8 @@ public class PUT_StagesIT extends JerseyAndDerbyCase {
 
         onSuccess(response).bodyEquals(1, "{\"id\":3,\"name\":\"x\",\"phoneNumber\":null}");
 
-        e3().matcher().eq("id", 3).eq("name", "x").assertOneMatch();
-        e3().matcher().eq("id", 4).assertNoMatches();
+        e3().matcher().eq("id_", 3).eq("name", "x").assertOneMatch();
+        e3().matcher().eq("id_", 4).assertNoMatches();
 
         assertTrue(Resource.BEFORE_UPDATE_CALLED);
     }

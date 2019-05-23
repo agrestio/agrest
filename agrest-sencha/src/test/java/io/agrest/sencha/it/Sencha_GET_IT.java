@@ -34,8 +34,8 @@ public class Sencha_GET_IT extends SenchaBQJerseyTestOnDerby {
     @Test
     public void testIncludeRelationships_ById() {
 
-        e2().insertColumns("id", "name").values(1, "xxx").exec();
-        e3().insertColumns("id", "name", "e2_id")
+        e2().insertColumns("id_", "name").values(1, "xxx").exec();
+        e3().insertColumns("id_", "name", "e2_id")
                 .values(8, "yyy", 1)
                 .values(9, "zzz", 1).exec();
 
@@ -52,8 +52,8 @@ public class Sencha_GET_IT extends SenchaBQJerseyTestOnDerby {
     @Test
     public void testIncludeRelationships() {
 
-        e2().insertColumns("id", "name").values(1, "xxx").exec();
-        e3().insertColumns("id", "name", "e2_id")
+        e2().insertColumns("id_", "name").values(1, "xxx").exec();
+        e3().insertColumns("id_", "name", "e2_id")
                 .values(8, "yyy", 1)
                 .values(9, "zzz", 1).exec();
 
@@ -68,8 +68,8 @@ public class Sencha_GET_IT extends SenchaBQJerseyTestOnDerby {
     @Test
     public void testIncludeRelationships_StartLimit() {
 
-        e2().insertColumns("id", "name").values(1, "xxx").exec();
-        e3().insertColumns("id", "name", "e2_id")
+        e2().insertColumns("id_", "name").values(1, "xxx").exec();
+        e3().insertColumns("id_", "name", "e2_id")
                 .values(8, "yyy", 1)
                 .values(9, "zzz", 1)
                 .values(10, "zzz", 1)
@@ -88,8 +88,8 @@ public class Sencha_GET_IT extends SenchaBQJerseyTestOnDerby {
     @Test
     public void testToOne_Null() {
 
-        e2().insertColumns("id", "name").values(1, "xxx").exec();
-        e3().insertColumns("id", "name", "e2_id")
+        e2().insertColumns("id_", "name").values(1, "xxx").exec();
+        e3().insertColumns("id_", "name", "e2_id")
                 .values(8, "yyy", 1)
                 .values(9, "zzz", null).exec();
 
@@ -100,8 +100,8 @@ public class Sencha_GET_IT extends SenchaBQJerseyTestOnDerby {
     @Test
     public void testMapBy_ToOne() {
 
-        e2().insertColumns("id", "name").values(1, "xxx").exec();
-        e3().insertColumns("id", "name", "e2_id")
+        e2().insertColumns("id_", "name").values(1, "xxx").exec();
+        e3().insertColumns("id_", "name", "e2_id")
                 .values(8, "yyy", 1).exec();
 
         Response r = target("/e3")
@@ -114,9 +114,9 @@ public class Sencha_GET_IT extends SenchaBQJerseyTestOnDerby {
     @Test
     public void testToMany_IncludeRelated() {
 
-        e2().insertColumns("id", "name").values(1, "xxx").exec();
+        e2().insertColumns("id_", "name").values(1, "xxx").exec();
         e5().insertColumns("id", "name").values(345, "B").values(346, "A").exec();
-        e3().insertColumns("id", "name", "e2_id", "e5_id")
+        e3().insertColumns("id_", "name", "e2_id", "e5_id")
                 .values(8, "a", 1, 345)
                 .values(9, "z", 1, 345)
                 .values(7, "m", 1, 346).exec();
@@ -136,8 +136,8 @@ public class Sencha_GET_IT extends SenchaBQJerseyTestOnDerby {
     @Test
     public void testIncludePathRelationship() {
 
-        e2().insertColumns("id", "name").values(1, "xxx").exec();
-        e3().insertColumns("id", "name", "e2_id").values(8, "yyy", 1).exec();
+        e2().insertColumns("id_", "name").values(1, "xxx").exec();
+        e3().insertColumns("id_", "name", "e2_id").values(8, "yyy", 1).exec();
 
         Response r = target("/e3")
                 .queryParam("include", urlEnc("{\"path\":\"e2\"}"))
@@ -149,7 +149,7 @@ public class Sencha_GET_IT extends SenchaBQJerseyTestOnDerby {
     @Test
     public void testFilter_ById() {
 
-        e2().insertColumns("id", "name").values(1, "xxx").exec();
+        e2().insertColumns("id_", "name").values(1, "xxx").exec();
 
         Response r = target("/e2")
                 .queryParam("include", "id")
@@ -162,7 +162,7 @@ public class Sencha_GET_IT extends SenchaBQJerseyTestOnDerby {
     @Test
     public void testStartsWith_AfterParseRequest() {
 
-        e2().insertColumns("id", "name")
+        e2().insertColumns("id_", "name")
                 .values(1, "Axx")
                 .values(2, "Bxx")
                 .values(3, "cxx").exec();
@@ -186,7 +186,7 @@ public class Sencha_GET_IT extends SenchaBQJerseyTestOnDerby {
     @Test
     public void testStartsWith_AfterAssembleQuery() {
 
-        e2().insertColumns("id", "name")
+        e2().insertColumns("id_", "name")
                 .values(1, "Axx")
                 .values(2, "Bxx")
                 .values(3, "cxx").exec();

@@ -16,7 +16,7 @@ public abstract class _E3 extends CayenneDataObject {
 
     private static final long serialVersionUID = 1L; 
 
-    public static final String ID_PK_COLUMN = "id";
+    public static final String ID__PK_COLUMN = "id_";
 
     public static final Property<String> NAME = Property.create("name", String.class);
     public static final Property<String> PHONE_NUMBER = Property.create("phoneNumber", String.class);

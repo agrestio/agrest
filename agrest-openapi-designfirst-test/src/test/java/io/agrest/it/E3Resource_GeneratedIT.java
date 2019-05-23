@@ -25,9 +25,9 @@ public class E3Resource_GeneratedIT extends JerseyAndDerbyCase {
     @Test
     public void testGET_ById_Include() {
 
-        e2().insertColumns("id", "name").values(1, "xxx").exec();
+        e2().insertColumns("id_", "name").values(1, "xxx").exec();
 
-        e3().insertColumns("id", "name", "e2_id")
+        e3().insertColumns("id_", "name", "e2_id")
                 .values(8, "yyy", 1)
                 .values(9, "zzz", 1).exec();
 
@@ -41,9 +41,9 @@ public class E3Resource_GeneratedIT extends JerseyAndDerbyCase {
     @Test
     public void testGET_Include_Sort_Dir() {
 
-        e2().insertColumns("id", "name").values(1, "xxx").exec();
+        e2().insertColumns("id_", "name").values(1, "xxx").exec();
 
-        e3().insertColumns("id", "name", "e2_id")
+        e3().insertColumns("id_", "name", "e2_id")
                 .values(9, "zzz", 1)
                 .values(8, "yyy", 1).exec();
 
@@ -67,9 +67,9 @@ public class E3Resource_GeneratedIT extends JerseyAndDerbyCase {
     @Test
     public void testGET_Start_Limit() {
 
-        e2().insertColumns("id", "name").values(1, "xxx").exec();
+        e2().insertColumns("id_", "name").values(1, "xxx").exec();
 
-        e3().insertColumns("id", "name", "e2_id")
+        e3().insertColumns("id_", "name", "e2_id")
                 .values(10, "zzz", 1)
                 .values(9, "zzz", 1)
                 .values(8, "yyy", 1)
@@ -91,12 +91,12 @@ public class E3Resource_GeneratedIT extends JerseyAndDerbyCase {
     @Test
     public void testGET_CayenneExp() {
 
-        e2().insertColumns("id", "name")
+        e2().insertColumns("id_", "name")
                 .values(1, "xxx")
                 .values(2, "yyy")
                 .values(3, "zzzz").exec();
 
-        e3().insertColumns("id", "name", "e2_id")
+        e3().insertColumns("id_", "name", "e2_id")
                 .values(6, "yyy", 3)
                 .values(8, "yyy", 1)
                 .values(9, "zzz", 2).exec();
@@ -115,11 +115,11 @@ public class E3Resource_GeneratedIT extends JerseyAndDerbyCase {
         // make sure we have e3s for more than one e2 - this will help us
         // confirm that relationship queries are properly filtered.
 
-        e2().insertColumns("id", "name")
+        e2().insertColumns("id_", "name")
                 .values(1, "xxx")
                 .values(2, "yyy").exec();
 
-        e3().insertColumns("id", "name", "e2_id")
+        e3().insertColumns("id_", "name", "e2_id")
                 .values(7, "zzz", 2)
                 .values(8, "yyy", 1)
                 .values(9, "zzz", 1).exec();
@@ -131,7 +131,7 @@ public class E3Resource_GeneratedIT extends JerseyAndDerbyCase {
     @Test
     public void testPOST() {
 
-        e2().insertColumns("id", "name")
+        e2().insertColumns("id_", "name")
                 .values(1, "xxx")
                 .values(8, "yyy").exec();
 
@@ -146,25 +146,25 @@ public class E3Resource_GeneratedIT extends JerseyAndDerbyCase {
     @Test
     public void testPUT_ById() {
 
-        e2().insertColumns("id", "name")
+        e2().insertColumns("id_", "name")
                 .values(1, "xxx")
                 .values(8, "yyy").exec();
 
-        e3().insertColumns("id", "name", "e2_id").values(3, "zzz", 8).exec();
+        e3().insertColumns("id_", "name", "e2_id").values(3, "zzz", 8).exec();
 
         Response response = target("/v1/e3/3")
                 .request()
                 .put(Entity.json("{\"id\":3,\"e2\":1}"));
 
         onSuccess(response).bodyEquals(1, "{\"id\":3,\"name\":\"zzz\",\"phoneNumber\":null}");
-        e3().matcher().eq("id", 3).eq("e2_id", 1).assertOneMatch();
+        e3().matcher().eq("id_", 3).eq("e2_id", 1).assertOneMatch();
     }
 
 
     @Test
     public void testPUT_Bulk() {
 
-        e3().insertColumns("id", "name")
+        e3().insertColumns("id_", "name")
                 .values(5, "aaa")
                 .values(4, "zzz")
                 .values(2, "bbb")
@@ -189,10 +189,10 @@ public class E3Resource_GeneratedIT extends JerseyAndDerbyCase {
     @Test
     public void testPUT_Relate() {
 
-        e2().insertColumns("id", "name")
+        e2().insertColumns("id_", "name")
                 .values(24, "xxx").exec();
 
-        e3().insertColumns("id", "name")
+        e3().insertColumns("id_", "name")
                 .values(7, "zzz")
                 .values(8, "yyy").exec();
 
@@ -210,11 +210,11 @@ public class E3Resource_GeneratedIT extends JerseyAndDerbyCase {
         // make sure we have e3s for more than one e2 - this will help us
         // confirm that relationship queries are properly filtered.
 
-        e2().insertColumns("id", "name")
+        e2().insertColumns("id_", "name")
                 .values(1, "xxx")
                 .values(2, "yyy").exec();
 
-        e3().insertColumns("id", "name", "e2_id")
+        e3().insertColumns("id_", "name", "e2_id")
                 .values(7, "zzz", 2)
                 .values(8, "yyy", 1)
                 .values(9, "zzz", 1).exec();
@@ -234,11 +234,11 @@ public class E3Resource_GeneratedIT extends JerseyAndDerbyCase {
         // make sure we have e3s for more than one e2 - this will help us
         // confirm that relationship queries are properly filtered.
 
-        e2().insertColumns("id", "name")
+        e2().insertColumns("id_", "name")
                 .values(1, "xxx")
                 .values(2, "yyy").exec();
 
-        e3().insertColumns("id", "name", "e2_id")
+        e3().insertColumns("id_", "name", "e2_id")
                 .values(7, "zzz", 2)
                 .values(8, "yyy", 1)
                 .values(9, "zzz", 1).exec();

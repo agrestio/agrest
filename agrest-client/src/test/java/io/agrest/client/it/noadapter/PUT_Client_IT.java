@@ -43,7 +43,7 @@ public class PUT_Client_IT extends JerseyAndDerbyCase {
         assertEquals(Response.Status.CREATED, r1.getStatus());
         assertEquals(1, r1.getTotal());
 
-        int id = r1.getData().get(0).get(E3.ID_PK_COLUMN).asInt();
+        int id = r1.getData().get(0).get("id").asInt();
         JsonNode e3_before_update = EntityUtil.createE3(id, "ccc");
         assertEquals(e3_before_update, r1.getData().get(0));
 

@@ -89,10 +89,10 @@ public class GET_Client_IT extends JerseyAndDerbyCase {
     @Test
     public void testClient_Include() {
 
-        e2().insertColumns("id", "name")
+        e2().insertColumns("id_", "name")
                 .values(1, "xxx").exec();
 
-        e3().insertColumns("id", "name", "e2_id")
+        e3().insertColumns("id_", "name", "e2_id")
                 .values(5, "aaa", 1)
                 .values(6, "bbb", 1)
                 .values(7, "ccc", 1)
@@ -114,11 +114,11 @@ public class GET_Client_IT extends JerseyAndDerbyCase {
     @Test
     public void testClient_CayenneExpression1() {
 
-        e2().insertColumns("id", "name")
+        e2().insertColumns("id_", "name")
                 .values(1, "xxx")
                 .values(2, "yyy").exec();
 
-        e3().insertColumns("id", "name", "e2_id")
+        e3().insertColumns("id_", "name", "e2_id")
                 .values(5, "aaa", 1)
                 .values(6, "bbb", 2)
                 .values(7, "ccc", 1).exec();

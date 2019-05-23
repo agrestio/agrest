@@ -20,7 +20,7 @@ public class EntityUtil {
     static JsonNode createE2(int id, String name, JsonNode... e3s) {
 
         ObjectNode e2 = nodeFactory.objectNode();
-        e2.set(E2.ID_PK_COLUMN, nodeFactory.numberNode(id));
+        e2.set("id", nodeFactory.numberNode(id));
 
         if (e3s.length > 0) {
             ArrayNode e3sNodes = nodeFactory.arrayNode();
@@ -38,7 +38,7 @@ public class EntityUtil {
     static JsonNode createE3(int id, String name) {
 
         ObjectNode e3 = nodeFactory.objectNode();
-        e3.set(E3.ID_PK_COLUMN, nodeFactory.numberNode(id));
+        e3.set("id", nodeFactory.numberNode(id));
         e3.set(E3.NAME.getName(), nodeFactory.textNode(name));
         return e3;
     }
@@ -46,7 +46,7 @@ public class EntityUtil {
     static JsonNode createE4(int id, String cVarchar, int cInt) {
 
         ObjectNode e4 = nodeFactory.objectNode();
-        e4.set(E4.ID_PK_COLUMN, nodeFactory.numberNode(id));
+        e4.set("id", nodeFactory.numberNode(id));
         e4.set(E4.C_INT.getName(), nodeFactory.numberNode(cInt));
         e4.set(E4.C_VARCHAR.getName(), nodeFactory.textNode(cVarchar));
         return e4;

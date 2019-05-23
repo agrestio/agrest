@@ -35,7 +35,7 @@ public class Encoder_VisitFilteredIT extends JerseyAndDerbyCase {
     @Test
     public void testEncoderFilter() {
 
-        e2().insertColumns("id", "name")
+        e2().insertColumns("id_", "name")
                 .values(1, "xxx")
                 .values(2, "yyy")
                 .values(3, "zzz")

@@ -45,7 +45,7 @@ public class POST_Related_IT extends JerseyAndDerbyCase {
     @Test
     public void testRelate_ToMany_New() {
 
-        e2().insertColumns("id", "name").values(24, "xxx").exec();
+        e2().insertColumns("id_", "name").values(24, "xxx").exec();
 
         Response r = target("/e2/24/e3s")
                 .request()
@@ -83,11 +83,11 @@ public class POST_Related_IT extends JerseyAndDerbyCase {
     @Test
     public void testRelate_ToMany_MixedCollection() {
 
-        e2().insertColumns("id", "name")
+        e2().insertColumns("id_", "name")
                 .values(15, "xxx")
                 .values(16, "yyy").exec();
 
-        e3().insertColumns("id", "name", "e2_id")
+        e3().insertColumns("id_", "name", "e2_id")
                 .values(7, "zzz", 16)
                 .values(8, "yyy", 15)
                 .values(9, "aaa", 15).exec();

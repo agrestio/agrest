@@ -42,7 +42,7 @@ public class Encoder_VisitPushPopIT extends JerseyAndDerbyCase {
     @Test
     public void testVisit_Tree() {
 
-        e2().insertColumns("id", "name")
+        e2().insertColumns("id_", "name")
                 .values(1, "xxx")
                 .values(2, "yyy")
                 .values(3, "zzz").exec();
@@ -51,7 +51,7 @@ public class Encoder_VisitPushPopIT extends JerseyAndDerbyCase {
                 .values(1, "xxx")
                 .values(2, "yyy").exec();
 
-        e3().insertColumns("id", "name", "e2_id", "e5_id")
+        e3().insertColumns("id_", "name", "e2_id", "e5_id")
                 .values(7, "zzz", 2, 1)
                 .values(8, "yyy", 1, 1)
                 .values(9, "zzz", 1, 2).exec();
@@ -73,7 +73,7 @@ public class Encoder_VisitPushPopIT extends JerseyAndDerbyCase {
     @Test
     public void testVisit_Tree_MapBy() {
 
-        e2().insertColumns("id", "name")
+        e2().insertColumns("id_", "name")
                 .values(1, "xxx")
                 .values(2, "yyy")
                 .values(3, "zzz").exec();
@@ -82,7 +82,7 @@ public class Encoder_VisitPushPopIT extends JerseyAndDerbyCase {
                 .values(1, "xxx")
                 .values(2, "yyy").exec();
 
-        e3().insertColumns("id", "name", "e2_id", "e5_id")
+        e3().insertColumns("id_", "name", "e2_id", "e5_id")
                 .values(7, "zzz", 2, 1)
                 .values(8, "yyy", 1, 1)
                 .values(9, "zzz", 1, 2).exec();

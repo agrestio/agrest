@@ -28,9 +28,9 @@ public class E2Resource_GeneratedIT extends JerseyAndDerbyCase {
     @Test
     public void testGET_ById_Include() {
 
-        e2().insertColumns("id", "name").values(1, "xxx").exec();
+        e2().insertColumns("id_", "name").values(1, "xxx").exec();
 
-        e3().insertColumns("id", "name", "e2_id")
+        e3().insertColumns("id_", "name", "e2_id")
                 .values(8, "yyy", 1)
                 .values(9, "zzz", 1).exec();
 
@@ -43,7 +43,7 @@ public class E2Resource_GeneratedIT extends JerseyAndDerbyCase {
     @Test
     public void testGET_CayenneExp() {
 
-        e2().insertColumns("id", "name")
+        e2().insertColumns("id_", "name")
                 .values(1, "xxx")
                 .values(2, "yyy")
                 .values(3, "zzz").exec();
@@ -61,11 +61,11 @@ public class E2Resource_GeneratedIT extends JerseyAndDerbyCase {
         // make sure we have e3s for more than one e2 - this will help us
         // confirm that relationship queries are properly filtered.
 
-        e2().insertColumns("id", "name")
+        e2().insertColumns("id_", "name")
                 .values(1, "xxx")
                 .values(2, "yyy").exec();
 
-        e3().insertColumns("id", "name", "e2_id")
+        e3().insertColumns("id_", "name", "e2_id")
                 .values(7, "zzz", 2)
                 .values(8, "yyy", 1)
                 .values(9, "zzz", 1).exec();
@@ -84,11 +84,11 @@ public class E2Resource_GeneratedIT extends JerseyAndDerbyCase {
         // make sure we have e3s for more than one e2 - this will help us
         // confirm that relationship queries are properly filtered.
 
-        e2().insertColumns("id", "name")
+        e2().insertColumns("id_", "name")
                 .values(1, "xxx")
                 .values(2, "yyy").exec();
 
-        e3().insertColumns("id", "name", "e2_id")
+        e3().insertColumns("id_", "name", "e2_id")
                 .values(7, "zzz", 2)
                 .values(8, "yyy", 1)
                 .values(9, "zzz", 1).exec();
@@ -104,7 +104,7 @@ public class E2Resource_GeneratedIT extends JerseyAndDerbyCase {
     @Test
     public void testPOST_IncludeExclude() {
 
-        e3().insertColumns("id", "name")
+        e3().insertColumns("id_", "name")
                 .values(1, "xxx")
                 .values(8, "yyy").exec();
 
@@ -122,7 +122,7 @@ public class E2Resource_GeneratedIT extends JerseyAndDerbyCase {
 
         // TODO: hopefully there will be a an easier way to select ID per
         //   https://github.com/bootique/bootique-jdbc/issues/93
-        List<Object[]> ids = e2().selectColumns("id");
+        List<Object[]> ids = e2().selectColumns("id_");
         assertEquals(1, ids.size());
         int id = (Integer) ids.get(0)[0];
 
@@ -132,7 +132,7 @@ public class E2Resource_GeneratedIT extends JerseyAndDerbyCase {
     @Test
     public void testPOST_Relate() {
 
-        e2().insertColumns("id", "name").values(24, "xxx").exec();
+        e2().insertColumns("id_", "name").values(24, "xxx").exec();
 
         Response r = target("/v1/e2/24/e3s")
                 .request()
@@ -145,11 +145,11 @@ public class E2Resource_GeneratedIT extends JerseyAndDerbyCase {
     @Test
     public void testPUT_ById() {
 
-        e2().insertColumns("id", "name")
+        e2().insertColumns("id_", "name")
                 .values(1, "xxx")
                 .values(8, "yyy").exec();
 
-        e3().insertColumns("id", "name", "e2_id")
+        e3().insertColumns("id_", "name", "e2_id")
                 .values(3, "zzz", null)
                 .values(4, "aaa", 8)
                 .values(5, "bbb", 8).exec();
@@ -170,11 +170,11 @@ public class E2Resource_GeneratedIT extends JerseyAndDerbyCase {
         // confirm that relationship queries are properly filtered.
 
 
-        e2().insertColumns("id", "name")
+        e2().insertColumns("id_", "name")
                 .values(1, "xxx")
                 .values(2, "yyy").exec();
 
-        e3().insertColumns("id", "name", "e2_id")
+        e3().insertColumns("id_", "name", "e2_id")
                 .values(7, "zzz", 2)
                 .values(8, "yyy", 1)
                 .values(9, "zzz", 1).exec();
@@ -193,11 +193,11 @@ public class E2Resource_GeneratedIT extends JerseyAndDerbyCase {
         // make sure we have e3s for more than one e2 - this will help us
         // confirm that relationship queries are properly filtered.
 
-        e2().insertColumns("id", "name")
+        e2().insertColumns("id_", "name")
                 .values(1, "xxx")
                 .values(2, "yyy").exec();
 
-        e3().insertColumns("id", "name", "e2_id")
+        e3().insertColumns("id_", "name", "e2_id")
                 .values(7, "zzz", 2)
                 .values(8, "yyy", 1)
                 .values(9, "zzz", 1).exec();

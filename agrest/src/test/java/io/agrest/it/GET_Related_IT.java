@@ -51,11 +51,11 @@ public class GET_Related_IT extends JerseyAndDerbyCase {
         // make sure we have e3s for more than one e2 - this will help us
         // confirm that relationship queries are properly filtered.
 
-        e2().insertColumns("id", "name")
+        e2().insertColumns("id_", "name")
                 .values(1, "xxx")
                 .values(2, "yyy").exec();
 
-        e3().insertColumns("id", "name", "e2_id")
+        e3().insertColumns("id_", "name", "e2_id")
                 .values(7, "zzz", 2)
                 .values(8, "yyy", 1)
                 .values(9, "zzz", 1).exec();
@@ -107,11 +107,11 @@ public class GET_Related_IT extends JerseyAndDerbyCase {
         // make sure we have e3s for more than one e2 - this will help us
         // confirm that relationship queries are properly filtered.
 
-        e2().insertColumns("id", "name")
+        e2().insertColumns("id_", "name")
                 .values(1, "xxx")
                 .values(2, "yyy").exec();
 
-        e3().insertColumns("id", "name", "e2_id")
+        e3().insertColumns("id_", "name", "e2_id")
                 .values(7, "zzz", 2)
                 .values(8, "yyy", 1)
                 .values(9, "zzz", 1).exec();
@@ -126,11 +126,11 @@ public class GET_Related_IT extends JerseyAndDerbyCase {
         // make sure we have e3s for more than one e2 - this will help us
         // confirm that relationship queries are properly filtered.
 
-        e2().insertColumns("id", "name")
+        e2().insertColumns("id_", "name")
                 .values(1, "xxx")
                 .values(2, "yyy").exec();
 
-        e3().insertColumns("id", "name", "e2_id")
+        e3().insertColumns("id_", "name", "e2_id")
                 .values(7, "zzz", 2)
                 .values(8, "yyy", 1)
                 .values(9, "zzz", 1).exec();

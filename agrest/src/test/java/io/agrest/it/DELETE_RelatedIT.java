@@ -63,11 +63,11 @@ public class DELETE_RelatedIT extends JerseyAndDerbyCase {
         // make sure we have e3s for more than one e2 - this will help us
         // confirm that relationship queries are properly filtered.
 
-        e2().insertColumns("id", "name")
+        e2().insertColumns("id_", "name")
                 .values(1, "xxx")
                 .values(2, "yyy").exec();
 
-        e3().insertColumns("id", "name", "e2_id")
+        e3().insertColumns("id_", "name", "e2_id")
                 .values(7, "zzz", 2)
                 .values(8, "yyy", 1)
                 .values(9, "zzz", 1).exec();
@@ -82,7 +82,7 @@ public class DELETE_RelatedIT extends JerseyAndDerbyCase {
                 .selectStatement(rs -> {
                     int i = rs.getInt(1);
                     return rs.wasNull() ? null : i;
-                }).append("SELECT e2_id FROM utest.e3 WHERE id = 9")
+                }).append("SELECT e2_id FROM utest.e3 WHERE id_ = 9")
                 .select(100);
         assertEquals(1, ids1.size());
         assertNull(ids1.get(0));
@@ -94,11 +94,11 @@ public class DELETE_RelatedIT extends JerseyAndDerbyCase {
         // make sure we have e3s for more than one e2 - this will help us
         // confirm that relationship queries are properly filtered.
 
-        e2().insertColumns("id", "name")
+        e2().insertColumns("id_", "name")
                 .values(1, "xxx")
                 .values(2, "yyy").exec();
 
-        e3().insertColumns("id", "name", "e2_id")
+        e3().insertColumns("id_", "name", "e2_id")
                 .values(7, "zzz", 2)
                 .values(8, "yyy", 1)
                 .values(9, "zzz", 1).exec();
@@ -113,7 +113,7 @@ public class DELETE_RelatedIT extends JerseyAndDerbyCase {
                 .selectStatement(rs -> {
                     int i = rs.getInt(1);
                     return rs.wasNull() ? null : i;
-                }).append("SELECT e2_id FROM utest.e3 WHERE id = 9")
+                }).append("SELECT e2_id FROM utest.e3 WHERE id_ = 9")
                 .select(100);
         assertEquals(1, ids1.size());
         assertNull(ids1.get(0));
@@ -125,11 +125,11 @@ public class DELETE_RelatedIT extends JerseyAndDerbyCase {
         // make sure we have e3s for more than one e2 - this will help us
         // confirm that relationship queries are properly filtered.
 
-        e2().insertColumns("id", "name")
+        e2().insertColumns("id_", "name")
                 .values(1, "xxx")
                 .values(2, "yyy").exec();
 
-        e3().insertColumns("id", "name", "e2_id")
+        e3().insertColumns("id_", "name", "e2_id")
                 .values(7, "zzz", 2)
                 .values(8, "yyy", 1)
                 .values(9, "zzz", 1).exec();
@@ -144,7 +144,7 @@ public class DELETE_RelatedIT extends JerseyAndDerbyCase {
                 .selectStatement(rs -> {
                     int i = rs.getInt(1);
                     return rs.wasNull() ? null : i;
-                }).append("SELECT e2_id FROM utest.e3 WHERE id = 9")
+                }).append("SELECT e2_id FROM utest.e3 WHERE id_ = 9")
                 .select(100);
         assertEquals(1, ids1.size());
         assertNull(ids1.get(0));

@@ -34,7 +34,7 @@ public class GET_AgRequestIT extends JerseyAndDerbyCase {
     @Test
     public void test_CayenneExp_OverrideByAgRequest() {
 
-        e2().insertColumns("id", "name")
+        e2().insertColumns("id_", "name")
                 .values(1, "xxx")
                 .values(2, "yyy")
                 .values(3, "zzz").exec();
@@ -51,7 +51,7 @@ public class GET_AgRequestIT extends JerseyAndDerbyCase {
     @Test
     public void testIncludes_OverrideByAgRequest() {
 
-        e3().insertColumns("id", "name")
+        e3().insertColumns("id_", "name")
                 .values(6, "yyy")
                 .values(8, "yyy")
                 .values(9, "zzz").exec();
@@ -68,7 +68,7 @@ public class GET_AgRequestIT extends JerseyAndDerbyCase {
     @Test
     public void testExcludes_OverrideByAgRequest() {
 
-        e3().insertColumns("id", "name")
+        e3().insertColumns("id_", "name")
                 .values(6, "yyy")
                 .values(8, "yyy")
                 .values(9, "zzz").exec();

@@ -30,7 +30,7 @@ public class GET_CayenneExpIT extends JerseyAndDerbyCase {
     @Test
     public void testMap() {
 
-        e2().insertColumns("id", "name")
+        e2().insertColumns("id_", "name")
                 .values(1, "xxx")
                 .values(2, "yyy")
                 .values(3, "zzz").exec();
@@ -45,7 +45,7 @@ public class GET_CayenneExpIT extends JerseyAndDerbyCase {
     @Test
     public void testMap_Params() {
 
-        e2().insertColumns("id", "name")
+        e2().insertColumns("id_", "name")
                 .values(1, "xxx")
                 .values(2, "yyy")
                 .values(3, "zzz").exec();
@@ -59,7 +59,7 @@ public class GET_CayenneExpIT extends JerseyAndDerbyCase {
     @Test
     public void testBare() {
 
-        e2().insertColumns("id", "name")
+        e2().insertColumns("id_", "name")
                 .values(1, "xxx")
                 .values(2, "yyy")
                 .values(3, "zzz").exec();
@@ -75,7 +75,7 @@ public class GET_CayenneExpIT extends JerseyAndDerbyCase {
     @Test
     public void testList() {
 
-        e2().insertColumns("id", "name")
+        e2().insertColumns("id_", "name")
                 .values(1, "xxx")
                 .values(2, "yyy")
                 .values(3, "zzz").exec();
@@ -91,7 +91,7 @@ public class GET_CayenneExpIT extends JerseyAndDerbyCase {
     @Test
     public void testList_Params() {
 
-        e2().insertColumns("id", "name")
+        e2().insertColumns("id_", "name")
                 .values(1, "xxx")
                 .values(2, "yyy")
                 .values(3, "zzz").exec();
@@ -108,12 +108,12 @@ public class GET_CayenneExpIT extends JerseyAndDerbyCase {
     @Test
     public void testIn_Array() {
 
-        e2().insertColumns("id", "name")
+        e2().insertColumns("id_", "name")
                 .values(1, "xxx")
                 .values(2, "yyy")
                 .values(3, "zzzz").exec();
 
-        e3().insertColumns("id", "name", "e2_id")
+        e3().insertColumns("id_", "name", "e2_id")
                 .values(6, "yyy", 3)
                 .values(8, "yyy", 1)
                 .values(9, "zzz", 2).exec();
@@ -128,11 +128,11 @@ public class GET_CayenneExpIT extends JerseyAndDerbyCase {
     @Test
     public void testNotIn_Array() {
 
-        e2().insertColumns("id", "name")
+        e2().insertColumns("id_", "name")
                 .values(1, "xxx")
                 .values(2, "yyy").exec();
 
-        e3().insertColumns("id", "name", "e2_id")
+        e3().insertColumns("id_", "name", "e2_id")
                 .values(8, "yyy", 1)
                 .values(9, "zzz", 2).exec();
 
@@ -148,11 +148,11 @@ public class GET_CayenneExpIT extends JerseyAndDerbyCase {
     @Test
     public void testOuter() {
 
-        e2().insertColumns("id", "name")
+        e2().insertColumns("id_", "name")
                 .values(1, "xxx")
                 .values(2, "yyy").exec();
 
-        e3().insertColumns("id", "name", "e2_id")
+        e3().insertColumns("id_", "name", "e2_id")
                 .values(8, "A", 1)
                 .values(9, "B", null).exec();
 
@@ -168,11 +168,11 @@ public class GET_CayenneExpIT extends JerseyAndDerbyCase {
     @Test
     public void testOuter_Relationship() {
 
-        e2().insertColumns("id", "name")
+        e2().insertColumns("id_", "name")
                 .values(1, "xxx")
                 .values(2, "yyy").exec();
 
-        e3().insertColumns("id", "name", "e2_id")
+        e3().insertColumns("id_", "name", "e2_id")
                 .values(8, "A", 1)
                 .values(9, "B", null).exec();
 
@@ -188,11 +188,11 @@ public class GET_CayenneExpIT extends JerseyAndDerbyCase {
     @Test
     public void testOuter_To_Many_Relationship() {
 
-        e2().insertColumns("id", "name")
+        e2().insertColumns("id_", "name")
                 .values(1, "xxx")
                 .values(2, "yyy").exec();
 
-        e3().insertColumns("id", "name", "e2_id")
+        e3().insertColumns("id_", "name", "e2_id")
                 .values(8, "A", 1)
                 .values(9, "B", null).exec();
 
@@ -208,7 +208,7 @@ public class GET_CayenneExpIT extends JerseyAndDerbyCase {
     @Test
     public void testIn_TwoObjects() {
 
-        e3().insertColumns("id", "name")
+        e3().insertColumns("id_", "name")
                 .values(8, "yyy")
                 .values(9, "zzz").exec();
 
@@ -224,11 +224,11 @@ public class GET_CayenneExpIT extends JerseyAndDerbyCase {
     @Test
     public void testIn_TwoRelatedObjects() {
 
-        e2().insertColumns("id", "name")
+        e2().insertColumns("id_", "name")
                 .values(1, "xxx")
                 .values(2, "yyy").exec();
 
-        e3().insertColumns("id", "name", "e2_id")
+        e3().insertColumns("id_", "name", "e2_id")
                 .values(8, "yyy", 1)
                 .values(9, "zzz", 2).exec();
 
@@ -243,11 +243,11 @@ public class GET_CayenneExpIT extends JerseyAndDerbyCase {
     @Test
     public void testNotIn_ById() {
 
-        e2().insertColumns("id", "name")
+        e2().insertColumns("id_", "name")
                 .values(1, "xxx")
                 .values(2, "yyy").exec();
 
-        e3().insertColumns("id", "name", "e2_id")
+        e3().insertColumns("id_", "name", "e2_id")
                 .values(8, "yyy", 1)
                 .values(9, "zzz", 2).exec();
 
@@ -262,11 +262,11 @@ public class GET_CayenneExpIT extends JerseyAndDerbyCase {
     @Test
     public void testNotIn_By2Ids() {
 
-        e2().insertColumns("id", "name")
+        e2().insertColumns("id_", "name")
                 .values(1, "xxx")
                 .values(2, "yyy").exec();
 
-        e3().insertColumns("id", "name", "e2_id")
+        e3().insertColumns("id_", "name", "e2_id")
                 .values(8, "yyy", 1)
                 .values(9, "zzz", 2).exec();
 

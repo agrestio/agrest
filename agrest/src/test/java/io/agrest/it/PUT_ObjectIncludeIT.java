@@ -33,8 +33,8 @@ public class PUT_ObjectIncludeIT extends JerseyAndDerbyCase {
     @Test
     public void testOverlap() {
         e5().insertColumns("id", "name", "date").values(45, "T", "2013-01-03").exec();
-        e2().insertColumns("id", "name").values(8, "yyy").exec();
-        e3().insertColumns("id", "name", "e2_id", "e5_id").values(3, "zzz", 8, 45).exec();
+        e2().insertColumns("id_", "name").values(8, "yyy").exec();
+        e3().insertColumns("id_", "name", "e2_id", "e5_id").values(3, "zzz", 8, 45).exec();
 
         Response response = target("/e3/3")
                 .queryParam("include", "e2")
@@ -46,16 +46,16 @@ public class PUT_ObjectIncludeIT extends JerseyAndDerbyCase {
 
         onSuccess(response).bodyEquals(1, "{\"id\":3,\"e2\":{\"id\":8},\"e5\":{\"id\":45},\"name\":\"zzz\",\"phoneNumber\":null}");
 
-        e3().matcher().eq("id", 3).eq("e2_id", 8).assertOneMatch();
+        e3().matcher().eq("id_", 3).eq("e2_id", 8).assertOneMatch();
     }
 
     @Test
     public void testToOne() {
 
-        e2().insertColumns("id", "name")
+        e2().insertColumns("id_", "name")
                 .values(1, "xxx")
                 .values(8, "yyy").exec();
-        e3().insertColumns("id", "name", "e2_id").values(3, "zzz", 8).exec();
+        e3().insertColumns("id_", "name", "e2_id").values(3, "zzz", 8).exec();
 
         Response response = target("/e3/3")
                 .queryParam("include", "e2")
@@ -63,16 +63,16 @@ public class PUT_ObjectIncludeIT extends JerseyAndDerbyCase {
                 .put(Entity.json("{\"id\":3,\"e2\":1}"));
 
         onSuccess(response).bodyEquals(1, "{\"id\":3,\"e2\":{\"id\":1,\"address\":null,\"name\":\"xxx\"},\"name\":\"zzz\",\"phoneNumber\":null}");
-        e3().matcher().eq("id", 3).eq("e2_id", 1).assertOneMatch();
+        e3().matcher().eq("id_", 3).eq("e2_id", 1).assertOneMatch();
     }
 
     @Test
     public void testToMany() {
 
-        e2().insertColumns("id", "name")
+        e2().insertColumns("id_", "name")
                 .values(1, "xxx")
                 .values(8, "yyy").exec();
-        e3().insertColumns("id", "name", "e2_id")
+        e3().insertColumns("id_", "name", "e2_id")
                 .values(3, "zzz", null)
                 .values(4, "aaa", 8)
                 .values(5, "bbb", 8).exec();

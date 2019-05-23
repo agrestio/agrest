@@ -35,7 +35,7 @@ public class Sencha_POST_IT extends SenchaBQJerseyTestOnDerby {
     @Test
     public void testPost_ToOne() {
 
-        e2().insertColumns("id", "name")
+        e2().insertColumns("id_", "name")
                 .values(1, "xxx")
                 .values(8, "yyy").exec();
 
@@ -43,7 +43,7 @@ public class Sencha_POST_IT extends SenchaBQJerseyTestOnDerby {
                 .request()
                 .post(Entity.json("{\"e2_id\":8,\"name\":\"MM\"}"));
 
-        Object[] row = e3().selectColumns("id", "name", "e2_id").get(0);
+        Object[] row = e3().selectColumns("id_", "name", "e2_id").get(0);
         onResponse(r).statusEquals(Status.CREATED).bodyEquals(1, "{\"id\":" + row[0] + ",\"name\":\"MM\",\"phoneNumber\":null}");
 
         assertEquals("MM", row[1]);
@@ -53,7 +53,7 @@ public class Sencha_POST_IT extends SenchaBQJerseyTestOnDerby {
     @Test
     public void testPost_ToOne_BadFK() {
 
-        e2().insertColumns("id", "name")
+        e2().insertColumns("id_", "name")
                 .values(1, "xxx")
                 .values(8, "yyy").exec();
 

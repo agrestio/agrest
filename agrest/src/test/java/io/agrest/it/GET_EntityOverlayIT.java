@@ -81,8 +81,8 @@ public class GET_EntityOverlayIT extends JerseyAndDerbyCase {
     @Test
     public void testAdHocAttribute_Related() {
 
-        e2().insertColumns("id", "name").values(1, "xxx").exec();
-        e3().insertColumns("id", "name", "e2_id").values(3, "zzz", 1).exec();
+        e2().insertColumns("id_", "name").values(1, "xxx").exec();
+        e3().insertColumns("id_", "name", "e2_id").values(3, "zzz", 1).exec();
 
         Response r = target("/e3")
                 .queryParam("include", "id")

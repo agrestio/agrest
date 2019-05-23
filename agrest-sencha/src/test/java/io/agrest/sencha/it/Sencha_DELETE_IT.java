@@ -36,7 +36,7 @@ public class Sencha_DELETE_IT extends SenchaBQJerseyTestOnDerby {
     @Test
     public void test_BatchDelete() {
 
-        e2().insertColumns("id", "name")
+        e2().insertColumns("id_", "name")
                 .values(1, "xxx")
                 .values(2, "yyy")
                 .values(3, "zzz").exec();
@@ -48,7 +48,7 @@ public class Sencha_DELETE_IT extends SenchaBQJerseyTestOnDerby {
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
 
         e2().matcher().assertOneMatch();
-        e2().matcher().eq("id", 3).assertOneMatch();
+        e2().matcher().eq("id_", 3).assertOneMatch();
     }
 
     @Test

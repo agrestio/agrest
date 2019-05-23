@@ -76,20 +76,20 @@ public class EncoderServiceTest extends TestWithCayenneMapping {
 
         ObjectContext context = mockCayennePersister.newContext();
         E2 e2 = new E2();
-        e2.setObjectId(new ObjectId("E2", E2.ID_PK_COLUMN, 7));
+        e2.setObjectId(new ObjectId("E2", E2.ID__PK_COLUMN, 7));
         e2.setName("XYZ");
         e2.setAddress("bla bla street");
         context.registerNewObject(e2);
 
         E3 e31 = new E3();
-        e31.setObjectId(new ObjectId("E3", E3.ID_PK_COLUMN, 5));
+        e31.setObjectId(new ObjectId("E3", E3.ID__PK_COLUMN, 5));
         e31.setName("31");
         e31.setPhoneNumber("+12345678");
         context.registerNewObject(e31);
         e2.addToE3s(e31);
 
         E3 e32 = new E3();
-        e32.setObjectId(new ObjectId("E3", E3.ID_PK_COLUMN, 6));
+        e32.setObjectId(new ObjectId("E3", E3.ID__PK_COLUMN, 6));
         e32.setName("32");
         e31.setPhoneNumber("+87654321");
         context.registerNewObject(e32);
@@ -144,7 +144,7 @@ public class EncoderServiceTest extends TestWithCayenneMapping {
 
         ObjectContext context = mockCayennePersister.newContext();
         E2 e21 = new E2();
-        e21.setObjectId(new ObjectId("E2", E2.ID_PK_COLUMN, 7));
+        e21.setObjectId(new ObjectId("E2", E2.ID__PK_COLUMN, 7));
         e21.setName("XYZ");
         e21.setAddress("bla bla street");
         context.registerNewObject(e21);
@@ -152,7 +152,7 @@ public class EncoderServiceTest extends TestWithCayenneMapping {
         assertEquals("{\"data\":[{\"id\":7}],\"total\":1}", toJson(e21, descriptor));
 
         E2 e22 = new E2();
-        e22.setObjectId(new ObjectId("E2", E2.ID_PK_COLUMN, 8));
+        e22.setObjectId(new ObjectId("E2", E2.ID__PK_COLUMN, 8));
         e22.setName("XYZ");
         e22.setAddress("bla bla street");
         context.registerNewObject(e22);
@@ -212,11 +212,11 @@ public class EncoderServiceTest extends TestWithCayenneMapping {
         ObjectContext context = mockCayennePersister.newContext();
 
         E2 e21 = new E2();
-        e21.setObjectId(new ObjectId("E2", E2.ID_PK_COLUMN, 7));
+        e21.setObjectId(new ObjectId("E2", E2.ID__PK_COLUMN, 7));
         context.registerNewObject(e21);
 
         E3 e31 = new E3();
-        e31.setObjectId(new ObjectId("E3", E3.ID_PK_COLUMN, 5));
+        e31.setObjectId(new ObjectId("E3", E3.ID__PK_COLUMN, 5));
         context.registerNewObject(e31);
         e31.setE2(e21);
         // saves result set in ResourceEntity
@@ -226,11 +226,11 @@ public class EncoderServiceTest extends TestWithCayenneMapping {
         assertEquals("{\"data\":[{\"id\":5,\"e2\":{\"id\":7}}],\"total\":1}", toJson(e31, e3Descriptor));
 
         E2 e22 = new E2();
-        e22.setObjectId(new ObjectId("E2", E2.ID_PK_COLUMN, 8));
+        e22.setObjectId(new ObjectId("E2", E2.ID__PK_COLUMN, 8));
         context.registerNewObject(e22);
 
         E3 e32 = new E3();
-        e32.setObjectId(new ObjectId("E3", E3.ID_PK_COLUMN, 6));
+        e32.setObjectId(new ObjectId("E3", E3.ID__PK_COLUMN, 6));
         context.registerNewObject(e32);
         e32.setE2(e22);
         // saves result set in ResourceEntity
@@ -270,7 +270,7 @@ public class EncoderServiceTest extends TestWithCayenneMapping {
 
         ObjectContext context = mockCayennePersister.newContext();
         E2 e21 = new E2();
-        e21.setObjectId(new ObjectId("E2", E2.ID_PK_COLUMN, 7));
+        e21.setObjectId(new ObjectId("E2", E2.ID__PK_COLUMN, 7));
         e21.setName("XYZ");
         e21.setAddress("bla bla street");
         context.registerNewObject(e21);
@@ -279,7 +279,7 @@ public class EncoderServiceTest extends TestWithCayenneMapping {
     }
 
     @Test
-    public void testEncoder_BinaryAttribute() throws IOException {
+    public void testEncoder_BinaryAttribute() {
 
         ResourceEntity<E19> descriptor = getResourceEntity(E19.class);
         descriptor.includeId();

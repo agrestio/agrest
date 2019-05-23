@@ -32,7 +32,7 @@ public class DefaultSelectBuilder_CustomPipeline_DataIT extends JerseyAndDerbyCa
     @Test
     public void testStage() {
 
-        e2().insertColumns("id", "name")
+        e2().insertColumns("id_", "name")
                 .values(1, "xxx")
                 .values(2, "yyy").exec();
 
@@ -47,7 +47,7 @@ public class DefaultSelectBuilder_CustomPipeline_DataIT extends JerseyAndDerbyCa
     @Test
     public void testTerminalStage() {
 
-        e2().insertColumns("id", "name").values(1, "xxx").exec();
+        e2().insertColumns("id_", "name").values(1, "xxx").exec();
 
         DataResponse<E2> dr = createBuilder(E2.class)
                 .terminalStage(SelectStage.PARSE_REQUEST, c -> {

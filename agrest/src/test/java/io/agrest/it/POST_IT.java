@@ -224,7 +224,7 @@ public class POST_IT extends JerseyAndDerbyCase {
     @Test
     public void testToOne() {
 
-        e2().insertColumns("id", "name")
+        e2().insertColumns("id_", "name")
                 .values(1, "xxx")
                 .values(8, "yyy").exec();
 
@@ -298,7 +298,7 @@ public class POST_IT extends JerseyAndDerbyCase {
     @Test
     public void testToMany() {
 
-        e3().insertColumns("id", "name")
+        e3().insertColumns("id_", "name")
                 .values(1, "xxx")
                 .values(8, "yyy").exec();
 

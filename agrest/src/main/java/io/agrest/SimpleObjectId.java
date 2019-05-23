@@ -6,6 +6,7 @@ import io.agrest.parser.converter.Normalizer;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * A single value id.
@@ -17,8 +18,7 @@ public class SimpleObjectId extends BaseObjectId {
 	private Object id;
 
 	public SimpleObjectId(Object id) {
-		super();
-		this.id = id;
+		this.id = Objects.requireNonNull(id);
 	}
 
 	@Override

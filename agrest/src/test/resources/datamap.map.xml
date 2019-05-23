@@ -99,7 +99,7 @@
 	</db-entity>
 	<db-entity name="e2" schema="utest">
 		<db-attribute name="address" type="VARCHAR" length="255"/>
-		<db-attribute name="id" type="INTEGER" isPrimaryKey="true" isGenerated="true" isMandatory="true"/>
+		<db-attribute name="id_" type="INTEGER" isPrimaryKey="true" isGenerated="true" isMandatory="true"/>
 		<db-attribute name="name" type="VARCHAR" length="100"/>
 	</db-entity>
 	<db-entity name="e20" schema="utest">
@@ -139,7 +139,7 @@
 	<db-entity name="e3" schema="utest">
 		<db-attribute name="e2_id" type="INTEGER"/>
 		<db-attribute name="e5_id" type="INTEGER"/>
-		<db-attribute name="id" type="INTEGER" isPrimaryKey="true" isGenerated="true" isMandatory="true"/>
+		<db-attribute name="id_" type="INTEGER" isPrimaryKey="true" isGenerated="true" isMandatory="true"/>
 		<db-attribute name="name" type="VARCHAR" length="200"/>
 		<db-attribute name="phone_number" type="VARCHAR" length="12"/>
 	</db-entity>
@@ -355,7 +355,7 @@
 		<db-attribute-pair source="e17_id2" target="id2"/>
 	</db-relationship>
 	<db-relationship name="e3s" source="e2" target="e3" toMany="true">
-		<db-attribute-pair source="id" target="e2_id"/>
+		<db-attribute-pair source="id_" target="e2_id"/>
 	</db-relationship>
 	<db-relationship name="e21" source="e20" target="e21" toMany="false">
 		<db-attribute-pair source="e21_id" target="id"/>
@@ -376,7 +376,7 @@
 		<db-attribute-pair source="e23_id" target="id"/>
 	</db-relationship>
 	<db-relationship name="e2" source="e3" target="e2" toMany="false">
-		<db-attribute-pair source="e2_id" target="id"/>
+		<db-attribute-pair source="e2_id" target="id_"/>
 	</db-relationship>
 	<db-relationship name="e5" source="e3" target="e5" toMany="false">
 		<db-attribute-pair source="e5_id" target="id"/>

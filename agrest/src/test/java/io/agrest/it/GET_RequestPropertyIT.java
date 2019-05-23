@@ -64,7 +64,7 @@ public class GET_RequestPropertyIT extends JerseyAndDerbyCase {
     @Test
     public void testRequest_ShadowProperty() {
 
-        e3().insertColumns("id", "name")
+        e3().insertColumns("id_", "name")
                 .values(1, "x")
                 .values(8, "y").exec();
 
@@ -80,7 +80,7 @@ public class GET_RequestPropertyIT extends JerseyAndDerbyCase {
     @Test
     public void testRequest_ShadowProperty_Exclude() {
 
-        e3().insertColumns("id", "name")
+        e3().insertColumns("id_", "name")
                 .values(1, "x")
                 .values(2, "y").exec();
 

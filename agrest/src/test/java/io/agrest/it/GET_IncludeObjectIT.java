@@ -41,8 +41,8 @@ public class GET_IncludeObjectIT extends JerseyAndDerbyCase {
     @Test
     public void testPathRelationship() {
 
-        e2().insertColumns("id", "name").values(1, "xxx").exec();
-        e3().insertColumns("id", "name", "e2_id").values(8, "yyy", 1).exec();
+        e2().insertColumns("id_", "name").values(1, "xxx").exec();
+        e3().insertColumns("id_", "name", "e2_id").values(8, "yyy", 1).exec();
 
         Response r = target("/e3")
                 .queryParam("include", urlEnc("{\"path\":\"e2\"}"))
@@ -55,8 +55,8 @@ public class GET_IncludeObjectIT extends JerseyAndDerbyCase {
     @Test
     public void testMapBy_ToOne() {
 
-        e2().insertColumns("id", "name").values(1, "xxx").exec();
-        e3().insertColumns("id", "name", "e2_id").values(8, "yyy", 1).exec();
+        e2().insertColumns("id_", "name").values(1, "xxx").exec();
+        e3().insertColumns("id_", "name", "e2_id").values(8, "yyy", 1).exec();
 
         Response r = target("/e3")
                 .queryParam("include", urlEnc("{\"path\":\"e2\",\"mapBy\":\"name\"}"))
@@ -71,8 +71,8 @@ public class GET_IncludeObjectIT extends JerseyAndDerbyCase {
     @Test
     public void testMapBy_ToMany() {
 
-        e2().insertColumns("id", "name").values(1, "xxx").exec();
-        e3().insertColumns("id", "name", "e2_id")
+        e2().insertColumns("id_", "name").values(1, "xxx").exec();
+        e3().insertColumns("id_", "name", "e2_id")
                 .values(8, "aaa", 1)
                 .values(9, "zzz", 1)
                 .values(7, "aaa", 1).exec();
@@ -91,8 +91,8 @@ public class GET_IncludeObjectIT extends JerseyAndDerbyCase {
     @Test
     public void testMapBy_ToMany_ById() {
 
-        e2().insertColumns("id", "name").values(1, "xxx").exec();
-        e3().insertColumns("id", "name", "e2_id")
+        e2().insertColumns("id_", "name").values(1, "xxx").exec();
+        e3().insertColumns("id_", "name", "e2_id")
                 .values(8, "aaa", 1)
                 .values(9, "zzz", 1)
                 .values(7, "aaa", 1).exec();
@@ -113,8 +113,8 @@ public class GET_IncludeObjectIT extends JerseyAndDerbyCase {
     public void testMapBy_ToMany_ByRelatedId() {
 
         e5().insertColumns("id").values(45).values(46).exec();
-        e2().insertColumns("id", "name").values(1, "xxx").exec();
-        e3().insertColumns("id", "name", "e2_id", "e5_id")
+        e2().insertColumns("id_", "name").values(1, "xxx").exec();
+        e3().insertColumns("id_", "name", "e2_id", "e5_id")
                 .values(8, "aaa", 1, 45)
                 .values(9, "zzz", 1, 45)
                 .values(7, "aaa", 1, 46).exec();
@@ -137,9 +137,9 @@ public class GET_IncludeObjectIT extends JerseyAndDerbyCase {
                 .values(45, "T")
                 .values(46, "Y").exec();
 
-        e2().insertColumns("id", "name").values(1, "xxx").exec();
+        e2().insertColumns("id_", "name").values(1, "xxx").exec();
 
-        e3().insertColumns("id", "name", "e2_id", "e5_id")
+        e3().insertColumns("id_", "name", "e2_id", "e5_id")
                 .values(8, "aaa", 1, 45)
                 .values(9, "zzz", 1, 45)
                 .values(7, "aaa", 1, 46).exec();
@@ -162,9 +162,9 @@ public class GET_IncludeObjectIT extends JerseyAndDerbyCase {
                 .values(45, "T", "2013-01-03")
                 .values(46, "Y", "2013-01-04").exec();
 
-        e2().insertColumns("id", "name").values(1, "xxx").exec();
+        e2().insertColumns("id_", "name").values(1, "xxx").exec();
 
-        e3().insertColumns("id", "name", "e2_id", "e5_id")
+        e3().insertColumns("id_", "name", "e2_id", "e5_id")
                 .values(8, "aaa", 1, 45)
                 .values(9, "zzz", 1, 45)
                 .values(7, "aaa", 1, 46).exec();
@@ -185,8 +185,8 @@ public class GET_IncludeObjectIT extends JerseyAndDerbyCase {
 
         // see LF-294 - filter applied too late may cause a AgException
 
-        e2().insertColumns("id", "name").values(1, "xxx").exec();
-        e3().insertColumns("id", "name", "e2_id")
+        e2().insertColumns("id_", "name").values(1, "xxx").exec();
+        e3().insertColumns("id_", "name", "e2_id")
                 .values(8, "aaa", 1)
                 .values(9, "zzz", 1)
                 .values(7, "aaa", 1)
@@ -206,8 +206,8 @@ public class GET_IncludeObjectIT extends JerseyAndDerbyCase {
     @Test
     public void testToMany_Sort() {
 
-        e2().insertColumns("id", "name").values(1, "xxx").exec();
-        e3().insertColumns("id", "name", "e2_id")
+        e2().insertColumns("id_", "name").values(1, "xxx").exec();
+        e3().insertColumns("id_", "name", "e2_id")
                 .values(8, "z", 1)
                 .values(9, "s", 1)
                 .values(7, "b", 1).exec();
@@ -232,9 +232,9 @@ public class GET_IncludeObjectIT extends JerseyAndDerbyCase {
                 .values(143, "D")
                 .values(146, "A").exec();
 
-        e2().insertColumns("id", "name").values(11, "xxx").exec();
+        e2().insertColumns("id_", "name").values(11, "xxx").exec();
 
-        e3().insertColumns("id", "name", "e2_id", "e5_id")
+        e3().insertColumns("id_", "name", "e2_id", "e5_id")
                 .values(18, "s", 11, 145)
                 .values(19, "z", 11, 143)
                 .values(17, "b", 11, 146).exec();
@@ -257,9 +257,9 @@ public class GET_IncludeObjectIT extends JerseyAndDerbyCase {
                 .values(245, "B")
                 .values(246, "A").exec();
 
-        e2().insertColumns("id", "name").values(21, "xxx").exec();
+        e2().insertColumns("id_", "name").values(21, "xxx").exec();
 
-        e3().insertColumns("id", "name", "e2_id", "e5_id")
+        e3().insertColumns("id_", "name", "e2_id", "e5_id")
                 .values(28, "s", 21, 245)
                 .values(29, "z", 21, 245)
                 .values(27, "b", 21, 246).exec();
@@ -279,9 +279,9 @@ public class GET_IncludeObjectIT extends JerseyAndDerbyCase {
     @Test
     public void testToMany_CayenneExp() {
 
-        e2().insertColumns("id", "name").values(1, "xxx").exec();
+        e2().insertColumns("id_", "name").values(1, "xxx").exec();
 
-        e3().insertColumns("id", "name", "e2_id")
+        e3().insertColumns("id_", "name", "e2_id")
                 .values(8, "a", 1)
                 .values(9, "z", 1)
                 .values(7, "a", 1).exec();
@@ -303,9 +303,9 @@ public class GET_IncludeObjectIT extends JerseyAndDerbyCase {
                 .values(545, "B")
                 .values(546, "A").exec();
 
-        e2().insertColumns("id", "name").values(51, "xxx").exec();
+        e2().insertColumns("id_", "name").values(51, "xxx").exec();
 
-        e3().insertColumns("id", "name", "e2_id", "e5_id")
+        e3().insertColumns("id_", "name", "e2_id", "e5_id")
                 .values(58, "s", 51, 545)
                 .values(59, "z", 51, 545)
                 .values(57, "b", 51, 546).exec();
@@ -322,8 +322,8 @@ public class GET_IncludeObjectIT extends JerseyAndDerbyCase {
     @Test
     public void testToMany_Exclude() {
 
-        e2().insertColumns("id", "name").values(1, "xxx").exec();
-        e3().insertColumns("id", "name", "e2_id")
+        e2().insertColumns("id_", "name").values(1, "xxx").exec();
+        e3().insertColumns("id_", "name", "e2_id")
                 .values(8, "a", 1)
                 .values(9, "z", 1)
                 .values(7, "m", 1).exec();
@@ -345,9 +345,9 @@ public class GET_IncludeObjectIT extends JerseyAndDerbyCase {
                 .values(345, "B")
                 .values(346, "A").exec();
 
-        e2().insertColumns("id", "name").values(1, "xxx").exec();
+        e2().insertColumns("id_", "name").values(1, "xxx").exec();
 
-        e3().insertColumns("id", "name", "e2_id", "e5_id")
+        e3().insertColumns("id_", "name", "e2_id", "e5_id")
                 .values(8, "a", 1, 345)
                 .values(9, "z", 1, 345)
                 .values(7, "m", 1, 346).exec();
@@ -370,9 +370,9 @@ public class GET_IncludeObjectIT extends JerseyAndDerbyCase {
                 .values(345, "B")
                 .values(346, "A").exec();
 
-        e2().insertColumns("id", "name").values(1, "xxx").exec();
+        e2().insertColumns("id_", "name").values(1, "xxx").exec();
 
-        e3().insertColumns("id", "name", "e2_id", "e5_id")
+        e3().insertColumns("id_", "name", "e2_id", "e5_id")
                 .values(8, "a", 1, 345)
                 .values(9, "z", 1, 345)
                 .values(7, "m", 1, 346).exec();
@@ -395,9 +395,9 @@ public class GET_IncludeObjectIT extends JerseyAndDerbyCase {
                 .values(345, "B")
                 .values(346, "A").exec();
 
-        e2().insertColumns("id", "name").values(1, "xxx").exec();
+        e2().insertColumns("id_", "name").values(1, "xxx").exec();
 
-        e3().insertColumns("id", "name", "e2_id", "e5_id")
+        e3().insertColumns("id_", "name", "e2_id", "e5_id")
                 .values(8, "a", 1, 345)
                 .values(9, "z", 1, 345)
                 .values(7, "m", 1, 346).exec();
@@ -420,9 +420,9 @@ public class GET_IncludeObjectIT extends JerseyAndDerbyCase {
                 .values(345, "B")
                 .values(346, "A").exec();
 
-        e2().insertColumns("id", "name").values(1, "xxx").exec();
+        e2().insertColumns("id_", "name").values(1, "xxx").exec();
 
-        e3().insertColumns("id", "name", "e2_id", "e5_id")
+        e3().insertColumns("id_", "name", "e2_id", "e5_id")
                 .values(8, "a", 1, 345)
                 .values(9, "z", 1, 345)
                 .values(7, "m", 1, 346).exec();

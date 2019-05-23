@@ -46,7 +46,7 @@ public class POST_Client_IT extends JerseyAndDerbyCase {
         assertEquals(Status.CREATED, r1.getStatus());
         assertEquals(1, r1.getTotal());
 
-        int e3_id = r1.getData().get(0).get(E3.ID_PK_COLUMN).asInt();
+        int e3_id = r1.getData().get(0).get("id").asInt();
         JsonNode e3 = createE3(e3_id, "ccc");
         assertEquals(e3, r1.getData().get(0));
 
@@ -59,7 +59,7 @@ public class POST_Client_IT extends JerseyAndDerbyCase {
         assertEquals(Status.CREATED, r2.getStatus());
         assertEquals(1, r2.getTotal());
 
-        int e2_id = r2.getData().get(0).get(E2.ID_PK_COLUMN).asInt();
+        int e2_id = r2.getData().get(0).get("id").asInt();
         assertEquals(createE2(e2_id, "xxx", e3), r2.getData().get(0));
     }
 

@@ -43,7 +43,7 @@ public class Encoder_VisitIT extends JerseyAndDerbyCase {
     @Test
     public void testNoLimits() {
 
-        e2().insertColumns("id", "name")
+        e2().insertColumns("id_", "name")
                 .values(1, "xxx")
                 .values(2, "yyy")
                 .values(3, "zzz").exec();
@@ -55,7 +55,7 @@ public class Encoder_VisitIT extends JerseyAndDerbyCase {
     @Test
     public void testStartLimit() {
 
-        e2().insertColumns("id", "name")
+        e2().insertColumns("id_", "name")
                 .values(1, "xxx")
                 .values(2, "yyy")
                 .values(3, "zzz")
@@ -76,7 +76,7 @@ public class Encoder_VisitIT extends JerseyAndDerbyCase {
     @Test
     public void testVisitorLimit() {
 
-        e2().insertColumns("id", "name")
+        e2().insertColumns("id_", "name")
                 .values(1, "xxx")
                 .values(2, "yyy")
                 .values(3, "zzz").exec();
@@ -91,12 +91,12 @@ public class Encoder_VisitIT extends JerseyAndDerbyCase {
     @Test
     public void testRelated() {
 
-        e2().insertColumns("id", "name")
+        e2().insertColumns("id_", "name")
                 .values(1, "xxx")
                 .values(2, "yyy")
                 .values(3, "zzz").exec();
 
-        e3().insertColumns("id", "name", "e2_id")
+        e3().insertColumns("id_", "name", "e2_id")
                 .values(7, "zzz", 2)
                 .values(8, "yyy", 1)
                 .values(9, "zzz", 1).exec();

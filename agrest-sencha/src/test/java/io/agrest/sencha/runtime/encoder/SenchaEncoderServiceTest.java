@@ -108,11 +108,11 @@ public class SenchaEncoderServiceTest extends TestWithCayenneMapping {
         ObjectContext context = cayenneService.newContext();
 
         E2 e21 = new E2();
-        e21.setObjectId(new ObjectId("E2", E2.ID_PK_COLUMN, 7));
+        e21.setObjectId(new ObjectId("E2", E2.ID__PK_COLUMN, 7));
         context.registerNewObject(e21);
 
         E3 e31 = new E3();
-        e31.setObjectId(new ObjectId("E3", E3.ID_PK_COLUMN, 5));
+        e31.setObjectId(new ObjectId("E3", E3.ID__PK_COLUMN, 5));
         context.registerNewObject(e31);
         e31.setE2(e21);
 
@@ -124,11 +124,11 @@ public class SenchaEncoderServiceTest extends TestWithCayenneMapping {
                 toJson(e31, e3Descriptor));
 
         E2 e22 = new E2();
-        e22.setObjectId(new ObjectId("E2", E2.ID_PK_COLUMN, 8));
+        e22.setObjectId(new ObjectId("E2", E2.ID__PK_COLUMN, 8));
         context.registerNewObject(e22);
 
         E3 e32 = new E3();
-        e32.setObjectId(new ObjectId("E3", E3.ID_PK_COLUMN, 6));
+        e32.setObjectId(new ObjectId("E3", E3.ID__PK_COLUMN, 6));
         context.registerNewObject(e32);
         e32.setE2(e22);
 

@@ -33,20 +33,20 @@ public class PUT_EntityUpdateBindingIT extends JerseyAndDerbyCase {
     @Test
     public void testSingle() {
 
-        e3().insertColumns("id", "name").values(3, "zzz").exec();
+        e3().insertColumns("id_", "name").values(3, "zzz").exec();
 
         Response response = target("/e3/updatebinding/3")
                 .request()
                 .put(Entity.json("{\"id\":3,\"name\":\"yyy\"}"));
 
         onSuccess(response).bodyEquals("{\"success\":true}");
-        e3().matcher().eq("id", 3).eq("name", "yyy").assertOneMatch();
+        e3().matcher().eq("id_", 3).eq("name", "yyy").assertOneMatch();
     }
 
     @Test
     public void testCollection() {
 
-        e3().insertColumns("id", "name")
+        e3().insertColumns("id_", "name")
                 .values(3, "zzz")
                 .values(4, "xxx")
                 .values(5, "mmm").exec();
@@ -58,8 +58,8 @@ public class PUT_EntityUpdateBindingIT extends JerseyAndDerbyCase {
         onSuccess(response).bodyEquals("{\"success\":true}");
 
         e3().matcher().assertMatches(2);
-        e3().matcher().eq("id", 3).eq("name", "yyy").assertOneMatch();
-        e3().matcher().eq("id", 5).eq("name", "nnn").assertOneMatch();
+        e3().matcher().eq("id_", 3).eq("name", "yyy").assertOneMatch();
+        e3().matcher().eq("id_", 5).eq("name", "nnn").assertOneMatch();
     }
 
     @Path("")

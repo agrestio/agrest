@@ -50,10 +50,10 @@ public class PUT_Related_IT extends JerseyAndDerbyCase {
     @Test
     public void testRelate_EmptyPutWithID() {
 
-        e2().insertColumns("id", "name")
+        e2().insertColumns("id_", "name")
                 .values(24, "xxx").exec();
 
-        e3().insertColumns("id", "name")
+        e3().insertColumns("id_", "name")
                 .values(7, "zzz")
                 .values(8, "yyy").exec();
 
@@ -67,10 +67,10 @@ public class PUT_Related_IT extends JerseyAndDerbyCase {
 
     @Test
     public void testRelate_ValidRel_ToOne_Existing() {
-        e2().insertColumns("id", "name")
+        e2().insertColumns("id_", "name")
                 .values(24, "xxx").exec();
 
-        e3().insertColumns("id", "name")
+        e3().insertColumns("id_", "name")
                 .values(7, "zzz")
                 .values(8, "yyy").exec();
 
@@ -86,10 +86,10 @@ public class PUT_Related_IT extends JerseyAndDerbyCase {
     @Test
     public void testRelate_ValidRel_ToOne_Existing_WithUpdate() {
 
-        e2().insertColumns("id", "name")
+        e2().insertColumns("id_", "name")
                 .values(24, "xxx").exec();
 
-        e3().insertColumns("id", "name")
+        e3().insertColumns("id_", "name")
                 .values(7, "zzz")
                 .values(8, "yyy").exec();
 
@@ -170,7 +170,7 @@ public class PUT_Related_IT extends JerseyAndDerbyCase {
     @Test
     public void testRelate_ValidRel_ToOne_New_AutogenId() {
 
-        e3().insertColumns("id", "name")
+        e3().insertColumns("id_", "name")
                 .values(7, "zzz")
                 .values(8, "yyy").exec();
 
@@ -265,11 +265,11 @@ public class PUT_Related_IT extends JerseyAndDerbyCase {
     @Test
     public void testRelate_ToMany_NoIds() {
 
-        e2().insertColumns("id", "name")
+        e2().insertColumns("id_", "name")
                 .values(15, "xxx")
                 .values(16, "xxx").exec();
 
-        e3().insertColumns("id", "name", "e2_id")
+        e3().insertColumns("id_", "name", "e2_id")
                 .values(7, "zzz", 16)
                 .values(8, "yyy", 15)
                 .values(9, "aaa", 15).exec();

@@ -49,7 +49,7 @@ public class DELETE_Client_IT extends JerseyAndDerbyCase {
         assertEquals(Status.CREATED, r1.getStatus());
         assertEquals(1, r1.getTotal());
 
-        int id = r1.getData().get(0).get(E2.ID_PK_COLUMN).asInt();
+        int id = r1.getData().get(0).get("id").asInt();
         JsonNode e2 = EntityUtil.createE2(id, "xxx");
         assertEquals(e2, r1.getData().get(0));
 

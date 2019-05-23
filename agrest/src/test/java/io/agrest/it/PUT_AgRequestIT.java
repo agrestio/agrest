@@ -34,7 +34,7 @@ public class PUT_AgRequestIT extends JerseyAndDerbyCase {
     @Test
     public void testPUT_Includes_OverrideByAgRequest() {
 
-        e3().insertColumns("id", "name")
+        e3().insertColumns("id_", "name")
                 .values(5, "aaa")
                 .values(4, "zzz")
                 .values(2, "bbb")
@@ -58,7 +58,7 @@ public class PUT_AgRequestIT extends JerseyAndDerbyCase {
     @Test
     public void testPUT_Excludes_OverrideByAgRequest() {
 
-        e3().insertColumns("id", "name")
+        e3().insertColumns("id_", "name")
                 .values(5, "aaa")
                 .values(4, "zzz")
                 .values(2, "bbb")

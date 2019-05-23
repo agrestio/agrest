@@ -33,10 +33,10 @@ public class GET_IncludeIT extends JerseyAndDerbyCase {
     @Test
     public void testRelated() {
 
-        e2().insertColumns("id", "name")
+        e2().insertColumns("id_", "name")
                 .values(1, "xxx").exec();
 
-        e3().insertColumns("id", "name", "e2_id")
+        e3().insertColumns("id_", "name", "e2_id")
                 .values(8, "yyy", 1)
                 .values(9, "zzz", 1).exec();
 
@@ -55,8 +55,8 @@ public class GET_IncludeIT extends JerseyAndDerbyCase {
     public void testOrderOfInclude() {
 
         e5().insertColumns("id", "name", "date").values(45, "T", "2013-01-03").exec();
-        e2().insertColumns("id", "name").values(8, "yyy").exec();
-        e3().insertColumns("id", "name", "e2_id", "e5_id").values(3, "zzz", 8, 45).exec();
+        e2().insertColumns("id_", "name").values(8, "yyy").exec();
+        e3().insertColumns("id_", "name", "e2_id", "e5_id").values(3, "zzz", 8, 45).exec();
 
         Response r1 = target("/e3")
                 .queryParam("include", "id", "e2", "e2.id")
@@ -77,8 +77,8 @@ public class GET_IncludeIT extends JerseyAndDerbyCase {
     @Test
     public void testPhantom() {
         e5().insertColumns("id", "name", "date").values(45, "T", "2013-01-03").exec();
-        e2().insertColumns("id", "name").values(8, "yyy").exec();
-        e3().insertColumns("id", "name", "e2_id", "e5_id").values(3, "zzz", 8, 45).exec();
+        e2().insertColumns("id_", "name").values(8, "yyy").exec();
+        e3().insertColumns("id_", "name", "e2_id", "e5_id").values(3, "zzz", 8, 45).exec();
 
         Response r = target("/e2")
                 .queryParam("include", "id", "e3s.e5.id")
@@ -92,9 +92,9 @@ public class GET_IncludeIT extends JerseyAndDerbyCase {
     @Test
     public void testStartLimit() {
 
-        e2().insertColumns("id", "name").values(1, "xxx").exec();
+        e2().insertColumns("id_", "name").values(1, "xxx").exec();
 
-        e3().insertColumns("id", "name", "e2_id")
+        e3().insertColumns("id_", "name", "e2_id")
                 .values(8, "yyy", 1)
                 .values(9, "zzz", 1)
                 .values(10, "zzz", 1)

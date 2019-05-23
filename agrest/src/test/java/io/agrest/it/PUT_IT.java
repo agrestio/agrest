@@ -81,42 +81,42 @@ public class PUT_IT extends JerseyAndDerbyCase {
     @Test
     public void testToOne() {
 
-        e2().insertColumns("id", "name")
+        e2().insertColumns("id_", "name")
                 .values(1, "xxx")
                 .values(8, "yyy").exec();
-        e3().insertColumns("id", "name", "e2_id").values(3, "zzz", 8).exec();
+        e3().insertColumns("id_", "name", "e2_id").values(3, "zzz", 8).exec();
 
         Response response = target("/e3/3")
                 .request()
                 .put(Entity.json("{\"id\":3,\"e2\":1}"));
 
         onSuccess(response).bodyEquals(1, "{\"id\":3,\"name\":\"zzz\",\"phoneNumber\":null}");
-        e3().matcher().eq("id", 3).eq("e2_id", 1).assertOneMatch();
+        e3().matcher().eq("id_", 3).eq("e2_id", 1).assertOneMatch();
     }
 
     @Test
     public void testToOne_ArraySyntax() {
 
-        e2().insertColumns("id", "name")
+        e2().insertColumns("id_", "name")
                 .values(1, "xxx")
                 .values(8, "yyy").exec();
-        e3().insertColumns("id", "name", "e2_id").values(3, "zzz", 8).exec();
+        e3().insertColumns("id_", "name", "e2_id").values(3, "zzz", 8).exec();
 
         Response response = target("/e3/3")
                 .request()
                 .put(Entity.json("{\"id\":3,\"e2\":[1]}"));
 
         onSuccess(response).bodyEquals(1, "{\"id\":3,\"name\":\"zzz\",\"phoneNumber\":null}");
-        e3().matcher().eq("id", 3).eq("e2_id", 1).assertOneMatch();
+        e3().matcher().eq("id_", 3).eq("e2_id", 1).assertOneMatch();
     }
 
     @Test
     public void testToOne_ToNull() {
 
-        e2().insertColumns("id", "name")
+        e2().insertColumns("id_", "name")
                 .values(1, "xxx")
                 .values(8, "yyy").exec();
-        e3().insertColumns("id", "name", "e2_id").values(3, "zzz", 8).exec();
+        e3().insertColumns("id_", "name", "e2_id").values(3, "zzz", 8).exec();
 
         Response response = target("/e3/3")
                 .request()
@@ -127,7 +127,7 @@ public class PUT_IT extends JerseyAndDerbyCase {
         // TODO: can't use matcher until BQ 1.1 upgrade (because of https://github.com/bootique/bootique-jdbc/issues/91 )
         //  so using select...
 
-        List<Object[]> rows = e3().selectColumns("id", "e2_id");
+        List<Object[]> rows = e3().selectColumns("id_", "e2_id");
         assertEquals(1, rows.size());
         assertEquals(3, rows.get(0)[0]);
         assertNull(rows.get(0)[1]);
@@ -136,22 +136,22 @@ public class PUT_IT extends JerseyAndDerbyCase {
     @Test
     public void testToOne_FromNull() {
 
-        e2().insertColumns("id", "name")
+        e2().insertColumns("id_", "name")
                 .values(1, "xxx")
                 .values(8, "yyy").exec();
-        e3().insertColumns("id", "name", "e2_id").values(3, "zzz", null).exec();
+        e3().insertColumns("id_", "name", "e2_id").values(3, "zzz", null).exec();
 
         Entity<String> entity = Entity.json("{\"id\":3,\"e2\":8}");
         Response response = target("/e3/3").request().put(entity);
 
         onSuccess(response).bodyEquals(1, "{\"id\":3,\"name\":\"zzz\",\"phoneNumber\":null}");
-        e3().matcher().eq("id", 3).eq("e2_id", 8).assertOneMatch();
+        e3().matcher().eq("id_", 3).eq("e2_id", 8).assertOneMatch();
     }
 
     @Test
     public void testBulk() {
 
-        e3().insertColumns("id", "name")
+        e3().insertColumns("id_", "name")
                 .values(5, "aaa")
                 .values(4, "zzz")
                 .values(2, "bbb")
@@ -369,10 +369,10 @@ public class PUT_IT extends JerseyAndDerbyCase {
     @Test
     public void testToMany() {
 
-        e2().insertColumns("id", "name")
+        e2().insertColumns("id_", "name")
                 .values(1, "xxx")
                 .values(8, "yyy").exec();
-        e3().insertColumns("id", "name", "e2_id")
+        e3().insertColumns("id_", "name", "e2_id")
                 .values(3, "zzz", null)
                 .values(4, "aaa", 8)
                 .values(5, "bbb", 8).exec();
@@ -389,10 +389,10 @@ public class PUT_IT extends JerseyAndDerbyCase {
     @Test
     public void testToMany_UnrelateAll() {
 
-        e2().insertColumns("id", "name")
+        e2().insertColumns("id_", "name")
                 .values(1, "xxx")
                 .values(8, "yyy").exec();
-        e3().insertColumns("id", "name", "e2_id")
+        e3().insertColumns("id_", "name", "e2_id")
                 .values(3, "zzz", null)
                 .values(4, "aaa", 8)
                 .values(5, "bbb", 8).exec();
@@ -412,10 +412,10 @@ public class PUT_IT extends JerseyAndDerbyCase {
     @Test
     public void testToMany_UnrelateOne() {
 
-        e2().insertColumns("id", "name")
+        e2().insertColumns("id_", "name")
                 .values(1, "xxx")
                 .values(8, "yyy").exec();
-        e3().insertColumns("id", "name", "e2_id")
+        e3().insertColumns("id_", "name", "e2_id")
                 .values(3, "zzz", null)
                 .values(4, "aaa", 8)
                 .values(5, "bbb", 8).exec();
@@ -428,8 +428,8 @@ public class PUT_IT extends JerseyAndDerbyCase {
 
         onSuccess(response).bodyEquals(1, "{\"id\":1,\"e3s\":[{\"id\":4}]}");
 
-        e3().matcher().eq("e2_id", 1).eq("id", 4).assertOneMatch();
-        e3().matcher().eq("e2_id", 8).eq("id", 5).assertOneMatch();
+        e3().matcher().eq("e2_id", 1).eq("id_", 4).assertOneMatch();
+        e3().matcher().eq("e2_id", 8).eq("id_", 5).assertOneMatch();
     }
 
     @Path("")

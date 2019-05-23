@@ -35,26 +35,26 @@ public class Sencha_PUT_IT extends SenchaBQJerseyTestOnDerby {
     @Test
     public void testPut_ToOne_FromNull() {
 
-        e2().insertColumns("id", "name")
+        e2().insertColumns("id_", "name")
                 .values(1, "xxx")
                 .values(8, "yyy").exec();
 
-        e3().insertColumns("id", "name", "e2_id").values(3, "zzz", null).exec();
+        e3().insertColumns("id_", "name", "e2_id").values(3, "zzz", null).exec();
 
         Response r = target("/e3/3").request().put(Entity.json("{\"id\":3,\"e2_id\":8}"));
         onSuccess(r).bodyEquals(1, "{\"id\":3,\"name\":\"zzz\",\"phoneNumber\":null}");
 
-        e3().matcher().eq("id", 3).eq("e2_id", 8).assertOneMatch();
+        e3().matcher().eq("id_", 3).eq("e2_id", 8).assertOneMatch();
     }
 
     @Test
     public void testPut_ToOne_ToNull() {
 
-        e2().insertColumns("id", "name")
+        e2().insertColumns("id_", "name")
                 .values(1, "xxx")
                 .values(8, "yyy").exec();
 
-        e3().insertColumns("id", "name", "e2_id").values(3, "zzz", 8).exec();
+        e3().insertColumns("id_", "name", "e2_id").values(3, "zzz", 8).exec();
 
         Response r = target("/e3/3").request().put(Entity.json("{\"id\":3,\"e2_id\":null}"));
         onSuccess(r).bodyEquals(1, "{\"id\":3,\"name\":\"zzz\",\"phoneNumber\":null}");
@@ -62,7 +62,7 @@ public class Sencha_PUT_IT extends SenchaBQJerseyTestOnDerby {
         // TODO: can't use matcher for NULLs until BQ 1.1 upgrade (because of https://github.com/bootique/bootique-jdbc/issues/91 )
         //  so using select...
 
-        List<Object[]> rows = e3().selectColumns("id", "e2_id");
+        List<Object[]> rows = e3().selectColumns("id_", "e2_id");
         assertEquals(1, rows.size());
         assertEquals(3, rows.get(0)[0]);
         assertNull(rows.get(0)[1]);
@@ -71,32 +71,32 @@ public class Sencha_PUT_IT extends SenchaBQJerseyTestOnDerby {
     @Test
     public void testPut_ToOne() {
 
-        e2().insertColumns("id", "name")
+        e2().insertColumns("id_", "name")
                 .values(1, "xxx")
                 .values(8, "yyy").exec();
 
-        e3().insertColumns("id", "name", "e2_id").values(3, "zzz", 8).exec();
+        e3().insertColumns("id_", "name", "e2_id").values(3, "zzz", 8).exec();
 
         Response r = target("/e3/3").request().put(Entity.json("{\"id\":3,\"e2_id\":1}"));
         onSuccess(r).bodyEquals(1, "{\"id\":3,\"name\":\"zzz\",\"phoneNumber\":null}");
 
-        e3().matcher().eq("id", 3).eq("e2_id", 1).assertOneMatch();
+        e3().matcher().eq("id_", 3).eq("e2_id", 1).assertOneMatch();
     }
 
     @Test
     public void testPut_ToOne_Relationship_Name() {
 
-        e2().insertColumns("id", "name")
+        e2().insertColumns("id_", "name")
                 .values(1, "xxx")
                 .values(8, "yyy").exec();
 
-        e3().insertColumns("id", "name", "e2_id")
+        e3().insertColumns("id_", "name", "e2_id")
                 .values(3, "zzz", 8).exec();
 
         Response r = target("/e3/3").request().put(Entity.json("{\"id\":3,\"e2\":1}"));
         onSuccess(r).bodyEquals(1, "{\"id\":3,\"name\":\"zzz\",\"phoneNumber\":null}");
 
-        e3().matcher().eq("id", 3).eq("e2_id", 1).assertOneMatch();
+        e3().matcher().eq("id_", 3).eq("e2_id", 1).assertOneMatch();
     }
 
     @Path("")
