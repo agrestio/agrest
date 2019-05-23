@@ -1,5 +1,6 @@
 package io.agrest.runtime.encoder;
 
+import io.agrest.AgObjectId;
 import io.agrest.CompoundObjectId;
 import io.agrest.EntityProperty;
 import io.agrest.ResourceEntity;
@@ -89,37 +90,31 @@ public class AttributeEncoderFactory implements IAttributeEncoderFactory {
     }
 
     protected EntityProperty buildRelationshipProperty(ResourceEntity<?> entity, AgRelationship relationship, Encoder encoder) {
+
+        // for now only "overlay" relationships have non-null readers
+        if (relationship.getPropertyReader() != null) {
+            return PropertyBuilder.property(relationship.getPropertyReader());
+        }
+
         boolean persistent = relationship instanceof AgPersistentRelationship;
         if (persistent && DataObject.class.isAssignableFrom(entity.getType())) {
-            return PropertyBuilder
-                    .property(
-                            // wraps function to to get AgObjectId from DataObject
-                            (o, n) -> {
-                                Object object = getOrCreateIdPropertyReader(entity.getAgEntity()).value(o, "");
-                                ResourceEntity child = entity.getChildren().get(n);
-                                AgRelationship rel = entity.getAgEntity().getRelationship(n);
-                                Object result = null;
-                                if (object instanceof Map && child != null) {
-                                    Map ids = (Map) object;
 
-                                    if (ids.size() == 1) {
-                                        result = child.getResult(new SimpleObjectId(ids.values().iterator().next()));
-                                    } else if (ids.size() > 1) {
-                                        result = child.getResult(new CompoundObjectId(ids));
-                                    }
+            PropertyReader reader = (root, name) -> {
 
-                                    if (result == null && rel.isToMany()) {
-                                        result = Collections.emptyList();
-                                    }
-                                }
-                                return result;
-                            })
-                    .encodedWith(encoder);
-        } else if (relationship.getPropertyReader() != null) {
-            return PropertyBuilder.property(relationship.getPropertyReader());
-        } else {
-            return PropertyBuilder.property().encodedWith(encoder);
+                AgObjectId id = readObjectId(entity.getAgEntity(), (DataObject) root);
+
+                ResourceEntity childEntity = entity.getChildren().get(name);
+                Object result = childEntity.getResult(id);
+
+                return result == null && relationship.isToMany()
+                        ? Collections.emptyList()
+                        : result;
+            };
+
+            return PropertyBuilder.property(reader).encodedWith(encoder);
         }
+
+        return PropertyBuilder.property().encodedWith(encoder);
     }
 
     protected EntityProperty buildAttributeProperty(AgEntity<?> entity, AgAttribute attribute) {
@@ -155,14 +150,14 @@ public class AttributeEncoderFactory implements IAttributeEncoderFactory {
                     valueEncoders.put(id.getName(), valueEncoder);
                 }
 
-                return PropertyBuilder.property(getOrCreateIdPropertyReader(entity.getAgEntity()))
+                return PropertyBuilder.property(getOrCreateIdReader(entity.getAgEntity()))
                         .encodedWith(new IdEncoder(valueEncoders));
             } else {
 
                 AgAttribute id = ids.iterator().next();
                 Encoder valueEncoder = buildEncoder(id);
 
-                return PropertyBuilder.property(getOrCreateIdPropertyReader(entity.getAgEntity()))
+                return PropertyBuilder.property(getOrCreateIdReader(entity.getAgEntity()))
                         .encodedWith(new IdEncoder(valueEncoder));
             }
         } else {
@@ -188,7 +183,20 @@ public class AttributeEncoderFactory implements IAttributeEncoderFactory {
         return buildEncoder(attribute.getType());
     }
 
-    private IdPropertyReader getOrCreateIdPropertyReader(AgEntity<?> entity) {
+    private AgObjectId readObjectId(AgEntity<?> entity, DataObject object) {
+
+        Map<String, Object> idMap = (Map<String, Object>) getOrCreateIdReader(entity).value(object, null);
+
+        if (idMap.size() == 1) {
+            return new SimpleObjectId(idMap.values().iterator().next());
+        } else if (idMap.size() > 1) {
+            return new CompoundObjectId(idMap);
+        }
+
+        throw new RuntimeException("ID is empty for entity '" + entity.getName() + "'");
+    }
+
+    private IdPropertyReader getOrCreateIdReader(AgEntity<?> entity) {
         return idPropertyReaders.computeIfAbsent(entity, e -> new IdPropertyReader(e));
     }
 
