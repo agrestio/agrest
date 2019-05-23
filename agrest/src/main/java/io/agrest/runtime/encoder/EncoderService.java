@@ -26,7 +26,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TreeMap;
-import java.util.concurrent.ConcurrentHashMap;
 
 public class EncoderService implements IEncoderService {
 
@@ -35,7 +34,6 @@ public class EncoderService implements IEncoderService {
     private IStringConverterFactory stringConverterFactory;
     private List<EncoderFilter> filters;
     private Map<String, PropertyMetadataEncoder> propertyMetadataEncoders;
-    private Map<ResourceEntity<?>, Encoder> entityMetadataEncoders;
 
     public EncoderService(
             @Inject List<EncoderFilter> filters,
@@ -49,7 +47,6 @@ public class EncoderService implements IEncoderService {
         this.stringConverterFactory = stringConverterFactory;
         this.filters = filters;
         this.propertyMetadataEncoders = propertyMetadataEncoders;
-        this.entityMetadataEncoders = new ConcurrentHashMap<>();
     }
 
     @Override
@@ -128,9 +125,7 @@ public class EncoderService implements IEncoderService {
     }
 
     protected Encoder entityMetadataEncoder(ResourceEntity<?> resourceEntity) {
-        return entityMetadataEncoders.computeIfAbsent(
-                resourceEntity,
-                e -> new EntityMetadataEncoder(resourceEntity, propertyMetadataEncoders));
+        return new EntityMetadataEncoder(resourceEntity, propertyMetadataEncoders);
     }
 
     protected Encoder entityEncoder(ResourceEntity<?> resourceEntity) {

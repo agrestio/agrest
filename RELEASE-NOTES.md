@@ -1,3 +1,7 @@
+Release 3.3
+
+* #414 Metadata encoding related memory leak in EncoderService
+
 Release 3.2
 
 * #262 Switch to bootique-test
