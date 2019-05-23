@@ -78,12 +78,12 @@ public class CayenneAssembleQueryStage implements Processor<SelectContext<?>> {
         entity.setSelect(query);
 
         if (entity.getMapBy() != null) {
-            for(ResourceEntity<?> c : entity.getMapBy().getChildren().values()) {
+            for (ResourceEntity<?> c : entity.getMapBy().getChildren().values()) {
                 buildChildQuery(context, entity, c);
             }
         }
 
-        for(ResourceEntity<?> c : entity.getChildren().values()) {
+        for (ResourceEntity<?> c : entity.getChildren().values()) {
             buildChildQuery(context, entity, c);
         }
 
@@ -91,7 +91,7 @@ public class CayenneAssembleQueryStage implements Processor<SelectContext<?>> {
     }
 
 
-    private void buildChildQuery(SelectContext context, ResourceEntity<?> parent, ResourceEntity<?> child) {
+    private void buildChildQuery(SelectContext context, ResourceEntity<?> parent, ResourceEntity child) {
 
         if (!(child.getAgEntity() instanceof AgPersistentEntity)) {
             return;
