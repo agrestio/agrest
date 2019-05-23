@@ -26,7 +26,6 @@ import javax.ws.rs.core.Response;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 
 /**
  * @since 2.7
@@ -79,50 +78,52 @@ public class CayenneAssembleQueryStage implements Processor<SelectContext<?>> {
         entity.setSelect(query);
 
         if (entity.getMapBy() != null) {
-            buildChildrenQuery(context, entity, entity.getMapBy().getChildren());
+            for(ResourceEntity<?> c : entity.getMapBy().getChildren().values()) {
+                buildChildQuery(context, entity, c);
+            }
         }
 
-        buildChildrenQuery(context, entity, entity.getChildren());
+        for(ResourceEntity<?> c : entity.getChildren().values()) {
+            buildChildQuery(context, entity, c);
+        }
 
         return query;
     }
 
 
-    private void buildChildrenQuery(SelectContext context, ResourceEntity<?> entity, Map<String, ResourceEntity<?>> children) {
-        for (Map.Entry<String, ResourceEntity<?>> e : children.entrySet()) {
-            ResourceEntity child = e.getValue();
-            if (!(child.getAgEntity() instanceof AgPersistentEntity)) {
-                continue;
-            }
+    private void buildChildQuery(SelectContext context, ResourceEntity<?> parent, ResourceEntity<?> child) {
 
-            List<Property> properties = new ArrayList<>();
-            properties.add(Property.createSelf(child.getType()));
-
-            AgRelationship relationship = entity.getAgEntity().getRelationship(e.getKey());
-            if (relationship instanceof CayenneAgRelationship) {
-
-                CayenneAgRelationship rel = (CayenneAgRelationship) relationship;
-
-                for (AgAttribute attribute : entity.getAgEntity().getIds()) {
-
-                    // TODO: is this cast ever going to blow up?
-                    CayenneAgAttribute cayenneAgAttribute = (CayenneAgAttribute) attribute;
-                    Expression propertyExp = ExpressionFactory.dbPathExp(rel.getReverseDbPath() + "." + cayenneAgAttribute.getColumnName());
-                    properties.add(Property.create(propertyExp, (Class) attribute.getType()));
-                }
-
-                // translate expression from parent
-                if (entity.getSelect().getQualifier() != null) {
-                    // TODO: dirty - altering ResourceEntity "qualifier" parameter during query assembly stage. This stage should
-                    //  do what it says it does - assembling query..
-                    child.andQualifier(rel.translateExpressionToSource(entity.getSelect().getQualifier()));
-                }
-
-            }
-
-            SelectQuery childQuery = buildQuery(context, child, null);
-            childQuery.setColumns(properties);
+        if (!(child.getAgEntity() instanceof AgPersistentEntity)) {
+            return;
         }
+
+        List<Property> properties = new ArrayList<>();
+        properties.add(Property.createSelf(child.getType()));
+
+        AgRelationship relationship = child.getIncoming();
+        if (relationship instanceof CayenneAgRelationship) {
+
+            CayenneAgRelationship rel = (CayenneAgRelationship) relationship;
+
+            for (AgAttribute attribute : parent.getAgEntity().getIds()) {
+
+                // TODO: is this cast ever going to blow up?
+                CayenneAgAttribute cayenneAgAttribute = (CayenneAgAttribute) attribute;
+                Expression propertyExp = ExpressionFactory.dbPathExp(rel.getReverseDbPath() + "." + cayenneAgAttribute.getColumnName());
+                properties.add(Property.create(propertyExp, (Class) attribute.getType()));
+            }
+
+            // translate expression from parent
+            if (parent.getSelect().getQualifier() != null) {
+                // TODO: dirty - altering ResourceEntity "qualifier" parameter during query assembly stage. This stage should
+                //  do what it says it does - assembling query..
+                child.andQualifier(rel.translateExpressionToSource(parent.getSelect().getQualifier()));
+            }
+
+        }
+
+        SelectQuery childQuery = buildQuery(context, child, null);
+        childQuery.setColumns(properties);
     }
 
     <T> SelectQuery<T> basicSelect(ResourceEntity<T> resourceEntity, AgObjectId rootId) {
