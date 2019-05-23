@@ -37,7 +37,7 @@ public class DELETE_NaturalIdIT extends JerseyAndDerbyCase {
     @Test
     public void testSingleId() {
 
-        e20().insertColumns("name")
+        e20().insertColumns("name_col")
                 .values("John")
                 .values("Brian").exec();
 
@@ -45,7 +45,7 @@ public class DELETE_NaturalIdIT extends JerseyAndDerbyCase {
         onSuccess(r).bodyEquals("{\"success\":true}");
 
         e20().matcher().assertOneMatch();
-        e20().matcher().eq("name", "Brian").assertOneMatch();
+        e20().matcher().eq("name_col", "Brian").assertOneMatch();
     }
 
     @Test

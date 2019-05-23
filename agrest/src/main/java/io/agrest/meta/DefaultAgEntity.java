@@ -42,6 +42,11 @@ public class DefaultAgEntity<T> implements AgEntity<T> {
 	}
 
 	@Override
+	public AgAttribute getId(String name) {
+		return ids.get(name);
+	}
+
+	@Override
 	public AgRelationship getRelationship(String name) {
 		return relationships.get(name);
 	}

@@ -159,9 +159,8 @@ public class CayenneAssembleQueryStage implements Processor<SelectContext<?>> {
                 qualifiers.add(ExpressionFactory.matchDbExp(
                         ((AgPersistentAttribute) idAttribute).getColumnName(), idValue));
             } else {
-                // TODO: we should not be building DB expressions from public names. They will be invalid. See #412
-                // can be non-persistent attribute if assembled from @AgId by AgEntityBuilder
-                qualifiers.add(ExpressionFactory.matchDbExp(idAttribute.getName(), idValue));
+                throw new AgException(Response.Status.INTERNAL_SERVER_ERROR,
+                        "ID attribute '" + idAttribute.getName() + "' has no mapping to a column name");
             }
         }
         return ExpressionFactory.and(qualifiers);

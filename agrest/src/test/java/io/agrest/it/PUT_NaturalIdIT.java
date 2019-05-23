@@ -36,7 +36,7 @@ public class PUT_NaturalIdIT extends JerseyAndDerbyCase {
     @Test
     public void testSingleId() {
 
-        e20().insertColumns("name")
+        e20().insertColumns("name_col")
                 .values("John")
                 .values("Brian").exec();
 
@@ -50,7 +50,7 @@ public class PUT_NaturalIdIT extends JerseyAndDerbyCase {
 
     @Test
     public void testSingle_Id_SeveralExistingObjects() {
-        e20().insertColumns("name")
+        e20().insertColumns("name_col")
                 .values("John")
                 .values("John").exec();
 

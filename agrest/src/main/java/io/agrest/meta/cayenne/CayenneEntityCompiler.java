@@ -125,17 +125,23 @@ public class CayenneEntityCompiler implements AgEntityCompiler {
         if (annotatedEntity.getIds().size() > 0) {
             for (AgAttribute id : annotatedEntity.getIds()) {
 
-                AgAttribute existing = entity.addId(id);
+                // there is a good chance a designated ID attribute is also a regular persistent attribute.. so make
+                // sure we replace non-persistent with persistent...
+
+                AgAttribute existingNonId = entity.getAttribute(id.getName());
+                AgAttribute existing = entity.addId(existingNonId != null ? existingNonId : id);
+
                 if (existing != null && LOGGER.isDebugEnabled()) {
                     LOGGER.debug("ID attribute '" + existing.getName() + "' is overridden from annotations.");
                 }
             }
 
-            Iterator<AgAttribute> iter = entity.getIds().iterator();
-            while (iter.hasNext()) {
-                AgAttribute id = iter.next();
-                if (!annotatedEntity.getIds().contains(id)) {
-                    iter.remove();
+            // remove Cayenne-mandated ids
+            Iterator<AgAttribute> it = entity.getIds().iterator();
+            while (it.hasNext()) {
+                AgAttribute id = it.next();
+                if (annotatedEntity.getId(id.getName()) == null) {
+                    it.remove();
                 }
             }
         }

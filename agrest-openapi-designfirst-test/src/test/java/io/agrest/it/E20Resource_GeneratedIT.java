@@ -24,7 +24,7 @@ public class E20Resource_GeneratedIT extends JerseyAndDerbyCase {
     @Test
     public void testGET_ById_Exclude() {
 
-        e20().insertColumns("name").values("John").exec();
+        e20().insertColumns("name_col").values("John").exec();
 
         Response r = target("/v1/e20/John")
                 .queryParam("exclude", "age", "description").request().get();
@@ -46,7 +46,7 @@ public class E20Resource_GeneratedIT extends JerseyAndDerbyCase {
     @Test
     public void testPUT_ByName() {
 
-        e20().insertColumns("name")
+        e20().insertColumns("name_col")
                 .values("John")
                 .values("Brian").exec();
 
@@ -62,7 +62,7 @@ public class E20Resource_GeneratedIT extends JerseyAndDerbyCase {
     @Test
     public void testDELETE_ByName() {
 
-        e20().insertColumns("name")
+        e20().insertColumns("name_col")
                 .values("John")
                 .values("Brian").exec();
 
@@ -70,6 +70,6 @@ public class E20Resource_GeneratedIT extends JerseyAndDerbyCase {
         onResponse(r).statusEquals(Response.Status.OK).bodyEquals("{\"success\":true}");
 
         e20().matcher().assertOneMatch();
-        e20().matcher().eq("name", "Brian").assertOneMatch();
+        e20().matcher().eq("name_col", "Brian").assertOneMatch();
     }
 }

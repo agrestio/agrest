@@ -107,7 +107,7 @@
 		<db-attribute name="description" type="VARCHAR" length="100"/>
 		<db-attribute name="e21_id" type="INTEGER"/>
 		<db-attribute name="id" type="INTEGER" isPrimaryKey="true" isGenerated="true" isMandatory="true"/>
-		<db-attribute name="name" type="VARCHAR" length="100"/>
+		<db-attribute name="name_col" type="VARCHAR" length="100"/>
 	</db-entity>
 	<db-entity name="e21" schema="utest">
 		<db-attribute name="age" type="INTEGER"/>
@@ -251,7 +251,7 @@
 	<obj-entity name="E20" className="io.agrest.it.fixture.cayenne.E20" dbEntityName="e20">
 		<obj-attribute name="age" type="java.lang.Integer" db-attribute-path="age"/>
 		<obj-attribute name="description" type="java.lang.String" db-attribute-path="description"/>
-		<obj-attribute name="name" type="java.lang.String" db-attribute-path="name"/>
+		<obj-attribute name="name" type="java.lang.String" db-attribute-path="name_col"/>
 	</obj-entity>
 	<obj-entity name="E21" className="io.agrest.it.fixture.cayenne.E21" dbEntityName="e21">
 		<obj-attribute name="age" type="java.lang.Integer" db-attribute-path="age"/>

@@ -35,12 +35,12 @@ public class GET_NaturalIdIT extends JerseyAndDerbyCase {
     @Test
     public void test_SelectById() {
 
-        e20().insertColumns("name").values("John").exec();
+        e20().insertColumns("name_col").values("John").exec();
 
         Response r1 = target("/single-id/John").queryParam("exclude", "age", "description").request().get();
         onSuccess(r1).bodyEquals(1, "{\"id\":\"John\",\"name\":\"John\"}");
 
-        e20().insertColumns("name").values("John").exec();
+        e20().insertColumns("name_col").values("John").exec();
 
         Response r2 = target("/single-id/John").queryParam("exclude", "age", "description").request().get();
         onResponse(r2).statusEquals(Response.Status.INTERNAL_SERVER_ERROR)

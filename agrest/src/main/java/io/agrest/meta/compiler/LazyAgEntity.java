@@ -35,6 +35,11 @@ public class LazyAgEntity<T> extends BaseLazyAgEntity<T, AgEntity<T>> implements
     }
 
     @Override
+    public AgAttribute getId(String name) {
+        return getDelegate().getId(name);
+    }
+
+    @Override
     public Collection<AgAttribute> getAttributes() {
         return getDelegate().getAttributes();
     }

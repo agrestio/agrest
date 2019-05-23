@@ -148,6 +148,7 @@ public abstract class CayenneUpdateDataStoreStage implements Processor<UpdateCon
                 // TODO: I guess this should be done in a separate new context
                 T existing = Util.findById(objectContext, context.getType(), context.getEntity().getAgEntity(), idMap);
                 if (existing != null) {
+                    // TODO: printing "idMap" exposes column names, not JSON attributes
                     throw new AgException(Response.Status.BAD_REQUEST, "Can't create '" + entity.getName()
                             + "' with id " + CompoundObjectId.mapToString(idMap) + " - already exists");
                 }

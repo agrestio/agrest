@@ -52,6 +52,11 @@ public class LazyAgPersistentEntity<T> extends BaseLazyAgEntity<T, AgPersistentE
     }
 
     @Override
+    public AgAttribute getId(String name) {
+        return getDelegate().getId(name);
+    }
+
+    @Override
     public Collection<AgAttribute> getAttributes() {
         return getDelegate().getAttributes();
     }

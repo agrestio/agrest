@@ -15,6 +15,11 @@ public interface AgEntity<T> {
 
 	Collection<AgAttribute> getIds();
 
+	/**
+	 * @since 3.3
+	 */
+	AgAttribute getId(String name);
+
 	Collection<AgAttribute> getAttributes();
 
 	AgAttribute getAttribute(String name);
