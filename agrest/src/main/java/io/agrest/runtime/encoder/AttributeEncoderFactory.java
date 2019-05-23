@@ -102,9 +102,7 @@ public class AttributeEncoderFactory implements IAttributeEncoderFactory {
             PropertyReader reader = (root, name) -> {
 
                 AgObjectId id = readObjectId(entity.getAgEntity(), (DataObject) root);
-
-                ResourceEntity childEntity = entity.getChildren().get(name);
-                Object result = childEntity.getResult(id);
+                Object result = entity.getChild(name).getResult(id);
 
                 return result == null && relationship.isToMany()
                         ? Collections.emptyList()
