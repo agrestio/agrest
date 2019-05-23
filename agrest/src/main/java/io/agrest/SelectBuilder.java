@@ -15,24 +15,21 @@ import java.util.Map;
 import java.util.function.Consumer;
 
 /**
- * An object that allows to customize/extend Agrest request processing.
- * SelectBuilder instance is bootstrapped by the framework based on a user query
- * or a root entity and then configured by the user server-side code to achieve
- * the desired behavior. Finally {@link #get()} is called to get the results.
+ * An object that allows to customize/extend Agrest request processing. SelectBuilder instance is created by Agrest
+ * and then configured by the user server-side code to achieve the desired behavior. Finally {@link #get()} is called
+ * to get the results.
  */
 public interface SelectBuilder<T> {
 
     /**
-     * Sets request {@link UriInfo} that is a source of various request
-     * parameters.
+     * Sets request {@link UriInfo} that is a source of various request parameters.
      *
      * @since 1.14
      */
     SelectBuilder<T> uri(UriInfo uriInfo);
 
     /**
-     * Sets the encoder for the entities under the "data" key in the response
-     * collection.
+     * Sets the encoder for the entities under the "data" key in the response collection.
      *
      * @since 1.14
      */
@@ -59,10 +56,9 @@ public interface SelectBuilder<T> {
     SelectBuilder<T> property(String name, EntityProperty clientProperty);
 
     /**
-     * Adds a custom property that is appended to the root
-     * {@link ResourceEntity}. Property is read as a regular JavaBean
-     * "property", and default encoder is used. For more control over property
-     * access and encoding use {@link #property(String, EntityProperty)}.
+     * Adds a custom property that is appended to the root {@link ResourceEntity}. Property is read as a regular JavaBean
+     * "property", and default encoder is used. For more control over property access and encoding use
+     * {@link #property(String, EntityProperty)}.
      *
      * @see AgBuilder#entityOverlay(AgEntityOverlay)
      * @since 1.14
@@ -217,7 +213,7 @@ public interface SelectBuilder<T> {
      * 							.uri(uriInfo)
      * 							.request(agRequest) // overrides parameters from uriInfo
      * 							.get();
-     * 		}
+     *        }
      *
      * }</pre>
      *

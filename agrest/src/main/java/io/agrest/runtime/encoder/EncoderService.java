@@ -144,18 +144,20 @@ public class EncoderService implements IEncoderService {
         for (Entry<String, ResourceEntity<?>> e : resourceEntity.getChildren().entrySet()) {
             AgRelationship relationship = resourceEntity.getAgEntity().getRelationship(e.getKey());
 
-            Encoder encoder = relationship.isToMany() ? nestedToManyEncoder(e.getValue())
+            Encoder encoder = relationship.isToMany()
+                    ? nestedToManyEncoder(e.getValue())
                     : toOneEncoder(e.getValue(), relationship);
 
             EntityProperty property = attributeEncoderFactory.getRelationshipProperty(resourceEntity, relationship, encoder);
             relationshipEncoders.put(e.getKey(), property);
         }
 
-        Map<String, EntityProperty> extraEncoders = new TreeMap<String, EntityProperty>();
+        Map<String, EntityProperty> extraEncoders = new TreeMap<>();
 
         extraEncoders.putAll(resourceEntity.getIncludedExtraProperties());
 
-        EntityProperty idEncoder = resourceEntity.isIdIncluded() ? attributeEncoderFactory.getIdProperty(resourceEntity)
+        EntityProperty idEncoder = resourceEntity.isIdIncluded()
+                ? attributeEncoderFactory.getIdProperty(resourceEntity)
                 : PropertyBuilder.doNothingProperty();
         return new EntityEncoder(idEncoder, attributeEncoders, relationshipEncoders, extraEncoders);
     }
