@@ -37,10 +37,13 @@ public class EncoderService implements IEncoderService {
     private Map<String, PropertyMetadataEncoder> propertyMetadataEncoders;
     private Map<ResourceEntity<?>, Encoder> entityMetadataEncoders;
 
-    public EncoderService(@Inject List<EncoderFilter> filters,
-                          @Inject IAttributeEncoderFactory attributeEncoderFactory,
-                          @Inject IStringConverterFactory stringConverterFactory, @Inject IRelationshipMapper relationshipMapper,
-                          @Inject Map<String, PropertyMetadataEncoder> propertyMetadataEncoders) {
+    public EncoderService(
+            @Inject List<EncoderFilter> filters,
+            @Inject IAttributeEncoderFactory attributeEncoderFactory,
+            @Inject IStringConverterFactory stringConverterFactory,
+            @Inject IRelationshipMapper relationshipMapper,
+            @Inject Map<String, PropertyMetadataEncoder> propertyMetadataEncoders) {
+        
         this.attributeEncoderFactory = attributeEncoderFactory;
         this.relationshipMapper = relationshipMapper;
         this.stringConverterFactory = stringConverterFactory;
@@ -125,14 +128,9 @@ public class EncoderService implements IEncoderService {
     }
 
     protected Encoder entityMetadataEncoder(ResourceEntity<?> resourceEntity) {
-        Encoder encoder = entityMetadataEncoders.get(resourceEntity);
-
-        if (encoder == null) {
-            encoder = new EntityMetadataEncoder(resourceEntity, propertyMetadataEncoders);
-            entityMetadataEncoders.put(resourceEntity, encoder);
-        }
-
-        return encoder;
+        return entityMetadataEncoders.computeIfAbsent(
+                resourceEntity,
+                e -> new EntityMetadataEncoder(resourceEntity, propertyMetadataEncoders));
     }
 
     protected Encoder entityEncoder(ResourceEntity<?> resourceEntity) {
