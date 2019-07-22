@@ -12,6 +12,7 @@ import io.agrest.protocol.Include;
 import io.agrest.protocol.Sort;
 import io.agrest.runtime.entity.CayenneExpMerger;
 import io.agrest.runtime.entity.ExcludeMerger;
+import io.agrest.runtime.entity.ExpressionParser;
 import io.agrest.runtime.entity.ExpressionPostProcessor;
 import io.agrest.runtime.entity.ICayenneExpMerger;
 import io.agrest.runtime.entity.IExcludeMerger;
@@ -55,7 +56,7 @@ public class CreateEntityStageTest extends TestWithCayenneMapping {
         IPathDescriptorManager pathCache = new PathDescriptorManager();
 
         // prepare create entity stage
-        ICayenneExpMerger expMerger = new CayenneExpMerger(new ExpressionPostProcessor(pathCache));
+        ICayenneExpMerger expMerger = new CayenneExpMerger(new ExpressionParser(), new ExpressionPostProcessor(pathCache));
         ISortMerger sortMerger = new SortMerger(pathCache);
         IMapByMerger mapByMerger = new MapByMerger();
         ISizeMerger sizeMerger = new SizeMerger();
@@ -172,7 +173,7 @@ public class CreateEntityStageTest extends TestWithCayenneMapping {
     public void testSelectRequest_ExcludeAttrs_AsArray() {
 
         SelectContext<E1> context = new SelectContext<>(E1.class);
-        
+
         context.setMergedRequest(requestBuilderFactory.builder()
                 .addExclude(new Exclude("description"))
                 .addExclude(new Exclude("age")).build());

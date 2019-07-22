@@ -55,9 +55,11 @@ import io.agrest.runtime.encoder.IStringConverterFactory;
 import io.agrest.runtime.encoder.StringConverterFactoryProvider;
 import io.agrest.runtime.entity.CayenneExpMerger;
 import io.agrest.runtime.entity.ExcludeMerger;
+import io.agrest.runtime.entity.ExpressionParser;
 import io.agrest.runtime.entity.ExpressionPostProcessor;
 import io.agrest.runtime.entity.ICayenneExpMerger;
 import io.agrest.runtime.entity.IExcludeMerger;
+import io.agrest.runtime.entity.IExpressionParser;
 import io.agrest.runtime.entity.IExpressionPostProcessor;
 import io.agrest.runtime.entity.IIncludeMerger;
 import io.agrest.runtime.entity.IMapByMerger;
@@ -507,6 +509,7 @@ public class AgBuilder {
             binder.bind(IMetadataService.class).to(MetadataService.class);
             binder.bind(IResourceMetadataService.class).to(ResourceMetadataService.class);
             binder.bind(IConstraintsHandler.class).to(ConstraintsHandler.class);
+            binder.bind(IExpressionParser.class).to(ExpressionParser.class);
             binder.bind(IExpressionPostProcessor.class).to(ExpressionPostProcessor.class);
 
             binder.bind(IJacksonService.class).to(JacksonService.class);
@@ -523,7 +526,6 @@ public class AgBuilder {
 
             binder.bind(IAgRequestBuilderFactory.class).to(DefaultRequestBuilderFactory.class);
 
-            // Constructors to create ResourceEntity from Query parameters
             binder.bind(ICayenneExpMerger.class).to(CayenneExpMerger.class);
             binder.bind(ISortMerger.class).to(SortMerger.class);
             binder.bind(IMapByMerger.class).to(MapByMerger.class);

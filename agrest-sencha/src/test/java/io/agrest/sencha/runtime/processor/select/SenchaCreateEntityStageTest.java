@@ -5,6 +5,7 @@ import io.agrest.it.fixture.cayenne.E2;
 import io.agrest.protocol.CayenneExp;
 import io.agrest.runtime.entity.CayenneExpMerger;
 import io.agrest.runtime.entity.ExcludeMerger;
+import io.agrest.runtime.entity.ExpressionParser;
 import io.agrest.runtime.entity.ExpressionPostProcessor;
 import io.agrest.runtime.entity.ICayenneExpMerger;
 import io.agrest.runtime.entity.IExcludeMerger;
@@ -50,7 +51,7 @@ public class SenchaCreateEntityStageTest extends TestWithCayenneMapping {
         IPathDescriptorManager pathCache = new PathDescriptorManager();
 
         // prepare entity creation stage
-        ICayenneExpMerger expConstructor = new CayenneExpMerger(new ExpressionPostProcessor(pathCache));
+        ICayenneExpMerger expConstructor = new CayenneExpMerger(new ExpressionParser(), new ExpressionPostProcessor(pathCache));
         ISortMerger sortConstructor = new SortMerger(pathCache);
         IMapByMerger mapByConstructor = new MapByMerger();
         ISizeMerger sizeConstructor = new SizeMerger();

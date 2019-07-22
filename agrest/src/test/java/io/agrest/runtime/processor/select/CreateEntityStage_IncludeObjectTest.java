@@ -6,6 +6,7 @@ import io.agrest.it.fixture.cayenne.E3;
 import io.agrest.protocol.Include;
 import io.agrest.runtime.entity.CayenneExpMerger;
 import io.agrest.runtime.entity.ExcludeMerger;
+import io.agrest.runtime.entity.ExpressionParser;
 import io.agrest.runtime.entity.ExpressionPostProcessor;
 import io.agrest.runtime.entity.ICayenneExpMerger;
 import io.agrest.runtime.entity.IExcludeMerger;
@@ -48,7 +49,7 @@ public class CreateEntityStage_IncludeObjectTest extends TestWithCayenneMapping 
         IPathDescriptorManager pathCache = new PathDescriptorManager();
 
         // prepare create entity stage
-        ICayenneExpMerger expConstructor = new CayenneExpMerger(new ExpressionPostProcessor(pathCache));
+        ICayenneExpMerger expConstructor = new CayenneExpMerger(new ExpressionParser(), new ExpressionPostProcessor(pathCache));
         ISortMerger sortConstructor = new SortMerger(pathCache);
         IMapByMerger mapByConstructor = new MapByMerger();
         ISizeMerger sizeConstructor = new SizeMerger();
