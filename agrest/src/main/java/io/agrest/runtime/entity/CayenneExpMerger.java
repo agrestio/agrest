@@ -19,10 +19,7 @@ public class CayenneExpMerger implements ICayenneExpMerger {
 	public CayenneExpMerger(@Inject IExpressionPostProcessor postProcessor) {
 		this.postProcessor = postProcessor;
 	}
-
-	/**
-	 * @since 2.13
-	 */
+	
 	@Override
 	public void merge(ResourceEntity<?> resourceEntity, CayenneExp cayenneExp) {
 		Expression exp = postProcessor.process(resourceEntity.getAgEntity(), exp(cayenneExp));
@@ -31,10 +28,6 @@ public class CayenneExpMerger implements ICayenneExpMerger {
 		}
 	}
 
-
-	/**
-	 * @since 2.13
-	 */
 	private Expression exp(CayenneExp cayenneExp) {
 		if (cayenneExp == null) {
 			return null;
