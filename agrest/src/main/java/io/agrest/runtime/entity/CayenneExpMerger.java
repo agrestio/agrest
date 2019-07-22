@@ -14,42 +14,42 @@ import java.util.Map;
  */
 public class CayenneExpMerger implements ICayenneExpMerger {
 
-	private IExpressionPostProcessor postProcessor;
+    private IExpressionPostProcessor postProcessor;
 
-	public CayenneExpMerger(@Inject IExpressionPostProcessor postProcessor) {
-		this.postProcessor = postProcessor;
-	}
-	
-	@Override
-	public void merge(ResourceEntity<?> resourceEntity, CayenneExp cayenneExp) {
-		Expression exp = postProcessor.process(resourceEntity.getAgEntity(), exp(cayenneExp));
-		if (exp != null) {
-			resourceEntity.andQualifier(exp);
-		}
-	}
+    public CayenneExpMerger(@Inject IExpressionPostProcessor postProcessor) {
+        this.postProcessor = postProcessor;
+    }
 
-	private Expression exp(CayenneExp cayenneExp) {
-		if (cayenneExp == null) {
-			return null;
-		}
-		
-		final String exp = cayenneExp.getExp();
+    @Override
+    public void merge(ResourceEntity<?> resourceEntity, CayenneExp cayenneExp) {
+        Expression exp = postProcessor.process(resourceEntity.getAgEntity(), exp(cayenneExp));
+        if (exp != null) {
+            resourceEntity.andQualifier(exp);
+        }
+    }
+
+    private Expression exp(CayenneExp cayenneExp) {
+        if (cayenneExp == null) {
+            return null;
+        }
+
+        String exp = cayenneExp.getExp();
         if (exp == null || exp.isEmpty()) {
             return null;
         }
 
-        final List<Object> inPositionParams = cayenneExp.getInPositionParams();
+        List<Object> inPositionParams = cayenneExp.getInPositionParams();
         if (inPositionParams != null && !inPositionParams.isEmpty()) {
             return ExpressionFactory.exp(exp, inPositionParams.toArray());
         }
 
         Expression expression = ExpressionFactory.exp(exp);
 
-		final Map<String, Object> params = cayenneExp.getParams();
+        Map<String, Object> params = cayenneExp.getParams();
         if (params != null && !params.isEmpty()) {
             expression = expression.params(params);
         }
 
         return expression;
-	}
+    }
 }
