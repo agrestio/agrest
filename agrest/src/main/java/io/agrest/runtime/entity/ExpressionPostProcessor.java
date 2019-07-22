@@ -27,17 +27,16 @@ public class ExpressionPostProcessor implements IExpressionPostProcessor {
 
     private IPathDescriptorManager pathCache;
 	private Map<Class<?>, JsonValueConverter<?>> converters;
-
     private Map<AgEntity<?>, ExpressionProcessor> postProcessors;
 
     public ExpressionPostProcessor(@Inject IPathDescriptorManager pathCache) {
         this.pathCache = pathCache;
 
         // TODO: instead of manually assembling converters we must switch to
-		// IJsonValueConverterFactory already used by DataObjectProcessor.
-		// The tricky part is the "id" attribute that is converted to DbPath
-		// during CayenneExpProcessorWorker traversal, so its type can not be
-		// mapped with existing tools
+        //  IJsonValueConverterFactory already used by DataObjectProcessor.
+        //  The tricky part is the "id" attribute that is converted to DbPath
+        //  during CayenneExpProcessorWorker traversal, so its type can not be
+        //  mapped with existing tools
         Map<Class<?>, JsonValueConverter<?>> converters = new HashMap<>();
 		converters.put(Date.class, UtcDateConverter.converter());
 		converters.put(java.sql.Date.class, UtcDateConverter.converter());
@@ -71,16 +70,7 @@ public class ExpressionPostProcessor implements IExpressionPostProcessor {
 	}
 
     private ExpressionProcessor getOrCreateExpressionProcessor(AgEntity<?> entity) {
-
-		ExpressionProcessor postProcessor = postProcessors.get(entity);
-		if (postProcessor == null) {
-			postProcessor = new ExpressionProcessor(entity);
-			ExpressionProcessor existing = postProcessors.putIfAbsent(entity, postProcessor);
-			if (existing != null) {
-				postProcessor = existing;
-			}
-		}
-		return postProcessor;
+		return postProcessors.computeIfAbsent(entity, e -> new ExpressionProcessor(e));
 	}
 
     private class ExpressionProcessor extends TraversalHelper {
