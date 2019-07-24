@@ -9,7 +9,6 @@ import io.agrest.encoder.ISOLocalDateTimeEncoder;
 import io.agrest.encoder.ISOLocalTimeEncoder;
 import io.agrest.encoder.ISOOffsetDateTimeEncoder;
 import io.agrest.encoder.ISOTimeEncoder;
-import org.apache.cayenne.di.DIRuntimeException;
 import org.apache.cayenne.di.Inject;
 import org.apache.cayenne.di.Provider;
 
@@ -18,28 +17,25 @@ import java.util.Map;
 
 import static io.agrest.meta.Types.typeForName;
 
-public class AttributeEncoderFactoryProvider implements Provider<IAttributeEncoderFactory> {
+public class ValueEncodersProvider implements Provider<ValueEncoders> {
 
     private Map<String, Encoder> injectedEncoders;
 
-    public AttributeEncoderFactoryProvider(@Inject Map<String, Encoder> injectedEncoders) {
+    public ValueEncodersProvider(@Inject Map<String, Encoder> injectedEncoders) {
         this.injectedEncoders = injectedEncoders;
     }
 
     @Override
-    public IAttributeEncoderFactory get() throws DIRuntimeException {
-        Map<Class<?>, Encoder> encoders =
-                appendInjectedEncoders(
-                        appendKnownEncoders(new HashMap<>()));
-
-        return createFactory(encoders, defaultEncoder());
+    public ValueEncoders get() {
+        return createValueEncoders(createEncoders(), defaultEncoder());
     }
 
-    /**
-     * @since 2.11
-     */
-    protected IAttributeEncoderFactory createFactory(Map<Class<?>, Encoder> encoders, Encoder defaultEncoder) {
-        return new AttributeEncoderFactory(encoders, defaultEncoder);
+    protected ValueEncoders createValueEncoders(Map<Class<?>, Encoder> encoders, Encoder defaultEncoder) {
+        return new ValueEncoders(encoders, defaultEncoder);
+    }
+
+    protected Map<Class<?>, Encoder> createEncoders() {
+        return appendInjectedEncoders(appendKnownEncoders(new HashMap<>()));
     }
 
     protected Encoder defaultEncoder() {

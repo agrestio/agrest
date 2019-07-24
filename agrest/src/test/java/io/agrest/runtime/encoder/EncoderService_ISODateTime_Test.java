@@ -1,17 +1,5 @@
 package io.agrest.runtime.encoder;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.mock;
-
-import java.sql.Types;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
-import java.time.format.DateTimeFormatter;
-import java.util.Collections;
-
 import io.agrest.ResourceEntity;
 import io.agrest.encoder.Encoder;
 import io.agrest.encoder.EncoderFilter;
@@ -26,16 +14,28 @@ import io.agrest.unit.Java8TestWithCayenneMapping;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.sql.Types;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
+import java.util.Collections;
+
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.mock;
+
 public class EncoderService_ISODateTime_Test extends Java8TestWithCayenneMapping {
 
     private EncoderService encoderService;
 
     @Before
     public void before() {
-        IAttributeEncoderFactory attributeEncoderFactory = new AttributeEncoderFactoryProvider(Collections.emptyMap()).get();
+        IAttributeEncoderFactory aef = new AttributeEncoderFactory(new ValueEncodersProvider(Collections.emptyMap()).get());
         IStringConverterFactory stringConverterFactory = mock(IStringConverterFactory.class);
 
-        encoderService = new EncoderService(Collections.<EncoderFilter>emptyList(), attributeEncoderFactory, stringConverterFactory,
+        encoderService = new EncoderService(Collections.<EncoderFilter>emptyList(), aef, stringConverterFactory,
                 new RelationshipMapper(), Collections.<String, PropertyMetadataEncoder> emptyMap());
     }
 

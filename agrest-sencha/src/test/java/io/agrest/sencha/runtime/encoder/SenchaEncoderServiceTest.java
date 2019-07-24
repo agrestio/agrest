@@ -6,13 +6,13 @@ import io.agrest.ResourceEntity;
 import io.agrest.SimpleObjectId;
 import io.agrest.encoder.Encoder;
 import io.agrest.encoder.EncoderFilter;
-import io.agrest.encoder.PropertyMetadataEncoder;
 import io.agrest.it.fixture.cayenne.E2;
 import io.agrest.it.fixture.cayenne.E3;
 import io.agrest.runtime.cayenne.ICayennePersister;
-import io.agrest.runtime.encoder.AttributeEncoderFactoryProvider;
+import io.agrest.runtime.encoder.AttributeEncoderFactory;
 import io.agrest.runtime.encoder.IAttributeEncoderFactory;
 import io.agrest.runtime.encoder.IStringConverterFactory;
+import io.agrest.runtime.encoder.ValueEncodersProvider;
 import io.agrest.runtime.jackson.JacksonService;
 import io.agrest.runtime.semantics.IRelationshipMapper;
 import io.agrest.sencha.runtime.semantics.SenchaRelationshipMapper;
@@ -29,7 +29,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -48,12 +48,12 @@ public class SenchaEncoderServiceTest extends TestWithCayenneMapping {
         when(cayenneService.newContext()).thenReturn(TestWithCayenneMapping.runtime.newContext());
 
         this.filters = new ArrayList<>();
-        IAttributeEncoderFactory attributeEncoderFactory = new AttributeEncoderFactoryProvider(Collections.emptyMap()).get();
+        IAttributeEncoderFactory aef = new AttributeEncoderFactory(new ValueEncodersProvider(Collections.emptyMap()).get());
         IStringConverterFactory stringConverterFactory = mock(IStringConverterFactory.class);
         IRelationshipMapper relationshipMapper = new SenchaRelationshipMapper();
 
-        encoderService = new SenchaEncoderService(this.filters, attributeEncoderFactory, stringConverterFactory,
-                relationshipMapper, Collections.<String, PropertyMetadataEncoder>emptyMap());
+        encoderService = new SenchaEncoderService(this.filters, aef, stringConverterFactory,
+                relationshipMapper, Collections.emptyMap());
     }
 
     @Test

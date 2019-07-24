@@ -18,6 +18,7 @@ import io.agrest.property.IdPropertyReader;
 import io.agrest.property.PropertyBuilder;
 import io.agrest.property.PropertyReader;
 import org.apache.cayenne.DataObject;
+import org.apache.cayenne.di.Inject;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -27,20 +28,15 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class AttributeEncoderFactory implements IAttributeEncoderFactory {
 
-    private Map<Class<?>, Encoder> encodersByJavaType;
-    private Encoder defaultEncoder;
+    private ValueEncoders valueEncoders;
 
     // these are explicit overrides for named attributes
     private Map<String, EntityProperty> attributePropertiesByPath;
     private Map<String, EntityProperty> idPropertiesByEntity;
     private Map<AgEntity<?>, IdPropertyReader> idPropertyReaders;
 
-    public AttributeEncoderFactory(Map<Class<?>, Encoder> knownEncoders, Encoder defaultEncoder) {
-        
-        // creating a concurrent copy of the provided map - we'll be expanding it dynamically.
-        this.encodersByJavaType = new ConcurrentHashMap<>(knownEncoders);
-        this.defaultEncoder = defaultEncoder;
-
+    public AttributeEncoderFactory(@Inject ValueEncoders valueEncoders) {
+        this.valueEncoders = valueEncoders;
         this.attributePropertiesByPath = new ConcurrentHashMap<>();
         this.idPropertiesByEntity = new ConcurrentHashMap<>();
         this.idPropertyReaders = new ConcurrentHashMap<>();
@@ -101,7 +97,7 @@ public class AttributeEncoderFactory implements IAttributeEncoderFactory {
 
     protected EntityProperty buildAttributeProperty(AgEntity<?> entity, AgAttribute attribute) {
         boolean persistent = attribute instanceof AgPersistentAttribute;
-        Encoder encoder = buildEncoder(attribute);
+        Encoder encoder = getEncoder(attribute.getType());
         return getProperty(entity, attribute.getPropertyReader(), persistent, encoder);
     }
 
@@ -128,7 +124,7 @@ public class AttributeEncoderFactory implements IAttributeEncoderFactory {
                 // keeping attribute encoders in alphabetical order
                 Map<String, Encoder> valueEncoders = new TreeMap<>();
                 for (AgAttribute id : ids) {
-                    Encoder valueEncoder = buildEncoder(id);
+                    Encoder valueEncoder = getEncoder(id.getType());
                     valueEncoders.put(id.getName(), valueEncoder);
                 }
 
@@ -137,7 +133,7 @@ public class AttributeEncoderFactory implements IAttributeEncoderFactory {
             } else {
 
                 AgAttribute id = ids.iterator().next();
-                Encoder valueEncoder = buildEncoder(id);
+                Encoder valueEncoder = getEncoder(id.getType());
 
                 return PropertyBuilder.property(getOrCreateIdReader(entity.getAgEntity()))
                         .encodedWith(new IdEncoder(valueEncoder));
@@ -158,13 +154,6 @@ public class AttributeEncoderFactory implements IAttributeEncoderFactory {
         }
     }
 
-    /**
-     * @since 2.11
-     */
-    protected Encoder buildEncoder(AgAttribute attribute) {
-        return buildEncoder(attribute.getType());
-    }
-
     private AgObjectId readObjectId(AgEntity<?> entity, DataObject object) {
 
         Map<String, Object> idMap = (Map<String, Object>) getOrCreateIdReader(entity).value(object, null);
@@ -182,11 +171,7 @@ public class AttributeEncoderFactory implements IAttributeEncoderFactory {
         return idPropertyReaders.computeIfAbsent(entity, e -> new IdPropertyReader(e));
     }
 
-    /**
-     * @since 1.12
-     */
-    protected Encoder buildEncoder(Class<?> javaType) {
-        return encodersByJavaType.computeIfAbsent(javaType, vt -> defaultEncoder);
+    protected Encoder getEncoder(Class<?> type) {
+        return valueEncoders.getEncoder(type);
     }
-
 }

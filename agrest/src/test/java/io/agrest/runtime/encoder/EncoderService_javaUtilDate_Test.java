@@ -2,12 +2,10 @@ package io.agrest.runtime.encoder;
 
 import io.agrest.ResourceEntity;
 import io.agrest.encoder.Encoder;
-import io.agrest.encoder.EncoderFilter;
 import io.agrest.encoder.Encoders;
 import io.agrest.encoder.ISODateEncoder;
 import io.agrest.encoder.ISODateTimeEncoder;
 import io.agrest.encoder.ISOTimeEncoderTest;
-import io.agrest.encoder.PropertyMetadataEncoder;
 import io.agrest.it.fixture.cayenne.iso.SqlDateTestEntity;
 import io.agrest.it.fixture.cayenne.iso.UtilDateTestEntity;
 import io.agrest.runtime.semantics.RelationshipMapper;
@@ -22,7 +20,7 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
 
 public class EncoderService_javaUtilDate_Test extends TestWithCayenneMapping {
@@ -35,11 +33,11 @@ public class EncoderService_javaUtilDate_Test extends TestWithCayenneMapping {
 
     @Before
     public void before() {
-        IAttributeEncoderFactory attributeEncoderFactory = new AttributeEncoderFactoryProvider(Collections.emptyMap()).get();
+        IAttributeEncoderFactory aef = new AttributeEncoderFactory(new ValueEncodersProvider(Collections.emptyMap()).get());
         IStringConverterFactory stringConverterFactory = mock(IStringConverterFactory.class);
 
-        encoderService = new EncoderService(Collections.<EncoderFilter>emptyList(), attributeEncoderFactory, stringConverterFactory,
-                new RelationshipMapper(), Collections.<String, PropertyMetadataEncoder>emptyMap());
+        encoderService = new EncoderService(Collections.emptyList(), aef, stringConverterFactory,
+                new RelationshipMapper(), Collections.emptyMap());
     }
 
     /**

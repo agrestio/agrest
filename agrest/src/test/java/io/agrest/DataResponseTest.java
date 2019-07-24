@@ -1,25 +1,23 @@
 package io.agrest;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.mockito.Mockito.mock;
+import io.agrest.it.fixture.cayenne.E1;
+import io.agrest.runtime.encoder.AttributeEncoderFactory;
+import io.agrest.runtime.encoder.EncoderService;
+import io.agrest.runtime.encoder.IAttributeEncoderFactory;
+import io.agrest.runtime.encoder.IEncoderService;
+import io.agrest.runtime.encoder.IStringConverterFactory;
+import io.agrest.runtime.encoder.ValueEncodersProvider;
+import io.agrest.runtime.semantics.RelationshipMapper;
+import io.agrest.unit.TestWithCayenneMapping;
+import org.junit.Before;
+import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import io.agrest.encoder.EncoderFilter;
-import io.agrest.encoder.PropertyMetadataEncoder;
-import io.agrest.it.fixture.cayenne.E1;
-import io.agrest.runtime.encoder.AttributeEncoderFactoryProvider;
-import io.agrest.runtime.encoder.EncoderService;
-import io.agrest.runtime.encoder.IAttributeEncoderFactory;
-import io.agrest.runtime.encoder.IEncoderService;
-import io.agrest.runtime.encoder.IStringConverterFactory;
-import io.agrest.runtime.semantics.RelationshipMapper;
-import io.agrest.unit.TestWithCayenneMapping;
-import org.junit.Before;
-import org.junit.Test;
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.mock;
 
 public class DataResponseTest extends TestWithCayenneMapping {
 
@@ -28,11 +26,11 @@ public class DataResponseTest extends TestWithCayenneMapping {
 	@Before
 	public void setUp() {
 
-		IAttributeEncoderFactory attributeEncoderFactory = new AttributeEncoderFactoryProvider(Collections.emptyMap()).get();
+		IAttributeEncoderFactory aef = new AttributeEncoderFactory(new ValueEncodersProvider(Collections.emptyMap()).get());
 		IStringConverterFactory stringConverterFactory = mock(IStringConverterFactory.class);
-		this.encoderService = new EncoderService(Collections.<EncoderFilter> emptyList(), attributeEncoderFactory,
+		this.encoderService = new EncoderService(Collections.emptyList(), aef,
 				stringConverterFactory, new RelationshipMapper(),
-				Collections.<String, PropertyMetadataEncoder> emptyMap());
+				Collections.emptyMap());
 	}
 
 	@Test

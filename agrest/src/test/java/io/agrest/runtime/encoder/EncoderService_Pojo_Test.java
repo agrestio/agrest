@@ -4,13 +4,12 @@ import io.agrest.ResourceEntity;
 import io.agrest.encoder.Encoder;
 import io.agrest.encoder.EncoderFilter;
 import io.agrest.encoder.Encoders;
-import io.agrest.encoder.PropertyMetadataEncoder;
 import io.agrest.it.fixture.pojo.model.P1;
 import io.agrest.it.fixture.pojo.model.P6;
 import io.agrest.meta.AgEntity;
+import io.agrest.meta.AgEntityBuilder;
 import io.agrest.meta.DefaultAgAttribute;
 import io.agrest.meta.LazyAgDataMap;
-import io.agrest.meta.AgEntityBuilder;
 import io.agrest.meta.compiler.AgEntityCompiler;
 import io.agrest.meta.compiler.PojoEntityCompiler;
 import io.agrest.runtime.semantics.RelationshipMapper;
@@ -24,7 +23,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
 
 public class EncoderService_Pojo_Test {
@@ -45,11 +44,11 @@ public class EncoderService_Pojo_Test {
 
 		this.filters = new ArrayList<>();
 
-		IAttributeEncoderFactory attributeEncoderFactory = new AttributeEncoderFactoryProvider(Collections.emptyMap()).get();
+		IAttributeEncoderFactory aef = new AttributeEncoderFactory(new ValueEncodersProvider(Collections.emptyMap()).get());
 		IStringConverterFactory stringConverterFactory = mock(IStringConverterFactory.class);
 
-		this.encoderService = new EncoderService(this.filters, attributeEncoderFactory, stringConverterFactory,
-				new RelationshipMapper(), Collections.<String, PropertyMetadataEncoder> emptyMap());
+		this.encoderService = new EncoderService(this.filters, aef, stringConverterFactory,
+				new RelationshipMapper(), Collections.emptyMap());
 	}
 
 	@Test
