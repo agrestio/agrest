@@ -19,29 +19,13 @@ import io.agrest.property.PropertyBuilder;
 import io.agrest.property.PropertyReader;
 import org.apache.cayenne.DataObject;
 
-import java.sql.Time;
-import java.sql.Timestamp;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.OffsetDateTime;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Date;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class AttributeEncoderFactory implements IAttributeEncoderFactory {
-
-    static final Class<?> UTIL_DATE = Date.class;
-    static final Class<?> SQL_DATE = java.sql.Date.class;
-    static final Class<?> SQL_TIME = Time.class;
-    static final Class<?> SQL_TIMESTAMP = Timestamp.class;
-    static final Class<?> LOCAL_DATE = LocalDate.class;
-    static final Class<?> LOCAL_TIME = LocalTime.class;
-    static final Class<?> LOCAL_DATETIME = LocalDateTime.class;
-    static final Class<?> OFFSET_DATETIME = OffsetDateTime.class;
 
     private Map<Class<?>, Encoder> encodersByJavaType;
     private Encoder defaultEncoder;
@@ -51,8 +35,8 @@ public class AttributeEncoderFactory implements IAttributeEncoderFactory {
     private Map<String, EntityProperty> idPropertiesByEntity;
     private Map<AgEntity<?>, IdPropertyReader> idPropertyReaders;
 
-    public AttributeEncoderFactory(Map<Class<?>, Encoder> knownEncoders,
-                                   Encoder defaultEncoder) {
+    public AttributeEncoderFactory(Map<Class<?>, Encoder> knownEncoders, Encoder defaultEncoder) {
+        
         // creating a concurrent copy of the provided map - we'll be expanding it dynamically.
         this.encodersByJavaType = new ConcurrentHashMap<>(knownEncoders);
         this.defaultEncoder = defaultEncoder;

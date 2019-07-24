@@ -47,14 +47,14 @@ public class AttributeEncoderFactoryProvider implements Provider<IAttributeEncod
     }
 
     protected Map<Class<?>, Encoder> appendKnownEncoders(Map<Class<?>, Encoder> encoders) {
-        encoders.put(AttributeEncoderFactory.LOCAL_DATE, ISOLocalDateEncoder.encoder());
-        encoders.put(AttributeEncoderFactory.LOCAL_TIME, ISOLocalTimeEncoder.encoder());
-        encoders.put(AttributeEncoderFactory.LOCAL_DATETIME, ISOLocalDateTimeEncoder.encoder());
-        encoders.put(AttributeEncoderFactory.OFFSET_DATETIME, ISOOffsetDateTimeEncoder.encoder());
-        encoders.put(AttributeEncoderFactory.UTIL_DATE, ISODateTimeEncoder.encoder());
-        encoders.put(AttributeEncoderFactory.SQL_TIMESTAMP, ISODateTimeEncoder.encoder());
-        encoders.put(AttributeEncoderFactory.SQL_DATE, ISODateEncoder.encoder());
-        encoders.put(AttributeEncoderFactory.SQL_TIME, ISOTimeEncoder.encoder());
+        encoders.put(PropertyTypes.LOCAL_DATE, ISOLocalDateEncoder.encoder());
+        encoders.put(PropertyTypes.LOCAL_TIME, ISOLocalTimeEncoder.encoder());
+        encoders.put(PropertyTypes.LOCAL_DATETIME, ISOLocalDateTimeEncoder.encoder());
+        encoders.put(PropertyTypes.OFFSET_DATETIME, ISOOffsetDateTimeEncoder.encoder());
+        encoders.put(PropertyTypes.UTIL_DATE, ISODateTimeEncoder.encoder());
+        encoders.put(PropertyTypes.SQL_TIMESTAMP, ISODateTimeEncoder.encoder());
+        encoders.put(PropertyTypes.SQL_DATE, ISODateEncoder.encoder());
+        encoders.put(PropertyTypes.SQL_TIME, ISOTimeEncoder.encoder());
 
         return encoders;
     }

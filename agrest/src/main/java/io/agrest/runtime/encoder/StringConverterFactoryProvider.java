@@ -57,14 +57,14 @@ public class StringConverterFactoryProvider implements Provider<IStringConverter
      * @since 2.11
      */
     protected Map<Class<?>, StringConverter> appendKnownConverters(Map<Class<?>, StringConverter> converters) {
-        converters.put(AttributeEncoderFactory.LOCAL_DATE, ISOLocalDateConverter.converter());
-        converters.put(AttributeEncoderFactory.LOCAL_TIME, ISOLocalDateTimeConverter.converter());
-        converters.put(AttributeEncoderFactory.LOCAL_DATETIME, ISOLocalTimeConverter.converter());
-        converters.put(AttributeEncoderFactory.OFFSET_DATETIME, ISOOffsetDateTimeConverter.converter());
-        converters.put(AttributeEncoderFactory.UTIL_DATE, ISODateTimeConverter.converter());
-        converters.put(AttributeEncoderFactory.SQL_TIMESTAMP, ISODateTimeConverter.converter());
-        converters.put(AttributeEncoderFactory.SQL_DATE, ISODateConverter.converter());
-        converters.put(AttributeEncoderFactory.SQL_TIME, ISOTimeConverter.converter());
+        converters.put(PropertyTypes.LOCAL_DATE, ISOLocalDateConverter.converter());
+        converters.put(PropertyTypes.LOCAL_TIME, ISOLocalDateTimeConverter.converter());
+        converters.put(PropertyTypes.LOCAL_DATETIME, ISOLocalTimeConverter.converter());
+        converters.put(PropertyTypes.OFFSET_DATETIME, ISOOffsetDateTimeConverter.converter());
+        converters.put(PropertyTypes.UTIL_DATE, ISODateTimeConverter.converter());
+        converters.put(PropertyTypes.SQL_TIMESTAMP, ISODateTimeConverter.converter());
+        converters.put(PropertyTypes.SQL_DATE, ISODateConverter.converter());
+        converters.put(PropertyTypes.SQL_TIME, ISOTimeConverter.converter());
 
         return converters;
     }
