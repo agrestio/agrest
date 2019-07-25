@@ -92,7 +92,7 @@ public class GET_PojoIT extends JerseyAndPojoCase {
         p1().put("o2id", o2);
 
         Response r = target("/pojo/p1").queryParam("sort", "name").request().get();
-        onSuccess(r).bodyEquals(2, "{\"name\":\"n1\"}," + "{\"name\":\"n2\"}");
+        onSuccess(r).bodyEquals(2, "{\"name\":\"n1\"},{\"name\":\"n2\"}");
     }
 
     @Test

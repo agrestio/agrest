@@ -57,16 +57,8 @@ public class AttributeEncoderFactory implements IAttributeEncoderFactory {
 
     @Override
     public EntityProperty getIdProperty(ResourceEntity<?> entity) {
-
         String key = entity.getAgEntity().getName();
-
-        EntityProperty property = idPropertiesByEntity.get(key);
-        if (property == null) {
-            property = buildIdProperty(entity);
-            idPropertiesByEntity.put(key, property);
-        }
-
-        return property;
+        return idPropertiesByEntity.computeIfAbsent(key, k -> buildIdProperty(entity));
     }
 
     protected EntityProperty buildRelationshipProperty(ResourceEntity<?> entity, AgRelationship relationship, Encoder encoder) {
@@ -153,6 +145,8 @@ public class AttributeEncoderFactory implements IAttributeEncoderFactory {
             return PropertyBuilder.property(BeanPropertyReader.reader(id.getName()));
         }
     }
+
+
 
     private AgObjectId readObjectId(AgEntity<?> entity, DataObject object) {
 
