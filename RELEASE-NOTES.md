@@ -2,6 +2,7 @@ Release 3.3
 
 * #414 Metadata encoding related memory leak in EncoderService
 * #415 Exposed id with name different from DB column: ExpressionException: Can't resolve path component
+* #418 Obscure exception on entities with no ids 
 
 Release 3.2
 

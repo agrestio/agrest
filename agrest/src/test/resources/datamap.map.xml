@@ -136,6 +136,9 @@
 		<db-attribute name="e23_id" type="INTEGER"/>
 		<db-attribute name="id" type="INTEGER" isPrimaryKey="true" isMandatory="true"/>
 	</db-entity>
+	<db-entity name="e27_nopk" schema="utest">
+		<db-attribute name="name" type="VARCHAR" length="100"/>
+	</db-entity>
 	<db-entity name="e3" schema="utest">
 		<db-attribute name="e2_id" type="INTEGER"/>
 		<db-attribute name="e5_id" type="INTEGER"/>
@@ -272,6 +275,9 @@
 	<obj-entity name="E25" className="io.agrest.it.fixture.cayenne.E25" dbEntityName="e25">
 	</obj-entity>
 	<obj-entity name="E26" className="io.agrest.it.fixture.cayenne.E26" dbEntityName="e26">
+	</obj-entity>
+	<obj-entity name="E27Nopk" className="io.agrest.it.fixture.cayenne.E27Nopk" dbEntityName="e27_nopk">
+		<obj-attribute name="name" type="java.lang.String" db-attribute-path="name"/>
 	</obj-entity>
 	<obj-entity name="E3" className="io.agrest.it.fixture.cayenne.E3" dbEntityName="e3">
 		<obj-attribute name="name" type="java.lang.String" db-attribute-path="name"/>

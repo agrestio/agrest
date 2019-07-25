@@ -107,29 +107,32 @@ public class AttributeEncoderFactory implements IAttributeEncoderFactory {
 
         Collection<AgAttribute> ids = entity.getAgEntity().getIds();
 
+        // TODO: consider unifying id readers between POJO and entities
+
         if (entity.getAgEntity() instanceof AgPersistentEntity) {
 
-            // Cayenne object - PK is an ObjectId (even if it is also a
-            // meaningful object property)
+            // Cayenne object - PK is an ObjectId (even if it is also a meaningful object property)
+            switch (ids.size()) {
+                case 0:
+                    // use fake ID encoder
+                    return PropertyBuilder.doNothingProperty();
+                case 1:
+                    return PropertyBuilder
+                            .property(getOrCreateIdReader(entity.getAgEntity()))
+                            .encodedWith(new IdEncoder(getEncoder(ids.iterator().next().getType())));
+                default:
 
-            if (ids.size() > 1) {
-                // keeping attribute encoders in alphabetical order
-                Map<String, Encoder> valueEncoders = new TreeMap<>();
-                for (AgAttribute id : ids) {
-                    Encoder valueEncoder = getEncoder(id.getType());
-                    valueEncoders.put(id.getName(), valueEncoder);
-                }
+                    // keeping attribute encoders in alphabetical order
+                    Map<String, Encoder> valueEncoders = new TreeMap<>();
+                    for (AgAttribute id : ids) {
+                        valueEncoders.put(id.getName(), getEncoder(id.getType()));
+                    }
 
-                return PropertyBuilder.property(getOrCreateIdReader(entity.getAgEntity()))
-                        .encodedWith(new IdEncoder(valueEncoders));
-            } else {
-
-                AgAttribute id = ids.iterator().next();
-                Encoder valueEncoder = getEncoder(id.getType());
-
-                return PropertyBuilder.property(getOrCreateIdReader(entity.getAgEntity()))
-                        .encodedWith(new IdEncoder(valueEncoder));
+                    return PropertyBuilder
+                            .property(getOrCreateIdReader(entity.getAgEntity()))
+                            .encodedWith(new IdEncoder(valueEncoders));
             }
+
         } else {
 
             // POJO - PK is an object property
@@ -145,7 +148,6 @@ public class AttributeEncoderFactory implements IAttributeEncoderFactory {
             return PropertyBuilder.property(BeanPropertyReader.reader(id.getName()));
         }
     }
-
 
 
     private AgObjectId readObjectId(AgEntity<?> entity, DataObject object) {
