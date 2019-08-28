@@ -54,9 +54,11 @@ public class ApplyServerParamsStage implements Processor<UpdateContext<?>> {
         // constraints after the commit?)
         constraintsHandler.constrainResponse(entity, null, context.getReadConstraints());
 
-        // TODO: we don't need encoder if includeData=false... should we
-        // conditionally skip this step?
-        context.setEncoder(encoderService.dataEncoder(entity));
+        if(context.getEncoder() == null) {
+            // TODO: we don't need encoder if includeData=false... should we
+            // conditionally skip this step?
+            context.setEncoder(encoderService.dataEncoder(entity));
+        }
     }
 
     private <T> void processExplicitId(UpdateContext<T> context) {

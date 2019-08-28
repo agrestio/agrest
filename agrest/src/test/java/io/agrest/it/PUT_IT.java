@@ -1,7 +1,10 @@
 package io.agrest.it;
 
+import com.fasterxml.jackson.core.JsonGenerator;
 import io.agrest.Ag;
 import io.agrest.DataResponse;
+import io.agrest.UpdateStage;
+import io.agrest.encoder.Encoder;
 import io.agrest.it.fixture.JerseyAndDerbyCase;
 import io.agrest.it.fixture.cayenne.E14;
 import io.agrest.it.fixture.cayenne.E17;
@@ -23,6 +26,7 @@ import javax.ws.rs.core.Configuration;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -261,6 +265,16 @@ public class PUT_IT extends JerseyAndDerbyCase {
     }
 
     @Test
+    public void testCustomEncoder() {
+
+        Response r = target("/e7_custom_encoder")
+                .request()
+                .put(Entity.json("[{\"id\":4,\"name\":\"zzz\"}]"));
+
+        onSuccess(r).bodyEquals("{\"encoder\":\"custom\"}");
+    }
+
+    @Test
     public void testBulk_ResponseAttributesFilter() {
 
         Response response1 = target("/e7")
@@ -466,6 +480,30 @@ public class PUT_IT extends JerseyAndDerbyCase {
         @Path("e7")
         public DataResponse<E7> syncE7(@Context UriInfo uriInfo, String data) {
             return Ag.idempotentFullSync(E7.class, config).uri(uriInfo).syncAndSelect(data);
+        }
+
+        @PUT
+        @Path("e7_custom_encoder")
+        public DataResponse<E7> syncE7_CustomEncoder(@Context UriInfo uriInfo, String data) {
+
+            Encoder encoder = new Encoder() {
+                @Override
+                public boolean encode(String propertyName, Object object, JsonGenerator out) throws IOException {
+                    out.writeStartObject();
+                    out.writeObjectField("encoder", "custom");
+                    out.writeEndObject();
+                    return true;
+                }
+
+                @Override
+                public boolean willEncode(String propertyName, Object object) {
+                    return true;
+                }
+            };
+
+            return Ag.idempotentFullSync(E7.class, config).uri(uriInfo)
+                    .stage(UpdateStage.START, c -> c.setEncoder(encoder))
+                    .syncAndSelect(data);
         }
 
         @PUT

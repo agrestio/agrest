@@ -1,3 +1,7 @@
+Release 3.4
+
+* #421 Custom per-request Encoder is ignored on update
+
 Release 3.3
 
 * #414 Metadata encoding related memory leak in EncoderService
