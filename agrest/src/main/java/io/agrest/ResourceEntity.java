@@ -23,8 +23,8 @@ import java.util.Map;
  * filtering and extending its properties to describe the data structure to be
  * returned to the client.
  * <p>
- * ResourceEntity scope is usually a single request. It is built on the fly by
- * the framework or by the application code.
+ * ResourceEntity scope is a single request. It is usually created by Agrest based on request parameters and can be
+ * optionally further customized by the application via custom stages.
  */
 public class ResourceEntity<T> {
 
@@ -123,45 +123,42 @@ public class ResourceEntity<T> {
     }
 
     /**
+     * @param result objects
      * @since 3.1
-     *
-     *  @param result objects
      */
     public void setResult(List<T> result) {
         this.result = result;
     }
 
     /**
-     * @since 3.1
-     *
      * @param parentId
      * @return
+     * @since 3.1
      */
     public Object getResult(AgObjectId parentId) {
         return parentToChildResult.get(parentId);
     }
 
     /**
+     * @param parentId
+     * @param object
      * @since 3.1
      * Stores object related to particular parent object.
      * It is used for one-to-one relation between a parent and a child.
-     *
-     * @param parentId
-     * @param object
      */
     public void setToOneResult(AgObjectId parentId, T object) {
         parentToChildResult.put(parentId, object);
     }
 
     /**
-     *  Stores result object as a List of objects. It is used for one-to-many relation between a parent and children.
+     * Stores result object as a List of objects. It is used for one-to-many relation between a parent and children.
      *
      * @param parentId
      * @param object
      * @since 3.1
      */
     public void addToManyResult(AgObjectId parentId, T object) {
-        ((List<T> )parentToChildResult.computeIfAbsent(parentId, k -> new ArrayList<>())).add(object);
+        ((List<T>) parentToChildResult.computeIfAbsent(parentId, k -> new ArrayList<>())).add(object);
     }
 
     /**

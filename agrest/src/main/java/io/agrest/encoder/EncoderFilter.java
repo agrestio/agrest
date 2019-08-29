@@ -1,21 +1,18 @@
 package io.agrest.encoder;
 
-import java.io.IOException;
-
 import com.fasterxml.jackson.core.JsonGenerator;
 import io.agrest.ResourceEntity;
 
+import java.io.IOException;
+
 /**
- * Defines API of an interceptor for encoding specific entities. E.g. an
- * application may define a filter that suppresses certain objects based on
- * security constraints. Another application may provide an alternative Encoder
- * for a given object, etc.
+ * Defines API of an interceptor for encoding specific entities. E.g. an application may define a filter that suppresses
+ * certain objects based on security constraints. Or provide an alternative encoder for a given object, etc.
  */
 public interface EncoderFilter {
 
 	/**
-	 * Returns whether the filter should be applied for a given
-	 * {@link ResourceEntity}.
+	 * Returns whether the filter should be applied for a given {@link ResourceEntity}.
 	 */
 	boolean matches(ResourceEntity<?> entity);
 
