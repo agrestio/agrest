@@ -16,6 +16,7 @@ class DataResponseFlattenExtractor<U> implements EncoderVisitor {
     private String[] path;
     private Deque<String> stack;
     private State state;
+
     public DataResponseFlattenExtractor(String path) {
         this.path = path == null || path.length() == 0 ? new String[0] : SPLIT_PATH.split(path);
         this.result = new ArrayList<>();

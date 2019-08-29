@@ -132,7 +132,7 @@ public class DefaultSelectBuilder<T> implements SelectBuilder<T> {
     }
 
     @Override
-    public SelectBuilder<T> dataEncoder(Encoder encoder) {
+    public SelectBuilder<T> encoder(Encoder encoder) {
         this.context.setEncoder(encoder);
         return this;
     }

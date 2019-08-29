@@ -32,8 +32,21 @@ public interface SelectBuilder<T> {
      * Sets the encoder for the entities under the "data" key in the response collection.
      *
      * @since 1.14
+     * @deprecated since 3.4 in favor of {@link #encoder(Encoder)}. The name and the docs of this method was incorrectly
+     * implying that this encoder is only responsible for the "data" part of the response, while it was used to encode
+     * the entire response.
      */
-    SelectBuilder<T> dataEncoder(Encoder encoder);
+    @Deprecated
+    default SelectBuilder<T> dataEncoder(Encoder encoder) {
+        return encoder(encoder);
+    }
+
+    /**
+     * Sets the Encoder of the entire response, overriding framework-provided Encoder.
+     *
+     * @since 3.4
+     */
+    SelectBuilder<T> encoder(Encoder encoder);
 
     /**
      * Forces the builder to select a single object by ID.
