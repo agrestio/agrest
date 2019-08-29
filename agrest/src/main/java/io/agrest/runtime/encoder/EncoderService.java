@@ -41,7 +41,7 @@ public class EncoderService implements IEncoderService {
             @Inject IStringConverterFactory stringConverterFactory,
             @Inject IRelationshipMapper relationshipMapper,
             @Inject Map<String, PropertyMetadataEncoder> propertyMetadataEncoders) {
-        
+
         this.attributeEncoderFactory = attributeEncoderFactory;
         this.relationshipMapper = relationshipMapper;
         this.stringConverterFactory = stringConverterFactory;
@@ -127,13 +127,20 @@ public class EncoderService implements IEncoderService {
         return new EntityMetadataEncoder(resourceEntity, propertyMetadataEncoders);
     }
 
+    /**
+     * Recursively builds an Encoder for the ResourceEntity tree.
+     *
+     * @param resourceEntity root entity to be encoded
+     * @return a new Encoder for the provided ResourceEntity tree
+     */
     protected Encoder entityEncoder(ResourceEntity<?> resourceEntity) {
 
         // ensure we sort property encoders alphabetically for cleaner JSON output
         Map<String, EntityProperty> attributeEncoders = new TreeMap<>();
 
         for (AgAttribute attribute : resourceEntity.getAttributes().values()) {
-            EntityProperty property = attributeEncoderFactory.getAttributeProperty(resourceEntity.getAgEntity(),
+            EntityProperty property = attributeEncoderFactory.getAttributeProperty(
+                    resourceEntity.getAgEntity(),
                     attribute);
             attributeEncoders.put(attribute.getName(), property);
         }
@@ -146,7 +153,11 @@ public class EncoderService implements IEncoderService {
                     ? nestedToManyEncoder(e.getValue())
                     : toOneEncoder(e.getValue(), relationship);
 
-            EntityProperty property = attributeEncoderFactory.getRelationshipProperty(resourceEntity, relationship, encoder);
+            EntityProperty property = attributeEncoderFactory.getRelationshipProperty(
+                    resourceEntity,
+                    relationship,
+                    encoder);
+
             relationshipEncoders.put(e.getKey(), property);
         }
 
