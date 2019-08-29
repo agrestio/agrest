@@ -8,7 +8,6 @@ import io.agrest.encoder.Encoder;
 import io.agrest.encoder.EncoderFilter;
 import io.agrest.encoder.EntityEncoder;
 import io.agrest.encoder.EntityMetadataEncoder;
-import io.agrest.encoder.EntityToOneEncoder;
 import io.agrest.encoder.FilterChainEncoder;
 import io.agrest.encoder.GenericEncoder;
 import io.agrest.encoder.ListEncoder;
@@ -119,8 +118,7 @@ public class EncoderService implements IEncoderService {
         // different structure from to-many, so building it differently
 
         Encoder valueEncoder = entityEncoder(resourceEntity);
-        Encoder compositeValueEncoder = new EntityToOneEncoder(valueEncoder);
-        return filteredEncoder(compositeValueEncoder, resourceEntity);
+        return filteredEncoder(valueEncoder, resourceEntity);
     }
 
     protected Encoder entityMetadataEncoder(ResourceEntity<?> resourceEntity) {
