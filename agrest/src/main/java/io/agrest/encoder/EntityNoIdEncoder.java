@@ -41,7 +41,10 @@ public class EntityNoIdEncoder extends AbstractEncoder {
     protected void encodeProperties(Object object, JsonGenerator out) throws IOException {
 
         for (Map.Entry<String, EntityProperty> e : combinedEncoders.entrySet()) {
-            e.getValue().encode(object, e.getKey(), out);
+            EntityProperty p = e.getValue();
+            String propertyName = e.getKey();
+            Object v = object == null ? null : p.getReader().value(object, propertyName);
+            p.getEncoder().encode(propertyName, v, out);
         }
     }
 

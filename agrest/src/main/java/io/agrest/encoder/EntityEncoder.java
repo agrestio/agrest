@@ -22,7 +22,12 @@ public class EntityEncoder extends EntityNoIdEncoder {
     }
 
     protected void encodeProperties(Object object, JsonGenerator out) throws IOException {
-        idEncoder.encode(object, PathConstants.ID_PK_ATTRIBUTE, out);
+        encodeId(object, out);
         super.encodeProperties(object, out);
+    }
+
+    protected void encodeId(Object object, JsonGenerator out) throws IOException {
+        Object v = object == null ? null : idEncoder.getReader().value(object, PathConstants.ID_PK_ATTRIBUTE);
+        idEncoder.getEncoder().encode(PathConstants.ID_PK_ATTRIBUTE, v, out);
     }
 }

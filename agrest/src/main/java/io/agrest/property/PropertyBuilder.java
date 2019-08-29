@@ -1,16 +1,12 @@
 package io.agrest.property;
 
-import com.fasterxml.jackson.core.JsonGenerator;
 import io.agrest.EntityProperty;
 import io.agrest.encoder.Encoder;
 import io.agrest.encoder.EncoderVisitor;
 import io.agrest.encoder.GenericEncoder;
 
-import java.io.IOException;
-
 /**
- * A {@link EntityProperty} implementation that provides fluent builder methods
- * for the manual property assembly.
+ * A {@link EntityProperty} implementation that provides fluent builder methods for the manual property assembly.
  */
 public class PropertyBuilder implements EntityProperty {
 
@@ -40,19 +36,18 @@ public class PropertyBuilder implements EntityProperty {
 	}
 
 	@Override
-	public void encode(Object root, String propertyName, JsonGenerator out) throws IOException {
-		Object value = root == null ? null : read(root, propertyName);
-		encoder.encode(propertyName, value, out);
+	public Encoder getEncoder() {
+		return encoder;
 	}
 
 	@Override
-	public Object read(Object root, String propertyName) {
-		return reader.value(root, propertyName);
+	public PropertyReader getReader() {
+		return reader;
 	}
 
 	@Override
 	public int visit(Object root, String propertyName, EncoderVisitor visitor) {
-		Object value = root == null ? null : read(root, propertyName);
+		Object value = root == null ? null : getReader().value(root, propertyName);
 		return encoder.visitEntities(value, visitor);
 	}
 }

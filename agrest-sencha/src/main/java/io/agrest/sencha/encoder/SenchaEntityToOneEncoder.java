@@ -26,10 +26,7 @@ public class SenchaEntityToOneEncoder implements Encoder {
         }
 
         // encode FK as 'xyz_id' property
-        if (propertyName != null) {
-            String idPropertyName = idPropertyName(propertyName);
-            idEncoder.encode(object, idPropertyName, out);
-        }
+        encodeId(object, propertyName, out);
 
         return true;
     }
@@ -44,5 +41,14 @@ public class SenchaEntityToOneEncoder implements Encoder {
         // single known property, so hardcode the ID property to avoid
         // relationshipMapper lookups in a loop
         return idPropertyName;
+    }
+
+    protected void encodeId(Object object, String propertyName, JsonGenerator out) throws IOException {
+        if (propertyName != null) {
+            String idPropertyName = idPropertyName(propertyName);
+
+            Object v = object == null ? null : idEncoder.getReader().value(object, idPropertyName);
+            idEncoder.getEncoder().encode(idPropertyName, v, out);
+        }
     }
 }

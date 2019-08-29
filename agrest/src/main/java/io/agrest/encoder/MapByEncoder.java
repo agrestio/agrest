@@ -46,7 +46,7 @@ public class MapByEncoder implements CollectionEncoder {
     }
 
     private static Function<Object, ?> getPropertyReader(String propertyName, EntityProperty property) {
-        return it -> property.read(it, propertyName);
+        return it -> property.getReader().value(it, propertyName);
     }
 
     @Override
