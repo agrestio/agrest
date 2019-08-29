@@ -113,8 +113,7 @@ public class EncoderService implements IEncoderService {
 
     protected Encoder toOneEncoder(ResourceEntity<?> resourceEntity, AgRelationship relationship) {
 
-        // to-one encoder is made of the following decorator layers (from outer
-        // to inner):
+        // to-one encoder is made of the following decorator layers (from outer to inner):
         // (1) custom filters ->
         // (2) value encoder
         // different structure from to-many, so building it differently
@@ -130,9 +129,8 @@ public class EncoderService implements IEncoderService {
 
     protected Encoder entityEncoder(ResourceEntity<?> resourceEntity) {
 
-        // ensure we sort property encoders alphabetically for cleaner JSON
-        // output
-        Map<String, EntityProperty> attributeEncoders = new TreeMap<String, EntityProperty>();
+        // ensure we sort property encoders alphabetically for cleaner JSON output
+        Map<String, EntityProperty> attributeEncoders = new TreeMap<>();
 
         for (AgAttribute attribute : resourceEntity.getAttributes().values()) {
             EntityProperty property = attributeEncoderFactory.getAttributeProperty(resourceEntity.getAgEntity(),
@@ -140,7 +138,7 @@ public class EncoderService implements IEncoderService {
             attributeEncoders.put(attribute.getName(), property);
         }
 
-        Map<String, EntityProperty> relationshipEncoders = new TreeMap<String, EntityProperty>();
+        Map<String, EntityProperty> relationshipEncoders = new TreeMap<>();
         for (Entry<String, ResourceEntity<?>> e : resourceEntity.getChildren().entrySet()) {
             AgRelationship relationship = resourceEntity.getAgEntity().getRelationship(e.getKey());
 
@@ -177,5 +175,4 @@ public class EncoderService implements IEncoderService {
 
         return matchingFilters != null ? new FilterChainEncoder(encoder, matchingFilters) : encoder;
     }
-
 }
