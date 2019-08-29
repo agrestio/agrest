@@ -1,13 +1,13 @@
 package io.agrest.encoder;
 
+import com.fasterxml.jackson.core.JsonGenerator;
+import io.agrest.EntityProperty;
+import io.agrest.PathConstants;
+
 import java.io.IOException;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TreeMap;
-
-import com.fasterxml.jackson.core.JsonGenerator;
-import io.agrest.EntityProperty;
-import io.agrest.PathConstants;
 
 public class EntityEncoder extends AbstractEncoder {
 
@@ -15,13 +15,15 @@ public class EntityEncoder extends AbstractEncoder {
 	private Map<String, EntityProperty> relationshipEncoders;
 	private Map<String, EntityProperty> combinedEncoders;
 
-	public EntityEncoder(EntityProperty idEncoder, Map<String, EntityProperty> attributeEncoders,
-			Map<String, EntityProperty> relationshipEncoders, Map<String, EntityProperty> extraEncoders) {
+	public EntityEncoder(
+			EntityProperty idEncoder,
+			Map<String, EntityProperty> attributeEncoders,
+			Map<String, EntityProperty> relationshipEncoders,
+			Map<String, EntityProperty> extraEncoders) {
 
 		this.idEncoder = idEncoder;
 
-		// tracking relationship encoders separately for the sake of the
-		// visitors
+		// tracking relationship encoders separately for the sake of the visitors
 		this.relationshipEncoders = relationshipEncoders;
 
 		this.combinedEncoders = new TreeMap<>();
