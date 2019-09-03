@@ -36,8 +36,11 @@ public class EncoderService_javaUtilDate_Test extends TestWithCayenneMapping {
         IAttributeEncoderFactory aef = new AttributeEncoderFactory(new ValueEncodersProvider(Collections.emptyMap()).get());
         IStringConverterFactory stringConverterFactory = mock(IStringConverterFactory.class);
 
-        encoderService = new EncoderService(Collections.emptyList(), aef, stringConverterFactory,
-                new RelationshipMapper(), Collections.emptyMap());
+        encoderService = new EncoderService(
+                aef,
+                stringConverterFactory,
+                new RelationshipMapper(),
+                Collections.emptyMap());
     }
 
     /**

@@ -55,8 +55,8 @@ public class ApplyServerParamsStage implements Processor<UpdateContext<?>> {
         constraintsHandler.constrainResponse(entity, null, context.getReadConstraints());
 
         if(context.getEncoder() == null) {
-            // TODO: we don't need encoder if includeData=false... should we
-            // conditionally skip this step?
+            // TODO: we don't need encoder if includeData=false... should we  conditionally skip this step?
+            // TODO: should we allow custom EntityFilters in update?
             context.setEncoder(encoderService.dataEncoder(entity));
         }
     }

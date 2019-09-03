@@ -3,7 +3,6 @@ package io.agrest.it;
 import com.fasterxml.jackson.core.JsonGenerator;
 import io.agrest.Ag;
 import io.agrest.DataResponse;
-import io.agrest.ResourceEntity;
 import io.agrest.SelectStage;
 import io.agrest.encoder.Encoder;
 import io.agrest.encoder.EncoderFilter;
@@ -16,6 +15,7 @@ import org.junit.Test;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Configuration;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
@@ -29,8 +29,24 @@ public class GET_EncoderFiltersIT extends JerseyAndDerbyCase {
 
     @BeforeClass
     public static void startTestRuntime() {
-        UnaryOperator<AgBuilder> customizer = ab -> ab.encoderFilter(new E4OddFilter());
+        UnaryOperator<AgBuilder> customizer = ab -> ab.encoderFilter(oddFilter());
         startTestRuntime(customizer, Resource.class);
+    }
+
+    static EncoderFilter oddFilter() {
+        return EncoderFilter
+                .forEntity(E4.class)
+                .objectCondition(GET_EncoderFiltersIT::willEncodeOdd)
+                .encoder(GET_EncoderFiltersIT::encodeOdd)
+                .build();
+    }
+
+    static boolean willEncodeOdd(String p, E4 e4, Encoder d) {
+        return Cayenne.intPKForObject(e4) % 2 == 0 ? d.willEncode(p, e4) : false;
+    }
+
+    static boolean encodeOdd(String p, E4 e4, JsonGenerator out, Encoder d) throws IOException {
+        return Cayenne.intPKForObject(e4) % 2 == 0 ? d.encode(p, e4, out) : false;
     }
 
     @Override
@@ -145,37 +161,18 @@ public class GET_EncoderFiltersIT extends JerseyAndDerbyCase {
         assertEquals(0, Resource.QUERY_PAGE_SIZE);
     }
 
-    private static class E4OddFilter implements EncoderFilter {
-        @Override
-        public boolean matches(ResourceEntity<?> entity) {
-            return entity.getAgEntity().getName().equals("E4");
-        }
+    @Test
+    public void testRequestEncoder() {
 
-        @Override
-        public boolean encode(String propertyName, Object object, JsonGenerator out, Encoder delegate)
-                throws IOException {
+        e4().insertColumns("id", "c_varchar").values(1, "a").values(2, "b").exec();
 
-            E4 e4 = (E4) object;
+        Response r = target("/e4_request_encoder/xyz")
+                .queryParam("include", "[\"id\",\"cVarchar\"]")
+                .queryParam("sort", "id")
+                .request()
+                .get();
 
-            // keep even, remove odd
-            if (Cayenne.intPKForObject(e4) % 2 == 0) {
-                return delegate.encode(propertyName, object, out);
-            }
-
-            return false;
-        }
-
-        @Override
-        public boolean willEncode(String propertyName, Object object, Encoder delegate) {
-            E4 e4 = (E4) object;
-
-            // keep even, remove odd
-            if (Cayenne.intPKForObject(e4) % 2 == 0) {
-                return delegate.willEncode(propertyName, object);
-            }
-
-            return false;
-        }
+        onSuccess(r).bodyEquals(1, "{\"suffix\":\"xyz\"}");
     }
 
     @Path("")
@@ -187,7 +184,6 @@ public class GET_EncoderFiltersIT extends JerseyAndDerbyCase {
         @Context
         private Configuration config;
 
-
         @GET
         @Path("e4")
         public DataResponse<E4> get(@Context UriInfo uriInfo) {
@@ -196,7 +192,7 @@ public class GET_EncoderFiltersIT extends JerseyAndDerbyCase {
 
         @GET
         @Path("e4/pagination_stage")
-        public DataResponse<E4> get_WithPaginationStage(@Context UriInfo uriInfo) {
+        public DataResponse<E4> getWithPaginationStage(@Context UriInfo uriInfo) {
             return Ag.service(config)
                     .select(E4.class)
                     .uri(uriInfo)
@@ -204,6 +200,27 @@ public class GET_EncoderFiltersIT extends JerseyAndDerbyCase {
                             c -> RESOURCE_ENTITY_IS_FILTERED = c.getEntity().isFiltered())
                     .stage(SelectStage.ASSEMBLE_QUERY,
                             c -> QUERY_PAGE_SIZE = c.getEntity().getSelect().getPageSize())
+                    .get();
+        }
+
+        @GET
+        @Path("e4_request_encoder/{suffix}")
+        // typical use case tested here is an EncoderFilter that depends on request parameters
+        public DataResponse<E4> getWithRequestEncoder(@Context UriInfo uriInfo, @PathParam("suffix") String suffix) {
+
+            EncoderFilter filter = EncoderFilter.forEntity(E4.class)
+                    .encoder((p, o, out, e) -> {
+                        out.writeStartObject();
+                        out.writeObjectField("suffix", suffix);
+                        out.writeEndObject();
+                        return true;
+                    })
+                    .build();
+
+            return Ag.service(config)
+                    .select(E4.class)
+                    .encoderFilter(filter)
+                    .uri(uriInfo)
                     .get();
         }
     }

@@ -21,9 +21,7 @@ import org.junit.Test;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
@@ -31,17 +29,13 @@ import static org.mockito.Mockito.mock;
 public class EncoderServiceTest extends TestWithCayenneMapping {
 
     private EncoderService encoderService;
-    private List<EncoderFilter> filters;
 
     @Before
     public void before() {
-
-        this.filters = new ArrayList<>();
         IAttributeEncoderFactory aef = new AttributeEncoderFactory(new ValueEncodersProvider(Collections.emptyMap()).get());
         IStringConverterFactory stringConverterFactory = mock(IStringConverterFactory.class);
 
         encoderService = new EncoderService(
-                this.filters,
                 aef,
                 stringConverterFactory,
                 new RelationshipMapper(),
@@ -107,7 +101,7 @@ public class EncoderServiceTest extends TestWithCayenneMapping {
     @Test
     public void testEncoder_FilteredRoots() {
 
-        filters.add(new EncoderFilter() {
+        EncoderFilter filter = new EncoderFilter() {
 
             @Override
             public boolean matches(ResourceEntity<?> entity) {
@@ -137,9 +131,10 @@ public class EncoderServiceTest extends TestWithCayenneMapping {
 
                 return false;
             }
-        });
+        };
 
         ResourceEntity<E2> descriptor = getResourceEntity(E2.class);
+        descriptor.getEncoderFilters().add(filter);
         descriptor.includeId();
 
         ObjectContext context = mockCayennePersister.newContext();
@@ -163,7 +158,7 @@ public class EncoderServiceTest extends TestWithCayenneMapping {
     @Test
     public void testEncoder_FilteredToOne() {
 
-        filters.add(new EncoderFilter() {
+        EncoderFilter filter = new EncoderFilter() {
 
             @Override
             public boolean matches(ResourceEntity<?> entity) {
@@ -200,9 +195,10 @@ public class EncoderServiceTest extends TestWithCayenneMapping {
                     return delegate.willEncode(propertyName, object);
                 }
             }
-        });
+        };
 
         ResourceEntity<E2> e2Descriptor = getResourceEntity(E2.class);
+        e2Descriptor.getEncoderFilters().add(filter);
         e2Descriptor.includeId();
 
         ResourceEntity<E3> e3Descriptor = getResourceEntity(E3.class);
@@ -243,7 +239,7 @@ public class EncoderServiceTest extends TestWithCayenneMapping {
     @Test
     public void testEncoder_FilterNoMatch() throws IOException {
 
-        filters.add(new EncoderFilter() {
+        EncoderFilter filter = new EncoderFilter() {
 
             @Override
             public boolean matches(ResourceEntity<?> entity) {
@@ -261,9 +257,10 @@ public class EncoderServiceTest extends TestWithCayenneMapping {
                 fail("Non matching filter was not supposed to be invoked");
                 return false;
             }
-        });
+        };
 
         ResourceEntity<E2> descriptor = getResourceEntity(E2.class);
+        descriptor.getEncoderFilters().add(filter);
         descriptor.includeId();
 
         DataResponse<E2> builder = DataResponse.forType(E2.class);

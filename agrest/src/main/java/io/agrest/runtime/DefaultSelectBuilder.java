@@ -10,6 +10,7 @@ import io.agrest.SelectStage;
 import io.agrest.SizeConstraints;
 import io.agrest.constraints.Constraint;
 import io.agrest.encoder.Encoder;
+import io.agrest.encoder.EncoderFilter;
 import io.agrest.processor.Processor;
 import io.agrest.property.PropertyBuilder;
 import io.agrest.runtime.processor.select.SelectContext;
@@ -20,6 +21,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriInfo;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.EnumMap;
 import java.util.HashMap;
@@ -134,6 +136,19 @@ public class DefaultSelectBuilder<T> implements SelectBuilder<T> {
     @Override
     public SelectBuilder<T> encoder(Encoder encoder) {
         this.context.setEncoder(encoder);
+        return this;
+    }
+
+    /**
+     * @since 3.4
+     */
+    @Override
+    public SelectBuilder<T> encoderFilter(EncoderFilter filter) {
+        if (context.getEncoderFilters() == null) {
+            context.setEncoderFilters(new ArrayList<>());
+        }
+
+        context.getEncoderFilters().add(filter);
         return this;
     }
 

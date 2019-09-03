@@ -2,9 +2,7 @@ package io.agrest.runtime.encoder;
 
 import io.agrest.ResourceEntity;
 import io.agrest.encoder.Encoder;
-import io.agrest.encoder.EncoderFilter;
 import io.agrest.encoder.Encoders;
-import io.agrest.encoder.PropertyMetadataEncoder;
 import io.agrest.it.fixture.cayenne.iso.Java8ISODateTestEntity;
 import io.agrest.it.fixture.cayenne.iso.Java8ISOOffsetDateTimeTestEntity;
 import io.agrest.it.fixture.cayenne.iso.Java8ISOTimeTestEntity;
@@ -35,8 +33,11 @@ public class EncoderService_ISODateTime_Test extends Java8TestWithCayenneMapping
         IAttributeEncoderFactory aef = new AttributeEncoderFactory(new ValueEncodersProvider(Collections.emptyMap()).get());
         IStringConverterFactory stringConverterFactory = mock(IStringConverterFactory.class);
 
-        encoderService = new EncoderService(Collections.<EncoderFilter>emptyList(), aef, stringConverterFactory,
-                new RelationshipMapper(), Collections.<String, PropertyMetadataEncoder> emptyMap());
+        encoderService = new EncoderService(
+                aef,
+                stringConverterFactory,
+                new RelationshipMapper(),
+                Collections.emptyMap());
     }
 
     @Test
@@ -102,7 +103,7 @@ public class EncoderService_ISODateTime_Test extends Java8TestWithCayenneMapping
         assertEquals("{\"data\":[{\"timestamp\":\"" + dateTimeString + "\"}],\"total\":1}",
                 toJson(isoTimestampTestEntity, resourceEntity));
     }
-    
+
     @Test
     public void testJava8ISOOffsetDateTime() {
         // fractional part is not printed, when less than a millisecond
@@ -112,7 +113,7 @@ public class EncoderService_ISODateTime_Test extends Java8TestWithCayenneMapping
         int millisecond = 1_000_000; // millisecond is 10^6 nanoseconds
         _testJava8ISOOffsetDateTime(OffsetDateTime.of(LocalDateTime.of(2017, 1, 1, 10, 0, 0, millisecond), ZoneOffset.ofHours(3)));
     }
-    
+
     private void _testJava8ISOOffsetDateTime(OffsetDateTime dateTime) {
 
         ResourceEntity<Java8ISOOffsetDateTimeTestEntity> resourceEntity = getResourceEntity(Java8ISOOffsetDateTimeTestEntity.class);

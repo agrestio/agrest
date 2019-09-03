@@ -25,9 +25,7 @@ import org.junit.Test;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
@@ -37,7 +35,6 @@ public class SenchaEncoderServiceTest extends TestWithCayenneMapping {
 
     private SenchaEncoderService encoderService;
     private ICayennePersister cayenneService;
-    private List<EncoderFilter> filters;
 
     @Before
     public void before() {
@@ -47,61 +44,35 @@ public class SenchaEncoderServiceTest extends TestWithCayenneMapping {
         when(cayenneService.sharedContext()).thenReturn(sharedContext);
         when(cayenneService.newContext()).thenReturn(TestWithCayenneMapping.runtime.newContext());
 
-        this.filters = new ArrayList<>();
         IAttributeEncoderFactory aef = new AttributeEncoderFactory(new ValueEncodersProvider(Collections.emptyMap()).get());
         IStringConverterFactory stringConverterFactory = mock(IStringConverterFactory.class);
         IRelationshipMapper relationshipMapper = new SenchaRelationshipMapper();
 
-        encoderService = new SenchaEncoderService(this.filters, aef, stringConverterFactory,
-                relationshipMapper, Collections.emptyMap());
+        encoderService = new SenchaEncoderService(
+                aef,
+                stringConverterFactory,
+                relationshipMapper,
+                Collections.emptyMap());
     }
 
     @Test
     public void testEncoder_FilteredToOne() throws IOException {
 
-        filters.add(new EncoderFilter() {
+        EncoderFilter filter = EncoderFilter.forAll()
+                .objectCondition((p, o, d) -> o instanceof E2 && Cayenne.intPKForObject((E2) o) != 7
+                        ? false : d.willEncode(p, o)
+                )
+                .encoder((p, o, out, d) -> o instanceof E2 && Cayenne.intPKForObject((E2) o) != 7
+                        ? false : d.encode(p, o, out))
+                .build();
 
-            @Override
-            public boolean matches(ResourceEntity<?> entity) {
-                return true;
-            }
-
-            @Override
-            public boolean encode(String propertyName, Object object, JsonGenerator out, Encoder delegate)
-                    throws IOException {
-
-                if (object instanceof E2) {
-                    E2 e2 = (E2) object;
-                    if (Cayenne.intPKForObject(e2) == 7) {
-                        return delegate.encode(propertyName, object, out);
-                    } else {
-                        return false;
-                    }
-                } else {
-                    delegate.encode(propertyName, object, out);
-                    return true;
-                }
-            }
-
-            @Override
-            public boolean willEncode(String propertyName, Object object, Encoder delegate) {
-                if (object instanceof E2) {
-                    E2 e2 = (E2) object;
-                    if (Cayenne.intPKForObject(e2) == 7) {
-                        return delegate.willEncode(propertyName, object);
-                    } else {
-                        return false;
-                    }
-                } else {
-                    return delegate.willEncode(propertyName, object);
-                }
-            }
-        });
 
         ResourceEntity<E2> e2Descriptor = getResourceEntity(E2.class);
+        e2Descriptor.getEncoderFilters().add(filter);
         e2Descriptor.includeId();
 
         ResourceEntity<E3> e3Descriptor = getResourceEntity(E3.class);
+        e3Descriptor.getEncoderFilters().add(filter);
         e3Descriptor.includeId();
         e3Descriptor.getChildren().put(E3.E2.getName(), e2Descriptor);
 

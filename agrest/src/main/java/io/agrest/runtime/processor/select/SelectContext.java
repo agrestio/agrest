@@ -11,6 +11,7 @@ import io.agrest.SimpleObjectId;
 import io.agrest.SizeConstraints;
 import io.agrest.constraints.Constraint;
 import io.agrest.encoder.Encoder;
+import io.agrest.encoder.EncoderFilter;
 import io.agrest.processor.BaseProcessingContext;
 
 import javax.ws.rs.core.UriInfo;
@@ -36,7 +37,7 @@ public class SelectContext<T> extends BaseProcessingContext<T> {
     private Encoder encoder;
     private AgRequest mergedRequest;
     private AgRequest request;
-
+    private List<EncoderFilter> encoderFilters;
 
     public SelectContext(Class<T> type) {
         super(type);
@@ -102,6 +103,20 @@ public class SelectContext<T> extends BaseProcessingContext<T> {
 
     public void setExtraProperties(Map<String, EntityProperty> extraProperties) {
         this.extraProperties = extraProperties;
+    }
+
+    /**
+     * @since 3.4
+     */
+    public List<EncoderFilter> getEncoderFilters() {
+        return encoderFilters;
+    }
+
+    /**
+     * @since 3.4
+     */
+    public void setEncoderFilters(List<EncoderFilter> encoderFilters) {
+        this.encoderFilters = encoderFilters;
     }
 
     public SizeConstraints getSizeConstraints() {

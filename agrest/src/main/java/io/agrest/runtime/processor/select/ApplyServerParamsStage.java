@@ -8,6 +8,7 @@ import io.agrest.runtime.constraints.IConstraintsHandler;
 import io.agrest.runtime.encoder.IEncoderService;
 import org.apache.cayenne.di.Inject;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -41,12 +42,7 @@ public class ApplyServerParamsStage implements Processor<SelectContext<?>> {
 
         constraintsHandler.constrainResponse(entity, context.getSizeConstraints(), context.getConstraint());
 
-        for (EncoderFilter filter : filters) {
-            if (filter.matches(entity)) {
-                entity.setFiltered(true);
-                break;
-            }
-        }
+        initEncoderFilters(context);
 
         // make sure we create the encoder, even if we end up with an empty
         // list, as we need to encode the totals
@@ -54,5 +50,44 @@ public class ApplyServerParamsStage implements Processor<SelectContext<?>> {
         if (context.getEncoder() == null) {
             context.setEncoder(encoderService.dataEncoder(entity));
         }
+    }
+
+    protected void initEncoderFilters(SelectContext<?> context) {
+        List<EncoderFilter> filters = mergeFilters(context.getEncoderFilters());
+        if (!filters.isEmpty()) {
+            initEncoderFilters(context.getEntity(), filters);
+        }
+    }
+
+    protected void initEncoderFilters(ResourceEntity<?> entity, List<EncoderFilter> filters) {
+
+        for (EncoderFilter filter : filters) {
+            if (filter.matches(entity)) {
+                entity.getEncoderFilters().add(filter);
+            }
+        }
+
+        for (ResourceEntity<?> child : entity.getChildren().values()) {
+            initEncoderFilters(child, filters);
+        }
+    }
+
+    protected List<EncoderFilter> mergeFilters(List<EncoderFilter> requestFilters) {
+
+        if (requestFilters == null || requestFilters.isEmpty()) {
+            return this.filters;
+        }
+
+        if (this.filters.isEmpty()) {
+            return requestFilters;
+        }
+
+        List<EncoderFilter> combined = new ArrayList<>(requestFilters.size() + filters.size());
+
+        // global filters go first, per-request filters applied after them
+        combined.addAll(filters);
+        combined.addAll(requestFilters);
+
+        return combined;
     }
 }

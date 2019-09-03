@@ -6,18 +6,39 @@ import io.agrest.ResourceEntity;
 import java.io.IOException;
 
 /**
- * Defines API of an interceptor for encoding specific entities. E.g. an application may define a filter that suppresses
- * certain objects based on security constraints. Or provide an alternative encoder for a given object, etc.
+ * An interceptor for custom encoding of specific entities. An application may define a filter that suppresses
+ * certain objects based on security constraints, or may provide a custom encoder for a given object, etc.
  */
 public interface EncoderFilter {
 
 	/**
-	 * Returns whether the filter should be applied for a given {@link ResourceEntity}.
+	 * @since 3.4
 	 */
-	boolean matches(ResourceEntity<?> entity);
+    static EncoderFilterBuilder forAll() {
+        return new EncoderFilterBuilder();
+    }
 
-	boolean encode(String propertyName, Object object, JsonGenerator out, Encoder delegate) throws IOException;
+	/**
+	 * @since 3.4
+	 */
+    static EncoderFilterBuilder forEntity(Class<?> entity) {
+        return new EncoderFilterBuilder().forEntity(entity);
+    }
 
-	boolean willEncode(String propertyName, Object object, Encoder delegate);
+	/**
+	 * @since 3.4
+	 */
+    static EncoderFilterBuilder forEntityCondition(EncoderFilterEntityCondition condition) {
+        return new EncoderFilterBuilder().entityCondition(condition);
+    }
+
+    /**
+     * Returns whether the filter should be applied for a given {@link ResourceEntity}.
+     */
+    boolean matches(ResourceEntity<?> entity);
+
+    boolean encode(String propertyName, Object object, JsonGenerator out, Encoder delegate) throws IOException;
+
+    boolean willEncode(String propertyName, Object object, Encoder delegate);
 
 }

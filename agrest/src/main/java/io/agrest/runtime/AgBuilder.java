@@ -235,6 +235,14 @@ public class AgBuilder {
         return this;
     }
 
+    /**
+     * Installs a encoding filter that is applied to every request, altering response encoding. This method can be
+     * called multiple times to add more than one filter.
+     *
+     * @param filter a filter to apply when encoding individual entities
+     * @return this builder instance
+     * @see io.agrest.SelectBuilder#encoderFilter(EncoderFilter)
+     */
     public AgBuilder encoderFilter(EncoderFilter filter) {
         this.encoderFilters.add(filter);
         return this;

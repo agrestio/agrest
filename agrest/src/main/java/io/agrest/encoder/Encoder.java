@@ -30,10 +30,9 @@ public interface Encoder {
 	boolean encode(String propertyName, Object object, JsonGenerator out) throws IOException;
 
 	/**
-	 * Allows to check whether a given object will be encoded or skipped by the
-	 * current encoder. This is the same as
-	 * {@link #encode(String, Object, JsonGenerator)}, only without actually
-	 * encoding the object.
+	 * Allows to check whether a given object will be encoded or skipped by the current encoder. This is the same as
+	 * {@link #encode(String, Object, JsonGenerator)}, only without actually encoding the object. Used e.g. in
+	 * {@link ListEncoder} to properly calculate offsets.
 	 */
 	boolean willEncode(String propertyName, Object object);
 
