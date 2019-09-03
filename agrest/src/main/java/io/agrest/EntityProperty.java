@@ -5,10 +5,9 @@ import io.agrest.encoder.EncoderVisitor;
 import io.agrest.property.PropertyReader;
 
 /**
- * Encapsulates how certain data is extracted and encoded from entity objects.
- * Conceptually {@link EntityProperty} is not limited to object "bean"
- * properties. It can be some value calculated dynamically based on the request
- * context, such as current date, or some other parameters, etc.
+ * Encapsulates how certain data is extracted and encoded from entity objects. It is not limited to object "java bean"
+ * properties. It can be some value calculated dynamically based on the request context, such as current date, or some
+ * other parameters, etc.
  */
 public interface EntityProperty {
 

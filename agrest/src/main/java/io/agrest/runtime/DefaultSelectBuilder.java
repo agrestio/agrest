@@ -158,12 +158,12 @@ public class DefaultSelectBuilder<T> implements SelectBuilder<T> {
     }
 
     @Override
-    public SelectBuilder<T> property(String name, EntityProperty clientProperty) {
+    public SelectBuilder<T> property(String name, EntityProperty property) {
         if (context.getExtraProperties() == null) {
             context.setExtraProperties(new HashMap<>());
         }
 
-        EntityProperty oldProperty = context.getExtraProperties().put(name, clientProperty);
+        EntityProperty oldProperty = context.getExtraProperties().put(name, property);
         if (oldProperty != null) {
             logger.info("Overriding existing custom property '" + name + "', ignoring...");
         }
