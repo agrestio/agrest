@@ -18,6 +18,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.function.Function;
 
 public class MapByEncoder implements CollectionEncoder {
@@ -28,12 +29,14 @@ public class MapByEncoder implements CollectionEncoder {
     private boolean byId;
     private StringConverter fieldNameConverter;
 
-    public MapByEncoder(String mapByPath, ResourceEntity<?> mapBy, CollectionEncoder collectionEncoder,
-                        IStringConverterFactory converterFactory, IAttributeEncoderFactory encoderFactory) {
+    public MapByEncoder(
+            String mapByPath,
+            ResourceEntity<?> mapBy,
+            CollectionEncoder collectionEncoder,
+            IStringConverterFactory converterFactory,
+            IAttributeEncoderFactory encoderFactory) {
 
-        if (mapBy == null) {
-            throw new NullPointerException("Null mapBy");
-        }
+        Objects.requireNonNull(mapBy, "Null mapBy");
 
         this.mapByPath = mapByPath;
         this.mapByReaders = new ArrayList<>();
@@ -60,8 +63,10 @@ public class MapByEncoder implements CollectionEncoder {
         return collectionEncoder.visitEntities(object, visitor);
     }
 
-    private void config(IStringConverterFactory converterFactory, IAttributeEncoderFactory encoderFactory,
-                        ResourceEntity<?> mapBy) {
+    private void config(
+            IStringConverterFactory converterFactory,
+            IAttributeEncoderFactory encoderFactory,
+            ResourceEntity<?> mapBy) {
 
         if (mapBy.isIdIncluded()) {
             validateLeafMapBy(mapBy);
@@ -90,7 +95,8 @@ public class MapByEncoder implements CollectionEncoder {
 
             Map.Entry<String, ResourceEntity<?>> child = mapBy.getChildren().entrySet().iterator().next();
             AgRelationship relationship = mapBy.getAgEntity().getRelationship(child.getKey());
-            mapByReaders.add(getPropertyReader(child.getKey(),
+            mapByReaders.add(getPropertyReader(
+                    child.getKey(),
                     encoderFactory.getRelationshipProperty(mapBy, relationship, null)));
 
             ResourceEntity<?> childMapBy = mapBy.getChildren().get(child.getKey());
@@ -108,9 +114,9 @@ public class MapByEncoder implements CollectionEncoder {
 
         if (!mapBy.getChildren().isEmpty()) {
 
-            StringBuilder message = new StringBuilder("'mapBy' path segment '");
-            message.append(mapBy.getIncoming().getName()).append(
-                    "should not have children. Full 'mapBy' path: " + mapByPath);
+            StringBuilder message = new StringBuilder("'mapBy' path segment '")
+                    .append(mapBy.getIncoming().getName())
+                    .append("should not have children. Full 'mapBy' path: " + mapByPath);
 
             throw new AgException(Status.BAD_REQUEST, message.toString());
         }
