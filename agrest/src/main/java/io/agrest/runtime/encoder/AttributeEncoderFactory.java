@@ -23,6 +23,7 @@ import org.apache.cayenne.di.Inject;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
+import java.util.Optional;
 import java.util.TreeMap;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -32,7 +33,7 @@ public class AttributeEncoderFactory implements IAttributeEncoderFactory {
 
     // these are explicit overrides for named attributes
     private Map<String, EntityProperty> attributePropertiesByPath;
-    private Map<String, EntityProperty> idPropertiesByEntity;
+    private Map<String, Optional<EntityProperty>> idPropertiesByEntity;
     private Map<AgEntity<?>, IdPropertyReader> idPropertyReaders;
 
     public AttributeEncoderFactory(@Inject ValueEncoders valueEncoders) {
@@ -56,7 +57,7 @@ public class AttributeEncoderFactory implements IAttributeEncoderFactory {
     }
 
     @Override
-    public EntityProperty getIdProperty(ResourceEntity<?> entity) {
+    public Optional<EntityProperty> getIdProperty(ResourceEntity<?> entity) {
         String key = entity.getAgEntity().getName();
         return idPropertiesByEntity.computeIfAbsent(key, k -> buildIdProperty(entity));
     }
@@ -103,7 +104,7 @@ public class AttributeEncoderFactory implements IAttributeEncoderFactory {
         }
     }
 
-    protected EntityProperty buildIdProperty(ResourceEntity<?> entity) {
+    protected Optional<EntityProperty> buildIdProperty(ResourceEntity<?> entity) {
 
         Collection<AgAttribute> ids = entity.getAgEntity().getIds();
 
@@ -114,12 +115,12 @@ public class AttributeEncoderFactory implements IAttributeEncoderFactory {
             // Cayenne object - PK is an ObjectId (even if it is also a meaningful object property)
             switch (ids.size()) {
                 case 0:
-                    // use fake ID encoder
-                    return PropertyBuilder.doNothingProperty();
+                    return Optional.empty();
                 case 1:
-                    return PropertyBuilder
+                    EntityProperty p1 = PropertyBuilder
                             .property(getOrCreateIdReader(entity.getAgEntity()))
                             .encodedWith(new IdEncoder(getEncoder(ids.iterator().next().getType())));
+                    return Optional.of(p1);
                 default:
 
                     // keeping attribute encoders in alphabetical order
@@ -128,9 +129,10 @@ public class AttributeEncoderFactory implements IAttributeEncoderFactory {
                         valueEncoders.put(id.getName(), getEncoder(id.getType()));
                     }
 
-                    return PropertyBuilder
+                    EntityProperty p2 = PropertyBuilder
                             .property(getOrCreateIdReader(entity.getAgEntity()))
                             .encodedWith(new IdEncoder(valueEncoders));
+                    return Optional.of(p2);
             }
 
         } else {
@@ -138,14 +140,13 @@ public class AttributeEncoderFactory implements IAttributeEncoderFactory {
             // POJO - PK is an object property
 
             if (ids.isEmpty()) {
-                // use fake ID encoder
-                return PropertyBuilder.doNothingProperty();
+                return Optional.empty();
             }
 
             // TODO: multi-attribute ID?
 
             AgAttribute id = ids.iterator().next();
-            return PropertyBuilder.property(BeanPropertyReader.reader(id.getName()));
+            return Optional.of(PropertyBuilder.property(BeanPropertyReader.reader(id.getName())));
         }
     }
 

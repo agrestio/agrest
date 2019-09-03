@@ -71,7 +71,8 @@ public class MapByEncoder implements CollectionEncoder {
         if (mapBy.isIdIncluded()) {
             validateLeafMapBy(mapBy);
             byId = true;
-            this.mapByReaders.add(getPropertyReader(null, encoderFactory.getIdProperty(mapBy)));
+
+            encoderFactory.getIdProperty(mapBy).ifPresent(p -> this.mapByReaders.add(getPropertyReader(null, p)));
             this.fieldNameConverter = converterFactory.getConverter(mapBy.getAgEntity());
             return;
         }
@@ -107,7 +108,7 @@ public class MapByEncoder implements CollectionEncoder {
 
         // by default we are dealing with ID
         byId = true;
-        mapByReaders.add(getPropertyReader(null, encoderFactory.getIdProperty(mapBy)));
+        encoderFactory.getIdProperty(mapBy).ifPresent(p -> mapByReaders.add(getPropertyReader(null, p)));
         fieldNameConverter = converterFactory.getConverter(mapBy.getAgEntity());
     }
 

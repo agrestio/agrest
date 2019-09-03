@@ -8,6 +8,7 @@ import io.agrest.encoder.Encoder;
 import io.agrest.encoder.EncoderFilter;
 import io.agrest.encoder.EntityEncoder;
 import io.agrest.encoder.EntityMetadataEncoder;
+import io.agrest.encoder.EntityNoIdEncoder;
 import io.agrest.encoder.FilterChainEncoder;
 import io.agrest.encoder.GenericEncoder;
 import io.agrest.encoder.ListEncoder;
@@ -16,7 +17,6 @@ import io.agrest.encoder.PropertyMetadataEncoder;
 import io.agrest.encoder.ResourceEncoder;
 import io.agrest.meta.AgAttribute;
 import io.agrest.meta.AgRelationship;
-import io.agrest.property.PropertyBuilder;
 import io.agrest.runtime.semantics.IRelationshipMapper;
 import org.apache.cayenne.di.Inject;
 
@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.TreeMap;
 
 public class EncoderService implements IEncoderService {
@@ -163,10 +164,12 @@ public class EncoderService implements IEncoderService {
 
         extraEncoders.putAll(resourceEntity.getIncludedExtraProperties());
 
-        EntityProperty idEncoder = resourceEntity.isIdIncluded()
+        Optional<EntityProperty> idEncoder = resourceEntity.isIdIncluded()
                 ? attributeEncoderFactory.getIdProperty(resourceEntity)
-                : PropertyBuilder.doNothingProperty();
-        return new EntityEncoder(idEncoder, attributeEncoders, relationshipEncoders, extraEncoders);
+                : Optional.empty();
+        return idEncoder
+                .map(ide -> (Encoder) new EntityEncoder(ide, attributeEncoders, relationshipEncoders, extraEncoders))
+                .orElseGet(() -> new EntityNoIdEncoder(attributeEncoders, relationshipEncoders, extraEncoders));
     }
 
     protected Encoder filteredEncoder(Encoder encoder, ResourceEntity<?> resourceEntity) {

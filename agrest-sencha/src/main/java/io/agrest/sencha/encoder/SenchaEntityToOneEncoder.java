@@ -6,12 +6,15 @@ import io.agrest.encoder.Encoder;
 
 import java.io.IOException;
 
-public abstract class SenchaEntityToOneEncoder implements Encoder {
+public class SenchaEntityToOneEncoder implements Encoder {
 
     private Encoder objectEncoder;
     private EntityProperty idEncoder;
+    private String idPropertyName;
 
-    public SenchaEntityToOneEncoder(Encoder objectEncoder, EntityProperty idEncoder) {
+
+    public SenchaEntityToOneEncoder(String idPropertyName, Encoder objectEncoder, EntityProperty idEncoder) {
+        this.idPropertyName = idPropertyName;
         this.objectEncoder = objectEncoder;
         this.idEncoder = idEncoder;
     }
@@ -31,11 +34,15 @@ public abstract class SenchaEntityToOneEncoder implements Encoder {
         return true;
     }
 
-	@Override
-	public boolean willEncode(String propertyName, Object object) {
-		return true;
-	}
+    @Override
+    public boolean willEncode(String propertyName, Object object) {
+        return true;
+    }
 
-	protected abstract String idPropertyName(String propertyName);
-
+    protected String idPropertyName(String propertyName) {
+        // we know that created encoder will only be used for encoding a
+        // single known property, so hardcode the ID property to avoid
+        // relationshipMapper lookups in a loop
+        return idPropertyName;
+    }
 }

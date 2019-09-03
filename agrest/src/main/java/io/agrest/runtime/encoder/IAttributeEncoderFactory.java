@@ -7,6 +7,8 @@ import io.agrest.meta.AgAttribute;
 import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgRelationship;
 
+import java.util.Optional;
+
 /**
  * A service that manages {@link EntityProperty} objects that allow to extract and encode entity attributes when rendering
  * JSON.
@@ -23,5 +25,5 @@ public interface IAttributeEncoderFactory {
      */
     EntityProperty getRelationshipProperty(ResourceEntity<?> entity, AgRelationship relationship, Encoder encoder);
 
-    EntityProperty getIdProperty(ResourceEntity<?> entity);
+    Optional<EntityProperty> getIdProperty(ResourceEntity<?> entity);
 }

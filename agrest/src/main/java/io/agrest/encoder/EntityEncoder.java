@@ -6,77 +6,23 @@ import io.agrest.PathConstants;
 
 import java.io.IOException;
 import java.util.Map;
-import java.util.Map.Entry;
-import java.util.TreeMap;
 
-public class EntityEncoder extends AbstractEncoder {
+public class EntityEncoder extends EntityNoIdEncoder {
 
-	private EntityProperty idEncoder;
-	private Map<String, EntityProperty> relationshipEncoders;
-	private Map<String, EntityProperty> combinedEncoders;
+    private EntityProperty idEncoder;
 
-	public EntityEncoder(
-			EntityProperty idEncoder,
-			Map<String, EntityProperty> attributeEncoders,
-			Map<String, EntityProperty> relationshipEncoders,
-			Map<String, EntityProperty> extraEncoders) {
+    public EntityEncoder(
+            EntityProperty idEncoder,
+            Map<String, EntityProperty> attributeEncoders,
+            Map<String, EntityProperty> relationshipEncoders,
+            Map<String, EntityProperty> extraEncoders) {
 
-		this.idEncoder = idEncoder;
+        super(attributeEncoders, relationshipEncoders, extraEncoders);
+        this.idEncoder = idEncoder;
+    }
 
-		// tracking relationship encoders separately for the sake of the visitors
-		this.relationshipEncoders = relationshipEncoders;
-
-		this.combinedEncoders = new TreeMap<>();
-		combinedEncoders.putAll(attributeEncoders);
-		combinedEncoders.putAll(relationshipEncoders);
-		combinedEncoders.putAll(extraEncoders);
-	}
-
-	@Override
-	protected boolean encodeNonNullObject(Object object, JsonGenerator out) throws IOException {
-
-		out.writeStartObject();
-
-		idEncoder.encode(object, PathConstants.ID_PK_ATTRIBUTE, out);
-
-		for (Entry<String, EntityProperty> e : combinedEncoders.entrySet()) {
-			e.getValue().encode(object, e.getKey(), out);
-		}
-
-		out.writeEndObject();
-		return true;
-	}
-
-	@Override
-	public int visitEntities(Object object, EncoderVisitor visitor) {
-
-		if (object == null || !willEncode(null, object)) {
-			return VISIT_CONTINUE;
-		}
-
-		int bitmask = visitor.visit(object);
-
-		if ((bitmask & VISIT_SKIP_ALL) != 0) {
-			return VISIT_SKIP_ALL;
-		}
-
-		if ((bitmask & VISIT_SKIP_CHILDREN) == 0) {
-
-			for (Entry<String, EntityProperty> e : relationshipEncoders.entrySet()) {
-
-				visitor.push(e.getKey());
-
-				int propBitmask = e.getValue().visit(object, e.getKey(), visitor);
-
-				if ((propBitmask & VISIT_SKIP_ALL) != 0) {
-					return VISIT_SKIP_ALL;
-				}
-
-				visitor.pop();
-			}
-
-		}
-
-		return VISIT_CONTINUE;
-	}
+    protected void encodeProperties(Object object, JsonGenerator out) throws IOException {
+        idEncoder.encode(object, PathConstants.ID_PK_ATTRIBUTE, out);
+        super.encodeProperties(object, out);
+    }
 }
