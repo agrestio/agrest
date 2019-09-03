@@ -82,7 +82,8 @@ public class MapByEncoder implements CollectionEncoder {
             byId = false;
 
             Map.Entry<String, AgAttribute> attribute = mapBy.getAttributes().entrySet().iterator().next();
-            mapByReaders.add(getPropertyReader(attribute.getKey(),
+            mapByReaders.add(getPropertyReader(
+                    attribute.getKey(),
                     encoderFactory.getAttributeProperty(mapBy.getAgEntity(), attribute.getValue())));
 
             this.fieldNameConverter = converterFactory.getConverter(mapBy.getAgEntity(), attribute.getKey());
