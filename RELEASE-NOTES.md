@@ -1,5 +1,6 @@
 Release 3.4
 
+* #421 Per-request EncoderFilters
 * #421 Custom per-request Encoder is ignored on update
 
 Release 3.3
