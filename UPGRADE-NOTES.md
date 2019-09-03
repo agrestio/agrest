@@ -1,3 +1,24 @@
+## Upgrading to 3.4
+
+### EncoderFilter API Changes [#420](https://github.com/agrestio/agrest/issues/420)
+
+* `EncoderFilter` was renamed to `EntityEncoderFilter`, as the new name points to the exact place where filtering occurs
+ (per entity object).
+* Previous `EntityEncoderFilter` that was used as an abstract superclass for the filters was removed. If you have code
+that subclasses it, switch to `EntityEncoderFilter` static builder methods instead:
+
+```java
+var x = ..
+EntityEncoderFilter filter = EntityEncoderFilter.forEntity(E4.class)
+    .encoder((p, o, out, e) -> {
+        out.writeStartObject();
+        out.writeObjectField("x", x);
+        out.writeEndObject();
+        return true;
+    })
+    .build();
+```
+
 ## Upgrading to 3.2
 
 ### Response with overlapping relationship / attribute "includes" is include order dependent [#406](https://github.com/agrestio/agrest/issues/406)
