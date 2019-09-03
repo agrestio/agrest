@@ -5,7 +5,7 @@ package io.agrest.encoder;
  * @since 3.4
  */
 @FunctionalInterface
-public interface EncoderFilterObjectCondition<T> {
+public interface EncoderObjectCondition<T> {
 
     boolean test(String propertyName, T object, Encoder delegate);
 }

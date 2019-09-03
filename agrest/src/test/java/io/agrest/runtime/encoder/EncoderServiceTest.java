@@ -5,7 +5,7 @@ import io.agrest.DataResponse;
 import io.agrest.ResourceEntity;
 import io.agrest.SimpleObjectId;
 import io.agrest.encoder.Encoder;
-import io.agrest.encoder.EncoderFilter;
+import io.agrest.encoder.EntityEncoderFilter;
 import io.agrest.encoder.Encoders;
 import io.agrest.it.fixture.cayenne.E1;
 import io.agrest.it.fixture.cayenne.E19;
@@ -101,7 +101,7 @@ public class EncoderServiceTest extends TestWithCayenneMapping {
     @Test
     public void testEncoder_FilteredRoots() {
 
-        EncoderFilter filter = new EncoderFilter() {
+        EntityEncoderFilter filter = new EntityEncoderFilter() {
 
             @Override
             public boolean matches(ResourceEntity<?> entity) {
@@ -134,7 +134,7 @@ public class EncoderServiceTest extends TestWithCayenneMapping {
         };
 
         ResourceEntity<E2> descriptor = getResourceEntity(E2.class);
-        descriptor.getEncoderFilters().add(filter);
+        descriptor.getEntityEncoderFilters().add(filter);
         descriptor.includeId();
 
         ObjectContext context = mockCayennePersister.newContext();
@@ -158,7 +158,7 @@ public class EncoderServiceTest extends TestWithCayenneMapping {
     @Test
     public void testEncoder_FilteredToOne() {
 
-        EncoderFilter filter = new EncoderFilter() {
+        EntityEncoderFilter filter = new EntityEncoderFilter() {
 
             @Override
             public boolean matches(ResourceEntity<?> entity) {
@@ -198,7 +198,7 @@ public class EncoderServiceTest extends TestWithCayenneMapping {
         };
 
         ResourceEntity<E2> e2Descriptor = getResourceEntity(E2.class);
-        e2Descriptor.getEncoderFilters().add(filter);
+        e2Descriptor.getEntityEncoderFilters().add(filter);
         e2Descriptor.includeId();
 
         ResourceEntity<E3> e3Descriptor = getResourceEntity(E3.class);
@@ -239,7 +239,7 @@ public class EncoderServiceTest extends TestWithCayenneMapping {
     @Test
     public void testEncoder_FilterNoMatch() throws IOException {
 
-        EncoderFilter filter = new EncoderFilter() {
+        EntityEncoderFilter filter = new EntityEncoderFilter() {
 
             @Override
             public boolean matches(ResourceEntity<?> entity) {
@@ -260,7 +260,7 @@ public class EncoderServiceTest extends TestWithCayenneMapping {
         };
 
         ResourceEntity<E2> descriptor = getResourceEntity(E2.class);
-        descriptor.getEncoderFilters().add(filter);
+        descriptor.getEntityEncoderFilters().add(filter);
         descriptor.includeId();
 
         DataResponse<E2> builder = DataResponse.forType(E2.class);

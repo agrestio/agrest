@@ -1,6 +1,6 @@
 package io.agrest;
 
-import io.agrest.encoder.EncoderFilter;
+import io.agrest.encoder.EntityEncoderFilter;
 import io.agrest.meta.AgAttribute;
 import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgRelationship;
@@ -46,7 +46,7 @@ public class ResourceEntity<T> {
     private Map<String, EntityProperty> extraProperties;
     private int fetchOffset;
     private int fetchLimit;
-    private List<EncoderFilter> encoderFilters;
+    private List<EntityEncoderFilter> entityEncoderFilters;
 
     private SelectQuery<T> select;
     private List<T> result;
@@ -63,7 +63,7 @@ public class ResourceEntity<T> {
         this.agEntity = agEntity;
         this.result = new ArrayList<>();
         this.parentToChildResult = new LinkedHashMap<>();
-        this.encoderFilters = new ArrayList<>(3);
+        this.entityEncoderFilters = new ArrayList<>(3);
     }
 
     public ResourceEntity(AgEntity<T> agEntity, AgRelationship incoming) {
@@ -309,13 +309,13 @@ public class ResourceEntity<T> {
      * @since 1.23
      */
     public boolean isFiltered() {
-        return !encoderFilters.isEmpty();
+        return !entityEncoderFilters.isEmpty();
     }
 
     /**
      * @since 3.4
      */
-    public List<EncoderFilter> getEncoderFilters() {
-        return encoderFilters;
+    public List<EntityEncoderFilter> getEntityEncoderFilters() {
+        return entityEncoderFilters;
     }
 }

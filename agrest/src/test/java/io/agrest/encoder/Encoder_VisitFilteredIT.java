@@ -23,7 +23,7 @@ public class Encoder_VisitFilteredIT extends JerseyAndDerbyCase {
 
     @BeforeClass
     public static void startTestRuntime() {
-        UnaryOperator<AgBuilder> customizer = ab -> ab.encoderFilter(new TestFilter(1, 3));
+        UnaryOperator<AgBuilder> customizer = ab -> ab.entityEncoderFilter(new TestFilter(1, 3));
         JerseyAndDerbyCase.startTestRuntime(customizer);
     }
 
@@ -45,7 +45,7 @@ public class Encoder_VisitFilteredIT extends JerseyAndDerbyCase {
         assertEquals("2;E2:1;E2:3", Encoder_VisitIT.responseContents(response));
     }
 
-    static class TestFilter implements EncoderFilter {
+    static class TestFilter implements EntityEncoderFilter {
 
         private Collection<Integer> ids;
 

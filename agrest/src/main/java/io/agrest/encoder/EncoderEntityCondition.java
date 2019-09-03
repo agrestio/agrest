@@ -6,7 +6,7 @@ import io.agrest.ResourceEntity;
  * @since 3.4
  */
 @FunctionalInterface
-public interface EncoderFilterEntityCondition {
+public interface EncoderEntityCondition {
 
     boolean test(ResourceEntity<?> entity);
 }

@@ -5,7 +5,7 @@ import io.agrest.Ag;
 import io.agrest.DataResponse;
 import io.agrest.SelectStage;
 import io.agrest.encoder.Encoder;
-import io.agrest.encoder.EncoderFilter;
+import io.agrest.encoder.EntityEncoderFilter;
 import io.agrest.it.fixture.JerseyAndDerbyCase;
 import io.agrest.it.fixture.cayenne.E4;
 import io.agrest.runtime.AgBuilder;
@@ -25,19 +25,19 @@ import java.util.function.UnaryOperator;
 
 import static org.junit.Assert.*;
 
-public class GET_EncoderFiltersIT extends JerseyAndDerbyCase {
+public class GET_EntityEncoderFiltersIT extends JerseyAndDerbyCase {
 
     @BeforeClass
     public static void startTestRuntime() {
-        UnaryOperator<AgBuilder> customizer = ab -> ab.encoderFilter(oddFilter());
+        UnaryOperator<AgBuilder> customizer = ab -> ab.entityEncoderFilter(oddFilter());
         startTestRuntime(customizer, Resource.class);
     }
 
-    static EncoderFilter oddFilter() {
-        return EncoderFilter
+    static EntityEncoderFilter oddFilter() {
+        return EntityEncoderFilter
                 .forEntity(E4.class)
-                .objectCondition(GET_EncoderFiltersIT::willEncodeOdd)
-                .encoder(GET_EncoderFiltersIT::encodeOdd)
+                .objectCondition(GET_EntityEncoderFiltersIT::willEncodeOdd)
+                .encoder(GET_EntityEncoderFiltersIT::encodeOdd)
                 .build();
     }
 
@@ -208,7 +208,7 @@ public class GET_EncoderFiltersIT extends JerseyAndDerbyCase {
         // typical use case tested here is an EncoderFilter that depends on request parameters
         public DataResponse<E4> getWithRequestEncoder(@Context UriInfo uriInfo, @PathParam("suffix") String suffix) {
 
-            EncoderFilter filter = EncoderFilter.forEntity(E4.class)
+            EntityEncoderFilter filter = EntityEncoderFilter.forEntity(E4.class)
                     .encoder((p, o, out, e) -> {
                         out.writeStartObject();
                         out.writeObjectField("suffix", suffix);
@@ -219,7 +219,7 @@ public class GET_EncoderFiltersIT extends JerseyAndDerbyCase {
 
             return Ag.service(config)
                     .select(E4.class)
-                    .encoderFilter(filter)
+                    .entityEncoderFilter(filter)
                     .uri(uriInfo)
                     .get();
         }

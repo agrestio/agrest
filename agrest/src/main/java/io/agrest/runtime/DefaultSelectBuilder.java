@@ -10,7 +10,7 @@ import io.agrest.SelectStage;
 import io.agrest.SizeConstraints;
 import io.agrest.constraints.Constraint;
 import io.agrest.encoder.Encoder;
-import io.agrest.encoder.EncoderFilter;
+import io.agrest.encoder.EntityEncoderFilter;
 import io.agrest.processor.Processor;
 import io.agrest.property.PropertyBuilder;
 import io.agrest.runtime.processor.select.SelectContext;
@@ -143,12 +143,12 @@ public class DefaultSelectBuilder<T> implements SelectBuilder<T> {
      * @since 3.4
      */
     @Override
-    public SelectBuilder<T> encoderFilter(EncoderFilter filter) {
-        if (context.getEncoderFilters() == null) {
-            context.setEncoderFilters(new ArrayList<>());
+    public SelectBuilder<T> entityEncoderFilter(EntityEncoderFilter filter) {
+        if (context.getEntityEncoderFilters() == null) {
+            context.setEntityEncoderFilters(new ArrayList<>());
         }
 
-        context.getEncoderFilters().add(filter);
+        context.getEntityEncoderFilters().add(filter);
         return this;
     }
 

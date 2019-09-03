@@ -10,17 +10,17 @@ import java.io.IOException;
  *
  * @since 3.4
  */
-class CompositeEncoderFilter implements EncoderFilter {
+class CompositeEntityEncoderFilter implements EntityEncoderFilter {
 
-    private static final EncoderFilterEntityCondition DEFAUL_ENTITY_CONDITION = e -> true;
-    private static final EncoderFilterObjectCondition<Object> DEFAULT_OBJECT_CONDITION = (p, o, d) -> d.willEncode(p, o);
-    private static final EncoderFilterEncoder<Object> DEFAULT_ENCODER = (p, o, out, d) -> d.encode(p, o, out);
+    private static final EncoderEntityCondition DEFAUL_ENTITY_CONDITION = e -> true;
+    private static final EncoderObjectCondition<Object> DEFAULT_OBJECT_CONDITION = (p, o, d) -> d.willEncode(p, o);
+    private static final EncoderMethod<Object> DEFAULT_ENCODER = (p, o, out, d) -> d.encode(p, o, out);
 
-    EncoderFilterEntityCondition entityCondition;
-    EncoderFilterObjectCondition objectCondition;
-    EncoderFilterEncoder encoder;
+    EncoderEntityCondition entityCondition;
+    EncoderObjectCondition objectCondition;
+    EncoderMethod encoder;
 
-    CompositeEncoderFilter() {
+    CompositeEntityEncoderFilter() {
         this.entityCondition = DEFAUL_ENTITY_CONDITION;
         this.objectCondition = DEFAULT_OBJECT_CONDITION;
         this.encoder = DEFAULT_ENCODER;

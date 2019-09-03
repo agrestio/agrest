@@ -9,7 +9,7 @@ import io.agrest.EntityConstraint;
 import io.agrest.MetadataResponse;
 import io.agrest.SimpleResponse;
 import io.agrest.encoder.Encoder;
-import io.agrest.encoder.EncoderFilter;
+import io.agrest.encoder.EntityEncoderFilter;
 import io.agrest.encoder.PropertyMetadataEncoder;
 import io.agrest.encoder.converter.StringConverter;
 import io.agrest.meta.AgEntityOverlay;
@@ -143,7 +143,7 @@ public class AgBuilder {
     private List<Module> modules;
     private List<AgFeatureProvider> featureProviders;
     private List<Feature> features;
-    private List<EncoderFilter> encoderFilters;
+    private List<EntityEncoderFilter> entityEncoderFilters;
     private Map<String, AgEntityOverlay> entityOverlays;
     private Map<String, Class<? extends ExceptionMapper>> exceptionMappers;
     private Map<String, PropertyMetadataEncoder> metadataEncoders;
@@ -156,7 +156,7 @@ public class AgBuilder {
         this.autoLoadModules = true;
         this.autoLoadFeatures = true;
         this.entityOverlays = new HashMap<>();
-        this.encoderFilters = new ArrayList<>();
+        this.entityEncoderFilters = new ArrayList<>();
         this.agServiceType = DefaultAgService.class;
         this.cayenneService = NoCayennePersister.instance();
         this.exceptionMappers = new HashMap<>();
@@ -236,20 +236,40 @@ public class AgBuilder {
     }
 
     /**
+     * @deprecated since 3.4 in favor of {@link #entityEncoderFilter(EntityEncoderFilter)}
+     */
+    @Deprecated
+    public AgBuilder encoderFilter(EntityEncoderFilter filter) {
+        return entityEncoderFilter(filter);
+    }
+
+    /**
      * Installs a encoding filter that is applied to every request, altering response encoding. This method can be
      * called multiple times to add more than one filter.
      *
      * @param filter a filter to apply when encoding individual entities
      * @return this builder instance
-     * @see io.agrest.SelectBuilder#encoderFilter(EncoderFilter)
+     * @see io.agrest.SelectBuilder#entityEncoderFilter(EntityEncoderFilter)
+     * @since 3.4
      */
-    public AgBuilder encoderFilter(EncoderFilter filter) {
-        this.encoderFilters.add(filter);
+    public AgBuilder entityEncoderFilter(EntityEncoderFilter filter) {
+        this.entityEncoderFilters.add(filter);
         return this;
     }
 
-    public AgBuilder encoderFilters(Collection<EncoderFilter> filters) {
-        this.encoderFilters.addAll(filters);
+    /**
+     * @deprecated since 3.4 in favor of {@link #entityEncoderFilters(Collection)}
+     */
+    @Deprecated
+    public AgBuilder encoderFilters(Collection<EntityEncoderFilter> filters) {
+        return entityEncoderFilters(filters);
+    }
+
+    /**
+     * @since 3.4
+     */
+    public AgBuilder entityEncoderFilters(Collection<EntityEncoderFilter> filters) {
+        this.entityEncoderFilters.addAll(filters);
         return this;
     }
 
@@ -433,7 +453,7 @@ public class AgBuilder {
 
         return binder -> {
 
-            binder.bindList(EncoderFilter.class).addAll(encoderFilters);
+            binder.bindList(EntityEncoderFilter.class).addAll(entityEncoderFilters);
 
             binder.bind(CayenneEntityCompiler.class).to(CayenneEntityCompiler.class);
             binder.bind(PojoEntityCompiler.class).to(PojoEntityCompiler.class);

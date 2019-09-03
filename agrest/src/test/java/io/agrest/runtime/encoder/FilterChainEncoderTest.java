@@ -12,7 +12,7 @@ import java.util.Collections;
 
 import io.agrest.ResourceEntity;
 import io.agrest.encoder.Encoder;
-import io.agrest.encoder.EncoderFilter;
+import io.agrest.encoder.EntityEncoderFilter;
 import io.agrest.encoder.FilterChainEncoder;
 import org.junit.Test;
 
@@ -25,7 +25,7 @@ public class FilterChainEncoderTest {
 
 		Encoder delegate = mock(Encoder.class);
 
-		FilterChainEncoder chain = new FilterChainEncoder(delegate, Collections.<EncoderFilter> emptyList());
+		FilterChainEncoder chain = new FilterChainEncoder(delegate, Collections.<EntityEncoderFilter> emptyList());
 		chain.encode(null, new Object(), mock(JsonGenerator.class));
 		verify(delegate).encode(any(String.class), any(), any(JsonGenerator.class));
 	}
@@ -34,7 +34,7 @@ public class FilterChainEncoderTest {
 	public void testEncode_PassThroughFilter() throws IOException {
 
 		Encoder delegate = mock(Encoder.class);
-		EncoderFilter filter = new EncoderFilter() {
+		EntityEncoderFilter filter = new EntityEncoderFilter() {
 
 			@Override
 			public boolean matches(ResourceEntity<?> entity) {
@@ -62,7 +62,7 @@ public class FilterChainEncoderTest {
 	public void testEncode_BlockingFilter() throws IOException {
 
 		Encoder delegate = mock(Encoder.class);
-		EncoderFilter filter = mock(EncoderFilter.class);
+		EntityEncoderFilter filter = mock(EntityEncoderFilter.class);
 
 		FilterChainEncoder chain = new FilterChainEncoder(delegate, Collections.singletonList(filter));
 		chain.encode(null, new Object(), mock(JsonGenerator.class));
@@ -76,7 +76,7 @@ public class FilterChainEncoderTest {
 		Encoder delegate = mock(Encoder.class);
 
 		// pass-through
-		EncoderFilter filter1 = new EncoderFilter() {
+		EntityEncoderFilter filter1 = new EntityEncoderFilter() {
 			
 			@Override
 			public boolean matches(ResourceEntity<?> entity) {
@@ -96,10 +96,10 @@ public class FilterChainEncoderTest {
 		};
 
 		// blocking
-		EncoderFilter filter2 = mock(EncoderFilter.class);
+		EntityEncoderFilter filter2 = mock(EntityEncoderFilter.class);
 
 		// blocking, but that's irrelevant
-		EncoderFilter filter3 = mock(EncoderFilter.class);
+		EntityEncoderFilter filter3 = mock(EntityEncoderFilter.class);
 
 		FilterChainEncoder chain = new FilterChainEncoder(delegate, Arrays.asList(filter1, filter2, filter3));
 		chain.encode(null, new Object(), mock(JsonGenerator.class));

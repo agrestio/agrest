@@ -2,7 +2,7 @@ package io.agrest;
 
 import io.agrest.constraints.Constraint;
 import io.agrest.encoder.Encoder;
-import io.agrest.encoder.EncoderFilter;
+import io.agrest.encoder.EntityEncoderFilter;
 import io.agrest.meta.AgEntityOverlay;
 import io.agrest.processor.Processor;
 import io.agrest.processor.ProcessorOutcome;
@@ -50,15 +50,15 @@ public interface SelectBuilder<T> {
     SelectBuilder<T> encoder(Encoder encoder);
 
     /**
-     * Installs request-scoped {@link EncoderFilter} that allows to customize how individual JSON objects are encoded
+     * Installs request-scoped {@link EntityEncoderFilter} that allows to customize how individual JSON objects are encoded
      * within the data list. This method can be called multiple times to add more than one filter.
      *
      * @param filter a filter to apply when encoding individual entities
      * @return this builder instance
-     * @see AgBuilder#encoderFilter(EncoderFilter)
+     * @see AgBuilder#entityEncoderFilter(EntityEncoderFilter)
      * @since 3.4
      */
-    SelectBuilder<T> encoderFilter(EncoderFilter filter);
+    SelectBuilder<T> entityEncoderFilter(EntityEncoderFilter filter);
 
     /**
      * Forces the builder to select a single object by ID.

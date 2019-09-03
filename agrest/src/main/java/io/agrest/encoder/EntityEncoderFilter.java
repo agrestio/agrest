@@ -1,49 +1,45 @@
 package io.agrest.encoder;
 
-import java.io.IOException;
-
 import com.fasterxml.jackson.core.JsonGenerator;
 import io.agrest.ResourceEntity;
-import io.agrest.meta.AgEntity;
-import io.agrest.runtime.meta.IMetadataService;
+
+import java.io.IOException;
 
 /**
- * A superclass of authorizing {@link EncoderFilter}s that performs filter
- * matching based on the entity name.
- * 
- * @since 1.2
+ * An interceptor for custom encoding of specific entities. An application may define a filter that suppresses
+ * certain objects based on security constraints, or may provide a custom encoder for a given object, etc.
+ *
+ * @since 3.4
  */
-public abstract class EntityEncoderFilter<T> implements EncoderFilter {
+public interface EntityEncoderFilter {
 
-	private AgEntity<T> agEntity;
+    /**
+     * @since 3.4
+     */
+    static EntityEncoderFilterBuilder forAll() {
+        return new EntityEncoderFilterBuilder();
+    }
 
-	public EntityEncoderFilter(IMetadataService metadataService) {
-		this.agEntity = metadataService.getAgEntity(getType());
-	}
+    /**
+     * @since 3.4
+     */
+    static EntityEncoderFilterBuilder forEntity(Class<?> entity) {
+        return new EntityEncoderFilterBuilder().forEntity(entity);
+    }
 
-	protected abstract Class<T> getType();
+    /**
+     * @since 3.4
+     */
+    static EntityEncoderFilterBuilder forEntityCondition(EncoderEntityCondition condition) {
+        return new EntityEncoderFilterBuilder().entityCondition(condition);
+    }
 
-	protected abstract boolean willEncode(T object);
+    /**
+     * Returns whether the filter should be applied for a given {@link ResourceEntity}.
+     */
+    boolean matches(ResourceEntity<?> entity);
 
-	@Override
-	public boolean matches(ResourceEntity<?> resourceEntity) {
-		return agEntity == resourceEntity.getAgEntity();
-	}
+    boolean encode(String propertyName, Object object, JsonGenerator out, Encoder delegate) throws IOException;
 
-	@SuppressWarnings("unchecked")
-	@Override
-	public boolean encode(String propertyName, Object object, JsonGenerator out, Encoder delegate) throws IOException {
-
-		if (willEncode((T) object)) {
-			return delegate.encode(propertyName, object, out);
-		} else {
-			return false;
-		}
-	}
-
-	@SuppressWarnings("unchecked")
-	@Override
-	public boolean willEncode(String propertyName, Object object, Encoder delegate) {
-		return willEncode((T) object);
-	}
+    boolean willEncode(String propertyName, Object object, Encoder delegate);
 }

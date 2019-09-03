@@ -152,8 +152,8 @@ public class DataEncoderFactory {
     }
 
     protected Encoder filteredEncoder(Encoder encoder, ResourceEntity<?> resourceEntity) {
-        return resourceEntity.getEncoderFilters().isEmpty()
+        return resourceEntity.getEntityEncoderFilters().isEmpty()
                 ? encoder
-                : new FilterChainEncoder(encoder, resourceEntity.getEncoderFilters());
+                : new FilterChainEncoder(encoder, resourceEntity.getEntityEncoderFilters());
     }
 }

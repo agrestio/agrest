@@ -9,7 +9,7 @@ import java.io.IOException;
  * @since 3.4
  */
 @FunctionalInterface
-public interface EncoderFilterEncoder<T> {
+public interface EncoderMethod<T> {
 
     boolean encode(String propertyName, T object, JsonGenerator out, Encoder delegate) throws IOException;
 }

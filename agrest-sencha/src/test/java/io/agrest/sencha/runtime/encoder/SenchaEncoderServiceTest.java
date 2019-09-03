@@ -5,7 +5,7 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import io.agrest.ResourceEntity;
 import io.agrest.SimpleObjectId;
 import io.agrest.encoder.Encoder;
-import io.agrest.encoder.EncoderFilter;
+import io.agrest.encoder.EntityEncoderFilter;
 import io.agrest.it.fixture.cayenne.E2;
 import io.agrest.it.fixture.cayenne.E3;
 import io.agrest.runtime.cayenne.ICayennePersister;
@@ -58,7 +58,7 @@ public class SenchaEncoderServiceTest extends TestWithCayenneMapping {
     @Test
     public void testEncoder_FilteredToOne() throws IOException {
 
-        EncoderFilter filter = EncoderFilter.forAll()
+        EntityEncoderFilter filter = EntityEncoderFilter.forAll()
                 .objectCondition((p, o, d) -> o instanceof E2 && Cayenne.intPKForObject((E2) o) != 7
                         ? false : d.willEncode(p, o)
                 )
@@ -68,11 +68,11 @@ public class SenchaEncoderServiceTest extends TestWithCayenneMapping {
 
 
         ResourceEntity<E2> e2Descriptor = getResourceEntity(E2.class);
-        e2Descriptor.getEncoderFilters().add(filter);
+        e2Descriptor.getEntityEncoderFilters().add(filter);
         e2Descriptor.includeId();
 
         ResourceEntity<E3> e3Descriptor = getResourceEntity(E3.class);
-        e3Descriptor.getEncoderFilters().add(filter);
+        e3Descriptor.getEntityEncoderFilters().add(filter);
         e3Descriptor.includeId();
         e3Descriptor.getChildren().put(E3.E2.getName(), e2Descriptor);
 

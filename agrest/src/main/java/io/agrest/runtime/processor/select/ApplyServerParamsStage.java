@@ -1,7 +1,7 @@
 package io.agrest.runtime.processor.select;
 
 import io.agrest.ResourceEntity;
-import io.agrest.encoder.EncoderFilter;
+import io.agrest.encoder.EntityEncoderFilter;
 import io.agrest.processor.Processor;
 import io.agrest.processor.ProcessorOutcome;
 import io.agrest.runtime.constraints.IConstraintsHandler;
@@ -18,12 +18,12 @@ public class ApplyServerParamsStage implements Processor<SelectContext<?>> {
 
     private IConstraintsHandler constraintsHandler;
     private IEncoderService encoderService;
-    private List<EncoderFilter> filters;
+    private List<EntityEncoderFilter> filters;
 
     public ApplyServerParamsStage(
             @Inject IConstraintsHandler constraintsHandler,
             @Inject IEncoderService encoderService,
-            @Inject List<EncoderFilter> filters) {
+            @Inject List<EntityEncoderFilter> filters) {
 
         this.constraintsHandler = constraintsHandler;
         this.encoderService = encoderService;
@@ -53,17 +53,17 @@ public class ApplyServerParamsStage implements Processor<SelectContext<?>> {
     }
 
     protected void initEncoderFilters(SelectContext<?> context) {
-        List<EncoderFilter> filters = mergeFilters(context.getEncoderFilters());
+        List<EntityEncoderFilter> filters = mergeFilters(context.getEntityEncoderFilters());
         if (!filters.isEmpty()) {
             initEncoderFilters(context.getEntity(), filters);
         }
     }
 
-    protected void initEncoderFilters(ResourceEntity<?> entity, List<EncoderFilter> filters) {
+    protected void initEncoderFilters(ResourceEntity<?> entity, List<EntityEncoderFilter> filters) {
 
-        for (EncoderFilter filter : filters) {
+        for (EntityEncoderFilter filter : filters) {
             if (filter.matches(entity)) {
-                entity.getEncoderFilters().add(filter);
+                entity.getEntityEncoderFilters().add(filter);
             }
         }
 
@@ -72,7 +72,7 @@ public class ApplyServerParamsStage implements Processor<SelectContext<?>> {
         }
     }
 
-    protected List<EncoderFilter> mergeFilters(List<EncoderFilter> requestFilters) {
+    protected List<EntityEncoderFilter> mergeFilters(List<EntityEncoderFilter> requestFilters) {
 
         if (requestFilters == null || requestFilters.isEmpty()) {
             return this.filters;
@@ -82,7 +82,7 @@ public class ApplyServerParamsStage implements Processor<SelectContext<?>> {
             return requestFilters;
         }
 
-        List<EncoderFilter> combined = new ArrayList<>(requestFilters.size() + filters.size());
+        List<EntityEncoderFilter> combined = new ArrayList<>(requestFilters.size() + filters.size());
 
         // global filters go first, per-request filters applied after them
         combined.addAll(filters);
