@@ -66,7 +66,7 @@ public class AttributeEncoderFactory implements IAttributeEncoderFactory {
 
         // for now only "overlay" relationships have non-null readers
         if (relationship.getPropertyReader() != null) {
-            return PropertyBuilder.property(relationship.getPropertyReader());
+            return PropertyBuilder.property(relationship.getPropertyReader()).encodedWith(encoder);
         }
 
         boolean persistent = relationship instanceof AgPersistentRelationship;
