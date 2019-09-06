@@ -3,11 +3,8 @@ package io.agrest.it;
 import io.agrest.Ag;
 import io.agrest.SimpleResponse;
 import io.agrest.it.fixture.JerseyAndDerbyCase;
-import io.agrest.it.fixture.cayenne.E17;
 import io.agrest.it.fixture.cayenne.E20;
 import io.agrest.it.fixture.cayenne.E21;
-import io.agrest.it.fixture.cayenne.E24;
-import io.agrest.it.fixture.cayenne.E4;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -31,7 +28,7 @@ public class DELETE_NaturalIdIT extends JerseyAndDerbyCase {
 
     @Override
     protected Class<?>[] testEntities() {
-        return new Class[]{E4.class, E17.class, E24.class};
+        return new Class[]{E20.class, E21.class};
     }
 
     @Test
