@@ -7,13 +7,5 @@ package io.agrest.meta;
  */
 public interface AgPersistentAttribute extends AgAttribute {
 
-	/**
-	 * @since 1.12
-     */
-	int getJdbcType();
 
-	/**
-	 * @since 2.4
-     */
-	boolean isMandatory();
 }

@@ -131,32 +131,19 @@ public class TestWithCayenneMapping {
 		entity.getAttributes().put(name, new DefaultAgAttribute(name, type));
 	}
 
-	protected <T> void appendPersistenceAttribute(ResourceEntity<?> entity, Property<T> property, Class<T> javaType,
-			int jdbcType) {
-		appendPersistenceAttribute(entity, property.getName(), javaType, jdbcType);
+	protected <T> void appendPersistenceAttribute(ResourceEntity<?> entity, Property<T> property, Class<T> javaType) {
+		appendPersistenceAttribute(entity, property.getName(), javaType);
 	}
 
-	protected void appendPersistenceAttribute(ResourceEntity<?> entity, String name, Class<?> javaType, int jdbcType) {
+	protected void appendPersistenceAttribute(ResourceEntity<?> entity, String name, Class<?> javaType) {
 		entity.getAttributes().put(name,
-				new TestAgPersistentAttribute(name, javaType, jdbcType));
+				new TestAgPersistentAttribute(name, javaType));
 	}
 
 	private class TestAgPersistentAttribute extends DefaultAgAttribute implements AgPersistentAttribute {
-		private int jdbcType;
 
-		public TestAgPersistentAttribute(String name, Class<?> javaType, int jdbcType) {
+		public TestAgPersistentAttribute(String name, Class<?> javaType) {
 			super(name, javaType);
-			this.jdbcType = jdbcType;
-		}
-
-		@Override
-		public int getJdbcType() {
-			return jdbcType;
-		}
-
-		@Override
-		public boolean isMandatory() {
-			return false;
 		}
 
 		@Override

@@ -12,7 +12,6 @@ import io.agrest.unit.Java8TestWithCayenneMapping;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.sql.Types;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -43,7 +42,7 @@ public class EncoderService_ISODateTime_Test extends Java8TestWithCayenneMapping
     @Test
     public void testJava8ISODate() {
         ResourceEntity<Java8ISODateTestEntity> resourceEntity = getResourceEntity(Java8ISODateTestEntity.class);
-        appendPersistenceAttribute(resourceEntity, Java8ISODateTestEntity.DATE, LocalDate.class, Types.DATE);
+        appendPersistenceAttribute(resourceEntity, Java8ISODateTestEntity.DATE, LocalDate.class);
 
         LocalDate localDate = LocalDate.now();
 
@@ -69,7 +68,7 @@ public class EncoderService_ISODateTime_Test extends Java8TestWithCayenneMapping
     private void _testJava8ISOTime(LocalTime time, String expectedPattern) {
 
         ResourceEntity<Java8ISOTimeTestEntity> resourceEntity = getResourceEntity(Java8ISOTimeTestEntity.class);
-        appendPersistenceAttribute(resourceEntity, Java8ISOTimeTestEntity.TIME, LocalTime.class, Types.TIME);
+        appendPersistenceAttribute(resourceEntity, Java8ISOTimeTestEntity.TIME, LocalTime.class);
 
         Java8ISOTimeTestEntity isoTimeTestEntity = new Java8ISOTimeTestEntity();
         isoTimeTestEntity.setTime(time);
@@ -93,7 +92,7 @@ public class EncoderService_ISODateTime_Test extends Java8TestWithCayenneMapping
     private void _testJava8ISOTimestamp(LocalDateTime dateTime, String expectedPattern) {
 
         ResourceEntity<Java8ISOTimestampTestEntity> resourceEntity = getResourceEntity(Java8ISOTimestampTestEntity.class);
-        appendPersistenceAttribute(resourceEntity, Java8ISOTimestampTestEntity.TIMESTAMP, LocalDateTime.class, Types.TIMESTAMP);
+        appendPersistenceAttribute(resourceEntity, Java8ISOTimestampTestEntity.TIMESTAMP, LocalDateTime.class);
 
         Java8ISOTimestampTestEntity isoTimestampTestEntity = new Java8ISOTimestampTestEntity();
         isoTimestampTestEntity.setTimestamp(dateTime);
@@ -117,7 +116,7 @@ public class EncoderService_ISODateTime_Test extends Java8TestWithCayenneMapping
     private void _testJava8ISOOffsetDateTime(OffsetDateTime dateTime) {
 
         ResourceEntity<Java8ISOOffsetDateTimeTestEntity> resourceEntity = getResourceEntity(Java8ISOOffsetDateTimeTestEntity.class);
-        appendPersistenceAttribute(resourceEntity, Java8ISOOffsetDateTimeTestEntity.TIMESTAMP, OffsetDateTime.class, Types.VARCHAR);
+        appendPersistenceAttribute(resourceEntity, Java8ISOOffsetDateTimeTestEntity.TIMESTAMP, OffsetDateTime.class);
 
         Java8ISOOffsetDateTimeTestEntity isoOffsetDateTimeTestEntity = new Java8ISOOffsetDateTimeTestEntity();
         isoOffsetDateTimeTestEntity.setTimestamp(dateTime);

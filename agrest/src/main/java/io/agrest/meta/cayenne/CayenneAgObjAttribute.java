@@ -18,16 +18,6 @@ public class CayenneAgObjAttribute extends DefaultAgAttribute implements AgPersi
 		this.objAttribute = objAttribute;
 	}
 
-	@Override
-	public int getJdbcType() {
-		return objAttribute.getDbAttribute().getType();
-	}
-
-	@Override
-	public boolean isMandatory() {
-		return objAttribute.getDbAttribute().isMandatory();
-	}
-
 	public ObjAttribute getObjAttribute() {
 		return objAttribute;
 	}

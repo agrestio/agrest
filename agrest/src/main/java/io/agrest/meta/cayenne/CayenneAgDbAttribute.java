@@ -22,20 +22,10 @@ public class CayenneAgDbAttribute extends DefaultAgAttribute implements AgPersis
     }
 
     @Override
-    public int getJdbcType() {
-        return dbAttribute.getType();
-    }
-
-    @Override
     public ASTPath getPathExp() {
         return new ASTDbPath(dbAttribute.getName());
     }
-
-    @Override
-    public boolean isMandatory() {
-        return dbAttribute.isMandatory();
-    }
-
+    
     /**
      * @since 3.4
      */

@@ -2,7 +2,6 @@ package io.agrest.encoder;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import io.agrest.meta.AgAttribute;
-import io.agrest.meta.AgPersistentAttribute;
 import io.agrest.meta.AgRelationship;
 
 import java.io.IOException;
@@ -98,11 +97,7 @@ public abstract class PropertyMetadataEncoder extends AbstractEncoder {
 
         @Override
         protected void doEncode(Object property, JsonGenerator out) throws IOException {
-            if (property instanceof AgPersistentAttribute) {
-                if (((AgPersistentAttribute) property).isMandatory()) {
-                    out.writeBooleanField("mandatory", true);
-                }
-            } else if (property instanceof AgRelationship) {
+            if (property instanceof AgRelationship) {
                 out.writeBooleanField("relationship", true);
                 if (((AgRelationship) property).isToMany()) {
                     out.writeBooleanField("collection", true);
