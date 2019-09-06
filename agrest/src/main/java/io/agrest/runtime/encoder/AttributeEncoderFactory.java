@@ -9,7 +9,6 @@ import io.agrest.encoder.Encoder;
 import io.agrest.encoder.IdEncoder;
 import io.agrest.meta.AgAttribute;
 import io.agrest.meta.AgEntity;
-import io.agrest.meta.AgPersistentAttribute;
 import io.agrest.meta.AgPersistentRelationship;
 import io.agrest.meta.AgRelationship;
 import io.agrest.property.BeanPropertyReader;
@@ -91,16 +90,18 @@ public class AttributeEncoderFactory implements IAttributeEncoderFactory {
     }
 
     protected EntityProperty buildAttributeProperty(AgEntity<?> entity, AgAttribute attribute) {
-        boolean persistent = attribute instanceof AgPersistentAttribute;
         Encoder encoder = getEncoder(attribute.getType());
-        return getProperty(entity, attribute.getPropertyReader(), persistent, encoder);
+        return getProperty(entity, attribute, encoder);
     }
 
-    private EntityProperty getProperty(AgEntity<?> entity, PropertyReader reader, boolean persistent, Encoder encoder) {
-        if (persistent && DataObject.class.isAssignableFrom(entity.getType())) {
+    private EntityProperty getProperty(AgEntity<?> entity, AgAttribute attribute, Encoder encoder) {
+
+        // TODO: reader must always come from AgAttribute
+
+        if (DataObject.class.isAssignableFrom(entity.getType())) {
             return PropertyBuilder.dataObjectProperty().encodedWith(encoder);
-        } else if (reader != null) {
-            return PropertyBuilder.property(reader);
+        } else if (attribute.getPropertyReader() != null) {
+            return PropertyBuilder.property(attribute.getPropertyReader());
         } else {
             return PropertyBuilder.property().encodedWith(encoder);
         }

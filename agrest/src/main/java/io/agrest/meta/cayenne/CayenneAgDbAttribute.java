@@ -1,6 +1,5 @@
 package io.agrest.meta.cayenne;
 
-import io.agrest.meta.AgPersistentAttribute;
 import io.agrest.meta.DefaultAgAttribute;
 import org.apache.cayenne.exp.parser.ASTDbPath;
 import org.apache.cayenne.exp.parser.ASTPath;
@@ -9,7 +8,7 @@ import org.apache.cayenne.map.DbAttribute;
 /**
  * @since 1.12
  */
-public class CayenneAgDbAttribute extends DefaultAgAttribute implements AgPersistentAttribute, CayenneAgAttribute {
+public class CayenneAgDbAttribute extends DefaultAgAttribute implements CayenneAgAttribute {
 
     private DbAttribute dbAttribute;
 

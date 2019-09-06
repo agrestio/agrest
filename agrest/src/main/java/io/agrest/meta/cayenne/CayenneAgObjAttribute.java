@@ -1,7 +1,6 @@
 package io.agrest.meta.cayenne;
 
 import io.agrest.meta.DefaultAgAttribute;
-import io.agrest.meta.AgPersistentAttribute;
 import org.apache.cayenne.map.DbAttribute;
 import org.apache.cayenne.map.ObjAttribute;
 import org.apache.cayenne.util.ToStringBuilder;
@@ -9,7 +8,7 @@ import org.apache.cayenne.util.ToStringBuilder;
 /**
  * @since 3.4
  */
-public class CayenneAgObjAttribute extends DefaultAgAttribute implements AgPersistentAttribute, CayenneAgAttribute {
+public class CayenneAgObjAttribute extends DefaultAgAttribute implements CayenneAgAttribute {
 
 	private ObjAttribute objAttribute;
 

@@ -1,9 +1,8 @@
 package io.agrest.unit;
 
 import io.agrest.ResourceEntity;
-import io.agrest.meta.DefaultAgAttribute;
 import io.agrest.meta.AgEntity;
-import io.agrest.meta.AgPersistentAttribute;
+import io.agrest.meta.DefaultAgAttribute;
 import io.agrest.meta.cayenne.CayenneEntityCompiler;
 import io.agrest.meta.compiler.AgEntityCompiler;
 import io.agrest.meta.parser.IResourceParser;
@@ -126,7 +125,7 @@ public class Java8TestWithCayenneMapping {
 				new TestAgPersistentAttribute(name, javaType));
 	}
 
-	private class TestAgPersistentAttribute extends DefaultAgAttribute implements AgPersistentAttribute {
+	private class TestAgPersistentAttribute extends DefaultAgAttribute {
 
 		public TestAgPersistentAttribute(String name, Class<?> javaType) {
 			super(name, javaType);
