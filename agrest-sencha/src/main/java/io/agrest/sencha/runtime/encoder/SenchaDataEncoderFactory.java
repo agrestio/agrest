@@ -32,7 +32,9 @@ public class SenchaDataEncoderFactory extends DataEncoderFactory {
 
     @Override
     public <T> Encoder encoder(ResourceEntity<T> entity) {
+
         CollectionEncoder dataEncoder = dataEncoder(entity);
+
         return new DataResponseEncoder("data", dataEncoder, "total", GenericEncoder.encoder()) {
             @Override
             protected void encodeObjectBody(Object object, JsonGenerator out) throws IOException {
@@ -44,7 +46,7 @@ public class SenchaDataEncoderFactory extends DataEncoderFactory {
     }
 
     @Override
-    protected Encoder toOneEncoder(ResourceEntity<?> resourceEntity, final AgRelationship relationship) {
+    protected Encoder toOneEncoder(ResourceEntity<?> resourceEntity, AgRelationship relationship) {
         // to-one encoder is made of the following decorator layers (from outer
         // to inner):
         // (1) custom filters ->
