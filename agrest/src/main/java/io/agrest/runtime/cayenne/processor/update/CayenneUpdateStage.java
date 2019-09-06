@@ -179,12 +179,12 @@ public class CayenneUpdateStage extends CayenneUpdateDataStoreStage {
                 AgRelationship relationship = entity.getAgEntity().getRelationship(e.getKey());
                 if (relationship != null && relationship instanceof CayenneAgRelationship) {
                     CayenneAgRelationship rel = (CayenneAgRelationship)relationship;
-                    for (AgAttribute attribute : (Collection<AgAttribute>) entity.getAgEntity().getIds()) {
+                    for (AgAttribute attribute : entity.getAgEntity().getIds()) {
                         properties.add(Property.create(ExpressionFactory.dbPathExp(rel.getReverseDbPath() + "." + attribute.getName()), (Class) attribute.getType()));
                     }
                     // transfer expression from parent
                     if (entity.getSelect().getQualifier() != null) {
-                        child.andQualifier((Expression) rel.translateExpressionToSource(entity.getSelect().getQualifier()));
+                        child.andQualifier(rel.translateExpressionToSource(entity.getSelect().getQualifier()));
                     }
                 }
 
