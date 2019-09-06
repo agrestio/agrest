@@ -10,10 +10,10 @@ import io.agrest.ResourceEntity;
 import io.agrest.SimpleObjectId;
 import io.agrest.meta.AgAttribute;
 import io.agrest.meta.AgEntity;
-import io.agrest.meta.AgPersistentEntity;
 import io.agrest.meta.AgRelationship;
 import io.agrest.meta.cayenne.CayenneAgRelationship;
 import io.agrest.runtime.cayenne.ByIdObjectMapperFactory;
+import io.agrest.runtime.cayenne.ICayennePersister;
 import io.agrest.runtime.meta.IMetadataService;
 import io.agrest.runtime.processor.update.UpdateContext;
 import org.apache.cayenne.DataObject;
@@ -21,6 +21,7 @@ import org.apache.cayenne.di.Inject;
 import org.apache.cayenne.exp.Expression;
 import org.apache.cayenne.exp.ExpressionFactory;
 import org.apache.cayenne.exp.Property;
+import org.apache.cayenne.map.EntityResolver;
 import org.apache.cayenne.query.SelectQuery;
 
 import javax.ws.rs.core.Response;
@@ -38,8 +39,14 @@ import java.util.function.BiConsumer;
  */
 public class CayenneUpdateStage extends CayenneUpdateDataStoreStage {
 
-    public CayenneUpdateStage(@Inject IMetadataService metadataService) {
+    private EntityResolver entityResolver;
+
+    public CayenneUpdateStage(
+            @Inject IMetadataService metadataService,
+            @Inject ICayennePersister persister) {
+
         super(metadataService);
+        this.entityResolver = persister.entityResolver();
     }
 
     @Override
@@ -163,7 +170,8 @@ public class CayenneUpdateStage extends CayenneUpdateDataStoreStage {
         if (!children.isEmpty()) {
             for (Map.Entry<String, ResourceEntity<?>> e : children.entrySet()) {
                 ResourceEntity child = e.getValue();
-                if (!(child.getAgEntity() instanceof AgPersistentEntity)) {
+
+                if (entityResolver.getObjEntity(child.getType()) == null) {
                     continue;
                 }
 
@@ -171,7 +179,9 @@ public class CayenneUpdateStage extends CayenneUpdateDataStoreStage {
                 properties.add(Property.createSelf(child.getType()));
 
                 AgRelationship relationship = entity.getAgEntity().getRelationship(e.getKey());
+
                 if (relationship instanceof CayenneAgRelationship) {
+
                     CayenneAgRelationship rel = (CayenneAgRelationship) relationship;
                     for (AgAttribute attribute : entity.getAgEntity().getIds()) {
                         properties.add(Property.create(ExpressionFactory.dbPathExp(rel.getReverseDbPath() + "." + attribute.getName()), (Class) attribute.getType()));

@@ -34,7 +34,7 @@ public class AgEntityBuilder<T> {
     }
 
     public DefaultAgEntity<T> build() {
-        DefaultAgEntity<T> e = new DefaultAgEntity<>(type);
+        DefaultAgEntity<T> e = new DefaultAgEntity<>(type.getSimpleName(), type);
         appendProperties(e);
         return e;
     }

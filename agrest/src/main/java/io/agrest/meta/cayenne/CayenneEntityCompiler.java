@@ -3,12 +3,12 @@ package io.agrest.meta.cayenne;
 import io.agrest.meta.AgAttribute;
 import io.agrest.meta.AgDataMap;
 import io.agrest.meta.AgEntity;
-import io.agrest.meta.AgPersistentEntity;
 import io.agrest.meta.AgEntityBuilder;
 import io.agrest.meta.AgEntityOverlay;
 import io.agrest.meta.AgRelationship;
-import io.agrest.meta.compiler.LazyAgPersistentEntity;
+import io.agrest.meta.DefaultAgEntity;
 import io.agrest.meta.compiler.AgEntityCompiler;
+import io.agrest.meta.compiler.LazyAgEntity;
 import io.agrest.runtime.cayenne.ICayennePersister;
 import io.agrest.runtime.parser.converter.IJsonValueConverterFactory;
 import org.apache.cayenne.dba.TypesMapping;
@@ -56,28 +56,27 @@ public class CayenneEntityCompiler implements AgEntityCompiler {
         if (objEntity == null) {
             return null;
         }
-        return new LazyAgPersistentEntity<>(type, () -> doCompile(type, dataMap));
+        return new LazyAgEntity<>(type, () -> doCompile(type, dataMap));
     }
 
-    private <T> AgPersistentEntity<T> doCompile(Class<T> type, AgDataMap dataMap) {
+    private <T> AgEntity<T> doCompile(Class<T> type, AgDataMap dataMap) {
 
         LOGGER.debug("compiling Cayenne entity for type: " + type);
 
         ObjEntity objEntity = resolver.getObjEntity(type);
-        CayenneAgEntity<T> agEntity = new CayenneAgEntity<>(type, objEntity);
-        loadCayenneEntity(agEntity, dataMap);
+        DefaultAgEntity<T> agEntity = new DefaultAgEntity<>(objEntity.getName(), type);
+        loadCayenneEntity(agEntity, objEntity, dataMap);
         loadAnnotatedProperties(agEntity, dataMap);
         loadOverlays(dataMap, agEntity);
         return agEntity;
     }
 
-    protected <T> void loadCayenneEntity(CayenneAgEntity<T> agEntity, AgDataMap dataMap) {
+    protected <T> void loadCayenneEntity(DefaultAgEntity<T> agEntity, ObjEntity objEntity, AgDataMap dataMap) {
 
-        ObjEntity objEntity = agEntity.getObjEntity();
         for (ObjAttribute a : objEntity.getAttributes()) {
             Class<?> type = typeForName(a.getType());
             CayenneAgObjAttribute agAttribute = new CayenneAgObjAttribute(a, type);
-            agEntity.addPersistentAttribute(agAttribute);
+            agEntity.addAttribute(agAttribute);
         }
 
         for (ObjRelationship r : objEntity.getRelationships()) {
@@ -113,7 +112,7 @@ public class CayenneEntityCompiler implements AgEntityCompiler {
 
     }
 
-    protected <T> void loadAnnotatedProperties(CayenneAgEntity<T> entity, AgDataMap dataMap) {
+    protected <T> void loadAnnotatedProperties(DefaultAgEntity<T> entity, AgDataMap dataMap) {
 
         // load a separate entity built purely from annotations, then merge it
         // with our entity... Note that we are not cloning attributes or
@@ -163,7 +162,7 @@ public class CayenneEntityCompiler implements AgEntityCompiler {
         }
     }
 
-    protected <T> void loadOverlays(AgDataMap dataMap, CayenneAgEntity<T> entity) {
+    protected <T> void loadOverlays(AgDataMap dataMap, DefaultAgEntity<T> entity) {
         AgEntityOverlay<?> overlay = entityOverlays.get(entity.getType().getName());
         if (overlay != null) {
             overlay.getAttributes().forEach(entity::addAttribute);

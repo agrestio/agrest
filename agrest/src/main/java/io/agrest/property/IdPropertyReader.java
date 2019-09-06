@@ -2,7 +2,7 @@ package io.agrest.property;
 
 import io.agrest.meta.AgAttribute;
 import io.agrest.meta.AgEntity;
-import io.agrest.meta.AgPersistentEntity;
+import org.apache.cayenne.DataObject;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -12,11 +12,13 @@ import java.util.Map;
 public class IdPropertyReader implements PropertyReader {
 
     private AgEntity<?> entity;
-    private boolean isPersistent;
+    private boolean isDataObject;
 
     public IdPropertyReader(AgEntity<?> entity) {
         this.entity = entity;
-        this.isPersistent = entity instanceof AgPersistentEntity;
+
+        // TODO: Cayenne dependency out of place
+        this.isDataObject = DataObject.class.isAssignableFrom(entity.getType());
     }
 
     @Override
@@ -37,7 +39,7 @@ public class IdPropertyReader implements PropertyReader {
 
     private Object readPropertyOrId(Object object, String name) {
 
-        if (isPersistent) {
+        if (isDataObject) {
             // try normal property first, and if it's absent, assume that it's (a part of) the entity's ID
             Object property = DataObjectPropertyReader.reader().value(object, name);
             return property != null ? property : PersistentObjectIdPropertyReader.reader().value(object, name);

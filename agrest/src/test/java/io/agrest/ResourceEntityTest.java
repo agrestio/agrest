@@ -1,20 +1,19 @@
 package io.agrest;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.mockito.Mockito.mock;
-
 import io.agrest.it.fixture.cayenne.E2;
-import io.agrest.meta.AgPersistentEntity;
+import io.agrest.meta.AgEntity;
 import org.apache.cayenne.exp.ExpressionFactory;
 import org.junit.Test;
+
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.mock;
 
 public class ResourceEntityTest {
 
 	@Test
 	public void testQualifier() {
 		@SuppressWarnings("unchecked")
-		ResourceEntity<E2> e2 = new ResourceEntity<>(mock(AgPersistentEntity.class));
+		ResourceEntity<E2> e2 = new ResourceEntity<>(mock(AgEntity.class));
 		assertNull(e2.getQualifier());
 
 		e2.andQualifier(ExpressionFactory.exp("a = 1"));

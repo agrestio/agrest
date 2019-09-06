@@ -5,7 +5,6 @@ import io.agrest.AgObjectId;
 import io.agrest.ResourceEntity;
 import io.agrest.meta.AgAttribute;
 import io.agrest.meta.AgEntity;
-import io.agrest.meta.AgPersistentEntity;
 import io.agrest.meta.AgRelationship;
 import io.agrest.meta.cayenne.CayenneAgAttribute;
 import io.agrest.meta.cayenne.CayenneAgRelationship;
@@ -92,7 +91,8 @@ public class CayenneAssembleQueryStage implements Processor<SelectContext<?>> {
 
     private void buildChildQuery(SelectContext context, ResourceEntity<?> parent, ResourceEntity child) {
 
-        if (!(child.getAgEntity() instanceof AgPersistentEntity)) {
+        // if related entity is not managed by Cayenne
+        if (entityResolver.getObjEntity(child.getType()) == null) {
             return;
         }
 

@@ -10,7 +10,6 @@ import io.agrest.encoder.IdEncoder;
 import io.agrest.meta.AgAttribute;
 import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgPersistentAttribute;
-import io.agrest.meta.AgPersistentEntity;
 import io.agrest.meta.AgPersistentRelationship;
 import io.agrest.meta.AgRelationship;
 import io.agrest.property.BeanPropertyReader;
@@ -62,7 +61,10 @@ public class AttributeEncoderFactory implements IAttributeEncoderFactory {
         return idPropertiesByEntity.computeIfAbsent(key, k -> buildIdProperty(entity));
     }
 
-    protected EntityProperty buildRelationshipProperty(ResourceEntity<?> entity, AgRelationship relationship, Encoder encoder) {
+    protected EntityProperty buildRelationshipProperty(
+            ResourceEntity<?> entity,
+            AgRelationship relationship,
+            Encoder encoder) {
 
         // for now only "overlay" relationships have non-null readers
         if (relationship.getPropertyReader() != null) {
@@ -108,9 +110,10 @@ public class AttributeEncoderFactory implements IAttributeEncoderFactory {
 
         Collection<AgAttribute> ids = entity.getAgEntity().getIds();
 
+        // TODO: dirty - direct Cayenne dependency
         // TODO: consider unifying id readers between POJO and entities
 
-        if (entity.getAgEntity() instanceof AgPersistentEntity) {
+        if (DataObject.class.isAssignableFrom(entity.getType())) {
 
             // Cayenne object - PK is an ObjectId (even if it is also a meaningful object property)
             switch (ids.size()) {

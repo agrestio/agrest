@@ -5,7 +5,7 @@ import io.agrest.ResourceEntity;
 import io.agrest.constraints.Constraint;
 import io.agrest.it.fixture.cayenne.E1;
 import io.agrest.it.fixture.cayenne.E2;
-import io.agrest.meta.AgPersistentEntity;
+import io.agrest.meta.AgEntity;
 import io.agrest.unit.TestWithCayenneMapping;
 import org.apache.cayenne.map.ObjEntity;
 import org.junit.Before;
@@ -15,16 +15,15 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 public class ConstraintsHandlerWithDefaultsTest extends TestWithCayenneMapping {
 
 	private ConstraintsHandler constraintHandler;
-	private AgPersistentEntity<E1> age1;
-	private AgPersistentEntity<E2> age2;
+	private AgEntity<E1> age1;
+	private AgEntity<E2> age2;
 
 	@SuppressWarnings("unchecked")
 	@Before
@@ -32,22 +31,20 @@ public class ConstraintsHandlerWithDefaultsTest extends TestWithCayenneMapping {
 
 		List<EntityConstraint> r = new ArrayList<>();
 		r.add(new DefaultEntityConstraint("E1", true, false, Collections.singleton(E1.AGE.getName()),
-				Collections.<String> emptySet()));
+				Collections.emptySet()));
 
 		List<EntityConstraint> w = new ArrayList<>();
 		w.add(new DefaultEntityConstraint("E2", false, false, Collections.singleton(E2.ADDRESS.getName()),
-				Collections.<String> emptySet()));
+				Collections.emptySet()));
 
 		ObjEntity e1 = runtime.getChannel().getEntityResolver().getObjEntity(E1.class);
 		ObjEntity e2 = runtime.getChannel().getEntityResolver().getObjEntity(E2.class);
 
-		age1 = mock(AgPersistentEntity.class);
-		when(age1.getObjEntity()).thenReturn(e1);
+		age1 = mock(AgEntity.class);
 		when(age1.getType()).thenReturn(E1.class);
 		when(age1.getName()).thenReturn(e1.getName());
 
-		age2 = mock(AgPersistentEntity.class);
-		when(age2.getObjEntity()).thenReturn(e2);
+		age2 = mock(AgEntity.class);
 		when(age2.getType()).thenReturn(E2.class);
 		when(age2.getName()).thenReturn(e2.getName());
 

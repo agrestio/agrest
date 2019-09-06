@@ -4,6 +4,7 @@ import io.agrest.AgException;
 import io.agrest.EntityUpdate;
 import io.agrest.ObjectMapper;
 import io.agrest.ResourceEntity;
+import io.agrest.runtime.cayenne.ICayennePersister;
 import io.agrest.runtime.meta.IMetadataService;
 import io.agrest.runtime.processor.update.UpdateContext;
 import org.apache.cayenne.DataObject;
@@ -22,8 +23,10 @@ import java.util.Map;
  */
 public class CayenneIdempotentFullSyncStage extends CayenneIdempotentCreateOrUpdateStage {
 
-    public CayenneIdempotentFullSyncStage(@Inject IMetadataService metadataService) {
-        super(metadataService);
+    public CayenneIdempotentFullSyncStage(
+            @Inject IMetadataService metadataService,
+            @Inject ICayennePersister persister) {
+        super(metadataService, persister);
     }
 
     @Override
