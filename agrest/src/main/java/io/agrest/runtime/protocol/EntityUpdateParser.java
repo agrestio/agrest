@@ -11,7 +11,6 @@ import org.apache.cayenne.di.Inject;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Map;
 
 /**
  * @since 1.20
@@ -75,11 +74,6 @@ public class EntityUpdateParser implements IEntityUpdateParser {
         @Override
         public void visitId(String name, Object value) {
             currentUpdate.getOrCreateId().put(name, value);
-        }
-
-        @Override
-        public void visitId(Map<String, Object> value) {
-            currentUpdate.getOrCreateId().putAll(value);
         }
 
         @Override

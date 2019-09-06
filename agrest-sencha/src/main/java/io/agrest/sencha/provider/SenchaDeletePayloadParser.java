@@ -113,11 +113,6 @@ public class SenchaDeletePayloadParser implements MessageBodyReader<Collection<E
 		}
 
 		@Override
-		public void visitId(Map<String, Object> value) {
-			deletedId.putAll(value);
-		}
-
-		@Override
 		public void visitAttribute(String name, Object value) {
 			deletedId.put(name, value);
 		}
