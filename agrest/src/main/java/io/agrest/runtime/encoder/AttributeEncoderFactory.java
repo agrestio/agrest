@@ -44,7 +44,7 @@ public class AttributeEncoderFactory implements IAttributeEncoderFactory {
     @Override
     public EntityProperty getAttributeProperty(AgEntity<?> entity, AgAttribute attribute) {
         String key = entity.getName() + "." + attribute.getName();
-        return attributePropertiesByPath.computeIfAbsent(key, k -> buildAttributeProperty(entity, attribute));
+        return attributePropertiesByPath.computeIfAbsent(key, k -> buildAttributeProperty(attribute));
     }
 
     @Override
@@ -89,22 +89,11 @@ public class AttributeEncoderFactory implements IAttributeEncoderFactory {
         return PropertyBuilder.property().encodedWith(encoder);
     }
 
-    protected EntityProperty buildAttributeProperty(AgEntity<?> entity, AgAttribute attribute) {
+    protected EntityProperty buildAttributeProperty(AgAttribute attribute) {
         Encoder encoder = getEncoder(attribute.getType());
-        return getProperty(entity, attribute, encoder);
-    }
-
-    private EntityProperty getProperty(AgEntity<?> entity, AgAttribute attribute, Encoder encoder) {
-
-        // TODO: reader must always come from AgAttribute
-
-        if (DataObject.class.isAssignableFrom(entity.getType())) {
-            return PropertyBuilder.dataObjectProperty().encodedWith(encoder);
-        } else if (attribute.getPropertyReader() != null) {
-            return PropertyBuilder.property(attribute.getPropertyReader());
-        } else {
-            return PropertyBuilder.property().encodedWith(encoder);
-        }
+        return attribute.getPropertyReader() != null
+                ? PropertyBuilder.property(attribute.getPropertyReader()).encodedWith(encoder)
+                : PropertyBuilder.property().encodedWith(encoder);
     }
 
     protected Optional<EntityProperty> buildIdProperty(ResourceEntity<?> entity) {
