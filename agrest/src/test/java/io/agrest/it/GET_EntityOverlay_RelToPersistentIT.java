@@ -5,7 +5,6 @@ import io.agrest.DataResponse;
 import io.agrest.MetadataResponse;
 import io.agrest.it.fixture.JerseyAndDerbyCase;
 import io.agrest.it.fixture.cayenne.E22;
-import io.agrest.it.fixture.cayenne.E24;
 import io.agrest.it.fixture.cayenne.E25;
 import io.agrest.meta.AgEntityOverlay;
 import org.apache.cayenne.Cayenne;
@@ -43,7 +42,7 @@ public class GET_EntityOverlay_RelToPersistentIT extends JerseyAndDerbyCase {
 
     @Override
     protected Class<?>[] testEntities() {
-        return new Class[]{E24.class, E25.class};
+        return new Class[]{E22.class, E25.class};
     }
 
     @Test
