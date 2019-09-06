@@ -1,7 +1,8 @@
 package io.agrest.meta;
 
+import io.agrest.property.IdReader;
+
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -11,19 +12,27 @@ public class DefaultAgEntity<T> implements AgEntity<T> {
 
     private String name;
     private Class<T> type;
+    private IdReader idReader;
 
+    // TODO: ensure name uniqueness between all types of properties
     private Map<String, AgAttribute> ids;
     private Map<String, AgAttribute> attributes;
     private Map<String, AgRelationship> relationships;
 
-    // TODO: ensure name uniqueness between all types of properties
+    public DefaultAgEntity(
+            String name,
+            Class<T> type,
+            Map<String, AgAttribute> ids,
+            Map<String, AgAttribute> attributes,
+            Map<String, AgRelationship> relationships,
+            IdReader idReader) {
 
-    public DefaultAgEntity(String name, Class<T> type) {
         this.name = name;
         this.type = type;
-        this.relationships = new HashMap<>();
-        this.attributes = new HashMap<>();
-        this.ids = new HashMap<>();
+        this.ids = ids;
+        this.attributes = attributes;
+        this.relationships = relationships;
+        this.idReader = idReader;
     }
 
     @Override
@@ -34,6 +43,11 @@ public class DefaultAgEntity<T> implements AgEntity<T> {
     @Override
     public Class<T> getType() {
         return type;
+    }
+
+    @Override
+    public IdReader getIdReader() {
+        return idReader;
     }
 
     @Override
@@ -64,18 +78,6 @@ public class DefaultAgEntity<T> implements AgEntity<T> {
     @Override
     public Collection<AgAttribute> getAttributes() {
         return attributes.values();
-    }
-
-    public AgRelationship addRelationship(AgRelationship relationship) {
-        return relationships.put(relationship.getName(), relationship);
-    }
-
-    public AgAttribute addAttribute(AgAttribute attribute) {
-        return attributes.put(attribute.getName(), attribute);
-    }
-
-    public AgAttribute addId(AgAttribute id) {
-        return ids.put(id.getName(), id);
     }
 
     @Override

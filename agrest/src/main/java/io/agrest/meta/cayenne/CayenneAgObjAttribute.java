@@ -1,6 +1,7 @@
 package io.agrest.meta.cayenne;
 
 import io.agrest.meta.DefaultAgAttribute;
+import io.agrest.property.PropertyReader;
 import org.apache.cayenne.map.DbAttribute;
 import org.apache.cayenne.map.ObjAttribute;
 import org.apache.cayenne.util.ToStringBuilder;
@@ -12,8 +13,8 @@ public class CayenneAgObjAttribute extends DefaultAgAttribute implements Cayenne
 
 	private ObjAttribute objAttribute;
 
-	public CayenneAgObjAttribute(ObjAttribute objAttribute, Class<?> type) {
-		super(objAttribute.getName(), type);
+	public CayenneAgObjAttribute(ObjAttribute objAttribute, Class<?> type, PropertyReader propertyReader) {
+		super(objAttribute.getName(), type, propertyReader);
 		this.objAttribute = objAttribute;
 	}
 

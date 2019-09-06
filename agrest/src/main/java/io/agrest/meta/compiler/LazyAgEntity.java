@@ -3,6 +3,7 @@ package io.agrest.meta.compiler;
 import io.agrest.meta.AgAttribute;
 import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgRelationship;
+import io.agrest.property.IdReader;
 
 import java.util.Collection;
 import java.util.function.Supplier;
@@ -27,6 +28,11 @@ public class LazyAgEntity<T> extends BaseLazyAgEntity<T, AgEntity<T>> implements
     @Override
     public Class<T> getType() {
         return type;
+    }
+
+    @Override
+    public IdReader getIdReader() {
+        return getDelegate().getIdReader();
     }
 
     @Override

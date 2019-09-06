@@ -5,6 +5,8 @@ import io.agrest.annotation.AgId;
 import io.agrest.annotation.AgRelationship;
 import io.agrest.meta.compiler.BeanAnalyzer;
 import io.agrest.meta.compiler.PropertyGetter;
+import io.agrest.property.BeanPropertyReader;
+import io.agrest.property.DefaultIdReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,6 +16,7 @@ import java.lang.reflect.Type;
 import java.lang.reflect.TypeVariable;
 import java.lang.reflect.WildcardType;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -26,30 +29,67 @@ public class AgEntityBuilder<T> {
     private static final Logger LOGGER = LoggerFactory.getLogger(AgEntityBuilder.class);
 
     private Class<T> type;
+    private String name;
     private AgDataMap dataMap;
+    private AgEntityOverlay<T> overlay;
+
+    private Map<String, io.agrest.meta.AgAttribute> ids;
+    private Map<String, io.agrest.meta.AgAttribute> attributes;
+    private Map<String, io.agrest.meta.AgRelationship> relationships;
 
     public AgEntityBuilder(Class<T> type, AgDataMap dataMap) {
         this.type = type;
+        this.name = type.getSimpleName();
         this.dataMap = dataMap;
+
+        this.ids = new HashMap<>();
+        this.attributes = new HashMap<>();
+        this.relationships = new HashMap<>();
+    }
+
+    public AgEntityBuilder<T> overlay(AgEntityOverlay<T> overlay) {
+        this.overlay = overlay;
+        return this;
     }
 
     public DefaultAgEntity<T> build() {
-        DefaultAgEntity<T> e = new DefaultAgEntity<>(type.getSimpleName(), type);
-        appendProperties(e);
-        return e;
+
+        collectProperties();
+        loadOverlays();
+
+        return new DefaultAgEntity<>(
+                name,
+                type,
+                ids,
+                attributes,
+                relationships,
+                new DefaultIdReader(ids.keySet()));
     }
 
-    private void appendProperties(DefaultAgEntity<T> entity) {
-        BeanAnalyzer.findGetters(type).forEach(getter -> appendProperty(entity, getter));
+    private void addId(io.agrest.meta.AgAttribute id) {
+        ids.put(id.getName(), id);
     }
 
-    private void appendProperty(DefaultAgEntity<T> entity, PropertyGetter getter) {
-        if (!addAsAttribute(entity, getter)) {
-            addAsRelationship(entity, getter);
+    private void addAttribute(io.agrest.meta.AgAttribute a) {
+        attributes.put(a.getName(), a);
+    }
+
+    private void addRelationship(io.agrest.meta.AgRelationship r) {
+        relationships.put(r.getName(), r);
+    }
+
+    private void collectProperties() {
+        BeanAnalyzer.findGetters(type).forEach(getter -> appendProperty(getter));
+    }
+
+    private void appendProperty(PropertyGetter getter) {
+
+        if (!addAsAttribute(getter)) {
+            addAsRelationship(getter);
         }
     }
 
-    private boolean addAsAttribute(DefaultAgEntity<T> entity, PropertyGetter getter) {
+    private boolean addAsAttribute(PropertyGetter getter) {
 
         Method m = getter.getMethod();
         Class<?> type = getter.getType();
@@ -58,12 +98,10 @@ public class AgEntityBuilder<T> {
         if (m.getAnnotation(AgAttribute.class) != null) {
 
             if (checkValidAttributeType(type, m.getGenericReturnType())) {
-                DefaultAgAttribute a = new DefaultAgAttribute(name, type);
-                entity.addAttribute(a);
+                addAttribute(new DefaultAgAttribute(name, type, BeanPropertyReader.reader()));
             } else {
-                // still return true after validation failure... this is an
-                // attribute, just not a proper one
-                LOGGER.warn("Invalid attribute type for " + entity.getName() + "." + name + ". Skipping.");
+                // still return true after validation failure... this is an attribute, just not a proper one
+                LOGGER.warn("Invalid attribute type for " + this.name + "." + name + ". Skipping.");
             }
 
             return true;
@@ -72,12 +110,11 @@ public class AgEntityBuilder<T> {
         if (m.getAnnotation(AgId.class) != null) {
 
             if (checkValidIdType(type)) {
-                DefaultAgAttribute a = new DefaultAgAttribute(name, type);
-                entity.addId(a);
+                addId(new DefaultAgAttribute(name, type, BeanPropertyReader.reader()));
             } else {
                 // still return true after validation failure... this is an
                 // attribute, just not a proper one
-                LOGGER.warn("Invalid ID attribute type for " + entity.getName() + "." + name + ". Skipping.");
+                LOGGER.warn("Invalid ID attribute type for " + this.name + "." + name + ". Skipping.");
             }
 
             return true;
@@ -136,25 +173,31 @@ public class AgEntityBuilder<T> {
                 && !Collection.class.isAssignableFrom(type);
     }
 
-    private boolean addAsRelationship(DefaultAgEntity<T> entity, PropertyGetter getter) {
+    private boolean addAsRelationship(PropertyGetter getter) {
 
         Method m = getter.getMethod();
-        Class<?> targetType = getter.getType();
-        String name = getter.getName();
-
         if (m.getAnnotation(AgRelationship.class) != null) {
 
             boolean toMany = false;
+            Class<?> targetType = getter.getType();
 
             if (Collection.class.isAssignableFrom(targetType)) {
                 targetType = (Class<?>) ((ParameterizedType) m.getGenericReturnType()).getActualTypeArguments()[0];
                 toMany = true;
             }
 
+            String name = getter.getName();
             AgEntity<?> targetEntity = dataMap.getEntity(targetType);
-            entity.addRelationship(new DefaultAgRelationship(name, targetEntity, toMany));
+            addRelationship(new DefaultAgRelationship(name, targetEntity, toMany));
         }
 
         return false;
+    }
+
+    protected void loadOverlays() {
+        if (overlay != null) {
+            overlay.getAttributes().forEach(this::addAttribute);
+            overlay.getRelatonships(dataMap).forEach(this::addRelationship);
+        }
     }
 }

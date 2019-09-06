@@ -1,6 +1,7 @@
 package io.agrest.meta.cayenne;
 
 import io.agrest.meta.DefaultAgAttribute;
+import io.agrest.property.PropertyReader;
 import org.apache.cayenne.exp.parser.ASTDbPath;
 import org.apache.cayenne.exp.parser.ASTPath;
 import org.apache.cayenne.map.DbAttribute;
@@ -15,8 +16,8 @@ public class CayenneAgDbAttribute extends DefaultAgAttribute implements CayenneA
     /**
      * @since 1.24
      */
-    public CayenneAgDbAttribute(String name, DbAttribute dbAttribute, Class<?> type) {
-        super(name, type);
+    public CayenneAgDbAttribute(String name, DbAttribute dbAttribute, Class<?> type, PropertyReader propertyReader) {
+        super(name, type, propertyReader);
         this.dbAttribute = dbAttribute;
     }
 

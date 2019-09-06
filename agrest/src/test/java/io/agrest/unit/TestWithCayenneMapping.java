@@ -8,6 +8,7 @@ import io.agrest.meta.compiler.AgEntityCompiler;
 import io.agrest.meta.compiler.PojoEntityCompiler;
 import io.agrest.meta.parser.IResourceParser;
 import io.agrest.meta.parser.ResourceParser;
+import io.agrest.property.BeanPropertyReader;
 import io.agrest.runtime.cayenne.ICayennePersister;
 import io.agrest.runtime.meta.BaseUrlProvider;
 import io.agrest.runtime.meta.IMetadataService;
@@ -127,7 +128,7 @@ public class TestWithCayenneMapping {
 	}
 
 	protected void appendAttribute(ResourceEntity<?> entity, String name, Class<?> type) {
-		entity.getAttributes().put(name, new DefaultAgAttribute(name, type));
+		entity.getAttributes().put(name, new DefaultAgAttribute(name, type, BeanPropertyReader.reader()));
 	}
 
 	protected <T> void appendPersistenceAttribute(ResourceEntity<?> entity, Property<T> property, Class<T> javaType) {
@@ -142,7 +143,7 @@ public class TestWithCayenneMapping {
 	private class TestAgPersistentAttribute extends DefaultAgAttribute {
 
 		public TestAgPersistentAttribute(String name, Class<?> javaType) {
-			super(name, javaType);
+			super(name, javaType, BeanPropertyReader.reader());
 		}
 
 		@Override

@@ -12,6 +12,7 @@ import io.agrest.it.fixture.cayenne.E5;
 import io.agrest.meta.AgEntity;
 import io.agrest.meta.DefaultAgAttribute;
 import io.agrest.meta.AgRelationship;
+import io.agrest.property.BeanPropertyReader;
 import org.apache.cayenne.exp.Expression;
 import org.junit.Before;
 import org.junit.Test;
@@ -321,6 +322,6 @@ public class ConstraintsHandlerTest {
     }
 
     protected void appendAttribute(ResourceEntity<?> entity, String name) {
-        entity.getAttributes().put(name, new DefaultAgAttribute(name, String.class));
+        entity.getAttributes().put(name, new DefaultAgAttribute(name, String.class, BeanPropertyReader.reader()));
     }
 }

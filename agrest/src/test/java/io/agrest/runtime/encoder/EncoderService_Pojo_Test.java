@@ -11,6 +11,7 @@ import io.agrest.meta.DefaultAgAttribute;
 import io.agrest.meta.LazyAgDataMap;
 import io.agrest.meta.compiler.AgEntityCompiler;
 import io.agrest.meta.compiler.PojoEntityCompiler;
+import io.agrest.property.BeanPropertyReader;
 import io.agrest.runtime.semantics.RelationshipMapper;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -51,8 +52,8 @@ public class EncoderService_Pojo_Test {
 	@Test
 	public void testEncode_SimplePojo_noId() {
 		AgEntity<P1> p1age = new AgEntityBuilder<>(P1.class, new LazyAgDataMap(compilers)).build();
-		ResourceEntity<P1> descriptor = new ResourceEntity<P1>(p1age);
-		descriptor.getAttributes().put("name", new DefaultAgAttribute("name", String.class));
+		ResourceEntity<P1> descriptor = new ResourceEntity<>(p1age);
+		descriptor.getAttributes().put("name", new DefaultAgAttribute("name", String.class, BeanPropertyReader.reader()));
 
 		P1 p1 = new P1();
 		p1.setName("XYZ");
@@ -67,8 +68,8 @@ public class EncoderService_Pojo_Test {
 		p6.setIntProp(4);
 
 		AgEntity<P6> p6age = new AgEntityBuilder<>(P6.class, new LazyAgDataMap(compilers)).build();
-		ResourceEntity<P6> descriptor = new ResourceEntity<P6>(p6age);
-		descriptor.getAttributes().put("intProp", new DefaultAgAttribute("intProp", Integer.class));
+		ResourceEntity<P6> descriptor = new ResourceEntity<>(p6age);
+		descriptor.getAttributes().put("intProp", new DefaultAgAttribute("intProp", Integer.class, BeanPropertyReader.reader()));
 		descriptor.includeId();
 
 		assertEquals("{\"data\":[{\"id\":\"myid\",\"intProp\":4}],\"total\":1}", toJson(p6, descriptor));

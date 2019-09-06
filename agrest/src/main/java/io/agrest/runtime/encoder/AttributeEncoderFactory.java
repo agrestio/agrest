@@ -12,7 +12,7 @@ import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgPersistentRelationship;
 import io.agrest.meta.AgRelationship;
 import io.agrest.property.BeanPropertyReader;
-import io.agrest.property.IdPropertyReader;
+import io.agrest.property.IdReader;
 import io.agrest.property.PropertyBuilder;
 import io.agrest.property.PropertyReader;
 import org.apache.cayenne.DataObject;
@@ -32,13 +32,11 @@ public class AttributeEncoderFactory implements IAttributeEncoderFactory {
     // these are explicit overrides for named attributes
     private Map<String, EntityProperty> attributePropertiesByPath;
     private Map<String, Optional<EntityProperty>> idPropertiesByEntity;
-    private Map<AgEntity<?>, IdPropertyReader> idPropertyReaders;
 
     public AttributeEncoderFactory(@Inject ValueEncoders valueEncoders) {
         this.valueEncoders = valueEncoders;
         this.attributePropertiesByPath = new ConcurrentHashMap<>();
         this.idPropertiesByEntity = new ConcurrentHashMap<>();
-        this.idPropertyReaders = new ConcurrentHashMap<>();
     }
 
     @Override
@@ -110,8 +108,13 @@ public class AttributeEncoderFactory implements IAttributeEncoderFactory {
                 case 0:
                     return Optional.empty();
                 case 1:
+
+                    // TODO: abstraction leak... IdReader is not a property (it doesn't take property name to resolve a value),
+                    //  yet somewhere in Agrest it is treated as a property, so wrapping it in one
+
+                    IdReader ir1 = entity.getAgEntity().getIdReader();
                     EntityProperty p1 = PropertyBuilder
-                            .property(getOrCreateIdReader(entity.getAgEntity()))
+                            .property((r, n) -> ir1.id(r))
                             .encodedWith(new IdEncoder(getEncoder(ids.iterator().next().getType())));
                     return Optional.of(p1);
                 default:
@@ -122,8 +125,11 @@ public class AttributeEncoderFactory implements IAttributeEncoderFactory {
                         valueEncoders.put(id.getName(), getEncoder(id.getType()));
                     }
 
+                    // TODO: abstraction leak... IdReader is not a property (it doesn't take property name to resolve a value),
+                    //  yet somewhere in Agrest it is treated as a property, so wrapping it in one
+                    IdReader ir2 = entity.getAgEntity().getIdReader();
                     EntityProperty p2 = PropertyBuilder
-                            .property(getOrCreateIdReader(entity.getAgEntity()))
+                            .property((r, n) -> ir2.id(r))
                             .encodedWith(new IdEncoder(valueEncoders));
                     return Optional.of(p2);
             }
@@ -146,19 +152,15 @@ public class AttributeEncoderFactory implements IAttributeEncoderFactory {
 
     private AgObjectId readObjectId(AgEntity<?> entity, DataObject object) {
 
-        Map<String, Object> idMap = (Map<String, Object>) getOrCreateIdReader(entity).value(object, null);
+        Map<String, Object> id = entity.getIdReader().id(object);
 
-        if (idMap.size() == 1) {
-            return new SimpleObjectId(idMap.values().iterator().next());
-        } else if (idMap.size() > 1) {
-            return new CompoundObjectId(idMap);
+        if (id.size() == 1) {
+            return new SimpleObjectId(id.values().iterator().next());
+        } else if (id.size() > 1) {
+            return new CompoundObjectId(id);
         }
 
         throw new RuntimeException("ID is empty for entity '" + entity.getName() + "'");
-    }
-
-    private IdPropertyReader getOrCreateIdReader(AgEntity<?> entity) {
-        return idPropertyReaders.computeIfAbsent(entity, e -> new IdPropertyReader(e));
     }
 
     protected Encoder getEncoder(Class<?> type) {

@@ -34,25 +34,19 @@ public class PojoEntityCompiler implements AgEntityCompiler {
     private <T> AgEntity<T> doCompile(Class<T> type, AgDataMap dataMap) {
         LOGGER.debug("compiling entity of type {}", type);
 
-        DefaultAgEntity<T> entity = loadAnnotatedProperties(type, dataMap);
-        loadOverlays(entity, dataMap);
+        DefaultAgEntity<T> entity = load(type, dataMap);
         checkEntityValid(entity);
         return entity;
     }
 
-    protected <T> DefaultAgEntity<T> loadAnnotatedProperties(Class<T> type, AgDataMap dataMap) {
-        return new AgEntityBuilder<>(type, dataMap).build();
-    }
-
-    protected <T> void loadOverlays(DefaultAgEntity<T> entity, AgDataMap dataMap) {
-        AgEntityOverlay<?> overlay = entityOverlays.get(entity.getType().getName());
-        if (overlay != null) {
-            overlay.getAttributes().forEach(entity::addAttribute);
-            overlay.getRelatonships(dataMap).forEach(entity::addRelationship);
-        }
+    protected <T> DefaultAgEntity<T> load(Class<T> type, AgDataMap dataMap) {
+        return new AgEntityBuilder<>(type, dataMap)
+                .overlay(entityOverlays.get(type.getName()))
+                .build();
     }
 
     protected <T> void checkEntityValid(AgEntity<T> entity) {
+        // TODO: what's wrong with an empty entity? It may not be very useful, but still valid
         if (entity.getIds().isEmpty() && entity.getAttributes().isEmpty() && entity.getRelationships().isEmpty()) {
             throw new AgException(Response.Status.INTERNAL_SERVER_ERROR,
                     "Invalid entity '" + entity.getType().getName() + "' - no properties");

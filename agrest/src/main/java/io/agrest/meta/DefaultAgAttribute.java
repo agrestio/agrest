@@ -14,10 +14,6 @@ public class DefaultAgAttribute implements AgAttribute {
 	private Class<?> javaType;
 	private PropertyReader propertyReader;
 
-	public DefaultAgAttribute(String name, Class<?> javaType) {
-		this(name, javaType, null);
-	}
-
 	public DefaultAgAttribute(String name, Class<?> javaType, PropertyReader propertyReader) {
 		this.name = name;
 		this.javaType = javaType;

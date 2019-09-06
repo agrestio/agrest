@@ -1,5 +1,6 @@
-package io.agrest.property;
+package io.agrest.meta.cayenne;
 
+import io.agrest.property.PropertyReader;
 import org.apache.cayenne.DataObject;
 
 public class DataObjectPropertyReader implements PropertyReader {
@@ -14,5 +15,4 @@ public class DataObjectPropertyReader implements PropertyReader {
 	public Object value(Object root, String name) {
 		return ((DataObject) root).readProperty(name);
 	}
-
 }
