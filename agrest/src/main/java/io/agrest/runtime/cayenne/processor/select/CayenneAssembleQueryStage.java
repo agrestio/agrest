@@ -5,7 +5,6 @@ import io.agrest.AgObjectId;
 import io.agrest.ResourceEntity;
 import io.agrest.meta.AgAttribute;
 import io.agrest.meta.AgEntity;
-import io.agrest.meta.AgPersistentAttribute;
 import io.agrest.meta.AgPersistentEntity;
 import io.agrest.meta.AgRelationship;
 import io.agrest.meta.cayenne.CayenneAgAttribute;
@@ -156,9 +155,9 @@ public class CayenneAssembleQueryStage implements Processor<SelectContext<?>> {
                         "Failed to build a Cayenne qualifier for entity " + entity.getName()
                                 + ": one of the entity's ID parts is missing in this ID: " + idAttribute.getName());
             }
-            if (idAttribute instanceof AgPersistentAttribute) {
+            if (idAttribute instanceof CayenneAgAttribute) {
                 qualifiers.add(ExpressionFactory.matchDbExp(
-                        ((AgPersistentAttribute) idAttribute).getColumnName(), idValue));
+                        ((CayenneAgAttribute) idAttribute).getDbAttribute().getName(), idValue));
             } else {
                 throw new AgException(Response.Status.INTERNAL_SERVER_ERROR,
                         "ID attribute '" + idAttribute.getName() + "' has no mapping to a column name");
