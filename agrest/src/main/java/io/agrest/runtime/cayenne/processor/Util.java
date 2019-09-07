@@ -6,6 +6,7 @@ import io.agrest.meta.AgEntity;
 import org.apache.cayenne.ObjectContext;
 import org.apache.cayenne.exp.ExpressionFactory;
 import org.apache.cayenne.exp.parser.ASTEqual;
+import org.apache.cayenne.map.DbEntity;
 import org.apache.cayenne.map.ObjEntity;
 import org.apache.cayenne.query.ObjectSelect;
 
@@ -35,14 +36,15 @@ public final class Util {
 
 		if (id instanceof Map) {
 			Map<String, Object> ids = (Map<String, Object>) id;
+			DbEntity dbEntity = entity.getDbEntity();
+
 			ObjectSelect<A> query = ObjectSelect.query(type);
 			for (Map.Entry<String, Object> entry : ids.entrySet()) {
-				query.and(ExpressionFactory.matchDbExp(
-						entity.getDbEntity().getAttribute(entry.getKey()).getName(), entry.getValue()
-				));
+				query.and(ExpressionFactory.matchDbExp(dbEntity.getAttribute(entry.getKey()).getName(), entry.getValue()));
 			}
 			return query.selectOne(context);
 		} else {
+			// TODO: this will break if this is am ID attribute not mapped as ObjAttribute in Cayenne
 			AgAttribute attribute = agEntity.getIds().iterator().next();
 			return ObjectSelect.query(type, new ASTEqual(attribute.getPathExp(), id)).selectOne(context);
 		}

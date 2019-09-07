@@ -107,9 +107,10 @@ public class CayenneAssembleQueryStage implements Processor<SelectContext<?>> {
 
             for (AgAttribute attribute : parent.getAgEntity().getIds()) {
 
-                // TODO: is this cast ever going to blow up?
                 CayenneAgAttribute cayenneAgAttribute = (CayenneAgAttribute) attribute;
-                Expression propertyExp = ExpressionFactory.dbPathExp(rel.getReverseDbPath() + "." + cayenneAgAttribute.getColumnName());
+                Expression propertyExp = ExpressionFactory.dbPathExp(rel.getReverseDbPath()
+                        + "."
+                        + cayenneAgAttribute.getDbAttribute().getName());
                 properties.add(Property.create(propertyExp, (Class) attribute.getType()));
             }
 

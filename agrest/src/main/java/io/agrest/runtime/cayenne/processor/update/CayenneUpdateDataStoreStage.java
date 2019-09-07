@@ -1,14 +1,16 @@
 package io.agrest.runtime.cayenne.processor.update;
 
+import io.agrest.AgException;
 import io.agrest.AgObjectId;
 import io.agrest.CompoundObjectId;
 import io.agrest.EntityParent;
 import io.agrest.EntityUpdate;
-import io.agrest.AgException;
 import io.agrest.ResourceEntity;
 import io.agrest.SimpleObjectId;
+import io.agrest.meta.AgAttribute;
 import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgRelationship;
+import io.agrest.meta.cayenne.CayenneAgAttribute;
 import io.agrest.processor.Processor;
 import io.agrest.processor.ProcessorOutcome;
 import io.agrest.runtime.cayenne.processor.Util;
@@ -16,18 +18,22 @@ import io.agrest.runtime.meta.IMetadataService;
 import io.agrest.runtime.processor.update.UpdateContext;
 import org.apache.cayenne.Cayenne;
 import org.apache.cayenne.DataObject;
+import org.apache.cayenne.DataRow;
 import org.apache.cayenne.Fault;
 import org.apache.cayenne.ObjectContext;
+import org.apache.cayenne.exp.ExpressionFactory;
 import org.apache.cayenne.map.DbAttribute;
 import org.apache.cayenne.map.DbEntity;
 import org.apache.cayenne.map.ObjAttribute;
 import org.apache.cayenne.map.ObjEntity;
 import org.apache.cayenne.map.ObjRelationship;
+import org.apache.cayenne.query.ObjectSelect;
 import org.apache.cayenne.reflect.ClassDescriptor;
 
 import javax.ws.rs.core.Response;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -121,22 +127,27 @@ public abstract class CayenneUpdateDataStoreStage implements Processor<UpdateCon
 
         ObjectContext objectContext = CayenneUpdateStartStage.cayenneContext(context);
         DataObject o = objectContext.newObject(context.getType());
-        Map<String, Object> idMap = u.getId();
+        Map<String, Object> idByAgAttribute = u.getId();
 
         // set explicit ID
-        if (idMap != null) {
+        if (idByAgAttribute != null) {
 
             if (context.isIdUpdatesDisallowed() && u.isExplicitId()) {
-                throw new AgException(Response.Status.BAD_REQUEST, "Setting ID explicitly is not allowed: " + idMap);
+                throw new AgException(Response.Status.BAD_REQUEST, "Setting ID explicitly is not allowed: " + idByAgAttribute);
             }
 
-            ObjEntity entity = objectContext.getEntityResolver().getObjEntity(context.getType());
-            if (isPrimaryKey(entity.getDbEntity(), idMap.keySet())) {
-                createSingleFromPk(entity, idMap, o);
+            ObjEntity objEntity = objectContext.getEntityResolver().getObjEntity(context.getType());
+            DbEntity dbEntity = objEntity.getDbEntity();
+            AgEntity agEntity = context.getEntity().getAgEntity();
+
+            Map<DbAttribute, Object> idByDbAttribute = mapToDbAttributes(agEntity, idByAgAttribute);
+
+            if (isPrimaryKey(dbEntity, idByDbAttribute.keySet())) {
+                createSingleFromPk(objEntity, idByDbAttribute, o);
             } else {
                 // need to make an additional check that the AgId is unique
-                checkExisting(objectContext, context.getEntity().getAgEntity(), idMap);
-                createSingleFromIdValues(entity, idMap, o);
+                checkExisting(objectContext, agEntity, idByDbAttribute, idByAgAttribute);
+                createSingleFromIdValues(objEntity, idByDbAttribute, idByAgAttribute, o);
             }
         }
 
@@ -144,40 +155,85 @@ public abstract class CayenneUpdateDataStoreStage implements Processor<UpdateCon
         relator.relateToParent(o);
     }
 
-    private void createSingleFromPk(ObjEntity entity, Map<String, Object> idMap, DataObject o) {
-        for (DbAttribute pk : entity.getDbEntity().getPrimaryKeys()) {
-            Object id = idMap.get(pk.getName());
-            if (id != null) {
-                setPrimaryKey(o, entity, pk, id);
+    // translate "id" expressed in terms on public Ag names to Cayenne DbAttributes
+    private Map<DbAttribute, Object> mapToDbAttributes(AgEntity<?> agEntity, Map<String, Object> idByAgAttribute) {
+
+        Map<DbAttribute, Object> idByDbAttribute = new HashMap<>((int) (idByAgAttribute.size() / 0.75) + 1);
+        for (Map.Entry<String, Object> e : idByAgAttribute.entrySet()) {
+
+            AgAttribute agAttribute = agEntity.getId(e.getKey());
+            if (agAttribute == null) {
+                agAttribute = agEntity.getAttribute(e.getKey());
             }
+
+            if (agAttribute == null) {
+                throw new AgException(Response.Status.BAD_REQUEST, "Invalid attribute '"
+                        + agEntity.getName()
+                        + "."
+                        + e.getKey()
+                        + "'");
+            }
+
+            // I guess this kind of type checking is not too dirty ... CayenneAgDbAttribute was created by Cayenne
+            // part of Ag, and we are back again in Cayenne part of Ag, trying to map Ag model back to Cayenne
+            DbAttribute dbAttribute;
+
+            if (agAttribute instanceof CayenneAgAttribute) {
+                dbAttribute = ((CayenneAgAttribute) agAttribute).getDbAttribute();
+            } else {
+                throw new AgException(Response.Status.BAD_REQUEST, "Not a mapped persistent attribute '"
+                        + agEntity.getName()
+                        + "."
+                        + e.getKey()
+                        + "'");
+            }
+
+            idByDbAttribute.put(dbAttribute, e.getValue());
+        }
+
+        return idByDbAttribute;
+    }
+
+    private void createSingleFromPk(ObjEntity objEntity, Map<DbAttribute, Object> idByDbAttribute, DataObject o) {
+        for (Map.Entry<DbAttribute, Object> e : idByDbAttribute.entrySet()) {
+            setPrimaryKey(o, objEntity, e.getKey(), e.getValue());
         }
     }
 
-    private <T extends DataObject> void checkExisting(ObjectContext objectContext, AgEntity<T> agEntity, Map<String, Object> idMap) {
-        T existing = Util.findById(objectContext, agEntity.getType(), agEntity, idMap);
-        if (existing != null) {
-            // TODO: printing "idMap" exposes column names, not JSON attributes
+    private <T extends DataObject> void checkExisting(
+            ObjectContext objectContext,
+            AgEntity<T> agEntity,
+            Map<DbAttribute, Object> idByDbAttribute,
+            Map<String, Object> idByAgAttribute) {
+
+        ObjectSelect<DataRow> query = ObjectSelect.dataRowQuery(agEntity.getType());
+        for (Map.Entry<DbAttribute, Object> e : idByDbAttribute.entrySet()) {
+            query.and(ExpressionFactory.matchDbExp(e.getKey().getName(), e.getValue()));
+        }
+
+        if (query.selectOne(objectContext) != null) {
             throw new AgException(Response.Status.BAD_REQUEST, "Can't create '"
                     + agEntity.getName()
                     + "' with id "
-                    + CompoundObjectId.mapToString(idMap)
+                    + CompoundObjectId.mapToString(idByAgAttribute)
                     + " - already exists");
         }
     }
 
     private void createSingleFromIdValues(
             ObjEntity entity,
-            Map<String, Object> idMap,
+            Map<DbAttribute, Object> idByDbAttribute,
+            Map<String, Object> idByAgAttribute,
             DataObject o) {
 
-        for (Map.Entry<String, Object> idPart : idMap.entrySet()) {
+        for (Map.Entry<DbAttribute, Object> idPart : idByDbAttribute.entrySet()) {
 
-            DbAttribute maybePk = entity.getDbEntity().getAttribute(idPart.getKey());
+            DbAttribute maybePk = idPart.getKey();
             if (maybePk == null) {
                 throw new AgException(Response.Status.BAD_REQUEST, "Can't create '"
                         + entity.getName()
                         + "' with id "
-                        + CompoundObjectId.mapToString(idMap)
+                        + CompoundObjectId.mapToString(idByAgAttribute)
                         + " - not an ID DB attribute: "
                         + idPart.getKey());
             }
@@ -190,7 +246,7 @@ public abstract class CayenneUpdateDataStoreStage implements Processor<UpdateCon
                 if (objAttribute == null) {
                     throw new AgException(Response.Status.BAD_REQUEST, "Can't create '"
                             + entity.getName()
-                            + "' with id " + CompoundObjectId.mapToString(idMap)
+                            + "' with id " + CompoundObjectId.mapToString(idByAgAttribute)
                             + " - unknown object attribute: "
                             + idPart.getKey());
                 }
@@ -200,17 +256,15 @@ public abstract class CayenneUpdateDataStoreStage implements Processor<UpdateCon
         }
     }
 
-    private void setPrimaryKey(DataObject o, ObjEntity entity, DbAttribute pk, Object id) {
+    private void setPrimaryKey(DataObject o, ObjEntity entity, DbAttribute pk, Object idValue) {
 
         // 1. meaningful ID
-        // TODO: must compile all this... figuring this on the fly is
-        // slow
+        // TODO: must precompile all this... figuring this on the fly is slow
         ObjAttribute opk = entity.getAttributeForDbAttribute(pk);
         if (opk != null) {
-            o.writeProperty(opk.getName(), id);
+            o.writeProperty(opk.getName(), idValue);
         }
-        // 2. PK is auto-generated ... I guess this is sorta
-        // expected to fail - generated meaningless PK should not be
+        // 2. PK is auto-generated ... I guess this is sorta expected to fail - generated meaningless PK should not be
         // pushed from the client
         else if (pk.isGenerated()) {
             throw new AgException(Response.Status.BAD_REQUEST, "Can't create '" + entity.getName()
@@ -218,23 +272,27 @@ public abstract class CayenneUpdateDataStoreStage implements Processor<UpdateCon
         }
         // 3. probably a propagated ID.
         else {
-            // TODO: hopefully this works..
-            o.getObjectId().getReplacementIdMap().put(pk.getName(), id);
+            o.getObjectId().getReplacementIdMap().put(pk.getName(), idValue);
         }
     }
-
 
     /**
      * @return true if all PK columns are represented in {@code keys}
      */
-    private boolean isPrimaryKey(DbEntity entity, Collection<String> keys) {
-        Collection<DbAttribute> pks = entity.getPrimaryKeys();
-        for (DbAttribute pk : pks) {
-            if (!keys.contains(pk.getName())) {
-                return false;
+    private boolean isPrimaryKey(DbEntity entity, Collection<DbAttribute> maybePk) {
+        int pkSize = entity.getPrimaryKeys().size();
+        if (pkSize > maybePk.size()) {
+            return false;
+        }
+
+        int countPk = 0;
+        for (DbAttribute a : maybePk) {
+            if (a.isPrimaryKey()) {
+                countPk++;
             }
         }
-        return true;
+
+        return countPk >= pkSize;
     }
 
     private <T extends DataObject> void mergeChanges(EntityUpdate<T> entityUpdate, DataObject o, ObjectRelator relator) {

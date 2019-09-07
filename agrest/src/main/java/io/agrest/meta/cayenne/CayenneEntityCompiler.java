@@ -76,7 +76,7 @@ public class CayenneEntityCompiler implements AgEntityCompiler {
         ObjEntity objEntity = agEntity.getObjEntity();
         for (ObjAttribute a : objEntity.getAttributes()) {
             Class<?> type = typeForName(a.getType());
-            CayenneAgAttribute agAttribute = new CayenneAgAttribute(a, type);
+            CayenneAgObjAttribute agAttribute = new CayenneAgObjAttribute(a, type);
             agEntity.addPersistentAttribute(agAttribute);
         }
 
@@ -106,7 +106,7 @@ public class CayenneEntityCompiler implements AgEntityCompiler {
                 id = new CayenneAgDbAttribute(pk.getName(), pk, type);
             } else {
                 type = typeForName(attribute.getType());
-                id = new CayenneAgAttribute(attribute, type);
+                id = new CayenneAgObjAttribute(attribute, type);
             }
             agEntity.addId(id);
         }

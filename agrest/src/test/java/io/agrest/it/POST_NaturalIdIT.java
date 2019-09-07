@@ -52,7 +52,7 @@ public class POST_NaturalIdIT extends JerseyAndDerbyCase {
         onResponse(r2)
                 .statusEquals(Response.Status.BAD_REQUEST)
                 // TODO: DB columns exposed in the message
-                .bodyEquals("{\"success\":false,\"message\":\"Can't create 'E20' with id {name_col:John} - already exists\"}");
+                .bodyEquals("{\"success\":false,\"message\":\"Can't create 'E20' with id {name:John} - already exists\"}");
     }
 
     @Test

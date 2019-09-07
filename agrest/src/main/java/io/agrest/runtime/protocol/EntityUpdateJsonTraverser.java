@@ -6,7 +6,6 @@ import io.agrest.AgException;
 import io.agrest.PathConstants;
 import io.agrest.meta.AgAttribute;
 import io.agrest.meta.AgEntity;
-import io.agrest.meta.AgPersistentAttribute;
 import io.agrest.meta.AgPersistentRelationship;
 import io.agrest.meta.AgRelationship;
 import io.agrest.parser.converter.JsonValueConverter;
@@ -152,16 +151,9 @@ public class EntityUpdateJsonTraverser {
 	}
 
 	protected void extractPKPart(BiConsumer<String, Object> idConsumer, AgAttribute id, JsonNode valueNode) {
-		String name;
-		if (id instanceof AgPersistentAttribute) {
-			name = ((AgPersistentAttribute) id).getColumnName();
-		} else {
-			name = id.getName();
-		}
-
-		Object value = converter(id).value(valueNode);
-
-        idConsumer.accept(name, value);
+        idConsumer.accept(
+        		id.getName(),
+				converter(id).value(valueNode));
 	}
 
 	private JsonValueConverter<?> converter(AgAttribute attribute) {

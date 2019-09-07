@@ -1,51 +1,51 @@
 package io.agrest.meta.cayenne;
 
-import org.apache.cayenne.dba.TypesMapping;
+import io.agrest.meta.AgPersistentAttribute;
+import io.agrest.meta.DefaultAgAttribute;
 import org.apache.cayenne.exp.parser.ASTDbPath;
 import org.apache.cayenne.exp.parser.ASTPath;
 import org.apache.cayenne.map.DbAttribute;
-import org.apache.cayenne.map.ObjAttribute;
 
 /**
  * @since 1.12
  */
-public class CayenneAgDbAttribute extends CayenneAgAttribute {
+public class CayenneAgDbAttribute extends DefaultAgAttribute implements AgPersistentAttribute, CayenneAgAttribute {
 
-	private static ObjAttribute fakeObjAttribute(String name, DbAttribute dbAttribute) {
-		ObjAttribute a = new ObjAttribute(name) {
-			@Override
-			public DbAttribute getDbAttribute() {
-				return dbAttribute;
-			}
-		};
-		a.setDbAttributePath(dbAttribute.getName());
+    private DbAttribute dbAttribute;
 
-		String javaType = TypesMapping.getJavaBySqlType(dbAttribute.getType());
-		if (javaType == null) {
-			throw new NullPointerException("Java type not found for SQL type: " + dbAttribute.getType());
-		}
-		a.setType(javaType);
-		return a;
-	}
-
-	private DbAttribute dbAttribute;
-
-	/**
-	 * @since 1.24
+    /**
+     * @since 1.24
      */
-	public CayenneAgDbAttribute(String name, DbAttribute dbAttribute, Class<?> type) {
-		super(fakeObjAttribute(name, dbAttribute), type);
-		this.dbAttribute = dbAttribute;
-	}
+    public CayenneAgDbAttribute(String name, DbAttribute dbAttribute, Class<?> type) {
+        super(name, type);
+        this.dbAttribute = dbAttribute;
+    }
 
-	@Override
-	public int getJdbcType() {
-		return dbAttribute.getType();
-	}
+    @Override
+    public int getJdbcType() {
+        return dbAttribute.getType();
+    }
 
-	@Override
-	public ASTPath getPathExp() {
-		return new ASTDbPath(dbAttribute.getName());
-	}
+    @Override
+    public ASTPath getPathExp() {
+        return new ASTDbPath(dbAttribute.getName());
+    }
 
+    @Override
+    public boolean isMandatory() {
+        return dbAttribute.isMandatory();
+    }
+
+    @Override
+    public String getColumnName() {
+        return dbAttribute.getName();
+    }
+
+    /**
+     * @since 3.4
+     */
+    @Override
+    public DbAttribute getDbAttribute() {
+        return dbAttribute;
+    }
 }
