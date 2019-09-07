@@ -24,11 +24,6 @@ public class CayenneAgObjAttribute extends DefaultAgAttribute implements AgPersi
 	}
 
 	@Override
-	public String getColumnName() {
-		return objAttribute.getDbAttribute().getName();
-	}
-
-	@Override
 	public boolean isMandatory() {
 		return objAttribute.getDbAttribute().isMandatory();
 	}

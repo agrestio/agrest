@@ -36,11 +36,6 @@ public class CayenneAgDbAttribute extends DefaultAgAttribute implements AgPersis
         return dbAttribute.isMandatory();
     }
 
-    @Override
-    public String getColumnName() {
-        return dbAttribute.getName();
-    }
-
     /**
      * @since 3.4
      */

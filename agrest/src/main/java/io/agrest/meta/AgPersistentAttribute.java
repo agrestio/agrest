@@ -15,10 +15,5 @@ public interface AgPersistentAttribute extends AgAttribute {
 	/**
 	 * @since 2.4
      */
-	String getColumnName();
-
-	/**
-	 * @since 2.4
-     */
 	boolean isMandatory();
 }

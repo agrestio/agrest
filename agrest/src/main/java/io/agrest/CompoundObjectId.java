@@ -1,7 +1,6 @@
 package io.agrest;
 
 import io.agrest.meta.AgAttribute;
-import io.agrest.meta.AgPersistentAttribute;
 import io.agrest.parser.converter.Normalizer;
 
 import javax.ws.rs.core.Response;
@@ -49,11 +48,8 @@ public class CompoundObjectId extends BaseObjectId {
 						"Failed to build a compound ID: one of the entity's ID parts is missing in this ID object: "
 								+ idAttribute.getName());
 			}
-			if (idAttribute instanceof AgPersistentAttribute) {
-				idMap.put(((AgPersistentAttribute) idAttribute).getColumnName(), idValue);
-			} else {
-				idMap.put(idAttribute.getName(), idValue);
-			}
+
+			idMap.put(idAttribute.getName(), idValue);
 		}
 		return idMap;
 	}

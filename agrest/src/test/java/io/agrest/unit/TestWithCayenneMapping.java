@@ -155,11 +155,6 @@ public class TestWithCayenneMapping {
 		}
 
 		@Override
-		public String getColumnName() {
-			return getName();
-		}
-
-		@Override
 		public boolean isMandatory() {
 			return false;
 		}

@@ -66,8 +66,7 @@ public class ApplyServerParamsStage implements Processor<UpdateContext<?>> {
 
             // id was specified explicitly ... this means a few things:
             // * we expect zero or one object in the body
-            // * if zero, create an empty update that will be attached to the
-            // ID.
+            // * if zero, create an empty update that will be attached to the ID.
             // * if more than one - throw...
 
             if (context.getUpdates().isEmpty()) {
@@ -77,7 +76,6 @@ public class ApplyServerParamsStage implements Processor<UpdateContext<?>> {
             AgEntity<T> entity = context.getEntity().getAgEntity();
             EntityUpdate<T> u = context.getFirst();
             u.getOrCreateId().putAll(context.getId().asMap(entity));
-
             u.setExplicitId();
         }
     }
