@@ -136,7 +136,7 @@ public abstract class CayenneUpdateDataStoreStage implements Processor<UpdateCon
             } else {
                 // need to make an additional check that the AgId is unique
                 checkExisting(objectContext, context.getEntity().getAgEntity(), idMap);
-                createSingleFromPartialPk(entity, idMap, o);
+                createSingleFromIdValues(entity, idMap, o);
             }
         }
 
@@ -165,7 +165,7 @@ public abstract class CayenneUpdateDataStoreStage implements Processor<UpdateCon
         }
     }
 
-    private void createSingleFromPartialPk(
+    private void createSingleFromIdValues(
             ObjEntity entity,
             Map<String, Object> idMap,
             DataObject o) {
