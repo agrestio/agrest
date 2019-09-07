@@ -89,23 +89,17 @@ public class CayenneUpdateStage extends CayenneUpdateDataStoreStage {
         Map<Object, Collection<EntityUpdate<T>>> map = new HashMap<>((int) (updates.size() / 0.75));
 
         for (EntityUpdate<T> u : updates) {
-
             Object key = mapper.keyForUpdate(u);
-            Collection<EntityUpdate<T>> updatesForKey = map.get(key);
-            if (updatesForKey == null) {
-                updatesForKey = new ArrayList<>(2);
-                map.put(key, updatesForKey);
-            }
-
-            updatesForKey.add(u);
+            map.computeIfAbsent(key, k -> new ArrayList<>(2)).add(u);
         }
 
         return map;
     }
 
     protected <T extends DataObject> ObjectMapper<T> createObjectMapper(UpdateContext<T> context) {
-        ObjectMapperFactory mapper = context.getMapper() != null ? context.getMapper() : ByIdObjectMapperFactory
-                .mapper();
+        ObjectMapperFactory mapper = context.getMapper() != null
+                ? context.getMapper()
+                : ByIdObjectMapperFactory.mapper();
         return mapper.createMapper(context);
     }
 
@@ -168,7 +162,7 @@ public class CayenneUpdateStage extends CayenneUpdateDataStoreStage {
     protected void buildChildrenQuery(UpdateContext context, ResourceEntity<?> entity, Map<String, ResourceEntity<?>> children) {
         if (!children.isEmpty()) {
             for (Map.Entry<String, ResourceEntity<?>> e : children.entrySet()) {
-                ResourceEntity child  = e.getValue();
+                ResourceEntity child = e.getValue();
                 if (!(child.getAgEntity() instanceof AgPersistentEntity)) {
                     continue;
                 }
@@ -177,8 +171,8 @@ public class CayenneUpdateStage extends CayenneUpdateDataStoreStage {
                 properties.add(Property.createSelf(child.getType()));
 
                 AgRelationship relationship = entity.getAgEntity().getRelationship(e.getKey());
-                if (relationship != null && relationship instanceof CayenneAgRelationship) {
-                    CayenneAgRelationship rel = (CayenneAgRelationship)relationship;
+                if (relationship instanceof CayenneAgRelationship) {
+                    CayenneAgRelationship rel = (CayenneAgRelationship) relationship;
                     for (AgAttribute attribute : entity.getAgEntity().getIds()) {
                         properties.add(Property.create(ExpressionFactory.dbPathExp(rel.getReverseDbPath() + "." + attribute.getName()), (Class) attribute.getType()));
                     }
@@ -195,7 +189,7 @@ public class CayenneUpdateStage extends CayenneUpdateDataStoreStage {
     }
 
 
-    protected <T> List<T>  fetchEntity(UpdateContext<T> context, ResourceEntity<T> resourceEntity) {
+    protected <T> List<T> fetchEntity(UpdateContext<T> context, ResourceEntity<T> resourceEntity) {
         SelectQuery<T> select = resourceEntity.getSelect();
 
         List<T> objects = CayenneUpdateStartStage.cayenneContext(context).select(select);
@@ -231,7 +225,7 @@ public class CayenneUpdateStage extends CayenneUpdateDataStoreStage {
         // saves a result
         for (Object child : children) {
             if (child instanceof Object[]) {
-                Object[] ids = (Object[])child;
+                Object[] ids = (Object[]) child;
                 if (ids.length == 2) {
                     resultKeeper.accept(new SimpleObjectId(ids[1]), (T) ids[0]);
                 } else if (ids.length > 2) {
