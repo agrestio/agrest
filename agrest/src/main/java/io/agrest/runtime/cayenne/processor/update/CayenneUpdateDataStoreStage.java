@@ -131,61 +131,73 @@ public abstract class CayenneUpdateDataStoreStage implements Processor<UpdateCon
             }
 
             ObjEntity entity = objectContext.getEntityResolver().getObjEntity(context.getType());
-
             if (isPrimaryKey(entity.getDbEntity(), idMap.keySet())) {
-                for (DbAttribute pk : entity.getDbEntity().getPrimaryKeys()) {
-                    Object id = idMap.get(pk.getName());
-                    if (id != null) {
-                        setPrimaryKey(o, entity, pk, id);
-                    }
-                }
-
+                createSingleFromPk(entity, idMap, o);
             } else {
                 // need to make an additional check that the AgId is unique
-                // TODO: I guess this should be done in a separate new context
-                T existing = Util.findById(objectContext, context.getType(), context.getEntity().getAgEntity(), idMap);
-                if (existing != null) {
-                    // TODO: printing "idMap" exposes column names, not JSON attributes
-                    throw new AgException(Response.Status.BAD_REQUEST, "Can't create '"
-                            + entity.getName()
-                            + "' with id "
-                            + CompoundObjectId.mapToString(idMap)
-                            + " - already exists");
-                }
-
-                for (Map.Entry<String, Object> idPart : idMap.entrySet()) {
-
-                    DbAttribute maybePk = entity.getDbEntity().getAttribute(idPart.getKey());
-                    if (maybePk == null) {
-                        throw new AgException(Response.Status.BAD_REQUEST, "Can't create '"
-                                + entity.getName()
-                                + "' with id "
-                                + CompoundObjectId.mapToString(idMap)
-                                + " - not an ID DB attribute: "
-                                + idPart.getKey());
-                    }
-
-                    if (maybePk.isPrimaryKey()) {
-                        setPrimaryKey(o, entity, maybePk, idPart.getValue());
-                    } else {
-
-                        ObjAttribute objAttribute = entity.getAttributeForDbAttribute(maybePk);
-                        if (objAttribute == null) {
-                            throw new AgException(Response.Status.BAD_REQUEST, "Can't create '"
-                                    + entity.getName()
-                                    + "' with id " + CompoundObjectId.mapToString(idMap)
-                                    + " - unknown object attribute: "
-                                    + idPart.getKey());
-                        }
-
-                        o.writeProperty(objAttribute.getName(), idPart.getValue());
-                    }
-                }
+                checkExisting(objectContext, context.getEntity().getAgEntity(), idMap);
+                createSingleFromPartialPk(entity, idMap, o);
             }
         }
 
         mergeChanges(u, o, relator);
         relator.relateToParent(o);
+    }
+
+    private void createSingleFromPk(ObjEntity entity, Map<String, Object> idMap, DataObject o) {
+        for (DbAttribute pk : entity.getDbEntity().getPrimaryKeys()) {
+            Object id = idMap.get(pk.getName());
+            if (id != null) {
+                setPrimaryKey(o, entity, pk, id);
+            }
+        }
+    }
+
+    private <T extends DataObject> void checkExisting(ObjectContext objectContext, AgEntity<T> agEntity, Map<String, Object> idMap) {
+        T existing = Util.findById(objectContext, agEntity.getType(), agEntity, idMap);
+        if (existing != null) {
+            // TODO: printing "idMap" exposes column names, not JSON attributes
+            throw new AgException(Response.Status.BAD_REQUEST, "Can't create '"
+                    + agEntity.getName()
+                    + "' with id "
+                    + CompoundObjectId.mapToString(idMap)
+                    + " - already exists");
+        }
+    }
+
+    private void createSingleFromPartialPk(
+            ObjEntity entity,
+            Map<String, Object> idMap,
+            DataObject o) {
+
+        for (Map.Entry<String, Object> idPart : idMap.entrySet()) {
+
+            DbAttribute maybePk = entity.getDbEntity().getAttribute(idPart.getKey());
+            if (maybePk == null) {
+                throw new AgException(Response.Status.BAD_REQUEST, "Can't create '"
+                        + entity.getName()
+                        + "' with id "
+                        + CompoundObjectId.mapToString(idMap)
+                        + " - not an ID DB attribute: "
+                        + idPart.getKey());
+            }
+
+            if (maybePk.isPrimaryKey()) {
+                setPrimaryKey(o, entity, maybePk, idPart.getValue());
+            } else {
+
+                ObjAttribute objAttribute = entity.getAttributeForDbAttribute(maybePk);
+                if (objAttribute == null) {
+                    throw new AgException(Response.Status.BAD_REQUEST, "Can't create '"
+                            + entity.getName()
+                            + "' with id " + CompoundObjectId.mapToString(idMap)
+                            + " - unknown object attribute: "
+                            + idPart.getKey());
+                }
+
+                o.writeProperty(objAttribute.getName(), idPart.getValue());
+            }
+        }
     }
 
     private void setPrimaryKey(DataObject o, ObjEntity entity, DbAttribute pk, Object id) {
