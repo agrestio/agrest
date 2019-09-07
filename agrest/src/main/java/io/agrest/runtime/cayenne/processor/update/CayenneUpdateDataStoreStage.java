@@ -133,14 +133,11 @@ public abstract class CayenneUpdateDataStoreStage implements Processor<UpdateCon
             ObjEntity entity = objectContext.getEntityResolver().getObjEntity(context.getType());
 
             if (isPrimaryKey(entity.getDbEntity(), idMap.keySet())) {
-                // AgId is the same as the PK,
-                // no need to make an additional check that the AGId is unique
                 for (DbAttribute pk : entity.getDbEntity().getPrimaryKeys()) {
                     Object id = idMap.get(pk.getName());
-                    if (id == null) {
-                        continue;
+                    if (id != null) {
+                        setPrimaryKey(o, entity, pk, id);
                     }
-                    setPrimaryKey(o, entity, pk, id);
                 }
 
             } else {
@@ -149,8 +146,11 @@ public abstract class CayenneUpdateDataStoreStage implements Processor<UpdateCon
                 T existing = Util.findById(objectContext, context.getType(), context.getEntity().getAgEntity(), idMap);
                 if (existing != null) {
                     // TODO: printing "idMap" exposes column names, not JSON attributes
-                    throw new AgException(Response.Status.BAD_REQUEST, "Can't create '" + entity.getName()
-                            + "' with id " + CompoundObjectId.mapToString(idMap) + " - already exists");
+                    throw new AgException(Response.Status.BAD_REQUEST, "Can't create '"
+                            + entity.getName()
+                            + "' with id "
+                            + CompoundObjectId.mapToString(idMap)
+                            + " - already exists");
                 }
 
                 for (Map.Entry<String, Object> idPart : idMap.entrySet()) {
@@ -166,13 +166,20 @@ public abstract class CayenneUpdateDataStoreStage implements Processor<UpdateCon
                     if (pk == null) {
                         DbAttribute dbAttribute = entity.getDbEntity().getAttribute(idPart.getKey());
                         if (dbAttribute == null) {
-                            throw new AgException(Response.Status.BAD_REQUEST, "Can't create '" + entity.getName()
-                                    + "' with id " + CompoundObjectId.mapToString(idMap) + " -- unknown db attribute: " + idPart.getKey());
+                            throw new AgException(Response.Status.BAD_REQUEST, "Can't create '"
+                                    + entity.getName()
+                                    + "' with id "
+                                    + CompoundObjectId.mapToString(idMap)
+                                    + " - unknown db attribute: "
+                                    + idPart.getKey());
                         }
                         ObjAttribute objAttribute = entity.getAttributeForDbAttribute(dbAttribute);
                         if (objAttribute == null) {
-                            throw new AgException(Response.Status.BAD_REQUEST, "Can't create '" + entity.getName()
-                                    + "' with id " + CompoundObjectId.mapToString(idMap) + " -- unknown object attribute: " + idPart.getKey());
+                            throw new AgException(Response.Status.BAD_REQUEST, "Can't create '"
+                                    + entity.getName()
+                                    + "' with id " + CompoundObjectId.mapToString(idMap)
+                                    + " - unknown object attribute: "
+                                    + idPart.getKey());
                         }
                         o.writeProperty(objAttribute.getName(), idPart.getValue());
                     } else {
@@ -208,6 +215,7 @@ public abstract class CayenneUpdateDataStoreStage implements Processor<UpdateCon
             o.getObjectId().getReplacementIdMap().put(pk.getName(), id);
         }
     }
+
 
     /**
      * @return true if all PK columns are represented in {@code keys}
