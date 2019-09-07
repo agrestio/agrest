@@ -1,10 +1,10 @@
 package io.agrest.runtime.cayenne.processor.update;
 
+import io.agrest.AgObjectId;
 import io.agrest.EntityParent;
 import io.agrest.EntityUpdate;
 import io.agrest.ResourceEntity;
 import io.agrest.meta.AgEntity;
-import io.agrest.meta.AgPersistentRelationship;
 import io.agrest.meta.AgRelationship;
 import io.agrest.meta.cayenne.CayenneAgRelationship;
 import io.agrest.processor.Processor;
@@ -166,12 +166,21 @@ public class CayenneApplyServerParamsStage implements Processor<UpdateContext<?>
         EntityParent<?> parent = context.getParent();
 
         if (parent != null && parent.getId() != null) {
+
             AgRelationship fromParent = relationshipFromParent(context);
-            if (fromParent instanceof AgPersistentRelationship) {
-                AgPersistentRelationship r = (AgPersistentRelationship) fromParent;
-                if (r.isToDependentEntity()) {
+            if (fromParent instanceof CayenneAgRelationship) {
+                CayenneAgRelationship r = (CayenneAgRelationship) fromParent;
+
+                // TODO: is this appropriate for flattened parent rels?
+                DbRelationship incomingDbRelationship = r.getObjRelationship().getDbRelationships().get(0);
+                if (incomingDbRelationship.isToDependentPK()) {
+
+                    AgObjectId id = parent.getId();
                     for (EntityUpdate<T> u : context.getUpdates()) {
-                        u.getOrCreateId().putAll(r.extractId(parent.getId()));
+                        for (DbJoin join : incomingDbRelationship.getJoins()) {
+                            // 'getSourceName' and 'getTargetName' assumes AgEntity's id attribute name is based on DbAttribute name
+                            u.getOrCreateId().putIfAbsent(join.getTargetName(), id.get(join.getSourceName()));
+                        }
                     }
                 }
             }
@@ -179,18 +188,6 @@ public class CayenneApplyServerParamsStage implements Processor<UpdateContext<?>
     }
 
     private AgRelationship relationshipFromParent(UpdateContext<?> context) {
-
-        EntityParent<?> parent = context.getParent();
-
-        if (parent == null) {
-            return null;
-        }
-
-        AgRelationship r = metadataService.getAgRelationship(parent);
-        if (r instanceof AgPersistentRelationship) {
-            return r;
-        }
-
-        return null;
+        return context.getParent() != null ? metadataService.getAgRelationship(context.getParent()) : null;
     }
 }
