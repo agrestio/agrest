@@ -14,7 +14,6 @@ import io.agrest.runtime.meta.IMetadataService;
 import org.apache.cayenne.di.Inject;
 
 import java.util.Collections;
-import java.util.Map;
 
 /**
  * @since 2.7
@@ -77,8 +76,7 @@ public class ApplyServerParamsStage implements Processor<UpdateContext<?>> {
 
             AgEntity<T> entity = context.getEntity().getAgEntity();
             EntityUpdate<T> u = context.getFirst();
-            Map<String, Object> idMap = u.getOrCreateId();
-            idMap.putAll(context.getId().asMap(entity));
+            u.getOrCreateId().putAll(context.getId().asMap(entity));
 
             u.setExplicitId();
         }
