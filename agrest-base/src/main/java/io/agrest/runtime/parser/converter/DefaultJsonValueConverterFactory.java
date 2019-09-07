@@ -115,9 +115,7 @@ public class DefaultJsonValueConverterFactory implements IJsonValueConverterFact
         } else if (Set.class.equals(containerType)) {
             containerSupplier = () -> (T) new HashSet<>();
         } else {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.debug("Unsupported collection type: " + containerType.getName());
-            }
+            LOGGER.debug("Unsupported collection type: {}", containerType.getName());
             return null;
         }
         JsonValueConverter<E> elementConverter = new LazyConverter<>(
@@ -134,7 +132,7 @@ public class DefaultJsonValueConverterFactory implements IJsonValueConverterFact
 
         } else {
             Map<String, JsonValueConverter<?>> propertyConverters = setters.values().stream()
-                .collect(Collectors.toMap(PropertySetter::getName, setter -> new LazyConverter<>(() -> buildConverter(setter))));
+                    .collect(Collectors.toMap(PropertySetter::getName, setter -> new LazyConverter<>(() -> buildConverter(setter))));
             return new PojoConverter<>(cls, setters, propertyConverters, defaultConverter);
         }
     }

@@ -32,7 +32,7 @@ import java.util.Map;
  */
 public class DefaultSelectBuilder<T> implements SelectBuilder<T> {
 
-    private static final Logger logger = LoggerFactory.getLogger(DefaultSelectBuilder.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultSelectBuilder.class);
 
     protected SelectContext<T> context;
     protected SelectProcessorFactory processorFactory;
@@ -165,7 +165,7 @@ public class DefaultSelectBuilder<T> implements SelectBuilder<T> {
 
         EntityProperty oldProperty = context.getExtraProperties().put(name, property);
         if (oldProperty != null) {
-            logger.info("Overriding existing custom property '" + name + "', ignoring...");
+            LOGGER.info("Overriding existing custom property '{}', ignoring...", name);
         }
 
         return this;

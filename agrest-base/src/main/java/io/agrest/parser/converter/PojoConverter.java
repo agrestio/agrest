@@ -27,6 +27,14 @@ public class PojoConverter<T> extends AbstractConverter<T> {
         this.defaultConverter = defaultConverter;
     }
 
+    private static <T> T newInstance(Class<T> type) {
+        try {
+            return type.newInstance();
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to instantiate type: " + type.getName(), e);
+        }
+    }
+
     @Override
     public T valueNonNull(JsonNode node) {
         T object = newInstance(type);
@@ -36,17 +44,13 @@ public class PojoConverter<T> extends AbstractConverter<T> {
             JsonNode value = e.getValue();
 
             if (value.isNull() || value.isMissingNode()) {
-                if (LOGGER.isDebugEnabled()) {
-                    LOGGER.debug("Skipping null/missing node: '{}'", propertyName);
-                }
+                LOGGER.debug("Skipping null/missing node: '{}'", propertyName);
                 return;
             }
 
             PropertySetter setter = setters.get(propertyName);
             if (setter == null) {
-                if (LOGGER.isDebugEnabled()) {
-                    LOGGER.debug("Skipping unknown property: '{}'", propertyName);
-                }
+                LOGGER.debug("Skipping unknown property: '{}'", propertyName);
                 return;
             }
 
@@ -62,13 +66,5 @@ public class PojoConverter<T> extends AbstractConverter<T> {
 
     private JsonValueConverter<?> getPropertyConverter(String propertyName) {
         return propertyConverters.getOrDefault(propertyName, defaultConverter);
-    }
-
-    private static <T> T newInstance(Class<T> type) {
-        try {
-            return type.newInstance();
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to instantiate type: " + type.getName(), e);
-        }
     }
 }

@@ -46,7 +46,7 @@ public class MapByMerger implements IMapByMerger {
         }
 
         if (resourceEntity == null) {
-            LOGGER.info("Ignoring 'mapBy:" + mapByPath + "' for non-relationship property");
+            LOGGER.info("Ignoring 'mapBy:{}' for non-relationship property", mapByPath);
             return;
         }
 

@@ -82,7 +82,7 @@ public class EntityUpdateJsonTraverser {
 				continue;
 			}
 
-			LOGGER.info("Skipping unknown attribute '" + key + "'");
+			LOGGER.info("Skipping unknown attribute '{}'", key);
 		}
 
 		visitor.endObject();
@@ -116,8 +116,7 @@ public class EntityUpdateJsonTraverser {
 			}
         } else {
             if (relationship.isToMany() && valueNode.isNull()) {
-                LOGGER.warn("Unexpected 'null' for a to-many relationship: " + relationship.getName()
-                        + ". Skipping...");
+                LOGGER.warn("Unexpected 'null' for a to-many relationship: {}. Skipping...", relationship.getName());
             } else {
                 addRelatedObject(visitor, relationship, converter(relationship).value(valueNode));
             }
