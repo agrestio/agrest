@@ -155,25 +155,21 @@ public abstract class CayenneUpdateDataStoreStage implements Processor<UpdateCon
 
                 for (Map.Entry<String, Object> idPart : idMap.entrySet()) {
 
-                    DbAttribute pk = null;
-                    for (DbAttribute _pk : entity.getDbEntity().getPrimaryKeys()) {
-                        if (_pk.getName().equals(idPart.getKey())) {
-                            pk = _pk;
-                            break;
-                        }
+                    DbAttribute maybePk = entity.getDbEntity().getAttribute(idPart.getKey());
+                    if (maybePk == null) {
+                        throw new AgException(Response.Status.BAD_REQUEST, "Can't create '"
+                                + entity.getName()
+                                + "' with id "
+                                + CompoundObjectId.mapToString(idMap)
+                                + " - not an ID DB attribute: "
+                                + idPart.getKey());
                     }
 
-                    if (pk == null) {
-                        DbAttribute dbAttribute = entity.getDbEntity().getAttribute(idPart.getKey());
-                        if (dbAttribute == null) {
-                            throw new AgException(Response.Status.BAD_REQUEST, "Can't create '"
-                                    + entity.getName()
-                                    + "' with id "
-                                    + CompoundObjectId.mapToString(idMap)
-                                    + " - unknown db attribute: "
-                                    + idPart.getKey());
-                        }
-                        ObjAttribute objAttribute = entity.getAttributeForDbAttribute(dbAttribute);
+                    if (maybePk.isPrimaryKey()) {
+                        setPrimaryKey(o, entity, maybePk, idPart.getValue());
+                    } else {
+
+                        ObjAttribute objAttribute = entity.getAttributeForDbAttribute(maybePk);
                         if (objAttribute == null) {
                             throw new AgException(Response.Status.BAD_REQUEST, "Can't create '"
                                     + entity.getName()
@@ -181,9 +177,8 @@ public abstract class CayenneUpdateDataStoreStage implements Processor<UpdateCon
                                     + " - unknown object attribute: "
                                     + idPart.getKey());
                         }
+
                         o.writeProperty(objAttribute.getName(), idPart.getValue());
-                    } else {
-                        setPrimaryKey(o, entity, pk, idPart.getValue());
                     }
                 }
             }
@@ -352,6 +347,12 @@ public abstract class CayenneUpdateDataStoreStage implements Processor<UpdateCon
         }
     }
 
+    interface RelationshipUpdate {
+        boolean containsRelatedObject(DataObject o);
+
+        void removeUpdateForRelatedObject(DataObject o);
+    }
+
     class ObjectRelator {
 
         void relateToParent(DataObject object) {
@@ -392,11 +393,5 @@ public abstract class CayenneUpdateDataStoreStage implements Processor<UpdateCon
                 object.setToOneTarget(agRelationship.getName(), null, true);
             }
         }
-    }
-
-    interface RelationshipUpdate {
-        boolean containsRelatedObject(DataObject o);
-
-        void removeUpdateForRelatedObject(DataObject o);
     }
 }
