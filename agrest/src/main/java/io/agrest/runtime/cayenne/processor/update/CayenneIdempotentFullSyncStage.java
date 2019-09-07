@@ -58,8 +58,7 @@ public class CayenneIdempotentFullSyncStage extends CayenneIdempotentCreateOrUpd
     }
 
     <T extends DataObject> List<T> allItems(UpdateContext<T> context) {
-        SelectQuery<T> query = buildQuery(context, context.getEntity());
-
+        buildQuery(context, context.getEntity());
 
         // TODO: use SelectBuilder to get Cayenne representation of the
         // resource, instead of duplicating this here...
@@ -75,6 +74,7 @@ public class CayenneIdempotentFullSyncStage extends CayenneIdempotentCreateOrUpd
         return objects;
     }
 
+    @Override
     <T> SelectQuery<T> buildQuery(UpdateContext<T> context, ResourceEntity<T> entity) {
 
         SelectQuery<T> query = SelectQuery.query(entity.getAgEntity().getType());

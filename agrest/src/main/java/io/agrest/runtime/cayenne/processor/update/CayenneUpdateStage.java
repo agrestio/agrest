@@ -135,7 +135,7 @@ public class CayenneUpdateStage extends CayenneUpdateDataStoreStage {
         ResourceEntity resourceEntity = context.getEntity();
         resourceEntity.setQualifier(ExpressionFactory.joinExp(Expression.OR, expressions));
 
-        SelectQuery<T> query = buildQuery(context, context.getEntity());
+        buildQuery(context, context.getEntity());
 
         List<T> objects = fetchEntity(context, resourceEntity);
         if (context.isById() && objects.size() > 1) {
