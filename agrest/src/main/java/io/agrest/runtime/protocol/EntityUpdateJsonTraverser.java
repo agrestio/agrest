@@ -6,7 +6,6 @@ import io.agrest.AgException;
 import io.agrest.PathConstants;
 import io.agrest.meta.AgAttribute;
 import io.agrest.meta.AgEntity;
-import io.agrest.meta.AgPersistentRelationship;
 import io.agrest.meta.AgRelationship;
 import io.agrest.parser.converter.JsonValueConverter;
 import io.agrest.runtime.parser.converter.IJsonValueConverterFactory;
@@ -76,9 +75,9 @@ public class EntityUpdateJsonTraverser {
             }
 
             AgRelationship relationship = relationshipMapper.toRelationship(entity, key);
-            if (relationship instanceof AgPersistentRelationship) {
+            if (relationship != null) {
                 JsonNode valueNode = objectNode.get(key);
-                processRelationship(visitor, (AgPersistentRelationship) relationship, valueNode);
+                processRelationship(visitor, relationship, valueNode);
                 continue;
             }
 
@@ -88,21 +87,7 @@ public class EntityUpdateJsonTraverser {
         visitor.endObject();
     }
 
-    private void processRelationship(EntityUpdateJsonVisitor visitor, AgPersistentRelationship relationship, JsonNode valueNode) {
-        if (relationship.isPrimaryKey()) {
-            if (valueNode.isArray()) {
-                ArrayNode arrayNode = (ArrayNode) valueNode;
-                if (arrayNode.size() > 1) {
-                    throw new AgException(Response.Status.BAD_REQUEST,
-                            "Relationship is a part of the primary key, only one related object allowed: "
-                                    + relationship.getName());
-                } else if (arrayNode.size() == 1) {
-                    valueNode = arrayNode.get(0);
-                }
-            }
-            // record FK that is also a PK
-            relationship.extractId(valueNode).forEach(visitor::visitId);
-        }
+    private void processRelationship(EntityUpdateJsonVisitor visitor, AgRelationship relationship, JsonNode valueNode) {
 
         if (valueNode.isArray()) {
             ArrayNode arrayNode = (ArrayNode) valueNode;

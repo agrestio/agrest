@@ -3,7 +3,6 @@ package io.agrest.runtime.cayenne.processor.update;
 import io.agrest.UpdateStage;
 import io.agrest.processor.Processor;
 import io.agrest.runtime.UpdateOperation;
-import io.agrest.runtime.processor.update.ApplyServerParamsStage;
 import io.agrest.runtime.processor.update.CreateResourceEntityStage;
 import io.agrest.runtime.processor.update.ParseRequestStage;
 import io.agrest.runtime.processor.update.UpdateContext;
@@ -30,7 +29,7 @@ public class CayenneUpdateProcessorFactoryFactoryProvider implements Provider<Up
             @Inject CayenneUpdateStartStage startStage,
             @Inject ParseRequestStage parseRequestStage,
             @Inject CreateResourceEntityStage createResourceEntityStage,
-            @Inject ApplyServerParamsStage applyServerParamsStage,
+            @Inject CayenneApplyServerParamsStage applyServerParamsStage,
             @Inject CayenneCreateStage createStage,
             @Inject CayenneUpdateStage updateStage,
             @Inject CayenneCreateOrUpdateStage createOrUpdateStage,

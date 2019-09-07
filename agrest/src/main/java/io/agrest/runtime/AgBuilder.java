@@ -36,6 +36,7 @@ import io.agrest.runtime.cayenne.processor.select.CayenneSelectProcessorFactoryP
 import io.agrest.runtime.cayenne.processor.unrelate.CayenneUnrelateDataStoreStage;
 import io.agrest.runtime.cayenne.processor.unrelate.CayenneUnrelateProcessorFactoryProvider;
 import io.agrest.runtime.cayenne.processor.unrelate.CayenneUnrelateStartStage;
+import io.agrest.runtime.cayenne.processor.update.CayenneApplyServerParamsStage;
 import io.agrest.runtime.cayenne.processor.update.CayenneCreateOrUpdateStage;
 import io.agrest.runtime.cayenne.processor.update.CayenneCreateStage;
 import io.agrest.runtime.cayenne.processor.update.CayenneCreatedResponseStage;
@@ -507,8 +508,8 @@ public class AgBuilder {
                     .to(io.agrest.runtime.processor.update.ParseRequestStage.class);
             binder.bind(io.agrest.runtime.processor.update.CreateResourceEntityStage.class)
                     .to(io.agrest.runtime.processor.update.CreateResourceEntityStage.class);
-            binder.bind(io.agrest.runtime.processor.update.ApplyServerParamsStage.class)
-                    .to(io.agrest.runtime.processor.update.ApplyServerParamsStage.class);
+            binder.bind(CayenneApplyServerParamsStage.class)
+                    .to(CayenneApplyServerParamsStage.class);
             binder.bind(CayenneCreateStage.class).to(CayenneCreateStage.class);
             binder.bind(CayenneUpdateStage.class).to(CayenneUpdateStage.class);
             binder.bind(CayenneCreateOrUpdateStage.class).to(CayenneCreateOrUpdateStage.class);

@@ -1,6 +1,5 @@
 package io.agrest.meta.cayenne;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import io.agrest.AgObjectId;
 import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgPersistentRelationship;
@@ -11,7 +10,6 @@ import org.apache.cayenne.map.DbJoin;
 import org.apache.cayenne.map.DbRelationship;
 import org.apache.cayenne.map.ObjRelationship;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -27,7 +25,11 @@ public class CayenneAgRelationship implements AgPersistentRelationship {
     private JsonValueConverter<?> converter;
     private PropertyReader propertyReader;
 
-    public CayenneAgRelationship(ObjRelationship objRelationship, AgEntity<?> targetEntity, JsonValueConverter<?> converter) {
+    public CayenneAgRelationship(
+            ObjRelationship objRelationship,
+            AgEntity<?> targetEntity,
+            JsonValueConverter<?> converter) {
+
         this(objRelationship, targetEntity, converter, null);
     }
 
@@ -74,9 +76,8 @@ public class CayenneAgRelationship implements AgPersistentRelationship {
         return getDbRelationship().isToDependentPK();
     }
 
-    @Override
-    public boolean isPrimaryKey() {
-        return getDbRelationship().getReverseRelationship().isToDependentPK();
+    public ObjRelationship getObjRelationship() {
+        return objRelationship;
     }
 
     private DbRelationship getDbRelationship() {
@@ -86,22 +87,6 @@ public class CayenneAgRelationship implements AgPersistentRelationship {
     @Override
     public Map<String, Object> extractId(AgObjectId id) {
         return extractId(id::get);
-    }
-
-    @Override
-    public Map<String, Object> extractId(JsonNode id) {
-        if (isMultiJoin()) {
-            if (!id.isObject()) {
-                throw new IllegalArgumentException("Relationship has multiple joins, but only a scalar value was provided");
-            }
-            return extractId(id::get);
-        } else if (id.isObject()) {
-            return extractId(id::get);
-        } else {
-            return Collections.singletonMap(
-                    getDbRelationship().getReverseRelationship().getJoins().iterator().next().getTargetName(),
-                    converter.value(id));
-        }
     }
 
     public String getReverseDbPath() {
@@ -123,9 +108,5 @@ public class CayenneAgRelationship implements AgPersistentRelationship {
             }
         }
         return parentIdMap;
-    }
-
-    private boolean isMultiJoin() {
-        return getDbRelationship().getReverseRelationship().getJoins().size() > 1;
     }
 }
