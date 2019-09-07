@@ -1,4 +1,3 @@
-
 package io.agrest.meta;
 
 import io.agrest.property.PropertyReader;
@@ -14,10 +13,6 @@ public class DefaultAgRelationship implements AgRelationship {
     private AgEntity<?> targetEntity;
     private boolean toMany;
     private PropertyReader propertyReader;
-
-    public DefaultAgRelationship(String name, AgEntity<?> targetEntity, boolean toMany) {
-        this(name, targetEntity, toMany, null);
-    }
 
     /**
      * @since 2.10
@@ -51,5 +46,4 @@ public class DefaultAgRelationship implements AgRelationship {
     public PropertyReader getPropertyReader() {
         return propertyReader;
     }
-
 }

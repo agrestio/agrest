@@ -1,7 +1,7 @@
 package io.agrest.meta.cayenne;
 
 import io.agrest.meta.AgEntity;
-import io.agrest.meta.AgPersistentRelationship;
+import io.agrest.meta.AgRelationship;
 import io.agrest.parser.converter.JsonValueConverter;
 import io.agrest.property.PropertyReader;
 import org.apache.cayenne.exp.Expression;
@@ -12,20 +12,12 @@ import java.util.Objects;
 /**
  * @since 1.12
  */
-public class CayenneAgRelationship implements AgPersistentRelationship {
+public class CayenneAgRelationship implements AgRelationship {
 
     private ObjRelationship objRelationship;
     private AgEntity<?> targetEntity;
     private JsonValueConverter<?> converter;
     private PropertyReader propertyReader;
-
-    public CayenneAgRelationship(
-            ObjRelationship objRelationship,
-            AgEntity<?> targetEntity,
-            JsonValueConverter<?> converter) {
-
-        this(objRelationship, targetEntity, converter, null);
-    }
 
     /**
      * @since 2.10

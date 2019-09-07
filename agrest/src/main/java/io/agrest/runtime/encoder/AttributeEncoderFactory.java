@@ -9,17 +9,14 @@ import io.agrest.encoder.Encoder;
 import io.agrest.encoder.IdEncoder;
 import io.agrest.meta.AgAttribute;
 import io.agrest.meta.AgEntity;
-import io.agrest.meta.AgPersistentRelationship;
 import io.agrest.meta.AgRelationship;
 import io.agrest.property.BeanPropertyReader;
 import io.agrest.property.IdReader;
 import io.agrest.property.PropertyBuilder;
-import io.agrest.property.PropertyReader;
 import org.apache.cayenne.DataObject;
 import org.apache.cayenne.di.Inject;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Map;
 import java.util.Optional;
 import java.util.TreeMap;
@@ -48,8 +45,9 @@ public class AttributeEncoderFactory implements IAttributeEncoderFactory {
     @Override
     public EntityProperty getRelationshipProperty(ResourceEntity<?> entity, AgRelationship relationship, Encoder encoder) {
 
-        // TODO: can't cache, as target encoder is dynamic...
-        return buildRelationshipProperty(entity, relationship, encoder);
+        // TODO: Can't cache, as target encoder is dynamic... still keeping "entity" parameter for symmetry with
+        //  'getAttributeProperty' in case we can figure out caching. Maybe we should remove it?
+        return buildRelationshipProperty(relationship, encoder);
     }
 
     @Override
@@ -58,37 +56,17 @@ public class AttributeEncoderFactory implements IAttributeEncoderFactory {
         return idPropertiesByEntity.computeIfAbsent(key, k -> buildIdProperty(entity));
     }
 
-    protected EntityProperty buildRelationshipProperty(
-            ResourceEntity<?> entity,
-            AgRelationship relationship,
-            Encoder encoder) {
-
-        // for now only "overlay" relationships have non-null readers
-        if (relationship.getPropertyReader() != null) {
-            return PropertyBuilder.property(relationship.getPropertyReader()).encodedWith(encoder);
-        }
-
-        boolean persistent = relationship instanceof AgPersistentRelationship;
-        if (persistent && DataObject.class.isAssignableFrom(entity.getType())) {
-
-            PropertyReader reader = (root, name) -> {
-
-                AgObjectId id = readObjectId(entity.getAgEntity(), (DataObject) root);
-                Object result = entity.getChild(name).getResult(id);
-
-                return result == null && relationship.isToMany()
-                        ? Collections.emptyList()
-                        : result;
-            };
-
-            return PropertyBuilder.property(reader).encodedWith(encoder);
-        }
-
-        return PropertyBuilder.property().encodedWith(encoder);
+    protected EntityProperty buildRelationshipProperty(AgRelationship relationship, Encoder encoder) {
+        // all relationships these days have a reader, but check just in case
+        return relationship.getPropertyReader() != null
+                ? PropertyBuilder.property(relationship.getPropertyReader()).encodedWith(encoder)
+                : PropertyBuilder.property().encodedWith(encoder);
     }
 
     protected EntityProperty buildAttributeProperty(AgAttribute attribute) {
         Encoder encoder = getEncoder(attribute.getType());
+
+        // all attributes these days have a reader, but check just in case
         return attribute.getPropertyReader() != null
                 ? PropertyBuilder.property(attribute.getPropertyReader()).encodedWith(encoder)
                 : PropertyBuilder.property().encodedWith(encoder);
