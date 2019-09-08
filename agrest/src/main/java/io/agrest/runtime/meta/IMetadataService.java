@@ -53,7 +53,10 @@ public interface IMetadataService {
      * is thrown.
      *
      * @since 1.12
+     * @deprecated since 3.4. Seems redundant and simply cluttering the interface. Use {@link #getAgRelationship(Class, String)}
+     * instead.
      */
+    @Deprecated
     default AgRelationship getAgRelationship(EntityParent<?> parent) {
         return getAgRelationship(parent.getType(), parent.getRelationship());
     }

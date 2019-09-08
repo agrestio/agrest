@@ -50,7 +50,9 @@ public class CayenneUnrelateDataStoreStage implements Processor<UnrelateContext<
     private <T extends DataObject> void unrelateSingle(UnrelateContext<T> context, ObjectContext cayenneContext) {
 
         // validate relationship before doing anything else
-        AgRelationship relationship = metadataService.getAgRelationship(context.getParent());
+        AgRelationship relationship = metadataService.getAgRelationship(
+                context.getParent().getType(),
+                context.getParent().getRelationship());
 
         DataObject parent = (DataObject) getExistingObject(context.getParent().getType(), cayenneContext, context
                 .getParent().getId().get());
@@ -84,7 +86,9 @@ public class CayenneUnrelateDataStoreStage implements Processor<UnrelateContext<
 
     private <T extends DataObject> void unrelateAll(UnrelateContext<T> context, ObjectContext cayenneContext) {
         // validate relationship before doing anything else
-        AgRelationship agRelationship = metadataService.getAgRelationship(context.getParent());
+        AgRelationship agRelationship = metadataService.getAgRelationship(
+                context.getParent().getType(),
+                context.getParent().getRelationship());
 
         DataObject parent = (DataObject) getExistingObject(context.getParent().getType(), cayenneContext, context
                 .getParent().getId().get());

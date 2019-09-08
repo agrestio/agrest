@@ -188,6 +188,8 @@ public class CayenneApplyServerParamsStage implements Processor<UpdateContext<?>
     }
 
     private AgRelationship relationshipFromParent(UpdateContext<?> context) {
-        return context.getParent() != null ? metadataService.getAgRelationship(context.getParent()) : null;
+        return context.getParent() != null
+                ? metadataService.getAgRelationship(context.getParent().getType(), context.getParent().getRelationship())
+                : null;
     }
 }
