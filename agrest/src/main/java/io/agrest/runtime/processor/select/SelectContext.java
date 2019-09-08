@@ -1,17 +1,18 @@
 package io.agrest.runtime.processor.select;
 
+import io.agrest.AgObjectId;
 import io.agrest.AgRequest;
 import io.agrest.CompoundObjectId;
 import io.agrest.DataResponse;
 import io.agrest.EntityParent;
 import io.agrest.EntityProperty;
-import io.agrest.AgObjectId;
 import io.agrest.ResourceEntity;
 import io.agrest.SimpleObjectId;
 import io.agrest.SizeConstraints;
 import io.agrest.constraints.Constraint;
 import io.agrest.encoder.Encoder;
 import io.agrest.encoder.EntityEncoderFilter;
+import io.agrest.meta.AgEntityOverlay;
 import io.agrest.processor.BaseProcessingContext;
 
 import javax.ws.rs.core.UriInfo;
@@ -38,6 +39,8 @@ public class SelectContext<T> extends BaseProcessingContext<T> {
     private AgRequest mergedRequest;
     private AgRequest request;
     private List<EntityEncoderFilter> entityEncoderFilters;
+    private Map<String, AgEntityOverlay> entityOverlays;
+
 
     public SelectContext(Class<T> type) {
         super(type);
@@ -117,6 +120,24 @@ public class SelectContext<T> extends BaseProcessingContext<T> {
      */
     public void setEntityEncoderFilters(List<EntityEncoderFilter> entityEncoderFilters) {
         this.entityEncoderFilters = entityEncoderFilters;
+    }
+
+    /**
+     * @since 3.4
+     */
+    public <A> AgEntityOverlay<A> getEntityOverlay(Class<A> type) {
+        return entityOverlays != null ? entityOverlays.get(type) : null;
+    }
+
+    /**
+     * @since 3.4
+     */
+    public <A> void addEntityOverlay(AgEntityOverlay<A> overlay) {
+        getOrCreateOverlay(overlay.getType()).merge(overlay);
+    }
+
+    private <A> AgEntityOverlay<A> getOrCreateOverlay(Class<A> type) {
+        return entityOverlays.computeIfAbsent(type.getName(), n -> new AgEntityOverlay<>(type));
     }
 
     public SizeConstraints getSizeConstraints() {

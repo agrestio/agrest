@@ -306,6 +306,7 @@ public class AgBuilder {
      * Adds a descriptor of extra properties of a particular entity. If multiple overlays are registered for the
      * same entity, they are merged together. If they have overlapping properties, the last overlay wins.
      *
+     * @see io.agrest.SelectBuilder#entityOverlay(AgEntityOverlay)
      * @since 2.10
      */
     public <T> AgBuilder entityOverlay(AgEntityOverlay<T> overlay) {

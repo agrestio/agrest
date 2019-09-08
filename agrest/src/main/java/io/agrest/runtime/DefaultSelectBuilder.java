@@ -11,6 +11,7 @@ import io.agrest.SizeConstraints;
 import io.agrest.constraints.Constraint;
 import io.agrest.encoder.Encoder;
 import io.agrest.encoder.EntityEncoderFilter;
+import io.agrest.meta.AgEntityOverlay;
 import io.agrest.processor.Processor;
 import io.agrest.property.PropertyBuilder;
 import io.agrest.runtime.processor.select.SelectContext;
@@ -149,6 +150,12 @@ public class DefaultSelectBuilder<T> implements SelectBuilder<T> {
         }
 
         context.getEntityEncoderFilters().add(filter);
+        return this;
+    }
+
+    @Override
+    public <A> SelectBuilder<T> entityOverlay(AgEntityOverlay<A> overlay) {
+        context.addEntityOverlay(overlay);
         return this;
     }
 

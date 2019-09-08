@@ -1,6 +1,5 @@
 package io.agrest.meta;
 
-import io.agrest.annotation.AgId;
 import io.agrest.meta.compiler.BeanAnalyzer;
 import io.agrest.meta.compiler.PropertyGetter;
 import io.agrest.property.PropertyReader;
@@ -72,7 +71,6 @@ public class AgEntityOverlay<T> {
      * @since 3.4
      */
     public Iterable<AgRelationshipOverlay> getRelationships() {
-        // resolve relationship targets
         return relationships.values();
     }
 
@@ -82,7 +80,8 @@ public class AgEntityOverlay<T> {
         if (this.typeGetters == null) {
             Map<String, PropertyGetter> getters = new HashMap<>();
 
-            // this is expensive... still not caching, as presumably overlays are processed only once
+            // TODO: this is expensive, and since #422 this may be called per-request..
+            //  Need either a stack-scoped caching strategy or deprecating the caller - "addAttribute"
             BeanAnalyzer.findGetters(type).forEach(pm -> getters.put(pm.getName(), pm));
 
             this.typeGetters = getters;
@@ -92,11 +91,8 @@ public class AgEntityOverlay<T> {
     }
 
     /**
-     * Adds an attribute to the overlaid entity. The value of the attribute will be read from the object itself.
-     * This overlay is only needed if Agrest can't otherwise determine property presence in the entity.
-     * An alternative to calling this method explicitly is annotating property getters with
-     * {@link io.agrest.annotation.AgAttribute}, {@link io.agrest.annotation.AgRelationship} or
-     * {@link AgId}. Also all Cayenne attributes are automatically added to the entity.
+     * Adds an attribute to the overlaid entity. Type and value reader are determined via class introspection, so this
+     * method may be quite slow. Consider using {@link #addAttribute(String, Class, Function)} instead.
      *
      * @since 2.10
      */

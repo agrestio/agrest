@@ -61,6 +61,18 @@ public interface SelectBuilder<T> {
     SelectBuilder<T> entityEncoderFilter(EntityEncoderFilter filter);
 
     /**
+     * Installs request-scoped {@link AgEntityOverlay} that allows to customize add or change a list of properties of
+     * the overlay entity available in request. This method can be called multiple times to add more than one overlay.
+     * The overlay can alter the root entity, or any other entity in the model.
+     *
+     * @param overlay overlay descriptor
+     * @param <A>     entity type for the overlay. Can be the same as "T", or may be any other model entity.
+     * @return this builder instance
+     * @since 3.4
+     */
+    <A> SelectBuilder<T> entityOverlay(AgEntityOverlay<A> overlay);
+
+    /**
      * Forces the builder to select a single object by ID.
      */
     SelectBuilder<T> byId(Object id);
@@ -75,7 +87,7 @@ public interface SelectBuilder<T> {
     /**
      * Adds a "synthetic" property of the root entity, that is otherwise not present in the model.
      *
-     * @see AgBuilder#entityOverlay(AgEntityOverlay)
+     * @see #entityOverlay(AgEntityOverlay)
      * @since 1.14
      */
     SelectBuilder<T> property(String name, EntityProperty property);
@@ -85,7 +97,7 @@ public interface SelectBuilder<T> {
      * a regular JavaBean "property", and default encoder is used. For more control over property access and encoding use
      * {@link #property(String, EntityProperty)}.
      *
-     * @see AgBuilder#entityOverlay(AgEntityOverlay)
+     * @see #entityOverlay(AgEntityOverlay)
      * @since 1.14
      */
     SelectBuilder<T> property(String name);
