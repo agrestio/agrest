@@ -1,7 +1,5 @@
 package io.agrest;
 
-import javax.ws.rs.core.Response.Status;
-
 import org.apache.cayenne.exp.Expression;
 import org.apache.cayenne.exp.ExpressionFactory;
 import org.apache.cayenne.map.DbJoin;
@@ -10,6 +8,7 @@ import org.apache.cayenne.map.EntityResolver;
 import org.apache.cayenne.map.ObjEntity;
 import org.apache.cayenne.map.ObjRelationship;
 
+import javax.ws.rs.core.Response.Status;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -82,8 +81,7 @@ public class EntityParent<P> {
 			throw new AgException(Status.BAD_REQUEST, "Invalid relationship: '" + relationship + "'");
 		}
 
-		// navigate through DbRelationships ... there may be no reverse
-		// ObjRel.. Reverse DB should always be there
+		// navigate through DbRelationships. There may be no reverse ObjRelationship. Reverse DB should always be there
 
 		if (id.size() > 1) {
 			List<Expression> expressions = new ArrayList<>();

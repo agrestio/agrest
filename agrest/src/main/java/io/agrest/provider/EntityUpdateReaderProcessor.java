@@ -4,7 +4,6 @@ import io.agrest.EntityUpdate;
 import io.agrest.runtime.meta.IMetadataService;
 import io.agrest.runtime.protocol.IEntityUpdateParser;
 
-import javax.ws.rs.WebApplicationException;
 import java.io.InputStream;
 import java.lang.reflect.Type;
 import java.util.Collection;
@@ -19,7 +18,7 @@ class EntityUpdateReaderProcessor {
 		this.metadataService = metadataService;
 	}
 
-	<T> Collection<EntityUpdate<T>> read(Type entityUpdateType, InputStream entityStream) throws WebApplicationException {
-		return parser.parse(metadataService.getEntityByType(entityUpdateType), entityStream);
+	<T> Collection<EntityUpdate<T>> read(Type entityUpdateType, InputStream entityStream) {
+		return parser.parse(metadataService.getAgEntityByType(entityUpdateType), entityStream);
 	}
 }

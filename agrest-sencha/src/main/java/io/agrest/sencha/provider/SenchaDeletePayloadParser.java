@@ -69,7 +69,7 @@ public class SenchaDeletePayloadParser implements MessageBodyReader<Collection<E
 					"Invalid request entity collection type: " + genericType);
 		}
 
-		AgEntity<?> entity = metadataService.getEntityByType(entityType);
+		AgEntity<?> entity = metadataService.getAgEntityByType(entityType);
 
 		DeleteVisitor visitor = new DeleteVisitor(entity);
         entityUpdateJsonTraverser.traverse(entity, jacksonService.parseJson(entityStream), visitor);

@@ -39,7 +39,7 @@ public class MetadataService implements IMetadataService {
     }
 
     @Override
-    public <T> AgEntity<T> getEntityByType(Type entityType) {
+    public <T> AgEntity<T> getAgEntityByType(Type entityType) {
         @SuppressWarnings("unchecked")
         AgEntity<T> entity = getAgEntity((Class<T>) Types.getClassForTypeArgument(entityType).orElse(Object.class));
         if (entity == null) {
