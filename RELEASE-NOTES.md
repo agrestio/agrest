@@ -3,6 +3,7 @@ Release 3.4
 * #420 Per-request EncoderFilters
 * #421 Custom per-request Encoder is ignored on update
 * #423 Wrong Encoder for target entities in overlayed relationships
+* #424 Unwinding Cayenne dependencies 
 
 Release 3.3
 
