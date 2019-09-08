@@ -1,5 +1,6 @@
 package io.agrest.meta;
 
+import io.agrest.ResourceEntity;
 import io.agrest.property.PropertyReader;
 
 /**
@@ -19,6 +20,5 @@ public interface AgRelationship {
 	/**
 	 * @since 2.10
 	 */
-	PropertyReader getPropertyReader();
-
+	PropertyReader getPropertyReader(ResourceEntity<?> entity);
 }

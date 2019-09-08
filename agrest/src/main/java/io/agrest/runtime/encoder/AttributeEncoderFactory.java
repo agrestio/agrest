@@ -1,10 +1,7 @@
 package io.agrest.runtime.encoder;
 
-import io.agrest.AgObjectId;
-import io.agrest.CompoundObjectId;
 import io.agrest.EntityProperty;
 import io.agrest.ResourceEntity;
-import io.agrest.SimpleObjectId;
 import io.agrest.encoder.Encoder;
 import io.agrest.encoder.IdEncoder;
 import io.agrest.meta.AgAttribute;
@@ -13,6 +10,7 @@ import io.agrest.meta.AgRelationship;
 import io.agrest.property.BeanPropertyReader;
 import io.agrest.property.IdReader;
 import io.agrest.property.PropertyBuilder;
+import io.agrest.property.PropertyReader;
 import org.apache.cayenne.DataObject;
 import org.apache.cayenne.di.Inject;
 
@@ -45,22 +43,21 @@ public class AttributeEncoderFactory implements IAttributeEncoderFactory {
     @Override
     public EntityProperty getRelationshipProperty(ResourceEntity<?> entity, AgRelationship relationship, Encoder encoder) {
 
-        // TODO: Can't cache, as target encoder is dynamic... still keeping "entity" parameter for symmetry with
-        //  'getAttributeProperty' in case we can figure out caching. Maybe we should remove it?
-        return buildRelationshipProperty(relationship, encoder);
+        // Can't cache, as target encoder is dynamic...
+
+        PropertyReader reader = relationship.getPropertyReader(entity);
+
+        // all relationships these days have a reader, but check just in case
+
+        return reader != null
+                ? PropertyBuilder.property(reader).encodedWith(encoder)
+                : PropertyBuilder.property().encodedWith(encoder);
     }
 
     @Override
     public Optional<EntityProperty> getIdProperty(ResourceEntity<?> entity) {
         String key = entity.getAgEntity().getName();
         return idPropertiesByEntity.computeIfAbsent(key, k -> buildIdProperty(entity));
-    }
-
-    protected EntityProperty buildRelationshipProperty(AgRelationship relationship, Encoder encoder) {
-        // all relationships these days have a reader, but check just in case
-        return relationship.getPropertyReader() != null
-                ? PropertyBuilder.property(relationship.getPropertyReader()).encodedWith(encoder)
-                : PropertyBuilder.property().encodedWith(encoder);
     }
 
     protected EntityProperty buildAttributeProperty(AgAttribute attribute) {
@@ -125,20 +122,6 @@ public class AttributeEncoderFactory implements IAttributeEncoderFactory {
             AgAttribute id = ids.iterator().next();
             return Optional.of(PropertyBuilder.property(BeanPropertyReader.reader(id.getName())));
         }
-    }
-
-
-    private AgObjectId readObjectId(AgEntity<?> entity, DataObject object) {
-
-        Map<String, Object> id = entity.getIdReader().id(object);
-
-        if (id.size() == 1) {
-            return new SimpleObjectId(id.values().iterator().next());
-        } else if (id.size() > 1) {
-            return new CompoundObjectId(id);
-        }
-
-        throw new RuntimeException("ID is empty for entity '" + entity.getName() + "'");
     }
 
     protected Encoder getEncoder(Class<?> type) {
