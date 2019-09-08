@@ -15,9 +15,9 @@ import io.agrest.meta.AgAttribute;
 import io.agrest.meta.AgRelationship;
 import io.agrest.runtime.semantics.IRelationshipMapper;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
-import java.util.TreeMap;
 
 /**
  * @since 3.4
@@ -113,8 +113,7 @@ public class DataEncoderFactory {
      */
     protected Encoder entityEncoder(ResourceEntity<?> resourceEntity) {
 
-        // ensure we sort property encoders alphabetically for cleaner JSON output
-        Map<String, EntityProperty> attributeEncoders = new TreeMap<>();
+        Map<String, EntityProperty> attributeEncoders = new HashMap<>();
 
         for (AgAttribute attribute : resourceEntity.getAttributes().values()) {
             EntityProperty property = attributeEncoderFactory.getAttributeProperty(
@@ -123,7 +122,7 @@ public class DataEncoderFactory {
             attributeEncoders.put(attribute.getName(), property);
         }
 
-        Map<String, EntityProperty> relationshipEncoders = new TreeMap<>();
+        Map<String, EntityProperty> relationshipEncoders = new HashMap<>();
         for (Map.Entry<String, ResourceEntity<?>> e : resourceEntity.getChildren().entrySet()) {
             AgRelationship relationship = resourceEntity.getAgEntity().getRelationship(e.getKey());
 
@@ -139,7 +138,7 @@ public class DataEncoderFactory {
             relationshipEncoders.put(e.getKey(), property);
         }
 
-        Map<String, EntityProperty> extraEncoders = new TreeMap<>();
+        Map<String, EntityProperty> extraEncoders = new HashMap<>();
 
         extraEncoders.putAll(resourceEntity.getIncludedExtraProperties());
 
