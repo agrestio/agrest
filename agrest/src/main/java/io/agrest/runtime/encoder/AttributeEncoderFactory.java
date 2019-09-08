@@ -7,11 +7,9 @@ import io.agrest.encoder.IdEncoder;
 import io.agrest.meta.AgAttribute;
 import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgRelationship;
-import io.agrest.property.BeanPropertyReader;
 import io.agrest.property.IdReader;
 import io.agrest.property.PropertyBuilder;
 import io.agrest.property.PropertyReader;
-import org.apache.cayenne.DataObject;
 import org.apache.cayenne.di.Inject;
 
 import java.util.Collection;
@@ -71,54 +69,35 @@ public class AttributeEncoderFactory implements IAttributeEncoderFactory {
 
         Collection<AgAttribute> ids = entity.getAgEntity().getIds();
 
-        // TODO: dirty - direct Cayenne dependency
-        // TODO: consider unifying id readers between POJO and entities
-
-        if (DataObject.class.isAssignableFrom(entity.getType())) {
-
-            // Cayenne object - PK is an ObjectId (even if it is also a meaningful object property)
-            switch (ids.size()) {
-                case 0:
-                    return Optional.empty();
-                case 1:
-
-                    // TODO: abstraction leak... IdReader is not a property (it doesn't take property name to resolve a value),
-                    //  yet somewhere in Agrest it is treated as a property, so wrapping it in one
-
-                    IdReader ir1 = entity.getAgEntity().getIdReader();
-                    EntityProperty p1 = PropertyBuilder
-                            .property((r, n) -> ir1.id(r))
-                            .encodedWith(new IdEncoder(getEncoder(ids.iterator().next().getType())));
-                    return Optional.of(p1);
-                default:
-
-                    // keeping attribute encoders in alphabetical order
-                    Map<String, Encoder> valueEncoders = new TreeMap<>();
-                    for (AgAttribute id : ids) {
-                        valueEncoders.put(id.getName(), getEncoder(id.getType()));
-                    }
-
-                    // TODO: abstraction leak... IdReader is not a property (it doesn't take property name to resolve a value),
-                    //  yet somewhere in Agrest it is treated as a property, so wrapping it in one
-                    IdReader ir2 = entity.getAgEntity().getIdReader();
-                    EntityProperty p2 = PropertyBuilder
-                            .property((r, n) -> ir2.id(r))
-                            .encodedWith(new IdEncoder(valueEncoders));
-                    return Optional.of(p2);
-            }
-
-        } else {
-
-            // POJO - PK is an object property
-
-            if (ids.isEmpty()) {
+        switch (ids.size()) {
+            case 0:
                 return Optional.empty();
-            }
+            case 1:
 
-            // TODO: multi-attribute ID?
+                // TODO: abstraction leak... IdReader is not a property (it doesn't take property name to resolve a value),
+                //  yet in EntityProperty it is treated as a property, so wrapping it in one
 
-            AgAttribute id = ids.iterator().next();
-            return Optional.of(PropertyBuilder.property(BeanPropertyReader.reader(id.getName())));
+                IdReader ir1 = entity.getAgEntity().getIdReader();
+                EntityProperty p1 = PropertyBuilder
+                        .property((r, n) -> ir1.id(r))
+                        .encodedWith(new IdEncoder(getEncoder(ids.iterator().next().getType())));
+                return Optional.of(p1);
+                
+            default:
+
+                // keeping attribute encoders in alphabetical order
+                Map<String, Encoder> valueEncoders = new TreeMap<>();
+                for (AgAttribute id : ids) {
+                    valueEncoders.put(id.getName(), getEncoder(id.getType()));
+                }
+
+                // TODO: abstraction leak... IdReader is not a property (it doesn't take property name to resolve a value),
+                //  yet in EntityProperty it is treated as a property, so wrapping it in one
+                IdReader ir2 = entity.getAgEntity().getIdReader();
+                EntityProperty p2 = PropertyBuilder
+                        .property((r, n) -> ir2.id(r))
+                        .encodedWith(new IdEncoder(valueEncoders));
+                return Optional.of(p2);
         }
     }
 

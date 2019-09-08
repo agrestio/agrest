@@ -9,16 +9,16 @@ import java.util.Map;
 
 public class EntityEncoder extends EntityNoIdEncoder {
 
-    private EntityProperty idEncoder;
+    private EntityProperty idProperty;
 
     public EntityEncoder(
-            EntityProperty idEncoder,
+            EntityProperty idProperty,
             Map<String, EntityProperty> attributeEncoders,
             Map<String, EntityProperty> relationshipEncoders,
             Map<String, EntityProperty> extraEncoders) {
 
         super(attributeEncoders, relationshipEncoders, extraEncoders);
-        this.idEncoder = idEncoder;
+        this.idProperty = idProperty;
     }
 
     protected void encodeProperties(Object object, JsonGenerator out) throws IOException {
@@ -27,7 +27,7 @@ public class EntityEncoder extends EntityNoIdEncoder {
     }
 
     protected void encodeId(Object object, JsonGenerator out) throws IOException {
-        Object v = object == null ? null : idEncoder.getReader().value(object, PathConstants.ID_PK_ATTRIBUTE);
-        idEncoder.getEncoder().encode(PathConstants.ID_PK_ATTRIBUTE, v, out);
+        Object v = object == null ? null : idProperty.getReader().value(object, PathConstants.ID_PK_ATTRIBUTE);
+        idProperty.getEncoder().encode(PathConstants.ID_PK_ATTRIBUTE, v, out);
     }
 }
