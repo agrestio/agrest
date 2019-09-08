@@ -30,6 +30,11 @@ public class AgEntityOverlay<T> {
         this.relationships = new HashMap<>();
     }
 
+    // lose generics ... PropertyReader is not parameterized
+    private static PropertyReader asPropertyReader(Function reader) {
+        return (o, n) -> reader.apply(o);
+    }
+
     /**
      * @since 2.10
      */
@@ -97,14 +102,13 @@ public class AgEntityOverlay<T> {
 
     /**
      * Adds an "ad-hoc" attribute to the overlaid entity. The value of the attribute will be calculated from
-     * each entity object by applying the "valueSupplier" function. This allows Agrest entities
+     * each entity object by applying the "reader" function. This allows Agrest entities
      * to declare properties not present in the underlying Java objects.
      *
      * @since 2.10
      */
-    public <V> AgEntityOverlay<T> addAttribute(String name, Class<V> valueType, Function<T, V> valueSupplier) {
-        PropertyReader reader = PropertyReader.forValueProducer(valueSupplier);
-        attributes.put(name, new DefaultAgAttribute(name, valueType, reader));
+    public <V> AgEntityOverlay<T> addAttribute(String name, Class<V> valueType, Function<T, V> reader) {
+        attributes.put(name, new DefaultAgAttribute(name, valueType, asPropertyReader(reader)));
         return this;
     }
 
@@ -132,15 +136,13 @@ public class AgEntityOverlay<T> {
         return this;
     }
 
-    private <V> AgRelationship resolveToOne(AgDataMap dataMap, String name, Class<V> type, Function<T, V> valueSupplier) {
+    private <V> AgRelationship resolveToOne(AgDataMap dataMap, String name, Class<V> type, Function<T, V> reader) {
         AgEntity<V> target = dataMap.getEntity(type);
-        PropertyReader reader = PropertyReader.forValueProducer(valueSupplier);
-        return new DefaultAgRelationship(name, target, false, reader);
+        return new DefaultAgRelationship(name, target, false, asPropertyReader(reader));
     }
 
-    private <V> AgRelationship resolveToMany(AgDataMap dataMap, String name, Class<V> type, Function<T, List<V>> valueSupplier) {
+    private <V> AgRelationship resolveToMany(AgDataMap dataMap, String name, Class<V> type, Function<T, List<V>> reader) {
         AgEntity<V> target = dataMap.getEntity(type);
-        PropertyReader reader = PropertyReader.forValueProducer(valueSupplier);
-        return new DefaultAgRelationship(name, target, true, reader);
+        return new DefaultAgRelationship(name, target, true, asPropertyReader(reader));
     }
 }
