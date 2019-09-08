@@ -1,5 +1,6 @@
 package io.agrest.meta.cayenne;
 
+import io.agrest.ResourceEntity;
 import io.agrest.meta.AgAttribute;
 import io.agrest.meta.AgDataMap;
 import io.agrest.meta.AgEntity;
@@ -7,12 +8,13 @@ import io.agrest.meta.AgEntityBuilder;
 import io.agrest.meta.AgEntityOverlay;
 import io.agrest.meta.AgRelationship;
 import io.agrest.meta.DefaultAgEntity;
+import io.agrest.property.ChildEntityListResultReader;
+import io.agrest.property.ChildEntityResultReader;
 import io.agrest.property.DefaultIdReader;
 import io.agrest.property.IdReader;
-import io.agrest.runtime.parser.converter.IJsonValueConverterFactory;
+import io.agrest.property.PropertyReader;
 import org.apache.cayenne.dba.TypesMapping;
 import org.apache.cayenne.map.DbAttribute;
-import org.apache.cayenne.map.DbRelationship;
 import org.apache.cayenne.map.EntityResolver;
 import org.apache.cayenne.map.ObjAttribute;
 import org.apache.cayenne.map.ObjEntity;
@@ -21,8 +23,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 
 import static io.agrest.meta.Types.typeForName;
 
@@ -35,7 +37,6 @@ public class CayenneAgEntityBuilder<T> {
 
     private final EntityResolver resolver;
     private final Map<String, AgEntityOverlay> entityOverlays;
-    private final IJsonValueConverterFactory converterFactory;
 
     private final Class<T> type;
     private final AgDataMap agDataMap;
@@ -51,12 +52,10 @@ public class CayenneAgEntityBuilder<T> {
             Class<T> type,
             AgDataMap agDataMap,
             EntityResolver resolver,
-            Map<String, AgEntityOverlay> entityOverlays,
-            IJsonValueConverterFactory converterFactory) {
+            Map<String, AgEntityOverlay> entityOverlays) {
 
         this.resolver = resolver;
         this.entityOverlays = entityOverlays;
-        this.converterFactory = converterFactory;
 
         this.type = type;
         this.agDataMap = agDataMap;
@@ -104,18 +103,20 @@ public class CayenneAgEntityBuilder<T> {
         }
 
         for (ObjRelationship r : cayenneEntity.getRelationships()) {
-            List<DbRelationship> dbRelationshipsList = r.getDbRelationships();
 
             Class<?> targetEntityType = resolver.getClassDescriptor(r.getTargetEntityName()).getObjectClass();
             AgEntity<?> targetEntity = agDataMap.getEntity(targetEntityType);
 
-            // take last element from list of db relationships
-            // in order to behave correctly if
-            // db entities are connected through intermediate tables
-            DbRelationship targetRelationship = dbRelationshipsList.get(dbRelationshipsList.size() - 1);
-            int targetJdbcType = targetRelationship.getJoins().get(0).getTarget().getType();
-            Class<?> type = typeForName(TypesMapping.getJavaBySqlType(targetJdbcType));
-            addRelationship(new CayenneAgRelationship(r, targetEntity, converterFactory.converter(type)));
+            // TODO: a decision whether to read results from the object or from the child entity (via
+            //  ChildEntityResultReader and ChildEntityListResultReader) should not be dependent on the object nature,
+            //  but rather on the data retrieval strategy for a given relationship
+
+            Function<ResourceEntity<?>, PropertyReader> readerFactory = r.isToMany()
+                    // "idReader" must come from parent entity.. it is not yet know here
+                    ? e -> new ChildEntityListResultReader(e, e.getAgEntity().getIdReader())
+                    : e -> new ChildEntityResultReader(e, e.getAgEntity().getIdReader());
+
+            addRelationship(new CayenneAgRelationship(r, targetEntity, readerFactory));
         }
 
         for (DbAttribute pk : cayenneEntity.getDbEntity().getPrimaryKeys()) {

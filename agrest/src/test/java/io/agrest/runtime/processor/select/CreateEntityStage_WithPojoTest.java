@@ -83,7 +83,7 @@ public class CreateEntityStage_WithPojoTest extends TestWithCayenneMapping {
 
         List<AgEntityCompiler> compilers = new ArrayList<>();
         compilers.add(new PojoEntityCompiler(Collections.emptyMap()));
-        compilers.add(new CayenneEntityCompiler(mockCayennePersister, Collections.emptyMap(), converterFactory));
+        compilers.add(new CayenneEntityCompiler(mockCayennePersister, Collections.emptyMap()));
 
         return new MetadataService(compilers);
     }
@@ -137,7 +137,5 @@ public class CreateEntityStage_WithPojoTest extends TestWithCayenneMapping {
         assertEquals(1, ce2.getChildren().size());
 
         assertTrue(ce2.getChildren().keySet().contains("p1"));
-
     }
-
 }

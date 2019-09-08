@@ -1,13 +1,14 @@
 package io.agrest.meta.cayenne;
 
+import io.agrest.ResourceEntity;
 import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgRelationship;
-import io.agrest.parser.converter.JsonValueConverter;
 import io.agrest.property.PropertyReader;
 import org.apache.cayenne.exp.Expression;
 import org.apache.cayenne.map.ObjRelationship;
 
 import java.util.Objects;
+import java.util.function.Function;
 
 /**
  * @since 1.12
@@ -16,8 +17,7 @@ public class CayenneAgRelationship implements AgRelationship {
 
     private ObjRelationship objRelationship;
     private AgEntity<?> targetEntity;
-    private JsonValueConverter<?> converter;
-    private PropertyReader propertyReader;
+    private Function<ResourceEntity<?>, PropertyReader> readerFactory;
 
     /**
      * @since 2.10
@@ -25,21 +25,16 @@ public class CayenneAgRelationship implements AgRelationship {
     public CayenneAgRelationship(
             ObjRelationship objRelationship,
             AgEntity<?> targetEntity,
-            JsonValueConverter<?> converter,
-            PropertyReader propertyReader) {
+            Function<ResourceEntity<?>, PropertyReader> readerFactory) {
 
         this.objRelationship = objRelationship;
         this.targetEntity = Objects.requireNonNull(targetEntity);
-        this.converter = converter;
-        this.propertyReader = propertyReader;
+        this.readerFactory = readerFactory;
     }
 
-    /**
-     * @since 2.10
-     */
     @Override
-    public PropertyReader getPropertyReader() {
-        return propertyReader;
+    public PropertyReader getPropertyReader(ResourceEntity<?> entity) {
+        return readerFactory.apply(entity);
     }
 
     @Override

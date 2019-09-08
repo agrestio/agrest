@@ -6,7 +6,6 @@ import io.agrest.meta.AgEntityOverlay;
 import io.agrest.meta.compiler.AgEntityCompiler;
 import io.agrest.meta.compiler.LazyAgEntity;
 import io.agrest.runtime.cayenne.ICayennePersister;
-import io.agrest.runtime.parser.converter.IJsonValueConverterFactory;
 import org.apache.cayenne.di.Inject;
 import org.apache.cayenne.map.EntityResolver;
 import org.apache.cayenne.map.ObjEntity;
@@ -24,16 +23,13 @@ public class CayenneEntityCompiler implements AgEntityCompiler {
 
     private EntityResolver resolver;
     private Map<String, AgEntityOverlay> entityOverlays;
-    private IJsonValueConverterFactory converterFactory;
 
     public CayenneEntityCompiler(
             @Inject ICayennePersister cayennePersister,
-            @Inject Map<String, AgEntityOverlay> entityOverlays,
-            @Inject IJsonValueConverterFactory converterFactory) {
+            @Inject Map<String, AgEntityOverlay> entityOverlays) {
 
         this.resolver = cayennePersister.entityResolver();
         this.entityOverlays = entityOverlays;
-        this.converterFactory = converterFactory;
     }
 
     @Override
@@ -47,7 +43,7 @@ public class CayenneEntityCompiler implements AgEntityCompiler {
     }
 
     private <T> AgEntity<T> doCompile(Class<T> type, AgDataMap dataMap) {
-        LOGGER.debug("compiling Cayenne entity for type: " + type);
-        return new CayenneAgEntityBuilder<>(type, dataMap, resolver, entityOverlays, converterFactory).build();
+        LOGGER.debug("compiling Cayenne entity for type: {}", type);
+        return new CayenneAgEntityBuilder<>(type, dataMap, resolver, entityOverlays).build();
     }
 }

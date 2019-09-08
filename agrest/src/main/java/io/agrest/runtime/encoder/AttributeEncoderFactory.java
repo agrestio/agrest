@@ -43,12 +43,10 @@ public class AttributeEncoderFactory implements IAttributeEncoderFactory {
     @Override
     public EntityProperty getRelationshipProperty(ResourceEntity<?> entity, AgRelationship relationship, Encoder encoder) {
 
-        // Can't cache, as target encoder is dynamic...
-
+        // Can't cache the reader, as both reader and encoder depend on request state
         PropertyReader reader = relationship.getPropertyReader(entity);
 
         // all relationships these days have a reader, but check just in case
-
         return reader != null
                 ? PropertyBuilder.property(reader).encodedWith(encoder)
                 : PropertyBuilder.property().encodedWith(encoder);

@@ -15,8 +15,6 @@ import io.agrest.runtime.meta.IMetadataService;
 import io.agrest.runtime.meta.IResourceMetadataService;
 import io.agrest.runtime.meta.MetadataService;
 import io.agrest.runtime.meta.ResourceMetadataService;
-import io.agrest.runtime.parser.converter.DefaultJsonValueConverterFactoryProvider;
-import io.agrest.runtime.parser.converter.IJsonValueConverterFactory;
 import io.agrest.runtime.processor.select.SelectContext;
 import org.apache.cayenne.ObjectContext;
 import org.apache.cayenne.configuration.server.DataSourceFactory;
@@ -70,7 +68,6 @@ public class TestWithCayenneMapping {
 	protected IMetadataService metadataService;
 	protected IResourceMetadataService resourceMetadataService;
 	protected IResourceParser resourceParser;
-	protected IJsonValueConverterFactory converterFactory;
 
 	@Before
 	public void initAgDataMap() {
@@ -82,7 +79,6 @@ public class TestWithCayenneMapping {
 		when(mockCayennePersister.sharedContext()).thenReturn(sharedContext);
 		when(mockCayennePersister.newContext()).thenReturn(runtime.newContext());
 
-		this.converterFactory = new DefaultJsonValueConverterFactoryProvider(Collections.emptyMap()).get();
 		this.metadataService = createMetadataService();
 		this.resourceParser = new ResourceParser(metadataService);
 		this.resourceMetadataService = createResourceMetadataService();
@@ -91,7 +87,7 @@ public class TestWithCayenneMapping {
 	protected IMetadataService createMetadataService() {
 
 		List<AgEntityCompiler> compilers = new ArrayList<>();
-		compilers.add(new CayenneEntityCompiler(mockCayennePersister, Collections.emptyMap(), converterFactory));
+		compilers.add(new CayenneEntityCompiler(mockCayennePersister, Collections.emptyMap()));
 		compilers.add(new PojoEntityCompiler(Collections.emptyMap()));
 
 		return new MetadataService(compilers);

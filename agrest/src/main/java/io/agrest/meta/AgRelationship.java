@@ -8,17 +8,19 @@ import io.agrest.property.PropertyReader;
  */
 public interface AgRelationship {
 
-	String getName();
+    String getName();
 
-	/**
-	 * @since 2.0
-	 */
-	AgEntity<?> getTargetEntity();
+    /**
+     * @since 2.0
+     */
+    AgEntity<?> getTargetEntity();
 
-	boolean isToMany();
+    boolean isToMany();
 
-	/**
-	 * @since 2.10
-	 */
-	PropertyReader getPropertyReader(ResourceEntity<?> entity);
+    /**
+     * Returns a {@link PropertyReader} for this relationship applicable in a context of the provided request entity.
+     *
+     * @since 3.4
+     */
+    PropertyReader getPropertyReader(ResourceEntity<?> entity);
 }

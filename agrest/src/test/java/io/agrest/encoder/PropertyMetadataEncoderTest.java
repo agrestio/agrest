@@ -34,7 +34,7 @@ public class PropertyMetadataEncoderTest {
     public void testEncode_ToOneRelationship() {
         AgEntity<E4> target = mock(AgEntity.class);
         when(target.getName()).thenReturn("E4");
-        AgRelationship r = new DefaultAgRelationship("rel", target, false);
+        AgRelationship r = new DefaultAgRelationship("rel", target, false, e -> BeanPropertyReader.reader());
         assertEquals("{\"name\":\"rel\",\"type\":\"E4\",\"relationship\":true}", toJson(encoder, r));
     }
 
@@ -42,7 +42,7 @@ public class PropertyMetadataEncoderTest {
     public void testEncode_ToManyRelationship() {
         AgEntity<E4> target = mock(AgEntity.class);
         when(target.getName()).thenReturn("E4");
-        AgRelationship r = new DefaultAgRelationship("rel", target, true);
+        AgRelationship r = new DefaultAgRelationship("rel", target, true, e -> BeanPropertyReader.reader());
         assertEquals("{\"name\":\"rel\",\"type\":\"E4\",\"relationship\":true,\"collection\":true}", toJson(encoder, r));
     }
 
