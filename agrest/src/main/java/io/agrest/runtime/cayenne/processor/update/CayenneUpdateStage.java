@@ -9,7 +9,6 @@ import io.agrest.ObjectMapperFactory;
 import io.agrest.ResourceEntity;
 import io.agrest.SimpleObjectId;
 import io.agrest.meta.AgAttribute;
-import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgRelationship;
 import io.agrest.meta.cayenne.CayenneAgRelationship;
 import io.agrest.runtime.cayenne.ByIdObjectMapperFactory;
@@ -82,9 +81,8 @@ public class CayenneUpdateStage extends CayenneUpdateDataStoreStage {
                 throw new AgException(Response.Status.BAD_REQUEST, "Can't update. No id for object");
             }
 
-            AgEntity<?> entity = context.getEntity().getAgEntity();
-            throw new AgException(Response.Status.NOT_FOUND, "No object for ID '" + firstKey + "' and entity '"
-                    + entity.getName() + "'");
+            throw new AgException(Response.Status.NOT_FOUND,
+                    "No object for ID '" + firstKey + "' and entity '" + context.getEntity().getName() + "'");
         }
     }
 

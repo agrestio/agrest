@@ -57,12 +57,12 @@ public class CayenneApplyServerParamsStage implements Processor<UpdateContext<?>
 
         constraintsHandler.constrainUpdate(context, context.getWriteConstraints());
 
-        // apply read constraints (TODO: should we only care about response
-        // constraints after the commit?)
+        // apply read constraints
+        // TODO: should we only care about response constraints after the commit?
         constraintsHandler.constrainResponse(entity, null, context.getReadConstraints());
 
         if (context.getEncoder() == null) {
-            // TODO: we don't need encoder if includeData=false... should we  conditionally skip this step?
+            // TODO: we don't need encoder if includeData=false... should we conditionally skip this step?
             // TODO: should we allow custom EntityFilters in update?
             context.setEncoder(encoderService.dataEncoder(entity));
         }
@@ -78,6 +78,8 @@ public class CayenneApplyServerParamsStage implements Processor<UpdateContext<?>
         // with values from related PK...
 
         AgEntity<T> entity = context.getEntity().getAgEntity();
+
+        // TODO: AgEntityOverlay relationships are ignored here
         for (AgRelationship r : entity.getRelationships()) {
             if (r instanceof CayenneAgRelationship) {
                 List<DbRelationship> dbRelationships = ((CayenneAgRelationship) r).getObjRelationship().getDbRelationships();

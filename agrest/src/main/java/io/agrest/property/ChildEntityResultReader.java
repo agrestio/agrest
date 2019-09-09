@@ -34,7 +34,7 @@ public class ChildEntityResultReader implements PropertyReader {
         Map<String, Object> id = idReader.id(object);
         switch (id.size()) {
             case 0:
-                throw new RuntimeException("ID is empty for '" + entity.getAgEntity() + "'");
+                throw new RuntimeException("ID is empty for '" + entity.getName() + "'");
             case 1:
                 return new SimpleObjectId(id.values().iterator().next());
             default:

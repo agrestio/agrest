@@ -129,7 +129,7 @@ public class CayenneAssembleQueryStage implements Processor<SelectContext<?>> {
         // selecting by ID overrides any explicit SelectQuery...
         if (rootId != null) {
 
-            SelectQuery<T> query = new SelectQuery<>(resourceEntity.getAgEntity().getType());
+            SelectQuery<T> query = new SelectQuery<>(resourceEntity.getType());
             query.andQualifier(buildIdQualifer(resourceEntity.getAgEntity(), rootId));
             return query;
         }
