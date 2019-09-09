@@ -2,6 +2,7 @@ Release 3.4
 
 * #420 Per-request EncoderFilters
 * #421 Custom per-request Encoder is ignored on update
+* #422 Per-request AgEntityOverlay to customize properties based on request state
 * #423 Wrong Encoder for target entities in overlayed relationships
 * #424 Unwinding Cayenne dependencies - get rid of AgPersistent* models
 
