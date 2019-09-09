@@ -15,7 +15,7 @@ public interface IMapByMerger {
     /**
      * @since 3.4 additionally takes request overlays
      */
-    <T> void merge(ResourceEntity<T> entity, String mapByPath, Map<String, AgEntityOverlay<?>> overlays);
+    <T> void merge(ResourceEntity<T> entity, String mapByPath, Map<Class<?>, AgEntityOverlay<?>> overlays);
 
     /**
      * @since 3.4 additionally takes request overlays
@@ -23,5 +23,5 @@ public interface IMapByMerger {
     <T> void mergeIncluded(
             ResourceEntity<T> childEntity,
             String incomingMapByPath,
-            Map<String, AgEntityOverlay<?>> requestOverlays);
+            Map<Class<?>, AgEntityOverlay<?>> requestOverlays);
 }

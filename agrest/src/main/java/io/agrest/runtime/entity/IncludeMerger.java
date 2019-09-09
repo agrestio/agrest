@@ -49,7 +49,7 @@ public class IncludeMerger implements IIncludeMerger {
      * @since 3.4
      */
     @Override
-    public void merge(ResourceEntity<?> entity, List<Include> includes, Map<String, AgEntityOverlay<?>> overlays) {
+    public void merge(ResourceEntity<?> entity, List<Include> includes, Map<Class<?>, AgEntityOverlay<?>> overlays) {
 
         // included attribute sets of the root entity and entities that are included explicitly via relationship includes
         // may need to get expanded if they don't have any explicit includes otherwise. Will track them here... Entities
@@ -71,7 +71,7 @@ public class IncludeMerger implements IIncludeMerger {
             ResourceEntity<?> entity,
             Include include,
             ResourceEntityTreeBuilder treeBuilder,
-            Map<String, AgEntityOverlay<?>> overlays) {
+            Map<Class<?>, AgEntityOverlay<?>> overlays) {
 
         String path = include.getPath();
         ResourceEntity<?> includeEntity = (path == null || path.isEmpty()) ? entity : treeBuilder.inflatePath(path);

@@ -22,7 +22,7 @@ public class PhantomTrackingResourceEntityTreeBuilder extends ResourceEntityTree
     public PhantomTrackingResourceEntityTreeBuilder(
             ResourceEntity<?> rootEntity,
             AgDataMap agDataMap,
-            Map<String, AgEntityOverlay<?>> entityOverlays) {
+            Map<Class<?>, AgEntityOverlay<?>> entityOverlays) {
 
         super(rootEntity, agDataMap, entityOverlays);
         this.nonPhantomEntities = new HashSet<>();

@@ -24,7 +24,7 @@ public class MapByMerger implements IMapByMerger {
     }
 
     @Override
-    public <T> void merge(ResourceEntity<T> entity, String mapByPath, Map<String, AgEntityOverlay<?>> overlays) {
+    public <T> void merge(ResourceEntity<T> entity, String mapByPath, Map<Class<?>, AgEntityOverlay<?>> overlays) {
         if (mapByPath == null) {
             return;
         }
@@ -44,7 +44,7 @@ public class MapByMerger implements IMapByMerger {
     }
 
     @Override
-    public <T> void mergeIncluded(ResourceEntity<T> entity, String mapByPath, Map<String, AgEntityOverlay<?>> overlays) {
+    public <T> void mergeIncluded(ResourceEntity<T> entity, String mapByPath, Map<Class<?>, AgEntityOverlay<?>> overlays) {
         if (mapByPath == null) {
             return;
         }

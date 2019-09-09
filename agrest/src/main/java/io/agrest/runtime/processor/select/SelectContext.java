@@ -40,7 +40,7 @@ public class SelectContext<T> extends BaseProcessingContext<T> {
     private AgRequest mergedRequest;
     private AgRequest request;
     private List<EntityEncoderFilter> entityEncoderFilters;
-    private Map<String, AgEntityOverlay<?>> entityOverlays;
+    private Map<Class<?>, AgEntityOverlay<?>> entityOverlays;
 
     public SelectContext(Class<T> type) {
         super(type);
@@ -125,7 +125,7 @@ public class SelectContext<T> extends BaseProcessingContext<T> {
     /**
      * @since 3.4
      */
-    public Map<String, AgEntityOverlay<?>> getEntityOverlays() {
+    public Map<Class<?>, AgEntityOverlay<?>> getEntityOverlays() {
         return entityOverlays != null ? entityOverlays : Collections.emptyMap();
     }
 
@@ -133,7 +133,7 @@ public class SelectContext<T> extends BaseProcessingContext<T> {
      * @since 3.4
      */
     public <A> AgEntityOverlay<A> getEntityOverlay(Class<A> type) {
-        return entityOverlays != null ? (AgEntityOverlay<A>) entityOverlays.get(type.getName()) : null;
+        return entityOverlays != null ? (AgEntityOverlay<A>) entityOverlays.get(type) : null;
     }
 
     /**
@@ -148,7 +148,7 @@ public class SelectContext<T> extends BaseProcessingContext<T> {
             entityOverlays = new HashMap<>();
         }
 
-        return (AgEntityOverlay<A>) entityOverlays.computeIfAbsent(type.getName(), n -> new AgEntityOverlay<>(type));
+        return (AgEntityOverlay<A>) entityOverlays.computeIfAbsent(type, t -> new AgEntityOverlay<>(t));
     }
 
     public SizeConstraints getSizeConstraints() {

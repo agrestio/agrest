@@ -25,12 +25,12 @@ public class ResourceEntityTreeBuilder {
 
     private ResourceEntity<?> rootEntity;
     private AgDataMap agDataMap;
-    private Map<String, AgEntityOverlay<?>> entityOverlays;
+    private Map<Class<?>, AgEntityOverlay<?>> entityOverlays;
 
     public ResourceEntityTreeBuilder(
             ResourceEntity<?> rootEntity,
             AgDataMap agDataMap,
-            Map<String, AgEntityOverlay<?>> entityOverlays) {
+            Map<Class<?>, AgEntityOverlay<?>> entityOverlays) {
 
         this.agDataMap = Objects.requireNonNull(agDataMap);
         this.rootEntity = Objects.requireNonNull(rootEntity);
@@ -122,6 +122,6 @@ public class ResourceEntityTreeBuilder {
 
     protected ResourceEntity<?> createChildEntity(AgRelationship incoming) {
         AgEntity<?> target = incoming.getTargetEntity();
-        return new ResourceEntity(target, entityOverlays.get(target.getType().getName()), incoming);
+        return new ResourceEntity(target, entityOverlays.get(target.getType()), incoming);
     }
 }
