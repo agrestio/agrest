@@ -24,5 +24,11 @@ public interface IAttributeEncoderFactory {
      */
     EntityProperty getRelationshipProperty(ResourceEntity<?> entity, AgRelationship relationship, Encoder encoder);
 
+    /**
+     * Returns a property to read and encode entity ID. The id may have one more more attributes (all hidden bihind
+     * {@link EntityProperty} facade. If the entity has no ID defined, an empty Optional is returned.
+     *
+     * @since 3.4
+     */
     Optional<EntityProperty> getIdProperty(ResourceEntity<?> entity);
 }
