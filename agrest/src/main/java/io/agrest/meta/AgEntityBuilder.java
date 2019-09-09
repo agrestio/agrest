@@ -208,12 +208,7 @@ public class AgEntityBuilder<T> {
     protected void loadOverlays() {
         if (overlay != null) {
             overlay.getAttributes().forEach(this::addAttribute);
-            overlay.getRelationships().forEach(or -> addRelationship(fromOverlay(or)));
+            overlay.getRelationships().forEach(or -> addRelationship(or.resolve(agDataMap)));
         }
-    }
-
-    protected io.agrest.meta.AgRelationship fromOverlay(AgRelationshipOverlay overlay) {
-        AgEntity<?> targetEntity = agDataMap.getEntity(overlay.getTargetType());
-        return new DefaultAgRelationship(overlay.getName(), targetEntity, overlay.isToMany(), overlay.getReaderFactory());
     }
 }

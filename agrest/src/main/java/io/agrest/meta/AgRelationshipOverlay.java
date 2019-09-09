@@ -17,4 +17,9 @@ public interface AgRelationshipOverlay {
     boolean isToMany();
 
     Function<ResourceEntity<?>, PropertyReader> getReaderFactory();
+
+    default AgRelationship resolve(AgDataMap agDataMap) {
+        AgEntity<?> targetEntity = agDataMap.getEntity(getTargetType());
+        return new DefaultAgRelationship(getName(), targetEntity, isToMany(), getReaderFactory());
+    }
 }
