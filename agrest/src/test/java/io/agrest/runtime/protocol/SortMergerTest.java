@@ -39,7 +39,7 @@ public class SortMergerTest extends TestWithCayenneMapping {
         when(age2.getAttribute("name")).thenReturn(mock(AgAttribute.class));
         when(age2.getAttribute("address")).thenReturn(mock(AgAttribute.class));
 
-        this.entity = new ResourceEntity<>(age2);
+        this.entity = new ResourceEntity<>(age2, null);
     }
 
     @Test

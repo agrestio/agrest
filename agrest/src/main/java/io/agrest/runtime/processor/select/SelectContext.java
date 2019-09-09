@@ -17,6 +17,7 @@ import io.agrest.processor.BaseProcessingContext;
 
 import javax.ws.rs.core.UriInfo;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -39,8 +40,7 @@ public class SelectContext<T> extends BaseProcessingContext<T> {
     private AgRequest mergedRequest;
     private AgRequest request;
     private List<EntityEncoderFilter> entityEncoderFilters;
-    private Map<String, AgEntityOverlay> entityOverlays;
-
+    private Map<String, AgEntityOverlay<?>> entityOverlays;
 
     public SelectContext(Class<T> type) {
         super(type);
@@ -125,8 +125,15 @@ public class SelectContext<T> extends BaseProcessingContext<T> {
     /**
      * @since 3.4
      */
+    public Map<String, AgEntityOverlay<?>> getEntityOverlays() {
+        return entityOverlays != null ? entityOverlays : Collections.emptyMap();
+    }
+
+    /**
+     * @since 3.4
+     */
     public <A> AgEntityOverlay<A> getEntityOverlay(Class<A> type) {
-        return entityOverlays != null ? entityOverlays.get(type) : null;
+        return entityOverlays != null ? (AgEntityOverlay<A>) entityOverlays.get(type.getName()) : null;
     }
 
     /**
@@ -137,7 +144,11 @@ public class SelectContext<T> extends BaseProcessingContext<T> {
     }
 
     private <A> AgEntityOverlay<A> getOrCreateOverlay(Class<A> type) {
-        return entityOverlays.computeIfAbsent(type.getName(), n -> new AgEntityOverlay<>(type));
+        if (entityOverlays == null) {
+            entityOverlays = new HashMap<>();
+        }
+
+        return (AgEntityOverlay<A>) entityOverlays.computeIfAbsent(type.getName(), n -> new AgEntityOverlay<>(type));
     }
 
     public SizeConstraints getSizeConstraints() {

@@ -73,14 +73,17 @@ public class CollectMetadataStage implements Processor<MetadataContext<?>> {
     }
 
     private <T> ResourceEntity<T> createDefaultResourceEntity(AgEntity<T> entity) {
-        ResourceEntity<T> resourceEntity = new ResourceEntity<>(entity);
+
+        // TODO: support entity overlays (second null argument) in meta requests
+        ResourceEntity<T> resourceEntity = new ResourceEntity<>(entity, null);
 
         for (AgAttribute a : entity.getAttributes()) {
             resourceEntity.getAttributes().put(a.getName(), a);
         }
 
         for (AgRelationship r : entity.getRelationships()) {
-            ResourceEntity<?> child = new ResourceEntity<>(r.getTargetEntity(), r);
+            // TODO: support entity overlays (second null argument) in meta requests
+            ResourceEntity<?> child = new ResourceEntity<>(r.getTargetEntity(), null, r);
             resourceEntity.getChildren().put(r.getName(), child);
         }
 

@@ -101,7 +101,7 @@ public class Java8TestWithCayenneMapping {
 	}
 
 	protected <T> ResourceEntity<T> getResourceEntity(Class<T> type) {
-		return new ResourceEntity<>(getAgEntity(type));
+		return new ResourceEntity<>(getAgEntity(type), null);
 	}
 
 	protected <T> void appendAttribute(ResourceEntity<?> entity, Property<T> property, Class<T> type) {

@@ -47,7 +47,7 @@ public class CayenneAssembleQueryStageTest extends TestWithCayenneMapping {
 	@Test
 	public void testBuildQuery_Pagination() {
 
-		ResourceEntity<E1> resourceEntity = new ResourceEntity<>(getAgEntity(E1.class));
+		ResourceEntity<E1> resourceEntity = new ResourceEntity<>(getAgEntity(E1.class), null);
 		resourceEntity.setFetchLimit(10);
 		resourceEntity.setFetchOffset(0);
 
