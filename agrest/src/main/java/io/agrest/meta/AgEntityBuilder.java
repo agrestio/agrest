@@ -209,7 +209,7 @@ public class AgEntityBuilder<T> {
     protected void loadOverlays() {
         if (overlay != null) {
             overlay.getAttributes().forEach(this::addAttribute);
-            overlay.getRelatonships(dataMap).forEach(this::addRelationship);
+            overlay.getRelationships(dataMap).forEach(this::addRelationship);
         }
     }
 }

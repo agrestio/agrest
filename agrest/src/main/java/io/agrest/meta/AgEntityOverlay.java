@@ -58,7 +58,7 @@ public class AgEntityOverlay<T> {
     /**
      * @since 2.10
      */
-    public Stream<AgRelationship> getRelatonships(AgDataMap dataMap) {
+    public Stream<AgRelationship> getRelationships(AgDataMap dataMap) {
         // resolve relationship targets
         return relationships.values().stream().map(f -> f.apply(dataMap));
     }

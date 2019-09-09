@@ -197,7 +197,7 @@ public class CayenneAgEntityBuilder<T> {
         if (overlay != null) {
             // TODO: what about overlaying ids?
             overlay.getAttributes().forEach(this::addAttribute);
-            overlay.getRelatonships(agDataMap).forEach(this::addRelationship);
+            overlay.getRelationships(agDataMap).forEach(this::addRelationship);
         }
     }
 }
