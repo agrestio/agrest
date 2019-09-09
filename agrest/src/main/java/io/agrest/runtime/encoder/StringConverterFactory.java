@@ -12,66 +12,59 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class StringConverterFactory implements IStringConverterFactory {
 
-	private Map<Class<?>, StringConverter> convertersByJavaType;
-	private StringConverter defaultConverter;
+    private Map<Class<?>, StringConverter> convertersByJavaType;
+    private StringConverter defaultConverter;
 
-	// these are explicit overrides for named attributes
-	private Map<String, StringConverter> convertersByPath;
+    // these are explicit overrides for named attributes
+    private Map<String, StringConverter> convertersByPath;
 
-	public StringConverterFactory(Map<Class<?>, StringConverter> knownConverters,
-								  StringConverter defaultConverter) {
-		// creating a concurrent copy of the provided map - we'll be expanding it dynamically.
-		this.convertersByJavaType = new ConcurrentHashMap<>(knownConverters);
-		this.defaultConverter = defaultConverter;
-		this.convertersByPath = new ConcurrentHashMap<>();
-	}
+    public StringConverterFactory(Map<Class<?>, StringConverter> knownConverters,
+                                  StringConverter defaultConverter) {
+        // creating a concurrent copy of the provided map - we'll be expanding it dynamically.
+        this.convertersByJavaType = new ConcurrentHashMap<>(knownConverters);
+        this.defaultConverter = defaultConverter;
+        this.convertersByPath = new ConcurrentHashMap<>();
+    }
 
-	@Override
-	public StringConverter getConverter(AgEntity<?> entity) {
-		return getConverter(entity, null);
-	}
+    @Override
+    public StringConverter getConverter(AgEntity<?> entity) {
+        return getConverter(entity, null);
+    }
 
-	@Override
-	public StringConverter getConverter(AgEntity<?> entity, String attributeName) {
-		String key = attributeName != null ? entity.getName() + "." + attributeName : entity.getName();
+    @Override
+    public StringConverter getConverter(AgEntity<?> entity, String attributeName) {
+        String key = attributeName != null ? entity.getName() + "." + attributeName : entity.getName();
+        return convertersByPath.computeIfAbsent(key, k -> buildConverter(entity, attributeName));
+    }
 
-		StringConverter converter = convertersByPath.get(key);
-		if (converter == null) {
-			converter = buildConverter(entity, attributeName);
-			convertersByPath.put(key, converter);
-		}
+    protected StringConverter buildConverter(AgEntity<?> entity, String attributeName) {
 
-		return converter;
-	}
+        if (attributeName == null) {
+            // root object encoder... assuming we'll get ID as number
+            return GenericConverter.converter();
+        }
 
-	protected StringConverter buildConverter(AgEntity<?> entity, String attributeName) {
+        AgAttribute attribute = entity.getAttribute(attributeName);
 
-		if (attributeName == null) {
-			// root object encoder... assuming we'll get ID as number
-			return GenericConverter.converter();
-		}
+        if (attribute == null) {
+            throw new AgException(Status.BAD_REQUEST, "Invalid attribute: '" + entity.getName() + "."
+                    + attributeName + "'");
+        }
 
-		AgAttribute attribute = entity.getAttribute(attributeName);
+        return buildConverter(attribute);
+    }
 
-		if (attribute == null) {
-			throw new AgException(Status.BAD_REQUEST, "Invalid attribute: '" + entity.getName() + "."
-					+ attributeName + "'");
-		}
-
-		return buildConverter(attribute);
-	}
-
-	/**
-	 * @since 2.11
+    /**
+     * @since 2.11
      */
-	protected StringConverter buildConverter(AgAttribute attribute) {
-		return buildConverter(attribute.getType());
-	}
+    protected StringConverter buildConverter(AgAttribute attribute) {
+        return buildConverter(attribute.getType());
+    }
 
-	/**
-	 * @since 2.11
+    /**
+     * @since 2.11
      */
-	protected StringConverter buildConverter(Class<?> javaType) {
-		return convertersByJavaType.computeIfAbsent(javaType, vt -> defaultConverter);
-	}
+    protected StringConverter buildConverter(Class<?> javaType) {
+        return convertersByJavaType.computeIfAbsent(javaType, vt -> defaultConverter);
+    }
 }
