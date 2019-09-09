@@ -96,6 +96,9 @@ public class MapByEncoder implements CollectionEncoder {
             byId = false;
 
             Map.Entry<String, ResourceEntity<?>> child = mapBy.getChildren().entrySet().iterator().next();
+
+            // TODO: to account for overlaid relationships (and avoid NPEs), we should not access agEntity...
+            //  instead should look for incoming rel of a child ResourceEntity.. Is is present in MapBy case?
             AgRelationship relationship = mapBy.getAgEntity().getRelationship(child.getKey());
             mapByReaders.add(getPropertyReader(
                     child.getKey(),

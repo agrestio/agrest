@@ -6,6 +6,7 @@ import io.agrest.ResourceEntity;
 import io.agrest.meta.AgAttribute;
 import io.agrest.meta.AgEntityOverlay;
 import io.agrest.protocol.Include;
+import io.agrest.runtime.meta.IMetadataService;
 import org.apache.cayenne.di.Inject;
 
 import javax.ws.rs.core.Response;
@@ -15,17 +16,20 @@ import java.util.Map;
 
 public class IncludeMerger implements IIncludeMerger {
 
+    protected IMetadataService metadataService;
     protected ISortMerger sortMerger;
     protected ICayenneExpMerger expMerger;
     protected IMapByMerger mapByMerger;
     protected ISizeMerger sizeMerger;
 
     public IncludeMerger(
+            @Inject IMetadataService metadataService,
             @Inject ICayenneExpMerger expMerger,
             @Inject ISortMerger sortMerger,
             @Inject IMapByMerger mapByMerger,
             @Inject ISizeMerger sizeMerger) {
 
+        this.metadataService = metadataService;
         this.sortMerger = sortMerger;
         this.expMerger = expMerger;
         this.mapByMerger = mapByMerger;
@@ -52,7 +56,7 @@ public class IncludeMerger implements IIncludeMerger {
         // that are NOT expanded are those that are "phantom" entities included as a part of the longer path.
 
         PhantomTrackingResourceEntityTreeBuilder treeBuilder
-                = new PhantomTrackingResourceEntityTreeBuilder(entity, overlays);
+                = new PhantomTrackingResourceEntityTreeBuilder(entity, metadataService::getAgEntity, overlays);
 
         for (Include include : includes) {
             mergeInclude(entity, include, treeBuilder, overlays);
@@ -86,6 +90,13 @@ public class IncludeMerger implements IIncludeMerger {
             for (AgAttribute a : resourceEntity.getAgEntity().getAttributes()) {
                 resourceEntity.getAttributes().put(a.getName(), a);
                 resourceEntity.getDefaultProperties().add(a.getName());
+            }
+
+            if (resourceEntity.getAgEntityOverlay() != null) {
+                for (AgAttribute a : resourceEntity.getAgEntityOverlay().getAttributes()) {
+                    resourceEntity.getAttributes().put(a.getName(), a);
+                    resourceEntity.getDefaultProperties().add(a.getName());
+                }
             }
 
             resourceEntity.getIncludedExtraProperties().putAll(resourceEntity.getExtraProperties());

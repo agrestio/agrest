@@ -3,6 +3,8 @@ package io.agrest.runtime.entity;
 import io.agrest.ResourceEntity;
 import io.agrest.meta.AgAttribute;
 import io.agrest.meta.AgEntityOverlay;
+import io.agrest.runtime.meta.IMetadataService;
+import org.apache.cayenne.di.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,6 +16,12 @@ import java.util.Map;
 public class MapByMerger implements IMapByMerger {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MapByMerger.class);
+
+    private IMetadataService metadataService;
+
+    public MapByMerger(@Inject IMetadataService metadataService) {
+        this.metadataService = metadataService;
+    }
 
     @Override
     public <T> void merge(ResourceEntity<T> entity, String mapByPath, Map<String, AgEntityOverlay<?>> overlays) {
@@ -30,7 +38,7 @@ public class MapByMerger implements IMapByMerger {
             mapByRoot.getAttributes().put(attribute.getName(), attribute);
             entity.mapBy(mapByRoot, attribute.getName());
         } else {
-            new ResourceEntityTreeBuilder(mapByRoot, overlays).inflatePath(mapByPath);
+            new ResourceEntityTreeBuilder(mapByRoot, metadataService::getAgEntity, overlays).inflatePath(mapByPath);
             entity.mapBy(mapByRoot, mapByPath);
         }
     }
@@ -49,7 +57,7 @@ public class MapByMerger implements IMapByMerger {
         // either root list, or to-many relationship
         if (entity.getIncoming() == null || entity.getIncoming().isToMany()) {
             ResourceEntity<?> mapByRoot = toMapByEntity(entity);
-            new ResourceEntityTreeBuilder(mapByRoot, overlays).inflatePath(mapByPath);
+            new ResourceEntityTreeBuilder(mapByRoot, metadataService::getAgEntity, overlays).inflatePath(mapByPath);
             entity.mapBy(mapByRoot, mapByPath);
         } else {
             LOGGER.info("Ignoring 'mapBy:" + mapByPath + "' for to-one relationship property");

@@ -2,6 +2,7 @@ package io.agrest.unit;
 
 import io.agrest.ResourceEntity;
 import io.agrest.meta.AgEntity;
+import io.agrest.meta.AgRelationship;
 import io.agrest.meta.DefaultAgAttribute;
 import io.agrest.meta.cayenne.CayenneEntityCompiler;
 import io.agrest.meta.compiler.AgEntityCompiler;
@@ -117,6 +118,10 @@ public class TestWithCayenneMapping {
 
 	protected <T> ResourceEntity<T> getResourceEntity(Class<T> type) {
 		return new ResourceEntity<>(getAgEntity(type), null);
+	}
+
+	protected <T> ResourceEntity<T> getResourceEntity(Class<T> type, AgRelationship incoming) {
+		return new ResourceEntity<>(getAgEntity(type), null, incoming);
 	}
 
 	protected <T> void appendAttribute(ResourceEntity<?> entity, Property<T> property, Class<T> type) {

@@ -56,9 +56,9 @@ public class CreateEntityStage_WithPojoTest extends TestWithCayenneMapping {
         // prepare create entity stage
         ICayenneExpMerger expConstructor = new CayenneExpMerger(new ExpressionParser(), new ExpressionPostProcessor(pathCache));
         ISortMerger sortConstructor = new SortMerger(pathCache);
-        IMapByMerger mapByConstructor = new MapByMerger();
+        IMapByMerger mapByConstructor = new MapByMerger(mock(IMetadataService.class));
         ISizeMerger sizeConstructor = new SizeMerger();
-        IIncludeMerger includeConstructor = new IncludeMerger(expConstructor, sortConstructor, mapByConstructor, sizeConstructor);
+        IIncludeMerger includeConstructor = new IncludeMerger(mock(IMetadataService.class), expConstructor, sortConstructor, mapByConstructor, sizeConstructor);
         IExcludeMerger excludeConstructor = new ExcludeMerger();
 
         this.createEntityStage = new CreateResourceEntityStage(

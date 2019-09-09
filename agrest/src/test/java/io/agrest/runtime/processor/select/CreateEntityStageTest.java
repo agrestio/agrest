@@ -24,6 +24,7 @@ import io.agrest.runtime.entity.IncludeMerger;
 import io.agrest.runtime.entity.MapByMerger;
 import io.agrest.runtime.entity.SizeMerger;
 import io.agrest.runtime.entity.SortMerger;
+import io.agrest.runtime.meta.IMetadataService;
 import io.agrest.runtime.path.IPathDescriptorManager;
 import io.agrest.runtime.path.PathDescriptorManager;
 import io.agrest.runtime.protocol.ICayenneExpParser;
@@ -58,9 +59,9 @@ public class CreateEntityStageTest extends TestWithCayenneMapping {
         // prepare create entity stage
         ICayenneExpMerger expMerger = new CayenneExpMerger(new ExpressionParser(), new ExpressionPostProcessor(pathCache));
         ISortMerger sortMerger = new SortMerger(pathCache);
-        IMapByMerger mapByMerger = new MapByMerger();
+        IMapByMerger mapByMerger = new MapByMerger(mock(IMetadataService.class));
         ISizeMerger sizeMerger = new SizeMerger();
-        IIncludeMerger includeMerger = new IncludeMerger(expMerger, sortMerger, mapByMerger, sizeMerger);
+        IIncludeMerger includeMerger = new IncludeMerger(mock(IMetadataService.class), expMerger, sortMerger, mapByMerger, sizeMerger);
         IExcludeMerger excludeMerger = new ExcludeMerger();
 
         this.createEntityStage

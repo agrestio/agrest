@@ -122,7 +122,9 @@ public class DataEncoderFactory {
 
         Map<String, EntityProperty> relationshipEncoders = new HashMap<>();
         for (Map.Entry<String, ResourceEntity<?>> e : resourceEntity.getChildren().entrySet()) {
-            AgRelationship relationship = resourceEntity.getAgEntity().getRelationship(e.getKey());
+
+            // read relationship vis child entity to account for overlays
+            AgRelationship relationship = resourceEntity.getChild(e.getKey()).getIncoming();
 
             Encoder encoder = relationship.isToMany()
                     ? nestedToManyEncoder(e.getValue())

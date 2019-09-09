@@ -18,6 +18,7 @@ import io.agrest.runtime.entity.IncludeMerger;
 import io.agrest.runtime.entity.MapByMerger;
 import io.agrest.runtime.entity.SizeMerger;
 import io.agrest.runtime.entity.SortMerger;
+import io.agrest.runtime.meta.IMetadataService;
 import io.agrest.runtime.path.IPathDescriptorManager;
 import io.agrest.runtime.path.PathDescriptorManager;
 import io.agrest.runtime.protocol.ICayenneExpParser;
@@ -51,9 +52,9 @@ public class CreateEntityStage_IncludeObjectTest extends TestWithCayenneMapping 
         // prepare create entity stage
         ICayenneExpMerger expConstructor = new CayenneExpMerger(new ExpressionParser(), new ExpressionPostProcessor(pathCache));
         ISortMerger sortConstructor = new SortMerger(pathCache);
-        IMapByMerger mapByConstructor = new MapByMerger();
+        IMapByMerger mapByConstructor = new MapByMerger(mock(IMetadataService.class));
         ISizeMerger sizeConstructor = new SizeMerger();
-        IIncludeMerger includeConstructor = new IncludeMerger(expConstructor, sortConstructor, mapByConstructor, sizeConstructor);
+        IIncludeMerger includeConstructor = new IncludeMerger(mock(IMetadataService.class), expConstructor, sortConstructor, mapByConstructor, sizeConstructor);
         IExcludeMerger excludeConstructor = new ExcludeMerger();
 
         this.createEntityStage = new CreateResourceEntityStage(

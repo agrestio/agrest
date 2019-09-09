@@ -84,7 +84,7 @@ public abstract class CayenneUpdateDataStoreStage implements Processor<UpdateCon
                         ? new CompoundObjectId(root.getObjectId().getIdSnapshot())
                         : new SimpleObjectId(root.getObjectId().getIdSnapshot().values().iterator().next());
 
-                AgRelationship rel = parent.getAgEntity().getRelationship(e.getKey());
+                AgRelationship rel = parent.getChild(e.getKey()).getIncoming();
                 if (rel.isToMany() && result instanceof List) {
                     List r = (List) result;
 

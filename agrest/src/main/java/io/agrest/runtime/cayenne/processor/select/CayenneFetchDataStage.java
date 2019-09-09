@@ -83,7 +83,7 @@ public class CayenneFetchDataStage implements Processor<SelectContext<?>> {
 
             List childObjects = fetchEntity(childEntity);
 
-            AgRelationship rel = parent.getAgEntity().getRelationship(e.getKey());
+            AgRelationship rel = parent.getChild(e.getKey()).getIncoming();
 
             BiConsumer<AgObjectId, Object> resultAccum = rel.isToMany()
                     ? (i, o) -> childEntity.addToManyResult(i, o)

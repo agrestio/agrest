@@ -1,6 +1,7 @@
 package io.agrest.runtime.entity;
 
 import io.agrest.ResourceEntity;
+import io.agrest.meta.AgDataMap;
 import io.agrest.meta.AgEntityOverlay;
 import io.agrest.meta.AgRelationship;
 
@@ -18,8 +19,12 @@ public class PhantomTrackingResourceEntityTreeBuilder extends ResourceEntityTree
 
     private Set<ResourceEntity<?>> nonPhantomEntities;
 
-    public PhantomTrackingResourceEntityTreeBuilder(ResourceEntity<?> rootEntity, Map<String, AgEntityOverlay<?>> entityOverlays) {
-        super(rootEntity, entityOverlays);
+    public PhantomTrackingResourceEntityTreeBuilder(
+            ResourceEntity<?> rootEntity,
+            AgDataMap agDataMap,
+            Map<String, AgEntityOverlay<?>> entityOverlays) {
+
+        super(rootEntity, agDataMap, entityOverlays);
         this.nonPhantomEntities = new HashSet<>();
 
         // "root" always a candidate for defaults, as it is included implicitly

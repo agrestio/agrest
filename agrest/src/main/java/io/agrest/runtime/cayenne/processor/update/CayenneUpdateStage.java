@@ -178,7 +178,7 @@ public class CayenneUpdateStage extends CayenneUpdateDataStoreStage {
                 List<Property> properties = new ArrayList<>();
                 properties.add(Property.createSelf(child.getType()));
 
-                AgRelationship relationship = entity.getAgEntity().getRelationship(e.getKey());
+                AgRelationship relationship = entity.getChild(e.getKey()).getIncoming();
 
                 if (relationship instanceof CayenneAgRelationship) {
 
@@ -216,7 +216,7 @@ public class CayenneUpdateStage extends CayenneUpdateDataStoreStage {
 
                 List childObjects = fetchEntity(context, childEntity);
 
-                AgRelationship rel = parent.getAgEntity().getRelationship(e.getKey());
+                AgRelationship rel = parent.getChild(e.getKey()).getIncoming();
 
                 assignChildrenToParent(
                         parent,
