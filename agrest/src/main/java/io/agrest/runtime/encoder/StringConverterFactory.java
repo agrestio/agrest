@@ -18,10 +18,11 @@ public class StringConverterFactory implements IStringConverterFactory {
     // these are explicit overrides for named attributes
     private Map<String, StringConverter> convertersByPath;
 
-    public StringConverterFactory(Map<Class<?>, StringConverter> knownConverters,
-                                  StringConverter defaultConverter) {
-        // creating a concurrent copy of the provided map - we'll be expanding it dynamically.
-        this.convertersByJavaType = new ConcurrentHashMap<>(knownConverters);
+    public StringConverterFactory(
+            Map<Class<?>, StringConverter> knownConverters,
+            StringConverter defaultConverter) {
+
+        this.convertersByJavaType = knownConverters;
         this.defaultConverter = defaultConverter;
         this.convertersByPath = new ConcurrentHashMap<>();
     }
@@ -47,8 +48,8 @@ public class StringConverterFactory implements IStringConverterFactory {
         AgAttribute attribute = entity.getAttribute(attributeName);
 
         if (attribute == null) {
-            throw new AgException(Status.BAD_REQUEST, "Invalid attribute: '" + entity.getName() + "."
-                    + attributeName + "'");
+            throw new AgException(Status.BAD_REQUEST,
+                    "Invalid attribute: '" + entity.getName() + "." + attributeName + "'");
         }
 
         return buildConverter(attribute);
@@ -65,6 +66,6 @@ public class StringConverterFactory implements IStringConverterFactory {
      * @since 2.11
      */
     protected StringConverter buildConverter(Class<?> javaType) {
-        return convertersByJavaType.computeIfAbsent(javaType, vt -> defaultConverter);
+        return convertersByJavaType.getOrDefault(javaType, defaultConverter);
     }
 }
