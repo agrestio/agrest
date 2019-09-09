@@ -69,16 +69,16 @@ public class CayenneFetchDataStage implements Processor<SelectContext<?>> {
         List<T> objects = persister.sharedContext().select(select);
 
         if (resourceEntity.getMapBy() != null) {
-            fetchChildren(resourceEntity, resourceEntity.getMapBy().getChildren());
+            fetchChildren(resourceEntity.getMapBy());
         }
 
-        fetchChildren(resourceEntity, resourceEntity.getChildren());
+        fetchChildren(resourceEntity);
 
         return objects;
     }
 
-    protected <T> void fetchChildren(ResourceEntity<T> parent, Map<String, ResourceEntity<?>> children) {
-        for (Map.Entry<String, ResourceEntity<?>> e : children.entrySet()) {
+    protected <T> void fetchChildren(ResourceEntity<T> parent) {
+        for (Map.Entry<String, ResourceEntity<?>> e : parent.getChildren().entrySet()) {
             ResourceEntity childEntity = e.getValue();
 
             List childObjects = fetchEntity(childEntity);
