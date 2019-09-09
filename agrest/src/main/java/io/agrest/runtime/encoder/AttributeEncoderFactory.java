@@ -5,7 +5,6 @@ import io.agrest.ResourceEntity;
 import io.agrest.encoder.Encoder;
 import io.agrest.encoder.IdEncoder;
 import io.agrest.meta.AgAttribute;
-import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgRelationship;
 import io.agrest.property.IdReader;
 import io.agrest.property.PropertyBuilder;
@@ -33,7 +32,7 @@ public class AttributeEncoderFactory implements IAttributeEncoderFactory {
     }
 
     @Override
-    public EntityProperty getAttributeProperty(AgEntity<?> entity, AgAttribute attribute) {
+    public EntityProperty getAttributeProperty(ResourceEntity<?> entity, AgAttribute attribute) {
         String key = entity.getName() + "." + attribute.getName();
         return attributePropertiesByPath.computeIfAbsent(key, k -> buildAttributeProperty(attribute));
     }

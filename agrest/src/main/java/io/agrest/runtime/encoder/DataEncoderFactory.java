@@ -116,9 +116,7 @@ public class DataEncoderFactory {
         Map<String, EntityProperty> attributeEncoders = new HashMap<>();
 
         for (AgAttribute attribute : resourceEntity.getAttributes().values()) {
-            EntityProperty property = attributeEncoderFactory.getAttributeProperty(
-                    resourceEntity.getAgEntity(),
-                    attribute);
+            EntityProperty property = attributeEncoderFactory.getAttributeProperty(resourceEntity, attribute);
             attributeEncoders.put(attribute.getName(), property);
         }
 
