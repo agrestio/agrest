@@ -7,8 +7,8 @@ import io.agrest.ResourceEntity;
  */
 public interface IMapByMerger {
 
-    void merge(ResourceEntity<?> resourceEntity, String mapByPath);
+    <T> void merge(ResourceEntity<T> entity, String mapByPath);
 
-    void mergeIncluded(ResourceEntity<?> resourceEntity, String mapByPath);
+    <T> void mergeIncluded(ResourceEntity<T> entity, String mapByPath);
 
 }

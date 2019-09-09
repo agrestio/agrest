@@ -15,53 +15,57 @@ public class MapByMerger implements IMapByMerger {
     private static final Logger LOGGER = LoggerFactory.getLogger(MapByMerger.class);
 
     @Override
-    public void merge(ResourceEntity<?> resourceEntity, String mapByPath) {
+    public <T> void merge(ResourceEntity<T> entity, String mapByPath) {
         if (mapByPath == null) {
             return;
         }
 
         if (mapByPath != null) {
-            AgAttribute attribute = resourceEntity.getAgEntity().getAttribute(mapByPath);
+            ResourceEntity<?> mapByEntity = toMapByEntity(entity);
+
+            AgAttribute attribute = entity.getAgEntity().getAttribute(mapByPath);
             if (attribute != null) {
-                ResourceEntity<?> mapByEntity = new ResourceEntity<>(resourceEntity.getAgEntity());
                 mapByEntity.getAttributes().put(attribute.getName(), attribute);
-                resourceEntity.mapBy(mapByEntity, attribute.getName());
+                entity.mapBy(mapByEntity, attribute.getName());
             } else {
-                ResourceEntity<?> mapByEntity = new ResourceEntity<>(resourceEntity.getAgEntity());
                 IncludeMerger.checkTooLong(mapByPath);
 
                 // TODO: Non-phantom entity tracking HashSet is not really used here... Should we unwind it from include path
                 //  processing somehow? (an option is to track it inside ResourceEntity seems dirty)
                 IncludeMerger.processIncludePath(mapByEntity, mapByPath, new HashSet<>());
-                resourceEntity.mapBy(mapByEntity, mapByPath);
+                entity.mapBy(mapByEntity, mapByPath);
             }
         }
-
     }
 
     @Override
-    public void mergeIncluded(ResourceEntity<?> resourceEntity, String mapByPath) {
+    public <T> void mergeIncluded(ResourceEntity<T> entity, String mapByPath) {
         if (mapByPath == null) {
             return;
         }
 
-        if (resourceEntity == null) {
+        if (entity == null) {
             LOGGER.info("Ignoring 'mapBy:{}' for non-relationship property", mapByPath);
             return;
         }
 
         // either root list, or to-many relationship
-        if (resourceEntity.getIncoming() == null || resourceEntity.getIncoming().isToMany()) {
+        if (entity.getIncoming() == null || entity.getIncoming().isToMany()) {
 
-            ResourceEntity<?> mapByRoot = new ResourceEntity<>(resourceEntity.getAgEntity());
+            ResourceEntity<?> mapByRoot = toMapByEntity(entity);
+
             IncludeMerger.checkTooLong(mapByPath);
             // TODO: Non-phantom entity tracking HashSet is not really used here... Should we unwind it from include path
             //  processing somehow? (an option is to track it inside ResourceEntity seems dirty)
             IncludeMerger.processIncludePath(mapByRoot, mapByPath, new HashSet<>());
-            resourceEntity.mapBy(mapByRoot, mapByPath);
+            entity.mapBy(mapByRoot, mapByPath);
 
         } else {
             LOGGER.info("Ignoring 'mapBy:" + mapByPath + "' for to-one relationship property");
         }
+    }
+
+    private <T> ResourceEntity<T> toMapByEntity(ResourceEntity<T> entity) {
+        return new ResourceEntity<>(entity.getAgEntity(), entity.getAgEntityOverlay());
     }
 }

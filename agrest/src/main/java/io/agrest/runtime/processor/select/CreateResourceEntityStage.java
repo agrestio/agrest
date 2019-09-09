@@ -51,7 +51,11 @@ public class CreateResourceEntityStage implements Processor<SelectContext<?>> {
     }
 
     protected <T> void doExecute(SelectContext<T> context) {
-        ResourceEntity<T> resourceEntity = new ResourceEntity<>(metadataService.getAgEntity(context.getType()));
+        Class<T> type = context.getType();
+        ResourceEntity<T> resourceEntity = new ResourceEntity<>(
+                metadataService.getAgEntity(type),
+                context.getEntityOverlay(type)
+        );
 
         // TODO: no reason why extra properties can't be hierarchical, i.e. we need to parse dot-path here and assign
         //  children to child ResourceEntities

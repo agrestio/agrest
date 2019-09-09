@@ -3,6 +3,7 @@ package io.agrest;
 import io.agrest.encoder.EntityEncoderFilter;
 import io.agrest.meta.AgAttribute;
 import io.agrest.meta.AgEntity;
+import io.agrest.meta.AgEntityOverlay;
 import io.agrest.meta.AgRelationship;
 import org.apache.cayenne.exp.Expression;
 import org.apache.cayenne.query.Ordering;
@@ -30,6 +31,7 @@ public class ResourceEntity<T> {
     private boolean idIncluded;
 
     private AgEntity<T> agEntity;
+    private AgEntityOverlay<T> agEntityOverlay;
     private Map<String, AgAttribute> attributes;
     private Collection<String> defaultProperties;
 
@@ -50,7 +52,11 @@ public class ResourceEntity<T> {
     private List<T> result;
     private Map<AgObjectId, Object> parentToChildResult;
 
-    public ResourceEntity(AgEntity<T> agEntity) {
+    public ResourceEntity(AgEntity<T> agEntity, AgEntityOverlay<T> agEntityOverlay) {
+
+        this.agEntity = agEntity;
+        this.agEntityOverlay = agEntityOverlay;
+
         this.idIncluded = false;
         this.attributes = new HashMap<>();
         this.defaultProperties = new HashSet<>();
@@ -58,14 +64,13 @@ public class ResourceEntity<T> {
         this.orderings = new ArrayList<>(2);
         this.extraProperties = new HashMap<>();
         this.includedExtraProperties = new HashMap<>();
-        this.agEntity = agEntity;
         this.result = new ArrayList<>();
         this.parentToChildResult = new LinkedHashMap<>();
         this.entityEncoderFilters = new ArrayList<>(3);
     }
 
-    public ResourceEntity(AgEntity<T> agEntity, AgRelationship incoming) {
-        this(agEntity);
+    public ResourceEntity(AgEntity<T> agEntity, AgEntityOverlay<T> agEntityOverlay, AgRelationship incoming) {
+        this(agEntity, agEntityOverlay);
         this.incoming = incoming;
     }
 
@@ -81,6 +86,13 @@ public class ResourceEntity<T> {
      */
     public AgEntity<T> getAgEntity() {
         return agEntity;
+    }
+
+    /**
+     * @since 3.4
+     */
+    public AgEntityOverlay<T> getAgEntityOverlay() {
+        return agEntityOverlay;
     }
 
     public AgRelationship getIncoming() {
@@ -120,7 +132,6 @@ public class ResourceEntity<T> {
     public void setSelect(SelectQuery<T> select) {
         this.select = select;
     }
-
 
     /**
      * @since 3.1
