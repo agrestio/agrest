@@ -9,19 +9,9 @@ import java.util.Map;
  * @since 2.13
  */
 public interface IMapByMerger {
-
-    // TODO: "merge" and "mergeIncluded" seem to do the same thing. Why 2 methods?
-
+    
     /**
      * @since 3.4 additionally takes request overlays
      */
     <T> void merge(ResourceEntity<T> entity, String mapByPath, Map<Class<?>, AgEntityOverlay<?>> overlays);
-
-    /**
-     * @since 3.4 additionally takes request overlays
-     */
-    <T> void mergeIncluded(
-            ResourceEntity<T> childEntity,
-            String incomingMapByPath,
-            Map<Class<?>, AgEntityOverlay<?>> requestOverlays);
 }
