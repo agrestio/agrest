@@ -161,7 +161,7 @@ public abstract class CayenneUpdateDataStoreStage implements Processor<UpdateCon
         Map<DbAttribute, Object> idByDbAttribute = new HashMap<>((int) (idByAgAttribute.size() / 0.75) + 1);
         for (Map.Entry<String, Object> e : idByAgAttribute.entrySet()) {
 
-            AgAttribute agAttribute = agEntity.getId(e.getKey());
+            AgAttribute agAttribute = agEntity.getIdAttribute(e.getKey());
             if (agAttribute == null) {
                 agAttribute = agEntity.getAttribute(e.getKey());
             }

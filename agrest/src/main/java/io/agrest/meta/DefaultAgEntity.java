@@ -56,7 +56,7 @@ public class DefaultAgEntity<T> implements AgEntity<T> {
     }
 
     @Override
-    public AgAttribute getId(String name) {
+    public AgAttribute getIdAttribute(String name) {
         return ids.get(name);
     }
 
