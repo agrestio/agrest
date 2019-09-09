@@ -44,6 +44,8 @@ public class CayenneEntityCompiler implements AgEntityCompiler {
 
     private <T> AgEntity<T> doCompile(Class<T> type, AgDataMap dataMap) {
         LOGGER.debug("compiling Cayenne entity for type: {}", type);
-        return new CayenneAgEntityBuilder<>(type, dataMap, resolver, entityOverlays).build();
+        return new CayenneAgEntityBuilder<>(type, dataMap, resolver)
+                .overlay(entityOverlays.get(type.getName()))
+                .build();
     }
 }

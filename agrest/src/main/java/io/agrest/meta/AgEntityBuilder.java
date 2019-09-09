@@ -33,17 +33,17 @@ public class AgEntityBuilder<T> {
 
     private Class<T> type;
     private String name;
-    private AgDataMap dataMap;
+    private AgDataMap agDataMap;
     private AgEntityOverlay<T> overlay;
 
     private Map<String, io.agrest.meta.AgAttribute> ids;
     private Map<String, io.agrest.meta.AgAttribute> attributes;
     private Map<String, io.agrest.meta.AgRelationship> relationships;
 
-    public AgEntityBuilder(Class<T> type, AgDataMap dataMap) {
+    public AgEntityBuilder(Class<T> type, AgDataMap agDataMap) {
         this.type = type;
         this.name = type.getSimpleName();
-        this.dataMap = dataMap;
+        this.agDataMap = agDataMap;
 
         this.ids = new HashMap<>();
         this.attributes = new HashMap<>();
@@ -190,7 +190,7 @@ public class AgEntityBuilder<T> {
             }
 
             String name = getter.getName();
-            AgEntity<?> targetEntity = dataMap.getEntity(targetType);
+            AgEntity<?> targetEntity = agDataMap.getEntity(targetType);
 
             // unlike Cayenne entity, for POJOs read children from the object, not from the entity..
 
@@ -199,7 +199,6 @@ public class AgEntityBuilder<T> {
             //  but rather on the data retrieval strategy for a given relationship
 
             Function<ResourceEntity<?>, PropertyReader> readerFactory = e -> BeanPropertyReader.reader();
-
             addRelationship(new DefaultAgRelationship(name, targetEntity, toMany, readerFactory));
         }
 
@@ -209,7 +208,12 @@ public class AgEntityBuilder<T> {
     protected void loadOverlays() {
         if (overlay != null) {
             overlay.getAttributes().forEach(this::addAttribute);
-            overlay.getRelationships(dataMap).forEach(this::addRelationship);
+            overlay.getRelationships().forEach(or -> addRelationship(fromOverlay(or)));
         }
+    }
+
+    protected io.agrest.meta.AgRelationship fromOverlay(AgRelationshipOverlay overlay) {
+        AgEntity<?> targetEntity = agDataMap.getEntity(overlay.getTargetType());
+        return new DefaultAgRelationship(overlay.getName(), targetEntity, overlay.isToMany(), overlay.getReaderFactory());
     }
 }

@@ -9,7 +9,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
-import java.util.stream.Stream;
 
 /**
  * A mutable collection of entity properties that are not derived from the object structure. {@link AgEntityOverlay}
@@ -21,7 +20,7 @@ public class AgEntityOverlay<T> {
 
     private Class<T> type;
     private Map<String, AgAttribute> attributes;
-    private Map<String, Function<AgDataMap, AgRelationship>> relationships;
+    private Map<String, AgRelationshipOverlay> relationships;
     private Map<String, PropertyGetter> typeGetters;
 
     public AgEntityOverlay(Class<T> type) {
@@ -49,6 +48,13 @@ public class AgEntityOverlay<T> {
     }
 
     /**
+     * @since 3.4
+     */
+    public AgAttribute getAttribute(String name) {
+        return attributes.get(name);
+    }
+
+    /**
      * @since 2.10
      */
     public Iterable<AgAttribute> getAttributes() {
@@ -56,11 +62,18 @@ public class AgEntityOverlay<T> {
     }
 
     /**
-     * @since 2.10
+     * @since 3.4
      */
-    public Stream<AgRelationship> getRelationships(AgDataMap dataMap) {
+    public AgRelationshipOverlay getRelationship(String name) {
+        return relationships.get(name);
+    }
+
+    /**
+     * @since 3.4
+     */
+    public Iterable<AgRelationshipOverlay> getRelationships() {
         // resolve relationship targets
-        return relationships.values().stream().map(f -> f.apply(dataMap));
+        return relationships.values();
     }
 
     private Map<String, PropertyGetter> getTypeGetters() {
@@ -119,8 +132,8 @@ public class AgEntityOverlay<T> {
      *
      * @since 2.10
      */
-    public <V> AgEntityOverlay<T> addToOneRelationship(String name, Class<V> valueType, Function<T, V> reader) {
-        relationships.put(name, dm -> resolveToOne(dm, name, valueType, reader));
+    public <V> AgEntityOverlay<T> addToOneRelationship(String name, Class<V> targetType, Function<T, V> reader) {
+        relationships.put(name, new DefaultAgRelationshipOverlay(name, targetType, false, e -> asPropertyReader(reader)));
         return this;
     }
 
@@ -131,18 +144,8 @@ public class AgEntityOverlay<T> {
      *
      * @since 2.10
      */
-    public <V> AgEntityOverlay<T> addToManyRelationship(String name, Class<V> valueType, Function<T, List<V>> reader) {
-        relationships.put(name, dm -> resolveToMany(dm, name, valueType, reader));
+    public <V> AgEntityOverlay<T> addToManyRelationship(String name, Class<V> targetType, Function<T, List<V>> reader) {
+        relationships.put(name, new DefaultAgRelationshipOverlay(name, targetType, true, e -> asPropertyReader(reader)));
         return this;
-    }
-
-    private <V> AgRelationship resolveToOne(AgDataMap dataMap, String name, Class<V> type, Function<T, V> reader) {
-        AgEntity<V> target = dataMap.getEntity(type);
-        return new DefaultAgRelationship(name, target, false, e -> asPropertyReader(reader));
-    }
-
-    private <V> AgRelationship resolveToMany(AgDataMap dataMap, String name, Class<V> type, Function<T, List<V>> reader) {
-        AgEntity<V> target = dataMap.getEntity(type);
-        return new DefaultAgRelationship(name, target, true, e -> asPropertyReader(reader));
     }
 }

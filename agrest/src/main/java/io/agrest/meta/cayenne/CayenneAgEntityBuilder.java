@@ -7,7 +7,9 @@ import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgEntityBuilder;
 import io.agrest.meta.AgEntityOverlay;
 import io.agrest.meta.AgRelationship;
+import io.agrest.meta.AgRelationshipOverlay;
 import io.agrest.meta.DefaultAgEntity;
+import io.agrest.meta.DefaultAgRelationship;
 import io.agrest.property.ChildEntityListResultReader;
 import io.agrest.property.ChildEntityResultReader;
 import io.agrest.property.DefaultIdReader;
@@ -36,26 +38,19 @@ public class CayenneAgEntityBuilder<T> {
     private static final Logger LOGGER = LoggerFactory.getLogger(CayenneAgEntityBuilder.class);
 
     private final EntityResolver resolver;
-    private final Map<String, AgEntityOverlay> entityOverlays;
-
     private final Class<T> type;
     private final AgDataMap agDataMap;
     private final ObjEntity cayenneEntity;
-
     private final Map<String, AgAttribute> ids;
     private final Map<String, AgAttribute> attributes;
     private final Map<String, AgRelationship> relationships;
 
+    private AgEntityOverlay<T> overlay;
     private boolean pojoIdReader;
 
-    public CayenneAgEntityBuilder(
-            Class<T> type,
-            AgDataMap agDataMap,
-            EntityResolver resolver,
-            Map<String, AgEntityOverlay> entityOverlays) {
+    public CayenneAgEntityBuilder(Class<T> type, AgDataMap agDataMap, EntityResolver resolver) {
 
         this.resolver = resolver;
-        this.entityOverlays = entityOverlays;
 
         this.type = type;
         this.agDataMap = agDataMap;
@@ -64,6 +59,11 @@ public class CayenneAgEntityBuilder<T> {
         this.ids = new HashMap<>();
         this.attributes = new HashMap<>();
         this.relationships = new HashMap<>();
+    }
+
+    public CayenneAgEntityBuilder<T> overlay(AgEntityOverlay<T> overlay) {
+        this.overlay = overlay;
+        return this;
     }
 
     public AgEntity<T> build() {
@@ -194,12 +194,16 @@ public class CayenneAgEntityBuilder<T> {
     }
 
     protected void applyOverlays() {
-
-        AgEntityOverlay<?> overlay = entityOverlays.get(type.getName());
         if (overlay != null) {
             // TODO: what about overlaying ids?
             overlay.getAttributes().forEach(this::addAttribute);
-            overlay.getRelationships(agDataMap).forEach(this::addRelationship);
+            overlay.getRelationships().forEach(ro -> addRelationship(fromOverlay(ro)));
         }
+    }
+
+    protected AgRelationship fromOverlay(AgRelationshipOverlay overlay) {
+        // I guess there's no point or benefit in creating CayenneAgRelationship for any overlays?
+        AgEntity<?> targetEntity = agDataMap.getEntity(overlay.getTargetType());
+        return new DefaultAgRelationship(overlay.getName(), targetEntity, overlay.isToMany(), overlay.getReaderFactory());
     }
 }
