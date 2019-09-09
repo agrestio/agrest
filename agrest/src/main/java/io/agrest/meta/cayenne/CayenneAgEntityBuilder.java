@@ -105,6 +105,8 @@ public class CayenneAgEntityBuilder<T> {
         for (ObjRelationship r : cayenneEntity.getRelationships()) {
 
             Class<?> targetEntityType = resolver.getClassDescriptor(r.getTargetEntityName()).getObjectClass();
+
+            // 'agDataMap.getEntity' will compile the entity on the fly if needed
             AgEntity<?> targetEntity = agDataMap.getEntity(targetEntityType);
 
             // TODO: a decision whether to read results from the object or from the child entity (via

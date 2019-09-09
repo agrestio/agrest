@@ -25,18 +25,8 @@ public class LazyAgDataMap implements AgDataMap {
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T> AgEntity<T> getEntity(Class<T> type) {
-		AgEntity<?> e = entities.get(type);
-
-		// lazily create entities, improving startup time
-		// and decreasing memory footprint.
-		if (e == null) {
-
-			AgEntity<?> newEntity = compile(type);
-			AgEntity<?> existingEntity = entities.putIfAbsent(type, newEntity);
-			e = existingEntity != null ? existingEntity : newEntity;
-		}
-
-		return (AgEntity<T>) e;
+		// lazily create entities, improving startup time and decreasing memory footprint.
+		return (AgEntity<T>) entities.computeIfAbsent(type, t -> compile(type));
 	}
 
 	protected <T> AgEntity<T> compile(Class<T> type) {
