@@ -58,9 +58,7 @@ public class CayenneAssembleQueryStage implements Processor<SelectContext<?>> {
             }
         }
 
-        if (context.getParent() != null
-                // TODO override equals() for AgEntity
-                && context.getEntity().getAgEntity().getName().equals(entity.getAgEntity().getName())) {
+        if (context.getParent() != null && context.getEntity().getName().equals(entity.getName())) {
             Expression qualifier = context.getParent().qualifier(entityResolver);
             query.andQualifier(qualifier);
         }
@@ -136,7 +134,7 @@ public class CayenneAssembleQueryStage implements Processor<SelectContext<?>> {
             return query;
         }
 
-        return resourceEntity.getSelect() != null ? resourceEntity.getSelect() : new SelectQuery<>(resourceEntity.getAgEntity().getType());
+        return resourceEntity.getSelect() != null ? resourceEntity.getSelect() : new SelectQuery<>(resourceEntity.getType());
     }
 
     private Expression buildIdQualifer(AgEntity<?> entity, AgObjectId id) {

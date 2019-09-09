@@ -52,7 +52,7 @@ public class AttributeEncoderFactory implements IAttributeEncoderFactory {
 
     @Override
     public Optional<EntityProperty> getIdProperty(ResourceEntity<?> entity) {
-        String key = entity.getAgEntity().getName();
+        String key = entity.getName();
         return idPropertiesByEntity.computeIfAbsent(key, k -> buildIdProperty(entity));
     }
 
@@ -82,7 +82,7 @@ public class AttributeEncoderFactory implements IAttributeEncoderFactory {
                         .property((r, n) -> ir1.id(r))
                         .encodedWith(new IdEncoder(getEncoder(ids.iterator().next().getType())));
                 return Optional.of(p1);
-                
+
             default:
 
                 // keeping attribute encoders in alphabetical order

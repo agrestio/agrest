@@ -34,13 +34,13 @@ public class EntityMetadataEncoder extends AbstractEncoder {
         // sanity check
         if (!entity.equals(object)) {
             throw new IllegalArgumentException(
-                    "Expected entity: " + entity.getAgEntity().getName() + ", was object of class: " + object.getClass().getName()
+                    "Expected entity: " + entity.getName() + ", was object of class: " + object.getClass().getName()
             );
         }
 
         out.writeStartObject();
 
-        out.writeStringField("name", entity.getAgEntity().getName());
+        out.writeStringField("name", entity.getName());
 
         out.writeArrayFieldStart("properties");
         for (Map.Entry<String, PropertyHelper> e : properties.entrySet()) {

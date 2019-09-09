@@ -72,6 +72,13 @@ public class ResourceEntity<T> {
     }
 
     /**
+     * @since 3.4
+     */
+    public String getName() {
+        return agEntity.getName();
+    }
+
+    /**
      * @since 1.12
      */
     public AgEntity<T> getAgEntity() {

@@ -142,7 +142,7 @@ public class CayenneUpdateStage extends CayenneUpdateDataStoreStage {
         if (context.isById() && objects.size() > 1) {
             throw new AgException(Response.Status.INTERNAL_SERVER_ERROR, String.format(
                     "Found more than one object for ID '%s' and entity '%s'",
-                    context.getId(), context.getEntity().getAgEntity().getName()));
+                    context.getId(), context.getEntity().getName()));
         }
 
         return objects;
@@ -151,7 +151,7 @@ public class CayenneUpdateStage extends CayenneUpdateDataStoreStage {
 
     <T> SelectQuery<T> buildQuery(UpdateContext<T> context, ResourceEntity<T> entity) {
 
-        SelectQuery<T> query = SelectQuery.query(entity.getAgEntity().getType());
+        SelectQuery<T> query = SelectQuery.query(entity.getType());
 
         // apply various request filters identifying the span of the collection
 
