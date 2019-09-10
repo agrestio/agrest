@@ -20,21 +20,23 @@ import java.util.concurrent.ConcurrentHashMap;
 public class AttributeEncoderFactory implements IAttributeEncoderFactory {
 
     private ValueEncoders valueEncoders;
-
-    // these are explicit overrides for named attributes
-    private Map<String, EntityProperty> attributePropertiesByPath;
     private Map<String, Optional<EntityProperty>> idPropertiesByEntity;
 
     public AttributeEncoderFactory(@Inject ValueEncoders valueEncoders) {
         this.valueEncoders = valueEncoders;
-        this.attributePropertiesByPath = new ConcurrentHashMap<>();
         this.idPropertiesByEntity = new ConcurrentHashMap<>();
     }
 
     @Override
     public EntityProperty getAttributeProperty(ResourceEntity<?> entity, AgAttribute attribute) {
-        String key = entity.getName() + "." + attribute.getName();
-        return attributePropertiesByPath.computeIfAbsent(key, k -> buildAttributeProperty(attribute));
+
+        // Can't cache the reader, as it may be overlaid and hence request state-dependent
+        Encoder encoder = getEncoder(attribute.getType());
+
+        // all attributes these days have a reader, but check just in case
+        return attribute.getPropertyReader() != null
+                ? PropertyBuilder.property(attribute.getPropertyReader()).encodedWith(encoder)
+                : PropertyBuilder.property().encodedWith(encoder);
     }
 
     @Override
@@ -51,17 +53,9 @@ public class AttributeEncoderFactory implements IAttributeEncoderFactory {
 
     @Override
     public Optional<EntityProperty> getIdProperty(ResourceEntity<?> entity) {
+        // id properties are not (yet) overlaid and hence can be cached
         String key = entity.getName();
         return idPropertiesByEntity.computeIfAbsent(key, k -> buildIdProperty(entity));
-    }
-
-    protected EntityProperty buildAttributeProperty(AgAttribute attribute) {
-        Encoder encoder = getEncoder(attribute.getType());
-
-        // all attributes these days have a reader, but check just in case
-        return attribute.getPropertyReader() != null
-                ? PropertyBuilder.property(attribute.getPropertyReader()).encodedWith(encoder)
-                : PropertyBuilder.property().encodedWith(encoder);
     }
 
     protected Optional<EntityProperty> buildIdProperty(ResourceEntity<?> entity) {

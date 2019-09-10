@@ -63,6 +63,30 @@ public class GET_EntityOverlay_PerRequestIT extends JerseyAndDerbyCase {
     }
 
     @Test
+    public void test_Overlay_NoReaderCaching() {
+
+        e4().insertColumns("id").values(2).values(4).exec();
+
+        Response r1 = target("/e4/xyz")
+                .queryParam("sort", "id")
+                .queryParam("include", "fromRequest")
+                .request()
+                .get();
+
+        onSuccess(r1).bodyEquals(2, "{\"fromRequest\":\"xyz\"},{\"fromRequest\":\"xyz\"}");
+
+
+        // at some point in time readers were cached, so changing the URL parameter would still return the old result
+        Response r2 = target("/e4/abc")
+                .queryParam("sort", "id")
+                .queryParam("include", "fromRequest")
+                .request()
+                .get();
+
+        onSuccess(r2).bodyEquals(2, "{\"fromRequest\":\"abc\"},{\"fromRequest\":\"abc\"}");
+    }
+
+    @Test
     public void test_OverlayedRelationship() {
 
         e4().insertColumns("id", "c_varchar").values(2, "a").values(4, "b").exec();
