@@ -1,7 +1,7 @@
 package io.agrest.runtime.constraints;
 
 import io.agrest.EntityConstraint;
-import io.agrest.ResourceEntity;
+import io.agrest.RootResourceEntity;
 import io.agrest.constraints.Constraint;
 import io.agrest.it.fixture.cayenne.E1;
 import io.agrest.it.fixture.cayenne.E2;
@@ -56,7 +56,7 @@ public class ConstraintsHandlerWithDefaultsTest extends TestWithCayenneMapping {
 
 		Constraint<E1> tc1 = Constraint.excludeAll(E1.class).attributes(E1.DESCRIPTION);
 
-		ResourceEntity<E1> te1 = new ResourceEntity<>(age1, null);
+		RootResourceEntity<E1> te1 = new RootResourceEntity<>(age1, null);
 		appendAttribute(te1, E1.AGE, Integer.class);
 		appendAttribute(te1, E1.DESCRIPTION, String.class);
 
@@ -69,7 +69,7 @@ public class ConstraintsHandlerWithDefaultsTest extends TestWithCayenneMapping {
 	@Test
 	public void testConstrainResponse_Default() {
 
-		ResourceEntity<E1> te1 = new ResourceEntity<>(age1, null);
+		RootResourceEntity<E1> te1 = new RootResourceEntity<>(age1, null);
 		appendAttribute(te1, E1.AGE, Integer.class);
 		appendAttribute(te1, E1.DESCRIPTION, String.class);
 
@@ -82,7 +82,7 @@ public class ConstraintsHandlerWithDefaultsTest extends TestWithCayenneMapping {
 	@Test
 	public void testConstrainResponse_None() {
 
-		ResourceEntity<E2> te1 = new ResourceEntity<>(age2, null);
+		RootResourceEntity<E2> te1 = new RootResourceEntity<>(age2, null);
 		appendAttribute(te1, E2.ADDRESS, String.class);
 		appendAttribute(te1, E2.NAME, String.class);
 

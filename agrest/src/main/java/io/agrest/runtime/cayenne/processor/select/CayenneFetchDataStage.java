@@ -2,6 +2,7 @@ package io.agrest.runtime.cayenne.processor.select;
 
 import io.agrest.AgException;
 import io.agrest.AgObjectId;
+import io.agrest.ChildResourceEntity;
 import io.agrest.CompoundObjectId;
 import io.agrest.ResourceEntity;
 import io.agrest.SimpleObjectId;
@@ -78,8 +79,8 @@ public class CayenneFetchDataStage implements Processor<SelectContext<?>> {
     }
 
     protected <T> void fetchChildren(ResourceEntity<T> parent) {
-        for (Map.Entry<String, ResourceEntity<?>> e : parent.getChildren().entrySet()) {
-            ResourceEntity childEntity = e.getValue();
+        for (Map.Entry<String, ChildResourceEntity<?>> e : parent.getChildren().entrySet()) {
+            ChildResourceEntity childEntity = e.getValue();
 
             List childObjects = fetchEntity(childEntity);
 

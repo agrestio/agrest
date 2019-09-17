@@ -2,6 +2,7 @@ package io.agrest.runtime.cayenne.processor.select;
 
 import io.agrest.AgException;
 import io.agrest.AgObjectId;
+import io.agrest.ChildResourceEntity;
 import io.agrest.ResourceEntity;
 import io.agrest.meta.AgAttribute;
 import io.agrest.meta.AgEntity;
@@ -74,12 +75,12 @@ public class CayenneAssembleQueryStage implements Processor<SelectContext<?>> {
         entity.setSelect(query);
 
         if (entity.getMapBy() != null) {
-            for (ResourceEntity<?> c : entity.getMapBy().getChildren().values()) {
+            for (ChildResourceEntity<?> c : entity.getMapBy().getChildren().values()) {
                 buildChildQuery(context, entity, c);
             }
         }
 
-        for (ResourceEntity<?> c : entity.getChildren().values()) {
+        for (ChildResourceEntity<?> c : entity.getChildren().values()) {
             buildChildQuery(context, entity, c);
         }
 
@@ -87,7 +88,7 @@ public class CayenneAssembleQueryStage implements Processor<SelectContext<?>> {
     }
 
 
-    private void buildChildQuery(SelectContext context, ResourceEntity<?> parent, ResourceEntity child) {
+    private void buildChildQuery(SelectContext context, ResourceEntity<?> parent, ChildResourceEntity child) {
 
         // if related entity is not managed by Cayenne
         if (entityResolver.getObjEntity(child.getType()) == null) {

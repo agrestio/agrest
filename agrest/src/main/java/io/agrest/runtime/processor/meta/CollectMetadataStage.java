@@ -1,6 +1,7 @@
 package io.agrest.runtime.processor.meta;
 
-import io.agrest.ResourceEntity;
+import io.agrest.ChildResourceEntity;
+import io.agrest.RootResourceEntity;
 import io.agrest.meta.AgAttribute;
 import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgRelationship;
@@ -57,7 +58,7 @@ public class CollectMetadataStage implements Processor<MetadataContext<?>> {
             }
         }
 
-        ResourceEntity<T> resourceEntity = createDefaultResourceEntity(entity);
+        RootResourceEntity<T> resourceEntity = createDefaultResourceEntity(entity);
         constraintsHandler.constrainResponse(resourceEntity, null, context.getConstraint());
         resourceEntity.setApplicationBase(getBaseUrl(context));
 
@@ -72,10 +73,10 @@ public class CollectMetadataStage implements Processor<MetadataContext<?>> {
         );
     }
 
-    private <T> ResourceEntity<T> createDefaultResourceEntity(AgEntity<T> entity) {
+    private <T> RootResourceEntity<T> createDefaultResourceEntity(AgEntity<T> entity) {
 
         // TODO: support entity overlays (second null argument) in meta requests
-        ResourceEntity<T> resourceEntity = new ResourceEntity<>(entity, null);
+        RootResourceEntity<T> resourceEntity = new RootResourceEntity<>(entity, null);
 
         for (AgAttribute a : entity.getAttributes()) {
             resourceEntity.getAttributes().put(a.getName(), a);
@@ -83,7 +84,7 @@ public class CollectMetadataStage implements Processor<MetadataContext<?>> {
 
         for (AgRelationship r : entity.getRelationships()) {
             // TODO: support entity overlays (second null argument) in meta requests
-            ResourceEntity<?> child = new ResourceEntity<>(r.getTargetEntity(), null, r);
+            ChildResourceEntity<?> child = new ChildResourceEntity<>(r.getTargetEntity(), null, r);
             resourceEntity.getChildren().put(r.getName(), child);
         }
 

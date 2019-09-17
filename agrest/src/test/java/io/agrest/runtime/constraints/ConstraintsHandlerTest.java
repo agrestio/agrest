@@ -1,7 +1,9 @@
 package io.agrest.runtime.constraints;
 
+import io.agrest.ChildResourceEntity;
 import io.agrest.EntityConstraint;
 import io.agrest.ResourceEntity;
+import io.agrest.RootResourceEntity;
 import io.agrest.SizeConstraints;
 import io.agrest.constraints.Constraint;
 import io.agrest.it.fixture.cayenne.E1;
@@ -89,25 +91,25 @@ public class ConstraintsHandlerTest {
         SizeConstraints s1 = new SizeConstraints().fetchOffset(5);
         SizeConstraints s2 = new SizeConstraints().fetchOffset(0);
 
-        ResourceEntity<E1> t1 = new ResourceEntity<>(age0, null);
+        ResourceEntity<E1> t1 = new RootResourceEntity<>(age0, null);
         t1.setFetchOffset(0);
         constraintHandler.constrainResponse(t1, s1, null);
         assertEquals(0, t1.getFetchOffset());
         assertEquals(5, s1.getFetchOffset());
 
-        ResourceEntity<E1> t2 = new ResourceEntity<>(age0, null);
+        ResourceEntity<E1> t2 = new RootResourceEntity<>(age0, null);
         t2.setFetchOffset(3);
         constraintHandler.constrainResponse(t2, s1, null);
         assertEquals(3, t2.getFetchOffset());
         assertEquals(5, s1.getFetchOffset());
 
-        ResourceEntity<E1> t3 = new ResourceEntity<>(age0, null);
+        ResourceEntity<E1> t3 = new RootResourceEntity<>(age0, null);
         t3.setFetchOffset(6);
         constraintHandler.constrainResponse(t3, s1, null);
         assertEquals(5, t3.getFetchOffset());
         assertEquals(5, s1.getFetchOffset());
 
-        ResourceEntity<E1> t4 = new ResourceEntity<>(age0, null);
+        ResourceEntity<E1> t4 = new RootResourceEntity<>(age0, null);
         t4.setFetchOffset(6);
         constraintHandler.constrainResponse(t4, s2, null);
         assertEquals(6, t4.getFetchOffset());
@@ -120,36 +122,36 @@ public class ConstraintsHandlerTest {
         SizeConstraints s1 = new SizeConstraints().fetchLimit(5);
         SizeConstraints s2 = new SizeConstraints().fetchLimit(0);
 
-        ResourceEntity<E1> t1 = new ResourceEntity<>(age0, null);
+        ResourceEntity<E1> t1 = new RootResourceEntity<>(age0, null);
         constraintHandler.constrainResponse(t1, s1, null);
         assertEquals(5, t1.getFetchLimit());
         assertEquals(5, s1.getFetchLimit());
 
-        ResourceEntity<E1> t1_1 = new ResourceEntity<>(age0, null);
+        ResourceEntity<E1> t1_1 = new RootResourceEntity<>(age0, null);
         t1_1.setFetchLimit(0);
         constraintHandler.constrainResponse(t1_1, s1, null);
         assertEquals(5, t1_1.getFetchLimit());
         assertEquals(5, s1.getFetchLimit());
 
-        ResourceEntity<E1> t1_2 = new ResourceEntity<>(age0, null);
+        ResourceEntity<E1> t1_2 = new RootResourceEntity<>(age0, null);
         t1_2.setFetchLimit(-1);
         constraintHandler.constrainResponse(t1_2, s1, null);
         assertEquals(5, t1_2.getFetchLimit());
         assertEquals(5, s1.getFetchLimit());
 
-        ResourceEntity<E1> t2 = new ResourceEntity<>(age0, null);
+        ResourceEntity<E1> t2 = new RootResourceEntity<>(age0, null);
         t2.setFetchLimit(3);
         constraintHandler.constrainResponse(t2, s1, null);
         assertEquals(3, t2.getFetchLimit());
         assertEquals(5, s1.getFetchLimit());
 
-        ResourceEntity<E1> t3 = new ResourceEntity<>(age0, null);
+        ResourceEntity<E1> t3 = new RootResourceEntity<>(age0, null);
         t3.setFetchLimit(6);
         constraintHandler.constrainResponse(t3, s1, null);
         assertEquals(5, t3.getFetchLimit());
         assertEquals(5, s1.getFetchLimit());
 
-        ResourceEntity<E1> t4 = new ResourceEntity<>(age0, null);
+        ResourceEntity<E1> t4 = new RootResourceEntity<>(age0, null);
         t4.setFetchLimit(6);
         constraintHandler.constrainResponse(t4, s2, null);
         assertEquals(6, t4.getFetchLimit());
@@ -161,11 +163,11 @@ public class ConstraintsHandlerTest {
 
         Constraint<E1> tc1 = Constraint.excludeAll(E1.class).attributes("a", "b");
 
-        ResourceEntity<E1> te1 = new ResourceEntity<>(age0, null);
+        ResourceEntity<E1> te1 = new RootResourceEntity<>(age0, null);
         appendAttribute(te1, "c");
         appendAttribute(te1, "b");
 
-        ResourceEntity<?> te11 = new ResourceEntity<>(age2, null);
+        ChildResourceEntity<?> te11 = new ChildResourceEntity<>(age2, null, null);
         appendAttribute(te11, "a1");
         appendAttribute(te11, "b1");
         te1.getChildren().put("d", te11);
@@ -184,16 +186,16 @@ public class ConstraintsHandlerTest {
                 .path("r1.r11", Constraint.excludeAll(E3.class).attributes("p", "r"))
                 .path("r2", Constraint.excludeAll(E4.class).attributes("k", "l"));
 
-        ResourceEntity<E1> te1 = new ResourceEntity<>(age0, null);
+        ResourceEntity<E1> te1 = new RootResourceEntity<>(age0, null);
         appendAttribute(te1, "c");
         appendAttribute(te1, "b");
 
-        ResourceEntity<?> te11 = new ResourceEntity<>(age1, null);
+        ChildResourceEntity<?> te11 = new ChildResourceEntity<>(age1, null, null);
         appendAttribute(te11, "m");
         appendAttribute(te11, "z");
         te1.getChildren().put("r1", te11);
 
-        ResourceEntity<?> te21 = new ResourceEntity<>(age4, null);
+        ChildResourceEntity<?> te21 = new ChildResourceEntity<>(age4, null, null);
         appendAttribute(te21, "p");
         appendAttribute(te21, "z");
         te1.getChildren().put("r3", te21);
@@ -216,17 +218,17 @@ public class ConstraintsHandlerTest {
         Constraint<E1> tc1 = Constraint.excludeAll(E1.class).excludeId();
         Constraint<E1> tc2 = Constraint.excludeAll(E1.class).includeId();
 
-        ResourceEntity<E1> te1 = new ResourceEntity<>(age0, null);
+        ResourceEntity<E1> te1 = new RootResourceEntity<>(age0, null);
         te1.includeId();
         constraintHandler.constrainResponse(te1, null, tc1);
         assertFalse(te1.isIdIncluded());
 
-        ResourceEntity<E1> te2 = new ResourceEntity<>(age0, null);
+        ResourceEntity<E1> te2 = new RootResourceEntity<>(age0, null);
         te2.includeId();
         constraintHandler.constrainResponse(te2, null, tc2);
         assertTrue(te2.isIdIncluded());
 
-        ResourceEntity<E1> te3 = new ResourceEntity<>(age0, null);
+        ResourceEntity<E1> te3 = new RootResourceEntity<>(age0, null);
         te3.excludeId();
         constraintHandler.constrainResponse(te3, null, tc2);
         assertFalse(te3.isIdIncluded());
@@ -239,11 +241,11 @@ public class ConstraintsHandlerTest {
 
         Constraint<E1> tc1 = Constraint.excludeAll(E1.class).and(q1);
 
-        ResourceEntity<E1> te1 = new ResourceEntity<>(age0, null);
+        ResourceEntity<E1> te1 = new RootResourceEntity<>(age0, null);
         constraintHandler.constrainResponse(te1, null, tc1);
         assertEquals(exp("a = 5"), te1.getQualifier());
 
-        ResourceEntity<E1> te2 = new ResourceEntity<>(age0, null);
+        ResourceEntity<E1> te2 = new RootResourceEntity<>(age0, null);
         te2.andQualifier(exp("b = 'd'"));
         constraintHandler.constrainResponse(te2, null, tc1);
         assertEquals(exp("b = 'd' and a = 5"), te2.getQualifier());
@@ -255,26 +257,26 @@ public class ConstraintsHandlerTest {
         Constraint<E1> tc1 = Constraint.excludeAll(E1.class).path("r1",
                 Constraint.excludeAll(E2.class).attribute("a"));
 
-        ResourceEntity<E1> te1MapByTarget = new ResourceEntity<>(age0, null);
+        ChildResourceEntity<E1> te1MapByTarget = new ChildResourceEntity<>(age0, null, null);
         appendAttribute(te1MapByTarget, "b");
 
-        ResourceEntity<E2> te1MapBy = new ResourceEntity<>(age1, null);
+        ResourceEntity<E2> te1MapBy = new RootResourceEntity<>(age1, null);
         te1MapBy.getChildren().put("r1", te1MapByTarget);
 
-        ResourceEntity<E1> te1 = new ResourceEntity<>(age0, null);
+        ResourceEntity<E1> te1 = new RootResourceEntity<>(age0, null);
         te1.mapBy(te1MapBy, "r1.b");
 
         constraintHandler.constrainResponse(te1, null, tc1);
         assertNull(te1.getMapBy());
         assertNull(te1.getMapByPath());
 
-        ResourceEntity<E2> te2MapByTarget = new ResourceEntity<>(age1, null);
+        ChildResourceEntity<E2> te2MapByTarget = new ChildResourceEntity<>(age1, null, null);
         appendAttribute(te2MapByTarget, "a");
 
-        ResourceEntity<E1> te2MapBy = new ResourceEntity<>(age0, null);
+        ResourceEntity<E1> te2MapBy = new RootResourceEntity<>(age0, null);
         te1MapBy.getChildren().put("r1", te2MapByTarget);
 
-        ResourceEntity<E1> te2 = new ResourceEntity<>(age0, null);
+        ResourceEntity<E1> te2 = new RootResourceEntity<>(age0, null);
         te2.mapBy(te2MapBy, "r1.a");
 
         constraintHandler.constrainResponse(te2, null, tc1);
@@ -287,13 +289,13 @@ public class ConstraintsHandlerTest {
 
         Constraint<E1> tc1 = Constraint.excludeAll(E1.class).path("r1", Constraint.excludeAll(E2.class).excludeId());
 
-        ResourceEntity<E1> te1MapByTarget = new ResourceEntity<>(age0, null);
+        ChildResourceEntity<E1> te1MapByTarget = new ChildResourceEntity<>(age0, null, null);
         te1MapByTarget.includeId();
 
-        ResourceEntity<E2> te1MapBy = new ResourceEntity<>(age1, null);
+        ResourceEntity<E2> te1MapBy = new RootResourceEntity<>(age1, null);
         te1MapBy.getChildren().put("r1", te1MapByTarget);
 
-        ResourceEntity<E1> te1 = new ResourceEntity<>(age0, null);
+        ResourceEntity<E1> te1 = new RootResourceEntity<>(age0, null);
         te1.mapBy(te1MapBy, "r1");
 
         constraintHandler.constrainResponse(te1, null, tc1);
@@ -307,13 +309,13 @@ public class ConstraintsHandlerTest {
 
         Constraint<E1> tc1 = Constraint.excludeAll(E1.class).path("r1", Constraint.excludeAll(E2.class).includeId());
 
-        ResourceEntity<E2> te1MapByTarget = new ResourceEntity<>(age1, null);
+        ChildResourceEntity<E2> te1MapByTarget = new ChildResourceEntity<>(age1, null, null);
         te1MapByTarget.includeId();
 
-        ResourceEntity<E1> te1MapBy = new ResourceEntity<>(age0, null);
+        ResourceEntity<E1> te1MapBy = new RootResourceEntity<>(age0, null);
         te1MapBy.getChildren().put("r1", te1MapByTarget);
 
-        ResourceEntity<E1> te1 = new ResourceEntity<>(age0, null);
+        ResourceEntity<E1> te1 = new RootResourceEntity<>(age0, null);
         te1.mapBy(te1MapBy, "r1");
 
         constraintHandler.constrainResponse(te1, null, tc1);

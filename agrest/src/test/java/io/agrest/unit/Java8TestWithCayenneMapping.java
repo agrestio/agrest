@@ -1,6 +1,7 @@
 package io.agrest.unit;
 
 import io.agrest.ResourceEntity;
+import io.agrest.RootResourceEntity;
 import io.agrest.meta.AgEntity;
 import io.agrest.meta.DefaultAgAttribute;
 import io.agrest.meta.cayenne.CayenneEntityCompiler;
@@ -100,8 +101,8 @@ public class Java8TestWithCayenneMapping {
 		return runtime.getChannel().getEntityResolver().getObjEntity(type);
 	}
 
-	protected <T> ResourceEntity<T> getResourceEntity(Class<T> type) {
-		return new ResourceEntity<>(getAgEntity(type), null);
+	protected <T> RootResourceEntity<T> getResourceEntity(Class<T> type) {
+		return new RootResourceEntity<>(getAgEntity(type), null);
 	}
 
 	protected <T> void appendAttribute(ResourceEntity<?> entity, Property<T> property, Class<T> type) {

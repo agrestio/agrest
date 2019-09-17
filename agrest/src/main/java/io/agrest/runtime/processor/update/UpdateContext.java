@@ -1,14 +1,15 @@
 package io.agrest.runtime.processor.update;
 
 import io.agrest.AgException;
+import io.agrest.AgObjectId;
 import io.agrest.AgRequest;
 import io.agrest.CompoundObjectId;
 import io.agrest.DataResponse;
 import io.agrest.EntityParent;
 import io.agrest.EntityUpdate;
-import io.agrest.AgObjectId;
 import io.agrest.ObjectMapperFactory;
 import io.agrest.ResourceEntity;
+import io.agrest.RootResourceEntity;
 import io.agrest.SimpleObjectId;
 import io.agrest.constraints.Constraint;
 import io.agrest.encoder.Encoder;
@@ -29,7 +30,7 @@ import java.util.Map;
  */
 public class UpdateContext<T> extends BaseProcessingContext<T> {
 
-    private ResourceEntity<T> entity;
+    private RootResourceEntity<T> entity;
     private UriInfo uriInfo;
     private AgObjectId id;
     private EntityParent<?> parent;
@@ -202,14 +203,14 @@ public class UpdateContext<T> extends BaseProcessingContext<T> {
     /**
      * @since 1.20
      */
-    public ResourceEntity<T> getEntity() {
+    public RootResourceEntity<T> getEntity() {
         return entity;
     }
 
     /**
      * @since 1.20
      */
-    public void setEntity(ResourceEntity<T> entity) {
+    public void setEntity(RootResourceEntity<T> entity) {
         this.entity = entity;
     }
 

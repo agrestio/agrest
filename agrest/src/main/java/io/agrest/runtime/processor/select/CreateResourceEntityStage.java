@@ -1,7 +1,7 @@
 package io.agrest.runtime.processor.select;
 
 import io.agrest.AgRequest;
-import io.agrest.ResourceEntity;
+import io.agrest.RootResourceEntity;
 import io.agrest.processor.Processor;
 import io.agrest.processor.ProcessorOutcome;
 import io.agrest.runtime.entity.ICayenneExpMerger;
@@ -52,7 +52,7 @@ public class CreateResourceEntityStage implements Processor<SelectContext<?>> {
 
     protected <T> void doExecute(SelectContext<T> context) {
         Class<T> type = context.getType();
-        ResourceEntity<T> resourceEntity = new ResourceEntity<>(
+        RootResourceEntity<T> resourceEntity = new RootResourceEntity<>(
                 metadataService.getAgEntity(type),
                 context.getEntityOverlay(type)
         );

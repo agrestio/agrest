@@ -2,10 +2,12 @@ package io.agrest.runtime.cayenne.processor.update;
 
 import io.agrest.AgException;
 import io.agrest.AgObjectId;
+import io.agrest.ChildResourceEntity;
 import io.agrest.CompoundObjectId;
 import io.agrest.EntityParent;
 import io.agrest.EntityUpdate;
 import io.agrest.ResourceEntity;
+import io.agrest.RootResourceEntity;
 import io.agrest.SimpleObjectId;
 import io.agrest.meta.AgAttribute;
 import io.agrest.meta.AgEntity;
@@ -56,8 +58,8 @@ public abstract class CayenneUpdateDataStoreStage implements Processor<UpdateCon
 
         // Stores parent-child result list in ResourceEntity
         // TODO Replace this by dedicated select child stage during of update stages refactoring
-        ResourceEntity entity = context.getEntity();
-        Map<String, ResourceEntity<?>> children = entity.getChildren();
+        RootResourceEntity entity = context.getEntity();
+        Map<String, ChildResourceEntity<?>> children = entity.getChildren();
         List rootResult = new ArrayList();
         for (EntityUpdate<?> u : context.getUpdates()) {
             DataObject o = (DataObject) u.getMergedTo();
@@ -71,10 +73,10 @@ public abstract class CayenneUpdateDataStoreStage implements Processor<UpdateCon
         return ProcessorOutcome.CONTINUE;
     }
 
-    protected void assignChildrenToParent(DataObject root, ResourceEntity<?> parent, Map<String, ResourceEntity<?>> children) {
+    protected void assignChildrenToParent(DataObject root, ResourceEntity<?> parent, Map<String, ChildResourceEntity<?>> children) {
         if (!children.isEmpty()) {
-            for (Map.Entry<String, ResourceEntity<?>> e : children.entrySet()) {
-                ResourceEntity childEntity = e.getValue();
+            for (Map.Entry<String, ChildResourceEntity<?>> e : children.entrySet()) {
+                ChildResourceEntity childEntity = e.getValue();
 
                 Object result = root.readPropertyDirectly(e.getKey());
                 if (result == null || result instanceof Fault) {

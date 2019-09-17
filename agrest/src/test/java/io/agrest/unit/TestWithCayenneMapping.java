@@ -1,6 +1,8 @@
 package io.agrest.unit;
 
+import io.agrest.ChildResourceEntity;
 import io.agrest.ResourceEntity;
+import io.agrest.RootResourceEntity;
 import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgRelationship;
 import io.agrest.meta.DefaultAgAttribute;
@@ -116,12 +118,12 @@ public class TestWithCayenneMapping {
 		return runtime.getChannel().getEntityResolver().getObjEntity(type);
 	}
 
-	protected <T> ResourceEntity<T> getResourceEntity(Class<T> type) {
-		return new ResourceEntity<>(getAgEntity(type), null);
+	protected <T> RootResourceEntity<T> getResourceEntity(Class<T> type) {
+		return new RootResourceEntity<>(getAgEntity(type), null);
 	}
 
-	protected <T> ResourceEntity<T> getResourceEntity(Class<T> type, AgRelationship incoming) {
-		return new ResourceEntity<>(getAgEntity(type), null, incoming);
+	protected <T> ChildResourceEntity<T> getResourceEntity(Class<T> type, AgRelationship incoming) {
+		return new ChildResourceEntity<>(getAgEntity(type), null, incoming);
 	}
 
 	protected <T> void appendAttribute(ResourceEntity<?> entity, Property<T> property, Class<T> type) {

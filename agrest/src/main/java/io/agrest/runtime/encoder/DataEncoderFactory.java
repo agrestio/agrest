@@ -1,5 +1,6 @@
 package io.agrest.runtime.encoder;
 
+import io.agrest.ChildResourceEntity;
 import io.agrest.EntityProperty;
 import io.agrest.ResourceEntity;
 import io.agrest.encoder.CollectionEncoder;
@@ -121,7 +122,7 @@ public class DataEncoderFactory {
         }
 
         Map<String, EntityProperty> relationshipEncoders = new HashMap<>();
-        for (Map.Entry<String, ResourceEntity<?>> e : resourceEntity.getChildren().entrySet()) {
+        for (Map.Entry<String, ChildResourceEntity<?>> e : resourceEntity.getChildren().entrySet()) {
 
             // read relationship vis child entity to account for overlays
             AgRelationship relationship = resourceEntity.getChild(e.getKey()).getIncoming();

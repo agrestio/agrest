@@ -1,6 +1,6 @@
 package io.agrest.runtime.cayenne.processor.select;
 
-import io.agrest.ResourceEntity;
+import io.agrest.RootResourceEntity;
 import io.agrest.it.fixture.cayenne.E1;
 import io.agrest.runtime.processor.select.SelectContext;
 import io.agrest.unit.TestWithCayenneMapping;
@@ -30,7 +30,7 @@ public class CayenneAssembleQueryStageTest extends TestWithCayenneMapping {
 		SelectQuery<E1> query = new SelectQuery<E1>(E1.class);
 		query.addOrdering(o1);
 
-		ResourceEntity<E1> resourceEntity = getResourceEntity(E1.class);
+		RootResourceEntity<E1> resourceEntity = getResourceEntity(E1.class);
 		resourceEntity.getOrderings().add(o2);
 
 		SelectContext<E1> context = new SelectContext<E1>(E1.class);
@@ -47,7 +47,7 @@ public class CayenneAssembleQueryStageTest extends TestWithCayenneMapping {
 	@Test
 	public void testBuildQuery_Pagination() {
 
-		ResourceEntity<E1> resourceEntity = new ResourceEntity<>(getAgEntity(E1.class), null);
+		RootResourceEntity<E1> resourceEntity = new RootResourceEntity<>(getAgEntity(E1.class), null);
 		resourceEntity.setFetchLimit(10);
 		resourceEntity.setFetchOffset(0);
 
@@ -81,7 +81,7 @@ public class CayenneAssembleQueryStageTest extends TestWithCayenneMapping {
 	@Test
 	public void testBuildQuery_Qualifier() {
 		Expression extraQualifier = E1.NAME.eq("X");
-		ResourceEntity<E1> resourceEntity = getResourceEntity(E1.class);
+		RootResourceEntity<E1> resourceEntity = getResourceEntity(E1.class);
 
 		resourceEntity.andQualifier(extraQualifier);
 
@@ -91,7 +91,7 @@ public class CayenneAssembleQueryStageTest extends TestWithCayenneMapping {
 		SelectQuery<E1> query = makeQueryStage.buildQuery(c1, c1.getEntity(), c1.getId());
 		assertEquals(extraQualifier, query.getQualifier());
 
-		SelectQuery<E1> query2 = new SelectQuery<E1>(E1.class);
+		SelectQuery<E1> query2 = new SelectQuery<>(E1.class);
 		query2.setQualifier(E1.NAME.in("a", "b"));
 
 		SelectContext<E1> c2 = new SelectContext<>(E1.class);

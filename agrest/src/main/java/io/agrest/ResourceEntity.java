@@ -4,7 +4,6 @@ import io.agrest.encoder.EntityEncoderFilter;
 import io.agrest.meta.AgAttribute;
 import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgEntityOverlay;
-import io.agrest.meta.AgRelationship;
 import org.apache.cayenne.exp.Expression;
 import org.apache.cayenne.query.Ordering;
 import org.apache.cayenne.query.SelectQuery;
@@ -14,7 +13,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -26,7 +24,7 @@ import java.util.Map;
  * ResourceEntity scope is a single request. It is usually created by Agrest based on request parameters and can be
  * optionally further customized by the application via custom stages.
  */
-public class ResourceEntity<T> {
+public abstract class ResourceEntity<T> {
 
     private boolean idIncluded;
 
@@ -35,11 +33,9 @@ public class ResourceEntity<T> {
     private Map<String, AgAttribute> attributes;
     private Collection<String> defaultProperties;
 
-    private String applicationBase;
     private String mapByPath;
     private ResourceEntity<?> mapBy;
-    private Map<String, ResourceEntity<?>> children;
-    private AgRelationship incoming;
+    private Map<String, ChildResourceEntity<?>> children;
     private List<Ordering> orderings;
     private Expression qualifier;
     private Map<String, EntityProperty> includedExtraProperties;
@@ -49,8 +45,6 @@ public class ResourceEntity<T> {
     private List<EntityEncoderFilter> entityEncoderFilters;
 
     private SelectQuery<T> select;
-    private List<T> result;
-    private Map<AgObjectId, Object> parentToChildResult;
 
     public ResourceEntity(AgEntity<T> agEntity, AgEntityOverlay<T> agEntityOverlay) {
 
@@ -64,14 +58,7 @@ public class ResourceEntity<T> {
         this.orderings = new ArrayList<>(2);
         this.extraProperties = new HashMap<>();
         this.includedExtraProperties = new HashMap<>();
-        this.result = new ArrayList<>();
-        this.parentToChildResult = new LinkedHashMap<>();
         this.entityEncoderFilters = new ArrayList<>(3);
-    }
-
-    public ResourceEntity(AgEntity<T> agEntity, AgEntityOverlay<T> agEntityOverlay, AgRelationship incoming) {
-        this(agEntity, agEntityOverlay);
-        this.incoming = incoming;
     }
 
     /**
@@ -93,10 +80,6 @@ public class ResourceEntity<T> {
      */
     public AgEntityOverlay<T> getAgEntityOverlay() {
         return agEntityOverlay;
-    }
-
-    public AgRelationship getIncoming() {
-        return incoming;
     }
 
     public Expression getQualifier() {
@@ -133,60 +116,6 @@ public class ResourceEntity<T> {
         this.select = select;
     }
 
-    /**
-     * @since 3.1
-     */
-    public List<T> getResult() {
-        return result;
-    }
-
-    /**
-     * @param result objects
-     * @since 3.1
-     */
-    public void setResult(List<T> result) {
-        this.result = result;
-    }
-
-    /**
-     * @param parentId
-     * @return
-     * @since 3.1
-     */
-    public Object getResult(AgObjectId parentId) {
-        return parentToChildResult.get(parentId);
-    }
-
-    /**
-     * @param parentId
-     * @param object
-     * @since 3.1
-     * Stores object related to particular parent object.
-     * It is used for one-to-one relation between a parent and a child.
-     */
-    public void setToOneResult(AgObjectId parentId, T object) {
-        parentToChildResult.put(parentId, object);
-    }
-
-    /**
-     * Stores result object as a List of objects. It is used for one-to-many relation between a parent and children.
-     *
-     * @param parentId
-     * @param object
-     * @since 3.1
-     */
-    public void addToManyResult(AgObjectId parentId, T object) {
-        ((List<T>) parentToChildResult.computeIfAbsent(parentId, k -> new ArrayList<>())).add(object);
-    }
-
-    /**
-     * @param parentId
-     * @param objects
-     * @since 3.1
-     */
-    public void setToManyResult(AgObjectId parentId, List<T> objects) {
-        parentToChildResult.put(parentId, objects);
-    }
 
     /**
      * @since 1.12
@@ -209,14 +138,14 @@ public class ResourceEntity<T> {
         return defaultProperties.contains(propertyName);
     }
 
-    public Map<String, ResourceEntity<?>> getChildren() {
+    public Map<String, ChildResourceEntity<?>> getChildren() {
         return children;
     }
 
     /**
      * @since 1.1
      */
-    public ResourceEntity<?> getChild(String name) {
+    public ChildResourceEntity<?> getChild(String name) {
         return children.get(name);
     }
 
@@ -305,20 +234,6 @@ public class ResourceEntity<T> {
      */
     public void setFetchLimit(int fetchLimit) {
         this.fetchLimit = fetchLimit;
-    }
-
-    /**
-     * @since 1.20
-     */
-    public String getApplicationBase() {
-        return applicationBase;
-    }
-
-    /**
-     * @since 1.20
-     */
-    public void setApplicationBase(String applicationBase) {
-        this.applicationBase = applicationBase;
     }
 
     /**

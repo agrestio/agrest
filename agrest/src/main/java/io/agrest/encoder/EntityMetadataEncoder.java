@@ -1,6 +1,7 @@
 package io.agrest.encoder;
 
 import com.fasterxml.jackson.core.JsonGenerator;
+import io.agrest.ChildResourceEntity;
 import io.agrest.ResourceEntity;
 import io.agrest.meta.AgAttribute;
 import io.agrest.meta.AgRelationship;
@@ -24,7 +25,7 @@ public class EntityMetadataEncoder extends AbstractEncoder {
         for (AgAttribute attribute : entity.getAttributes().values()) {
             properties.put(attribute.getName(), new AttributeProperty(attribute));
         }
-        for (ResourceEntity<?> child : entity.getChildren().values()) {
+        for (ChildResourceEntity<?> child : entity.getChildren().values()) {
             properties.put(child.getIncoming().getName(), new RelationshipProperty(child.getIncoming()));
         }
     }

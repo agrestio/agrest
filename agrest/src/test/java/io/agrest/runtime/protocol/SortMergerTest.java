@@ -1,6 +1,7 @@
 package io.agrest.runtime.protocol;
 
 import io.agrest.ResourceEntity;
+import io.agrest.RootResourceEntity;
 import io.agrest.it.fixture.cayenne.E2;
 import io.agrest.it.fixture.cayenne.auto._E2;
 import io.agrest.meta.AgAttribute;
@@ -39,7 +40,7 @@ public class SortMergerTest extends TestWithCayenneMapping {
         when(age2.getAttribute("name")).thenReturn(mock(AgAttribute.class));
         when(age2.getAttribute("address")).thenReturn(mock(AgAttribute.class));
 
-        this.entity = new ResourceEntity<>(age2, null);
+        this.entity = new RootResourceEntity<>(age2, null);
     }
 
     @Test

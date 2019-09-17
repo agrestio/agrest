@@ -1,6 +1,7 @@
 package io.agrest.runtime.encoder;
 
 import io.agrest.ResourceEntity;
+import io.agrest.RootResourceEntity;
 import io.agrest.encoder.Encoder;
 
 public interface IEncoderService {
@@ -17,5 +18,5 @@ public interface IEncoderService {
 	 * 
 	 * @since 1.20
 	 */
-	<T> Encoder metadataEncoder(ResourceEntity<T> entity);
+	<T> Encoder metadataEncoder(RootResourceEntity<T> entity);
 }

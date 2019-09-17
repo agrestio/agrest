@@ -1,12 +1,14 @@
 package io.agrest.runtime.encoder;
 
 import com.fasterxml.jackson.core.JsonGenerator;
+import io.agrest.ChildResourceEntity;
 import io.agrest.DataResponse;
 import io.agrest.ResourceEntity;
+import io.agrest.RootResourceEntity;
 import io.agrest.SimpleObjectId;
 import io.agrest.encoder.Encoder;
-import io.agrest.encoder.EntityEncoderFilter;
 import io.agrest.encoder.Encoders;
+import io.agrest.encoder.EntityEncoderFilter;
 import io.agrest.it.fixture.cayenne.E1;
 import io.agrest.it.fixture.cayenne.E19;
 import io.agrest.it.fixture.cayenne.E2;
@@ -60,11 +62,10 @@ public class EncoderServiceTest extends TestWithCayenneMapping {
     @Test
     public void testGetRootEncoder_ExcludedRelationshipAttributes() {
 
-
-        ResourceEntity<E2> descriptor = getResourceEntity(E2.class);
+        RootResourceEntity<E2> descriptor = getResourceEntity(E2.class);
         descriptor.includeId();
 
-        ResourceEntity<E3> e3Descriptor = getResourceEntity(E3.class, descriptor.getAgEntity().getRelationship(E2.E3S.getName()));
+        ChildResourceEntity<E3> e3Descriptor = getResourceEntity(E3.class, descriptor.getAgEntity().getRelationship(E2.E3S.getName()));
         e3Descriptor.includeId();
         appendAttribute(e3Descriptor, E3.NAME, String.class);
 
@@ -199,10 +200,10 @@ public class EncoderServiceTest extends TestWithCayenneMapping {
             }
         };
 
-        ResourceEntity<E3> e3Descriptor = getResourceEntity(E3.class);
+        RootResourceEntity<E3> e3Descriptor = getResourceEntity(E3.class);
         e3Descriptor.includeId();
 
-        ResourceEntity<E2> e2Descriptor = getResourceEntity(E2.class, e3Descriptor.getAgEntity().getRelationship(E3.E2.getName()));
+        ChildResourceEntity<E2> e2Descriptor = getResourceEntity(E2.class, e3Descriptor.getAgEntity().getRelationship(E3.E2.getName()));
         e2Descriptor.getEntityEncoderFilters().add(filter);
         e2Descriptor.includeId();
         e3Descriptor.getChildren().put(E3.E2.getName(), e2Descriptor);

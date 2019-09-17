@@ -1,7 +1,7 @@
 package io.agrest.runtime.processor.update;
 
 import io.agrest.AgRequest;
-import io.agrest.ResourceEntity;
+import io.agrest.RootResourceEntity;
 import io.agrest.meta.AgEntity;
 import io.agrest.processor.Processor;
 import io.agrest.processor.ProcessorOutcome;
@@ -39,7 +39,7 @@ public class CreateResourceEntityStage implements Processor<UpdateContext<?>> {
         AgEntity<T> entity = metadataService.getAgEntity(context.getType());
 
         // TODO: support entity overlays (second null argument) in updates
-        ResourceEntity<T> resourceEntity = new ResourceEntity<>(entity, null);
+        RootResourceEntity<T> resourceEntity = new RootResourceEntity<>(entity, null);
 
         AgRequest request = context.getMergedRequest();
         if (request != null) {

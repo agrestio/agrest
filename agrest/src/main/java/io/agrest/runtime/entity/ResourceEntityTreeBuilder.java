@@ -1,6 +1,7 @@
 package io.agrest.runtime.entity;
 
 import io.agrest.AgException;
+import io.agrest.ChildResourceEntity;
 import io.agrest.EntityProperty;
 import io.agrest.PathConstants;
 import io.agrest.ResourceEntity;
@@ -120,8 +121,8 @@ public class ResourceEntityTreeBuilder {
                 : childEntity;
     }
 
-    protected ResourceEntity<?> createChildEntity(AgRelationship incoming) {
+    protected ChildResourceEntity<?> createChildEntity(AgRelationship incoming) {
         AgEntity<?> target = incoming.getTargetEntity();
-        return new ResourceEntity(target, entityOverlays.get(target.getType()), incoming);
+        return new ChildResourceEntity(target, entityOverlays.get(target.getType()), incoming);
     }
 }

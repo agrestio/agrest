@@ -1,6 +1,8 @@
 package io.agrest.runtime.entity;
 
+import io.agrest.ChildResourceEntity;
 import io.agrest.ResourceEntity;
+import io.agrest.RootResourceEntity;
 import io.agrest.meta.AgEntityOverlay;
 import io.agrest.runtime.meta.IMetadataService;
 import org.apache.cayenne.di.Inject;
@@ -33,12 +35,12 @@ public class MapByMerger implements IMapByMerger {
             return;
         }
 
-        if (entity.getIncoming() != null && !entity.getIncoming().isToMany()) {
+        if (entity instanceof ChildResourceEntity && !((ChildResourceEntity) entity).getIncoming().isToMany()) {
             LOGGER.info("Ignoring 'mapBy : {}' for to-one relationship property", mapByPath);
             return;
         }
 
-        ResourceEntity<?> mapByCompanionEntity = new ResourceEntity<>(entity.getAgEntity(), entity.getAgEntityOverlay());
+        ResourceEntity<?> mapByCompanionEntity = new RootResourceEntity<>(entity.getAgEntity(), entity.getAgEntityOverlay());
         new ResourceEntityTreeBuilder(mapByCompanionEntity, metadataService::getAgEntity, overlays).inflatePath(mapByPath);
         entity.mapBy(mapByCompanionEntity, mapByPath);
     }

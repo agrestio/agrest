@@ -1,6 +1,7 @@
 package io.agrest.runtime.encoder;
 
 import io.agrest.ResourceEntity;
+import io.agrest.RootResourceEntity;
 import io.agrest.encoder.Encoder;
 import io.agrest.encoder.EntityMetadataEncoder;
 import io.agrest.encoder.PropertyMetadataEncoder;
@@ -30,7 +31,7 @@ public class EncoderService implements IEncoderService {
     }
 
     @Override
-    public <T> Encoder metadataEncoder(ResourceEntity<T> entity) {
+    public <T> Encoder metadataEncoder(RootResourceEntity<T> entity) {
         return new ResourceEncoder<>(entity, entity.getApplicationBase(), entityMetadataEncoder(entity));
     }
 
