@@ -1,13 +1,7 @@
-package io.agrest.runtime.cayenne.processor.select;
+package io.agrest.runtime.processor.select;
 
 import io.agrest.SelectStage;
 import io.agrest.processor.Processor;
-import io.agrest.runtime.processor.select.ApplyServerParamsStage;
-import io.agrest.runtime.processor.select.CreateResourceEntityStage;
-import io.agrest.runtime.processor.select.ParseRequestStage;
-import io.agrest.runtime.processor.select.SelectContext;
-import io.agrest.runtime.processor.select.SelectProcessorFactory;
-import io.agrest.runtime.processor.select.StartStage;
 import org.apache.cayenne.di.DIRuntimeException;
 import org.apache.cayenne.di.Inject;
 import org.apache.cayenne.di.Provider;
@@ -17,17 +11,17 @@ import java.util.EnumMap;
 /**
  * @since 2.7
  */
-public class CayenneSelectProcessorFactoryProvider implements Provider<SelectProcessorFactory> {
-    
+public class SelectProcessorFactoryProvider implements Provider<SelectProcessorFactory> {
+
     private EnumMap<SelectStage, Processor<SelectContext<?>>> stages;
 
-    public CayenneSelectProcessorFactoryProvider(
+    public SelectProcessorFactoryProvider(
             @Inject StartStage startStage,
             @Inject ParseRequestStage parseRequestStage,
             @Inject CreateResourceEntityStage createResourceEntityStage,
             @Inject ApplyServerParamsStage applyServerParamsStage,
-            @Inject CayenneAssembleQueryStage assembleQueryStage,
-            @Inject CayenneFetchDataStage fetchDataStage) {
+            @Inject AssembleQueryStage assembleQueryStage,
+            @Inject FetchDataStage fetchDataStage) {
 
         stages = new EnumMap<>(SelectStage.class);
         stages.put(SelectStage.START, startStage);

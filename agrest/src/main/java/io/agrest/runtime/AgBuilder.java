@@ -30,9 +30,6 @@ import io.agrest.runtime.cayenne.NoCayennePersister;
 import io.agrest.runtime.cayenne.processor.delete.CayenneDeleteProcessorFactoryProvider;
 import io.agrest.runtime.cayenne.processor.delete.CayenneDeleteStage;
 import io.agrest.runtime.cayenne.processor.delete.CayenneDeleteStartStage;
-import io.agrest.runtime.cayenne.processor.select.CayenneAssembleQueryStage;
-import io.agrest.runtime.cayenne.processor.select.CayenneFetchDataStage;
-import io.agrest.runtime.cayenne.processor.select.CayenneSelectProcessorFactoryProvider;
 import io.agrest.runtime.cayenne.processor.unrelate.CayenneUnrelateDataStoreStage;
 import io.agrest.runtime.cayenne.processor.unrelate.CayenneUnrelateProcessorFactoryProvider;
 import io.agrest.runtime.cayenne.processor.unrelate.CayenneUnrelateStartStage;
@@ -49,13 +46,13 @@ import io.agrest.runtime.cayenne.processor.update.CayenneUpdateStartStage;
 import io.agrest.runtime.constraints.ConstraintsHandler;
 import io.agrest.runtime.constraints.IConstraintsHandler;
 import io.agrest.runtime.encoder.AttributeEncoderFactory;
-import io.agrest.runtime.encoder.ValueEncoders;
-import io.agrest.runtime.encoder.ValueEncodersProvider;
 import io.agrest.runtime.encoder.EncoderService;
 import io.agrest.runtime.encoder.IAttributeEncoderFactory;
 import io.agrest.runtime.encoder.IEncoderService;
 import io.agrest.runtime.encoder.IStringConverterFactory;
 import io.agrest.runtime.encoder.StringConverterFactoryProvider;
+import io.agrest.runtime.encoder.ValueEncoders;
+import io.agrest.runtime.encoder.ValueEncodersProvider;
 import io.agrest.runtime.entity.CayenneExpMerger;
 import io.agrest.runtime.entity.ExcludeMerger;
 import io.agrest.runtime.entity.ExpressionParser;
@@ -87,9 +84,12 @@ import io.agrest.runtime.processor.meta.CollectMetadataStage;
 import io.agrest.runtime.processor.meta.MetadataProcessorFactory;
 import io.agrest.runtime.processor.meta.MetadataProcessorFactoryProvider;
 import io.agrest.runtime.processor.select.ApplyServerParamsStage;
+import io.agrest.runtime.processor.select.AssembleQueryStage;
 import io.agrest.runtime.processor.select.CreateResourceEntityStage;
+import io.agrest.runtime.processor.select.FetchDataStage;
 import io.agrest.runtime.processor.select.ParseRequestStage;
 import io.agrest.runtime.processor.select.SelectProcessorFactory;
+import io.agrest.runtime.processor.select.SelectProcessorFactoryProvider;
 import io.agrest.runtime.processor.select.StartStage;
 import io.agrest.runtime.processor.unrelate.UnrelateProcessorFactory;
 import io.agrest.runtime.processor.update.UpdateProcessorFactoryFactory;
@@ -488,13 +488,13 @@ public class AgBuilder {
             exceptionMappers.forEach((n, m) -> mapperBuilder.put(n, m));
 
             // select stages
-            binder.bind(SelectProcessorFactory.class).toProvider(CayenneSelectProcessorFactoryProvider.class);
+            binder.bind(SelectProcessorFactory.class).toProvider(SelectProcessorFactoryProvider.class);
             binder.bind(StartStage.class).to(StartStage.class);
             binder.bind(ParseRequestStage.class).to(ParseRequestStage.class);
             binder.bind(CreateResourceEntityStage.class).to(CreateResourceEntityStage.class);
             binder.bind(ApplyServerParamsStage.class).to(ApplyServerParamsStage.class);
-            binder.bind(CayenneAssembleQueryStage.class).to(CayenneAssembleQueryStage.class);
-            binder.bind(CayenneFetchDataStage.class).to(CayenneFetchDataStage.class);
+            binder.bind(AssembleQueryStage.class).to(AssembleQueryStage.class);
+            binder.bind(FetchDataStage.class).to(FetchDataStage.class);
 
             // delete stages
             binder.bind(DeleteProcessorFactory.class).toProvider(CayenneDeleteProcessorFactoryProvider.class);
