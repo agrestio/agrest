@@ -17,6 +17,7 @@ import java.util.Map;
 /**
  * @since 1.24
  */
+// TODO: support for injectable DataResolvers...
 public class PojoEntityCompiler implements AgEntityCompiler {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PojoEntityCompiler.class);

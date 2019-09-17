@@ -5,6 +5,7 @@ import io.agrest.resolver.NestedDataResolver;
 import io.agrest.runtime.cayenne.ICayennePersister;
 import io.agrest.runtime.processor.select.SelectContext;
 import org.apache.cayenne.DataObject;
+import org.apache.cayenne.di.Inject;
 
 import java.util.Collections;
 
@@ -13,7 +14,9 @@ import java.util.Collections;
  */
 public class ViaParentPrefetchResolver extends CayenneDataResolver implements NestedDataResolver<DataObject> {
 
-    public ViaParentPrefetchResolver(CayenneQueryAssembler queryAssembler, ICayennePersister persister) {
+    public ViaParentPrefetchResolver(
+            @Inject CayenneQueryAssembler queryAssembler,
+            @Inject ICayennePersister persister) {
         super(queryAssembler, persister);
     }
 

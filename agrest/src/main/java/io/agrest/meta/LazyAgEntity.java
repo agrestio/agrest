@@ -1,6 +1,8 @@
 package io.agrest.meta;
 
 import io.agrest.property.IdReader;
+import io.agrest.resolver.NestedDataResolver;
+import io.agrest.resolver.RootDataResolver;
 
 import java.util.Collection;
 import java.util.function.Supplier;
@@ -60,5 +62,15 @@ public class LazyAgEntity<T> extends BaseLazyAgEntity<T, AgEntity<T>> implements
     @Override
     public AgRelationship getRelationship(String name) {
         return getDelegate().getRelationship(name);
+    }
+
+    @Override
+    public RootDataResolver<T> getRootDataResolver() {
+        return getDelegate().getRootDataResolver();
+    }
+
+    @Override
+    public NestedDataResolver<T> getNestedDataResolver() {
+        return getDelegate().getNestedDataResolver();
     }
 }

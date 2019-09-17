@@ -12,6 +12,9 @@ import io.agrest.meta.parser.IResourceParser;
 import io.agrest.meta.parser.ResourceParser;
 import io.agrest.property.BeanPropertyReader;
 import io.agrest.runtime.cayenne.ICayennePersister;
+import io.agrest.runtime.cayenne.processor.select.CayenneQueryAssembler;
+import io.agrest.runtime.cayenne.processor.select.ViaQueryResolver;
+import io.agrest.runtime.cayenne.processor.select.ViaQueryWithParentQualifierResolver;
 import io.agrest.runtime.meta.BaseUrlProvider;
 import io.agrest.runtime.meta.IMetadataService;
 import io.agrest.runtime.meta.IResourceMetadataService;
@@ -31,11 +34,11 @@ import org.junit.BeforeClass;
 
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.UriInfo;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+import static java.util.Arrays.asList;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -46,10 +49,12 @@ import static org.mockito.Mockito.when;
 public class TestWithCayenneMapping {
 
     protected static ServerRuntime runtime;
+
     protected ICayennePersister mockCayennePersister;
     protected IMetadataService metadataService;
     protected IResourceMetadataService resourceMetadataService;
     protected IResourceParser resourceParser;
+    protected CayenneQueryAssembler queryAssembler;
 
     @BeforeClass
     public static void setUpClass() {
@@ -57,6 +62,7 @@ public class TestWithCayenneMapping {
             DataSourceFactory dsf = mock(DataSourceFactory.class);
             binder.bind(DataSourceFactory.class).toInstance(dsf);
         };
+
         runtime = ServerRuntime
                 .builder()
                 .addConfig("cayenne-agrest-tests.xml")
@@ -80,18 +86,27 @@ public class TestWithCayenneMapping {
         when(mockCayennePersister.sharedContext()).thenReturn(sharedContext);
         when(mockCayennePersister.newContext()).thenReturn(runtime.newContext());
 
-        this.metadataService = createMetadataService();
+        this.queryAssembler = createQueryAssembler();
+        this.metadataService = new MetadataService(createEntityCompilers());
         this.resourceParser = new ResourceParser(metadataService);
         this.resourceMetadataService = createResourceMetadataService();
     }
 
-    protected IMetadataService createMetadataService() {
+    protected CayenneQueryAssembler createQueryAssembler() {
+        return new CayenneQueryAssembler(mockCayennePersister.entityResolver());
+    }
 
-        List<AgEntityCompiler> compilers = new ArrayList<>();
-        compilers.add(new CayenneEntityCompiler(mockCayennePersister, Collections.emptyMap()));
-        compilers.add(new PojoEntityCompiler(Collections.emptyMap()));
+    protected List<AgEntityCompiler> createEntityCompilers() {
 
-        return new MetadataService(compilers);
+        AgEntityCompiler c1 = new CayenneEntityCompiler(
+                mockCayennePersister,
+                Collections.emptyMap(),
+                new ViaQueryResolver(queryAssembler, mockCayennePersister),
+                new ViaQueryWithParentQualifierResolver(queryAssembler, mockCayennePersister));
+
+        AgEntityCompiler c2 = new PojoEntityCompiler(Collections.emptyMap());
+
+        return asList(c1, c2);
     }
 
     protected IResourceMetadataService createResourceMetadataService() {

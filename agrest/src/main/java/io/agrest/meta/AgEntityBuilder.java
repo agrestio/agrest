@@ -9,6 +9,10 @@ import io.agrest.meta.compiler.PropertyGetter;
 import io.agrest.property.BeanPropertyReader;
 import io.agrest.property.DefaultIdReader;
 import io.agrest.property.PropertyReader;
+import io.agrest.resolver.NestedDataResolver;
+import io.agrest.resolver.RootDataResolver;
+import io.agrest.resolver.ThrowingNestedDataResolver;
+import io.agrest.resolver.ThrowingRootDataResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,6 +39,8 @@ public class AgEntityBuilder<T> {
     private String name;
     private AgDataMap agDataMap;
     private AgEntityOverlay<T> overlay;
+    private RootDataResolver<T> rootDataResolver;
+    private NestedDataResolver<T> nestedDataResolver;
 
     private Map<String, io.agrest.meta.AgAttribute> ids;
     private Map<String, io.agrest.meta.AgAttribute> attributes;
@@ -55,6 +61,22 @@ public class AgEntityBuilder<T> {
         return this;
     }
 
+    /**
+     * @since 3.4
+     */
+    public AgEntityBuilder<T> rootDataResolver(RootDataResolver<T> resolver) {
+        this.rootDataResolver = resolver;
+        return this;
+    }
+
+    /**
+     * @since 3.4
+     */
+    public AgEntityBuilder<T> nestedDataResolver(NestedDataResolver<T> resolver) {
+        this.nestedDataResolver = resolver;
+        return this;
+    }
+
     public DefaultAgEntity<T> build() {
 
         collectProperties();
@@ -66,7 +88,9 @@ public class AgEntityBuilder<T> {
                 ids,
                 attributes,
                 relationships,
-                new DefaultIdReader(ids.keySet()));
+                new DefaultIdReader(ids.keySet()),
+                rootDataResolver != null ? rootDataResolver : ThrowingRootDataResolver.getInstance(),
+                nestedDataResolver != null ? nestedDataResolver : ThrowingNestedDataResolver.getInstance());
     }
 
     private void addId(io.agrest.meta.AgAttribute id) {

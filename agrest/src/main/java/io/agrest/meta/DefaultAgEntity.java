@@ -1,6 +1,8 @@
 package io.agrest.meta;
 
 import io.agrest.property.IdReader;
+import io.agrest.resolver.NestedDataResolver;
+import io.agrest.resolver.RootDataResolver;
 
 import java.util.Collection;
 import java.util.Map;
@@ -13,6 +15,8 @@ public class DefaultAgEntity<T> implements AgEntity<T> {
     private String name;
     private Class<T> type;
     private IdReader idReader;
+    private RootDataResolver<T> rootDataResolver;
+    private NestedDataResolver<T> nestedDataResolver;
 
     // TODO: ensure name uniqueness between all types of properties
     private Map<String, AgAttribute> ids;
@@ -25,7 +29,9 @@ public class DefaultAgEntity<T> implements AgEntity<T> {
             Map<String, AgAttribute> ids,
             Map<String, AgAttribute> attributes,
             Map<String, AgRelationship> relationships,
-            IdReader idReader) {
+            IdReader idReader,
+            RootDataResolver<T> rootDataResolver,
+            NestedDataResolver<T> nestedDataResolver) {
 
         this.name = name;
         this.type = type;
@@ -33,6 +39,8 @@ public class DefaultAgEntity<T> implements AgEntity<T> {
         this.attributes = attributes;
         this.relationships = relationships;
         this.idReader = idReader;
+        this.rootDataResolver = rootDataResolver;
+        this.nestedDataResolver = nestedDataResolver;
     }
 
     @Override
@@ -78,6 +86,16 @@ public class DefaultAgEntity<T> implements AgEntity<T> {
     @Override
     public Collection<AgAttribute> getAttributes() {
         return attributes.values();
+    }
+
+    @Override
+    public NestedDataResolver<T> getNestedDataResolver() {
+        return nestedDataResolver;
+    }
+
+    @Override
+    public RootDataResolver<T> getRootDataResolver() {
+        return rootDataResolver;
     }
 
     @Override

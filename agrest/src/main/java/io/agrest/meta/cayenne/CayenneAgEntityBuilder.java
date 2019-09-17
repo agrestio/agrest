@@ -13,6 +13,10 @@ import io.agrest.property.ChildEntityResultReader;
 import io.agrest.property.DefaultIdReader;
 import io.agrest.property.IdReader;
 import io.agrest.property.PropertyReader;
+import io.agrest.resolver.NestedDataResolver;
+import io.agrest.resolver.RootDataResolver;
+import io.agrest.resolver.ThrowingNestedDataResolver;
+import io.agrest.resolver.ThrowingRootDataResolver;
 import org.apache.cayenne.dba.TypesMapping;
 import org.apache.cayenne.map.DbAttribute;
 import org.apache.cayenne.map.EntityResolver;
@@ -35,7 +39,7 @@ public class CayenneAgEntityBuilder<T> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CayenneAgEntityBuilder.class);
 
-    private final EntityResolver resolver;
+    private final EntityResolver cayenneResolver;
     private final Class<T> type;
     private final AgDataMap agDataMap;
     private final ObjEntity cayenneEntity;
@@ -45,14 +49,16 @@ public class CayenneAgEntityBuilder<T> {
 
     private AgEntityOverlay<T> overlay;
     private boolean pojoIdReader;
+    private RootDataResolver<T> rootDataResolver;
+    private NestedDataResolver<T> nestedDataResolver;
 
-    public CayenneAgEntityBuilder(Class<T> type, AgDataMap agDataMap, EntityResolver resolver) {
+    public CayenneAgEntityBuilder(Class<T> type, AgDataMap agDataMap, EntityResolver cayenneResolver) {
 
-        this.resolver = resolver;
+        this.cayenneResolver = cayenneResolver;
 
         this.type = type;
         this.agDataMap = agDataMap;
-        this.cayenneEntity = resolver.getObjEntity(type);
+        this.cayenneEntity = cayenneResolver.getObjEntity(type);
 
         this.ids = new HashMap<>();
         this.attributes = new HashMap<>();
@@ -61,6 +67,16 @@ public class CayenneAgEntityBuilder<T> {
 
     public CayenneAgEntityBuilder<T> overlay(AgEntityOverlay<T> overlay) {
         this.overlay = overlay;
+        return this;
+    }
+
+    public CayenneAgEntityBuilder<T> rootDataResolver(RootDataResolver<T> resolver) {
+        this.rootDataResolver = resolver;
+        return this;
+    }
+
+    public CayenneAgEntityBuilder<T> nestedDataResolver(NestedDataResolver<T> resolver) {
+        this.nestedDataResolver = resolver;
         return this;
     }
 
@@ -78,7 +94,9 @@ public class CayenneAgEntityBuilder<T> {
                 ids,
                 attributes,
                 relationships,
-                idReader);
+                idReader,
+                rootDataResolver != null ? rootDataResolver : ThrowingRootDataResolver.getInstance(),
+                nestedDataResolver != null ? nestedDataResolver : ThrowingNestedDataResolver.getInstance());
     }
 
     private AgAttribute addId(AgAttribute id) {
@@ -102,7 +120,7 @@ public class CayenneAgEntityBuilder<T> {
 
         for (ObjRelationship r : cayenneEntity.getRelationships()) {
 
-            Class<?> targetEntityType = resolver.getClassDescriptor(r.getTargetEntityName()).getObjectClass();
+            Class<?> targetEntityType = cayenneResolver.getClassDescriptor(r.getTargetEntityName()).getObjectClass();
 
             // 'agDataMap.getEntity' will compile the entity on the fly if needed
             AgEntity<?> targetEntity = agDataMap.getEntity(targetEntityType);

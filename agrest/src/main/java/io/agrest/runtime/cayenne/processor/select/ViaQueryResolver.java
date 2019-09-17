@@ -7,6 +7,7 @@ import io.agrest.resolver.RootDataResolver;
 import io.agrest.runtime.cayenne.ICayennePersister;
 import io.agrest.runtime.processor.select.SelectContext;
 import org.apache.cayenne.DataObject;
+import org.apache.cayenne.di.Inject;
 
 import javax.ws.rs.core.Response;
 import java.util.List;
@@ -16,7 +17,9 @@ import java.util.List;
  */
 public class ViaQueryResolver extends CayenneDataResolver implements RootDataResolver<DataObject> {
 
-    public ViaQueryResolver(CayenneQueryAssembler queryAssembler, ICayennePersister persister) {
+    public ViaQueryResolver(
+            @Inject CayenneQueryAssembler queryAssembler,
+            @Inject ICayennePersister persister) {
         super(queryAssembler, persister);
     }
 

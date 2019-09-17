@@ -62,7 +62,7 @@ public class SenchaCreateEntityStageTest extends TestWithCayenneMapping {
         ISenchaFilterExpressionCompiler senchaFilterProcessor = new SenchaFilterExpressionCompiler(pathCache, new ExpressionPostProcessor(pathCache));
 
         this.createEntityStage = new SenchaCreateResourceEntityStage(
-                createMetadataService(),
+                metadataService,
                 expConstructor,
                 sortConstructor,
                 mapByConstructor,

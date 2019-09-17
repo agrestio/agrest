@@ -66,7 +66,7 @@ public class CreateEntityStageTest extends TestWithCayenneMapping {
 
         this.createEntityStage
                 = new CreateResourceEntityStage(
-                createMetadataService(),
+                metadataService,
                 expMerger,
                 sortMerger,
                 mapByMerger,

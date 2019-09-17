@@ -1,6 +1,8 @@
 package io.agrest.meta;
 
 import io.agrest.property.IdReader;
+import io.agrest.resolver.NestedDataResolver;
+import io.agrest.resolver.RootDataResolver;
 
 import java.util.Collection;
 
@@ -34,4 +36,16 @@ public interface AgEntity<T> {
      * @since 3.4
      */
     IdReader getIdReader();
+
+    /**
+     * @return a default data resolver for this entity for when it is resolved as a root of a request.
+     * @since 3.4
+     */
+    RootDataResolver<T> getRootDataResolver();
+
+    /**
+     * @return a default data resolver for this entity for when it is resolved as a child of another entity.
+     * @since 3.4
+     */
+    NestedDataResolver<T> getNestedDataResolver();
 }

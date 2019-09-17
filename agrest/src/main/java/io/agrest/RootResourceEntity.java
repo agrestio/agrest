@@ -20,6 +20,7 @@ public class RootResourceEntity<T> extends ResourceEntity<T> {
     public RootResourceEntity(AgEntity<T> agEntity, AgEntityOverlay<T> agEntityOverlay) {
         super(agEntity, agEntityOverlay);
         this.result = new ArrayList<>();
+        this.resolver = agEntity.getRootDataResolver();
     }
 
     public List<T> getResult() {

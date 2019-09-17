@@ -58,7 +58,7 @@ public class CreateEntityStage_IncludeObjectTest extends TestWithCayenneMapping 
         IExcludeMerger excludeConstructor = new ExcludeMerger();
 
         this.createEntityStage = new CreateResourceEntityStage(
-                createMetadataService(),
+                metadataService,
                 expConstructor,
                 sortConstructor,
                 mapByConstructor,

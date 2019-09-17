@@ -22,17 +22,18 @@ public class NestedResourceEntity<T> extends ResourceEntity<T> {
     private NestedDataResolver<T> resolver;
     private Map<AgObjectId, Object> resultByParent;
 
-    // TODO: Instead of AgRelationship introduce some kind of RERelationship that has references to both parent and child
     public NestedResourceEntity(
             AgEntity<T> agEntity,
             AgEntityOverlay<T> agEntityOverlay,
+            // TODO: Instead of AgRelationship introduce some kind of RERelationship that has references to both parent and child
             ResourceEntity<?> parent,
             AgRelationship incoming) {
-        
+
         super(agEntity, agEntityOverlay);
         this.incoming = incoming;
         this.parent = parent;
         this.resultByParent = new LinkedHashMap<>();
+        this.resolver = agEntity.getNestedDataResolver();
     }
 
     public ResourceEntity<?> getParent() {

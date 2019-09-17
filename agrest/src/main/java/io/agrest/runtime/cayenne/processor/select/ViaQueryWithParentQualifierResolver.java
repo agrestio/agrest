@@ -9,6 +9,7 @@ import io.agrest.resolver.NestedDataResolver;
 import io.agrest.runtime.cayenne.ICayennePersister;
 import io.agrest.runtime.processor.select.SelectContext;
 import org.apache.cayenne.DataObject;
+import org.apache.cayenne.di.Inject;
 
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -21,7 +22,9 @@ import java.util.function.BiConsumer;
  */
 public class ViaQueryWithParentQualifierResolver extends CayenneDataResolver implements NestedDataResolver<DataObject> {
 
-    public ViaQueryWithParentQualifierResolver(CayenneQueryAssembler queryAssembler, ICayennePersister persister) {
+    public ViaQueryWithParentQualifierResolver(
+            @Inject CayenneQueryAssembler queryAssembler,
+            @Inject ICayennePersister persister) {
         super(queryAssembler, persister);
     }
 
