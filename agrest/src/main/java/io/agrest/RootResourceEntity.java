@@ -2,6 +2,7 @@ package io.agrest;
 
 import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgEntityOverlay;
+import io.agrest.resolver.RootDataResolver;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,8 +13,9 @@ import java.util.List;
  */
 public class RootResourceEntity<T> extends ResourceEntity<T> {
 
-    private List<T> result;
     private String applicationBase;
+    private RootDataResolver<T> resolver;
+    private List<T> result;
 
     public RootResourceEntity(AgEntity<T> agEntity, AgEntityOverlay<T> agEntityOverlay) {
         super(agEntity, agEntityOverlay);
@@ -40,5 +42,13 @@ public class RootResourceEntity<T> extends ResourceEntity<T> {
      */
     public void setApplicationBase(String applicationBase) {
         this.applicationBase = applicationBase;
+    }
+
+    public RootDataResolver<T> getResolver() {
+        return resolver;
+    }
+
+    public void setResolver(RootDataResolver<T> resolver) {
+        this.resolver = resolver;
     }
 }

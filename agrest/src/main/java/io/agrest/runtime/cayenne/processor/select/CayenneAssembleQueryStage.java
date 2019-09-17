@@ -29,6 +29,7 @@ import java.util.List;
 /**
  * @since 2.7
  */
+@Deprecated
 public class CayenneAssembleQueryStage implements Processor<SelectContext<?>> {
 
     private EntityResolver entityResolver;

@@ -25,6 +25,7 @@ import java.util.function.BiConsumer;
 /**
  * @since 2.7
  */
+@Deprecated
 public class CayenneFetchDataStage implements Processor<SelectContext<?>> {
 
     private ICayennePersister persister;

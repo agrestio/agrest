@@ -3,6 +3,8 @@ package io.agrest;
 import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgEntityOverlay;
 import io.agrest.meta.AgRelationship;
+import io.agrest.resolver.NestedDataResolver;
+import io.agrest.runtime.processor.select.SelectContext;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -17,6 +19,7 @@ public class NestedResourceEntity<T> extends ResourceEntity<T> {
 
     private ResourceEntity<?> parent;
     private AgRelationship incoming;
+    private NestedDataResolver<T> resolver;
     private Map<AgObjectId, Object> resultByParent;
 
     // TODO: Instead of AgRelationship introduce some kind of RERelationship that has references to both parent and child
@@ -54,5 +57,21 @@ public class NestedResourceEntity<T> extends ResourceEntity<T> {
 
     public void setToManyResult(AgObjectId parentId, List<T> objects) {
         resultByParent.put(parentId, objects);
+    }
+
+    public NestedDataResolver<T> getResolver() {
+        return resolver;
+    }
+
+    public void setResolver(NestedDataResolver<T> resolver) {
+        this.resolver = resolver;
+    }
+
+    public void onParentQueryAssembled(SelectContext<?> context) {
+        resolver.onParentQueryAssembled(this, context);
+    }
+
+    public void onParentDataResolved(Iterable<?> parentData, SelectContext<?> context) {
+        resolver.onParentDataResolved(this, parentData, context);
     }
 }
