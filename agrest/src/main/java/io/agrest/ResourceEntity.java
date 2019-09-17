@@ -35,7 +35,7 @@ public abstract class ResourceEntity<T> {
 
     private String mapByPath;
     private ResourceEntity<?> mapBy;
-    private Map<String, ChildResourceEntity<?>> children;
+    private Map<String, NestedResourceEntity<?>> children;
     private List<Ordering> orderings;
     private Expression qualifier;
     private Map<String, EntityProperty> includedExtraProperties;
@@ -138,14 +138,14 @@ public abstract class ResourceEntity<T> {
         return defaultProperties.contains(propertyName);
     }
 
-    public Map<String, ChildResourceEntity<?>> getChildren() {
+    public Map<String, NestedResourceEntity<?>> getChildren() {
         return children;
     }
 
     /**
      * @since 1.1
      */
-    public ChildResourceEntity<?> getChild(String name) {
+    public NestedResourceEntity<?> getChild(String name) {
         return children.get(name);
     }
 

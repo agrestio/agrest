@@ -1,7 +1,7 @@
 package io.agrest.runtime.constraints;
 
 import io.agrest.AgException;
-import io.agrest.ChildResourceEntity;
+import io.agrest.NestedResourceEntity;
 import io.agrest.EntityUpdate;
 import io.agrest.PathConstants;
 import io.agrest.ResourceEntity;
@@ -116,10 +116,10 @@ class RequestConstraintsHandler {
             }
         }
 
-        Iterator<Entry<String, ChildResourceEntity<?>>> rit = target.getChildren().entrySet().iterator();
+        Iterator<Entry<String, NestedResourceEntity<?>>> rit = target.getChildren().entrySet().iterator();
         while (rit.hasNext()) {
 
-            Entry<String, ChildResourceEntity<?>> e = rit.next();
+            Entry<String, NestedResourceEntity<?>> e = rit.next();
             ConstrainedAgEntity sourceChild = constraints.getChild(e.getKey());
             if (sourceChild != null) {
 

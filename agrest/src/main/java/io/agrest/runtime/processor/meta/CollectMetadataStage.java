@@ -1,6 +1,6 @@
 package io.agrest.runtime.processor.meta;
 
-import io.agrest.ChildResourceEntity;
+import io.agrest.NestedResourceEntity;
 import io.agrest.RootResourceEntity;
 import io.agrest.meta.AgAttribute;
 import io.agrest.meta.AgEntity;
@@ -84,7 +84,7 @@ public class CollectMetadataStage implements Processor<MetadataContext<?>> {
 
         for (AgRelationship r : entity.getRelationships()) {
             // TODO: support entity overlays (second null argument) in meta requests
-            ChildResourceEntity<?> child = new ChildResourceEntity<>(r.getTargetEntity(), null, resourceEntity, r);
+            NestedResourceEntity<?> child = new NestedResourceEntity<>(r.getTargetEntity(), null, resourceEntity, r);
             resourceEntity.getChildren().put(r.getName(), child);
         }
 

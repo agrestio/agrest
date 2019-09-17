@@ -1,7 +1,7 @@
 package io.agrest.runtime.entity;
 
 import io.agrest.AgException;
-import io.agrest.ChildResourceEntity;
+import io.agrest.NestedResourceEntity;
 import io.agrest.EntityProperty;
 import io.agrest.PathConstants;
 import io.agrest.ResourceEntity;
@@ -121,8 +121,8 @@ public class ResourceEntityTreeBuilder {
                 : childEntity;
     }
 
-    protected ChildResourceEntity<?> createChildEntity(ResourceEntity<?> parent, AgRelationship incoming) {
+    protected NestedResourceEntity<?> createChildEntity(ResourceEntity<?> parent, AgRelationship incoming) {
         AgEntity<?> target = incoming.getTargetEntity();
-        return new ChildResourceEntity(target, entityOverlays.get(target.getType()), parent, incoming);
+        return new NestedResourceEntity(target, entityOverlays.get(target.getType()), parent, incoming);
     }
 }

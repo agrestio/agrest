@@ -13,14 +13,19 @@ import java.util.Map;
  * @param <T>
  * @since 3.4
  */
-public class ChildResourceEntity<T> extends ResourceEntity<T> {
+public class NestedResourceEntity<T> extends ResourceEntity<T> {
 
     private ResourceEntity<?> parent;
     private AgRelationship incoming;
     private Map<AgObjectId, Object> resultByParent;
 
-    // TODO: Instead of AgRelationship introduce some kind of RERelaationship that has references to both parent and child
-    public ChildResourceEntity(AgEntity<T> agEntity, AgEntityOverlay<T> agEntityOverlay, ResourceEntity<?> parent, AgRelationship incoming) {
+    // TODO: Instead of AgRelationship introduce some kind of RERelationship that has references to both parent and child
+    public NestedResourceEntity(
+            AgEntity<T> agEntity,
+            AgEntityOverlay<T> agEntityOverlay,
+            ResourceEntity<?> parent,
+            AgRelationship incoming) {
+        
         super(agEntity, agEntityOverlay);
         this.incoming = incoming;
         this.parent = parent;

@@ -1,6 +1,6 @@
 package io.agrest.runtime.constraints;
 
-import io.agrest.ChildResourceEntity;
+import io.agrest.NestedResourceEntity;
 import io.agrest.EntityConstraint;
 import io.agrest.ResourceEntity;
 import io.agrest.RootResourceEntity;
@@ -167,7 +167,7 @@ public class ConstraintsHandlerTest {
         appendAttribute(te1, "c");
         appendAttribute(te1, "b");
 
-        ChildResourceEntity<?> te11 = new ChildResourceEntity<>(age2, null, null, null);
+        NestedResourceEntity<?> te11 = new NestedResourceEntity<>(age2, null, null, null);
         appendAttribute(te11, "a1");
         appendAttribute(te11, "b1");
         te1.getChildren().put("d", te11);
@@ -190,12 +190,12 @@ public class ConstraintsHandlerTest {
         appendAttribute(te1, "c");
         appendAttribute(te1, "b");
 
-        ChildResourceEntity<?> te11 = new ChildResourceEntity<>(age1, null, te1, null);
+        NestedResourceEntity<?> te11 = new NestedResourceEntity<>(age1, null, te1, null);
         appendAttribute(te11, "m");
         appendAttribute(te11, "z");
         te1.getChildren().put("r1", te11);
 
-        ChildResourceEntity<?> te21 = new ChildResourceEntity<>(age4, null, te1, null);
+        NestedResourceEntity<?> te21 = new NestedResourceEntity<>(age4, null, te1, null);
         appendAttribute(te21, "p");
         appendAttribute(te21, "z");
         te1.getChildren().put("r3", te21);
@@ -259,7 +259,7 @@ public class ConstraintsHandlerTest {
 
         ResourceEntity<E2> te1MapBy = new RootResourceEntity<>(age1, null);
 
-        ChildResourceEntity<E1> te1MapByTarget = new ChildResourceEntity<>(age0, null, te1MapBy, null);
+        NestedResourceEntity<E1> te1MapByTarget = new NestedResourceEntity<>(age0, null, te1MapBy, null);
         appendAttribute(te1MapByTarget, "b");
         te1MapBy.getChildren().put("r1", te1MapByTarget);
 
@@ -270,7 +270,7 @@ public class ConstraintsHandlerTest {
         assertNull(te1.getMapBy());
         assertNull(te1.getMapByPath());
 
-        ChildResourceEntity<E2> te2MapByTarget = new ChildResourceEntity<>(age1, null, te1MapBy, null);
+        NestedResourceEntity<E2> te2MapByTarget = new NestedResourceEntity<>(age1, null, te1MapBy, null);
         appendAttribute(te2MapByTarget, "a");
 
         ResourceEntity<E1> te2MapBy = new RootResourceEntity<>(age0, null);
@@ -290,7 +290,7 @@ public class ConstraintsHandlerTest {
         Constraint<E1> tc1 = Constraint.excludeAll(E1.class).path("r1", Constraint.excludeAll(E2.class).excludeId());
 
         ResourceEntity<E2> te1MapBy = new RootResourceEntity<>(age1, null);
-        ChildResourceEntity<E1> te1MapByTarget = new ChildResourceEntity<>(age0, null, te1MapBy, null);
+        NestedResourceEntity<E1> te1MapByTarget = new NestedResourceEntity<>(age0, null, te1MapBy, null);
         te1MapByTarget.includeId();
 
         te1MapBy.getChildren().put("r1", te1MapByTarget);
@@ -310,7 +310,7 @@ public class ConstraintsHandlerTest {
         Constraint<E1> tc1 = Constraint.excludeAll(E1.class).path("r1", Constraint.excludeAll(E2.class).includeId());
 
         ResourceEntity<E1> te1MapBy = new RootResourceEntity<>(age0, null);
-        ChildResourceEntity<E2> te1MapByTarget = new ChildResourceEntity<>(age1, null, te1MapBy, null);
+        NestedResourceEntity<E2> te1MapByTarget = new NestedResourceEntity<>(age1, null, te1MapBy, null);
         te1MapByTarget.includeId();
 
         te1MapBy.getChildren().put("r1", te1MapByTarget);

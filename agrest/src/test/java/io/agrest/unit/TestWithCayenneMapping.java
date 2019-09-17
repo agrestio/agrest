@@ -1,6 +1,6 @@
 package io.agrest.unit;
 
-import io.agrest.ChildResourceEntity;
+import io.agrest.NestedResourceEntity;
 import io.agrest.ResourceEntity;
 import io.agrest.RootResourceEntity;
 import io.agrest.meta.AgEntity;
@@ -120,8 +120,8 @@ public class TestWithCayenneMapping {
         return new RootResourceEntity<>(getAgEntity(type), null);
     }
 
-    protected <T> ChildResourceEntity<T> getChildResourceEntity(Class<T> type, ResourceEntity<?> parent, String incoming) {
-        return new ChildResourceEntity<>(getAgEntity(type), null, parent, parent.getAgEntity().getRelationship(incoming));
+    protected <T> NestedResourceEntity<T> getChildResourceEntity(Class<T> type, ResourceEntity<?> parent, String incoming) {
+        return new NestedResourceEntity<>(getAgEntity(type), null, parent, parent.getAgEntity().getRelationship(incoming));
     }
 
     protected <T> void appendAttribute(ResourceEntity<?> entity, Property<T> property, Class<T> type) {

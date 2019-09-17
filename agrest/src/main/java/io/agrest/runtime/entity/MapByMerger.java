@@ -1,6 +1,6 @@
 package io.agrest.runtime.entity;
 
-import io.agrest.ChildResourceEntity;
+import io.agrest.NestedResourceEntity;
 import io.agrest.ResourceEntity;
 import io.agrest.RootResourceEntity;
 import io.agrest.meta.AgEntityOverlay;
@@ -35,7 +35,7 @@ public class MapByMerger implements IMapByMerger {
             return;
         }
 
-        if (entity instanceof ChildResourceEntity && !((ChildResourceEntity) entity).getIncoming().isToMany()) {
+        if (entity instanceof NestedResourceEntity && !((NestedResourceEntity) entity).getIncoming().isToMany()) {
             LOGGER.info("Ignoring 'mapBy : {}' for to-one relationship property", mapByPath);
             return;
         }

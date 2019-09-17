@@ -1,6 +1,6 @@
 package io.agrest.runtime.constraints;
 
-import io.agrest.ChildResourceEntity;
+import io.agrest.NestedResourceEntity;
 import io.agrest.EntityConstraint;
 import io.agrest.EntityUpdate;
 import io.agrest.ResourceEntity;
@@ -141,10 +141,10 @@ class EntityConstraintHandler {
             }
         }
 
-        Iterator<Entry<String, ChildResourceEntity<?>>> rit = entity.getChildren().entrySet().iterator();
+        Iterator<Entry<String, NestedResourceEntity<?>>> rit = entity.getChildren().entrySet().iterator();
         while (rit.hasNext()) {
 
-            Entry<String, ChildResourceEntity<?>> e = rit.next();
+            Entry<String, NestedResourceEntity<?>> e = rit.next();
 
             if (c.allowsRelationship(e.getKey())) {
                 constrainForRead(e.getValue());

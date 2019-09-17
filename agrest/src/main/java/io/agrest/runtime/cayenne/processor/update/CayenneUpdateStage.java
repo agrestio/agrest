@@ -2,7 +2,7 @@ package io.agrest.runtime.cayenne.processor.update;
 
 import io.agrest.AgException;
 import io.agrest.AgObjectId;
-import io.agrest.ChildResourceEntity;
+import io.agrest.NestedResourceEntity;
 import io.agrest.CompoundObjectId;
 import io.agrest.EntityUpdate;
 import io.agrest.ObjectMapper;
@@ -165,9 +165,9 @@ public class CayenneUpdateStage extends CayenneUpdateDataStoreStage {
         return query;
     }
 
-    protected void buildChildrenQuery(UpdateContext context, ResourceEntity<?> entity, Map<String, ChildResourceEntity<?>> children) {
+    protected void buildChildrenQuery(UpdateContext context, ResourceEntity<?> entity, Map<String, NestedResourceEntity<?>> children) {
         if (!children.isEmpty()) {
-            for (Map.Entry<String, ChildResourceEntity<?>> e : children.entrySet()) {
+            for (Map.Entry<String, NestedResourceEntity<?>> e : children.entrySet()) {
                 ResourceEntity child = e.getValue();
 
                 if (entityResolver.getObjEntity(child.getType()) == null) {
@@ -208,10 +208,10 @@ public class CayenneUpdateStage extends CayenneUpdateDataStoreStage {
         return objects;
     }
 
-    protected <T> void fetchChildren(UpdateContext context, ResourceEntity<T> parent, Map<String, ChildResourceEntity<?>> children) {
+    protected <T> void fetchChildren(UpdateContext context, ResourceEntity<T> parent, Map<String, NestedResourceEntity<?>> children) {
         if (!children.isEmpty()) {
-            for (Map.Entry<String, ChildResourceEntity<?>> e : children.entrySet()) {
-                ChildResourceEntity childEntity = e.getValue();
+            for (Map.Entry<String, NestedResourceEntity<?>> e : children.entrySet()) {
+                NestedResourceEntity childEntity = e.getValue();
 
                 List childObjects = fetchEntity(context, childEntity);
 

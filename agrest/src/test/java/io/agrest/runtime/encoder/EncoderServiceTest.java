@@ -1,7 +1,7 @@
 package io.agrest.runtime.encoder;
 
 import com.fasterxml.jackson.core.JsonGenerator;
-import io.agrest.ChildResourceEntity;
+import io.agrest.NestedResourceEntity;
 import io.agrest.DataResponse;
 import io.agrest.ResourceEntity;
 import io.agrest.RootResourceEntity;
@@ -65,7 +65,7 @@ public class EncoderServiceTest extends TestWithCayenneMapping {
         RootResourceEntity<E2> descriptor = getResourceEntity(E2.class);
         descriptor.includeId();
 
-        ChildResourceEntity<E3> e3Descriptor = getChildResourceEntity(E3.class, descriptor, E2.E3S.getName());
+        NestedResourceEntity<E3> e3Descriptor = getChildResourceEntity(E3.class, descriptor, E2.E3S.getName());
         e3Descriptor.includeId();
         appendAttribute(e3Descriptor, E3.NAME, String.class);
 
@@ -203,7 +203,7 @@ public class EncoderServiceTest extends TestWithCayenneMapping {
         RootResourceEntity<E3> e3Descriptor = getResourceEntity(E3.class);
         e3Descriptor.includeId();
 
-        ChildResourceEntity<E2> e2Descriptor = getChildResourceEntity(E2.class, e3Descriptor, E3.E2.getName());
+        NestedResourceEntity<E2> e2Descriptor = getChildResourceEntity(E2.class, e3Descriptor, E3.E2.getName());
         e2Descriptor.getEntityEncoderFilters().add(filter);
         e2Descriptor.includeId();
         e3Descriptor.getChildren().put(E3.E2.getName(), e2Descriptor);

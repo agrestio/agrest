@@ -2,7 +2,7 @@ package io.agrest.encoder;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import io.agrest.AgException;
-import io.agrest.ChildResourceEntity;
+import io.agrest.NestedResourceEntity;
 import io.agrest.EntityProperty;
 import io.agrest.ResourceEntity;
 import io.agrest.encoder.converter.StringConverter;
@@ -96,7 +96,7 @@ public class MapByEncoder implements CollectionEncoder {
 
             byId = false;
 
-            Map.Entry<String, ChildResourceEntity<?>> child = mapBy.getChildren().entrySet().iterator().next();
+            Map.Entry<String, NestedResourceEntity<?>> child = mapBy.getChildren().entrySet().iterator().next();
 
             // TODO: to account for overlaid relationships (and avoid NPEs), we should not access agEntity...
             //  instead should look for incoming rel of a child ResourceEntity.. Is is present in MapBy case?
@@ -120,8 +120,8 @@ public class MapByEncoder implements CollectionEncoder {
 
         if (!mapBy.getChildren().isEmpty()) {
 
-            String pathSegment = (mapBy instanceof ChildResourceEntity)
-                    ? ((ChildResourceEntity) mapBy).getIncoming().getName()
+            String pathSegment = (mapBy instanceof NestedResourceEntity)
+                    ? ((NestedResourceEntity) mapBy).getIncoming().getName()
                     : "";
 
             StringBuilder message = new StringBuilder("'mapBy' path segment '")

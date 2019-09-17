@@ -2,7 +2,7 @@ package io.agrest.sencha.runtime.encoder;
 
 import com.fasterxml.jackson.core.JsonEncoding;
 import com.fasterxml.jackson.core.JsonGenerator;
-import io.agrest.ChildResourceEntity;
+import io.agrest.NestedResourceEntity;
 import io.agrest.ResourceEntity;
 import io.agrest.RootResourceEntity;
 import io.agrest.SimpleObjectId;
@@ -73,7 +73,7 @@ public class SenchaEncoderServiceTest extends TestWithCayenneMapping {
         e3Descriptor.getEntityEncoderFilters().add(filter);
         e3Descriptor.includeId();
 
-        ChildResourceEntity<E2> e2Descriptor = getChildResourceEntity(E2.class, e3Descriptor, E3.E2.getName());
+        NestedResourceEntity<E2> e2Descriptor = getChildResourceEntity(E2.class, e3Descriptor, E3.E2.getName());
         e2Descriptor.getEntityEncoderFilters().add(filter);
         e2Descriptor.includeId();
         e3Descriptor.getChildren().put(E3.E2.getName(), e2Descriptor);
