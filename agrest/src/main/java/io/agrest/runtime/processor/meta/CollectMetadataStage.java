@@ -84,7 +84,7 @@ public class CollectMetadataStage implements Processor<MetadataContext<?>> {
 
         for (AgRelationship r : entity.getRelationships()) {
             // TODO: support entity overlays (second null argument) in meta requests
-            ChildResourceEntity<?> child = new ChildResourceEntity<>(r.getTargetEntity(), null, r);
+            ChildResourceEntity<?> child = new ChildResourceEntity<>(r.getTargetEntity(), null, resourceEntity, r);
             resourceEntity.getChildren().put(r.getName(), child);
         }
 

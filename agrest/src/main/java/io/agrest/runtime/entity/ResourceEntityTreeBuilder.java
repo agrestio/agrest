@@ -114,15 +114,15 @@ public class ResourceEntityTreeBuilder {
     protected ResourceEntity<?> inflateChild(ResourceEntity<?> parentEntity, AgRelationship relationship, String childPath) {
         ResourceEntity<?> childEntity = parentEntity
                 .getChildren()
-                .computeIfAbsent(relationship.getName(), p -> createChildEntity(relationship));
+                .computeIfAbsent(relationship.getName(), p -> createChildEntity(parentEntity, relationship));
 
         return childPath != null
                 ? doInflatePath(childEntity, childPath)
                 : childEntity;
     }
 
-    protected ChildResourceEntity<?> createChildEntity(AgRelationship incoming) {
+    protected ChildResourceEntity<?> createChildEntity(ResourceEntity<?> parent, AgRelationship incoming) {
         AgEntity<?> target = incoming.getTargetEntity();
-        return new ChildResourceEntity(target, entityOverlays.get(target.getType()), incoming);
+        return new ChildResourceEntity(target, entityOverlays.get(target.getType()), parent, incoming);
     }
 }

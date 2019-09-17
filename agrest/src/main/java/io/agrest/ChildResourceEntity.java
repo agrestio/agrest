@@ -15,13 +15,20 @@ import java.util.Map;
  */
 public class ChildResourceEntity<T> extends ResourceEntity<T> {
 
+    private ResourceEntity<?> parent;
     private AgRelationship incoming;
     private Map<AgObjectId, Object> resultByParent;
 
-    public ChildResourceEntity(AgEntity<T> agEntity, AgEntityOverlay<T> agEntityOverlay, AgRelationship incoming) {
+    // TODO: Instead of AgRelationship introduce some kind of RERelaationship that has references to both parent and child
+    public ChildResourceEntity(AgEntity<T> agEntity, AgEntityOverlay<T> agEntityOverlay, ResourceEntity<?> parent, AgRelationship incoming) {
         super(agEntity, agEntityOverlay);
         this.incoming = incoming;
+        this.parent = parent;
         this.resultByParent = new LinkedHashMap<>();
+    }
+
+    public ResourceEntity<?> getParent() {
+        return parent;
     }
 
     public AgRelationship getIncoming() {

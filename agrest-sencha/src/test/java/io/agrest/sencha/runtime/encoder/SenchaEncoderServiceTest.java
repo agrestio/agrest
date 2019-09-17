@@ -73,7 +73,7 @@ public class SenchaEncoderServiceTest extends TestWithCayenneMapping {
         e3Descriptor.getEntityEncoderFilters().add(filter);
         e3Descriptor.includeId();
 
-        ChildResourceEntity<E2> e2Descriptor = getResourceEntity(E2.class, e3Descriptor.getAgEntity().getRelationship(E3.E2.getName()));
+        ChildResourceEntity<E2> e2Descriptor = getChildResourceEntity(E2.class, e3Descriptor, E3.E2.getName());
         e2Descriptor.getEntityEncoderFilters().add(filter);
         e2Descriptor.includeId();
         e3Descriptor.getChildren().put(E3.E2.getName(), e2Descriptor);
