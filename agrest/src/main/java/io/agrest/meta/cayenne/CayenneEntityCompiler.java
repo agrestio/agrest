@@ -4,7 +4,7 @@ import io.agrest.meta.AgDataMap;
 import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgEntityOverlay;
 import io.agrest.meta.compiler.AgEntityCompiler;
-import io.agrest.meta.compiler.LazyAgEntity;
+import io.agrest.meta.LazyAgEntity;
 import io.agrest.runtime.cayenne.ICayennePersister;
 import org.apache.cayenne.di.Inject;
 import org.apache.cayenne.map.EntityResolver;

@@ -1,8 +1,5 @@
-package io.agrest.meta.compiler;
+package io.agrest.meta;
 
-import io.agrest.meta.AgAttribute;
-import io.agrest.meta.AgEntity;
-import io.agrest.meta.AgRelationship;
 import io.agrest.property.IdReader;
 
 import java.util.Collection;

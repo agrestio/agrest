@@ -6,6 +6,7 @@ import io.agrest.meta.DefaultAgEntity;
 import io.agrest.meta.AgDataMap;
 import io.agrest.meta.AgEntityBuilder;
 import io.agrest.meta.AgEntityOverlay;
+import io.agrest.meta.LazyAgEntity;
 import org.apache.cayenne.di.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

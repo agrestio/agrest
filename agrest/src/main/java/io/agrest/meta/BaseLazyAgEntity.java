@@ -1,6 +1,4 @@
-package io.agrest.meta.compiler;
-
-import io.agrest.meta.AgEntity;
+package io.agrest.meta;
 
 import java.util.function.Supplier;
 
