@@ -1,6 +1,7 @@
 package io.agrest.resolver;
 
 import io.agrest.NestedResourceEntity;
+import io.agrest.property.PropertyReader;
 import io.agrest.runtime.processor.select.SelectContext;
 
 /**
@@ -11,4 +12,6 @@ public interface NestedDataResolver<T> {
     void onParentQueryAssembled(NestedResourceEntity<T> entity, SelectContext<?> context);
 
     void onParentDataResolved(NestedResourceEntity<T> entity, Iterable<?> parentData, SelectContext<?> context);
+
+    PropertyReader reader(NestedResourceEntity<T> entity);
 }

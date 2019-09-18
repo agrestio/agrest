@@ -1,14 +1,12 @@
 package io.agrest.meta.cayenne;
 
-import io.agrest.ResourceEntity;
 import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgRelationship;
-import io.agrest.property.PropertyReader;
+import io.agrest.resolver.NestedDataResolver;
 import org.apache.cayenne.exp.Expression;
 import org.apache.cayenne.map.ObjRelationship;
 
 import java.util.Objects;
-import java.util.function.Function;
 
 /**
  * @since 1.12
@@ -17,24 +15,21 @@ public class CayenneAgRelationship implements AgRelationship {
 
     private ObjRelationship objRelationship;
     private AgEntity<?> targetEntity;
-    private Function<ResourceEntity<?>, PropertyReader> readerFactory;
+    private NestedDataResolver<?> dataResolver;
 
-    /**
-     * @since 2.10
-     */
     public CayenneAgRelationship(
             ObjRelationship objRelationship,
             AgEntity<?> targetEntity,
-            Function<ResourceEntity<?>, PropertyReader> readerFactory) {
+            NestedDataResolver<?> dataResolver) {
 
-        this.objRelationship = objRelationship;
+        this.objRelationship = Objects.requireNonNull(objRelationship);
         this.targetEntity = Objects.requireNonNull(targetEntity);
-        this.readerFactory = readerFactory;
+        this.dataResolver = Objects.requireNonNull(dataResolver);
     }
 
     @Override
-    public PropertyReader getPropertyReader(ResourceEntity<?> entity) {
-        return readerFactory.apply(entity);
+    public NestedDataResolver<?> getResolver() {
+        return dataResolver;
     }
 
     @Override

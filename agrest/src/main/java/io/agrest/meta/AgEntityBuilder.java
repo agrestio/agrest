@@ -1,6 +1,5 @@
 package io.agrest.meta;
 
-import io.agrest.ResourceEntity;
 import io.agrest.annotation.AgAttribute;
 import io.agrest.annotation.AgId;
 import io.agrest.annotation.AgRelationship;
@@ -8,10 +7,8 @@ import io.agrest.meta.compiler.BeanAnalyzer;
 import io.agrest.meta.compiler.PropertyGetter;
 import io.agrest.property.BeanPropertyReader;
 import io.agrest.property.DefaultIdReader;
-import io.agrest.property.PropertyReader;
 import io.agrest.resolver.NestedDataResolver;
 import io.agrest.resolver.RootDataResolver;
-import io.agrest.resolver.ThrowingNestedDataResolver;
 import io.agrest.resolver.ThrowingRootDataResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,7 +21,6 @@ import java.lang.reflect.WildcardType;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.Function;
 
 /**
  * A helper class to compile custom {@link AgEntity} objects based on annotations.
@@ -89,8 +85,7 @@ public class AgEntityBuilder<T> {
                 attributes,
                 relationships,
                 new DefaultIdReader(ids.keySet()),
-                rootDataResolver != null ? rootDataResolver : ThrowingRootDataResolver.getInstance(),
-                nestedDataResolver != null ? nestedDataResolver : ThrowingNestedDataResolver.getInstance());
+                rootDataResolver != null ? rootDataResolver : ThrowingRootDataResolver.getInstance());
     }
 
     private void addId(io.agrest.meta.AgAttribute id) {
@@ -216,14 +211,12 @@ public class AgEntityBuilder<T> {
             String name = getter.getName();
             AgEntity<?> targetEntity = agDataMap.getEntity(targetType);
 
-            // unlike Cayenne entity, for POJOs read children from the object, not from the entity..
-
-            // TODO: a decision whether to read results from the object or from the child entity (via
-            //  ChildEntityResultReader and ChildEntityListResultReader) should not be dependent on the object nature,
-            //  but rather on the data retrieval strategy for a given relationship
-
-            Function<ResourceEntity<?>, PropertyReader> readerFactory = e -> BeanPropertyReader.reader();
-            addRelationship(new DefaultAgRelationship(name, targetEntity, toMany, readerFactory));
+            addRelationship(new DefaultAgRelationship(
+                    name,
+                    targetEntity,
+                    toMany,
+                    nestedDataResolver)
+            );
         }
 
         return false;

@@ -5,11 +5,13 @@ import io.agrest.CompoundObjectId;
 import io.agrest.NestedResourceEntity;
 import io.agrest.SimpleObjectId;
 import io.agrest.meta.AgAttribute;
+import io.agrest.property.NestedEntityListResultReader;
+import io.agrest.property.NestedEntityResultReader;
+import io.agrest.property.PropertyReader;
 import io.agrest.resolver.NestedDataResolver;
 import io.agrest.runtime.cayenne.ICayennePersister;
 import io.agrest.runtime.processor.select.SelectContext;
 import org.apache.cayenne.DataObject;
-import org.apache.cayenne.di.Inject;
 
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -22,9 +24,7 @@ import java.util.function.BiConsumer;
  */
 public class ViaQueryWithParentQualifierResolver extends CayenneDataResolver implements NestedDataResolver<DataObject> {
 
-    public ViaQueryWithParentQualifierResolver(
-            @Inject CayenneQueryAssembler queryAssembler,
-            @Inject ICayennePersister persister) {
+    public ViaQueryWithParentQualifierResolver(CayenneQueryAssembler queryAssembler, ICayennePersister persister) {
         super(queryAssembler, persister);
     }
 
@@ -49,6 +49,13 @@ public class ViaQueryWithParentQualifierResolver extends CayenneDataResolver imp
         List<DataObject> result = fetch(entity);
         indexResultByParentId(entity, result);
         afterDataFetched(entity, result, context);
+    }
+
+    @Override
+    public PropertyReader reader(NestedResourceEntity<DataObject> entity) {
+        return entity.getIncoming().isToMany()
+                ? new NestedEntityListResultReader(entity)
+                : new NestedEntityResultReader(entity);
     }
 
     protected void indexResultByParentId(NestedResourceEntity<DataObject> entity, List<DataObject> result) {

@@ -1,10 +1,8 @@
 package io.agrest.meta;
 
-import io.agrest.ResourceEntity;
-import io.agrest.property.PropertyReader;
+import io.agrest.resolver.NestedDataResolver;
 
 import java.util.Objects;
-import java.util.function.Function;
 
 /**
  * @since 1.12
@@ -14,19 +12,18 @@ public class DefaultAgRelationship implements AgRelationship {
     private String name;
     private AgEntity<?> targetEntity;
     private boolean toMany;
-    private Function<ResourceEntity<?>, PropertyReader> readerFactory;
+    private NestedDataResolver<?> dataResolver;
 
-    /**
-     * @since 2.10
-     */
     public DefaultAgRelationship(
-            String name, AgEntity<?> targetEntity,
+            String name,
+            AgEntity<?> targetEntity,
             boolean toMany,
-            Function<ResourceEntity<?>, PropertyReader> readerFactory) {
+            NestedDataResolver<?> dataResolver) {
+
         this.name = name;
-        this.targetEntity = Objects.requireNonNull(targetEntity);
         this.toMany = toMany;
-        this.readerFactory = readerFactory;
+        this.targetEntity = Objects.requireNonNull(targetEntity);
+        this.dataResolver = Objects.requireNonNull(dataResolver);
     }
 
     @Override
@@ -44,11 +41,8 @@ public class DefaultAgRelationship implements AgRelationship {
         return toMany;
     }
 
-    /**
-     * @since 2.10
-     */
     @Override
-    public PropertyReader getPropertyReader(ResourceEntity<?> entity) {
-        return readerFactory.apply(entity);
+    public NestedDataResolver<?> getResolver() {
+        return dataResolver;
     }
 }

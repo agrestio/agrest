@@ -4,7 +4,6 @@ import io.agrest.NestedResourceEntity;
 import io.agrest.runtime.cayenne.ICayennePersister;
 import io.agrest.runtime.processor.select.SelectContext;
 import org.apache.cayenne.DataObject;
-import org.apache.cayenne.di.Inject;
 import org.apache.cayenne.query.SelectQuery;
 
 import java.util.Iterator;
@@ -14,9 +13,7 @@ import java.util.Iterator;
  */
 public class ViaQueryWithParentIdsResolver extends ViaQueryWithParentQualifierResolver {
 
-    public ViaQueryWithParentIdsResolver(
-            @Inject CayenneQueryAssembler queryAssembler,
-            @Inject ICayennePersister persister) {
+    public ViaQueryWithParentIdsResolver(CayenneQueryAssembler queryAssembler, ICayennePersister persister) {
         super(queryAssembler, persister);
     }
 

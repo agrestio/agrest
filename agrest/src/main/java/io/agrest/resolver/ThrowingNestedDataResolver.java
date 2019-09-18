@@ -1,6 +1,7 @@
 package io.agrest.resolver;
 
 import io.agrest.NestedResourceEntity;
+import io.agrest.property.PropertyReader;
 import io.agrest.runtime.processor.select.SelectContext;
 
 /**
@@ -24,6 +25,13 @@ public class ThrowingNestedDataResolver<T> implements NestedDataResolver<T> {
 
     @Override
     public void onParentDataResolved(NestedResourceEntity<T> entity, Iterable<?> parentData, SelectContext<?> context) {
+        throw new UnsupportedOperationException(
+                "This is a placeholder for the nested resolver. " +
+                        "A real resolver is needed to read entity '" + entity.getName() + "'");
+    }
+
+    @Override
+    public PropertyReader reader(NestedResourceEntity<T> entity) {
         throw new UnsupportedOperationException(
                 "This is a placeholder for the nested resolver. " +
                         "A real resolver is needed to read entity '" + entity.getName() + "'");

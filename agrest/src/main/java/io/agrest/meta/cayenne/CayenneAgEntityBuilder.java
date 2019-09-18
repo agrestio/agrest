@@ -1,6 +1,5 @@
 package io.agrest.meta.cayenne;
 
-import io.agrest.ResourceEntity;
 import io.agrest.meta.AgAttribute;
 import io.agrest.meta.AgDataMap;
 import io.agrest.meta.AgEntity;
@@ -8,14 +7,10 @@ import io.agrest.meta.AgEntityBuilder;
 import io.agrest.meta.AgEntityOverlay;
 import io.agrest.meta.AgRelationship;
 import io.agrest.meta.DefaultAgEntity;
-import io.agrest.property.ChildEntityListResultReader;
-import io.agrest.property.ChildEntityResultReader;
 import io.agrest.property.DefaultIdReader;
 import io.agrest.property.IdReader;
-import io.agrest.property.PropertyReader;
 import io.agrest.resolver.NestedDataResolver;
 import io.agrest.resolver.RootDataResolver;
-import io.agrest.resolver.ThrowingNestedDataResolver;
 import io.agrest.resolver.ThrowingRootDataResolver;
 import org.apache.cayenne.dba.TypesMapping;
 import org.apache.cayenne.map.DbAttribute;
@@ -28,7 +23,6 @@ import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.Function;
 
 import static io.agrest.meta.Types.typeForName;
 
@@ -51,6 +45,7 @@ public class CayenneAgEntityBuilder<T> {
     private boolean pojoIdReader;
     private RootDataResolver<T> rootDataResolver;
     private NestedDataResolver<T> nestedDataResolver;
+    private NestedDataResolver pojoNestedResolver;
 
     public CayenneAgEntityBuilder(Class<T> type, AgDataMap agDataMap, EntityResolver cayenneResolver) {
 
@@ -80,6 +75,11 @@ public class CayenneAgEntityBuilder<T> {
         return this;
     }
 
+    public CayenneAgEntityBuilder<T> pojoNestedDataResolver(NestedDataResolver<T> resolver) {
+        this.pojoNestedResolver = resolver;
+        return this;
+    }
+
     public AgEntity<T> build() {
 
         buildCayenneEntity();
@@ -95,8 +95,7 @@ public class CayenneAgEntityBuilder<T> {
                 attributes,
                 relationships,
                 idReader,
-                rootDataResolver != null ? rootDataResolver : ThrowingRootDataResolver.getInstance(),
-                nestedDataResolver != null ? nestedDataResolver : ThrowingNestedDataResolver.getInstance());
+                rootDataResolver != null ? rootDataResolver : ThrowingRootDataResolver.getInstance());
     }
 
     private AgAttribute addId(AgAttribute id) {
@@ -122,19 +121,11 @@ public class CayenneAgEntityBuilder<T> {
 
             Class<?> targetEntityType = cayenneResolver.getClassDescriptor(r.getTargetEntityName()).getObjectClass();
 
-            // 'agDataMap.getEntity' will compile the entity on the fly if needed
-            AgEntity<?> targetEntity = agDataMap.getEntity(targetEntityType);
-
-            // TODO: a decision whether to read results from the object or from the child entity (via
-            //  ChildEntityResultReader and ChildEntityListResultReader) should not be dependent on the object nature,
-            //  but rather on the data retrieval strategy for a given relationship
-
-            Function<ResourceEntity<?>, PropertyReader> readerFactory = r.isToMany()
-                    // "idReader" must come from parent entity.. it is not yet know here
-                    ? e -> new ChildEntityListResultReader(e, e.getAgEntity().getIdReader())
-                    : e -> new ChildEntityResultReader(e, e.getAgEntity().getIdReader());
-
-            addRelationship(new CayenneAgRelationship(r, targetEntity, readerFactory));
+            addRelationship(new CayenneAgRelationship(
+                    r,
+                    // 'agDataMap.getEntity' will compile the entity on the fly if needed
+                    agDataMap.getEntity(targetEntityType),
+                    nestedDataResolver));
         }
 
         for (DbAttribute pk : cayenneEntity.getDbEntity().getPrimaryKeys()) {
@@ -162,12 +153,12 @@ public class CayenneAgEntityBuilder<T> {
 
     protected void buildAnnotatedProperties() {
 
-        // load a separate entity built purely from annotations, then merge it
-        // with our entity... Note that we are not cloning attributes or
-        // relationship during merge... they have no references to parent and
-        // can be used as is.
+        // Load a separate entity built purely from annotations, then merge it with our entity. We are not cloning
+        // attributes or relationship during merge... they have no references to parent and can be used as is.
 
-        AgEntity<T> annotatedEntity = new AgEntityBuilder<>(type, agDataMap).build();
+        AgEntity<T> annotatedEntity = new AgEntityBuilder<>(type, agDataMap)
+                .nestedDataResolver(pojoNestedResolver)
+                .build();
 
         if (annotatedEntity.getIds().size() > 0) {
 

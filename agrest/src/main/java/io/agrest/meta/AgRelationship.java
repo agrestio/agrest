@@ -1,7 +1,6 @@
 package io.agrest.meta;
 
-import io.agrest.ResourceEntity;
-import io.agrest.property.PropertyReader;
+import io.agrest.resolver.NestedDataResolver;
 
 /**
  * @since 1.12
@@ -18,9 +17,8 @@ public interface AgRelationship {
     boolean isToMany();
 
     /**
-     * Returns a {@link PropertyReader} for this relationship applicable in a context of the provided request entity.
-     *
+     * @return a default data resolver for the target entity of this relationship
      * @since 3.4
      */
-    PropertyReader getPropertyReader(ResourceEntity<?> entity);
+    NestedDataResolver<?> getResolver();
 }

@@ -5,8 +5,8 @@ import io.agrest.ResourceEntity;
 import io.agrest.RootResourceEntity;
 import io.agrest.runtime.cayenne.ICayennePersister;
 import io.agrest.runtime.processor.select.SelectContext;
+import org.apache.cayenne.query.SelectQuery;
 
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -55,6 +55,10 @@ public abstract class CayenneDataResolver {
 
         ResourceEntity<?> mapBy = entity.getMapBy();
         if (mapBy != null) {
+
+            // copy owner's query to MapBy to ensure its own resolvers do not get confused...
+            mapBy.setSelect((SelectQuery) entity.getSelect());
+
             for (NestedResourceEntity<?> c : mapBy.getChildren().values()) {
                 c.onParentQueryAssembled(context);
             }
@@ -70,8 +74,7 @@ public abstract class CayenneDataResolver {
         ResourceEntity<?> mapBy = entity.getMapBy();
         if (mapBy != null) {
             for (NestedResourceEntity<?> c : mapBy.getChildren().values()) {
-                // TODO: do we need to pass our data to MapBy children?
-                c.onParentDataResolved(Collections.emptyList(), context);
+                c.onParentDataResolved(data, context);
             }
         }
 

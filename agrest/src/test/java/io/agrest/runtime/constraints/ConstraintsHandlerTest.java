@@ -167,7 +167,7 @@ public class ConstraintsHandlerTest {
         appendAttribute(te1, "c");
         appendAttribute(te1, "b");
 
-        NestedResourceEntity<?> te11 = new NestedResourceEntity<>(age2, null, null, null);
+        NestedResourceEntity<?> te11 = new NestedResourceEntity<>(age2, null, null, mock(AgRelationship.class));
         appendAttribute(te11, "a1");
         appendAttribute(te11, "b1");
         te1.getChildren().put("d", te11);
@@ -190,12 +190,12 @@ public class ConstraintsHandlerTest {
         appendAttribute(te1, "c");
         appendAttribute(te1, "b");
 
-        NestedResourceEntity<?> te11 = new NestedResourceEntity<>(age1, null, te1, null);
+        NestedResourceEntity<?> te11 = new NestedResourceEntity<>(age1, null, te1, mock(AgRelationship.class));
         appendAttribute(te11, "m");
         appendAttribute(te11, "z");
         te1.getChildren().put("r1", te11);
 
-        NestedResourceEntity<?> te21 = new NestedResourceEntity<>(age4, null, te1, null);
+        NestedResourceEntity<?> te21 = new NestedResourceEntity<>(age4, null, te1, mock(AgRelationship.class));
         appendAttribute(te21, "p");
         appendAttribute(te21, "z");
         te1.getChildren().put("r3", te21);
@@ -259,7 +259,7 @@ public class ConstraintsHandlerTest {
 
         ResourceEntity<E2> te1MapBy = new RootResourceEntity<>(age1, null);
 
-        NestedResourceEntity<E1> te1MapByTarget = new NestedResourceEntity<>(age0, null, te1MapBy, null);
+        NestedResourceEntity<E1> te1MapByTarget = new NestedResourceEntity<>(age0, null, te1MapBy, mock(AgRelationship.class));
         appendAttribute(te1MapByTarget, "b");
         te1MapBy.getChildren().put("r1", te1MapByTarget);
 
@@ -270,7 +270,7 @@ public class ConstraintsHandlerTest {
         assertNull(te1.getMapBy());
         assertNull(te1.getMapByPath());
 
-        NestedResourceEntity<E2> te2MapByTarget = new NestedResourceEntity<>(age1, null, te1MapBy, null);
+        NestedResourceEntity<E2> te2MapByTarget = new NestedResourceEntity<>(age1, null, te1MapBy, mock(AgRelationship.class));
         appendAttribute(te2MapByTarget, "a");
 
         ResourceEntity<E1> te2MapBy = new RootResourceEntity<>(age0, null);
@@ -290,7 +290,7 @@ public class ConstraintsHandlerTest {
         Constraint<E1> tc1 = Constraint.excludeAll(E1.class).path("r1", Constraint.excludeAll(E2.class).excludeId());
 
         ResourceEntity<E2> te1MapBy = new RootResourceEntity<>(age1, null);
-        NestedResourceEntity<E1> te1MapByTarget = new NestedResourceEntity<>(age0, null, te1MapBy, null);
+        NestedResourceEntity<E1> te1MapByTarget = new NestedResourceEntity<>(age0, null, te1MapBy, mock(AgRelationship.class));
         te1MapByTarget.includeId();
 
         te1MapBy.getChildren().put("r1", te1MapByTarget);
@@ -310,7 +310,7 @@ public class ConstraintsHandlerTest {
         Constraint<E1> tc1 = Constraint.excludeAll(E1.class).path("r1", Constraint.excludeAll(E2.class).includeId());
 
         ResourceEntity<E1> te1MapBy = new RootResourceEntity<>(age0, null);
-        NestedResourceEntity<E2> te1MapByTarget = new NestedResourceEntity<>(age1, null, te1MapBy, null);
+        NestedResourceEntity<E2> te1MapByTarget = new NestedResourceEntity<>(age1, null, te1MapBy, mock(AgRelationship.class));
         te1MapByTarget.includeId();
 
         te1MapBy.getChildren().put("r1", te1MapByTarget);

@@ -1,9 +1,6 @@
 package io.agrest.meta;
 
-import io.agrest.ResourceEntity;
-import io.agrest.property.PropertyReader;
-
-import java.util.function.Function;
+import io.agrest.resolver.NestedDataResolver;
 
 /**
  * @since 3.4
@@ -16,10 +13,10 @@ public interface AgRelationshipOverlay {
 
     boolean isToMany();
 
-    Function<ResourceEntity<?>, PropertyReader> getReaderFactory();
+    NestedDataResolver<?> getResolver();
 
     default AgRelationship resolve(AgDataMap agDataMap) {
         AgEntity<?> targetEntity = agDataMap.getEntity(getTargetType());
-        return new DefaultAgRelationship(getName(), targetEntity, isToMany(), getReaderFactory());
+        return new DefaultAgRelationship(getName(), targetEntity, isToMany(), getResolver());
     }
 }

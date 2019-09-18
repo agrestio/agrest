@@ -1,5 +1,6 @@
 package io.agrest.property;
 
+import io.agrest.NestedResourceEntity;
 import io.agrest.ResourceEntity;
 
 import java.util.Collections;
@@ -10,10 +11,10 @@ import java.util.Collections;
  *
  * @since 3.4
  */
-public class ChildEntityListResultReader extends ChildEntityResultReader {
+public class NestedEntityListResultReader extends NestedEntityResultReader {
 
-    public ChildEntityListResultReader(ResourceEntity<?> entity, IdReader idReader) {
-        super(entity, idReader);
+    public NestedEntityListResultReader(NestedResourceEntity<?> entity) {
+        super(entity);
     }
 
     @Override

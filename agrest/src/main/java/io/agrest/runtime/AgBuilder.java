@@ -24,8 +24,6 @@ import io.agrest.provider.DataResponseWriter;
 import io.agrest.provider.MetadataResponseWriter;
 import io.agrest.provider.SimpleResponseWriter;
 import io.agrest.provider.ValidationExceptionMapper;
-import io.agrest.resolver.NestedDataResolver;
-import io.agrest.resolver.RootDataResolver;
 import io.agrest.runtime.cayenne.CayennePersister;
 import io.agrest.runtime.cayenne.ICayennePersister;
 import io.agrest.runtime.cayenne.NoCayennePersister;
@@ -34,8 +32,6 @@ import io.agrest.runtime.cayenne.processor.delete.CayenneDeleteStage;
 import io.agrest.runtime.cayenne.processor.delete.CayenneDeleteStartStage;
 import io.agrest.runtime.cayenne.processor.select.CayenneQueryAssembler;
 import io.agrest.runtime.cayenne.processor.select.CayenneQueryAssemblerProvider;
-import io.agrest.runtime.cayenne.processor.select.ViaQueryResolver;
-import io.agrest.runtime.cayenne.processor.select.ViaQueryWithParentIdsResolver;
 import io.agrest.runtime.cayenne.processor.unrelate.CayenneUnrelateDataStoreStage;
 import io.agrest.runtime.cayenne.processor.unrelate.CayenneUnrelateProcessorFactoryProvider;
 import io.agrest.runtime.cayenne.processor.unrelate.CayenneUnrelateStartStage;
@@ -464,9 +460,6 @@ public class AgBuilder {
             binder.bindList(EntityEncoderFilter.class).addAll(entityEncoderFilters);
 
             binder.bind(CayenneQueryAssembler.class).toProvider(CayenneQueryAssemblerProvider.class);
-            binder.bind(RootDataResolver.class).to(ViaQueryResolver.class);
-            binder.bind(NestedDataResolver.class).to(ViaQueryWithParentIdsResolver.class);
-
             binder.bind(CayenneEntityCompiler.class).to(CayenneEntityCompiler.class);
             binder.bind(PojoEntityCompiler.class).to(PojoEntityCompiler.class);
             binder.bindList(AgEntityCompiler.class)

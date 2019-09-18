@@ -3,6 +3,7 @@ package io.agrest.meta;
 import io.agrest.meta.compiler.BeanAnalyzer;
 import io.agrest.meta.compiler.PropertyGetter;
 import io.agrest.property.PropertyReader;
+import io.agrest.resolver.ParentPropertyDataResolvers;
 
 import java.util.HashMap;
 import java.util.List;
@@ -129,7 +130,7 @@ public class AgEntityOverlay<T> {
      * @since 2.10
      */
     public <V> AgEntityOverlay<T> addToOneRelationship(String name, Class<V> targetType, Function<T, V> reader) {
-        relationships.put(name, new DefaultAgRelationshipOverlay(name, targetType, false, e -> asPropertyReader(reader)));
+        relationships.put(name, new DefaultAgRelationshipOverlay(name, targetType, false, ParentPropertyDataResolvers.forReader(reader)));
         return this;
     }
 
@@ -141,7 +142,7 @@ public class AgEntityOverlay<T> {
      * @since 2.10
      */
     public <V> AgEntityOverlay<T> addToManyRelationship(String name, Class<V> targetType, Function<T, List<V>> reader) {
-        relationships.put(name, new DefaultAgRelationshipOverlay(name, targetType, true, e -> asPropertyReader(reader)));
+        relationships.put(name, new DefaultAgRelationshipOverlay(name, targetType, true, ParentPropertyDataResolvers.forReader(reader)));
         return this;
     }
 }

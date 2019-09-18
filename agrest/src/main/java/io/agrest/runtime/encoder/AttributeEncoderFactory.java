@@ -1,6 +1,7 @@
 package io.agrest.runtime.encoder;
 
 import io.agrest.EntityProperty;
+import io.agrest.NestedResourceEntity;
 import io.agrest.ResourceEntity;
 import io.agrest.encoder.Encoder;
 import io.agrest.encoder.IdEncoder;
@@ -42,8 +43,8 @@ public class AttributeEncoderFactory implements IAttributeEncoderFactory {
     @Override
     public EntityProperty getRelationshipProperty(ResourceEntity<?> entity, AgRelationship relationship, Encoder encoder) {
 
-        // Can't cache the reader, as both reader and encoder depend on request state
-        PropertyReader reader = relationship.getPropertyReader(entity);
+        NestedResourceEntity childEntity = entity.getChild(relationship.getName());
+        PropertyReader reader = relationship.getResolver().reader(childEntity);
 
         // all relationships these days have a reader, but check just in case
         return reader != null

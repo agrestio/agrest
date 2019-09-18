@@ -33,7 +33,7 @@ public class NestedResourceEntity<T> extends ResourceEntity<T> {
         this.incoming = incoming;
         this.parent = parent;
         this.resultByParent = new LinkedHashMap<>();
-        this.resolver = agEntity.getNestedDataResolver();
+        this.resolver = (NestedDataResolver<T>) incoming.getResolver();
     }
 
     public ResourceEntity<?> getParent() {

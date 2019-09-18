@@ -13,8 +13,6 @@ import io.agrest.meta.parser.ResourceParser;
 import io.agrest.property.BeanPropertyReader;
 import io.agrest.runtime.cayenne.ICayennePersister;
 import io.agrest.runtime.cayenne.processor.select.CayenneQueryAssembler;
-import io.agrest.runtime.cayenne.processor.select.ViaQueryResolver;
-import io.agrest.runtime.cayenne.processor.select.ViaQueryWithParentQualifierResolver;
 import io.agrest.runtime.meta.BaseUrlProvider;
 import io.agrest.runtime.meta.IMetadataService;
 import io.agrest.runtime.meta.IResourceMetadataService;
@@ -99,10 +97,9 @@ public class TestWithCayenneMapping {
     protected List<AgEntityCompiler> createEntityCompilers() {
 
         AgEntityCompiler c1 = new CayenneEntityCompiler(
+                queryAssembler,
                 mockCayennePersister,
-                Collections.emptyMap(),
-                new ViaQueryResolver(queryAssembler, mockCayennePersister),
-                new ViaQueryWithParentQualifierResolver(queryAssembler, mockCayennePersister));
+                Collections.emptyMap());
 
         AgEntityCompiler c2 = new PojoEntityCompiler(Collections.emptyMap());
 
