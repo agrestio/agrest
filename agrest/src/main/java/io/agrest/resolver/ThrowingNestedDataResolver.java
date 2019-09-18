@@ -19,13 +19,13 @@ public class ThrowingNestedDataResolver<T> implements NestedDataResolver<T> {
     public void onParentQueryAssembled(NestedResourceEntity<T> entity, SelectContext<?> context) {
         throw new UnsupportedOperationException(
                 "This is a placeholder for the nested resolver. " +
-                        "A real resolver is needed to read entity '" + context.getEntity().getName() + "'");
+                        "A real resolver is needed to read entity '" + entity.getName() + "'");
     }
 
     @Override
     public void onParentDataResolved(NestedResourceEntity<T> entity, Iterable<?> parentData, SelectContext<?> context) {
         throw new UnsupportedOperationException(
                 "This is a placeholder for the nested resolver. " +
-                        "A real resolver is needed to read entity '" + context.getEntity().getName() + "'");
+                        "A real resolver is needed to read entity '" + entity.getName() + "'");
     }
 }

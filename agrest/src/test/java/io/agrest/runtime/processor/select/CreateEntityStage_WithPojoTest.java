@@ -4,6 +4,7 @@ import io.agrest.ResourceEntity;
 import io.agrest.it.fixture.pojo.model.P1;
 import io.agrest.it.fixture.pojo.model.P2;
 import io.agrest.meta.compiler.AgEntityCompiler;
+import io.agrest.meta.compiler.PojoEntityCompiler;
 import io.agrest.protocol.Include;
 import io.agrest.runtime.entity.CayenneExpMerger;
 import io.agrest.runtime.entity.ExcludeMerger;
@@ -76,11 +77,7 @@ public class CreateEntityStage_WithPojoTest extends TestWithCayenneMapping {
 
     @Override
     protected List<AgEntityCompiler> createEntityCompilers() {
-        List<AgEntityCompiler> compilers = super.createEntityCompilers();
-
-        // reorder compilers for POJO one to go first
-        Collections.swap(compilers, 0, 1);
-        return compilers;
+        return Collections.singletonList(new PojoEntityCompiler(Collections.emptyMap()));
     }
 
     @Test
