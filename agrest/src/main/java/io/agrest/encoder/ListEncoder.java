@@ -7,151 +7,155 @@ import java.util.List;
 
 public class ListEncoder implements CollectionEncoder {
 
-	private Encoder elementEncoder;
+    private Encoder elementEncoder;
 
-	private int offset;
-	private int limit;
+    private int offset;
+    private int limit;
 
-	private boolean shouldFilter;
+    private boolean shouldFilter;
 
-	public ListEncoder(Encoder elementEncoder) {
-		this.elementEncoder = elementEncoder;
-	}
+    public ListEncoder(Encoder elementEncoder) {
+        this.elementEncoder = elementEncoder;
+    }
 
-	@Override
-	public int visitEntities(Object root, EncoderVisitor visitor) {
-		if (root == null) {
-			return 0;
-		}
+    @Override
+    public int visitEntities(Object root, EncoderVisitor visitor) {
+        if (root == null) {
+            return 0;
+        }
 
-		List<?> objects = toList(root);
+        List<?> objects = toList(root);
 
-		Counter counter = new Counter();
+        Counter counter = new Counter();
 
-		rewind(counter, objects, offset);
-		return visit(counter, objects, limit > 0 ? limit : Integer.MAX_VALUE, visitor);
-	}
+        rewind(counter, objects, offset);
+        return visit(counter, objects, limit > 0 ? limit : Integer.MAX_VALUE, visitor);
+    }
 
-	public ListEncoder withOffset(int offset) {
-		this.offset = offset;
-		return this;
-	}
+    public ListEncoder withOffset(int offset) {
+        this.offset = offset;
+        return this;
+    }
 
-	public ListEncoder withLimit(int limit) {
-		this.limit = limit;
-		return this;
-	}
+    public ListEncoder withLimit(int limit) {
+        this.limit = limit;
+        return this;
+    }
 
-	public ListEncoder shouldFilter() {
-		shouldFilter = true;
-		return this;
-	}
+    public ListEncoder shouldFilter() {
+        shouldFilter = true;
+        return this;
+    }
 
-	/**
-	 * @since 2.1
+    /**
+     * @since 2.1
      */
-	public ListEncoder shouldFilter(boolean filter) {
-		shouldFilter = filter;
-		return this;
-	}
+    public ListEncoder shouldFilter(boolean filter) {
+        shouldFilter = filter;
+        return this;
+    }
 
-	/**
-	 * @since 2.0
-	 */
-	public int encodeAndGetTotal(String propertyName, Object object, JsonGenerator out) throws IOException {
-		if (propertyName != null) {
-			out.writeFieldName(propertyName);
-		}
+    /**
+     * @since 2.0
+     */
+    public int encodeAndGetTotal(String propertyName, Object object, JsonGenerator out) throws IOException {
+        if (propertyName != null) {
+            out.writeFieldName(propertyName);
+        }
 
-		List<?> objects = toList(object);
+        List<?> objects = toList(object);
 
-		out.writeStartArray();
+        out.writeStartArray();
 
-		Counter counter = new Counter();
+        Counter counter = new Counter();
 
-		// to get valid counts and offsets, we need to do the following:
-		// rewind head -> encode -> rewind tail
-		rewind(counter, objects, offset);
-		encode(counter, objects, limit > 0 ? limit : Integer.MAX_VALUE, out);
-		rewind(counter, objects, objects.size());
+        // to get valid counts and offsets, we need to do the following:
+        // rewind head -> encode -> rewind tail
+        rewind(counter, objects, offset);
+        encode(counter, objects, limit > 0 ? limit : Integer.MAX_VALUE, out);
+        rewind(counter, objects, objects.size());
 
-		out.writeEndArray();
+        out.writeEndArray();
 
-		return counter.getTotal();
-	}
+        return counter.getTotal();
+    }
 
-	@SuppressWarnings({ "unchecked", "rawtypes" })
-	private List<?> toList(Object object) {
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    private List<?> toList(Object object) {
 
-		if (object == null) {
-			throw new IllegalStateException("Unexpected null list");
-		}
+        if (object == null) {
+            throw new IllegalStateException("Unexpected null list");
+        }
 
-		if (!(object instanceof List)) {
-			throw new IllegalStateException(
-					"Unexpected object type. Should be a List, got: " + object.getClass().getName());
-		}
+        if (!(object instanceof List)) {
+            throw new IllegalStateException(
+                    "Unexpected object type. Should be a List, got: " + object.getClass().getName());
+        }
 
-		return (List) object;
-	}
+        return (List) object;
+    }
 
-	private void rewind(Counter c, List<?> objects, int limit) {
+    private void rewind(Counter c, List<?> objects, int limit) {
 
-		int length = objects.size();
+        int length = objects.size();
 
-		for (; c.position < length && c.rewound < limit; c.position++) {
-
-			if (shouldFilter) {
+        if (shouldFilter) {
+			for (; c.position < length && c.rewound < limit; c.position++) {
 				Object o = objects.get(c.position);
 				if (elementEncoder.willEncode(null, o)) {
 					c.rewound++;
 				}
-			} else {
-				c.rewound++;
 			}
 		}
-	}
+        else {
 
-	private void encode(Counter c, List<?> objects, int limit, JsonGenerator out) throws IOException {
-
-		int length = objects.size();
-
-		for (; c.position < length && c.encoded < limit; c.position++) {
-			if (elementEncoder.encode(null, objects.get(c.position), out)) {
-				c.encoded++;
-			}
+        	// if no filtering is in effect, "position" and "rewound" would increment together
+			int delta = Math.min(length - c.position, limit - c.rewound);
+			c.rewound += delta;
+			c.position += delta;
 		}
-	}
+    }
 
-	private int visit(Counter c, List<?> objects, int limit, EncoderVisitor visitor) {
-		int length = objects.size();
+    private void encode(Counter c, List<?> objects, int limit, JsonGenerator out) throws IOException {
 
-		for (; c.position < length && c.encoded < limit; c.position++) {
-			Object o = objects.get(c.position);
-			int bitmask = elementEncoder.visitEntities(o, visitor);
-			c.encoded++;
+        int length = objects.size();
 
-			if ((bitmask & VISIT_SKIP_ALL) != 0) {
-				return VISIT_SKIP_ALL;
-			}
-		}
+        for (; c.position < length && c.encoded < limit; c.position++) {
+            if (elementEncoder.encode(null, objects.get(c.position), out)) {
+                c.encoded++;
+            }
+        }
+    }
 
-		return VISIT_CONTINUE;
-	}
+    private int visit(Counter c, List<?> objects, int limit, EncoderVisitor visitor) {
+        int length = objects.size();
 
-	@Override
-	public boolean willEncode(String propertyName, Object object) {
-		return true;
-	}
+        for (; c.position < length && c.encoded < limit; c.position++) {
+            Object o = objects.get(c.position);
+            int bitmask = elementEncoder.visitEntities(o, visitor);
+            c.encoded++;
 
-	final class Counter {
-		int position;
+            if ((bitmask & VISIT_SKIP_ALL) != 0) {
+                return VISIT_SKIP_ALL;
+            }
+        }
 
-		int encoded;
-		int rewound;
+        return VISIT_CONTINUE;
+    }
 
-		int getTotal() {
-			return encoded + rewound;
-		}
-	}
+    @Override
+    public boolean willEncode(String propertyName, Object object) {
+        return true;
+    }
+
+    final class Counter {
+        int position;
+
+        int encoded;
+        int rewound;
+
+        int getTotal() {
+            return encoded + rewound;
+        }
+    }
 }
