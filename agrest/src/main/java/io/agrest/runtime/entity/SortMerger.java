@@ -50,8 +50,23 @@ public class SortMerger implements ISortMerger {
                 }
             }
 
-            SortOrder so = ordering.getDirection() == Dir.ASC ? SortOrder.ASCENDING : SortOrder.DESCENDING;
+
+            SortOrder so = directionToSortOrder(ordering.getDirection());
             resourceEntity.getOrderings().add(new Ordering(property, so));
         }
     }
+
+    private SortOrder directionToSortOrder(Dir direction) {
+        switch (direction) {
+            case ASC:
+                return SortOrder.ASCENDING;
+            case ASC_INSENSITIVE:
+                return SortOrder.ASCENDING_INSENSITIVE;
+            case DESC_INSENSITIVE:
+                return SortOrder.DESCENDING_INSENSITIVE;
+            default:
+                return SortOrder.DESCENDING;
+        }
+    }
+
 }
