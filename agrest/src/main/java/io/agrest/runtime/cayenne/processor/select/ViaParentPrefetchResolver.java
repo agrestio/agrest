@@ -15,8 +15,11 @@ import java.util.Collections;
  */
 public class ViaParentPrefetchResolver extends CayenneDataResolver implements NestedDataResolver<DataObject> {
 
-    public ViaParentPrefetchResolver(CayenneQueryAssembler queryAssembler, ICayennePersister persister) {
+    private int prefetchSemantics;
+
+    public ViaParentPrefetchResolver(CayenneQueryAssembler queryAssembler, ICayennePersister persister, int prefetchSemantics) {
         super(queryAssembler, persister);
+        this.prefetchSemantics = prefetchSemantics;
     }
 
     @Override
@@ -24,7 +27,7 @@ public class ViaParentPrefetchResolver extends CayenneDataResolver implements Ne
             NestedResourceEntity<DataObject> entity,
             SelectContext<?> context) {
 
-        addPrefetch(entity);
+        addPrefetch(entity, prefetchSemantics);
         afterQueryAssembled(entity, context);
     }
 

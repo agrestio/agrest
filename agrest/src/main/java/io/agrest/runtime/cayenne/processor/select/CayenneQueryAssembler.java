@@ -50,6 +50,7 @@ public class CayenneQueryAssembler {
 
         SelectQuery<T> query = createQuery(entity);
 
+        // TODO: this check prevents us from using overlaid CayenneAgRelationships
         if (!(entity.getIncoming() instanceof CayenneAgRelationship)) {
             return query;
         }
@@ -62,6 +63,7 @@ public class CayenneQueryAssembler {
 
         for (AgAttribute attribute : entity.getParent().getAgEntity().getIds()) {
 
+            // this works as
             CayenneAgAttribute cayenneAgAttribute = (CayenneAgAttribute) attribute;
             Expression propertyExp = ExpressionFactory.dbPathExp(reversePath
                     + "."
@@ -84,6 +86,7 @@ public class CayenneQueryAssembler {
 
         SelectQuery<T> query = createQuery(entity);
 
+        // TODO: this check prevents us from using overlaid CayenneAgRelationships
         if (!(entity.getIncoming() instanceof CayenneAgRelationship)) {
             return query;
         }

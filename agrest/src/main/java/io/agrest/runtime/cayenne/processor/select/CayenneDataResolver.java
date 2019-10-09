@@ -22,11 +22,11 @@ public abstract class CayenneDataResolver {
         this.persister = persister;
     }
 
-    protected void addPrefetch(NestedResourceEntity<?> entity) {
-        addPrefetch(entity, null);
+    protected void addPrefetch(NestedResourceEntity<?> entity, int prefetchSemantics) {
+        addPrefetch(entity, null, prefetchSemantics);
     }
 
-    protected void addPrefetch(NestedResourceEntity<?> entity, String outgoingPath) {
+    protected void addPrefetch(NestedResourceEntity<?> entity, String outgoingPath, int prefetchSemantics) {
 
         // add prefetch to the first available (grand-)parent query
 
@@ -35,7 +35,7 @@ public abstract class CayenneDataResolver {
 
         ResourceEntity<?> parent = entity.getParent();
         if (parent.getSelect() != null) {
-            parent.getSelect().addPrefetch(path);
+            parent.getSelect().addPrefetch(path).setSemantics(prefetchSemantics);
             return;
         }
 
@@ -44,7 +44,7 @@ public abstract class CayenneDataResolver {
                     "Can't add prefetch to root entity that has no SelectQuery of its own. Path: " + path);
         }
 
-        addPrefetch(((NestedResourceEntity) parent), path);
+        addPrefetch(((NestedResourceEntity) parent), path, prefetchSemantics);
     }
 
     protected <T> List<T> fetch(ResourceEntity<T> entity) {
