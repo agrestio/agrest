@@ -227,6 +227,10 @@ public class AgEntityBuilder<T> {
         if (overlay != null) {
             overlay.getAttributes().forEach(this::addAttribute);
             overlay.getRelationshipOverlays().forEach(this::loadRelationshipOverlay);
+
+            if(overlay.getRootDataResolver() != null) {
+                this.rootDataResolver = overlay.getRootDataResolver();
+            }
         }
     }
 

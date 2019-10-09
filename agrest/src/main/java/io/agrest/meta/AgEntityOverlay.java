@@ -5,6 +5,7 @@ import io.agrest.meta.compiler.PropertyGetter;
 import io.agrest.property.PropertyReader;
 import io.agrest.resolver.NestedDataResolver;
 import io.agrest.resolver.ParentPropertyDataResolvers;
+import io.agrest.resolver.RootDataResolver;
 import org.apache.cayenne.exp.parser.ASTObjPath;
 
 import java.util.HashMap;
@@ -22,9 +23,10 @@ import java.util.function.Function;
 public class AgEntityOverlay<T> {
 
     private Class<T> type;
-    //  TODO: AgAttributeOverride to allow for partial overrides, like changing a reader
+    //  TODO: introduce AgAttributeOverride to allow for partial overrides, like changing a reader
     private Map<String, AgAttribute> attributes;
     private Map<String, AgRelationshipOverlay> relationships;
+    private RootDataResolver<T> rootDataResolver;
 
     @Deprecated
     private Map<String, PropertyGetter> typeGetters;
@@ -46,6 +48,9 @@ public class AgEntityOverlay<T> {
     public AgEntityOverlay<T> merge(AgEntityOverlay<T> anotherOverlay) {
         attributes.putAll(anotherOverlay.attributes);
         relationships.putAll(anotherOverlay.relationships);
+        if(anotherOverlay.getRootDataResolver() != null) {
+            this.rootDataResolver = anotherOverlay.getRootDataResolver();
+        }
         return this;
     }
 
@@ -79,6 +84,13 @@ public class AgEntityOverlay<T> {
      */
     public Iterable<AgRelationshipOverlay> getRelationshipOverlays() {
         return relationships.values();
+    }
+
+    /**
+     * @since 3.4
+     */
+    public RootDataResolver<T> getRootDataResolver() {
+        return rootDataResolver;
     }
 
     private Map<String, PropertyGetter> getTypeGetters() {
@@ -217,5 +229,13 @@ public class AgEntityOverlay<T> {
     @Deprecated
     public <V> AgEntityOverlay<T> addToManyRelationship(String name, Class<V> targetType, Function<T, List<V>> reader) {
         return redefineToMany(name, targetType, reader);
+    }
+
+    /**
+     * @since 3.4
+     */
+    public AgEntityOverlay<T> redefineRootDataResolver(RootDataResolver<T> rootResolver) {
+        this.rootDataResolver = rootResolver;
+        return this;
     }
 }

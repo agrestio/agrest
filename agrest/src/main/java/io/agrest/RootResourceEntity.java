@@ -14,13 +14,11 @@ import java.util.List;
 public class RootResourceEntity<T> extends ResourceEntity<T> {
 
     private String applicationBase;
-    private RootDataResolver<T> resolver;
     private List<T> result;
 
     public RootResourceEntity(AgEntity<T> agEntity, AgEntityOverlay<T> agEntityOverlay) {
         super(agEntity, agEntityOverlay);
         this.result = new ArrayList<>();
-        this.resolver = agEntity.getDataResolver();
     }
 
     public List<T> getResult() {
@@ -46,10 +44,7 @@ public class RootResourceEntity<T> extends ResourceEntity<T> {
     }
 
     public RootDataResolver<T> getResolver() {
-        return resolver;
-    }
-
-    public void setResolver(RootDataResolver<T> resolver) {
-        this.resolver = resolver;
+        RootDataResolver<T> resolver = getAgEntityOverlay() != null ? getAgEntityOverlay().getRootDataResolver() : null;
+        return resolver != null ? resolver : getAgEntity().getDataResolver();
     }
 }

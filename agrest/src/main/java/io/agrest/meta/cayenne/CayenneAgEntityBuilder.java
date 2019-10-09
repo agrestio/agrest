@@ -211,8 +211,10 @@ public class CayenneAgEntityBuilder<T> {
         if (overlay != null) {
             // TODO: what about overlaying ids?
             overlay.getAttributes().forEach(this::addAttribute);
-
             overlay.getRelationshipOverlays().forEach(this::loadRelationshipOverlay);
+            if(overlay.getRootDataResolver() != null) {
+                this.rootDataResolver = overlay.getRootDataResolver();
+            }
         }
     }
 
