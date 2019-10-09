@@ -2,16 +2,15 @@ package io.agrest.runtime.cayenne.processor.update;
 
 import io.agrest.AgException;
 import io.agrest.AgObjectId;
-import io.agrest.NestedResourceEntity;
 import io.agrest.CompoundObjectId;
 import io.agrest.EntityUpdate;
+import io.agrest.NestedResourceEntity;
 import io.agrest.ObjectMapper;
 import io.agrest.ObjectMapperFactory;
 import io.agrest.ResourceEntity;
 import io.agrest.SimpleObjectId;
 import io.agrest.meta.AgAttribute;
 import io.agrest.meta.AgRelationship;
-import io.agrest.meta.cayenne.CayenneAgRelationship;
 import io.agrest.runtime.cayenne.ByIdObjectMapperFactory;
 import io.agrest.runtime.cayenne.ICayennePersister;
 import io.agrest.runtime.meta.IMetadataService;
@@ -22,6 +21,7 @@ import org.apache.cayenne.exp.Expression;
 import org.apache.cayenne.exp.ExpressionFactory;
 import org.apache.cayenne.exp.Property;
 import org.apache.cayenne.map.EntityResolver;
+import org.apache.cayenne.map.ObjRelationship;
 import org.apache.cayenne.query.SelectQuery;
 
 import javax.ws.rs.core.Response;
@@ -168,7 +168,7 @@ public class CayenneUpdateStage extends CayenneUpdateDataStoreStage {
     protected void buildChildrenQuery(UpdateContext context, ResourceEntity<?> entity, Map<String, NestedResourceEntity<?>> children) {
         if (!children.isEmpty()) {
             for (Map.Entry<String, NestedResourceEntity<?>> e : children.entrySet()) {
-                ResourceEntity child = e.getValue();
+                NestedResourceEntity child = e.getValue();
 
                 if (entityResolver.getObjEntity(child.getType()) == null) {
                     continue;
@@ -177,18 +177,16 @@ public class CayenneUpdateStage extends CayenneUpdateDataStoreStage {
                 List<Property> properties = new ArrayList<>();
                 properties.add(Property.createSelf(child.getType()));
 
-                AgRelationship relationship = entity.getChild(e.getKey()).getIncoming();
+                ObjRelationship objRelationship = objRelationshipForIncomingRelationship(child);
 
-                if (relationship instanceof CayenneAgRelationship) {
-
-                    CayenneAgRelationship rel = (CayenneAgRelationship) relationship;
-                    for (AgAttribute attribute : entity.getAgEntity().getIds()) {
-                        properties.add(Property.create(ExpressionFactory.dbPathExp(rel.getReverseDbPath() + "." + attribute.getName()), (Class) attribute.getType()));
-                    }
-                    // transfer expression from parent
-                    if (entity.getSelect().getQualifier() != null) {
-                        child.andQualifier(rel.translateExpressionToSource(entity.getSelect().getQualifier()));
-                    }
+                for (AgAttribute attribute : entity.getAgEntity().getIds()) {
+                    properties.add(Property.create(ExpressionFactory.dbPathExp(
+                            objRelationship.getReverseDbRelationshipPath() + "." + attribute.getName()),
+                            (Class) attribute.getType()));
+                }
+                // transfer expression from parent
+                if (entity.getSelect().getQualifier() != null) {
+                    child.andQualifier(translateExpressionToSource(objRelationship, entity.getSelect().getQualifier()));
                 }
 
                 SelectQuery childQuery = buildQuery(context, child);
@@ -250,5 +248,17 @@ public class CayenneUpdateStage extends CayenneUpdateDataStoreStage {
                 }
             }
         }
+    }
+
+    // TODO: copied verbatim from CayenneQueryAssembler... Unify this code?
+    protected ObjRelationship objRelationshipForIncomingRelationship(NestedResourceEntity<?> entity) {
+        return entityResolver.getObjEntity(entity.getParent().getName()).getRelationship(entity.getIncoming().getName());
+    }
+
+    // TODO: copied verbatim from CayenneQueryAssembler... Unify this code?
+    protected Expression translateExpressionToSource(ObjRelationship relationship, Expression expression) {
+        return expression != null
+                ? relationship.getSourceEntity().translateToRelatedEntity(expression, relationship.getName())
+                : null;
     }
 }

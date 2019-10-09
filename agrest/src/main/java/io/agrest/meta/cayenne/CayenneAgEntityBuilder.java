@@ -8,6 +8,7 @@ import io.agrest.meta.AgEntityOverlay;
 import io.agrest.meta.AgRelationship;
 import io.agrest.meta.AgRelationshipOverlay;
 import io.agrest.meta.DefaultAgEntity;
+import io.agrest.meta.DefaultAgRelationship;
 import io.agrest.property.DefaultIdReader;
 import io.agrest.property.IdReader;
 import io.agrest.resolver.NestedDataResolver;
@@ -122,10 +123,11 @@ public class CayenneAgEntityBuilder<T> {
 
             Class<?> targetEntityType = cayenneResolver.getClassDescriptor(r.getTargetEntityName()).getObjectClass();
 
-            addRelationship(new CayenneAgRelationship(
-                    r,
+            addRelationship(new DefaultAgRelationship(
+                    r.getName(),
                     // 'agDataMap.getEntity' will compile the entity on the fly if needed
                     agDataMap.getEntity(targetEntityType),
+                    r.isToMany(),
                     nestedDataResolver));
         }
 
@@ -211,8 +213,7 @@ public class CayenneAgEntityBuilder<T> {
     }
 
     protected void loadRelationshipOverlay(AgRelationshipOverlay overlay) {
-        // I guess there's no point or benefit in creating CayenneAgRelationship for any overlays?
-        io.agrest.meta.AgRelationship relationship = overlay.resolve(relationships.get(overlay.getName()), agDataMap);
+        AgRelationship relationship = overlay.resolve(relationships.get(overlay.getName()), agDataMap);
         if (relationship != null) {
             addRelationship(relationship);
         }

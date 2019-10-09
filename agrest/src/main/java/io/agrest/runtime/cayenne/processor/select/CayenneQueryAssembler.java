@@ -7,12 +7,12 @@ import io.agrest.ResourceEntity;
 import io.agrest.meta.AgAttribute;
 import io.agrest.meta.AgEntity;
 import io.agrest.meta.cayenne.CayenneAgAttribute;
-import io.agrest.meta.cayenne.CayenneAgRelationship;
 import io.agrest.runtime.processor.select.SelectContext;
 import org.apache.cayenne.exp.Expression;
 import org.apache.cayenne.exp.ExpressionFactory;
 import org.apache.cayenne.exp.Property;
 import org.apache.cayenne.map.EntityResolver;
+import org.apache.cayenne.map.ObjRelationship;
 import org.apache.cayenne.query.Ordering;
 import org.apache.cayenne.query.SelectQuery;
 
@@ -50,13 +50,8 @@ public class CayenneQueryAssembler {
 
         SelectQuery<T> query = createQuery(entity);
 
-        // TODO: this check prevents us from using overlaid CayenneAgRelationships
-        if (!(entity.getIncoming() instanceof CayenneAgRelationship)) {
-            return query;
-        }
-
-        CayenneAgRelationship relationship = (CayenneAgRelationship) entity.getIncoming();
-        String reversePath = relationship.getReverseDbPath();
+        ObjRelationship objRelationship = objRelationshipForIncomingRelationship(entity);
+        String reversePath = objRelationship.getReverseDbRelationshipPath();
 
         List<Property<?>> properties = new ArrayList<>();
         properties.add(Property.createSelf(entity.getType()));
@@ -76,7 +71,7 @@ public class CayenneQueryAssembler {
         // translate expression from parent
         Expression parentQualifier = entity.getParent().getSelect().getQualifier();
         if (parentQualifier != null) {
-            query.andQualifier(relationship.translateExpressionToSource(parentQualifier));
+            query.andQualifier(translateExpressionToSource(objRelationship, parentQualifier));
         }
 
         return query;
@@ -86,13 +81,8 @@ public class CayenneQueryAssembler {
 
         SelectQuery<T> query = createQuery(entity);
 
-        // TODO: this check prevents us from using overlaid CayenneAgRelationships
-        if (!(entity.getIncoming() instanceof CayenneAgRelationship)) {
-            return query;
-        }
-
-        CayenneAgRelationship relationship = (CayenneAgRelationship) entity.getIncoming();
-        String outgoingPath = relationship.getReverseDbPath();
+        ObjRelationship objRelationship = objRelationshipForIncomingRelationship(entity);
+        String outgoingPath = objRelationship.getReverseDbRelationshipPath();
 
         List<Property<?>> properties = new ArrayList<>();
         properties.add(Property.createSelf(entity.getType()));
@@ -177,5 +167,15 @@ public class CayenneQueryAssembler {
             }
         }
         return ExpressionFactory.and(qualifiers);
+    }
+
+    protected ObjRelationship objRelationshipForIncomingRelationship(NestedResourceEntity<?> entity) {
+        return cayenneEntityResolver.getObjEntity(entity.getParent().getName()).getRelationship(entity.getIncoming().getName());
+    }
+
+    protected Expression translateExpressionToSource(ObjRelationship relationship, Expression expression) {
+        return expression != null
+                ? relationship.getSourceEntity().translateToRelatedEntity(expression, relationship.getName())
+                : null;
     }
 }

@@ -6,16 +6,19 @@ import io.agrest.EntityUpdate;
 import io.agrest.ResourceEntity;
 import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgRelationship;
-import io.agrest.meta.cayenne.CayenneAgRelationship;
 import io.agrest.processor.Processor;
 import io.agrest.processor.ProcessorOutcome;
+import io.agrest.runtime.cayenne.ICayennePersister;
 import io.agrest.runtime.constraints.IConstraintsHandler;
 import io.agrest.runtime.encoder.IEncoderService;
 import io.agrest.runtime.meta.IMetadataService;
 import io.agrest.runtime.processor.update.UpdateContext;
 import org.apache.cayenne.di.Inject;
+import org.apache.cayenne.exp.Expression;
 import org.apache.cayenne.map.DbJoin;
 import org.apache.cayenne.map.DbRelationship;
+import org.apache.cayenne.map.EntityResolver;
+import org.apache.cayenne.map.ObjRelationship;
 
 import java.util.Collections;
 import java.util.List;
@@ -30,15 +33,18 @@ public class CayenneApplyServerParamsStage implements Processor<UpdateContext<?>
     private IEncoderService encoderService;
     private IConstraintsHandler constraintsHandler;
     private IMetadataService metadataService;
+    private EntityResolver entityResolver;
 
     public CayenneApplyServerParamsStage(
             @Inject IEncoderService encoderService,
             @Inject IConstraintsHandler constraintsHandler,
-            @Inject IMetadataService metadataService) {
+            @Inject IMetadataService metadataService,
+            @Inject ICayennePersister persister) {
 
         this.encoderService = encoderService;
         this.constraintsHandler = constraintsHandler;
         this.metadataService = metadataService;
+        this.entityResolver = persister.entityResolver();
     }
 
     @Override
@@ -81,8 +87,11 @@ public class CayenneApplyServerParamsStage implements Processor<UpdateContext<?>
 
         // TODO: AgEntityOverlay relationships are ignored here
         for (AgRelationship r : entity.getRelationships()) {
-            if (r instanceof CayenneAgRelationship) {
-                List<DbRelationship> dbRelationships = ((CayenneAgRelationship) r).getObjRelationship().getDbRelationships();
+
+            ObjRelationship objRelationship = objRelationshipForAgRelationship(entity.getName(), r);
+
+            if(objRelationship != null) {
+                List<DbRelationship> dbRelationships = objRelationship.getDbRelationships();
                 if (dbRelationships.size() == 1) {
 
                     DbRelationship outgoingDbRelationship = dbRelationships.get(0);
@@ -169,12 +178,11 @@ public class CayenneApplyServerParamsStage implements Processor<UpdateContext<?>
 
         if (parent != null && parent.getId() != null) {
 
-            AgRelationship fromParent = relationshipFromParent(context);
-            if (fromParent instanceof CayenneAgRelationship) {
-                CayenneAgRelationship r = (CayenneAgRelationship) fromParent;
+            ObjRelationship fromParent = relationshipFromParent(context);
+            if (fromParent != null) {
 
                 // TODO: is this appropriate for flattened parent rels?
-                DbRelationship incomingDbRelationship = r.getObjRelationship().getDbRelationships().get(0);
+                DbRelationship incomingDbRelationship = fromParent.getDbRelationships().get(0);
                 if (incomingDbRelationship.isToDependentPK()) {
 
                     AgObjectId id = parent.getId();
@@ -189,9 +197,21 @@ public class CayenneApplyServerParamsStage implements Processor<UpdateContext<?>
         }
     }
 
-    private AgRelationship relationshipFromParent(UpdateContext<?> context) {
+    private ObjRelationship relationshipFromParent(UpdateContext<?> context) {
         return context.getParent() != null
-                ? metadataService.getAgRelationship(context.getParent().getType(), context.getParent().getRelationship())
+                ? entityResolver.getObjEntity(context.getParent().getType()).getRelationship(context.getParent().getRelationship())
+                : null;
+    }
+
+    // TODO: copied verbatim from CayenneQueryAssembler... Unify this code?
+    protected ObjRelationship objRelationshipForAgRelationship(String sourceEntityName, AgRelationship relationship) {
+        return entityResolver.getObjEntity(sourceEntityName).getRelationship(relationship.getName());
+    }
+
+    // TODO: copied verbatim from CayenneQueryAssembler... Unify this code?
+    protected Expression translateExpressionToSource(ObjRelationship relationship, Expression expression) {
+        return expression != null
+                ? relationship.getSourceEntity().translateToRelatedEntity(expression, relationship.getName())
                 : null;
     }
 }
