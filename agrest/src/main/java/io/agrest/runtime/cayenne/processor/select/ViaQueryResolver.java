@@ -1,9 +1,8 @@
 package io.agrest.runtime.cayenne.processor.select;
 
 import io.agrest.AgException;
-import io.agrest.RootResourceEntity;
 import io.agrest.meta.AgEntity;
-import io.agrest.resolver.RootDataResolver;
+import io.agrest.resolver.BaseRootDataResolver;
 import io.agrest.runtime.cayenne.ICayennePersister;
 import io.agrest.runtime.processor.select.SelectContext;
 import org.apache.cayenne.DataObject;
@@ -14,25 +13,26 @@ import java.util.List;
 /**
  * @since 3.4
  */
-public class ViaQueryResolver extends CayenneDataResolver implements RootDataResolver<DataObject> {
+public class ViaQueryResolver extends BaseRootDataResolver<DataObject> {
+
+    protected CayenneQueryAssembler queryAssembler;
+    protected ICayennePersister persister;
 
     public ViaQueryResolver(CayenneQueryAssembler queryAssembler, ICayennePersister persister) {
-        super(queryAssembler, persister);
+        this.queryAssembler = queryAssembler;
+        this.persister = persister;
     }
 
     @Override
-    public void assembleQuery(SelectContext<DataObject> context) {
+    protected void doAssembleQuery(SelectContext<DataObject> context) {
         context.getEntity().setSelect(queryAssembler.createRootQuery(context));
-        afterQueryAssembled(context.getEntity(), context);
     }
 
     @Override
-    public void fetchData(SelectContext<DataObject> context) {
-        RootResourceEntity<DataObject> entity = context.getEntity();
-        List<DataObject> result = fetch(entity);
-        entity.setResult(result);
+    protected List<DataObject> doFetchData(SelectContext<DataObject> context) {
+        List<DataObject> result = persister.sharedContext().select(context.getEntity().getSelect());
         checkObjectNotFound(context, result);
-        afterDataFetched(entity, result, context);
+        return result;
     }
 
     protected void checkObjectNotFound(SelectContext<DataObject> context, List<?> result) {

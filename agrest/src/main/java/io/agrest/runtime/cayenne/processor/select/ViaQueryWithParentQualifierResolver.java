@@ -8,11 +8,12 @@ import io.agrest.meta.AgAttribute;
 import io.agrest.property.NestedEntityListResultReader;
 import io.agrest.property.NestedEntityResultReader;
 import io.agrest.property.PropertyReader;
-import io.agrest.resolver.NestedDataResolver;
+import io.agrest.resolver.BaseNestedDataResolver;
 import io.agrest.runtime.cayenne.ICayennePersister;
 import io.agrest.runtime.processor.select.SelectContext;
 import org.apache.cayenne.DataObject;
 
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -22,20 +23,23 @@ import java.util.function.BiConsumer;
 /**
  * @since 3.4
  */
-public class ViaQueryWithParentQualifierResolver extends CayenneDataResolver implements NestedDataResolver<DataObject> {
+public class ViaQueryWithParentQualifierResolver extends BaseNestedDataResolver<DataObject> {
+
+    protected CayenneQueryAssembler queryAssembler;
+    protected ICayennePersister persister;
 
     public ViaQueryWithParentQualifierResolver(CayenneQueryAssembler queryAssembler, ICayennePersister persister) {
-        super(queryAssembler, persister);
+        this.queryAssembler = queryAssembler;
+        this.persister = persister;
     }
 
     @Override
-    public void onParentQueryAssembled(NestedResourceEntity<DataObject> entity, SelectContext<?> context) {
+    protected void doOnParentQueryAssembled(NestedResourceEntity<DataObject> entity, SelectContext<?> context) {
         entity.setSelect(queryAssembler.createQueryWithParentQualifier(entity));
-        afterQueryAssembled(entity, context);
     }
 
     @Override
-    public void onParentDataResolved(
+    protected List<DataObject> doOnParentDataResolved(
             NestedResourceEntity<DataObject> entity,
             Iterable<?> parentData,
             SelectContext<?> context) {
@@ -43,12 +47,13 @@ public class ViaQueryWithParentQualifierResolver extends CayenneDataResolver imp
         // no parents, no need to fetch children
         Iterator<?> parentIt = parentData.iterator();
         if (!parentIt.hasNext()) {
-            return;
+            return Collections.emptyList();
         }
 
-        List<DataObject> result = fetch(entity);
+        List<DataObject> result = persister.sharedContext().select(entity.getSelect());
         indexResultByParentId(entity, result);
-        afterDataFetched(entity, result, context);
+
+        return result;
     }
 
     @Override

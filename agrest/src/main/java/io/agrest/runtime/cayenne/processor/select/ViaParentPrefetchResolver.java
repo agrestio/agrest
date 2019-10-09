@@ -1,49 +1,76 @@
 package io.agrest.runtime.cayenne.processor.select;
 
 import io.agrest.NestedResourceEntity;
+import io.agrest.ResourceEntity;
+import io.agrest.RootResourceEntity;
 import io.agrest.meta.cayenne.DataObjectPropertyReader;
 import io.agrest.property.PropertyReader;
-import io.agrest.resolver.NestedDataResolver;
+import io.agrest.resolver.BaseNestedDataResolver;
 import io.agrest.runtime.cayenne.ICayennePersister;
 import io.agrest.runtime.processor.select.SelectContext;
 import org.apache.cayenne.DataObject;
 
 import java.util.Collections;
+import java.util.List;
 
 /**
  * @since 3.4
  */
-public class ViaParentPrefetchResolver extends CayenneDataResolver implements NestedDataResolver<DataObject> {
+public class ViaParentPrefetchResolver extends BaseNestedDataResolver<DataObject> {
 
+    protected CayenneQueryAssembler queryAssembler;
+    protected ICayennePersister persister;
     private int prefetchSemantics;
 
     public ViaParentPrefetchResolver(CayenneQueryAssembler queryAssembler, ICayennePersister persister, int prefetchSemantics) {
-        super(queryAssembler, persister);
+        this.queryAssembler = queryAssembler;
+        this.persister = persister;
         this.prefetchSemantics = prefetchSemantics;
     }
 
     @Override
-    public void onParentQueryAssembled(
-            NestedResourceEntity<DataObject> entity,
-            SelectContext<?> context) {
-
+    protected void doOnParentQueryAssembled(NestedResourceEntity<DataObject> entity, SelectContext<?> context) {
         addPrefetch(entity, prefetchSemantics);
-        afterQueryAssembled(entity, context);
     }
 
     @Override
-    public void onParentDataResolved(
+    protected List<DataObject> doOnParentDataResolved(
             NestedResourceEntity<DataObject> entity,
             Iterable<?> parentData,
             SelectContext<?> context) {
 
-        // all the data was fetched at the parent level... so pass an empty list
+        // all the data was fetched at the parent level... so return an empty list
 
         // Current limitation - if used for non-leaf node, all of its children must also use ViaParentPrefetchResolver.
         // Otherwise there will be a child data loss.
         // TODO: We need to efficiently emulate Iterable<ThisEntity> over parent data...
 
-        afterDataFetched(entity, Collections.emptyList(), context);
+        return Collections.emptyList();
+    }
+
+    protected void addPrefetch(NestedResourceEntity<?> entity, int prefetchSemantics) {
+        addPrefetch(entity, null, prefetchSemantics);
+    }
+
+    protected void addPrefetch(NestedResourceEntity<?> entity, String outgoingPath, int prefetchSemantics) {
+
+        // add prefetch to the first available (grand-)parent query
+
+        String incomingPath = entity.getIncoming().getName();
+        String path = outgoingPath != null ? incomingPath + "." + outgoingPath : incomingPath;
+
+        ResourceEntity<?> parent = entity.getParent();
+        if (parent.getSelect() != null) {
+            parent.getSelect().addPrefetch(path).setSemantics(prefetchSemantics);
+            return;
+        }
+
+        if (parent instanceof RootResourceEntity) {
+            throw new IllegalStateException(
+                    "Can't add prefetch to root entity that has no SelectQuery of its own. Path: " + path);
+        }
+
+        addPrefetch(((NestedResourceEntity) parent), path, prefetchSemantics);
     }
 
     @Override
