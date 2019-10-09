@@ -28,6 +28,7 @@ import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+@Deprecated
 public class MultiSelectBuilder_IT extends JerseyAndDerbyCase {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MultiSelectBuilder_IT.class);

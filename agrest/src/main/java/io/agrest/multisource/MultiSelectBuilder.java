@@ -26,8 +26,13 @@ import java.util.function.Supplier;
 import java.util.regex.Pattern;
 
 /**
+ * @see io.agrest.meta.AgEntityOverlay
+ * @see io.agrest.resolver.NestedDataResolver
  * @since 2.0
+ * @deprecated since 3.4 as we now have per-entity data resolvers, so data from multiple sources can be resolved within
+ * a regular pipeline, and without the need to add fake properties to the root objects to store nested results.
  */
+@Deprecated
 public class MultiSelectBuilder<T> {
 
     private static final Pattern SPLIT_PATH = Pattern.compile("\\.");
