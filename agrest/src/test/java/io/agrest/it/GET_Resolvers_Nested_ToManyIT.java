@@ -20,8 +20,6 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
-import static org.junit.Assert.*;
-
 public class GET_Resolvers_Nested_ToManyIT extends JerseyAndDerbyCase {
 
     @BeforeClass
@@ -45,7 +43,6 @@ public class GET_Resolvers_Nested_ToManyIT extends JerseyAndDerbyCase {
                 .values(9, "zzz", null)
                 .exec();
 
-        assertEquals(0, cayenneOpCounter.getQueryCounter());
         Response r = target("/e2_joint_prefetch")
                 .queryParam("include", "id")
                 .queryParam("include", "name")
@@ -54,9 +51,9 @@ public class GET_Resolvers_Nested_ToManyIT extends JerseyAndDerbyCase {
                 .queryParam("sort", "id")
                 .request().get();
 
-        assertEquals(1, cayenneOpCounter.getQueryCounter());
-
-        onSuccess(r).bodyEquals(2, "{\"id\":1,\"e3s\":[{\"name\":\"yyy\"}],\"name\":\"xxx\"},{\"id\":2,\"e3s\":[],\"name\":\"aaa\"}");
+        onSuccess(r)
+                .bodyEquals(2, "{\"id\":1,\"e3s\":[{\"name\":\"yyy\"}],\"name\":\"xxx\"},{\"id\":2,\"e3s\":[],\"name\":\"aaa\"}")
+                .ranQueries(1);
     }
 
     @Test
@@ -70,7 +67,6 @@ public class GET_Resolvers_Nested_ToManyIT extends JerseyAndDerbyCase {
                 .values(9, "zzz", null)
                 .exec();
 
-        assertEquals(0, cayenneOpCounter.getQueryCounter());
         Response r = target("/e2_disjoint_prefetch")
                 .queryParam("include", "id")
                 .queryParam("include", "name")
@@ -79,10 +75,10 @@ public class GET_Resolvers_Nested_ToManyIT extends JerseyAndDerbyCase {
                 .queryParam("sort", "id")
                 .request().get();
 
-        // disjoint prefetch is counted as 1 query at the DataDomainFilter level
-        assertEquals(1, cayenneOpCounter.getQueryCounter());
-
-        onSuccess(r).bodyEquals(2, "{\"id\":1,\"e3s\":[{\"name\":\"yyy\"}],\"name\":\"xxx\"},{\"id\":2,\"e3s\":[],\"name\":\"aaa\"}");
+        onSuccess(r)
+                .bodyEquals(2, "{\"id\":1,\"e3s\":[{\"name\":\"yyy\"}],\"name\":\"xxx\"},{\"id\":2,\"e3s\":[],\"name\":\"aaa\"}")
+                // disjoint prefetch is counted as 1 query at the DataDomainFilter level
+                .ranQueries(1);
     }
 
     @Test
@@ -96,7 +92,6 @@ public class GET_Resolvers_Nested_ToManyIT extends JerseyAndDerbyCase {
                 .values(9, "zzz", null)
                 .exec();
 
-        assertEquals(0, cayenneOpCounter.getQueryCounter());
         Response r = target("/e2_query_with_parent_ids")
                 .queryParam("include", "id")
                 .queryParam("include", "name")
@@ -105,10 +100,9 @@ public class GET_Resolvers_Nested_ToManyIT extends JerseyAndDerbyCase {
                 .queryParam("sort", "id")
                 .request().get();
 
-        // disjoint prefetch is counted as 1 query at the DataDomainFilter level
-        assertEquals(2, cayenneOpCounter.getQueryCounter());
-
-        onSuccess(r).bodyEquals(2, "{\"id\":1,\"e3s\":[{\"name\":\"yyy\"}],\"name\":\"xxx\"},{\"id\":2,\"e3s\":[],\"name\":\"aaa\"}");
+        onSuccess(r)
+                .bodyEquals(2, "{\"id\":1,\"e3s\":[{\"name\":\"yyy\"}],\"name\":\"xxx\"},{\"id\":2,\"e3s\":[],\"name\":\"aaa\"}")
+                .ranQueries(2);
     }
 
     @Path("")

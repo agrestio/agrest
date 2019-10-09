@@ -26,7 +26,6 @@ import javax.ws.rs.core.UriInfo;
 import java.util.List;
 
 import static java.util.Arrays.asList;
-import static org.junit.Assert.*;
 
 public class GET_Resolvers_RootIT extends JerseyAndDerbyCase {
 
@@ -51,7 +50,6 @@ public class GET_Resolvers_RootIT extends JerseyAndDerbyCase {
                 .values(9, "zzz", null)
                 .exec();
 
-        assertEquals(0, cayenneOpCounter.getQueryCounter());
         Response r = target("/e2_standard_query")
                 .queryParam("include", "id")
                 .queryParam("include", "name")
@@ -60,8 +58,9 @@ public class GET_Resolvers_RootIT extends JerseyAndDerbyCase {
                 .queryParam("sort", "id")
                 .request().get();
 
-        onSuccess(r).bodyEquals(2, "{\"id\":1,\"e3s\":[{\"name\":\"yyy\"}],\"name\":\"xxx\"},{\"id\":2,\"e3s\":[],\"name\":\"aaa\"}");
-        assertEquals(1, cayenneOpCounter.getQueryCounter());
+        onSuccess(r)
+                .bodyEquals(2, "{\"id\":1,\"e3s\":[{\"name\":\"yyy\"}],\"name\":\"xxx\"},{\"id\":2,\"e3s\":[],\"name\":\"aaa\"}")
+                .ranQueries(1);
     }
 
     @Test
@@ -75,15 +74,15 @@ public class GET_Resolvers_RootIT extends JerseyAndDerbyCase {
                 .values(9, "zzz", null)
                 .exec();
 
-        assertEquals(0, cayenneOpCounter.getQueryCounter());
         Response r = target("/e2_custom_query")
                 .queryParam("include", "id")
                 .queryParam("include", "name")
                 .queryParam("include", "e3s.name")
                 .request().get();
 
-        onSuccess(r).bodyEquals(2, "{\"id\":2,\"e3s\":[],\"name\":\"n_2\"},{\"id\":1,\"e3s\":[{\"name\":\"yyy\"}],\"name\":\"n_1\"}");
-        assertEquals(1, cayenneOpCounter.getQueryCounter());
+        onSuccess(r)
+                .bodyEquals(2, "{\"id\":2,\"e3s\":[],\"name\":\"n_2\"},{\"id\":1,\"e3s\":[{\"name\":\"yyy\"}],\"name\":\"n_1\"}")
+                .ranQueries(1);
     }
 
     @Path("")
