@@ -6,25 +6,19 @@ import io.agrest.RootResourceEntity;
 import io.agrest.meta.cayenne.DataObjectPropertyReader;
 import io.agrest.property.PropertyReader;
 import io.agrest.resolver.BaseNestedDataResolver;
-import io.agrest.runtime.cayenne.ICayennePersister;
 import io.agrest.runtime.processor.select.SelectContext;
 import org.apache.cayenne.DataObject;
 
 import java.util.Collections;
-import java.util.List;
 
 /**
  * @since 3.4
  */
 public class ViaParentPrefetchResolver extends BaseNestedDataResolver<DataObject> {
 
-    protected CayenneQueryAssembler queryAssembler;
-    protected ICayennePersister persister;
     private int prefetchSemantics;
 
-    public ViaParentPrefetchResolver(CayenneQueryAssembler queryAssembler, ICayennePersister persister, int prefetchSemantics) {
-        this.queryAssembler = queryAssembler;
-        this.persister = persister;
+    public ViaParentPrefetchResolver(int prefetchSemantics) {
         this.prefetchSemantics = prefetchSemantics;
     }
 
@@ -34,7 +28,7 @@ public class ViaParentPrefetchResolver extends BaseNestedDataResolver<DataObject
     }
 
     @Override
-    protected List<DataObject> doOnParentDataResolved(
+    protected Iterable<DataObject> doOnParentDataResolved(
             NestedResourceEntity<DataObject> entity,
             Iterable<?> parentData,
             SelectContext<?> context) {

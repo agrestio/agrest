@@ -4,6 +4,7 @@ import io.agrest.NestedResourceEntity;
 import io.agrest.property.PropertyReader;
 import io.agrest.runtime.processor.select.SelectContext;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.function.Function;
 
@@ -32,7 +33,7 @@ public class ParentPropertyDataResolvers {
         return new ReaderFactoryBasedResolver<>(readerFactory);
     }
 
-    static class ReaderFactoryBasedResolver<T> implements NestedDataResolver<T> {
+    static class ReaderFactoryBasedResolver<T> extends BaseNestedDataResolver<T> {
 
         private Function<NestedResourceEntity<T>, PropertyReader> readerFactory;
 
@@ -41,13 +42,17 @@ public class ParentPropertyDataResolvers {
         }
 
         @Override
-        public void onParentQueryAssembled(NestedResourceEntity<T> entity, SelectContext<?> context) {
+        protected void doOnParentQueryAssembled(NestedResourceEntity<T> entity, SelectContext<?> context) {
             // do nothing .. parent entity will query our data for us
         }
 
+
         @Override
-        public void onParentDataResolved(NestedResourceEntity<T> entity, Iterable<?> parentData, SelectContext<?> context) {
+        protected Iterable<T> doOnParentDataResolved(NestedResourceEntity<T> entity, Iterable<?> parentData, SelectContext<?> context) {
             // do nothing .. parent entity will carry our data for us
+
+            // TODO: create an iterable<T> for the sake of children
+            return Collections.emptyList();
         }
 
         @Override
@@ -56,7 +61,7 @@ public class ParentPropertyDataResolvers {
         }
     }
 
-    static class ReaderBasedResolver<T> implements NestedDataResolver<T> {
+    static class ReaderBasedResolver<T> extends BaseNestedDataResolver<T> {
 
         private PropertyReader reader;
 
@@ -65,13 +70,15 @@ public class ParentPropertyDataResolvers {
         }
 
         @Override
-        public void onParentQueryAssembled(NestedResourceEntity<T> entity, SelectContext<?> context) {
+        protected void doOnParentQueryAssembled(NestedResourceEntity<T> entity, SelectContext<?> context) {
             // do nothing .. parent entity will query our data for us
         }
 
         @Override
-        public void onParentDataResolved(NestedResourceEntity<T> entity, Iterable<?> parentData, SelectContext<?> context) {
+        protected Iterable<T> doOnParentDataResolved(NestedResourceEntity<T> entity, Iterable<?> parentData, SelectContext<?> context) {
             // do nothing .. parent entity will carry our data for us
+            // TODO: create an iterable<T> for the sake of children
+            return Collections.emptyList();
         }
 
         @Override

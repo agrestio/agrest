@@ -54,7 +54,7 @@ public class SelectContext<T> extends BaseProcessingContext<T> {
      * @since 1.24
      */
     public DataResponse<T> createDataResponse() {
-        List<? extends T> objects = this.entity != null ? this.entity.getResult() : Collections.<T>emptyList();
+        List<? extends T> objects = this.entity != null ? this.entity.getResult() : Collections.emptyList();
         DataResponse<T> response = DataResponse.forType(getType());
         response.setObjects(objects);
         response.setEncoder(encoder);

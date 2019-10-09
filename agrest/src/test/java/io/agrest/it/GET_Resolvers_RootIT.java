@@ -103,7 +103,7 @@ public class GET_Resolvers_RootIT extends JerseyAndDerbyCase {
                     // this is what Ag uses by default, but let's see if it still works as an override
                     .redefineRootDataResolver(AgCayenne.rootResolverViaQuery(config))
                     // check how a combination of custom root and nested resolvers works
-                    .redefineRelationshipResolver("e3s", AgCayenne.resolverViaJointParentPrefetch(config));
+                    .redefineRelationshipResolver("e3s", AgCayenne.resolverViaJointParentPrefetch());
 
             return Ag.select(E2.class, config)
                     .entityOverlay(e2Overlay)

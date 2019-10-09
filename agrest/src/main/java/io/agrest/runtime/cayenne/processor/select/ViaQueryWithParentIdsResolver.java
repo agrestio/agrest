@@ -6,6 +6,7 @@ import io.agrest.runtime.processor.select.SelectContext;
 import org.apache.cayenne.DataObject;
 import org.apache.cayenne.query.SelectQuery;
 
+import java.util.Collections;
 import java.util.Iterator;
 
 /**
@@ -19,11 +20,11 @@ public class ViaQueryWithParentIdsResolver extends ViaQueryWithParentQualifierRe
 
     @Override
     public void onParentQueryAssembled(NestedResourceEntity<DataObject> entity, SelectContext<?> context) {
-        // do nothing... we need have access to parent objects before we can build our query
+        // do nothing... we need to have access to parent objects before we can build our query
     }
 
     @Override
-    public void onParentDataResolved(
+    protected Iterable<DataObject> doOnParentDataResolved(
             NestedResourceEntity<DataObject> entity,
             Iterable<?> parentData,
             SelectContext<?> context) {
@@ -31,18 +32,18 @@ public class ViaQueryWithParentIdsResolver extends ViaQueryWithParentQualifierRe
         // no parents, no need to fetch children
         Iterator<?> parentIt = parentData.iterator();
         if (!parentIt.hasNext()) {
-            return;
+            return Collections.emptyList();
         }
 
         // assemble query here, where we have access to all parent ids
         SelectQuery<DataObject> select = queryAssembler.createQueryWithParentIdsQualifier(entity, parentIt);
         if (select == null) {
             // no parents - nothing to fetch for this entity, and no need to descend into children
-            return;
+            return Collections.emptyList();
         }
 
         entity.setSelect(select);
         afterQueryAssembled(entity, context);
-        super.onParentDataResolved(entity, parentData, context);
+        return super.doOnParentDataResolved(entity, parentData, context);
     }
 }

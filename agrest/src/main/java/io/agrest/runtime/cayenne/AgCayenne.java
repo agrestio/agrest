@@ -30,18 +30,12 @@ public class AgCayenne {
                 persister(config));
     }
 
-    public static <T extends DataObject> NestedDataResolver<T> resolverViaDisjointParentPrefetch(Configuration config) {
-        return (NestedDataResolver<T>) new ViaParentPrefetchResolver(
-                AgRuntime.service(CayenneQueryAssembler.class, config),
-                persister(config),
-                PrefetchTreeNode.DISJOINT_PREFETCH_SEMANTICS);
+    public static <T extends DataObject> NestedDataResolver<T> resolverViaDisjointParentPrefetch() {
+        return (NestedDataResolver<T>) new ViaParentPrefetchResolver(PrefetchTreeNode.DISJOINT_PREFETCH_SEMANTICS);
     }
 
-    public static <T extends DataObject> NestedDataResolver<T> resolverViaJointParentPrefetch(Configuration config) {
-        return (NestedDataResolver<T>) new ViaParentPrefetchResolver(
-                AgRuntime.service(CayenneQueryAssembler.class, config),
-                persister(config),
-                PrefetchTreeNode.JOINT_PREFETCH_SEMANTICS);
+    public static <T extends DataObject> NestedDataResolver<T> resolverViaJointParentPrefetch() {
+        return (NestedDataResolver<T>) new ViaParentPrefetchResolver(PrefetchTreeNode.JOINT_PREFETCH_SEMANTICS);
     }
 
     public static <T extends DataObject> NestedDataResolver<T> resolverViaQueryWithParentQualifier(Configuration config) {

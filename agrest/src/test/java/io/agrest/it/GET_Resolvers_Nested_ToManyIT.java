@@ -125,7 +125,7 @@ public class GET_Resolvers_Nested_ToManyIT extends JerseyAndDerbyCase {
             // non-standard nested resolver
             AgEntityOverlay<E2> e2Overlay = AgEntity
                     .overlay(E2.class)
-                    .redefineRelationshipResolver("e3s", AgCayenne.resolverViaDisjointParentPrefetch(config));
+                    .redefineRelationshipResolver("e3s", AgCayenne.resolverViaDisjointParentPrefetch());
 
             return Ag.select(E2.class, config)
                     .entityOverlay(e2Overlay)
@@ -140,7 +140,7 @@ public class GET_Resolvers_Nested_ToManyIT extends JerseyAndDerbyCase {
             // non-standard nested resolver
             AgEntityOverlay<E2> e2Overlay = AgEntity
                     .overlay(E2.class)
-                    .redefineRelationshipResolver("e3s", AgCayenne.resolverViaJointParentPrefetch(config));
+                    .redefineRelationshipResolver("e3s", AgCayenne.resolverViaJointParentPrefetch());
 
             return Ag.select(E2.class, config)
                     .entityOverlay(e2Overlay)

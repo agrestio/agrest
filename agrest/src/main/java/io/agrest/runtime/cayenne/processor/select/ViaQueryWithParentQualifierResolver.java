@@ -39,7 +39,7 @@ public class ViaQueryWithParentQualifierResolver extends BaseNestedDataResolver<
     }
 
     @Override
-    protected List<DataObject> doOnParentDataResolved(
+    protected Iterable<DataObject> doOnParentDataResolved(
             NestedResourceEntity<DataObject> entity,
             Iterable<?> parentData,
             SelectContext<?> context) {

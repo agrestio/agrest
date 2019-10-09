@@ -4,8 +4,6 @@ import io.agrest.NestedResourceEntity;
 import io.agrest.property.PropertyReader;
 import io.agrest.runtime.processor.select.SelectContext;
 
-import java.util.List;
-
 /**
  * @since 3.4
  */
@@ -19,8 +17,8 @@ public abstract class BaseNestedDataResolver<T> extends BaseDataResolver impleme
 
     @Override
     public void onParentDataResolved(NestedResourceEntity<T> entity, Iterable<?> parentData, SelectContext<?> context) {
-        List<T> result = doOnParentDataResolved(entity, parentData, context);
-        
+        Iterable<T> result = doOnParentDataResolved(entity, parentData, context);
+
         // note that unlike BaseRootDataResolver, we are not saving the result in the entity. Implementor will need to
         // figure out what to do with the result
 
@@ -34,7 +32,7 @@ public abstract class BaseNestedDataResolver<T> extends BaseDataResolver impleme
 
     protected abstract void doOnParentQueryAssembled(NestedResourceEntity<T> entity, SelectContext<?> context);
 
-    protected abstract List<T> doOnParentDataResolved(
+    protected abstract Iterable<T> doOnParentDataResolved(
             NestedResourceEntity<T> entity,
             Iterable<?> parentData,
             SelectContext<?> context);
