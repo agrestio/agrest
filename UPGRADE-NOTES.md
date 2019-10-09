@@ -19,6 +19,14 @@ EntityEncoderFilter filter = EntityEncoderFilter.forEntity(E4.class)
     .build();
 ```
 
+### Pluggable Resolvers make `MultiSelectBuilder` obsolete [#413](https://github.com/agrestio/agrest/issues/413)
+
+This feature allows to install custom resolvers for root and nested entities in an Ag request, either globally or per-request.
+This new capability allows to fetch data from multiple sources, aggregating it in a single response on the fly (all without
+altering model objects for each source). This is very powerful, and it makes our earlier experiment with `AgMultiSource`
+and `MultiSelectBuilder` obsolete. These two classes are deprecated. If you were using them, consider switching to
+custom resolvers and `AgEntityOverlay`.
+
 ## Upgrading to 3.2
 
 ### Response with overlapping relationship / attribute "includes" is include order dependent [#406](https://github.com/agrestio/agrest/issues/406)
