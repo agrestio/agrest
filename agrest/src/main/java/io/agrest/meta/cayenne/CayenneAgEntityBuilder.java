@@ -7,6 +7,7 @@ import io.agrest.meta.AgEntityBuilder;
 import io.agrest.meta.AgEntityOverlay;
 import io.agrest.meta.AgRelationship;
 import io.agrest.meta.AgRelationshipOverlay;
+import io.agrest.meta.DefaultAgAttribute;
 import io.agrest.meta.DefaultAgEntity;
 import io.agrest.meta.DefaultAgRelationship;
 import io.agrest.property.DefaultIdReader;
@@ -15,6 +16,8 @@ import io.agrest.resolver.NestedDataResolver;
 import io.agrest.resolver.RootDataResolver;
 import io.agrest.resolver.ThrowingRootDataResolver;
 import org.apache.cayenne.dba.TypesMapping;
+import org.apache.cayenne.exp.parser.ASTDbPath;
+import org.apache.cayenne.exp.parser.ASTObjPath;
 import org.apache.cayenne.map.DbAttribute;
 import org.apache.cayenne.map.EntityResolver;
 import org.apache.cayenne.map.ObjAttribute;
@@ -116,7 +119,7 @@ public class CayenneAgEntityBuilder<T> {
 
         for (ObjAttribute a : cayenneEntity.getAttributes()) {
             Class<?> type = typeForName(a.getType());
-            addAttribute(new CayenneAgObjAttribute(a, type, DataObjectPropertyReader.reader()));
+            addAttribute(new DefaultAgAttribute(a.getName(), type, new ASTObjPath(a.getName()), DataObjectPropertyReader.reader()));
         }
 
         for (ObjRelationship r : cayenneEntity.getRelationships()) {
@@ -138,15 +141,16 @@ public class CayenneAgEntityBuilder<T> {
             if (attribute == null) {
 
                 // TODO: we are using a DB name for the attribute... Perhaps it should not be exposed in Ag model?
-                id = new CayenneAgDbAttribute(
+                id = new DefaultAgAttribute(
                         pk.getName(),
-                        pk,
                         typeForName(TypesMapping.getJavaBySqlType(pk.getType())),
+                        new ASTDbPath(pk.getName()),
                         ObjectIdValueReader.reader());
             } else {
-                id = new CayenneAgObjAttribute(
-                        attribute,
+                id = new DefaultAgAttribute(
+                        attribute.getName(),
                         typeForName(attribute.getType()),
+                        new ASTObjPath(attribute.getName()),
                         DataObjectPropertyReader.reader());
             }
 

@@ -24,6 +24,7 @@ import org.apache.cayenne.configuration.server.DataSourceFactory;
 import org.apache.cayenne.configuration.server.ServerRuntime;
 import org.apache.cayenne.di.Module;
 import org.apache.cayenne.exp.Property;
+import org.apache.cayenne.exp.parser.ASTObjPath;
 import org.apache.cayenne.exp.parser.ASTPath;
 import org.apache.cayenne.map.ObjEntity;
 import org.junit.AfterClass;
@@ -141,7 +142,7 @@ public class TestWithCayenneMapping {
     }
 
     protected void appendAttribute(ResourceEntity<?> entity, String name, Class<?> type) {
-        entity.getAttributes().put(name, new DefaultAgAttribute(name, type, BeanPropertyReader.reader()));
+        entity.getAttributes().put(name, new DefaultAgAttribute(name, type, new ASTObjPath(name), BeanPropertyReader.reader()));
     }
 
     protected <T> void appendPersistenceAttribute(ResourceEntity<?> entity, Property<T> property, Class<T> javaType) {
@@ -156,7 +157,7 @@ public class TestWithCayenneMapping {
     private class TestAgPersistentAttribute extends DefaultAgAttribute {
 
         public TestAgPersistentAttribute(String name, Class<?> javaType) {
-            super(name, javaType, BeanPropertyReader.reader());
+            super(name, javaType, new ASTObjPath(name), BeanPropertyReader.reader());
         }
 
         @Override

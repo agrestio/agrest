@@ -39,14 +39,12 @@ import java.util.function.BiConsumer;
  */
 public class CayenneUpdateStage extends CayenneUpdateDataStoreStage {
 
-    private EntityResolver entityResolver;
 
     public CayenneUpdateStage(
             @Inject IMetadataService metadataService,
             @Inject ICayennePersister persister) {
 
-        super(metadataService);
-        this.entityResolver = persister.entityResolver();
+        super(metadataService, persister.entityResolver());
     }
 
     @Override

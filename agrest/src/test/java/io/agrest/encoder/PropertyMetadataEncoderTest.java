@@ -8,6 +8,7 @@ import io.agrest.meta.DefaultAgAttribute;
 import io.agrest.meta.DefaultAgRelationship;
 import io.agrest.property.BeanPropertyReader;
 import io.agrest.resolver.ParentPropertyDataResolvers;
+import org.apache.cayenne.exp.parser.ASTObjPath;
 import org.junit.Test;
 
 import static io.agrest.encoder.Encoders.toJson;
@@ -21,13 +22,13 @@ public class PropertyMetadataEncoderTest {
 
     @Test
     public void testEncode_StringAttribute() {
-        AgAttribute attribute = new DefaultAgAttribute("prop", String.class, BeanPropertyReader.reader());
+        AgAttribute attribute = new DefaultAgAttribute("prop", String.class, new ASTObjPath("prop"), BeanPropertyReader.reader());
         assertEquals("{\"name\":\"prop\",\"type\":\"string\"}", toJson(encoder, attribute));
     }
 
     @Test
     public void testEncode_ObjectAttribute() {
-        AgAttribute attribute = new DefaultAgAttribute("prop", Object.class, BeanPropertyReader.reader());
+        AgAttribute attribute = new DefaultAgAttribute("prop", Object.class, new ASTObjPath("prop"), BeanPropertyReader.reader());
         assertEquals("{\"name\":\"prop\",\"type\":\"unknown\"}", toJson(encoder, attribute));
     }
 

@@ -1,5 +1,6 @@
 package io.agrest.runtime.cayenne.processor.update;
 
+import io.agrest.runtime.cayenne.ICayennePersister;
 import io.agrest.runtime.meta.IMetadataService;
 import io.agrest.runtime.processor.update.UpdateContext;
 import org.apache.cayenne.DataObject;
@@ -10,8 +11,10 @@ import org.apache.cayenne.di.Inject;
  */
 public class CayenneCreateStage extends CayenneUpdateDataStoreStage {
 
-    public CayenneCreateStage(@Inject IMetadataService metadataService) {
-        super(metadataService);
+    public CayenneCreateStage(
+            @Inject IMetadataService metadataService,
+            @Inject ICayennePersister persister) {
+        super(metadataService, persister.entityResolver());
     }
 
     @Override

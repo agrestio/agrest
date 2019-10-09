@@ -1,7 +1,7 @@
 package io.agrest.runtime.constraints;
 
-import io.agrest.NestedResourceEntity;
 import io.agrest.EntityConstraint;
+import io.agrest.NestedResourceEntity;
 import io.agrest.ResourceEntity;
 import io.agrest.RootResourceEntity;
 import io.agrest.SizeConstraints;
@@ -12,10 +12,11 @@ import io.agrest.it.fixture.cayenne.E3;
 import io.agrest.it.fixture.cayenne.E4;
 import io.agrest.it.fixture.cayenne.E5;
 import io.agrest.meta.AgEntity;
-import io.agrest.meta.DefaultAgAttribute;
 import io.agrest.meta.AgRelationship;
+import io.agrest.meta.DefaultAgAttribute;
 import io.agrest.property.BeanPropertyReader;
 import org.apache.cayenne.exp.Expression;
+import org.apache.cayenne.exp.parser.ASTObjPath;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -23,12 +24,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static org.apache.cayenne.exp.ExpressionFactory.exp;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -324,6 +320,6 @@ public class ConstraintsHandlerTest {
     }
 
     protected void appendAttribute(ResourceEntity<?> entity, String name) {
-        entity.getAttributes().put(name, new DefaultAgAttribute(name, String.class, BeanPropertyReader.reader()));
+        entity.getAttributes().put(name, new DefaultAgAttribute(name, String.class, new ASTObjPath(name), BeanPropertyReader.reader()));
     }
 }

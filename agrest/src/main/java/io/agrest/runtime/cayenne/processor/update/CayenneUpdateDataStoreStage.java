@@ -2,17 +2,15 @@ package io.agrest.runtime.cayenne.processor.update;
 
 import io.agrest.AgException;
 import io.agrest.AgObjectId;
-import io.agrest.NestedResourceEntity;
 import io.agrest.CompoundObjectId;
 import io.agrest.EntityParent;
 import io.agrest.EntityUpdate;
+import io.agrest.NestedResourceEntity;
 import io.agrest.ResourceEntity;
 import io.agrest.RootResourceEntity;
 import io.agrest.SimpleObjectId;
-import io.agrest.meta.AgAttribute;
 import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgRelationship;
-import io.agrest.meta.cayenne.CayenneAgAttribute;
 import io.agrest.processor.Processor;
 import io.agrest.processor.ProcessorOutcome;
 import io.agrest.runtime.cayenne.processor.Util;
@@ -26,6 +24,7 @@ import org.apache.cayenne.ObjectContext;
 import org.apache.cayenne.exp.ExpressionFactory;
 import org.apache.cayenne.map.DbAttribute;
 import org.apache.cayenne.map.DbEntity;
+import org.apache.cayenne.map.EntityResolver;
 import org.apache.cayenne.map.ObjAttribute;
 import org.apache.cayenne.map.ObjEntity;
 import org.apache.cayenne.map.ObjRelationship;
@@ -46,9 +45,11 @@ import java.util.Set;
 public abstract class CayenneUpdateDataStoreStage implements Processor<UpdateContext<?>> {
 
     private IMetadataService metadataService;
+    protected EntityResolver entityResolver;
 
-    public CayenneUpdateDataStoreStage(IMetadataService metadataService) {
+    public CayenneUpdateDataStoreStage(IMetadataService metadataService, EntityResolver entityResolver) {
         this.metadataService = metadataService;
+        this.entityResolver = entityResolver;
     }
 
     @Override
@@ -163,26 +164,11 @@ public abstract class CayenneUpdateDataStoreStage implements Processor<UpdateCon
         Map<DbAttribute, Object> idByDbAttribute = new HashMap<>((int) (idByAgAttribute.size() / 0.75) + 1);
         for (Map.Entry<String, Object> e : idByAgAttribute.entrySet()) {
 
-            AgAttribute agAttribute = agEntity.getIdAttribute(e.getKey());
-            if (agAttribute == null) {
-                agAttribute = agEntity.getAttribute(e.getKey());
-            }
-
-            if (agAttribute == null) {
-                throw new AgException(Response.Status.BAD_REQUEST, "Invalid attribute '"
-                        + agEntity.getName()
-                        + "."
-                        + e.getKey()
-                        + "'");
-            }
-
             // I guess this kind of type checking is not too dirty ... CayenneAgDbAttribute was created by Cayenne
             // part of Ag, and we are back again in Cayenne part of Ag, trying to map Ag model back to Cayenne
-            DbAttribute dbAttribute;
+            DbAttribute dbAttribute = dbAttributeForAgAttribute(agEntity, e.getKey());
 
-            if (agAttribute instanceof CayenneAgAttribute) {
-                dbAttribute = ((CayenneAgAttribute) agAttribute).getDbAttribute();
-            } else {
+            if (dbAttribute == null) {
                 throw new AgException(Response.Status.BAD_REQUEST, "Not a mapped persistent attribute '"
                         + agEntity.getName()
                         + "."
@@ -417,6 +403,17 @@ public abstract class CayenneUpdateDataStoreStage implements Processor<UpdateCon
                 }
             };
         }
+    }
+
+    // TODO: copied verbatim from CayenneQueryAssembler... Unify this code?
+    protected DbAttribute dbAttributeForAgAttribute(AgEntity<?> agEntity, String attributeName) {
+
+        ObjEntity entity = entityResolver.getObjEntity(agEntity.getName());
+        ObjAttribute objAttribute = entity.getAttribute(attributeName);
+        return objAttribute != null
+                ? objAttribute.getDbAttribute()
+                // this is suspect.. don't see how we would allow DbAttribute names to leak in the Ag model
+                : entity.getDbEntity().getAttribute(attributeName);
     }
 
     interface RelationshipUpdate {

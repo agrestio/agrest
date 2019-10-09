@@ -6,12 +6,14 @@ import io.agrest.NestedResourceEntity;
 import io.agrest.ResourceEntity;
 import io.agrest.meta.AgAttribute;
 import io.agrest.meta.AgEntity;
-import io.agrest.meta.cayenne.CayenneAgAttribute;
 import io.agrest.runtime.processor.select.SelectContext;
 import org.apache.cayenne.exp.Expression;
 import org.apache.cayenne.exp.ExpressionFactory;
 import org.apache.cayenne.exp.Property;
+import org.apache.cayenne.map.DbAttribute;
 import org.apache.cayenne.map.EntityResolver;
+import org.apache.cayenne.map.ObjAttribute;
+import org.apache.cayenne.map.ObjEntity;
 import org.apache.cayenne.map.ObjRelationship;
 import org.apache.cayenne.query.Ordering;
 import org.apache.cayenne.query.SelectQuery;
@@ -55,14 +57,14 @@ public class CayenneQueryAssembler {
 
         List<Property<?>> properties = new ArrayList<>();
         properties.add(Property.createSelf(entity.getType()));
+        AgEntity<?> parentEntity = entity.getParent().getAgEntity();
 
         for (AgAttribute attribute : entity.getParent().getAgEntity().getIds()) {
 
-            // this works as
-            CayenneAgAttribute cayenneAgAttribute = (CayenneAgAttribute) attribute;
+            DbAttribute dbAttribute = dbAttributeForAgAttribute(parentEntity, attribute);
             Expression propertyExp = ExpressionFactory.dbPathExp(reversePath
                     + "."
-                    + cayenneAgAttribute.getDbAttribute().getName());
+                    + dbAttribute.getName());
             properties.add(Property.create(propertyExp, (Class) attribute.getType()));
         }
 
@@ -87,12 +89,13 @@ public class CayenneQueryAssembler {
         List<Property<?>> properties = new ArrayList<>();
         properties.add(Property.createSelf(entity.getType()));
 
-        for (AgAttribute attribute : entity.getParent().getAgEntity().getIds()) {
+        AgEntity<?> parentEntity = entity.getParent().getAgEntity();
+        for (AgAttribute attribute : parentEntity.getIds()) {
 
-            CayenneAgAttribute cayenneAgAttribute = (CayenneAgAttribute) attribute;
+            DbAttribute dbAttribute = dbAttributeForAgAttribute(parentEntity, attribute);
             Expression propertyExp = ExpressionFactory.dbPathExp(outgoingPath
                     + "."
-                    + cayenneAgAttribute.getDbAttribute().getName());
+                    + dbAttribute.getName());
             properties.add(Property.create(propertyExp, (Class) attribute.getType()));
         }
 
@@ -158,13 +161,15 @@ public class CayenneQueryAssembler {
                         "Failed to build a Cayenne qualifier for entity " + entity.getName()
                                 + ": one of the entity's ID parts is missing in this ID: " + idAttribute.getName());
             }
-            if (idAttribute instanceof CayenneAgAttribute) {
-                qualifiers.add(ExpressionFactory.matchDbExp(
-                        ((CayenneAgAttribute) idAttribute).getDbAttribute().getName(), idValue));
-            } else {
+
+            DbAttribute dbAttribute = dbAttributeForAgAttribute(entity, idAttribute);
+
+            if (dbAttribute == null) {
                 throw new AgException(Response.Status.INTERNAL_SERVER_ERROR,
                         "ID attribute '" + idAttribute.getName() + "' has no mapping to a column name");
             }
+
+            qualifiers.add(ExpressionFactory.matchDbExp(dbAttribute.getName(), idValue));
         }
         return ExpressionFactory.and(qualifiers);
     }
@@ -177,5 +182,15 @@ public class CayenneQueryAssembler {
         return expression != null
                 ? relationship.getSourceEntity().translateToRelatedEntity(expression, relationship.getName())
                 : null;
+    }
+
+    protected DbAttribute dbAttributeForAgAttribute(AgEntity<?> agEntity, AgAttribute agAttribute) {
+
+        ObjEntity entity = cayenneEntityResolver.getObjEntity(agEntity.getName());
+        ObjAttribute objAttribute = entity.getAttribute(agAttribute.getName());
+        return objAttribute != null
+                ? objAttribute.getDbAttribute()
+                // this is suspect.. don't see how we would allow DbAttribute names to leak in the Ag model
+                : entity.getDbEntity().getAttribute(agAttribute.getName());
     }
 }

@@ -5,6 +5,7 @@ import io.agrest.meta.compiler.PropertyGetter;
 import io.agrest.property.PropertyReader;
 import io.agrest.resolver.NestedDataResolver;
 import io.agrest.resolver.ParentPropertyDataResolvers;
+import org.apache.cayenne.exp.parser.ASTObjPath;
 
 import java.util.HashMap;
 import java.util.List;
@@ -132,7 +133,7 @@ public class AgEntityOverlay<T> {
      * @since 3.4
      */
     public <V> AgEntityOverlay<T> redefineAttribute(String name, Class<V> valueType, Function<T, V> reader) {
-        attributes.put(name, new DefaultAgAttribute(name, valueType, asPropertyReader(reader)));
+        attributes.put(name, new DefaultAgAttribute(name, valueType, new ASTObjPath(name), asPropertyReader(reader)));
         return this;
     }
 

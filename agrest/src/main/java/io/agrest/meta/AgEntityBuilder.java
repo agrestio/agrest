@@ -10,6 +10,7 @@ import io.agrest.property.DefaultIdReader;
 import io.agrest.resolver.NestedDataResolver;
 import io.agrest.resolver.RootDataResolver;
 import io.agrest.resolver.ThrowingRootDataResolver;
+import org.apache.cayenne.exp.parser.ASTObjPath;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -120,7 +121,7 @@ public class AgEntityBuilder<T> {
         if (m.getAnnotation(AgAttribute.class) != null) {
 
             if (checkValidAttributeType(type, m.getGenericReturnType())) {
-                addAttribute(new DefaultAgAttribute(name, type, BeanPropertyReader.reader()));
+                addAttribute(new DefaultAgAttribute(name, type, new ASTObjPath(name), BeanPropertyReader.reader()));
             } else {
                 // still return true after validation failure... this is an attribute, just not a proper one
                 LOGGER.warn("Invalid attribute type for " + this.name + "." + name + ". Skipping.");
@@ -132,7 +133,7 @@ public class AgEntityBuilder<T> {
         if (m.getAnnotation(AgId.class) != null) {
 
             if (checkValidIdType(type)) {
-                addId(new DefaultAgAttribute(name, type, BeanPropertyReader.reader()));
+                addId(new DefaultAgAttribute(name, type, new ASTObjPath(name), BeanPropertyReader.reader()));
             } else {
                 // still return true after validation failure... this is an
                 // attribute, just not a proper one

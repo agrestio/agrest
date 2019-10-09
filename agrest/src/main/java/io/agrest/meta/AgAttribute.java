@@ -23,6 +23,7 @@ public interface AgAttribute {
 	/**
 	 * @since 1.12
      */
+	// TODO: Cayenne API leak
 	ASTPath getPathExp();
 
 	/**

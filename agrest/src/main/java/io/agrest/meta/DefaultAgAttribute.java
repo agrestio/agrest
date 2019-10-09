@@ -1,7 +1,6 @@
 package io.agrest.meta;
 
 import io.agrest.property.PropertyReader;
-import org.apache.cayenne.exp.parser.ASTObjPath;
 import org.apache.cayenne.exp.parser.ASTPath;
 import org.apache.cayenne.util.ToStringBuilder;
 
@@ -12,11 +11,13 @@ public class DefaultAgAttribute implements AgAttribute {
 
 	private String name;
 	private Class<?> javaType;
+	private ASTPath pathExp;
 	private PropertyReader propertyReader;
 
-	public DefaultAgAttribute(String name, Class<?> javaType, PropertyReader propertyReader) {
+	public DefaultAgAttribute(String name, Class<?> javaType, ASTPath pathExp, PropertyReader propertyReader) {
 		this.name = name;
 		this.javaType = javaType;
+		this.pathExp = pathExp;
 		this.propertyReader = propertyReader;
 	}
 
@@ -27,7 +28,7 @@ public class DefaultAgAttribute implements AgAttribute {
 
 	@Override
 	public ASTPath getPathExp() {
-		return new ASTObjPath(name);
+		return pathExp;
 	}
 
 	@Override
