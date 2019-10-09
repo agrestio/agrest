@@ -5,9 +5,10 @@ import io.agrest.DataResponse;
 import io.agrest.it.fixture.JerseyAndDerbyCase;
 import io.agrest.it.fixture.cayenne.E2;
 import io.agrest.it.fixture.cayenne.E3;
+import io.agrest.it.fixture.cayenne.auto._E2;
 import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgEntityOverlay;
-import io.agrest.resolver.RootDataResolver;
+import io.agrest.resolver.BaseRootDataResolver;
 import io.agrest.runtime.cayenne.AgCayenne;
 import io.agrest.runtime.processor.select.SelectContext;
 import org.apache.cayenne.ObjectId;
@@ -22,6 +23,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
+import java.util.List;
 
 import static java.util.Arrays.asList;
 import static org.junit.Assert.*;
@@ -117,7 +119,7 @@ public class GET_Resolvers_RootIT extends JerseyAndDerbyCase {
             AgEntityOverlay<E2> e2Overlay = AgEntity
                     .overlay(E2.class)
                     .redefineRootDataResolver(new CustomE2Resolver())
-                    // check how a combination of custom root and nested resolvers works
+                    // check how a combination of custom root and Cayenne nested resolvers works
                     .redefineRelationshipResolver("e3s", AgCayenne.resolverViaQueryWithParentIds(config));
 
             return Ag.select(E2.class, config)
@@ -127,22 +129,22 @@ public class GET_Resolvers_RootIT extends JerseyAndDerbyCase {
         }
     }
 
-    static class CustomE2Resolver implements RootDataResolver<E2> {
+    static class CustomE2Resolver extends BaseRootDataResolver<E2> {
 
         @Override
-        public void assembleQuery(SelectContext<E2> context) {
+        protected void doAssembleQuery(SelectContext<E2> context) {
             // do nothing...
         }
 
         @Override
-        public void fetchData(SelectContext<E2> context) {
-            context.getEntity().setResult(asList(e2(2), e2(1)));
+        protected List<E2> doFetchData(SelectContext<E2> context) {
+            return asList(e2(2), e2(1));
         }
 
         private E2 e2(int i) {
             E2 e2 = new E2();
             e2.setName("n_" + i);
-            e2.setObjectId(new ObjectId("e2", "id", i));
+            e2.setObjectId(new ObjectId("e2", _E2.ID__PK_COLUMN, i));
 
             return e2;
         }
