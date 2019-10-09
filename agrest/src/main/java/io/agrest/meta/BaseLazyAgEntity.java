@@ -9,17 +9,15 @@ public abstract class BaseLazyAgEntity<T, E extends AgEntity<T>> {
 
     private Supplier<E> delegateSupplier;
     private E delegate;
-    private final Object lock;
 
     public BaseLazyAgEntity(Supplier<E> delegateSupplier) {
         this.delegateSupplier = delegateSupplier;
-        lock = new Object();
     }
 
     protected final E getDelegate() {
 
         if (delegate == null) {
-            synchronized (lock) {
+            synchronized (this) {
                 if (delegate == null) {
                     delegate = delegateSupplier.get();
                 }

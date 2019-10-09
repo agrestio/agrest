@@ -27,7 +27,7 @@ public class GET_EntityOverlay_RelToPersistentIT extends JerseyAndDerbyCase {
     public static void startTestRuntime() {
 
         AgEntityOverlay<E22> e22Overlay = new AgEntityOverlay<>(E22.class)
-                .addToOneRelationship("overlayToOne", E25.class, GET_EntityOverlay_RelToPersistentIT::findForParent);
+                .addOrAmendToOne("overlayToOne", E25.class, GET_EntityOverlay_RelToPersistentIT::findForParent);
 
         startTestRuntime(
                 ab -> ab.entityOverlay(e22Overlay),

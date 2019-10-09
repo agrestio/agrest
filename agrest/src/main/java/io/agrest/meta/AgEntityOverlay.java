@@ -3,6 +3,7 @@ package io.agrest.meta;
 import io.agrest.meta.compiler.BeanAnalyzer;
 import io.agrest.meta.compiler.PropertyGetter;
 import io.agrest.property.PropertyReader;
+import io.agrest.resolver.NestedDataResolver;
 import io.agrest.resolver.ParentPropertyDataResolvers;
 
 import java.util.HashMap;
@@ -123,26 +124,84 @@ public class AgEntityOverlay<T> {
     }
 
     /**
-     * Adds an "ad-hoc" to-one relationship to the overlaid entity. The value of the relationship will be
-     * calculated from each entity object by applying the "reader" function. This allows Agrest entities
-     * to declare properties not present in the underlying Java objects.
+     * Adds an overlay for an existing named relationship, replacing its default resolving strategy.
      *
-     * @since 2.10
+     * @since 3.4
      */
-    public <V> AgEntityOverlay<T> addToOneRelationship(String name, Class<V> targetType, Function<T, V> reader) {
-        relationships.put(name, new DefaultAgRelationshipOverlay(name, targetType, false, ParentPropertyDataResolvers.forReader(reader)));
+    public <V> AgEntityOverlay<T> amendRelationship(String name, NestedDataResolver<V> resolver) {
+        relationships.put(name, new PartialRelationshipOverlay(type, name, resolver));
         return this;
     }
 
     /**
-     * Adds an "ad-hoc" to-many relationship to the overlaid entity. The value of the relationship will be
-     * calculated from each entity object by applying the "reader" function. This allows Agrest entities
-     * to declare properties not present in the underlying Java objects.
+     * Adds an overlay for an existing named relationship, replacing its default resolving strategy.
      *
-     * @since 2.10
+     * @since 3.4
      */
-    public <V> AgEntityOverlay<T> addToManyRelationship(String name, Class<V> targetType, Function<T, List<V>> reader) {
-        relationships.put(name, new DefaultAgRelationshipOverlay(name, targetType, true, ParentPropertyDataResolvers.forReader(reader)));
+    public AgEntityOverlay<T> amendRelationship(String name, Function<T, ?> reader) {
+        amendRelationship(name, ParentPropertyDataResolvers.forReader(reader));
         return this;
+    }
+
+    /**
+     * Adds a relationship overlay to the overlaid entity. This allows Agrest entities to declare properties not
+     * present in the underlying Java objects or change how the standard relationships are read.
+     *
+     * @since 3.4
+     */
+    public <V> AgEntityOverlay<T> addOrAmendToOne(String name, Class<V> targetType, NestedDataResolver<V> resolver) {
+        relationships.put(name, new FullRelationshipOverlay(name, targetType, false, resolver));
+        return this;
+    }
+
+    /**
+     * Adds a relationship overlay to the overlaid entity. This allows Agrest entities to declare properties not
+     * present in the underlying Java objects or change how the standard relationships are read.
+     *
+     * @since 3.4
+     */
+    public <V> AgEntityOverlay<T> addOrAmendToMany(String name, Class<V> targetType, NestedDataResolver<V> resolver) {
+        relationships.put(name, new FullRelationshipOverlay(name, targetType, true, resolver));
+        return this;
+    }
+
+    /**
+     * Adds a to-one relationship to the overlaid entity. The value of the relationship will be
+     * calculated from each entity object by applying the "reader" function. This allows Agrest entities
+     * to declare properties not present in the underlying Java objects or change how the standard relationships are
+     * read.
+     *
+     * @since 3.4
+     */
+    public <V> AgEntityOverlay<T> addOrAmendToOne(String name, Class<V> targetType, Function<T, V> reader) {
+        return addOrAmendToOne(name, targetType, ParentPropertyDataResolvers.forReader(reader));
+    }
+
+    /**
+     * Adds a to-many relationship to the overlaid entity. The value of the relationship will be
+     * calculated from each entity object by applying the "reader" function. This allows Agrest entities
+     * to declare properties not present in the underlying Java objects or change how the standard relationships are
+     * read.
+     *
+     * @since 3.4
+     */
+    public <V> AgEntityOverlay<T> addOrAmendToMany(String name, Class<V> targetType, Function<T, List<V>> reader) {
+        return addOrAmendToMany(name, targetType, ParentPropertyDataResolvers.forListReader(reader));
+    }
+
+    /**
+     * @deprecated since 3.4 in favor of {@link #addOrAmendToOne(String, Class, Function)}
+     */
+    @Deprecated
+    public <V> AgEntityOverlay<T> addToOneRelationship(String name, Class<V> targetType, Function<T, V> reader) {
+        return addOrAmendToOne(name, targetType, reader);
+    }
+
+    /**
+     * @deprecated since 3.4 in favor of {@link #addOrAmendToMany(String, Class, Function)}
+     */
+    @Deprecated
+    public <V> AgEntityOverlay<T> addToManyRelationship(String name, Class<V> targetType, Function<T, List<V>> reader) {
+        return addOrAmendToMany(name, targetType, reader);
     }
 }

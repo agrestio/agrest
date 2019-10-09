@@ -4,6 +4,7 @@ import io.agrest.NestedResourceEntity;
 import io.agrest.property.PropertyReader;
 import io.agrest.runtime.processor.select.SelectContext;
 
+import java.util.List;
 import java.util.function.Function;
 
 /**
@@ -12,6 +13,12 @@ import java.util.function.Function;
 public class ParentPropertyDataResolvers {
 
     public static <T> NestedDataResolver<T> forReader(Function<?, T> reader) {
+        // lose generics. PropertyReader is not parameterized
+        Function plainReader = reader;
+        return new ReaderBasedResolver<T>((o, n) -> plainReader.apply(o));
+    }
+
+    public static <T> NestedDataResolver<T> forListReader(Function<?, List<T>> reader) {
         // lose generics. PropertyReader is not parameterized
         Function plainReader = reader;
         return new ReaderBasedResolver<T>((o, n) -> plainReader.apply(o));

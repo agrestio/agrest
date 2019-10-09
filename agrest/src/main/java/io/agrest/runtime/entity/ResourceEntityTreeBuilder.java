@@ -89,14 +89,14 @@ public class ResourceEntityTreeBuilder {
             }
         }
 
-        AgRelationshipOverlay overlayRelationship = agEntityOverlay != null ? agEntityOverlay.getRelationship(property) : null;
-        if (overlayRelationship != null) {
-            AgRelationship relationship = overlayRelationship.resolve(agDataMap);
+        AgRelationship relationship = agEntity.getRelationship(property);
+        AgRelationshipOverlay relationshipOverlay = agEntityOverlay != null ? agEntityOverlay.getRelationship(property) : null;
+        if (relationshipOverlay != null) {
+            AgRelationship overlaidRelationship = relationshipOverlay.resolve(relationship, agDataMap);
             String childPath = dot > 0 ? path.substring(dot + 1) : null;
-            return inflateChild(entity, relationship, childPath);
+            return inflateChild(entity, overlaidRelationship, childPath);
         }
 
-        AgRelationship relationship = agEntity.getRelationship(property);
         if (relationship != null) {
             String childPath = dot > 0 ? path.substring(dot + 1) : null;
             return inflateChild(entity, relationship, childPath);

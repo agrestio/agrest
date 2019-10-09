@@ -206,7 +206,7 @@ public class CayenneAgEntityBuilder<T> {
             overlay.getAttributes().forEach(this::addAttribute);
 
             // I guess there's no point or benefit in creating CayenneAgRelationship for any overlays?
-            overlay.getRelationships().forEach(ro -> addRelationship(ro.resolve(agDataMap)));
+            overlay.getRelationships().forEach(ro -> addRelationship(ro.resolve(relationships.get(ro.getName()), agDataMap)));
         }
     }
 }

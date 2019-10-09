@@ -129,7 +129,7 @@ public class GET_EntityOverlay_PerRequestIT extends JerseyAndDerbyCase {
                     // 3. Changing output of the existing property
                     .addAttribute("cVarchar", String.class, e4 -> e4.getCVarchar() + "_x")
                     // 4. Dynamic relationship
-                    .addToOneRelationship("dynamicRelationship", E22.class, Resource::findMatching);
+                    .addOrAmendToOne("dynamicRelationship", E22.class, Resource::findMatching);
 
             return Ag.service(config)
                     .select(E4.class)

@@ -8,8 +8,12 @@ import io.agrest.it.fixture.JerseyAndDerbyCase;
 import io.agrest.it.fixture.cayenne.E2;
 import io.agrest.it.fixture.cayenne.E3;
 import io.agrest.it.fixture.cayenne.E4;
+import io.agrest.it.fixture.cayenne.E7;
+import io.agrest.it.fixture.cayenne.E8;
 import io.agrest.meta.AgEntityOverlay;
 import io.agrest.runtime.AgBuilder;
+import org.apache.cayenne.Cayenne;
+import org.apache.cayenne.ObjectId;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -32,21 +36,30 @@ public class GET_EntityOverlayIT extends JerseyAndDerbyCase {
 
         AgEntityOverlay<E4> e4Overlay = new AgEntityOverlay<>(E4.class)
                 .addAttribute("adhocString", String.class, e4 -> e4.getCVarchar() + "*")
-                .addToOneRelationship("adhocToOne", EX.class, EX::forE4)
-                .addToManyRelationship("adhocToMany", EY.class, EY::forE4)
+                .addOrAmendToOne("adhocToOne", EX.class, EX::forE4)
+                .addOrAmendToMany("adhocToMany", EY.class, EY::forE4)
                 .addAttribute("derived");
 
-        // this entity has incoming relationships
         AgEntityOverlay<E2> e2Overlay = new AgEntityOverlay<>(E2.class)
                 .addAttribute("adhocString", String.class, e2 -> e2.getName() + "*");
 
-        UnaryOperator<AgBuilder> customizer = ab -> ab.entityOverlay(e4Overlay).entityOverlay(e2Overlay);
+        AgEntityOverlay<E7> e7Overlay = new AgEntityOverlay<>(E7.class)
+                .amendRelationship("e8", e7 -> {
+                    E8 e8 = new E8();
+                    e8.setObjectId(new ObjectId("e8", "id", Cayenne.intPKForObject(e7)));
+                    e8.setName(e7.getName() + "_e8");
+                    return e8;
+                })
+                // we are changing the type of the existing attribute
+                .addAttribute("name", Integer.class, e7 -> e7.getName().length());
+
+        UnaryOperator<AgBuilder> customizer = ab -> ab.entityOverlay(e4Overlay).entityOverlay(e2Overlay).entityOverlay(e7Overlay);
         startTestRuntime(customizer, Resource.class);
     }
 
     @Override
     protected Class<?>[] testEntities() {
-        return new Class[]{E2.class, E3.class, E4.class};
+        return new Class[]{E2.class, E3.class, E4.class, E7.class, E8.class};
     }
 
     @Test
@@ -111,7 +124,7 @@ public class GET_EntityOverlayIT extends JerseyAndDerbyCase {
     }
 
     @Test
-    public void testAdHocToOne() {
+    public void testAddToOne() {
 
         e4().insertColumns("id", "c_varchar")
                 .values(1, "x")
@@ -130,7 +143,7 @@ public class GET_EntityOverlayIT extends JerseyAndDerbyCase {
     }
 
     @Test
-    public void testAdHocToMany() {
+    public void testAddToMany() {
 
         e4().insertColumns("id", "c_varchar")
                 .values(1, "x")
@@ -146,6 +159,44 @@ public class GET_EntityOverlayIT extends JerseyAndDerbyCase {
         onSuccess(r).bodyEquals(2,
                 "{\"id\":1,\"adhocToMany\":[{\"p1\":\"x-\"},{\"p1\":\"x%\"}]}",
                 "{\"id\":2,\"adhocToMany\":[{\"p1\":\"y-\"},{\"p1\":\"y%\"}]}");
+    }
+
+    @Test
+    public void testAmendToOne() {
+
+        e7().insertColumns("id", "name")
+                .values(1, "x1")
+                .values(2, "x2").exec();
+
+        Response r = target("/e7")
+                .queryParam("include", "id")
+                .queryParam("include", "e8.name")
+                .queryParam("sort", "id")
+                .request()
+                .get();
+
+        onSuccess(r).bodyEquals(2,
+                "{\"id\":1,\"e8\":{\"name\":\"x1_e8\"}}",
+                "{\"id\":2,\"e8\":{\"name\":\"x2_e8\"}}");
+    }
+
+    @Test
+    public void testAmendAttribute() {
+
+        e7().insertColumns("id", "name")
+                .values(1, "01")
+                .values(2, "0123").exec();
+
+        Response r = target("/e7")
+                .queryParam("include", "id")
+                .queryParam("include", "name")
+                .queryParam("sort", "id")
+                .request()
+                .get();
+
+        onSuccess(r).bodyEquals(2,
+                "{\"id\":1,\"name\":2}",
+                "{\"id\":2,\"name\":4}");
     }
 
     public static final class EX {
@@ -208,6 +259,12 @@ public class GET_EntityOverlayIT extends JerseyAndDerbyCase {
         @Path("e4/meta")
         public MetadataResponse<E4> getMetaE4(@Context UriInfo uriInfo) {
             return Ag.metadata(E4.class, config).forResource(Resource.class).uri(uriInfo).process();
+        }
+
+        @GET
+        @Path("e7")
+        public DataResponse<E7> getE7(@Context UriInfo uriInfo) {
+            return Ag.service(config).select(E7.class).uri(uriInfo).get();
         }
     }
 }
