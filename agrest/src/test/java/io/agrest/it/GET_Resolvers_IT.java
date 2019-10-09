@@ -35,7 +35,7 @@ public class GET_Resolvers_IT extends JerseyAndDerbyCase {
     }
 
     @Test
-    public void test_JointPrefetchResolver() {
+    public void test_JointPrefetchResolver_ToOne() {
 
         e2().insertColumns("id_", "name").values(1, "xxx").exec();
         e3().insertColumns("id_", "name", "e2_id")
@@ -57,7 +57,7 @@ public class GET_Resolvers_IT extends JerseyAndDerbyCase {
     }
 
     @Test
-    public void test_DisjointPrefetchResolver() {
+    public void test_DisjointPrefetchResolver_ToOne() {
 
         e2().insertColumns("id_", "name").values(1, "xxx").exec();
         e3().insertColumns("id_", "name", "e2_id")
@@ -80,7 +80,58 @@ public class GET_Resolvers_IT extends JerseyAndDerbyCase {
     }
 
     @Test
-    public void test_QueryWithParentIdsResolver() {
+    public void test_JointPrefetchResolver_ToMany() {
+
+        e2().insertColumns("id_", "name")
+                .values(1, "xxx")
+                .values(2, "aaa").exec();
+        e3().insertColumns("id_", "name", "e2_id")
+                .values(8, "yyy", 1)
+                .values(9, "zzz", null)
+                .exec();
+
+        assertEquals(0, cayenneOpCounter.getQueryCounter());
+        Response r = target("/e2_joint_prefetch")
+                .queryParam("include", "id")
+                .queryParam("include", "name")
+                .queryParam("include", "e3s.name")
+                .queryParam("cayenneExp", "id < 3")
+                .queryParam("sort", "id")
+                .request().get();
+
+        assertEquals(1, cayenneOpCounter.getQueryCounter());
+
+        onSuccess(r).bodyEquals(2, "{\"id\":1,\"e3s\":[{\"name\":\"yyy\"}],\"name\":\"xxx\"},{\"id\":2,\"e3s\":[],\"name\":\"aaa\"}");
+    }
+
+    @Test
+    public void test_DisjointPrefetchResolver_ToMany() {
+
+        e2().insertColumns("id_", "name")
+                .values(1, "xxx")
+                .values(2, "aaa").exec();
+        e3().insertColumns("id_", "name", "e2_id")
+                .values(8, "yyy", 1)
+                .values(9, "zzz", null)
+                .exec();
+
+        assertEquals(0, cayenneOpCounter.getQueryCounter());
+        Response r = target("/e2_disjoint_prefetch")
+                .queryParam("include", "id")
+                .queryParam("include", "name")
+                .queryParam("include", "e3s.name")
+                .queryParam("cayenneExp", "id < 3")
+                .queryParam("sort", "id")
+                .request().get();
+
+        // disjoint prefetch is counted as 1 query at the DataDomainFilter level
+        assertEquals(1, cayenneOpCounter.getQueryCounter());
+
+        onSuccess(r).bodyEquals(2, "{\"id\":1,\"e3s\":[{\"name\":\"yyy\"}],\"name\":\"xxx\"},{\"id\":2,\"e3s\":[],\"name\":\"aaa\"}");
+    }
+
+    @Test
+    public void test_QueryWithParentIdsResolver_ToOne() {
 
         e2().insertColumns("id_", "name").values(1, "xxx").exec();
         e3().insertColumns("id_", "name", "e2_id")
@@ -100,6 +151,33 @@ public class GET_Resolvers_IT extends JerseyAndDerbyCase {
 
         onSuccess(r).bodyEquals(2, "{\"id\":8,\"e2\":{\"name\":\"xxx\"},\"name\":\"yyy\"},{\"id\":9,\"e2\":null,\"name\":\"zzz\"}");
     }
+
+    @Test
+    public void test_QueryWithParentIdsResolver_ToMany() {
+
+        e2().insertColumns("id_", "name")
+                .values(1, "xxx")
+                .values(2, "aaa").exec();
+        e3().insertColumns("id_", "name", "e2_id")
+                .values(8, "yyy", 1)
+                .values(9, "zzz", null)
+                .exec();
+
+        assertEquals(0, cayenneOpCounter.getQueryCounter());
+        Response r = target("/e2_query_with_parent_ids")
+                .queryParam("include", "id")
+                .queryParam("include", "name")
+                .queryParam("include", "e3s.name")
+                .queryParam("cayenneExp", "id < 3")
+                .queryParam("sort", "id")
+                .request().get();
+
+        // disjoint prefetch is counted as 1 query at the DataDomainFilter level
+        assertEquals(2, cayenneOpCounter.getQueryCounter());
+
+        onSuccess(r).bodyEquals(2, "{\"id\":1,\"e3s\":[{\"name\":\"yyy\"}],\"name\":\"xxx\"},{\"id\":2,\"e3s\":[],\"name\":\"aaa\"}");
+    }
+
 
     @Test
     public void test_QueryWithParentQualifierResolver() {
@@ -123,12 +201,80 @@ public class GET_Resolvers_IT extends JerseyAndDerbyCase {
         onSuccess(r).bodyEquals(2, "{\"id\":8,\"e2\":{\"name\":\"xxx\"},\"name\":\"yyy\"},{\"id\":9,\"e2\":null,\"name\":\"zzz\"}");
     }
 
+    @Test
+    public void test_QueryWithParentQualifierResolver_NoFetchIfNoParent() {
+
+        e2().insertColumns("id_", "name").values(1, "xxx").exec();
+        e3().insertColumns("id_", "name", "e2_id")
+                .values(8, "yyy", 1)
+                .values(9, "zzz", null)
+                .exec();
+
+        assertEquals(0, cayenneOpCounter.getQueryCounter());
+        Response r = target("/e3_query_with_parent_qualifier")
+                .queryParam("include", "id")
+                .queryParam("include", "name")
+                .queryParam("include", "e2.name")
+                .queryParam("cayenneExp", "id > 9")
+                .request().get();
+
+        assertEquals(1, cayenneOpCounter.getQueryCounter());
+
+        onSuccess(r).bodyEquals(0, "");
+    }
+
     @Path("")
     @Produces(MediaType.APPLICATION_JSON)
     public static class Resource {
 
         @Context
         private Configuration config;
+
+        @GET
+        @Path("e2_disjoint_prefetch")
+        public DataResponse<E2> e2_disjoint_prefetch(@Context UriInfo uriInfo) {
+
+            // non-standard nested resolver
+            AgEntityOverlay<E2> e2Overlay = AgEntity
+                    .overlay(E2.class)
+                    .redefineRelationshipResolver("e3s", AgCayenne.resolverViaDisjointParentPrefetch(config));
+
+            return Ag.select(E2.class, config)
+                    .entityOverlay(e2Overlay)
+                    .uri(uriInfo)
+                    .get();
+        }
+
+        @GET
+        @Path("e2_joint_prefetch")
+        public DataResponse<E2> e2_joint_prefetch(@Context UriInfo uriInfo) {
+
+            // non-standard nested resolver
+            AgEntityOverlay<E2> e2Overlay = AgEntity
+                    .overlay(E2.class)
+                    .redefineRelationshipResolver("e3s", AgCayenne.resolverViaJointParentPrefetch(config));
+
+            return Ag.select(E2.class, config)
+                    .entityOverlay(e2Overlay)
+                    .uri(uriInfo)
+                    .get();
+        }
+
+        @GET
+        @Path("e2_query_with_parent_ids")
+        public DataResponse<E2> e2_query_with_parent_ids(@Context UriInfo uriInfo) {
+
+            // non-standard nested resolver
+            AgEntityOverlay<E2> e2Overlay = AgEntity
+                    .overlay(E2.class)
+                    .redefineRelationshipResolver("e3s", AgCayenne.resolverViaQueryWithParentIds(config));
+
+            return Ag.select(E2.class, config)
+                    .entityOverlay(e2Overlay)
+                    .uri(uriInfo)
+                    .get();
+        }
+
 
         @GET
         @Path("e3_joint_prefetch")
@@ -167,7 +313,7 @@ public class GET_Resolvers_IT extends JerseyAndDerbyCase {
             // non-standard nested resolver
             AgEntityOverlay<E3> e3Overlay = AgEntity
                     .overlay(E3.class)
-                    .redefineRelationshipResolver("e2", AgCayenne.viaQueryWithParentIdsResolver(config));
+                    .redefineRelationshipResolver("e2", AgCayenne.resolverViaQueryWithParentIds(config));
 
             return Ag.select(E3.class, config)
                     .entityOverlay(e3Overlay)

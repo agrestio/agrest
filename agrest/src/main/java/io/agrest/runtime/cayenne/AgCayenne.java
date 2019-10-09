@@ -50,7 +50,7 @@ public class AgCayenne {
                 persister(config));
     }
 
-    public static <T extends DataObject> NestedDataResolver<T> viaQueryWithParentIdsResolver(Configuration config) {
+    public static <T extends DataObject> NestedDataResolver<T> resolverViaQueryWithParentIds(Configuration config) {
         return (NestedDataResolver<T>) new ViaQueryWithParentIdsResolver(
                 AgRuntime.service(CayenneQueryAssembler.class, config),
                 persister(config));
