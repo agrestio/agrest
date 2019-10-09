@@ -5,6 +5,7 @@ import io.agrest.DataResponse;
 import io.agrest.it.fixture.JerseyAndDerbyCase;
 import io.agrest.it.fixture.cayenne.E22;
 import io.agrest.it.fixture.cayenne.E4;
+import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgEntityOverlay;
 import org.apache.cayenne.Cayenne;
 import org.apache.cayenne.query.SelectById;
@@ -121,15 +122,15 @@ public class GET_EntityOverlay_PerRequestIT extends JerseyAndDerbyCase {
         // typical use case tested here is an AgEntityOverlay that depends on request parameters
         public DataResponse<E4> get(@Context UriInfo uriInfo, @PathParam("suffix") String suffix) {
 
-            AgEntityOverlay<E4> overlay = new AgEntityOverlay<>(E4.class)
+            AgEntityOverlay<E4> overlay = AgEntity.overlay(E4.class)
                     // 1. Request-specific attribute
-                    .addAttribute("fromRequest", String.class, e4 -> suffix)
+                    .redefineAttribute("fromRequest", String.class, e4 -> suffix)
                     // 2. Object property previously unknown to Ag
-                    .addAttribute("objectProperty", String.class, e4 -> e4.getDerived())
+                    .redefineAttribute("objectProperty", String.class, e4 -> e4.getDerived())
                     // 3. Changing output of the existing property
-                    .addAttribute("cVarchar", String.class, e4 -> e4.getCVarchar() + "_x")
+                    .redefineAttribute("cVarchar", String.class, e4 -> e4.getCVarchar() + "_x")
                     // 4. Dynamic relationship
-                    .addOrAmendToOne("dynamicRelationship", E22.class, Resource::findMatching);
+                    .redefineToOne("dynamicRelationship", E22.class, Resource::findMatching);
 
             return Ag.service(config)
                     .select(E4.class)

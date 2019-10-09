@@ -9,6 +9,7 @@ import static org.junit.Assert.assertEquals;
 
 public class AgEntityOverlayTest {
 
+    @Deprecated
     @Test
     public void testAddAttribute() {
 
@@ -25,6 +26,7 @@ public class AgEntityOverlayTest {
         assertEquals(boolean.class, attributes.get("y").getType());
     }
 
+    @Deprecated
     @Test
     public void testAddAttribute_Inheritance() {
 
@@ -44,6 +46,7 @@ public class AgEntityOverlayTest {
 
     }
 
+    @Deprecated
     @Test(expected = IllegalArgumentException.class)
     public void testAddAttribute_Missing() {
         new AgEntityOverlay<>(T1.class).addAttribute("a");

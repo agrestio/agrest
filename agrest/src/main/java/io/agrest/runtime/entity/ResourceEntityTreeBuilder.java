@@ -90,11 +90,13 @@ public class ResourceEntityTreeBuilder {
         }
 
         AgRelationship relationship = agEntity.getRelationship(property);
-        AgRelationshipOverlay relationshipOverlay = agEntityOverlay != null ? agEntityOverlay.getRelationship(property) : null;
+        AgRelationshipOverlay relationshipOverlay = agEntityOverlay != null ? agEntityOverlay.getRelationshipOverlay(property) : null;
         if (relationshipOverlay != null) {
-            AgRelationship overlaidRelationship = relationshipOverlay.resolve(relationship, agDataMap);
-            String childPath = dot > 0 ? path.substring(dot + 1) : null;
-            return inflateChild(entity, overlaidRelationship, childPath);
+            AgRelationship overlaid = relationshipOverlay.resolve(relationship, agDataMap);
+            if(overlaid != null) {
+                String childPath = dot > 0 ? path.substring(dot + 1) : null;
+                return inflateChild(entity, overlaid, childPath);
+            }
         }
 
         if (relationship != null) {

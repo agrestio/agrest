@@ -15,21 +15,21 @@ public class ParentPropertyDataResolvers {
     public static <T> NestedDataResolver<T> forReader(Function<?, T> reader) {
         // lose generics. PropertyReader is not parameterized
         Function plainReader = reader;
-        return new ReaderBasedResolver<T>((o, n) -> plainReader.apply(o));
+        return new ReaderBasedResolver<>((o, n) -> plainReader.apply(o));
     }
 
     public static <T> NestedDataResolver<T> forListReader(Function<?, List<T>> reader) {
         // lose generics. PropertyReader is not parameterized
         Function plainReader = reader;
-        return new ReaderBasedResolver<T>((o, n) -> plainReader.apply(o));
+        return new ReaderBasedResolver<>((o, n) -> plainReader.apply(o));
     }
 
     public static <T> NestedDataResolver<T> forReader(PropertyReader reader) {
-        return new ReaderBasedResolver<T>(reader);
+        return new ReaderBasedResolver<>(reader);
     }
 
     public static <T> NestedDataResolver<T> forReaderFactory(Function<NestedResourceEntity<T>, PropertyReader> readerFactory) {
-        return new ReaderFactoryBasedResolver<T>(readerFactory);
+        return new ReaderFactoryBasedResolver<>(readerFactory);
     }
 
     static class ReaderFactoryBasedResolver<T> implements NestedDataResolver<T> {

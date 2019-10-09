@@ -6,6 +6,7 @@ import io.agrest.MetadataResponse;
 import io.agrest.it.fixture.JerseyAndDerbyCase;
 import io.agrest.it.fixture.cayenne.E22;
 import io.agrest.it.fixture.cayenne.E25;
+import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgEntityOverlay;
 import org.apache.cayenne.Cayenne;
 import org.apache.cayenne.query.SelectById;
@@ -26,8 +27,8 @@ public class GET_EntityOverlay_RelToPersistentIT extends JerseyAndDerbyCase {
     @BeforeClass
     public static void startTestRuntime() {
 
-        AgEntityOverlay<E22> e22Overlay = new AgEntityOverlay<>(E22.class)
-                .addOrAmendToOne("overlayToOne", E25.class, GET_EntityOverlay_RelToPersistentIT::findForParent);
+        AgEntityOverlay<E22> e22Overlay = AgEntity.overlay(E22.class)
+                .redefineToOne("overlayToOne", E25.class, GET_EntityOverlay_RelToPersistentIT::findForParent);
 
         startTestRuntime(
                 ab -> ab.entityOverlay(e22Overlay),

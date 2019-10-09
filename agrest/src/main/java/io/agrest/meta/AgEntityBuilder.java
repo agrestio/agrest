@@ -225,7 +225,14 @@ public class AgEntityBuilder<T> {
     protected void loadOverlays() {
         if (overlay != null) {
             overlay.getAttributes().forEach(this::addAttribute);
-            overlay.getRelationships().forEach(ro -> addRelationship(ro.resolve(relationships.get(ro.getName()), agDataMap)));
+            overlay.getRelationshipOverlays().forEach(this::loadRelationshipOverlay);
+        }
+    }
+
+    protected void loadRelationshipOverlay(AgRelationshipOverlay overlay) {
+        io.agrest.meta.AgRelationship relationship = overlay.resolve(relationships.get(overlay.getName()), agDataMap);
+        if (relationship != null) {
+            addRelationship(relationship);
         }
     }
 }

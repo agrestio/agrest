@@ -6,6 +6,7 @@ import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgEntityBuilder;
 import io.agrest.meta.AgEntityOverlay;
 import io.agrest.meta.AgRelationship;
+import io.agrest.meta.AgRelationshipOverlay;
 import io.agrest.meta.DefaultAgEntity;
 import io.agrest.property.DefaultIdReader;
 import io.agrest.property.IdReader;
@@ -205,8 +206,15 @@ public class CayenneAgEntityBuilder<T> {
             // TODO: what about overlaying ids?
             overlay.getAttributes().forEach(this::addAttribute);
 
-            // I guess there's no point or benefit in creating CayenneAgRelationship for any overlays?
-            overlay.getRelationships().forEach(ro -> addRelationship(ro.resolve(relationships.get(ro.getName()), agDataMap)));
+            overlay.getRelationshipOverlays().forEach(this::loadRelationshipOverlay);
+        }
+    }
+
+    protected void loadRelationshipOverlay(AgRelationshipOverlay overlay) {
+        // I guess there's no point or benefit in creating CayenneAgRelationship for any overlays?
+        io.agrest.meta.AgRelationship relationship = overlay.resolve(relationships.get(overlay.getName()), agDataMap);
+        if (relationship != null) {
+            addRelationship(relationship);
         }
     }
 }

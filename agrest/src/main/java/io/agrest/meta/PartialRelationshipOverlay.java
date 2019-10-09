@@ -1,6 +1,8 @@
 package io.agrest.meta;
 
 import io.agrest.resolver.NestedDataResolver;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Objects;
 
@@ -11,6 +13,8 @@ import java.util.Objects;
  * @since 3.4
  */
 public class PartialRelationshipOverlay implements AgRelationshipOverlay {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(PartialRelationshipOverlay.class);
 
     private Class<?> sourceEntityType;
     private String name;
@@ -29,12 +33,20 @@ public class PartialRelationshipOverlay implements AgRelationshipOverlay {
 
     @Override
     public AgRelationship resolve(AgRelationship maybeOverlaid, AgDataMap agDataMap) {
+        return maybeOverlaid != null ? doResolve(maybeOverlaid) : cantResolve();
+    }
 
-        if (maybeOverlaid == null) {
-            throw new IllegalStateException("Partial overlay can't be resolved. No relationship: "
-                    + sourceEntityType.getName() + "." + name);
-        }
+    private AgRelationship cantResolve() {
 
+        // an argument can be made that we need to throw here, but unfortunately such an exception will be far removed
+        // from the place where an incorrect overlay is defined, and sometimes may not even be detected. So we decided
+        // to log a warning, and ignore the overlay instead of keeping a time bomb in the code
+
+        LOGGER.warn("Partial overlay can't be resolved. No underlying relationship '{}.{}' is defined", sourceEntityType.getName(), name);
+        return null;
+    }
+
+    private AgRelationship doResolve(AgRelationship maybeOverlaid) {
         return new DefaultAgRelationship(name, maybeOverlaid.getTargetEntity(), maybeOverlaid.isToMany(), resolver);
     }
 }

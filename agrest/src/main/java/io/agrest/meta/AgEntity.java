@@ -12,6 +12,14 @@ import java.util.Collection;
  */
 public interface AgEntity<T> {
 
+    /**
+     * @return a mutable overlay object that can be used to customize the entity.
+     * @since 3.4
+     */
+    static <T> AgEntityOverlay<T> overlay(Class<T> type) {
+        return new AgEntityOverlay<>(type);
+    }
+
     String getName();
 
     Class<T> getType();

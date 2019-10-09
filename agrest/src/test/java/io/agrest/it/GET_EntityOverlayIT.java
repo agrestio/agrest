@@ -10,6 +10,7 @@ import io.agrest.it.fixture.cayenne.E3;
 import io.agrest.it.fixture.cayenne.E4;
 import io.agrest.it.fixture.cayenne.E7;
 import io.agrest.it.fixture.cayenne.E8;
+import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgEntityOverlay;
 import io.agrest.runtime.AgBuilder;
 import org.apache.cayenne.Cayenne;
@@ -34,24 +35,24 @@ public class GET_EntityOverlayIT extends JerseyAndDerbyCase {
     @BeforeClass
     public static void startTestRuntime() {
 
-        AgEntityOverlay<E4> e4Overlay = new AgEntityOverlay<>(E4.class)
-                .addAttribute("adhocString", String.class, e4 -> e4.getCVarchar() + "*")
-                .addOrAmendToOne("adhocToOne", EX.class, EX::forE4)
-                .addOrAmendToMany("adhocToMany", EY.class, EY::forE4)
-                .addAttribute("derived");
+        AgEntityOverlay<E4> e4Overlay = AgEntity.overlay(E4.class)
+                .redefineAttribute("adhocString", String.class, e4 -> e4.getCVarchar() + "*")
+                .redefineToOne("adhocToOne", EX.class, EX::forE4)
+                .redefineToMany("adhocToMany", EY.class, EY::forE4)
+                .redefineAttribute("derived", String.class, E4::getDerived);
 
-        AgEntityOverlay<E2> e2Overlay = new AgEntityOverlay<>(E2.class)
-                .addAttribute("adhocString", String.class, e2 -> e2.getName() + "*");
+        AgEntityOverlay<E2> e2Overlay = AgEntity.overlay(E2.class)
+                .redefineAttribute("adhocString", String.class, e2 -> e2.getName() + "*");
 
-        AgEntityOverlay<E7> e7Overlay = new AgEntityOverlay<>(E7.class)
-                .amendRelationship("e8", e7 -> {
+        AgEntityOverlay<E7> e7Overlay = AgEntity.overlay(E7.class)
+                .redefineRelationshipResolver("e8", e7 -> {
                     E8 e8 = new E8();
                     e8.setObjectId(new ObjectId("e8", "id", Cayenne.intPKForObject(e7)));
                     e8.setName(e7.getName() + "_e8");
                     return e8;
                 })
                 // we are changing the type of the existing attribute
-                .addAttribute("name", Integer.class, e7 -> e7.getName().length());
+                .redefineAttribute("name", Integer.class, e7 -> e7.getName().length());
 
         UnaryOperator<AgBuilder> customizer = ab -> ab.entityOverlay(e4Overlay).entityOverlay(e2Overlay).entityOverlay(e7Overlay);
         startTestRuntime(customizer, Resource.class);
@@ -63,7 +64,7 @@ public class GET_EntityOverlayIT extends JerseyAndDerbyCase {
     }
 
     @Test
-    public void testAdHocMeta() {
+    public void testOverlayMeta() {
 
         Response r = target("/e4/meta").request().get();
 
@@ -76,7 +77,7 @@ public class GET_EntityOverlayIT extends JerseyAndDerbyCase {
     }
 
     @Test
-    public void testTransientAttribute() {
+    public void testRedefineAttribute_Transient() {
 
         e4().insertColumns("id", "c_varchar")
                 .values(1, "x")
@@ -92,7 +93,7 @@ public class GET_EntityOverlayIT extends JerseyAndDerbyCase {
     }
 
     @Test
-    public void testAdHocAttribute_Related() {
+    public void testRedefineAttribute_AdHocRelated() {
 
         e2().insertColumns("id_", "name").values(1, "xxx").exec();
         e3().insertColumns("id_", "name", "e2_id").values(3, "zzz", 1).exec();
@@ -108,7 +109,7 @@ public class GET_EntityOverlayIT extends JerseyAndDerbyCase {
     }
 
     @Test
-    public void testAdHocAttribute() {
+    public void testRedefineAttribute_AdHoc() {
 
         e4().insertColumns("id", "c_varchar")
                 .values(1, "x")
@@ -124,7 +125,7 @@ public class GET_EntityOverlayIT extends JerseyAndDerbyCase {
     }
 
     @Test
-    public void testAddToOne() {
+    public void testRedefineToOne_AdHoc() {
 
         e4().insertColumns("id", "c_varchar")
                 .values(1, "x")
@@ -143,7 +144,7 @@ public class GET_EntityOverlayIT extends JerseyAndDerbyCase {
     }
 
     @Test
-    public void testAddToMany() {
+    public void testRedefineToMany_AdHoc() {
 
         e4().insertColumns("id", "c_varchar")
                 .values(1, "x")
@@ -162,7 +163,7 @@ public class GET_EntityOverlayIT extends JerseyAndDerbyCase {
     }
 
     @Test
-    public void testAmendToOne() {
+    public void testRedefineToOne_Replaced() {
 
         e7().insertColumns("id", "name")
                 .values(1, "x1")
@@ -181,7 +182,7 @@ public class GET_EntityOverlayIT extends JerseyAndDerbyCase {
     }
 
     @Test
-    public void testAmendAttribute() {
+    public void testRedefineAttribute_Replaced() {
 
         e7().insertColumns("id", "name")
                 .values(1, "01")
