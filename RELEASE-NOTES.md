@@ -1,5 +1,6 @@
 Release 3.4
 
+* #413 Pluggable resolver for hierarchical fetches
 * #420 Per-request EncoderFilters
 * #421 Custom per-request Encoder is ignored on update
 * #422 GET: Per-request AgEntityOverlay to customize properties based on request state
