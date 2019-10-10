@@ -1,16 +1,17 @@
 package io.agrest.client.runtime.run;
 
+import io.agrest.client.AgClientException;
+import io.agrest.client.protocol.Expression;
+import io.agrest.client.protocol.Include;
+import io.agrest.client.protocol.Sort;
+import io.agrest.protocol.Dir;
+
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.Map;
-
-import io.agrest.client.AgClientException;
-import io.agrest.client.protocol.Expression;
-import io.agrest.client.protocol.Include;
-import io.agrest.client.protocol.Sort;
 
 /**
  * @since 2.0
@@ -186,9 +187,9 @@ class RequestEncoder {
 		buf.append(ordering.getPropertyName());
 		buf.append("\"");
 
-		if (ordering.getDirection() != Sort.SortDirection.ASCENDING) {
+		if (ordering.getDirection() != Dir.ASC) {
 			buf.append(",\"direction\":\"");
-			buf.append(ordering.getDirection().abbrev());
+			buf.append(ordering.getDirection().name());
 			buf.append("\"");
 		}
 

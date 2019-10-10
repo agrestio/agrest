@@ -7,6 +7,7 @@ Release 3.4
 * #423 Wrong Encoder for target entities in overlayed relationships
 * #424 Unwinding Cayenne dependencies - get rid of AgPersistent* models
 * #428 Add support for Case Insensitive Sorting
+* #430 agrest-client: Use protocol "dir" enum instead of "SortDirection" enum
 
 Release 3.3
 
