@@ -6,5 +6,5 @@ package io.agrest.protocol;
  * @since 2.13
  */
 public enum Dir {
-    ASC, DESC;
+    ASC, ASC_INSENSITIVE, DESC, DESC_INSENSITIVE;
 }
