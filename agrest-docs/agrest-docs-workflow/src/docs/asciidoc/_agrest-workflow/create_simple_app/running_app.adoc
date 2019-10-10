@@ -3,7 +3,7 @@
 In this chapter, we run and test our application.
 After you have completed the above steps, the structure of your project will look like this:
 
-image::../images/bookstore_ide_prjct.png[align="center"]
+image::../img/bookstore_ide_prjct.png[align="center"]
 
 ==== Building and running
 

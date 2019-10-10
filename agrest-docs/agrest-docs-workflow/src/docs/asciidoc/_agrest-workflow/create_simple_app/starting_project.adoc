@@ -8,7 +8,7 @@ and introduce a simple Bookstore application that will be used as an example.
 The application contains two types of entities: `Category` and `Book`.
 The relationship between `Category` and `Book` entities is *one-to-many*.
 
-image::../images/bookstore_er_diagram.png[align="center"]
+image::../img/bookstore_er_diagram.png[align="center"]
 
 ==== Create a new Project in IntelliJ IDEA
 
@@ -17,7 +17,7 @@ In IntelliJ IDEA, select `File > New > Project..`. Then select `Maven` and click
 In the dialog shown on the screenshot below, fill in the `Group Id`
 and `Artifact Id` fields and click `Next`.
 
-image::../images/tutorial-idea-project.png[align="center"]
+image::../img/tutorial-idea-project.png[align="center"]
 
 During the next step, you will be able to customize the directory for your project.
 Click `Finish` where you are done. Now you should have a new empty project.

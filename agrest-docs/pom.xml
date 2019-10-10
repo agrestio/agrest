@@ -77,7 +77,7 @@
                         <basedir>${project.basedir}</basedir>
                         <sourcedir>${project.build.sourceDirectory}</sourcedir>
 
-                        <imagesdir>images</imagesdir>
+                        <imagesdir>img</imagesdir>
                         <icons>font</icons>
 
                         <sectanchors>true</sectanchors>
@@ -134,7 +134,7 @@
                             <outputDirectory>${project.build.directory}/site/${project.artifactId}/images/</outputDirectory>
                             <resources>
                                 <resource>
-                                    <directory>${project.build.directory}/tmp/images/</directory>
+                                    <directory>${project.build.directory}/tmp/img/</directory>
                                     <filtering>true</filtering>
                                 </resource>
                             </resources>
