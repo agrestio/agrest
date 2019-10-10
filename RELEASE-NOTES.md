@@ -6,6 +6,7 @@ Release 3.4
 * #422 GET: Per-request AgEntityOverlay to customize properties based on request state
 * #423 Wrong Encoder for target entities in overlayed relationships
 * #424 Unwinding Cayenne dependencies - get rid of AgPersistent* models
+* #428 Add support for Case Insensitive Sorting
 
 Release 3.3
 
