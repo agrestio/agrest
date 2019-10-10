@@ -38,7 +38,7 @@ public class SortParserTest extends TestWithCayenneMapping {
         assertEquals(Dir.ASC, orderings.get(1).getDirection());
 
         assertEquals("city", orderings.get(2).getProperty());
-        assertEquals(Dir.DESC_INSENSITIVE, orderings.get(2).getDirection());
+        assertEquals(Dir.DESC_CI, orderings.get(2).getDirection());
     }
 
     @Test
@@ -88,7 +88,7 @@ public class SortParserTest extends TestWithCayenneMapping {
 
         assertEquals(1, orderings.size());
         assertEquals("name", orderings.get(0).getProperty());
-        assertEquals(Dir.ASC_INSENSITIVE, orderings.get(0).getDirection());
+        assertEquals(Dir.ASC_CI, orderings.get(0).getDirection());
     }
 
     @Test
@@ -98,6 +98,6 @@ public class SortParserTest extends TestWithCayenneMapping {
 
         assertEquals(1, orderings.size());
         assertEquals("name", orderings.get(0).getProperty());
-        assertEquals(Dir.DESC_INSENSITIVE, orderings.get(0).getDirection());
+        assertEquals(Dir.DESC_CI, orderings.get(0).getDirection());
     }
 }

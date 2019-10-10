@@ -60,9 +60,9 @@ public class SortMerger implements ISortMerger {
         switch (direction) {
             case ASC:
                 return SortOrder.ASCENDING;
-            case ASC_INSENSITIVE:
+            case ASC_CI:
                 return SortOrder.ASCENDING_INSENSITIVE;
-            case DESC_INSENSITIVE:
+            case DESC_CI:
                 return SortOrder.DESCENDING_INSENSITIVE;
             default:
                 return SortOrder.DESCENDING;
