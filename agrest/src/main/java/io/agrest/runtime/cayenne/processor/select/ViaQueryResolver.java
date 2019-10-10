@@ -11,6 +11,8 @@ import javax.ws.rs.core.Response;
 import java.util.List;
 
 /**
+ * A root resolver that builds and executes a Cayenne DB query based on the request parameters provided by the client.
+ *
  * @since 3.4
  */
 public class ViaQueryResolver extends BaseRootDataResolver<DataObject> {

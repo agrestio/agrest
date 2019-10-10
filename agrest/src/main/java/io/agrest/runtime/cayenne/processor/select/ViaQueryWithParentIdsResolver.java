@@ -10,6 +10,9 @@ import java.util.Collections;
 import java.util.Iterator;
 
 /**
+ * A nested resolver that waits for the parent query to complete, and resolves its entity objects based on the collection
+ * of IDs from the parent result.
+ *
  * @since 3.4
  */
 public class ViaQueryWithParentIdsResolver extends ViaQueryWithParentQualifierResolver {

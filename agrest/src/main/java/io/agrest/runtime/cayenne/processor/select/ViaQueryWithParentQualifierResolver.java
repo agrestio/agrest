@@ -21,6 +21,9 @@ import java.util.Map;
 import java.util.function.BiConsumer;
 
 /**
+ * A nested resolver that builds a database query using a qualifier from the parent entity. This is the default nested
+ * resolver used by Cayenne backend.
+ *
  * @since 3.4
  */
 public class ViaQueryWithParentQualifierResolver extends BaseNestedDataResolver<DataObject> {
