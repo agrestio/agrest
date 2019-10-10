@@ -12,6 +12,9 @@ import org.apache.cayenne.DataObject;
 import java.util.Collections;
 
 /**
+ * A resolver that doesn't run its own queries, but instead amends parent node query with prefetch spec, so that the
+ * objects can be read efficiently from the parent objects. Also allows to explicitly set the prefetch semantics.
+ *
  * @since 3.4
  */
 public class ViaParentPrefetchResolver extends BaseNestedDataResolver<DataObject> {
