@@ -64,8 +64,10 @@ public class SortMerger implements ISortMerger {
                 return SortOrder.ASCENDING_INSENSITIVE;
             case DESC_CI:
                 return SortOrder.DESCENDING_INSENSITIVE;
-            default:
+            case DESC:
                 return SortOrder.DESCENDING;
+            default:
+                throw new IllegalArgumentException("Missing or unexpected sort direction: " + direction);
         }
     }
 
