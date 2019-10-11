@@ -28,19 +28,20 @@ public class CayenneEntityCompiler implements AgEntityCompiler {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CayenneEntityCompiler.class);
 
-    private EntityResolver cayenneResolver;
+    private EntityResolver cayenneEntityResolver;
     private Map<String, AgEntityOverlay> entityOverlays;
     private RootDataResolver defaultRootResolver;
     private NestedDataResolver defaultNestedResolver;
     private NestedDataResolver defaultPojoNestedResolver;
 
     public CayenneEntityCompiler(
-            @Inject CayenneQueryAssembler queryAssembler,
             @Inject ICayennePersister cayennePersister,
             @Inject Map<String, AgEntityOverlay> entityOverlays) {
 
-        this.cayenneResolver = cayennePersister.entityResolver();
+        this.cayenneEntityResolver = cayennePersister.entityResolver();
         this.entityOverlays = entityOverlays;
+
+        CayenneQueryAssembler queryAssembler = new CayenneQueryAssembler(cayenneEntityResolver);
         this.defaultRootResolver = createDefaultRootResolver(queryAssembler, cayennePersister);
         this.defaultNestedResolver = createDefaultNestedResolver(queryAssembler, cayennePersister);
         this.defaultPojoNestedResolver = createDefaultPojoNestedResolver();
@@ -49,7 +50,7 @@ public class CayenneEntityCompiler implements AgEntityCompiler {
     @Override
     public <T> AgEntity<T> compile(Class<T> type, AgDataMap dataMap) {
 
-        ObjEntity objEntity = cayenneResolver.getObjEntity(type);
+        ObjEntity objEntity = cayenneEntityResolver.getObjEntity(type);
         return objEntity != null
                 ? new LazyAgEntity<>(type, () -> doCompile(type, dataMap))
                 : null;
@@ -75,7 +76,7 @@ public class CayenneEntityCompiler implements AgEntityCompiler {
 
     private <T> AgEntity<T> doCompile(Class<T> type, AgDataMap dataMap) {
         LOGGER.debug("compiling Cayenne entity for type: {}", type);
-        return new CayenneAgEntityBuilder<>(type, dataMap, cayenneResolver)
+        return new CayenneAgEntityBuilder<>(type, dataMap, cayenneEntityResolver)
                 .overlay(entityOverlays.get(type.getName()))
                 .rootDataResolver(defaultRootResolver)
                 .nestedDataResolver(defaultNestedResolver)

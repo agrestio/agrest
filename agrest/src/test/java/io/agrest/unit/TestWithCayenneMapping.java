@@ -12,7 +12,6 @@ import io.agrest.meta.parser.IResourceParser;
 import io.agrest.meta.parser.ResourceParser;
 import io.agrest.property.BeanPropertyReader;
 import io.agrest.runtime.cayenne.ICayennePersister;
-import io.agrest.runtime.cayenne.processor.select.CayenneQueryAssembler;
 import io.agrest.runtime.meta.BaseUrlProvider;
 import io.agrest.runtime.meta.IMetadataService;
 import io.agrest.runtime.meta.IResourceMetadataService;
@@ -53,7 +52,6 @@ public class TestWithCayenneMapping {
     protected IMetadataService metadataService;
     protected IResourceMetadataService resourceMetadataService;
     protected IResourceParser resourceParser;
-    protected CayenneQueryAssembler queryAssembler;
 
     @BeforeClass
     public static void setUpClass() {
@@ -85,20 +83,14 @@ public class TestWithCayenneMapping {
         when(mockCayennePersister.sharedContext()).thenReturn(sharedContext);
         when(mockCayennePersister.newContext()).thenReturn(runtime.newContext());
 
-        this.queryAssembler = createQueryAssembler();
         this.metadataService = new MetadataService(createEntityCompilers());
         this.resourceParser = new ResourceParser(metadataService);
         this.resourceMetadataService = createResourceMetadataService();
     }
 
-    protected CayenneQueryAssembler createQueryAssembler() {
-        return new CayenneQueryAssembler(mockCayennePersister.entityResolver());
-    }
-
     protected List<AgEntityCompiler> createEntityCompilers() {
 
         AgEntityCompiler c1 = new CayenneEntityCompiler(
-                queryAssembler,
                 mockCayennePersister,
                 Collections.emptyMap());
 

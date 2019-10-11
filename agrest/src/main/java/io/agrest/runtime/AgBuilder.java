@@ -30,8 +30,6 @@ import io.agrest.runtime.cayenne.NoCayennePersister;
 import io.agrest.runtime.cayenne.processor.delete.CayenneDeleteProcessorFactoryProvider;
 import io.agrest.runtime.cayenne.processor.delete.CayenneDeleteStage;
 import io.agrest.runtime.cayenne.processor.delete.CayenneDeleteStartStage;
-import io.agrest.runtime.cayenne.processor.select.CayenneQueryAssembler;
-import io.agrest.runtime.cayenne.processor.select.CayenneQueryAssemblerProvider;
 import io.agrest.runtime.cayenne.processor.unrelate.CayenneUnrelateDataStoreStage;
 import io.agrest.runtime.cayenne.processor.unrelate.CayenneUnrelateProcessorFactoryProvider;
 import io.agrest.runtime.cayenne.processor.unrelate.CayenneUnrelateStartStage;
@@ -459,7 +457,6 @@ public class AgBuilder {
 
             binder.bindList(EntityEncoderFilter.class).addAll(entityEncoderFilters);
 
-            binder.bind(CayenneQueryAssembler.class).toProvider(CayenneQueryAssemblerProvider.class);
             binder.bind(CayenneEntityCompiler.class).to(CayenneEntityCompiler.class);
             binder.bind(PojoEntityCompiler.class).to(PojoEntityCompiler.class);
             binder.bindList(AgEntityCompiler.class)

@@ -25,9 +25,13 @@ public class AgCayenne {
     }
 
     public static <T extends DataObject> RootDataResolver<T> rootResolverViaQuery(Configuration config) {
+        return rootResolverViaQuery(persister(config));
+    }
+
+    public static <T extends DataObject> RootDataResolver<T> rootResolverViaQuery(ICayennePersister persister) {
         return (RootDataResolver<T>) new ViaQueryResolver(
-                AgRuntime.service(CayenneQueryAssembler.class, config),
-                persister(config));
+                new CayenneQueryAssembler(persister.entityResolver()),
+                persister);
     }
 
     public static <T extends DataObject> NestedDataResolver<T> resolverViaDisjointParentPrefetch() {
@@ -39,14 +43,22 @@ public class AgCayenne {
     }
 
     public static <T extends DataObject> NestedDataResolver<T> resolverViaQueryWithParentQualifier(Configuration config) {
+        return resolverViaQueryWithParentQualifier(persister(config));
+    }
+
+    public static <T extends DataObject> NestedDataResolver<T> resolverViaQueryWithParentQualifier(ICayennePersister persister) {
         return (NestedDataResolver<T>) new ViaQueryWithParentQualifierResolver(
-                AgRuntime.service(CayenneQueryAssembler.class, config),
-                persister(config));
+                new CayenneQueryAssembler(persister.entityResolver()),
+                persister);
     }
 
     public static <T extends DataObject> NestedDataResolver<T> resolverViaQueryWithParentIds(Configuration config) {
+        return resolverViaQueryWithParentIds(persister(config));
+    }
+
+    public static <T extends DataObject> NestedDataResolver<T> resolverViaQueryWithParentIds(ICayennePersister persister) {
         return (NestedDataResolver<T>) new ViaQueryWithParentIdsResolver(
-                AgRuntime.service(CayenneQueryAssembler.class, config),
-                persister(config));
+                new CayenneQueryAssembler(persister.entityResolver()),
+                persister);
     }
 }
