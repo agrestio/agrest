@@ -9,6 +9,7 @@ Release 3.4
 * #428 Add support for Case Insensitive Sorting
 * #430 agrest-client: Use protocol "dir" enum instead of "SortDirection" enum
 * #434 Upgrade to Cayenne 4.0.2
+* #435 Upgrade SLF4J to 1.7.25
 
 Release 3.3
 
