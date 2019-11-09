@@ -111,7 +111,7 @@ public class IncludeMergerTest extends TestWithCayenneMapping {
         Map<Class<?>, AgEntityOverlay<?>> overlays = new HashMap<>();
         overlays.put(E5.class, AgEntity
                 .overlay(E5.class)
-                .redefineToOne(E5.E3S.getName(), E3.class, AgCayenne.resolverViaQueryWithParentIds(mockCayennePersister)));
+                .redefineRelationshipResolver(E5.E3S.getName(), AgCayenne.resolverViaQueryWithParentIds(mockCayennePersister)));
 
         overlays.put(E3.class, AgEntity
                 .overlay(E3.class)
