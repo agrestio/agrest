@@ -22,13 +22,15 @@ import javax.ws.rs.core.UriInfo;
 
 import static org.junit.Assert.*;
 
-public class GET_EntityOverlay_RelToPersistentIT extends JerseyAndDerbyCase {
+public class GET_EntityOverlay_RedefineToOne_PersistentToPersistentIT extends JerseyAndDerbyCase {
 
     @BeforeClass
     public static void startTestRuntime() {
 
-        AgEntityOverlay<E22> e22Overlay = AgEntity.overlay(E22.class)
-                .redefineToOne("overlayToOne", E25.class, GET_EntityOverlay_RelToPersistentIT::findForParent);
+        // creating an adhoc relationship between two persistent objects with a custom resolver
+        AgEntityOverlay<E22> e22Overlay = AgEntity
+                .overlay(E22.class)
+                .redefineToOne("overlayToOne", E25.class, p -> findForParent(p));
 
         startTestRuntime(
                 ab -> ab.entityOverlay(e22Overlay),
@@ -47,7 +49,7 @@ public class GET_EntityOverlay_RelToPersistentIT extends JerseyAndDerbyCase {
     }
 
     @Test
-    public void testAdHocMeta() {
+    public void testRedefineToOne_Meta() {
         Response r = target("/e22/meta").request().get();
         String data = onSuccess(r).getContentAsString();
         assertTrue("Unexpected metadata: " + data,
@@ -55,7 +57,7 @@ public class GET_EntityOverlay_RelToPersistentIT extends JerseyAndDerbyCase {
     }
 
     @Test
-    public void testOverlayToOne() {
+    public void testRedefineToOne() {
 
         e22().insertColumns("id")
                 .values(1)

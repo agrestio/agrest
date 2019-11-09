@@ -35,6 +35,8 @@ import io.agrest.it.fixture.cayenne.E9;
 import io.agrest.runtime.AgBuilder;
 import io.agrest.runtime.AgRuntime;
 import io.agrest.runtime.IAgService;
+import io.agrest.runtime.cayenne.CayennePersister;
+import io.agrest.runtime.cayenne.ICayennePersister;
 import io.bootique.BQRuntime;
 import io.bootique.cayenne.CayenneModule;
 import io.bootique.cayenne.test.CayenneTestDataManager;
@@ -52,6 +54,7 @@ import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Response;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.util.function.BiFunction;
 import java.util.function.UnaryOperator;
 
 /**
@@ -75,6 +78,11 @@ public abstract class JerseyAndDerbyCase {
     }
 
     protected static void startTestRuntime(UnaryOperator<AgBuilder> agCustomizer, Class<?>... resources) {
+        startTestRuntime((b, p) -> agCustomizer.apply(b), resources);
+    }
+
+    protected static void startTestRuntime(BiFunction<AgBuilder, ICayennePersister, AgBuilder> agCustomizer, Class<?>... resources) {
+
         TEST_RUNTIME = TEST_FACTORY.app("-s", "-c", "classpath:io/agrest/it/fixture/server.yml")
                 .autoLoadModules()
                 .module(new AgModule(agCustomizer))
@@ -260,9 +268,9 @@ public abstract class JerseyAndDerbyCase {
 
     public static class AgModule implements Module {
 
-        private UnaryOperator<AgBuilder> agCustomizer;
+        private BiFunction<AgBuilder, ICayennePersister, AgBuilder> agCustomizer;
 
-        public AgModule(UnaryOperator<AgBuilder> agCustomizer) {
+        public AgModule(BiFunction<AgBuilder, ICayennePersister, AgBuilder> agCustomizer) {
             this.agCustomizer = agCustomizer;
         }
 
@@ -273,7 +281,8 @@ public abstract class JerseyAndDerbyCase {
         @Provides
         @Singleton
         AgRuntime createRuntime(ServerRuntime runtime) {
-            return agCustomizer.apply(new AgBuilder().cayenneRuntime(runtime)).build();
+            ICayennePersister persister = new CayennePersister(runtime);
+            return agCustomizer.apply(new AgBuilder().cayenneService(persister), persister).build();
         }
     }
 }
