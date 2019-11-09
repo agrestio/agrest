@@ -23,7 +23,10 @@ public class ViaQueryWithParentIdsResolver extends ViaQueryWithParentExpResolver
 
     @Override
     public void onParentQueryAssembled(NestedResourceEntity<DataObject> entity, SelectContext<?> context) {
-        // do nothing... we need to have access to parent objects before we can build our query
+
+        // no query here... we need to have access to parent objects before we can build our query
+        // still do validation..
+        validateParent(entity);
     }
 
     @Override

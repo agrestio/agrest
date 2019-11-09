@@ -36,8 +36,21 @@ public class ViaQueryWithParentExpResolver extends BaseNestedDataResolver<DataOb
         this.persister = persister;
     }
 
+    protected void validateParent(NestedResourceEntity<?> entity) {
+        // sanity check ... while child type validity is ensured by the API, parent can be anything, so let's ensure
+        // it is also a DataObject
+        Class<?> parentType = entity.getParent().getType();
+        if (persister.entityResolver().getObjEntity(parentType) == null) {
+            throw new IllegalStateException("Entity '" + parentType.getSimpleName()
+                    + "' is not mapped in Cayenne, so its child '"
+                    + entity.getType().getSimpleName()
+                    + "' can't be resolved with " + getClass().getName());
+        }
+    }
+
     @Override
     protected void doOnParentQueryAssembled(NestedResourceEntity<DataObject> entity, SelectContext<?> context) {
+        validateParent(entity);
         entity.setSelect(queryAssembler.createQueryWithParentQualifier(entity));
     }
 
