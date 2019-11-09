@@ -9,7 +9,7 @@ import io.agrest.it.fixture.cayenne.auto._E2;
 import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgEntityOverlay;
 import io.agrest.resolver.BaseRootDataResolver;
-import io.agrest.runtime.cayenne.AgCayenne;
+import io.agrest.runtime.cayenne.CayenneResolvers;
 import io.agrest.runtime.processor.select.SelectContext;
 import org.apache.cayenne.ObjectId;
 import org.junit.BeforeClass;
@@ -100,9 +100,9 @@ public class GET_Resolvers_RootIT extends JerseyAndDerbyCase {
             AgEntityOverlay<E2> e2Overlay = AgEntity
                     .overlay(E2.class)
                     // this is what Ag uses by default, but let's see if it still works as an override
-                    .redefineRootDataResolver(AgCayenne.rootResolverViaQuery(config))
+                    .redefineRootDataResolver(CayenneResolvers.rootViaQuery(config))
                     // check how a combination of custom root and nested resolvers works
-                    .redefineRelationshipResolver("e3s", AgCayenne.resolverViaJointParentPrefetch());
+                    .redefineRelationshipResolver("e3s", CayenneResolvers.nestedViaJointParentPrefetch());
 
             return Ag.select(E2.class, config)
                     .entityOverlay(e2Overlay)
@@ -119,7 +119,7 @@ public class GET_Resolvers_RootIT extends JerseyAndDerbyCase {
                     .overlay(E2.class)
                     .redefineRootDataResolver(new CustomE2Resolver())
                     // check how a combination of custom root and Cayenne nested resolvers works
-                    .redefineRelationshipResolver("e3s", AgCayenne.resolverViaQueryWithParentIds(config));
+                    .redefineRelationshipResolver("e3s", CayenneResolvers.nestedViaQueryWithParentIds(config));
 
             return Ag.select(E2.class, config)
                     .entityOverlay(e2Overlay)

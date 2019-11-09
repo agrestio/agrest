@@ -9,7 +9,7 @@ import io.agrest.it.fixture.cayenne.E5;
 import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgEntityOverlay;
 import io.agrest.protocol.Include;
-import io.agrest.runtime.cayenne.AgCayenne;
+import io.agrest.runtime.cayenne.CayenneResolvers;
 import io.agrest.runtime.path.IPathDescriptorManager;
 import io.agrest.runtime.path.PathDescriptorManager;
 import io.agrest.unit.TestWithCayenneMapping;
@@ -111,11 +111,11 @@ public class IncludeMergerTest extends TestWithCayenneMapping {
         Map<Class<?>, AgEntityOverlay<?>> overlays = new HashMap<>();
         overlays.put(E5.class, AgEntity
                 .overlay(E5.class)
-                .redefineRelationshipResolver(E5.E3S.getName(), AgCayenne.resolverViaQueryWithParentIds(mockCayennePersister)));
+                .redefineRelationshipResolver(E5.E3S.getName(), CayenneResolvers.nestedViaQueryWithParentIds(mockCayennePersister)));
 
         overlays.put(E3.class, AgEntity
                 .overlay(E3.class)
-                .redefineRelationshipResolver(E3.E2.getName(), AgCayenne.resolverViaJointParentPrefetch()));
+                .redefineRelationshipResolver(E3.E2.getName(), CayenneResolvers.nestedViaJointParentPrefetch()));
 
         AgEntity<E5> e5 = getAgEntity(E5.class);
         ResourceEntity<E5> e5Root = new RootResourceEntity<>(e5, (AgEntityOverlay<E5>) overlays.get(E5.class));

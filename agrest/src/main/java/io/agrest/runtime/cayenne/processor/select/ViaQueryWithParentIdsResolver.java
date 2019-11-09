@@ -15,7 +15,7 @@ import java.util.Iterator;
  *
  * @since 3.4
  */
-public class ViaQueryWithParentIdsResolver extends ViaQueryWithParentQualifierResolver {
+public class ViaQueryWithParentIdsResolver extends ViaQueryWithParentExpResolver {
 
     public ViaQueryWithParentIdsResolver(CayenneQueryAssembler queryAssembler, ICayennePersister persister) {
         super(queryAssembler, persister);

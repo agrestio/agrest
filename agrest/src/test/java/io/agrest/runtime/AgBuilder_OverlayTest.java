@@ -11,7 +11,7 @@ import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgRelationship;
 import io.agrest.property.PropertyReader;
 import io.agrest.resolver.NestedDataResolver;
-import io.agrest.runtime.cayenne.processor.select.ViaQueryWithParentQualifierResolver;
+import io.agrest.runtime.cayenne.processor.select.ViaQueryWithParentExpResolver;
 import io.agrest.runtime.meta.IMetadataService;
 import io.agrest.runtime.processor.select.SelectContext;
 import io.agrest.unit.TestWithCayenneMapping;
@@ -95,7 +95,7 @@ public class AgBuilder_OverlayTest extends TestWithCayenneMapping {
         assertNotNull(unchanged);
         assertSame(metadata.getAgEntity(E5.class), unchanged.getTargetEntity());
         assertNotSame(resolver, unchanged.getResolver());
-        assertTrue(unchanged.getResolver() instanceof ViaQueryWithParentQualifierResolver);
+        assertTrue(unchanged.getResolver() instanceof ViaQueryWithParentExpResolver);
 
         assertFalse(unchanged.isToMany());
     }
@@ -122,7 +122,7 @@ public class AgBuilder_OverlayTest extends TestWithCayenneMapping {
         assertNotNull(unchanged);
         assertSame(metadata.getAgEntity(E5.class), unchanged.getTargetEntity());
         assertNotSame(resolver, unchanged.getResolver());
-        assertTrue(unchanged.getResolver() instanceof ViaQueryWithParentQualifierResolver);
+        assertTrue(unchanged.getResolver() instanceof ViaQueryWithParentExpResolver);
         assertFalse(unchanged.isToMany());
     }
 
@@ -152,7 +152,7 @@ public class AgBuilder_OverlayTest extends TestWithCayenneMapping {
         assertNotNull(unchanged);
         assertSame(metadata.getAgEntity(E5.class), unchanged.getTargetEntity());
         assertNotSame(resolver, unchanged.getResolver());
-        assertTrue(unchanged.getResolver() instanceof ViaQueryWithParentQualifierResolver);
+        assertTrue(unchanged.getResolver() instanceof ViaQueryWithParentExpResolver);
         assertFalse(unchanged.isToMany());
     }
 
@@ -181,7 +181,7 @@ public class AgBuilder_OverlayTest extends TestWithCayenneMapping {
         assertNotNull(unchanged);
         assertSame(metadata.getAgEntity(E5.class), unchanged.getTargetEntity());
         assertNotSame(resolver, unchanged.getResolver());
-        assertTrue(unchanged.getResolver() instanceof ViaQueryWithParentQualifierResolver);
+        assertTrue(unchanged.getResolver() instanceof ViaQueryWithParentExpResolver);
         assertFalse(unchanged.isToMany());
     }
 

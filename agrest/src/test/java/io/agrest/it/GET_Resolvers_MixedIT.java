@@ -8,7 +8,7 @@ import io.agrest.it.fixture.cayenne.E3;
 import io.agrest.it.fixture.cayenne.E5;
 import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgEntityOverlay;
-import io.agrest.runtime.cayenne.AgCayenne;
+import io.agrest.runtime.cayenne.CayenneResolvers;
 import org.apache.cayenne.Cayenne;
 import org.apache.cayenne.ObjectContext;
 import org.apache.cayenne.exp.ExpressionFactory;
@@ -153,11 +153,11 @@ public class GET_Resolvers_MixedIT extends JerseyAndDerbyCase {
 
             AgEntityOverlay<E5> o1 = AgEntity
                     .overlay(E5.class)
-                    .redefineRelationshipResolver(E5.E3S.getName(), AgCayenne.resolverViaQueryWithParentIds(config));
+                    .redefineRelationshipResolver(E5.E3S.getName(), CayenneResolvers.nestedViaQueryWithParentIds(config));
 
             AgEntityOverlay<E3> o2 = AgEntity
                     .overlay(E3.class)
-                    .redefineRelationshipResolver(E3.E2.getName(), AgCayenne.resolverViaJointParentPrefetch());
+                    .redefineRelationshipResolver(E3.E2.getName(), CayenneResolvers.nestedViaJointParentPrefetch());
 
             return Ag.select(E5.class, config)
                     .entityOverlay(o1)
@@ -170,7 +170,7 @@ public class GET_Resolvers_MixedIT extends JerseyAndDerbyCase {
         @Path("test_mix_up_relations")
         public DataResponse<E5> test_mix_up_relations(@Context UriInfo uriInfo) {
 
-            ObjectContext context = AgCayenne.persister(config).sharedContext();
+            ObjectContext context = CayenneResolvers.persister(config).sharedContext();
 
             AgEntityOverlay<E5> o1 = AgEntity
                     .overlay(E5.class)

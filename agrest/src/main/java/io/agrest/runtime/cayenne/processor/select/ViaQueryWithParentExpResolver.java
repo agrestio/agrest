@@ -26,12 +26,12 @@ import java.util.function.BiConsumer;
  *
  * @since 3.4
  */
-public class ViaQueryWithParentQualifierResolver extends BaseNestedDataResolver<DataObject> {
+public class ViaQueryWithParentExpResolver extends BaseNestedDataResolver<DataObject> {
 
     protected CayenneQueryAssembler queryAssembler;
     protected ICayennePersister persister;
 
-    public ViaQueryWithParentQualifierResolver(CayenneQueryAssembler queryAssembler, ICayennePersister persister) {
+    public ViaQueryWithParentExpResolver(CayenneQueryAssembler queryAssembler, ICayennePersister persister) {
         this.queryAssembler = queryAssembler;
         this.persister = persister;
     }

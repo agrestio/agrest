@@ -7,7 +7,7 @@ import io.agrest.it.fixture.cayenne.E2;
 import io.agrest.it.fixture.cayenne.E3;
 import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgEntityOverlay;
-import io.agrest.runtime.cayenne.AgCayenne;
+import io.agrest.runtime.cayenne.CayenneResolvers;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -154,7 +154,7 @@ public class GET_Resolvers_Nested_ToOneIT extends JerseyAndDerbyCase {
             // non-standard nested resolver
             AgEntityOverlay<E3> e3Overlay = AgEntity
                     .overlay(E3.class)
-                    .redefineRelationshipResolver("e2", AgCayenne.resolverViaJointParentPrefetch());
+                    .redefineRelationshipResolver("e2", CayenneResolvers.nestedViaJointParentPrefetch());
 
             return Ag.select(E3.class, config)
                     .entityOverlay(e3Overlay)
@@ -169,7 +169,7 @@ public class GET_Resolvers_Nested_ToOneIT extends JerseyAndDerbyCase {
             // non-standard nested resolver
             AgEntityOverlay<E3> e3Overlay = AgEntity
                     .overlay(E3.class)
-                    .redefineRelationshipResolver("e2", AgCayenne.resolverViaDisjointParentPrefetch());
+                    .redefineRelationshipResolver("e2", CayenneResolvers.nestedViaDisjointParentPrefetch());
 
             return Ag.select(E3.class, config)
                     .entityOverlay(e3Overlay)
@@ -184,7 +184,7 @@ public class GET_Resolvers_Nested_ToOneIT extends JerseyAndDerbyCase {
             // non-standard nested resolver
             AgEntityOverlay<E3> e3Overlay = AgEntity
                     .overlay(E3.class)
-                    .redefineRelationshipResolver("e2", AgCayenne.resolverViaQueryWithParentIds(config));
+                    .redefineRelationshipResolver("e2", CayenneResolvers.nestedViaQueryWithParentIds(config));
 
             return Ag.select(E3.class, config)
                     .entityOverlay(e3Overlay)
@@ -200,7 +200,7 @@ public class GET_Resolvers_Nested_ToOneIT extends JerseyAndDerbyCase {
             AgEntityOverlay<E3> e3Overlay = AgEntity
                     .overlay(E3.class)
                     // this is actually the standard strategy, but let's see how it works if installed via a request-scoped overlay
-                    .redefineRelationshipResolver("e2", AgCayenne.resolverViaQueryWithParentQualifier(config));
+                    .redefineRelationshipResolver("e2", CayenneResolvers.nestedViaQueryWithParentExp(config));
 
             return Ag.select(E3.class, config)
                     .entityOverlay(e3Overlay)

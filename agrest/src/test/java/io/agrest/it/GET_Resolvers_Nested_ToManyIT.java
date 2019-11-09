@@ -7,7 +7,7 @@ import io.agrest.it.fixture.cayenne.E2;
 import io.agrest.it.fixture.cayenne.E3;
 import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgEntityOverlay;
-import io.agrest.runtime.cayenne.AgCayenne;
+import io.agrest.runtime.cayenne.CayenneResolvers;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -119,7 +119,7 @@ public class GET_Resolvers_Nested_ToManyIT extends JerseyAndDerbyCase {
             // non-standard nested resolver
             AgEntityOverlay<E2> e2Overlay = AgEntity
                     .overlay(E2.class)
-                    .redefineRelationshipResolver("e3s", AgCayenne.resolverViaDisjointParentPrefetch());
+                    .redefineRelationshipResolver("e3s", CayenneResolvers.nestedViaDisjointParentPrefetch());
 
             return Ag.select(E2.class, config)
                     .entityOverlay(e2Overlay)
@@ -134,7 +134,7 @@ public class GET_Resolvers_Nested_ToManyIT extends JerseyAndDerbyCase {
             // non-standard nested resolver
             AgEntityOverlay<E2> e2Overlay = AgEntity
                     .overlay(E2.class)
-                    .redefineRelationshipResolver("e3s", AgCayenne.resolverViaJointParentPrefetch());
+                    .redefineRelationshipResolver("e3s", CayenneResolvers.nestedViaJointParentPrefetch());
 
             return Ag.select(E2.class, config)
                     .entityOverlay(e2Overlay)
@@ -149,7 +149,7 @@ public class GET_Resolvers_Nested_ToManyIT extends JerseyAndDerbyCase {
             // non-standard nested resolver
             AgEntityOverlay<E2> e2Overlay = AgEntity
                     .overlay(E2.class)
-                    .redefineRelationshipResolver("e3s", AgCayenne.resolverViaQueryWithParentIds(config));
+                    .redefineRelationshipResolver("e3s", CayenneResolvers.nestedViaQueryWithParentIds(config));
 
             return Ag.select(E2.class, config)
                     .entityOverlay(e2Overlay)
