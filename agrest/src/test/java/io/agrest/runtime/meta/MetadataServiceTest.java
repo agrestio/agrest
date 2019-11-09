@@ -40,6 +40,6 @@ public class MetadataServiceTest extends TestWithCayenneMapping {
 
 		assertNotNull(e5.getAttribute(E5.NAME.getName()));
 		assertNotNull(e5.getAttribute(E5.DATE.getName()));
-		assertNotNull(e5.getRelationship(E5.E2S.getName()));
+		assertNotNull(e5.getRelationship(E5.E3S.getName()));
 	}
 }

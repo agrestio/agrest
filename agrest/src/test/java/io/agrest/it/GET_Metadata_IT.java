@@ -48,7 +48,7 @@ public class GET_Metadata_IT extends JerseyAndDerbyCase {
                 "\"properties\":[" +
                 "{\"name\":\"date\",\"type\":\"date\",\"format\":\"date-time\"}," +
                 "{\"name\":\"e15s\",\"type\":\"E15\",\"relationship\":true,\"collection\":true}," +
-                "{\"name\":\"e2s\",\"type\":\"E3\",\"relationship\":true,\"collection\":true}," +
+                "{\"name\":\"e3s\",\"type\":\"E3\",\"relationship\":true,\"collection\":true}," +
                 "{\"name\":\"name\",\"type\":\"string\"}]}," +
                 "\"links\":[" +
                 "{\"href\":\"https://example.org/e5\",\"type\":\"collection\",\"operations\":[{\"method\":\"GET\"}]}," +

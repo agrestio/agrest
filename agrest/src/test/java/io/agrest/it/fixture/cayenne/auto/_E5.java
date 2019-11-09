@@ -24,7 +24,7 @@ public abstract class _E5 extends CayenneDataObject {
     public static final Property<Date> DATE = Property.create("date", Date.class);
     public static final Property<String> NAME = Property.create("name", String.class);
     public static final Property<List<E15>> E15S = Property.create("e15s", List.class);
-    public static final Property<List<E3>> E2S = Property.create("e2s", List.class);
+    public static final Property<List<E3>> E3S = Property.create("e3s", List.class);
 
     public void setDate(Date date) {
         writeProperty("date", date);
@@ -52,15 +52,15 @@ public abstract class _E5 extends CayenneDataObject {
     }
 
 
-    public void addToE2s(E3 obj) {
-        addToManyTarget("e2s", obj, true);
+    public void addToE3s(E3 obj) {
+        addToManyTarget("e3s", obj, true);
     }
-    public void removeFromE2s(E3 obj) {
-        removeToManyTarget("e2s", obj, true);
+    public void removeFromE3s(E3 obj) {
+        removeToManyTarget("e3s", obj, true);
     }
     @SuppressWarnings("unchecked")
-    public List<E3> getE2s() {
-        return (List<E3>)readProperty("e2s");
+    public List<E3> getE3s() {
+        return (List<E3>)readProperty("e3s");
     }
 
 
