@@ -103,6 +103,8 @@ public class CayenneQueryAssembler {
 
         // build id-based qualifier
         List<Expression> qualifiers = new ArrayList<>();
+
+        // TODO: this only works for single column ids
         parentData.forEachRemaining(p -> qualifiers.add(ExpressionFactory.matchDbExp(outgoingPath, p)));
 
         // TODO: There is some functionality in Cayenne that allows to break long OR qualifiers in a series of queries.
@@ -175,7 +177,14 @@ public class CayenneQueryAssembler {
     }
 
     protected ObjRelationship objRelationshipForIncomingRelationship(NestedResourceEntity<?> entity) {
-        return cayenneEntityResolver.getObjEntity(entity.getParent().getName()).getRelationship(entity.getIncoming().getName());
+
+        ObjEntity parentObjEntity = cayenneEntityResolver.getObjEntity(entity.getParent().getName());
+        if (parentObjEntity == null) {
+            throw new IllegalStateException("Relationship from a non-persistent entity '"
+                    + entity.getParent().getName()
+                    + "' is not an ObjRelationship");
+        }
+        return parentObjEntity.getRelationship(entity.getIncoming().getName());
     }
 
     protected Expression translateExpressionToSource(ObjRelationship relationship, Expression expression) {
