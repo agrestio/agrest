@@ -24,19 +24,9 @@ public class ResourceMetadataService implements IResourceMetadataService {
         this.baseUrl = baseUrlProvider.getBaseUrl();
     }
 
-    @SuppressWarnings({"rawtypes", "unchecked"})
     @Override
     public Collection<AgResource<?>> getAgResources(Class<?> resourceClass) {
-
-        Collection resources = classResources.get(resourceClass);
-        if (resources == null) {
-            Collection newResources = resourceParser.parse(resourceClass);
-
-            Collection existingResources = classResources.putIfAbsent(resourceClass, newResources);
-            resources = existingResources == null ? newResources : existingResources;
-        }
-
-        return resources;
+        return classResources.computeIfAbsent(resourceClass, rc -> resourceParser.parse(rc));
     }
 
     @Override

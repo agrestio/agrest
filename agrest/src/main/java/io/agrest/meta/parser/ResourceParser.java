@@ -3,10 +3,10 @@ package io.agrest.meta.parser;
 import io.agrest.DataResponse;
 import io.agrest.annotation.LinkType;
 import io.agrest.meta.AgEntity;
+import io.agrest.meta.AgResource;
 import io.agrest.meta.DefaultAgOperation;
 import io.agrest.meta.DefaultAgResource;
 import io.agrest.meta.LinkMethodType;
-import io.agrest.meta.AgResource;
 import io.agrest.runtime.meta.IMetadataService;
 import org.apache.cayenne.di.Inject;
 
@@ -23,7 +23,7 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
@@ -33,141 +33,163 @@ import java.util.TreeMap;
  */
 public class ResourceParser implements IResourceParser {
 
-	private IMetadataService metadataService;
+    private IMetadataService metadataService;
 
-	public ResourceParser(@Inject IMetadataService metadataService) {
-		this.metadataService = metadataService;
-	}
+    public ResourceParser(@Inject IMetadataService metadataService) {
+        this.metadataService = metadataService;
+    }
 
-	@Override
-	public <T> Collection<AgResource<?>> parse(Class<T> resourceClass) {
+    private static LinkMethodType getMethodType(Method method) {
+        if (method.getAnnotation(GET.class) != null) {
+            return LinkMethodType.GET;
+        }
+        if (method.getAnnotation(POST.class) != null) {
+            return LinkMethodType.POST;
+        }
+        if (method.getAnnotation(PUT.class) != null) {
+            return LinkMethodType.PUT;
+        }
+        if (method.getAnnotation(DELETE.class) != null) {
+            return LinkMethodType.DELETE;
+        }
+        return null;
+    }
 
-		Path root = resourceClass.getAnnotation(Path.class);
-		if (root == null) {
-			return Collections.emptySet();
-		}
+    private static String getPathSegment(AnnotatedElement element) {
+        Path path = element.getAnnotation(Path.class);
+        return normalizePathSegment(path == null ? "" : path.value());
+    }
 
-		Method[] methods = resourceClass.getDeclaredMethods();
-		
-		// using sorted TreeMap to ensure stable ordering of resources returned
-		// from the method. Otherwise ordering differs between Java 8 and 7 ,
-		// causing non-deterministic responses (and unit test failures).
-		Map<String, Set<Method>> methodsMap = new TreeMap<>();
-		for (Method method : methods) {
-			if (Modifier.isPublic(method.getModifiers()) && getMethodType(method) != null) {
-				String path = buildPath(getPath(resourceClass), getPath(method));
-				Set<Method> methodsByPath = methodsMap.get(path);
-				if (methodsByPath == null) {
-					methodsByPath = new HashSet<>();
-				}
-				methodsByPath.add(method);
-				methodsMap.put(path, methodsByPath);
-			}
-		}
+    private static String concatPathSegments(String... paths) {
+        StringBuilder concat = new StringBuilder();
 
-		Collection<AgResource<?>> resources = new ArrayList<>();
-		for (Map.Entry<String, Set<Method>> methodsByPath : methodsMap.entrySet()) {
-			resources.add(createResource(methodsByPath.getKey(), methodsByPath.getValue()));
-		}
-		return resources;
-	}
+        for (String p : paths) {
+            if (!p.isEmpty()) {
+                if (concat.length() > 0) {
+                    concat.append('/');
+                }
 
-	@SuppressWarnings({ "rawtypes", "unchecked" })
-	private AgResource<?> createResource(String path, Set<Method> methods) {
-		DefaultAgResource resource = new DefaultAgResource();
+                concat.append(p);
+            }
+        }
 
-		LinkType resourceType = LinkType.UNDEFINED;
-		for (Method method : methods) {
+        return concat.toString();
+    }
 
-			EndpointMetadata md = EndpointMetadata.fromAnnotation(method);
-			AgEntity<?> entity = null;
-			if (md != null) {
-				LinkType annotatedType = md.getLinkType();
-				if (resourceType == LinkType.UNDEFINED) {
-					resourceType = annotatedType;
-				} else {
-					if (annotatedType != LinkType.UNDEFINED && annotatedType != resourceType) {
-						throw new IllegalStateException("Conflicting resource type annotations detected for resource: "
-								+ path);
-					}
-				}
-			}
+    /**
+     * Strips leading and trailing slash from the path for further resolution against the base
+     */
+    // From @Path javadoc:
+    //   Paths are relative. For an annotated class the base URI is the application path, see {@link ApplicationPath}.
+    //   For an annotated method the base URI is the effective URI of the containing class. For the purposes of
+    //   absolutizing a path against the base URI , a leading '/' in a path is ignored and base URIs are treated as if
+    //   they ended in '/'.
+    private static String normalizePathSegment(String path) {
 
-			if (md != null && !md.getEntityClass().equals(Object.class)) {
+        if (path == null || path.length() == 0 || path.equals("/")) {
+            return "";
+        }
 
-				Class<?> entityClass = md.getEntityClass();
-				entity = metadataService.getAgEntity(entityClass);
-				if (entity == null) {
-					throw new IllegalStateException("Unknown entity class: " + entityClass.getName());
-				}
+        if (path.startsWith("/")) {
+            path = path.substring(1);
+        }
 
-			} else if (DataResponse.class.isAssignableFrom(method.getReturnType())) {
+        if (path.endsWith("/")) {
+            path = path.substring(0, path.length() - 1);
+        }
 
-				Type returnType = method.getGenericReturnType();
-				if (returnType instanceof ParameterizedType) {
-					entity = metadataService.getAgEntity((Class) ((ParameterizedType) returnType)
-							.getActualTypeArguments()[0]);
-				}
-			}
+        return path;
+    }
 
-			if (entity != null) {
-				if (resource.getEntity() != null) {
-					if (!resource.getEntity().getName().equals(entity.getName())) {
-						throw new IllegalStateException("Conflicting entity class annotations detected for resource: "
-								+ path);
-					}
-				}
-				resource.setEntity(entity);
-			}
+    @Override
+    public <T> Collection<AgResource<?>> parse(Class<T> resourceClass) {
 
-			LinkMethodType methodType = getMethodType(method);
-			if (methodType == null) {
-				continue;
-			}
-			resource.addOperation(new DefaultAgOperation(methodType));
+        Path root = resourceClass.getAnnotation(Path.class);
+        if (root == null) {
+            return Collections.emptySet();
+        }
 
-		}
+        Method[] methods = resourceClass.getDeclaredMethods();
 
-		resource.setPath(path);
-		resource.setType(resourceType);
+        // using sorted TreeMap to ensure stable ordering of resources returned
+        // from the method. Otherwise ordering differs between Java 8 and 7 ,
+        // causing non-deterministic responses (and unit test failures).
+        Map<String, Set<Method>> methodsMap = new TreeMap<>();
 
-		return resource;
-	}
+        for (Method method : methods) {
+            if (Modifier.isPublic(method.getModifiers()) && getMethodType(method) != null) {
+                String path = concatPathSegments(getPathSegment(resourceClass), getPathSegment(method));
+                methodsMap.computeIfAbsent(path, p -> new LinkedHashSet<>()).add(method);
+            }
+        }
 
-	private static LinkMethodType getMethodType(Method method) {
-		if (method.getAnnotation(GET.class) != null) {
-			return LinkMethodType.GET;
-		}
-		if (method.getAnnotation(POST.class) != null) {
-			return LinkMethodType.POST;
-		}
-		if (method.getAnnotation(PUT.class) != null) {
-			return LinkMethodType.PUT;
-		}
-		if (method.getAnnotation(DELETE.class) != null) {
-			return LinkMethodType.DELETE;
-		}
-		return null;
-	}
+        Collection<AgResource<?>> resources = new ArrayList<>();
+        for (Map.Entry<String, Set<Method>> methodsByPath : methodsMap.entrySet()) {
+            resources.add(createResource(methodsByPath.getKey(), methodsByPath.getValue()));
+        }
+        return resources;
+    }
 
-	private static String getPath(AnnotatedElement element) {
-		Path path = element.getAnnotation(Path.class);
-		return path == null ? "" : path.value();
-	}
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    private AgResource<?> createResource(String path, Set<Method> methods) {
+        DefaultAgResource resource = new DefaultAgResource();
 
-	private static String buildPath(String root, String suffix) {
-		if (isEmpty(root)) {
-			if (isEmpty(suffix)) {
-				throw new IllegalStateException("Root and suffix cannot both be empty");
-			}
-			return suffix;
-		} else {
-			return isEmpty(suffix) ? root : root + "/" + suffix;
-		}
-	}
+        LinkType resourceType = LinkType.UNDEFINED;
+        for (Method method : methods) {
 
-	private static boolean isEmpty(String s) {
-		return s == null || s.isEmpty();
-	}
+            EndpointMetadata md = EndpointMetadata.fromAnnotation(method);
+            AgEntity<?> entity = null;
+            if (md != null) {
+                LinkType annotatedType = md.getLinkType();
+                if (resourceType == LinkType.UNDEFINED) {
+                    resourceType = annotatedType;
+                } else {
+                    if (annotatedType != LinkType.UNDEFINED && annotatedType != resourceType) {
+                        throw new IllegalStateException("Conflicting resource type annotations detected for resource: "
+                                + path);
+                    }
+                }
+            }
+
+            if (md != null && !md.getEntityClass().equals(Object.class)) {
+
+                Class<?> entityClass = md.getEntityClass();
+                entity = metadataService.getAgEntity(entityClass);
+                if (entity == null) {
+                    throw new IllegalStateException("Unknown entity class: " + entityClass.getName());
+                }
+
+            } else if (DataResponse.class.isAssignableFrom(method.getReturnType())) {
+
+                Type returnType = method.getGenericReturnType();
+                if (returnType instanceof ParameterizedType) {
+                    entity = metadataService.getAgEntity((Class) ((ParameterizedType) returnType)
+                            .getActualTypeArguments()[0]);
+                }
+            }
+
+            if (entity != null) {
+                if (resource.getEntity() != null) {
+                    if (!resource.getEntity().getName().equals(entity.getName())) {
+                        throw new IllegalStateException("Conflicting entity class annotations detected for resource: "
+                                + path);
+                    }
+                }
+                resource.setEntity(entity);
+            }
+
+            LinkMethodType methodType = getMethodType(method);
+            if (methodType == null) {
+                continue;
+            }
+            resource.addOperation(new DefaultAgOperation(methodType));
+
+        }
+
+        resource.setPath(path);
+        resource.setType(resourceType);
+
+        return resource;
+    }
 
 }
