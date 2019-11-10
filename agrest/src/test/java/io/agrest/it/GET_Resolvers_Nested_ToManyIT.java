@@ -119,7 +119,7 @@ public class GET_Resolvers_Nested_ToManyIT extends JerseyAndDerbyCase {
             // non-standard nested resolver
             AgEntityOverlay<E2> e2Overlay = AgEntity
                     .overlay(E2.class)
-                    .redefineRelationshipResolver("e3s", CayenneResolvers.nestedViaDisjointParentPrefetch());
+                    .redefineRelationshipResolver("e3s", CayenneResolvers.nested(config).viaDisjointParentPrefetch());
 
             return Ag.select(E2.class, config)
                     .entityOverlay(e2Overlay)
@@ -131,10 +131,9 @@ public class GET_Resolvers_Nested_ToManyIT extends JerseyAndDerbyCase {
         @Path("e2_joint_prefetch")
         public DataResponse<E2> e2_joint_prefetch(@Context UriInfo uriInfo) {
 
-            // non-standard nested resolver
             AgEntityOverlay<E2> e2Overlay = AgEntity
                     .overlay(E2.class)
-                    .redefineRelationshipResolver("e3s", CayenneResolvers.nestedViaJointParentPrefetch());
+                    .redefineRelationshipResolver("e3s", CayenneResolvers.nested(config).viaJointParentPrefetch());
 
             return Ag.select(E2.class, config)
                     .entityOverlay(e2Overlay)
@@ -146,10 +145,9 @@ public class GET_Resolvers_Nested_ToManyIT extends JerseyAndDerbyCase {
         @Path("e2_query_with_parent_ids")
         public DataResponse<E2> e2_query_with_parent_ids(@Context UriInfo uriInfo) {
 
-            // non-standard nested resolver
             AgEntityOverlay<E2> e2Overlay = AgEntity
                     .overlay(E2.class)
-                    .redefineRelationshipResolver("e3s", CayenneResolvers.nestedViaQueryWithParentIds(config));
+                    .redefineRelationshipResolver("e3s", CayenneResolvers.nested(config).viaQueryWithParentIds());
 
             return Ag.select(E2.class, config)
                     .entityOverlay(e2Overlay)

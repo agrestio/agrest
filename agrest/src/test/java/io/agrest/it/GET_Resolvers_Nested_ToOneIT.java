@@ -154,7 +154,7 @@ public class GET_Resolvers_Nested_ToOneIT extends JerseyAndDerbyCase {
             // non-standard nested resolver
             AgEntityOverlay<E3> e3Overlay = AgEntity
                     .overlay(E3.class)
-                    .redefineRelationshipResolver("e2", CayenneResolvers.nestedViaJointParentPrefetch());
+                    .redefineRelationshipResolver("e2", CayenneResolvers.nested(config).viaJointParentPrefetch());
 
             return Ag.select(E3.class, config)
                     .entityOverlay(e3Overlay)
@@ -169,7 +169,7 @@ public class GET_Resolvers_Nested_ToOneIT extends JerseyAndDerbyCase {
             // non-standard nested resolver
             AgEntityOverlay<E3> e3Overlay = AgEntity
                     .overlay(E3.class)
-                    .redefineRelationshipResolver("e2", CayenneResolvers.nestedViaDisjointParentPrefetch());
+                    .redefineRelationshipResolver("e2", CayenneResolvers.nested(config).viaDisjointParentPrefetch());
 
             return Ag.select(E3.class, config)
                     .entityOverlay(e3Overlay)
@@ -184,7 +184,7 @@ public class GET_Resolvers_Nested_ToOneIT extends JerseyAndDerbyCase {
             // non-standard nested resolver
             AgEntityOverlay<E3> e3Overlay = AgEntity
                     .overlay(E3.class)
-                    .redefineRelationshipResolver("e2", CayenneResolvers.nestedViaQueryWithParentIds(config));
+                    .redefineRelationshipResolver("e2", CayenneResolvers.nested(config).viaQueryWithParentIds());
 
             return Ag.select(E3.class, config)
                     .entityOverlay(e3Overlay)
@@ -200,7 +200,7 @@ public class GET_Resolvers_Nested_ToOneIT extends JerseyAndDerbyCase {
             AgEntityOverlay<E3> e3Overlay = AgEntity
                     .overlay(E3.class)
                     // this is actually the standard strategy, but let's see how it works if installed via a request-scoped overlay
-                    .redefineRelationshipResolver("e2", CayenneResolvers.nestedViaQueryWithParentExp(config));
+                    .redefineRelationshipResolver("e2", CayenneResolvers.nested(config).viaQueryWithParentExp());
 
             return Ag.select(E3.class, config)
                     .entityOverlay(e3Overlay)

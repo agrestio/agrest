@@ -7,7 +7,7 @@ import io.agrest.meta.LazyAgEntity;
 import io.agrest.meta.compiler.AgEntityCompiler;
 import io.agrest.property.BeanPropertyReader;
 import io.agrest.resolver.NestedDataResolver;
-import io.agrest.resolver.ParentPropertyDataResolvers;
+import io.agrest.resolver.ReaderFactoryBasedResolver;
 import io.agrest.resolver.RootDataResolver;
 import io.agrest.runtime.cayenne.ICayennePersister;
 import io.agrest.runtime.cayenne.processor.select.CayenneQueryAssembler;
@@ -71,7 +71,7 @@ public class CayenneEntityCompiler implements AgEntityCompiler {
     }
 
     protected NestedDataResolver<?> createDefaultPojoNestedResolver() {
-        return ParentPropertyDataResolvers.forReaderFactory(e -> BeanPropertyReader.reader(e.getIncoming().getName()));
+        return new ReaderFactoryBasedResolver<>(e -> BeanPropertyReader.reader(e.getIncoming().getName()));
     }
 
     private <T> AgEntity<T> doCompile(Class<T> type, AgDataMap dataMap) {

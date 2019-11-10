@@ -77,7 +77,7 @@ public class AgBuilder_OverlayTest extends TestWithCayenneMapping {
 
         AgRuntime runtime = new AgBuilder()
                 .cayenneRuntime(TestWithCayenneMapping.runtime)
-                .entityOverlay(AgEntity.overlay(E3.class).redefineRelationshipResolver("e2", resolver))
+                .entityOverlay(AgEntity.overlay(E3.class).redefineRelationshipResolver("e2", (t, n) -> resolver))
                 .build();
 
         IMetadataService metadata = runtime.service(IMetadataService.class);
@@ -107,7 +107,7 @@ public class AgBuilder_OverlayTest extends TestWithCayenneMapping {
 
         AgRuntime runtime = new AgBuilder()
                 .cayenneRuntime(TestWithCayenneMapping.runtime)
-                .entityOverlay(AgEntity.overlay(E3.class).redefineRelationshipResolver("adHoc", resolver))
+                .entityOverlay(AgEntity.overlay(E3.class).redefineRelationshipResolver("adHoc", (t, n) -> resolver))
                 .build();
 
         IMetadataService metadata = runtime.service(IMetadataService.class);
@@ -134,7 +134,7 @@ public class AgBuilder_OverlayTest extends TestWithCayenneMapping {
         AgRuntime runtime = new AgBuilder()
                 .cayenneRuntime(TestWithCayenneMapping.runtime)
                 // just for kicks redefine to-one as to-many, and change its target
-                .entityOverlay(AgEntity.overlay(E3.class).redefineToMany("e2", E1.class, resolver))
+                .entityOverlay(AgEntity.overlay(E3.class).redefineToMany("e2", E1.class, (t, n) -> resolver))
                 .build();
 
         IMetadataService metadata = runtime.service(IMetadataService.class);
@@ -163,7 +163,7 @@ public class AgBuilder_OverlayTest extends TestWithCayenneMapping {
 
         AgRuntime runtime = new AgBuilder()
                 .cayenneRuntime(TestWithCayenneMapping.runtime)
-                .entityOverlay(AgEntity.overlay(E3.class).redefineToOne("adHoc", P1.class, resolver))
+                .entityOverlay(AgEntity.overlay(E3.class).redefineToOne("adHoc", P1.class, (t, n) -> resolver))
                 .build();
 
         IMetadataService metadata = runtime.service(IMetadataService.class);

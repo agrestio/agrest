@@ -9,7 +9,7 @@ import io.agrest.meta.DefaultAgEntity;
 import io.agrest.meta.LazyAgEntity;
 import io.agrest.property.BeanPropertyReader;
 import io.agrest.resolver.NestedDataResolver;
-import io.agrest.resolver.ParentPropertyDataResolvers;
+import io.agrest.resolver.ReaderFactoryBasedResolver;
 import org.apache.cayenne.di.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,7 +39,7 @@ public class PojoEntityCompiler implements AgEntityCompiler {
     }
 
     protected NestedDataResolver<?> createDefaultNestedResolver() {
-        return ParentPropertyDataResolvers.forReaderFactory(e -> BeanPropertyReader.reader(e.getIncoming().getName()));
+        return new ReaderFactoryBasedResolver<>(e -> BeanPropertyReader.reader(e.getIncoming().getName()));
     }
 
     private <T> AgEntity<T> doCompile(Class<T> type, AgDataMap dataMap) {

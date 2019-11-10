@@ -4,8 +4,10 @@ import io.agrest.meta.compiler.BeanAnalyzer;
 import io.agrest.meta.compiler.PropertyGetter;
 import io.agrest.property.PropertyReader;
 import io.agrest.resolver.NestedDataResolver;
-import io.agrest.resolver.ParentPropertyDataResolvers;
+import io.agrest.resolver.NestedDataResolverFactory;
+import io.agrest.resolver.ReaderBasedResolver;
 import io.agrest.resolver.RootDataResolver;
+import io.agrest.resolver.RootDataResolverFactory;
 import org.apache.cayenne.exp.parser.ASTObjPath;
 
 import java.util.HashMap;
@@ -42,13 +44,25 @@ public class AgEntityOverlay<T> {
         return (o, n) -> reader.apply(o);
     }
 
+    private static <T> NestedDataResolver<T> resolverForReader(Function<?, T> reader) {
+        // lose generics. PropertyReader is not parameterized
+        Function plainReader = reader;
+        return new ReaderBasedResolver<>((o, n) -> plainReader.apply(o));
+    }
+
+    static <T> NestedDataResolver<T> resolverForListReader(Function<?, List<T>> reader) {
+        // lose generics. PropertyReader is not parameterized
+        Function plainReader = reader;
+        return new ReaderBasedResolver<>((o, n) -> plainReader.apply(o));
+    }
+
     /**
      * @since 2.10
      */
     public AgEntityOverlay<T> merge(AgEntityOverlay<T> anotherOverlay) {
         attributes.putAll(anotherOverlay.attributes);
         relationships.putAll(anotherOverlay.relationships);
-        if(anotherOverlay.getRootDataResolver() != null) {
+        if (anotherOverlay.getRootDataResolver() != null) {
             this.rootDataResolver = anotherOverlay.getRootDataResolver();
         }
         return this;
@@ -154,7 +168,8 @@ public class AgEntityOverlay<T> {
      *
      * @since 3.4
      */
-    public AgEntityOverlay<T> redefineRelationshipResolver(String name, NestedDataResolver<?> resolver) {
+    public AgEntityOverlay<T> redefineRelationshipResolver(String name, NestedDataResolverFactory resolverFactory) {
+        NestedDataResolver<?> resolver = resolverFactory.resolver(type, name);
         relationships.put(name, new PartialRelationshipOverlay(type, name, resolver));
         return this;
     }
@@ -165,7 +180,7 @@ public class AgEntityOverlay<T> {
      * @since 3.4
      */
     public AgEntityOverlay<T> redefineRelationshipResolver(String name, Function<T, ?> reader) {
-        redefineRelationshipResolver(name, ParentPropertyDataResolvers.forReader(reader));
+        relationships.put(name, new PartialRelationshipOverlay(type, name, resolverForReader(reader)));
         return this;
     }
 
@@ -175,7 +190,8 @@ public class AgEntityOverlay<T> {
      *
      * @since 3.4
      */
-    public <V> AgEntityOverlay<T> redefineToOne(String name, Class<V> targetType, NestedDataResolver<? super V> resolver) {
+    public <V> AgEntityOverlay<T> redefineToOne(String name, Class<V> targetType, NestedDataResolverFactory resolverFactory) {
+        NestedDataResolver<?> resolver = resolverFactory.resolver(type, name);
         relationships.put(name, new FullRelationshipOverlay(name, targetType, false, resolver));
         return this;
     }
@@ -186,7 +202,8 @@ public class AgEntityOverlay<T> {
      *
      * @since 3.4
      */
-    public <V> AgEntityOverlay<T> redefineToMany(String name, Class<V> targetType, NestedDataResolver<? super V> resolver) {
+    public <V> AgEntityOverlay<T> redefineToMany(String name, Class<V> targetType, NestedDataResolverFactory resolverFactory) {
+        NestedDataResolver<?> resolver = resolverFactory.resolver(type, name);
         relationships.put(name, new FullRelationshipOverlay(name, targetType, true, resolver));
         return this;
     }
@@ -200,7 +217,8 @@ public class AgEntityOverlay<T> {
      * @since 3.4
      */
     public <V> AgEntityOverlay<T> redefineToOne(String name, Class<V> targetType, Function<T, V> reader) {
-        return redefineToOne(name, targetType, ParentPropertyDataResolvers.forReader(reader));
+        relationships.put(name, new FullRelationshipOverlay(name, targetType, false, resolverForReader(reader)));
+        return this;
     }
 
     /**
@@ -212,7 +230,8 @@ public class AgEntityOverlay<T> {
      * @since 3.4
      */
     public <V> AgEntityOverlay<T> redefineToMany(String name, Class<V> targetType, Function<T, List<V>> reader) {
-        return redefineToMany(name, targetType, ParentPropertyDataResolvers.forListReader(reader));
+        relationships.put(name, new FullRelationshipOverlay(name, targetType, true, resolverForListReader(reader)));
+        return this;
     }
 
     /**
@@ -234,8 +253,16 @@ public class AgEntityOverlay<T> {
     /**
      * @since 3.4
      */
-    public AgEntityOverlay<T> redefineRootDataResolver(RootDataResolver<T> rootResolver) {
-        this.rootDataResolver = rootResolver;
+    public AgEntityOverlay<T> redefineRootDataResolver(RootDataResolverFactory rootDataResolverFactory) {
+        this.rootDataResolver = rootDataResolverFactory.resolver(type);
+        return this;
+    }
+
+    /**
+     * @since 3.4
+     */
+    public AgEntityOverlay<T> redefineRootDataResolver(RootDataResolver<T> rootDataResolver) {
+        this.rootDataResolver = rootDataResolver;
         return this;
     }
 }
