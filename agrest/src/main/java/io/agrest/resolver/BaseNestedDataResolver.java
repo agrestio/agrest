@@ -19,8 +19,8 @@ public abstract class BaseNestedDataResolver<T> extends BaseDataResolver impleme
     public void onParentDataResolved(NestedResourceEntity<T> entity, Iterable<?> parentData, SelectContext<?> context) {
         Iterable<T> result = doOnParentDataResolved(entity, parentData, context);
 
-        // note that unlike BaseRootDataResolver, we are not saving the result in the entity. Implementor will need to
-        // figure out what to do with the result
+        // unlike BaseRootDataResolver, we are not saving the result in the entity. Instead it is passed between parent
+        // and child resolvers
 
         afterDataFetched(entity, result, context);
     }

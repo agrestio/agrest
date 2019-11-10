@@ -41,37 +41,6 @@ public class GET_Resolvers_MixedIT extends JerseyAndDerbyCase {
     }
 
     @Test
-    public void test_no_overlays() {
-
-        e5().insertColumns("id", "name")
-                .values(1, "e5_1")
-                .values(2, "e5_2")
-                .values(3, "e5_3").exec();
-
-        e2().insertColumns("id_", "name")
-                .values(1, "e2_1")
-                .values(2, "e2_2").exec();
-
-        e3().insertColumns("id_", "name", "e5_id", "e2_id")
-                .values(34, "e3_1", 1, 2)
-                .values(11, "e3_2", 2, null)
-                .values(13, "e3_3", 3, 1)
-                .exec();
-
-        Response r = target("/test_no_overlays")
-                .queryParam("include", "id")
-                .queryParam("include", "e3s.name")
-                .queryParam("include", "e3s.e2.name")
-                .queryParam("cayenneExp", "id < 3")
-                .queryParam("sort", "id")
-                .request().get();
-
-        onSuccess(r)
-                .bodyEquals(2, "{\"id\":1,\"e3s\":[{\"e2\":{\"name\":\"e2_2\"},\"name\":\"e3_1\"}]},{\"id\":2,\"e3s\":[{\"e2\":null,\"name\":\"e3_2\"}]}")
-                .ranQueries(3);
-    }
-
-    @Test
     public void test_alt_resolver__parentids_joint_prefetch() {
 
         e5().insertColumns("id", "name")
@@ -139,15 +108,6 @@ public class GET_Resolvers_MixedIT extends JerseyAndDerbyCase {
 
         @Context
         private Configuration config;
-
-        @GET
-        @Path("test_no_overlays")
-        public DataResponse<E5> test_no_overlays(@Context UriInfo uriInfo) {
-
-            return Ag.select(E5.class, config)
-                    .uri(uriInfo)
-                    .get();
-        }
 
         @GET
         @Path("test_alt_resolver__parentids_joint_prefetch")

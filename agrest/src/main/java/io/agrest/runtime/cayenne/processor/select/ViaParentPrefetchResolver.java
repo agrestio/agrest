@@ -51,7 +51,7 @@ public class ViaParentPrefetchResolver extends BaseNestedDataResolver<DataObject
 
     protected void addPrefetch(NestedResourceEntity<?> entity, String outgoingPath, int prefetchSemantics) {
 
-        // add prefetch to the first available (grand-)parent query
+        // add prefetch to the first available (grand)parent query
 
         String incomingPath = entity.getIncoming().getName();
         String path = outgoingPath != null ? incomingPath + "." + outgoingPath : incomingPath;
@@ -72,11 +72,10 @@ public class ViaParentPrefetchResolver extends BaseNestedDataResolver<DataObject
 
     @Override
     public PropertyReader reader(NestedResourceEntity<DataObject> entity) {
-        // While this entity is a DataObject, it doesn't mean the parent is (the reader will read from the parent).
-        // However if we got that far, and "addPrefetch" didn't fail, the parent should be a DataObject...
 
         // TODO: what about multi-step prefetches? How do we locate parent then?
 
+        // assuming the parent is a DataObject. CayenneNestedDataResolverBuilder ensures that it is
         return DataObjectPropertyReader.reader();
     }
 }
