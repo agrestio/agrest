@@ -107,7 +107,7 @@ public class CayenneQueryAssembler {
         String fullDbPath = concatWithParentDbPath(incoming, outgoingDbPath);
 
         // shouldn't really happen with any of the current built-in root strategies, but who knows what customaizations
-        // can be applied 
+        // can be applied
         if (parent instanceof RootResourceEntity) {
             throw new IllegalStateException(
                     "Can't fetch child using parent expression strategy. Root entity '" +
