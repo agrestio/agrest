@@ -20,7 +20,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
-public class GET_EntityOverlay_RedefineToOne_PojoToPersistentIT extends JerseyAndDerbyCase {
+public class GET_EntityOverlay_PerRequest_PojoToPersistentIT extends JerseyAndDerbyCase {
 
     @BeforeClass
     public static void startTestRuntime() {

@@ -22,7 +22,7 @@ import javax.ws.rs.core.UriInfo;
 
 import static org.junit.Assert.*;
 
-public class GET_EntityOverlay_RedefineToOne_PersistentToPersistentIT extends JerseyAndDerbyCase {
+public class GET_EntityOverlay_PerStack_PersistentToPersistentIT extends JerseyAndDerbyCase {
 
     @BeforeClass
     public static void startTestRuntime() {
