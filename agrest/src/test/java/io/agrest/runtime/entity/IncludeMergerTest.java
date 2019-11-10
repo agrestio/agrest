@@ -115,7 +115,7 @@ public class IncludeMergerTest extends TestWithCayenneMapping {
 
         overlays.put(E3.class, AgEntity
                 .overlay(E3.class)
-                .redefineRelationshipResolver(E3.E2.getName(), CayenneResolvers.nested(mockCayennePersister).viaJointParentPrefetch()));
+                .redefineRelationshipResolver(E3.E2.getName(), CayenneResolvers.nested(mockCayennePersister).viaParentPrefetch()));
 
         AgEntity<E5> e5 = getAgEntity(E5.class);
         ResourceEntity<E5> e5Root = new RootResourceEntity<>(e5, (AgEntityOverlay<E5>) overlays.get(E5.class));

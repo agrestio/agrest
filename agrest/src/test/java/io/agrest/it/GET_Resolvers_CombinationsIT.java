@@ -51,23 +51,14 @@ public class GET_Resolvers_CombinationsIT extends JerseyAndDerbyCase {
         return asList(
                 new Object[][]{
 
-                        // note that "disjoint" prefetches are batched together with their parent query with out approach
-                        // to query counting using DataChannelFilter. We can't meter them as individual queries yet.
-
                         // unique pairs of overlay types
-                        {OverlayType.joint, OverlayType.disjoint, 1},
                         {OverlayType.joint, OverlayType.parentExp, 2},
                         {OverlayType.joint, OverlayType.parentId, 2},
-                        {OverlayType.disjoint, OverlayType.parentExp, 2},
-                        {OverlayType.disjoint, OverlayType.parentId, 2},
                         {OverlayType.parentExp, OverlayType.parentId, 3},
 
                         // unique pairs - reversed
-                        {OverlayType.disjoint, OverlayType.joint, 1},
                         {OverlayType.parentExp, OverlayType.joint, 2},
                         {OverlayType.parentId, OverlayType.joint, 2},
-                        {OverlayType.parentExp, OverlayType.disjoint, 2},
-                        {OverlayType.parentId, OverlayType.disjoint, 2},
                         {OverlayType.parentId, OverlayType.parentExp, 3}
                 });
     }
@@ -141,7 +132,7 @@ public class GET_Resolvers_CombinationsIT extends JerseyAndDerbyCase {
     }
 
     public enum OverlayType {
-        joint, disjoint, parentExp, parentId;
+        joint, parentExp, parentId;
     }
 
     @Path("")
@@ -175,9 +166,7 @@ public class GET_Resolvers_CombinationsIT extends JerseyAndDerbyCase {
         NestedDataResolverFactory resolverFactory(OverlayType o) {
             switch (o) {
                 case joint:
-                    return CayenneResolvers.nested(config).viaJointParentPrefetch();
-                case disjoint:
-                    return CayenneResolvers.nested(config).viaDisjointParentPrefetch();
+                    return CayenneResolvers.nested(config).viaParentPrefetch();
                 case parentExp:
                     return CayenneResolvers.nested(config).viaQueryWithParentExp();
                 case parentId:

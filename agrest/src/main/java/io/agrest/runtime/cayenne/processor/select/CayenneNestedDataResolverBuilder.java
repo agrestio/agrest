@@ -25,12 +25,11 @@ public class CayenneNestedDataResolverBuilder {
         return this::viaQueryWithParentIds;
     }
 
-    public NestedDataResolverFactory viaDisjointParentPrefetch() {
-        return this::viaDisjointParentPrefetch;
-    }
-
-    public NestedDataResolverFactory viaJointParentPrefetch() {
-        return this::viaJointParentPrefetch;
+    // This will result in a JOINT prefetch on the parent. Note that DISJOINT prefetch is not available as an option,
+    // as it is functionally equivalent to "viaQueryWithParentExp", and only complicates implementation without providing
+    // a distinct useful alternative
+    public NestedDataResolverFactory viaParentPrefetch() {
+        return this::viaParentPrefetch;
     }
 
     protected NestedDataResolver<?> viaQueryWithParentExp(Class<?> parentType, String relationshipName) {
@@ -47,12 +46,7 @@ public class CayenneNestedDataResolverBuilder {
                 persister);
     }
 
-    public NestedDataResolver<?> viaDisjointParentPrefetch(Class<?> parentType, String relationshipName) {
-        validateParent(parentType, relationshipName);
-        return new ViaParentPrefetchResolver(PrefetchTreeNode.DISJOINT_PREFETCH_SEMANTICS);
-    }
-
-    public NestedDataResolver<?> viaJointParentPrefetch(Class<?> parentType, String relationshipName) {
+    public NestedDataResolver<?> viaParentPrefetch(Class<?> parentType, String relationshipName) {
         validateParent(parentType, relationshipName);
         return new ViaParentPrefetchResolver(PrefetchTreeNode.JOINT_PREFETCH_SEMANTICS);
     }

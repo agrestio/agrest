@@ -57,31 +57,6 @@ public class GET_Resolvers_Nested_ToManyIT extends JerseyAndDerbyCase {
     }
 
     @Test
-    public void test_DisjointPrefetchResolver() {
-
-        e2().insertColumns("id_", "name")
-                .values(1, "xxx")
-                .values(2, "aaa").exec();
-        e3().insertColumns("id_", "name", "e2_id")
-                .values(8, "yyy", 1)
-                .values(9, "zzz", null)
-                .exec();
-
-        Response r = target("/e2_disjoint_prefetch")
-                .queryParam("include", "id")
-                .queryParam("include", "name")
-                .queryParam("include", "e3s.name")
-                .queryParam("cayenneExp", "id < 3")
-                .queryParam("sort", "id")
-                .request().get();
-
-        onSuccess(r)
-                .bodyEquals(2, "{\"id\":1,\"e3s\":[{\"name\":\"yyy\"}],\"name\":\"xxx\"},{\"id\":2,\"e3s\":[],\"name\":\"aaa\"}")
-                // disjoint prefetch is counted as 1 query at the DataDomainFilter level
-                .ranQueries(1);
-    }
-
-    @Test
     public void test_QueryWithParentIdsResolver() {
 
         e2().insertColumns("id_", "name")
@@ -113,27 +88,12 @@ public class GET_Resolvers_Nested_ToManyIT extends JerseyAndDerbyCase {
         private Configuration config;
 
         @GET
-        @Path("e2_disjoint_prefetch")
-        public DataResponse<E2> e2_disjoint_prefetch(@Context UriInfo uriInfo) {
-
-            // non-standard nested resolver
-            AgEntityOverlay<E2> e2Overlay = AgEntity
-                    .overlay(E2.class)
-                    .redefineRelationshipResolver("e3s", CayenneResolvers.nested(config).viaDisjointParentPrefetch());
-
-            return Ag.select(E2.class, config)
-                    .entityOverlay(e2Overlay)
-                    .uri(uriInfo)
-                    .get();
-        }
-
-        @GET
         @Path("e2_joint_prefetch")
         public DataResponse<E2> e2_joint_prefetch(@Context UriInfo uriInfo) {
 
             AgEntityOverlay<E2> e2Overlay = AgEntity
                     .overlay(E2.class)
-                    .redefineRelationshipResolver("e3s", CayenneResolvers.nested(config).viaJointParentPrefetch());
+                    .redefineRelationshipResolver("e3s", CayenneResolvers.nested(config).viaParentPrefetch());
 
             return Ag.select(E2.class, config)
                     .entityOverlay(e2Overlay)

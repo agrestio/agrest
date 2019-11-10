@@ -119,7 +119,7 @@ public class GET_Resolvers_MixedIT extends JerseyAndDerbyCase {
 
             AgEntityOverlay<E3> o2 = AgEntity
                     .overlay(E3.class)
-                    .redefineRelationshipResolver(E3.E2.getName(), CayenneResolvers.nested(config).viaJointParentPrefetch());
+                    .redefineRelationshipResolver(E3.E2.getName(), CayenneResolvers.nested(config).viaParentPrefetch());
 
             return Ag.select(E5.class, config)
                     .entityOverlay(o1)

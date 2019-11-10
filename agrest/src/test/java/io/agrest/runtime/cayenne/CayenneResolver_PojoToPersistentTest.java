@@ -52,7 +52,7 @@ public class CayenneResolver_PojoToPersistentTest extends TestWithCayenneMapping
                     .overlay(PX1.class)
                     .redefineRootDataResolver(new PX1RootResolver())
                     // Cayenne resolver will fail as the parent is not a Cayenne object
-                    .redefineToOne("overlayToOne", E25.class, CayenneResolvers.nested(mockCayennePersister).viaJointParentPrefetch());
+                    .redefineToOne("overlayToOne", E25.class, CayenneResolvers.nested(mockCayennePersister).viaParentPrefetch());
 
             fail("Must have failed");
         } catch (IllegalStateException e) {
