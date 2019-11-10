@@ -4,6 +4,7 @@ import io.agrest.AgException;
 import io.agrest.AgObjectId;
 import io.agrest.NestedResourceEntity;
 import io.agrest.ResourceEntity;
+import io.agrest.RootResourceEntity;
 import io.agrest.meta.AgAttribute;
 import io.agrest.meta.AgEntity;
 import io.agrest.runtime.processor.select.SelectContext;
@@ -70,13 +71,47 @@ public class CayenneQueryAssembler {
 
         query.setColumns(properties);
 
-        // translate expression from parent
-        Expression parentQualifier = entity.getParent().getSelect().getQualifier();
+        // Translate expression from parent.
+        // Find the closest parent in the chain that has a query of its own, and use that as a base.
+        Expression parentQualifier = resolveQualifier(entity, null);
         if (parentQualifier != null) {
-            query.andQualifier(translateExpressionToSource(objRelationship, parentQualifier));
+            query.andQualifier(parentQualifier);
         }
 
         return query;
+    }
+
+    protected Expression resolveQualifier(NestedResourceEntity<?> entity, String outgoingDbPath) {
+
+        ResourceEntity<?> parent = entity.getParent();
+        if (parent.getSelect() != null) {
+
+            Expression parentQualifier = parent.getSelect().getQualifier();
+
+            if (parentQualifier == null) {
+                return null;
+            }
+
+            ObjEntity parentObjEntity = cayenneEntityResolver.getObjEntity(parent.getType());
+            ObjRelationship incoming = parentObjEntity.getRelationship(entity.getIncoming().getName());
+            String fullDbPath = concatWithParentDbPath(incoming, outgoingDbPath);
+            return parentObjEntity.getDbEntity().translateToRelatedEntity(parentQualifier, fullDbPath);
+        }
+
+        if (parent instanceof RootResourceEntity) {
+            // TODO: would be nice to recreate full path from parent to the leaf entity for the message
+            throw new IllegalStateException(
+                    "Can't fetch child using parent expression strategy. Root entity that has no SelectQuery of its own: " + parent.getName());
+        }
+
+        ObjEntity parentObjEntity = cayenneEntityResolver.getObjEntity(entity.getParent().getType());
+        ObjRelationship incoming = parentObjEntity.getRelationship(entity.getIncoming().getName());
+        return resolveQualifier((NestedResourceEntity) parent, concatWithParentDbPath(incoming, outgoingDbPath));
+    }
+
+    private String concatWithParentDbPath(ObjRelationship incoming, String outgoingDbPath) {
+        String dbPath = incoming.getDbRelationshipPath();
+        return outgoingDbPath != null ? dbPath + "." + outgoingDbPath : dbPath;
     }
 
     public <T, P> SelectQuery<T> createQueryWithParentIdsQualifier(NestedResourceEntity<T> entity, Iterator<P> parentData) {
@@ -185,12 +220,6 @@ public class CayenneQueryAssembler {
                     + "' is not an ObjRelationship");
         }
         return parentObjEntity.getRelationship(entity.getIncoming().getName());
-    }
-
-    protected Expression translateExpressionToSource(ObjRelationship relationship, Expression expression) {
-        return expression != null
-                ? relationship.getSourceEntity().translateToRelatedEntity(expression, relationship.getName())
-                : null;
     }
 
     protected DbAttribute dbAttributeForAgAttribute(AgEntity<?> agEntity, AgAttribute agAttribute) {
