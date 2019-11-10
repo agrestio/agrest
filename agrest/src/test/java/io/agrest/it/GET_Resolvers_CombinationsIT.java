@@ -38,31 +38,37 @@ public class GET_Resolvers_CombinationsIT extends JerseyAndDerbyCase {
 
     private OverlayType e5o;
     private OverlayType e3o;
+    private int queryCount;
 
-    public GET_Resolvers_CombinationsIT(OverlayType e5o, OverlayType e3o) {
+    public GET_Resolvers_CombinationsIT(OverlayType e5o, OverlayType e3o, int queryCount) {
         this.e5o = e5o;
         this.e3o = e3o;
+        this.queryCount = queryCount;
     }
 
     @Parameterized.Parameters
     public static Collection<Object[]> data() {
         return asList(
                 new Object[][]{
+
+                        // note that "disjoint" prefetches are batched together with their parent query with out approach
+                        // to query counting using DataChannelFilter. We can't meter them as individual queries yet.
+
                         // unique pairs of overlay types
-                        {OverlayType.j, OverlayType.d},
-                        {OverlayType.j, OverlayType.e},
-                        {OverlayType.j, OverlayType.i},
-                        {OverlayType.d, OverlayType.e},
-                        {OverlayType.d, OverlayType.i},
-                        {OverlayType.e, OverlayType.i},
+                        {OverlayType.joint, OverlayType.disjoint, 1},
+                        {OverlayType.joint, OverlayType.parentExp, 2},
+                        {OverlayType.joint, OverlayType.parentId, 2},
+                        {OverlayType.disjoint, OverlayType.parentExp, 2},
+                        {OverlayType.disjoint, OverlayType.parentId, 2},
+                        {OverlayType.parentExp, OverlayType.parentId, 3},
 
                         // unique pairs - reversed
-                        {OverlayType.d, OverlayType.j},
-                        {OverlayType.e, OverlayType.j},
-                        {OverlayType.i, OverlayType.j},
-                        {OverlayType.e, OverlayType.d},
-                        {OverlayType.i, OverlayType.d},
-                        {OverlayType.i, OverlayType.e}
+                        {OverlayType.disjoint, OverlayType.joint, 1},
+                        {OverlayType.parentExp, OverlayType.joint, 2},
+                        {OverlayType.parentId, OverlayType.joint, 2},
+                        {OverlayType.parentExp, OverlayType.disjoint, 2},
+                        {OverlayType.parentId, OverlayType.disjoint, 2},
+                        {OverlayType.parentId, OverlayType.parentExp, 3}
                 });
     }
 
@@ -128,11 +134,14 @@ public class GET_Resolvers_CombinationsIT extends JerseyAndDerbyCase {
                 .request().get();
 
         onSuccess(r)
-                .bodyEquals(2, "{\"id\":1,\"e3s\":[{\"e2\":{\"name\":\"e2_2\"},\"name\":\"e3_1\"}]},{\"id\":2,\"e3s\":[{\"e2\":null,\"name\":\"e3_2\"}]}");
+                .bodyEquals(2,
+                        "{\"id\":1,\"e3s\":[{\"e2\":{\"name\":\"e2_2\"},\"name\":\"e3_1\"}]}," +
+                                "{\"id\":2,\"e3s\":[{\"e2\":null,\"name\":\"e3_2\"}]}")
+                .ranQueries(queryCount);
     }
 
     public enum OverlayType {
-        j, d, e, i;
+        joint, disjoint, parentExp, parentId;
     }
 
     @Path("")
@@ -165,13 +174,13 @@ public class GET_Resolvers_CombinationsIT extends JerseyAndDerbyCase {
 
         NestedDataResolverFactory resolverFactory(OverlayType o) {
             switch (o) {
-                case j:
+                case joint:
                     return CayenneResolvers.nested(config).viaJointParentPrefetch();
-                case d:
+                case disjoint:
                     return CayenneResolvers.nested(config).viaDisjointParentPrefetch();
-                case e:
+                case parentExp:
                     return CayenneResolvers.nested(config).viaQueryWithParentExp();
-                case i:
+                case parentId:
                     return CayenneResolvers.nested(config).viaQueryWithParentIds();
                 default:
                     throw new IllegalStateException("?");

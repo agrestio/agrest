@@ -9,8 +9,6 @@ import io.agrest.resolver.BaseNestedDataResolver;
 import io.agrest.runtime.processor.select.SelectContext;
 import org.apache.cayenne.DataObject;
 
-import java.util.Collections;
-
 /**
  * A resolver that doesn't run its own queries, but instead amends parent node query with prefetch spec, so that the
  * objects can be read efficiently from the parent objects. Also allows to explicitly set the prefetch semantics.
@@ -35,14 +33,7 @@ public class ViaParentPrefetchResolver extends BaseNestedDataResolver<DataObject
             NestedResourceEntity<DataObject> entity,
             Iterable<?> parentData,
             SelectContext<?> context) {
-
-        // all the data was fetched at the parent level... so return an empty list
-
-        // Current limitation - if used for non-leaf node, all of its children must also use ViaParentPrefetchResolver.
-        // Otherwise there will be a child data loss.
-        // TODO: We need to efficiently emulate Iterable<ThisEntity> over parent data...
-
-        return Collections.emptyList();
+        return dataIterable(entity, (Iterable<DataObject>) parentData);
     }
 
     protected void addPrefetch(NestedResourceEntity<?> entity, int prefetchSemantics) {
@@ -77,5 +68,12 @@ public class ViaParentPrefetchResolver extends BaseNestedDataResolver<DataObject
 
         // assuming the parent is a DataObject. CayenneNestedDataResolverBuilder ensures that it is
         return DataObjectPropertyReader.reader();
+    }
+
+    protected Iterable<DataObject> dataIterable(NestedResourceEntity<DataObject> entity, Iterable<? extends DataObject> parentData) {
+        String property = entity.getIncoming().getName();
+        return entity.getIncoming().isToMany()
+                ? () -> new ToManyFlattenedIterator<>(parentData.iterator(), property)
+                : () -> new ToOneFlattenedIterator<>(parentData.iterator(), property);
     }
 }

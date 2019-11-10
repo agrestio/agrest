@@ -53,10 +53,13 @@ public class ViaQueryWithParentExpResolver extends BaseNestedDataResolver<DataOb
             return Collections.emptyList();
         }
 
-        List<DataObject> result = persister.sharedContext().select(entity.getSelect());
+        // TODO: here we are dealing with the column query returning List<Object[]>. Figure proper Cayenne-side generics
+        //  for it
+        List result = persister.sharedContext().select(entity.getSelect());
         indexResultByParentId(entity, result);
 
-        return result;
+        // transform Iterable<Object[]> to Iterable<DataObject>
+        return result.isEmpty() ? result : () -> new SingleColumnIterator<>(result.iterator(), 0);
     }
 
     @Override
@@ -66,7 +69,7 @@ public class ViaQueryWithParentExpResolver extends BaseNestedDataResolver<DataOb
                 : new NestedEntityResultReader(entity);
     }
 
-    protected void indexResultByParentId(NestedResourceEntity<DataObject> entity, List<DataObject> result) {
+    protected void indexResultByParentId(NestedResourceEntity<DataObject> entity, List<Object[]> result) {
 
         BiConsumer<AgObjectId, DataObject> resultAccum = entity.getIncoming().isToMany()
                 ? (i, o) -> entity.addToManyResult(i, o)
@@ -74,13 +77,10 @@ public class ViaQueryWithParentExpResolver extends BaseNestedDataResolver<DataOb
 
         AgAttribute[] idAttributes = entity.getParent().getAgEntity().getIds().toArray(new AgAttribute[0]);
 
-        for (Object o : result) {
-
-            // TODO: use SelectQuery<Object[]>
+        for (Object[] row : result) {
 
             // position 0 - the object itself
             // position 1..N-1 - parent id components
-            Object[] row = (Object[]) o;
             DataObject object = (DataObject) row[0];
 
             if (row.length == 2) {
