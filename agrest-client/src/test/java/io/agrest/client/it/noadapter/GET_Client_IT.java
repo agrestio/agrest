@@ -123,7 +123,8 @@ public class GET_Client_IT extends JerseyAndDerbyCase {
                 .values(6, "bbb", 2)
                 .values(7, "ccc", 1).exec();
 
-        ClientDataResponse<JsonNode> response = AgClient.client(target("/e2"))
+        ClientDataResponse<JsonNode> response = AgClient
+                .client(target("/e2"))
                 .exclude(E2.ADDRESS.getName(), E2.E3S.dot(E3.PHONE_NUMBER).getName())
                 .cayenneExp(Expression.query("name like 'xx%'"))
                 .include(Include.path(E2.E3S.getName()).cayenneExp(Expression.query("name = $b").params("ccc")))

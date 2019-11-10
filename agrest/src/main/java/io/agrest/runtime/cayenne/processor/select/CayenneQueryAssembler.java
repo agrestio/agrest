@@ -81,6 +81,9 @@ public class CayenneQueryAssembler {
         return query;
     }
 
+    // using dbpaths for all expression operations on the theory that some object paths can be unidirectional, and
+    // hence may be missing for some relationships (although all "incoming" relationships along the parents chain
+    // should be present, no?)
     protected Expression resolveQualifier(NestedResourceEntity<?> entity, String outgoingDbPath) {
 
         ResourceEntity<?> parent = entity.getParent();
@@ -95,18 +98,25 @@ public class CayenneQueryAssembler {
             ObjEntity parentObjEntity = cayenneEntityResolver.getObjEntity(parent.getType());
             ObjRelationship incoming = parentObjEntity.getRelationship(entity.getIncoming().getName());
             String fullDbPath = concatWithParentDbPath(incoming, outgoingDbPath);
-            return parentObjEntity.getDbEntity().translateToRelatedEntity(parentQualifier, fullDbPath);
-        }
-
-        if (parent instanceof RootResourceEntity) {
-            // TODO: would be nice to recreate full path from parent to the leaf entity for the message
-            throw new IllegalStateException(
-                    "Can't fetch child using parent expression strategy. Root entity that has no SelectQuery of its own: " + parent.getName());
+            Expression dbParentQualifier = parentObjEntity.translateToDbPath(parentQualifier);
+            return parentObjEntity.getDbEntity().translateToRelatedEntity(dbParentQualifier, fullDbPath);
         }
 
         ObjEntity parentObjEntity = cayenneEntityResolver.getObjEntity(entity.getParent().getType());
         ObjRelationship incoming = parentObjEntity.getRelationship(entity.getIncoming().getName());
-        return resolveQualifier((NestedResourceEntity) parent, concatWithParentDbPath(incoming, outgoingDbPath));
+        String fullDbPath = concatWithParentDbPath(incoming, outgoingDbPath);
+
+        // shouldn't really happen with any of the current built-in root strategies, but who knows what customaizations
+        // can be applied 
+        if (parent instanceof RootResourceEntity) {
+            throw new IllegalStateException(
+                    "Can't fetch child using parent expression strategy. Root entity '" +
+                            parent.getName() +
+                            "' has no SelectQuery of its own. DB path to child: " +
+                            fullDbPath);
+        }
+
+        return resolveQualifier((NestedResourceEntity) parent, fullDbPath);
     }
 
     private String concatWithParentDbPath(ObjRelationship incoming, String outgoingDbPath) {
