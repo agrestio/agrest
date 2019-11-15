@@ -12,6 +12,7 @@ Release 3.4
 * #434 Upgrade to Cayenne 4.0.2
 * #435 Upgrade SLF4J to 1.7.25
 * #436 Metadata pipeline throws for empty @Path("")
+* #437 Remove "bootique-bom" references from "agrest-bom" POM
 
 Release 3.3
 

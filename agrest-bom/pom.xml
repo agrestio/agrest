@@ -1,21 +1,34 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <parent>
-        <groupId>io.agrest</groupId>
-        <artifactId>agrest-parent</artifactId>
-        <version>3.4-SNAPSHOT</version>
-        <relativePath>../pom.xml</relativePath>
-    </parent>
-
+    <!-- Not inheriting from parent to avoid pollution of client projects with things like test dependency versions
+     (e.g. "bootique-bom"). As a result have to duplicate certain distribution-related sections.
+    -->
+    <groupId>io.agrest</groupId>
+    <version>3.4-SNAPSHOT</version>
     <artifactId>agrest-bom</artifactId>
     <packaging>pom</packaging>
     <name>agrest-bom: Bill of Materials w/all public modules</name>
+
     <description>
-        Bill of Materials (BOM) for Agrest modules that allows the end users to capture the version of multiple Agrest modules
-        at once.
+        Bill of Materials (BOM) for Agrest modules that allows the end users to capture the version of multiple Agrest
+        modules at once.
     </description>
+
+    <distributionManagement>
+        <repository>
+            <uniqueVersion>false</uniqueVersion>
+            <id>oss-sonatype-releases</id>
+            <name>Deployment Repository</name>
+            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2</url>
+        </repository>
+        <snapshotRepository>
+            <id>agrest-snapshots</id>
+            <url>https://maven.objectstyle.org/nexus/content/repositories/linkrest-snapshots</url>
+        </snapshotRepository>
+    </distributionManagement>
 
     <dependencyManagement>
         <dependencies>
@@ -47,4 +60,26 @@
         </dependencies>
     </dependencyManagement>
 
+    <profiles>
+        <profile>
+            <id>release</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>sign-artifacts</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>sign</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>
