@@ -8,3 +8,4 @@ target
 .openapi-generator
 .DS_Store
 agrest-swagger-designfirst-test/src/test/java/io/agrest/swagger/api/v1/service/*
+derby.log
