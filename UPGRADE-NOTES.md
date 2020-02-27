@@ -2,8 +2,8 @@
 
 ### Support for Case Insensitive Sorting [#428](https://github.com/agrestio/agrest/issues/428)
 
-Support for added for case-insensitive sorting to the Agrest protocol and the backend framework. While this change 
-does not require any upgrade actions, and is fully backwards-compatible, since this is a rare protocol addition,
+Support was added for case-insensitive sorting to the Agrest protocol and the backend framework. While this change 
+does not require any upgrade actions and is fully backwards-compatible, since this is a rare protocol addition,
 it is worth mentioning it here.
 
 ### EncoderFilter API Changes [#420](https://github.com/agrestio/agrest/issues/420)
