@@ -1,8 +1,11 @@
+:bq-header: _overview/header.html
+
 = Agrest Overview
-:revnumber: {project-major-version} ({project-version})
+
+//:revnumber: {project-major-version} ({project-version})
 // enable section numbering, limiting depth to 2
-:sectnums:
-:sectnumlevels: 2
+//:sectnums:
+//:sectnumlevels: 2
 
 // customize final layout
 //:linkcss:
