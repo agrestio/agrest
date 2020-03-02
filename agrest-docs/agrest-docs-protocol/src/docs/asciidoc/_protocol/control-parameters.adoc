@@ -6,12 +6,12 @@ to shape up the response Collection to its liking. These parameters are normally
 GET, however POST/PUT can also return a Collection Document, so many of the parameters are
 also applicable when modifying the data.
 
-include::control-parameters/filtering-collection.adoc[]
+include::_control-parameters/filtering-collection.adoc[]
 
-include::control-parameters/ordering-collection.adoc[]
+include::_control-parameters/ordering-collection.adoc[]
 
-include::control-parameters/pagination.adoc[]
+include::_control-parameters/pagination.adoc[]
 
-include::control-parameters/structuring-collection.adoc[]
+include::_control-parameters/structuring-collection.adoc[]
 
-include::control-parameters/shaping-collection.adoc[]
+include::_control-parameters/shaping-collection.adoc[]

@@ -1,3 +1,3 @@
 == Code-First Approach
 
-include::code-first-approach/introduction.adoc[]
+include::_code-first-approach/introduction.adoc[]

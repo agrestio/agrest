@@ -6,7 +6,6 @@
 
 // enable section numbering, limiting depth to 2
 
-
 include::_framework/prerequisites.adoc[]
 
 include::_framework/getting-started.adoc[]

@@ -1,7 +1,7 @@
 == Request Chains
 
-include::request-chains/available-chains.adoc[]
+include::_request-chains/available-chains.adoc[]
 
-include::request-chains/strategies-for-object-matching.adoc[]
+include::_request-chains/strategies-for-object-matching.adoc[]
 
-include::request-chains/idempotency-of-updating-chains.adoc[]
+include::_request-chains/idempotency-of-updating-chains.adoc[]

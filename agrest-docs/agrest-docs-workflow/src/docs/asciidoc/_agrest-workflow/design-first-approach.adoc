@@ -1,15 +1,15 @@
 == Design-First Approach
 
-include::design-first-approach/introduction.adoc[]
+include::_design-first-approach/introduction.adoc[]
 
-include::design-first-approach/setup.adoc[]
+include::_design-first-approach/setup.adoc[]
 
-include::design-first-approach/defining-api.adoc[]
+include::_design-first-approach/defining-api.adoc[]
 
-include::design-first-approach/validate-implementation.adoc[]
+include::_design-first-approach/validate-implementation.adoc[]
 
-include::design-first-approach/configure-and-run.adoc[]
+include::_design-first-approach/configure-and-run.adoc[]
 
-include::design-first-approach/example-with-integration-tests.adoc[]
+include::_design-first-approach/example-with-integration-tests.adoc[]
 
-include::design-first-approach/protocol-yaml.adoc[]
+include::_design-first-approach/protocol-yaml.adoc[]

@@ -23,8 +23,8 @@ public DataResponse<Domain> getOne(@PathParam("id") int id, @Context UriInfo uri
 }
 ----
 
-include::customizing-request-processing/stage.adoc[]
+include::_customizing-request-processing/stage.adoc[]
 
-include::customizing-request-processing/terminalStage.adoc[]
+include::_customizing-request-processing/terminalStage.adoc[]
 
-include::customizing-request-processing/routingStage.adoc[]
+include::_customizing-request-processing/routingStage.adoc[]

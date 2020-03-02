@@ -20,10 +20,10 @@ public class DomainResource {
 }
 ----
 
-include::writing-resource-endpoints/create-entity.adoc[]
+include::_writing-resource-endpoints/create-entity.adoc[]
 
-include::writing-resource-endpoints/read-collection-of-entities.adoc[]
+include::_writing-resource-endpoints/read-collection-of-entities.adoc[]
 
-include::writing-resource-endpoints/read-single-entity.adoc[]
+include::_writing-resource-endpoints/read-single-entity.adoc[]
 
-include::writing-resource-endpoints/update-entity.adoc[]
+include::_writing-resource-endpoints/update-entity.adoc[]
