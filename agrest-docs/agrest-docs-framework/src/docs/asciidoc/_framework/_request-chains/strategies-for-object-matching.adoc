@@ -1,6 +1,6 @@
 === Strategies for Object Matching
 
-Many of the updating chains need to match objects coming as Update Documents (see <<protocol#request-update-document, Request: Update Document>>) against
+Many of the updating chains need to match objects coming as Update Documents (see link:/protocol#request-update-document[Request: Update Document]) against
 objects in the database. E.g. "createOrUpdate" needs to know whether a JSON object is new (and needs to be created)
 or it already exists (and needs to be updated). By default Agrest would attempt to match each JSON
 "id" attribute with a DB record primary key. This is a reasonable and useful strategy. Its
