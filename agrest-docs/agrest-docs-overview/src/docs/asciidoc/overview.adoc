@@ -1,4 +1,4 @@
-:bq-header: _overview/header.html
+:agrest-header: _overview/header.html
 
 = Agrest Overview
 

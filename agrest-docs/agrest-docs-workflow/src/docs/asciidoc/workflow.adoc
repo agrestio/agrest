@@ -1,4 +1,4 @@
-:bq-header: _agrest-workflow/header.html
+:agrest-header: _agrest-workflow/header.html
 
 = Agrest Workflow
 

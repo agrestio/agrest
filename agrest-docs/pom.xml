@@ -20,6 +20,7 @@
         <module>agrest-docs-protocol</module>
         <module>agrest-docs-framework</module>
         <module>agrest-docs-workflow</module>
+        <module>agrest-asciidoc-preprocessor</module>
     </modules>
 
     <properties>
