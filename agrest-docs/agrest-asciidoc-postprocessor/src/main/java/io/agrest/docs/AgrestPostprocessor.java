@@ -1,3 +1,5 @@
+package io.agrest.docs;
+
 import org.asciidoctor.Options;
 import org.asciidoctor.ast.Document;
 import org.asciidoctor.extension.Postprocessor;
@@ -12,7 +14,7 @@ import java.nio.file.StandardOpenOption;
 import java.util.Collections;
 import java.util.Map;
 
-public class AgrestPreProcessor extends Postprocessor {
+public class AgrestPostprocessor extends Postprocessor {
 
     private static final String FRONT_MATTER = "front-matter";
     private static final String EMPTY_FRONT_MATTER = "---\n---\n\n";

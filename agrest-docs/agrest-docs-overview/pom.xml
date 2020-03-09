@@ -13,34 +13,11 @@
     <packaging>jar</packaging>
     <name>agrest-docs-overview: framework overview docs</name>
 
-    <pluginRepositories>
-        <pluginRepository>
-            <id>bootique-snapshots</id>
-            <url>https://maven.objectstyle.org/nexus/content/repositories/bootique-snapshots</url>
-            <releases>
-                <enabled>false</enabled>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-        </pluginRepository>
-    </pluginRepositories>
-
     <build>
         <plugins>
             <plugin>
                 <groupId>org.asciidoctor</groupId>
                 <artifactId>asciidoctor-maven-plugin</artifactId>
-
-                <dependencies>
-                    <!-- Using Cayenne asciidoc extension to inject custom headers -->
-                    <dependency>
-                        <groupId>io.agrest.docs</groupId>
-                        <artifactId>agrest-asciidoc-preprocessor</artifactId>
-                        <version>3.4-SNAPSHOT</version>
-                    </dependency>
-                </dependencies>
-
                 <executions>
                     <!-- generate "embeddable" html content with front matter and without header/footer/styles -->
                     <execution>
@@ -49,79 +26,10 @@
                         <goals>
                             <goal>process-asciidoc</goal>
                         </goals>
-                        <configuration>
-                            <doctype>book</doctype>
-                            <backend>html5</backend>
-                            <headerFooter>false</headerFooter> <!-- do not generate header and footer -->
-                            <outputDirectory>${project.build.directory}/tmp/</outputDirectory>
-                            <preserveDirectories>true</preserveDirectories>
-                            <!-- this will inject header with "front-matter" markup -->
-                            <extensions>
-                                <extension>
-                                    <className>AgrestPreProcessor</className>
-                                </extension>
-                            </extensions>
-                            <attributes>
-                                <sectnums/>
-                                <icons>font</icons>
-                                <toc>auto</toc>
-                            </attributes>
-                        </configuration>
                     </execution>
                 </executions>
             </plugin>
         </plugins>
     </build>
-
-
-    <profiles>
-        <profile>
-            <id>assembly</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.asciidoctor</groupId>
-                        <artifactId>asciidoctor-maven-plugin</artifactId>
-                        <executions>
-                            <!-- generate standalone html help -->
-                            <execution>
-                                <id>asciidoctor-html-standalone</id>
-                                <phase>generate-resources</phase>
-                                <goals>
-                                    <goal>process-asciidoc</goal>
-                                </goals>
-                                <configuration>
-                                    <backend>html5</backend>
-                                    <sourceHighlighter>coderay</sourceHighlighter>
-                                    <embedAssets>true</embedAssets>
-                                    <attributes>
-                                        <toc>left</toc>
-                                    </attributes>
-                                </configuration>
-                            </execution>
-
-                            <!-- generate PDF -->
-                            <execution>
-                                <id>generate-pdf-doc</id>
-                                <phase>generate-resources</phase>
-                                <goals>
-                                    <goal>process-asciidoc</goal>
-                                </goals>
-                                <configuration>
-                                    <backend>pdf</backend>
-                                    <sourceHighlighter>coderay</sourceHighlighter>
-                                    <attributes>
-                                        <pagenums />
-                                        <toc />
-                                    </attributes>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-    </profiles>
-
 
 </project>
