@@ -1,8 +1,10 @@
+:agrest-header: _protocol/header.html
+
 = Agrest Protocol
 
 // enable section numbering, limiting depth to 2
-:sectnums:
-:sectnumlevels: 2
+//:sectnums:
+//:sectnumlevels: 2
 
 include::_protocol/overview.adoc[]
 

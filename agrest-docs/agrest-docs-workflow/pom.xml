@@ -18,7 +18,6 @@
             <plugin>
                 <groupId>org.asciidoctor</groupId>
                 <artifactId>asciidoctor-maven-plugin</artifactId>
-
                 <executions>
                     <!-- generate "embeddable" html content with front matter and without header/footer/styles -->
                     <execution>
@@ -27,67 +26,10 @@
                         <goals>
                             <goal>process-asciidoc</goal>
                         </goals>
-                        <configuration>
-                            <backend>html5</backend>
-                            <headerFooter>false</headerFooter> <!-- do not generate header and footer -->
-                            <outputDirectory>${project.build.directory}/tmp/</outputDirectory>
-                            <attributes>
-                                <toc>auto</toc>
-                            </attributes>
-                        </configuration>
                     </execution>
                 </executions>
             </plugin>
         </plugins>
     </build>
-
-    <profiles>
-        <profile>
-            <id>assembly</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.asciidoctor</groupId>
-                        <artifactId>asciidoctor-maven-plugin</artifactId>
-                        <executions>
-                            <!-- generate standalone html help -->
-                            <execution>
-                                <id>asciidoctor-html-standalone</id>
-                                <phase>generate-resources</phase>
-                                <goals>
-                                    <goal>process-asciidoc</goal>
-                                </goals>
-                                <configuration>
-                                    <backend>html5</backend>
-                                    <sourceHighlighter>coderay</sourceHighlighter>
-                                    <embedAssets>true</embedAssets>
-                                    <attributes>
-                                        <toc>left</toc>
-                                    </attributes>
-                                </configuration>
-                            </execution>
-
-                            <!-- generate PDF -->
-                            <execution>
-                                <id>generate-pdf-doc</id>
-                                <phase>generate-resources</phase>
-                                <goals>
-                                    <goal>process-asciidoc</goal>
-                                </goals>
-                                <configuration>
-                                    <backend>pdf</backend>
-                                    <sourceHighlighter>coderay</sourceHighlighter>
-                                    <attributes>
-                                        <pagenums />
-                                        <toc />
-                                    </attributes>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-    </profiles>
 
 </project>

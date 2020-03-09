@@ -37,7 +37,7 @@ Content-Type: application/json
 ----
 
 Since select chain above incorporates UriInfo, it will recognize Agrest control
-parameters passed from the client (see <<protocol#control-parameters, Control Parameters>>). Let's try using "cayenneExp" filter and "include":
+parameters passed from the client (see link:/protocol#control-parameters[Control Parameters]). Let's try using "cayenneExp" filter and "include":
 
 
 `curl -i -X GET 'http://example.org/myapp/domain?cayenneExp=vhost="mysite1.example.org"&amp;include=id'`
