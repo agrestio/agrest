@@ -26,11 +26,12 @@ Click `Finish` where you are done. Now you should have a new empty project.
 
 Add the following dependencies:
 
-```
+[source, xml, subs="verbatim,attributes"]
+----
 <dependency>
     <groupId>io.agrest</groupId>
     <artifactId>agrest</artifactId>
-    <version>3.0-SNAPSHOT</version>
+    <version>{project-version}</version>
 </dependency>
 
 <dependency>
@@ -49,11 +50,12 @@ Add the following dependencies:
     <artifactId>derby</artifactId>
     <version>10.13.1.1</version>
 </dependency>
-```
+----
 
 Configure a `jetty` Maven plugin to start app using `mvn jetty:run` command
 
-```
+[source, xml, subs="verbatim,attributes"]
+----
 <plugin>
     <groupId>org.eclipse.jetty</groupId>
     <artifactId>jetty-maven-plugin</artifactId>
@@ -64,5 +66,5 @@ Configure a `jetty` Maven plugin to start app using `mvn jetty:run` command
         <supportedPackagings><supportedPackaging>jar</supportedPackaging></supportedPackagings>
     </configuration>
 </plugin>
-```
+----
 

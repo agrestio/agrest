@@ -1,6 +1,6 @@
 === Configure and run API generation
 There is an example of the Maven plugin configuration:
-[source, XML]
+[source, xml, subs="verbatim,attributes"]
 ----
 <plugin>
     <groupId>org.openapitools</groupId>
@@ -16,7 +16,7 @@ There is an example of the Maven plugin configuration:
                 <generatorName>io.swagger.codegen.languages.AgServerCodegen</generatorName>
                 <output>${project.basedir}</output>
                 <apiPackage>org.example.agrest</apiPackage>
-                <modelPackage>org.example.agrest.persistente</modelPackage>
+                <modelPackage>org.example.agrest.persistent</modelPackage>
                 <invokerPackage>org.example.agrest</invokerPackage>
                 <generateModels>false</generateModels>
                 <skipOverwrite>false</skipOverwrite>
@@ -28,7 +28,7 @@ There is an example of the Maven plugin configuration:
         <dependency>
             <groupId>io.agrest.openapi</groupId>
             <artifactId>agrest-openapi-designfirst</artifactId>
-            <version>3.0-SNAPSHOT</version>
+            <version>{project-version}</version>
         </dependency>
     </dependencies>
 </plugin>

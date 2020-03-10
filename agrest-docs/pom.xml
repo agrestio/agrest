@@ -106,6 +106,7 @@
                         <sectnums/>
                         <icons>font</icons>
                         <toc>auto</toc>
+                        <project-version>${project.version}</project-version>
                     </attributes>
                     <!-- this will inject a header with "front-matter" markup -->
                     <extensions>

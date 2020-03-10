@@ -20,7 +20,7 @@ Then update the `pom.xml`.
 Add the `openapi-generator-maven-plugin` plugin and appropriate settings.
 For more details, please refer tothe next section <<Configure and run API generation>>
 
-[source, xml]
+[source, xml, subs="verbatim,attributes"]
 ----
 <plugin>
     <groupId>org.openapitools</groupId>
@@ -48,7 +48,7 @@ For more details, please refer tothe next section <<Configure and run API genera
         <dependency>
             <groupId>io.agrest.openapi</groupId>
             <artifactId>agrest-openapi-designfirst</artifactId>
-            <version>3.0-SNAPSHOT</version>
+            <version>{project-version}</version>
         </dependency>
     </dependencies>
 </plugin>

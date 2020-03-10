@@ -5,19 +5,19 @@ To load Agrest in your project, follow these simple steps:
 . Declare Agrest dependency. Here is a Maven example. If you are using Gradle or
   Ant, you do what needs to be done there to include Agrest dependency.
 +
-[source, XML]
+[source, xml, subs="verbatim,attributes"]
 ----
 <dependency>
    <groupId>io.agrest</groupId>
    <artifactId>agrest</artifactId>
-   <version>3.0</version>
+   <version>{project-version}</version>
 </dependency>
 ----
 
 . Create `AgRuntime`, and load it in JAX-RS container. Assuming the
   container is Jersey, this may look like this:
 +
-[source, Java]
+[source, java]
 ----
 import javax.ws.rs.ApplicationPath;
 import org.glassfish.jersey.server.ResourceConfig;
