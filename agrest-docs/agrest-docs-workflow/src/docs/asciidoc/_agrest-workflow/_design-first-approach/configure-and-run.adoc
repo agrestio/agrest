@@ -33,34 +33,42 @@ There is an example of the Maven plugin configuration:
     </dependencies>
 </plugin>
 ----
+
 [#inputSpec]
-===== <inputSpec>
+*<inputSpec>*
+
 Points to your API definition in `.yaml` or `.json` formats.
 
 [#generatorName]
-===== <generatorName>
+*<generatorName>*
+
 Sets the Agrest custom code generator.
 
 [#output]
-===== <output>
+*<output>*
+
 Sets the output catalog for all generated items.
 
 [#apiPackage]
-===== <apiPackage>
+*<apiPackage>*
+
 Contains full package name of resource implementation classes to be generated.
 
 [#modelPackage]
-===== <modelPackage>
+*<modelPackage>*
+
 Contains full package name of model classes.
 If <<generateModels>> is set to `true`, the POJO stubs of models will be generated.
 Otherwise, existing model classes from this package will be used.
 
 [#generateModels]
-===== <generateModels>
+*<generateModels>*
+
 Generates POJO of models or uses existing ones.
 
 [#skipOverwrite]
-===== <skipOverwrite>
+*<skipOverwrite>*
+
 If it is set to `false`, all generated files will be overwritten each time during `mvn clean install`.
 So, if you are planning to customize the generated API implementation, this parameter should be set to `true`.
 
