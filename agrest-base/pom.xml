@@ -5,7 +5,6 @@
         <artifactId>agrest-parent</artifactId>
         <groupId>io.agrest</groupId>
         <version>3.4-SNAPSHOT</version>
-        <relativePath>../pom.xml</relativePath>
     </parent>
 
     <artifactId>agrest-base</artifactId>
