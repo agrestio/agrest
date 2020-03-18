@@ -121,14 +121,11 @@ public class MapByEncoder implements CollectionEncoder {
         if (!mapBy.getChildren().isEmpty()) {
 
             String pathSegment = (mapBy instanceof NestedResourceEntity)
-                    ? ((NestedResourceEntity) mapBy).getIncoming().getName()
+                    ? ((NestedResourceEntity<?>) mapBy).getIncoming().getName()
                     : "";
 
-            StringBuilder message = new StringBuilder("'mapBy' path segment '")
-                    .append(pathSegment)
-                    .append("should not have children. Full 'mapBy' path: " + mapByPath);
-
-            throw new AgException(Status.BAD_REQUEST, message.toString());
+            throw new AgException(Status.BAD_REQUEST, "'mapBy' path segment '" + pathSegment +
+                    "' should not have children. Full 'mapBy' path: " + mapByPath);
         }
     }
 
@@ -143,9 +140,7 @@ public class MapByEncoder implements CollectionEncoder {
             return 0;
         }
 
-        @SuppressWarnings({"rawtypes", "unchecked"})
-        List<?> objects = (List) object;
-
+        List<?> objects = (List<?>) object;
         Map<String, List<Object>> map = mapBy(objects);
 
         out.writeStartObject();
@@ -181,8 +176,7 @@ public class MapByEncoder implements CollectionEncoder {
             return Collections.emptyMap();
         }
 
-        // though the map is unsorted, it is still in predictable iteration
-        // order...
+        // though the map is unsorted, it is still in predictable iteration order...
         Map<String, List<Object>> map = new LinkedHashMap<>();
 
         for (Object o : objects) {
@@ -201,14 +195,7 @@ public class MapByEncoder implements CollectionEncoder {
             }
 
             String keyString = fieldNameConverter.asString(key);
-
-            List<Object> list = map.get(keyString);
-            if (list == null) {
-                list = new ArrayList<>();
-                map.put(keyString, list);
-            }
-
-            list.add(o);
+            map.computeIfAbsent(keyString, k -> new ArrayList<>()).add(o);
         }
 
         return map;
