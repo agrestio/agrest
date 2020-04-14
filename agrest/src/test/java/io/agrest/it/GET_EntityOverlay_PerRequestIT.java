@@ -3,13 +3,17 @@ package io.agrest.it;
 import io.agrest.Ag;
 import io.agrest.DataResponse;
 import io.agrest.it.fixture.JerseyAndDerbyCase;
+import io.agrest.it.fixture.cayenne.E2;
 import io.agrest.it.fixture.cayenne.E22;
+import io.agrest.it.fixture.cayenne.E3;
 import io.agrest.it.fixture.cayenne.E4;
 import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgEntityOverlay;
 import org.apache.cayenne.Cayenne;
+import org.apache.cayenne.Persistent;
 import org.apache.cayenne.query.SelectById;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import javax.ws.rs.GET;
@@ -29,7 +33,7 @@ public class GET_EntityOverlay_PerRequestIT extends JerseyAndDerbyCase {
 
     @Override
     protected Class<?>[] testEntities() {
-        return new Class[]{E4.class, E22.class};
+        return new Class[]{E2.class, E3.class, E4.class, E22.class};
     }
 
     @Test
@@ -122,7 +126,32 @@ public class GET_EntityOverlay_PerRequestIT extends JerseyAndDerbyCase {
                 .get();
 
         onSuccess(r).bodyEquals(1, "{\"id\":2,\"dynamicRelationship\":{\"id\":2,\"name\":\"b\",\"prop1\":null,\"prop2\":null}}");
+    }
 
+    @Ignore("A relationship that is a child of dynamic relationship fails to resolve properly. We must use " +
+            "read-from-parent resolver for anything hanging off of a dynamic relationship instead of using built-in Cayenne resolvers")
+    @Test
+    public void test_OverlayedRelationship_CayenneExpOnParent_Nested() {
+
+        e4().insertColumns("id", "c_varchar").values(2, "a").values(4, "b").exec();
+
+        e2().insertColumns("id_", "name")
+                .values(1, "a2")
+                .values(2, "b2")
+                .values(3, "c2").exec();
+
+        e3().insertColumns("id_", "name", "e2_id")
+                .values(1, "a", 1)
+                .values(2, "b", 1)
+                .values(3, "c", 1).exec();
+
+        Response r = target("/e4_2")
+                .queryParam("cayenneExp", "id = 2")
+                .queryParam("include", "[\"id\",\"dynamicRelationship.e2\"]")
+                .request()
+                .get();
+
+        onSuccess(r).bodyEquals(1, "{\"id\":2,\"dynamicRelationship\":{\"e2\":{\"id\":2,\"name\":\"b2\"}}");
     }
 
     @Path("")
@@ -131,9 +160,8 @@ public class GET_EntityOverlay_PerRequestIT extends JerseyAndDerbyCase {
         @Context
         private Configuration config;
 
-        private static E22 findMatching(E4 e4) {
-            // TODO: how do we batch retrieval of E22s for all E4s?
-            return SelectById.query(E22.class, Cayenne.pkForObject(e4)).selectOne(e4.getObjectContext());
+        private static <T extends Persistent> T findMatching(Class<T> type, Persistent p) {
+            return SelectById.query(type, Cayenne.pkForObject(p)).selectOne(p.getObjectContext());
         }
 
         @GET
@@ -149,7 +177,22 @@ public class GET_EntityOverlay_PerRequestIT extends JerseyAndDerbyCase {
                     // 3. Changing output of the existing property
                     .redefineAttribute("cVarchar", String.class, e4 -> e4.getCVarchar() + "_x")
                     // 4. Dynamic relationship
-                    .redefineToOne("dynamicRelationship", E22.class, Resource::findMatching);
+                    .redefineToOne("dynamicRelationship", E22.class, e4 -> findMatching(E22.class, e4));
+
+            return Ag.service(config)
+                    .select(E4.class)
+                    .entityOverlay(overlay)
+                    .uri(uriInfo)
+                    .get();
+        }
+
+        @GET
+        @Path("e4_2")
+        public DataResponse<E4> getE4_WithE3(@Context UriInfo uriInfo) {
+
+            AgEntityOverlay<E4> overlay = AgEntity.overlay(E4.class)
+                    // dynamic relationship
+                    .redefineToOne("dynamicRelationship", E3.class, e4 -> findMatching(E3.class, e4));
 
             return Ag.service(config)
                     .select(E4.class)
