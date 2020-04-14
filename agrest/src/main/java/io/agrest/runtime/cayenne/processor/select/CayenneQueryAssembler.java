@@ -97,6 +97,11 @@ public class CayenneQueryAssembler {
 
             ObjEntity parentObjEntity = cayenneEntityResolver.getObjEntity(parent.getType());
             ObjRelationship incoming = parentObjEntity.getRelationship(entity.getIncoming().getName());
+
+            if(incoming == null) {
+                throw new IllegalStateException("No Cayenne relationships " + parentObjEntity.getName() + "." + entity.getIncoming().getName());
+            }
+
             String fullDbPath = concatWithParentDbPath(incoming, outgoingDbPath);
             Expression dbParentQualifier = parentObjEntity.translateToDbPath(parentQualifier);
             return parentObjEntity.getDbEntity().translateToRelatedEntity(dbParentQualifier, fullDbPath);
