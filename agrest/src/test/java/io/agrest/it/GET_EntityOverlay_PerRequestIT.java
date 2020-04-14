@@ -103,7 +103,8 @@ public class GET_EntityOverlay_PerRequestIT extends JerseyAndDerbyCase {
                 .get();
 
         onSuccess(r).bodyEquals(2, "{\"id\":2,\"cVarchar\":\"a_x\",\"dynamicRelationship\":{\"id\":2,\"name\":\"b\",\"prop1\":null,\"prop2\":null},\"fromRequest\":\"xyz\"}," +
-                "{\"id\":4,\"cVarchar\":\"b_x\",\"dynamicRelationship\":null,\"fromRequest\":\"xyz\"}");    }
+                "{\"id\":4,\"cVarchar\":\"b_x\",\"dynamicRelationship\":null,\"fromRequest\":\"xyz\"}");
+    }
 
     @Test
     public void test_OverlayedRelationship_CayenneExpOnParent() {
