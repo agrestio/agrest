@@ -103,7 +103,25 @@ public class GET_EntityOverlay_PerRequestIT extends JerseyAndDerbyCase {
                 .get();
 
         onSuccess(r).bodyEquals(2, "{\"id\":2,\"cVarchar\":\"a_x\",\"dynamicRelationship\":{\"id\":2,\"name\":\"b\",\"prop1\":null,\"prop2\":null},\"fromRequest\":\"xyz\"}," +
-                "{\"id\":4,\"cVarchar\":\"b_x\",\"dynamicRelationship\":null,\"fromRequest\":\"xyz\"}");
+                "{\"id\":4,\"cVarchar\":\"b_x\",\"dynamicRelationship\":null,\"fromRequest\":\"xyz\"}");    }
+
+    @Test
+    public void test_OverlayedRelationship_CayenneExpOnParent() {
+
+        e4().insertColumns("id", "c_varchar").values(2, "a").values(4, "b").exec();
+        e22().insertColumns("id", "name")
+                .values(1, "a")
+                .values(2, "b")
+                .values(3, "c").exec();
+
+        Response r = target("/e4/xyz")
+                .queryParam("cayenneExp", "id = 2")
+                .queryParam("include", "[\"id\",\"dynamicRelationship\"]")
+                .request()
+                .get();
+
+        onSuccess(r).bodyEquals(1, "{\"id\":2,\"dynamicRelationship\":{\"id\":2,\"name\":\"b\",\"prop1\":null,\"prop2\":null}}");
+
     }
 
     @Path("")
