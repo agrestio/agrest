@@ -99,7 +99,7 @@ public class CayenneQueryAssembler {
             ObjRelationship incoming = parentObjEntity.getRelationship(entity.getIncoming().getName());
 
             if(incoming == null) {
-                throw new IllegalStateException("No Cayenne relationships " + parentObjEntity.getName() + "." + entity.getIncoming().getName());
+                throw new IllegalStateException("No such relationship: " + parentObjEntity.getName() + "." + entity.getIncoming().getName());
             }
 
             String fullDbPath = concatWithParentDbPath(incoming, outgoingDbPath);
