@@ -3,17 +3,19 @@ package io.agrest.runtime.cayenne;
 import io.agrest.AgException;
 import io.agrest.EntityUpdate;
 import io.agrest.ObjectMapper;
-import io.agrest.meta.cayenne.DataObjectPropertyReader;
-import io.agrest.meta.cayenne.ObjectIdValueReader;
+import io.agrest.meta.AgAttribute;
+import io.agrest.meta.AgEntity;
 import org.apache.cayenne.exp.Expression;
 import org.apache.cayenne.exp.parser.ASTEqual;
 import org.apache.cayenne.exp.parser.ASTPath;
 
 import javax.ws.rs.core.Response.Status;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import static org.apache.cayenne.exp.ExpressionFactory.joinExp;
 
@@ -22,12 +24,10 @@ import static org.apache.cayenne.exp.ExpressionFactory.joinExp;
  */
 class ByIdObjectMapper<T> implements ObjectMapper<T> {
 
-    private ASTPath[] keyPaths;
+    private AgEntity<T> entity;
 
-    ByIdObjectMapper(ASTPath[] keyPaths) {
-        // this can be a "db:" or "obj:" expression, so treating it as an opaque
-        // Expression, letting Cayenne to figure out the difference
-        this.keyPaths = keyPaths;
+    ByIdObjectMapper(AgEntity<T> entity) {
+        this.entity = Objects.requireNonNull(entity);
     }
 
     @Override
@@ -46,14 +46,15 @@ class ByIdObjectMapper<T> implements ObjectMapper<T> {
             return null;
         }
 
-        int len = keyPaths.length;
+        Collection<AgAttribute> ids = entity.getIds();
+        int len = ids.size();
         if (len == 1) {
-            return match(keyPaths[0], idMap);
+            return match(ids.iterator().next().getPathExp(), idMap);
         }
 
         List<Expression> exps = new ArrayList<>(len);
-        for (ASTPath p : keyPaths) {
-            exps.add(match(p, idMap));
+        for (AgAttribute id : ids) {
+            exps.add(match(id.getPathExp(), idMap));
         }
         return joinExp(Expression.AND, exps);
     }
@@ -71,22 +72,10 @@ class ByIdObjectMapper<T> implements ObjectMapper<T> {
     @Override
     public Object keyForObject(T object) {
         Map<String, Object> idMap = new HashMap<>();
-        for (ASTPath keyPath : keyPaths) {
-            idMap.put(keyPath.getPath(), readPropertyOrId(object, keyPath.getPath()));
+        for (AgAttribute id : entity.getIds()) {
+            idMap.put(id.getPathExp().getPath(), id.getPropertyReader().value(object, id.getName()));
         }
         return idMap;
-    }
-
-    private Object readPropertyOrId(Object object, String name) {
-
-    	// TODO: reading property and then ID is wasteful and stupid. We should know what we are dealing with here
-		//  upfront and should select a proper reader
-
-        // try normal property first, and if it's absent, assume that it's (a part of) the entity's ID
-        Object property = DataObjectPropertyReader.reader().value(object, name);
-        return property == null
-                ? ObjectIdValueReader.reader().value(object, name)
-                : property;
     }
 
     @Override
