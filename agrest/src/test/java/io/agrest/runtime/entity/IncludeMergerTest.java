@@ -3,32 +3,41 @@ package io.agrest.runtime.entity;
 import io.agrest.NestedResourceEntity;
 import io.agrest.ResourceEntity;
 import io.agrest.RootResourceEntity;
-import io.agrest.it.fixture.cayenne.E2;
-import io.agrest.it.fixture.cayenne.E3;
-import io.agrest.it.fixture.cayenne.E5;
+import io.agrest.annotation.AgAttribute;
+import io.agrest.annotation.AgId;
+import io.agrest.annotation.AgRelationship;
 import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgEntityOverlay;
+import io.agrest.meta.compiler.AgEntityCompiler;
+import io.agrest.meta.compiler.PojoEntityCompiler;
 import io.agrest.protocol.Include;
-import io.agrest.runtime.cayenne.CayenneResolvers;
+import io.agrest.resolver.ThrowingNestedDataResolver;
+import io.agrest.runtime.meta.IMetadataService;
+import io.agrest.runtime.meta.MetadataService;
 import io.agrest.runtime.path.IPathDescriptorManager;
 import io.agrest.runtime.path.PathDescriptorManager;
-import io.agrest.unit.TestWithCayenneMapping;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.time.LocalDate;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static java.util.Arrays.asList;
 import static org.junit.Assert.*;
 
-public class IncludeMergerTest extends TestWithCayenneMapping {
+public class IncludeMergerTest {
 
+    private IMetadataService metadataService;
     private IncludeMerger includeMerger;
 
     @Before
     public void setUp() {
+
+        AgEntityCompiler compiler = new PojoEntityCompiler(Collections.emptyMap());
+        this.metadataService = new MetadataService(Collections.singletonList(compiler));
 
         IPathDescriptorManager pathCache = new PathDescriptorManager();
         ICayenneExpMerger expMerger = new CayenneExpMerger(new ExpressionParser(), new ExpressionPostProcessor(pathCache));
@@ -41,104 +50,183 @@ public class IncludeMergerTest extends TestWithCayenneMapping {
     @Test
     public void testMergeNothing() {
 
-        AgEntity<E5> e5 = getAgEntity(E5.class);
-        ResourceEntity<E5> e5Root = new RootResourceEntity<>(e5, null);
-        includeMerger.merge(e5Root, asList(), Collections.emptyMap());
+        AgEntity<X> entity = metadataService.getAgEntity(X.class);
+        ResourceEntity<X> root = new RootResourceEntity<>(entity, null);
+        includeMerger.merge(root, asList(), Collections.emptyMap());
 
-        assertEquals(e5.getAttributes().size(), e5Root.getAttributes().size());
-        assertTrue(e5Root.isIdIncluded());
-        assertEquals(0, e5Root.getChildren().size());
+        assertEquals(entity.getAttributes().size(), root.getAttributes().size());
+        assertTrue(root.isIdIncluded());
+        assertEquals(0, root.getChildren().size());
     }
 
     @Test
     public void testMergeAttributes() {
 
-        AgEntity<E5> e5 = getAgEntity(E5.class);
-        ResourceEntity<E5> e5Root = new RootResourceEntity<>(e5, null);
-        includeMerger.merge(e5Root, asList(new Include(E5.NAME.getName())), Collections.emptyMap());
+        AgEntity<X> entity = metadataService.getAgEntity(X.class);
+        ResourceEntity<X> root = new RootResourceEntity<>(entity, null);
+        includeMerger.merge(root, asList(new Include("name")), Collections.emptyMap());
 
-        assertEquals(1, e5Root.getAttributes().size());
-        assertFalse(e5Root.isIdIncluded());
-        assertEquals(0, e5Root.getChildren().size());
+        assertEquals(1, root.getAttributes().size());
+        assertFalse(root.isIdIncluded());
+        assertEquals(0, root.getChildren().size());
     }
 
     @Test
     public void testMergeAttributesAndRelationships() {
 
-        AgEntity<E5> e5 = getAgEntity(E5.class);
-        ResourceEntity<E5> e5Root = new RootResourceEntity<>(e5, null);
-        includeMerger.merge(e5Root, asList(
-                new Include(E5.NAME.getName()),
-                new Include(E5.E3S.getName())
-        ), Collections.emptyMap());
+        AgEntity<X> entity = metadataService.getAgEntity(X.class);
+        ResourceEntity<X> root = new RootResourceEntity<>(entity, null);
+        includeMerger.merge(root, asList(new Include("name"), new Include("ys")), Collections.emptyMap());
 
-        assertEquals(1, e5Root.getAttributes().size());
-        assertFalse(e5Root.isIdIncluded());
-        assertEquals(1, e5Root.getChildren().size());
+        assertEquals(1, root.getAttributes().size());
+        assertFalse(root.isIdIncluded());
+        assertEquals(1, root.getChildren().size());
     }
 
     @Test
     public void testMerge_AttributesAndRelationships_OverlappedPath() {
 
-        AgEntity<E5> e5 = getAgEntity(E5.class);
-        ResourceEntity<E5> e5Root = new RootResourceEntity<>(e5, null);
-        includeMerger.merge(e5Root, asList(
-                new Include(E5.NAME.getName()),
-                new Include(E5.E3S.dot(E3.NAME).getName()),
-                new Include(E5.E3S.dot(E3.E2).getName())
+        AgEntity<X> entity = metadataService.getAgEntity(X.class);
+        ResourceEntity<X> root = new RootResourceEntity<>(entity, null);
+        includeMerger.merge(root, asList(
+                new Include("name"),
+                new Include("ys.name"),
+                new Include("ys.z")
         ), Collections.emptyMap());
 
-        assertEquals(1, e5Root.getAttributes().size());
-        assertFalse(e5Root.isIdIncluded());
-        assertEquals(1, e5Root.getChildren().size());
+        assertEquals(1, root.getAttributes().size());
+        assertFalse(root.isIdIncluded());
+        assertEquals(1, root.getChildren().size());
 
-        NestedResourceEntity<?> e3Child = e5Root.getChild(E5.E3S.getName());
-        assertNotNull(e3Child);
-        assertEquals(1, e3Child.getAttributes().size());
-        assertFalse(e3Child.isIdIncluded());
-        assertEquals(1, e3Child.getChildren().size());
+        NestedResourceEntity<?> yChild = root.getChild("ys");
+        assertNotNull(yChild);
+        assertEquals(1, yChild.getAttributes().size());
+        assertFalse(yChild.isIdIncluded());
+        assertEquals(1, yChild.getChildren().size());
 
-        NestedResourceEntity<?> e2Child = e3Child.getChild(E3.E2.getName());
-        assertNotNull(e2Child);
-        assertEquals(getAgEntity(E2.class).getAttributes().size(), e2Child.getAttributes().size());
-        assertTrue(e2Child.isIdIncluded());
-        assertEquals(0, e2Child.getChildren().size());
+        NestedResourceEntity<?> zChild = yChild.getChild("z");
+        assertNotNull(zChild);
+        assertEquals(metadataService.getAgEntity(Z.class).getAttributes().size(), zChild.getAttributes().size());
+        assertTrue(zChild.isIdIncluded());
+        assertEquals(0, zChild.getChildren().size());
     }
 
     @Test
     public void testMerge_AttributesAndRelationships_OverlappedPath_Overlays() {
 
         Map<Class<?>, AgEntityOverlay<?>> overlays = new HashMap<>();
-        overlays.put(E5.class, AgEntity
-                .overlay(E5.class)
-                .redefineRelationshipResolver(E5.E3S.getName(), CayenneResolvers.nested(mockCayennePersister).viaQueryWithParentIds()));
+        overlays.put(X.class, AgEntity
+                .overlay(X.class)
+                .redefineRelationshipResolver("ys", (t, r) -> ThrowingNestedDataResolver.getInstance()));
 
-        overlays.put(E3.class, AgEntity
-                .overlay(E3.class)
-                .redefineRelationshipResolver(E3.E2.getName(), CayenneResolvers.nested(mockCayennePersister).viaParentPrefetch()));
+        overlays.put(Y.class, AgEntity
+                .overlay(Y.class)
+                .redefineRelationshipResolver("z", (t, r) -> ThrowingNestedDataResolver.getInstance()));
 
-        AgEntity<E5> e5 = getAgEntity(E5.class);
-        ResourceEntity<E5> e5Root = new RootResourceEntity<>(e5, (AgEntityOverlay<E5>) overlays.get(E5.class));
-        includeMerger.merge(e5Root, asList(
-                new Include(E5.NAME.getName()),
-                new Include(E5.E3S.dot(E3.NAME).getName()),
-                new Include(E5.E3S.dot(E3.E2).getName())
+        AgEntity<X> entity = metadataService.getAgEntity(X.class);
+        ResourceEntity<X> root = new RootResourceEntity<>(entity, (AgEntityOverlay<X>) overlays.get(X.class));
+
+        includeMerger.merge(root, asList(
+                new Include("name"),
+                new Include("ys.name"),
+                new Include("ys.z")
         ), overlays);
 
-        assertEquals(1, e5Root.getAttributes().size());
-        assertFalse(e5Root.isIdIncluded());
-        assertEquals(1, e5Root.getChildren().size());
+        assertEquals(1, root.getAttributes().size());
+        assertFalse(root.isIdIncluded());
+        assertEquals(1, root.getChildren().size());
 
-        NestedResourceEntity<?> e3Child = e5Root.getChild(E5.E3S.getName());
-        assertNotNull(e3Child);
-        assertEquals(1, e3Child.getAttributes().size());
-        assertFalse(e3Child.isIdIncluded());
-        assertEquals(1, e3Child.getChildren().size());
+        NestedResourceEntity<?> yChild = root.getChild("ys");
+        assertNotNull(yChild);
+        assertEquals(1, yChild.getAttributes().size());
+        assertFalse(yChild.isIdIncluded());
+        assertEquals(1, yChild.getChildren().size());
 
-        NestedResourceEntity<?> e2Child = e3Child.getChild(E3.E2.getName());
-        assertNotNull(e2Child);
-        assertEquals(getAgEntity(E2.class).getAttributes().size(), e2Child.getAttributes().size());
-        assertTrue(e2Child.isIdIncluded());
-        assertEquals(0, e2Child.getChildren().size());
+        NestedResourceEntity<?> zChild = yChild.getChild("z");
+        assertNotNull(zChild);
+        assertEquals(metadataService.getAgEntity(Z.class).getAttributes().size(), zChild.getAttributes().size());
+        assertTrue(zChild.isIdIncluded());
+        assertEquals(0, zChild.getChildren().size());
+    }
+
+    public static class X {
+
+        private int id;
+        private LocalDate date;
+        private String name;
+        private List<Y> ys;
+
+        @AgId
+        public int getId() {
+            return id;
+        }
+
+        @AgAttribute
+        public LocalDate getDate() {
+            return date;
+        }
+
+        @AgAttribute
+        public String getName() {
+            return name;
+        }
+
+        @AgRelationship
+        public List<Y> getYs() {
+            return ys;
+        }
+    }
+
+    public static class Y {
+
+        private String name;
+        private String phoneNumber;
+        private Z z;
+
+        @AgAttribute
+        public String getName() {
+            return name;
+        }
+
+        @AgAttribute
+        public String getPhoneNumber() {
+            return phoneNumber;
+        }
+
+        @AgRelationship
+        public Z getZ() {
+            return z;
+        }
+    }
+
+    public static class Z {
+
+        private int id;
+        private String name;
+        private A a;
+
+        @AgId
+        public int getId() {
+            return id;
+        }
+
+        @AgAttribute
+        public String getName() {
+            return name;
+        }
+
+        @AgRelationship
+        public A getA() {
+            return a;
+        }
+    }
+
+    public static class A {
+        private int id;
+
+        @AgId
+        public int getId() {
+            return id;
+        }
     }
 }
