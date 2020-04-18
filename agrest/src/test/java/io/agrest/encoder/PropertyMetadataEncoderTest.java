@@ -1,6 +1,5 @@
 package io.agrest.encoder;
 
-import io.agrest.it.fixture.cayenne.E4;
 import io.agrest.meta.AgAttribute;
 import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgRelationship;
@@ -34,22 +33,26 @@ public class PropertyMetadataEncoderTest {
 
     @Test
     public void testEncode_ToOneRelationship() {
-        AgEntity<E4> target = mock(AgEntity.class);
-        when(target.getName()).thenReturn("E4");
+        AgEntity<T> target = mock(AgEntity.class);
+        when(target.getName()).thenReturn("T");
         AgRelationship r = new DefaultAgRelationship("rel", target, false, new ReaderBasedResolver(BeanPropertyReader.reader()));
-        assertEquals("{\"name\":\"rel\",\"type\":\"E4\",\"relationship\":true}", toJson(encoder, r));
+        assertEquals("{\"name\":\"rel\",\"type\":\"T\",\"relationship\":true}", toJson(encoder, r));
     }
 
     @Test
     public void testEncode_ToManyRelationship() {
-        AgEntity<E4> target = mock(AgEntity.class);
-        when(target.getName()).thenReturn("E4");
+        AgEntity<T> target = mock(AgEntity.class);
+        when(target.getName()).thenReturn("T");
         AgRelationship r = new DefaultAgRelationship("rel", target, true, new ReaderBasedResolver(BeanPropertyReader.reader()));
-        assertEquals("{\"name\":\"rel\",\"type\":\"E4\",\"relationship\":true,\"collection\":true}", toJson(encoder, r));
+        assertEquals("{\"name\":\"rel\",\"type\":\"T\",\"relationship\":true,\"collection\":true}", toJson(encoder, r));
     }
 
     @Test(expected = UnsupportedOperationException.class)
     public void testEncode_NotAnAttributeOrRelationship() {
         toJson(encoder, "iamastring");
+    }
+
+    public class T {
+
     }
 }
