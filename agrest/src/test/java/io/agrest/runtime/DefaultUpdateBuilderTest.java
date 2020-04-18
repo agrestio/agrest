@@ -1,7 +1,6 @@
 package io.agrest.runtime;
 
 import io.agrest.UpdateStage;
-import io.agrest.it.fixture.cayenne.E2;
 import io.agrest.processor.Processor;
 import io.agrest.processor.ProcessorOutcome;
 import io.agrest.runtime.processor.update.UpdateContext;
@@ -33,13 +32,13 @@ public class DefaultUpdateBuilderTest {
         // note that we do not make any assertions here.. just making sure methods with certain generic signatures
         // would compile without casting...
 
-        createBuilder(E2.class)
+        createBuilder(X.class)
                 .stage(UpdateStage.PARSE_REQUEST, this::doSomething0)
                 .stage(UpdateStage.PARSE_REQUEST, this::doSomething1)
                 .stage(UpdateStage.PARSE_REQUEST, this::doSomething2)
                 .stage(UpdateStage.PARSE_REQUEST, this::doSomething3)
                 .stage(UpdateStage.PARSE_REQUEST, this::doSomething4)
-                .stage(UpdateStage.PARSE_REQUEST, (UpdateContext<E2> s) -> {
+                .stage(UpdateStage.PARSE_REQUEST, (UpdateContext<X> s) -> {
                 })
                 .stage(UpdateStage.PARSE_REQUEST, s -> {
                 });
@@ -51,13 +50,13 @@ public class DefaultUpdateBuilderTest {
         // note that we do not make any assertions here.. just making sure methods with certain generic signatures
         // would compile without casting...
 
-        createBuilder(E2.class)
+        createBuilder(X.class)
                 .terminalStage(UpdateStage.PARSE_REQUEST, this::doSomething0)
                 .terminalStage(UpdateStage.PARSE_REQUEST, this::doSomething1)
                 .terminalStage(UpdateStage.PARSE_REQUEST, this::doSomething2)
                 .terminalStage(UpdateStage.PARSE_REQUEST, this::doSomething3)
                 .terminalStage(UpdateStage.PARSE_REQUEST, this::doSomething4)
-                .terminalStage(UpdateStage.PARSE_REQUEST, (UpdateContext<E2> s) -> {
+                .terminalStage(UpdateStage.PARSE_REQUEST, (UpdateContext<X> s) -> {
                 })
                 .terminalStage(UpdateStage.PARSE_REQUEST, s -> {
                 });
@@ -69,13 +68,13 @@ public class DefaultUpdateBuilderTest {
         // note that we do not make any assertions here.. just making sure methods with certain generic signatures
         // would compile without casting...
 
-        createBuilder(E2.class)
+        createBuilder(X.class)
                 .routingStage(UpdateStage.PARSE_REQUEST, this::doSomethingAndReturn0)
                 .routingStage(UpdateStage.PARSE_REQUEST, this::doSomethingAndReturn1)
                 .routingStage(UpdateStage.PARSE_REQUEST, this::doSomethingAndReturn2)
                 .routingStage(UpdateStage.PARSE_REQUEST, this::doSomethingAndReturn3)
                 .routingStage(UpdateStage.PARSE_REQUEST, this::doSomethingAndReturn4)
-                .routingStage(UpdateStage.PARSE_REQUEST, (UpdateContext<E2> s) -> ProcessorOutcome.CONTINUE)
+                .routingStage(UpdateStage.PARSE_REQUEST, (UpdateContext<X> s) -> ProcessorOutcome.CONTINUE)
                 .routingStage(UpdateStage.PARSE_REQUEST, s -> ProcessorOutcome.CONTINUE);
     }
 
@@ -95,9 +94,9 @@ public class DefaultUpdateBuilderTest {
         c.getEntity().setResult(new ArrayList<>());
     }
 
-    private void doSomething4(UpdateContext<E2> c) {
+    private void doSomething4(UpdateContext<X> c) {
         c.getEntity().setResult(new ArrayList<>());
-        c.getEntity().setResult(new ArrayList<E2>());
+        c.getEntity().setResult(new ArrayList<X>());
     }
 
     private ProcessorOutcome doSomethingAndReturn0(UpdateContext<?> c) {
@@ -118,9 +117,12 @@ public class DefaultUpdateBuilderTest {
         return ProcessorOutcome.CONTINUE;
     }
 
-    private ProcessorOutcome doSomethingAndReturn4(UpdateContext<E2> c) {
+    private ProcessorOutcome doSomethingAndReturn4(UpdateContext<X> c) {
         c.getEntity().setResult(new ArrayList<>());
-        c.getEntity().setResult(new ArrayList<E2>());
+        c.getEntity().setResult(new ArrayList<X>());
         return ProcessorOutcome.CONTINUE;
+    }
+
+    public class X {
     }
 }

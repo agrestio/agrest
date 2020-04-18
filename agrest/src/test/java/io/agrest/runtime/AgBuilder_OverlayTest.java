@@ -1,73 +1,81 @@
 package io.agrest.runtime;
 
 import io.agrest.NestedResourceEntity;
-import io.agrest.it.fixture.cayenne.E1;
-import io.agrest.it.fixture.cayenne.E2;
-import io.agrest.it.fixture.cayenne.E3;
-import io.agrest.it.fixture.cayenne.E5;
 import io.agrest.it.fixture.pojo.model.P1;
 import io.agrest.meta.AgAttribute;
 import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgRelationship;
 import io.agrest.property.PropertyReader;
 import io.agrest.resolver.NestedDataResolver;
-import io.agrest.runtime.cayenne.processor.select.ViaQueryWithParentExpResolver;
+import io.agrest.resolver.ReaderFactoryBasedResolver;
+import io.agrest.runtime.cayenne.ICayennePersister;
 import io.agrest.runtime.meta.IMetadataService;
 import io.agrest.runtime.processor.select.SelectContext;
-import io.agrest.unit.TestWithCayenneMapping;
+import org.apache.cayenne.map.EntityResolver;
+import org.junit.Before;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
-public class AgBuilder_OverlayTest extends TestWithCayenneMapping {
+public class AgBuilder_OverlayTest {
+
+    private ICayennePersister mockCayennePersister ;
+
+    @Before
+    public void before() {
+        this.mockCayennePersister = mock(ICayennePersister.class);
+        when(mockCayennePersister.entityResolver()).thenReturn(mock(EntityResolver.class));
+    }
 
     @Test
     public void testOverlay_RedefineAttribute_New() {
         AgRuntime runtime = new AgBuilder()
                 .cayenneService(mockCayennePersister)
-                .entityOverlay(AgEntity.overlay(E3.class).redefineAttribute("adHoc", Integer.class, e3 -> 2))
+                .entityOverlay(AgEntity.overlay(X.class).redefineAttribute("adHoc", Integer.class, e -> 2))
                 .build();
 
-        E3 e3 = new E3();
-        e3.setName("aname");
+        X x = new X();
+        x.setName("aname");
 
-        AgEntity<E3> e3Entity = runtime.service(IMetadataService.class).getAgEntity(E3.class);
-        assertNotNull(e3Entity);
+        AgEntity<X> entity = runtime.service(IMetadataService.class).getAgEntity(X.class);
+        assertNotNull(entity);
 
-        AgAttribute e3_AdHoc = e3Entity.getAttribute("adHoc");
-        assertNotNull(e3_AdHoc);
-        assertEquals(Integer.class, e3_AdHoc.getType());
-        assertEquals(2, e3_AdHoc.getPropertyReader().value(e3, "adHoc"));
+        AgAttribute x_adHoc = entity.getAttribute("adHoc");
+        assertNotNull(x_adHoc);
+        assertEquals(Integer.class, x_adHoc.getType());
+        assertEquals(2, x_adHoc.getPropertyReader().value(x, "adHoc"));
 
-        AgAttribute e3_Unchanged = e3Entity.getAttribute("name");
-        assertNotNull(e3_Unchanged);
-        assertEquals(String.class, e3_Unchanged.getType());
-        assertEquals("aname", e3_Unchanged.getPropertyReader().value(e3, "name"));
+        AgAttribute x_Unchanged = entity.getAttribute("name");
+        assertNotNull(x_Unchanged);
+        assertEquals(String.class, x_Unchanged.getType());
+        assertEquals("aname", x_Unchanged.getPropertyReader().value(x, "name"));
     }
 
     @Test
     public void testOverlay_RedefineAttribute_Replace() {
         AgRuntime runtime = new AgBuilder()
                 .cayenneService(mockCayennePersister)
-                .entityOverlay(AgEntity.overlay(E3.class).redefineAttribute("phoneNumber", Long.class, e3 -> Long.valueOf(e3.getPhoneNumber())))
+                .entityOverlay(AgEntity.overlay(X.class).redefineAttribute("phoneNumber", Long.class, x -> Long.valueOf(x.getPhoneNumber())))
                 .build();
 
-        E3 e3 = new E3();
-        e3.setName("aname");
-        e3.setPhoneNumber("3333333");
+        X x = new X();
+        x.setName("aname");
+        x.setPhoneNumber("3333333");
 
-        AgEntity<E3> e3Entity = runtime.service(IMetadataService.class).getAgEntity(E3.class);
-        assertNotNull(e3Entity);
+        AgEntity<X> entity = runtime.service(IMetadataService.class).getAgEntity(X.class);
+        assertNotNull(entity);
 
-        AgAttribute e3_Replaced = e3Entity.getAttribute("phoneNumber");
-        assertNotNull(e3_Replaced);
-        assertEquals(Long.class, e3_Replaced.getType());
-        assertEquals(3_333_333L, e3_Replaced.getPropertyReader().value(e3, "phoneNumber"));
+        AgAttribute replaced = entity.getAttribute("phoneNumber");
+        assertNotNull(replaced);
+        assertEquals(Long.class, replaced.getType());
+        assertEquals(3_333_333L, replaced.getPropertyReader().value(x, "phoneNumber"));
 
-        AgAttribute e3_Unchanged = e3Entity.getAttribute("name");
-        assertNotNull(e3_Unchanged);
-        assertEquals(String.class, e3_Unchanged.getType());
-        assertEquals("aname", e3_Unchanged.getPropertyReader().value(e3, "name"));
+        AgAttribute unchanged = entity.getAttribute("name");
+        assertNotNull(unchanged);
+        assertEquals(String.class, unchanged.getType());
+        assertEquals("aname", unchanged.getPropertyReader().value(x, "name"));
     }
 
     @Test
@@ -76,27 +84,26 @@ public class AgBuilder_OverlayTest extends TestWithCayenneMapping {
         NestedDataResolver<?> resolver = new TestNestedDataResolver();
 
         AgRuntime runtime = new AgBuilder()
-                .cayenneRuntime(TestWithCayenneMapping.runtime)
-                .entityOverlay(AgEntity.overlay(E3.class).redefineRelationshipResolver("e2", (t, n) -> resolver))
+                .cayenneService(mockCayennePersister)
+                .entityOverlay(AgEntity.overlay(X.class).redefineRelationshipResolver("y", (t, n) -> resolver))
                 .build();
 
         IMetadataService metadata = runtime.service(IMetadataService.class);
 
-        AgEntity<E3> e3Entity = metadata.getAgEntity(E3.class);
-        assertNotNull(e3Entity);
+        AgEntity<X> entity = metadata.getAgEntity(X.class);
+        assertNotNull(entity);
 
-        AgRelationship replaced = e3Entity.getRelationship("e2");
+        AgRelationship replaced = entity.getRelationship("y");
         assertNotNull(replaced);
-        assertSame(metadata.getAgEntity(E2.class), replaced.getTargetEntity());
+        assertSame(metadata.getAgEntity(Y.class), replaced.getTargetEntity());
         assertSame(resolver, replaced.getResolver());
         assertFalse(replaced.isToMany());
 
-        AgRelationship unchanged = e3Entity.getRelationship("e5");
+        AgRelationship unchanged = entity.getRelationship("z");
         assertNotNull(unchanged);
-        assertSame(metadata.getAgEntity(E5.class), unchanged.getTargetEntity());
+        assertSame(metadata.getAgEntity(Z.class), unchanged.getTargetEntity());
         assertNotSame(resolver, unchanged.getResolver());
-        assertTrue(unchanged.getResolver() instanceof ViaQueryWithParentExpResolver);
-
+        assertTrue(unchanged.getResolver() instanceof ReaderFactoryBasedResolver);
         assertFalse(unchanged.isToMany());
     }
 
@@ -106,23 +113,23 @@ public class AgBuilder_OverlayTest extends TestWithCayenneMapping {
         NestedDataResolver<?> resolver = new TestNestedDataResolver();
 
         AgRuntime runtime = new AgBuilder()
-                .cayenneRuntime(TestWithCayenneMapping.runtime)
-                .entityOverlay(AgEntity.overlay(E3.class).redefineRelationshipResolver("adHoc", (t, n) -> resolver))
+                .cayenneService(mockCayennePersister)
+                .entityOverlay(AgEntity.overlay(X.class).redefineRelationshipResolver("adHoc", (t, n) -> resolver))
                 .build();
 
         IMetadataService metadata = runtime.service(IMetadataService.class);
 
-        AgEntity<E3> e3Entity = metadata.getAgEntity(E3.class);
-        assertNotNull(e3Entity);
+        AgEntity<X> entity = metadata.getAgEntity(X.class);
+        assertNotNull(entity);
 
-        AgRelationship adHoc = e3Entity.getRelationship("adHoc");
+        AgRelationship adHoc = entity.getRelationship("adHoc");
         assertNull(adHoc);
 
-        AgRelationship unchanged = e3Entity.getRelationship("e5");
+        AgRelationship unchanged = entity.getRelationship("z");
         assertNotNull(unchanged);
-        assertSame(metadata.getAgEntity(E5.class), unchanged.getTargetEntity());
+        assertSame(metadata.getAgEntity(Z.class), unchanged.getTargetEntity());
         assertNotSame(resolver, unchanged.getResolver());
-        assertTrue(unchanged.getResolver() instanceof ViaQueryWithParentExpResolver);
+        assertTrue(unchanged.getResolver() instanceof ReaderFactoryBasedResolver);
         assertFalse(unchanged.isToMany());
     }
 
@@ -132,27 +139,27 @@ public class AgBuilder_OverlayTest extends TestWithCayenneMapping {
         NestedDataResolver<Object> resolver = new TestNestedDataResolver<>();
 
         AgRuntime runtime = new AgBuilder()
-                .cayenneRuntime(TestWithCayenneMapping.runtime)
+                .cayenneService(mockCayennePersister)
                 // just for kicks redefine to-one as to-many, and change its target
-                .entityOverlay(AgEntity.overlay(E3.class).redefineToMany("e2", E1.class, (t, n) -> resolver))
+                .entityOverlay(AgEntity.overlay(X.class).redefineToMany("y", A.class, (t, n) -> resolver))
                 .build();
 
         IMetadataService metadata = runtime.service(IMetadataService.class);
 
-        AgEntity<E3> e3Entity = metadata.getAgEntity(E3.class);
-        assertNotNull(e3Entity);
+        AgEntity<X> entity = metadata.getAgEntity(X.class);
+        assertNotNull(entity);
 
-        AgRelationship replaced = e3Entity.getRelationship("e2");
+        AgRelationship replaced = entity.getRelationship("y");
         assertNotNull(replaced);
-        assertSame(metadata.getAgEntity(E1.class), replaced.getTargetEntity());
+        assertSame(metadata.getAgEntity(A.class), replaced.getTargetEntity());
         assertSame(resolver, replaced.getResolver());
         assertTrue(replaced.isToMany());
 
-        AgRelationship unchanged = e3Entity.getRelationship("e5");
+        AgRelationship unchanged = entity.getRelationship("z");
         assertNotNull(unchanged);
-        assertSame(metadata.getAgEntity(E5.class), unchanged.getTargetEntity());
+        assertSame(metadata.getAgEntity(Z.class), unchanged.getTargetEntity());
         assertNotSame(resolver, unchanged.getResolver());
-        assertTrue(unchanged.getResolver() instanceof ViaQueryWithParentExpResolver);
+        assertTrue(unchanged.getResolver() instanceof ReaderFactoryBasedResolver);
         assertFalse(unchanged.isToMany());
     }
 
@@ -162,26 +169,26 @@ public class AgBuilder_OverlayTest extends TestWithCayenneMapping {
         NestedDataResolver<P1> resolver = new TestNestedDataResolver<>();
 
         AgRuntime runtime = new AgBuilder()
-                .cayenneRuntime(TestWithCayenneMapping.runtime)
-                .entityOverlay(AgEntity.overlay(E3.class).redefineToOne("adHoc", P1.class, (t, n) -> resolver))
+                .cayenneService(mockCayennePersister)
+                .entityOverlay(AgEntity.overlay(X.class).redefineToOne("adHoc", A.class, (t, n) -> resolver))
                 .build();
 
         IMetadataService metadata = runtime.service(IMetadataService.class);
 
-        AgEntity<E3> e3Entity = metadata.getAgEntity(E3.class);
-        assertNotNull(e3Entity);
+        AgEntity<X> entity = metadata.getAgEntity(X.class);
+        assertNotNull(entity);
 
-        AgRelationship created = e3Entity.getRelationship("adHoc");
+        AgRelationship created = entity.getRelationship("adHoc");
         assertNotNull(created);
-        assertSame(metadata.getAgEntity(P1.class), created.getTargetEntity());
+        assertSame(metadata.getAgEntity(A.class), created.getTargetEntity());
         assertSame(resolver, created.getResolver());
         assertFalse(created.isToMany());
 
-        AgRelationship unchanged = e3Entity.getRelationship("e5");
+        AgRelationship unchanged = entity.getRelationship("z");
         assertNotNull(unchanged);
-        assertSame(metadata.getAgEntity(E5.class), unchanged.getTargetEntity());
+        assertSame(metadata.getAgEntity(Z.class), unchanged.getTargetEntity());
         assertNotSame(resolver, unchanged.getResolver());
-        assertTrue(unchanged.getResolver() instanceof ViaQueryWithParentExpResolver);
+        assertTrue(unchanged.getResolver() instanceof ReaderFactoryBasedResolver);
         assertFalse(unchanged.isToMany());
     }
 
@@ -201,5 +208,61 @@ public class AgBuilder_OverlayTest extends TestWithCayenneMapping {
         public PropertyReader reader(NestedResourceEntity<T> entity) {
             throw new UnsupportedOperationException();
         }
+    }
+
+    public static class X {
+
+        private String name;
+        private String phoneNumber;
+        private Y y;
+        private Z z;
+
+        @io.agrest.annotation.AgAttribute
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        @io.agrest.annotation.AgAttribute
+        public String getPhoneNumber() {
+            return phoneNumber;
+        }
+
+        public void setPhoneNumber(String phoneNumber) {
+            this.phoneNumber = phoneNumber;
+        }
+
+        @io.agrest.annotation.AgRelationship
+        public Y getY() {
+            return y;
+        }
+
+        public void setY(Y y) {
+            this.y = y;
+        }
+
+        @io.agrest.annotation.AgRelationship
+        public Z getZ() {
+            return z;
+        }
+
+        public void setZ(Z z) {
+            this.z = z;
+        }
+    }
+
+    public static class Y {
+
+    }
+
+    public static class Z {
+
+    }
+
+    public static class A {
+
     }
 }
