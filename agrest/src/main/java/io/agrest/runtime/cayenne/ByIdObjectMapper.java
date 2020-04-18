@@ -19,9 +19,6 @@ import java.util.Objects;
 
 import static org.apache.cayenne.exp.ExpressionFactory.joinExp;
 
-/**
- * @since 1.7
- */
 class ByIdObjectMapper<T> implements ObjectMapper<T> {
 
     private AgEntity<T> entity;

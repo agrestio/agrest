@@ -2,6 +2,8 @@ package io.agrest.runtime.cayenne;
 
 import io.agrest.ObjectMapper;
 import io.agrest.ObjectMapperFactory;
+import io.agrest.meta.AgAttribute;
+import io.agrest.meta.AgEntity;
 import io.agrest.runtime.processor.update.UpdateContext;
 import org.apache.cayenne.exp.Property;
 
@@ -30,6 +32,10 @@ public class ByKeyObjectMapperFactory implements ObjectMapperFactory {
 
 	@Override
 	public <T> ObjectMapper<T> createMapper(UpdateContext<T> context) {
-		return new ByKeyObjectMapper<>(property);
+		AgEntity<T> entity = context.getEntity().getAgEntity();
+
+		// TODO: should we account for "id" attributes here?
+		AgAttribute attribute = entity.getAttribute(property);
+		return new ByKeyObjectMapper<>(attribute);
 	}
 }
