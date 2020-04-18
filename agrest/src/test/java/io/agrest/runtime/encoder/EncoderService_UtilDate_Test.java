@@ -6,7 +6,11 @@ import io.agrest.annotation.AgAttribute;
 import io.agrest.encoder.Encoder;
 import io.agrest.encoder.Encoders;
 import io.agrest.encoder.ISODateTimeEncoder;
+import io.agrest.meta.AgDataMap;
 import io.agrest.meta.AgEntity;
+import io.agrest.meta.LazyAgDataMap;
+import io.agrest.meta.compiler.AgEntityCompiler;
+import io.agrest.meta.compiler.PojoEntityCompiler;
 import io.agrest.runtime.semantics.RelationshipMapper;
 import io.agrest.unit.ResourceEntityUtils;
 import org.junit.Before;
@@ -20,7 +24,6 @@ import java.util.Collections;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 public class EncoderService_UtilDate_Test {
 
@@ -40,9 +43,9 @@ public class EncoderService_UtilDate_Test {
                 new RelationshipMapper(),
                 Collections.emptyMap());
 
-        this.utilDateEntity = mock(AgEntity.class);
-        when(utilDateEntity.getType()).thenReturn(PUtilDate.class);
-        when(utilDateEntity.getName()).thenReturn("PUtilDate");
+        AgEntityCompiler compiler = new PojoEntityCompiler(Collections.emptyMap());
+        AgDataMap dataMap = new LazyAgDataMap(Collections.singletonList(compiler));
+        this.utilDateEntity = dataMap.getEntity(PUtilDate.class);
     }
 
     /**
@@ -56,12 +59,12 @@ public class EncoderService_UtilDate_Test {
      * @see ISODateTimeEncoder
      */
     @Test
-    public void testJavaUtilDate() {
-        _testJavaUtilDate(new java.util.Date(EPOCH_MILLIS), "yyyy-MM-dd'T'HH:mm:ss");
-        _testJavaUtilDate(new java.util.Date(EPOCH_MILLIS_WITH_FRACTION), "yyyy-MM-dd'T'HH:mm:ss.SSS");
+    public void testUtilDate() {
+        testUtilDate(new java.util.Date(EPOCH_MILLIS), "yyyy-MM-dd'T'HH:mm:ss");
+        testUtilDate(new java.util.Date(EPOCH_MILLIS_WITH_FRACTION), "yyyy-MM-dd'T'HH:mm:ss.SSS");
     }
 
-    private void _testJavaUtilDate(java.util.Date date, String expectedPattern) {
+    private void testUtilDate(java.util.Date date, String expectedPattern) {
 
         ResourceEntity<PUtilDate> re = new RootResourceEntity<>(utilDateEntity, null);
         ResourceEntityUtils.appendAttribute(re, "date", java.util.Date.class);

@@ -5,7 +5,11 @@ import io.agrest.RootResourceEntity;
 import io.agrest.annotation.AgAttribute;
 import io.agrest.encoder.Encoder;
 import io.agrest.encoder.Encoders;
+import io.agrest.meta.AgDataMap;
 import io.agrest.meta.AgEntity;
+import io.agrest.meta.LazyAgDataMap;
+import io.agrest.meta.compiler.AgEntityCompiler;
+import io.agrest.meta.compiler.PojoEntityCompiler;
 import io.agrest.runtime.semantics.RelationshipMapper;
 import io.agrest.unit.ResourceEntityUtils;
 import org.junit.Before;
@@ -22,7 +26,6 @@ import java.util.Collections;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 public class EncoderService_SqlDateTime_Test {
 
@@ -42,9 +45,9 @@ public class EncoderService_SqlDateTime_Test {
                 new RelationshipMapper(),
                 Collections.emptyMap());
 
-        this.sqlDateTimeEntity = mock(AgEntity.class);
-        when(sqlDateTimeEntity.getType()).thenReturn(PSqlDateTime.class);
-        when(sqlDateTimeEntity.getName()).thenReturn("PSqlDateTime");
+        AgEntityCompiler compiler = new PojoEntityCompiler(Collections.emptyMap());
+        AgDataMap dataMap = new LazyAgDataMap(Collections.singletonList(compiler));
+        this.sqlDateTimeEntity = dataMap.getEntity(PSqlDateTime.class);
     }
 
     /**
