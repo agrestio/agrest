@@ -58,7 +58,7 @@ public class EncoderService_DateTime_Test {
     }
 
     @Test
-    public void testJava8ISODate() {
+    public void testLocalDate() {
         ResourceEntity<PDate> re = new RootResourceEntity<>(dateEntity, null);
         ResourceEntityUtils.appendAttribute(re, "date", LocalDate.class);
 
@@ -72,16 +72,15 @@ public class EncoderService_DateTime_Test {
     }
 
     @Test
-    public void testJava8ISOTime() {
+    public void testLocalTime() {
         // fractional part is not printed, when less than a millisecond
-        doTestJava8ISOTime(LocalTime.of(10, 0, 0), "HH:mm:ss");
-        doTestJava8ISOTime(LocalTime.of(10, 0, 0, 1), "HH:mm:ss");
-        doTestJava8ISOTime(LocalTime.of(10, 0, 0, 999_999), "HH:mm:ss");
-        int millisecond = 1_000_000; // millisecond is 10^6 nanoseconds
-        doTestJava8ISOTime(LocalTime.of(10, 0, 0, millisecond), "HH:mm:ss.SSS");
+        testLocalTime(LocalTime.of(10, 0, 0), "HH:mm:ss");
+        testLocalTime(LocalTime.of(10, 0, 0, 1), "HH:mm:ss");
+        testLocalTime(LocalTime.of(10, 0, 0, 999_999), "HH:mm:ss");
+        testLocalTime(LocalTime.of(10, 0, 0, 1_000_000), "HH:mm:ss.SSS"); // millisecond is 10^6 nanoseconds
     }
 
-    private void doTestJava8ISOTime(LocalTime time, String expectedPattern) {
+    private void testLocalTime(LocalTime time, String expectedPattern) {
 
         ResourceEntity<PTime> re = new RootResourceEntity<>(timeEntity, null);
         ResourceEntityUtils.appendAttribute(re, "time", LocalTime.class);
@@ -94,16 +93,15 @@ public class EncoderService_DateTime_Test {
     }
 
     @Test
-    public void testJava8ISOTimestamp() {
+    public void testLocalDateTime() {
         // fractional part is not printed, when less than a millisecond
-        doTestJava8ISOTimestamp(LocalDateTime.of(2017, 1, 1, 10, 0, 0), "yyyy-MM-dd'T'HH:mm:ss");
-        doTestJava8ISOTimestamp(LocalDateTime.of(2017, 1, 1, 10, 0, 0, 1), "yyyy-MM-dd'T'HH:mm:ss");
-        doTestJava8ISOTimestamp(LocalDateTime.of(2017, 1, 1, 10, 0, 0, 999_999), "yyyy-MM-dd'T'HH:mm:ss");
-        int millisecond = 1_000_000; // millisecond is 10^6 nanoseconds
-        doTestJava8ISOTimestamp(LocalDateTime.of(2017, 1, 1, 10, 0, 0, millisecond), "yyyy-MM-dd'T'HH:mm:ss.SSS");
+        testLocalDateTime(LocalDateTime.of(2017, 1, 1, 10, 0, 0), "yyyy-MM-dd'T'HH:mm:ss");
+        testLocalDateTime(LocalDateTime.of(2017, 1, 1, 10, 0, 0, 1), "yyyy-MM-dd'T'HH:mm:ss");
+        testLocalDateTime(LocalDateTime.of(2017, 1, 1, 10, 0, 0, 999_999), "yyyy-MM-dd'T'HH:mm:ss");
+        testLocalDateTime(LocalDateTime.of(2017, 1, 1, 10, 0, 0, 1_000_000), "yyyy-MM-dd'T'HH:mm:ss.SSS"); // millisecond is 10^6 nanoseconds
     }
 
-    private void doTestJava8ISOTimestamp(LocalDateTime dateTime, String expectedPattern) {
+    private void testLocalDateTime(LocalDateTime dateTime, String expectedPattern) {
 
         ResourceEntity<PDateTime> re = new RootResourceEntity<>(dateTimeEntity, null);
         ResourceEntityUtils.appendAttribute(re, "timestamp", LocalDateTime.class);
@@ -116,16 +114,15 @@ public class EncoderService_DateTime_Test {
     }
 
     @Test
-    public void testJava8ISOOffsetDateTime() {
+    public void testOffsetDateTime() {
         // fractional part is not printed, when less than a millisecond
-        doTestJava8ISOOffsetDateTime(OffsetDateTime.of(LocalDateTime.of(2017, 1, 1, 10, 0, 0), ZoneOffset.ofHours(3)));
-        doTestJava8ISOOffsetDateTime(OffsetDateTime.of(LocalDateTime.of(2017, 1, 1, 10, 0, 0, 1), ZoneOffset.ofHours(3)));
-        doTestJava8ISOOffsetDateTime(OffsetDateTime.of(LocalDateTime.of(2017, 1, 1, 10, 0, 0, 999_999), ZoneOffset.ofHours(3)));
-        int millisecond = 1_000_000; // millisecond is 10^6 nanoseconds
-        doTestJava8ISOOffsetDateTime(OffsetDateTime.of(LocalDateTime.of(2017, 1, 1, 10, 0, 0, millisecond), ZoneOffset.ofHours(3)));
+        testOffsetDateTime(OffsetDateTime.of(LocalDateTime.of(2017, 1, 1, 10, 0, 0), ZoneOffset.ofHours(3)));
+        testOffsetDateTime(OffsetDateTime.of(LocalDateTime.of(2017, 1, 1, 10, 0, 0, 1), ZoneOffset.ofHours(3)));
+        testOffsetDateTime(OffsetDateTime.of(LocalDateTime.of(2017, 1, 1, 10, 0, 0, 999_999), ZoneOffset.ofHours(3)));
+        testOffsetDateTime(OffsetDateTime.of(LocalDateTime.of(2017, 1, 1, 10, 0, 0, 1_000_000), ZoneOffset.ofHours(3))); // millisecond is 10^6 nanoseconds
     }
 
-    private void doTestJava8ISOOffsetDateTime(OffsetDateTime dateTime) {
+    private void testOffsetDateTime(OffsetDateTime dateTime) {
 
         ResourceEntity<POffsetDateTime> re = new RootResourceEntity<>(offsetDateTimeEntity, null);
         ResourceEntityUtils.appendAttribute(re, "timestamp", OffsetDateTime.class);
