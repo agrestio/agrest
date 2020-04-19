@@ -1,5 +1,18 @@
 ## Upgrading to 3.4
 
+### Isolating a pluggable Cayenne backend [#433](https://github.com/agrestio/agrest/issues/433) 
+
+Code related to Cayenne backend was isolated in its own module `agrest-cayenne`. The old `agrest` module
+depends on it, so dependencies do not need to be upgraded. However bootstrapping Cayenne is now done differently.
+`ServerRuntime` is not longer passed to `AgBuilder`. You must pass it to `AgCayenneBuilder`, and use it to 
+create a module that is passed to `AgBuilder`:
+
+```java
+ServerRuntime runtime = ..;
+AgCayenneModule cayenneExt = AgCayenneBuilder.build(runtime);
+AgBuilder agBuilder = new AgBuilder().module(cayenneExt);
+```
+
 ### Support for Case Insensitive Sorting [#428](https://github.com/agrestio/agrest/issues/428)
 
 Support was added for case-insensitive sorting to the Agrest protocol and the backend framework. While this change 
