@@ -1,6 +1,6 @@
 package io.agrest.runtime.protocol;
 
-import io.agrest.protocol.Exclude;
+import io.agrest.base.protocol.Exclude;
 
 import java.util.List;
 

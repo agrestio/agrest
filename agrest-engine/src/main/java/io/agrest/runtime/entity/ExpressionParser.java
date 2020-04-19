@@ -1,6 +1,6 @@
 package io.agrest.runtime.entity;
 
-import io.agrest.protocol.CayenneExp;
+import io.agrest.base.protocol.CayenneExp;
 import org.apache.cayenne.exp.Expression;
 import org.apache.cayenne.exp.ExpressionFactory;
 

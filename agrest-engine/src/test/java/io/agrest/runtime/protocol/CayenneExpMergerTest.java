@@ -7,7 +7,7 @@ import io.agrest.annotation.AgAttribute;
 import io.agrest.annotation.AgId;
 import io.agrest.meta.compiler.AgEntityCompiler;
 import io.agrest.meta.compiler.PojoEntityCompiler;
-import io.agrest.protocol.CayenneExp;
+import io.agrest.base.protocol.CayenneExp;
 import io.agrest.runtime.entity.CayenneExpMerger;
 import io.agrest.runtime.entity.ExpressionParser;
 import io.agrest.runtime.entity.ExpressionPostProcessor;

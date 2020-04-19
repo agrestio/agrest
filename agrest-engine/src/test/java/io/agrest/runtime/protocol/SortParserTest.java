@@ -1,7 +1,7 @@
 package io.agrest.runtime.protocol;
 
-import io.agrest.protocol.Dir;
-import io.agrest.protocol.Sort;
+import io.agrest.base.protocol.Dir;
+import io.agrest.base.protocol.Sort;
 import io.agrest.runtime.jackson.JacksonService;
 import org.junit.BeforeClass;
 import org.junit.Test;

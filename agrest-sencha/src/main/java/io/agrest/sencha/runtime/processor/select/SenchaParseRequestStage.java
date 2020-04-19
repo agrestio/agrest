@@ -2,7 +2,7 @@ package io.agrest.sencha.runtime.processor.select;
 
 import io.agrest.AgRequest;
 import io.agrest.AgRequestBuilder;
-import io.agrest.protocol.Sort;
+import io.agrest.base.protocol.Sort;
 import io.agrest.runtime.processor.select.ParseRequestStage;
 import io.agrest.runtime.processor.select.SelectContext;
 import io.agrest.runtime.protocol.ParameterExtractor;

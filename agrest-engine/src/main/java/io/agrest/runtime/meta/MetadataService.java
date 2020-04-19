@@ -4,7 +4,7 @@ import io.agrest.AgException;
 import io.agrest.meta.AgDataMap;
 import io.agrest.meta.AgEntity;
 import io.agrest.meta.LazyAgDataMap;
-import io.agrest.meta.Types;
+import io.agrest.base.reflect.Types;
 import io.agrest.meta.compiler.AgEntityCompiler;
 import org.apache.cayenne.di.Inject;
 

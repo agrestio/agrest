@@ -10,7 +10,7 @@ import io.agrest.it.fixture.cayenne.E2;
 import io.agrest.it.fixture.cayenne.E3;
 import io.agrest.it.fixture.cayenne.E4;
 import io.agrest.it.fixture.cayenne.E6;
-import io.agrest.parser.converter.UtcDateConverter;
+import io.agrest.base.jsonvalueconverter.UtcDateConverter;
 import org.junit.BeforeClass;
 import org.junit.Test;
 

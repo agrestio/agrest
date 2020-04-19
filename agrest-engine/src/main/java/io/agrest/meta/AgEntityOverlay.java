@@ -1,7 +1,7 @@
 package io.agrest.meta;
 
-import io.agrest.meta.compiler.BeanAnalyzer;
-import io.agrest.meta.compiler.PropertyGetter;
+import io.agrest.base.reflect.BeanAnalyzer;
+import io.agrest.base.reflect.PropertyGetter;
 import io.agrest.property.PropertyReader;
 import io.agrest.resolver.NestedDataResolver;
 import io.agrest.resolver.NestedDataResolverFactory;

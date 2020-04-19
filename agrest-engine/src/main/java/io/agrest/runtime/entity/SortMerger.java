@@ -2,8 +2,8 @@ package io.agrest.runtime.entity;
 
 import io.agrest.ResourceEntity;
 import io.agrest.meta.AgEntity;
-import io.agrest.protocol.Dir;
-import io.agrest.protocol.Sort;
+import io.agrest.base.protocol.Dir;
+import io.agrest.base.protocol.Sort;
 import io.agrest.runtime.path.IPathDescriptorManager;
 import org.apache.cayenne.di.Inject;
 import org.apache.cayenne.exp.parser.ASTObjPath;

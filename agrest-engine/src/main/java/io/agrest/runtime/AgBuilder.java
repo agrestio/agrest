@@ -3,7 +3,7 @@ package io.agrest.runtime;
 import io.agrest.AgException;
 import io.agrest.AgFeatureProvider;
 import io.agrest.AgModuleProvider;
-import io.agrest.BaseModule;
+import io.agrest.base.BaseModule;
 import io.agrest.DataResponse;
 import io.agrest.EntityConstraint;
 import io.agrest.MetadataResponse;

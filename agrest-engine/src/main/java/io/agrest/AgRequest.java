@@ -1,9 +1,9 @@
 package io.agrest;
 
-import io.agrest.protocol.CayenneExp;
-import io.agrest.protocol.Exclude;
-import io.agrest.protocol.Include;
-import io.agrest.protocol.Sort;
+import io.agrest.base.protocol.CayenneExp;
+import io.agrest.base.protocol.Exclude;
+import io.agrest.base.protocol.Include;
+import io.agrest.base.protocol.Sort;
 
 import java.util.List;
 

@@ -2,7 +2,7 @@ package io.agrest.provider;
 
 import io.agrest.AgException;
 import io.agrest.EntityUpdate;
-import io.agrest.meta.Types;
+import io.agrest.base.reflect.Types;
 import io.agrest.runtime.AgRuntime;
 import io.agrest.runtime.meta.IMetadataService;
 import io.agrest.runtime.protocol.IEntityUpdateParser;

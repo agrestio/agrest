@@ -15,7 +15,7 @@ import org.apache.cayenne.di.Provider;
 import java.util.HashMap;
 import java.util.Map;
 
-import static io.agrest.meta.Types.typeForName;
+import static io.agrest.base.reflect.Types.typeForName;
 
 public class ValueEncodersProvider implements Provider<ValueEncoders> {
 

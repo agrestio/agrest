@@ -1,7 +1,7 @@
 package io.agrest.runtime.entity;
 
 import io.agrest.ResourceEntity;
-import io.agrest.protocol.Exclude;
+import io.agrest.base.protocol.Exclude;
 
 import java.util.List;
 

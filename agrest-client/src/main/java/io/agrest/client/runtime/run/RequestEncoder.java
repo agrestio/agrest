@@ -4,7 +4,7 @@ import io.agrest.client.AgClientException;
 import io.agrest.client.protocol.Expression;
 import io.agrest.client.protocol.Include;
 import io.agrest.client.protocol.Sort;
-import io.agrest.protocol.Dir;
+import io.agrest.base.protocol.Dir;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;

@@ -1,7 +1,7 @@
 package io.agrest.runtime.protocol;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import io.agrest.protocol.CayenneExp;
+import io.agrest.base.protocol.CayenneExp;
 
 /**
  * Parsing of CayenneExp query parameter from string or nested in Json values.

@@ -1,7 +1,7 @@
 package io.agrest;
 
 import io.agrest.meta.AgAttribute;
-import io.agrest.parser.converter.Normalizer;
+import io.agrest.base.jsonvalueconverter.Normalizer;
 
 import java.util.Collection;
 import java.util.Collections;

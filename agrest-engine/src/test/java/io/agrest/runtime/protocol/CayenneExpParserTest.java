@@ -1,6 +1,6 @@
 package io.agrest.runtime.protocol;
 
-import io.agrest.protocol.CayenneExp;
+import io.agrest.base.protocol.CayenneExp;
 import io.agrest.runtime.jackson.JacksonService;
 import org.junit.BeforeClass;
 import org.junit.Test;

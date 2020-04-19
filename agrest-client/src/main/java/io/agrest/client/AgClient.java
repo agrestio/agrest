@@ -9,9 +9,9 @@ import io.agrest.client.protocol.Sort;
 import io.agrest.client.runtime.response.DataResponseHandler;
 import io.agrest.client.runtime.response.SimpleResponseHandler;
 import io.agrest.client.runtime.run.InvocationBuilder;
-import io.agrest.parser.converter.JsonValueConverter;
-import io.agrest.runtime.parser.converter.DefaultJsonValueConverterFactoryProvider;
-import io.agrest.runtime.parser.converter.IJsonValueConverterFactory;
+import io.agrest.base.jsonvalueconverter.JsonValueConverter;
+import io.agrest.base.jsonvalueconverter.DefaultJsonValueConverterFactoryProvider;
+import io.agrest.base.jsonvalueconverter.IJsonValueConverterFactory;
 
 import javax.ws.rs.client.Invocation;
 import javax.ws.rs.client.WebTarget;

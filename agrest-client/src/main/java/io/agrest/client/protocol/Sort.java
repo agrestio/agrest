@@ -1,6 +1,6 @@
 package io.agrest.client.protocol;
 
-import io.agrest.protocol.Dir;
+import io.agrest.base.protocol.Dir;
 
 /**
  * @since 2.0

@@ -10,7 +10,7 @@ import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgEntityOverlay;
 import io.agrest.meta.compiler.AgEntityCompiler;
 import io.agrest.meta.compiler.PojoEntityCompiler;
-import io.agrest.protocol.Include;
+import io.agrest.base.protocol.Include;
 import io.agrest.resolver.ThrowingNestedDataResolver;
 import io.agrest.runtime.meta.IMetadataService;
 import io.agrest.runtime.meta.MetadataService;

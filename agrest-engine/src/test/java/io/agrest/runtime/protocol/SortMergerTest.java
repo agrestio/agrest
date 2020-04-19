@@ -6,7 +6,7 @@ import io.agrest.annotation.AgAttribute;
 import io.agrest.annotation.AgId;
 import io.agrest.meta.compiler.AgEntityCompiler;
 import io.agrest.meta.compiler.PojoEntityCompiler;
-import io.agrest.protocol.Sort;
+import io.agrest.base.protocol.Sort;
 import io.agrest.runtime.entity.SortMerger;
 import io.agrest.runtime.meta.MetadataService;
 import io.agrest.runtime.path.PathDescriptorManager;

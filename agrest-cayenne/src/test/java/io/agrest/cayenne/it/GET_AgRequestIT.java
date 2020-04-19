@@ -7,8 +7,8 @@ import io.agrest.cayenne.unit.JerseyAndDerbyCase;
 import io.agrest.it.fixture.cayenne.E2;
 import io.agrest.it.fixture.cayenne.E3;
 import io.agrest.it.fixture.cayenne.E4;
-import io.agrest.protocol.CayenneExp;
-import io.agrest.protocol.Sort;
+import io.agrest.base.protocol.CayenneExp;
+import io.agrest.base.protocol.Sort;
 import org.junit.BeforeClass;
 import org.junit.Test;
 

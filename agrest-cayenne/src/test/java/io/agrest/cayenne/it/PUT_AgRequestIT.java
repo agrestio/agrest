@@ -5,8 +5,8 @@ import io.agrest.AgRequest;
 import io.agrest.DataResponse;
 import io.agrest.cayenne.unit.JerseyAndDerbyCase;
 import io.agrest.it.fixture.cayenne.E3;
-import io.agrest.protocol.Exclude;
-import io.agrest.protocol.Include;
+import io.agrest.base.protocol.Exclude;
+import io.agrest.base.protocol.Include;
 import org.junit.BeforeClass;
 import org.junit.Test;
 

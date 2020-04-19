@@ -4,7 +4,7 @@ import io.agrest.AgException;
 import io.agrest.PathConstants;
 import io.agrest.ResourceEntity;
 import io.agrest.meta.AgEntity;
-import io.agrest.protocol.Exclude;
+import io.agrest.base.protocol.Exclude;
 
 import javax.ws.rs.core.Response.Status;
 import java.util.List;

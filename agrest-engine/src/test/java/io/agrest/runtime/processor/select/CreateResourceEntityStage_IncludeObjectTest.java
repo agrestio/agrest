@@ -6,7 +6,7 @@ import io.agrest.annotation.AgId;
 import io.agrest.annotation.AgRelationship;
 import io.agrest.meta.compiler.AgEntityCompiler;
 import io.agrest.meta.compiler.PojoEntityCompiler;
-import io.agrest.protocol.Include;
+import io.agrest.base.protocol.Include;
 import io.agrest.runtime.entity.CayenneExpMerger;
 import io.agrest.runtime.entity.ExcludeMerger;
 import io.agrest.runtime.entity.ExpressionParser;

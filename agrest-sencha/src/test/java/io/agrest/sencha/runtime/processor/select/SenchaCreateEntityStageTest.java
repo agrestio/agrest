@@ -3,7 +3,7 @@ package io.agrest.sencha.runtime.processor.select;
 import io.agrest.ResourceEntity;
 import io.agrest.cayenne.unit.TestWithCayenneMapping;
 import io.agrest.it.fixture.cayenne.E2;
-import io.agrest.protocol.CayenneExp;
+import io.agrest.base.protocol.CayenneExp;
 import io.agrest.runtime.entity.CayenneExpMerger;
 import io.agrest.runtime.entity.ExcludeMerger;
 import io.agrest.runtime.entity.ExpressionParser;

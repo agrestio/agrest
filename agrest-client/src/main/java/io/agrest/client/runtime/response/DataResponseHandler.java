@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.agrest.client.ClientDataResponse;
 import io.agrest.client.AgClientException;
-import io.agrest.parser.converter.JsonValueConverter;
+import io.agrest.base.jsonvalueconverter.JsonValueConverter;
 
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;

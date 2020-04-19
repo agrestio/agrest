@@ -3,7 +3,7 @@ package io.agrest.sencha.runtime.protocol;
 import com.fasterxml.jackson.databind.JsonNode;
 import io.agrest.meta.AgEntity;
 import io.agrest.runtime.jackson.IJacksonService;
-import io.agrest.runtime.parser.converter.IJsonValueConverterFactory;
+import io.agrest.base.jsonvalueconverter.IJsonValueConverterFactory;
 import io.agrest.runtime.protocol.EntityUpdateJsonTraverser;
 import io.agrest.runtime.protocol.EntityUpdateJsonVisitor;
 import io.agrest.runtime.protocol.EntityUpdateParser;
