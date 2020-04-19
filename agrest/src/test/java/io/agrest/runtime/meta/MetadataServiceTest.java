@@ -1,45 +1,98 @@
 package io.agrest.runtime.meta;
 
-import io.agrest.it.fixture.cayenne.E4;
-import io.agrest.it.fixture.cayenne.E5;
+import io.agrest.annotation.AgAttribute;
+import io.agrest.annotation.AgId;
+import io.agrest.annotation.AgRelationship;
 import io.agrest.meta.AgEntity;
-import io.agrest.unit.TestWithCayenneMapping;
+import io.agrest.meta.compiler.AgEntityCompiler;
+import io.agrest.meta.compiler.PojoEntityCompiler;
+import org.junit.BeforeClass;
 import org.junit.Test;
+
+import java.util.Collections;
+import java.util.List;
 
 import static org.junit.Assert.*;
 
-public class MetadataServiceTest extends TestWithCayenneMapping {
+public class MetadataServiceTest {
+
+	private static IMetadataService metadata;
+
+	@BeforeClass
+	public static void before() {
+		AgEntityCompiler compiler = new PojoEntityCompiler(Collections.emptyMap());
+		metadata = new MetadataService(Collections.singletonList(compiler));
+	}
 
 	@Test
 	public void testGetAgEntity_NoRelationships() {
 
-		AgEntity<E4> e4 = metadataService.getAgEntity(E4.class);
-		assertNotNull(e4);
-		assertEquals("E4", e4.getName());
-		assertSame(E4.class, e4.getType());
+		AgEntity<Tr> tr = metadata.getAgEntity(Tr.class);
+		assertNotNull(tr);
+		assertEquals("Tr", tr.getName());
+		assertSame(Tr.class, tr.getType());
+		assertEquals("Tr", tr.getName());
 
-		assertEquals("E4", e4.getName());
+		assertNotNull(tr.getAttribute("a"));
+		assertNotNull(tr.getAttribute("b"));
 
-		assertEquals(0, e4.getRelationships().size());
-
-		assertNotNull(e4.getAttribute(E4.C_BOOLEAN.getName()));
-		assertNotNull(e4.getAttribute(E4.C_DATE.getName()));
+		assertEquals(0, tr.getRelationships().size());
 	}
 
 	@Test
 	public void testGetAgEntity_Relationships() {
 
-		AgEntity<E5> e5 = metadataService.getAgEntity(E5.class);
-		assertNotNull(e5);
-		assertEquals("E5", e5.getName());
-		assertSame(E5.class, e5.getType());
+		AgEntity<Ts> ts = metadata.getAgEntity(Ts.class);
+		assertNotNull(ts);
+		assertEquals("Ts", ts.getName());
+		assertSame(Ts.class, ts.getType());
+		assertEquals("Ts", ts.getName());
 
-		assertEquals("E5", e5.getName());
+		assertNotNull(ts.getAttribute("m"));
+		assertNotNull(ts.getAttribute("n"));
+		assertNotNull(ts.getRelationship("rtrs"));
 
-		assertEquals(2, e5.getRelationships().size());
+		assertEquals(1, ts.getRelationships().size());
+	}
 
-		assertNotNull(e5.getAttribute(E5.NAME.getName()));
-		assertNotNull(e5.getAttribute(E5.DATE.getName()));
-		assertNotNull(e5.getRelationship(E5.E3S.getName()));
+	public static class Tr {
+
+		@AgId
+		public int getId() {
+			throw new UnsupportedOperationException();
+		}
+
+		@AgAttribute
+		public int getA() {
+			throw new UnsupportedOperationException();
+		}
+
+		@AgAttribute
+		public String getB() {
+			throw new UnsupportedOperationException();
+		}
+	}
+
+	public static class Ts {
+
+		@AgId
+		public int getId() {
+			throw new UnsupportedOperationException();
+		}
+
+		@AgAttribute
+		public String getN() {
+			throw new UnsupportedOperationException();
+		}
+
+		@AgAttribute
+		public String getM() {
+			throw new UnsupportedOperationException();
+		}
+
+		@AgRelationship
+		public List<Tr> getRtrs() {
+			throw new UnsupportedOperationException();
+		}
 	}
 }

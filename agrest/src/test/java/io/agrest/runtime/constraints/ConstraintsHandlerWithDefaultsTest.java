@@ -11,7 +11,7 @@ import io.agrest.meta.compiler.AgEntityCompiler;
 import io.agrest.meta.compiler.PojoEntityCompiler;
 import io.agrest.runtime.meta.IMetadataService;
 import io.agrest.runtime.meta.MetadataService;
-import io.agrest.unit.TestWithCayenneMapping;
+import io.agrest.unit.ResourceEntityUtils;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -20,7 +20,7 @@ import java.util.List;
 
 import static org.junit.Assert.*;
 
-public class ConstraintsHandlerWithDefaultsTest extends TestWithCayenneMapping {
+public class ConstraintsHandlerWithDefaultsTest {
 
     private static ConstraintsHandler constraintsHandler;
     private static IMetadataService metadata;
@@ -46,8 +46,8 @@ public class ConstraintsHandlerWithDefaultsTest extends TestWithCayenneMapping {
         Constraint<Tr> tc1 = Constraint.excludeAll(Tr.class).attributes("b");
 
         RootResourceEntity<Tr> te1 = new RootResourceEntity<>(entity, null);
-        appendAttribute(te1, "a", Integer.class);
-        appendAttribute(te1, "b", String.class);
+        ResourceEntityUtils.appendAttribute(te1, "a", Integer.class);
+        ResourceEntityUtils.appendAttribute(te1, "b", String.class);
 
         constraintsHandler.constrainResponse(te1, null, tc1);
         assertEquals(1, te1.getAttributes().size());
@@ -61,8 +61,8 @@ public class ConstraintsHandlerWithDefaultsTest extends TestWithCayenneMapping {
         AgEntity<Tr> entity = metadata.getAgEntity(Tr.class);
 
         RootResourceEntity<Tr> te1 = new RootResourceEntity<>(entity, null);
-        appendAttribute(te1, "a", Integer.class);
-        appendAttribute(te1, "b", String.class);
+        ResourceEntityUtils.appendAttribute(te1, "a", Integer.class);
+        ResourceEntityUtils.appendAttribute(te1, "b", String.class);
 
         constraintsHandler.constrainResponse(te1, null, null);
         assertEquals(1, te1.getAttributes().size());
@@ -76,8 +76,8 @@ public class ConstraintsHandlerWithDefaultsTest extends TestWithCayenneMapping {
         AgEntity<Ts> entity = metadata.getAgEntity(Ts.class);
 
         RootResourceEntity<Ts> te1 = new RootResourceEntity<>(entity, null);
-        appendAttribute(te1, "m", String.class);
-        appendAttribute(te1, "n", String.class);
+        ResourceEntityUtils.appendAttribute(te1, "m", String.class);
+        ResourceEntityUtils.appendAttribute(te1, "n", String.class);
 
         constraintsHandler.constrainResponse(te1, null, null);
         assertEquals(2, te1.getAttributes().size());

@@ -9,13 +9,11 @@ import io.agrest.annotation.AgId;
 import io.agrest.annotation.AgRelationship;
 import io.agrest.constraints.Constraint;
 import io.agrest.meta.AgEntity;
-import io.agrest.meta.DefaultAgAttribute;
 import io.agrest.meta.compiler.AgEntityCompiler;
 import io.agrest.meta.compiler.PojoEntityCompiler;
-import io.agrest.property.BeanPropertyReader;
 import io.agrest.runtime.meta.IMetadataService;
 import io.agrest.runtime.meta.MetadataService;
-import org.apache.cayenne.exp.parser.ASTObjPath;
+import io.agrest.unit.ResourceEntityUtils;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -123,12 +121,12 @@ public class ConstraintsHandlerTest {
         Constraint<Tr> tc1 = Constraint.excludeAll(Tr.class).attributes("a", "b");
 
         ResourceEntity<Tr> te1 = new RootResourceEntity<>(entityTr, null);
-        appendAttribute(te1, "c");
-        appendAttribute(te1, "b");
+        ResourceEntityUtils.appendAttribute(te1, "c");
+        ResourceEntityUtils.appendAttribute(te1, "b");
 
         NestedResourceEntity<Ts> te11 = new NestedResourceEntity<>(entityTs, null, te1, entityTr.getRelationship("rts"));
-        appendAttribute(te11, "a1");
-        appendAttribute(te11, "b1");
+        ResourceEntityUtils.appendAttribute(te11, "a1");
+        ResourceEntityUtils.appendAttribute(te11, "b1");
         te1.getChildren().put("d", te11);
 
         constraintsHandler.constrainResponse(te1, null, tc1);
@@ -150,17 +148,17 @@ public class ConstraintsHandlerTest {
                 .path("rtu", Constraint.excludeAll(Tu.class).attributes("k", "l"));
 
         ResourceEntity<Tr> tr = new RootResourceEntity<>(entityTr, null);
-        appendAttribute(tr, "c");
-        appendAttribute(tr, "b");
+        ResourceEntityUtils. appendAttribute(tr, "c");
+        ResourceEntityUtils.appendAttribute(tr, "b");
 
         NestedResourceEntity<Ts> ts = new NestedResourceEntity<>(entityTs, null, tr, entityTr.getRelationship("rts"));
-        appendAttribute(ts, "m");
-        appendAttribute(ts, "z");
+        ResourceEntityUtils.appendAttribute(ts, "m");
+        ResourceEntityUtils.appendAttribute(ts, "z");
         tr.getChildren().put("rts", ts);
 
         NestedResourceEntity<Tv> tv = new NestedResourceEntity<>(entityTv, null, tr, entityTr.getRelationship("rtv"));
-        appendAttribute(tv, "p");
-        appendAttribute(tv, "z");
+        ResourceEntityUtils.appendAttribute(tv, "p");
+        ResourceEntityUtils.appendAttribute(tv, "z");
         tr.getChildren().put("rtv", tv);
 
         constraintsHandler.constrainResponse(tr, null, constraint);
@@ -226,12 +224,12 @@ public class ConstraintsHandlerTest {
                 .path("rts", Constraint.excludeAll(Ts.class).attribute("m"));
 
         ResourceEntity<Ts> tsMapBy = new RootResourceEntity<>(entityTs, null);
-        appendAttribute(tsMapBy, "m");
-        appendAttribute(tsMapBy, "n");
+        ResourceEntityUtils.appendAttribute(tsMapBy, "m");
+        ResourceEntityUtils.appendAttribute(tsMapBy, "n");
 
         NestedResourceEntity<Tr> trMapBy = new NestedResourceEntity<>(entityTr, null, tsMapBy, entityTr.getRelationship("rts"));
-        appendAttribute(trMapBy, "a");
-        appendAttribute(trMapBy, "b");
+        ResourceEntityUtils.appendAttribute(trMapBy, "a");
+        ResourceEntityUtils.appendAttribute(trMapBy, "b");
         tsMapBy.getChildren().put("rts", trMapBy);
 
         ResourceEntity<Tr> e = new RootResourceEntity<>(entityTr, null);
@@ -252,12 +250,12 @@ public class ConstraintsHandlerTest {
                 .path("rts", Constraint.excludeAll(Ts.class).attribute("m"));
 
         ResourceEntity<Ts> tsMapBy = new RootResourceEntity<>(entityTs, null);
-        appendAttribute(tsMapBy, "m");
-        appendAttribute(tsMapBy, "n");
+        ResourceEntityUtils.appendAttribute(tsMapBy, "m");
+        ResourceEntityUtils.appendAttribute(tsMapBy, "n");
 
         NestedResourceEntity<Tr> trMapBy = new NestedResourceEntity<>(entityTr, null, tsMapBy, entityTs.getRelationship("rtrs"));
-        appendAttribute(trMapBy, "a");
-        appendAttribute(trMapBy, "b");
+        ResourceEntityUtils.appendAttribute(trMapBy, "a");
+        ResourceEntityUtils.appendAttribute(trMapBy, "b");
         tsMapBy.getChildren().put("rts", trMapBy);
 
         ResourceEntity<Tr> e = new RootResourceEntity<>(entityTr, null);
@@ -314,10 +312,6 @@ public class ConstraintsHandlerTest {
         constraintsHandler.constrainResponse(te1, null, constraint);
         assertSame(te1MapBy, te1.getMapBy());
         assertEquals("rts", te1.getMapByPath());
-    }
-
-    protected void appendAttribute(ResourceEntity<?> entity, String name) {
-        entity.getAttributes().put(name, new DefaultAgAttribute(name, String.class, new ASTObjPath(name), BeanPropertyReader.reader()));
     }
 
     public static class Tr {
