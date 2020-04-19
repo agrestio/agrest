@@ -13,7 +13,7 @@ import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgRelationship;
 import io.agrest.processor.Processor;
 import io.agrest.processor.ProcessorOutcome;
-import io.agrest.cayenne.processor.Util;
+import io.agrest.cayenne.processor.CayenneUtil;
 import io.agrest.runtime.meta.IMetadataService;
 import io.agrest.runtime.processor.update.UpdateContext;
 import org.apache.cayenne.Cayenne;
@@ -379,7 +379,7 @@ public abstract class CayenneUpdateDataStoreStage implements Processor<UpdateCon
 
         ObjEntity parentEntity = objectContext.getEntityResolver().getObjEntity(parent.getType());
         AgEntity<?> parentAgEntity = metadataService.getAgEntity(context.getParent().getType());
-        final DataObject parentObject = (DataObject) Util.findById(objectContext, parent.getType(),
+        final DataObject parentObject = (DataObject) CayenneUtil.findById(objectContext, parent.getType(),
                 parentAgEntity, parent.getId().get());
 
         if (parentObject == null) {

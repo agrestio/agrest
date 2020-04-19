@@ -1,16 +1,6 @@
 package io.agrest;
 
-import org.apache.cayenne.exp.Expression;
-import org.apache.cayenne.exp.ExpressionFactory;
-import org.apache.cayenne.map.DbJoin;
-import org.apache.cayenne.map.DbRelationship;
-import org.apache.cayenne.map.EntityResolver;
-import org.apache.cayenne.map.ObjEntity;
-import org.apache.cayenne.map.ObjRelationship;
-
 import javax.ws.rs.core.Response.Status;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -70,36 +60,5 @@ public class EntityParent<P> {
 
 	public String getRelationship() {
 		return relationship;
-	}
-
-	public Expression qualifier(EntityResolver resolver) {
-
-		ObjEntity parentEntity = resolver.getObjEntity(type);
-		ObjRelationship objRelationship = parentEntity.getRelationship(relationship);
-
-		if (objRelationship == null) {
-			throw new AgException(Status.BAD_REQUEST, "Invalid relationship: '" + relationship + "'");
-		}
-
-		// navigate through DbRelationships. There may be no reverse ObjRelationship. Reverse DB should always be there
-
-		if (id.size() > 1) {
-			List<Expression> expressions = new ArrayList<>();
-			for (DbRelationship dbRelationship : objRelationship.getDbRelationships()) {
-				DbRelationship reverseRelationship = dbRelationship.getReverseRelationship();
-				for (DbJoin join : reverseRelationship.getJoins()) {
-					Object joinValue = id.get(join.getTargetName());
-					if (joinValue == null) {
-						throw new AgException(Status.BAD_REQUEST,
-								"Failed to build a Cayenne qualifier for a by-parent relationship '" + relationship +
-										"'; one of the parent's ID parts is missing in it's ID: " + join.getTargetName());
-					}
-					expressions.add(ExpressionFactory.matchDbExp(join.getSourceName(), joinValue));
-				}
-			}
-			return ExpressionFactory.and(expressions);
-		} else {
-			return ExpressionFactory.matchDbExp(objRelationship.getReverseDbRelationshipPath(), id.get());
-		}
 	}
 }

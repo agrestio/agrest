@@ -5,6 +5,7 @@ import io.agrest.AgObjectId;
 import io.agrest.NestedResourceEntity;
 import io.agrest.ResourceEntity;
 import io.agrest.RootResourceEntity;
+import io.agrest.cayenne.processor.CayenneUtil;
 import io.agrest.meta.AgAttribute;
 import io.agrest.meta.AgEntity;
 import io.agrest.runtime.processor.select.SelectContext;
@@ -43,7 +44,7 @@ public class CayenneQueryAssembler {
                 : createQuery(context.getEntity());
 
         if (context.getParent() != null) {
-            query.andQualifier(context.getParent().qualifier(cayenneEntityResolver));
+            query.andQualifier(CayenneUtil.parentQualifier(context.getParent(), cayenneEntityResolver));
         }
 
         return query;
@@ -98,7 +99,7 @@ public class CayenneQueryAssembler {
             ObjEntity parentObjEntity = cayenneEntityResolver.getObjEntity(parent.getType());
             ObjRelationship incoming = parentObjEntity.getRelationship(entity.getIncoming().getName());
 
-            if(incoming == null) {
+            if (incoming == null) {
                 throw new IllegalStateException("No such relationship: " + parentObjEntity.getName() + "." + entity.getIncoming().getName());
             }
 

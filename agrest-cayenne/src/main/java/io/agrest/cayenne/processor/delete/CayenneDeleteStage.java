@@ -6,7 +6,7 @@ import io.agrest.AgObjectId;
 import io.agrest.meta.AgEntity;
 import io.agrest.processor.Processor;
 import io.agrest.processor.ProcessorOutcome;
-import io.agrest.cayenne.processor.Util;
+import io.agrest.cayenne.processor.CayenneUtil;
 import io.agrest.runtime.meta.IMetadataService;
 import io.agrest.runtime.processor.delete.DeleteContext;
 import org.apache.cayenne.DataObject;
@@ -65,7 +65,7 @@ public class CayenneDeleteStage implements Processor<DeleteContext<?>> {
     private <T extends DataObject> void deleteById(DeleteContext<T> context, ObjectContext cayenneContext, AgEntity<T> agEntity) {
 
         for (AgObjectId id : context.getIds()) {
-            Object o = Util.findById(cayenneContext, context.getType(), agEntity, id.get());
+            Object o = CayenneUtil.findById(cayenneContext, context.getType(), agEntity, id.get());
 
             if (o == null) {
                 ObjEntity entity = cayenneContext.getEntityResolver().getObjEntity(context.getType());
@@ -81,7 +81,7 @@ public class CayenneDeleteStage implements Processor<DeleteContext<?>> {
     private <T extends DataObject> void deleteByParent(DeleteContext<T> context, ObjectContext cayenneContext, AgEntity<?> agParentEntity) {
 
         EntityParent<?> parent = context.getParent();
-        Object parentObject = Util.findById(cayenneContext, parent.getType(), agParentEntity, parent.getId().get());
+        Object parentObject = CayenneUtil.findById(cayenneContext, parent.getType(), agParentEntity, parent.getId().get());
 
         if (parentObject == null) {
             ObjEntity entity = cayenneContext.getEntityResolver().getObjEntity(parent.getType());
@@ -89,7 +89,7 @@ public class CayenneDeleteStage implements Processor<DeleteContext<?>> {
                     + "' and entity '" + entity.getName() + "'");
         }
 
-        Expression qualifier = parent.qualifier(cayenneContext.getEntityResolver());
+        Expression qualifier = CayenneUtil.parentQualifier(parent, cayenneContext.getEntityResolver());
         SelectQuery<?> select = SelectQuery.query(context.getType());
         select.andQualifier(qualifier);
 

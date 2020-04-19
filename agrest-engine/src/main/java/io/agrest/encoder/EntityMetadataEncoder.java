@@ -5,7 +5,6 @@ import io.agrest.NestedResourceEntity;
 import io.agrest.ResourceEntity;
 import io.agrest.meta.AgAttribute;
 import io.agrest.meta.AgRelationship;
-import org.apache.cayenne.dba.TypesMapping;
 
 import java.io.IOException;
 import java.util.Map;
@@ -48,7 +47,7 @@ public class EntityMetadataEncoder extends AbstractEncoder {
 
             String typeName;
             if (byte[].class.equals(e.getValue().getType())) {
-                typeName = TypesMapping.JAVA_BYTES;
+                typeName = "byte[]";
             } else {
                 typeName = e.getValue().getType().getName();
             }

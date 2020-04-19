@@ -20,6 +20,12 @@
 			<artifactId>agrest-engine</artifactId>
 			<version>${project.version}</version>
 		</dependency>
+		<!-- Sencha extension requires Cayenne extension... No abstract Cayenne-free version is supported -->
+		<dependency>
+			<groupId>io.agrest</groupId>
+			<artifactId>agrest-cayenne</artifactId>
+			<version>${project.version}</version>
+		</dependency>
 
 		<!-- unit test deps -->
 		<dependency>
@@ -61,12 +67,6 @@
 			<groupId>io.agrest</groupId>
 			<artifactId>agrest-engine</artifactId>
 			<type>test-jar</type>
-			<scope>test</scope>
-			<version>${project.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>io.agrest</groupId>
-			<artifactId>agrest-cayenne</artifactId>
 			<scope>test</scope>
 			<version>${project.version}</version>
 		</dependency>
