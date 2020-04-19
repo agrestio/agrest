@@ -95,5 +95,4 @@ public class EntityPathCacheTest {
             throw new UnsupportedOperationException();
         }
     }
-
 }

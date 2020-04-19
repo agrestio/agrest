@@ -2,96 +2,135 @@ package io.agrest.runtime.constraints;
 
 import io.agrest.EntityConstraint;
 import io.agrest.RootResourceEntity;
+import io.agrest.annotation.AgAttribute;
+import io.agrest.annotation.AgId;
+import io.agrest.annotation.AgRelationship;
 import io.agrest.constraints.Constraint;
-import io.agrest.it.fixture.cayenne.E1;
-import io.agrest.it.fixture.cayenne.E2;
 import io.agrest.meta.AgEntity;
+import io.agrest.meta.compiler.AgEntityCompiler;
+import io.agrest.meta.compiler.PojoEntityCompiler;
+import io.agrest.runtime.meta.IMetadataService;
+import io.agrest.runtime.meta.MetadataService;
 import io.agrest.unit.TestWithCayenneMapping;
-import org.apache.cayenne.map.ObjEntity;
-import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 import static org.junit.Assert.*;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 public class ConstraintsHandlerWithDefaultsTest extends TestWithCayenneMapping {
 
-	private ConstraintsHandler constraintHandler;
-	private AgEntity<E1> age1;
-	private AgEntity<E2> age2;
+    private static ConstraintsHandler constraintsHandler;
+    private static IMetadataService metadata;
 
-	@SuppressWarnings("unchecked")
-	@Before
-	public void before() {
+    @BeforeClass
+    public static void before() {
+        AgEntityCompiler compiler = new PojoEntityCompiler(Collections.emptyMap());
+        metadata = new MetadataService(Collections.singletonList(compiler));
 
-		List<EntityConstraint> r = new ArrayList<>();
-		r.add(new DefaultEntityConstraint("E1", true, false, Collections.singleton(E1.AGE.getName()),
-				Collections.emptySet()));
+        List<EntityConstraint> r = Collections.singletonList(
+                new DefaultEntityConstraint("Tr", true, false, Collections.singleton("a"), Collections.emptySet()));
 
-		List<EntityConstraint> w = new ArrayList<>();
-		w.add(new DefaultEntityConstraint("E2", false, false, Collections.singleton(E2.ADDRESS.getName()),
-				Collections.emptySet()));
+        List<EntityConstraint> w = Collections.singletonList(
+                new DefaultEntityConstraint("Ts", false, false, Collections.singleton("n"), Collections.emptySet()));
 
-		ObjEntity e1 = runtime.getChannel().getEntityResolver().getObjEntity(E1.class);
-		ObjEntity e2 = runtime.getChannel().getEntityResolver().getObjEntity(E2.class);
+        constraintsHandler = new ConstraintsHandler(r, w);
+    }
 
-		age1 = mock(AgEntity.class);
-		when(age1.getType()).thenReturn(E1.class);
-		when(age1.getName()).thenReturn(e1.getName());
+    @Test
+    public void testConstrainResponse_PerRequest() {
 
-		age2 = mock(AgEntity.class);
-		when(age2.getType()).thenReturn(E2.class);
-		when(age2.getName()).thenReturn(e2.getName());
+        AgEntity<Tr> entity = metadata.getAgEntity(Tr.class);
+        Constraint<Tr> tc1 = Constraint.excludeAll(Tr.class).attributes("b");
 
-		this.constraintHandler = new ConstraintsHandler(r, w);
-	}
+        RootResourceEntity<Tr> te1 = new RootResourceEntity<>(entity, null);
+        appendAttribute(te1, "a", Integer.class);
+        appendAttribute(te1, "b", String.class);
 
-	@Test
-	public void testConstrainResponse_PerRequest() {
+        constraintsHandler.constrainResponse(te1, null, tc1);
+        assertEquals(1, te1.getAttributes().size());
+        assertTrue(te1.getAttributes().containsKey("b"));
+        assertTrue(te1.getChildren().isEmpty());
+    }
 
-		Constraint<E1> tc1 = Constraint.excludeAll(E1.class).attributes(E1.DESCRIPTION);
+    @Test
+    public void testConstrainResponse_Default() {
 
-		RootResourceEntity<E1> te1 = new RootResourceEntity<>(age1, null);
-		appendAttribute(te1, E1.AGE, Integer.class);
-		appendAttribute(te1, E1.DESCRIPTION, String.class);
+        AgEntity<Tr> entity = metadata.getAgEntity(Tr.class);
 
-		constraintHandler.constrainResponse(te1, null, tc1);
-		assertEquals(1, te1.getAttributes().size());
-		assertTrue(te1.getAttributes().containsKey(E1.DESCRIPTION.getName()));
-		assertTrue(te1.getChildren().isEmpty());
-	}
+        RootResourceEntity<Tr> te1 = new RootResourceEntity<>(entity, null);
+        appendAttribute(te1, "a", Integer.class);
+        appendAttribute(te1, "b", String.class);
 
-	@Test
-	public void testConstrainResponse_Default() {
+        constraintsHandler.constrainResponse(te1, null, null);
+        assertEquals(1, te1.getAttributes().size());
+        assertTrue(te1.getAttributes().containsKey("a"));
+        assertTrue(te1.getChildren().isEmpty());
+    }
 
-		RootResourceEntity<E1> te1 = new RootResourceEntity<>(age1, null);
-		appendAttribute(te1, E1.AGE, Integer.class);
-		appendAttribute(te1, E1.DESCRIPTION, String.class);
+    @Test
+    public void testConstrainResponse_None() {
 
-		constraintHandler.constrainResponse(te1, null, null);
-		assertEquals(1, te1.getAttributes().size());
-		assertTrue(te1.getAttributes().containsKey(E1.AGE.getName()));
-		assertTrue(te1.getChildren().isEmpty());
-	}
+        AgEntity<Ts> entity = metadata.getAgEntity(Ts.class);
 
-	@Test
-	public void testConstrainResponse_None() {
+        RootResourceEntity<Ts> te1 = new RootResourceEntity<>(entity, null);
+        appendAttribute(te1, "m", String.class);
+        appendAttribute(te1, "n", String.class);
 
-		RootResourceEntity<E2> te1 = new RootResourceEntity<>(age2, null);
-		appendAttribute(te1, E2.ADDRESS, String.class);
-		appendAttribute(te1, E2.NAME, String.class);
+        constraintsHandler.constrainResponse(te1, null, null);
+        assertEquals(2, te1.getAttributes().size());
+        assertTrue(te1.getAttributes().containsKey("m"));
+        assertTrue(te1.getAttributes().containsKey("n"));
 
-		constraintHandler.constrainResponse(te1, null, null);
-		assertEquals(2, te1.getAttributes().size());
-		assertTrue(te1.getAttributes().containsKey(E2.ADDRESS.getName()));
-		assertTrue(te1.getAttributes().containsKey(E2.NAME.getName()));
+        assertTrue(te1.getChildren().isEmpty());
+    }
 
-		assertTrue(te1.getChildren().isEmpty());
-	}
+    public static class Tr {
+
+        @AgId
+        public int getId() {
+            throw new UnsupportedOperationException();
+        }
+
+        @AgAttribute
+        public int getA() {
+            throw new UnsupportedOperationException();
+        }
+
+        @AgAttribute
+        public String getB() {
+            throw new UnsupportedOperationException();
+        }
+
+        @AgRelationship
+        public Ts getRts() {
+            throw new UnsupportedOperationException();
+        }
+    }
+
+    public static class Ts {
+
+        @AgId
+        public int getId() {
+            throw new UnsupportedOperationException();
+        }
+
+        @AgAttribute
+        public String getN() {
+            throw new UnsupportedOperationException();
+        }
+
+        @AgAttribute
+        public String getM() {
+            throw new UnsupportedOperationException();
+        }
+
+        @AgRelationship
+        public List<Tr> getRtrs() {
+            throw new UnsupportedOperationException();
+        }
+    }
 
 }

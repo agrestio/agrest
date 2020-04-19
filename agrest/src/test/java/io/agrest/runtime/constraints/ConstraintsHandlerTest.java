@@ -1,23 +1,22 @@
 package io.agrest.runtime.constraints;
 
-import io.agrest.EntityConstraint;
 import io.agrest.NestedResourceEntity;
 import io.agrest.ResourceEntity;
 import io.agrest.RootResourceEntity;
 import io.agrest.SizeConstraints;
+import io.agrest.annotation.AgAttribute;
+import io.agrest.annotation.AgId;
+import io.agrest.annotation.AgRelationship;
 import io.agrest.constraints.Constraint;
-import io.agrest.it.fixture.cayenne.E1;
-import io.agrest.it.fixture.cayenne.E2;
-import io.agrest.it.fixture.cayenne.E3;
-import io.agrest.it.fixture.cayenne.E4;
-import io.agrest.it.fixture.cayenne.E5;
 import io.agrest.meta.AgEntity;
-import io.agrest.meta.AgRelationship;
 import io.agrest.meta.DefaultAgAttribute;
+import io.agrest.meta.compiler.AgEntityCompiler;
+import io.agrest.meta.compiler.PojoEntityCompiler;
 import io.agrest.property.BeanPropertyReader;
-import org.apache.cayenne.exp.Expression;
+import io.agrest.runtime.meta.IMetadataService;
+import io.agrest.runtime.meta.MetadataService;
 import org.apache.cayenne.exp.parser.ASTObjPath;
-import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.util.Collections;
@@ -25,301 +24,408 @@ import java.util.List;
 
 import static org.apache.cayenne.exp.ExpressionFactory.exp;
 import static org.junit.Assert.*;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 public class ConstraintsHandlerTest {
 
-    private ConstraintsHandler constraintHandler;
+    private static ConstraintsHandler constraintsHandler;
+    private static IMetadataService metadata;
 
-    private AgEntity<E1> age0;
-    private AgEntity<E2> age1;
-    private AgEntity<E3> age2;
-    private AgEntity<E4> age3;
-    private AgEntity<E5> age4;
-
-    @SuppressWarnings("unchecked")
-    @Before
-    public void before() {
-
-        age0 = mock(AgEntity.class);
-        when(age0.getName()).thenReturn("E1");
-        when(age0.getType()).thenReturn(E1.class);
-        AgRelationship r1 = mock(AgRelationship.class);
-        when(age0.getRelationship("r1")).thenReturn(r1);
-        when(r1.getName()).thenReturn("r1");
-        when(r1.getTargetEntity()).then(invocation -> age1);
-
-        AgRelationship r2 = mock(AgRelationship.class);
-        when(age0.getRelationship("r2")).thenReturn(r2);
-        when(r2.getName()).thenReturn("r2");
-        when(r2.getTargetEntity()).then(invocation -> age3);
-
-        age1 = mock(AgEntity.class);
-        when(age1.getName()).thenReturn("E2");
-        when(age1.getType()).thenReturn(E2.class);
-
-        AgRelationship r11 = mock(AgRelationship.class);
-        when(age1.getRelationship("r11")).thenReturn(r11);
-        when(r11.getName()).thenReturn("r11");
-        when(r11.getTargetEntity()).then(invocation -> age2);
-
-        age2 = mock(AgEntity.class);
-        when(age2.getName()).thenReturn("E3");
-        when(age2.getType()).thenReturn(E3.class);
-
-        age3 = mock(AgEntity.class);
-        when(age3.getName()).thenReturn("E4");
-        when(age3.getType()).thenReturn(E4.class);
-
-        age4 = mock(AgEntity.class);
-        when(age4.getName()).thenReturn("E5");
-        when(age4.getType()).thenReturn(E5.class);
-
-        List<EntityConstraint> r = Collections.emptyList();
-        List<EntityConstraint> w = Collections.emptyList();
-        this.constraintHandler = new ConstraintsHandler(r, w);
+    @BeforeClass
+    public static void before() {
+        AgEntityCompiler compiler = new PojoEntityCompiler(Collections.emptyMap());
+        metadata = new MetadataService(Collections.singletonList(compiler));
+        constraintsHandler = new ConstraintsHandler(Collections.emptyList(), Collections.emptyList());
     }
 
     @Test
-    public void testApply_FetchOffset() {
+    public void testConstrainResponse_FetchOffset() {
+
+        AgEntity<Tr> entity = metadata.getAgEntity(Tr.class);
 
         SizeConstraints s1 = new SizeConstraints().fetchOffset(5);
         SizeConstraints s2 = new SizeConstraints().fetchOffset(0);
 
-        ResourceEntity<E1> t1 = new RootResourceEntity<>(age0, null);
+        ResourceEntity<Tr> t1 = new RootResourceEntity<>(entity, null);
         t1.setFetchOffset(0);
-        constraintHandler.constrainResponse(t1, s1, null);
+        constraintsHandler.constrainResponse(t1, s1, null);
         assertEquals(0, t1.getFetchOffset());
         assertEquals(5, s1.getFetchOffset());
 
-        ResourceEntity<E1> t2 = new RootResourceEntity<>(age0, null);
+        ResourceEntity<Tr> t2 = new RootResourceEntity<>(entity, null);
         t2.setFetchOffset(3);
-        constraintHandler.constrainResponse(t2, s1, null);
+        constraintsHandler.constrainResponse(t2, s1, null);
         assertEquals(3, t2.getFetchOffset());
         assertEquals(5, s1.getFetchOffset());
 
-        ResourceEntity<E1> t3 = new RootResourceEntity<>(age0, null);
+        ResourceEntity<Tr> t3 = new RootResourceEntity<>(entity, null);
         t3.setFetchOffset(6);
-        constraintHandler.constrainResponse(t3, s1, null);
+        constraintsHandler.constrainResponse(t3, s1, null);
         assertEquals(5, t3.getFetchOffset());
         assertEquals(5, s1.getFetchOffset());
 
-        ResourceEntity<E1> t4 = new RootResourceEntity<>(age0, null);
+        ResourceEntity<Tr> t4 = new RootResourceEntity<>(entity, null);
         t4.setFetchOffset(6);
-        constraintHandler.constrainResponse(t4, s2, null);
+        constraintsHandler.constrainResponse(t4, s2, null);
         assertEquals(6, t4.getFetchOffset());
         assertEquals(0, s2.getFetchOffset());
     }
 
     @Test
-    public void testApply_FetchLimit() {
+    public void testConstrainResponse_FetchLimit() {
+
+        AgEntity<Tr> entity = metadata.getAgEntity(Tr.class);
 
         SizeConstraints s1 = new SizeConstraints().fetchLimit(5);
         SizeConstraints s2 = new SizeConstraints().fetchLimit(0);
 
-        ResourceEntity<E1> t1 = new RootResourceEntity<>(age0, null);
-        constraintHandler.constrainResponse(t1, s1, null);
+        ResourceEntity<Tr> t1 = new RootResourceEntity<>(entity, null);
+        constraintsHandler.constrainResponse(t1, s1, null);
         assertEquals(5, t1.getFetchLimit());
         assertEquals(5, s1.getFetchLimit());
 
-        ResourceEntity<E1> t1_1 = new RootResourceEntity<>(age0, null);
+        ResourceEntity<Tr> t1_1 = new RootResourceEntity<>(entity, null);
         t1_1.setFetchLimit(0);
-        constraintHandler.constrainResponse(t1_1, s1, null);
+        constraintsHandler.constrainResponse(t1_1, s1, null);
         assertEquals(5, t1_1.getFetchLimit());
         assertEquals(5, s1.getFetchLimit());
 
-        ResourceEntity<E1> t1_2 = new RootResourceEntity<>(age0, null);
+        ResourceEntity<Tr> t1_2 = new RootResourceEntity<>(entity, null);
         t1_2.setFetchLimit(-1);
-        constraintHandler.constrainResponse(t1_2, s1, null);
+        constraintsHandler.constrainResponse(t1_2, s1, null);
         assertEquals(5, t1_2.getFetchLimit());
         assertEquals(5, s1.getFetchLimit());
 
-        ResourceEntity<E1> t2 = new RootResourceEntity<>(age0, null);
+        ResourceEntity<Tr> t2 = new RootResourceEntity<>(entity, null);
         t2.setFetchLimit(3);
-        constraintHandler.constrainResponse(t2, s1, null);
+        constraintsHandler.constrainResponse(t2, s1, null);
         assertEquals(3, t2.getFetchLimit());
         assertEquals(5, s1.getFetchLimit());
 
-        ResourceEntity<E1> t3 = new RootResourceEntity<>(age0, null);
+        ResourceEntity<Tr> t3 = new RootResourceEntity<>(entity, null);
         t3.setFetchLimit(6);
-        constraintHandler.constrainResponse(t3, s1, null);
+        constraintsHandler.constrainResponse(t3, s1, null);
         assertEquals(5, t3.getFetchLimit());
         assertEquals(5, s1.getFetchLimit());
 
-        ResourceEntity<E1> t4 = new RootResourceEntity<>(age0, null);
+        ResourceEntity<Tr> t4 = new RootResourceEntity<>(entity, null);
         t4.setFetchLimit(6);
-        constraintHandler.constrainResponse(t4, s2, null);
+        constraintsHandler.constrainResponse(t4, s2, null);
         assertEquals(6, t4.getFetchLimit());
         assertEquals(0, s2.getFetchLimit());
     }
 
     @Test
-    public void testApply_ResourceEntity_NoTargetRel() {
+    public void testConstrainResponse_ResourceEntity_NoTargetRel() {
 
-        Constraint<E1> tc1 = Constraint.excludeAll(E1.class).attributes("a", "b");
+        AgEntity<Tr> entityTr = metadata.getAgEntity(Tr.class);
+        AgEntity<Ts> entityTs = metadata.getAgEntity(Ts.class);
 
-        ResourceEntity<E1> te1 = new RootResourceEntity<>(age0, null);
+        Constraint<Tr> tc1 = Constraint.excludeAll(Tr.class).attributes("a", "b");
+
+        ResourceEntity<Tr> te1 = new RootResourceEntity<>(entityTr, null);
         appendAttribute(te1, "c");
         appendAttribute(te1, "b");
 
-        NestedResourceEntity<?> te11 = new NestedResourceEntity<>(age2, null, null, mock(AgRelationship.class));
+        NestedResourceEntity<Ts> te11 = new NestedResourceEntity<>(entityTs, null, te1, entityTr.getRelationship("rts"));
         appendAttribute(te11, "a1");
         appendAttribute(te11, "b1");
         te1.getChildren().put("d", te11);
 
-        constraintHandler.constrainResponse(te1, null, tc1);
+        constraintsHandler.constrainResponse(te1, null, tc1);
         assertEquals(1, te1.getAttributes().size());
         assertTrue(te1.getAttributes().containsKey("b"));
         assertTrue(te1.getChildren().isEmpty());
     }
 
     @Test
-    public void testApply_ResourceEntity_TargetRel() {
+    public void testConstrainResponse_ResourceEntity_TargetRel() {
 
-        Constraint<E1> tc1 = Constraint.excludeAll(E1.class).attributes("a", "b")
-                .path("r1", Constraint.excludeAll(E2.class).attributes("n", "m"))
-                .path("r1.r11", Constraint.excludeAll(E3.class).attributes("p", "r"))
-                .path("r2", Constraint.excludeAll(E4.class).attributes("k", "l"));
+        AgEntity<Tr> entityTr = metadata.getAgEntity(Tr.class);
+        AgEntity<Ts> entityTs = metadata.getAgEntity(Ts.class);
+        AgEntity<Tv> entityTv = metadata.getAgEntity(Tv.class);
 
-        ResourceEntity<E1> te1 = new RootResourceEntity<>(age0, null);
-        appendAttribute(te1, "c");
-        appendAttribute(te1, "b");
+        Constraint<Tr> constraint = Constraint.excludeAll(Tr.class).attributes("a", "b")
+                .path("rts", Constraint.excludeAll(Ts.class).attributes("n", "m"))
+                .path("rts.rtt", Constraint.excludeAll(Tt.class).attributes("p", "r"))
+                .path("rtu", Constraint.excludeAll(Tu.class).attributes("k", "l"));
 
-        NestedResourceEntity<?> te11 = new NestedResourceEntity<>(age1, null, te1, mock(AgRelationship.class));
-        appendAttribute(te11, "m");
-        appendAttribute(te11, "z");
-        te1.getChildren().put("r1", te11);
+        ResourceEntity<Tr> tr = new RootResourceEntity<>(entityTr, null);
+        appendAttribute(tr, "c");
+        appendAttribute(tr, "b");
 
-        NestedResourceEntity<?> te21 = new NestedResourceEntity<>(age4, null, te1, mock(AgRelationship.class));
-        appendAttribute(te21, "p");
-        appendAttribute(te21, "z");
-        te1.getChildren().put("r3", te21);
+        NestedResourceEntity<Ts> ts = new NestedResourceEntity<>(entityTs, null, tr, entityTr.getRelationship("rts"));
+        appendAttribute(ts, "m");
+        appendAttribute(ts, "z");
+        tr.getChildren().put("rts", ts);
 
-        constraintHandler.constrainResponse(te1, null, tc1);
-        assertEquals(1, te1.getAttributes().size());
-        assertTrue(te1.getAttributes().containsKey("b"));
-        assertEquals(1, te1.getChildren().size());
+        NestedResourceEntity<Tv> tv = new NestedResourceEntity<>(entityTv, null, tr, entityTr.getRelationship("rtv"));
+        appendAttribute(tv, "p");
+        appendAttribute(tv, "z");
+        tr.getChildren().put("rtv", tv);
 
-        ResourceEntity<?> mergedTe11 = te1.getChildren().get("r1");
-        assertNotNull(mergedTe11);
-        assertTrue(mergedTe11.getChildren().isEmpty());
-        assertEquals(1, mergedTe11.getAttributes().size());
-        assertTrue(mergedTe11.getAttributes().containsKey("m"));
+        constraintsHandler.constrainResponse(tr, null, constraint);
+        assertEquals(1, tr.getAttributes().size());
+        assertTrue(tr.getAttributes().containsKey("b"));
+        assertEquals(1, tr.getChildren().size());
+
+        ResourceEntity<?> mergedTs = tr.getChildren().get("rts");
+        assertNotNull(mergedTs);
+        assertTrue(mergedTs.getChildren().isEmpty());
+        assertEquals(1, mergedTs.getAttributes().size());
+        assertTrue(mergedTs.getAttributes().containsKey("m"));
     }
 
     @Test
-    public void testMerge_ResourceEntity_Id() {
+    public void testConstrainResponse_ResourceEntity_Id() {
 
-        Constraint<E1> tc1 = Constraint.excludeAll(E1.class).excludeId();
-        Constraint<E1> tc2 = Constraint.excludeAll(E1.class).includeId();
+        AgEntity<Tr> entity = metadata.getAgEntity(Tr.class);
 
-        ResourceEntity<E1> te1 = new RootResourceEntity<>(age0, null);
-        te1.includeId();
-        constraintHandler.constrainResponse(te1, null, tc1);
-        assertFalse(te1.isIdIncluded());
+        Constraint<Tr> constraint1 = Constraint.excludeAll(Tr.class).excludeId();
+        Constraint<Tr> constraint2 = Constraint.excludeAll(Tr.class).includeId();
 
-        ResourceEntity<E1> te2 = new RootResourceEntity<>(age0, null);
-        te2.includeId();
-        constraintHandler.constrainResponse(te2, null, tc2);
-        assertTrue(te2.isIdIncluded());
+        ResourceEntity<Tr> e1 = new RootResourceEntity<>(entity, null);
+        e1.includeId();
+        constraintsHandler.constrainResponse(e1, null, constraint1);
+        assertFalse(e1.isIdIncluded());
 
-        ResourceEntity<E1> te3 = new RootResourceEntity<>(age0, null);
-        te3.excludeId();
-        constraintHandler.constrainResponse(te3, null, tc2);
-        assertFalse(te3.isIdIncluded());
+        ResourceEntity<Tr> e2 = new RootResourceEntity<>(entity, null);
+        e2.includeId();
+        constraintsHandler.constrainResponse(e2, null, constraint2);
+        assertTrue(e2.isIdIncluded());
+
+        ResourceEntity<Tr> e3 = new RootResourceEntity<>(entity, null);
+        e3.excludeId();
+        constraintsHandler.constrainResponse(e3, null, constraint2);
+        assertFalse(e3.isIdIncluded());
     }
 
     @Test
-    public void testMerge_CayenneExp() {
+    public void testConstrainResponse_CayenneExp() {
 
-        Expression q1 = exp("a = 5");
+        AgEntity<Tr> entity = metadata.getAgEntity(Tr.class);
+        Constraint<Tr> constraint = Constraint.excludeAll(Tr.class).and(exp("a = 5"));
 
-        Constraint<E1> tc1 = Constraint.excludeAll(E1.class).and(q1);
+        ResourceEntity<Tr> e1 = new RootResourceEntity<>(entity, null);
+        constraintsHandler.constrainResponse(e1, null, constraint);
+        assertEquals(exp("a = 5"), e1.getQualifier());
 
-        ResourceEntity<E1> te1 = new RootResourceEntity<>(age0, null);
-        constraintHandler.constrainResponse(te1, null, tc1);
-        assertEquals(exp("a = 5"), te1.getQualifier());
-
-        ResourceEntity<E1> te2 = new RootResourceEntity<>(age0, null);
-        te2.andQualifier(exp("b = 'd'"));
-        constraintHandler.constrainResponse(te2, null, tc1);
-        assertEquals(exp("b = 'd' and a = 5"), te2.getQualifier());
+        ResourceEntity<Tr> e2 = new RootResourceEntity<>(entity, null);
+        e2.andQualifier(exp("b = 'd'"));
+        constraintsHandler.constrainResponse(e2, null, constraint);
+        assertEquals(exp("b = 'd' and a = 5"), e2.getQualifier());
     }
 
     @Test
-    public void testMerge_MapBy() {
+    public void testConstrainResponse_MapByAttribute_Excluded() {
 
-        Constraint<E1> tc1 = Constraint.excludeAll(E1.class).path("r1",
-                Constraint.excludeAll(E2.class).attribute("a"));
+        AgEntity<Tr> entityTr = metadata.getAgEntity(Tr.class);
+        AgEntity<Ts> entityTs = metadata.getAgEntity(Ts.class);
 
-        ResourceEntity<E2> te1MapBy = new RootResourceEntity<>(age1, null);
+        Constraint<Tr> constraint = Constraint
+                .excludeAll(Tr.class)
+                .path("rts", Constraint.excludeAll(Ts.class).attribute("m"));
 
-        NestedResourceEntity<E1> te1MapByTarget = new NestedResourceEntity<>(age0, null, te1MapBy, mock(AgRelationship.class));
-        appendAttribute(te1MapByTarget, "b");
-        te1MapBy.getChildren().put("r1", te1MapByTarget);
+        ResourceEntity<Ts> tsMapBy = new RootResourceEntity<>(entityTs, null);
+        appendAttribute(tsMapBy, "m");
+        appendAttribute(tsMapBy, "n");
 
-        ResourceEntity<E1> te1 = new RootResourceEntity<>(age0, null);
-        te1.mapBy(te1MapBy, "r1.b");
+        NestedResourceEntity<Tr> trMapBy = new NestedResourceEntity<>(entityTr, null, tsMapBy, entityTr.getRelationship("rts"));
+        appendAttribute(trMapBy, "a");
+        appendAttribute(trMapBy, "b");
+        tsMapBy.getChildren().put("rts", trMapBy);
 
-        constraintHandler.constrainResponse(te1, null, tc1);
+        ResourceEntity<Tr> e = new RootResourceEntity<>(entityTr, null);
+        e.mapBy(tsMapBy, "rts.n");
+
+        constraintsHandler.constrainResponse(e, null, constraint);
+        assertNull(e.getMapBy());
+        assertNull(e.getMapByPath());
+    }
+
+    @Test
+    public void testConstrainResponse_MapByAttribute_Included() {
+        AgEntity<Tr> entityTr = metadata.getAgEntity(Tr.class);
+        AgEntity<Ts> entityTs = metadata.getAgEntity(Ts.class);
+
+        Constraint<Tr> constraint = Constraint
+                .excludeAll(Tr.class)
+                .path("rts", Constraint.excludeAll(Ts.class).attribute("m"));
+
+        ResourceEntity<Ts> tsMapBy = new RootResourceEntity<>(entityTs, null);
+        appendAttribute(tsMapBy, "m");
+        appendAttribute(tsMapBy, "n");
+
+        NestedResourceEntity<Tr> trMapBy = new NestedResourceEntity<>(entityTr, null, tsMapBy, entityTs.getRelationship("rtrs"));
+        appendAttribute(trMapBy, "a");
+        appendAttribute(trMapBy, "b");
+        tsMapBy.getChildren().put("rts", trMapBy);
+
+        ResourceEntity<Tr> e = new RootResourceEntity<>(entityTr, null);
+        e.mapBy(tsMapBy, "rts.m");
+
+        constraintsHandler.constrainResponse(e, null, constraint);
+        assertSame(tsMapBy, e.getMapBy());
+        assertEquals("rts.m", e.getMapByPath());
+    }
+
+    @Test
+    public void testConstrainResponse_MapById_Excluded() {
+
+        AgEntity<Tr> entityTr = metadata.getAgEntity(Tr.class);
+        AgEntity<Ts> entityTs = metadata.getAgEntity(Ts.class);
+
+        Constraint<Tr> constraint = Constraint
+                .excludeAll(Tr.class)
+                .path("rts", Constraint.excludeAll(Ts.class).excludeId());
+
+        ResourceEntity<Ts> te1MapBy = new RootResourceEntity<>(entityTs, null);
+        NestedResourceEntity<Tr> te1MapByTarget = new NestedResourceEntity<>(entityTr, null, te1MapBy, entityTs.getRelationship("rtrs"));
+        te1MapByTarget.includeId();
+
+        te1MapBy.getChildren().put("rtrs", te1MapByTarget);
+
+        ResourceEntity<Tr> te1 = new RootResourceEntity<>(entityTr, null);
+        te1.mapBy(te1MapBy, "rts");
+
+        constraintsHandler.constrainResponse(te1, null, constraint);
         assertNull(te1.getMapBy());
         assertNull(te1.getMapByPath());
 
-        NestedResourceEntity<E2> te2MapByTarget = new NestedResourceEntity<>(age1, null, te1MapBy, mock(AgRelationship.class));
-        appendAttribute(te2MapByTarget, "a");
-
-        ResourceEntity<E1> te2MapBy = new RootResourceEntity<>(age0, null);
-        te1MapBy.getChildren().put("r1", te2MapByTarget);
-
-        ResourceEntity<E1> te2 = new RootResourceEntity<>(age0, null);
-        te2.mapBy(te2MapBy, "r1.a");
-
-        constraintHandler.constrainResponse(te2, null, tc1);
-        assertSame(te2MapBy, te2.getMapBy());
-        assertEquals("r1.a", te2.getMapByPath());
     }
 
     @Test
-    public void testMerge_MapById_Exclude() {
+    public void testConstrainResponse_MapById_Included() {
 
-        Constraint<E1> tc1 = Constraint.excludeAll(E1.class).path("r1", Constraint.excludeAll(E2.class).excludeId());
+        AgEntity<Tr> entityTr = metadata.getAgEntity(Tr.class);
+        AgEntity<Ts> entityTs = metadata.getAgEntity(Ts.class);
 
-        ResourceEntity<E2> te1MapBy = new RootResourceEntity<>(age1, null);
-        NestedResourceEntity<E1> te1MapByTarget = new NestedResourceEntity<>(age0, null, te1MapBy, mock(AgRelationship.class));
+        Constraint<Tr> constraint = Constraint
+                .excludeAll(Tr.class)
+                .path("rts", Constraint.excludeAll(Ts.class).includeId());
+
+        ResourceEntity<Tr> te1MapBy = new RootResourceEntity<>(entityTr, null);
+        NestedResourceEntity<Ts> te1MapByTarget = new NestedResourceEntity<>(entityTs, null, te1MapBy, entityTr.getRelationship("rts"));
         te1MapByTarget.includeId();
+        te1MapBy.getChildren().put("rts", te1MapByTarget);
 
-        te1MapBy.getChildren().put("r1", te1MapByTarget);
+        ResourceEntity<Tr> te1 = new RootResourceEntity<>(entityTr, null);
+        te1.mapBy(te1MapBy, "rts");
 
-        ResourceEntity<E1> te1 = new RootResourceEntity<>(age0, null);
-        te1.mapBy(te1MapBy, "r1");
-
-        constraintHandler.constrainResponse(te1, null, tc1);
-        assertNull(te1.getMapBy());
-        assertNull(te1.getMapByPath());
-
-    }
-
-    @Test
-    public void testMerge_MapById_Include() {
-
-        Constraint<E1> tc1 = Constraint.excludeAll(E1.class).path("r1", Constraint.excludeAll(E2.class).includeId());
-
-        ResourceEntity<E1> te1MapBy = new RootResourceEntity<>(age0, null);
-        NestedResourceEntity<E2> te1MapByTarget = new NestedResourceEntity<>(age1, null, te1MapBy, mock(AgRelationship.class));
-        te1MapByTarget.includeId();
-
-        te1MapBy.getChildren().put("r1", te1MapByTarget);
-
-        ResourceEntity<E1> te1 = new RootResourceEntity<>(age0, null);
-        te1.mapBy(te1MapBy, "r1");
-
-        constraintHandler.constrainResponse(te1, null, tc1);
+        constraintsHandler.constrainResponse(te1, null, constraint);
         assertSame(te1MapBy, te1.getMapBy());
-        assertEquals("r1", te1.getMapByPath());
+        assertEquals("rts", te1.getMapByPath());
     }
 
     protected void appendAttribute(ResourceEntity<?> entity, String name) {
         entity.getAttributes().put(name, new DefaultAgAttribute(name, String.class, new ASTObjPath(name), BeanPropertyReader.reader()));
+    }
+
+    public static class Tr {
+
+        @AgId
+        public int getId() {
+            throw new UnsupportedOperationException();
+        }
+
+        @AgAttribute
+        public String getA() {
+            throw new UnsupportedOperationException();
+        }
+
+        @AgAttribute
+        public String getB() {
+            throw new UnsupportedOperationException();
+        }
+
+        @AgAttribute
+        public String getC() {
+            throw new UnsupportedOperationException();
+        }
+
+        @AgRelationship
+        public Ts getRts() {
+            throw new UnsupportedOperationException();
+        }
+
+        @AgRelationship
+        public Tu getRtu() {
+            throw new UnsupportedOperationException();
+        }
+
+        @AgRelationship
+        public Tv getRtv() {
+            throw new UnsupportedOperationException();
+        }
+    }
+
+    public static class Ts {
+
+        @AgId
+        public int getId() {
+            throw new UnsupportedOperationException();
+        }
+
+        @AgAttribute
+        public String getN() {
+            throw new UnsupportedOperationException();
+        }
+
+        @AgAttribute
+        public String getM() {
+            throw new UnsupportedOperationException();
+        }
+
+        @AgAttribute
+        public String getZ() {
+            throw new UnsupportedOperationException();
+        }
+
+        @AgRelationship
+        public Tt getRtt() {
+            throw new UnsupportedOperationException();
+        }
+
+        @AgRelationship
+        public List<Tr> getRtrs() {
+            throw new UnsupportedOperationException();
+        }
+    }
+
+    public static class Tt {
+        @AgAttribute
+        public String getP() {
+            throw new UnsupportedOperationException();
+        }
+
+        @AgAttribute
+        public String getR() {
+            throw new UnsupportedOperationException();
+        }
+    }
+
+    public static class Tu {
+
+        @AgAttribute
+        public String getK() {
+            throw new UnsupportedOperationException();
+        }
+
+        @AgAttribute
+        public String getL() {
+            throw new UnsupportedOperationException();
+        }
+    }
+
+    public static class Tv {
+
+        @AgAttribute
+        public String getP() {
+            throw new UnsupportedOperationException();
+        }
+
+        @AgAttribute
+        public String getZ() {
+            throw new UnsupportedOperationException();
+        }
     }
 }
