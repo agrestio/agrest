@@ -3,22 +3,20 @@ package io.agrest.runtime.protocol;
 import io.agrest.protocol.Dir;
 import io.agrest.protocol.Sort;
 import io.agrest.runtime.jackson.JacksonService;
-import io.agrest.unit.TestWithCayenneMapping;
-import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.util.List;
 
 import static org.junit.Assert.*;
 
-public class SortParserTest extends TestWithCayenneMapping {
+public class SortParserTest {
 
-    private SortParser parser;
+    private static SortParser parser;
 
-    @Before
-    public void before() {
-        JacksonService jacksonService = new JacksonService();
-        this.parser = new SortParser(jacksonService);
+    @BeforeClass
+    public static void beforeAll() {
+        parser = new SortParser(new JacksonService());
     }
 
     @Test

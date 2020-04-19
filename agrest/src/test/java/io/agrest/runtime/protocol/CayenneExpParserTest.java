@@ -1,74 +1,56 @@
 package io.agrest.runtime.protocol;
 
 import io.agrest.protocol.CayenneExp;
-import io.agrest.runtime.jackson.IJacksonService;
 import io.agrest.runtime.jackson.JacksonService;
-import io.agrest.unit.TestWithCayenneMapping;
-import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.junit.Assert.*;
 
-public class CayenneExpParserTest extends TestWithCayenneMapping {
+public class CayenneExpParserTest {
 
-    private CayenneExpParser parser;
+    private static CayenneExpParser parser;
 
-	@Before
-	public void setUp() {
-
-		IJacksonService jsonParser = new JacksonService();
-
-		this.parser = new CayenneExpParser(jsonParser);
+	@BeforeClass
+	public static void beforeAll() {
+		parser = new CayenneExpParser(new JacksonService());
 	}
 
 	@Test
 	public void testProcess_Bare() {
-
-        CayenneExp exp = parser.fromString("cInt = 12345 and cVarchar = 'John Smith' and cBoolean = true");
-
+        CayenneExp exp = parser.fromString("a = 12345 and b = 'John Smith' and c = true");
 		assertNotNull(exp);
-		assertEquals("cInt = 12345 and cVarchar = 'John Smith' and cBoolean = true", exp.getExp());
+		assertEquals("a = 12345 and b = 'John Smith' and c = true", exp.getExp());
 	}
 
 	@Test
 	public void testProcess_Functions() {
-
-        CayenneExp exp = parser.fromString("length(cVarchar) > 5");
-
+        CayenneExp exp = parser.fromString("length(b) > 5");
 		assertNotNull(exp);
-		assertEquals("length(cVarchar) > 5", exp.getExp());
+		assertEquals("length(b) > 5", exp.getExp());
 	}
 
 	@Test
 	public void testProcess_List() {
-
-        CayenneExp exp = parser.fromString("[\"cInt = 12345 and cVarchar = 'John Smith' and cBoolean = true\"]");
-
+        CayenneExp exp = parser.fromString("[\"a = 12345 and b = 'John Smith' and c = true\"]");
 		assertNotNull(exp);
-		assertEquals("cInt = 12345 and cVarchar = 'John Smith' and cBoolean = true", exp.getExp());
+		assertEquals("a = 12345 and b = 'John Smith' and c = true", exp.getExp());
 	}
 
 	@Test
 	public void testProcess_List_Params_String() {
-
-        CayenneExp exp = parser.fromString("[\"cVarchar=$s\",\"x\"]");
-
+        CayenneExp exp = parser.fromString("[\"b=$s\",\"x\"]");
 		assertNotNull(exp);
-		assertEquals("cVarchar=$s", exp.getExp());
+		assertEquals("b=$s", exp.getExp());
 		assertFalse(exp.getInPositionParams().isEmpty());
 		assertEquals("\"x\"", exp.getInPositionParams().get(0).toString());
 	}
 
 	@Test
 	public void testProcess_List_Params_Multiple() {
-
-        CayenneExp exp = parser.fromString( "[\"cVarchar=$s or cVarchar =$x or cVarchar =$s\",\"x\",\"y\"]");
-
+        CayenneExp exp = parser.fromString( "[\"b=$s or b =$x or b =$s\",\"x\",\"y\"]");
 		assertNotNull(exp);
-		assertEquals("cVarchar=$s or cVarchar =$x or cVarchar =$s", exp.getExp());
+		assertEquals("b=$s or b =$x or b =$s", exp.getExp());
 		assertEquals(2, exp.getInPositionParams().size());
 		assertEquals("\"x\"", exp.getInPositionParams().get(0).toString());
 		assertEquals("\"y\"", exp.getInPositionParams().get(1).toString());
@@ -76,31 +58,25 @@ public class CayenneExpParserTest extends TestWithCayenneMapping {
 
 	@Test
 	public void testProcess_Map() {
-
-        CayenneExp exp = parser.fromString("{\"exp\" : \"cInt = 12345 and cVarchar = 'John Smith' and cBoolean = true\"}");
-
+        CayenneExp exp = parser.fromString("{\"exp\" : \"a = 12345 and b = 'John Smith' and c = true\"}");
 		assertNotNull(exp);
-		assertEquals("cInt = 12345 and cVarchar = 'John Smith' and cBoolean = true", exp.getExp());
+		assertEquals("a = 12345 and b = 'John Smith' and c = true", exp.getExp());
 	}
 
 	@Test
 	public void testProcess_Map_Params_String() {
-
-        CayenneExp exp = parser.fromString("{\"exp\" : \"cVarchar=$s\", \"params\":{\"s\":\"x\"}}");
-
+        CayenneExp exp = parser.fromString("{\"exp\" : \"b=$s\", \"params\":{\"s\":\"x\"}}");
 		assertNotNull(exp);
-		assertEquals("cVarchar=$s", exp.getExp());
+		assertEquals("b=$s", exp.getExp());
 		assertFalse(exp.getParams().isEmpty());
 		assertEquals("\"x\"", exp.getParams().get("s").toString());
 	}
 
 	@Test
 	public void testProcess_Map_Params_Null() {
-
-        CayenneExp exp = parser.fromString( "{\"exp\" : \"cBoolean=$b\", \"params\":{\"b\": null}}");
-
+        CayenneExp exp = parser.fromString( "{\"exp\" : \"c=$b\", \"params\":{\"b\": null}}");
 		assertNotNull(exp);
-		assertEquals("cBoolean=$b", exp.getExp());
+		assertEquals("c=$b", exp.getExp());
 		assertFalse(exp.getParams().isEmpty());
 		assertNull(exp.getParams().get("b"));
 	}

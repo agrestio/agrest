@@ -2,17 +2,18 @@ package io.agrest.runtime.protocol;
 
 import io.agrest.ResourceEntity;
 import io.agrest.RootResourceEntity;
-import io.agrest.it.fixture.cayenne.E2;
-import io.agrest.it.fixture.cayenne.auto._E2;
-import io.agrest.meta.AgAttribute;
-import io.agrest.meta.AgEntity;
+import io.agrest.annotation.AgAttribute;
+import io.agrest.annotation.AgId;
+import io.agrest.meta.compiler.AgEntityCompiler;
+import io.agrest.meta.compiler.PojoEntityCompiler;
 import io.agrest.protocol.Sort;
 import io.agrest.runtime.entity.SortMerger;
+import io.agrest.runtime.meta.MetadataService;
 import io.agrest.runtime.path.PathDescriptorManager;
-import io.agrest.unit.TestWithCayenneMapping;
 import org.apache.cayenne.query.Ordering;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.util.Collections;
@@ -20,33 +21,30 @@ import java.util.Iterator;
 
 import static java.util.Arrays.asList;
 import static org.junit.Assert.*;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
-public class SortMergerTest extends TestWithCayenneMapping {
+public class SortMergerTest {
 
-    private SortMerger merger;
+    private static SortMerger merger;
+    private static MetadataService metadataService;
+
     private ResourceEntity<?> entity;
 
+    @BeforeClass
+    public static void beforeAll() {
+        AgEntityCompiler compiler = new PojoEntityCompiler(Collections.emptyMap());
+        metadataService = new MetadataService(Collections.singletonList(compiler));
+        merger = new SortMerger(new PathDescriptorManager());
+    }
+
     @Before
-    public void before() {
-
-        this.merger = new SortMerger(new PathDescriptorManager());
-
-        @SuppressWarnings("unchecked")
-        AgEntity<E2> age2 = mock(AgEntity.class);
-        when(age2.getType()).thenReturn(E2.class);
-        when(age2.getName()).thenReturn("E2");
-        when(age2.getAttribute("name")).thenReturn(mock(AgAttribute.class));
-        when(age2.getAttribute("address")).thenReturn(mock(AgAttribute.class));
-
-        this.entity = new RootResourceEntity<>(age2, null);
+    public void beforeEach() {
+        this.entity = new RootResourceEntity<>(metadataService.getAgEntity(Tr.class), null);
     }
 
     @Test
-    public void testProcess_Array() {
+    public void testMerge_Array() {
 
-        merger.merge(entity, asList(new Sort("name"), new Sort("address")));
+        merger.merge(entity, asList(new Sort("a"), new Sort("b")));
 
         assertEquals(2, entity.getOrderings().size());
 
@@ -54,21 +52,39 @@ public class SortMergerTest extends TestWithCayenneMapping {
         Ordering o1 = it.next();
         Ordering o2 = it.next();
 
-        Assert.assertEquals(_E2.NAME.getName(), o1.getSortSpecString());
-        assertEquals(_E2.ADDRESS.getName(), o2.getSortSpecString());
+        Assert.assertEquals("a", o1.getSortSpecString());
+        assertEquals("b", o2.getSortSpecString());
     }
 
     @Test
-    public void testProcess_Simple() {
+    public void testMerge_Simple() {
 
-        merger.merge(entity, Collections.singletonList(new Sort("name")));
+        merger.merge(entity, Collections.singletonList(new Sort("a")));
 
         assertEquals(1, entity.getOrderings().size());
 
         Iterator<Ordering> it = entity.getOrderings().iterator();
         Ordering o1 = it.next();
 
-        assertEquals(_E2.NAME.getName(), o1.getSortSpecString());
+        assertEquals("a", o1.getSortSpecString());
+    }
+
+    public static class Tr {
+
+        @AgId
+        public int getId() {
+            throw new UnsupportedOperationException();
+        }
+
+        @AgAttribute
+        public int getA() {
+            throw new UnsupportedOperationException();
+        }
+
+        @AgAttribute
+        public String getB() {
+            throw new UnsupportedOperationException();
+        }
     }
 
 }

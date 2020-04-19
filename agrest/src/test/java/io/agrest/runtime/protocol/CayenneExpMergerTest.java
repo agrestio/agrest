@@ -2,15 +2,20 @@ package io.agrest.runtime.protocol;
 
 import io.agrest.AgException;
 import io.agrest.ResourceEntity;
-import io.agrest.it.fixture.cayenne.E4;
+import io.agrest.RootResourceEntity;
+import io.agrest.annotation.AgAttribute;
+import io.agrest.annotation.AgId;
+import io.agrest.meta.compiler.AgEntityCompiler;
+import io.agrest.meta.compiler.PojoEntityCompiler;
 import io.agrest.protocol.CayenneExp;
 import io.agrest.runtime.entity.CayenneExpMerger;
 import io.agrest.runtime.entity.ExpressionParser;
 import io.agrest.runtime.entity.ExpressionPostProcessor;
+import io.agrest.runtime.meta.MetadataService;
 import io.agrest.runtime.path.PathDescriptorManager;
-import io.agrest.unit.TestWithCayenneMapping;
 import org.apache.cayenne.exp.Expression;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.util.Collections;
@@ -19,180 +24,156 @@ import java.util.GregorianCalendar;
 import java.util.TimeZone;
 
 import static org.apache.cayenne.exp.ExpressionFactory.exp;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.*;
 
-public class CayenneExpMergerTest extends TestWithCayenneMapping {
+public class CayenneExpMergerTest {
 
-    private ResourceEntity<E4> e4Entity;
-    private CayenneExpMerger merger;
+    private static MetadataService metadataService;
+    private static CayenneExpMerger merger;
+    private ResourceEntity<Tr> entity;
 
-    @Before
-    public void setUp() {
+    @BeforeClass
+    public static void beforeAll() {
+
+        AgEntityCompiler compiler = new PojoEntityCompiler(Collections.emptyMap());
+        metadataService = new MetadataService(Collections.singletonList(compiler));
 
         PathDescriptorManager pathDescriptorManager = new PathDescriptorManager();
+        merger = new CayenneExpMerger(new ExpressionParser(), new ExpressionPostProcessor(pathDescriptorManager));
+    }
 
-        this.merger = new CayenneExpMerger(new ExpressionParser(), new ExpressionPostProcessor(pathDescriptorManager));
-        this.e4Entity = getResourceEntity(E4.class);
+    @Before
+    public void beforeEach() {
+        entity = new RootResourceEntity<>(metadataService.getAgEntity(Tr.class), null);
     }
 
     @Test
-    public void testProcess_Bare() {
+    public void testMerge_Bare() {
 
-        CayenneExp exp = new CayenneExp("cInt = 12345 and cVarchar = 'John Smith' and cBoolean = true");
-        merger.merge(e4Entity, exp);
-
-        Expression e = e4Entity.getQualifier();
+        merger.merge(entity, new CayenneExp("a = 12345 and b = 'John Smith' and c = true"));
+        Expression e = entity.getQualifier();
 
         assertNotNull(e);
-        assertEquals(exp("cInt = 12345 and cVarchar = 'John Smith' and cBoolean = true"), e);
+        assertEquals(exp("a = 12345 and b = 'John Smith' and c = true"), e);
     }
 
     @Test
-    public void testProcess_Functions() {
+    public void testMerge_Functions() {
 
-        CayenneExp exp = new CayenneExp("length(cVarchar) > 5");
-        merger.merge(e4Entity, exp);
-
-        Expression e = e4Entity.getQualifier();
+        merger.merge(entity, new CayenneExp("length(b) > 5"));
+        Expression e = entity.getQualifier();
 
         assertNotNull(e);
-        assertEquals(exp("length(cVarchar) > 5"), e);
+        assertEquals(exp("length(b) > 5"), e);
     }
 
-
     @Test
-    public void testProcess_List_Params_String() {
+    public void testMerge_List_Params_String() {
 
-        CayenneExp exp = new CayenneExp("cVarchar=$s", "x");
-        merger.merge(e4Entity, exp);
-
-        Expression e = e4Entity.getQualifier();
+        merger.merge(entity, new CayenneExp("b=$s", "x"));
+        Expression e = entity.getQualifier();
 
         assertNotNull(e);
-        assertEquals(exp("cVarchar='x'"), e);
+        assertEquals(exp("b='x'"), e);
     }
 
     @Test
-    public void testProcess_List_Params_Multiple() {
+    public void testMerge_List_Params_Multiple() {
 
-        CayenneExp exp = new CayenneExp("cVarchar=$s or cVarchar =$x or cVarchar =$s", "x", "y");
-        merger.merge(e4Entity, exp);
-
-        Expression e = e4Entity.getQualifier();
+        merger.merge(entity, new CayenneExp("b=$s or b =$x or b =$s", "x", "y"));
+        Expression e = entity.getQualifier();
 
         assertNotNull(e);
-        assertEquals(exp("cVarchar='x' or cVarchar='y' or cVarchar='x'"), e);
+        assertEquals(exp("b='x' or b='y' or b='x'"), e);
     }
 
-
     @Test
-    public void testProcess_Map_Params_String() {
+    public void testMerge_Map_Params_String() {
 
-        CayenneExp exp = new CayenneExp("cVarchar=$s", Collections.singletonMap("s", "x"));
-        merger.merge(e4Entity, exp);
-
-        Expression e = e4Entity.getQualifier();
+        merger.merge(entity, new CayenneExp("b=$s", Collections.singletonMap("s", "x")));
+        Expression e = entity.getQualifier();
 
         assertNotNull(e);
-        assertEquals(exp("cVarchar='x'"), e);
+        assertEquals(exp("b='x'"), e);
     }
 
     @Test
-    public void testProcess_Map_Params_Int() {
+    public void testMerge_Map_Params_Int() {
 
-        CayenneExp exp = new CayenneExp("cInt=$n", Collections.singletonMap("n", 453));
-        merger.merge(e4Entity, exp);
-
-        Expression e = e4Entity.getQualifier();
+        merger.merge(entity, new CayenneExp("a=$n", Collections.singletonMap("n", 453)));
+        Expression e = entity.getQualifier();
 
         assertNotNull(e);
-        assertEquals(exp("cInt=453"), e);
+        assertEquals(exp("a=453"), e);
     }
 
     @Test
-    public void testProcess_Map_Params_Float() {
+    public void testMerge_Map_Params_Double() {
 
-        CayenneExp exp = new CayenneExp("cDecimal=$n", Collections.singletonMap("n", 4.4009));
-        merger.merge(e4Entity, exp);
-
-        Expression e = e4Entity.getQualifier();
+        merger.merge(entity, new CayenneExp("d=$n", Collections.singletonMap("n", 4.4009)));
+        Expression e = entity.getQualifier();
 
         assertNotNull(e);
-        assertEquals(exp("cDecimal=4.4009"), e);
+        assertEquals(exp("d=4.4009"), e);
     }
 
     @Test
-    public void testProcess_Map_Params_Float_Negative() {
-
-        CayenneExp exp = new CayenneExp("cDecimal=$n", Collections.singletonMap("n", -4.4009));
-        merger.merge(e4Entity, exp);
-
-        Expression e = e4Entity.getQualifier();
+    public void testMerge_Map_Params_Doublet_Negative() {
+        merger.merge(entity, new CayenneExp("d=$n", Collections.singletonMap("n", -4.4009)));
+        Expression e = entity.getQualifier();
 
         assertNotNull(e);
 
         // Cayenne parses 'fromString' as ASTNegate(ASTScalar), so to compare
         // apples to apples, let's convert it back to String.. not an ideal
         // comparison, but a good approximation
-        assertEquals("cDecimal = -4.4009", e.toString());
+        assertEquals("d = -4.4009", e.toString());
     }
 
     @Test
-    public void testProcess_Map_Params_Boolean_True() {
+    public void testMerge_Map_Params_Boolean_True() {
 
-        CayenneExp exp = new CayenneExp("cBoolean=$b", Collections.singletonMap("b", true));
-        merger.merge(e4Entity, exp);
-
-        Expression e = e4Entity.getQualifier();
+        merger.merge(entity, new CayenneExp("c=$b", Collections.singletonMap("b", true)));
+        Expression e = entity.getQualifier();
 
         assertNotNull(e);
-        assertEquals(exp("cBoolean=true"), e);
+        assertEquals(exp("c=true"), e);
     }
 
     @Test
-    public void testProcess_Map_Params_Boolean_False() {
-
-        CayenneExp exp = new CayenneExp("cBoolean=$b", Collections.singletonMap("b", false));
-        merger.merge(e4Entity, exp);
-
-        Expression e = e4Entity.getQualifier();
+    public void testMerge_Map_Params_Boolean_False() {
+        merger.merge(entity, new CayenneExp("c=$b", Collections.singletonMap("b", false)));
+        Expression e = entity.getQualifier();
 
         assertNotNull(e);
-        assertEquals(exp("cBoolean=false"), e);
+        assertEquals(exp("c=false"), e);
     }
 
     @Test(expected = AgException.class)
-    public void testProcess_Params_InvalidPath() {
+    public void testMerge_Params_InvalidPath() {
         CayenneExp exp = new CayenneExp("invalid/path=$b", Collections.singletonMap("b", false));
-        merger.merge(e4Entity, exp);
+        merger.merge(entity, exp);
     }
 
     @Test
-    public void testProcess_Map_Params_Null() {
-
-        CayenneExp exp = new CayenneExp("cBoolean=$b", Collections.singletonMap("b", null));
-        merger.merge(e4Entity, exp);
-
-        Expression e = e4Entity.getQualifier();
+    public void testMerge_Map_Params_Null() {
+        merger.merge(entity, new CayenneExp("c=$b", Collections.singletonMap("b", null)));
+        Expression e = entity.getQualifier();
 
         assertNotNull(e);
-        assertEquals(exp("cBoolean=null"), e);
+        assertEquals(exp("c=null"), e);
     }
 
     @Test(expected = AgException.class)
-    public void testProcess_Map_Params_Date_NonISO() {
-        CayenneExp exp = new CayenneExp("cTimestamp=$d", Collections.singletonMap("d", "2014:02:03"));
-        merger.merge(e4Entity, exp);
+    public void testMerge_Map_Params_Date_NonISO() {
+        CayenneExp exp = new CayenneExp("e=$d", Collections.singletonMap("d", "2014:02:03"));
+        merger.merge(entity, exp);
     }
 
     @Test
-    public void testProcess_Map_Params_Date_Local_TZ() {
-
-        CayenneExp exp = new CayenneExp("cTimestamp=$d", Collections.singletonMap("d", "2014-02-03T14:06:35"));
-        merger.merge(e4Entity, exp);
-
-        Expression e = e4Entity.getQualifier();
+    public void testMerge_Map_Params_Date_Local_TZ() {
+        merger.merge(entity, new CayenneExp("e=$d", Collections.singletonMap("d", "2014-02-03T14:06:35")));
+        Expression e = entity.getQualifier();
 
         assertNotNull(e);
 
@@ -200,17 +181,16 @@ public class CayenneExpMergerTest extends TestWithCayenneMapping {
         cal.setTimeZone(TimeZone.getDefault());
         Date date = cal.getTime();
 
-        Expression expected = exp("cTimestamp=$d", date);
+        Expression expected = exp("e=$d", date);
         assertEquals(expected, e);
     }
 
     @Test
-    public void testProcess_Map_Params_Date_TZ_Zulu() {
+    public void testMerge_Map_Params_Date_TZ_Zulu() {
 
-        CayenneExp exp = new CayenneExp("cTimestamp=$d", Collections.singletonMap("d", "2014-02-03T22:06:35Z"));
-        merger.merge(e4Entity, exp);
+        merger.merge(entity, new CayenneExp("e=$d", Collections.singletonMap("d", "2014-02-03T22:06:35Z")));
 
-        Expression e = e4Entity.getQualifier();
+        Expression e = entity.getQualifier();
 
         assertNotNull(e);
 
@@ -218,17 +198,15 @@ public class CayenneExpMergerTest extends TestWithCayenneMapping {
         cal.setTimeZone(TimeZone.getTimeZone("America/Los_Angeles"));
         Date date = cal.getTime();
 
-        Expression expected = exp("cTimestamp=$d", date);
+        Expression expected = exp("e=$d", date);
         assertEquals(expected, e);
     }
 
     @Test
-    public void testProcess_Map_Params_Date_TZ_Zulu_DST() {
+    public void testMerge_Map_Params_Date_TZ_Zulu_DST() {
 
-        CayenneExp exp = new CayenneExp("cTimestamp=$d", Collections.singletonMap("d", "2013-06-03"));
-        merger.merge(e4Entity, exp);
-
-        Expression e = e4Entity.getQualifier();
+        merger.merge(entity, new CayenneExp("e=$d", Collections.singletonMap("d", "2013-06-03")));
+        Expression e = entity.getQualifier();
 
         assertNotNull(e);
 
@@ -236,17 +214,14 @@ public class CayenneExpMergerTest extends TestWithCayenneMapping {
         cal.setTimeZone(TimeZone.getDefault());
         Date date = cal.getTime();
 
-        Expression expected = exp("cTimestamp=$d", date);
+        Expression expected = exp("e=$d", date);
         assertEquals(expected, e);
     }
 
     @Test
-    public void testProcess_Map_Params_Date_NoTime() {
-
-        CayenneExp exp = new CayenneExp("cTimestamp=$d", Collections.singletonMap("d", "2013-06-03T22:06:35Z"));
-        merger.merge(e4Entity, exp);
-
-        Expression e = e4Entity.getQualifier();
+    public void testMerge_Map_Params_Date_NoTime() {
+        merger.merge(entity, new CayenneExp("e=$d", Collections.singletonMap("d", "2013-06-03T22:06:35Z")));
+        Expression e = entity.getQualifier();
 
         assertNotNull(e);
 
@@ -254,25 +229,53 @@ public class CayenneExpMergerTest extends TestWithCayenneMapping {
         cal.setTimeZone(TimeZone.getTimeZone("America/Los_Angeles"));
         Date date = cal.getTime();
 
-        Expression expected = exp("cTimestamp=$d", date);
+        Expression expected = exp("e=$d", date);
         assertEquals(expected, e);
     }
 
     @Test(expected = AgException.class)
-    public void testProcess_DisallowDBPath() {
+    public void testMerge_DisallowDBPath() {
         CayenneExp exp = new CayenneExp("db:id=$i", Collections.singletonMap("i", 5));
-        merger.merge(e4Entity, exp);
+        merger.merge(entity, exp);
     }
 
     @Test
-    public void testProcess_MatchByRootId() {
+    public void testMerge_MatchByRootId() {
+        merger.merge(entity, new CayenneExp("id=$i", Collections.singletonMap("i", 5)));
+        Expression e = entity.getQualifier();
+        assertEquals(exp("id=$i", 5), e);
+    }
 
-        CayenneExp exp = new CayenneExp("id=$i", Collections.singletonMap("i", 5));
-        merger.merge(e4Entity, exp);
+    public static class Tr {
 
-        Expression e = e4Entity.getQualifier();
+        @AgId
+        public int getId() {
+            throw new UnsupportedOperationException();
+        }
 
-        Expression expected = exp("db:id=$i", 5);
-        assertEquals(expected, e);
+        @AgAttribute
+        public int getA() {
+            throw new UnsupportedOperationException();
+        }
+
+        @AgAttribute
+        public String getB() {
+            throw new UnsupportedOperationException();
+        }
+
+        @AgAttribute
+        public boolean getC() {
+            throw new UnsupportedOperationException();
+        }
+
+        @AgAttribute
+        public double getD() {
+            throw new UnsupportedOperationException();
+        }
+
+        @AgAttribute
+        public Date getE() {
+            throw new UnsupportedOperationException();
+        }
     }
 }
