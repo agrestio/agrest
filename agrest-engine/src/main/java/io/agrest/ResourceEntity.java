@@ -44,6 +44,8 @@ public abstract class ResourceEntity<T> {
     private int fetchLimit;
     private List<EntityEncoderFilter> entityEncoderFilters;
 
+    // TODO: Per #433 get rid of SelectQuery in generic "agrest-engine".. It must live on the "agrest-cayenne" side.
+    @Deprecated
     private SelectQuery<T> select;
 
     public ResourceEntity(AgEntity<T> agEntity, AgEntityOverlay<T> agEntityOverlay) {
