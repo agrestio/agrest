@@ -5,10 +5,11 @@ Release 3.4
 * #421 Custom per-request Encoder is ignored on update
 * #422 GET: Per-request AgEntityOverlay to customize properties based on request state
 * #423 Wrong Encoder for target entities in overlayed relationships
-* #424 Unwinding Cayenne dependencies - get rid of AgPersistent* models
+* #424 Unwinding Cayenne dependencies - get rid of AgPersistent models
 * #428 Add support for Case Insensitive Sorting
 * #430 agrest-client: Use protocol "dir" enum instead of "SortDirection" enum
 * #432 Cayenne resolvers reading their objects from parent must follow contract with child resolvers
+* #433 "agrest-cayenne" : isolate a pluggable Cayenne backend for Agrest
 * #434 Upgrade to Cayenne 4.0.2
 * #435 Upgrade SLF4J to 1.7.25
 * #436 Metadata pipeline throws for empty @Path("")
