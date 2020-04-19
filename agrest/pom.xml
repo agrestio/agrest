@@ -9,15 +9,15 @@
     </parent>
 
     <artifactId>agrest</artifactId>
-    <name>agrest: core framework</name>
-    <description>Core Agrest framework</description>
+    <name>agrest: Cayenne-based Agrest server (legacy)</name>
+    <description>Cayenne-based Agrest server. Exists for legacy purposes to combine generic server engine with Cayenne backend</description>
 
     <dependencies>
 
         <!-- required runtime dependencies -->
         <dependency>
             <groupId>io.agrest</groupId>
-            <artifactId>agrest-base</artifactId>
+            <artifactId>agrest-engine</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
@@ -26,54 +26,9 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.apache.cayenne</groupId>
-            <artifactId>cayenne-server</artifactId>
-            <scope>compile</scope>
-        </dependency>
-
-        <!-- unit test deps -->
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.mockito</groupId>
-            <artifactId>mockito-all</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>io.bootique</groupId>
-            <artifactId>bootique-test</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>io.bootique.jersey</groupId>
-            <artifactId>bootique-jersey</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-simple</artifactId>
-            <scope>test</scope>
+            <groupId>io.agrest</groupId>
+            <artifactId>agrest-cayenne</artifactId>
+            <version>${project.version}</version>
         </dependency>
     </dependencies>
-
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jar-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>build-tests</id>
-                        <goals>
-                            <goal>test-jar</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
-    </build>
-
 </project>

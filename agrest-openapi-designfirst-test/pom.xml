@@ -16,21 +16,20 @@
         <!-- required runtime dependencies -->
         <dependency>
             <groupId>io.agrest</groupId>
-            <artifactId>agrest</artifactId>
+            <artifactId>agrest-engine</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.agrest</groupId>
+            <artifactId>agrest-cayenne</artifactId>
             <version>${project.version}</version>
         </dependency>
 
         <!-- unit test deps -->
         <dependency>
             <groupId>io.agrest</groupId>
-            <artifactId>agrest</artifactId>
+            <artifactId>agrest-engine</artifactId>
             <type>test-jar</type>
-            <version>${project.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>io.agrest</groupId>
-            <artifactId>agrest-cayenne</artifactId>
             <version>${project.version}</version>
             <scope>test</scope>
         </dependency>

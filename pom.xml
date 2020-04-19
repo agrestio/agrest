@@ -13,10 +13,11 @@
     <modules>
         <module>agrest-base</module>
         <module>agrest-annotations</module>
-        <module>agrest</module>
-        <module>agrest-client</module>
-        <module>agrest-sencha</module>
+        <module>agrest-engine</module>
         <module>agrest-cayenne</module>
+        <module>agrest</module>
+        <module>agrest-sencha</module>
+        <module>agrest-client</module>
         <module>agrest-bom</module>
         <module>agrest-docs</module>
         <module>agrest-openapi-designfirst</module>

@@ -8,16 +8,16 @@
         <version>3.4-SNAPSHOT</version>
     </parent>
 
-    <artifactId>agrest-cayenne</artifactId>
-    <name>agrest-cayenne: Cayenne backend for Agrest</name>
-    <description>Cayenne backend for Agrest</description>
+    <artifactId>agrest-engine</artifactId>
+    <name>agrest-engine: core server engine</name>
+    <description>Core Agrest server engine</description>
 
     <dependencies>
 
         <!-- required runtime dependencies -->
         <dependency>
             <groupId>io.agrest</groupId>
-            <artifactId>agrest-engine</artifactId>
+            <artifactId>agrest-base</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
@@ -25,6 +25,8 @@
             <artifactId>agrest-annotations</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <!-- Unfortinately there are still Cayenne dependencies related to DI, Expressions, etc.
+        TODO: remove this when we can. -->
         <dependency>
             <groupId>org.apache.cayenne</groupId>
             <artifactId>cayenne-server</artifactId>
@@ -43,13 +45,6 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>io.agrest</groupId>
-            <artifactId>agrest-engine</artifactId>
-            <type>test-jar</type>
-            <scope>test</scope>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
             <groupId>io.bootique</groupId>
             <artifactId>bootique-test</artifactId>
             <scope>test</scope>
@@ -57,16 +52,6 @@
         <dependency>
             <groupId>io.bootique.jersey</groupId>
             <artifactId>bootique-jersey</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>io.bootique.cayenne</groupId>
-            <artifactId>bootique-cayenne-test</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>io.bootique.jdbc</groupId>
-            <artifactId>bootique-jdbc-hikaricp</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -92,4 +77,5 @@
             </plugin>
         </plugins>
     </build>
+
 </project>

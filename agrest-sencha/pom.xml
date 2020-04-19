@@ -17,7 +17,7 @@
 		<!-- required runtime dependencies -->
 		<dependency>
 			<groupId>io.agrest</groupId>
-			<artifactId>agrest</artifactId>
+			<artifactId>agrest-engine</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 
@@ -59,7 +59,7 @@
 		</dependency>
 		<dependency>
 			<groupId>io.agrest</groupId>
-			<artifactId>agrest</artifactId>
+			<artifactId>agrest-engine</artifactId>
 			<type>test-jar</type>
 			<scope>test</scope>
 			<version>${project.version}</version>
