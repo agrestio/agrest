@@ -1,8 +1,9 @@
 package io.agrest.runtime.processor.select;
 
 import io.agrest.AgException;
-import io.agrest.it.fixture.cayenne.E1;
-import io.agrest.it.fixture.cayenne.E2;
+import io.agrest.annotation.AgAttribute;
+import io.agrest.annotation.AgId;
+import io.agrest.annotation.AgRelationship;
 import io.agrest.protocol.Dir;
 import io.agrest.protocol.Sort;
 import io.agrest.runtime.jackson.IJacksonService;
@@ -19,24 +20,25 @@ import io.agrest.runtime.protocol.SizeParser;
 import io.agrest.runtime.protocol.SortParser;
 import io.agrest.runtime.request.DefaultRequestBuilderFactory;
 import io.agrest.runtime.request.IAgRequestBuilderFactory;
-import io.agrest.unit.TestWithCayenneMapping;
-import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
+import javax.ws.rs.core.MultivaluedHashMap;
 import javax.ws.rs.core.MultivaluedMap;
+import javax.ws.rs.core.UriInfo;
 import java.util.Arrays;
-import java.util.Collections;
+import java.util.List;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class ParseRequestStageTest extends TestWithCayenneMapping {
+public class ParseRequestStageTest {
 
-    private ParseRequestStage parseStage;
+    private static ParseRequestStage stage;
 
-    @Before
-    public void setUp() {
+    @BeforeClass
+    public static void beforeAll() {
 
         IJacksonService jacksonService = new JacksonService();
 
@@ -49,18 +51,15 @@ public class ParseRequestStageTest extends TestWithCayenneMapping {
 
         IAgRequestBuilderFactory requestBuilderFactory
                 = new DefaultRequestBuilderFactory(expParser, sortParser, includeParser, excludeParser);
-        this.parseStage = new ParseRequestStage(requestBuilderFactory);
+        stage = new ParseRequestStage(requestBuilderFactory);
     }
 
     @Test
-    public void testSelectRequest_Default() {
+    public void testExecute_Default() {
 
-        @SuppressWarnings("unchecked")
-        MultivaluedMap<String, String> params = mock(MultivaluedMap.class);
+        SelectContext<Tr> context = prepareContext(Tr.class, new MultivaluedHashMap<>());
 
-        SelectContext<E1> context = prepareContext(params, E1.class);
-
-        parseStage.execute(context);
+        stage.execute(context);
 
         assertNotNull(context.getMergedRequest());
         assertNull(context.getMergedRequest().getCayenneExp());
@@ -73,202 +72,174 @@ public class ParseRequestStageTest extends TestWithCayenneMapping {
     }
 
     @Test
-    public void testSelectRequest_IncludeAttrs() {
+    public void testExecute_IncludeAttrs() {
 
-        @SuppressWarnings("unchecked")
-        MultivaluedMap<String, String> params = mock(MultivaluedMap.class);
-        when(params.get("include")).thenReturn(Arrays.asList("description", "age"));
+        MultivaluedMap<String, String> params = new MultivaluedHashMap<>();
+        params.put("include", Arrays.asList("a", "b"));
+        SelectContext<Tr> context = prepareContext(Tr.class, params);
 
-        SelectContext<E1> context = prepareContext(params, E1.class);
+        stage.execute(context);
 
-        parseStage.execute(context);
+        assertNotNull(context.getMergedRequest());
+        assertEquals(2, context.getMergedRequest().getIncludes().size());
+        assertEquals("a", context.getMergedRequest().getIncludes().get(0).getPath());
+        assertEquals("b", context.getMergedRequest().getIncludes().get(1).getPath());
+    }
+
+    @Test
+    public void testExecute_IncludeAttrs_AsArray() {
+
+        MultivaluedMap<String, String> params = new MultivaluedHashMap<>();
+        params.putSingle("include", "[\"a\", \"b\"]");
+        SelectContext<Tr> context = prepareContext(Tr.class, params);
+
+        stage.execute(context);
 
         assertNotNull(context.getMergedRequest());
 
         assertEquals(2, context.getMergedRequest().getIncludes().size());
-        assertEquals("description", context.getMergedRequest().getIncludes().get(0).getPath());
-        assertEquals("age", context.getMergedRequest().getIncludes().get(1).getPath());
+        assertEquals("a", context.getMergedRequest().getIncludes().get(0).getPath());
+        assertEquals("b", context.getMergedRequest().getIncludes().get(1).getPath());
     }
 
     @Test
-    public void testSelectRequest_IncludeAttrs_AsArray() {
+    public void testExecute_ExcludeAttrs() {
 
-        @SuppressWarnings("unchecked")
-        MultivaluedMap<String, String> params = mock(MultivaluedMap.class);
-        when(params.get("include")).thenReturn(Arrays.asList("[\"description\", \"age\"]"));
+        MultivaluedMap<String, String> params = new MultivaluedHashMap<>();
+        params.put("exclude", Arrays.asList("a", "b"));
+        SelectContext<Tr> context = prepareContext(Tr.class, params);
 
-        SelectContext<E1> context = prepareContext(params, E1.class);
-
-        parseStage.execute(context);
-
-        assertNotNull(context.getMergedRequest());
-
-        assertEquals(2, context.getMergedRequest().getIncludes().size());
-        assertEquals("description", context.getMergedRequest().getIncludes().get(0).getPath());
-        assertEquals("age", context.getMergedRequest().getIncludes().get(1).getPath());
-    }
-
-    @Test
-    public void testSelectRequest_ExcludeAttrs() {
-
-        @SuppressWarnings("unchecked")
-        MultivaluedMap<String, String> params = mock(MultivaluedMap.class);
-        when(params.get("exclude")).thenReturn(Arrays.asList("description", "age"));
-
-        SelectContext<E1> context = prepareContext(params, E1.class);
-
-        parseStage.execute(context);
+        stage.execute(context);
 
         assertNotNull(context.getMergedRequest());
 
         assertEquals(2, context.getMergedRequest().getExcludes().size());
-        assertEquals("description", context.getMergedRequest().getExcludes().get(0).getPath());
-        assertEquals("age", context.getMergedRequest().getExcludes().get(1).getPath());
+        assertEquals("a", context.getMergedRequest().getExcludes().get(0).getPath());
+        assertEquals("b", context.getMergedRequest().getExcludes().get(1).getPath());
     }
 
     @Test
-    public void testSelectRequest_ExcludeAttrs_AsArray() {
+    public void testExecute_ExcludeAttrs_AsArray() {
 
-        @SuppressWarnings("unchecked")
-        MultivaluedMap<String, String> params = mock(MultivaluedMap.class);
-        when(params.get("exclude")).thenReturn(Arrays.asList("[\"description\", \"age\"]"));
+        MultivaluedMap<String, String> params = new MultivaluedHashMap<>();
+        params.putSingle("exclude", "[\"a\", \"b\"]");
+        SelectContext<Tr> context = prepareContext(Tr.class, params);
 
-        SelectContext<E1> context = prepareContext(params, E1.class);
-
-        parseStage.execute(context);
+        stage.execute(context);
 
         assertNotNull(context.getMergedRequest());
 
         assertEquals(2, context.getMergedRequest().getExcludes().size());
-        assertEquals("description", context.getMergedRequest().getExcludes().get(0).getPath());
-        assertEquals("age", context.getMergedRequest().getExcludes().get(1).getPath());
+        assertEquals("a", context.getMergedRequest().getExcludes().get(0).getPath());
+        assertEquals("b", context.getMergedRequest().getExcludes().get(1).getPath());
     }
 
     @Test
-    public void testSelectRequest_IncludeExcludeAttrs() {
+    public void testExecute_IncludeExcludeAttrs() {
 
-        @SuppressWarnings("unchecked")
-        MultivaluedMap<String, String> params = mock(MultivaluedMap.class);
-        when(params.get("include")).thenReturn(Arrays.asList("description", "age", "id"));
-        when(params.get("exclude")).thenReturn(Arrays.asList("description", "name"));
+        MultivaluedMap<String, String> params = new MultivaluedHashMap<>();
+        params.put("include", Arrays.asList("a", "b", "id"));
+        params.put("exclude", Arrays.asList("a", "c"));
+        SelectContext<Tr> context = prepareContext(Tr.class, params);
 
-        SelectContext<E1> context = prepareContext(params, E1.class);
-
-        parseStage.execute(context);
+        stage.execute(context);
 
         assertNotNull(context.getMergedRequest());
 
         assertEquals(3, context.getMergedRequest().getIncludes().size());
-        assertEquals("description", context.getMergedRequest().getIncludes().get(0).getPath());
-        assertEquals("age", context.getMergedRequest().getIncludes().get(1).getPath());
+        assertEquals("a", context.getMergedRequest().getIncludes().get(0).getPath());
+        assertEquals("b", context.getMergedRequest().getIncludes().get(1).getPath());
         assertEquals("id", context.getMergedRequest().getIncludes().get(2).getPath());
 
         assertEquals(2, context.getMergedRequest().getExcludes().size());
-        assertEquals("description", context.getMergedRequest().getExcludes().get(0).getPath());
-        assertEquals("name", context.getMergedRequest().getExcludes().get(1).getPath());
+        assertEquals("a", context.getMergedRequest().getExcludes().get(0).getPath());
+        assertEquals("c", context.getMergedRequest().getExcludes().get(1).getPath());
     }
 
     @Test
-    public void testSelectRequest_IncludeRels() {
+    public void testExecute_IncludeRels() {
 
-        @SuppressWarnings("unchecked")
-        MultivaluedMap<String, String> params = mock(MultivaluedMap.class);
-        when(params.get("include")).thenReturn(Arrays.asList("e3s"));
+        MultivaluedMap<String, String> params = new MultivaluedHashMap<>();
+        params.putSingle("include", "rtss");
+        SelectContext<Tr> context = prepareContext(Tr.class, params);
 
-        SelectContext<E2> context = prepareContext(params, E2.class);
-
-        parseStage.execute(context);
+        stage.execute(context);
 
         assertNotNull(context.getMergedRequest());
-
         assertEquals(1, context.getMergedRequest().getIncludes().size());
-        assertEquals("e3s", context.getMergedRequest().getIncludes().get(0).getPath());
+        assertEquals("rtss", context.getMergedRequest().getIncludes().get(0).getPath());
     }
 
-
     @Test
-    public void testSelectRequest_SortSimple_NoDir() {
+    public void testExecute_SortSimple_NoDir() {
 
-        @SuppressWarnings("unchecked")
-        MultivaluedMap<String, String> params = mock(MultivaluedMap.class);
-        when(params.get("sort")).thenReturn(Collections.singletonList("e2"));
+        MultivaluedMap<String, String> params = new MultivaluedHashMap<>();
+        params.putSingle("sort", "rtss");
+        SelectContext<Tr> context = prepareContext(Tr.class, params);
 
-        SelectContext<E2> context = prepareContext(params, E2.class);
-
-        parseStage.execute(context);
+        stage.execute(context);
 
         assertNotNull(context.getMergedRequest());
         assertNotNull(context.getMergedRequest().getOrderings());
-
         Sort ordering = context.getMergedRequest().getOrderings().get(0);
-        assertEquals("e2", ordering.getProperty());
+        assertEquals("rtss", ordering.getProperty());
     }
 
     @Test
-    public void testSelectRequest_SortSimple_ASC() {
+    public void testExecute_SortSimple_ASC() {
 
-        @SuppressWarnings("unchecked")
-        MultivaluedMap<String, String> params = mock(MultivaluedMap.class);
-        when(params.get("sort")).thenReturn(Collections.singletonList("e2"));
-        when(params.get("dir")).thenReturn(Collections.singletonList("ASC"));
+        MultivaluedMap<String, String> params = new MultivaluedHashMap<>();
+        params.putSingle("sort", "rtss");
+        params.putSingle("dir", "ASC");
+        SelectContext<Tr> context = prepareContext(Tr.class, params);
 
-        SelectContext<E2> context = prepareContext(params, E2.class);
-
-        parseStage.execute(context);
+        stage.execute(context);
 
         assertNotNull(context.getMergedRequest());
         assertNotNull(context.getMergedRequest().getOrderings());
-
         assertEquals(1, context.getMergedRequest().getOrderings().size());
         Sort ordering = context.getMergedRequest().getOrderings().get(0);
-        assertEquals("e2", ordering.getProperty());
+        assertEquals("rtss", ordering.getProperty());
         assertEquals(Dir.ASC, ordering.getDirection());
     }
 
     @Test
-    public void testSelectRequest_SortSimple_DESC() {
+    public void testExecute_SortSimple_DESC() {
 
-        @SuppressWarnings("unchecked")
-        MultivaluedMap<String, String> params = mock(MultivaluedMap.class);
-        when(params.get("sort")).thenReturn(Collections.singletonList("e2"));
-        when(params.get("dir")).thenReturn(Collections.singletonList("DESC"));
+        MultivaluedMap<String, String> params = new MultivaluedHashMap<>();
+        params.putSingle("sort", "rtss");
+        params.putSingle("dir", "DESC");
+        SelectContext<Tr> context = prepareContext(Tr.class, params);
 
-        SelectContext<E2> context = prepareContext(params, E2.class);
-
-        parseStage.execute(context);
+        stage.execute(context);
 
         assertNotNull(context.getMergedRequest());
         assertNotNull(context.getMergedRequest().getOrderings());
 
         Sort ordering = context.getMergedRequest().getOrderings().get(0);
-        assertEquals("e2", ordering.getProperty());
+        assertEquals("rtss", ordering.getProperty());
         assertEquals(Dir.DESC, ordering.getDirection());
     }
 
     @Test(expected = AgException.class)
-    public void testSelectRequest_SortSimple_Garbage() {
+    public void testExecute_SortSimple_Garbage() {
 
-        @SuppressWarnings("unchecked")
-        MultivaluedMap<String, String> params = mock(MultivaluedMap.class);
-        when(params.get("sort")).thenReturn(Collections.singletonList("s1"));
-        when(params.get("dir")).thenReturn(Collections.singletonList("XYZ"));
+        MultivaluedMap<String, String> params = new MultivaluedHashMap<>();
+        params.putSingle("sort", "xx");
+        params.putSingle("dir", "XYZ");
+        SelectContext<Tr> context = prepareContext(Tr.class, params);
 
-        SelectContext<E2> context = prepareContext(params, E2.class);
-
-        parseStage.execute(context);
+        stage.execute(context);
     }
 
     @Test
-    public void testSelectRequest_Sort() {
+    public void testExecute_Sort() {
 
-        @SuppressWarnings("unchecked")
-        MultivaluedMap<String, String> params = mock(MultivaluedMap.class);
-        when(params.get("sort")).thenReturn(
-                Collections.singletonList("[{\"property\":\"name\",\"direction\":\"DESC\"},{\"property\":\"address\",\"direction\":\"ASC\"}]"));
+        MultivaluedMap<String, String> params = new MultivaluedHashMap<>();
+        params.putSingle("sort", "[{\"property\":\"a\",\"direction\":\"DESC\"},{\"property\":\"b\",\"direction\":\"ASC\"}]");
+        SelectContext<Tr> context = prepareContext(Tr.class, params);
 
-        SelectContext<E2> context = prepareContext(params, E2.class);
-
-        parseStage.execute(context);
+        stage.execute(context);
 
         assertNotNull(context.getMergedRequest());
         assertNotNull(context.getMergedRequest().getOrderings());
@@ -277,23 +248,20 @@ public class ParseRequestStageTest extends TestWithCayenneMapping {
         Sort o1 = context.getMergedRequest().getOrderings().get(0);
         Sort o2 = context.getMergedRequest().getOrderings().get(1);
 
-        assertEquals("name", o1.getProperty());
+        assertEquals("a", o1.getProperty());
         assertEquals(Dir.DESC, o1.getDirection());
-        assertEquals("address", o2.getProperty());
+        assertEquals("b", o2.getProperty());
         assertEquals(Dir.ASC, o2.getDirection());
     }
 
     @Test
-    public void testSelectRequest_Sort_Dupes() {
+    public void testExecute_Sort_Dupes() {
 
-        @SuppressWarnings("unchecked")
-        MultivaluedMap<String, String> params = mock(MultivaluedMap.class);
-        when(params.get("sort")).thenReturn(
-                Collections.singletonList("[{\"property\":\"name\",\"direction\":\"DESC\"},{\"property\":\"name\",\"direction\":\"ASC\"}]"));
+        MultivaluedMap<String, String> params = new MultivaluedHashMap<>();
+        params.putSingle("sort", "[{\"property\":\"a\",\"direction\":\"DESC\"},{\"property\":\"a\",\"direction\":\"ASC\"}]");
+        SelectContext<Tr> context = prepareContext(Tr.class, params);
 
-        SelectContext<E2> context = prepareContext(params, E2.class);
-
-        parseStage.execute(context);
+        stage.execute(context);
 
         assertNotNull(context.getMergedRequest());
         assertNotNull(context.getMergedRequest().getOrderings());
@@ -302,52 +270,100 @@ public class ParseRequestStageTest extends TestWithCayenneMapping {
         Sort o1 = context.getMergedRequest().getOrderings().get(0);
         Sort o2 = context.getMergedRequest().getOrderings().get(1);
 
-        assertEquals("name", o1.getProperty());
+        assertEquals("a", o1.getProperty());
         assertEquals(Dir.DESC, o1.getDirection());
-        assertEquals("name", o2.getProperty());
+        assertEquals("a", o2.getProperty());
         assertEquals(Dir.ASC, o2.getDirection());
     }
 
     @Test(expected = AgException.class)
-    public void testSelectRequest_Sort_BadSpec() {
+    public void testExecute_Sort_BadSpec() {
 
-        @SuppressWarnings("unchecked")
-        MultivaluedMap<String, String> params = mock(MultivaluedMap.class);
-        when(params.get("sort")).thenReturn(
-                Collections.singletonList("[{\"property\":\"p1\",\"direction\":\"DESC\"},{\"property\":\"p2\",\"direction\":\"XXX\"}]"));
+        MultivaluedMap<String, String> params = new MultivaluedHashMap<>();
+        params.putSingle("sort", "[{\"property\":\"p1\",\"direction\":\"DESC\"},{\"property\":\"p2\",\"direction\":\"XXX\"}]");
+        SelectContext<Tr> context = prepareContext(Tr.class, params);
 
-        SelectContext<E2> context = prepareContext(params, E2.class);
-
-        parseStage.execute(context);
+        stage.execute(context);
     }
 
     @Test(expected = AgException.class)
-    public void testSelectRequest_CayenneExp_BadSpec() {
+    public void testExecute_CayenneExp_BadSpec() {
 
-        @SuppressWarnings("unchecked")
-        MultivaluedMap<String, String> params = mock(MultivaluedMap.class);
-        when(params.get("cayenneExp"))
-                .thenReturn(Collections.singletonList("{exp : \"numericProp = 12345 and stringProp = 'John Smith' and booleanProp = true\"}"));
+        MultivaluedMap<String, String> params = new MultivaluedHashMap<>();
+        params.putSingle("cayenneExp", "{exp : \"numericProp = 12345 and stringProp = 'John Smith' and booleanProp = true\"}");
+        SelectContext<Tr> context = prepareContext(Tr.class, params);
 
-        SelectContext<E2> context = prepareContext(params, E2.class);
-
-        parseStage.execute(context);
+        stage.execute(context);
     }
 
     @Test
-    public void testSelectRequest_CayenneExp() {
+    public void testExecute_CayenneExp() {
 
-        @SuppressWarnings("unchecked")
-        MultivaluedMap<String, String> params = mock(MultivaluedMap.class);
-        when(params.get("cayenneExp")).thenReturn(Collections.singletonList("{\"exp\" : \"name = 'John Smith'\"}"));
+        MultivaluedMap<String, String> params = new MultivaluedHashMap<>();
+        params.putSingle("cayenneExp", "{\"exp\" : \"a = 'John Smith'\"}");
+        SelectContext<Tr> context = prepareContext(Tr.class, params);
 
-        SelectContext<E2> context = prepareContext(params, E2.class);
-
-        parseStage.execute(context);
+        stage.execute(context);
 
         assertNotNull(context.getMergedRequest());
         assertNotNull(context.getMergedRequest().getCayenneExp());
 
-        assertEquals("name = 'John Smith'", context.getMergedRequest().getCayenneExp().getExp());
+        assertEquals("a = 'John Smith'", context.getMergedRequest().getCayenneExp().getExp());
+    }
+
+    protected <T> SelectContext<T> prepareContext(Class<T> type, MultivaluedMap<String, String> params) {
+        SelectContext<T> context = new SelectContext<>(type);
+
+        UriInfo uriInfo = mock(UriInfo.class);
+        when(uriInfo.getQueryParameters()).thenReturn(params);
+
+        context.setUriInfo(uriInfo);
+        return context;
+    }
+
+    public static class Tr {
+
+        @AgId
+        public int getId() {
+            throw new UnsupportedOperationException();
+        }
+
+        @AgAttribute
+        public int getA() {
+            throw new UnsupportedOperationException();
+        }
+
+        @AgAttribute
+        public String getB() {
+            throw new UnsupportedOperationException();
+        }
+
+        @AgAttribute
+        public String getC() {
+            throw new UnsupportedOperationException();
+        }
+
+        @AgRelationship
+        public List<Ts> getRtss() {
+            throw new UnsupportedOperationException();
+        }
+    }
+
+    public static class Ts {
+
+        @AgId
+        public int getId() {
+            throw new UnsupportedOperationException();
+        }
+
+        @AgAttribute
+        public String getN() {
+            throw new UnsupportedOperationException();
+        }
+
+        @AgAttribute
+        public String getM() {
+            throw new UnsupportedOperationException();
+        }
     }
 }

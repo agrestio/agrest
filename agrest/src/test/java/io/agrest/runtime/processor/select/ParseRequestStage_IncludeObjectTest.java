@@ -1,7 +1,8 @@
 package io.agrest.runtime.processor.select;
 
-import io.agrest.it.fixture.cayenne.E2;
-import io.agrest.it.fixture.cayenne.E3;
+import io.agrest.annotation.AgAttribute;
+import io.agrest.annotation.AgId;
+import io.agrest.annotation.AgRelationship;
 import io.agrest.runtime.jackson.IJacksonService;
 import io.agrest.runtime.jackson.JacksonService;
 import io.agrest.runtime.protocol.CayenneExpParser;
@@ -16,23 +17,23 @@ import io.agrest.runtime.protocol.SizeParser;
 import io.agrest.runtime.protocol.SortParser;
 import io.agrest.runtime.request.DefaultRequestBuilderFactory;
 import io.agrest.runtime.request.IAgRequestBuilderFactory;
-import io.agrest.unit.TestWithCayenneMapping;
-import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
+import javax.ws.rs.core.MultivaluedHashMap;
 import javax.ws.rs.core.MultivaluedMap;
-import java.util.Arrays;
+import javax.ws.rs.core.UriInfo;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class ParseRequestStage_IncludeObjectTest extends TestWithCayenneMapping {
+public class ParseRequestStage_IncludeObjectTest {
 
-    private ParseRequestStage parseStage;
+    private static ParseRequestStage stage;
 
-    @Before
-    public void setUp() {
+    @BeforeClass
+    public static void beforeAll() {
 
         IJacksonService jacksonService = new JacksonService();
 
@@ -45,40 +46,101 @@ public class ParseRequestStage_IncludeObjectTest extends TestWithCayenneMapping 
 
         IAgRequestBuilderFactory requestBuilderFactory
                 = new DefaultRequestBuilderFactory(expParser, sortParser, includeParser, excludeParser);
-        this.parseStage = new ParseRequestStage(requestBuilderFactory);
+        stage = new ParseRequestStage(requestBuilderFactory);
     }
 
     @Test
-    public void testToDataRequest_IncludeObject_Path() {
+    public void testExecute_IncludeObject_Path() {
 
-        @SuppressWarnings("unchecked")
-        MultivaluedMap<String, String> params = mock(MultivaluedMap.class);
-        when(params.get("include")).thenReturn(Arrays.asList("{\"path\":\"e3s\"}"));
+        MultivaluedHashMap<String, String> params = new MultivaluedHashMap<>();
+        params.putSingle("include", "{\"path\":\"rtt\"}");
+        SelectContext<Ts> context = prepareContext(Ts.class, params);
 
-        SelectContext<E2> context = prepareContext(params, E2.class);
-
-        parseStage.execute(context);
+        stage.execute(context);
 
         assertNotNull(context.getMergedRequest());
-
         assertEquals(1, context.getMergedRequest().getIncludes().size());
-        assertEquals("e3s", context.getMergedRequest().getIncludes().get(0).getPath());
+        assertEquals("rtt", context.getMergedRequest().getIncludes().get(0).getPath());
     }
 
     @Test
-    public void testToDataRequest_IncludeObject_MapBy() {
+    public void testExecute_IncludeObject_MapBy() {
 
-        @SuppressWarnings("unchecked")
-        MultivaluedMap<String, String> params = mock(MultivaluedMap.class);
-        when(params.get("include")).thenReturn(Arrays.asList("{\"path\":\"e3s\",\"mapBy\":\"e5\"}"));
+        MultivaluedHashMap<String, String> params = new MultivaluedHashMap<>();
+        params.putSingle("include", "{\"path\":\"rtt\",\"mapBy\":\"rtu\"}");
+        SelectContext<Ts> context = prepareContext(Ts.class, params);
 
-        SelectContext<E2> context = prepareContext(params, E2.class);
+        stage.execute(context);
 
-        parseStage.execute(context);
         assertNotNull(context.getMergedRequest());
-
         assertEquals(1, context.getMergedRequest().getIncludes().size());
-        assertTrue(context.getMergedRequest().getIncludes().get(0).getPath().equalsIgnoreCase(E2.E3S.getName()));
-        assertTrue(context.getMergedRequest().getIncludes().get(0).getMapBy().equalsIgnoreCase(E3.E5.getName()));
+        assertTrue(context.getMergedRequest().getIncludes().get(0).getPath().equalsIgnoreCase("rtt"));
+        assertTrue(context.getMergedRequest().getIncludes().get(0).getMapBy().equalsIgnoreCase("rtu"));
+    }
+
+    protected <T> SelectContext<T> prepareContext(Class<T> type, MultivaluedMap<String, String> params) {
+        SelectContext<T> context = new SelectContext<>(type);
+
+        UriInfo uriInfo = mock(UriInfo.class);
+        when(uriInfo.getQueryParameters()).thenReturn(params);
+
+        context.setUriInfo(uriInfo);
+        return context;
+    }
+
+    public static class Ts {
+
+        @AgId
+        public int getId() {
+            throw new UnsupportedOperationException();
+        }
+
+        @AgAttribute
+        public String getN() {
+            throw new UnsupportedOperationException();
+        }
+
+        @AgAttribute
+        public String getM() {
+            throw new UnsupportedOperationException();
+        }
+
+
+        @AgRelationship
+        public Tt getRtt() {
+            throw new UnsupportedOperationException();
+        }
+    }
+
+    public static class Tt {
+
+        @AgId
+        public int getId() {
+            throw new UnsupportedOperationException();
+        }
+
+
+        @AgAttribute
+        public String getO() {
+            throw new UnsupportedOperationException();
+        }
+
+        @AgAttribute
+        public String getP() {
+            throw new UnsupportedOperationException();
+        }
+
+        @AgRelationship
+        public Tu getRtu() {
+            throw new UnsupportedOperationException();
+        }
+    }
+
+    public static class Tu {
+
+        @AgId
+        public int getId() {
+            throw new UnsupportedOperationException();
+        }
     }
 }
