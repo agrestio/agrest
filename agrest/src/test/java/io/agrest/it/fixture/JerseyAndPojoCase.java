@@ -12,10 +12,12 @@ import io.agrest.it.fixture.pojo.model.P1;
 import io.agrest.it.fixture.pojo.model.P2;
 import io.agrest.it.fixture.pojo.model.P4;
 import io.agrest.it.fixture.pojo.model.P6;
+import io.agrest.it.fixture.pojo.model.P7;
 import io.agrest.it.fixture.pojo.model.P8;
 import io.agrest.it.fixture.pojo.model.P9;
 import io.agrest.runtime.AgBuilder;
 import io.agrest.runtime.AgRuntime;
+import io.agrest.runtime.IAgService;
 import io.agrest.runtime.processor.select.SelectProcessorFactory;
 import io.bootique.BQRuntime;
 import io.bootique.jersey.JerseyModule;
@@ -83,6 +85,14 @@ public class JerseyAndPojoCase {
         POJO_DB.clear();
     }
 
+    protected IAgService ag() {
+        return agService(IAgService.class);
+    }
+
+    protected <T> T agService(Class<T> type) {
+        return TEST_RUNTIME.getInstance(AgRuntime.class).service(type);
+    }
+
     protected ResponseAssertions onSuccess(Response response) {
         return onResponse(response).wasSuccess();
     }
@@ -107,6 +117,10 @@ public class JerseyAndPojoCase {
         return ClientBuilder.newClient().target("http://127.0.0.1:8080/").path(path);
     }
 
+    protected <T> Map<Object, T> bucket(Class<T> type) {
+        return POJO_DB.bucketForType(type);
+    }
+
     protected Map<Object, P1> p1() {
         return POJO_DB.bucketForType(P1.class);
     }
@@ -121,6 +135,10 @@ public class JerseyAndPojoCase {
 
     protected Map<Object, P6> p6() {
         return POJO_DB.bucketForType(P6.class);
+    }
+
+    protected Map<Object, P7> p7() {
+        return POJO_DB.bucketForType(P7.class);
     }
 
     protected Map<Object, P8> p8() {
