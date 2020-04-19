@@ -1,7 +1,7 @@
 package io.agrest.sencha.it.fixture;
 
-import io.agrest.it.fixture.CayenneAwareResponseAssertions;
-import io.agrest.it.fixture.CayenneOpCounter;
+import io.agrest.cayenne.unit.CayenneAwareResponseAssertions;
+import io.agrest.cayenne.unit.CayenneOpCounter;
 
 import javax.ws.rs.core.Response;
 

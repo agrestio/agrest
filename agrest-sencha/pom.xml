@@ -32,7 +32,6 @@
 			<artifactId>mockito-all</artifactId>
 			<scope>test</scope>
 		</dependency>
-
 		<dependency>
 			<groupId>io.bootique</groupId>
 			<artifactId>bootique-test</artifactId>
@@ -53,7 +52,6 @@
 			<artifactId>bootique-jdbc-hikaricp</artifactId>
 			<scope>test</scope>
 		</dependency>
-
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-simple</artifactId>
@@ -62,9 +60,22 @@
 		<dependency>
 			<groupId>io.agrest</groupId>
 			<artifactId>agrest</artifactId>
-            <type>test-jar</type>
-			<version>${project.version}</version>
+			<type>test-jar</type>
 			<scope>test</scope>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>io.agrest</groupId>
+			<artifactId>agrest-cayenne</artifactId>
+			<scope>test</scope>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>io.agrest</groupId>
+			<artifactId>agrest-cayenne</artifactId>
+			<type>test-jar</type>
+			<scope>test</scope>
+			<version>${project.version}</version>
 		</dependency>
 	</dependencies>
 

@@ -8,31 +8,17 @@ import io.agrest.meta.AgRelationship;
 import io.agrest.property.PropertyReader;
 import io.agrest.resolver.NestedDataResolver;
 import io.agrest.resolver.ReaderFactoryBasedResolver;
-import io.agrest.runtime.cayenne.ICayennePersister;
 import io.agrest.runtime.meta.IMetadataService;
 import io.agrest.runtime.processor.select.SelectContext;
-import org.apache.cayenne.map.EntityResolver;
-import org.junit.Before;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 public class AgBuilder_OverlayTest {
-
-    private ICayennePersister mockCayennePersister ;
-
-    @Before
-    public void before() {
-        this.mockCayennePersister = mock(ICayennePersister.class);
-        when(mockCayennePersister.entityResolver()).thenReturn(mock(EntityResolver.class));
-    }
 
     @Test
     public void testOverlay_RedefineAttribute_New() {
         AgRuntime runtime = new AgBuilder()
-                .cayenneService(mockCayennePersister)
                 .entityOverlay(AgEntity.overlay(X.class).redefineAttribute("adHoc", Integer.class, e -> 2))
                 .build();
 
@@ -56,7 +42,6 @@ public class AgBuilder_OverlayTest {
     @Test
     public void testOverlay_RedefineAttribute_Replace() {
         AgRuntime runtime = new AgBuilder()
-                .cayenneService(mockCayennePersister)
                 .entityOverlay(AgEntity.overlay(X.class).redefineAttribute("phoneNumber", Long.class, x -> Long.valueOf(x.getPhoneNumber())))
                 .build();
 
@@ -84,7 +69,6 @@ public class AgBuilder_OverlayTest {
         NestedDataResolver<?> resolver = new TestNestedDataResolver();
 
         AgRuntime runtime = new AgBuilder()
-                .cayenneService(mockCayennePersister)
                 .entityOverlay(AgEntity.overlay(X.class).redefineRelationshipResolver("y", (t, n) -> resolver))
                 .build();
 
@@ -113,7 +97,6 @@ public class AgBuilder_OverlayTest {
         NestedDataResolver<?> resolver = new TestNestedDataResolver();
 
         AgRuntime runtime = new AgBuilder()
-                .cayenneService(mockCayennePersister)
                 .entityOverlay(AgEntity.overlay(X.class).redefineRelationshipResolver("adHoc", (t, n) -> resolver))
                 .build();
 
@@ -139,7 +122,6 @@ public class AgBuilder_OverlayTest {
         NestedDataResolver<Object> resolver = new TestNestedDataResolver<>();
 
         AgRuntime runtime = new AgBuilder()
-                .cayenneService(mockCayennePersister)
                 // just for kicks redefine to-one as to-many, and change its target
                 .entityOverlay(AgEntity.overlay(X.class).redefineToMany("y", A.class, (t, n) -> resolver))
                 .build();
@@ -169,7 +151,6 @@ public class AgBuilder_OverlayTest {
         NestedDataResolver<P1> resolver = new TestNestedDataResolver<>();
 
         AgRuntime runtime = new AgBuilder()
-                .cayenneService(mockCayennePersister)
                 .entityOverlay(AgEntity.overlay(X.class).redefineToOne("adHoc", A.class, (t, n) -> resolver))
                 .build();
 

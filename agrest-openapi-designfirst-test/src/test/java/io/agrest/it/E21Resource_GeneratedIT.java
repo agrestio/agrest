@@ -1,6 +1,7 @@
 package io.agrest.it;
 
-import io.agrest.it.fixture.JerseyAndDerbyCase;
+
+import io.agrest.cayenne.unit.JerseyAndDerbyCase;
 import io.agrest.it.fixture.cayenne.E21;
 import io.agrest.swagger.api.v1.service.E21Resource;
 import org.junit.BeforeClass;

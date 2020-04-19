@@ -1,6 +1,7 @@
 package io.agrest.sencha.runtime.entity;
 
 import io.agrest.AgException;
+import io.agrest.cayenne.unit.TestWithCayenneMapping;
 import io.agrest.it.fixture.cayenne.E4;
 import io.agrest.meta.AgEntity;
 import io.agrest.runtime.entity.ExpressionPostProcessor;
@@ -8,7 +9,6 @@ import io.agrest.runtime.jackson.IJacksonService;
 import io.agrest.runtime.jackson.JacksonService;
 import io.agrest.runtime.path.PathDescriptorManager;
 import io.agrest.sencha.protocol.Filter;
-import io.agrest.unit.TestWithCayenneMapping;
 import org.apache.cayenne.exp.Expression;
 import org.junit.Before;
 import org.junit.Test;
@@ -18,8 +18,7 @@ import java.util.GregorianCalendar;
 
 import static java.util.Arrays.asList;
 import static org.apache.cayenne.exp.ExpressionFactory.exp;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.Assert.*;
 
 public class SenchaFilterExpressionCompilerTest extends TestWithCayenneMapping {
 

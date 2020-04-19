@@ -11,7 +11,7 @@ import io.agrest.UpdateBuilder;
 import io.agrest.UpdateStage;
 import io.agrest.constraints.Constraint;
 import io.agrest.processor.Processor;
-import io.agrest.runtime.cayenne.ByKeyObjectMapperFactory;
+import io.agrest.runtime.processor.update.ByKeyObjectMapperFactory;
 import io.agrest.runtime.processor.update.UpdateContext;
 import io.agrest.runtime.processor.update.UpdateProcessorFactory;
 import org.apache.cayenne.exp.Property;

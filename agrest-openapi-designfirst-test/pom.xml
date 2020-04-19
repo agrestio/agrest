@@ -29,6 +29,19 @@
             <scope>test</scope>
         </dependency>
         <dependency>
+            <groupId>io.agrest</groupId>
+            <artifactId>agrest-cayenne</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.agrest</groupId>
+            <artifactId>agrest-cayenne</artifactId>
+            <type>test-jar</type>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <scope>test</scope>

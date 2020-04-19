@@ -18,12 +18,14 @@ import io.agrest.it.fixture.pojo.model.P9;
 import io.agrest.runtime.AgBuilder;
 import io.agrest.runtime.AgRuntime;
 import io.agrest.runtime.IAgService;
+import io.agrest.runtime.processor.delete.DeleteProcessorFactory;
 import io.agrest.runtime.processor.select.SelectProcessorFactory;
+import io.agrest.runtime.processor.unrelate.UnrelateProcessorFactory;
+import io.agrest.runtime.processor.update.UpdateProcessorFactoryFactory;
 import io.bootique.BQRuntime;
 import io.bootique.jersey.JerseyModule;
 import io.bootique.jersey.JerseyModuleExtender;
 import io.bootique.test.junit.BQTestFactory;
-import org.apache.cayenne.configuration.server.ServerRuntime;
 import org.junit.Before;
 import org.junit.ClassRule;
 
@@ -35,6 +37,8 @@ import java.net.URLEncoder;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.function.UnaryOperator;
+
+import static org.mockito.Mockito.mock;
 
 /**
  * An abstract superclass of integration tests that starts Bootique test runtime with JAX-RS service and an in-memory
@@ -59,7 +63,7 @@ public class JerseyAndPojoCase {
 
         Function<AgBuilder, AgBuilder> customizerChain = customizer.compose(JerseyAndPojoCase::customizeForPojo);
 
-        TEST_RUNTIME = TEST_FACTORY.app("-s", "-c", "classpath:io/agrest/it/fixture/pojoserver.yml")
+        TEST_RUNTIME = TEST_FACTORY.app("-s")
                 .autoLoadModules()
                 .module(new AgModule(customizerChain))
                 .module(b -> addResources(JerseyModule.extend(b), resources).addFeature(AgRuntime.class))
@@ -163,8 +167,8 @@ public class JerseyAndPojoCase {
 
         @Provides
         @Singleton
-        AgRuntime createRuntime(ServerRuntime runtime) {
-            return agCustomizer.apply(new AgBuilder().cayenneRuntime(runtime)).build();
+        AgRuntime createRuntime() {
+            return agCustomizer.apply(new AgBuilder()).build();
         }
     }
 
@@ -186,6 +190,10 @@ public class JerseyAndPojoCase {
         @Override
         public void configure(org.apache.cayenne.di.Binder binder) {
             binder.bind(SelectProcessorFactory.class).toProvider(PojoSelectProcessorFactoryProvider.class);
+            binder.bind(DeleteProcessorFactory.class).toInstance(mock(DeleteProcessorFactory.class));
+            binder.bind(UpdateProcessorFactoryFactory.class).toInstance(mock(UpdateProcessorFactoryFactory.class));
+            binder.bind(UnrelateProcessorFactory.class).toInstance(mock(UnrelateProcessorFactory.class));
+
             binder.bind(PojoFetchStage.class).to(PojoFetchStage.class);
             binder.bind(PojoDB.class).toInstance(POJO_DB);
         }

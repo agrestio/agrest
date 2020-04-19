@@ -1,7 +1,7 @@
 package io.agrest.runtime;
 
 import io.agrest.SelectStage;
-import io.agrest.it.fixture.cayenne.E2;
+import io.agrest.it.fixture.pojo.model.P1;
 import io.agrest.processor.Processor;
 import io.agrest.processor.ProcessorOutcome;
 import io.agrest.runtime.processor.select.SelectContext;
@@ -33,13 +33,13 @@ public class DefaultSelectBuilderTest {
         // note that we do not make any assertions here.. just making sure methods with certain generic signatures
         // would compile without casting...
 
-        createBuilder(E2.class)
+        createBuilder(P1.class)
                 .stage(SelectStage.PARSE_REQUEST, this::doSomething0)
                 .stage(SelectStage.PARSE_REQUEST, this::doSomething1)
                 .stage(SelectStage.PARSE_REQUEST, this::doSomething2)
                 .stage(SelectStage.PARSE_REQUEST, this::doSomething3)
                 .stage(SelectStage.PARSE_REQUEST, this::doSomething4)
-                .stage(SelectStage.PARSE_REQUEST, (SelectContext<E2> s) -> {
+                .stage(SelectStage.PARSE_REQUEST, (SelectContext<P1> s) -> {
                 })
                 .stage(SelectStage.PARSE_REQUEST, s -> {
                 });
@@ -51,13 +51,13 @@ public class DefaultSelectBuilderTest {
         // note that we do not make any assertions here.. just making sure methods with certain generic signatures
         // would compile without casting...
 
-        createBuilder(E2.class)
+        createBuilder(P1.class)
                 .terminalStage(SelectStage.PARSE_REQUEST, this::doSomething0)
                 .terminalStage(SelectStage.PARSE_REQUEST, this::doSomething1)
                 .terminalStage(SelectStage.PARSE_REQUEST, this::doSomething2)
                 .terminalStage(SelectStage.PARSE_REQUEST, this::doSomething3)
                 .terminalStage(SelectStage.PARSE_REQUEST, this::doSomething4)
-                .terminalStage(SelectStage.PARSE_REQUEST, (SelectContext<E2> s) -> {
+                .terminalStage(SelectStage.PARSE_REQUEST, (SelectContext<P1> s) -> {
                 })
                 .terminalStage(SelectStage.PARSE_REQUEST, s -> {
                 });
@@ -69,13 +69,13 @@ public class DefaultSelectBuilderTest {
         // note that we do not make any assertions here.. just making sure methods with certain generic signatures
         // would compile without casting...
 
-        createBuilder(E2.class)
+        createBuilder(P1.class)
                 .routingStage(SelectStage.PARSE_REQUEST, this::doSomethingAndReturn0)
                 .routingStage(SelectStage.PARSE_REQUEST, this::doSomethingAndReturn1)
                 .routingStage(SelectStage.PARSE_REQUEST, this::doSomethingAndReturn2)
                 .routingStage(SelectStage.PARSE_REQUEST, this::doSomethingAndReturn3)
                 .routingStage(SelectStage.PARSE_REQUEST, this::doSomethingAndReturn4)
-                .routingStage(SelectStage.PARSE_REQUEST, (SelectContext<E2> s) -> ProcessorOutcome.CONTINUE)
+                .routingStage(SelectStage.PARSE_REQUEST, (SelectContext<P1> s) -> ProcessorOutcome.CONTINUE)
                 .routingStage(SelectStage.PARSE_REQUEST, s -> ProcessorOutcome.CONTINUE);
     }
 
@@ -96,9 +96,9 @@ public class DefaultSelectBuilderTest {
         c.getEntity().setResult(new ArrayList<>());
     }
 
-    private void doSomething4(SelectContext<E2> c) {
+    private void doSomething4(SelectContext<P1> c) {
         c.getEntity().setResult(new ArrayList<>());
-        c.getEntity().setResult(new ArrayList<E2>());
+        c.getEntity().setResult(new ArrayList<P1>());
     }
 
     private ProcessorOutcome doSomethingAndReturn0(SelectContext<?> c) {
@@ -119,9 +119,9 @@ public class DefaultSelectBuilderTest {
         return ProcessorOutcome.CONTINUE;
     }
 
-    private ProcessorOutcome doSomethingAndReturn4(SelectContext<E2> c) {
+    private ProcessorOutcome doSomethingAndReturn4(SelectContext<P1> c) {
         c.getEntity().setResult(new ArrayList<>());
-        c.getEntity().setResult(new ArrayList<E2>());
+        c.getEntity().setResult(new ArrayList<P1>());
         return ProcessorOutcome.CONTINUE;
     }
 }

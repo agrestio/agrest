@@ -1,6 +1,7 @@
 package io.agrest.sencha.runtime.processor.select;
 
 import io.agrest.ResourceEntity;
+import io.agrest.cayenne.unit.TestWithCayenneMapping;
 import io.agrest.it.fixture.cayenne.E2;
 import io.agrest.protocol.CayenneExp;
 import io.agrest.runtime.entity.CayenneExpMerger;
@@ -31,7 +32,6 @@ import io.agrest.sencha.SenchaRequest;
 import io.agrest.sencha.protocol.Filter;
 import io.agrest.sencha.runtime.entity.ISenchaFilterExpressionCompiler;
 import io.agrest.sencha.runtime.entity.SenchaFilterExpressionCompiler;
-import io.agrest.unit.TestWithCayenneMapping;
 import org.junit.Before;
 import org.junit.Test;
 

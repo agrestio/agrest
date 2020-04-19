@@ -16,6 +16,7 @@
         <module>agrest</module>
         <module>agrest-client</module>
         <module>agrest-sencha</module>
+        <module>agrest-cayenne</module>
         <module>agrest-bom</module>
         <module>agrest-docs</module>
         <module>agrest-openapi-designfirst</module>

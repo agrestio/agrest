@@ -3,10 +3,11 @@ package io.agrest.client.it.noadapter;
 import com.fasterxml.jackson.databind.JsonNode;
 import io.agrest.Ag;
 import io.agrest.DataResponse;
+import io.agrest.cayenne.unit.JerseyAndDerbyCase;
 import io.agrest.client.AgClient;
 import io.agrest.client.AgClientException;
 import io.agrest.client.ClientDataResponse;
-import io.agrest.it.fixture.JerseyAndDerbyCase;
+
 import io.agrest.it.fixture.cayenne.E4;
 import org.junit.BeforeClass;
 import org.junit.Test;

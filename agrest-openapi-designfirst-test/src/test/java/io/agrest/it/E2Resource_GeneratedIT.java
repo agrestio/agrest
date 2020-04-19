@@ -1,6 +1,7 @@
 package io.agrest.it;
 
-import io.agrest.it.fixture.JerseyAndDerbyCase;
+
+import io.agrest.cayenne.unit.JerseyAndDerbyCase;
 import io.agrest.it.fixture.cayenne.E2;
 import io.agrest.it.fixture.cayenne.E3;
 import io.agrest.swagger.api.v1.service.E2Resource;
