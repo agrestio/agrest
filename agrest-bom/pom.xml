@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <!-- Not inheriting from parent to avoid pollution of client projects with things like test dependency versions
      (e.g. "bootique-bom"). As a result have to duplicate certain distribution-related sections.
     -->
     <groupId>io.agrest</groupId>
-    <version>3.4-SNAPSHOT</version>
+    <version>3.4</version>
     <artifactId>agrest-bom</artifactId>
     <packaging>pom</packaging>
     <name>agrest-bom: Bill of Materials w/all public modules</name>
