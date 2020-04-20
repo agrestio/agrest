@@ -16,6 +16,34 @@
         modules at once.
     </description>
 
+    <url>https://github.com/agrestio/agrest/</url>
+
+    <licenses>
+        <license>
+            <name>Apache 2.0 License</name>
+            <url>https://github.com/agrestio/agrest/blob/master/LICENSE.txt</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+
+    <developers>
+        <developer>
+            <id>andrus</id>
+            <name>Andrus Adamchik</name>
+            <email>andrus@objectstyle.com</email>
+            <organization>ObjectStyle</organization>
+            <timezone>America/New_York</timezone>
+        </developer>
+    </developers>
+
+    <scm>
+        <connection>scm:git:https://github.com/agrestio/agrest</connection>
+        <developerConnection>scm:git:ssh://git@github.com/agrestio/agrest</developerConnection>
+        <url>https://github.com/agrestio/agrest</url>
+        <tag>HEAD</tag>
+    </scm>
+
     <distributionManagement>
         <repository>
             <uniqueVersion>false</uniqueVersion>
