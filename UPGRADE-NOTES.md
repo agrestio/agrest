@@ -1,4 +1,4 @@
-## Upgrading to 3.4
+## Upgrading to 3.5
 
 ### Isolating a pluggable Cayenne backend [#433](https://github.com/agrestio/agrest/issues/433) 
 
@@ -12,6 +12,8 @@ ServerRuntime runtime = ..;
 AgCayenneModule cayenneExt = AgCayenneBuilder.build(runtime);
 AgBuilder agBuilder = new AgBuilder().module(cayenneExt);
 ```
+
+## Upgrading to 3.4
 
 ### Support for Case Insensitive Sorting [#428](https://github.com/agrestio/agrest/issues/428)
 
