@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>io.agrest</groupId>
 		<artifactId>agrest-parent</artifactId>
-		<version>3.5-SNAPSHOT</version>
+		<version>3.5</version>
 	</parent>
 
 	<groupId>io.agrest.docs</groupId>
@@ -102,7 +102,7 @@
                         <sectanchors>true</sectanchors>
                         <idprefix /> <!-- set the idprefix to blank -->
                         <idseparator>-</idseparator>
-                        <sectnums/>
+                        <sectnums />
                         <icons>font</icons>
                         <toc>auto</toc>
                         <project-version>${project.version}</project-version>
