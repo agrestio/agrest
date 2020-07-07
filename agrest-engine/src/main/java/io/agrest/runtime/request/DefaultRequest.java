@@ -14,13 +14,13 @@ import java.util.List;
  */
 public class DefaultRequest implements AgRequest {
 
-    CayenneExp cayenneExp;
-    List<Sort> orderings;
-    String mapBy;
-    Integer start;
-    Integer limit;
-    List<Include> includes;
-    List<Exclude> excludes;
+    protected CayenneExp cayenneExp;
+    protected List<Sort> orderings;
+    protected String mapBy;
+    protected Integer start;
+    protected Integer limit;
+    protected List<Include> includes;
+    protected List<Exclude> excludes;
 
     protected DefaultRequest() {
         this.includes = new ArrayList<>();

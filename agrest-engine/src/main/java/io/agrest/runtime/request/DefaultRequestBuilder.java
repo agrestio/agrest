@@ -57,25 +57,33 @@ public class DefaultRequestBuilder implements AgRequestBuilder {
 
     @Override
     public AgRequestBuilder addOrdering(String unparsedOrdering) {
-        request.orderings.addAll(sortParser.parse(unparsedOrdering, null));
+        if (unparsedOrdering != null && unparsedOrdering.length() > 0) {
+            request.orderings.addAll(sortParser.parse(unparsedOrdering, null));
+        }
         return this;
     }
 
     @Override
     public AgRequestBuilder addOrdering(String unparsedOrdering, String unparsedDir) {
-        request.orderings.addAll(sortParser.parse(unparsedOrdering, unparsedDir));
+        if (unparsedOrdering != null && unparsedOrdering.length() > 0) {
+            request.orderings.addAll(sortParser.parse(unparsedOrdering, unparsedDir));
+        }
         return this;
     }
 
     @Override
     public AgRequestBuilder addOrdering(Sort ordering) {
-        request.orderings.add(ordering);
+        if (ordering != null) {
+            request.orderings.add(ordering);
+        }
         return this;
     }
 
     @Override
     public AgRequestBuilder addOrdering(int index, Sort ordering) {
-        request.orderings.add(index, ordering);
+        if (ordering != null) {
+            request.orderings.add(index, ordering);
+        }
         return this;
     }
 

@@ -1,8 +1,9 @@
-Release 3.5
+## Release 3.5
 
 * #433 "agrest-cayenne" : isolate a pluggable Cayenne backend for Agrest
+* #443 Null-safe AgRequestBuilder
 
-Release 3.4
+## Release 3.4
 
 * #413 Pluggable resolver for hierarchical fetches
 * #420 Per-request EncoderFilters
