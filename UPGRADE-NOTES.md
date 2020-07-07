@@ -12,6 +12,8 @@ ServerRuntime runtime = ..;
 AgCayenneModule cayenneExt = AgCayenneBuilder.build(runtime);
 AgBuilder agBuilder = new AgBuilder().module(cayenneExt);
 ```
+Also classes in `io.agrest.protocol` where moved to `io.agrest.base.protocol` package. Change your imports 
+accordingly.
 
 ## Upgrading to 3.4
 
