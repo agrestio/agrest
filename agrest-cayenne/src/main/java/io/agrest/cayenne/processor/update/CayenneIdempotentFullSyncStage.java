@@ -34,7 +34,7 @@ public class CayenneIdempotentFullSyncStage extends CayenneIdempotentCreateOrUpd
     protected <T extends DataObject> void sync(UpdateContext<T> context) {
 
         ObjectMapper<T> mapper = createObjectMapper(context);
-        Map<Object, Collection<EntityUpdate<T>>> keyMap = mutableKeyMap(context, mapper);
+        Map<Object, Collection<EntityUpdate<T>>> keyMap = mutableUpdatesByKey(context, mapper);
 
         List<T> allObjects = allItems(context);
 
@@ -56,8 +56,7 @@ public class CayenneIdempotentFullSyncStage extends CayenneIdempotentCreateOrUpd
             CayenneUpdateStartStage.cayenneContext(context).deleteObjects(deletedObjects);
         }
 
-        // check leftovers - those correspond to objects missing in the DB or
-        // objects with no keys
+        // check leftovers - those correspond to objects missing in the DB or objects with no keys
         afterUpdatesMerge(context, keyMap);
     }
 

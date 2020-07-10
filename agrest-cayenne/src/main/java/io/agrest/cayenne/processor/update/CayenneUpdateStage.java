@@ -24,20 +24,13 @@ import org.apache.cayenne.map.ObjRelationship;
 import org.apache.cayenne.query.SelectQuery;
 
 import javax.ws.rs.core.Response;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.BiConsumer;
 
 /**
  * @since 2.7
  */
 public class CayenneUpdateStage extends CayenneUpdateDataStoreStage {
-
 
     public CayenneUpdateStage(
             @Inject IMetadataService metadataService,
@@ -51,12 +44,13 @@ public class CayenneUpdateStage extends CayenneUpdateDataStoreStage {
 
         ObjectMapper<T> mapper = createObjectMapper(context);
 
-        Map<Object, Collection<EntityUpdate<T>>> keyMap = mutableKeyMap(context, mapper);
+        Map<Object, Collection<EntityUpdate<T>>> updatesByKey = mutableUpdatesByKey(context, mapper);
 
-        for (T o : itemsForKeys(context, keyMap.keySet(), mapper)) {
+        // find existing objects and merge values into them
+        for (T o : existingObjects(context, updatesByKey.keySet(), mapper)) {
             Object key = mapper.keyForObject(o);
 
-            Collection<EntityUpdate<T>> updates = keyMap.remove(key);
+            Collection<EntityUpdate<T>> updates = updatesByKey.remove(key);
 
             // a null can only mean some algorithm malfunction
             if (updates == null) {
@@ -68,7 +62,7 @@ public class CayenneUpdateStage extends CayenneUpdateDataStoreStage {
 
         // check leftovers - those correspond to objects missing in the DB or
         // objects with no keys
-        afterUpdatesMerge(context, keyMap);
+        afterUpdatesMerge(context, updatesByKey);
     }
 
     protected <T extends DataObject> void afterUpdatesMerge(UpdateContext<T> context, Map<Object, Collection<EntityUpdate<T>>> keyMap) {
@@ -84,7 +78,9 @@ public class CayenneUpdateStage extends CayenneUpdateDataStoreStage {
         }
     }
 
-    protected <T extends DataObject> Map<Object, Collection<EntityUpdate<T>>> mutableKeyMap(UpdateContext<T> context, ObjectMapper<T> mapper) {
+    protected <T extends DataObject> Map<Object, Collection<EntityUpdate<T>>> mutableUpdatesByKey(
+            UpdateContext<T> context,
+            ObjectMapper<T> mapper) {
 
         Collection<EntityUpdate<T>> updates = context.getUpdates();
 
@@ -93,6 +89,10 @@ public class CayenneUpdateStage extends CayenneUpdateDataStoreStage {
 
         for (EntityUpdate<T> u : updates) {
             Object key = mapper.keyForUpdate(u);
+
+            // Note that the key can be "null", and the update may still be valid.
+            // It simply means it won't match anything in the DB.
+
             map.computeIfAbsent(key, k -> new ArrayList<>(2)).add(u);
         }
 
@@ -106,7 +106,7 @@ public class CayenneUpdateStage extends CayenneUpdateDataStoreStage {
         return mapper.createMapper(context);
     }
 
-    <T extends DataObject> List<T> itemsForKeys(UpdateContext<T> context, Collection<Object> keys, ObjectMapper<T> mapper) {
+    <T extends DataObject> List<T> existingObjects(UpdateContext<T> context, Collection<Object> keys, ObjectMapper<T> mapper) {
 
         // TODO: split query in batches:
         // respect Constants.SERVER_MAX_ID_QUALIFIER_SIZE_PROPERTY
@@ -118,9 +118,12 @@ public class CayenneUpdateStage extends CayenneUpdateDataStoreStage {
         List<Expression> expressions = new ArrayList<>(keys.size());
         for (Object key : keys) {
 
-            Expression e = mapper.expressionForKey(key);
-            if (e != null) {
-                expressions.add(e);
+            // update keys can be null... see a note in "mutableUpdatesByKey"
+            if(key != null) {
+                Expression e = mapper.expressionForKey(key);
+                if (e != null) {
+                    expressions.add(e);
+                }
             }
         }
 
