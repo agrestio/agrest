@@ -24,25 +24,7 @@ abstract class EntityConstraintSource {
 	}
 
 	EntityConstraint getOrCreate(AgEntity<?> entity) {
-
-		EntityConstraint c = constraints.get(entity.getName());
-
-		if (c == null) {
-
-			// even though we are using a concurrent map, use key
-			// synchronization on write to avoid double compilation.. after all
-			// this is an amortized cost (done only once)
-
-			synchronized (entity) {
-				c = constraints.get(entity.getName());
-				if (c == null) {
-					c = create(entity);
-					constraints.put(entity.getName(), c);
-				}
-			}
-		}
-
-		return c;
+		return constraints.computeIfAbsent(entity.getName(), n -> create(entity));
 	}
 
 	protected abstract AnnotationData processAnnotation(Class<?> type);
