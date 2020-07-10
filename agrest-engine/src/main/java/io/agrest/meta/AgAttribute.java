@@ -10,9 +10,6 @@ import org.apache.cayenne.exp.parser.ASTPath;
  */
 public interface AgAttribute {
 
-	/**
-	 * @since 1.12
-     */
 	String getName();
 
 	/**
@@ -20,9 +17,6 @@ public interface AgAttribute {
 	 */
 	Class<?> getType();
 
-	/**
-	 * @since 1.12
-     */
 	// TODO: Cayenne API leak
 	ASTPath getPathExp();
 

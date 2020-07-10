@@ -1,3 +1,7 @@
+## Release 3.6
+
+* #444 Support id propagation on update from PK properties
+
 ## Release 3.5
 
 * #433 "agrest-cayenne" : isolate a pluggable Cayenne backend for Agrest

@@ -3,9 +3,11 @@ package io.agrest.cayenne.it;
 import io.agrest.Ag;
 import io.agrest.DataResponse;
 import io.agrest.EntityUpdate;
+import io.agrest.SimpleResponse;
 import io.agrest.cayenne.unit.JerseyAndDerbyCase;
 import io.agrest.it.fixture.cayenne.E20;
 import io.agrest.it.fixture.cayenne.E21;
+import io.agrest.it.fixture.cayenne.E23;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -18,8 +20,7 @@ import javax.ws.rs.core.Configuration;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class PUT_NaturalIdIT extends JerseyAndDerbyCase {
 
@@ -30,7 +31,7 @@ public class PUT_NaturalIdIT extends JerseyAndDerbyCase {
 
     @Override
     protected Class<?>[] testEntities() {
-        return new Class[]{E20.class, E21.class};
+        return new Class[]{E20.class, E21.class, E23.class};
     }
 
     @Test
@@ -90,11 +91,46 @@ public class PUT_NaturalIdIT extends JerseyAndDerbyCase {
                 .bodyEquals("{\"success\":false,\"message\":\"Found more than one object for ID '{name:John,age:18}' and entity 'E21'\"}");
     }
 
+    @Test
+    public void testNaturalIdInPayload() {
+
+        e23().insertColumns("id", "name").values(12, "John").exec();
+
+        Response r = target("/natural-id-in-payload")
+                .request()
+                .put(Entity.json("[{\"exposedId\":12,\"name\":\"Joe\"}, {\"exposedId\":10,\"name\":\"Ana\"}]"));
+
+        onSuccess(r).bodyEquals("{\"success\":true}");
+        e23().matcher().assertMatches(2);
+    }
+
+    @Test
+    public void testNaturalIdInPayload_MascaradingAsId() {
+
+        e23().insertColumns("id", "name").values(12, "John").exec();
+
+        Response r = target("/natural-id-in-payload")
+                .request()
+                .put(Entity.json("[{\"id\":12,\"name\":\"Joe\"}, {\"id\":10,\"name\":\"Ana\"}]"));
+
+        onSuccess(r).bodyEquals("{\"success\":true}");
+        e23().matcher().assertMatches(2);
+    }
+
     @Path("")
     public static class Resource {
 
         @Context
         private Configuration config;
+
+        @PUT
+        @Path("natural-id-in-payload")
+        public SimpleResponse createOrUpdate_E23(
+                Collection<EntityUpdate<E23>> update,
+                @Context UriInfo uriInfo) {
+
+            return Ag.idempotentCreateOrUpdate(E23.class, config).uri(uriInfo).sync(update);
+        }
 
         @PUT
         @Path("single-id/{id}")

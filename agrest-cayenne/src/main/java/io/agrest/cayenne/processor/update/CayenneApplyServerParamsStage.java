@@ -5,6 +5,7 @@ import io.agrest.EntityParent;
 import io.agrest.EntityUpdate;
 import io.agrest.ResourceEntity;
 import io.agrest.cayenne.persister.ICayennePersister;
+import io.agrest.meta.AgAttribute;
 import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgRelationship;
 import io.agrest.processor.Processor;
@@ -14,11 +15,7 @@ import io.agrest.runtime.encoder.IEncoderService;
 import io.agrest.runtime.meta.IMetadataService;
 import io.agrest.runtime.processor.update.UpdateContext;
 import org.apache.cayenne.di.Inject;
-import org.apache.cayenne.exp.Expression;
-import org.apache.cayenne.map.DbJoin;
-import org.apache.cayenne.map.DbRelationship;
-import org.apache.cayenne.map.EntityResolver;
-import org.apache.cayenne.map.ObjRelationship;
+import org.apache.cayenne.map.*;
 
 import java.util.Collections;
 import java.util.List;
@@ -57,10 +54,16 @@ public class CayenneApplyServerParamsStage implements Processor<UpdateContext<?>
 
         ResourceEntity<T> entity = context.getEntity();
 
-        processPropagatedId(context);
-        processExplicitId(context);
-        processParentId(context);
+        // this creates a new EntityUpdate if there's no request payload, but the context ID is present,
+        // so execute it unconditionally
+        fillIdsFromExplicitContextId(context);
 
+        if (!context.getUpdates().isEmpty()) {
+            fillIdsFromRelatedIds(context);
+            fillIdsFromMeaningfulPk(context);
+            fillIdsFromParentId(context);
+        }
+        
         constraintsHandler.constrainUpdate(context, context.getWriteConstraints());
 
         // apply read constraints
@@ -74,11 +77,7 @@ public class CayenneApplyServerParamsStage implements Processor<UpdateContext<?>
         }
     }
 
-    private <T> void processPropagatedId(UpdateContext<T> context) {
-
-        if (context.getUpdates().isEmpty()) {
-            return;
-        }
+    private <T> void fillIdsFromRelatedIds(UpdateContext<T> context) {
 
         // for each relationship that propagates an id from the target entity to this, fill this entity "id" collection
         // with values from related PK...
@@ -90,7 +89,7 @@ public class CayenneApplyServerParamsStage implements Processor<UpdateContext<?>
 
             ObjRelationship objRelationship = objRelationshipForAgRelationship(entity.getName(), r);
 
-            if(objRelationship != null) {
+            if (objRelationship != null) {
                 List<DbRelationship> dbRelationships = objRelationship.getDbRelationships();
                 if (dbRelationships.size() == 1) {
 
@@ -105,9 +104,9 @@ public class CayenneApplyServerParamsStage implements Processor<UpdateContext<?>
                         if (joins.size() == 0) {
                             throw new IllegalStateException("No joins for relationship " + r.getName());
                         } else if (joins.size() == 1) {
-                            processSingleValuePropagatedId(context, r.getName(), joins.get(0));
+                            fillIdsFromRelatedId(context, r.getName(), joins.get(0));
                         } else {
-                            processMapPropagatedId(context, r.getName(), joins);
+                            fillIdsFromRelatedIds(context, r.getName(), joins);
                         }
                     }
                 }
@@ -115,7 +114,31 @@ public class CayenneApplyServerParamsStage implements Processor<UpdateContext<?>
         }
     }
 
-    private void processSingleValuePropagatedId(UpdateContext<?> context, String agRelationshipName, DbJoin outgoingJoin) {
+    private <T> void fillIdsFromMeaningfulPk(UpdateContext<T> context) {
+
+        AgEntity<T> entity = context.getEntity().getAgEntity();
+        ObjEntity objEntity = entityResolver.getObjEntity(entity.getName());
+        if (objEntity != null) {
+            for (AgAttribute a : entity.getAttributes()) {
+                ObjAttribute oa = objEntity.getAttribute(a.getName());
+                if (oa != null && oa.isPrimaryKey()) {
+                    fillIdsFromMappedPk(context, a.getName());
+                }
+            }
+        }
+    }
+
+    private void fillIdsFromMappedPk(UpdateContext<?> context, String propertyName) {
+
+        for (EntityUpdate<?> u : context.getUpdates()) {
+            Object pk = u.getValues().get(propertyName);
+
+            // Unlike id parts mapped from the DB layer, this one is tracked by its normal property name
+            u.getOrCreateId().putIfAbsent(propertyName, pk);
+        }
+    }
+
+    private void fillIdsFromRelatedId(UpdateContext<?> context, String agRelationshipName, DbJoin outgoingJoin) {
 
         for (EntityUpdate<?> u : context.getUpdates()) {
             // 'getSourceName' assumes AgEntity's id attribute name is based on DbAttribute name
@@ -129,7 +152,7 @@ public class CayenneApplyServerParamsStage implements Processor<UpdateContext<?>
         }
     }
 
-    private void processMapPropagatedId(UpdateContext<?> context, String agRelationshipName, List<DbJoin> outgoingJoins) {
+    private void fillIdsFromRelatedIds(UpdateContext<?> context, String agRelationshipName, List<DbJoin> outgoingJoins) {
 
         for (EntityUpdate<?> u : context.getUpdates()) {
 
@@ -152,7 +175,7 @@ public class CayenneApplyServerParamsStage implements Processor<UpdateContext<?>
         }
     }
 
-    private <T> void processExplicitId(UpdateContext<T> context) {
+    private <T> void fillIdsFromExplicitContextId(UpdateContext<T> context) {
 
         if (context.isById()) {
 
@@ -172,7 +195,7 @@ public class CayenneApplyServerParamsStage implements Processor<UpdateContext<?>
         }
     }
 
-    private <T> void processParentId(UpdateContext<T> context) {
+    private <T> void fillIdsFromParentId(UpdateContext<T> context) {
 
         EntityParent<?> parent = context.getParent();
 
@@ -206,12 +229,5 @@ public class CayenneApplyServerParamsStage implements Processor<UpdateContext<?>
     // TODO: copied verbatim from CayenneQueryAssembler... Unify this code?
     protected ObjRelationship objRelationshipForAgRelationship(String sourceEntityName, AgRelationship relationship) {
         return entityResolver.getObjEntity(sourceEntityName).getRelationship(relationship.getName());
-    }
-
-    // TODO: copied verbatim from CayenneQueryAssembler... Unify this code?
-    protected Expression translateExpressionToSource(ObjRelationship relationship, Expression expression) {
-        return expression != null
-                ? relationship.getSourceEntity().translateToRelatedEntity(expression, relationship.getName())
-                : null;
     }
 }

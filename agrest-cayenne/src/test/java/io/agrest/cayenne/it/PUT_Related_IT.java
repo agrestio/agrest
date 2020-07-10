@@ -403,7 +403,9 @@ public class PUT_Related_IT extends JerseyAndDerbyCase {
                 @PathParam("id") int parentId,
                 @PathParam("tid") int id,
                 String entityData) {
-            return Ag.idempotentCreateOrUpdate(E2.class, config).id(id).parent(E3.class, parentId, E3.E2)
+            return Ag.idempotentCreateOrUpdate(E2.class, config)
+                    .id(id)
+                    .parent(E3.class, parentId, E3.E2)
                     .syncAndSelect(entityData);
         }
 

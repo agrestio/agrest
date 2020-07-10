@@ -90,8 +90,8 @@ public class CayenneUpdateStage extends CayenneUpdateDataStoreStage {
         for (EntityUpdate<T> u : updates) {
             Object key = mapper.keyForUpdate(u);
 
-            // Note that the key can be "null", and the update may still be valid.
-            // It simply means it won't match anything in the DB.
+            // The key can be "null", and the update may still be valid. It means it won't match anything in the
+            // DB though, and the request can not be idempotent...
 
             map.computeIfAbsent(key, k -> new ArrayList<>(2)).add(u);
         }
