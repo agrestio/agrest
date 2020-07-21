@@ -5,14 +5,18 @@ package io.agrest;
  */
 public interface EntityConstraint {
 
-	String getEntityName();
+    String getEntityName();
 
-	boolean allowsId();
+    boolean allowsId();
 
-	boolean allowsAllAttributes();
+    /**
+     * Tells constraint handler whether there is a need to check individual attributes. This is a shortcut to improve
+	 * constraints checking performance.
+     */
+    boolean allowsAllAttributes();
 
-	boolean allowsAttribute(String name);
+    boolean allowsAttribute(String name);
 
-	boolean allowsRelationship(String name);
+    boolean allowsRelationship(String name);
 
 }
