@@ -1,6 +1,7 @@
 ## Release 3.6
 
 * #444 Support id propagation on update from PK properties
+* #446 Separate "commit" in its own UpdateStage to intercept uncommitted data
 
 ## Release 3.5
 

@@ -5,6 +5,7 @@ import java.util.Objects;
 /**
  * @since 2.7
  */
+@FunctionalInterface
 public interface Processor<C extends ProcessingContext<?>> {
 
     /**

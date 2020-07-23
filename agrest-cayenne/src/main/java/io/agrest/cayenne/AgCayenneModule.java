@@ -8,16 +8,7 @@ import io.agrest.cayenne.processor.delete.CayenneDeleteStartStage;
 import io.agrest.cayenne.processor.unrelate.CayenneUnrelateDataStoreStage;
 import io.agrest.cayenne.processor.unrelate.CayenneUnrelateProcessorFactoryProvider;
 import io.agrest.cayenne.processor.unrelate.CayenneUnrelateStartStage;
-import io.agrest.cayenne.processor.update.CayenneApplyServerParamsStage;
-import io.agrest.cayenne.processor.update.CayenneCreateOrUpdateStage;
-import io.agrest.cayenne.processor.update.CayenneCreateStage;
-import io.agrest.cayenne.processor.update.CayenneCreatedResponseStage;
-import io.agrest.cayenne.processor.update.CayenneIdempotentCreateOrUpdateStage;
-import io.agrest.cayenne.processor.update.CayenneIdempotentFullSyncStage;
-import io.agrest.cayenne.processor.update.CayenneOkResponseStage;
-import io.agrest.cayenne.processor.update.CayenneUpdateProcessorFactoryFactoryProvider;
-import io.agrest.cayenne.processor.update.CayenneUpdateStage;
-import io.agrest.cayenne.processor.update.CayenneUpdateStartStage;
+import io.agrest.cayenne.processor.update.*;
 import io.agrest.cayenne.provider.CayenneRuntimeExceptionMapper;
 import io.agrest.cayenne.provider.ValidationExceptionMapper;
 import io.agrest.meta.compiler.AgEntityCompiler;
@@ -59,13 +50,13 @@ public class AgCayenneModule implements Module {
         binder.bind(UpdateProcessorFactoryFactory.class)
                 .toProvider(CayenneUpdateProcessorFactoryFactoryProvider.class);
         binder.bind(CayenneUpdateStartStage.class).to(CayenneUpdateStartStage.class);
-        binder.bind(CayenneApplyServerParamsStage.class)
-                .to(CayenneApplyServerParamsStage.class);
+        binder.bind(CayenneApplyServerParamsStage.class).to(CayenneApplyServerParamsStage.class);
         binder.bind(CayenneCreateStage.class).to(CayenneCreateStage.class);
         binder.bind(CayenneUpdateStage.class).to(CayenneUpdateStage.class);
         binder.bind(CayenneCreateOrUpdateStage.class).to(CayenneCreateOrUpdateStage.class);
         binder.bind(CayenneIdempotentCreateOrUpdateStage.class).to(CayenneIdempotentCreateOrUpdateStage.class);
         binder.bind(CayenneIdempotentFullSyncStage.class).to(CayenneIdempotentFullSyncStage.class);
+        binder.bind(CayenneCommitStage.class).to(CayenneCommitStage.class);
         binder.bind(CayenneOkResponseStage.class).to(CayenneOkResponseStage.class);
         binder.bind(CayenneCreatedResponseStage.class).to(CayenneCreatedResponseStage.class);
 

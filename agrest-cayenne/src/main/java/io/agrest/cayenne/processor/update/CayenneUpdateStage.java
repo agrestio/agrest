@@ -30,7 +30,7 @@ import java.util.function.BiConsumer;
 /**
  * @since 2.7
  */
-public class CayenneUpdateStage extends CayenneUpdateDataStoreStage {
+public class CayenneUpdateStage extends CayenneMergeChangesStage {
 
     public CayenneUpdateStage(
             @Inject IMetadataService metadataService,

@@ -1,3 +1,10 @@
+## Upgrading to 3.6
+
+### Separate "commit" in its own UpdateStage [#446](https://github.com/agrestio/agrest/issues/446) 
+
+If you customized `UpdateStage.UPDATE_DATA_STORE` stage on update, change the stage name from `UPDATE_DATA_STORE` 
+to `COMMIT`. It should produce the same result. 
+
 ## Upgrading to 3.5
 
 ### Isolating a pluggable Cayenne backend [#433](https://github.com/agrestio/agrest/issues/433) 

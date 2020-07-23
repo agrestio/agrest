@@ -9,7 +9,7 @@ import org.apache.cayenne.di.Inject;
 /**
  * @since 2.7
  */
-public class CayenneCreateStage extends CayenneUpdateDataStoreStage {
+public class CayenneCreateStage extends CayenneMergeChangesStage {
 
     public CayenneCreateStage(
             @Inject IMetadataService metadataService,

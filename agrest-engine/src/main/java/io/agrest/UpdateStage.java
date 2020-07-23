@@ -8,7 +8,7 @@ package io.agrest;
  */
 public enum UpdateStage {
 
-    // Note that stages ordinals are meaningful. DO NOT REORDER CASUALLY!
+    // Stages ordinals are determine stage execution order. DO NOT REORDER WITHOUT A REASON!
 
     START,
 
@@ -18,7 +18,9 @@ public enum UpdateStage {
 
     APPLY_SERVER_PARAMS,
 
-    UPDATE_DATA_STORE,
+    MERGE_CHANGES,
+
+    COMMIT,
 
     FILL_RESPONSE
 }
