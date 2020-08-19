@@ -17,14 +17,26 @@ public class CayenneNestedDataResolverBuilder {
         this.persister = persister;
     }
 
+    /**
+     * Returns a nested resolver that builds a database query using a qualifier from the parent entity. This is the
+     * default nested resolver used by the Cayenne backend.
+     */
     public NestedDataResolverFactory viaQueryWithParentExp() {
         return this::viaQueryWithParentExp;
     }
 
+    /**
+     * Returns a nested resolver that waits for the parent query to complete, and resolves its entity objects based on
+     * the collection of IDs from the parent result.
+     */
     public NestedDataResolverFactory viaQueryWithParentIds() {
         return this::viaQueryWithParentIds;
     }
 
+    /**
+     * Returns a nested resolver that doesn't run its own queries, but instead amends parent node query with prefetch
+     * spec, so that the objects can be read efficiently from the parent objects.
+     */
     // This will result in a JOINT prefetch on the parent. Note that DISJOINT prefetch is not available as an option,
     // as it is functionally equivalent to "viaQueryWithParentExp", and only complicates implementation without providing
     // a distinct useful alternative
