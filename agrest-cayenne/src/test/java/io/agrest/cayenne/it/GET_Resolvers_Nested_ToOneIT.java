@@ -76,6 +76,36 @@ public class GET_Resolvers_Nested_ToOneIT extends JerseyAndDerbyCase {
     }
 
     @Test
+    public void test_QueryWithParentIdsResolver_Pagination() {
+
+        e2().insertColumns("id_", "name")
+                .values(1, "aaa")
+                .values(2, "bbb")
+                .values(3, "ccc")
+                .values(4, "ddd")
+                .exec();
+        e3().insertColumns("id_", "name", "e2_id")
+                .values(8, "aaa3", 1)
+                .values(9, "bbb3", 2)
+                .values(10, "ccc3", 3)
+                .values(11, "ddd3", 4)
+                .exec();
+
+        Response r = target("/e3_query_with_parent_ids")
+                .queryParam("include", "id")
+                .queryParam("include", "e2.id")
+                .queryParam("sort", "id")
+                .queryParam("limit", 2)
+                .request().get();
+
+        onSuccess(r)
+                .bodyEquals(4,
+                        "{\"id\":8,\"e2\":{\"id\":1}}",
+                        "{\"id\":9,\"e2\":{\"id\":2}}")
+                .ranQueries(2);
+    }
+
+    @Test
     public void test_QueryWithParentQualifierResolver() {
 
         e2().insertColumns("id_", "name").values(1, "xxx").exec();

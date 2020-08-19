@@ -2,6 +2,7 @@
 
 * #444 Support id propagation on update from PK properties
 * #446 Separate "commit" in its own UpdateStage to intercept uncommitted data
+* #447 "CayenneResolvers.nested(..).viaQueryWithParentIds()" strategy must respect pagination settings
 
 ## Release 3.5
 

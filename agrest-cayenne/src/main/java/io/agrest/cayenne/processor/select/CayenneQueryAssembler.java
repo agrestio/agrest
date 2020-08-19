@@ -25,6 +25,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 
 /**
  * @since 3.4
@@ -155,14 +157,31 @@ public class CayenneQueryAssembler {
         // build id-based qualifier
         List<Expression> qualifiers = new ArrayList<>();
 
-        // TODO: this only works for single column ids
-        parentData.forEachRemaining(p -> qualifiers.add(ExpressionFactory.matchDbExp(outgoingPath, p)));
+        // if pagination is in effect, we should only fault the requested range. It makes this particular strategy
+        // very efficient in case of pagination
+        consumeRange(parentData, entity.getParent().getFetchOffset(), entity.getParent().getFetchLimit(),
+                // TODO: this only works for single column ids
+                p -> qualifiers.add(ExpressionFactory.matchDbExp(outgoingPath, p)));
 
         // TODO: There is some functionality in Cayenne that allows to break long OR qualifiers in a series of queries.
         //  How do we use it here?
         query.andQualifier(ExpressionFactory.joinExp(Expression.OR, qualifiers));
 
         return query;
+    }
+
+    private <P> void consumeRange(Iterator<P> parentData, int offset, int len, Consumer<P> consumer) {
+
+        int from = Math.max(0, offset);
+        int to = Math.min(from + len, Integer.MAX_VALUE);
+
+        for (int i = 0; i < from && parentData.hasNext(); i++) {
+            parentData.next();
+        }
+
+        for (int i = from; i < to && parentData.hasNext(); i++) {
+            consumer.accept(parentData.next());
+        }
     }
 
     public <T> SelectQuery<T> createRootIdQuery(ResourceEntity<T> entity, AgObjectId rootId) {
