@@ -26,8 +26,8 @@ public class CayenneNestedDataResolverBuilder {
     }
 
     /**
-     * Returns a nested resolver that waits for the parent query to complete, and resolves its entity objects based on
-     * the collection of IDs from the parent result.
+     * Returns a nested resolver that waits for the parent query to complete, and resolves its objects by building a
+     * query from the collection of IDs from the parent result.
      */
     public NestedDataResolverFactory viaQueryWithParentIds() {
         return this::viaQueryWithParentIds;
