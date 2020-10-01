@@ -9,10 +9,10 @@ import org.apache.cayenne.util.ToStringBuilder;
  */
 public class DefaultAgAttribute implements AgAttribute {
 
-	private String name;
-	private Class<?> javaType;
-	private ASTPath pathExp;
-	private PropertyReader propertyReader;
+	private final String name;
+	private final Class<?> javaType;
+	private final ASTPath pathExp;
+	private final PropertyReader propertyReader;
 
 	public DefaultAgAttribute(String name, Class<?> javaType, ASTPath pathExp, PropertyReader propertyReader) {
 		this.name = name;

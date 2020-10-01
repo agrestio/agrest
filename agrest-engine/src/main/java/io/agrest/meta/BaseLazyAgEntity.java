@@ -7,7 +7,7 @@ import java.util.function.Supplier;
  */
 public abstract class BaseLazyAgEntity<T, E extends AgEntity<T>> {
 
-    private Supplier<E> delegateSupplier;
+    private final Supplier<E> delegateSupplier;
     private E delegate;
 
     public BaseLazyAgEntity(Supplier<E> delegateSupplier) {

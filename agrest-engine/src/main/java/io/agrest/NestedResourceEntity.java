@@ -17,10 +17,10 @@ import java.util.Map;
  */
 public class NestedResourceEntity<T> extends ResourceEntity<T> {
 
-    private ResourceEntity<?> parent;
-    private AgRelationship incoming;
+    private final ResourceEntity<?> parent;
+    private final AgRelationship incoming;
     private NestedDataResolver<T> resolver;
-    private Map<AgObjectId, Object> resultByParent;
+    private final Map<AgObjectId, Object> resultByParent;
 
     public NestedResourceEntity(
             AgEntity<T> agEntity,

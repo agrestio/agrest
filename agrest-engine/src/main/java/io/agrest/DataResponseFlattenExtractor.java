@@ -12,15 +12,16 @@ import java.util.regex.Pattern;
 class DataResponseFlattenExtractor<U> implements EncoderVisitor {
 
     private static final Pattern SPLIT_PATH = Pattern.compile("\\.");
-    private Collection<U> result;
-    private String[] path;
-    private Deque<String> stack;
+
+    private final Collection<U> result;
+    private final String[] path;
+    private final Deque<String> stack;
     private State state;
 
     public DataResponseFlattenExtractor(String path) {
         this.path = path == null || path.length() == 0 ? new String[0] : SPLIT_PATH.split(path);
         this.result = new ArrayList<>();
-        this.state = path.length() > 0 ? State.matching : State.collecting;
+        this.state = path != null && path.length() > 0 ? State.matching : State.collecting;
         this.stack = new ArrayDeque<>();
     }
 
@@ -38,8 +39,6 @@ class DataResponseFlattenExtractor<U> implements EncoderVisitor {
             case collecting:
                 result.add((U) object);
                 return Encoder.VISIT_SKIP_CHILDREN;
-            case invalid:
-                return Encoder.VISIT_SKIP_CHILDREN;
             default:
                 return Encoder.VISIT_SKIP_CHILDREN;
         }
@@ -49,20 +48,17 @@ class DataResponseFlattenExtractor<U> implements EncoderVisitor {
     public void push(String relationship) {
         stack.push(relationship);
 
-        switch (state) {
-            case matching:
-                if (path[stack.size() - 1].equals(relationship)) {
+        if (state == State.matching) {
+            if (path[stack.size() - 1].equals(relationship)) {
 
-                    if (path.length == stack.size()) {
-                        state = State.collecting;
-                    }
-                } else {
-                    state = State.invalid;
+                if (path.length == stack.size()) {
+                    state = State.collecting;
                 }
-
-                break;
-            default:
-                throw new IllegalStateException("Unexpected state on push: " + state);
+            } else {
+                state = State.invalid;
+            }
+        } else {
+            throw new IllegalStateException("Unexpected state on push: " + state);
         }
     }
 
@@ -70,12 +66,8 @@ class DataResponseFlattenExtractor<U> implements EncoderVisitor {
     public void pop() {
         stack.pop();
 
-        switch (state) {
-            case collecting:
-                state = State.matching;
-                break;
-            default:
-                break;
+        if (state == State.collecting) {
+            state = State.matching;
         }
     }
 

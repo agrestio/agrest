@@ -15,7 +15,7 @@ import java.util.Objects;
  */
 public class SimpleObjectId extends BaseObjectId {
 
-	private Object id;
+	private final Object id;
 
 	public SimpleObjectId(Object id) {
 		this.id = Objects.requireNonNull(id);

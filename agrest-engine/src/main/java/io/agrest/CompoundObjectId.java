@@ -4,10 +4,7 @@ import io.agrest.meta.AgAttribute;
 import io.agrest.base.jsonvalueconverter.Normalizer;
 
 import javax.ws.rs.core.Response;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
+import java.util.*;
 
 /**
  * A multi-value id.
@@ -16,10 +13,10 @@ import java.util.Map;
  */
 public class CompoundObjectId extends BaseObjectId {
 
-	private Map<String, Object> id;
+	private final Map<String, Object> id;
 
 	public CompoundObjectId(Map<String, Object> id) {
-		this.id = id;
+		this.id = Objects.requireNonNull(id);
 	}
 
 	@Override

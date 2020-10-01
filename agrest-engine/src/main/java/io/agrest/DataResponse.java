@@ -14,7 +14,7 @@ import java.util.List;
  */
 public class DataResponse<T> extends AgResponse {
 
-    private Class<T> type;
+    private final Class<T> type;
     private List objects;
     private Encoder encoder;
 

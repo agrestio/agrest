@@ -16,9 +16,9 @@ import java.util.Collections;
  */
 public class MetadataResponse<T> extends AgResponse {
 
+	private final Class<T> type;
 	private Encoder encoder;
 	private Collection<AgResource<T>> resources;
-	private Class<T> type;
 
 	public MetadataResponse(Class<T> type) {
 		this.encoder = GenericEncoder.encoder();

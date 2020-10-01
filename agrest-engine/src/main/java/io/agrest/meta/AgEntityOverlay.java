@@ -24,10 +24,10 @@ import java.util.function.Function;
  */
 public class AgEntityOverlay<T> {
 
-    private Class<T> type;
+    private final Class<T> type;
     //  TODO: introduce AgAttributeOverride to allow for partial overrides, like changing a reader
-    private Map<String, AgAttribute> attributes;
-    private Map<String, AgRelationshipOverlay> relationships;
+    private final Map<String, AgAttribute> attributes;
+    private final Map<String, AgRelationshipOverlay> relationships;
     private RootDataResolver<T> rootDataResolver;
 
     @Deprecated
@@ -46,14 +46,12 @@ public class AgEntityOverlay<T> {
 
     private static <T> NestedDataResolver<T> resolverForReader(Function<?, T> reader) {
         // lose generics. PropertyReader is not parameterized
-        Function plainReader = reader;
-        return new ReaderBasedResolver<>((o, n) -> plainReader.apply(o));
+        return new ReaderBasedResolver<>((o, n) -> ((Function) reader).apply(o));
     }
 
     static <T> NestedDataResolver<T> resolverForListReader(Function<?, List<T>> reader) {
         // lose generics. PropertyReader is not parameterized
-        Function plainReader = reader;
-        return new ReaderBasedResolver<>((o, n) -> plainReader.apply(o));
+        return new ReaderBasedResolver<>((o, n) -> ((Function) reader).apply(o));
     }
 
     /**

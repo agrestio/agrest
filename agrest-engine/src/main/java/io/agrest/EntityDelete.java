@@ -4,8 +4,8 @@ import io.agrest.meta.AgEntity;
 
 public class EntityDelete<T> {
 
-    private AgEntity<T> entity;
-    private AgObjectId id;
+    private final AgEntity<T> entity;
+    private final AgObjectId id;
 
     public EntityDelete(AgEntity<T> entity, AgObjectId id) {
         this.entity = entity;

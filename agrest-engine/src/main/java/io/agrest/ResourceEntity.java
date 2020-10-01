@@ -28,21 +28,21 @@ public abstract class ResourceEntity<T> {
 
     private boolean idIncluded;
 
-    private AgEntity<T> agEntity;
-    private AgEntityOverlay<T> agEntityOverlay;
-    private Map<String, AgAttribute> attributes;
-    private Collection<String> defaultProperties;
+    private final AgEntity<T> agEntity;
+    private final AgEntityOverlay<T> agEntityOverlay;
+    private final Map<String, AgAttribute> attributes;
+    private final Collection<String> defaultProperties;
 
     private String mapByPath;
     private ResourceEntity<?> mapBy;
-    private Map<String, NestedResourceEntity<?>> children;
-    private List<Ordering> orderings;
+    private final Map<String, NestedResourceEntity<?>> children;
+    private final List<Ordering> orderings;
     private Expression qualifier;
-    private Map<String, EntityProperty> includedExtraProperties;
-    private Map<String, EntityProperty> extraProperties;
+    private final Map<String, EntityProperty> includedExtraProperties;
+    private final Map<String, EntityProperty> extraProperties;
     private int fetchOffset;
     private int fetchLimit;
-    private List<EntityEncoderFilter> entityEncoderFilters;
+    private final List<EntityEncoderFilter> entityEncoderFilters;
 
     // TODO: Per #433 get rid of SelectQuery in generic "agrest-engine".. It must live on the "agrest-cayenne" side.
     @Deprecated

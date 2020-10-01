@@ -32,16 +32,16 @@ public class AgEntityBuilder<T> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AgEntityBuilder.class);
 
-    private Class<T> type;
-    private String name;
-    private AgDataMap agDataMap;
+    private final Class<T> type;
+    private final String name;
+    private final AgDataMap agDataMap;
     private AgEntityOverlay<T> overlay;
     private RootDataResolver<T> rootDataResolver;
     private NestedDataResolver<T> nestedDataResolver;
 
-    private Map<String, io.agrest.meta.AgAttribute> ids;
-    private Map<String, io.agrest.meta.AgAttribute> attributes;
-    private Map<String, io.agrest.meta.AgRelationship> relationships;
+    private final Map<String, io.agrest.meta.AgAttribute> ids;
+    private final Map<String, io.agrest.meta.AgAttribute> attributes;
+    private final Map<String, io.agrest.meta.AgRelationship> relationships;
 
     public AgEntityBuilder(Class<T> type, AgDataMap agDataMap) {
         this.type = type;
@@ -102,7 +102,7 @@ public class AgEntityBuilder<T> {
     }
 
     private void collectProperties() {
-        BeanAnalyzer.findGetters(type).forEach(getter -> appendProperty(getter));
+        BeanAnalyzer.findGetters(type).forEach(this::appendProperty);
     }
 
     private void appendProperty(PropertyGetter getter) {
@@ -147,13 +147,10 @@ public class AgEntityBuilder<T> {
     }
 
     private boolean checkValidAttributeType(Class<?> type, Type genericType) {
-        if (Void.class.equals(type) || void.class.equals(type) || Map.class.isAssignableFrom(type)) {
-            return false;
-        }
-        if (Collection.class.isAssignableFrom(type) && !isCollectionOfSimpleType(type, genericType)) {
-            return false;
-        }
-        return true;
+        return !Void.class.equals(type)
+                && !void.class.equals(type)
+                && !Map.class.isAssignableFrom(type)
+                && (!Collection.class.isAssignableFrom(type) || isCollectionOfSimpleType(type, genericType));
     }
 
     private boolean isCollectionOfSimpleType(Class<?> type, Type genericType) {
@@ -228,7 +225,7 @@ public class AgEntityBuilder<T> {
             overlay.getAttributes().forEach(this::addAttribute);
             overlay.getRelationshipOverlays().forEach(this::loadRelationshipOverlay);
 
-            if(overlay.getRootDataResolver() != null) {
+            if (overlay.getRootDataResolver() != null) {
                 this.rootDataResolver = overlay.getRootDataResolver();
             }
         }

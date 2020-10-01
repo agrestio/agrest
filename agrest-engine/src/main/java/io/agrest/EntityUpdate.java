@@ -2,10 +2,7 @@ package io.agrest;
 
 import io.agrest.meta.AgEntity;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Contains update data of a single object.
@@ -14,17 +11,18 @@ import java.util.Set;
  */
 public class EntityUpdate<T> {
 
-    private Map<String, Object> values;
-    private Map<String, Set<Object>> relatedIds;
+    private final AgEntity<T> entity;
+    private final Map<String, Object> values;
+    private final Map<String, Set<Object>> relatedIds;
+
     private Map<String, Object> id;
     private boolean explicitId;
     private Object mergedTo;
-    private AgEntity<T> entity;
 
     public EntityUpdate(AgEntity<T> entity) {
+        this.entity = Objects.requireNonNull(entity);
         this.values = new HashMap<>();
         this.relatedIds = new HashMap<>();
-        this.entity = entity;
     }
 
     /**
