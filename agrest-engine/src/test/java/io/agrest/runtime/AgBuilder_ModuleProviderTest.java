@@ -6,13 +6,13 @@ import io.agrest.encoder.PropertyMetadataEncoder;
 import org.apache.cayenne.di.Binder;
 import org.apache.cayenne.di.Key;
 import org.apache.cayenne.di.Module;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.Map;
 import java.util.function.Consumer;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 
 public class AgBuilder_ModuleProviderTest {
@@ -54,13 +54,13 @@ public class AgBuilder_ModuleProviderTest {
     private void assertTestModuleActive(AgRuntime runtime) {
         Map<String, PropertyMetadataEncoder> encoders =
                 runtime.service(Key.getMapOf(String.class, PropertyMetadataEncoder.class));
-        assertTrue("Auto-loading was off", encoders.containsKey(TestModuleProvider.METADATA_ENCODER_KEY));
+        assertTrue(encoders.containsKey(TestModuleProvider.METADATA_ENCODER_KEY), "Auto-loading was off");
     }
 
     private void assertTestModuleNotActive(AgRuntime runtime) {
         Map<String, PropertyMetadataEncoder> encoders =
                 runtime.service(Key.getMapOf(String.class, PropertyMetadataEncoder.class));
-        assertFalse("Auto-loading was on", encoders.containsKey(TestModuleProvider.METADATA_ENCODER_KEY));
+        assertFalse(encoders.containsKey(TestModuleProvider.METADATA_ENCODER_KEY), "Auto-loading was on");
     }
 
     private void inRuntime(AgBuilder builder, Consumer<AgRuntime> test) {

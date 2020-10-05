@@ -15,15 +15,15 @@ import io.agrest.meta.compiler.PojoEntityCompiler;
 import io.agrest.property.BeanPropertyReader;
 import io.agrest.runtime.semantics.RelationshipMapper;
 import org.apache.cayenne.exp.parser.ASTObjPath;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 
 public class EncoderService_Pojo_Test {
@@ -32,13 +32,13 @@ public class EncoderService_Pojo_Test {
 
 	private EncoderService encoderService;
 
-	@BeforeClass
+	@BeforeAll
 	public static void setUpClass() {
 		compilers = new ArrayList<>();
 		compilers.add(new PojoEntityCompiler(Collections.emptyMap()));
 	}
 
-	@Before
+	@BeforeEach
 	public void setUp() {
 
 		IAttributeEncoderFactory aef = new AttributeEncoderFactory(new ValueEncodersProvider(Collections.emptyMap()).get());

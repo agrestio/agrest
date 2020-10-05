@@ -18,9 +18,10 @@ import io.bootique.di.Binder;
 import io.bootique.di.Provides;
 import io.bootique.jersey.JerseyModule;
 import io.bootique.jersey.JerseyModuleExtender;
-import io.bootique.test.junit.BQTestFactory;
-import org.junit.Before;
-import org.junit.ClassRule;
+import io.bootique.junit5.BQTest;
+import io.bootique.junit5.BQTestFactory;
+import io.bootique.junit5.BQTestTool;
+import org.junit.jupiter.api.BeforeEach;
 
 import javax.inject.Singleton;
 import javax.ws.rs.client.ClientBuilder;
@@ -38,10 +39,11 @@ import static org.mockito.Mockito.mock;
  * An abstract superclass of integration tests that starts Bootique test runtime with JAX-RS service and an in-memory
  * "pojo database".
  */
+@BQTest
 public class JerseyAndPojoCase {
 
-    @ClassRule
-    public static BQTestFactory TEST_FACTORY = new BQTestFactory();
+    @BQTestTool
+    static final BQTestFactory TEST_FACTORY = new BQTestFactory();
 
     // in-memory key/value "database" to store POJOs
     protected static PojoDB POJO_DB;
@@ -78,7 +80,7 @@ public class JerseyAndPojoCase {
         return extender;
     }
 
-    @Before
+    @BeforeEach
     public void resetData() {
         POJO_DB.clear();
     }

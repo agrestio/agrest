@@ -6,22 +6,18 @@ import io.agrest.annotation.AgId;
 import io.agrest.it.fixture.pojo.model.P8;
 import io.agrest.meta.AgEntity;
 import io.agrest.meta.LazyAgDataMap;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class PojoEntityCompilerTest {
 
 	private static Collection<AgEntityCompiler> compilers;
 
-	@BeforeClass
+	@BeforeAll
 	public static void setUpClass() {
 		compilers = new ArrayList<>();
 		compilers.add(new PojoEntityCompiler(Collections.emptyMap()));
@@ -64,7 +60,7 @@ public class PojoEntityCompilerTest {
 			entity.getAttributes();
 			fail("Exception expected");
 		} catch (AgException e) {
-			assertTrue(e.getMessage(), e.getMessage().startsWith("Invalid entity '"));
+			assertTrue(e.getMessage().startsWith("Invalid entity '"), e.getMessage());
 		}
 	}
 

@@ -5,27 +5,10 @@ import io.agrest.ResourceEntity;
 import io.agrest.annotation.AgAttribute;
 import io.agrest.annotation.AgId;
 import io.agrest.annotation.AgRelationship;
+import io.agrest.base.protocol.*;
 import io.agrest.meta.compiler.AgEntityCompiler;
 import io.agrest.meta.compiler.PojoEntityCompiler;
-import io.agrest.base.protocol.CayenneExp;
-import io.agrest.base.protocol.Dir;
-import io.agrest.base.protocol.Exclude;
-import io.agrest.base.protocol.Include;
-import io.agrest.base.protocol.Sort;
-import io.agrest.runtime.entity.CayenneExpMerger;
-import io.agrest.runtime.entity.ExcludeMerger;
-import io.agrest.runtime.entity.ExpressionParser;
-import io.agrest.runtime.entity.ExpressionPostProcessor;
-import io.agrest.runtime.entity.ICayenneExpMerger;
-import io.agrest.runtime.entity.IExcludeMerger;
-import io.agrest.runtime.entity.IIncludeMerger;
-import io.agrest.runtime.entity.IMapByMerger;
-import io.agrest.runtime.entity.ISizeMerger;
-import io.agrest.runtime.entity.ISortMerger;
-import io.agrest.runtime.entity.IncludeMerger;
-import io.agrest.runtime.entity.MapByMerger;
-import io.agrest.runtime.entity.SizeMerger;
-import io.agrest.runtime.entity.SortMerger;
+import io.agrest.runtime.entity.*;
 import io.agrest.runtime.meta.IMetadataService;
 import io.agrest.runtime.meta.MetadataService;
 import io.agrest.runtime.path.IPathDescriptorManager;
@@ -38,8 +21,8 @@ import io.agrest.runtime.request.DefaultRequestBuilderFactory;
 import io.agrest.runtime.request.IAgRequestBuilderFactory;
 import org.apache.cayenne.query.Ordering;
 import org.apache.cayenne.query.SortOrder;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.UriInfo;
@@ -48,7 +31,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import static org.apache.cayenne.exp.ExpressionFactory.exp;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -57,7 +40,7 @@ public class CreateResourceEntityStageTest {
     private static CreateResourceEntityStage stage;
     private static IAgRequestBuilderFactory requestBuilderFactory;
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeAll() {
 
         AgEntityCompiler compiler = new PojoEntityCompiler(Collections.emptyMap());
@@ -436,7 +419,7 @@ public class CreateResourceEntityStageTest {
         assertEquals("n", o1.getSortSpecString());
     }
 
-    @Test(expected = AgException.class)
+    @Test
     public void testExecute_CayenneExp_BadSpec() {
 
         SelectContext<Ts> context = new SelectContext<>(Ts.class);
@@ -444,7 +427,7 @@ public class CreateResourceEntityStageTest {
                 .builder()
                 .cayenneExp(new CayenneExp("x = 12345 and y = 'John Smith' and z = true")).build());
 
-        stage.execute(context);
+        assertThrows(AgException.class, () -> stage.execute(context));
     }
 
     @Test

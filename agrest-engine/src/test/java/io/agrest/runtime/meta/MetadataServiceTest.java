@@ -6,19 +6,19 @@ import io.agrest.annotation.AgRelationship;
 import io.agrest.meta.AgEntity;
 import io.agrest.meta.compiler.AgEntityCompiler;
 import io.agrest.meta.compiler.PojoEntityCompiler;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import java.util.Collections;
 import java.util.List;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class MetadataServiceTest {
 
 	private static IMetadataService metadata;
 
-	@BeforeClass
+	@BeforeAll
 	public static void before() {
 		AgEntityCompiler compiler = new PojoEntityCompiler(Collections.emptyMap());
 		metadata = new MetadataService(Collections.singletonList(compiler));

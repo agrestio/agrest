@@ -1,18 +1,18 @@
 package io.agrest.constraints;
 
 import io.agrest.meta.AgEntity;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 
 public class ConstrainedAgEntityTest {
 
 	private ConstrainedAgEntity visitor;
 
-	@Before
+	@BeforeEach
 	public void before() {
 		AgEntity<?> entity = mock(AgEntity.class);
 		visitor = new ConstrainedAgEntity(entity);

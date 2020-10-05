@@ -13,9 +13,8 @@ import io.agrest.meta.LinkMethodType;
 import io.agrest.meta.compiler.AgEntityCompiler;
 import io.agrest.meta.compiler.PojoEntityCompiler;
 import io.agrest.meta.parser.ResourceParser;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -27,14 +26,15 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Optional;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class ResourceMetadataServiceTest {
 
     private static IMetadataService metadata;
     private static IResourceMetadataService resourceMetadata;
 
-    @BeforeClass
+    @BeforeAll
     public static void before() {
         AgEntityCompiler compiler = new PojoEntityCompiler(Collections.emptyMap());
         metadata = new MetadataService(Collections.singletonList(compiler));
@@ -55,9 +55,9 @@ public class ResourceMetadataServiceTest {
 
             switch (resource.getPath()) {
                 case "tr":
-                    Assert.assertEquals(LinkType.COLLECTION, resource.getType());
+                    assertEquals(LinkType.COLLECTION, resource.getType());
                     assertEquals(1, resource.getOperations().size());
-                    Assert.assertEquals(LinkMethodType.GET, resource.getOperations().iterator().next().getMethod());
+                    assertEquals(LinkMethodType.GET, resource.getOperations().iterator().next().getMethod());
                     break;
                 case "tr/{id}":
                     assertEquals(LinkType.ITEM, resource.getType());

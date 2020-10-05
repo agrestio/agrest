@@ -5,26 +5,17 @@ import io.agrest.annotation.AgId;
 import io.agrest.annotation.AgRelationship;
 import io.agrest.runtime.jackson.IJacksonService;
 import io.agrest.runtime.jackson.JacksonService;
-import io.agrest.runtime.protocol.CayenneExpParser;
-import io.agrest.runtime.protocol.ExcludeParser;
-import io.agrest.runtime.protocol.ICayenneExpParser;
-import io.agrest.runtime.protocol.IExcludeParser;
-import io.agrest.runtime.protocol.IIncludeParser;
-import io.agrest.runtime.protocol.ISizeParser;
-import io.agrest.runtime.protocol.ISortParser;
-import io.agrest.runtime.protocol.IncludeParser;
-import io.agrest.runtime.protocol.SizeParser;
-import io.agrest.runtime.protocol.SortParser;
+import io.agrest.runtime.protocol.*;
 import io.agrest.runtime.request.DefaultRequestBuilderFactory;
 import io.agrest.runtime.request.IAgRequestBuilderFactory;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import javax.ws.rs.core.MultivaluedHashMap;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.UriInfo;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -32,7 +23,7 @@ public class ParseRequestStage_IncludeObjectTest {
 
     private static ParseRequestStage stage;
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeAll() {
 
         IJacksonService jacksonService = new JacksonService();

@@ -3,18 +3,19 @@ package io.agrest.runtime.protocol;
 import io.agrest.base.protocol.Dir;
 import io.agrest.base.protocol.Sort;
 import io.agrest.runtime.jackson.JacksonService;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class SortParserTest {
 
     private static SortParser parser;
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeAll() {
         parser = new SortParser(new JacksonService());
     }

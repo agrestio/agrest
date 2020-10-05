@@ -3,14 +3,9 @@ package io.agrest.it;
 import io.agrest.Ag;
 import io.agrest.DataResponse;
 import io.agrest.it.fixture.JerseyAndPojoCase;
-import io.agrest.it.fixture.pojo.model.P1;
-import io.agrest.it.fixture.pojo.model.P3;
-import io.agrest.it.fixture.pojo.model.P4;
-import io.agrest.it.fixture.pojo.model.P6;
-import io.agrest.it.fixture.pojo.model.P8;
-import io.agrest.it.fixture.pojo.model.P9;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import io.agrest.it.fixture.pojo.model.*;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -28,7 +23,7 @@ import java.util.List;
 
 public class GET_PojoIT extends JerseyAndPojoCase {
 
-    @BeforeClass
+    @BeforeAll
     public static void startTestRuntime() {
         startTestRuntime(Resource.class);
     }

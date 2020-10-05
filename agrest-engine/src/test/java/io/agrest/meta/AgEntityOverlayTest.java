@@ -1,11 +1,12 @@
 package io.agrest.meta;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class AgEntityOverlayTest {
 
@@ -47,9 +48,9 @@ public class AgEntityOverlayTest {
     }
 
     @Deprecated
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testAddAttribute_Missing() {
-        new AgEntityOverlay<>(T1.class).addAttribute("a");
+        assertThrows(IllegalArgumentException.class, () -> new AgEntityOverlay<>(T1.class).addAttribute("a"));
     }
 
     public static class T1 {

@@ -1,21 +1,20 @@
 package io.agrest.processor;
 
 import io.agrest.runtime.processor.select.SelectContext;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
 
 public class ProcessorTest {
 
-
     private Processor<SelectContext<?>> shouldContinue1;
     private Processor<SelectContext<?>> shouldContinue2;
     private Processor<SelectContext<?>> shouldStop;
     private SelectContext<?> mockContext;
 
-    @Before
+    @BeforeEach
     public void createProcessors() {
         this.shouldContinue1 = mock(Processor.class);
         when(shouldContinue1.execute(any())).thenReturn(ProcessorOutcome.CONTINUE);

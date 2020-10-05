@@ -5,18 +5,18 @@ import io.agrest.ResourceEntity;
 import io.agrest.RootResourceEntity;
 import io.agrest.annotation.AgAttribute;
 import io.agrest.annotation.AgId;
+import io.agrest.base.protocol.CayenneExp;
 import io.agrest.meta.compiler.AgEntityCompiler;
 import io.agrest.meta.compiler.PojoEntityCompiler;
-import io.agrest.base.protocol.CayenneExp;
 import io.agrest.runtime.entity.CayenneExpMerger;
 import io.agrest.runtime.entity.ExpressionParser;
 import io.agrest.runtime.entity.ExpressionPostProcessor;
 import io.agrest.runtime.meta.MetadataService;
 import io.agrest.runtime.path.PathDescriptorManager;
 import org.apache.cayenne.exp.Expression;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.Collections;
 import java.util.Date;
@@ -24,7 +24,7 @@ import java.util.GregorianCalendar;
 import java.util.TimeZone;
 
 import static org.apache.cayenne.exp.ExpressionFactory.exp;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class CayenneExpMergerTest {
 
@@ -32,7 +32,7 @@ public class CayenneExpMergerTest {
     private static CayenneExpMerger merger;
     private ResourceEntity<Tr> entity;
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeAll() {
 
         AgEntityCompiler compiler = new PojoEntityCompiler(Collections.emptyMap());
@@ -42,7 +42,7 @@ public class CayenneExpMergerTest {
         merger = new CayenneExpMerger(new ExpressionParser(), new ExpressionPostProcessor(pathDescriptorManager));
     }
 
-    @Before
+    @BeforeEach
     public void beforeEach() {
         entity = new RootResourceEntity<>(metadataService.getAgEntity(Tr.class), null);
     }
@@ -149,10 +149,10 @@ public class CayenneExpMergerTest {
         assertEquals(exp("c=false"), e);
     }
 
-    @Test(expected = AgException.class)
+    @Test
     public void testMerge_Params_InvalidPath() {
         CayenneExp exp = new CayenneExp("invalid/path=$b", Collections.singletonMap("b", false));
-        merger.merge(entity, exp);
+        assertThrows(AgException.class, () -> merger.merge(entity, exp));
     }
 
     @Test
@@ -164,10 +164,10 @@ public class CayenneExpMergerTest {
         assertEquals(exp("c=null"), e);
     }
 
-    @Test(expected = AgException.class)
+    @Test
     public void testMerge_Map_Params_Date_NonISO() {
         CayenneExp exp = new CayenneExp("e=$d", Collections.singletonMap("d", "2014:02:03"));
-        merger.merge(entity, exp);
+        assertThrows(AgException.class, () -> merger.merge(entity, exp));
     }
 
     @Test
@@ -233,10 +233,10 @@ public class CayenneExpMergerTest {
         assertEquals(expected, e);
     }
 
-    @Test(expected = AgException.class)
+    @Test
     public void testMerge_DisallowDBPath() {
         CayenneExp exp = new CayenneExp("db:id=$i", Collections.singletonMap("i", 5));
-        merger.merge(entity, exp);
+        assertThrows(AgException.class, () -> merger.merge(entity, exp));
     }
 
     @Test

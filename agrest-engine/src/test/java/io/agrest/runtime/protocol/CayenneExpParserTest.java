@@ -2,16 +2,16 @@ package io.agrest.runtime.protocol;
 
 import io.agrest.base.protocol.CayenneExp;
 import io.agrest.runtime.jackson.JacksonService;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class CayenneExpParserTest {
 
     private static CayenneExpParser parser;
 
-	@BeforeClass
+	@BeforeAll
 	public static void beforeAll() {
 		parser = new CayenneExpParser(new JacksonService());
 	}

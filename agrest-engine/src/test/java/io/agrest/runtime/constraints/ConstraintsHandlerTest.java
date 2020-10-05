@@ -14,21 +14,21 @@ import io.agrest.meta.compiler.PojoEntityCompiler;
 import io.agrest.runtime.meta.IMetadataService;
 import io.agrest.runtime.meta.MetadataService;
 import io.agrest.unit.ResourceEntityUtils;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import java.util.Collections;
 import java.util.List;
 
 import static org.apache.cayenne.exp.ExpressionFactory.exp;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ConstraintsHandlerTest {
 
     private static ConstraintsHandler constraintsHandler;
     private static IMetadataService metadata;
 
-    @BeforeClass
+    @BeforeAll
     public static void before() {
         AgEntityCompiler compiler = new PojoEntityCompiler(Collections.emptyMap());
         metadata = new MetadataService(Collections.singletonList(compiler));

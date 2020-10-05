@@ -6,18 +6,18 @@ import io.agrest.RootResourceEntity;
 import io.agrest.annotation.AgAttribute;
 import io.agrest.annotation.AgId;
 import io.agrest.annotation.AgRelationship;
+import io.agrest.base.protocol.Include;
 import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgEntityOverlay;
 import io.agrest.meta.compiler.AgEntityCompiler;
 import io.agrest.meta.compiler.PojoEntityCompiler;
-import io.agrest.base.protocol.Include;
 import io.agrest.resolver.ThrowingNestedDataResolver;
 import io.agrest.runtime.meta.IMetadataService;
 import io.agrest.runtime.meta.MetadataService;
 import io.agrest.runtime.path.IPathDescriptorManager;
 import io.agrest.runtime.path.PathDescriptorManager;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
 import java.util.Collections;
@@ -26,14 +26,14 @@ import java.util.List;
 import java.util.Map;
 
 import static java.util.Arrays.asList;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class IncludeMergerTest {
 
     private IMetadataService metadataService;
     private IncludeMerger includeMerger;
 
-    @Before
+    @BeforeEach
     public void setUp() {
 
         AgEntityCompiler compiler = new PojoEntityCompiler(Collections.emptyMap());

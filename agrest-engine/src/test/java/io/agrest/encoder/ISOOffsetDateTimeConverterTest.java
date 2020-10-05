@@ -1,17 +1,13 @@
 package io.agrest.encoder;
 
-import static org.junit.Assert.assertEquals;
-
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.OffsetDateTime;
-import java.time.ZoneId;
-import java.time.ZoneOffset;
-import java.time.format.DateTimeFormatter;
-
 import io.agrest.encoder.converter.ISOOffsetDateTimeConverter;
 import io.agrest.encoder.converter.StringConverter;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import java.time.*;
+import java.time.format.DateTimeFormatter;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ISOOffsetDateTimeConverterTest {
 

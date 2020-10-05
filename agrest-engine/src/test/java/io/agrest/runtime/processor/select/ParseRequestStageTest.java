@@ -8,20 +8,11 @@ import io.agrest.base.protocol.Dir;
 import io.agrest.base.protocol.Sort;
 import io.agrest.runtime.jackson.IJacksonService;
 import io.agrest.runtime.jackson.JacksonService;
-import io.agrest.runtime.protocol.CayenneExpParser;
-import io.agrest.runtime.protocol.ExcludeParser;
-import io.agrest.runtime.protocol.ICayenneExpParser;
-import io.agrest.runtime.protocol.IExcludeParser;
-import io.agrest.runtime.protocol.IIncludeParser;
-import io.agrest.runtime.protocol.ISizeParser;
-import io.agrest.runtime.protocol.ISortParser;
-import io.agrest.runtime.protocol.IncludeParser;
-import io.agrest.runtime.protocol.SizeParser;
-import io.agrest.runtime.protocol.SortParser;
+import io.agrest.runtime.protocol.*;
 import io.agrest.runtime.request.DefaultRequestBuilderFactory;
 import io.agrest.runtime.request.IAgRequestBuilderFactory;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import javax.ws.rs.core.MultivaluedHashMap;
 import javax.ws.rs.core.MultivaluedMap;
@@ -29,7 +20,7 @@ import javax.ws.rs.core.UriInfo;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -37,7 +28,7 @@ public class ParseRequestStageTest {
 
     private static ParseRequestStage stage;
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeAll() {
 
         IJacksonService jacksonService = new JacksonService();
@@ -221,7 +212,7 @@ public class ParseRequestStageTest {
         assertEquals(Dir.DESC, ordering.getDirection());
     }
 
-    @Test(expected = AgException.class)
+    @Test
     public void testExecute_SortSimple_Garbage() {
 
         MultivaluedMap<String, String> params = new MultivaluedHashMap<>();
@@ -229,7 +220,7 @@ public class ParseRequestStageTest {
         params.putSingle("dir", "XYZ");
         SelectContext<Tr> context = prepareContext(Tr.class, params);
 
-        stage.execute(context);
+        assertThrows(AgException.class, () -> stage.execute(context));
     }
 
     @Test
@@ -276,24 +267,24 @@ public class ParseRequestStageTest {
         assertEquals(Dir.ASC, o2.getDirection());
     }
 
-    @Test(expected = AgException.class)
+    @Test
     public void testExecute_Sort_BadSpec() {
 
         MultivaluedMap<String, String> params = new MultivaluedHashMap<>();
         params.putSingle("sort", "[{\"property\":\"p1\",\"direction\":\"DESC\"},{\"property\":\"p2\",\"direction\":\"XXX\"}]");
         SelectContext<Tr> context = prepareContext(Tr.class, params);
 
-        stage.execute(context);
+        assertThrows(AgException.class, () -> stage.execute(context));
     }
 
-    @Test(expected = AgException.class)
+    @Test
     public void testExecute_CayenneExp_BadSpec() {
 
         MultivaluedMap<String, String> params = new MultivaluedHashMap<>();
         params.putSingle("cayenneExp", "{exp : \"numericProp = 12345 and stringProp = 'John Smith' and booleanProp = true\"}");
         SelectContext<Tr> context = prepareContext(Tr.class, params);
 
-        stage.execute(context);
+        assertThrows(AgException.class, () -> stage.execute(context));
     }
 
     @Test

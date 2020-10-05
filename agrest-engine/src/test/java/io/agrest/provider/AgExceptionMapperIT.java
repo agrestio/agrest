@@ -4,8 +4,8 @@ import io.agrest.AgException;
 import io.agrest.DataResponse;
 import io.agrest.it.fixture.JerseyAndPojoCase;
 import io.agrest.it.fixture.pojo.model.P1;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -17,7 +17,7 @@ import javax.ws.rs.core.UriInfo;
 
 public class AgExceptionMapperIT extends JerseyAndPojoCase {
 
-    @BeforeClass
+    @BeforeAll
     public static void startTestRuntime() {
         startTestRuntime(Resource.class);
     }

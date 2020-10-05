@@ -10,9 +10,9 @@ import io.agrest.resolver.NestedDataResolver;
 import io.agrest.resolver.ReaderFactoryBasedResolver;
 import io.agrest.runtime.meta.IMetadataService;
 import io.agrest.runtime.processor.select.SelectContext;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class AgBuilder_OverlayTest {
 

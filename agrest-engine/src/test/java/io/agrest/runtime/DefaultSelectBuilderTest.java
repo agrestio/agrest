@@ -8,7 +8,7 @@ import io.agrest.runtime.processor.select.SelectContext;
 import io.agrest.runtime.processor.select.SelectProcessorFactory;
 import org.apache.cayenne.CayenneDataObject;
 import org.apache.cayenne.DataObject;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.List;

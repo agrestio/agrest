@@ -8,10 +8,10 @@ import io.agrest.meta.DefaultAgRelationship;
 import io.agrest.property.BeanPropertyReader;
 import io.agrest.resolver.ReaderBasedResolver;
 import org.apache.cayenne.exp.parser.ASTObjPath;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static io.agrest.encoder.Encoders.toJson;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -47,9 +47,9 @@ public class PropertyMetadataEncoderTest {
         assertEquals("{\"name\":\"rel\",\"type\":\"T\",\"relationship\":true,\"collection\":true}", toJson(encoder, r));
     }
 
-    @Test(expected = UnsupportedOperationException.class)
+    @Test
     public void testEncode_NotAnAttributeOrRelationship() {
-        toJson(encoder, "iamastring");
+        assertThrows(UnsupportedOperationException.class, () -> toJson(encoder, "iamastring"));
     }
 
     public class T {

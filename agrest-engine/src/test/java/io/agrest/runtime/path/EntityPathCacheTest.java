@@ -8,18 +8,18 @@ import io.agrest.meta.compiler.PojoEntityCompiler;
 import io.agrest.runtime.meta.IMetadataService;
 import io.agrest.runtime.meta.MetadataService;
 import org.apache.cayenne.exp.parser.ASTObjPath;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.Collections;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class EntityPathCacheTest {
 
     private IMetadataService metadataService;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         AgEntityCompiler compiler = new PojoEntityCompiler(Collections.emptyMap());
         this.metadataService = new MetadataService(Collections.singletonList(compiler));
@@ -58,10 +58,10 @@ public class EntityPathCacheTest {
         assertSame(pd, cache.getPathDescriptor(new ASTObjPath("y.name")));
     }
 
-    @Test(expected = AgException.class)
+    @Test
     public void testGetPathDescriptor_BadPath() {
         EntityPathCache cache = new EntityPathCache(metadataService.getAgEntity(X.class));
-        cache.getPathDescriptor(new ASTObjPath("y.xyz"));
+        assertThrows(AgException.class, () -> cache.getPathDescriptor(new ASTObjPath("y.xyz")));
     }
 
     @Test

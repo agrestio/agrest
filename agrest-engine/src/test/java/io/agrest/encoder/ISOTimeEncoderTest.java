@@ -1,6 +1,6 @@
 package io.agrest.encoder;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
@@ -11,7 +11,7 @@ import java.util.Date;
 
 import static io.agrest.encoder.Encoders.jsonString;
 import static io.agrest.encoder.Encoders.toJson;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ISOTimeEncoderTest {
 

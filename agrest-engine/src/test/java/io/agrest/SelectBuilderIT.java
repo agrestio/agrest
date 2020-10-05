@@ -3,8 +3,8 @@ package io.agrest;
 import io.agrest.annotation.AgAttribute;
 import io.agrest.annotation.AgRelationship;
 import io.agrest.it.fixture.JerseyAndPojoCase;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import javax.ws.rs.core.MultivaluedHashMap;
 import javax.ws.rs.core.UriInfo;
@@ -13,14 +13,15 @@ import java.util.List;
 
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.joining;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 public class SelectBuilderIT extends JerseyAndPojoCase {
 
-    @BeforeClass
-    public static void beforeClass() {
+    @BeforeAll
+    public static void beforeAll() {
         startTestRuntime();
     }
 

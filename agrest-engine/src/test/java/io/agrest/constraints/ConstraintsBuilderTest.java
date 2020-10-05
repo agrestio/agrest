@@ -7,19 +7,19 @@ import io.agrest.meta.AgEntity;
 import io.agrest.meta.LazyAgDataMap;
 import io.agrest.meta.compiler.AgEntityCompiler;
 import io.agrest.meta.compiler.PojoEntityCompiler;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.Collections;
 import java.util.Date;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ConstraintsBuilderTest {
 
     private AgEntity<T> entity;
 
-    @Before
+    @BeforeEach
     public void before() {
         AgEntityCompiler compiler = new PojoEntityCompiler(Collections.emptyMap());
         AgDataMap dataMap = new LazyAgDataMap(Collections.singletonList(compiler));

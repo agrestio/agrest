@@ -12,18 +12,14 @@ import io.agrest.meta.compiler.AgEntityCompiler;
 import io.agrest.meta.compiler.PojoEntityCompiler;
 import io.agrest.runtime.semantics.RelationshipMapper;
 import io.agrest.unit.ResourceEntityUtils;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
+import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 
 public class EncoderService_DateTime_Test {
@@ -35,7 +31,7 @@ public class EncoderService_DateTime_Test {
 
     private EncoderService encoderService;
 
-    @Before
+    @BeforeEach
     public void before() {
         this.encoderService = new EncoderService(
                 new AttributeEncoderFactory(new ValueEncodersProvider(Collections.emptyMap()).get()),

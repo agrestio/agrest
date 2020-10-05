@@ -9,7 +9,7 @@ import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ResponseAssertions<T extends ResponseAssertions<T>> {
 
@@ -60,16 +60,16 @@ public class ResponseAssertions<T extends ResponseAssertions<T>> {
     }
 
     public T wasSuccess() {
-        assertEquals("Failed request: " + response.getStatus(),
-                Response.Status.OK.getStatusCode(),
-                response.getStatus());
+        assertEquals(Response.Status.OK.getStatusCode(),
+                response.getStatus(),
+                "Failed request: " + response.getStatus());
         return (T) this;
     }
 
     public T wasCreated() {
-        assertEquals("Expected 'CREATED' status, was: " + response.getStatus(),
-                Response.Status.CREATED.getStatusCode(),
-                response.getStatus());
+        assertEquals(Response.Status.CREATED.getStatusCode(),
+                response.getStatus(),
+                "Expected 'CREATED' status, was: " + response.getStatus());
         return (T) this;
     }
 
@@ -98,7 +98,7 @@ public class ResponseAssertions<T extends ResponseAssertions<T>> {
         String actual = getContentAsString();
         String normalized = idPlaceholder != null ? NUMERIC_ID_MATCHER.matcher(actual).replaceFirst("\"id\":" + idPlaceholder) : actual;
 
-        assertEquals("Response contains unexpected JSON", expected, normalized);
+        assertEquals(expected, normalized, "Response contains unexpected JSON");
         return (T) this;
     }
 
@@ -131,12 +131,12 @@ public class ResponseAssertions<T extends ResponseAssertions<T>> {
         } catch (IOException e) {
             throw new RuntimeException("Error reading JSON", e);
         }
-        assertNotNull("No response data", rootNode);
+        assertNotNull(rootNode, "No response data");
 
         JsonNode totalNode = rootNode.get("total");
-        assertNotNull("No 'total' info", totalNode);
+        assertNotNull(totalNode, "No 'total' info");
 
-        assertEquals("Unexpected total", total, totalNode.asLong());
+        assertEquals(total, totalNode.asLong(), "Unexpected total");
 
         return (T) this;
     }

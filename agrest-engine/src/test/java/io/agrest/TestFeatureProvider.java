@@ -5,7 +5,7 @@ import org.apache.cayenne.di.Injector;
 import javax.ws.rs.core.Feature;
 import javax.ws.rs.core.FeatureContext;
 
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class TestFeatureProvider implements AgFeatureProvider {
 

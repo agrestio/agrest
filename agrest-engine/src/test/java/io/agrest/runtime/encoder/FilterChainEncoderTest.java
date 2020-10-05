@@ -14,7 +14,7 @@ import io.agrest.ResourceEntity;
 import io.agrest.encoder.Encoder;
 import io.agrest.encoder.EntityEncoderFilter;
 import io.agrest.encoder.FilterChainEncoder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 

@@ -6,21 +6,21 @@ import io.agrest.meta.AgResource;
 import io.agrest.meta.compiler.AgEntityCompiler;
 import io.agrest.meta.compiler.PojoEntityCompiler;
 import io.agrest.meta.parser.ResourceParser;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import java.util.Collection;
 import java.util.Collections;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ResourceParserTest {
 
     private static ResourceParser resourceParser;
 
-    @BeforeClass
+    @BeforeAll
     public static void before() {
         AgEntityCompiler compiler = new PojoEntityCompiler(Collections.emptyMap());
         MetadataService metadata = new MetadataService(Collections.singletonList(compiler));
@@ -28,7 +28,7 @@ public class ResourceParserTest {
     }
 
 
-    @Test(expected = Exception.class)
+    @Test
     public void testParse_ConflictingResourceTypes() {
         @Path("r1")
         class R1 {
@@ -43,7 +43,7 @@ public class ResourceParserTest {
             }
         }
 
-        resourceParser.parse(R1.class);
+        assertThrows(Exception.class, () -> resourceParser.parse(R1.class));
     }
 
     @Test
@@ -61,11 +61,11 @@ public class ResourceParserTest {
             resources.iterator().next().getEntity().getIds();
             fail("Exception expected");
         } catch (AgException e) {
-            assertTrue(e.getMessage(), e.getMessage().startsWith("Invalid entity '"));
+            assertTrue(e.getMessage().startsWith("Invalid entity '"), e.getMessage());
         }
     }
 
-    @Test(expected = Exception.class)
+    @Test
     public void testParse_ConflictingResourceEntities() {
         @Path("r1")
         class R1 {
@@ -80,7 +80,7 @@ public class ResourceParserTest {
             }
         }
 
-        resourceParser.parse(R1.class);
+        assertThrows(Exception.class, () -> resourceParser.parse(R1.class));
     }
 
     @Test

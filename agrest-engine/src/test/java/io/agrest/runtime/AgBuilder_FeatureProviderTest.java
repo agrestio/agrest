@@ -3,7 +3,7 @@ package io.agrest.runtime;
 import io.agrest.AgFeatureProvider;
 import io.agrest.TestFeatureProvider;
 import org.apache.cayenne.di.Injector;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import javax.ws.rs.core.Feature;
 import javax.ws.rs.core.FeatureContext;
@@ -11,9 +11,9 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.function.Consumer;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -55,12 +55,12 @@ public class AgBuilder_FeatureProviderTest {
 
     private void assertTestFeatureNotActive(AgRuntime runtime) {
         Set<Object> registered = extractRegisteredInJaxRS(runtime);
-        assertFalse("Auto-loading was on", registered.contains(TestFeatureProvider.RegisteredByFeature.class));
+        assertFalse(registered.contains(TestFeatureProvider.RegisteredByFeature.class), "Auto-loading was on");
     }
 
     private void assertLocalTestFeatureActive(AgRuntime runtime) {
         Set<Object> registered = extractRegisteredInJaxRS(runtime);
-        assertTrue("Auto-loading was off", registered.contains(LocalRegisteredByFeature.class));
+        assertTrue(registered.contains(LocalRegisteredByFeature.class), "Auto-loading was off");
     }
 
     private Set<Object> extractRegisteredInJaxRS(AgRuntime runtime) {

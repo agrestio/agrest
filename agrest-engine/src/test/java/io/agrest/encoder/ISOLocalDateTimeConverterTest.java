@@ -2,14 +2,14 @@ package io.agrest.encoder;
 
 import io.agrest.encoder.converter.ISOLocalDateTimeConverter;
 import io.agrest.encoder.converter.StringConverter;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ISOLocalDateTimeConverterTest {
 

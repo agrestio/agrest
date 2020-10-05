@@ -34,12 +34,6 @@
         </dependency>
 
         <!-- unit test deps -->
-        <!-- Use Vintage until we switch to JUnit 5-->
-        <dependency>
-            <groupId>org.junit.vintage</groupId>
-            <artifactId>junit-vintage-engine</artifactId>
-            <scope>test</scope>
-        </dependency>
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-all</artifactId>
@@ -47,7 +41,7 @@
         </dependency>
         <dependency>
             <groupId>io.bootique</groupId>
-            <artifactId>bootique-test</artifactId>
+            <artifactId>bootique-junit5</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>

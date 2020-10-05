@@ -6,20 +6,20 @@ import io.agrest.it.fixture.pojo.model.P5;
 import io.agrest.meta.compiler.AgEntityCompiler;
 import io.agrest.meta.compiler.PojoEntityCompiler;
 import io.agrest.resolver.ThrowingNestedDataResolver;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import java.util.Collection;
 import java.util.Collections;
 
 import static java.util.Arrays.asList;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class AgEntityBuilderTest {
 
 	private static Collection<AgEntityCompiler> COMPILERS;
 
-	@BeforeClass
+	@BeforeAll
 	public static void setUpClass() {
 		COMPILERS = asList(new PojoEntityCompiler(Collections.emptyMap()));
 	}

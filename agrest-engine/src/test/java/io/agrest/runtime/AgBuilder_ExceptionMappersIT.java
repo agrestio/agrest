@@ -6,23 +6,19 @@ import io.agrest.it.fixture.JerseyAndPojoCase;
 import io.agrest.it.fixture.pojo.model.P1;
 import io.agrest.it.fixture.pojo.model.P2;
 import org.apache.cayenne.di.Module;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
-import javax.ws.rs.core.Configuration;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriInfo;
+import javax.ws.rs.core.*;
 import javax.ws.rs.ext.ExceptionMapper;
 import java.util.function.UnaryOperator;
 
 public class AgBuilder_ExceptionMappersIT extends JerseyAndPojoCase {
 
-    @BeforeClass
+    @BeforeAll
     public static void startTestRuntime() {
         UnaryOperator<AgBuilder> customizer = b -> b.module(exceptionsModule());
         startTestRuntime(customizer, Resource.class);
