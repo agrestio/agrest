@@ -39,7 +39,7 @@
         <jaxrs-version>2.1</jaxrs-version>
         <jackson-version>2.10.3</jackson-version>
         <openapi-generator-version>3.0.2</openapi-generator-version>
-        <bootique-version>1.1</bootique-version>
+        <bootique-version>2.0.M1</bootique-version>
     </properties>
 
     <url>https://github.com/agrestio/agrest/</url>

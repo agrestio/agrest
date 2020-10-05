@@ -1,20 +1,10 @@
 package io.agrest.it.fixture;
 
-import com.google.inject.Binder;
-import com.google.inject.Module;
-import com.google.inject.Provides;
-import com.google.inject.Singleton;
 import io.agrest.AgModuleProvider;
 import io.agrest.it.fixture.pojo.PojoDB;
 import io.agrest.it.fixture.pojo.PojoFetchStage;
 import io.agrest.it.fixture.pojo.PojoSelectProcessorFactoryProvider;
-import io.agrest.it.fixture.pojo.model.P1;
-import io.agrest.it.fixture.pojo.model.P2;
-import io.agrest.it.fixture.pojo.model.P4;
-import io.agrest.it.fixture.pojo.model.P6;
-import io.agrest.it.fixture.pojo.model.P7;
-import io.agrest.it.fixture.pojo.model.P8;
-import io.agrest.it.fixture.pojo.model.P9;
+import io.agrest.it.fixture.pojo.model.*;
 import io.agrest.runtime.AgBuilder;
 import io.agrest.runtime.AgRuntime;
 import io.agrest.runtime.IAgService;
@@ -23,12 +13,16 @@ import io.agrest.runtime.processor.select.SelectProcessorFactory;
 import io.agrest.runtime.processor.unrelate.UnrelateProcessorFactory;
 import io.agrest.runtime.processor.update.UpdateProcessorFactoryFactory;
 import io.bootique.BQRuntime;
+import io.bootique.di.BQModule;
+import io.bootique.di.Binder;
+import io.bootique.di.Provides;
 import io.bootique.jersey.JerseyModule;
 import io.bootique.jersey.JerseyModuleExtender;
 import io.bootique.test.junit.BQTestFactory;
 import org.junit.Before;
 import org.junit.ClassRule;
 
+import javax.inject.Singleton;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Response;
@@ -153,7 +147,7 @@ public class JerseyAndPojoCase {
         return POJO_DB.bucketForType(P9.class);
     }
 
-    public static class AgModule implements Module {
+    public static class AgModule implements BQModule {
 
         private Function<AgBuilder, AgBuilder> agCustomizer;
 

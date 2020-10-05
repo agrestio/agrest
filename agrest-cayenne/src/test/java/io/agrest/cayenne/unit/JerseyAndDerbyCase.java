@@ -1,46 +1,18 @@
 package io.agrest.cayenne.unit;
 
-import com.google.inject.Binder;
-import com.google.inject.Module;
-import com.google.inject.Provides;
-import com.google.inject.Singleton;
 import io.agrest.cayenne.AgCayenneBuilder;
 import io.agrest.cayenne.persister.CayennePersister;
 import io.agrest.cayenne.persister.ICayennePersister;
-import io.agrest.it.fixture.cayenne.E1;
-import io.agrest.it.fixture.cayenne.E10;
-import io.agrest.it.fixture.cayenne.E11;
-import io.agrest.it.fixture.cayenne.E12;
-import io.agrest.it.fixture.cayenne.E12E13;
-import io.agrest.it.fixture.cayenne.E13;
-import io.agrest.it.fixture.cayenne.E14;
-import io.agrest.it.fixture.cayenne.E15;
-import io.agrest.it.fixture.cayenne.E15E1;
-import io.agrest.it.fixture.cayenne.E17;
-import io.agrest.it.fixture.cayenne.E18;
-import io.agrest.it.fixture.cayenne.E19;
-import io.agrest.it.fixture.cayenne.E2;
-import io.agrest.it.fixture.cayenne.E20;
-import io.agrest.it.fixture.cayenne.E21;
-import io.agrest.it.fixture.cayenne.E22;
-import io.agrest.it.fixture.cayenne.E23;
-import io.agrest.it.fixture.cayenne.E24;
-import io.agrest.it.fixture.cayenne.E25;
-import io.agrest.it.fixture.cayenne.E26;
-import io.agrest.it.fixture.cayenne.E27Nopk;
-import io.agrest.it.fixture.cayenne.E3;
-import io.agrest.it.fixture.cayenne.E4;
-import io.agrest.it.fixture.cayenne.E5;
-import io.agrest.it.fixture.cayenne.E6;
-import io.agrest.it.fixture.cayenne.E7;
-import io.agrest.it.fixture.cayenne.E8;
-import io.agrest.it.fixture.cayenne.E9;
+import io.agrest.it.fixture.cayenne.*;
 import io.agrest.runtime.AgBuilder;
 import io.agrest.runtime.AgRuntime;
 import io.agrest.runtime.IAgService;
 import io.bootique.BQRuntime;
 import io.bootique.cayenne.CayenneModule;
 import io.bootique.cayenne.test.CayenneTestDataManager;
+import io.bootique.di.BQModule;
+import io.bootique.di.Binder;
+import io.bootique.di.Provides;
 import io.bootique.jdbc.test.Table;
 import io.bootique.jersey.JerseyModule;
 import io.bootique.jersey.JerseyModuleExtender;
@@ -50,6 +22,7 @@ import org.apache.cayenne.configuration.server.ServerRuntime;
 import org.junit.ClassRule;
 import org.junit.Rule;
 
+import javax.inject.Singleton;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Response;
@@ -267,9 +240,9 @@ public abstract class JerseyAndDerbyCase {
         return dataManager.getTable(E27Nopk.class);
     }
 
-    public static class AgModule implements Module {
+    public static class AgModule implements BQModule {
 
-        private BiFunction<AgBuilder, ICayennePersister, AgBuilder> agCustomizer;
+        private final BiFunction<AgBuilder, ICayennePersister, AgBuilder> agCustomizer;
 
         public AgModule(BiFunction<AgBuilder, ICayennePersister, AgBuilder> agCustomizer) {
             this.agCustomizer = agCustomizer;
