@@ -32,9 +32,10 @@
         </dependency>
 
         <!-- unit test deps -->
+        <!-- Use Vintage until we switch to JUnit 5-->
         <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
+            <groupId>org.junit.vintage</groupId>
+            <artifactId>junit-vintage-engine</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>

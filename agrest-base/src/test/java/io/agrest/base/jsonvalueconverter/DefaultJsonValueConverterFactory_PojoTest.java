@@ -2,24 +2,19 @@ package io.agrest.base.jsonvalueconverter;
 
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class DefaultJsonValueConverterFactory_PojoTest {
 
     IJsonValueConverterFactory converterFactory;
     JsonNodeFactory nodeFactory;
 
-    @Before
+    @BeforeEach
     public void before() {
         converterFactory = new DefaultJsonValueConverterFactoryProvider(Collections.emptyMap()).get();
         nodeFactory = JsonNodeFactory.instance;
@@ -104,7 +99,7 @@ public class DefaultJsonValueConverterFactory_PojoTest {
         assertNotNull(collection);
         assertEquals(values.length, collection.size());
         for (Object value : values) {
-            assertTrue("Value is missing from the collection: '" + value + "'", collection.contains(value));
+            assertTrue(collection.contains(value), "Value is missing from the collection: '" + value + "'");
         }
     }
 

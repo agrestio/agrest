@@ -1,8 +1,7 @@
 package io.agrest.base.jsonvalueconverter;
 
 import com.fasterxml.jackson.databind.node.TextNode;
-import io.agrest.base.jsonvalueconverter.UtcDateConverter;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.time.Instant;
 import java.time.ZoneId;
@@ -10,11 +9,8 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
 import java.time.format.DecimalStyle;
 
-import static java.time.temporal.ChronoField.HOUR_OF_DAY;
-import static java.time.temporal.ChronoField.MILLI_OF_SECOND;
-import static java.time.temporal.ChronoField.MINUTE_OF_HOUR;
-import static java.time.temporal.ChronoField.SECOND_OF_MINUTE;
-import static org.junit.Assert.assertEquals;
+import static java.time.temporal.ChronoField.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class UtcDateConverterTest {
 
@@ -47,9 +43,8 @@ public class UtcDateConverterTest {
         return AGREST_ISO_LOCAL_DATE_TIME.format(Instant.ofEpochMilli(date.getTime()));
     }
 
-    @SuppressWarnings("unchecked")
     private static <T extends java.util.Date> T convert(Class<T> targetType, String value) {
-        return (T) UtcDateConverter.converter(targetType).value(new TextNode(value));
+        return UtcDateConverter.converter(targetType).value(new TextNode(value));
     }
 
     @Test

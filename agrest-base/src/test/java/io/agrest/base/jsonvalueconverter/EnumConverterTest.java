@@ -2,11 +2,9 @@ package io.agrest.base.jsonvalueconverter;
 
 import com.fasterxml.jackson.databind.node.TextNode;
 import io.agrest.AgException;
-import io.agrest.base.jsonvalueconverter.EnumConverter;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertSame;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class EnumConverterTest {
 
@@ -19,11 +17,10 @@ public class EnumConverterTest {
         assertNull(c.value(new TextNode("")));
     }
 
-    @Test(expected = AgException.class)
+    @Test
     public void testConvert_Invalid() {
         EnumConverter c = new EnumConverter(E1.class);
-
-        c.value(new TextNode("invalid"));
+        assertThrows(AgException.class, () -> c.value(new TextNode("invalid")));
     }
 
     public enum E1 {

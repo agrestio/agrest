@@ -1,12 +1,11 @@
 package io.agrest.base.jsonvalueconverter;
 
 import com.fasterxml.jackson.databind.node.TextNode;
-import io.agrest.base.jsonvalueconverter.ISOLocalTimeConverter;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.time.LocalTime;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ISOLocalTimeConverterTest {
 

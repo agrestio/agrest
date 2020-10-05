@@ -5,10 +5,10 @@ import com.fasterxml.jackson.databind.node.FloatNode;
 import com.fasterxml.jackson.databind.node.IntNode;
 import com.fasterxml.jackson.databind.node.TextNode;
 import io.agrest.AgException;
-import io.agrest.base.jsonvalueconverter.FloatConverter;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class FloatConverterTest {
 
@@ -64,24 +64,24 @@ public class FloatConverterTest {
         assertEquals(Float.valueOf(Float.NEGATIVE_INFINITY), convert("-Infinity"));
     }
 
-    @Test(expected = AgException.class)
+    @Test
     public void testConverter_TooLarge_Positive() {
-        FloatConverter.converter().value(new DoubleNode(Float.MAX_VALUE * 1.1d));
+        assertThrows(AgException.class, () -> FloatConverter.converter().value(new DoubleNode(Float.MAX_VALUE * 1.1d)));
     }
 
-    @Test(expected = AgException.class)
+    @Test
     public void testConverter_TooSmall_Positive() {
-        FloatConverter.converter().value(new DoubleNode(Float.MIN_VALUE * 0.9d));
+        assertThrows(AgException.class, () -> FloatConverter.converter().value(new DoubleNode(Float.MIN_VALUE * 0.9d)));
     }
 
-    @Test(expected = AgException.class)
+    @Test
     public void testConverter_TooLarge_Negative() {
-        FloatConverter.converter().value(new DoubleNode(Float.MAX_VALUE * -1.1d));
+        assertThrows(AgException.class, () -> FloatConverter.converter().value(new DoubleNode(Float.MAX_VALUE * -1.1d)));
     }
 
-    @Test(expected = AgException.class)
+    @Test
     public void testConverter_TooSmall_Negative() {
-        FloatConverter.converter().value(new DoubleNode(Float.MIN_VALUE * -0.9d));
+        assertThrows(AgException.class, () -> FloatConverter.converter().value(new DoubleNode(Float.MIN_VALUE * -0.9d)));
     }
 
     private Float convert(Float value) {
