@@ -15,7 +15,7 @@ import io.agrest.it.fixture.cayenne.E7;
 import io.agrest.it.fixture.cayenne.E8;
 import io.agrest.it.fixture.cayenne.E9;
 import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
@@ -31,7 +31,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class PUT_IT extends JerseyAndDerbyCase {
 

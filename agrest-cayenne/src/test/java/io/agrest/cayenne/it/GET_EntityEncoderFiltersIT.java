@@ -11,7 +11,7 @@ import io.agrest.it.fixture.cayenne.E4;
 import io.agrest.runtime.AgBuilder;
 import org.apache.cayenne.Cayenne;
 import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -23,7 +23,7 @@ import javax.ws.rs.core.UriInfo;
 import java.io.IOException;
 import java.util.function.UnaryOperator;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class GET_EntityEncoderFiltersIT extends JerseyAndDerbyCase {
 

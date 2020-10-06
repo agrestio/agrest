@@ -4,7 +4,7 @@ import io.agrest.it.fixture.ResponseAssertions;
 
 import javax.ws.rs.core.Response;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class CayenneAwareResponseAssertions extends ResponseAssertions<CayenneAwareResponseAssertions> {
 

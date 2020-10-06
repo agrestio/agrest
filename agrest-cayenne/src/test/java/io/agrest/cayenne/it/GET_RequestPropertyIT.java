@@ -9,7 +9,7 @@ import io.agrest.property.PropertyReader;
 import org.apache.cayenne.Cayenne;
 import org.apache.cayenne.DataObject;
 import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;

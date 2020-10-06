@@ -11,7 +11,7 @@ import io.agrest.meta.AgEntityOverlay;
 import org.apache.cayenne.Cayenne;
 import org.apache.cayenne.query.SelectById;
 import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -20,7 +20,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class GET_EntityOverlay_PerStackIT extends JerseyAndDerbyCase {
 

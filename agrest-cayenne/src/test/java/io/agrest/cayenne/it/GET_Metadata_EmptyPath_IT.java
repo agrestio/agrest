@@ -9,7 +9,7 @@ import io.agrest.annotation.LinkType;
 import io.agrest.cayenne.unit.JerseyAndDerbyCase;
 import io.agrest.it.fixture.cayenne.E5;
 import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;

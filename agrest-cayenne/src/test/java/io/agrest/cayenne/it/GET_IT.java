@@ -12,7 +12,7 @@ import io.agrest.it.fixture.cayenne.E4;
 import io.agrest.it.fixture.cayenne.E6;
 import io.agrest.base.jsonvalueconverter.UtcDateConverter;
 import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;

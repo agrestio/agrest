@@ -8,7 +8,7 @@ import io.agrest.it.fixture.cayenne.E3;
 import io.agrest.base.protocol.Exclude;
 import io.agrest.base.protocol.Include;
 import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;

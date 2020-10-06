@@ -15,7 +15,7 @@ import io.agrest.runtime.AgRuntime;
 import io.agrest.runtime.processor.select.SelectContext;
 import org.apache.cayenne.query.ObjectSelect;
 import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;

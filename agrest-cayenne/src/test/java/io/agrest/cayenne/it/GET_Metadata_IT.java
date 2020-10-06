@@ -14,7 +14,7 @@ import io.agrest.it.fixture.cayenne.E19;
 import io.agrest.it.fixture.cayenne.E5;
 import io.agrest.runtime.jackson.JacksonService;
 import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -25,7 +25,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class GET_Metadata_IT extends JerseyAndDerbyCase {
 

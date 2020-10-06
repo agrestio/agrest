@@ -5,9 +5,9 @@ import io.agrest.it.fixture.cayenne.E25;
 import io.agrest.it.fixture.pojox.PX1;
 import io.agrest.it.fixture.pojox.PX1RootResolver;
 import io.agrest.meta.AgEntity;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class CayenneResolver_PojoToPersistentTest extends TestWithCayenneMapping {
 

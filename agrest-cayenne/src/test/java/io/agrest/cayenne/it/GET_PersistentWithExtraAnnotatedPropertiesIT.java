@@ -10,7 +10,7 @@ import io.agrest.it.fixture.pojo.model.P7;
 import io.agrest.runtime.processor.select.SelectContext;
 import org.apache.cayenne.Cayenne;
 import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;

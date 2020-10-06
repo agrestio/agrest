@@ -8,9 +8,9 @@ import io.agrest.it.fixture.cayenne.E2;
 import io.agrest.it.fixture.cayenne.E3;
 import io.agrest.runtime.DefaultSelectBuilder;
 import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class DefaultSelectBuilder_CustomPipeline_DataIT extends JerseyAndDerbyCase {
 

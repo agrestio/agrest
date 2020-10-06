@@ -13,7 +13,7 @@ import org.apache.cayenne.Cayenne;
 import org.apache.cayenne.Persistent;
 import org.junit.Assert;
 import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.util.Collection;

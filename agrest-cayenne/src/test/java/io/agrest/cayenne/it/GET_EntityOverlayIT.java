@@ -16,7 +16,7 @@ import io.agrest.runtime.AgBuilder;
 import org.apache.cayenne.Cayenne;
 import org.apache.cayenne.ObjectId;
 import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -28,7 +28,7 @@ import java.util.List;
 import java.util.function.UnaryOperator;
 
 import static java.util.Arrays.asList;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class GET_EntityOverlayIT extends JerseyAndDerbyCase {
 

@@ -5,14 +5,14 @@ import io.agrest.it.fixture.cayenne.E3;
 import org.apache.cayenne.DataObject;
 import org.apache.cayenne.ObjectContext;
 import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 import static java.util.Arrays.asList;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 
 public class ToOneFlattenedIteratorTest {

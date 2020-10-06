@@ -9,7 +9,7 @@ import io.agrest.it.fixture.cayenne.E3;
 import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgEntityOverlay;
 import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
