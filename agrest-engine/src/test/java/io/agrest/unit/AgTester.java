@@ -1,4 +1,4 @@
-package io.agrest.it.fixture;
+package io.agrest.unit;
 
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.Invocation;
@@ -8,13 +8,14 @@ import javax.ws.rs.core.Response;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.Objects;
-import java.util.function.Consumer;
 import java.util.stream.Stream;
 
+/**
+ * A DSL for evaluating Agrest responses.
+ */
 public class AgTester {
 
     private WebTarget target;
-    private Consumer<Invocation.Builder> requestCustomizer;
 
     public static AgTester request(WebTarget target) {
         return new AgTester(target);
@@ -22,8 +23,6 @@ public class AgTester {
 
     protected AgTester(WebTarget target) {
         this.target = Objects.requireNonNull(target);
-        this.requestCustomizer = (b) -> {
-        };
     }
 
     public AgTester path(String path) {
@@ -43,44 +42,37 @@ public class AgTester {
         return this;
     }
 
-    public AgTester customizeRequest(Consumer<Invocation.Builder> requestCustomizer) {
-        this.requestCustomizer = Objects.requireNonNull(requestCustomizer);
-        return this;
-    }
-
-    public ResponseAssertions get() {
+    public AgResponseAssertions get() {
         return onResponse(this.request().get());
     }
 
-    public ResponseAssertions put(String data) {
+    public AgResponseAssertions put(String data) {
         Objects.requireNonNull(data);
         Response r = this.request().put(Entity.entity(data, MediaType.APPLICATION_JSON_TYPE));
         return onResponse(r);
     }
 
-    public ResponseAssertions post(String data) {
+    public AgResponseAssertions post(String data) {
         Objects.requireNonNull(data);
         Response r = this.request().post(Entity.entity(data, MediaType.APPLICATION_JSON_TYPE));
         return onResponse(r);
     }
 
-    public ResponseAssertions delete() {
+    public AgResponseAssertions delete() {
         return onResponse(this.request().delete());
     }
 
-    protected static ResponseAssertions onResponse(Response response) {
-        return new ResponseAssertions(response);
+    protected static AgResponseAssertions onResponse(Response response) {
+        return new AgResponseAssertions(response);
     }
 
     protected Invocation.Builder request() {
-        Invocation.Builder requestBuilder = this.target.request();
-        this.requestCustomizer.accept(requestBuilder);
-        return requestBuilder;
+        return this.target.request();
     }
 
     private static String urlEnc(Object queryParam) {
 
-        if(queryParam == null) {
+        if (queryParam == null) {
             return "null";
         }
 

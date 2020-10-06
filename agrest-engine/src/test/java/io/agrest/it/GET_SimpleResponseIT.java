@@ -1,7 +1,7 @@
 package io.agrest.it;
 
 import io.agrest.SimpleResponse;
-import io.agrest.it.fixture.JerseyAndPojoCase;
+import io.agrest.unit.PojoTest;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -9,7 +9,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.Response;
 
-public class GET_SimpleResponseIT extends JerseyAndPojoCase {
+public class GET_SimpleResponseIT extends PojoTest {
 
 	@BeforeAll
 	public static void startTestRuntime() {

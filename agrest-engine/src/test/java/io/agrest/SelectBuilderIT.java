@@ -2,7 +2,7 @@ package io.agrest;
 
 import io.agrest.annotation.AgAttribute;
 import io.agrest.annotation.AgRelationship;
-import io.agrest.it.fixture.JerseyAndPojoCase;
+import io.agrest.unit.PojoTest;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class SelectBuilderIT extends JerseyAndPojoCase {
+public class SelectBuilderIT extends PojoTest {
 
     @BeforeAll
     public static void beforeAll() {

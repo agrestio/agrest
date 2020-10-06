@@ -1,7 +1,7 @@
 package io.agrest.sencha.runtime.entity;
 
 import io.agrest.AgException;
-import io.agrest.cayenne.unit.TestWithCayenneMapping;
+import io.agrest.cayenne.unit.CayenneNoDbTest;
 import io.agrest.it.fixture.cayenne.E4;
 import io.agrest.meta.AgEntity;
 import io.agrest.runtime.entity.ExpressionPostProcessor;
@@ -20,7 +20,7 @@ import static java.util.Arrays.asList;
 import static org.apache.cayenne.exp.ExpressionFactory.exp;
 import static org.junit.Assert.*;
 
-public class SenchaFilterExpressionCompilerTest extends TestWithCayenneMapping {
+public class SenchaFilterExpressionCompilerTest extends CayenneNoDbTest {
 
     private AgEntity<E4> e4Entity;
     private SenchaFilterExpressionCompiler processor;

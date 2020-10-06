@@ -3,7 +3,7 @@ package io.agrest.cayenne.it;
 import io.agrest.Ag;
 import io.agrest.SimpleResponse;
 import io.agrest.cayenne.unit.CayenneAgTester;
-import io.agrest.cayenne.unit.JerseyAndDerbyCase;
+import io.agrest.cayenne.unit.DbTest;
 import io.agrest.it.fixture.cayenne.E20;
 import io.agrest.it.fixture.cayenne.E21;
 import io.bootique.junit5.BQTestTool;
@@ -19,7 +19,7 @@ import javax.ws.rs.core.UriInfo;
 import java.util.HashMap;
 import java.util.Map;
 
-public class DELETE_NaturalIdIT extends JerseyAndDerbyCase {
+public class DELETE_NaturalIdIT extends DbTest {
 
     @BQTestTool
     static final CayenneAgTester tester = tester(Resource.class)

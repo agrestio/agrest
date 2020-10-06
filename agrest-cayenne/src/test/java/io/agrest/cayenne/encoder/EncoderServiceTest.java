@@ -2,7 +2,7 @@ package io.agrest.cayenne.encoder;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import io.agrest.*;
-import io.agrest.cayenne.unit.TestWithCayenneMapping;
+import io.agrest.cayenne.unit.CayenneNoDbTest;
 import io.agrest.encoder.Encoder;
 import io.agrest.encoder.Encoders;
 import io.agrest.encoder.EntityEncoderFilter;
@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.Mockito.mock;
 
-public class EncoderServiceTest extends TestWithCayenneMapping {
+public class EncoderServiceTest extends CayenneNoDbTest {
 
     private EncoderService encoderService;
 

@@ -1,7 +1,7 @@
 package io.agrest.sencha.runtime.processor.select;
 
 import io.agrest.AgRequest;
-import io.agrest.cayenne.unit.TestWithCayenneMapping;
+import io.agrest.cayenne.unit.CayenneNoDbTest;
 import io.agrest.it.fixture.cayenne.E2;
 import io.agrest.base.protocol.Dir;
 import io.agrest.base.protocol.Sort;
@@ -34,7 +34,7 @@ import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class SenchaParseRequestStageTest extends TestWithCayenneMapping {
+public class SenchaParseRequestStageTest extends CayenneNoDbTest {
 
     private SenchaParseRequestStage parseStage;
 

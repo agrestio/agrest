@@ -5,7 +5,7 @@ import io.agrest.Ag;
 import io.agrest.DataResponse;
 import io.agrest.UpdateStage;
 import io.agrest.cayenne.unit.CayenneAgTester;
-import io.agrest.cayenne.unit.JerseyAndDerbyCase;
+import io.agrest.cayenne.unit.DbTest;
 import io.agrest.encoder.Encoder;
 import io.agrest.it.fixture.cayenne.*;
 import io.bootique.junit5.BQTestTool;
@@ -26,7 +26,7 @@ import java.util.Map;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-public class PUT_IT extends JerseyAndDerbyCase {
+public class PUT_IT extends DbTest {
 
     @BQTestTool
     static final CayenneAgTester tester = tester(Resource.class)

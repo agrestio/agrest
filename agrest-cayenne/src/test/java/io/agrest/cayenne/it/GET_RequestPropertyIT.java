@@ -3,7 +3,7 @@ package io.agrest.cayenne.it;
 import io.agrest.Ag;
 import io.agrest.DataResponse;
 import io.agrest.cayenne.unit.CayenneAgTester;
-import io.agrest.cayenne.unit.JerseyAndDerbyCase;
+import io.agrest.cayenne.unit.DbTest;
 import io.agrest.it.fixture.cayenne.*;
 import io.agrest.property.PropertyReader;
 import io.bootique.junit5.BQTestTool;
@@ -19,7 +19,7 @@ import javax.ws.rs.core.UriInfo;
 
 import static io.agrest.property.PropertyBuilder.property;
 
-public class GET_RequestPropertyIT extends JerseyAndDerbyCase {
+public class GET_RequestPropertyIT extends DbTest {
 
     @BQTestTool
     static final CayenneAgTester tester = tester(Resource.class)

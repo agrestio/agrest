@@ -7,7 +7,7 @@ import io.agrest.SimpleResponse;
 import io.agrest.annotation.AgResource;
 import io.agrest.annotation.LinkType;
 import io.agrest.cayenne.unit.CayenneAgTester;
-import io.agrest.cayenne.unit.JerseyAndDerbyCase;
+import io.agrest.cayenne.unit.DbTest;
 import io.agrest.it.fixture.cayenne.E5;
 import io.agrest.runtime.AgBuilder;
 import io.bootique.junit5.BQTestTool;
@@ -21,7 +21,7 @@ import javax.ws.rs.core.Configuration;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.UriInfo;
 
-public class GET_Metadata_EmptyPath_IT extends JerseyAndDerbyCase {
+public class GET_Metadata_EmptyPath_IT extends DbTest {
 
     @BQTestTool
     static final CayenneAgTester tester = tester(Resource.class)

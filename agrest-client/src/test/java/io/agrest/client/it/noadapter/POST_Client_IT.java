@@ -3,7 +3,7 @@ package io.agrest.client.it.noadapter;
 import com.fasterxml.jackson.databind.JsonNode;
 import io.agrest.Ag;
 import io.agrest.DataResponse;
-import io.agrest.cayenne.unit.JerseyAndDerbyCase;
+import io.agrest.cayenne.unit.DbTest;
 import io.agrest.client.AgClient;
 import io.agrest.client.ClientDataResponse;
 import io.agrest.client.protocol.Include;
@@ -24,7 +24,7 @@ import static io.agrest.client.it.noadapter.EntityUtil.createE2;
 import static io.agrest.client.it.noadapter.EntityUtil.createE3;
 import static org.junit.Assert.*;
 
-public class POST_Client_IT extends JerseyAndDerbyCase {
+public class POST_Client_IT extends DbTest {
 
     @BeforeClass
     public static void startTestRuntime() {

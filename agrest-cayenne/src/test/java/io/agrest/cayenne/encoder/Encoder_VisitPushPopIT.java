@@ -2,7 +2,7 @@ package io.agrest.cayenne.encoder;
 
 import io.agrest.DataResponse;
 import io.agrest.cayenne.unit.CayenneAgTester;
-import io.agrest.cayenne.unit.JerseyAndDerbyCase;
+import io.agrest.cayenne.unit.DbTest;
 import io.agrest.encoder.Encoder;
 import io.agrest.encoder.EncoderVisitor;
 import io.agrest.it.fixture.cayenne.E2;
@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class Encoder_VisitPushPopIT extends JerseyAndDerbyCase {
+public class Encoder_VisitPushPopIT extends DbTest {
 
     @BQTestTool
     static final CayenneAgTester tester = tester()

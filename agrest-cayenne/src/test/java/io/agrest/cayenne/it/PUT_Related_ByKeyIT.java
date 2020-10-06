@@ -3,7 +3,7 @@ package io.agrest.cayenne.it;
 import io.agrest.Ag;
 import io.agrest.DataResponse;
 import io.agrest.cayenne.unit.CayenneAgTester;
-import io.agrest.cayenne.unit.JerseyAndDerbyCase;
+import io.agrest.cayenne.unit.DbTest;
 import io.agrest.it.fixture.cayenne.*;
 import io.agrest.runtime.processor.update.ByKeyObjectMapperFactory;
 import io.bootique.junit5.BQTestTool;
@@ -15,7 +15,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Configuration;
 import javax.ws.rs.core.Context;
 
-public class PUT_Related_ByKeyIT extends JerseyAndDerbyCase {
+public class PUT_Related_ByKeyIT extends DbTest {
 
     @BQTestTool
     static final CayenneAgTester tester = tester(Resource.class)

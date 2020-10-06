@@ -2,7 +2,7 @@ package io.agrest.provider;
 
 import io.agrest.AgException;
 import io.agrest.DataResponse;
-import io.agrest.it.fixture.JerseyAndPojoCase;
+import io.agrest.unit.PojoTest;
 import io.agrest.it.fixture.pojo.model.P1;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -15,7 +15,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
-public class AgExceptionMapperIT extends JerseyAndPojoCase {
+public class AgExceptionMapperIT extends PojoTest {
 
     @BeforeAll
     public static void startTestRuntime() {

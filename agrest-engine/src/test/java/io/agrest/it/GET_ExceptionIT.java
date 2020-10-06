@@ -1,7 +1,7 @@
 package io.agrest.it;
 
 import io.agrest.AgException;
-import io.agrest.it.fixture.JerseyAndPojoCase;
+import io.agrest.unit.PojoTest;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -11,7 +11,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
-public class GET_ExceptionIT extends JerseyAndPojoCase {
+public class GET_ExceptionIT extends PojoTest {
 
     @BeforeAll
     public static void startTestRuntime() {

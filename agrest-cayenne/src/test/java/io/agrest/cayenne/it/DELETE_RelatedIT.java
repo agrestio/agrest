@@ -4,7 +4,7 @@ import io.agrest.Ag;
 import io.agrest.EntityDelete;
 import io.agrest.SimpleResponse;
 import io.agrest.cayenne.unit.CayenneAgTester;
-import io.agrest.cayenne.unit.JerseyAndDerbyCase;
+import io.agrest.cayenne.unit.DbTest;
 import io.agrest.it.fixture.cayenne.E2;
 import io.agrest.it.fixture.cayenne.E3;
 import io.agrest.it.fixture.cayenne.E7;
@@ -20,7 +20,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.UriInfo;
 import java.util.Collection;
 
-public class DELETE_RelatedIT extends JerseyAndDerbyCase {
+public class DELETE_RelatedIT extends DbTest {
 
     @BQTestTool
     static final CayenneAgTester tester = tester(E2Resource.class, E3Resource.class, E8Resource.class)

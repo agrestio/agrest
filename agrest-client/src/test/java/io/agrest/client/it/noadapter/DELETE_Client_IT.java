@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import io.agrest.Ag;
 import io.agrest.DataResponse;
 import io.agrest.SimpleResponse;
-import io.agrest.cayenne.unit.JerseyAndDerbyCase;
+import io.agrest.cayenne.unit.DbTest;
 import io.agrest.client.AgClient;
 import io.agrest.client.AgClientException;
 import io.agrest.client.ClientDataResponse;
@@ -27,7 +27,7 @@ import javax.ws.rs.core.UriInfo;
 
 import static org.junit.Assert.*;
 
-public class DELETE_Client_IT extends JerseyAndDerbyCase {
+public class DELETE_Client_IT extends DbTest {
 
     @BeforeClass
     public static void startTestRuntime() {

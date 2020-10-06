@@ -4,7 +4,7 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import io.agrest.DataResponse;
 import io.agrest.ResourceEntity;
 import io.agrest.cayenne.unit.CayenneAgTester;
-import io.agrest.cayenne.unit.JerseyAndDerbyCase;
+import io.agrest.cayenne.unit.DbTest;
 import io.agrest.encoder.Encoder;
 import io.agrest.encoder.EntityEncoderFilter;
 import io.agrest.it.fixture.cayenne.E2;
@@ -20,7 +20,7 @@ import java.util.Collection;
 import static java.util.Arrays.asList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class Encoder_VisitFilteredIT extends JerseyAndDerbyCase {
+public class Encoder_VisitFilteredIT extends DbTest {
 
     @BQTestTool
     static final CayenneAgTester tester = tester()

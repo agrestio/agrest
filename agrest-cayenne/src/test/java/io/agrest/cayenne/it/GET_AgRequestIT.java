@@ -6,7 +6,7 @@ import io.agrest.DataResponse;
 import io.agrest.base.protocol.CayenneExp;
 import io.agrest.base.protocol.Sort;
 import io.agrest.cayenne.unit.CayenneAgTester;
-import io.agrest.cayenne.unit.JerseyAndDerbyCase;
+import io.agrest.cayenne.unit.DbTest;
 import io.agrest.it.fixture.cayenne.E2;
 import io.agrest.it.fixture.cayenne.E3;
 import io.agrest.it.fixture.cayenne.E4;
@@ -19,7 +19,7 @@ import javax.ws.rs.core.Configuration;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.UriInfo;
 
-public class GET_AgRequestIT extends JerseyAndDerbyCase {
+public class GET_AgRequestIT extends DbTest {
 
     @BQTestTool
     static final CayenneAgTester tester = tester(Resource.class)

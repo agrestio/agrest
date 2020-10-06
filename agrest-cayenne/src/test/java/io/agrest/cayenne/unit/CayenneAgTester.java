@@ -3,7 +3,7 @@ package io.agrest.cayenne.unit;
 import io.agrest.cayenne.AgCayenneBuilder;
 import io.agrest.cayenne.persister.CayennePersister;
 import io.agrest.cayenne.persister.ICayennePersister;
-import io.agrest.it.fixture.AgTester;
+import io.agrest.unit.AgTester;
 import io.agrest.runtime.AgBuilder;
 import io.agrest.runtime.AgRuntime;
 import io.agrest.runtime.IAgService;

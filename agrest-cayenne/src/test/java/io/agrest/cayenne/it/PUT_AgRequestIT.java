@@ -6,7 +6,7 @@ import io.agrest.DataResponse;
 import io.agrest.base.protocol.Exclude;
 import io.agrest.base.protocol.Include;
 import io.agrest.cayenne.unit.CayenneAgTester;
-import io.agrest.cayenne.unit.JerseyAndDerbyCase;
+import io.agrest.cayenne.unit.DbTest;
 import io.agrest.it.fixture.cayenne.E3;
 import io.bootique.junit5.BQTestTool;
 import org.junit.jupiter.api.Test;
@@ -18,7 +18,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.UriInfo;
 
 
-public class PUT_AgRequestIT extends JerseyAndDerbyCase {
+public class PUT_AgRequestIT extends DbTest {
 
     @BQTestTool
     static final CayenneAgTester tester = tester(Resource.class)

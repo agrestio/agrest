@@ -5,7 +5,7 @@ import io.agrest.Ag;
 import io.agrest.DataResponse;
 import io.agrest.SelectStage;
 import io.agrest.cayenne.unit.CayenneAgTester;
-import io.agrest.cayenne.unit.JerseyAndDerbyCase;
+import io.agrest.cayenne.unit.DbTest;
 import io.agrest.encoder.Encoder;
 import io.agrest.encoder.EntityEncoderFilter;
 import io.agrest.it.fixture.cayenne.E4;
@@ -24,7 +24,7 @@ import java.io.IOException;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class GET_EntityEncoderFiltersIT extends JerseyAndDerbyCase {
+public class GET_EntityEncoderFiltersIT extends DbTest {
 
     @BQTestTool
     static final CayenneAgTester tester = tester(Resource.class)

@@ -2,7 +2,7 @@ package io.agrest.it;
 
 import io.agrest.Ag;
 import io.agrest.DataResponse;
-import io.agrest.it.fixture.JerseyAndPojoCase;
+import io.agrest.unit.PojoTest;
 import io.agrest.it.fixture.pojo.model.*;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -21,7 +21,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-public class GET_PojoIT extends JerseyAndPojoCase {
+public class GET_PojoIT extends PojoTest {
 
     @BeforeAll
     public static void startTestRuntime() {

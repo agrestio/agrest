@@ -2,7 +2,7 @@ package io.agrest.cayenne.provider;
 
 import io.agrest.DataResponse;
 import io.agrest.cayenne.unit.CayenneAgTester;
-import io.agrest.cayenne.unit.JerseyAndDerbyCase;
+import io.agrest.cayenne.unit.DbTest;
 import io.agrest.it.fixture.cayenne.E2;
 import io.bootique.junit5.BQTestTool;
 import org.apache.cayenne.CayenneException;
@@ -14,7 +14,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.*;
 
-public class CayenneRuntimeExceptionMapperIT extends JerseyAndDerbyCase {
+public class CayenneRuntimeExceptionMapperIT extends DbTest {
 
     @BQTestTool
     static final CayenneAgTester tester = tester(Resource.class)

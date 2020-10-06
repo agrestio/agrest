@@ -1,7 +1,7 @@
 package io.agrest.it;
 
 
-import io.agrest.cayenne.unit.JerseyAndDerbyCase;
+import io.agrest.cayenne.unit.DbTest;
 import io.agrest.it.fixture.cayenne.E2;
 import io.agrest.it.fixture.cayenne.E3;
 import io.agrest.swagger.api.v1.service.E2Resource;
@@ -14,7 +14,7 @@ import java.util.List;
 
 import static org.junit.Assert.*;
 
-public class E2Resource_GeneratedIT extends JerseyAndDerbyCase {
+public class E2Resource_GeneratedIT extends DbTest {
 
     @BeforeClass
     public static void startTestRuntime() {

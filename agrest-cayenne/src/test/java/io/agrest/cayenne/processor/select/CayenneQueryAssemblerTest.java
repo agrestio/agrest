@@ -1,7 +1,7 @@
 package io.agrest.cayenne.processor.select;
 
 import io.agrest.RootResourceEntity;
-import io.agrest.cayenne.unit.TestWithCayenneMapping;
+import io.agrest.cayenne.unit.CayenneNoDbTest;
 import io.agrest.it.fixture.cayenne.E1;
 import io.agrest.runtime.processor.select.SelectContext;
 import org.apache.cayenne.exp.Expression;
@@ -12,7 +12,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class CayenneQueryAssemblerTest extends TestWithCayenneMapping {
+public class CayenneQueryAssemblerTest extends CayenneNoDbTest {
 
     private CayenneQueryAssembler queryAssembler;
 

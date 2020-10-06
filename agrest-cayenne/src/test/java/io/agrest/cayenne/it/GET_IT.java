@@ -4,7 +4,7 @@ import io.agrest.Ag;
 import io.agrest.DataResponse;
 import io.agrest.base.jsonvalueconverter.UtcDateConverter;
 import io.agrest.cayenne.unit.CayenneAgTester;
-import io.agrest.cayenne.unit.JerseyAndDerbyCase;
+import io.agrest.cayenne.unit.DbTest;
 import io.agrest.encoder.DateTimeFormatters;
 import io.agrest.it.fixture.cayenne.*;
 import io.bootique.junit5.BQTestTool;
@@ -23,7 +23,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-public class GET_IT extends JerseyAndDerbyCase {
+public class GET_IT extends DbTest {
 
     @BQTestTool
     static final CayenneAgTester tester = tester(Resource.class)

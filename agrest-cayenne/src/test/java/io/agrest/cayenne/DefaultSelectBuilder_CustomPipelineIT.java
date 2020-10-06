@@ -3,7 +3,7 @@ package io.agrest.cayenne;
 import io.agrest.SelectBuilder;
 import io.agrest.SelectStage;
 import io.agrest.cayenne.unit.CayenneAgTester;
-import io.agrest.cayenne.unit.JerseyAndDerbyCase;
+import io.agrest.cayenne.unit.DbTest;
 import io.agrest.it.fixture.cayenne.E2;
 import io.agrest.runtime.DefaultSelectBuilder;
 import io.bootique.junit5.BQTestTool;
@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * The test class for operations that execute and verify the callbacks and custom stack functions, but do not check
  * the data. So no need to run DB cleanup.
  */
-public class DefaultSelectBuilder_CustomPipelineIT extends JerseyAndDerbyCase {
+public class DefaultSelectBuilder_CustomPipelineIT extends DbTest {
 
     @BQTestTool
     static final CayenneAgTester tester = tester()

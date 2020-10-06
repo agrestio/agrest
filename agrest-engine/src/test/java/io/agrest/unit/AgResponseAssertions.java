@@ -1,4 +1,4 @@
-package io.agrest.it.fixture;
+package io.agrest.unit;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -11,7 +11,7 @@ import java.util.regex.Pattern;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class ResponseAssertions {
+public class AgResponseAssertions {
 
     private static final Pattern NUMERIC_ID_MATCHER = Pattern.compile("\"id\":([\\d]+)");
 
@@ -20,7 +20,7 @@ public class ResponseAssertions {
 
     private String responseContent;
 
-    public ResponseAssertions(Response response) {
+    public AgResponseAssertions(Response response) {
         this.response = response;
     }
 
@@ -63,41 +63,41 @@ public class ResponseAssertions {
         return responseContent;
     }
 
-    public ResponseAssertions wasSuccess() {
+    public AgResponseAssertions wasSuccess() {
         assertEquals(Response.Status.OK.getStatusCode(),
                 response.getStatus(),
                 "Failed request: " + response.getStatus());
         return this;
     }
 
-    public ResponseAssertions wasCreated() {
+    public AgResponseAssertions wasCreated() {
         assertEquals(Response.Status.CREATED.getStatusCode(),
                 response.getStatus(),
                 "Expected 'CREATED' status, was: " + response.getStatus());
         return this;
     }
 
-    public ResponseAssertions wasServerError() {
+    public AgResponseAssertions wasServerError() {
         assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(),
                 response.getStatus(),
                 "Expected 'INTERNAL_SERVER_ERROR' status, was: " + response.getStatus());
         return this;
     }
 
-    public ResponseAssertions wasBadRequest() {
+    public AgResponseAssertions wasBadRequest() {
         return statusEquals(Response.Status.BAD_REQUEST);
     }
 
-    public ResponseAssertions wasNotFound() {
+    public AgResponseAssertions wasNotFound() {
         return statusEquals(Response.Status.NOT_FOUND);
     }
 
-    public ResponseAssertions statusEquals(Response.Status expectedStatus) {
+    public AgResponseAssertions statusEquals(Response.Status expectedStatus) {
         assertEquals(expectedStatus.getStatusCode(), response.getStatus());
         return this;
     }
 
-    public ResponseAssertions mediaTypeEquals(MediaType expected) {
+    public AgResponseAssertions mediaTypeEquals(MediaType expected) {
         assertEquals(expected, response.getMediaType());
         return this;
     }
@@ -106,12 +106,12 @@ public class ResponseAssertions {
      * Replaces id value in the actual result with a known placeholder, this allowing to compare JSON coming for
      * unknonw ids.
      */
-    public ResponseAssertions replaceId(String idPlaceholder) {
+    public AgResponseAssertions replaceId(String idPlaceholder) {
         this.idPlaceholder = idPlaceholder;
         return this;
     }
 
-    public ResponseAssertions bodyEquals(String expected) {
+    public AgResponseAssertions bodyEquals(String expected) {
         String actual = getContentAsString();
         String normalized = idPlaceholder != null ? NUMERIC_ID_MATCHER.matcher(actual).replaceFirst("\"id\":" + idPlaceholder) : actual;
 
@@ -119,11 +119,11 @@ public class ResponseAssertions {
         return this;
     }
 
-    public ResponseAssertions bodyEquals(long total, String... jsonObjects) {
+    public AgResponseAssertions bodyEquals(long total, String... jsonObjects) {
         return bodyEquals(buildExpectedJson(total, jsonObjects));
     }
 
-    public ResponseAssertions bodyEqualsMapBy(long total, String... jsonKeyValues) {
+    public AgResponseAssertions bodyEqualsMapBy(long total, String... jsonKeyValues) {
 
         StringBuilder expectedJson = new StringBuilder("{\"data\":{");
         for (String o : jsonKeyValues) {
@@ -139,7 +139,7 @@ public class ResponseAssertions {
         return bodyEquals(expectedJson.toString());
     }
 
-    public ResponseAssertions totalEquals(long total) {
+    public AgResponseAssertions totalEquals(long total) {
 
         String string = getContentAsString();
         JsonNode rootNode = null;

@@ -4,7 +4,7 @@ import io.agrest.Ag;
 import io.agrest.EntityUpdate;
 import io.agrest.SimpleResponse;
 import io.agrest.cayenne.unit.CayenneAgTester;
-import io.agrest.cayenne.unit.JerseyAndDerbyCase;
+import io.agrest.cayenne.unit.DbTest;
 import io.agrest.it.fixture.cayenne.E3;
 import io.bootique.junit5.BQTestTool;
 import org.junit.jupiter.api.Test;
@@ -17,7 +17,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.UriInfo;
 import java.util.Collection;
 
-public class PUT_EntityUpdateBindingIT extends JerseyAndDerbyCase {
+public class PUT_EntityUpdateBindingIT extends DbTest {
 
     @BQTestTool
     static final CayenneAgTester tester = tester(Resource.class)

@@ -1,6 +1,6 @@
 package io.agrest.cayenne;
 
-import io.agrest.cayenne.unit.TestWithCayenneMapping;
+import io.agrest.cayenne.unit.CayenneNoDbTest;
 import io.agrest.it.fixture.cayenne.E25;
 import io.agrest.it.fixture.pojox.PX1;
 import io.agrest.it.fixture.pojox.PX1RootResolver;
@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class CayenneResolver_PojoToPersistentTest extends TestWithCayenneMapping {
+public class CayenneResolver_PojoToPersistentTest extends CayenneNoDbTest {
 
     @Test
     public void testFail_nestedViaQueryWithParentIds() {

@@ -8,7 +8,7 @@ import io.agrest.SimpleResponse;
 import io.agrest.annotation.AgResource;
 import io.agrest.annotation.LinkType;
 import io.agrest.cayenne.unit.CayenneAgTester;
-import io.agrest.cayenne.unit.JerseyAndDerbyCase;
+import io.agrest.cayenne.unit.DbTest;
 import io.agrest.constraints.Constraint;
 import io.agrest.it.fixture.cayenne.E15;
 import io.agrest.it.fixture.cayenne.E19;
@@ -28,7 +28,7 @@ import javax.ws.rs.core.UriInfo;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class GET_Metadata_IT extends JerseyAndDerbyCase {
+public class GET_Metadata_IT extends DbTest {
 
     @BQTestTool
     static final CayenneAgTester tester = tester(E5Resource.class, E19Resource.class)

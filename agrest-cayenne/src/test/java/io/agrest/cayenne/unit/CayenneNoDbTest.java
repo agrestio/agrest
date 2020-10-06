@@ -40,7 +40,7 @@ import static org.mockito.Mockito.when;
  * A superclass of Cayenne-aware test cases that do not need to access the DB, but need to work with EntityResolver
  * and higher levels of the stack.
  */
-public class TestWithCayenneMapping {
+public class CayenneNoDbTest {
 
     protected static ServerRuntime runtime;
 

@@ -2,7 +2,7 @@ package io.agrest.cayenne.provider;
 
 import io.agrest.DataResponse;
 import io.agrest.cayenne.unit.CayenneAgTester;
-import io.agrest.cayenne.unit.JerseyAndDerbyCase;
+import io.agrest.cayenne.unit.DbTest;
 import io.agrest.it.fixture.cayenne.E2;
 import io.bootique.junit5.BQTestTool;
 import org.apache.cayenne.validation.SimpleValidationFailure;
@@ -18,7 +18,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.UriInfo;
 
-public class ValidationExceptionMapperIT extends JerseyAndDerbyCase {
+public class ValidationExceptionMapperIT extends DbTest {
 
     @BQTestTool
     static final CayenneAgTester tester = tester(Resource.class)

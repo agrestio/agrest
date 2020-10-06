@@ -1,7 +1,7 @@
 package io.agrest.it;
 
 
-import io.agrest.cayenne.unit.JerseyAndDerbyCase;
+import io.agrest.cayenne.unit.DbTest;
 import io.agrest.it.fixture.cayenne.E2;
 import io.agrest.it.fixture.cayenne.E3;
 import io.agrest.swagger.api.v1.service.E3Resource;
@@ -11,7 +11,7 @@ import org.junit.Test;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.Response;
 
-public class E3Resource_GeneratedIT extends JerseyAndDerbyCase {
+public class E3Resource_GeneratedIT extends DbTest {
 
     @BeforeClass
     public static void startTestRuntime() {

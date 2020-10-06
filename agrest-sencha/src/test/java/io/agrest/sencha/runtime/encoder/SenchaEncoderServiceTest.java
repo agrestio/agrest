@@ -7,7 +7,7 @@ import io.agrest.ResourceEntity;
 import io.agrest.RootResourceEntity;
 import io.agrest.SimpleObjectId;
 import io.agrest.cayenne.persister.ICayennePersister;
-import io.agrest.cayenne.unit.TestWithCayenneMapping;
+import io.agrest.cayenne.unit.CayenneNoDbTest;
 import io.agrest.encoder.Encoder;
 import io.agrest.encoder.EntityEncoderFilter;
 import io.agrest.it.fixture.cayenne.E2;
@@ -33,7 +33,7 @@ import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class SenchaEncoderServiceTest extends TestWithCayenneMapping {
+public class SenchaEncoderServiceTest extends CayenneNoDbTest {
 
     private SenchaEncoderService encoderService;
     private ICayennePersister cayenneService;
@@ -41,10 +41,10 @@ public class SenchaEncoderServiceTest extends TestWithCayenneMapping {
     @Before
     public void before() {
 
-        ObjectContext sharedContext = TestWithCayenneMapping.runtime.newContext();
+        ObjectContext sharedContext = CayenneNoDbTest.runtime.newContext();
         cayenneService = mock(ICayennePersister.class);
         when(cayenneService.sharedContext()).thenReturn(sharedContext);
-        when(cayenneService.newContext()).thenReturn(TestWithCayenneMapping.runtime.newContext());
+        when(cayenneService.newContext()).thenReturn(CayenneNoDbTest.runtime.newContext());
 
         IAttributeEncoderFactory aef = new AttributeEncoderFactory(new ValueEncodersProvider(Collections.emptyMap()).get());
         IStringConverterFactory stringConverterFactory = mock(IStringConverterFactory.class);

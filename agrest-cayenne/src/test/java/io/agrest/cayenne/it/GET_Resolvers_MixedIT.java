@@ -5,7 +5,7 @@ import io.agrest.DataResponse;
 import io.agrest.cayenne.CayenneResolvers;
 import io.agrest.cayenne.persister.ICayennePersister;
 import io.agrest.cayenne.unit.CayenneAgTester;
-import io.agrest.cayenne.unit.JerseyAndDerbyCase;
+import io.agrest.cayenne.unit.DbTest;
 import io.agrest.it.fixture.cayenne.*;
 import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgEntityOverlay;
@@ -26,7 +26,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.UriInfo;
 
-public class GET_Resolvers_MixedIT extends JerseyAndDerbyCase {
+public class GET_Resolvers_MixedIT extends DbTest {
 
     @BQTestTool
     static final CayenneAgTester tester = tester(Resource.class)

@@ -1,7 +1,7 @@
 package io.agrest.sencha.runtime.processor.select;
 
 import io.agrest.ResourceEntity;
-import io.agrest.cayenne.unit.TestWithCayenneMapping;
+import io.agrest.cayenne.unit.CayenneNoDbTest;
 import io.agrest.it.fixture.cayenne.E2;
 import io.agrest.base.protocol.CayenneExp;
 import io.agrest.runtime.entity.CayenneExpMerger;
@@ -41,7 +41,7 @@ import static org.apache.cayenne.exp.ExpressionFactory.exp;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
 
-public class SenchaCreateEntityStageTest extends TestWithCayenneMapping {
+public class SenchaCreateEntityStageTest extends CayenneNoDbTest {
 
     private SenchaCreateResourceEntityStage createEntityStage;
     private IAgRequestBuilderFactory requestBuilderFactory;

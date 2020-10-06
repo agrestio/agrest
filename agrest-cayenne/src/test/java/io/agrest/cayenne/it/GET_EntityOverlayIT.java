@@ -5,7 +5,7 @@ import io.agrest.DataResponse;
 import io.agrest.MetadataResponse;
 import io.agrest.annotation.AgAttribute;
 import io.agrest.cayenne.unit.CayenneAgTester;
-import io.agrest.cayenne.unit.JerseyAndDerbyCase;
+import io.agrest.cayenne.unit.DbTest;
 import io.agrest.it.fixture.cayenne.*;
 import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgEntityOverlay;
@@ -25,7 +25,7 @@ import java.util.List;
 import static java.util.Arrays.asList;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class GET_EntityOverlayIT extends JerseyAndDerbyCase {
+public class GET_EntityOverlayIT extends DbTest {
 
     @BQTestTool
     static final CayenneAgTester tester = tester(Resource.class)

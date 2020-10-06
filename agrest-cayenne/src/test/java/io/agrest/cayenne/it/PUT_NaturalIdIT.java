@@ -5,7 +5,7 @@ import io.agrest.DataResponse;
 import io.agrest.EntityUpdate;
 import io.agrest.SimpleResponse;
 import io.agrest.cayenne.unit.CayenneAgTester;
-import io.agrest.cayenne.unit.JerseyAndDerbyCase;
+import io.agrest.cayenne.unit.DbTest;
 import io.agrest.it.fixture.cayenne.E20;
 import io.agrest.it.fixture.cayenne.E21;
 import io.agrest.it.fixture.cayenne.E23;
@@ -23,7 +23,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-public class PUT_NaturalIdIT extends JerseyAndDerbyCase {
+public class PUT_NaturalIdIT extends DbTest {
 
     @BQTestTool
     static final CayenneAgTester tester = tester(Resource.class)

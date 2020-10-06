@@ -4,7 +4,7 @@ import io.agrest.DataResponse;
 import io.agrest.SelectBuilder;
 import io.agrest.SelectStage;
 import io.agrest.cayenne.unit.CayenneAgTester;
-import io.agrest.cayenne.unit.JerseyAndDerbyCase;
+import io.agrest.cayenne.unit.DbTest;
 import io.agrest.it.fixture.cayenne.E2;
 import io.agrest.it.fixture.cayenne.E3;
 import io.agrest.runtime.DefaultSelectBuilder;
@@ -14,7 +14,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class DefaultSelectBuilder_CustomPipeline_DataIT extends JerseyAndDerbyCase {
+public class DefaultSelectBuilder_CustomPipeline_DataIT extends DbTest {
 
     @BQTestTool
     static final CayenneAgTester tester = tester()

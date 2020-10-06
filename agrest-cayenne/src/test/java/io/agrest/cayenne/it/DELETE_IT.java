@@ -3,7 +3,7 @@ package io.agrest.cayenne.it;
 import io.agrest.Ag;
 import io.agrest.SimpleResponse;
 import io.agrest.cayenne.unit.CayenneAgTester;
-import io.agrest.cayenne.unit.JerseyAndDerbyCase;
+import io.agrest.cayenne.unit.DbTest;
 import io.agrest.it.fixture.cayenne.E17;
 import io.agrest.it.fixture.cayenne.E24;
 import io.agrest.it.fixture.cayenne.E4;
@@ -21,7 +21,7 @@ import javax.ws.rs.core.UriInfo;
 import java.util.HashMap;
 import java.util.Map;
 
-public class DELETE_IT extends JerseyAndDerbyCase {
+public class DELETE_IT extends DbTest {
 
     @BQTestTool
     static final CayenneAgTester tester = tester(Resource.class)

@@ -4,7 +4,7 @@ import io.agrest.Ag;
 import io.agrest.DataResponse;
 import io.agrest.client.AgClient;
 import io.agrest.client.ClientDataResponse;
-import io.agrest.it.fixture.JerseyAndPojoCase;
+import io.agrest.unit.PojoTest;
 import io.agrest.it.fixture.pojo.model.P1;
 import io.agrest.it.fixture.pojo.model.P2;
 import org.junit.BeforeClass;
@@ -20,7 +20,7 @@ import java.util.List;
 
 import static org.junit.Assert.*;
 
-public class GET_Client_PojoIT extends JerseyAndPojoCase {
+public class GET_Client_PojoIT extends PojoTest {
 
     @BeforeClass
     public static void startTestRuntime() {

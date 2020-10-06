@@ -1,4 +1,4 @@
-package io.agrest.it.fixture;
+package io.agrest.unit;
 
 import io.agrest.AgModuleProvider;
 import io.agrest.it.fixture.pojo.PojoDB;
@@ -40,7 +40,7 @@ import static org.mockito.Mockito.mock;
  * "pojo database".
  */
 @BQTest
-public class JerseyAndPojoCase {
+public abstract class PojoTest {
 
     @BQTestTool
     static final BQTestFactory TEST_FACTORY = new BQTestFactory();
@@ -57,7 +57,7 @@ public class JerseyAndPojoCase {
 
         POJO_DB = new PojoDB();
 
-        Function<AgBuilder, AgBuilder> customizerChain = customizer.compose(JerseyAndPojoCase::customizeForPojo);
+        Function<AgBuilder, AgBuilder> customizerChain = customizer.compose(PojoTest::customizeForPojo);
 
         TEST_RUNTIME = TEST_FACTORY.app("-s")
                 .autoLoadModules()
@@ -93,12 +93,12 @@ public class JerseyAndPojoCase {
         return TEST_RUNTIME.getInstance(AgRuntime.class).service(type);
     }
 
-    protected ResponseAssertions onSuccess(Response response) {
+    protected AgResponseAssertions onSuccess(Response response) {
         return onResponse(response).wasSuccess();
     }
 
-    protected ResponseAssertions onResponse(Response response) {
-        return new ResponseAssertions(response);
+    protected AgResponseAssertions onResponse(Response response) {
+        return new AgResponseAssertions(response);
     }
 
     protected String urlEnc(String queryParam) {

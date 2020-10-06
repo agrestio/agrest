@@ -3,7 +3,7 @@ package io.agrest.client.it.noadapter;
 import com.fasterxml.jackson.databind.JsonNode;
 import io.agrest.Ag;
 import io.agrest.DataResponse;
-import io.agrest.cayenne.unit.JerseyAndDerbyCase;
+import io.agrest.cayenne.unit.DbTest;
 import io.agrest.client.AgClient;
 import io.agrest.client.AgClientException;
 import io.agrest.client.ClientDataResponse;
@@ -29,7 +29,7 @@ import java.util.List;
 
 import static org.junit.Assert.*;
 
-public class JWT_Client_IT extends JerseyAndDerbyCase {
+public class JWT_Client_IT extends DbTest {
 
     final static String AUTH_TOKEN = "itIsMyVerySecretToken";
 

@@ -6,7 +6,7 @@ import io.agrest.DataResponse;
 import io.agrest.SelectStage;
 import io.agrest.cayenne.persister.ICayennePersister;
 import io.agrest.cayenne.unit.CayenneAgTester;
-import io.agrest.cayenne.unit.JerseyAndDerbyCase;
+import io.agrest.cayenne.unit.DbTest;
 import io.agrest.encoder.DataResponseEncoder;
 import io.agrest.encoder.Encoder;
 import io.agrest.encoder.GenericEncoder;
@@ -26,7 +26,7 @@ import javax.ws.rs.core.UriInfo;
 import java.io.IOException;
 import java.util.List;
 
-public class GET_StagesIT extends JerseyAndDerbyCase {
+public class GET_StagesIT extends DbTest {
 
     @BQTestTool
     static final CayenneAgTester tester = tester(Resource.class)
