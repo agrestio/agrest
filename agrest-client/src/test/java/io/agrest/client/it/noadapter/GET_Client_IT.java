@@ -10,9 +10,9 @@ import io.agrest.client.protocol.Expression;
 import io.agrest.client.protocol.Include;
 import io.agrest.client.protocol.Sort;
 
-import io.agrest.it.fixture.cayenne.E2;
-import io.agrest.it.fixture.cayenne.E3;
-import io.agrest.it.fixture.cayenne.E4;
+import io.agrest.cayenne.cayenne.main.E2;
+import io.agrest.cayenne.cayenne.main.E3;
+import io.agrest.cayenne.cayenne.main.E4;
 import org.junit.BeforeClass;
 import org.junit.Test;
 

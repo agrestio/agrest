@@ -1,11 +1,10 @@
 package io.agrest.swagger.api.v1.service;
 
-import io.agrest.it.fixture.cayenne.E1;
+import io.agrest.cayenne.cayenne.main.E1;
 
 import io.agrest.AgRequest;
 import io.agrest.DataResponse;
 
-import java.util.*;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
 

@@ -3,7 +3,7 @@ package io.agrest.cayenne.provider;
 import io.agrest.DataResponse;
 import io.agrest.cayenne.unit.CayenneAgTester;
 import io.agrest.cayenne.unit.DbTest;
-import io.agrest.it.fixture.cayenne.E2;
+import io.agrest.cayenne.cayenne.main.E2;
 import io.bootique.junit5.BQTestTool;
 import org.apache.cayenne.validation.SimpleValidationFailure;
 import org.apache.cayenne.validation.ValidationException;

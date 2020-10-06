@@ -5,8 +5,8 @@ import io.agrest.DataResponse;
 import io.agrest.client.AgClient;
 import io.agrest.client.ClientDataResponse;
 import io.agrest.unit.PojoTest;
-import io.agrest.it.fixture.pojo.model.P1;
-import io.agrest.it.fixture.pojo.model.P2;
+import io.agrest.pojo.model.P1;
+import io.agrest.pojo.model.P2;
 import org.junit.BeforeClass;
 import org.junit.Test;
 

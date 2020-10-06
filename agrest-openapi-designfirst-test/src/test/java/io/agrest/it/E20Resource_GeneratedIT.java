@@ -2,7 +2,7 @@ package io.agrest.it;
 
 
 import io.agrest.cayenne.unit.DbTest;
-import io.agrest.it.fixture.cayenne.E20;
+import io.agrest.cayenne.cayenne.main.E20;
 import io.agrest.swagger.api.v1.service.E20Resource;
 import org.junit.BeforeClass;
 import org.junit.Test;

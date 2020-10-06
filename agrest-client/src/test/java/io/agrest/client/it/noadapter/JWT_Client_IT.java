@@ -8,7 +8,7 @@ import io.agrest.client.AgClient;
 import io.agrest.client.AgClientException;
 import io.agrest.client.ClientDataResponse;
 
-import io.agrest.it.fixture.cayenne.E4;
+import io.agrest.cayenne.cayenne.main.E4;
 import org.junit.BeforeClass;
 import org.junit.Test;
 

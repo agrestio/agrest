@@ -1,6 +1,6 @@
 package io.agrest;
 
-import io.agrest.it.fixture.pojo.model.P1;
+import io.agrest.pojo.model.P1;
 import io.agrest.meta.AgEntity;
 import org.apache.cayenne.exp.ExpressionFactory;
 import org.junit.jupiter.api.Test;

@@ -1,7 +1,7 @@
 package io.agrest.runtime;
 
 import io.agrest.NestedResourceEntity;
-import io.agrest.it.fixture.pojo.model.P1;
+import io.agrest.pojo.model.P1;
 import io.agrest.meta.AgAttribute;
 import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgRelationship;

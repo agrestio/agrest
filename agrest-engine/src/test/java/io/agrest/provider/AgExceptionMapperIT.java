@@ -3,7 +3,7 @@ package io.agrest.provider;
 import io.agrest.AgException;
 import io.agrest.DataResponse;
 import io.agrest.unit.PojoTest;
-import io.agrest.it.fixture.pojo.model.P1;
+import io.agrest.pojo.model.P1;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 

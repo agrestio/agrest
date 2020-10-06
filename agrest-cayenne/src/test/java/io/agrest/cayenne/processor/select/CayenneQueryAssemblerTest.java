@@ -2,7 +2,7 @@ package io.agrest.cayenne.processor.select;
 
 import io.agrest.RootResourceEntity;
 import io.agrest.cayenne.unit.CayenneNoDbTest;
-import io.agrest.it.fixture.cayenne.E1;
+import io.agrest.cayenne.cayenne.main.E1;
 import io.agrest.runtime.processor.select.SelectContext;
 import org.apache.cayenne.exp.Expression;
 import org.apache.cayenne.query.Ordering;

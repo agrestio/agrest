@@ -8,8 +8,8 @@ import io.agrest.client.AgClient;
 import io.agrest.client.ClientDataResponse;
 import io.agrest.client.protocol.Include;
 
-import io.agrest.it.fixture.cayenne.E2;
-import io.agrest.it.fixture.cayenne.E3;
+import io.agrest.cayenne.cayenne.main.E2;
+import io.agrest.cayenne.cayenne.main.E3;
 import org.junit.BeforeClass;
 import org.junit.Test;
 

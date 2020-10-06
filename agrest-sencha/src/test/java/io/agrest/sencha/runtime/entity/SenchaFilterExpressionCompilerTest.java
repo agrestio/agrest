@@ -2,7 +2,7 @@ package io.agrest.sencha.runtime.entity;
 
 import io.agrest.AgException;
 import io.agrest.cayenne.unit.CayenneNoDbTest;
-import io.agrest.it.fixture.cayenne.E4;
+import io.agrest.cayenne.cayenne.main.E4;
 import io.agrest.meta.AgEntity;
 import io.agrest.runtime.entity.ExpressionPostProcessor;
 import io.agrest.runtime.jackson.IJacksonService;

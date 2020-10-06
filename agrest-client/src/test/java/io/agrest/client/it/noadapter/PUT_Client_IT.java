@@ -7,7 +7,7 @@ import io.agrest.cayenne.unit.DbTest;
 import io.agrest.client.AgClient;
 import io.agrest.client.ClientDataResponse;
 
-import io.agrest.it.fixture.cayenne.E3;
+import io.agrest.cayenne.cayenne.main.E3;
 import org.junit.BeforeClass;
 import org.junit.Test;
 

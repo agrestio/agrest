@@ -3,7 +3,7 @@
 	 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	 xsi:schemaLocation="http://cayenne.apache.org/schema/9/modelMap https://cayenne.apache.org/schema/9/modelMap.xsd"
 	 project-version="9">
-	<property name="defaultPackage" value="io.agrest.it.fixture.cayenne"/>
+	<property name="defaultPackage" value="io.agrest.cayenne.cayenne.main"/>
 	<property name="quoteSqlIdentifiers" value="true"/>
 	<db-entity name="e1">
 		<db-attribute name="age" type="INTEGER"/>
@@ -177,12 +177,12 @@
 	<db-entity name="e9">
 		<db-attribute name="e8_id" type="INTEGER" isPrimaryKey="true" isMandatory="true"/>
 	</db-entity>
-	<obj-entity name="E1" className="io.agrest.it.fixture.cayenne.E1" dbEntityName="e1">
+	<obj-entity name="E1" className="io.agrest.cayenne.cayenne.main.E1" dbEntityName="e1">
 		<obj-attribute name="age" type="java.lang.Integer" db-attribute-path="age"/>
 		<obj-attribute name="description" type="java.lang.String" db-attribute-path="description"/>
 		<obj-attribute name="name" type="java.lang.String" db-attribute-path="name"/>
 	</obj-entity>
-	<obj-entity name="E10" className="io.agrest.it.fixture.cayenne.E10" dbEntityName="e10">
+	<obj-entity name="E10" className="io.agrest.cayenne.cayenne.main.E10" dbEntityName="e10">
 		<obj-attribute name="cBoolean" type="java.lang.Boolean" db-attribute-path="c_boolean"/>
 		<obj-attribute name="cDate" type="java.util.Date" db-attribute-path="c_date"/>
 		<obj-attribute name="cDecimal" type="java.math.BigDecimal" db-attribute-path="c_decimal"/>
@@ -191,38 +191,38 @@
 		<obj-attribute name="cTimestamp" type="java.util.Date" db-attribute-path="c_timestamp"/>
 		<obj-attribute name="cVarchar" type="java.lang.String" db-attribute-path="c_varchar"/>
 	</obj-entity>
-	<obj-entity name="E11" className="io.agrest.it.fixture.cayenne.E11" dbEntityName="e11">
+	<obj-entity name="E11" className="io.agrest.cayenne.cayenne.main.E11" dbEntityName="e11">
 		<obj-attribute name="address" type="java.lang.String" db-attribute-path="address"/>
 		<obj-attribute name="name" type="java.lang.String" db-attribute-path="name"/>
 	</obj-entity>
-	<obj-entity name="E12" className="io.agrest.it.fixture.cayenne.E12" dbEntityName="e12">
+	<obj-entity name="E12" className="io.agrest.cayenne.cayenne.main.E12" dbEntityName="e12">
 	</obj-entity>
-	<obj-entity name="E12E13" className="io.agrest.it.fixture.cayenne.E12E13" dbEntityName="e12_e13">
+	<obj-entity name="E12E13" className="io.agrest.cayenne.cayenne.main.E12E13" dbEntityName="e12_e13">
 	</obj-entity>
-	<obj-entity name="E13" className="io.agrest.it.fixture.cayenne.E13" dbEntityName="e13">
+	<obj-entity name="E13" className="io.agrest.cayenne.cayenne.main.E13" dbEntityName="e13">
 	</obj-entity>
-	<obj-entity name="E14" className="io.agrest.it.fixture.cayenne.E14" dbEntityName="e14">
+	<obj-entity name="E14" className="io.agrest.cayenne.cayenne.main.E14" dbEntityName="e14">
 		<obj-attribute name="name" type="java.lang.String" db-attribute-path="name"/>
 	</obj-entity>
-	<obj-entity name="E15" className="io.agrest.it.fixture.cayenne.E15" dbEntityName="e15">
+	<obj-entity name="E15" className="io.agrest.cayenne.cayenne.main.E15" dbEntityName="e15">
 		<obj-attribute name="name" type="java.lang.String" db-attribute-path="name"/>
 	</obj-entity>
-	<obj-entity name="E15E1" className="io.agrest.it.fixture.cayenne.E15E1" dbEntityName="e15_e1">
+	<obj-entity name="E15E1" className="io.agrest.cayenne.cayenne.main.E15E1" dbEntityName="e15_e1">
 	</obj-entity>
-	<obj-entity name="E16" className="io.agrest.it.fixture.cayenne.E16" dbEntityName="e16">
+	<obj-entity name="E16" className="io.agrest.cayenne.cayenne.main.E16" dbEntityName="e16">
 		<obj-attribute name="cDate" type="java.sql.Date" db-attribute-path="c_date"/>
 		<obj-attribute name="cTime" type="java.sql.Time" db-attribute-path="c_time"/>
 		<obj-attribute name="cTimestamp" type="java.sql.Timestamp" db-attribute-path="c_timestamp"/>
 	</obj-entity>
-	<obj-entity name="E17" className="io.agrest.it.fixture.cayenne.E17" dbEntityName="e17">
+	<obj-entity name="E17" className="io.agrest.cayenne.cayenne.main.E17" dbEntityName="e17">
 		<obj-attribute name="id1" type="java.lang.Integer" db-attribute-path="id1"/>
 		<obj-attribute name="id2" type="java.lang.Integer" db-attribute-path="id2"/>
 		<obj-attribute name="name" type="java.lang.String" db-attribute-path="name"/>
 	</obj-entity>
-	<obj-entity name="E18" className="io.agrest.it.fixture.cayenne.E18" dbEntityName="e18">
+	<obj-entity name="E18" className="io.agrest.cayenne.cayenne.main.E18" dbEntityName="e18">
 		<obj-attribute name="name" type="java.lang.String" db-attribute-path="name"/>
 	</obj-entity>
-	<obj-entity name="E19" className="io.agrest.it.fixture.cayenne.E19" dbEntityName="e19">
+	<obj-entity name="E19" className="io.agrest.cayenne.cayenne.main.E19" dbEntityName="e19">
 		<obj-attribute name="bigDecimal" type="java.math.BigDecimal" db-attribute-path="big_decimal"/>
 		<obj-attribute name="bigInteger" type="java.math.BigInteger" db-attribute-path="big_integer"/>
 		<obj-attribute name="booleanObject" type="java.lang.Boolean" db-attribute-path="boolean_object"/>
@@ -247,43 +247,43 @@
 		<obj-attribute name="shortObject" type="java.lang.Short" db-attribute-path="short_object"/>
 		<obj-attribute name="shortPrimitive" type="short" db-attribute-path="short_primitive"/>
 	</obj-entity>
-	<obj-entity name="E2" className="io.agrest.it.fixture.cayenne.E2" dbEntityName="e2">
+	<obj-entity name="E2" className="io.agrest.cayenne.cayenne.main.E2" dbEntityName="e2">
 		<obj-attribute name="address" type="java.lang.String" db-attribute-path="address"/>
 		<obj-attribute name="name" type="java.lang.String" db-attribute-path="name"/>
 	</obj-entity>
-	<obj-entity name="E20" className="io.agrest.it.fixture.cayenne.E20" dbEntityName="e20">
+	<obj-entity name="E20" className="io.agrest.cayenne.cayenne.main.E20" dbEntityName="e20">
 		<obj-attribute name="age" type="java.lang.Integer" db-attribute-path="age"/>
 		<obj-attribute name="description" type="java.lang.String" db-attribute-path="description"/>
 		<obj-attribute name="name" type="java.lang.String" db-attribute-path="name_col"/>
 	</obj-entity>
-	<obj-entity name="E21" className="io.agrest.it.fixture.cayenne.E21" dbEntityName="e21">
+	<obj-entity name="E21" className="io.agrest.cayenne.cayenne.main.E21" dbEntityName="e21">
 		<obj-attribute name="age" type="java.lang.Integer" db-attribute-path="age"/>
 		<obj-attribute name="description" type="java.lang.String" db-attribute-path="description"/>
 		<obj-attribute name="name" type="java.lang.String" db-attribute-path="name"/>
 	</obj-entity>
-	<obj-entity name="E22" className="io.agrest.it.fixture.cayenne.E22" dbEntityName="e22">
+	<obj-entity name="E22" className="io.agrest.cayenne.cayenne.main.E22" dbEntityName="e22">
 		<obj-attribute name="name" type="java.lang.String" db-attribute-path="name"/>
 	</obj-entity>
-	<obj-entity name="E23" className="io.agrest.it.fixture.cayenne.E23" dbEntityName="e23">
+	<obj-entity name="E23" className="io.agrest.cayenne.cayenne.main.E23" dbEntityName="e23">
 		<obj-attribute name="exposedId" type="java.lang.Integer" db-attribute-path="id"/>
 		<obj-attribute name="name" type="java.lang.String" db-attribute-path="name"/>
 	</obj-entity>
-	<obj-entity name="E24" className="io.agrest.it.fixture.cayenne.E24" dbEntityName="e24">
+	<obj-entity name="E24" className="io.agrest.cayenne.cayenne.main.E24" dbEntityName="e24">
 		<obj-attribute name="name" type="java.lang.String" db-attribute-path="name"/>
 		<obj-attribute name="type" type="java.lang.String" db-attribute-path="TYPE"/>
 	</obj-entity>
-	<obj-entity name="E25" className="io.agrest.it.fixture.cayenne.E25" dbEntityName="e25">
+	<obj-entity name="E25" className="io.agrest.cayenne.cayenne.main.E25" dbEntityName="e25">
 	</obj-entity>
-	<obj-entity name="E26" className="io.agrest.it.fixture.cayenne.E26" dbEntityName="e26">
+	<obj-entity name="E26" className="io.agrest.cayenne.cayenne.main.E26" dbEntityName="e26">
 	</obj-entity>
-	<obj-entity name="E27Nopk" className="io.agrest.it.fixture.cayenne.E27Nopk" dbEntityName="e27_nopk">
+	<obj-entity name="E27Nopk" className="io.agrest.cayenne.cayenne.main.E27Nopk" dbEntityName="e27_nopk">
 		<obj-attribute name="name" type="java.lang.String" db-attribute-path="name"/>
 	</obj-entity>
-	<obj-entity name="E3" className="io.agrest.it.fixture.cayenne.E3" dbEntityName="e3">
+	<obj-entity name="E3" className="io.agrest.cayenne.cayenne.main.E3" dbEntityName="e3">
 		<obj-attribute name="name" type="java.lang.String" db-attribute-path="name"/>
 		<obj-attribute name="phoneNumber" type="java.lang.String" db-attribute-path="phone_number"/>
 	</obj-entity>
-	<obj-entity name="E4" className="io.agrest.it.fixture.cayenne.E4" dbEntityName="e4">
+	<obj-entity name="E4" className="io.agrest.cayenne.cayenne.main.E4" dbEntityName="e4">
 		<obj-attribute name="cBoolean" type="java.lang.Boolean" db-attribute-path="c_boolean"/>
 		<obj-attribute name="cDate" type="java.util.Date" db-attribute-path="c_date"/>
 		<obj-attribute name="cDecimal" type="java.math.BigDecimal" db-attribute-path="c_decimal"/>
@@ -292,20 +292,20 @@
 		<obj-attribute name="cTimestamp" type="java.util.Date" db-attribute-path="c_timestamp"/>
 		<obj-attribute name="cVarchar" type="java.lang.String" db-attribute-path="c_varchar"/>
 	</obj-entity>
-	<obj-entity name="E5" className="io.agrest.it.fixture.cayenne.E5" dbEntityName="e5">
+	<obj-entity name="E5" className="io.agrest.cayenne.cayenne.main.E5" dbEntityName="e5">
 		<obj-attribute name="date" type="java.util.Date" db-attribute-path="date"/>
 		<obj-attribute name="name" type="java.lang.String" db-attribute-path="name"/>
 	</obj-entity>
-	<obj-entity name="E6" className="io.agrest.it.fixture.cayenne.E6" dbEntityName="e6">
+	<obj-entity name="E6" className="io.agrest.cayenne.cayenne.main.E6" dbEntityName="e6">
 		<obj-attribute name="charColumn" type="java.lang.String" db-attribute-path="char_column"/>
 	</obj-entity>
-	<obj-entity name="E7" className="io.agrest.it.fixture.cayenne.E7" dbEntityName="e7">
+	<obj-entity name="E7" className="io.agrest.cayenne.cayenne.main.E7" dbEntityName="e7">
 		<obj-attribute name="name" type="java.lang.String" db-attribute-path="name"/>
 	</obj-entity>
-	<obj-entity name="E8" className="io.agrest.it.fixture.cayenne.E8" dbEntityName="e8">
+	<obj-entity name="E8" className="io.agrest.cayenne.cayenne.main.E8" dbEntityName="e8">
 		<obj-attribute name="name" type="java.lang.String" db-attribute-path="name"/>
 	</obj-entity>
-	<obj-entity name="E9" className="io.agrest.it.fixture.cayenne.E9" dbEntityName="e9">
+	<obj-entity name="E9" className="io.agrest.cayenne.cayenne.main.E9" dbEntityName="e9">
 	</obj-entity>
 	<db-relationship name="e15e1" source="e1" target="e15_e1" toDependentPK="true" toMany="true">
 		<db-attribute-pair source="id" target="e1_id"/>

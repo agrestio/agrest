@@ -1,10 +1,10 @@
 package io.agrest.unit;
 
 import io.agrest.AgModuleProvider;
-import io.agrest.it.fixture.pojo.PojoDB;
-import io.agrest.it.fixture.pojo.PojoFetchStage;
-import io.agrest.it.fixture.pojo.PojoSelectProcessorFactoryProvider;
-import io.agrest.it.fixture.pojo.model.*;
+import io.agrest.pojo.runtime.PojoDB;
+import io.agrest.pojo.runtime.PojoFetchStage;
+import io.agrest.pojo.runtime.PojoSelectProcessorFactoryProvider;
+import io.agrest.pojo.model.*;
 import io.agrest.runtime.AgBuilder;
 import io.agrest.runtime.AgRuntime;
 import io.agrest.runtime.IAgService;
@@ -114,6 +114,7 @@ public abstract class PojoTest {
     }
 
     protected WebTarget target(String path) {
+        // TODO: use JettyTester and dynamic port
         return ClientBuilder.newClient().target("http://127.0.0.1:8080/").path(path);
     }
 
@@ -137,10 +138,6 @@ public abstract class PojoTest {
         return POJO_DB.bucketForType(P6.class);
     }
 
-    protected Map<Object, P7> p7() {
-        return POJO_DB.bucketForType(P7.class);
-    }
-
     protected Map<Object, P8> p8() {
         return POJO_DB.bucketForType(P8.class);
     }
@@ -151,7 +148,7 @@ public abstract class PojoTest {
 
     public static class AgModule implements BQModule {
 
-        private Function<AgBuilder, AgBuilder> agCustomizer;
+        private final Function<AgBuilder, AgBuilder> agCustomizer;
 
         public AgModule(Function<AgBuilder, AgBuilder> agCustomizer) {
             this.agCustomizer = agCustomizer;

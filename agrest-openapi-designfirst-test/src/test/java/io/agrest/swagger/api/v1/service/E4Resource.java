@@ -1,6 +1,6 @@
 package io.agrest.swagger.api.v1.service;
 
-import io.agrest.it.fixture.cayenne.E4;
+import io.agrest.cayenne.cayenne.main.E4;
 
 import io.agrest.AgRequest;
 import io.agrest.DataResponse;

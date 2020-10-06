@@ -3,7 +3,7 @@ package io.agrest.meta.compiler;
 import io.agrest.AgException;
 import io.agrest.annotation.AgAttribute;
 import io.agrest.annotation.AgId;
-import io.agrest.it.fixture.pojo.model.P8;
+import io.agrest.pojo.model.P8;
 import io.agrest.meta.AgEntity;
 import io.agrest.meta.LazyAgDataMap;
 import org.junit.jupiter.api.BeforeAll;

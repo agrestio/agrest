@@ -1,8 +1,8 @@
 package io.agrest.meta;
 
-import io.agrest.it.fixture.pojo.model.P3;
-import io.agrest.it.fixture.pojo.model.P4;
-import io.agrest.it.fixture.pojo.model.P5;
+import io.agrest.pojo.model.P3;
+import io.agrest.pojo.model.P4;
+import io.agrest.pojo.model.P5;
 import io.agrest.meta.compiler.AgEntityCompiler;
 import io.agrest.meta.compiler.PojoEntityCompiler;
 import io.agrest.resolver.ThrowingNestedDataResolver;

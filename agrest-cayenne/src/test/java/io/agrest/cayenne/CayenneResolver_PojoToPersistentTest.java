@@ -1,9 +1,9 @@
 package io.agrest.cayenne;
 
 import io.agrest.cayenne.unit.CayenneNoDbTest;
-import io.agrest.it.fixture.cayenne.E25;
-import io.agrest.it.fixture.pojox.PX1;
-import io.agrest.it.fixture.pojox.PX1RootResolver;
+import io.agrest.cayenne.cayenne.main.E25;
+import io.agrest.pojo.model.PX1;
+import io.agrest.pojo.runtime.PX1RootResolver;
 import io.agrest.meta.AgEntity;
 import org.junit.jupiter.api.Test;
 

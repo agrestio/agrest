@@ -4,7 +4,7 @@ import io.agrest.SelectBuilder;
 import io.agrest.SelectStage;
 import io.agrest.cayenne.unit.CayenneAgTester;
 import io.agrest.cayenne.unit.DbTest;
-import io.agrest.it.fixture.cayenne.E2;
+import io.agrest.cayenne.cayenne.main.E2;
 import io.agrest.runtime.DefaultSelectBuilder;
 import io.bootique.junit5.BQTestTool;
 import org.junit.jupiter.api.Test;
