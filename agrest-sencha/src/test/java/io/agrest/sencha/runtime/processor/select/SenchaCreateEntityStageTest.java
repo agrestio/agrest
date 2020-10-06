@@ -1,23 +1,10 @@
 package io.agrest.sencha.runtime.processor.select;
 
 import io.agrest.ResourceEntity;
-import io.agrest.cayenne.unit.CayenneNoDbTest;
-import io.agrest.cayenne.cayenne.main.E2;
 import io.agrest.base.protocol.CayenneExp;
-import io.agrest.runtime.entity.CayenneExpMerger;
-import io.agrest.runtime.entity.ExcludeMerger;
-import io.agrest.runtime.entity.ExpressionParser;
-import io.agrest.runtime.entity.ExpressionPostProcessor;
-import io.agrest.runtime.entity.ICayenneExpMerger;
-import io.agrest.runtime.entity.IExcludeMerger;
-import io.agrest.runtime.entity.IIncludeMerger;
-import io.agrest.runtime.entity.IMapByMerger;
-import io.agrest.runtime.entity.ISizeMerger;
-import io.agrest.runtime.entity.ISortMerger;
-import io.agrest.runtime.entity.IncludeMerger;
-import io.agrest.runtime.entity.MapByMerger;
-import io.agrest.runtime.entity.SizeMerger;
-import io.agrest.runtime.entity.SortMerger;
+import io.agrest.cayenne.cayenne.main.E2;
+import io.agrest.cayenne.unit.CayenneNoDbTest;
+import io.agrest.runtime.entity.*;
 import io.agrest.runtime.meta.IMetadataService;
 import io.agrest.runtime.path.IPathDescriptorManager;
 import io.agrest.runtime.path.PathDescriptorManager;
@@ -32,13 +19,14 @@ import io.agrest.sencha.SenchaRequest;
 import io.agrest.sencha.protocol.Filter;
 import io.agrest.sencha.runtime.entity.ISenchaFilterExpressionCompiler;
 import io.agrest.sencha.runtime.entity.SenchaFilterExpressionCompiler;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.Collections;
 
 import static org.apache.cayenne.exp.ExpressionFactory.exp;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.mock;
 
 public class SenchaCreateEntityStageTest extends CayenneNoDbTest {
@@ -46,7 +34,7 @@ public class SenchaCreateEntityStageTest extends CayenneNoDbTest {
     private SenchaCreateResourceEntityStage createEntityStage;
     private IAgRequestBuilderFactory requestBuilderFactory;
 
-    @Before
+    @BeforeEach
     public void before() {
 
         IPathDescriptorManager pathCache = new PathDescriptorManager();

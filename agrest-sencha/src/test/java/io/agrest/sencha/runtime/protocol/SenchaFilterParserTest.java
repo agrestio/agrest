@@ -1,25 +1,17 @@
 package io.agrest.sencha.runtime.protocol;
 
-import io.agrest.runtime.jackson.IJacksonService;
 import io.agrest.runtime.jackson.JacksonService;
 import io.agrest.sencha.protocol.Filter;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
 import static java.util.Arrays.asList;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class SenchaFilterParserTest {
 
-    private SenchaFilterParser parser;
-
-    @Before
-    public void before() {
-        IJacksonService jacksonService = new JacksonService();
-        this.parser = new SenchaFilterParser(jacksonService);
-    }
+    final SenchaFilterParser parser = new SenchaFilterParser(new JacksonService());
 
     private void assertFilter(
             String expectedProperty,

@@ -1,5 +1,7 @@
 package io.agrest.unit;
 
+import org.glassfish.jersey.client.ClientProperties;
+
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.Invocation;
 import javax.ws.rs.client.WebTarget;
@@ -60,6 +62,14 @@ public class AgTester {
 
     public AgResponseAssertions delete() {
         return onResponse(this.request().delete());
+    }
+
+    public AgResponseAssertions deleteWithEntity(String entity) {
+        Response response = this.request()
+                .property(ClientProperties.SUPPRESS_HTTP_COMPLIANCE_VALIDATION, true)
+                .method("DELETE", Entity.json(entity), Response.class);
+
+        return onResponse(response);
     }
 
     protected static AgResponseAssertions onResponse(Response response) {

@@ -6,22 +6,25 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
+import java.util.function.Function;
+import java.util.function.UnaryOperator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class AgResponseAssertions {
 
     private static final Pattern NUMERIC_ID_MATCHER = Pattern.compile("\"id\":([\\d]+)");
 
-    private Response response;
-    private String idPlaceholder;
-
+    private final Response response;
     private String responseContent;
+    private Function<String, String> bodyTransformer;
 
     public AgResponseAssertions(Response response) {
         this.response = response;
+        this.bodyTransformer = UnaryOperator.identity();
     }
 
     /**
@@ -103,19 +106,27 @@ public class AgResponseAssertions {
     }
 
     /**
+     * Allows to register a custom processor of the response body. It will be invoked on the actual response body
+     * before comparing it with expected body.
+     */
+    public AgResponseAssertions bodyTransformer(UnaryOperator<String> bodyTransformer) {
+        this.bodyTransformer = this.bodyTransformer.andThen(bodyTransformer);
+        return this;
+    }
+
+    /**
      * Replaces id value in the actual result with a known placeholder, this allowing to compare JSON coming for
-     * unknonw ids.
+     * unknown ids.
      */
     public AgResponseAssertions replaceId(String idPlaceholder) {
-        this.idPlaceholder = idPlaceholder;
+        this.bodyTransformer = this.bodyTransformer.andThen(
+                s -> NUMERIC_ID_MATCHER.matcher(s).replaceFirst("\"id\":" + idPlaceholder));
         return this;
     }
 
     public AgResponseAssertions bodyEquals(String expected) {
-        String actual = getContentAsString();
-        String normalized = idPlaceholder != null ? NUMERIC_ID_MATCHER.matcher(actual).replaceFirst("\"id\":" + idPlaceholder) : actual;
-
-        assertEquals(expected, normalized, "Response contains unexpected JSON");
+        String actual = bodyTransformer.apply(getContentAsString());
+        assertEquals(expected, actual, "Response contains unexpected JSON");
         return this;
     }
 
@@ -130,7 +141,7 @@ public class AgResponseAssertions {
             expectedJson.append(o).append(",");
         }
 
-        // rempve last comma
+        // remove last comma
         expectedJson.deleteCharAt(expectedJson.length() - 1)
                 .append("},\"total\":")
                 .append(total)
@@ -142,7 +153,7 @@ public class AgResponseAssertions {
     public AgResponseAssertions totalEquals(long total) {
 
         String string = getContentAsString();
-        JsonNode rootNode = null;
+        JsonNode rootNode;
         try {
             rootNode = new ObjectMapper().readTree(string);
         } catch (IOException e) {

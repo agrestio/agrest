@@ -1,37 +1,36 @@
 package io.agrest.sencha.runtime.entity;
 
 import io.agrest.AgException;
-import io.agrest.cayenne.unit.CayenneNoDbTest;
 import io.agrest.cayenne.cayenne.main.E4;
+import io.agrest.cayenne.unit.CayenneNoDbTest;
 import io.agrest.meta.AgEntity;
 import io.agrest.runtime.entity.ExpressionPostProcessor;
-import io.agrest.runtime.jackson.IJacksonService;
-import io.agrest.runtime.jackson.JacksonService;
 import io.agrest.runtime.path.PathDescriptorManager;
 import io.agrest.sencha.protocol.Filter;
 import org.apache.cayenne.exp.Expression;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 import java.util.GregorianCalendar;
 
 import static java.util.Arrays.asList;
 import static org.apache.cayenne.exp.ExpressionFactory.exp;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class SenchaFilterExpressionCompilerTest extends CayenneNoDbTest {
 
     private AgEntity<E4> e4Entity;
     private SenchaFilterExpressionCompiler processor;
 
-    @Before
+    @BeforeEach
     public void before() {
 
-        IJacksonService jsonParser = new JacksonService();
         PathDescriptorManager pathDescriptorManager = new PathDescriptorManager();
 
-        this.processor = new SenchaFilterExpressionCompiler(pathDescriptorManager, new ExpressionPostProcessor(pathDescriptorManager));
+        this.processor = new SenchaFilterExpressionCompiler(
+                pathDescriptorManager,
+                new ExpressionPostProcessor(pathDescriptorManager));
         this.e4Entity = getAgEntity(E4.class);
     }
 
@@ -71,9 +70,9 @@ public class SenchaFilterExpressionCompilerTest extends CayenneNoDbTest {
                 new Filter("cVarchar", "123", "like", false, false));
     }
 
-    @Test(expected = AgException.class)
+    @Test
     public void testProcess_InvalidProperty() {
-        assertNull(process(new Filter("cDummp", "xyz", "like", false, false)));
+        assertThrows(AgException.class, () -> process(new Filter("cDummp", "xyz", "like", false, false)));
     }
 
     @Test

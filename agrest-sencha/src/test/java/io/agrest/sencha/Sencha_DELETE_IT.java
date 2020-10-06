@@ -5,68 +5,51 @@ import io.agrest.EntityDelete;
 import io.agrest.SimpleResponse;
 import io.agrest.cayenne.cayenne.main.E17;
 import io.agrest.cayenne.cayenne.main.E2;
-import io.agrest.sencha.unit.SenchaBQJerseyTestOnDerby;
-import org.glassfish.jersey.client.ClientProperties;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import io.agrest.cayenne.unit.CayenneAgTester;
+import io.agrest.cayenne.unit.DbTest;
+import io.bootique.junit5.BQTestTool;
+import org.junit.jupiter.api.Test;
 
 import javax.ws.rs.DELETE;
 import javax.ws.rs.Path;
-import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.Configuration;
 import javax.ws.rs.core.Context;
-import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import java.util.Collection;
 
-import static org.junit.Assert.*;
+public class Sencha_DELETE_IT extends DbTest {
 
-public class Sencha_DELETE_IT extends SenchaBQJerseyTestOnDerby {
-
-    @BeforeClass
-    public static void startTestRuntime() {
-        startTestRuntime(E2Resource.class, E17Resource.class);
-    }
-
-    @Override
-    protected Class<?>[] testEntities() {
-        return new Class[]{E2.class, E17.class};
-    }
+    @BQTestTool
+    static final CayenneAgTester tester = tester(E2Resource.class, E17Resource.class)
+            .entitiesAndDependencies(E2.class, E17.class)
+            .build();
 
     @Test
     public void test_BatchDelete() {
 
-        e2().insertColumns("id_", "name")
+        tester.e2().insertColumns("id_", "name")
                 .values(1, "xxx")
                 .values(2, "yyy")
                 .values(3, "zzz").exec();
 
-        Response response = target("/e2").request()
-                .property(ClientProperties.SUPPRESS_HTTP_COMPLIANCE_VALIDATION, true)
-                .method("DELETE", Entity.json(" [{\"id\":1},{\"id\":2}]"), Response.class);
+        tester.target("/e2").deleteWithEntity("[{\"id\":1},{\"id\":2}]").wasSuccess();
 
-        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
-
-        e2().matcher().assertOneMatch();
-        e2().matcher().eq("id_", 3).assertOneMatch();
+        tester.e2().matcher().assertOneMatch();
+        tester.e2().matcher().eq("id_", 3).assertOneMatch();
     }
 
     @Test
     public void test_BatchDelete_CompoundId() {
 
-        e17().insertColumns("id1", "id2", "name")
+        tester.e17().insertColumns("id1", "id2", "name")
                 .values(1, 1, "aaa")
                 .values(2, 2, "bbb")
                 .values(3, 3, "ccc").exec();
 
-        Response response = target("/e17").request()
-                .property(ClientProperties.SUPPRESS_HTTP_COMPLIANCE_VALIDATION, true)
-                .method("DELETE", Entity.json("[{\"id1\":1,\"id2\":1},{\"id1\":2,\"id2\":2}]"), Response.class);
+        tester.target("/e17").deleteWithEntity("[{\"id1\":1,\"id2\":1},{\"id1\":2,\"id2\":2}]").wasSuccess();
 
-        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
-
-        e17().matcher().assertOneMatch();
-        e17().matcher().eq("id1", 3).eq("id2", 3).assertOneMatch();
+        tester.e17().matcher().assertOneMatch();
+        tester.e17().matcher().eq("id1", 3).eq("id2", 3).assertOneMatch();
     }
 
     @Path("e2")

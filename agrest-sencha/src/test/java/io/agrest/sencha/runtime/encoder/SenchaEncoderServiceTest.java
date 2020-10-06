@@ -6,12 +6,12 @@ import io.agrest.NestedResourceEntity;
 import io.agrest.ResourceEntity;
 import io.agrest.RootResourceEntity;
 import io.agrest.SimpleObjectId;
+import io.agrest.cayenne.cayenne.main.E2;
+import io.agrest.cayenne.cayenne.main.E3;
 import io.agrest.cayenne.persister.ICayennePersister;
 import io.agrest.cayenne.unit.CayenneNoDbTest;
 import io.agrest.encoder.Encoder;
 import io.agrest.encoder.EntityEncoderFilter;
-import io.agrest.cayenne.cayenne.main.E2;
-import io.agrest.cayenne.cayenne.main.E3;
 import io.agrest.runtime.encoder.AttributeEncoderFactory;
 import io.agrest.runtime.encoder.IAttributeEncoderFactory;
 import io.agrest.runtime.encoder.IStringConverterFactory;
@@ -22,14 +22,15 @@ import io.agrest.sencha.runtime.semantics.SenchaRelationshipMapper;
 import org.apache.cayenne.Cayenne;
 import org.apache.cayenne.ObjectContext;
 import org.apache.cayenne.ObjectId;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -38,7 +39,7 @@ public class SenchaEncoderServiceTest extends CayenneNoDbTest {
     private SenchaEncoderService encoderService;
     private ICayennePersister cayenneService;
 
-    @Before
+    @BeforeEach
     public void before() {
 
         ObjectContext sharedContext = CayenneNoDbTest.runtime.newContext();
@@ -61,11 +62,8 @@ public class SenchaEncoderServiceTest extends CayenneNoDbTest {
     public void testEncoder_FilteredToOne() throws IOException {
 
         EntityEncoderFilter filter = EntityEncoderFilter.forAll()
-                .objectCondition((p, o, d) -> o instanceof E2 && Cayenne.intPKForObject((E2) o) != 7
-                        ? false : d.willEncode(p, o)
-                )
-                .encoder((p, o, out, d) -> o instanceof E2 && Cayenne.intPKForObject((E2) o) != 7
-                        ? false : d.encode(p, o, out))
+                .objectCondition((p, o, d) -> (!(o instanceof E2) || Cayenne.intPKForObject((E2) o) == 7) && d.willEncode(p, o))
+                .encoder((p, o, out, d) -> (!(o instanceof E2) || Cayenne.intPKForObject((E2) o) == 7) && d.encode(p, o, out))
                 .build();
 
 
@@ -122,7 +120,7 @@ public class SenchaEncoderServiceTest extends CayenneNoDbTest {
             encoder.encode(null, Collections.singletonList(object), generator);
         }
 
-        return new String(out.toByteArray(), "UTF-8");
+        return new String(out.toByteArray(), StandardCharsets.UTF_8);
     }
 
 }

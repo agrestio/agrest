@@ -1,36 +1,27 @@
 package io.agrest.sencha.runtime.processor.select;
 
 import io.agrest.AgRequest;
-import io.agrest.cayenne.unit.CayenneNoDbTest;
-import io.agrest.cayenne.cayenne.main.E2;
 import io.agrest.base.protocol.Dir;
 import io.agrest.base.protocol.Sort;
+import io.agrest.cayenne.cayenne.main.E2;
+import io.agrest.cayenne.unit.CayenneNoDbTest;
 import io.agrest.runtime.jackson.IJacksonService;
 import io.agrest.runtime.jackson.JacksonService;
 import io.agrest.runtime.processor.select.SelectContext;
-import io.agrest.runtime.protocol.CayenneExpParser;
-import io.agrest.runtime.protocol.ExcludeParser;
-import io.agrest.runtime.protocol.ICayenneExpParser;
-import io.agrest.runtime.protocol.IExcludeParser;
-import io.agrest.runtime.protocol.IIncludeParser;
-import io.agrest.runtime.protocol.ISizeParser;
-import io.agrest.runtime.protocol.ISortParser;
-import io.agrest.runtime.protocol.IncludeParser;
-import io.agrest.runtime.protocol.SizeParser;
-import io.agrest.runtime.protocol.SortParser;
+import io.agrest.runtime.protocol.*;
 import io.agrest.runtime.request.DefaultRequestBuilderFactory;
 import io.agrest.runtime.request.IAgRequestBuilderFactory;
 import io.agrest.sencha.SenchaRequest;
 import io.agrest.sencha.runtime.protocol.ISenchaFilterParser;
 import io.agrest.sencha.runtime.protocol.SenchaFilterParser;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import javax.ws.rs.core.MultivaluedMap;
 import java.util.Collections;
 import java.util.List;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -38,7 +29,7 @@ public class SenchaParseRequestStageTest extends CayenneNoDbTest {
 
     private SenchaParseRequestStage parseStage;
 
-	@Before
+	@BeforeEach
 	public void before() {
 
 		IJacksonService jacksonService = new JacksonService();
