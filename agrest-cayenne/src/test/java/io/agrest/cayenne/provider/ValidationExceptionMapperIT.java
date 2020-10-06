@@ -1,12 +1,13 @@
 package io.agrest.cayenne.provider;
 
 import io.agrest.DataResponse;
+import io.agrest.cayenne.unit.CayenneAgTester;
 import io.agrest.cayenne.unit.JerseyAndDerbyCase;
 import io.agrest.it.fixture.cayenne.E2;
+import io.bootique.junit5.BQTestTool;
 import org.apache.cayenne.validation.SimpleValidationFailure;
 import org.apache.cayenne.validation.ValidationException;
 import org.apache.cayenne.validation.ValidationResult;
-import org.junit.BeforeClass;
 import org.junit.jupiter.api.Test;
 
 import javax.ws.rs.GET;
@@ -15,26 +16,19 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Configuration;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
 public class ValidationExceptionMapperIT extends JerseyAndDerbyCase {
 
-    @BeforeClass
-    public static void startTestRuntime() {
-        startTestRuntime(Resource.class);
-    }
+    @BQTestTool
+    static final CayenneAgTester tester = tester(Resource.class)
 
-    @Override
-    protected Class<?>[] testEntities() {
-        return new Class[0];
-    }
+            .build();
 
     @Test
     public void testException() {
-        Response response = target("/g1").request().get();
-        onResponse(response)
-                .statusEquals(Response.Status.BAD_REQUEST)
+        tester.target("/g1").get()
+                .wasBadRequest()
                 .bodyEquals("{\"success\":false,\"message\":\"Object validation failed. There were 1 failure(s).\"}");
     }
 

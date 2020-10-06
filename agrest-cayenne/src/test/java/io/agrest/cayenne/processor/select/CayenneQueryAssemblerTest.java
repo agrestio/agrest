@@ -1,13 +1,13 @@
 package io.agrest.cayenne.processor.select;
 
 import io.agrest.RootResourceEntity;
+import io.agrest.cayenne.unit.TestWithCayenneMapping;
 import io.agrest.it.fixture.cayenne.E1;
 import io.agrest.runtime.processor.select.SelectContext;
-import io.agrest.cayenne.unit.TestWithCayenneMapping;
 import org.apache.cayenne.exp.Expression;
 import org.apache.cayenne.query.Ordering;
 import org.apache.cayenne.query.SelectQuery;
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -16,7 +16,7 @@ public class CayenneQueryAssemblerTest extends TestWithCayenneMapping {
 
     private CayenneQueryAssembler queryAssembler;
 
-    @Before
+    @BeforeEach
     public void before() {
         this.queryAssembler = new CayenneQueryAssembler(runtime.getChannel().getEntityResolver());
     }
@@ -51,12 +51,12 @@ public class CayenneQueryAssemblerTest extends TestWithCayenneMapping {
         resourceEntity.setFetchLimit(10);
         resourceEntity.setFetchOffset(0);
 
-        SelectContext<E1> c = new SelectContext<E1>(E1.class);
+        SelectContext<E1> c = new SelectContext<>(E1.class);
         c.setEntity(resourceEntity);
 
         SelectQuery<E1> q1 = queryAssembler.createRootQuery(c);
 
-        assertEquals("Pagination in the query for paginated request is expected", 10, q1.getPageSize());
+        assertEquals(10, q1.getPageSize(), "Pagination in the query for paginated request is expected");
         assertEquals(0, q1.getFetchOffset());
         assertEquals(0, q1.getFetchLimit());
 
@@ -116,7 +116,7 @@ public class CayenneQueryAssemblerTest extends TestWithCayenneMapping {
 
     @Test
     public void testCreateRootQuery_ById_WithQuery() {
-        SelectQuery<E1> select = new SelectQuery<E1>(E1.class);
+        SelectQuery<E1> select = new SelectQuery<>(E1.class);
 
         SelectContext<E1> c = new SelectContext<>(E1.class);
         c.setId(1);

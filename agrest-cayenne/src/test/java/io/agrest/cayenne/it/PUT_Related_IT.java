@@ -2,211 +2,180 @@ package io.agrest.cayenne.it;
 
 import io.agrest.Ag;
 import io.agrest.DataResponse;
+import io.agrest.cayenne.unit.CayenneAgTester;
 import io.agrest.cayenne.unit.JerseyAndDerbyCase;
-import io.agrest.it.fixture.cayenne.E1;
-import io.agrest.it.fixture.cayenne.E12;
-import io.agrest.it.fixture.cayenne.E12E13;
-import io.agrest.it.fixture.cayenne.E13;
-import io.agrest.it.fixture.cayenne.E15;
-import io.agrest.it.fixture.cayenne.E15E1;
-import io.agrest.it.fixture.cayenne.E2;
-import io.agrest.it.fixture.cayenne.E3;
-import io.agrest.it.fixture.cayenne.E7;
-import io.agrest.it.fixture.cayenne.E8;
-import io.agrest.it.fixture.cayenne.E9;
-import org.junit.BeforeClass;
+import io.agrest.it.fixture.cayenne.*;
+import io.bootique.junit5.BQTestTool;
 import org.junit.jupiter.api.Test;
 
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
-import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.Configuration;
 import javax.ws.rs.core.Context;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriInfo;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class PUT_Related_IT extends JerseyAndDerbyCase {
 
-    @BeforeClass
-    public static void startTestRuntime() {
-        startTestRuntime(Resource.class);
-    }
-
-    @Override
-    protected Class<?>[] testEntities() {
-        return new Class[]{E1.class, E2.class, E3.class, E7.class, E8.class, E9.class};
-    }
-
-    @Override
-    protected Class<?>[] testEntitiesAndDependencies() {
-        return new Class[]{E12.class, E13.class, E15.class};
-    }
+    @BQTestTool
+    static final CayenneAgTester tester = tester(Resource.class)
+            .entities(E1.class, E2.class, E3.class, E7.class, E8.class, E9.class)
+            .entitiesAndDependencies(E12.class, E13.class, E15.class)
+            .build();
 
     @Test
     public void testRelate_EmptyPutWithID() {
 
-        e2().insertColumns("id_", "name")
+        tester.e2().insertColumns("id_", "name")
                 .values(24, "xxx").exec();
 
-        e3().insertColumns("id_", "name")
+        tester.e3().insertColumns("id_", "name")
                 .values(7, "zzz")
                 .values(8, "yyy").exec();
 
         // POST with empty body ... how bad is that?
-        Response r = target("/e3/8/e2/24").request().put(Entity.json(""));
+        tester.target("/e3/8/e2/24").put("")
+                .wasSuccess()
+                .bodyEquals(1, "{\"id\":24,\"address\":null,\"name\":\"xxx\"}");
 
-        onSuccess(r).bodyEquals(1, "{\"id\":24,\"address\":null,\"name\":\"xxx\"}");
-
-        e3().matcher().eq("e2_id", 24).eq("name", "yyy").assertOneMatch();
+        tester.e3().matcher().eq("e2_id", 24).eq("name", "yyy").assertOneMatch();
     }
 
     @Test
     public void testRelate_ValidRel_ToOne_Existing() {
-        e2().insertColumns("id_", "name")
+        tester.e2().insertColumns("id_", "name")
                 .values(24, "xxx").exec();
 
-        e3().insertColumns("id_", "name")
+        tester.e3().insertColumns("id_", "name")
                 .values(7, "zzz")
                 .values(8, "yyy").exec();
 
-        Response response = target("/e3/8/e2/24").request().put(Entity.json("{}"));
+        tester.target("/e3/8/e2/24").put("{}")
+                .wasSuccess()
+                .bodyEquals(1, "{\"id\":24,\"address\":null,\"name\":\"xxx\"}");
 
-        assertEquals(Status.OK.getStatusCode(), response.getStatus());
-        assertEquals("{\"data\":[{\"id\":24,\"address\":null,\"name\":\"xxx\"}],\"total\":1}",
-                response.readEntity(String.class));
-
-        e3().matcher().eq("e2_id", 24).eq("name", "yyy").assertOneMatch();
+        tester.e3().matcher().eq("e2_id", 24).eq("name", "yyy").assertOneMatch();
     }
 
     @Test
     public void testRelate_ValidRel_ToOne_Existing_WithUpdate() {
 
-        e2().insertColumns("id_", "name")
+        tester.e2().insertColumns("id_", "name")
                 .values(24, "xxx").exec();
 
-        e3().insertColumns("id_", "name")
+        tester.e3().insertColumns("id_", "name")
                 .values(7, "zzz")
                 .values(8, "yyy").exec();
 
-        Response r1 = target("/e3/8/e2/24")
-                .request()
-                .put(Entity.json("{\"name\":\"123\"}"));
+        tester.target("/e3/8/e2/24")
+                .put("{\"name\":\"123\"}")
+                .wasSuccess()
+                .bodyEquals(1, "{\"id\":24,\"address\":null,\"name\":\"123\"}");
 
-        assertEquals(Status.OK.getStatusCode(), r1.getStatus());
-        assertEquals("{\"data\":[{\"id\":24,\"address\":null,\"name\":\"123\"}],\"total\":1}",
-                r1.readEntity(String.class));
-
-        e2().matcher().assertOneMatch();
-        e3().matcher().eq("e2_id", 24).eq("name", "yyy").assertOneMatch();
+        tester.e2().matcher().assertOneMatch();
+        tester.e3().matcher().eq("e2_id", 24).eq("name", "yyy").assertOneMatch();
     }
 
     @Test
     public void testRelate_ToMany_MixedCollection() {
 
-        e8().insertColumns("id", "name")
+        tester.e8().insertColumns("id", "name")
                 .values(15, "xxx")
                 .values(16, "xxx").exec();
 
-        e7().insertColumns("id", "name", "e8_id")
+        tester.e7().insertColumns("id", "name", "e8_id")
                 .values(7, "zzz", 16)
                 .values(8, "yyy", 15)
                 .values(9, "aaa", 15).exec();
 
-        Response r1 = target("/e8/createorupdate/15/e7s")
-                .request()
-                .put(Entity.json("[  {\"id\":1,\"name\":\"newname\"}, {\"id\":8,\"name\":\"123\"} ]"));
+        tester.target("/e8/createorupdate/15/e7s")
+                .put("[  {\"id\":1,\"name\":\"newname\"}, {\"id\":8,\"name\":\"123\"} ]")
+                .wasSuccess().bodyEquals(2, "{\"id\":1,\"name\":\"newname\"},{\"id\":8,\"name\":\"123\"}");
 
-        onSuccess(r1).bodyEquals(2, "{\"id\":1,\"name\":\"newname\"},{\"id\":8,\"name\":\"123\"}");
-        e7().matcher().assertMatches(4);
+        tester.e7().matcher().assertMatches(4);
 
         // testing idempotency
 
-        Response r2 = target("/e8/createorupdate/15/e7s")
-                .request()
-                .put(Entity.json("[  {\"id\":1,\"name\":\"newname\"}, {\"id\":8,\"name\":\"123\"} ]"));
+        tester.target("/e8/createorupdate/15/e7s")
+                .put("[  {\"id\":1,\"name\":\"newname\"}, {\"id\":8,\"name\":\"123\"} ]")
+                .wasSuccess()
+                .bodyEquals(2, "{\"id\":1,\"name\":\"newname\"}," + "{\"id\":8,\"name\":\"123\"}");
 
-        onSuccess(r2).bodyEquals(2, "{\"id\":1,\"name\":\"newname\"}," + "{\"id\":8,\"name\":\"123\"}");
-        e7().matcher().assertMatches(4);
+        tester.e7().matcher().assertMatches(4);
     }
 
     @Test
     public void test_ToMany_CreateUpdateDelete() {
 
-        e8().insertColumns("id", "name")
+        tester.e8().insertColumns("id", "name")
                 .values(15, "xxx")
                 .values(16, "xxx").exec();
 
-        e7().insertColumns("id", "name", "e8_id")
+        tester.e7().insertColumns("id", "name", "e8_id")
                 .values(7, "zzz", 16)
                 .values(8, "yyy", 15)
                 .values(9, "zzz", 15).exec();
 
         // this must add E7 with id=1, update - with id=8, delete - with id=9
-        Response r1 = target("/e8/15/e7s")
-                .request()
-                .put(Entity.json("[  {\"id\":1,\"name\":\"newname\"}, {\"id\":8,\"name\":\"123\"} ]"));
-        onSuccess(r1).bodyEquals(2, "{\"id\":1,\"name\":\"newname\"},{\"id\":8,\"name\":\"123\"}");
+        tester.target("/e8/15/e7s")
+                .put("[  {\"id\":1,\"name\":\"newname\"}, {\"id\":8,\"name\":\"123\"} ]")
+                .wasSuccess()
+                .bodyEquals(2, "{\"id\":1,\"name\":\"newname\"},{\"id\":8,\"name\":\"123\"}");
 
-        e7().matcher().eq("e8_id", 15).assertMatches(2);
-        e7().matcher().eq("id", 9).assertNoMatches();
+        tester.e7().matcher().eq("e8_id", 15).assertMatches(2);
+        tester.e7().matcher().eq("id", 9).assertNoMatches();
 
         // testing idempotency
 
-        Response r2 = target("/e8/15/e7s")
-                .request()
-                .put(Entity.json("[  {\"id\":1,\"name\":\"newname\"}, {\"id\":8,\"name\":\"123\"} ]"));
+        tester.target("/e8/15/e7s")
+                .put("[  {\"id\":1,\"name\":\"newname\"}, {\"id\":8,\"name\":\"123\"} ]")
+                .wasSuccess()
+                .bodyEquals(2, "{\"id\":1,\"name\":\"newname\"},{\"id\":8,\"name\":\"123\"}");
 
-        onSuccess(r2).bodyEquals(2, "{\"id\":1,\"name\":\"newname\"},{\"id\":8,\"name\":\"123\"}");
-
-        e7().matcher().eq("e8_id", 15).assertMatches(2);
-        e7().matcher().eq("id", 9).assertNoMatches();
+        tester.e7().matcher().eq("e8_id", 15).assertMatches(2);
+        tester.e7().matcher().eq("id", 9).assertNoMatches();
     }
 
     @Test
     public void testRelate_ValidRel_ToOne_New_AutogenId() {
 
-        e3().insertColumns("id_", "name")
+        tester.e3().insertColumns("id_", "name")
                 .values(7, "zzz")
                 .values(8, "yyy").exec();
 
-        Response r = target("/e3/8/e2/24")
-                .request()
-                .put(Entity.json("{\"name\":\"123\"}"));
-
-        onResponse(r).statusEquals(Status.BAD_REQUEST)
+        tester.target("/e3/8/e2/24")
+                .put("{\"name\":\"123\"}")
+                .wasBadRequest()
                 .bodyEquals("{\"success\":false,\"message\":\"Can't create 'E2' with fixed id\"}");
 
-        e2().matcher().assertNoMatches();
+        tester.e2().matcher().assertNoMatches();
     }
 
     @Test
     public void testRelate_ValidRel_ToOne_New_DefaultId() {
 
-        e7().insertColumns("id")
+        tester.e7().insertColumns("id")
                 .values(7)
                 .values(8).exec();
 
-        Response r1 = target("/e7/8/e8/24")
-                .request()
-                .put(Entity.json("{\"name\":\"aaa\"}"));
+        tester.target("/e7/8/e8/24")
+                .put("{\"name\":\"aaa\"}")
+                .wasSuccess().bodyEquals(1, "{\"id\":24,\"name\":\"aaa\"}");
 
-        onSuccess(r1).bodyEquals(1, "{\"id\":24,\"name\":\"aaa\"}");
+        tester.e8().matcher().assertOneMatch();
+        tester.e8().matcher().eq("name", "aaa").assertOneMatch();
+        tester.e8().matcher().eq("id", 24).assertOneMatch();
 
-        e8().matcher().assertOneMatch();
-        e8().matcher().eq("name", "aaa").assertOneMatch();
-        e8().matcher().eq("id", 24).assertOneMatch();
-
-        e7().matcher().eq("id", 8).eq("e8_id", 24).assertOneMatch();
+        tester.e7().matcher().eq("id", 8).eq("e8_id", 24).assertOneMatch();
 
         // TODO: can't use matcher for NULLs until BQ 1.1 upgrade (because of https://github.com/bootique/bootique-jdbc/issues/91 )
         //  so using select...
 
-        List<Integer> ids1 = e7()
+        List<Integer> ids1 = tester.e7()
                 .selectStatement(rs -> {
                     int i = rs.getInt(1);
                     return rs.wasNull() ? null : i;
@@ -216,22 +185,20 @@ public class PUT_Related_IT extends JerseyAndDerbyCase {
         assertNull(ids1.get(0));
 
         // PUT is idempotent... doing another update should not change the picture
-        Response r2 = target("/e7/8/e8/24")
-                .request()
-                .put(Entity.json("{\"name\":\"aaa\"}"));
+        tester.target("/e7/8/e8/24")
+                .put("{\"name\":\"aaa\"}")
+                .wasSuccess()
+                .bodyEquals(1, "{\"id\":24,\"name\":\"aaa\"}");
 
-        assertEquals(Status.OK.getStatusCode(), r2.getStatus());
-        assertEquals("{\"data\":[{\"id\":24,\"name\":\"aaa\"}],\"total\":1}", r2.readEntity(String.class));
-
-        e8().matcher().assertOneMatch();
-        e8().matcher().eq("name", "aaa").assertOneMatch();
-        e8().matcher().eq("id", 24).assertOneMatch();
-        e7().matcher().eq("id", 8).eq("e8_id", 24).assertOneMatch();
+        tester.e8().matcher().assertOneMatch();
+        tester.e8().matcher().eq("name", "aaa").assertOneMatch();
+        tester.e8().matcher().eq("id", 24).assertOneMatch();
+        tester.e7().matcher().eq("id", 8).eq("e8_id", 24).assertOneMatch();
 
         // TODO: can't use matcher for NULLs until BQ 1.1 upgrade (because of https://github.com/bootique/bootique-jdbc/issues/91 )
         //  so using select...
 
-        List<Integer> ids2 = e7()
+        List<Integer> ids2 = tester.e7()
                 .selectStatement(rs -> {
                     int i = rs.getInt(1);
                     return rs.wasNull() ? null : i;
@@ -244,144 +211,131 @@ public class PUT_Related_IT extends JerseyAndDerbyCase {
     @Test
     public void testRelate_ValidRel_ToOne_New_PropagatedId() {
 
-        e8().insertColumns("id")
+        tester.e8().insertColumns("id")
                 .values(7)
                 .values(8).exec();
 
-        Response r1 = target("/e8/8/e9").request().put(Entity.json("{}"));
-        onSuccess(r1).bodyEquals(1, "{\"id\":8}");
+        tester.target("/e8/8/e9").put("{}")
+                .wasSuccess().bodyEquals(1, "{\"id\":8}");
 
-        e9().matcher().assertOneMatch();
-        e9().matcher().eq("e8_id", 8).assertOneMatch();
+        tester.e9().matcher().assertOneMatch();
+        tester.e9().matcher().eq("e8_id", 8).assertOneMatch();
 
         // PUT is idempotent... doing another update should not change the picture
-        Response r2 = target("/e8/8/e9").request().put(Entity.json("{}"));
-        onSuccess(r2).bodyEquals(1, "{\"id\":8}");
+        tester.target("/e8/8/e9").put("{}")
+                .wasSuccess().bodyEquals(1, "{\"id\":8}");
 
-        e9().matcher().assertOneMatch();
-        e9().matcher().eq("e8_id", 8).assertOneMatch();
+        tester.e9().matcher().assertOneMatch();
+        tester.e9().matcher().eq("e8_id", 8).assertOneMatch();
     }
 
     @Test
     public void testRelate_ToMany_NoIds() {
 
-        e2().insertColumns("id_", "name")
+        tester.e2().insertColumns("id_", "name")
                 .values(15, "xxx")
                 .values(16, "xxx").exec();
 
-        e3().insertColumns("id_", "name", "e2_id")
+        tester.e3().insertColumns("id_", "name", "e2_id")
                 .values(7, "zzz", 16)
                 .values(8, "yyy", 15)
                 .values(9, "aaa", 15).exec();
 
         // we can't PUT an object with generated ID , as the request is non-repeatable
-        Response r = target("/e2/15/e3s")
-                .request()
-                .put(Entity.json("[ {\"name\":\"newname\"} ]"));
-
-        onResponse(r).statusEquals(Status.BAD_REQUEST)
+        tester.target("/e2/15/e3s")
+                .put("[ {\"name\":\"newname\"} ]")
+                .wasBadRequest()
                 .bodyEquals("{\"success\":false,\"message\":\"Request is not idempotent.\"}");
 
-        e3().matcher().assertMatches(3);
-        e3().matcher().eq("e2_id", 15).assertMatches(2);
+        tester.e3().matcher().assertMatches(3);
+        tester.e3().matcher().eq("e2_id", 15).assertMatches(2);
     }
 
     @Test
     public void testToMany_Join() {
 
-        e12().insertColumns("id").values(11).values(12).exec();
-        e13().insertColumns("id").values(14).values(15).values(16).exec();
+        tester.e12().insertColumns("id").values(11).values(12).exec();
+        tester.e13().insertColumns("id").values(14).values(15).values(16).exec();
 
-        Response r1 = target("/e12/12/e1213")
+        tester.target("/e12/12/e1213")
                 .queryParam("exclude", "id")
-                .request()
-                .put(Entity.json("[{\"e13\":15},{\"e13\":14}]"));
-
-        onSuccess(r1).bodyEquals(2, "{},{}");
+                .put("[{\"e13\":15},{\"e13\":14}]")
+                .wasSuccess().bodyEquals(2, "{},{}");
 
 
-        e12_13().matcher().assertMatches(2);
-        e12_13().matcher().eq("e12_id", 12).eq("e13_id", 14).assertOneMatch();
-        e12_13().matcher().eq("e12_id", 12).eq("e13_id", 15).assertOneMatch();
+        tester.e12_13().matcher().assertMatches(2);
+        tester.e12_13().matcher().eq("e12_id", 12).eq("e13_id", 14).assertOneMatch();
+        tester.e12_13().matcher().eq("e12_id", 12).eq("e13_id", 15).assertOneMatch();
 
         // testing idempotency
-        Response r2 = target("/e12/12/e1213")
+        tester.target("/e12/12/e1213")
                 .queryParam("exclude", "id")
-                .request()
-                .put(Entity.json("[{\"e13\":15},{\"e13\":14}]"));
-
-        onSuccess(r2).bodyEquals(2, "{},{}");
+                .put("[{\"e13\":15},{\"e13\":14}]")
+                .wasSuccess().bodyEquals(2, "{},{}");
 
 
-        e12_13().matcher().assertMatches(2);
-        e12_13().matcher().eq("e12_id", 12).eq("e13_id", 14).assertOneMatch();
-        e12_13().matcher().eq("e12_id", 12).eq("e13_id", 15).assertOneMatch();
+        tester.e12_13().matcher().assertMatches(2);
+        tester.e12_13().matcher().eq("e12_id", 12).eq("e13_id", 14).assertOneMatch();
+        tester.e12_13().matcher().eq("e12_id", 12).eq("e13_id", 15).assertOneMatch();
 
         // add one and delete another record
-        Response r3 = target("/e12/12/e1213")
+        tester.target("/e12/12/e1213")
                 .queryParam("exclude", "id")
-                .request()
-                .put(Entity.json("[{\"e13\":16},{\"e13\":14}]"));
+                .put("[{\"e13\":16},{\"e13\":14}]")
+                .wasSuccess().bodyEquals(2, "{},{}");
 
-        onSuccess(r3).bodyEquals(2, "{},{}");
-
-        e12_13().matcher().assertMatches(2);
-        e12_13().matcher().eq("e12_id", 12).eq("e13_id", 14).assertOneMatch();
-        e12_13().matcher().eq("e12_id", 12).eq("e13_id", 16).assertOneMatch();
+        tester.e12_13().matcher().assertMatches(2);
+        tester.e12_13().matcher().eq("e12_id", 12).eq("e13_id", 14).assertOneMatch();
+        tester.e12_13().matcher().eq("e12_id", 12).eq("e13_id", 16).assertOneMatch();
     }
 
     @Test
     public void testToMany_DifferentIdTypes() {
 
-        e1().insertColumns("id", "name")
+        tester.e1().insertColumns("id", "name")
                 .values(1, "xxx")
                 .values(2, "yyy").exec();
 
 
-        e15().insertColumns("long_id", "name")
+        tester.e15().insertColumns("long_id", "name")
                 .values(14L, "aaa")
                 .values(15L, "bbb")
                 .values(16L, "ccc").exec();
 
-        e15_1().insertColumns("e15_id", "e1_id")
+        tester.e15_1().insertColumns("e15_id", "e1_id")
                 .values(14, 1).exec();
 
-        Response r = target("/e15/14/e15e1")
+        tester.target("/e15/14/e15e1")
                 .queryParam("exclude", "id")
-                .request()
-                .put(Entity.json("[{\"e1\":1}]"));
+                .put("[{\"e1\":1}]").wasSuccess();
 
-        onSuccess(r);
+        tester.e15_1().matcher().assertOneMatch();
+        tester.e15_1().matcher().eq("e15_id", 14).eq("e1_id", 1).assertOneMatch();
 
-        e15_1().matcher().assertOneMatch();
-        e15_1().matcher().eq("e15_id", 14).eq("e1_id", 1).assertOneMatch();
-
-        e1().matcher().assertMatches(2);
-        e15().matcher().assertMatches(3);
+        tester.e1().matcher().assertMatches(2);
+        tester.e15().matcher().assertMatches(3);
     }
 
     @Test
     public void testToMany_Flattened_DifferentIdTypes() {
 
-        e5().insertColumns("id", "name")
+        tester.e5().insertColumns("id", "name")
                 .values(1, "xxx")
                 .values(2, "yyy").exec();
 
-        e15().insertColumns("long_id", "name")
+        tester.e15().insertColumns("long_id", "name")
                 .values(14L, "aaa")
                 .values(15L, "bbb")
                 .values(16L, "ccc").exec();
 
-        e15_5().insertColumns("e15_id", "e5_id").values(14, 1).exec();
+        tester.e15_5().insertColumns("e15_id", "e5_id").values(14, 1).exec();
 
+        tester.target("/e15/14").put("{\"e5s\":[1]}").wasSuccess();
 
-        Response r = target("/e15/14").request().put(Entity.json("{\"e5s\":[1]}"));
-        onSuccess(r);
-
-        e15_5().matcher().assertOneMatch();
-        e5().matcher().assertMatches(2);
-        e15().matcher().assertMatches(3);
-        e15_5().matcher().eq("e15_id", 14).eq("e5_id", 1).assertOneMatch();
+        tester.e15_5().matcher().assertOneMatch();
+        tester.e5().matcher().assertMatches(2);
+        tester.e15().matcher().assertMatches(3);
+        tester.e15_5().matcher().eq("e15_id", 14).eq("e5_id", 1).assertOneMatch();
     }
 
     @Path("")

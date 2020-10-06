@@ -12,11 +12,7 @@ import io.agrest.meta.compiler.PojoEntityCompiler;
 import io.agrest.meta.parser.IResourceParser;
 import io.agrest.meta.parser.ResourceParser;
 import io.agrest.property.BeanPropertyReader;
-import io.agrest.runtime.meta.BaseUrlProvider;
-import io.agrest.runtime.meta.IMetadataService;
-import io.agrest.runtime.meta.IResourceMetadataService;
-import io.agrest.runtime.meta.MetadataService;
-import io.agrest.runtime.meta.ResourceMetadataService;
+import io.agrest.runtime.meta.*;
 import io.agrest.runtime.processor.select.SelectContext;
 import org.apache.cayenne.ObjectContext;
 import org.apache.cayenne.configuration.server.DataSourceFactory;
@@ -26,9 +22,9 @@ import org.apache.cayenne.exp.Property;
 import org.apache.cayenne.exp.parser.ASTObjPath;
 import org.apache.cayenne.exp.parser.ASTPath;
 import org.apache.cayenne.map.ObjEntity;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.UriInfo;
@@ -53,7 +49,7 @@ public class TestWithCayenneMapping {
     protected IResourceMetadataService resourceMetadataService;
     protected IResourceParser resourceParser;
 
-    @BeforeClass
+    @BeforeAll
     public static void setUpClass() {
         Module module = binder -> {
             DataSourceFactory dsf = mock(DataSourceFactory.class);
@@ -67,13 +63,13 @@ public class TestWithCayenneMapping {
                 .build();
     }
 
-    @AfterClass
+    @AfterAll
     public static void tearDownClass() {
         runtime.shutdown();
         runtime = null;
     }
 
-    @Before
+    @BeforeEach
     public void initAgDataMap() {
 
         ObjectContext sharedContext = runtime.newContext();
@@ -146,7 +142,7 @@ public class TestWithCayenneMapping {
                 new TestAgPersistentAttribute(name, javaType));
     }
 
-    private class TestAgPersistentAttribute extends DefaultAgAttribute {
+    private static class TestAgPersistentAttribute extends DefaultAgAttribute {
 
         public TestAgPersistentAttribute(String name, Class<?> javaType) {
             super(name, javaType, new ASTObjPath(name), BeanPropertyReader.reader());

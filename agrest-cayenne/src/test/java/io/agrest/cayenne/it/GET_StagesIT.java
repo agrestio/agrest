@@ -5,6 +5,7 @@ import io.agrest.Ag;
 import io.agrest.DataResponse;
 import io.agrest.SelectStage;
 import io.agrest.cayenne.persister.ICayennePersister;
+import io.agrest.cayenne.unit.CayenneAgTester;
 import io.agrest.cayenne.unit.JerseyAndDerbyCase;
 import io.agrest.encoder.DataResponseEncoder;
 import io.agrest.encoder.Encoder;
@@ -13,40 +14,35 @@ import io.agrest.encoder.ListEncoder;
 import io.agrest.it.fixture.cayenne.E27Nopk;
 import io.agrest.runtime.AgRuntime;
 import io.agrest.runtime.processor.select.SelectContext;
+import io.bootique.junit5.BQTestTool;
 import org.apache.cayenne.query.ObjectSelect;
-import org.junit.BeforeClass;
 import org.junit.jupiter.api.Test;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.Configuration;
 import javax.ws.rs.core.Context;
-import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import java.io.IOException;
 import java.util.List;
 
 public class GET_StagesIT extends JerseyAndDerbyCase {
 
-    @BeforeClass
-    public static void startTestRuntime() {
-        startTestRuntime(Resource.class);
-    }
-
-    @Override
-    protected Class<?>[] testEntities() {
-        return new Class[]{E27Nopk.class};
-    }
+    @BQTestTool
+    static final CayenneAgTester tester = tester(Resource.class)
+            .entities(E27Nopk.class)
+            .build();
 
     @Test
     public void testNoId() {
-        e27NoPk().insertColumns("name")
+        tester.e27NoPk().insertColumns("name")
                 .values("z")
                 .values("a").exec();
 
-        Response response = target("/e27").request().get();
-        onSuccess(response).bodyEquals(2,
-                "{\"name\":\"a\"},{\"name\":\"z\"}");
+        tester.target("/e27")
+                .get()
+                .wasSuccess()
+                .bodyEquals(2, "{\"name\":\"a\"},{\"name\":\"z\"}");
     }
 
     @Path("")

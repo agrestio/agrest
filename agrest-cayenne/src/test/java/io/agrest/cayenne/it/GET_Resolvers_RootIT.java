@@ -3,6 +3,7 @@ package io.agrest.cayenne.it;
 import io.agrest.Ag;
 import io.agrest.DataResponse;
 import io.agrest.cayenne.CayenneResolvers;
+import io.agrest.cayenne.unit.CayenneAgTester;
 import io.agrest.cayenne.unit.JerseyAndDerbyCase;
 import io.agrest.it.fixture.cayenne.E2;
 import io.agrest.it.fixture.cayenne.E3;
@@ -11,8 +12,8 @@ import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgEntityOverlay;
 import io.agrest.resolver.BaseRootDataResolver;
 import io.agrest.runtime.processor.select.SelectContext;
+import io.bootique.junit5.BQTestTool;
 import org.apache.cayenne.ObjectId;
-import org.junit.BeforeClass;
 import org.junit.jupiter.api.Test;
 
 import javax.ws.rs.GET;
@@ -21,7 +22,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Configuration;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import java.util.List;
 
@@ -29,60 +29,57 @@ import static java.util.Arrays.asList;
 
 public class GET_Resolvers_RootIT extends JerseyAndDerbyCase {
 
-    @BeforeClass
-    public static void startTestRuntime() {
-        startTestRuntime(Resource.class);
-    }
-
-    @Override
-    protected Class<?>[] testEntities() {
-        return new Class[]{E2.class, E3.class};
-    }
+    @BQTestTool
+    static final CayenneAgTester tester = tester(Resource.class)
+            .entities(E2.class, E3.class)
+            .build();
 
     @Test
     public void test_ViaQueryResolver() {
 
-        e2().insertColumns("id_", "name")
+        tester.e2().insertColumns("id_", "name")
                 .values(1, "xxx")
                 .values(2, "aaa").exec();
-        e3().insertColumns("id_", "name", "e2_id")
+        tester.e3().insertColumns("id_", "name", "e2_id")
                 .values(8, "yyy", 1)
                 .values(9, "zzz", null)
                 .exec();
 
-        Response r = target("/e2_standard_query")
+        tester.target("/e2_standard_query")
                 .queryParam("include", "id")
                 .queryParam("include", "name")
                 .queryParam("include", "e3s.name")
                 .queryParam("cayenneExp", "id < 3")
                 .queryParam("sort", "id")
-                .request().get();
+                .get().wasSuccess()
+                .bodyEquals(2,
+                        "{\"id\":1,\"e3s\":[{\"name\":\"yyy\"}],\"name\":\"xxx\"}",
+                        "{\"id\":2,\"e3s\":[],\"name\":\"aaa\"}");
 
-        onSuccess(r)
-                .bodyEquals(2, "{\"id\":1,\"e3s\":[{\"name\":\"yyy\"}],\"name\":\"xxx\"},{\"id\":2,\"e3s\":[],\"name\":\"aaa\"}")
-                .ranQueries(1);
+        tester.assertQueryCount(1);
     }
 
     @Test
     public void test_ViaCustomResolver() {
 
-        e2().insertColumns("id_", "name")
+        tester.e2().insertColumns("id_", "name")
                 .values(1, "xxx")
                 .values(2, "aaa").exec();
-        e3().insertColumns("id_", "name", "e2_id")
+        tester.e3().insertColumns("id_", "name", "e2_id")
                 .values(8, "yyy", 1)
                 .values(9, "zzz", null)
                 .exec();
 
-        Response r = target("/e2_custom_query")
+        tester.target("/e2_custom_query")
                 .queryParam("include", "id")
                 .queryParam("include", "name")
                 .queryParam("include", "e3s.name")
-                .request().get();
+                .get().wasSuccess()
+                .bodyEquals(2,
+                        "{\"id\":2,\"e3s\":[],\"name\":\"n_2\"}",
+                        "{\"id\":1,\"e3s\":[{\"name\":\"yyy\"}],\"name\":\"n_1\"}");
 
-        onSuccess(r)
-                .bodyEquals(2, "{\"id\":2,\"e3s\":[],\"name\":\"n_2\"},{\"id\":1,\"e3s\":[{\"name\":\"yyy\"}],\"name\":\"n_1\"}")
-                .ranQueries(1);
+        tester.assertQueryCount(1);
     }
 
     @Path("")

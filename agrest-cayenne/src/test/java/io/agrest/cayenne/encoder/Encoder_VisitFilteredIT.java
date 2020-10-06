@@ -3,48 +3,43 @@ package io.agrest.cayenne.encoder;
 import com.fasterxml.jackson.core.JsonGenerator;
 import io.agrest.DataResponse;
 import io.agrest.ResourceEntity;
+import io.agrest.cayenne.unit.CayenneAgTester;
 import io.agrest.cayenne.unit.JerseyAndDerbyCase;
 import io.agrest.encoder.Encoder;
 import io.agrest.encoder.EntityEncoderFilter;
 import io.agrest.it.fixture.cayenne.E2;
 import io.agrest.it.fixture.cayenne.E3;
-import io.agrest.runtime.AgBuilder;
+import io.bootique.junit5.BQTestTool;
 import org.apache.cayenne.Cayenne;
 import org.apache.cayenne.Persistent;
-import org.junit.Assert;
-import org.junit.BeforeClass;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.util.Collection;
-import java.util.function.UnaryOperator;
 
 import static java.util.Arrays.asList;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class Encoder_VisitFilteredIT extends JerseyAndDerbyCase {
 
-    @BeforeClass
-    public static void startTestRuntime() {
-        UnaryOperator<AgBuilder> customizer = ab -> ab.entityEncoderFilter(new TestFilter(1, 3));
-        JerseyAndDerbyCase.startTestRuntime(customizer);
-    }
+    @BQTestTool
+    static final CayenneAgTester tester = tester()
 
-    @Override
-    protected Class<?>[] testEntities() {
-        return new Class[]{E2.class, E3.class};
-    }
+            .entities(E2.class, E3.class)
+            .agCustomizer(ab -> ab.entityEncoderFilter(new TestFilter(1, 3)))
+            .build();
 
     @Test
     public void testEncoderFilter() {
 
-        e2().insertColumns("id_", "name")
+        tester.e2().insertColumns("id_", "name")
                 .values(1, "xxx")
                 .values(2, "yyy")
                 .values(3, "zzz")
                 .values(4, "zzz").exec();
 
-        DataResponse<E2> response = ag().select(E2.class).get();
-        Assert.assertEquals("2;E2:1;E2:3", Encoder_VisitIT.responseContents(response));
+        DataResponse<E2> response = tester.ag().select(E2.class).get();
+        assertEquals("2;E2:1;E2:3", Encoder_VisitIT.responseContents(response));
     }
 
     static class TestFilter implements EntityEncoderFilter {

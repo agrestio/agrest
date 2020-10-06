@@ -2,10 +2,10 @@ package io.agrest.cayenne.it;
 
 import io.agrest.Ag;
 import io.agrest.DataResponse;
+import io.agrest.cayenne.unit.CayenneAgTester;
 import io.agrest.cayenne.unit.JerseyAndDerbyCase;
-import io.agrest.it.fixture.cayenne.E23;
-import io.agrest.it.fixture.cayenne.E26;
-import org.junit.BeforeClass;
+import io.agrest.it.fixture.cayenne.*;
+import io.bootique.junit5.BQTestTool;
 import org.junit.jupiter.api.Test;
 
 import javax.ws.rs.GET;
@@ -13,60 +13,52 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Configuration;
 import javax.ws.rs.core.Context;
-import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
 public class GET_ExposedIdIT extends JerseyAndDerbyCase {
 
-    @BeforeClass
-    public static void startTestRuntime() {
-        startTestRuntime(Resource.class);
-    }
-
-    @Override
-    protected Class<?>[] testEntities() {
-        return new Class[]{E23.class, E26.class};
-    }
+    @BQTestTool
+    static final CayenneAgTester tester = tester(Resource.class)
+            .entities(E23.class, E26.class)
+            .build();
 
     @Test
     public void testById() {
 
-        e23().insertColumns("id", "name")
+        tester.e23().insertColumns("id", "name")
                 .values(1, "abc")
                 .values(2, "xyz").exec();
 
-        Response r = target("/e23").path("1").request().get();
-        onSuccess(r).bodyEquals(1, "{\"id\":1,\"exposedId\":1,\"name\":\"abc\"}");
+        tester.target("/e23/1").get()
+                .wasSuccess()
+                .bodyEquals(1, "{\"id\":1,\"exposedId\":1,\"name\":\"abc\"}");
     }
 
     @Test
     public void testIncludeFrom() {
 
-        e23().insertColumns("id", "name").values(1, "abc").exec();
-        e26().insertColumns("id", "e23_id").values(41, 1).exec();
+        tester.e23().insertColumns("id", "name").values(1, "abc").exec();
+        tester.e26().insertColumns("id", "e23_id").values(41, 1).exec();
 
-        Response r = target("/e23")
+        tester.target("/e23")
                 .queryParam("include", "id", "e26s.id")
-                .request()
-                .get();
+                .get().wasSuccess().bodyEquals(1, "{\"id\":1,\"e26s\":[{\"id\":41}]}");
 
-        onSuccess(r).bodyEquals(1, "{\"id\":1,\"e26s\":[{\"id\":41}]}").ranQueries(2);
+        tester.assertQueryCount(2);
     }
 
     @Test
     public void testIncludeTo() {
 
-        e23().insertColumns("id", "name").values(1, "abc").exec();
-        e26().insertColumns("id", "e23_id").values(41, 1).exec();
+        tester.e23().insertColumns("id", "name").values(1, "abc").exec();
+        tester.e26().insertColumns("id", "e23_id").values(41, 1).exec();
 
-        Response r = target("/e26")
+        tester.target("/e26")
                 .queryParam("include", "id", "e23.id")
-                .request()
-                .get();
+                .get().wasSuccess().bodyEquals(1, "{\"id\":41,\"e23\":{\"id\":1}}");
 
-        onSuccess(r).bodyEquals(1, "{\"id\":41,\"e23\":{\"id\":1}}").ranQueries(2);
+        tester.assertQueryCount(2);
     }
-
 
     @Path("")
     public static class Resource {

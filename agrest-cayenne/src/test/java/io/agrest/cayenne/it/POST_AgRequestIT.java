@@ -3,41 +3,32 @@ package io.agrest.cayenne.it;
 import io.agrest.Ag;
 import io.agrest.AgRequest;
 import io.agrest.DataResponse;
+import io.agrest.cayenne.unit.CayenneAgTester;
 import io.agrest.cayenne.unit.JerseyAndDerbyCase;
-
 import io.agrest.it.fixture.cayenne.E3;
-import org.junit.BeforeClass;
+import io.bootique.junit5.BQTestTool;
 import org.junit.jupiter.api.Test;
 
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
-import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.Configuration;
 import javax.ws.rs.core.Context;
-import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
 public class POST_AgRequestIT extends JerseyAndDerbyCase {
 
-    @BeforeClass
-    public static void startTestRuntime() {
-        startTestRuntime(Resource.class);
-    }
+    @BQTestTool
+    static final CayenneAgTester tester = tester(Resource.class)
 
-    @Override
-    protected Class<?>[] testEntities() {
-        return new Class[]{E3.class};
-    }
+            .entities(E3.class)
+            .build();
 
     @Test
     public void testIncludes_OverriddenByAgRequest() {
 
-        Response r = target("/e3_includes")
+        tester.target("/e3_includes")
                 .queryParam("include", "id")
-                .request()
-                .post(Entity.json("[{\"name\":\"aaa\"},{\"name\":\"zzz\"},{\"name\":\"bbb\"}]"));
-
-        onResponse(r)
+                .post("[{\"name\":\"aaa\"},{\"name\":\"zzz\"},{\"name\":\"bbb\"}]")
                 .wasCreated()
                 .bodyEquals(3, "{\"name\":\"aaa\"},{\"name\":\"zzz\"},{\"name\":\"bbb\"}");
     }
@@ -45,12 +36,9 @@ public class POST_AgRequestIT extends JerseyAndDerbyCase {
     @Test
     public void testExcludes_OverriddenByAgRequest() {
 
-        Response r = target("/e3_excludes")
+        tester.target("/e3_excludes")
                 .queryParam("exclude", "name")
-                .request()
-                .post(Entity.json("[{\"name\":\"aaa\"},{\"name\":\"zzz\"},{\"name\":\"bbb\"}]"));
-
-        onResponse(r)
+                .post("[{\"name\":\"aaa\"},{\"name\":\"zzz\"},{\"name\":\"bbb\"}]")
                 .wasCreated()
                 .bodyEquals(3,
                         "{\"name\":\"aaa\",\"phoneNumber\":null}",

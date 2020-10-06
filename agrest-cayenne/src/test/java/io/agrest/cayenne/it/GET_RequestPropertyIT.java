@@ -2,95 +2,81 @@ package io.agrest.cayenne.it;
 
 import io.agrest.Ag;
 import io.agrest.DataResponse;
+import io.agrest.cayenne.unit.CayenneAgTester;
 import io.agrest.cayenne.unit.JerseyAndDerbyCase;
-import io.agrest.it.fixture.cayenne.E3;
-import io.agrest.it.fixture.cayenne.E4;
+import io.agrest.it.fixture.cayenne.*;
 import io.agrest.property.PropertyReader;
+import io.bootique.junit5.BQTestTool;
 import org.apache.cayenne.Cayenne;
 import org.apache.cayenne.DataObject;
-import org.junit.BeforeClass;
 import org.junit.jupiter.api.Test;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.Configuration;
 import javax.ws.rs.core.Context;
-import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
 import static io.agrest.property.PropertyBuilder.property;
 
 public class GET_RequestPropertyIT extends JerseyAndDerbyCase {
 
-    @BeforeClass
-    public static void startTestRuntime() {
-        startTestRuntime(Resource.class);
-    }
-
-    @Override
-    protected Class<?>[] testEntities() {
-        return new Class[]{E3.class, E4.class};
-    }
+    @BQTestTool
+    static final CayenneAgTester tester = tester(Resource.class)
+            .entities(E3.class, E4.class)
+            .build();
 
     @Test
     public void testRequest_Property() {
 
-        e4().insertColumns("id").values(1).values(2).exec();
+        tester.e4().insertColumns("id").values(1).values(2).exec();
 
-        Response r = target("/e4/calc_property")
+        tester.target("/e4/calc_property")
                 .queryParam("include", "id")
                 .queryParam("include", "x")
                 .queryParam("sort", "id")
-                .request()
-                .get();
 
-        onSuccess(r).bodyEquals(2, "{\"id\":1,\"x\":\"y_1\"},{\"id\":2,\"x\":\"y_2\"}");
+                .get().wasSuccess().bodyEquals(2, "{\"id\":1,\"x\":\"y_1\"},{\"id\":2,\"x\":\"y_2\"}");
     }
 
     @Test
     public void testRequest_Property_Exclude() {
 
-        e4().insertColumns("id").values(1).values(2).exec();
+        tester.e4().insertColumns("id").values(1).values(2).exec();
 
-        Response r = target("/e4/calc_property")
+        tester.target("/e4/calc_property")
                 .queryParam("include", "id")
                 .queryParam("sort", "id")
-                .request()
-                .get();
 
-        onSuccess(r).bodyEquals(2, "{\"id\":1},{\"id\":2}");
+                .get().wasSuccess().bodyEquals(2, "{\"id\":1},{\"id\":2}");
     }
 
     @Test
     public void testRequest_ShadowProperty() {
 
-        e3().insertColumns("id_", "name")
+        tester.e3().insertColumns("id_", "name")
                 .values(1, "x")
                 .values(8, "y").exec();
 
-        Response r = target("/e3/custom_encoding")
+        tester.target("/e3/custom_encoding")
                 .queryParam("include", "name")
                 .queryParam("sort", "id")
-                .request()
-                .get();
 
-        onSuccess(r).bodyEquals(2, "{\"name\":\"_x_\"},{\"name\":\"_y_\"}");
+                .get().wasSuccess().bodyEquals(2, "{\"name\":\"_x_\"},{\"name\":\"_y_\"}");
     }
 
     @Test
     public void testRequest_ShadowProperty_Exclude() {
 
-        e3().insertColumns("id_", "name")
+        tester.e3().insertColumns("id_", "name")
                 .values(1, "x")
                 .values(2, "y").exec();
 
-        Response r = target("/e3/custom_encoding")
+        tester.target("/e3/custom_encoding")
                 .queryParam("include", "id")
                 .queryParam("sort", "id")
-                .request()
-                .get();
 
-        onSuccess(r).bodyEquals(2, "{\"id\":1},{\"id\":2}");
+                .get().wasSuccess().bodyEquals(2, "{\"id\":1},{\"id\":2}");
     }
 
     @Path("")

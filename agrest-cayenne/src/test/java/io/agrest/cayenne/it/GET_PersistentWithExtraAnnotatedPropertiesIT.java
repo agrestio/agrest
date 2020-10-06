@@ -3,33 +3,29 @@ package io.agrest.cayenne.it;
 import io.agrest.Ag;
 import io.agrest.DataResponse;
 import io.agrest.SelectStage;
+import io.agrest.cayenne.unit.CayenneAgTester;
 import io.agrest.cayenne.unit.JerseyAndDerbyCase;
 import io.agrest.it.fixture.cayenne.E14;
 import io.agrest.it.fixture.cayenne.E15;
 import io.agrest.it.fixture.pojo.model.P7;
 import io.agrest.runtime.processor.select.SelectContext;
+import io.bootique.junit5.BQTestTool;
 import org.apache.cayenne.Cayenne;
-import org.junit.BeforeClass;
 import org.junit.jupiter.api.Test;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.Configuration;
 import javax.ws.rs.core.Context;
-import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
 public class GET_PersistentWithExtraAnnotatedPropertiesIT extends JerseyAndDerbyCase {
 
-    @BeforeClass
-    public static void startTestRuntime() {
-        startTestRuntime(Resource.class);
-    }
+    @BQTestTool
+    static final CayenneAgTester tester = tester(Resource.class)
 
-    @Override
-    protected Class<?>[] testEntities() {
-        return new Class[]{E14.class, E15.class};
-    }
+            .entities(E14.class, E15.class)
+            .build();
 
     // TODO: each test is using the same dataset... if we could only do data cleanup once per class, then we can load
     //  the test data in constructor
@@ -37,43 +33,36 @@ public class GET_PersistentWithExtraAnnotatedPropertiesIT extends JerseyAndDerby
     @Test
     public void testGET_Root() {
 
-        e15().insertColumns("long_id", "name").values(1L, "xxx").exec();
-        e14().insertColumns("e15_id", "long_id", "name").values(1L, 8L, "yyy").exec();
+        tester.e15().insertColumns("long_id", "name").values(1L, "xxx").exec();
+        tester.e14().insertColumns("e15_id", "long_id", "name").values(1L, 8L, "yyy").exec();
 
-        Response r = target("/e14")
+        tester.target("/e14")
                 .queryParam("include", "name", "prettyName")
-                .request()
-                .get();
-
-        onSuccess(r).bodyEquals(1, "{\"name\":\"yyy\",\"prettyName\":\"yyy_pretty\"}");
+                .get().wasSuccess().bodyEquals(1, "{\"name\":\"yyy\",\"prettyName\":\"yyy_pretty\"}");
     }
 
     @Test
     public void testIncludeRelationship() {
 
-        e15().insertColumns("long_id", "name").values(1L, "xxx").exec();
-        e14().insertColumns("e15_id", "long_id", "name").values(1L, 8L, "yyy").exec();
+        tester.e15().insertColumns("long_id", "name").values(1L, "xxx").exec();
+        tester.e14().insertColumns("e15_id", "long_id", "name").values(1L, 8L, "yyy").exec();
 
-        Response r = target("/e14")
+        tester.target("/e14")
                 .queryParam("include", "name", "p7")
-                .request()
-                .get();
 
-        onSuccess(r).bodyEquals(1, "{\"name\":\"yyy\",\"p7\":{\"id\":800,\"string\":\"p7_yyy\"}}");
+                .get().wasSuccess().bodyEquals(1, "{\"name\":\"yyy\",\"p7\":{\"id\":800,\"string\":\"p7_yyy\"}}");
     }
 
     @Test
     public void testGET_Related() {
 
-        e15().insertColumns("long_id", "name").values(1L, "xxx").exec();
-        e14().insertColumns("e15_id", "long_id", "name").values(1L, 8L, "yyy").exec();
+        tester.e15().insertColumns("long_id", "name").values(1L, "xxx").exec();
+        tester.e14().insertColumns("e15_id", "long_id", "name").values(1L, 8L, "yyy").exec();
 
-        Response r = target("/e15")
+        tester.target("/e15")
                 .queryParam("include", "e14s.name", "e14s.prettyName")
-                .request()
-                .get();
-
-        onSuccess(r).bodyEquals(1, "{\"id\":1,\"e14s\":[{\"name\":\"yyy\",\"prettyName\":\"yyy_pretty\"}],\"name\":\"xxx\"}");
+                .get()
+                .wasSuccess().bodyEquals(1, "{\"id\":1,\"e14s\":[{\"name\":\"yyy\",\"prettyName\":\"yyy_pretty\"}],\"name\":\"xxx\"}");
     }
 
     @Path("")

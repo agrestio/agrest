@@ -2,84 +2,72 @@ package io.agrest.cayenne.it;
 
 import io.agrest.Ag;
 import io.agrest.DataResponse;
+import io.agrest.cayenne.unit.CayenneAgTester;
 import io.agrest.cayenne.unit.JerseyAndDerbyCase;
-
 import io.agrest.it.fixture.cayenne.E4;
-import org.junit.BeforeClass;
+import io.bootique.junit5.BQTestTool;
 import org.junit.jupiter.api.Test;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.Configuration;
 import javax.ws.rs.core.Context;
-import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
 public class GET_SizeConstraintsIT extends JerseyAndDerbyCase {
 
-    @BeforeClass
-    public static void startTestRuntime() {
-        startTestRuntime(Resource.class);
-    }
-
-    @Override
-    protected Class<?>[] testEntities() {
-        return new Class[]{E4.class};
-    }
+    @BQTestTool
+    static final CayenneAgTester tester = tester(Resource.class)
+            .entities(E4.class)
+            .build();
 
     // TODO: unclear what server-side fetch offset protects? so not testing it here.
 
     @Test
     public void testNoClientLimit() {
 
-        e4().insertColumns("id")
+        tester.e4().insertColumns("id")
                 .values(1)
                 .values(2)
                 .values(3).exec();
 
-        Response r = target("/e4/limit")
+        tester.target("/e4/limit")
                 .queryParam("sort", "id")
                 .queryParam("include", "id")
-                .request()
-                .get();
 
-        onSuccess(r).bodyEquals(3, "{\"id\":1},{\"id\":2}");
+                .get().wasSuccess().bodyEquals(3, "{\"id\":1},{\"id\":2}");
     }
 
     @Test
     public void testClientLimitBelowServerLimit() {
 
-        e4().insertColumns("id")
+        tester.e4().insertColumns("id")
                 .values(1)
                 .values(2)
                 .values(3).exec();
 
-        Response r = target("/e4/limit")
+        tester.target("/e4/limit")
                 .queryParam("sort", "id")
                 .queryParam("include", "id")
                 .queryParam("limit", "1")
-                .request()
-                .get();
 
-        onSuccess(r).bodyEquals(3, "{\"id\":1}");
+                .get().wasSuccess().bodyEquals(3, "{\"id\":1}");
     }
 
     @Test
     public void testClientLimitExceedsServerLimit() {
 
-        e4().insertColumns("id")
+        tester.e4().insertColumns("id")
                 .values(1)
                 .values(2)
                 .values(3).exec();
 
-        Response r = target("/e4/limit")
+        tester.target("/e4/limit")
                 .queryParam("sort", "id")
                 .queryParam("include", "id")
                 .queryParam("limit", "5")
-                .request()
-                .get();
 
-        onSuccess(r).bodyEquals(3, "{\"id\":1},{\"id\":2}");
+                .get().wasSuccess().bodyEquals(3, "{\"id\":1},{\"id\":2}");
     }
 
     @Path("")

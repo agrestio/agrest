@@ -3,16 +3,15 @@ package io.agrest.cayenne.it;
 import io.agrest.Ag;
 import io.agrest.DataResponse;
 import io.agrest.EntityUpdate;
+import io.agrest.cayenne.unit.CayenneAgTester;
 import io.agrest.cayenne.unit.JerseyAndDerbyCase;
-
 import io.agrest.it.fixture.cayenne.E20;
 import io.agrest.it.fixture.cayenne.E21;
-import org.junit.BeforeClass;
+import io.bootique.junit5.BQTestTool;
 import org.junit.jupiter.api.Test;
 
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
-import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.Configuration;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
@@ -20,38 +19,28 @@ import javax.ws.rs.core.UriInfo;
 
 public class POST_NaturalIdIT extends JerseyAndDerbyCase {
 
-    @BeforeClass
-    public static void startTestRuntime() {
-        startTestRuntime(Resource.class);
-    }
+    @BQTestTool
+    static final CayenneAgTester tester = tester(Resource.class)
 
-    @Override
-    protected Class<?>[] testEntities() {
-        return new Class[]{E20.class, E21.class};
-    }
+            .entities(E20.class, E21.class)
+            .build();
 
     @Test
     public void testSingleId() {
 
-        Response r1 = target("/single-id")
+        tester.target("/single-id")
                 .queryParam("exclude", "age", "description")
-                .request()
-                .post(Entity.json("{\"id\":\"John\"}"));
-
-        onResponse(r1)
+                .post("{\"id\":\"John\"}")
                 .wasCreated()
                 .replaceId("RID")
                 .bodyEquals(1, "{\"id\":\"John\",\"name\":\"John\"}");
 
-        e20().matcher().eq("name_col", "John").assertOneMatch();
+        tester.e20().matcher().eq("name_col", "John").assertOneMatch();
 
-        Response r2 = target("/single-id")
+        tester.target("/single-id")
                 .queryParam("exclude", "age", "description")
-                .request()
-                .post(Entity.json("{\"id\":\"John\"}"));
-
-        onResponse(r2)
-                .statusEquals(Response.Status.BAD_REQUEST)
+                .post("{\"id\":\"John\"}")
+                .wasBadRequest()
                 // TODO: DB columns exposed in the message
                 .bodyEquals("{\"success\":false,\"message\":\"Can't create 'E20' with id {name:John} - already exists\"}");
     }
@@ -59,21 +48,16 @@ public class POST_NaturalIdIT extends JerseyAndDerbyCase {
     @Test
     public void testMultiId() {
 
-        Response r1 = target("/multi-id")
+        tester.target("/multi-id")
                 .queryParam("exclude", "description")
-                .request().post(Entity.json("{\"id\":{\"age\":18,\"name\":\"John\"}}"));
-
-        onResponse(r1)
+                .post("{\"id\":{\"age\":18,\"name\":\"John\"}}")
                 .wasCreated()
                 .bodyEquals(1, "{\"id\":{\"age\":18,\"name\":\"John\"},\"age\":18,\"name\":\"John\"}");
 
-        e21().matcher().eq("name", "John").eq("age", 18).assertOneMatch();
+        tester.e21().matcher().eq("name", "John").eq("age", 18).assertOneMatch();
 
-        Response r2 = target("/multi-id").queryParam("exclude", "description")
-                .request()
-                .post(Entity.json("{\"id\":{\"age\":18,\"name\":\"John\"}}"));
-
-        onResponse(r2)
+        tester.target("/multi-id").queryParam("exclude", "description")
+                .post("{\"id\":{\"age\":18,\"name\":\"John\"}}")
                 .statusEquals(Response.Status.BAD_REQUEST)
                 .bodyEquals("{\"success\":false,\"message\":\"Can't create 'E21' with id {name:John,age:18} - already exists\"}");
     }

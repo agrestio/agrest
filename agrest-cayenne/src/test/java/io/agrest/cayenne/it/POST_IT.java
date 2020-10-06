@@ -3,27 +3,19 @@ package io.agrest.cayenne.it;
 import io.agrest.Ag;
 import io.agrest.DataResponse;
 import io.agrest.SimpleResponse;
+import io.agrest.cayenne.unit.CayenneAgTester;
 import io.agrest.cayenne.unit.JerseyAndDerbyCase;
 import io.agrest.constraints.Constraint;
-
-import io.agrest.it.fixture.cayenne.E16;
-import io.agrest.it.fixture.cayenne.E17;
-import io.agrest.it.fixture.cayenne.E19;
-import io.agrest.it.fixture.cayenne.E2;
-import io.agrest.it.fixture.cayenne.E3;
-import io.agrest.it.fixture.cayenne.E4;
-import io.agrest.it.fixture.cayenne.E8;
-import org.junit.BeforeClass;
+import io.agrest.it.fixture.cayenne.*;
+import io.bootique.junit5.BQTestTool;
 import org.junit.jupiter.api.Test;
 
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.QueryParam;
-import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.Configuration;
 import javax.ws.rs.core.Context;
-import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import java.util.HashMap;
 import java.util.List;
@@ -33,61 +25,48 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class POST_IT extends JerseyAndDerbyCase {
 
-    @BeforeClass
-    public static void startTestRuntime() {
-        startTestRuntime(Resource.class);
-    }
-
-    @Override
-    protected Class<?>[] testEntities() {
-        return new Class[]{E2.class, E3.class, E4.class, E8.class, E16.class, E17.class, E19.class};
-    }
+    @BQTestTool
+    static final CayenneAgTester tester = tester(Resource.class)
+            .entities(E2.class, E3.class, E4.class, E8.class, E16.class, E17.class, E19.class)
+            .build();
 
     @Test
     public void test() {
 
-        Response r1 = target("/e4").request().post(Entity.json("{\"cVarchar\":\"zzz\"}"));
-        onResponse(r1)
+        tester.target("/e4").post("{\"cVarchar\":\"zzz\"}")
                 .wasCreated()
                 .replaceId("RID")
                 .bodyEquals(1, "{\"id\":RID,\"cBoolean\":null,\"cDate\":null,\"cDecimal\":null,\"cInt\":null,"
                         + "\"cTime\":null,\"cTimestamp\":null,\"cVarchar\":\"zzz\"}");
 
-        e4().matcher().assertOneMatch();
-        e4().matcher().eq("c_varchar", "zzz").assertOneMatch();
+        tester.e4().matcher().assertOneMatch();
+        tester.e4().matcher().eq("c_varchar", "zzz").assertOneMatch();
 
-        Response r2 = target("/e4").request().post(Entity.json("{\"cVarchar\":\"TTTT\"}"));
-        onResponse(r2)
+        tester.target("/e4").post("{\"cVarchar\":\"TTTT\"}")
                 .wasCreated()
                 .replaceId("RID")
                 .bodyEquals(1, "{\"id\":RID,\"cBoolean\":null,\"cDate\":null,\"cDecimal\":null,\"cInt\":null,"
                         + "\"cTime\":null,\"cTimestamp\":null,\"cVarchar\":\"TTTT\"}");
 
-        e4().matcher().assertMatches(2);
-        e4().matcher().eq("c_varchar", "TTTT").assertOneMatch();
+        tester.e4().matcher().assertMatches(2);
+        tester.e4().matcher().eq("c_varchar", "TTTT").assertOneMatch();
     }
 
     @Test
     public void testCompoundId() {
 
-        Response r = target("/e17")
+        tester.target("/e17")
                 .queryParam("id1", 1)
                 .queryParam("id2", 1)
-                .request()
-                .post(Entity.json("{\"name\":\"xxx\"}"));
-
-        onResponse(r)
+                .post("{\"name\":\"xxx\"}")
                 .wasCreated()
                 .bodyEquals(1, "{\"id\":{\"id1\":1,\"id2\":1},\"id1\":1,\"id2\":1,\"name\":\"xxx\"}");
     }
 
     @Test
     public void testDateTime() {
-        Response r = target("e16")
-                .request()
-                .post(Entity.json("{\"cDate\":\"2015-03-14\", \"cTime\":\"T19:00:00\", \"cTimestamp\":\"2015-03-14T19:00:00.000\"}"));
-
-        onResponse(r)
+        tester.target("e16")
+                .post("{\"cDate\":\"2015-03-14\", \"cTime\":\"T19:00:00\", \"cTimestamp\":\"2015-03-14T19:00:00.000\"}")
                 .wasCreated()
                 // TODO: why is time returned back without a "T" prefix?
                 .bodyEquals(1, "{\"id\":1,\"cDate\":\"2015-03-14\",\"cTime\":\"19:00:00\",\"cTimestamp\":\"2015-03-14T19:00:00\"}");
@@ -96,16 +75,13 @@ public class POST_IT extends JerseyAndDerbyCase {
     @Test
     public void testSync_NoData() {
 
-        Response r = target("/e4/sync")
-                .request()
-                .post(Entity.json("{\"cVarchar\":\"zzz\"}"));
-
-        onResponse(r)
+        tester.target("/e4/sync")
+                .post("{\"cVarchar\":\"zzz\"}")
                 .wasCreated()
                 .bodyEquals("{\"success\":true}");
 
-        e4().matcher().assertOneMatch();
-        e4().matcher().eq("c_varchar", "zzz").assertOneMatch();
+        tester.e4().matcher().assertOneMatch();
+        tester.e4().matcher().eq("c_varchar", "zzz").assertOneMatch();
     }
 
     @Test
@@ -113,16 +89,13 @@ public class POST_IT extends JerseyAndDerbyCase {
 
         // endpoint constraint allows "name" and "id"
 
-        Response r = target("/e8/w/constrainedid/578")
-                .request()
-                .post(Entity.json("{\"name\":\"zzz\"}"));
-
-        onResponse(r)
+        tester.target("/e8/w/constrainedid/578")
+                .post("{\"name\":\"zzz\"}")
                 .wasCreated()
                 .bodyEquals("{\"success\":true}");
 
-        e8().matcher().assertOneMatch();
-        e8().matcher().eq("id", 578).eq("name", "zzz").assertOneMatch();
+        tester.e8().matcher().assertOneMatch();
+        tester.e8().matcher().eq("id", 578).eq("name", "zzz").assertOneMatch();
     }
 
     @Test
@@ -130,24 +103,19 @@ public class POST_IT extends JerseyAndDerbyCase {
 
         // endpoint constraint allows "name", but not "id"
 
-        Response r = target("/e8/w/constrainedidblocked/578")
-                .request()
-                .post(Entity.json("{\"name\":\"zzz\"}"));
-
-        onResponse(r)
-                .statusEquals(Response.Status.BAD_REQUEST)
+        tester.target("/e8/w/constrainedidblocked/578")
+                .post("{\"name\":\"zzz\"}")
+                .wasBadRequest()
                 .bodyEquals("{\"success\":false,\"message\":\"Setting ID explicitly is not allowed: {id=578}\"}");
 
-        e8().matcher().assertNoMatches();
+        tester.e8().matcher().assertNoMatches();
     }
 
     @Test
     public void testWriteConstraints1() {
 
-        Response r = target("/e3/w/constrained").request()
-                .post(Entity.json("{\"name\":\"zzz\"}"));
-
-        onResponse(r)
+        tester.target("/e3/w/constrained")
+                .post("{\"name\":\"zzz\"}")
                 .wasCreated()
                 .replaceId("RID")
                 .bodyEquals(1, "{\"id\":RID,\"name\":\"zzz\",\"phoneNumber\":null}");
@@ -156,20 +124,19 @@ public class POST_IT extends JerseyAndDerbyCase {
     @Test
     public void testWriteConstraints2() {
 
-        Response r = target("/e3/w/constrained").request()
-                .post(Entity.json("{\"name\":\"zzz\",\"phoneNumber\":\"12345\"}"));
-
-        // writing phone number is not allowed, so it was ignored
-        onResponse(r)
+        tester.target("/e3/w/constrained")
+                .post("{\"name\":\"zzz\",\"phoneNumber\":\"12345\"}")
                 .wasCreated()
                 .replaceId("RID")
+                // writing phone number is not allowed, so it was ignored
                 .bodyEquals(1, "{\"id\":RID,\"name\":\"zzz\",\"phoneNumber\":null}");
 
         // TODO: can't use matcher for NULLs until BQ 1.1 upgrade (because of https://github.com/bootique/bootique-jdbc/issues/91 )
         //  so using select...
 
-        e3().matcher().assertOneMatch();
-        List<String> phones = e3()
+        tester.e3().matcher().assertOneMatch();
+        List<String> phones = tester
+                .e3()
                 .selectStatement(rs -> rs.getString(1)).append("SELECT phone_number FROM utest.e3")
                 .select(100);
         assertEquals(1, phones.size());
@@ -179,10 +146,8 @@ public class POST_IT extends JerseyAndDerbyCase {
     @Test
     public void testReadConstraints1() {
 
-        Response r = target("/e3/constrained").request()
-                .post(Entity.json("{\"name\":\"zzz\"}"));
-
-        onResponse(r)
+        tester.target("/e3/constrained")
+                .post("{\"name\":\"zzz\"}")
                 .wasCreated()
                 .replaceId("RID")
                 .bodyEquals(1, "{\"id\":RID,\"name\":\"zzz\"}");
@@ -193,29 +158,23 @@ public class POST_IT extends JerseyAndDerbyCase {
 
         // writing "phoneNumber" is allowed, but reading is not ... must be in DB, but not in response
 
-        Response r = target("/e3/constrained")
+        tester.target("/e3/constrained")
                 .queryParam("include", "name")
                 .queryParam("include", "phoneNumber")
-                .request()
-                .post(Entity.json("{\"name\":\"zzz\",\"phoneNumber\":\"123456\"}"));
-
-        onResponse(r)
+                .post("{\"name\":\"zzz\",\"phoneNumber\":\"123456\"}")
                 .wasCreated()
                 .bodyEquals(1, "{\"name\":\"zzz\"}");
 
-        e3().matcher().assertOneMatch();
-        e3().matcher().eq("name", "zzz").eq("phone_number", "123456").assertOneMatch();
+        tester.e3().matcher().assertOneMatch();
+        tester.e3().matcher().eq("name", "zzz").eq("phone_number", "123456").assertOneMatch();
     }
 
     @Test
     public void testReadConstraints_DisallowRelated() {
 
-        Response r = target("/e3/constrained")
+        tester.target("/e3/constrained")
                 .queryParam("include", E3.E2.getName())
-                .request()
-                .post(Entity.json("{\"name\":\"zzz\"}"));
-
-        onResponse(r)
+                .post("{\"name\":\"zzz\"}")
                 .wasCreated()
                 .replaceId("RID")
                 .bodyEquals(1, "{\"id\":RID,\"name\":\"zzz\"}");
@@ -225,42 +184,37 @@ public class POST_IT extends JerseyAndDerbyCase {
     @Test
     public void testToOne() {
 
-        e2().insertColumns("id_", "name")
+        tester.e2().insertColumns("id_", "name")
                 .values(1, "xxx")
                 .values(8, "yyy").exec();
 
-        Response r = target("/e3")
-                .request()
-                .post(Entity.json("{\"e2\":8,\"name\":\"MM\"}"));
-
-        onResponse(r)
+        tester.target("/e3")
+                .post("{\"e2\":8,\"name\":\"MM\"}")
                 .wasCreated()
                 .replaceId("RID")
                 .bodyEquals(1, "{\"id\":RID,\"name\":\"MM\",\"phoneNumber\":null}");
 
-        e3().matcher().assertOneMatch();
-        e3().matcher().eq("e2_id", 8).eq("name", "MM").assertOneMatch();
+        tester.e3().matcher().assertOneMatch();
+        tester.e3().matcher().eq("e2_id", 8).eq("name", "MM").assertOneMatch();
     }
 
     @Test
     public void testToOne_Null() {
 
-        Response r = target("/e3")
-                .request()
-                .post(Entity.json("{\"e2_id\":null,\"name\":\"MM\"}"));
-
-        onResponse(r)
+        tester.target("/e3")
+                .post("{\"e2_id\":null,\"name\":\"MM\"}")
                 .wasCreated()
                 .replaceId("RID")
                 .bodyEquals(1, "{\"id\":RID,\"name\":\"MM\",\"phoneNumber\":null}");
 
-        e3().matcher().assertOneMatch();
+        tester.e3().matcher().assertOneMatch();
 
         // TODO: can't use matcher for NULLs until BQ 1.1 upgrade (because of https://github.com/bootique/bootique-jdbc/issues/91 )
         //  so using select...
 
-        e3().matcher().assertOneMatch();
-        List<String> fks = e3()
+        tester.e3().matcher().assertOneMatch();
+
+        List<String> fks = tester.e3()
                 .selectStatement(rs -> rs.getString(1)).append("SELECT e2_id FROM utest.e3")
                 .select(100);
         assertEquals(1, fks.size());
@@ -270,46 +224,37 @@ public class POST_IT extends JerseyAndDerbyCase {
     @Test
     public void testToOne_BadFK() {
 
-        Response r = target("/e3")
-                .request()
-                .post(Entity.json("{\"e2\":15,\"name\":\"MM\"}"));
-
-        onResponse(r)
-                .statusEquals(Response.Status.NOT_FOUND)
+        tester.target("/e3")
+                .post("{\"e2\":15,\"name\":\"MM\"}")
+                .wasNotFound()
                 .bodyEquals("{\"success\":false,\"message\":\"Related object 'E2' with ID '[15]' is not found\"}");
 
-        e3().matcher().assertNoMatches();
+        tester.e3().matcher().assertNoMatches();
     }
 
     @Test
     public void testBulk() {
 
-        Response r = target("/e3/")
+        tester.target("/e3/")
                 .queryParam("exclude", "id")
                 .queryParam("include", E3.NAME.getName())
-                .request()
-                .post(Entity.json("[{\"name\":\"aaa\"},{\"name\":\"zzz\"},{\"name\":\"bbb\"},{\"name\":\"yyy\"}]"));
-
-        // ordering from request must be preserved...
-        onResponse(r)
+                .post("[{\"name\":\"aaa\"},{\"name\":\"zzz\"},{\"name\":\"bbb\"},{\"name\":\"yyy\"}]")
                 .wasCreated()
+                // ordering from request must be preserved...
                 .bodyEquals(4, "{\"name\":\"aaa\"},{\"name\":\"zzz\"},{\"name\":\"bbb\"},{\"name\":\"yyy\"}");
     }
 
     @Test
     public void testToMany() {
 
-        e3().insertColumns("id_", "name")
+        tester.e3().insertColumns("id_", "name")
                 .values(1, "xxx")
                 .values(8, "yyy").exec();
 
-        Response r = target("/e2")
+        Long id = tester.target("/e2")
                 .queryParam("include", E2.E3S.getName())
                 .queryParam("exclude", E2.ADDRESS.getName(), E2.E3S.dot(E3.NAME).getName(), E2.E3S.dot(E3.PHONE_NUMBER).getName())
-                .request()
-                .post(Entity.json("{\"e3s\":[1,8],\"name\":\"MM\"}"));
-
-        Long id = onResponse(r)
+                .post("{\"e3s\":[1,8],\"name\":\"MM\"}")
                 .wasCreated()
                 .replaceId("RID")
                 .bodyEquals(1, "{\"id\":RID,\"e3s\":[{\"id\":1},{\"id\":8}],\"name\":\"MM\"}")
@@ -317,7 +262,7 @@ public class POST_IT extends JerseyAndDerbyCase {
 
         assertNotNull(id);
 
-        e3().matcher().eq("e2_id", id).assertMatches(2);
+        tester.e3().matcher().eq("e2_id", id).assertMatches(2);
     }
 
     @Test
@@ -325,12 +270,9 @@ public class POST_IT extends JerseyAndDerbyCase {
 
         String base64Encoded = "c29tZVZhbHVlMTIz"; // someValue123
 
-        Response response = target("/e19")
+        tester.target("/e19")
                 .queryParam("include", E19.GUID.getName())
-                .request()
-                .post(Entity.json("{\"guid\":\"" + base64Encoded + "\"}"));
-
-        onResponse(response)
+                .post("{\"guid\":\"" + base64Encoded + "\"}")
                 .wasCreated()
                 .bodyEquals(1, "{\"guid\":\"" + base64Encoded + "\"}");
     }
@@ -338,13 +280,10 @@ public class POST_IT extends JerseyAndDerbyCase {
     @Test
     public void testFloatProperty() {
         String data = "{\"floatObject\":0,\"floatPrimitive\":0}";
-        Response response = target("/e19").path("float")
+        tester.target("/e19").path("float")
                 .queryParam("include", "floatObject")
                 .queryParam("include", "floatPrimitive")
-                .request()
-                .post(Entity.json(data));
-
-        onResponse(response)
+                .post(data)
                 .wasCreated()
                 .bodyEquals(1, "{\"floatObject\":0.0,\"floatPrimitive\":0.0}");
     }

@@ -4,39 +4,41 @@ import io.agrest.Ag;
 import io.agrest.MetadataResponse;
 import io.agrest.annotation.AgResource;
 import io.agrest.annotation.LinkType;
+import io.agrest.cayenne.unit.CayenneAgTester;
 import io.agrest.cayenne.unit.JerseyAndDerbyCase;
 import io.agrest.it.fixture.cayenne.E5;
-import org.junit.BeforeClass;
+import io.agrest.runtime.AgBuilder;
+import io.bootique.junit5.BQTestTool;
 import org.junit.jupiter.api.Test;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.Configuration;
 import javax.ws.rs.core.Context;
-import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class GET_Metadata_CustomBaseIT extends JerseyAndDerbyCase {
 
-    @BeforeClass
-    public static void startTestRuntime() {
-        startTestRuntime(ab -> ab.baseUrl("https://example.org"), Resource.class);
-    }
+    @BQTestTool
+    static final CayenneAgTester tester = tester(Resource.class)
 
-    @Override
-    protected Class<?>[] testEntities() {
-        return new Class[0];
+            .agCustomizer(GET_Metadata_CustomBaseIT::customize)
+            .build();
+
+    private static AgBuilder customize(AgBuilder builder) {
+        return builder.baseUrl("https://example.org");
     }
 
     @Test
     public void testGetMetadataForResource() {
 
-        Response r = target("/r1/meta").request().get();
-        assertEquals(Response.Status.OK.getStatusCode(), r.getStatus());
+        String json = tester.target("/r1/meta")
+                .get()
+                .wasSuccess()
+                .getContentAsString();
 
-        String json = r.readEntity(String.class);
         assertTrue(json.contains("{\"href\":\"https://example.org/r1/meta\",\"type\":\"metadata\",\"operations\":[{\"method\":\"GET\"}]}"));
     }
 

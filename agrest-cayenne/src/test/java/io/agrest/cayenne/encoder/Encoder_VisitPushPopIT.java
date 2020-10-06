@@ -1,16 +1,16 @@
 package io.agrest.cayenne.encoder;
 
 import io.agrest.DataResponse;
-
+import io.agrest.cayenne.unit.CayenneAgTester;
 import io.agrest.cayenne.unit.JerseyAndDerbyCase;
 import io.agrest.encoder.Encoder;
 import io.agrest.encoder.EncoderVisitor;
 import io.agrest.it.fixture.cayenne.E2;
 import io.agrest.it.fixture.cayenne.E3;
 import io.agrest.it.fixture.cayenne.E5;
+import io.bootique.junit5.BQTestTool;
 import org.apache.cayenne.Cayenne;
 import org.apache.cayenne.Persistent;
-import org.junit.BeforeClass;
 import org.junit.jupiter.api.Test;
 
 import javax.ws.rs.core.MultivaluedHashMap;
@@ -20,41 +20,36 @@ import java.util.ArrayList;
 import java.util.Deque;
 import java.util.List;
 
-import static java.util.stream.Collectors.joining;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 public class Encoder_VisitPushPopIT extends JerseyAndDerbyCase {
 
-    @BeforeClass
-    public static void startTestRuntime() {
-        JerseyAndDerbyCase.startTestRuntime();
-    }
+    @BQTestTool
+    static final CayenneAgTester tester = tester()
 
-    @Override
-    protected Class<?>[] testEntities() {
-        return new Class[]{E2.class, E3.class, E5.class};
-    }
+            .entities(E2.class, E3.class, E5.class)
+            .build();
 
     private String responseContents(DataResponse<?> response, PushPopVisitor visitor) {
         response.getEncoder().visitEntities(response.getObjects(), visitor);
-        return visitor.ids.stream().collect(joining(";"));
+        return String.join(";", visitor.ids);
     }
 
     @Test
     public void testVisit_Tree() {
 
-        e2().insertColumns("id_", "name")
+        tester.e2().insertColumns("id_", "name")
                 .values(1, "xxx")
                 .values(2, "yyy")
                 .values(3, "zzz").exec();
 
-        e5().insertColumns("id", "name")
+        tester.e5().insertColumns("id", "name")
                 .values(1, "xxx")
                 .values(2, "yyy").exec();
 
-        e3().insertColumns("id_", "name", "e2_id", "e5_id")
+        tester.e3().insertColumns("id_", "name", "e2_id", "e5_id")
                 .values(7, "zzz", 2, 1)
                 .values(8, "yyy", 1, 1)
                 .values(9, "zzz", 1, 2).exec();
@@ -66,7 +61,7 @@ public class Encoder_VisitPushPopIT extends JerseyAndDerbyCase {
         UriInfo mockUri = mock(UriInfo.class);
         when(mockUri.getQueryParameters()).thenReturn(params);
 
-        DataResponse<E2> response = ag().select(E2.class).uri(mockUri).get();
+        DataResponse<E2> response = tester.ag().select(E2.class).uri(mockUri).get();
 
         PushPopVisitor visitor = new PushPopVisitor();
 
@@ -76,16 +71,16 @@ public class Encoder_VisitPushPopIT extends JerseyAndDerbyCase {
     @Test
     public void testVisit_Tree_MapBy() {
 
-        e2().insertColumns("id_", "name")
+        tester.e2().insertColumns("id_", "name")
                 .values(1, "xxx")
                 .values(2, "yyy")
                 .values(3, "zzz").exec();
 
-        e5().insertColumns("id", "name")
+        tester.e5().insertColumns("id", "name")
                 .values(1, "xxx")
                 .values(2, "yyy").exec();
 
-        e3().insertColumns("id_", "name", "e2_id", "e5_id")
+        tester.e3().insertColumns("id_", "name", "e2_id", "e5_id")
                 .values(7, "zzz", 2, 1)
                 .values(8, "yyy", 1, 1)
                 .values(9, "zzz", 1, 2).exec();
@@ -98,14 +93,14 @@ public class Encoder_VisitPushPopIT extends JerseyAndDerbyCase {
         UriInfo mockUri = mock(UriInfo.class);
         when(mockUri.getQueryParameters()).thenReturn(params);
 
-        DataResponse<E2> response = ag().select(E2.class).uri(mockUri).get();
+        DataResponse<E2> response = tester.ag().select(E2.class).uri(mockUri).get();
 
         PushPopVisitor visitor = new PushPopVisitor();
 
         assertEquals("E3:8;E3:9;E3:7", responseContents(response, visitor));
     }
 
-    class PushPopVisitor implements EncoderVisitor {
+    static class PushPopVisitor implements EncoderVisitor {
 
         String processPath = "e3s";
         Deque<String> stack = new ArrayDeque<>();

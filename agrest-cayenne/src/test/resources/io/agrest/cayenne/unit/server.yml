@@ -1,5 +1,0 @@
-jdbc:
-  ds:
-    driverClassName: org.apache.derby.jdbc.EmbeddedDriver
-    jdbcUrl: "jdbc:derby:target/derby/testdb0;create=true"
-

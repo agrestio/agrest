@@ -7,13 +7,15 @@ import io.agrest.MetadataResponse;
 import io.agrest.SimpleResponse;
 import io.agrest.annotation.AgResource;
 import io.agrest.annotation.LinkType;
+import io.agrest.cayenne.unit.CayenneAgTester;
 import io.agrest.cayenne.unit.JerseyAndDerbyCase;
 import io.agrest.constraints.Constraint;
 import io.agrest.it.fixture.cayenne.E15;
 import io.agrest.it.fixture.cayenne.E19;
 import io.agrest.it.fixture.cayenne.E5;
+import io.agrest.runtime.AgBuilder;
 import io.agrest.runtime.jackson.JacksonService;
-import org.junit.BeforeClass;
+import io.bootique.junit5.BQTestTool;
 import org.junit.jupiter.api.Test;
 
 import javax.ws.rs.DELETE;
@@ -22,47 +24,46 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Configuration;
 import javax.ws.rs.core.Context;
-import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 public class GET_Metadata_IT extends JerseyAndDerbyCase {
 
-    @BeforeClass
-    public static void startTestRuntime() {
-        startTestRuntime(ab -> ab.baseUrl("https://example.org"), E5Resource.class, E19Resource.class);
-    }
+    @BQTestTool
+    static final CayenneAgTester tester = tester(E5Resource.class, E19Resource.class)
 
-    @Override
-    protected Class<?>[] testEntities() {
-        return new Class[0];
+            .agCustomizer(GET_Metadata_IT::customize)
+            .build();
+
+    private static AgBuilder customize(AgBuilder builder) {
+        return builder.baseUrl("https://example.org");
     }
 
     @Test
     public void testGetMetadataForResource() {
 
-        Response r = target("/e5/metadata").request().get();
-
-        onSuccess(r).bodyEquals("{\"entity\":{\"name\":\"E5\"," +
-                "\"properties\":[" +
-                "{\"name\":\"date\",\"type\":\"date\",\"format\":\"date-time\"}," +
-                "{\"name\":\"e15s\",\"type\":\"E15\",\"relationship\":true,\"collection\":true}," +
-                "{\"name\":\"e3s\",\"type\":\"E3\",\"relationship\":true,\"collection\":true}," +
-                "{\"name\":\"name\",\"type\":\"string\"}]}," +
-                "\"links\":[" +
-                "{\"href\":\"https://example.org/e5\",\"type\":\"collection\",\"operations\":[{\"method\":\"GET\"}]}," +
-                "{\"href\":\"https://example.org/e5/metadata\",\"type\":\"metadata\",\"operations\":[{\"method\":\"GET\"}]}," +
-                "{\"href\":\"https://example.org/e5/metadata-constraints\",\"type\":\"metadata\",\"operations\":[{\"method\":\"GET\"}]}," +
-                "{\"href\":\"https://example.org/e5/{id}\",\"type\":\"item\"," +
-                "\"operations\":[{\"method\":\"DELETE\"},{\"method\":\"GET\"}]}]}");
+        tester.target("/e5/metadata")
+                .get()
+                .wasSuccess()
+                .bodyEquals("{\"entity\":{\"name\":\"E5\"," +
+                        "\"properties\":[" +
+                        "{\"name\":\"date\",\"type\":\"date\",\"format\":\"date-time\"}," +
+                        "{\"name\":\"e15s\",\"type\":\"E15\",\"relationship\":true,\"collection\":true}," +
+                        "{\"name\":\"e3s\",\"type\":\"E3\",\"relationship\":true,\"collection\":true}," +
+                        "{\"name\":\"name\",\"type\":\"string\"}]}," +
+                        "\"links\":[" +
+                        "{\"href\":\"https://example.org/e5\",\"type\":\"collection\",\"operations\":[{\"method\":\"GET\"}]}," +
+                        "{\"href\":\"https://example.org/e5/metadata\",\"type\":\"metadata\",\"operations\":[{\"method\":\"GET\"}]}," +
+                        "{\"href\":\"https://example.org/e5/metadata-constraints\",\"type\":\"metadata\",\"operations\":[{\"method\":\"GET\"}]}," +
+                        "{\"href\":\"https://example.org/e5/{id}\",\"type\":\"item\"," +
+                        "\"operations\":[{\"method\":\"DELETE\"},{\"method\":\"GET\"}]}]}");
     }
 
     @Test
     public void testMetadata_PropertyTypes() {
 
-        Response r = target("/e19/metadata").request().get();
-        String body = onSuccess(r).getContentAsString();
+        String body = tester.target("/e19/metadata").get().wasSuccess().getContentAsString();
 
         JsonNode jsonNode = new JacksonService().parseJson(body);
         assertEquals("[{\"name\":\"bigDecimal\",\"type\":\"number\"}," +
@@ -94,16 +95,16 @@ public class GET_Metadata_IT extends JerseyAndDerbyCase {
     @Test
     public void testGetMetadata_Constraints() {
 
-        Response r = target("/e5/metadata-constraints").request().get();
-
-        String metadata = onSuccess(r).getContentAsString();
+        String metadata = tester.target("/e5/metadata-constraints").get().wasSuccess().getContentAsString();
 
         assertTrue(metadata.contains("{\"name\":\"name\",\"type\":\"string\"}"));
         assertTrue(metadata.contains("{\"name\":\"e15s\",\"type\":\"E15\",\"relationship\":true,\"collection\":true}"));
-        assertFalse("Constraint was not applied",
-                metadata.contains("{\"name\":\"date\",\"type\":\"date\",\"format\":\"date-time\"}"));
-        assertFalse("Constraint was not applied",
-                metadata.contains("{\"name\":\"e2s\",\"type\":\"E3\",\"relationship\":true,\"collection\":true}"));
+        assertFalse(
+                metadata.contains("{\"name\":\"date\",\"type\":\"date\",\"format\":\"date-time\"}"),
+                "Constraint was not applied");
+        assertFalse(
+                metadata.contains("{\"name\":\"e2s\",\"type\":\"E3\",\"relationship\":true,\"collection\":true}"),
+                "Constraint was not applied");
     }
 
     @Path("e5")

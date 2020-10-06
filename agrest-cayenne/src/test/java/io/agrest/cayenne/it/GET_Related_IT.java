@@ -2,16 +2,11 @@ package io.agrest.cayenne.it;
 
 import io.agrest.Ag;
 import io.agrest.DataResponse;
+import io.agrest.cayenne.unit.CayenneAgTester;
 import io.agrest.cayenne.unit.JerseyAndDerbyCase;
 import io.agrest.constraints.Constraint;
-import io.agrest.it.fixture.cayenne.E12;
-import io.agrest.it.fixture.cayenne.E12E13;
-import io.agrest.it.fixture.cayenne.E13;
-import io.agrest.it.fixture.cayenne.E17;
-import io.agrest.it.fixture.cayenne.E18;
-import io.agrest.it.fixture.cayenne.E2;
-import io.agrest.it.fixture.cayenne.E3;
-import org.junit.BeforeClass;
+import io.agrest.it.fixture.cayenne.*;
+import io.bootique.junit5.BQTestTool;
 import org.junit.jupiter.api.Test;
 
 import javax.ws.rs.GET;
@@ -20,30 +15,17 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Configuration;
 import javax.ws.rs.core.Context;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriInfo;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 public class GET_Related_IT extends JerseyAndDerbyCase {
 
-    @BeforeClass
-    public static void startTestRuntime() {
-        startTestRuntime(Resource.class);
-    }
-
-    @Override
-    protected Class<?>[] testEntities() {
-        return new Class[]{E2.class, E3.class, E17.class, E18.class};
-    }
-
-    @Override
-    protected Class<?>[] testEntitiesAndDependencies() {
-        return new Class[]{E12.class, E13.class};
-    }
+    @BQTestTool
+    static final CayenneAgTester tester = tester(Resource.class)
+            .entities(E2.class, E3.class, E17.class, E18.class)
+            .entitiesAndDependencies(E12.class, E13.class)
+            .build();
 
     @Test
     public void testToMany_Constrained() {
@@ -51,53 +33,49 @@ public class GET_Related_IT extends JerseyAndDerbyCase {
         // make sure we have e3s for more than one e2 - this will help us
         // confirm that relationship queries are properly filtered.
 
-        e2().insertColumns("id_", "name")
+        tester.e2().insertColumns("id_", "name")
                 .values(1, "xxx")
                 .values(2, "yyy").exec();
 
-        e3().insertColumns("id_", "name", "e2_id")
+        tester.e3().insertColumns("id_", "name", "e2_id")
                 .values(7, "zzz", 2)
                 .values(8, "yyy", 1)
                 .values(9, "zzz", 1).exec();
 
-        Response r = target("/e2/constraints/1/e3s").request().get();
-        onSuccess(r).bodyEquals(2, "{\"id\":8},{\"id\":9}");
+        tester.target("/e2/constraints/1/e3s").get().wasSuccess().bodyEquals(2, "{\"id\":8},{\"id\":9}");
     }
 
     @Test
     public void testToMany_CompoundId() {
 
-        e17().insertColumns("id1", "id2", "name")
+        tester.e17().insertColumns("id1", "id2", "name")
                 .values(1, 1, "aaa")
                 .values(2, 2, "bbb").exec();
 
-        e18().insertColumns("id", "e17_id1", "e17_id2", "name")
+        tester.e18().insertColumns("id", "e17_id1", "e17_id2", "name")
                 .values(1, 1, 1, "xxx")
                 .values(2, 1, 1, "yyy")
                 .values(3, 2, 2, "zzz").exec();
 
-        Response r = target("/e17/e18s")
+        tester.target("/e17/e18s")
                 .matrixParam("parentId1", 1)
                 .matrixParam("parentId2", 1)
-                .request().get();
-
-        onSuccess(r).bodyEquals(2, "{\"id\":1,\"name\":\"xxx\"},{\"id\":2,\"name\":\"yyy\"}");
+                .get().wasSuccess().bodyEquals(2, "{\"id\":1,\"name\":\"xxx\"},{\"id\":2,\"name\":\"yyy\"}");
     }
 
     @Test
     public void testValidRel_ToOne_CompoundId() {
 
-        e17().insertColumns("id1", "id2", "name")
+        tester.e17().insertColumns("id1", "id2", "name")
                 .values(1, 1, "aaa")
                 .values(2, 2, "bbb").exec();
 
-        e18().insertColumns("id", "e17_id1", "e17_id2", "name")
+        tester.e18().insertColumns("id", "e17_id1", "e17_id2", "name")
                 .values(1, 1, 1, "xxx")
                 .values(2, 1, 1, "yyy")
                 .values(3, 2, 2, "zzz").exec();
 
-        Response r = target("/e18/1").queryParam("include", E18.E17.getName()).request().get();
-        onSuccess(r)
+        tester.target("/e18/1").queryParam("include", E18.E17.getName()).get().wasSuccess()
                 .bodyEquals(1, "{\"id\":1,\"e17\":{\"id\":{\"id1\":1,\"id2\":1},\"id1\":1,\"id2\":1,\"name\":\"aaa\"},\"name\":\"xxx\"}");
     }
 
@@ -107,17 +85,16 @@ public class GET_Related_IT extends JerseyAndDerbyCase {
         // make sure we have e3s for more than one e2 - this will help us
         // confirm that relationship queries are properly filtered.
 
-        e2().insertColumns("id_", "name")
+        tester.e2().insertColumns("id_", "name")
                 .values(1, "xxx")
                 .values(2, "yyy").exec();
 
-        e3().insertColumns("id_", "name", "e2_id")
+        tester.e3().insertColumns("id_", "name", "e2_id")
                 .values(7, "zzz", 2)
                 .values(8, "yyy", 1)
                 .values(9, "zzz", 1).exec();
 
-        Response r = target("/e2/1/e3s").queryParam("include", "id").request().get();
-        onSuccess(r).bodyEquals(2, "{\"id\":8},{\"id\":9}");
+        tester.target("/e2/1/e3s").queryParam("include", "id").get().wasSuccess().bodyEquals(2, "{\"id\":8},{\"id\":9}");
     }
 
     @Test
@@ -126,50 +103,47 @@ public class GET_Related_IT extends JerseyAndDerbyCase {
         // make sure we have e3s for more than one e2 - this will help us
         // confirm that relationship queries are properly filtered.
 
-        e2().insertColumns("id_", "name")
+        tester.e2().insertColumns("id_", "name")
                 .values(1, "xxx")
                 .values(2, "yyy").exec();
 
-        e3().insertColumns("id_", "name", "e2_id")
+        tester.e3().insertColumns("id_", "name", "e2_id")
                 .values(7, "zzz", 2)
                 .values(8, "yyy", 1)
                 .values(9, "zzz", 1).exec();
 
-        Response r = target("/e3/7/e2").queryParam("include", "id").request().get();
-        onSuccess(r).bodyEquals(1, "{\"id\":2}");
+        tester.target("/e3/7/e2").queryParam("include", "id").get().wasSuccess().bodyEquals(1, "{\"id\":2}");
     }
 
     @Test
     public void testInvalidRel() {
-        Response r = target("/e2/1/dummyrel").request().get();
-        onResponse(r)
-                .statusEquals(Status.BAD_REQUEST)
+        tester.target("/e2/1/dummyrel").get()
+                .wasBadRequest()
                 .bodyEquals("{\"success\":false,\"message\":\"Invalid relationship: 'dummyrel'\"}");
     }
 
     @Test
     public void testToManyJoin() {
 
-        e12().insertColumns("id")
+        tester.e12().insertColumns("id")
                 .values(11)
                 .values(12).exec();
 
-        e13().insertColumns("id")
+        tester.e13().insertColumns("id")
                 .values(14)
                 .values(15)
                 .values(16).exec();
 
-        e12_13().insertColumns("e12_id", "e13_id")
+        tester.e12_13().insertColumns("e12_id", "e13_id")
                 .values(11, 14)
                 .values(12, 16)
                 .exec();
 
         // excluding ID - can't render multi-column IDs yet
-        Response r1 = target("/e12/12/e1213").queryParam("exclude", "id").queryParam("include", "e12")
-                .queryParam("include", "e13").request().get();
-
-        assertEquals(Status.OK.getStatusCode(), r1.getStatus());
-        assertEquals("{\"data\":[{\"e12\":{\"id\":12},\"e13\":{\"id\":16}}],\"total\":1}", r1.readEntity(String.class));
+        tester.target("/e12/12/e1213").queryParam("exclude", "id").queryParam("include", "e12")
+                .queryParam("include", "e13").get()
+                .wasSuccess()
+                .bodyEquals(1, "{\"e12\":{\"id\":12},\"e13\":{\"id\":16}}");
     }
 
     @Path("")

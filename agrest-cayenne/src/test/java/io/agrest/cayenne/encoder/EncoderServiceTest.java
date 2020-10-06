@@ -1,11 +1,7 @@
 package io.agrest.cayenne.encoder;
 
 import com.fasterxml.jackson.core.JsonGenerator;
-import io.agrest.DataResponse;
-import io.agrest.NestedResourceEntity;
-import io.agrest.ResourceEntity;
-import io.agrest.RootResourceEntity;
-import io.agrest.SimpleObjectId;
+import io.agrest.*;
 import io.agrest.cayenne.unit.TestWithCayenneMapping;
 import io.agrest.encoder.Encoder;
 import io.agrest.encoder.Encoders;
@@ -14,30 +10,27 @@ import io.agrest.it.fixture.cayenne.E1;
 import io.agrest.it.fixture.cayenne.E19;
 import io.agrest.it.fixture.cayenne.E2;
 import io.agrest.it.fixture.cayenne.E3;
-import io.agrest.runtime.encoder.AttributeEncoderFactory;
-import io.agrest.runtime.encoder.EncoderService;
-import io.agrest.runtime.encoder.IAttributeEncoderFactory;
-import io.agrest.runtime.encoder.IStringConverterFactory;
-import io.agrest.runtime.encoder.ValueEncodersProvider;
+import io.agrest.runtime.encoder.*;
 import io.agrest.runtime.semantics.RelationshipMapper;
 import org.apache.cayenne.Cayenne;
 import org.apache.cayenne.ObjectContext;
 import org.apache.cayenne.ObjectId;
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.Mockito.mock;
 
 public class EncoderServiceTest extends TestWithCayenneMapping {
 
     private EncoderService encoderService;
 
-    @Before
+    @BeforeEach
     public void before() {
         IAttributeEncoderFactory aef = new AttributeEncoderFactory(new ValueEncodersProvider(Collections.emptyMap()).get());
         IStringConverterFactory stringConverterFactory = mock(IStringConverterFactory.class);

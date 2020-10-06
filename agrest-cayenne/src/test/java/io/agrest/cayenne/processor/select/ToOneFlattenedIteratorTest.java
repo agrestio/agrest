@@ -4,7 +4,7 @@ import io.agrest.it.fixture.cayenne.E2;
 import io.agrest.it.fixture.cayenne.E3;
 import org.apache.cayenne.DataObject;
 import org.apache.cayenne.ObjectContext;
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -12,21 +12,21 @@ import java.util.Collections;
 import java.util.List;
 
 import static java.util.Arrays.asList;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.mockito.Mockito.mock;
 
 public class ToOneFlattenedIteratorTest {
 
     private ObjectContext context;
 
-    @Before
+    @BeforeEach
     public void before() {
         context = mock(ObjectContext.class);
     }
 
     @Test
     public void testIterator_Empty() {
-
         List<E3> e3s = Collections.emptyList();
         ToOneFlattenedIterator<DataObject> it = new ToOneFlattenedIterator<>(e3s.iterator(), E3.E2.getName());
         assertFalse(it.hasNext());

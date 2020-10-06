@@ -2,116 +2,105 @@ package io.agrest.cayenne.it;
 
 import io.agrest.Ag;
 import io.agrest.DataResponse;
-import io.agrest.runtime.processor.update.ByKeyObjectMapperFactory;
+import io.agrest.cayenne.unit.CayenneAgTester;
 import io.agrest.cayenne.unit.JerseyAndDerbyCase;
-import io.agrest.it.fixture.cayenne.E14;
-import io.agrest.it.fixture.cayenne.E15;
-import io.agrest.it.fixture.cayenne.E3;
-import io.agrest.it.fixture.cayenne.E7;
-import io.agrest.it.fixture.cayenne.E8;
-import org.junit.BeforeClass;
+import io.agrest.it.fixture.cayenne.*;
+import io.agrest.runtime.processor.update.ByKeyObjectMapperFactory;
+import io.bootique.junit5.BQTestTool;
 import org.junit.jupiter.api.Test;
 
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
-import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.Configuration;
 import javax.ws.rs.core.Context;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 public class PUT_Related_ByKeyIT extends JerseyAndDerbyCase {
 
-    @BeforeClass
-    public static void startTestRuntime() {
-        startTestRuntime(Resource.class);
-    }
-
-    @Override
-    protected Class<?>[] testEntities() {
-        return new Class[]{E7.class, E8.class, E14.class, E15.class};
-    }
+    @BQTestTool
+    static final CayenneAgTester tester = tester(Resource.class)
+            .entities(E7.class, E8.class, E14.class, E15.class)
+            .build();
 
     @Test
     public void testRelate_ToMany_MixedCollection() {
 
-        e8().insertColumns("id", "name")
+        tester.e8().insertColumns("id", "name")
                 .values(15, "xxx")
                 .values(16, "xxx").exec();
 
-        e7().insertColumns("id", "name", "e8_id")
+        tester.e7().insertColumns("id", "name", "e8_id")
                 .values(7, "zzz", 16)
                 .values(8, "yyy", 15)
                 .values(9, "aaa", 15).exec();
 
-        Response r1 = target("/e8/bykey/15/e7s")
-                .request()
-                .put(Entity.json("[  {\"name\":\"newname\"}, {\"name\":\"aaa\"} ]"));
+        tester.target("/e8/bykey/15/e7s")
+                .put("[  {\"name\":\"newname\"}, {\"name\":\"aaa\"} ]")
+                .wasSuccess()
+                .replaceId("XID")
+                .bodyEquals(2, "{\"id\":XID,\"name\":\"newname\"},{\"id\":9,\"name\":\"aaa\"}");
 
-        e7().matcher().assertMatches(4);
-        onSuccess(r1).replaceId("XID").bodyEquals(2, "{\"id\":XID,\"name\":\"newname\"},{\"id\":9,\"name\":\"aaa\"}");
+        tester.e7().matcher().assertMatches(4);
 
         // testing idempotency
 
-        Response r2 = target("/e8/bykey/15/e7s")
-                .request()
-                .put(Entity.json("[  {\"name\":\"newname\"}, {\"name\":\"aaa\"} ]"));
+        tester.target("/e8/bykey/15/e7s")
+                .put("[  {\"name\":\"newname\"}, {\"name\":\"aaa\"} ]")
+                .wasSuccess().replaceId("XID")
+                .bodyEquals(2,
+                        "{\"id\":XID,\"name\":\"newname\"}",
+                        "{\"id\":9,\"name\":\"aaa\"}");
 
-        e7().matcher().assertMatches(4);
-        onSuccess(r2).replaceId("XID").bodyEquals(2, "{\"id\":XID,\"name\":\"newname\"},{\"id\":9,\"name\":\"aaa\"}");
+        tester.e7().matcher().assertMatches(4);
     }
 
     @Test
     public void testRelate_ToMany_PropertyMapper() {
 
-        e8().insertColumns("id", "name")
+        tester.e8().insertColumns("id", "name")
                 .values(15, "xxx")
                 .values(16, "xxx").exec();
 
-        e7().insertColumns("id", "name", "e8_id")
+        tester.e7().insertColumns("id", "name", "e8_id")
                 .values(7, "zzz", 16)
                 .values(8, "yyy", 15)
                 .values(9, "aaa", 15).exec();
 
-        Response r1 = target("/e8/bypropkey/15/e7s").request()
-                .put(Entity.json("[  {\"name\":\"newname\"}, {\"name\":\"aaa\"} ]"));
+        tester.target("/e8/bypropkey/15/e7s")
+                .put("[  {\"name\":\"newname\"}, {\"name\":\"aaa\"} ]")
+                .wasSuccess().replaceId("XID")
+                .bodyEquals(2, "{\"id\":XID,\"name\":\"newname\"},{\"id\":9,\"name\":\"aaa\"}");
 
-        e7().matcher().assertMatches(4);
-        onSuccess(r1).replaceId("XID").bodyEquals(2, "{\"id\":XID,\"name\":\"newname\"},{\"id\":9,\"name\":\"aaa\"}");
+        tester.e7().matcher().assertMatches(4);
     }
 
     @Test
     public void testToMany_LongId() {
 
-        e15().insertColumns("long_id", "name")
+        tester.e15().insertColumns("long_id", "name")
                 .values(5L, "aaa")
                 .values(44L, "aaa").exec();
 
-        e14().insertColumns("long_id", "e15_id", "name")
+        tester.e14().insertColumns("long_id", "e15_id", "name")
                 .values(5L, 5L, "aaa")
                 .values(4L, 44L, "zzz")
                 .values(2L, 44L, "bbb")
                 .values(6L, 5L, "yyy").exec();
 
-        Response r1 = target("/e15/44/e14s").queryParam("exclude", "id").queryParam("include", E3.NAME.getName())
-                .request().put(Entity.json("[{\"id\":4,\"name\":\"zzz\"},{\"id\":11,\"name\":\"new\"}]"));
-        assertEquals(Status.OK.getStatusCode(), r1.getStatus());
+        tester.target("/e15/44/e14s").queryParam("exclude", "id").queryParam("include", E3.NAME.getName())
+                .put("[{\"id\":4,\"name\":\"zzz\"},{\"id\":11,\"name\":\"new\"}]")
+                .wasSuccess()
+                // update: ordering must be preserved...
+                .bodyEquals(2,
+                        "{\"id\":4,\"name\":\"zzz\",\"prettyName\":\"zzz_pretty\"}",
+                        "{\"id\":11,\"name\":\"new\",\"prettyName\":\"new_pretty\"}");
 
-        // update: ordering must be preserved...
-        assertEquals(
-                "{\"data\":[{\"id\":4,\"name\":\"zzz\",\"prettyName\":\"zzz_pretty\"}"
-                        + ",{\"id\":11,\"name\":\"new\",\"prettyName\":\"new_pretty\"}],\"total\":2}",
-                r1.readEntity(String.class));
-
-        e14().matcher().eq("e15_id", 44).assertMatches(2);
+        tester.e14().matcher().eq("e15_id", 44).assertMatches(2);
 
         // TODO: checking individual records one by one until "in()" becomes available in BQ 1.1 per
         //  https://github.com/bootique/bootique-jdbc/issues/92
-        e14().matcher().eq("e15_id", 44).eq("long_id", 4L).assertOneMatch();
-        e14().matcher().eq("e15_id", 44).eq("long_id", 11L).assertOneMatch();
+        tester.e14().matcher().eq("e15_id", 44).eq("long_id", 4L).assertOneMatch();
+        tester.e14().matcher().eq("e15_id", 44).eq("long_id", 11L).assertOneMatch();
     }
 
     @Path("")

@@ -2,11 +2,12 @@ package io.agrest.cayenne.it;
 
 import io.agrest.Ag;
 import io.agrest.SimpleResponse;
+import io.agrest.cayenne.unit.CayenneAgTester;
 import io.agrest.cayenne.unit.JerseyAndDerbyCase;
 import io.agrest.it.fixture.cayenne.E17;
 import io.agrest.it.fixture.cayenne.E24;
 import io.agrest.it.fixture.cayenne.E4;
-import org.junit.BeforeClass;
+import io.bootique.junit5.BQTestTool;
 import org.junit.jupiter.api.Test;
 
 import javax.ws.rs.DELETE;
@@ -15,7 +16,6 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Configuration;
 import javax.ws.rs.core.Context;
-import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriInfo;
 import java.util.HashMap;
@@ -23,73 +23,80 @@ import java.util.Map;
 
 public class DELETE_IT extends JerseyAndDerbyCase {
 
-    @BeforeClass
-    public static void startTestRuntime() {
-        startTestRuntime(Resource.class);
-    }
-
-    @Override
-    protected Class<?>[] testEntities() {
-        return new Class[]{E4.class, E17.class, E24.class};
-    }
+    @BQTestTool
+    static final CayenneAgTester tester = tester(Resource.class)
+            .entities(E4.class, E17.class, E24.class)
+            .build();
 
     @Test
     public void test() {
 
-        e4().insertColumns("id", "c_varchar")
+        tester.e4().insertColumns("id", "c_varchar")
                 .values(1, "xxx")
                 .values(8, "yyy").exec();
 
-        Response r = target("/e4/8").request().delete();
-        onSuccess(r).bodyEquals("{\"success\":true}");
+        tester.target("/e4/8")
+                .delete()
+                .wasSuccess()
+                .bodyEquals("{\"success\":true}");
 
-        e4().matcher().assertOneMatch();
+        tester.e4().matcher().assertOneMatch();
     }
 
     @Test
     public void testCompoundId() {
 
-        e17().insertColumns("id1", "id2", "name").values(1, 1, "aaa").values(2, 2, "bbb").exec();
+        tester.e17().insertColumns("id1", "id2", "name").values(1, 1, "aaa").values(2, 2, "bbb").exec();
 
-        Response r = target("/e17").queryParam("id1", 1).queryParam("id2", 1).request().delete();
-        onSuccess(r).bodyEquals("{\"success\":true}");
+        tester.target("/e17").queryParam("id1", 1).queryParam("id2", 1)
+                .delete()
+                .wasSuccess()
+                .bodyEquals("{\"success\":true}");
 
-        e17().matcher().assertOneMatch();
-        e17().matcher().eq("id2", 2).eq("id2", 2).eq("name", "bbb").assertOneMatch();
+        tester.e17().matcher().assertOneMatch();
+        tester.e17().matcher().eq("id2", 2).eq("id2", 2).eq("name", "bbb").assertOneMatch();
     }
 
     @Test
     public void testBadId() {
 
-        e4().insertColumns("id", "c_varchar").values(1, "xxx").exec();
+        tester.e4().insertColumns("id", "c_varchar").values(1, "xxx").exec();
 
-        Response r = target("/e4/7").request().delete();
-        onResponse(r).statusEquals(Status.NOT_FOUND).bodyEquals("{\"success\":false,\"message\":\"No object for ID '7' and entity 'E4'\"}");
+        tester.target("/e4/7")
+                .delete()
+                .statusEquals(Status.NOT_FOUND)
+                .bodyEquals("{\"success\":false,\"message\":\"No object for ID '7' and entity 'E4'\"}");
 
-        e4().matcher().assertMatches(1);
+        tester.e4().matcher().assertMatches(1);
     }
 
     @Test
     public void testTwice() {
 
-        e4().insertColumns("id", "c_varchar")
+        tester.e4().insertColumns("id", "c_varchar")
                 .values(1, "xxx")
                 .values(8, "yyy").exec();
 
-        Response r1 = target("/e4/8").request().delete();
-        onSuccess(r1).bodyEquals("{\"success\":true}");
+        tester.target("/e4/8")
+                .delete()
+                .wasSuccess()
+                .bodyEquals("{\"success\":true}");
 
-        Response r2 = target("/e4/8").request().delete();
-        onResponse(r2).statusEquals(Status.NOT_FOUND).bodyEquals("{\"success\":false,\"message\":\"No object for ID '8' and entity 'E4'\"}");
+        tester.target("/e4/8")
+                .delete()
+                .statusEquals(Status.NOT_FOUND)
+                .bodyEquals("{\"success\":false,\"message\":\"No object for ID '8' and entity 'E4'\"}");
     }
 
     @Test
     public void testUpperCasePK() {
 
-        e24().insertColumns("TYPE", "name").values(1, "xyz").exec();
+        tester.e24().insertColumns("TYPE", "name").values(1, "xyz").exec();
 
-        Response r = target("/e24/1").request().delete();
-        onSuccess(r).bodyEquals("{\"success\":true}");
+        tester.target("/e24/1")
+                .delete()
+                .wasSuccess()
+                .bodyEquals("{\"success\":true}");
     }
 
     @Path("")

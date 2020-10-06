@@ -11,9 +11,9 @@ import java.util.regex.Pattern;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class ResponseAssertions<T extends ResponseAssertions<T>> {
+public class ResponseAssertions {
 
-    private static Pattern NUMERIC_ID_MATCHER = Pattern.compile("\"id\":([\\d]+)");
+    private static final Pattern NUMERIC_ID_MATCHER = Pattern.compile("\"id\":([\\d]+)");
 
     private Response response;
     private String idPlaceholder;
@@ -59,54 +59,67 @@ public class ResponseAssertions<T extends ResponseAssertions<T>> {
         return responseContent;
     }
 
-    public T wasSuccess() {
+    public ResponseAssertions wasSuccess() {
         assertEquals(Response.Status.OK.getStatusCode(),
                 response.getStatus(),
                 "Failed request: " + response.getStatus());
-        return (T) this;
+        return this;
     }
 
-    public T wasCreated() {
+    public ResponseAssertions wasCreated() {
         assertEquals(Response.Status.CREATED.getStatusCode(),
                 response.getStatus(),
                 "Expected 'CREATED' status, was: " + response.getStatus());
-        return (T) this;
+        return this;
     }
 
-    public T statusEquals(Response.Status expectedStatus) {
-        assertEquals(
-                expectedStatus.getStatusCode(),
-                response.getStatus());
-        return (T) this;
+    public ResponseAssertions wasServerError() {
+        assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(),
+                response.getStatus(),
+                "Expected 'INTERNAL_SERVER_ERROR' status, was: " + response.getStatus());
+        return this;
     }
 
-    public T mediaTypeEquals(MediaType expected) {
+    public ResponseAssertions wasBadRequest() {
+        return statusEquals(Response.Status.BAD_REQUEST);
+    }
+
+    public ResponseAssertions wasNotFound() {
+        return statusEquals(Response.Status.NOT_FOUND);
+    }
+
+    public ResponseAssertions statusEquals(Response.Status expectedStatus) {
+        assertEquals(expectedStatus.getStatusCode(), response.getStatus());
+        return this;
+    }
+
+    public ResponseAssertions mediaTypeEquals(MediaType expected) {
         assertEquals(expected, response.getMediaType());
-        return (T) this;
+        return this;
     }
 
     /**
      * Replaces id value in the actual result with a known placeholder, this allowing to compare JSON coming for
      * unknonw ids.
      */
-    public T replaceId(String idPlaceholder) {
+    public ResponseAssertions replaceId(String idPlaceholder) {
         this.idPlaceholder = idPlaceholder;
-        return (T) this;
+        return this;
     }
 
-    public T bodyEquals(String expected) {
+    public ResponseAssertions bodyEquals(String expected) {
         String actual = getContentAsString();
         String normalized = idPlaceholder != null ? NUMERIC_ID_MATCHER.matcher(actual).replaceFirst("\"id\":" + idPlaceholder) : actual;
 
         assertEquals(expected, normalized, "Response contains unexpected JSON");
-        return (T) this;
+        return this;
     }
 
-    public T bodyEquals(long total, String... jsonObjects) {
+    public ResponseAssertions bodyEquals(long total, String... jsonObjects) {
         return bodyEquals(buildExpectedJson(total, jsonObjects));
     }
 
-    public T bodyEqualsMapBy(long total, String... jsonKeyValues) {
+    public ResponseAssertions bodyEqualsMapBy(long total, String... jsonKeyValues) {
 
         StringBuilder expectedJson = new StringBuilder("{\"data\":{");
         for (String o : jsonKeyValues) {
@@ -122,7 +135,7 @@ public class ResponseAssertions<T extends ResponseAssertions<T>> {
         return bodyEquals(expectedJson.toString());
     }
 
-    public T totalEquals(long total) {
+    public ResponseAssertions totalEquals(long total) {
 
         String string = getContentAsString();
         JsonNode rootNode = null;
@@ -138,6 +151,6 @@ public class ResponseAssertions<T extends ResponseAssertions<T>> {
 
         assertEquals(total, totalNode.asLong(), "Unexpected total");
 
-        return (T) this;
+        return this;
     }
 }

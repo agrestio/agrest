@@ -34,7 +34,7 @@
         <!-- unit test deps -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter-engine</artifactId>
+            <artifactId>junit-jupiter-params</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -50,23 +50,23 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>io.bootique</groupId>
-            <artifactId>bootique-test</artifactId>
+            <groupId>io.bootique.jdbc</groupId>
+            <artifactId>bootique-jdbc-junit5-derby</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.bootique.cayenne</groupId>
+            <artifactId>bootique-cayenne-junit5</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.bootique.jetty</groupId>
+            <artifactId>bootique-jetty-junit5</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>io.bootique.jersey</groupId>
             <artifactId>bootique-jersey</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>io.bootique.cayenne</groupId>
-            <artifactId>bootique-cayenne-test</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>io.bootique.jdbc</groupId>
-            <artifactId>bootique-jdbc-hikaricp</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>

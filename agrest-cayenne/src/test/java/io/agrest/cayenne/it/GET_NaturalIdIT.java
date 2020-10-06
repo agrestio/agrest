@@ -2,10 +2,11 @@ package io.agrest.cayenne.it;
 
 import io.agrest.Ag;
 import io.agrest.DataResponse;
+import io.agrest.cayenne.unit.CayenneAgTester;
 import io.agrest.cayenne.unit.JerseyAndDerbyCase;
 import io.agrest.it.fixture.cayenne.E20;
 import io.agrest.it.fixture.cayenne.E21;
-import org.junit.BeforeClass;
+import io.bootique.junit5.BQTestTool;
 import org.junit.jupiter.api.Test;
 
 import javax.ws.rs.GET;
@@ -14,58 +15,52 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Configuration;
 import javax.ws.rs.core.Context;
-import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import java.util.HashMap;
 import java.util.Map;
 
 public class GET_NaturalIdIT extends JerseyAndDerbyCase {
 
+    @BQTestTool
+    static final CayenneAgTester tester = tester(Resource.class)
 
-    @BeforeClass
-    public static void startTestRuntime() {
-        startTestRuntime(Resource.class);
-    }
-
-    @Override
-    protected Class<?>[] testEntities() {
-        return new Class[]{E20.class, E21.class};
-    }
+            .entities(E20.class, E21.class)
+            .build();
 
     @Test
     public void test_SelectById() {
 
-        e20().insertColumns("name_col").values("John").exec();
+        tester.e20().insertColumns("name_col").values("John").exec();
 
-        Response r1 = target("/single-id/John").queryParam("exclude", "age", "description").request().get();
-        onSuccess(r1).bodyEquals(1, "{\"id\":\"John\",\"name\":\"John\"}");
+        tester.target("/single-id/John").queryParam("exclude", "age", "description").get().wasSuccess().bodyEquals(1, "{\"id\":\"John\",\"name\":\"John\"}");
 
-        e20().insertColumns("name_col").values("John").exec();
+        tester.e20().insertColumns("name_col").values("John").exec();
 
-        Response r2 = target("/single-id/John").queryParam("exclude", "age", "description").request().get();
-        onResponse(r2).statusEquals(Response.Status.INTERNAL_SERVER_ERROR)
+        tester.target("/single-id/John").queryParam("exclude", "age", "description")
+                .get()
+                .wasServerError()
                 .bodyEquals("{\"success\":false,\"message\":\"Found more than one object for ID 'John' and entity 'E20'\"}");
     }
 
     @Test
     public void test_SelectById_MultiId() {
 
-        e21().insertColumns("age", "name").values(18, "John").exec();
+        tester.e21().insertColumns("age", "name").values(18, "John").exec();
 
-        Response r1 = target("/multi-id/byid")
+        tester.target("/multi-id/byid")
                 .queryParam("age", 18)
                 .queryParam("name", "John")
-                .queryParam("exclude", "description").request().get();
-        onSuccess(r1).bodyEquals(1, "{\"id\":{\"age\":18,\"name\":\"John\"},\"age\":18,\"name\":\"John\"}");
+                .queryParam("exclude", "description").get().wasSuccess().bodyEquals(1, "{\"id\":{\"age\":18,\"name\":\"John\"},\"age\":18,\"name\":\"John\"}");
 
 
-        e21().insertColumns("age", "name").values(18, "John").exec();
+        tester.e21().insertColumns("age", "name").values(18, "John").exec();
 
-        Response r2 = target("/multi-id/byid")
+        tester.target("/multi-id/byid")
                 .queryParam("age", 18)
                 .queryParam("name", "John")
-                .queryParam("exclude", "description").request().get();
-        onResponse(r2).statusEquals(Response.Status.INTERNAL_SERVER_ERROR)
+                .queryParam("exclude", "description")
+                .get()
+                .wasServerError()
                 .bodyEquals("{\"success\":false,\"message\":\"Found more than one object for ID '{name:John,age:18}' and entity 'E21'\"}");
     }
 

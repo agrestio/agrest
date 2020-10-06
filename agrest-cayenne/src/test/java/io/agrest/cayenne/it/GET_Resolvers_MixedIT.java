@@ -4,19 +4,18 @@ import io.agrest.Ag;
 import io.agrest.DataResponse;
 import io.agrest.cayenne.CayenneResolvers;
 import io.agrest.cayenne.persister.ICayennePersister;
+import io.agrest.cayenne.unit.CayenneAgTester;
 import io.agrest.cayenne.unit.JerseyAndDerbyCase;
-import io.agrest.it.fixture.cayenne.E2;
-import io.agrest.it.fixture.cayenne.E3;
-import io.agrest.it.fixture.cayenne.E5;
+import io.agrest.it.fixture.cayenne.*;
 import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgEntityOverlay;
 import io.agrest.runtime.AgRuntime;
+import io.bootique.junit5.BQTestTool;
 import org.apache.cayenne.Cayenne;
 import org.apache.cayenne.ObjectContext;
 import org.apache.cayenne.exp.ExpressionFactory;
 import org.apache.cayenne.query.ObjectSelect;
 import org.apache.cayenne.query.SelectById;
-import org.junit.BeforeClass;
 import org.junit.jupiter.api.Test;
 
 import javax.ws.rs.GET;
@@ -25,81 +24,79 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Configuration;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
 public class GET_Resolvers_MixedIT extends JerseyAndDerbyCase {
 
-    @BeforeClass
-    public static void startTestRuntime() {
-        startTestRuntime(Resource.class);
-    }
-
-    @Override
-    protected Class<?>[] testEntities() {
-        return new Class[]{E2.class, E3.class, E5.class};
-    }
+    @BQTestTool
+    static final CayenneAgTester tester = tester(Resource.class)
+            .entities(E2.class, E3.class, E5.class)
+            .build();
 
     @Test
     public void test_alt_resolver__parentids_joint_prefetch() {
 
-        e5().insertColumns("id", "name")
+        tester.e5().insertColumns("id", "name")
                 .values(1, "e5_1")
                 .values(2, "e5_2")
                 .values(3, "e5_3").exec();
 
-        e2().insertColumns("id_", "name")
+        tester.e2().insertColumns("id_", "name")
                 .values(1, "e2_1")
                 .values(2, "e2_2").exec();
 
-        e3().insertColumns("id_", "name", "e5_id", "e2_id")
+        tester.e3().insertColumns("id_", "name", "e5_id", "e2_id")
                 .values(34, "e3_1", 1, 2)
                 .values(11, "e3_2", 2, null)
                 .values(13, "e3_3", 3, 1)
                 .exec();
 
-        Response r = target("/test_alt_resolver__parentids_joint_prefetch")
+        tester.target("/test_alt_resolver__parentids_joint_prefetch")
                 .queryParam("include", "id")
                 .queryParam("include", "e3s.name")
                 .queryParam("include", "e3s.e2.name")
                 .queryParam("cayenneExp", "id < 3")
                 .queryParam("sort", "id")
-                .request().get();
+                .get()
+                .wasSuccess()
+                .bodyEquals(2,
+                        "{\"id\":1,\"e3s\":[{\"e2\":{\"name\":\"e2_2\"},\"name\":\"e3_1\"}]}",
+                        "{\"id\":2,\"e3s\":[{\"e2\":null,\"name\":\"e3_2\"}]}");
 
-        onSuccess(r)
-                .bodyEquals(2, "{\"id\":1,\"e3s\":[{\"e2\":{\"name\":\"e2_2\"},\"name\":\"e3_1\"}]},{\"id\":2,\"e3s\":[{\"e2\":null,\"name\":\"e3_2\"}]}")
-                .ranQueries(2);
+        tester.assertQueryCount(2);
     }
 
     @Test
     public void test_alt_mix_up_relations() {
 
-        e5().insertColumns("id", "name")
+        tester.e5().insertColumns("id", "name")
                 .values(1, "e5_1")
                 .values(2, "e5_2")
                 .values(3, "e5_3").exec();
 
-        e2().insertColumns("id_", "name")
+        tester.e2().insertColumns("id_", "name")
                 .values(1, "e2_1")
                 .values(2, "e2_2").exec();
 
-        e3().insertColumns("id_", "name")
+        tester.e3().insertColumns("id_", "name")
                 .values(2, "e3_2")
                 .values(1, "e3_1")
                 .values(3, "e3_3")
                 .exec();
 
-        Response r = target("/test_mix_up_relations")
+        tester.target("/test_mix_up_relations")
                 .queryParam("include", "id")
                 .queryParam("include", "e3s.name")
                 .queryParam("include", "e3s.ex.name")
                 .queryParam("cayenneExp", "id < 3")
                 .queryParam("sort", "id")
-                .request().get();
+                .get()
+                .wasSuccess()
+                .bodyEquals(2,
+                        "{\"id\":1,\"e3s\":[{\"ex\":{\"name\":\"e3_2\"},\"name\":\"e2_2\"}]}",
+                        "{\"id\":2,\"e3s\":[]}");
 
-        onSuccess(r)
-                .bodyEquals(2, "{\"id\":1,\"e3s\":[{\"ex\":{\"name\":\"e3_2\"},\"name\":\"e2_2\"}]},{\"id\":2,\"e3s\":[]}")
-                .ranQueries(4);
+        tester.assertQueryCount(4);
     }
 
     @Path("")

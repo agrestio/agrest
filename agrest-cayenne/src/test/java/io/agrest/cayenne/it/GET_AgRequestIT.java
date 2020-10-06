@@ -3,122 +3,116 @@ package io.agrest.cayenne.it;
 import io.agrest.Ag;
 import io.agrest.AgRequest;
 import io.agrest.DataResponse;
+import io.agrest.base.protocol.CayenneExp;
+import io.agrest.base.protocol.Sort;
+import io.agrest.cayenne.unit.CayenneAgTester;
 import io.agrest.cayenne.unit.JerseyAndDerbyCase;
 import io.agrest.it.fixture.cayenne.E2;
 import io.agrest.it.fixture.cayenne.E3;
 import io.agrest.it.fixture.cayenne.E4;
-import io.agrest.base.protocol.CayenneExp;
-import io.agrest.base.protocol.Sort;
-import org.junit.BeforeClass;
+import io.bootique.junit5.BQTestTool;
 import org.junit.jupiter.api.Test;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.Configuration;
 import javax.ws.rs.core.Context;
-import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
 public class GET_AgRequestIT extends JerseyAndDerbyCase {
 
-    @BeforeClass
-    public static void startTestRuntime() {
-        startTestRuntime(Resource.class);
-    }
-
-    @Override
-    protected Class<?>[] testEntities() {
-        return new Class[]{E2.class, E3.class, E4.class};
-    }
+    @BQTestTool
+    static final CayenneAgTester tester = tester(Resource.class)
+            .entities(E2.class, E3.class, E4.class)
+            .build();
 
     @Test
     public void test_CayenneExp_OverrideByAgRequest() {
 
-        e2().insertColumns("id_", "name")
+        tester.e2().insertColumns("id_", "name")
                 .values(1, "xxx")
                 .values(2, "yyy")
                 .values(3, "zzz").exec();
 
-        Response r = target("/e2_cayenneExp")
+        tester.target("/e2_cayenneExp")
                 .queryParam("include", "name")
-                .queryParam("cayenneExp", urlEnc("{\"exp\":\"name = 'yyy'\"}"))
-                .request().get();
-
-        // returns 'xxx' instead of 'yyy' due to overriding cayenneExp by AgRequest
-        onSuccess(r).bodyEquals(1, "{\"name\":\"xxx\"}");
+                .queryParam("cayenneExp", "{\"exp\":\"name = 'yyy'\"}")
+                .get()
+                .wasSuccess()
+                // returns 'xxx' instead of 'yyy' due to overriding cayenneExp by AgRequest
+                .bodyEquals(1, "{\"name\":\"xxx\"}");
     }
 
     @Test
     public void testIncludes_OverrideByAgRequest() {
 
-        e3().insertColumns("id_", "name")
+        tester.e3().insertColumns("id_", "name")
                 .values(6, "yyy")
                 .values(8, "yyy")
                 .values(9, "zzz").exec();
 
-        Response r = target("/e3_includes")
+        tester.target("/e3_includes")
                 .queryParam("include", "id")
-                .queryParam("cayenneExp", urlEnc("{\"exp\":\"name = 'yyy'\"}"))
-                .request().get();
-
-        // returns names instead of id's due to overriding include by AgRequest
-        onSuccess(r).bodyEquals(2, "{\"name\":\"yyy\"},{\"name\":\"yyy\"}");
+                .queryParam("cayenneExp", "{\"exp\":\"name = 'yyy'\"}")
+                .get()
+                // returns names instead of id's due to overriding include by AgRequest
+                .wasSuccess().bodyEquals(2, "{\"name\":\"yyy\"}", "{\"name\":\"yyy\"}");
     }
 
     @Test
     public void testExcludes_OverrideByAgRequest() {
 
-        e3().insertColumns("id_", "name")
+        tester.e3().insertColumns("id_", "name")
                 .values(6, "yyy")
                 .values(8, "yyy")
                 .values(9, "zzz").exec();
 
-        Response r = target("/e3_excludes")
+        tester.target("/e3_excludes")
                 .queryParam("exclude", "name")
-                .queryParam("cayenneExp", urlEnc("{\"exp\":\"name = 'yyy'\"}"))
-                .request().get();
-
-        // returns 'name' and other fields except 'id' due to overriding exclude by AgRequest
-        onSuccess(r).bodyEquals(2, "{\"name\":\"yyy\",\"phoneNumber\":null},{\"name\":\"yyy\",\"phoneNumber\":null}");
+                .queryParam("cayenneExp", "{\"exp\":\"name = 'yyy'\"}")
+                .get()
+                // returns 'name' and other fields except 'id' due to overriding exclude by AgRequest
+                .wasSuccess()
+                .bodyEquals(2,
+                        "{\"name\":\"yyy\",\"phoneNumber\":null}",
+                        "{\"name\":\"yyy\",\"phoneNumber\":null}");
     }
 
     @Test
     public void test_Sort_OverrideByAgRequest() {
 
-        e4().insertColumns("id")
+        tester.e4().insertColumns("id")
                 .values(2)
                 .values(1)
                 .values(3).exec();
 
-        Response response = target("/e4_sort")
-                .queryParam("sort", urlEnc("[{\"property\":\"id\",\"direction\":\"DESC\"}]"))
+        tester.target("/e4_sort")
+                .queryParam("sort", "[{\"property\":\"id\",\"direction\":\"DESC\"}]")
                 .queryParam("include", "id")
-                .request()
-                .get();
-
-        // returns items in ascending order instead of descending due to overriding sort direction by AgRequest
-        onSuccess(response).bodyEquals(3, "{\"id\":1},{\"id\":2},{\"id\":3}");
+                .get()
+                // returns items in ascending order instead of descending due to overriding sort direction by AgRequest
+                .wasSuccess()
+                .bodyEquals(3, "{\"id\":1},{\"id\":2},{\"id\":3}");
     }
 
     @Test
     public void test_MapBy_OverrideByAgRequest() {
 
-        e4().insertColumns("c_varchar", "c_int")
+        tester.e4().insertColumns("c_varchar", "c_int")
                 .values("xxx", 1)
                 .values("yyy", 2)
                 .values("zzz", 2)
                 .values("xxx", 3).exec();
 
-        Response r = target("/e4_mapBy")
+        tester.target("/e4_mapBy")
                 .queryParam("mapBy", E4.C_INT.getName())
                 .queryParam("include", E4.C_VARCHAR.getName())
-                .request()
-                .get();
-
-        onSuccess(r).bodyEqualsMapBy(4,
-                "\"xxx\":[{\"cVarchar\":\"xxx\"},{\"cVarchar\":\"xxx\"}]",
-                "\"yyy\":[{\"cVarchar\":\"yyy\"}]",
-                "\"zzz\":[{\"cVarchar\":\"zzz\"}]");
+                .get()
+                .wasSuccess()
+                .bodyEqualsMapBy(4,
+                        "\"xxx\":[{\"cVarchar\":\"xxx\"},{\"cVarchar\":\"xxx\"}]",
+                        "\"yyy\":[{\"cVarchar\":\"yyy\"}]",
+                        "\"zzz\":[{\"cVarchar\":\"zzz\"}]");
     }
 
 

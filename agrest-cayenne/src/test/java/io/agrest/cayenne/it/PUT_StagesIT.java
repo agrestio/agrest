@@ -3,36 +3,31 @@ package io.agrest.cayenne.it;
 import io.agrest.Ag;
 import io.agrest.DataResponse;
 import io.agrest.UpdateStage;
+import io.agrest.cayenne.unit.CayenneAgTester;
 import io.agrest.cayenne.unit.JerseyAndDerbyCase;
 import io.agrest.it.fixture.cayenne.E3;
 import io.agrest.runtime.processor.update.UpdateContext;
-import org.junit.Before;
-import org.junit.BeforeClass;
+import io.bootique.junit5.BQTestTool;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
-import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.Configuration;
 import javax.ws.rs.core.Context;
-import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class PUT_StagesIT extends JerseyAndDerbyCase {
 
-    @BeforeClass
-    public static void startTestRuntime() {
-        startTestRuntime(Resource.class);
-    }
+    @BQTestTool
+    static final CayenneAgTester tester = tester(Resource.class)
+            .entities(E3.class)
+            .build();
 
-    @Override
-    protected Class<?>[] testEntities() {
-        return new Class[]{E3.class};
-    }
-
-    @Before
+    @BeforeEach
     public void resetCallbacks() {
         Resource.START_CALLED = false;
         Resource.PARSE_REQUEST_CALLED = false;
@@ -46,18 +41,17 @@ public class PUT_StagesIT extends JerseyAndDerbyCase {
     @Test
     public void testToOne() {
 
-        e3().insertColumns("id_", "name")
+        tester.e3().insertColumns("id_", "name")
                 .values(3, "z")
                 .values(4, "a").exec();
 
-        Response response = target("/e3/callbackstage")
-                .request()
-                .put(Entity.json("[{\"id\":3,\"name\":\"x\"}]"));
+        tester.target("/e3/callbackstage")
+                .put("[{\"id\":3,\"name\":\"x\"}]")
+                .wasSuccess()
+                .bodyEquals(1, "{\"id\":3,\"name\":\"x\",\"phoneNumber\":null}");
 
-        onSuccess(response).bodyEquals(1, "{\"id\":3,\"name\":\"x\",\"phoneNumber\":null}");
-
-        e3().matcher().eq("id_", 3).eq("name", "x").assertOneMatch();
-        e3().matcher().eq("id_", 4).assertNoMatches();
+        tester.e3().matcher().eq("id_", 3).eq("name", "x").assertOneMatch();
+        tester.e3().matcher().eq("id_", 4).assertNoMatches();
 
         assertTrue(Resource.START_CALLED);
         assertTrue(Resource.PARSE_REQUEST_CALLED);

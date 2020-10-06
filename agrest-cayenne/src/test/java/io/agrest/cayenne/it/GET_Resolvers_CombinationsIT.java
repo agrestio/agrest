@@ -3,6 +3,7 @@ package io.agrest.cayenne.it;
 import io.agrest.Ag;
 import io.agrest.DataResponse;
 import io.agrest.cayenne.CayenneResolvers;
+import io.agrest.cayenne.unit.CayenneAgTester;
 import io.agrest.cayenne.unit.JerseyAndDerbyCase;
 import io.agrest.it.fixture.cayenne.E15;
 import io.agrest.it.fixture.cayenne.E2;
@@ -11,13 +12,11 @@ import io.agrest.it.fixture.cayenne.E5;
 import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgEntityOverlay;
 import io.agrest.resolver.NestedDataResolverFactory;
-import io.bootique.BQRuntime;
-import io.bootique.cayenne.test.CayenneTestDataManager;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.jupiter.api.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
+import io.bootique.junit5.BQTestTool;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -26,121 +25,81 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Configuration;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
-import java.util.Collection;
+import java.util.stream.Stream;
 
-import static java.util.Arrays.asList;
-
-@RunWith(Parameterized.class)
 public class GET_Resolvers_CombinationsIT extends JerseyAndDerbyCase {
 
-    private static boolean dataLoaded;
+    @BQTestTool
+    static final CayenneAgTester tester = tester(Resource.class)
+            .entities(E2.class, E3.class, E5.class)
+            .entitiesAndDependencies(E15.class)
+            // manually manage data... we only create it once for all test permutations
+            .doNotCleanData()
+            .build();
 
-    private OverlayType o1;
-    private OverlayType o2;
-    private int queryCount;
+    @BeforeAll
+    static void loadData() {
 
-    public GET_Resolvers_CombinationsIT(OverlayType o1, OverlayType o2, int queryCount) {
-        this.o1 = o1;
-        this.o2 = o2;
-        this.queryCount = queryCount;
-    }
+        tester.e3().deleteAll();
+        tester.e15_5().deleteAll();
+        tester.e5().deleteAll();
+        tester.e2().deleteAll();
+        tester.e15().deleteAll();
 
-    @Parameterized.Parameters
-    public static Collection<Object[]> data() {
-        return asList(
-                new Object[][]{
-
-                        // unique pairs of overlay types
-                        {OverlayType.joint, OverlayType.parentExp, 2},
-                        {OverlayType.joint, OverlayType.parentId, 2},
-                        {OverlayType.parentExp, OverlayType.parentId, 3},
-
-                        // unique pairs - reversed
-                        {OverlayType.parentExp, OverlayType.joint, 2},
-                        {OverlayType.parentId, OverlayType.joint, 2},
-                        {OverlayType.parentId, OverlayType.parentExp, 3},
-
-                        // paired with self
-                        {OverlayType.joint, OverlayType.joint, 1},
-                        {OverlayType.parentExp, OverlayType.parentExp, 3},
-                        {OverlayType.parentId, OverlayType.parentId, 3}
-                });
-    }
-
-    @BeforeClass
-    public static void startTestRuntime() {
-        startTestRuntime(Resource.class);
-    }
-
-    @Override
-    protected Class<?>[] testEntitiesAndDependencies() {
-        return new Class[]{E15.class};
-    }
-
-    @Override
-    protected Class<?>[] testEntities() {
-        return new Class[]{E2.class, E3.class, E5.class};
-    }
-
-    @Override
-    protected CayenneTestDataManager createDataManager(BQRuntime runtime) {
-        return CayenneTestDataManager.builder(TEST_RUNTIME)
-                .entities(testEntities())
-                .entitiesAndDependencies(testEntitiesAndDependencies())
-                // avoid data deletion... we reuse the dataset after creating it once
-                .doNotDeleteData()
-                .build();
-    }
-
-    @Before
-    public void loadData() {
-        if (dataLoaded) {
-            return;
-        }
-
-        // manually managing deletes as test data manager is configured to avoid deletes
-        e3().deleteAll();
-        e15_5().deleteAll();
-        e5().deleteAll();
-        e2().deleteAll();
-        e15().deleteAll();
-
-        e5().insertColumns("id", "name")
+        tester.e5().insertColumns("id", "name")
                 .values(1, "e5_1")
                 .values(2, "e5_2")
                 .values(3, "e5_3").exec();
 
-        e2().insertColumns("id_", "name")
+        tester.e2().insertColumns("id_", "name")
                 .values(1, "e2_1")
                 .values(2, "e2_2").exec();
 
-        e3().insertColumns("id_", "name", "e5_id", "e2_id")
+        tester.e3().insertColumns("id_", "name", "e5_id", "e2_id")
                 .values(34, "e3_1", 1, 2)
                 .values(11, "e3_2", 2, null)
                 .values(13, "e3_3", 3, 1)
                 .exec();
 
-        e15().insertColumns("long_id", "name")
+        tester.e15().insertColumns("long_id", "name")
                 .values(1L, "e15_1")
                 .values(2L, "e15_2")
                 .values(3L, "e15_3")
                 .exec();
 
-        e15_5().insertColumns("e15_id", "e5_id")
+        tester.e15_5().insertColumns("e15_id", "e5_id")
                 .values(1L, 1)
                 .values(2L, 3)
                 .values(3L, 3)
                 .exec();
-
-        dataLoaded = true;
     }
 
-    @Test
-    public void test_ToManyToOne() {
+    private static Stream<Arguments> provideTestInputs() {
+        return Stream.of(
 
-        Response r = target("/tomany_toone")
+                // unique pairs of overlay types
+                Arguments.of(Overlay.joint, Overlay.parentExp, 2),
+                Arguments.of(Overlay.joint, Overlay.parentId, 2),
+                Arguments.of(Overlay.parentExp, Overlay.parentId, 3),
+
+                // unique pairs - reversed
+                Arguments.of(Overlay.parentExp, Overlay.joint, 2),
+                Arguments.of(Overlay.parentId, Overlay.joint, 2),
+                Arguments.of(Overlay.parentId, Overlay.parentExp, 3),
+
+                // paired with self
+                Arguments.of(Overlay.joint, Overlay.joint, 1),
+                Arguments.of(Overlay.parentExp, Overlay.parentExp, 3),
+                Arguments.of(Overlay.parentId, Overlay.parentId, 3)
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("provideTestInputs")
+    public void test_ToManyToOne(Overlay o1, Overlay o2, int queryCount) {
+
+        tester.target("/tomany_toone")
                 .queryParam("include", "id")
                 .queryParam("include", "e3s.name")
                 .queryParam("include", "e3s.e2.name")
@@ -148,19 +107,20 @@ public class GET_Resolvers_CombinationsIT extends JerseyAndDerbyCase {
                 .queryParam("sort", "id")
                 .queryParam("o1", o1)
                 .queryParam("o2", o2)
-                .request().get();
-
-        onSuccess(r)
+                .get()
+                .wasSuccess()
                 .bodyEquals(2,
-                        "{\"id\":1,\"e3s\":[{\"e2\":{\"name\":\"e2_2\"},\"name\":\"e3_1\"}]}," +
-                                "{\"id\":2,\"e3s\":[{\"e2\":null,\"name\":\"e3_2\"}]}")
-                .ranQueries(queryCount);
+                        "{\"id\":1,\"e3s\":[{\"e2\":{\"name\":\"e2_2\"},\"name\":\"e3_1\"}]}",
+                        "{\"id\":2,\"e3s\":[{\"e2\":null,\"name\":\"e3_2\"}]}");
+
+        tester.assertQueryCount(queryCount);
     }
 
-    @Test
-    public void test_ToOneToMany() {
+    @ParameterizedTest
+    @MethodSource("provideTestInputs")
+    public void test_ToOneToMany(Overlay o1, Overlay o2, int queryCount) {
 
-        Response r = target("/toone_tomany")
+        tester.target("/toone_tomany")
                 .queryParam("include", "id")
                 .queryParam("include", "e5.name")
                 .queryParam("include", "e5.e15s.name")
@@ -168,17 +128,16 @@ public class GET_Resolvers_CombinationsIT extends JerseyAndDerbyCase {
                 .queryParam("sort", "id")
                 .queryParam("o1", o1)
                 .queryParam("o2", o2)
-                .request().get();
-
-        onSuccess(r)
+                .get().wasSuccess()
                 .bodyEquals(2,
-                        "{\"id\":11,\"e5\":{\"e15s\":[],\"name\":\"e5_2\"}}," +
-                                "{\"id\":13,\"e5\":{\"e15s\":[{\"name\":\"e15_2\"},{\"name\":\"e15_3\"}],\"name\":\"e5_3\"}}")
-                .ranQueries(queryCount);
+                        "{\"id\":11,\"e5\":{\"e15s\":[],\"name\":\"e5_2\"}}",
+                        "{\"id\":13,\"e5\":{\"e15s\":[{\"name\":\"e15_2\"},{\"name\":\"e15_3\"}],\"name\":\"e5_3\"}}");
+
+        tester.assertQueryCount(queryCount);
     }
 
-    public enum OverlayType {
-        joint, parentExp, parentId;
+    public enum Overlay {
+        joint, parentExp, parentId
     }
 
     @Path("")
@@ -191,8 +150,8 @@ public class GET_Resolvers_CombinationsIT extends JerseyAndDerbyCase {
         @GET
         @Path("tomany_toone")
         public DataResponse<E5> tomany_toone(
-                @QueryParam("o1") OverlayType e5o,
-                @QueryParam("o2") OverlayType e3o,
+                @QueryParam("o1") Overlay e5o,
+                @QueryParam("o2") Overlay e3o,
                 @Context UriInfo uriInfo) {
 
             AgEntityOverlay<E5> o1 = AgEntity
@@ -213,8 +172,8 @@ public class GET_Resolvers_CombinationsIT extends JerseyAndDerbyCase {
         @GET
         @Path("toone_tomany")
         public DataResponse<E3> toone_tomany(
-                @QueryParam("o1") OverlayType e5o,
-                @QueryParam("o2") OverlayType e3o,
+                @QueryParam("o1") Overlay e5o,
+                @QueryParam("o2") Overlay e3o,
                 @Context UriInfo uriInfo) {
 
             AgEntityOverlay<E3> o1 = AgEntity
@@ -232,7 +191,7 @@ public class GET_Resolvers_CombinationsIT extends JerseyAndDerbyCase {
                     .get();
         }
 
-        NestedDataResolverFactory resolverFactory(OverlayType o) {
+        NestedDataResolverFactory resolverFactory(Overlay o) {
             switch (o) {
                 case joint:
                     return CayenneResolvers.nested(config).viaParentPrefetch();
