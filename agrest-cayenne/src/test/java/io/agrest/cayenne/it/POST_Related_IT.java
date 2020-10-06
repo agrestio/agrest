@@ -73,10 +73,11 @@ public class POST_Related_IT extends JerseyAndDerbyCase {
                 .values(9, "aaa", 15).exec();
 
         tester.target("/e2/15/e3s")
+                // only including name in response, as IDs are generated and it is hard to assert them properly
+                .queryParam("include", "name")
                 .post("[ {\"id\":8,\"name\":\"123\"}, {\"name\":\"newname\"} ]")
                 .wasSuccess()
-                .bodyEquals(2, "{\"id\":8,\"name\":\"123\",\"phoneNumber\":null},"
-                        + "{\"id\":1,\"name\":\"newname\",\"phoneNumber\":null}");
+                .bodyEquals(2, "{\"name\":\"123\"}", "{\"name\":\"newname\"}");
 
         tester.e3().matcher().assertMatches(4);
         tester.e3().matcher().eq("e2_id", 15).assertMatches(3);
@@ -84,10 +85,10 @@ public class POST_Related_IT extends JerseyAndDerbyCase {
         // testing non-idempotency
 
         tester.target("/e2/15/e3s")
+                .queryParam("include", "name")
                 .post("[ {\"id\":8,\"name\":\"123\"}, {\"name\":\"newname\"} ]")
                 .wasSuccess()
-                .bodyEquals(2, "{\"id\":8,\"name\":\"123\",\"phoneNumber\":null},"
-                        + "{\"id\":2,\"name\":\"newname\",\"phoneNumber\":null}");
+                .bodyEquals(2, "{\"name\":\"123\"}", "{\"name\":\"newname\"}");
 
         tester.e3().matcher().assertMatches(5);
         tester.e3().matcher().eq("e2_id", 15).assertMatches(4);
@@ -124,8 +125,8 @@ public class POST_Related_IT extends JerseyAndDerbyCase {
 
         @POST
         @Path("e2/{id}/e3s")
-        public DataResponse<E3> createOrUpdateE3sOfE2(@PathParam("id") int id, String targetData) {
-            return Ag.createOrUpdate(E3.class, config).toManyParent(E2.class, id, E2.E3S).syncAndSelect(targetData);
+        public DataResponse<E3> createOrUpdateE3sOfE2(@PathParam("id") int id, @Context UriInfo uri,  String targetData) {
+            return Ag.createOrUpdate(E3.class, config).uri(uri).toManyParent(E2.class, id, E2.E3S).syncAndSelect(targetData);
         }
 
         @POST

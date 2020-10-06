@@ -37,7 +37,6 @@ import java.util.function.UnaryOperator;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Combines multiple Bootique JUnit 5 test tools into a single tester. Users must annotate CayenneAgTester field
@@ -70,11 +69,7 @@ public class CayenneAgTester implements BQBeforeScopeCallback, BQAfterScopeCallb
     }
 
     public void assertQueryCount(int expected) {
-        fail("TODO: upgrade to BQ 2.0.B1. CayenneTester has query checkers");
-    }
-
-    public void assertCommitCount(int expected) {
-        getCayenneInScope().assertCommitCount(expected);
+        getCayenneInScope().assertQueryCount(expected);
     }
 
     public AgTester target() {
@@ -264,14 +259,9 @@ public class CayenneAgTester implements BQBeforeScopeCallback, BQAfterScopeCallb
                 .module(jetty.moduleReplacingConnectors())
                 .module(cayenne.moduleWithTestHooks())
                 .module(b -> CayenneModule.extend(b).addProject(cayenneProject))
-                .module(b -> addResources(JerseyModule.extend(b)))
-                .module(new AgModule(agCustomizer));
+                .module(new AgModule(agCustomizer, resources));
 
         return builder.createRuntime();
-    }
-
-    protected void addResources(JerseyModuleExtender extender) {
-        resources.forEach(extender::addResource);
     }
 
     public static class Builder {
@@ -330,13 +320,21 @@ public class CayenneAgTester implements BQBeforeScopeCallback, BQAfterScopeCallb
     static class AgModule implements BQModule {
 
         private final BiFunction<AgBuilder, ICayennePersister, AgBuilder> customizer;
+        private final List<Class<?>> resources;
 
-        public AgModule(BiFunction<AgBuilder, ICayennePersister, AgBuilder> customizer) {
+        public AgModule(BiFunction<AgBuilder, ICayennePersister, AgBuilder> customizer, List<Class<?>> resources) {
             this.customizer = customizer;
+            this.resources = resources;
         }
 
         @Override
         public void configure(Binder binder) {
+            configureJersey(JerseyModule.extend(binder));
+        }
+
+        private void configureJersey(JerseyModuleExtender extender) {
+            extender.addFeature(AgRuntime.class);
+            resources.forEach(extender::addResource);
         }
 
         @Provides

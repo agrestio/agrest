@@ -18,10 +18,9 @@ import javax.ws.rs.core.Configuration;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.UriInfo;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class POST_IT extends JerseyAndDerbyCase {
 
@@ -131,16 +130,8 @@ public class POST_IT extends JerseyAndDerbyCase {
                 // writing phone number is not allowed, so it was ignored
                 .bodyEquals(1, "{\"id\":RID,\"name\":\"zzz\",\"phoneNumber\":null}");
 
-        // TODO: can't use matcher for NULLs until BQ 1.1 upgrade (because of https://github.com/bootique/bootique-jdbc/issues/91 )
-        //  so using select...
-
         tester.e3().matcher().assertOneMatch();
-        List<String> phones = tester
-                .e3()
-                .selectStatement(rs -> rs.getString(1)).append("SELECT phone_number FROM utest.e3")
-                .select(100);
-        assertEquals(1, phones.size());
-        assertNull(phones.get(0));
+        tester.e3().matcher().eq("phone_number", null).assertOneMatch();
     }
 
     @Test
@@ -208,17 +199,7 @@ public class POST_IT extends JerseyAndDerbyCase {
                 .bodyEquals(1, "{\"id\":RID,\"name\":\"MM\",\"phoneNumber\":null}");
 
         tester.e3().matcher().assertOneMatch();
-
-        // TODO: can't use matcher for NULLs until BQ 1.1 upgrade (because of https://github.com/bootique/bootique-jdbc/issues/91 )
-        //  so using select...
-
-        tester.e3().matcher().assertOneMatch();
-
-        List<String> fks = tester.e3()
-                .selectStatement(rs -> rs.getString(1)).append("SELECT e2_id FROM utest.e3")
-                .select(100);
-        assertEquals(1, fks.size());
-        assertNull(fks.get(0));
+        tester.e3().matcher().eq("e2_id", null).assertOneMatch();
     }
 
     @Test

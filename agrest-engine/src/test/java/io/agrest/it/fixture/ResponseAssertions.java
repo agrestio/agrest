@@ -38,13 +38,17 @@ public class ResponseAssertions {
 
     protected String buildExpectedJson(long total, String... jsonObjects) {
         StringBuilder expectedJson = new StringBuilder("{\"data\":[");
-        for (String o : jsonObjects) {
-            expectedJson.append(o).append(",");
+
+        if (jsonObjects.length > 0) {
+            for (String o : jsonObjects) {
+                expectedJson.append(o).append(",");
+            }
+
+            // remove last comma
+            expectedJson.deleteCharAt(expectedJson.length() - 1);
         }
 
-        // remove last comma
-        expectedJson.deleteCharAt(expectedJson.length() - 1)
-                .append("],\"total\":")
+        expectedJson.append("],\"total\":")
                 .append(total)
                 .append("}");
         return expectedJson.toString();

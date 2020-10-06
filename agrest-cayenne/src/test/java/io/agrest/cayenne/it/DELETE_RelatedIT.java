@@ -19,10 +19,6 @@ import javax.ws.rs.core.Configuration;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.UriInfo;
 import java.util.Collection;
-import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class DELETE_RelatedIT extends JerseyAndDerbyCase {
 
@@ -67,17 +63,7 @@ public class DELETE_RelatedIT extends JerseyAndDerbyCase {
 
         tester.target("/e2/1/e3s/9").delete().wasSuccess().bodyEquals("{\"success\":true}");
 
-        // TODO: can't use matcher for NULLs until BQ 1.1 upgrade (because of https://github.com/bootique/bootique-jdbc/issues/91 )
-        //  so using select...
-
-        List<Integer> ids1 = tester.e3()
-                .selectStatement(rs -> {
-                    int i = rs.getInt(1);
-                    return rs.wasNull() ? null : i;
-                }).append("SELECT e2_id FROM utest.e3 WHERE id_ = 9")
-                .select(100);
-        assertEquals(1, ids1.size());
-        assertNull(ids1.get(0));
+        tester.e3().matcher().eq("id_", 9).eq("e2_id", null).assertOneMatch();
     }
 
     @Test
@@ -97,17 +83,7 @@ public class DELETE_RelatedIT extends JerseyAndDerbyCase {
 
         tester.target("/e3/9/e2/1").delete().wasSuccess().bodyEquals("{\"success\":true}");
 
-        // TODO: can't use matcher for NULLs until BQ 1.1 upgrade (because of https://github.com/bootique/bootique-jdbc/issues/91 )
-        //  so using select...
-
-        List<Integer> ids1 = tester.e3()
-                .selectStatement(rs -> {
-                    int i = rs.getInt(1);
-                    return rs.wasNull() ? null : i;
-                }).append("SELECT e2_id FROM utest.e3 WHERE id_ = 9")
-                .select(100);
-        assertEquals(1, ids1.size());
-        assertNull(ids1.get(0));
+        tester.e3().matcher().eq("id_", 9).eq("e2_id", null).assertOneMatch();
     }
 
     @Test
@@ -126,18 +102,7 @@ public class DELETE_RelatedIT extends JerseyAndDerbyCase {
                 .values(9, "zzz", 1).exec();
 
         tester.target("/e3/9/e2").delete().wasSuccess().bodyEquals("{\"success\":true}");
-
-        // TODO: can't use matcher for NULLs until BQ 1.1 upgrade (because of https://github.com/bootique/bootique-jdbc/issues/91 )
-        //  so using select...
-
-        List<Integer> ids1 = tester.e3()
-                .selectStatement(rs -> {
-                    int i = rs.getInt(1);
-                    return rs.wasNull() ? null : i;
-                }).append("SELECT e2_id FROM utest.e3 WHERE id_ = 9")
-                .select(100);
-        assertEquals(1, ids1.size());
-        assertNull(ids1.get(0));
+        tester.e3().matcher().eq("id_", 9).eq("e2_id", null).assertOneMatch();
     }
 
     @Test

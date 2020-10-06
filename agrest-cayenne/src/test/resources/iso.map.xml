@@ -4,14 +4,14 @@
 	 xsi:schemaLocation="http://cayenne.apache.org/schema/9/modelMap https://cayenne.apache.org/schema/9/modelMap.xsd"
 	 project-version="9">
 	<property name="defaultPackage" value="io.agrest.it.fixture.cayenne.iso"/>
-	<property name="defaultSchema" value="utest_iso"/>
-	<db-entity name="SQL_DATE_TEST" schema="utest_iso">
+	<property name="quoteSqlIdentifiers" value="true"/>
+	<db-entity name="SQL_DATE_TEST">
 		<db-attribute name="Date" type="DATE"/>
 		<db-attribute name="ID" type="INTEGER" isPrimaryKey="true" isMandatory="true"/>
 		<db-attribute name="Time" type="TIME"/>
 		<db-attribute name="Timestamp" type="TIMESTAMP"/>
 	</db-entity>
-	<db-entity name="UTIL_DATE_TEST" schema="utest_iso">
+	<db-entity name="UTIL_DATE_TEST">
 		<db-attribute name="Date" type="DATE"/>
 		<db-attribute name="ID" type="INTEGER" isPrimaryKey="true" isMandatory="true"/>
 		<db-attribute name="Time" type="TIME"/>

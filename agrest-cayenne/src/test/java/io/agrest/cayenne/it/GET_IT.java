@@ -15,8 +15,6 @@ import javax.ws.rs.core.Configuration;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.UriInfo;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.sql.Time;
 import java.time.Instant;
@@ -219,7 +217,7 @@ public class GET_IT extends JerseyAndDerbyCase {
     }
 
     @Test
-    public void testRelationshipStartLimit() throws UnsupportedEncodingException {
+    public void testRelationshipStartLimit() {
 
         tester.e2().insertColumns("id_", "name")
                 .values(1, "zzz")
@@ -232,11 +230,13 @@ public class GET_IT extends JerseyAndDerbyCase {
 
         tester.target("/e2")
                 .queryParam("include", "id")
-                .queryParam("include", URLEncoder.encode("{\"path\":\"" + E2.E3S.getName() + "\",\"start\":1,\"limit\":1}", "UTF-8"))
+                .queryParam("include", "{\"path\":\"" + E2.E3S.getName() + "\",\"start\":1,\"limit\":1}")
                 .queryParam("exclude", E2.E3S.dot(E3.PHONE_NUMBER).getName())
-                .get().wasSuccess().bodyEquals(2,
-                "{\"id\":1,\"e3s\":[{\"id\":9,\"name\":\"bbb\"}]}",
-                "{\"id\":2,\"e3s\":[]}");
+                .get()
+                .wasSuccess()
+                .bodyEquals(2,
+                        "{\"id\":1,\"e3s\":[{\"id\":9,\"name\":\"bbb\"}]}",
+                        "{\"id\":2,\"e3s\":[]}");
     }
 
     @Test

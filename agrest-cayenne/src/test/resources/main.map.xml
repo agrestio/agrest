@@ -4,14 +4,14 @@
 	 xsi:schemaLocation="http://cayenne.apache.org/schema/9/modelMap https://cayenne.apache.org/schema/9/modelMap.xsd"
 	 project-version="9">
 	<property name="defaultPackage" value="io.agrest.it.fixture.cayenne"/>
-	<property name="defaultSchema" value="utest"/>
-	<db-entity name="e1" schema="utest">
+	<property name="quoteSqlIdentifiers" value="true"/>
+	<db-entity name="e1">
 		<db-attribute name="age" type="INTEGER"/>
 		<db-attribute name="description" type="VARCHAR" length="100"/>
 		<db-attribute name="id" type="INTEGER" isPrimaryKey="true" isGenerated="true" isMandatory="true"/>
 		<db-attribute name="name" type="VARCHAR" length="100"/>
 	</db-entity>
-	<db-entity name="e10" schema="utest">
+	<db-entity name="e10">
 		<db-attribute name="c_boolean" type="BOOLEAN"/>
 		<db-attribute name="c_date" type="DATE"/>
 		<db-attribute name="c_decimal" type="DECIMAL" length="10" scale="2"/>
@@ -21,57 +21,57 @@
 		<db-attribute name="c_varchar" type="VARCHAR" length="100"/>
 		<db-attribute name="id" type="INTEGER" isPrimaryKey="true" isGenerated="true" isMandatory="true"/>
 	</db-entity>
-	<db-entity name="e11" schema="utest">
+	<db-entity name="e11">
 		<db-attribute name="address" type="VARCHAR" length="255"/>
 		<db-attribute name="e10_id" type="INTEGER"/>
 		<db-attribute name="id" type="INTEGER" isPrimaryKey="true" isGenerated="true" isMandatory="true"/>
 		<db-attribute name="name" type="VARCHAR" length="100"/>
 	</db-entity>
-	<db-entity name="e12" schema="utest">
+	<db-entity name="e12">
 		<db-attribute name="id" type="INTEGER" isPrimaryKey="true" isMandatory="true"/>
 	</db-entity>
-	<db-entity name="e12_e13" schema="utest">
+	<db-entity name="e12_e13">
 		<db-attribute name="e12_id" type="INTEGER" isPrimaryKey="true" isMandatory="true"/>
 		<db-attribute name="e13_id" type="INTEGER" isPrimaryKey="true" isMandatory="true"/>
 	</db-entity>
-	<db-entity name="e13" schema="utest">
+	<db-entity name="e13">
 		<db-attribute name="id" type="INTEGER" isPrimaryKey="true" isMandatory="true"/>
 	</db-entity>
-	<db-entity name="e14" schema="utest">
+	<db-entity name="e14">
 		<db-attribute name="e15_id" type="BIGINT"/>
 		<db-attribute name="long_id" type="BIGINT" isPrimaryKey="true" isMandatory="true"/>
 		<db-attribute name="name" type="VARCHAR" length="100"/>
 	</db-entity>
-	<db-entity name="e15" schema="utest">
+	<db-entity name="e15">
 		<db-attribute name="long_id" type="BIGINT" isPrimaryKey="true" isMandatory="true"/>
 		<db-attribute name="name" type="VARCHAR" length="100"/>
 	</db-entity>
-	<db-entity name="e15_e1" schema="utest">
+	<db-entity name="e15_e1">
 		<db-attribute name="e15_id" type="BIGINT" isPrimaryKey="true" isMandatory="true"/>
 		<db-attribute name="e1_id" type="INTEGER" isPrimaryKey="true" isMandatory="true"/>
 	</db-entity>
-	<db-entity name="e15_e5" schema="utest">
+	<db-entity name="e15_e5">
 		<db-attribute name="e15_id" type="BIGINT" isPrimaryKey="true" isMandatory="true"/>
 		<db-attribute name="e5_id" type="INTEGER" isPrimaryKey="true" isMandatory="true"/>
 	</db-entity>
-	<db-entity name="e16" schema="utest">
+	<db-entity name="e16">
 		<db-attribute name="c_date" type="DATE"/>
 		<db-attribute name="c_time" type="TIME"/>
 		<db-attribute name="c_timestamp" type="TIMESTAMP"/>
 		<db-attribute name="id" type="INTEGER" isPrimaryKey="true" isGenerated="true" isMandatory="true"/>
 	</db-entity>
-	<db-entity name="e17" schema="utest">
+	<db-entity name="e17">
 		<db-attribute name="id1" type="INTEGER" isPrimaryKey="true" isMandatory="true"/>
 		<db-attribute name="id2" type="INTEGER" isPrimaryKey="true" isMandatory="true"/>
 		<db-attribute name="name" type="VARCHAR" length="100"/>
 	</db-entity>
-	<db-entity name="e18" schema="utest">
+	<db-entity name="e18">
 		<db-attribute name="e17_id1" type="INTEGER"/>
 		<db-attribute name="e17_id2" type="INTEGER"/>
 		<db-attribute name="id" type="INTEGER" isPrimaryKey="true" isGenerated="true" isMandatory="true"/>
 		<db-attribute name="name" type="VARCHAR" length="100"/>
 	</db-entity>
-	<db-entity name="e19" schema="utest">
+	<db-entity name="e19">
 		<db-attribute name="big_decimal" type="DECIMAL" length="18" scale="2"/>
 		<db-attribute name="big_integer" type="DECIMAL" length="18"/>
 		<db-attribute name="boolean_object" type="TINYINT"/>
@@ -97,56 +97,56 @@
 		<db-attribute name="short_object" type="SMALLINT"/>
 		<db-attribute name="short_primitive" type="SMALLINT"/>
 	</db-entity>
-	<db-entity name="e2" schema="utest">
+	<db-entity name="e2">
 		<db-attribute name="address" type="VARCHAR" length="255"/>
 		<db-attribute name="id_" type="INTEGER" isPrimaryKey="true" isGenerated="true" isMandatory="true"/>
 		<db-attribute name="name" type="VARCHAR" length="100"/>
 	</db-entity>
-	<db-entity name="e20" schema="utest">
+	<db-entity name="e20">
 		<db-attribute name="age" type="INTEGER"/>
 		<db-attribute name="description" type="VARCHAR" length="100"/>
 		<db-attribute name="e21_id" type="INTEGER"/>
 		<db-attribute name="id" type="INTEGER" isPrimaryKey="true" isGenerated="true" isMandatory="true"/>
 		<db-attribute name="name_col" type="VARCHAR" length="100"/>
 	</db-entity>
-	<db-entity name="e21" schema="utest">
+	<db-entity name="e21">
 		<db-attribute name="age" type="INTEGER"/>
 		<db-attribute name="description" type="VARCHAR" length="100"/>
 		<db-attribute name="id" type="INTEGER" isPrimaryKey="true" isGenerated="true" isMandatory="true"/>
 		<db-attribute name="name" type="VARCHAR" length="100"/>
 	</db-entity>
-	<db-entity name="e22" schema="utest">
+	<db-entity name="e22">
 		<db-attribute name="id" type="INTEGER" isPrimaryKey="true" isMandatory="true"/>
 		<db-attribute name="name" type="VARCHAR" length="100"/>
 	</db-entity>
-	<db-entity name="e23" schema="utest">
+	<db-entity name="e23">
 		<db-attribute name="id" type="INTEGER" isPrimaryKey="true" isMandatory="true"/>
 		<db-attribute name="name" type="VARCHAR" length="100"/>
 	</db-entity>
-	<db-entity name="e24" schema="utest">
+	<db-entity name="e24">
 		<db-attribute name="TYPE" type="INTEGER" isPrimaryKey="true" isMandatory="true"/>
 		<db-attribute name="name" type="VARCHAR" length="100"/>
 	</db-entity>
-	<db-entity name="e25" schema="utest">
+	<db-entity name="e25">
 		<db-attribute name="e22_id" type="INTEGER"/>
 		<db-attribute name="id" type="INTEGER" isPrimaryKey="true" isMandatory="true"/>
 		<db-attribute name="name" type="VARCHAR" length="100"/>
 	</db-entity>
-	<db-entity name="e26" schema="utest">
+	<db-entity name="e26">
 		<db-attribute name="e23_id" type="INTEGER"/>
 		<db-attribute name="id" type="INTEGER" isPrimaryKey="true" isMandatory="true"/>
 	</db-entity>
-	<db-entity name="e27_nopk" schema="utest">
+	<db-entity name="e27_nopk">
 		<db-attribute name="name" type="VARCHAR" length="100"/>
 	</db-entity>
-	<db-entity name="e3" schema="utest">
+	<db-entity name="e3">
 		<db-attribute name="e2_id" type="INTEGER"/>
 		<db-attribute name="e5_id" type="INTEGER"/>
 		<db-attribute name="id_" type="INTEGER" isPrimaryKey="true" isGenerated="true" isMandatory="true"/>
 		<db-attribute name="name" type="VARCHAR" length="200"/>
 		<db-attribute name="phone_number" type="VARCHAR" length="12"/>
 	</db-entity>
-	<db-entity name="e4" schema="utest">
+	<db-entity name="e4">
 		<db-attribute name="c_boolean" type="BOOLEAN"/>
 		<db-attribute name="c_date" type="DATE"/>
 		<db-attribute name="c_decimal" type="DECIMAL" length="10" scale="2"/>
@@ -156,25 +156,25 @@
 		<db-attribute name="c_varchar" type="VARCHAR" length="100"/>
 		<db-attribute name="id" type="INTEGER" isPrimaryKey="true" isGenerated="true" isMandatory="true"/>
 	</db-entity>
-	<db-entity name="e5" schema="utest">
+	<db-entity name="e5">
 		<db-attribute name="date" type="DATE"/>
 		<db-attribute name="id" type="INTEGER" isPrimaryKey="true" isMandatory="true"/>
 		<db-attribute name="name" type="VARCHAR" length="50"/>
 	</db-entity>
-	<db-entity name="e6" schema="utest">
+	<db-entity name="e6">
 		<db-attribute name="char_column" type="VARCHAR" length="100"/>
 		<db-attribute name="char_id" type="VARCHAR" isPrimaryKey="true" isMandatory="true" length="100"/>
 	</db-entity>
-	<db-entity name="e7" schema="utest">
+	<db-entity name="e7">
 		<db-attribute name="e8_id" type="INTEGER"/>
 		<db-attribute name="id" type="INTEGER" isPrimaryKey="true" isMandatory="true"/>
 		<db-attribute name="name" type="VARCHAR" length="100"/>
 	</db-entity>
-	<db-entity name="e8" schema="utest">
+	<db-entity name="e8">
 		<db-attribute name="id" type="INTEGER" isPrimaryKey="true" isMandatory="true"/>
 		<db-attribute name="name" type="VARCHAR" length="100"/>
 	</db-entity>
-	<db-entity name="e9" schema="utest">
+	<db-entity name="e9">
 		<db-attribute name="e8_id" type="INTEGER" isPrimaryKey="true" isMandatory="true"/>
 	</db-entity>
 	<obj-entity name="E1" className="io.agrest.it.fixture.cayenne.E1" dbEntityName="e1">

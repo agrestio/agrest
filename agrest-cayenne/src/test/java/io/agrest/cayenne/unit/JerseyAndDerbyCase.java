@@ -12,7 +12,7 @@ import io.bootique.junit5.BQTestTool;
 public abstract class JerseyAndDerbyCase {
 
     @BQTestTool(BQTestScope.GLOBAL)
-    static final DerbyTester db = DerbyTester.db();
+    static final DerbyTester db = DerbyTester.db().initDB("classpath:schema-derby.sql");
 
     protected static CayenneAgTester.Builder tester(Class<?>... resources) {
         return CayenneAgTester

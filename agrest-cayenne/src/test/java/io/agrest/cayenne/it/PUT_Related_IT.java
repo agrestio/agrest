@@ -14,10 +14,6 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Configuration;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.UriInfo;
-import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class PUT_Related_IT extends JerseyAndDerbyCase {
 
@@ -171,18 +167,7 @@ public class PUT_Related_IT extends JerseyAndDerbyCase {
         tester.e8().matcher().eq("id", 24).assertOneMatch();
 
         tester.e7().matcher().eq("id", 8).eq("e8_id", 24).assertOneMatch();
-
-        // TODO: can't use matcher for NULLs until BQ 1.1 upgrade (because of https://github.com/bootique/bootique-jdbc/issues/91 )
-        //  so using select...
-
-        List<Integer> ids1 = tester.e7()
-                .selectStatement(rs -> {
-                    int i = rs.getInt(1);
-                    return rs.wasNull() ? null : i;
-                }).append("SELECT e8_id FROM utest.e7 WHERE id = 7")
-                .select(100);
-        assertEquals(1, ids1.size());
-        assertNull(ids1.get(0));
+        tester.e7().matcher().eq("id", 7).eq("e8_id", null).assertOneMatch();
 
         // PUT is idempotent... doing another update should not change the picture
         tester.target("/e7/8/e8/24")
@@ -194,18 +179,7 @@ public class PUT_Related_IT extends JerseyAndDerbyCase {
         tester.e8().matcher().eq("name", "aaa").assertOneMatch();
         tester.e8().matcher().eq("id", 24).assertOneMatch();
         tester.e7().matcher().eq("id", 8).eq("e8_id", 24).assertOneMatch();
-
-        // TODO: can't use matcher for NULLs until BQ 1.1 upgrade (because of https://github.com/bootique/bootique-jdbc/issues/91 )
-        //  so using select...
-
-        List<Integer> ids2 = tester.e7()
-                .selectStatement(rs -> {
-                    int i = rs.getInt(1);
-                    return rs.wasNull() ? null : i;
-                }).append("SELECT e8_id FROM utest.e7 WHERE id = 7")
-                .select(100);
-        assertEquals(1, ids2.size());
-        assertNull(ids2.get(0));
+        tester.e7().matcher().eq("id", 7).eq("e8_id", null).assertOneMatch();
     }
 
     @Test
