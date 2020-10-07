@@ -1,9 +1,15 @@
 package io.agrest.cayenne.cayenne.main.auto;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.List;
 
-import org.apache.cayenne.CayenneDataObject;
-import org.apache.cayenne.exp.Property;
+import org.apache.cayenne.BaseDataObject;
+import org.apache.cayenne.exp.property.EntityProperty;
+import org.apache.cayenne.exp.property.ListProperty;
+import org.apache.cayenne.exp.property.PropertyFactory;
+import org.apache.cayenne.exp.property.StringProperty;
 
 import io.agrest.cayenne.cayenne.main.E7;
 import io.agrest.cayenne.cayenne.main.E9;
@@ -14,34 +20,43 @@ import io.agrest.cayenne.cayenne.main.E9;
  * since it may be overwritten next time code is regenerated.
  * If you need to make any customizations, please use subclass.
  */
-public abstract class _E8 extends CayenneDataObject {
+public abstract class _E8 extends BaseDataObject {
 
     private static final long serialVersionUID = 1L; 
 
     public static final String ID_PK_COLUMN = "id";
 
-    public static final Property<String> NAME = Property.create("name", String.class);
-    public static final Property<List<E7>> E7S = Property.create("e7s", List.class);
-    public static final Property<E9> E9 = Property.create("e9", E9.class);
+    public static final StringProperty<String> NAME = PropertyFactory.createString("name", String.class);
+    public static final ListProperty<E7> E7S = PropertyFactory.createList("e7s", E7.class);
+    public static final EntityProperty<E9> E9 = PropertyFactory.createEntity("e9", E9.class);
+
+    protected String name;
+
+    protected Object e7s;
+    protected Object e9;
 
     public void setName(String name) {
-        writeProperty("name", name);
+        beforePropertyWrite("name", this.name, name);
+        this.name = name;
     }
+
     public String getName() {
-        return (String)readProperty("name");
+        beforePropertyRead("name");
+        return this.name;
     }
 
     public void addToE7s(E7 obj) {
         addToManyTarget("e7s", obj, true);
     }
+
     public void removeFromE7s(E7 obj) {
         removeToManyTarget("e7s", obj, true);
     }
+
     @SuppressWarnings("unchecked")
     public List<E7> getE7s() {
         return (List<E7>)readProperty("e7s");
     }
-
 
     public void setE9(E9 e9) {
         setToOneTarget("e9", e9, true);
@@ -51,5 +66,67 @@ public abstract class _E8 extends CayenneDataObject {
         return (E9)readProperty("e9");
     }
 
+    @Override
+    public Object readPropertyDirectly(String propName) {
+        if(propName == null) {
+            throw new IllegalArgumentException();
+        }
+
+        switch(propName) {
+            case "name":
+                return this.name;
+            case "e7s":
+                return this.e7s;
+            case "e9":
+                return this.e9;
+            default:
+                return super.readPropertyDirectly(propName);
+        }
+    }
+
+    @Override
+    public void writePropertyDirectly(String propName, Object val) {
+        if(propName == null) {
+            throw new IllegalArgumentException();
+        }
+
+        switch (propName) {
+            case "name":
+                this.name = (String)val;
+                break;
+            case "e7s":
+                this.e7s = val;
+                break;
+            case "e9":
+                this.e9 = val;
+                break;
+            default:
+                super.writePropertyDirectly(propName, val);
+        }
+    }
+
+    private void writeObject(ObjectOutputStream out) throws IOException {
+        writeSerialized(out);
+    }
+
+    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
+        readSerialized(in);
+    }
+
+    @Override
+    protected void writeState(ObjectOutputStream out) throws IOException {
+        super.writeState(out);
+        out.writeObject(this.name);
+        out.writeObject(this.e7s);
+        out.writeObject(this.e9);
+    }
+
+    @Override
+    protected void readState(ObjectInputStream in) throws IOException, ClassNotFoundException {
+        super.readState(in);
+        this.name = (String)in.readObject();
+        this.e7s = in.readObject();
+        this.e9 = in.readObject();
+    }
 
 }

@@ -1,9 +1,15 @@
 package io.agrest.cayenne.cayenne.main.auto;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.List;
 
-import org.apache.cayenne.CayenneDataObject;
-import org.apache.cayenne.exp.Property;
+import org.apache.cayenne.BaseDataObject;
+import org.apache.cayenne.exp.property.ListProperty;
+import org.apache.cayenne.exp.property.NumericProperty;
+import org.apache.cayenne.exp.property.PropertyFactory;
+import org.apache.cayenne.exp.property.StringProperty;
 
 import io.agrest.cayenne.cayenne.main.E26;
 
@@ -13,40 +19,115 @@ import io.agrest.cayenne.cayenne.main.E26;
  * since it may be overwritten next time code is regenerated.
  * If you need to make any customizations, please use subclass.
  */
-public abstract class _E23 extends CayenneDataObject {
+public abstract class _E23 extends BaseDataObject {
 
     private static final long serialVersionUID = 1L; 
 
     public static final String ID_PK_COLUMN = "id";
 
-    public static final Property<Integer> EXPOSED_ID = Property.create("exposedId", Integer.class);
-    public static final Property<String> NAME = Property.create("name", String.class);
-    public static final Property<List<E26>> E26S = Property.create("e26s", List.class);
+    public static final NumericProperty<Integer> EXPOSED_ID = PropertyFactory.createNumeric("exposedId", Integer.class);
+    public static final StringProperty<String> NAME = PropertyFactory.createString("name", String.class);
+    public static final ListProperty<E26> E26S = PropertyFactory.createList("e26s", E26.class);
+
+    protected Integer exposedId;
+    protected String name;
+
+    protected Object e26s;
 
     public void setExposedId(Integer exposedId) {
-        writeProperty("exposedId", exposedId);
+        beforePropertyWrite("exposedId", this.exposedId, exposedId);
+        this.exposedId = exposedId;
     }
+
     public Integer getExposedId() {
-        return (Integer)readProperty("exposedId");
+        beforePropertyRead("exposedId");
+        return this.exposedId;
     }
 
     public void setName(String name) {
-        writeProperty("name", name);
+        beforePropertyWrite("name", this.name, name);
+        this.name = name;
     }
+
     public String getName() {
-        return (String)readProperty("name");
+        beforePropertyRead("name");
+        return this.name;
     }
 
     public void addToE26s(E26 obj) {
         addToManyTarget("e26s", obj, true);
     }
+
     public void removeFromE26s(E26 obj) {
         removeToManyTarget("e26s", obj, true);
     }
+
     @SuppressWarnings("unchecked")
     public List<E26> getE26s() {
         return (List<E26>)readProperty("e26s");
     }
 
+    @Override
+    public Object readPropertyDirectly(String propName) {
+        if(propName == null) {
+            throw new IllegalArgumentException();
+        }
+
+        switch(propName) {
+            case "exposedId":
+                return this.exposedId;
+            case "name":
+                return this.name;
+            case "e26s":
+                return this.e26s;
+            default:
+                return super.readPropertyDirectly(propName);
+        }
+    }
+
+    @Override
+    public void writePropertyDirectly(String propName, Object val) {
+        if(propName == null) {
+            throw new IllegalArgumentException();
+        }
+
+        switch (propName) {
+            case "exposedId":
+                this.exposedId = (Integer)val;
+                break;
+            case "name":
+                this.name = (String)val;
+                break;
+            case "e26s":
+                this.e26s = val;
+                break;
+            default:
+                super.writePropertyDirectly(propName, val);
+        }
+    }
+
+    private void writeObject(ObjectOutputStream out) throws IOException {
+        writeSerialized(out);
+    }
+
+    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
+        readSerialized(in);
+    }
+
+    @Override
+    protected void writeState(ObjectOutputStream out) throws IOException {
+        super.writeState(out);
+        out.writeObject(this.exposedId);
+        out.writeObject(this.name);
+        out.writeObject(this.e26s);
+    }
+
+    @Override
+    protected void readState(ObjectInputStream in) throws IOException, ClassNotFoundException {
+        super.readState(in);
+        this.exposedId = (Integer)in.readObject();
+        this.name = (String)in.readObject();
+        this.e26s = in.readObject();
+    }
 
 }

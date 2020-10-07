@@ -1,7 +1,12 @@
 package io.agrest.cayenne.cayenne.main.auto;
 
-import org.apache.cayenne.CayenneDataObject;
-import org.apache.cayenne.exp.Property;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+
+import org.apache.cayenne.BaseDataObject;
+import org.apache.cayenne.exp.property.EntityProperty;
+import org.apache.cayenne.exp.property.PropertyFactory;
 
 import io.agrest.cayenne.cayenne.main.E12;
 import io.agrest.cayenne.cayenne.main.E13;
@@ -12,15 +17,19 @@ import io.agrest.cayenne.cayenne.main.E13;
  * since it may be overwritten next time code is regenerated.
  * If you need to make any customizations, please use subclass.
  */
-public abstract class _E12E13 extends CayenneDataObject {
+public abstract class _E12E13 extends BaseDataObject {
 
     private static final long serialVersionUID = 1L; 
 
     public static final String E12_ID_PK_COLUMN = "e12_id";
     public static final String E13_ID_PK_COLUMN = "e13_id";
 
-    public static final Property<E12> E12 = Property.create("e12", E12.class);
-    public static final Property<E13> E13 = Property.create("e13", E13.class);
+    public static final EntityProperty<E12> E12 = PropertyFactory.createEntity("e12", E12.class);
+    public static final EntityProperty<E13> E13 = PropertyFactory.createEntity("e13", E13.class);
+
+
+    protected Object e12;
+    protected Object e13;
 
     public void setE12(E12 e12) {
         setToOneTarget("e12", e12, true);
@@ -30,7 +39,6 @@ public abstract class _E12E13 extends CayenneDataObject {
         return (E12)readProperty("e12");
     }
 
-
     public void setE13(E13 e13) {
         setToOneTarget("e13", e13, true);
     }
@@ -39,5 +47,60 @@ public abstract class _E12E13 extends CayenneDataObject {
         return (E13)readProperty("e13");
     }
 
+    @Override
+    public Object readPropertyDirectly(String propName) {
+        if(propName == null) {
+            throw new IllegalArgumentException();
+        }
+
+        switch(propName) {
+            case "e12":
+                return this.e12;
+            case "e13":
+                return this.e13;
+            default:
+                return super.readPropertyDirectly(propName);
+        }
+    }
+
+    @Override
+    public void writePropertyDirectly(String propName, Object val) {
+        if(propName == null) {
+            throw new IllegalArgumentException();
+        }
+
+        switch (propName) {
+            case "e12":
+                this.e12 = val;
+                break;
+            case "e13":
+                this.e13 = val;
+                break;
+            default:
+                super.writePropertyDirectly(propName, val);
+        }
+    }
+
+    private void writeObject(ObjectOutputStream out) throws IOException {
+        writeSerialized(out);
+    }
+
+    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
+        readSerialized(in);
+    }
+
+    @Override
+    protected void writeState(ObjectOutputStream out) throws IOException {
+        super.writeState(out);
+        out.writeObject(this.e12);
+        out.writeObject(this.e13);
+    }
+
+    @Override
+    protected void readState(ObjectInputStream in) throws IOException, ClassNotFoundException {
+        super.readState(in);
+        this.e12 = in.readObject();
+        this.e13 = in.readObject();
+    }
 
 }

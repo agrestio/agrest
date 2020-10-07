@@ -8,7 +8,8 @@ import io.agrest.meta.AgEntity;
 import io.agrest.runtime.processor.select.SelectContext;
 import org.apache.cayenne.exp.Expression;
 import org.apache.cayenne.exp.ExpressionFactory;
-import org.apache.cayenne.exp.Property;
+import org.apache.cayenne.exp.property.Property;
+import org.apache.cayenne.exp.property.PropertyFactory;
 import org.apache.cayenne.map.*;
 import org.apache.cayenne.query.Ordering;
 import org.apache.cayenne.query.SelectQuery;
@@ -52,7 +53,8 @@ public class CayenneQueryAssembler {
         String reversePath = objRelationship.getReverseDbRelationshipPath();
 
         List<Property<?>> properties = new ArrayList<>();
-        properties.add(Property.createSelf(entity.getType()));
+        Class entityType = entity.getType();
+        properties.add(PropertyFactory.createSelf(entityType));
         AgEntity<?> parentEntity = entity.getParent().getAgEntity();
 
         for (AgAttribute attribute : entity.getParent().getAgEntity().getIds()) {
@@ -61,7 +63,7 @@ public class CayenneQueryAssembler {
             Expression propertyExp = ExpressionFactory.dbPathExp(reversePath
                     + "."
                     + dbAttribute.getName());
-            properties.add(Property.create(propertyExp, (Class) attribute.getType()));
+            properties.add(PropertyFactory.createBase(propertyExp, (Class) attribute.getType()));
         }
 
         query.setColumns(properties);
@@ -134,7 +136,8 @@ public class CayenneQueryAssembler {
         String outgoingPath = objRelationship.getReverseDbRelationshipPath();
 
         List<Property<?>> properties = new ArrayList<>();
-        properties.add(Property.createSelf(entity.getType()));
+        Class entityType = entity.getType();
+        properties.add(PropertyFactory.createSelf(entityType));
 
         AgEntity<?> parentEntity = entity.getParent().getAgEntity();
         for (AgAttribute attribute : parentEntity.getIds()) {
@@ -143,7 +146,7 @@ public class CayenneQueryAssembler {
             Expression propertyExp = ExpressionFactory.dbPathExp(outgoingPath
                     + "."
                     + dbAttribute.getName());
-            properties.add(Property.create(propertyExp, (Class) attribute.getType()));
+            properties.add(PropertyFactory.createBase(propertyExp, (Class) attribute.getType()));
         }
 
         query.setColumns(properties);

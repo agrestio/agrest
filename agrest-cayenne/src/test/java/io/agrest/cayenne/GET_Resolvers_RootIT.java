@@ -139,7 +139,7 @@ public class GET_Resolvers_RootIT extends DbTest {
         private E2 e2(int i) {
             E2 e2 = new E2();
             e2.setName("n_" + i);
-            e2.setObjectId(new ObjectId("e2", _E2.ID__PK_COLUMN, i));
+            e2.setObjectId(ObjectId.of("e2", _E2.ID__PK_COLUMN, i));
 
             return e2;
         }

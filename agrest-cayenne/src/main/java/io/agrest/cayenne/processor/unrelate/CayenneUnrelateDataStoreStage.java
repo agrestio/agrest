@@ -145,7 +145,7 @@ public class CayenneUnrelateDataStoreStage implements Processor<UnrelateContext<
         // instead of SELECT/DELETE|UPDATE?
 
         String idName = entity.getPrimaryKeyNames().iterator().next();
-        ObjectIdQuery select = new ObjectIdQuery(new ObjectId(entity.getName(), idName, id));
+        ObjectIdQuery select = new ObjectIdQuery(ObjectId.of(entity.getName(), idName, id));
 
         return Cayenne.objectForQuery(context, select);
     }

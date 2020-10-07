@@ -47,7 +47,7 @@ public class GET_EntityOverlayIT extends DbTest {
         AgEntityOverlay<E7> e7Overlay = AgEntity.overlay(E7.class)
                 .redefineRelationshipResolver("e8", e7 -> {
                     E8 e8 = new E8();
-                    e8.setObjectId(new ObjectId("e8", "id", Cayenne.intPKForObject(e7)));
+                    e8.setObjectId(ObjectId.of("e8", "id", Cayenne.intPKForObject(e7)));
                     e8.setName(e7.getName() + "_e8");
                     return e8;
                 })

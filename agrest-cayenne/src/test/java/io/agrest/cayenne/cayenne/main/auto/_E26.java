@@ -1,7 +1,12 @@
 package io.agrest.cayenne.cayenne.main.auto;
 
-import org.apache.cayenne.CayenneDataObject;
-import org.apache.cayenne.exp.Property;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+
+import org.apache.cayenne.BaseDataObject;
+import org.apache.cayenne.exp.property.EntityProperty;
+import org.apache.cayenne.exp.property.PropertyFactory;
 
 import io.agrest.cayenne.cayenne.main.E23;
 
@@ -11,13 +16,16 @@ import io.agrest.cayenne.cayenne.main.E23;
  * since it may be overwritten next time code is regenerated.
  * If you need to make any customizations, please use subclass.
  */
-public abstract class _E26 extends CayenneDataObject {
+public abstract class _E26 extends BaseDataObject {
 
     private static final long serialVersionUID = 1L; 
 
     public static final String ID_PK_COLUMN = "id";
 
-    public static final Property<E23> E23 = Property.create("e23", E23.class);
+    public static final EntityProperty<E23> E23 = PropertyFactory.createEntity("e23", E23.class);
+
+
+    protected Object e23;
 
     public void setE23(E23 e23) {
         setToOneTarget("e23", e23, true);
@@ -27,5 +35,53 @@ public abstract class _E26 extends CayenneDataObject {
         return (E23)readProperty("e23");
     }
 
+    @Override
+    public Object readPropertyDirectly(String propName) {
+        if(propName == null) {
+            throw new IllegalArgumentException();
+        }
+
+        switch(propName) {
+            case "e23":
+                return this.e23;
+            default:
+                return super.readPropertyDirectly(propName);
+        }
+    }
+
+    @Override
+    public void writePropertyDirectly(String propName, Object val) {
+        if(propName == null) {
+            throw new IllegalArgumentException();
+        }
+
+        switch (propName) {
+            case "e23":
+                this.e23 = val;
+                break;
+            default:
+                super.writePropertyDirectly(propName, val);
+        }
+    }
+
+    private void writeObject(ObjectOutputStream out) throws IOException {
+        writeSerialized(out);
+    }
+
+    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
+        readSerialized(in);
+    }
+
+    @Override
+    protected void writeState(ObjectOutputStream out) throws IOException {
+        super.writeState(out);
+        out.writeObject(this.e23);
+    }
+
+    @Override
+    protected void readState(ObjectInputStream in) throws IOException, ClassNotFoundException {
+        super.readState(in);
+        this.e23 = in.readObject();
+    }
 
 }

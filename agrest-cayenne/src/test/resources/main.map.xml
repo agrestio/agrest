@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<data-map xmlns="http://cayenne.apache.org/schema/9/modelMap"
+<data-map xmlns="http://cayenne.apache.org/schema/10/modelMap"
 	 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	 xsi:schemaLocation="http://cayenne.apache.org/schema/9/modelMap https://cayenne.apache.org/schema/9/modelMap.xsd"
-	 project-version="9">
+	 xsi:schemaLocation="http://cayenne.apache.org/schema/10/modelMap https://cayenne.apache.org/schema/10/modelMap.xsd"
+	 project-version="10">
 	<property name="defaultPackage" value="io.agrest.cayenne.cayenne.main"/>
 	<property name="quoteSqlIdentifiers" value="true"/>
 	<db-entity name="e1">
@@ -195,20 +195,16 @@
 		<obj-attribute name="address" type="java.lang.String" db-attribute-path="address"/>
 		<obj-attribute name="name" type="java.lang.String" db-attribute-path="name"/>
 	</obj-entity>
-	<obj-entity name="E12" className="io.agrest.cayenne.cayenne.main.E12" dbEntityName="e12">
-	</obj-entity>
-	<obj-entity name="E12E13" className="io.agrest.cayenne.cayenne.main.E12E13" dbEntityName="e12_e13">
-	</obj-entity>
-	<obj-entity name="E13" className="io.agrest.cayenne.cayenne.main.E13" dbEntityName="e13">
-	</obj-entity>
+	<obj-entity name="E12" className="io.agrest.cayenne.cayenne.main.E12" dbEntityName="e12"/>
+	<obj-entity name="E12E13" className="io.agrest.cayenne.cayenne.main.E12E13" dbEntityName="e12_e13"/>
+	<obj-entity name="E13" className="io.agrest.cayenne.cayenne.main.E13" dbEntityName="e13"/>
 	<obj-entity name="E14" className="io.agrest.cayenne.cayenne.main.E14" dbEntityName="e14">
 		<obj-attribute name="name" type="java.lang.String" db-attribute-path="name"/>
 	</obj-entity>
 	<obj-entity name="E15" className="io.agrest.cayenne.cayenne.main.E15" dbEntityName="e15">
 		<obj-attribute name="name" type="java.lang.String" db-attribute-path="name"/>
 	</obj-entity>
-	<obj-entity name="E15E1" className="io.agrest.cayenne.cayenne.main.E15E1" dbEntityName="e15_e1">
-	</obj-entity>
+	<obj-entity name="E15E1" className="io.agrest.cayenne.cayenne.main.E15E1" dbEntityName="e15_e1"/>
 	<obj-entity name="E16" className="io.agrest.cayenne.cayenne.main.E16" dbEntityName="e16">
 		<obj-attribute name="cDate" type="java.sql.Date" db-attribute-path="c_date"/>
 		<obj-attribute name="cTime" type="java.sql.Time" db-attribute-path="c_time"/>
@@ -272,10 +268,8 @@
 		<obj-attribute name="name" type="java.lang.String" db-attribute-path="name"/>
 		<obj-attribute name="type" type="java.lang.String" db-attribute-path="TYPE"/>
 	</obj-entity>
-	<obj-entity name="E25" className="io.agrest.cayenne.cayenne.main.E25" dbEntityName="e25">
-	</obj-entity>
-	<obj-entity name="E26" className="io.agrest.cayenne.cayenne.main.E26" dbEntityName="e26">
-	</obj-entity>
+	<obj-entity name="E25" className="io.agrest.cayenne.cayenne.main.E25" dbEntityName="e25"/>
+	<obj-entity name="E26" className="io.agrest.cayenne.cayenne.main.E26" dbEntityName="e26"/>
 	<obj-entity name="E27Nopk" className="io.agrest.cayenne.cayenne.main.E27Nopk" dbEntityName="e27_nopk">
 		<obj-attribute name="name" type="java.lang.String" db-attribute-path="name"/>
 	</obj-entity>
@@ -305,30 +299,29 @@
 	<obj-entity name="E8" className="io.agrest.cayenne.cayenne.main.E8" dbEntityName="e8">
 		<obj-attribute name="name" type="java.lang.String" db-attribute-path="name"/>
 	</obj-entity>
-	<obj-entity name="E9" className="io.agrest.cayenne.cayenne.main.E9" dbEntityName="e9">
-	</obj-entity>
+	<obj-entity name="E9" className="io.agrest.cayenne.cayenne.main.E9" dbEntityName="e9"/>
 	<db-relationship name="e15e1" source="e1" target="e15_e1" toDependentPK="true" toMany="true">
 		<db-attribute-pair source="id" target="e1_id"/>
 	</db-relationship>
 	<db-relationship name="e11s" source="e10" target="e11" toMany="true">
 		<db-attribute-pair source="id" target="e10_id"/>
 	</db-relationship>
-	<db-relationship name="e10" source="e11" target="e10" toMany="false">
+	<db-relationship name="e10" source="e11" target="e10">
 		<db-attribute-pair source="e10_id" target="id"/>
 	</db-relationship>
 	<db-relationship name="e1213" source="e12" target="e12_e13" toDependentPK="true" toMany="true">
 		<db-attribute-pair source="id" target="e12_id"/>
 	</db-relationship>
-	<db-relationship name="e12" source="e12_e13" target="e12" toMany="false">
+	<db-relationship name="e12" source="e12_e13" target="e12">
 		<db-attribute-pair source="e12_id" target="id"/>
 	</db-relationship>
-	<db-relationship name="e13" source="e12_e13" target="e13" toMany="false">
+	<db-relationship name="e13" source="e12_e13" target="e13">
 		<db-attribute-pair source="e13_id" target="id"/>
 	</db-relationship>
 	<db-relationship name="e1213" source="e13" target="e12_e13" toDependentPK="true" toMany="true">
 		<db-attribute-pair source="id" target="e13_id"/>
 	</db-relationship>
-	<db-relationship name="e15" source="e14" target="e15" toMany="false">
+	<db-relationship name="e15" source="e14" target="e15">
 		<db-attribute-pair source="e15_id" target="long_id"/>
 	</db-relationship>
 	<db-relationship name="e14s" source="e15" target="e14" toMany="true">
@@ -340,30 +333,30 @@
 	<db-relationship name="e15e5" source="e15" target="e15_e5" toDependentPK="true" toMany="true">
 		<db-attribute-pair source="long_id" target="e15_id"/>
 	</db-relationship>
-	<db-relationship name="e1" source="e15_e1" target="e1" toMany="false">
+	<db-relationship name="e1" source="e15_e1" target="e1">
 		<db-attribute-pair source="e1_id" target="id"/>
 	</db-relationship>
-	<db-relationship name="e15" source="e15_e1" target="e15" toMany="false">
+	<db-relationship name="e15" source="e15_e1" target="e15">
 		<db-attribute-pair source="e15_id" target="long_id"/>
 	</db-relationship>
-	<db-relationship name="e15" source="e15_e5" target="e15" toMany="false">
+	<db-relationship name="e15" source="e15_e5" target="e15">
 		<db-attribute-pair source="e15_id" target="long_id"/>
 	</db-relationship>
-	<db-relationship name="e5" source="e15_e5" target="e5" toMany="false">
+	<db-relationship name="e5" source="e15_e5" target="e5">
 		<db-attribute-pair source="e5_id" target="id"/>
 	</db-relationship>
 	<db-relationship name="e18s" source="e17" target="e18" toMany="true">
 		<db-attribute-pair source="id1" target="e17_id1"/>
 		<db-attribute-pair source="id2" target="e17_id2"/>
 	</db-relationship>
-	<db-relationship name="e17" source="e18" target="e17" toMany="false">
+	<db-relationship name="e17" source="e18" target="e17">
 		<db-attribute-pair source="e17_id1" target="id1"/>
 		<db-attribute-pair source="e17_id2" target="id2"/>
 	</db-relationship>
 	<db-relationship name="e3s" source="e2" target="e3" toMany="true">
 		<db-attribute-pair source="id_" target="e2_id"/>
 	</db-relationship>
-	<db-relationship name="e21" source="e20" target="e21" toMany="false">
+	<db-relationship name="e21" source="e20" target="e21">
 		<db-attribute-pair source="e21_id" target="id"/>
 	</db-relationship>
 	<db-relationship name="e20" source="e21" target="e20" toMany="true">
@@ -375,16 +368,16 @@
 	<db-relationship name="e26s" source="e23" target="e26" toMany="true">
 		<db-attribute-pair source="id" target="e23_id"/>
 	</db-relationship>
-	<db-relationship name="e22" source="e25" target="e22" toMany="false">
+	<db-relationship name="e22" source="e25" target="e22">
 		<db-attribute-pair source="e22_id" target="id"/>
 	</db-relationship>
-	<db-relationship name="e23" source="e26" target="e23" toMany="false">
+	<db-relationship name="e23" source="e26" target="e23">
 		<db-attribute-pair source="e23_id" target="id"/>
 	</db-relationship>
-	<db-relationship name="e2" source="e3" target="e2" toMany="false">
+	<db-relationship name="e2" source="e3" target="e2">
 		<db-attribute-pair source="e2_id" target="id_"/>
 	</db-relationship>
-	<db-relationship name="e5" source="e3" target="e5" toMany="false">
+	<db-relationship name="e5" source="e3" target="e5">
 		<db-attribute-pair source="e5_id" target="id"/>
 	</db-relationship>
 	<db-relationship name="e15e5" source="e5" target="e15_e5" toDependentPK="true" toMany="true">
@@ -393,16 +386,16 @@
 	<db-relationship name="e2s" source="e5" target="e3" toMany="true">
 		<db-attribute-pair source="id" target="e5_id"/>
 	</db-relationship>
-	<db-relationship name="e8" source="e7" target="e8" toMany="false">
+	<db-relationship name="e8" source="e7" target="e8">
 		<db-attribute-pair source="e8_id" target="id"/>
 	</db-relationship>
 	<db-relationship name="e7s" source="e8" target="e7" toMany="true">
 		<db-attribute-pair source="id" target="e8_id"/>
 	</db-relationship>
-	<db-relationship name="e9" source="e8" target="e9" toDependentPK="true" toMany="false">
+	<db-relationship name="e9" source="e8" target="e9" toDependentPK="true">
 		<db-attribute-pair source="id" target="e8_id"/>
 	</db-relationship>
-	<db-relationship name="e8" source="e9" target="e8" toMany="false">
+	<db-relationship name="e8" source="e9" target="e8">
 		<db-attribute-pair source="e8_id" target="id"/>
 	</db-relationship>
 	<obj-relationship name="e15e1" source="E1" target="E15E1" deleteRule="Deny" db-relationship-path="e15e1"/>
@@ -433,4 +426,17 @@
 	<obj-relationship name="e7s" source="E8" target="E7" deleteRule="Deny" db-relationship-path="e7s"/>
 	<obj-relationship name="e9" source="E8" target="E9" deleteRule="Nullify" db-relationship-path="e9"/>
 	<obj-relationship name="e8" source="E9" target="E8" deleteRule="Nullify" db-relationship-path="e8"/>
+	<cgen xmlns="http://cayenne.apache.org/schema/10/cgen">
+		<destDir>../java</destDir>
+		<mode>entity</mode>
+		<template>templates/v4_1/subclass.vm</template>
+		<superTemplate>templates/v4_1/superclass.vm</superTemplate>
+		<outputPattern>*.java</outputPattern>
+		<makePairs>true</makePairs>
+		<usePkgPath>true</usePkgPath>
+		<overwrite>false</overwrite>
+		<createPropertyNames>false</createPropertyNames>
+		<createPKProperties>false</createPKProperties>
+		<client>false</client>
+	</cgen>
 </data-map>

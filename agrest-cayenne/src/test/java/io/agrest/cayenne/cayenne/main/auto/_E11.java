@@ -1,7 +1,13 @@
 package io.agrest.cayenne.cayenne.main.auto;
 
-import org.apache.cayenne.CayenneDataObject;
-import org.apache.cayenne.exp.Property;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+
+import org.apache.cayenne.BaseDataObject;
+import org.apache.cayenne.exp.property.EntityProperty;
+import org.apache.cayenne.exp.property.PropertyFactory;
+import org.apache.cayenne.exp.property.StringProperty;
 
 import io.agrest.cayenne.cayenne.main.E10;
 
@@ -11,28 +17,39 @@ import io.agrest.cayenne.cayenne.main.E10;
  * since it may be overwritten next time code is regenerated.
  * If you need to make any customizations, please use subclass.
  */
-public abstract class _E11 extends CayenneDataObject {
+public abstract class _E11 extends BaseDataObject {
 
     private static final long serialVersionUID = 1L; 
 
     public static final String ID_PK_COLUMN = "id";
 
-    public static final Property<String> ADDRESS = Property.create("address", String.class);
-    public static final Property<String> NAME = Property.create("name", String.class);
-    public static final Property<E10> E10 = Property.create("e10", E10.class);
+    public static final StringProperty<String> ADDRESS = PropertyFactory.createString("address", String.class);
+    public static final StringProperty<String> NAME = PropertyFactory.createString("name", String.class);
+    public static final EntityProperty<E10> E10 = PropertyFactory.createEntity("e10", E10.class);
+
+    protected String address;
+    protected String name;
+
+    protected Object e10;
 
     public void setAddress(String address) {
-        writeProperty("address", address);
+        beforePropertyWrite("address", this.address, address);
+        this.address = address;
     }
+
     public String getAddress() {
-        return (String)readProperty("address");
+        beforePropertyRead("address");
+        return this.address;
     }
 
     public void setName(String name) {
-        writeProperty("name", name);
+        beforePropertyWrite("name", this.name, name);
+        this.name = name;
     }
+
     public String getName() {
-        return (String)readProperty("name");
+        beforePropertyRead("name");
+        return this.name;
     }
 
     public void setE10(E10 e10) {
@@ -43,5 +60,67 @@ public abstract class _E11 extends CayenneDataObject {
         return (E10)readProperty("e10");
     }
 
+    @Override
+    public Object readPropertyDirectly(String propName) {
+        if(propName == null) {
+            throw new IllegalArgumentException();
+        }
+
+        switch(propName) {
+            case "address":
+                return this.address;
+            case "name":
+                return this.name;
+            case "e10":
+                return this.e10;
+            default:
+                return super.readPropertyDirectly(propName);
+        }
+    }
+
+    @Override
+    public void writePropertyDirectly(String propName, Object val) {
+        if(propName == null) {
+            throw new IllegalArgumentException();
+        }
+
+        switch (propName) {
+            case "address":
+                this.address = (String)val;
+                break;
+            case "name":
+                this.name = (String)val;
+                break;
+            case "e10":
+                this.e10 = val;
+                break;
+            default:
+                super.writePropertyDirectly(propName, val);
+        }
+    }
+
+    private void writeObject(ObjectOutputStream out) throws IOException {
+        writeSerialized(out);
+    }
+
+    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
+        readSerialized(in);
+    }
+
+    @Override
+    protected void writeState(ObjectOutputStream out) throws IOException {
+        super.writeState(out);
+        out.writeObject(this.address);
+        out.writeObject(this.name);
+        out.writeObject(this.e10);
+    }
+
+    @Override
+    protected void readState(ObjectInputStream in) throws IOException, ClassNotFoundException {
+        super.readState(in);
+        this.address = (String)in.readObject();
+        this.name = (String)in.readObject();
+        this.e10 = in.readObject();
+    }
 
 }

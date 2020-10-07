@@ -20,7 +20,8 @@ import org.apache.cayenne.DataObject;
 import org.apache.cayenne.di.Inject;
 import org.apache.cayenne.exp.Expression;
 import org.apache.cayenne.exp.ExpressionFactory;
-import org.apache.cayenne.exp.Property;
+import org.apache.cayenne.exp.property.Property;
+import org.apache.cayenne.exp.property.PropertyFactory;
 import org.apache.cayenne.map.ObjRelationship;
 import org.apache.cayenne.query.SelectQuery;
 
@@ -178,12 +179,12 @@ public class CayenneUpdateStage extends CayenneMergeChangesStage {
                 }
 
                 List<Property> properties = new ArrayList<>();
-                properties.add(Property.createSelf(child.getType()));
+                properties.add(PropertyFactory.createSelf(child.getType()));
 
                 ObjRelationship objRelationship = objRelationshipForIncomingRelationship(child);
 
                 for (AgAttribute attribute : entity.getAgEntity().getIds()) {
-                    properties.add(Property.create(ExpressionFactory.dbPathExp(
+                    properties.add(PropertyFactory.createBase(ExpressionFactory.dbPathExp(
                             objRelationship.getReverseDbRelationshipPath() + "." + attribute.getName()),
                             (Class) attribute.getType()));
                 }
