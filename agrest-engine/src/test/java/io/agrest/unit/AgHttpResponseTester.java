@@ -99,7 +99,7 @@ public class AgHttpResponseTester {
         return statusEquals(Response.Status.NOT_FOUND);
     }
 
-    public AgHttpResponseTester statusEquals(Response.Status expectedStatus) {
+    protected AgHttpResponseTester statusEquals(Response.Status expectedStatus) {
         assertEquals(expectedStatus.getStatusCode(), response.getStatus());
         return this;
     }

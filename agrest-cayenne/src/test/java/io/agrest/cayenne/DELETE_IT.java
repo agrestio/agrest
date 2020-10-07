@@ -2,11 +2,11 @@ package io.agrest.cayenne;
 
 import io.agrest.Ag;
 import io.agrest.SimpleResponse;
-import io.agrest.cayenne.unit.AgCayenneTester;
-import io.agrest.cayenne.unit.DbTest;
 import io.agrest.cayenne.cayenne.main.E17;
 import io.agrest.cayenne.cayenne.main.E24;
 import io.agrest.cayenne.cayenne.main.E4;
+import io.agrest.cayenne.unit.AgCayenneTester;
+import io.agrest.cayenne.unit.DbTest;
 import io.bootique.junit5.BQTestTool;
 import org.junit.jupiter.api.Test;
 
@@ -16,7 +16,6 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Configuration;
 import javax.ws.rs.core.Context;
-import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriInfo;
 import java.util.HashMap;
 import java.util.Map;
@@ -64,7 +63,7 @@ public class DELETE_IT extends DbTest {
 
         tester.target("/e4/7")
                 .delete()
-                .statusEquals(Status.NOT_FOUND)
+                .wasNotFound()
                 .bodyEquals("{\"success\":false,\"message\":\"No object for ID '7' and entity 'E4'\"}");
 
         tester.e4().matcher().assertMatches(1);
@@ -84,7 +83,7 @@ public class DELETE_IT extends DbTest {
 
         tester.target("/e4/8")
                 .delete()
-                .statusEquals(Status.NOT_FOUND)
+                .wasNotFound()
                 .bodyEquals("{\"success\":false,\"message\":\"No object for ID '8' and entity 'E4'\"}");
     }
 

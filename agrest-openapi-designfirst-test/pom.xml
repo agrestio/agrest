@@ -27,6 +27,21 @@
 
         <!-- unit test deps -->
         <dependency>
+            <groupId>io.bootique.jdbc</groupId>
+            <artifactId>bootique-jdbc-junit5-derby</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.bootique.cayenne</groupId>
+            <artifactId>bootique-cayenne-junit5</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.bootique.jetty</groupId>
+            <artifactId>bootique-jetty-junit5</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>io.agrest</groupId>
             <artifactId>agrest-engine</artifactId>
             <type>test-jar</type>
@@ -40,12 +55,6 @@
             <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
-        <!-- Use Vintage until we switch to JUnit 5-->
-        <dependency>
-            <groupId>org.junit.vintage</groupId>
-            <artifactId>junit-vintage-engine</artifactId>
-            <scope>test</scope>
-        </dependency>
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-all</artifactId>
@@ -56,28 +65,11 @@
             <artifactId>slf4j-simple</artifactId>
             <scope>test</scope>
         </dependency>
-
-        <dependency>
-            <groupId>io.bootique</groupId>
-            <artifactId>bootique-test</artifactId>
-            <scope>test</scope>
-        </dependency>
         <dependency>
             <groupId>io.bootique.jersey</groupId>
             <artifactId>bootique-jersey</artifactId>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>io.bootique.cayenne</groupId>
-            <artifactId>bootique-cayenne-test</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>io.bootique.jdbc</groupId>
-            <artifactId>bootique-jdbc-hikaricp</artifactId>
-            <scope>test</scope>
-        </dependency>
-
     </dependencies>
 
     <build>
@@ -103,7 +95,7 @@
                             <generatorName>io.swagger.codegen.languages.AgServerCodegen</generatorName>
                             <output>${project.basedir}</output>
                             <apiPackage>${base-package}.swagger.api.v${schema-version}.service</apiPackage>
-                            <modelPackage>${base-package}.it.fixture.cayenne</modelPackage>
+                            <modelPackage>${base-package}.cayenne.cayenne.main</modelPackage>
                             <invokerPackage>${base-package}</invokerPackage>
                             <generateModels>false</generateModels>
                             <skipOverwrite>false</skipOverwrite>

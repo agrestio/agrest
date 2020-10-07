@@ -5,10 +5,12 @@ import io.agrest.cayenne.cayenne.main.E5;
 import io.agrest.AgRequest;
 import io.agrest.DataResponse;
 
+import java.util.*;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
 
 import io.agrest.Ag;
+import io.agrest.SimpleResponse;
 
 @Path("/")
 public class E5Resource {

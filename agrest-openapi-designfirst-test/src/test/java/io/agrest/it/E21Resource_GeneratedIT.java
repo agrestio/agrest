@@ -1,88 +1,75 @@
 package io.agrest.it;
 
 
-import io.agrest.cayenne.unit.DbTest;
 import io.agrest.cayenne.cayenne.main.E21;
+import io.agrest.cayenne.unit.AgCayenneTester;
+import io.agrest.cayenne.unit.DbTest;
 import io.agrest.swagger.api.v1.service.E21Resource;
-import org.junit.BeforeClass;
-import org.junit.Test;
-
-import javax.ws.rs.client.Entity;
-import javax.ws.rs.core.Response;
+import io.bootique.junit5.BQTestTool;
+import org.junit.jupiter.api.Test;
 
 public class E21Resource_GeneratedIT extends DbTest {
 
-    @BeforeClass
-    public static void startTestRuntime() {
-        startTestRuntime(E21Resource.class);
-    }
-
-    @Override
-    protected Class<?>[] testEntities() {
-        return new Class[]{E21.class};
-    }
+    @BQTestTool
+    static final AgCayenneTester tester = tester(E21Resource.class)
+            .entities(E21.class)
+            .build();
 
     @Test
     public void test_SelectById_MultiId() {
 
-        e21().insertColumns("age", "name")
+        tester.e21().insertColumns("age", "name")
                 .values(18, "John").exec();
 
-        Response r = target("/v1/e21")
+        tester.target("/v1/e21")
                 .queryParam("age", 18)
                 .queryParam("name", "John")
                 .queryParam("exclude", "description")
-                .request().get();
-
-        onSuccess(r).bodyEquals(1, "{\"id\":{\"age\":18,\"name\":\"John\"},\"age\":18,\"name\":\"John\"}");
+                .get().wasOk().bodyEquals(1, "{\"id\":{\"age\":18,\"name\":\"John\"},\"age\":18,\"name\":\"John\"}");
     }
 
 
     @Test
     public void testPOST_Exclude() {
 
-        Response r = target("/v1/e21")
+        tester.target("/v1/e21")
                 .queryParam("exclude", "description")
-                .request()
-                .post(Entity.json("{\"id\":{\"age\":18,\"name\":\"John\"}}"));
-
-        onResponse(r).statusEquals(Response.Status.CREATED)
+                .post("{\"id\":{\"age\":18,\"name\":\"John\"}}")
+                .wasCreated()
                 .bodyEquals(1, "{\"id\":{\"age\":18,\"name\":\"John\"},\"age\":18,\"name\":\"John\"}");
-        e21().matcher().assertOneMatch();
+
+        tester.e21().matcher().assertOneMatch();
     }
 
     @Test
     public void testPUT() {
-        e21().insertColumns("age", "name")
+        tester.e21().insertColumns("age", "name")
                 .values(18, "John")
                 .values(27, "Brian").exec();
 
-        Response r = target("/v1/e21").queryParam("age", 18)
+        tester.target("/v1/e21").queryParam("age", 18)
                 .queryParam("name", "John")
-                .request().put(Entity.json("{\"age\":28,\"description\":\"zzz\"}"));
+                .put("{\"age\":28,\"description\":\"zzz\"}")
+                .wasOk()
+                .bodyEquals(1, "{\"id\":{\"age\":28,\"name\":\"John\"},\"age\":28,\"description\":\"zzz\",\"name\":\"John\"}");
 
-        onSuccess(r).bodyEquals(1,
-                "{\"id\":{\"age\":28,\"name\":\"John\"},\"age\":28,\"description\":\"zzz\",\"name\":\"John\"}");
-
-        e21().matcher().eq("age", 28).eq("description", "zzz").assertOneMatch();
+        tester.e21().matcher().eq("age", 28).eq("description", "zzz").assertOneMatch();
     }
 
     @Test
     public void testDELETE_MultiId() {
 
-        e21().insertColumns("age", "name")
+        tester.e21().insertColumns("age", "name")
                 .values(18, "John")
                 .values(27, "Brian").exec();
 
-        Response r = target("/v1/e21")
+        tester.target("/v1/e21")
                 .queryParam("age", 18)
                 .queryParam("name", "John")
-                .request()
-                .delete();
 
-        onSuccess(r).bodyEquals("{\"success\":true}");
+                .delete().wasOk().bodyEquals("{\"success\":true}");
 
-        e21().matcher().assertOneMatch();
-        e21().matcher().eq("name", "Brian").eq("age", 27).assertOneMatch();
+        tester.e21().matcher().assertOneMatch();
+        tester.e21().matcher().eq("name", "Brian").eq("age", 27).assertOneMatch();
     }
 }
