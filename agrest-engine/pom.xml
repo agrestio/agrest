@@ -25,7 +25,7 @@
             <artifactId>agrest-annotations</artifactId>
             <version>${project.version}</version>
         </dependency>
-        <!-- Unfortinately there are still Cayenne dependencies related to DI, Expressions, etc.
+        <!-- Unfortunately there are still Cayenne dependencies related to DI, Expressions, etc.
         TODO: remove this when we can. -->
         <dependency>
             <groupId>org.apache.cayenne</groupId>
@@ -40,8 +40,8 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>io.bootique</groupId>
-            <artifactId>bootique-junit5</artifactId>
+            <groupId>io.bootique.jetty</groupId>
+            <artifactId>bootique-jetty-junit5</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>

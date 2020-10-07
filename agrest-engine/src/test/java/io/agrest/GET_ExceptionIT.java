@@ -1,8 +1,8 @@
 package io.agrest;
 
-import io.agrest.AgException;
+import io.agrest.unit.AgPojoTester;
 import io.agrest.unit.PojoTest;
-import org.junit.jupiter.api.BeforeAll;
+import io.bootique.junit5.BQTestTool;
 import org.junit.jupiter.api.Test;
 
 import javax.ws.rs.GET;
@@ -13,22 +13,20 @@ import javax.ws.rs.core.Response.Status;
 
 public class GET_ExceptionIT extends PojoTest {
 
-    @BeforeAll
-    public static void startTestRuntime() {
-        startTestRuntime(Resource.class);
-    }
+    @BQTestTool
+    static final AgPojoTester tester = tester(Resource.class).build();
 
     @Test
     public void testNoData() {
-        Response r = target("/nodata").request().get();
-        onResponse(r).statusEquals(Status.NOT_FOUND).bodyEquals("{\"success\":false,\"message\":\"request failed\"}");
+        tester.target("/nodata").get()
+                .wasNotFound()
+                .bodyEquals("{\"success\":false,\"message\":\"request failed\"}");
     }
 
     @Test
     public void testNoData_WithThrowable() {
-        Response r = target("/nodata/th").request().get();
-
-        onResponse(r).statusEquals(Status.INTERNAL_SERVER_ERROR)
+        tester.target("/nodata/th").get()
+                .wasServerError()
                 .mediaTypeEquals(MediaType.APPLICATION_JSON_TYPE)
                 .bodyEquals("{\"success\":false,\"message\":\"request failed with th\"}");
     }

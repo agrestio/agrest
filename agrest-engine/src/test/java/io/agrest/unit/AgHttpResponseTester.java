@@ -91,6 +91,10 @@ public class AgHttpResponseTester {
         return statusEquals(Response.Status.BAD_REQUEST);
     }
 
+    public AgHttpResponseTester wasForbidden() {
+        return statusEquals(Response.Status.FORBIDDEN);
+    }
+
     public AgHttpResponseTester wasNotFound() {
         return statusEquals(Response.Status.NOT_FOUND);
     }

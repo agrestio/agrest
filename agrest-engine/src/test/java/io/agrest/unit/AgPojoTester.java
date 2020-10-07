@@ -1,4 +1,203 @@
 package io.agrest.unit;
 
-public class AgPojoTester {
+import io.agrest.pojo.model.*;
+import io.agrest.pojo.runtime.PojoDB;
+import io.agrest.pojo.runtime.PojoFetchStage;
+import io.agrest.pojo.runtime.PojoSelectProcessorFactoryProvider;
+import io.agrest.runtime.AgBuilder;
+import io.agrest.runtime.AgRuntime;
+import io.agrest.runtime.IAgService;
+import io.agrest.runtime.processor.delete.DeleteProcessorFactory;
+import io.agrest.runtime.processor.select.SelectProcessorFactory;
+import io.agrest.runtime.processor.unrelate.UnrelateProcessorFactory;
+import io.agrest.runtime.processor.update.UpdateProcessorFactoryFactory;
+import io.bootique.BQRuntime;
+import io.bootique.Bootique;
+import io.bootique.command.CommandOutcome;
+import io.bootique.di.BQModule;
+import io.bootique.di.Binder;
+import io.bootique.di.Provides;
+import io.bootique.jersey.JerseyModule;
+import io.bootique.jersey.JerseyModuleExtender;
+import io.bootique.jetty.junit5.JettyTester;
+import io.bootique.junit5.BQTestScope;
+import io.bootique.junit5.scope.BQAfterScopeCallback;
+import io.bootique.junit5.scope.BQBeforeMethodCallback;
+import io.bootique.junit5.scope.BQBeforeScopeCallback;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.extension.ExtensionContext;
+
+import javax.inject.Singleton;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.function.Function;
+import java.util.stream.Stream;
+
+import static org.mockito.Mockito.mock;
+
+public class AgPojoTester implements BQBeforeScopeCallback, BQAfterScopeCallback, BQBeforeMethodCallback {
+
+    private final List<Class<?>> resources;
+    private Function<AgBuilder, AgBuilder> agCustomizer;
+
+    private PojoDB pojoDBInScope;
+    private JettyTester jettyInScope;
+    private BQRuntime appInScope;
+
+    public static Builder builder() {
+        return new Builder();
+    }
+
+    protected AgPojoTester() {
+        this.resources = new ArrayList<>();
+        this.agCustomizer = Function.identity();
+    }
+
+    public AgHttpTester target() {
+        return AgHttpTester.request(getJettyInScope().getTarget());
+    }
+
+    public AgHttpTester target(String path) {
+        return target().path(path);
+    }
+
+    public IAgService ag() {
+        return getAppInScope().getInstance(AgRuntime.class).service(IAgService.class);
+    }
+
+    public <T> Map<Object, T> bucket(Class<T> type) {
+        return getPojoDBInScope().bucketForType(type);
+    }
+
+    public Map<Object, P1> p1() {
+        return bucket(P1.class);
+    }
+
+    public Map<Object, P2> p2() {
+        return bucket(P2.class);
+    }
+
+    public Map<Object, P4> p4() {
+        return bucket(P4.class);
+    }
+
+    public Map<Object, P6> p6() {
+        return bucket(P6.class);
+    }
+
+    public Map<Object, P8> p8() {
+        return bucket(P8.class);
+    }
+
+    public Map<Object, P9> p9() {
+        return bucket(P9.class);
+    }
+
+
+    protected JettyTester getJettyInScope() {
+        return Objects.requireNonNull(jettyInScope, "Not in test scope");
+    }
+
+    protected BQRuntime getAppInScope() {
+        return Objects.requireNonNull(appInScope, "Not in test scope");
+    }
+
+    protected PojoDB getPojoDBInScope() {
+        return Objects.requireNonNull(pojoDBInScope, "Not in test scope");
+    }
+
+    @Override
+    public void beforeScope(BQTestScope scope, ExtensionContext context) {
+
+        this.pojoDBInScope = new PojoDB();
+        this.jettyInScope = JettyTester.create();
+        this.appInScope = createAppInScope(this.jettyInScope, this.pojoDBInScope);
+
+        CommandOutcome result = appInScope.run();
+        Assertions.assertTrue(result.isSuccess());
+        Assertions.assertTrue(result.forkedToBackground());
+    }
+
+    @Override
+    public void afterScope(BQTestScope scope, ExtensionContext context) {
+        this.appInScope.shutdown();
+        this.appInScope = null;
+        this.jettyInScope = null;
+        this.pojoDBInScope = null;
+    }
+
+    @Override
+    public void beforeMethod(BQTestScope scope, ExtensionContext context) {
+        getPojoDBInScope().clear();
+    }
+
+    protected BQRuntime createAppInScope(JettyTester jetty, PojoDB pojoDB) {
+
+        Bootique builder = Bootique.app("-s")
+                .autoLoadModules()
+                .module(jetty.moduleReplacingConnectors())
+                .module(new AgModule(agCustomizer, pojoDB, resources));
+
+        return builder.createRuntime();
+    }
+
+    public static class Builder {
+
+        private final AgPojoTester tester = new AgPojoTester();
+
+        public Builder resources(Class<?>... resources) {
+            Stream.of(resources).forEach(tester.resources::add);
+            return this;
+        }
+
+        public Builder agCustomizer(Function<AgBuilder, AgBuilder> agCustomizer) {
+            tester.agCustomizer = Objects.requireNonNull(agCustomizer);
+            return this;
+        }
+
+        public AgPojoTester build() {
+            return tester;
+        }
+    }
+
+    static class AgModule implements BQModule {
+
+        private final PojoDB pojoDB;
+        private final Function<AgBuilder, AgBuilder> customizer;
+        private final List<Class<?>> resources;
+
+        public AgModule(Function<AgBuilder, AgBuilder> customizer, PojoDB pojoDB, List<Class<?>> resources) {
+            this.pojoDB = pojoDB;
+            this.customizer = customizer;
+            this.resources = resources;
+        }
+
+        @Override
+        public void configure(Binder binder) {
+            configureJersey(JerseyModule.extend(binder));
+        }
+
+        private void configureJersey(JerseyModuleExtender extender) {
+            extender.addFeature(AgRuntime.class);
+            resources.forEach(extender::addResource);
+        }
+
+        @Provides
+        @Singleton
+        AgRuntime provideAgRuntime() {
+            AgBuilder agBuilder = new AgBuilder().module(this::configureAg);
+            return customizer.apply(agBuilder).build();
+        }
+
+        private void configureAg(org.apache.cayenne.di.Binder agBinder) {
+            agBinder.bind(SelectProcessorFactory.class).toProvider(PojoSelectProcessorFactoryProvider.class);
+            agBinder.bind(DeleteProcessorFactory.class).toInstance(mock(DeleteProcessorFactory.class));
+            agBinder.bind(UpdateProcessorFactoryFactory.class).toInstance(mock(UpdateProcessorFactoryFactory.class));
+            agBinder.bind(UnrelateProcessorFactory.class).toInstance(mock(UnrelateProcessorFactory.class));
+            agBinder.bind(PojoFetchStage.class).to(PojoFetchStage.class);
+            agBinder.bind(PojoDB.class).toInstance(pojoDB);
+        }
+    }
 }

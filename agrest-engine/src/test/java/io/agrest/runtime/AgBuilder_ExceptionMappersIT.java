@@ -2,11 +2,12 @@ package io.agrest.runtime;
 
 import io.agrest.AgException;
 import io.agrest.DataResponse;
-import io.agrest.unit.PojoTest;
 import io.agrest.pojo.model.P1;
 import io.agrest.pojo.model.P2;
+import io.agrest.unit.AgPojoTester;
+import io.agrest.unit.PojoTest;
+import io.bootique.junit5.BQTestTool;
 import org.apache.cayenne.di.Module;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import javax.ws.rs.GET;
@@ -14,19 +15,17 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.*;
 import javax.ws.rs.ext.ExceptionMapper;
-import java.util.function.UnaryOperator;
 
 public class AgBuilder_ExceptionMappersIT extends PojoTest {
 
-    @BeforeAll
-    public static void startTestRuntime() {
-        UnaryOperator<AgBuilder> customizer = b -> b.module(exceptionsModule());
-        startTestRuntime(customizer, Resource.class);
-    }
+    @BQTestTool
+    static final AgPojoTester tester = tester(Resource.class)
+            .agCustomizer(b -> b.module(exceptionsModule()))
+            .build();
 
     private static Module exceptionsModule() {
-        return cb -> cb.bindMap(ExceptionMapper.class)
-                // TODO: Bootique-like extender API
+        return cb -> cb
+                .bindMap(ExceptionMapper.class)
                 .put(AgException.class.getName(), TestAgExceptionMapper.class)
                 .put(TestException.class.getName(), TestExceptionMapper.class);
     }
@@ -35,15 +34,13 @@ public class AgBuilder_ExceptionMappersIT extends PojoTest {
     public void testExceptionMapper() {
 
         // override standard mapper
-        Response r1 = target("/agexception").request().get();
-        onResponse(r1)
-                .statusEquals(Response.Status.INTERNAL_SERVER_ERROR)
+        tester.target("/agexception").get()
+                .wasServerError()
                 .bodyEquals("_ag__ag_exception_");
 
         // install custom mapper
-        Response r2 = target("/testexception").request().get();
-        onResponse(r2)
-                .statusEquals(Response.Status.INTERNAL_SERVER_ERROR)
+        tester.target("/testexception").get()
+                .wasServerError()
                 .bodyEquals("_test__test_exception_");
     }
 
