@@ -37,6 +37,8 @@ public abstract class ResourceEntity<T> {
     private int fetchLimit;
     private final List<EntityEncoderFilter> entityEncoderFilters;
 
+    private final Map<String, Object> requestProperties;
+
     // TODO: Per #433 get rid of SelectQuery in generic "agrest-engine".. It must live on the "agrest-cayenne" side.
     @Deprecated
     private SelectQuery<T> select;
@@ -52,6 +54,8 @@ public abstract class ResourceEntity<T> {
         this.children = new HashMap<>();
         this.orderings = new ArrayList<>(2);
         this.entityEncoderFilters = new ArrayList<>(3);
+
+        this.requestProperties = new HashMap<>(5);
     }
 
     /**
@@ -248,5 +252,25 @@ public abstract class ResourceEntity<T> {
      */
     public List<EntityEncoderFilter> getEntityEncoderFilters() {
         return entityEncoderFilters;
+    }
+
+    /**
+     * Returns a previously stored object for a given name. Request properties mechanism allows pluggable processing
+     * pipelines to store and exchange data within a given request.
+     *
+     * @since 3.7
+     */
+    public <T> T getRequestProperty(String name) {
+        return (T) requestProperties.get(name);
+    }
+
+    /**
+     * Sets a property value for a given name. Request properties mechanism allows pluggable processing pipelines to
+     * store and exchange data within a given request.
+     *
+     * @since 3.7
+     */
+    public void setRequestProperty(String name, Object value) {
+        requestProperties.put(name, value);
     }
 }
