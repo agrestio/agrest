@@ -155,14 +155,14 @@ public class DELETE_RelatedIT extends DbTest {
         @DELETE
         @Path("{id}/e2")
         public SimpleResponse deleteE2_Implicit(@PathParam("id") int id) {
-            return Ag.service(config).unrelate(E3.class, id, E3.E2);
+            return Ag.service(config).unrelate(E3.class, id, E3.E2.getName());
         }
 
 
         @DELETE
         @Path("{id}/e2/{tid}")
         public SimpleResponse deleteE2(@PathParam("id") int id, @PathParam("tid") int tid) {
-            return Ag.service(config).unrelate(E3.class, id, E3.E2, tid);
+            return Ag.service(config).unrelate(E3.class, id, E3.E2.getName(), tid);
         }
     }
 

@@ -146,7 +146,7 @@ public class GET_Metadata_IT extends DbTest {
 
             Constraint<E5> constraint = Constraint.excludeAll(E5.class)
                     .attribute(E5.NAME.getName())
-                    .toManyPath(E5.E15S, Constraint.idAndAttributes(E15.class));
+                    .path(E5.E15S.getName(), Constraint.idAndAttributes(E15.class));
 
             return Ag
                     .metadata(E5.class, config)

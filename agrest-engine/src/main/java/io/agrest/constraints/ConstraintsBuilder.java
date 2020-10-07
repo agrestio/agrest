@@ -4,9 +4,7 @@ import io.agrest.PathConstants;
 import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgRelationship;
 import org.apache.cayenne.exp.Expression;
-import org.apache.cayenne.exp.Property;
 
-import java.util.List;
 import java.util.function.Function;
 
 /**
@@ -123,14 +121,6 @@ public class ConstraintsBuilder<T> implements Constraint<T> {
             ce.orQualifier(qualifier);
             return ce;
         }));
-    }
-
-    public <S> ConstraintsBuilder<T> path(Property<S> path, ConstraintsBuilder<S> subentityBuilder) {
-        return path(path.getName(), subentityBuilder);
-    }
-
-    public <S> ConstraintsBuilder<T> toManyPath(Property<List<S>> path, ConstraintsBuilder<S> subentityBuilder) {
-        return path(path.getName(), subentityBuilder);
     }
 
     public <S> ConstraintsBuilder<T> path(String path, ConstraintsBuilder<S> subEntityBuilder) {

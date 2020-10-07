@@ -1,13 +1,6 @@
 package io.agrest.runtime;
 
-import io.agrest.DataResponse;
-import io.agrest.DeleteBuilder;
-import io.agrest.EntityDelete;
-import io.agrest.EntityParent;
-import io.agrest.MetadataBuilder;
-import io.agrest.SelectBuilder;
-import io.agrest.SimpleResponse;
-import io.agrest.UpdateBuilder;
+import io.agrest.*;
 import io.agrest.runtime.processor.delete.DeleteContext;
 import io.agrest.runtime.processor.delete.DeleteProcessorFactory;
 import io.agrest.runtime.processor.meta.MetadataContext;
@@ -19,7 +12,6 @@ import io.agrest.runtime.processor.unrelate.UnrelateProcessorFactory;
 import io.agrest.runtime.processor.update.UpdateContext;
 import io.agrest.runtime.processor.update.UpdateProcessorFactoryFactory;
 import org.apache.cayenne.di.Inject;
-import org.apache.cayenne.exp.Property;
 
 import javax.ws.rs.core.UriInfo;
 import java.util.Collection;
@@ -75,14 +67,6 @@ public class DefaultAgService implements IAgService {
      * @since 1.2
      */
     @Override
-    public SimpleResponse unrelate(Class<?> type, Object sourceId, Property<?> relationship) {
-        return unrelate(type, sourceId, relationship.getName());
-    }
-
-    /**
-     * @since 1.2
-     */
-    @Override
     public <T> SimpleResponse unrelate(Class<T> type, Object sourceId, String relationship) {
 
         // TODO: should context 'type' be the target type, not "parent" type?
@@ -90,14 +74,6 @@ public class DefaultAgService implements IAgService {
         UnrelateContext<T> context = new UnrelateContext<>(type, new EntityParent<>(type, sourceId, relationship));
         unrelateProcessorFactory.createProcessor().execute(context);
         return context.createSimpleResponse();
-    }
-
-    /**
-     * @since 1.2
-     */
-    @Override
-    public SimpleResponse unrelate(Class<?> type, Object sourceId, Property<?> relationship, Object targetId) {
-        return unrelate(type, sourceId, relationship.getName(), targetId);
     }
 
     /**
