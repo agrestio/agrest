@@ -5,7 +5,7 @@ import io.agrest.AgRequest;
 import io.agrest.DataResponse;
 import io.agrest.base.protocol.CayenneExp;
 import io.agrest.base.protocol.Sort;
-import io.agrest.cayenne.unit.CayenneAgTester;
+import io.agrest.cayenne.unit.AgCayenneTester;
 import io.agrest.cayenne.unit.DbTest;
 import io.agrest.cayenne.cayenne.main.E2;
 import io.agrest.cayenne.cayenne.main.E3;
@@ -22,7 +22,7 @@ import javax.ws.rs.core.UriInfo;
 public class GET_AgRequestIT extends DbTest {
 
     @BQTestTool
-    static final CayenneAgTester tester = tester(Resource.class)
+    static final AgCayenneTester tester = tester(Resource.class)
             .entities(E2.class, E3.class, E4.class)
             .build();
 
@@ -38,7 +38,7 @@ public class GET_AgRequestIT extends DbTest {
                 .queryParam("include", "name")
                 .queryParam("cayenneExp", "{\"exp\":\"name = 'yyy'\"}")
                 .get()
-                .wasSuccess()
+                .wasOk()
                 // returns 'xxx' instead of 'yyy' due to overriding cayenneExp by AgRequest
                 .bodyEquals(1, "{\"name\":\"xxx\"}");
     }
@@ -56,7 +56,7 @@ public class GET_AgRequestIT extends DbTest {
                 .queryParam("cayenneExp", "{\"exp\":\"name = 'yyy'\"}")
                 .get()
                 // returns names instead of id's due to overriding include by AgRequest
-                .wasSuccess().bodyEquals(2, "{\"name\":\"yyy\"}", "{\"name\":\"yyy\"}");
+                .wasOk().bodyEquals(2, "{\"name\":\"yyy\"}", "{\"name\":\"yyy\"}");
     }
 
     @Test
@@ -72,7 +72,7 @@ public class GET_AgRequestIT extends DbTest {
                 .queryParam("cayenneExp", "{\"exp\":\"name = 'yyy'\"}")
                 .get()
                 // returns 'name' and other fields except 'id' due to overriding exclude by AgRequest
-                .wasSuccess()
+                .wasOk()
                 .bodyEquals(2,
                         "{\"name\":\"yyy\",\"phoneNumber\":null}",
                         "{\"name\":\"yyy\",\"phoneNumber\":null}");
@@ -91,7 +91,7 @@ public class GET_AgRequestIT extends DbTest {
                 .queryParam("include", "id")
                 .get()
                 // returns items in ascending order instead of descending due to overriding sort direction by AgRequest
-                .wasSuccess()
+                .wasOk()
                 .bodyEquals(3, "{\"id\":1},{\"id\":2},{\"id\":3}");
     }
 
@@ -108,7 +108,7 @@ public class GET_AgRequestIT extends DbTest {
                 .queryParam("mapBy", E4.C_INT.getName())
                 .queryParam("include", E4.C_VARCHAR.getName())
                 .get()
-                .wasSuccess()
+                .wasOk()
                 .bodyEqualsMapBy(4,
                         "\"xxx\":[{\"cVarchar\":\"xxx\"},{\"cVarchar\":\"xxx\"}]",
                         "\"yyy\":[{\"cVarchar\":\"yyy\"}]",

@@ -3,7 +3,7 @@ package io.agrest.cayenne;
 import io.agrest.Ag;
 import io.agrest.DataResponse;
 import io.agrest.EntityUpdate;
-import io.agrest.cayenne.unit.CayenneAgTester;
+import io.agrest.cayenne.unit.AgCayenneTester;
 import io.agrest.cayenne.unit.DbTest;
 import io.agrest.cayenne.cayenne.main.E20;
 import io.agrest.cayenne.cayenne.main.E21;
@@ -20,7 +20,7 @@ import javax.ws.rs.core.UriInfo;
 public class POST_NaturalIdIT extends DbTest {
 
     @BQTestTool
-    static final CayenneAgTester tester = tester(Resource.class)
+    static final AgCayenneTester tester = tester(Resource.class)
 
             .entities(E20.class, E21.class)
             .build();

@@ -2,7 +2,7 @@ package io.agrest.cayenne;
 
 import io.agrest.Ag;
 import io.agrest.DataResponse;
-import io.agrest.cayenne.unit.CayenneAgTester;
+import io.agrest.cayenne.unit.AgCayenneTester;
 import io.agrest.cayenne.unit.DbTest;
 import io.agrest.cayenne.cayenne.main.E2;
 import io.agrest.cayenne.cayenne.main.E22;
@@ -27,7 +27,7 @@ import javax.ws.rs.core.UriInfo;
 public class GET_EntityOverlay_PerRequestIT extends DbTest {
 
     @BQTestTool
-    static final CayenneAgTester tester = tester(Resource.class)
+    static final AgCayenneTester tester = tester(Resource.class)
             .entities(E2.class, E3.class, E4.class, E22.class)
             .build();
 
@@ -39,7 +39,7 @@ public class GET_EntityOverlay_PerRequestIT extends DbTest {
         tester.target("/e4/xyz")
                 .queryParam("sort", "id")
 
-                .get().wasSuccess().bodyEquals(2, "{\"id\":2,\"cBoolean\":null,\"cDate\":null,\"cDecimal\":null,\"cInt\":null," +
+                .get().wasOk().bodyEquals(2, "{\"id\":2,\"cBoolean\":null,\"cDate\":null,\"cDecimal\":null,\"cInt\":null," +
                 "\"cTime\":null,\"cTimestamp\":null,\"cVarchar\":\"a_x\",\"fromRequest\":\"xyz\",\"objectProperty\":\"a$\"}," +
                 "{\"id\":4,\"cBoolean\":null,\"cDate\":null,\"cDecimal\":null,\"cInt\":null," +
                 "\"cTime\":null,\"cTimestamp\":null,\"cVarchar\":\"b_x\",\"fromRequest\":\"xyz\",\"objectProperty\":\"b$\"}");
@@ -54,7 +54,7 @@ public class GET_EntityOverlay_PerRequestIT extends DbTest {
                 .queryParam("sort", "id")
                 .queryParam("include", "[\"id\",\"cVarchar\",\"fromRequest\"]")
 
-                .get().wasSuccess().bodyEquals(2, "{\"id\":2,\"cVarchar\":\"a_x\",\"fromRequest\":\"xyz\"}," +
+                .get().wasOk().bodyEquals(2, "{\"id\":2,\"cVarchar\":\"a_x\",\"fromRequest\":\"xyz\"}," +
                 "{\"id\":4,\"cVarchar\":\"b_x\",\"fromRequest\":\"xyz\"}");
     }
 
@@ -67,7 +67,7 @@ public class GET_EntityOverlay_PerRequestIT extends DbTest {
                 .queryParam("sort", "id")
                 .queryParam("include", "fromRequest")
                 .get()
-                .wasSuccess().bodyEquals(2, "{\"fromRequest\":\"xyz\"},{\"fromRequest\":\"xyz\"}");
+                .wasOk().bodyEquals(2, "{\"fromRequest\":\"xyz\"},{\"fromRequest\":\"xyz\"}");
 
 
         // at some point in time readers were cached, so changing the URL parameter would still return the old result
@@ -75,7 +75,7 @@ public class GET_EntityOverlay_PerRequestIT extends DbTest {
                 .queryParam("sort", "id")
                 .queryParam("include", "fromRequest")
                 .get()
-                .wasSuccess().bodyEquals(2, "{\"fromRequest\":\"abc\"},{\"fromRequest\":\"abc\"}");
+                .wasOk().bodyEquals(2, "{\"fromRequest\":\"abc\"},{\"fromRequest\":\"abc\"}");
     }
 
     @Test
@@ -91,7 +91,7 @@ public class GET_EntityOverlay_PerRequestIT extends DbTest {
                 .queryParam("include", "[\"id\",\"cVarchar\",\"fromRequest\",\"dynamicRelationship\"]")
                 .queryParam("sort", "id")
                 .get()
-                .wasSuccess()
+                .wasOk()
                 .bodyEquals(
                         2,
                         "{\"id\":2,\"cVarchar\":\"a_x\",\"dynamicRelationship\":{\"id\":2,\"name\":\"b\",\"prop1\":null,\"prop2\":null},\"fromRequest\":\"xyz\"}," +
@@ -111,7 +111,7 @@ public class GET_EntityOverlay_PerRequestIT extends DbTest {
                 .queryParam("cayenneExp", "id = 2")
                 .queryParam("include", "[\"id\",\"dynamicRelationship\"]")
                 .get()
-                .wasSuccess()
+                .wasOk()
                 .bodyEquals(1, "{\"id\":2,\"dynamicRelationship\":{\"id\":2,\"name\":\"b\",\"prop1\":null,\"prop2\":null}}");
     }
 
@@ -136,7 +136,7 @@ public class GET_EntityOverlay_PerRequestIT extends DbTest {
                 .queryParam("cayenneExp", "id = 2")
                 .queryParam("include", "[\"id\",\"dynamicRelationship.e2\"]")
 
-                .get().wasSuccess().bodyEquals(1, "{\"id\":2,\"dynamicRelationship\":{\"e2\":{\"id\":2,\"name\":\"b2\"}}");
+                .get().wasOk().bodyEquals(1, "{\"id\":2,\"dynamicRelationship\":{\"e2\":{\"id\":2,\"name\":\"b2\"}}");
     }
 
     @Path("")

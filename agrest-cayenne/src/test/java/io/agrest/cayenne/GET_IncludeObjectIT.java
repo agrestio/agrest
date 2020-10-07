@@ -2,7 +2,7 @@ package io.agrest.cayenne;
 
 import io.agrest.Ag;
 import io.agrest.DataResponse;
-import io.agrest.cayenne.unit.CayenneAgTester;
+import io.agrest.cayenne.unit.AgCayenneTester;
 import io.agrest.cayenne.unit.DbTest;
 import io.agrest.cayenne.cayenne.main.E2;
 import io.agrest.cayenne.cayenne.main.E3;
@@ -20,7 +20,7 @@ import javax.ws.rs.core.UriInfo;
 public class GET_IncludeObjectIT extends DbTest {
 
     @BQTestTool
-    static final CayenneAgTester tester = tester(Resource.class)
+    static final AgCayenneTester tester = tester(Resource.class)
             .entities(E2.class, E3.class, E4.class, E5.class)
             .build();
 
@@ -32,7 +32,7 @@ public class GET_IncludeObjectIT extends DbTest {
         tester.target("/e4")
                 .queryParam("include", "{\"path\":\"cInt\"}")
                 .get()
-                .wasSuccess().bodyEquals(1, "{\"cInt\":55}");
+                .wasOk().bodyEquals(1, "{\"cInt\":55}");
     }
 
     @Test
@@ -45,7 +45,7 @@ public class GET_IncludeObjectIT extends DbTest {
                 .queryParam("include", "{\"path\":\"e2\"}")
                 .queryParam("include", "id")
                 .get()
-                .wasSuccess()
+                .wasOk()
                 .bodyEquals(1, "{\"id\":8,\"e2\":{\"id\":1,\"address\":null,\"name\":\"xxx\"}}");
     }
 
@@ -60,7 +60,7 @@ public class GET_IncludeObjectIT extends DbTest {
                 .queryParam("include", "id")
                 .get()
                 // no support for MapBy for to-one... simply ignoring it...
-                .wasSuccess()
+                .wasOk()
                 .bodyEquals(1, "{\"id\":8,\"e2\":{\"id\":1,\"address\":null,\"name\":\"xxx\"}}");
     }
 
@@ -77,7 +77,7 @@ public class GET_IncludeObjectIT extends DbTest {
                 .queryParam("include", "{\"path\":\"e3s\",\"mapBy\":\"name\"}")
                 .queryParam("include", "id")
                 .get()
-                .wasSuccess()
+                .wasOk()
                 .bodyEquals(1, "{\"id\":1,\"e3s\":{"
                         + "\"aaa\":[{\"id\":8,\"name\":\"aaa\",\"phoneNumber\":null},{\"id\":7,\"name\":\"aaa\",\"phoneNumber\":null}],"
                         + "\"zzz\":[{\"id\":9,\"name\":\"zzz\",\"phoneNumber\":null}]" + "}}");
@@ -96,7 +96,7 @@ public class GET_IncludeObjectIT extends DbTest {
                 .queryParam("include", "{\"path\":\"e3s\",\"mapBy\":\"id\"}")
                 .queryParam("include", "id")
                 .get()
-                .wasSuccess()
+                .wasOk()
                 .bodyEquals(1, "{\"id\":1,\"e3s\":{"
                         + "\"8\":[{\"id\":8,\"name\":\"aaa\",\"phoneNumber\":null}],"
                         + "\"9\":[{\"id\":9,\"name\":\"zzz\",\"phoneNumber\":null}],"
@@ -117,7 +117,7 @@ public class GET_IncludeObjectIT extends DbTest {
                 .queryParam("include", "{\"path\":\"e3s\",\"mapBy\":\"e5.id\"}")
                 .queryParam("include", "id")
                 .get()
-                .wasSuccess()
+                .wasOk()
                 .bodyEquals(1, "{\"id\":1,\"e3s\":{"
                         + "\"45\":[{\"id\":8,\"name\":\"aaa\",\"phoneNumber\":null},{\"id\":9,\"name\":\"zzz\",\"phoneNumber\":null}],"
                         + "\"46\":[{\"id\":7,\"name\":\"aaa\",\"phoneNumber\":null}]}}");
@@ -141,7 +141,7 @@ public class GET_IncludeObjectIT extends DbTest {
                 .queryParam("include", "{\"path\":\"e3s\",\"mapBy\":\"e5.name\"}")
                 .queryParam("include", "id")
                 .get()
-                .wasSuccess()
+                .wasOk()
                 .bodyEquals(1, "{\"id\":1,\"e3s\":{"
                         + "\"T\":[{\"id\":8,\"name\":\"aaa\",\"phoneNumber\":null},{\"id\":9,\"name\":\"zzz\",\"phoneNumber\":null}],"
                         + "\"Y\":[{\"id\":7,\"name\":\"aaa\",\"phoneNumber\":null}]}}");
@@ -165,7 +165,7 @@ public class GET_IncludeObjectIT extends DbTest {
                 .queryParam("include", "{\"path\":\"e3s\",\"mapBy\":\"e5.date\"}")
                 .queryParam("include", "id")
                 .get()
-                .wasSuccess()
+                .wasOk()
                 .bodyEquals(1, "{\"id\":1,\"e3s\":{"
                         + "\"2013-01-03T00:00:00\":[{\"id\":8,\"name\":\"aaa\",\"phoneNumber\":null},{\"id\":9,\"name\":\"zzz\",\"phoneNumber\":null}],"
                         + "\"2013-01-04T00:00:00\":[{\"id\":7,\"name\":\"aaa\",\"phoneNumber\":null}]}}");
@@ -186,7 +186,7 @@ public class GET_IncludeObjectIT extends DbTest {
         tester.target("/e2")
                 .queryParam("include", "{\"path\":\"e3s\",\"mapBy\":\"name\", \"cayenneExp\":{\"exp\":\"name != NULL\"}}")
                 .queryParam("include", "id")
-                .get().wasSuccess()
+                .get().wasOk()
                 .bodyEquals(1, "{\"id\":1,\"e3s\":{"
                         + "\"aaa\":[{\"id\":8,\"name\":\"aaa\",\"phoneNumber\":null},{\"id\":7,\"name\":\"aaa\",\"phoneNumber\":null}],"
                         + "\"zzz\":[{\"id\":9,\"name\":\"zzz\",\"phoneNumber\":null}]}}");
@@ -204,7 +204,7 @@ public class GET_IncludeObjectIT extends DbTest {
         tester.target("/e2")
                 .queryParam("include", "{\"path\":\"e3s\",\"sort\":\"name\"}")
                 .queryParam("include", "id")
-                .get().wasSuccess().bodyEquals(1, "{\"id\":1,\"e3s\":["
+                .get().wasOk().bodyEquals(1, "{\"id\":1,\"e3s\":["
                 + "{\"id\":7,\"name\":\"b\",\"phoneNumber\":null},"
                 + "{\"id\":9,\"name\":\"s\",\"phoneNumber\":null},"
                 + "{\"id\":8,\"name\":\"z\",\"phoneNumber\":null}]}");
@@ -228,7 +228,7 @@ public class GET_IncludeObjectIT extends DbTest {
         tester.target("/e2")
                 .queryParam("include", "{\"path\":\"e3s\",\"sort\":[{\"property\":\"e5.name\"}]}")
                 .queryParam("include", "id")
-                .get().wasSuccess()
+                .get().wasOk()
                 .bodyEquals(1, "{\"id\":11,\"e3s\":["
                         + "{\"id\":17,\"name\":\"b\",\"phoneNumber\":null},"
                         + "{\"id\":18,\"name\":\"s\",\"phoneNumber\":null},"
@@ -252,7 +252,7 @@ public class GET_IncludeObjectIT extends DbTest {
         tester.target("/e2")
                 .queryParam("include", "{\"path\":\"e3s\",\"sort\":[{\"property\":\"e5.name\", \"direction\":\"DESC\"},{\"property\":\"name\", \"direction\":\"DESC\"}]}")
                 .queryParam("include", "id")
-                .get().wasSuccess()
+                .get().wasOk()
                 .bodyEquals(1, "{\"id\":21,\"e3s\":["
                         + "{\"id\":29,\"name\":\"z\",\"phoneNumber\":null},"
                         + "{\"id\":28,\"name\":\"s\",\"phoneNumber\":null},"
@@ -272,7 +272,7 @@ public class GET_IncludeObjectIT extends DbTest {
         tester.target("/e2")
                 .queryParam("include", "{\"path\":\"e3s\",\"cayenneExp\":{\"exp\":\"name = $n\", \"params\":{\"n\":\"a\"}}}")
                 .queryParam("include", "id")
-                .get().wasSuccess()
+                .get().wasOk()
                 .bodyEquals(1, "{\"id\":1,\"e3s\":["
                         + "{\"id\":8,\"name\":\"a\",\"phoneNumber\":null},"
                         + "{\"id\":7,\"name\":\"a\",\"phoneNumber\":null}]}");
@@ -295,7 +295,7 @@ public class GET_IncludeObjectIT extends DbTest {
         tester.target("/e2")
                 .queryParam("include", "{\"path\":\"e3s\",\"cayenneExp\":{\"exp\":\"e5 = $id\", \"params\":{\"id\":546}}}")
                 .queryParam("include", "id")
-                .get().wasSuccess()
+                .get().wasOk()
                 .bodyEquals(1, "{\"id\":51,\"e3s\":[{\"id\":57,\"name\":\"b\",\"phoneNumber\":null}]}");
     }
 
@@ -313,7 +313,7 @@ public class GET_IncludeObjectIT extends DbTest {
                 .queryParam("include", "id")
                 .queryParam("exclude", "e3s.id")
                 .queryParam("exclude", "e3s.phoneNumber")
-                .get().wasSuccess()
+                .get().wasOk()
                 .bodyEquals(1, "{\"id\":1,\"e3s\":[{\"name\":\"a\"},{\"name\":\"z\"},{\"name\":\"m\"}]}");
     }
 
@@ -336,7 +336,7 @@ public class GET_IncludeObjectIT extends DbTest {
                 .queryParam("include", "id")
                 .queryParam("exclude", "e3s.id")
                 .queryParam("exclude", "e3s.phoneNumber")
-                .queryParam("include", "e3s.e5.name").get().wasSuccess()
+                .queryParam("include", "e3s.e5.name").get().wasOk()
                 .bodyEquals(1, "{\"id\":1,\"e3s\":[{\"e5\":{\"name\":\"B\"},\"name\":\"a\"},"
                         + "{\"e5\":{\"name\":\"B\"},\"name\":\"z\"},{\"e5\":{\"name\":\"A\"},\"name\":\"m\"}]}");
     }
@@ -358,7 +358,7 @@ public class GET_IncludeObjectIT extends DbTest {
         tester.target("/e2")
                 .queryParam("include", "[\"id\", {\"path\":\"e3s\"}, \"e3s.e5.name\"]")
                 .queryParam("exclude", "[\"e3s.id\", \"e3s.phoneNumber\"]")
-                .get().wasSuccess()
+                .get().wasOk()
                 .bodyEquals(1, "{\"id\":1,\"e3s\":[{\"e5\":{\"name\":\"B\"},\"name\":\"a\"},"
                         + "{\"e5\":{\"name\":\"B\"},\"name\":\"z\"},"
                         + "{\"e5\":{\"name\":\"A\"},\"name\":\"m\"}]}");
@@ -381,7 +381,7 @@ public class GET_IncludeObjectIT extends DbTest {
         tester.target("/e2")
                 .queryParam("include", "[\"id\", {\"path\":\"e3s\"}, {\"e3s.e5\":[\"name\"]}]")
                 .queryParam("exclude", "[{\"e3s\": [\"id\", \"phoneNumber\"]}]")
-                .get().wasSuccess()
+                .get().wasOk()
                 .bodyEquals(1, "{\"id\":1,\"e3s\":[{\"e5\":{\"name\":\"B\"},\"name\":\"a\"},"
                         + "{\"e5\":{\"name\":\"B\"},\"name\":\"z\"},"
                         + "{\"e5\":{\"name\":\"A\"},\"name\":\"m\"}]}");
@@ -404,7 +404,7 @@ public class GET_IncludeObjectIT extends DbTest {
         tester.target("/e2")
                 .queryParam("include", "[\"id\", {\"path\":\"e3s\", \"include\":[\"e5.name\"]}]")
                 .queryParam("exclude", "[{\"e3s\": [\"id\", \"phoneNumber\"]}]")
-                .get().wasSuccess()
+                .get().wasOk()
                 .bodyEquals(1, "{\"id\":1,\"e3s\":[{\"e5\":{\"name\":\"B\"},\"name\":\"a\"},"
                         + "{\"e5\":{\"name\":\"B\"},\"name\":\"z\"},"
                         + "{\"e5\":{\"name\":\"A\"},\"name\":\"m\"}]}");

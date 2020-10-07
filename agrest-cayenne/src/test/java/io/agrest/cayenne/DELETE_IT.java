@@ -2,7 +2,7 @@ package io.agrest.cayenne;
 
 import io.agrest.Ag;
 import io.agrest.SimpleResponse;
-import io.agrest.cayenne.unit.CayenneAgTester;
+import io.agrest.cayenne.unit.AgCayenneTester;
 import io.agrest.cayenne.unit.DbTest;
 import io.agrest.cayenne.cayenne.main.E17;
 import io.agrest.cayenne.cayenne.main.E24;
@@ -24,7 +24,7 @@ import java.util.Map;
 public class DELETE_IT extends DbTest {
 
     @BQTestTool
-    static final CayenneAgTester tester = tester(Resource.class)
+    static final AgCayenneTester tester = tester(Resource.class)
             .entities(E4.class, E17.class, E24.class)
             .build();
 
@@ -37,7 +37,7 @@ public class DELETE_IT extends DbTest {
 
         tester.target("/e4/8")
                 .delete()
-                .wasSuccess()
+                .wasOk()
                 .bodyEquals("{\"success\":true}");
 
         tester.e4().matcher().assertOneMatch();
@@ -50,7 +50,7 @@ public class DELETE_IT extends DbTest {
 
         tester.target("/e17").queryParam("id1", 1).queryParam("id2", 1)
                 .delete()
-                .wasSuccess()
+                .wasOk()
                 .bodyEquals("{\"success\":true}");
 
         tester.e17().matcher().assertOneMatch();
@@ -79,7 +79,7 @@ public class DELETE_IT extends DbTest {
 
         tester.target("/e4/8")
                 .delete()
-                .wasSuccess()
+                .wasOk()
                 .bodyEquals("{\"success\":true}");
 
         tester.target("/e4/8")
@@ -95,7 +95,7 @@ public class DELETE_IT extends DbTest {
 
         tester.target("/e24/1")
                 .delete()
-                .wasSuccess()
+                .wasOk()
                 .bodyEquals("{\"success\":true}");
     }
 

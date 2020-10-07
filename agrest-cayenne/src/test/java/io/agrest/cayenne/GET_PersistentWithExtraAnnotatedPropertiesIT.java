@@ -3,7 +3,7 @@ package io.agrest.cayenne;
 import io.agrest.Ag;
 import io.agrest.DataResponse;
 import io.agrest.SelectStage;
-import io.agrest.cayenne.unit.CayenneAgTester;
+import io.agrest.cayenne.unit.AgCayenneTester;
 import io.agrest.cayenne.unit.DbTest;
 import io.agrest.cayenne.cayenne.main.E14;
 import io.agrest.cayenne.cayenne.main.E15;
@@ -22,7 +22,7 @@ import javax.ws.rs.core.UriInfo;
 public class GET_PersistentWithExtraAnnotatedPropertiesIT extends DbTest {
 
     @BQTestTool
-    static final CayenneAgTester tester = tester(Resource.class)
+    static final AgCayenneTester tester = tester(Resource.class)
 
             .entities(E14.class, E15.class)
             .build();
@@ -38,7 +38,7 @@ public class GET_PersistentWithExtraAnnotatedPropertiesIT extends DbTest {
 
         tester.target("/e14")
                 .queryParam("include", "name", "prettyName")
-                .get().wasSuccess().bodyEquals(1, "{\"name\":\"yyy\",\"prettyName\":\"yyy_pretty\"}");
+                .get().wasOk().bodyEquals(1, "{\"name\":\"yyy\",\"prettyName\":\"yyy_pretty\"}");
     }
 
     @Test
@@ -50,7 +50,7 @@ public class GET_PersistentWithExtraAnnotatedPropertiesIT extends DbTest {
         tester.target("/e14")
                 .queryParam("include", "name", "p7")
 
-                .get().wasSuccess().bodyEquals(1, "{\"name\":\"yyy\",\"p7\":{\"id\":800,\"string\":\"p7_yyy\"}}");
+                .get().wasOk().bodyEquals(1, "{\"name\":\"yyy\",\"p7\":{\"id\":800,\"string\":\"p7_yyy\"}}");
     }
 
     @Test
@@ -62,7 +62,7 @@ public class GET_PersistentWithExtraAnnotatedPropertiesIT extends DbTest {
         tester.target("/e15")
                 .queryParam("include", "e14s.name", "e14s.prettyName")
                 .get()
-                .wasSuccess().bodyEquals(1, "{\"id\":1,\"e14s\":[{\"name\":\"yyy\",\"prettyName\":\"yyy_pretty\"}],\"name\":\"xxx\"}");
+                .wasOk().bodyEquals(1, "{\"id\":1,\"e14s\":[{\"name\":\"yyy\",\"prettyName\":\"yyy_pretty\"}],\"name\":\"xxx\"}");
     }
 
     @Path("")

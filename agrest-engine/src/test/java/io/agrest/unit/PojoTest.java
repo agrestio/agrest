@@ -93,12 +93,12 @@ public abstract class PojoTest {
         return TEST_RUNTIME.getInstance(AgRuntime.class).service(type);
     }
 
-    protected AgResponseAssertions onSuccess(Response response) {
-        return onResponse(response).wasSuccess();
+    protected AgHttpResponseTester onSuccess(Response response) {
+        return onResponse(response).wasOk();
     }
 
-    protected AgResponseAssertions onResponse(Response response) {
-        return new AgResponseAssertions(response);
+    protected AgHttpResponseTester onResponse(Response response) {
+        return new AgHttpResponseTester(response);
     }
 
     protected String urlEnc(String queryParam) {

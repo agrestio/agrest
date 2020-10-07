@@ -6,7 +6,7 @@ import io.agrest.MetadataResponse;
 import io.agrest.SimpleResponse;
 import io.agrest.annotation.AgResource;
 import io.agrest.annotation.LinkType;
-import io.agrest.cayenne.unit.CayenneAgTester;
+import io.agrest.cayenne.unit.AgCayenneTester;
 import io.agrest.cayenne.unit.DbTest;
 import io.agrest.cayenne.cayenne.main.E5;
 import io.agrest.runtime.AgBuilder;
@@ -24,7 +24,7 @@ import javax.ws.rs.core.UriInfo;
 public class GET_Metadata_EmptyPath_IT extends DbTest {
 
     @BQTestTool
-    static final CayenneAgTester tester = tester(Resource.class)
+    static final AgCayenneTester tester = tester(Resource.class)
 
             .agCustomizer(GET_Metadata_EmptyPath_IT::customize)
             .build();
@@ -38,7 +38,7 @@ public class GET_Metadata_EmptyPath_IT extends DbTest {
 
         tester.target("/metadata")
                 .get().
-                wasSuccess()
+                wasOk()
                 .bodyEquals("{\"entity\":{\"name\":\"E5\"," +
                         "\"properties\":[" +
                         "{\"name\":\"date\",\"type\":\"date\",\"format\":\"date-time\"}," +

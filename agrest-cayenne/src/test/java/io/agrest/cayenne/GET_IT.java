@@ -4,7 +4,7 @@ import io.agrest.Ag;
 import io.agrest.DataResponse;
 import io.agrest.base.jsonvalueconverter.UtcDateConverter;
 import io.agrest.cayenne.cayenne.main.*;
-import io.agrest.cayenne.unit.CayenneAgTester;
+import io.agrest.cayenne.unit.AgCayenneTester;
 import io.agrest.cayenne.unit.DbTest;
 import io.agrest.encoder.DateTimeFormatters;
 import io.bootique.junit5.BQTestTool;
@@ -26,7 +26,7 @@ import java.util.Map;
 public class GET_IT extends DbTest {
 
     @BQTestTool
-    static final CayenneAgTester tester = tester(Resource.class)
+    static final AgCayenneTester tester = tester(Resource.class)
 
             .entities(E2.class, E3.class, E4.class, E6.class, E17.class, E19.class)
             .build();
@@ -38,7 +38,7 @@ public class GET_IT extends DbTest {
 
         tester.target("/e4")
                 .get()
-                .wasSuccess()
+                .wasOk()
                 .bodyEquals(1,
                         "{\"id\":1,\"cBoolean\":null,\"cDate\":null,\"cDecimal\":null,"
                                 + "\"cInt\":5,\"cTime\":null,\"cTimestamp\":null,\"cVarchar\":\"xxx\"}");
@@ -53,7 +53,7 @@ public class GET_IT extends DbTest {
         String dateString = DateTimeFormatters.isoLocalDateTime().format(Instant.ofEpochMilli(date.getTime()));
 
         tester.target("/e4").queryParam("include", E4.C_TIMESTAMP.getName()).get()
-                .wasSuccess().bodyEquals(1, "{\"cTimestamp\":\"" + dateString + "\"}");
+                .wasOk().bodyEquals(1, "{\"cTimestamp\":\"" + dateString + "\"}");
     }
 
     @Test
@@ -66,7 +66,7 @@ public class GET_IT extends DbTest {
 
         tester.target("/e4").queryParam("include", E4.C_DATE.getName())
                 .get()
-                .wasSuccess()
+                .wasOk()
                 .bodyEquals(1, "{\"cDate\":\"" + dateString + "\"}");
     }
 
@@ -82,7 +82,7 @@ public class GET_IT extends DbTest {
 
         String timeString = DateTimeFormatters.isoLocalDateTime().format(Instant.ofEpochMilli(time.getTime()));
 
-        tester.target("/e4").queryParam("include", E4.C_TIME.getName()).get().wasSuccess().bodyEquals(1, "{\"cTime\":\"" + timeString + "\"}");
+        tester.target("/e4").queryParam("include", E4.C_TIME.getName()).get().wasOk().bodyEquals(1, "{\"cTime\":\"" + timeString + "\"}");
     }
 
     // TODO: add tests for java.sql attributes
@@ -99,7 +99,7 @@ public class GET_IT extends DbTest {
                 .queryParam("sort", "[{\"property\":\"id\",\"direction\":\"DESC\"}]")
                 .queryParam("include", "id")
                 .get()
-                .wasSuccess()
+                .wasOk()
                 .bodyEquals(3, "{\"id\":3}", "{\"id\":2}", "{\"id\":1}");
     }
 
@@ -127,7 +127,7 @@ public class GET_IT extends DbTest {
         tester.target("/e4")
                 .queryParam("sort", "[{\"property\":null,\"direction\":\"DESC\"}]")
                 .queryParam("include", "id")
-                .get().wasSuccess()
+                .get().wasOk()
                 .totalEquals(3);
     }
 
@@ -138,7 +138,7 @@ public class GET_IT extends DbTest {
                 .values(2)
                 .exec();
 
-        tester.target("/e4/2").get().wasSuccess().bodyEquals(1, "{\"id\":2,\"cBoolean\":null," +
+        tester.target("/e4/2").get().wasOk().bodyEquals(1, "{\"id\":2,\"cBoolean\":null," +
                 "\"cDate\":null," +
                 "\"cDecimal\":null," +
                 "\"cInt\":null," +
@@ -155,12 +155,12 @@ public class GET_IT extends DbTest {
                 .exec();
 
         tester.target("/e4/2").get()
-                .wasSuccess()
+                .wasOk()
                 .bodyEquals(1, "{\"id\":2,\"cBoolean\":null,\"cDate\":null,\"cDecimal\":null,"
                         + "\"cInt\":null,\"cTime\":null,\"cTimestamp\":null,\"cVarchar\":null}");
 
         tester.target("/e4/2").queryParam("include", "id").get()
-                .wasSuccess()
+                .wasOk()
                 .bodyEquals(1, "{\"id\":2}");
     }
 
@@ -180,15 +180,15 @@ public class GET_IT extends DbTest {
                 .values(9, "zzz", 1).exec();
 
         tester.target("/e3/8").queryParam("include", "e2.id").get()
-                .wasSuccess()
+                .wasOk()
                 .bodyEquals(1, "{\"id\":8,\"e2\":{\"id\":1},\"name\":\"yyy\",\"phoneNumber\":null}");
 
         tester.target("/e3/8").queryParam("include", "e2.name").get()
-                .wasSuccess()
+                .wasOk()
                 .bodyEquals(1, "{\"id\":8,\"e2\":{\"name\":\"xxx\"},\"name\":\"yyy\",\"phoneNumber\":null}");
 
         tester.target("/e2/1").queryParam("include", "e3s.id").get()
-                .wasSuccess()
+                .wasOk()
                 .bodyEquals(1, "{\"id\":1,\"address\":null,\"e3s\":[{\"id\":8},{\"id\":9}],\"name\":\"xxx\"}");
     }
 
@@ -210,7 +210,7 @@ public class GET_IT extends DbTest {
                 .queryParam("include", E3.E2.getName())
                 .queryParam("sort", E3.E2.dot(E2.NAME).getName())
 
-                .get().wasSuccess().bodyEquals(3,
+                .get().wasOk().bodyEquals(3,
                 "{\"id\":10,\"e2\":{\"id\":3,\"address\":null,\"name\":\"xxx\"}}",
                 "{\"id\":9,\"e2\":{\"id\":2,\"address\":null,\"name\":\"yyy\"}}",
                 "{\"id\":8,\"e2\":{\"id\":1,\"address\":null,\"name\":\"zzz\"}}");
@@ -233,7 +233,7 @@ public class GET_IT extends DbTest {
                 .queryParam("include", "{\"path\":\"" + E2.E3S.getName() + "\",\"start\":1,\"limit\":1}")
                 .queryParam("exclude", E2.E3S.dot(E3.PHONE_NUMBER).getName())
                 .get()
-                .wasSuccess()
+                .wasOk()
                 .bodyEquals(2,
                         "{\"id\":1,\"e3s\":[{\"id\":9,\"name\":\"bbb\"}]}",
                         "{\"id\":2,\"e3s\":[]}");
@@ -251,7 +251,7 @@ public class GET_IT extends DbTest {
         tester.target("/e3")
                 .queryParam("include", "e2.id", "id")
 
-                .get().wasSuccess().bodyEquals(2,
+                .get().wasOk().bodyEquals(2,
                 "{\"id\":8,\"e2\":{\"id\":1}}",
                 "{\"id\":9,\"e2\":null}");
     }
@@ -261,7 +261,7 @@ public class GET_IT extends DbTest {
 
         tester.e6().insertColumns("char_id", "char_column").values("a", "aaa").exec();
 
-        tester.target("/e6/a").get().wasSuccess().bodyEquals(1, "{\"id\":\"a\",\"charColumn\":\"aaa\"}");
+        tester.target("/e6/a").get().wasOk().bodyEquals(1, "{\"id\":\"a\",\"charColumn\":\"aaa\"}");
     }
 
     @Test
@@ -273,7 +273,7 @@ public class GET_IT extends DbTest {
                 .queryParam("id1", 1)
                 .queryParam("id2", 1)
 
-                .get().wasSuccess().bodyEquals(1, "{\"id\":{\"id1\":1,\"id2\":1},\"id1\":1,\"id2\":1,\"name\":\"aaa\"}");
+                .get().wasOk().bodyEquals(1, "{\"id\":{\"id1\":1,\"id2\":1},\"id1\":1,\"id2\":1,\"name\":\"aaa\"}");
     }
 
     @Test
@@ -287,7 +287,7 @@ public class GET_IT extends DbTest {
                 .queryParam("mapBy", "cInt")
                 .queryParam("include", "cVarchar")
 
-                .get().wasSuccess().bodyEqualsMapBy(3,
+                .get().wasOk().bodyEqualsMapBy(3,
                 "\"1\":[{\"cVarchar\":\"xxx\"}]",
                 "\"2\":[{\"cVarchar\":\"yyy\"},{\"cVarchar\":\"zzz\"}]");
     }
@@ -308,7 +308,7 @@ public class GET_IT extends DbTest {
                 .queryParam("mapBy", "e2.id")
                 .queryParam("exclude", "phoneNumber")
 
-                .get().wasSuccess().bodyEqualsMapBy(3,
+                .get().wasOk().bodyEqualsMapBy(3,
                 "\"1\":[{\"id\":8,\"name\":\"aaa\"},{\"id\":9,\"name\":\"bbb\"}]",
                 "\"2\":[{\"id\":10,\"name\":\"ccc\"}]");
     }
@@ -329,7 +329,7 @@ public class GET_IT extends DbTest {
                 .queryParam("mapBy", "e2")
                 .queryParam("exclude", "phoneNumber")
 
-                .get().wasSuccess().bodyEqualsMapBy(3,
+                .get().wasOk().bodyEqualsMapBy(3,
                 "\"1\":[{\"id\":8,\"name\":\"aaa\"},{\"id\":9,\"name\":\"bbb\"}]",
                 "\"2\":[{\"id\":10,\"name\":\"ccc\"}]");
     }
@@ -342,7 +342,7 @@ public class GET_IT extends DbTest {
         tester.target("/e4/1")
                 .queryParam("include", "cVarchar")
 
-                .get().wasSuccess().bodyEquals(1, "{\"cVarchar\":\"First line\\u2028Second line...\\u2029\"}");
+                .get().wasOk().bodyEquals(1, "{\"cVarchar\":\"First line\\u2028Second line...\\u2029\"}");
     }
 
     @Test
@@ -353,7 +353,7 @@ public class GET_IT extends DbTest {
         tester.target("/e19/35")
                 .queryParam("include", E19.GUID.getName())
 
-                .get().wasSuccess().bodyEquals(1, "{\"guid\":\"c29tZVZhbHVlMTIz\"}");
+                .get().wasOk().bodyEquals(1, "{\"guid\":\"c29tZVZhbHVlMTIz\"}");
     }
 
     @Path("")

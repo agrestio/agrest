@@ -5,7 +5,7 @@ import io.agrest.AgRequest;
 import io.agrest.DataResponse;
 import io.agrest.base.protocol.Exclude;
 import io.agrest.base.protocol.Include;
-import io.agrest.cayenne.unit.CayenneAgTester;
+import io.agrest.cayenne.unit.AgCayenneTester;
 import io.agrest.cayenne.unit.DbTest;
 import io.agrest.cayenne.cayenne.main.E3;
 import io.bootique.junit5.BQTestTool;
@@ -21,7 +21,7 @@ import javax.ws.rs.core.UriInfo;
 public class PUT_AgRequestIT extends DbTest {
 
     @BQTestTool
-    static final CayenneAgTester tester = tester(Resource.class)
+    static final AgCayenneTester tester = tester(Resource.class)
             .entities(E3.class)
             .build();
 
@@ -39,7 +39,7 @@ public class PUT_AgRequestIT extends DbTest {
         tester.target("/e3_includes")
                 .queryParam("include", "id")
                 .put(entity)
-                .wasSuccess()
+                .wasOk()
                 // returns names instead of id's due to overriding include by AgRequest
                 .bodyEquals(4,
                         "{\"name\":\"yyy\"}",
@@ -62,7 +62,7 @@ public class PUT_AgRequestIT extends DbTest {
         tester.target("/e3_excludes")
                 .queryParam("exclude", E3.NAME.getName())
                 .put(entity)
-                .wasSuccess()
+                .wasOk()
                 // returns 'name' and 'phoneNumber' fields except 'id' due to overriding exclude by AgRequest
                 .bodyEquals(4,
                         "{\"name\":\"yyy\",\"phoneNumber\":null}",

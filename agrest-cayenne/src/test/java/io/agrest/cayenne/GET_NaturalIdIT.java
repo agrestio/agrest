@@ -2,7 +2,7 @@ package io.agrest.cayenne;
 
 import io.agrest.Ag;
 import io.agrest.DataResponse;
-import io.agrest.cayenne.unit.CayenneAgTester;
+import io.agrest.cayenne.unit.AgCayenneTester;
 import io.agrest.cayenne.unit.DbTest;
 import io.agrest.cayenne.cayenne.main.E20;
 import io.agrest.cayenne.cayenne.main.E21;
@@ -22,7 +22,7 @@ import java.util.Map;
 public class GET_NaturalIdIT extends DbTest {
 
     @BQTestTool
-    static final CayenneAgTester tester = tester(Resource.class)
+    static final AgCayenneTester tester = tester(Resource.class)
 
             .entities(E20.class, E21.class)
             .build();
@@ -32,7 +32,7 @@ public class GET_NaturalIdIT extends DbTest {
 
         tester.e20().insertColumns("name_col").values("John").exec();
 
-        tester.target("/single-id/John").queryParam("exclude", "age", "description").get().wasSuccess().bodyEquals(1, "{\"id\":\"John\",\"name\":\"John\"}");
+        tester.target("/single-id/John").queryParam("exclude", "age", "description").get().wasOk().bodyEquals(1, "{\"id\":\"John\",\"name\":\"John\"}");
 
         tester.e20().insertColumns("name_col").values("John").exec();
 
@@ -50,7 +50,7 @@ public class GET_NaturalIdIT extends DbTest {
         tester.target("/multi-id/byid")
                 .queryParam("age", 18)
                 .queryParam("name", "John")
-                .queryParam("exclude", "description").get().wasSuccess().bodyEquals(1, "{\"id\":{\"age\":18,\"name\":\"John\"},\"age\":18,\"name\":\"John\"}");
+                .queryParam("exclude", "description").get().wasOk().bodyEquals(1, "{\"id\":{\"age\":18,\"name\":\"John\"},\"age\":18,\"name\":\"John\"}");
 
 
         tester.e21().insertColumns("age", "name").values(18, "John").exec();

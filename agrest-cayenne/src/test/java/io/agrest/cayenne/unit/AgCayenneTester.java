@@ -3,7 +3,7 @@ package io.agrest.cayenne.unit;
 import io.agrest.cayenne.AgCayenneBuilder;
 import io.agrest.cayenne.persister.CayennePersister;
 import io.agrest.cayenne.persister.ICayennePersister;
-import io.agrest.unit.AgTester;
+import io.agrest.unit.AgHttpTester;
 import io.agrest.runtime.AgBuilder;
 import io.agrest.runtime.AgRuntime;
 import io.agrest.runtime.IAgService;
@@ -39,10 +39,11 @@ import java.util.stream.Stream;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * Combines multiple Bootique JUnit 5 test tools into a single tester. Users must annotate CayenneAgTester field
- * with {@link io.bootique.junit5.BQTestTool}.
+ * An integration test utility that manages an application stack with a database and Cayenne runtime used for testing
+ * Agrest endpoints. Under the hood combines multiple Bootique JUnit 5 tools. Users must annotate AgCayenneTester field
+ * with {@link io.bootique.junit5.BQTestTool} to tie it to the JUnit 5 lifecycle.
  */
-public class CayenneAgTester implements BQBeforeScopeCallback, BQAfterScopeCallback, BQBeforeMethodCallback {
+public class AgCayenneTester implements BQBeforeScopeCallback, BQAfterScopeCallback, BQBeforeMethodCallback {
 
     private DbTester<?> db;
     private String cayenneProject;
@@ -56,11 +57,11 @@ public class CayenneAgTester implements BQBeforeScopeCallback, BQAfterScopeCallb
     private CayenneTester cayenneInScope;
     private BQRuntime appInScope;
 
-    public static CayenneAgTester.Builder forDb(DbTester<?> db) {
+    public static AgCayenneTester.Builder forDb(DbTester<?> db) {
         return new Builder().db(db);
     }
 
-    protected CayenneAgTester() {
+    protected AgCayenneTester() {
         this.resources = new ArrayList<>();
         this.agCustomizer = (b, p) -> b;
         this.entities = new Class[0];
@@ -72,11 +73,11 @@ public class CayenneAgTester implements BQBeforeScopeCallback, BQAfterScopeCallb
         getCayenneInScope().assertQueryCount(expected);
     }
 
-    public AgTester target() {
-        return AgTester.request(getJettyInScope().getTarget());
+    public AgHttpTester target() {
+        return AgHttpTester.request(getJettyInScope().getTarget());
     }
 
-    public AgTester target(String path) {
+    public AgHttpTester target(String path) {
         return target().path(path);
     }
 
@@ -266,7 +267,7 @@ public class CayenneAgTester implements BQBeforeScopeCallback, BQAfterScopeCallb
 
     public static class Builder {
 
-        private final CayenneAgTester tester = new CayenneAgTester();
+        private final AgCayenneTester tester = new AgCayenneTester();
 
         public Builder db(DbTester<?> db) {
             tester.db = db;
@@ -309,7 +310,7 @@ public class CayenneAgTester implements BQBeforeScopeCallback, BQAfterScopeCallb
             return this;
         }
 
-        public CayenneAgTester build() {
+        public AgCayenneTester build() {
             Objects.requireNonNull(tester.db);
             Objects.requireNonNull(tester.cayenneProject);
 

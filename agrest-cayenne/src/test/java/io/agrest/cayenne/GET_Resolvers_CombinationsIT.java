@@ -2,7 +2,7 @@ package io.agrest.cayenne;
 
 import io.agrest.Ag;
 import io.agrest.DataResponse;
-import io.agrest.cayenne.unit.CayenneAgTester;
+import io.agrest.cayenne.unit.AgCayenneTester;
 import io.agrest.cayenne.unit.DbTest;
 import io.agrest.cayenne.cayenne.main.E15;
 import io.agrest.cayenne.cayenne.main.E2;
@@ -30,7 +30,7 @@ import java.util.stream.Stream;
 public class GET_Resolvers_CombinationsIT extends DbTest {
 
     @BQTestTool
-    static final CayenneAgTester tester = tester(Resource.class)
+    static final AgCayenneTester tester = tester(Resource.class)
             .entities(E2.class, E3.class, E5.class)
             .entitiesAndDependencies(E15.class)
             // manually manage data... we only create it once for all test permutations
@@ -107,7 +107,7 @@ public class GET_Resolvers_CombinationsIT extends DbTest {
                 .queryParam("o1", o1)
                 .queryParam("o2", o2)
                 .get()
-                .wasSuccess()
+                .wasOk()
                 .bodyEquals(2,
                         "{\"id\":1,\"e3s\":[{\"e2\":{\"name\":\"e2_2\"},\"name\":\"e3_1\"}]}",
                         "{\"id\":2,\"e3s\":[{\"e2\":null,\"name\":\"e3_2\"}]}");
@@ -127,7 +127,7 @@ public class GET_Resolvers_CombinationsIT extends DbTest {
                 .queryParam("sort", "id")
                 .queryParam("o1", o1)
                 .queryParam("o2", o2)
-                .get().wasSuccess()
+                .get().wasOk()
                 .bodyEquals(2,
                         "{\"id\":11,\"e5\":{\"e15s\":[],\"name\":\"e5_2\"}}",
                         "{\"id\":13,\"e5\":{\"e15s\":[{\"name\":\"e15_2\"},{\"name\":\"e15_3\"}],\"name\":\"e5_3\"}}");

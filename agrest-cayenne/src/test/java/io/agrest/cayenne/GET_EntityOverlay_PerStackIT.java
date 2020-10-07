@@ -3,7 +3,7 @@ package io.agrest.cayenne;
 import io.agrest.Ag;
 import io.agrest.DataResponse;
 import io.agrest.MetadataResponse;
-import io.agrest.cayenne.unit.CayenneAgTester;
+import io.agrest.cayenne.unit.AgCayenneTester;
 import io.agrest.cayenne.unit.DbTest;
 import io.agrest.cayenne.cayenne.main.E22;
 import io.agrest.cayenne.cayenne.main.E25;
@@ -25,7 +25,7 @@ import javax.ws.rs.core.UriInfo;
 public class GET_EntityOverlay_PerStackIT extends DbTest {
 
     @BQTestTool
-    static final CayenneAgTester tester = tester(Resource.class)
+    static final AgCayenneTester tester = tester(Resource.class)
 
             .entities(E22.class, E25.class)
             .agCustomizer(GET_EntityOverlay_PerStackIT::addOverlay)
@@ -49,7 +49,7 @@ public class GET_EntityOverlay_PerStackIT extends DbTest {
 
     @Test
     public void testRedefineToOne_Meta() {
-        String data = tester.target("/e22/meta").get().wasSuccess().getContentAsString();
+        String data = tester.target("/e22/meta").get().wasOk().getContentAsString();
         Assertions.assertTrue(
                 data.contains("{\"name\":\"overlayToOne\",\"type\":\"E25\",\"relationship\":true}"),
                 "Unexpected metadata: " + data);
@@ -73,7 +73,7 @@ public class GET_EntityOverlay_PerStackIT extends DbTest {
                 .queryParam("include", "overlayToOne")
                 .queryParam("sort", "id")
 
-                .get().wasSuccess().bodyEquals(2,
+                .get().wasOk().bodyEquals(2,
                 "{\"id\":1,\"overlayToOne\":{\"id\":2}}",
                 "{\"id\":2,\"overlayToOne\":{\"id\":4}}");
     }

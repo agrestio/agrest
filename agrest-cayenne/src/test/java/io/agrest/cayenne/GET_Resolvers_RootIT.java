@@ -2,7 +2,7 @@ package io.agrest.cayenne;
 
 import io.agrest.Ag;
 import io.agrest.DataResponse;
-import io.agrest.cayenne.unit.CayenneAgTester;
+import io.agrest.cayenne.unit.AgCayenneTester;
 import io.agrest.cayenne.unit.DbTest;
 import io.agrest.cayenne.cayenne.main.E2;
 import io.agrest.cayenne.cayenne.main.E3;
@@ -29,7 +29,7 @@ import static java.util.Arrays.asList;
 public class GET_Resolvers_RootIT extends DbTest {
 
     @BQTestTool
-    static final CayenneAgTester tester = tester(Resource.class)
+    static final AgCayenneTester tester = tester(Resource.class)
             .entities(E2.class, E3.class)
             .build();
 
@@ -50,7 +50,7 @@ public class GET_Resolvers_RootIT extends DbTest {
                 .queryParam("include", "e3s.name")
                 .queryParam("cayenneExp", "id < 3")
                 .queryParam("sort", "id")
-                .get().wasSuccess()
+                .get().wasOk()
                 .bodyEquals(2,
                         "{\"id\":1,\"e3s\":[{\"name\":\"yyy\"}],\"name\":\"xxx\"}",
                         "{\"id\":2,\"e3s\":[],\"name\":\"aaa\"}");
@@ -73,7 +73,7 @@ public class GET_Resolvers_RootIT extends DbTest {
                 .queryParam("include", "id")
                 .queryParam("include", "name")
                 .queryParam("include", "e3s.name")
-                .get().wasSuccess()
+                .get().wasOk()
                 .bodyEquals(2,
                         "{\"id\":2,\"e3s\":[],\"name\":\"n_2\"}",
                         "{\"id\":1,\"e3s\":[{\"name\":\"yyy\"}],\"name\":\"n_1\"}");

@@ -2,7 +2,7 @@ package io.agrest.cayenne;
 
 import io.agrest.Ag;
 import io.agrest.DataResponse;
-import io.agrest.cayenne.unit.CayenneAgTester;
+import io.agrest.cayenne.unit.AgCayenneTester;
 import io.agrest.cayenne.unit.DbTest;
 import io.agrest.cayenne.cayenne.main.E2;
 import io.agrest.cayenne.cayenne.main.E3;
@@ -20,7 +20,7 @@ import javax.ws.rs.core.UriInfo;
 public class PUT_ObjectIncludeIT extends DbTest {
 
     @BQTestTool
-    static final CayenneAgTester tester = tester(Resource.class)
+    static final AgCayenneTester tester = tester(Resource.class)
             .entities(E2.class, E3.class, E5.class)
             .build();
 
@@ -33,7 +33,7 @@ public class PUT_ObjectIncludeIT extends DbTest {
         tester.target("/e3/3")
                 .queryParam("include", "e2", "e2.id", "e5.id", "e5")
                 .put("{\"id\":3}")
-                .wasSuccess()
+                .wasOk()
                 .bodyEquals(1, "{\"id\":3,\"e2\":{\"id\":8},\"e5\":{\"id\":45},\"name\":\"zzz\",\"phoneNumber\":null}");
 
         tester.e3().matcher().eq("id_", 3).eq("e2_id", 8).assertOneMatch();
@@ -50,7 +50,7 @@ public class PUT_ObjectIncludeIT extends DbTest {
         tester.target("/e3/3")
                 .queryParam("include", "e2")
                 .put("{\"id\":3,\"e2\":1}")
-                .wasSuccess()
+                .wasOk()
                 .bodyEquals(1, "{\"id\":3,\"e2\":{\"id\":1,\"address\":null,\"name\":\"xxx\"},\"name\":\"zzz\",\"phoneNumber\":null}");
 
         tester.e3().matcher().eq("id_", 3).eq("e2_id", 1).assertOneMatch();
@@ -70,7 +70,7 @@ public class PUT_ObjectIncludeIT extends DbTest {
         tester.target("/e2/1")
                 .queryParam("include", E2.ADDRESS.getName(), E2.NAME.getName(), E2.E3S.getName())
                 .put("{\"e3s\":[3,4,5]}")
-                .wasSuccess()
+                .wasOk()
                 .bodyEquals(1, "{\"address\":null,\"e3s\":[{\"id\":3,\"name\":\"zzz\",\"phoneNumber\":null},{\"id\":4,\"name\":\"aaa\",\"phoneNumber\":null},{\"id\":5,\"name\":\"bbb\",\"phoneNumber\":null}],\"name\":\"xxx\"}");
 
         tester.e3().matcher().eq("e2_id", 1).assertMatches(3);

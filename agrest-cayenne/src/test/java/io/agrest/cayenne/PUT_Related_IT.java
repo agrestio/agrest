@@ -3,7 +3,7 @@ package io.agrest.cayenne;
 import io.agrest.Ag;
 import io.agrest.DataResponse;
 import io.agrest.cayenne.cayenne.main.*;
-import io.agrest.cayenne.unit.CayenneAgTester;
+import io.agrest.cayenne.unit.AgCayenneTester;
 import io.agrest.cayenne.unit.DbTest;
 import io.bootique.junit5.BQTestTool;
 import org.junit.jupiter.api.Test;
@@ -18,7 +18,7 @@ import javax.ws.rs.core.UriInfo;
 public class PUT_Related_IT extends DbTest {
 
     @BQTestTool
-    static final CayenneAgTester tester = tester(Resource.class)
+    static final AgCayenneTester tester = tester(Resource.class)
             .entities(E1.class, E2.class, E3.class, E7.class, E8.class, E9.class)
             .entitiesAndDependencies(E12.class, E13.class, E15.class)
             .build();
@@ -35,7 +35,7 @@ public class PUT_Related_IT extends DbTest {
 
         // POST with empty body ... how bad is that?
         tester.target("/e3/8/e2/24").put("")
-                .wasSuccess()
+                .wasOk()
                 .bodyEquals(1, "{\"id\":24,\"address\":null,\"name\":\"xxx\"}");
 
         tester.e3().matcher().eq("e2_id", 24).eq("name", "yyy").assertOneMatch();
@@ -51,7 +51,7 @@ public class PUT_Related_IT extends DbTest {
                 .values(8, "yyy").exec();
 
         tester.target("/e3/8/e2/24").put("{}")
-                .wasSuccess()
+                .wasOk()
                 .bodyEquals(1, "{\"id\":24,\"address\":null,\"name\":\"xxx\"}");
 
         tester.e3().matcher().eq("e2_id", 24).eq("name", "yyy").assertOneMatch();
@@ -69,7 +69,7 @@ public class PUT_Related_IT extends DbTest {
 
         tester.target("/e3/8/e2/24")
                 .put("{\"name\":\"123\"}")
-                .wasSuccess()
+                .wasOk()
                 .bodyEquals(1, "{\"id\":24,\"address\":null,\"name\":\"123\"}");
 
         tester.e2().matcher().assertOneMatch();
@@ -90,7 +90,7 @@ public class PUT_Related_IT extends DbTest {
 
         tester.target("/e8/createorupdate/15/e7s")
                 .put("[  {\"id\":1,\"name\":\"newname\"}, {\"id\":8,\"name\":\"123\"} ]")
-                .wasSuccess().bodyEquals(2, "{\"id\":1,\"name\":\"newname\"},{\"id\":8,\"name\":\"123\"}");
+                .wasOk().bodyEquals(2, "{\"id\":1,\"name\":\"newname\"},{\"id\":8,\"name\":\"123\"}");
 
         tester.e7().matcher().assertMatches(4);
 
@@ -98,7 +98,7 @@ public class PUT_Related_IT extends DbTest {
 
         tester.target("/e8/createorupdate/15/e7s")
                 .put("[  {\"id\":1,\"name\":\"newname\"}, {\"id\":8,\"name\":\"123\"} ]")
-                .wasSuccess()
+                .wasOk()
                 .bodyEquals(2, "{\"id\":1,\"name\":\"newname\"}," + "{\"id\":8,\"name\":\"123\"}");
 
         tester.e7().matcher().assertMatches(4);
@@ -119,7 +119,7 @@ public class PUT_Related_IT extends DbTest {
         // this must add E7 with id=1, update - with id=8, delete - with id=9
         tester.target("/e8/15/e7s")
                 .put("[  {\"id\":1,\"name\":\"newname\"}, {\"id\":8,\"name\":\"123\"} ]")
-                .wasSuccess()
+                .wasOk()
                 .bodyEquals(2, "{\"id\":1,\"name\":\"newname\"},{\"id\":8,\"name\":\"123\"}");
 
         tester.e7().matcher().eq("e8_id", 15).assertMatches(2);
@@ -129,7 +129,7 @@ public class PUT_Related_IT extends DbTest {
 
         tester.target("/e8/15/e7s")
                 .put("[  {\"id\":1,\"name\":\"newname\"}, {\"id\":8,\"name\":\"123\"} ]")
-                .wasSuccess()
+                .wasOk()
                 .bodyEquals(2, "{\"id\":1,\"name\":\"newname\"},{\"id\":8,\"name\":\"123\"}");
 
         tester.e7().matcher().eq("e8_id", 15).assertMatches(2);
@@ -160,7 +160,7 @@ public class PUT_Related_IT extends DbTest {
 
         tester.target("/e7/8/e8/24")
                 .put("{\"name\":\"aaa\"}")
-                .wasSuccess().bodyEquals(1, "{\"id\":24,\"name\":\"aaa\"}");
+                .wasOk().bodyEquals(1, "{\"id\":24,\"name\":\"aaa\"}");
 
         tester.e8().matcher().assertOneMatch();
         tester.e8().matcher().eq("name", "aaa").assertOneMatch();
@@ -172,7 +172,7 @@ public class PUT_Related_IT extends DbTest {
         // PUT is idempotent... doing another update should not change the picture
         tester.target("/e7/8/e8/24")
                 .put("{\"name\":\"aaa\"}")
-                .wasSuccess()
+                .wasOk()
                 .bodyEquals(1, "{\"id\":24,\"name\":\"aaa\"}");
 
         tester.e8().matcher().assertOneMatch();
@@ -190,14 +190,14 @@ public class PUT_Related_IT extends DbTest {
                 .values(8).exec();
 
         tester.target("/e8/8/e9").put("{}")
-                .wasSuccess().bodyEquals(1, "{\"id\":8}");
+                .wasOk().bodyEquals(1, "{\"id\":8}");
 
         tester.e9().matcher().assertOneMatch();
         tester.e9().matcher().eq("e8_id", 8).assertOneMatch();
 
         // PUT is idempotent... doing another update should not change the picture
         tester.target("/e8/8/e9").put("{}")
-                .wasSuccess().bodyEquals(1, "{\"id\":8}");
+                .wasOk().bodyEquals(1, "{\"id\":8}");
 
         tester.e9().matcher().assertOneMatch();
         tester.e9().matcher().eq("e8_id", 8).assertOneMatch();
@@ -234,7 +234,7 @@ public class PUT_Related_IT extends DbTest {
         tester.target("/e12/12/e1213")
                 .queryParam("exclude", "id")
                 .put("[{\"e13\":15},{\"e13\":14}]")
-                .wasSuccess().bodyEquals(2, "{},{}");
+                .wasOk().bodyEquals(2, "{},{}");
 
 
         tester.e12_13().matcher().assertMatches(2);
@@ -245,7 +245,7 @@ public class PUT_Related_IT extends DbTest {
         tester.target("/e12/12/e1213")
                 .queryParam("exclude", "id")
                 .put("[{\"e13\":15},{\"e13\":14}]")
-                .wasSuccess().bodyEquals(2, "{},{}");
+                .wasOk().bodyEquals(2, "{},{}");
 
 
         tester.e12_13().matcher().assertMatches(2);
@@ -256,7 +256,7 @@ public class PUT_Related_IT extends DbTest {
         tester.target("/e12/12/e1213")
                 .queryParam("exclude", "id")
                 .put("[{\"e13\":16},{\"e13\":14}]")
-                .wasSuccess().bodyEquals(2, "{},{}");
+                .wasOk().bodyEquals(2, "{},{}");
 
         tester.e12_13().matcher().assertMatches(2);
         tester.e12_13().matcher().eq("e12_id", 12).eq("e13_id", 14).assertOneMatch();
@@ -281,7 +281,7 @@ public class PUT_Related_IT extends DbTest {
 
         tester.target("/e15/14/e15e1")
                 .queryParam("exclude", "id")
-                .put("[{\"e1\":1}]").wasSuccess();
+                .put("[{\"e1\":1}]").wasOk();
 
         tester.e15_1().matcher().assertOneMatch();
         tester.e15_1().matcher().eq("e15_id", 14).eq("e1_id", 1).assertOneMatch();
@@ -304,7 +304,7 @@ public class PUT_Related_IT extends DbTest {
 
         tester.e15_5().insertColumns("e15_id", "e5_id").values(14, 1).exec();
 
-        tester.target("/e15/14").put("{\"e5s\":[1]}").wasSuccess();
+        tester.target("/e15/14").put("{\"e5s\":[1]}").wasOk();
 
         tester.e15_5().matcher().assertOneMatch();
         tester.e5().matcher().assertMatches(2);

@@ -4,7 +4,7 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import io.agrest.Ag;
 import io.agrest.DataResponse;
 import io.agrest.SelectStage;
-import io.agrest.cayenne.unit.CayenneAgTester;
+import io.agrest.cayenne.unit.AgCayenneTester;
 import io.agrest.cayenne.unit.DbTest;
 import io.agrest.encoder.Encoder;
 import io.agrest.encoder.EntityEncoderFilter;
@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class GET_EntityEncoderFiltersIT extends DbTest {
 
     @BQTestTool
-    static final CayenneAgTester tester = tester(Resource.class)
+    static final AgCayenneTester tester = tester(Resource.class)
             .entities(E4.class)
             .agCustomizer(ab -> ab.entityEncoderFilter(oddFilter()))
             .build();
@@ -57,7 +57,7 @@ public class GET_EntityEncoderFiltersIT extends DbTest {
                 .queryParam("include", "id")
                 .queryParam("sort", "id")
                 .get()
-                .wasSuccess().bodyEquals(1, "{\"id\":2}");
+                .wasOk().bodyEquals(1, "{\"id\":2}");
     }
 
     @Test
@@ -81,7 +81,7 @@ public class GET_EntityEncoderFiltersIT extends DbTest {
                 .queryParam("start", "0")
                 .queryParam("limit", "2")
                 .get()
-                .wasSuccess().bodyEquals(5, "{\"id\":2},{\"id\":4}");
+                .wasOk().bodyEquals(5, "{\"id\":2},{\"id\":4}");
     }
 
     @Test
@@ -105,7 +105,7 @@ public class GET_EntityEncoderFiltersIT extends DbTest {
                 .queryParam("start", "2")
                 .queryParam("limit", "3")
                 .get()
-                .wasSuccess().bodyEquals(5, "{\"id\":6},{\"id\":8},{\"id\":10}");
+                .wasOk().bodyEquals(5, "{\"id\":6},{\"id\":8},{\"id\":10}");
     }
 
     @Test
@@ -129,7 +129,7 @@ public class GET_EntityEncoderFiltersIT extends DbTest {
                 .queryParam("start", "2")
                 .queryParam("limit", "10")
                 .get()
-                .wasSuccess().bodyEquals(5, "{\"id\":6},{\"id\":8},{\"id\":10}");
+                .wasOk().bodyEquals(5, "{\"id\":6},{\"id\":8},{\"id\":10}");
     }
 
     @Test
@@ -158,7 +158,7 @@ public class GET_EntityEncoderFiltersIT extends DbTest {
                 .queryParam("include", "[\"id\",\"cVarchar\"]")
                 .queryParam("sort", "id")
                 .get()
-                .wasSuccess().bodyEquals(1, "{\"suffix\":\"xyz\"}");
+                .wasOk().bodyEquals(1, "{\"suffix\":\"xyz\"}");
     }
 
     @Path("")

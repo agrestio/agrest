@@ -2,7 +2,7 @@ package io.agrest.cayenne;
 
 import io.agrest.Ag;
 import io.agrest.DataResponse;
-import io.agrest.cayenne.unit.CayenneAgTester;
+import io.agrest.cayenne.unit.AgCayenneTester;
 import io.agrest.cayenne.unit.DbTest;
 import io.agrest.cayenne.cayenne.main.E2;
 import io.agrest.cayenne.cayenne.main.E3;
@@ -22,7 +22,7 @@ import javax.ws.rs.core.UriInfo;
 public class GET_Resolvers_Nested_ToOneIT extends DbTest {
 
     @BQTestTool
-    static final CayenneAgTester tester = tester(Resource.class)
+    static final AgCayenneTester tester = tester(Resource.class)
             .entities(E2.class, E3.class)
             .build();
 
@@ -41,7 +41,7 @@ public class GET_Resolvers_Nested_ToOneIT extends DbTest {
                 .queryParam("include", "e2.name")
                 .queryParam("cayenneExp", "id > 3")
                 .get()
-                .wasSuccess()
+                .wasOk()
                 .bodyEquals(2,
                         "{\"id\":8,\"e2\":{\"name\":\"xxx\"},\"name\":\"yyy\"}",
                         "{\"id\":9,\"e2\":null,\"name\":\"zzz\"}");
@@ -63,7 +63,7 @@ public class GET_Resolvers_Nested_ToOneIT extends DbTest {
                 .queryParam("include", "name")
                 .queryParam("include", "e2.name")
                 .queryParam("cayenneExp", "id > 3")
-                .get().wasSuccess()
+                .get().wasOk()
                 .bodyEquals(2,
                         "{\"id\":8,\"e2\":{\"name\":\"xxx\"},\"name\":\"yyy\"}",
                         "{\"id\":9,\"e2\":null,\"name\":\"zzz\"}");
@@ -92,7 +92,7 @@ public class GET_Resolvers_Nested_ToOneIT extends DbTest {
                 .queryParam("include", "e2.id")
                 .queryParam("sort", "id")
                 .queryParam("limit", 2)
-                .get().wasSuccess()
+                .get().wasOk()
                 .bodyEquals(4,
                         "{\"id\":8,\"e2\":{\"id\":1}}",
                         "{\"id\":9,\"e2\":{\"id\":2}}");
@@ -114,7 +114,7 @@ public class GET_Resolvers_Nested_ToOneIT extends DbTest {
                 .queryParam("include", "name")
                 .queryParam("include", "e2.name")
                 .queryParam("cayenneExp", "id > 3")
-                .get().wasSuccess()
+                .get().wasOk()
                 .bodyEquals(2,
                         "{\"id\":8,\"e2\":{\"name\":\"xxx\"},\"name\":\"yyy\"}",
                         "{\"id\":9,\"e2\":null,\"name\":\"zzz\"}");
@@ -136,7 +136,7 @@ public class GET_Resolvers_Nested_ToOneIT extends DbTest {
                 .queryParam("include", "name")
                 .queryParam("include", "e2.name")
                 .queryParam("cayenneExp", "id > 9")
-                .get().wasSuccess()
+                .get().wasOk()
                 .bodyEquals(0);
 
         tester.assertQueryCount(1);

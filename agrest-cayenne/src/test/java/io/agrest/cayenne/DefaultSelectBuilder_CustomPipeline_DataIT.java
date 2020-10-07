@@ -3,7 +3,7 @@ package io.agrest.cayenne;
 import io.agrest.DataResponse;
 import io.agrest.SelectBuilder;
 import io.agrest.SelectStage;
-import io.agrest.cayenne.unit.CayenneAgTester;
+import io.agrest.cayenne.unit.AgCayenneTester;
 import io.agrest.cayenne.unit.DbTest;
 import io.agrest.cayenne.cayenne.main.E2;
 import io.agrest.cayenne.cayenne.main.E3;
@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class DefaultSelectBuilder_CustomPipeline_DataIT extends DbTest {
 
     @BQTestTool
-    static final CayenneAgTester tester = tester()
+    static final AgCayenneTester tester = tester()
 
             .entities(E2.class, E3.class)
             .build();

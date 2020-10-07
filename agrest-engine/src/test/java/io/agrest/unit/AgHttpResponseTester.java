@@ -14,7 +14,7 @@ import java.util.regex.Pattern;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class AgResponseAssertions {
+public class AgHttpResponseTester {
 
     private static final Pattern NUMERIC_ID_MATCHER = Pattern.compile("\"id\":([\\d]+)");
 
@@ -22,7 +22,7 @@ public class AgResponseAssertions {
     private String responseContent;
     private Function<String, String> bodyTransformer;
 
-    public AgResponseAssertions(Response response) {
+    public AgHttpResponseTester(Response response) {
         this.response = response;
         this.bodyTransformer = UnaryOperator.identity();
     }
@@ -66,41 +66,41 @@ public class AgResponseAssertions {
         return responseContent;
     }
 
-    public AgResponseAssertions wasSuccess() {
+    public AgHttpResponseTester wasOk() {
         assertEquals(Response.Status.OK.getStatusCode(),
                 response.getStatus(),
                 "Failed request: " + response.getStatus());
         return this;
     }
 
-    public AgResponseAssertions wasCreated() {
+    public AgHttpResponseTester wasCreated() {
         assertEquals(Response.Status.CREATED.getStatusCode(),
                 response.getStatus(),
                 "Expected 'CREATED' status, was: " + response.getStatus());
         return this;
     }
 
-    public AgResponseAssertions wasServerError() {
+    public AgHttpResponseTester wasServerError() {
         assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(),
                 response.getStatus(),
                 "Expected 'INTERNAL_SERVER_ERROR' status, was: " + response.getStatus());
         return this;
     }
 
-    public AgResponseAssertions wasBadRequest() {
+    public AgHttpResponseTester wasBadRequest() {
         return statusEquals(Response.Status.BAD_REQUEST);
     }
 
-    public AgResponseAssertions wasNotFound() {
+    public AgHttpResponseTester wasNotFound() {
         return statusEquals(Response.Status.NOT_FOUND);
     }
 
-    public AgResponseAssertions statusEquals(Response.Status expectedStatus) {
+    public AgHttpResponseTester statusEquals(Response.Status expectedStatus) {
         assertEquals(expectedStatus.getStatusCode(), response.getStatus());
         return this;
     }
 
-    public AgResponseAssertions mediaTypeEquals(MediaType expected) {
+    public AgHttpResponseTester mediaTypeEquals(MediaType expected) {
         assertEquals(expected, response.getMediaType());
         return this;
     }
@@ -109,7 +109,7 @@ public class AgResponseAssertions {
      * Allows to register a custom processor of the response body. It will be invoked on the actual response body
      * before comparing it with expected body.
      */
-    public AgResponseAssertions bodyTransformer(UnaryOperator<String> bodyTransformer) {
+    public AgHttpResponseTester bodyTransformer(UnaryOperator<String> bodyTransformer) {
         this.bodyTransformer = this.bodyTransformer.andThen(bodyTransformer);
         return this;
     }
@@ -118,23 +118,23 @@ public class AgResponseAssertions {
      * Replaces id value in the actual result with a known placeholder, this allowing to compare JSON coming for
      * unknown ids.
      */
-    public AgResponseAssertions replaceId(String idPlaceholder) {
+    public AgHttpResponseTester replaceId(String idPlaceholder) {
         this.bodyTransformer = this.bodyTransformer.andThen(
                 s -> NUMERIC_ID_MATCHER.matcher(s).replaceFirst("\"id\":" + idPlaceholder));
         return this;
     }
 
-    public AgResponseAssertions bodyEquals(String expected) {
+    public AgHttpResponseTester bodyEquals(String expected) {
         String actual = bodyTransformer.apply(getContentAsString());
         assertEquals(expected, actual, "Response contains unexpected JSON");
         return this;
     }
 
-    public AgResponseAssertions bodyEquals(long total, String... jsonObjects) {
+    public AgHttpResponseTester bodyEquals(long total, String... jsonObjects) {
         return bodyEquals(buildExpectedJson(total, jsonObjects));
     }
 
-    public AgResponseAssertions bodyEqualsMapBy(long total, String... jsonKeyValues) {
+    public AgHttpResponseTester bodyEqualsMapBy(long total, String... jsonKeyValues) {
 
         StringBuilder expectedJson = new StringBuilder("{\"data\":{");
         for (String o : jsonKeyValues) {
@@ -150,7 +150,7 @@ public class AgResponseAssertions {
         return bodyEquals(expectedJson.toString());
     }
 
-    public AgResponseAssertions totalEquals(long total) {
+    public AgHttpResponseTester totalEquals(long total) {
 
         String string = getContentAsString();
         JsonNode rootNode;

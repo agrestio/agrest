@@ -6,7 +6,7 @@ import io.agrest.cayenne.cayenne.main.E2;
 import io.agrest.cayenne.cayenne.main.E3;
 import io.agrest.cayenne.cayenne.main.E5;
 import io.agrest.cayenne.persister.ICayennePersister;
-import io.agrest.cayenne.unit.CayenneAgTester;
+import io.agrest.cayenne.unit.AgCayenneTester;
 import io.agrest.cayenne.unit.DbTest;
 import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgEntityOverlay;
@@ -30,7 +30,7 @@ import javax.ws.rs.core.UriInfo;
 public class GET_Resolvers_MixedIT extends DbTest {
 
     @BQTestTool
-    static final CayenneAgTester tester = tester(Resource.class)
+    static final AgCayenneTester tester = tester(Resource.class)
             .entities(E2.class, E3.class, E5.class)
             .build();
 
@@ -59,7 +59,7 @@ public class GET_Resolvers_MixedIT extends DbTest {
                 .queryParam("cayenneExp", "id < 3")
                 .queryParam("sort", "id")
                 .get()
-                .wasSuccess()
+                .wasOk()
                 .bodyEquals(2,
                         "{\"id\":1,\"e3s\":[{\"e2\":{\"name\":\"e2_2\"},\"name\":\"e3_1\"}]}",
                         "{\"id\":2,\"e3s\":[{\"e2\":null,\"name\":\"e3_2\"}]}");
@@ -92,7 +92,7 @@ public class GET_Resolvers_MixedIT extends DbTest {
                 .queryParam("cayenneExp", "id < 3")
                 .queryParam("sort", "id")
                 .get()
-                .wasSuccess()
+                .wasOk()
                 .bodyEquals(2,
                         "{\"id\":1,\"e3s\":[{\"ex\":{\"name\":\"e3_2\"},\"name\":\"e2_2\"}]}",
                         "{\"id\":2,\"e3s\":[]}");

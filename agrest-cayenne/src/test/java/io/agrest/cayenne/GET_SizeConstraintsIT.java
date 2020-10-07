@@ -2,7 +2,7 @@ package io.agrest.cayenne;
 
 import io.agrest.Ag;
 import io.agrest.DataResponse;
-import io.agrest.cayenne.unit.CayenneAgTester;
+import io.agrest.cayenne.unit.AgCayenneTester;
 import io.agrest.cayenne.unit.DbTest;
 import io.agrest.cayenne.cayenne.main.E4;
 import io.bootique.junit5.BQTestTool;
@@ -17,7 +17,7 @@ import javax.ws.rs.core.UriInfo;
 public class GET_SizeConstraintsIT extends DbTest {
 
     @BQTestTool
-    static final CayenneAgTester tester = tester(Resource.class)
+    static final AgCayenneTester tester = tester(Resource.class)
             .entities(E4.class)
             .build();
 
@@ -35,7 +35,7 @@ public class GET_SizeConstraintsIT extends DbTest {
                 .queryParam("sort", "id")
                 .queryParam("include", "id")
 
-                .get().wasSuccess().bodyEquals(3, "{\"id\":1},{\"id\":2}");
+                .get().wasOk().bodyEquals(3, "{\"id\":1},{\"id\":2}");
     }
 
     @Test
@@ -51,7 +51,7 @@ public class GET_SizeConstraintsIT extends DbTest {
                 .queryParam("include", "id")
                 .queryParam("limit", "1")
 
-                .get().wasSuccess().bodyEquals(3, "{\"id\":1}");
+                .get().wasOk().bodyEquals(3, "{\"id\":1}");
     }
 
     @Test
@@ -67,7 +67,7 @@ public class GET_SizeConstraintsIT extends DbTest {
                 .queryParam("include", "id")
                 .queryParam("limit", "5")
 
-                .get().wasSuccess().bodyEquals(3, "{\"id\":1},{\"id\":2}");
+                .get().wasOk().bodyEquals(3, "{\"id\":1},{\"id\":2}");
     }
 
     @Path("")

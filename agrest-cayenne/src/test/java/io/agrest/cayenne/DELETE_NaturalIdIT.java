@@ -2,7 +2,7 @@ package io.agrest.cayenne;
 
 import io.agrest.Ag;
 import io.agrest.SimpleResponse;
-import io.agrest.cayenne.unit.CayenneAgTester;
+import io.agrest.cayenne.unit.AgCayenneTester;
 import io.agrest.cayenne.unit.DbTest;
 import io.agrest.cayenne.cayenne.main.E20;
 import io.agrest.cayenne.cayenne.main.E21;
@@ -22,7 +22,7 @@ import java.util.Map;
 public class DELETE_NaturalIdIT extends DbTest {
 
     @BQTestTool
-    static final CayenneAgTester tester = tester(Resource.class)
+    static final AgCayenneTester tester = tester(Resource.class)
             .entities(E20.class, E21.class)
             .build();
 
@@ -34,7 +34,7 @@ public class DELETE_NaturalIdIT extends DbTest {
                 .values("Brian").exec();
 
         tester.target("/single-id/John").delete()
-                .wasSuccess()
+                .wasOk()
                 .bodyEquals("{\"success\":true}");
 
         tester.e20().matcher().assertOneMatch();
@@ -52,7 +52,7 @@ public class DELETE_NaturalIdIT extends DbTest {
                 .queryParam("age", 18)
                 .queryParam("name", "John")
                 .delete()
-                .wasSuccess()
+                .wasOk()
                 .bodyEquals("{\"success\":true}");
 
         tester.e21().matcher().assertOneMatch();

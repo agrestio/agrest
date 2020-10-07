@@ -5,7 +5,7 @@ import io.agrest.DataResponse;
 import io.agrest.cayenne.cayenne.main.E10;
 import io.agrest.cayenne.cayenne.main.E11;
 import io.agrest.cayenne.cayenne.main.E4;
-import io.agrest.cayenne.unit.CayenneAgTester;
+import io.agrest.cayenne.unit.AgCayenneTester;
 import io.agrest.cayenne.unit.DbTest;
 import io.agrest.constraints.Constraint;
 import io.bootique.junit5.BQTestTool;
@@ -20,7 +20,7 @@ import javax.ws.rs.core.UriInfo;
 public class GET_ConstraintsIT extends DbTest {
 
     @BQTestTool
-    static final CayenneAgTester tester = tester(Resource.class)
+    static final AgCayenneTester tester = tester(Resource.class)
             .entities(E4.class, E10.class, E11.class)
             .build();
 
@@ -31,7 +31,7 @@ public class GET_ConstraintsIT extends DbTest {
 
         tester.target("/e4/limit_attributes")
                 .get()
-                .wasSuccess().bodyEquals(1, "{\"id\":1,\"cInt\":5}");
+                .wasOk().bodyEquals(1, "{\"id\":1,\"cInt\":5}");
     }
 
     @Test
@@ -43,7 +43,7 @@ public class GET_ConstraintsIT extends DbTest {
                 .queryParam("include", E4.C_BOOLEAN.getName())
                 .queryParam("include", E4.C_INT.getName())
                 .get()
-                .wasSuccess().bodyEquals(1, "{\"cInt\":5}");
+                .wasOk().bodyEquals(1, "{\"cInt\":5}");
     }
 
     @Test
@@ -54,7 +54,7 @@ public class GET_ConstraintsIT extends DbTest {
 
         tester.target("/e10")
                 .get()
-                .wasSuccess()
+                .wasOk()
                 .bodyEquals(1, "{\"id\":1,\"cBoolean\":true,\"cInt\":5}");
     }
 
@@ -69,7 +69,7 @@ public class GET_ConstraintsIT extends DbTest {
 
         tester.target("/e10").queryParam("include", E10.E11S.getName())
                 .get()
-                .wasSuccess()
+                .wasOk()
                 .bodyEquals(1, "{\"id\":1,\"cBoolean\":true,\"cInt\":5,\"e11s\":[{\"address\":\"aaa\"}]}");
     }
 

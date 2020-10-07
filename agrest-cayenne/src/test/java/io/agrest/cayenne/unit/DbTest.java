@@ -14,8 +14,8 @@ public abstract class DbTest {
     @BQTestTool(BQTestScope.GLOBAL)
     static final DerbyTester db = DerbyTester.db().initDB("classpath:schema-derby.sql");
 
-    protected static CayenneAgTester.Builder tester(Class<?>... resources) {
-        return CayenneAgTester
+    protected static AgCayenneTester.Builder tester(Class<?>... resources) {
+        return AgCayenneTester
                 .forDb(db)
                 .cayenneProject("cayenne-agrest-tests.xml")
                 .resources(resources);

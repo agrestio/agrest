@@ -5,7 +5,7 @@ import io.agrest.DataResponse;
 import io.agrest.MetadataResponse;
 import io.agrest.annotation.AgAttribute;
 import io.agrest.cayenne.cayenne.main.*;
-import io.agrest.cayenne.unit.CayenneAgTester;
+import io.agrest.cayenne.unit.AgCayenneTester;
 import io.agrest.cayenne.unit.DbTest;
 import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgEntityOverlay;
@@ -28,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class GET_EntityOverlayIT extends DbTest {
 
     @BQTestTool
-    static final CayenneAgTester tester = tester(Resource.class)
+    static final AgCayenneTester tester = tester(Resource.class)
             .entities(E2.class, E3.class, E4.class, E7.class, E8.class)
             .agCustomizer(GET_EntityOverlayIT::addOverlay)
             .build();
@@ -60,7 +60,7 @@ public class GET_EntityOverlayIT extends DbTest {
     @Test
     public void testOverlayMeta() {
 
-        String data = tester.target("/e4/meta").get().wasSuccess().getContentAsString();
+        String data = tester.target("/e4/meta").get().wasOk().getContentAsString();
 
         assertTrue(data.contains("{\"name\":\"derived\",\"type\":\"string\"}"));
         assertTrue(data.contains("{\"name\":\"adhocString\",\"type\":\"string\"}"));
@@ -79,7 +79,7 @@ public class GET_EntityOverlayIT extends DbTest {
                 .queryParam("include", "derived")
                 .queryParam("sort", "id")
 
-                .get().wasSuccess().bodyEquals(2, "{\"derived\":\"x$\"},{\"derived\":\"y$\"}");
+                .get().wasOk().bodyEquals(2, "{\"derived\":\"x$\"},{\"derived\":\"y$\"}");
     }
 
     @Test
@@ -93,7 +93,7 @@ public class GET_EntityOverlayIT extends DbTest {
                 .queryParam("include", "e2.adhocString")
                 .queryParam("sort", "id")
 
-                .get().wasSuccess().bodyEquals(1, "{\"id\":3,\"e2\":{\"adhocString\":\"xxx*\"}}");
+                .get().wasOk().bodyEquals(1, "{\"id\":3,\"e2\":{\"adhocString\":\"xxx*\"}}");
     }
 
     @Test
@@ -107,7 +107,7 @@ public class GET_EntityOverlayIT extends DbTest {
                 .queryParam("include", "adhocString")
                 .queryParam("sort", "id")
 
-                .get().wasSuccess().bodyEquals(2, "{\"adhocString\":\"x*\"},{\"adhocString\":\"y*\"}");
+                .get().wasOk().bodyEquals(2, "{\"adhocString\":\"x*\"},{\"adhocString\":\"y*\"}");
     }
 
     @Test
@@ -122,7 +122,7 @@ public class GET_EntityOverlayIT extends DbTest {
                 .queryParam("include", "adhocToOne")
                 .queryParam("sort", "id")
 
-                .get().wasSuccess().bodyEquals(2,
+                .get().wasOk().bodyEquals(2,
                 "{\"id\":1,\"adhocToOne\":{\"p1\":\"x_\"}}",
                 "{\"id\":2,\"adhocToOne\":{\"p1\":\"y_\"}}");
     }
@@ -139,7 +139,7 @@ public class GET_EntityOverlayIT extends DbTest {
                 .queryParam("include", "adhocToMany")
                 .queryParam("sort", "id")
 
-                .get().wasSuccess().bodyEquals(2,
+                .get().wasOk().bodyEquals(2,
                 "{\"id\":1,\"adhocToMany\":[{\"p1\":\"x-\"},{\"p1\":\"x%\"}]}",
                 "{\"id\":2,\"adhocToMany\":[{\"p1\":\"y-\"},{\"p1\":\"y%\"}]}");
     }
@@ -156,7 +156,7 @@ public class GET_EntityOverlayIT extends DbTest {
                 .queryParam("include", "e8.name")
                 .queryParam("sort", "id")
 
-                .get().wasSuccess().bodyEquals(2,
+                .get().wasOk().bodyEquals(2,
                 "{\"id\":1,\"e8\":{\"name\":\"x1_e8\"}}",
                 "{\"id\":2,\"e8\":{\"name\":\"x2_e8\"}}");
     }
@@ -173,7 +173,7 @@ public class GET_EntityOverlayIT extends DbTest {
                 .queryParam("include", "name")
                 .queryParam("sort", "id")
 
-                .get().wasSuccess().bodyEquals(2,
+                .get().wasOk().bodyEquals(2,
                 "{\"id\":1,\"name\":2}",
                 "{\"id\":2,\"name\":4}");
     }

@@ -3,7 +3,7 @@ package io.agrest.cayenne;
 import io.agrest.Ag;
 import io.agrest.DataResponse;
 import io.agrest.cayenne.cayenne.main.*;
-import io.agrest.cayenne.unit.CayenneAgTester;
+import io.agrest.cayenne.unit.AgCayenneTester;
 import io.agrest.cayenne.unit.DbTest;
 import io.bootique.junit5.BQTestTool;
 import org.junit.jupiter.api.Test;
@@ -21,7 +21,7 @@ import java.util.Map;
 public class POST_Related_IT extends DbTest {
 
     @BQTestTool
-    static final CayenneAgTester tester = tester(Resource.class)
+    static final AgCayenneTester tester = tester(Resource.class)
             .entities(E2.class, E3.class, E17.class, E18.class)
             .entitiesAndDependencies(E12.class, E13.class)
             .build();
@@ -33,7 +33,7 @@ public class POST_Related_IT extends DbTest {
 
         tester.target("/e2/24/e3s")
                 .post("{\"name\":\"zzz\"}")
-                .wasSuccess()
+                .wasOk()
                 .replaceId("RID")
                 .bodyEquals(1, "{\"id\":RID,\"name\":\"zzz\",\"phoneNumber\":null}");
 
@@ -51,7 +51,7 @@ public class POST_Related_IT extends DbTest {
                 .matrixParam("parentId1", 1)
                 .matrixParam("parentId2", 1)
                 .post("{\"name\":\"xxx\"}")
-                .wasSuccess()
+                .wasOk()
                 .replaceId("RID")
                 .bodyEquals(1, "{\"id\":RID,\"name\":\"xxx\"}");
 
@@ -76,7 +76,7 @@ public class POST_Related_IT extends DbTest {
                 // only including name in response, as IDs are generated and it is hard to assert them properly
                 .queryParam("include", "name")
                 .post("[ {\"id\":8,\"name\":\"123\"}, {\"name\":\"newname\"} ]")
-                .wasSuccess()
+                .wasOk()
                 .bodyEquals(2, "{\"name\":\"123\"}", "{\"name\":\"newname\"}");
 
         tester.e3().matcher().assertMatches(4);
@@ -87,7 +87,7 @@ public class POST_Related_IT extends DbTest {
         tester.target("/e2/15/e3s")
                 .queryParam("include", "name")
                 .post("[ {\"id\":8,\"name\":\"123\"}, {\"name\":\"newname\"} ]")
-                .wasSuccess()
+                .wasOk()
                 .bodyEquals(2, "{\"name\":\"123\"}", "{\"name\":\"newname\"}");
 
         tester.e3().matcher().assertMatches(5);

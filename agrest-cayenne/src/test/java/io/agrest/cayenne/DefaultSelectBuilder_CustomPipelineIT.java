@@ -2,7 +2,7 @@ package io.agrest.cayenne;
 
 import io.agrest.SelectBuilder;
 import io.agrest.SelectStage;
-import io.agrest.cayenne.unit.CayenneAgTester;
+import io.agrest.cayenne.unit.AgCayenneTester;
 import io.agrest.cayenne.unit.DbTest;
 import io.agrest.cayenne.cayenne.main.E2;
 import io.agrest.runtime.DefaultSelectBuilder;
@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class DefaultSelectBuilder_CustomPipelineIT extends DbTest {
 
     @BQTestTool
-    static final CayenneAgTester tester = tester()
+    static final AgCayenneTester tester = tester()
 
             .build();
 

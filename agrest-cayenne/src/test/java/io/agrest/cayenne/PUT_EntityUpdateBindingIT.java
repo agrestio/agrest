@@ -3,7 +3,7 @@ package io.agrest.cayenne;
 import io.agrest.Ag;
 import io.agrest.EntityUpdate;
 import io.agrest.SimpleResponse;
-import io.agrest.cayenne.unit.CayenneAgTester;
+import io.agrest.cayenne.unit.AgCayenneTester;
 import io.agrest.cayenne.unit.DbTest;
 import io.agrest.cayenne.cayenne.main.E3;
 import io.bootique.junit5.BQTestTool;
@@ -20,7 +20,7 @@ import java.util.Collection;
 public class PUT_EntityUpdateBindingIT extends DbTest {
 
     @BQTestTool
-    static final CayenneAgTester tester = tester(Resource.class)
+    static final AgCayenneTester tester = tester(Resource.class)
 
             .entities(E3.class)
             .build();
@@ -32,7 +32,7 @@ public class PUT_EntityUpdateBindingIT extends DbTest {
 
         tester.target("/e3/updatebinding/3")
                 .put("{\"id\":3,\"name\":\"yyy\"}")
-                .wasSuccess().bodyEquals("{\"success\":true}");
+                .wasOk().bodyEquals("{\"success\":true}");
 
         tester.e3().matcher().eq("id_", 3).eq("name", "yyy").assertOneMatch();
     }
@@ -47,7 +47,7 @@ public class PUT_EntityUpdateBindingIT extends DbTest {
 
         tester.target("/e3/updatebinding")
                 .put("[{\"id\":3,\"name\":\"yyy\"},{\"id\":5,\"name\":\"nnn\"}]")
-                .wasSuccess().bodyEquals("{\"success\":true}");
+                .wasOk().bodyEquals("{\"success\":true}");
 
         tester.e3().matcher().assertMatches(2);
         tester.e3().matcher().eq("id_", 3).eq("name", "yyy").assertOneMatch();

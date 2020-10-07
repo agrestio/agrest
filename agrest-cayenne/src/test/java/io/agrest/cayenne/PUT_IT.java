@@ -5,7 +5,7 @@ import io.agrest.Ag;
 import io.agrest.DataResponse;
 import io.agrest.UpdateStage;
 import io.agrest.cayenne.cayenne.main.*;
-import io.agrest.cayenne.unit.CayenneAgTester;
+import io.agrest.cayenne.unit.AgCayenneTester;
 import io.agrest.cayenne.unit.DbTest;
 import io.agrest.encoder.Encoder;
 import io.bootique.junit5.BQTestTool;
@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 public class PUT_IT extends DbTest {
 
     @BQTestTool
-    static final CayenneAgTester tester = tester(Resource.class)
+    static final AgCayenneTester tester = tester(Resource.class)
             .entities(E2.class, E3.class, E4.class, E7.class, E8.class, E9.class, E14.class, E17.class)
             .build();
 
@@ -41,7 +41,7 @@ public class PUT_IT extends DbTest {
                 .values(8, "yyy").exec();
 
         tester.target("/e4/8").put("{\"id\":8,\"cVarchar\":\"zzz\"}")
-                .wasSuccess()
+                .wasOk()
                 .bodyEquals(1, "{\"id\":8," +
                         "\"cBoolean\":null," +
                         "\"cDate\":null," +
@@ -65,7 +65,7 @@ public class PUT_IT extends DbTest {
                 .queryParam("id1", 1)
                 .queryParam("id2", 1)
                 .put("{\"name\":\"xxx\"}")
-                .wasSuccess().bodyEquals(1, "{\"id\":{\"id1\":1,\"id2\":1},\"id1\":1,\"id2\":1,\"name\":\"xxx\"}");
+                .wasOk().bodyEquals(1, "{\"id\":{\"id1\":1,\"id2\":1},\"id1\":1,\"id2\":1,\"name\":\"xxx\"}");
 
         tester.e17().matcher().eq("id1", 1).eq("id2", 1).eq("name", "xxx").assertOneMatch();
     }
@@ -80,7 +80,7 @@ public class PUT_IT extends DbTest {
 
         tester.target("/e3/3")
                 .put("{\"id\":3,\"e2\":1}")
-                .wasSuccess()
+                .wasOk()
                 .bodyEquals(1, "{\"id\":3,\"name\":\"zzz\",\"phoneNumber\":null}");
 
         tester.e3().matcher().eq("id_", 3).eq("e2_id", 1).assertOneMatch();
@@ -96,7 +96,7 @@ public class PUT_IT extends DbTest {
 
         tester.target("/e3/3")
                 .put("{\"id\":3,\"e2\":[1]}")
-                .wasSuccess()
+                .wasOk()
                 .bodyEquals(1, "{\"id\":3,\"name\":\"zzz\",\"phoneNumber\":null}");
 
         tester.e3().matcher().eq("id_", 3).eq("e2_id", 1).assertOneMatch();
@@ -112,7 +112,7 @@ public class PUT_IT extends DbTest {
 
         tester.target("/e3/3")
                 .put("{\"id\":3,\"e2\":null}")
-                .wasSuccess().bodyEquals(1, "{\"id\":3,\"name\":\"zzz\",\"phoneNumber\":null}");
+                .wasOk().bodyEquals(1, "{\"id\":3,\"name\":\"zzz\",\"phoneNumber\":null}");
 
         // TODO: can't use matcher until BQ 1.1 upgrade (because of https://github.com/bootique/bootique-jdbc/issues/91 )
         //  so using select...
@@ -132,7 +132,7 @@ public class PUT_IT extends DbTest {
         tester.e3().insertColumns("id_", "name", "e2_id").values(3, "zzz", null).exec();
 
         tester.target("/e3/3").put("{\"id\":3,\"e2\":8}")
-                .wasSuccess()
+                .wasOk()
                 .bodyEquals(1, "{\"id\":3,\"name\":\"zzz\",\"phoneNumber\":null}");
 
         tester.e3().matcher().eq("id_", 3).eq("e2_id", 8).assertOneMatch();
@@ -152,7 +152,7 @@ public class PUT_IT extends DbTest {
                 .queryParam("exclude", "id")
                 .queryParam("include", E3.NAME.getName())
                 .put(entity)
-                .wasSuccess()
+                .wasOk()
                 // ordering must be preserved in response, so comparing with request entity
                 .bodyEquals(4,
                         "{\"name\":\"yyy\"}",
@@ -170,7 +170,7 @@ public class PUT_IT extends DbTest {
                 .queryParam("exclude", "id")
                 .queryParam("include", E14.NAME.getName())
                 .put("[{\"id\":5,\"name\":\"bbb\"}]")
-                .wasSuccess().bodyEquals(1, "{\"id\":5,\"name\":\"bbb\",\"prettyName\":\"bbb_pretty\"}");
+                .wasOk().bodyEquals(1, "{\"id\":5,\"name\":\"bbb\",\"prettyName\":\"bbb_pretty\"}");
 
         tester.e14().matcher().assertOneMatch();
         tester.e14().matcher().eq("long_id", 5).eq("name", "bbb").assertOneMatch();
@@ -194,7 +194,7 @@ public class PUT_IT extends DbTest {
                 .queryParam("exclude", "id")
                 .queryParam("include", E14.NAME.getName())
                 .put(entity)
-                .wasSuccess()
+                .wasOk()
                 .bodyEquals(4,
                         "{\"id\":6,\"name\":\"yyy\",\"prettyName\":\"yyy_pretty\"}",
                         "{\"id\":4,\"name\":\"zzz\",\"prettyName\":\"zzz_pretty\"}",
@@ -227,7 +227,7 @@ public class PUT_IT extends DbTest {
 
         tester.target("/e14/")
                 .put(putEntity)
-                .wasSuccess()
+                .wasOk()
                 .bodyEquals(4,
                         "{\"id\":3147483646,\"name\":\"yyy\",\"prettyName\":\"yyy_pretty\"}",
                         "{\"id\":8147483648,\"name\":\"zzz\",\"prettyName\":\"zzz_pretty\"}",
@@ -246,7 +246,7 @@ public class PUT_IT extends DbTest {
 
         tester.target("/e7_custom_encoder")
                 .put("[{\"id\":4,\"name\":\"zzz\"}]")
-                .wasSuccess()
+                .wasOk()
                 .bodyEquals("{\"encoder\":\"custom\"}");
     }
 
@@ -257,7 +257,7 @@ public class PUT_IT extends DbTest {
                 .queryParam("exclude", "id")
                 .queryParam("include", E7.NAME.getName())
                 .put("[{\"id\":6,\"name\":\"yyy\"},{\"id\":4,\"name\":\"zzz\"}]")
-                .wasSuccess()
+                .wasOk()
                 .bodyEquals(2,
                         "{\"name\":\"yyy\"}",
                         "{\"name\":\"zzz\"}");
@@ -266,7 +266,7 @@ public class PUT_IT extends DbTest {
                 .queryParam("include", "id")
                 .queryParam("exclude", E7.NAME.getName())
                 .put("[{\"id\":6,\"name\":\"123\"},{\"id\":4}]")
-                .wasSuccess()
+                .wasOk()
                 .bodyEquals(2, "{\"id\":6}", "{\"id\":4}");
     }
 
@@ -280,7 +280,7 @@ public class PUT_IT extends DbTest {
                 .queryParam("include", "id", E7.E8.getName())
                 .queryParam("exclude", E7.NAME.getName())
                 .put("[{\"id\":6,\"name\":\"yyy\"},{\"id\":4,\"name\":\"zzz\"}]")
-                .wasSuccess()
+                .wasOk()
                 .bodyEquals(2,
                         "{\"id\":6,\"e8\":null}",
                         "{\"id\":4,\"e8\":null}");
@@ -289,7 +289,7 @@ public class PUT_IT extends DbTest {
                 .queryParam("include", "id", E7.E8.getName())
                 .queryParam("exclude", E7.NAME.getName())
                 .put("[{\"id\":6,\"name\":\"123\",\"e8\":6},{\"id\":4,\"name\":\"zzz\",\"e8\":5}]")
-                .wasSuccess()
+                .wasOk()
                 .bodyEquals(2,
                         "{\"id\":6,\"e8\":{\"id\":6,\"name\":\"ert\"}}",
                         "{\"id\":4,\"e8\":{\"id\":5,\"name\":\"aaa\"}}");
@@ -298,7 +298,7 @@ public class PUT_IT extends DbTest {
                 .queryParam("include", "id", E7.E8.dot(E8.NAME).getName())
                 .queryParam("exclude", E7.NAME.getName())
                 .put("[{\"id\":6,\"name\":\"123\",\"e8\":6},{\"id\":4,\"name\":\"zzz\",\"e8\":5}]")
-                .wasSuccess()
+                .wasOk()
                 .bodyEquals(2,
                         "{\"id\":6,\"e8\":{\"name\":\"ert\"}}",
                         "{\"id\":4,\"e8\":{\"name\":\"aaa\"}}");
@@ -307,7 +307,7 @@ public class PUT_IT extends DbTest {
                 .queryParam("include", "id", E7.E8.dot(E8.E9).getName())
                 .queryParam("exclude", E7.NAME.getName())
                 .put("[{\"id\":6,\"name\":\"123\",\"e8\":6},{\"id\":4,\"name\":\"zzz\",\"e8\":5}]")
-                .wasSuccess()
+                .wasOk()
                 .bodyEquals(2,
                         "{\"id\":6,\"e8\":{\"e9\":{\"id\":6}}}",
                         "{\"id\":4,\"e8\":{\"e9\":{\"id\":5}}}");
@@ -329,7 +329,7 @@ public class PUT_IT extends DbTest {
                 .queryParam("include", "id", E8.E7S.dot(E7.NAME).getName())
                 .queryParam("exclude", E8.NAME.getName())
                 .put("[{\"id\":6,\"name\":\"yyy\"},{\"id\":5,\"name\":\"zzz\"}]")
-                .wasSuccess()
+                .wasOk()
                 .bodyEquals(2,
                         "{\"id\":6,\"e7s\":[{\"name\":\"me\"}]}",
                         "{\"id\":5,\"e7s\":[{\"name\":\"her\"},{\"name\":\"him\"}]}");
@@ -345,7 +345,7 @@ public class PUT_IT extends DbTest {
                 .queryParam("include", "id", E7.E8.dot(E8.E9).getName())
                 .queryParam("exclude", E7.NAME.getName())
                 .put("[{\"name\":\"yyy\",\"e8\":6}]")
-                .wasSuccess()
+                .wasOk()
                 .bodyEquals(1, "{\"id\":6,\"e8\":{\"e9\":{\"id\":6}}}");
     }
 
@@ -364,7 +364,7 @@ public class PUT_IT extends DbTest {
                 .queryParam("include", E2.E3S.getName())
                 .queryParam("exclude", E2.ADDRESS.getName(), E2.NAME.getName(), E2.E3S.dot(E3.NAME).getName(), E2.E3S.dot(E3.PHONE_NUMBER).getName())
                 .put("{\"e3s\":[3,4,5]}")
-                .wasSuccess().bodyEquals(1, "{\"id\":1,\"e3s\":[{\"id\":3},{\"id\":4},{\"id\":5}]}");
+                .wasOk().bodyEquals(1, "{\"id\":1,\"e3s\":[{\"id\":3},{\"id\":4},{\"id\":5}]}");
 
         tester.e3().matcher().eq("e2_id", 1).assertMatches(3);
     }
@@ -384,7 +384,7 @@ public class PUT_IT extends DbTest {
                 .queryParam("include", E2.E3S.getName())
                 .queryParam("exclude", E2.ADDRESS.getName(), E2.NAME.getName(), E2.E3S.dot(E3.NAME).getName(), E2.E3S.dot(E3.PHONE_NUMBER).getName())
                 .put("{\"e3s\":[]}")
-                .wasSuccess().bodyEquals(1, "{\"id\":8,\"e3s\":[]}");
+                .wasOk().bodyEquals(1, "{\"id\":8,\"e3s\":[]}");
 
         tester.e3().matcher().eq("e2_id", null).assertMatches(3);
     }
@@ -404,7 +404,7 @@ public class PUT_IT extends DbTest {
                 .queryParam("include", E2.E3S.getName())
                 .queryParam("exclude", E2.ADDRESS.getName(), E2.NAME.getName(), E2.E3S.dot(E3.NAME).getName(), E2.E3S.dot(E3.PHONE_NUMBER).getName())
                 .put("{\"e3s\":[4]}")
-                .wasSuccess().bodyEquals(1, "{\"id\":1,\"e3s\":[{\"id\":4}]}");
+                .wasOk().bodyEquals(1, "{\"id\":1,\"e3s\":[{\"id\":4}]}");
 
         tester.e3().matcher().eq("e2_id", 1).eq("id_", 4).assertOneMatch();
         tester.e3().matcher().eq("e2_id", 8).eq("id_", 5).assertOneMatch();

@@ -1,7 +1,7 @@
 package io.agrest.cayenne.encoder;
 
 import io.agrest.DataResponse;
-import io.agrest.cayenne.unit.CayenneAgTester;
+import io.agrest.cayenne.unit.AgCayenneTester;
 import io.agrest.cayenne.unit.DbTest;
 import io.agrest.encoder.Encoder;
 import io.agrest.encoder.EncoderVisitor;
@@ -24,7 +24,7 @@ import static org.mockito.Mockito.when;
 public class Encoder_VisitIT extends DbTest {
 
     @BQTestTool
-    static final CayenneAgTester tester = tester()
+    static final AgCayenneTester tester = tester()
 
             .entities(E2.class, E3.class)
             .build();

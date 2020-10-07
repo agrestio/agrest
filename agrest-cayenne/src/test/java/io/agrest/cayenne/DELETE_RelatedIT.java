@@ -3,7 +3,7 @@ package io.agrest.cayenne;
 import io.agrest.Ag;
 import io.agrest.EntityDelete;
 import io.agrest.SimpleResponse;
-import io.agrest.cayenne.unit.CayenneAgTester;
+import io.agrest.cayenne.unit.AgCayenneTester;
 import io.agrest.cayenne.unit.DbTest;
 import io.agrest.cayenne.cayenne.main.E2;
 import io.agrest.cayenne.cayenne.main.E3;
@@ -23,7 +23,7 @@ import java.util.Collection;
 public class DELETE_RelatedIT extends DbTest {
 
     @BQTestTool
-    static final CayenneAgTester tester = tester(E2Resource.class, E3Resource.class, E8Resource.class)
+    static final AgCayenneTester tester = tester(E2Resource.class, E3Resource.class, E8Resource.class)
             .entities(E2.class, E3.class, E7.class, E8.class)
             .build();
 
@@ -42,7 +42,7 @@ public class DELETE_RelatedIT extends DbTest {
                 .values(8, "yyy", 1)
                 .values(9, "zzz", 1).exec();
 
-        tester.target("/e8/1/e7s").delete().wasSuccess().bodyEquals("{\"success\":true}");
+        tester.target("/e8/1/e7s").delete().wasOk().bodyEquals("{\"success\":true}");
         tester.e7().matcher().eq("e8_id", 1).assertNoMatches();
     }
 
@@ -61,7 +61,7 @@ public class DELETE_RelatedIT extends DbTest {
                 .values(8, "yyy", 1)
                 .values(9, "zzz", 1).exec();
 
-        tester.target("/e2/1/e3s/9").delete().wasSuccess().bodyEquals("{\"success\":true}");
+        tester.target("/e2/1/e3s/9").delete().wasOk().bodyEquals("{\"success\":true}");
 
         tester.e3().matcher().eq("id_", 9).eq("e2_id", null).assertOneMatch();
     }
@@ -81,7 +81,7 @@ public class DELETE_RelatedIT extends DbTest {
                 .values(8, "yyy", 1)
                 .values(9, "zzz", 1).exec();
 
-        tester.target("/e3/9/e2/1").delete().wasSuccess().bodyEquals("{\"success\":true}");
+        tester.target("/e3/9/e2/1").delete().wasOk().bodyEquals("{\"success\":true}");
 
         tester.e3().matcher().eq("id_", 9).eq("e2_id", null).assertOneMatch();
     }
@@ -101,7 +101,7 @@ public class DELETE_RelatedIT extends DbTest {
                 .values(8, "yyy", 1)
                 .values(9, "zzz", 1).exec();
 
-        tester.target("/e3/9/e2").delete().wasSuccess().bodyEquals("{\"success\":true}");
+        tester.target("/e3/9/e2").delete().wasOk().bodyEquals("{\"success\":true}");
         tester.e3().matcher().eq("id_", 9).eq("e2_id", null).assertOneMatch();
     }
 

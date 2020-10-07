@@ -7,7 +7,7 @@ import io.agrest.MetadataResponse;
 import io.agrest.SimpleResponse;
 import io.agrest.annotation.AgResource;
 import io.agrest.annotation.LinkType;
-import io.agrest.cayenne.unit.CayenneAgTester;
+import io.agrest.cayenne.unit.AgCayenneTester;
 import io.agrest.cayenne.unit.DbTest;
 import io.agrest.constraints.Constraint;
 import io.agrest.cayenne.cayenne.main.E15;
@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class GET_Metadata_IT extends DbTest {
 
     @BQTestTool
-    static final CayenneAgTester tester = tester(E5Resource.class, E19Resource.class)
+    static final AgCayenneTester tester = tester(E5Resource.class, E19Resource.class)
 
             .agCustomizer(GET_Metadata_IT::customize)
             .build();
@@ -45,7 +45,7 @@ public class GET_Metadata_IT extends DbTest {
 
         tester.target("/e5/metadata")
                 .get()
-                .wasSuccess()
+                .wasOk()
                 .bodyEquals("{\"entity\":{\"name\":\"E5\"," +
                         "\"properties\":[" +
                         "{\"name\":\"date\",\"type\":\"date\",\"format\":\"date-time\"}," +
@@ -63,7 +63,7 @@ public class GET_Metadata_IT extends DbTest {
     @Test
     public void testMetadata_PropertyTypes() {
 
-        String body = tester.target("/e19/metadata").get().wasSuccess().getContentAsString();
+        String body = tester.target("/e19/metadata").get().wasOk().getContentAsString();
 
         JsonNode jsonNode = new JacksonService().parseJson(body);
         assertEquals("[{\"name\":\"bigDecimal\",\"type\":\"number\"}," +
@@ -95,7 +95,7 @@ public class GET_Metadata_IT extends DbTest {
     @Test
     public void testGetMetadata_Constraints() {
 
-        String metadata = tester.target("/e5/metadata-constraints").get().wasSuccess().getContentAsString();
+        String metadata = tester.target("/e5/metadata-constraints").get().wasOk().getContentAsString();
 
         assertTrue(metadata.contains("{\"name\":\"name\",\"type\":\"string\"}"));
         assertTrue(metadata.contains("{\"name\":\"e15s\",\"type\":\"E15\",\"relationship\":true,\"collection\":true}"));

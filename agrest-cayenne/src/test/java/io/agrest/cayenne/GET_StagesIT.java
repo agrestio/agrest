@@ -5,7 +5,7 @@ import io.agrest.Ag;
 import io.agrest.DataResponse;
 import io.agrest.SelectStage;
 import io.agrest.cayenne.persister.ICayennePersister;
-import io.agrest.cayenne.unit.CayenneAgTester;
+import io.agrest.cayenne.unit.AgCayenneTester;
 import io.agrest.cayenne.unit.DbTest;
 import io.agrest.encoder.DataResponseEncoder;
 import io.agrest.encoder.Encoder;
@@ -29,7 +29,7 @@ import java.util.List;
 public class GET_StagesIT extends DbTest {
 
     @BQTestTool
-    static final CayenneAgTester tester = tester(Resource.class)
+    static final AgCayenneTester tester = tester(Resource.class)
             .entities(E27Nopk.class)
             .build();
 
@@ -41,7 +41,7 @@ public class GET_StagesIT extends DbTest {
 
         tester.target("/e27")
                 .get()
-                .wasSuccess()
+                .wasOk()
                 .bodyEquals(2, "{\"name\":\"a\"},{\"name\":\"z\"}");
     }
 

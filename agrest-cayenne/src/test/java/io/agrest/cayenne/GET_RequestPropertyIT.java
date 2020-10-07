@@ -4,7 +4,7 @@ import io.agrest.Ag;
 import io.agrest.DataResponse;
 import io.agrest.cayenne.cayenne.main.E3;
 import io.agrest.cayenne.cayenne.main.E4;
-import io.agrest.cayenne.unit.CayenneAgTester;
+import io.agrest.cayenne.unit.AgCayenneTester;
 import io.agrest.cayenne.unit.DbTest;
 import io.agrest.property.PropertyReader;
 import io.bootique.junit5.BQTestTool;
@@ -23,7 +23,7 @@ import static io.agrest.property.PropertyBuilder.property;
 public class GET_RequestPropertyIT extends DbTest {
 
     @BQTestTool
-    static final CayenneAgTester tester = tester(Resource.class)
+    static final AgCayenneTester tester = tester(Resource.class)
             .entities(E3.class, E4.class)
             .build();
 
@@ -37,7 +37,7 @@ public class GET_RequestPropertyIT extends DbTest {
                 .queryParam("include", "x")
                 .queryParam("sort", "id")
 
-                .get().wasSuccess().bodyEquals(2, "{\"id\":1,\"x\":\"y_1\"},{\"id\":2,\"x\":\"y_2\"}");
+                .get().wasOk().bodyEquals(2, "{\"id\":1,\"x\":\"y_1\"},{\"id\":2,\"x\":\"y_2\"}");
     }
 
     @Test
@@ -49,7 +49,7 @@ public class GET_RequestPropertyIT extends DbTest {
                 .queryParam("include", "id")
                 .queryParam("sort", "id")
 
-                .get().wasSuccess().bodyEquals(2, "{\"id\":1},{\"id\":2}");
+                .get().wasOk().bodyEquals(2, "{\"id\":1},{\"id\":2}");
     }
 
     @Test
@@ -63,7 +63,7 @@ public class GET_RequestPropertyIT extends DbTest {
                 .queryParam("include", "name")
                 .queryParam("sort", "id")
 
-                .get().wasSuccess().bodyEquals(2, "{\"name\":\"_x_\"},{\"name\":\"_y_\"}");
+                .get().wasOk().bodyEquals(2, "{\"name\":\"_x_\"},{\"name\":\"_y_\"}");
     }
 
     @Test
@@ -77,7 +77,7 @@ public class GET_RequestPropertyIT extends DbTest {
                 .queryParam("include", "id")
                 .queryParam("sort", "id")
 
-                .get().wasSuccess().bodyEquals(2, "{\"id\":1},{\"id\":2}");
+                .get().wasOk().bodyEquals(2, "{\"id\":1},{\"id\":2}");
     }
 
     @Path("")

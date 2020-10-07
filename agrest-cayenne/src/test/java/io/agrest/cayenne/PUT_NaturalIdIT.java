@@ -4,7 +4,7 @@ import io.agrest.Ag;
 import io.agrest.DataResponse;
 import io.agrest.EntityUpdate;
 import io.agrest.SimpleResponse;
-import io.agrest.cayenne.unit.CayenneAgTester;
+import io.agrest.cayenne.unit.AgCayenneTester;
 import io.agrest.cayenne.unit.DbTest;
 import io.agrest.cayenne.cayenne.main.E20;
 import io.agrest.cayenne.cayenne.main.E21;
@@ -26,7 +26,7 @@ import java.util.Map;
 public class PUT_NaturalIdIT extends DbTest {
 
     @BQTestTool
-    static final CayenneAgTester tester = tester(Resource.class)
+    static final AgCayenneTester tester = tester(Resource.class)
 
             .entities(E20.class, E21.class, E23.class)
             .build();
@@ -41,7 +41,7 @@ public class PUT_NaturalIdIT extends DbTest {
         tester.target("/single-id/John")
 
                 .put("{\"age\":28,\"description\":\"zzz\"}")
-                .wasSuccess()
+                .wasOk()
                 .bodyEquals(1, "{\"id\":\"John\",\"age\":28,\"description\":\"zzz\",\"name\":\"John\"}");
 
         tester.e20().matcher().eq("age", 28).eq("description", "zzz").assertOneMatch();
@@ -68,7 +68,7 @@ public class PUT_NaturalIdIT extends DbTest {
         tester.target("/multi-id/byid").queryParam("age", 18)
                 .queryParam("name", "John")
                 .put("{\"age\":28,\"description\":\"zzz\"}")
-                .wasSuccess()
+                .wasOk()
                 .bodyEquals(1,
                         "{\"id\":{\"age\":28,\"name\":\"John\"},\"age\":28,\"description\":\"zzz\",\"name\":\"John\"}");
 
@@ -96,7 +96,7 @@ public class PUT_NaturalIdIT extends DbTest {
 
         tester.target("/natural-id-in-payload")
                 .put("[{\"exposedId\":12,\"name\":\"Joe\"}, {\"exposedId\":10,\"name\":\"Ana\"}]")
-                .wasSuccess().bodyEquals("{\"success\":true}");
+                .wasOk().bodyEquals("{\"success\":true}");
 
         tester.e23().matcher().assertMatches(2);
     }
@@ -108,7 +108,7 @@ public class PUT_NaturalIdIT extends DbTest {
 
         tester.target("/natural-id-in-payload")
                 .put("[{\"id\":12,\"name\":\"Joe\"}, {\"id\":10,\"name\":\"Ana\"}]")
-                .wasSuccess().bodyEquals("{\"success\":true}");
+                .wasOk().bodyEquals("{\"success\":true}");
 
         tester.e23().matcher().assertMatches(2);
     }

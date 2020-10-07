@@ -5,7 +5,7 @@ import io.agrest.DataResponse;
 import io.agrest.cayenne.cayenne.main.E14;
 import io.agrest.cayenne.cayenne.main.E2;
 import io.agrest.cayenne.cayenne.main.E3;
-import io.agrest.cayenne.unit.CayenneAgTester;
+import io.agrest.cayenne.unit.AgCayenneTester;
 import io.agrest.cayenne.unit.DbTest;
 import io.agrest.sencha.ops.unit.SenchaBodyAssertions;
 import io.bootique.junit5.BQTestTool;
@@ -20,7 +20,7 @@ import javax.ws.rs.core.UriInfo;
 public class Sencha_POST_IT extends DbTest {
 
     @BQTestTool
-    static final CayenneAgTester tester = tester(Resource.class)
+    static final AgCayenneTester tester = tester(Resource.class)
             .entities(E2.class, E3.class, E14.class)
             .build();
 

@@ -4,7 +4,7 @@ import io.agrest.Ag;
 import io.agrest.DataResponse;
 import io.agrest.cayenne.cayenne.main.E2;
 import io.agrest.cayenne.cayenne.main.E3;
-import io.agrest.cayenne.unit.CayenneAgTester;
+import io.agrest.cayenne.unit.AgCayenneTester;
 import io.agrest.cayenne.unit.DbTest;
 import io.agrest.sencha.ops.unit.SenchaBodyAssertions;
 import io.bootique.junit5.BQTestTool;
@@ -19,7 +19,7 @@ import javax.ws.rs.core.Context;
 public class Sencha_PUT_IT extends DbTest {
 
     @BQTestTool
-    static final CayenneAgTester tester = tester(Resource.class)
+    static final AgCayenneTester tester = tester(Resource.class)
             .entities(E2.class, E3.class)
             .build();
 
@@ -33,7 +33,7 @@ public class Sencha_PUT_IT extends DbTest {
         tester.e3().insertColumns("id_", "name", "e2_id").values(3, "zzz", null).exec();
 
         tester.target("/e3/3").put("{\"id\":3,\"e2_id\":8}")
-                .wasSuccess()
+                .wasOk()
                 .bodyTransformer(SenchaBodyAssertions::checkAndNormalizeBody)
                 .bodyEquals(1, "{\"id\":3,\"name\":\"zzz\",\"phoneNumber\":null}");
 
@@ -50,7 +50,7 @@ public class Sencha_PUT_IT extends DbTest {
         tester.e3().insertColumns("id_", "name", "e2_id").values(3, "zzz", 8).exec();
 
         tester.target("/e3/3").put("{\"id\":3,\"e2_id\":null}")
-                .wasSuccess()
+                .wasOk()
                 .bodyTransformer(SenchaBodyAssertions::checkAndNormalizeBody)
                 .bodyEquals(1, "{\"id\":3,\"name\":\"zzz\",\"phoneNumber\":null}");
 
@@ -68,7 +68,7 @@ public class Sencha_PUT_IT extends DbTest {
         tester.e3().insertColumns("id_", "name", "e2_id").values(3, "zzz", 8).exec();
 
         tester.target("/e3/3").put("{\"id\":3,\"e2_id\":1}")
-                .wasSuccess()
+                .wasOk()
                 .bodyTransformer(SenchaBodyAssertions::checkAndNormalizeBody)
                 .bodyEquals(1, "{\"id\":3,\"name\":\"zzz\",\"phoneNumber\":null}");
 
@@ -86,7 +86,7 @@ public class Sencha_PUT_IT extends DbTest {
                 .values(3, "zzz", 8).exec();
 
         tester.target("/e3/3").put("{\"id\":3,\"e2\":1}")
-                .wasSuccess()
+                .wasOk()
                 .bodyTransformer(SenchaBodyAssertions::checkAndNormalizeBody)
                 .bodyEquals(1, "{\"id\":3,\"name\":\"zzz\",\"phoneNumber\":null}");
 

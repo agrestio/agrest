@@ -3,7 +3,7 @@ package io.agrest.cayenne;
 import io.agrest.Ag;
 import io.agrest.DataResponse;
 import io.agrest.UpdateStage;
-import io.agrest.cayenne.unit.CayenneAgTester;
+import io.agrest.cayenne.unit.AgCayenneTester;
 import io.agrest.cayenne.unit.DbTest;
 import io.agrest.cayenne.cayenne.main.E3;
 import io.agrest.runtime.processor.update.UpdateContext;
@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class PUT_StagesIT extends DbTest {
 
     @BQTestTool
-    static final CayenneAgTester tester = tester(Resource.class)
+    static final AgCayenneTester tester = tester(Resource.class)
             .entities(E3.class)
             .build();
 
@@ -47,7 +47,7 @@ public class PUT_StagesIT extends DbTest {
 
         tester.target("/e3/callbackstage")
                 .put("[{\"id\":3,\"name\":\"x\"}]")
-                .wasSuccess()
+                .wasOk()
                 .bodyEquals(1, "{\"id\":3,\"name\":\"x\",\"phoneNumber\":null}");
 
         tester.e3().matcher().eq("id_", 3).eq("name", "x").assertOneMatch();

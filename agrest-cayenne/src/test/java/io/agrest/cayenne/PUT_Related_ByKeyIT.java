@@ -3,7 +3,7 @@ package io.agrest.cayenne;
 import io.agrest.Ag;
 import io.agrest.DataResponse;
 import io.agrest.cayenne.cayenne.main.*;
-import io.agrest.cayenne.unit.CayenneAgTester;
+import io.agrest.cayenne.unit.AgCayenneTester;
 import io.agrest.cayenne.unit.DbTest;
 import io.agrest.runtime.processor.update.ByKeyObjectMapperFactory;
 import io.bootique.junit5.BQTestTool;
@@ -18,7 +18,7 @@ import javax.ws.rs.core.Context;
 public class PUT_Related_ByKeyIT extends DbTest {
 
     @BQTestTool
-    static final CayenneAgTester tester = tester(Resource.class)
+    static final AgCayenneTester tester = tester(Resource.class)
             .entities(E7.class, E8.class, E14.class, E15.class)
             .build();
 
@@ -36,7 +36,7 @@ public class PUT_Related_ByKeyIT extends DbTest {
 
         tester.target("/e8/bykey/15/e7s")
                 .put("[  {\"name\":\"newname\"}, {\"name\":\"aaa\"} ]")
-                .wasSuccess()
+                .wasOk()
                 .replaceId("XID")
                 .bodyEquals(2, "{\"id\":XID,\"name\":\"newname\"},{\"id\":9,\"name\":\"aaa\"}");
 
@@ -46,7 +46,7 @@ public class PUT_Related_ByKeyIT extends DbTest {
 
         tester.target("/e8/bykey/15/e7s")
                 .put("[  {\"name\":\"newname\"}, {\"name\":\"aaa\"} ]")
-                .wasSuccess().replaceId("XID")
+                .wasOk().replaceId("XID")
                 .bodyEquals(2,
                         "{\"id\":XID,\"name\":\"newname\"}",
                         "{\"id\":9,\"name\":\"aaa\"}");
@@ -68,7 +68,7 @@ public class PUT_Related_ByKeyIT extends DbTest {
 
         tester.target("/e8/bypropkey/15/e7s")
                 .put("[  {\"name\":\"newname\"}, {\"name\":\"aaa\"} ]")
-                .wasSuccess().replaceId("XID")
+                .wasOk().replaceId("XID")
                 .bodyEquals(2, "{\"id\":XID,\"name\":\"newname\"},{\"id\":9,\"name\":\"aaa\"}");
 
         tester.e7().matcher().assertMatches(4);
@@ -89,7 +89,7 @@ public class PUT_Related_ByKeyIT extends DbTest {
 
         tester.target("/e15/44/e14s").queryParam("exclude", "id").queryParam("include", E3.NAME.getName())
                 .put("[{\"id\":4,\"name\":\"zzz\"},{\"id\":11,\"name\":\"new\"}]")
-                .wasSuccess()
+                .wasOk()
                 // update: ordering must be preserved...
                 .bodyEquals(2,
                         "{\"id\":4,\"name\":\"zzz\",\"prettyName\":\"zzz_pretty\"}",

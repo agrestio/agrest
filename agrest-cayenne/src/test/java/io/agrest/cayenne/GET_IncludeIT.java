@@ -5,7 +5,7 @@ import io.agrest.DataResponse;
 import io.agrest.cayenne.cayenne.main.E2;
 import io.agrest.cayenne.cayenne.main.E3;
 import io.agrest.cayenne.cayenne.main.E5;
-import io.agrest.cayenne.unit.CayenneAgTester;
+import io.agrest.cayenne.unit.AgCayenneTester;
 import io.agrest.cayenne.unit.DbTest;
 import io.bootique.junit5.BQTestTool;
 import org.junit.jupiter.api.Test;
@@ -18,7 +18,7 @@ import javax.ws.rs.core.*;
 public class GET_IncludeIT extends DbTest {
 
     @BQTestTool
-    static final CayenneAgTester tester = tester(Resource.class)
+    static final AgCayenneTester tester = tester(Resource.class)
             .entities(E2.class, E3.class, E5.class)
             .build();
 
@@ -36,7 +36,7 @@ public class GET_IncludeIT extends DbTest {
                 .queryParam("include", "id", "e2.id")
                 .queryParam("sort", "id")
                 .get()
-                .wasSuccess()
+                .wasOk()
                 .bodyEquals(2, "{\"id\":8,\"e2\":{\"id\":1}}", "{\"id\":9,\"e2\":{\"id\":1}}");
 
         tester.assertQueryCount(2);
@@ -51,14 +51,14 @@ public class GET_IncludeIT extends DbTest {
 
         tester.target("/e3")
                 .queryParam("include", "id", "e2", "e2.id")
-                .get().wasSuccess().bodyEquals(1, "{\"id\":3,\"e2\":{\"id\":8}}");
+                .get().wasOk().bodyEquals(1, "{\"id\":3,\"e2\":{\"id\":8}}");
 
         tester.assertQueryCount(2);
 
         // change the order of includes
         tester.target("/e3")
                 .queryParam("include", "id", "e2.id", "e2")
-                .get().wasSuccess().bodyEquals(1, "{\"id\":3,\"e2\":{\"id\":8}}");
+                .get().wasOk().bodyEquals(1, "{\"id\":3,\"e2\":{\"id\":8}}");
         tester.assertQueryCount(2 + 2);
     }
 
@@ -71,7 +71,7 @@ public class GET_IncludeIT extends DbTest {
         tester.target("/e2")
                 .queryParam("include", "id", "e3s.e5.id")
                 .get()
-                .wasSuccess()
+                .wasOk()
                 .bodyEquals(1, "{\"id\":8,\"e3s\":[{\"e5\":{\"id\":45}}]}");
 
         // TODO: actually expect only 2 queries .. "e3" is a phantom entity
@@ -95,7 +95,7 @@ public class GET_IncludeIT extends DbTest {
                 .queryParam("start", "1")
                 .queryParam("limit", "2")
 
-                .get().wasSuccess().bodyEquals(4,
+                .get().wasOk().bodyEquals(4,
                 "{\"id\":9,\"e2\":{\"id\":1}}",
                 "{\"id\":10,\"e2\":{\"id\":1}}");
 

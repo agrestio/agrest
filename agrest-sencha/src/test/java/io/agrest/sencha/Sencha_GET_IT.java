@@ -6,7 +6,7 @@ import io.agrest.SelectStage;
 import io.agrest.cayenne.cayenne.main.E2;
 import io.agrest.cayenne.cayenne.main.E3;
 import io.agrest.cayenne.cayenne.main.E5;
-import io.agrest.cayenne.unit.CayenneAgTester;
+import io.agrest.cayenne.unit.AgCayenneTester;
 import io.agrest.cayenne.unit.DbTest;
 import io.agrest.sencha.ops.unit.SenchaBodyAssertions;
 import io.bootique.junit5.BQTestTool;
@@ -22,7 +22,7 @@ import javax.ws.rs.core.UriInfo;
 public class Sencha_GET_IT extends DbTest {
 
     @BQTestTool
-    static final CayenneAgTester tester = tester(Resource.class)
+    static final AgCayenneTester tester = tester(Resource.class)
             .entities(E2.class, E3.class, E5.class)
             .build();
 
@@ -36,17 +36,17 @@ public class Sencha_GET_IT extends DbTest {
 
         tester.target("/e3/8").queryParam("include", "e2.id")
                 .get()
-                .wasSuccess()
+                .wasOk()
                 .bodyTransformer(SenchaBodyAssertions::checkAndNormalizeBody)
                 .bodyEquals(1, "{\"id\":8,\"e2\":{\"id\":1},\"e2_id\":1,\"name\":\"yyy\",\"phoneNumber\":null}");
 
         tester.target("/e3/8").queryParam("include", "e2.name").get()
-                .wasSuccess()
+                .wasOk()
                 .bodyTransformer(SenchaBodyAssertions::checkAndNormalizeBody)
                 .bodyEquals(1, "{\"id\":8,\"e2\":{\"name\":\"xxx\"},\"e2_id\":1,\"name\":\"yyy\",\"phoneNumber\":null}");
 
         tester.target("/e2/1").queryParam("include", "e3s.id").get()
-                .wasSuccess()
+                .wasOk()
                 .bodyTransformer(SenchaBodyAssertions::checkAndNormalizeBody)
                 .bodyEquals(1, "{\"id\":1,\"address\":null,\"e3s\":[{\"id\":8},{\"id\":9}],\"name\":\"xxx\"}");
     }
@@ -63,7 +63,7 @@ public class Sencha_GET_IT extends DbTest {
                 .queryParam("include", "id", "e2.id")
                 .queryParam("sort", "id")
                 .get()
-                .wasSuccess()
+                .wasOk()
                 .bodyTransformer(SenchaBodyAssertions::checkAndNormalizeBody)
                 .bodyEquals(2,
                         "{\"id\":8,\"e2\":{\"id\":1},\"e2_id\":1}",
@@ -86,7 +86,7 @@ public class Sencha_GET_IT extends DbTest {
                 .queryParam("sort", "id")
                 .queryParam("start", "1")
                 .queryParam("limit", "2").get()
-                .wasSuccess()
+                .wasOk()
                 .bodyTransformer(SenchaBodyAssertions::checkAndNormalizeBody)
                 .bodyEquals(4,
                         "{\"id\":9,\"e2\":{\"id\":1},\"e2_id\":1}",
@@ -102,7 +102,7 @@ public class Sencha_GET_IT extends DbTest {
                 .values(9, "zzz", null).exec();
 
         tester.target("/e3").queryParam("include", "e2.id", "id").get()
-                .wasSuccess()
+                .wasOk()
                 .bodyTransformer(SenchaBodyAssertions::checkAndNormalizeBody)
                 .bodyEquals(2,
                         "{\"id\":8,\"e2\":{\"id\":1},\"e2_id\":1}",
@@ -118,7 +118,7 @@ public class Sencha_GET_IT extends DbTest {
 
         tester.target("/e3").queryParam("include", "{\"path\":\"e2\",\"mapBy\":\"name\"}", "id")
                 .get()
-                .wasSuccess()
+                .wasOk()
                 .bodyTransformer(SenchaBodyAssertions::checkAndNormalizeBody)
                 .bodyEquals(1, "{\"id\":8,\"e2\":{\"id\":1,\"address\":null,\"name\":\"xxx\"},\"e2_id\":1}");
     }
@@ -137,7 +137,7 @@ public class Sencha_GET_IT extends DbTest {
                 .queryParam("include", "id", "{\"path\":\"e3s\"}", "e3s.e5.name")
                 .queryParam("exclude", "e3s.id", "e3s.phoneNumber")
                 .get()
-                .wasSuccess()
+                .wasOk()
                 .bodyTransformer(SenchaBodyAssertions::checkAndNormalizeBody)
                 .bodyEquals(1, "{\"id\":1,\"e3s\":[{\"e5\":{\"name\":\"B\"},\"e5_id\":345,\"name\":\"a\"},"
                         + "{\"e5\":{\"name\":\"B\"},\"e5_id\":345,\"name\":\"z\"},"
@@ -152,7 +152,7 @@ public class Sencha_GET_IT extends DbTest {
 
         tester.target("/e3")
                 .queryParam("include", "id", "{\"path\":\"e2\"}").get()
-                .wasSuccess()
+                .wasOk()
                 .bodyTransformer(SenchaBodyAssertions::checkAndNormalizeBody)
                 .bodyEquals(1, "{\"id\":8,\"e2\":{\"id\":1,\"address\":null,\"name\":\"xxx\"},\"e2_id\":1}");
     }
@@ -166,7 +166,7 @@ public class Sencha_GET_IT extends DbTest {
                 .queryParam("include", "id")
                 .queryParam("filter", "[{\"exactMatch\":true,\"disabled\":false,\"property\":\"id\",\"operator\":\"=\",\"value\":1}]")
                 .get()
-                .wasSuccess()
+                .wasOk()
                 .bodyTransformer(SenchaBodyAssertions::checkAndNormalizeBody)
                 .bodyEquals(1, "{\"id\":1}");
     }
@@ -183,7 +183,7 @@ public class Sencha_GET_IT extends DbTest {
                 .queryParam("include", "id")
                 .queryParam("query", "a")
                 .queryParam("sort", "id").get()
-                .wasSuccess()
+                .wasOk()
                 .bodyTransformer(SenchaBodyAssertions::checkAndNormalizeBody)
                 .bodyEquals(1, "{\"id\":1}");
 
@@ -191,7 +191,7 @@ public class Sencha_GET_IT extends DbTest {
                 .queryParam("include", "id")
                 .queryParam("query", "C")
                 .queryParam("sort", "id").get()
-                .wasSuccess()
+                .wasOk()
                 .bodyTransformer(SenchaBodyAssertions::checkAndNormalizeBody)
                 .bodyEquals(1, "{\"id\":3}");
     }
@@ -208,7 +208,7 @@ public class Sencha_GET_IT extends DbTest {
                 .queryParam("include", "id")
                 .queryParam("query", "a")
                 .queryParam("sort", "id").get()
-                .wasSuccess()
+                .wasOk()
                 .bodyTransformer(SenchaBodyAssertions::checkAndNormalizeBody)
                 .bodyEquals(1, "{\"id\":1}");
 
@@ -216,7 +216,7 @@ public class Sencha_GET_IT extends DbTest {
                 .queryParam("include", "id")
                 .queryParam("query", "C")
                 .queryParam("sort", "id").get()
-                .wasSuccess()
+                .wasOk()
                 .bodyTransformer(SenchaBodyAssertions::checkAndNormalizeBody)
                 .bodyEquals(1, "{\"id\":3}");
     }

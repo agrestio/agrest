@@ -1,7 +1,7 @@
 package io.agrest.cayenne.provider;
 
 import io.agrest.DataResponse;
-import io.agrest.cayenne.unit.CayenneAgTester;
+import io.agrest.cayenne.unit.AgCayenneTester;
 import io.agrest.cayenne.unit.DbTest;
 import io.agrest.cayenne.cayenne.main.E2;
 import io.bootique.junit5.BQTestTool;
@@ -21,7 +21,7 @@ import javax.ws.rs.core.UriInfo;
 public class ValidationExceptionMapperIT extends DbTest {
 
     @BQTestTool
-    static final CayenneAgTester tester = tester(Resource.class)
+    static final AgCayenneTester tester = tester(Resource.class)
 
             .build();
 

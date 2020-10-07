@@ -5,7 +5,7 @@ import io.agrest.EntityDelete;
 import io.agrest.SimpleResponse;
 import io.agrest.cayenne.cayenne.main.E17;
 import io.agrest.cayenne.cayenne.main.E2;
-import io.agrest.cayenne.unit.CayenneAgTester;
+import io.agrest.cayenne.unit.AgCayenneTester;
 import io.agrest.cayenne.unit.DbTest;
 import io.bootique.junit5.BQTestTool;
 import org.junit.jupiter.api.Test;
@@ -20,7 +20,7 @@ import java.util.Collection;
 public class Sencha_DELETE_IT extends DbTest {
 
     @BQTestTool
-    static final CayenneAgTester tester = tester(E2Resource.class, E17Resource.class)
+    static final AgCayenneTester tester = tester(E2Resource.class, E17Resource.class)
             .entitiesAndDependencies(E2.class, E17.class)
             .build();
 
@@ -32,7 +32,7 @@ public class Sencha_DELETE_IT extends DbTest {
                 .values(2, "yyy")
                 .values(3, "zzz").exec();
 
-        tester.target("/e2").deleteWithEntity("[{\"id\":1},{\"id\":2}]").wasSuccess();
+        tester.target("/e2").deleteWithEntity("[{\"id\":1},{\"id\":2}]").wasOk();
 
         tester.e2().matcher().assertOneMatch();
         tester.e2().matcher().eq("id_", 3).assertOneMatch();
@@ -46,7 +46,7 @@ public class Sencha_DELETE_IT extends DbTest {
                 .values(2, 2, "bbb")
                 .values(3, 3, "ccc").exec();
 
-        tester.target("/e17").deleteWithEntity("[{\"id1\":1,\"id2\":1},{\"id1\":2,\"id2\":2}]").wasSuccess();
+        tester.target("/e17").deleteWithEntity("[{\"id1\":1,\"id2\":1},{\"id1\":2,\"id2\":2}]").wasOk();
 
         tester.e17().matcher().assertOneMatch();
         tester.e17().matcher().eq("id1", 3).eq("id2", 3).assertOneMatch();

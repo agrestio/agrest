@@ -4,7 +4,7 @@ import io.agrest.Ag;
 import io.agrest.MetadataResponse;
 import io.agrest.annotation.AgResource;
 import io.agrest.annotation.LinkType;
-import io.agrest.cayenne.unit.CayenneAgTester;
+import io.agrest.cayenne.unit.AgCayenneTester;
 import io.agrest.cayenne.unit.DbTest;
 import io.agrest.cayenne.cayenne.main.E5;
 import io.agrest.runtime.AgBuilder;
@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class GET_Metadata_CustomBaseIT extends DbTest {
 
     @BQTestTool
-    static final CayenneAgTester tester = tester(Resource.class)
+    static final AgCayenneTester tester = tester(Resource.class)
 
             .agCustomizer(GET_Metadata_CustomBaseIT::customize)
             .build();
@@ -36,7 +36,7 @@ public class GET_Metadata_CustomBaseIT extends DbTest {
 
         String json = tester.target("/r1/meta")
                 .get()
-                .wasSuccess()
+                .wasOk()
                 .getContentAsString();
 
         assertTrue(json.contains("{\"href\":\"https://example.org/r1/meta\",\"type\":\"metadata\",\"operations\":[{\"method\":\"GET\"}]}"));

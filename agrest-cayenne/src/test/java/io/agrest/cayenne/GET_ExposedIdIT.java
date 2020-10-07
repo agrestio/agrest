@@ -4,7 +4,7 @@ import io.agrest.Ag;
 import io.agrest.DataResponse;
 import io.agrest.cayenne.cayenne.main.E23;
 import io.agrest.cayenne.cayenne.main.E26;
-import io.agrest.cayenne.unit.CayenneAgTester;
+import io.agrest.cayenne.unit.AgCayenneTester;
 import io.agrest.cayenne.unit.DbTest;
 import io.bootique.junit5.BQTestTool;
 import org.junit.jupiter.api.Test;
@@ -19,7 +19,7 @@ import javax.ws.rs.core.UriInfo;
 public class GET_ExposedIdIT extends DbTest {
 
     @BQTestTool
-    static final CayenneAgTester tester = tester(Resource.class)
+    static final AgCayenneTester tester = tester(Resource.class)
             .entities(E23.class, E26.class)
             .build();
 
@@ -31,7 +31,7 @@ public class GET_ExposedIdIT extends DbTest {
                 .values(2, "xyz").exec();
 
         tester.target("/e23/1").get()
-                .wasSuccess()
+                .wasOk()
                 .bodyEquals(1, "{\"id\":1,\"exposedId\":1,\"name\":\"abc\"}");
     }
 
@@ -43,7 +43,7 @@ public class GET_ExposedIdIT extends DbTest {
 
         tester.target("/e23")
                 .queryParam("include", "id", "e26s.id")
-                .get().wasSuccess().bodyEquals(1, "{\"id\":1,\"e26s\":[{\"id\":41}]}");
+                .get().wasOk().bodyEquals(1, "{\"id\":1,\"e26s\":[{\"id\":41}]}");
 
         tester.assertQueryCount(2);
     }
@@ -56,7 +56,7 @@ public class GET_ExposedIdIT extends DbTest {
 
         tester.target("/e26")
                 .queryParam("include", "id", "e23.id")
-                .get().wasSuccess().bodyEquals(1, "{\"id\":41,\"e23\":{\"id\":1}}");
+                .get().wasOk().bodyEquals(1, "{\"id\":41,\"e23\":{\"id\":1}}");
 
         tester.assertQueryCount(2);
     }

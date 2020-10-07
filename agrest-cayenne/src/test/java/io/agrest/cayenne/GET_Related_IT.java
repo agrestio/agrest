@@ -3,7 +3,7 @@ package io.agrest.cayenne;
 import io.agrest.Ag;
 import io.agrest.DataResponse;
 import io.agrest.cayenne.cayenne.main.*;
-import io.agrest.cayenne.unit.CayenneAgTester;
+import io.agrest.cayenne.unit.AgCayenneTester;
 import io.agrest.cayenne.unit.DbTest;
 import io.agrest.constraints.Constraint;
 import io.bootique.junit5.BQTestTool;
@@ -22,7 +22,7 @@ import java.util.Map;
 public class GET_Related_IT extends DbTest {
 
     @BQTestTool
-    static final CayenneAgTester tester = tester(Resource.class)
+    static final AgCayenneTester tester = tester(Resource.class)
             .entities(E2.class, E3.class, E17.class, E18.class)
             .entitiesAndDependencies(E12.class, E13.class)
             .build();
@@ -42,7 +42,7 @@ public class GET_Related_IT extends DbTest {
                 .values(8, "yyy", 1)
                 .values(9, "zzz", 1).exec();
 
-        tester.target("/e2/constraints/1/e3s").get().wasSuccess().bodyEquals(2, "{\"id\":8},{\"id\":9}");
+        tester.target("/e2/constraints/1/e3s").get().wasOk().bodyEquals(2, "{\"id\":8},{\"id\":9}");
     }
 
     @Test
@@ -60,7 +60,7 @@ public class GET_Related_IT extends DbTest {
         tester.target("/e17/e18s")
                 .matrixParam("parentId1", 1)
                 .matrixParam("parentId2", 1)
-                .get().wasSuccess().bodyEquals(2, "{\"id\":1,\"name\":\"xxx\"},{\"id\":2,\"name\":\"yyy\"}");
+                .get().wasOk().bodyEquals(2, "{\"id\":1,\"name\":\"xxx\"},{\"id\":2,\"name\":\"yyy\"}");
     }
 
     @Test
@@ -75,7 +75,7 @@ public class GET_Related_IT extends DbTest {
                 .values(2, 1, 1, "yyy")
                 .values(3, 2, 2, "zzz").exec();
 
-        tester.target("/e18/1").queryParam("include", E18.E17.getName()).get().wasSuccess()
+        tester.target("/e18/1").queryParam("include", E18.E17.getName()).get().wasOk()
                 .bodyEquals(1, "{\"id\":1,\"e17\":{\"id\":{\"id1\":1,\"id2\":1},\"id1\":1,\"id2\":1,\"name\":\"aaa\"},\"name\":\"xxx\"}");
     }
 
@@ -94,7 +94,7 @@ public class GET_Related_IT extends DbTest {
                 .values(8, "yyy", 1)
                 .values(9, "zzz", 1).exec();
 
-        tester.target("/e2/1/e3s").queryParam("include", "id").get().wasSuccess().bodyEquals(2, "{\"id\":8},{\"id\":9}");
+        tester.target("/e2/1/e3s").queryParam("include", "id").get().wasOk().bodyEquals(2, "{\"id\":8},{\"id\":9}");
     }
 
     @Test
@@ -112,7 +112,7 @@ public class GET_Related_IT extends DbTest {
                 .values(8, "yyy", 1)
                 .values(9, "zzz", 1).exec();
 
-        tester.target("/e3/7/e2").queryParam("include", "id").get().wasSuccess().bodyEquals(1, "{\"id\":2}");
+        tester.target("/e3/7/e2").queryParam("include", "id").get().wasOk().bodyEquals(1, "{\"id\":2}");
     }
 
     @Test
@@ -142,7 +142,7 @@ public class GET_Related_IT extends DbTest {
         // excluding ID - can't render multi-column IDs yet
         tester.target("/e12/12/e1213").queryParam("exclude", "id").queryParam("include", "e12")
                 .queryParam("include", "e13").get()
-                .wasSuccess()
+                .wasOk()
                 .bodyEquals(1, "{\"e12\":{\"id\":12},\"e13\":{\"id\":16}}");
     }
 
