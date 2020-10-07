@@ -27,8 +27,7 @@ public class PUT_NaturalIdIT extends DbTest {
 
     @BQTestTool
     static final AgCayenneTester tester = tester(Resource.class)
-
-            .entities(E20.class, E21.class, E23.class)
+            .entitiesAndDependencies(E20.class, E21.class, E23.class)
             .build();
 
     @Test
