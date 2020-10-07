@@ -21,7 +21,7 @@ public class GET_IncludeObjectIT extends DbTest {
 
     @BQTestTool
     static final AgCayenneTester tester = tester(Resource.class)
-            .entities(E2.class, E3.class, E4.class, E5.class)
+            .entitiesAndDependencies(E2.class, E3.class, E4.class, E5.class)
             .build();
 
     @Test
