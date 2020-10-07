@@ -93,7 +93,7 @@ class EntityConstraintHandler {
 
                         // do not report default properties, as this wasn't a
                         // client's fault it go there..
-                        if (!context.getEntity().isDefault(attr)) {
+                        if (!context.getEntity().isDefaultAttribute(attr)) {
                             LOGGER.info("Attribute not allowed, removing: {} for id {}", attr, u.getId());
                         }
 
@@ -132,7 +132,7 @@ class EntityConstraintHandler {
 
                     // hack: do not report default properties, as this wasn't a
                     // client's fault it go there..
-                    if (!entity.isDefault(a)) {
+                    if (!entity.isDefaultAttribute(a)) {
                         LOGGER.info("Attribute not allowed, removing: {}", a);
                     }
 
@@ -152,7 +152,7 @@ class EntityConstraintHandler {
 
                 // do not report default properties, as this wasn't a client's
                 // fault it go there..
-                if (!entity.isDefault(e.getKey())) {
+                if (!entity.isDefaultAttribute(e.getKey())) {
                     LOGGER.info("Relationship not allowed, removing: {}", e.getKey());
                 }
 

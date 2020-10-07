@@ -8,12 +8,7 @@ import org.apache.cayenne.exp.Expression;
 import org.apache.cayenne.query.Ordering;
 import org.apache.cayenne.query.SelectQuery;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * A metadata object that describes a data structure of a given REST resource. Connected ResourceEntities form a
@@ -29,12 +24,13 @@ public abstract class ResourceEntity<T> {
 
     private final AgEntity<T> agEntity;
     private final AgEntityOverlay<T> agEntityOverlay;
+
     private final Map<String, AgAttribute> attributes;
-    private final Collection<String> defaultProperties;
+    private final Set<String> defaultAttributes;
+    private final Map<String, NestedResourceEntity<?>> children;
 
     private String mapByPath;
     private ResourceEntity<?> mapBy;
-    private final Map<String, NestedResourceEntity<?>> children;
     private final List<Ordering> orderings;
     private Expression qualifier;
     private int fetchOffset;
@@ -52,7 +48,7 @@ public abstract class ResourceEntity<T> {
 
         this.idIncluded = false;
         this.attributes = new HashMap<>();
-        this.defaultProperties = new HashSet<>();
+        this.defaultAttributes = new HashSet<>();
         this.children = new HashMap<>();
         this.orderings = new ArrayList<>(2);
         this.entityEncoderFilters = new ArrayList<>(3);
@@ -122,17 +118,36 @@ public abstract class ResourceEntity<T> {
     }
 
     /**
-     * @since 1.5
+     * Returns whether the named attribute was added to the entity implicitly, via the default rules, instead of being
+     * explicitly requested by the client.
+     *
+     * @since 3.7
      */
-    public Collection<String> getDefaultProperties() {
-        return defaultProperties;
+    public boolean isDefaultAttribute(String name) {
+        return defaultAttributes.contains(name);
     }
 
     /**
-     * @since 1.5
+     * @since 3.7
      */
-    public boolean isDefault(String propertyName) {
-        return defaultProperties.contains(propertyName);
+    public void addAttribute(AgAttribute attribute, boolean isDefault) {
+        attributes.put(attribute.getName(), attribute);
+        if (isDefault) {
+            defaultAttributes.add(attribute.getName());
+        }
+    }
+
+    /**
+     * @since 3.7
+     */
+    public AgAttribute removeAttribute(String name) {
+
+        AgAttribute removed = attributes.remove(name);
+        if (removed != null) {
+            defaultAttributes.remove(name);
+        }
+
+        return removed;
     }
 
     public Map<String, NestedResourceEntity<?>> getChildren() {

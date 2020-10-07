@@ -75,7 +75,7 @@ class RequestConstraintsHandler {
 
                     // do not report default properties, as this wasn't a
                     // client's fault it go there..
-                    if (!context.getEntity().isDefault(e.getKey())) {
+                    if (!context.getEntity().isDefaultAttribute(e.getKey())) {
                         LOGGER.info("Attribute not allowed, removing: {} for id {}", e.getKey(), u.getId());
                     }
 
@@ -108,7 +108,7 @@ class RequestConstraintsHandler {
 
                 // do not report default properties, as this wasn't a client's
                 // fault it go there..
-                if (!target.isDefault(a.getName())) {
+                if (!target.isDefaultAttribute(a.getName())) {
                     LOGGER.info("Attribute not allowed, removing: {}", a.getName());
                 }
 
@@ -131,7 +131,7 @@ class RequestConstraintsHandler {
 
                 // do not report default properties, as this wasn't a client's
                 // fault it go there..
-                if (!target.isDefault(e.getKey())) {
+                if (!target.isDefaultAttribute(e.getKey())) {
                     LOGGER.info("Relationship not allowed, removing: {}", e.getKey());
                 }
 

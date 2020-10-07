@@ -281,10 +281,7 @@ public class EncoderServiceTest extends CayenneNoDbTest {
 
         ResourceEntity<E19> descriptor = getResourceEntity(E19.class);
         descriptor.includeId();
-        descriptor.getAttributes().put(
-                E19.GUID.getName(),
-                getAgEntity(E19.class).getAttribute(E19.GUID.getName())
-        );
+        descriptor.addAttribute(getAgEntity(E19.class).getAttribute(E19.GUID.getName()), false);
 
         E19 e19 = new E19();
         e19.setObjectId(new ObjectId("E19", E19.ID_PK_COLUMN, 1));

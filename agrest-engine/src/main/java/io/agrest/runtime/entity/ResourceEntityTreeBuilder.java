@@ -67,13 +67,13 @@ public class ResourceEntityTreeBuilder {
 
             AgAttribute overlayAttribute = agEntityOverlay != null ? agEntityOverlay.getAttribute(property) : null;
             if (overlayAttribute != null) {
-                entity.getAttributes().put(property, overlayAttribute);
+                entity.addAttribute(overlayAttribute, false);
                 return entity;
             }
 
             AgAttribute attribute = agEntity.getAttribute(property);
             if (attribute != null) {
-                entity.getAttributes().put(property, attribute);
+                entity.addAttribute(attribute, false);
                 return entity;
             }
         }

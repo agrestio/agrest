@@ -79,7 +79,7 @@ public class CollectMetadataStage implements Processor<MetadataContext<?>> {
         RootResourceEntity<T> resourceEntity = new RootResourceEntity<>(entity, null);
 
         for (AgAttribute a : entity.getAttributes()) {
-            resourceEntity.getAttributes().put(a.getName(), a);
+            resourceEntity.addAttribute(a, false);
         }
 
         for (AgRelationship r : entity.getRelationships()) {

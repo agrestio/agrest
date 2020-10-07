@@ -34,7 +34,7 @@ public class ExcludeMerger implements IExcludeMerger {
         AgEntity<?> entity = resourceEntity.getAgEntity();
 
         if (dot < 0) {
-            if (resourceEntity.getAttributes().remove(property) != null) {
+            if (resourceEntity.removeAttribute(property) != null) {
                 return;
             }
         }

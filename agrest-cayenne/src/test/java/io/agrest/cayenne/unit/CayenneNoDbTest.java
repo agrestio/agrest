@@ -130,7 +130,7 @@ public class CayenneNoDbTest {
     }
 
     protected void appendAttribute(ResourceEntity<?> entity, String name, Class<?> type) {
-        entity.getAttributes().put(name, new DefaultAgAttribute(name, type, new ASTObjPath(name), BeanPropertyReader.reader()));
+        entity.addAttribute(new DefaultAgAttribute(name, type, new ASTObjPath(name), BeanPropertyReader.reader()), false);
     }
 
     protected <T> void appendPersistenceAttribute(ResourceEntity<?> entity, Property<T> property, Class<T> javaType) {
@@ -138,8 +138,7 @@ public class CayenneNoDbTest {
     }
 
     protected void appendPersistenceAttribute(ResourceEntity<?> entity, String name, Class<?> javaType) {
-        entity.getAttributes().put(name,
-                new TestAgPersistentAttribute(name, javaType));
+        entity.addAttribute(new TestAgPersistentAttribute(name, javaType), false);
     }
 
     private static class TestAgPersistentAttribute extends DefaultAgAttribute {

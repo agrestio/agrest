@@ -55,7 +55,7 @@ public class EncoderService_Pojo_Test {
 	public void testEncode_SimplePojo_noId() {
 		AgEntity<P1> p1age = new AgEntityBuilder<>(P1.class, new LazyAgDataMap(compilers)).build();
 		RootResourceEntity<P1> descriptor = new RootResourceEntity<>(p1age, null);
-		descriptor.getAttributes().put("name", new DefaultAgAttribute("name", String.class, new ASTObjPath("name"), BeanPropertyReader.reader()));
+		descriptor.addAttribute(new DefaultAgAttribute("name", String.class, new ASTObjPath("name"), BeanPropertyReader.reader()), false);
 
 		P1 p1 = new P1();
 		p1.setName("XYZ");
@@ -71,7 +71,7 @@ public class EncoderService_Pojo_Test {
 
 		AgEntity<P6> p6age = new AgEntityBuilder<>(P6.class, new LazyAgDataMap(compilers)).build();
 		RootResourceEntity<P6> descriptor = new RootResourceEntity<>(p6age, null);
-		descriptor.getAttributes().put("intProp", new DefaultAgAttribute("intProp", Integer.class, new ASTObjPath("intProp"), BeanPropertyReader.reader()));
+		descriptor.addAttribute(new DefaultAgAttribute("intProp", Integer.class, new ASTObjPath("intProp"), BeanPropertyReader.reader()), false);
 		descriptor.includeId();
 
 		assertEquals("{\"data\":[{\"id\":\"myid\",\"intProp\":4}],\"total\":1}", toJson(p6, descriptor));
