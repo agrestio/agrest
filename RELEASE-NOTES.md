@@ -1,3 +1,7 @@
+## Release 3.7
+
+* #451 Remove API deprecated in 3.4 or earlier
+
 ## Release 3.6
 
 * #444 Support id propagation on update from PK properties

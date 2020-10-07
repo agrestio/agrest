@@ -177,14 +177,6 @@ public class AgBuilder {
     }
 
     /**
-     * @deprecated since 3.4 in favor of {@link #entityEncoderFilter(EntityEncoderFilter)}
-     */
-    @Deprecated
-    public AgBuilder encoderFilter(EntityEncoderFilter filter) {
-        return entityEncoderFilter(filter);
-    }
-
-    /**
      * Installs a encoding filter that is applied to every request, altering response encoding. This method can be
      * called multiple times to add more than one filter.
      *
@@ -196,14 +188,6 @@ public class AgBuilder {
     public AgBuilder entityEncoderFilter(EntityEncoderFilter filter) {
         this.entityEncoderFilters.add(filter);
         return this;
-    }
-
-    /**
-     * @deprecated since 3.4 in favor of {@link #entityEncoderFilters(Collection)}
-     */
-    @Deprecated
-    public AgBuilder encoderFilters(Collection<EntityEncoderFilter> filters) {
-        return entityEncoderFilters(filters);
     }
 
     /**

@@ -1,13 +1,7 @@
 package io.agrest.meta;
 
-import io.agrest.base.reflect.BeanAnalyzer;
-import io.agrest.base.reflect.PropertyGetter;
 import io.agrest.property.PropertyReader;
-import io.agrest.resolver.NestedDataResolver;
-import io.agrest.resolver.NestedDataResolverFactory;
-import io.agrest.resolver.ReaderBasedResolver;
-import io.agrest.resolver.RootDataResolver;
-import io.agrest.resolver.RootDataResolverFactory;
+import io.agrest.resolver.*;
 import org.apache.cayenne.exp.parser.ASTObjPath;
 
 import java.util.HashMap;
@@ -29,9 +23,6 @@ public class AgEntityOverlay<T> {
     private final Map<String, AgAttribute> attributes;
     private final Map<String, AgRelationshipOverlay> relationships;
     private RootDataResolver<T> rootDataResolver;
-
-    @Deprecated
-    private Map<String, PropertyGetter> typeGetters;
 
     public AgEntityOverlay(Class<T> type) {
         this.type = type;
@@ -103,52 +94,6 @@ public class AgEntityOverlay<T> {
      */
     public RootDataResolver<T> getRootDataResolver() {
         return rootDataResolver;
-    }
-
-    private Map<String, PropertyGetter> getTypeGetters() {
-
-        // compile getters map lazily, only when the caller adds attributes that require getters
-        if (this.typeGetters == null) {
-            Map<String, PropertyGetter> getters = new HashMap<>();
-
-            // TODO: this is expensive, and since #422 this may be called per-request..
-            //  Need either a stack-scoped caching strategy or deprecating the caller - "addAttribute"
-            BeanAnalyzer.findGetters(type).forEach(pm -> getters.put(pm.getName(), pm));
-
-            this.typeGetters = getters;
-        }
-
-        return typeGetters;
-    }
-
-    /**
-     * Adds an attribute to the overlaid entity. Type and value reader are determined via class introspection, so this
-     * method may be quite slow. Consider using {@link #redefineAttribute(String, Class, Function)} instead.
-     *
-     * @since 2.10
-     * @deprecated since 3.4 in favor of {@link #redefineAttribute(String, Class, Function)}, as this method does class
-     * introspection and can be really slow.
-     */
-    @Deprecated
-    public AgEntityOverlay<T> addAttribute(String name) {
-
-        PropertyGetter getter = getTypeGetters().get(name);
-
-        if (getter == null) {
-            throw new IllegalArgumentException("'" + name + "' is not a readable property in " + type.getName());
-        }
-
-        Class vType = getter.getType();
-        redefineAttribute(name, vType, getter::getValue);
-        return this;
-    }
-
-    /**
-     * @deprecated since 3.4 in favor for {@link #redefineAttribute(String, Class, Function)}.
-     */
-    @Deprecated
-    public <V> AgEntityOverlay<T> addAttribute(String name, Class<V> valueType, Function<T, V> reader) {
-        return redefineAttribute(name, valueType, reader);
     }
 
     /**
@@ -230,22 +175,6 @@ public class AgEntityOverlay<T> {
     public <V> AgEntityOverlay<T> redefineToMany(String name, Class<V> targetType, Function<T, List<V>> reader) {
         relationships.put(name, new FullRelationshipOverlay(name, targetType, true, resolverForListReader(reader)));
         return this;
-    }
-
-    /**
-     * @deprecated since 3.4 in favor of {@link #redefineToOne(String, Class, Function)}
-     */
-    @Deprecated
-    public <V> AgEntityOverlay<T> addToOneRelationship(String name, Class<V> targetType, Function<T, V> reader) {
-        return redefineToOne(name, targetType, reader);
-    }
-
-    /**
-     * @deprecated since 3.4 in favor of {@link #redefineToMany(String, Class, Function)}
-     */
-    @Deprecated
-    public <V> AgEntityOverlay<T> addToManyRelationship(String name, Class<V> targetType, Function<T, List<V>> reader) {
-        return redefineToMany(name, targetType, reader);
     }
 
     /**

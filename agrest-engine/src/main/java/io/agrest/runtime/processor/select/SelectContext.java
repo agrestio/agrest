@@ -243,22 +243,4 @@ public class SelectContext<T> extends BaseProcessingContext<T> {
     public void setRequest(AgRequest request) {
         this.request = request;
     }
-
-    /**
-     * @since 2.13
-     * @deprecated since 3.2 in favor of {@link #getMergedRequest()}.
-     */
-    @Deprecated
-    public AgRequest getRawRequest() {
-        return getMergedRequest();
-    }
-
-    /**
-     * @since 2.13
-     * @deprecated since 3.2 in favor of {@link #setMergedRequest(AgRequest)}
-     */
-    @Deprecated
-    public void setRawRequest(AgRequest request) {
-        setMergedRequest(request);
-    }
 }

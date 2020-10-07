@@ -229,24 +229,6 @@ public class UpdateContext<T> extends BaseProcessingContext<T> {
     }
 
     /**
-     * @since 1.24
-     * @deprecated since 3.2 use "getEntity().getResult()"
-     */
-    @Deprecated
-    public List<T> getObjects() {
-        return entity != null ? entity.getResult() : Collections.emptyList();
-    }
-
-    /**
-     * @since 1.24
-     * @deprecated since 3.2 use "getEntity().setResult()"
-     */
-    @Deprecated
-    public void setObjects(List<? extends T> objects) {
-        this.entity.setResult((List<T>) objects);
-    }
-
-    /**
      * Returns AgRequest instance that is the source of request data for {@link io.agrest.UpdateStage#CREATE_ENTITY}
      * stage that produces a tree of {@link ResourceEntity} instances. Usually merged request is a result of merging
      * context AgRequest with URL parameters during {@link io.agrest.UpdateStage#PARSE_REQUEST} stage.
@@ -287,23 +269,5 @@ public class UpdateContext<T> extends BaseProcessingContext<T> {
      */
     public void setRequest(AgRequest request) {
         this.request = request;
-    }
-
-    /**
-     * @since 2.13
-     * @deprecated since 3.2 in favor of {@link #getMergedRequest()}.
-     */
-    @Deprecated
-    public AgRequest getRawRequest() {
-        return getMergedRequest();
-    }
-
-    /**
-     * @since 2.13
-     * @deprecated since 3.2 in favor of {@link #setMergedRequest(AgRequest)}
-     */
-    @Deprecated
-    public void setRawRequest(AgRequest request) {
-        setMergedRequest(request);
     }
 }

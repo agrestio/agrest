@@ -1,7 +1,6 @@
 package io.agrest.runtime.meta;
 
 import io.agrest.AgException;
-import io.agrest.EntityParent;
 import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgRelationship;
 
@@ -24,14 +23,6 @@ public interface IMetadataService {
     <T> AgEntity<T> getAgEntityByType(Type type);
 
     /**
-     * @deprecated since 3.4 renamed to {@link #getAgEntityByType(Type)}
-     */
-    @Deprecated
-    default <T> AgEntity<T> getEntityByType(Type type) {
-        return getAgEntityByType(type);
-    }
-
-    /**
      * Returns a named relationship for a given object type. If the type is not supported or there is no matching
      * relationship, an exception is thrown.
      *
@@ -45,19 +36,5 @@ public interface IMetadataService {
         }
 
         return r;
-    }
-
-    /**
-     * Returns a relationship to child for a given {@link EntityParent}. If the
-     * type is not supported or there is no matching relationship, an exception
-     * is thrown.
-     *
-     * @since 1.12
-     * @deprecated since 3.4. Seems redundant and simply cluttering the interface. Use {@link #getAgRelationship(Class, String)}
-     * instead.
-     */
-    @Deprecated
-    default AgRelationship getAgRelationship(EntityParent<?> parent) {
-        return getAgRelationship(parent.getType(), parent.getRelationship());
     }
 }
