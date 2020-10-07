@@ -113,15 +113,17 @@ public class PUT_Related_ByKeyIT extends DbTest {
         @Path("e8/bykey/{id}/e7s")
         public DataResponse<E7> e8CreateOrUpdateE7sByKey_Idempotent(@PathParam("id") int id, String entityData) {
             return Ag.idempotentCreateOrUpdate(E7.class, config)
-                    .mapper(ByKeyObjectMapperFactory.byKey(E7.NAME))
-                    .toManyParent(E8.class, id, E8.E7S)
+                    .mapper(ByKeyObjectMapperFactory.byKey(E7.NAME.getName()))
+                    .parent(E8.class, id, E8.E7S.getName())
                     .syncAndSelect(entityData);
         }
 
         @PUT
         @Path("e8/bypropkey/{id}/e7s")
         public DataResponse<E7> e8CreateOrUpdateE7sByPropKey_Idempotent(@PathParam("id") int id, String entityData) {
-            return Ag.idempotentCreateOrUpdate(E7.class, config).mapper(E7.NAME).toManyParent(E8.class, id, E8.E7S)
+            return Ag.idempotentCreateOrUpdate(E7.class, config)
+                    .mapper(E7.NAME.getName())
+                    .parent(E8.class, id, E8.E7S.getName())
                     .syncAndSelect(entityData);
         }
 
@@ -130,7 +132,9 @@ public class PUT_Related_ByKeyIT extends DbTest {
         // note that parent id is "int" here , but is BIGINT (long) in the DB. This
         // is intentional
         public DataResponse<E14> relateToOneExisting(@PathParam("id") int id, String data) {
-            return Ag.idempotentFullSync(E14.class, config).toManyParent(E15.class, id, E15.E14S).syncAndSelect(data);
+            return Ag.idempotentFullSync(E14.class, config)
+                    .parent(E15.class, id, E15.E14S.getName())
+                    .syncAndSelect(data);
         }
     }
 }

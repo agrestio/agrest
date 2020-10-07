@@ -126,14 +126,16 @@ public class POST_Related_IT extends DbTest {
         @POST
         @Path("e2/{id}/e3s")
         public DataResponse<E3> createOrUpdateE3sOfE2(@PathParam("id") int id, @Context UriInfo uri,  String targetData) {
-            return Ag.createOrUpdate(E3.class, config).uri(uri).toManyParent(E2.class, id, E2.E3S).syncAndSelect(targetData);
+            return Ag.createOrUpdate(E3.class, config).uri(uri)
+                    .parent(E2.class, id, E2.E3S.getName())
+                    .syncAndSelect(targetData);
         }
 
         @POST
         @Path("e12/{id}/e1213")
         public DataResponse<E12E13> create_Joins(@PathParam("id") int id, @Context UriInfo info, String entityData) {
             return Ag.create(E12E13.class, config)
-                    .toManyParent(E12.class, id, E12.E1213)
+                    .parent(E12.class, id, E12.E1213.getName())
                     .uri(info)
                     .syncAndSelect(entityData);
         }
@@ -150,7 +152,9 @@ public class POST_Related_IT extends DbTest {
             parentIds.put(E17.ID1_PK_COLUMN, parentId1);
             parentIds.put(E17.ID2_PK_COLUMN, parentId2);
 
-            return Ag.createOrUpdate(E18.class, config).toManyParent(E17.class, parentIds, E17.E18S).uri(uriInfo)
+            return Ag.createOrUpdate(E18.class, config)
+                    .parent(E17.class, parentIds, E17.E18S.getName())
+                    .uri(uriInfo)
                     .syncAndSelect(targetData);
         }
     }

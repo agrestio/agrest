@@ -4,7 +4,6 @@ import io.agrest.ObjectMapper;
 import io.agrest.ObjectMapperFactory;
 import io.agrest.meta.AgAttribute;
 import io.agrest.meta.AgEntity;
-import org.apache.cayenne.exp.Property;
 
 /**
  * An {@link ObjectMapperFactory} that locates objects by the combination of FK
@@ -19,14 +18,6 @@ public class ByKeyObjectMapperFactory implements ObjectMapperFactory {
 
     public static ByKeyObjectMapperFactory byKey(String key) {
         return new ByKeyObjectMapperFactory(key);
-    }
-
-    /**
-     * @deprecated since 3.6 as it uses Cayenne API in the method signature. Use {@link #byKey(String)}
-     */
-    @Deprecated
-    public static ByKeyObjectMapperFactory byKey(Property<?> key) {
-        return byKey(key.getName());
     }
 
     private ByKeyObjectMapperFactory(String property) {

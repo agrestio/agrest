@@ -47,7 +47,7 @@ public DataResponse<{{#bodyParams}}{{dataType}}{{/bodyParams}}> {{nickname}}({{#
 
         return Ag.idempotentCreateOrUpdate({{#bodyParams}}{{dataType}}{{/bodyParams}}.class, config)
                  .id({{#pathParams}}{{#-last}}{{paramName}}{{/-last}}{{/pathParams}})
-                 .parent({{returnType}}.class, {{#pathParams}}{{#-first}}{{paramName}}{{/-first}}{{/pathParams}}, {{returnType}}.{{#bodyParams}}{{dataType}}{{/bodyParams}})
+                 .parent({{returnType}}.class, {{#pathParams}}{{#-first}}{{paramName}}{{/-first}}{{/pathParams}}, "{{#modelRelations}}{{bodyParam.paramName}}{{/modelRelations}}")
                  .request(agRequest)
                  .syncAndSelect({{#bodyParam}}{{paramName}}{{/bodyParam}});
     }

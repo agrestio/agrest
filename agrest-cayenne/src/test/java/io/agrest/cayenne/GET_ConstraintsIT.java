@@ -83,7 +83,7 @@ public class GET_ConstraintsIT extends DbTest {
         @Path("e4/limit_attributes")
         public DataResponse<E4> getObjects_LimitAttributes(@Context UriInfo uriInfo) {
             return Ag.select(E4.class, config).uri(uriInfo)
-                    .constraint(Constraint.idOnly(E4.class).attributes(E4.C_INT))
+                    .constraint(Constraint.idOnly(E4.class).attributes(E4.C_INT.getName()))
                     .get();
         }
 

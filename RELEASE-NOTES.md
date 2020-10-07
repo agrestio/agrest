@@ -1,5 +1,6 @@
 ## Release 3.7
 
+* #450 Minimize Cayenne footprint - remove references to "Property" from API signatures
 * #451 Remove API deprecated in 3.4 or earlier
 
 ## Release 3.6

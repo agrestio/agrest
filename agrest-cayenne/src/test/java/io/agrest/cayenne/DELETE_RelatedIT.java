@@ -175,7 +175,7 @@ public class DELETE_RelatedIT extends DbTest {
         @DELETE
         @Path("{id}/e7s")
         public SimpleResponse deleteE7s(@PathParam("id") int id, String entityData) {
-            return Ag.delete(E7.class, config).toManyParent(E8.class, id, E8.E7S).delete();
+            return Ag.delete(E7.class, config).parent(E8.class, id, E8.E7S.getName()).delete();
         }
     }
 

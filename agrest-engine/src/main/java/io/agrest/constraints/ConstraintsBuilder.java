@@ -41,18 +41,6 @@ public class ConstraintsBuilder<T> implements Constraint<T> {
     }
 
     /**
-     * Excludes an attribute or relationship.
-     *
-     * @param attributeOrRelationship a name of the property to exclude.
-     * @return a new instance of Constraints.
-     * @deprecated since 3.6 as it uses Cayenne API in the method signature. Use {@link #excludeProperty(String)}.
-     */
-    @Deprecated
-    public ConstraintsBuilder<T> excludeProperty(Property<?> attributeOrRelationship) {
-        return excludeProperty(attributeOrRelationship.getName());
-    }
-
-    /**
      * @param attributesOrRelationships an array of properties to exclude.
      * @return a new instance of Constraints.
      */
@@ -61,22 +49,6 @@ public class ConstraintsBuilder<T> implements Constraint<T> {
             ce.excludeProperties(attributesOrRelationships);
             return ce;
         }));
-    }
-
-    /**
-     * @param attributesOrRelationships an array of properties to exclude.
-     * @return a new instance of Constraints.
-     * @deprecated since 3.6 as it uses Cayenne API in the method signature. Use {@link #excludeProperties(String...)}
-     */
-    @Deprecated
-    public ConstraintsBuilder<T> excludeProperties(Property<?>... attributesOrRelationships) {
-
-        String[] names = new String[attributesOrRelationships.length];
-        for (int i = 0; i < attributesOrRelationships.length; i++) {
-            names[i] = attributesOrRelationships[i].getName();
-        }
-
-        return excludeProperties(names);
     }
 
     /**
@@ -110,14 +82,6 @@ public class ConstraintsBuilder<T> implements Constraint<T> {
         }));
     }
 
-    /**
-     * @deprecated since 3.6 as it uses Cayenne API in the method signature. Use {@link #attribute(String)}.
-     */
-    @Deprecated
-    public ConstraintsBuilder<T> attribute(Property<?> attribute) {
-        return attribute(attribute.getName());
-    }
-
     public ConstraintsBuilder<T> allAttributes() {
         return new ConstraintsBuilder<>(op.andThen(ce -> {
             ce.includeAllAttributes();
@@ -130,19 +94,6 @@ public class ConstraintsBuilder<T> implements Constraint<T> {
             ce.includeAttributes(attributes);
             return ce;
         }));
-    }
-
-    /**
-     * @deprecated since 3.6 as it uses Cayenne API in the method signature. Use {@link #attributes(String...)}.
-     */
-    @Deprecated
-    public ConstraintsBuilder<T> attributes(Property<?>... attributes) {
-        String[] names = new String[attributes.length];
-        for (int i = 0; i < attributes.length; i++) {
-            names[i] = attributes[i].getName();
-        }
-
-        return attributes(names);
     }
 
     public ConstraintsBuilder<T> includeId(boolean include) {
