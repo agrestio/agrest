@@ -2,15 +2,9 @@ package io.agrest.runtime.entity;
 
 import io.agrest.AgException;
 import io.agrest.NestedResourceEntity;
-import io.agrest.EntityProperty;
 import io.agrest.PathConstants;
 import io.agrest.ResourceEntity;
-import io.agrest.meta.AgAttribute;
-import io.agrest.meta.AgDataMap;
-import io.agrest.meta.AgEntity;
-import io.agrest.meta.AgEntityOverlay;
-import io.agrest.meta.AgRelationship;
-import io.agrest.meta.AgRelationshipOverlay;
+import io.agrest.meta.*;
 
 import javax.ws.rs.core.Response;
 import java.util.Collections;
@@ -70,11 +64,6 @@ public class ResourceEntityTreeBuilder {
         AgEntityOverlay<?> agEntityOverlay = entity.getAgEntityOverlay();
 
         if (dot < 0) {
-            EntityProperty requestProperty = entity.getExtraProperties().get(property);
-            if (requestProperty != null) {
-                entity.getIncludedExtraProperties().put(property, requestProperty);
-                return entity;
-            }
 
             AgAttribute overlayAttribute = agEntityOverlay != null ? agEntityOverlay.getAttribute(property) : null;
             if (overlayAttribute != null) {

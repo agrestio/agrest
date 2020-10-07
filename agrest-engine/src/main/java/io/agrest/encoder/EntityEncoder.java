@@ -14,10 +14,9 @@ public class EntityEncoder extends EntityNoIdEncoder {
     public EntityEncoder(
             EntityProperty idProperty,
             Map<String, EntityProperty> attributeEncoders,
-            Map<String, EntityProperty> relationshipEncoders,
-            Map<String, EntityProperty> extraEncoders) {
+            Map<String, EntityProperty> relationshipEncoders) {
 
-        super(attributeEncoders, relationshipEncoders, extraEncoders);
+        super(attributeEncoders, relationshipEncoders);
         this.idProperty = idProperty;
     }
 

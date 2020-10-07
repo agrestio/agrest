@@ -17,8 +17,7 @@ public class EntityNoIdEncoder extends AbstractEncoder {
 
     public EntityNoIdEncoder(
             Map<String, EntityProperty> attributeEncoders,
-            Map<String, EntityProperty> relationshipEncoders,
-            Map<String, EntityProperty> extraEncoders) {
+            Map<String, EntityProperty> relationshipEncoders) {
 
         // tracking relationship encoders separately for the sake of the visitors
         this.relationshipEncoders = relationshipEncoders;
@@ -26,7 +25,6 @@ public class EntityNoIdEncoder extends AbstractEncoder {
         this.combinedEncoders = new TreeMap<>();
         combinedEncoders.putAll(attributeEncoders);
         combinedEncoders.putAll(relationshipEncoders);
-        combinedEncoders.putAll(extraEncoders);
     }
 
     @Override

@@ -57,12 +57,6 @@ public class CreateResourceEntityStage implements Processor<SelectContext<?>> {
                 context.getEntityOverlay(type)
         );
 
-        // TODO: no reason why extra properties can't be hierarchical, i.e. we need to parse dot-path here and assign
-        //  children to child ResourceEntities
-        if (context.getExtraProperties() != null) {
-            resourceEntity.getExtraProperties().putAll(context.getExtraProperties());
-        }
-
         AgRequest request = context.getMergedRequest();
         if (request != null) {
             sizeMerger.merge(resourceEntity, request.getStart(), request.getLimit());

@@ -12,6 +12,7 @@ import io.agrest.runtime.processor.select.SelectContext;
 import javax.ws.rs.core.UriInfo;
 import java.util.Map;
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 /**
  * An object that allows to customize/extend Agrest request processing. SelectBuilder instance is created by Agrest
@@ -58,6 +59,14 @@ public interface SelectBuilder<T> {
     <A> SelectBuilder<T> entityOverlay(AgEntityOverlay<A> overlay);
 
     /**
+     * Defines a request-scoped attribute of the root entity of this request. This is an equivalent of calling
+     * {@link #entityOverlay(AgEntityOverlay)} with the overlay containing a single custom attribute.
+     *
+     * @since 3.7
+     */
+    <V> SelectBuilder<T> entityAttribute(String name, Class<V> valueType, Function<T, V> reader);
+
+    /**
      * Forces the builder to select a single object by ID.
      */
     SelectBuilder<T> byId(Object id);
@@ -68,24 +77,6 @@ public interface SelectBuilder<T> {
      * @since 1.20
      */
     SelectBuilder<T> byId(Map<String, Object> ids);
-
-    /**
-     * Adds a "synthetic" property of the root entity, that is otherwise not present in the model.
-     *
-     * @see #entityOverlay(AgEntityOverlay)
-     * @since 1.14
-     */
-    SelectBuilder<T> property(String name, EntityProperty property);
-
-    /**
-     * Adds a "synthetic" property of the root entity, that is otherwise not present in the model. Property is read as
-     * a regular JavaBean "property", and default encoder is used. For more control over property access and encoding use
-     * {@link #property(String, EntityProperty)}.
-     *
-     * @see #entityOverlay(AgEntityOverlay)
-     * @since 1.14
-     */
-    SelectBuilder<T> property(String name);
 
     /**
      * Installs an optional constraint function defining how much of the request entity attributes / relationships

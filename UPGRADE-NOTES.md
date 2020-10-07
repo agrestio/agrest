@@ -1,3 +1,10 @@
+## Upgrading to 3.7
+
+### "SelectBuilder.property()" replaced with simpler "SelectBuilder.entityAttribute()" [#452](https://github.com/agrestio/agrest/issues/452) 
+
+As a part of the effort to consolidate various customization APIs, two "SelectBuilder.property()" methods were replaced
+with a single "SelectBuilder.entityAttribute()" method that relies on the standard entity overlay customization mechanism behind the scenes. It is more user-friendly, as it allows a user to provide `Function<T, V> reader` instead of an obscure `EntityProperty property`.
+
 ## Upgrading to 3.6
 
 ### Separate "commit" in its own UpdateStage [#446](https://github.com/agrestio/agrest/issues/446) 

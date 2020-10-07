@@ -37,8 +37,6 @@ public abstract class ResourceEntity<T> {
     private final Map<String, NestedResourceEntity<?>> children;
     private final List<Ordering> orderings;
     private Expression qualifier;
-    private final Map<String, EntityProperty> includedExtraProperties;
-    private final Map<String, EntityProperty> extraProperties;
     private int fetchOffset;
     private int fetchLimit;
     private final List<EntityEncoderFilter> entityEncoderFilters;
@@ -57,8 +55,6 @@ public abstract class ResourceEntity<T> {
         this.defaultProperties = new HashSet<>();
         this.children = new HashMap<>();
         this.orderings = new ArrayList<>(2);
-        this.extraProperties = new HashMap<>();
-        this.includedExtraProperties = new HashMap<>();
         this.entityEncoderFilters = new ArrayList<>(3);
     }
 
@@ -148,14 +144,6 @@ public abstract class ResourceEntity<T> {
      */
     public NestedResourceEntity<?> getChild(String name) {
         return children.get(name);
-    }
-
-    public Map<String, EntityProperty> getExtraProperties() {
-        return extraProperties;
-    }
-
-    public Map<String, EntityProperty> getIncludedExtraProperties() {
-        return includedExtraProperties;
     }
 
     public boolean isIdIncluded() {

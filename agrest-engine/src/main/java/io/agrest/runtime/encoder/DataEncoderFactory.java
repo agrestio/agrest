@@ -139,16 +139,12 @@ public class DataEncoderFactory {
             relationshipEncoders.put(e.getKey(), property);
         }
 
-        Map<String, EntityProperty> extraEncoders = new HashMap<>();
-
-        extraEncoders.putAll(resourceEntity.getIncludedExtraProperties());
-
         Optional<EntityProperty> idEncoder = resourceEntity.isIdIncluded()
                 ? attributeEncoderFactory.getIdProperty(resourceEntity)
                 : Optional.empty();
         return idEncoder
-                .map(ide -> (Encoder) new EntityEncoder(ide, attributeEncoders, relationshipEncoders, extraEncoders))
-                .orElseGet(() -> new EntityNoIdEncoder(attributeEncoders, relationshipEncoders, extraEncoders));
+                .map(ide -> (Encoder) new EntityEncoder(ide, attributeEncoders, relationshipEncoders))
+                .orElseGet(() -> new EntityNoIdEncoder(attributeEncoders, relationshipEncoders));
     }
 
     protected Encoder filteredEncoder(Encoder encoder, ResourceEntity<?> resourceEntity) {

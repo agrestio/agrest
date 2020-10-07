@@ -34,11 +34,6 @@ public class ExcludeMerger implements IExcludeMerger {
         AgEntity<?> entity = resourceEntity.getAgEntity();
 
         if (dot < 0) {
-
-            if (resourceEntity.getIncludedExtraProperties().remove(property) != null) {
-                return;
-            }
-
             if (resourceEntity.getAttributes().remove(property) != null) {
                 return;
             }
@@ -70,7 +65,6 @@ public class ExcludeMerger implements IExcludeMerger {
 
         // the property was either not included or is invalid... throw in the latter case for symmetry with "include"
         if (entity.getAttribute(property) == null
-                && !resourceEntity.getExtraProperties().containsKey(property)
             // not checking relationship names; the condition above does it already...
         ) {
             throw new AgException(Status.BAD_REQUEST, "Invalid exclude path: " + path);

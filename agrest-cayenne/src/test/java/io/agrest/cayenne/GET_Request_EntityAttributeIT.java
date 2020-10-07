@@ -6,7 +6,6 @@ import io.agrest.cayenne.cayenne.main.E3;
 import io.agrest.cayenne.cayenne.main.E4;
 import io.agrest.cayenne.unit.AgCayenneTester;
 import io.agrest.cayenne.unit.DbTest;
-import io.agrest.property.PropertyReader;
 import io.bootique.junit5.BQTestTool;
 import org.apache.cayenne.Cayenne;
 import org.apache.cayenne.DataObject;
@@ -18,9 +17,7 @@ import javax.ws.rs.core.Configuration;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.UriInfo;
 
-import static io.agrest.property.PropertyBuilder.property;
-
-public class GET_RequestPropertyIT extends DbTest {
+public class GET_Request_EntityAttributeIT extends DbTest {
 
     @BQTestTool
     static final AgCayenneTester tester = tester(Resource.class)
@@ -89,17 +86,17 @@ public class GET_RequestPropertyIT extends DbTest {
         @GET
         @Path("e4/calc_property")
         public DataResponse<E4> property_WithReader(@Context UriInfo uriInfo) {
-            PropertyReader xReader = (root, name) -> "y_" + Cayenne.intPKForObject((DataObject) root);
-            return Ag.select(E4.class, config).uri(uriInfo).property("x", property(xReader)).get();
+            return Ag.select(E4.class, config).uri(uriInfo)
+                    .entityAttribute("x", String.class, o -> "y_" + Cayenne.intPKForObject((DataObject) o))
+                    .get();
         }
 
         @GET
         @Path("e3/custom_encoding")
         public DataResponse<E3> replaceProperty_WithReader(@Context UriInfo uriInfo) {
-
-            // use case: custom encoder for the existing property...
-            PropertyReader xReader = (o, name) -> "_" + ((E3) o).getName() + "_";
-            return Ag.select(E3.class, config).uri(uriInfo).property(E3.NAME.getName(), property(xReader)).get();
+            return Ag.select(E3.class, config).uri(uriInfo)
+                    .entityAttribute(E3.NAME.getName(), String.class, o -> "_" + o.getName() + "_")
+                    .get();
         }
     }
 }

@@ -4,9 +4,9 @@ import io.agrest.*;
 import io.agrest.constraints.Constraint;
 import io.agrest.encoder.Encoder;
 import io.agrest.encoder.EntityEncoderFilter;
+import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgEntityOverlay;
 import io.agrest.processor.Processor;
-import io.agrest.property.PropertyBuilder;
 import io.agrest.runtime.processor.select.SelectContext;
 import io.agrest.runtime.processor.select.SelectProcessorFactory;
 import org.slf4j.Logger;
@@ -16,8 +16,8 @@ import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriInfo;
 import java.util.ArrayList;
 import java.util.EnumMap;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Function;
 
 /**
  * @since 1.16
@@ -126,22 +126,8 @@ public class DefaultSelectBuilder<T> implements SelectBuilder<T> {
     }
 
     @Override
-    public SelectBuilder<T> property(String name) {
-        return property(name, PropertyBuilder.property());
-    }
-
-    @Override
-    public SelectBuilder<T> property(String name, EntityProperty property) {
-        if (context.getExtraProperties() == null) {
-            context.setExtraProperties(new HashMap<>());
-        }
-
-        EntityProperty oldProperty = context.getExtraProperties().put(name, property);
-        if (oldProperty != null) {
-            LOGGER.info("Overriding existing custom property '{}', ignoring...", name);
-        }
-
-        return this;
+    public <V> SelectBuilder<T> entityAttribute(String name, Class<V> valueType, Function<T, V> reader) {
+        return entityOverlay(AgEntity.overlay(getContext().getType()).redefineAttribute(name, valueType, reader));
     }
 
     @Override

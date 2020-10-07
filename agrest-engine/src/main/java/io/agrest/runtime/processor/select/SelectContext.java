@@ -1,15 +1,6 @@
 package io.agrest.runtime.processor.select;
 
-import io.agrest.AgObjectId;
-import io.agrest.AgRequest;
-import io.agrest.CompoundObjectId;
-import io.agrest.DataResponse;
-import io.agrest.EntityParent;
-import io.agrest.EntityProperty;
-import io.agrest.ResourceEntity;
-import io.agrest.RootResourceEntity;
-import io.agrest.SimpleObjectId;
-import io.agrest.SizeConstraints;
+import io.agrest.*;
 import io.agrest.constraints.Constraint;
 import io.agrest.encoder.Encoder;
 import io.agrest.encoder.EntityEncoderFilter;
@@ -33,7 +24,6 @@ public class SelectContext<T> extends BaseProcessingContext<T> {
     private EntityParent<?> parent;
     private RootResourceEntity<T> entity;
     private UriInfo uriInfo;
-    private Map<String, EntityProperty> extraProperties;
     private SizeConstraints sizeConstraints;
     private Constraint<T> constraint;
     private boolean atMostOneObject;
@@ -101,14 +91,6 @@ public class SelectContext<T> extends BaseProcessingContext<T> {
         return uriInfo != null ? uriInfo.getQueryParameters() : Collections.emptyMap();
     }
 
-    public Map<String, EntityProperty> getExtraProperties() {
-        return extraProperties;
-    }
-
-    public void setExtraProperties(Map<String, EntityProperty> extraProperties) {
-        this.extraProperties = extraProperties;
-    }
-
     /**
      * @since 3.4
      */
@@ -149,7 +131,7 @@ public class SelectContext<T> extends BaseProcessingContext<T> {
             entityOverlays = new HashMap<>();
         }
 
-        return (AgEntityOverlay<A>) entityOverlays.computeIfAbsent(type, t -> new AgEntityOverlay<>(t));
+        return (AgEntityOverlay<A>) entityOverlays.computeIfAbsent(type, AgEntityOverlay::new);
     }
 
     public SizeConstraints getSizeConstraints() {

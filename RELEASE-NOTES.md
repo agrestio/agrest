@@ -2,6 +2,7 @@
 
 * #450 Minimize Cayenne footprint - remove references to "Property" from API signatures
 * #451 Remove API deprecated in 3.4 or earlier
+* #452 Replace SelectBuilder.property(..) with overlay-based API
 
 ## Release 3.6
 
