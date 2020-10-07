@@ -110,14 +110,21 @@ public interface SelectBuilder<T> {
     SelectBuilder<T> parent(Class<?> parentType, Map<String, Object> parentIds, String relationshipFromParent);
 
     /**
-     * @since 1.4
+     * @deprecated since 3.6 as it uses Cayenne API in the method signature. Use {@link #parent(Class, Object, String)}
      */
-    SelectBuilder<T> parent(Class<?> parentType, Object parentId, Property<T> relationshipFromParent);
+    @Deprecated
+    default SelectBuilder<T> parent(Class<?> parentType, Object parentId, Property<T> relationshipFromParent) {
+        return parent(parentType, parentId, relationshipFromParent.getName());
+    }
 
     /**
      * @since 1.20
+     * @deprecated since 3.6 as it uses Cayenne API in the method signature. Use {@link #parent(Class, Map, String)}
      */
-    SelectBuilder<T> parent(Class<?> parentType, Map<String, Object> parentIds, Property<T> relationshipFromParent);
+    @Deprecated
+    default SelectBuilder<T> parent(Class<?> parentType, Map<String, Object> parentIds, Property<T> relationshipFromParent) {
+        return parent(parentType, parentIds, relationshipFromParent.getName());
+    }
 
     /**
      * @since 1.7
@@ -126,15 +133,21 @@ public interface SelectBuilder<T> {
 
     /**
      * @since 1.7
+     * @deprecated since 3.6 as it uses Cayenne API in the method signature. Use {@link #parent(Class, Object, String)}
      */
-    SelectBuilder<T> toManyParent(Class<?> parentType, Object parentId,
-                                  Property<? extends Collection<T>> relationshipFromParent);
+    @Deprecated
+    default SelectBuilder<T> toManyParent(Class<?> parentType, Object parentId, Property<? extends Collection<T>> relationshipFromParent) {
+        return parent(parentType, parentId, relationshipFromParent.getName());
+    }
 
     /**
      * @since 1.20
+     * @deprecated since 3.6 as it uses Cayenne API in the method signature. Use {@link #parent(Class, Map, String)}
      */
-    SelectBuilder<T> toManyParent(Class<?> parentType, Map<String, Object> parentIds,
-                                  Property<? extends Collection<T>> relationshipFromParent);
+    @Deprecated
+    default SelectBuilder<T> toManyParent(Class<?> parentType, Map<String, Object> parentIds, Property<? extends Collection<T>> relationshipFromParent) {
+        return parent(parentType, parentIds, relationshipFromParent.getName());
+    }
 
     /**
      * @since 1.2

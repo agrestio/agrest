@@ -10,31 +10,35 @@ import org.apache.cayenne.exp.Property;
  * An {@link ObjectMapperFactory} that locates objects by the combination of FK
  * to parent and some other column. I.e. those objects in 1..N relationships
  * that have a unique property within parent.
- * 
+ *
  * @since 1.4
  */
 public class ByKeyObjectMapperFactory implements ObjectMapperFactory {
 
-	private String property;
+    private String property;
 
-	public static ByKeyObjectMapperFactory byKey(String key) {
-		return new ByKeyObjectMapperFactory(key);
-	}
+    public static ByKeyObjectMapperFactory byKey(String key) {
+        return new ByKeyObjectMapperFactory(key);
+    }
 
-	public static ByKeyObjectMapperFactory byKey(Property<?> key) {
-		return new ByKeyObjectMapperFactory(key.getName());
-	}
+    /**
+     * @deprecated since 3.6 as it uses Cayenne API in the method signature. Use {@link #byKey(String)}
+     */
+    @Deprecated
+    public static ByKeyObjectMapperFactory byKey(Property<?> key) {
+        return byKey(key.getName());
+    }
 
-	private ByKeyObjectMapperFactory(String property) {
-		this.property = property;
-	}
+    private ByKeyObjectMapperFactory(String property) {
+        this.property = property;
+    }
 
-	@Override
-	public <T> ObjectMapper<T> createMapper(UpdateContext<T> context) {
-		AgEntity<T> entity = context.getEntity().getAgEntity();
+    @Override
+    public <T> ObjectMapper<T> createMapper(UpdateContext<T> context) {
+        AgEntity<T> entity = context.getEntity().getAgEntity();
 
-		// TODO: should we account for "id" attributes here?
-		AgAttribute attribute = entity.getAttribute(property);
-		return new ByKeyObjectMapper<>(attribute);
-	}
+        // TODO: should we account for "id" attributes here?
+        AgAttribute attribute = entity.getAttribute(property);
+        return new ByKeyObjectMapper<>(attribute);
+    }
 }

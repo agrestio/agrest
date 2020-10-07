@@ -1,16 +1,10 @@
 package io.agrest.runtime;
 
-import io.agrest.DeleteBuilder;
-import io.agrest.EntityParent;
-import io.agrest.AgException;
-import io.agrest.AgObjectId;
-import io.agrest.SimpleResponse;
+import io.agrest.*;
 import io.agrest.runtime.processor.delete.DeleteContext;
 import io.agrest.runtime.processor.delete.DeleteProcessorFactory;
-import org.apache.cayenne.exp.Property;
 
 import javax.ws.rs.core.Response;
-import java.util.Collection;
 import java.util.Map;
 
 /**
@@ -52,18 +46,6 @@ public class DefaultDeleteBuilder<T> implements DeleteBuilder<T> {
 	}
 
 	@Override
-	public DeleteBuilder<T> parent(Class<?> parentType, Object parentId, Property<T> relationshipFromParent) {
-		context.setParent(new EntityParent<>(parentType, parentId, relationshipFromParent.getName()));
-		return this;
-	}
-
-	@Override
-	public DeleteBuilder<T> parent(Class<?> parentType, Map<String, Object> parentIds, Property<T> relationshipFromParent) {
-		context.setParent(new EntityParent<>(parentType, parentIds, relationshipFromParent.getName()));
-		return this;
-	}
-
-	@Override
 	public DeleteBuilder<T> parent(Class<?> parentType, Object parentId, String relationshipFromParent) {
 		context.setParent(new EntityParent<>(parentType, parentId, relationshipFromParent));
 		return this;
@@ -73,17 +55,6 @@ public class DefaultDeleteBuilder<T> implements DeleteBuilder<T> {
 	public DeleteBuilder<T> parent(Class<?> parentType, Map<String, Object> parentIds, String relationshipFromParent) {
 		context.setParent(new EntityParent<>(parentType, parentIds, relationshipFromParent));
 		return this;
-	}
-
-	@Override
-	public DeleteBuilder<T> toManyParent(Class<?> parentType, Object parentId,
-			Property<? extends Collection<T>> relationshipFromParent) {
-		return parent(parentType, parentId, relationshipFromParent.getName());
-	}
-
-	@Override
-	public DeleteBuilder<T> toManyParent(Class<?> parentType, Map<String, Object> parentIds, Property<? extends Collection<T>> relationshipFromParent) {
-		return parent(parentType, parentIds, relationshipFromParent.getName());
 	}
 
 	@Override

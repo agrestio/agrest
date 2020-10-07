@@ -45,7 +45,9 @@ public class ConstraintsBuilder<T> implements Constraint<T> {
      *
      * @param attributeOrRelationship a name of the property to exclude.
      * @return a new instance of Constraints.
+     * @deprecated since 3.6 as it uses Cayenne API in the method signature. Use {@link #excludeProperty(String)}.
      */
+    @Deprecated
     public ConstraintsBuilder<T> excludeProperty(Property<?> attributeOrRelationship) {
         return excludeProperty(attributeOrRelationship.getName());
     }
@@ -64,7 +66,9 @@ public class ConstraintsBuilder<T> implements Constraint<T> {
     /**
      * @param attributesOrRelationships an array of properties to exclude.
      * @return a new instance of Constraints.
+     * @deprecated since 3.6 as it uses Cayenne API in the method signature. Use {@link #excludeProperties(String...)}
      */
+    @Deprecated
     public ConstraintsBuilder<T> excludeProperties(Property<?>... attributesOrRelationships) {
 
         String[] names = new String[attributesOrRelationships.length];
@@ -106,6 +110,10 @@ public class ConstraintsBuilder<T> implements Constraint<T> {
         }));
     }
 
+    /**
+     * @deprecated since 3.6 as it uses Cayenne API in the method signature. Use {@link #attribute(String)}.
+     */
+    @Deprecated
     public ConstraintsBuilder<T> attribute(Property<?> attribute) {
         return attribute(attribute.getName());
     }
@@ -124,6 +132,10 @@ public class ConstraintsBuilder<T> implements Constraint<T> {
         }));
     }
 
+    /**
+     * @deprecated since 3.6 as it uses Cayenne API in the method signature. Use {@link #attributes(String...)}.
+     */
+    @Deprecated
     public ConstraintsBuilder<T> attributes(Property<?>... attributes) {
         String[] names = new String[attributes.length];
         for (int i = 0; i < attributes.length; i++) {

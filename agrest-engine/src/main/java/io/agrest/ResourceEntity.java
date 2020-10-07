@@ -7,7 +7,6 @@ import io.agrest.meta.AgEntityOverlay;
 import org.apache.cayenne.exp.Expression;
 import org.apache.cayenne.query.Ordering;
 import org.apache.cayenne.query.SelectQuery;
-import org.apache.cayenne.util.ToStringBuilder;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -197,13 +196,9 @@ public abstract class ResourceEntity<T> {
 
     @Override
     public String toString() {
-
-        ToStringBuilder tsb = new ToStringBuilder(this);
-        if (agEntity != null) {
-            tsb.append("name", agEntity.getName());
-        }
-
-        return tsb.toString();
+        return "ResourceEntity{" +
+                "name=" + agEntity.getName() +
+                '}';
     }
 
     public Class<T> getType() {

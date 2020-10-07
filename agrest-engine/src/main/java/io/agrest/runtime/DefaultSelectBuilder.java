@@ -1,13 +1,6 @@
 package io.agrest.runtime;
 
-import io.agrest.AgException;
-import io.agrest.DataResponse;
-import io.agrest.EntityParent;
-import io.agrest.EntityProperty;
-import io.agrest.AgRequest;
-import io.agrest.SelectBuilder;
-import io.agrest.SelectStage;
-import io.agrest.SizeConstraints;
+import io.agrest.*;
 import io.agrest.constraints.Constraint;
 import io.agrest.encoder.Encoder;
 import io.agrest.encoder.EntityEncoderFilter;
@@ -16,14 +9,12 @@ import io.agrest.processor.Processor;
 import io.agrest.property.PropertyBuilder;
 import io.agrest.runtime.processor.select.SelectContext;
 import io.agrest.runtime.processor.select.SelectProcessorFactory;
-import org.apache.cayenne.exp.Property;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriInfo;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Map;
@@ -52,19 +43,6 @@ public class DefaultSelectBuilder<T> implements SelectBuilder<T> {
     }
 
     @Override
-    public SelectBuilder<T> parent(Class<?> parentType, Object parentId, Property<T> relationshipFromParent) {
-        context.setParent(new EntityParent<>(parentType, parentId, relationshipFromParent.getName()));
-        return this;
-    }
-
-    @Override
-    public SelectBuilder<T> parent(Class<?> parentType, Map<String, Object> parentIds,
-                                   Property<T> relationshipFromParent) {
-        context.setParent(new EntityParent<>(parentType, parentIds, relationshipFromParent.getName()));
-        return this;
-    }
-
-    @Override
     public SelectBuilder<T> parent(Class<?> parentType, Object parentId, String relationshipFromParent) {
         context.setParent(new EntityParent<>(parentType, parentId, relationshipFromParent));
         return this;
@@ -80,18 +58,6 @@ public class DefaultSelectBuilder<T> implements SelectBuilder<T> {
     public SelectBuilder<T> parent(EntityParent<?> parent) {
         context.setParent(parent);
         return this;
-    }
-
-    @Override
-    public SelectBuilder<T> toManyParent(Class<?> parentType, Object parentId,
-                                         Property<? extends Collection<T>> relationshipFromParent) {
-        return parent(parentType, parentId, relationshipFromParent.getName());
-    }
-
-    @Override
-    public SelectBuilder<T> toManyParent(Class<?> parentType, Map<String, Object> parentIds,
-                                         Property<? extends Collection<T>> relationshipFromParent) {
-        return parent(parentType, parentIds, relationshipFromParent.getName());
     }
 
     /**

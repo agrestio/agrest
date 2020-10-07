@@ -48,29 +48,45 @@ public interface UpdateBuilder<T> {
 
     /**
      * Sets up a relationship clause for all objects in this update.
+     *
+     * @deprecated since 3.6 as it uses Cayenne API in the method signature. Use {@link #parent(Class, Object, String)}
      */
-    UpdateBuilder<T> parent(Class<?> parentType, Object parentId, Property<T> relationshipFromParent);
+    @Deprecated
+    default UpdateBuilder<T> parent(Class<?> parentType, Object parentId, Property<T> relationshipFromParent) {
+        return parent(parentType, parentId, relationshipFromParent.getName());
+    }
 
     /**
      * Sets up a relationship clause for all objects in this update.
      *
      * @since 1.20
+     * @deprecated since 3.6 as it uses Cayenne API in the method signature. Use {@link #parent(Class, Map, String)}
      */
-    UpdateBuilder<T> parent(Class<?> parentType, Map<String, Object> parentIds, Property<T> relationshipFromParent);
+    @Deprecated
+    default UpdateBuilder<T> parent(Class<?> parentType, Map<String, Object> parentIds, Property<T> relationshipFromParent) {
+        return parent(parentType, parentIds, relationshipFromParent.getName());
+    }
 
     /**
      * Sets up a relationship clause for all objects in this update.
+     *
+     * @deprecated since 3.6 as it uses Cayenne API in the method signature. Use {@link #parent(Class, Object, String)}
      */
-    UpdateBuilder<T> toManyParent(Class<?> parentType, Object parentId,
-                                  Property<? extends Collection<T>> relationshipFromParent);
+    @Deprecated
+    default UpdateBuilder<T> toManyParent(Class<?> parentType, Object parentId, Property<? extends Collection<T>> relationshipFromParent) {
+        return parent(parentType, parentId, relationshipFromParent.getName());
+    }
 
     /**
      * Sets up a relationship clause for all objects in this update.
      *
      * @since 1.20
+     * @deprecated since 3.6 as it uses Cayenne API in the method signature. Use {@link #parent(Class, Map, String)}
      */
-    UpdateBuilder<T> toManyParent(Class<?> parentType, Map<String, Object> parentIds,
-                                  Property<? extends Collection<T>> relationshipFromParent);
+    @Deprecated
+    default UpdateBuilder<T> toManyParent(Class<?> parentType, Map<String, Object> parentIds, Property<? extends Collection<T>> relationshipFromParent) {
+        return parent(parentType, parentIds, relationshipFromParent.getName());
+    }
 
     /**
      * Sets request {@link UriInfo} that will be used to shape response.
@@ -120,8 +136,12 @@ public interface UpdateBuilder<T> {
      * equivalent to calling 'mapped(ByKeyObjectMapperFactory.byKey(property))'.
      *
      * @since 1.20
+     * @deprecated since 3.6 as it uses Cayenne API in the method signature. Use {@link #mapper(String)}
      */
-    UpdateBuilder<T> mapper(Property<?> property);
+    @Deprecated
+    default UpdateBuilder<T> mapper(Property<?> property) {
+        return mapper(property.getName());
+    }
 
     /**
      * Registers a consumer to be executed after a specified standard execution stage. The consumer can inspect and
@@ -191,7 +211,7 @@ public interface UpdateBuilder<T> {
      * 							.uri(uriInfo)
      * 							.request(agRequest) // overwrite parameters from uriInfo
      * 							.get();
-     * 		}
+     *        }
      *
      * }</pre>
      *
