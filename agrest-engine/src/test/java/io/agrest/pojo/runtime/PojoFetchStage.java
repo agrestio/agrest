@@ -15,9 +15,9 @@ import java.util.Map;
 
 public class PojoFetchStage implements Processor<SelectContext<?>> {
 
-    private PojoDB db;
+    private PojoStore db;
 
-    public PojoFetchStage(@Inject PojoDB db) {
+    public PojoFetchStage(@Inject PojoStore db) {
         this.db = db;
     }
 
@@ -29,7 +29,7 @@ public class PojoFetchStage implements Processor<SelectContext<?>> {
 
     <T> void findObjects(SelectContext<T> context) {
 
-        Map<Object, T> typeBucket = db.bucketForType(context.getType());
+        Map<Object, T> typeBucket = db.bucket(context.getType());
         if (context.isById()) {
             T object = typeBucket.get(context.getId().get());
             // stores as a result into ResourceEntity

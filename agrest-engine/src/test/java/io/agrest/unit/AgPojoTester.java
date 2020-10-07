@@ -1,7 +1,7 @@
 package io.agrest.unit;
 
 import io.agrest.pojo.model.*;
-import io.agrest.pojo.runtime.PojoDB;
+import io.agrest.pojo.runtime.PojoStore;
 import io.agrest.pojo.runtime.PojoFetchStage;
 import io.agrest.pojo.runtime.PojoSelectProcessorFactoryProvider;
 import io.agrest.runtime.AgBuilder;
@@ -42,7 +42,7 @@ public class AgPojoTester implements BQBeforeScopeCallback, BQAfterScopeCallback
     private final List<Class<?>> resources;
     private Function<AgBuilder, AgBuilder> agCustomizer;
 
-    private PojoDB pojoDBInScope;
+    private PojoStore pojoStoreInScope;
     private JettyTester jettyInScope;
     private BQRuntime appInScope;
 
@@ -68,15 +68,11 @@ public class AgPojoTester implements BQBeforeScopeCallback, BQAfterScopeCallback
     }
 
     public <T> Map<Object, T> bucket(Class<T> type) {
-        return getPojoDBInScope().bucketForType(type);
+        return getPojoStoreInScope().bucket(type);
     }
 
     public Map<Object, P1> p1() {
         return bucket(P1.class);
-    }
-
-    public Map<Object, P2> p2() {
-        return bucket(P2.class);
     }
 
     public Map<Object, P4> p4() {
@@ -95,7 +91,6 @@ public class AgPojoTester implements BQBeforeScopeCallback, BQAfterScopeCallback
         return bucket(P9.class);
     }
 
-
     protected JettyTester getJettyInScope() {
         return Objects.requireNonNull(jettyInScope, "Not in test scope");
     }
@@ -104,16 +99,16 @@ public class AgPojoTester implements BQBeforeScopeCallback, BQAfterScopeCallback
         return Objects.requireNonNull(appInScope, "Not in test scope");
     }
 
-    protected PojoDB getPojoDBInScope() {
-        return Objects.requireNonNull(pojoDBInScope, "Not in test scope");
+    protected PojoStore getPojoStoreInScope() {
+        return Objects.requireNonNull(pojoStoreInScope, "Not in test scope");
     }
 
     @Override
     public void beforeScope(BQTestScope scope, ExtensionContext context) {
 
-        this.pojoDBInScope = new PojoDB();
+        this.pojoStoreInScope = new PojoStore();
         this.jettyInScope = JettyTester.create();
-        this.appInScope = createAppInScope(this.jettyInScope, this.pojoDBInScope);
+        this.appInScope = createAppInScope(this.jettyInScope, this.pojoStoreInScope);
 
         CommandOutcome result = appInScope.run();
         Assertions.assertTrue(result.isSuccess());
@@ -125,20 +120,20 @@ public class AgPojoTester implements BQBeforeScopeCallback, BQAfterScopeCallback
         this.appInScope.shutdown();
         this.appInScope = null;
         this.jettyInScope = null;
-        this.pojoDBInScope = null;
+        this.pojoStoreInScope = null;
     }
 
     @Override
     public void beforeMethod(BQTestScope scope, ExtensionContext context) {
-        getPojoDBInScope().clear();
+        getPojoStoreInScope().clear();
     }
 
-    protected BQRuntime createAppInScope(JettyTester jetty, PojoDB pojoDB) {
+    protected BQRuntime createAppInScope(JettyTester jetty, PojoStore pojoStore) {
 
         Bootique builder = Bootique.app("-s")
                 .autoLoadModules()
                 .module(jetty.moduleReplacingConnectors())
-                .module(new AgModule(agCustomizer, pojoDB, resources));
+                .module(new AgModule(agCustomizer, pojoStore, resources));
 
         return builder.createRuntime();
     }
@@ -164,12 +159,12 @@ public class AgPojoTester implements BQBeforeScopeCallback, BQAfterScopeCallback
 
     static class AgModule implements BQModule {
 
-        private final PojoDB pojoDB;
+        private final PojoStore pojoStore;
         private final Function<AgBuilder, AgBuilder> customizer;
         private final List<Class<?>> resources;
 
-        public AgModule(Function<AgBuilder, AgBuilder> customizer, PojoDB pojoDB, List<Class<?>> resources) {
-            this.pojoDB = pojoDB;
+        public AgModule(Function<AgBuilder, AgBuilder> customizer, PojoStore pojoStore, List<Class<?>> resources) {
+            this.pojoStore = pojoStore;
             this.customizer = customizer;
             this.resources = resources;
         }
@@ -197,7 +192,7 @@ public class AgPojoTester implements BQBeforeScopeCallback, BQAfterScopeCallback
             agBinder.bind(UpdateProcessorFactoryFactory.class).toInstance(mock(UpdateProcessorFactoryFactory.class));
             agBinder.bind(UnrelateProcessorFactory.class).toInstance(mock(UnrelateProcessorFactory.class));
             agBinder.bind(PojoFetchStage.class).to(PojoFetchStage.class);
-            agBinder.bind(PojoDB.class).toInstance(pojoDB);
+            agBinder.bind(PojoStore.class).toInstance(pojoStore);
         }
     }
 }

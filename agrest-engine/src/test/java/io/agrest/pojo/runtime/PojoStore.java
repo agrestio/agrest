@@ -7,11 +7,11 @@ import java.util.concurrent.ConcurrentMap;
 /**
  * A key/value "database" that stores objects by type and id.
  */
-public class PojoDB {
+public class PojoStore {
 
     private ConcurrentMap<Class<?>, Map<Object, Object>> map;
 
-    public PojoDB() {
+    public PojoStore() {
         this.map = new ConcurrentHashMap<>();
     }
 
@@ -20,7 +20,7 @@ public class PojoDB {
     }
 
     @SuppressWarnings("unchecked")
-    public <T> Map<Object, T> bucketForType(Class<T> type) {
+    public <T> Map<Object, T> bucket(Class<T> type) {
         return (Map<Object, T>) map.computeIfAbsent(type, t -> new ConcurrentHashMap<>());
     }
 }
