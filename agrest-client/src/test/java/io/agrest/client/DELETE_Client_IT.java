@@ -1,49 +1,37 @@
-package io.agrest.client.it.noadapter;
+package io.agrest.client;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import io.agrest.Ag;
 import io.agrest.DataResponse;
 import io.agrest.SimpleResponse;
-import io.agrest.cayenne.unit.DbTest;
-import io.agrest.client.AgClient;
-import io.agrest.client.AgClientException;
-import io.agrest.client.ClientDataResponse;
-import io.agrest.client.ClientSimpleResponse;
-
 import io.agrest.cayenne.cayenne.main.E2;
 import io.agrest.cayenne.cayenne.main.E3;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import io.agrest.cayenne.unit.AgCayenneTester;
+import io.agrest.client.unit.ClientDbTest;
+import io.agrest.client.unit.EntityUtil;
+import io.bootique.junit5.BQTestTool;
+import org.junit.jupiter.api.Test;
 
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
+import javax.ws.rs.*;
 import javax.ws.rs.core.Configuration;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriInfo;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
-public class DELETE_Client_IT extends DbTest {
+public class DELETE_Client_IT extends ClientDbTest {
 
-    @BeforeClass
-    public static void startTestRuntime() {
-        startTestRuntime(Resource.class);
-    }
-
-    @Override
-    protected Class<?>[] testEntities() {
-        return new Class[]{E2.class, E3.class};
-    }
+    @BQTestTool
+    static final AgCayenneTester tester = tester(Resource.class)
+            .entities(E2.class, E3.class)
+            .build();
 
     @Test
     public void testClient_Delete() {
 
         // Create new entity
-        ClientDataResponse<JsonNode> r1 = AgClient.client(target("/e2"))
+        ClientDataResponse<JsonNode> r1 = client(tester, "/e2")
                 .exclude(E2.ADDRESS.getName(), E2.E3S.getName())
                 .post(JsonNode.class, "{\"name\":\"xxx\"}");
 
@@ -55,7 +43,7 @@ public class DELETE_Client_IT extends DbTest {
         assertEquals(e2, r1.getData().get(0));
 
         // Delete existing entity
-        ClientSimpleResponse r2 = AgClient.client(target("/e2/" + id))
+        ClientSimpleResponse r2 = client(tester, "/e2/" + id)
                 .exclude(E2.ADDRESS.getName(), E2.E3S.getName())
                 .delete();
 
@@ -64,7 +52,7 @@ public class DELETE_Client_IT extends DbTest {
         // Try to fetch deleted entity
         AgClientException e = null;
         try {
-            AgClient.client(target("/e2/" + id))
+            client(tester, "/e2/" + id)
                     .exclude(E2.ADDRESS.getName(), E2.E3S.getName())
                     .get(JsonNode.class);
         } catch (AgClientException e1) {

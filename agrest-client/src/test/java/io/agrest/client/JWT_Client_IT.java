@@ -1,16 +1,14 @@
-package io.agrest.client.it.noadapter;
+package io.agrest.client;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import io.agrest.Ag;
 import io.agrest.DataResponse;
-import io.agrest.cayenne.unit.DbTest;
-import io.agrest.client.AgClient;
-import io.agrest.client.AgClientException;
-import io.agrest.client.ClientDataResponse;
-
 import io.agrest.cayenne.cayenne.main.E4;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import io.agrest.cayenne.unit.AgCayenneTester;
+import io.agrest.client.unit.ClientDbTest;
+import io.agrest.runtime.AgBuilder;
+import io.bootique.junit5.BQTestTool;
+import org.junit.jupiter.api.Test;
 
 import javax.annotation.Priority;
 import javax.ws.rs.GET;
@@ -18,44 +16,40 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Priorities;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerRequestFilter;
-import javax.ws.rs.core.Configuration;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.Feature;
-import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriInfo;
-import java.io.IOException;
+import javax.ws.rs.core.*;
 import java.util.List;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
-public class JWT_Client_IT extends DbTest {
+public class JWT_Client_IT extends ClientDbTest {
 
     final static String AUTH_TOKEN = "itIsMyVerySecretToken";
 
-    @BeforeClass
-    public static void startTestRuntime() {
+    @BQTestTool
+    static final AgCayenneTester tester = tester(Resource.class)
+            .agCustomizer(JWT_Client_IT::registerFilter)
+            .entities(E4.class)
+            .build();
+
+
+    private static AgBuilder registerFilter(AgBuilder agBuilder) {
         Feature f = c -> {
             c.register(JWTAuthFilter.class);
             return true;
         };
-        startTestRuntime(ab -> ab.feature(f), Resource.class);
-    }
 
-    @Override
-    protected Class<?>[] testEntities() {
-        return new Class[]{E4.class};
+        return agBuilder.feature(f);
     }
 
     @Test
     public void testAuthClient() {
 
-        e4().insertColumns("id", "c_varchar", "c_int")
+        tester.e4().insertColumns("id", "c_varchar", "c_int")
                 .values(1, "xxx", 5)
                 .values(2, "yyy", 7)
                 .exec();
 
-        ClientDataResponse<JsonNode> response = AgClient.client(target("/e4"))
+        ClientDataResponse<JsonNode> response = client(tester, "/e4")
                 .configure(b -> b.header(HttpHeaders.AUTHORIZATION, "Bearer " + AUTH_TOKEN))
                 .get(JsonNode.class);
 
@@ -70,14 +64,14 @@ public class JWT_Client_IT extends DbTest {
     @Test
     public void testNotAuthClient() {
 
-        e4().insertColumns("id", "c_varchar", "c_int")
+        tester.e4().insertColumns("id", "c_varchar", "c_int")
                 .values(1, "xxx", 5)
                 .values(2, "yyy", 7)
                 .exec();
 
         AgClientException e = null;
         try {
-            AgClient.client(target("/e4")).get(JsonNode.class);
+            client(tester, "/e4").get(JsonNode.class);
         } catch (AgClientException e1) {
             e = e1;
         }
@@ -103,7 +97,7 @@ public class JWT_Client_IT extends DbTest {
     public static class JWTAuthFilter implements ContainerRequestFilter {
 
         @Override
-        public void filter(ContainerRequestContext requestContext) throws IOException {
+        public void filter(ContainerRequestContext requestContext) {
 
             String authHeaderVal = requestContext.getHeaderString(HttpHeaders.AUTHORIZATION);
 

@@ -1,15 +1,14 @@
-package io.agrest.client.it.noadapter;
+package io.agrest.client;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import io.agrest.Ag;
 import io.agrest.DataResponse;
-import io.agrest.cayenne.unit.DbTest;
-import io.agrest.client.AgClient;
-import io.agrest.client.ClientDataResponse;
-
 import io.agrest.cayenne.cayenne.main.E3;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import io.agrest.cayenne.unit.AgCayenneTester;
+import io.agrest.client.unit.ClientDbTest;
+import io.agrest.client.unit.EntityUtil;
+import io.bootique.junit5.BQTestTool;
+import org.junit.jupiter.api.Test;
 
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
@@ -19,25 +18,20 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class PUT_Client_IT extends DbTest {
+public class PUT_Client_IT extends ClientDbTest {
 
-    @BeforeClass
-    public static void startTestRuntime() {
-        startTestRuntime(Resource.class);
-    }
-
-    @Override
-    protected Class<?>[] testEntities() {
-        return new Class[]{E3.class};
-    }
+    @BQTestTool
+    static final AgCayenneTester tester = tester(Resource.class)
+            .entities(E3.class)
+            .build();
 
     @Test
     public void testClient_Put() {
 
         // Create new entity
-        ClientDataResponse<JsonNode> r1 = AgClient.client(target("/e3"))
+        ClientDataResponse<JsonNode> r1 = client(tester, "/e3")
                 .exclude(E3.PHONE_NUMBER.getName())
                 .post(JsonNode.class, "{\"name\":\"ccc\"}");
 
@@ -49,7 +43,7 @@ public class PUT_Client_IT extends DbTest {
         assertEquals(e3_before_update, r1.getData().get(0));
 
         // Update existing entity
-        ClientDataResponse<JsonNode> r2 = AgClient.client(target("/e3"))
+        ClientDataResponse<JsonNode> r2 = client(tester, "/e3")
                 .exclude(E3.PHONE_NUMBER.getName())
                 .put(JsonNode.class, "{\"id\":" + id + ",\"name\":\"ddd\"}");
 

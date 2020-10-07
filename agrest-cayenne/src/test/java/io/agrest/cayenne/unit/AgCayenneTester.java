@@ -29,6 +29,7 @@ import org.apache.cayenne.configuration.server.ServerRuntime;
 import org.junit.jupiter.api.extension.ExtensionContext;
 
 import javax.inject.Singleton;
+import javax.ws.rs.client.WebTarget;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -74,11 +75,19 @@ public class AgCayenneTester implements BQBeforeScopeCallback, BQAfterScopeCallb
     }
 
     public AgHttpTester target() {
-        return AgHttpTester.request(getJettyInScope().getTarget());
+        return AgHttpTester.request(internalTarget());
     }
 
     public AgHttpTester target(String path) {
         return target().path(path);
+    }
+
+    /**
+     * Provides access to JAXRS WebTarget. Used in special cases, as normally you should call {@link #target()} and
+     * use the returned {@link AgHttpTester} to manage web request and run result assertions.
+     */
+    public WebTarget internalTarget() {
+        return getJettyInScope().getTarget();
     }
 
     public IAgService ag() {

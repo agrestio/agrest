@@ -1,4 +1,4 @@
-package io.agrest.client.it.noadapter;
+package io.agrest.client.unit;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -17,7 +17,7 @@ public class EntityUtil {
         nodeFactory = new ObjectMapper().getNodeFactory();
     }
 
-    static JsonNode createE2(int id, String name, JsonNode... e3s) {
+    public static JsonNode createE2(int id, String name, JsonNode... e3s) {
 
         ObjectNode e2 = nodeFactory.objectNode();
         e2.set("id", nodeFactory.numberNode(id));
@@ -35,7 +35,7 @@ public class EntityUtil {
         return e2;
     }
 
-    static JsonNode createE3(int id, String name) {
+    public static JsonNode createE3(int id, String name) {
 
         ObjectNode e3 = nodeFactory.objectNode();
         e3.set("id", nodeFactory.numberNode(id));
@@ -43,7 +43,7 @@ public class EntityUtil {
         return e3;
     }
 
-    static JsonNode createE4(int id, String cVarchar, int cInt) {
+    public static JsonNode createE4(int id, String cVarchar, int cInt) {
 
         ObjectNode e4 = nodeFactory.objectNode();
         e4.set("id", nodeFactory.numberNode(id));

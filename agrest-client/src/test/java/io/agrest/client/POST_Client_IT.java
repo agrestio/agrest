@@ -1,17 +1,15 @@
-package io.agrest.client.it.noadapter;
+package io.agrest.client;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import io.agrest.Ag;
 import io.agrest.DataResponse;
-import io.agrest.cayenne.unit.DbTest;
-import io.agrest.client.AgClient;
-import io.agrest.client.ClientDataResponse;
-import io.agrest.client.protocol.Include;
-
 import io.agrest.cayenne.cayenne.main.E2;
 import io.agrest.cayenne.cayenne.main.E3;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import io.agrest.cayenne.unit.AgCayenneTester;
+import io.agrest.client.protocol.Include;
+import io.agrest.client.unit.ClientDbTest;
+import io.bootique.junit5.BQTestTool;
+import org.junit.jupiter.api.Test;
 
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -20,28 +18,23 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriInfo;
 
-import static io.agrest.client.it.noadapter.EntityUtil.createE2;
-import static io.agrest.client.it.noadapter.EntityUtil.createE3;
-import static org.junit.Assert.*;
+import static io.agrest.client.unit.EntityUtil.createE2;
+import static io.agrest.client.unit.EntityUtil.createE3;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class POST_Client_IT extends DbTest {
+public class POST_Client_IT extends ClientDbTest {
 
-    @BeforeClass
-    public static void startTestRuntime() {
-        startTestRuntime(Resource.class);
-    }
-
-    @Override
-    protected Class<?>[] testEntities() {
-        return new Class[]{E2.class, E3.class};
-    }
+    @BQTestTool
+    static final AgCayenneTester tester = tester(Resource.class)
+            .entities(E2.class, E3.class)
+            .build();
 
     @Test
     public void testClient_Post() {
 
         // Create related entity
-        ClientDataResponse<JsonNode> r1 = AgClient.client(target("/e3"))
-                .exclude(E3.PHONE_NUMBER.getName())
+        ClientDataResponse<JsonNode> r1 = client(tester, "/e3")
+                .exclude("phoneNumber")
                 .post(JsonNode.class, "{\"name\":\"ccc\"}");
 
         assertEquals(Status.CREATED, r1.getStatus());
@@ -52,10 +45,10 @@ public class POST_Client_IT extends DbTest {
         assertEquals(e3, r1.getData().get(0));
 
         // Create parent entity
-        ClientDataResponse<JsonNode> r2 = AgClient.client(target("/e2"))
-                .exclude(E2.ADDRESS.getName(), E2.E3S.dot(E3.PHONE_NUMBER).getName())
-                .include(Include.path(E2.E3S.getName()))
-                .post(JsonNode.class, "{\"name\":\"xxx\",\"address\":\"yyy\",\"e3s\":[1]}");
+        ClientDataResponse<JsonNode> r2 = client(tester, "/e2")
+                .exclude("address", "e3s.phoneNumber")
+                .include(Include.path("e3s"))
+                .post(JsonNode.class, "{\"name\":\"xxx\",\"address\":\"yyy\",\"e3s\":[" + e3_id + "]}");
 
         assertEquals(Status.CREATED, r2.getStatus());
         assertEquals(1, r2.getTotal());

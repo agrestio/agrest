@@ -3,12 +3,12 @@ package io.agrest.client.runtime.run;
 import io.agrest.client.protocol.AgcRequest;
 import io.agrest.client.protocol.Include;
 import io.agrest.client.protocol.Sort;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.WebTarget;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class TargetBuilderTest {
 

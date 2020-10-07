@@ -1,9 +1,9 @@
 package io.agrest.unit;
 
 import io.agrest.pojo.model.*;
-import io.agrest.pojo.runtime.PojoStore;
 import io.agrest.pojo.runtime.PojoFetchStage;
 import io.agrest.pojo.runtime.PojoSelectProcessorFactoryProvider;
+import io.agrest.pojo.runtime.PojoStore;
 import io.agrest.runtime.AgBuilder;
 import io.agrest.runtime.AgRuntime;
 import io.agrest.runtime.IAgService;
@@ -28,6 +28,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.extension.ExtensionContext;
 
 import javax.inject.Singleton;
+import javax.ws.rs.client.WebTarget;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -56,11 +57,19 @@ public class AgPojoTester implements BQBeforeScopeCallback, BQAfterScopeCallback
     }
 
     public AgHttpTester target() {
-        return AgHttpTester.request(getJettyInScope().getTarget());
+        return AgHttpTester.request(internalTarget());
     }
 
     public AgHttpTester target(String path) {
         return target().path(path);
+    }
+
+    /**
+     * Provides access to JAXRS WebTarget. Used in special cases, as normally you should call {@link #target()} and
+     * use the returned {@link AgHttpTester} to manage web request and run result assertions.
+     */
+    public WebTarget internalTarget() {
+        return getJettyInScope().getTarget();
     }
 
     public IAgService ag() {
@@ -73,6 +82,10 @@ public class AgPojoTester implements BQBeforeScopeCallback, BQAfterScopeCallback
 
     public Map<Object, P1> p1() {
         return bucket(P1.class);
+    }
+
+    public Map<Object, P2> p2() {
+        return bucket(P2.class);
     }
 
     public Map<Object, P4> p4() {

@@ -3,21 +3,21 @@ package io.agrest.client.runtime.run;
 import io.agrest.client.protocol.Expression;
 import io.agrest.client.protocol.Include;
 import io.agrest.client.protocol.Sort;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.Arrays;
 import java.util.Collections;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class RequestEncoderTest {
 
 	private RequestEncoder encoder;
 
-	@Before
+	@BeforeEach
 	public void setUp() {
 		encoder = RequestEncoder.encoder();
 	}
