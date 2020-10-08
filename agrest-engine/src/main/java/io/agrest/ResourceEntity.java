@@ -6,7 +6,6 @@ import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgEntityOverlay;
 import org.apache.cayenne.exp.Expression;
 import org.apache.cayenne.query.Ordering;
-import org.apache.cayenne.query.SelectQuery;
 
 import java.util.*;
 
@@ -38,10 +37,6 @@ public abstract class ResourceEntity<T> {
     private final List<EntityEncoderFilter> entityEncoderFilters;
 
     private final Map<String, Object> requestProperties;
-
-    // TODO: Per #433 get rid of SelectQuery in generic "agrest-engine".. It must live on the "agrest-cayenne" side.
-    @Deprecated
-    private SelectQuery<T> select;
 
     public ResourceEntity(AgEntity<T> agEntity, AgEntityOverlay<T> agEntityOverlay) {
 
@@ -104,15 +99,6 @@ public abstract class ResourceEntity<T> {
     public List<Ordering> getOrderings() {
         return orderings;
     }
-
-    public SelectQuery<T> getSelect() {
-        return select;
-    }
-
-    public void setSelect(SelectQuery<T> select) {
-        this.select = select;
-    }
-
 
     /**
      * @since 1.12

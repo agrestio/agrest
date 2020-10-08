@@ -5,6 +5,7 @@ import io.agrest.EntityUpdate;
 import io.agrest.ObjectMapper;
 import io.agrest.ResourceEntity;
 import io.agrest.cayenne.persister.ICayennePersister;
+import io.agrest.cayenne.processor.CayenneProcessor;
 import io.agrest.cayenne.processor.CayenneUtil;
 import io.agrest.runtime.meta.IMetadataService;
 import io.agrest.runtime.processor.update.UpdateContext;
@@ -93,8 +94,7 @@ public class CayenneIdempotentFullSyncStage extends CayenneIdempotentCreateOrUpd
             query.andQualifier(entity.getQualifier());
         }
 
-        entity.setSelect(query);
-
+        CayenneProcessor.setQuery(entity, query);
         buildChildrenQuery(context, entity, entity.getChildren());
 
         return query;

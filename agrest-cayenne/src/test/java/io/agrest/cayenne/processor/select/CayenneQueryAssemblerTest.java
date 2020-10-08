@@ -1,6 +1,7 @@
 package io.agrest.cayenne.processor.select;
 
 import io.agrest.RootResourceEntity;
+import io.agrest.cayenne.processor.CayenneProcessor;
 import io.agrest.cayenne.unit.CayenneNoDbTest;
 import io.agrest.cayenne.cayenne.main.E1;
 import io.agrest.runtime.processor.select.SelectContext;
@@ -34,7 +35,7 @@ public class CayenneQueryAssemblerTest extends CayenneNoDbTest {
         resourceEntity.getOrderings().add(o2);
 
         SelectContext<E1> context = new SelectContext<>(E1.class);
-        resourceEntity.setSelect(query);
+        CayenneProcessor.setQuery(resourceEntity, query);
         context.setEntity(resourceEntity);
 
         SelectQuery<E1> amended = queryAssembler.createRootQuery(context);
@@ -62,7 +63,7 @@ public class CayenneQueryAssemblerTest extends CayenneNoDbTest {
 
         resourceEntity.setFetchLimit(0);
         resourceEntity.setFetchOffset(0);
-        resourceEntity.setSelect(null);
+        CayenneProcessor.setQuery(resourceEntity, null);
 
         SelectQuery<E1> q2 = queryAssembler.createRootQuery(c);
         assertEquals(0, q2.getPageSize());
@@ -95,7 +96,8 @@ public class CayenneQueryAssemblerTest extends CayenneNoDbTest {
         query2.setQualifier(E1.NAME.in("a", "b"));
 
         SelectContext<E1> c2 = new SelectContext<>(E1.class);
-        resourceEntity.setSelect(query2);
+        CayenneProcessor.setQuery(resourceEntity, query2);
+
         c2.setEntity(resourceEntity);
 
         SelectQuery<E1> query2Amended = queryAssembler.createRootQuery(c2);
@@ -121,7 +123,8 @@ public class CayenneQueryAssemblerTest extends CayenneNoDbTest {
         SelectContext<E1> c = new SelectContext<>(E1.class);
         c.setId(1);
         c.setEntity(getResourceEntity(E1.class));
-        c.getEntity().setSelect(select);
+
+        CayenneProcessor.setQuery(c.getEntity(), select);
 
         SelectQuery<E1> s2 = queryAssembler.createRootQuery(c);
         assertNotNull(s2);

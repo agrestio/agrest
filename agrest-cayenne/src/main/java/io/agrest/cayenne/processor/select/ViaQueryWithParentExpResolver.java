@@ -5,6 +5,7 @@ import io.agrest.CompoundObjectId;
 import io.agrest.NestedResourceEntity;
 import io.agrest.SimpleObjectId;
 import io.agrest.cayenne.persister.ICayennePersister;
+import io.agrest.cayenne.processor.CayenneProcessor;
 import io.agrest.meta.AgAttribute;
 import io.agrest.property.NestedEntityListResultReader;
 import io.agrest.property.NestedEntityResultReader;
@@ -12,6 +13,7 @@ import io.agrest.property.PropertyReader;
 import io.agrest.resolver.BaseNestedDataResolver;
 import io.agrest.runtime.processor.select.SelectContext;
 import org.apache.cayenne.DataObject;
+import org.apache.cayenne.query.SelectQuery;
 
 import java.util.Collections;
 import java.util.Iterator;
@@ -26,7 +28,7 @@ import java.util.function.BiConsumer;
  *
  * @since 3.4
  */
-public class ViaQueryWithParentExpResolver extends BaseNestedDataResolver<DataObject> {
+public class ViaQueryWithParentExpResolver<T extends DataObject> extends BaseNestedDataResolver<T> {
 
     protected CayenneQueryAssembler queryAssembler;
     protected ICayennePersister persister;
@@ -37,13 +39,13 @@ public class ViaQueryWithParentExpResolver extends BaseNestedDataResolver<DataOb
     }
 
     @Override
-    protected void doOnParentQueryAssembled(NestedResourceEntity<DataObject> entity, SelectContext<?> context) {
-        entity.setSelect(queryAssembler.createQueryWithParentQualifier(entity));
+    protected void doOnParentQueryAssembled(NestedResourceEntity<T> entity, SelectContext<?> context) {
+        CayenneProcessor.setQuery(entity, queryAssembler.createQueryWithParentQualifier(entity));
     }
 
     @Override
-    protected Iterable<DataObject> doOnParentDataResolved(
-            NestedResourceEntity<DataObject> entity,
+    protected Iterable<T> doOnParentDataResolved(
+            NestedResourceEntity<T> entity,
             Iterable<?> parentData,
             SelectContext<?> context) {
 
@@ -53,25 +55,26 @@ public class ViaQueryWithParentExpResolver extends BaseNestedDataResolver<DataOb
             return Collections.emptyList();
         }
 
-        // TODO: here we are dealing with the column query returning List<Object[]>. Figure proper Cayenne-side generics
-        //  for it
-        List result = persister.sharedContext().select(entity.getSelect());
+        SelectQuery<Object[]> select = CayenneProcessor.getQuery(entity);
+        List<Object[]> result = persister.sharedContext().select(select);
         indexResultByParentId(entity, result);
 
-        // transform Iterable<Object[]> to Iterable<DataObject>
-        return result.isEmpty() ? result : () -> new SingleColumnIterator<>(result.iterator(), 0);
+        return result.isEmpty()
+                ? Collections.emptyList()
+                // transform Iterable<Object[]> to Iterable<T>
+                : () -> new SingleColumnIterator<>(result.iterator(), 0);
     }
 
     @Override
-    public PropertyReader reader(NestedResourceEntity<DataObject> entity) {
+    public PropertyReader reader(NestedResourceEntity<T> entity) {
         return entity.getIncoming().isToMany()
                 ? new NestedEntityListResultReader(entity)
                 : new NestedEntityResultReader(entity);
     }
 
-    protected void indexResultByParentId(NestedResourceEntity<DataObject> entity, List<Object[]> result) {
+    protected void indexResultByParentId(NestedResourceEntity<T> entity, List<Object[]> result) {
 
-        BiConsumer<AgObjectId, DataObject> resultAccum = entity.getIncoming().isToMany()
+        BiConsumer<AgObjectId, T> resultAccum = entity.getIncoming().isToMany()
                 ? (i, o) -> entity.addToManyResult(i, o)
                 : (i, o) -> entity.setToOneResult(i, o);
 
@@ -81,7 +84,7 @@ public class ViaQueryWithParentExpResolver extends BaseNestedDataResolver<DataOb
 
             // position 0 - the object itself
             // position 1..N-1 - parent id components
-            DataObject object = (DataObject) row[0];
+            T object = (T) row[0];
 
             if (row.length == 2) {
                 resultAccum.accept(new SimpleObjectId(row[1]), object);

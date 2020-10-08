@@ -1,9 +1,11 @@
 package io.agrest.sencha;
 
+import io.agrest.cayenne.processor.CayenneProcessor;
 import io.agrest.runtime.processor.select.SelectContext;
 import io.agrest.runtime.protocol.ParameterExtractor;
 import io.agrest.sencha.ops.StartsWithFilter;
 import org.apache.cayenne.exp.Expression;
+import org.apache.cayenne.query.SelectQuery;
 
 import javax.ws.rs.core.UriInfo;
 import java.util.function.Consumer;
@@ -38,8 +40,9 @@ public class SenchaOps {
         }
         // else - error?
 
-        if (context.getEntity().getSelect() != null) {
-            context.getEntity().getSelect().andQualifier(expression);
+        SelectQuery<?> select = CayenneProcessor.getQuery(context.getEntity());
+        if (select != null) {
+            select.andQualifier(expression);
         }
     }
 }

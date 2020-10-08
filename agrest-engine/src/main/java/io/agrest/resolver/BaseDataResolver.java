@@ -3,7 +3,6 @@ package io.agrest.resolver;
 import io.agrest.NestedResourceEntity;
 import io.agrest.ResourceEntity;
 import io.agrest.runtime.processor.select.SelectContext;
-import org.apache.cayenne.query.SelectQuery;
 
 /**
  * @since 3.4
@@ -14,10 +13,6 @@ public abstract class BaseDataResolver {
 
         ResourceEntity<?> mapBy = entity.getMapBy();
         if (mapBy != null) {
-
-            // copy owner's query to MapBy to ensure its own resolvers do not get confused...
-            mapBy.setSelect((SelectQuery) entity.getSelect());
-
             for (NestedResourceEntity<?> c : mapBy.getChildren().values()) {
                 c.onParentQueryAssembled(context);
             }

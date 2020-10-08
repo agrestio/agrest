@@ -2,6 +2,7 @@ package io.agrest.cayenne.processor.select;
 
 import io.agrest.NestedResourceEntity;
 import io.agrest.cayenne.persister.ICayennePersister;
+import io.agrest.cayenne.processor.CayenneProcessor;
 import io.agrest.runtime.processor.select.SelectContext;
 import org.apache.cayenne.DataObject;
 import org.apache.cayenne.query.SelectQuery;
@@ -15,20 +16,20 @@ import java.util.Iterator;
  *
  * @since 3.4
  */
-public class ViaQueryWithParentIdsResolver extends ViaQueryWithParentExpResolver {
+public class ViaQueryWithParentIdsResolver<T extends DataObject> extends ViaQueryWithParentExpResolver<T> {
 
     public ViaQueryWithParentIdsResolver(CayenneQueryAssembler queryAssembler, ICayennePersister persister) {
         super(queryAssembler, persister);
     }
 
     @Override
-    public void onParentQueryAssembled(NestedResourceEntity<DataObject> entity, SelectContext<?> context) {
+    public void onParentQueryAssembled(NestedResourceEntity<T> entity, SelectContext<?> context) {
         // no query here... we need to have access to parent objects before we can build our query
     }
 
     @Override
-    protected Iterable<DataObject> doOnParentDataResolved(
-            NestedResourceEntity<DataObject> entity,
+    protected Iterable<T> doOnParentDataResolved(
+            NestedResourceEntity<T> entity,
             Iterable<?> parentData,
             SelectContext<?> context) {
 
@@ -39,13 +40,13 @@ public class ViaQueryWithParentIdsResolver extends ViaQueryWithParentExpResolver
         }
 
         // assemble query here, where we have access to all parent ids
-        SelectQuery<DataObject> select = queryAssembler.createQueryWithParentIdsQualifier(entity, parentIt);
+        SelectQuery<T> select = queryAssembler.createQueryWithParentIdsQualifier(entity, parentIt);
         if (select == null) {
             // no parents - nothing to fetch for this entity, and no need to descend into children
             return Collections.emptyList();
         }
 
-        entity.setSelect(select);
+        CayenneProcessor.setQuery(entity, select);
         afterQueryAssembled(entity, context);
         return super.doOnParentDataResolved(entity, parentData, context);
     }

@@ -10,6 +10,7 @@ import io.agrest.ObjectMapperFactory;
 import io.agrest.ResourceEntity;
 import io.agrest.SimpleObjectId;
 import io.agrest.cayenne.persister.ICayennePersister;
+import io.agrest.cayenne.processor.CayenneProcessor;
 import io.agrest.meta.AgAttribute;
 import io.agrest.meta.AgRelationship;
 import io.agrest.runtime.meta.IMetadataService;
@@ -158,8 +159,7 @@ public class CayenneUpdateStage extends CayenneMergeChangesStage {
             query.andQualifier(entity.getQualifier());
         }
 
-        entity.setSelect(query);
-
+        CayenneProcessor.setQuery(entity, query);
         buildChildrenQuery(context, entity, entity.getChildren());
 
         return query;
@@ -167,6 +167,9 @@ public class CayenneUpdateStage extends CayenneMergeChangesStage {
 
     protected void buildChildrenQuery(UpdateContext context, ResourceEntity<?> entity, Map<String, NestedResourceEntity<?>> children) {
         if (!children.isEmpty()) {
+
+            SelectQuery<?> parentSelect = CayenneProcessor.getQuery(entity);
+
             for (Map.Entry<String, NestedResourceEntity<?>> e : children.entrySet()) {
                 NestedResourceEntity child = e.getValue();
 
@@ -184,9 +187,10 @@ public class CayenneUpdateStage extends CayenneMergeChangesStage {
                             objRelationship.getReverseDbRelationshipPath() + "." + attribute.getName()),
                             (Class) attribute.getType()));
                 }
+
                 // transfer expression from parent
-                if (entity.getSelect().getQualifier() != null) {
-                    child.andQualifier(translateExpressionToSource(objRelationship, entity.getSelect().getQualifier()));
+                if (parentSelect.getQualifier() != null) {
+                    child.andQualifier(translateExpressionToSource(objRelationship, parentSelect.getQualifier()));
                 }
 
                 SelectQuery childQuery = buildQuery(context, child);
@@ -197,10 +201,9 @@ public class CayenneUpdateStage extends CayenneMergeChangesStage {
 
 
     protected <T> List<T> fetchEntity(UpdateContext<T> context, ResourceEntity<T> resourceEntity) {
-        SelectQuery<T> select = resourceEntity.getSelect();
 
+        SelectQuery<T> select = CayenneProcessor.getQuery(resourceEntity);
         List<T> objects = CayenneUpdateStartStage.cayenneContext(context).select(select);
-
         fetchChildren(context, resourceEntity, resourceEntity.getChildren());
 
         return objects;

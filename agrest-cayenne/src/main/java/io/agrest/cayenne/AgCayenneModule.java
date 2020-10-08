@@ -29,7 +29,7 @@ import java.util.Objects;
  */
 public class AgCayenneModule implements Module {
 
-    private ICayennePersister persister;
+    private final ICayennePersister persister;
 
     public AgCayenneModule(ICayennePersister persister) {
         this.persister = Objects.requireNonNull(persister);

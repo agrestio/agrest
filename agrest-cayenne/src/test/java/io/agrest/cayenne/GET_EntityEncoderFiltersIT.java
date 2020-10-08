@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import io.agrest.Ag;
 import io.agrest.DataResponse;
 import io.agrest.SelectStage;
+import io.agrest.cayenne.processor.CayenneProcessor;
 import io.agrest.cayenne.unit.AgCayenneTester;
 import io.agrest.cayenne.unit.DbTest;
 import io.agrest.encoder.Encoder;
@@ -185,7 +186,7 @@ public class GET_EntityEncoderFiltersIT extends DbTest {
                     .stage(SelectStage.APPLY_SERVER_PARAMS,
                             c -> RESOURCE_ENTITY_IS_FILTERED = c.getEntity().isFiltered())
                     .stage(SelectStage.ASSEMBLE_QUERY,
-                            c -> QUERY_PAGE_SIZE = c.getEntity().getSelect().getPageSize())
+                            c -> QUERY_PAGE_SIZE = CayenneProcessor.getQuery(c.getEntity()).getPageSize())
                     .get();
         }
 

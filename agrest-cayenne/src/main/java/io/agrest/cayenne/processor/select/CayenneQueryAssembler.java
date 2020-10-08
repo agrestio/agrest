@@ -1,10 +1,7 @@
 package io.agrest.cayenne.processor.select;
 
-import io.agrest.AgException;
-import io.agrest.AgObjectId;
-import io.agrest.NestedResourceEntity;
-import io.agrest.ResourceEntity;
-import io.agrest.RootResourceEntity;
+import io.agrest.*;
+import io.agrest.cayenne.processor.CayenneProcessor;
 import io.agrest.cayenne.processor.CayenneUtil;
 import io.agrest.meta.AgAttribute;
 import io.agrest.meta.AgEntity;
@@ -12,11 +9,7 @@ import io.agrest.runtime.processor.select.SelectContext;
 import org.apache.cayenne.exp.Expression;
 import org.apache.cayenne.exp.ExpressionFactory;
 import org.apache.cayenne.exp.Property;
-import org.apache.cayenne.map.DbAttribute;
-import org.apache.cayenne.map.EntityResolver;
-import org.apache.cayenne.map.ObjAttribute;
-import org.apache.cayenne.map.ObjEntity;
-import org.apache.cayenne.map.ObjRelationship;
+import org.apache.cayenne.map.*;
 import org.apache.cayenne.query.Ordering;
 import org.apache.cayenne.query.SelectQuery;
 
@@ -25,7 +18,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
-import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 /**
@@ -90,9 +82,11 @@ public class CayenneQueryAssembler {
     protected Expression resolveQualifier(NestedResourceEntity<?> entity, String outgoingDbPath) {
 
         ResourceEntity<?> parent = entity.getParent();
-        if (parent.getSelect() != null) {
+        SelectQuery<?> select = CayenneProcessor.getQuery(parent);
 
-            Expression parentQualifier = parent.getSelect().getQualifier();
+        if (select != null) {
+
+            Expression parentQualifier = select.getQualifier();
 
             if (parentQualifier == null) {
                 return null;
@@ -195,9 +189,13 @@ public class CayenneQueryAssembler {
 
     public <T> SelectQuery<T> createQuery(ResourceEntity<T> entity) {
 
-        SelectQuery<T> query = entity.getSelect() != null
-                ? entity.getSelect()
-                : new SelectQuery<>(entity.getType());
+        // TODO: should we ignore previously set resource query here instead of modifying it here
+        // TODO: the returned query may be an Object[] or T query
+
+        SelectQuery<T> query = CayenneProcessor.getQuery(entity);
+        if (query == null) {
+            query = new SelectQuery<>(entity.getType());
+        }
 
         if (!entity.isFiltered()) {
             int limit = entity.getFetchLimit();
