@@ -28,21 +28,20 @@ public class CayenneQueryAssemblerTest extends CayenneNoDbTest {
         Ordering o1 = E1.NAME.asc();
         Ordering o2 = E1.NAME.desc();
 
-        SelectQuery<E1> query = new SelectQuery<>(E1.class);
-        query.addOrdering(o1);
+        RootResourceEntity<E1> entity = getResourceEntity(E1.class);
+        entity.getOrderings().add(o1);
+        SelectContext<E1> c = new SelectContext<>(E1.class);
+        c.setEntity(entity);
 
-        RootResourceEntity<E1> resourceEntity = getResourceEntity(E1.class);
-        resourceEntity.getOrderings().add(o2);
+        SelectQuery<E1> q1 = queryAssembler.createRootQuery(c);
+        assertEquals(1, q1.getOrderings().size());
+        assertSame(o1, q1.getOrderings().get(0));
 
-        SelectContext<E1> context = new SelectContext<>(E1.class);
-        CayenneProcessor.setQuery(resourceEntity, query);
-        context.setEntity(resourceEntity);
-
-        SelectQuery<E1> amended = queryAssembler.createRootQuery(context);
-        assertSame(query, amended);
-        assertEquals(2, amended.getOrderings().size());
-        assertSame(o1, amended.getOrderings().get(0));
-        assertSame(o2, amended.getOrderings().get(1));
+        entity.getOrderings().add(o2);
+        SelectQuery<E1> q2 = queryAssembler.createRootQuery(c);
+        assertEquals(2, q2.getOrderings().size());
+        assertSame(o1, q2.getOrderings().get(0));
+        assertSame(o2, q2.getOrderings().get(1));
     }
 
     @Test
@@ -82,26 +81,18 @@ public class CayenneQueryAssemblerTest extends CayenneNoDbTest {
     @Test
     public void testCreateRootQuery_Qualifier() {
         Expression extraQualifier = E1.NAME.eq("X");
-        RootResourceEntity<E1> resourceEntity = getResourceEntity(E1.class);
+        RootResourceEntity<E1> entity = getResourceEntity(E1.class);
 
-        resourceEntity.andQualifier(extraQualifier);
+        SelectContext<E1> c = new SelectContext<>(E1.class);
+        c.setEntity(entity);
 
-        SelectContext<E1> c1 = new SelectContext<>(E1.class);
-        c1.setEntity(resourceEntity);
+        entity.andQualifier(extraQualifier);
+        SelectQuery<E1> q1 = queryAssembler.createRootQuery(c);
+        assertEquals(extraQualifier, q1.getQualifier());
 
-        SelectQuery<E1> query = queryAssembler.createRootQuery(c1);
-        assertEquals(extraQualifier, query.getQualifier());
-
-        SelectQuery<E1> query2 = new SelectQuery<>(E1.class);
-        query2.setQualifier(E1.NAME.in("a", "b"));
-
-        SelectContext<E1> c2 = new SelectContext<>(E1.class);
-        CayenneProcessor.setQuery(resourceEntity, query2);
-
-        c2.setEntity(resourceEntity);
-
-        SelectQuery<E1> query2Amended = queryAssembler.createRootQuery(c2);
-        assertEquals(E1.NAME.in("a", "b").andExp(E1.NAME.eq("X")), query2Amended.getQualifier());
+        entity.andQualifier(E1.NAME.in("a", "b"));
+        SelectQuery<E1> q2 = queryAssembler.createRootQuery(c);
+        assertEquals(E1.NAME.eq("X").andExp(E1.NAME.in("a", "b")), q2.getQualifier());
     }
 
     @Test

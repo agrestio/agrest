@@ -35,7 +35,7 @@ public class CayenneQueryAssembler {
 
         SelectQuery<T> query = context.getId() != null
                 ? createRootIdQuery(context.getEntity(), context.getId())
-                : createQuery(context.getEntity());
+                : createBaseQuery(context.getEntity());
 
         if (context.getParent() != null) {
             query.andQualifier(CayenneUtil.parentQualifier(context.getParent(), cayenneEntityResolver));
@@ -46,7 +46,7 @@ public class CayenneQueryAssembler {
 
     public <T> SelectQuery<T> createQueryWithParentQualifier(NestedResourceEntity<T> entity) {
 
-        SelectQuery<T> query = createQuery(entity);
+        SelectQuery<T> query = createBaseQuery(entity);
 
         ObjRelationship objRelationship = objRelationshipForIncomingRelationship(entity);
         String reversePath = objRelationship.getReverseDbRelationshipPath();
@@ -128,7 +128,7 @@ public class CayenneQueryAssembler {
 
     public <T, P> SelectQuery<T> createQueryWithParentIdsQualifier(NestedResourceEntity<T> entity, Iterator<P> parentData) {
 
-        SelectQuery<T> query = createQuery(entity);
+        SelectQuery<T> query = createBaseQuery(entity);
 
         ObjRelationship objRelationship = objRelationshipForIncomingRelationship(entity);
         String outgoingPath = objRelationship.getReverseDbRelationshipPath();
@@ -187,15 +187,9 @@ public class CayenneQueryAssembler {
         return query;
     }
 
-    public <T> SelectQuery<T> createQuery(ResourceEntity<T> entity) {
+    protected <T> SelectQuery<T> createBaseQuery(ResourceEntity<T> entity) {
 
-        // TODO: should we ignore previously set resource query here instead of modifying it here
-        // TODO: the returned query may be an Object[] or T query
-
-        SelectQuery<T> query = CayenneProcessor.getQuery(entity);
-        if (query == null) {
-            query = new SelectQuery<>(entity.getType());
-        }
+        SelectQuery<T> query = new SelectQuery<>(entity.getType());
 
         if (!entity.isFiltered()) {
             int limit = entity.getFetchLimit();
