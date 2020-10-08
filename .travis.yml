@@ -2,7 +2,6 @@ language: java
 
 jdk:
   - openjdk8
-  - oraclejdk11
 
 # This prevents Travis from running "mvn install" on its own before running our script
 install: /bin/true
