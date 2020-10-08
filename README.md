@@ -3,7 +3,7 @@
 
 Agrest (formerly "LinkRest") is a flexible model-driven REST data service framework. It helps to optimize REST interactions and avoid excessive requests to server when navigating data graphs on the client. Visit [our site](http://agrest.io/) for more information. 
 
-_This is branch dedicated to supporting Agrest 3.x line of releases. It works with Cayenne 4.0 and 4.1_
+_This branch is dedicated to supporting Agrest 3.x line of development. It provides integration with Cayenne 4.0 and 4.1._
 
 Quick links:
 
