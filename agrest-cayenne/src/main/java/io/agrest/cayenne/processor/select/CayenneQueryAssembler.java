@@ -68,7 +68,7 @@ public class CayenneQueryAssembler {
 
         // Translate expression from parent.
         // Find the closest parent in the chain that has a query of its own, and use that as a base.
-        Expression parentQualifier = resolveQualifier(entity, null);
+        Expression parentQualifier = resolveParentQualifier(entity, null);
         if (parentQualifier != null) {
             query.andQualifier(parentQualifier);
         }
@@ -79,7 +79,7 @@ public class CayenneQueryAssembler {
     // using dbpaths for all expression operations on the theory that some object paths can be unidirectional, and
     // hence may be missing for some relationships (although all "incoming" relationships along the parents chain
     // should be present, no?)
-    protected Expression resolveQualifier(NestedResourceEntity<?> entity, String outgoingDbPath) {
+    protected Expression resolveParentQualifier(NestedResourceEntity<?> entity, String outgoingDbPath) {
 
         ResourceEntity<?> parent = entity.getParent();
         SelectQuery<?> select = CayenneProcessor.getQuery(parent);
@@ -118,7 +118,7 @@ public class CayenneQueryAssembler {
                             fullDbPath);
         }
 
-        return resolveQualifier((NestedResourceEntity) parent, fullDbPath);
+        return resolveParentQualifier((NestedResourceEntity) parent, fullDbPath);
     }
 
     private String concatWithParentDbPath(ObjRelationship incoming, String outgoingDbPath) {
