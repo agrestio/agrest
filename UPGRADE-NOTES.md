@@ -1,3 +1,9 @@
+## Upgrading to 4.0
+
+### Cayenne 4.2
+
+This release is integrated with Cayenne 4.2 and will not work with earlier Cayenne releases. 
+
 ## Upgrading to 3.7
 
 ### "SelectBuilder.property()" replaced with simpler "SelectBuilder.entityAttribute()" [#452](https://github.com/agrestio/agrest/issues/452) 
