@@ -3,7 +3,16 @@
 ### "SelectBuilder.property()" replaced with simpler "SelectBuilder.entityAttribute()" [#452](https://github.com/agrestio/agrest/issues/452) 
 
 As a part of the effort to consolidate various customization APIs, two "SelectBuilder.property()" methods were replaced
-with a single "SelectBuilder.entityAttribute()" method that relies on the standard entity overlay customization mechanism behind the scenes. It is more user-friendly, as it allows a user to provide `Function<T, V> reader` instead of an obscure `EntityProperty property`.
+with a single "SelectBuilder.entityAttribute()" method that relies on the standard entity overlay customization 
+mechanism behind the scenes. It is more user-friendly, as it allows a user to provide `Function<T, V> reader` 
+instead of an obscure `EntityProperty property`.
+
+### "ResourceEntity.getSelect()" is not available [#453](https://github.com/agrestio/agrest/issues/453) 
+
+`ResourceEntity.getSelect()` is removed, so that there's no direct Cayenne dependency in generic Agrest API. 
+While there's still a way to access it using `CayenneProcessor` class, you will no longer be able to set an arbitrary
+query as a "template" for Cayenne. So if you need to customize query parameters, such as expressions, orderings, includes,
+look into using ResourceEntity API instead.
 
 ## Upgrading to 3.6
 
