@@ -70,7 +70,7 @@ public class ViaParentPrefetchResolver extends BaseNestedDataResolver<DataObject
         // TODO: what about multi-step prefetches? How do we locate parent then?
 
         // assuming the parent is a DataObject. CayenneNestedDataResolverBuilder ensures that it is
-        return DataObjectPropertyReader.reader();
+        return DataObjectPropertyReader.reader(entity.getIncoming().getName());
     }
 
     protected Iterable<DataObject> dataIterable(NestedResourceEntity<DataObject> entity, Iterable<? extends DataObject> parentData) {

@@ -41,7 +41,7 @@ public class EntityNoIdEncoder extends AbstractEncoder {
         for (Map.Entry<String, EntityProperty> e : combinedEncoders.entrySet()) {
             EntityProperty p = e.getValue();
             String propertyName = e.getKey();
-            Object v = object == null ? null : p.getReader().value(object, propertyName);
+            Object v = object == null ? null : p.getReader().value(object);
             p.getEncoder().encode(propertyName, v, out);
         }
     }
@@ -65,7 +65,7 @@ public class EntityNoIdEncoder extends AbstractEncoder {
 
                 visitor.push(e.getKey());
 
-                int propBitmask = e.getValue().visit(object, e.getKey(), visitor);
+                int propBitmask = e.getValue().visit(object, visitor);
 
                 if ((propBitmask & VISIT_SKIP_ALL) != 0) {
                     return VISIT_SKIP_ALL;

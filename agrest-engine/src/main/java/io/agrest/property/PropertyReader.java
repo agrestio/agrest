@@ -3,5 +3,8 @@ package io.agrest.property;
 @FunctionalInterface
 public interface PropertyReader {
 
-    Object value(Object root, String name);
+    /**
+     * @since 3.7
+     */
+    Object value(Object object);
 }

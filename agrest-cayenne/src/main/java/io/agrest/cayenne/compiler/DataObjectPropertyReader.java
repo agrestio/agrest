@@ -5,14 +5,18 @@ import org.apache.cayenne.DataObject;
 
 public class DataObjectPropertyReader implements PropertyReader {
 
-	private static final PropertyReader instance = new DataObjectPropertyReader();
+	private final String propertyName;
 
-	public static PropertyReader reader() {
-		return instance;
+	public static PropertyReader reader(String propertyName) {
+		return new DataObjectPropertyReader(propertyName);
+	}
+
+	protected DataObjectPropertyReader(String propertyName) {
+		this.propertyName = propertyName;
 	}
 
 	@Override
-	public Object value(Object root, String name) {
-		return ((DataObject) root).readProperty(name);
+	public Object value(Object root) {
+		return ((DataObject) root).readProperty(propertyName);
 	}
 }

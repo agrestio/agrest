@@ -70,7 +70,7 @@ class ByIdObjectMapper<T> implements ObjectMapper<T> {
     public Object keyForObject(T object) {
         Map<String, Object> idMap = new HashMap<>();
         for (AgAttribute id : entity.getIds()) {
-            idMap.put(id.getPathExp().getPath(), id.getPropertyReader().value(object, id.getName()));
+            idMap.put(id.getPathExp().getPath(), id.getPropertyReader().value(object));
         }
         return idMap;
     }

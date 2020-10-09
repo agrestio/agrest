@@ -47,7 +47,7 @@ public class SenchaEntityToOneEncoder implements Encoder {
         if (propertyName != null) {
             String idPropertyName = idPropertyName(propertyName);
 
-            Object v = object == null ? null : idEncoder.getReader().value(object, idPropertyName);
+            Object v = object == null ? null : idEncoder.getReader().value(object);
             idEncoder.getEncoder().encode(idPropertyName, v, out);
         }
     }

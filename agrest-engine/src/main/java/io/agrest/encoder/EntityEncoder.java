@@ -26,7 +26,7 @@ public class EntityEncoder extends EntityNoIdEncoder {
     }
 
     protected void encodeId(Object object, JsonGenerator out) throws IOException {
-        Object v = object == null ? null : idProperty.getReader().value(object, PathConstants.ID_PK_ATTRIBUTE);
+        Object v = object == null ? null : idProperty.getReader().value(object);
         idProperty.getEncoder().encode(PathConstants.ID_PK_ATTRIBUTE, v, out);
     }
 }

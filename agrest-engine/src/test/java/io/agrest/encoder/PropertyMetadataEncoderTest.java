@@ -21,13 +21,13 @@ public class PropertyMetadataEncoderTest {
 
     @Test
     public void testEncode_StringAttribute() {
-        AgAttribute attribute = new DefaultAgAttribute("prop", String.class, new ASTObjPath("prop"), BeanPropertyReader.reader());
+        AgAttribute attribute = new DefaultAgAttribute("prop", String.class, new ASTObjPath("prop"), BeanPropertyReader.reader("prop"));
         assertEquals("{\"name\":\"prop\",\"type\":\"string\"}", toJson(encoder, attribute));
     }
 
     @Test
     public void testEncode_ObjectAttribute() {
-        AgAttribute attribute = new DefaultAgAttribute("prop", Object.class, new ASTObjPath("prop"), BeanPropertyReader.reader());
+        AgAttribute attribute = new DefaultAgAttribute("prop", Object.class, new ASTObjPath("prop"), BeanPropertyReader.reader("prop"));
         assertEquals("{\"name\":\"prop\",\"type\":\"unknown\"}", toJson(encoder, attribute));
     }
 
@@ -35,7 +35,7 @@ public class PropertyMetadataEncoderTest {
     public void testEncode_ToOneRelationship() {
         AgEntity<T> target = mock(AgEntity.class);
         when(target.getName()).thenReturn("T");
-        AgRelationship r = new DefaultAgRelationship("rel", target, false, new ReaderBasedResolver(BeanPropertyReader.reader()));
+        AgRelationship r = new DefaultAgRelationship("rel", target, false, new ReaderBasedResolver(BeanPropertyReader.reader("rel")));
         assertEquals("{\"name\":\"rel\",\"type\":\"T\",\"relationship\":true}", toJson(encoder, r));
     }
 
@@ -43,7 +43,7 @@ public class PropertyMetadataEncoderTest {
     public void testEncode_ToManyRelationship() {
         AgEntity<T> target = mock(AgEntity.class);
         when(target.getName()).thenReturn("T");
-        AgRelationship r = new DefaultAgRelationship("rel", target, true, new ReaderBasedResolver(BeanPropertyReader.reader()));
+        AgRelationship r = new DefaultAgRelationship("rel", target, true, new ReaderBasedResolver(BeanPropertyReader.reader("rel")));
         assertEquals("{\"name\":\"rel\",\"type\":\"T\",\"relationship\":true,\"collection\":true}", toJson(encoder, r));
     }
 

@@ -22,10 +22,9 @@ public interface EntityProperty {
     PropertyReader getReader();
 
     /**
-     * A graph traversal method that recursively visits all graph nodes that
-     * will be encoded with this encoder.
+     * A graph traversal method that recursively visits all graph nodes that will be encoded with this encoder.
      *
      * @since 2.0
      */
-    int visit(Object object, String propertyName, EncoderVisitor visitor);
+    int visit(Object object, EncoderVisitor visitor);
 }

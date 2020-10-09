@@ -12,6 +12,6 @@ public class ResourceEntityUtils {
     }
 
     public static void appendAttribute(ResourceEntity<?> entity, String name, Class<?> type) {
-        entity.addAttribute(new DefaultAgAttribute(name, type, new ASTObjPath(name), BeanPropertyReader.reader()), false);
+        entity.addAttribute(new DefaultAgAttribute(name, type, new ASTObjPath(name), BeanPropertyReader.reader(name)), false);
     }
 }
