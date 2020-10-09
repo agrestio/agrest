@@ -4,6 +4,7 @@
 * #451 Remove API deprecated in 3.4 or earlier
 * #452 Replace SelectBuilder.property(..) with overlay-based API
 * #453 Remove Cayenne SelectQuery from ResourceEntity
+* #454 Remove property name from property reader signature
 
 ## Release 3.6
 

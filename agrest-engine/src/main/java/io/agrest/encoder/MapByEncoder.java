@@ -3,30 +3,24 @@ package io.agrest.encoder;
 import com.fasterxml.jackson.core.JsonGenerator;
 import io.agrest.AgException;
 import io.agrest.NestedResourceEntity;
-import io.agrest.EntityProperty;
 import io.agrest.ResourceEntity;
 import io.agrest.encoder.converter.StringConverter;
 import io.agrest.meta.AgAttribute;
 import io.agrest.meta.AgRelationship;
+import io.agrest.property.PropertyReader;
 import io.agrest.runtime.encoder.IAttributeEncoderFactory;
 import io.agrest.runtime.encoder.IStringConverterFactory;
 
 import javax.ws.rs.core.Response.Status;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Objects;
-import java.util.function.Function;
 
 public class MapByEncoder implements CollectionEncoder {
 
-    private String mapByPath;
-    private List<Function<Object, ?>> mapByReaders;
-    private CollectionEncoder collectionEncoder;
+    private final String mapByPath;
+    private final List<PropertyReader> mapByReaders;
+    private final CollectionEncoder collectionEncoder;
     private boolean byId;
     private StringConverter fieldNameConverter;
 
@@ -44,10 +38,6 @@ public class MapByEncoder implements CollectionEncoder {
         this.collectionEncoder = collectionEncoder;
 
         config(converterFactory, encoderFactory, mapBy);
-    }
-
-    private static Function<Object, ?> getPropertyReader(String propertyName, EntityProperty property) {
-        return it -> property.getReader().value(it, propertyName);
     }
 
     @Override
@@ -73,7 +63,7 @@ public class MapByEncoder implements CollectionEncoder {
             validateLeafMapBy(mapBy);
             byId = true;
 
-            encoderFactory.getIdProperty(mapBy).ifPresent(p -> this.mapByReaders.add(getPropertyReader(null, p)));
+            encoderFactory.getIdProperty(mapBy).ifPresent(p -> this.mapByReaders.add(p.getReader()));
             this.fieldNameConverter = converterFactory.getConverter(mapBy.getAgEntity());
             return;
         }
@@ -84,10 +74,7 @@ public class MapByEncoder implements CollectionEncoder {
             byId = false;
 
             Map.Entry<String, AgAttribute> attribute = mapBy.getAttributes().entrySet().iterator().next();
-            mapByReaders.add(getPropertyReader(
-                    attribute.getKey(),
-                    encoderFactory.getAttributeProperty(mapBy, attribute.getValue())));
-
+            this.mapByReaders.add(encoderFactory.getAttributeProperty(mapBy, attribute.getValue()).getReader());
             this.fieldNameConverter = converterFactory.getConverter(mapBy.getAgEntity(), attribute.getKey());
             return;
         }
@@ -101,9 +88,7 @@ public class MapByEncoder implements CollectionEncoder {
             // TODO: to account for overlaid relationships (and avoid NPEs), we should not access agEntity...
             //  instead should look for incoming rel of a child ResourceEntity.. Is is present in MapBy case?
             AgRelationship relationship = mapBy.getChild(child.getKey()).getIncoming();
-            mapByReaders.add(getPropertyReader(
-                    child.getKey(),
-                    encoderFactory.getRelationshipProperty(mapBy, relationship, null)));
+            this.mapByReaders.add(encoderFactory.getRelationshipProperty(mapBy, relationship, null).getReader());
 
             ResourceEntity<?> childMapBy = mapBy.getChildren().get(child.getKey());
             config(converterFactory, encoderFactory, childMapBy);
@@ -112,7 +97,7 @@ public class MapByEncoder implements CollectionEncoder {
 
         // by default we are dealing with ID
         byId = true;
-        encoderFactory.getIdProperty(mapBy).ifPresent(p -> mapByReaders.add(getPropertyReader(null, p)));
+        encoderFactory.getIdProperty(mapBy).ifPresent(p -> mapByReaders.add(p.getReader()));
         fieldNameConverter = converterFactory.getConverter(mapBy.getAgEntity());
     }
 
@@ -159,12 +144,12 @@ public class MapByEncoder implements CollectionEncoder {
     private Object mapByValue(Object object) {
         Object result = object;
 
-        for (Function<Object, ?> reader : mapByReaders) {
+        for (PropertyReader reader : mapByReaders) {
             if (result == null) {
                 break;
             }
 
-            result = reader.apply(result);
+            result = reader.value(result);
         }
 
         return result;

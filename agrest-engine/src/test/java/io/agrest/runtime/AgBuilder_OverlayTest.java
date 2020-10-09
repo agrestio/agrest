@@ -31,12 +31,12 @@ public class AgBuilder_OverlayTest {
         AgAttribute x_adHoc = entity.getAttribute("adHoc");
         assertNotNull(x_adHoc);
         assertEquals(Integer.class, x_adHoc.getType());
-        assertEquals(2, x_adHoc.getPropertyReader().value(x, "adHoc"));
+        assertEquals(2, x_adHoc.getPropertyReader().value(x));
 
         AgAttribute x_Unchanged = entity.getAttribute("name");
         assertNotNull(x_Unchanged);
         assertEquals(String.class, x_Unchanged.getType());
-        assertEquals("aname", x_Unchanged.getPropertyReader().value(x, "name"));
+        assertEquals("aname", x_Unchanged.getPropertyReader().value(x));
     }
 
     @Test
@@ -55,12 +55,12 @@ public class AgBuilder_OverlayTest {
         AgAttribute replaced = entity.getAttribute("phoneNumber");
         assertNotNull(replaced);
         assertEquals(Long.class, replaced.getType());
-        assertEquals(3_333_333L, replaced.getPropertyReader().value(x, "phoneNumber"));
+        assertEquals(3_333_333L, replaced.getPropertyReader().value(x));
 
         AgAttribute unchanged = entity.getAttribute("name");
         assertNotNull(unchanged);
         assertEquals(String.class, unchanged.getType());
-        assertEquals("aname", unchanged.getPropertyReader().value(x, "name"));
+        assertEquals("aname", unchanged.getPropertyReader().value(x));
     }
 
     @Test

@@ -30,19 +30,18 @@ public class AgEntityOverlay<T> {
         this.relationships = new HashMap<>();
     }
 
-    // lose generics ... PropertyReader is not parameterized
-    private static PropertyReader asPropertyReader(Function reader) {
-        return (o, n) -> reader.apply(o);
+    private static PropertyReader fromFunction(Function<?, ?> f) {
+        // lose generics. PropertyReader is not parameterized
+        Function fx = f;
+        return fx::apply;
     }
 
     private static <T> NestedDataResolver<T> resolverForReader(Function<?, T> reader) {
-        // lose generics. PropertyReader is not parameterized
-        return new ReaderBasedResolver<>((o, n) -> ((Function) reader).apply(o));
+        return new ReaderBasedResolver<>(fromFunction(reader));
     }
 
     static <T> NestedDataResolver<T> resolverForListReader(Function<?, List<T>> reader) {
-        // lose generics. PropertyReader is not parameterized
-        return new ReaderBasedResolver<>((o, n) -> ((Function) reader).apply(o));
+        return new ReaderBasedResolver<>(fromFunction(reader));
     }
 
     /**
@@ -102,7 +101,7 @@ public class AgEntityOverlay<T> {
      * @since 3.4
      */
     public <V> AgEntityOverlay<T> redefineAttribute(String name, Class<V> valueType, Function<T, V> reader) {
-        attributes.put(name, new DefaultAgAttribute(name, valueType, new ASTObjPath(name), asPropertyReader(reader)));
+        attributes.put(name, new DefaultAgAttribute(name, valueType, new ASTObjPath(name), fromFunction(reader)));
         return this;
     }
 

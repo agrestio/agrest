@@ -33,11 +33,7 @@ public class AttributeEncoderFactory implements IAttributeEncoderFactory {
 
         // Can't cache the reader, as it may be overlaid and hence request state-dependent
         Encoder encoder = getEncoder(attribute.getType());
-
-        // all attributes these days have a reader, but check just in case
-        return attribute.getPropertyReader() != null
-                ? PropertyBuilder.property(attribute.getPropertyReader()).encodedWith(encoder)
-                : PropertyBuilder.property().encodedWith(encoder);
+        return PropertyBuilder.property(attribute.getPropertyReader()).encodedWith(encoder);
     }
 
     @Override
@@ -46,10 +42,7 @@ public class AttributeEncoderFactory implements IAttributeEncoderFactory {
         NestedResourceEntity childEntity = entity.getChild(relationship.getName());
         PropertyReader reader = relationship.getResolver().reader(childEntity);
 
-        // all relationships these days have a reader, but check just in case
-        return reader != null
-                ? PropertyBuilder.property(reader).encodedWith(encoder)
-                : PropertyBuilder.property().encodedWith(encoder);
+        return PropertyBuilder.property(reader).encodedWith(encoder);
     }
 
     @Override
@@ -68,12 +61,9 @@ public class AttributeEncoderFactory implements IAttributeEncoderFactory {
                 return Optional.empty();
             case 1:
 
-                // TODO: abstraction leak... IdReader is not a property (it doesn't take property name to resolve a value),
-                //  yet in EntityProperty it is treated as a property, so wrapping it in one
-
                 IdReader ir1 = entity.getAgEntity().getIdReader();
                 EntityProperty p1 = PropertyBuilder
-                        .property((r, n) -> ir1.id(r))
+                        .property(ir1::id)
                         .encodedWith(new IdEncoder(getEncoder(ids.iterator().next().getType())));
                 return Optional.of(p1);
 
@@ -85,11 +75,9 @@ public class AttributeEncoderFactory implements IAttributeEncoderFactory {
                     valueEncoders.put(id.getName(), getEncoder(id.getType()));
                 }
 
-                // TODO: abstraction leak... IdReader is not a property (it doesn't take property name to resolve a value),
-                //  yet in EntityProperty it is treated as a property, so wrapping it in one
                 IdReader ir2 = entity.getAgEntity().getIdReader();
                 EntityProperty p2 = PropertyBuilder
-                        .property((r, n) -> ir2.id(r))
+                        .property(ir2::id)
                         .encodedWith(new IdEncoder(valueEncoders));
                 return Optional.of(p2);
         }

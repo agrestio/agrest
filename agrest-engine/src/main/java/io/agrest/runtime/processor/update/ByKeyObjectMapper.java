@@ -16,7 +16,7 @@ class ByKeyObjectMapper<T> implements ObjectMapper<T> {
 
 	@Override
 	public Object keyForObject(T object) {
-		return attribute.getPropertyReader().value(object, attribute.getName());
+		return attribute.getPropertyReader().value(object);
 	}
 
 	@Override

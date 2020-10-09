@@ -6,7 +6,9 @@ import io.agrest.annotation.AgRelationship;
 import io.agrest.base.reflect.BeanAnalyzer;
 import io.agrest.base.reflect.PropertyGetter;
 import io.agrest.property.BeanPropertyReader;
-import io.agrest.property.DefaultIdReader;
+import io.agrest.property.IdReader;
+import io.agrest.property.PropertyIdReader;
+import io.agrest.property.PropertyReader;
 import io.agrest.resolver.NestedDataResolver;
 import io.agrest.resolver.RootDataResolver;
 import io.agrest.resolver.ThrowingRootDataResolver;
@@ -85,7 +87,7 @@ public class AgEntityBuilder<T> {
                 ids,
                 attributes,
                 relationships,
-                new DefaultIdReader(ids.keySet()),
+                createIdReader(),
                 rootDataResolver != null ? rootDataResolver : ThrowingRootDataResolver.getInstance());
     }
 
@@ -121,7 +123,7 @@ public class AgEntityBuilder<T> {
         if (m.getAnnotation(AgAttribute.class) != null) {
 
             if (checkValidAttributeType(type, m.getGenericReturnType())) {
-                addAttribute(new DefaultAgAttribute(name, type, new ASTObjPath(name), BeanPropertyReader.reader()));
+                addAttribute(new DefaultAgAttribute(name, type, new ASTObjPath(name), BeanPropertyReader.reader(name)));
             } else {
                 // still return true after validation failure... this is an attribute, just not a proper one
                 LOGGER.warn("Invalid attribute type for " + this.name + "." + name + ". Skipping.");
@@ -133,7 +135,7 @@ public class AgEntityBuilder<T> {
         if (m.getAnnotation(AgId.class) != null) {
 
             if (checkValidIdType(type)) {
-                addId(new DefaultAgAttribute(name, type, new ASTObjPath(name), BeanPropertyReader.reader()));
+                addId(new DefaultAgAttribute(name, type, new ASTObjPath(name), BeanPropertyReader.reader(name)));
             } else {
                 // still return true after validation failure... this is an
                 // attribute, just not a proper one
@@ -236,5 +238,11 @@ public class AgEntityBuilder<T> {
         if (relationship != null) {
             addRelationship(relationship);
         }
+    }
+
+    protected IdReader createIdReader() {
+        Map<String, PropertyReader> idPropReaders = new HashMap<>();
+        ids.forEach((n, a) -> idPropReaders.put(n, a.getPropertyReader()));
+        return new PropertyIdReader(idPropReaders);
     }
 }

@@ -24,7 +24,7 @@ public class NestedEntityResultReader implements PropertyReader {
     }
 
     @Override
-    public Object value(Object root, String name) {
+    public Object value(Object root) {
         AgObjectId id = readId(root);
         return entity.getResult(id);
     }

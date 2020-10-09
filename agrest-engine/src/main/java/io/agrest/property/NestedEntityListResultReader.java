@@ -18,8 +18,8 @@ public class NestedEntityListResultReader extends NestedEntityResultReader {
     }
 
     @Override
-    public Object value(Object root, String name) {
-        Object value = super.value(root, name);
+    public Object value(Object root) {
+        Object value = super.value(root);
         return value != null ? value : Collections.emptyList();
     }
 }

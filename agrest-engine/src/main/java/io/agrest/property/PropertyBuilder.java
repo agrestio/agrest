@@ -13,10 +13,6 @@ public class PropertyBuilder implements EntityProperty {
 	private Encoder encoder;
 	private PropertyReader reader;
 
-	public static PropertyBuilder property() {
-		return new PropertyBuilder(BeanPropertyReader.reader(), GenericEncoder.encoder());
-	}
-
 	public static PropertyBuilder property(PropertyReader reader) {
 		return new PropertyBuilder(reader, GenericEncoder.encoder());
 	}
@@ -42,8 +38,8 @@ public class PropertyBuilder implements EntityProperty {
 	}
 
 	@Override
-	public int visit(Object root, String propertyName, EncoderVisitor visitor) {
-		Object value = root == null ? null : getReader().value(root, propertyName);
+	public int visit(Object root, EncoderVisitor visitor) {
+		Object value = root == null ? null : getReader().value(root);
 		return encoder.visitEntities(value, visitor);
 	}
 }

@@ -1,28 +1,16 @@
 package io.agrest.cayenne.compiler;
 
-import io.agrest.meta.AgAttribute;
-import io.agrest.meta.AgDataMap;
-import io.agrest.meta.AgEntity;
-import io.agrest.meta.AgEntityBuilder;
-import io.agrest.meta.AgEntityOverlay;
-import io.agrest.meta.AgRelationship;
-import io.agrest.meta.AgRelationshipOverlay;
-import io.agrest.meta.DefaultAgAttribute;
-import io.agrest.meta.DefaultAgEntity;
-import io.agrest.meta.DefaultAgRelationship;
-import io.agrest.property.DefaultIdReader;
+import io.agrest.meta.*;
 import io.agrest.property.IdReader;
+import io.agrest.property.PropertyIdReader;
+import io.agrest.property.PropertyReader;
 import io.agrest.resolver.NestedDataResolver;
 import io.agrest.resolver.RootDataResolver;
 import io.agrest.resolver.ThrowingRootDataResolver;
 import org.apache.cayenne.dba.TypesMapping;
 import org.apache.cayenne.exp.parser.ASTDbPath;
 import org.apache.cayenne.exp.parser.ASTObjPath;
-import org.apache.cayenne.map.DbAttribute;
-import org.apache.cayenne.map.EntityResolver;
-import org.apache.cayenne.map.ObjAttribute;
-import org.apache.cayenne.map.ObjEntity;
-import org.apache.cayenne.map.ObjRelationship;
+import org.apache.cayenne.map.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -91,7 +79,7 @@ public class CayenneAgEntityBuilder<T> {
         buildAnnotatedProperties();
         applyOverlays();
 
-        IdReader idReader = pojoIdReader ? new DefaultIdReader(ids.keySet()) : ObjectIdReader.reader();
+        IdReader idReader = pojoIdReader ? createIdReader() : ObjectIdReader.reader();
 
         return new DefaultAgEntity<>(
                 cayenneEntity.getName(),
@@ -119,7 +107,8 @@ public class CayenneAgEntityBuilder<T> {
 
         for (ObjAttribute a : cayenneEntity.getAttributes()) {
             Class<?> type = typeForName(a.getType());
-            addAttribute(new DefaultAgAttribute(a.getName(), type, new ASTObjPath(a.getName()), DataObjectPropertyReader.reader()));
+            String name = a.getName();
+            addAttribute(new DefaultAgAttribute(name, type, new ASTObjPath(name), DataObjectPropertyReader.reader(name)));
         }
 
         for (ObjRelationship r : cayenneEntity.getRelationships()) {
@@ -145,13 +134,13 @@ public class CayenneAgEntityBuilder<T> {
                         pk.getName(),
                         typeForName(TypesMapping.getJavaBySqlType(pk.getType())),
                         new ASTDbPath(pk.getName()),
-                        ObjectIdValueReader.reader());
+                        ObjectIdValueReader.reader(pk.getName()));
             } else {
                 id = new DefaultAgAttribute(
                         attribute.getName(),
                         typeForName(attribute.getType()),
                         new ASTObjPath(attribute.getName()),
-                        DataObjectPropertyReader.reader());
+                        DataObjectPropertyReader.reader(attribute.getName()));
             }
 
             addId(id);
@@ -223,5 +212,11 @@ public class CayenneAgEntityBuilder<T> {
         if (relationship != null) {
             addRelationship(relationship);
         }
+    }
+
+    protected IdReader createIdReader() {
+        Map<String, PropertyReader> idPropReaders = new HashMap<>();
+        ids.forEach((n, a) -> idPropReaders.put(n, a.getPropertyReader()));
+        return new PropertyIdReader(idPropReaders);
     }
 }

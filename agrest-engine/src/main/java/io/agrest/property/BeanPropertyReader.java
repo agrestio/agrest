@@ -5,19 +5,19 @@ import org.apache.cayenne.reflect.PropertyUtils;
 
 public class BeanPropertyReader implements PropertyReader {
 
-    private static final PropertyReader instance = new BeanPropertyReader();
-
-    public static PropertyReader reader() {
-        return instance;
+    public static PropertyReader reader(String propertyName) {
+        Accessor accessor = PropertyUtils.accessor(propertyName);
+        return new BeanPropertyReader(accessor);
     }
 
-    public static PropertyReader reader(String fixedPropertyName) {
-        Accessor accessor = PropertyUtils.accessor(fixedPropertyName);
-        return (root, name) -> accessor.getValue(root);
+    private final Accessor accessor;
+
+    protected BeanPropertyReader(Accessor accessor) {
+        this.accessor = accessor;
     }
 
     @Override
-    public Object value(Object root, String name) {
-        return PropertyUtils.getProperty(root, name);
+    public Object value(Object object) {
+        return accessor.getValue(object);
     }
 }
