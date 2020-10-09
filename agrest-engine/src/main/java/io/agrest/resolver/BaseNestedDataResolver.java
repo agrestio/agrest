@@ -26,9 +26,7 @@ public abstract class BaseNestedDataResolver<T> extends BaseDataResolver impleme
     }
 
     @Override
-    public PropertyReader reader(NestedResourceEntity<T> entity) {
-        return null;
-    }
+    public abstract PropertyReader reader(NestedResourceEntity<T> entity);
 
     protected abstract void doOnParentQueryAssembled(NestedResourceEntity<T> entity, SelectContext<?> context);
 
