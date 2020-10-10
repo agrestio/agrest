@@ -5,22 +5,17 @@ import io.agrest.annotation.AgId;
 import io.agrest.annotation.AgRelationship;
 import io.agrest.base.reflect.BeanAnalyzer;
 import io.agrest.base.reflect.PropertyGetter;
-import io.agrest.property.BeanPropertyReader;
 import io.agrest.property.IdReader;
 import io.agrest.property.PropertyIdReader;
 import io.agrest.property.PropertyReader;
-import io.agrest.resolver.NestedDataResolver;
+import io.agrest.resolver.ReaderBasedResolver;
 import io.agrest.resolver.RootDataResolver;
 import io.agrest.resolver.ThrowingRootDataResolver;
 import org.apache.cayenne.exp.parser.ASTObjPath;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.lang.reflect.Method;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-import java.lang.reflect.TypeVariable;
-import java.lang.reflect.WildcardType;
+import java.lang.reflect.*;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -39,7 +34,6 @@ public class AgEntityBuilder<T> {
     private final AgDataMap agDataMap;
     private AgEntityOverlay<T> overlay;
     private RootDataResolver<T> rootDataResolver;
-    private NestedDataResolver<T> nestedDataResolver;
 
     private final Map<String, io.agrest.meta.AgAttribute> ids;
     private final Map<String, io.agrest.meta.AgAttribute> attributes;
@@ -65,14 +59,6 @@ public class AgEntityBuilder<T> {
      */
     public AgEntityBuilder<T> rootDataResolver(RootDataResolver<T> resolver) {
         this.rootDataResolver = resolver;
-        return this;
-    }
-
-    /**
-     * @since 3.4
-     */
-    public AgEntityBuilder<T> nestedDataResolver(NestedDataResolver<T> resolver) {
-        this.nestedDataResolver = resolver;
         return this;
     }
 
@@ -123,7 +109,7 @@ public class AgEntityBuilder<T> {
         if (m.getAnnotation(AgAttribute.class) != null) {
 
             if (checkValidAttributeType(type, m.getGenericReturnType())) {
-                addAttribute(new DefaultAgAttribute(name, type, new ASTObjPath(name), BeanPropertyReader.reader(name)));
+                addAttribute(new DefaultAgAttribute(name, type, new ASTObjPath(name), getter::getValue));
             } else {
                 // still return true after validation failure... this is an attribute, just not a proper one
                 LOGGER.warn("Invalid attribute type for " + this.name + "." + name + ". Skipping.");
@@ -135,7 +121,7 @@ public class AgEntityBuilder<T> {
         if (m.getAnnotation(AgId.class) != null) {
 
             if (checkValidIdType(type)) {
-                addId(new DefaultAgAttribute(name, type, new ASTObjPath(name), BeanPropertyReader.reader(name)));
+                addId(new DefaultAgAttribute(name, type, new ASTObjPath(name), getter::getValue));
             } else {
                 // still return true after validation failure... this is an
                 // attribute, just not a proper one
@@ -208,14 +194,11 @@ public class AgEntityBuilder<T> {
                 toMany = true;
             }
 
-            String name = getter.getName();
-            AgEntity<?> targetEntity = agDataMap.getEntity(targetType);
-
             addRelationship(new DefaultAgRelationship(
-                    name,
-                    targetEntity,
+                    getter.getName(),
+                    agDataMap.getEntity(targetType),
                     toMany,
-                    nestedDataResolver)
+                    new ReaderBasedResolver<>(getter::getValue))
             );
         }
 

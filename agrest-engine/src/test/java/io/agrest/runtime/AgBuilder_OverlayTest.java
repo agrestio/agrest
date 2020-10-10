@@ -1,13 +1,13 @@
 package io.agrest.runtime;
 
 import io.agrest.NestedResourceEntity;
-import io.agrest.pojo.model.P1;
 import io.agrest.meta.AgAttribute;
 import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgRelationship;
+import io.agrest.pojo.model.P1;
 import io.agrest.property.PropertyReader;
 import io.agrest.resolver.NestedDataResolver;
-import io.agrest.resolver.ReaderFactoryBasedResolver;
+import io.agrest.resolver.ReaderBasedResolver;
 import io.agrest.runtime.meta.IMetadataService;
 import io.agrest.runtime.processor.select.SelectContext;
 import org.junit.jupiter.api.Test;
@@ -66,7 +66,7 @@ public class AgBuilder_OverlayTest {
     @Test
     public void testOverlay_RedefineRelationshipResolver_Replace() {
 
-        NestedDataResolver<?> resolver = new TestNestedDataResolver();
+        NestedDataResolver<?> resolver = new TestNestedDataResolver<>();
 
         AgRuntime runtime = new AgBuilder()
                 .entityOverlay(AgEntity.overlay(X.class).redefineRelationshipResolver("y", (t, n) -> resolver))
@@ -87,14 +87,14 @@ public class AgBuilder_OverlayTest {
         assertNotNull(unchanged);
         assertSame(metadata.getAgEntity(Z.class), unchanged.getTargetEntity());
         assertNotSame(resolver, unchanged.getResolver());
-        assertTrue(unchanged.getResolver() instanceof ReaderFactoryBasedResolver);
+        assertTrue(unchanged.getResolver() instanceof ReaderBasedResolver);
         assertFalse(unchanged.isToMany());
     }
 
     @Test
     public void testOverlay_RedefineRelationshipResolver_New() {
 
-        NestedDataResolver<?> resolver = new TestNestedDataResolver();
+        NestedDataResolver<?> resolver = new TestNestedDataResolver<>();
 
         AgRuntime runtime = new AgBuilder()
                 .entityOverlay(AgEntity.overlay(X.class).redefineRelationshipResolver("adHoc", (t, n) -> resolver))
@@ -112,7 +112,7 @@ public class AgBuilder_OverlayTest {
         assertNotNull(unchanged);
         assertSame(metadata.getAgEntity(Z.class), unchanged.getTargetEntity());
         assertNotSame(resolver, unchanged.getResolver());
-        assertTrue(unchanged.getResolver() instanceof ReaderFactoryBasedResolver);
+        assertTrue(unchanged.getResolver() instanceof ReaderBasedResolver);
         assertFalse(unchanged.isToMany());
     }
 
@@ -141,7 +141,7 @@ public class AgBuilder_OverlayTest {
         assertNotNull(unchanged);
         assertSame(metadata.getAgEntity(Z.class), unchanged.getTargetEntity());
         assertNotSame(resolver, unchanged.getResolver());
-        assertTrue(unchanged.getResolver() instanceof ReaderFactoryBasedResolver);
+        assertTrue(unchanged.getResolver() instanceof ReaderBasedResolver);
         assertFalse(unchanged.isToMany());
     }
 
@@ -169,7 +169,7 @@ public class AgBuilder_OverlayTest {
         assertNotNull(unchanged);
         assertSame(metadata.getAgEntity(Z.class), unchanged.getTargetEntity());
         assertNotSame(resolver, unchanged.getResolver());
-        assertTrue(unchanged.getResolver() instanceof ReaderFactoryBasedResolver);
+        assertTrue(unchanged.getResolver() instanceof ReaderBasedResolver);
         assertFalse(unchanged.isToMany());
     }
 
