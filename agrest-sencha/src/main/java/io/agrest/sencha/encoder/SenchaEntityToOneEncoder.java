@@ -1,7 +1,7 @@
 package io.agrest.sencha.encoder;
 
 import com.fasterxml.jackson.core.JsonGenerator;
-import io.agrest.EntityProperty;
+import io.agrest.encoder.EncodableProperty;
 import io.agrest.encoder.Encoder;
 
 import java.io.IOException;
@@ -9,11 +9,11 @@ import java.io.IOException;
 public class SenchaEntityToOneEncoder implements Encoder {
 
     private Encoder objectEncoder;
-    private EntityProperty idEncoder;
+    private EncodableProperty idEncoder;
     private String idPropertyName;
 
 
-    public SenchaEntityToOneEncoder(String idPropertyName, Encoder objectEncoder, EntityProperty idEncoder) {
+    public SenchaEntityToOneEncoder(String idPropertyName, Encoder objectEncoder, EncodableProperty idEncoder) {
         this.idPropertyName = idPropertyName;
         this.objectEncoder = objectEncoder;
         this.idEncoder = idEncoder;

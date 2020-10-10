@@ -1,7 +1,7 @@
 package io.agrest.runtime.encoder;
 
 import io.agrest.NestedResourceEntity;
-import io.agrest.EntityProperty;
+import io.agrest.encoder.EncodableProperty;
 import io.agrest.ResourceEntity;
 import io.agrest.encoder.CollectionEncoder;
 import io.agrest.encoder.DataResponseEncoder;
@@ -25,16 +25,16 @@ import java.util.Optional;
  */
 public class DataEncoderFactory {
 
-    protected IAttributeEncoderFactory attributeEncoderFactory;
+    protected IEncodablePropertyFactory encodablePropertyFactory;
     protected IRelationshipMapper relationshipMapper;
     private IStringConverterFactory stringConverterFactory;
 
     public DataEncoderFactory(
-            IAttributeEncoderFactory attributeEncoderFactory,
+            IEncodablePropertyFactory encodablePropertyFactory,
             IStringConverterFactory stringConverterFactory,
             IRelationshipMapper relationshipMapper) {
 
-        this.attributeEncoderFactory = attributeEncoderFactory;
+        this.encodablePropertyFactory = encodablePropertyFactory;
         this.relationshipMapper = relationshipMapper;
         this.stringConverterFactory = stringConverterFactory;
     }
@@ -62,7 +62,7 @@ public class DataEncoderFactory {
                         entity.getMapBy(),
                         encoder,
                         stringConverterFactory,
-                        attributeEncoderFactory)
+                        encodablePropertyFactory)
                 : encoder;
     }
 
@@ -86,7 +86,7 @@ public class DataEncoderFactory {
                         resourceEntity.getMapBy(),
                         listEncoder,
                         stringConverterFactory,
-                        attributeEncoderFactory)
+                        encodablePropertyFactory)
                 : listEncoder;
     }
 
@@ -114,14 +114,14 @@ public class DataEncoderFactory {
      */
     protected Encoder entityEncoder(ResourceEntity<?> resourceEntity) {
 
-        Map<String, EntityProperty> attributeEncoders = new HashMap<>();
+        Map<String, EncodableProperty> attributeEncoders = new HashMap<>();
 
         for (AgAttribute attribute : resourceEntity.getAttributes().values()) {
-            EntityProperty property = attributeEncoderFactory.getAttributeProperty(resourceEntity, attribute);
+            EncodableProperty property = encodablePropertyFactory.getAttributeProperty(resourceEntity, attribute);
             attributeEncoders.put(attribute.getName(), property);
         }
 
-        Map<String, EntityProperty> relationshipEncoders = new HashMap<>();
+        Map<String, EncodableProperty> relationshipEncoders = new HashMap<>();
         for (Map.Entry<String, NestedResourceEntity<?>> e : resourceEntity.getChildren().entrySet()) {
 
             // read relationship vis child entity to account for overlays
@@ -131,7 +131,7 @@ public class DataEncoderFactory {
                     ? nestedToManyEncoder(e.getValue())
                     : toOneEncoder(e.getValue(), relationship);
 
-            EntityProperty property = attributeEncoderFactory.getRelationshipProperty(
+            EncodableProperty property = encodablePropertyFactory.getRelationshipProperty(
                     resourceEntity,
                     relationship,
                     encoder);
@@ -139,8 +139,8 @@ public class DataEncoderFactory {
             relationshipEncoders.put(e.getKey(), property);
         }
 
-        Optional<EntityProperty> idEncoder = resourceEntity.isIdIncluded()
-                ? attributeEncoderFactory.getIdProperty(resourceEntity)
+        Optional<EncodableProperty> idEncoder = resourceEntity.isIdIncluded()
+                ? encodablePropertyFactory.getIdProperty(resourceEntity)
                 : Optional.empty();
         return idEncoder
                 .map(ide -> (Encoder) new EntityEncoder(ide, attributeEncoders, relationshipEncoders))

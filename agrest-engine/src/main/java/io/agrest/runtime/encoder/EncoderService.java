@@ -13,13 +13,13 @@ import java.util.Map;
 
 public class EncoderService implements IEncoderService {
 
-    protected IAttributeEncoderFactory attributeEncoderFactory;
+    protected IEncodablePropertyFactory attributeEncoderFactory;
     protected IRelationshipMapper relationshipMapper;
     protected IStringConverterFactory stringConverterFactory;
     protected Map<String, PropertyMetadataEncoder> propertyMetadataEncoders;
 
     public EncoderService(
-            @Inject IAttributeEncoderFactory attributeEncoderFactory,
+            @Inject IEncodablePropertyFactory attributeEncoderFactory,
             @Inject IStringConverterFactory stringConverterFactory,
             @Inject IRelationshipMapper relationshipMapper,
             @Inject Map<String, PropertyMetadataEncoder> propertyMetadataEncoders) {

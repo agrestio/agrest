@@ -38,7 +38,7 @@ public class EncoderService_UtilDate_Test {
     public void before() {
 
         this.encoderService = new EncoderService(
-                new AttributeEncoderFactory(new ValueEncodersProvider(Collections.emptyMap()).get()),
+                new EncodablePropertyFactory(new ValueEncodersProvider(Collections.emptyMap()).get()),
                 mock(IStringConverterFactory.class),
                 new RelationshipMapper(),
                 Collections.emptyMap());

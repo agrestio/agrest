@@ -41,11 +41,11 @@ public class EncoderService_Pojo_Test {
 	@BeforeEach
 	public void setUp() {
 
-		IAttributeEncoderFactory aef = new AttributeEncoderFactory(new ValueEncodersProvider(Collections.emptyMap()).get());
+		IEncodablePropertyFactory epf = new EncodablePropertyFactory(new ValueEncodersProvider(Collections.emptyMap()).get());
 		IStringConverterFactory stringConverterFactory = mock(IStringConverterFactory.class);
 
 		this.encoderService = new EncoderService(
-				aef,
+				epf,
 				stringConverterFactory,
 				new RelationshipMapper(),
 				Collections.emptyMap());

@@ -23,9 +23,9 @@ import io.agrest.provider.MetadataResponseWriter;
 import io.agrest.provider.SimpleResponseWriter;
 import io.agrest.runtime.constraints.ConstraintsHandler;
 import io.agrest.runtime.constraints.IConstraintsHandler;
-import io.agrest.runtime.encoder.AttributeEncoderFactory;
+import io.agrest.runtime.encoder.EncodablePropertyFactory;
 import io.agrest.runtime.encoder.EncoderService;
-import io.agrest.runtime.encoder.IAttributeEncoderFactory;
+import io.agrest.runtime.encoder.IEncodablePropertyFactory;
 import io.agrest.runtime.encoder.IEncoderService;
 import io.agrest.runtime.encoder.IStringConverterFactory;
 import io.agrest.runtime.encoder.StringConverterFactoryProvider;
@@ -429,7 +429,7 @@ public class AgBuilder {
 
             // a map of custom encoders
             binder.bindMap(Encoder.class);
-            binder.bind(IAttributeEncoderFactory.class).to(AttributeEncoderFactory.class);
+            binder.bind(IEncodablePropertyFactory.class).to(EncodablePropertyFactory.class);
             binder.bind(ValueEncoders.class).toProvider(ValueEncodersProvider.class);
 
             // a map of custom converters

@@ -12,8 +12,8 @@ import io.agrest.cayenne.persister.ICayennePersister;
 import io.agrest.cayenne.unit.CayenneNoDbTest;
 import io.agrest.encoder.Encoder;
 import io.agrest.encoder.EntityEncoderFilter;
-import io.agrest.runtime.encoder.AttributeEncoderFactory;
-import io.agrest.runtime.encoder.IAttributeEncoderFactory;
+import io.agrest.runtime.encoder.EncodablePropertyFactory;
+import io.agrest.runtime.encoder.IEncodablePropertyFactory;
 import io.agrest.runtime.encoder.IStringConverterFactory;
 import io.agrest.runtime.encoder.ValueEncodersProvider;
 import io.agrest.runtime.jackson.JacksonService;
@@ -47,7 +47,7 @@ public class SenchaEncoderServiceTest extends CayenneNoDbTest {
         when(cayenneService.sharedContext()).thenReturn(sharedContext);
         when(cayenneService.newContext()).thenReturn(CayenneNoDbTest.runtime.newContext());
 
-        IAttributeEncoderFactory aef = new AttributeEncoderFactory(new ValueEncodersProvider(Collections.emptyMap()).get());
+        IEncodablePropertyFactory aef = new EncodablePropertyFactory(new ValueEncodersProvider(Collections.emptyMap()).get());
         IStringConverterFactory stringConverterFactory = mock(IStringConverterFactory.class);
         IRelationshipMapper relationshipMapper = new SenchaRelationshipMapper();
 
