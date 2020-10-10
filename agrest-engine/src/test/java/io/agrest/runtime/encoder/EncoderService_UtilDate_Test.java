@@ -67,7 +67,7 @@ public class EncoderService_UtilDate_Test {
     private void testUtilDate(java.util.Date date, String expectedPattern) {
 
         ResourceEntity<PUtilDate> re = new RootResourceEntity<>(utilDateEntity, null);
-        ResourceEntityUtils.appendAttribute(re, "date", java.util.Date.class);
+        ResourceEntityUtils.appendAttribute(re, "date", java.util.Date.class, PUtilDate::getDate);
 
         PUtilDate o = new PUtilDate();
         o.setDate(date);

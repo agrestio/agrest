@@ -50,7 +50,7 @@ public class EncoderService_DateTime_Test {
     @Test
     public void testLocalDate() {
         ResourceEntity<PDate> re = new RootResourceEntity<>(dateEntity, null);
-        ResourceEntityUtils.appendAttribute(re, "date", LocalDate.class);
+        ResourceEntityUtils.appendAttribute(re, "date", LocalDate.class, PDate::getDate);
 
         LocalDate localDate = LocalDate.now();
 
@@ -73,7 +73,7 @@ public class EncoderService_DateTime_Test {
     private void testLocalTime(LocalTime time, String expectedPattern) {
 
         ResourceEntity<PTime> re = new RootResourceEntity<>(timeEntity, null);
-        ResourceEntityUtils.appendAttribute(re, "time", LocalTime.class);
+        ResourceEntityUtils.appendAttribute(re, "time", LocalTime.class, PTime::getTime);
 
         PTime o = new PTime();
         o.setTime(time);
@@ -94,7 +94,7 @@ public class EncoderService_DateTime_Test {
     private void testLocalDateTime(LocalDateTime dateTime, String expectedPattern) {
 
         ResourceEntity<PDateTime> re = new RootResourceEntity<>(dateTimeEntity, null);
-        ResourceEntityUtils.appendAttribute(re, "timestamp", LocalDateTime.class);
+        ResourceEntityUtils.appendAttribute(re, "timestamp", LocalDateTime.class, PDateTime::getTimestamp);
 
         PDateTime o = new PDateTime();
         o.setTimestamp(dateTime);
@@ -109,13 +109,14 @@ public class EncoderService_DateTime_Test {
         testOffsetDateTime(OffsetDateTime.of(LocalDateTime.of(2017, 1, 1, 10, 0, 0), ZoneOffset.ofHours(3)));
         testOffsetDateTime(OffsetDateTime.of(LocalDateTime.of(2017, 1, 1, 10, 0, 0, 1), ZoneOffset.ofHours(3)));
         testOffsetDateTime(OffsetDateTime.of(LocalDateTime.of(2017, 1, 1, 10, 0, 0, 999_999), ZoneOffset.ofHours(3)));
-        testOffsetDateTime(OffsetDateTime.of(LocalDateTime.of(2017, 1, 1, 10, 0, 0, 1_000_000), ZoneOffset.ofHours(3))); // millisecond is 10^6 nanoseconds
+        // millisecond is 10^6 nanoseconds
+        testOffsetDateTime(OffsetDateTime.of(LocalDateTime.of(2017, 1, 1, 10, 0, 0, 1_000_000), ZoneOffset.ofHours(3)));
     }
 
     private void testOffsetDateTime(OffsetDateTime dateTime) {
 
         ResourceEntity<POffsetDateTime> re = new RootResourceEntity<>(offsetDateTimeEntity, null);
-        ResourceEntityUtils.appendAttribute(re, "timestamp", OffsetDateTime.class);
+        ResourceEntityUtils.appendAttribute(re, "timestamp", OffsetDateTime.class, POffsetDateTime::getTimestamp);
 
         POffsetDateTime o = new POffsetDateTime();
         o.setTimestamp(dateTime);

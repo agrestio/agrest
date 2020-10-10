@@ -6,21 +6,16 @@ import io.agrest.RootResourceEntity;
 import io.agrest.cayenne.compiler.CayenneEntityCompiler;
 import io.agrest.cayenne.persister.ICayennePersister;
 import io.agrest.meta.AgEntity;
-import io.agrest.meta.DefaultAgAttribute;
 import io.agrest.meta.compiler.AgEntityCompiler;
 import io.agrest.meta.compiler.PojoEntityCompiler;
 import io.agrest.meta.parser.IResourceParser;
 import io.agrest.meta.parser.ResourceParser;
-import io.agrest.property.BeanPropertyReader;
 import io.agrest.runtime.meta.*;
 import io.agrest.runtime.processor.select.SelectContext;
 import org.apache.cayenne.ObjectContext;
 import org.apache.cayenne.configuration.server.DataSourceFactory;
 import org.apache.cayenne.configuration.server.ServerRuntime;
 import org.apache.cayenne.di.Module;
-import org.apache.cayenne.exp.parser.ASTObjPath;
-import org.apache.cayenne.exp.parser.ASTPath;
-import org.apache.cayenne.exp.property.Property;
 import org.apache.cayenne.map.ObjEntity;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -40,7 +35,7 @@ import static org.mockito.Mockito.when;
  * A superclass of Cayenne-aware test cases that do not need to access the DB, but need to work with EntityResolver
  * and higher levels of the stack.
  */
-public class CayenneNoDbTest {
+public abstract class CayenneNoDbTest {
 
     protected static ServerRuntime runtime;
 
@@ -123,33 +118,5 @@ public class CayenneNoDbTest {
 
     protected <T> NestedResourceEntity<T> getChildResourceEntity(Class<T> type, ResourceEntity<?> parent, String incoming) {
         return new NestedResourceEntity<>(getAgEntity(type), null, parent, parent.getAgEntity().getRelationship(incoming));
-    }
-
-    protected <T> void appendAttribute(ResourceEntity<?> entity, Property<T> property, Class<T> type) {
-        appendAttribute(entity, property.getName(), type);
-    }
-
-    protected void appendAttribute(ResourceEntity<?> entity, String name, Class<?> type) {
-        entity.addAttribute(new DefaultAgAttribute(name, type, new ASTObjPath(name), BeanPropertyReader.reader(name)), false);
-    }
-
-    protected <T> void appendPersistenceAttribute(ResourceEntity<?> entity, Property<T> property, Class<T> javaType) {
-        appendPersistenceAttribute(entity, property.getName(), javaType);
-    }
-
-    protected void appendPersistenceAttribute(ResourceEntity<?> entity, String name, Class<?> javaType) {
-        entity.addAttribute(new TestAgPersistentAttribute(name, javaType), false);
-    }
-
-    private static class TestAgPersistentAttribute extends DefaultAgAttribute {
-
-        public TestAgPersistentAttribute(String name, Class<?> javaType) {
-            super(name, javaType, new ASTObjPath(name), BeanPropertyReader.reader(name));
-        }
-
-        @Override
-        public ASTPath getPathExp() {
-            return null;
-        }
     }
 }

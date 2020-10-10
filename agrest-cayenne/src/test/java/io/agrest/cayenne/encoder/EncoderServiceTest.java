@@ -12,6 +12,7 @@ import io.agrest.cayenne.cayenne.main.E2;
 import io.agrest.cayenne.cayenne.main.E3;
 import io.agrest.runtime.encoder.*;
 import io.agrest.runtime.semantics.RelationshipMapper;
+import io.agrest.unit.ResourceEntityUtils;
 import org.apache.cayenne.Cayenne;
 import org.apache.cayenne.ObjectContext;
 import org.apache.cayenne.ObjectId;
@@ -65,7 +66,7 @@ public class EncoderServiceTest extends CayenneNoDbTest {
 
         NestedResourceEntity<E3> e3Descriptor = getChildResourceEntity(E3.class, descriptor, E2.E3S.getName());
         e3Descriptor.includeId();
-        appendAttribute(e3Descriptor, E3.NAME, String.class);
+        ResourceEntityUtils.appendAttribute(e3Descriptor, "name", String.class, E3::getName);
 
         descriptor.getChildren().put(E2.E3S.getName(), e3Descriptor);
 
