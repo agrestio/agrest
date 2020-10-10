@@ -1,17 +1,23 @@
 package io.agrest.cayenne.processor.select;
 
 import io.agrest.*;
+import io.agrest.base.protocol.Dir;
+import io.agrest.base.protocol.Sort;
 import io.agrest.cayenne.processor.CayenneProcessor;
 import io.agrest.cayenne.processor.CayenneUtil;
 import io.agrest.meta.AgAttribute;
 import io.agrest.meta.AgEntity;
+import io.agrest.runtime.path.IPathDescriptorManager;
 import io.agrest.runtime.processor.select.SelectContext;
 import org.apache.cayenne.exp.Expression;
 import org.apache.cayenne.exp.ExpressionFactory;
 import org.apache.cayenne.exp.Property;
+import org.apache.cayenne.exp.parser.ASTObjPath;
+import org.apache.cayenne.exp.parser.ASTPath;
 import org.apache.cayenne.map.*;
 import org.apache.cayenne.query.Ordering;
 import org.apache.cayenne.query.SelectQuery;
+import org.apache.cayenne.query.SortOrder;
 
 import javax.ws.rs.core.Response;
 import java.util.ArrayList;
@@ -25,10 +31,12 @@ import java.util.function.Consumer;
  */
 public class CayenneQueryAssembler {
 
-    private EntityResolver cayenneEntityResolver;
+    private final EntityResolver cayenneEntityResolver;
+    private final IPathDescriptorManager pathCache;
 
-    public CayenneQueryAssembler(EntityResolver cayenneEntityResolver) {
+    public CayenneQueryAssembler(EntityResolver cayenneEntityResolver, IPathDescriptorManager pathCache) {
         this.cayenneEntityResolver = cayenneEntityResolver;
+        this.pathCache = pathCache;
     }
 
     public <T> SelectQuery<T> createRootQuery(SelectContext<T> context) {
@@ -202,12 +210,13 @@ public class CayenneQueryAssembler {
             query.andQualifier(entity.getQualifier());
         }
 
-        for (Ordering o : entity.getOrderings()) {
-            query.addOrdering(o);
+        for (Sort o : entity.getOrderings()) {
+            query.addOrdering(toOrdering(entity, o));
         }
 
         return query;
     }
+
 
     public Expression buildIdQualifer(AgEntity<?> entity, AgObjectId id) {
 
@@ -257,5 +266,30 @@ public class CayenneQueryAssembler {
                 ? objAttribute.getDbAttribute()
                 // this is suspect.. don't see how we would allow DbAttribute names to leak in the Ag model
                 : entity.getDbEntity().getAttribute(agAttribute.getName());
+    }
+
+    protected Ordering toOrdering(ResourceEntity<?> entity, Sort sort) {
+        return new Ordering(toCayennePath(entity, sort.getProperty()), toSortOrder(sort.getDirection()));
+    }
+
+    private ASTPath toCayennePath(ResourceEntity<?> entity, String agPath) {
+        return pathCache.getPathDescriptor(
+                entity.getAgEntity(),
+                new ASTObjPath(agPath)).getPathExp();
+    }
+
+    private SortOrder toSortOrder(Dir direction) {
+        switch (direction) {
+            case ASC:
+                return SortOrder.ASCENDING;
+            case ASC_CI:
+                return SortOrder.ASCENDING_INSENSITIVE;
+            case DESC_CI:
+                return SortOrder.DESCENDING_INSENSITIVE;
+            case DESC:
+                return SortOrder.DESCENDING;
+            default:
+                throw new IllegalArgumentException("Missing or unexpected sort direction: " + direction);
+        }
     }
 }

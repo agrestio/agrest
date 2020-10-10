@@ -3,6 +3,7 @@ package io.agrest.cayenne.processor.select;
 import io.agrest.cayenne.persister.ICayennePersister;
 import io.agrest.resolver.NestedDataResolver;
 import io.agrest.resolver.NestedDataResolverFactory;
+import io.agrest.runtime.path.IPathDescriptorManager;
 import org.apache.cayenne.map.ObjEntity;
 import org.apache.cayenne.query.PrefetchTreeNode;
 
@@ -11,10 +12,12 @@ import org.apache.cayenne.query.PrefetchTreeNode;
  */
 public class CayenneNestedDataResolverBuilder {
 
-    private ICayennePersister persister;
+    private final ICayennePersister persister;
+    private final IPathDescriptorManager pathDescriptorManager;
 
-    public CayenneNestedDataResolverBuilder(ICayennePersister persister) {
+    public CayenneNestedDataResolverBuilder(ICayennePersister persister, IPathDescriptorManager pathDescriptorManager) {
         this.persister = persister;
+        this.pathDescriptorManager = pathDescriptorManager;
     }
 
     /**
@@ -47,14 +50,14 @@ public class CayenneNestedDataResolverBuilder {
     protected NestedDataResolver<?> viaQueryWithParentExp(Class<?> parentType, String relationshipName) {
         validateParent(parentType, relationshipName);
         return new ViaQueryWithParentExpResolver(
-                new CayenneQueryAssembler(persister.entityResolver()),
+                new CayenneQueryAssembler(persister.entityResolver(), pathDescriptorManager),
                 persister);
     }
 
     protected NestedDataResolver<?> viaQueryWithParentIds(Class<?> parentType, String relationshipName) {
         validateParent(parentType, relationshipName);
         return new ViaQueryWithParentIdsResolver(
-                new CayenneQueryAssembler(persister.entityResolver()),
+                new CayenneQueryAssembler(persister.entityResolver(), pathDescriptorManager),
                 persister);
     }
 

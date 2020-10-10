@@ -28,4 +28,18 @@ public class Sort {
     public Dir getDirection() {
         return direction;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Sort sort = (Sort) o;
+        return property.equals(sort.property) &&
+                direction == sort.direction;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(property, direction);
+    }
 }

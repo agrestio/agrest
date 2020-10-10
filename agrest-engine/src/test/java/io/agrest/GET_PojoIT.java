@@ -53,7 +53,8 @@ public class GET_PojoIT extends PojoTest {
         tester.p6().put("o1id", o1);
         tester.p6().put("o2id", o2);
 
-        tester.target("/pojo/p6").queryParam("sort", "id").get()
+        tester.target("/pojo/p6").queryParam("sort", "id")
+                .get()
                 .wasOk()
                 .bodyEquals(2, "{\"id\":\"o1id\",\"intProp\":15},{\"id\":\"o2id\",\"intProp\":16}");
     }

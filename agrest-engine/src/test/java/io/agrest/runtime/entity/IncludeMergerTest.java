@@ -41,7 +41,7 @@ public class IncludeMergerTest {
 
         IPathDescriptorManager pathCache = new PathDescriptorManager();
         ICayenneExpMerger expMerger = new CayenneExpMerger(new ExpressionParser(), new ExpressionPostProcessor(pathCache));
-        ISortMerger sortMerger = new SortMerger(pathCache);
+        ISortMerger sortMerger = new SortMerger();
         IMapByMerger mapByMerger = new MapByMerger(metadataService);
         ISizeMerger sizeMerger = new SizeMerger();
         this.includeMerger = new IncludeMerger(metadataService, expMerger, sortMerger, mapByMerger, sizeMerger);

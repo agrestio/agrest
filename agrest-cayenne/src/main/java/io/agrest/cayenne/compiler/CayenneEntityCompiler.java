@@ -11,6 +11,7 @@ import io.agrest.meta.LazyAgEntity;
 import io.agrest.meta.compiler.AgEntityCompiler;
 import io.agrest.resolver.NestedDataResolver;
 import io.agrest.resolver.RootDataResolver;
+import io.agrest.runtime.path.IPathDescriptorManager;
 import org.apache.cayenne.di.Inject;
 import org.apache.cayenne.map.EntityResolver;
 import org.apache.cayenne.map.ObjEntity;
@@ -33,12 +34,13 @@ public class CayenneEntityCompiler implements AgEntityCompiler {
 
     public CayenneEntityCompiler(
             @Inject ICayennePersister cayennePersister,
+            @Inject IPathDescriptorManager pathDescriptorManager,
             @Inject Map<String, AgEntityOverlay> entityOverlays) {
 
         this.cayenneEntityResolver = cayennePersister.entityResolver();
         this.entityOverlays = entityOverlays;
 
-        CayenneQueryAssembler queryAssembler = new CayenneQueryAssembler(cayenneEntityResolver);
+        CayenneQueryAssembler queryAssembler = new CayenneQueryAssembler(cayenneEntityResolver, pathDescriptorManager);
         this.defaultRootResolver = createDefaultRootResolver(queryAssembler, cayennePersister);
         this.defaultNestedResolver = createDefaultNestedResolver(queryAssembler, cayennePersister);
     }

@@ -1,12 +1,13 @@
 package io.agrest.cayenne.processor.select;
 
 import io.agrest.RootResourceEntity;
+import io.agrest.base.protocol.Dir;
+import io.agrest.base.protocol.Sort;
+import io.agrest.cayenne.cayenne.main.E1;
 import io.agrest.cayenne.processor.CayenneProcessor;
 import io.agrest.cayenne.unit.CayenneNoDbTest;
-import io.agrest.cayenne.cayenne.main.E1;
 import io.agrest.runtime.processor.select.SelectContext;
 import org.apache.cayenne.exp.Expression;
-import org.apache.cayenne.query.Ordering;
 import org.apache.cayenne.query.SelectQuery;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -19,29 +20,26 @@ public class CayenneQueryAssemblerTest extends CayenneNoDbTest {
 
     @BeforeEach
     public void before() {
-        this.queryAssembler = new CayenneQueryAssembler(runtime.getChannel().getEntityResolver());
+        this.queryAssembler = new CayenneQueryAssembler(runtime.getChannel().getEntityResolver(), pathDescriptorManager);
     }
 
     @Test
     public void testCreateRootQuery_Ordering() {
 
-        Ordering o1 = E1.NAME.asc();
-        Ordering o2 = E1.NAME.desc();
-
         RootResourceEntity<E1> entity = getResourceEntity(E1.class);
-        entity.getOrderings().add(o1);
+        entity.getOrderings().add(new Sort("name", Dir.ASC));
         SelectContext<E1> c = new SelectContext<>(E1.class);
         c.setEntity(entity);
 
         SelectQuery<E1> q1 = queryAssembler.createRootQuery(c);
         assertEquals(1, q1.getOrderings().size());
-        assertSame(o1, q1.getOrderings().get(0));
+        assertEquals(E1.NAME.asc(), q1.getOrderings().get(0));
 
-        entity.getOrderings().add(o2);
+        entity.getOrderings().add(new Sort("name", Dir.DESC));
         SelectQuery<E1> q2 = queryAssembler.createRootQuery(c);
         assertEquals(2, q2.getOrderings().size());
-        assertSame(o1, q2.getOrderings().get(0));
-        assertSame(o2, q2.getOrderings().get(1));
+        assertEquals(E1.NAME.asc(), q2.getOrderings().get(0));
+        assertEquals(E1.NAME.desc(), q2.getOrderings().get(1));
     }
 
     @Test
