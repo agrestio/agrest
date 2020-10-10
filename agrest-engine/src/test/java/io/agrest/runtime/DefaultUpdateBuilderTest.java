@@ -5,8 +5,6 @@ import io.agrest.processor.Processor;
 import io.agrest.processor.ProcessorOutcome;
 import io.agrest.runtime.processor.update.UpdateContext;
 import io.agrest.runtime.processor.update.UpdateProcessorFactory;
-import org.apache.cayenne.CayenneDataObject;
-import org.apache.cayenne.DataObject;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -84,10 +82,10 @@ public class DefaultUpdateBuilderTest {
     private <T> void doSomething1(UpdateContext<T> c) {
     }
 
-    private void doSomething2(UpdateContext<DataObject> c) {
+    private void doSomething2(UpdateContext<I1> c) {
         c.getEntity().setResult(new ArrayList<>());
-        List<DataObject> objects = c.getEntity().getResult();
-        objects.add(new CayenneDataObject());
+        List<I1> objects = c.getEntity().getResult();
+        objects.add(new T1());
     }
 
     private void doSomething3(UpdateContext<Object> c) {
@@ -107,7 +105,7 @@ public class DefaultUpdateBuilderTest {
         return ProcessorOutcome.CONTINUE;
     }
 
-    private ProcessorOutcome doSomethingAndReturn2(UpdateContext<DataObject> c) {
+    private ProcessorOutcome doSomethingAndReturn2(UpdateContext<I1> c) {
         c.getEntity().setResult(new ArrayList<>());
         return ProcessorOutcome.CONTINUE;
     }
@@ -121,6 +119,12 @@ public class DefaultUpdateBuilderTest {
         c.getEntity().setResult(new ArrayList<>());
         c.getEntity().setResult(new ArrayList<X>());
         return ProcessorOutcome.CONTINUE;
+    }
+
+    interface I1 {
+    }
+
+    static class T1 implements I1 {
     }
 
     public class X {
