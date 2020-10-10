@@ -142,15 +142,12 @@ public class DataEncoderFactory {
             CollectionEncoder encoder,
             String mapByPath) {
 
+        // map by id
         if (mapBy.isIdIncluded()) {
             validateLeafMapBy(mapBy, mapByPath);
 
-            IdReader idReader = mapBy.getAgEntity().getIdReader();
-
-            // TODO: should we throw on no id reader?
-            if (idReader != null) {
-                readerChain.add(idReader::id);
-            }
+            IdReader idReader = Objects.requireNonNull(mapBy.getAgEntity().getIdReader());
+            readerChain.add(idReader::id);
 
             return new MapByEncoder(mapByPath,
                     readerChain,
@@ -159,6 +156,7 @@ public class DataEncoderFactory {
                     stringConverterFactory.getConverter(mapBy.getAgEntity()));
         }
 
+        // map by property
         if (!mapBy.getAttributes().isEmpty()) {
             validateLeafMapBy(mapBy, mapByPath);
 
@@ -171,6 +169,7 @@ public class DataEncoderFactory {
                     stringConverterFactory.getConverter(mapBy.getAgEntity(), attribute.getKey()));
         }
 
+        // descend into relationship
         if (!mapBy.getChildren().isEmpty()) {
 
             Map.Entry<String, NestedResourceEntity<?>> child = mapBy.getChildren().entrySet().iterator().next();
@@ -183,14 +182,9 @@ public class DataEncoderFactory {
             return mapByEncoder(mapBy.getChildren().get(child.getKey()), readerChain, encoder, mapByPath);
         }
 
-        // by default we are dealing with ID
-
-        IdReader idReader = mapBy.getAgEntity().getIdReader();
-
-        // TODO: should we throw on no id reader?
-        if (idReader != null) {
-            readerChain.add(idReader::id);
-        }
+        // map by relationship (implicitly by id)
+        IdReader idReader = Objects.requireNonNull(mapBy.getAgEntity().getIdReader());
+        readerChain.add(idReader::id);
 
         return new MapByEncoder(mapByPath,
                 readerChain,
