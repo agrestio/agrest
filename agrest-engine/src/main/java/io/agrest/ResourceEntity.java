@@ -1,11 +1,11 @@
 package io.agrest;
 
+import io.agrest.base.protocol.Sort;
 import io.agrest.encoder.EntityEncoderFilter;
 import io.agrest.meta.AgAttribute;
 import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgEntityOverlay;
 import org.apache.cayenne.exp.Expression;
-import org.apache.cayenne.query.Ordering;
 
 import java.util.*;
 
@@ -30,7 +30,7 @@ public abstract class ResourceEntity<T> {
 
     private String mapByPath;
     private ResourceEntity<?> mapBy;
-    private final List<Ordering> orderings;
+    private final List<Sort> orderings;
     private Expression qualifier;
     private int fetchOffset;
     private int fetchLimit;
@@ -96,7 +96,7 @@ public abstract class ResourceEntity<T> {
         }
     }
 
-    public List<Ordering> getOrderings() {
+    public List<Sort> getOrderings() {
         return orderings;
     }
 

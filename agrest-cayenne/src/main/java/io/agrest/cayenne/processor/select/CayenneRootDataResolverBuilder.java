@@ -3,6 +3,7 @@ package io.agrest.cayenne.processor.select;
 import io.agrest.cayenne.persister.ICayennePersister;
 import io.agrest.resolver.RootDataResolver;
 import io.agrest.resolver.RootDataResolverFactory;
+import io.agrest.runtime.path.IPathDescriptorManager;
 import org.apache.cayenne.map.ObjEntity;
 
 /**
@@ -10,10 +11,12 @@ import org.apache.cayenne.map.ObjEntity;
  */
 public class CayenneRootDataResolverBuilder {
 
-    private ICayennePersister persister;
+    private final ICayennePersister persister;
+    private final IPathDescriptorManager pathDescriptorManager;
 
-    public CayenneRootDataResolverBuilder(ICayennePersister persister) {
+    public CayenneRootDataResolverBuilder(ICayennePersister persister, IPathDescriptorManager pathDescriptorManager) {
         this.persister = persister;
+        this.pathDescriptorManager = pathDescriptorManager;
     }
 
     public RootDataResolverFactory viaQuery() {
@@ -23,7 +26,7 @@ public class CayenneRootDataResolverBuilder {
     protected <T> RootDataResolver<T> viaQuery(Class<?> rootType) {
         validateRoot(rootType);
         return (RootDataResolver<T>) new ViaQueryResolver(
-                new CayenneQueryAssembler(persister.entityResolver()),
+                new CayenneQueryAssembler(persister.entityResolver(), pathDescriptorManager),
                 persister);
     }
 

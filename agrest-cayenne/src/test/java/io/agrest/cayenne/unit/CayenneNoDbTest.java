@@ -11,6 +11,8 @@ import io.agrest.meta.compiler.PojoEntityCompiler;
 import io.agrest.meta.parser.IResourceParser;
 import io.agrest.meta.parser.ResourceParser;
 import io.agrest.runtime.meta.*;
+import io.agrest.runtime.path.IPathDescriptorManager;
+import io.agrest.runtime.path.PathDescriptorManager;
 import io.agrest.runtime.processor.select.SelectContext;
 import org.apache.cayenne.ObjectContext;
 import org.apache.cayenne.configuration.server.DataSourceFactory;
@@ -40,6 +42,7 @@ public abstract class CayenneNoDbTest {
     protected static ServerRuntime runtime;
 
     protected ICayennePersister mockCayennePersister;
+    protected IPathDescriptorManager pathDescriptorManager;
     protected IMetadataService metadataService;
     protected IResourceMetadataService resourceMetadataService;
     protected IResourceParser resourceParser;
@@ -77,12 +80,15 @@ public abstract class CayenneNoDbTest {
         this.metadataService = new MetadataService(createEntityCompilers());
         this.resourceParser = new ResourceParser(metadataService);
         this.resourceMetadataService = createResourceMetadataService();
+
+        this.pathDescriptorManager = new PathDescriptorManager();
     }
 
     protected List<AgEntityCompiler> createEntityCompilers() {
 
         AgEntityCompiler c1 = new CayenneEntityCompiler(
                 mockCayennePersister,
+                pathDescriptorManager,
                 Collections.emptyMap());
 
         AgEntityCompiler c2 = new PojoEntityCompiler(Collections.emptyMap());

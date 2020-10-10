@@ -19,15 +19,12 @@ import io.agrest.runtime.protocol.IIncludeParser;
 import io.agrest.runtime.protocol.ISortParser;
 import io.agrest.runtime.request.DefaultRequestBuilderFactory;
 import io.agrest.runtime.request.IAgRequestBuilderFactory;
-import org.apache.cayenne.query.Ordering;
-import org.apache.cayenne.query.SortOrder;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.UriInfo;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 
 import static org.apache.cayenne.exp.ExpressionFactory.exp;
@@ -50,7 +47,7 @@ public class CreateResourceEntityStageTest {
 
         // prepare create entity stage
         ICayenneExpMerger expMerger = new CayenneExpMerger(new ExpressionParser(), new ExpressionPostProcessor(pathCache));
-        ISortMerger sortMerger = new SortMerger(pathCache);
+        ISortMerger sortMerger = new SortMerger();
         IMapByMerger mapByMerger = new MapByMerger(mock(IMetadataService.class));
         ISizeMerger sizeMerger = new SizeMerger();
         IIncludeMerger includeMerger = new IncludeMerger(mock(IMetadataService.class), expMerger, sortMerger, mapByMerger, sizeMerger);
@@ -332,9 +329,8 @@ public class CreateResourceEntityStageTest {
         ResourceEntity<Ts> resourceEntity = context.getEntity();
 
         assertEquals(1, resourceEntity.getOrderings().size());
-        Ordering o1 = resourceEntity.getOrderings().iterator().next();
-        assertEquals(SortOrder.ASCENDING, o1.getSortOrder());
-        assertEquals("n", o1.getSortSpecString());
+        Sort o1 = resourceEntity.getOrderings().iterator().next();
+        assertEquals(new Sort("n", Dir.ASC), o1);
     }
 
     @Test
@@ -351,9 +347,8 @@ public class CreateResourceEntityStageTest {
         ResourceEntity<Ts> resourceEntity = context.getEntity();
 
         assertEquals(1, resourceEntity.getOrderings().size());
-        Ordering o1 = resourceEntity.getOrderings().iterator().next();
-        assertEquals(SortOrder.ASCENDING, o1.getSortOrder());
-        assertEquals("n", o1.getSortSpecString());
+        Sort o1 = resourceEntity.getOrderings().iterator().next();
+        assertEquals(new Sort("n", Dir.ASC), o1);
     }
 
     @Test
@@ -370,9 +365,8 @@ public class CreateResourceEntityStageTest {
         ResourceEntity<Ts> resourceEntity = context.getEntity();
 
         assertEquals(1, resourceEntity.getOrderings().size());
-        Ordering o1 = resourceEntity.getOrderings().iterator().next();
-        assertEquals(SortOrder.DESCENDING, o1.getSortOrder());
-        assertEquals("n", o1.getSortSpecString());
+        Sort o1 = resourceEntity.getOrderings().iterator().next();
+        assertEquals(new Sort("n", Dir.DESC), o1);
     }
 
     @Test
@@ -389,34 +383,8 @@ public class CreateResourceEntityStageTest {
         ResourceEntity<Ts> resourceEntity = context.getEntity();
 
         assertEquals(2, resourceEntity.getOrderings().size());
-        Iterator<Ordering> it = resourceEntity.getOrderings().iterator();
-        Ordering o1 = it.next();
-        Ordering o2 = it.next();
-        assertEquals(SortOrder.DESCENDING, o1.getSortOrder());
-        assertEquals("m", o1.getSortSpecString());
-        assertEquals(SortOrder.ASCENDING, o2.getSortOrder());
-        assertEquals("n", o2.getSortSpecString());
-    }
-
-    @Test
-    public void testExecute_Sort_Dupes() {
-
-        SelectContext<Ts> context = new SelectContext<>(Ts.class);
-
-        context.setMergedRequest(requestBuilderFactory
-                .builder()
-                .addOrdering(new Sort("n", Dir.DESC))
-                .addOrdering(new Sort("n", Dir.ASC)).build());
-
-        stage.execute(context);
-
-        ResourceEntity<Ts> resourceEntity = context.getEntity();
-
-        assertEquals(1, resourceEntity.getOrderings().size());
-        Iterator<Ordering> it = resourceEntity.getOrderings().iterator();
-        Ordering o1 = it.next();
-        assertEquals(SortOrder.DESCENDING, o1.getSortOrder());
-        assertEquals("n", o1.getSortSpecString());
+        assertEquals(new Sort("m", Dir.DESC), resourceEntity.getOrderings().get(0));
+        assertEquals(new Sort("n", Dir.ASC), resourceEntity.getOrderings().get(1));
     }
 
     @Test

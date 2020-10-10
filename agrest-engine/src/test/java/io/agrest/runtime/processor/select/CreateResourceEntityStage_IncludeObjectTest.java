@@ -45,7 +45,7 @@ public class CreateResourceEntityStage_IncludeObjectTest {
 
         // prepare create entity stage
         ICayenneExpMerger expConstructor = new CayenneExpMerger(new ExpressionParser(), new ExpressionPostProcessor(pathCache));
-        ISortMerger sortConstructor = new SortMerger(pathCache);
+        ISortMerger sortConstructor = new SortMerger();
         IMapByMerger mapByConstructor = new MapByMerger(mock(IMetadataService.class));
         ISizeMerger sizeConstructor = new SizeMerger();
         IIncludeMerger includeConstructor = new IncludeMerger(mock(IMetadataService.class), expConstructor, sortConstructor, mapByConstructor, sizeConstructor);
