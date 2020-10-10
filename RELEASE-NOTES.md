@@ -1,3 +1,7 @@
+## Release 4.0
+
+* #456 Upgrade to Cayenne 4.2
+
 ## Release 3.7
 
 * #450 Minimize Cayenne footprint - remove references to "Property" from API signatures
