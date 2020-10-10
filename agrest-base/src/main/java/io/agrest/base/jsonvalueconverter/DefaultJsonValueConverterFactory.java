@@ -25,12 +25,12 @@ import java.util.stream.Collectors;
 public class DefaultJsonValueConverterFactory implements IJsonValueConverterFactory {
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultJsonValueConverterFactory.class);
 
-    protected Map<Type, JsonValueConverter<?>> convertersByJavaType;
+    protected final Map<Type, JsonValueConverter<?>> convertersByJavaType;
+    private final JsonValueConverter<?> defaultConverter;
 
-    private JsonValueConverter<?> defaultConverter;
-
-    public DefaultJsonValueConverterFactory(Map<Class<?>, JsonValueConverter<?>> knownConverters,
-                                            JsonValueConverter<?> defaultConverter) {
+    public DefaultJsonValueConverterFactory(
+            Map<Class<?>, JsonValueConverter<?>> knownConverters,
+            JsonValueConverter<?> defaultConverter) {
 
         this.defaultConverter = defaultConverter;
 
@@ -40,57 +40,26 @@ public class DefaultJsonValueConverterFactory implements IJsonValueConverterFact
 
     @Override
     public JsonValueConverter<?> converter(Type valueType) {
-        return getOrCreateConverter(valueType, () -> buildOrDefault(valueType));
+        return convertersByJavaType.computeIfAbsent(valueType, this::buildOrDefault);
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    public <T> Optional<JsonValueConverter<T>> typedConverter(Class<T> valueType) {
-        return Optional.ofNullable((JsonValueConverter<T>) getOrCreateConverter(valueType, () -> buildOrNull(valueType)));
-    }
-
-    private JsonValueConverter<?> getOrCreateConverter(Type valueType, Supplier<JsonValueConverter<?>> supplier) {
-        JsonValueConverter<?> converter = convertersByJavaType.get(valueType);
-
-        if (converter == null) {
-            converter = supplier.get();
-            if (converter != null) {
-                JsonValueConverter<?> existing = convertersByJavaType.putIfAbsent(valueType, converter);
-                if (existing != null) {
-                    converter = existing;
-                }
-            }
-        }
-
-        return converter;
+    public <T> JsonValueConverter<T> typedConverter(Class<T> valueType) {
+        return (JsonValueConverter<T>) convertersByJavaType.computeIfAbsent(valueType, this::buildOrDefault);
     }
 
     private JsonValueConverter<?> buildOrDefault(Type t) {
-        return buildConverter(t).orElse(defaultConverter);
+        return Types.getClassForType(t).flatMap(cls -> buildConverter(cls, t)).orElse(defaultConverter);
     }
 
-    private JsonValueConverter<?> buildOrNull(Type t) {
-        return buildConverter(t).orElse(null);
-    }
-
-    private Optional<JsonValueConverter<?>> buildConverter(Type t) {
-        return Types.getClassForType(t).flatMap(cls -> buildConverter(cls, Optional.of(t)));
-    }
-
-    @SuppressWarnings("unchecked")
-    private Optional<JsonValueConverter<?>> buildConverter(Class<?> cls, Optional<Type> t) {
+    private Optional<JsonValueConverter<?>> buildConverter(Class<?> cls, Type t) {
         if (cls.isEnum()) {
             return Optional.of(enumConverter(cls));
         }
 
         if (Collection.class.isAssignableFrom(cls)) {
-            Class<?> parameterType;
-            if (t.isPresent()) {
-                parameterType = Types.getClassForTypeArgument(t.get()).orElse(Object.class);
-            } else {
-                parameterType = Object.class;
-            }
-
+            Class<?> parameterType = t != null ? Types.getClassForTypeArgument(t).orElse(Object.class) : Object.class;
             return Optional.ofNullable(collectionConverter(cls, parameterType));
         }
 
@@ -113,8 +82,7 @@ public class DefaultJsonValueConverterFactory implements IJsonValueConverterFact
             LOGGER.debug("Unsupported collection type: {}", containerType.getName());
             return null;
         }
-        JsonValueConverter<E> elementConverter = new LazyConverter<>(
-                () -> typedConverter(elementType).orElse((JsonValueConverter<E>) defaultConverter));
+        JsonValueConverter<E> elementConverter = new LazyConverter<>(() -> typedConverter(elementType));
         return new CollectionConverter<>(containerSupplier, elementConverter);
     }
 

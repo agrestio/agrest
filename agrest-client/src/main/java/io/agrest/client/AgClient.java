@@ -138,7 +138,6 @@ public class AgClient {
 
 	private <T> JsonValueConverter<T> getEntityReader(Class<T> entityType) {
 		Objects.requireNonNull(entityType, "Missing target type");
-		return jsonEntityReaderFactory.typedConverter(entityType)
-				.orElseThrow(() -> new AgClientException("Can't build converter for type: " + entityType.getName()));
+		return jsonEntityReaderFactory.typedConverter(entityType);
 	}
 }
