@@ -21,8 +21,7 @@ public class DefaultJsonValueConverterFactory_PojoTest {
     }
 
     private <T> JsonValueConverter<T> compile(Class<T> type) {
-        return converterFactory.typedConverter(type)
-                .orElseThrow(() -> new RuntimeException("Can't create converter for type: " + type.getName()));
+        return converterFactory.typedConverter(type);
     }
 
     private JsonNodeFactory nodeFactory() {
@@ -95,7 +94,7 @@ public class DefaultJsonValueConverterFactory_PojoTest {
         assertEquals(t3_expected, t3);
     }
 
-    private <T extends Collection> void assertSameContent(T collection, Object... values) {
+    private <T extends Collection<?>> void assertSameContent(T collection, Object... values) {
         assertNotNull(collection);
         assertEquals(values.length, collection.size());
         for (Object value : values) {
@@ -221,7 +220,7 @@ public class DefaultJsonValueConverterFactory_PojoTest {
 
             if (!id.equals(t3.id)) return false;
             if (t4s != null ? !t4s.containsAll(t3.t4s) : t3.t4s != null) return false;
-            return t5 != null ? t5.equals(t3.t5) : t3.t5 == null;
+            return Objects.equals(t5, t3.t5);
 
         }
 
@@ -273,7 +272,7 @@ public class DefaultJsonValueConverterFactory_PojoTest {
             T4 t4 = (T4) object;
 
             if (!id.equals(t4.id)) return false;
-            return t3 != null ? t3.equals(t4.t3) : t4.t3 == null;
+            return Objects.equals(t3, t4.t3);
 
         }
 
