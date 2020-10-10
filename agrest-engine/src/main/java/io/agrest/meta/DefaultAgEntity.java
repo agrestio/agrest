@@ -11,15 +11,15 @@ import java.util.Map;
  */
 public class DefaultAgEntity<T> implements AgEntity<T> {
 
-    private String name;
-    private Class<T> type;
-    private IdReader idReader;
-    private RootDataResolver<T> dataResolver;
+    private final String name;
+    private final Class<T> type;
+    private final IdReader idReader;
+    private final RootDataResolver<T> dataResolver;
 
     // TODO: ensure name uniqueness between all types of properties
-    private Map<String, AgAttribute> ids;
-    private Map<String, AgAttribute> attributes;
-    private Map<String, AgRelationship> relationships;
+    private final Map<String, AgAttribute> ids;
+    private final Map<String, AgAttribute> attributes;
+    private final Map<String, AgRelationship> relationships;
 
     public DefaultAgEntity(
             String name,
@@ -91,8 +91,6 @@ public class DefaultAgEntity<T> implements AgEntity<T> {
 
     @Override
     public String toString() {
-        return new StringBuilder(getClass().getName()).append("@")
-                .append(Integer.toHexString(System.identityHashCode(this))).append("[").append(getName()).append("]")
-                .toString();
+        return getClass().getName() + "@" + Integer.toHexString(System.identityHashCode(this)) + "[" + getName() + "]";
     }
 }
