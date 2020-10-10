@@ -246,8 +246,8 @@ public abstract class ResourceEntity<T> {
      *
      * @since 3.7
      */
-    public <T> T getRequestProperty(String name) {
-        return (T) requestProperties.get(name);
+    public <P> P getRequestProperty(String name) {
+        return (P) requestProperties.get(name);
     }
 
     /**
