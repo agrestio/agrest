@@ -6,8 +6,6 @@ import io.agrest.processor.Processor;
 import io.agrest.processor.ProcessorOutcome;
 import io.agrest.runtime.processor.select.SelectContext;
 import io.agrest.runtime.processor.select.SelectProcessorFactory;
-import org.apache.cayenne.CayenneDataObject;
-import org.apache.cayenne.DataObject;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -85,11 +83,11 @@ public class DefaultSelectBuilderTest {
     private <T> void doSomething1(SelectContext<T> c) {
     }
 
-    private void doSomething2(SelectContext<DataObject> c) {
+    private void doSomething2(SelectContext<I1> c) {
         c.getEntity().setResult(new ArrayList<>());
 
-        List<DataObject> objects = c.getEntity().getResult();
-        objects.add(new CayenneDataObject());
+        List<I1> objects = c.getEntity().getResult();
+        objects.add(new T1());
     }
 
     private void doSomething3(SelectContext<Object> c) {
@@ -109,7 +107,7 @@ public class DefaultSelectBuilderTest {
         return ProcessorOutcome.CONTINUE;
     }
 
-    private ProcessorOutcome doSomethingAndReturn2(SelectContext<DataObject> c) {
+    private ProcessorOutcome doSomethingAndReturn2(SelectContext<I1> c) {
         c.getEntity().setResult(new ArrayList<>());
         return ProcessorOutcome.CONTINUE;
     }
@@ -123,5 +121,11 @@ public class DefaultSelectBuilderTest {
         c.getEntity().setResult(new ArrayList<>());
         c.getEntity().setResult(new ArrayList<P1>());
         return ProcessorOutcome.CONTINUE;
+    }
+
+    interface I1 {
+    }
+
+    static class T1 implements I1 {
     }
 }
