@@ -15,8 +15,7 @@ public class Encoders {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
 
         try {
-            JACKSON.outputJson(g ->
-                    encoder.encode(null, value, g), out);
+            JACKSON.outputJson(g -> encoder.encode(null, value, g), out);
         } catch (IOException e) {
             throw new RuntimeException("Encoding error: " + e.getMessage());
         }
