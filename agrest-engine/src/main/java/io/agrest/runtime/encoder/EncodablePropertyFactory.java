@@ -1,14 +1,13 @@
 package io.agrest.runtime.encoder;
 
-import io.agrest.EntityProperty;
 import io.agrest.NestedResourceEntity;
 import io.agrest.ResourceEntity;
+import io.agrest.encoder.EncodableProperty;
 import io.agrest.encoder.Encoder;
 import io.agrest.encoder.IdEncoder;
 import io.agrest.meta.AgAttribute;
 import io.agrest.meta.AgRelationship;
 import io.agrest.property.IdReader;
-import io.agrest.property.PropertyBuilder;
 import io.agrest.property.PropertyReader;
 import org.apache.cayenne.di.Inject;
 
@@ -18,41 +17,42 @@ import java.util.Optional;
 import java.util.TreeMap;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class AttributeEncoderFactory implements IAttributeEncoderFactory {
+public class EncodablePropertyFactory implements IEncodablePropertyFactory {
 
-    private ValueEncoders valueEncoders;
-    private Map<String, Optional<EntityProperty>> idPropertiesByEntity;
+    private final ValueEncoders valueEncoders;
+    private final Map<String, Optional<EncodableProperty>> idPropertiesByEntity;
 
-    public AttributeEncoderFactory(@Inject ValueEncoders valueEncoders) {
+    public EncodablePropertyFactory(@Inject ValueEncoders valueEncoders) {
         this.valueEncoders = valueEncoders;
         this.idPropertiesByEntity = new ConcurrentHashMap<>();
     }
 
     @Override
-    public EntityProperty getAttributeProperty(ResourceEntity<?> entity, AgAttribute attribute) {
-
-        // Can't cache the reader, as it may be overlaid and hence request state-dependent
-        Encoder encoder = getEncoder(attribute.getType());
-        return PropertyBuilder.property(attribute.getPropertyReader()).encodedWith(encoder);
+    public EncodableProperty getAttributeProperty(ResourceEntity<?> entity, AgAttribute attribute) {
+        return EncodableProperty
+                .property(attribute.getPropertyReader())
+                .encodedWith(getEncoder(attribute.getType()));
     }
 
     @Override
-    public EntityProperty getRelationshipProperty(ResourceEntity<?> entity, AgRelationship relationship, Encoder encoder) {
+    public EncodableProperty getRelationshipProperty(ResourceEntity<?> entity, AgRelationship relationship, Encoder relatedEncoder) {
 
         NestedResourceEntity childEntity = entity.getChild(relationship.getName());
         PropertyReader reader = relationship.getResolver().reader(childEntity);
 
-        return PropertyBuilder.property(reader).encodedWith(encoder);
+        return EncodableProperty
+                .property(reader)
+                .encodedWith(relatedEncoder);
     }
 
     @Override
-    public Optional<EntityProperty> getIdProperty(ResourceEntity<?> entity) {
+    public Optional<EncodableProperty> getIdProperty(ResourceEntity<?> entity) {
         // id properties are not (yet) overlaid and hence can be cached
-        String key = entity.getName();
-        return idPropertiesByEntity.computeIfAbsent(key, k -> buildIdProperty(entity));
+        return idPropertiesByEntity
+                .computeIfAbsent(entity.getName(), k -> buildIdProperty(entity));
     }
 
-    protected Optional<EntityProperty> buildIdProperty(ResourceEntity<?> entity) {
+    protected Optional<EncodableProperty> buildIdProperty(ResourceEntity<?> entity) {
 
         Collection<AgAttribute> ids = entity.getAgEntity().getIds();
 
@@ -62,7 +62,7 @@ public class AttributeEncoderFactory implements IAttributeEncoderFactory {
             case 1:
 
                 IdReader ir1 = entity.getAgEntity().getIdReader();
-                EntityProperty p1 = PropertyBuilder
+                EncodableProperty p1 = EncodableProperty
                         .property(ir1::id)
                         .encodedWith(new IdEncoder(getEncoder(ids.iterator().next().getType())));
                 return Optional.of(p1);
@@ -76,7 +76,7 @@ public class AttributeEncoderFactory implements IAttributeEncoderFactory {
                 }
 
                 IdReader ir2 = entity.getAgEntity().getIdReader();
-                EntityProperty p2 = PropertyBuilder
+                EncodableProperty p2 = EncodableProperty
                         .property(ir2::id)
                         .encodedWith(new IdEncoder(valueEncoders));
                 return Optional.of(p2);

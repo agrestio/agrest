@@ -1,7 +1,7 @@
 package io.agrest.sencha.runtime.encoder;
 
 import com.fasterxml.jackson.core.JsonGenerator;
-import io.agrest.EntityProperty;
+import io.agrest.encoder.EncodableProperty;
 import io.agrest.ResourceEntity;
 import io.agrest.encoder.CollectionEncoder;
 import io.agrest.encoder.DataResponseEncoder;
@@ -9,7 +9,7 @@ import io.agrest.encoder.Encoder;
 import io.agrest.encoder.GenericEncoder;
 import io.agrest.meta.AgRelationship;
 import io.agrest.runtime.encoder.DataEncoderFactory;
-import io.agrest.runtime.encoder.IAttributeEncoderFactory;
+import io.agrest.runtime.encoder.IEncodablePropertyFactory;
 import io.agrest.runtime.encoder.IStringConverterFactory;
 import io.agrest.runtime.semantics.IRelationshipMapper;
 import io.agrest.sencha.encoder.SenchaEntityToOneEncoder;
@@ -24,10 +24,10 @@ import java.util.Optional;
 public class SenchaDataEncoderFactory extends DataEncoderFactory {
 
     public SenchaDataEncoderFactory(
-            IAttributeEncoderFactory attributeEncoderFactory,
+            IEncodablePropertyFactory encodablePropertyFactory,
             IStringConverterFactory stringConverterFactory,
             IRelationshipMapper relationshipMapper) {
-        super(attributeEncoderFactory, stringConverterFactory, relationshipMapper);
+        super(encodablePropertyFactory, stringConverterFactory, relationshipMapper);
     }
 
     @Override
@@ -54,7 +54,7 @@ public class SenchaDataEncoderFactory extends DataEncoderFactory {
         // different structure from to-many, so building it differently
 
         Encoder valueEncoder = entityEncoder(resourceEntity);
-        Optional<EntityProperty> idEncoder = attributeEncoderFactory.getIdProperty(resourceEntity);
+        Optional<EncodableProperty> idEncoder = encodablePropertyFactory.getIdProperty(resourceEntity);
         Encoder compositeValueEncoder = idEncoder
                 .map(ide -> senchaToOnEntityEncoder(relationship, valueEncoder, ide))
                 .orElse(valueEncoder);
@@ -62,7 +62,7 @@ public class SenchaDataEncoderFactory extends DataEncoderFactory {
         return filteredEncoder(compositeValueEncoder, resourceEntity);
     }
 
-    private Encoder senchaToOnEntityEncoder(AgRelationship relationship, Encoder valueEncoder, EntityProperty idEncoder) {
+    private Encoder senchaToOnEntityEncoder(AgRelationship relationship, Encoder valueEncoder, EncodableProperty idEncoder) {
         return new SenchaEntityToOneEncoder(relationshipMapper.toRelatedIdName(relationship), valueEncoder, idEncoder);
     }
 }

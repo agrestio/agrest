@@ -8,7 +8,7 @@ import io.agrest.encoder.converter.StringConverter;
 import io.agrest.meta.AgAttribute;
 import io.agrest.meta.AgRelationship;
 import io.agrest.property.PropertyReader;
-import io.agrest.runtime.encoder.IAttributeEncoderFactory;
+import io.agrest.runtime.encoder.IEncodablePropertyFactory;
 import io.agrest.runtime.encoder.IStringConverterFactory;
 
 import javax.ws.rs.core.Response.Status;
@@ -29,7 +29,7 @@ public class MapByEncoder implements CollectionEncoder {
             ResourceEntity<?> mapBy,
             CollectionEncoder collectionEncoder,
             IStringConverterFactory converterFactory,
-            IAttributeEncoderFactory encoderFactory) {
+            IEncodablePropertyFactory encodablePropertyFactory) {
 
         Objects.requireNonNull(mapBy, "Null mapBy");
 
@@ -37,7 +37,7 @@ public class MapByEncoder implements CollectionEncoder {
         this.mapByReaders = new ArrayList<>();
         this.collectionEncoder = collectionEncoder;
 
-        config(converterFactory, encoderFactory, mapBy);
+        config(converterFactory, encodablePropertyFactory, mapBy);
     }
 
     @Override
@@ -56,14 +56,14 @@ public class MapByEncoder implements CollectionEncoder {
 
     private void config(
             IStringConverterFactory converterFactory,
-            IAttributeEncoderFactory encoderFactory,
+            IEncodablePropertyFactory encodablePropertyFactory,
             ResourceEntity<?> mapBy) {
 
         if (mapBy.isIdIncluded()) {
             validateLeafMapBy(mapBy);
             byId = true;
 
-            encoderFactory.getIdProperty(mapBy).ifPresent(p -> this.mapByReaders.add(p.getReader()));
+            encodablePropertyFactory.getIdProperty(mapBy).ifPresent(p -> this.mapByReaders.add(p.getReader()));
             this.fieldNameConverter = converterFactory.getConverter(mapBy.getAgEntity());
             return;
         }
@@ -74,7 +74,7 @@ public class MapByEncoder implements CollectionEncoder {
             byId = false;
 
             Map.Entry<String, AgAttribute> attribute = mapBy.getAttributes().entrySet().iterator().next();
-            this.mapByReaders.add(encoderFactory.getAttributeProperty(mapBy, attribute.getValue()).getReader());
+            this.mapByReaders.add(encodablePropertyFactory.getAttributeProperty(mapBy, attribute.getValue()).getReader());
             this.fieldNameConverter = converterFactory.getConverter(mapBy.getAgEntity(), attribute.getKey());
             return;
         }
@@ -88,16 +88,16 @@ public class MapByEncoder implements CollectionEncoder {
             // TODO: to account for overlaid relationships (and avoid NPEs), we should not access agEntity...
             //  instead should look for incoming rel of a child ResourceEntity.. Is is present in MapBy case?
             AgRelationship relationship = mapBy.getChild(child.getKey()).getIncoming();
-            this.mapByReaders.add(encoderFactory.getRelationshipProperty(mapBy, relationship, null).getReader());
+            this.mapByReaders.add(encodablePropertyFactory.getRelationshipProperty(mapBy, relationship, null).getReader());
 
             ResourceEntity<?> childMapBy = mapBy.getChildren().get(child.getKey());
-            config(converterFactory, encoderFactory, childMapBy);
+            config(converterFactory, encodablePropertyFactory, childMapBy);
             return;
         }
 
         // by default we are dealing with ID
         byId = true;
-        encoderFactory.getIdProperty(mapBy).ifPresent(p -> mapByReaders.add(p.getReader()));
+        encodablePropertyFactory.getIdProperty(mapBy).ifPresent(p -> mapByReaders.add(p.getReader()));
         fieldNameConverter = converterFactory.getConverter(mapBy.getAgEntity());
     }
 
