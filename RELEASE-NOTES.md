@@ -5,6 +5,7 @@
 * #452 Replace SelectBuilder.property(..) with overlay-based API
 * #453 Remove Cayenne SelectQuery from ResourceEntity
 * #454 Remove property name from property reader signature
+* #455 Replace Cayenne Ordering in ResourceEntity with Agrest "sort"
 
 ## Release 3.6
 
