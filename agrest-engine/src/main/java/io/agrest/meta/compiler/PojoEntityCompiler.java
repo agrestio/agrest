@@ -1,15 +1,7 @@
 package io.agrest.meta.compiler;
 
 import io.agrest.AgException;
-import io.agrest.meta.AgDataMap;
-import io.agrest.meta.AgEntity;
-import io.agrest.meta.AgEntityBuilder;
-import io.agrest.meta.AgEntityOverlay;
-import io.agrest.meta.DefaultAgEntity;
-import io.agrest.meta.LazyAgEntity;
-import io.agrest.property.BeanPropertyReader;
-import io.agrest.resolver.NestedDataResolver;
-import io.agrest.resolver.ReaderFactoryBasedResolver;
+import io.agrest.meta.*;
 import org.apache.cayenne.di.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,20 +18,14 @@ public class PojoEntityCompiler implements AgEntityCompiler {
     private static final Logger LOGGER = LoggerFactory.getLogger(PojoEntityCompiler.class);
 
     private Map<String, AgEntityOverlay> entityOverlays;
-    private NestedDataResolver defaultNestedResolver;
 
     public PojoEntityCompiler(@Inject Map<String, AgEntityOverlay> entityOverlays) {
         this.entityOverlays = entityOverlays;
-        this.defaultNestedResolver = createDefaultNestedResolver();
     }
 
     @Override
     public <T> AgEntity<T> compile(Class<T> type, AgDataMap dataMap) {
         return new LazyAgEntity<>(type, () -> doCompile(type, dataMap));
-    }
-
-    protected NestedDataResolver<?> createDefaultNestedResolver() {
-        return new ReaderFactoryBasedResolver<>(e -> BeanPropertyReader.reader(e.getIncoming().getName()));
     }
 
     private <T> AgEntity<T> doCompile(Class<T> type, AgDataMap dataMap) {
@@ -53,9 +39,6 @@ public class PojoEntityCompiler implements AgEntityCompiler {
     protected <T> DefaultAgEntity<T> load(Class<T> type, AgDataMap dataMap) {
         return new AgEntityBuilder<>(type, dataMap)
                 .overlay(entityOverlays.get(type.getName()))
-                // while we don't have a notion of a default "root" resolver for POJOs, we have one for nested resolvers
-                // - just read values from parent
-                .nestedDataResolver(defaultNestedResolver)
                 .build();
     }
 

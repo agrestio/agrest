@@ -38,7 +38,6 @@ public class CayenneAgEntityBuilder<T> {
     private boolean pojoIdReader;
     private RootDataResolver<T> rootDataResolver;
     private NestedDataResolver<T> nestedDataResolver;
-    private NestedDataResolver pojoNestedResolver;
 
     public CayenneAgEntityBuilder(Class<T> type, AgDataMap agDataMap, EntityResolver cayenneResolver) {
 
@@ -65,11 +64,6 @@ public class CayenneAgEntityBuilder<T> {
 
     public CayenneAgEntityBuilder<T> nestedDataResolver(NestedDataResolver<T> resolver) {
         this.nestedDataResolver = resolver;
-        return this;
-    }
-
-    public CayenneAgEntityBuilder<T> pojoNestedDataResolver(NestedDataResolver<T> resolver) {
-        this.pojoNestedResolver = resolver;
         return this;
     }
 
@@ -152,9 +146,7 @@ public class CayenneAgEntityBuilder<T> {
         // Load a separate entity built purely from annotations, then merge it with our entity. We are not cloning
         // attributes or relationship during merge... they have no references to parent and can be used as is.
 
-        AgEntity<T> annotatedEntity = new AgEntityBuilder<>(type, agDataMap)
-                .nestedDataResolver(pojoNestedResolver)
-                .build();
+        AgEntity<T> annotatedEntity = new AgEntityBuilder<>(type, agDataMap).build();
 
         if (annotatedEntity.getIds().size() > 0) {
 

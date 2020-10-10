@@ -1,11 +1,10 @@
 package io.agrest.meta;
 
+import io.agrest.meta.compiler.AgEntityCompiler;
+import io.agrest.meta.compiler.PojoEntityCompiler;
 import io.agrest.pojo.model.P3;
 import io.agrest.pojo.model.P4;
 import io.agrest.pojo.model.P5;
-import io.agrest.meta.compiler.AgEntityCompiler;
-import io.agrest.meta.compiler.PojoEntityCompiler;
-import io.agrest.resolver.ThrowingNestedDataResolver;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -27,9 +26,7 @@ public class AgEntityBuilderTest {
 	@Test
 	public void testBuild_Default() {
 
-		AgEntity<P3> p3e = new AgEntityBuilder<>(P3.class, new LazyAgDataMap(COMPILERS))
-				.nestedDataResolver(ThrowingNestedDataResolver.getInstance())
-				.build();
+		AgEntity<P3> p3e = new AgEntityBuilder<>(P3.class, new LazyAgDataMap(COMPILERS)).build();
 		assertNotNull(p3e);
 		assertEquals("P3", p3e.getName());
 
@@ -45,9 +42,7 @@ public class AgEntityBuilderTest {
 	@Test
 	public void testToOneRelationship() {
 
-		AgEntity<P4> p4e = new AgEntityBuilder<>(P4.class, new LazyAgDataMap(COMPILERS))
-				.nestedDataResolver(ThrowingNestedDataResolver.getInstance())
-				.build();
+		AgEntity<P4> p4e = new AgEntityBuilder<>(P4.class, new LazyAgDataMap(COMPILERS)).build();
 		assertNotNull(p4e);
 		assertEquals("P4", p4e.getName());
 
@@ -63,9 +58,7 @@ public class AgEntityBuilderTest {
 	@Test
 	public void testToManyRelationship() {
 
-		AgEntity<P5> p5e = new AgEntityBuilder<>(P5.class, new LazyAgDataMap(COMPILERS))
-				.nestedDataResolver(ThrowingNestedDataResolver.getInstance())
-				.build();
+		AgEntity<P5> p5e = new AgEntityBuilder<>(P5.class, new LazyAgDataMap(COMPILERS)).build();
 
 		assertNotNull(p5e);
 		assertEquals("P5", p5e.getName());
