@@ -2,14 +2,8 @@ package io.agrest.encoder;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import io.agrest.AgException;
-import io.agrest.NestedResourceEntity;
-import io.agrest.ResourceEntity;
 import io.agrest.encoder.converter.StringConverter;
-import io.agrest.meta.AgAttribute;
-import io.agrest.meta.AgRelationship;
 import io.agrest.property.PropertyReader;
-import io.agrest.runtime.encoder.IEncodablePropertyFactory;
-import io.agrest.runtime.encoder.IStringConverterFactory;
 
 import javax.ws.rs.core.Response.Status;
 import java.io.IOException;
@@ -21,23 +15,21 @@ public class MapByEncoder implements CollectionEncoder {
     private final String mapByPath;
     private final List<PropertyReader> mapByReaders;
     private final CollectionEncoder collectionEncoder;
-    private boolean byId;
-    private StringConverter fieldNameConverter;
+    private final boolean byId;
+    private final StringConverter fieldNameConverter;
 
     public MapByEncoder(
             String mapByPath,
-            ResourceEntity<?> mapBy,
+            List<PropertyReader> mapByReaders,
             CollectionEncoder collectionEncoder,
-            IStringConverterFactory converterFactory,
-            IEncodablePropertyFactory encodablePropertyFactory) {
-
-        Objects.requireNonNull(mapBy, "Null mapBy");
+            boolean byId,
+            StringConverter fieldNameConverter) {
 
         this.mapByPath = mapByPath;
-        this.mapByReaders = new ArrayList<>();
+        this.mapByReaders = mapByReaders;
         this.collectionEncoder = collectionEncoder;
-
-        config(converterFactory, encodablePropertyFactory, mapBy);
+        this.byId = byId;
+        this.fieldNameConverter = fieldNameConverter;
     }
 
     @Override
@@ -52,66 +44,6 @@ public class MapByEncoder implements CollectionEncoder {
     public int visitEntities(Object object, EncoderVisitor visitor) {
         // a "flat" visit method that ignores mapping property
         return collectionEncoder.visitEntities(object, visitor);
-    }
-
-    private void config(
-            IStringConverterFactory converterFactory,
-            IEncodablePropertyFactory encodablePropertyFactory,
-            ResourceEntity<?> mapBy) {
-
-        if (mapBy.isIdIncluded()) {
-            validateLeafMapBy(mapBy);
-            byId = true;
-
-            encodablePropertyFactory.getIdProperty(mapBy).ifPresent(p -> this.mapByReaders.add(p.getReader()));
-            this.fieldNameConverter = converterFactory.getConverter(mapBy.getAgEntity());
-            return;
-        }
-
-        if (!mapBy.getAttributes().isEmpty()) {
-
-            validateLeafMapBy(mapBy);
-            byId = false;
-
-            Map.Entry<String, AgAttribute> attribute = mapBy.getAttributes().entrySet().iterator().next();
-            this.mapByReaders.add(encodablePropertyFactory.getAttributeProperty(mapBy, attribute.getValue()).getReader());
-            this.fieldNameConverter = converterFactory.getConverter(mapBy.getAgEntity(), attribute.getKey());
-            return;
-        }
-
-        if (!mapBy.getChildren().isEmpty()) {
-
-            byId = false;
-
-            Map.Entry<String, NestedResourceEntity<?>> child = mapBy.getChildren().entrySet().iterator().next();
-
-            // TODO: to account for overlaid relationships (and avoid NPEs), we should not access agEntity...
-            //  instead should look for incoming rel of a child ResourceEntity.. Is is present in MapBy case?
-            AgRelationship relationship = mapBy.getChild(child.getKey()).getIncoming();
-            this.mapByReaders.add(encodablePropertyFactory.getRelationshipProperty(mapBy, relationship, null).getReader());
-
-            ResourceEntity<?> childMapBy = mapBy.getChildren().get(child.getKey());
-            config(converterFactory, encodablePropertyFactory, childMapBy);
-            return;
-        }
-
-        // by default we are dealing with ID
-        byId = true;
-        encodablePropertyFactory.getIdProperty(mapBy).ifPresent(p -> mapByReaders.add(p.getReader()));
-        fieldNameConverter = converterFactory.getConverter(mapBy.getAgEntity());
-    }
-
-    private void validateLeafMapBy(ResourceEntity<?> mapBy) {
-
-        if (!mapBy.getChildren().isEmpty()) {
-
-            String pathSegment = (mapBy instanceof NestedResourceEntity)
-                    ? ((NestedResourceEntity<?>) mapBy).getIncoming().getName()
-                    : "";
-
-            throw new AgException(Status.BAD_REQUEST, "'mapBy' path segment '" + pathSegment +
-                    "' should not have children. Full 'mapBy' path: " + mapByPath);
-        }
     }
 
     @Override
