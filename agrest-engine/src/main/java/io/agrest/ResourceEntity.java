@@ -126,6 +126,13 @@ public abstract class ResourceEntity<T> {
         return removed;
     }
 
+    /**
+     * @since 3.7
+     */
+    public NestedResourceEntity<?> removeChild(String name) {
+        return children.remove(name);
+    }
+
     public Map<String, NestedResourceEntity<?>> getChildren() {
         return children;
     }

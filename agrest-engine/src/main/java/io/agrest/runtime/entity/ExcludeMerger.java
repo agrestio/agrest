@@ -3,8 +3,8 @@ package io.agrest.runtime.entity;
 import io.agrest.AgException;
 import io.agrest.PathConstants;
 import io.agrest.ResourceEntity;
-import io.agrest.meta.AgEntity;
 import io.agrest.base.protocol.Exclude;
+import io.agrest.meta.AgEntity;
 
 import javax.ws.rs.core.Response.Status;
 import java.util.List;
@@ -12,17 +12,16 @@ import java.util.List;
 public class ExcludeMerger implements IExcludeMerger {
 
     @Override
-    public void merge(ResourceEntity<?> resourceEntity, List<Exclude> excludes) {
-        for (Exclude exclude : excludes) {
-            processExcludePath(resourceEntity, exclude.getPath());
-        }
-
-        if (resourceEntity.getAgEntityOverlay() != null) {
-            resourceEntity.getAgEntityOverlay().getExcludes().forEach(e -> processExcludePath(resourceEntity, e));
-        }
+    public void merge(ResourceEntity<?> entity, List<Exclude> excludes) {
+        processRequestExcludes(entity, excludes);
+        processOverlayExcludes(entity);
     }
 
-    private void processExcludePath(ResourceEntity<?> resourceEntity, String path) {
+    private void processRequestExcludes(ResourceEntity<?> entity, List<Exclude> excludes) {
+        excludes.forEach(e -> processExcludePath(entity, e.getPath()));
+    }
+
+    private void processExcludePath(ResourceEntity<?> entity, String path) {
 
         int dot = path.indexOf(PathConstants.DOT);
 
@@ -35,27 +34,27 @@ public class ExcludeMerger implements IExcludeMerger {
         }
 
         String property = dot > 0 ? path.substring(0, dot) : path;
-        AgEntity<?> entity = resourceEntity.getAgEntity();
+        AgEntity<?> agEntity = entity.getAgEntity();
 
         if (dot < 0) {
-            if (resourceEntity.removeAttribute(property) != null) {
+            if (entity.removeAttribute(property) != null) {
                 return;
             }
         }
 
-        if (entity.getRelationship(property) != null) {
+        if (agEntity.getRelationship(property) != null) {
 
             // TODO: I guess we are not removing the relationships based on the assumption that they are not included
             //  by default and an exclude shouldn't be needed. But this is too much second-guessing the caller.
 
-            ResourceEntity<?> relatedFilter = resourceEntity.getChild(property);
-            if (relatedFilter == null) {
+            ResourceEntity<?> child = entity.getChild(property);
+            if (child == null) {
                 // valid path, but not included... ignoring
                 return;
             }
 
             if (dot > 0) {
-                processExcludePath(relatedFilter, path.substring(dot + 1));
+                processExcludePath(child, path.substring(dot + 1));
             }
 
             return;
@@ -63,15 +62,32 @@ public class ExcludeMerger implements IExcludeMerger {
 
         // this is an entity id and it's excluded explicitly
         if (property.equals(PathConstants.ID_PK_ATTRIBUTE)) {
-            resourceEntity.excludeId();
+            entity.excludeId();
             return;
         }
 
         // the property was either not included or is invalid... throw in the latter case for symmetry with "include"
-        if (entity.getAttribute(property) == null
+        if (agEntity.getAttribute(property) == null
             // not checking relationship names; the condition above does it already...
         ) {
             throw new AgException(Status.BAD_REQUEST, "Invalid exclude path: " + path);
+        }
+    }
+
+    private void processOverlayExcludes(ResourceEntity<?> entity) {
+
+        if (entity.getAgEntityOverlay() != null) {
+            entity.getAgEntityOverlay().getExcludes().forEach(e -> exclude(entity, e));
+        }
+
+        entity.getChildren().values().forEach(this::processOverlayExcludes);
+    }
+
+    private void exclude(ResourceEntity<?> entity, String name) {
+        if (entity.removeAttribute(name) == null
+                && entity.removeChild(name) == null
+                && name.equals(PathConstants.ID_PK_ATTRIBUTE)) {
+            entity.excludeId();
         }
     }
 }

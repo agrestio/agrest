@@ -146,6 +146,21 @@ public class GET_EntityOverlay_PerRequestIT extends DbTest {
     public void test_OverlayedExclude() {
 
         tester.e2().insertColumns("id_", "name", "address").values(1, "N", "A").exec();
+        tester.e3().insertColumns("id_", "name", "phone_number", "e2_id")
+                .values(1, "N", "P", 1)
+                .exec();
+
+        tester.target("/e2")
+                .queryParam("include", "e3s")
+                .get()
+                .wasOk()
+                .bodyEquals(1, "{\"id\":1,\"e3s\":[{\"id\":1,\"name\":\"N\"}],\"name\":\"N\"}");
+    }
+
+    @Test
+    public void test_OverlayedNestedExclude() {
+
+        tester.e2().insertColumns("id_", "name", "address").values(1, "N", "A").exec();
 
         tester.target("/e2")
                 .get()
@@ -204,11 +219,13 @@ public class GET_EntityOverlay_PerRequestIT extends DbTest {
         @Path("e2")
         public DataResponse<E2> getE2_With_exclude(@Context UriInfo uriInfo) {
 
-            AgEntityOverlay<E2> overlay = AgEntity.overlay(E2.class).exclude("address");
+            AgEntityOverlay<E2> e2Overlay = AgEntity.overlay(E2.class).exclude("address");
+            AgEntityOverlay<E3> e3Overlay = AgEntity.overlay(E3.class).exclude("phoneNumber");
 
             return Ag.service(config)
                     .select(E2.class)
-                    .entityOverlay(overlay)
+                    .entityOverlay(e2Overlay)
+                    .entityOverlay(e3Overlay)
                     .uri(uriInfo)
                     .get();
         }
