@@ -35,14 +35,15 @@ public class GET_EntityOverlayIT extends DbTest {
 
     private static AgBuilder addOverlay(AgBuilder builder) {
 
+        AgEntityOverlay<E2> e2Overlay = AgEntity.overlay(E2.class)
+                .redefineAttribute("adhocString", String.class, e2 -> e2.getName() + "*")
+                .exclude("address");
+
         AgEntityOverlay<E4> e4Overlay = AgEntity.overlay(E4.class)
                 .redefineAttribute("adhocString", String.class, e4 -> e4.getCVarchar() + "*")
                 .redefineToOne("adhocToOne", EX.class, EX::forE4)
                 .redefineToMany("adhocToMany", EY.class, EY::forE4)
                 .redefineAttribute("derived", String.class, E4::getDerived);
-
-        AgEntityOverlay<E2> e2Overlay = AgEntity.overlay(E2.class)
-                .redefineAttribute("adhocString", String.class, e2 -> e2.getName() + "*");
 
         AgEntityOverlay<E7> e7Overlay = AgEntity.overlay(E7.class)
                 .redefineRelationshipResolver("e8", e7 -> {
@@ -69,6 +70,17 @@ public class GET_EntityOverlayIT extends DbTest {
     }
 
     @Test
+    public void testExclude() {
+
+        tester.e2().insertColumns("id_", "name", "address").values(1, "N", "A").exec();
+
+        tester.target("/e2")
+                .get()
+                .wasOk()
+                .bodyEquals(1, "{\"id\":1,\"adhocString\":\"N*\",\"name\":\"N\"}");
+    }
+
+    @Test
     public void testRedefineAttribute_Transient() {
 
         tester.e4().insertColumns("id", "c_varchar")
@@ -78,7 +90,6 @@ public class GET_EntityOverlayIT extends DbTest {
         tester.target("/e4")
                 .queryParam("include", "derived")
                 .queryParam("sort", "id")
-
                 .get().wasOk().bodyEquals(2, "{\"derived\":\"x$\"},{\"derived\":\"y$\"}");
     }
 
@@ -92,7 +103,6 @@ public class GET_EntityOverlayIT extends DbTest {
                 .queryParam("include", "id")
                 .queryParam("include", "e2.adhocString")
                 .queryParam("sort", "id")
-
                 .get().wasOk().bodyEquals(1, "{\"id\":3,\"e2\":{\"adhocString\":\"xxx*\"}}");
     }
 
@@ -106,7 +116,6 @@ public class GET_EntityOverlayIT extends DbTest {
         tester.target("/e4")
                 .queryParam("include", "adhocString")
                 .queryParam("sort", "id")
-
                 .get().wasOk().bodyEquals(2, "{\"adhocString\":\"x*\"},{\"adhocString\":\"y*\"}");
     }
 
@@ -121,7 +130,6 @@ public class GET_EntityOverlayIT extends DbTest {
                 .queryParam("include", "id")
                 .queryParam("include", "adhocToOne")
                 .queryParam("sort", "id")
-
                 .get().wasOk().bodyEquals(2,
                 "{\"id\":1,\"adhocToOne\":{\"p1\":\"x_\"}}",
                 "{\"id\":2,\"adhocToOne\":{\"p1\":\"y_\"}}");
@@ -138,7 +146,6 @@ public class GET_EntityOverlayIT extends DbTest {
                 .queryParam("include", "id")
                 .queryParam("include", "adhocToMany")
                 .queryParam("sort", "id")
-
                 .get().wasOk().bodyEquals(2,
                 "{\"id\":1,\"adhocToMany\":[{\"p1\":\"x-\"},{\"p1\":\"x%\"}]}",
                 "{\"id\":2,\"adhocToMany\":[{\"p1\":\"y-\"},{\"p1\":\"y%\"}]}");
@@ -155,7 +162,6 @@ public class GET_EntityOverlayIT extends DbTest {
                 .queryParam("include", "id")
                 .queryParam("include", "e8.name")
                 .queryParam("sort", "id")
-
                 .get().wasOk().bodyEquals(2,
                 "{\"id\":1,\"e8\":{\"name\":\"x1_e8\"}}",
                 "{\"id\":2,\"e8\":{\"name\":\"x2_e8\"}}");
@@ -172,7 +178,6 @@ public class GET_EntityOverlayIT extends DbTest {
                 .queryParam("include", "id")
                 .queryParam("include", "name")
                 .queryParam("sort", "id")
-
                 .get().wasOk().bodyEquals(2,
                 "{\"id\":1,\"name\":2}",
                 "{\"id\":2,\"name\":4}");
@@ -221,6 +226,12 @@ public class GET_EntityOverlayIT extends DbTest {
     public static final class Resource {
         @Context
         private Configuration config;
+
+        @GET
+        @Path("e2")
+        public DataResponse<E2> getE2(@Context UriInfo uriInfo) {
+            return Ag.service(config).select(E2.class).uri(uriInfo).get();
+        }
 
         @GET
         @Path("e3")

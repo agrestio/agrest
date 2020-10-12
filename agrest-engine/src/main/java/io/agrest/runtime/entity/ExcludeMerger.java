@@ -16,6 +16,10 @@ public class ExcludeMerger implements IExcludeMerger {
         for (Exclude exclude : excludes) {
             processExcludePath(resourceEntity, exclude.getPath());
         }
+
+        if (resourceEntity.getAgEntityOverlay() != null) {
+            resourceEntity.getAgEntityOverlay().getExcludes().forEach(e -> processExcludePath(resourceEntity, e));
+        }
     }
 
     private void processExcludePath(ResourceEntity<?> resourceEntity, String path) {

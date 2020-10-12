@@ -173,6 +173,17 @@ public class AgBuilder_OverlayTest {
         assertFalse(unchanged.isToMany());
     }
 
+    @Test
+    public void testOverlay_Exclude() {
+        AgRuntime runtime = new AgBuilder()
+                .entityOverlay(AgEntity.overlay(X.class).exclude("phoneNumber"))
+                .build();
+
+        AgEntity<X> entity = runtime.service(IMetadataService.class).getAgEntity(X.class);
+        AgAttribute phone = entity.getAttribute("phoneNumber");
+        assertNull(phone);
+    }
+
     static class TestNestedDataResolver<T> implements NestedDataResolver<T> {
 
         @Override
