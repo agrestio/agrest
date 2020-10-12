@@ -14,8 +14,6 @@ import io.agrest.meta.compiler.PojoEntityCompiler;
 import io.agrest.resolver.ThrowingNestedDataResolver;
 import io.agrest.runtime.meta.IMetadataService;
 import io.agrest.runtime.meta.MetadataService;
-import io.agrest.runtime.path.IPathDescriptorManager;
-import io.agrest.runtime.path.PathDescriptorManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -39,8 +37,7 @@ public class IncludeMergerTest {
         AgEntityCompiler compiler = new PojoEntityCompiler(Collections.emptyMap());
         this.metadataService = new MetadataService(Collections.singletonList(compiler));
 
-        IPathDescriptorManager pathCache = new PathDescriptorManager();
-        ICayenneExpMerger expMerger = new CayenneExpMerger(new ExpressionParser(), new ExpressionPostProcessor(pathCache));
+        ICayenneExpMerger expMerger = new CayenneExpMerger();
         ISortMerger sortMerger = new SortMerger();
         IMapByMerger mapByMerger = new MapByMerger(metadataService);
         ISizeMerger sizeMerger = new SizeMerger();

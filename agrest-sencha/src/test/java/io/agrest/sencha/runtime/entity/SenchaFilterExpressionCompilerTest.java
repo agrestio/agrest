@@ -1,22 +1,19 @@
 package io.agrest.sencha.runtime.entity;
 
-import io.agrest.AgException;
+import io.agrest.base.protocol.CayenneExp;
 import io.agrest.cayenne.cayenne.main.E4;
 import io.agrest.cayenne.unit.CayenneNoDbTest;
 import io.agrest.meta.AgEntity;
-import io.agrest.runtime.entity.ExpressionPostProcessor;
-import io.agrest.runtime.path.PathDescriptorManager;
 import io.agrest.sencha.protocol.Filter;
-import org.apache.cayenne.exp.Expression;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
-import java.util.GregorianCalendar;
+import java.util.List;
 
 import static java.util.Arrays.asList;
-import static org.apache.cayenne.exp.ExpressionFactory.exp;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class SenchaFilterExpressionCompilerTest extends CayenneNoDbTest {
 
@@ -25,119 +22,104 @@ public class SenchaFilterExpressionCompilerTest extends CayenneNoDbTest {
 
     @BeforeEach
     public void before() {
-
-        PathDescriptorManager pathDescriptorManager = new PathDescriptorManager();
-
-        this.processor = new SenchaFilterExpressionCompiler(
-                pathDescriptorManager,
-                new ExpressionPostProcessor(pathDescriptorManager));
+        this.processor = new SenchaFilterExpressionCompiler();
         this.e4Entity = getAgEntity(E4.class);
     }
 
-    private Expression process(Filter... filters) {
+    private void assertFromFilter(Filter filter, String expectedExp, Object... expectedParams) {
+        assertEquals(new CayenneExp(expectedExp, expectedParams), processor.fromFilter(filter));
+    }
+
+    private List<CayenneExp> process(Filter... filters) {
         return processor.process(e4Entity, Arrays.asList(filters));
     }
 
-    private void assertProcess(String expectedExpression, Filter... filters) {
-        assertEquals(exp(expectedExpression), process(filters));
-    }
-
-    private void assertProcess(Expression expectedExpression, Filter... filters) {
-        assertEquals(expectedExpression, process(filters));
-    }
-
     @Test
-    public void testProcess_SingleFilter() {
-        assertProcess("cVarchar likeIgnoreCase 'xyz%'", new Filter("cVarchar", "xyz", "like", false, false));
-    }
-
-    @Test
-    public void testProcess_SingleFilter_Disabled() {
-        assertNull(process(new Filter("cVarchar", "xyz", "like", true, false)));
+    public void testProcess_Disabled() {
+        assertTrue(process(new Filter("cVarchar", "xyz", "like", true, false)).isEmpty());
     }
 
     @Test
     public void testProcess_MultipleFilters() {
-        assertProcess("cVarchar likeIgnoreCase 'xyz%' and cVarchar likeIgnoreCase '123%'",
-                new Filter("cVarchar", "xyz", "like", false, false),
-                new Filter("cVarchar", "123", "like", false, false));
+        assertEquals(asList(
+                new CayenneExp("cVarchar likeIgnoreCase 'xyz%'"),
+                new CayenneExp("cVarchar likeIgnoreCase '123%'")
+                ),
+                process(
+                        new Filter("cVarchar", "xyz", "like", false, false),
+                        new Filter("cVarchar", "123", "like", false, false)));
     }
 
     @Test
     public void testProcess_MultipleFilters_Disabled() {
-        assertProcess("cVarchar likeIgnoreCase '123%'",
-                new Filter("cVarchar", "xyz", "like", true, false),
-                new Filter("cVarchar", "123", "like", false, false));
+        assertEquals(asList(new CayenneExp("cVarchar likeIgnoreCase '123%'")),
+                process(
+                        new Filter("cVarchar", "xyz", "like", true, false),
+                        new Filter("cVarchar", "123", "like", false, false)));
     }
 
     @Test
-    public void testProcess_InvalidProperty() {
-        assertThrows(AgException.class, () -> process(new Filter("cDummp", "xyz", "like", false, false)));
+    public void testFromFilter_ValueEscape() {
+        assertFromFilter(new Filter("cVarchar", "x_%", "like", false, false), "cVarchar likeIgnoreCase 'x\\_\\%%'");
     }
 
     @Test
-    public void testProcess_ValueEscape() {
-        assertProcess(E4.C_VARCHAR.likeIgnoreCase("x\\_\\%%"), new Filter("cVarchar", "x_%", "like", false, false));
+    public void testFromFilter_ValueNull() {
+        assertFromFilter(new Filter("cVarchar", null, "like", false, false), "cVarchar = $a", new Object[]{null});
     }
 
     @Test
-    public void testProcess_ValueNull() {
-        assertProcess(E4.C_VARCHAR.isNull(), new Filter("cVarchar", null, "like", false, false));
+    public void testFromFilter_ExactMatch() {
+        assertFromFilter(new Filter("cVarchar", "xyz", "like", false, true), "cVarchar = $a", "xyz");
     }
 
     @Test
-    public void testProcess_ExactMatch() {
-        assertProcess("cVarchar = 'xyz'", new Filter("cVarchar", "xyz", "like", false, true));
+    public void testFromFilter_Equal() {
+        assertFromFilter(new Filter("cVarchar", "xyz", "=", false, true), "cVarchar = $a", "xyz");
     }
 
     @Test
-    public void testProcess_Equal() {
-        assertProcess("cVarchar = 'xyz'", new Filter("cVarchar", "xyz", "=", false, true));
+    public void testFromFilter_NotEqual() {
+        assertFromFilter(new Filter("cVarchar", "xyz", "!=", false, true), "cVarchar <> $a", "xyz");
     }
 
     @Test
-    public void testProcess_NotEqual() {
-        assertProcess("cVarchar != 'xyz'", new Filter("cVarchar", "xyz", "!=", false, true));
+    public void testFromFilter_Like() {
+        assertFromFilter(new Filter("cVarchar", "xyz", "like", false, false), "cVarchar likeIgnoreCase 'xyz%'");
     }
 
     @Test
-    public void testProcess_Like() {
-        assertProcess("cVarchar likeIgnoreCase 'xyz%'", new Filter("cVarchar", "xyz", "like", false, false));
+    public void testFromFilter_In() {
+        assertFromFilter(new Filter("cVarchar", asList("xyz", "abc"), "in", false, false), "cVarchar in ($a)", asList("xyz", "abc"));
     }
 
     @Test
-    public void testProcess_In() {
-        assertProcess("cVarchar in ('xyz', 'abc')", new Filter("cVarchar", asList("xyz", "abc"), "in", false, false));
+    public void testFromFilter_Greater() {
+        assertFromFilter(new Filter("cVarchar", 6, ">", false, false), "cVarchar > $a", 6);
     }
 
     @Test
-    public void testProcess_Greater() {
-        assertProcess("cVarchar > 6", new Filter("cVarchar", 6, ">", false, false));
+    public void testFromFilter_Greater_Null() {
+        assertFromFilter(new Filter("cVarchar", null, ">", false, false), "cVarchar > $a", new Object[]{null});
     }
 
     @Test
-    public void testProcess_Greater_Null() {
-        assertProcess("false", new Filter("cVarchar", null, ">", false, false));
+    public void testFromFilter_GreaterOrEqual() {
+        assertFromFilter(new Filter("cVarchar", 5, ">=", false, false), "cVarchar >= $a", 5);
     }
 
     @Test
-    public void testProcess_GreaterOrEqual() {
-        assertProcess("cVarchar >= 5", new Filter("cVarchar", 5, ">=", false, false));
+    public void testFromFilter_Less() {
+        assertFromFilter(new Filter("cVarchar", 7, "<", false, false), "cVarchar < $a", 7);
     }
 
     @Test
-    public void testProcess_Less() {
-        assertProcess("cVarchar < 7", new Filter("cVarchar", 7, "<", false, false));
+    public void testFromFilter_LessOrEqual() {
+        assertFromFilter(new Filter("cVarchar", "xyz", "<=", false, false), "cVarchar <= $a", "xyz");
     }
 
     @Test
-    public void testProcess_LessOrEqual() {
-        assertProcess("cVarchar <= 'xyz'", new Filter("cVarchar", "xyz", "<=", false, false));
-    }
-
-    @Test
-    public void testProcess_Date() {
-        assertProcess(exp("cDate > $d", new GregorianCalendar(2016, 2, 26).getTime()),
-                new Filter("cDate", "2016-03-26", ">", false, false));
+    public void testFromFilter_Date() {
+        assertFromFilter(new Filter("cDate", "2016-03-26", ">", false, false), "cDate > $a", "2016-03-26");
     }
 }

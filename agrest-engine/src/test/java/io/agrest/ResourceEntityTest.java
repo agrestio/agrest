@@ -1,25 +1,26 @@
 package io.agrest;
 
-import io.agrest.pojo.model.P1;
+import io.agrest.base.protocol.CayenneExp;
 import io.agrest.meta.AgEntity;
-import org.apache.cayenne.exp.ExpressionFactory;
+import io.agrest.pojo.model.P1;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 
 public class ResourceEntityTest {
 
 	@Test
-	public void testQualifier() {
+	public void testQualifiers() {
 		@SuppressWarnings("unchecked")
-		ResourceEntity<P1> p1 = new RootResourceEntity<>(mock(AgEntity.class), null);
-		assertNull(p1.getQualifier());
+		ResourceEntity<P1> e = new RootResourceEntity<>(mock(AgEntity.class), null);
+		assertTrue(e.getQualifiers().isEmpty());
 
-		p1.andQualifier(ExpressionFactory.exp("a = 1"));
-		assertEquals("a = 1", p1.getQualifier().toString());
+		e.getQualifiers().add(new CayenneExp("a = 1"));
+		assertEquals(1, e.getQualifiers().size());
 
-		p1.andQualifier(ExpressionFactory.exp("b = 2"));
-		assertEquals("(a = 1) and (b = 2)", p1.getQualifier().toString());
+		e.getQualifiers().add(new CayenneExp("b = 2"));
+		assertEquals(2, e.getQualifiers().size());
 	}
 }

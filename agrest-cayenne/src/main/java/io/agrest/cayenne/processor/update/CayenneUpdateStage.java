@@ -121,7 +121,7 @@ public class CayenneUpdateStage extends CayenneMergeChangesStage {
         for (Object key : keys) {
 
             // update keys can be null... see a note in "mutableUpdatesByKey"
-            if(key != null) {
+            if (key != null) {
                 Expression e = mapper.expressionForKey(key);
                 if (e != null) {
                     expressions.add(e);
@@ -135,9 +135,7 @@ public class CayenneUpdateStage extends CayenneMergeChangesStage {
         }
 
         ResourceEntity resourceEntity = context.getEntity();
-        resourceEntity.setQualifier(ExpressionFactory.joinExp(Expression.OR, expressions));
-
-        buildQuery(context, context.getEntity());
+        buildQuery(context, context.getEntity(), ExpressionFactory.joinExp(Expression.OR, expressions));
 
         List<T> objects = fetchEntity(context, resourceEntity);
         if (context.isById() && objects.size() > 1) {
@@ -150,14 +148,12 @@ public class CayenneUpdateStage extends CayenneMergeChangesStage {
     }
 
 
-    <T> SelectQuery<T> buildQuery(UpdateContext<T> context, ResourceEntity<T> entity) {
+    <T> SelectQuery<T> buildQuery(UpdateContext<T> context, ResourceEntity<T> entity, Expression qualifier) {
 
         SelectQuery<T> query = SelectQuery.query(entity.getType());
 
-        // apply various request filters identifying the span of the collection
-
-        if (entity.getQualifier() != null) {
-            query.andQualifier(entity.getQualifier());
+        if (qualifier != null) {
+            query.setQualifier(qualifier);
         }
 
         CayenneProcessor.setQuery(entity, query);
@@ -189,12 +185,7 @@ public class CayenneUpdateStage extends CayenneMergeChangesStage {
                             (Class) attribute.getType()));
                 }
 
-                // transfer expression from parent
-                if (parentSelect.getQualifier() != null) {
-                    child.andQualifier(translateExpressionToSource(objRelationship, parentSelect.getQualifier()));
-                }
-
-                SelectQuery childQuery = buildQuery(context, child);
+                SelectQuery childQuery = buildQuery(context, child, translateExpressionToSource(objRelationship, parentSelect.getQualifier()));
                 childQuery.setColumns(properties);
             }
         }

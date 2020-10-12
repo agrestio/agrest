@@ -7,6 +7,7 @@ import io.agrest.SizeConstraints;
 import io.agrest.annotation.AgAttribute;
 import io.agrest.annotation.AgId;
 import io.agrest.annotation.AgRelationship;
+import io.agrest.base.protocol.CayenneExp;
 import io.agrest.constraints.Constraint;
 import io.agrest.meta.AgEntity;
 import io.agrest.meta.compiler.AgEntityCompiler;
@@ -20,7 +21,6 @@ import org.junit.jupiter.api.Test;
 import java.util.Collections;
 import java.util.List;
 
-import static org.apache.cayenne.exp.ExpressionFactory.exp;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class ConstraintsHandlerTest {
@@ -201,16 +201,12 @@ public class ConstraintsHandlerTest {
     public void testConstrainResponse_CayenneExp() {
 
         AgEntity<Tr> entity = metadata.getAgEntity(Tr.class);
-        Constraint<Tr> constraint = Constraint.excludeAll(Tr.class).and(exp("a = 5"));
+        Constraint<Tr> constraint = Constraint.excludeAll(Tr.class).qualifier(new CayenneExp("a = 5"));
 
         ResourceEntity<Tr> e1 = new RootResourceEntity<>(entity, null);
         constraintsHandler.constrainResponse(e1, null, constraint);
-        assertEquals(exp("a = 5"), e1.getQualifier());
-
-        ResourceEntity<Tr> e2 = new RootResourceEntity<>(entity, null);
-        e2.andQualifier(exp("b = 'd'"));
-        constraintsHandler.constrainResponse(e2, null, constraint);
-        assertEquals(exp("b = 'd' and a = 5"), e2.getQualifier());
+        assertEquals(1, e1.getQualifiers().size());
+        assertEquals(new CayenneExp("a = 5"), e1.getQualifiers().get(0));
     }
 
     @Test

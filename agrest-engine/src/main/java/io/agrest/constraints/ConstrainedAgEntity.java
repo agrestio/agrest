@@ -1,8 +1,8 @@
 package io.agrest.constraints;
 
+import io.agrest.base.protocol.CayenneExp;
 import io.agrest.meta.AgAttribute;
 import io.agrest.meta.AgEntity;
-import org.apache.cayenne.exp.Expression;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -19,7 +19,7 @@ public class ConstrainedAgEntity<T> {
     private boolean idIncluded;
     private Collection<String> attributes;
     private Map<String, ConstrainedAgEntity<?>> children;
-    private Expression qualifier;
+    private CayenneExp qualifier;
     private AgEntity<T> entity;
 
     public ConstrainedAgEntity(AgEntity<T> entity) {
@@ -64,7 +64,7 @@ public class ConstrainedAgEntity<T> {
         return children.containsKey(name);
     }
 
-    public Expression getQualifier() {
+    public CayenneExp getQualifier() {
         return qualifier;
     }
 
@@ -107,20 +107,7 @@ public class ConstrainedAgEntity<T> {
         this.idIncluded = include;
     }
 
-    void andQualifier(Expression qualifier) {
-        if (this.qualifier == null) {
-            this.qualifier = qualifier;
-        } else {
-            this.qualifier = this.qualifier.andExp(qualifier);
-        }
-    }
-
-    void orQualifier(Expression qualifier) {
-
-        if (this.qualifier == null) {
-            this.qualifier = qualifier;
-        } else {
-            this.qualifier = this.qualifier.orExp(qualifier);
-        }
+    void setQualifier(CayenneExp qualifier) {
+        this.qualifier = qualifier;
     }
 }

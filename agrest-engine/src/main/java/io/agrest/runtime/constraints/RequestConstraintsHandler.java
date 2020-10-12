@@ -140,7 +140,7 @@ class RequestConstraintsHandler {
         }
 
         if (constraints.getQualifier() != null) {
-            target.andQualifier(constraints.getQualifier());
+            target.getQualifiers().add(constraints.getQualifier());
         }
 
         // process 'mapByPath' ... treat it as a regular relationship/attribute
@@ -180,17 +180,16 @@ class RequestConstraintsHandler {
     private boolean allowedMapBy_LastComponent(ConstrainedAgEntity source, String path) {
 
         // process last component
-        String property = path;
 
-        if (property == null || property.length() == 0 || property.equals(PathConstants.ID_PK_ATTRIBUTE)) {
+        if (path == null || path.length() == 0 || path.equals(PathConstants.ID_PK_ATTRIBUTE)) {
             return source.isIdIncluded();
         }
 
-        if (source.hasAttribute(property)) {
+        if (source.hasAttribute(path)) {
             return true;
         }
 
-        ConstrainedAgEntity child = source.getChild(property);
+        ConstrainedAgEntity child = source.getChild(path);
         return child != null && allowedMapBy_LastComponent(child, null);
     }
 }

@@ -1,4 +1,4 @@
-package io.agrest.runtime.entity;
+package io.agrest.cayenne.qualifier;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.TextNode;
@@ -23,13 +23,13 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class ExpressionPostProcessor implements IExpressionPostProcessor {
+public class QualifierPostProcessor implements IQualifierPostProcessor {
 
     private IPathDescriptorManager pathCache;
 	private Map<Class<?>, JsonValueConverter<?>> converters;
     private Map<AgEntity<?>, ExpressionProcessor> postProcessors;
 
-    public ExpressionPostProcessor(@Inject IPathDescriptorManager pathCache) {
+    public QualifierPostProcessor(@Inject IPathDescriptorManager pathCache) {
         this.pathCache = pathCache;
 
         // TODO: instead of manually assembling converters we must switch to

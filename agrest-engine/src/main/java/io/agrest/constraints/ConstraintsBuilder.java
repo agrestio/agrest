@@ -1,9 +1,9 @@
 package io.agrest.constraints;
 
 import io.agrest.PathConstants;
+import io.agrest.base.protocol.CayenneExp;
 import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgRelationship;
-import org.apache.cayenne.exp.Expression;
 
 import java.util.function.Function;
 
@@ -109,16 +109,9 @@ public class ConstraintsBuilder<T> implements Constraint<T> {
         return includeId(false);
     }
 
-    public ConstraintsBuilder<T> and(Expression qualifier) {
+    public ConstraintsBuilder<T> qualifier(CayenneExp qualifier) {
         return new ConstraintsBuilder<>(op.andThen(ce -> {
-            ce.andQualifier(qualifier);
-            return ce;
-        }));
-    }
-
-    public ConstraintsBuilder<T> or(Expression qualifier) {
-        return new ConstraintsBuilder<>(op.andThen(ce -> {
-            ce.orQualifier(qualifier);
+            ce.setQualifier(qualifier);
             return ce;
         }));
     }

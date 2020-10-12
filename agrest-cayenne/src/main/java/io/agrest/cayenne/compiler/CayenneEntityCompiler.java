@@ -1,7 +1,7 @@
 package io.agrest.cayenne.compiler;
 
 import io.agrest.cayenne.persister.ICayennePersister;
-import io.agrest.cayenne.processor.select.CayenneQueryAssembler;
+import io.agrest.cayenne.processor.ICayenneQueryAssembler;
 import io.agrest.cayenne.processor.select.ViaQueryResolver;
 import io.agrest.cayenne.processor.select.ViaQueryWithParentExpResolver;
 import io.agrest.meta.AgDataMap;
@@ -11,7 +11,6 @@ import io.agrest.meta.LazyAgEntity;
 import io.agrest.meta.compiler.AgEntityCompiler;
 import io.agrest.resolver.NestedDataResolver;
 import io.agrest.resolver.RootDataResolver;
-import io.agrest.runtime.path.IPathDescriptorManager;
 import org.apache.cayenne.di.Inject;
 import org.apache.cayenne.map.EntityResolver;
 import org.apache.cayenne.map.ObjEntity;
@@ -34,13 +33,12 @@ public class CayenneEntityCompiler implements AgEntityCompiler {
 
     public CayenneEntityCompiler(
             @Inject ICayennePersister cayennePersister,
-            @Inject IPathDescriptorManager pathDescriptorManager,
+            @Inject ICayenneQueryAssembler queryAssembler,
             @Inject Map<String, AgEntityOverlay> entityOverlays) {
 
         this.cayenneEntityResolver = cayennePersister.entityResolver();
         this.entityOverlays = entityOverlays;
 
-        CayenneQueryAssembler queryAssembler = new CayenneQueryAssembler(cayenneEntityResolver, pathDescriptorManager);
         this.defaultRootResolver = createDefaultRootResolver(queryAssembler, cayennePersister);
         this.defaultNestedResolver = createDefaultNestedResolver(queryAssembler, cayennePersister);
     }
@@ -55,14 +53,14 @@ public class CayenneEntityCompiler implements AgEntityCompiler {
     }
 
     protected RootDataResolver<?> createDefaultRootResolver(
-            CayenneQueryAssembler queryAssembler,
+            ICayenneQueryAssembler queryAssembler,
             ICayennePersister cayennePersister) {
 
         return new ViaQueryResolver(queryAssembler, cayennePersister);
     }
 
     protected NestedDataResolver<?> createDefaultNestedResolver(
-            CayenneQueryAssembler queryAssembler,
+            ICayenneQueryAssembler queryAssembler,
             ICayennePersister cayennePersister) {
 
         return new ViaQueryWithParentExpResolver(queryAssembler, cayennePersister);

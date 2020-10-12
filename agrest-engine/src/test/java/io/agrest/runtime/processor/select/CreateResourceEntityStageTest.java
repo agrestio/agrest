@@ -1,6 +1,5 @@
 package io.agrest.runtime.processor.select;
 
-import io.agrest.AgException;
 import io.agrest.ResourceEntity;
 import io.agrest.annotation.AgAttribute;
 import io.agrest.annotation.AgId;
@@ -11,8 +10,6 @@ import io.agrest.meta.compiler.PojoEntityCompiler;
 import io.agrest.runtime.entity.*;
 import io.agrest.runtime.meta.IMetadataService;
 import io.agrest.runtime.meta.MetadataService;
-import io.agrest.runtime.path.IPathDescriptorManager;
-import io.agrest.runtime.path.PathDescriptorManager;
 import io.agrest.runtime.protocol.ICayenneExpParser;
 import io.agrest.runtime.protocol.IExcludeParser;
 import io.agrest.runtime.protocol.IIncludeParser;
@@ -27,7 +24,6 @@ import javax.ws.rs.core.UriInfo;
 import java.util.Collections;
 import java.util.List;
 
-import static org.apache.cayenne.exp.ExpressionFactory.exp;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -43,10 +39,8 @@ public class CreateResourceEntityStageTest {
         AgEntityCompiler compiler = new PojoEntityCompiler(Collections.emptyMap());
         MetadataService metadataService = new MetadataService(Collections.singletonList(compiler));
 
-        IPathDescriptorManager pathCache = new PathDescriptorManager();
-
         // prepare create entity stage
-        ICayenneExpMerger expMerger = new CayenneExpMerger(new ExpressionParser(), new ExpressionPostProcessor(pathCache));
+        ICayenneExpMerger expMerger = new CayenneExpMerger();
         ISortMerger sortMerger = new SortMerger();
         IMapByMerger mapByMerger = new MapByMerger(mock(IMetadataService.class));
         ISizeMerger sizeMerger = new SizeMerger();
@@ -395,7 +389,7 @@ public class CreateResourceEntityStageTest {
                 .builder()
                 .cayenneExp(new CayenneExp("x = 12345 and y = 'John Smith' and z = true")).build());
 
-        assertThrows(AgException.class, () -> stage.execute(context));
+        assertDoesNotThrow(() -> stage.execute(context), "Even though the passed spec is invalid, no parsing should occur at this stage");
     }
 
     @Test
@@ -409,8 +403,8 @@ public class CreateResourceEntityStageTest {
         stage.execute(context);
 
         ResourceEntity<Ts> resourceEntity = context.getEntity();
-        assertNotNull(resourceEntity.getQualifier());
-        assertEquals(exp("m = 'John Smith'"), resourceEntity.getQualifier());
+        assertEquals(1, resourceEntity.getQualifiers().size());
+        assertEquals(new CayenneExp("m = 'John Smith'"), resourceEntity.getQualifiers().get(0));
     }
 
     public static class Tr {

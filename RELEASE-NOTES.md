@@ -1,6 +1,7 @@
 ## Release 4.0
 
 * #456 Upgrade to Cayenne 4.2
+* #457 Replace Cayenne "Expression" in ResourceEntity with Agrest "CayenneExp"
 
 ## Release 3.7
 
