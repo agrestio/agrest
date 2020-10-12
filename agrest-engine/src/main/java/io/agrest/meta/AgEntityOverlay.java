@@ -4,9 +4,7 @@ import io.agrest.property.PropertyReader;
 import io.agrest.resolver.*;
 import org.apache.cayenne.exp.parser.ASTObjPath;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Function;
 
 /**
@@ -22,12 +20,14 @@ public class AgEntityOverlay<T> {
     //  TODO: introduce AgAttributeOverride to allow for partial overrides, like changing a reader
     private final Map<String, AgAttribute> attributes;
     private final Map<String, AgRelationshipOverlay> relationships;
+    private final List<String> excludes;
     private RootDataResolver<T> rootDataResolver;
 
     public AgEntityOverlay(Class<T> type) {
         this.type = type;
         this.attributes = new HashMap<>();
         this.relationships = new HashMap<>();
+        this.excludes = new ArrayList<>(2);
     }
 
     private static PropertyReader fromFunction(Function<?, ?> f) {
@@ -45,11 +45,16 @@ public class AgEntityOverlay<T> {
     }
 
     /**
+     * Combines this overlay with another overlay. This overlay is modified, loading overlaid properties and
+     * resolvers from another overlay.
+     *
+     * @return this overlay
      * @since 2.10
      */
     public AgEntityOverlay<T> merge(AgEntityOverlay<T> anotherOverlay) {
         attributes.putAll(anotherOverlay.attributes);
         relationships.putAll(anotherOverlay.relationships);
+        excludes.addAll(anotherOverlay.excludes);
         if (anotherOverlay.getRootDataResolver() != null) {
             this.rootDataResolver = anotherOverlay.getRootDataResolver();
         }
@@ -93,6 +98,24 @@ public class AgEntityOverlay<T> {
      */
     public RootDataResolver<T> getRootDataResolver() {
         return rootDataResolver;
+    }
+
+    /**
+     * Removes a named property (attribute or relationship) from overlaid AgEntity.
+     *
+     * @return this overlay instance
+     * @since 3.7
+     */
+    public AgEntityOverlay<T> exclude(String... properties) {
+        Collections.addAll(excludes, properties);
+        return this;
+    }
+
+    /**
+     * @since 3.7
+     */
+    public Iterable<String> getExcludes() {
+        return excludes;
     }
 
     /**

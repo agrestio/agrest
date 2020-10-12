@@ -38,11 +38,12 @@ public class GET_EntityOverlay_PerRequestIT extends DbTest {
 
         tester.target("/e4/xyz")
                 .queryParam("sort", "id")
-
-                .get().wasOk().bodyEquals(2, "{\"id\":2,\"cBoolean\":null,\"cDate\":null,\"cDecimal\":null,\"cInt\":null," +
-                "\"cTime\":null,\"cTimestamp\":null,\"cVarchar\":\"a_x\",\"fromRequest\":\"xyz\",\"objectProperty\":\"a$\"}," +
-                "{\"id\":4,\"cBoolean\":null,\"cDate\":null,\"cDecimal\":null,\"cInt\":null," +
-                "\"cTime\":null,\"cTimestamp\":null,\"cVarchar\":\"b_x\",\"fromRequest\":\"xyz\",\"objectProperty\":\"b$\"}");
+                .get()
+                .wasOk()
+                .bodyEquals(2, "{\"id\":2,\"cBoolean\":null,\"cDate\":null,\"cDecimal\":null,\"cInt\":null," +
+                        "\"cTime\":null,\"cTimestamp\":null,\"cVarchar\":\"a_x\",\"fromRequest\":\"xyz\",\"objectProperty\":\"a$\"}," +
+                        "{\"id\":4,\"cBoolean\":null,\"cDate\":null,\"cDecimal\":null,\"cInt\":null," +
+                        "\"cTime\":null,\"cTimestamp\":null,\"cVarchar\":\"b_x\",\"fromRequest\":\"xyz\",\"objectProperty\":\"b$\"}");
     }
 
     @Test
@@ -53,9 +54,10 @@ public class GET_EntityOverlay_PerRequestIT extends DbTest {
         tester.target("/e4/xyz")
                 .queryParam("sort", "id")
                 .queryParam("include", "[\"id\",\"cVarchar\",\"fromRequest\"]")
-
-                .get().wasOk().bodyEquals(2, "{\"id\":2,\"cVarchar\":\"a_x\",\"fromRequest\":\"xyz\"}," +
-                "{\"id\":4,\"cVarchar\":\"b_x\",\"fromRequest\":\"xyz\"}");
+                .get()
+                .wasOk()
+                .bodyEquals(2, "{\"id\":2,\"cVarchar\":\"a_x\",\"fromRequest\":\"xyz\"}," +
+                        "{\"id\":4,\"cVarchar\":\"b_x\",\"fromRequest\":\"xyz\"}");
     }
 
     @Test
@@ -67,15 +69,16 @@ public class GET_EntityOverlay_PerRequestIT extends DbTest {
                 .queryParam("sort", "id")
                 .queryParam("include", "fromRequest")
                 .get()
-                .wasOk().bodyEquals(2, "{\"fromRequest\":\"xyz\"},{\"fromRequest\":\"xyz\"}");
-
+                .wasOk()
+                .bodyEquals(2, "{\"fromRequest\":\"xyz\"},{\"fromRequest\":\"xyz\"}");
 
         // at some point in time readers were cached, so changing the URL parameter would still return the old result
         tester.target("/e4/abc")
                 .queryParam("sort", "id")
                 .queryParam("include", "fromRequest")
                 .get()
-                .wasOk().bodyEquals(2, "{\"fromRequest\":\"abc\"},{\"fromRequest\":\"abc\"}");
+                .wasOk()
+                .bodyEquals(2, "{\"fromRequest\":\"abc\"},{\"fromRequest\":\"abc\"}");
     }
 
     @Test
@@ -135,8 +138,19 @@ public class GET_EntityOverlay_PerRequestIT extends DbTest {
         tester.target("/e4_2")
                 .queryParam("cayenneExp", "id = 2")
                 .queryParam("include", "[\"id\",\"dynamicRelationship.e2\"]")
+                .get().wasOk()
+                .bodyEquals(1, "{\"id\":2,\"dynamicRelationship\":{\"e2\":{\"id\":2,\"name\":\"b2\"}}");
+    }
 
-                .get().wasOk().bodyEquals(1, "{\"id\":2,\"dynamicRelationship\":{\"e2\":{\"id\":2,\"name\":\"b2\"}}");
+    @Test
+    public void test_OverlayedExclude() {
+
+        tester.e2().insertColumns("id_", "name", "address").values(1, "N", "A").exec();
+
+        tester.target("/e2")
+                .get()
+                .wasOk()
+                .bodyEquals(1, "{\"id\":1,\"name\":\"N\"}");
     }
 
     @Path("")
@@ -181,6 +195,19 @@ public class GET_EntityOverlay_PerRequestIT extends DbTest {
 
             return Ag.service(config)
                     .select(E4.class)
+                    .entityOverlay(overlay)
+                    .uri(uriInfo)
+                    .get();
+        }
+
+        @GET
+        @Path("e2")
+        public DataResponse<E2> getE2_With_exclude(@Context UriInfo uriInfo) {
+
+            AgEntityOverlay<E2> overlay = AgEntity.overlay(E2.class).exclude("address");
+
+            return Ag.service(config)
+                    .select(E2.class)
                     .entityOverlay(overlay)
                     .uri(uriInfo)
                     .get();

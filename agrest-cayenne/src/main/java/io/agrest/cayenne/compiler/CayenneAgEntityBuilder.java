@@ -193,7 +193,9 @@ public class CayenneAgEntityBuilder<T> {
             // TODO: what about overlaying ids?
             overlay.getAttributes().forEach(this::addAttribute);
             overlay.getRelationshipOverlays().forEach(this::loadRelationshipOverlay);
-            if(overlay.getRootDataResolver() != null) {
+            overlay.getExcludes().forEach(this::removeIdOrAttributeOrRelationship);
+
+            if (overlay.getRootDataResolver() != null) {
                 this.rootDataResolver = overlay.getRootDataResolver();
             }
         }
@@ -204,6 +206,12 @@ public class CayenneAgEntityBuilder<T> {
         if (relationship != null) {
             addRelationship(relationship);
         }
+    }
+
+    protected void removeIdOrAttributeOrRelationship(String name) {
+        ids.remove(name);
+        attributes.remove(name);
+        relationships.remove(name);
     }
 
     protected IdReader createIdReader() {

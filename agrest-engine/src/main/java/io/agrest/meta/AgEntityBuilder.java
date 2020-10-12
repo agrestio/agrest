@@ -209,6 +209,7 @@ public class AgEntityBuilder<T> {
         if (overlay != null) {
             overlay.getAttributes().forEach(this::addAttribute);
             overlay.getRelationshipOverlays().forEach(this::loadRelationshipOverlay);
+            overlay.getExcludes().forEach(this::removeIdOrAttributeOrRelationship);
 
             if (overlay.getRootDataResolver() != null) {
                 this.rootDataResolver = overlay.getRootDataResolver();
@@ -221,6 +222,12 @@ public class AgEntityBuilder<T> {
         if (relationship != null) {
             addRelationship(relationship);
         }
+    }
+
+    protected void removeIdOrAttributeOrRelationship(String name) {
+        ids.remove(name);
+        attributes.remove(name);
+        relationships.remove(name);
     }
 
     protected IdReader createIdReader() {
