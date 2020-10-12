@@ -6,6 +6,7 @@ import io.agrest.NestedResourceEntity;
 import io.agrest.SimpleObjectId;
 import io.agrest.cayenne.persister.ICayennePersister;
 import io.agrest.cayenne.processor.CayenneProcessor;
+import io.agrest.cayenne.processor.ICayenneQueryAssembler;
 import io.agrest.meta.AgAttribute;
 import io.agrest.property.NestedEntityListResultReader;
 import io.agrest.property.NestedEntityResultReader;
@@ -15,11 +16,7 @@ import io.agrest.runtime.processor.select.SelectContext;
 import org.apache.cayenne.DataObject;
 import org.apache.cayenne.query.SelectQuery;
 
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.BiConsumer;
 
 /**
@@ -30,10 +27,10 @@ import java.util.function.BiConsumer;
  */
 public class ViaQueryWithParentExpResolver<T extends DataObject> extends BaseNestedDataResolver<T> {
 
-    protected CayenneQueryAssembler queryAssembler;
+    protected ICayenneQueryAssembler queryAssembler;
     protected ICayennePersister persister;
 
-    public ViaQueryWithParentExpResolver(CayenneQueryAssembler queryAssembler, ICayennePersister persister) {
+    public ViaQueryWithParentExpResolver(ICayenneQueryAssembler queryAssembler, ICayennePersister persister) {
         this.queryAssembler = queryAssembler;
         this.persister = persister;
     }

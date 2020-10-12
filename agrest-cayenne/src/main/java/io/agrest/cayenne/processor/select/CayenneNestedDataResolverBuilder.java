@@ -1,9 +1,9 @@
 package io.agrest.cayenne.processor.select;
 
 import io.agrest.cayenne.persister.ICayennePersister;
+import io.agrest.cayenne.processor.ICayenneQueryAssembler;
 import io.agrest.resolver.NestedDataResolver;
 import io.agrest.resolver.NestedDataResolverFactory;
-import io.agrest.runtime.path.IPathDescriptorManager;
 import org.apache.cayenne.map.ObjEntity;
 import org.apache.cayenne.query.PrefetchTreeNode;
 
@@ -13,11 +13,11 @@ import org.apache.cayenne.query.PrefetchTreeNode;
 public class CayenneNestedDataResolverBuilder {
 
     private final ICayennePersister persister;
-    private final IPathDescriptorManager pathDescriptorManager;
+    private final ICayenneQueryAssembler queryAssembler;
 
-    public CayenneNestedDataResolverBuilder(ICayennePersister persister, IPathDescriptorManager pathDescriptorManager) {
+    public CayenneNestedDataResolverBuilder(ICayennePersister persister, ICayenneQueryAssembler queryAssembler) {
         this.persister = persister;
-        this.pathDescriptorManager = pathDescriptorManager;
+        this.queryAssembler = queryAssembler;
     }
 
     /**
@@ -49,16 +49,12 @@ public class CayenneNestedDataResolverBuilder {
 
     protected NestedDataResolver<?> viaQueryWithParentExp(Class<?> parentType, String relationshipName) {
         validateParent(parentType, relationshipName);
-        return new ViaQueryWithParentExpResolver(
-                new CayenneQueryAssembler(persister.entityResolver(), pathDescriptorManager),
-                persister);
+        return new ViaQueryWithParentExpResolver(queryAssembler, persister);
     }
 
     protected NestedDataResolver<?> viaQueryWithParentIds(Class<?> parentType, String relationshipName) {
         validateParent(parentType, relationshipName);
-        return new ViaQueryWithParentIdsResolver(
-                new CayenneQueryAssembler(persister.entityResolver(), pathDescriptorManager),
-                persister);
+        return new ViaQueryWithParentIdsResolver(queryAssembler, persister);
     }
 
     public NestedDataResolver<?> viaParentPrefetch(Class<?> parentType, String relationshipName) {

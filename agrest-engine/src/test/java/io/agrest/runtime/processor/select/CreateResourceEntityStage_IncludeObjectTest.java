@@ -10,8 +10,6 @@ import io.agrest.meta.compiler.PojoEntityCompiler;
 import io.agrest.runtime.entity.*;
 import io.agrest.runtime.meta.IMetadataService;
 import io.agrest.runtime.meta.MetadataService;
-import io.agrest.runtime.path.IPathDescriptorManager;
-import io.agrest.runtime.path.PathDescriptorManager;
 import io.agrest.runtime.protocol.ICayenneExpParser;
 import io.agrest.runtime.protocol.IExcludeParser;
 import io.agrest.runtime.protocol.IIncludeParser;
@@ -40,11 +38,9 @@ public class CreateResourceEntityStage_IncludeObjectTest {
 
         AgEntityCompiler compiler = new PojoEntityCompiler(Collections.emptyMap());
         MetadataService metadataService = new MetadataService(Collections.singletonList(compiler));
-
-        IPathDescriptorManager pathCache = new PathDescriptorManager();
-
+        
         // prepare create entity stage
-        ICayenneExpMerger expConstructor = new CayenneExpMerger(new ExpressionParser(), new ExpressionPostProcessor(pathCache));
+        ICayenneExpMerger expConstructor = new CayenneExpMerger();
         ISortMerger sortConstructor = new SortMerger();
         IMapByMerger mapByConstructor = new MapByMerger(mock(IMetadataService.class));
         ISizeMerger sizeConstructor = new SizeMerger();

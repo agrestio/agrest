@@ -1,13 +1,10 @@
 package io.agrest.sencha.runtime.processor.select;
 
-import io.agrest.ResourceEntity;
 import io.agrest.base.protocol.CayenneExp;
 import io.agrest.cayenne.cayenne.main.E2;
 import io.agrest.cayenne.unit.CayenneNoDbTest;
 import io.agrest.runtime.entity.*;
 import io.agrest.runtime.meta.IMetadataService;
-import io.agrest.runtime.path.IPathDescriptorManager;
-import io.agrest.runtime.path.PathDescriptorManager;
 import io.agrest.runtime.processor.select.SelectContext;
 import io.agrest.runtime.protocol.ICayenneExpParser;
 import io.agrest.runtime.protocol.IExcludeParser;
@@ -23,10 +20,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.Collections;
+import java.util.List;
 
-import static org.apache.cayenne.exp.ExpressionFactory.exp;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.mock;
 
 public class SenchaCreateEntityStageTest extends CayenneNoDbTest {
@@ -37,17 +33,15 @@ public class SenchaCreateEntityStageTest extends CayenneNoDbTest {
     @BeforeEach
     public void before() {
 
-        IPathDescriptorManager pathCache = new PathDescriptorManager();
-
         // prepare entity creation stage
-        ICayenneExpMerger expConstructor = new CayenneExpMerger(new ExpressionParser(), new ExpressionPostProcessor(pathCache));
+        ICayenneExpMerger expConstructor = new CayenneExpMerger();
         ISortMerger sortConstructor = new SortMerger();
         IMapByMerger mapByConstructor = new MapByMerger(mock(IMetadataService.class));
         ISizeMerger sizeConstructor = new SizeMerger();
         IIncludeMerger includeConstructor = new IncludeMerger(mock(IMetadataService.class), expConstructor, sortConstructor, mapByConstructor, sizeConstructor);
         IExcludeMerger excludeConstructor = new ExcludeMerger();
 
-        ISenchaFilterExpressionCompiler senchaFilterProcessor = new SenchaFilterExpressionCompiler(pathCache, new ExpressionPostProcessor(pathCache));
+        ISenchaFilterExpressionCompiler senchaFilterProcessor = new SenchaFilterExpressionCompiler();
 
         this.createEntityStage = new SenchaCreateResourceEntityStage(
                 metadataService,
@@ -76,12 +70,10 @@ public class SenchaCreateEntityStageTest extends CayenneNoDbTest {
 
         createEntityStage.doExecute(context);
 
-        ResourceEntity<E2> resourceEntity = context.getEntity();
-
-        assertNotNull(resourceEntity.getQualifier());
-        assertEquals(exp("name likeIgnoreCase 'xyz%'"), resourceEntity.getQualifier());
+        List<CayenneExp> qualifiers = context.getEntity().getQualifiers();
+        assertEquals(1, qualifiers.size());
+        assertEquals(new CayenneExp("name likeIgnoreCase 'xyz%'"), qualifiers.get(0));
     }
-
 
     @Test
     public void testSelectRequest_Filter_CayenneExp() {
@@ -95,9 +87,9 @@ public class SenchaCreateEntityStageTest extends CayenneNoDbTest {
 
         createEntityStage.doExecute(context);
 
-        ResourceEntity<E2> resourceEntity = context.getEntity();
-
-        assertNotNull(resourceEntity.getQualifier());
-        assertEquals(exp("address = '1 Main Street' and name likeIgnoreCase 'xyz%'"), resourceEntity.getQualifier());
+        List<CayenneExp> qualifiers = context.getEntity().getQualifiers();
+        assertEquals(2, qualifiers.size());
+        assertEquals(cayenneExp, qualifiers.get(0));
+        assertEquals(new CayenneExp("name likeIgnoreCase 'xyz%'"), qualifiers.get(1));
     }
 }

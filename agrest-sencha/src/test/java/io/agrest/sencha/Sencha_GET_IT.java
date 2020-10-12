@@ -267,7 +267,7 @@ public class Sencha_GET_IT extends DbTest {
             return Ag
                     .service(config)
                     .select(E2.class)
-                    .stage(SelectStage.ASSEMBLE_QUERY, SenchaOps.startsWithFilter(E2.NAME.getName(), uriInfo))
+                    .stage(SelectStage.APPLY_SERVER_PARAMS, SenchaOps.startsWithFilter(E2.NAME.getName(), uriInfo))
                     .uri(uriInfo).get();
         }
     }

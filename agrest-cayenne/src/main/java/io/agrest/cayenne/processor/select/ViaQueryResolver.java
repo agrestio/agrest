@@ -3,6 +3,7 @@ package io.agrest.cayenne.processor.select;
 import io.agrest.AgException;
 import io.agrest.cayenne.persister.ICayennePersister;
 import io.agrest.cayenne.processor.CayenneProcessor;
+import io.agrest.cayenne.processor.ICayenneQueryAssembler;
 import io.agrest.meta.AgEntity;
 import io.agrest.resolver.BaseRootDataResolver;
 import io.agrest.runtime.processor.select.SelectContext;
@@ -19,10 +20,10 @@ import java.util.List;
  */
 public class ViaQueryResolver<T extends DataObject> extends BaseRootDataResolver<T> {
 
-    protected CayenneQueryAssembler queryAssembler;
-    protected ICayennePersister persister;
+    protected final ICayenneQueryAssembler queryAssembler;
+    protected final ICayennePersister persister;
 
-    public ViaQueryResolver(CayenneQueryAssembler queryAssembler, ICayennePersister persister) {
+    public ViaQueryResolver(ICayenneQueryAssembler queryAssembler, ICayennePersister persister) {
         this.queryAssembler = queryAssembler;
         this.persister = persister;
     }

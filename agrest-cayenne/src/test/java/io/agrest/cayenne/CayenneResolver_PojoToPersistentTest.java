@@ -18,7 +18,7 @@ public class CayenneResolver_PojoToPersistentTest extends CayenneNoDbTest {
                     .overlay(PX1.class)
                     .redefineRootDataResolver(new PX1RootResolver())
                     // Cayenne resolver will fail as the parent is not a Cayenne object
-                    .redefineToOne("overlayToOne", E25.class, CayenneResolvers.nested(mockCayennePersister, pathDescriptorManager).viaQueryWithParentIds());
+                    .redefineToOne("overlayToOne", E25.class, CayenneResolvers.nested(mockCayennePersister, queryAssembler).viaQueryWithParentIds());
 
             fail("Must have failed");
         } catch (IllegalStateException e) {
@@ -35,7 +35,7 @@ public class CayenneResolver_PojoToPersistentTest extends CayenneNoDbTest {
                     .overlay(PX1.class)
                     .redefineRootDataResolver(new PX1RootResolver())
                     // Cayenne resolver will fail as the parent is not a Cayenne object
-                    .redefineToOne("overlayToOne", E25.class, CayenneResolvers.nested(mockCayennePersister, pathDescriptorManager).viaQueryWithParentExp());
+                    .redefineToOne("overlayToOne", E25.class, CayenneResolvers.nested(mockCayennePersister, queryAssembler).viaQueryWithParentExp());
 
             fail("Must have failed");
         } catch (IllegalStateException e) {
@@ -52,7 +52,7 @@ public class CayenneResolver_PojoToPersistentTest extends CayenneNoDbTest {
                     .overlay(PX1.class)
                     .redefineRootDataResolver(new PX1RootResolver())
                     // Cayenne resolver will fail as the parent is not a Cayenne object
-                    .redefineToOne("overlayToOne", E25.class, CayenneResolvers.nested(mockCayennePersister, pathDescriptorManager).viaParentPrefetch());
+                    .redefineToOne("overlayToOne", E25.class, CayenneResolvers.nested(mockCayennePersister, queryAssembler).viaParentPrefetch());
 
             fail("Must have failed");
         } catch (IllegalStateException e) {

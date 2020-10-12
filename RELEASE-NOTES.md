@@ -6,6 +6,7 @@
 * #453 Remove Cayenne SelectQuery from ResourceEntity
 * #454 Remove property name from property reader signature
 * #455 Replace Cayenne Ordering in ResourceEntity with Agrest "sort"
+* #457 Replace Cayenne "Expression" in ResourceEntity with Agrest "CayenneExp"
 
 ## Release 3.6
 

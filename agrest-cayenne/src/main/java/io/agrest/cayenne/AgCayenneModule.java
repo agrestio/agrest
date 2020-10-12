@@ -2,6 +2,8 @@ package io.agrest.cayenne;
 
 import io.agrest.cayenne.compiler.CayenneEntityCompiler;
 import io.agrest.cayenne.persister.ICayennePersister;
+import io.agrest.cayenne.processor.CayenneQueryAssembler;
+import io.agrest.cayenne.processor.ICayenneQueryAssembler;
 import io.agrest.cayenne.processor.delete.CayenneDeleteProcessorFactoryProvider;
 import io.agrest.cayenne.processor.delete.CayenneDeleteStage;
 import io.agrest.cayenne.processor.delete.CayenneDeleteStartStage;
@@ -11,6 +13,10 @@ import io.agrest.cayenne.processor.unrelate.CayenneUnrelateStartStage;
 import io.agrest.cayenne.processor.update.*;
 import io.agrest.cayenne.provider.CayenneRuntimeExceptionMapper;
 import io.agrest.cayenne.provider.ValidationExceptionMapper;
+import io.agrest.cayenne.qualifier.QualifierParser;
+import io.agrest.cayenne.qualifier.QualifierPostProcessor;
+import io.agrest.cayenne.qualifier.IQualifierParser;
+import io.agrest.cayenne.qualifier.IQualifierPostProcessor;
 import io.agrest.meta.compiler.AgEntityCompiler;
 import io.agrest.meta.compiler.PojoEntityCompiler;
 import io.agrest.runtime.processor.delete.DeleteProcessorFactory;
@@ -40,6 +46,9 @@ public class AgCayenneModule implements Module {
         binder.bind(CayenneEntityCompiler.class).to(CayenneEntityCompiler.class);
         binder.bindList(AgEntityCompiler.class).insertBefore(CayenneEntityCompiler.class, PojoEntityCompiler.class);
         binder.bind(ICayennePersister.class).toInstance(persister);
+        binder.bind(IQualifierParser.class).to(QualifierParser.class);
+        binder.bind(IQualifierPostProcessor.class).to(QualifierPostProcessor.class);
+        binder.bind(ICayenneQueryAssembler.class).to(CayenneQueryAssembler.class);
 
         // delete stages
         binder.bind(DeleteProcessorFactory.class).toProvider(CayenneDeleteProcessorFactoryProvider.class);
@@ -47,8 +56,7 @@ public class AgCayenneModule implements Module {
         binder.bind(CayenneDeleteStage.class).to(CayenneDeleteStage.class);
 
         // update stages
-        binder.bind(UpdateProcessorFactoryFactory.class)
-                .toProvider(CayenneUpdateProcessorFactoryFactoryProvider.class);
+        binder.bind(UpdateProcessorFactoryFactory.class).toProvider(CayenneUpdateProcessorFactoryFactoryProvider.class);
         binder.bind(CayenneUpdateStartStage.class).to(CayenneUpdateStartStage.class);
         binder.bind(CayenneApplyServerParamsStage.class).to(CayenneApplyServerParamsStage.class);
         binder.bind(CayenneCreateStage.class).to(CayenneCreateStage.class);

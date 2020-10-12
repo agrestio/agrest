@@ -9,7 +9,6 @@ import io.agrest.processor.ProcessorOutcome;
 import io.agrest.property.IdReader;
 import io.agrest.runtime.processor.select.SelectContext;
 import org.apache.cayenne.di.Inject;
-import org.apache.cayenne.exp.Expression;
 
 import java.util.*;
 import java.util.function.Function;
@@ -42,11 +41,6 @@ public class PojoFetchStage implements Processor<SelectContext<?>> {
 
         // clone the list and then filter/sort it as needed
         List<T> list = new ArrayList<>(typeBucket.values());
-
-        Expression filter = context.getEntity().getQualifier();
-        if (filter != null) {
-            list.removeIf(t -> !filter.match(t));
-        }
 
         for (Sort s : context.getEntity().getOrderings()) {
             list.sort(toComparator(context.getEntity().getAgEntity(), s));

@@ -14,6 +14,12 @@ While there's still a way to access it using `CayenneProcessor` class, you will 
 query as a "template" for Cayenne. So if you need to customize query parameters, such as expressions, orderings, includes,
 look into using ResourceEntity API instead.
 
+### Cayenne Expression is no longer part of ResourceEntity [#457](https://github.com/agrestio/agrest/issues/457) 
+
+In a continuing effort to remove dependency on Cayenne, ResourceEntity tree is no longer using Expression "qualifier". Instead ir is replaced with a collection of Agrest `CayenneExp` objects. This may effect customization code if it attempted to change query conditions. Our recommendation is to replace Cayenne Expression class in any such code with CayenneExp. 
+
+A special case is Sencha module. Callers of `SenchaOps.startsWithFilter(..)` must attach it to `SelectStage.APPLY_SERVER_PARAMS` stage, not `SelectStage.ASSEMBLE_QUERY`, or it will not be applied.
+
 ## Upgrading to 3.6
 
 ### Separate "commit" in its own UpdateStage [#446](https://github.com/agrestio/agrest/issues/446) 

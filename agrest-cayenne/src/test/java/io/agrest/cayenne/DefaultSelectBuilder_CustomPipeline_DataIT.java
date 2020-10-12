@@ -3,6 +3,7 @@ package io.agrest.cayenne;
 import io.agrest.DataResponse;
 import io.agrest.SelectBuilder;
 import io.agrest.SelectStage;
+import io.agrest.base.protocol.CayenneExp;
 import io.agrest.cayenne.unit.AgCayenneTester;
 import io.agrest.cayenne.unit.DbTest;
 import io.agrest.cayenne.cayenne.main.E2;
@@ -36,7 +37,7 @@ public class DefaultSelectBuilder_CustomPipeline_DataIT extends DbTest {
                 .values(2, "yyy").exec();
 
         DataResponse<E2> dr = createBuilder(E2.class)
-                .stage(SelectStage.CREATE_ENTITY, c -> c.getEntity().setQualifier(E2.NAME.eq("yyy")))
+                .stage(SelectStage.CREATE_ENTITY, c -> c.getEntity().getQualifiers().add(new CayenneExp("name = 'yyy'")))
                 .get();
 
         assertEquals(1, dr.getObjects().size());

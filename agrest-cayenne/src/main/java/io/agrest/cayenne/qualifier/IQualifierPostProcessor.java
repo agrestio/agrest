@@ -1,4 +1,4 @@
-package io.agrest.runtime.entity;
+package io.agrest.cayenne.qualifier;
 
 import io.agrest.AgException;
 import io.agrest.meta.AgEntity;
@@ -7,7 +7,7 @@ import org.apache.cayenne.exp.Expression;
 /**
  * @since 2.2
  */
-public interface IExpressionPostProcessor {
+public interface IQualifierPostProcessor {
 
     /**
      * Performs any post-processing and cleanup that might be necessary for the successful execution of expression

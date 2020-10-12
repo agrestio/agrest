@@ -1,14 +1,16 @@
-package io.agrest.cayenne.processor.select;
+package io.agrest.cayenne.processor;
 
 import io.agrest.*;
 import io.agrest.base.protocol.Dir;
 import io.agrest.base.protocol.Sort;
-import io.agrest.cayenne.processor.CayenneProcessor;
-import io.agrest.cayenne.processor.CayenneUtil;
+import io.agrest.cayenne.persister.ICayennePersister;
+import io.agrest.cayenne.qualifier.IQualifierParser;
+import io.agrest.cayenne.qualifier.IQualifierPostProcessor;
 import io.agrest.meta.AgAttribute;
 import io.agrest.meta.AgEntity;
 import io.agrest.runtime.path.IPathDescriptorManager;
 import io.agrest.runtime.processor.select.SelectContext;
+import org.apache.cayenne.di.Inject;
 import org.apache.cayenne.exp.Expression;
 import org.apache.cayenne.exp.ExpressionFactory;
 import org.apache.cayenne.exp.Property;
@@ -29,16 +31,25 @@ import java.util.function.Consumer;
 /**
  * @since 3.4
  */
-public class CayenneQueryAssembler {
+public class CayenneQueryAssembler implements ICayenneQueryAssembler {
 
-    private final EntityResolver cayenneEntityResolver;
+    private final EntityResolver entityResolver;
     private final IPathDescriptorManager pathCache;
+    private final IQualifierParser qualifierParser;
+    private final IQualifierPostProcessor qualifierPostProcessor;
 
-    public CayenneQueryAssembler(EntityResolver cayenneEntityResolver, IPathDescriptorManager pathCache) {
-        this.cayenneEntityResolver = cayenneEntityResolver;
+    public CayenneQueryAssembler(
+            @Inject ICayennePersister persister,
+            @Inject IPathDescriptorManager pathCache,
+            @Inject IQualifierParser qualifierParser,
+            @Inject IQualifierPostProcessor qualifierPostProcessor) {
+        this.entityResolver = persister.entityResolver();
         this.pathCache = pathCache;
+        this.qualifierParser = qualifierParser;
+        this.qualifierPostProcessor = qualifierPostProcessor;
     }
 
+    @Override
     public <T> SelectQuery<T> createRootQuery(SelectContext<T> context) {
 
         SelectQuery<T> query = context.getId() != null
@@ -46,12 +57,13 @@ public class CayenneQueryAssembler {
                 : createBaseQuery(context.getEntity());
 
         if (context.getParent() != null) {
-            query.andQualifier(CayenneUtil.parentQualifier(context.getParent(), cayenneEntityResolver));
+            query.andQualifier(CayenneUtil.parentQualifier(context.getParent(), entityResolver));
         }
 
         return query;
     }
 
+    @Override
     public <T> SelectQuery<T> createQueryWithParentQualifier(NestedResourceEntity<T> entity) {
 
         SelectQuery<T> query = createBaseQuery(entity);
@@ -100,7 +112,7 @@ public class CayenneQueryAssembler {
                 return null;
             }
 
-            ObjEntity parentObjEntity = cayenneEntityResolver.getObjEntity(parent.getType());
+            ObjEntity parentObjEntity = entityResolver.getObjEntity(parent.getType());
             ObjRelationship incoming = parentObjEntity.getRelationship(entity.getIncoming().getName());
 
             if (incoming == null) {
@@ -112,7 +124,7 @@ public class CayenneQueryAssembler {
             return parentObjEntity.getDbEntity().translateToRelatedEntity(dbParentQualifier, fullDbPath);
         }
 
-        ObjEntity parentObjEntity = cayenneEntityResolver.getObjEntity(entity.getParent().getType());
+        ObjEntity parentObjEntity = entityResolver.getObjEntity(entity.getParent().getType());
         ObjRelationship incoming = parentObjEntity.getRelationship(entity.getIncoming().getName());
         String fullDbPath = concatWithParentDbPath(incoming, outgoingDbPath);
 
@@ -134,6 +146,7 @@ public class CayenneQueryAssembler {
         return outgoingDbPath != null ? dbPath + "." + outgoingDbPath : dbPath;
     }
 
+    @Override
     public <T, P> SelectQuery<T> createQueryWithParentIdsQualifier(NestedResourceEntity<T> entity, Iterator<P> parentData) {
 
         SelectQuery<T> query = createBaseQuery(entity);
@@ -186,6 +199,7 @@ public class CayenneQueryAssembler {
         }
     }
 
+    @Override
     public <T> SelectQuery<T> createRootIdQuery(ResourceEntity<T> entity, AgObjectId rootId) {
 
         // selecting by ID overrides any explicit SelectQuery that might have been attached to the entity
@@ -197,7 +211,7 @@ public class CayenneQueryAssembler {
 
     protected <T> SelectQuery<T> createBaseQuery(ResourceEntity<T> entity) {
 
-        SelectQuery<T> query = new SelectQuery<>(entity.getType());
+        SelectQuery<T> query = SelectQuery.query(entity.getType());
 
         if (!entity.isFiltered()) {
             int limit = entity.getFetchLimit();
@@ -206,9 +220,9 @@ public class CayenneQueryAssembler {
             }
         }
 
-        if (entity.getQualifier() != null) {
-            query.andQualifier(entity.getQualifier());
-        }
+        Expression parsedExp = qualifierParser.parse(entity.getQualifiers());
+        Expression finalExp = qualifierPostProcessor.process(entity.getAgEntity(), parsedExp);
+        query.setQualifier(finalExp);
 
         for (Sort o : entity.getOrderings()) {
             query.addOrdering(toOrdering(entity, o));
@@ -249,7 +263,7 @@ public class CayenneQueryAssembler {
 
     protected ObjRelationship objRelationshipForIncomingRelationship(NestedResourceEntity<?> entity) {
 
-        ObjEntity parentObjEntity = cayenneEntityResolver.getObjEntity(entity.getParent().getName());
+        ObjEntity parentObjEntity = entityResolver.getObjEntity(entity.getParent().getName());
         if (parentObjEntity == null) {
             throw new IllegalStateException("Relationship from a non-persistent entity '"
                     + entity.getParent().getName()
@@ -260,7 +274,7 @@ public class CayenneQueryAssembler {
 
     protected DbAttribute dbAttributeForAgAttribute(AgEntity<?> agEntity, AgAttribute agAttribute) {
 
-        ObjEntity entity = cayenneEntityResolver.getObjEntity(agEntity.getName());
+        ObjEntity entity = entityResolver.getObjEntity(agEntity.getName());
         ObjAttribute objAttribute = entity.getAttribute(agAttribute.getName());
         return objAttribute != null
                 ? objAttribute.getDbAttribute()

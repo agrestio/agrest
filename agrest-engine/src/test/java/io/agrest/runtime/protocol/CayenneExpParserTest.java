@@ -42,8 +42,8 @@ public class CayenneExpParserTest {
         CayenneExp exp = parser.fromString("[\"b=$s\",\"x\"]");
 		assertNotNull(exp);
 		assertEquals("b=$s", exp.getExp());
-		assertFalse(exp.getInPositionParams().isEmpty());
-		assertEquals("\"x\"", exp.getInPositionParams().get(0).toString());
+		assertEquals(1, exp.getPositionalParams().length);
+		assertEquals("\"x\"", exp.getPositionalParams()[0].toString());
 	}
 
 	@Test
@@ -51,9 +51,9 @@ public class CayenneExpParserTest {
         CayenneExp exp = parser.fromString( "[\"b=$s or b =$x or b =$s\",\"x\",\"y\"]");
 		assertNotNull(exp);
 		assertEquals("b=$s or b =$x or b =$s", exp.getExp());
-		assertEquals(2, exp.getInPositionParams().size());
-		assertEquals("\"x\"", exp.getInPositionParams().get(0).toString());
-		assertEquals("\"y\"", exp.getInPositionParams().get(1).toString());
+		assertEquals(2, exp.getPositionalParams().length);
+		assertEquals("\"x\"", exp.getPositionalParams()[0].toString());
+		assertEquals("\"y\"", exp.getPositionalParams()[1].toString());
 	}
 
 	@Test
@@ -68,8 +68,8 @@ public class CayenneExpParserTest {
         CayenneExp exp = parser.fromString("{\"exp\" : \"b=$s\", \"params\":{\"s\":\"x\"}}");
 		assertNotNull(exp);
 		assertEquals("b=$s", exp.getExp());
-		assertFalse(exp.getParams().isEmpty());
-		assertEquals("\"x\"", exp.getParams().get("s").toString());
+		assertFalse(exp.getNamedParams().isEmpty());
+		assertEquals("\"x\"", exp.getNamedParams().get("s").toString());
 	}
 
 	@Test
@@ -77,7 +77,7 @@ public class CayenneExpParserTest {
         CayenneExp exp = parser.fromString( "{\"exp\" : \"c=$b\", \"params\":{\"b\": null}}");
 		assertNotNull(exp);
 		assertEquals("c=$b", exp.getExp());
-		assertFalse(exp.getParams().isEmpty());
-		assertNull(exp.getParams().get("b"));
+		assertFalse(exp.getNamedParams().isEmpty());
+		assertNull(exp.getNamedParams().get("b"));
 	}
 }

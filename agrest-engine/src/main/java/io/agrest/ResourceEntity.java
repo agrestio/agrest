@@ -1,11 +1,11 @@
 package io.agrest;
 
+import io.agrest.base.protocol.CayenneExp;
 import io.agrest.base.protocol.Sort;
 import io.agrest.encoder.EntityEncoderFilter;
 import io.agrest.meta.AgAttribute;
 import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgEntityOverlay;
-import org.apache.cayenne.exp.Expression;
 
 import java.util.*;
 
@@ -31,7 +31,7 @@ public abstract class ResourceEntity<T> {
     private String mapByPath;
     private ResourceEntity<?> mapBy;
     private final List<Sort> orderings;
-    private Expression qualifier;
+    private final List<CayenneExp> qualifiers;
     private int fetchOffset;
     private int fetchLimit;
     private final List<EntityEncoderFilter> entityEncoderFilters;
@@ -48,6 +48,7 @@ public abstract class ResourceEntity<T> {
         this.defaultAttributes = new HashSet<>();
         this.children = new HashMap<>();
         this.orderings = new ArrayList<>(2);
+        this.qualifiers = new ArrayList<>(2);
         this.entityEncoderFilters = new ArrayList<>(3);
 
         this.requestProperties = new HashMap<>(5);
@@ -74,26 +75,11 @@ public abstract class ResourceEntity<T> {
         return agEntityOverlay;
     }
 
-    public Expression getQualifier() {
-        return qualifier;
-    }
-
     /**
-     * Resets the qualifier for the entity to a new one.
-     *
-     * @param qualifier a new qualifier expression. Can be null.
-     * @since 2.7
+     * @since 3.7
      */
-    public void setQualifier(Expression qualifier) {
-        this.qualifier = qualifier;
-    }
-
-    public void andQualifier(Expression qualifier) {
-        if (this.qualifier == null) {
-            this.qualifier = qualifier;
-        } else {
-            this.qualifier = this.qualifier.andExp(qualifier);
-        }
+    public List<CayenneExp> getQualifiers() {
+        return qualifiers;
     }
 
     public List<Sort> getOrderings() {

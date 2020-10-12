@@ -1,13 +1,7 @@
 package io.agrest.runtime;
 
-import io.agrest.AgException;
-import io.agrest.AgFeatureProvider;
-import io.agrest.AgModuleProvider;
+import io.agrest.*;
 import io.agrest.base.BaseModule;
-import io.agrest.DataResponse;
-import io.agrest.EntityConstraint;
-import io.agrest.MetadataResponse;
-import io.agrest.SimpleResponse;
 import io.agrest.encoder.Encoder;
 import io.agrest.encoder.EntityEncoderFilter;
 import io.agrest.encoder.PropertyMetadataEncoder;
@@ -23,85 +17,31 @@ import io.agrest.provider.MetadataResponseWriter;
 import io.agrest.provider.SimpleResponseWriter;
 import io.agrest.runtime.constraints.ConstraintsHandler;
 import io.agrest.runtime.constraints.IConstraintsHandler;
-import io.agrest.runtime.encoder.EncodablePropertyFactory;
-import io.agrest.runtime.encoder.EncoderService;
-import io.agrest.runtime.encoder.IEncodablePropertyFactory;
-import io.agrest.runtime.encoder.IEncoderService;
-import io.agrest.runtime.encoder.IStringConverterFactory;
-import io.agrest.runtime.encoder.StringConverterFactoryProvider;
-import io.agrest.runtime.encoder.ValueEncoders;
-import io.agrest.runtime.encoder.ValueEncodersProvider;
-import io.agrest.runtime.entity.CayenneExpMerger;
-import io.agrest.runtime.entity.ExcludeMerger;
-import io.agrest.runtime.entity.ExpressionParser;
-import io.agrest.runtime.entity.ExpressionPostProcessor;
-import io.agrest.runtime.entity.ICayenneExpMerger;
-import io.agrest.runtime.entity.IExcludeMerger;
-import io.agrest.runtime.entity.IExpressionParser;
-import io.agrest.runtime.entity.IExpressionPostProcessor;
-import io.agrest.runtime.entity.IIncludeMerger;
-import io.agrest.runtime.entity.IMapByMerger;
-import io.agrest.runtime.entity.ISizeMerger;
-import io.agrest.runtime.entity.ISortMerger;
-import io.agrest.runtime.entity.IncludeMerger;
-import io.agrest.runtime.entity.MapByMerger;
-import io.agrest.runtime.entity.SizeMerger;
-import io.agrest.runtime.entity.SortMerger;
+import io.agrest.runtime.encoder.*;
+import io.agrest.runtime.entity.*;
 import io.agrest.runtime.executor.UnboundedExecutorServiceProvider;
 import io.agrest.runtime.jackson.IJacksonService;
 import io.agrest.runtime.jackson.JacksonService;
-import io.agrest.runtime.meta.BaseUrlProvider;
-import io.agrest.runtime.meta.IMetadataService;
-import io.agrest.runtime.meta.IResourceMetadataService;
-import io.agrest.runtime.meta.MetadataService;
-import io.agrest.runtime.meta.ResourceMetadataService;
+import io.agrest.runtime.meta.*;
 import io.agrest.runtime.path.IPathDescriptorManager;
 import io.agrest.runtime.path.PathDescriptorManager;
 import io.agrest.runtime.processor.meta.CollectMetadataStage;
 import io.agrest.runtime.processor.meta.MetadataProcessorFactory;
 import io.agrest.runtime.processor.meta.MetadataProcessorFactoryProvider;
-import io.agrest.runtime.processor.select.ApplyServerParamsStage;
-import io.agrest.runtime.processor.select.AssembleQueryStage;
-import io.agrest.runtime.processor.select.CreateResourceEntityStage;
-import io.agrest.runtime.processor.select.FetchDataStage;
-import io.agrest.runtime.processor.select.ParseRequestStage;
-import io.agrest.runtime.processor.select.SelectProcessorFactory;
-import io.agrest.runtime.processor.select.SelectProcessorFactoryProvider;
-import io.agrest.runtime.processor.select.StartStage;
-import io.agrest.runtime.protocol.CayenneExpParser;
-import io.agrest.runtime.protocol.EntityUpdateParser;
-import io.agrest.runtime.protocol.ExcludeParser;
-import io.agrest.runtime.protocol.ICayenneExpParser;
-import io.agrest.runtime.protocol.IEntityUpdateParser;
-import io.agrest.runtime.protocol.IExcludeParser;
-import io.agrest.runtime.protocol.IIncludeParser;
-import io.agrest.runtime.protocol.ISizeParser;
-import io.agrest.runtime.protocol.ISortParser;
-import io.agrest.runtime.protocol.IncludeParser;
-import io.agrest.runtime.protocol.SizeParser;
-import io.agrest.runtime.protocol.SortParser;
+import io.agrest.runtime.processor.select.*;
+import io.agrest.runtime.protocol.*;
 import io.agrest.runtime.request.DefaultRequestBuilderFactory;
 import io.agrest.runtime.request.IAgRequestBuilderFactory;
 import io.agrest.runtime.semantics.IRelationshipMapper;
 import io.agrest.runtime.semantics.RelationshipMapper;
 import io.agrest.runtime.shutdown.ShutdownManager;
-import org.apache.cayenne.di.DIBootstrap;
-import org.apache.cayenne.di.Injector;
-import org.apache.cayenne.di.Key;
-import org.apache.cayenne.di.MapBuilder;
-import org.apache.cayenne.di.Module;
+import org.apache.cayenne.di.*;
 import org.apache.cayenne.di.spi.ModuleLoader;
 
 import javax.ws.rs.core.Feature;
 import javax.ws.rs.ext.ExceptionMapper;
 import java.time.Duration;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.ServiceLoader;
+import java.util.*;
 import java.util.concurrent.ExecutorService;
 
 /**
@@ -111,14 +51,14 @@ public class AgBuilder {
 
     private Class<? extends IAgService> agServiceType;
     private IAgService agService;
-    private List<AgModuleProvider> moduleProviders;
-    private List<Module> modules;
-    private List<AgFeatureProvider> featureProviders;
-    private List<Feature> features;
-    private List<EntityEncoderFilter> entityEncoderFilters;
-    private Map<String, AgEntityOverlay> entityOverlays;
-    private Map<String, Class<? extends ExceptionMapper>> exceptionMappers;
-    private Map<String, PropertyMetadataEncoder> metadataEncoders;
+    private final List<AgModuleProvider> moduleProviders;
+    private final List<Module> modules;
+    private final List<AgFeatureProvider> featureProviders;
+    private final List<Feature> features;
+    private final List<EntityEncoderFilter> entityEncoderFilters;
+    private final Map<String, AgEntityOverlay> entityOverlays;
+    private final Map<String, Class<? extends ExceptionMapper>> exceptionMappers;
+    private final Map<String, PropertyMetadataEncoder> metadataEncoders;
     private ExecutorService executor;
     private String baseUrl;
     private boolean autoLoadModules;
@@ -406,7 +346,7 @@ public class AgBuilder {
                     .put(AgException.class.getName(), AgExceptionMapper.class);
 
             // override with custom mappers
-            exceptionMappers.forEach((n, m) -> mapperBuilder.put(n, m));
+            exceptionMappers.forEach(mapperBuilder::put);
 
             // select stages
             binder.bind(SelectProcessorFactory.class).toProvider(SelectProcessorFactoryProvider.class);
@@ -441,8 +381,6 @@ public class AgBuilder {
             binder.bind(IMetadataService.class).to(MetadataService.class);
             binder.bind(IResourceMetadataService.class).to(ResourceMetadataService.class);
             binder.bind(IConstraintsHandler.class).to(ConstraintsHandler.class);
-            binder.bind(IExpressionParser.class).to(ExpressionParser.class);
-            binder.bind(IExpressionPostProcessor.class).to(ExpressionPostProcessor.class);
 
             binder.bind(IJacksonService.class).to(JacksonService.class);
 

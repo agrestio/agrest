@@ -5,6 +5,10 @@ import io.agrest.ResourceEntity;
 import io.agrest.RootResourceEntity;
 import io.agrest.cayenne.compiler.CayenneEntityCompiler;
 import io.agrest.cayenne.persister.ICayennePersister;
+import io.agrest.cayenne.processor.CayenneQueryAssembler;
+import io.agrest.cayenne.processor.ICayenneQueryAssembler;
+import io.agrest.cayenne.qualifier.QualifierParser;
+import io.agrest.cayenne.qualifier.QualifierPostProcessor;
 import io.agrest.meta.AgEntity;
 import io.agrest.meta.compiler.AgEntityCompiler;
 import io.agrest.meta.compiler.PojoEntityCompiler;
@@ -46,6 +50,7 @@ public abstract class CayenneNoDbTest {
     protected IMetadataService metadataService;
     protected IResourceMetadataService resourceMetadataService;
     protected IResourceParser resourceParser;
+    protected ICayenneQueryAssembler queryAssembler;
 
     @BeforeAll
     public static void setUpClass() {
@@ -82,13 +87,18 @@ public abstract class CayenneNoDbTest {
         this.resourceMetadataService = createResourceMetadataService();
 
         this.pathDescriptorManager = new PathDescriptorManager();
+        this.queryAssembler = new CayenneQueryAssembler(
+                mockCayennePersister,
+                pathDescriptorManager,
+                new QualifierParser(),
+                new QualifierPostProcessor(pathDescriptorManager));
     }
 
     protected List<AgEntityCompiler> createEntityCompilers() {
 
         AgEntityCompiler c1 = new CayenneEntityCompiler(
                 mockCayennePersister,
-                pathDescriptorManager,
+                queryAssembler,
                 Collections.emptyMap());
 
         AgEntityCompiler c2 = new PojoEntityCompiler(Collections.emptyMap());

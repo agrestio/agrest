@@ -19,8 +19,8 @@ public class PUT_Related_IT extends DbTest {
 
     @BQTestTool
     static final AgCayenneTester tester = tester(Resource.class)
-            .entities(E1.class, E2.class, E3.class, E7.class, E8.class, E9.class)
-            .entitiesAndDependencies(E5.class, E12.class, E13.class, E15.class)
+            .entities(E1.class, E2.class, E3.class, E9.class)
+            .entitiesAndDependencies(E5.class, E7.class, E8.class, E12.class, E13.class, E15.class)
             .build();
 
     @Test

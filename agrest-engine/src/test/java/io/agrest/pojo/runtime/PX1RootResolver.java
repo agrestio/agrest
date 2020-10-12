@@ -3,7 +3,6 @@ package io.agrest.pojo.runtime;
 import io.agrest.pojo.model.PX1;
 import io.agrest.resolver.BaseRootDataResolver;
 import io.agrest.runtime.processor.select.SelectContext;
-import org.apache.cayenne.exp.Expression;
 
 import java.util.List;
 
@@ -25,7 +24,6 @@ public class PX1RootResolver extends BaseRootDataResolver<PX1> {
 
     @Override
     protected List<PX1> doFetchData(SelectContext<PX1> context) {
-        Expression filter = context.getEntity().getQualifier();
-        return filter != null ? filter.filterObjects(all) : all;
+        return all;
     }
 }
