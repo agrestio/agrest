@@ -60,7 +60,6 @@ public class AgProtocolModelConverter extends AgModelConverter {
 
         LOGGER.debug("resolve DataResponse ({})", wrapped);
 
-
         Map<String, Schema> properties = new HashMap<>();
 
         // TODO: handled non-generified DataResponse too

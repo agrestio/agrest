@@ -29,12 +29,8 @@ import org.junit.jupiter.api.extension.ExtensionContext;
 
 import javax.inject.Singleton;
 import javax.ws.rs.client.WebTarget;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.function.Function;
-import java.util.stream.Stream;
 
 import static org.mockito.Mockito.mock;
 
@@ -42,6 +38,7 @@ public class AgPojoTester implements BQBeforeScopeCallback, BQAfterScopeCallback
 
     private final List<Class<?>> resources;
     private Function<AgBuilder, AgBuilder> agCustomizer;
+    private final List<BQModule> bqModules;
 
     private PojoStore pojoStoreInScope;
     private JettyTester jettyInScope;
@@ -54,6 +51,7 @@ public class AgPojoTester implements BQBeforeScopeCallback, BQAfterScopeCallback
     protected AgPojoTester() {
         this.resources = new ArrayList<>();
         this.agCustomizer = Function.identity();
+        this.bqModules = new ArrayList<>();
     }
 
     public AgHttpTester target() {
@@ -148,6 +146,8 @@ public class AgPojoTester implements BQBeforeScopeCallback, BQAfterScopeCallback
                 .module(jetty.moduleReplacingConnectors())
                 .module(new AgModule(agCustomizer, pojoStore, resources));
 
+        bqModules.forEach(builder::module);
+
         return builder.createRuntime();
     }
 
@@ -156,12 +156,17 @@ public class AgPojoTester implements BQBeforeScopeCallback, BQAfterScopeCallback
         private final AgPojoTester tester = new AgPojoTester();
 
         public Builder resources(Class<?>... resources) {
-            Stream.of(resources).forEach(tester.resources::add);
+            tester.resources.addAll(Arrays.asList(resources));
             return this;
         }
 
         public Builder agCustomizer(Function<AgBuilder, AgBuilder> agCustomizer) {
             tester.agCustomizer = Objects.requireNonNull(agCustomizer);
+            return this;
+        }
+
+        public Builder bqModule(BQModule module) {
+            tester.bqModules.add(module);
             return this;
         }
 
