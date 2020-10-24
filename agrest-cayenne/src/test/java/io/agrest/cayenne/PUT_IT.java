@@ -20,11 +20,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.UriInfo;
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class PUT_IT extends DbTest {
 
@@ -114,13 +110,8 @@ public class PUT_IT extends DbTest {
                 .put("{\"id\":3,\"e2\":null}")
                 .wasOk().bodyEquals(1, "{\"id\":3,\"name\":\"zzz\",\"phoneNumber\":null}");
 
-        // TODO: can't use matcher until BQ 1.1 upgrade (because of https://github.com/bootique/bootique-jdbc/issues/91 )
-        //  so using select...
-
-        List<Object[]> rows = tester.e3().selectColumns("id_", "e2_id");
-        assertEquals(1, rows.size());
-        assertEquals(3, rows.get(0)[0]);
-        assertNull(rows.get(0)[1]);
+        tester.e3().matcher().assertOneMatch();
+        tester.e3().matcher().eq("id_", 3).eq("e2_id", null).assertOneMatch();
     }
 
     @Test
