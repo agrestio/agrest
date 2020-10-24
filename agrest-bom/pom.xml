@@ -79,6 +79,11 @@
                 <artifactId>agrest-cayenne</artifactId>
                 <version>${project.version}</version>
             </dependency>
+            <dependency>
+                <groupId>io.agrest</groupId>
+                <artifactId>agrest-openapi</artifactId>
+                <version>${project.version}</version>
+            </dependency>
              <dependency>
                 <groupId>io.agrest</groupId>
                 <artifactId>agrest</artifactId>
