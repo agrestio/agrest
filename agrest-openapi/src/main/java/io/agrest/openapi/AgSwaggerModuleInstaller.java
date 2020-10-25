@@ -4,6 +4,8 @@ import io.agrest.AgFeatureProvider;
 import io.swagger.v3.core.converter.ModelConverter;
 import io.swagger.v3.core.converter.ModelConverters;
 import org.apache.cayenne.di.Injector;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.ws.rs.core.Feature;
 
@@ -12,8 +14,12 @@ import javax.ws.rs.core.Feature;
  */
 public class AgSwaggerModuleInstaller implements AgFeatureProvider {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(AgSwaggerModuleInstaller.class);
+
     @Override
     public Feature feature(Injector injector) {
+
+        LOGGER.info("initializing Agrest Swagger model converters");
 
         installConverter(injector.getInstance(AgProtocolModelConverter.class));
         installConverter(injector.getInstance(AgEntityModelConverter.class));

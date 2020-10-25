@@ -4,6 +4,7 @@ import io.agrest.Ag;
 import io.agrest.DataResponse;
 import io.agrest.SimpleResponse;
 import io.swagger.v3.core.converter.AnnotatedType;
+import io.swagger.v3.core.converter.ModelConverter;
 import io.swagger.v3.core.converter.ModelConverterContext;
 import io.swagger.v3.core.util.RefUtils;
 import io.swagger.v3.oas.models.media.*;
@@ -11,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 import static java.util.Arrays.asList;
@@ -43,16 +45,14 @@ public class AgProtocolModelConverter extends AgModelConverter {
     }
 
     @Override
-    protected Schema doResolve(AnnotatedType type, ModelConverterContext context, TypeWrapper wrapped) {
-
+    protected Schema doResolve(AnnotatedType type, ModelConverterContext context, Iterator<ModelConverter> chain, TypeWrapper wrapped) {
         if (wrapped.getRawClass() == DataResponse.class) {
             return resolveAsDataResponse(type, context, wrapped);
         } else if (wrapped.getRawClass() == SimpleResponse.class) {
             return resolveAsSimpleResponse(type, context);
         } else {
-            // TODO: throw an exception here once we properly support all Agrest types
-            LOGGER.warn("This Agrest type should not be exposed as an OpenAPI model: {}", wrapped);
-            return null;
+            // could be an internal test class, etc.
+            return delegateResolve(type, context, chain);
         }
     }
 
@@ -60,17 +60,38 @@ public class AgProtocolModelConverter extends AgModelConverter {
 
         LOGGER.debug("resolve DataResponse ({})", wrapped);
 
-        Map<String, Schema> properties = new HashMap<>();
 
-        // TODO: handled non-generified DataResponse too
+        return wrapped.containedTypeCount() == 1
+                ? resolveAsParameterizedDataResponse(type, context, wrapped)
+                : resolveAsRawDataResponse(type, context);
+    }
+
+    protected Schema resolveAsParameterizedDataResponse(AnnotatedType type, ModelConverterContext context, TypeWrapper wrapped) {
+
         TypeWrapper entityType = wrapped.containedType(0);
         Schema entitySchema = context.resolve(new AnnotatedType().type(entityType.getType()));
         Schema entitySchemaRef = new Schema().$ref(RefUtils.constructRef(entitySchema.getName()));
 
+        Map<String, Schema> properties = new HashMap<>();
         properties.put("data", new ArraySchema().items(entitySchemaRef));
         properties.put("total", new IntegerSchema());
 
         String name = "DataResponse(" + entitySchema.getName() + ")";
+        Schema schema = new ObjectSchema()
+                .name(name)
+                .required(asList("data", "total"))
+                .properties(properties);
+
+        return onSchemaResolved(type, context, schema);
+    }
+
+    protected Schema resolveAsRawDataResponse(AnnotatedType type, ModelConverterContext context) {
+
+        Map<String, Schema> properties = new HashMap<>();
+        properties.put("data", new ArraySchema());
+        properties.put("total", new IntegerSchema());
+
+        String name = "DataResponse(Object)";
         Schema schema = new ObjectSchema()
                 .name(name)
                 .required(asList("data", "total"))

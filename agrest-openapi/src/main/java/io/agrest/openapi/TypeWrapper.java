@@ -30,6 +30,8 @@ public interface TypeWrapper {
 
     TypeWrapper containedType(int index);
 
+    int containedTypeCount();
+
     class JacksonTypeWrapper implements TypeWrapper {
 
         private final JavaType type;
@@ -46,6 +48,11 @@ public interface TypeWrapper {
         @Override
         public Class<?> getRawClass() {
             return type.getRawClass();
+        }
+
+        @Override
+        public int containedTypeCount() {
+            return type.containedTypeCount();
         }
 
         @Override
@@ -83,6 +90,11 @@ public interface TypeWrapper {
         }
 
         @Override
+        public int containedTypeCount() {
+            return type.getActualTypeArguments().length;
+        }
+
+        @Override
         public String toString() {
             return type.toString();
         }
@@ -104,6 +116,11 @@ public interface TypeWrapper {
         @Override
         public Class<?> getRawClass() {
             return type;
+        }
+
+        @Override
+        public int containedTypeCount() {
+            return 0;
         }
 
         @Override

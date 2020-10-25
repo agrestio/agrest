@@ -23,13 +23,13 @@ public abstract class AgModelConverter implements ModelConverter {
 
         TypeWrapper wrapped = TypeWrapper.forType(type.getType());
         return willResolve(type, context, wrapped)
-                ? doResolve(type, context, wrapped)
+                ? doResolve(type, context, chain, wrapped)
                 : delegateResolve(type, context, chain);
     }
 
     protected abstract boolean willResolve(AnnotatedType type, ModelConverterContext context, TypeWrapper wrapped);
 
-    protected abstract Schema doResolve(AnnotatedType type, ModelConverterContext context, TypeWrapper wrapped);
+    protected abstract Schema doResolve(AnnotatedType type, ModelConverterContext context, Iterator<ModelConverter> chain, TypeWrapper wrapped);
 
     protected Schema delegateResolve(AnnotatedType type, ModelConverterContext context, Iterator<ModelConverter> chain) {
         return chain.hasNext() ? chain.next().resolve(type, context, chain) : null;

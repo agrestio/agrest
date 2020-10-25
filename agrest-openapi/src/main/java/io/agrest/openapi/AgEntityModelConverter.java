@@ -6,6 +6,7 @@ import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgRelationship;
 import io.agrest.runtime.meta.IMetadataService;
 import io.swagger.v3.core.converter.AnnotatedType;
+import io.swagger.v3.core.converter.ModelConverter;
 import io.swagger.v3.core.converter.ModelConverterContext;
 import io.swagger.v3.core.util.RefUtils;
 import io.swagger.v3.oas.models.media.ArraySchema;
@@ -15,10 +16,7 @@ import org.apache.cayenne.di.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 /**
  * Provides OpenAPI Schema conversions for Agrest entity objects
@@ -55,7 +53,7 @@ public class AgEntityModelConverter extends AgModelConverter {
     }
 
     @Override
-    protected Schema doResolve(AnnotatedType type, ModelConverterContext context, TypeWrapper wrapped) {
+    protected Schema doResolve(AnnotatedType type, ModelConverterContext context, Iterator<ModelConverter> chain, TypeWrapper wrapped) {
 
         LOGGER.debug("resolve AgEntity ({}}", wrapped);
 
