@@ -6,7 +6,9 @@ import io.swagger.v3.core.converter.ModelConverter;
 import io.swagger.v3.core.converter.ModelConverterContext;
 import io.swagger.v3.oas.models.media.BinarySchema;
 import io.swagger.v3.oas.models.media.Schema;
+import io.swagger.v3.oas.models.media.StringSchema;
 
+import java.time.LocalTime;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -25,11 +27,17 @@ public class AgValueModelConverter extends AgModelConverter {
     protected AgValueModelConverter() {
         this.resolvers = new ConcurrentHashMap<>();
         this.resolvers.put(byte[].class, this::stringByteSchema);
+        this.resolvers.put(LocalTime.class, this::stringNullSchema);
     }
 
-    protected Schema<byte[]> stringByteSchema() {
+    protected Schema stringByteSchema() {
         // Schemas are mutable, so creating a new one every time
         return new BinarySchema().format("byte");
+    }
+
+    protected Schema stringNullSchema() {
+        // Schemas are mutable, so creating a new one every time
+        return new StringSchema();
     }
 
     @Override

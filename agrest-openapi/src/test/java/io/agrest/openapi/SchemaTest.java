@@ -7,7 +7,6 @@ import io.swagger.v3.oas.models.media.Schema;
 import org.example.entity.P1;
 import org.example.entity.P3;
 import org.example.entity.P4;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -109,7 +108,6 @@ public class SchemaTest {
     }
 
     @Test
-    @Disabled
     public void testDateTimeStringTypes() {
 
         Map<String, Schema> props = oapi.getComponents().getSchemas().get("P3").getProperties();
