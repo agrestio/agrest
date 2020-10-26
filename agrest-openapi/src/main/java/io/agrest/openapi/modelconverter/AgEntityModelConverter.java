@@ -1,9 +1,10 @@
-package io.agrest.openapi;
+package io.agrest.openapi.modelconverter;
 
 import io.agrest.PathConstants;
 import io.agrest.meta.AgAttribute;
 import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgRelationship;
+import io.agrest.openapi.TypeWrapper;
 import io.agrest.runtime.meta.IMetadataService;
 import io.swagger.v3.core.converter.AnnotatedType;
 import io.swagger.v3.core.converter.ModelConverter;

@@ -1,5 +1,8 @@
 package io.agrest.openapi;
 
+import io.agrest.openapi.modelconverter.AgEntityModelConverter;
+import io.agrest.openapi.modelconverter.AgProtocolModelConverter;
+import io.agrest.openapi.modelconverter.AgValueModelConverter;
 import org.apache.cayenne.di.Binder;
 import org.apache.cayenne.di.ListBuilder;
 import org.apache.cayenne.di.Module;

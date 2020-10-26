@@ -1,7 +1,8 @@
-package io.agrest.openapi;
+package io.agrest.openapi.parmconverter;
 
 import com.fasterxml.jackson.annotation.JsonView;
 import io.agrest.base.protocol.Dir;
+import io.agrest.openapi.TypeWrapper;
 import io.swagger.v3.jaxrs2.ResolvedParameter;
 import io.swagger.v3.jaxrs2.ext.AbstractOpenAPIExtension;
 import io.swagger.v3.jaxrs2.ext.OpenAPIExtension;

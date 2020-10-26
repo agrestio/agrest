@@ -1,6 +1,9 @@
 package io.agrest.openapi;
 
 import io.agrest.AgFeatureProvider;
+import io.agrest.openapi.modelconverter.AgEntityModelConverter;
+import io.agrest.openapi.modelconverter.AgProtocolModelConverter;
+import io.agrest.openapi.modelconverter.AgValueModelConverter;
 import io.swagger.v3.core.converter.ModelConverter;
 import io.swagger.v3.core.converter.ModelConverters;
 import org.apache.cayenne.di.Injector;

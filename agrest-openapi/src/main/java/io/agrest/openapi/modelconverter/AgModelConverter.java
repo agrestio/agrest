@@ -1,5 +1,6 @@
-package io.agrest.openapi;
+package io.agrest.openapi.modelconverter;
 
+import io.agrest.openapi.TypeWrapper;
 import io.swagger.v3.core.converter.AnnotatedType;
 import io.swagger.v3.core.converter.ModelConverter;
 import io.swagger.v3.core.converter.ModelConverterContext;
