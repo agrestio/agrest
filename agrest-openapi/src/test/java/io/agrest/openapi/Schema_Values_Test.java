@@ -21,7 +21,7 @@ import java.util.Map;
 import static java.util.Arrays.asList;
 import static org.junit.jupiter.api.Assertions.*;
 
-public class SchemaTest {
+public class Schema_Values_Test {
 
     static final OpenAPI oapi = new OpenAPIBuilder()
             .addPackage(P1.class)
