@@ -21,6 +21,7 @@ public class AgSwaggerModuleInstaller implements AgFeatureProvider {
 
         LOGGER.info("initializing Agrest Swagger model converters");
 
+        installConverter(injector.getInstance(AgValueModelConverter.class));
         installConverter(injector.getInstance(AgProtocolModelConverter.class));
         installConverter(injector.getInstance(AgEntityModelConverter.class));
 

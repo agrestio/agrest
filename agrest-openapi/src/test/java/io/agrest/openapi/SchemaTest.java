@@ -98,7 +98,6 @@ public class SchemaTest {
     }
 
     @Test
-    @Disabled
     public void testBinaryStringTypes() {
 
         Map<String, Schema> props = oapi.getComponents().getSchemas().get("P3").getProperties();
