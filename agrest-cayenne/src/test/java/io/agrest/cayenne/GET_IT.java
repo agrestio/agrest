@@ -27,7 +27,7 @@ public class GET_IT extends DbTest {
 
     @BQTestTool
     static final AgCayenneTester tester = tester(Resource.class)
-            .entities(E2.class, E3.class, E4.class, E6.class, E17.class, E19.class)
+            .entities(E2.class, E3.class, E4.class, E6.class, E17.class, E19.class, E28.class)
             .build();
 
     @Test
@@ -351,8 +351,24 @@ public class GET_IT extends DbTest {
 
         tester.target("/e19/35")
                 .queryParam("include", E19.GUID.getName())
-
                 .get().wasOk().bodyEquals(1, "{\"guid\":\"c29tZVZhbHVlMTIz\"}");
+    }
+
+    @Test
+    public void testJsonProperty() {
+
+        tester.e28().insertColumns("id", "json")
+                .values(35, "[1,2]")
+                .values(36, "{\"a\":1}")
+                .values(37, "5")
+                .exec();
+
+        tester.target("/e28")
+                .queryParam("include", E28.JSON.getName())
+                .queryParam("sort", "id")
+                .get()
+                .wasOk()
+                .bodyEquals(3, "{\"json\":[1,2]}", "{\"json\":{\"a\":1}}", "{\"json\":5}");
     }
 
     @Path("")
@@ -408,6 +424,12 @@ public class GET_IT extends DbTest {
         @Path("e19/{id}")
         public DataResponse<E19> getById(@Context UriInfo uriInfo, @PathParam("id") Integer id) {
             return Ag.select(E19.class, config).uri(uriInfo).byId(id).getOne();
+        }
+
+        @GET
+        @Path("e28")
+        public DataResponse<E28> get28(@Context UriInfo uriInfo) {
+            return Ag.select(E28.class, config).uri(uriInfo).get();
         }
 
         @GET

@@ -139,6 +139,10 @@
 	<db-entity name="e27_nopk">
 		<db-attribute name="name" type="VARCHAR" length="100"/>
 	</db-entity>
+	<db-entity name="e28">
+		<db-attribute name="id" type="INTEGER" isPrimaryKey="true" isMandatory="true"/>
+		<db-attribute name="json" type="VARCHAR" length="250"/>
+	</db-entity>
 	<db-entity name="e3">
 		<db-attribute name="e2_id" type="INTEGER"/>
 		<db-attribute name="e5_id" type="INTEGER"/>
@@ -272,6 +276,9 @@
 	<obj-entity name="E26" className="io.agrest.cayenne.cayenne.main.E26" dbEntityName="e26"/>
 	<obj-entity name="E27Nopk" className="io.agrest.cayenne.cayenne.main.E27Nopk" dbEntityName="e27_nopk">
 		<obj-attribute name="name" type="java.lang.String" db-attribute-path="name"/>
+	</obj-entity>
+	<obj-entity name="E28" className="io.agrest.cayenne.cayenne.main.E28" dbEntityName="e28">
+		<obj-attribute name="json" type="org.apache.cayenne.value.Json" db-attribute-path="json"/>
 	</obj-entity>
 	<obj-entity name="E3" className="io.agrest.cayenne.cayenne.main.E3" dbEntityName="e3">
 		<obj-attribute name="name" type="java.lang.String" db-attribute-path="name"/>
@@ -427,6 +434,7 @@
 	<obj-relationship name="e9" source="E8" target="E9" deleteRule="Nullify" db-relationship-path="e9"/>
 	<obj-relationship name="e8" source="E9" target="E8" deleteRule="Nullify" db-relationship-path="e8"/>
 	<cgen xmlns="http://cayenne.apache.org/schema/10/cgen">
+		<excludeEntities>E28</excludeEntities>
 		<destDir>../java</destDir>
 		<mode>entity</mode>
 		<template>templates/v4_1/subclass.vm</template>

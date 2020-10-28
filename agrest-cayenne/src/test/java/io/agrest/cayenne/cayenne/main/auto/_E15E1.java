@@ -19,7 +19,7 @@ import io.agrest.cayenne.cayenne.main.E15;
  */
 public abstract class _E15E1 extends BaseDataObject {
 
-    private static final long serialVersionUID = 1L; 
+    private static final long serialVersionUID = 1L;
 
     public static final String E15_ID_PK_COLUMN = "e15_id";
     public static final String E1_ID_PK_COLUMN = "e1_id";

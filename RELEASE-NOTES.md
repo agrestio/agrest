@@ -1,3 +1,7 @@
+## Release 4.1
+
+* #460 Support for the new Cayenne "Json" type
+
 ## Release 4.0
 
 * #456 Upgrade to Cayenne 4.2

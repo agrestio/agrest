@@ -16,7 +16,7 @@ import org.apache.cayenne.exp.property.StringProperty;
  */
 public abstract class _E24 extends BaseDataObject {
 
-    private static final long serialVersionUID = 1L; 
+    private static final long serialVersionUID = 1L;
 
     public static final String TYPE_PK_COLUMN = "TYPE";
 

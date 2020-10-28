@@ -1,6 +1,9 @@
 package io.agrest.cayenne;
 
+import io.agrest.base.jsonvalueconverter.JsonValueConverter;
 import io.agrest.cayenne.compiler.CayenneEntityCompiler;
+import io.agrest.cayenne.converter.JsonConverter;
+import io.agrest.cayenne.encoder.JsonEncoder;
 import io.agrest.cayenne.persister.ICayennePersister;
 import io.agrest.cayenne.processor.CayenneQueryAssembler;
 import io.agrest.cayenne.processor.ICayenneQueryAssembler;
@@ -13,10 +16,11 @@ import io.agrest.cayenne.processor.unrelate.CayenneUnrelateStartStage;
 import io.agrest.cayenne.processor.update.*;
 import io.agrest.cayenne.provider.CayenneRuntimeExceptionMapper;
 import io.agrest.cayenne.provider.ValidationExceptionMapper;
-import io.agrest.cayenne.qualifier.QualifierParser;
-import io.agrest.cayenne.qualifier.QualifierPostProcessor;
 import io.agrest.cayenne.qualifier.IQualifierParser;
 import io.agrest.cayenne.qualifier.IQualifierPostProcessor;
+import io.agrest.cayenne.qualifier.QualifierParser;
+import io.agrest.cayenne.qualifier.QualifierPostProcessor;
+import io.agrest.encoder.Encoder;
 import io.agrest.meta.compiler.AgEntityCompiler;
 import io.agrest.meta.compiler.PojoEntityCompiler;
 import io.agrest.runtime.processor.delete.DeleteProcessorFactory;
@@ -26,6 +30,7 @@ import org.apache.cayenne.CayenneRuntimeException;
 import org.apache.cayenne.di.Binder;
 import org.apache.cayenne.di.Module;
 import org.apache.cayenne.validation.ValidationException;
+import org.apache.cayenne.value.Json;
 
 import javax.ws.rs.ext.ExceptionMapper;
 import java.util.Objects;
@@ -43,6 +48,9 @@ public class AgCayenneModule implements Module {
 
     @Override
     public void configure(Binder binder) {
+        binder.bindMap(Encoder.class).put(Json.class.getName(), JsonEncoder.encoder());
+        binder.bindMap(JsonValueConverter.class).put(Json.class.getName(), JsonConverter.converter());
+
         binder.bind(CayenneEntityCompiler.class).to(CayenneEntityCompiler.class);
         binder.bindList(AgEntityCompiler.class).insertBefore(CayenneEntityCompiler.class, PojoEntityCompiler.class);
         binder.bind(ICayennePersister.class).toInstance(persister);

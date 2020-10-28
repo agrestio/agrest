@@ -3,6 +3,7 @@ package io.agrest.cayenne;
 import com.fasterxml.jackson.core.JsonGenerator;
 import io.agrest.Ag;
 import io.agrest.DataResponse;
+import io.agrest.SimpleResponse;
 import io.agrest.UpdateStage;
 import io.agrest.cayenne.cayenne.main.*;
 import io.agrest.cayenne.unit.AgCayenneTester;
@@ -26,7 +27,7 @@ public class PUT_IT extends DbTest {
 
     @BQTestTool
     static final AgCayenneTester tester = tester(Resource.class)
-            .entities(E2.class, E3.class, E4.class, E7.class, E8.class, E9.class, E14.class, E17.class)
+            .entities(E2.class, E3.class, E4.class, E7.class, E8.class, E9.class, E14.class, E17.class, E28.class)
             .build();
 
     @Test
@@ -401,6 +402,23 @@ public class PUT_IT extends DbTest {
         tester.e3().matcher().eq("e2_id", 8).eq("id_", 5).assertOneMatch();
     }
 
+    @Test
+    public void testJson() {
+
+        String e1 = "[{\"id\":5,\"json\":[1,2]},{\"id\":6,\"json\":{\"a\":1}},{\"id\":7,\"json\":5}]";
+        tester.target("/e28/").put(e1).wasOk();
+        tester.e28().matcher().assertMatches(3);
+        tester.e28().matcher().eq("id", 5).eq("json", "[1,2]").assertOneMatch();
+        tester.e28().matcher().eq("id", 6).eq("json", "{\"a\":1}").assertOneMatch();
+        tester.e28().matcher().eq("id", 7).eq("json", "5").assertOneMatch();
+
+        // try updating
+        String e2 = "[{\"id\":5,\"json\":[1,3]}]";
+        tester.target("/e28/").put(e2).wasOk();
+        tester.e28().matcher().assertMatches(3);
+        tester.e28().matcher().eq("id", 5).eq("json", "[1,3]").assertOneMatch();
+    }
+
     @Path("")
     public static class Resource {
 
@@ -498,6 +516,12 @@ public class PUT_IT extends DbTest {
             ids.put(E17.ID2_PK_COLUMN, id2);
 
             return Ag.update(E17.class, config).uri(uriInfo).id(ids).syncAndSelect(targetData);
+        }
+
+        @PUT
+        @Path("e28")
+        public SimpleResponse syncE28(String data) {
+            return Ag.createOrUpdate(E28.class, config).sync(data);
         }
     }
 }
