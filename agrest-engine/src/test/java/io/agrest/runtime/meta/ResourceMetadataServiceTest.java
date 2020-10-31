@@ -6,10 +6,7 @@ import io.agrest.SimpleResponse;
 import io.agrest.annotation.AgAttribute;
 import io.agrest.annotation.AgId;
 import io.agrest.annotation.LinkType;
-import io.agrest.meta.AgEntity;
-import io.agrest.meta.AgOperation;
-import io.agrest.meta.AgResource;
-import io.agrest.meta.LinkMethodType;
+import io.agrest.meta.*;
 import io.agrest.compiler.AgEntityCompiler;
 import io.agrest.compiler.AnnotationsAgEntityCompiler;
 import io.agrest.meta.parser.ResourceParser;
@@ -31,13 +28,13 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 public class ResourceMetadataServiceTest {
 
-    private static IMetadataService metadata;
+    private static AgDataMap metadata;
     private static IResourceMetadataService resourceMetadata;
 
     @BeforeAll
     public static void before() {
         AgEntityCompiler compiler = new AnnotationsAgEntityCompiler(Collections.emptyMap());
-        metadata = new MetadataService(Collections.singletonList(compiler));
+        metadata = new LazyAgDataMap(Collections.singletonList(compiler));
         resourceMetadata = new ResourceMetadataService(
                 new ResourceParser(metadata),
                 BaseUrlProvider.forUrl(Optional.empty()));
@@ -45,7 +42,7 @@ public class ResourceMetadataServiceTest {
 
     @Test
     public void testGetResources() {
-        AgEntity<Tr> entity = metadata.getAgEntity(Tr.class);
+        AgEntity<Tr> entity = metadata.getEntity(Tr.class);
         Collection<AgResource<?>> resources = resourceMetadata.getAgResources(E5Resource.class);
 
         assertEquals(4, resources.size());

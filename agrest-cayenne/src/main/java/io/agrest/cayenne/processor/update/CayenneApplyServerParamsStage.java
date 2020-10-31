@@ -12,7 +12,6 @@ import io.agrest.processor.Processor;
 import io.agrest.processor.ProcessorOutcome;
 import io.agrest.runtime.constraints.IConstraintsHandler;
 import io.agrest.runtime.encoder.IEncoderService;
-import io.agrest.runtime.meta.IMetadataService;
 import io.agrest.runtime.processor.update.UpdateContext;
 import org.apache.cayenne.di.Inject;
 import org.apache.cayenne.map.*;
@@ -29,18 +28,15 @@ public class CayenneApplyServerParamsStage implements Processor<UpdateContext<?>
 
     private IEncoderService encoderService;
     private IConstraintsHandler constraintsHandler;
-    private IMetadataService metadataService;
     private EntityResolver entityResolver;
 
     public CayenneApplyServerParamsStage(
             @Inject IEncoderService encoderService,
             @Inject IConstraintsHandler constraintsHandler,
-            @Inject IMetadataService metadataService,
             @Inject ICayennePersister persister) {
 
         this.encoderService = encoderService;
         this.constraintsHandler = constraintsHandler;
-        this.metadataService = metadataService;
         this.entityResolver = persister.entityResolver();
     }
 

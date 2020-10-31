@@ -6,10 +6,10 @@ import io.agrest.EntityDelete;
 import io.agrest.SimpleObjectId;
 import io.agrest.base.jsonvalueconverter.IJsonValueConverterFactory;
 import io.agrest.base.reflect.Types;
+import io.agrest.meta.AgDataMap;
 import io.agrest.meta.AgEntity;
 import io.agrest.runtime.AgRuntime;
 import io.agrest.runtime.jackson.IJacksonService;
-import io.agrest.runtime.meta.IMetadataService;
 import io.agrest.runtime.protocol.EntityUpdateJsonTraverser;
 import io.agrest.runtime.protocol.EntityUpdateJsonVisitor;
 import io.agrest.runtime.semantics.IRelationshipMapper;
@@ -38,12 +38,12 @@ import java.util.Map;
 public class SenchaDeletePayloadParser implements MessageBodyReader<Collection<EntityDelete<?>>> {
 
     private IJacksonService jacksonService;
-	private IMetadataService metadataService;
+	private AgDataMap dataMap;
 	private EntityUpdateJsonTraverser entityUpdateJsonTraverser;
 
     public SenchaDeletePayloadParser(@Context Configuration config) {
         this.jacksonService = AgRuntime.service(IJacksonService.class, config);
-		this.metadataService = AgRuntime.service(IMetadataService.class, config);
+		this.dataMap = AgRuntime.service(AgDataMap.class, config);
 		this.entityUpdateJsonTraverser = new EntityUpdateJsonTraverser(AgRuntime.service(IRelationshipMapper.class, config),
 				AgRuntime.service(IJsonValueConverterFactory.class, config));
     }
@@ -71,7 +71,7 @@ public class SenchaDeletePayloadParser implements MessageBodyReader<Collection<E
 		}
 
 		Class<?> typeClass = Types.getClassForTypeArgument(entityType).orElse(Object.class);
-		AgEntity<?> entity = metadataService.getAgEntity(typeClass);
+		AgEntity<?> entity = dataMap.getEntity(typeClass);
 
 		DeleteVisitor visitor = new DeleteVisitor(entity);
         entityUpdateJsonTraverser.traverse(entity, jacksonService.parseJson(entityStream), visitor);

@@ -4,6 +4,7 @@
 * #460 Support for the new Cayenne "Json" type
 * #465 AgIdPart metadata object
 * #466 Deprecate Agrest metadata API
+* #467 Injectable AgDataMap, remove redundant IMetadataService
 
 ## Release 4.0
 

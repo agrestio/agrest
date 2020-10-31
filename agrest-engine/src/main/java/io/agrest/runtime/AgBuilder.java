@@ -6,6 +6,7 @@ import io.agrest.encoder.Encoder;
 import io.agrest.encoder.EntityEncoderFilter;
 import io.agrest.encoder.PropertyMetadataEncoder;
 import io.agrest.encoder.converter.StringConverter;
+import io.agrest.meta.AgDataMap;
 import io.agrest.meta.AgEntityOverlay;
 import io.agrest.compiler.AgEntityCompiler;
 import io.agrest.compiler.AnnotationsAgEntityCompiler;
@@ -388,7 +389,7 @@ public class AgBuilder {
 
             binder.bind(IEncoderService.class).to(EncoderService.class);
             binder.bind(IRelationshipMapper.class).to(RelationshipMapper.class);
-            binder.bind(IMetadataService.class).to(MetadataService.class);
+            binder.bind(AgDataMap.class).toProvider(LazyAgDataMapProvider.class);
             binder.bind(IResourceMetadataService.class).to(ResourceMetadataService.class);
             binder.bind(IConstraintsHandler.class).to(ConstraintsHandler.class);
 

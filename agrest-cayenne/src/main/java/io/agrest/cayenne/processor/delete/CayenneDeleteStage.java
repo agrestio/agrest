@@ -1,13 +1,13 @@
 package io.agrest.cayenne.processor.delete;
 
 import io.agrest.AgException;
-import io.agrest.EntityParent;
 import io.agrest.AgObjectId;
+import io.agrest.EntityParent;
+import io.agrest.cayenne.processor.CayenneUtil;
+import io.agrest.meta.AgDataMap;
 import io.agrest.meta.AgEntity;
 import io.agrest.processor.Processor;
 import io.agrest.processor.ProcessorOutcome;
-import io.agrest.cayenne.processor.CayenneUtil;
-import io.agrest.runtime.meta.IMetadataService;
 import io.agrest.runtime.processor.delete.DeleteContext;
 import org.apache.cayenne.DataObject;
 import org.apache.cayenne.ObjectContext;
@@ -25,10 +25,10 @@ import java.util.List;
  */
 public class CayenneDeleteStage implements Processor<DeleteContext<?>> {
 
-    private IMetadataService metadataService;
+    private AgDataMap dataMap;
 
-    public CayenneDeleteStage(@Inject IMetadataService metadataService) {
-        this.metadataService = metadataService;
+    public CayenneDeleteStage(@Inject AgDataMap dataMap) {
+        this.dataMap = dataMap;
     }
 
     @Override
@@ -48,12 +48,12 @@ public class CayenneDeleteStage implements Processor<DeleteContext<?>> {
 
         // delete by id
         if (context.isById()) {
-            AgEntity<T> agEntity = metadataService.getAgEntity(context.getType());
+            AgEntity<T> agEntity = dataMap.getEntity(context.getType());
             deleteById(context, cayenneContext, agEntity);
         }
         // delete by parent
         else if (context.getParent() != null) {
-            AgEntity<?> parentAgEntity = metadataService.getAgEntity(context.getParent().getType());
+            AgEntity<?> parentAgEntity = dataMap.getEntity(context.getParent().getType());
             deleteByParent(context, cayenneContext, parentAgEntity);
         }
         // delete all !!

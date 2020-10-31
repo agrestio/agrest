@@ -8,12 +8,12 @@ import io.agrest.annotation.AgAttribute;
 import io.agrest.annotation.AgId;
 import io.agrest.annotation.AgRelationship;
 import io.agrest.base.protocol.CayenneExp;
-import io.agrest.constraints.Constraint;
-import io.agrest.meta.AgEntity;
 import io.agrest.compiler.AgEntityCompiler;
 import io.agrest.compiler.AnnotationsAgEntityCompiler;
-import io.agrest.runtime.meta.IMetadataService;
-import io.agrest.runtime.meta.MetadataService;
+import io.agrest.constraints.Constraint;
+import io.agrest.meta.AgDataMap;
+import io.agrest.meta.AgEntity;
+import io.agrest.meta.LazyAgDataMap;
 import io.agrest.unit.ResourceEntityUtils;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -26,19 +26,19 @@ import static org.junit.jupiter.api.Assertions.*;
 public class ConstraintsHandlerTest {
 
     private static ConstraintsHandler constraintsHandler;
-    private static IMetadataService metadata;
+    private static AgDataMap dataMap;
 
     @BeforeAll
     public static void before() {
         AgEntityCompiler compiler = new AnnotationsAgEntityCompiler(Collections.emptyMap());
-        metadata = new MetadataService(Collections.singletonList(compiler));
+        dataMap = new LazyAgDataMap(Collections.singletonList(compiler));
         constraintsHandler = new ConstraintsHandler(Collections.emptyList(), Collections.emptyList());
     }
 
     @Test
     public void testConstrainResponse_FetchOffset() {
 
-        AgEntity<Tr> entity = metadata.getAgEntity(Tr.class);
+        AgEntity<Tr> entity = dataMap.getEntity(Tr.class);
 
         SizeConstraints s1 = new SizeConstraints().fetchOffset(5);
         SizeConstraints s2 = new SizeConstraints().fetchOffset(0);
@@ -71,7 +71,7 @@ public class ConstraintsHandlerTest {
     @Test
     public void testConstrainResponse_FetchLimit() {
 
-        AgEntity<Tr> entity = metadata.getAgEntity(Tr.class);
+        AgEntity<Tr> entity = dataMap.getEntity(Tr.class);
 
         SizeConstraints s1 = new SizeConstraints().fetchLimit(5);
         SizeConstraints s2 = new SizeConstraints().fetchLimit(0);
@@ -115,8 +115,8 @@ public class ConstraintsHandlerTest {
     @Test
     public void testConstrainResponse_ResourceEntity_NoTargetRel() {
 
-        AgEntity<Tr> entityTr = metadata.getAgEntity(Tr.class);
-        AgEntity<Ts> entityTs = metadata.getAgEntity(Ts.class);
+        AgEntity<Tr> entityTr = dataMap.getEntity(Tr.class);
+        AgEntity<Ts> entityTs = dataMap.getEntity(Ts.class);
 
         Constraint<Tr> tc1 = Constraint.excludeAll(Tr.class).attributes("a", "b");
 
@@ -138,9 +138,9 @@ public class ConstraintsHandlerTest {
     @Test
     public void testConstrainResponse_ResourceEntity_TargetRel() {
 
-        AgEntity<Tr> entityTr = metadata.getAgEntity(Tr.class);
-        AgEntity<Ts> entityTs = metadata.getAgEntity(Ts.class);
-        AgEntity<Tv> entityTv = metadata.getAgEntity(Tv.class);
+        AgEntity<Tr> entityTr = dataMap.getEntity(Tr.class);
+        AgEntity<Ts> entityTs = dataMap.getEntity(Ts.class);
+        AgEntity<Tv> entityTv = dataMap.getEntity(Tv.class);
 
         Constraint<Tr> constraint = Constraint.excludeAll(Tr.class).attributes("a", "b")
                 .path("rts", Constraint.excludeAll(Ts.class).attributes("n", "m"))
@@ -176,7 +176,7 @@ public class ConstraintsHandlerTest {
     @Test
     public void testConstrainResponse_ResourceEntity_Id() {
 
-        AgEntity<Tr> entity = metadata.getAgEntity(Tr.class);
+        AgEntity<Tr> entity = dataMap.getEntity(Tr.class);
 
         Constraint<Tr> constraint1 = Constraint.excludeAll(Tr.class).excludeId();
         Constraint<Tr> constraint2 = Constraint.excludeAll(Tr.class).includeId();
@@ -200,7 +200,7 @@ public class ConstraintsHandlerTest {
     @Test
     public void testConstrainResponse_CayenneExp() {
 
-        AgEntity<Tr> entity = metadata.getAgEntity(Tr.class);
+        AgEntity<Tr> entity = dataMap.getEntity(Tr.class);
         Constraint<Tr> constraint = Constraint.excludeAll(Tr.class).qualifier(new CayenneExp("a = 5"));
 
         ResourceEntity<Tr> e1 = new RootResourceEntity<>(entity, null);
@@ -212,8 +212,8 @@ public class ConstraintsHandlerTest {
     @Test
     public void testConstrainResponse_MapByAttribute_Excluded() {
 
-        AgEntity<Tr> entityTr = metadata.getAgEntity(Tr.class);
-        AgEntity<Ts> entityTs = metadata.getAgEntity(Ts.class);
+        AgEntity<Tr> entityTr = dataMap.getEntity(Tr.class);
+        AgEntity<Ts> entityTs = dataMap.getEntity(Ts.class);
 
         Constraint<Tr> constraint = Constraint
                 .excludeAll(Tr.class)
@@ -238,8 +238,8 @@ public class ConstraintsHandlerTest {
 
     @Test
     public void testConstrainResponse_MapByAttribute_Included() {
-        AgEntity<Tr> entityTr = metadata.getAgEntity(Tr.class);
-        AgEntity<Ts> entityTs = metadata.getAgEntity(Ts.class);
+        AgEntity<Tr> entityTr = dataMap.getEntity(Tr.class);
+        AgEntity<Ts> entityTs = dataMap.getEntity(Ts.class);
 
         Constraint<Tr> constraint = Constraint
                 .excludeAll(Tr.class)
@@ -265,8 +265,8 @@ public class ConstraintsHandlerTest {
     @Test
     public void testConstrainResponse_MapById_Excluded() {
 
-        AgEntity<Tr> entityTr = metadata.getAgEntity(Tr.class);
-        AgEntity<Ts> entityTs = metadata.getAgEntity(Ts.class);
+        AgEntity<Tr> entityTr = dataMap.getEntity(Tr.class);
+        AgEntity<Ts> entityTs = dataMap.getEntity(Ts.class);
 
         Constraint<Tr> constraint = Constraint
                 .excludeAll(Tr.class)
@@ -290,8 +290,8 @@ public class ConstraintsHandlerTest {
     @Test
     public void testConstrainResponse_MapById_Included() {
 
-        AgEntity<Tr> entityTr = metadata.getAgEntity(Tr.class);
-        AgEntity<Ts> entityTs = metadata.getAgEntity(Ts.class);
+        AgEntity<Tr> entityTr = dataMap.getEntity(Tr.class);
+        AgEntity<Ts> entityTs = dataMap.getEntity(Ts.class);
 
         Constraint<Tr> constraint = Constraint
                 .excludeAll(Tr.class)

@@ -8,8 +8,9 @@ import io.agrest.base.protocol.Dir;
 import io.agrest.base.protocol.Sort;
 import io.agrest.compiler.AgEntityCompiler;
 import io.agrest.compiler.AnnotationsAgEntityCompiler;
+import io.agrest.meta.AgDataMap;
+import io.agrest.meta.LazyAgDataMap;
 import io.agrest.runtime.entity.SortMerger;
-import io.agrest.runtime.meta.MetadataService;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -22,20 +23,20 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class SortMergerTest {
 
     private static SortMerger merger;
-    private static MetadataService metadataService;
+    private static AgDataMap dataMap;
 
     private ResourceEntity<?> entity;
 
     @BeforeAll
     public static void beforeAll() {
         AgEntityCompiler compiler = new AnnotationsAgEntityCompiler(Collections.emptyMap());
-        metadataService = new MetadataService(Collections.singletonList(compiler));
+        dataMap = new LazyAgDataMap(Collections.singletonList(compiler));
         merger = new SortMerger();
     }
 
     @BeforeEach
     public void beforeEach() {
-        this.entity = new RootResourceEntity<>(metadataService.getAgEntity(Tr.class), null);
+        this.entity = new RootResourceEntity<>(dataMap.getEntity(Tr.class), null);
     }
 
     @Test

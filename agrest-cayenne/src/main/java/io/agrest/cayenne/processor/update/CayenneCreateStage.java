@@ -1,7 +1,7 @@
 package io.agrest.cayenne.processor.update;
 
 import io.agrest.cayenne.persister.ICayennePersister;
-import io.agrest.runtime.meta.IMetadataService;
+import io.agrest.meta.AgDataMap;
 import io.agrest.runtime.processor.update.UpdateContext;
 import org.apache.cayenne.DataObject;
 import org.apache.cayenne.di.Inject;
@@ -12,9 +12,9 @@ import org.apache.cayenne.di.Inject;
 public class CayenneCreateStage extends CayenneMergeChangesStage {
 
     public CayenneCreateStage(
-            @Inject IMetadataService metadataService,
+            @Inject AgDataMap dataMap,
             @Inject ICayennePersister persister) {
-        super(metadataService, persister.entityResolver());
+        super(dataMap, persister.entityResolver());
     }
 
     @Override

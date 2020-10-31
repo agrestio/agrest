@@ -1,43 +1,27 @@
 package io.agrest.cayenne.processor.update;
 
 import io.agrest.AgException;
-import io.agrest.AgObjectId;
 import io.agrest.CompoundObjectId;
 import io.agrest.EntityParent;
 import io.agrest.EntityUpdate;
-import io.agrest.NestedResourceEntity;
-import io.agrest.ResourceEntity;
-import io.agrest.RootResourceEntity;
-import io.agrest.SimpleObjectId;
+import io.agrest.cayenne.processor.CayenneUtil;
+import io.agrest.meta.AgDataMap;
 import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgRelationship;
 import io.agrest.processor.Processor;
 import io.agrest.processor.ProcessorOutcome;
-import io.agrest.cayenne.processor.CayenneUtil;
-import io.agrest.runtime.meta.IMetadataService;
 import io.agrest.runtime.processor.update.UpdateContext;
 import org.apache.cayenne.Cayenne;
 import org.apache.cayenne.DataObject;
 import org.apache.cayenne.DataRow;
-import org.apache.cayenne.Fault;
 import org.apache.cayenne.ObjectContext;
 import org.apache.cayenne.exp.ExpressionFactory;
-import org.apache.cayenne.map.DbAttribute;
-import org.apache.cayenne.map.DbEntity;
-import org.apache.cayenne.map.EntityResolver;
-import org.apache.cayenne.map.ObjAttribute;
-import org.apache.cayenne.map.ObjEntity;
-import org.apache.cayenne.map.ObjRelationship;
+import org.apache.cayenne.map.*;
 import org.apache.cayenne.query.ObjectSelect;
 import org.apache.cayenne.reflect.ClassDescriptor;
 
 import javax.ws.rs.core.Response;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * A superclass of the processors invoked for {@link io.agrest.UpdateStage#MERGE_CHANGES} stage.
@@ -46,11 +30,11 @@ import java.util.Set;
  */
 public abstract class CayenneMergeChangesStage implements Processor<UpdateContext<?>> {
 
-    private IMetadataService metadataService;
+    private AgDataMap dataMap;
     protected EntityResolver entityResolver;
 
-    public CayenneMergeChangesStage(IMetadataService metadataService, EntityResolver entityResolver) {
-        this.metadataService = metadataService;
+    public CayenneMergeChangesStage(AgDataMap dataMap, EntityResolver entityResolver) {
+        this.dataMap = dataMap;
         this.entityResolver = entityResolver;
     }
 
@@ -335,7 +319,7 @@ public abstract class CayenneMergeChangesStage implements Processor<UpdateContex
         ObjectContext objectContext = CayenneUpdateStartStage.cayenneContext(context);
 
         ObjEntity parentEntity = objectContext.getEntityResolver().getObjEntity(parent.getType());
-        AgEntity<?> parentAgEntity = metadataService.getAgEntity(context.getParent().getType());
+        AgEntity<?> parentAgEntity = dataMap.getEntity(context.getParent().getType());
         final DataObject parentObject = (DataObject) CayenneUtil.findById(objectContext, parent.getType(),
                 parentAgEntity, parent.getId().get());
 

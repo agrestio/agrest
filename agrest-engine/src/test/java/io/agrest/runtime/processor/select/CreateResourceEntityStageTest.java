@@ -7,9 +7,9 @@ import io.agrest.annotation.AgRelationship;
 import io.agrest.base.protocol.*;
 import io.agrest.compiler.AgEntityCompiler;
 import io.agrest.compiler.AnnotationsAgEntityCompiler;
+import io.agrest.meta.AgDataMap;
+import io.agrest.meta.LazyAgDataMap;
 import io.agrest.runtime.entity.*;
-import io.agrest.runtime.meta.IMetadataService;
-import io.agrest.runtime.meta.MetadataService;
 import io.agrest.runtime.protocol.ICayenneExpParser;
 import io.agrest.runtime.protocol.IExcludeParser;
 import io.agrest.runtime.protocol.IIncludeParser;
@@ -37,18 +37,18 @@ public class CreateResourceEntityStageTest {
     public static void beforeAll() {
 
         AgEntityCompiler compiler = new AnnotationsAgEntityCompiler(Collections.emptyMap());
-        MetadataService metadataService = new MetadataService(Collections.singletonList(compiler));
+        AgDataMap dataMap = new LazyAgDataMap(Collections.singletonList(compiler));
 
         // prepare create entity stage
         ICayenneExpMerger expMerger = new CayenneExpMerger();
         ISortMerger sortMerger = new SortMerger();
-        IMapByMerger mapByMerger = new MapByMerger(mock(IMetadataService.class));
+        IMapByMerger mapByMerger = new MapByMerger(dataMap);
         ISizeMerger sizeMerger = new SizeMerger();
-        IIncludeMerger includeMerger = new IncludeMerger(mock(IMetadataService.class), expMerger, sortMerger, mapByMerger, sizeMerger);
+        IIncludeMerger includeMerger = new IncludeMerger(dataMap, expMerger, sortMerger, mapByMerger, sizeMerger);
         IExcludeMerger excludeMerger = new ExcludeMerger();
 
         stage = new CreateResourceEntityStage(
-                metadataService,
+                dataMap,
                 expMerger,
                 sortMerger,
                 mapByMerger,

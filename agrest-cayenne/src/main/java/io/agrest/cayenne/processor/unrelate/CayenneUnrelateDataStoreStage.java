@@ -1,10 +1,10 @@
 package io.agrest.cayenne.processor.unrelate;
 
 import io.agrest.AgException;
+import io.agrest.meta.AgDataMap;
 import io.agrest.meta.AgRelationship;
 import io.agrest.processor.Processor;
 import io.agrest.processor.ProcessorOutcome;
-import io.agrest.runtime.meta.IMetadataService;
 import io.agrest.runtime.processor.unrelate.UnrelateContext;
 import org.apache.cayenne.Cayenne;
 import org.apache.cayenne.DataObject;
@@ -23,10 +23,10 @@ import java.util.Collection;
  */
 public class CayenneUnrelateDataStoreStage implements Processor<UnrelateContext<?>> {
 
-    private final IMetadataService metadataService;
+    private final AgDataMap dataMap;
 
-    public CayenneUnrelateDataStoreStage(@Inject IMetadataService metadataService) {
-        this.metadataService = metadataService;
+    public CayenneUnrelateDataStoreStage(@Inject AgDataMap dataMap) {
+        this.dataMap = dataMap;
     }
 
     @Override
@@ -50,8 +50,8 @@ public class CayenneUnrelateDataStoreStage implements Processor<UnrelateContext<
     private <T extends DataObject> void unrelateSingle(UnrelateContext<T> context, ObjectContext cayenneContext) {
 
         // validate relationship before doing anything else
-        AgRelationship relationship = metadataService
-                .getAgEntity(context.getParent().getType())
+        AgRelationship relationship = dataMap
+                .getEntity(context.getParent().getType())
                 .getRelationship(context.getParent().getRelationship());
 
         if (relationship == null) {
@@ -90,8 +90,8 @@ public class CayenneUnrelateDataStoreStage implements Processor<UnrelateContext<
 
     private <T extends DataObject> void unrelateAll(UnrelateContext<T> context, ObjectContext cayenneContext) {
         // validate relationship before doing anything else
-        AgRelationship relationship = metadataService
-                .getAgEntity(context.getParent().getType())
+        AgRelationship relationship = dataMap
+                .getEntity(context.getParent().getType())
                 .getRelationship(context.getParent().getRelationship());
 
         if (relationship == null) {

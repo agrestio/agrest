@@ -5,8 +5,8 @@ import io.agrest.annotation.AgAttribute;
 import io.agrest.annotation.AgRelationship;
 import io.agrest.compiler.AgEntityCompiler;
 import io.agrest.compiler.AnnotationsAgEntityCompiler;
-import io.agrest.runtime.meta.IMetadataService;
-import io.agrest.runtime.meta.MetadataService;
+import io.agrest.meta.AgDataMap;
+import io.agrest.meta.LazyAgDataMap;
 import org.apache.cayenne.exp.parser.ASTObjPath;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -17,17 +17,17 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class EntityPathCacheTest {
 
-    private IMetadataService metadataService;
+    private AgDataMap dataMap;
 
     @BeforeEach
     public void setUp() {
         AgEntityCompiler compiler = new AnnotationsAgEntityCompiler(Collections.emptyMap());
-        this.metadataService = new MetadataService(Collections.singletonList(compiler));
+        this.dataMap = new LazyAgDataMap(Collections.singletonList(compiler));
     }
 
     @Test
     public void testGetPathDescriptor_Attribute() {
-        EntityPathCache cache = new EntityPathCache(metadataService.getAgEntity(X.class));
+        EntityPathCache cache = new EntityPathCache(dataMap.getEntity(X.class));
         PathDescriptor pd = cache.getPathDescriptor(new ASTObjPath("name"));
         assertNotNull(pd);
         assertTrue(pd.isAttribute());
@@ -38,7 +38,7 @@ public class EntityPathCacheTest {
 
     @Test
     public void testGetPathDescriptor_Relationship() {
-        EntityPathCache cache = new EntityPathCache(metadataService.getAgEntity(X.class));
+        EntityPathCache cache = new EntityPathCache(dataMap.getEntity(X.class));
         PathDescriptor pd = cache.getPathDescriptor(new ASTObjPath("y"));
         assertNotNull(pd);
         assertFalse(pd.isAttribute());
@@ -49,7 +49,7 @@ public class EntityPathCacheTest {
 
     @Test
     public void testGetPathDescriptor_RelatedAttribute() {
-        EntityPathCache cache = new EntityPathCache(metadataService.getAgEntity(X.class));
+        EntityPathCache cache = new EntityPathCache(dataMap.getEntity(X.class));
         PathDescriptor pd = cache.getPathDescriptor(new ASTObjPath("y.name"));
         assertNotNull(pd);
         assertTrue(pd.isAttribute());
@@ -60,13 +60,13 @@ public class EntityPathCacheTest {
 
     @Test
     public void testGetPathDescriptor_BadPath() {
-        EntityPathCache cache = new EntityPathCache(metadataService.getAgEntity(X.class));
+        EntityPathCache cache = new EntityPathCache(dataMap.getEntity(X.class));
         assertThrows(AgException.class, () -> cache.getPathDescriptor(new ASTObjPath("y.xyz")));
     }
 
     @Test
     public void testGetPathDescriptor_OuterRelatedAttribute() {
-        EntityPathCache cache = new EntityPathCache(metadataService.getAgEntity(X.class));
+        EntityPathCache cache = new EntityPathCache(dataMap.getEntity(X.class));
         PathDescriptor pd = cache.getPathDescriptor(new ASTObjPath("y+.name"));
         assertNotNull(pd);
         assertTrue(pd.isAttribute());

@@ -1,12 +1,8 @@
 package io.agrest.openapi.modelconverter;
 
 import io.agrest.PathConstants;
-import io.agrest.meta.AgAttribute;
-import io.agrest.meta.AgEntity;
-import io.agrest.meta.AgIdPart;
-import io.agrest.meta.AgRelationship;
+import io.agrest.meta.*;
 import io.agrest.openapi.TypeWrapper;
-import io.agrest.runtime.meta.IMetadataService;
 import io.swagger.v3.core.converter.AnnotatedType;
 import io.swagger.v3.core.converter.ModelConverter;
 import io.swagger.v3.core.converter.ModelConverterContext;
@@ -30,13 +26,13 @@ public class AgEntityModelConverter extends AgModelConverter {
 
     public static final String BINDING_ENTITY_PACKAGES = "openapi-entity";
 
-    private final IMetadataService metadataService;
+    private final AgDataMap dataMap;
     private final List<String> entityPackages;
 
     public AgEntityModelConverter(
-            @Inject IMetadataService metadataService,
+            @Inject AgDataMap dataMap,
             @Inject(BINDING_ENTITY_PACKAGES) List<String> entityPackages) {
-        this.metadataService = Objects.requireNonNull(metadataService);
+        this.dataMap = Objects.requireNonNull(dataMap);
         this.entityPackages = Objects.requireNonNull(entityPackages);
     }
 
@@ -47,7 +43,7 @@ public class AgEntityModelConverter extends AgModelConverter {
 
             Package p = wrapped.getRawClass().getPackage();
 
-            // Since IMetadataService would lazily compile an entity from any Java class,
+            // Since AgDataMap would lazily compile an entity from any Java class,
             // we need to start with a more deterministic filter for the model classes
             return p != null && entityPackages.contains(p.getName());
         }
@@ -60,7 +56,7 @@ public class AgEntityModelConverter extends AgModelConverter {
 
         LOGGER.debug("resolve AgEntity ({}}", wrapped);
 
-        AgEntity<?> agEntity = metadataService.getAgEntity(wrapped.getRawClass());
+        AgEntity<?> agEntity = dataMap.getEntity(wrapped.getRawClass());
         String name = agEntity.getName();
         Map<String, Schema> properties = new HashMap<>();
 
@@ -107,12 +103,12 @@ public class AgEntityModelConverter extends AgModelConverter {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         AgEntityModelConverter that = (AgEntityModelConverter) o;
-        return metadataService.equals(that.metadataService) &&
+        return dataMap.equals(that.dataMap) &&
                 entityPackages.equals(that.entityPackages);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(metadataService, entityPackages);
+        return Objects.hash(dataMap, entityPackages);
     }
 }

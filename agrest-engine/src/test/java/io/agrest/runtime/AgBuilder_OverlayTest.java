@@ -2,13 +2,13 @@ package io.agrest.runtime;
 
 import io.agrest.NestedResourceEntity;
 import io.agrest.meta.AgAttribute;
+import io.agrest.meta.AgDataMap;
 import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgRelationship;
 import io.agrest.pojo.model.P1;
 import io.agrest.property.PropertyReader;
 import io.agrest.resolver.NestedDataResolver;
 import io.agrest.resolver.ReaderBasedResolver;
-import io.agrest.runtime.meta.IMetadataService;
 import io.agrest.runtime.processor.select.SelectContext;
 import org.junit.jupiter.api.Test;
 
@@ -25,7 +25,7 @@ public class AgBuilder_OverlayTest {
         X x = new X();
         x.setName("aname");
 
-        AgEntity<X> entity = runtime.service(IMetadataService.class).getAgEntity(X.class);
+        AgEntity<X> entity = runtime.service(AgDataMap.class).getEntity(X.class);
         assertNotNull(entity);
 
         AgAttribute x_adHoc = entity.getAttribute("adHoc");
@@ -49,7 +49,7 @@ public class AgBuilder_OverlayTest {
         x.setName("aname");
         x.setPhoneNumber("3333333");
 
-        AgEntity<X> entity = runtime.service(IMetadataService.class).getAgEntity(X.class);
+        AgEntity<X> entity = runtime.service(AgDataMap.class).getEntity(X.class);
         assertNotNull(entity);
 
         AgAttribute replaced = entity.getAttribute("phoneNumber");
@@ -72,20 +72,20 @@ public class AgBuilder_OverlayTest {
                 .entityOverlay(AgEntity.overlay(X.class).redefineRelationshipResolver("y", (t, n) -> resolver))
                 .build();
 
-        IMetadataService metadata = runtime.service(IMetadataService.class);
+        AgDataMap metadata = runtime.service(AgDataMap.class);
 
-        AgEntity<X> entity = metadata.getAgEntity(X.class);
+        AgEntity<X> entity = metadata.getEntity(X.class);
         assertNotNull(entity);
 
         AgRelationship replaced = entity.getRelationship("y");
         assertNotNull(replaced);
-        assertSame(metadata.getAgEntity(Y.class), replaced.getTargetEntity());
+        assertSame(metadata.getEntity(Y.class), replaced.getTargetEntity());
         assertSame(resolver, replaced.getResolver());
         assertFalse(replaced.isToMany());
 
         AgRelationship unchanged = entity.getRelationship("z");
         assertNotNull(unchanged);
-        assertSame(metadata.getAgEntity(Z.class), unchanged.getTargetEntity());
+        assertSame(metadata.getEntity(Z.class), unchanged.getTargetEntity());
         assertNotSame(resolver, unchanged.getResolver());
         assertTrue(unchanged.getResolver() instanceof ReaderBasedResolver);
         assertFalse(unchanged.isToMany());
@@ -100,9 +100,9 @@ public class AgBuilder_OverlayTest {
                 .entityOverlay(AgEntity.overlay(X.class).redefineRelationshipResolver("adHoc", (t, n) -> resolver))
                 .build();
 
-        IMetadataService metadata = runtime.service(IMetadataService.class);
+        AgDataMap metadata = runtime.service(AgDataMap.class);
 
-        AgEntity<X> entity = metadata.getAgEntity(X.class);
+        AgEntity<X> entity = metadata.getEntity(X.class);
         assertNotNull(entity);
 
         AgRelationship adHoc = entity.getRelationship("adHoc");
@@ -110,7 +110,7 @@ public class AgBuilder_OverlayTest {
 
         AgRelationship unchanged = entity.getRelationship("z");
         assertNotNull(unchanged);
-        assertSame(metadata.getAgEntity(Z.class), unchanged.getTargetEntity());
+        assertSame(metadata.getEntity(Z.class), unchanged.getTargetEntity());
         assertNotSame(resolver, unchanged.getResolver());
         assertTrue(unchanged.getResolver() instanceof ReaderBasedResolver);
         assertFalse(unchanged.isToMany());
@@ -126,20 +126,20 @@ public class AgBuilder_OverlayTest {
                 .entityOverlay(AgEntity.overlay(X.class).redefineToMany("y", A.class, (t, n) -> resolver))
                 .build();
 
-        IMetadataService metadata = runtime.service(IMetadataService.class);
+        AgDataMap metadata = runtime.service(AgDataMap.class);
 
-        AgEntity<X> entity = metadata.getAgEntity(X.class);
+        AgEntity<X> entity = metadata.getEntity(X.class);
         assertNotNull(entity);
 
         AgRelationship replaced = entity.getRelationship("y");
         assertNotNull(replaced);
-        assertSame(metadata.getAgEntity(A.class), replaced.getTargetEntity());
+        assertSame(metadata.getEntity(A.class), replaced.getTargetEntity());
         assertSame(resolver, replaced.getResolver());
         assertTrue(replaced.isToMany());
 
         AgRelationship unchanged = entity.getRelationship("z");
         assertNotNull(unchanged);
-        assertSame(metadata.getAgEntity(Z.class), unchanged.getTargetEntity());
+        assertSame(metadata.getEntity(Z.class), unchanged.getTargetEntity());
         assertNotSame(resolver, unchanged.getResolver());
         assertTrue(unchanged.getResolver() instanceof ReaderBasedResolver);
         assertFalse(unchanged.isToMany());
@@ -154,20 +154,20 @@ public class AgBuilder_OverlayTest {
                 .entityOverlay(AgEntity.overlay(X.class).redefineToOne("adHoc", A.class, (t, n) -> resolver))
                 .build();
 
-        IMetadataService metadata = runtime.service(IMetadataService.class);
+        AgDataMap metadata = runtime.service(AgDataMap.class);
 
-        AgEntity<X> entity = metadata.getAgEntity(X.class);
+        AgEntity<X> entity = metadata.getEntity(X.class);
         assertNotNull(entity);
 
         AgRelationship created = entity.getRelationship("adHoc");
         assertNotNull(created);
-        assertSame(metadata.getAgEntity(A.class), created.getTargetEntity());
+        assertSame(metadata.getEntity(A.class), created.getTargetEntity());
         assertSame(resolver, created.getResolver());
         assertFalse(created.isToMany());
 
         AgRelationship unchanged = entity.getRelationship("z");
         assertNotNull(unchanged);
-        assertSame(metadata.getAgEntity(Z.class), unchanged.getTargetEntity());
+        assertSame(metadata.getEntity(Z.class), unchanged.getTargetEntity());
         assertNotSame(resolver, unchanged.getResolver());
         assertTrue(unchanged.getResolver() instanceof ReaderBasedResolver);
         assertFalse(unchanged.isToMany());
@@ -179,7 +179,7 @@ public class AgBuilder_OverlayTest {
                 .entityOverlay(AgEntity.overlay(X.class).exclude("phoneNumber"))
                 .build();
 
-        AgEntity<X> entity = runtime.service(IMetadataService.class).getAgEntity(X.class);
+        AgEntity<X> entity = runtime.service(AgDataMap.class).getEntity(X.class);
         AgAttribute phone = entity.getAttribute("phoneNumber");
         assertNull(phone);
     }

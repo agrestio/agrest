@@ -7,8 +7,9 @@ import io.agrest.annotation.AgId;
 import io.agrest.base.protocol.CayenneExp;
 import io.agrest.compiler.AgEntityCompiler;
 import io.agrest.compiler.AnnotationsAgEntityCompiler;
+import io.agrest.meta.AgDataMap;
+import io.agrest.meta.LazyAgDataMap;
 import io.agrest.runtime.entity.CayenneExpMerger;
-import io.agrest.runtime.meta.MetadataService;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -20,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class CayenneExpMergerTest {
 
-    private static MetadataService metadataService;
+    private static AgDataMap dataMap;
     private static CayenneExpMerger merger;
     private ResourceEntity<Tr> entity;
 
@@ -28,13 +29,13 @@ public class CayenneExpMergerTest {
     public static void beforeAll() {
 
         AgEntityCompiler compiler = new AnnotationsAgEntityCompiler(Collections.emptyMap());
-        metadataService = new MetadataService(Collections.singletonList(compiler));
+        dataMap = new LazyAgDataMap(Collections.singletonList(compiler));
         merger = new CayenneExpMerger();
     }
 
     @BeforeEach
     public void beforeEach() {
-        entity = new RootResourceEntity<>(metadataService.getAgEntity(Tr.class), null);
+        entity = new RootResourceEntity<>(dataMap.getEntity(Tr.class), null);
     }
 
     @Test

@@ -2,31 +2,12 @@ package io.agrest.meta.parser;
 
 import io.agrest.DataResponse;
 import io.agrest.annotation.LinkType;
-import io.agrest.meta.AgEntity;
-import io.agrest.meta.AgResource;
-import io.agrest.meta.DefaultAgOperation;
-import io.agrest.meta.DefaultAgResource;
-import io.agrest.meta.LinkMethodType;
-import io.agrest.runtime.meta.IMetadataService;
+import io.agrest.meta.*;
 import org.apache.cayenne.di.Inject;
 
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import java.lang.reflect.AnnotatedElement;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.LinkedHashSet;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
+import javax.ws.rs.*;
+import java.lang.reflect.*;
+import java.util.*;
 
 /**
  * @since 1.18
@@ -35,10 +16,10 @@ import java.util.TreeMap;
 @Deprecated
 public class ResourceParser implements IResourceParser {
 
-    private IMetadataService metadataService;
+    private AgDataMap dataMap;
 
-    public ResourceParser(@Inject IMetadataService metadataService) {
-        this.metadataService = metadataService;
+    public ResourceParser(@Inject AgDataMap dataMap) {
+        this.dataMap = dataMap;
     }
 
     private static LinkMethodType getMethodType(Method method) {
@@ -156,7 +137,7 @@ public class ResourceParser implements IResourceParser {
             if (md != null && !md.getEntityClass().equals(Object.class)) {
 
                 Class<?> entityClass = md.getEntityClass();
-                entity = metadataService.getAgEntity(entityClass);
+                entity = dataMap.getEntity(entityClass);
                 if (entity == null) {
                     throw new IllegalStateException("Unknown entity class: " + entityClass.getName());
                 }
@@ -165,7 +146,7 @@ public class ResourceParser implements IResourceParser {
 
                 Type returnType = method.getGenericReturnType();
                 if (returnType instanceof ParameterizedType) {
-                    entity = metadataService.getAgEntity((Class) ((ParameterizedType) returnType)
+                    entity = dataMap.getEntity((Class) ((ParameterizedType) returnType)
                             .getActualTypeArguments()[0]);
                 }
             }

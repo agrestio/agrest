@@ -1,20 +1,12 @@
 package io.agrest.cayenne.processor.update;
 
-import io.agrest.AgException;
-import io.agrest.AgObjectId;
-import io.agrest.CompoundObjectId;
-import io.agrest.EntityUpdate;
-import io.agrest.NestedResourceEntity;
-import io.agrest.ObjectMapper;
-import io.agrest.ObjectMapperFactory;
-import io.agrest.ResourceEntity;
-import io.agrest.SimpleObjectId;
+import io.agrest.*;
 import io.agrest.cayenne.persister.ICayennePersister;
 import io.agrest.cayenne.processor.CayenneProcessor;
 import io.agrest.meta.AgAttribute;
+import io.agrest.meta.AgDataMap;
 import io.agrest.meta.AgIdPart;
 import io.agrest.meta.AgRelationship;
-import io.agrest.runtime.meta.IMetadataService;
 import io.agrest.runtime.processor.update.ByIdObjectMapperFactory;
 import io.agrest.runtime.processor.update.UpdateContext;
 import org.apache.cayenne.DataObject;
@@ -36,10 +28,10 @@ import java.util.function.BiConsumer;
 public class CayenneUpdateStage extends CayenneMergeChangesStage {
 
     public CayenneUpdateStage(
-            @Inject IMetadataService metadataService,
+            @Inject AgDataMap dataMap,
             @Inject ICayennePersister persister) {
 
-        super(metadataService, persister.entityResolver());
+        super(dataMap, persister.entityResolver());
     }
 
     @Override

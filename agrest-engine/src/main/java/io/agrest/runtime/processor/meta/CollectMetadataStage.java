@@ -2,15 +2,11 @@ package io.agrest.runtime.processor.meta;
 
 import io.agrest.NestedResourceEntity;
 import io.agrest.RootResourceEntity;
-import io.agrest.meta.AgAttribute;
-import io.agrest.meta.AgEntity;
-import io.agrest.meta.AgRelationship;
-import io.agrest.meta.AgResource;
+import io.agrest.meta.*;
 import io.agrest.processor.Processor;
 import io.agrest.processor.ProcessorOutcome;
 import io.agrest.runtime.constraints.IConstraintsHandler;
 import io.agrest.runtime.encoder.IEncoderService;
-import io.agrest.runtime.meta.IMetadataService;
 import io.agrest.runtime.meta.IResourceMetadataService;
 import org.apache.cayenne.di.Inject;
 
@@ -24,18 +20,18 @@ import java.util.Collection;
 @Deprecated
 public class CollectMetadataStage implements Processor<MetadataContext<?>> {
 
-    private IMetadataService metadataService;
+    private AgDataMap dataMap;
     private IResourceMetadataService resourceMetadataService;
     private IEncoderService encoderService;
     private IConstraintsHandler constraintsHandler;
 
     public CollectMetadataStage(
-            @Inject IMetadataService metadataService,
+            @Inject AgDataMap dataMap,
             @Inject IResourceMetadataService resourceMetadataService,
             @Inject IEncoderService encoderService,
             @Inject IConstraintsHandler constraintsHandler) {
 
-        this.metadataService = metadataService;
+        this.dataMap = dataMap;
         this.resourceMetadataService = resourceMetadataService;
         this.encoderService = encoderService;
         this.constraintsHandler = constraintsHandler;
@@ -49,7 +45,7 @@ public class CollectMetadataStage implements Processor<MetadataContext<?>> {
 
     @SuppressWarnings("unchecked")
     protected <T> void doExecute(MetadataContext<T> context) {
-        AgEntity<T> entity = metadataService.getAgEntity(context.getType());
+        AgEntity<T> entity = dataMap.getEntity(context.getType());
         Collection<AgResource<?>> resources = resourceMetadataService.getAgResources(context.getResource());
         Collection<AgResource<T>> filteredResources = new ArrayList<>(resources.size());
 

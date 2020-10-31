@@ -3,10 +3,10 @@ package io.agrest.runtime.processor.update;
 import io.agrest.AgRequest;
 import io.agrest.AgRequestBuilder;
 import io.agrest.EntityUpdate;
+import io.agrest.meta.AgDataMap;
 import io.agrest.meta.AgEntity;
 import io.agrest.processor.Processor;
 import io.agrest.processor.ProcessorOutcome;
-import io.agrest.runtime.meta.IMetadataService;
 import io.agrest.runtime.protocol.IEntityUpdateParser;
 import io.agrest.runtime.protocol.ParameterExtractor;
 import io.agrest.runtime.request.IAgRequestBuilderFactory;
@@ -24,17 +24,17 @@ public class ParseRequestStage implements Processor<UpdateContext<?>> {
     protected static final String PROTOCOL_EXCLUDE = "exclude";
     protected static final String PROTOCOL_INCLUDE = "include";
 
-    private IMetadataService metadataService;
+    private AgDataMap dataMap;
     private IEntityUpdateParser updateParser;
     private IAgRequestBuilderFactory requestBuilderFactory;
 
     public ParseRequestStage(
-            @Inject IMetadataService metadataService,
+            @Inject AgDataMap dataMap,
             @Inject IEntityUpdateParser updateParser,
             @Inject IAgRequestBuilderFactory requestBuilderFactory) {
 
         this.updateParser = updateParser;
-        this.metadataService = metadataService;
+        this.dataMap = dataMap;
         this.requestBuilderFactory = requestBuilderFactory;
     }
 
@@ -53,7 +53,7 @@ public class ParseRequestStage implements Processor<UpdateContext<?>> {
         // Parse updates payload..
         // skip parsing if we already received EntityUpdates collection parsed by MessageBodyReader
         if (context.getUpdates() == null) {
-            AgEntity<T> entity = metadataService.getAgEntity(context.getType());
+            AgEntity<T> entity = dataMap.getEntity(context.getType());
             Collection<EntityUpdate<T>> updates = updateParser.parse(entity, context.getEntityData());
             context.setUpdates(updates);
         }

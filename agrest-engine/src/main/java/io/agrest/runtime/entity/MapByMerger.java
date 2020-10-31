@@ -3,8 +3,8 @@ package io.agrest.runtime.entity;
 import io.agrest.NestedResourceEntity;
 import io.agrest.ResourceEntity;
 import io.agrest.RootResourceEntity;
+import io.agrest.meta.AgDataMap;
 import io.agrest.meta.AgEntityOverlay;
-import io.agrest.runtime.meta.IMetadataService;
 import org.apache.cayenne.di.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,10 +18,10 @@ public class MapByMerger implements IMapByMerger {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MapByMerger.class);
 
-    private IMetadataService metadataService;
+    private AgDataMap dataMap;
 
-    public MapByMerger(@Inject IMetadataService metadataService) {
-        this.metadataService = metadataService;
+    public MapByMerger(@Inject AgDataMap dataMap) {
+        this.dataMap = dataMap;
     }
 
     @Override
@@ -41,7 +41,7 @@ public class MapByMerger implements IMapByMerger {
         }
 
         ResourceEntity<?> mapByCompanionEntity = new RootResourceEntity<>(entity.getAgEntity(), entity.getAgEntityOverlay());
-        new ResourceEntityTreeBuilder(mapByCompanionEntity, metadataService::getAgEntity, overlays).inflatePath(mapByPath);
+        new ResourceEntityTreeBuilder(mapByCompanionEntity, dataMap, overlays).inflatePath(mapByPath);
         entity.mapBy(mapByCompanionEntity, mapByPath);
     }
 }

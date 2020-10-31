@@ -2,15 +2,10 @@ package io.agrest.runtime.processor.select;
 
 import io.agrest.AgRequest;
 import io.agrest.RootResourceEntity;
+import io.agrest.meta.AgDataMap;
 import io.agrest.processor.Processor;
 import io.agrest.processor.ProcessorOutcome;
-import io.agrest.runtime.entity.ICayenneExpMerger;
-import io.agrest.runtime.entity.IExcludeMerger;
-import io.agrest.runtime.entity.IIncludeMerger;
-import io.agrest.runtime.entity.IMapByMerger;
-import io.agrest.runtime.entity.ISizeMerger;
-import io.agrest.runtime.entity.ISortMerger;
-import io.agrest.runtime.meta.IMetadataService;
+import io.agrest.runtime.entity.*;
 import org.apache.cayenne.di.Inject;
 
 /**
@@ -18,7 +13,7 @@ import org.apache.cayenne.di.Inject;
  */
 public class CreateResourceEntityStage implements Processor<SelectContext<?>> {
 
-    private IMetadataService metadataService;
+    private AgDataMap dataMap;
     private ICayenneExpMerger expMerger;
     private ISortMerger sortMerger;
     private IMapByMerger mapByMerger;
@@ -27,7 +22,7 @@ public class CreateResourceEntityStage implements Processor<SelectContext<?>> {
     private IExcludeMerger excludeMerger;
 
     public CreateResourceEntityStage(
-            @Inject IMetadataService metadataService,
+            @Inject AgDataMap dataMap,
             @Inject ICayenneExpMerger expMerger,
             @Inject ISortMerger sortMerger,
             @Inject IMapByMerger mapByMerger,
@@ -35,7 +30,7 @@ public class CreateResourceEntityStage implements Processor<SelectContext<?>> {
             @Inject IIncludeMerger includeMerger,
             @Inject IExcludeMerger excludeMerger) {
 
-        this.metadataService = metadataService;
+        this.dataMap = dataMap;
         this.sortMerger = sortMerger;
         this.expMerger = expMerger;
         this.mapByMerger = mapByMerger;
@@ -53,7 +48,7 @@ public class CreateResourceEntityStage implements Processor<SelectContext<?>> {
     protected <T> void doExecute(SelectContext<T> context) {
         Class<T> type = context.getType();
         RootResourceEntity<T> resourceEntity = new RootResourceEntity<>(
-                metadataService.getAgEntity(type),
+                dataMap.getEntity(type),
                 context.getEntityOverlay(type)
         );
 

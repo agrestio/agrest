@@ -2,7 +2,7 @@ package io.agrest.provider;
 
 import io.agrest.EntityUpdate;
 import io.agrest.base.reflect.Types;
-import io.agrest.runtime.meta.IMetadataService;
+import io.agrest.meta.AgDataMap;
 import io.agrest.runtime.protocol.IEntityUpdateParser;
 
 import java.io.InputStream;
@@ -12,15 +12,15 @@ import java.util.Collection;
 class EntityUpdateReaderProcessor {
 
 	private IEntityUpdateParser parser;
-	private IMetadataService metadataService;
+	private AgDataMap dataMap;
 
-	EntityUpdateReaderProcessor(IEntityUpdateParser parser, IMetadataService metadataService) {
+	EntityUpdateReaderProcessor(IEntityUpdateParser parser, AgDataMap dataMap) {
 		this.parser = parser;
-		this.metadataService = metadataService;
+		this.dataMap = dataMap;
 	}
 
 	<T> Collection<EntityUpdate<T>> read(Type entityUpdateType, InputStream entityStream) {
 		Class<T> typeClass = (Class<T>) Types.getClassForTypeArgument(entityUpdateType).orElse(Object.class);
-		return parser.parse(metadataService.getAgEntity(typeClass), entityStream);
+		return parser.parse(dataMap.getEntity(typeClass), entityStream);
 	}
 }

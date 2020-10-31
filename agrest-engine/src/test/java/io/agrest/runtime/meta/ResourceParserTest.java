@@ -1,9 +1,11 @@
 package io.agrest.runtime.meta;
 
 import io.agrest.annotation.LinkType;
+import io.agrest.meta.AgDataMap;
 import io.agrest.meta.AgResource;
 import io.agrest.compiler.AgEntityCompiler;
 import io.agrest.compiler.AnnotationsAgEntityCompiler;
+import io.agrest.meta.LazyAgDataMap;
 import io.agrest.meta.parser.ResourceParser;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -23,7 +25,7 @@ public class ResourceParserTest {
     @BeforeAll
     public static void before() {
         AgEntityCompiler compiler = new AnnotationsAgEntityCompiler(Collections.emptyMap());
-        MetadataService metadata = new MetadataService(Collections.singletonList(compiler));
+        AgDataMap metadata = new LazyAgDataMap(Collections.singletonList(compiler));
         resourceParser = new ResourceParser(metadata);
     }
 

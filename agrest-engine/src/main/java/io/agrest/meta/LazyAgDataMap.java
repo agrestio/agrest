@@ -17,7 +17,6 @@ public class LazyAgDataMap implements AgDataMap {
 	private ConcurrentMap<Class<?>, AgEntity<?>> entities;
 
 	public LazyAgDataMap(Collection<AgEntityCompiler> compilers) {
-
 		this.compilers = compilers;
 		this.entities = new ConcurrentHashMap<>();
 	}

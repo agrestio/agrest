@@ -9,12 +9,16 @@ import io.agrest.cayenne.processor.CayenneQueryAssembler;
 import io.agrest.cayenne.processor.ICayenneQueryAssembler;
 import io.agrest.cayenne.qualifier.QualifierParser;
 import io.agrest.cayenne.qualifier.QualifierPostProcessor;
-import io.agrest.meta.AgEntity;
 import io.agrest.compiler.AgEntityCompiler;
 import io.agrest.compiler.AnnotationsAgEntityCompiler;
+import io.agrest.meta.AgDataMap;
+import io.agrest.meta.AgEntity;
+import io.agrest.meta.LazyAgDataMap;
 import io.agrest.meta.parser.IResourceParser;
 import io.agrest.meta.parser.ResourceParser;
-import io.agrest.runtime.meta.*;
+import io.agrest.runtime.meta.BaseUrlProvider;
+import io.agrest.runtime.meta.IResourceMetadataService;
+import io.agrest.runtime.meta.ResourceMetadataService;
 import io.agrest.runtime.path.IPathDescriptorManager;
 import io.agrest.runtime.path.PathDescriptorManager;
 import io.agrest.runtime.processor.select.SelectContext;
@@ -47,7 +51,7 @@ public abstract class CayenneNoDbTest {
 
     protected ICayennePersister mockCayennePersister;
     protected IPathDescriptorManager pathDescriptorManager;
-    protected IMetadataService metadataService;
+    protected AgDataMap dataMap;
     protected IResourceMetadataService resourceMetadataService;
     protected IResourceParser resourceParser;
     protected ICayenneQueryAssembler queryAssembler;
@@ -82,8 +86,8 @@ public abstract class CayenneNoDbTest {
         when(mockCayennePersister.sharedContext()).thenReturn(sharedContext);
         when(mockCayennePersister.newContext()).thenReturn(runtime.newContext());
 
-        this.metadataService = new MetadataService(createEntityCompilers());
-        this.resourceParser = new ResourceParser(metadataService);
+        this.dataMap = new LazyAgDataMap(createEntityCompilers());
+        this.resourceParser = new ResourceParser(dataMap);
         this.resourceMetadataService = createResourceMetadataService();
 
         this.pathDescriptorManager = new PathDescriptorManager();
@@ -121,7 +125,7 @@ public abstract class CayenneNoDbTest {
     }
 
     protected <T> AgEntity<T> getAgEntity(Class<T> type) {
-        return metadataService.getAgEntity(type);
+        return dataMap.getEntity(type);
     }
 
     protected ObjEntity getEntity(Class<?> type) {

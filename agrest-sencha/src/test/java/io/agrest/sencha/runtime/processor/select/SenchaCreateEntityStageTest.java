@@ -4,7 +4,6 @@ import io.agrest.base.protocol.CayenneExp;
 import io.agrest.cayenne.cayenne.main.E2;
 import io.agrest.cayenne.unit.CayenneNoDbTest;
 import io.agrest.runtime.entity.*;
-import io.agrest.runtime.meta.IMetadataService;
 import io.agrest.runtime.processor.select.SelectContext;
 import io.agrest.runtime.protocol.ICayenneExpParser;
 import io.agrest.runtime.protocol.IExcludeParser;
@@ -36,15 +35,15 @@ public class SenchaCreateEntityStageTest extends CayenneNoDbTest {
         // prepare entity creation stage
         ICayenneExpMerger expConstructor = new CayenneExpMerger();
         ISortMerger sortConstructor = new SortMerger();
-        IMapByMerger mapByConstructor = new MapByMerger(mock(IMetadataService.class));
+        IMapByMerger mapByConstructor = new MapByMerger(dataMap);
         ISizeMerger sizeConstructor = new SizeMerger();
-        IIncludeMerger includeConstructor = new IncludeMerger(mock(IMetadataService.class), expConstructor, sortConstructor, mapByConstructor, sizeConstructor);
+        IIncludeMerger includeConstructor = new IncludeMerger(dataMap, expConstructor, sortConstructor, mapByConstructor, sizeConstructor);
         IExcludeMerger excludeConstructor = new ExcludeMerger();
 
         ISenchaFilterExpressionCompiler senchaFilterProcessor = new SenchaFilterExpressionCompiler();
 
         this.createEntityStage = new SenchaCreateResourceEntityStage(
-                metadataService,
+                dataMap,
                 expConstructor,
                 sortConstructor,
                 mapByConstructor,
