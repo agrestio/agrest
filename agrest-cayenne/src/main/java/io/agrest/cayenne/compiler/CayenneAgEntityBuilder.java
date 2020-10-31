@@ -159,17 +159,9 @@ public class CayenneAgEntityBuilder<T> {
             // ensure ids are read from properties, not as ObjectId
             this.pojoIdReader = true;
 
-            for (AgAttribute id : annotatedEntity.getIds()) {
-
-                // there is a good chance a designated ID attribute is also a regular persistent attribute.. so make
-                // sure we replace non-persistent with persistent...
-
-                AgAttribute existingNonId = attributes.get(id.getName());
-
-                // TODO: replacing with "existingNonId" duplicates the attribute (as "xyzName" and then as "id")
-                AgAttribute newId = existingNonId != null ? existingNonId : id;
-                addId(newId);
-            }
+            // TODO: we should remove a possible matching regular persistent attributes from the model, since it was
+            //  also declared as ID, and hence should not be exposed as an attribute anymore
+            annotatedEntity.getIds().forEach(this::addId);
         }
 
         for (AgAttribute attribute : annotatedEntity.getAttributes()) {
