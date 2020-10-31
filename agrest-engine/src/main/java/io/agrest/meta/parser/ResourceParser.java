@@ -30,7 +30,9 @@ import java.util.TreeMap;
 
 /**
  * @since 1.18
+ * @deprecated since 4.1, as Agrest now integrates with OpenAPI 3 / Swagger.
  */
+@Deprecated
 public class ResourceParser implements IResourceParser {
 
     private IMetadataService metadataService;

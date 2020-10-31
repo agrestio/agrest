@@ -13,7 +13,9 @@ import java.util.Collections;
  * A response object that represents a 'Metadata Document' from Agrest protocol.
  * 
  * @since 1.18
+ * @deprecated since 4.1, as Agrest now integrates with OpenAPI 3 / Swagger.
  */
+@Deprecated
 public class MetadataResponse<T> extends AgResponse {
 
 	private final Class<T> type;

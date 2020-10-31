@@ -19,6 +19,7 @@ import javax.ws.rs.core.UriInfo;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@Deprecated
 public class GET_Metadata_CustomBaseIT extends DbTest {
 
     @BQTestTool

@@ -5,18 +5,18 @@ import io.agrest.annotation.LinkType;
 import java.util.Collection;
 
 /**
+ * @param <T> The type of the resource entity model.
  * @since 1.18
- * 
- * @param <T>
- *            The type of the resource entity model.
+ * @deprecated since 4.1, as Agrest now integrates with OpenAPI 3 / Swagger.
  */
+@Deprecated
 public interface AgResource<T> {
 
-	String getPath();
+    String getPath();
 
-	LinkType getType();
+    LinkType getType();
 
-	Collection<AgOperation> getOperations();
+    Collection<AgOperation> getOperations();
 
-	AgEntity<T> getEntity();
+    AgEntity<T> getEntity();
 }

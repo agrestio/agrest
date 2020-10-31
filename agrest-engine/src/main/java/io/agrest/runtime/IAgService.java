@@ -100,5 +100,9 @@ public interface IAgService {
 	 */
 	<T> DeleteBuilder<T> delete(Class<T> type);
 
+	/**
+	 * @deprecated since 4.1, as Agrest now integrates with OpenAPI 3 / Swagger.
+	 */
+	@Deprecated
 	<T> MetadataBuilder<T> metadata(Class<T> type);
 }

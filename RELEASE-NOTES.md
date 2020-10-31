@@ -3,6 +3,7 @@
 * #459 "code-first" OpenAPI support and Swagger integration
 * #460 Support for the new Cayenne "Json" type
 * #465 AgIdPart metadata object
+* #466 Deprecate Agrest metadata API
 
 ## Release 4.0
 

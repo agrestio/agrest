@@ -13,7 +13,9 @@ import static java.util.stream.Collectors.toList;
 
 /**
  * @since 1.18
+ * @deprecated since 4.1, as Agrest now integrates with OpenAPI 3 / Swagger.
  */
+@Deprecated
 public class ResourceEncoder<T> extends AbstractEncoder {
 
     private ResourceEntity<T> entity;

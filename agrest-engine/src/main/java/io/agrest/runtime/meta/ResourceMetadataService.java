@@ -11,7 +11,9 @@ import java.util.concurrent.ConcurrentMap;
 
 /**
  * @since 1.18
+ * @deprecated since 4.1, as Agrest now integrates with OpenAPI 3 / Swagger.
  */
+@Deprecated
 public class ResourceMetadataService implements IResourceMetadataService {
 
     private IResourceParser resourceParser;

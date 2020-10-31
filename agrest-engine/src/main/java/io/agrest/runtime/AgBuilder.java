@@ -148,7 +148,11 @@ public class AgBuilder {
      * @param url a URL of the root REST resource of the application.
      * @return this builder instance
      * @since 2.10
+     * @deprecated since 4.1, as Agrest now integrates with OpenAPI 3 / Swagger.
      */
+    // TODO: this may be useful for the future hypermedia controls (like pagination "next" links),
+    //  but for now this is of no use
+    @Deprecated
     public AgBuilder baseUrl(String url) {
         this.baseUrl = url;
         return this;

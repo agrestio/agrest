@@ -28,6 +28,7 @@ import javax.ws.rs.core.UriInfo;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@Deprecated
 public class GET_Metadata_IT extends DbTest {
 
     @BQTestTool

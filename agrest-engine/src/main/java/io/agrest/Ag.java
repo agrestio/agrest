@@ -53,7 +53,9 @@ public class Ag {
 
     /**
      * @since 1.18
+     * @deprecated since 4.1, as Agrest now integrates with OpenAPI 3 / Swagger.
      */
+    @Deprecated
     public static <T> MetadataBuilder<T> metadata(Class<T> entityClass, Configuration config) {
         return service(config).metadata(entityClass);
     }

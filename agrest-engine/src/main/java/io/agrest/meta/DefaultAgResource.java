@@ -7,7 +7,9 @@ import java.util.Collection;
 
 /**
  * @since 1.18
+ * @deprecated since 4.1, as Agrest now integrates with OpenAPI 3 / Swagger.
  */
+@Deprecated
 public class DefaultAgResource<T> implements AgResource<T> {
 
     private String path;

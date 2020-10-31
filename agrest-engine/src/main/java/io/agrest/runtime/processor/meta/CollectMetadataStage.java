@@ -19,7 +19,9 @@ import java.util.Collection;
 
 /**
  * @since 2.7
+ * @deprecated since 4.1, as Agrest now integrates with OpenAPI 3 / Swagger.
  */
+@Deprecated
 public class CollectMetadataStage implements Processor<MetadataContext<?>> {
 
     private IMetadataService metadataService;
