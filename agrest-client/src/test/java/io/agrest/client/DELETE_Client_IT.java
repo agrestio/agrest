@@ -71,7 +71,7 @@ public class DELETE_Client_IT extends ClientDbTest {
         @GET
         @Path("{id}")
         public DataResponse<E2> getE2ById(@PathParam("id") int id, @Context UriInfo uriInfo) {
-            return Ag.service(config).selectById(E2.class, id, uriInfo);
+            return Ag.select(E2.class, config).uri(uriInfo).byId(id).get();
         }
 
         @POST
@@ -82,7 +82,7 @@ public class DELETE_Client_IT extends ClientDbTest {
         @DELETE
         @Path("{id}")
         public SimpleResponse deleteE2ById(@PathParam("id") int id, @Context UriInfo uriInfo) {
-            return Ag.service(config).delete(E2.class, id);
+            return Ag.delete(E2.class, config).id(id).delete();
         }
     }
 }

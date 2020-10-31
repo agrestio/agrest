@@ -238,7 +238,7 @@ public class Sencha_GET_IT extends DbTest {
         @GET
         @Path("e2/{id}")
         public DataResponse<E2> getE2ById(@PathParam("id") int id, @Context UriInfo uriInfo) {
-            return Ag.service(config).selectById(E2.class, id, uriInfo);
+            return Ag.select(E2.class, config).uri(uriInfo).byId(id).get();
         }
 
         @GET
@@ -250,7 +250,7 @@ public class Sencha_GET_IT extends DbTest {
         @GET
         @Path("e3/{id}")
         public DataResponse<E3> getById(@PathParam("id") int id, @Context UriInfo uriInfo) {
-            return Ag.service(config).selectById(E3.class, id, uriInfo);
+            return Ag.select(E3.class, config).uri(uriInfo).byId(id).get();
         }
 
         @GET

@@ -387,7 +387,7 @@ public class GET_IT extends DbTest {
         @GET
         @Path("e2/{id}")
         public DataResponse<E2> getE2ById(@PathParam("id") int id, @Context UriInfo uriInfo) {
-            return Ag.service(config).selectById(E2.class, id, uriInfo);
+            return Ag.select(E2.class, config).uri(uriInfo).byId(id).get();
         }
 
         @GET
@@ -399,7 +399,7 @@ public class GET_IT extends DbTest {
         @GET
         @Path("e3/{id}")
         public DataResponse<E3> getE3ById(@PathParam("id") int id, @Context UriInfo uriInfo) {
-            return Ag.service(config).selectById(E3.class, id, uriInfo);
+            return Ag.select(E3.class, config).uri(uriInfo).byId(id).get();
         }
 
         @GET
@@ -411,13 +411,13 @@ public class GET_IT extends DbTest {
         @GET
         @Path("e4/{id}")
         public DataResponse<E4> getE4_WithIncludeExclude(@PathParam("id") int id, @Context UriInfo uriInfo) {
-            return Ag.service(config).selectById(E4.class, id, uriInfo);
+            return Ag.select(E4.class, config).uri(uriInfo).byId(id).get();
         }
 
         @GET
         @Path("e6/{id}")
         public DataResponse<E6> getOneE6(@PathParam("id") String id) {
-            return Ag.service(config).selectById(E6.class, id);
+            return Ag.select(E6.class, config).byId(id).get();
         }
 
         @GET

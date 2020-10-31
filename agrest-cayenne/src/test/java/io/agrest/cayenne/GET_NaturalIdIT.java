@@ -2,10 +2,10 @@ package io.agrest.cayenne;
 
 import io.agrest.Ag;
 import io.agrest.DataResponse;
-import io.agrest.cayenne.unit.AgCayenneTester;
-import io.agrest.cayenne.unit.DbTest;
 import io.agrest.cayenne.cayenne.main.E20;
 import io.agrest.cayenne.cayenne.main.E21;
+import io.agrest.cayenne.unit.AgCayenneTester;
+import io.agrest.cayenne.unit.DbTest;
 import io.bootique.junit5.BQTestTool;
 import org.junit.jupiter.api.Test;
 
@@ -73,7 +73,7 @@ public class GET_NaturalIdIT extends DbTest {
         @GET
         @Path("single-id/{id}")
         public DataResponse<E20> getE20ById(@PathParam("id") String name, @Context UriInfo uriInfo) {
-            return Ag.service(config).selectById(E20.class, name, uriInfo);
+            return Ag.select(E20.class, config).uri(uriInfo).byId(name).get();
         }
 
         @GET

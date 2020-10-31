@@ -107,7 +107,7 @@ public class DELETE_IT extends DbTest {
         @DELETE
         @Path("e4/{id}")
         public SimpleResponse deleteById(@PathParam("id") int id) {
-            return Ag.service(config).delete(E4.class, id);
+            return Ag.service(config).delete(E4.class).id(id).delete();
         }
 
         @DELETE
@@ -121,7 +121,7 @@ public class DELETE_IT extends DbTest {
             ids.put(E17.ID1_PK_COLUMN, id1);
             ids.put(E17.ID2_PK_COLUMN, id2);
 
-            return Ag.service(config).delete(E17.class, ids);
+            return Ag.service(config).delete(E17.class).id(ids).delete();
         }
 
         @DELETE

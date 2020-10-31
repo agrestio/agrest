@@ -15,7 +15,6 @@ import org.apache.cayenne.di.Inject;
 
 import javax.ws.rs.core.UriInfo;
 import java.util.Collection;
-import java.util.Map;
 
 /**
  * A backend-agnostic abstract {@link IAgService} that can serve to
@@ -41,16 +40,6 @@ public class DefaultAgService implements IAgService {
         this.updateProcessorFactoryFactory = updateProcessorFactoryFactory;
         this.metadataProcessorFactory = metadataProcessorFactory;
         this.unrelateProcessorFactory = unrelateProcessorFactory;
-    }
-
-    @Override
-    public <T> DataResponse<T> selectById(Class<T> root, Object id) {
-        return select(root).byId(id).get();
-    }
-
-    @Override
-    public <T> DataResponse<T> selectById(Class<T> root, Object id, UriInfo uriInfo) {
-        return select(root).uri(uriInfo).byId(id).get();
     }
 
     @Override
@@ -91,16 +80,6 @@ public class DefaultAgService implements IAgService {
 
         unrelateProcessorFactory.createProcessor().execute(context);
         return context.createSimpleResponse();
-    }
-
-    @Override
-    public SimpleResponse delete(Class<?> root, Object id) {
-        return delete(root).id(id).delete();
-    }
-
-    @Override
-    public SimpleResponse delete(Class<?> root, Map<String, Object> ids) {
-        return delete(root).id(ids).delete();
     }
 
     @Override

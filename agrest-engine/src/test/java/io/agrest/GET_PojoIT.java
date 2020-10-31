@@ -194,13 +194,13 @@ public class GET_PojoIT extends PojoTest {
         @GET
         @Path("p6/{id}")
         public DataResponse<P6> p6ById(@PathParam("id") String id, @Context UriInfo uriInfo) {
-            return Ag.service(config).selectById(P6.class, id, uriInfo);
+            return Ag.select(P6.class, config).uri(uriInfo).byId(id).get();
         }
 
         @GET
         @Path("p8/{id}")
         public DataResponse<P8> p8ById(@PathParam("id") int id, @Context UriInfo uriInfo) {
-            return Ag.service(config).selectById(P8.class, id, uriInfo);
+            return Ag.select(P8.class, config).uri(uriInfo).byId(id).get();
         }
 
         @GET
@@ -212,7 +212,7 @@ public class GET_PojoIT extends PojoTest {
         @GET
         @Path("p10/{id1}/{id2}")
         public DataResponse<P10> p10ById(@PathParam("id1") int id1, @PathParam("id2") String id2, @Context UriInfo uriInfo) {
-            return Ag.service(config).selectById(P10.class, P10.id(id1, id2), uriInfo);
+            return Ag.select(P10.class, config).uri(uriInfo).byId(P10.id(id1, id2)).get();
         }
     }
 }
