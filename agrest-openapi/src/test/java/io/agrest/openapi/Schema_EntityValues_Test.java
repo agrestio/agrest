@@ -21,7 +21,7 @@ import java.util.Map;
 import static java.util.Arrays.asList;
 import static org.junit.jupiter.api.Assertions.*;
 
-public class Schema_Values_Test {
+public class Schema_EntityValues_Test {
 
     static final OpenAPI oapi = new OpenAPIBuilder()
             .addPackage(P1.class)
@@ -34,7 +34,7 @@ public class Schema_Values_Test {
         assertNotNull(p4);
 
         Map<String, Schema> props = p4.getProperties();
-        assertEquals(new HashSet(asList("a", "b", "c")), props.keySet());
+        assertEquals(new HashSet(asList("b", "c", "id")), props.keySet());
     }
 
     @ParameterizedTest
@@ -44,7 +44,7 @@ public class Schema_Values_Test {
         Map<String, Schema> props = oapi.getComponents().getSchemas().get("P3").getProperties();
 
         Schema schema = props.get(propertyName);
-        assertEquals(propertyName, schema.getName());
+        assertNull(schema.getName());
         assertEquals("integer", schema.getType());
         assertEquals("int32", schema.getFormat());
     }
@@ -56,7 +56,7 @@ public class Schema_Values_Test {
         Map<String, Schema> props = oapi.getComponents().getSchemas().get("P3").getProperties();
 
         Schema schema = props.get(propertyName);
-        assertEquals(propertyName, schema.getName());
+        assertNull(schema.getName());
         assertEquals("integer", schema.getType());
         assertEquals("int64", schema.getFormat());
     }
@@ -68,7 +68,7 @@ public class Schema_Values_Test {
         Map<String, Schema> props = oapi.getComponents().getSchemas().get("P3").getProperties();
 
         Schema schema = props.get(propertyName);
-        assertEquals(propertyName, schema.getName());
+        assertNull(schema.getName());
         assertEquals("number", schema.getType());
         assertEquals("float", schema.getFormat());
     }
@@ -80,7 +80,7 @@ public class Schema_Values_Test {
         Map<String, Schema> props = oapi.getComponents().getSchemas().get("P3").getProperties();
 
         Schema schema = props.get(propertyName);
-        assertEquals(propertyName, schema.getName());
+        assertNull(schema.getName());
         assertEquals("number", schema.getType());
         assertEquals("double", schema.getFormat());
     }
@@ -91,7 +91,7 @@ public class Schema_Values_Test {
         Map<String, Schema> props = oapi.getComponents().getSchemas().get("P3").getProperties();
 
         Schema string = props.get("i");
-        assertEquals("i", string.getName());
+        assertNull(string.getName());
         assertEquals("string", string.getType());
         assertNull(string.getFormat());
     }
@@ -102,7 +102,7 @@ public class Schema_Values_Test {
         Map<String, Schema> props = oapi.getComponents().getSchemas().get("P3").getProperties();
 
         Schema base64 = props.get("j");
-        assertEquals("j", base64.getName());
+        assertNull(base64.getName());
         assertEquals("string", base64.getType());
         assertEquals("byte", base64.getFormat());
     }
@@ -113,17 +113,17 @@ public class Schema_Values_Test {
         Map<String, Schema> props = oapi.getComponents().getSchemas().get("P3").getProperties();
 
         Schema date = props.get("k");
-        assertEquals("k", date.getName());
+        assertNull(date.getName());
         assertEquals("string", date.getType());
         assertEquals("date", date.getFormat());
 
         Schema dateTime = props.get("l");
-        assertEquals("l", dateTime.getName());
+        assertNull(dateTime.getName());
         assertEquals("string", dateTime.getType());
         assertEquals("date-time", dateTime.getFormat());
 
         Schema time = props.get("m");
-        assertEquals("m", time.getName());
+        assertNull(time.getName());
         assertEquals("string", time.getType());
         assertNull(time.getFormat(), "Somehow Open API spec does not define a format for 'time'");
     }
@@ -135,7 +135,7 @@ public class Schema_Values_Test {
         Map<String, Schema> props = oapi.getComponents().getSchemas().get("P3").getProperties();
 
         Schema schema = props.get(propertyName);
-        assertEquals(propertyName, schema.getName());
+        assertNull(schema.getName());
         assertEquals("boolean", schema.getType());
         assertNull(schema.getFormat());
     }

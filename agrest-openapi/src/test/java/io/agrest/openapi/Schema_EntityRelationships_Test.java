@@ -7,6 +7,7 @@ import io.swagger.v3.oas.models.media.ArraySchema;
 import io.swagger.v3.oas.models.media.Schema;
 import org.example.entity.P1;
 import org.example.entity.P5;
+import org.example.entity.P6;
 import org.junit.jupiter.api.Test;
 
 import javax.ws.rs.GET;
@@ -17,7 +18,7 @@ import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class Schema_Relationships_Test {
+public class Schema_EntityRelationships_Test {
 
     static final OpenAPI oapi = new OpenAPIBuilder()
             .addPackage(P1.class)
@@ -29,7 +30,7 @@ public class Schema_Relationships_Test {
         Map<String, Schema> props = oapi.getComponents().getSchemas().get("P5").getProperties();
         Schema schema = props.get("p6");
 
-        assertEquals("p6", schema.getName());
+        assertNull(schema.getName());
         assertNull(schema.getType());
         assertNull(schema.getFormat());
         assertEquals("#/components/schemas/P6", schema.get$ref());
@@ -40,7 +41,7 @@ public class Schema_Relationships_Test {
         Map<String, Schema> props = oapi.getComponents().getSchemas().get("P6").getProperties();
         Schema schema = props.get("p5s");
 
-        assertEquals("p5s", schema.getName());
+        assertNull(schema.getName());
         assertEquals("array", schema.getType());
 
         assertTrue(schema instanceof ArraySchema);
@@ -59,7 +60,14 @@ public class Schema_Relationships_Test {
         private Configuration config;
 
         @GET
+        @Path("p5")
         public DataResponse<P5> getP5() {
+            throw new UnsupportedOperationException("endpoint logic is irrelevant for the test");
+        }
+
+        @GET
+        @Path("p6")
+        public DataResponse<P6> getP6() {
             throw new UnsupportedOperationException("endpoint logic is irrelevant for the test");
         }
     }

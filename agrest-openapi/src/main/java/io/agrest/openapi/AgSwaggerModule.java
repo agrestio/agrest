@@ -17,7 +17,7 @@ public class AgSwaggerModule implements Module {
     public void configure(Binder binder) {
         binder.bindList(String.class, AgEntityModelConverter.BINDING_ENTITY_PACKAGES);
         binder.bind(AgValueModelConverter.class).toInstance(AgValueModelConverter.getInstance());
-        binder.bind(AgProtocolModelConverter.class).toInstance(AgProtocolModelConverter.getInstance());
+        binder.bind(AgProtocolModelConverter.class).to(AgProtocolModelConverter.class);
         binder.bind(AgEntityModelConverter.class).to(AgEntityModelConverter.class);
     }
 }

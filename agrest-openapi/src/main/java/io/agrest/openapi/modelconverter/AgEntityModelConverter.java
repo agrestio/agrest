@@ -10,6 +10,7 @@ import io.agrest.runtime.meta.IMetadataService;
 import io.swagger.v3.core.converter.AnnotatedType;
 import io.swagger.v3.core.converter.ModelConverter;
 import io.swagger.v3.core.converter.ModelConverterContext;
+import io.swagger.v3.core.util.PrimitiveType;
 import io.swagger.v3.core.util.RefUtils;
 import io.swagger.v3.oas.models.media.ArraySchema;
 import io.swagger.v3.oas.models.media.ObjectSchema;
@@ -65,34 +66,33 @@ public class AgEntityModelConverter extends AgModelConverter {
 
         // TODO: multi-key ids must be exposed as maps
         if (agEntity.getIdParts().size() == 1) {
-            properties.put(PathConstants.ID_PK_ATTRIBUTE, doResolveIdPart(agEntity.getIdParts().iterator().next(), context));
+            AgIdPart id = agEntity.getIdParts().iterator().next();
+            properties.put(PathConstants.ID_PK_ATTRIBUTE, doResolveValue(
+                    PathConstants.ID_PK_ATTRIBUTE,
+                    id.getType(),
+                    context));
         }
 
         for (AgAttribute a : agEntity.getAttributes()) {
-            properties.put(a.getName(), doResolveAttribute(a, context));
+            properties.put(a.getName(), doResolveValue(a.getName(), a.getType(), context));
         }
 
         for (AgRelationship r : agEntity.getRelationships()) {
-            properties.put(r.getName(), doResolveRelationship(r, context));
+            properties.put(r.getName(), doResolveRelationship(r));
         }
 
         Schema<?> schema = new ObjectSchema().name(name).properties(properties);
         return onSchemaResolved(type, context, schema);
     }
 
-    protected Schema doResolveIdPart(AgIdPart idPart, ModelConverterContext context) {
-        return context.resolve(new AnnotatedType()
-                .name(idPart.getName())
-                .type(idPart.getType()));
+    protected Schema doResolveValue(String name, Class<?> type, ModelConverterContext context) {
+        Schema primitive = PrimitiveType.createProperty(type);
+        return primitive != null
+                ? primitive
+                : context.resolve(new AnnotatedType().type(type));
     }
 
-    protected Schema doResolveAttribute(AgAttribute attribute, ModelConverterContext context) {
-        return context.resolve(new AnnotatedType()
-                .name(attribute.getName())
-                .type(attribute.getType()));
-    }
-
-    protected Schema doResolveRelationship(AgRelationship relationship, ModelConverterContext context) {
+    protected Schema doResolveRelationship(AgRelationship relationship) {
         AgEntity<?> targetEntity = relationship.getTargetEntity();
         Schema relatedSchemaRef = new Schema().$ref(RefUtils.constructRef(targetEntity.getName()));
         return relationship.isToMany()
