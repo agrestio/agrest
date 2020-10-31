@@ -1,6 +1,5 @@
 package io.agrest.runtime.meta;
 
-import io.agrest.AgException;
 import io.agrest.annotation.LinkType;
 import io.agrest.meta.AgResource;
 import io.agrest.meta.compiler.AgEntityCompiler;
@@ -14,7 +13,8 @@ import javax.ws.rs.Path;
 import java.util.Collection;
 import java.util.Collections;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class ResourceParserTest {
 
@@ -26,7 +26,6 @@ public class ResourceParserTest {
         MetadataService metadata = new MetadataService(Collections.singletonList(compiler));
         resourceParser = new ResourceParser(metadata);
     }
-
 
     @Test
     public void testParse_ConflictingResourceTypes() {
@@ -44,25 +43,6 @@ public class ResourceParserTest {
         }
 
         assertThrows(Exception.class, () -> resourceParser.parse(R1.class));
-    }
-
-    @Test
-    public void testParse_UnknownEntity() {
-        @Path("r1")
-        class R1 {
-            @GET
-            @io.agrest.annotation.AgResource(entityClass = String.class)
-            public void method1() {
-            }
-        }
-
-        Collection<AgResource<?>> resources = resourceParser.parse(R1.class);
-        try {
-            resources.iterator().next().getEntity().getIdParts();
-            fail("Exception expected");
-        } catch (AgException e) {
-            assertTrue(e.getMessage().startsWith("Invalid entity '"), e.getMessage());
-        }
     }
 
     @Test
