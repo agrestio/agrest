@@ -15,9 +15,7 @@ import javax.ws.rs.core.UriInfo;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 public class GET_PojoIT extends PojoTest {
 
@@ -40,6 +38,28 @@ public class GET_PojoIT extends PojoTest {
                 .wasOk()
                 .bodyEquals(1, "{\"id\":\"o2id\",\"intProp\":16}");
     }
+
+    @Test
+    public void testById_MultiKey() {
+
+        P10 o1 = new P10();
+        o1.setId1(5);
+        o1.setId2("six");
+        o1.setA1("seven");
+
+        P10 o2 = new P10();
+        o2.setId1(8);
+        o2.setId2("nine");
+        o2.setA1("ten");
+
+        tester.p10().put(o1.id(), o1);
+        tester.p10().put(o2.id(), o2);
+
+        tester.target("/pojo/p10/5/six").get()
+                .wasOk()
+                .bodyEquals(1, "{\"id\":{\"id1\":5,\"id2\":\"six\"},\"a1\":\"seven\"}");
+    }
+
 
     @Test
     public void test() {
@@ -187,6 +207,12 @@ public class GET_PojoIT extends PojoTest {
         @Path("p9")
         public DataResponse<P9> p9All(@Context UriInfo uriInfo) {
             return Ag.select(P9.class, config).uri(uriInfo).get();
+        }
+
+        @GET
+        @Path("p10/{id1}/{id2}")
+        public DataResponse<P10> p10ById(@PathParam("id1") int id1, @PathParam("id2") String id2, @Context UriInfo uriInfo) {
+            return Ag.service(config).selectById(P10.class, P10.id(id1, id2), uriInfo);
         }
     }
 }

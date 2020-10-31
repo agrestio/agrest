@@ -102,6 +102,10 @@ public class AgPojoTester implements BQBeforeScopeCallback, BQAfterScopeCallback
         return bucket(P9.class);
     }
 
+    public Map<Object, P10> p10() {
+        return bucket(P10.class);
+    }
+
     protected JettyTester getJettyInScope() {
         return Objects.requireNonNull(jettyInScope, "Not in test scope");
     }
