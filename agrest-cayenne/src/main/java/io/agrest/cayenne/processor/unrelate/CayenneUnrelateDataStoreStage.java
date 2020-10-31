@@ -23,7 +23,7 @@ import java.util.Collection;
  */
 public class CayenneUnrelateDataStoreStage implements Processor<UnrelateContext<?>> {
 
-    private IMetadataService metadataService;
+    private final IMetadataService metadataService;
 
     public CayenneUnrelateDataStoreStage(@Inject IMetadataService metadataService) {
         this.metadataService = metadataService;
@@ -50,9 +50,13 @@ public class CayenneUnrelateDataStoreStage implements Processor<UnrelateContext<
     private <T extends DataObject> void unrelateSingle(UnrelateContext<T> context, ObjectContext cayenneContext) {
 
         // validate relationship before doing anything else
-        AgRelationship relationship = metadataService.getAgRelationship(
-                context.getParent().getType(),
-                context.getParent().getRelationship());
+        AgRelationship relationship = metadataService
+                .getAgEntity(context.getParent().getType())
+                .getRelationship(context.getParent().getRelationship());
+
+        if (relationship == null) {
+            throw new AgException(Response.Status.BAD_REQUEST, "Invalid relationship: '" + context.getParent().getRelationship() + "'");
+        }
 
         DataObject parent = (DataObject) getExistingObject(context.getParent().getType(), cayenneContext, context
                 .getParent().getId().get());
@@ -86,31 +90,35 @@ public class CayenneUnrelateDataStoreStage implements Processor<UnrelateContext<
 
     private <T extends DataObject> void unrelateAll(UnrelateContext<T> context, ObjectContext cayenneContext) {
         // validate relationship before doing anything else
-        AgRelationship agRelationship = metadataService.getAgRelationship(
-                context.getParent().getType(),
-                context.getParent().getRelationship());
+        AgRelationship relationship = metadataService
+                .getAgEntity(context.getParent().getType())
+                .getRelationship(context.getParent().getRelationship());
+
+        if (relationship == null) {
+            throw new AgException(Response.Status.BAD_REQUEST, "Invalid relationship: '" + context.getParent().getRelationship() + "'");
+        }
 
         DataObject parent = (DataObject) getExistingObject(context.getParent().getType(), cayenneContext, context
                 .getParent().getId().get());
 
-        if (agRelationship.isToMany()) {
+        if (relationship.isToMany()) {
 
             // clone relationship before we start deleting to avoid concurrent
             // modification of the iterator, and to be able to batch-delete
             // objects if needed
             @SuppressWarnings("unchecked")
             Collection<DataObject> relatedCollection = new ArrayList<>(
-                    (Collection<DataObject>) parent.readProperty(agRelationship.getName()));
+                    (Collection<DataObject>) parent.readProperty(relationship.getName()));
 
             for (DataObject o : relatedCollection) {
-                parent.removeToManyTarget(agRelationship.getName(), o, true);
+                parent.removeToManyTarget(relationship.getName(), o, true);
             }
 
         } else {
 
-            DataObject target = (DataObject) parent.readProperty(agRelationship.getName());
+            DataObject target = (DataObject) parent.readProperty(relationship.getName());
             if (target != null) {
-                parent.setToOneTarget(agRelationship.getName(), null, true);
+                parent.setToOneTarget(relationship.getName(), null, true);
             }
         }
 
@@ -131,7 +139,6 @@ public class CayenneUnrelateDataStoreStage implements Processor<UnrelateContext<
     }
 
     // TODO: use ObjectMapper
-    @SuppressWarnings("unchecked")
     private Object getOptionalExistingObject(Class<?> type, ObjectContext context, Object id) {
 
         ObjEntity entity = context.getEntityResolver().getObjEntity(type);
