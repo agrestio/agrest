@@ -58,6 +58,8 @@ public class AgBuilder {
     private final List<EntityEncoderFilter> entityEncoderFilters;
     private final Map<String, AgEntityOverlay> entityOverlays;
     private final Map<String, Class<? extends ExceptionMapper>> exceptionMappers;
+
+    @Deprecated
     private final Map<String, PropertyMetadataEncoder> metadataEncoders;
     private ExecutorService executor;
     private String baseUrl;

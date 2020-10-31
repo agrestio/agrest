@@ -25,7 +25,7 @@ public class SenchaEncoderService extends EncoderService {
     }
 
     @Override
-    protected <T> DataEncoderFactory dataEncoderFactory() {
+    protected DataEncoderFactory dataEncoderFactory() {
         return new SenchaDataEncoderFactory(
                 attributeEncoderFactory,
                 stringConverterFactory,

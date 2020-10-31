@@ -16,6 +16,8 @@ public class EncoderService implements IEncoderService {
     protected IEncodablePropertyFactory attributeEncoderFactory;
     protected IRelationshipMapper relationshipMapper;
     protected IStringConverterFactory stringConverterFactory;
+
+    @Deprecated
     protected Map<String, PropertyMetadataEncoder> propertyMetadataEncoders;
 
     public EncoderService(
@@ -44,7 +46,7 @@ public class EncoderService implements IEncoderService {
         return dataEncoderFactory().encoder(entity);
     }
 
-    protected <T> DataEncoderFactory dataEncoderFactory() {
+    protected DataEncoderFactory dataEncoderFactory() {
         return new DataEncoderFactory(attributeEncoderFactory, stringConverterFactory, relationshipMapper);
     }
 
