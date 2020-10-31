@@ -43,12 +43,6 @@ public class MetadataService implements IMetadataService {
 
         @SuppressWarnings("unchecked")
         Class<T> typeClass = (Class<T>) Types.getClassForTypeArgument(entityType).orElse(Object.class);
-
-        AgEntity<T> entity = getAgEntity(typeClass);
-        if (entity == null) {
-            throw new AgException(Status.INTERNAL_SERVER_ERROR,
-                    "EntityUpdate type '" + entityType.getTypeName() + "' is not an entity");
-        }
-        return entity;
+        return getAgEntity(typeClass);
     }
 }
