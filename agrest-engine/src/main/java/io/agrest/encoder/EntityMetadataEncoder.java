@@ -10,6 +10,10 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.TreeMap;
 
+/**
+ * @deprecated since 4.1, as Agrest now integrates with OpenAPI 3 / Swagger.
+ */
+@Deprecated
 public class EntityMetadataEncoder extends AbstractEncoder {
 
     private ResourceEntity<?> entity;

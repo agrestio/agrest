@@ -12,6 +12,10 @@ import java.util.Date;
 import java.util.Objects;
 import java.util.Optional;
 
+/**
+ * @deprecated since 4.1, as Agrest now integrates with OpenAPI 3 / Swagger.
+ */
+@Deprecated
 public abstract class PropertyMetadataEncoder extends AbstractEncoder {
 
     private static final Encoder instance = new PropertyMetadataEncoder() {

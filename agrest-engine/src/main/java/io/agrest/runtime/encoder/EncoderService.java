@@ -30,6 +30,10 @@ public class EncoderService implements IEncoderService {
         this.propertyMetadataEncoders = propertyMetadataEncoders;
     }
 
+    /**
+     * @deprecated since 4.1, as Agrest now integrates with OpenAPI 3 / Swagger.
+     */
+    @Deprecated
     @Override
     public <T> Encoder metadataEncoder(RootResourceEntity<T> entity) {
         return new ResourceEncoder<>(entity, entity.getApplicationBase(), entityMetadataEncoder(entity));
@@ -44,6 +48,7 @@ public class EncoderService implements IEncoderService {
         return new DataEncoderFactory(attributeEncoderFactory, stringConverterFactory, relationshipMapper);
     }
 
+    @Deprecated
     protected Encoder entityMetadataEncoder(ResourceEntity<?> resourceEntity) {
         return new EntityMetadataEncoder(resourceEntity, propertyMetadataEncoders);
     }
