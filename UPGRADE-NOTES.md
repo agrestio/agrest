@@ -1,3 +1,11 @@
+## Upgrading to 4.1
+
+### Metadata API is deprecated in favor of OpenAPI [#466](https://github.com/agrestio/agrest/issues/466) 
+
+Since we now support integration with OpenAPI / Swagger, Agrest own less capable metadata API is deprecated. While
+we plan to keep it around for a while, it is wise to stay awy from it, and if you are already using it, switch to
+OpenAPI. 
+
 ## Upgrading to 4.0
 
 ### Cayenne 4.2
