@@ -1,6 +1,5 @@
 package io.agrest.meta;
 
-import io.agrest.property.IdReader;
 import io.agrest.resolver.RootDataResolver;
 
 import java.util.Collection;
@@ -29,18 +28,13 @@ public class LazyAgEntity<T> extends BaseLazyAgEntity<T, AgEntity<T>> implements
     }
 
     @Override
-    public IdReader getIdReader() {
-        return getDelegate().getIdReader();
+    public Collection<AgIdPart> getIdParts() {
+        return getDelegate().getIdParts();
     }
 
     @Override
-    public Collection<AgAttribute> getIds() {
-        return getDelegate().getIds();
-    }
-
-    @Override
-    public AgAttribute getIdAttribute(String name) {
-        return getDelegate().getIdAttribute(name);
+    public AgIdPart getIdPart(String name) {
+        return getDelegate().getIdPart(name);
     }
 
     @Override

@@ -28,7 +28,7 @@ public class PojoEntityCompilerTest {
 		AgEntity<Entity> entity = new PojoEntityCompiler(Collections.emptyMap())
 				.compile(Entity.class, new LazyAgDataMap(compilers));
 		assertNotNull(entity);
-		assertEquals(1, entity.getIds().size());
+		assertEquals(1, entity.getIdParts().size());
 		assertEquals(1, entity.getAttributes().size());
 		assertEquals(0, entity.getRelationships().size());
 	}
@@ -38,7 +38,7 @@ public class PojoEntityCompilerTest {
 		AgEntity<P8> entity = new PojoEntityCompiler(Collections.emptyMap())
 				.compile(P8.class, new LazyAgDataMap(compilers));
 		assertNotNull(entity);
-		assertEquals(0, entity.getIds().size());
+		assertEquals(0, entity.getIdParts().size());
 		assertEquals(7, entity.getAttributes().size());
 		assertEquals(Collection.class, entity.getAttribute(P8.BOOLEANS).getType());
 		assertEquals(Collection.class, entity.getAttribute(P8.DOUBLES).getType());

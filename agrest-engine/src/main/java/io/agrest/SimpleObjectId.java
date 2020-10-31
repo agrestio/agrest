@@ -1,7 +1,7 @@
 package io.agrest;
 
-import io.agrest.meta.AgAttribute;
 import io.agrest.base.jsonvalueconverter.Normalizer;
+import io.agrest.meta.AgIdPart;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -37,8 +37,8 @@ public class SimpleObjectId extends BaseObjectId {
 	}
 
 	@Override
-	protected Map<String, Object> asMap(Collection<AgAttribute> idAttributes) {
-		AgAttribute idAttribute = idAttributes.iterator().next();
+	protected Map<String, Object> asMap(Collection<AgIdPart> idAttributes) {
+		AgIdPart idAttribute = idAttributes.iterator().next();
 		return Collections.singletonMap(idAttribute.getName(), Normalizer.normalize(id, idAttribute.getType()));
 	}
 

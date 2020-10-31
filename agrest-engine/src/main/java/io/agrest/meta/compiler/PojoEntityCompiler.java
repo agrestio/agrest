@@ -44,7 +44,7 @@ public class PojoEntityCompiler implements AgEntityCompiler {
 
     protected <T> void checkEntityValid(AgEntity<T> entity) {
         // TODO: what's wrong with an empty entity? It may not be very useful, but still valid
-        if (entity.getIds().isEmpty() && entity.getAttributes().isEmpty() && entity.getRelationships().isEmpty()) {
+        if (entity.getIdParts().isEmpty() && entity.getAttributes().isEmpty() && entity.getRelationships().isEmpty()) {
             throw new AgException(Response.Status.INTERNAL_SERVER_ERROR,
                     "Invalid entity '" + entity.getType().getName() + "' - no properties");
         }

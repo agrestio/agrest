@@ -58,7 +58,7 @@ public class ResourceParserTest {
 
         Collection<AgResource<?>> resources = resourceParser.parse(R1.class);
         try {
-            resources.iterator().next().getEntity().getIds();
+            resources.iterator().next().getEntity().getIdParts();
             fail("Exception expected");
         } catch (AgException e) {
             assertTrue(e.getMessage().startsWith("Invalid entity '"), e.getMessage());

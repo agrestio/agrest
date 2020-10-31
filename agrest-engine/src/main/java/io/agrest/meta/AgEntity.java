@@ -1,9 +1,12 @@
 package io.agrest.meta;
 
-import io.agrest.property.IdReader;
+import io.agrest.property.PropertyReader;
 import io.agrest.resolver.RootDataResolver;
 
 import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * A model of an entity.
@@ -24,12 +27,15 @@ public interface AgEntity<T> {
 
     Class<T> getType();
 
-    Collection<AgAttribute> getIds();
+    /**
+     * @since 4.1
+     */
+    Collection<AgIdPart> getIdParts();
 
     /**
-     * @since 3.4
+     * @since 4.1
      */
-    AgAttribute getIdAttribute(String name);
+    AgIdPart getIdPart(String name);
 
     Collection<AgAttribute> getAttributes();
 
@@ -40,13 +46,30 @@ public interface AgEntity<T> {
     AgRelationship getRelationship(String name);
 
     /**
-     * @since 3.4
-     */
-    IdReader getIdReader();
-
-    /**
      * @return a default data resolver for this entity for when it is resolved as a root of a request.
      * @since 3.4
      */
     RootDataResolver<T> getDataResolver();
+
+    /**
+     * Returns a reader that returns id values as a Map<String, Object>
+     *
+     * @since 4.2
+     */
+    default PropertyReader getIdReader() {
+        Collection<AgIdPart> ids = getIdParts();
+        switch (ids.size()) {
+            case 0:
+                return o -> Collections.emptyMap();
+            case 1:
+                AgIdPart id = ids.iterator().next();
+                return o -> Collections.singletonMap(id.getName(), id.getReader().value(o));
+            default:
+                return o -> {
+                    Map<String, Object> values = new HashMap<>();
+                    ids.forEach(idx -> values.put(idx.getName(), idx.getReader().value(o)));
+                    return values;
+                };
+        }
+    }
 }

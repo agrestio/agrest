@@ -9,147 +9,148 @@ import io.agrest.AgException;
 import io.agrest.PathConstants;
 import io.agrest.meta.AgAttribute;
 import io.agrest.meta.AgEntity;
+import io.agrest.meta.AgIdPart;
 import io.agrest.meta.AgRelationship;
 import org.apache.cayenne.exp.parser.ASTObjPath;
 import org.apache.cayenne.exp.parser.ASTPath;
 
 class EntityPathCache {
 
-	private AgEntity<?> entity;
-	private Map<String, PathDescriptor> pathCache;
+    private AgEntity<?> entity;
+    private Map<String, PathDescriptor> pathCache;
 
-	EntityPathCache(final AgEntity<?> entity) {
-		this.entity = entity;
-		this.pathCache = new ConcurrentHashMap<>();
+    EntityPathCache(AgEntity<?> entity) {
+        this.entity = entity;
+        this.pathCache = new ConcurrentHashMap<>();
 
-		// immediately cache a special entry matching "id" constant ... if there
-		// is a single ID
+        // immediately cache a special entry matching "id" constant ... if there
+        // is a single ID
 
-		// TODO: single ID check allows us to support id-less entities (quite
-		// common, e.g. various aggregated data reports). However it does not
-		// solve an issue of more common case of entities with multi-column ID.
-		// Will need a concept of "virtual" ID built from ObjectId (or POJO id
-		// properties) via cayenne-lifecycle.
+        // TODO: single ID check allows us to support id-less entities (quite
+        // common, e.g. various aggregated data reports). However it does not
+        // solve an issue of more common case of entities with multi-column ID.
+        // Will need a concept of "virtual" ID built from ObjectId (or POJO id
+        // properties) via cayenne-lifecycle.
 
-		if (entity.getIds().size() == 1) {
+        if (entity.getIdParts().size() == 1) {
 
-			pathCache.put(PathConstants.ID_PK_ATTRIBUTE, new PathDescriptor() {
+            pathCache.put(PathConstants.ID_PK_ATTRIBUTE, new PathDescriptor() {
 
-				AgAttribute id = entity.getIds().iterator().next();
+                AgIdPart id = entity.getIdParts().iterator().next();
 
-				@Override
-				public boolean isAttribute() {
-					return true;
-				}
+                @Override
+                public boolean isAttribute() {
+                    return true;
+                }
 
-				@Override
-				public Class<?> getType() {
-					return id.getType();
-				}
+                @Override
+                public Class<?> getType() {
+                    return id.getType();
+                }
 
-				@Override
-				public ASTPath getPathExp() {
-					return id.getPathExp();
-				}
-			});
-		}
-	}
+                @Override
+                public ASTPath getPathExp() {
+                    return id.getPathExp();
+                }
+            });
+        }
+    }
 
-	PathDescriptor getPathDescriptor(final ASTObjPath path) {
+    PathDescriptor getPathDescriptor(ASTObjPath path) {
 
-		PathDescriptor entry = pathCache.get(path.getPath());
-		if (entry == null) {
+        PathDescriptor entry = pathCache.get(path.getPath());
+        if (entry == null) {
 
-			String stringPath = (String) path.getOperand(0);
-			final Object last = lastPathComponent(entity, stringPath);
+            String stringPath = (String) path.getOperand(0);
+            final Object last = lastPathComponent(entity, stringPath);
 
-			if (last instanceof AgAttribute) {
-				entry = new PathDescriptor() {
+            if (last instanceof AgAttribute) {
+                entry = new PathDescriptor() {
 
-					AgAttribute attribute = (AgAttribute) last;
+                    AgAttribute attribute = (AgAttribute) last;
 
-					@Override
-					public boolean isAttribute() {
-						return true;
-					}
+                    @Override
+                    public boolean isAttribute() {
+                        return true;
+                    }
 
-					@Override
-					public Class<?> getType() {
-						return attribute.getType();
-					}
+                    @Override
+                    public Class<?> getType() {
+                        return attribute.getType();
+                    }
 
-					@Override
-					public ASTPath getPathExp() {
-						return path;
-					}
-				};
-			} else {
-				entry = new PathDescriptor() {
+                    @Override
+                    public ASTPath getPathExp() {
+                        return path;
+                    }
+                };
+            } else {
+                entry = new PathDescriptor() {
 
-					AgRelationship relationship = (AgRelationship) last;
-					Class<?> type = relationship.getTargetEntity().getType();
+                    AgRelationship relationship = (AgRelationship) last;
+                    Class<?> type = relationship.getTargetEntity().getType();
 
-					@Override
-					public boolean isAttribute() {
-						return false;
-					}
+                    @Override
+                    public boolean isAttribute() {
+                        return false;
+                    }
 
-					@Override
-					public Class<?> getType() {
-						return type;
-					}
+                    @Override
+                    public Class<?> getType() {
+                        return type;
+                    }
 
-					@Override
-					public ASTPath getPathExp() {
-						return path;
-					}
-				};
-			}
+                    @Override
+                    public ASTPath getPathExp() {
+                        return path;
+                    }
+                };
+            }
 
-			pathCache.put(path.getPath(), entry);
-		}
+            pathCache.put(path.getPath(), entry);
+        }
 
-		return entry;
-	}
+        return entry;
+    }
 
-	Object lastPathComponent(AgEntity<?> entity, String path) {
+    Object lastPathComponent(AgEntity<?> entity, String path) {
 
-		int dot = path.indexOf(PathConstants.DOT);
+        int dot = path.indexOf(PathConstants.DOT);
 
-		if (dot == 0 || dot == path.length() - 1) {
-			throw new AgException(Status.BAD_REQUEST, "Invalid path '" + path + "' for '" + entity.getName()
-					+ "'");
-		}
+        if (dot == 0 || dot == path.length() - 1) {
+            throw new AgException(Status.BAD_REQUEST, "Invalid path '" + path + "' for '" + entity.getName()
+                    + "'");
+        }
 
-		if (dot > 0) {
-			String segment = toRelationshipName(path.substring(0, dot));
+        if (dot > 0) {
+            String segment = toRelationshipName(path.substring(0, dot));
 
-			// must be a relationship ..
-			AgRelationship relationship = entity.getRelationship(segment);
-			if (relationship == null) {
-				throw new AgException(Status.BAD_REQUEST, "Invalid path '" + path + "' for '" + entity.getName()
-						+ "'. Not a relationship");
-			}
+            // must be a relationship ..
+            AgRelationship relationship = entity.getRelationship(segment);
+            if (relationship == null) {
+                throw new AgException(Status.BAD_REQUEST, "Invalid path '" + path + "' for '" + entity.getName()
+                        + "'. Not a relationship");
+            }
 
-			AgEntity<?> targetEntity = relationship.getTargetEntity();
-			return lastPathComponent(targetEntity, path.substring(dot + 1));
-		}
+            AgEntity<?> targetEntity = relationship.getTargetEntity();
+            return lastPathComponent(targetEntity, path.substring(dot + 1));
+        }
 
-		// can be a relationship or an attribute
-		AgAttribute attribute = entity.getAttribute(path);
-		if (attribute != null) {
-			return attribute;
-		}
+        // can be a relationship or an attribute
+        AgAttribute attribute = entity.getAttribute(path);
+        if (attribute != null) {
+            return attribute;
+        }
 
-		AgRelationship relationship = entity.getRelationship(toRelationshipName(path));
-		if (relationship != null) {
-			return relationship;
-		}
+        AgRelationship relationship = entity.getRelationship(toRelationshipName(path));
+        if (relationship != null) {
+            return relationship;
+        }
 
-		throw new AgException(Status.BAD_REQUEST, "Invalid path '" + path + "' for '" + entity.getName() + "'");
-	}
+        throw new AgException(Status.BAD_REQUEST, "Invalid path '" + path + "' for '" + entity.getName() + "'");
+    }
 
-	private String toRelationshipName(String pathSegment) {
-		return pathSegment.endsWith("+") ? pathSegment.substring(0, pathSegment.length() - 1) : pathSegment;
-	}
+    private String toRelationshipName(String pathSegment) {
+        return pathSegment.endsWith("+") ? pathSegment.substring(0, pathSegment.length() - 1) : pathSegment;
+    }
 }

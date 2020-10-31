@@ -12,6 +12,7 @@ import io.agrest.SimpleObjectId;
 import io.agrest.cayenne.persister.ICayennePersister;
 import io.agrest.cayenne.processor.CayenneProcessor;
 import io.agrest.meta.AgAttribute;
+import io.agrest.meta.AgIdPart;
 import io.agrest.meta.AgRelationship;
 import io.agrest.runtime.meta.IMetadataService;
 import io.agrest.runtime.processor.update.ByIdObjectMapperFactory;
@@ -179,10 +180,10 @@ public class CayenneUpdateStage extends CayenneMergeChangesStage {
 
                 ObjRelationship objRelationship = objRelationshipForIncomingRelationship(child);
 
-                for (AgAttribute attribute : entity.getAgEntity().getIds()) {
+                for (AgIdPart id : entity.getAgEntity().getIdParts()) {
                     properties.add(PropertyFactory.createBase(ExpressionFactory.dbPathExp(
-                            objRelationship.getReverseDbRelationshipPath() + "." + attribute.getName()),
-                            (Class) attribute.getType()));
+                            objRelationship.getReverseDbRelationshipPath() + "." + id.getName()),
+                            id.getType()));
                 }
 
                 SelectQuery childQuery = buildQuery(context, child, translateExpressionToSource(objRelationship, parentSelect.getQualifier()));
@@ -233,7 +234,7 @@ public class CayenneUpdateStage extends CayenneMergeChangesStage {
                 } else if (ids.length > 2) {
                     // saves entity with a compound ID
                     Map<String, Object> compoundKeys = new LinkedHashMap<>();
-                    AgAttribute[] idAttributes = parentEntity.getAgEntity().getIds().toArray(new AgAttribute[0]);
+                    AgAttribute[] idAttributes = parentEntity.getAgEntity().getIdParts().toArray(new AgAttribute[0]);
                     if (idAttributes.length == (ids.length - 1)) {
                         for (int i = 1; i < ids.length; i++) {
                             compoundKeys.put(idAttributes[i - 1].getName(), ids[i]);

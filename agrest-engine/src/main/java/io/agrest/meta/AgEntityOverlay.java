@@ -2,7 +2,6 @@ package io.agrest.meta;
 
 import io.agrest.property.PropertyReader;
 import io.agrest.resolver.*;
-import org.apache.cayenne.exp.parser.ASTObjPath;
 
 import java.util.*;
 import java.util.function.Function;
@@ -124,7 +123,7 @@ public class AgEntityOverlay<T> {
      * @since 3.4
      */
     public <V> AgEntityOverlay<T> redefineAttribute(String name, Class<V> valueType, Function<T, V> reader) {
-        attributes.put(name, new DefaultAgAttribute(name, valueType, new ASTObjPath(name), fromFunction(reader)));
+        attributes.put(name, new DefaultAgAttribute(name, valueType, fromFunction(reader)));
         return this;
     }
 

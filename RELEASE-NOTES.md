@@ -1,6 +1,7 @@
 ## Release 4.1
 
 * #460 Support for the new Cayenne "Json" type
+* #465 AgIdPart metadata object
 
 ## Release 4.0
 

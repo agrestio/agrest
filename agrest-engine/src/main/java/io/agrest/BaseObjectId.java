@@ -1,7 +1,7 @@
 package io.agrest;
 
-import io.agrest.meta.AgAttribute;
 import io.agrest.meta.AgEntity;
+import io.agrest.meta.AgIdPart;
 
 import javax.ws.rs.core.Response;
 import java.util.Collection;
@@ -20,7 +20,7 @@ public abstract class BaseObjectId implements AgObjectId {
                     "Can't build ID: entity is null");
         }
 
-        Collection<AgAttribute> idAttributes = entity.getIds();
+        Collection<AgIdPart> idAttributes = entity.getIdParts();
         if (idAttributes.size() != size()) {
             throw new AgException(Response.Status.BAD_REQUEST,
                     "Wrong ID size: expected " + idAttributes.size() + ", got: " + size());
@@ -29,5 +29,5 @@ public abstract class BaseObjectId implements AgObjectId {
         return asMap(idAttributes);
     }
 
-    protected abstract Map<String, Object> asMap(Collection<AgAttribute> idAttributes);
+    protected abstract Map<String, Object> asMap(Collection<AgIdPart> idAttributes);
 }

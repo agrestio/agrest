@@ -6,7 +6,6 @@ import io.agrest.ResourceEntity;
 import io.agrest.encoder.*;
 import io.agrest.meta.AgAttribute;
 import io.agrest.meta.AgRelationship;
-import io.agrest.property.IdReader;
 import io.agrest.property.PropertyReader;
 import io.agrest.runtime.semantics.IRelationshipMapper;
 
@@ -145,9 +144,7 @@ public class DataEncoderFactory {
         // map by id
         if (mapBy.isIdIncluded()) {
             validateLeafMapBy(mapBy, mapByPath);
-
-            IdReader idReader = Objects.requireNonNull(mapBy.getAgEntity().getIdReader());
-            readerChain.add(idReader::id);
+            readerChain.add(mapBy.getAgEntity().getIdReader());
 
             return new MapByEncoder(mapByPath,
                     readerChain,
@@ -183,8 +180,7 @@ public class DataEncoderFactory {
         }
 
         // map by relationship (implicitly by id)
-        IdReader idReader = Objects.requireNonNull(mapBy.getAgEntity().getIdReader());
-        readerChain.add(idReader::id);
+        readerChain.add(mapBy.getAgEntity().getIdReader());
 
         return new MapByEncoder(mapByPath,
                 readerChain,

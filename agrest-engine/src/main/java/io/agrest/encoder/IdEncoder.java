@@ -22,7 +22,7 @@ public class IdEncoder implements Encoder {
 
     public IdEncoder(Map<String, Encoder> valueEncoders) {
         this.valueEncoders = valueEncoders;
-        isCompoundId = true;
+        this.isCompoundId = true;
     }
 
     @SuppressWarnings("unchecked")
@@ -46,7 +46,8 @@ public class IdEncoder implements Encoder {
     }
 
     protected boolean encodeId(String propertyName, Map<String, Object> id, JsonGenerator out) throws IOException {
-        return isCompoundId? encodeCompoundId(propertyName, id, valueEncoders, out)
+        return isCompoundId
+                ? encodeCompoundId(propertyName, id, valueEncoders, out)
                 : encodeSingleId(propertyName, id, valueEncoder, out);
     }
 

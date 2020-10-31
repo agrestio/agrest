@@ -3,18 +3,13 @@ package io.agrest.cayenne.processor;
 import io.agrest.AgException;
 import io.agrest.AgObjectId;
 import io.agrest.EntityParent;
-import io.agrest.meta.AgAttribute;
 import io.agrest.meta.AgEntity;
+import io.agrest.meta.AgIdPart;
 import org.apache.cayenne.ObjectContext;
 import org.apache.cayenne.exp.Expression;
 import org.apache.cayenne.exp.ExpressionFactory;
 import org.apache.cayenne.exp.parser.ASTEqual;
-import org.apache.cayenne.map.DbEntity;
-import org.apache.cayenne.map.DbJoin;
-import org.apache.cayenne.map.DbRelationship;
-import org.apache.cayenne.map.EntityResolver;
-import org.apache.cayenne.map.ObjEntity;
-import org.apache.cayenne.map.ObjRelationship;
+import org.apache.cayenne.map.*;
 import org.apache.cayenne.query.ObjectSelect;
 
 import javax.ws.rs.core.Response.Status;
@@ -51,7 +46,7 @@ public final class CayenneUtil {
             return query.selectOne(context);
         } else {
             // TODO: this will break if this is am ID attribute not mapped as ObjAttribute in Cayenne
-            AgAttribute attribute = agEntity.getIds().iterator().next();
+            AgIdPart attribute = agEntity.getIdParts().iterator().next();
             return ObjectSelect.query(type, new ASTEqual(attribute.getPathExp(), id)).selectOne(context);
         }
     }

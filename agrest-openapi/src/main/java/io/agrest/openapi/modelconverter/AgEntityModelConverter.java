@@ -3,6 +3,7 @@ package io.agrest.openapi.modelconverter;
 import io.agrest.PathConstants;
 import io.agrest.meta.AgAttribute;
 import io.agrest.meta.AgEntity;
+import io.agrest.meta.AgIdPart;
 import io.agrest.meta.AgRelationship;
 import io.agrest.openapi.TypeWrapper;
 import io.agrest.runtime.meta.IMetadataService;
@@ -62,10 +63,9 @@ public class AgEntityModelConverter extends AgModelConverter {
         String name = agEntity.getName();
         Map<String, Schema> properties = new HashMap<>();
 
-        // TODO: should we expose ID attributes for multi-ID entities?
-        //  Note that Agrest leaks DB names for IDs that are not mapped as regular attributes
-        if (agEntity.getIds().size() == 1) {
-            properties.put(PathConstants.ID_PK_ATTRIBUTE, doResolveAttribute(agEntity.getIds().iterator().next(), context));
+        // TODO: multi-key ids must be exposed as maps
+        if (agEntity.getIdParts().size() == 1) {
+            properties.put(PathConstants.ID_PK_ATTRIBUTE, doResolveIdPart(agEntity.getIdParts().iterator().next(), context));
         }
 
         for (AgAttribute a : agEntity.getAttributes()) {
@@ -78,6 +78,12 @@ public class AgEntityModelConverter extends AgModelConverter {
 
         Schema<?> schema = new ObjectSchema().name(name).properties(properties);
         return onSchemaResolved(type, context, schema);
+    }
+
+    protected Schema doResolveIdPart(AgIdPart idPart, ModelConverterContext context) {
+        return context.resolve(new AnnotatedType()
+                .name(idPart.getName())
+                .type(idPart.getType()));
     }
 
     protected Schema doResolveAttribute(AgAttribute attribute, ModelConverterContext context) {

@@ -6,8 +6,8 @@ import io.agrest.base.protocol.Sort;
 import io.agrest.cayenne.persister.ICayennePersister;
 import io.agrest.cayenne.qualifier.IQualifierParser;
 import io.agrest.cayenne.qualifier.IQualifierPostProcessor;
-import io.agrest.meta.AgAttribute;
 import io.agrest.meta.AgEntity;
+import io.agrest.meta.AgIdPart;
 import io.agrest.runtime.path.IPathDescriptorManager;
 import io.agrest.runtime.processor.select.SelectContext;
 import org.apache.cayenne.di.Inject;
@@ -77,9 +77,9 @@ public class CayenneQueryAssembler implements ICayenneQueryAssembler {
         properties.add(PropertyFactory.createSelf(entityType));
         AgEntity<?> parentEntity = entity.getParent().getAgEntity();
 
-        for (AgAttribute attribute : entity.getParent().getAgEntity().getIds()) {
+        for (AgIdPart attribute : entity.getParent().getAgEntity().getIdParts()) {
 
-            DbAttribute dbAttribute = dbAttributeForAgAttribute(parentEntity, attribute);
+            DbAttribute dbAttribute = dbAttributeForAgIdPart(parentEntity, attribute);
             Expression propertyExp = ExpressionFactory.dbPathExp(reversePath
                     + "."
                     + dbAttribute.getName());
@@ -161,9 +161,9 @@ public class CayenneQueryAssembler implements ICayenneQueryAssembler {
         properties.add(PropertyFactory.createSelf(entityType));
 
         AgEntity<?> parentEntity = entity.getParent().getAgEntity();
-        for (AgAttribute attribute : parentEntity.getIds()) {
+        for (AgIdPart attribute : parentEntity.getIdParts()) {
 
-            DbAttribute dbAttribute = dbAttributeForAgAttribute(parentEntity, attribute);
+            DbAttribute dbAttribute = dbAttributeForAgIdPart(parentEntity, attribute);
             Expression propertyExp = ExpressionFactory.dbPathExp(outgoingPath
                     + "."
                     + dbAttribute.getName());
@@ -237,14 +237,14 @@ public class CayenneQueryAssembler implements ICayenneQueryAssembler {
 
     public Expression buildIdQualifer(AgEntity<?> entity, AgObjectId id) {
 
-        Collection<AgAttribute> idAttributes = entity.getIds();
+        Collection<AgIdPart> idAttributes = entity.getIdParts();
         if (idAttributes.size() != id.size()) {
             throw new AgException(Response.Status.BAD_REQUEST,
                     "Wrong ID size: expected " + idAttributes.size() + ", got: " + id.size());
         }
 
         Collection<Expression> qualifiers = new ArrayList<>();
-        for (AgAttribute idAttribute : idAttributes) {
+        for (AgIdPart idAttribute : idAttributes) {
             Object idValue = id.get(idAttribute.getName());
             if (idValue == null) {
                 throw new AgException(Response.Status.BAD_REQUEST,
@@ -252,7 +252,7 @@ public class CayenneQueryAssembler implements ICayenneQueryAssembler {
                                 + ": one of the entity's ID parts is missing in this ID: " + idAttribute.getName());
             }
 
-            DbAttribute dbAttribute = dbAttributeForAgAttribute(entity, idAttribute);
+            DbAttribute dbAttribute = dbAttributeForAgIdPart(entity, idAttribute);
 
             if (dbAttribute == null) {
                 throw new AgException(Response.Status.INTERNAL_SERVER_ERROR,
@@ -275,14 +275,14 @@ public class CayenneQueryAssembler implements ICayenneQueryAssembler {
         return parentObjEntity.getRelationship(entity.getIncoming().getName());
     }
 
-    protected DbAttribute dbAttributeForAgAttribute(AgEntity<?> agEntity, AgAttribute agAttribute) {
+    protected DbAttribute dbAttributeForAgIdPart(AgEntity<?> agEntity, AgIdPart agIdPart) {
 
         ObjEntity entity = entityResolver.getObjEntity(agEntity.getName());
-        ObjAttribute objAttribute = entity.getAttribute(agAttribute.getName());
+        ObjAttribute objAttribute = entity.getAttribute(agIdPart.getName());
         return objAttribute != null
                 ? objAttribute.getDbAttribute()
                 // this is suspect.. don't see how we would allow DbAttribute names to leak in the Ag model
-                : entity.getDbEntity().getAttribute(agAttribute.getName());
+                : entity.getDbEntity().getAttribute(agIdPart.getName());
     }
 
     protected Ordering toOrdering(ResourceEntity<?> entity, Sort sort) {

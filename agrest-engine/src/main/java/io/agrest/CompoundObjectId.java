@@ -1,7 +1,7 @@
 package io.agrest;
 
-import io.agrest.meta.AgAttribute;
 import io.agrest.base.jsonvalueconverter.Normalizer;
+import io.agrest.meta.AgIdPart;
 
 import javax.ws.rs.core.Response;
 import java.util.*;
@@ -35,10 +35,10 @@ public class CompoundObjectId extends BaseObjectId {
 	}
 
 	@Override
-	protected Map<String, Object> asMap(Collection<AgAttribute> idAttributes) {
+	protected Map<String, Object> asMap(Collection<AgIdPart> idAttributes) {
 
 		Map<String, Object> idMap = new HashMap<>();
-		for (AgAttribute idAttribute : idAttributes) {
+		for (AgIdPart idAttribute : idAttributes) {
 			Object idValue = Normalizer.normalize(id.get(idAttribute.getName()), idAttribute.getType());
 			if (idValue == null) {
 				throw new AgException(Response.Status.INTERNAL_SERVER_ERROR,

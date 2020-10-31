@@ -16,7 +16,7 @@ import java.util.Objects;
 public class NestedEntityResultReader implements PropertyReader {
 
     private NestedResourceEntity<?> entity;
-    private IdReader parentIdReader;
+    private PropertyReader parentIdReader;
 
     public NestedEntityResultReader(NestedResourceEntity<?> entity) {
         this.entity = Objects.requireNonNull(entity);
@@ -30,8 +30,8 @@ public class NestedEntityResultReader implements PropertyReader {
     }
 
     private AgObjectId readId(Object object) {
-        // TODO: wrapping in AgObjectId seems wasteful ... Should we store results by Map ID?
-        Map<String, Object> id = parentIdReader.id(object);
+        // TODO: wrapping in AgObjectId is wasteful
+        Map<String, Object> id = (Map<String, Object>) parentIdReader.value(object);
         switch (id.size()) {
             case 0:
                 throw new RuntimeException("ID is empty for '" + entity.getName() + "'");

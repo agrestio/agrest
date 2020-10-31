@@ -3,7 +3,6 @@ package io.agrest.encoder;
 import io.agrest.meta.*;
 import io.agrest.property.PropertyReader;
 import io.agrest.resolver.ReaderBasedResolver;
-import org.apache.cayenne.exp.parser.ASTObjPath;
 import org.junit.jupiter.api.Test;
 
 import static io.agrest.encoder.Encoders.toJson;
@@ -18,13 +17,13 @@ public class PropertyMetadataEncoderTest {
 
     @Test
     public void testEncode_StringAttribute() {
-        AgAttribute attribute = new DefaultAgAttribute("prop", String.class, new ASTObjPath("prop"), mock(PropertyReader.class));
+        AgAttribute attribute = new DefaultAgAttribute("prop", String.class, mock(PropertyReader.class));
         assertEquals("{\"name\":\"prop\",\"type\":\"string\"}", toJson(encoder, attribute));
     }
 
     @Test
     public void testEncode_ObjectAttribute() {
-        AgAttribute attribute = new DefaultAgAttribute("prop", Object.class, new ASTObjPath("prop"), mock(PropertyReader.class));
+        AgAttribute attribute = new DefaultAgAttribute("prop", Object.class, mock(PropertyReader.class));
         assertEquals("{\"name\":\"prop\",\"type\":\"unknown\"}", toJson(encoder, attribute));
     }
 

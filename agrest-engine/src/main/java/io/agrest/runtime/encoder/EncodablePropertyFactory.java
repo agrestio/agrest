@@ -6,8 +6,8 @@ import io.agrest.encoder.EncodableProperty;
 import io.agrest.encoder.Encoder;
 import io.agrest.encoder.IdEncoder;
 import io.agrest.meta.AgAttribute;
+import io.agrest.meta.AgIdPart;
 import io.agrest.meta.AgRelationship;
-import io.agrest.property.IdReader;
 import io.agrest.property.PropertyReader;
 import org.apache.cayenne.di.Inject;
 
@@ -54,30 +54,28 @@ public class EncodablePropertyFactory implements IEncodablePropertyFactory {
 
     protected Optional<EncodableProperty> buildIdProperty(ResourceEntity<?> entity) {
 
-        Collection<AgAttribute> ids = entity.getAgEntity().getIds();
+        Collection<AgIdPart> ids = entity.getAgEntity().getIdParts();
 
         switch (ids.size()) {
             case 0:
                 return Optional.empty();
             case 1:
-
-                IdReader ir1 = entity.getAgEntity().getIdReader();
+                AgIdPart idPart = entity.getAgEntity().getIdParts().iterator().next();
                 EncodableProperty p1 = EncodableProperty
-                        .property(ir1::id)
-                        .encodedWith(new IdEncoder(getEncoder(ids.iterator().next().getType())));
+                        .property(entity.getAgEntity().getIdReader())
+                        .encodedWith(new IdEncoder(getEncoder(idPart.getType())));
                 return Optional.of(p1);
 
             default:
 
                 // keeping attribute encoders in alphabetical order
                 Map<String, Encoder> valueEncoders = new TreeMap<>();
-                for (AgAttribute id : ids) {
+                for (AgIdPart id : ids) {
                     valueEncoders.put(id.getName(), getEncoder(id.getType()));
                 }
 
-                IdReader ir2 = entity.getAgEntity().getIdReader();
                 EncodableProperty p2 = EncodableProperty
-                        .property(ir2::id)
+                        .property(entity.getAgEntity().getIdReader())
                         .encodedWith(new IdEncoder(valueEncoders));
                 return Optional.of(p2);
         }

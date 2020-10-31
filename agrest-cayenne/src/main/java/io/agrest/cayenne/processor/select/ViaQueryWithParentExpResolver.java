@@ -7,7 +7,7 @@ import io.agrest.SimpleObjectId;
 import io.agrest.cayenne.persister.ICayennePersister;
 import io.agrest.cayenne.processor.CayenneProcessor;
 import io.agrest.cayenne.processor.ICayenneQueryAssembler;
-import io.agrest.meta.AgAttribute;
+import io.agrest.meta.AgIdPart;
 import io.agrest.property.NestedEntityListResultReader;
 import io.agrest.property.NestedEntityResultReader;
 import io.agrest.property.PropertyReader;
@@ -75,7 +75,7 @@ public class ViaQueryWithParentExpResolver<T extends DataObject> extends BaseNes
                 ? (i, o) -> entity.addToManyResult(i, o)
                 : (i, o) -> entity.setToOneResult(i, o);
 
-        AgAttribute[] idAttributes = entity.getParent().getAgEntity().getIds().toArray(new AgAttribute[0]);
+        AgIdPart[] idAttributes = entity.getParent().getAgEntity().getIdParts().toArray(new AgIdPart[0]);
 
         for (Object[] row : result) {
 

@@ -1,9 +1,6 @@
 package io.agrest.cayenne.compiler;
 
 import io.agrest.meta.*;
-import io.agrest.property.IdReader;
-import io.agrest.property.PropertyIdReader;
-import io.agrest.property.PropertyReader;
 import io.agrest.resolver.NestedDataResolver;
 import io.agrest.resolver.RootDataResolver;
 import io.agrest.resolver.ThrowingRootDataResolver;
@@ -30,12 +27,11 @@ public class CayenneAgEntityBuilder<T> {
     private final Class<T> type;
     private final AgDataMap agDataMap;
     private final ObjEntity cayenneEntity;
-    private final Map<String, AgAttribute> ids;
+    private final Map<String, AgIdPart> ids;
     private final Map<String, AgAttribute> attributes;
     private final Map<String, AgRelationship> relationships;
 
     private AgEntityOverlay<T> overlay;
-    private boolean pojoIdReader;
     private RootDataResolver<T> rootDataResolver;
     private NestedDataResolver<T> nestedDataResolver;
 
@@ -73,20 +69,17 @@ public class CayenneAgEntityBuilder<T> {
         buildAnnotatedProperties();
         applyOverlays();
 
-        IdReader idReader = pojoIdReader ? createIdReader() : ObjectIdReader.reader();
-
         return new DefaultAgEntity<>(
                 cayenneEntity.getName(),
                 type,
                 ids,
                 attributes,
                 relationships,
-                idReader,
                 rootDataResolver != null ? rootDataResolver : ThrowingRootDataResolver.getInstance());
     }
 
-    private AgAttribute addId(AgAttribute id) {
-        return ids.put(id.getName(), id);
+    private void addId(AgIdPart id) {
+        ids.put(id.getName(), id);
     }
 
     private AgAttribute addAttribute(AgAttribute a) {
@@ -102,7 +95,7 @@ public class CayenneAgEntityBuilder<T> {
         for (ObjAttribute a : cayenneEntity.getAttributes()) {
             Class<?> type = typeForName(a.getType());
             String name = a.getName();
-            addAttribute(new DefaultAgAttribute(name, type, new ASTObjPath(name), DataObjectPropertyReader.reader(name)));
+            addAttribute(new DefaultAgAttribute(name, type, DataObjectPropertyReader.reader(name)));
         }
 
         for (ObjRelationship r : cayenneEntity.getRelationships()) {
@@ -120,21 +113,22 @@ public class CayenneAgEntityBuilder<T> {
         for (DbAttribute pk : cayenneEntity.getDbEntity().getPrimaryKeys()) {
             ObjAttribute attribute = cayenneEntity.getAttributeForDbAttribute(pk);
 
-            AgAttribute id;
+            AgIdPart id;
             if (attribute == null) {
 
                 // TODO: we are using a DB name for the attribute... Perhaps it should not be exposed in Ag model?
-                id = new DefaultAgAttribute(
+                id = new DefaultAgIdPart(
                         pk.getName(),
                         typeForName(TypesMapping.getJavaBySqlType(pk.getType())),
-                        new ASTDbPath(pk.getName()),
-                        ObjectIdValueReader.reader(pk.getName()));
+                        ObjectIdValueReader.reader(pk.getName()),
+                        new ASTDbPath(pk.getName())
+                );
             } else {
-                id = new DefaultAgAttribute(
+                id = new DefaultAgIdPart(
                         attribute.getName(),
                         typeForName(attribute.getType()),
-                        new ASTObjPath(attribute.getName()),
-                        DataObjectPropertyReader.reader(attribute.getName()));
+                        DataObjectPropertyReader.reader(attribute.getName()),
+                        new ASTObjPath(attribute.getName()));
             }
 
             addId(id);
@@ -148,7 +142,7 @@ public class CayenneAgEntityBuilder<T> {
 
         AgEntity<T> annotatedEntity = new AgEntityBuilder<>(type, agDataMap).build();
 
-        if (annotatedEntity.getIds().size() > 0) {
+        if (annotatedEntity.getIdParts().size() > 0) {
 
             // if annotated ids are present, remove all Cayenne-originated ids, regardless of their type and count
             if (!ids.isEmpty()) {
@@ -156,12 +150,9 @@ public class CayenneAgEntityBuilder<T> {
                 ids.clear();
             }
 
-            // ensure ids are read from properties, not as ObjectId
-            this.pojoIdReader = true;
-
             // TODO: we should remove a possible matching regular persistent attributes from the model, since it was
             //  also declared as ID, and hence should not be exposed as an attribute anymore
-            annotatedEntity.getIds().forEach(this::addId);
+            annotatedEntity.getIdParts().forEach(this::addId);
         }
 
         for (AgAttribute attribute : annotatedEntity.getAttributes()) {
@@ -204,11 +195,5 @@ public class CayenneAgEntityBuilder<T> {
         ids.remove(name);
         attributes.remove(name);
         relationships.remove(name);
-    }
-
-    protected IdReader createIdReader() {
-        Map<String, PropertyReader> idPropReaders = new HashMap<>();
-        ids.forEach((n, a) -> idPropReaders.put(n, a.getPropertyReader()));
-        return new PropertyIdReader(idPropReaders);
     }
 }

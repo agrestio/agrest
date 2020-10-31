@@ -3,25 +3,20 @@ package io.agrest.runtime.processor.update;
 import io.agrest.AgException;
 import io.agrest.EntityUpdate;
 import io.agrest.ObjectMapper;
-import io.agrest.meta.AgAttribute;
 import io.agrest.meta.AgEntity;
+import io.agrest.meta.AgIdPart;
 import org.apache.cayenne.exp.Expression;
 import org.apache.cayenne.exp.parser.ASTEqual;
 import org.apache.cayenne.exp.parser.ASTPath;
 
 import javax.ws.rs.core.Response.Status;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 import static org.apache.cayenne.exp.ExpressionFactory.joinExp;
 
 class ByIdObjectMapper<T> implements ObjectMapper<T> {
 
-    private AgEntity<T> entity;
+    private final AgEntity<T> entity;
 
     ByIdObjectMapper(AgEntity<T> entity) {
         this.entity = Objects.requireNonNull(entity);
@@ -43,14 +38,14 @@ class ByIdObjectMapper<T> implements ObjectMapper<T> {
             return null;
         }
 
-        Collection<AgAttribute> ids = entity.getIds();
+        Collection<AgIdPart> ids = entity.getIdParts();
         int len = ids.size();
         if (len == 1) {
             return match(ids.iterator().next().getPathExp(), idMap);
         }
 
         List<Expression> exps = new ArrayList<>(len);
-        for (AgAttribute id : ids) {
+        for (AgIdPart id : ids) {
             exps.add(match(id.getPathExp(), idMap));
         }
         return joinExp(Expression.AND, exps);
@@ -69,8 +64,8 @@ class ByIdObjectMapper<T> implements ObjectMapper<T> {
     @Override
     public Object keyForObject(T object) {
         Map<String, Object> idMap = new HashMap<>();
-        for (AgAttribute id : entity.getIds()) {
-            idMap.put(id.getPathExp().getPath(), id.getPropertyReader().value(object));
+        for (AgIdPart id : entity.getIdParts()) {
+            idMap.put(id.getPathExp().getPath(), id.getReader().value(object));
         }
         return idMap;
     }

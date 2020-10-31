@@ -4,11 +4,12 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import io.agrest.AgException;
 import io.agrest.PathConstants;
+import io.agrest.base.jsonvalueconverter.IJsonValueConverterFactory;
+import io.agrest.base.jsonvalueconverter.JsonValueConverter;
 import io.agrest.meta.AgAttribute;
 import io.agrest.meta.AgEntity;
+import io.agrest.meta.AgIdPart;
 import io.agrest.meta.AgRelationship;
-import io.agrest.base.jsonvalueconverter.JsonValueConverter;
-import io.agrest.base.jsonvalueconverter.IJsonValueConverterFactory;
 import io.agrest.runtime.semantics.IRelationshipMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -116,13 +117,13 @@ public class EntityUpdateJsonTraverser {
 
     protected void extractPK(AgEntity<?> entity, EntityUpdateJsonVisitor visitor, JsonNode valueNode) {
 
-        Collection<AgAttribute> ids = entity.getIds();
+        Collection<AgIdPart> ids = entity.getIdParts();
         if (ids.size() == 1) {
             extractPKPart(visitor::visitId, ids.iterator().next(), valueNode);
             return;
         }
 
-        for (AgAttribute id : ids) {
+        for (AgIdPart id : ids) {
 
             JsonNode idNode = valueNode.get(id.getName());
             if (idNode == null) {
@@ -134,10 +135,14 @@ public class EntityUpdateJsonTraverser {
         }
     }
 
-    protected void extractPKPart(BiConsumer<String, Object> idConsumer, AgAttribute id, JsonNode valueNode) {
+    protected void extractPKPart(BiConsumer<String, Object> idConsumer, AgIdPart id, JsonNode valueNode) {
         idConsumer.accept(
                 id.getName(),
                 converter(id).value(valueNode));
+    }
+
+    private JsonValueConverter<?> converter(AgIdPart idPart) {
+        return converterFactory.converter(idPart.getType());
     }
 
     private JsonValueConverter<?> converter(AgAttribute attribute) {
@@ -148,11 +153,11 @@ public class EntityUpdateJsonTraverser {
 
         AgEntity<?> target = relationship.getTargetEntity();
 
-        int ids = target.getIds().size();
+        int ids = target.getIdParts().size();
         if (ids != 1) {
             throw new IllegalArgumentException("Entity '" + target.getName() +
                     "' has unexpected number of ID attributes: " + ids);
         }
-        return converterFactory.converter(target.getIds().iterator().next().getType());
+        return converterFactory.converter(target.getIdParts().iterator().next().getType());
     }
 }
