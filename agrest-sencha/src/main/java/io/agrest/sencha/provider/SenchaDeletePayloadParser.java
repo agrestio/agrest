@@ -4,11 +4,12 @@ import io.agrest.AgException;
 import io.agrest.CompoundObjectId;
 import io.agrest.EntityDelete;
 import io.agrest.SimpleObjectId;
+import io.agrest.base.jsonvalueconverter.IJsonValueConverterFactory;
+import io.agrest.base.reflect.Types;
 import io.agrest.meta.AgEntity;
 import io.agrest.runtime.AgRuntime;
 import io.agrest.runtime.jackson.IJacksonService;
 import io.agrest.runtime.meta.IMetadataService;
-import io.agrest.base.jsonvalueconverter.IJsonValueConverterFactory;
 import io.agrest.runtime.protocol.EntityUpdateJsonTraverser;
 import io.agrest.runtime.protocol.EntityUpdateJsonVisitor;
 import io.agrest.runtime.semantics.IRelationshipMapper;
@@ -69,7 +70,8 @@ public class SenchaDeletePayloadParser implements MessageBodyReader<Collection<E
 					"Invalid request entity collection type: " + genericType);
 		}
 
-		AgEntity<?> entity = metadataService.getAgEntityByType(entityType);
+		Class<?> typeClass = Types.getClassForTypeArgument(entityType).orElse(Object.class);
+		AgEntity<?> entity = metadataService.getAgEntity(typeClass);
 
 		DeleteVisitor visitor = new DeleteVisitor(entity);
         entityUpdateJsonTraverser.traverse(entity, jacksonService.parseJson(entityStream), visitor);

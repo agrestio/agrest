@@ -1,6 +1,7 @@
 package io.agrest.provider;
 
 import io.agrest.EntityUpdate;
+import io.agrest.base.reflect.Types;
 import io.agrest.runtime.meta.IMetadataService;
 import io.agrest.runtime.protocol.IEntityUpdateParser;
 
@@ -19,6 +20,7 @@ class EntityUpdateReaderProcessor {
 	}
 
 	<T> Collection<EntityUpdate<T>> read(Type entityUpdateType, InputStream entityStream) {
-		return parser.parse(metadataService.getAgEntityByType(entityUpdateType), entityStream);
+		Class<T> typeClass = (Class<T>) Types.getClassForTypeArgument(entityUpdateType).orElse(Object.class);
+		return parser.parse(metadataService.getAgEntity(typeClass), entityStream);
 	}
 }

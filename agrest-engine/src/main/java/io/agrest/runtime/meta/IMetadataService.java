@@ -5,7 +5,6 @@ import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgRelationship;
 
 import javax.ws.rs.core.Response;
-import java.lang.reflect.Type;
 
 /**
  * Provides access to Agrest entity metadata.
@@ -16,11 +15,6 @@ public interface IMetadataService {
      * @since 1.12
      */
     <T> AgEntity<T> getAgEntity(Class<T> type);
-
-    /**
-     * @since 3.4
-     */
-    <T> AgEntity<T> getAgEntityByType(Type type);
 
     /**
      * Returns a named relationship for a given object type. If the type is not supported or there is no matching
