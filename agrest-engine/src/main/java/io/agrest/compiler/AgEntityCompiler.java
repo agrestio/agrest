@@ -1,4 +1,4 @@
-package io.agrest.meta.compiler;
+package io.agrest.compiler;
 
 import io.agrest.meta.AgDataMap;
 import io.agrest.meta.AgEntity;

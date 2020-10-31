@@ -10,8 +10,8 @@ import io.agrest.annotation.AgRelationship;
 import io.agrest.base.protocol.CayenneExp;
 import io.agrest.constraints.Constraint;
 import io.agrest.meta.AgEntity;
-import io.agrest.meta.compiler.AgEntityCompiler;
-import io.agrest.meta.compiler.PojoEntityCompiler;
+import io.agrest.compiler.AgEntityCompiler;
+import io.agrest.compiler.AnnotationBasedCompiler;
 import io.agrest.runtime.meta.IMetadataService;
 import io.agrest.runtime.meta.MetadataService;
 import io.agrest.unit.ResourceEntityUtils;
@@ -30,7 +30,7 @@ public class ConstraintsHandlerTest {
 
     @BeforeAll
     public static void before() {
-        AgEntityCompiler compiler = new PojoEntityCompiler(Collections.emptyMap());
+        AgEntityCompiler compiler = new AnnotationBasedCompiler(Collections.emptyMap());
         metadata = new MetadataService(Collections.singletonList(compiler));
         constraintsHandler = new ConstraintsHandler(Collections.emptyList(), Collections.emptyList());
     }

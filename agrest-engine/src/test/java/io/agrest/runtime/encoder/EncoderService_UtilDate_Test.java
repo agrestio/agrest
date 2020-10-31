@@ -9,8 +9,8 @@ import io.agrest.encoder.ISODateTimeEncoder;
 import io.agrest.meta.AgDataMap;
 import io.agrest.meta.AgEntity;
 import io.agrest.meta.LazyAgDataMap;
-import io.agrest.meta.compiler.AgEntityCompiler;
-import io.agrest.meta.compiler.PojoEntityCompiler;
+import io.agrest.compiler.AgEntityCompiler;
+import io.agrest.compiler.AnnotationBasedCompiler;
 import io.agrest.runtime.semantics.RelationshipMapper;
 import io.agrest.unit.ResourceEntityUtils;
 import org.junit.jupiter.api.BeforeEach;
@@ -43,7 +43,7 @@ public class EncoderService_UtilDate_Test {
                 new RelationshipMapper(),
                 Collections.emptyMap());
 
-        AgEntityCompiler compiler = new PojoEntityCompiler(Collections.emptyMap());
+        AgEntityCompiler compiler = new AnnotationBasedCompiler(Collections.emptyMap());
         AgDataMap dataMap = new LazyAgDataMap(Collections.singletonList(compiler));
         this.utilDateEntity = dataMap.getEntity(PUtilDate.class);
     }

@@ -1,6 +1,6 @@
 package io.agrest.meta;
 
-import io.agrest.meta.compiler.AgEntityCompiler;
+import io.agrest.compiler.AgEntityCompiler;
 
 import java.util.Collection;
 import java.util.concurrent.ConcurrentHashMap;

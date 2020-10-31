@@ -1,4 +1,4 @@
-package io.agrest.meta.compiler;
+package io.agrest.compiler;
 
 import io.agrest.annotation.AgAttribute;
 import io.agrest.annotation.AgId;
@@ -12,19 +12,19 @@ import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class PojoEntityCompilerTest {
+public class AnnotationBasedCompilerTest {
 
     private static Collection<AgEntityCompiler> compilers;
 
     @BeforeAll
     public static void setUpClass() {
         compilers = new ArrayList<>();
-        compilers.add(new PojoEntityCompiler(Collections.emptyMap()));
+        compilers.add(new AnnotationBasedCompiler(Collections.emptyMap()));
     }
 
     @Test
     public void testCompile() {
-        AgEntity<Entity> entity = new PojoEntityCompiler(Collections.emptyMap())
+        AgEntity<Entity> entity = new AnnotationBasedCompiler(Collections.emptyMap())
                 .compile(Entity.class, new LazyAgDataMap(compilers));
         assertNotNull(entity);
         assertEquals(1, entity.getIdParts().size());
@@ -34,7 +34,7 @@ public class PojoEntityCompilerTest {
 
     @Test
     public void testCompile_CollectionAttributes() {
-        AgEntity<P8> entity = new PojoEntityCompiler(Collections.emptyMap())
+        AgEntity<P8> entity = new AnnotationBasedCompiler(Collections.emptyMap())
                 .compile(P8.class, new LazyAgDataMap(compilers));
         assertNotNull(entity);
         assertEquals(0, entity.getIdParts().size());
@@ -51,7 +51,7 @@ public class PojoEntityCompilerTest {
 
     @Test
     public void testCompile_EntityWithNoAnnotations() {
-        AgEntity<EntityNoAnnotations> entity = new PojoEntityCompiler(Collections.emptyMap())
+        AgEntity<EntityNoAnnotations> entity = new AnnotationBasedCompiler(Collections.emptyMap())
                 .compile(EntityNoAnnotations.class, new LazyAgDataMap(compilers));
         assertNotNull(entity);
         assertTrue(entity.getAttributes().isEmpty());

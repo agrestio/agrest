@@ -8,7 +8,7 @@ import io.agrest.meta.AgDataMap;
 import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgEntityOverlay;
 import io.agrest.meta.LazyAgEntity;
-import io.agrest.meta.compiler.AgEntityCompiler;
+import io.agrest.compiler.AgEntityCompiler;
 import io.agrest.resolver.NestedDataResolver;
 import io.agrest.resolver.RootDataResolver;
 import org.apache.cayenne.di.Inject;

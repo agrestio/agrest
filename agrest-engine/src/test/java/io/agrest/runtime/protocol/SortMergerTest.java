@@ -6,8 +6,8 @@ import io.agrest.annotation.AgAttribute;
 import io.agrest.annotation.AgId;
 import io.agrest.base.protocol.Dir;
 import io.agrest.base.protocol.Sort;
-import io.agrest.meta.compiler.AgEntityCompiler;
-import io.agrest.meta.compiler.PojoEntityCompiler;
+import io.agrest.compiler.AgEntityCompiler;
+import io.agrest.compiler.AnnotationBasedCompiler;
 import io.agrest.runtime.entity.SortMerger;
 import io.agrest.runtime.meta.MetadataService;
 import org.junit.jupiter.api.BeforeAll;
@@ -28,7 +28,7 @@ public class SortMergerTest {
 
     @BeforeAll
     public static void beforeAll() {
-        AgEntityCompiler compiler = new PojoEntityCompiler(Collections.emptyMap());
+        AgEntityCompiler compiler = new AnnotationBasedCompiler(Collections.emptyMap());
         metadataService = new MetadataService(Collections.singletonList(compiler));
         merger = new SortMerger();
     }

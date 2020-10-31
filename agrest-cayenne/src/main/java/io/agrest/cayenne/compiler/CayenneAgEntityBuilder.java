@@ -1,5 +1,6 @@
 package io.agrest.cayenne.compiler;
 
+import io.agrest.compiler.AgEntityBuilder;
 import io.agrest.meta.*;
 import io.agrest.resolver.NestedDataResolver;
 import io.agrest.resolver.RootDataResolver;

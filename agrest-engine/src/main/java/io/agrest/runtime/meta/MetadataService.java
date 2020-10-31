@@ -5,7 +5,7 @@ import io.agrest.meta.AgDataMap;
 import io.agrest.meta.AgEntity;
 import io.agrest.meta.LazyAgDataMap;
 import io.agrest.base.reflect.Types;
-import io.agrest.meta.compiler.AgEntityCompiler;
+import io.agrest.compiler.AgEntityCompiler;
 import org.apache.cayenne.di.Inject;
 
 import javax.ws.rs.core.Response.Status;

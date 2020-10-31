@@ -10,8 +10,8 @@ import io.agrest.cayenne.processor.ICayenneQueryAssembler;
 import io.agrest.cayenne.qualifier.QualifierParser;
 import io.agrest.cayenne.qualifier.QualifierPostProcessor;
 import io.agrest.meta.AgEntity;
-import io.agrest.meta.compiler.AgEntityCompiler;
-import io.agrest.meta.compiler.PojoEntityCompiler;
+import io.agrest.compiler.AgEntityCompiler;
+import io.agrest.compiler.AnnotationBasedCompiler;
 import io.agrest.meta.parser.IResourceParser;
 import io.agrest.meta.parser.ResourceParser;
 import io.agrest.runtime.meta.*;
@@ -101,7 +101,7 @@ public abstract class CayenneNoDbTest {
                 queryAssembler,
                 Collections.emptyMap());
 
-        AgEntityCompiler c2 = new PojoEntityCompiler(Collections.emptyMap());
+        AgEntityCompiler c2 = new AnnotationBasedCompiler(Collections.emptyMap());
 
         return asList(c1, c2);
     }

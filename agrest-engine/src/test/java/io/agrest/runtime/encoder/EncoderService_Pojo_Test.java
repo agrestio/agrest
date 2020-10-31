@@ -5,10 +5,10 @@ import io.agrest.RootResourceEntity;
 import io.agrest.encoder.Encoder;
 import io.agrest.encoder.Encoders;
 import io.agrest.meta.AgEntity;
-import io.agrest.meta.AgEntityBuilder;
+import io.agrest.compiler.AgEntityBuilder;
 import io.agrest.meta.LazyAgDataMap;
-import io.agrest.meta.compiler.AgEntityCompiler;
-import io.agrest.meta.compiler.PojoEntityCompiler;
+import io.agrest.compiler.AgEntityCompiler;
+import io.agrest.compiler.AnnotationBasedCompiler;
 import io.agrest.pojo.model.P1;
 import io.agrest.pojo.model.P6;
 import io.agrest.runtime.semantics.RelationshipMapper;
@@ -33,7 +33,7 @@ public class EncoderService_Pojo_Test {
     @BeforeAll
     public static void setUpClass() {
         compilers = new ArrayList<>();
-        compilers.add(new PojoEntityCompiler(Collections.emptyMap()));
+        compilers.add(new AnnotationBasedCompiler(Collections.emptyMap()));
     }
 
     @BeforeEach

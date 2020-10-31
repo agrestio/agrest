@@ -1,7 +1,9 @@
-package io.agrest.meta;
+package io.agrest.compiler;
 
-import io.agrest.meta.compiler.AgEntityCompiler;
-import io.agrest.meta.compiler.PojoEntityCompiler;
+import io.agrest.meta.AgAttribute;
+import io.agrest.meta.AgEntity;
+import io.agrest.meta.AgRelationship;
+import io.agrest.meta.LazyAgDataMap;
 import io.agrest.pojo.model.P3;
 import io.agrest.pojo.model.P4;
 import io.agrest.pojo.model.P5;
@@ -20,7 +22,7 @@ public class AgEntityBuilderTest {
 
 	@BeforeAll
 	public static void setUpClass() {
-		COMPILERS = asList(new PojoEntityCompiler(Collections.emptyMap()));
+		COMPILERS = asList(new AnnotationBasedCompiler(Collections.emptyMap()));
 	}
 
 	@Test

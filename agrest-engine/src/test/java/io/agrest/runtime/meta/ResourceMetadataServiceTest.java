@@ -10,8 +10,8 @@ import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgOperation;
 import io.agrest.meta.AgResource;
 import io.agrest.meta.LinkMethodType;
-import io.agrest.meta.compiler.AgEntityCompiler;
-import io.agrest.meta.compiler.PojoEntityCompiler;
+import io.agrest.compiler.AgEntityCompiler;
+import io.agrest.compiler.AnnotationBasedCompiler;
 import io.agrest.meta.parser.ResourceParser;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -36,7 +36,7 @@ public class ResourceMetadataServiceTest {
 
     @BeforeAll
     public static void before() {
-        AgEntityCompiler compiler = new PojoEntityCompiler(Collections.emptyMap());
+        AgEntityCompiler compiler = new AnnotationBasedCompiler(Collections.emptyMap());
         metadata = new MetadataService(Collections.singletonList(compiler));
         resourceMetadata = new ResourceMetadataService(
                 new ResourceParser(metadata),

@@ -1,4 +1,4 @@
-package io.agrest.meta.compiler;
+package io.agrest.compiler;
 
 import io.agrest.meta.*;
 import org.apache.cayenne.di.Inject;
@@ -8,16 +8,15 @@ import org.slf4j.LoggerFactory;
 import java.util.Map;
 
 /**
- * @since 1.24
+ * @since 4.1
  */
-// TODO: support for injectable DataResolvers...
-public class PojoEntityCompiler implements AgEntityCompiler {
+public class AnnotationBasedCompiler implements AgEntityCompiler {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(PojoEntityCompiler.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(AnnotationBasedCompiler.class);
 
     private Map<String, AgEntityOverlay> entityOverlays;
 
-    public PojoEntityCompiler(@Inject Map<String, AgEntityOverlay> entityOverlays) {
+    public AnnotationBasedCompiler(@Inject Map<String, AgEntityOverlay> entityOverlays) {
         this.entityOverlays = entityOverlays;
     }
 
@@ -46,5 +45,4 @@ public class PojoEntityCompiler implements AgEntityCompiler {
             LOGGER.info("Empty entity '{}'", entity.getName());
         }
     }
-
 }

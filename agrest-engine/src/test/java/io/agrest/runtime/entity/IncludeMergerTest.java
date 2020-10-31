@@ -9,8 +9,8 @@ import io.agrest.annotation.AgRelationship;
 import io.agrest.base.protocol.Include;
 import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgEntityOverlay;
-import io.agrest.meta.compiler.AgEntityCompiler;
-import io.agrest.meta.compiler.PojoEntityCompiler;
+import io.agrest.compiler.AgEntityCompiler;
+import io.agrest.compiler.AnnotationBasedCompiler;
 import io.agrest.resolver.ThrowingNestedDataResolver;
 import io.agrest.runtime.meta.IMetadataService;
 import io.agrest.runtime.meta.MetadataService;
@@ -34,7 +34,7 @@ public class IncludeMergerTest {
     @BeforeEach
     public void setUp() {
 
-        AgEntityCompiler compiler = new PojoEntityCompiler(Collections.emptyMap());
+        AgEntityCompiler compiler = new AnnotationBasedCompiler(Collections.emptyMap());
         this.metadataService = new MetadataService(Collections.singletonList(compiler));
 
         ICayenneExpMerger expMerger = new CayenneExpMerger();
