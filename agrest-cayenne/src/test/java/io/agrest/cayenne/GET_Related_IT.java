@@ -139,11 +139,12 @@ public class GET_Related_IT extends DbTest {
                 .values(12, 16)
                 .exec();
 
-        // excluding ID - can't render multi-column IDs yet
-        tester.target("/e12/12/e1213").queryParam("exclude", "id").queryParam("include", "e12")
-                .queryParam("include", "e13").get()
+        tester.target("/e12/12/e1213")
+                .queryParam("include", "e12", "e13")
+                .get()
                 .wasOk()
-                .bodyEquals(1, "{\"e12\":{\"id\":12},\"e13\":{\"id\":16}}");
+                // note how ID leaks DB column names
+                .bodyEquals(1, "{\"id\":{\"e12_id\":12,\"e13_id\":16},\"e12\":{\"id\":12},\"e13\":{\"id\":16}}");
     }
 
     @Path("")
