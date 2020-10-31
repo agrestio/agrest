@@ -3,7 +3,7 @@ package io.agrest.cayenne.unit;
 import io.agrest.NestedResourceEntity;
 import io.agrest.ResourceEntity;
 import io.agrest.RootResourceEntity;
-import io.agrest.cayenne.compiler.CayenneEntityCompiler;
+import io.agrest.cayenne.compiler.CayenneAgEntityCompiler;
 import io.agrest.cayenne.persister.ICayennePersister;
 import io.agrest.cayenne.processor.CayenneQueryAssembler;
 import io.agrest.cayenne.processor.ICayenneQueryAssembler;
@@ -11,7 +11,7 @@ import io.agrest.cayenne.qualifier.QualifierParser;
 import io.agrest.cayenne.qualifier.QualifierPostProcessor;
 import io.agrest.meta.AgEntity;
 import io.agrest.compiler.AgEntityCompiler;
-import io.agrest.compiler.AnnotationBasedCompiler;
+import io.agrest.compiler.AnnotationsAgEntityCompiler;
 import io.agrest.meta.parser.IResourceParser;
 import io.agrest.meta.parser.ResourceParser;
 import io.agrest.runtime.meta.*;
@@ -96,12 +96,12 @@ public abstract class CayenneNoDbTest {
 
     protected List<AgEntityCompiler> createEntityCompilers() {
 
-        AgEntityCompiler c1 = new CayenneEntityCompiler(
+        AgEntityCompiler c1 = new CayenneAgEntityCompiler(
                 mockCayennePersister,
                 queryAssembler,
                 Collections.emptyMap());
 
-        AgEntityCompiler c2 = new AnnotationBasedCompiler(Collections.emptyMap());
+        AgEntityCompiler c2 = new AnnotationsAgEntityCompiler(Collections.emptyMap());
 
         return asList(c1, c2);
     }

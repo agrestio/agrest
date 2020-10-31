@@ -1,7 +1,7 @@
 package io.agrest.cayenne;
 
 import io.agrest.base.jsonvalueconverter.JsonValueConverter;
-import io.agrest.cayenne.compiler.CayenneEntityCompiler;
+import io.agrest.cayenne.compiler.CayenneAgEntityCompiler;
 import io.agrest.cayenne.converter.JsonConverter;
 import io.agrest.cayenne.encoder.JsonEncoder;
 import io.agrest.cayenne.persister.ICayennePersister;
@@ -22,7 +22,7 @@ import io.agrest.cayenne.qualifier.QualifierParser;
 import io.agrest.cayenne.qualifier.QualifierPostProcessor;
 import io.agrest.encoder.Encoder;
 import io.agrest.compiler.AgEntityCompiler;
-import io.agrest.compiler.AnnotationBasedCompiler;
+import io.agrest.compiler.AnnotationsAgEntityCompiler;
 import io.agrest.runtime.processor.delete.DeleteProcessorFactory;
 import io.agrest.runtime.processor.unrelate.UnrelateProcessorFactory;
 import io.agrest.runtime.processor.update.UpdateProcessorFactoryFactory;
@@ -51,8 +51,8 @@ public class AgCayenneModule implements Module {
         binder.bindMap(Encoder.class).put(Json.class.getName(), JsonEncoder.encoder());
         binder.bindMap(JsonValueConverter.class).put(Json.class.getName(), JsonConverter.converter());
 
-        binder.bind(CayenneEntityCompiler.class).to(CayenneEntityCompiler.class);
-        binder.bindList(AgEntityCompiler.class).insertBefore(CayenneEntityCompiler.class, AnnotationBasedCompiler.class);
+        binder.bind(CayenneAgEntityCompiler.class).to(CayenneAgEntityCompiler.class);
+        binder.bindList(AgEntityCompiler.class).insertBefore(CayenneAgEntityCompiler.class, AnnotationsAgEntityCompiler.class);
         binder.bind(ICayennePersister.class).toInstance(persister);
         binder.bind(IQualifierParser.class).to(QualifierParser.class);
         binder.bind(IQualifierPostProcessor.class).to(QualifierPostProcessor.class);

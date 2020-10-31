@@ -1,6 +1,6 @@
 package io.agrest.cayenne.compiler;
 
-import io.agrest.compiler.AgEntityBuilder;
+import io.agrest.compiler.AnnotationsAgEntityBuilder;
 import io.agrest.meta.*;
 import io.agrest.resolver.NestedDataResolver;
 import io.agrest.resolver.RootDataResolver;
@@ -141,7 +141,7 @@ public class CayenneAgEntityBuilder<T> {
         // Load a separate entity built purely from annotations, then merge it with our entity. We are not cloning
         // attributes or relationship during merge... they have no references to parent and can be used as is.
 
-        AgEntity<T> annotatedEntity = new AgEntityBuilder<>(type, agDataMap).build();
+        AgEntity<T> annotatedEntity = new AnnotationsAgEntityBuilder<>(type, agDataMap).build();
 
         if (annotatedEntity.getIdParts().size() > 0) {
 

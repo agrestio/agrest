@@ -6,7 +6,7 @@ import io.agrest.annotation.AgAttribute;
 import io.agrest.annotation.AgId;
 import io.agrest.base.protocol.CayenneExp;
 import io.agrest.compiler.AgEntityCompiler;
-import io.agrest.compiler.AnnotationBasedCompiler;
+import io.agrest.compiler.AnnotationsAgEntityCompiler;
 import io.agrest.runtime.entity.CayenneExpMerger;
 import io.agrest.runtime.meta.MetadataService;
 import org.junit.jupiter.api.BeforeAll;
@@ -27,7 +27,7 @@ public class CayenneExpMergerTest {
     @BeforeAll
     public static void beforeAll() {
 
-        AgEntityCompiler compiler = new AnnotationBasedCompiler(Collections.emptyMap());
+        AgEntityCompiler compiler = new AnnotationsAgEntityCompiler(Collections.emptyMap());
         metadataService = new MetadataService(Collections.singletonList(compiler));
         merger = new CayenneExpMerger();
     }

@@ -20,18 +20,18 @@ import org.slf4j.LoggerFactory;
 import java.util.Map;
 
 /**
- * @since 1.24
+ * @since 4.1
  */
-public class CayenneEntityCompiler implements AgEntityCompiler {
+public class CayenneAgEntityCompiler implements AgEntityCompiler {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(CayenneEntityCompiler.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(CayenneAgEntityCompiler.class);
 
     private final EntityResolver cayenneEntityResolver;
     private final Map<String, AgEntityOverlay> entityOverlays;
     private final RootDataResolver defaultRootResolver;
     private final NestedDataResolver defaultNestedResolver;
 
-    public CayenneEntityCompiler(
+    public CayenneAgEntityCompiler(
             @Inject ICayennePersister cayennePersister,
             @Inject ICayenneQueryAssembler queryAssembler,
             @Inject Map<String, AgEntityOverlay> entityOverlays) {

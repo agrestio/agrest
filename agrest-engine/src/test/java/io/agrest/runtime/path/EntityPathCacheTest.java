@@ -4,7 +4,7 @@ import io.agrest.AgException;
 import io.agrest.annotation.AgAttribute;
 import io.agrest.annotation.AgRelationship;
 import io.agrest.compiler.AgEntityCompiler;
-import io.agrest.compiler.AnnotationBasedCompiler;
+import io.agrest.compiler.AnnotationsAgEntityCompiler;
 import io.agrest.runtime.meta.IMetadataService;
 import io.agrest.runtime.meta.MetadataService;
 import org.apache.cayenne.exp.parser.ASTObjPath;
@@ -21,7 +21,7 @@ public class EntityPathCacheTest {
 
     @BeforeEach
     public void setUp() {
-        AgEntityCompiler compiler = new AnnotationBasedCompiler(Collections.emptyMap());
+        AgEntityCompiler compiler = new AnnotationsAgEntityCompiler(Collections.emptyMap());
         this.metadataService = new MetadataService(Collections.singletonList(compiler));
     }
 

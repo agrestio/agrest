@@ -6,7 +6,7 @@ import io.agrest.annotation.AgId;
 import io.agrest.annotation.AgRelationship;
 import io.agrest.base.protocol.Include;
 import io.agrest.compiler.AgEntityCompiler;
-import io.agrest.compiler.AnnotationBasedCompiler;
+import io.agrest.compiler.AnnotationsAgEntityCompiler;
 import io.agrest.runtime.entity.*;
 import io.agrest.runtime.meta.IMetadataService;
 import io.agrest.runtime.meta.MetadataService;
@@ -36,7 +36,7 @@ public class CreateResourceEntityStage_IncludeObjectTest {
     @BeforeAll
     public static void beforeAll() {
 
-        AgEntityCompiler compiler = new AnnotationBasedCompiler(Collections.emptyMap());
+        AgEntityCompiler compiler = new AnnotationsAgEntityCompiler(Collections.emptyMap());
         MetadataService metadataService = new MetadataService(Collections.singletonList(compiler));
         
         // prepare create entity stage

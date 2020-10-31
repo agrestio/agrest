@@ -12,19 +12,19 @@ import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class AnnotationBasedCompilerTest {
+public class AnnotationsAgEntityCompilerTest {
 
     private static Collection<AgEntityCompiler> compilers;
 
     @BeforeAll
     public static void setUpClass() {
         compilers = new ArrayList<>();
-        compilers.add(new AnnotationBasedCompiler(Collections.emptyMap()));
+        compilers.add(new AnnotationsAgEntityCompiler(Collections.emptyMap()));
     }
 
     @Test
     public void testCompile() {
-        AgEntity<Entity> entity = new AnnotationBasedCompiler(Collections.emptyMap())
+        AgEntity<Entity> entity = new AnnotationsAgEntityCompiler(Collections.emptyMap())
                 .compile(Entity.class, new LazyAgDataMap(compilers));
         assertNotNull(entity);
         assertEquals(1, entity.getIdParts().size());
@@ -34,7 +34,7 @@ public class AnnotationBasedCompilerTest {
 
     @Test
     public void testCompile_CollectionAttributes() {
-        AgEntity<P8> entity = new AnnotationBasedCompiler(Collections.emptyMap())
+        AgEntity<P8> entity = new AnnotationsAgEntityCompiler(Collections.emptyMap())
                 .compile(P8.class, new LazyAgDataMap(compilers));
         assertNotNull(entity);
         assertEquals(0, entity.getIdParts().size());
@@ -51,7 +51,7 @@ public class AnnotationBasedCompilerTest {
 
     @Test
     public void testCompile_EntityWithNoAnnotations() {
-        AgEntity<EntityNoAnnotations> entity = new AnnotationBasedCompiler(Collections.emptyMap())
+        AgEntity<EntityNoAnnotations> entity = new AnnotationsAgEntityCompiler(Collections.emptyMap())
                 .compile(EntityNoAnnotations.class, new LazyAgDataMap(compilers));
         assertNotNull(entity);
         assertTrue(entity.getAttributes().isEmpty());

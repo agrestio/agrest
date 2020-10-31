@@ -8,7 +8,7 @@ import io.agrest.encoder.PropertyMetadataEncoder;
 import io.agrest.encoder.converter.StringConverter;
 import io.agrest.meta.AgEntityOverlay;
 import io.agrest.compiler.AgEntityCompiler;
-import io.agrest.compiler.AnnotationBasedCompiler;
+import io.agrest.compiler.AnnotationsAgEntityCompiler;
 import io.agrest.meta.parser.IResourceParser;
 import io.agrest.meta.parser.ResourceParser;
 import io.agrest.provider.AgExceptionMapper;
@@ -332,9 +332,9 @@ public class AgBuilder {
             binder.bindList(EntityEncoderFilter.class).addAll(entityEncoderFilters);
 
 
-            binder.bind(AnnotationBasedCompiler.class).to(AnnotationBasedCompiler.class);
+            binder.bind(AnnotationsAgEntityCompiler.class).to(AnnotationsAgEntityCompiler.class);
             binder.bindList(AgEntityCompiler.class)
-                    .add(AnnotationBasedCompiler.class);
+                    .add(AnnotationsAgEntityCompiler.class);
 
             binder.bindMap(AgEntityOverlay.class).putAll(entityOverlays);
             binder.bindMap(Class.class, AgRuntime.BODY_WRITERS_MAP)

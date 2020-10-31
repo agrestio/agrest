@@ -5,7 +5,7 @@ import io.agrest.annotation.AgId;
 import io.agrest.annotation.AgRelationship;
 import io.agrest.meta.AgEntity;
 import io.agrest.compiler.AgEntityCompiler;
-import io.agrest.compiler.AnnotationBasedCompiler;
+import io.agrest.compiler.AnnotationsAgEntityCompiler;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -20,7 +20,7 @@ public class MetadataServiceTest {
 
 	@BeforeAll
 	public static void before() {
-		AgEntityCompiler compiler = new AnnotationBasedCompiler(Collections.emptyMap());
+		AgEntityCompiler compiler = new AnnotationsAgEntityCompiler(Collections.emptyMap());
 		metadata = new MetadataService(Collections.singletonList(compiler));
 	}
 

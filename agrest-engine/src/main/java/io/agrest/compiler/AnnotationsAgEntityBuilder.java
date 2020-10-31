@@ -21,11 +21,11 @@ import java.util.Map;
 /**
  * A helper class to compile custom {@link AgEntity} objects based on annotations.
  *
- * @since 1.12
+ * @since 4.1
  */
-public class AgEntityBuilder<T> {
+public class AnnotationsAgEntityBuilder<T> {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(AgEntityBuilder.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(AnnotationsAgEntityBuilder.class);
 
     private final Class<T> type;
     private final String name;
@@ -37,7 +37,7 @@ public class AgEntityBuilder<T> {
     private final Map<String, io.agrest.meta.AgAttribute> attributes;
     private final Map<String, io.agrest.meta.AgRelationship> relationships;
 
-    public AgEntityBuilder(Class<T> type, AgDataMap agDataMap) {
+    public AnnotationsAgEntityBuilder(Class<T> type, AgDataMap agDataMap) {
         this.type = type;
         this.name = type.getSimpleName();
         this.agDataMap = agDataMap;
@@ -47,15 +47,12 @@ public class AgEntityBuilder<T> {
         this.relationships = new HashMap<>();
     }
 
-    public AgEntityBuilder<T> overlay(AgEntityOverlay<T> overlay) {
+    public AnnotationsAgEntityBuilder<T> overlay(AgEntityOverlay<T> overlay) {
         this.overlay = overlay;
         return this;
     }
 
-    /**
-     * @since 3.4
-     */
-    public AgEntityBuilder<T> rootDataResolver(RootDataResolver<T> resolver) {
+    public AnnotationsAgEntityBuilder<T> rootDataResolver(RootDataResolver<T> resolver) {
         this.rootDataResolver = resolver;
         return this;
     }

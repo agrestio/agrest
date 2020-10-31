@@ -10,14 +10,14 @@ import java.util.Map;
 /**
  * @since 4.1
  */
-public class AnnotationBasedCompiler implements AgEntityCompiler {
+public class AnnotationsAgEntityCompiler implements AgEntityCompiler {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(AnnotationBasedCompiler.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(AnnotationsAgEntityCompiler.class);
 
-    private Map<String, AgEntityOverlay> entityOverlays;
+    private Map<String, AgEntityOverlay> overlays;
 
-    public AnnotationBasedCompiler(@Inject Map<String, AgEntityOverlay> entityOverlays) {
-        this.entityOverlays = entityOverlays;
+    public AnnotationsAgEntityCompiler(@Inject Map<String, AgEntityOverlay> overlays) {
+        this.overlays = overlays;
     }
 
     @Override
@@ -27,8 +27,8 @@ public class AnnotationBasedCompiler implements AgEntityCompiler {
 
     private <T> AgEntity<T> doCompile(Class<T> type, AgDataMap dataMap) {
         LOGGER.debug("compiling entity of type {}", type);
-        AgEntity<T> entity = new AgEntityBuilder<>(type, dataMap)
-                .overlay(entityOverlays.get(type.getName()))
+        AgEntity<T> entity = new AnnotationsAgEntityBuilder<>(type, dataMap)
+                .overlay(overlays.get(type.getName()))
                 .build();
 
         if (LOGGER.isInfoEnabled()) {

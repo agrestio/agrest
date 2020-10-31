@@ -5,10 +5,10 @@ import io.agrest.RootResourceEntity;
 import io.agrest.encoder.Encoder;
 import io.agrest.encoder.Encoders;
 import io.agrest.meta.AgEntity;
-import io.agrest.compiler.AgEntityBuilder;
+import io.agrest.compiler.AnnotationsAgEntityBuilder;
 import io.agrest.meta.LazyAgDataMap;
 import io.agrest.compiler.AgEntityCompiler;
-import io.agrest.compiler.AnnotationBasedCompiler;
+import io.agrest.compiler.AnnotationsAgEntityCompiler;
 import io.agrest.pojo.model.P1;
 import io.agrest.pojo.model.P6;
 import io.agrest.runtime.semantics.RelationshipMapper;
@@ -33,7 +33,7 @@ public class EncoderService_Pojo_Test {
     @BeforeAll
     public static void setUpClass() {
         compilers = new ArrayList<>();
-        compilers.add(new AnnotationBasedCompiler(Collections.emptyMap()));
+        compilers.add(new AnnotationsAgEntityCompiler(Collections.emptyMap()));
     }
 
     @BeforeEach
@@ -51,7 +51,7 @@ public class EncoderService_Pojo_Test {
 
     @Test
     public void testEncode_SimplePojo_noId() {
-        AgEntity<P1> p1age = new AgEntityBuilder<>(P1.class, new LazyAgDataMap(compilers)).build();
+        AgEntity<P1> p1age = new AnnotationsAgEntityBuilder<>(P1.class, new LazyAgDataMap(compilers)).build();
         RootResourceEntity<P1> entity = new RootResourceEntity<>(p1age, null);
         ResourceEntityUtils.appendAttribute(entity, "name", String.class, P1::getName);
 
@@ -67,7 +67,7 @@ public class EncoderService_Pojo_Test {
         p6.setStringId("myid");
         p6.setIntProp(4);
 
-        AgEntity<P6> p6age = new AgEntityBuilder<>(P6.class, new LazyAgDataMap(compilers)).build();
+        AgEntity<P6> p6age = new AnnotationsAgEntityBuilder<>(P6.class, new LazyAgDataMap(compilers)).build();
         RootResourceEntity<P6> entity = new RootResourceEntity<>(p6age, null);
         ResourceEntityUtils.appendAttribute(entity, "intProp", Integer.class, P6::getIntProp);
         entity.includeId();

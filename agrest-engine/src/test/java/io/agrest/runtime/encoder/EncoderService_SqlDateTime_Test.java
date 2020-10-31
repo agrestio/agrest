@@ -9,7 +9,7 @@ import io.agrest.meta.AgDataMap;
 import io.agrest.meta.AgEntity;
 import io.agrest.meta.LazyAgDataMap;
 import io.agrest.compiler.AgEntityCompiler;
-import io.agrest.compiler.AnnotationBasedCompiler;
+import io.agrest.compiler.AnnotationsAgEntityCompiler;
 import io.agrest.runtime.semantics.RelationshipMapper;
 import io.agrest.unit.ResourceEntityUtils;
 import org.junit.jupiter.api.BeforeEach;
@@ -45,7 +45,7 @@ public class EncoderService_SqlDateTime_Test {
                 new RelationshipMapper(),
                 Collections.emptyMap());
 
-        AgEntityCompiler compiler = new AnnotationBasedCompiler(Collections.emptyMap());
+        AgEntityCompiler compiler = new AnnotationsAgEntityCompiler(Collections.emptyMap());
         AgDataMap dataMap = new LazyAgDataMap(Collections.singletonList(compiler));
         this.sqlDateTimeEntity = dataMap.getEntity(PSqlDateTime.class);
     }
