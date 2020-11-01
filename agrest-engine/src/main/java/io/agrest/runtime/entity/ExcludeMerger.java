@@ -88,18 +88,6 @@ public class ExcludeMerger implements IExcludeMerger {
     }
 
     private boolean isValidProperty(AgEntity<?> entity, String name) {
-        if (entity.getAttribute(name) != null) {
-            return true;
-        }
-
-        if (entity.getRelationship(name) != null) {
-            return true;
-        }
-
-        if (name.equals(PathConstants.ID_PK_ATTRIBUTE)) {
-            return true;
-        }
-
-        return false;
+        return entity.getAttribute(name) != null || entity.getRelationship(name) != null || name.equals(PathConstants.ID_PK_ATTRIBUTE);
     }
 }

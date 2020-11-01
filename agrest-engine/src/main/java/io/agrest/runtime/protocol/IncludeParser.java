@@ -24,10 +24,10 @@ public class IncludeParser implements IIncludeParser {
     private static final String JSON_KEY_START = "start";
     private static final String JSON_KEY_INCLUDE = "include";
 
-    private IJacksonService jsonParser;
-    private ICayenneExpParser expParser;
-    private ISortParser sortParser;
-    private ISizeParser sizeParser;
+    private final IJacksonService jsonParser;
+    private final ICayenneExpParser expParser;
+    private final ISortParser sortParser;
+    private final ISizeParser sizeParser;
 
     public IncludeParser(
             @Inject IJacksonService jsonParser,
