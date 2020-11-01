@@ -382,7 +382,7 @@ public class CreateResourceEntityStageTest {
     }
 
     @Test
-    public void testExecute_CayenneExp_BadSpec() {
+    public void testExecute_Exp_BadSpec() {
 
         SelectContext<Ts> context = new SelectContext<>(Ts.class);
         context.setMergedRequest(requestBuilderFactory
@@ -393,7 +393,7 @@ public class CreateResourceEntityStageTest {
     }
 
     @Test
-    public void testExecute_CayenneExp() {
+    public void testExecute_Exp() {
 
         SelectContext<Ts> context = new SelectContext<>(Ts.class);
         context.setMergedRequest(requestBuilderFactory

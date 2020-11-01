@@ -2,6 +2,7 @@
 
 * #459 "code-first" OpenAPI support and Swagger integration
 * #460 Support for the new Cayenne "Json" type
+* #462 "exp" key to replace "cayenneExp"
 * #465 AgIdPart metadata object
 * #466 Deprecate Agrest metadata API
 * #467 Injectable AgDataMap, remove redundant IMetadataService

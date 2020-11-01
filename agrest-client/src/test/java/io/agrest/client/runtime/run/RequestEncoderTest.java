@@ -71,7 +71,7 @@ public class RequestEncoderTest {
 	}
 
 	@Test
-	public void testEncode_Include_CayenneExpression() throws UnsupportedEncodingException {
+	public void testEncode_Include_Expression() throws UnsupportedEncodingException {
 
 		Include include = Include.path("abc")
 				.exp(Expression.query("name like $name and age >= $age").param("name", "Jo%").param("age", 21))

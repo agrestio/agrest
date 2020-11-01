@@ -27,19 +27,19 @@ public class GET_AgRequestIT extends DbTest {
             .build();
 
     @Test
-    public void test_CayenneExp_OverrideByAgRequest() {
+    public void test_Exp_OverrideByAgRequest() {
 
         tester.e2().insertColumns("id_", "name")
                 .values(1, "xxx")
                 .values(2, "yyy")
                 .values(3, "zzz").exec();
 
-        tester.target("/e2_cayenneExp")
+        tester.target("/e2_exp")
                 .queryParam("include", "name")
-                .queryParam("cayenneExp", "{\"exp\":\"name = 'yyy'\"}")
+                .queryParam("exp", "{\"exp\":\"name = 'yyy'\"}")
                 .get()
                 .wasOk()
-                // returns 'xxx' instead of 'yyy' due to overriding cayenneExp by AgRequest
+                // returns 'xxx' instead of 'yyy' due to overriding exp by AgRequest
                 .bodyEquals(1, "{\"name\":\"xxx\"}");
     }
 
@@ -53,7 +53,7 @@ public class GET_AgRequestIT extends DbTest {
 
         tester.target("/e3_includes")
                 .queryParam("include", "id")
-                .queryParam("cayenneExp", "{\"exp\":\"name = 'yyy'\"}")
+                .queryParam("exp", "{\"exp\":\"name = 'yyy'\"}")
                 .get()
                 // returns names instead of id's due to overriding include by AgRequest
                 .wasOk().bodyEquals(2, "{\"name\":\"yyy\"}", "{\"name\":\"yyy\"}");
@@ -69,7 +69,7 @@ public class GET_AgRequestIT extends DbTest {
 
         tester.target("/e3_excludes")
                 .queryParam("exclude", "name")
-                .queryParam("cayenneExp", "{\"exp\":\"name = 'yyy'\"}")
+                .queryParam("exp", "{\"exp\":\"name = 'yyy'\"}")
                 .get()
                 // returns 'name' and other fields except 'id' due to overriding exclude by AgRequest
                 .wasOk()
@@ -123,7 +123,7 @@ public class GET_AgRequestIT extends DbTest {
         private Configuration config;
 
         @GET
-        @Path("e2_cayenneExp")
+        @Path("e2_exp")
         public DataResponse<E2> getE2(@Context UriInfo uriInfo) {
             Exp exp = new Exp("name = 'xxx'");
             AgRequest agRequest = Ag.request(config).exp(exp).build();

@@ -75,7 +75,7 @@ public class SenchaCreateEntityStageTest extends CayenneNoDbTest {
     }
 
     @Test
-    public void testSelectRequest_Filter_CayenneExp() {
+    public void testSelectRequest_Filter_Exp() {
         SelectContext<E2> context = new SelectContext<>(E2.class);
 
         Exp exp = new Exp("address = '1 Main Street'");

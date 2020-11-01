@@ -38,7 +38,6 @@ public class ParamsTest {
         Map<String, Parameter> paramsMap = new HashMap<>();
         get.getParameters().forEach(p -> paramsMap.put(p.getName(), p));
 
-        // TODO: Agrest should define the names enum publicly somewhere
         assertEquals(
                 new HashSet<>(asList("cayenneExp", "dir", "exclude", "exp", "include", "limit", "mapBy", "sort", "start")),
                 paramsMap.keySet());
@@ -55,9 +54,8 @@ public class ParamsTest {
         Map<String, Parameter> paramsMap = new HashMap<>();
         get.getParameters().forEach(p -> paramsMap.put(p.getName(), p));
 
-        // TODO: Agrest should define the names enum publicly somewhere
         assertEquals(
-                new HashSet<>(asList("cayenneExp", "sort")),
+                new HashSet<>(asList("exp", "sort")),
                 paramsMap.keySet());
 
         // TODO assert the actual parameters
@@ -94,7 +92,7 @@ public class ParamsTest {
 
         @GET
         @Path("explicit-params")
-        public DataResponse<P1> explicitParams(@QueryParam("cayenneExp") String exp, @QueryParam("sort") String sort) {
+        public DataResponse<P1> explicitParams(@QueryParam("exp") String exp, @QueryParam("sort") String sort) {
             throw new UnsupportedOperationException("endpoint logic is irrelevant for the test");
         }
 

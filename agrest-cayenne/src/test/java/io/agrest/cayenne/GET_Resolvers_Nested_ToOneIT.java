@@ -39,7 +39,7 @@ public class GET_Resolvers_Nested_ToOneIT extends DbTest {
                 .queryParam("include", "id")
                 .queryParam("include", "name")
                 .queryParam("include", "e2.name")
-                .queryParam("cayenneExp", "id > 3")
+                .queryParam("exp", "id > 3")
                 .get()
                 .wasOk()
                 .bodyEquals(2,
@@ -62,7 +62,7 @@ public class GET_Resolvers_Nested_ToOneIT extends DbTest {
                 .queryParam("include", "id")
                 .queryParam("include", "name")
                 .queryParam("include", "e2.name")
-                .queryParam("cayenneExp", "id > 3")
+                .queryParam("exp", "id > 3")
                 .get().wasOk()
                 .bodyEquals(2,
                         "{\"id\":8,\"e2\":{\"name\":\"xxx\"},\"name\":\"yyy\"}",
@@ -113,7 +113,7 @@ public class GET_Resolvers_Nested_ToOneIT extends DbTest {
                 .queryParam("include", "id")
                 .queryParam("include", "name")
                 .queryParam("include", "e2.name")
-                .queryParam("cayenneExp", "id > 3")
+                .queryParam("exp", "id > 3")
                 .get().wasOk()
                 .bodyEquals(2,
                         "{\"id\":8,\"e2\":{\"name\":\"xxx\"},\"name\":\"yyy\"}",
@@ -135,7 +135,7 @@ public class GET_Resolvers_Nested_ToOneIT extends DbTest {
                 .queryParam("include", "id")
                 .queryParam("include", "name")
                 .queryParam("include", "e2.name")
-                .queryParam("cayenneExp", "id > 9")
+                .queryParam("exp", "id > 9")
                 .get().wasOk()
                 .bodyEquals(0);
 

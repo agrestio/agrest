@@ -71,7 +71,7 @@ public class SenchaParseRequestStageTest extends CayenneNoDbTest {
 
 
 	@Test
-	public void testSelectRequest_Filter_CayenneExp() {
+	public void testSelectRequest_Filter_Exp() {
 
 		@SuppressWarnings("unchecked")
 		MultivaluedMap<String, String> params = mock(MultivaluedMap.class);

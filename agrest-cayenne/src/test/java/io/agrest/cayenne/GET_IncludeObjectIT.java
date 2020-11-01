@@ -173,7 +173,7 @@ public class GET_IncludeObjectIT extends DbTest {
     }
 
     @Test
-    public void testMapBy_ToMany_WithCayenneExp() {
+    public void testMapBy_ToMany_WithExp() {
 
         // see LF-294 - filter applied too late may cause a AgException
 
@@ -185,7 +185,7 @@ public class GET_IncludeObjectIT extends DbTest {
                 .values(6, null, 1).exec();
 
         tester.target("/e2")
-                .queryParam("include", "{\"path\":\"e3s\",\"mapBy\":\"name\", \"cayenneExp\":{\"exp\":\"name != NULL\"}}")
+                .queryParam("include", "{\"path\":\"e3s\",\"mapBy\":\"name\", \"exp\":{\"exp\":\"name != NULL\"}}")
                 .queryParam("include", "id")
                 .get().wasOk()
                 .bodyEquals(1, "{\"id\":1,\"e3s\":{"
@@ -261,7 +261,7 @@ public class GET_IncludeObjectIT extends DbTest {
     }
 
     @Test
-    public void testToMany_CayenneExp() {
+    public void testToMany_Exp() {
 
         tester.e2().insertColumns("id_", "name").values(1, "xxx").exec();
 
@@ -271,7 +271,7 @@ public class GET_IncludeObjectIT extends DbTest {
                 .values(7, "a", 1).exec();
 
         tester.target("/e2")
-                .queryParam("include", "{\"path\":\"e3s\",\"cayenneExp\":{\"exp\":\"name = $n\", \"params\":{\"n\":\"a\"}}}")
+                .queryParam("include", "{\"path\":\"e3s\",\"exp\":{\"exp\":\"name = $n\", \"params\":{\"n\":\"a\"}}}")
                 .queryParam("include", "id")
                 .get().wasOk()
                 .bodyEquals(1, "{\"id\":1,\"e3s\":["
@@ -280,7 +280,7 @@ public class GET_IncludeObjectIT extends DbTest {
     }
 
     @Test
-    public void testToMany_CayenneExpById() {
+    public void testToMany_ExpById() {
 
         tester.e5().insertColumns("id", "name")
                 .values(545, "B")
@@ -294,7 +294,7 @@ public class GET_IncludeObjectIT extends DbTest {
                 .values(57, "b", 51, 546).exec();
 
         tester.target("/e2")
-                .queryParam("include", "{\"path\":\"e3s\",\"cayenneExp\":{\"exp\":\"e5 = $id\", \"params\":{\"id\":546}}}")
+                .queryParam("include", "{\"path\":\"e3s\",\"exp\":{\"exp\":\"e5 = $id\", \"params\":{\"id\":546}}}")
                 .queryParam("include", "id")
                 .get().wasOk()
                 .bodyEquals(1, "{\"id\":51,\"e3s\":[{\"id\":57,\"name\":\"b\",\"phoneNumber\":null}]}");

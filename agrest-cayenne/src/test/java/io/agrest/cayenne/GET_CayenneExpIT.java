@@ -2,10 +2,10 @@ package io.agrest.cayenne;
 
 import io.agrest.Ag;
 import io.agrest.DataResponse;
-import io.agrest.cayenne.unit.AgCayenneTester;
-import io.agrest.cayenne.unit.DbTest;
 import io.agrest.cayenne.cayenne.main.E2;
 import io.agrest.cayenne.cayenne.main.E3;
+import io.agrest.cayenne.unit.AgCayenneTester;
+import io.agrest.cayenne.unit.DbTest;
 import io.bootique.junit5.BQTestTool;
 import org.junit.jupiter.api.Test;
 
@@ -15,7 +15,8 @@ import javax.ws.rs.core.Configuration;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.UriInfo;
 
-public class GET_ExpIT extends DbTest {
+@Deprecated
+public class GET_CayenneExpIT extends DbTest {
 
     @BQTestTool
     static final AgCayenneTester tester = tester(Resource.class)
@@ -31,7 +32,7 @@ public class GET_ExpIT extends DbTest {
                 .values(3, "zzz").exec();
 
         tester.target("/e2").queryParam("include", "id")
-                .queryParam("exp", "{\"exp\":\"name = 'yyy'\"}")
+                .queryParam("cayenneExp", "{\"exp\":\"name = 'yyy'\"}")
                 .get()
                 .wasOk().bodyEquals(1, "{\"id\":2}");
     }
@@ -45,7 +46,7 @@ public class GET_ExpIT extends DbTest {
                 .values(3, "zzz").exec();
 
         tester.target("/e2").queryParam("include", "id")
-                .queryParam("exp", "{\"exp\":\"name = $n\",\"params\":{\"n\":\"xxx\"}}")
+                .queryParam("cayenneExp", "{\"exp\":\"name = $n\",\"params\":{\"n\":\"xxx\"}}")
                 .get()
                 .wasOk()
                 .bodyEquals(1, "{\"id\":1}");
@@ -61,7 +62,7 @@ public class GET_ExpIT extends DbTest {
 
         tester.target("/e2")
                 .queryParam("include", "id")
-                .queryParam("exp", "name = 'yyy'")
+                .queryParam("cayenneExp", "name = 'yyy'")
                 .get()
                 .wasOk()
                 .bodyEquals(1, "{\"id\":2}");
@@ -77,7 +78,7 @@ public class GET_ExpIT extends DbTest {
 
         tester.target("/e2")
                 .queryParam("include", "id")
-                .queryParam("exp", "[\"name = 'yyy'\"]")
+                .queryParam("cayenneExp", "[\"name = 'yyy'\"]")
                 .get()
                 .wasOk().bodyEquals(1, "{\"id\":2}");
     }
@@ -92,7 +93,7 @@ public class GET_ExpIT extends DbTest {
 
         tester.target("/e2")
                 .queryParam("include", "id")
-                .queryParam("exp", "[\"name = $b\", \"xxx\"]")
+                .queryParam("cayenneExp", "[\"name = $b\", \"xxx\"]")
                 .get()
                 .wasOk().bodyEquals(1, "{\"id\":1}");
     }
@@ -111,7 +112,7 @@ public class GET_ExpIT extends DbTest {
                 .values(9, "zzz", 2).exec();
 
         tester.target("/e3").queryParam("include", "id")
-                .queryParam("exp", "{\"exp\":\"e2 in $ids\",\"params\":{\"ids\": [3, 4]}}")
+                .queryParam("cayenneExp", "{\"exp\":\"e2 in $ids\",\"params\":{\"ids\": [3, 4]}}")
                 .get()
                 .wasOk().bodyEquals(1, "{\"id\":6}");
     }
@@ -129,7 +130,7 @@ public class GET_ExpIT extends DbTest {
 
         tester.target("/e3")
                 .queryParam("include", "id")
-                .queryParam("exp", "{\"exp\":\"e2 not in $ids\",\"params\":{\"ids\": [1, 2]}}")
+                .queryParam("cayenneExp", "{\"exp\":\"e2 not in $ids\",\"params\":{\"ids\": [1, 2]}}")
                 .get()
                 .wasOk().bodyEquals(0, "");
     }
@@ -147,7 +148,7 @@ public class GET_ExpIT extends DbTest {
 
         tester.target("/e3")
                 .queryParam("include", "id")
-                .queryParam("exp", "{\"exp\":\"e2+.name = null\"}")
+                .queryParam("cayenneExp", "{\"exp\":\"e2+.name = null\"}")
                 .get()
                 .wasOk().bodyEquals(1, "{\"id\":9}");
     }
@@ -165,7 +166,7 @@ public class GET_ExpIT extends DbTest {
 
         tester.target("/e3")
                 .queryParam("include", "id")
-                .queryParam("exp", "{\"exp\":\"e2+ = null\"}")
+                .queryParam("cayenneExp", "{\"exp\":\"e2+ = null\"}")
                 .get()
                 .wasOk().bodyEquals(1, "{\"id\":9}");
     }
@@ -183,7 +184,7 @@ public class GET_ExpIT extends DbTest {
 
         tester.target("/e2")
                 .queryParam("include", "id")
-                .queryParam("exp", "{\"exp\":\"e3s+ = null\"}")
+                .queryParam("cayenneExp", "{\"exp\":\"e3s+ = null\"}")
                 .get()
                 .wasOk().bodyEquals(1, "{\"id\":2}");
     }
@@ -197,7 +198,7 @@ public class GET_ExpIT extends DbTest {
 
         tester.target("/e3")
                 .queryParam("include", "id")
-                .queryParam("exp", "{\"exp\":\"name in ($n1, $n2)\",\"params\":{\"n1\":\"zzz\",\"n2\":\"xxx\"}}")
+                .queryParam("cayenneExp", "{\"exp\":\"name in ($n1, $n2)\",\"params\":{\"n1\":\"zzz\",\"n2\":\"xxx\"}}")
                 .get()
                 .wasOk().bodyEquals(1, "{\"id\":9}");
     }
@@ -215,7 +216,7 @@ public class GET_ExpIT extends DbTest {
 
         tester.target("/e3")
                 .queryParam("include", "id")
-                .queryParam("exp", "{\"exp\":\"e2.name in ($n1, $n2)\",\"params\":{\"n1\":\"zzz\",\"n2\":\"xxx\"}}")
+                .queryParam("cayenneExp", "{\"exp\":\"e2.name in ($n1, $n2)\",\"params\":{\"n1\":\"zzz\",\"n2\":\"xxx\"}}")
                 .get()
                 .wasOk().bodyEquals(1, "{\"id\":8}");
     }
@@ -232,7 +233,7 @@ public class GET_ExpIT extends DbTest {
                 .values(9, "zzz", 2).exec();
 
         tester.target("/e3").queryParam("include", "id")
-                .queryParam("exp", "{\"exp\":\"e2 not in ($id)\",\"params\":{\"id\":1}}")
+                .queryParam("cayenneExp", "{\"exp\":\"e2 not in ($id)\",\"params\":{\"id\":1}}")
                 .get()
                 .wasOk().bodyEquals(1, "{\"id\":9}");
     }
@@ -250,7 +251,7 @@ public class GET_ExpIT extends DbTest {
 
         tester.target("/e3")
                 .queryParam("include", "id")
-                .queryParam("exp", "{\"exp\":\"e2 not in ($id1, $id2)\",\"params\":{\"id1\":1,\"id2\":3}}")
+                .queryParam("cayenneExp", "{\"exp\":\"e2 not in ($id1, $id2)\",\"params\":{\"id1\":1,\"id2\":3}}")
                 .get()
                 .wasOk().bodyEquals(1, "{\"id\":9}");
     }

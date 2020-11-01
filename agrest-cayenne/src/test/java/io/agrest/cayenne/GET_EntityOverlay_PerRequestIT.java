@@ -102,7 +102,7 @@ public class GET_EntityOverlay_PerRequestIT extends DbTest {
     }
 
     @Test
-    public void test_OverlayedRelationship_CayenneExpOnParent() {
+    public void test_OverlayedRelationship_ExpOnParent() {
 
         tester.e4().insertColumns("id", "c_varchar").values(2, "a").values(4, "b").exec();
         tester.e22().insertColumns("id", "name")
@@ -111,7 +111,7 @@ public class GET_EntityOverlay_PerRequestIT extends DbTest {
                 .values(3, "c").exec();
 
         tester.target("/e4/xyz")
-                .queryParam("cayenneExp", "id = 2")
+                .queryParam("exp", "id = 2")
                 .queryParam("include", "[\"id\",\"dynamicRelationship\"]")
                 .get()
                 .wasOk()
@@ -121,7 +121,7 @@ public class GET_EntityOverlay_PerRequestIT extends DbTest {
     @Test
     @Disabled("A relationship that is a child of dynamic relationship fails to resolve properly. We must use " +
             "read-from-parent resolver for anything hanging off of a dynamic relationship instead of using built-in Cayenne resolvers")
-    public void test_OverlayedRelationship_CayenneExpOnParent_Nested() {
+    public void test_OverlayedRelationship_ExpOnParent_Nested() {
 
         tester.e4().insertColumns("id", "c_varchar").values(2, "a").values(4, "b").exec();
 
@@ -136,7 +136,7 @@ public class GET_EntityOverlay_PerRequestIT extends DbTest {
                 .values(3, "c", 1).exec();
 
         tester.target("/e4_2")
-                .queryParam("cayenneExp", "id = 2")
+                .queryParam("exp", "id = 2")
                 .queryParam("include", "[\"id\",\"dynamicRelationship.e2\"]")
                 .get().wasOk()
                 .bodyEquals(1, "{\"id\":2,\"dynamicRelationship\":{\"e2\":{\"id\":2,\"name\":\"b2\"}}");

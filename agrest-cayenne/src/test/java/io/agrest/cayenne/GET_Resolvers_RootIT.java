@@ -48,7 +48,7 @@ public class GET_Resolvers_RootIT extends DbTest {
                 .queryParam("include", "id")
                 .queryParam("include", "name")
                 .queryParam("include", "e3s.name")
-                .queryParam("cayenneExp", "id < 3")
+                .queryParam("exp", "id < 3")
                 .queryParam("sort", "id")
                 .get().wasOk()
                 .bodyEquals(2,

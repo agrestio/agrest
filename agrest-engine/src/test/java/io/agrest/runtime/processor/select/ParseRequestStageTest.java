@@ -278,20 +278,20 @@ public class ParseRequestStageTest {
     }
 
     @Test
-    public void testExecute_CayenneExp_BadSpec() {
+    public void testExecute_Exp_BadSpec() {
 
         MultivaluedMap<String, String> params = new MultivaluedHashMap<>();
-        params.putSingle("cayenneExp", "{exp : \"numericProp = 12345 and stringProp = 'John Smith' and booleanProp = true\"}");
+        params.putSingle("exp", "{exp : \"numericProp = 12345 and stringProp = 'John Smith' and booleanProp = true\"}");
         SelectContext<Tr> context = prepareContext(Tr.class, params);
 
         assertThrows(AgException.class, () -> stage.execute(context));
     }
 
     @Test
-    public void testExecute_CayenneExp() {
+    public void testExecute_Exp() {
 
         MultivaluedMap<String, String> params = new MultivaluedHashMap<>();
-        params.putSingle("cayenneExp", "{\"exp\" : \"a = 'John Smith'\"}");
+        params.putSingle("exp", "{\"exp\" : \"a = 'John Smith'\"}");
         SelectContext<Tr> context = prepareContext(Tr.class, params);
 
         stage.execute(context);

@@ -198,7 +198,7 @@ public class ConstraintsHandlerTest {
     }
 
     @Test
-    public void testConstrainResponse_CayenneExp() {
+    public void testConstrainResponse_Exp() {
 
         AgEntity<Tr> entity = dataMap.getEntity(Tr.class);
         Constraint<Tr> constraint = Constraint.excludeAll(Tr.class).qualifier(new Exp("a = 5"));

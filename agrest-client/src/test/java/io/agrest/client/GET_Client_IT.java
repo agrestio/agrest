@@ -113,7 +113,7 @@ public class GET_Client_IT extends ClientDbTest {
     }
 
     @Test
-    public void testClient_CayenneExpression1() {
+    public void testClient_Expression1() {
 
         tester.e2().insertColumns("id_", "name")
                 .values(1, "xxx")
@@ -136,7 +136,7 @@ public class GET_Client_IT extends ClientDbTest {
     }
 
     @Test
-    public void testClient_CayenneExpression2() {
+    public void testClient_Expression2() {
 
         tester.e4().insertColumns("id", "c_varchar", "c_int", "c_boolean")
                 .values(1, "xxx", 1, false)
