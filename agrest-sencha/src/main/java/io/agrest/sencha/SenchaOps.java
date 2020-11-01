@@ -14,10 +14,8 @@ import java.util.function.Consumer;
  */
 public class SenchaOps {
 
-    private static final String QUERY = "query";
-
     public static <T> Consumer<SelectContext<T>> startsWithFilter(String property, UriInfo uriInfo) {
-        String value = ParameterExtractor.string(uriInfo.getQueryParameters(), QUERY);
+        String value = ParameterExtractor.string(uriInfo.getQueryParameters(), AgProtocolSenchaExt.query);
         return startsWithFilter(property, value);
     }
 

@@ -11,28 +11,24 @@ import java.util.Map;
  */
 public abstract class ParameterExtractor {
 
-    public static String string(Map<String, List<String>> parameters, String name) {
+    public static <T extends Enum<T>> String string(Map<String, List<String>> parameters, T param) {
 
-        List<String> strings = strings(parameters, name);
+        List<String> strings = strings(parameters, param);
         return strings.isEmpty() ? null : strings.get(0);
     }
 
-    public static List<String> strings(Map<String, List<String>> parameters, String name) {
+    public static <T extends Enum<T>> List<String> strings(Map<String, List<String>> parameters, T param) {
         if (parameters == null) {
             return Collections.emptyList();
         }
 
-        List<String> result = parameters.get(name);
-        if (result == null) {
-            result = Collections.emptyList();
-        }
-
-        return result;
+        List<String> result = parameters.get(param.name());
+        return result != null ? result : Collections.emptyList();
     }
 
-    public static int integer(Map<String, List<String>> parameters, String name) {
+    public static <T extends Enum<T>> int integer(Map<String, List<String>> parameters, T param) {
 
-        List<String> strings = strings(parameters, name);
+        List<String> strings = strings(parameters, param);
         String value = strings.isEmpty() ? null : strings.get(0);
 
         if (value == null) {
@@ -49,9 +45,9 @@ public abstract class ParameterExtractor {
     /**
      * @since 3.2
      */
-    public static Integer integerObject(Map<String, List<String>> parameters, String name) {
+    public static <T extends Enum<T>> Integer integerObject(Map<String, List<String>> parameters, T param) {
 
-        List<String> strings = strings(parameters, name);
+        List<String> strings = strings(parameters, param);
         String value = strings.isEmpty() ? null : strings.get(0);
 
         if (value == null) {

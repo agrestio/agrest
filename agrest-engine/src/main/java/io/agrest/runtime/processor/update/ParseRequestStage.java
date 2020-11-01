@@ -3,6 +3,7 @@ package io.agrest.runtime.processor.update;
 import io.agrest.AgRequest;
 import io.agrest.AgRequestBuilder;
 import io.agrest.EntityUpdate;
+import io.agrest.base.protocol.AgProtocol;
 import io.agrest.meta.AgDataMap;
 import io.agrest.meta.AgEntity;
 import io.agrest.processor.Processor;
@@ -20,9 +21,6 @@ import java.util.Map;
  * @since 2.7
  */
 public class ParseRequestStage implements Processor<UpdateContext<?>> {
-
-    protected static final String PROTOCOL_EXCLUDE = "exclude";
-    protected static final String PROTOCOL_INCLUDE = "include";
 
     private AgDataMap dataMap;
     private IEntityUpdateParser updateParser;
@@ -77,8 +75,8 @@ public class ParseRequestStage implements Processor<UpdateContext<?>> {
 
     private AgRequest requestFromParams(Map<String, List<String>> parameters) {
         return requestBuilderFactory.builder()
-                .addIncludes(ParameterExtractor.strings(parameters, PROTOCOL_INCLUDE))
-                .addExcludes(ParameterExtractor.strings(parameters, PROTOCOL_EXCLUDE))
+                .addIncludes(ParameterExtractor.strings(parameters, AgProtocol.include))
+                .addExcludes(ParameterExtractor.strings(parameters, AgProtocol.exclude))
                 .build();
     }
 
@@ -105,7 +103,7 @@ public class ParseRequestStage implements Processor<UpdateContext<?>> {
             if (!request.getIncludes().isEmpty()) {
                 request.getIncludes().forEach(builder::addInclude);
             } else {
-                builder.addIncludes(ParameterExtractor.strings(parameters, PROTOCOL_INCLUDE));
+                builder.addIncludes(ParameterExtractor.strings(parameters, AgProtocol.include));
             }
         }
 
@@ -113,7 +111,7 @@ public class ParseRequestStage implements Processor<UpdateContext<?>> {
             if (!request.getExcludes().isEmpty()) {
                 request.getExcludes().forEach(builder::addExclude);
             } else {
-                builder.addExcludes(ParameterExtractor.strings(parameters, PROTOCOL_EXCLUDE));
+                builder.addExcludes(ParameterExtractor.strings(parameters, AgProtocol.exclude));
             }
         }
     }

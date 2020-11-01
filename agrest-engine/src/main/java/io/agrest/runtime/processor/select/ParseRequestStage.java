@@ -2,6 +2,7 @@ package io.agrest.runtime.processor.select;
 
 import io.agrest.AgRequest;
 import io.agrest.AgRequestBuilder;
+import io.agrest.base.protocol.AgProtocol;
 import io.agrest.processor.Processor;
 import io.agrest.processor.ProcessorOutcome;
 import io.agrest.runtime.protocol.ParameterExtractor;
@@ -16,16 +17,7 @@ import java.util.Map;
  */
 public class ParseRequestStage implements Processor<SelectContext<?>> {
 
-    protected static final String PROTOCOL_CAYENNE_EXP = "cayenneExp";
-    protected static final String PROTOCOL_DIR = "dir";
-    protected static final String PROTOCOL_EXCLUDE = "exclude";
-    protected static final String PROTOCOL_INCLUDE = "include";
-    protected static final String PROTOCOL_LIMIT = "limit";
-    protected static final String PROTOCOL_MAP_BY = "mapBy";
-    protected static final String PROTOCOL_SORT = "sort";
-    protected static final String PROTOCOL_START = "start";
-
-    protected IAgRequestBuilderFactory requestBuilderFactory;
+    protected final IAgRequestBuilderFactory requestBuilderFactory;
 
     public ParseRequestStage(@Inject IAgRequestBuilderFactory requestBuilderFactory) {
         this.requestBuilderFactory = requestBuilderFactory;
@@ -58,13 +50,13 @@ public class ParseRequestStage implements Processor<SelectContext<?>> {
     // keeping as protected, and returning a mutable builder to allow subclasses to interfere
     protected AgRequestBuilder requestFromParams(Map<String, List<String>> parameters) {
         return requestBuilderFactory.builder()
-                .cayenneExp(ParameterExtractor.string(parameters, PROTOCOL_CAYENNE_EXP))
-                .addOrdering(ParameterExtractor.string(parameters, PROTOCOL_SORT), ParameterExtractor.string(parameters, PROTOCOL_DIR))
-                .mapBy(ParameterExtractor.string(parameters, PROTOCOL_MAP_BY))
-                .addIncludes(ParameterExtractor.strings(parameters, PROTOCOL_INCLUDE))
-                .addExcludes(ParameterExtractor.strings(parameters, PROTOCOL_EXCLUDE))
-                .start(ParameterExtractor.integerObject(parameters, PROTOCOL_START))
-                .limit(ParameterExtractor.integerObject(parameters, PROTOCOL_LIMIT));
+                .cayenneExp(ParameterExtractor.string(parameters, AgProtocol.cayenneExp))
+                .addOrdering(ParameterExtractor.string(parameters, AgProtocol.sort), ParameterExtractor.string(parameters, AgProtocol.dir))
+                .mapBy(ParameterExtractor.string(parameters, AgProtocol.mapBy))
+                .addIncludes(ParameterExtractor.strings(parameters, AgProtocol.include))
+                .addExcludes(ParameterExtractor.strings(parameters, AgProtocol.exclude))
+                .start(ParameterExtractor.integerObject(parameters, AgProtocol.start))
+                .limit(ParameterExtractor.integerObject(parameters, AgProtocol.limit));
     }
 
     // keeping as protected, and returning a mutable builder to allow subclasses to interfere
@@ -74,8 +66,8 @@ public class ParseRequestStage implements Processor<SelectContext<?>> {
 
     private class RequestParametersMerger {
 
-        private Map<String, List<String>> parameters;
-        private AgRequest request;
+        private final Map<String, List<String>> parameters;
+        private final AgRequest request;
 
         RequestParametersMerger(AgRequest request, Map<String, List<String>> parameters) {
             this.parameters = parameters;
@@ -100,7 +92,7 @@ public class ParseRequestStage implements Processor<SelectContext<?>> {
             if (request.getCayenneExp() != null) {
                 builder.cayenneExp(request.getCayenneExp());
             } else {
-                builder.cayenneExp(ParameterExtractor.string(parameters, PROTOCOL_CAYENNE_EXP));
+                builder.cayenneExp(ParameterExtractor.string(parameters, AgProtocol.cayenneExp));
             }
         }
 
@@ -110,8 +102,8 @@ public class ParseRequestStage implements Processor<SelectContext<?>> {
                 request.getOrderings().forEach(builder::addOrdering);
             } else {
                 builder.addOrdering(
-                        ParameterExtractor.string(parameters, PROTOCOL_SORT),
-                        ParameterExtractor.string(parameters, PROTOCOL_DIR));
+                        ParameterExtractor.string(parameters, AgProtocol.sort),
+                        ParameterExtractor.string(parameters, AgProtocol.dir));
             }
         }
 
@@ -119,7 +111,7 @@ public class ParseRequestStage implements Processor<SelectContext<?>> {
             if (request.getMapBy() != null) {
                 builder.mapBy(request.getMapBy());
             } else {
-                builder.mapBy(ParameterExtractor.string(parameters, PROTOCOL_MAP_BY));
+                builder.mapBy(ParameterExtractor.string(parameters, AgProtocol.mapBy));
             }
         }
 
@@ -127,7 +119,7 @@ public class ParseRequestStage implements Processor<SelectContext<?>> {
             if (!request.getIncludes().isEmpty()) {
                 request.getIncludes().forEach(builder::addInclude);
             } else {
-                builder.addIncludes(ParameterExtractor.strings(parameters, PROTOCOL_INCLUDE));
+                builder.addIncludes(ParameterExtractor.strings(parameters, AgProtocol.include));
             }
         }
 
@@ -135,7 +127,7 @@ public class ParseRequestStage implements Processor<SelectContext<?>> {
             if (!request.getExcludes().isEmpty()) {
                 request.getExcludes().forEach(builder::addExclude);
             } else {
-                builder.addExcludes(ParameterExtractor.strings(parameters, PROTOCOL_EXCLUDE));
+                builder.addExcludes(ParameterExtractor.strings(parameters, AgProtocol.exclude));
             }
         }
 
@@ -143,7 +135,7 @@ public class ParseRequestStage implements Processor<SelectContext<?>> {
             if (request.getStart() != null) {
                 builder.start(request.getStart());
             } else {
-                builder.start(ParameterExtractor.integerObject(parameters, PROTOCOL_START));
+                builder.start(ParameterExtractor.integerObject(parameters, AgProtocol.start));
             }
         }
 
@@ -151,7 +143,7 @@ public class ParseRequestStage implements Processor<SelectContext<?>> {
             if (request.getLimit() != null) {
                 builder.limit(request.getLimit());
             } else {
-                builder.limit(ParameterExtractor.integerObject(parameters, PROTOCOL_LIMIT));
+                builder.limit(ParameterExtractor.integerObject(parameters, AgProtocol.limit));
             }
         }
     }

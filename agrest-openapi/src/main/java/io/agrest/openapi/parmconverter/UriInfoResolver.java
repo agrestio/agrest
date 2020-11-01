@@ -1,5 +1,6 @@
 package io.agrest.openapi.parmconverter;
 
+import io.agrest.base.protocol.AgProtocol;
 import io.agrest.base.protocol.Dir;
 import io.agrest.openapi.TypeWrapper;
 import io.swagger.v3.jaxrs2.ResolvedParameter;
@@ -14,16 +15,6 @@ import java.lang.annotation.Annotation;
 import java.util.List;
 
 public class UriInfoResolver {
-
-    // TODO: Agrest should define these publicly somewhere
-    private static final String PROTOCOL_CAYENNE_EXP = "cayenneExp";
-    private static final String PROTOCOL_DIR = "dir";
-    private static final String PROTOCOL_EXCLUDE = "exclude";
-    private static final String PROTOCOL_INCLUDE = "include";
-    private static final String PROTOCOL_LIMIT = "limit";
-    private static final String PROTOCOL_MAP_BY = "mapBy";
-    private static final String PROTOCOL_SORT = "sort";
-    private static final String PROTOCOL_START = "start";
 
     public boolean willResolve(TypeWrapper wrapper, List<Annotation> annotations) {
         if (wrapper != null && wrapper.getRawClass() == UriInfo.class) {
@@ -58,21 +49,21 @@ public class UriInfoResolver {
     protected Parameter createIncludeParam() {
         // TODO: detailed schema
         return new QueryParameter()
-                .name(PROTOCOL_INCLUDE)
-                .description("Property path to include in the response");
+                .name(AgProtocol.include.name())
+                .description("Either a property path or a JSON object defining rules for including entity properties in response");
     }
 
     protected Parameter createExcludeParam() {
         return new QueryParameter()
-                .name(PROTOCOL_EXCLUDE)
+                .name(AgProtocol.exclude.name())
                 .description("Property path to exclude from the response");
     }
 
     protected Parameter createSortParam() {
         // TODO: detailed schema
         return new QueryParameter()
-                .name(PROTOCOL_SORT)
-                .description("Defines result sorting. May be used in conjunction with 'dir' parameter");
+                .name(AgProtocol.sort.name())
+                .description("Either a property path or a JSON object that defines result sorting. May be used in conjunction with 'dir' parameter.");
     }
 
     protected Parameter createDirParam() {
@@ -83,7 +74,7 @@ public class UriInfoResolver {
                 .addEnumItem(Dir.DESC_CI.name());
 
         return new QueryParameter()
-                .name(PROTOCOL_DIR)
+                .name(AgProtocol.dir.name())
                 .description("Defines result sort direction. Must be used in conjunction with 'sort' parameter")
                 .schema(dirSchema);
     }
@@ -91,25 +82,25 @@ public class UriInfoResolver {
     protected Parameter createCayenneExpParam() {
         // TODO: detailed schema
         return new QueryParameter()
-                .name(PROTOCOL_CAYENNE_EXP)
+                .name(AgProtocol.cayenneExp.name())
                 .description("Expression used to filter the result");
     }
 
     protected Parameter createMapByParam() {
         return new QueryParameter()
-                .name(PROTOCOL_MAP_BY)
-                .description("Property path to use as a key, turning the result into a map");
+                .name(AgProtocol.mapBy.name())
+                .description("Property path to use as a result map key. When present a result \"data\" is rendered as a map instead of a list.");
     }
 
     protected Parameter createStartParam() {
         return new QueryParameter()
-                .name(PROTOCOL_START)
-                .description("How many objects to skip from the beginning of the result list. Used to control pagination");
+                .name(AgProtocol.start.name())
+                .description("Defines how many objects to skip from the beginning of a result list. Used to control pagination");
     }
 
     protected Parameter createLimitParam() {
         return new QueryParameter()
-                .name(PROTOCOL_LIMIT)
+                .name(AgProtocol.limit.name())
                 .description("Max objects to include in the result list. Used to control pagination");
     }
 }
