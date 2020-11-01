@@ -48,22 +48,16 @@ public class UriInfoResolver {
 
     protected Parameter createIncludeParam() {
         // TODO: detailed schema
-        return new QueryParameter()
-                .name(AgProtocol.include.name())
-                .description("Either a property path or a JSON object defining rules for including entity properties in response");
+        return queryParam(AgProtocol.include);
     }
 
     protected Parameter createExcludeParam() {
-        return new QueryParameter()
-                .name(AgProtocol.exclude.name())
-                .description("Property path to exclude from the response");
+        return queryParam(AgProtocol.exclude);
     }
 
     protected Parameter createSortParam() {
         // TODO: detailed schema
-        return new QueryParameter()
-                .name(AgProtocol.sort.name())
-                .description("Either a property path or a JSON object that defines result sorting. May be used in conjunction with 'dir' parameter.");
+        return queryParam(AgProtocol.sort);
     }
 
     protected Parameter createDirParam() {
@@ -73,34 +67,29 @@ public class UriInfoResolver {
                 .addEnumItem(Dir.DESC.name())
                 .addEnumItem(Dir.DESC_CI.name());
 
-        return new QueryParameter()
-                .name(AgProtocol.dir.name())
-                .description("Defines result sort direction. Must be used in conjunction with 'sort' parameter")
-                .schema(dirSchema);
+        return queryParam(AgProtocol.dir).schema(dirSchema);
     }
 
     protected Parameter createCayenneExpParam() {
         // TODO: detailed schema
-        return new QueryParameter()
-                .name(AgProtocol.cayenneExp.name())
-                .description("Expression used to filter the result");
+        return queryParam(AgProtocol.cayenneExp);
     }
 
     protected Parameter createMapByParam() {
-        return new QueryParameter()
-                .name(AgProtocol.mapBy.name())
-                .description("Property path to use as a result map key. When present a result \"data\" is rendered as a map instead of a list.");
+        return queryParam(AgProtocol.mapBy);
     }
 
     protected Parameter createStartParam() {
-        return new QueryParameter()
-                .name(AgProtocol.start.name())
-                .description("Defines how many objects to skip from the beginning of a result list. Used to control pagination");
+        return queryParam(AgProtocol.start);
     }
 
     protected Parameter createLimitParam() {
+        return queryParam(AgProtocol.limit);
+    }
+
+    protected Parameter queryParam(AgProtocol param) {
         return new QueryParameter()
-                .name(AgProtocol.limit.name())
-                .description("Max objects to include in the result list. Used to control pagination");
+                .name(param.name())
+                .description(param.description);
     }
 }
