@@ -51,7 +51,7 @@ public class ParseRequestStage implements Processor<SelectContext<?>> {
         }
     }
 
-    private String cayenneExp(Map<String, List<String>> params) {
+    private String exp(Map<String, List<String>> params) {
         String exp = ParameterExtractor.string(params, AgProtocol.exp);
         String cayenneExp = ParameterExtractor.string(params, AgProtocol.cayenneExp);
 
@@ -73,7 +73,7 @@ public class ParseRequestStage implements Processor<SelectContext<?>> {
     protected AgRequestBuilder requestFromParams(Map<String, List<String>> parameters) {
 
         return requestBuilderFactory.builder()
-                .cayenneExp(cayenneExp(parameters))
+                .exp(exp(parameters))
                 .addOrdering(ParameterExtractor.string(parameters, AgProtocol.sort), ParameterExtractor.string(parameters, AgProtocol.dir))
                 .mapBy(ParameterExtractor.string(parameters, AgProtocol.mapBy))
                 .addIncludes(ParameterExtractor.strings(parameters, AgProtocol.include))
@@ -100,7 +100,7 @@ public class ParseRequestStage implements Processor<SelectContext<?>> {
         AgRequestBuilder merge() {
             AgRequestBuilder builder = requestBuilderFactory.builder();
 
-            setCayenneExp(builder);
+            setExp(builder);
             setOrderings(builder);
             setMapBy(builder);
             setIncludes(builder);
@@ -111,11 +111,11 @@ public class ParseRequestStage implements Processor<SelectContext<?>> {
             return builder;
         }
 
-        private void setCayenneExp(AgRequestBuilder builder) {
-            if (request.getCayenneExp() != null) {
-                builder.cayenneExp(request.getCayenneExp());
+        private void setExp(AgRequestBuilder builder) {
+            if (request.getExp() != null) {
+                builder.exp(request.getExp());
             } else {
-                builder.cayenneExp(cayenneExp(parameters));
+                builder.exp(exp(parameters));
             }
         }
 

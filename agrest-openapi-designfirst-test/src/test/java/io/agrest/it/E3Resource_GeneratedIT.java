@@ -83,7 +83,7 @@ public class E3Resource_GeneratedIT extends DbTest {
     }
 
     @Test
-    public void testGET_CayenneExp() {
+    public void testGET_Exp() {
 
         tester.e2().insertColumns("id_", "name")
                 .values(1, "xxx")
@@ -97,7 +97,7 @@ public class E3Resource_GeneratedIT extends DbTest {
 
         tester.target("/v1/e3")
                 .queryParam("include", "id")
-                .queryParam("cayenneExp", "{\"exp\":\"e2 in $ids\",\"params\":{\"ids\": [3, 4]}}")
+                .queryParam("exp", "{\"exp\":\"e2 in $ids\",\"params\":{\"ids\": [3, 4]}}")
                 .get()
                 .wasOk()
                 .bodyEquals(1, "{\"id\":6}");

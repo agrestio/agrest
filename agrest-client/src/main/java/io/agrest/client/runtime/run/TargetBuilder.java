@@ -53,7 +53,7 @@ public class TargetBuilder {
 
 		RequestEncoder encoder = RequestEncoder.encoder();
 
-		Optional<Expression> exp = request.getCayenneExp();
+		Optional<Expression> exp = request.getExp();
 		if (exp.isPresent()) {
 			newTarget = newTarget.queryParam(AgProtocol.exp.name(), encoder.encode(exp.get()));
 		}

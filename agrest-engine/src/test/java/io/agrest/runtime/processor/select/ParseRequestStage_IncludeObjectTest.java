@@ -29,7 +29,7 @@ public class ParseRequestStage_IncludeObjectTest {
         IJacksonService jacksonService = new JacksonService();
 
         // prepare parse request stage
-        ICayenneExpParser expParser = new CayenneExpParser(jacksonService);
+        IExpParser expParser = new ExpParser(jacksonService);
         ISortParser sortParser = new SortParser(jacksonService);
         ISizeParser sizeParser = new SizeParser();
         IIncludeParser includeParser = new IncludeParser(jacksonService, expParser, sortParser, sizeParser);

@@ -53,7 +53,7 @@ public class E3Resource {
     @GET
     @Path("/v1/e3")
     @Produces({ "application/json" })
-    public DataResponse<E3> getAll(@QueryParam("sort") String sort, @QueryParam("dir") String dir, @QueryParam("include") List<String> includes, @QueryParam("exclude") List<String> excludes, @QueryParam("limit") Integer limit, @QueryParam("start") Integer start, @QueryParam("mapBy") String mapBy, @QueryParam("cayenneExp") String cayenneExp) {
+    public DataResponse<E3> getAll(@QueryParam("sort") String sort, @QueryParam("dir") String dir, @QueryParam("include") List<String> includes, @QueryParam("exclude") List<String> excludes, @QueryParam("limit") Integer limit, @QueryParam("start") Integer start, @QueryParam("mapBy") String mapBy, @QueryParam("exp") String exp) {
 
         AgRequest agRequest = Ag.request(config)
                 .addOrdering(sort, dir)
@@ -62,7 +62,7 @@ public class E3Resource {
                 .limit(limit)
                 .start(start)
                 .mapBy(mapBy)
-                .cayenneExp(cayenneExp)
+                .exp(exp)
                 .build();
 
         return Ag.select(E3.class, config)

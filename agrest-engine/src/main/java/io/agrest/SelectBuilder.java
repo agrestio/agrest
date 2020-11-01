@@ -196,12 +196,12 @@ public interface SelectBuilder<T> {
      *
      * <pre>{@code
      *
-     * 		public DataResponse<E2> getE2(@Context UriInfo uriInfo, @QueryParam CayenneExp cayenneExp) {
+     * 		public DataResponse<E> getE(@Context UriInfo uriInfo, @QueryParam String exp) {
      * 			// Explicit query parameter
-     * 			AgRequest agRequest = AgRequest.builder().cayenneExp(cayenneExp).build();
+     * 			AgRequest agRequest = AgRequest.builder().exp(exp).build();
      *
-     * 			return Ag.service(config).select(E2.class)
-     * 							.uri(uriInfo)
+     * 			return Ag.service(config).select(E.class)
+     * 							.uri(uriInfo) // this may not even be needed
      * 							.request(agRequest) // overrides parameters from uriInfo
      * 							.get();
      *        }

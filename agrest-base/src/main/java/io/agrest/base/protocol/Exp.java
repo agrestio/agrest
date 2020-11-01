@@ -5,23 +5,23 @@ import java.util.Map;
 import java.util.Objects;
 
 /**
- * Represents 'cayenneExp' Agrest protocol parameter.
+ * Represents {@link AgProtocol#exp} protocol parameter.
  *
- * @since 2.13
+ * @since 4.1
  */
-public class CayenneExp {
+public class Exp {
 
     private final String exp;
     private final Map<String, Object> namedParams;
     private final Object[] positionalParams;
 
-    public CayenneExp(String exp) {
+    public Exp(String exp) {
         this.exp = Objects.requireNonNull(exp);
         this.namedParams = null;
         this.positionalParams = null;
     }
 
-    public CayenneExp(String exp, Object... params) {
+    public Exp(String exp, Object... params) {
         this.exp = Objects.requireNonNull(exp);
         this.namedParams = null;
 
@@ -29,7 +29,7 @@ public class CayenneExp {
         this.positionalParams = params.length > 0 ? params : null;
     }
 
-    public CayenneExp(String exp, Map<String, Object> params) {
+    public Exp(String exp, Map<String, Object> params) {
         this.exp = Objects.requireNonNull(exp);
 
         Objects.requireNonNull(params);
@@ -75,7 +75,7 @@ public class CayenneExp {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        CayenneExp that = (CayenneExp) o;
+        Exp that = (Exp) o;
         return exp.equals(that.exp) &&
                 Objects.equals(namedParams, that.namedParams) &&
                 Arrays.equals(positionalParams, that.positionalParams);

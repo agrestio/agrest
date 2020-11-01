@@ -1,11 +1,11 @@
 package io.agrest.sencha.runtime.processor.select;
 
-import io.agrest.base.protocol.CayenneExp;
+import io.agrest.base.protocol.Exp;
 import io.agrest.cayenne.cayenne.main.E2;
 import io.agrest.cayenne.unit.CayenneNoDbTest;
 import io.agrest.runtime.entity.*;
 import io.agrest.runtime.processor.select.SelectContext;
-import io.agrest.runtime.protocol.ICayenneExpParser;
+import io.agrest.runtime.protocol.IExpParser;
 import io.agrest.runtime.protocol.IExcludeParser;
 import io.agrest.runtime.protocol.IIncludeParser;
 import io.agrest.runtime.protocol.ISortParser;
@@ -33,7 +33,7 @@ public class SenchaCreateEntityStageTest extends CayenneNoDbTest {
     public void before() {
 
         // prepare entity creation stage
-        ICayenneExpMerger expConstructor = new CayenneExpMerger();
+        IExpMerger expConstructor = new ExpMerger();
         ISortMerger sortConstructor = new SortMerger();
         IMapByMerger mapByConstructor = new MapByMerger(dataMap);
         ISizeMerger sizeConstructor = new SizeMerger();
@@ -53,7 +53,7 @@ public class SenchaCreateEntityStageTest extends CayenneNoDbTest {
                 senchaFilterProcessor);
 
         this.requestBuilderFactory = new DefaultRequestBuilderFactory(
-                mock(ICayenneExpParser.class),
+                mock(IExpParser.class),
                 mock(ISortParser.class),
                 mock(IIncludeParser.class),
                 mock(IExcludeParser.class)
@@ -69,26 +69,26 @@ public class SenchaCreateEntityStageTest extends CayenneNoDbTest {
 
         createEntityStage.doExecute(context);
 
-        List<CayenneExp> qualifiers = context.getEntity().getQualifiers();
+        List<Exp> qualifiers = context.getEntity().getQualifiers();
         assertEquals(1, qualifiers.size());
-        assertEquals(new CayenneExp("name likeIgnoreCase 'xyz%'"), qualifiers.get(0));
+        assertEquals(new Exp("name likeIgnoreCase 'xyz%'"), qualifiers.get(0));
     }
 
     @Test
     public void testSelectRequest_Filter_CayenneExp() {
         SelectContext<E2> context = new SelectContext<>(E2.class);
 
-        CayenneExp cayenneExp = new CayenneExp("address = '1 Main Street'");
-        context.setMergedRequest(requestBuilderFactory.builder().cayenneExp(cayenneExp).build());
+        Exp exp = new Exp("address = '1 Main Street'");
+        context.setMergedRequest(requestBuilderFactory.builder().exp(exp).build());
 
         Filter filter = new Filter("name", "xyz", "like", false, false);
         SenchaRequest.set(context, SenchaRequest.builder().filters(Collections.singletonList(filter)).build());
 
         createEntityStage.doExecute(context);
 
-        List<CayenneExp> qualifiers = context.getEntity().getQualifiers();
+        List<Exp> qualifiers = context.getEntity().getQualifiers();
         assertEquals(2, qualifiers.size());
-        assertEquals(cayenneExp, qualifiers.get(0));
-        assertEquals(new CayenneExp("name likeIgnoreCase 'xyz%'"), qualifiers.get(1));
+        assertEquals(exp, qualifiers.get(0));
+        assertEquals(new Exp("name likeIgnoreCase 'xyz%'"), qualifiers.get(1));
     }
 }

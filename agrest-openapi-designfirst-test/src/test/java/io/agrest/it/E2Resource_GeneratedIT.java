@@ -33,7 +33,7 @@ public class E2Resource_GeneratedIT extends DbTest {
     }
 
     @Test
-    public void testGET_CayenneExp() {
+    public void testGET_Exp() {
 
         tester.e2().insertColumns("id_", "name")
                 .values(1, "xxx")
@@ -42,7 +42,8 @@ public class E2Resource_GeneratedIT extends DbTest {
 
         tester.target("/v1/e2")
                 .queryParam("include", "id")
-                .queryParam("cayenneExp", "name = 'yyy'").get()
+                .queryParam("exp", "name = 'yyy'")
+                .get()
                 .wasOk()
                 .bodyEquals(1, "{\"id\":2}");
     }

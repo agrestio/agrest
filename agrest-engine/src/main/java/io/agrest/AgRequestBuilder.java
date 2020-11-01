@@ -1,6 +1,6 @@
 package io.agrest;
 
-import io.agrest.base.protocol.CayenneExp;
+import io.agrest.base.protocol.Exp;
 import io.agrest.base.protocol.Exclude;
 import io.agrest.base.protocol.Include;
 import io.agrest.base.protocol.Sort;
@@ -34,9 +34,9 @@ public interface AgRequestBuilder {
 
     AgRequestBuilder addOrdering(int index, Sort ordering);
 
-    AgRequestBuilder cayenneExp(String unparsedExp);
+    AgRequestBuilder exp(String unparsedExp);
 
-    AgRequestBuilder cayenneExp(CayenneExp exp);
+    AgRequestBuilder exp(Exp exp);
 
     AgRequestBuilder mapBy(String mapByPath);
 

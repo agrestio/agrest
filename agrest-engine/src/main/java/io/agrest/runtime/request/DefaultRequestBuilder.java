@@ -2,11 +2,11 @@ package io.agrest.runtime.request;
 
 import io.agrest.AgRequest;
 import io.agrest.AgRequestBuilder;
-import io.agrest.base.protocol.CayenneExp;
+import io.agrest.base.protocol.Exp;
 import io.agrest.base.protocol.Exclude;
 import io.agrest.base.protocol.Include;
 import io.agrest.base.protocol.Sort;
-import io.agrest.runtime.protocol.ICayenneExpParser;
+import io.agrest.runtime.protocol.IExpParser;
 import io.agrest.runtime.protocol.IExcludeParser;
 import io.agrest.runtime.protocol.IIncludeParser;
 import io.agrest.runtime.protocol.ISortParser;
@@ -19,20 +19,20 @@ import java.util.List;
 public class DefaultRequestBuilder implements AgRequestBuilder {
 
     private DefaultRequest request;
-    private ICayenneExpParser cayenneExpParser;
+    private IExpParser expParser;
     private ISortParser sortParser;
     private IIncludeParser includeParser;
     private IExcludeParser excludeParser;
 
     public DefaultRequestBuilder(
-            ICayenneExpParser cayenneExpParser,
+            IExpParser expParser,
             ISortParser sortParser,
             IIncludeParser includeParser,
             IExcludeParser excludeParser) {
 
         this.request = new DefaultRequest();
 
-        this.cayenneExpParser = cayenneExpParser;
+        this.expParser = expParser;
         this.sortParser = sortParser;
         this.includeParser = includeParser;
         this.excludeParser = excludeParser;
@@ -44,14 +44,14 @@ public class DefaultRequestBuilder implements AgRequestBuilder {
     }
 
     @Override
-    public AgRequestBuilder cayenneExp(String unparsedExp) {
-        CayenneExp cayenneExp = unparsedExp != null ? cayenneExpParser.fromString(unparsedExp) : null;
-        return cayenneExp(cayenneExp);
+    public AgRequestBuilder exp(String unparsedExp) {
+        Exp exp = unparsedExp != null ? expParser.fromString(unparsedExp) : null;
+        return exp(exp);
     }
 
     @Override
-    public AgRequestBuilder cayenneExp(CayenneExp exp) {
-        request.cayenneExp = exp;
+    public AgRequestBuilder exp(Exp exp) {
+        request.exp = exp;
         return this;
     }
 

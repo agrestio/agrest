@@ -14,13 +14,13 @@ import java.util.Optional;
  */
 public abstract class AgcEntityRequest {
 
-	protected Expression cayenneExp;
+	protected Expression exp;
 	protected Map<String, Sort> orderingMap;
 	protected long start;
 	protected long limit;
 
-	public Optional<Expression> getCayenneExp() {
-		return Optional.ofNullable(cayenneExp);
+	public Optional<Expression> getExp() {
+		return Optional.ofNullable(exp);
 	}
 
 	public Collection<Sort> getOrderings() {
@@ -60,8 +60,8 @@ public abstract class AgcEntityRequest {
 		orderingMap.put(property, sort);
 	}
 
-	protected void setCayenneExp(Expression cayenneExp) {
-		this.cayenneExp = cayenneExp;
+	protected void setExp(Expression exp) {
+		this.exp = exp;
 	}
 
 }

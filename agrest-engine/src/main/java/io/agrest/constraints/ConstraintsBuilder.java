@@ -1,7 +1,7 @@
 package io.agrest.constraints;
 
 import io.agrest.PathConstants;
-import io.agrest.base.protocol.CayenneExp;
+import io.agrest.base.protocol.Exp;
 import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgRelationship;
 
@@ -109,7 +109,7 @@ public class ConstraintsBuilder<T> implements Constraint<T> {
         return includeId(false);
     }
 
-    public ConstraintsBuilder<T> qualifier(CayenneExp qualifier) {
+    public ConstraintsBuilder<T> qualifier(Exp qualifier) {
         return new ConstraintsBuilder<>(op.andThen(ce -> {
             ce.setQualifier(qualifier);
             return ce;

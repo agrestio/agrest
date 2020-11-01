@@ -6,8 +6,8 @@
 components:
   queryParams:
 
-    CayenneExp:
-      name: cayenneExp
+    Exp:
+      name: exp
       in: query
       style: form
       explode: false
@@ -22,7 +22,7 @@ components:
             type: object
             additionalProperties:
               type: string
-      description: cayenneExp query
+      description: exp query
       required: false
 
     Dir:
@@ -85,8 +85,8 @@ components:
         properties:
           value:
             type: string
-          cayenneExp:
-            $ref: '#/components/queryParams/CayenneExp'
+          exp:
+            $ref: '#/components/queryParams/Exp'
           sort:
             $ref: '#/components/queryParams/Sort'
           mapBy:

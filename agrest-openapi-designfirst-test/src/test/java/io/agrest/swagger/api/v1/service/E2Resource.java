@@ -67,12 +67,12 @@ public class E2Resource {
     @GET
     @Path("/v1/e2")
     @Produces({ "application/json" })
-    public DataResponse<E2> getAll(@QueryParam("include") List<String> includes, @QueryParam("exclude") List<String> excludes, @QueryParam("cayenneExp") String cayenneExp) {
+    public DataResponse<E2> getAll(@QueryParam("include") List<String> includes, @QueryParam("exclude") List<String> excludes, @QueryParam("exp") String exp) {
 
         AgRequest agRequest = Ag.request(config)
                 .addIncludes(includes)
                 .addExcludes(excludes)
-                .cayenneExp(cayenneExp)
+                .exp(exp)
                 .build();
 
         return Ag.select(E2.class, config)

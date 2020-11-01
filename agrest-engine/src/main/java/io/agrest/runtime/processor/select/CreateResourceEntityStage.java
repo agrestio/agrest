@@ -14,7 +14,7 @@ import org.apache.cayenne.di.Inject;
 public class CreateResourceEntityStage implements Processor<SelectContext<?>> {
 
     private AgDataMap dataMap;
-    private ICayenneExpMerger expMerger;
+    private IExpMerger expMerger;
     private ISortMerger sortMerger;
     private IMapByMerger mapByMerger;
     private ISizeMerger sizeMerger;
@@ -23,7 +23,7 @@ public class CreateResourceEntityStage implements Processor<SelectContext<?>> {
 
     public CreateResourceEntityStage(
             @Inject AgDataMap dataMap,
-            @Inject ICayenneExpMerger expMerger,
+            @Inject IExpMerger expMerger,
             @Inject ISortMerger sortMerger,
             @Inject IMapByMerger mapByMerger,
             @Inject ISizeMerger sizeMerger,
@@ -59,7 +59,7 @@ public class CreateResourceEntityStage implements Processor<SelectContext<?>> {
             excludeMerger.merge(resourceEntity, request.getExcludes());
             sortMerger.merge(resourceEntity, request.getOrderings());
             mapByMerger.merge(resourceEntity, request.getMapBy(), context.getEntityOverlays());
-            expMerger.merge(resourceEntity, request.getCayenneExp());
+            expMerger.merge(resourceEntity, request.getExp());
         }
 
         context.setEntity(resourceEntity);

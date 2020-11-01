@@ -398,7 +398,7 @@ public class AgBuilder {
             binder.bind(IPathDescriptorManager.class).to(PathDescriptorManager.class);
 
             // Query parameter parsers from the UriInfo
-            binder.bind(ICayenneExpParser.class).to(CayenneExpParser.class);
+            binder.bind(IExpParser.class).to(ExpParser.class);
             binder.bind(ISizeParser.class).to(SizeParser.class);
             binder.bind(ISortParser.class).to(SortParser.class);
             binder.bind(IExcludeParser.class).to(ExcludeParser.class);
@@ -406,7 +406,7 @@ public class AgBuilder {
 
             binder.bind(IAgRequestBuilderFactory.class).to(DefaultRequestBuilderFactory.class);
 
-            binder.bind(ICayenneExpMerger.class).to(CayenneExpMerger.class);
+            binder.bind(IExpMerger.class).to(ExpMerger.class);
             binder.bind(ISortMerger.class).to(SortMerger.class);
             binder.bind(IMapByMerger.class).to(MapByMerger.class);
             binder.bind(ISizeMerger.class).to(SizeMerger.class);

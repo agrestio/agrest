@@ -30,7 +30,7 @@ public class Include extends AgcEntityRequest {
 	 *         addition constraints.
 	 */
 	public boolean isSimple() {
-		return mapBy == null && cayenneExp == null && start <= 0 && limit <= 0
+		return mapBy == null && exp == null && start <= 0 && limit <= 0
 				&& (orderingMap == null || orderingMap.isEmpty());
 	}
 
@@ -73,8 +73,8 @@ public class Include extends AgcEntityRequest {
 			return this;
 		}
 
-		public IncludeBuilder cayenneExp(Expression.ExpressionBuilder exp) {
-			include.setCayenneExp(exp.build());
+		public IncludeBuilder exp(Expression.ExpressionBuilder exp) {
+			include.setExp(exp.build());
 			return this;
 		}
 

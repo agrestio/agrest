@@ -111,8 +111,8 @@ public class AgcRequest extends AgcEntityRequest {
 			return this;
 		}
 
-		public AgRequestBuilder cayenneExp(Expression exp) {
-			request.setCayenneExp(exp);
+		public AgRequestBuilder exp(Expression exp) {
+			request.setExp(exp);
 			return this;
 		}
 

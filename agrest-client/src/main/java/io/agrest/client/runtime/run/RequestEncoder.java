@@ -44,8 +44,8 @@ class RequestEncoder {
 			buf.append("\"");
 		});
 
-		include.getCayenneExp().ifPresent(exp -> {
-			buf.append(",\"cayenneExp\":");
+		include.getExp().ifPresent(exp -> {
+			buf.append(",\"exp\":");
 			buf.append(encode(exp, false));
 		});
 

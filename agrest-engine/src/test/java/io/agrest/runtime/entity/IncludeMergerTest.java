@@ -37,7 +37,7 @@ public class IncludeMergerTest {
         AgEntityCompiler compiler = new AnnotationsAgEntityCompiler(Collections.emptyMap());
         this.dataMap = new LazyAgDataMap(Collections.singletonList(compiler));
 
-        ICayenneExpMerger expMerger = new CayenneExpMerger();
+        IExpMerger expMerger = new ExpMerger();
         ISortMerger sortMerger = new SortMerger();
         IMapByMerger mapByMerger = new MapByMerger(dataMap);
         ISizeMerger sizeMerger = new SizeMerger();

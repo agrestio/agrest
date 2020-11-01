@@ -1,6 +1,6 @@
 package io.agrest;
 
-import io.agrest.base.protocol.CayenneExp;
+import io.agrest.base.protocol.Exp;
 import io.agrest.base.protocol.Exclude;
 import io.agrest.base.protocol.Include;
 import io.agrest.base.protocol.Sort;
@@ -18,7 +18,7 @@ public interface AgRequest {
 
     List<Exclude> getExcludes();
 
-    CayenneExp getCayenneExp();
+    Exp getExp();
 
     List<Sort> getOrderings();
 

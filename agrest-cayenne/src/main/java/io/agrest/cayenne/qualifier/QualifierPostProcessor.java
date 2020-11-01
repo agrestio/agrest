@@ -35,8 +35,7 @@ public class QualifierPostProcessor implements IQualifierPostProcessor {
         // TODO: instead of manually assembling converters we must switch to
         //  IJsonValueConverterFactory already used by DataObjectProcessor.
         //  The tricky part is the "id" attribute that is converted to DbPath
-        //  during CayenneExpProcessorWorker traversal, so its type can not be
-        //  mapped with existing tools
+        //  , so its type can not be mapped with existing tools
         Map<Class<?>, JsonValueConverter<?>> converters = new HashMap<>();
 		converters.put(Date.class, UtcDateConverter.converter());
 		converters.put(java.sql.Date.class, UtcDateConverter.converter());

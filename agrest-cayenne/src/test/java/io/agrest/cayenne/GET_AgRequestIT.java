@@ -3,7 +3,7 @@ package io.agrest.cayenne;
 import io.agrest.Ag;
 import io.agrest.AgRequest;
 import io.agrest.DataResponse;
-import io.agrest.base.protocol.CayenneExp;
+import io.agrest.base.protocol.Exp;
 import io.agrest.base.protocol.Sort;
 import io.agrest.cayenne.unit.AgCayenneTester;
 import io.agrest.cayenne.unit.DbTest;
@@ -125,8 +125,8 @@ public class GET_AgRequestIT extends DbTest {
         @GET
         @Path("e2_cayenneExp")
         public DataResponse<E2> getE2(@Context UriInfo uriInfo) {
-            CayenneExp cayenneExp = new CayenneExp("name = 'xxx'");
-            AgRequest agRequest = Ag.request(config).cayenneExp(cayenneExp).build();
+            Exp exp = new Exp("name = 'xxx'");
+            AgRequest agRequest = Ag.request(config).exp(exp).build();
 
             return Ag.service(config).select(E2.class)
                     .uri(uriInfo)

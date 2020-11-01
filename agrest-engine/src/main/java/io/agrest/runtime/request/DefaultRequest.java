@@ -1,7 +1,7 @@
 package io.agrest.runtime.request;
 
 import io.agrest.AgRequest;
-import io.agrest.base.protocol.CayenneExp;
+import io.agrest.base.protocol.Exp;
 import io.agrest.base.protocol.Exclude;
 import io.agrest.base.protocol.Include;
 import io.agrest.base.protocol.Sort;
@@ -14,7 +14,7 @@ import java.util.List;
  */
 public class DefaultRequest implements AgRequest {
 
-    protected CayenneExp cayenneExp;
+    protected Exp exp;
     protected List<Sort> orderings;
     protected String mapBy;
     protected Integer start;
@@ -29,8 +29,8 @@ public class DefaultRequest implements AgRequest {
     }
 
     @Override
-    public CayenneExp getCayenneExp() {
-        return cayenneExp;
+    public Exp getExp() {
+        return exp;
     }
 
     @Override

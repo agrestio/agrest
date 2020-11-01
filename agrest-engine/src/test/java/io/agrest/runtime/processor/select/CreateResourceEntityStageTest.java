@@ -10,7 +10,7 @@ import io.agrest.compiler.AnnotationsAgEntityCompiler;
 import io.agrest.meta.AgDataMap;
 import io.agrest.meta.LazyAgDataMap;
 import io.agrest.runtime.entity.*;
-import io.agrest.runtime.protocol.ICayenneExpParser;
+import io.agrest.runtime.protocol.IExpParser;
 import io.agrest.runtime.protocol.IExcludeParser;
 import io.agrest.runtime.protocol.IIncludeParser;
 import io.agrest.runtime.protocol.ISortParser;
@@ -40,7 +40,7 @@ public class CreateResourceEntityStageTest {
         AgDataMap dataMap = new LazyAgDataMap(Collections.singletonList(compiler));
 
         // prepare create entity stage
-        ICayenneExpMerger expMerger = new CayenneExpMerger();
+        IExpMerger expMerger = new ExpMerger();
         ISortMerger sortMerger = new SortMerger();
         IMapByMerger mapByMerger = new MapByMerger(dataMap);
         ISizeMerger sizeMerger = new SizeMerger();
@@ -57,7 +57,7 @@ public class CreateResourceEntityStageTest {
                 excludeMerger);
 
         requestBuilderFactory = new DefaultRequestBuilderFactory(
-                mock(ICayenneExpParser.class),
+                mock(IExpParser.class),
                 mock(ISortParser.class),
                 mock(IIncludeParser.class),
                 mock(IExcludeParser.class)
@@ -387,7 +387,7 @@ public class CreateResourceEntityStageTest {
         SelectContext<Ts> context = new SelectContext<>(Ts.class);
         context.setMergedRequest(requestBuilderFactory
                 .builder()
-                .cayenneExp(new CayenneExp("x = 12345 and y = 'John Smith' and z = true")).build());
+                .exp(new Exp("x = 12345 and y = 'John Smith' and z = true")).build());
 
         assertDoesNotThrow(() -> stage.execute(context), "Even though the passed spec is invalid, no parsing should occur at this stage");
     }
@@ -398,13 +398,13 @@ public class CreateResourceEntityStageTest {
         SelectContext<Ts> context = new SelectContext<>(Ts.class);
         context.setMergedRequest(requestBuilderFactory
                 .builder()
-                .cayenneExp(new CayenneExp("m = 'John Smith'")).build());
+                .exp(new Exp("m = 'John Smith'")).build());
 
         stage.execute(context);
 
         ResourceEntity<Ts> resourceEntity = context.getEntity();
         assertEquals(1, resourceEntity.getQualifiers().size());
-        assertEquals(new CayenneExp("m = 'John Smith'"), resourceEntity.getQualifiers().get(0));
+        assertEquals(new Exp("m = 'John Smith'"), resourceEntity.getQualifiers().get(0));
     }
 
     public static class Tr {

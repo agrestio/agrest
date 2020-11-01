@@ -11,7 +11,7 @@ import java.util.Objects;
  */
 public class Include {
 
-    private CayenneExp cayenneExp;
+    private Exp exp;
     private List<Sort> orderings;
     private String mapBy;
     private String path;
@@ -24,14 +24,14 @@ public class Include {
 
     public Include(
             String path,
-            CayenneExp cayenneExp,
+            Exp exp,
             List<Sort> orderings,
             String mapBy,
             Integer start,
             Integer limit) {
 
         this.path = Objects.requireNonNull(path);
-        this.cayenneExp = cayenneExp;
+        this.exp = exp;
         this.orderings = Objects.requireNonNull(orderings);
         this.mapBy = mapBy;
         this.start = start;
@@ -54,8 +54,8 @@ public class Include {
         return limit;
     }
 
-    public CayenneExp getCayenneExp() {
-        return cayenneExp;
+    public Exp getExp() {
+        return exp;
     }
 
     public List<Sort> getOrderings() {

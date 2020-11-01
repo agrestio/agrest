@@ -97,7 +97,7 @@ paths:
       tags:
         - E2
       parameters:
-        - $ref: '../resources/protocol.yaml#/components/queryParams/CayenneExp'
+        - $ref: '../resources/protocol.yaml#/components/queryParams/Exp'
       responses:
         '200':
           description: Success response.
@@ -321,7 +321,7 @@ paths:
         - $ref: '../resources/protocol.yaml#/components/queryParams/Limit'
         - $ref: '../resources/protocol.yaml#/components/queryParams/Start'
         - $ref: '../resources/protocol.yaml#/components/queryParams/MapBy'
-        - $ref: '../resources/protocol.yaml#/components/queryParams/CayenneExp'
+        - $ref: '../resources/protocol.yaml#/components/queryParams/Exp'
       responses:
         '200':
           description: Success response.

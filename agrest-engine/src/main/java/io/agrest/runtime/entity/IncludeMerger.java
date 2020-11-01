@@ -18,13 +18,13 @@ public class IncludeMerger implements IIncludeMerger {
 
     protected AgDataMap dataMap;
     protected ISortMerger sortMerger;
-    protected ICayenneExpMerger expMerger;
+    protected IExpMerger expMerger;
     protected IMapByMerger mapByMerger;
     protected ISizeMerger sizeMerger;
 
     public IncludeMerger(
             @Inject AgDataMap dataMap,
-            @Inject ICayenneExpMerger expMerger,
+            @Inject IExpMerger expMerger,
             @Inject ISortMerger sortMerger,
             @Inject IMapByMerger mapByMerger,
             @Inject ISizeMerger sizeMerger) {
@@ -78,7 +78,7 @@ public class IncludeMerger implements IIncludeMerger {
 
         mapByMerger.merge(includeEntity, include.getMapBy(), overlays);
         sortMerger.merge(includeEntity, include.getOrderings());
-        expMerger.merge(includeEntity, include.getCayenneExp());
+        expMerger.merge(includeEntity, include.getExp());
         sizeMerger.merge(includeEntity, include.getStart(), include.getLimit());
     }
 

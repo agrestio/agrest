@@ -34,7 +34,7 @@ public class ParseRequestStageTest {
         IJacksonService jacksonService = new JacksonService();
 
         // prepare parse request stage
-        ICayenneExpParser expParser = new CayenneExpParser(jacksonService);
+        IExpParser expParser = new ExpParser(jacksonService);
         ISortParser sortParser = new SortParser(jacksonService);
         ISizeParser sizeParser = new SizeParser();
         IIncludeParser includeParser = new IncludeParser(jacksonService, expParser, sortParser, sizeParser);
@@ -53,7 +53,7 @@ public class ParseRequestStageTest {
         stage.execute(context);
 
         assertNotNull(context.getMergedRequest());
-        assertNull(context.getMergedRequest().getCayenneExp());
+        assertNull(context.getMergedRequest().getExp());
         assertTrue(context.getMergedRequest().getOrderings().isEmpty());
         assertNull(context.getMergedRequest().getMapBy());
         assertNull(context.getMergedRequest().getLimit());
@@ -297,9 +297,9 @@ public class ParseRequestStageTest {
         stage.execute(context);
 
         assertNotNull(context.getMergedRequest());
-        assertNotNull(context.getMergedRequest().getCayenneExp());
+        assertNotNull(context.getMergedRequest().getExp());
 
-        assertEquals("a = 'John Smith'", context.getMergedRequest().getCayenneExp().getExp());
+        assertEquals("a = 'John Smith'", context.getMergedRequest().getExp().getExp());
     }
 
     protected <T> SelectContext<T> prepareContext(Class<T> type, MultivaluedMap<String, String> params) {

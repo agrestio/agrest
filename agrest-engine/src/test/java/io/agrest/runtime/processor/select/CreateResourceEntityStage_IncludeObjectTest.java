@@ -10,7 +10,7 @@ import io.agrest.compiler.AnnotationsAgEntityCompiler;
 import io.agrest.meta.AgDataMap;
 import io.agrest.meta.LazyAgDataMap;
 import io.agrest.runtime.entity.*;
-import io.agrest.runtime.protocol.ICayenneExpParser;
+import io.agrest.runtime.protocol.IExpParser;
 import io.agrest.runtime.protocol.IExcludeParser;
 import io.agrest.runtime.protocol.IIncludeParser;
 import io.agrest.runtime.protocol.ISortParser;
@@ -40,7 +40,7 @@ public class CreateResourceEntityStage_IncludeObjectTest {
         AgDataMap dataMap = new LazyAgDataMap(Collections.singletonList(compiler));
         
         // prepare create entity stage
-        ICayenneExpMerger expConstructor = new CayenneExpMerger();
+        IExpMerger expConstructor = new ExpMerger();
         ISortMerger sortConstructor = new SortMerger();
         IMapByMerger mapByConstructor = new MapByMerger(dataMap);
         ISizeMerger sizeConstructor = new SizeMerger();
@@ -57,7 +57,7 @@ public class CreateResourceEntityStage_IncludeObjectTest {
                 excludeConstructor);
 
         requestBuilderFactory = new DefaultRequestBuilderFactory(
-                mock(ICayenneExpParser.class),
+                mock(IExpParser.class),
                 mock(ISortParser.class),
                 mock(IIncludeParser.class),
                 mock(IExcludeParser.class)

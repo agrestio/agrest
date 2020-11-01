@@ -126,8 +126,8 @@ public class GET_Client_IT extends ClientDbTest {
 
         ClientDataResponse<JsonNode> response = client(tester, "/e2")
                 .exclude(E2.ADDRESS.getName(), E2.E3S.dot(E3.PHONE_NUMBER).getName())
-                .cayenneExp(Expression.query("name like 'xx%'"))
-                .include(Include.path(E2.E3S.getName()).cayenneExp(Expression.query("name = $b").params("ccc")))
+                .exp(Expression.query("name like 'xx%'"))
+                .include(Include.path(E2.E3S.getName()).exp(Expression.query("name = $b").params("ccc")))
                 .get(JsonNode.class);
 
         assertEquals(Status.OK, response.getStatus());
@@ -146,7 +146,7 @@ public class GET_Client_IT extends ClientDbTest {
 
         ClientDataResponse<JsonNode> response = client(tester, "/e4")
                 .include(E4.ID_PK_COLUMN, E4.C_VARCHAR.getName(), E4.C_INT.getName())
-                .cayenneExp(Expression.query("cVarchar like $a and cInt >= $b and cBoolean <> $c")
+                .exp(Expression.query("cVarchar like $a and cInt >= $b and cBoolean <> $c")
                         .param("a", "xx%").param("b", 2).param("c", false))
                 .get(JsonNode.class);
 

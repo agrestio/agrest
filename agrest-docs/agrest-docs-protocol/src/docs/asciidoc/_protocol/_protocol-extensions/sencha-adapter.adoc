@@ -6,6 +6,6 @@ Provides a few extensions to the Agrest protocol to better handle certain Sencha
   framework would also generate a companion "synthetic" FK property called
   "propertyName_id"
 
-* `"filter"` key - an alternative to `"cayenneExp"`.
+* `"filter"` key - an alternative to `"exp"`.
 
 * `"group"` / `"groupDir"` keys that are functionally equivalent to `"sort"` / `"dir"`.

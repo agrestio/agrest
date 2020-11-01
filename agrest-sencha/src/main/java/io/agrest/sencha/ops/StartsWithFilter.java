@@ -1,7 +1,7 @@
 package io.agrest.sencha.ops;
 
 import io.agrest.AgException;
-import io.agrest.base.protocol.CayenneExp;
+import io.agrest.base.protocol.Exp;
 import io.agrest.meta.AgAttribute;
 import io.agrest.meta.AgEntity;
 import io.agrest.runtime.processor.select.SelectContext;
@@ -20,7 +20,7 @@ public class StartsWithFilter {
         return INSTANCE;
     }
 
-    public Optional<CayenneExp> filter(SelectContext<?> context, String queryProperty, String value) {
+    public Optional<Exp> filter(SelectContext<?> context, String queryProperty, String value) {
 
         if (value == null || value.length() == 0 || queryProperty == null) {
             return Optional.empty();
@@ -29,7 +29,7 @@ public class StartsWithFilter {
         validateAttribute(context.getEntity().getAgEntity(), queryProperty);
 
         String exp = queryProperty + " likeIgnoreCase '" + FilterUtil.escapeValueForLike(value) + "%'";
-        return Optional.of(new CayenneExp(exp));
+        return Optional.of(new Exp(exp));
     }
 
     /**

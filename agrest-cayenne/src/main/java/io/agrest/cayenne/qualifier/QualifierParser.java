@@ -1,6 +1,6 @@
 package io.agrest.cayenne.qualifier;
 
-import io.agrest.base.protocol.CayenneExp;
+import io.agrest.base.protocol.Exp;
 import org.apache.cayenne.exp.Expression;
 import org.apache.cayenne.exp.ExpressionFactory;
 
@@ -13,7 +13,7 @@ import java.util.List;
 public class QualifierParser implements IQualifierParser {
 
     @Override
-    public Expression parse(List<CayenneExp> qualifiers) {
+    public Expression parse(List<Exp> qualifiers) {
 
         switch (qualifiers.size()) {
             case 0:
@@ -27,7 +27,7 @@ public class QualifierParser implements IQualifierParser {
         }
     }
 
-    protected Expression parse(CayenneExp qualifier) {
+    protected Expression parse(Exp qualifier) {
 
         Expression exp = ExpressionFactory.exp(qualifier.getExp());
 

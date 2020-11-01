@@ -74,11 +74,11 @@ public class RequestEncoderTest {
 	public void testEncode_Include_CayenneExpression() throws UnsupportedEncodingException {
 
 		Include include = Include.path("abc")
-				.cayenneExp(Expression.query("name like $name and age >= $age").param("name", "Jo%").param("age", 21))
+				.exp(Expression.query("name like $name and age >= $age").param("name", "Jo%").param("age", 21))
 				.build();
 
 		String encoded = encoder.encode(include);
-		assertEquals("{\"path\":\"abc\",\"cayenneExp\":{\"exp\":\"name like $name and age >= $age\"," +
+		assertEquals("{\"path\":\"abc\",\"exp\":{\"exp\":\"name like $name and age >= $age\"," +
 				"\"params\":{\"name\":\"Jo%\",\"age\":\"21\"}}}",
 				URLDecoder.decode(encoded, "UTF-8"));
 	}

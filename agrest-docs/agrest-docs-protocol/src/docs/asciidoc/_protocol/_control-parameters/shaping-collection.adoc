@@ -42,10 +42,10 @@ Example 3: Multiple includes, one of them points to attributes of related entity
 ----
 
 Example 4: Advanced include. Include specification can itself be a JSON object and
-contain `"cayenneExp"`, `"sort"`, `"start"` and `"limit"` keys shaping up a collection
+contain `"exp"`, `"sort"`, `"start"` and `"limit"` keys shaping up a collection
 of related objects for each root object.
 
-`include={"path":"articles","cayenneExp":"title like '%Agrest%'","sort":"title"}&amp;include=articles.title`
+`include={"path":"articles","exp":"title like '%Agrest%'","sort":"title"}&amp;include=articles.title`
 
 [source, JSON]
 ----
@@ -83,7 +83,7 @@ Example 6: Include and Exclude parameters have ability to take an array of value
 
 Example 7: The array can contain both the simple include and the advanced include values
 
-`include=["id","articles.title",{"path":"articles","cayenneExp":"title like '%Agrest%'"}]`
+`include=["id","articles.title",{"path":"articles","exp":"title like '%Agrest%'"}]`
 
 [source, JSON]
 ----

@@ -35,7 +35,7 @@ public class SenchaParseRequestStage extends ParseRequestStage {
         Map<String, List<String>> protocolParameters = context.getProtocolParameters();
 
         // TODO: make symmetrical with AgRequestBuilder (namely hide the parser inside the builder)
-        //  Or even better - convert "filter" to CayenneExp and avoid this SenchaRequest buisness all together
+        //  Or even better - convert "filter" to Exp and avoid this SenchaRequest business all together
         SenchaRequest.Builder builder = SenchaRequest.builder()
                 .filters(filterParser.fromString(ParameterExtractor.string(protocolParameters, AgProtocolSenchaExt.filter)));
 

@@ -1,7 +1,7 @@
 package io.agrest.sencha.runtime.processor.select;
 
 import io.agrest.ResourceEntity;
-import io.agrest.base.protocol.CayenneExp;
+import io.agrest.base.protocol.Exp;
 import io.agrest.meta.AgDataMap;
 import io.agrest.meta.AgEntity;
 import io.agrest.runtime.entity.*;
@@ -20,7 +20,7 @@ public class SenchaCreateResourceEntityStage extends CreateResourceEntityStage {
 
     public SenchaCreateResourceEntityStage(
             @Inject AgDataMap dataMap,
-            @Inject ICayenneExpMerger expConstructor,
+            @Inject IExpMerger expConstructor,
             @Inject ISortMerger sortConstructor,
             @Inject IMapByMerger mapByConstructor,
             @Inject ISizeMerger sizeConstructor,
@@ -42,7 +42,7 @@ public class SenchaCreateResourceEntityStage extends CreateResourceEntityStage {
         entity.getQualifiers().addAll(parseFilter(entity.getAgEntity(), context));
     }
 
-    protected <T> List<CayenneExp> parseFilter(AgEntity<?> entity, SelectContext<T> context) {
+    protected <T> List<Exp> parseFilter(AgEntity<?> entity, SelectContext<T> context) {
         SenchaRequest senchaRequest = SenchaRequest.get(context);
         return senchaFilterProcessor.process(entity, senchaRequest.getFilters());
     }

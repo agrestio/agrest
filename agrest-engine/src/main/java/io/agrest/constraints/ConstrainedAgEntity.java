@@ -1,6 +1,6 @@
 package io.agrest.constraints;
 
-import io.agrest.base.protocol.CayenneExp;
+import io.agrest.base.protocol.Exp;
 import io.agrest.meta.AgAttribute;
 import io.agrest.meta.AgEntity;
 
@@ -19,7 +19,7 @@ public class ConstrainedAgEntity<T> {
     private boolean idIncluded;
     private Collection<String> attributes;
     private Map<String, ConstrainedAgEntity<?>> children;
-    private CayenneExp qualifier;
+    private Exp qualifier;
     private AgEntity<T> entity;
 
     public ConstrainedAgEntity(AgEntity<T> entity) {
@@ -64,7 +64,7 @@ public class ConstrainedAgEntity<T> {
         return children.containsKey(name);
     }
 
-    public CayenneExp getQualifier() {
+    public Exp getQualifier() {
         return qualifier;
     }
 
@@ -107,7 +107,7 @@ public class ConstrainedAgEntity<T> {
         this.idIncluded = include;
     }
 
-    void setQualifier(CayenneExp qualifier) {
+    void setQualifier(Exp qualifier) {
         this.qualifier = qualifier;
     }
 }

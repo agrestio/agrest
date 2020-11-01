@@ -37,7 +37,7 @@ public class SenchaParseRequestStageTest extends CayenneNoDbTest {
 		IJacksonService jacksonService = new JacksonService();
 
 		// prepare parse request stage
-        ICayenneExpParser expParser = new CayenneExpParser(jacksonService);
+        IExpParser expParser = new ExpParser(jacksonService);
 		ISortParser sortParser = new SortParser(jacksonService);
         ISizeParser sizeParser = new SizeParser();
         IIncludeParser includeParser = new IncludeParser(jacksonService, expParser, sortParser, sizeParser);
@@ -92,8 +92,8 @@ public class SenchaParseRequestStageTest extends CayenneNoDbTest {
 
 		AgRequest request = context.getMergedRequest();
 
-		assertNotNull(request.getCayenneExp());
-		assertEquals("address = '1 Main Street'", request.getCayenneExp().getExp());
+		assertNotNull(request.getExp());
+		assertEquals("address = '1 Main Street'", request.getExp().getExp());
 	}
 
 	@Test

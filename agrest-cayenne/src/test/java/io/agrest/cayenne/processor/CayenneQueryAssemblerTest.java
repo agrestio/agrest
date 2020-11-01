@@ -1,7 +1,7 @@
 package io.agrest.cayenne.processor;
 
 import io.agrest.RootResourceEntity;
-import io.agrest.base.protocol.CayenneExp;
+import io.agrest.base.protocol.Exp;
 import io.agrest.base.protocol.Dir;
 import io.agrest.base.protocol.Sort;
 import io.agrest.cayenne.cayenne.main.E1;
@@ -74,11 +74,11 @@ public class CayenneQueryAssemblerTest extends CayenneNoDbTest {
         SelectContext<E1> c = new SelectContext<>(E1.class);
         c.setEntity(entity);
 
-        entity.getQualifiers().add(new CayenneExp("name = 'X'"));
+        entity.getQualifiers().add(new Exp("name = 'X'"));
         SelectQuery<E1> q1 = queryAssembler.createRootQuery(c);
         assertEquals(E1.NAME.eq("X"), q1.getQualifier());
 
-        entity.getQualifiers().add(new CayenneExp("name in ('a', 'b')"));
+        entity.getQualifiers().add(new Exp("name in ('a', 'b')"));
         SelectQuery<E1> q2 = queryAssembler.createRootQuery(c);
         assertEquals(E1.NAME.eq("X").andExp(E1.NAME.in("a", "b")), q2.getQualifier());
     }

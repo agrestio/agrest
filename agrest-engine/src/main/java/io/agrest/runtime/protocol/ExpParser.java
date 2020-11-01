@@ -3,7 +3,7 @@ package io.agrest.runtime.protocol;
 import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.JsonNode;
 import io.agrest.AgException;
-import io.agrest.base.protocol.CayenneExp;
+import io.agrest.base.protocol.Exp;
 import io.agrest.runtime.jackson.IJacksonService;
 import org.apache.cayenne.di.Inject;
 
@@ -14,14 +14,14 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-public class CayenneExpParser implements ICayenneExpParser {
+public class ExpParser implements IExpParser {
 
     private static final String JSON_KEY_EXP = "exp";
     private static final String JSON_KEY_PARAMS = "params";
 
     private IJacksonService jsonParser;
 
-    public CayenneExpParser(@Inject IJacksonService jsonParser) {
+    public ExpParser(@Inject IJacksonService jsonParser) {
         this.jsonParser = jsonParser;
     }
 
@@ -62,36 +62,36 @@ public class CayenneExpParser implements ICayenneExpParser {
      * @since 2.13
      */
     @Override
-    public CayenneExp fromString(String value) {
+    public Exp fromString(String value) {
         if (value == null || value.isEmpty()) {
             return null;
         }
 
-        CayenneExp cayenneExp;
+        Exp exp;
 
         if (value.startsWith("[")) {
-            cayenneExp = fromJsonArray(jsonParser.parseJson(value));
+            exp = fromJsonArray(jsonParser.parseJson(value));
         } else if (value.startsWith("{")) {
-            cayenneExp = fromJsonObject(jsonParser.parseJson(value));
+            exp = fromJsonObject(jsonParser.parseJson(value));
         } else {
-            cayenneExp = new CayenneExp(value);
+            exp = new Exp(value);
         }
 
-        return cayenneExp;
+        return exp;
     }
 
     /**
      * @since 2.13
      */
     @Override
-    public CayenneExp fromJson(JsonNode json) {
+    public Exp fromJson(JsonNode json) {
 
         if (json == null || json.isNull()) {
             return null;
         }
 
         if(json.isTextual()) {
-            return new CayenneExp(json.asText());
+            return new Exp(json.asText());
         }
 
         if(json.isArray()) {
@@ -106,11 +106,11 @@ public class CayenneExpParser implements ICayenneExpParser {
         return null;
     }
 
-    private CayenneExp fromJsonObject(JsonNode node) {
+    private Exp fromJsonObject(JsonNode node) {
         // 'exp' key is required; 'params' key is optional
         JsonNode expNode = node.get(JSON_KEY_EXP);
         if (expNode == null) {
-            throw new AgException(Status.BAD_REQUEST, "'exp' key is missing in 'cayenneExp' map");
+            throw new AgException(Status.BAD_REQUEST, "'exp' key is missing in 'exp' map");
         }
 
         JsonNode paramsNode = node.get(JSON_KEY_PARAMS);
@@ -126,23 +126,23 @@ public class CayenneExpParser implements ICayenneExpParser {
                 paramsMap.put(key, val);
             }
 
-            return new CayenneExp(expNode.asText(), paramsMap);
+            return new Exp(expNode.asText(), paramsMap);
         }
 
-        return new CayenneExp(expNode.asText());
+        return new Exp(expNode.asText());
     }
 
-    private CayenneExp fromJsonArray(JsonNode array) {
+    private Exp fromJsonArray(JsonNode array) {
         int len = array.size();
 
         if (len < 1) {
-            throw new AgException(Status.BAD_REQUEST, "array 'cayenneExp' mast have at least one element");
+            throw new AgException(Status.BAD_REQUEST, "array 'exp' mast have at least one element");
         }
 
         String expString = array.get(0).asText();
 
         if (len < 2) {
-            return new CayenneExp(expString);
+            return new Exp(expString);
         }
 
         Object[] params = new Object[len - 1];
@@ -153,6 +153,6 @@ public class CayenneExpParser implements ICayenneExpParser {
             params[i - 1] = extractValue(paramNode);
         }
 
-        return new CayenneExp(expString, params);
+        return new Exp(expString, params);
     }
 }

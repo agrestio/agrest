@@ -4,12 +4,12 @@ import io.agrest.ResourceEntity;
 import io.agrest.RootResourceEntity;
 import io.agrest.annotation.AgAttribute;
 import io.agrest.annotation.AgId;
-import io.agrest.base.protocol.CayenneExp;
+import io.agrest.base.protocol.Exp;
 import io.agrest.compiler.AgEntityCompiler;
 import io.agrest.compiler.AnnotationsAgEntityCompiler;
 import io.agrest.meta.AgDataMap;
 import io.agrest.meta.LazyAgDataMap;
-import io.agrest.runtime.entity.CayenneExpMerger;
+import io.agrest.runtime.entity.ExpMerger;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -19,10 +19,10 @@ import java.util.Date;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class CayenneExpMergerTest {
+public class ExpMergerTest {
 
     private static AgDataMap dataMap;
-    private static CayenneExpMerger merger;
+    private static ExpMerger merger;
     private ResourceEntity<Tr> entity;
 
     @BeforeAll
@@ -30,7 +30,7 @@ public class CayenneExpMergerTest {
 
         AgEntityCompiler compiler = new AnnotationsAgEntityCompiler(Collections.emptyMap());
         dataMap = new LazyAgDataMap(Collections.singletonList(compiler));
-        merger = new CayenneExpMerger();
+        merger = new ExpMerger();
     }
 
     @BeforeEach
@@ -40,18 +40,18 @@ public class CayenneExpMergerTest {
 
     @Test
     public void testMerge_Empty() {
-        merger.merge(entity, new CayenneExp("a = 12345 and b = 'John Smith'"));
+        merger.merge(entity, new Exp("a = 12345 and b = 'John Smith'"));
         assertEquals(1, entity.getQualifiers().size());
-        assertEquals(new CayenneExp("a = 12345 and b = 'John Smith'"), entity.getQualifiers().get(0));
+        assertEquals(new Exp("a = 12345 and b = 'John Smith'"), entity.getQualifiers().get(0));
     }
 
     @Test
     public void testMerge_OverExisting() {
-        entity.getQualifiers().add(new CayenneExp("c = true"));
-        merger.merge(entity, new CayenneExp("a = 12345 and b = 'John Smith'"));
+        entity.getQualifiers().add(new Exp("c = true"));
+        merger.merge(entity, new Exp("a = 12345 and b = 'John Smith'"));
         assertEquals(2, entity.getQualifiers().size());
-        assertEquals(new CayenneExp("c = true"), entity.getQualifiers().get(0));
-        assertEquals(new CayenneExp("a = 12345 and b = 'John Smith'"), entity.getQualifiers().get(1));
+        assertEquals(new Exp("c = true"), entity.getQualifiers().get(0));
+        assertEquals(new Exp("a = 12345 and b = 'John Smith'"), entity.getQualifiers().get(1));
     }
 
     public static class Tr {

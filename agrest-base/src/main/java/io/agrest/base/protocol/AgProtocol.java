@@ -8,10 +8,11 @@ package io.agrest.base.protocol;
 public enum AgProtocol {
 
     /**
-     * @deprecated since 4.1 in favor of {@link AgProtocol#exp}, but will be supported indefinitely for backwards compatibility.
+     * @deprecated since 4.1 in favor of {@link AgProtocol#exp}, but will be supported indefinitely for backwards
+     * compatibility.
      */
     @Deprecated
-    cayenneExp("A deprecated alias for 'exp'. Expression used to filter a select result"),
+    cayenneExp("A deprecated alias for 'exp' parameter. Expression used to filter a select result"),
 
     dir("Sort direction. Can be one of 'ASC','ASC_CI', 'DESC', 'DESC_CI'. Used in conjunction with 'sort'."),
 

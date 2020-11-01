@@ -67,8 +67,8 @@ public class AgClient {
 		return this;
 	}
 
-	public AgClient cayenneExp(Expression.ExpressionBuilder cayenneExp) {
-		request.cayenneExp(cayenneExp.build());
+	public AgClient exp(Expression.ExpressionBuilder exp) {
+		request.exp(exp.build());
 		return this;
 	}
 

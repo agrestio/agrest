@@ -7,7 +7,7 @@ import io.agrest.SizeConstraints;
 import io.agrest.annotation.AgAttribute;
 import io.agrest.annotation.AgId;
 import io.agrest.annotation.AgRelationship;
-import io.agrest.base.protocol.CayenneExp;
+import io.agrest.base.protocol.Exp;
 import io.agrest.compiler.AgEntityCompiler;
 import io.agrest.compiler.AnnotationsAgEntityCompiler;
 import io.agrest.constraints.Constraint;
@@ -201,12 +201,12 @@ public class ConstraintsHandlerTest {
     public void testConstrainResponse_CayenneExp() {
 
         AgEntity<Tr> entity = dataMap.getEntity(Tr.class);
-        Constraint<Tr> constraint = Constraint.excludeAll(Tr.class).qualifier(new CayenneExp("a = 5"));
+        Constraint<Tr> constraint = Constraint.excludeAll(Tr.class).qualifier(new Exp("a = 5"));
 
         ResourceEntity<Tr> e1 = new RootResourceEntity<>(entity, null);
         constraintsHandler.constrainResponse(e1, null, constraint);
         assertEquals(1, e1.getQualifiers().size());
-        assertEquals(new CayenneExp("a = 5"), e1.getQualifiers().get(0));
+        assertEquals(new Exp("a = 5"), e1.getQualifiers().get(0));
     }
 
     @Test

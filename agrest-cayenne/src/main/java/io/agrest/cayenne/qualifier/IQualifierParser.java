@@ -1,6 +1,6 @@
 package io.agrest.cayenne.qualifier;
 
-import io.agrest.base.protocol.CayenneExp;
+import io.agrest.base.protocol.Exp;
 import org.apache.cayenne.exp.Expression;
 
 import java.util.List;
@@ -10,5 +10,5 @@ import java.util.List;
  */
 public interface IQualifierParser {
 
-    Expression parse(List<CayenneExp> qualifiers);
+    Expression parse(List<Exp> qualifiers);
 }

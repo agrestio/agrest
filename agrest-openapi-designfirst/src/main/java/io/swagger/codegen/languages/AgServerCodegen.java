@@ -45,7 +45,7 @@ public class AgServerCodegen extends AbstractJavaJAXRSServerCodegen implements A
         typeMapping.put("DateTime", "LocalDateTime");
         typeMapping.put("number", "Double");
 
-        typeMapping.put("cayenneExp", "CayenneExp");
+        typeMapping.put("exp", "Exp");
         typeMapping.put("dir", "Dir");
         typeMapping.put("exclude", "Exclude");
         typeMapping.put("include", "Include");

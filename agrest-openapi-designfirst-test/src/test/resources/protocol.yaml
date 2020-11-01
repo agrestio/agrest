@@ -1,8 +1,8 @@
 components:
   queryParams:
 
-    CayenneExp:
-      name: cayenneExp
+    Exp:
+      name: exp
       in: query
       style: form
       explode: false

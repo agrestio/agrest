@@ -1,6 +1,6 @@
 package io.agrest.sencha.runtime.entity;
 
-import io.agrest.base.protocol.CayenneExp;
+import io.agrest.base.protocol.Exp;
 import io.agrest.cayenne.cayenne.main.E4;
 import io.agrest.cayenne.unit.CayenneNoDbTest;
 import io.agrest.meta.AgEntity;
@@ -27,10 +27,10 @@ public class SenchaFilterExpressionCompilerTest extends CayenneNoDbTest {
     }
 
     private void assertFromFilter(Filter filter, String expectedExp, Object... expectedParams) {
-        assertEquals(new CayenneExp(expectedExp, expectedParams), processor.fromFilter(filter));
+        assertEquals(new Exp(expectedExp, expectedParams), processor.fromFilter(filter));
     }
 
-    private List<CayenneExp> process(Filter... filters) {
+    private List<Exp> process(Filter... filters) {
         return processor.process(e4Entity, Arrays.asList(filters));
     }
 
@@ -42,8 +42,8 @@ public class SenchaFilterExpressionCompilerTest extends CayenneNoDbTest {
     @Test
     public void testProcess_MultipleFilters() {
         assertEquals(asList(
-                new CayenneExp("cVarchar likeIgnoreCase 'xyz%'"),
-                new CayenneExp("cVarchar likeIgnoreCase '123%'")
+                new Exp("cVarchar likeIgnoreCase 'xyz%'"),
+                new Exp("cVarchar likeIgnoreCase '123%'")
                 ),
                 process(
                         new Filter("cVarchar", "xyz", "like", false, false),
@@ -52,7 +52,7 @@ public class SenchaFilterExpressionCompilerTest extends CayenneNoDbTest {
 
     @Test
     public void testProcess_MultipleFilters_Disabled() {
-        assertEquals(asList(new CayenneExp("cVarchar likeIgnoreCase '123%'")),
+        assertEquals(asList(new Exp("cVarchar likeIgnoreCase '123%'")),
                 process(
                         new Filter("cVarchar", "xyz", "like", true, false),
                         new Filter("cVarchar", "123", "like", false, false)));
