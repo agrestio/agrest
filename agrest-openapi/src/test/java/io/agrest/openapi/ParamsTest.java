@@ -34,13 +34,13 @@ public class ParamsTest {
         PathItem pi = oapi.getPaths().get("/r/uri-info");
         Operation get = pi.getGet();
 
-        assertEquals(8, get.getParameters().size());
+        assertEquals(9, get.getParameters().size());
         Map<String, Parameter> paramsMap = new HashMap<>();
         get.getParameters().forEach(p -> paramsMap.put(p.getName(), p));
 
         // TODO: Agrest should define the names enum publicly somewhere
         assertEquals(
-                new HashSet<>(asList("cayenneExp", "dir", "exclude", "include", "limit", "mapBy", "sort", "start")),
+                new HashSet<>(asList("cayenneExp", "dir", "exclude", "exp", "include", "limit", "mapBy", "sort", "start")),
                 paramsMap.keySet());
 
         // TODO assert the actual parameters
@@ -68,13 +68,13 @@ public class ParamsTest {
         PathItem pi = oapi.getPaths().get("/r/mixed-params");
         Operation get = pi.getGet();
 
-        assertEquals(9, get.getParameters().size());
+        assertEquals(10, get.getParameters().size());
         Map<String, Parameter> paramsMap = new HashMap<>();
         get.getParameters().forEach(p -> paramsMap.put(p.getName(), p));
 
         // TODO: Agrest should define the names enum publicly somewhere
         assertEquals(
-                new HashSet<>(asList("x", "cayenneExp", "dir", "exclude", "include", "limit", "mapBy", "sort", "start")),
+                new HashSet<>(asList("x", "cayenneExp", "dir", "exclude", "exp", "include", "limit", "mapBy", "sort", "start")),
                 paramsMap.keySet());
 
         // TODO assert the actual parameters

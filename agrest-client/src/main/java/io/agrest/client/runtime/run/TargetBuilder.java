@@ -55,7 +55,7 @@ public class TargetBuilder {
 
 		Optional<Expression> exp = request.getCayenneExp();
 		if (exp.isPresent()) {
-			newTarget = newTarget.queryParam(AgProtocol.cayenneExp.name(), encoder.encode(exp.get()));
+			newTarget = newTarget.queryParam(AgProtocol.exp.name(), encoder.encode(exp.get()));
 		}
 
 		if (!request.getOrderings().isEmpty()) {

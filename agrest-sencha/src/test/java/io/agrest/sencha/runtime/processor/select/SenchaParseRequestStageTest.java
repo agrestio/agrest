@@ -75,7 +75,7 @@ public class SenchaParseRequestStageTest extends CayenneNoDbTest {
 
 		@SuppressWarnings("unchecked")
 		MultivaluedMap<String, String> params = mock(MultivaluedMap.class);
-		when(params.get(AgProtocol.cayenneExp.name())).thenReturn(Collections.singletonList("{\"exp\" : \"address = '1 Main Street'\"}"));
+		when(params.get(AgProtocol.exp.name())).thenReturn(Collections.singletonList("{\"exp\" : \"address = '1 Main Street'\"}"));
 		when(params.get(AgProtocolSenchaExt.filter.name())).thenReturn(Collections.singletonList("[{\"property\":\"name\",\"value\":\"xyz\"}]"));
 
         SelectContext<E2> context = prepareContext(params, E2.class);

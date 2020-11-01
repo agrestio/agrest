@@ -38,6 +38,7 @@ public class UriInfoResolver {
         resolved.parameters.add(createExcludeParam());
         resolved.parameters.add(createSortParam());
         resolved.parameters.add(createDirParam());
+        resolved.parameters.add(createExpParam());
         resolved.parameters.add(createCayenneExpParam());
         resolved.parameters.add(createMapByParam());
         resolved.parameters.add(createStartParam());
@@ -70,9 +71,18 @@ public class UriInfoResolver {
         return queryParam(AgProtocol.dir).schema(dirSchema);
     }
 
+    protected Parameter createExpParam() {
+        // TODO: detailed schema
+        return queryParam(AgProtocol.exp);
+    }
+
+    /**
+     * @deprecated since 4.1 in favor of {@link AgProtocol#exp}, but will be supported indefinitely for backwards compatibility.
+     */
+    @Deprecated
     protected Parameter createCayenneExpParam() {
         // TODO: detailed schema
-        return queryParam(AgProtocol.cayenneExp);
+        return queryParam(AgProtocol.cayenneExp).deprecated(true);
     }
 
     protected Parameter createMapByParam() {

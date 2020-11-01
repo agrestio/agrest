@@ -8,6 +8,8 @@ import io.agrest.processor.ProcessorOutcome;
 import io.agrest.runtime.protocol.ParameterExtractor;
 import io.agrest.runtime.request.IAgRequestBuilderFactory;
 import org.apache.cayenne.di.Inject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.Map;
@@ -16,6 +18,8 @@ import java.util.Map;
  * @since 2.7
  */
 public class ParseRequestStage implements Processor<SelectContext<?>> {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(ParseRequestStage.class);
 
     protected final IAgRequestBuilderFactory requestBuilderFactory;
 
@@ -47,10 +51,29 @@ public class ParseRequestStage implements Processor<SelectContext<?>> {
         }
     }
 
+    private String cayenneExp(Map<String, List<String>> params) {
+        String exp = ParameterExtractor.string(params, AgProtocol.exp);
+        String cayenneExp = ParameterExtractor.string(params, AgProtocol.cayenneExp);
+
+        // keep supporting deprecated "cayenneExp" key
+        // TODO: if we ever start supporting multiple "exp" keys, these two can be concatenated.
+        //  For now "exp" overrides "cayenneExp"
+        if (exp != null) {
+            return exp;
+        }
+
+        if (cayenneExp != null) {
+            LOGGER.info("*** 'cayenneExp' parameter is deprecated since Agrest 4.1. Consider replacing it with 'exp'");
+        }
+
+        return cayenneExp;
+    }
+
     // keeping as protected, and returning a mutable builder to allow subclasses to interfere
     protected AgRequestBuilder requestFromParams(Map<String, List<String>> parameters) {
+
         return requestBuilderFactory.builder()
-                .cayenneExp(ParameterExtractor.string(parameters, AgProtocol.cayenneExp))
+                .cayenneExp(cayenneExp(parameters))
                 .addOrdering(ParameterExtractor.string(parameters, AgProtocol.sort), ParameterExtractor.string(parameters, AgProtocol.dir))
                 .mapBy(ParameterExtractor.string(parameters, AgProtocol.mapBy))
                 .addIncludes(ParameterExtractor.strings(parameters, AgProtocol.include))
@@ -92,7 +115,7 @@ public class ParseRequestStage implements Processor<SelectContext<?>> {
             if (request.getCayenneExp() != null) {
                 builder.cayenneExp(request.getCayenneExp());
             } else {
-                builder.cayenneExp(ParameterExtractor.string(parameters, AgProtocol.cayenneExp));
+                builder.cayenneExp(cayenneExp(parameters));
             }
         }
 

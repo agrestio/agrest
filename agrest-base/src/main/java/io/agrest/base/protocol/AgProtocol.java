@@ -7,11 +7,20 @@ package io.agrest.base.protocol;
  */
 public enum AgProtocol {
 
-    cayenneExp("Expression used to filter a select result"),
+    /**
+     * @deprecated since 4.1 in favor of {@link AgProtocol#exp}, but will be supported indefinitely for backwards compatibility.
+     */
+    @Deprecated
+    cayenneExp("A deprecated alias for 'exp'. Expression used to filter a select result"),
 
     dir("Sort direction. Can be one of 'ASC','ASC_CI', 'DESC', 'DESC_CI'. Used in conjunction with 'sort'."),
 
     exclude("Property path to exclude from response objects."),
+
+    /**
+     * @since 4.1
+     */
+    exp("Expression used to filter a select result"),
 
     include("Either a property path or a JSON object defining rules for including entity properties in a response"),
 
