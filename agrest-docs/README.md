@@ -13,4 +13,4 @@ git add -A
 git commit -a -m "docs update"
 ```
 
-_TODO: this is a temporary recipe until Agrest.io is switched to publishing via Hugo`.
+_TODO: this is a temporary recipe until Agrest.io is switched to publishing via Hugo`._
