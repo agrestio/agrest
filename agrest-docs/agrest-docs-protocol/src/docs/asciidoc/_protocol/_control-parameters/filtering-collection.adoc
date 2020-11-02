@@ -1,17 +1,19 @@
 === Filtering Collection with `exp`
 
-A conditional expression that is used to filter the response objects. Expression
-String should follow the
-http://cayenne.apache.org/docs/4.0/cayenne-guide/expressions.html[format understood by Cayenne].
-The root for the property paths is the request entity
-(unless "exp" is used within a relationship "include", in which case the root is that related entity).
+NOTE: "exp" key was first introduced in Agrest 4.1. Previously it was called "cayenneExp".
+Both are synonymous. "cayenneExp" is still supported, though should be considered deprecated.
+
+A condition expression used to filter the response objects. Expression follow syntax of the
+https://cayenne.apache.org/docs/4.0/cayenne-guide/expressions.html[Apache Cayenne expressions].
+An implicit "root" for the property paths is the request entity, (unless "exp" is used within
+an "include" JSON, in which case the root is that related entity).
 
 Example 1: Filtering on a single property.
 
 `exp=vhost='agrest.io'`
 
 
-Example 2: Filtering using outer join (the "+" sign is Cayenne notation for outer).
+Example 2: Filtering using outer join (the "+" sign is notation for "outer").
 
 `exp=articles+ = null`
 

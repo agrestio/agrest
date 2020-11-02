@@ -58,6 +58,9 @@ of related objects for each root object.
 }
 ----
 
+NOTE: "exp" key was first introduced in Agrest 4.1. Previously it was called "cayenneExp".
+Both are synonymous. "cayenneExp" is still supported, though should be considered deprecated.
+
 Example 5: Related objects as a map. Here we'll map article bodies by title.
 
 `include={"path":"articles","mapBy":"title"}&amp;include=articles.body`
