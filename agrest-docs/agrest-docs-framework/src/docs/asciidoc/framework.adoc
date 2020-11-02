@@ -1,10 +1,6 @@
 :agrest-header: _framework/header.html
-//:sectnums:
-//:sectnumlevels: 2
 
 = Agrest Framework
-
-// enable section numbering, limiting depth to 2
 
 include::_framework/prerequisites.adoc[]
 

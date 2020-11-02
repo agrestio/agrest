@@ -2,13 +2,6 @@
 
 = Agrest Overview
 
-//:revnumber: {project-major-version} ({project-version})
-// enable section numbering, limiting depth to 2
-//:sectnums:
-//:sectnumlevels: 2
-
-// customize final layout
-//:linkcss:
 // base path to java code include
 :agrest-root: {basedir}/../../..
 

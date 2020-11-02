@@ -2,10 +2,6 @@
 
 = Agrest Protocol
 
-// enable section numbering, limiting depth to 2
-//:sectnums:
-//:sectnumlevels: 2
-
 include::_protocol/overview.adoc[]
 
 include::_protocol/json-documents.adoc[]
