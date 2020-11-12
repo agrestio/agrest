@@ -58,7 +58,9 @@ public class AgEntityModelConverter extends AgModelConverter {
 
         AgEntity<?> agEntity = dataMap.getEntity(wrapped.getRawClass());
         String name = agEntity.getName();
-        Map<String, Schema> properties = new HashMap<>();
+
+        // ensure stable property ordering
+        Map<String, Schema> properties = new LinkedHashMap<>();
 
         // TODO: multi-key ids must be exposed as maps
         if (agEntity.getIdParts().size() == 1) {
@@ -69,11 +71,15 @@ public class AgEntityModelConverter extends AgModelConverter {
                     context));
         }
 
-        for (AgAttribute a : agEntity.getAttributes()) {
+        List<AgAttribute> sortedAttributes = new ArrayList<>(agEntity.getAttributes());
+        sortedAttributes.sort(Comparator.comparing(AgAttribute::getName));
+        for (AgAttribute a : sortedAttributes) {
             properties.put(a.getName(), doResolveValue(a.getName(), a.getType(), context));
         }
 
-        for (AgRelationship r : agEntity.getRelationships()) {
+        List<AgRelationship> sortedRelationships = new ArrayList<>(agEntity.getRelationships());
+        sortedRelationships.sort(Comparator.comparing(AgRelationship::getName));
+        for (AgRelationship r : sortedRelationships) {
             properties.put(r.getName(), doResolveRelationship(r));
         }
 

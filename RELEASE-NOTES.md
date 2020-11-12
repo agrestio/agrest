@@ -1,3 +1,7 @@
+## Release 4.2
+
+* #469 AgEntityModelConverter to use predictable alphabetic ordering 
+
 ## Release 4.1
 
 * #459 "code-first" OpenAPI support and Swagger integration
