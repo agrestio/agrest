@@ -65,7 +65,7 @@ public abstract class CayenneNoDbTest {
 
         runtime = ServerRuntime
                 .builder()
-                .addConfig("cayenne-agrest-tests.xml")
+                .addConfig("cayenne-project.xml")
                 .addModule(module)
                 .build();
     }

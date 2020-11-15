@@ -3,5 +3,6 @@
 	 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	 xsi:schemaLocation="http://cayenne.apache.org/schema/10/domain https://cayenne.apache.org/schema/10/domain.xsd"
 	 project-version="10">
-	<map name="main"/>
+	<map name="datamap"/>
+	<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="project.graph.xml"/>
 </domain>

@@ -17,7 +17,7 @@ public abstract class DbTest {
     protected static AgCayenneTester.Builder tester(Class<?>... resources) {
         return AgCayenneTester
                 .forDb(db)
-                .cayenneProject("cayenne-agrest-tests.xml")
+                .cayenneProject("cayenne-project.xml")
                 .resources(resources);
     }
 }
