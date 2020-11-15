@@ -1,7 +1,7 @@
 package io.agrest.openapi;
 
 import io.agrest.DataResponse;
-import org.example.entity.P1;
+import org.example.entity.NonAgP1;
 import io.agrest.openapi.unit.OpenAPIBuilder;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.Operation;
@@ -26,7 +26,7 @@ public class ParamsTest {
 
     static final OpenAPI oapi = new OpenAPIBuilder()
             .addClass(Resource.class)
-            .addPackage(P1.class)
+            .addPackage(NonAgP1.class)
             .build();
 
     @Test
@@ -86,19 +86,19 @@ public class ParamsTest {
 
         @GET
         @Path("uri-info")
-        public DataResponse<P1> uriInfo(@Context UriInfo uriInfo) {
+        public DataResponse<NonAgP1> uriInfo(@Context UriInfo uriInfo) {
             throw new UnsupportedOperationException("endpoint logic is irrelevant for the test");
         }
 
         @GET
         @Path("explicit-params")
-        public DataResponse<P1> explicitParams(@QueryParam("exp") String exp, @QueryParam("sort") String sort) {
+        public DataResponse<NonAgP1> explicitParams(@QueryParam("exp") String exp, @QueryParam("sort") String sort) {
             throw new UnsupportedOperationException("endpoint logic is irrelevant for the test");
         }
 
         @GET
         @Path("mixed-params")
-        public DataResponse<P1> mixedParams(@QueryParam("x") String x, @Context UriInfo uriInfo) {
+        public DataResponse<NonAgP1> mixedParams(@QueryParam("x") String x, @Context UriInfo uriInfo) {
             throw new UnsupportedOperationException("endpoint logic is irrelevant for the test");
         }
     }

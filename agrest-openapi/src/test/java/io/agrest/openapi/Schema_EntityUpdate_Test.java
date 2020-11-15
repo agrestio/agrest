@@ -2,11 +2,11 @@ package io.agrest.openapi;
 
 import io.agrest.EntityUpdate;
 import io.agrest.SimpleResponse;
+import io.agrest.annotation.AgAttribute;
+import io.agrest.annotation.AgId;
 import io.agrest.openapi.unit.OpenAPIBuilder;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.media.Schema;
-import org.example.entity.P1;
-import org.example.entity.P4;
 import org.junit.jupiter.api.Test;
 
 import javax.ws.rs.PUT;
@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class Schema_EntityUpdate_Test {
 
     static final OpenAPI oapi = new OpenAPIBuilder()
-            .addPackage(P1.class)
+            .addPackage(P4.class)
             .addClass(Resource.class)
             .build();
 
@@ -61,6 +61,24 @@ public class Schema_EntityUpdate_Test {
         @Path("collection")
         public SimpleResponse putP4(List<EntityUpdate<P4>> p4Updates) {
             throw new UnsupportedOperationException("endpoint logic is irrelevant for the test");
+        }
+    }
+
+    public static class P4 {
+
+        @AgId
+        public int getA() {
+            return -1;
+        }
+
+        @AgAttribute
+        public int getB() {
+            return -1;
+        }
+
+        @AgAttribute
+        public String getC() {
+            return "";
         }
     }
 }

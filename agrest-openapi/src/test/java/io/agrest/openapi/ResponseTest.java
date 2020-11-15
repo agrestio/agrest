@@ -11,7 +11,7 @@ import io.swagger.v3.oas.models.media.MediaType;
 import io.swagger.v3.oas.models.media.Schema;
 import io.swagger.v3.oas.models.responses.ApiResponse;
 import io.swagger.v3.oas.models.responses.ApiResponses;
-import org.example.entity.P1;
+import org.example.entity.NonAgP1;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -28,7 +28,7 @@ public class ResponseTest {
 
     static final OpenAPI oapi = new OpenAPIBuilder()
             .addClass(Resource.class)
-            .addPackage(P1.class)
+            .addPackage(NonAgP1.class)
             .addPackage(AgP1.class)
             .build();
 
@@ -49,7 +49,7 @@ public class ResponseTest {
 
         assertNull(schema.getName());
         assertNull(schema.getType());
-        assertEquals("#/components/schemas/DataResponse(P1)", schema.get$ref());
+        assertEquals("#/components/schemas/DataResponse(NonAgP1)", schema.get$ref());
     }
 
     @Test
@@ -121,7 +121,7 @@ public class ResponseTest {
 
         @GET
         @Path("data-response-with-type")
-        public DataResponse<P1> dataResponseWithType() {
+        public DataResponse<NonAgP1> dataResponseWithType() {
             throw new UnsupportedOperationException("endpoint logic is irrelevant for the test");
         }
 

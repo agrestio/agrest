@@ -1,12 +1,10 @@
 package io.agrest.openapi;
 
 import io.agrest.DataResponse;
+import io.agrest.annotation.AgAttribute;
 import io.agrest.openapi.unit.OpenAPIBuilder;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.media.Schema;
-import org.example.entity.P1;
-import org.example.entity.P7;
-import org.example.entity.P8;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -24,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 public class Schema_EntityValues_NoPropertyConflicts_Test {
 
     static final OpenAPI oapi = new OpenAPIBuilder()
-            .addPackage(P1.class)
+            .addPackage(P7.class)
             .addClass(Resource.class)
             .build();
 
@@ -74,6 +72,32 @@ public class Schema_EntityValues_NoPropertyConflicts_Test {
         @Path("p8")
         public DataResponse<P8> getP8() {
             throw new UnsupportedOperationException("endpoint logic is irrelevant for the test");
+        }
+    }
+
+    public static class P8 {
+
+        @AgAttribute
+        public String getOtherP8() {
+            return null;
+        }
+
+        @AgAttribute
+        public String getDuplicate() {
+            return null;
+        }
+    }
+
+    public static class P7 {
+
+        @AgAttribute
+        public String getDuplicate() {
+            return null;
+        }
+
+        @AgAttribute
+        public String getOtherP7() {
+            return null;
         }
     }
 }
