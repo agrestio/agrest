@@ -65,16 +65,13 @@ public class AgEntityModelConverter extends AgModelConverter {
         // TODO: multi-key ids must be exposed as maps
         if (agEntity.getIdParts().size() == 1) {
             AgIdPart id = agEntity.getIdParts().iterator().next();
-            properties.put(PathConstants.ID_PK_ATTRIBUTE, doResolveValue(
-                    PathConstants.ID_PK_ATTRIBUTE,
-                    id.getType(),
-                    context));
+            properties.put(PathConstants.ID_PK_ATTRIBUTE, doResolveValue(id.getType(), context));
         }
 
         List<AgAttribute> sortedAttributes = new ArrayList<>(agEntity.getAttributes());
         sortedAttributes.sort(Comparator.comparing(AgAttribute::getName));
         for (AgAttribute a : sortedAttributes) {
-            properties.put(a.getName(), doResolveValue(a.getName(), a.getType(), context));
+            properties.put(a.getName(), doResolveValue(a.getType(), context));
         }
 
         List<AgRelationship> sortedRelationships = new ArrayList<>(agEntity.getRelationships());
@@ -87,7 +84,7 @@ public class AgEntityModelConverter extends AgModelConverter {
         return onSchemaResolved(type, context, schema);
     }
 
-    protected Schema doResolveValue(String name, Class<?> type, ModelConverterContext context) {
+    protected Schema doResolveValue(Class<?> type, ModelConverterContext context) {
         Schema primitive = PrimitiveType.createProperty(type);
         return primitive != null
                 ? primitive
