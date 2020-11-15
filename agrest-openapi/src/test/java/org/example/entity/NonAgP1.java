@@ -1,7 +1,9 @@
 package org.example.entity;
 
 /**
- * Intentionally placing an entity class outside of "io.agrest" package to see how package filtering works.
+ * A class with location outside "io.agrest" package. Used in tests of package-based resolvers.
+ *
+ * @see io.agrest.entity.AgP1
  */
 public class NonAgP1 {
 }

@@ -1,8 +1,10 @@
 package io.agrest.entity;
 
 /**
- * Intentionally placing an entity class in the "io.agrest" package to ensure it can be resolved without
- * conflicts with other Agrest model resolvers.
+ * A class with location within "io.agrest" package. Used in tests that verify resolving without conflicts with other
+ * Agrest model resolvers.
+ *
+ * @see org.example.entity.NonAgP1
  */
 public class AgP1 {
 }
