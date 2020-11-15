@@ -17,7 +17,6 @@
         <module>agrest-annotations</module>
         <module>agrest-engine</module>
         <module>agrest-cayenne</module>
-        <module>agrest</module>
         <module>agrest-sencha</module>
         <module>agrest-client</module>
         <module>agrest-openapi</module>

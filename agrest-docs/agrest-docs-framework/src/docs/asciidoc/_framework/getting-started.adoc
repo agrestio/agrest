@@ -7,10 +7,21 @@ To load Agrest in your project, follow these simple steps:
 +
 [source, xml, subs="verbatim,attributes"]
 ----
+<!-- The main Agrest engine -->
 <dependency>
    <groupId>io.agrest</groupId>
-   <artifactId>agrest</artifactId>
-   <version>{project-version}</version>
+   <artifactId>agrest-engine</artifactId>
+   <version>{agrest.version}</version>
+</dependency>
+
+<!--
+You will likely also need "agrest-cayenne",
+as this is the most capable Agrest backend as of now
+-->
+<dependency>
+   <groupId>io.agrest</groupId>
+   <artifactId>agrest-cayenne</artifactId>
+   <version>{agrest.version}</version>
 </dependency>
 ----
 

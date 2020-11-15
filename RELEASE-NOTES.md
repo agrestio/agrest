@@ -2,6 +2,7 @@
 
 * #469 AgEntityModelConverter to use predictable alphabetic ordering 
 * #470 Swagger model must include entities reachable from resource entities
+* #472 remove legacy "agrest" module
 
 ## Release 4.1
 
