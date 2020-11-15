@@ -1,3 +1,11 @@
+## Upgrading to 4.2
+
+### Legacy "io.agrest:agrest" module is removed [#472](https://github.com/agrestio/agrest/issues/472) 
+
+If you imported legacy `io.agrest:agrest` module as a dependency, remove it, and import these two modules instead: 
+`io.agrest:agrest-engine` and `io.agrest:agrest-cayenne` (of course Cayenne module is needed only if you are using 
+Cayenne as Agrest backend).
+
 ## Upgrading to 4.1
 
 ### Metadata API is deprecated in favor of OpenAPI [#466](https://github.com/agrestio/agrest/issues/466) 
