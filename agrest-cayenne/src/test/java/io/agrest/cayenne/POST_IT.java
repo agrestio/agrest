@@ -10,10 +10,7 @@ import io.agrest.constraints.Constraint;
 import io.bootique.junit5.BQTestTool;
 import org.junit.jupiter.api.Test;
 
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.QueryParam;
+import javax.ws.rs.*;
 import javax.ws.rs.core.Configuration;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.UriInfo;
@@ -260,13 +257,34 @@ public class POST_IT extends DbTest {
 
     @Test
     public void testFloatProperty() {
-        String data = "{\"floatObject\":0,\"floatPrimitive\":0}";
-        tester.target("/e19").path("float")
-                .queryParam("include", "floatObject")
-                .queryParam("include", "floatPrimitive")
-                .post(data)
+        tester.target("/e19/float")
+                .queryParam("include", "floatObject", "floatPrimitive")
+                .post("{\"floatObject\":1.0,\"floatPrimitive\":2.0}")
                 .wasCreated()
-                .bodyEquals(1, "{\"floatObject\":0.0,\"floatPrimitive\":0.0}");
+                .bodyEquals(1, "{\"floatObject\":1.0,\"floatPrimitive\":2.0}");
+        tester.e19().matcher().eq("float_object", 1.0).eq("float_primitive", 2.0).assertOneMatch();
+    }
+
+    @Test
+    public void testFloatProperty_FromInt() {
+        tester.target("/e19/float")
+                .queryParam("include", "floatObject", "floatPrimitive")
+                .post("{\"floatObject\":1,\"floatPrimitive\":2}")
+                .wasCreated()
+                .bodyEquals(1, "{\"floatObject\":1.0,\"floatPrimitive\":2.0}");
+        tester.e19().matcher().eq("float_object", 1.0).eq("float_primitive", 2.0).assertOneMatch();
+    }
+
+    @Test
+    public void testDoubleProperty() {
+        tester.target("/e19/double").post("{\"doubleObject\":1.0,\"doublePrimitive\":2.0}").wasCreated();
+        tester.e19().matcher().eq("double_object", 1.0).eq("double_primitive", 2.0).assertOneMatch();
+    }
+
+    @Test
+    public void testDoubleProperty_FromInt() {
+        tester.target("/e19/double").post("{\"doubleObject\":1,\"doublePrimitive\":2}").wasCreated();
+        tester.e19().matcher().eq("double_object", 1.0).eq("double_primitive", 2.0).assertOneMatch();
     }
 
     @Path("")
@@ -364,18 +382,13 @@ public class POST_IT extends DbTest {
         @POST
         @Path("e19/float")
         public DataResponse<E19> createE19_FloatAttribute(@Context UriInfo uriInfo, String data) {
-            DataResponse<E19> response = Ag.create(E19.class, config).uri(uriInfo).syncAndSelect(data);
+            return Ag.create(E19.class, config).uri(uriInfo).syncAndSelect(data);
+        }
 
-            int objectCount = response.getObjects().size();
-            if (objectCount > 1) {
-                throw new IllegalStateException("unexpected number of objects: " + objectCount);
-            }
-            E19 e19 = response.getObjects().get(0);
-            // trigger type casts
-            e19.getFloatObject();
-            e19.getFloatPrimitive();
-
-            return response;
+        @POST
+        @Path("e19/double")
+        public SimpleResponse create_E19_DoubleAttribute(String entityData) {
+            return Ag.create(E19.class, config).sync(entityData);
         }
     }
 }

@@ -43,6 +43,8 @@ public class DefaultJsonValueConverterFactoryProvider implements Provider<IJsonV
         converters.put(Object.class, GenericConverter.converter());
         converters.put(Float.class, FloatConverter.converter());
         converters.put(float.class, FloatConverter.converter());
+        converters.put(Double.class, DoubleConverter.converter());
+        converters.put(double.class, DoubleConverter.converter());
         converters.put(Long.class, LongConverter.converter());
         converters.put(long.class, LongConverter.converter());
         converters.put(Date.class, UtcDateConverter.converter());

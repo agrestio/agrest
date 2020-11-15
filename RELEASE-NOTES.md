@@ -1,5 +1,6 @@
 ## Release 4.2
 
+* #468 ClassCastException in combination Agrest 3.4 and Cayenne 4.1.
 * #469 AgEntityModelConverter to use predictable alphabetic ordering 
 * #470 Swagger model must include entities reachable from resource entities
 * #472 remove legacy "agrest" module

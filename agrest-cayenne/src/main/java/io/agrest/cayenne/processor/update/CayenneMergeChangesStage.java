@@ -196,8 +196,7 @@ public abstract class CayenneMergeChangesStage implements Processor<UpdateContex
         // 2. PK is auto-generated ... I guess this is sorta expected to fail - generated meaningless PK should not be
         // pushed from the client
         else if (pk.isGenerated()) {
-            throw new AgException(Response.Status.BAD_REQUEST, "Can't create '" + entity.getName()
-                    + "' with fixed id");
+            throw new AgException(Response.Status.BAD_REQUEST, "Can't create '" + entity.getName() + "' with fixed id");
         }
         // 3. probably a propagated ID.
         else {
