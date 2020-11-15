@@ -1,6 +1,7 @@
 ## Release 4.2
 
 * #469 AgEntityModelConverter to use predictable alphabetic ordering 
+* #470 Swagger model must include entities reachable from resource entities
 
 ## Release 4.1
 

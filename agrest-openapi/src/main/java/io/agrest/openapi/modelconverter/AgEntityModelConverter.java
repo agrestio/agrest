@@ -77,7 +77,7 @@ public class AgEntityModelConverter extends AgModelConverter {
         List<AgRelationship> sortedRelationships = new ArrayList<>(agEntity.getRelationships());
         sortedRelationships.sort(Comparator.comparing(AgRelationship::getName));
         for (AgRelationship r : sortedRelationships) {
-            properties.put(r.getName(), doResolveRelationship(r));
+            properties.put(r.getName(), doResolveRelationship(r, context));
         }
 
         Schema<?> schema = new ObjectSchema().name(name).properties(properties);
@@ -91,8 +91,14 @@ public class AgEntityModelConverter extends AgModelConverter {
                 : context.resolve(new AnnotatedType().type(type));
     }
 
-    protected Schema doResolveRelationship(AgRelationship relationship) {
+    protected Schema doResolveRelationship(AgRelationship relationship, ModelConverterContext context) {
+
         AgEntity<?> targetEntity = relationship.getTargetEntity();
+
+        // ensure related entity and any other entities reachable from it are resolved
+        context.resolve(new AnnotatedType().type(targetEntity.getType()));
+
+        // link to resolved entity
         Schema relatedSchemaRef = new Schema().$ref(RefUtils.constructRef(targetEntity.getName()));
         return relationship.isToMany()
                 ? new ArraySchema().items(relatedSchemaRef)
