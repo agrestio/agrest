@@ -4,6 +4,8 @@ import io.agrest.DataResponse;
 import io.agrest.annotation.AgRelationship;
 import io.agrest.openapi.unit.OpenAPIBuilder;
 import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.media.ArraySchema;
+import io.swagger.v3.oas.models.media.Schema;
 import org.junit.jupiter.api.Test;
 
 import javax.ws.rs.GET;
@@ -12,7 +14,7 @@ import javax.ws.rs.core.Configuration;
 import javax.ws.rs.core.Context;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class Schema_EntityRelationships_ReachabilityTest {
 
@@ -24,9 +26,31 @@ public class Schema_EntityRelationships_ReachabilityTest {
     @Test
     public void testRelatedIncluded() {
         // P9, P10, P11 are all related to each other, some have circular relationships
-        assertNotNull(oapi.getComponents().getSchemas().get("P9"));
-        assertNotNull(oapi.getComponents().getSchemas().get("P10"), "Reachable entity was not included");
-        assertNotNull(oapi.getComponents().getSchemas().get("P11"), "Reachable entity was not included");
+
+        Schema p9 = oapi.getComponents().getSchemas().get("P9");
+        Schema p10 = oapi.getComponents().getSchemas().get("P10");
+        Schema p11 = oapi.getComponents().getSchemas().get("P11");
+
+        assertNotNull(p9);
+        assertNotNull(p10, "Reachable entity was not included");
+        assertNotNull(p11, "Reachable entity was not included");
+
+        Schema p10_fromP9 = (Schema) p9.getProperties().get("p10");
+        assertNull(p10_fromP9.getName());
+        assertNull(p10_fromP9.getType());
+        assertNull(p10_fromP9.getFormat());
+        assertEquals("#/components/schemas/P10", p10_fromP9.get$ref());
+
+        Schema p9_fromP10Array = (Schema) p10.getProperties().get("p9s");
+        assertNull(p9_fromP10Array.getName());
+        assertEquals("array", p9_fromP10Array.getType());
+        assertTrue(p9_fromP10Array instanceof ArraySchema);
+
+        Schema p9_fromP10 = ((ArraySchema) p9_fromP10Array).getItems();
+        assertNull(p9_fromP10.getName());
+        assertNull(p9_fromP10.getType());
+        assertNull(p9_fromP10.getFormat());
+        assertEquals("#/components/schemas/P9", p9_fromP10.get$ref());
     }
 
     @Path("r")
