@@ -208,7 +208,7 @@ public class CayenneQueryAssembler implements ICayenneQueryAssembler {
         // selecting by ID overrides any explicit SelectQuery that might have been attached to the entity
 
         SelectQuery<T> query = new SelectQuery<>(entity.getType());
-        query.andQualifier(buildIdQualifer(entity.getAgEntity(), rootId));
+        query.andQualifier(buildIdQualifier(entity.getAgEntity(), rootId));
         return query;
     }
 
@@ -234,8 +234,7 @@ public class CayenneQueryAssembler implements ICayenneQueryAssembler {
         return query;
     }
 
-
-    public Expression buildIdQualifer(AgEntity<?> entity, AgObjectId id) {
+    protected Expression buildIdQualifier(AgEntity<?> entity, AgObjectId id) {
 
         Collection<AgIdPart> idAttributes = entity.getIdParts();
         if (idAttributes.size() != id.size()) {
