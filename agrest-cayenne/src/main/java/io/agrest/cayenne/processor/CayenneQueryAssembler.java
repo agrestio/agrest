@@ -157,21 +157,22 @@ public class CayenneQueryAssembler implements ICayenneQueryAssembler {
 
         SelectQuery<T> query = createBaseQuery(entity);
 
-        ObjRelationship objRelationship = objRelationshipForIncomingRelationship(entity);
-        String outgoingPath = objRelationship.getReverseDbRelationshipPath();
+        // Use Cayenne metadata for query building. Agrest metadata may be missing some important parts like ids
+        // (e.g. see https://github.com/agrestio/agrest/issues/473)
+
+        ObjEntity parentObjEntity = entityResolver.getObjEntity(entity.getParent().getName());
+        ObjRelationship objRelationship = parentObjEntity.getRelationship(entity.getIncoming().getName());
+        String reversePath = objRelationship.getReverseDbRelationshipPath();
 
         List<Property<?>> properties = new ArrayList<>();
         Class entityType = entity.getType();
         properties.add(PropertyFactory.createSelf(entityType));
 
-        AgEntity<?> parentEntity = entity.getParent().getAgEntity();
-        for (AgIdPart attribute : parentEntity.getIdParts()) {
-
-            DbAttribute dbAttribute = dbAttributeForAgIdPart(parentEntity, attribute);
-            Expression propertyExp = ExpressionFactory.dbPathExp(outgoingPath
-                    + "."
-                    + dbAttribute.getName());
-            properties.add(PropertyFactory.createBase(propertyExp, (Class) attribute.getType()));
+        for (DbAttribute pk : parentObjEntity.getDbEntity().getPrimaryKeys()) {
+            String path = reversePath + "." + pk.getName();
+            Expression propertyExp = ExpressionFactory.dbPathExp(path);
+            Class<?> pkType = typeForName(TypesMapping.getJavaBySqlType(pk.getType()));
+            properties.add(PropertyFactory.createBase(propertyExp, pkType));
         }
 
         query.setColumns(properties);
@@ -183,7 +184,7 @@ public class CayenneQueryAssembler implements ICayenneQueryAssembler {
         // very efficient in case of pagination
         consumeRange(parentData, entity.getParent().getFetchOffset(), entity.getParent().getFetchLimit(),
                 // TODO: this only works for single column ids
-                p -> qualifiers.add(ExpressionFactory.matchDbExp(outgoingPath, p)));
+                p -> qualifiers.add(ExpressionFactory.matchDbExp(reversePath, p)));
 
         // TODO: There is some functionality in Cayenne that allows to break long OR qualifiers in a series of queries.
         //  How do we use it here?
@@ -262,17 +263,6 @@ public class CayenneQueryAssembler implements ICayenneQueryAssembler {
             qualifiers.add(ExpressionFactory.matchDbExp(dbAttribute.getName(), idValue));
         }
         return ExpressionFactory.and(qualifiers);
-    }
-
-    protected ObjRelationship objRelationshipForIncomingRelationship(NestedResourceEntity<?> entity) {
-
-        ObjEntity parentObjEntity = entityResolver.getObjEntity(entity.getParent().getName());
-        if (parentObjEntity == null) {
-            throw new IllegalStateException("Relationship from a non-persistent entity '"
-                    + entity.getParent().getName()
-                    + "' is not an ObjRelationship");
-        }
-        return parentObjEntity.getRelationship(entity.getIncoming().getName());
     }
 
     protected DbAttribute dbAttributeForAgIdPart(AgEntity<?> agEntity, AgIdPart agIdPart) {

@@ -13,8 +13,8 @@ import java.util.Collections;
  */
 public class NestedEntityListResultReader extends NestedEntityResultReader {
 
-    public NestedEntityListResultReader(NestedResourceEntity<?> entity) {
-        super(entity);
+    public NestedEntityListResultReader(NestedResourceEntity<?> entity, PropertyReader parentIdReader) {
+        super(entity, parentIdReader);
     }
 
     @Override

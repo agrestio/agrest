@@ -1,3 +1,7 @@
+## Release 4.3
+
+* #473 Cayenne backend - prefetches do not work if id is excluded from parent AgEntity
+
 ## Release 4.2
 
 * #468 ClassCastException in combination Agrest 3.4 and Cayenne 4.1.

@@ -15,12 +15,15 @@ import java.util.Objects;
  */
 public class NestedEntityResultReader implements PropertyReader {
 
-    private NestedResourceEntity<?> entity;
-    private PropertyReader parentIdReader;
+    private final NestedResourceEntity<?> entity;
 
-    public NestedEntityResultReader(NestedResourceEntity<?> entity) {
+    // note that we are referring to the parent reader as a "key" reader, not "id" reader, as it may not align with
+    // AgEntity ID (as it is used for a different purpose, which is to uniquely identify the parent from child select data).
+    private final PropertyReader parentKeyReader;
+
+    public NestedEntityResultReader(NestedResourceEntity<?> entity, PropertyReader parentKeyReader) {
         this.entity = Objects.requireNonNull(entity);
-        this.parentIdReader = entity.getParent().getAgEntity().getIdReader();
+        this.parentKeyReader = parentKeyReader;
     }
 
     @Override
@@ -31,7 +34,7 @@ public class NestedEntityResultReader implements PropertyReader {
 
     private AgObjectId readId(Object object) {
         // TODO: wrapping in AgObjectId is wasteful
-        Map<String, Object> id = (Map<String, Object>) parentIdReader.value(object);
+        Map<String, Object> id = (Map<String, Object>) parentKeyReader.value(object);
         switch (id.size()) {
             case 0:
                 throw new RuntimeException("ID is empty for '" + entity.getName() + "'");
