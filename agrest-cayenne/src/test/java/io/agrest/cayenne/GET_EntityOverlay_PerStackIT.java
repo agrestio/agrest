@@ -3,10 +3,12 @@ package io.agrest.cayenne;
 import io.agrest.Ag;
 import io.agrest.DataResponse;
 import io.agrest.MetadataResponse;
-import io.agrest.cayenne.unit.AgCayenneTester;
-import io.agrest.cayenne.unit.DbTest;
+import io.agrest.cayenne.cayenne.main.E2;
 import io.agrest.cayenne.cayenne.main.E22;
 import io.agrest.cayenne.cayenne.main.E25;
+import io.agrest.cayenne.cayenne.main.E3;
+import io.agrest.cayenne.unit.AgCayenneTester;
+import io.agrest.cayenne.unit.DbTest;
 import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgEntityOverlay;
 import io.agrest.runtime.AgBuilder;
@@ -26,8 +28,7 @@ public class GET_EntityOverlay_PerStackIT extends DbTest {
 
     @BQTestTool
     static final AgCayenneTester tester = tester(Resource.class)
-
-            .entities(E22.class, E25.class)
+            .entities(E22.class, E25.class, E2.class, E3.class)
             .agCustomizer(GET_EntityOverlay_PerStackIT::addOverlay)
             .build();
 
@@ -38,7 +39,11 @@ public class GET_EntityOverlay_PerStackIT extends DbTest {
                 .overlay(E22.class)
                 .redefineToOne("overlayToOne", E25.class, GET_EntityOverlay_PerStackIT::findForParent);
 
-        return builder.entityOverlay(e22Overlay);
+        AgEntityOverlay<E2> e2Overlay = AgEntity
+                .overlay(E2.class)
+                .exclude("id_");
+
+        return builder.entityOverlay(e22Overlay).entityOverlay(e2Overlay);
     }
 
     private static E25 findForParent(E22 parent) {
@@ -47,6 +52,7 @@ public class GET_EntityOverlay_PerStackIT extends DbTest {
                 .selectOne(parent.getObjectContext());
     }
 
+    @Deprecated
     @Test
     public void testRedefineToOne_Meta() {
         String data = tester.target("/e22/meta").get().wasOk().getContentAsString();
@@ -78,6 +84,21 @@ public class GET_EntityOverlay_PerStackIT extends DbTest {
                 "{\"id\":2,\"overlayToOne\":{\"id\":4}}");
     }
 
+    @Test
+    public void test_Overlay_HidingId() {
+
+        tester.e2().insertColumns("id_", "name", "address").values(1, "N", "A").exec();
+        tester.e3().insertColumns("id_", "name", "phone_number", "e2_id")
+                .values(4, "N", "P", 1)
+                .exec();
+
+        tester.target("e2/noid")
+                .queryParam("include", "name", "e3s.id")
+                .get()
+                .wasOk()
+                .bodyEquals(1, "{\"e3s\":[{\"id\":4}],\"name\":\"N\"}");
+    }
+
     @Path("")
     public static final class Resource {
         @Context
@@ -89,10 +110,21 @@ public class GET_EntityOverlay_PerStackIT extends DbTest {
             return Ag.service(config).select(E22.class).uri(uriInfo).get();
         }
 
+        @Deprecated
         @GET
         @Path("e22/meta")
         public MetadataResponse<E22> getMetaE22(@Context UriInfo uriInfo) {
             return Ag.metadata(E22.class, config).forResource(Resource.class).uri(uriInfo).process();
+        }
+
+        @GET
+        @Path("e2/noid")
+        public DataResponse<E2> getE2_NoId(@Context UriInfo uriInfo) {
+
+            return Ag.service(config)
+                    .select(E2.class)
+                    .uri(uriInfo)
+                    .get();
         }
     }
 }

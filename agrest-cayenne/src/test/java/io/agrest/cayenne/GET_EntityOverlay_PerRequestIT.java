@@ -2,12 +2,12 @@ package io.agrest.cayenne;
 
 import io.agrest.Ag;
 import io.agrest.DataResponse;
-import io.agrest.cayenne.unit.AgCayenneTester;
-import io.agrest.cayenne.unit.DbTest;
 import io.agrest.cayenne.cayenne.main.E2;
 import io.agrest.cayenne.cayenne.main.E22;
 import io.agrest.cayenne.cayenne.main.E3;
 import io.agrest.cayenne.cayenne.main.E4;
+import io.agrest.cayenne.unit.AgCayenneTester;
+import io.agrest.cayenne.unit.DbTest;
 import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgEntityOverlay;
 import io.bootique.junit5.BQTestTool;
@@ -157,8 +157,10 @@ public class GET_EntityOverlay_PerRequestIT extends DbTest {
                 .bodyEquals(1, "{\"id\":1,\"e3s\":[{\"id\":1,\"name\":\"N\"}],\"name\":\"N\"}");
     }
 
+
+
     @Test
-    public void test_OverlayedNestedExclude() {
+    public void test_OverlaidNestedExclude() {
 
         tester.e2().insertColumns("id_", "name", "address").values(1, "N", "A").exec();
 

@@ -10,6 +10,7 @@ import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgIdPart;
 import io.agrest.runtime.path.IPathDescriptorManager;
 import io.agrest.runtime.processor.select.SelectContext;
+import org.apache.cayenne.dba.TypesMapping;
 import org.apache.cayenne.di.Inject;
 import org.apache.cayenne.exp.Expression;
 import org.apache.cayenne.exp.ExpressionFactory;
@@ -28,6 +29,8 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.function.Consumer;
+
+import static io.agrest.base.reflect.Types.typeForName;
 
 /**
  * @since 3.4
@@ -69,21 +72,22 @@ public class CayenneQueryAssembler implements ICayenneQueryAssembler {
 
         SelectQuery<T> query = createBaseQuery(entity);
 
-        ObjRelationship objRelationship = objRelationshipForIncomingRelationship(entity);
+        // Use Cayenne metadata for query building. Agrest metadata may be missing some important parts like ids
+        // (e.g. see https://github.com/agrestio/agrest/issues/473)
+
+        ObjEntity parentObjEntity = entityResolver.getObjEntity(entity.getParent().getName());
+        ObjRelationship objRelationship = parentObjEntity.getRelationship(entity.getIncoming().getName());
         String reversePath = objRelationship.getReverseDbRelationshipPath();
 
         List<Property<?>> properties = new ArrayList<>();
         Class entityType = entity.getType();
         properties.add(PropertyFactory.createSelf(entityType));
-        AgEntity<?> parentEntity = entity.getParent().getAgEntity();
 
-        for (AgIdPart attribute : parentEntity.getIdParts()) {
-
-            DbAttribute dbAttribute = dbAttributeForAgIdPart(parentEntity, attribute);
-            Expression propertyExp = ExpressionFactory.dbPathExp(reversePath
-                    + "."
-                    + dbAttribute.getName());
-            properties.add(PropertyFactory.createBase(propertyExp, (Class) attribute.getType()));
+        for (DbAttribute pk : parentObjEntity.getDbEntity().getPrimaryKeys()) {
+            String path = reversePath + "." + pk.getName();
+            Expression propertyExp = ExpressionFactory.dbPathExp(path);
+            Class<?> pkType = typeForName(TypesMapping.getJavaBySqlType(pk.getType()));
+            properties.add(PropertyFactory.createBase(propertyExp, pkType));
         }
 
         query.setColumns(properties);
