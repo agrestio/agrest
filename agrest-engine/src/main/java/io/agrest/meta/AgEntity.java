@@ -60,7 +60,7 @@ public interface AgEntity<T> {
         Collection<AgIdPart> ids = getIdParts();
         switch (ids.size()) {
             case 0:
-                return o -> Collections.emptyMap();
+                throw new IllegalStateException("Can't create ID reader. No id parts defined for entity '" + getName() + "'");
             case 1:
                 AgIdPart id = ids.iterator().next();
                 return o -> Collections.singletonMap(id.getName(), id.getReader().value(o));
