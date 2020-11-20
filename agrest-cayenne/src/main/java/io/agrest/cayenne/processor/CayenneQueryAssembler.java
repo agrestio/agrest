@@ -204,9 +204,6 @@ public class CayenneQueryAssembler implements ICayenneQueryAssembler {
 
     @Override
     public <T> SelectQuery<T> createRootIdQuery(ResourceEntity<T> entity, AgObjectId rootId) {
-
-        // selecting by ID overrides any explicit SelectQuery that might have been attached to the entity
-
         SelectQuery<T> query = new SelectQuery<>(entity.getType());
         query.andQualifier(buildIdQualifier(entity.getAgEntity(), rootId));
         return query;
