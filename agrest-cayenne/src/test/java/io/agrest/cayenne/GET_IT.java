@@ -7,6 +7,8 @@ import io.agrest.cayenne.cayenne.main.*;
 import io.agrest.cayenne.unit.AgCayenneTester;
 import io.agrest.cayenne.unit.DbTest;
 import io.agrest.encoder.DateTimeFormatters;
+import io.agrest.meta.AgEntity;
+import io.agrest.meta.AgEntityOverlay;
 import io.bootique.junit5.BQTestTool;
 import org.junit.jupiter.api.Test;
 
@@ -360,7 +362,9 @@ public class GET_IT extends DbTest {
         tester.e28().insertColumns("id", "json")
                 .values(35, "[1,2]")
                 .values(36, "{\"a\":1}")
-                .values(37, "5")
+                .values(37, "{}")
+                .values(38, "5")
+                .values(39, null)
                 .exec();
 
         tester.target("/e28")
@@ -368,7 +372,23 @@ public class GET_IT extends DbTest {
                 .queryParam("sort", "id")
                 .get()
                 .wasOk()
-                .bodyEquals(3, "{\"json\":[1,2]}", "{\"json\":{\"a\":1}}", "{\"json\":5}");
+                .bodyEquals(5, "{\"json\":[1,2]}", "{\"json\":{\"a\":1}}", "{\"json\":{}}", "{\"json\":5}", "{\"json\":null}");
+    }
+
+    @Test
+    public void testJsonProperty_WithOtherProps() {
+
+        tester.e28().insertColumns("id", "json")
+                .values(35, "[1,2]")
+                .values(37, "{}")
+                .exec();
+
+        tester.target("/e28/expanded")
+                .queryParam("include", "a", E28.JSON.getName(), "z")
+                .queryParam("sort", "id")
+                .get()
+                .wasOk()
+                .bodyEquals(2, "{\"a\":\"A\",\"json\":[1,2],\"z\":\"Z\"}", "{\"a\":\"A\",\"json\":{},\"z\":\"Z\"}");
     }
 
     @Path("")
@@ -430,6 +450,21 @@ public class GET_IT extends DbTest {
         @Path("e28")
         public DataResponse<E28> get28(@Context UriInfo uriInfo) {
             return Ag.select(E28.class, config).uri(uriInfo).get();
+        }
+
+        @GET
+        @Path("e28/expanded")
+        public DataResponse<E28> get28Expanded(@Context UriInfo uriInfo) {
+
+            // adding regular properties to see if JSON property can be encoded when other properties are present
+            AgEntityOverlay<E28> overlay = AgEntity.overlay(E28.class)
+                    .redefineAttribute("a", String.class, o -> "A")
+                    .redefineAttribute("z", String.class, o -> "Z");
+
+            return Ag.select(E28.class, config)
+                    .entityOverlay(overlay)
+                    .uri(uriInfo)
+                    .get();
         }
 
         @GET

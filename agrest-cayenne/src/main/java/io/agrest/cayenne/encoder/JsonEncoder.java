@@ -24,7 +24,7 @@ public class JsonEncoder extends AbstractEncoder {
     @Override
     protected boolean encodeNonNullObject(Object object, JsonGenerator out) throws IOException {
         Json json = (Json) object;
-        out.writeRaw(":" + json.getRawJson());
+        out.writeRawValue(json.getRawJson());
         return true;
     }
 }

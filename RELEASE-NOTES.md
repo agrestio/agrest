@@ -1,6 +1,7 @@
 ## Release 4.3
 
 * #473 Cayenne backend - prefetches do not work if id is excluded from parent AgEntity
+* #474 Error encoding Json attributes if entity has more than one attribute
 
 ## Release 4.2
 
