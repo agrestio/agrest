@@ -77,7 +77,7 @@ public class CayenneQueryAssembler implements ICayenneQueryAssembler {
         properties.add(PropertyFactory.createSelf(entityType));
         AgEntity<?> parentEntity = entity.getParent().getAgEntity();
 
-        for (AgIdPart attribute : entity.getParent().getAgEntity().getIdParts()) {
+        for (AgIdPart attribute : parentEntity.getIdParts()) {
 
             DbAttribute dbAttribute = dbAttributeForAgIdPart(parentEntity, attribute);
             Expression propertyExp = ExpressionFactory.dbPathExp(reversePath
