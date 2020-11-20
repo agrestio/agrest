@@ -82,7 +82,7 @@ public class GET_EntityOverlay_PerRequestIT extends DbTest {
     }
 
     @Test
-    public void test_OverlayedRelationship() {
+    public void test_OverlaidRelationship() {
 
         tester.e4().insertColumns("id", "c_varchar").values(2, "a").values(4, "b").exec();
         tester.e22().insertColumns("id", "name")
@@ -102,7 +102,7 @@ public class GET_EntityOverlay_PerRequestIT extends DbTest {
     }
 
     @Test
-    public void test_OverlayedRelationship_ExpOnParent() {
+    public void test_OverlaidRelationship_ExpOnParent() {
 
         tester.e4().insertColumns("id", "c_varchar").values(2, "a").values(4, "b").exec();
         tester.e22().insertColumns("id", "name")
@@ -121,7 +121,7 @@ public class GET_EntityOverlay_PerRequestIT extends DbTest {
     @Test
     @Disabled("A relationship that is a child of dynamic relationship fails to resolve properly. We must use " +
             "read-from-parent resolver for anything hanging off of a dynamic relationship instead of using built-in Cayenne resolvers")
-    public void test_OverlayedRelationship_ExpOnParent_Nested() {
+    public void test_OverlaidRelationship_ExpOnParent_Nested() {
 
         tester.e4().insertColumns("id", "c_varchar").values(2, "a").values(4, "b").exec();
 
@@ -143,7 +143,7 @@ public class GET_EntityOverlay_PerRequestIT extends DbTest {
     }
 
     @Test
-    public void test_OverlayedExclude() {
+    public void test_OverlaidExclude() {
 
         tester.e2().insertColumns("id_", "name", "address").values(1, "N", "A").exec();
         tester.e3().insertColumns("id_", "name", "phone_number", "e2_id")
