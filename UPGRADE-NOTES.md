@@ -1,3 +1,11 @@
+## Upgrading to 3.8
+
+### 'CayenneExp' constructors replaced with static factory methods  [#477](https://github.com/agrestio/agrest/issues/477)
+
+`CayenneExp` class was converted to an interface to allow to compose expression trees from parts. As a result all its
+constructors got replaced with convenience static methods - `CayenneExp.simple()`, `CayenneExp.withPositionalParams()`,
+`CayenneExp.withNamedParams()`. If you see compilation errors, replace constructor calls accordingly.
+
 ## Upgrading to 3.7
 
 ### "SelectBuilder.property()" replaced with simpler "SelectBuilder.entityAttribute()" [#452](https://github.com/agrestio/agrest/issues/452) 
