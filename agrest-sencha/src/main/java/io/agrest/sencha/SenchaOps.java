@@ -23,6 +23,6 @@ public class SenchaOps {
         return c -> StartsWithFilter
                 .getInstance()
                 .filter(c, property, value)
-                .ifPresent(exp -> c.getEntity().getQualifiers().add(exp));
+                .ifPresent(exp -> c.getEntity().andQualifier(exp));
     }
 }

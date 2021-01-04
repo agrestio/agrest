@@ -1,3 +1,7 @@
+## Release 4.4
+
+* #476 Composable Exp
+
 ## Release 4.3
 
 * #473 Cayenne backend - prefetches do not work if id is excluded from parent AgEntity

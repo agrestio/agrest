@@ -5,8 +5,8 @@ import io.agrest.cayenne.cayenne.main.E2;
 import io.agrest.cayenne.unit.CayenneNoDbTest;
 import io.agrest.runtime.entity.*;
 import io.agrest.runtime.processor.select.SelectContext;
-import io.agrest.runtime.protocol.IExpParser;
 import io.agrest.runtime.protocol.IExcludeParser;
+import io.agrest.runtime.protocol.IExpParser;
 import io.agrest.runtime.protocol.IIncludeParser;
 import io.agrest.runtime.protocol.ISortParser;
 import io.agrest.runtime.request.DefaultRequestBuilderFactory;
@@ -19,7 +19,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.Collections;
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
@@ -68,17 +67,14 @@ public class SenchaCreateEntityStageTest extends CayenneNoDbTest {
         SenchaRequest.set(context, SenchaRequest.builder().filters(Collections.singletonList(filter)).build());
 
         createEntityStage.doExecute(context);
-
-        List<Exp> qualifiers = context.getEntity().getQualifiers();
-        assertEquals(1, qualifiers.size());
-        assertEquals(new Exp("name likeIgnoreCase 'xyz%'"), qualifiers.get(0));
+        assertEquals(Exp.simple("name likeIgnoreCase 'xyz%'"), context.getEntity().getQualifier());
     }
 
     @Test
     public void testSelectRequest_Filter_Exp() {
         SelectContext<E2> context = new SelectContext<>(E2.class);
 
-        Exp exp = new Exp("address = '1 Main Street'");
+        Exp exp = Exp.simple("address = '1 Main Street'");
         context.setMergedRequest(requestBuilderFactory.builder().exp(exp).build());
 
         Filter filter = new Filter("name", "xyz", "like", false, false);
@@ -86,9 +82,6 @@ public class SenchaCreateEntityStageTest extends CayenneNoDbTest {
 
         createEntityStage.doExecute(context);
 
-        List<Exp> qualifiers = context.getEntity().getQualifiers();
-        assertEquals(2, qualifiers.size());
-        assertEquals(exp, qualifiers.get(0));
-        assertEquals(new Exp("name likeIgnoreCase 'xyz%'"), qualifiers.get(1));
+        assertEquals(exp.and(Exp.simple("name likeIgnoreCase 'xyz%'")), context.getEntity().getQualifier());
     }
 }

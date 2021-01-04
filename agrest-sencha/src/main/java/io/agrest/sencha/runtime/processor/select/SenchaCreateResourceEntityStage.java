@@ -39,7 +39,7 @@ public class SenchaCreateResourceEntityStage extends CreateResourceEntityStage {
         super.doExecute(context);
 
         ResourceEntity<T> entity = context.getEntity();
-        entity.getQualifiers().addAll(parseFilter(entity.getAgEntity(), context));
+        parseFilter(entity.getAgEntity(), context).forEach(entity::andQualifier);
     }
 
     protected <T> List<Exp> parseFilter(AgEntity<?> entity, SelectContext<T> context) {

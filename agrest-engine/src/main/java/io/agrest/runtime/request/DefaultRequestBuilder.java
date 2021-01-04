@@ -43,15 +43,41 @@ public class DefaultRequestBuilder implements AgRequestBuilder {
         return request;
     }
 
+    @Deprecated
     @Override
     public AgRequestBuilder exp(String unparsedExp) {
         Exp exp = unparsedExp != null ? expParser.fromString(unparsedExp) : null;
         return exp(exp);
     }
 
+    @Deprecated
     @Override
     public AgRequestBuilder exp(Exp exp) {
         request.exp = exp;
+        return this;
+    }
+
+    @Override
+    public AgRequestBuilder andExp(String unparsedExp) {
+        Exp exp = unparsedExp != null ? expParser.fromString(unparsedExp) : null;
+        return andExp(exp);
+    }
+
+    @Override
+    public AgRequestBuilder andExp(Exp exp) {
+        request.exp = request.exp != null ? request.exp.and(exp) : exp;
+        return this;
+    }
+
+    @Override
+    public AgRequestBuilder orExp(String unparsedExp) {
+        Exp exp = unparsedExp != null ? expParser.fromString(unparsedExp) : null;
+        return orExp(exp);
+    }
+
+    @Override
+    public AgRequestBuilder orExp(Exp exp) {
+        request.exp = request.exp != null ? request.exp.or(exp) : exp;
         return this;
     }
 

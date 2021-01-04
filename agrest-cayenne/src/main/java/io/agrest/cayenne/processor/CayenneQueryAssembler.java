@@ -225,7 +225,7 @@ public class CayenneQueryAssembler implements ICayenneQueryAssembler {
             }
         }
 
-        Expression parsedExp = qualifierParser.parse(entity.getQualifiers());
+        Expression parsedExp = qualifierParser.parse(entity.getQualifier());
         Expression finalExp = qualifierPostProcessor.process(entity.getAgEntity(), parsedExp);
         query.setQualifier(finalExp);
 

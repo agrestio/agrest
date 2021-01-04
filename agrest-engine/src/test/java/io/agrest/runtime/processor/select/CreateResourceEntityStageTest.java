@@ -381,30 +381,31 @@ public class CreateResourceEntityStageTest {
         assertEquals(new Sort("n", Dir.ASC), resourceEntity.getOrderings().get(1));
     }
 
+    @Deprecated
     @Test
     public void testExecute_Exp_BadSpec() {
 
         SelectContext<Ts> context = new SelectContext<>(Ts.class);
         context.setMergedRequest(requestBuilderFactory
                 .builder()
-                .exp(new Exp("x = 12345 and y = 'John Smith' and z = true")).build());
+                .exp(Exp.simple("x = 12345 and y = 'John Smith' and z = true")).build());
 
         assertDoesNotThrow(() -> stage.execute(context), "Even though the passed spec is invalid, no parsing should occur at this stage");
     }
 
+    @Deprecated
     @Test
     public void testExecute_Exp() {
 
         SelectContext<Ts> context = new SelectContext<>(Ts.class);
         context.setMergedRequest(requestBuilderFactory
                 .builder()
-                .exp(new Exp("m = 'John Smith'")).build());
+                .exp(Exp.simple("m = 'John Smith'")).build());
 
         stage.execute(context);
 
         ResourceEntity<Ts> resourceEntity = context.getEntity();
-        assertEquals(1, resourceEntity.getQualifiers().size());
-        assertEquals(new Exp("m = 'John Smith'"), resourceEntity.getQualifiers().get(0));
+        assertEquals(Exp.simple("m = 'John Smith'"), resourceEntity.getQualifier());
     }
 
     public static class Tr {

@@ -201,12 +201,11 @@ public class ConstraintsHandlerTest {
     public void testConstrainResponse_Exp() {
 
         AgEntity<Tr> entity = dataMap.getEntity(Tr.class);
-        Constraint<Tr> constraint = Constraint.excludeAll(Tr.class).qualifier(new Exp("a = 5"));
+        Constraint<Tr> constraint = Constraint.excludeAll(Tr.class).qualifier(Exp.simple("a = 5"));
 
         ResourceEntity<Tr> e1 = new RootResourceEntity<>(entity, null);
         constraintsHandler.constrainResponse(e1, null, constraint);
-        assertEquals(1, e1.getQualifiers().size());
-        assertEquals(new Exp("a = 5"), e1.getQualifiers().get(0));
+        assertEquals(Exp.simple("a = 5"), e1.getQualifier());
     }
 
     @Test

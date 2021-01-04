@@ -19,7 +19,7 @@ public class ExpParser implements IExpParser {
     private static final String JSON_KEY_EXP = "exp";
     private static final String JSON_KEY_PARAMS = "params";
 
-    private IJacksonService jsonParser;
+    private final IJacksonService jsonParser;
 
     public ExpParser(@Inject IJacksonService jsonParser) {
         this.jsonParser = jsonParser;
@@ -74,7 +74,7 @@ public class ExpParser implements IExpParser {
         } else if (value.startsWith("{")) {
             exp = fromJsonObject(jsonParser.parseJson(value));
         } else {
-            exp = new Exp(value);
+            exp = Exp.simple(value);
         }
 
         return exp;
@@ -90,15 +90,15 @@ public class ExpParser implements IExpParser {
             return null;
         }
 
-        if(json.isTextual()) {
-            return new Exp(json.asText());
+        if (json.isTextual()) {
+            return Exp.simple(json.asText());
         }
 
-        if(json.isArray()) {
+        if (json.isArray()) {
             return fromJsonArray(json);
         }
 
-        if(json.isObject()) {
+        if (json.isObject()) {
             return fromJsonObject(json);
         }
 
@@ -126,10 +126,10 @@ public class ExpParser implements IExpParser {
                 paramsMap.put(key, val);
             }
 
-            return new Exp(expNode.asText(), paramsMap);
+            return Exp.withNamedParams(expNode.asText(), paramsMap);
         }
 
-        return new Exp(expNode.asText());
+        return Exp.simple(expNode.asText());
     }
 
     private Exp fromJsonArray(JsonNode array) {
@@ -142,7 +142,7 @@ public class ExpParser implements IExpParser {
         String expString = array.get(0).asText();
 
         if (len < 2) {
-            return new Exp(expString);
+            return Exp.simple(expString);
         }
 
         Object[] params = new Object[len - 1];
@@ -153,6 +153,6 @@ public class ExpParser implements IExpParser {
             params[i - 1] = extractValue(paramNode);
         }
 
-        return new Exp(expString, params);
+        return Exp.withPositionalParams(expString, params);
     }
 }

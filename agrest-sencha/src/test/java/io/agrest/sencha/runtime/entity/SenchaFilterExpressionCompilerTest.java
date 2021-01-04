@@ -27,7 +27,7 @@ public class SenchaFilterExpressionCompilerTest extends CayenneNoDbTest {
     }
 
     private void assertFromFilter(Filter filter, String expectedExp, Object... expectedParams) {
-        assertEquals(new Exp(expectedExp, expectedParams), processor.fromFilter(filter));
+        assertEquals(Exp.withPositionalParams(expectedExp, expectedParams), processor.fromFilter(filter));
     }
 
     private List<Exp> process(Filter... filters) {
@@ -42,8 +42,8 @@ public class SenchaFilterExpressionCompilerTest extends CayenneNoDbTest {
     @Test
     public void testProcess_MultipleFilters() {
         assertEquals(asList(
-                new Exp("cVarchar likeIgnoreCase 'xyz%'"),
-                new Exp("cVarchar likeIgnoreCase '123%'")
+                Exp.simple("cVarchar likeIgnoreCase 'xyz%'"),
+                Exp.simple("cVarchar likeIgnoreCase '123%'")
                 ),
                 process(
                         new Filter("cVarchar", "xyz", "like", false, false),
@@ -52,7 +52,7 @@ public class SenchaFilterExpressionCompilerTest extends CayenneNoDbTest {
 
     @Test
     public void testProcess_MultipleFilters_Disabled() {
-        assertEquals(asList(new Exp("cVarchar likeIgnoreCase '123%'")),
+        assertEquals(asList(Exp.simple("cVarchar likeIgnoreCase '123%'")),
                 process(
                         new Filter("cVarchar", "xyz", "like", true, false),
                         new Filter("cVarchar", "123", "like", false, false)));

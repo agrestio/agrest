@@ -31,7 +31,7 @@ public abstract class ResourceEntity<T> {
     private String mapByPath;
     private ResourceEntity<?> mapBy;
     private final List<Sort> orderings;
-    private final List<Exp> qualifiers;
+    private Exp qualifier;
     private int fetchOffset;
     private int fetchLimit;
     private final List<EntityEncoderFilter> entityEncoderFilters;
@@ -48,7 +48,6 @@ public abstract class ResourceEntity<T> {
         this.defaultAttributes = new HashSet<>();
         this.children = new HashMap<>();
         this.orderings = new ArrayList<>(2);
-        this.qualifiers = new ArrayList<>(2);
         this.entityEncoderFilters = new ArrayList<>(3);
 
         this.requestProperties = new HashMap<>(5);
@@ -76,10 +75,17 @@ public abstract class ResourceEntity<T> {
     }
 
     /**
-     * @since 3.7
+     * @since 4.4
      */
-    public List<Exp> getQualifiers() {
-        return qualifiers;
+    public Exp getQualifier() {
+        return qualifier;
+    }
+
+    /**
+     * @since 4.4
+     */
+    public void andQualifier(Exp qualifier) {
+        this.qualifier = this.qualifier != null ? this.qualifier.and(qualifier) : qualifier;
     }
 
     public List<Sort> getOrderings() {

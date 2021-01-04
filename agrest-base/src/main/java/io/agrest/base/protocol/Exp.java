@@ -1,88 +1,35 @@
 package io.agrest.base.protocol;
 
-import java.util.Arrays;
+import io.agrest.base.protocol.exp.*;
+
 import java.util.Map;
-import java.util.Objects;
 
 /**
  * Represents {@link AgProtocol#exp} protocol parameter.
  *
- * @since 4.1
+ * @since 4.4
  */
-public class Exp {
+public interface Exp {
 
-    private final String exp;
-    private final Map<String, Object> namedParams;
-    private final Object[] positionalParams;
-
-    public Exp(String exp) {
-        this.exp = Objects.requireNonNull(exp);
-        this.namedParams = null;
-        this.positionalParams = null;
+    static Exp simple(String template) {
+        return new SimpleExp(template);
     }
 
-    public Exp(String exp, Object... params) {
-        this.exp = Objects.requireNonNull(exp);
-        this.namedParams = null;
-
-        Objects.requireNonNull(params);
-        this.positionalParams = params.length > 0 ? params : null;
+    static Exp withPositionalParams(String template, Object... params) {
+        return params.length == 0 ? simple(template) : new PositionalParamsExp(template, params);
     }
 
-    public Exp(String exp, Map<String, Object> params) {
-        this.exp = Objects.requireNonNull(exp);
-
-        Objects.requireNonNull(params);
-        this.namedParams = !params.isEmpty() ? params : null;
-        this.positionalParams = null;
+    static Exp withNamedParams(String template, Map<String, Object> params) {
+        return params.isEmpty() ? simple(template) : new NamedParamsExp(template, params);
     }
 
-    /**
-     * @since 3.7
-     */
-    public boolean usesPositionalParameters() {
-        return positionalParams != null;
+    void visit(ExpVisitor visitor);
+
+    default Exp and(Exp exp) {
+        return exp != null ? new CompositeExp(CompositeExp.AND, this, exp) : this;
     }
 
-    /**
-     * @since 3.7
-     */
-    public boolean usesNamedParameters() {
-        return namedParams != null;
-    }
-
-    public String getExp() {
-        return exp;
-    }
-
-    public Map<String, Object> getNamedParams() {
-        if (usesNamedParameters()) {
-            return namedParams;
-        }
-
-        throw new IllegalStateException("The expression is not using named parameters");
-    }
-
-    public Object[] getPositionalParams() {
-        if (usesPositionalParameters()) {
-            return positionalParams;
-        }
-
-        throw new IllegalStateException("The expression is not using positional parameters");
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Exp that = (Exp) o;
-        return exp.equals(that.exp) &&
-                Objects.equals(namedParams, that.namedParams) &&
-                Arrays.equals(positionalParams, that.positionalParams);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(exp, namedParams, positionalParams);
+    default Exp or(Exp exp) {
+        return exp != null ? new CompositeExp(CompositeExp.OR, this, exp) : this;
     }
 }

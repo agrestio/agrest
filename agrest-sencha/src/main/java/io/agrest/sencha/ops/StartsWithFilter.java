@@ -29,7 +29,7 @@ public class StartsWithFilter {
         validateAttribute(context.getEntity().getAgEntity(), queryProperty);
 
         String exp = queryProperty + " likeIgnoreCase '" + FilterUtil.escapeValueForLike(value) + "%'";
-        return Optional.of(new Exp(exp));
+        return Optional.of(Exp.simple(exp));
     }
 
     /**
