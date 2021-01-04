@@ -27,6 +27,11 @@
 
 * #456 Upgrade to Cayenne 4.2
 
+## Release 3.8
+
+* #468 ClassCastException in combination Agrest 3.4 and Cayenne 4.1
+* #477 Composable Exp 3.x
+
 ## Release 3.7
 
 * #449 Excludes in overlays: support removing attributes and relationships via overlays
