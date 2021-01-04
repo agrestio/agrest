@@ -6,6 +6,12 @@ If you imported legacy `io.agrest:agrest` module as a dependency, remove it, and
 `io.agrest:agrest-engine` and `io.agrest:agrest-cayenne` (of course Cayenne module is needed only if you are using 
 Cayenne as Agrest backend).
 
+### 'Exp' constructors replaced with static factory methods  [#476](https://github.com/agrestio/agrest/issues/476)
+
+`Exp` class was converted to an interface to allow to compose expression trees from parts. As a result all its 
+constructors got replaced with convenience static methods - `Exp.simple()`, `Exp.withPositionalParams()`, 
+`Exp.withNamedParams()`. If you see compilation errors, replace constructor calls accordingly.
+
 ## Upgrading to 4.1
 
 ### Metadata API is deprecated in favor of OpenAPI [#466](https://github.com/agrestio/agrest/issues/466) 
