@@ -11,7 +11,7 @@ public class CayenneExpMerger implements ICayenneExpMerger {
     @Override
     public void merge(ResourceEntity<?> resourceEntity, CayenneExp cayenneExp) {
         if (cayenneExp != null) {
-            resourceEntity.getQualifiers().add(cayenneExp);
+            resourceEntity.andQualifier(cayenneExp);
         }
     }
 }

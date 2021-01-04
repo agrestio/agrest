@@ -20,7 +20,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.Collections;
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
@@ -69,27 +68,21 @@ public class SenchaCreateEntityStageTest extends CayenneNoDbTest {
         SenchaRequest.set(context, SenchaRequest.builder().filters(Collections.singletonList(filter)).build());
 
         createEntityStage.doExecute(context);
-
-        List<CayenneExp> qualifiers = context.getEntity().getQualifiers();
-        assertEquals(1, qualifiers.size());
-        assertEquals(new CayenneExp("name likeIgnoreCase 'xyz%'"), qualifiers.get(0));
+        assertEquals(CayenneExp.simple("name likeIgnoreCase 'xyz%'"), context.getEntity().getQualifier());
     }
 
     @Test
     public void testSelectRequest_Filter_CayenneExp() {
         SelectContext<E2> context = new SelectContext<>(E2.class);
 
-        CayenneExp cayenneExp = new CayenneExp("address = '1 Main Street'");
-        context.setMergedRequest(requestBuilderFactory.builder().cayenneExp(cayenneExp).build());
+        CayenneExp exp = CayenneExp.simple("address = '1 Main Street'");
+        context.setMergedRequest(requestBuilderFactory.builder().cayenneExp(exp).build());
 
         Filter filter = new Filter("name", "xyz", "like", false, false);
         SenchaRequest.set(context, SenchaRequest.builder().filters(Collections.singletonList(filter)).build());
 
         createEntityStage.doExecute(context);
 
-        List<CayenneExp> qualifiers = context.getEntity().getQualifiers();
-        assertEquals(2, qualifiers.size());
-        assertEquals(cayenneExp, qualifiers.get(0));
-        assertEquals(new CayenneExp("name likeIgnoreCase 'xyz%'"), qualifiers.get(1));
+        assertEquals(exp.and(CayenneExp.simple("name likeIgnoreCase 'xyz%'")), context.getEntity().getQualifier());
     }
 }

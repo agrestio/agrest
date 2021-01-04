@@ -43,15 +43,41 @@ public class DefaultRequestBuilder implements AgRequestBuilder {
         return request;
     }
 
+    @Deprecated
     @Override
     public AgRequestBuilder cayenneExp(String unparsedExp) {
         CayenneExp cayenneExp = unparsedExp != null ? cayenneExpParser.fromString(unparsedExp) : null;
         return cayenneExp(cayenneExp);
     }
 
+    @Deprecated
     @Override
     public AgRequestBuilder cayenneExp(CayenneExp exp) {
         request.cayenneExp = exp;
+        return this;
+    }
+
+    @Override
+    public AgRequestBuilder andExp(String unparsedExp) {
+        CayenneExp exp = unparsedExp != null ? cayenneExpParser.fromString(unparsedExp) : null;
+        return andExp(exp);
+    }
+
+    @Override
+    public AgRequestBuilder andExp(CayenneExp exp) {
+        request.cayenneExp = request.cayenneExp != null ? request.cayenneExp.and(exp) : exp;
+        return this;
+    }
+
+    @Override
+    public AgRequestBuilder orExp(String unparsedExp) {
+        CayenneExp exp = unparsedExp != null ? cayenneExpParser.fromString(unparsedExp) : null;
+        return orExp(exp);
+    }
+
+    @Override
+    public AgRequestBuilder orExp(CayenneExp exp) {
+        request.cayenneExp = request.cayenneExp != null ? request.cayenneExp.or(exp) : exp;
         return this;
     }
 

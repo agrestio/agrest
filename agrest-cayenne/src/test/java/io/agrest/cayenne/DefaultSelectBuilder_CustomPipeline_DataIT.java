@@ -37,7 +37,7 @@ public class DefaultSelectBuilder_CustomPipeline_DataIT extends DbTest {
                 .values(2, "yyy").exec();
 
         DataResponse<E2> dr = createBuilder(E2.class)
-                .stage(SelectStage.CREATE_ENTITY, c -> c.getEntity().getQualifiers().add(new CayenneExp("name = 'yyy'")))
+                .stage(SelectStage.CREATE_ENTITY, c -> c.getEntity().andQualifier(CayenneExp.simple("name = 'yyy'")))
                 .get();
 
         assertEquals(1, dr.getObjects().size());

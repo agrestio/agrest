@@ -54,7 +54,7 @@ public class SenchaFilterExpressionCompiler implements ISenchaFilterExpressionCo
 
         String string = filter.getValue().toString();
         checkValueLength(string);
-        return new CayenneExp(filter.getProperty() + " likeIgnoreCase '" + FilterUtil.escapeValueForLike(string) + "%'");
+        return CayenneExp.simple(filter.getProperty() + " likeIgnoreCase '" + FilterUtil.escapeValueForLike(string) + "%'");
     }
 
 
@@ -64,11 +64,11 @@ public class SenchaFilterExpressionCompiler implements ISenchaFilterExpressionCo
             return fromFilter(filter, "=");
         }
 
-        return new CayenneExp(filter.getProperty() + " in ($a)", filter.getValue());
+        return CayenneExp.withPositionalParams(filter.getProperty() + " in ($a)", filter.getValue());
     }
 
     CayenneExp fromFilter(Filter filter, String op) {
-        return new CayenneExp(filter.getProperty() + " " + op + " $a", filter.getValue());
+        return CayenneExp.withPositionalParams(filter.getProperty() + " " + op + " $a", filter.getValue());
     }
 
     private void checkValueLength(String value) {

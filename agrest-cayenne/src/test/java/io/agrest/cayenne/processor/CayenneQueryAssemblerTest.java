@@ -74,11 +74,11 @@ public class CayenneQueryAssemblerTest extends CayenneNoDbTest {
         SelectContext<E1> c = new SelectContext<>(E1.class);
         c.setEntity(entity);
 
-        entity.getQualifiers().add(new CayenneExp("name = 'X'"));
+        entity.andQualifier(CayenneExp.simple("name = 'X'"));
         SelectQuery<E1> q1 = queryAssembler.createRootQuery(c);
         assertEquals(E1.NAME.eq("X"), q1.getQualifier());
 
-        entity.getQualifiers().add(new CayenneExp("name in ('a', 'b')"));
+        entity.andQualifier(CayenneExp.simple("name in ('a', 'b')"));
         SelectQuery<E1> q2 = queryAssembler.createRootQuery(c);
         assertEquals(E1.NAME.eq("X").andExp(E1.NAME.in("a", "b")), q2.getQualifier());
     }

@@ -3,6 +3,7 @@ package io.agrest.sencha.runtime.processor.select;
 import io.agrest.AgRequest;
 import io.agrest.base.protocol.Dir;
 import io.agrest.base.protocol.Sort;
+import io.agrest.base.protocol.exp.SimpleExp;
 import io.agrest.cayenne.cayenne.main.E2;
 import io.agrest.cayenne.unit.CayenneNoDbTest;
 import io.agrest.runtime.jackson.IJacksonService;
@@ -29,10 +30,10 @@ public class SenchaParseRequestStageTest extends CayenneNoDbTest {
 
     private SenchaParseRequestStage parseStage;
 
-	@BeforeEach
-	public void before() {
+    @BeforeEach
+    public void before() {
 
-		IJacksonService jacksonService = new JacksonService();
+        IJacksonService jacksonService = new JacksonService();
 
 		// prepare parse request stage
         ICayenneExpParser expParser = new CayenneExpParser(jacksonService);
@@ -42,14 +43,14 @@ public class SenchaParseRequestStageTest extends CayenneNoDbTest {
         IExcludeParser excludeParser = new ExcludeParser(jacksonService);
         ISenchaFilterParser filterParser = new SenchaFilterParser(jacksonService);
 
-		IAgRequestBuilderFactory requestBuilderFactory
-				= new DefaultRequestBuilderFactory(expParser, sortParser, includeParser, excludeParser);
+        IAgRequestBuilderFactory requestBuilderFactory
+                = new DefaultRequestBuilderFactory(expParser, sortParser, includeParser, excludeParser);
         this.parseStage = new SenchaParseRequestStage(requestBuilderFactory, filterParser);
-	}
+    }
 
     @Test
-	public void testSelectRequest_Filter() {
-
+    public void testSelectRequest_Filter() {
+ 
 		@SuppressWarnings("unchecked")
 		MultivaluedMap<String, String> params = mock(MultivaluedMap.class);
 		when(params.get(SenchaParseRequestStage.FILTER)).thenReturn(Collections.singletonList("[{\"property\":\"name\",\"value\":\"xyz\"}]"));
@@ -60,12 +61,12 @@ public class SenchaParseRequestStageTest extends CayenneNoDbTest {
 
         SenchaRequest senchaRequest = SenchaRequest.get(context);
 
-		assertNotNull(senchaRequest);
-		assertFalse(senchaRequest.getFilters().isEmpty());
-		assertEquals("name", senchaRequest.getFilters().get(0).getProperty());
-		assertEquals("xyz", senchaRequest.getFilters().get(0).getValue());
-		assertEquals("like", senchaRequest.getFilters().get(0).getOperator());
-	}
+        assertNotNull(senchaRequest);
+        assertFalse(senchaRequest.getFilters().isEmpty());
+        assertEquals("name", senchaRequest.getFilters().get(0).getProperty());
+        assertEquals("xyz", senchaRequest.getFilters().get(0).getValue());
+        assertEquals("like", senchaRequest.getFilters().get(0).getOperator());
+    }
 
 
 	@Test
@@ -80,22 +81,22 @@ public class SenchaParseRequestStageTest extends CayenneNoDbTest {
 
         parseStage.doExecute(context);
 
-		SenchaRequest senchaRequest = SenchaRequest.get(context);
+        SenchaRequest senchaRequest = SenchaRequest.get(context);
 
-		assertNotNull(senchaRequest);
-		assertFalse(senchaRequest.getFilters().isEmpty());
-		assertEquals("name", senchaRequest.getFilters().get(0).getProperty());
-		assertEquals("xyz", senchaRequest.getFilters().get(0).getValue());
-		assertEquals("like", senchaRequest.getFilters().get(0).getOperator());
+        assertNotNull(senchaRequest);
+        assertFalse(senchaRequest.getFilters().isEmpty());
+        assertEquals("name", senchaRequest.getFilters().get(0).getProperty());
+        assertEquals("xyz", senchaRequest.getFilters().get(0).getValue());
+        assertEquals("like", senchaRequest.getFilters().get(0).getOperator());
 
-		AgRequest request = context.getMergedRequest();
+        AgRequest request = context.getMergedRequest();
 
-		assertNotNull(request.getCayenneExp());
-		assertEquals("address = '1 Main Street'", request.getCayenneExp().getExp());
-	}
+        assertNotNull(request.getCayenneExp());
+        assertEquals("address = '1 Main Street'", ((SimpleExp) request.getCayenneExp()).getTemplate());
+    }
 
-	@Test
-	public void testSelectRequest_Sort_Group() {
+    @Test
+    public void testSelectRequest_Sort_Group() {
 
 		@SuppressWarnings("unchecked")
 		MultivaluedMap<String, String> params = mock(MultivaluedMap.class);
@@ -108,17 +109,17 @@ public class SenchaParseRequestStageTest extends CayenneNoDbTest {
 
         parseStage.doExecute(context);
 
-		List<Sort> orderings = context.getMergedRequest().getOrderings();
-		assertEquals(4, orderings.size());
+        List<Sort> orderings = context.getMergedRequest().getOrderings();
+        assertEquals(4, orderings.size());
 
-		assertEquals("id", orderings.get(0).getProperty());
-		assertEquals(Dir.DESC, orderings.get(0).getDirection());
-		assertEquals("address", orderings.get(1).getProperty());
-		assertEquals(Dir.ASC, orderings.get(1).getDirection());
+        assertEquals("id", orderings.get(0).getProperty());
+        assertEquals(Dir.DESC, orderings.get(0).getDirection());
+        assertEquals("address", orderings.get(1).getProperty());
+        assertEquals(Dir.ASC, orderings.get(1).getDirection());
 
-		assertEquals("name", orderings.get(2).getProperty());
-		assertEquals(Dir.DESC, orderings.get(2).getDirection());
-		assertEquals("address", orderings.get(3).getProperty());
-		assertEquals(Dir.ASC, orderings.get(3).getDirection());
-	}
+        assertEquals("name", orderings.get(2).getProperty());
+        assertEquals(Dir.DESC, orderings.get(2).getDirection());
+        assertEquals("address", orderings.get(3).getProperty());
+        assertEquals(Dir.ASC, orderings.get(3).getDirection());
+    }
 }

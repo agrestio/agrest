@@ -6,6 +6,7 @@ import io.agrest.annotation.AgId;
 import io.agrest.annotation.AgRelationship;
 import io.agrest.base.protocol.Dir;
 import io.agrest.base.protocol.Sort;
+import io.agrest.base.protocol.exp.SimpleExp;
 import io.agrest.runtime.jackson.IJacksonService;
 import io.agrest.runtime.jackson.JacksonService;
 import io.agrest.runtime.protocol.*;
@@ -299,7 +300,7 @@ public class ParseRequestStageTest {
         assertNotNull(context.getMergedRequest());
         assertNotNull(context.getMergedRequest().getCayenneExp());
 
-        assertEquals("a = 'John Smith'", context.getMergedRequest().getCayenneExp().getExp());
+        assertEquals("a = 'John Smith'", ((SimpleExp)context.getMergedRequest().getCayenneExp()).getTemplate());
     }
 
     protected <T> SelectContext<T> prepareContext(Class<T> type, MultivaluedMap<String, String> params) {

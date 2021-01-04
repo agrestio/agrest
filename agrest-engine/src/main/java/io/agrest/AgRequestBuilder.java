@@ -34,9 +34,37 @@ public interface AgRequestBuilder {
 
     AgRequestBuilder addOrdering(int index, Sort ordering);
 
+    /**
+     * @deprecated since 3.8 use either {@link #andExp(String)} or {@link #orExp(String)}
+     */
+    @Deprecated
     AgRequestBuilder cayenneExp(String unparsedExp);
 
+    /**
+     * @deprecated since 3.8 use either {@link #andExp(Exp)} or {@link #orExp(Exp)}
+     */
+     @Deprecated
     AgRequestBuilder cayenneExp(CayenneExp exp);
+
+    /**
+     * @since 3.8
+     */
+    AgRequestBuilder andExp(String unparsedExp);
+
+    /**
+     * @since 3.8
+     */
+    AgRequestBuilder andExp(CayenneExp exp);
+
+    /**
+     * @since 3.8
+     */
+    AgRequestBuilder orExp(String unparsedExp);
+
+    /**
+     * @since 3.8
+     */
+    AgRequestBuilder orExp(CayenneExp exp);
 
     AgRequestBuilder mapBy(String mapByPath);
 

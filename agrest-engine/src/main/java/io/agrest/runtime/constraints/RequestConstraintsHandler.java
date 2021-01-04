@@ -140,7 +140,7 @@ class RequestConstraintsHandler {
         }
 
         if (constraints.getQualifier() != null) {
-            target.getQualifiers().add(constraints.getQualifier());
+            target.andQualifier(constraints.getQualifier());
         }
 
         // process 'mapByPath' ... treat it as a regular relationship/attribute

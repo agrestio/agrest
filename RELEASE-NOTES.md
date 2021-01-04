@@ -1,6 +1,7 @@
 ## Release 3.8
 
 * #468 ClassCastException in combination Agrest 3.4 and Cayenne 4.1
+* #477 Composable Exp 3.x
 
 ## Release 3.7
 

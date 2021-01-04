@@ -199,14 +199,12 @@ public class ConstraintsHandlerTest {
 
     @Test
     public void testConstrainResponse_CayenneExp() {
-
         AgEntity<Tr> entity = metadata.getAgEntity(Tr.class);
-        Constraint<Tr> constraint = Constraint.excludeAll(Tr.class).qualifier(new CayenneExp("a = 5"));
+        Constraint<Tr> constraint = Constraint.excludeAll(Tr.class).qualifier(CayenneExp.simple("a = 5"));
 
         ResourceEntity<Tr> e1 = new RootResourceEntity<>(entity, null);
         constraintsHandler.constrainResponse(e1, null, constraint);
-        assertEquals(1, e1.getQualifiers().size());
-        assertEquals(new CayenneExp("a = 5"), e1.getQualifiers().get(0));
+        assertEquals(CayenneExp.simple("a = 5"), e1.getQualifier());
     }
 
     @Test

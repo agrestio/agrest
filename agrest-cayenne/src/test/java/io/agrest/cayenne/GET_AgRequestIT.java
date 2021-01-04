@@ -125,8 +125,8 @@ public class GET_AgRequestIT extends DbTest {
         @GET
         @Path("e2_cayenneExp")
         public DataResponse<E2> getE2(@Context UriInfo uriInfo) {
-            CayenneExp cayenneExp = new CayenneExp("name = 'xxx'");
-            AgRequest agRequest = Ag.request(config).cayenneExp(cayenneExp).build();
+            CayenneExp exp = CayenneExp.simple("name = 'xxx'");
+            AgRequest agRequest = Ag.request(config).cayenneExp(exp).build();
 
             return Ag.service(config).select(E2.class)
                     .uri(uriInfo)

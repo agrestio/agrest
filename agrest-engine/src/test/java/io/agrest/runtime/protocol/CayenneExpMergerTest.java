@@ -39,18 +39,15 @@ public class CayenneExpMergerTest {
 
     @Test
     public void testMerge_Empty() {
-        merger.merge(entity, new CayenneExp("a = 12345 and b = 'John Smith'"));
-        assertEquals(1, entity.getQualifiers().size());
-        assertEquals(new CayenneExp("a = 12345 and b = 'John Smith'"), entity.getQualifiers().get(0));
+        merger.merge(entity, CayenneExp.simple("a = 12345 and b = 'John Smith'"));
+        assertEquals(CayenneExp.simple("a = 12345 and b = 'John Smith'"), entity.getQualifier());
     }
 
     @Test
     public void testMerge_OverExisting() {
-        entity.getQualifiers().add(new CayenneExp("c = true"));
-        merger.merge(entity, new CayenneExp("a = 12345 and b = 'John Smith'"));
-        assertEquals(2, entity.getQualifiers().size());
-        assertEquals(new CayenneExp("c = true"), entity.getQualifiers().get(0));
-        assertEquals(new CayenneExp("a = 12345 and b = 'John Smith'"), entity.getQualifiers().get(1));
+        entity.andQualifier(CayenneExp.simple("c = true"));
+        merger.merge(entity, CayenneExp.simple("a = 12345 and b = 'John Smith'"));
+        assertEquals(CayenneExp.simple("c = true").and(CayenneExp.simple("a = 12345 and b = 'John Smith'")), entity.getQualifier());
     }
 
     public static class Tr {

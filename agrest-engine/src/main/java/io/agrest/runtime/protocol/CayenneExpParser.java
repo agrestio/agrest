@@ -19,7 +19,7 @@ public class CayenneExpParser implements ICayenneExpParser {
     private static final String JSON_KEY_EXP = "exp";
     private static final String JSON_KEY_PARAMS = "params";
 
-    private IJacksonService jsonParser;
+    private final IJacksonService jsonParser;
 
     public CayenneExpParser(@Inject IJacksonService jsonParser) {
         this.jsonParser = jsonParser;
@@ -74,7 +74,7 @@ public class CayenneExpParser implements ICayenneExpParser {
         } else if (value.startsWith("{")) {
             cayenneExp = fromJsonObject(jsonParser.parseJson(value));
         } else {
-            cayenneExp = new CayenneExp(value);
+            cayenneExp = CayenneExp.simple(value);
         }
 
         return cayenneExp;
@@ -90,15 +90,15 @@ public class CayenneExpParser implements ICayenneExpParser {
             return null;
         }
 
-        if(json.isTextual()) {
-            return new CayenneExp(json.asText());
+        if (json.isTextual()) {
+            return CayenneExp.simple(json.asText());
         }
 
-        if(json.isArray()) {
+        if (json.isArray()) {
             return fromJsonArray(json);
         }
 
-        if(json.isObject()) {
+        if (json.isObject()) {
             return fromJsonObject(json);
         }
 
@@ -126,10 +126,10 @@ public class CayenneExpParser implements ICayenneExpParser {
                 paramsMap.put(key, val);
             }
 
-            return new CayenneExp(expNode.asText(), paramsMap);
+            return CayenneExp.withNamedParams(expNode.asText(), paramsMap);
         }
 
-        return new CayenneExp(expNode.asText());
+        return CayenneExp.simple(expNode.asText());
     }
 
     private CayenneExp fromJsonArray(JsonNode array) {
@@ -142,7 +142,7 @@ public class CayenneExpParser implements ICayenneExpParser {
         String expString = array.get(0).asText();
 
         if (len < 2) {
-            return new CayenneExp(expString);
+            return CayenneExp.simple(expString);
         }
 
         Object[] params = new Object[len - 1];
@@ -153,6 +153,6 @@ public class CayenneExpParser implements ICayenneExpParser {
             params[i - 1] = extractValue(paramNode);
         }
 
-        return new CayenneExp(expString, params);
+        return CayenneExp.withPositionalParams(expString, params);
     }
 }

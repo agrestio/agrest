@@ -381,30 +381,31 @@ public class CreateResourceEntityStageTest {
         assertEquals(new Sort("n", Dir.ASC), resourceEntity.getOrderings().get(1));
     }
 
+    @Deprecated
     @Test
     public void testExecute_CayenneExp_BadSpec() {
 
         SelectContext<Ts> context = new SelectContext<>(Ts.class);
         context.setMergedRequest(requestBuilderFactory
                 .builder()
-                .cayenneExp(new CayenneExp("x = 12345 and y = 'John Smith' and z = true")).build());
+                .cayenneExp(CayenneExp.simple("x = 12345 and y = 'John Smith' and z = true")).build());
 
         assertDoesNotThrow(() -> stage.execute(context), "Even though the passed spec is invalid, no parsing should occur at this stage");
     }
 
+    @Deprecated
     @Test
     public void testExecute_CayenneExp() {
 
         SelectContext<Ts> context = new SelectContext<>(Ts.class);
         context.setMergedRequest(requestBuilderFactory
                 .builder()
-                .cayenneExp(new CayenneExp("m = 'John Smith'")).build());
+                .cayenneExp(CayenneExp.simple("m = 'John Smith'")).build());
 
         stage.execute(context);
 
         ResourceEntity<Ts> resourceEntity = context.getEntity();
-        assertEquals(1, resourceEntity.getQualifiers().size());
-        assertEquals(new CayenneExp("m = 'John Smith'"), resourceEntity.getQualifiers().get(0));
+        assertEquals(CayenneExp.simple("m = 'John Smith'"), resourceEntity.getQualifier());
     }
 
     public static class Tr {
