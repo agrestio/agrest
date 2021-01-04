@@ -4,7 +4,7 @@
 
     <groupId>io.agrest</groupId>
     <artifactId>agrest-parent</artifactId>
-    <version>3.8-SNAPSHOT</version>
+    <version>3.8</version>
 
     <name>agrest: parent POM of all modules</name>
     <description>Agrest is a Model-driven RESTful data services framework. This is the parent POM of all Agrest
@@ -70,7 +70,7 @@
         <connection>scm:git:https://github.com/agrestio/agrest</connection>
         <developerConnection>scm:git:ssh://git@github.com/agrestio/agrest</developerConnection>
         <url>https://github.com/agrestio/agrest</url>
-        <tag>HEAD</tag>
+        <tag>agrest-parent-3.8</tag>
     </scm>
 
     <distributionManagement>
