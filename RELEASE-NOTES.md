@@ -1,3 +1,7 @@
+## Release 3.9
+
+* #478 Cayenne compound ID mapped to object properties with different names fails to serialize
+
 ## Release 3.8
 
 * #468 ClassCastException in combination Agrest 3.4 and Cayenne 4.1

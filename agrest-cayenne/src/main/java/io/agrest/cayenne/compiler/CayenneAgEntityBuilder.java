@@ -31,6 +31,7 @@ public class CayenneAgEntityBuilder<T> {
     private final AgDataMap agDataMap;
     private final ObjEntity cayenneEntity;
     private final Map<String, AgAttribute> ids;
+    private final Map<String, String> idsWithNonMatchingDbNames;
     private final Map<String, AgAttribute> attributes;
     private final Map<String, AgRelationship> relationships;
 
@@ -48,6 +49,7 @@ public class CayenneAgEntityBuilder<T> {
         this.cayenneEntity = cayenneResolver.getObjEntity(type);
 
         this.ids = new HashMap<>();
+        this.idsWithNonMatchingDbNames = new HashMap<>();
         this.attributes = new HashMap<>();
         this.relationships = new HashMap<>();
     }
@@ -73,7 +75,7 @@ public class CayenneAgEntityBuilder<T> {
         buildAnnotatedProperties();
         applyOverlays();
 
-        IdReader idReader = pojoIdReader ? createIdReader() : ObjectIdReader.reader();
+        IdReader idReader = pojoIdReader ? createPojoIdReader() : createPersistentIdReader();
 
         return new DefaultAgEntity<>(
                 cayenneEntity.getName(),
@@ -85,7 +87,12 @@ public class CayenneAgEntityBuilder<T> {
                 rootDataResolver != null ? rootDataResolver : ThrowingRootDataResolver.getInstance());
     }
 
-    private AgAttribute addId(AgAttribute id) {
+    private AgAttribute addId(AgAttribute id, String dbName) {
+
+        if (dbName != null && !id.getName().equals(dbName)) {
+            idsWithNonMatchingDbNames.put(dbName, id.getName());
+        }
+
         return ids.put(id.getName(), id);
     }
 
@@ -137,7 +144,7 @@ public class CayenneAgEntityBuilder<T> {
                         DataObjectPropertyReader.reader(attribute.getName()));
             }
 
-            addId(id);
+            addId(id, pk.getName());
         }
     }
 
@@ -168,7 +175,7 @@ public class CayenneAgEntityBuilder<T> {
 
                 // TODO: replacing with "existingNonId" duplicates the attribute (as "xyzName" and then as "id")
                 AgAttribute newId = existingNonId != null ? existingNonId : id;
-                addId(newId);
+                addId(newId, null);
             }
         }
 
@@ -214,9 +221,13 @@ public class CayenneAgEntityBuilder<T> {
         relationships.remove(name);
     }
 
-    protected IdReader createIdReader() {
+    protected IdReader createPojoIdReader() {
         Map<String, PropertyReader> idPropReaders = new HashMap<>();
         ids.forEach((n, a) -> idPropReaders.put(n, a.getPropertyReader()));
         return new PropertyIdReader(idPropReaders);
+    }
+
+    protected IdReader createPersistentIdReader() {
+        return new ObjectIdReader(idsWithNonMatchingDbNames);
     }
 }

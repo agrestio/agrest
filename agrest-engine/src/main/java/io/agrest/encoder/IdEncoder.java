@@ -22,7 +22,7 @@ public class IdEncoder implements Encoder {
 
     public IdEncoder(Map<String, Encoder> valueEncoders) {
         this.valueEncoders = valueEncoders;
-        isCompoundId = true;
+        this.isCompoundId = true;
     }
 
     @SuppressWarnings("unchecked")

@@ -90,6 +90,9 @@ CREATE TABLE "e3" ("e2_id" INTEGER , "e5_id" INTEGER , "id_" INTEGER  NOT NULL G
 CREATE TABLE "e27_nopk" ("name" VARCHAR (100))
 ;
 
+CREATE TABLE "e28" ("id1" INTEGER  NOT NULL, "id2" INTEGER  NOT NULL, PRIMARY KEY ("id1", "id2"))
+;
+
 ALTER TABLE "e14" ADD FOREIGN KEY ("e15_id") REFERENCES "e15" ("long_id")
 ;
 
