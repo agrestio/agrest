@@ -29,7 +29,7 @@ public class GET_IT extends DbTest {
 
     @BQTestTool
     static final AgCayenneTester tester = tester(Resource.class)
-            .entities(E2.class, E3.class, E4.class, E6.class, E17.class, E19.class, E28.class)
+            .entities(E2.class, E3.class, E4.class, E6.class, E17.class, E19.class, E28.class, E29.class)
             .build();
 
     @Test
@@ -278,6 +278,18 @@ public class GET_IT extends DbTest {
     }
 
     @Test
+    // Reproduces https://github.com/agrestio/agrest/issues/478
+    public void testCompoundId_PartiallyMapped_DiffPropNames() {
+
+        tester.e29().insertColumns("id1", "id2").values(1, 15).exec();
+        tester.target("/e29")
+                .get()
+                .wasOk()
+                // "id1" is a DB column name, "id2Prop" is an object property name
+                .bodyEquals(1, "{\"id\":{\"id1\":1,\"id2Prop\":15},\"id2Prop\":15}");
+    }
+
+    @Test
     public void testMapByRootEntity() {
 
         tester.e4().insertColumns("c_varchar", "c_int").values("xxx", 1)
@@ -479,6 +491,12 @@ public class GET_IT extends DbTest {
             ids.put(E17.ID2_PK_COLUMN, id2);
 
             return Ag.select(E17.class, config).uri(uriInfo).byId(ids).getOne();
+        }
+
+        @GET
+        @Path("e29")
+        public DataResponse<E29> getAllE29s(@Context UriInfo uriInfo) {
+            return Ag.select(E29.class, config).uri(uriInfo).getOne();
         }
     }
 

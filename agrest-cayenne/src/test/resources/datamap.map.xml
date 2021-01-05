@@ -143,6 +143,10 @@
 		<db-attribute name="id" type="INTEGER" isPrimaryKey="true" isMandatory="true"/>
 		<db-attribute name="json" type="VARCHAR" length="250"/>
 	</db-entity>
+	<db-entity name="e29">
+		<db-attribute name="id1" type="INTEGER" isPrimaryKey="true" isMandatory="true"/>
+		<db-attribute name="id2" type="INTEGER" isPrimaryKey="true" isMandatory="true"/>
+	</db-entity>
 	<db-entity name="e3">
 		<db-attribute name="e2_id" type="INTEGER"/>
 		<db-attribute name="e5_id" type="INTEGER"/>
@@ -279,6 +283,9 @@
 	</obj-entity>
 	<obj-entity name="E28" className="io.agrest.cayenne.cayenne.main.E28" dbEntityName="e28">
 		<obj-attribute name="json" type="org.apache.cayenne.value.Json" db-attribute-path="json"/>
+	</obj-entity>
+	<obj-entity name="E29" className="io.agrest.cayenne.cayenne.main.E29" dbEntityName="e29">
+		<obj-attribute name="id2Prop" type="java.lang.Integer" db-attribute-path="id2"/>
 	</obj-entity>
 	<obj-entity name="E3" className="io.agrest.cayenne.cayenne.main.E3" dbEntityName="e3">
 		<obj-attribute name="name" type="java.lang.String" db-attribute-path="name"/>
