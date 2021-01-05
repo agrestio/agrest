@@ -9,7 +9,7 @@ import org.apache.cayenne.exp.Property;
  * since it may be overwritten next time code is regenerated.
  * If you need to make any customizations, please use subclass.
  */
-public abstract class _E28 extends CayenneDataObject {
+public abstract class _E29 extends CayenneDataObject {
 
     private static final long serialVersionUID = 1L; 
 

@@ -139,7 +139,7 @@
 	<db-entity name="e27_nopk">
 		<db-attribute name="name" type="VARCHAR" length="100"/>
 	</db-entity>
-	<db-entity name="e28">
+	<db-entity name="e29">
 		<db-attribute name="id1" type="INTEGER" isPrimaryKey="true" isMandatory="true"/>
 		<db-attribute name="id2" type="INTEGER" isPrimaryKey="true" isMandatory="true"/>
 	</db-entity>
@@ -283,7 +283,7 @@
 	<obj-entity name="E27Nopk" className="io.agrest.cayenne.cayenne.main.E27Nopk" dbEntityName="e27_nopk">
 		<obj-attribute name="name" type="java.lang.String" db-attribute-path="name"/>
 	</obj-entity>
-	<obj-entity name="E28" className="io.agrest.cayenne.cayenne.main.E28" dbEntityName="e28">
+	<obj-entity name="E29" className="io.agrest.cayenne.cayenne.main.E29" dbEntityName="e29">
 		<obj-attribute name="id2Prop" type="java.lang.Integer" db-attribute-path="id2"/>
 	</obj-entity>
 	<obj-entity name="E3" className="io.agrest.cayenne.cayenne.main.E3" dbEntityName="e3">
