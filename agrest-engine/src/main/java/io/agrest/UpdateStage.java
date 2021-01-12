@@ -8,7 +8,7 @@ package io.agrest;
  */
 public enum UpdateStage {
 
-    // Stages ordinals are determine stage execution order. DO NOT REORDER WITHOUT A REASON!
+    // Stages ordinals determine stage execution order. DO NOT REORDER WITHOUT A REASON!
 
     START,
 
