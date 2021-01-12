@@ -26,9 +26,9 @@ import java.util.Set;
  */
 public class CayenneApplyServerParamsStage implements Processor<UpdateContext<?>> {
 
-    private IEncoderService encoderService;
-    private IConstraintsHandler constraintsHandler;
-    private EntityResolver entityResolver;
+    private final IEncoderService encoderService;
+    private final IConstraintsHandler constraintsHandler;
+    private final EntityResolver entityResolver;
 
     public CayenneApplyServerParamsStage(
             @Inject IEncoderService encoderService,
