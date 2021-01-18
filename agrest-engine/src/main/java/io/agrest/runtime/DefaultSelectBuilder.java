@@ -9,8 +9,6 @@ import io.agrest.meta.AgEntityOverlay;
 import io.agrest.processor.Processor;
 import io.agrest.runtime.processor.select.SelectContext;
 import io.agrest.runtime.processor.select.SelectProcessorFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriInfo;
@@ -23,8 +21,6 @@ import java.util.function.Function;
  * @since 1.16
  */
 public class DefaultSelectBuilder<T> implements SelectBuilder<T> {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultSelectBuilder.class);
 
     protected SelectContext<T> context;
     protected SelectProcessorFactory processorFactory;
