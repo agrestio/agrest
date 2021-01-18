@@ -191,6 +191,14 @@ public interface SelectBuilder<T> {
     DataResponse<T> getOne();
 
     /**
+     * A utility method to quickly return an empty success response, without running a query. The implementation may
+     * still process request parameters and report errors in request.
+     *
+     * @since 4.4
+     */
+    DataResponse<T> getEmpty();
+
+    /**
      * Forces the builder to make selection using explicit query parameters encapsulated in AgRequest.
      * These explicit parameters overwrite query parameters from UriInfo object.
      *

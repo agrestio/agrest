@@ -13,6 +13,7 @@ import io.agrest.runtime.processor.select.SelectProcessorFactory;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriInfo;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.function.Function;
@@ -189,5 +190,10 @@ public class DefaultSelectBuilder<T> implements SelectBuilder<T> {
         context.setAtMostOneObject(true);
         processorFactory.createProcessor(processors).execute(context);
         return context.createDataResponse();
+    }
+
+    @Override
+    public DataResponse<T> getEmpty() {
+        return terminalStage(SelectStage.APPLY_SERVER_PARAMS, c -> c.getEntity().setResult(Collections.emptyList())).get();
     }
 }

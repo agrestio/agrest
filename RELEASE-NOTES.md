@@ -1,6 +1,7 @@
 ## Release 4.4
 
 * #476 Composable Exp
+* #479 Simple API for returning an empty DataResponse
 
 ## Release 4.3
 

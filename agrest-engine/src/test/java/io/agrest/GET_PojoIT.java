@@ -167,11 +167,30 @@ public class GET_PojoIT extends PojoTest {
                         "\"wildcardCollection\":[0,1,2,3,4.0,5.0]}");
     }
 
+    @Test
+    public void testGetEmpty() {
+
+        P1 o1 = new P1();
+        o1.setName("n2");
+        tester.p1().put("o1id", o1);
+
+        tester.target("/pojo/p1_empty")
+                .get()
+                .wasOk()
+                .bodyEquals("{\"data\":[],\"total\":0}");
+    }
+
     @Path("pojo")
     public static class Resource {
 
         @Context
         private Configuration config;
+
+        @GET
+        @Path("p1_empty")
+        public DataResponse<P1> p1Empty(@Context UriInfo uriInfo) {
+            return Ag.select(P1.class, config).getEmpty();
+        }
 
         @GET
         @Path("p1")
