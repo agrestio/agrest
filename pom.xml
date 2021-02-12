@@ -44,6 +44,8 @@
         <bootique-version>2.0.B1-SNAPSHOT</bootique-version>
         <junit5-version>5.7.0</junit5-version>
         <swagger.version>2.1.5</swagger.version>
+
+        <gpg.pinentry.mode>loopback</gpg.pinentry.mode>
     </properties>
 
     <url>https://github.com/agrestio/agrest/</url>
@@ -82,8 +84,8 @@
             <url>https://oss.sonatype.org/service/local/staging/deploy/maven2</url>
         </repository>
         <snapshotRepository>
-            <id>agrest-snapshots</id>
-            <url>https://maven.objectstyle.org/nexus/content/repositories/linkrest-snapshots</url>
+            <id>oss-sonatype-snapshots</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
         </snapshotRepository>
     </distributionManagement>
 
@@ -276,7 +278,7 @@
                     <configuration>
                         <autoVersionSubmodules>true</autoVersionSubmodules>
 
-                        <!-- THis is to allow test dependencies to be SNAPSHOTS-->
+                        <!-- This is to allow test dependencies to be SNAPSHOTS-->
                         <allowTimestampedSnapshots>true</allowTimestampedSnapshots>
                     </configuration>
                 </plugin>
@@ -299,6 +301,11 @@
                         </execution>
                     </executions>
                 </plugin>
+                <plugin>
+                    <groupId>org.sonatype.plugins</groupId>
+                    <artifactId>nexus-staging-maven-plugin</artifactId>
+                    <version>1.6.8</version>
+                </plugin>
             </plugins>
         </pluginManagement>
         <plugins>
@@ -318,11 +325,21 @@
                     </execution>
                 </executions>
             </plugin>
+            <!-- This plugin replaces maven-deploy-plugin and "deploy" goal -->
+            <plugin>
+                <groupId>org.sonatype.plugins</groupId>
+                <artifactId>nexus-staging-maven-plugin</artifactId>
+                <extensions>true</extensions>
+                <configuration>
+                    <serverId>oss-sonatype-releases</serverId>
+                    <nexusUrl>https://oss.sonatype.org/</nexusUrl>
+                    <autoReleaseAfterClose>false</autoReleaseAfterClose>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
     <profiles>
-        <!-- Release profile - sign artifacts; do extra checks to ensure we don't
-            miss anything.. -->
+        <!-- Release profile - sign artifacts; do extra checks to ensure we don't miss anything.. -->
         <profile>
             <id>release</id>
             <build>
@@ -340,7 +357,7 @@
                                 <configuration>
                                     <gpgArguments>
                                         <arg>--pinentry-mode</arg>
-                                        <arg>loopback</arg>
+                                        <arg>${gpg.pinentry.mode}</arg>
                                     </gpgArguments>
                                 </configuration>
                             </execution>

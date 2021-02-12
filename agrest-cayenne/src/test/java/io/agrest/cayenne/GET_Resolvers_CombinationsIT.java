@@ -12,6 +12,7 @@ import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgEntityOverlay;
 import io.agrest.resolver.NestedDataResolverFactory;
 import io.bootique.junit5.BQTestTool;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -37,6 +38,16 @@ public class GET_Resolvers_CombinationsIT extends DbTest {
             .doNotCleanData()
             .build();
 
+    @AfterAll
+    static void cleanup() {
+        tester.e3().deleteAll();
+        tester.e15_5().deleteAll();
+        tester.e5().deleteAll();
+        tester.e2().deleteAll();
+        tester.e14().deleteAll();
+        tester.e15().deleteAll();
+    }
+
     @BeforeAll
     static void loadData() {
 
@@ -44,6 +55,7 @@ public class GET_Resolvers_CombinationsIT extends DbTest {
         tester.e15_5().deleteAll();
         tester.e5().deleteAll();
         tester.e2().deleteAll();
+        tester.e14().deleteAll();
         tester.e15().deleteAll();
 
         tester.e5().insertColumns("id", "name")
