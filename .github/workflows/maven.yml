@@ -2,7 +2,7 @@ name: 'build test deploy'
 
 on:
   push:
-    branches: [ github-actions ]
+    branches: [ master ]
 
 jobs:
   build:
