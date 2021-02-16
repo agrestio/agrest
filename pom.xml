@@ -322,6 +322,8 @@
                     <serverId>oss-sonatype-releases</serverId>
                     <nexusUrl>https://oss.sonatype.org/</nexusUrl>
                     <autoReleaseAfterClose>false</autoReleaseAfterClose>
+                    <!-- Default timeout is 5 minute and it's not enought for the all validation rules -->
+                    <stagingProgressTimeoutMinutes>20</stagingProgressTimeoutMinutes>
                 </configuration>
             </plugin>
         </plugins>
