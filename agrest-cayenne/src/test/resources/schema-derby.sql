@@ -105,8 +105,8 @@ ALTER TABLE "e9" ADD FOREIGN KEY ("e8_id") REFERENCES "e8" ("id")
 ALTER TABLE "e18" ADD FOREIGN KEY ("e17_id1", "e17_id2") REFERENCES "e17" ("id1", "id2")
 ;
 
-ALTER TABLE "e7" ADD FOREIGN KEY ("e8_id") REFERENCES "e8" ("id")
-;
+-- ALTER TABLE "e7" ADD FOREIGN KEY ("e8_id") REFERENCES "e8" ("id")
+-- ;
 
 ALTER TABLE "e11" ADD FOREIGN KEY ("e10_id") REFERENCES "e10" ("id")
 ;
