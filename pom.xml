@@ -43,6 +43,8 @@
         <openapi-generator-version>3.0.2</openapi-generator-version>
         <bootique-version>2.0.B1-SNAPSHOT</bootique-version>
         <junit5-version>5.6.2</junit5-version>
+
+        <gpg.pinentry.mode>loopback</gpg.pinentry.mode>
     </properties>
 
     <url>https://github.com/agrestio/agrest/</url>
@@ -81,8 +83,8 @@
             <url>https://oss.sonatype.org/service/local/staging/deploy/maven2</url>
         </repository>
         <snapshotRepository>
-            <id>agrest-snapshots</id>
-            <url>https://maven.objectstyle.org/nexus/content/repositories/linkrest-snapshots</url>
+            <id>oss-sonatype-snapshots</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
         </snapshotRepository>
     </distributionManagement>
 
@@ -270,7 +272,7 @@
                     <configuration>
                         <autoVersionSubmodules>true</autoVersionSubmodules>
 
-                        <!-- THis is to allow test dependencies to be SNAPSHOTS-->
+                        <!-- This is to allow test dependencies to be SNAPSHOTS-->
                         <allowTimestampedSnapshots>true</allowTimestampedSnapshots>
                     </configuration>
                 </plugin>
@@ -293,6 +295,11 @@
                         </execution>
                     </executions>
                 </plugin>
+                <plugin>
+                    <groupId>org.sonatype.plugins</groupId>
+                    <artifactId>nexus-staging-maven-plugin</artifactId>
+                    <version>1.6.8</version>
+                </plugin>
             </plugins>
         </pluginManagement>
         <plugins>
@@ -300,17 +307,18 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-failsafe-plugin</artifactId>
             </plugin>
+            <!-- This plugin replaces maven-deploy-plugin and "deploy" goal -->
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-source-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>attach-sources</id>
-                        <goals>
-                            <goal>jar</goal>
-                        </goals>
-                    </execution>
-                </executions>
+                <groupId>org.sonatype.plugins</groupId>
+                <artifactId>nexus-staging-maven-plugin</artifactId>
+                <extensions>true</extensions>
+                <configuration>
+                    <serverId>oss-sonatype-releases</serverId>
+                    <nexusUrl>https://oss.sonatype.org/</nexusUrl>
+                    <autoReleaseAfterClose>false</autoReleaseAfterClose>
+                    <skipLocalStaging>true</skipLocalStaging>
+                    <stagingProgressTimeoutMinutes>20</stagingProgressTimeoutMinutes>
+                </configuration>
             </plugin>
         </plugins>
     </build>
@@ -334,9 +342,21 @@
                                 <configuration>
                                     <gpgArguments>
                                         <arg>--pinentry-mode</arg>
-                                        <arg>loopback</arg>
+                                        <arg>${gpg.pinentry.mode}</arg>
                                     </gpgArguments>
                                 </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-source-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>attach-sources</id>
+                                <goals>
+                                    <goal>jar-no-fork</goal>
+                                </goals>
                             </execution>
                         </executions>
                     </plugin>
