@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/agrestio/agrest.svg?branch=master)](https://travis-ci.org/agrestio/agrest)
+[![build test deploy](https://github.com/agrestio/agrest/workflows/build%20test%20deploy/badge.svg)](https://github.com/agrestio/agrest/actions)
 [![Maven Central](https://img.shields.io/maven-central/v/io.agrest/agrest-engine.svg)](https://agrest.io/#get-started)
 
 Agrest (formerly "LinkRest") is a flexible model-driven REST data service framework. It helps to optimize REST interactions and avoid excessive requests to server when navigating data graphs on the client. Visit [our site](http://agrest.io/) for more information. 
