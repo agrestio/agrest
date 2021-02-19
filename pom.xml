@@ -39,7 +39,7 @@
         <cayenne-version>4.2.M2</cayenne-version>
         <jersey-version>2.27</jersey-version>
         <jaxrs-version>2.1</jaxrs-version>
-        <jackson-version>2.10.3</jackson-version>
+        <jackson-version>2.11.3</jackson-version>
         <openapi-generator-version>3.0.2</openapi-generator-version>
         <bootique-version>2.0.B1-SNAPSHOT</bootique-version>
         <junit5-version>5.7.0</junit5-version>

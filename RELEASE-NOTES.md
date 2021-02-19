@@ -1,3 +1,7 @@
+## Release 4.5
+
+* #484 Upgrade Jackson to 2.11.3
+
 ## Release 4.4
 
 * #476 Composable Exp
