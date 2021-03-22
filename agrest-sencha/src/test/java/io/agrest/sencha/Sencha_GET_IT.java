@@ -139,11 +139,9 @@ public class Sencha_GET_IT extends DbTest {
                 .get()
                 .wasOk()
                 .bodyTransformer(SenchaBodyAssertions::checkAndNormalizeBody)
-                .bodyEquals(1, "{\"id\":1,\"e3s\":["
-                        + "{\"e5\":{\"name\":\"B\"},\"e5_id\":345,\"name\":\"a\"},"
-                        + "{\"e5\":{\"name\":\"A\"},\"e5_id\":346,\"name\":\"m\"},"
-                        + "{\"e5\":{\"name\":\"B\"},\"e5_id\":345,\"name\":\"z\"}"
-                        + "]}");
+                .bodyEquals(1, "{\"id\":1,\"e3s\":[{\"e5\":{\"name\":\"B\"},\"e5_id\":345,\"name\":\"a\"},"
+                        + "{\"e5\":{\"name\":\"B\"},\"e5_id\":345,\"name\":\"z\"},"
+                        + "{\"e5\":{\"name\":\"A\"},\"e5_id\":346,\"name\":\"m\"}]}");
     }
 
     @Test

@@ -42,7 +42,7 @@ public class GET_IncludeObjectCayenneExpIT extends DbTest {
                 .queryParam("include", "id")
                 .get().wasOk()
                 .bodyEquals(1, "{\"id\":1,\"e3s\":{"
-                        + "\"aaa\":[{\"id\":7,\"name\":\"aaa\",\"phoneNumber\":null},{\"id\":8,\"name\":\"aaa\",\"phoneNumber\":null}],"
+                        + "\"aaa\":[{\"id\":8,\"name\":\"aaa\",\"phoneNumber\":null},{\"id\":7,\"name\":\"aaa\",\"phoneNumber\":null}],"
                         + "\"zzz\":[{\"id\":9,\"name\":\"zzz\",\"phoneNumber\":null}]}}");
     }
 
@@ -61,8 +61,8 @@ public class GET_IncludeObjectCayenneExpIT extends DbTest {
                 .queryParam("include", "id")
                 .get().wasOk()
                 .bodyEquals(1, "{\"id\":1,\"e3s\":["
-                        + "{\"id\":7,\"name\":\"a\",\"phoneNumber\":null},"
-                        + "{\"id\":8,\"name\":\"a\",\"phoneNumber\":null}]}");
+                        + "{\"id\":8,\"name\":\"a\",\"phoneNumber\":null},"
+                        + "{\"id\":7,\"name\":\"a\",\"phoneNumber\":null}]}");
     }
 
     @Test

@@ -79,7 +79,7 @@ public class GET_IncludeObjectIT extends DbTest {
                 .get()
                 .wasOk()
                 .bodyEquals(1, "{\"id\":1,\"e3s\":{"
-                        + "\"aaa\":[{\"id\":7,\"name\":\"aaa\",\"phoneNumber\":null},{\"id\":8,\"name\":\"aaa\",\"phoneNumber\":null}],"
+                        + "\"aaa\":[{\"id\":8,\"name\":\"aaa\",\"phoneNumber\":null},{\"id\":7,\"name\":\"aaa\",\"phoneNumber\":null}],"
                         + "\"zzz\":[{\"id\":9,\"name\":\"zzz\",\"phoneNumber\":null}]" + "}}");
     }
 
@@ -98,10 +98,9 @@ public class GET_IncludeObjectIT extends DbTest {
                 .get()
                 .wasOk()
                 .bodyEquals(1, "{\"id\":1,\"e3s\":{"
-                        + "\"7\":[{\"id\":7,\"name\":\"aaa\",\"phoneNumber\":null}],"
                         + "\"8\":[{\"id\":8,\"name\":\"aaa\",\"phoneNumber\":null}],"
-                        + "\"9\":[{\"id\":9,\"name\":\"zzz\",\"phoneNumber\":null}]"
-                        + "}}");
+                        + "\"9\":[{\"id\":9,\"name\":\"zzz\",\"phoneNumber\":null}],"
+                        + "\"7\":[{\"id\":7,\"name\":\"aaa\",\"phoneNumber\":null}]}}");
     }
 
     @Test
@@ -189,7 +188,7 @@ public class GET_IncludeObjectIT extends DbTest {
                 .queryParam("include", "id")
                 .get().wasOk()
                 .bodyEquals(1, "{\"id\":1,\"e3s\":{"
-                        + "\"aaa\":[{\"id\":7,\"name\":\"aaa\",\"phoneNumber\":null},{\"id\":8,\"name\":\"aaa\",\"phoneNumber\":null}],"
+                        + "\"aaa\":[{\"id\":8,\"name\":\"aaa\",\"phoneNumber\":null},{\"id\":7,\"name\":\"aaa\",\"phoneNumber\":null}],"
                         + "\"zzz\":[{\"id\":9,\"name\":\"zzz\",\"phoneNumber\":null}]}}");
     }
 
@@ -275,8 +274,8 @@ public class GET_IncludeObjectIT extends DbTest {
                 .queryParam("include", "id")
                 .get().wasOk()
                 .bodyEquals(1, "{\"id\":1,\"e3s\":["
-                        + "{\"id\":7,\"name\":\"a\",\"phoneNumber\":null},"
-                        + "{\"id\":8,\"name\":\"a\",\"phoneNumber\":null}]}");
+                        + "{\"id\":8,\"name\":\"a\",\"phoneNumber\":null},"
+                        + "{\"id\":7,\"name\":\"a\",\"phoneNumber\":null}]}");
     }
 
     @Test
@@ -315,7 +314,7 @@ public class GET_IncludeObjectIT extends DbTest {
                 .queryParam("exclude", "e3s.id")
                 .queryParam("exclude", "e3s.phoneNumber")
                 .get().wasOk()
-                .bodyEquals(1, "{\"id\":1,\"e3s\":[{\"name\":\"a\"},{\"name\":\"m\"},{\"name\":\"z\"}]}");
+                .bodyEquals(1, "{\"id\":1,\"e3s\":[{\"name\":\"a\"},{\"name\":\"z\"},{\"name\":\"m\"}]}");
     }
 
     @Test
@@ -338,10 +337,8 @@ public class GET_IncludeObjectIT extends DbTest {
                 .queryParam("exclude", "e3s.id")
                 .queryParam("exclude", "e3s.phoneNumber")
                 .queryParam("include", "e3s.e5.name").get().wasOk()
-                .bodyEquals(1, "{\"id\":1,\"e3s\":["
-                        + "{\"e5\":{\"name\":\"B\"},\"name\":\"a\"},"
-                        + "{\"e5\":{\"name\":\"A\"},\"name\":\"m\"},"
-                        + "{\"e5\":{\"name\":\"B\"},\"name\":\"z\"}]}");
+                .bodyEquals(1, "{\"id\":1,\"e3s\":[{\"e5\":{\"name\":\"B\"},\"name\":\"a\"},"
+                        + "{\"e5\":{\"name\":\"B\"},\"name\":\"z\"},{\"e5\":{\"name\":\"A\"},\"name\":\"m\"}]}");
     }
 
     @Test
@@ -362,10 +359,9 @@ public class GET_IncludeObjectIT extends DbTest {
                 .queryParam("include", "[\"id\", {\"path\":\"e3s\"}, \"e3s.e5.name\"]")
                 .queryParam("exclude", "[\"e3s.id\", \"e3s.phoneNumber\"]")
                 .get().wasOk()
-                .bodyEquals(1, "{\"id\":1,\"e3s\":["
-                        + "{\"e5\":{\"name\":\"B\"},\"name\":\"a\"},"
-                        + "{\"e5\":{\"name\":\"A\"},\"name\":\"m\"},"
-                        + "{\"e5\":{\"name\":\"B\"},\"name\":\"z\"}]}");
+                .bodyEquals(1, "{\"id\":1,\"e3s\":[{\"e5\":{\"name\":\"B\"},\"name\":\"a\"},"
+                        + "{\"e5\":{\"name\":\"B\"},\"name\":\"z\"},"
+                        + "{\"e5\":{\"name\":\"A\"},\"name\":\"m\"}]}");
     }
 
     @Test
@@ -387,8 +383,8 @@ public class GET_IncludeObjectIT extends DbTest {
                 .queryParam("exclude", "[{\"e3s\": [\"id\", \"phoneNumber\"]}]")
                 .get().wasOk()
                 .bodyEquals(1, "{\"id\":1,\"e3s\":[{\"e5\":{\"name\":\"B\"},\"name\":\"a\"},"
-                        + "{\"e5\":{\"name\":\"A\"},\"name\":\"m\"},"
-                        + "{\"e5\":{\"name\":\"B\"},\"name\":\"z\"}]}");
+                        + "{\"e5\":{\"name\":\"B\"},\"name\":\"z\"},"
+                        + "{\"e5\":{\"name\":\"A\"},\"name\":\"m\"}]}");
     }
 
     @Test
@@ -408,12 +404,10 @@ public class GET_IncludeObjectIT extends DbTest {
         tester.target("/e2")
                 .queryParam("include", "[\"id\", {\"path\":\"e3s\", \"include\":[\"e5.name\"]}]")
                 .queryParam("exclude", "[{\"e3s\": [\"id\", \"phoneNumber\"]}]")
-                .get()
-                .wasOk()
-                .bodyEquals(1, "{\"id\":1,\"e3s\":["
-                        + "{\"e5\":{\"name\":\"B\"},\"name\":\"a\"},"
-                        + "{\"e5\":{\"name\":\"A\"},\"name\":\"m\"},"
-                        + "{\"e5\":{\"name\":\"B\"},\"name\":\"z\"}]}");
+                .get().wasOk()
+                .bodyEquals(1, "{\"id\":1,\"e3s\":[{\"e5\":{\"name\":\"B\"},\"name\":\"a\"},"
+                        + "{\"e5\":{\"name\":\"B\"},\"name\":\"z\"},"
+                        + "{\"e5\":{\"name\":\"A\"},\"name\":\"m\"}]}");
     }
 
     @Path("")

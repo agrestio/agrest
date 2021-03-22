@@ -277,9 +277,6 @@ public class AgCayenneTester implements BQBeforeScopeCallback, BQAfterScopeCallb
                 .module(jetty.moduleReplacingConnectors())
                 .module(cayenne.moduleWithTestHooks())
                 .module(b -> CayenneModule.extend(b).addProject(cayenneProject))
-                // TODO: remove this once we can upgrade to Cayenne 4.2.M3 that would fix this:
-                //  https://issues.apache.org/jira/browse/CAY-2685
-                .module(b -> CayenneModule.extend(b).addModule(new TempCayenneFixes()))
                 .module(new AgModule(agCustomizer, resources));
 
         return builder.createRuntime();
