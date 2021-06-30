@@ -7,6 +7,7 @@ import io.agrest.cayenne.unit.DbTest;
 import io.agrest.cayenne.cayenne.main.E2;
 import io.agrest.cayenne.cayenne.main.E3;
 import io.bootique.junit5.BQTestTool;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import javax.ws.rs.GET;
@@ -93,6 +94,22 @@ public class GET_ExpIT extends DbTest {
         tester.target("/e2")
                 .queryParam("include", "id")
                 .queryParam("exp", "[\"name = $b\", \"xxx\"]")
+                .get()
+                .wasOk().bodyEquals(1, "{\"id\":1}");
+    }
+
+    @Test
+    @DisplayName("positional binding of repeating name")
+    public void testList_Params_Repeating() {
+
+        tester.e2().insertColumns("id_", "name")
+                .values(1, "xxx")
+                .values(2, "yyy")
+                .values(3, "zzz").exec();
+
+        tester.target("/e2")
+                .queryParam("include", "id")
+                .queryParam("exp", "[\"name = $b or name = $b or id = $a\", \"xxx\", 1]")
                 .get()
                 .wasOk().bodyEquals(1, "{\"id\":1}");
     }
