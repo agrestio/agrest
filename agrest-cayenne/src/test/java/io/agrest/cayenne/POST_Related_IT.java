@@ -68,14 +68,14 @@ public class POST_Related_IT extends DbTest {
                 .values(16, "yyy").exec();
 
         tester.e3().insertColumns("id_", "name", "e2_id")
-                .values(7, "zzz", 16)
-                .values(8, "yyy", 15)
-                .values(9, "aaa", 15).exec();
+                .values(12, "zzz", 16)
+                .values(60, "yyy", 15)
+                .values(90, "aaa", 15).exec();
 
         tester.target("/e2/15/e3s")
                 // only including name in response, as IDs are generated and it is hard to assert them properly
                 .queryParam("include", "name")
-                .post("[ {\"id\":8,\"name\":\"123\"}, {\"name\":\"newname\"} ]")
+                .post("[ {\"id\":60,\"name\":\"123\"}, {\"name\":\"newname\"} ]")
                 .wasOk()
                 .bodyEquals(2, "{\"name\":\"123\"}", "{\"name\":\"newname\"}");
 
@@ -86,7 +86,7 @@ public class POST_Related_IT extends DbTest {
 
         tester.target("/e2/15/e3s")
                 .queryParam("include", "name")
-                .post("[ {\"id\":8,\"name\":\"123\"}, {\"name\":\"newname\"} ]")
+                .post("[ {\"id\":60,\"name\":\"123\"}, {\"name\":\"newname\"} ]")
                 .wasOk()
                 .bodyEquals(2, "{\"name\":\"123\"}", "{\"name\":\"newname\"}");
 
