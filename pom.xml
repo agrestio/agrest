@@ -209,13 +209,41 @@
                 <artifactId>cayenne-server</artifactId>
                 <version>${cayenne-version}</version>
             </dependency>
+            <!--
+            Importing individual Bootique modules instead of a BOM, as BOM would be treated as a dependency
+            by the downstream projects.
+            -->
             <dependency>
-                <groupId>io.bootique.bom</groupId>
-                <artifactId>bootique-bom</artifactId>
+                <groupId>io.bootique.jdbc</groupId>
+                <artifactId>bootique-jdbc-junit5-derby</artifactId>
                 <version>${bootique-version}</version>
-                <scope>import</scope>
-                <type>pom</type>
             </dependency>
+            <dependency>
+                <groupId>io.bootique.cayenne</groupId>
+                <artifactId>bootique-cayenne42-junit5</artifactId>
+                <version>${bootique-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.bootique</groupId>
+                <artifactId>bootique-junit5</artifactId>
+                <version>${bootique-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.bootique.jdbc</groupId>
+                <artifactId>bootique-jdbc-junit5-derby</artifactId>
+                <version>${bootique-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.bootique.jersey</groupId>
+                <artifactId>bootique-jersey</artifactId>
+                <version>${bootique-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.bootique.jetty</groupId>
+                <artifactId>bootique-jetty-junit5</artifactId>
+                <version>${bootique-version}</version>
+            </dependency>
+
             <dependency>
                 <groupId>io.swagger.core.v3</groupId>
                 <artifactId>swagger-jaxrs2</artifactId>
