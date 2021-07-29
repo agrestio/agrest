@@ -1,3 +1,6 @@
+## Release 4.6
+
+* #487 Bootique dependency leaks to Agrest via BOM import
 
 ## Release 4.5
 
