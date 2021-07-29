@@ -227,11 +227,13 @@ public class AgCayenneTester implements BQBeforeScopeCallback, BQAfterScopeCallb
     }
 
     @Override
-    public void beforeScope(BQTestScope scope, ExtensionContext context) {
+    public void beforeScope(BQTestScope scope, ExtensionContext context) throws Exception {
 
         this.jettyInScope = JettyTester.create();
         this.cayenneInScope = createCayenneInScope();
         this.appInScope = createAppInScope(this.jettyInScope, this.cayenneInScope);
+
+        getCayenneInScope().beforeScope(scope, context);
 
         CommandOutcome result = appInScope.run();
         assertTrue(result.isSuccess());
