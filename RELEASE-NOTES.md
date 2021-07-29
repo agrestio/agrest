@@ -1,3 +1,7 @@
+## Release 3.10
+
+* #487 Bootique dependency leaks to Agrest via BOM import 
+
 ## Release 3.9
 
 * #478 Cayenne compound ID mapped to object properties with different names fails to serialize
