@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>io.agrest</groupId>
 		<artifactId>agrest-parent</artifactId>
-		<version>4.6-SNAPSHOT</version>
+		<version>4.6</version>
 	</parent>
 
 	<artifactId>agrest-sencha</artifactId>
