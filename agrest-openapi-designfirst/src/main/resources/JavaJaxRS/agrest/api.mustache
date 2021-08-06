@@ -22,7 +22,7 @@ public class {{classname}} {
 {{#operations}}
 {{#operation}}
     @{{httpMethod}}
-    {{#subresourceOperation}}@Path("/{{version}}{{path}}"){{/subresourceOperation}}
+    {{#subresourceOperation}}@Path("/{{version}}{{commonPath}}{{path}}"){{/subresourceOperation}}{{^subresourceOperation}}@Path("/{{version}}{{commonPath}}{{path}}"){{/subresourceOperation}}
     {{#hasConsumes}}
     @Consumes({ {{#consumes}}"{{{mediaType}}}"{{#hasMore}}, {{/hasMore}}{{/consumes}} })
     {{/hasConsumes}}

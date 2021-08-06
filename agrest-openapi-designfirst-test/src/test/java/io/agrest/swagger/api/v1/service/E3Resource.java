@@ -22,7 +22,7 @@ public class E3Resource {
     @POST
     @Path("/v1/e3")
     @Consumes({ "application/json" })
-    public DataResponse<E3> create(String e3, @QueryParam("include") List<String> includes, @QueryParam("exclude") List<String> excludes) {
+    public DataResponse<E3> createE3(String E3, @QueryParam("include") List<String> includes, @QueryParam("exclude") List<String> excludes) {
 
         AgRequest agRequest = Ag.request(config)
                 .addIncludes(includes)
@@ -31,7 +31,7 @@ public class E3Resource {
 
         return Ag.create(E3.class, config)
                  .request(agRequest)
-                 .syncAndSelect(e3);
+                 .syncAndSelect(E3);
     }
 
     @DELETE
@@ -44,7 +44,7 @@ public class E3Resource {
 
     @DELETE
     @Path("/v1/e3/{id}/e2/{tid}")
-    public SimpleResponse deleteE2ViaE3_1(@PathParam("id") Integer id, @PathParam("tid") Integer tid) {
+    public SimpleResponse deleteE2ViaE3WithTid(@PathParam("id") Integer id, @PathParam("tid") Integer tid) {
 
         return Ag.service(config)
                  .unrelate(E3.class, id, "e2", tid);
@@ -53,7 +53,7 @@ public class E3Resource {
     @GET
     @Path("/v1/e3")
     @Produces({ "application/json" })
-    public DataResponse<E3> getAll(@QueryParam("sort") String sort, @QueryParam("dir") String dir, @QueryParam("include") List<String> includes, @QueryParam("exclude") List<String> excludes, @QueryParam("limit") Integer limit, @QueryParam("start") Integer start, @QueryParam("mapBy") String mapBy, @QueryParam("exp") String exp) {
+    public DataResponse<E3> getAllE3(@QueryParam("sort") String sort, @QueryParam("dir") String dir, @QueryParam("include") List<String> includes, @QueryParam("exclude") List<String> excludes, @QueryParam("limit") Integer limit, @QueryParam("start") Integer start, @QueryParam("mapBy") String mapBy, @QueryParam("exp") String exp) {
 
         AgRequest agRequest = Ag.request(config)
                 .addOrdering(sort, dir)
@@ -73,7 +73,7 @@ public class E3Resource {
     @GET
     @Path("/v1/e3/{id}")
     @Produces({ "application/json" })
-        public DataResponse<E3> getOne(@PathParam("id") Integer id, @QueryParam("include") List<String> includes) {
+        public DataResponse<E3> getOneE3(@PathParam("id") Integer id, @QueryParam("include") List<String> includes) {
 
         AgRequest agRequest = Ag.request(config)
                 .addIncludes(includes)
@@ -88,7 +88,7 @@ public class E3Resource {
     @GET
     @Path("/v1/e3/{id}/e2")
     @Produces({ "application/json" })
-        public DataResponse<E2> getOneByOne(@PathParam("id") Integer id, @QueryParam("include") List<String> includes) {
+        public DataResponse<E2> getOneE3ByOneE2(@PathParam("id") Integer id, @QueryParam("include") List<String> includes) {
 
         AgRequest agRequest = Ag.request(config)
                 .addIncludes(includes)
@@ -101,23 +101,9 @@ public class E3Resource {
     }
 
     @PUT
-    @Path("/v1/e3/{id}")
-    @Consumes({ "application/json" })
-    public DataResponse<E3> update(@PathParam("id") Integer id, String e3) {
-
-        AgRequest agRequest = Ag.request(config)
-                .build();
-
-        return Ag.idempotentCreateOrUpdate(E3.class, config)
-                 .id(id)
-                 .request(agRequest)
-                 .syncAndSelect(e3);
-    }
-
-    @PUT
     @Path("/v1/e3")
     @Consumes({ "application/json" })
-    public DataResponse<E3> updateAll(String e3, @QueryParam("include") List<String> includes, @QueryParam("exclude") List<String> excludes) {
+    public DataResponse<E3> updateAllE3(String E3, @QueryParam("include") List<String> includes, @QueryParam("exclude") List<String> excludes) {
 
         AgRequest agRequest = Ag.request(config)
                 .addIncludes(includes)
@@ -126,13 +112,13 @@ public class E3Resource {
 
         return Ag.idempotentCreateOrUpdate(E3.class, config)
                  .request(agRequest)
-                 .syncAndSelect(e3);
+                 .syncAndSelect(E3);
     }
 
     @PUT
     @Path("/v1/e3/{id}/e2/{tid}")
     @Consumes({ "application/json" })
-    public DataResponse<E2> updateE2ViaE3(@PathParam("id") Integer id, @PathParam("tid") Integer tid, String e2) {
+    public DataResponse<E2> updateE2ViaE3(@PathParam("id") Integer id, @PathParam("tid") Integer tid, String E2) {
 
         AgRequest agRequest = Ag.request(config)
                 .build();
@@ -141,7 +127,21 @@ public class E3Resource {
                  .id(tid)
                  .parent(E3.class, id, "e2")
                  .request(agRequest)
-                 .syncAndSelect(e2);
+                 .syncAndSelect(E2);
+    }
+
+    @PUT
+    @Path("/v1/e3/{id}")
+    @Consumes({ "application/json" })
+    public DataResponse<E3> updateE3(@PathParam("id") Integer id, String E3) {
+
+        AgRequest agRequest = Ag.request(config)
+                .build();
+
+        return Ag.idempotentCreateOrUpdate(E3.class, config)
+                 .id(id)
+                 .request(agRequest)
+                 .syncAndSelect(E3);
     }
 
 }

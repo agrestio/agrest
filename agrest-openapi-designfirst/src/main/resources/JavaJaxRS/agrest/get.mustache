@@ -1,6 +1,6 @@
 {{#isRestfulIndex}}
     {{#hasCompoundId}}
-public {{>returnTypes}} {{nickname}}({{#allParams}}{{>pathParams}}{{>queryParams}}{{#hasMore}}, {{/hasMore}}{{/allParams}}) {
+public {{>returnTypes}} {{nickname}}({{#allParams}}{{>pathParams}}{{>queryParams}}{{^-last}}, {{/-last}}{{/allParams}}) {
 
         Map<String, Object> id = new HashMap<>();
         {{#modelAttributes}}
@@ -18,7 +18,7 @@ public {{>returnTypes}} {{nickname}}({{#allParams}}{{>pathParams}}{{>queryParams
     }
     {{/hasCompoundId}}
     {{^hasCompoundId}}
-public {{>returnTypes}} {{nickname}}({{#allParams}}{{>pathParams}}{{>queryParams}}{{#hasMore}}, {{/hasMore}}{{/allParams}}) {
+public {{>returnTypes}} {{nickname}}({{#allParams}}{{>pathParams}}{{>queryParams}}{{^-last}}, {{/-last}}{{/allParams}}) {
 
         {{>protocolImpl}}
 
@@ -29,7 +29,7 @@ public {{>returnTypes}} {{nickname}}({{#allParams}}{{>pathParams}}{{>queryParams
     {{/hasCompoundId}}
 {{/isRestfulIndex}}
 {{#isRestfulShow}}
-    public {{>returnTypes}} {{nickname}}({{#allParams}}{{>pathParams}}{{>queryParams}}{{#hasMore}}, {{/hasMore}}{{/allParams}}) {
+    public {{>returnTypes}} {{nickname}}({{#allParams}}{{>pathParams}}{{>queryParams}}{{^-last}}, {{/-last}}{{/allParams}}) {
 
         {{>protocolImpl}}
 
@@ -40,7 +40,7 @@ public {{>returnTypes}} {{nickname}}({{#allParams}}{{>pathParams}}{{>queryParams
     }
 {{/isRestfulShow}}
 {{#isRestfulIndexRelated}}
-    public DataResponse<{{#modelRelations}}{{returnType}}{{/modelRelations}}> {{nickname}}({{#allParams}}{{>pathParams}}{{>queryParams}}{{>bodyParams}}{{#hasMore}}, {{/hasMore}}{{/allParams}}) {
+    public DataResponse<{{#modelRelations}}{{returnType}}{{/modelRelations}}> {{nickname}}({{#allParams}}{{>pathParams}}{{>queryParams}}{{>bodyParams}}{{^-last}}, {{/-last}}{{/allParams}}) {
 
         {{>protocolImpl}}
 
@@ -52,7 +52,7 @@ public {{>returnTypes}} {{nickname}}({{#allParams}}{{>pathParams}}{{>queryParams
     }
 {{/isRestfulIndexRelated}}
 {{#isRestfulIndexToMany}}
-    public DataResponse<{{#modelRelations}}{{returnType}}{{/modelRelations}}> {{nickname}}({{#allParams}}{{>pathParams}}{{>queryParams}}{{#hasMore}}, {{/hasMore}}{{/allParams}}) {
+    public DataResponse<{{#modelRelations}}{{returnType}}{{/modelRelations}}> {{nickname}}({{#allParams}}{{>pathParams}}{{>queryParams}}{{^-last}}, {{/-last}}{{/allParams}}) {
 
         {{>protocolImpl}}
 

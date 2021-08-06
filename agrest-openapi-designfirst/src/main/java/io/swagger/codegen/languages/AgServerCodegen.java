@@ -11,17 +11,14 @@ import org.openapitools.codegen.CodegenProperty;
 import org.openapitools.codegen.languages.AbstractJavaJAXRSServerCodegen;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
+
+import static org.openapitools.codegen.utils.StringUtils.camelize;
 
 public class AgServerCodegen extends AbstractJavaJAXRSServerCodegen implements AgServerFeatures {
 
-    private final Map<String, Set<CodegenProperty>> models = new HashMap<>();
+    private final Map<String, Set<CodegenProperty>> models = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
 
     protected boolean generateForTesting = false;
 
@@ -100,8 +97,8 @@ public class AgServerCodegen extends AbstractJavaJAXRSServerCodegen implements A
     }
 
     @Override
-    public Map<String, Object> postProcessOperations(Map<String, Object> objs) {
-        Map<String, Object> objsResult = super.postProcessOperations(objs);
+    public Map<String, Object> postProcessOperationsWithModels(Map<String, Object> objs, List<Object> allModels) {
+        Map<String, Object> objsResult = super.postProcessOperationsWithModels(objs, allModels);
 
         Map<String, Object> operations = (Map<String, Object>) objsResult.get("operations");
 
@@ -115,7 +112,7 @@ public class AgServerCodegen extends AbstractJavaJAXRSServerCodegen implements A
                 }
 
                 // Removes container from response
-                operation.returnType = operation.baseName;
+                operation.returnType = models.keySet().stream().filter(k -> k.equalsIgnoreCase(operation.baseName)).findFirst().get();
                 AgCodegenOperation newOperation = new AgCodegenOperation(operation);
                 // Stores model properties to use them as constraints
                 populateModelAttributes(newOperation);
@@ -147,7 +144,6 @@ public class AgServerCodegen extends AbstractJavaJAXRSServerCodegen implements A
                         && !"id".equalsIgnoreCase(prop.baseName)) {
                     CodegenParameter codegenParam = new CodegenParameter();
                     codegenParam.paramName = prop.baseName;
-                    codegenParam.hasMore = true;
                     // checks if there is queryParam with the same name as model attribute
                     if (operation.queryParams.stream().anyMatch(p -> codegenParam.paramName.equalsIgnoreCase(p.paramName))) {
                         operation.hasCompoundId = codegenParam.isQueryParam = true;
@@ -162,7 +158,8 @@ public class AgServerCodegen extends AbstractJavaJAXRSServerCodegen implements A
                 }
             }
             if (!operation.modelAttributes.isEmpty()) {
-                operation.modelAttributes.get(operation.modelAttributes.size() - 1).hasMore = false;
+                // not needed anymore as "hasMore" attribute doesn't exists anymore
+                //operation.modelAttributes.get(operation.modelAttributes.size() - 1).hasMore = false;
             }
         }
     }

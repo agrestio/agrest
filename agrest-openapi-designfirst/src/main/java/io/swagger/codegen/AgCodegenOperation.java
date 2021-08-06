@@ -30,10 +30,9 @@ public class AgCodegenOperation extends CodegenOperation {
         this.returnTypeIsPrimitive = codegenOperation.returnTypeIsPrimitive;
         this.returnSimpleType = codegenOperation.returnSimpleType;
         this.subresourceOperation = codegenOperation.subresourceOperation;
-        this.isMapContainer = codegenOperation.isMapContainer;
-        this.isListContainer = codegenOperation.isListContainer;
+        this.isMap = codegenOperation.isMap;
+        this.isArray = codegenOperation.isArray;
         this.isMultipart = codegenOperation.isMultipart;
-        this.hasMore = codegenOperation.hasMore;
         this.isResponseBinary = codegenOperation.isResponseBinary;
         this.hasReference = codegenOperation.hasReference;
         this.isRestfulIndex = codegenOperation.isRestfulIndex;

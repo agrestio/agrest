@@ -21,7 +21,7 @@ public class E21Resource {
     @POST
     @Path("/v1/e21")
     @Consumes({ "application/json" })
-    public DataResponse<E21> create(String e21, @QueryParam("exclude") List<String> excludes) {
+    public DataResponse<E21> createE21(String E21, @QueryParam("exclude") List<String> excludes) {
 
         AgRequest agRequest = Ag.request(config)
                 .addExcludes(excludes)
@@ -29,15 +29,15 @@ public class E21Resource {
 
         return Ag.create(E21.class, config)
                  .request(agRequest)
-                 .syncAndSelect(e21);
+                 .syncAndSelect(E21);
     }
 
     @DELETE
     @Path("/v1/e21")
-    public SimpleResponse deleteByCompoundId(@QueryParam("name") String name, @QueryParam("age") Integer age) {
+    public SimpleResponse deleteE21ByCompoundId(@QueryParam("name") String name, @QueryParam("age") Integer age) {
         Map<String, Object> id = new HashMap<>();
-        id.put("name", name);
         id.put("age", age);
+        id.put("name", name);
 
         return Ag.delete(E21.class, config)
                  .id(id)
@@ -47,11 +47,11 @@ public class E21Resource {
     @GET
     @Path("/v1/e21")
     @Produces({ "application/json" })
-    public DataResponse<E21> getOneByCompoundId(@QueryParam("name") String name, @QueryParam("age") Integer age, @QueryParam("exclude") List<String> excludes) {
+    public DataResponse<E21> getOneE21ByCompoundId(@QueryParam("name") String name, @QueryParam("age") Integer age, @QueryParam("exclude") List<String> excludes) {
 
         Map<String, Object> id = new HashMap<>();
-        id.put("name", name);
         id.put("age", age);
+        id.put("name", name);
 
         AgRequest agRequest = Ag.request(config)
                 .addExcludes(excludes)
@@ -66,11 +66,11 @@ public class E21Resource {
     @PUT
     @Path("/v1/e21")
     @Consumes({ "application/json" })
-    public DataResponse<E21> updateByCompoundId(@QueryParam("name") String name, @QueryParam("age") Integer age, String e21) {
+    public DataResponse<E21> updateE21ByCompoundId(@QueryParam("name") String name, @QueryParam("age") Integer age, String E21) {
 
         Map<String, Object> id = new HashMap<>();
-                id.put("name", name);
                 id.put("age", age);
+                id.put("name", name);
 
 
         AgRequest agRequest = Ag.request(config)
@@ -79,7 +79,7 @@ public class E21Resource {
         return Ag.idempotentCreateOrUpdate(E21.class, config)
                  .id(id)
                  .request(agRequest)
-                 .syncAndSelect(e21);
+                 .syncAndSelect(E21);
     }
 
 }

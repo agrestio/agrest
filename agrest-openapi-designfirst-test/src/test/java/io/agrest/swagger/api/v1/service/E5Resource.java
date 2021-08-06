@@ -21,20 +21,20 @@ public class E5Resource {
     @POST
     @Path("/v1/e5")
     @Consumes({ "application/json" })
-    public DataResponse<E5> create(String e5) {
+    public DataResponse<E5> createE5(String E5) {
 
         AgRequest agRequest = Ag.request(config)
                 .build();
 
         return Ag.create(E5.class, config)
                  .request(agRequest)
-                 .syncAndSelect(e5);
+                 .syncAndSelect(E5);
     }
 
     @GET
     @Path("/v1/e5")
     @Produces({ "application/json" })
-    public DataResponse<E5> getAll() {
+    public DataResponse<E5> getAllE5() {
 
         AgRequest agRequest = Ag.request(config)
                 .build();

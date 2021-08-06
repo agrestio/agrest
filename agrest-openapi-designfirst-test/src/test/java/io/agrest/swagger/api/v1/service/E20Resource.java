@@ -21,7 +21,7 @@ public class E20Resource {
     @POST
     @Path("/v1/e20")
     @Consumes({ "application/json" })
-    public DataResponse<E20> create(String e20, @QueryParam("exclude") List<String> excludes) {
+    public DataResponse<E20> createE20(String E20, @QueryParam("exclude") List<String> excludes) {
 
         AgRequest agRequest = Ag.request(config)
                 .addExcludes(excludes)
@@ -29,12 +29,12 @@ public class E20Resource {
 
         return Ag.create(E20.class, config)
                  .request(agRequest)
-                 .syncAndSelect(e20);
+                 .syncAndSelect(E20);
     }
 
     @DELETE
     @Path("/v1/e20/{name}")
-    public SimpleResponse deleteByName(@PathParam("name") String name) {
+    public SimpleResponse deleteE20ByName(@PathParam("name") String name) {
 
         return Ag.delete(E20.class, config)
                  .id(name)
@@ -44,7 +44,7 @@ public class E20Resource {
     @GET
     @Path("/v1/e20/{name}")
     @Produces({ "application/json" })
-        public DataResponse<E20> getOneByName(@PathParam("name") String name, @QueryParam("exclude") List<String> excludes) {
+        public DataResponse<E20> getOneE20ByName(@PathParam("name") String name, @QueryParam("exclude") List<String> excludes) {
 
         AgRequest agRequest = Ag.request(config)
                 .addExcludes(excludes)
@@ -59,7 +59,7 @@ public class E20Resource {
     @PUT
     @Path("/v1/e20/{name}")
     @Consumes({ "application/json" })
-    public DataResponse<E20> updateByName(@PathParam("name") String name, String e20) {
+    public DataResponse<E20> updateE20ByName(@PathParam("name") String name, String E20) {
 
         AgRequest agRequest = Ag.request(config)
                 .build();
@@ -67,7 +67,7 @@ public class E20Resource {
         return Ag.idempotentCreateOrUpdate(E20.class, config)
                  .id(name)
                  .request(agRequest)
-                 .syncAndSelect(e20);
+                 .syncAndSelect(E20);
     }
 
 }

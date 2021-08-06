@@ -22,7 +22,7 @@ public class E2Resource {
     @POST
     @Path("/v1/e2")
     @Consumes({ "application/json" })
-    public DataResponse<E2> create(String e2, @QueryParam("include") List<String> includes, @QueryParam("exclude") List<String> excludes) {
+    public DataResponse<E2> createE2(String E2, @QueryParam("include") List<String> includes, @QueryParam("exclude") List<String> excludes) {
 
         AgRequest agRequest = Ag.request(config)
                 .addIncludes(includes)
@@ -31,13 +31,13 @@ public class E2Resource {
 
         return Ag.create(E2.class, config)
                  .request(agRequest)
-                 .syncAndSelect(e2);
+                 .syncAndSelect(E2);
     }
 
     @POST
     @Path("/v1/e2/{id}/e3s")
     @Consumes({ "application/json" })
-    public DataResponse<E3> createE3sViaE2(@PathParam("id") Integer id, String e3) {
+    public DataResponse<E3> createE3sViaE2(@PathParam("id") Integer id, String E3) {
 
         AgRequest agRequest = Ag.request(config)
                 .build();
@@ -45,7 +45,7 @@ public class E2Resource {
         return Ag.createOrUpdate(E3.class, config)
                  .parent(E2.class, id, "e3s")
                  .request(agRequest)
-                 .syncAndSelect(e3);
+                 .syncAndSelect(E3);
     }
 
     @DELETE
@@ -67,7 +67,7 @@ public class E2Resource {
     @GET
     @Path("/v1/e2")
     @Produces({ "application/json" })
-    public DataResponse<E2> getAll(@QueryParam("include") List<String> includes, @QueryParam("exclude") List<String> excludes, @QueryParam("exp") String exp) {
+    public DataResponse<E2> getAllE2(@QueryParam("include") List<String> includes, @QueryParam("exclude") List<String> excludes, @QueryParam("exp") String exp) {
 
         AgRequest agRequest = Ag.request(config)
                 .addIncludes(includes)
@@ -99,7 +99,7 @@ public class E2Resource {
     @GET
     @Path("/v1/e2/{id}")
     @Produces({ "application/json" })
-        public DataResponse<E2> getOne(@PathParam("id") Integer id, @QueryParam("include") List<String> includes, @QueryParam("exclude") List<String> excludes) {
+        public DataResponse<E2> getOneE2(@PathParam("id") Integer id, @QueryParam("include") List<String> includes, @QueryParam("exclude") List<String> excludes) {
 
         AgRequest agRequest = Ag.request(config)
                 .addIncludes(includes)
@@ -115,7 +115,7 @@ public class E2Resource {
     @GET
     @Path("/v1/e2/{id}/e3s")
     @Produces({ "application/json" })
-        public DataResponse<E3> getOneToMany(@PathParam("id") Integer id, @QueryParam("include") List<String> includes) {
+        public DataResponse<E3> getOneE2ToManyE3(@PathParam("id") Integer id, @QueryParam("include") List<String> includes) {
 
         AgRequest agRequest = Ag.request(config)
                 .addIncludes(includes)
@@ -130,7 +130,7 @@ public class E2Resource {
     @PUT
     @Path("/v1/e2/{id}")
     @Consumes({ "application/json" })
-    public DataResponse<E2> update(@PathParam("id") Integer id, String e2, @QueryParam("include") List<String> includes, @QueryParam("exclude") List<String> excludes) {
+    public DataResponse<E2> updateE2(@PathParam("id") Integer id, String E2, @QueryParam("include") List<String> includes, @QueryParam("exclude") List<String> excludes) {
 
         AgRequest agRequest = Ag.request(config)
                 .addIncludes(includes)
@@ -140,13 +140,13 @@ public class E2Resource {
         return Ag.idempotentCreateOrUpdate(E2.class, config)
                  .id(id)
                  .request(agRequest)
-                 .syncAndSelect(e2);
+                 .syncAndSelect(E2);
     }
 
     @PUT
     @Path("/v1/e2/{id}/e3s")
     @Consumes({ "application/json" })
-    public DataResponse<E3> updateE3sViaE2(@PathParam("id") Integer id, String e3) {
+    public DataResponse<E3> updateE3sViaE2(@PathParam("id") Integer id, String E3) {
 
         AgRequest agRequest = Ag.request(config)
                 .build();
@@ -154,7 +154,7 @@ public class E2Resource {
         return Ag.idempotentCreateOrUpdate(E3.class, config)
                  .parent(E2.class, id, "e3s")
                  .request(agRequest)
-                 .syncAndSelect(e3);
+                 .syncAndSelect(E3);
     }
 
 }

@@ -21,19 +21,19 @@ public class E4Resource {
     @POST
     @Path("/v1/e4")
     @Consumes({ "application/json" })
-    public DataResponse<E4> create(String e4) {
+    public DataResponse<E4> createE4(String E4) {
 
         AgRequest agRequest = Ag.request(config)
                 .build();
 
         return Ag.create(E4.class, config)
                  .request(agRequest)
-                 .syncAndSelect(e4);
+                 .syncAndSelect(E4);
     }
 
     @DELETE
     @Path("/v1/e4/{id}")
-    public SimpleResponse delete(@PathParam("id") Integer id) {
+    public SimpleResponse deleteE4(@PathParam("id") Integer id) {
 
         return Ag.delete(E4.class, config)
                  .id(id)
@@ -43,7 +43,7 @@ public class E4Resource {
     @GET
     @Path("/v1/e4")
     @Produces({ "application/json" })
-    public DataResponse<E4> getAll(@QueryParam("limit") Integer limit, @QueryParam("sort") String sort, @QueryParam("include") List<String> includes, @QueryParam("mapBy") String mapBy) {
+    public DataResponse<E4> getAllE4(@QueryParam("limit") Integer limit, @QueryParam("sort") String sort, @QueryParam("include") List<String> includes, @QueryParam("mapBy") String mapBy) {
 
         AgRequest agRequest = Ag.request(config)
                 .limit(limit)
@@ -60,7 +60,7 @@ public class E4Resource {
     @GET
     @Path("/v1/e4/{id}")
     @Produces({ "application/json" })
-        public DataResponse<E4> getOne(@PathParam("id") Integer id, @QueryParam("include") List<String> includes) {
+        public DataResponse<E4> getOneE4(@PathParam("id") Integer id, @QueryParam("include") List<String> includes) {
 
         AgRequest agRequest = Ag.request(config)
                 .addIncludes(includes)
@@ -75,7 +75,7 @@ public class E4Resource {
     @PUT
     @Path("/v1/e4/{id}")
     @Consumes({ "application/json" })
-    public DataResponse<E4> update(@PathParam("id") Integer id, String e4) {
+    public DataResponse<E4> updateE4(@PathParam("id") Integer id, String E4) {
 
         AgRequest agRequest = Ag.request(config)
                 .build();
@@ -83,7 +83,7 @@ public class E4Resource {
         return Ag.idempotentCreateOrUpdate(E4.class, config)
                  .id(id)
                  .request(agRequest)
-                 .syncAndSelect(e4);
+                 .syncAndSelect(E4);
     }
 
 }

@@ -20,7 +20,7 @@ public class E1Resource {
 
     @DELETE
     @Path("/v1/e1/{id}")
-    public SimpleResponse delete(@PathParam("id") Integer id) {
+    public SimpleResponse deleteE1(@PathParam("id") Integer id) {
 
         return Ag.delete(E1.class, config)
                  .id(id)
@@ -30,7 +30,7 @@ public class E1Resource {
     @GET
     @Path("/v1/e1")
     @Produces({ "application/json" })
-    public DataResponse<E1> getAll(@QueryParam("limit") Integer limit) {
+    public DataResponse<E1> getAllE1(@QueryParam("limit") Integer limit) {
 
         AgRequest agRequest = Ag.request(config)
                 .limit(limit)
@@ -44,7 +44,7 @@ public class E1Resource {
     @GET
     @Path("/v1/e1/{id}")
     @Produces({ "application/json" })
-        public DataResponse<E1> getOne(@PathParam("id") Integer id) {
+        public DataResponse<E1> getOneE1(@PathParam("id") Integer id) {
 
         AgRequest agRequest = Ag.request(config)
                 .build();

@@ -1,5 +1,5 @@
 {{#isRestfulCreate}}
-public {{>returnTypes}} {{nickname}}({{#allParams}}{{>pathParams}}{{>queryParams}}{{>bodyParams}}{{#hasMore}}, {{/hasMore}}{{/allParams}}) {
+public {{>returnTypes}} {{nickname}}({{#allParams}}{{>pathParams}}{{>queryParams}}{{>bodyParams}}{{^-last}}, {{/-last}}{{/allParams}}) {
 
         {{>protocolImpl}}
 
@@ -9,7 +9,7 @@ public {{>returnTypes}} {{nickname}}({{#allParams}}{{>pathParams}}{{>queryParams
     }
 {{/isRestfulCreate}}
 {{#isRestfulRelatedToManyCreate}}
-public DataResponse<{{#bodyParams}}{{dataType}}{{/bodyParams}}> {{nickname}}({{#allParams}}{{>pathParams}}{{>queryParams}}{{>bodyParams}}{{#hasMore}}, {{/hasMore}}{{/allParams}}) {
+public DataResponse<{{#bodyParams}}{{dataType}}{{/bodyParams}}> {{nickname}}({{#allParams}}{{>pathParams}}{{>queryParams}}{{>bodyParams}}{{^-last}}, {{/-last}}{{/allParams}}) {
 
         {{>protocolImpl}}
 

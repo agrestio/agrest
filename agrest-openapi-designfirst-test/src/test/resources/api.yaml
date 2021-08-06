@@ -28,7 +28,7 @@ paths:
   /e1:
     get:
       summary: Get all E1s
-      operationId: getAll
+      operationId: getAllE1
       tags:
         - E1
       parameters:
@@ -48,7 +48,7 @@ paths:
   /e1/{id}:
     get:
       description: Returns a E1
-      operationId: getOne
+      operationId: getOneE1
       tags:
         - E1
       parameters:
@@ -70,7 +70,7 @@ paths:
           description: Unexpected error
     delete:
       description: Deletes a E1 item based on the ID supplied
-      operationId: delete
+      operationId: deleteE1
       tags:
         - E1
       parameters:
@@ -93,7 +93,7 @@ paths:
       - $ref: '../resources/protocol.yaml#/components/queryParams/Excludes'
     get:
       summary: Get all E2s
-      operationId: getAll
+      operationId: getAllE2
       tags:
         - E2
       parameters:
@@ -113,7 +113,7 @@ paths:
       tags:
         - E2
       summary: Creates E2
-      operationId: create
+      operationId: createE2
       requestBody:
         $ref: "#/components/requestBodies/E2"
       responses:
@@ -123,7 +123,7 @@ paths:
   /e2/{id}:
     get:
       description: Returns a E2
-      operationId: getOne
+      operationId: getOneE2
       tags:
         - E2
       parameters:
@@ -149,7 +149,7 @@ paths:
       tags:
         - E2
       summary: Updates E2
-      operationId: update
+      operationId: updateE2
       requestBody:
         $ref: "#/components/requestBodies/E2"
       parameters:
@@ -169,7 +169,7 @@ paths:
   /e2/{id}/e3s:
     get:
       description: Returns E3s related to E2
-      operationId: getOneToMany
+      operationId: getOneE2ToManyE3
       tags:
         - E2
         - E3
@@ -299,7 +299,7 @@ paths:
       tags:
         - E3
       summary: Creates E3
-      operationId: create
+      operationId: createE3
       requestBody:
         $ref: "#/components/requestBodies/E3"
       parameters:
@@ -310,7 +310,7 @@ paths:
           description: successful operation
     get:
       summary: Get all E3s
-      operationId: getAll
+      operationId: getAllE3
       tags:
         - E3
       parameters:
@@ -337,7 +337,7 @@ paths:
       tags:
         - E3
       summary: Updates E3
-      operationId: updateAll
+      operationId: updateAllE3
       requestBody:
         $ref: "#/components/requestBodies/E3"
       parameters:
@@ -350,7 +350,7 @@ paths:
   /e3/{id}:
     get:
       description: Returns a E3
-      operationId: getOne
+      operationId: getOneE3
       tags:
         - E3
       parameters:
@@ -375,7 +375,7 @@ paths:
       tags:
         - E3
       summary: Updates E3
-      operationId: update
+      operationId: updateE3
       requestBody:
         $ref: "#/components/requestBodies/E3"
       parameters:
@@ -393,7 +393,7 @@ paths:
   /e3/{id}/e2:
     get:
       description: Returns a E2 related to E3
-      operationId: getOneByOne
+      operationId: getOneE3ByOneE2
       tags:
         - E3
         - E2
@@ -465,7 +465,7 @@ paths:
           description: successful operation
     delete:
       description: Deletes E2 Via E3
-      operationId: deleteE2ViaE3
+      operationId: deleteE2ViaE3WithTid
       tags:
         - E3
         - E2
@@ -481,7 +481,7 @@ paths:
       tags:
         - E4
       summary: Creates E4
-      operationId: create
+      operationId: createE4
       requestBody:
         $ref: "#/components/requestBodies/E4"
       responses:
@@ -489,7 +489,7 @@ paths:
           description: successful operation
     get:
       summary: Get all E4s
-      operationId: getAll
+      operationId: getAllE4
       tags:
         - E4
       parameters:
@@ -512,7 +512,7 @@ paths:
   /e4/{id}:
     get:
       description: Returns a E4
-      operationId: getOne
+      operationId: getOneE4
       tags:
         - E4
       parameters:
@@ -535,7 +535,7 @@ paths:
           description: Unexpected error
     delete:
       description: Deletes a E4 item based on the ID supplied
-      operationId: delete
+      operationId: deleteE4
       tags:
         - E4
       parameters:
@@ -555,7 +555,7 @@ paths:
       tags:
         - E4
       summary: Updates E4
-      operationId: update
+      operationId: updateE4
       requestBody:
         $ref: "#/components/requestBodies/E4"
       parameters:
@@ -573,7 +573,7 @@ paths:
   /e5:
     get:
       summary: Get all E5s
-      operationId: getAll
+      operationId: getAllE5
       tags:
         - E5
       responses:
@@ -591,7 +591,7 @@ paths:
       tags:
         - E5
       summary: Create E5
-      operationId: create
+      operationId: createE5
       requestBody:
         $ref: "#/components/requestBodies/E5"
       responses:
@@ -603,7 +603,7 @@ paths:
       tags:
         - E20
       summary: Create E20
-      operationId: create
+      operationId: createE20
       requestBody:
         $ref: "#/components/requestBodies/E20"
       parameters:
@@ -615,7 +615,7 @@ paths:
   /e20/{name}:
     get:
       description: Returns a E20 by natural ID
-      operationId: getOneByName
+      operationId: getOneE20ByName
       tags:
         - E20
       parameters:
@@ -637,7 +637,7 @@ paths:
           description: Unexpected error
     delete:
       description: Deletes a E20 item based on the Name supplied
-      operationId: deleteByName
+      operationId: deleteE20ByName
       tags:
         - E20
       parameters:
@@ -656,7 +656,7 @@ paths:
       tags:
         - E20
       summary: Updates E20
-      operationId: updateByName
+      operationId: updateE20ByName
       requestBody:
         $ref: "#/components/requestBodies/E20"
       parameters:
@@ -673,7 +673,7 @@ paths:
   /e21:
     get:
       description: Returns a E21 by natural ID
-      operationId: getOneByCompoundId
+      operationId: getOneE21ByCompoundId
       tags:
         - E21
       parameters:
@@ -702,7 +702,7 @@ paths:
           description: Unexpected error
     delete:
       description: Deletes a E21 item based on name and age
-      operationId: deleteByCompoundId
+      operationId: deleteE21ByCompoundId
       tags:
         - E21
       parameters:
@@ -728,7 +728,7 @@ paths:
       tags:
         - E21
       summary: Create E21
-      operationId: create
+      operationId: createE21
       requestBody:
         $ref: "#/components/requestBodies/E21"
       parameters:
@@ -740,7 +740,7 @@ paths:
       tags:
         - E21
       summary: Updates E21
-      operationId: updateByCompoundId
+      operationId: updateE21ByCompoundId
       requestBody:
         $ref: "#/components/requestBodies/E21"
       parameters:
