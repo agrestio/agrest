@@ -1,3 +1,7 @@
+## Release 4.7
+
+* #488 Bump to the latest version of openapi-generator (v5.2.0)
+
 ## Release 4.6
 
 * #487 Bootique dependency leaks to Agrest via BOM import

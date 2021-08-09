@@ -36,8 +36,8 @@ public class E21Resource {
     @Path("/v1/e21")
     public SimpleResponse deleteE21ByCompoundId(@QueryParam("name") String name, @QueryParam("age") Integer age) {
         Map<String, Object> id = new HashMap<>();
-        id.put("age", age);
         id.put("name", name);
+        id.put("age", age);
 
         return Ag.delete(E21.class, config)
                  .id(id)
@@ -50,8 +50,8 @@ public class E21Resource {
     public DataResponse<E21> getOneE21ByCompoundId(@QueryParam("name") String name, @QueryParam("age") Integer age, @QueryParam("exclude") List<String> excludes) {
 
         Map<String, Object> id = new HashMap<>();
-        id.put("age", age);
         id.put("name", name);
+        id.put("age", age);
 
         AgRequest agRequest = Ag.request(config)
                 .addExcludes(excludes)
@@ -69,8 +69,8 @@ public class E21Resource {
     public DataResponse<E21> updateE21ByCompoundId(@QueryParam("name") String name, @QueryParam("age") Integer age, String E21) {
 
         Map<String, Object> id = new HashMap<>();
-                id.put("age", age);
                 id.put("name", name);
+                id.put("age", age);
 
 
         AgRequest agRequest = Ag.request(config)
