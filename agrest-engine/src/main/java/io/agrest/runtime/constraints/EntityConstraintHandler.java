@@ -91,8 +91,7 @@ class EntityConstraintHandler {
                     String attr = it.next();
                     if (!c.allowsAttribute(attr)) {
 
-                        // do not report default properties, as this wasn't a
-                        // client's fault it go there..
+                        // do not report default properties, as this wasn't a client's fault it go there..
                         if (!context.getEntity().isDefaultAttribute(attr)) {
                             LOGGER.info("Attribute not allowed, removing: {} for id {}", attr, u.getId());
                         }

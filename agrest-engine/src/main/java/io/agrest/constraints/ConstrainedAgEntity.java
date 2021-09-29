@@ -73,6 +73,8 @@ public class ConstrainedAgEntity<T> {
             for (String name : attributesOrRelationships) {
 
                 if (!attributes.remove(name)) {
+                    // TODO: should we log removal like we do in EntityConstraintHandler? Unlike in
+                    //  EntityConstraintHandler we can't check if the removed attribute is "default" though
                     children.remove(name);
                 }
             }
