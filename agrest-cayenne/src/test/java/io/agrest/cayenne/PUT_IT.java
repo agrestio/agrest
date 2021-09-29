@@ -27,11 +27,26 @@ public class PUT_IT extends DbTest {
 
     @BQTestTool
     static final AgCayenneTester tester = tester(Resource.class)
-            .entities(E2.class, E3.class, E4.class, E7.class, E8.class, E9.class, E14.class, E17.class, E28.class)
+            .entities(E2.class, E3.class, E4.class, E7.class, E8.class, E9.class, E14.class, E17.class, E23.class, E28.class)
             .build();
 
     @Test
-    public void test() {
+    public void testCreateOrUpdate() {
+
+        tester.target("/e23_create_or_update/8").put("{\"name\":\"zzz\"}")
+                .wasOk()
+                .bodyEquals(1, "{\"id\":8,\"exposedId\":8,\"name\":\"zzz\"}");
+
+        tester.e23().matcher().eq("id", 8).eq("name", "zzz").assertOneMatch();
+
+        tester.target("/e23_create_or_update/8").put("{\"name\":\"aaa\"}")
+                .wasOk()
+                .bodyEquals(1, "{\"id\":8,\"exposedId\":8,\"name\":\"aaa\"}");
+        tester.e23().matcher().eq("id", 8).eq("name", "aaa").assertOneMatch();
+    }
+
+    @Test
+    public void testUpdate() {
 
         tester.e4().insertColumns("id", "c_varchar")
                 .values(1, "xxx")
@@ -516,6 +531,12 @@ public class PUT_IT extends DbTest {
             ids.put(E17.ID2_PK_COLUMN, id2);
 
             return Ag.update(E17.class, config).uri(uriInfo).id(ids).syncAndSelect(targetData);
+        }
+
+        @PUT
+        @Path("e23_create_or_update/{id}")
+        public DataResponse<E23> createOrUpdateE4(@PathParam("id") int id, String requestBody) {
+            return Ag.createOrUpdate(E23.class, config).id(id).syncAndSelect(requestBody);
         }
 
         @PUT
