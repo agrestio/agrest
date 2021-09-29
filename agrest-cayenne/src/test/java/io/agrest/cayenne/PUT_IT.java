@@ -10,6 +10,7 @@ import io.agrest.cayenne.unit.AgCayenneTester;
 import io.agrest.cayenne.unit.DbTest;
 import io.agrest.encoder.Encoder;
 import io.bootique.junit5.BQTestTool;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import javax.ws.rs.PUT;
@@ -31,10 +32,11 @@ public class PUT_IT extends DbTest {
             .build();
 
     @Test
+    @Disabled("Until #490 is fixed, response status on create is wrong")
     public void testCreateOrUpdate() {
 
         tester.target("/e23_create_or_update/8").put("{\"name\":\"zzz\"}")
-                .wasOk()
+                .wasCreated()
                 .bodyEquals(1, "{\"id\":8,\"exposedId\":8,\"name\":\"zzz\"}");
 
         tester.e23().matcher().eq("id", 8).eq("name", "zzz").assertOneMatch();
