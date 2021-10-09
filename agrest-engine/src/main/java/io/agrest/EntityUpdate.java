@@ -18,6 +18,7 @@ public class EntityUpdate<T> {
     private Map<String, Object> id;
     private boolean explicitId;
     private Object mergedTo;
+    private boolean createdNew;
 
     public EntityUpdate(AgEntity<T> entity) {
         this.entity = Objects.requireNonNull(entity);
@@ -98,4 +99,21 @@ public class EntityUpdate<T> {
         this.mergedTo = mergedTo;
     }
 
+    /**
+     * Returns whether this update resulted in creation of a new object (vs an update of an existing one).
+     *
+     * @since 4.7
+     */
+    public boolean isCreatedNew() {
+        return createdNew;
+    }
+
+    /**
+     * Sets whether this update resulted in creation of a new object (vs an update of an existing one).
+     *
+     * @since 4.7
+     */
+    public void setCreatedNew(boolean createdNew) {
+        this.createdNew = createdNew;
+    }
 }

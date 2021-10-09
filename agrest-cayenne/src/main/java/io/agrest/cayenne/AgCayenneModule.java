@@ -75,6 +75,7 @@ public class AgCayenneModule implements Module {
         binder.bind(CayenneCommitStage.class).to(CayenneCommitStage.class);
         binder.bind(CayenneOkResponseStage.class).to(CayenneOkResponseStage.class);
         binder.bind(CayenneCreatedResponseStage.class).to(CayenneCreatedResponseStage.class);
+        binder.bind(CayenneCreatedOrOkResponseStage.class).to(CayenneCreatedOrOkResponseStage.class);
 
         binder.bindMap(ExceptionMapper.class)
                 .put(CayenneRuntimeException.class.getName(), CayenneRuntimeExceptionMapper.class)

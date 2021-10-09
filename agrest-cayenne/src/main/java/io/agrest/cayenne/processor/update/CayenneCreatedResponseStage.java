@@ -1,5 +1,8 @@
 package io.agrest.cayenne.processor.update;
 
+import io.agrest.runtime.processor.update.UpdateContext;
+import org.apache.cayenne.DataObject;
+
 import javax.ws.rs.core.Response;
 
 /**
@@ -7,7 +10,8 @@ import javax.ws.rs.core.Response;
  */
 public class CayenneCreatedResponseStage extends CayenneFillResponseStage {
 
-    public CayenneCreatedResponseStage() {
-        super(Response.Status.CREATED);
+    @Override
+    protected <T extends DataObject> Response.Status getStatus(UpdateContext<T> context) {
+        return Response.Status.CREATED;
     }
 }

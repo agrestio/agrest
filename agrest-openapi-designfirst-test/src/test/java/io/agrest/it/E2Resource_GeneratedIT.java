@@ -119,7 +119,7 @@ public class E2Resource_GeneratedIT extends DbTest {
 
         tester.target("/v1/e2/24/e3s")
                 .post("{\"name\":\"zzz\"}")
-                .wasOk()
+                .wasCreated()
                 .replaceId("XID")
                 .bodyEquals(1, "{\"id\":XID,\"name\":\"zzz\",\"phoneNumber\":null}");
 

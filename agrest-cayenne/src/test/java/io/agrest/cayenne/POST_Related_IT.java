@@ -33,7 +33,7 @@ public class POST_Related_IT extends DbTest {
 
         tester.target("/e2/24/e3s")
                 .post("{\"name\":\"zzz\"}")
-                .wasOk()
+                .wasCreated()
                 .replaceId("RID")
                 .bodyEquals(1, "{\"id\":RID,\"name\":\"zzz\",\"phoneNumber\":null}");
 
@@ -51,7 +51,7 @@ public class POST_Related_IT extends DbTest {
                 .matrixParam("parentId1", 1)
                 .matrixParam("parentId2", 1)
                 .post("{\"name\":\"xxx\"}")
-                .wasOk()
+                .wasCreated()
                 .replaceId("RID")
                 .bodyEquals(1, "{\"id\":RID,\"name\":\"xxx\"}");
 

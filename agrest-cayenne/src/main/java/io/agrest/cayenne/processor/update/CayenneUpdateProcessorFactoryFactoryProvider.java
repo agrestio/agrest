@@ -2,13 +2,8 @@ package io.agrest.cayenne.processor.update;
 
 import io.agrest.UpdateStage;
 import io.agrest.processor.Processor;
-import io.agrest.processor.ProcessorOutcome;
 import io.agrest.runtime.UpdateOperation;
-import io.agrest.runtime.processor.update.CreateResourceEntityStage;
-import io.agrest.runtime.processor.update.ParseRequestStage;
-import io.agrest.runtime.processor.update.UpdateContext;
-import io.agrest.runtime.processor.update.UpdateProcessorFactory;
-import io.agrest.runtime.processor.update.UpdateProcessorFactoryFactory;
+import io.agrest.runtime.processor.update.*;
 import org.apache.cayenne.di.DIRuntimeException;
 import org.apache.cayenne.di.Inject;
 import org.apache.cayenne.di.Provider;
@@ -38,7 +33,8 @@ public class CayenneUpdateProcessorFactoryFactoryProvider implements Provider<Up
             @Inject CayenneIdempotentFullSyncStage idempotentFullSyncStage,
             @Inject CayenneCommitStage commitStage,
             @Inject CayenneOkResponseStage okResponseStage,
-            @Inject CayenneCreatedResponseStage createdResponseStage
+            @Inject CayenneCreatedResponseStage createdResponseStage,
+            @Inject CayenneCreatedOrOkResponseStage createdOrOkResponseStage
     ) {
 
         this.createStages = new EnumMap<>(UpdateStage.class);
@@ -66,7 +62,7 @@ public class CayenneUpdateProcessorFactoryFactoryProvider implements Provider<Up
         this.createOrUpdateStages.put(UpdateStage.APPLY_SERVER_PARAMS, applyServerParamsStage);
         this.createOrUpdateStages.put(UpdateStage.MERGE_CHANGES, createOrUpdateStage);
         this.createOrUpdateStages.put(UpdateStage.COMMIT, commitStage);
-        this.createOrUpdateStages.put(UpdateStage.FILL_RESPONSE, okResponseStage);
+        this.createOrUpdateStages.put(UpdateStage.FILL_RESPONSE, createdOrOkResponseStage);
 
         this.idempotentCreateOrUpdateStages = new EnumMap<>(UpdateStage.class);
         this.idempotentCreateOrUpdateStages.put(UpdateStage.START, startStage);
@@ -75,7 +71,7 @@ public class CayenneUpdateProcessorFactoryFactoryProvider implements Provider<Up
         this.idempotentCreateOrUpdateStages.put(UpdateStage.APPLY_SERVER_PARAMS, applyServerParamsStage);
         this.idempotentCreateOrUpdateStages.put(UpdateStage.MERGE_CHANGES, idempotentCreateOrUpdateStage);
         this.idempotentCreateOrUpdateStages.put(UpdateStage.COMMIT, commitStage);
-        this.idempotentCreateOrUpdateStages.put(UpdateStage.FILL_RESPONSE, okResponseStage);
+        this.idempotentCreateOrUpdateStages.put(UpdateStage.FILL_RESPONSE, createdOrOkResponseStage);
 
         this.idempotentFullSyncStages = new EnumMap<>(UpdateStage.class);
         this.idempotentFullSyncStages.put(UpdateStage.START, startStage);
@@ -84,7 +80,7 @@ public class CayenneUpdateProcessorFactoryFactoryProvider implements Provider<Up
         this.idempotentFullSyncStages.put(UpdateStage.APPLY_SERVER_PARAMS, applyServerParamsStage);
         this.idempotentFullSyncStages.put(UpdateStage.MERGE_CHANGES, idempotentFullSyncStage);
         this.idempotentFullSyncStages.put(UpdateStage.COMMIT, commitStage);
-        this.idempotentFullSyncStages.put(UpdateStage.FILL_RESPONSE, okResponseStage);
+        this.idempotentFullSyncStages.put(UpdateStage.FILL_RESPONSE, createdOrOkResponseStage);
     }
 
     @Override

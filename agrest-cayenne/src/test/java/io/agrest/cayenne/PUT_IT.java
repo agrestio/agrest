@@ -10,7 +10,6 @@ import io.agrest.cayenne.unit.AgCayenneTester;
 import io.agrest.cayenne.unit.DbTest;
 import io.agrest.encoder.Encoder;
 import io.bootique.junit5.BQTestTool;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import javax.ws.rs.PUT;
@@ -28,17 +27,15 @@ public class PUT_IT extends DbTest {
 
     @BQTestTool
     static final AgCayenneTester tester = tester(Resource.class)
-            .entities(E2.class, E3.class, E4.class, E7.class, E8.class, E9.class, E14.class, E17.class, E23.class, E28.class)
+            .entities(E2.class, E3.class, E4.class, E7.class, E8.class, E9.class, E14.class, E17.class, E23.class, E26.class, E28.class)
             .build();
 
     @Test
-    @Disabled("Until #490 is fixed, response status on create is wrong")
-    public void testCreateOrUpdate() {
+    public void testCreateOrUpdate_ById() {
 
         tester.target("/e23_create_or_update/8").put("{\"name\":\"zzz\"}")
                 .wasCreated()
                 .bodyEquals(1, "{\"id\":8,\"exposedId\":8,\"name\":\"zzz\"}");
-
         tester.e23().matcher().eq("id", 8).eq("name", "zzz").assertOneMatch();
 
         tester.target("/e23_create_or_update/8").put("{\"name\":\"aaa\"}")
@@ -255,7 +252,7 @@ public class PUT_IT extends DbTest {
 
         tester.target("/e7_custom_encoder")
                 .put("[{\"id\":4,\"name\":\"zzz\"}]")
-                .wasOk()
+                .wasCreated()
                 .bodyEquals("{\"encoder\":\"custom\"}");
     }
 
@@ -354,7 +351,7 @@ public class PUT_IT extends DbTest {
                 .queryParam("include", "id", E7.E8.dot(E8.E9).getName())
                 .queryParam("exclude", E7.NAME.getName())
                 .put("[{\"name\":\"yyy\",\"e8\":6}]")
-                .wasOk()
+                .wasCreated()
                 .bodyEquals(1, "{\"id\":6,\"e8\":{\"e9\":{\"id\":6}}}");
     }
 

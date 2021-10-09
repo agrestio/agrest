@@ -16,13 +16,7 @@ import java.util.Set;
 /**
  * @since 2.7
  */
-public class CayenneFillResponseStage implements Processor<UpdateContext<?>> {
-
-    private Response.Status status;
-
-    public CayenneFillResponseStage(Response.Status status) {
-        this.status = status;
-    }
+public abstract class CayenneFillResponseStage implements Processor<UpdateContext<?>> {
 
     @Override
     public ProcessorOutcome execute(UpdateContext<?> context) {
@@ -30,10 +24,12 @@ public class CayenneFillResponseStage implements Processor<UpdateContext<?>> {
         return ProcessorOutcome.CONTINUE;
     }
 
+    protected abstract <T extends DataObject> Response.Status getStatus(UpdateContext<T> context);
+
     @SuppressWarnings("unchecked")
     protected <T extends DataObject> void doExecute(UpdateContext<T> context) {
 
-        context.setStatus(status);
+        context.setStatus(getStatus(context));
 
         // response objects are attached to EntityUpdate instances ... if
         // 'includeData' is true create a list of unique updated objects in the

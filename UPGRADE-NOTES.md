@@ -1,3 +1,12 @@
+## Upgrading to 4.7
+
+### Updates may return "201" status where previously they returned "200" [#490](https://github.com/agrestio/agrest/issues/490)
+
+All variants of "create or update" operations would now return 201 code instead of 200 when performed on a single object
+and if the object was newly created. While this is the correct response code (and the previous behavior was incorrect),
+this may affect existing assumptions made by Agrest consumers. Consumer code should be revisited to ensure that
+201 response code is properly handled.
+
 ## Upgrading to 4.4
 
 ### 'Exp' constructors replaced with static factory methods  [#476](https://github.com/agrestio/agrest/issues/476)

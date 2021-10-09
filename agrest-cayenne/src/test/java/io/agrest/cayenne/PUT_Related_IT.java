@@ -160,7 +160,7 @@ public class PUT_Related_IT extends DbTest {
 
         tester.target("/e7/8/e8/24")
                 .put("{\"name\":\"aaa\"}")
-                .wasOk().bodyEquals(1, "{\"id\":24,\"name\":\"aaa\"}");
+                .wasCreated().bodyEquals(1, "{\"id\":24,\"name\":\"aaa\"}");
 
         tester.e8().matcher().assertOneMatch();
         tester.e8().matcher().eq("name", "aaa").assertOneMatch();
@@ -190,7 +190,7 @@ public class PUT_Related_IT extends DbTest {
                 .values(8).exec();
 
         tester.target("/e8/8/e9").put("{}")
-                .wasOk().bodyEquals(1, "{\"id\":8}");
+                .wasCreated().bodyEquals(1, "{\"id\":8}");
 
         tester.e9().matcher().assertOneMatch();
         tester.e9().matcher().eq("e8_id", 8).assertOneMatch();

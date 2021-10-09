@@ -11,10 +11,7 @@ import io.agrest.meta.AgRelationship;
 import io.agrest.processor.Processor;
 import io.agrest.processor.ProcessorOutcome;
 import io.agrest.runtime.processor.update.UpdateContext;
-import org.apache.cayenne.Cayenne;
-import org.apache.cayenne.DataObject;
-import org.apache.cayenne.DataRow;
-import org.apache.cayenne.ObjectContext;
+import org.apache.cayenne.*;
 import org.apache.cayenne.exp.ExpressionFactory;
 import org.apache.cayenne.map.*;
 import org.apache.cayenne.query.ObjectSelect;
@@ -291,9 +288,8 @@ public abstract class CayenneMergeChangesStage implements Processor<UpdateContex
             }
         }
 
-        // record this for the benefit of the downstream code that may want to
-        // order the results, etc...
         entityUpdate.setMergedTo(o);
+        entityUpdate.setCreatedNew(o.getPersistenceState() == PersistenceState.NEW);
     }
 
     private boolean allElementsNull(Collection<?> elements) {
