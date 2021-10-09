@@ -18,6 +18,7 @@ import java.util.Collections;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+@Deprecated
 public class ResourceParserTest {
 
     private static ResourceParser resourceParser;

@@ -9,7 +9,9 @@ import java.lang.annotation.Target;
  * Used to indicate that web method is an Agrest resource.
  *
  * @since 2.10
+ * @deprecated since 4.7, as Agrest now integrates with OpenAPI 3 / Swagger
  */
+@Deprecated
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface AgResource {
