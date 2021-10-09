@@ -1,12 +1,13 @@
 package io.agrest.runtime.constraints;
 
-import io.agrest.NestedResourceEntity;
 import io.agrest.EntityConstraint;
 import io.agrest.EntityUpdate;
+import io.agrest.NestedResourceEntity;
 import io.agrest.ResourceEntity;
-import io.agrest.annotation.ClientReadable;
-import io.agrest.annotation.ClientWritable;
 import io.agrest.meta.AgAttribute;
+import io.agrest.meta.AgEntity;
+import io.agrest.meta.AgIdPart;
+import io.agrest.meta.AgRelationship;
 import io.agrest.runtime.processor.update.UpdateContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,26 +44,58 @@ class EntityConstraintHandler {
         }
 
         this.forRead = new EntityConstraintSource(readMap) {
+
             @Override
-            protected AnnotationData processAnnotation(Class<?> type) {
-                ClientReadable a = type.getAnnotation(ClientReadable.class);
-                if (a == null) {
-                    return null;
+            protected AccessibleProperties findAccessible(AgEntity<?> entity) {
+
+                AccessibleProperties ap = new AccessibleProperties();
+
+                for(AgIdPart id : entity.getIdParts()) {
+                    if(id.isReadable()) {
+                        ap.idParts.add(id.getName());
+                    }
                 }
 
-                return new AnnotationData(a.id(), a.value());
+                for(AgAttribute a : entity.getAttributes()) {
+                    if(a.isReadable()) {
+                        ap.attributes.add(a.getName());
+                    }
+                }
+
+                for(AgRelationship r : entity.getRelationships()) {
+                    if(r.isReadable()) {
+                        ap.relationships.add(r.getName());
+                    }
+                }
+
+                return ap;
             }
         };
 
         this.forWrite = new EntityConstraintSource(writeMap) {
             @Override
-            protected AnnotationData processAnnotation(Class<?> type) {
-                ClientWritable a = type.getAnnotation(ClientWritable.class);
-                if (a == null) {
-                    return null;
+            protected AccessibleProperties findAccessible(AgEntity<?> entity) {
+                AccessibleProperties ap = new AccessibleProperties();
+
+                for(AgIdPart id : entity.getIdParts()) {
+                    if(id.isWritable()) {
+                        ap.idParts.add(id.getName());
+                    }
                 }
 
-                return new AnnotationData(a.id(), a.value());
+                for(AgAttribute a : entity.getAttributes()) {
+                    if(a.isWritable()) {
+                        ap.attributes.add(a.getName());
+                    }
+                }
+
+                for(AgRelationship r : entity.getRelationships()) {
+                    if(r.isWritable()) {
+                        ap.relationships.add(r.getName());
+                    }
+                }
+
+                return ap;
             }
         };
     }
@@ -158,7 +191,5 @@ class EntityConstraintHandler {
                 rit.remove();
             }
         }
-
     }
-
 }

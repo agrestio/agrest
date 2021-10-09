@@ -7,36 +7,61 @@ import io.agrest.property.PropertyReader;
  */
 public class DefaultAgAttribute implements AgAttribute {
 
-	private final String name;
-	private final Class<?> javaType;
-	private final PropertyReader propertyReader;
+    private final String name;
+    private final Class<?> javaType;
+    private final boolean readable;
+    private final boolean writable;
+    private final PropertyReader propertyReader;
 
-	public DefaultAgAttribute(String name, Class<?> javaType, PropertyReader propertyReader) {
-		this.name = name;
-		this.javaType = javaType;
-		this.propertyReader = propertyReader;
-	}
+    public DefaultAgAttribute(
+            String name,
+            Class<?> javaType,
+            boolean readable,
+            boolean writable,
+            PropertyReader propertyReader) {
+        this.name = name;
+        this.javaType = javaType;
+        this.readable = readable;
+        this.writable = writable;
+        this.propertyReader = propertyReader;
+    }
 
-	@Override
-	public String getName() {
-		return name;
-	}
+    @Override
+    public String getName() {
+        return name;
+    }
 
-	@Override
-	public Class<?> getType() {
-		return javaType;
-	}
+    @Override
+    public Class<?> getType() {
+        return javaType;
+    }
 
-	/**
-	 * @since 2.10
-	 */
+    /**
+     * @since 4.7
+     */
+    @Override
+    public boolean isReadable() {
+        return readable;
+    }
+
+    /**
+     * @since 4.7
+     */
+    @Override
+    public boolean isWritable() {
+        return writable;
+    }
+
+    /**
+     * @since 2.10
+     */
     @Override
     public PropertyReader getPropertyReader() {
         return propertyReader;
     }
 
     @Override
-	public String toString() {
-		return getClass().getName() + "@" + Integer.toHexString(System.identityHashCode(this)) + "[" + getName() + "]";
-	}
+    public String toString() {
+        return getClass().getName() + "@" + Integer.toHexString(System.identityHashCode(this)) + "[" + getName() + "]";
+    }
 }

@@ -10,12 +10,22 @@ public class DefaultAgIdPart implements AgIdPart {
 
     private final String name;
     private final Class<?> javaType;
+    private final boolean readable;
+    private final boolean writable;
     private final PropertyReader reader;
     private final ASTPath path;
 
-    public DefaultAgIdPart(String name, Class<?> javaType, PropertyReader reader, ASTPath path) {
+    public DefaultAgIdPart(
+            String name,
+            Class<?> javaType,
+            boolean readable,
+            boolean writable,
+            PropertyReader reader,
+            ASTPath path) {
         this.name = name;
         this.javaType = javaType;
+        this.readable = readable;
+        this.writable = writable;
         this.reader = reader;
         this.path = path;
     }
@@ -28,6 +38,22 @@ public class DefaultAgIdPart implements AgIdPart {
     @Override
     public Class<?> getType() {
         return javaType;
+    }
+
+    /**
+     * @since 4.7
+     */
+    @Override
+    public boolean isReadable() {
+        return readable;
+    }
+
+    /**
+     * @since 4.7
+     */
+    @Override
+    public boolean isWritable() {
+        return writable;
     }
 
     @Override

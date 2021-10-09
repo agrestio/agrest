@@ -16,6 +16,8 @@ public class DefaultAgRelationshipOverlay implements AgRelationshipOverlay {
     private final Class<?> sourceType;
     private final Class<?> targetType;
     private final Boolean toMany;
+    private final Boolean readable;
+    private final Boolean writable;
     private final NestedDataResolver<?> resolver;
 
     public DefaultAgRelationshipOverlay(
@@ -23,6 +25,8 @@ public class DefaultAgRelationshipOverlay implements AgRelationshipOverlay {
             Class<?> sourceType,
             Class<?> targetType,
             Boolean toMany,
+            Boolean readable,
+            Boolean writable,
             NestedDataResolver<?> resolver) {
 
         this.name = Objects.requireNonNull(name);
@@ -31,6 +35,8 @@ public class DefaultAgRelationshipOverlay implements AgRelationshipOverlay {
         // optional attributes. NULL means not overlaid
         this.targetType = targetType;
         this.toMany = toMany;
+        this.readable = readable;
+        this.writable = writable;
         this.resolver = resolver;
     }
 
@@ -46,12 +52,15 @@ public class DefaultAgRelationshipOverlay implements AgRelationshipOverlay {
 
     private AgRelationship resolveOverlaid(AgRelationship overlaid, AgDataMap agDataMap) {
         boolean toMany = this.toMany != null ? this.toMany : overlaid.isToMany();
+        boolean readable = this.readable != null ? this.readable : overlaid.isReadable();
+        boolean writable = this.writable != null ? this.writable : overlaid.isWritable();
+
         NestedDataResolver<?> resolver = this.resolver != null ? this.resolver : overlaid.getResolver();
         AgEntity<?> targetEntity = this.targetType != null
                 ? agDataMap.getEntity(this.targetType)
                 : overlaid.getTargetEntity();
 
-        return new DefaultAgRelationship(name, targetEntity, toMany, resolver);
+        return new DefaultAgRelationship(name, targetEntity, toMany, readable, writable, resolver);
     }
 
     private AgRelationship resolveNew(AgDataMap agDataMap) {
@@ -59,10 +68,12 @@ public class DefaultAgRelationshipOverlay implements AgRelationshipOverlay {
         // we can't use properties from the overlaid relationship, so make sure we have all the required ones present
         checkPropertyDefined("targetType", targetType);
         checkPropertyDefined("toMany", toMany);
+        checkPropertyDefined("readable", readable);
+        checkPropertyDefined("writable", writable);
         checkPropertyDefined("resolver", resolver);
 
         AgEntity<?> targetEntity = agDataMap.getEntity(targetType);
-        return new DefaultAgRelationship(name, targetEntity, toMany, resolver);
+        return new DefaultAgRelationship(name, targetEntity, toMany, readable, writable, resolver);
     }
 
     private void checkPropertyDefined(String property, Object value) {

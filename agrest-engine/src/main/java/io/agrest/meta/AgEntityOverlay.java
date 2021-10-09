@@ -123,7 +123,17 @@ public class AgEntityOverlay<T> {
      * @since 3.4
      */
     public <V> AgEntityOverlay<T> redefineAttribute(String name, Class<V> valueType, Function<T, V> reader) {
-        attributes.put(name, new DefaultAgAttributeOverlay(name, type, valueType, fromFunction(reader)));
+        attributes.put(name, new DefaultAgAttributeOverlay(name, type, valueType, null, null, fromFunction(reader)));
+        return this;
+    }
+
+    /**
+     * Adds or replaces an attribute in the overlaid entity.
+     *
+     * @since 4.7
+     */
+    public <V> AgEntityOverlay<T> redefineAttribute(String name, Class<V> valueType, boolean readable, boolean writable, Function<T, V> reader) {
+        attributes.put(name, new DefaultAgAttributeOverlay(name, type, valueType, readable, writable, fromFunction(reader)));
         return this;
     }
 
@@ -134,7 +144,7 @@ public class AgEntityOverlay<T> {
      */
     public AgEntityOverlay<T> redefineRelationshipResolver(String name, NestedDataResolverFactory resolverFactory) {
         NestedDataResolver<?> resolver = resolverFactory.resolver(type, name);
-        relationships.put(name, new DefaultAgRelationshipOverlay(name, type, null, null, resolver));
+        relationships.put(name, new DefaultAgRelationshipOverlay(name, type, null, null, null, null, resolver));
         return this;
     }
 
@@ -144,7 +154,7 @@ public class AgEntityOverlay<T> {
      * @since 3.4
      */
     public AgEntityOverlay<T> redefineRelationshipResolver(String name, Function<T, ?> reader) {
-        relationships.put(name, new DefaultAgRelationshipOverlay(name, type, null, null, resolverForReader(reader)));
+        relationships.put(name, new DefaultAgRelationshipOverlay(name, type, null, null, null, null, resolverForReader(reader)));
         return this;
     }
 
@@ -156,7 +166,19 @@ public class AgEntityOverlay<T> {
      */
     public <V> AgEntityOverlay<T> redefineToOne(String name, Class<V> targetType, NestedDataResolverFactory resolverFactory) {
         NestedDataResolver<?> resolver = resolverFactory.resolver(type, name);
-        relationships.put(name, new DefaultAgRelationshipOverlay(name, type, targetType, false, resolver));
+        relationships.put(name, new DefaultAgRelationshipOverlay(name, type, targetType, false, null, null, resolver));
+        return this;
+    }
+
+    /**
+     * Adds or replaces a relationship overlay in the overlaid entity. This allows Agrest entities to declare properties not
+     * present in the underlying Java objects or change how the standard relationships are read.
+     *
+     * @since 4.7
+     */
+    public <V> AgEntityOverlay<T> redefineToOne(String name, Class<V> targetType, boolean readable, boolean writable, NestedDataResolverFactory resolverFactory) {
+        NestedDataResolver<?> resolver = resolverFactory.resolver(type, name);
+        relationships.put(name, new DefaultAgRelationshipOverlay(name, type, targetType, false, readable, writable, resolver));
         return this;
     }
 
@@ -168,7 +190,19 @@ public class AgEntityOverlay<T> {
      */
     public <V> AgEntityOverlay<T> redefineToMany(String name, Class<V> targetType, NestedDataResolverFactory resolverFactory) {
         NestedDataResolver<?> resolver = resolverFactory.resolver(type, name);
-        relationships.put(name, new DefaultAgRelationshipOverlay(name, type, targetType, true, resolver));
+        relationships.put(name, new DefaultAgRelationshipOverlay(name, type, targetType, true, null, null, resolver));
+        return this;
+    }
+
+    /**
+     * Adds or replaces a relationship overlay in the overlaid entity. This allows Agrest entities to declare properties not
+     * present in the underlying Java objects or change how the standard relationships are read.
+     *
+     * @since 4.7
+     */
+    public <V> AgEntityOverlay<T> redefineToMany(String name, Class<V> targetType, boolean readable, boolean writable, NestedDataResolverFactory resolverFactory) {
+        NestedDataResolver<?> resolver = resolverFactory.resolver(type, name);
+        relationships.put(name, new DefaultAgRelationshipOverlay(name, type, targetType, true, readable, writable, resolver));
         return this;
     }
 
@@ -181,7 +215,20 @@ public class AgEntityOverlay<T> {
      * @since 3.4
      */
     public <V> AgEntityOverlay<T> redefineToOne(String name, Class<V> targetType, Function<T, V> reader) {
-        relationships.put(name, new DefaultAgRelationshipOverlay(name, type, targetType, false, resolverForReader(reader)));
+        relationships.put(name, new DefaultAgRelationshipOverlay(name, type, targetType, false, null, null, resolverForReader(reader)));
+        return this;
+    }
+
+    /**
+     * Adds or replaces a to-one relationship in the overlaid entity. The value of the relationship will be
+     * calculated from each entity object by applying the "reader" function. This allows Agrest entities
+     * to declare properties not present in the underlying Java objects or change how the standard relationships are
+     * read.
+     *
+     * @since 4.7
+     */
+    public <V> AgEntityOverlay<T> redefineToOne(String name, Class<V> targetType, boolean readable, boolean writable, Function<T, V> reader) {
+        relationships.put(name, new DefaultAgRelationshipOverlay(name, type, targetType, false, readable, writable, resolverForReader(reader)));
         return this;
     }
 
@@ -194,7 +241,20 @@ public class AgEntityOverlay<T> {
      * @since 3.4
      */
     public <V> AgEntityOverlay<T> redefineToMany(String name, Class<V> targetType, Function<T, List<V>> reader) {
-        relationships.put(name, new DefaultAgRelationshipOverlay(name, type, targetType, true, resolverForListReader(reader)));
+        relationships.put(name, new DefaultAgRelationshipOverlay(name, type, targetType, true, null, null, resolverForListReader(reader)));
+        return this;
+    }
+
+    /**
+     * Adds or replaces a to-many relationship in the overlaid entity. The value of the relationship will be
+     * calculated from each entity object by applying the "reader" function. This allows Agrest entities
+     * to declare properties not present in the underlying Java objects or change how the standard relationships are
+     * read.
+     *
+     * @since 4.7
+     */
+    public <V> AgEntityOverlay<T> redefineToMany(String name, Class<V> targetType, boolean readable, boolean writable, Function<T, List<V>> reader) {
+        relationships.put(name, new DefaultAgRelationshipOverlay(name, type, targetType, true, readable, writable, resolverForListReader(reader)));
         return this;
     }
 

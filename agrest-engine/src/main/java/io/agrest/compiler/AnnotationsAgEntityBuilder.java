@@ -100,10 +100,11 @@ public class AnnotationsAgEntityBuilder<T> {
         Class<?> type = getter.getType();
         String name = getter.getName();
 
-        if (m.getAnnotation(AgAttribute.class) != null) {
+        AgAttribute aAtt = m.getAnnotation(AgAttribute.class);
+        if (aAtt != null) {
 
             if (checkValidAttributeType(type, m.getGenericReturnType())) {
-                addAttribute(new DefaultAgAttribute(name, type, getter::getValue));
+                addAttribute(new DefaultAgAttribute(name, type, aAtt.readable(), aAtt.writable(), getter::getValue));
             } else {
                 // still return true after validation failure... this is an attribute, just not a proper one
                 LOGGER.warn("Invalid attribute type for " + this.name + "." + name + ". Skipping.");
@@ -112,13 +113,13 @@ public class AnnotationsAgEntityBuilder<T> {
             return true;
         }
 
-        if (m.getAnnotation(AgId.class) != null) {
+        AgId aId = m.getAnnotation(AgId.class);
+        if (aId != null) {
 
             if (checkValidIdType(type)) {
-                addId(new DefaultAgIdPart(name, type, getter::getValue, new ASTObjPath(name)));
+                addId(new DefaultAgIdPart(name, type, aId.readable(), aId.writable(), getter::getValue, new ASTObjPath(name)));
             } else {
-                // still return true after validation failure... this is an
-                // attribute, just not a proper one
+                // still return true after validation failure... this is an attribute, just not a proper one
                 LOGGER.warn("Invalid ID attribute type for " + this.name + "." + name + ". Skipping.");
             }
 
@@ -178,7 +179,9 @@ public class AnnotationsAgEntityBuilder<T> {
     private boolean addAsRelationship(PropertyGetter getter) {
 
         Method m = getter.getMethod();
-        if (m.getAnnotation(AgRelationship.class) != null) {
+        AgRelationship aRel = m.getAnnotation(AgRelationship.class);
+
+        if (aRel != null) {
 
             boolean toMany = false;
             Class<?> targetType = getter.getType();
@@ -192,6 +195,8 @@ public class AnnotationsAgEntityBuilder<T> {
                     getter.getName(),
                     agDataMap.getEntity(targetType),
                     toMany,
+                    aRel.readable(),
+                    aRel.writable(),
                     new ReaderBasedResolver<>(getter::getValue))
             );
         }

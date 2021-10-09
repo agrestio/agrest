@@ -1,52 +1,57 @@
 package io.agrest.runtime.constraints;
 
-import java.util.Set;
-
 import io.agrest.EntityConstraint;
+
+import java.util.Set;
 
 /**
  * @since 1.6
  */
 class DefaultEntityConstraint implements EntityConstraint {
 
-	private String entityName;
-	private boolean allowsId;
-	private boolean allowsAllAttributes;
-	private Set<String> attributes;
-	private Set<String> relationships;
+    private final String entityName;
+    private final boolean allowsId;
+    private final boolean allowsAllAttributes;
+    private final Set<String> attributes;
+    private final Set<String> relationships;
 
-	DefaultEntityConstraint(String entityName, boolean allowsId, boolean allowsAllAttributes, Set<String> attributes,
-			Set<String> relationships) {
-		this.entityName = entityName;
-		this.allowsId = allowsId;
-		this.attributes = attributes;
-		this.relationships = relationships;
-		this.allowsAllAttributes = allowsAllAttributes;
-	}
+    DefaultEntityConstraint(
+            String entityName,
+            boolean allowsId,
+            boolean allowsAllAttributes,
+            Set<String> attributes,
+            Set<String> relationships) {
 
-	@Override
-	public String getEntityName() {
-		return entityName;
-	}
+        this.entityName = entityName;
+        this.allowsId = allowsId;
+        this.attributes = attributes;
+        this.relationships = relationships;
+        this.allowsAllAttributes = allowsAllAttributes;
+    }
 
-	@Override
-	public boolean allowsId() {
-		return allowsId;
-	}
+    @Override
+    public String getEntityName() {
+        return entityName;
+    }
 
-	@Override
-	public boolean allowsAllAttributes() {
-		return allowsAllAttributes;
-	}
+    @Override
+    public boolean allowsId() {
+        return allowsId;
+    }
 
-	@Override
-	public boolean allowsAttribute(String name) {
-		return attributes.contains(name);
-	}
+    @Override
+    public boolean allowsAllAttributes() {
+        return allowsAllAttributes;
+    }
 
-	@Override
-	public boolean allowsRelationship(String name) {
-		return relationships.contains(name);
-	}
+    @Override
+    public boolean allowsAttribute(String name) {
+        return attributes.contains(name);
+    }
+
+    @Override
+    public boolean allowsRelationship(String name) {
+        return relationships.contains(name);
+    }
 
 }

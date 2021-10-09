@@ -17,6 +17,16 @@ public interface AgRelationship {
     boolean isToMany();
 
     /**
+     * @since 4.7
+     */
+    boolean isReadable();
+
+    /**
+     * @since 4.7
+     */
+    boolean isWritable();
+
+    /**
      * @return a default data resolver for the target entity of this relationship
      * @since 3.4
      */

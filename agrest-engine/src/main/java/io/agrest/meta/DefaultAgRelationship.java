@@ -12,17 +12,23 @@ public class DefaultAgRelationship implements AgRelationship {
     private String name;
     private AgEntity<?> targetEntity;
     private boolean toMany;
+    private final boolean readable;
+    private final boolean writable;
     private NestedDataResolver<?> dataResolver;
 
     public DefaultAgRelationship(
             String name,
             AgEntity<?> targetEntity,
             boolean toMany,
+            boolean readable,
+            boolean writable,
             NestedDataResolver<?> dataResolver) {
 
         this.name = name;
         this.toMany = toMany;
         this.targetEntity = Objects.requireNonNull(targetEntity);
+        this.readable = readable;
+        this.writable = writable;
         this.dataResolver = Objects.requireNonNull(dataResolver);
     }
 
@@ -39,6 +45,22 @@ public class DefaultAgRelationship implements AgRelationship {
     @Override
     public boolean isToMany() {
         return toMany;
+    }
+
+    /**
+     * @since 4.7
+     */
+    @Override
+    public boolean isReadable() {
+        return readable;
+    }
+
+    /**
+     * @since 4.7
+     */
+    @Override
+    public boolean isWritable() {
+        return writable;
     }
 
     @Override

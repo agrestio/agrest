@@ -19,7 +19,7 @@ public class AgBuilder_OverlayTest {
     @Test
     public void testOverlay_RedefineAttribute_New() {
         AgRuntime runtime = new AgBuilder()
-                .entityOverlay(AgEntity.overlay(X.class).redefineAttribute("adHoc", Integer.class, e -> 2))
+                .entityOverlay(AgEntity.overlay(X.class).redefineAttribute("adHoc", Integer.class, true, true, e -> 2))
                 .build();
 
         X x = new X();
@@ -141,7 +141,7 @@ public class AgBuilder_OverlayTest {
         NestedDataResolver<P1> resolver = new TestNestedDataResolver<>();
 
         AgRuntime runtime = new AgBuilder()
-                .entityOverlay(AgEntity.overlay(X.class).redefineToOne("adHoc", A.class, (t, n) -> resolver))
+                .entityOverlay(AgEntity.overlay(X.class).redefineToOne("adHoc", A.class, true, true, (t, n) -> resolver))
                 .build();
 
         AgDataMap metadata = runtime.service(AgDataMap.class);

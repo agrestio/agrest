@@ -14,6 +14,16 @@ public interface AgIdPart {
 
     Class<?> getType();
 
+    /**
+     * @since 4.7
+     */
+    boolean isReadable();
+
+    /**
+     * @since 4.7
+     */
+    boolean isWritable();
+
     PropertyReader getReader();
 
     // TODO: Cayenne API leak..

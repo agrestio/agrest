@@ -96,7 +96,8 @@ public class CayenneAgEntityBuilder<T> {
         for (ObjAttribute a : cayenneEntity.getAttributes()) {
             Class<?> type = typeForName(a.getType());
             String name = a.getName();
-            addAttribute(new DefaultAgAttribute(name, type, DataObjectPropertyReader.reader(name)));
+            // by default adding attributes as readable and writable... @AgAttribute annotation on a getter may override this
+            addAttribute(new DefaultAgAttribute(name, type, true, true, DataObjectPropertyReader.reader(name)));
         }
 
         for (ObjRelationship r : cayenneEntity.getRelationships()) {
@@ -108,6 +109,11 @@ public class CayenneAgEntityBuilder<T> {
                     // 'agDataMap.getEntity' will compile the entity on the fly if needed
                     agDataMap.getEntity(targetEntityType),
                     r.isToMany(),
+
+                    // TODO: maybe this should be "false, false" by default, giving us a default request model
+                    //  (i.e. all attributes, no relationships)
+                    true,
+                    true,
                     nestedDataResolver));
         }
 
@@ -121,6 +127,8 @@ public class CayenneAgEntityBuilder<T> {
                 id = new DefaultAgIdPart(
                         pk.getName(),
                         typeForName(TypesMapping.getJavaBySqlType(pk.getType())),
+                        true,
+                        true,
                         ObjectIdValueReader.reader(pk.getName()),
                         new ASTDbPath(pk.getName())
                 );
@@ -128,6 +136,8 @@ public class CayenneAgEntityBuilder<T> {
                 id = new DefaultAgIdPart(
                         attribute.getName(),
                         typeForName(attribute.getType()),
+                        true,
+                        true,
                         DataObjectPropertyReader.reader(attribute.getName()),
                         new ASTObjPath(attribute.getName()));
             }
@@ -140,6 +150,10 @@ public class CayenneAgEntityBuilder<T> {
 
         // Load a separate entity built purely from annotations, then merge it with our entity. We are not cloning
         // attributes or relationship during merge... they have no references to parent and can be used as is.
+
+        // Note that overriding Cayenne attributes with annotated attributes will have a slight side effect -
+        // DataObjectPropertyReader will be replaced with getter-based reader. Those two should behave exactly
+        // the same, possibly with some really minor performance difference
 
         AgEntity<T> annotatedEntity = new AnnotationsAgEntityBuilder<>(type, agDataMap).build();
 
