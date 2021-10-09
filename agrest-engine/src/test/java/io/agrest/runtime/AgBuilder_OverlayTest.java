@@ -97,23 +97,13 @@ public class AgBuilder_OverlayTest {
         NestedDataResolver<?> resolver = new TestNestedDataResolver<>();
 
         AgRuntime runtime = new AgBuilder()
+                // this overlay is partial, as it is missing "targetType" property
                 .entityOverlay(AgEntity.overlay(X.class).redefineRelationshipResolver("adHoc", (t, n) -> resolver))
                 .build();
 
         AgDataMap metadata = runtime.service(AgDataMap.class);
-
         AgEntity<X> entity = metadata.getEntity(X.class);
-        assertNotNull(entity);
-
-        AgRelationship adHoc = entity.getRelationship("adHoc");
-        assertNull(adHoc);
-
-        AgRelationship unchanged = entity.getRelationship("z");
-        assertNotNull(unchanged);
-        assertSame(metadata.getEntity(Z.class), unchanged.getTargetEntity());
-        assertNotSame(resolver, unchanged.getResolver());
-        assertTrue(unchanged.getResolver() instanceof ReaderBasedResolver);
-        assertFalse(unchanged.isToMany());
+        assertThrows(IllegalStateException.class, () -> entity.getRelationship("adHoc"));
     }
 
     @Test

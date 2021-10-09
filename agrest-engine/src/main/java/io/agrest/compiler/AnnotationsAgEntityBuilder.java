@@ -201,7 +201,7 @@ public class AnnotationsAgEntityBuilder<T> {
 
     protected void loadOverlays() {
         if (overlay != null) {
-            overlay.getAttributes().forEach(this::addAttribute);
+            overlay.getAttributeOverlays().forEach(this::loadAttributeOverlay);
             overlay.getRelationshipOverlays().forEach(this::loadRelationshipOverlay);
             overlay.getExcludes().forEach(this::removeIdOrAttributeOrRelationship);
 
@@ -211,11 +211,12 @@ public class AnnotationsAgEntityBuilder<T> {
         }
     }
 
+    protected void loadAttributeOverlay(AgAttributeOverlay overlay) {
+        addAttribute(overlay.resolve(attributes.get(overlay.getName())));
+    }
+
     protected void loadRelationshipOverlay(AgRelationshipOverlay overlay) {
-        io.agrest.meta.AgRelationship relationship = overlay.resolve(relationships.get(overlay.getName()), agDataMap);
-        if (relationship != null) {
-            addRelationship(relationship);
-        }
+        addRelationship(overlay.resolve(relationships.get(overlay.getName()), agDataMap));
     }
 
     protected void removeIdOrAttributeOrRelationship(String name) {

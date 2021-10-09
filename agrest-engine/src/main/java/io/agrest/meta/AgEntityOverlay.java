@@ -17,7 +17,7 @@ public class AgEntityOverlay<T> {
 
     private final Class<T> type;
     //  TODO: introduce AgAttributeOverride to allow for partial overrides, like changing a reader
-    private final Map<String, AgAttribute> attributes;
+    private final Map<String, AgAttributeOverlay> attributes;
     private final Map<String, AgRelationshipOverlay> relationships;
     private final List<String> excludes;
     private RootDataResolver<T> rootDataResolver;
@@ -65,16 +65,16 @@ public class AgEntityOverlay<T> {
     }
 
     /**
-     * @since 3.4
+     * @since 4.7
      */
-    public AgAttribute getAttribute(String name) {
+    public AgAttributeOverlay getAttributeOverlay(String name) {
         return attributes.get(name);
     }
 
     /**
-     * @since 2.10
+     * @since 4.7
      */
-    public Iterable<AgAttribute> getAttributes() {
+    public Iterable<AgAttributeOverlay> getAttributeOverlays() {
         return attributes.values();
     }
 
@@ -123,7 +123,7 @@ public class AgEntityOverlay<T> {
      * @since 3.4
      */
     public <V> AgEntityOverlay<T> redefineAttribute(String name, Class<V> valueType, Function<T, V> reader) {
-        attributes.put(name, new DefaultAgAttribute(name, valueType, fromFunction(reader)));
+        attributes.put(name, new DefaultAgAttributeOverlay(name, type, valueType, fromFunction(reader)));
         return this;
     }
 
@@ -134,7 +134,7 @@ public class AgEntityOverlay<T> {
      */
     public AgEntityOverlay<T> redefineRelationshipResolver(String name, NestedDataResolverFactory resolverFactory) {
         NestedDataResolver<?> resolver = resolverFactory.resolver(type, name);
-        relationships.put(name, new PartialRelationshipOverlay(type, name, resolver));
+        relationships.put(name, new DefaultAgRelationshipOverlay(name, type, null, null, resolver));
         return this;
     }
 
@@ -144,7 +144,7 @@ public class AgEntityOverlay<T> {
      * @since 3.4
      */
     public AgEntityOverlay<T> redefineRelationshipResolver(String name, Function<T, ?> reader) {
-        relationships.put(name, new PartialRelationshipOverlay(type, name, resolverForReader(reader)));
+        relationships.put(name, new DefaultAgRelationshipOverlay(name, type, null, null, resolverForReader(reader)));
         return this;
     }
 
@@ -156,7 +156,7 @@ public class AgEntityOverlay<T> {
      */
     public <V> AgEntityOverlay<T> redefineToOne(String name, Class<V> targetType, NestedDataResolverFactory resolverFactory) {
         NestedDataResolver<?> resolver = resolverFactory.resolver(type, name);
-        relationships.put(name, new FullRelationshipOverlay(name, targetType, false, resolver));
+        relationships.put(name, new DefaultAgRelationshipOverlay(name, type, targetType, false, resolver));
         return this;
     }
 
@@ -168,7 +168,7 @@ public class AgEntityOverlay<T> {
      */
     public <V> AgEntityOverlay<T> redefineToMany(String name, Class<V> targetType, NestedDataResolverFactory resolverFactory) {
         NestedDataResolver<?> resolver = resolverFactory.resolver(type, name);
-        relationships.put(name, new FullRelationshipOverlay(name, targetType, true, resolver));
+        relationships.put(name, new DefaultAgRelationshipOverlay(name, type, targetType, true, resolver));
         return this;
     }
 
@@ -181,7 +181,7 @@ public class AgEntityOverlay<T> {
      * @since 3.4
      */
     public <V> AgEntityOverlay<T> redefineToOne(String name, Class<V> targetType, Function<T, V> reader) {
-        relationships.put(name, new FullRelationshipOverlay(name, targetType, false, resolverForReader(reader)));
+        relationships.put(name, new DefaultAgRelationshipOverlay(name, type, targetType, false, resolverForReader(reader)));
         return this;
     }
 
@@ -194,7 +194,7 @@ public class AgEntityOverlay<T> {
      * @since 3.4
      */
     public <V> AgEntityOverlay<T> redefineToMany(String name, Class<V> targetType, Function<T, List<V>> reader) {
-        relationships.put(name, new FullRelationshipOverlay(name, targetType, true, resolverForListReader(reader)));
+        relationships.put(name, new DefaultAgRelationshipOverlay(name, type, targetType, true, resolverForListReader(reader)));
         return this;
     }
 

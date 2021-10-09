@@ -18,9 +18,9 @@ import java.util.Objects;
  */
 public class ResourceEntityTreeBuilder {
 
-    private ResourceEntity<?> rootEntity;
-    private AgDataMap agDataMap;
-    private Map<Class<?>, AgEntityOverlay<?>> entityOverlays;
+    private final ResourceEntity<?> rootEntity;
+    private final AgDataMap agDataMap;
+    private final Map<Class<?>, AgEntityOverlay<?>> entityOverlays;
 
     public ResourceEntityTreeBuilder(
             ResourceEntity<?> rootEntity,
@@ -65,13 +65,14 @@ public class ResourceEntityTreeBuilder {
 
         if (dot < 0) {
 
-            AgAttribute overlayAttribute = agEntityOverlay != null ? agEntityOverlay.getAttribute(property) : null;
-            if (overlayAttribute != null) {
-                entity.addAttribute(overlayAttribute, false);
+            AgAttribute attribute = agEntity.getAttribute(property);
+            AgAttributeOverlay attributeOverlay = agEntityOverlay != null ? agEntityOverlay.getAttributeOverlay(property) : null;
+            if (attributeOverlay != null) {
+                AgAttribute overlaid = attributeOverlay.resolve(attribute);
+                entity.addAttribute(overlaid, false);
                 return entity;
             }
 
-            AgAttribute attribute = agEntity.getAttribute(property);
             if (attribute != null) {
                 entity.addAttribute(attribute, false);
                 return entity;
@@ -82,10 +83,8 @@ public class ResourceEntityTreeBuilder {
         AgRelationshipOverlay relationshipOverlay = agEntityOverlay != null ? agEntityOverlay.getRelationshipOverlay(property) : null;
         if (relationshipOverlay != null) {
             AgRelationship overlaid = relationshipOverlay.resolve(relationship, agDataMap);
-            if(overlaid != null) {
-                String childPath = dot > 0 ? path.substring(dot + 1) : null;
-                return inflateChild(entity, overlaid, childPath);
-            }
+            String childPath = dot > 0 ? path.substring(dot + 1) : null;
+            return inflateChild(entity, overlaid, childPath);
         }
 
         if (relationship != null) {
