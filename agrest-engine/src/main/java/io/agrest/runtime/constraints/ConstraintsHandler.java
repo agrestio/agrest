@@ -1,15 +1,11 @@
 package io.agrest.runtime.constraints;
 
-import io.agrest.EntityConstraint;
 import io.agrest.ResourceEntity;
 import io.agrest.SizeConstraints;
 import io.agrest.constraints.Constraint;
 import io.agrest.runtime.processor.update.UpdateContext;
-import org.apache.cayenne.di.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.List;
 
 /**
  * An {@link IConstraintsHandler} that ensures that no target attributes exceed
@@ -19,21 +15,15 @@ import java.util.List;
  */
 public class ConstraintsHandler implements IConstraintsHandler {
 
-    public static final String DEFAULT_READ_CONSTRAINTS_LIST = "agrest.constraints.read.list";
-    public static final String DEFAULT_WRITE_CONSTRAINTS_LIST = "agrest.constraints.write.list";
-
     private static final Logger LOGGER = LoggerFactory.getLogger(ConstraintsHandler.class);
 
     private RequestConstraintsHandler requestConstraintHandler;
     private EntityConstraintHandler modelConstraintHandler;
 
-    public ConstraintsHandler(
-            @Inject(DEFAULT_READ_CONSTRAINTS_LIST) List<EntityConstraint> readConstraints,
-            @Inject(DEFAULT_WRITE_CONSTRAINTS_LIST) List<EntityConstraint> writeConstraints
-    ) {
+    public ConstraintsHandler() {
 
         this.requestConstraintHandler = new RequestConstraintsHandler();
-        this.modelConstraintHandler = new EntityConstraintHandler(readConstraints, writeConstraints);
+        this.modelConstraintHandler = new EntityConstraintHandler();
     }
 
     @Override

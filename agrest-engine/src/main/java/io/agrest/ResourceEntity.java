@@ -93,6 +93,13 @@ public abstract class ResourceEntity<T> {
     }
 
     /**
+     * @since 4.7
+     */
+    public AgAttribute getAttribute(String name) {
+        return attributes.get(name);
+    }
+
+    /**
      * @since 1.12
      */
     public Map<String, AgAttribute> getAttributes() {

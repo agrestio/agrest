@@ -1,10 +1,6 @@
 package io.agrest.runtime.constraints;
 
-import io.agrest.EntityConstraint;
 import io.agrest.RootResourceEntity;
-import io.agrest.annotation.AgAttribute;
-import io.agrest.annotation.AgId;
-import io.agrest.annotation.AgRelationship;
 import io.agrest.compiler.AgEntityCompiler;
 import io.agrest.compiler.AnnotationsAgEntityCompiler;
 import io.agrest.constraints.Constraint;
@@ -30,14 +26,7 @@ public class ConstraintsHandlerWithDefaultsTest {
     public static void before() {
         AgEntityCompiler compiler = new AnnotationsAgEntityCompiler(Collections.emptyMap());
         dataMap = new LazyAgDataMap(Collections.singletonList(compiler));
-
-        List<EntityConstraint> r = Collections.singletonList(
-                new DefaultEntityConstraint("Tr", true, false, Collections.singleton("a"), Collections.emptySet()));
-
-        List<EntityConstraint> w = Collections.singletonList(
-                new DefaultEntityConstraint("Ts", false, false, Collections.singleton("n"), Collections.emptySet()));
-
-        constraintsHandler = new ConstraintsHandler(r, w);
+        constraintsHandler = new ConstraintsHandler();
     }
 
     @Test
@@ -47,8 +36,8 @@ public class ConstraintsHandlerWithDefaultsTest {
         Constraint<Tr> tc1 = Constraint.excludeAll(Tr.class).attributes("b");
 
         RootResourceEntity<Tr> te1 = new RootResourceEntity<>(entity, null);
-        ResourceEntityUtils.appendAttribute(te1, "a", Integer.class, Tr::getA);
-        ResourceEntityUtils.appendAttribute(te1, "b", String.class, Tr::getB);
+        ResourceEntityUtils.appendAttribute(te1, "a", Integer.class, true, true, Tr::getA);
+        ResourceEntityUtils.appendAttribute(te1, "b", String.class, true, true, Tr::getB);
 
         constraintsHandler.constrainResponse(te1, null, tc1);
         assertEquals(1, te1.getAttributes().size());
@@ -62,8 +51,8 @@ public class ConstraintsHandlerWithDefaultsTest {
         AgEntity<Tr> entity = dataMap.getEntity(Tr.class);
 
         RootResourceEntity<Tr> te1 = new RootResourceEntity<>(entity, null);
-        ResourceEntityUtils.appendAttribute(te1, "a", Integer.class, Tr::getA);
-        ResourceEntityUtils.appendAttribute(te1, "b", String.class, Tr::getB);
+        ResourceEntityUtils.appendAttribute(te1, "a", Integer.class, true, true, Tr::getA);
+        ResourceEntityUtils.appendAttribute(te1, "b", String.class, false, true, Tr::getB);
 
         constraintsHandler.constrainResponse(te1, null, null);
         assertEquals(1, te1.getAttributes().size());
@@ -77,8 +66,8 @@ public class ConstraintsHandlerWithDefaultsTest {
         AgEntity<Ts> entity = dataMap.getEntity(Ts.class);
 
         RootResourceEntity<Ts> te1 = new RootResourceEntity<>(entity, null);
-        ResourceEntityUtils.appendAttribute(te1, "m", String.class, Ts::getM);
-        ResourceEntityUtils.appendAttribute(te1, "n", String.class, Ts::getN);
+        ResourceEntityUtils.appendAttribute(te1, "m", String.class, true, true, Ts::getM);
+        ResourceEntityUtils.appendAttribute(te1, "n", String.class, true, true, Ts::getN);
 
         constraintsHandler.constrainResponse(te1, null, null);
         assertEquals(2, te1.getAttributes().size());
@@ -90,22 +79,18 @@ public class ConstraintsHandlerWithDefaultsTest {
 
     public static class Tr {
 
-        @AgId
         public int getId() {
             throw new UnsupportedOperationException();
         }
 
-        @AgAttribute
         public int getA() {
             throw new UnsupportedOperationException();
         }
 
-        @AgAttribute
         public String getB() {
             throw new UnsupportedOperationException();
         }
 
-        @AgRelationship
         public Ts getRts() {
             throw new UnsupportedOperationException();
         }
@@ -113,22 +98,18 @@ public class ConstraintsHandlerWithDefaultsTest {
 
     public static class Ts {
 
-        @AgId
         public int getId() {
             throw new UnsupportedOperationException();
         }
 
-        @AgAttribute
         public String getN() {
             throw new UnsupportedOperationException();
         }
 
-        @AgAttribute
         public String getM() {
             throw new UnsupportedOperationException();
         }
 
-        @AgRelationship
         public List<Tr> getRtrs() {
             throw new UnsupportedOperationException();
         }

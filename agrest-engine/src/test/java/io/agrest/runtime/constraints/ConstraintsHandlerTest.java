@@ -32,7 +32,7 @@ public class ConstraintsHandlerTest {
     public static void before() {
         AgEntityCompiler compiler = new AnnotationsAgEntityCompiler(Collections.emptyMap());
         dataMap = new LazyAgDataMap(Collections.singletonList(compiler));
-        constraintsHandler = new ConstraintsHandler(Collections.emptyList(), Collections.emptyList());
+        constraintsHandler = new ConstraintsHandler();
     }
 
     @Test

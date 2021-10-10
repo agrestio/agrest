@@ -343,8 +343,6 @@ public class AgBuilder {
                     .put(DataResponse.class.getName(), DataResponseWriter.class)
                     .put(MetadataResponse.class.getName(), MetadataResponseWriter.class);
 
-            binder.bindList(EntityConstraint.class, ConstraintsHandler.DEFAULT_READ_CONSTRAINTS_LIST);
-            binder.bindList(EntityConstraint.class, ConstraintsHandler.DEFAULT_WRITE_CONSTRAINTS_LIST);
             binder.bindMap(PropertyMetadataEncoder.class).putAll(metadataEncoders);
 
             if (agServiceType != null) {
