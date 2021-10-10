@@ -28,12 +28,6 @@ class RequestConstraintsHandler {
 
     <T> boolean constrainResponse(ResourceEntity<T> resourceEntity, Constraint<T> c) {
 
-        // Null entity means we don't need to worry about unauthorized
-        // attributes and relationships
-        if (resourceEntity == null) {
-            return true;
-        }
-
         if (c == null) {
             return false;
         }
@@ -73,8 +67,7 @@ class RequestConstraintsHandler {
                 Entry<String, Object> e = it.next();
                 if (!constraints.hasAttribute(e.getKey())) {
 
-                    // do not report default properties, as this wasn't a
-                    // client's fault it go there..
+                    // do not report default properties, as this wasn't a client's fault it go there..
                     if (!context.getEntity().isDefaultAttribute(e.getKey())) {
                         LOGGER.info("Attribute not allowed, removing: {} for id {}", e.getKey(), u.getId());
                     }
@@ -106,8 +99,7 @@ class RequestConstraintsHandler {
             AgAttribute a = ait.next();
             if (!constraints.hasAttribute(a.getName())) {
 
-                // do not report default properties, as this wasn't a client's
-                // fault it go there..
+                // do not report default properties, as this wasn't a client's fault it go there
                 if (!target.isDefaultAttribute(a.getName())) {
                     LOGGER.info("Attribute not allowed, removing: {}", a.getName());
                 }

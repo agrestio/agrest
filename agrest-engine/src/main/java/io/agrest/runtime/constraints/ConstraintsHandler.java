@@ -24,23 +24,23 @@ public class ConstraintsHandler implements IConstraintsHandler {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ConstraintsHandler.class);
 
-    private RequestConstraintsHandler treeConstraintsHandler;
-    private EntityConstraintHandler entityConstraintHandler;
+    private RequestConstraintsHandler requestConstraintHandler;
+    private EntityConstraintHandler modelConstraintHandler;
 
     public ConstraintsHandler(
             @Inject(DEFAULT_READ_CONSTRAINTS_LIST) List<EntityConstraint> readConstraints,
             @Inject(DEFAULT_WRITE_CONSTRAINTS_LIST) List<EntityConstraint> writeConstraints
     ) {
 
-        this.treeConstraintsHandler = new RequestConstraintsHandler();
-        this.entityConstraintHandler = new EntityConstraintHandler(readConstraints, writeConstraints);
+        this.requestConstraintHandler = new RequestConstraintsHandler();
+        this.modelConstraintHandler = new EntityConstraintHandler(readConstraints, writeConstraints);
     }
 
     @Override
     public <T> void constrainUpdate(UpdateContext<T> context, Constraint<T> c) {
 
-        if (!treeConstraintsHandler.constrainUpdate(context, c)) {
-            entityConstraintHandler.constrainUpdate(context);
+        if (!requestConstraintHandler.constrainUpdate(context, c)) {
+            modelConstraintHandler.constrainUpdate(context);
         }
     }
 
@@ -51,8 +51,8 @@ public class ConstraintsHandler implements IConstraintsHandler {
             applySizeConstraintsForRead(entity, sizeConstraints);
         }
 
-        if (!treeConstraintsHandler.constrainResponse(entity, c)) {
-            entityConstraintHandler.constrainResponse(entity);
+        if (!requestConstraintHandler.constrainResponse(entity, c)) {
+            modelConstraintHandler.constrainResponse(entity);
         }
     }
 
