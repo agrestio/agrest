@@ -2,7 +2,13 @@
 
 ### `@ClientReadable` and `@ClientWritable` annotations are removed in favor of per-attribute access controls [#491](https://github.com/agrestio/agrest/issues/491)
 
-`@ClientReadable` and `@ClientWritable` annotations have been removed 
+As a part of an effort to unify constrain handling, `@ClientReadable` and `@ClientWritable` annotations have been 
+removed, as a rather inelegant mechanism to reference class properties. Instead `@Ag*` annotations on getters 
+(`@AgId`, `@AgAttribute` and `@AgRelationship`) now provide "readable" and "writable" properties. By default all
+properties are both readable and writable. So you must review your code and replace `@ClientReadable` and 
+`@ClientWritable` with explicit annotations on properties that you would like to **exclude** from either reading or
+writing. E.g. if a property "a" was "client-readable", then `@ClientReadable` annotation should be removed, and 
+properties "b", "c", etc. should be annotated with `@AgAttribute(readable=false)` / `@AgRelationship(readable=false)`
 
 ### Injectable EntityConstraint is removed in favor of per-attribute access controls [#491](https://github.com/agrestio/agrest/issues/491)
 
@@ -11,7 +17,7 @@ exclusion - an injectable `EntityConstraint`. List injection keys were `agrest.c
 for read and write constraints respectively. As a part of an effort to unify constrain handling, this mechanism was
 removed. There are two alternatives: `@Ag*` annotations on attributes, relationships and ids now have "readable" and 
 "writable" properties; also `AgEntityOverlay` API allows redefining existing property readability and writeability, 
-either globally or per-request.
+either globally or per-request. 
 
 ### Updates may return "201" status where previously they returned "200" [#490](https://github.com/agrestio/agrest/issues/490)
 
