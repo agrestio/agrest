@@ -2,10 +2,7 @@ package io.agrest.cayenne;
 
 import io.agrest.Ag;
 import io.agrest.DataResponse;
-import io.agrest.cayenne.cayenne.main.E2;
-import io.agrest.cayenne.cayenne.main.E22;
-import io.agrest.cayenne.cayenne.main.E3;
-import io.agrest.cayenne.cayenne.main.E4;
+import io.agrest.cayenne.cayenne.main.*;
 import io.agrest.cayenne.unit.AgCayenneTester;
 import io.agrest.cayenne.unit.DbTest;
 import io.agrest.meta.AgEntity;
@@ -28,7 +25,7 @@ public class GET_EntityOverlay_PerRequestIT extends DbTest {
 
     @BQTestTool
     static final AgCayenneTester tester = tester(Resource.class)
-            .entities(E2.class, E3.class, E4.class, E22.class)
+            .entities(E2.class, E3.class, E4.class, E10.class, E22.class)
             .build();
 
     @Test
@@ -79,6 +76,27 @@ public class GET_EntityOverlay_PerRequestIT extends DbTest {
                 .get()
                 .wasOk()
                 .bodyEquals(2, "{\"fromRequest\":\"abc\"},{\"fromRequest\":\"abc\"}");
+    }
+
+    @Test
+    @Disabled("Until #492 is fixed by redesign in #491")
+    public void test_RequestOverlaidProperties_ConstrainedEntity() {
+
+        tester.e10().insertColumns("id", "c_int").values(2, 5).values(4, 8).exec();
+        tester.e22().insertColumns("id", "name")
+                .values(1, "a")
+                .values(2, "b")
+                .values(3, "c").exec();
+
+        tester.target("/e10/xyz")
+                .queryParam("include", "[\"id\",\"cInt\",\"fromRequest\",\"dynamicRelationship\"]")
+                .queryParam("sort", "id")
+                .get()
+                .wasOk()
+                .bodyEquals(
+                        2,
+                        "{\"id\":2,\"cInt\":6,\"dynamicRelationship\":{\"id\":2,\"name\":\"b\",\"prop1\":null,\"prop2\":null},\"fromRequest\":\"xyz\"}," +
+                                "{\"id\":4,\"cInt\":9,\"dynamicRelationship\":null,\"fromRequest\":\"xyz\"}");
     }
 
     @Test
@@ -181,9 +199,29 @@ public class GET_EntityOverlay_PerRequestIT extends DbTest {
         }
 
         @GET
+        @Path("e10/{suffix}")
+        // request constraints mixed with entity constraints
+        public DataResponse<E10> getE10(@Context UriInfo uriInfo, @PathParam("suffix") String suffix) {
+
+            AgEntityOverlay<E10> overlay = AgEntity.overlay(E10.class)
+                    // 1. Request-specific attribute
+                    .redefineAttribute("fromRequest", String.class, e4 -> suffix)
+                    // 3. Changing output of the existing property
+                    .redefineAttribute("cInt", Integer.class, e10 -> e10.getCInt() + 1)
+                    // 4. Dynamic relationship
+                    .redefineToOne("dynamicRelationship", E22.class, e10 -> findMatching(E22.class, e10));
+
+            return Ag.service(config)
+                    .select(E10.class)
+                    .entityOverlay(overlay)
+                    .uri(uriInfo)
+                    .get();
+        }
+
+        @GET
         @Path("e4/{suffix}")
         // typical use case tested here is an AgEntityOverlay that depends on request parameters
-        public DataResponse<E4> get(@Context UriInfo uriInfo, @PathParam("suffix") String suffix) {
+        public DataResponse<E4> getE4(@Context UriInfo uriInfo, @PathParam("suffix") String suffix) {
 
             AgEntityOverlay<E4> overlay = AgEntity.overlay(E4.class)
                     // 1. Request-specific attribute
