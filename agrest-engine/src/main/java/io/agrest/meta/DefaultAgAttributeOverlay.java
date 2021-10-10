@@ -2,15 +2,11 @@ package io.agrest.meta;
 
 import io.agrest.property.PropertyReader;
 
-import java.util.Objects;
-
 /**
  * @since 4.7
  */
-public class DefaultAgAttributeOverlay implements AgAttributeOverlay {
+public class DefaultAgAttributeOverlay extends BasePropertyOverlay implements AgAttributeOverlay {
 
-    private final String name;
-    private final Class<?> sourceType;
     private final Class<?> javaType;
     private final Boolean readable;
     private final Boolean writable;
@@ -23,8 +19,8 @@ public class DefaultAgAttributeOverlay implements AgAttributeOverlay {
             Boolean readable,
             Boolean writable,
             PropertyReader propertyReader) {
-        this.name = Objects.requireNonNull(name);
-        this.sourceType = Objects.requireNonNull(sourceType);
+
+        super(name, sourceType);
 
         // optional attributes. NULL means not overlaid
         this.javaType = javaType;
@@ -54,24 +50,16 @@ public class DefaultAgAttributeOverlay implements AgAttributeOverlay {
 
     private AgAttribute resolveNew() {
 
-        // we can't use properties from the overlaid attribute, so make sure we have all the required ones present
-        checkPropertyDefined("javaType", javaType);
-        checkPropertyDefined("readable", readable);
-        checkPropertyDefined("writable", writable);
-        checkPropertyDefined("propertyReader", propertyReader);
+        // we can't use properties from the overlaid attribute, so make sure we have all the required ones present,
+        // and provide defaults where possible
 
-        return new DefaultAgAttribute(name, javaType, readable, writable, propertyReader);
-    }
+        return new DefaultAgAttribute(name,
+                requiredProperty("javaType", javaType),
 
-    private void checkPropertyDefined(String property, Object value) {
-        if (value == null) {
-            String message = String.format(
-                    "Overlay can't be resolved: '%s' is not defined and no overlaid attribute '%s.%s' exists",
-                    property,
-                    this.sourceType.getName(),
-                    this.name);
+                // using the defaults from @AgAttribute annotation
+                propertyOrDefault(readable, true),
+                propertyOrDefault(writable, true),
 
-            throw new IllegalStateException(message);
-        }
+                requiredProperty("propertyReader", propertyReader));
     }
 }

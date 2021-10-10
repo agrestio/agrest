@@ -1,5 +1,10 @@
 ## Upgrading to 4.7
 
+### @ClientReadable and @ClientWritable annotations are removed in favor of per-attribute access controls 
+[#491](https://github.com/agrestio/agrest/issues/491)
+
+TODO
+
 ### Updates may return "201" status where previously they returned "200" [#490](https://github.com/agrestio/agrest/issues/490)
 
 All variants of "create or update" operations would now return 201 code instead of 200 when performed on a single object

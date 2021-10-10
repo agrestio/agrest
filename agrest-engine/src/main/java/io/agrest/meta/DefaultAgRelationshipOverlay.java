@@ -2,18 +2,14 @@ package io.agrest.meta;
 
 import io.agrest.resolver.NestedDataResolver;
 
-import java.util.Objects;
-
 /**
  * {@link AgRelationshipOverlay} that internally defines full relationship semantics, and can either redefine an existing
  * relationship or introduce an entirely new one.
  *
  * @since 3.4
  */
-public class DefaultAgRelationshipOverlay implements AgRelationshipOverlay {
+public class DefaultAgRelationshipOverlay extends BasePropertyOverlay implements AgRelationshipOverlay {
 
-    private final String name;
-    private final Class<?> sourceType;
     private final Class<?> targetType;
     private final Boolean toMany;
     private final Boolean readable;
@@ -29,8 +25,7 @@ public class DefaultAgRelationshipOverlay implements AgRelationshipOverlay {
             Boolean writable,
             NestedDataResolver<?> resolver) {
 
-        this.name = Objects.requireNonNull(name);
-        this.sourceType = Objects.requireNonNull(sourceType);
+        super(name, sourceType);
 
         // optional attributes. NULL means not overlaid
         this.targetType = targetType;
@@ -65,26 +60,17 @@ public class DefaultAgRelationshipOverlay implements AgRelationshipOverlay {
 
     private AgRelationship resolveNew(AgDataMap agDataMap) {
 
-        // we can't use properties from the overlaid relationship, so make sure we have all the required ones present
-        checkPropertyDefined("targetType", targetType);
-        checkPropertyDefined("toMany", toMany);
-        checkPropertyDefined("readable", readable);
-        checkPropertyDefined("writable", writable);
-        checkPropertyDefined("resolver", resolver);
+        // we can't use defaults from the overlaid relationship, so make sure we have all the required ones present,
+        // and provide defaults where possible
 
-        AgEntity<?> targetEntity = agDataMap.getEntity(targetType);
-        return new DefaultAgRelationship(name, targetEntity, toMany, readable, writable, resolver);
-    }
+        return new DefaultAgRelationship(name,
+                agDataMap.getEntity(requiredProperty("targetType", targetType)),
+                requiredProperty("toMany", toMany),
 
-    private void checkPropertyDefined(String property, Object value) {
-        if (value == null) {
-            String message = String.format(
-                    "Overlay can't be resolved: '%s' is not defined and no overlaid relationship '%s.%s' exists",
-                    property,
-                    this.sourceType.getName(),
-                    this.name);
+                // using the defaults from @AgRelationship annotation
+                propertyOrDefault(readable, true),
+                propertyOrDefault(writable, true),
 
-            throw new IllegalStateException(message);
-        }
+                requiredProperty("resolver", resolver));
     }
 }

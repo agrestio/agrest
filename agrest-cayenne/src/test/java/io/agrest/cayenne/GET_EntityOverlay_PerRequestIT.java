@@ -79,7 +79,6 @@ public class GET_EntityOverlay_PerRequestIT extends DbTest {
     }
 
     @Test
-    @Disabled("Until #492 is fixed by redesign in #491")
     public void test_RequestOverlaidProperties_ConstrainedEntity() {
 
         tester.e10().insertColumns("id", "c_int").values(2, 5).values(4, 8).exec();

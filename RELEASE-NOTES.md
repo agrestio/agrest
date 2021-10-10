@@ -2,6 +2,7 @@
 
 * #488 Bump to the latest version of openapi-generator (v5.2.0)
 * #490 "createOrUpdate" and "idempotentCreateOrUpdate" must return 201 when a single object is created
+* #491 Consolidate access control API: fold readable and writable flags into the Ag entity model
 
 ## Release 4.6
 
