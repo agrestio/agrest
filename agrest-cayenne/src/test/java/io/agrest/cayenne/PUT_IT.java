@@ -10,6 +10,7 @@ import io.agrest.cayenne.unit.AgCayenneTester;
 import io.agrest.cayenne.unit.DbTest;
 import io.agrest.encoder.Encoder;
 import io.bootique.junit5.BQTestTool;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import javax.ws.rs.PUT;
@@ -20,6 +21,7 @@ import javax.ws.rs.core.Configuration;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.UriInfo;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -47,22 +49,30 @@ public class PUT_IT extends DbTest {
     @Test
     public void testUpdate() {
 
-        tester.e4().insertColumns("id", "c_varchar")
-                .values(1, "xxx")
-                .values(8, "yyy").exec();
+        tester.e4().insertColumns("id", "c_varchar", "c_decimal")
+                .values(1, "xxx", new BigDecimal("11.23"))
+                .values(8, "yyy", new BigDecimal("-101.023")).exec();
 
-        tester.target("/e4/8").put("{\"id\":8,\"cVarchar\":\"zzz\"}")
+        // TODO: BigDecimal failure is described here: https://github.com/agrestio/agrest/issues/494
+        //   but we can't reproduce it until we
+        tester.target("/e4/8").put("{\"id\":8,\"cVarchar\":\"zzz\",\"cDecimal\":12.99}")
                 .wasOk()
                 .bodyEquals(1, "{\"id\":8," +
                         "\"cBoolean\":null," +
                         "\"cDate\":null," +
-                        "\"cDecimal\":null," +
+                        "\"cDecimal\":12.99," +
                         "\"cInt\":null," +
                         "\"cTime\":null," +
                         "\"cTimestamp\":null," +
                         "\"cVarchar\":\"zzz\"}");
 
-        tester.e4().matcher().eq("id", 8).eq("c_varchar", "zzz").assertOneMatch();
+        // TODO: some kinda bug in TableMatcher - can't match on BigDecimal. So need to select the data and compare
+        //   in memory
+        Object[] data = tester.e4().selectColumns("c_varchar", "c_decimal")
+                .where("id", 8)
+                .selectOne();
+
+        Assertions.assertArrayEquals(new Object[]{"zzz", new BigDecimal("12.99")}, data);
     }
 
     @Test
