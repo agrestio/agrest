@@ -1,3 +1,7 @@
+## Release 3.11
+
+* #494 java.lang.Double cannot be cast to java.math.BigDecimal
+
 ## Release 3.10
 
 * #487 Bootique dependency leaks to Agrest via BOM import 
