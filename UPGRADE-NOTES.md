@@ -26,6 +26,15 @@ and if the object was newly created. While this is the correct response code (an
 this may affect existing assumptions made by Agrest consumers. Consumer code should be revisited to ensure that
 201 response code is properly handled.
 
+### AgException API changed [#495](https://github.com/agrestio/agrest/issues/495)
+
+`AgException` API has changed. `javax.ws.rs.core.Response.Status` was replaced with an int inside `AgException`. 
+So any code explicitly creating this exception, must pass standard HTTP status codes as integers. For convenience, they 
+are defined in `io.agrest.HttpStatus`. 
+
+Instead of public constructors, AgException now provides a set of static factory methods that allow to build exception
+messages with String templates and parameters.
+
 ## Upgrading to 4.4
 
 ### 'Exp' constructors replaced with static factory methods  [#476](https://github.com/agrestio/agrest/issues/476)
