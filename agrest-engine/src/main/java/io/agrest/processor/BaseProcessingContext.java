@@ -2,7 +2,6 @@ package io.agrest.processor;
 
 import io.agrest.SimpleResponse;
 
-import javax.ws.rs.core.Response.Status;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -13,7 +12,7 @@ public abstract class BaseProcessingContext<T> implements ProcessingContext<T> {
 
     private Class<T> type;
     private Map<String, Object> attributes;
-    private Status status;
+    private int status;
 
     public BaseProcessingContext(Class<T> type) {
         this.type = type;
@@ -53,16 +52,16 @@ public abstract class BaseProcessingContext<T> implements ProcessingContext<T> {
     }
 
     /**
-     * @since 1.24
+     * @since 4.7
      */
-    public Status getStatus() {
+    public int getStatus() {
         return status;
     }
 
     /**
-     * @since 1.24
+     * @since 4.7
      */
-    public void setStatus(Status status) {
+    public void setStatus(int status) {
         this.status = status;
     }
 }

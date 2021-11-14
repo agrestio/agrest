@@ -1,5 +1,6 @@
 package io.agrest.cayenne.provider;
 
+import io.agrest.HttpStatus;
 import io.agrest.SimpleResponse;
 import org.apache.cayenne.CayenneRuntimeException;
 import org.apache.cayenne.util.Util;
@@ -8,7 +9,6 @@ import org.slf4j.LoggerFactory;
 
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
 
@@ -43,6 +43,6 @@ public class CayenneRuntimeExceptionMapper implements ExceptionMapper<CayenneRun
 		message = "CayenneRuntimeException " + message;
 
 		SimpleResponse body = new SimpleResponse(false, message);
-		return Response.status(Status.INTERNAL_SERVER_ERROR).entity(body).type(MediaType.APPLICATION_JSON_TYPE).build();
+		return Response.status(HttpStatus.INTERNAL_SERVER_ERROR).entity(body).type(MediaType.APPLICATION_JSON_TYPE).build();
 	}
 }

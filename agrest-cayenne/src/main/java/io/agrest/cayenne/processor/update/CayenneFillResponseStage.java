@@ -7,7 +7,6 @@ import io.agrest.runtime.processor.update.UpdateContext;
 import org.apache.cayenne.DataObject;
 import org.apache.cayenne.ObjectId;
 
-import javax.ws.rs.core.Response;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -24,12 +23,12 @@ public abstract class CayenneFillResponseStage implements Processor<UpdateContex
         return ProcessorOutcome.CONTINUE;
     }
 
-    protected abstract <T extends DataObject> Response.Status getStatus(UpdateContext<T> context);
+    protected abstract <T extends DataObject> int getHttpStatus(UpdateContext<T> context);
 
     @SuppressWarnings("unchecked")
     protected <T extends DataObject> void doExecute(UpdateContext<T> context) {
 
-        context.setStatus(getStatus(context));
+        context.setStatus(getHttpStatus(context));
 
         // response objects are attached to EntityUpdate instances ... if
         // 'includeData' is true create a list of unique updated objects in the

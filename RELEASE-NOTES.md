@@ -6,6 +6,7 @@
 * #492 Annotation entity constraints block request-defined attributes
 * #494 java.lang.Double cannot be cast to java.math.BigDecimal
 * #495 Remove JAX-RS dependency from "agrest-base"
+* #496 Replace JAX-RS Status references with int Status
 
 ## Release 4.6
 

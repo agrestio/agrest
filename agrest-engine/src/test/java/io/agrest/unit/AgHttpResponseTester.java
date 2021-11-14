@@ -2,6 +2,7 @@ package io.agrest.unit;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.agrest.HttpStatus;
 
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -67,40 +68,40 @@ public class AgHttpResponseTester {
     }
 
     public AgHttpResponseTester wasOk() {
-        assertEquals(Response.Status.OK.getStatusCode(),
+        assertEquals(HttpStatus.OK,
                 response.getStatus(),
                 "Failed request: " + response.getStatus());
         return this;
     }
 
     public AgHttpResponseTester wasCreated() {
-        assertEquals(Response.Status.CREATED.getStatusCode(),
+        assertEquals(HttpStatus.CREATED,
                 response.getStatus(),
                 "Expected 'CREATED' status, was: " + response.getStatus());
         return this;
     }
 
     public AgHttpResponseTester wasServerError() {
-        assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(),
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR,
                 response.getStatus(),
                 "Expected 'INTERNAL_SERVER_ERROR' status, was: " + response.getStatus());
         return this;
     }
 
     public AgHttpResponseTester wasBadRequest() {
-        return statusEquals(Response.Status.BAD_REQUEST);
+        return statusEquals(HttpStatus.BAD_REQUEST);
     }
 
     public AgHttpResponseTester wasForbidden() {
-        return statusEquals(Response.Status.FORBIDDEN);
+        return statusEquals(HttpStatus.FORBIDDEN);
     }
 
     public AgHttpResponseTester wasNotFound() {
-        return statusEquals(Response.Status.NOT_FOUND);
+        return statusEquals(HttpStatus.NOT_FOUND);
     }
 
-    protected AgHttpResponseTester statusEquals(Response.Status expectedStatus) {
-        assertEquals(expectedStatus.getStatusCode(), response.getStatus());
+    protected AgHttpResponseTester statusEquals(int expectedStatus) {
+        assertEquals(expectedStatus, response.getStatus());
         return this;
     }
 

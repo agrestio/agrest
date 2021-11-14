@@ -1,7 +1,5 @@
 package io.agrest;
 
-import javax.ws.rs.core.Response.Status;
-
 /**
  * A base response object in Agrest.
  * 
@@ -9,19 +7,19 @@ import javax.ws.rs.core.Response.Status;
  */
 public abstract class AgResponse {
 	
-	protected Status status;
+	protected int status;
 
 	/**
-	 * @since 1.19
+	 * @since 4.7
 	 */
-	public Status getStatus() {
+	public int getStatus() {
 		return status;
 	}
 
 	/**
-	 * @since 1.19
+	 * @since 4.7
 	 */
-	public void setStatus(Status status) {
+	public void setStatus(int status) {
 		this.status = status;
 	}
 }
