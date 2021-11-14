@@ -11,12 +11,12 @@ import java.util.Objects;
  */
 public class Include {
 
-    private Exp exp;
-    private List<Sort> orderings;
-    private String mapBy;
-    private String path;
-    private Integer start;
-    private Integer limit;
+    private final Exp exp;
+    private final List<Sort> orderings;
+    private final String mapBy;
+    private final String path;
+    private final Integer start;
+    private final Integer limit;
 
     public Include(String path) {
         this(path, null, Collections.emptyList(), null, null, null);

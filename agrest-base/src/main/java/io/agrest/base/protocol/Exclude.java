@@ -7,7 +7,7 @@ package io.agrest.base.protocol;
  */
 public class Exclude {
 
-    private String path;
+    private final String path;
 
     public Exclude(String path) {
         this.path = path;

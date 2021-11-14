@@ -9,8 +9,8 @@ import java.util.Objects;
  */
 public class Sort {
 
-    private String property;
-    private Dir direction;
+    private final String property;
+    private final Dir direction;
 
     public Sort(String property) {
         this(property, Dir.ASC);
