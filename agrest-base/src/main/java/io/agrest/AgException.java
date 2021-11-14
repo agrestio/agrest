@@ -1,35 +1,35 @@
 package io.agrest;
 
-import javax.ws.rs.core.Response.Status;
-
 /**
- * An exception that encapsulates Agrest error mapped to the HTTP status code. Used by the framework internally and can
+ * Encapsulates an Agrest error condition described by an HTTP status code. Used by the framework internally and can
  * also be used by the application code.
+ *
+ * @see HttpStatus
  */
 public class AgException extends RuntimeException {
 
     private static final long serialVersionUID = 1L;
 
-    private Status status;
+    private final int status;
 
     public AgException() {
-        this(Status.INTERNAL_SERVER_ERROR);
+        this(HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
-    public AgException(Status status) {
+    public AgException(int status) {
         this(status, null, null);
     }
 
-    public AgException(Status status, String message) {
+    public AgException(int status, String message) {
         this(status, message, null);
     }
 
-    public AgException(Status status, String message, Throwable cause) {
+    public AgException(int status, String message, Throwable cause) {
         super(message, cause);
         this.status = status;
     }
 
-    public Status getStatus() {
+    public int getStatus() {
         return status;
     }
 }

@@ -2,26 +2,16 @@ package io.agrest.base.jsonvalueconverter;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import io.agrest.AgException;
+import io.agrest.HttpStatus;
 
-import javax.ws.rs.core.Response;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
+import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
 import java.time.temporal.ChronoField;
 import java.time.temporal.Temporal;
 import java.time.temporal.TemporalAccessor;
 import java.time.temporal.TemporalQueries;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.TimeZone;
+import java.util.*;
 import java.util.function.Function;
 
 public class UtcDateConverter<T extends java.util.Date> extends AbstractConverter<T> {
@@ -144,7 +134,7 @@ public class UtcDateConverter<T extends java.util.Date> extends AbstractConverte
 				return localTime.get();
 			}
 
-			throw new AgException(Response.Status.BAD_REQUEST, "Failed to build date/time/datetime: " + parsed);
+			throw new AgException(HttpStatus.BAD_REQUEST, "Failed to build date/time/datetime: " + parsed);
 		}
 
 		private Optional<ZonedDateTime> getZonedDateTime(TemporalAccessor parsed) {

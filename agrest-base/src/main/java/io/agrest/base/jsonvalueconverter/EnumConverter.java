@@ -2,8 +2,7 @@ package io.agrest.base.jsonvalueconverter;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import io.agrest.AgException;
-
-import javax.ws.rs.core.Response;
+import io.agrest.HttpStatus;
 
 /**
  * @since 2.10
@@ -26,7 +25,7 @@ public class EnumConverter<T extends Enum<T>> extends AbstractConverter<T> {
         try {
             return Enum.valueOf(enumType, string);
         } catch (IllegalArgumentException e) {
-            throw new AgException(Response.Status.BAD_REQUEST,
+            throw new AgException(HttpStatus.BAD_REQUEST,
                     "Invalid enum value: " + string);
         }
     }

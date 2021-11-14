@@ -1,8 +1,8 @@
 package io.agrest.base.reflect;
 
 import io.agrest.AgException;
+import io.agrest.HttpStatus;
 
-import javax.ws.rs.core.Response.Status;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.lang.reflect.WildcardType;
@@ -75,7 +75,7 @@ public class Types {
      */
 	public static Class<?> typeForName(String typeName) {
         if (typeName == null) {
-            throw new AgException(Status.INTERNAL_SERVER_ERROR, "Type name cannot be null");
+            throw new AgException(HttpStatus.INTERNAL_SERVER_ERROR, "Type name cannot be null");
         }
 
         switch (typeName) {
@@ -101,7 +101,7 @@ public class Types {
                 try {
                     return Class.forName(typeName);
                 } catch (ClassNotFoundException e) {
-                    throw new AgException(Status.INTERNAL_SERVER_ERROR, "Unknown class: " + typeName, e);
+                    throw new AgException(HttpStatus.INTERNAL_SERVER_ERROR, "Unknown class: " + typeName, e);
                 }
             }
         }

@@ -2,8 +2,7 @@ package io.agrest.base.jsonvalueconverter;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import io.agrest.AgException;
-
-import javax.ws.rs.core.Response.Status;
+import io.agrest.HttpStatus;
 
 /**
  * @since 4.2
@@ -30,7 +29,7 @@ public class DoubleConverter extends AbstractConverter<Double> {
 		}
 
 		if (!node.isIntegralNumber() && !node.isFloatingPointNumber()) {
-			throw new AgException(Status.BAD_REQUEST, "Expected numeric value, got: " + node.asText());
+			throw new AgException(HttpStatus.BAD_REQUEST, "Expected numeric value, got: " + node.asText());
 		}
 
 		return node.asDouble();

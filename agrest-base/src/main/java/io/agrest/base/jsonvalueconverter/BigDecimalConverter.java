@@ -2,8 +2,8 @@ package io.agrest.base.jsonvalueconverter;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import io.agrest.AgException;
+import io.agrest.HttpStatus;
 
-import javax.ws.rs.core.Response.Status;
 import java.math.BigDecimal;
 
 /**
@@ -26,7 +26,7 @@ public class BigDecimalConverter extends AbstractConverter<BigDecimal> {
 			return new BigDecimal(node.asText());
 		}
 		catch (NumberFormatException e) {
-			throw new AgException(Status.BAD_REQUEST, "Expected numeric value, got: " + node.asText());
+			throw new AgException(HttpStatus.BAD_REQUEST, "Expected numeric value, got: " + node.asText());
 		}
 	}
 }
