@@ -5,7 +5,7 @@
     <parent>
         <artifactId>agrest-docs</artifactId>
         <groupId>io.agrest.docs</groupId>
-        <version>3.11</version>
+        <version>3.12-SNAPSHOT</version>
     </parent>
 
     <artifactId>agrest-docs-framework</artifactId>
