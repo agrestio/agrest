@@ -18,7 +18,6 @@ import org.apache.cayenne.exp.property.PropertyFactory;
 import org.apache.cayenne.map.ObjRelationship;
 import org.apache.cayenne.query.SelectQuery;
 
-import javax.ws.rs.core.Response;
 import java.util.*;
 import java.util.function.BiConsumer;
 
@@ -49,7 +48,7 @@ public class CayenneUpdateStage extends CayenneMergeChangesStage {
 
             // a null can only mean some algorithm malfunction
             if (updates == null) {
-                throw new AgException(Response.Status.INTERNAL_SERVER_ERROR, "Invalid key item: " + key);
+                throw AgException.internalServerError("Invalid key item: %s", key);
             }
 
             updateSingle(context, o, updates);
@@ -65,11 +64,10 @@ public class CayenneUpdateStage extends CayenneMergeChangesStage {
             Object firstKey = keyMap.keySet().iterator().next();
 
             if (firstKey == null) {
-                throw new AgException(Response.Status.BAD_REQUEST, "Can't update. No id for object");
+                throw AgException.badRequest("Can't update. No id for object");
             }
 
-            throw new AgException(Response.Status.NOT_FOUND,
-                    "No object for ID '" + firstKey + "' and entity '" + context.getEntity().getName() + "'");
+            throw AgException.notFound("No object for ID '%s' and entity '%s'", firstKey, context.getEntity().getName());
         }
     }
 
@@ -132,9 +130,10 @@ public class CayenneUpdateStage extends CayenneMergeChangesStage {
 
         List<T> objects = fetchEntity(context, resourceEntity);
         if (context.isById() && objects.size() > 1) {
-            throw new AgException(Response.Status.INTERNAL_SERVER_ERROR, String.format(
+            throw AgException.internalServerError(
                     "Found more than one object for ID '%s' and entity '%s'",
-                    context.getId(), context.getEntity().getName()));
+                    context.getId(),
+                    context.getEntity().getName());
         }
 
         return objects;
@@ -174,7 +173,7 @@ public class CayenneUpdateStage extends CayenneMergeChangesStage {
 
                 for (AgIdPart id : entity.getAgEntity().getIdParts()) {
                     properties.add(PropertyFactory.createBase(ExpressionFactory.dbPathExp(
-                            objRelationship.getReverseDbRelationshipPath() + "." + id.getName()),
+                                    objRelationship.getReverseDbRelationshipPath() + "." + id.getName()),
                             id.getType()));
                 }
 

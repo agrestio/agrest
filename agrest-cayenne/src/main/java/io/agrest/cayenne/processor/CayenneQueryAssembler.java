@@ -23,7 +23,6 @@ import org.apache.cayenne.query.Ordering;
 import org.apache.cayenne.query.SelectQuery;
 import org.apache.cayenne.query.SortOrder;
 
-import javax.ws.rs.core.Response;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -240,24 +239,23 @@ public class CayenneQueryAssembler implements ICayenneQueryAssembler {
 
         Collection<AgIdPart> idAttributes = entity.getIdParts();
         if (idAttributes.size() != id.size()) {
-            throw new AgException(Response.Status.BAD_REQUEST,
-                    "Wrong ID size: expected " + idAttributes.size() + ", got: " + id.size());
+            throw AgException.badRequest("Wrong ID size: expected %s, got: %s", idAttributes.size(), id.size());
         }
 
         Collection<Expression> qualifiers = new ArrayList<>();
         for (AgIdPart idAttribute : idAttributes) {
             Object idValue = id.get(idAttribute.getName());
             if (idValue == null) {
-                throw new AgException(Response.Status.BAD_REQUEST,
-                        "Failed to build a Cayenne qualifier for entity " + entity.getName()
-                                + ": one of the entity's ID parts is missing in this ID: " + idAttribute.getName());
+                throw AgException.badRequest(
+                        "Failed to build a Cayenne qualifier for entity %s: one of the entity's ID parts is missing in this ID: %s",
+                        entity.getName(),
+                        idAttribute.getName());
             }
 
             DbAttribute dbAttribute = dbAttributeForAgIdPart(entity, idAttribute);
 
             if (dbAttribute == null) {
-                throw new AgException(Response.Status.INTERNAL_SERVER_ERROR,
-                        "ID attribute '" + idAttribute.getName() + "' has no mapping to a column name");
+                throw AgException.internalServerError("ID attribute '%s' has no mapping to a column name", idAttribute.getName());
             }
 
             qualifiers.add(ExpressionFactory.matchDbExp(dbAttribute.getName(), idValue));

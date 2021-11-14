@@ -51,11 +51,11 @@ public class EntityUpdateReader implements MessageBodyReader<EntityUpdate<?>> {
         Collection<EntityUpdate<Object>> updates = reader.read(genericType, entityStream);
 
         if (updates.isEmpty()) {
-            throw new AgException(Status.BAD_REQUEST, "No update");
+            throw AgException.badRequest("No update");
         }
 
         if (updates.size() > 1) {
-            throw new AgException(Status.BAD_REQUEST, "Expected single update. Found: " + updates.size());
+            throw AgException.badRequest("Expected single update. Found: %s", updates.size());
         }
 
         return updates.iterator().next();

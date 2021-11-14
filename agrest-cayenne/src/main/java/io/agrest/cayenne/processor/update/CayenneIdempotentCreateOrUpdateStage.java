@@ -8,7 +8,6 @@ import io.agrest.runtime.processor.update.UpdateContext;
 import org.apache.cayenne.DataObject;
 import org.apache.cayenne.di.Inject;
 
-import javax.ws.rs.core.Response;
 import java.util.Collection;
 import java.util.Map;
 
@@ -33,7 +32,7 @@ public class CayenneIdempotentCreateOrUpdateStage extends CayenneCreateOrUpdateS
         // explicit key - each update applies to the same object;
 
         if (updates.getKey() == null) {
-            throw new AgException(Response.Status.BAD_REQUEST, "Request is not idempotent.");
+            throw AgException.badRequest("Request is not idempotent.");
         }
 
         super.createOrUpdate(context, relator, updates);

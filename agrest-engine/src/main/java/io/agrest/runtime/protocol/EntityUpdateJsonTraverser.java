@@ -14,7 +14,6 @@ import io.agrest.runtime.semantics.IRelationshipMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.ws.rs.core.Response;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.function.BiConsumer;
@@ -38,7 +37,7 @@ public class EntityUpdateJsonTraverser {
             } else if (json.isObject()) {
                 processObject(entity, json, visitor);
             } else {
-                throw new AgException(Response.Status.BAD_REQUEST, "Expected Object or Array. Got: " + json.asText());
+                throw AgException.badRequest("Expected Object or Array. Got: %s", json.asText());
             }
         }
     }
@@ -48,7 +47,7 @@ public class EntityUpdateJsonTraverser {
             if (node.isObject()) {
                 processObject(entity, node, visitor);
             } else {
-                throw new AgException(Response.Status.BAD_REQUEST, "Expected Object, got: " + node.asText());
+                throw AgException.badRequest("Expected Object, got: %s", node.asText());
             }
         }
     }
@@ -127,7 +126,7 @@ public class EntityUpdateJsonTraverser {
 
             JsonNode idNode = valueNode.get(id.getName());
             if (idNode == null) {
-                throw new AgException(Response.Status.BAD_REQUEST,
+                throw AgException.badRequest(
                         "Failed to parse update payload -- ID part is missing: " + id.getName());
             }
 

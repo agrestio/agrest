@@ -15,7 +15,6 @@ import org.apache.cayenne.exp.Expression;
 import org.apache.cayenne.map.EntityResolver;
 import org.apache.cayenne.query.SelectQuery;
 
-import javax.ws.rs.core.Response;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -73,9 +72,10 @@ public class CayenneIdempotentFullSyncStage extends CayenneIdempotentCreateOrUpd
         List<T> objects = fetchEntity(context, context.getEntity());
 
         if (context.isById() && objects.size() > 1) {
-            throw new AgException(Response.Status.INTERNAL_SERVER_ERROR, String.format(
+            throw AgException.internalServerError(
                     "Found more than one object for ID '%s' and entity '%s'",
-                    context.getId(), context.getEntity().getName()));
+                    context.getId(),
+                    context.getEntity().getName());
         }
         return objects;
     }

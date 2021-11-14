@@ -1,7 +1,6 @@
 package io.agrest.base.reflect;
 
 import io.agrest.AgException;
-import io.agrest.HttpStatus;
 
 import java.lang.reflect.Method;
 
@@ -40,7 +39,7 @@ public class PropertyGetter {
         try {
             return method.invoke(object, (Object[]) null);
         } catch (Throwable th) {
-            throw new AgException(HttpStatus.INTERNAL_SERVER_ERROR, "Error reading property: " + name, th);
+            throw AgException.internalServerError(th, "Error reading property: %s", name);
         }
     }
 }

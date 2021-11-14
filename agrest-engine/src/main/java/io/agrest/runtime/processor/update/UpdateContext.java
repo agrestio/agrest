@@ -1,21 +1,10 @@
 package io.agrest.runtime.processor.update;
 
-import io.agrest.AgException;
-import io.agrest.AgObjectId;
-import io.agrest.AgRequest;
-import io.agrest.CompoundObjectId;
-import io.agrest.DataResponse;
-import io.agrest.EntityParent;
-import io.agrest.EntityUpdate;
-import io.agrest.ObjectMapperFactory;
-import io.agrest.ResourceEntity;
-import io.agrest.RootResourceEntity;
-import io.agrest.SimpleObjectId;
+import io.agrest.*;
 import io.agrest.constraints.Constraint;
 import io.agrest.encoder.Encoder;
 import io.agrest.processor.BaseProcessingContext;
 
-import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriInfo;
 import java.util.Collection;
 import java.util.Collections;
@@ -100,8 +89,7 @@ public class UpdateContext<T> extends BaseProcessingContext<T> {
         Collection<EntityUpdate<T>> updates = getUpdates();
 
         if (updates.size() != 1) {
-            throw new AgException(Status.INTERNAL_SERVER_ERROR,
-                    "Expected one object in update. Actual: " + updates.size());
+            throw AgException.internalServerError("Expected one object in update. Actual: %s", updates.size());
         }
 
         return updates.iterator().next();

@@ -7,7 +7,6 @@ import io.agrest.runtime.processor.update.ByKeyObjectMapperFactory;
 import io.agrest.runtime.processor.update.UpdateContext;
 import io.agrest.runtime.processor.update.UpdateProcessorFactory;
 
-import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import java.util.Collection;
 import java.util.Collections;
@@ -50,7 +49,7 @@ public class DefaultUpdateBuilder<T> implements UpdateBuilder<T> {
 
         for (Object id : ids.entrySet()) {
             if (id == null) {
-                throw new AgException(Response.Status.NOT_FOUND, "Part of compound ID is null");
+                throw AgException.notFound("Part of compound ID is null");
             }
         }
 

@@ -9,7 +9,6 @@ import io.agrest.meta.AgRelationship;
 import io.agrest.property.PropertyReader;
 import io.agrest.runtime.semantics.IRelationshipMapper;
 
-import javax.ws.rs.core.Response;
 import java.util.*;
 
 /**
@@ -197,8 +196,10 @@ public class DataEncoderFactory {
                     ? ((NestedResourceEntity<?>) mapBy).getIncoming().getName()
                     : "";
 
-            throw new AgException(Response.Status.BAD_REQUEST, "'mapBy' path segment '" + pathSegment +
-                    "' should not have children. Full 'mapBy' path: " + mapByPath);
+            throw AgException.badRequest(
+                    "'mapBy' path segment '%s' should not have children. Full 'mapBy' path: %s",
+                    pathSegment,
+                    mapByPath);
         }
     }
 }

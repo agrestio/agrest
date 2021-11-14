@@ -10,7 +10,6 @@ import io.agrest.processor.Processor;
 import io.agrest.runtime.processor.select.SelectContext;
 import io.agrest.runtime.processor.select.SelectProcessorFactory;
 
-import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriInfo;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -133,7 +132,7 @@ public class DefaultSelectBuilder<T> implements SelectBuilder<T> {
         // select
 
         if (id == null) {
-            throw new AgException(Status.NOT_FOUND, "Null 'id'");
+            throw AgException.notFound("Null 'id'");
         }
 
         context.setId(id);
@@ -145,7 +144,7 @@ public class DefaultSelectBuilder<T> implements SelectBuilder<T> {
 
         for (Object id : ids.entrySet()) {
             if (id == null) {
-                throw new AgException(Status.NOT_FOUND, "Part of compound ID is null");
+                throw AgException.notFound("Part of compound ID is null");
             }
         }
 

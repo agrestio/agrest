@@ -1,10 +1,5 @@
 package io.agrest.runtime.path;
 
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
-import javax.ws.rs.core.Response.Status;
-
 import io.agrest.AgException;
 import io.agrest.PathConstants;
 import io.agrest.meta.AgAttribute;
@@ -13,6 +8,9 @@ import io.agrest.meta.AgIdPart;
 import io.agrest.meta.AgRelationship;
 import org.apache.cayenne.exp.parser.ASTObjPath;
 import org.apache.cayenne.exp.parser.ASTPath;
+
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 class EntityPathCache {
 
@@ -118,8 +116,7 @@ class EntityPathCache {
         int dot = path.indexOf(PathConstants.DOT);
 
         if (dot == 0 || dot == path.length() - 1) {
-            throw new AgException(Status.BAD_REQUEST, "Invalid path '" + path + "' for '" + entity.getName()
-                    + "'");
+            throw AgException.badRequest("Invalid path '%s' for '%s'", path, entity.getName());
         }
 
         if (dot > 0) {
@@ -128,8 +125,9 @@ class EntityPathCache {
             // must be a relationship ..
             AgRelationship relationship = entity.getRelationship(segment);
             if (relationship == null) {
-                throw new AgException(Status.BAD_REQUEST, "Invalid path '" + path + "' for '" + entity.getName()
-                        + "'. Not a relationship");
+                throw AgException.badRequest("Invalid path '%s' for '%s'. Not a relationship",
+                        path,
+                        entity.getName());
             }
 
             AgEntity<?> targetEntity = relationship.getTargetEntity();
@@ -147,7 +145,7 @@ class EntityPathCache {
             return relationship;
         }
 
-        throw new AgException(Status.BAD_REQUEST, "Invalid path '" + path + "' for '" + entity.getName() + "'");
+        throw AgException.badRequest("Invalid path '%s' for '%s'", path, entity.getName());
     }
 
     private String toRelationshipName(String pathSegment) {

@@ -54,7 +54,7 @@ public class AgBuilder_ExceptionMappersIT extends PojoTest {
         @GET
         @Path("agexception")
         public DataResponse<P1> agException(@Context UriInfo uriInfo) {
-            throw new AgException(Response.Status.FORBIDDEN, "_ag_exception_");
+            throw AgException.forbidden("_ag_exception_");
         }
 
         @GET

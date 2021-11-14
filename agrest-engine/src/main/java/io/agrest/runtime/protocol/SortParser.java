@@ -11,8 +11,6 @@ import org.apache.cayenne.di.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -75,7 +73,7 @@ public class SortParser implements ISortParser {
         try {
             return Dir.valueOf(unparsedDir);
         } catch (IllegalArgumentException e) {
-            throw new AgException(Response.Status.BAD_REQUEST, "'dir' is invalid: " + unparsedDir);
+            throw AgException.badRequest("'dir' is invalid: %s", unparsedDir);
         }
     }
 
@@ -98,7 +96,7 @@ public class SortParser implements ISortParser {
                 return;
             }
 
-            throw new AgException(Status.BAD_REQUEST, "Bad sort spec: " + node);
+            throw AgException.badRequest("Bad sort spec: %s", node);
         }
 
         JsonNode directionNode = node.get(JSON_KEY_DIRECTION);
@@ -114,11 +112,11 @@ public class SortParser implements ISortParser {
         int dot = path.indexOf(PathConstants.DOT);
 
         if (dot == 0) {
-            throw new AgException(Response.Status.BAD_REQUEST, "Ordering starts with dot: " + path);
+            throw AgException.badRequest("Ordering starts with dot: %s", path);
         }
 
         if (dot == path.length() - 1) {
-            throw new AgException(Response.Status.BAD_REQUEST, "Ordering ends with dot: " + path);
+            throw AgException.badRequest("Ordering ends with dot: %s", path);
         }
 
         Dir dir = unparsedDir != null && !unparsedDir.isEmpty() ? parseDir(unparsedDir) : Dir.ASC;

@@ -10,7 +10,6 @@ import io.agrest.meta.AgDataMap;
 import io.agrest.meta.AgEntityOverlay;
 import org.apache.cayenne.di.Inject;
 
-import javax.ws.rs.core.Response;
 import java.util.List;
 import java.util.Map;
 
@@ -42,7 +41,7 @@ public class IncludeMerger implements IIncludeMerger {
      */
     public static void checkTooLong(String path) {
         if (path != null && path.length() > PathConstants.MAX_PATH_LENGTH) {
-            throw new AgException(Response.Status.BAD_REQUEST, "Include/exclude path too long: " + path);
+            throw AgException.badRequest("Include/exclude path too long: %s", path);
         }
     }
 

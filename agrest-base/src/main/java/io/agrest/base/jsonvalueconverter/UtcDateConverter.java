@@ -2,7 +2,6 @@ package io.agrest.base.jsonvalueconverter;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import io.agrest.AgException;
-import io.agrest.HttpStatus;
 
 import java.time.*;
 import java.time.format.DateTimeFormatter;
@@ -134,7 +133,7 @@ public class UtcDateConverter<T extends java.util.Date> extends AbstractConverte
 				return localTime.get();
 			}
 
-			throw new AgException(HttpStatus.BAD_REQUEST, "Failed to build date/time/datetime: " + parsed);
+			throw AgException.badRequest("Failed to build date/time/datetime: %s", parsed);
 		}
 
 		private Optional<ZonedDateTime> getZonedDateTime(TemporalAccessor parsed) {

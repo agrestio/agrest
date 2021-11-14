@@ -5,6 +5,7 @@
 * #491 Consolidate access control API: fold readable and writable flags into the Ag entity model
 * #492 Annotation entity constraints block request-defined attributes
 * #494 java.lang.Double cannot be cast to java.math.BigDecimal
+* #495 Remove JAX-RS dependency from "agrest-base"
 
 ## Release 4.6
 

@@ -12,7 +12,6 @@ import org.apache.cayenne.exp.parser.ASTEqual;
 import org.apache.cayenne.map.*;
 import org.apache.cayenne.query.ObjectSelect;
 
-import javax.ws.rs.core.Response.Status;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -28,11 +27,11 @@ public final class CayenneUtil {
 
         // sanity checking...
         if (entity == null) {
-            throw new AgException(Status.INTERNAL_SERVER_ERROR, "Unknown entity class: " + type);
+            throw AgException.internalServerError("Unknown entity class: %s", type);
         }
 
         if (id == null) {
-            throw new AgException(Status.BAD_REQUEST, "No id specified");
+            throw AgException.badRequest("No id specified");
         }
 
         if (id instanceof Map) {
@@ -57,7 +56,7 @@ public final class CayenneUtil {
         ObjRelationship objRelationship = parentEntity.getRelationship(parent.getRelationship());
 
         if (objRelationship == null) {
-            throw new AgException(Status.BAD_REQUEST, "Invalid relationship: '" + parent.getRelationship() + "'");
+            throw AgException.badRequest("Invalid relationship: '%s'", parent.getRelationship());
         }
 
         // navigate through DbRelationships. There may be no reverse ObjRelationship. Reverse DB should always be there
@@ -70,9 +69,10 @@ public final class CayenneUtil {
                 for (DbJoin join : reverseRelationship.getJoins()) {
                     Object joinValue = id.get(join.getTargetName());
                     if (joinValue == null) {
-                        throw new AgException(Status.BAD_REQUEST,
-                                "Failed to build a Cayenne qualifier for a by-parent relationship '" + parent.getRelationship() +
-                                        "'; one of the parent's ID parts is missing in it's ID: " + join.getTargetName());
+                        throw AgException.badRequest(
+                                "Failed to build a Cayenne qualifier for a by-parent relationship '%s'; one of the parent's ID parts is missing in it's ID: %s",
+                                parent.getRelationship(),
+                                join.getTargetName());
                     }
                     expressions.add(ExpressionFactory.matchDbExp(join.getSourceName(), joinValue));
                 }

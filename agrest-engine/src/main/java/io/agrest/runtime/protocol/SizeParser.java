@@ -3,8 +3,6 @@ package io.agrest.runtime.protocol;
 import com.fasterxml.jackson.databind.JsonNode;
 import io.agrest.AgException;
 
-import javax.ws.rs.core.Response;
-
 /**
  * @since 2.13
  */
@@ -15,7 +13,7 @@ public class SizeParser implements ISizeParser {
 
         if (json != null) {
             if (!json.isNumber()) {
-                throw new AgException(Response.Status.BAD_REQUEST, "Expected 'int' as 'start' value, got: " + json);
+                throw AgException.badRequest("Expected 'int' as 'start' value, got: %s", json);
             }
 
             return json.asInt();
@@ -29,7 +27,7 @@ public class SizeParser implements ISizeParser {
 
         if (json != null) {
             if (!json.isNumber()) {
-                throw new AgException(Response.Status.BAD_REQUEST, "Expected 'int' as 'limit' value, got: " + json);
+                throw AgException.badRequest("Expected 'int' as 'limit' value, got: %s", json);
             }
 
             return json.asInt();

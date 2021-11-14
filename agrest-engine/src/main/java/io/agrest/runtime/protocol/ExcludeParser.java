@@ -8,7 +8,6 @@ import io.agrest.runtime.entity.IncludeMerger;
 import io.agrest.runtime.jackson.IJacksonService;
 import org.apache.cayenne.di.Inject;
 
-import javax.ws.rs.core.Response;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -54,7 +53,7 @@ public class ExcludeParser implements IExcludeParser {
             } else if (child.isTextual()) {
                 appendPath(excludes, parentPath != null ? parentPath + '.' + child.asText() : child.asText());
             } else {
-                throw new AgException(Response.Status.BAD_REQUEST, "Bad exclude spec: " + child);
+                throw AgException.badRequest("Bad exclude spec: %s", child);
             }
         }
     }
@@ -65,11 +64,11 @@ public class ExcludeParser implements IExcludeParser {
         int dot = path.indexOf(PathConstants.DOT);
 
         if (dot == 0) {
-            throw new AgException(Response.Status.BAD_REQUEST, "Exclude starts with dot: " + path);
+            throw AgException.badRequest("Exclude starts with dot: %s", path);
         }
 
         if (dot == path.length() - 1) {
-            throw new AgException(Response.Status.BAD_REQUEST, "Exclude ends with dot: " + path);
+            throw AgException.badRequest("Exclude ends with dot: %s", path);
         }
 
         excludes.add(new Exclude(path));

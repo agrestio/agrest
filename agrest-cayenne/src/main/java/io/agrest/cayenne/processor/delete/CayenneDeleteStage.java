@@ -17,7 +17,6 @@ import org.apache.cayenne.map.ObjEntity;
 import org.apache.cayenne.query.EJBQLQuery;
 import org.apache.cayenne.query.SelectQuery;
 
-import javax.ws.rs.core.Response;
 import java.util.List;
 
 /**
@@ -69,8 +68,7 @@ public class CayenneDeleteStage implements Processor<DeleteContext<?>> {
 
             if (o == null) {
                 ObjEntity entity = cayenneContext.getEntityResolver().getObjEntity(context.getType());
-                throw new AgException(Response.Status.NOT_FOUND, "No object for ID '" + id + "' and entity '"
-                        + entity.getName() + "'");
+                throw AgException.notFound("No object for ID '%s' and entity '%s'", id, entity.getName());
             }
 
             cayenneContext.deleteObject(o);
@@ -85,8 +83,7 @@ public class CayenneDeleteStage implements Processor<DeleteContext<?>> {
 
         if (parentObject == null) {
             ObjEntity entity = cayenneContext.getEntityResolver().getObjEntity(parent.getType());
-            throw new AgException(Response.Status.NOT_FOUND, "No parent object for ID '" + parent.getId()
-                    + "' and entity '" + entity.getName() + "'");
+            throw AgException.notFound("No parent object for ID '%s' and entity '%s'", parent.getId(), entity.getName());
         }
 
         Expression qualifier = CayenneUtil.parentQualifier(parent, cayenneContext.getEntityResolver());

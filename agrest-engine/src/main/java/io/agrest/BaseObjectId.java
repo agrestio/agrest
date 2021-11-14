@@ -3,7 +3,6 @@ package io.agrest;
 import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgIdPart;
 
-import javax.ws.rs.core.Response;
 import java.util.Collection;
 import java.util.Map;
 
@@ -16,14 +15,12 @@ public abstract class BaseObjectId implements AgObjectId {
     public Map<String, Object> asMap(AgEntity<?> entity) {
 
         if (entity == null) {
-            throw new AgException(Response.Status.INTERNAL_SERVER_ERROR,
-                    "Can't build ID: entity is null");
+            throw AgException.internalServerError("Can't build ID: entity is null");
         }
 
         Collection<AgIdPart> idAttributes = entity.getIdParts();
         if (idAttributes.size() != size()) {
-            throw new AgException(Response.Status.BAD_REQUEST,
-                    "Wrong ID size: expected " + idAttributes.size() + ", got: " + size());
+            throw AgException.badRequest("Wrong ID size: expected %s, got: %s", idAttributes.size(), size());
         }
 
         return asMap(idAttributes);

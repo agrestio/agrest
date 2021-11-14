@@ -6,7 +6,6 @@ import io.agrest.PathConstants;
 import io.agrest.ResourceEntity;
 import io.agrest.meta.*;
 
-import javax.ws.rs.core.Response;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Objects;
@@ -52,11 +51,11 @@ public class ResourceEntityTreeBuilder {
         int dot = path.indexOf(PathConstants.DOT);
 
         if (dot == 0) {
-            throw new AgException(Response.Status.BAD_REQUEST, "Include starts with dot: " + path);
+            throw AgException.badRequest("Include starts with dot: %s", path);
         }
 
         if (dot == path.length() - 1) {
-            throw new AgException(Response.Status.BAD_REQUEST, "Include ends with dot: " + path);
+            throw AgException.badRequest("Include ends with dot: %s", path);
         }
 
         String property = dot > 0 ? path.substring(0, dot) : path;
@@ -98,7 +97,7 @@ public class ResourceEntityTreeBuilder {
             return entity;
         }
 
-        throw new AgException(Response.Status.BAD_REQUEST, "Invalid include path: " + path);
+        throw AgException.badRequest("Invalid include path: %s", path);
     }
 
     protected ResourceEntity<?> inflateChild(ResourceEntity<?> parentEntity, AgRelationship relationship, String childPath) {

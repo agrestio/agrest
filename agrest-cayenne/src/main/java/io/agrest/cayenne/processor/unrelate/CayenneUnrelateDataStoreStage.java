@@ -14,7 +14,6 @@ import org.apache.cayenne.di.Inject;
 import org.apache.cayenne.map.ObjEntity;
 import org.apache.cayenne.query.ObjectIdQuery;
 
-import javax.ws.rs.core.Response;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -55,7 +54,7 @@ public class CayenneUnrelateDataStoreStage implements Processor<UnrelateContext<
                 .getRelationship(context.getParent().getRelationship());
 
         if (relationship == null) {
-            throw new AgException(Response.Status.BAD_REQUEST, "Invalid relationship: '" + context.getParent().getRelationship() + "'");
+            throw AgException.badRequest("Invalid relationship: '%s'", context.getParent().getRelationship());
         }
 
         DataObject parent = (DataObject) getExistingObject(context.getParent().getType(), cayenneContext, context
@@ -71,7 +70,7 @@ public class CayenneUnrelateDataStoreStage implements Processor<UnrelateContext<
             // sanity check...
             Collection<?> relatedCollection = (Collection<?>) parent.readProperty(relationship.getName());
             if (!relatedCollection.contains(child)) {
-                throw new AgException(Response.Status.EXPECTATION_FAILED, "Source and target are not related");
+                throw AgException.badRequest("Source and target are not related");
             }
 
             parent.removeToManyTarget(relationship.getName(), child, true);
@@ -79,7 +78,7 @@ public class CayenneUnrelateDataStoreStage implements Processor<UnrelateContext<
 
             // sanity check...
             if (parent.readProperty(relationship.getName()) != child) {
-                throw new AgException(Response.Status.EXPECTATION_FAILED, "Source and target are not related");
+                throw AgException.badRequest("Source and target are not related");
             }
 
             parent.setToOneTarget(relationship.getName(), null, true);
@@ -95,7 +94,7 @@ public class CayenneUnrelateDataStoreStage implements Processor<UnrelateContext<
                 .getRelationship(context.getParent().getRelationship());
 
         if (relationship == null) {
-            throw new AgException(Response.Status.BAD_REQUEST, "Invalid relationship: '" + context.getParent().getRelationship() + "'");
+            throw AgException.badRequest("Invalid relationship: '%s'", context.getParent().getRelationship());
         }
 
         DataObject parent = (DataObject) getExistingObject(context.getParent().getType(), cayenneContext, context
@@ -131,8 +130,7 @@ public class CayenneUnrelateDataStoreStage implements Processor<UnrelateContext<
         Object object = getOptionalExistingObject(type, context, id);
         if (object == null) {
             ObjEntity entity = context.getEntityResolver().getObjEntity(type);
-            throw new AgException(Response.Status.NOT_FOUND, "No object for ID '" + id + "' and entity '"
-                    + entity.getName() + "'");
+            throw AgException.notFound("No object for ID '%s' and entity '%s'", id, entity.getName());
         }
 
         return object;
@@ -145,7 +143,7 @@ public class CayenneUnrelateDataStoreStage implements Processor<UnrelateContext<
 
         // sanity checking...
         if (entity == null) {
-            throw new AgException(Response.Status.INTERNAL_SERVER_ERROR, "Unknown entity class: " + type);
+            throw AgException.internalServerError("Unknown entity class: %s", type);
         }
 
         // TODO: should we start using optimistic locking on PK by default

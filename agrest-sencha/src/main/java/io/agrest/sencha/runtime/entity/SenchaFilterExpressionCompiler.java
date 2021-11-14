@@ -6,7 +6,6 @@ import io.agrest.meta.AgEntity;
 import io.agrest.sencha.ops.FilterUtil;
 import io.agrest.sencha.protocol.Filter;
 
-import javax.ws.rs.core.Response.Status;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -42,7 +41,7 @@ public class SenchaFilterExpressionCompiler implements ISenchaFilterExpressionCo
             case "in":
                 return in(filter);
             default:
-                throw new AgException(Status.BAD_REQUEST, "Invalid filter operator: " + filter.getOperator());
+                throw AgException.badRequest("Invalid filter operator: %s", filter.getOperator());
         }
     }
 
@@ -73,7 +72,7 @@ public class SenchaFilterExpressionCompiler implements ISenchaFilterExpressionCo
 
     private void checkValueLength(String value) {
         if (value.length() > MAX_VALUE_LENGTH) {
-            throw new AgException(Status.BAD_REQUEST, "filter 'value' is to long: " + value);
+            throw AgException.badRequest("filter 'value' is to long: %s", value);
         }
     }
 }

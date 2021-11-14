@@ -13,7 +13,6 @@ import javax.ws.rs.core.Configuration;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
-import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.ext.MessageBodyReader;
 import javax.ws.rs.ext.Provider;
 import java.io.InputStream;
@@ -62,8 +61,7 @@ public class EntityUpdateCollectionReader<T> implements MessageBodyReader<Collec
             InputStream entityStream) throws WebApplicationException {
 
         Type entityUpdateType = Types.unwrapTypeArgument(genericType)
-                .orElseThrow(() -> new AgException(Status.INTERNAL_SERVER_ERROR,
-                        "Invalid request entity collection type: " + genericType));
+                .orElseThrow(() -> AgException.internalServerError("Invalid request entity collection type: %s", genericType));
 
         return reader.read(entityUpdateType, entityStream);
     }

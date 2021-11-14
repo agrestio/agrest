@@ -13,7 +13,6 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
 public class AgExceptionMapperIT extends PojoTest {
@@ -35,7 +34,7 @@ public class AgExceptionMapperIT extends PojoTest {
         @GET
         @Path("p1")
         public DataResponse<P1> getE2(@Context UriInfo uriInfo) {
-            throw new AgException(Response.Status.FORBIDDEN, "_was_forbidden_");
+            throw AgException.forbidden("_was_forbidden_");
         }
     }
 }

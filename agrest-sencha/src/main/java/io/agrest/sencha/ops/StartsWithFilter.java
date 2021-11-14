@@ -6,7 +6,6 @@ import io.agrest.meta.AgAttribute;
 import io.agrest.meta.AgEntity;
 import io.agrest.runtime.processor.select.SelectContext;
 
-import javax.ws.rs.core.Response;
 import java.util.Optional;
 
 /**
@@ -39,12 +38,14 @@ public class StartsWithFilter {
     private void validateAttribute(AgEntity<?> entity, String queryProperty) {
         AgAttribute attribute = entity.getAttribute(queryProperty);
         if (attribute == null) {
-            throw new AgException(Response.Status.INTERNAL_SERVER_ERROR, "No such property '" + queryProperty
-                    + "' for entity '" + entity.getName() + "'");
+            throw AgException.internalServerError(
+                    "No such property '%s' for entity '%s'", queryProperty, entity.getName());
+
         } else if (!String.class.equals(attribute.getType())) {
-            throw new AgException(Response.Status.INTERNAL_SERVER_ERROR,
-                    "Invalid property type for query comparison: '" + queryProperty + "' for entity '"
-                            + entity.getName() + "'");
+            throw AgException.internalServerError(
+                    "Invalid property type for query comparison: '%s' for entity '%s'",
+                    queryProperty,
+                    entity.getName());
         }
     }
 }

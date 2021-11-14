@@ -5,7 +5,6 @@ import io.agrest.AgException;
 import io.agrest.encoder.converter.StringConverter;
 import io.agrest.property.PropertyReader;
 
-import javax.ws.rs.core.Response.Status;
 import java.io.IOException;
 import java.util.*;
 import java.util.Map.Entry;
@@ -108,7 +107,7 @@ public class MapByEncoder implements CollectionEncoder {
             // note that converter below will throw an NPE if we pass NULL
             // further down... the error here has more context.
             if (key == null) {
-                throw new AgException(Status.INTERNAL_SERVER_ERROR, "Null mapBy value for key '" + mapByPath + "'");
+                throw AgException.internalServerError("Null mapBy value for key '%s'", mapByPath);
             }
 
             String keyString = fieldNameConverter.asString(key);

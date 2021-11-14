@@ -6,7 +6,6 @@ import io.agrest.ResourceEntity;
 import io.agrest.base.protocol.Exclude;
 import io.agrest.meta.AgEntity;
 
-import javax.ws.rs.core.Response.Status;
 import java.util.List;
 
 public class ExcludeMerger implements IExcludeMerger {
@@ -35,11 +34,11 @@ public class ExcludeMerger implements IExcludeMerger {
         int dot = path.indexOf(PathConstants.DOT);
 
         if (dot == 0) {
-            throw new AgException(Status.BAD_REQUEST, "Exclude starts with dot: " + path);
+            throw AgException.badRequest("Exclude starts with dot: %s", path);
         }
 
         if (dot == path.length() - 1) {
-            throw new AgException(Status.BAD_REQUEST, "Exclude ends with dot: " + path);
+            throw AgException.badRequest("Exclude ends with dot: %s", path);
         }
 
         if (dot >= 0) {
@@ -55,7 +54,7 @@ public class ExcludeMerger implements IExcludeMerger {
 
         if (!wasExcluded && !isValidProperty(entity.getAgEntity(), path)) {
             // throw when the property is invalid (and not simply not included) for symmetry with "include"
-            throw new AgException(Status.BAD_REQUEST, "Invalid exclude path: " + path);
+            throw AgException.badRequest("Invalid exclude path: %s", path);
         }
     }
 

@@ -11,7 +11,6 @@ import org.apache.cayenne.di.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.ws.rs.core.Response;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -90,7 +89,7 @@ public class IncludeParser implements IIncludeParser {
             } else if (child.isTextual()) {
                 includes.add(new Include(parentPath != null ? parentPath + '.' + child.asText() : child.asText()));
             } else {
-                throw new AgException(Response.Status.BAD_REQUEST, "Bad include spec: " + child);
+                throw AgException.badRequest("Bad include spec: %s", child);
             }
         }
     }
@@ -150,11 +149,11 @@ public class IncludeParser implements IIncludeParser {
         int dot = path.indexOf(PathConstants.DOT);
 
         if (dot == 0) {
-            throw new AgException(Response.Status.BAD_REQUEST, "Exclude starts with dot: " + path);
+            throw AgException.badRequest("Exclude starts with dot: %s", path);
         }
 
         if (dot == path.length() - 1) {
-            throw new AgException(Response.Status.BAD_REQUEST, "Exclude ends with dot: " + path);
+            throw AgException.badRequest("Exclude ends with dot: %s", path);
         }
 
         includes.add(new Include(path));

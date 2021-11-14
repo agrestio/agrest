@@ -9,7 +9,6 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
 
 public class GET_ExceptionIT extends PojoTest {
 
@@ -36,7 +35,7 @@ public class GET_ExceptionIT extends PojoTest {
 
         @GET
         public Response get() {
-            throw new AgException(Status.NOT_FOUND, "request failed");
+            throw AgException.notFound("request failed");
         }
 
         @GET
@@ -45,7 +44,7 @@ public class GET_ExceptionIT extends PojoTest {
             try {
                 throw new Throwable("Dummy");
             } catch (Throwable th) {
-                throw new AgException(Status.INTERNAL_SERVER_ERROR, "request failed with th", th);
+                throw AgException.internalServerError(th, "request failed with th");
             }
         }
     }

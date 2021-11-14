@@ -9,7 +9,6 @@ import org.apache.cayenne.exp.Expression;
 import org.apache.cayenne.exp.parser.ASTEqual;
 import org.apache.cayenne.exp.parser.ASTPath;
 
-import javax.ws.rs.core.Response.Status;
 import java.util.*;
 
 import static org.apache.cayenne.exp.ExpressionFactory.joinExp;
@@ -55,7 +54,7 @@ class ByIdObjectMapper<T> implements ObjectMapper<T> {
 
         Object value = idMap.get(path.getPath());
         if (value == null) {
-            throw new AgException(Status.BAD_REQUEST, "No ID value for path: " + path);
+            throw AgException.badRequest("No ID value for path: %s", path);
         }
 
         return new ASTEqual(path, value);

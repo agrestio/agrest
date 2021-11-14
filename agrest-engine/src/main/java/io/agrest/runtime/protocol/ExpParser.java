@@ -7,12 +7,7 @@ import io.agrest.base.protocol.Exp;
 import io.agrest.runtime.jackson.IJacksonService;
 import org.apache.cayenne.di.Inject;
 
-import javax.ws.rs.core.Response.Status;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class ExpParser implements IExpParser {
 
@@ -110,7 +105,7 @@ public class ExpParser implements IExpParser {
         // 'exp' key is required; 'params' key is optional
         JsonNode expNode = node.get(JSON_KEY_EXP);
         if (expNode == null) {
-            throw new AgException(Status.BAD_REQUEST, "'exp' key is missing in 'exp' map");
+            throw AgException.badRequest("'exp' key is missing in 'exp' map");
         }
 
         JsonNode paramsNode = node.get(JSON_KEY_PARAMS);
@@ -136,7 +131,7 @@ public class ExpParser implements IExpParser {
         int len = array.size();
 
         if (len < 1) {
-            throw new AgException(Status.BAD_REQUEST, "array 'exp' mast have at least one element");
+            throw AgException.badRequest("array 'exp' mast have at least one element");
         }
 
         String expString = array.get(0).asText();

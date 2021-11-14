@@ -23,11 +23,14 @@ public class AgExceptionMapper implements ExceptionMapper<AgException> {
         String message = exception.getMessage();
         String causeMessage = exception.getCause() != null && exception.getCause() != exception
                 ? exception.getCause().getMessage() : null;
-        Status status = exception.getStatus();
+        int status = exception.getStatus();
 
         if (LOGGER.isInfoEnabled()) {
             StringBuilder log = new StringBuilder();
-            log.append(status.getStatusCode()).append(" ").append(status.getReasonPhrase());
+
+            Status jaxRSStatus = Status.fromStatusCode(status);
+
+            log.append(status).append(" ").append(jaxRSStatus.getReasonPhrase());
 
             if (message != null) {
                 log.append(" (").append(message).append(")");

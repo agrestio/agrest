@@ -1,10 +1,6 @@
 package io.agrest.runtime.constraints;
 
-import io.agrest.AgException;
-import io.agrest.NestedResourceEntity;
-import io.agrest.EntityUpdate;
-import io.agrest.PathConstants;
-import io.agrest.ResourceEntity;
+import io.agrest.*;
 import io.agrest.constraints.ConstrainedAgEntity;
 import io.agrest.constraints.Constraint;
 import io.agrest.meta.AgAttribute;
@@ -12,7 +8,6 @@ import io.agrest.runtime.processor.update.UpdateContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.ws.rs.core.Response.Status;
 import java.util.Iterator;
 import java.util.Map.Entry;
 
@@ -151,11 +146,11 @@ class RequestConstraintsHandler {
         int dot = path.indexOf(PathConstants.DOT);
 
         if (dot == 0) {
-            throw new AgException(Status.BAD_REQUEST, "Path starts with dot: " + path);
+            throw AgException.badRequest("Path starts with dot: %s", path);
         }
 
         if (dot == path.length() - 1) {
-            throw new AgException(Status.BAD_REQUEST, "Path ends with dot: " + path);
+            throw AgException.badRequest("Path ends with dot: %s", path);
         }
 
         if (dot > 0) {

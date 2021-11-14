@@ -17,7 +17,6 @@ import org.apache.cayenne.map.*;
 import org.apache.cayenne.query.ObjectSelect;
 import org.apache.cayenne.reflect.ClassDescriptor;
 
-import javax.ws.rs.core.Response;
 import java.util.*;
 
 /**
@@ -27,7 +26,7 @@ import java.util.*;
  */
 public abstract class CayenneMergeChangesStage implements Processor<UpdateContext<?>> {
 
-    private AgDataMap dataMap;
+    private final AgDataMap dataMap;
     protected EntityResolver entityResolver;
 
     public CayenneMergeChangesStage(AgDataMap dataMap, EntityResolver entityResolver) {
@@ -74,7 +73,7 @@ public abstract class CayenneMergeChangesStage implements Processor<UpdateContex
         if (idByAgAttribute != null) {
 
             if (context.isIdUpdatesDisallowed() && u.isExplicitId()) {
-                throw new AgException(Response.Status.BAD_REQUEST, "Setting ID explicitly is not allowed: " + idByAgAttribute);
+                throw AgException.badRequest("Setting ID explicitly is not allowed: %s", idByAgAttribute);
             }
 
             ObjEntity objEntity = objectContext.getEntityResolver().getObjEntity(context.getType());
@@ -107,11 +106,7 @@ public abstract class CayenneMergeChangesStage implements Processor<UpdateContex
             DbAttribute dbAttribute = dbAttributeForAgAttribute(agEntity, e.getKey());
 
             if (dbAttribute == null) {
-                throw new AgException(Response.Status.BAD_REQUEST, "Not a mapped persistent attribute '"
-                        + agEntity.getName()
-                        + "."
-                        + e.getKey()
-                        + "'");
+                throw AgException.badRequest("Not a mapped persistent attribute '%s.%s'", agEntity.getName(), e.getKey());
             }
 
             idByDbAttribute.put(dbAttribute, e.getValue());
@@ -138,11 +133,9 @@ public abstract class CayenneMergeChangesStage implements Processor<UpdateContex
         }
 
         if (query.selectOne(objectContext) != null) {
-            throw new AgException(Response.Status.BAD_REQUEST, "Can't create '"
-                    + agEntity.getName()
-                    + "' with id "
-                    + CompoundObjectId.mapToString(idByAgAttribute)
-                    + " - already exists");
+            throw AgException.badRequest("Can't create '%s' with id %s - already exists",
+                    agEntity.getName(),
+                    CompoundObjectId.mapToString(idByAgAttribute));
         }
     }
 
@@ -156,12 +149,10 @@ public abstract class CayenneMergeChangesStage implements Processor<UpdateContex
 
             DbAttribute maybePk = idPart.getKey();
             if (maybePk == null) {
-                throw new AgException(Response.Status.BAD_REQUEST, "Can't create '"
-                        + entity.getName()
-                        + "' with id "
-                        + CompoundObjectId.mapToString(idByAgAttribute)
-                        + " - not an ID DB attribute: "
-                        + idPart.getKey());
+                throw AgException.badRequest("Can't create '%s' with id %s - not an ID DB attribute: %s",
+                        entity.getName(),
+                        CompoundObjectId.mapToString(idByAgAttribute),
+                        idPart.getKey());
             }
 
             if (maybePk.isPrimaryKey()) {
@@ -170,11 +161,10 @@ public abstract class CayenneMergeChangesStage implements Processor<UpdateContex
 
                 ObjAttribute objAttribute = entity.getAttributeForDbAttribute(maybePk);
                 if (objAttribute == null) {
-                    throw new AgException(Response.Status.BAD_REQUEST, "Can't create '"
-                            + entity.getName()
-                            + "' with id " + CompoundObjectId.mapToString(idByAgAttribute)
-                            + " - unknown object attribute: "
-                            + idPart.getKey());
+                    throw AgException.badRequest("Can't create '%s' with id %s - unknown object attribute: %s",
+                            entity.getName(),
+                            CompoundObjectId.mapToString(idByAgAttribute),
+                            idPart.getKey());
                 }
 
                 o.writeProperty(objAttribute.getName(), idPart.getValue());
@@ -193,7 +183,7 @@ public abstract class CayenneMergeChangesStage implements Processor<UpdateContex
         // 2. PK is auto-generated ... I guess this is sorta expected to fail - generated meaningless PK should not be
         // pushed from the client
         else if (pk.isGenerated()) {
-            throw new AgException(Response.Status.BAD_REQUEST, "Can't create '" + entity.getName() + "' with fixed id");
+            throw AgException.badRequest("Can't create '%s' with fixed id", entity.getName());
         }
         // 3. probably a propagated ID.
         else {
@@ -250,9 +240,9 @@ public abstract class CayenneMergeChangesStage implements Processor<UpdateContex
             }
 
             if (!agRelationship.isToMany() && relatedIds.size() > 1) {
-                throw new AgException(Response.Status.BAD_REQUEST,
-                        "Relationship is to-one, but received update with multiple objects: " +
-                                agRelationship.getName());
+                throw AgException.badRequest(
+                        "Relationship is to-one, but received update with multiple objects: %s",
+                        agRelationship.getName());
             }
 
             ClassDescriptor relatedDescriptor = context.getEntityResolver().getClassDescriptor(
@@ -280,8 +270,9 @@ public abstract class CayenneMergeChangesStage implements Processor<UpdateContex
                         relatedId);
 
                 if (related == null) {
-                    throw new AgException(Response.Status.NOT_FOUND, "Related object '"
-                            + relationship.getTargetEntityName() + "' with ID '" + e.getValue() + "' is not found");
+                    throw AgException.notFound("Related object '%s' with ID '%s' is not found",
+                            relationship.getTargetEntityName(),
+                            e.getValue());
                 }
 
                 relator.relate(agRelationship, o, related);
@@ -319,8 +310,7 @@ public abstract class CayenneMergeChangesStage implements Processor<UpdateContex
                 parentAgEntity, parent.getId().get());
 
         if (parentObject == null) {
-            throw new AgException(Response.Status.NOT_FOUND, "No parent object for ID '" + parent.getId()
-                    + "' and entity '" + parentEntity.getName() + "'");
+            throw AgException.notFound("No parent object for ID '%s' and entity '%s'", parent.getId(), parentEntity.getName());
         }
 
         // TODO: check that relationship target is the same as <T> ??
@@ -358,7 +348,7 @@ public abstract class CayenneMergeChangesStage implements Processor<UpdateContex
         void removeUpdateForRelatedObject(DataObject o);
     }
 
-    class ObjectRelator {
+    static class ObjectRelator {
 
         void relateToParent(DataObject object) {
             // do nothing

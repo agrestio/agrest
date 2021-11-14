@@ -2,14 +2,13 @@ package io.agrest.base.jsonvalueconverter;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import io.agrest.AgException;
-import io.agrest.HttpStatus;
 
 /**
  * @since 2.10
  */
 public class EnumConverter<T extends Enum<T>> extends AbstractConverter<T> {
 
-    private Class<T> enumType;
+    private final Class<T> enumType;
 
     public EnumConverter(Class<T> enumType) {
         this.enumType = enumType;
@@ -25,8 +24,7 @@ public class EnumConverter<T extends Enum<T>> extends AbstractConverter<T> {
         try {
             return Enum.valueOf(enumType, string);
         } catch (IllegalArgumentException e) {
-            throw new AgException(HttpStatus.BAD_REQUEST,
-                    "Invalid enum value: " + string);
+            throw AgException.badRequest("Invalid enum value: %s", string);
         }
     }
 

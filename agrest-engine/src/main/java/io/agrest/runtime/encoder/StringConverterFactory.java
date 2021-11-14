@@ -6,7 +6,6 @@ import io.agrest.encoder.converter.StringConverter;
 import io.agrest.meta.AgAttribute;
 import io.agrest.meta.AgEntity;
 
-import javax.ws.rs.core.Response.Status;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -48,8 +47,7 @@ public class StringConverterFactory implements IStringConverterFactory {
         AgAttribute attribute = entity.getAttribute(attributeName);
 
         if (attribute == null) {
-            throw new AgException(Status.BAD_REQUEST,
-                    "Invalid attribute: '" + entity.getName() + "." + attributeName + "'");
+            throw AgException.badRequest("Invalid attribute: '%s.%s'",  entity.getName(), attributeName);
         }
 
         return buildConverter(attribute);

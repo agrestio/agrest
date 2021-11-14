@@ -10,7 +10,6 @@ import io.agrest.runtime.processor.select.SelectContext;
 import org.apache.cayenne.DataObject;
 import org.apache.cayenne.query.SelectQuery;
 
-import javax.ws.rs.core.Response;
 import java.util.List;
 
 /**
@@ -47,11 +46,11 @@ public class ViaQueryResolver<T extends DataObject> extends BaseRootDataResolver
             AgEntity<?> entity = context.getEntity().getAgEntity();
 
             if (result.isEmpty()) {
-                throw new AgException(Response.Status.NOT_FOUND,
-                        String.format("No object for ID '%s' and entity '%s'", context.getId(), entity.getName()));
+                throw AgException.notFound("No object for ID '%s' and entity '%s'", context.getId(), entity.getName());
             } else {
-                throw new AgException(Response.Status.INTERNAL_SERVER_ERROR, String.format(
-                        "Found more than one object for ID '%s' and entity '%s'", context.getId(), entity.getName()));
+                throw AgException.internalServerError("Found more than one object for ID '%s' and entity '%s'",
+                        context.getId(),
+                        entity.getName());
             }
         }
     }
