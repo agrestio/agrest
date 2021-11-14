@@ -109,6 +109,10 @@ public class ConstraintsBuilder<T> implements Constraint<T> {
         return includeId(false);
     }
 
+    /**
+     * @deprecated since 4.7. For server-side filtering use "Ag.request().andExp()"
+     */
+    @Deprecated
     public ConstraintsBuilder<T> qualifier(Exp qualifier) {
         return new ConstraintsBuilder<>(op.andThen(ce -> {
             ce.setQualifier(qualifier);

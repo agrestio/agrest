@@ -64,6 +64,10 @@ public class ConstrainedAgEntity<T> {
         return children.containsKey(name);
     }
 
+    /**
+     * @deprecated since 4.7. For server-side filtering use "Ag.request().andExp()"
+     */
+    @Deprecated
     public Exp getQualifier() {
         return qualifier;
     }
@@ -109,6 +113,7 @@ public class ConstrainedAgEntity<T> {
         this.idIncluded = include;
     }
 
+    @Deprecated
     void setQualifier(Exp qualifier) {
         this.qualifier = qualifier;
     }

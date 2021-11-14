@@ -197,6 +197,7 @@ public class ConstraintsHandlerTest {
         assertFalse(e3.isIdIncluded());
     }
 
+    @Deprecated
     @Test
     public void testConstrainResponse_Exp() {
 
