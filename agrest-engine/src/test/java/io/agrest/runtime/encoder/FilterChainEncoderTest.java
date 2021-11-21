@@ -1,22 +1,19 @@
 package io.agrest.runtime.encoder;
 
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.isNull;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.Collections;
-
+import com.fasterxml.jackson.core.JsonGenerator;
 import io.agrest.ResourceEntity;
 import io.agrest.encoder.Encoder;
 import io.agrest.encoder.EntityEncoderFilter;
 import io.agrest.encoder.FilterChainEncoder;
 import org.junit.jupiter.api.Test;
 
-import com.fasterxml.jackson.core.JsonGenerator;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.Collections;
+
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.isNull;
+import static org.mockito.Mockito.*;
 
 public class FilterChainEncoderTest {
 
@@ -26,7 +23,7 @@ public class FilterChainEncoderTest {
 		Encoder delegate = mock(Encoder.class);
 
 		FilterChainEncoder chain = new FilterChainEncoder(delegate, Collections.<EntityEncoderFilter> emptyList());
-		chain.encode(null, new Object(), mock(JsonGenerator.class));
+		chain.encode("prop", new Object(), mock(JsonGenerator.class));
 		verify(delegate).encode(any(String.class), any(), any(JsonGenerator.class));
 	}
 

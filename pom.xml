@@ -43,6 +43,7 @@
         <bootique-version>2.0.B1</bootique-version>
         <junit5-version>5.7.0</junit5-version>
         <swagger.version>2.1.5</swagger.version>
+        <mockito.version>3.9.0</mockito.version>
 
         <gpg.pinentry.mode>loopback</gpg.pinentry.mode>
     </properties>
@@ -108,8 +109,8 @@
             </dependency>
             <dependency>
                 <groupId>org.mockito</groupId>
-                <artifactId>mockito-all</artifactId>
-                <version>1.9.5-rc1</version>
+                <artifactId>mockito-core</artifactId>
+                <version>${mockito.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.slf4j</groupId>
