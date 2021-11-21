@@ -10,12 +10,9 @@ import io.agrest.meta.AgEntityOverlay;
 import java.util.*;
 
 /**
- * A metadata object that describes a data structure of a given REST resource. Connected ResourceEntities form a
- * tree structure that usually overlays a certain Cayenne mapping subgraph (unless this is a non-persistent entity),
- * filtering and extending its properties to describe the data structure to be returned to the client.
- * <p>
- * ResourceEntity scope is a single request. It is usually created by Agrest based on request parameters and can be
- * optionally further customized by the application via custom stages.
+ * A model of a resource entity for a given client request. ResourceEntity is based on an {@link AgEntity} with
+ * request-specific changes. Connected ResourceEntities form a tree structure that overlays a certain subgraph of
+ * AgEntities.
  */
 public abstract class ResourceEntity<T> {
 

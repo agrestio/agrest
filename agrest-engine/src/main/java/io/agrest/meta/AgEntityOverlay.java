@@ -7,9 +7,8 @@ import java.util.*;
 import java.util.function.Function;
 
 /**
- * A mutable collection of entity properties that are not derived from the object structure. {@link AgEntityOverlay}
- * objects are provided by the app and are merged into corresponding {@link AgEntity} entities to customize their
- * structure.
+ * A mutable collection of entity properties that allow the application code to override and customize {@link AgEntity}
+ * structure either globally or per-request.
  *
  * @since 1.12
  */

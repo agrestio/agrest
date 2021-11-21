@@ -9,7 +9,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * A model of an entity.
+ * A shared immutable model of a resource entity.
  *
  * @since 1.12
  */
