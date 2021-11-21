@@ -15,7 +15,6 @@ import java.util.function.Function;
 public class AgEntityOverlay<T> {
 
     private final Class<T> type;
-    //  TODO: introduce AgAttributeOverride to allow for partial overrides, like changing a reader
     private final Map<String, AgAttributeOverlay> attributes;
     private final Map<String, AgRelationshipOverlay> relationships;
     private final List<String> excludes;
