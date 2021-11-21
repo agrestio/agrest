@@ -47,9 +47,9 @@ public interface SelectBuilder<T> {
     SelectBuilder<T> entityEncoderFilter(EntityEncoderFilter filter);
 
     /**
-     * Installs request-scoped {@link AgEntityOverlay} that allows to customize add or change a list of properties of
-     * the overlay entity available in request. This method can be called multiple times to add more than one overlay.
-     * The overlay can alter the root entity, or any other entity in the model.
+     * Installs request-scoped {@link AgEntityOverlay} that allows to customize, add or redefine client-accessible
+     * properties of the overlay entity available in request. This method can be called multiple times to add more
+     * than one overlay. The overlay can alter the root entity or any other entity in the model.
      *
      * @param overlay overlay descriptor
      * @param <A>     entity type for the overlay. Can be the same as "T", or may be any other model entity.
@@ -59,7 +59,7 @@ public interface SelectBuilder<T> {
     <A> SelectBuilder<T> entityOverlay(AgEntityOverlay<A> overlay);
 
     /**
-     * Defines a request-scoped attribute of the root entity of this request. This is an equivalent of calling
+     * Defines a custom request-scoped attribute of the root entity of this request. This is an equivalent of calling
      * {@link #entityOverlay(AgEntityOverlay)} with the overlay containing a single custom attribute.
      *
      * @since 3.7

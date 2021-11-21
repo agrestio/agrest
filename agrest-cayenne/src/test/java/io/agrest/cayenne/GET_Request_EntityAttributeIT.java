@@ -8,7 +8,6 @@ import io.agrest.cayenne.unit.AgCayenneTester;
 import io.agrest.cayenne.unit.DbTest;
 import io.bootique.junit5.BQTestTool;
 import org.apache.cayenne.Cayenne;
-import org.apache.cayenne.DataObject;
 import org.junit.jupiter.api.Test;
 
 import javax.ws.rs.GET;
@@ -87,7 +86,7 @@ public class GET_Request_EntityAttributeIT extends DbTest {
         @Path("e4/calc_property")
         public DataResponse<E4> property_WithReader(@Context UriInfo uriInfo) {
             return Ag.select(E4.class, config).uri(uriInfo)
-                    .entityAttribute("x", String.class, o -> "y_" + Cayenne.intPKForObject((DataObject) o))
+                    .entityAttribute("x", String.class, o -> "y_" + Cayenne.intPKForObject(o))
                     .get();
         }
 
