@@ -13,7 +13,7 @@
 
     <dependencies>
 
-        <!-- compile dependencies -->
+        <!-- Compile dependencies -->
         <dependency>
             <groupId>io.agrest</groupId>
             <artifactId>agrest-engine</artifactId>
@@ -27,6 +27,14 @@
         <dependency>
             <groupId>io.swagger.core.v3</groupId>
             <artifactId>swagger-jaxrs2</artifactId>
+        </dependency>
+
+        <!-- Provided dependencies -->
+        <!-- Either JAX RS or Jakarta RS versions of Jersey will provide this -->
+        <dependency>
+            <groupId>jakarta.ws.rs</groupId>
+            <artifactId>jakarta.ws.rs-api</artifactId>
+            <scope>provided</scope>
         </dependency>
 
         <!-- Unit test dependencies -->

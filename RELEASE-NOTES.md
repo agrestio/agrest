@@ -1,3 +1,7 @@
+## Release 4.8
+
+* #498 Made JAX-RS dependency "provided"
+
 ## Release 4.7
 
 * #488 Bump to the latest version of openapi-generator (v5.2.0)

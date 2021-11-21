@@ -13,21 +13,24 @@
     <description>Client library to access Agrest protocol-compliant RESTful services</description>
 
     <dependencies>
+
+        <!-- compile dependencies -->
         <dependency>
             <groupId>io.agrest</groupId>
             <artifactId>agrest-base</artifactId>
             <version>${project.version}</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>javax.ws.rs</groupId>
-            <artifactId>javax.ws.rs-api</artifactId>
-            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
-            <scope>compile</scope>
+        </dependency>
+
+        <!-- Provided dependencies -->
+        <!-- Either JAX RS or Jakarta RS versions of Jersey will provide this -->
+        <dependency>
+            <groupId>jakarta.ws.rs</groupId>
+            <artifactId>jakarta.ws.rs-api</artifactId>
+            <scope>provided</scope>
         </dependency>
 
         <!-- unit test deps -->

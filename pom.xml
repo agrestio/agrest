@@ -37,7 +37,7 @@
         <!-- Custom properties (mostly framework versions) -->
         <slf4j-version>1.7.25</slf4j-version>
         <cayenne-version>4.2.M3</cayenne-version>
-        <jaxrs-version>2.1</jaxrs-version>
+        <jaxrs-version>2.1.6</jaxrs-version>
         <jackson-version>2.11.3</jackson-version>
         <openapi-generator-version>5.2.0</openapi-generator-version>
         <bootique-version>2.0.B1</bootique-version>
@@ -122,8 +122,8 @@
                 <version>${slf4j-version}</version>
             </dependency>
             <dependency>
-                <groupId>javax.ws.rs</groupId>
-                <artifactId>javax.ws.rs-api</artifactId>
+                <groupId>jakarta.ws.rs</groupId>
+                <artifactId>jakarta.ws.rs-api</artifactId>
                 <version>${jaxrs-version}</version>
             </dependency>
             <dependency>

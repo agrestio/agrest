@@ -14,7 +14,7 @@
 
 	<dependencies>
 
-		<!-- required runtime dependencies -->
+		<!-- Compile dependencies -->
 		<dependency>
 			<groupId>io.agrest</groupId>
 			<artifactId>agrest-engine</artifactId>
@@ -25,6 +25,14 @@
 			<groupId>io.agrest</groupId>
 			<artifactId>agrest-cayenne</artifactId>
 			<version>${project.version}</version>
+		</dependency>
+
+		<!-- Provided dependencies -->
+		<!-- Either JAX RS or Jakarta RS versions of Jersey will provide this -->
+		<dependency>
+			<groupId>jakarta.ws.rs</groupId>
+			<artifactId>jakarta.ws.rs-api</artifactId>
+			<scope>provided</scope>
 		</dependency>
 
 		<!-- unit test deps -->
