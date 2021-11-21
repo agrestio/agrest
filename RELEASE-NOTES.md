@@ -1,6 +1,7 @@
 ## Release 4.8
 
 * #498 Made JAX-RS dependency "provided"
+* #497 Agrest fails to build on Java 11
 
 ## Release 4.7
 
