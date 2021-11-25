@@ -120,7 +120,9 @@ public class CayenneQueryAssembler implements ICayenneQueryAssembler {
             ObjEntity parentObjEntity = entityResolver.getObjEntity(parent.getType());
             ObjRelationship incoming = parentObjEntity.getRelationship(entity.getIncoming().getName());
 
-            // TODO: handle dynamic relationships. See GET_EntityOverlay_PerRequestIT.test_OverlaidRelationship_ExpOnParent_Nested()
+            // TODO: handle dynamic relationships.
+            //  See https://github.com/agrestio/agrest/issues/500 and
+            //  GET_EntityOverlay_PerRequestIT.test_OverlaidRelationship_ExpOnParent_Nested()
             if (incoming == null) {
                 throw new IllegalStateException("No such relationship: " + parentObjEntity.getName() + "." + entity.getIncoming().getName());
             }

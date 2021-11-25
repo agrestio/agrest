@@ -135,9 +135,9 @@ public class GET_EntityOverlay_PerRequestIT extends DbTest {
                 .bodyEquals(1, "{\"id\":2,\"dynamicRelationship\":{\"id\":2,\"name\":\"b\",\"prop1\":null,\"prop2\":null}}");
     }
 
+    // TODO: https://github.com/agrestio/agrest/issues/500
     @Test
-    @Disabled("A relationship that is a child of dynamic relationship fails to resolve properly. We must use " +
-            "read-from-parent resolver for anything hanging off of a dynamic relationship instead of using built-in Cayenne resolvers")
+    @Disabled("See #500")
     public void test_OverlaidRelationship_ExpOnParent_Nested() {
 
         tester.e4().insertColumns("id", "c_varchar").values(2, "a").values(4, "b").exec();
