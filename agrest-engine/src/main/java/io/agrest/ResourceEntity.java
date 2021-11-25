@@ -5,9 +5,13 @@ import io.agrest.base.protocol.Sort;
 import io.agrest.encoder.EntityEncoderFilter;
 import io.agrest.meta.AgAttribute;
 import io.agrest.meta.AgEntity;
-import io.agrest.meta.AgEntityOverlay;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * A model of a resource entity for a given client request. ResourceEntity is based on an {@link AgEntity} with
@@ -19,7 +23,6 @@ public abstract class ResourceEntity<T> {
     private boolean idIncluded;
 
     private final AgEntity<T> agEntity;
-    private final AgEntityOverlay<T> agEntityOverlay;
 
     private final Map<String, AgAttribute> attributes;
     private final Set<String> defaultAttributes;
@@ -35,10 +38,9 @@ public abstract class ResourceEntity<T> {
 
     private final Map<String, Object> requestProperties;
 
-    public ResourceEntity(AgEntity<T> agEntity, AgEntityOverlay<T> agEntityOverlay) {
+    public ResourceEntity(AgEntity<T> agEntity) {
 
         this.agEntity = agEntity;
-        this.agEntityOverlay = agEntityOverlay;
 
         this.idIncluded = false;
         this.attributes = new HashMap<>();
@@ -62,13 +64,6 @@ public abstract class ResourceEntity<T> {
      */
     public AgEntity<T> getAgEntity() {
         return agEntity;
-    }
-
-    /**
-     * @since 3.4
-     */
-    public AgEntityOverlay<T> getAgEntityOverlay() {
-        return agEntityOverlay;
     }
 
     /**

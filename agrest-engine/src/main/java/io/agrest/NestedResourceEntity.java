@@ -1,7 +1,6 @@
 package io.agrest;
 
 import io.agrest.meta.AgEntity;
-import io.agrest.meta.AgEntityOverlay;
 import io.agrest.meta.AgRelationship;
 import io.agrest.resolver.NestedDataResolver;
 import io.agrest.runtime.processor.select.SelectContext;
@@ -24,12 +23,11 @@ public class NestedResourceEntity<T> extends ResourceEntity<T> {
 
     public NestedResourceEntity(
             AgEntity<T> agEntity,
-            AgEntityOverlay<T> agEntityOverlay,
             // TODO: Instead of AgRelationship introduce some kind of RERelationship that has references to both parent and child
             ResourceEntity<?> parent,
             AgRelationship incoming) {
 
-        super(agEntity, agEntityOverlay);
+        super(agEntity);
         this.incoming = incoming;
         this.parent = parent;
         this.resultByParent = new LinkedHashMap<>();
