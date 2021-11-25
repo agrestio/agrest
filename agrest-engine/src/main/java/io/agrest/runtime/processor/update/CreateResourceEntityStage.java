@@ -4,6 +4,7 @@ import io.agrest.AgRequest;
 import io.agrest.RootResourceEntity;
 import io.agrest.meta.AgDataMap;
 import io.agrest.meta.AgEntity;
+import io.agrest.meta.AgEntityOverlay;
 import io.agrest.processor.Processor;
 import io.agrest.processor.ProcessorOutcome;
 import io.agrest.runtime.entity.IExcludeMerger;
@@ -36,15 +37,16 @@ public class CreateResourceEntityStage implements Processor<UpdateContext<?>> {
     }
 
     protected <T> void doExecute(UpdateContext<T> context) {
+        AgEntityOverlay<T> overlay = context.getEntityOverlay(context.getType());
         AgEntity<T> entity = dataMap.getEntity(context.getType());
 
-        // TODO: support entity overlays in updates
-        RootResourceEntity<T> resourceEntity = new RootResourceEntity<>(entity);
+        RootResourceEntity<T> resourceEntity = new RootResourceEntity<>(
+                overlay != null ? overlay.resolve(dataMap, entity) : entity
+        );
 
         AgRequest request = context.getMergedRequest();
         if (request != null) {
-            // TODO: support entity overlays (third null argument) in updates
-            includeMerger.merge(resourceEntity, request.getIncludes(), null);
+            includeMerger.merge(resourceEntity, request.getIncludes(), context.getEntityOverlays());
             excludeMerger.merge(resourceEntity, request.getExcludes());
         }
         context.setEntity(resourceEntity);

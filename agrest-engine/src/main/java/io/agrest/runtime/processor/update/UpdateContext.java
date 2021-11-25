@@ -1,13 +1,25 @@
 package io.agrest.runtime.processor.update;
 
-import io.agrest.*;
+import io.agrest.AgException;
+import io.agrest.AgObjectId;
+import io.agrest.AgRequest;
+import io.agrest.CompoundObjectId;
+import io.agrest.DataResponse;
+import io.agrest.EntityParent;
+import io.agrest.EntityUpdate;
+import io.agrest.ObjectMapperFactory;
+import io.agrest.ResourceEntity;
+import io.agrest.RootResourceEntity;
+import io.agrest.SimpleObjectId;
 import io.agrest.constraints.Constraint;
 import io.agrest.encoder.Encoder;
+import io.agrest.meta.AgEntityOverlay;
 import io.agrest.processor.BaseProcessingContext;
 
 import javax.ws.rs.core.UriInfo;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -33,6 +45,7 @@ public class UpdateContext<T> extends BaseProcessingContext<T> {
     private Encoder encoder;
     private AgRequest mergedRequest;
     private AgRequest request;
+    private Map<Class<?>, AgEntityOverlay<?>> entityOverlays;
 
     public UpdateContext(Class<T> type) {
         super(type);
@@ -164,6 +177,35 @@ public class UpdateContext<T> extends BaseProcessingContext<T> {
 
     public void setMapper(ObjectMapperFactory mapper) {
         this.mapper = mapper;
+    }
+
+    /**
+     * @since 4.8
+     */
+    public Map<Class<?>, AgEntityOverlay<?>> getEntityOverlays() {
+        return entityOverlays != null ? entityOverlays : Collections.emptyMap();
+    }
+
+    /**
+     * @since 4.8
+     */
+    public <A> AgEntityOverlay<A> getEntityOverlay(Class<A> type) {
+        return entityOverlays != null ? (AgEntityOverlay<A>) entityOverlays.get(type) : null;
+    }
+
+    /**
+     * @since 4.8
+     */
+    public <A> void addEntityOverlay(AgEntityOverlay<A> overlay) {
+        getOrCreateOverlay(overlay.getType()).merge(overlay);
+    }
+
+    private <A> AgEntityOverlay<A> getOrCreateOverlay(Class<A> type) {
+        if (entityOverlays == null) {
+            entityOverlays = new HashMap<>();
+        }
+
+        return (AgEntityOverlay<A>) entityOverlays.computeIfAbsent(type, AgEntityOverlay::new);
     }
 
     public String getEntityData() {

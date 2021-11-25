@@ -1,7 +1,16 @@
 package io.agrest.runtime;
 
-import io.agrest.*;
+import io.agrest.AgException;
+import io.agrest.AgRequest;
+import io.agrest.DataResponse;
+import io.agrest.EntityParent;
+import io.agrest.EntityUpdate;
+import io.agrest.ObjectMapperFactory;
+import io.agrest.SimpleResponse;
+import io.agrest.UpdateBuilder;
+import io.agrest.UpdateStage;
 import io.agrest.constraints.Constraint;
+import io.agrest.meta.AgEntityOverlay;
 import io.agrest.processor.Processor;
 import io.agrest.runtime.processor.update.ByKeyObjectMapperFactory;
 import io.agrest.runtime.processor.update.UpdateContext;
@@ -84,6 +93,12 @@ public class DefaultUpdateBuilder<T> implements UpdateBuilder<T> {
     @Override
     public UpdateBuilder<T> writeConstraint(Constraint<T> constraint) {
         context.setWriteConstraints(constraint);
+        return this;
+    }
+
+    @Override
+    public <A> UpdateBuilder<T> entityOverlay(AgEntityOverlay<A> overlay) {
+        context.addEntityOverlay(overlay);
         return this;
     }
 

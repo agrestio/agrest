@@ -199,7 +199,6 @@ public class GET_EntityOverlay_PerRequestIT extends DbTest {
 
         @GET
         @Path("e10/{suffix}")
-        // request constraints mixed with entity constraints
         public DataResponse<E10> getE10(@Context UriInfo uriInfo, @PathParam("suffix") String suffix) {
 
             AgEntityOverlay<E10> overlay = AgEntity.overlay(E10.class)
@@ -219,7 +218,6 @@ public class GET_EntityOverlay_PerRequestIT extends DbTest {
 
         @GET
         @Path("e4/{suffix}")
-        // typical use case tested here is an AgEntityOverlay that depends on request parameters
         public DataResponse<E4> getE4(@Context UriInfo uriInfo, @PathParam("suffix") String suffix) {
 
             AgEntityOverlay<E4> overlay = AgEntity.overlay(E4.class)

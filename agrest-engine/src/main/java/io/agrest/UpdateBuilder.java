@@ -1,6 +1,7 @@
 package io.agrest;
 
 import io.agrest.constraints.Constraint;
+import io.agrest.meta.AgEntityOverlay;
 import io.agrest.processor.Processor;
 import io.agrest.processor.ProcessorOutcome;
 import io.agrest.runtime.processor.update.UpdateContext;
@@ -70,6 +71,18 @@ public interface UpdateBuilder<T> {
      * @return this builder instance.
      */
     UpdateBuilder<T> writeConstraint(Constraint<T> constraint);
+
+    /**
+     * Installs request-scoped {@link AgEntityOverlay} that allows to customize, add or redefine request entity structure,
+     * e.g. change property read/write access. This method can be called multiple times to add more than one overlay.
+     * The overlay can alter the root entity or any other entity in the model.
+     *
+     * @param overlay overlay descriptor
+     * @param <A>     entity type for the overlay. Can be the same as "T", or may be any other model entity.
+     * @return this builder instance
+     * @since 4.8
+     */
+    <A> UpdateBuilder<T> entityOverlay(AgEntityOverlay<A> overlay);
 
     /**
      * Sets a custom mapper that locates existing objects based on request data.
