@@ -164,6 +164,7 @@ public class AgBuilder_OverlayTest {
     }
 
     @Test
+    @Deprecated // exclude is deprecated
     public void testOverlay_Exclude() {
         AgRuntime runtime = new AgBuilder()
                 .entityOverlay(AgEntity.overlay(X.class).exclude("phoneNumber"))
@@ -171,7 +172,9 @@ public class AgBuilder_OverlayTest {
 
         AgEntity<X> entity = runtime.service(AgDataMap.class).getEntity(X.class);
         AgAttribute phone = entity.getAttribute("phoneNumber");
-        assertNull(phone);
+        assertNotNull(phone);
+        assertFalse(phone.isReadable());
+        assertFalse(phone.isWritable());
     }
 
     static class TestNestedDataResolver<T> implements NestedDataResolver<T> {

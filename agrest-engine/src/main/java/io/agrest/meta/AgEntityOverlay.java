@@ -1,10 +1,19 @@
 package io.agrest.meta;
 
 import io.agrest.property.PropertyReader;
-import io.agrest.resolver.*;
+import io.agrest.resolver.NestedDataResolver;
+import io.agrest.resolver.NestedDataResolverFactory;
+import io.agrest.resolver.ReaderBasedResolver;
+import io.agrest.resolver.RootDataResolver;
+import io.agrest.resolver.RootDataResolverFactory;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.function.Function;
+
+import static java.util.Arrays.asList;
 
 /**
  * A mutable collection of entity properties that allow the application code to override and customize {@link AgEntity}
@@ -17,14 +26,15 @@ public class AgEntityOverlay<T> {
     private final Class<T> type;
     private final Map<String, AgAttributeOverlay> attributes;
     private final Map<String, AgRelationshipOverlay> relationships;
-    private final List<String> excludes;
     private RootDataResolver<T> rootDataResolver;
+
+    private PropertyAccessRule readAccessBuilder;
+    private PropertyAccessRule writeAccessBuilder;
 
     public AgEntityOverlay(Class<T> type) {
         this.type = type;
         this.attributes = new HashMap<>();
         this.relationships = new HashMap<>();
-        this.excludes = new ArrayList<>(2);
     }
 
     private static PropertyReader fromFunction(Function<?, ?> f) {
@@ -51,22 +61,33 @@ public class AgEntityOverlay<T> {
         // TODO: support null entity like we do for overlaid Attributes and Relationships?
         Objects.requireNonNull(maybeOverlaid);
 
-        if (attributes.isEmpty() && relationships.isEmpty() && excludes.isEmpty()) {
+        if (attributes.isEmpty() && relationships.isEmpty() && readAccessBuilder == null && writeAccessBuilder == null) {
             return maybeOverlaid;
         }
 
-        OverlaidEntity<T> builder = new OverlaidEntity<>(agDataMap, maybeOverlaid);
+        AgEntityOverlayResolver resolver = new AgEntityOverlayResolver(agDataMap, maybeOverlaid);
 
-        getAttributeOverlays().forEach(builder::loadAttributeOverlay);
-        getRelationshipOverlays().forEach(builder::loadRelationshipOverlay);
-        getExcludes().forEach(builder::removeIdOrAttributeOrRelationship);
+        getAttributeOverlays().forEach(resolver::loadAttributeOverlay);
+        getRelationshipOverlays().forEach(resolver::loadRelationshipOverlay);
+
+        if (readAccessBuilder != null) {
+            PropertyAccess pa = new PropertyAccess();
+            readAccessBuilder.apply(pa);
+            pa.findInaccessible(maybeOverlaid, this).forEach(resolver::makeUnreadable);
+        }
+
+        if (writeAccessBuilder != null) {
+            PropertyAccess pa = new PropertyAccess();
+            writeAccessBuilder.apply(pa);
+            pa.findInaccessible(maybeOverlaid, this).forEach(resolver::makeUnwritable);
+        }
 
         return new DefaultAgEntity<>(
                 maybeOverlaid.getName(),
                 type,
-                builder.ids,
-                builder.attributes,
-                builder.relationships,
+                resolver.ids,
+                resolver.attributes,
+                resolver.relationships,
                 rootDataResolver != null ? rootDataResolver : maybeOverlaid.getDataResolver());
     }
 
@@ -80,7 +101,15 @@ public class AgEntityOverlay<T> {
     public AgEntityOverlay<T> merge(AgEntityOverlay<T> anotherOverlay) {
         attributes.putAll(anotherOverlay.attributes);
         relationships.putAll(anotherOverlay.relationships);
-        excludes.addAll(anotherOverlay.excludes);
+
+        if (anotherOverlay.readAccessBuilder != null) {
+            readAccess(anotherOverlay.readAccessBuilder);
+        }
+
+        if (anotherOverlay.writeAccessBuilder != null) {
+            writeAccess(anotherOverlay.writeAccessBuilder);
+        }
+
         if (anotherOverlay.getRootDataResolver() != null) {
             this.rootDataResolver = anotherOverlay.getRootDataResolver();
         }
@@ -127,21 +156,38 @@ public class AgEntityOverlay<T> {
     }
 
     /**
-     * Removes a named property (attribute or relationship) from overlaid AgEntity.
+     * Appends read access rules specified as a PropertyAccess consumer to the existing rules.
      *
-     * @return this overlay instance
-     * @since 3.7
+     * @since 4.8
      */
-    public AgEntityOverlay<T> exclude(String... properties) {
-        Collections.addAll(excludes, properties);
+    public AgEntityOverlay<T> readAccess(PropertyAccessRule accessBuilder) {
+        this.readAccessBuilder = readAccessBuilder != null ? readAccessBuilder.andThen(accessBuilder) : accessBuilder;
         return this;
     }
 
     /**
-     * @since 3.7
+     * Appends read access rules specified as a PropertyAccess consumer to the existing rules.
+     *
+     * @since 4.8
      */
-    public Iterable<String> getExcludes() {
-        return excludes;
+    public AgEntityOverlay<T> writeAccess(PropertyAccessRule accessBuilder) {
+        this.writeAccessBuilder = writeAccessBuilder != null ? writeAccessBuilder.andThen(accessBuilder) : accessBuilder;
+        return this;
+    }
+
+    /**
+     * Removes a named property (attribute or relationship) from overlaid AgEntity.
+     *
+     * @return this overlay instance
+     * @since 3.7
+     * @deprecated since 4.8 use {@link #readAccess(PropertyAccessRule)} and/or {@link #writeAccess(PropertyAccessRule)}
+     */
+    @Deprecated
+    public AgEntityOverlay<T> exclude(String... properties) {
+        List<String> asList = asList(properties);
+        readAccess(pa -> asList.forEach(p -> pa.property(p, false)));
+        writeAccess(pa -> asList.forEach(p -> pa.property(p, false)));
+        return this;
     }
 
     /**
@@ -299,40 +345,5 @@ public class AgEntityOverlay<T> {
     public AgEntityOverlay<T> redefineRootDataResolver(RootDataResolver<T> rootDataResolver) {
         this.rootDataResolver = rootDataResolver;
         return this;
-    }
-
-    static class OverlaidEntity<T> {
-
-        final AgDataMap dataMap;
-        final Map<String, AgIdPart> ids;
-        final Map<String, AgAttribute> attributes;
-        final Map<String, AgRelationship> relationships;
-
-        OverlaidEntity(AgDataMap dataMap, AgEntity<T> sourceEntity) {
-            this.dataMap = dataMap;
-
-            this.ids = new HashMap<>();
-            sourceEntity.getIdParts().forEach(p -> ids.put(p.getName(), p));
-
-            this.attributes = new HashMap<>();
-            sourceEntity.getAttributes().forEach(a -> attributes.put(a.getName(), a));
-
-            this.relationships = new HashMap<>();
-            sourceEntity.getRelationships().forEach(r -> relationships.put(r.getName(), r));
-        }
-
-        void loadAttributeOverlay(AgAttributeOverlay overlay) {
-            attributes.put(overlay.getName(), overlay.resolve(attributes.get(overlay.getName())));
-        }
-
-        void loadRelationshipOverlay(AgRelationshipOverlay overlay) {
-            relationships.put(overlay.getName(), overlay.resolve(relationships.get(overlay.getName()), dataMap));
-        }
-
-        void removeIdOrAttributeOrRelationship(String name) {
-            ids.remove(name);
-            attributes.remove(name);
-            relationships.remove(name);
-        }
     }
 }
