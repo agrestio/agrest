@@ -5,7 +5,6 @@ import io.agrest.PathConstants;
 import io.agrest.ResourceEntity;
 import io.agrest.base.protocol.Include;
 import io.agrest.meta.AgAttribute;
-import io.agrest.meta.AgAttributeOverlay;
 import io.agrest.meta.AgDataMap;
 import io.agrest.meta.AgEntityOverlay;
 import org.apache.cayenne.di.Inject;
@@ -87,13 +86,6 @@ public class IncludeMerger implements IIncludeMerger {
 
             for (AgAttribute a : resourceEntity.getAgEntity().getAttributes()) {
                 resourceEntity.addAttribute(a, true);
-            }
-
-            if (resourceEntity.getAgEntityOverlay() != null) {
-                for (AgAttributeOverlay ao : resourceEntity.getAgEntityOverlay().getAttributeOverlays()) {
-                    AgAttribute a = resourceEntity.getAgEntity().getAttribute(ao.getName());
-                    resourceEntity.addAttribute(ao.resolve(a), true);
-                }
             }
 
             resourceEntity.includeId();

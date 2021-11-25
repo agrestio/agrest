@@ -43,7 +43,6 @@ public class RootResourceEntity<T> extends ResourceEntity<T> {
     }
 
     public RootDataResolver<T> getResolver() {
-        RootDataResolver<T> resolver = getAgEntityOverlay() != null ? getAgEntityOverlay().getRootDataResolver() : null;
-        return resolver != null ? resolver : getAgEntity().getDataResolver();
+        return getAgEntity().getDataResolver();
     }
 }

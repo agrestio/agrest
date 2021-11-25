@@ -35,7 +35,7 @@ public class ExpMergerTest {
 
     @BeforeEach
     public void beforeEach() {
-        entity = new RootResourceEntity<>(dataMap.getEntity(Tr.class), null);
+        entity = new RootResourceEntity<>(dataMap.getEntity(Tr.class));
     }
 
     @Test

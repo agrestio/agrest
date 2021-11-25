@@ -52,7 +52,7 @@ public class EncoderService_Pojo_Test {
     @Test
     public void testEncode_SimplePojo_noId() {
         AgEntity<P1> p1age = new AnnotationsAgEntityBuilder<>(P1.class, new LazyAgDataMap(compilers)).build();
-        RootResourceEntity<P1> entity = new RootResourceEntity<>(p1age, null);
+        RootResourceEntity<P1> entity = new RootResourceEntity<>(p1age);
         ResourceEntityUtils.appendAttribute(entity, "name", String.class, P1::getName);
 
         P1 p1 = new P1();
@@ -68,7 +68,7 @@ public class EncoderService_Pojo_Test {
         p6.setIntProp(4);
 
         AgEntity<P6> p6age = new AnnotationsAgEntityBuilder<>(P6.class, new LazyAgDataMap(compilers)).build();
-        RootResourceEntity<P6> entity = new RootResourceEntity<>(p6age, null);
+        RootResourceEntity<P6> entity = new RootResourceEntity<>(p6age);
         ResourceEntityUtils.appendAttribute(entity, "intProp", Integer.class, P6::getIntProp);
         entity.includeId();
 

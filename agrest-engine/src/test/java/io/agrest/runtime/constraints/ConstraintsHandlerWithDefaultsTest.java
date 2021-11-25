@@ -35,7 +35,7 @@ public class ConstraintsHandlerWithDefaultsTest {
         AgEntity<Tr> entity = dataMap.getEntity(Tr.class);
         Constraint<Tr> tc1 = Constraint.excludeAll(Tr.class).attributes("b");
 
-        RootResourceEntity<Tr> te1 = new RootResourceEntity<>(entity, null);
+        RootResourceEntity<Tr> te1 = new RootResourceEntity<>(entity);
         ResourceEntityUtils.appendAttribute(te1, "a", Integer.class, true, true, Tr::getA);
         ResourceEntityUtils.appendAttribute(te1, "b", String.class, true, true, Tr::getB);
 
@@ -50,7 +50,7 @@ public class ConstraintsHandlerWithDefaultsTest {
 
         AgEntity<Tr> entity = dataMap.getEntity(Tr.class);
 
-        RootResourceEntity<Tr> te1 = new RootResourceEntity<>(entity, null);
+        RootResourceEntity<Tr> te1 = new RootResourceEntity<>(entity);
         ResourceEntityUtils.appendAttribute(te1, "a", Integer.class, true, true, Tr::getA);
         ResourceEntityUtils.appendAttribute(te1, "b", String.class, false, true, Tr::getB);
 
@@ -65,7 +65,7 @@ public class ConstraintsHandlerWithDefaultsTest {
 
         AgEntity<Ts> entity = dataMap.getEntity(Ts.class);
 
-        RootResourceEntity<Ts> te1 = new RootResourceEntity<>(entity, null);
+        RootResourceEntity<Ts> te1 = new RootResourceEntity<>(entity);
         ResourceEntityUtils.appendAttribute(te1, "m", String.class, true, true, Ts::getM);
         ResourceEntityUtils.appendAttribute(te1, "n", String.class, true, true, Ts::getN);
 

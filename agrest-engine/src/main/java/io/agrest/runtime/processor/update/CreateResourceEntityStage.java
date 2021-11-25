@@ -38,12 +38,12 @@ public class CreateResourceEntityStage implements Processor<UpdateContext<?>> {
     protected <T> void doExecute(UpdateContext<T> context) {
         AgEntity<T> entity = dataMap.getEntity(context.getType());
 
-        // TODO: support entity overlays (second null argument) in updates
-        RootResourceEntity<T> resourceEntity = new RootResourceEntity<>(entity, null);
+        // TODO: support entity overlays in updates
+        RootResourceEntity<T> resourceEntity = new RootResourceEntity<>(entity);
 
         AgRequest request = context.getMergedRequest();
         if (request != null) {
-            // TODO: support entity overlays (second null argument) in updates
+            // TODO: support entity overlays (third null argument) in updates
             includeMerger.merge(resourceEntity, request.getIncludes(), null);
             excludeMerger.merge(resourceEntity, request.getExcludes());
         }

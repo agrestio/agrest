@@ -40,7 +40,7 @@ public class MapByMerger implements IMapByMerger {
             return;
         }
 
-        ResourceEntity<?> mapByCompanionEntity = new RootResourceEntity<>(entity.getAgEntity(), entity.getAgEntityOverlay());
+        ResourceEntity<?> mapByCompanionEntity = new RootResourceEntity<>(entity.getAgEntity());
         new ResourceEntityTreeBuilder(mapByCompanionEntity, dataMap, overlays).inflatePath(mapByPath);
         entity.mapBy(mapByCompanionEntity, mapByPath);
     }

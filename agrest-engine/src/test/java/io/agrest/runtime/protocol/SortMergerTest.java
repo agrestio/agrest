@@ -36,7 +36,7 @@ public class SortMergerTest {
 
     @BeforeEach
     public void beforeEach() {
-        this.entity = new RootResourceEntity<>(dataMap.getEntity(Tr.class), null);
+        this.entity = new RootResourceEntity<>(dataMap.getEntity(Tr.class));
     }
 
     @Test

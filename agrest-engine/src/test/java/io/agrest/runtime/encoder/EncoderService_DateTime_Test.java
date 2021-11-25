@@ -49,7 +49,7 @@ public class EncoderService_DateTime_Test {
 
     @Test
     public void testLocalDate() {
-        ResourceEntity<PDate> re = new RootResourceEntity<>(dateEntity, null);
+        ResourceEntity<PDate> re = new RootResourceEntity<>(dateEntity);
         ResourceEntityUtils.appendAttribute(re, "date", LocalDate.class, PDate::getDate);
 
         LocalDate localDate = LocalDate.now();
@@ -72,7 +72,7 @@ public class EncoderService_DateTime_Test {
 
     private void testLocalTime(LocalTime time, String expectedPattern) {
 
-        ResourceEntity<PTime> re = new RootResourceEntity<>(timeEntity, null);
+        ResourceEntity<PTime> re = new RootResourceEntity<>(timeEntity);
         ResourceEntityUtils.appendAttribute(re, "time", LocalTime.class, PTime::getTime);
 
         PTime o = new PTime();
@@ -93,7 +93,7 @@ public class EncoderService_DateTime_Test {
 
     private void testLocalDateTime(LocalDateTime dateTime, String expectedPattern) {
 
-        ResourceEntity<PDateTime> re = new RootResourceEntity<>(dateTimeEntity, null);
+        ResourceEntity<PDateTime> re = new RootResourceEntity<>(dateTimeEntity);
         ResourceEntityUtils.appendAttribute(re, "timestamp", LocalDateTime.class, PDateTime::getTimestamp);
 
         PDateTime o = new PDateTime();
@@ -115,7 +115,7 @@ public class EncoderService_DateTime_Test {
 
     private void testOffsetDateTime(OffsetDateTime dateTime) {
 
-        ResourceEntity<POffsetDateTime> re = new RootResourceEntity<>(offsetDateTimeEntity, null);
+        ResourceEntity<POffsetDateTime> re = new RootResourceEntity<>(offsetDateTimeEntity);
         ResourceEntityUtils.appendAttribute(re, "timestamp", OffsetDateTime.class, POffsetDateTime::getTimestamp);
 
         POffsetDateTime o = new POffsetDateTime();

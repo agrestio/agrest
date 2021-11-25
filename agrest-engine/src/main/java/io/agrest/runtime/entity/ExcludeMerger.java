@@ -12,21 +12,7 @@ public class ExcludeMerger implements IExcludeMerger {
 
     @Override
     public void merge(ResourceEntity<?> entity, List<Exclude> excludes) {
-        processRequestExcludes(entity, excludes);
-        processOverlayExcludes(entity);
-    }
-
-    private void processRequestExcludes(ResourceEntity<?> entity, List<Exclude> excludes) {
         excludes.forEach(e -> excludePath(entity, e.getPath()));
-    }
-
-    private void processOverlayExcludes(ResourceEntity<?> entity) {
-
-        if (entity.getAgEntityOverlay() != null) {
-            entity.getAgEntityOverlay().getExcludes().forEach(e -> exclude(entity, e));
-        }
-
-        entity.getChildren().values().forEach(this::processOverlayExcludes);
     }
 
     private void excludePath(ResourceEntity<?> entity, String path) {

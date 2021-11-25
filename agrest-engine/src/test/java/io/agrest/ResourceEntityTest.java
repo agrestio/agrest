@@ -13,7 +13,7 @@ public class ResourceEntityTest {
     @Test
     public void testQualifier() {
         @SuppressWarnings("unchecked")
-        ResourceEntity<P1> e = new RootResourceEntity<>(mock(AgEntity.class), null);
+        ResourceEntity<P1> e = new RootResourceEntity<>(mock(AgEntity.class));
         assertNull(e.getQualifier());
 
         e.andQualifier(Exp.simple("a = 1"));

@@ -55,7 +55,7 @@ public class EncoderService_SqlDateTime_Test {
      */
     @Test
     public void testJavaSqlDate() {
-        ResourceEntity<PSqlDateTime> re = new RootResourceEntity<>(sqlDateTimeEntity, null);
+        ResourceEntity<PSqlDateTime> re = new RootResourceEntity<>(sqlDateTimeEntity);
         ResourceEntityUtils.appendAttribute(re, "date", Date.class, PSqlDateTime::getDate);
         Date date = new Date(EPOCH_MILLIS);
 
@@ -76,7 +76,7 @@ public class EncoderService_SqlDateTime_Test {
     }
 
     private void _testISOTimeEncoder_javaSqlTime(java.sql.Time time, String expectedPattern) {
-        ResourceEntity<PSqlDateTime> re = new RootResourceEntity<>(sqlDateTimeEntity, null);
+        ResourceEntity<PSqlDateTime> re = new RootResourceEntity<>(sqlDateTimeEntity);
         ResourceEntityUtils.appendAttribute(re, "time", Time.class, PSqlDateTime::getTime);
 
         PSqlDateTime o = new PSqlDateTime();
@@ -97,7 +97,7 @@ public class EncoderService_SqlDateTime_Test {
 
     private void _testISODateTimeEncoder_javaSqlTimestamp(java.sql.Timestamp timestamp, String expectedPattern) {
 
-        ResourceEntity<PSqlDateTime> re = new RootResourceEntity<>(sqlDateTimeEntity, null);
+        ResourceEntity<PSqlDateTime> re = new RootResourceEntity<>(sqlDateTimeEntity);
         ResourceEntityUtils.appendAttribute(re, "timestamp", Timestamp.class, PSqlDateTime::getTimestamp);
 
         PSqlDateTime o = new PSqlDateTime();

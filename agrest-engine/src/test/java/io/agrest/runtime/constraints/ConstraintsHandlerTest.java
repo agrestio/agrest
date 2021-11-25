@@ -43,25 +43,25 @@ public class ConstraintsHandlerTest {
         SizeConstraints s1 = new SizeConstraints().fetchOffset(5);
         SizeConstraints s2 = new SizeConstraints().fetchOffset(0);
 
-        ResourceEntity<Tr> t1 = new RootResourceEntity<>(entity, null);
+        ResourceEntity<Tr> t1 = new RootResourceEntity<>(entity);
         t1.setFetchOffset(0);
         constraintsHandler.constrainResponse(t1, s1, null);
         assertEquals(0, t1.getFetchOffset());
         assertEquals(5, s1.getFetchOffset());
 
-        ResourceEntity<Tr> t2 = new RootResourceEntity<>(entity, null);
+        ResourceEntity<Tr> t2 = new RootResourceEntity<>(entity);
         t2.setFetchOffset(3);
         constraintsHandler.constrainResponse(t2, s1, null);
         assertEquals(3, t2.getFetchOffset());
         assertEquals(5, s1.getFetchOffset());
 
-        ResourceEntity<Tr> t3 = new RootResourceEntity<>(entity, null);
+        ResourceEntity<Tr> t3 = new RootResourceEntity<>(entity);
         t3.setFetchOffset(6);
         constraintsHandler.constrainResponse(t3, s1, null);
         assertEquals(5, t3.getFetchOffset());
         assertEquals(5, s1.getFetchOffset());
 
-        ResourceEntity<Tr> t4 = new RootResourceEntity<>(entity, null);
+        ResourceEntity<Tr> t4 = new RootResourceEntity<>(entity);
         t4.setFetchOffset(6);
         constraintsHandler.constrainResponse(t4, s2, null);
         assertEquals(6, t4.getFetchOffset());
@@ -76,36 +76,36 @@ public class ConstraintsHandlerTest {
         SizeConstraints s1 = new SizeConstraints().fetchLimit(5);
         SizeConstraints s2 = new SizeConstraints().fetchLimit(0);
 
-        ResourceEntity<Tr> t1 = new RootResourceEntity<>(entity, null);
+        ResourceEntity<Tr> t1 = new RootResourceEntity<>(entity);
         constraintsHandler.constrainResponse(t1, s1, null);
         assertEquals(5, t1.getFetchLimit());
         assertEquals(5, s1.getFetchLimit());
 
-        ResourceEntity<Tr> t1_1 = new RootResourceEntity<>(entity, null);
+        ResourceEntity<Tr> t1_1 = new RootResourceEntity<>(entity);
         t1_1.setFetchLimit(0);
         constraintsHandler.constrainResponse(t1_1, s1, null);
         assertEquals(5, t1_1.getFetchLimit());
         assertEquals(5, s1.getFetchLimit());
 
-        ResourceEntity<Tr> t1_2 = new RootResourceEntity<>(entity, null);
+        ResourceEntity<Tr> t1_2 = new RootResourceEntity<>(entity);
         t1_2.setFetchLimit(-1);
         constraintsHandler.constrainResponse(t1_2, s1, null);
         assertEquals(5, t1_2.getFetchLimit());
         assertEquals(5, s1.getFetchLimit());
 
-        ResourceEntity<Tr> t2 = new RootResourceEntity<>(entity, null);
+        ResourceEntity<Tr> t2 = new RootResourceEntity<>(entity);
         t2.setFetchLimit(3);
         constraintsHandler.constrainResponse(t2, s1, null);
         assertEquals(3, t2.getFetchLimit());
         assertEquals(5, s1.getFetchLimit());
 
-        ResourceEntity<Tr> t3 = new RootResourceEntity<>(entity, null);
+        ResourceEntity<Tr> t3 = new RootResourceEntity<>(entity);
         t3.setFetchLimit(6);
         constraintsHandler.constrainResponse(t3, s1, null);
         assertEquals(5, t3.getFetchLimit());
         assertEquals(5, s1.getFetchLimit());
 
-        ResourceEntity<Tr> t4 = new RootResourceEntity<>(entity, null);
+        ResourceEntity<Tr> t4 = new RootResourceEntity<>(entity);
         t4.setFetchLimit(6);
         constraintsHandler.constrainResponse(t4, s2, null);
         assertEquals(6, t4.getFetchLimit());
@@ -120,11 +120,11 @@ public class ConstraintsHandlerTest {
 
         Constraint<Tr> tc1 = Constraint.excludeAll(Tr.class).attributes("a", "b");
 
-        ResourceEntity<Tr> te1 = new RootResourceEntity<>(entityTr, null);
+        ResourceEntity<Tr> te1 = new RootResourceEntity<>(entityTr);
         ResourceEntityUtils.appendAttribute(te1, "c", String.class, Tr::getC);
         ResourceEntityUtils.appendAttribute(te1, "b", String.class, Tr::getB);
 
-        NestedResourceEntity<Ts> te11 = new NestedResourceEntity<>(entityTs, null, te1, entityTr.getRelationship("rts"));
+        NestedResourceEntity<Ts> te11 = new NestedResourceEntity<>(entityTs, te1, entityTr.getRelationship("rts"));
         ResourceEntityUtils.appendAttribute(te11, "n", String.class, Ts::getN);
         ResourceEntityUtils.appendAttribute(te11, "z", String.class, Ts::getZ);
         te1.getChildren().put("d", te11);
@@ -147,16 +147,16 @@ public class ConstraintsHandlerTest {
                 .path("rts.rtt", Constraint.excludeAll(Tt.class).attributes("p", "r"))
                 .path("rtu", Constraint.excludeAll(Tu.class).attributes("k", "l"));
 
-        ResourceEntity<Tr> tr = new RootResourceEntity<>(entityTr, null);
+        ResourceEntity<Tr> tr = new RootResourceEntity<>(entityTr);
         ResourceEntityUtils. appendAttribute(tr, "c", String.class, Tr::getC);
         ResourceEntityUtils.appendAttribute(tr, "b", String.class, Tr::getB);
 
-        NestedResourceEntity<Ts> ts = new NestedResourceEntity<>(entityTs, null, tr, entityTr.getRelationship("rts"));
+        NestedResourceEntity<Ts> ts = new NestedResourceEntity<>(entityTs, tr, entityTr.getRelationship("rts"));
         ResourceEntityUtils.appendAttribute(ts, "m", String.class, Ts::getM);
         ResourceEntityUtils.appendAttribute(ts, "z", String.class, Ts::getZ);
         tr.getChildren().put("rts", ts);
 
-        NestedResourceEntity<Tv> tv = new NestedResourceEntity<>(entityTv, null, tr, entityTr.getRelationship("rtv"));
+        NestedResourceEntity<Tv> tv = new NestedResourceEntity<>(entityTv, tr, entityTr.getRelationship("rtv"));
         ResourceEntityUtils.appendAttribute(tv, "p", String.class, Tv::getP);
         ResourceEntityUtils.appendAttribute(tv, "z", String.class, Tv::getZ);
         tr.getChildren().put("rtv", tv);
@@ -181,17 +181,17 @@ public class ConstraintsHandlerTest {
         Constraint<Tr> constraint1 = Constraint.excludeAll(Tr.class).excludeId();
         Constraint<Tr> constraint2 = Constraint.excludeAll(Tr.class).includeId();
 
-        ResourceEntity<Tr> e1 = new RootResourceEntity<>(entity, null);
+        ResourceEntity<Tr> e1 = new RootResourceEntity<>(entity);
         e1.includeId();
         constraintsHandler.constrainResponse(e1, null, constraint1);
         assertFalse(e1.isIdIncluded());
 
-        ResourceEntity<Tr> e2 = new RootResourceEntity<>(entity, null);
+        ResourceEntity<Tr> e2 = new RootResourceEntity<>(entity);
         e2.includeId();
         constraintsHandler.constrainResponse(e2, null, constraint2);
         assertTrue(e2.isIdIncluded());
 
-        ResourceEntity<Tr> e3 = new RootResourceEntity<>(entity, null);
+        ResourceEntity<Tr> e3 = new RootResourceEntity<>(entity);
         e3.excludeId();
         constraintsHandler.constrainResponse(e3, null, constraint2);
         assertFalse(e3.isIdIncluded());
@@ -204,7 +204,7 @@ public class ConstraintsHandlerTest {
         AgEntity<Tr> entity = dataMap.getEntity(Tr.class);
         Constraint<Tr> constraint = Constraint.excludeAll(Tr.class).qualifier(Exp.simple("a = 5"));
 
-        ResourceEntity<Tr> e1 = new RootResourceEntity<>(entity, null);
+        ResourceEntity<Tr> e1 = new RootResourceEntity<>(entity);
         constraintsHandler.constrainResponse(e1, null, constraint);
         assertEquals(Exp.simple("a = 5"), e1.getQualifier());
     }
@@ -219,16 +219,16 @@ public class ConstraintsHandlerTest {
                 .excludeAll(Tr.class)
                 .path("rts", Constraint.excludeAll(Ts.class).attribute("m"));
 
-        ResourceEntity<Ts> tsMapBy = new RootResourceEntity<>(entityTs, null);
+        ResourceEntity<Ts> tsMapBy = new RootResourceEntity<>(entityTs);
         ResourceEntityUtils.appendAttribute(tsMapBy, "m", String.class, Ts::getM);
         ResourceEntityUtils.appendAttribute(tsMapBy, "n", String.class, Ts::getN);
 
-        NestedResourceEntity<Tr> trMapBy = new NestedResourceEntity<>(entityTr, null, tsMapBy, entityTr.getRelationship("rts"));
+        NestedResourceEntity<Tr> trMapBy = new NestedResourceEntity<>(entityTr, tsMapBy, entityTr.getRelationship("rts"));
         ResourceEntityUtils.appendAttribute(trMapBy, "a", String.class, Tr::getA);
         ResourceEntityUtils.appendAttribute(trMapBy, "b", String.class, Tr::getB);
         tsMapBy.getChildren().put("rts", trMapBy);
 
-        ResourceEntity<Tr> e = new RootResourceEntity<>(entityTr, null);
+        ResourceEntity<Tr> e = new RootResourceEntity<>(entityTr);
         e.mapBy(tsMapBy, "rts.n");
 
         constraintsHandler.constrainResponse(e, null, constraint);
@@ -245,16 +245,16 @@ public class ConstraintsHandlerTest {
                 .excludeAll(Tr.class)
                 .path("rts", Constraint.excludeAll(Ts.class).attribute("m"));
 
-        ResourceEntity<Ts> tsMapBy = new RootResourceEntity<>(entityTs, null);
+        ResourceEntity<Ts> tsMapBy = new RootResourceEntity<>(entityTs);
         ResourceEntityUtils.appendAttribute(tsMapBy, "m", String.class, Ts::getM);
         ResourceEntityUtils.appendAttribute(tsMapBy, "n", String.class, Ts::getN);
 
-        NestedResourceEntity<Tr> trMapBy = new NestedResourceEntity<>(entityTr, null, tsMapBy, entityTs.getRelationship("rtrs"));
+        NestedResourceEntity<Tr> trMapBy = new NestedResourceEntity<>(entityTr, tsMapBy, entityTs.getRelationship("rtrs"));
         ResourceEntityUtils.appendAttribute(trMapBy, "a", String.class, Tr::getA);
         ResourceEntityUtils.appendAttribute(trMapBy, "b", String.class, Tr::getB);
         tsMapBy.getChildren().put("rts", trMapBy);
 
-        ResourceEntity<Tr> e = new RootResourceEntity<>(entityTr, null);
+        ResourceEntity<Tr> e = new RootResourceEntity<>(entityTr);
         e.mapBy(tsMapBy, "rts.m");
 
         constraintsHandler.constrainResponse(e, null, constraint);
@@ -272,13 +272,13 @@ public class ConstraintsHandlerTest {
                 .excludeAll(Tr.class)
                 .path("rts", Constraint.excludeAll(Ts.class).excludeId());
 
-        ResourceEntity<Ts> te1MapBy = new RootResourceEntity<>(entityTs, null);
-        NestedResourceEntity<Tr> te1MapByTarget = new NestedResourceEntity<>(entityTr, null, te1MapBy, entityTs.getRelationship("rtrs"));
+        ResourceEntity<Ts> te1MapBy = new RootResourceEntity<>(entityTs);
+        NestedResourceEntity<Tr> te1MapByTarget = new NestedResourceEntity<>(entityTr, te1MapBy, entityTs.getRelationship("rtrs"));
         te1MapByTarget.includeId();
 
         te1MapBy.getChildren().put("rtrs", te1MapByTarget);
 
-        ResourceEntity<Tr> te1 = new RootResourceEntity<>(entityTr, null);
+        ResourceEntity<Tr> te1 = new RootResourceEntity<>(entityTr);
         te1.mapBy(te1MapBy, "rts");
 
         constraintsHandler.constrainResponse(te1, null, constraint);
@@ -297,12 +297,12 @@ public class ConstraintsHandlerTest {
                 .excludeAll(Tr.class)
                 .path("rts", Constraint.excludeAll(Ts.class).includeId());
 
-        ResourceEntity<Tr> te1MapBy = new RootResourceEntity<>(entityTr, null);
-        NestedResourceEntity<Ts> te1MapByTarget = new NestedResourceEntity<>(entityTs, null, te1MapBy, entityTr.getRelationship("rts"));
+        ResourceEntity<Tr> te1MapBy = new RootResourceEntity<>(entityTr);
+        NestedResourceEntity<Ts> te1MapByTarget = new NestedResourceEntity<>(entityTs, te1MapBy, entityTr.getRelationship("rts"));
         te1MapByTarget.includeId();
         te1MapBy.getChildren().put("rts", te1MapByTarget);
 
-        ResourceEntity<Tr> te1 = new RootResourceEntity<>(entityTr, null);
+        ResourceEntity<Tr> te1 = new RootResourceEntity<>(entityTr);
         te1.mapBy(te1MapBy, "rts");
 
         constraintsHandler.constrainResponse(te1, null, constraint);

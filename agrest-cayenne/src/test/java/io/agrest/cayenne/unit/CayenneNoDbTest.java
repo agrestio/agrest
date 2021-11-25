@@ -133,10 +133,10 @@ public abstract class CayenneNoDbTest {
     }
 
     protected <T> RootResourceEntity<T> getResourceEntity(Class<T> type) {
-        return new RootResourceEntity<>(getAgEntity(type), null);
+        return new RootResourceEntity<>(getAgEntity(type));
     }
 
     protected <T> NestedResourceEntity<T> getChildResourceEntity(Class<T> type, ResourceEntity<?> parent, String incoming) {
-        return new NestedResourceEntity<>(getAgEntity(type), null, parent, parent.getAgEntity().getRelationship(incoming));
+        return new NestedResourceEntity<>(getAgEntity(type), parent, parent.getAgEntity().getRelationship(incoming));
     }
 }

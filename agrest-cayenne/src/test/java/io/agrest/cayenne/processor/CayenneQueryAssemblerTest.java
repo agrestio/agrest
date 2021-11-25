@@ -36,7 +36,7 @@ public class CayenneQueryAssemblerTest extends CayenneNoDbTest {
     @Test
     public void testCreateRootQuery_Pagination() {
 
-        RootResourceEntity<E1> resourceEntity = new RootResourceEntity<>(getAgEntity(E1.class), null);
+        RootResourceEntity<E1> resourceEntity = new RootResourceEntity<>(getAgEntity(E1.class));
         resourceEntity.setFetchLimit(10);
         resourceEntity.setFetchOffset(0);
 

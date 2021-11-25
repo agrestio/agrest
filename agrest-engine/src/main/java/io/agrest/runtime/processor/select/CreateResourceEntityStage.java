@@ -3,9 +3,16 @@ package io.agrest.runtime.processor.select;
 import io.agrest.AgRequest;
 import io.agrest.RootResourceEntity;
 import io.agrest.meta.AgDataMap;
+import io.agrest.meta.AgEntity;
+import io.agrest.meta.AgEntityOverlay;
 import io.agrest.processor.Processor;
 import io.agrest.processor.ProcessorOutcome;
-import io.agrest.runtime.entity.*;
+import io.agrest.runtime.entity.IExcludeMerger;
+import io.agrest.runtime.entity.IExpMerger;
+import io.agrest.runtime.entity.IIncludeMerger;
+import io.agrest.runtime.entity.IMapByMerger;
+import io.agrest.runtime.entity.ISizeMerger;
+import io.agrest.runtime.entity.ISortMerger;
 import org.apache.cayenne.di.Inject;
 
 /**
@@ -46,10 +53,11 @@ public class CreateResourceEntityStage implements Processor<SelectContext<?>> {
     }
 
     protected <T> void doExecute(SelectContext<T> context) {
-        Class<T> type = context.getType();
+        AgEntityOverlay<T> overlay = context.getEntityOverlay(context.getType());
+        AgEntity<T> entity = dataMap.getEntity(context.getType());
+
         RootResourceEntity<T> resourceEntity = new RootResourceEntity<>(
-                dataMap.getEntity(type),
-                context.getEntityOverlay(type)
+                overlay != null ? overlay.resolve(dataMap, entity) : entity
         );
 
         AgRequest request = context.getMergedRequest();

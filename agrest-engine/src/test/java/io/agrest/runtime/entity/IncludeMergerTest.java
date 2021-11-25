@@ -48,7 +48,7 @@ public class IncludeMergerTest {
     public void testMergeNothing() {
 
         AgEntity<X> entity = dataMap.getEntity(X.class);
-        ResourceEntity<X> root = new RootResourceEntity<>(entity, null);
+        ResourceEntity<X> root = new RootResourceEntity<>(entity);
         includeMerger.merge(root, asList(), Collections.emptyMap());
 
         assertEquals(entity.getAttributes().size(), root.getAttributes().size());
@@ -60,7 +60,7 @@ public class IncludeMergerTest {
     public void testMergeAttributes() {
 
         AgEntity<X> entity = dataMap.getEntity(X.class);
-        ResourceEntity<X> root = new RootResourceEntity<>(entity, null);
+        ResourceEntity<X> root = new RootResourceEntity<>(entity);
         includeMerger.merge(root, asList(new Include("name")), Collections.emptyMap());
 
         assertEquals(1, root.getAttributes().size());
@@ -72,7 +72,7 @@ public class IncludeMergerTest {
     public void testMergeAttributesAndRelationships() {
 
         AgEntity<X> entity = dataMap.getEntity(X.class);
-        ResourceEntity<X> root = new RootResourceEntity<>(entity, null);
+        ResourceEntity<X> root = new RootResourceEntity<>(entity);
         includeMerger.merge(root, asList(new Include("name"), new Include("ys")), Collections.emptyMap());
 
         assertEquals(1, root.getAttributes().size());
@@ -84,7 +84,7 @@ public class IncludeMergerTest {
     public void testMerge_AttributesAndRelationships_OverlappedPath() {
 
         AgEntity<X> entity = dataMap.getEntity(X.class);
-        ResourceEntity<X> root = new RootResourceEntity<>(entity, null);
+        ResourceEntity<X> root = new RootResourceEntity<>(entity);
         includeMerger.merge(root, asList(
                 new Include("name"),
                 new Include("ys.name"),
@@ -121,7 +121,8 @@ public class IncludeMergerTest {
                 .redefineRelationshipResolver("z", (t, r) -> ThrowingNestedDataResolver.getInstance()));
 
         AgEntity<X> entity = dataMap.getEntity(X.class);
-        ResourceEntity<X> root = new RootResourceEntity<>(entity, (AgEntityOverlay<X>) overlays.get(X.class));
+        AgEntity<X> entityOverlaid = ((AgEntityOverlay<X>) overlays.get(X.class)).resolve(dataMap, entity);
+        ResourceEntity<X> root = new RootResourceEntity<>(entityOverlaid);
 
         includeMerger.merge(root, asList(
                 new Include("name"),

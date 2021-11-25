@@ -60,18 +60,10 @@ public class ResourceEntityTreeBuilder {
 
         String property = dot > 0 ? path.substring(0, dot) : path;
         AgEntity<?> agEntity = entity.getAgEntity();
-        AgEntityOverlay<?> agEntityOverlay = entity.getAgEntityOverlay();
 
         if (dot < 0) {
 
             AgAttribute attribute = agEntity.getAttribute(property);
-            AgAttributeOverlay attributeOverlay = agEntityOverlay != null ? agEntityOverlay.getAttributeOverlay(property) : null;
-            if (attributeOverlay != null) {
-                AgAttribute overlaid = attributeOverlay.resolve(attribute);
-                entity.addAttribute(overlaid, false);
-                return entity;
-            }
-
             if (attribute != null) {
                 entity.addAttribute(attribute, false);
                 return entity;
@@ -79,12 +71,6 @@ public class ResourceEntityTreeBuilder {
         }
 
         AgRelationship relationship = agEntity.getRelationship(property);
-        AgRelationshipOverlay relationshipOverlay = agEntityOverlay != null ? agEntityOverlay.getRelationshipOverlay(property) : null;
-        if (relationshipOverlay != null) {
-            AgRelationship overlaid = relationshipOverlay.resolve(relationship, agDataMap);
-            String childPath = dot > 0 ? path.substring(dot + 1) : null;
-            return inflateChild(entity, overlaid, childPath);
-        }
 
         if (relationship != null) {
             String childPath = dot > 0 ? path.substring(dot + 1) : null;
@@ -112,6 +98,11 @@ public class ResourceEntityTreeBuilder {
 
     protected NestedResourceEntity<?> createChildEntity(ResourceEntity<?> parent, AgRelationship incoming) {
         AgEntity<?> target = incoming.getTargetEntity();
-        return new NestedResourceEntity(target, entityOverlays.get(target.getType()), parent, incoming);
+        AgEntityOverlay targetOverlay = entityOverlays.get(target.getType());
+
+        return new NestedResourceEntity(
+                targetOverlay != null ? targetOverlay.resolve(agDataMap, target) : target,
+                parent,
+                incoming);
     }
 }
