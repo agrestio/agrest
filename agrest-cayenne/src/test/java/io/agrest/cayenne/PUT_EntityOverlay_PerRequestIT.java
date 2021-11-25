@@ -4,6 +4,7 @@ import io.agrest.Ag;
 import io.agrest.DataResponse;
 import io.agrest.EntityUpdate;
 import io.agrest.cayenne.cayenne.main.E10;
+import io.agrest.cayenne.cayenne.main.E11;
 import io.agrest.cayenne.cayenne.main.E2;
 import io.agrest.cayenne.cayenne.main.E22;
 import io.agrest.cayenne.cayenne.main.E3;
@@ -30,7 +31,7 @@ public class PUT_EntityOverlay_PerRequestIT extends DbTest {
 
     @BQTestTool
     static final AgCayenneTester tester = tester(Resource.class)
-            .entities(E2.class, E3.class, E4.class, E10.class, E22.class)
+            .entities(E2.class, E3.class, E4.class, E10.class, E11.class, E22.class)
             .build();
 
     @Test

@@ -28,8 +28,8 @@ public class AgEntityOverlay<T> {
     private final Map<String, AgRelationshipOverlay> relationships;
     private RootDataResolver<T> rootDataResolver;
 
-    private PropertyAccessRule readAccessBuilder;
-    private PropertyAccessRule writeAccessBuilder;
+    private PropertyAccessRules readAccessBuilder;
+    private PropertyAccessRules writeAccessBuilder;
 
     public AgEntityOverlay(Class<T> type) {
         this.type = type;
@@ -71,13 +71,13 @@ public class AgEntityOverlay<T> {
         getRelationshipOverlays().forEach(resolver::loadRelationshipOverlay);
 
         if (readAccessBuilder != null) {
-            PropertyAccess pa = new PropertyAccess();
+            PropertyAccessBuilder pa = new PropertyAccessBuilder();
             readAccessBuilder.apply(pa);
             pa.findInaccessible(maybeOverlaid, this).forEach(resolver::makeUnreadable);
         }
 
         if (writeAccessBuilder != null) {
-            PropertyAccess pa = new PropertyAccess();
+            PropertyAccessBuilder pa = new PropertyAccessBuilder();
             writeAccessBuilder.apply(pa);
             pa.findInaccessible(maybeOverlaid, this).forEach(resolver::makeUnwritable);
         }
@@ -160,7 +160,7 @@ public class AgEntityOverlay<T> {
      *
      * @since 4.8
      */
-    public AgEntityOverlay<T> readAccess(PropertyAccessRule accessBuilder) {
+    public AgEntityOverlay<T> readAccess(PropertyAccessRules accessBuilder) {
         this.readAccessBuilder = readAccessBuilder != null ? readAccessBuilder.andThen(accessBuilder) : accessBuilder;
         return this;
     }
@@ -170,7 +170,7 @@ public class AgEntityOverlay<T> {
      *
      * @since 4.8
      */
-    public AgEntityOverlay<T> writeAccess(PropertyAccessRule accessBuilder) {
+    public AgEntityOverlay<T> writeAccess(PropertyAccessRules accessBuilder) {
         this.writeAccessBuilder = writeAccessBuilder != null ? writeAccessBuilder.andThen(accessBuilder) : accessBuilder;
         return this;
     }
@@ -180,7 +180,7 @@ public class AgEntityOverlay<T> {
      *
      * @return this overlay instance
      * @since 3.7
-     * @deprecated since 4.8 use {@link #readAccess(PropertyAccessRule)} and/or {@link #writeAccess(PropertyAccessRule)}
+     * @deprecated since 4.8 use {@link #readAccess(PropertyAccessRules)} and/or {@link #writeAccess(PropertyAccessRules)}
      */
     @Deprecated
     public AgEntityOverlay<T> exclude(String... properties) {

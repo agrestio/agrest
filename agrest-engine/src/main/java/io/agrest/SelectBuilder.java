@@ -3,7 +3,9 @@ package io.agrest;
 import io.agrest.constraints.Constraint;
 import io.agrest.encoder.Encoder;
 import io.agrest.encoder.EntityEncoderFilter;
+import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgEntityOverlay;
+import io.agrest.meta.PropertyAccessRules;
 import io.agrest.processor.Processor;
 import io.agrest.processor.ProcessorOutcome;
 import io.agrest.runtime.AgBuilder;
@@ -79,7 +81,7 @@ public interface SelectBuilder<T> {
     SelectBuilder<T> byId(Map<String, Object> ids);
 
     /**
-     * Installs an optional constraint function defining how much of the request entity attributes / relationships
+     * Installs a constraint function defining how much of the request entity attributes / relationships
      * the client can see.
      *
      * @param constraint an instance of Constraint function.
@@ -87,6 +89,18 @@ public interface SelectBuilder<T> {
      * @since 2.4
      */
     SelectBuilder<T> constraint(Constraint<T> constraint);
+
+    /**
+     * Installs property access rules for request, defining which attributes and relationships a client can see for
+     * the specified entity type within a given request. This method can be called multiple times to add more than one
+     * access rule for same or different entities. Access rules can alter the root entity or any other entity in the
+     * model. This method is a shortcut for "entityOverlay(AgEntity.overlay(entityType).readAccess(accessRules))".
+     *
+     * @since 4.8
+     */
+    default <A> SelectBuilder<T> accessRules(Class<A> entityType, PropertyAccessRules accessRules) {
+        return entityOverlay(AgEntity.overlay(entityType).readAccess(accessRules));
+    }
 
     /**
      * @since 1.4

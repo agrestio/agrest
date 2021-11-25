@@ -10,14 +10,13 @@ import java.util.Set;
 import java.util.function.Consumer;
 
 /**
- * A mutable builder of property access rules for a single entity. Used to configure property access in
+ * A mutable builder of property access constraints for a single entity. Used to configure property access in
  * {@link AgEntityOverlay}.
  *
- * @see AgEntityOverlay#readAccess(PropertyAccessRule) 
- * @see AgEntityOverlay#writeAccess(PropertyAccessRule)
+ * @see PropertyAccessRules#apply(PropertyAccessBuilder)
  * @since 4.8
  */
-public class PropertyAccess {
+public class PropertyAccessBuilder {
 
     // Since we can't resolve the access rules until we are given an entity,
     // we must store them as "filter" operations in the order they were specified.
@@ -25,15 +24,23 @@ public class PropertyAccess {
     // set of properties
     private final List<Consumer<ExcludeBuilder<?>>> accessFilters;
 
-    public PropertyAccess() {
+    public PropertyAccessBuilder() {
         this.accessFilters = new ArrayList<>();
     }
 
-    public PropertyAccess id(boolean accessible) {
+    /**
+     * Creates a rule to block access to all properties (ids, attributes, relationships) from the entity model.
+     */
+    public PropertyAccessBuilder empty() {
+        accessFilters.add(ExcludeBuilder::excludeEverything);
+        return this;
+    }
+
+    public PropertyAccessBuilder id(boolean accessible) {
         return property(PathConstants.ID_PK_ATTRIBUTE, accessible);
     }
 
-    public PropertyAccess attributes(boolean accessible) {
+    public PropertyAccessBuilder attributes(boolean accessible) {
         accessFilters.add(accessible
                 ? ExcludeBuilder::includeAllAttributes
                 : ExcludeBuilder::excludeAllAttributes);
@@ -41,7 +48,7 @@ public class PropertyAccess {
         return this;
     }
 
-    public PropertyAccess relationships(boolean accessible) {
+    public PropertyAccessBuilder relationships(boolean accessible) {
         accessFilters.add(accessible
                 ? ExcludeBuilder::includeAllRelationships
                 : ExcludeBuilder::excludeAllRelationships);
@@ -49,7 +56,7 @@ public class PropertyAccess {
         return this;
     }
 
-    public PropertyAccess property(String name, boolean accessible) {
+    public PropertyAccessBuilder property(String name, boolean accessible) {
         accessFilters.add(accessible
                 ? b -> b.includeProperty(name)
                 : b -> b.excludeProperty(name));
@@ -77,6 +84,12 @@ public class PropertyAccess {
             this.overlay = overlay;
             this.entity = entity;
             this.excludes = new HashSet<>();
+        }
+
+        void excludeEverything() {
+            excludeAllAttributes();
+            excludeAllRelationships();
+            excludeProperty(PathConstants.ID_PK_ATTRIBUTE);
         }
 
         void includeAllAttributes() {

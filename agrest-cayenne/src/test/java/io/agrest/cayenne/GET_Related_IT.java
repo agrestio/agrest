@@ -2,10 +2,15 @@ package io.agrest.cayenne;
 
 import io.agrest.Ag;
 import io.agrest.DataResponse;
-import io.agrest.cayenne.cayenne.main.*;
+import io.agrest.cayenne.cayenne.main.E12;
+import io.agrest.cayenne.cayenne.main.E12E13;
+import io.agrest.cayenne.cayenne.main.E13;
+import io.agrest.cayenne.cayenne.main.E17;
+import io.agrest.cayenne.cayenne.main.E18;
+import io.agrest.cayenne.cayenne.main.E2;
+import io.agrest.cayenne.cayenne.main.E3;
 import io.agrest.cayenne.unit.AgCayenneTester;
 import io.agrest.cayenne.unit.DbTest;
-import io.agrest.constraints.Constraint;
 import io.bootique.junit5.BQTestTool;
 import org.junit.jupiter.api.Test;
 
@@ -26,24 +31,6 @@ public class GET_Related_IT extends DbTest {
             .entities(E2.class, E3.class, E17.class, E18.class)
             .entitiesAndDependencies(E12.class, E13.class)
             .build();
-
-    @Test
-    public void testToMany_Constrained() {
-
-        // make sure we have e3s for more than one e2 - this will help us
-        // confirm that relationship queries are properly filtered.
-
-        tester.e2().insertColumns("id_", "name")
-                .values(1, "xxx")
-                .values(2, "yyy").exec();
-
-        tester.e3().insertColumns("id_", "name", "e2_id")
-                .values(7, "zzz", 2)
-                .values(8, "yyy", 1)
-                .values(9, "zzz", 1).exec();
-
-        tester.target("/e2/constraints/1/e3s").get().wasOk().bodyEquals(2, "{\"id\":8},{\"id\":9}");
-    }
 
     @Test
     public void testToMany_CompoundId() {
@@ -163,13 +150,6 @@ public class GET_Related_IT extends DbTest {
         @Path("e2/{id}/e3s")
         public DataResponse<E3> getE2_E3s(@PathParam("id") int id, @Context UriInfo uriInfo) {
             return Ag.select(E3.class, config).parent(E2.class, id, "e3s").uri(uriInfo).get();
-        }
-
-        @GET
-        @Path("e2/constraints/{id}/e3s")
-        public DataResponse<E3> getE2_E3s_Constrained(@PathParam("id") int id, @Context UriInfo uriInfo) {
-            return Ag.select(E3.class, config).parent(E2.class, id, "e3s").uri(uriInfo)
-                    .constraint(Constraint.idOnly(E3.class)).get();
         }
 
         @GET
