@@ -98,10 +98,11 @@ public interface SelectBuilder<T> {
      * or different entities. So the "entityType" parameter can match the root entity or can be any other entity in the
      * model. This method is a shortcut for "entityOverlay(AgEntity.overlay(entityType).readAccess(accessRules))".
      *
+     * @return this builder instance
      * @since 4.8
      */
-    default <A> SelectBuilder<T> propertyAccess(Class<A> entityType, PropertyAccessRules accessRules) {
-        return entityOverlay(AgEntity.overlay(entityType).readAccess(accessRules));
+    default <A> SelectBuilder<T> propertyAccess(Class<A> entityType, PropertyAccessRules rules) {
+        return entityOverlay(AgEntity.overlay(entityType).readAccess(rules));
     }
 
     /**

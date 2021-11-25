@@ -1,6 +1,8 @@
 package io.agrest;
 
+import io.agrest.access.PropertyAccessRules;
 import io.agrest.constraints.Constraint;
+import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgEntityOverlay;
 import io.agrest.processor.Processor;
 import io.agrest.processor.ProcessorOutcome;
@@ -60,7 +62,9 @@ public interface UpdateBuilder<T> {
      * @param constraint an instance of Constraint function.
      * @return this builder instance.
      * @since 2.4
+     * @deprecated since 4.8 in favor of {@link #propertyReadAccess(Class, PropertyAccessRules)}
      */
+    @Deprecated
     UpdateBuilder<T> readConstraint(Constraint<T> constraint);
 
     /**
@@ -68,9 +72,37 @@ public interface UpdateBuilder<T> {
      * the client can modify.
      *
      * @param constraint an instance of Constraint function.
-     * @return this builder instance.
+     * @return this builder instance
+     * @deprecated since 4.8 in favor of {@link #propertyWriteAccess(Class, PropertyAccessRules)}
      */
+    @Deprecated
     UpdateBuilder<T> writeConstraint(Constraint<T> constraint);
+
+    /**
+     * Applies provided property read access rules to the current request, defining which attributes and relationships a
+     * client can view for the specified entity type. Can be called multiple times to add multiple rules for same entity
+     * or different entities. So the "entityType" parameter can match the root entity or can be any other entity in the
+     * model. This method is a shortcut for "entityOverlay(AgEntity.overlay(entityType).readAccess(accessRules))".
+     *
+     * @return this builder instance
+     * @since 4.8
+     */
+    default <A> UpdateBuilder<T> propertyReadAccess(Class<A> entityType, PropertyAccessRules rules) {
+        return entityOverlay(AgEntity.overlay(entityType).readAccess(rules));
+    }
+
+    /**
+     * Applies provided property write access rules to the current request, defining which attributes and relationships a
+     * client can modify for the specified entity type. Can be called multiple times to add multiple rules for same entity
+     * or different entities. So the "entityType" parameter can match the root entity or can be any other entity in the
+     * model. This method is a shortcut for "entityOverlay(AgEntity.overlay(entityType).writeAccess(accessRules))".
+     *
+     * @return this builder instance
+     * @since 4.8
+     */
+    default <A> UpdateBuilder<T> propertyWriteAccess(Class<A> entityType, PropertyAccessRules rules) {
+        return entityOverlay(AgEntity.overlay(entityType).writeAccess(rules));
+    }
 
     /**
      * Installs request-scoped {@link AgEntityOverlay} that allows to customize, add or redefine request entity structure,
