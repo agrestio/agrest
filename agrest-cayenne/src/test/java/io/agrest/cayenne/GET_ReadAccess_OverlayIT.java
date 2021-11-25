@@ -2,6 +2,7 @@ package io.agrest.cayenne;
 
 import io.agrest.Ag;
 import io.agrest.DataResponse;
+import io.agrest.access.PropertyAccessBuilder;
 import io.agrest.cayenne.cayenne.main.E2;
 import io.agrest.cayenne.cayenne.main.E3;
 import io.agrest.cayenne.cayenne.main.E4;
@@ -85,7 +86,7 @@ public class GET_ReadAccess_OverlayIT extends DbTest {
             return Ag.select(E3.class, config)
                     .parent(E2.class, id, "e3s")
                     .uri(uriInfo)
-                    .propertyAccess(E3.class, r -> r.idOnly())
+                    .propertyAccess(E3.class, PropertyAccessBuilder::idOnly)
                     .get();
         }
     }
