@@ -90,7 +90,7 @@ public class PropertyAccessBuilder {
      * A build method that returns a set of inaccessible properties based on the builder rules configured previously
      * by the user.
      */
-    public <T> Set<String> findInaccessible(AgEntity<T> entity, AgEntityOverlay<T> overlay) {
+    public <T> Set<String> resolveInaccessible(AgEntity<T> entity, AgEntityOverlay<T> overlay) {
         if (accessFilters.isEmpty()) {
             return Collections.emptySet();
         }

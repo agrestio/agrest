@@ -75,13 +75,13 @@ public class AgEntityOverlay<T> {
         if (readAccessRules != null) {
             PropertyAccessBuilder pa = new PropertyAccessBuilder();
             readAccessRules.apply(pa);
-            pa.findInaccessible(maybeOverlaid, this).forEach(resolver::makeUnreadable);
+            pa.resolveInaccessible(maybeOverlaid, this).forEach(resolver::makeUnreadable);
         }
 
         if (writeAccessRules != null) {
             PropertyAccessBuilder pa = new PropertyAccessBuilder();
             writeAccessRules.apply(pa);
-            pa.findInaccessible(maybeOverlaid, this).forEach(resolver::makeUnwritable);
+            pa.resolveInaccessible(maybeOverlaid, this).forEach(resolver::makeUnwritable);
         }
 
         return new DefaultAgEntity<>(

@@ -1,5 +1,7 @@
 package io.agrest.unit;
 
+import io.agrest.meta.AgDataMap;
+import io.agrest.meta.AgEntity;
 import io.agrest.pojo.model.*;
 import io.agrest.pojo.runtime.PojoFetchStage;
 import io.agrest.pojo.runtime.PojoSelectProcessorFactoryProvider;
@@ -71,7 +73,15 @@ public class AgPojoTester implements BQBeforeScopeCallback, BQAfterScopeCallback
     }
 
     public IAgService ag() {
-        return getAppInScope().getInstance(AgRuntime.class).service(IAgService.class);
+        return runtime().service(IAgService.class);
+    }
+
+    public AgRuntime runtime() {
+        return getAppInScope().getInstance(AgRuntime.class);
+    }
+
+    public <T> AgEntity<T> entity(Class<T> type) {
+        return runtime().service(AgDataMap.class).getEntity(type);
     }
 
     public <T> Map<Object, T> bucket(Class<T> type) {
