@@ -1,5 +1,7 @@
 package io.agrest.meta;
 
+import io.agrest.access.PropertyAccessBuilder;
+import io.agrest.access.PropertyAccessRules;
 import io.agrest.property.PropertyReader;
 import io.agrest.resolver.NestedDataResolver;
 import io.agrest.resolver.NestedDataResolverFactory;
@@ -28,8 +30,8 @@ public class AgEntityOverlay<T> {
     private final Map<String, AgRelationshipOverlay> relationships;
     private RootDataResolver<T> rootDataResolver;
 
-    private PropertyAccessRules readAccessBuilder;
-    private PropertyAccessRules writeAccessBuilder;
+    private PropertyAccessRules readAccessRules;
+    private PropertyAccessRules writeAccessRules;
 
     public AgEntityOverlay(Class<T> type) {
         this.type = type;
@@ -61,7 +63,7 @@ public class AgEntityOverlay<T> {
         // TODO: support null entity like we do for overlaid Attributes and Relationships?
         Objects.requireNonNull(maybeOverlaid);
 
-        if (attributes.isEmpty() && relationships.isEmpty() && readAccessBuilder == null && writeAccessBuilder == null) {
+        if (attributes.isEmpty() && relationships.isEmpty() && readAccessRules == null && writeAccessRules == null) {
             return maybeOverlaid;
         }
 
@@ -70,15 +72,15 @@ public class AgEntityOverlay<T> {
         getAttributeOverlays().forEach(resolver::loadAttributeOverlay);
         getRelationshipOverlays().forEach(resolver::loadRelationshipOverlay);
 
-        if (readAccessBuilder != null) {
+        if (readAccessRules != null) {
             PropertyAccessBuilder pa = new PropertyAccessBuilder();
-            readAccessBuilder.apply(pa);
+            readAccessRules.apply(pa);
             pa.findInaccessible(maybeOverlaid, this).forEach(resolver::makeUnreadable);
         }
 
-        if (writeAccessBuilder != null) {
+        if (writeAccessRules != null) {
             PropertyAccessBuilder pa = new PropertyAccessBuilder();
-            writeAccessBuilder.apply(pa);
+            writeAccessRules.apply(pa);
             pa.findInaccessible(maybeOverlaid, this).forEach(resolver::makeUnwritable);
         }
 
@@ -102,12 +104,12 @@ public class AgEntityOverlay<T> {
         attributes.putAll(anotherOverlay.attributes);
         relationships.putAll(anotherOverlay.relationships);
 
-        if (anotherOverlay.readAccessBuilder != null) {
-            readAccess(anotherOverlay.readAccessBuilder);
+        if (anotherOverlay.readAccessRules != null) {
+            readAccess(anotherOverlay.readAccessRules);
         }
 
-        if (anotherOverlay.writeAccessBuilder != null) {
-            writeAccess(anotherOverlay.writeAccessBuilder);
+        if (anotherOverlay.writeAccessRules != null) {
+            writeAccess(anotherOverlay.writeAccessRules);
         }
 
         if (anotherOverlay.getRootDataResolver() != null) {
@@ -161,7 +163,7 @@ public class AgEntityOverlay<T> {
      * @since 4.8
      */
     public AgEntityOverlay<T> readAccess(PropertyAccessRules accessBuilder) {
-        this.readAccessBuilder = readAccessBuilder != null ? readAccessBuilder.andThen(accessBuilder) : accessBuilder;
+        this.readAccessRules = readAccessRules != null ? readAccessRules.andThen(accessBuilder) : accessBuilder;
         return this;
     }
 
@@ -171,7 +173,7 @@ public class AgEntityOverlay<T> {
      * @since 4.8
      */
     public AgEntityOverlay<T> writeAccess(PropertyAccessRules accessBuilder) {
-        this.writeAccessBuilder = writeAccessBuilder != null ? writeAccessBuilder.andThen(accessBuilder) : accessBuilder;
+        this.writeAccessRules = writeAccessRules != null ? writeAccessRules.andThen(accessBuilder) : accessBuilder;
         return this;
     }
 

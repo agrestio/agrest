@@ -74,7 +74,7 @@ public class GET_ReadAccess_OverlayIT extends DbTest {
         public DataResponse<E4> getObjects_LimitAttributes(@Context UriInfo uriInfo) {
 
             return Ag.select(E4.class, config).uri(uriInfo)
-                    .accessRules(E4.class, r -> r.empty().id(true).property("cInt", true))
+                    .propertyAccess(E4.class, r -> r.empty().id(true).property("cInt", true))
                     .get();
         }
 
@@ -85,7 +85,7 @@ public class GET_ReadAccess_OverlayIT extends DbTest {
             return Ag.select(E3.class, config)
                     .parent(E2.class, id, "e3s")
                     .uri(uriInfo)
-                    .accessRules(E3.class, r -> r.empty().id(true))
+                    .propertyAccess(E3.class, r -> r.idOnly())
                     .get();
         }
     }

@@ -5,7 +5,7 @@ import io.agrest.encoder.Encoder;
 import io.agrest.encoder.EntityEncoderFilter;
 import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgEntityOverlay;
-import io.agrest.meta.PropertyAccessRules;
+import io.agrest.access.PropertyAccessRules;
 import io.agrest.processor.Processor;
 import io.agrest.processor.ProcessorOutcome;
 import io.agrest.runtime.AgBuilder;
@@ -87,18 +87,20 @@ public interface SelectBuilder<T> {
      * @param constraint an instance of Constraint function.
      * @return this builder instance.
      * @since 2.4
+     * @deprecated since 4.8 in favor of {@link #propertyAccess(Class, PropertyAccessRules)}.
      */
+    @Deprecated
     SelectBuilder<T> constraint(Constraint<T> constraint);
 
     /**
-     * Installs property access rules for request, defining which attributes and relationships a client can see for
-     * the specified entity type within a given request. This method can be called multiple times to add more than one
-     * access rule for same or different entities. Access rules can alter the root entity or any other entity in the
+     * Applies provided property access rules to the current request, defining which attributes and relationships a
+     * client can see for the specified entity type. Can be called multiple times to add multiple rules for same entity
+     * or different entities. So the "entityType" parameter can match the root entity or can be any other entity in the
      * model. This method is a shortcut for "entityOverlay(AgEntity.overlay(entityType).readAccess(accessRules))".
      *
      * @since 4.8
      */
-    default <A> SelectBuilder<T> accessRules(Class<A> entityType, PropertyAccessRules accessRules) {
+    default <A> SelectBuilder<T> propertyAccess(Class<A> entityType, PropertyAccessRules accessRules) {
         return entityOverlay(AgEntity.overlay(entityType).readAccess(accessRules));
     }
 

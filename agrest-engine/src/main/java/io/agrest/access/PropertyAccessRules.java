@@ -1,19 +1,19 @@
-package io.agrest.meta;
+package io.agrest.access;
 
 import java.util.Objects;
 
 /**
- * A set of custom property access rules
+ * Encapsulates logic for creating custom property access rules for a single entity.
  *
- * @see AgEntityOverlay#readAccess(PropertyAccessRules)
- * @see AgEntityOverlay#writeAccess(PropertyAccessRules)
+ * @see io.agrest.SelectBuilder#propertyAccess(Class, PropertyAccessRules)
  * @since 4.7
  */
 @FunctionalInterface
 public interface PropertyAccessRules {
 
     /**
-     * Applies a set of access rules encapsula
+     * Configures access rules of the provided {@link PropertyAccessBuilder}.
+     *
      * @param accessConfig
      */
     void apply(PropertyAccessBuilder accessConfig);

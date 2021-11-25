@@ -18,6 +18,7 @@ import javax.ws.rs.core.Configuration;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.UriInfo;
 
+@Deprecated
 public class GET_ReadAccess_ConstraintsIT extends DbTest {
 
     @BQTestTool

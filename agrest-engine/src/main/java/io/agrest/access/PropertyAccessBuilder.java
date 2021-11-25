@@ -1,6 +1,8 @@
-package io.agrest.meta;
+package io.agrest.access;
 
 import io.agrest.PathConstants;
+import io.agrest.meta.AgEntity;
+import io.agrest.meta.AgEntityOverlay;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -36,10 +38,24 @@ public class PropertyAccessBuilder {
         return this;
     }
 
+    /**
+     * Creates a rule to block access to all properties, but allows access to id
+     */
+    public PropertyAccessBuilder idOnly() {
+        accessFilters.add(ExcludeBuilder::includeIdOnly);
+        return this;
+    }
+
+    /**
+     * Sets an access rule for the id property.
+     */
     public PropertyAccessBuilder id(boolean accessible) {
         return property(PathConstants.ID_PK_ATTRIBUTE, accessible);
     }
 
+    /**
+     * Sets an access rule for all attribute properties.
+     */
     public PropertyAccessBuilder attributes(boolean accessible) {
         accessFilters.add(accessible
                 ? ExcludeBuilder::includeAllAttributes
@@ -48,6 +64,9 @@ public class PropertyAccessBuilder {
         return this;
     }
 
+    /**
+     * Sets an access rule for all relationship properties.
+     */
     public PropertyAccessBuilder relationships(boolean accessible) {
         accessFilters.add(accessible
                 ? ExcludeBuilder::includeAllRelationships
@@ -56,6 +75,9 @@ public class PropertyAccessBuilder {
         return this;
     }
 
+    /**
+     * Sets am access rule for a given named property, that can be an attribute, a relationship or an id.
+     */
     public PropertyAccessBuilder property(String name, boolean accessible) {
         accessFilters.add(accessible
                 ? b -> b.includeProperty(name)
@@ -64,7 +86,11 @@ public class PropertyAccessBuilder {
         return this;
     }
 
-    <T> Set<String> findInaccessible(AgEntity<T> entity, AgEntityOverlay<T> overlay) {
+    /**
+     * A build method that returns a set of inaccessible properties based on the builder rules configured previously
+     * by the user.
+     */
+    public <T> Set<String> findInaccessible(AgEntity<T> entity, AgEntityOverlay<T> overlay) {
         if (accessFilters.isEmpty()) {
             return Collections.emptySet();
         }
@@ -90,6 +116,12 @@ public class PropertyAccessBuilder {
             excludeAllAttributes();
             excludeAllRelationships();
             excludeProperty(PathConstants.ID_PK_ATTRIBUTE);
+        }
+
+        void includeIdOnly() {
+            excludeAllAttributes();
+            excludeAllRelationships();
+            includeProperty(PathConstants.ID_PK_ATTRIBUTE);
         }
 
         void includeAllAttributes() {
