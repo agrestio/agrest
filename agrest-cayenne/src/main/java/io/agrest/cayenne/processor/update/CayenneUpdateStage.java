@@ -159,7 +159,7 @@ public class CayenneUpdateStage extends CayenneMergeChangesStage {
 
         Map<String, NestedResourceEntity<?>> children = entity.getChildren();
 
-        if (!children.isEmpty()) {
+        if (children.isEmpty()) {
             return;
         }
 

@@ -1,5 +1,6 @@
 ## Release 4.8
 
+* #427 AgEntityOverlay support for POST/PUT requests
 * #498 Made JAX-RS dependency "provided"
 * #497 Agrest fails to build on Java 11
 

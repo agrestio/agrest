@@ -18,13 +18,13 @@ import org.apache.cayenne.Persistent;
 import org.apache.cayenne.query.SelectById;
 import org.junit.jupiter.api.Test;
 
-import javax.ws.rs.GET;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Configuration;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.UriInfo;
+import java.util.List;
 
 public class PUT_EntityOverlay_PerRequestIT extends DbTest {
 
@@ -46,6 +46,53 @@ public class PUT_EntityOverlay_PerRequestIT extends DbTest {
                 .bodyEquals(
                         1,
                         "{\"id\":2,\"cInt\":89,\"dynamicRelationship\":{\"name\":\"b\"},\"fromRequest\":\"xyz\"}");
+    }
+
+    @Test
+    public void test_DefaultIncludes() {
+
+        tester.e4().insertColumns("id", "c_varchar").values(2, "a").values(4, "b").exec();
+
+        tester.target("/e4/xyz")
+                .queryParam("sort", "id")
+                // "objectProperty" is not writable, and should be ignored
+                .put("[{\"id\":2,\"cBoolean\":true,\"cVarchar\":\"c\",\"objectProperty\":\"xxx$\"}," +
+                        "{\"id\":4,\"cBoolean\":false,\"cVarchar\":\"d\",\"objectProperty\":\"yyy$\"}]")
+                .wasOk()
+                .bodyEquals(2, "{\"id\":2,\"cBoolean\":true,\"cDate\":null,\"cDecimal\":null,\"cInt\":null," +
+                                "\"cTime\":null,\"cTimestamp\":null,\"cVarchar\":\"c_x\",\"fromRequest\":\"xyz\",\"objectProperty\":\"c$\"}",
+                        "{\"id\":4,\"cBoolean\":false,\"cDate\":null,\"cDecimal\":null,\"cInt\":null," +
+                                "\"cTime\":null,\"cTimestamp\":null,\"cVarchar\":\"d_x\",\"fromRequest\":\"xyz\",\"objectProperty\":\"d$\"}");
+    }
+
+    @Test
+    public void test_OverlaidNestedExclude() {
+
+        tester.e2().insertColumns("id_", "name", "address").values(1, "N", "A").exec();
+        tester.e3().insertColumns("id_", "name", "phone_number", "e2_id")
+                .values(1, "N", "P", 1)
+                .exec();
+
+        tester.target("/e2/1")
+                .queryParam("include", "e3s")
+                .put("{\"name\":\"Nn\",\"address\":\"Aa\"}")
+                .wasOk()
+                .bodyEquals(1, "{\"id\":1,\"e3s\":[{\"id\":1,\"name\":\"N\"}],\"name\":\"Nn\"}");
+
+        tester.e2().matcher().eq("id_", 1).eq("name", "Nn").eq("address", "A").assertOneMatch();
+    }
+
+    @Test
+    public void test_OverlaidExclude() {
+
+        tester.e2().insertColumns("id_", "name", "address").values(1, "N", "A").exec();
+
+        tester.target("/e2/1")
+                .put("{\"name\":\"Nn\",\"address\":\"Aa\"}")
+                .wasOk()
+                .bodyEquals(1, "{\"id\":1,\"name\":\"Nn\"}");
+
+        tester.e2().matcher().eq("id_", 1).eq("name", "Nn").eq("address", "A").assertOneMatch();
     }
 
     @Path("")
@@ -82,9 +129,12 @@ public class PUT_EntityOverlay_PerRequestIT extends DbTest {
                     .syncAndSelect(data);
         }
 
-        @GET
+        @PUT
         @Path("e4/{suffix}")
-        public DataResponse<E4> getE4(@Context UriInfo uriInfo, @PathParam("suffix") String suffix) {
+        public DataResponse<E4> putE4(
+                @Context UriInfo uriInfo,
+                @PathParam("suffix") String suffix,
+                List<EntityUpdate<E4>> data) {
 
             AgEntityOverlay<E4> overlay = AgEntity.overlay(E4.class)
                     // 1. Request-specific attribute
@@ -97,40 +147,29 @@ public class PUT_EntityOverlay_PerRequestIT extends DbTest {
                     .redefineToOne("dynamicRelationship", E22.class, e4 -> findMatching(E22.class, e4));
 
             return Ag.service(config)
-                    .select(E4.class)
+                    .createOrUpdate(E4.class)
                     .entityOverlay(overlay)
                     .uri(uriInfo)
-                    .get();
+                    .syncAndSelect(data);
         }
 
-        @GET
-        @Path("e4_2")
-        public DataResponse<E4> getE4_WithE3(@Context UriInfo uriInfo) {
-
-            AgEntityOverlay<E4> overlay = AgEntity.overlay(E4.class)
-                    // dynamic relationship
-                    .redefineToOne("dynamicRelationship", E3.class, e4 -> findMatching(E3.class, e4));
-
-            return Ag.service(config)
-                    .select(E4.class)
-                    .entityOverlay(overlay)
-                    .uri(uriInfo)
-                    .get();
-        }
-
-        @GET
-        @Path("e2")
-        public DataResponse<E2> getE2_With_exclude(@Context UriInfo uriInfo) {
+        @PUT
+        @Path("e2/{id}")
+        public DataResponse<E2> putE2_With_exclude(
+                @Context UriInfo uriInfo,
+                @PathParam("id") Integer id,
+                EntityUpdate<E2> data) {
 
             AgEntityOverlay<E2> e2Overlay = AgEntity.overlay(E2.class).exclude("address");
             AgEntityOverlay<E3> e3Overlay = AgEntity.overlay(E3.class).exclude("phoneNumber");
 
             return Ag.service(config)
-                    .select(E2.class)
+                    .createOrUpdate(E2.class)
                     .entityOverlay(e2Overlay)
                     .entityOverlay(e3Overlay)
                     .uri(uriInfo)
-                    .get();
+                    .id(id)
+                    .syncAndSelect(data);
         }
     }
 }

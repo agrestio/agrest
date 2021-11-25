@@ -160,7 +160,7 @@ public class GET_EntityOverlay_PerRequestIT extends DbTest {
     }
 
     @Test
-    public void test_OverlaidExclude() {
+    public void test_OverlaidNestedExclude() {
 
         tester.e2().insertColumns("id_", "name", "address").values(1, "N", "A").exec();
         tester.e3().insertColumns("id_", "name", "phone_number", "e2_id")
@@ -174,10 +174,8 @@ public class GET_EntityOverlay_PerRequestIT extends DbTest {
                 .bodyEquals(1, "{\"id\":1,\"e3s\":[{\"id\":1,\"name\":\"N\"}],\"name\":\"N\"}");
     }
 
-
-
     @Test
-    public void test_OverlaidNestedExclude() {
+    public void test_OverlaidExclude() {
 
         tester.e2().insertColumns("id_", "name", "address").values(1, "N", "A").exec();
 
