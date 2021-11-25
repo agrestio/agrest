@@ -65,18 +65,7 @@ public class CayenneAgEntityBuilder<T> {
     }
 
     public AgEntity<T> build() {
-
-        buildCayenneEntity();
-        buildAnnotatedProperties();
-        applyOverlays();
-
-        return new DefaultAgEntity<>(
-                cayenneEntity.getName(),
-                type,
-                ids,
-                attributes,
-                relationships,
-                rootDataResolver != null ? rootDataResolver : ThrowingRootDataResolver.getInstance());
+        return applyOverlay(buildEntity());
     }
 
     private void addId(AgIdPart id) {
@@ -186,30 +175,26 @@ public class CayenneAgEntityBuilder<T> {
         }
     }
 
-    protected void applyOverlays() {
-        if (overlay != null) {
-            // TODO: what about overlaying ids?
-            overlay.getAttributeOverlays().forEach(this::loadAttributeOverlay);
-            overlay.getRelationshipOverlays().forEach(this::loadRelationshipOverlay);
-            overlay.getExcludes().forEach(this::removeIdOrAttributeOrRelationship);
+    /**
+     * @since 4.8
+     */
+    protected AgEntity<T> buildEntity() {
+        buildCayenneEntity();
+        buildAnnotatedProperties();
 
-            if (overlay.getRootDataResolver() != null) {
-                this.rootDataResolver = overlay.getRootDataResolver();
-            }
-        }
+        return new DefaultAgEntity<>(
+                cayenneEntity.getName(),
+                type,
+                ids,
+                attributes,
+                relationships,
+                rootDataResolver != null ? rootDataResolver : ThrowingRootDataResolver.getInstance());
     }
 
-    protected void loadAttributeOverlay(AgAttributeOverlay overlay) {
-        addAttribute(overlay.resolve(attributes.get(overlay.getName())));
-    }
-
-    protected void loadRelationshipOverlay(AgRelationshipOverlay overlay) {
-        addRelationship(overlay.resolve(relationships.get(overlay.getName()), agDataMap));
-    }
-
-    protected void removeIdOrAttributeOrRelationship(String name) {
-        ids.remove(name);
-        attributes.remove(name);
-        relationships.remove(name);
+    /**
+     * @since 4.8
+     */
+    protected AgEntity<T> applyOverlay(AgEntity<T> entity) {
+        return overlay != null ? overlay.resolve(agDataMap, entity) : entity;
     }
 }

@@ -42,6 +42,35 @@ public class AgEntityOverlay<T> {
     }
 
     /**
+     * Resolves entity overlay to an entity.
+     *
+     * @since 4.8
+     */
+    public AgEntity<T> resolve(AgDataMap agDataMap, AgEntity<T> maybeOverlaid) {
+
+        // TODO: support null entity like we do for overlaid Attributes and Relationships?
+        Objects.requireNonNull(maybeOverlaid);
+
+        if (attributes.isEmpty() && relationships.isEmpty() && excludes.isEmpty()) {
+            return maybeOverlaid;
+        }
+
+        OverlaidEntity<T> builder = new OverlaidEntity<>(agDataMap, maybeOverlaid);
+
+        getAttributeOverlays().forEach(builder::loadAttributeOverlay);
+        getRelationshipOverlays().forEach(builder::loadRelationshipOverlay);
+        getExcludes().forEach(builder::removeIdOrAttributeOrRelationship);
+
+        return new DefaultAgEntity<>(
+                maybeOverlaid.getName(),
+                type,
+                builder.ids,
+                builder.attributes,
+                builder.relationships,
+                rootDataResolver != null ? rootDataResolver : maybeOverlaid.getDataResolver());
+    }
+
+    /**
      * Combines this overlay with another overlay. This overlay is modified, loading overlaid properties and
      * resolvers from another overlay.
      *
@@ -270,5 +299,40 @@ public class AgEntityOverlay<T> {
     public AgEntityOverlay<T> redefineRootDataResolver(RootDataResolver<T> rootDataResolver) {
         this.rootDataResolver = rootDataResolver;
         return this;
+    }
+
+    static class OverlaidEntity<T> {
+
+        final AgDataMap dataMap;
+        final Map<String, AgIdPart> ids;
+        final Map<String, AgAttribute> attributes;
+        final Map<String, AgRelationship> relationships;
+
+        OverlaidEntity(AgDataMap dataMap, AgEntity<T> sourceEntity) {
+            this.dataMap = dataMap;
+
+            this.ids = new HashMap<>();
+            sourceEntity.getIdParts().forEach(p -> ids.put(p.getName(), p));
+
+            this.attributes = new HashMap<>();
+            sourceEntity.getAttributes().forEach(a -> attributes.put(a.getName(), a));
+
+            this.relationships = new HashMap<>();
+            sourceEntity.getRelationships().forEach(r -> relationships.put(r.getName(), r));
+        }
+
+        void loadAttributeOverlay(AgAttributeOverlay overlay) {
+            attributes.put(overlay.getName(), overlay.resolve(attributes.get(overlay.getName())));
+        }
+
+        void loadRelationshipOverlay(AgRelationshipOverlay overlay) {
+            relationships.put(overlay.getName(), overlay.resolve(relationships.get(overlay.getName()), dataMap));
+        }
+
+        void removeIdOrAttributeOrRelationship(String name) {
+            ids.remove(name);
+            attributes.remove(name);
+            relationships.remove(name);
+        }
     }
 }
