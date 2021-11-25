@@ -13,7 +13,9 @@ import java.util.function.Function;
  * in this class returns a new copy of Constraints, so it is safe to reuse instances including intermediate instances.
  *
  * @since 1.3
+ * @deprecated since 4.8 in favor of non-hierarchical per-entity {@link io.agrest.access.PropertyAccessRules} API
  */
+@Deprecated
 public class ConstraintsBuilder<T> implements Constraint<T> {
 
     protected Function<ConstrainedAgEntity<T>, ConstrainedAgEntity<T>> op;

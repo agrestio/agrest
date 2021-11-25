@@ -8,7 +8,9 @@ import java.util.function.Function;
  * Metadata constraint, essentially a function that creates {@link ConstrainedAgEntity} from {@link AgEntity}.
  *
  * @since 2.4
+ * @deprecated since 4.8 in favor of non-hierarchical per-entity {@link io.agrest.access.PropertyAccessRules} API
  */
+@Deprecated
 public interface Constraint<T> extends Function<AgEntity<T>, ConstrainedAgEntity<T>> {
 
     /**

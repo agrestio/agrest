@@ -146,7 +146,9 @@ public class SelectContext<T> extends BaseProcessingContext<T> {
     /**
      * @return this context's constraint function.
      * @since 2.4
+     * @deprecated since 4.8 as Constraint class is deprecated
      */
+    @Deprecated
     public Constraint<T> getConstraint() {
         return constraint;
     }
@@ -154,7 +156,9 @@ public class SelectContext<T> extends BaseProcessingContext<T> {
     /**
      * @param constraint constraint function.
      * @since 2.4
+     * @deprecated since 4.8 as Constraint class is deprecated
      */
+    @Deprecated
     public void setConstraint(Constraint<T> constraint) {
         this.constraint = constraint;
     }
