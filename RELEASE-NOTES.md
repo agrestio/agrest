@@ -1,6 +1,7 @@
 ## Release 4.8
 
 * #427 AgEntityOverlay support for POST/PUT requests
+* #493 Replace Constraint with per-entity API based on AgEntityOverlay
 * #498 Made JAX-RS dependency "provided"
 * #497 Agrest fails to build on Java 11
 
