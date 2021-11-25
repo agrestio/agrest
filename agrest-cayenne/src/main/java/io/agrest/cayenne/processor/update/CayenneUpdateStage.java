@@ -15,6 +15,7 @@ import org.apache.cayenne.exp.Expression;
 import org.apache.cayenne.exp.ExpressionFactory;
 import org.apache.cayenne.exp.property.Property;
 import org.apache.cayenne.exp.property.PropertyFactory;
+import org.apache.cayenne.map.ObjEntity;
 import org.apache.cayenne.map.ObjRelationship;
 import org.apache.cayenne.query.SelectQuery;
 
@@ -149,37 +150,51 @@ public class CayenneUpdateStage extends CayenneMergeChangesStage {
         }
 
         CayenneProcessor.setQuery(entity, query);
-        buildChildrenQuery(context, entity, entity.getChildren());
+        buildChildrenQuery(context, entity);
 
         return query;
     }
 
-    protected void buildChildrenQuery(UpdateContext context, ResourceEntity<?> entity, Map<String, NestedResourceEntity<?>> children) {
+    protected void buildChildrenQuery(UpdateContext context, ResourceEntity<?> entity) {
+
+        Map<String, NestedResourceEntity<?>> children = entity.getChildren();
+
         if (!children.isEmpty()) {
+            return;
+        }
 
-            SelectQuery<?> parentSelect = CayenneProcessor.getQuery(entity);
+        // both entities and properties may be non-persistent and unknown to Cayenne
+        ObjEntity cayenneEntity = entityResolver.getObjEntity(entity.getName());
+        if (cayenneEntity == null) {
+            return;
+        }
 
-            for (Map.Entry<String, NestedResourceEntity<?>> e : children.entrySet()) {
-                NestedResourceEntity child = e.getValue();
+        SelectQuery<?> parentSelect = CayenneProcessor.getQuery(entity);
 
-                if (entityResolver.getObjEntity(child.getType()) == null) {
-                    continue;
-                }
+        for (Map.Entry<String, NestedResourceEntity<?>> e : children.entrySet()) {
+            NestedResourceEntity child = e.getValue();
 
-                List<Property> properties = new ArrayList<>();
-                properties.add(PropertyFactory.createSelf(child.getType()));
-
-                ObjRelationship objRelationship = objRelationshipForIncomingRelationship(child);
-
-                for (AgIdPart id : entity.getAgEntity().getIdParts()) {
-                    properties.add(PropertyFactory.createBase(ExpressionFactory.dbPathExp(
-                                    objRelationship.getReverseDbRelationshipPath() + "." + id.getName()),
-                            id.getType()));
-                }
-
-                SelectQuery childQuery = buildQuery(context, child, translateExpressionToSource(objRelationship, parentSelect.getQualifier()));
-                childQuery.setColumns(properties);
+            // both entities and properties may be non-persistent and unknown to Cayenne
+            if (entityResolver.getObjEntity(child.getType()) == null) {
+                continue;
             }
+
+            ObjRelationship objRelationship = cayenneEntity.getRelationship(child.getIncoming().getName());
+            if (objRelationship == null) {
+                continue;
+            }
+
+            List<Property> properties = new ArrayList<>();
+            properties.add(PropertyFactory.createSelf(child.getType()));
+
+            for (AgIdPart id : entity.getAgEntity().getIdParts()) {
+                properties.add(PropertyFactory.createBase(ExpressionFactory.dbPathExp(
+                                objRelationship.getReverseDbRelationshipPath() + "." + id.getName()),
+                        id.getType()));
+            }
+
+            SelectQuery childQuery = buildQuery(context, child, translateExpressionToSource(objRelationship, parentSelect.getQualifier()));
+            childQuery.setColumns(properties);
         }
     }
 
@@ -235,11 +250,6 @@ public class CayenneUpdateStage extends CayenneMergeChangesStage {
                 }
             }
         }
-    }
-
-    // TODO: copied verbatim from CayenneQueryAssembler... Unify this code?
-    protected ObjRelationship objRelationshipForIncomingRelationship(NestedResourceEntity<?> entity) {
-        return entityResolver.getObjEntity(entity.getParent().getName()).getRelationship(entity.getIncoming().getName());
     }
 
     // TODO: copied verbatim from CayenneQueryAssembler... Unify this code?

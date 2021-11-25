@@ -41,7 +41,7 @@ public class PUT_EntityOverlay_PerRequestIT extends DbTest {
 
         tester.target("/e10/xyz/2")
                 .queryParam("include", "[\"id\",\"cInt\",\"fromRequest\",\"dynamicRelationship.name\"]")
-                .put("{\"id\":2,\"cInt\":88}")
+                .put("{\"cInt\":88}")
                 .wasOk()
                 .bodyEquals(
                         1,
@@ -60,7 +60,11 @@ public class PUT_EntityOverlay_PerRequestIT extends DbTest {
 
         @PUT
         @Path("e10/{suffix}/{id}")
-        public DataResponse<E10> putE10(@Context UriInfo uriInfo, @PathParam("suffix") String suffix, @PathParam("id") String id, EntityUpdate<E10> data) {
+        public DataResponse<E10> putE10(
+                @Context UriInfo uriInfo,
+                @PathParam("suffix") String suffix,
+                @PathParam("id") Integer id,
+                EntityUpdate<E10> data) {
 
             AgEntityOverlay<E10> overlay = AgEntity.overlay(E10.class)
                     // 1. Request-specific attribute

@@ -95,7 +95,7 @@ public class CayenneIdempotentFullSyncStage extends CayenneIdempotentCreateOrUpd
         }
 
         CayenneProcessor.setQuery(entity, query);
-        buildChildrenQuery(context, entity, entity.getChildren());
+        buildChildrenQuery(context, entity);
 
         return query;
     }
