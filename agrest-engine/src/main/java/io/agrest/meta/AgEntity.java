@@ -75,6 +75,8 @@ public interface AgEntity<T> {
     }
 
     /**
+     * Returns an in-memory filter of objects with read access
+     *
      * @since 4.8
      */
     ObjectFilter getReadableObjectFilter();

@@ -5,6 +5,7 @@ import io.agrest.annotation.AgId;
 import io.agrest.annotation.AgRelationship;
 import io.agrest.base.reflect.BeanAnalyzer;
 import io.agrest.base.reflect.PropertyGetter;
+import io.agrest.filter.ObjectFilter;
 import io.agrest.meta.*;
 import io.agrest.resolver.ReaderBasedResolver;
 import io.agrest.resolver.RootDataResolver;
@@ -205,7 +206,11 @@ public class AnnotationsAgEntityBuilder<T> {
                 ids,
                 attributes,
                 relationships,
-                rootDataResolver != null ? rootDataResolver : ThrowingRootDataResolver.getInstance());
+                rootDataResolver != null ? rootDataResolver : ThrowingRootDataResolver.getInstance(),
+
+                // TODO: support Exp filters via annotations?
+                ObjectFilter.trueFilter(),
+                ObjectFilter.trueFilter());
     }
 
     /**

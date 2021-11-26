@@ -1,5 +1,6 @@
 package io.agrest.meta;
 
+import io.agrest.filter.ObjectFilter;
 import io.agrest.filter.PropertyFilteringRulesBuilder;
 import io.agrest.filter.PropertyFilter;
 import io.agrest.property.PropertyReader;
@@ -33,10 +34,15 @@ public class AgEntityOverlay<T> {
     private PropertyFilter readablePropFilter;
     private PropertyFilter writablePropFilter;
 
+    private ObjectFilter readableObjectFilter;
+    private ObjectFilter writableObjectFilter;
+
     public AgEntityOverlay(Class<T> type) {
         this.type = type;
         this.attributes = new HashMap<>();
         this.relationships = new HashMap<>();
+        this.readableObjectFilter = ObjectFilter.trueFilter();
+        this.writableObjectFilter = ObjectFilter.trueFilter();
     }
 
     private static PropertyReader fromFunction(Function<?, ?> f) {
@@ -63,7 +69,7 @@ public class AgEntityOverlay<T> {
         // TODO: support null entity like we do for overlaid Attributes and Relationships?
         Objects.requireNonNull(maybeOverlaid);
 
-        if (attributes.isEmpty() && relationships.isEmpty() && readablePropFilter == null && writablePropFilter == null) {
+        if (isEmpty()) {
             return maybeOverlaid;
         }
 
@@ -90,7 +96,19 @@ public class AgEntityOverlay<T> {
                 resolver.ids,
                 resolver.attributes,
                 resolver.relationships,
-                rootDataResolver != null ? rootDataResolver : maybeOverlaid.getDataResolver());
+                rootDataResolver != null ? rootDataResolver : maybeOverlaid.getDataResolver(),
+                maybeOverlaid.getReadableObjectFilter().and(readableObjectFilter),
+                maybeOverlaid.getWritableObjectFilter().and(writableObjectFilter)
+        );
+    }
+
+    private boolean isEmpty() {
+        return attributes.isEmpty()
+                && relationships.isEmpty()
+                && readablePropFilter == null
+                && writablePropFilter == null
+                && readableObjectFilter == null
+                && writableObjectFilter == null;
     }
 
     /**
@@ -174,6 +192,22 @@ public class AgEntityOverlay<T> {
      */
     public AgEntityOverlay<T> writablePropFilter(PropertyFilter filter) {
         this.writablePropFilter = writablePropFilter != null ? writablePropFilter.andThen(filter) : filter;
+        return this;
+    }
+
+    /**
+     * @since 4.8
+     */
+    public AgEntityOverlay<T> andObjectFilterForRead(ObjectFilter filter) {
+        this.readableObjectFilter = this.readableObjectFilter.and(filter);
+        return this;
+    }
+
+    /**
+     * @since 4.8
+     */
+    public AgEntityOverlay<T> andObjectFilterForWrite(ObjectFilter filter) {
+        this.writableObjectFilter = this.writableObjectFilter.and(filter);
         return this;
     }
 

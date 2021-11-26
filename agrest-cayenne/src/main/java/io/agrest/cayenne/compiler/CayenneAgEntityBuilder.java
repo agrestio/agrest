@@ -1,14 +1,28 @@
 package io.agrest.cayenne.compiler;
 
 import io.agrest.compiler.AnnotationsAgEntityBuilder;
-import io.agrest.meta.*;
+import io.agrest.filter.ObjectFilter;
+import io.agrest.meta.AgAttribute;
+import io.agrest.meta.AgDataMap;
+import io.agrest.meta.AgEntity;
+import io.agrest.meta.AgEntityOverlay;
+import io.agrest.meta.AgIdPart;
+import io.agrest.meta.AgRelationship;
+import io.agrest.meta.DefaultAgAttribute;
+import io.agrest.meta.DefaultAgEntity;
+import io.agrest.meta.DefaultAgIdPart;
+import io.agrest.meta.DefaultAgRelationship;
 import io.agrest.resolver.NestedDataResolver;
 import io.agrest.resolver.RootDataResolver;
 import io.agrest.resolver.ThrowingRootDataResolver;
 import org.apache.cayenne.dba.TypesMapping;
 import org.apache.cayenne.exp.parser.ASTDbPath;
 import org.apache.cayenne.exp.parser.ASTObjPath;
-import org.apache.cayenne.map.*;
+import org.apache.cayenne.map.DbAttribute;
+import org.apache.cayenne.map.EntityResolver;
+import org.apache.cayenne.map.ObjAttribute;
+import org.apache.cayenne.map.ObjEntity;
+import org.apache.cayenne.map.ObjRelationship;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -188,7 +202,11 @@ public class CayenneAgEntityBuilder<T> {
                 ids,
                 attributes,
                 relationships,
-                rootDataResolver != null ? rootDataResolver : ThrowingRootDataResolver.getInstance());
+                rootDataResolver != null ? rootDataResolver : ThrowingRootDataResolver.getInstance(),
+
+                // TODO: support Exp filters via annotations?
+                ObjectFilter.trueFilter(),
+                ObjectFilter.trueFilter());
     }
 
     /**
