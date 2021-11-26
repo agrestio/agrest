@@ -59,6 +59,7 @@ import io.agrest.runtime.processor.select.ApplyServerParamsStage;
 import io.agrest.runtime.processor.select.AssembleQueryStage;
 import io.agrest.runtime.processor.select.CreateResourceEntityStage;
 import io.agrest.runtime.processor.select.FetchDataStage;
+import io.agrest.runtime.processor.select.FilterDataStage;
 import io.agrest.runtime.processor.select.ParseRequestStage;
 import io.agrest.runtime.processor.select.SelectProcessorFactory;
 import io.agrest.runtime.processor.select.SelectProcessorFactoryProvider;
@@ -419,6 +420,7 @@ public class AgBuilder {
             binder.bind(ApplyServerParamsStage.class).to(ApplyServerParamsStage.class);
             binder.bind(AssembleQueryStage.class).to(AssembleQueryStage.class);
             binder.bind(FetchDataStage.class).to(FetchDataStage.class);
+            binder.bind(FilterDataStage.class).to(FilterDataStage.class);
 
             // update stages
             binder.bind(io.agrest.runtime.processor.update.ParseRequestStage.class)

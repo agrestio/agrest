@@ -20,5 +20,10 @@ public enum SelectStage {
 
     ASSEMBLE_QUERY,
 
-    FETCH_DATA
+    FETCH_DATA,
+
+    /**
+     * @since 4.8
+     */
+    FILTER_DATA
 }

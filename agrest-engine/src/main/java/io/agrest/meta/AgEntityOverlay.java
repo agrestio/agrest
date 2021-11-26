@@ -129,6 +129,9 @@ public class AgEntityOverlay<T> {
         if (anotherOverlay.getRootDataResolver() != null) {
             this.rootDataResolver = anotherOverlay.getRootDataResolver();
         }
+
+        this.readableObjectFilter = this.readableObjectFilter.and(anotherOverlay.readableObjectFilter);
+
         return this;
     }
 
