@@ -1,4 +1,4 @@
-package io.agrest.access;
+package io.agrest.filter;
 
 import io.agrest.PathConstants;
 import io.agrest.meta.AgEntity;
@@ -15,10 +15,10 @@ import java.util.function.Consumer;
  * A mutable builder of property access constraints for a single entity. Used to configure property access in
  * {@link AgEntityOverlay}.
  *
- * @see PropertyAccessRules#apply(PropertyAccessBuilder)
+ * @see PropertyFilter#apply(PropertyFilteringRulesBuilder)
  * @since 4.8
  */
-public class PropertyAccessBuilder {
+public class PropertyFilteringRulesBuilder {
 
     // Since we can't resolve the access rules until we are given an entity,
     // we must store them as "filter" operations in the order they were specified.
@@ -26,14 +26,14 @@ public class PropertyAccessBuilder {
     // set of properties
     private final List<Consumer<ExcludeBuilder<?>>> accessFilters;
 
-    public PropertyAccessBuilder() {
+    public PropertyFilteringRulesBuilder() {
         this.accessFilters = new ArrayList<>();
     }
 
     /**
      * Creates a rule to block access to all properties (ids, attributes, relationships) from the entity model.
      */
-    public PropertyAccessBuilder empty() {
+    public PropertyFilteringRulesBuilder empty() {
         accessFilters.add(ExcludeBuilder::excludeEverything);
         return this;
     }
@@ -41,7 +41,7 @@ public class PropertyAccessBuilder {
     /**
      * Creates a rule to block access to all properties, but allows access to id
      */
-    public PropertyAccessBuilder idOnly() {
+    public PropertyFilteringRulesBuilder idOnly() {
         accessFilters.add(ExcludeBuilder::includeIdOnly);
         return this;
     }
@@ -49,14 +49,14 @@ public class PropertyAccessBuilder {
     /**
      * Sets an access rule for the id property.
      */
-    public PropertyAccessBuilder id(boolean accessible) {
+    public PropertyFilteringRulesBuilder id(boolean accessible) {
         return property(PathConstants.ID_PK_ATTRIBUTE, accessible);
     }
 
     /**
      * Sets an access rule for all attribute properties.
      */
-    public PropertyAccessBuilder attributes(boolean accessible) {
+    public PropertyFilteringRulesBuilder attributes(boolean accessible) {
         accessFilters.add(accessible
                 ? ExcludeBuilder::includeAllAttributes
                 : ExcludeBuilder::excludeAllAttributes);
@@ -67,7 +67,7 @@ public class PropertyAccessBuilder {
     /**
      * Sets an access rule for all relationship properties.
      */
-    public PropertyAccessBuilder relationships(boolean accessible) {
+    public PropertyFilteringRulesBuilder relationships(boolean accessible) {
         accessFilters.add(accessible
                 ? ExcludeBuilder::includeAllRelationships
                 : ExcludeBuilder::excludeAllRelationships);
@@ -78,7 +78,7 @@ public class PropertyAccessBuilder {
     /**
      * Sets am access rule for a given named property, that can be an attribute, a relationship or an id.
      */
-    public PropertyAccessBuilder property(String name, boolean accessible) {
+    public PropertyFilteringRulesBuilder property(String name, boolean accessible) {
         accessFilters.add(accessible
                 ? b -> b.includeProperty(name)
                 : b -> b.excludeProperty(name));

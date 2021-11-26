@@ -1,5 +1,6 @@
 package io.agrest.constraints;
 
+import io.agrest.filter.PropertyFilter;
 import io.agrest.meta.AgEntity;
 
 import java.util.function.Function;
@@ -8,7 +9,7 @@ import java.util.function.Function;
  * Metadata constraint, essentially a function that creates {@link ConstrainedAgEntity} from {@link AgEntity}.
  *
  * @since 2.4
- * @deprecated since 4.8 in favor of non-hierarchical per-entity {@link io.agrest.access.PropertyAccessRules} API
+ * @deprecated since 4.8 in favor of non-hierarchical per-entity {@link PropertyFilter} API
  */
 @Deprecated
 public interface Constraint<T> extends Function<AgEntity<T>, ConstrainedAgEntity<T>> {

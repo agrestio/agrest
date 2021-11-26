@@ -123,7 +123,7 @@ public class POST_ReadAccess_OverlayIT extends DbTest {
         @Path("e3/constrained")
         public DataResponse<E3> insertE3ReadConstrained(@Context UriInfo uriInfo, String requestBody) {
             return Ag.create(E3.class, config).uri(uriInfo)
-                    .propertyReadAccess(E3.class, b -> b.idOnly().property("name", true))
+                    .readablePropFilter(E3.class, b -> b.idOnly().property("name", true))
                     .syncAndSelect(requestBody);
         }
 
@@ -131,7 +131,7 @@ public class POST_ReadAccess_OverlayIT extends DbTest {
         @Path("e3/w/constrained")
         public DataResponse<E3> insertE3WriteConstrained(@Context UriInfo uriInfo, String requestBody) {
             return Ag.create(E3.class, config).uri(uriInfo)
-                    .propertyWriteAccess(E3.class, b -> b.idOnly().property("name", true))
+                    .writeablePropFilter(E3.class, b -> b.idOnly().property("name", true))
                     .syncAndSelect(requestBody);
         }
 
@@ -143,7 +143,7 @@ public class POST_ReadAccess_OverlayIT extends DbTest {
                 String requestBody) {
 
             return Ag.create(E8.class, config).uri(uriInfo).id(id)
-                    .propertyWriteAccess(E8.class, b -> b.idOnly().property("name", true))
+                    .writeablePropFilter(E8.class, b -> b.idOnly().property("name", true))
                     .sync(requestBody);
         }
 
@@ -154,7 +154,7 @@ public class POST_ReadAccess_OverlayIT extends DbTest {
                 @Context UriInfo uriInfo,
                 String requestBody) {
             return Ag.create(E8.class, config).uri(uriInfo).id(id)
-                    .propertyWriteAccess(E8.class, b -> b.empty().property("name", true))
+                    .writeablePropFilter(E8.class, b -> b.empty().property("name", true))
                     .sync(requestBody);
         }
     }

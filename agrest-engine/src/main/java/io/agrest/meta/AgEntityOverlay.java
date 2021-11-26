@@ -1,7 +1,7 @@
 package io.agrest.meta;
 
-import io.agrest.access.PropertyAccessBuilder;
-import io.agrest.access.PropertyAccessRules;
+import io.agrest.filter.PropertyFilteringRulesBuilder;
+import io.agrest.filter.PropertyFilter;
 import io.agrest.property.PropertyReader;
 import io.agrest.resolver.NestedDataResolver;
 import io.agrest.resolver.NestedDataResolverFactory;
@@ -30,8 +30,8 @@ public class AgEntityOverlay<T> {
     private final Map<String, AgRelationshipOverlay> relationships;
     private RootDataResolver<T> rootDataResolver;
 
-    private PropertyAccessRules readAccessRules;
-    private PropertyAccessRules writeAccessRules;
+    private PropertyFilter readablePropFilter;
+    private PropertyFilter writablePropFilter;
 
     public AgEntityOverlay(Class<T> type) {
         this.type = type;
@@ -63,7 +63,7 @@ public class AgEntityOverlay<T> {
         // TODO: support null entity like we do for overlaid Attributes and Relationships?
         Objects.requireNonNull(maybeOverlaid);
 
-        if (attributes.isEmpty() && relationships.isEmpty() && readAccessRules == null && writeAccessRules == null) {
+        if (attributes.isEmpty() && relationships.isEmpty() && readablePropFilter == null && writablePropFilter == null) {
             return maybeOverlaid;
         }
 
@@ -72,15 +72,15 @@ public class AgEntityOverlay<T> {
         getAttributeOverlays().forEach(resolver::loadAttributeOverlay);
         getRelationshipOverlays().forEach(resolver::loadRelationshipOverlay);
 
-        if (readAccessRules != null) {
-            PropertyAccessBuilder pa = new PropertyAccessBuilder();
-            readAccessRules.apply(pa);
+        if (readablePropFilter != null) {
+            PropertyFilteringRulesBuilder pa = new PropertyFilteringRulesBuilder();
+            readablePropFilter.apply(pa);
             pa.resolveInaccessible(maybeOverlaid, this).forEach(resolver::makeUnreadable);
         }
 
-        if (writeAccessRules != null) {
-            PropertyAccessBuilder pa = new PropertyAccessBuilder();
-            writeAccessRules.apply(pa);
+        if (writablePropFilter != null) {
+            PropertyFilteringRulesBuilder pa = new PropertyFilteringRulesBuilder();
+            writablePropFilter.apply(pa);
             pa.resolveInaccessible(maybeOverlaid, this).forEach(resolver::makeUnwritable);
         }
 
@@ -104,12 +104,12 @@ public class AgEntityOverlay<T> {
         attributes.putAll(anotherOverlay.attributes);
         relationships.putAll(anotherOverlay.relationships);
 
-        if (anotherOverlay.readAccessRules != null) {
-            readAccess(anotherOverlay.readAccessRules);
+        if (anotherOverlay.readablePropFilter != null) {
+            readablePropFilter(anotherOverlay.readablePropFilter);
         }
 
-        if (anotherOverlay.writeAccessRules != null) {
-            writeAccess(anotherOverlay.writeAccessRules);
+        if (anotherOverlay.writablePropFilter != null) {
+            writablePropFilter(anotherOverlay.writablePropFilter);
         }
 
         if (anotherOverlay.getRootDataResolver() != null) {
@@ -158,22 +158,22 @@ public class AgEntityOverlay<T> {
     }
 
     /**
-     * Appends read access rules specified as a PropertyAccess consumer to the existing rules.
+     * Adds a {@link PropertyFilter} to any existing read filters in this overlay.
      *
      * @since 4.8
      */
-    public AgEntityOverlay<T> readAccess(PropertyAccessRules accessBuilder) {
-        this.readAccessRules = readAccessRules != null ? readAccessRules.andThen(accessBuilder) : accessBuilder;
+    public AgEntityOverlay<T> readablePropFilter(PropertyFilter filter) {
+        this.readablePropFilter = readablePropFilter != null ? readablePropFilter.andThen(filter) : filter;
         return this;
     }
 
     /**
-     * Appends read access rules specified as a PropertyAccess consumer to the existing rules.
+     * Adds a {@link PropertyFilter} to any existing write filters in this overlay.
      *
      * @since 4.8
      */
-    public AgEntityOverlay<T> writeAccess(PropertyAccessRules accessBuilder) {
-        this.writeAccessRules = writeAccessRules != null ? writeAccessRules.andThen(accessBuilder) : accessBuilder;
+    public AgEntityOverlay<T> writablePropFilter(PropertyFilter filter) {
+        this.writablePropFilter = writablePropFilter != null ? writablePropFilter.andThen(filter) : filter;
         return this;
     }
 
@@ -182,13 +182,13 @@ public class AgEntityOverlay<T> {
      *
      * @return this overlay instance
      * @since 3.7
-     * @deprecated since 4.8 use {@link #readAccess(PropertyAccessRules)} and/or {@link #writeAccess(PropertyAccessRules)}
+     * @deprecated since 4.8 use {@link #readablePropFilter(PropertyFilter)} and/or {@link #writablePropFilter(PropertyFilter)}
      */
     @Deprecated
     public AgEntityOverlay<T> exclude(String... properties) {
         List<String> asList = asList(properties);
-        readAccess(pa -> asList.forEach(p -> pa.property(p, false)));
-        writeAccess(pa -> asList.forEach(p -> pa.property(p, false)));
+        readablePropFilter(pa -> asList.forEach(p -> pa.property(p, false)));
+        writablePropFilter(pa -> asList.forEach(p -> pa.property(p, false)));
         return this;
     }
 

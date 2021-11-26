@@ -1,6 +1,7 @@
 package io.agrest.constraints;
 
 import io.agrest.PathConstants;
+import io.agrest.filter.PropertyFilter;
 import io.agrest.base.protocol.Exp;
 import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgRelationship;
@@ -13,7 +14,7 @@ import java.util.function.Function;
  * in this class returns a new copy of Constraints, so it is safe to reuse instances including intermediate instances.
  *
  * @since 1.3
- * @deprecated since 4.8 in favor of non-hierarchical per-entity {@link io.agrest.access.PropertyAccessRules} API
+ * @deprecated since 4.8 in favor of non-hierarchical per-entity {@link PropertyFilter} API
  */
 @Deprecated
 public class ConstraintsBuilder<T> implements Constraint<T> {

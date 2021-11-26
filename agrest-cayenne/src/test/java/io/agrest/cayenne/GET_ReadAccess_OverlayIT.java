@@ -2,7 +2,7 @@ package io.agrest.cayenne;
 
 import io.agrest.Ag;
 import io.agrest.DataResponse;
-import io.agrest.access.PropertyAccessBuilder;
+import io.agrest.filter.PropertyFilteringRulesBuilder;
 import io.agrest.cayenne.cayenne.main.E2;
 import io.agrest.cayenne.cayenne.main.E3;
 import io.agrest.cayenne.cayenne.main.E4;
@@ -75,7 +75,7 @@ public class GET_ReadAccess_OverlayIT extends DbTest {
         public DataResponse<E4> getObjects_LimitAttributes(@Context UriInfo uriInfo) {
 
             return Ag.select(E4.class, config).uri(uriInfo)
-                    .propertyAccess(E4.class, r -> r.empty().id(true).property("cInt", true))
+                    .propFilter(E4.class, r -> r.empty().id(true).property("cInt", true))
                     .get();
         }
 
@@ -86,7 +86,7 @@ public class GET_ReadAccess_OverlayIT extends DbTest {
             return Ag.select(E3.class, config)
                     .parent(E2.class, id, "e3s")
                     .uri(uriInfo)
-                    .propertyAccess(E3.class, PropertyAccessBuilder::idOnly)
+                    .propFilter(E3.class, PropertyFilteringRulesBuilder::idOnly)
                     .get();
         }
     }

@@ -5,7 +5,7 @@ import io.agrest.encoder.Encoder;
 import io.agrest.encoder.EntityEncoderFilter;
 import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgEntityOverlay;
-import io.agrest.access.PropertyAccessRules;
+import io.agrest.filter.PropertyFilter;
 import io.agrest.processor.Processor;
 import io.agrest.processor.ProcessorOutcome;
 import io.agrest.runtime.AgBuilder;
@@ -87,22 +87,23 @@ public interface SelectBuilder<T> {
      * @param constraint an instance of Constraint function.
      * @return this builder instance.
      * @since 2.4
-     * @deprecated since 4.8 in favor of {@link #propertyAccess(Class, PropertyAccessRules)}.
+     * @deprecated since 4.8 in favor of {@link #propFilter(Class, PropertyFilter)}.
      */
     @Deprecated
     SelectBuilder<T> constraint(Constraint<T> constraint);
 
     /**
-     * Applies provided property access rules to the current request, defining which attributes and relationships a
-     * client can see for the specified entity type. Can be called multiple times to add multiple rules for same entity
-     * or different entities. So the "entityType" parameter can match the root entity or can be any other entity in the
-     * model. This method is a shortcut for "entityOverlay(AgEntity.overlay(entityType).readAccess(accessRules))".
+     * Adds a {@link PropertyFilter} that define property access rules for the current request and a given entity. I.e.
+     * which entity attributes, relationships and ids a client is allowed to see. Can be called multiple times to add
+     * multiple rules for same entity or different entities. The "entityType" parameter can match the root entity or
+     * can be any other entity in the model. This method is a shortcut for
+     * <code>entityOverlay(AgEntity.overlay(entityType).readablePropFilter(filter))</code>
      *
      * @return this builder instance
      * @since 4.8
      */
-    default <A> SelectBuilder<T> propertyAccess(Class<A> entityType, PropertyAccessRules rules) {
-        return entityOverlay(AgEntity.overlay(entityType).readAccess(rules));
+    default <A> SelectBuilder<T> propFilter(Class<A> entityType, PropertyFilter filter) {
+        return entityOverlay(AgEntity.overlay(entityType).readablePropFilter(filter));
     }
 
     /**

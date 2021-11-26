@@ -1,4 +1,4 @@
-package io.agrest.access;
+package io.agrest.filter;
 
 import io.agrest.meta.AgEntity;
 import io.agrest.pojo.model.P11;
@@ -13,20 +13,20 @@ import java.util.Set;
 import static java.util.Arrays.asList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class PropertyAccessBuilderTest extends PojoTest {
+public class PropertyFilteringRulesBuilderTest extends PojoTest {
 
     @BQTestTool
     static final AgPojoTester tester = tester().build();
 
     @Test
     public void testDefault_AllAvailable() {
-        PropertyAccessBuilder pab = new PropertyAccessBuilder();
+        PropertyFilteringRulesBuilder pab = new PropertyFilteringRulesBuilder();
         assertInaccessible(pab.resolveInaccessible(tester.entity(P11.class), AgEntity.overlay(P11.class)));
     }
 
     @Test
     public void testDefault_AllAvailable_WithOverlay() {
-        PropertyAccessBuilder pab = new PropertyAccessBuilder();
+        PropertyFilteringRulesBuilder pab = new PropertyFilteringRulesBuilder();
         assertInaccessible(pab.resolveInaccessible(
                 tester.entity(P11.class),
                 AgEntity.overlay(P11.class).redefineAttribute("x", String.class, p11 -> "a")));
@@ -34,38 +34,38 @@ public class PropertyAccessBuilderTest extends PojoTest {
 
     @Test
     public void testEmpty() {
-        PropertyAccessBuilder pab = new PropertyAccessBuilder().empty();
+        PropertyFilteringRulesBuilder pab = new PropertyFilteringRulesBuilder().empty();
         assertInaccessible(pab.resolveInaccessible(tester.entity(P11.class), AgEntity.overlay(P11.class)),
                 "id", "intProp", "p6");
     }
 
     @Test
     public void testIdOnly() {
-        PropertyAccessBuilder pab = new PropertyAccessBuilder().idOnly();
+        PropertyFilteringRulesBuilder pab = new PropertyFilteringRulesBuilder().idOnly();
         assertInaccessible(pab.resolveInaccessible(tester.entity(P11.class), AgEntity.overlay(P11.class)), "intProp", "p6");
     }
 
     @Test
     public void testId() {
-        PropertyAccessBuilder pab = new PropertyAccessBuilder().empty().id(true);
+        PropertyFilteringRulesBuilder pab = new PropertyFilteringRulesBuilder().empty().id(true);
         assertInaccessible(pab.resolveInaccessible(tester.entity(P11.class), AgEntity.overlay(P11.class)), "intProp", "p6");
     }
 
     @Test
     public void testAllButId() {
-        PropertyAccessBuilder pab = new PropertyAccessBuilder().empty().attributes(true).relationships(true);
+        PropertyFilteringRulesBuilder pab = new PropertyFilteringRulesBuilder().empty().attributes(true).relationships(true);
         assertInaccessible(pab.resolveInaccessible(tester.entity(P11.class), AgEntity.overlay(P11.class)), "id");
     }
 
     @Test
     public void testExcludeByName() {
-        PropertyAccessBuilder pab = new PropertyAccessBuilder().property("intProp", false);
+        PropertyFilteringRulesBuilder pab = new PropertyFilteringRulesBuilder().property("intProp", false);
         assertInaccessible(pab.resolveInaccessible(tester.entity(P11.class), AgEntity.overlay(P11.class)), "intProp");
     }
 
     @Test
     public void testExcludeByName_InOverlay() {
-        PropertyAccessBuilder pab = new PropertyAccessBuilder().property("x", false);
+        PropertyFilteringRulesBuilder pab = new PropertyFilteringRulesBuilder().property("x", false);
 
         assertInaccessible(pab.resolveInaccessible(
                 tester.entity(P11.class),
