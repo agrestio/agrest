@@ -3,9 +3,10 @@ package io.agrest;
 import io.agrest.constraints.Constraint;
 import io.agrest.encoder.Encoder;
 import io.agrest.encoder.EntityEncoderFilter;
+import io.agrest.filter.ObjectFilter;
+import io.agrest.filter.PropertyFilter;
 import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgEntityOverlay;
-import io.agrest.filter.PropertyFilter;
 import io.agrest.processor.Processor;
 import io.agrest.processor.ProcessorOutcome;
 import io.agrest.runtime.AgBuilder;
@@ -93,17 +94,26 @@ public interface SelectBuilder<T> {
     SelectBuilder<T> constraint(Constraint<T> constraint);
 
     /**
-     * Adds a {@link PropertyFilter} that define property access rules for the current request and a given entity. I.e.
+     * Appends a {@link PropertyFilter} that defines property access rules for the current request and a given entity. I.e.
      * which entity attributes, relationships and ids a client is allowed to see. Can be called multiple times to add
      * multiple rules for same entity or different entities. The "entityType" parameter can match the root entity or
-     * can be any other entity in the model. This method is a shortcut for
-     * <code>entityOverlay(AgEntity.overlay(entityType).readablePropFilter(filter))</code>
+     * can be any other entity in the model.
+     *
+     * <p>This method is a shortcut for <code>entityOverlay(AgEntity.overlay(entityType).readablePropFilter(filter))</code></p>
      *
      * @return this builder instance
      * @since 4.8
      */
     default <A> SelectBuilder<T> propFilter(Class<A> entityType, PropertyFilter filter) {
         return entityOverlay(AgEntity.overlay(entityType).readablePropFilter(filter));
+    }
+
+    /**
+     * @return this builder instance
+     * @since 4.8
+     */
+    default <A> SelectBuilder<T> objectFilter(Class<A> entityType, ObjectFilter<A> filter) {
+        return entityOverlay(AgEntity.overlay(entityType).readableObjectFilter(filter));
     }
 
     /**

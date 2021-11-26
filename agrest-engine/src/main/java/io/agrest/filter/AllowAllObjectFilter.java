@@ -3,7 +3,7 @@ package io.agrest.filter;
 /**
  * @since 4.8
  */
-final class AllowAllObjectFilter implements ObjectFilter {
+final class AllowAllObjectFilter<T> implements ObjectFilter<T> {
 
     static final AllowAllObjectFilter instance = new AllowAllObjectFilter();
 
@@ -11,7 +11,7 @@ final class AllowAllObjectFilter implements ObjectFilter {
     }
 
     @Override
-    public boolean isAccessible(Object object) {
+    public boolean isAccessible(T object) {
         return true;
     }
 

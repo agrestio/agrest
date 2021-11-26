@@ -198,7 +198,7 @@ public class AgEntityOverlay<T> {
     /**
      * @since 4.8
      */
-    public AgEntityOverlay<T> andObjectFilterForRead(ObjectFilter filter) {
+    public AgEntityOverlay<T> readableObjectFilter(ObjectFilter<T> filter) {
         this.readableObjectFilter = this.readableObjectFilter.and(filter);
         return this;
     }
@@ -206,7 +206,7 @@ public class AgEntityOverlay<T> {
     /**
      * @since 4.8
      */
-    public AgEntityOverlay<T> andObjectFilterForWrite(ObjectFilter filter) {
+    public AgEntityOverlay<T> writableObjectFilter(ObjectFilter<T> filter) {
         this.writableObjectFilter = this.writableObjectFilter.and(filter);
         return this;
     }

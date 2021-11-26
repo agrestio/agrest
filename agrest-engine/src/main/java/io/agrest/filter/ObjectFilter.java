@@ -6,13 +6,13 @@ package io.agrest.filter;
  * @since 4.8
  */
 @FunctionalInterface
-public interface ObjectFilter {
+public interface ObjectFilter<T> {
 
-    static ObjectFilter trueFilter() {
+    static <T> ObjectFilter<T> trueFilter() {
         return AllowAllObjectFilter.instance;
     }
 
-    boolean isAccessible(Object object);
+    boolean isAccessible(T object);
 
     /**
      * @return whether the filter is a noop and can be ignored
@@ -21,7 +21,7 @@ public interface ObjectFilter {
         return false;
     }
 
-    default ObjectFilter and(ObjectFilter another) {
+    default ObjectFilter<T> and(ObjectFilter<T> another) {
         if (another.allowAll()) {
             return this;
         }
