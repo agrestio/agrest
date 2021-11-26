@@ -3,7 +3,9 @@ package io.agrest.access;
 import java.util.Objects;
 
 /**
- * Encapsulates logic for creating custom property access rules for a single entity.
+ * Encapsulates logic for creating custom property access rules for a single entity. The logic is implemented in the
+ * {@link #apply(PropertyAccessBuilder)} method, where custom code can invoke various access rules on an instance of
+ * {@link PropertyAccessBuilder}.
  *
  * @see io.agrest.SelectBuilder#propertyAccess(Class, PropertyAccessRules)
  * @since 4.7
