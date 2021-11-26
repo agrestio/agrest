@@ -2,7 +2,13 @@ package io.agrest.runtime.processor.meta;
 
 import io.agrest.NestedResourceEntity;
 import io.agrest.RootResourceEntity;
-import io.agrest.meta.*;
+import io.agrest.ToManyResourceEntity;
+import io.agrest.ToOneResourceEntity;
+import io.agrest.meta.AgAttribute;
+import io.agrest.meta.AgDataMap;
+import io.agrest.meta.AgEntity;
+import io.agrest.meta.AgRelationship;
+import io.agrest.meta.AgResource;
 import io.agrest.processor.Processor;
 import io.agrest.processor.ProcessorOutcome;
 import io.agrest.runtime.constraints.IConstraintsHandler;
@@ -82,7 +88,10 @@ public class CollectMetadataStage implements Processor<MetadataContext<?>> {
 
         for (AgRelationship r : entity.getRelationships()) {
             // TODO: support entity overlays in meta requests
-            NestedResourceEntity<?> child = new NestedResourceEntity<>(r.getTargetEntity(), resourceEntity, r);
+            NestedResourceEntity<?> child =  r.isToMany()
+                    ? new ToManyResourceEntity<>(resourceEntity.getAgEntity(), resourceEntity, r)
+                    : new ToOneResourceEntity<>(resourceEntity.getAgEntity(), resourceEntity, r);
+
             resourceEntity.getChildren().put(r.getName(), child);
         }
 

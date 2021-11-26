@@ -1,12 +1,18 @@
 package io.agrest.cayenne.processor.update;
 
-import io.agrest.*;
+import io.agrest.AgException;
+import io.agrest.CompoundObjectId;
+import io.agrest.EntityUpdate;
+import io.agrest.NestedResourceEntity;
+import io.agrest.ObjectMapper;
+import io.agrest.ObjectMapperFactory;
+import io.agrest.ResourceEntity;
+import io.agrest.SimpleObjectId;
 import io.agrest.cayenne.persister.ICayennePersister;
 import io.agrest.cayenne.processor.CayenneProcessor;
 import io.agrest.meta.AgAttribute;
 import io.agrest.meta.AgDataMap;
 import io.agrest.meta.AgIdPart;
-import io.agrest.meta.AgRelationship;
 import io.agrest.runtime.processor.update.ByIdObjectMapperFactory;
 import io.agrest.runtime.processor.update.UpdateContext;
 import org.apache.cayenne.DataObject;
@@ -19,8 +25,13 @@ import org.apache.cayenne.map.ObjEntity;
 import org.apache.cayenne.map.ObjRelationship;
 import org.apache.cayenne.query.SelectQuery;
 
-import java.util.*;
-import java.util.function.BiConsumer;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @since 2.7
@@ -209,34 +220,23 @@ public class CayenneUpdateStage extends CayenneMergeChangesStage {
     }
 
     protected <T> void fetchChildren(UpdateContext context, ResourceEntity<T> parent, Map<String, NestedResourceEntity<?>> children) {
-        if (!children.isEmpty()) {
-            for (Map.Entry<String, NestedResourceEntity<?>> e : children.entrySet()) {
-                NestedResourceEntity childEntity = e.getValue();
-
-                List childObjects = fetchEntity(context, childEntity);
-
-                AgRelationship rel = parent.getChild(e.getKey()).getIncoming();
-
-                assignChildrenToParent(
-                        parent,
-                        childObjects,
-                        rel.isToMany()
-                                ? (i, o) -> childEntity.addToManyResult(i, o)
-                                : (i, o) -> childEntity.setToOneResult(i, o));
-            }
+        for (Map.Entry<String, NestedResourceEntity<?>> e : children.entrySet()) {
+            NestedResourceEntity childEntity = e.getValue();
+            List childObjects = fetchEntity(context, childEntity);
+            assignChildrenToParent(parent, childObjects, childEntity);
         }
     }
 
     /**
      * Assigns child items to the appropriate parent item
      */
-    protected <T> void assignChildrenToParent(ResourceEntity<T> parentEntity, List children, BiConsumer<AgObjectId, Object> resultKeeper) {
-        // saves a result
+    protected <T> void assignChildrenToParent(ResourceEntity<?> parentEntity, List<T> children, NestedResourceEntity<T> childEntity) {
+
         for (Object child : children) {
             if (child instanceof Object[]) {
                 Object[] ids = (Object[]) child;
                 if (ids.length == 2) {
-                    resultKeeper.accept(new SimpleObjectId(ids[1]), (T) ids[0]);
+                    childEntity.addResult(new SimpleObjectId(ids[1]), (T) ids[0]);
                 } else if (ids.length > 2) {
                     // saves entity with a compound ID
                     Map<String, Object> compoundKeys = new LinkedHashMap<>();
@@ -246,7 +246,7 @@ public class CayenneUpdateStage extends CayenneMergeChangesStage {
                             compoundKeys.put(idAttributes[i - 1].getName(), ids[i]);
                         }
                     }
-                    resultKeeper.accept(new CompoundObjectId(compoundKeys), (T) ids[0]);
+                    childEntity.addResult(new CompoundObjectId(compoundKeys), (T) ids[0]);
                 }
             }
         }

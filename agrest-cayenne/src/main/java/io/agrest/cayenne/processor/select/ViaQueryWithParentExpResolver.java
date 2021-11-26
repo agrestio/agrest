@@ -1,25 +1,29 @@
 package io.agrest.cayenne.processor.select;
 
-import io.agrest.AgObjectId;
 import io.agrest.CompoundObjectId;
 import io.agrest.NestedResourceEntity;
 import io.agrest.SimpleObjectId;
+import io.agrest.ToManyResourceEntity;
+import io.agrest.ToOneResourceEntity;
 import io.agrest.cayenne.persister.ICayennePersister;
 import io.agrest.cayenne.processor.CayenneProcessor;
 import io.agrest.cayenne.processor.ICayenneQueryAssembler;
 import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgIdPart;
-import io.agrest.property.NestedEntityListResultReader;
-import io.agrest.property.NestedEntityResultReader;
+import io.agrest.property.ToManyEntityResultReader;
 import io.agrest.property.PropertyReader;
+import io.agrest.property.ToOneEntityResultReader;
 import io.agrest.resolver.BaseNestedDataResolver;
 import io.agrest.runtime.processor.select.SelectContext;
 import org.apache.cayenne.DataObject;
 import org.apache.cayenne.Persistent;
 import org.apache.cayenne.query.SelectQuery;
 
-import java.util.*;
-import java.util.function.BiConsumer;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * A nested resolver that builds a database query using a qualifier from the parent entity. This is the default nested
@@ -79,16 +83,12 @@ public class ViaQueryWithParentExpResolver<T extends DataObject> extends BaseNes
                 ? p -> ((Persistent) p).getObjectId().getIdSnapshot()
                 : parentEntity.getIdReader();
 
-        return entity.getIncoming().isToMany()
-                ? new NestedEntityListResultReader(entity, parentIdReader)
-                : new NestedEntityResultReader(entity, parentIdReader);
+        return entity instanceof ToManyResourceEntity
+                ? new ToManyEntityResultReader((ToManyResourceEntity) entity, parentIdReader)
+                : new ToOneEntityResultReader((ToOneResourceEntity<?>) entity, parentIdReader);
     }
 
     protected void indexResultByParentId(NestedResourceEntity<T> entity, List<Object[]> result) {
-
-        BiConsumer<AgObjectId, T> resultAccum = entity.getIncoming().isToMany()
-                ? (i, o) -> entity.addToManyResult(i, o)
-                : (i, o) -> entity.setToOneResult(i, o);
 
         AgIdPart[] idAttributes = entity.getParent().getAgEntity().getIdParts().toArray(new AgIdPart[0]);
 
@@ -99,7 +99,7 @@ public class ViaQueryWithParentExpResolver<T extends DataObject> extends BaseNes
             T object = (T) row[0];
 
             if (row.length == 2) {
-                resultAccum.accept(new SimpleObjectId(row[1]), object);
+                entity.addResult(new SimpleObjectId(row[1]), object);
             } else {
 
                 Map<String, Object> idParts = new LinkedHashMap<>();
@@ -107,7 +107,7 @@ public class ViaQueryWithParentExpResolver<T extends DataObject> extends BaseNes
                     idParts.put(idAttributes[i - 1].getName(), row[i]);
                 }
 
-                resultAccum.accept(new CompoundObjectId(idParts), object);
+                entity.addResult(new CompoundObjectId(idParts), object);
             }
         }
     }

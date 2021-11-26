@@ -5,21 +5,15 @@ import io.agrest.meta.AgRelationship;
 import io.agrest.resolver.NestedDataResolver;
 import io.agrest.runtime.processor.select.SelectContext;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-
 /**
  * @param <T>
  * @since 3.4
  */
-public class NestedResourceEntity<T> extends ResourceEntity<T> {
+public abstract class NestedResourceEntity<T> extends ResourceEntity<T> {
 
     private final ResourceEntity<?> parent;
     private final AgRelationship incoming;
     private NestedDataResolver<T> resolver;
-    private final Map<AgObjectId, Object> resultByParent;
 
     public NestedResourceEntity(
             AgEntity<T> agEntity,
@@ -30,9 +24,10 @@ public class NestedResourceEntity<T> extends ResourceEntity<T> {
         super(agEntity);
         this.incoming = incoming;
         this.parent = parent;
-        this.resultByParent = new LinkedHashMap<>();
         this.resolver = (NestedDataResolver<T>) incoming.getResolver();
     }
+
+    public abstract void addResult(AgObjectId parentId, T object);
 
     public ResourceEntity<?> getParent() {
         return parent;
@@ -40,22 +35,6 @@ public class NestedResourceEntity<T> extends ResourceEntity<T> {
 
     public AgRelationship getIncoming() {
         return incoming;
-    }
-
-    public Object getResult(AgObjectId parentId) {
-        return resultByParent.get(parentId);
-    }
-
-    public void setToOneResult(AgObjectId parentId, T object) {
-        resultByParent.put(parentId, object);
-    }
-
-    public void addToManyResult(AgObjectId parentId, T object) {
-        ((List<T>) resultByParent.computeIfAbsent(parentId, k -> new ArrayList<>())).add(object);
-    }
-
-    public void setToManyResult(AgObjectId parentId, List<T> objects) {
-        resultByParent.put(parentId, objects);
     }
 
     public NestedDataResolver<T> getResolver() {

@@ -4,6 +4,7 @@ import io.agrest.NestedResourceEntity;
 import io.agrest.ResourceEntity;
 import io.agrest.RootResourceEntity;
 import io.agrest.SizeConstraints;
+import io.agrest.ToOneResourceEntity;
 import io.agrest.annotation.AgAttribute;
 import io.agrest.annotation.AgId;
 import io.agrest.annotation.AgRelationship;
@@ -124,7 +125,7 @@ public class ConstraintsHandlerTest {
         ResourceEntityUtils.appendAttribute(te1, "c", String.class, Tr::getC);
         ResourceEntityUtils.appendAttribute(te1, "b", String.class, Tr::getB);
 
-        NestedResourceEntity<Ts> te11 = new NestedResourceEntity<>(entityTs, te1, entityTr.getRelationship("rts"));
+        ToOneResourceEntity<Ts> te11 = new ToOneResourceEntity<>(entityTs, te1, entityTr.getRelationship("rts"));
         ResourceEntityUtils.appendAttribute(te11, "n", String.class, Ts::getN);
         ResourceEntityUtils.appendAttribute(te11, "z", String.class, Ts::getZ);
         te1.getChildren().put("d", te11);
@@ -151,12 +152,12 @@ public class ConstraintsHandlerTest {
         ResourceEntityUtils. appendAttribute(tr, "c", String.class, Tr::getC);
         ResourceEntityUtils.appendAttribute(tr, "b", String.class, Tr::getB);
 
-        NestedResourceEntity<Ts> ts = new NestedResourceEntity<>(entityTs, tr, entityTr.getRelationship("rts"));
+        ToOneResourceEntity<Ts> ts = new ToOneResourceEntity<>(entityTs, tr, entityTr.getRelationship("rts"));
         ResourceEntityUtils.appendAttribute(ts, "m", String.class, Ts::getM);
         ResourceEntityUtils.appendAttribute(ts, "z", String.class, Ts::getZ);
         tr.getChildren().put("rts", ts);
 
-        NestedResourceEntity<Tv> tv = new NestedResourceEntity<>(entityTv, tr, entityTr.getRelationship("rtv"));
+        ToOneResourceEntity<Tv> tv = new ToOneResourceEntity<>(entityTv, tr, entityTr.getRelationship("rtv"));
         ResourceEntityUtils.appendAttribute(tv, "p", String.class, Tv::getP);
         ResourceEntityUtils.appendAttribute(tv, "z", String.class, Tv::getZ);
         tr.getChildren().put("rtv", tv);
@@ -223,7 +224,7 @@ public class ConstraintsHandlerTest {
         ResourceEntityUtils.appendAttribute(tsMapBy, "m", String.class, Ts::getM);
         ResourceEntityUtils.appendAttribute(tsMapBy, "n", String.class, Ts::getN);
 
-        NestedResourceEntity<Tr> trMapBy = new NestedResourceEntity<>(entityTr, tsMapBy, entityTr.getRelationship("rts"));
+        NestedResourceEntity<Tr> trMapBy = new ToOneResourceEntity<>(entityTr, tsMapBy, entityTr.getRelationship("rts"));
         ResourceEntityUtils.appendAttribute(trMapBy, "a", String.class, Tr::getA);
         ResourceEntityUtils.appendAttribute(trMapBy, "b", String.class, Tr::getB);
         tsMapBy.getChildren().put("rts", trMapBy);
@@ -249,7 +250,7 @@ public class ConstraintsHandlerTest {
         ResourceEntityUtils.appendAttribute(tsMapBy, "m", String.class, Ts::getM);
         ResourceEntityUtils.appendAttribute(tsMapBy, "n", String.class, Ts::getN);
 
-        NestedResourceEntity<Tr> trMapBy = new NestedResourceEntity<>(entityTr, tsMapBy, entityTs.getRelationship("rtrs"));
+        NestedResourceEntity<Tr> trMapBy = new ToOneResourceEntity<>(entityTr, tsMapBy, entityTs.getRelationship("rtrs"));
         ResourceEntityUtils.appendAttribute(trMapBy, "a", String.class, Tr::getA);
         ResourceEntityUtils.appendAttribute(trMapBy, "b", String.class, Tr::getB);
         tsMapBy.getChildren().put("rts", trMapBy);
@@ -273,7 +274,7 @@ public class ConstraintsHandlerTest {
                 .path("rts", Constraint.excludeAll(Ts.class).excludeId());
 
         ResourceEntity<Ts> te1MapBy = new RootResourceEntity<>(entityTs);
-        NestedResourceEntity<Tr> te1MapByTarget = new NestedResourceEntity<>(entityTr, te1MapBy, entityTs.getRelationship("rtrs"));
+        NestedResourceEntity<Tr> te1MapByTarget = new ToOneResourceEntity<>(entityTr, te1MapBy, entityTs.getRelationship("rtrs"));
         te1MapByTarget.includeId();
 
         te1MapBy.getChildren().put("rtrs", te1MapByTarget);
@@ -298,7 +299,7 @@ public class ConstraintsHandlerTest {
                 .path("rts", Constraint.excludeAll(Ts.class).includeId());
 
         ResourceEntity<Tr> te1MapBy = new RootResourceEntity<>(entityTr);
-        NestedResourceEntity<Ts> te1MapByTarget = new NestedResourceEntity<>(entityTs, te1MapBy, entityTr.getRelationship("rts"));
+        NestedResourceEntity<Ts> te1MapByTarget = new ToOneResourceEntity<>(entityTs, te1MapBy, entityTr.getRelationship("rts"));
         te1MapByTarget.includeId();
         te1MapBy.getChildren().put("rts", te1MapByTarget);
 

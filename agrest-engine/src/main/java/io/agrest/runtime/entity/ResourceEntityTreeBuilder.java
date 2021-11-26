@@ -4,6 +4,8 @@ import io.agrest.AgException;
 import io.agrest.NestedResourceEntity;
 import io.agrest.PathConstants;
 import io.agrest.ResourceEntity;
+import io.agrest.ToManyResourceEntity;
+import io.agrest.ToOneResourceEntity;
 import io.agrest.meta.*;
 
 import java.util.Collections;
@@ -99,10 +101,10 @@ public class ResourceEntityTreeBuilder {
     protected NestedResourceEntity<?> createChildEntity(ResourceEntity<?> parent, AgRelationship incoming) {
         AgEntity<?> target = incoming.getTargetEntity();
         AgEntityOverlay targetOverlay = entityOverlays.get(target.getType());
+        AgEntity<?> overlaidTarget = targetOverlay != null ? targetOverlay.resolve(agDataMap, target) : target;
 
-        return new NestedResourceEntity(
-                targetOverlay != null ? targetOverlay.resolve(agDataMap, target) : target,
-                parent,
-                incoming);
+        return incoming.isToMany()
+                ? new ToManyResourceEntity<>(overlaidTarget, parent, incoming)
+                : new ToOneResourceEntity<>(overlaidTarget, parent, incoming);
     }
 }

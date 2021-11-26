@@ -64,7 +64,7 @@ public class EncoderServiceTest extends CayenneNoDbTest {
         RootResourceEntity<E2> descriptor = getResourceEntity(E2.class);
         descriptor.includeId();
 
-        NestedResourceEntity<E3> e3Descriptor = getChildResourceEntity(E3.class, descriptor, E2.E3S.getName());
+        ToManyResourceEntity<E3> e3Descriptor = getToManyChildEntity(E3.class, descriptor, E2.E3S.getName());
         e3Descriptor.includeId();
         ResourceEntityUtils.appendAttribute(e3Descriptor, "name", String.class, E3::getName);
 
@@ -93,8 +93,8 @@ public class EncoderServiceTest extends CayenneNoDbTest {
 
         // saves result set in ResourceEntity
         descriptor.setResult(Collections.singletonList(e2));
-        e3Descriptor.addToManyResult(new SimpleObjectId(7), e31);
-        e3Descriptor.addToManyResult(new SimpleObjectId(7), e32);
+        e3Descriptor.addResult(new SimpleObjectId(7), e31);
+        e3Descriptor.addResult(new SimpleObjectId(7), e32);
 
         assertEquals("{\"data\":[{\"id\":7,\"e3s\":[{\"id\":5,\"name\":\"31\"},{\"id\":6,\"name\":\"32\"}]}],\"total\":1}",
                 toJson(e2, descriptor));
@@ -202,7 +202,7 @@ public class EncoderServiceTest extends CayenneNoDbTest {
         RootResourceEntity<E3> e3Descriptor = getResourceEntity(E3.class);
         e3Descriptor.includeId();
 
-        NestedResourceEntity<E2> e2Descriptor = getChildResourceEntity(E2.class, e3Descriptor, E3.E2.getName());
+        ToOneResourceEntity<E2> e2Descriptor = getToOneChildEntity(E2.class, e3Descriptor, E3.E2.getName());
         e2Descriptor.getEntityEncoderFilters().add(filter);
         e2Descriptor.includeId();
         e3Descriptor.getChildren().put(E3.E2.getName(), e2Descriptor);
@@ -219,7 +219,7 @@ public class EncoderServiceTest extends CayenneNoDbTest {
         e31.setE2(e21);
         // saves result set in ResourceEntity
         e3Descriptor.setResult(Collections.singletonList(e31));
-        e2Descriptor.setToOneResult(new SimpleObjectId(5), e21);
+        e2Descriptor.addResult(new SimpleObjectId(5), e21);
 
         assertEquals("{\"data\":[{\"id\":5,\"e2\":{\"id\":7}}],\"total\":1}", toJson(e31, e3Descriptor));
 
@@ -233,7 +233,7 @@ public class EncoderServiceTest extends CayenneNoDbTest {
         e32.setE2(e22);
         // saves result set in ResourceEntity
         e3Descriptor.setResult(Collections.singletonList(e32));
-        e2Descriptor.setToOneResult(new SimpleObjectId(6), e22);
+        e2Descriptor.addResult(new SimpleObjectId(6), e22);
 
         assertEquals("{\"data\":[{\"id\":6}],\"total\":1}", toJson(e32, e3Descriptor));
     }

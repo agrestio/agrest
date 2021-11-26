@@ -2,10 +2,10 @@ package io.agrest.sencha.runtime.encoder;
 
 import com.fasterxml.jackson.core.JsonEncoding;
 import com.fasterxml.jackson.core.JsonGenerator;
-import io.agrest.NestedResourceEntity;
 import io.agrest.ResourceEntity;
 import io.agrest.RootResourceEntity;
 import io.agrest.SimpleObjectId;
+import io.agrest.ToOneResourceEntity;
 import io.agrest.cayenne.cayenne.main.E2;
 import io.agrest.cayenne.cayenne.main.E3;
 import io.agrest.cayenne.persister.ICayennePersister;
@@ -71,7 +71,7 @@ public class SenchaEncoderServiceTest extends CayenneNoDbTest {
         e3Descriptor.getEntityEncoderFilters().add(filter);
         e3Descriptor.includeId();
 
-        NestedResourceEntity<E2> e2Descriptor = getChildResourceEntity(E2.class, e3Descriptor, E3.E2.getName());
+        ToOneResourceEntity<E2> e2Descriptor = getToOneChildEntity(E2.class, e3Descriptor, E3.E2.getName());
         e2Descriptor.getEntityEncoderFilters().add(filter);
         e2Descriptor.includeId();
         e3Descriptor.getChildren().put(E3.E2.getName(), e2Descriptor);
@@ -89,7 +89,7 @@ public class SenchaEncoderServiceTest extends CayenneNoDbTest {
 
         // saves result set in ResourceEntity
         e3Descriptor.setResult(Collections.singletonList(e31));
-        e2Descriptor.setToOneResult(new SimpleObjectId(5), e21);
+        e2Descriptor.addResult(new SimpleObjectId(5), e21);
 
         assertEquals("{\"success\":true,\"data\":[{\"id\":5,\"e2\":{\"id\":7},\"e2_id\":7}],\"total\":1}",
                 toJson(e31, e3Descriptor));
@@ -105,7 +105,7 @@ public class SenchaEncoderServiceTest extends CayenneNoDbTest {
 
         // saves result set in ResourceEntity
         e3Descriptor.setResult(Collections.singletonList(e32));
-        e2Descriptor.setToOneResult(new SimpleObjectId(6), e22);
+        e2Descriptor.addResult(new SimpleObjectId(6), e22);
 
         assertEquals("{\"success\":true,\"data\":[{\"id\":6}],\"total\":1}", toJson(e32, e3Descriptor));
     }

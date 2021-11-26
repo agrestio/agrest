@@ -1,8 +1,9 @@
 package io.agrest.cayenne.unit;
 
-import io.agrest.NestedResourceEntity;
 import io.agrest.ResourceEntity;
 import io.agrest.RootResourceEntity;
+import io.agrest.ToManyResourceEntity;
+import io.agrest.ToOneResourceEntity;
 import io.agrest.cayenne.compiler.CayenneAgEntityCompiler;
 import io.agrest.cayenne.persister.ICayennePersister;
 import io.agrest.cayenne.processor.CayenneQueryAssembler;
@@ -136,7 +137,11 @@ public abstract class CayenneNoDbTest {
         return new RootResourceEntity<>(getAgEntity(type));
     }
 
-    protected <T> NestedResourceEntity<T> getChildResourceEntity(Class<T> type, ResourceEntity<?> parent, String incoming) {
-        return new NestedResourceEntity<>(getAgEntity(type), parent, parent.getAgEntity().getRelationship(incoming));
+    protected <T> ToOneResourceEntity<T> getToOneChildEntity(Class<T> type, ResourceEntity<?> parent, String incoming) {
+        return new ToOneResourceEntity<>(getAgEntity(type), parent, parent.getAgEntity().getRelationship(incoming));
+    }
+
+    protected <T> ToManyResourceEntity<T> getToManyChildEntity(Class<T> type, ResourceEntity<?> parent, String incoming) {
+        return new ToManyResourceEntity<>(getAgEntity(type), parent, parent.getAgEntity().getRelationship(incoming));
     }
 }
