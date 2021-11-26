@@ -35,14 +35,12 @@ public class AgEntityOverlay<T> {
     private PropertyFilter writablePropFilter;
 
     private ObjectFilter readableObjectFilter;
-    private ObjectFilter writableObjectFilter;
 
     public AgEntityOverlay(Class<T> type) {
         this.type = type;
         this.attributes = new HashMap<>();
         this.relationships = new HashMap<>();
         this.readableObjectFilter = ObjectFilter.trueFilter();
-        this.writableObjectFilter = ObjectFilter.trueFilter();
     }
 
     private static PropertyReader fromFunction(Function<?, ?> f) {
@@ -97,8 +95,7 @@ public class AgEntityOverlay<T> {
                 resolver.attributes,
                 resolver.relationships,
                 rootDataResolver != null ? rootDataResolver : maybeOverlaid.getDataResolver(),
-                maybeOverlaid.getReadableObjectFilter().and(readableObjectFilter),
-                maybeOverlaid.getWritableObjectFilter().and(writableObjectFilter)
+                maybeOverlaid.getReadableObjectFilter().and(readableObjectFilter)
         );
     }
 
@@ -107,8 +104,7 @@ public class AgEntityOverlay<T> {
                 && relationships.isEmpty()
                 && readablePropFilter == null
                 && writablePropFilter == null
-                && readableObjectFilter == null
-                && writableObjectFilter == null;
+                && readableObjectFilter == null;
     }
 
     /**
@@ -200,14 +196,6 @@ public class AgEntityOverlay<T> {
      */
     public AgEntityOverlay<T> readableObjectFilter(ObjectFilter<T> filter) {
         this.readableObjectFilter = this.readableObjectFilter.and(filter);
-        return this;
-    }
-
-    /**
-     * @since 4.8
-     */
-    public AgEntityOverlay<T> writableObjectFilter(ObjectFilter<T> filter) {
-        this.writableObjectFilter = this.writableObjectFilter.and(filter);
         return this;
     }
 

@@ -67,9 +67,4 @@ public class LazyAgEntity<T> extends BaseLazyAgEntity<T, AgEntity<T>> implements
     public ObjectFilter getReadableObjectFilter() {
         return getDelegate().getReadableObjectFilter();
     }
-
-    @Override
-    public ObjectFilter getWritableObjectFilter() {
-        return getDelegate().getWritableObjectFilter();
-    }
 }

@@ -1,8 +1,7 @@
 package io.agrest;
 
-import io.agrest.filter.ObjectFilter;
-import io.agrest.filter.PropertyFilter;
 import io.agrest.constraints.Constraint;
+import io.agrest.filter.PropertyFilter;
 import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgEntityOverlay;
 import io.agrest.processor.Processor;
@@ -105,22 +104,6 @@ public interface UpdateBuilder<T> {
      */
     default <A> UpdateBuilder<T> writeablePropFilter(Class<A> entityType, PropertyFilter rules) {
         return entityOverlay(AgEntity.overlay(entityType).writablePropFilter(rules));
-    }
-
-    /**
-     * @return this builder instance
-     * @since 4.8
-     */
-    default <A> UpdateBuilder<T> readableObjectFilter(Class<A> entityType, ObjectFilter<A> filter) {
-        return entityOverlay(AgEntity.overlay(entityType).readableObjectFilter(filter));
-    }
-
-    /**
-     * @return this builder instance
-     * @since 4.8
-     */
-    default <A> UpdateBuilder<T> writableObjectFilter(Class<A> entityType, ObjectFilter<A> filter) {
-        return entityOverlay(AgEntity.overlay(entityType).writableObjectFilter(filter));
     }
 
     /**

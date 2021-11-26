@@ -80,9 +80,4 @@ public interface AgEntity<T> {
      * @since 4.8
      */
     ObjectFilter getReadableObjectFilter();
-
-    /**
-     * @since 4.8
-     */
-    ObjectFilter getWritableObjectFilter();
 }

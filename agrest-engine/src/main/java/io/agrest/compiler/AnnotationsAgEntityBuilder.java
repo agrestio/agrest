@@ -209,7 +209,6 @@ public class AnnotationsAgEntityBuilder<T> {
                 rootDataResolver != null ? rootDataResolver : ThrowingRootDataResolver.getInstance(),
 
                 // TODO: support Exp filters via annotations?
-                ObjectFilter.trueFilter(),
                 ObjectFilter.trueFilter());
     }
 
