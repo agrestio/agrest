@@ -1,5 +1,6 @@
 package io.agrest.meta;
 
+import io.agrest.filter.ObjectFilter;
 import io.agrest.resolver.RootDataResolver;
 
 import java.util.Collection;
@@ -60,5 +61,15 @@ public class LazyAgEntity<T> extends BaseLazyAgEntity<T, AgEntity<T>> implements
     @Override
     public RootDataResolver<T> getDataResolver() {
         return getDelegate().getDataResolver();
+    }
+
+    @Override
+    public ObjectFilter getReadableObjectFilter() {
+        return getDelegate().getReadableObjectFilter();
+    }
+
+    @Override
+    public ObjectFilter getWritableObjectFilter() {
+        return getDelegate().getWritableObjectFilter();
     }
 }
