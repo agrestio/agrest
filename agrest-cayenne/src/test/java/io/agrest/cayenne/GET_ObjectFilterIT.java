@@ -2,6 +2,8 @@ package io.agrest.cayenne;
 
 import io.agrest.Ag;
 import io.agrest.DataResponse;
+import io.agrest.cayenne.cayenne.main.E2;
+import io.agrest.cayenne.cayenne.main.E3;
 import io.agrest.cayenne.cayenne.main.E4;
 import io.agrest.cayenne.unit.AgCayenneTester;
 import io.agrest.cayenne.unit.DbTest;
@@ -9,6 +11,7 @@ import io.agrest.filter.ObjectFilter;
 import io.agrest.meta.AgEntity;
 import io.bootique.junit5.BQTestTool;
 import org.apache.cayenne.Cayenne;
+import org.apache.cayenne.DataObject;
 import org.junit.jupiter.api.Test;
 
 import javax.ws.rs.GET;
@@ -22,16 +25,24 @@ public class GET_ObjectFilterIT extends DbTest {
 
     @BQTestTool
     static final AgCayenneTester tester = tester(Resource.class)
-            .entities(E4.class)
-            .agCustomizer(ab -> ab.entityOverlay(AgEntity.overlay(E4.class).readableObjectFilter(evenFilter())))
+            .entities(E2.class, E3.class, E4.class)
+            .agCustomizer(ab -> ab
+                    .entityOverlay(AgEntity.overlay(E2.class).readableObjectFilter(evenFilter()))
+                    .entityOverlay(AgEntity.overlay(E3.class).readableObjectFilter(oddFilter()))
+                    .entityOverlay(AgEntity.overlay(E4.class).readableObjectFilter(evenFilter()))
+            )
             .build();
 
-    static ObjectFilter<E4> evenFilter() {
+    static <T extends DataObject> ObjectFilter<T> evenFilter() {
         return o -> Cayenne.intPKForObject(o) % 2 == 0;
     }
 
+    static <T extends DataObject> ObjectFilter<T> oddFilter() {
+        return o -> Cayenne.intPKForObject(o) % 2 != 0;
+    }
+
     @Test
-    public void testRequestFilter() {
+    public void testRootFilter_InRequest() {
 
         tester.e4().insertColumns("id", "c_varchar")
                 .values(1, "a")
@@ -50,7 +61,50 @@ public class GET_ObjectFilterIT extends DbTest {
     }
 
     @Test
-    public void testSharedFilter() {
+    public void testNestedFilter_ToOne() {
+
+        tester.e2().insertColumns("id_")
+                .values(2)
+                .values(3)
+                .exec();
+
+        tester.e3().insertColumns("id_", "e2_id")
+                .values(1, 2)
+                .values(2, 2)
+                .values(3, 3)
+                .values(4, 3)
+                .exec();
+
+        tester.target("/e3_nested_filter")
+                .queryParam("include", "id", "e2.id")
+                .queryParam("sort", "id")
+                .get()
+                .wasOk().bodyEquals(2, "{\"id\":1,\"e2\":{\"id\":2}}", "{\"id\":3,\"e2\":null}");
+    }
+
+    @Test
+    public void testNestedFilter_ToMany() {
+
+        tester.e2().insertColumns("id_")
+                .values(2)
+                .values(3)
+                .exec();
+
+        tester.e3().insertColumns("id_", "e2_id")
+                .values(1, 2)
+                .values(2, 2)
+                .values(3, 3)
+                .values(4, 3)
+                .exec();
+
+        tester.target("/e2_nested_filter")
+                .queryParam("include", "id", "e3s.id")
+                .get()
+                .wasOk().bodyEquals(1, "{\"id\":2,\"e3s\":[{\"id\":1}]}");
+    }
+
+    @Test
+    public void testFilter_InStack() {
 
         tester.e4().insertColumns("id").values(1).values(2).exec();
 
@@ -138,6 +192,18 @@ public class GET_ObjectFilterIT extends DbTest {
 
         @Context
         private Configuration config;
+
+        @GET
+        @Path("e2_nested_filter")
+        public DataResponse<E2> getE2(@Context UriInfo uriInfo) {
+            return Ag.service(config).select(E2.class).uri(uriInfo).get();
+        }
+
+        @GET
+        @Path("e3_nested_filter")
+        public DataResponse<E3> getE3(@Context UriInfo uriInfo) {
+            return Ag.service(config).select(E3.class).uri(uriInfo).get();
+        }
 
         @GET
         @Path("e4_stack_filter")

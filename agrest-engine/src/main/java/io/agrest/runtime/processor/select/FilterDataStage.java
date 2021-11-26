@@ -1,13 +1,18 @@
 package io.agrest.runtime.processor.select;
 
+import io.agrest.AgObjectId;
 import io.agrest.NestedResourceEntity;
+import io.agrest.ResourceEntity;
 import io.agrest.RootResourceEntity;
+import io.agrest.ToManyResourceEntity;
+import io.agrest.ToOneResourceEntity;
 import io.agrest.filter.ObjectFilter;
 import io.agrest.processor.Processor;
 import io.agrest.processor.ProcessorOutcome;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @since 4.8
@@ -25,29 +30,56 @@ public class FilterDataStage implements Processor<SelectContext<?>> {
     }
 
     protected <T> void filterRoot(RootResourceEntity<T> entity) {
-        ObjectFilter<T> objectFilter = entity.getAgEntity().getReadableObjectFilter();
-        if (!objectFilter.allowAll() && !entity.getResult().isEmpty()) {
-            entity.setResult(filter(entity.getResult(), objectFilter));
+        ObjectFilter<T> filter = entity.getAgEntity().getReadableObjectFilter();
+        if (!filter.allowAll() && !entity.getResult().isEmpty()) {
+
+            // replacing the list to avoid messing up possible data source caches, and also
+            // it is likely faster to create a new list than to remove entries from an existing ArrayList
+            entity.setResult(filterList(entity.getResult(), filter));
         }
 
+        filterChildren(entity);
+    }
+
+    protected void filterChildren(ResourceEntity<?> entity) {
         for (NestedResourceEntity<?> child : entity.getChildren().values()) {
-            filterNested(child);
+            if (child instanceof ToOneResourceEntity) {
+                filterToOne((ToOneResourceEntity<?>) child);
+            } else {
+                filterToMany((ToManyResourceEntity<?>) child);
+            }
         }
     }
 
-    protected void filterNested(NestedResourceEntity<?> entity) {
+    protected <T> void filterToOne(ToOneResourceEntity<T> entity) {
 
-        ObjectFilter<?> objectFilter = entity.getAgEntity().getReadableObjectFilter();
-        if (!objectFilter.allowAll() && !entity.getResultsByParent().isEmpty()) {
-            // TODO
+        ObjectFilter<T> filter = entity.getAgEntity().getReadableObjectFilter();
+        if (!filter.allowAll() && !entity.getResultsByParent().isEmpty()) {
+
+            // filter the map in place - key removal should be fast
+            entity.getResultsByParent().entrySet().removeIf(e -> !filter.isAccessible(e.getValue()));
         }
 
-        for (NestedResourceEntity<?> child : entity.getChildren().values()) {
-            filterNested(child);
-        }
+        filterChildren(entity);
     }
 
-    private <T> List<T> filter(List<T> unfiltered, ObjectFilter<T> filter) {
+    protected <T> void filterToMany(ToManyResourceEntity<T> entity) {
+
+        ObjectFilter<T> filter = entity.getAgEntity().getReadableObjectFilter();
+        if (!filter.allowAll() && !entity.getResultsByParent().isEmpty()) {
+
+            // Filter the map in place;
+            // Replace relationship lists to avoid messing up possible data source caches, and also
+            // it is likely faster to create a new list than to remove entries from an existing ArrayList
+            for (Map.Entry<AgObjectId, List<T>> e : entity.getResultsByParent().entrySet()) {
+                e.setValue(filterList(e.getValue(), filter));
+            }
+        }
+
+        filterChildren(entity);
+    }
+
+    static <T> List<T> filterList(List<T> unfiltered, ObjectFilter<T> filter) {
 
         int len = unfiltered.size();
         for (int i = 0; i < len; i++) {
@@ -55,14 +87,14 @@ public class FilterDataStage implements Processor<SelectContext<?>> {
             if (!filter.isAccessible(t)) {
 
                 // avoid list copy until we can't
-                return filterByCopy(unfiltered, filter, i);
+                return filterListByCopy(unfiltered, filter, i);
             }
         }
 
         return unfiltered;
     }
 
-    private <T> List<T> filterByCopy(List<T> unfiltered, ObjectFilter<T> filter, int firstExcluded) {
+    static <T> List<T> filterListByCopy(List<T> unfiltered, ObjectFilter<T> filter, int firstExcluded) {
 
         int len = unfiltered.size();
         List<T> filtered = new ArrayList<>(len - 1);

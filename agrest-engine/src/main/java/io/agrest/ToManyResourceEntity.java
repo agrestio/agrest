@@ -13,23 +13,27 @@ import java.util.Map;
  */
 public class ToManyResourceEntity<T> extends NestedResourceEntity<T> {
 
-    private final Map<AgObjectId, List<T>> resultByParent;
+    private final Map<AgObjectId, List<T>> resultsByParent;
 
     public ToManyResourceEntity(AgEntity<T> agEntity, ResourceEntity<?> parent, AgRelationship incoming) {
         super(agEntity, parent, incoming);
-        this.resultByParent = new LinkedHashMap<>();
+        this.resultsByParent = new LinkedHashMap<>();
+    }
+
+    public Map<AgObjectId, List<T>> getResultsByParent() {
+        return resultsByParent;
     }
 
     public List<T> getResult(AgObjectId parentId) {
-        return resultByParent.get(parentId);
+        return resultsByParent.get(parentId);
     }
 
     @Override
     public void addResult(AgObjectId parentId, T object) {
-        resultByParent.computeIfAbsent(parentId, k -> new ArrayList<>()).add(object);
+        resultsByParent.computeIfAbsent(parentId, k -> new ArrayList<>()).add(object);
     }
 
     public void addResultList(AgObjectId parentId, List<T> objects) {
-        resultByParent.put(parentId, objects);
+        resultsByParent.put(parentId, objects);
     }
 }

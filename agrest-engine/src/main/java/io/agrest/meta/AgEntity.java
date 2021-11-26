@@ -79,5 +79,5 @@ public interface AgEntity<T> {
      *
      * @since 4.8
      */
-    ObjectFilter getReadableObjectFilter();
+    ObjectFilter<T> getReadableObjectFilter();
 }

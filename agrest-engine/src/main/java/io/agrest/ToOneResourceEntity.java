@@ -11,19 +11,23 @@ import java.util.Map;
  */
 public class ToOneResourceEntity<T> extends NestedResourceEntity<T> {
 
-    private final Map<AgObjectId, T> resultByParent;
+    private final Map<AgObjectId, T> resultsByParent;
 
     public ToOneResourceEntity(AgEntity<T> agEntity, ResourceEntity<?> parent, AgRelationship incoming) {
         super(agEntity, parent, incoming);
-        this.resultByParent = new LinkedHashMap<>();
+        this.resultsByParent = new LinkedHashMap<>();
+    }
+
+    public Map<AgObjectId, T> getResultsByParent() {
+        return resultsByParent;
     }
 
     public T getResult(AgObjectId parentId) {
-        return resultByParent.get(parentId);
+        return resultsByParent.get(parentId);
     }
 
     @Override
     public void addResult(AgObjectId parentId, T object) {
-        resultByParent.put(parentId, object);
+        resultsByParent.put(parentId, object);
     }
 }

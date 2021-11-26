@@ -24,9 +24,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class DefaultSelectBuilder_CustomPipelineIT extends DbTest {
 
     @BQTestTool
-    static final AgCayenneTester tester = tester()
-
-            .build();
+    static final AgCayenneTester tester = tester().build();
 
     private <T> DefaultSelectBuilder<T> createBuilder(Class<T> type) {
         SelectBuilder<T> builder = tester.ag().select(type);
@@ -46,6 +44,7 @@ public class DefaultSelectBuilder_CustomPipelineIT extends DbTest {
                 .stage(SelectStage.CREATE_ENTITY, c -> stageRecorder.accept(SelectStage.CREATE_ENTITY))
                 .stage(SelectStage.START, c -> stageRecorder.accept(SelectStage.START))
                 .stage(SelectStage.FETCH_DATA, c -> stageRecorder.accept(SelectStage.FETCH_DATA))
+                .stage(SelectStage.FILTER_DATA, c -> stageRecorder.accept(SelectStage.FILTER_DATA))
                 .stage(SelectStage.ASSEMBLE_QUERY, c -> stageRecorder.accept(SelectStage.ASSEMBLE_QUERY))
                 .stage(SelectStage.APPLY_SERVER_PARAMS, c -> stageRecorder.accept(SelectStage.APPLY_SERVER_PARAMS))
                 .get();

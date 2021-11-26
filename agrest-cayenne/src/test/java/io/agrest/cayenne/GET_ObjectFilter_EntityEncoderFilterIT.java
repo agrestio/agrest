@@ -30,22 +30,22 @@ public class GET_ObjectFilter_EntityEncoderFilterIT extends DbTest {
     @BQTestTool
     static final AgCayenneTester tester = tester(Resource.class)
             .entities(E4.class)
-            .agCustomizer(ab -> ab.entityEncoderFilter(oddFilter()))
+            .agCustomizer(ab -> ab.entityEncoderFilter(evenFilter()))
             .build();
 
-    static EntityEncoderFilter oddFilter() {
+    static EntityEncoderFilter evenFilter() {
         return EntityEncoderFilter
                 .forEntity(E4.class)
-                .objectCondition(GET_ObjectFilter_EntityEncoderFilterIT::willEncodeOdd)
-                .encoder(GET_ObjectFilter_EntityEncoderFilterIT::encodeOdd)
+                .objectCondition(GET_ObjectFilter_EntityEncoderFilterIT::willEncodeEven)
+                .encoder(GET_ObjectFilter_EntityEncoderFilterIT::encodeEven)
                 .build();
     }
 
-    static boolean willEncodeOdd(String p, E4 e4, Encoder d) {
+    static boolean willEncodeEven(String p, E4 e4, Encoder d) {
         return Cayenne.intPKForObject(e4) % 2 == 0 && d.willEncode(p, e4);
     }
 
-    static boolean encodeOdd(String p, E4 e4, JsonGenerator out, Encoder d) throws IOException {
+    static boolean encodeEven(String p, E4 e4, JsonGenerator out, Encoder d) throws IOException {
         return Cayenne.intPKForObject(e4) % 2 == 0 && d.encode(p, e4, out);
     }
 
