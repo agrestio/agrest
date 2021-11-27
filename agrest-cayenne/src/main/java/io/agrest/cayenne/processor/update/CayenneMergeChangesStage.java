@@ -52,9 +52,7 @@ public abstract class CayenneMergeChangesStage implements Processor<UpdateContex
         }
     }
 
-    protected <T extends DataObject> void updateSingle(UpdateContext<T> context, T o, Collection<EntityUpdate<T>> updates) {
-
-        ObjectRelator relator = createRelator(context);
+    protected <T extends DataObject> void updateSingle(ObjectRelator relator, T o, Collection<EntityUpdate<T>> updates) {
 
         for (EntityUpdate<T> u : updates) {
             mergeChanges(u, o, relator);

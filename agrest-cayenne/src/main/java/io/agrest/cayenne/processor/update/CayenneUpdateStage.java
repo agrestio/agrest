@@ -48,6 +48,7 @@ public class CayenneUpdateStage extends CayenneMergeChangesStage {
     @Override
     protected <T extends DataObject> void sync(UpdateContext<T> context) {
 
+        ObjectRelator relator = createRelator(context);
         ObjectMapper<T> mapper = createObjectMapper(context);
 
         Map<Object, Collection<EntityUpdate<T>>> updatesByKey = mutableUpdatesByKey(context, mapper);
@@ -63,7 +64,7 @@ public class CayenneUpdateStage extends CayenneMergeChangesStage {
                 throw AgException.internalServerError("Invalid key item: %s", key);
             }
 
-            updateSingle(context, o, updates);
+            updateSingle(relator, o, updates);
         }
 
         // check leftovers - those correspond to objects missing in the DB or

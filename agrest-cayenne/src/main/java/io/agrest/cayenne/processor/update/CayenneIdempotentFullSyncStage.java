@@ -34,6 +34,7 @@ public class CayenneIdempotentFullSyncStage extends CayenneIdempotentCreateOrUpd
     @Override
     protected <T extends DataObject> void sync(UpdateContext<T> context) {
 
+        ObjectRelator relator = createRelator(context);
         ObjectMapper<T> mapper = createObjectMapper(context);
         Map<Object, Collection<EntityUpdate<T>>> keyMap = mutableUpdatesByKey(context, mapper);
 
@@ -49,7 +50,7 @@ public class CayenneIdempotentFullSyncStage extends CayenneIdempotentCreateOrUpd
             if (updates == null) {
                 deletedObjects.add(o);
             } else {
-                updateSingle(context, o, updates);
+                updateSingle(relator, o, updates);
             }
         }
 
