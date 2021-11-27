@@ -104,7 +104,7 @@ public class AgEntityOverlay<T> {
                 && relationships.isEmpty()
                 && readablePropFilter == null
                 && writablePropFilter == null
-                && readFilter == null;
+                && readFilter.allowsAll();
     }
 
     /**
