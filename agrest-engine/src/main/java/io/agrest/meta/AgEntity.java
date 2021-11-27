@@ -75,7 +75,8 @@ public interface AgEntity<T> {
     }
 
     /**
-     * Returns an in-memory filter of objects with read access
+     * Returns an in-memory filter that will be applied to result objects during either "select" or one of the
+     * "create" / "update" operations.
      *
      * @since 4.8
      */
