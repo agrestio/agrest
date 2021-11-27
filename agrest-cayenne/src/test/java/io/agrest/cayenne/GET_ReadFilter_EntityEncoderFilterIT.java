@@ -25,7 +25,7 @@ import java.io.IOException;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class GET_SelectFilter_EntityEncoderFilterIT extends DbTest {
+public class GET_ReadFilter_EntityEncoderFilterIT extends DbTest {
 
     @BQTestTool
     static final AgCayenneTester tester = tester(Resource.class)
@@ -36,8 +36,8 @@ public class GET_SelectFilter_EntityEncoderFilterIT extends DbTest {
     static EntityEncoderFilter evenFilter() {
         return EntityEncoderFilter
                 .forEntity(E4.class)
-                .objectCondition(GET_SelectFilter_EntityEncoderFilterIT::willEncodeEven)
-                .encoder(GET_SelectFilter_EntityEncoderFilterIT::encodeEven)
+                .objectCondition(GET_ReadFilter_EntityEncoderFilterIT::willEncodeEven)
+                .encoder(GET_ReadFilter_EntityEncoderFilterIT::encodeEven)
                 .build();
     }
 

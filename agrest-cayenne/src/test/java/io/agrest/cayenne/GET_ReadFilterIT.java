@@ -7,7 +7,7 @@ import io.agrest.cayenne.cayenne.main.E3;
 import io.agrest.cayenne.cayenne.main.E4;
 import io.agrest.cayenne.unit.AgCayenneTester;
 import io.agrest.cayenne.unit.DbTest;
-import io.agrest.filter.SelectFilter;
+import io.agrest.filter.ReadFilter;
 import io.agrest.meta.AgEntity;
 import io.bootique.junit5.BQTestTool;
 import org.apache.cayenne.Cayenne;
@@ -21,23 +21,23 @@ import javax.ws.rs.core.Configuration;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.UriInfo;
 
-public class GET_SelectFilterIT extends DbTest {
+public class GET_ReadFilterIT extends DbTest {
 
     @BQTestTool
     static final AgCayenneTester tester = tester(Resource.class)
             .entities(E2.class, E3.class, E4.class)
             .agCustomizer(ab -> ab
-                    .entityOverlay(AgEntity.overlay(E2.class).selectFilter(evenFilter()))
-                    .entityOverlay(AgEntity.overlay(E3.class).selectFilter(oddFilter()))
-                    .entityOverlay(AgEntity.overlay(E4.class).selectFilter(evenFilter()))
+                    .entityOverlay(AgEntity.overlay(E2.class).readFilter(evenFilter()))
+                    .entityOverlay(AgEntity.overlay(E3.class).readFilter(oddFilter()))
+                    .entityOverlay(AgEntity.overlay(E4.class).readFilter(evenFilter()))
             )
             .build();
 
-    static <T extends DataObject> SelectFilter<T> evenFilter() {
+    static <T extends DataObject> ReadFilter<T> evenFilter() {
         return o -> Cayenne.intPKForObject(o) % 2 == 0;
     }
 
-    static <T extends DataObject> SelectFilter<T> oddFilter() {
+    static <T extends DataObject> ReadFilter<T> oddFilter() {
         return o -> Cayenne.intPKForObject(o) % 2 != 0;
     }
 

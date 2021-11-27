@@ -2,7 +2,7 @@ package io.agrest.encoder;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import io.agrest.ResourceEntity;
-import io.agrest.filter.SelectFilter;
+import io.agrest.filter.ReadFilter;
 
 import java.io.IOException;
 
@@ -10,7 +10,7 @@ import java.io.IOException;
  * An interceptor for custom encoding of specific entities. An application may define a filter that suppresses
  * certain objects based on security constraints, or may provide a custom encoder for a given object, etc.
  *
- * @deprecated since 4.8 in favor of {@link SelectFilter}.
+ * @deprecated since 4.8 in favor of {@link ReadFilter}.
  */
 @Deprecated
 public interface EntityEncoderFilter {

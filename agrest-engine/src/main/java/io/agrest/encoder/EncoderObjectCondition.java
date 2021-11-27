@@ -1,11 +1,11 @@
 package io.agrest.encoder;
 
-import io.agrest.filter.SelectFilter;
+import io.agrest.filter.ReadFilter;
 
 /**
  * @param <T>
  * @since 3.4
- * @deprecated since 4.8 in favor of {@link SelectFilter}.
+ * @deprecated since 4.8 in favor of {@link ReadFilter}.
  */
 @Deprecated
 @FunctionalInterface

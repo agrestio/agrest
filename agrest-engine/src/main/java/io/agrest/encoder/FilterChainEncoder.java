@@ -1,7 +1,7 @@
 package io.agrest.encoder;
 
 import com.fasterxml.jackson.core.JsonGenerator;
-import io.agrest.filter.SelectFilter;
+import io.agrest.filter.ReadFilter;
 
 import java.io.IOException;
 import java.util.List;
@@ -10,7 +10,7 @@ import java.util.List;
  * An encoder that passes encoding request through a chain of {@link EntityEncoderFilter} filters before it gets to the real
  * Encoder.
  *
- * @deprecated since 4.8 in favor of {@link SelectFilter}.
+ * @deprecated since 4.8 in favor of {@link ReadFilter}.
  */
 @Deprecated
 public class FilterChainEncoder implements Encoder {

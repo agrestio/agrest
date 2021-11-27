@@ -1,6 +1,6 @@
 package io.agrest.meta;
 
-import io.agrest.filter.SelectFilter;
+import io.agrest.filter.ReadFilter;
 import io.agrest.resolver.RootDataResolver;
 
 import java.util.Collection;
@@ -64,7 +64,7 @@ public class LazyAgEntity<T> extends BaseLazyAgEntity<T, AgEntity<T>> implements
     }
 
     @Override
-    public SelectFilter getSelectFilter() {
-        return getDelegate().getSelectFilter();
+    public ReadFilter getReadFilter() {
+        return getDelegate().getReadFilter();
     }
 }

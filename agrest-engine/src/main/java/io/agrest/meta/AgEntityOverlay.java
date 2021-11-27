@@ -1,6 +1,6 @@
 package io.agrest.meta;
 
-import io.agrest.filter.SelectFilter;
+import io.agrest.filter.ReadFilter;
 import io.agrest.filter.PropertyFilteringRulesBuilder;
 import io.agrest.filter.PropertyFilter;
 import io.agrest.property.PropertyReader;
@@ -34,13 +34,13 @@ public class AgEntityOverlay<T> {
     private PropertyFilter readablePropFilter;
     private PropertyFilter writablePropFilter;
 
-    private SelectFilter<T> selectFilter;
+    private ReadFilter<T> readFilter;
 
     public AgEntityOverlay(Class<T> type) {
         this.type = type;
         this.attributes = new HashMap<>();
         this.relationships = new HashMap<>();
-        this.selectFilter = SelectFilter.allowsAllFilter();
+        this.readFilter = ReadFilter.allowsAllFilter();
     }
 
     private static PropertyReader fromFunction(Function<?, ?> f) {
@@ -95,7 +95,7 @@ public class AgEntityOverlay<T> {
                 resolver.attributes,
                 resolver.relationships,
                 rootDataResolver != null ? rootDataResolver : maybeOverlaid.getDataResolver(),
-                maybeOverlaid.getSelectFilter().andThen(selectFilter)
+                maybeOverlaid.getReadFilter().andThen(readFilter)
         );
     }
 
@@ -104,7 +104,7 @@ public class AgEntityOverlay<T> {
                 && relationships.isEmpty()
                 && readablePropFilter == null
                 && writablePropFilter == null
-                && selectFilter == null;
+                && readFilter == null;
     }
 
     /**
@@ -130,7 +130,7 @@ public class AgEntityOverlay<T> {
             this.rootDataResolver = anotherOverlay.getRootDataResolver();
         }
 
-        this.selectFilter = this.selectFilter.andThen(anotherOverlay.selectFilter);
+        this.readFilter = this.readFilter.andThen(anotherOverlay.readFilter);
 
         return this;
     }
@@ -195,10 +195,12 @@ public class AgEntityOverlay<T> {
     }
 
     /**
+     * Adds an object READ filter to the existing filters.
+     *
      * @since 4.8
      */
-    public AgEntityOverlay<T> selectFilter(SelectFilter<T> filter) {
-        this.selectFilter = this.selectFilter.andThen(filter);
+    public AgEntityOverlay<T> readFilter(ReadFilter<T> filter) {
+        this.readFilter = this.readFilter.andThen(filter);
         return this;
     }
 

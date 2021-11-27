@@ -1,7 +1,7 @@
 package io.agrest.cayenne.compiler;
 
 import io.agrest.compiler.AnnotationsAgEntityBuilder;
-import io.agrest.filter.SelectFilter;
+import io.agrest.filter.ReadFilter;
 import io.agrest.meta.AgAttribute;
 import io.agrest.meta.AgDataMap;
 import io.agrest.meta.AgEntity;
@@ -205,7 +205,7 @@ public class CayenneAgEntityBuilder<T> {
                 rootDataResolver != null ? rootDataResolver : ThrowingRootDataResolver.getInstance(),
 
                 // TODO: support Exp filters via annotations?
-                SelectFilter.allowsAllFilter());
+                ReadFilter.allowsAllFilter());
     }
 
     /**

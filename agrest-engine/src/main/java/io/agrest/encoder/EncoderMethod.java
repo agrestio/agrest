@@ -1,14 +1,14 @@
 package io.agrest.encoder;
 
 import com.fasterxml.jackson.core.JsonGenerator;
-import io.agrest.filter.SelectFilter;
+import io.agrest.filter.ReadFilter;
 
 import java.io.IOException;
 
 /**
  * @param <T>
  * @since 3.4
- * @deprecated since 4.8 in favor of {@link SelectFilter}.
+ * @deprecated since 4.8 in favor of {@link ReadFilter}.
  */
 @Deprecated
 @FunctionalInterface

@@ -2,7 +2,7 @@ package io.agrest.encoder;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import io.agrest.ResourceEntity;
-import io.agrest.filter.SelectFilter;
+import io.agrest.filter.ReadFilter;
 
 import java.io.IOException;
 
@@ -10,7 +10,7 @@ import java.io.IOException;
  * Encoder filter that delegates individual encoder methods to custom functions.
  *
  * @since 3.4
- * @deprecated since 4.8 in favor of {@link SelectFilter}.
+ * @deprecated since 4.8 in favor of {@link ReadFilter}.
  */
 @Deprecated
 class CompositeEntityEncoderFilter implements EntityEncoderFilter {

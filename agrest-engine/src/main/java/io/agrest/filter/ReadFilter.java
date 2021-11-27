@@ -1,15 +1,15 @@
 package io.agrest.filter;
 
 /**
- * A filter of objects that defines an access policy for a given entity.
+ * Per-entity filter used to implement object READ access policies.
  *
  * @since 4.8
  */
 @FunctionalInterface
-public interface SelectFilter<T> {
+public interface ReadFilter<T> {
 
-    static <T> SelectFilter<T> allowsAllFilter() {
-        return AllowAllSelectFilter.instance;
+    static <T> ReadFilter<T> allowsAllFilter() {
+        return AllowAllReadFilter.instance;
     }
 
     boolean isAllowed(T object);
@@ -21,7 +21,7 @@ public interface SelectFilter<T> {
         return false;
     }
 
-    default SelectFilter<T> andThen(SelectFilter<T> another) {
+    default ReadFilter<T> andThen(ReadFilter<T> another) {
         if (another.allowsAll()) {
             return this;
         }
