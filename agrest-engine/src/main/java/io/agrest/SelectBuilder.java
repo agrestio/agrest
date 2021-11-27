@@ -46,7 +46,9 @@ public interface SelectBuilder<T> {
      * @return this builder instance
      * @see AgBuilder#entityEncoderFilter(EntityEncoderFilter)
      * @since 3.4
+     * @deprecated since 4.8 in favor of {@link #objectFilter(Class, ObjectFilter)}.
      */
+    @Deprecated
     SelectBuilder<T> entityEncoderFilter(EntityEncoderFilter filter);
 
     /**

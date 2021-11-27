@@ -9,8 +9,9 @@ import java.io.IOException;
  * An interceptor for custom encoding of specific entities. An application may define a filter that suppresses
  * certain objects based on security constraints, or may provide a custom encoder for a given object, etc.
  *
- * @since 3.4
+ * @deprecated since 4.8 in favor of {@link io.agrest.filter.ObjectFilter}.
  */
+@Deprecated
 public interface EntityEncoderFilter {
 
     /**

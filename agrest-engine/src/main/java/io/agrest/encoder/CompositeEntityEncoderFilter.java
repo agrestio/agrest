@@ -9,7 +9,9 @@ import java.io.IOException;
  * Encoder filter that delegates individual encoder methods to custom functions.
  *
  * @since 3.4
+ * @deprecated since 4.8 in favor of {@link io.agrest.filter.ObjectFilter}.
  */
+@Deprecated
 class CompositeEntityEncoderFilter implements EntityEncoderFilter {
 
     private static final EncoderEntityCondition DEFAUL_ENTITY_CONDITION = e -> true;

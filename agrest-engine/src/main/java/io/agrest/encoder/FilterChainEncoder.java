@@ -8,7 +8,10 @@ import java.util.List;
 /**
  * An encoder that passes encoding request through a chain of {@link EntityEncoderFilter} filters before it gets to the real
  * Encoder.
+ *
+ * @deprecated since 4.8 in favor of {@link io.agrest.filter.ObjectFilter}.
  */
+@Deprecated
 public class FilterChainEncoder implements Encoder {
 
     private Encoder delegate;

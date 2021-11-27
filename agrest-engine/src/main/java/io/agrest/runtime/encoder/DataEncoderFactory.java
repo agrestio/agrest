@@ -124,6 +124,9 @@ public class DataEncoderFactory {
                 .orElseGet(() -> new EntityNoIdEncoder(attributeEncoders, relationshipEncoders));
     }
 
+    /**
+     * @deprecated since 4.8 as EntityEncoderFilter is deprecated
+     */
     protected Encoder filteredEncoder(Encoder encoder, ResourceEntity<?> resourceEntity) {
         return resourceEntity.getEntityEncoderFilters().isEmpty()
                 ? encoder

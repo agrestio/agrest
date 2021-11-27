@@ -15,6 +15,7 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.isNull;
 import static org.mockito.Mockito.*;
 
+@Deprecated
 public class FilterChainEncoderTest {
 
 	@Test
