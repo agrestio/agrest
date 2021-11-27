@@ -30,7 +30,7 @@ public class FilterDataStage implements Processor<SelectContext<?>> {
     }
 
     protected <T> void filterRoot(RootResourceEntity<T> entity) {
-        ObjectFilter<T> filter = entity.getAgEntity().getReadableObjectFilter();
+        ObjectFilter<T> filter = entity.getAgEntity().getSelectFilter();
         if (!filter.allowsAll() && !entity.getResult().isEmpty()) {
 
             // replacing the list to avoid messing up possible data source caches, and also
@@ -53,7 +53,7 @@ public class FilterDataStage implements Processor<SelectContext<?>> {
 
     protected <T> void filterToOne(ToOneResourceEntity<T> entity) {
 
-        ObjectFilter<T> filter = entity.getAgEntity().getReadableObjectFilter();
+        ObjectFilter<T> filter = entity.getAgEntity().getSelectFilter();
         if (!filter.allowsAll() && !entity.getResultsByParent().isEmpty()) {
 
             // filter the map in place - key removal should be fast
@@ -65,7 +65,7 @@ public class FilterDataStage implements Processor<SelectContext<?>> {
 
     protected <T> void filterToMany(ToManyResourceEntity<T> entity) {
 
-        ObjectFilter<T> filter = entity.getAgEntity().getReadableObjectFilter();
+        ObjectFilter<T> filter = entity.getAgEntity().getSelectFilter();
         if (!filter.allowsAll() && !entity.getResultsByParent().isEmpty()) {
 
             // Filter the map in place;

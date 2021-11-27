@@ -14,7 +14,7 @@ public class DefaultAgEntity<T> implements AgEntity<T> {
     private final String name;
     private final Class<T> type;
     private final RootDataResolver<T> dataResolver;
-    private final ObjectFilter readableObjectFilter;
+    private final ObjectFilter<T> selectFilter;
 
     // TODO: ensure name uniqueness between all types of properties
     private final Map<String, AgIdPart> ids;
@@ -28,7 +28,7 @@ public class DefaultAgEntity<T> implements AgEntity<T> {
             Map<String, AgAttribute> attributes,
             Map<String, AgRelationship> relationships,
             RootDataResolver<T> dataResolver,
-            ObjectFilter readableObjectFilter) {
+            ObjectFilter<T> selectFilter) {
 
         this.name = name;
         this.type = type;
@@ -36,7 +36,7 @@ public class DefaultAgEntity<T> implements AgEntity<T> {
         this.attributes = attributes;
         this.relationships = relationships;
         this.dataResolver = dataResolver;
-        this.readableObjectFilter = readableObjectFilter;
+        this.selectFilter = selectFilter;
     }
 
     @Override
@@ -85,8 +85,8 @@ public class DefaultAgEntity<T> implements AgEntity<T> {
     }
 
     @Override
-    public ObjectFilter getReadableObjectFilter() {
-        return readableObjectFilter;
+    public ObjectFilter<T> getSelectFilter() {
+        return selectFilter;
     }
 
     @Override

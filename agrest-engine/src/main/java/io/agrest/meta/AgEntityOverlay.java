@@ -34,13 +34,13 @@ public class AgEntityOverlay<T> {
     private PropertyFilter readablePropFilter;
     private PropertyFilter writablePropFilter;
 
-    private ObjectFilter readableObjectFilter;
+    private ObjectFilter<T> selectFilter;
 
     public AgEntityOverlay(Class<T> type) {
         this.type = type;
         this.attributes = new HashMap<>();
         this.relationships = new HashMap<>();
-        this.readableObjectFilter = ObjectFilter.trueFilter();
+        this.selectFilter = ObjectFilter.trueFilter();
     }
 
     private static PropertyReader fromFunction(Function<?, ?> f) {
@@ -95,7 +95,7 @@ public class AgEntityOverlay<T> {
                 resolver.attributes,
                 resolver.relationships,
                 rootDataResolver != null ? rootDataResolver : maybeOverlaid.getDataResolver(),
-                maybeOverlaid.getReadableObjectFilter().andThen(readableObjectFilter)
+                maybeOverlaid.getSelectFilter().andThen(selectFilter)
         );
     }
 
@@ -104,7 +104,7 @@ public class AgEntityOverlay<T> {
                 && relationships.isEmpty()
                 && readablePropFilter == null
                 && writablePropFilter == null
-                && readableObjectFilter == null;
+                && selectFilter == null;
     }
 
     /**
@@ -130,7 +130,7 @@ public class AgEntityOverlay<T> {
             this.rootDataResolver = anotherOverlay.getRootDataResolver();
         }
 
-        this.readableObjectFilter = this.readableObjectFilter.andThen(anotherOverlay.readableObjectFilter);
+        this.selectFilter = this.selectFilter.andThen(anotherOverlay.selectFilter);
 
         return this;
     }
@@ -197,8 +197,8 @@ public class AgEntityOverlay<T> {
     /**
      * @since 4.8
      */
-    public AgEntityOverlay<T> readableObjectFilter(ObjectFilter<T> filter) {
-        this.readableObjectFilter = this.readableObjectFilter.andThen(filter);
+    public AgEntityOverlay<T> selectFilter(ObjectFilter<T> filter) {
+        this.selectFilter = this.selectFilter.andThen(filter);
         return this;
     }
 

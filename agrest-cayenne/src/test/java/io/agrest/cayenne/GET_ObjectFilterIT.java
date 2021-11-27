@@ -27,9 +27,9 @@ public class GET_ObjectFilterIT extends DbTest {
     static final AgCayenneTester tester = tester(Resource.class)
             .entities(E2.class, E3.class, E4.class)
             .agCustomizer(ab -> ab
-                    .entityOverlay(AgEntity.overlay(E2.class).readableObjectFilter(evenFilter()))
-                    .entityOverlay(AgEntity.overlay(E3.class).readableObjectFilter(oddFilter()))
-                    .entityOverlay(AgEntity.overlay(E4.class).readableObjectFilter(evenFilter()))
+                    .entityOverlay(AgEntity.overlay(E2.class).selectFilter(evenFilter()))
+                    .entityOverlay(AgEntity.overlay(E3.class).selectFilter(oddFilter()))
+                    .entityOverlay(AgEntity.overlay(E4.class).selectFilter(evenFilter()))
             )
             .build();
 

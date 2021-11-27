@@ -115,7 +115,7 @@ public interface SelectBuilder<T> {
      * @since 4.8
      */
     default <A> SelectBuilder<T> objectFilter(Class<A> entityType, ObjectFilter<A> filter) {
-        return entityOverlay(AgEntity.overlay(entityType).readableObjectFilter(filter));
+        return entityOverlay(AgEntity.overlay(entityType).selectFilter(filter));
     }
 
     /**

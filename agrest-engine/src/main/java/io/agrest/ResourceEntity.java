@@ -228,7 +228,7 @@ public abstract class ResourceEntity<T> {
      * @since 1.23
      */
     public boolean isFiltered() {
-        return !(entityEncoderFilters.isEmpty() && agEntity.getReadableObjectFilter().allowsAll());
+        return !(entityEncoderFilters.isEmpty() && agEntity.getSelectFilter().allowsAll());
     }
 
     /**
