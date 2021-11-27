@@ -427,6 +427,8 @@ public class AgBuilder {
                     .to(io.agrest.runtime.processor.update.ParseRequestStage.class);
             binder.bind(io.agrest.runtime.processor.update.CreateResourceEntityStage.class)
                     .to(io.agrest.runtime.processor.update.CreateResourceEntityStage.class);
+            binder.bind(io.agrest.runtime.processor.update.FilterChangesStage.class)
+                    .to(io.agrest.runtime.processor.update.FilterChangesStage.class);
 
             // metadata stages
             binder.bind(MetadataProcessorFactory.class).toProvider(MetadataProcessorFactoryProvider.class);

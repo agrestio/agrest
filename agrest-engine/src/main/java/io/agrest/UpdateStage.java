@@ -23,6 +23,11 @@ public enum UpdateStage {
      */
     MAP_CHANGES,
 
+    /**
+     * @since 4.8
+     */
+    FILTER_CHANGES,
+
     MERGE_CHANGES,
 
     COMMIT,

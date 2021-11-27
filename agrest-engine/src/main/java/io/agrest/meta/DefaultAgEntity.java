@@ -1,6 +1,9 @@
 package io.agrest.meta;
 
+import io.agrest.filter.CreateFilter;
+import io.agrest.filter.DeleteFilter;
 import io.agrest.filter.ReadFilter;
+import io.agrest.filter.UpdateFilter;
 import io.agrest.resolver.RootDataResolver;
 
 import java.util.Collection;
@@ -15,6 +18,9 @@ public class DefaultAgEntity<T> implements AgEntity<T> {
     private final Class<T> type;
     private final RootDataResolver<T> dataResolver;
     private final ReadFilter<T> readFilter;
+    private final CreateFilter<T> createFilter;
+    private final UpdateFilter<T> updateFilter;
+    private final DeleteFilter<T> deleteFilter;
 
     // TODO: ensure name uniqueness between all types of properties
     private final Map<String, AgIdPart> ids;
@@ -28,7 +34,10 @@ public class DefaultAgEntity<T> implements AgEntity<T> {
             Map<String, AgAttribute> attributes,
             Map<String, AgRelationship> relationships,
             RootDataResolver<T> dataResolver,
-            ReadFilter<T> readFilter) {
+            ReadFilter<T> readFilter,
+            CreateFilter<T> createFilter,
+            UpdateFilter<T> updateFilter,
+            DeleteFilter<T> deleteFilter) {
 
         this.name = name;
         this.type = type;
@@ -37,6 +46,10 @@ public class DefaultAgEntity<T> implements AgEntity<T> {
         this.relationships = relationships;
         this.dataResolver = dataResolver;
         this.readFilter = readFilter;
+        this.createFilter = createFilter;
+        this.updateFilter = updateFilter;
+        this.deleteFilter = deleteFilter;
+
     }
 
     @Override
@@ -87,6 +100,21 @@ public class DefaultAgEntity<T> implements AgEntity<T> {
     @Override
     public ReadFilter<T> getReadFilter() {
         return readFilter;
+    }
+
+    @Override
+    public CreateFilter<T> getCreateFilter() {
+        return createFilter;
+    }
+
+    @Override
+    public UpdateFilter<T> getUpdateFilter() {
+        return updateFilter;
+    }
+
+    @Override
+    public DeleteFilter<T> getDeleteFilter() {
+        return deleteFilter;
     }
 
     @Override

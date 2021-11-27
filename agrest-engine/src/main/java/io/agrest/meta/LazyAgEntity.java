@@ -1,6 +1,10 @@
+
 package io.agrest.meta;
 
+import io.agrest.filter.CreateFilter;
+import io.agrest.filter.DeleteFilter;
 import io.agrest.filter.ReadFilter;
+import io.agrest.filter.UpdateFilter;
 import io.agrest.resolver.RootDataResolver;
 
 import java.util.Collection;
@@ -66,5 +70,20 @@ public class LazyAgEntity<T> extends BaseLazyAgEntity<T, AgEntity<T>> implements
     @Override
     public ReadFilter getReadFilter() {
         return getDelegate().getReadFilter();
+    }
+
+    @Override
+    public CreateFilter<T> getCreateFilter() {
+        return getDelegate().getCreateFilter();
+    }
+
+    @Override
+    public UpdateFilter<T> getUpdateFilter() {
+        return getDelegate().getUpdateFilter();
+    }
+
+    @Override
+    public DeleteFilter<T> getDeleteFilter() {
+        return getDelegate().getDeleteFilter();
     }
 }

@@ -5,8 +5,18 @@ import io.agrest.annotation.AgId;
 import io.agrest.annotation.AgRelationship;
 import io.agrest.base.reflect.BeanAnalyzer;
 import io.agrest.base.reflect.PropertyGetter;
+import io.agrest.filter.CreateFilter;
+import io.agrest.filter.DeleteFilter;
 import io.agrest.filter.ReadFilter;
-import io.agrest.meta.*;
+import io.agrest.filter.UpdateFilter;
+import io.agrest.meta.AgDataMap;
+import io.agrest.meta.AgEntity;
+import io.agrest.meta.AgEntityOverlay;
+import io.agrest.meta.AgIdPart;
+import io.agrest.meta.DefaultAgAttribute;
+import io.agrest.meta.DefaultAgEntity;
+import io.agrest.meta.DefaultAgIdPart;
+import io.agrest.meta.DefaultAgRelationship;
 import io.agrest.resolver.ReaderBasedResolver;
 import io.agrest.resolver.RootDataResolver;
 import io.agrest.resolver.ThrowingRootDataResolver;
@@ -14,7 +24,11 @@ import org.apache.cayenne.exp.parser.ASTObjPath;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.lang.reflect.*;
+import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.lang.reflect.TypeVariable;
+import java.lang.reflect.WildcardType;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -207,9 +221,10 @@ public class AnnotationsAgEntityBuilder<T> {
                 attributes,
                 relationships,
                 rootDataResolver != null ? rootDataResolver : ThrowingRootDataResolver.getInstance(),
-
-                // TODO: support Exp filters via annotations?
-                ReadFilter.allowsAllFilter());
+                ReadFilter.allowsAllFilter(),
+                CreateFilter.allowsAllFilter(),
+                UpdateFilter.allowsAllFilter(),
+                DeleteFilter.allowsAllFilter());
     }
 
     /**

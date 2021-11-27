@@ -1,6 +1,9 @@
 package io.agrest.meta;
 
+import io.agrest.filter.CreateFilter;
+import io.agrest.filter.DeleteFilter;
 import io.agrest.filter.ReadFilter;
+import io.agrest.filter.UpdateFilter;
 import io.agrest.property.PropertyReader;
 import io.agrest.resolver.RootDataResolver;
 
@@ -81,4 +84,25 @@ public interface AgEntity<T> {
      * @since 4.8
      */
     ReadFilter<T> getReadFilter();
+
+    /**
+     * Returns an in-memory filter that will be applied to each individual object CREATE operation.
+     *
+     * @since 4.8
+     */
+    CreateFilter<T> getCreateFilter();
+
+    /**
+     * Returns an in-memory filter that will be applied to each individual object UPDATE operation.
+     *
+     * @since 4.8
+     */
+    UpdateFilter<T> getUpdateFilter();
+
+    /**
+     * Returns an in-memory filter that will be applied to each individual object DELETE operation.
+     *
+     * @since 4.8
+     */
+    DeleteFilter<T> getDeleteFilter();
 }

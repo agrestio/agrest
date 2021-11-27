@@ -1,6 +1,9 @@
 package io.agrest.meta;
 
+import io.agrest.filter.CreateFilter;
+import io.agrest.filter.DeleteFilter;
 import io.agrest.filter.ReadFilter;
+import io.agrest.filter.UpdateFilter;
 import io.agrest.filter.PropertyFilteringRulesBuilder;
 import io.agrest.filter.PropertyFilter;
 import io.agrest.property.PropertyReader;
@@ -35,12 +38,18 @@ public class AgEntityOverlay<T> {
     private PropertyFilter writablePropFilter;
 
     private ReadFilter<T> readFilter;
+    private CreateFilter<T> createFilter;
+    private UpdateFilter<T> updateFilter;
+    private DeleteFilter<T> deleteFilter;
 
     public AgEntityOverlay(Class<T> type) {
         this.type = type;
         this.attributes = new HashMap<>();
         this.relationships = new HashMap<>();
         this.readFilter = ReadFilter.allowsAllFilter();
+        this.createFilter = CreateFilter.allowsAllFilter();
+        this.updateFilter = UpdateFilter.allowsAllFilter();
+        this.deleteFilter = DeleteFilter.allowsAllFilter();
     }
 
     private static PropertyReader fromFunction(Function<?, ?> f) {
@@ -95,7 +104,10 @@ public class AgEntityOverlay<T> {
                 resolver.attributes,
                 resolver.relationships,
                 rootDataResolver != null ? rootDataResolver : maybeOverlaid.getDataResolver(),
-                maybeOverlaid.getReadFilter().andThen(readFilter)
+                maybeOverlaid.getReadFilter().andThen(readFilter),
+                maybeOverlaid.getCreateFilter().andThen(createFilter),
+                maybeOverlaid.getUpdateFilter().andThen(updateFilter),
+                maybeOverlaid.getDeleteFilter().andThen(deleteFilter)
         );
     }
 
@@ -104,7 +116,10 @@ public class AgEntityOverlay<T> {
                 && relationships.isEmpty()
                 && readablePropFilter == null
                 && writablePropFilter == null
-                && readFilter.allowsAll();
+                && readFilter.allowsAll()
+                && createFilter.allowsAll()
+                && updateFilter.allowsAll()
+                && deleteFilter.allowsAll();
     }
 
     /**
@@ -131,6 +146,9 @@ public class AgEntityOverlay<T> {
         }
 
         this.readFilter = this.readFilter.andThen(anotherOverlay.readFilter);
+        this.createFilter = this.createFilter.andThen(anotherOverlay.createFilter);
+        this.updateFilter = this.updateFilter.andThen(anotherOverlay.updateFilter);
+        this.deleteFilter = this.deleteFilter.andThen(anotherOverlay.deleteFilter);
 
         return this;
     }
@@ -201,6 +219,30 @@ public class AgEntityOverlay<T> {
      */
     public AgEntityOverlay<T> readFilter(ReadFilter<T> filter) {
         this.readFilter = this.readFilter.andThen(filter);
+        return this;
+    }
+
+    /**
+     * @since 4.8
+     */
+    public AgEntityOverlay<T> createFilter(CreateFilter<T> filter) {
+        this.createFilter = this.createFilter.andThen(filter);
+        return this;
+    }
+
+    /**
+     * @since 4.8
+     */
+    public AgEntityOverlay<T> updateFilter(UpdateFilter<T> filter) {
+        this.updateFilter = this.updateFilter.andThen(filter);
+        return this;
+    }
+
+    /**
+     * @since 4.8
+     */
+    public AgEntityOverlay<T> deleteFilter(DeleteFilter<T> filter) {
+        this.deleteFilter = this.deleteFilter.andThen(filter);
         return this;
     }
 
