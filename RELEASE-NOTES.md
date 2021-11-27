@@ -4,7 +4,7 @@
 * #493 Replace Constraint with per-entity API based on AgEntityOverlay
 * #497 Agrest fails to build on Java 11
 * #498 Made JAX-RS dependency "provided"
-* #500 Replace EntityEncoderFilter with per-entity object filter
+* #501 Replace EntityEncoderFilter with per-entity object filter
 * #503 New update stage - MAP_CHANGES
 * #504 Update processes result twice
 
