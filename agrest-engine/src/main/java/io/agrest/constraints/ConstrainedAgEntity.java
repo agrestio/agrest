@@ -1,6 +1,7 @@
 package io.agrest.constraints;
 
 import io.agrest.base.protocol.Exp;
+import io.agrest.filter.PropertyFilter;
 import io.agrest.meta.AgAttribute;
 import io.agrest.meta.AgEntity;
 
@@ -13,7 +14,9 @@ import java.util.Map;
  * A view of an AgEntity after applying request constraints.
  *
  * @since 2.4
+ * @deprecated since 4.8 in favor of non-hierarchical per-entity {@link PropertyFilter} API
  */
+@Deprecated
 public class ConstrainedAgEntity<T> {
 
     private boolean idIncluded;
