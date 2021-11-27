@@ -31,7 +31,7 @@ public class SelectProcessorFactoryProvider implements Provider<SelectProcessorF
         stages.put(SelectStage.APPLY_SERVER_PARAMS, applyServerParamsStage);
         stages.put(SelectStage.ASSEMBLE_QUERY, assembleQueryStage);
         stages.put(SelectStage.FETCH_DATA, fetchDataStage);
-        stages.put(SelectStage.FILTER_DATA, filterDataStage);
+        stages.put(SelectStage.FILTER, filterDataStage);
     }
 
     @Override

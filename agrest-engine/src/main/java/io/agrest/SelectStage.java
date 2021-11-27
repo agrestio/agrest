@@ -25,5 +25,5 @@ public enum SelectStage {
     /**
      * @since 4.8
      */
-    FILTER_DATA
+    FILTER
 }

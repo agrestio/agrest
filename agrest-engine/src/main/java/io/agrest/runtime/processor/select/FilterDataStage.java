@@ -31,7 +31,7 @@ public class FilterDataStage implements Processor<SelectContext<?>> {
 
     protected <T> void filterRoot(RootResourceEntity<T> entity) {
         ObjectFilter<T> filter = entity.getAgEntity().getReadableObjectFilter();
-        if (!filter.allowAll() && !entity.getResult().isEmpty()) {
+        if (!filter.allowsAll() && !entity.getResult().isEmpty()) {
 
             // replacing the list to avoid messing up possible data source caches, and also
             // it is likely faster to create a new list than to remove entries from an existing ArrayList
@@ -54,10 +54,10 @@ public class FilterDataStage implements Processor<SelectContext<?>> {
     protected <T> void filterToOne(ToOneResourceEntity<T> entity) {
 
         ObjectFilter<T> filter = entity.getAgEntity().getReadableObjectFilter();
-        if (!filter.allowAll() && !entity.getResultsByParent().isEmpty()) {
+        if (!filter.allowsAll() && !entity.getResultsByParent().isEmpty()) {
 
             // filter the map in place - key removal should be fast
-            entity.getResultsByParent().entrySet().removeIf(e -> !filter.isAccessible(e.getValue()));
+            entity.getResultsByParent().entrySet().removeIf(e -> !filter.isAllowed(e.getValue()));
         }
 
         filterChildren(entity);
@@ -66,7 +66,7 @@ public class FilterDataStage implements Processor<SelectContext<?>> {
     protected <T> void filterToMany(ToManyResourceEntity<T> entity) {
 
         ObjectFilter<T> filter = entity.getAgEntity().getReadableObjectFilter();
-        if (!filter.allowAll() && !entity.getResultsByParent().isEmpty()) {
+        if (!filter.allowsAll() && !entity.getResultsByParent().isEmpty()) {
 
             // Filter the map in place;
             // Replace relationship lists to avoid messing up possible data source caches, and also
@@ -84,7 +84,7 @@ public class FilterDataStage implements Processor<SelectContext<?>> {
         int len = unfiltered.size();
         for (int i = 0; i < len; i++) {
             T t = unfiltered.get(i);
-            if (!filter.isAccessible(t)) {
+            if (!filter.isAllowed(t)) {
 
                 // avoid list copy until we can't
                 return filterListByCopy(unfiltered, filter, i);
@@ -105,7 +105,7 @@ public class FilterDataStage implements Processor<SelectContext<?>> {
 
         for (int i = firstExcluded + 1; i < len; i++) {
             T t = unfiltered.get(i);
-            if (filter.isAccessible(t)) {
+            if (filter.isAllowed(t)) {
                 filtered.add(t);
             }
         }

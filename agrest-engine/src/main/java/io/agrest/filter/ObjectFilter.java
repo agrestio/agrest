@@ -1,7 +1,7 @@
 package io.agrest.filter;
 
 /**
- * Per-entity filter of objects used to implement data access rules.
+ * A filter of objects that defines an access policy for a given entity.
  *
  * @since 4.8
  */
@@ -12,24 +12,24 @@ public interface ObjectFilter<T> {
         return AllowAllObjectFilter.instance;
     }
 
-    boolean isAccessible(T object);
+    boolean isAllowed(T object);
 
     /**
      * @return whether the filter is a noop and can be ignored
      */
-    default boolean allowAll() {
+    default boolean allowsAll() {
         return false;
     }
 
-    default ObjectFilter<T> and(ObjectFilter<T> another) {
-        if (another.allowAll()) {
+    default ObjectFilter<T> andThen(ObjectFilter<T> another) {
+        if (another.allowsAll()) {
             return this;
         }
 
-        if (this.allowAll()) {
+        if (this.allowsAll()) {
             return another;
         }
 
-        return o -> this.isAccessible(o) && another.isAccessible(o);
+        return o -> this.isAllowed(o) && another.isAllowed(o);
     }
 }

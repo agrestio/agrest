@@ -5,23 +5,23 @@ package io.agrest.filter;
  */
 final class AllowAllObjectFilter<T> implements ObjectFilter<T> {
 
-    static final AllowAllObjectFilter instance = new AllowAllObjectFilter();
+    static final AllowAllObjectFilter instance = new AllowAllObjectFilter<>();
 
     private AllowAllObjectFilter() {
     }
 
     @Override
-    public boolean isAccessible(T object) {
+    public boolean isAllowed(T object) {
         return true;
     }
 
     @Override
-    public boolean allowAll() {
+    public boolean allowsAll() {
         return true;
     }
 
     @Override
-    public ObjectFilter and(ObjectFilter another) {
+    public ObjectFilter<T> andThen(ObjectFilter<T> another) {
         return another;
     }
 }

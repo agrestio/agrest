@@ -95,7 +95,7 @@ public class AgEntityOverlay<T> {
                 resolver.attributes,
                 resolver.relationships,
                 rootDataResolver != null ? rootDataResolver : maybeOverlaid.getDataResolver(),
-                maybeOverlaid.getReadableObjectFilter().and(readableObjectFilter)
+                maybeOverlaid.getReadableObjectFilter().andThen(readableObjectFilter)
         );
     }
 
@@ -130,7 +130,7 @@ public class AgEntityOverlay<T> {
             this.rootDataResolver = anotherOverlay.getRootDataResolver();
         }
 
-        this.readableObjectFilter = this.readableObjectFilter.and(anotherOverlay.readableObjectFilter);
+        this.readableObjectFilter = this.readableObjectFilter.andThen(anotherOverlay.readableObjectFilter);
 
         return this;
     }
@@ -198,7 +198,7 @@ public class AgEntityOverlay<T> {
      * @since 4.8
      */
     public AgEntityOverlay<T> readableObjectFilter(ObjectFilter<T> filter) {
-        this.readableObjectFilter = this.readableObjectFilter.and(filter);
+        this.readableObjectFilter = this.readableObjectFilter.andThen(filter);
         return this;
     }
 
