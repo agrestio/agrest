@@ -1,12 +1,14 @@
 package io.agrest.encoder;
 
+import io.agrest.filter.SelectFilter;
+
 import java.util.Objects;
 
 /**
  * A helper class to build EntityEncoderFilters. Usually created via static methods on {@link EntityEncoderFilter}.
  *
  * @since 3.4
- * @deprecated since 4.8 in favor of {@link io.agrest.filter.ObjectFilter}.
+ * @deprecated since 4.8 in favor of {@link SelectFilter}.
  */
 @Deprecated
 public class EntityEncoderFilterBuilder {

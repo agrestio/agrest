@@ -3,6 +3,7 @@ package io.agrest;
 import io.agrest.base.protocol.Exp;
 import io.agrest.base.protocol.Sort;
 import io.agrest.encoder.EntityEncoderFilter;
+import io.agrest.filter.SelectFilter;
 import io.agrest.meta.AgAttribute;
 import io.agrest.meta.AgEntity;
 
@@ -233,7 +234,7 @@ public abstract class ResourceEntity<T> {
 
     /**
      * @since 3.4
-     * @deprecated since 4.8 in favor of {@link io.agrest.filter.ObjectFilter}.
+     * @deprecated since 4.8 in favor of {@link SelectFilter}.
      */
     @Deprecated
     public List<EntityEncoderFilter> getEntityEncoderFilters() {

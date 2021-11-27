@@ -1,6 +1,6 @@
 package io.agrest.meta;
 
-import io.agrest.filter.ObjectFilter;
+import io.agrest.filter.SelectFilter;
 import io.agrest.filter.PropertyFilteringRulesBuilder;
 import io.agrest.filter.PropertyFilter;
 import io.agrest.property.PropertyReader;
@@ -34,13 +34,13 @@ public class AgEntityOverlay<T> {
     private PropertyFilter readablePropFilter;
     private PropertyFilter writablePropFilter;
 
-    private ObjectFilter<T> selectFilter;
+    private SelectFilter<T> selectFilter;
 
     public AgEntityOverlay(Class<T> type) {
         this.type = type;
         this.attributes = new HashMap<>();
         this.relationships = new HashMap<>();
-        this.selectFilter = ObjectFilter.allowsAllFilter();
+        this.selectFilter = SelectFilter.allowsAllFilter();
     }
 
     private static PropertyReader fromFunction(Function<?, ?> f) {
@@ -197,7 +197,7 @@ public class AgEntityOverlay<T> {
     /**
      * @since 4.8
      */
-    public AgEntityOverlay<T> selectFilter(ObjectFilter<T> filter) {
+    public AgEntityOverlay<T> selectFilter(SelectFilter<T> filter) {
         this.selectFilter = this.selectFilter.andThen(filter);
         return this;
     }

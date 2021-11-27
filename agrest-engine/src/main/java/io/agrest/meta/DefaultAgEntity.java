@@ -1,6 +1,6 @@
 package io.agrest.meta;
 
-import io.agrest.filter.ObjectFilter;
+import io.agrest.filter.SelectFilter;
 import io.agrest.resolver.RootDataResolver;
 
 import java.util.Collection;
@@ -14,7 +14,7 @@ public class DefaultAgEntity<T> implements AgEntity<T> {
     private final String name;
     private final Class<T> type;
     private final RootDataResolver<T> dataResolver;
-    private final ObjectFilter<T> selectFilter;
+    private final SelectFilter<T> selectFilter;
 
     // TODO: ensure name uniqueness between all types of properties
     private final Map<String, AgIdPart> ids;
@@ -28,7 +28,7 @@ public class DefaultAgEntity<T> implements AgEntity<T> {
             Map<String, AgAttribute> attributes,
             Map<String, AgRelationship> relationships,
             RootDataResolver<T> dataResolver,
-            ObjectFilter<T> selectFilter) {
+            SelectFilter<T> selectFilter) {
 
         this.name = name;
         this.type = type;
@@ -85,7 +85,7 @@ public class DefaultAgEntity<T> implements AgEntity<T> {
     }
 
     @Override
-    public ObjectFilter<T> getSelectFilter() {
+    public SelectFilter<T> getSelectFilter() {
         return selectFilter;
     }
 

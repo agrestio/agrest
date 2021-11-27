@@ -6,10 +6,10 @@ package io.agrest.filter;
  * @since 4.8
  */
 @FunctionalInterface
-public interface ObjectFilter<T> {
+public interface SelectFilter<T> {
 
-    static <T> ObjectFilter<T> allowsAllFilter() {
-        return AllowAllObjectFilter.instance;
+    static <T> SelectFilter<T> allowsAllFilter() {
+        return AllowAllSelectFilter.instance;
     }
 
     boolean isAllowed(T object);
@@ -21,7 +21,7 @@ public interface ObjectFilter<T> {
         return false;
     }
 
-    default ObjectFilter<T> andThen(ObjectFilter<T> another) {
+    default SelectFilter<T> andThen(SelectFilter<T> another) {
         if (another.allowsAll()) {
             return this;
         }

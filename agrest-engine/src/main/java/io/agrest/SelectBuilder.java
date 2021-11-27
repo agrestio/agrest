@@ -3,7 +3,7 @@ package io.agrest;
 import io.agrest.constraints.Constraint;
 import io.agrest.encoder.Encoder;
 import io.agrest.encoder.EntityEncoderFilter;
-import io.agrest.filter.ObjectFilter;
+import io.agrest.filter.SelectFilter;
 import io.agrest.filter.PropertyFilter;
 import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgEntityOverlay;
@@ -46,7 +46,7 @@ public interface SelectBuilder<T> {
      * @return this builder instance
      * @see AgBuilder#entityEncoderFilter(EntityEncoderFilter)
      * @since 3.4
-     * @deprecated since 4.8 in favor of {@link #filter(Class, ObjectFilter)}.
+     * @deprecated since 4.8 in favor of {@link #filter(Class, SelectFilter)}.
      */
     @Deprecated
     SelectBuilder<T> entityEncoderFilter(EntityEncoderFilter filter);
@@ -117,7 +117,7 @@ public interface SelectBuilder<T> {
      * @return this builder instance
      * @since 4.8
      */
-    default <A> SelectBuilder<T> filter(Class<A> entityType, ObjectFilter<A> filter) {
+    default <A> SelectBuilder<T> filter(Class<A> entityType, SelectFilter<A> filter) {
         return entityOverlay(AgEntity.overlay(entityType).selectFilter(filter));
     }
 

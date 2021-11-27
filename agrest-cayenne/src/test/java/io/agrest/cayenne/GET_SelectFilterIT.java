@@ -7,7 +7,7 @@ import io.agrest.cayenne.cayenne.main.E3;
 import io.agrest.cayenne.cayenne.main.E4;
 import io.agrest.cayenne.unit.AgCayenneTester;
 import io.agrest.cayenne.unit.DbTest;
-import io.agrest.filter.ObjectFilter;
+import io.agrest.filter.SelectFilter;
 import io.agrest.meta.AgEntity;
 import io.bootique.junit5.BQTestTool;
 import org.apache.cayenne.Cayenne;
@@ -21,7 +21,7 @@ import javax.ws.rs.core.Configuration;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.UriInfo;
 
-public class GET_ObjectFilterIT extends DbTest {
+public class GET_SelectFilterIT extends DbTest {
 
     @BQTestTool
     static final AgCayenneTester tester = tester(Resource.class)
@@ -33,11 +33,11 @@ public class GET_ObjectFilterIT extends DbTest {
             )
             .build();
 
-    static <T extends DataObject> ObjectFilter<T> evenFilter() {
+    static <T extends DataObject> SelectFilter<T> evenFilter() {
         return o -> Cayenne.intPKForObject(o) % 2 == 0;
     }
 
-    static <T extends DataObject> ObjectFilter<T> oddFilter() {
+    static <T extends DataObject> SelectFilter<T> oddFilter() {
         return o -> Cayenne.intPKForObject(o) % 2 != 0;
     }
 

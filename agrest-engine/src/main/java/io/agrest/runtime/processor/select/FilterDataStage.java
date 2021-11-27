@@ -6,7 +6,7 @@ import io.agrest.ResourceEntity;
 import io.agrest.RootResourceEntity;
 import io.agrest.ToManyResourceEntity;
 import io.agrest.ToOneResourceEntity;
-import io.agrest.filter.ObjectFilter;
+import io.agrest.filter.SelectFilter;
 import io.agrest.processor.Processor;
 import io.agrest.processor.ProcessorOutcome;
 
@@ -30,7 +30,7 @@ public class FilterDataStage implements Processor<SelectContext<?>> {
     }
 
     protected <T> void filterRoot(RootResourceEntity<T> entity) {
-        ObjectFilter<T> filter = entity.getAgEntity().getSelectFilter();
+        SelectFilter<T> filter = entity.getAgEntity().getSelectFilter();
         if (!filter.allowsAll() && !entity.getResult().isEmpty()) {
 
             // replacing the list to avoid messing up possible data source caches, and also
@@ -53,7 +53,7 @@ public class FilterDataStage implements Processor<SelectContext<?>> {
 
     protected <T> void filterToOne(ToOneResourceEntity<T> entity) {
 
-        ObjectFilter<T> filter = entity.getAgEntity().getSelectFilter();
+        SelectFilter<T> filter = entity.getAgEntity().getSelectFilter();
         if (!filter.allowsAll() && !entity.getResultsByParent().isEmpty()) {
 
             // filter the map in place - key removal should be fast
@@ -65,7 +65,7 @@ public class FilterDataStage implements Processor<SelectContext<?>> {
 
     protected <T> void filterToMany(ToManyResourceEntity<T> entity) {
 
-        ObjectFilter<T> filter = entity.getAgEntity().getSelectFilter();
+        SelectFilter<T> filter = entity.getAgEntity().getSelectFilter();
         if (!filter.allowsAll() && !entity.getResultsByParent().isEmpty()) {
 
             // Filter the map in place;
@@ -79,7 +79,7 @@ public class FilterDataStage implements Processor<SelectContext<?>> {
         filterChildren(entity);
     }
 
-    static <T> List<T> filterList(List<T> unfiltered, ObjectFilter<T> filter) {
+    static <T> List<T> filterList(List<T> unfiltered, SelectFilter<T> filter) {
 
         int len = unfiltered.size();
         for (int i = 0; i < len; i++) {
@@ -94,7 +94,7 @@ public class FilterDataStage implements Processor<SelectContext<?>> {
         return unfiltered;
     }
 
-    static <T> List<T> filterListByCopy(List<T> unfiltered, ObjectFilter<T> filter, int firstExcluded) {
+    static <T> List<T> filterListByCopy(List<T> unfiltered, SelectFilter<T> filter, int firstExcluded) {
 
         int len = unfiltered.size();
         List<T> filtered = new ArrayList<>(len - 1);

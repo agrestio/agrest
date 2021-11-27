@@ -1,6 +1,6 @@
 package io.agrest.meta;
 
-import io.agrest.filter.ObjectFilter;
+import io.agrest.filter.SelectFilter;
 import io.agrest.property.PropertyReader;
 import io.agrest.resolver.RootDataResolver;
 
@@ -80,5 +80,5 @@ public interface AgEntity<T> {
      *
      * @since 4.8
      */
-    ObjectFilter<T> getSelectFilter();
+    SelectFilter<T> getSelectFilter();
 }

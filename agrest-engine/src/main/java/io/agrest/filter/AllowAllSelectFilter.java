@@ -3,11 +3,11 @@ package io.agrest.filter;
 /**
  * @since 4.8
  */
-final class AllowAllObjectFilter<T> implements ObjectFilter<T> {
+final class AllowAllSelectFilter<T> implements SelectFilter<T> {
 
-    static final AllowAllObjectFilter instance = new AllowAllObjectFilter<>();
+    static final AllowAllSelectFilter instance = new AllowAllSelectFilter<>();
 
-    private AllowAllObjectFilter() {
+    private AllowAllSelectFilter() {
     }
 
     @Override
@@ -21,7 +21,7 @@ final class AllowAllObjectFilter<T> implements ObjectFilter<T> {
     }
 
     @Override
-    public ObjectFilter<T> andThen(ObjectFilter<T> another) {
+    public SelectFilter<T> andThen(SelectFilter<T> another) {
         return another;
     }
 }
