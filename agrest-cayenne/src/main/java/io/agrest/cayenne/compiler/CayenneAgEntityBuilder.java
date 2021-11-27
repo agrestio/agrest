@@ -205,7 +205,7 @@ public class CayenneAgEntityBuilder<T> {
                 rootDataResolver != null ? rootDataResolver : ThrowingRootDataResolver.getInstance(),
 
                 // TODO: support Exp filters via annotations?
-                ObjectFilter.trueFilter());
+                ObjectFilter.allowsAllFilter());
     }
 
     /**

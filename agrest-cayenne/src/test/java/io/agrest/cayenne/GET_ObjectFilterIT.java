@@ -217,7 +217,7 @@ public class GET_ObjectFilterIT extends DbTest {
 
             return Ag.service(config)
                     .select(E4.class)
-                    .objectFilter(E4.class, e4 -> cVarchar.equals(e4.getCVarchar()))
+                    .filter(E4.class, e4 -> cVarchar.equals(e4.getCVarchar()))
                     .uri(uriInfo)
                     .get();
         }

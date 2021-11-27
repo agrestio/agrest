@@ -40,7 +40,7 @@ public class AgEntityOverlay<T> {
         this.type = type;
         this.attributes = new HashMap<>();
         this.relationships = new HashMap<>();
-        this.selectFilter = ObjectFilter.trueFilter();
+        this.selectFilter = ObjectFilter.allowsAllFilter();
     }
 
     private static PropertyReader fromFunction(Function<?, ?> f) {

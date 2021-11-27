@@ -8,7 +8,7 @@ package io.agrest.filter;
 @FunctionalInterface
 public interface ObjectFilter<T> {
 
-    static <T> ObjectFilter<T> trueFilter() {
+    static <T> ObjectFilter<T> allowsAllFilter() {
         return AllowAllObjectFilter.instance;
     }
 

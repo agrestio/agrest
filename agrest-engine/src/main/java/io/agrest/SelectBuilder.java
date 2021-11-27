@@ -46,7 +46,7 @@ public interface SelectBuilder<T> {
      * @return this builder instance
      * @see AgBuilder#entityEncoderFilter(EntityEncoderFilter)
      * @since 3.4
-     * @deprecated since 4.8 in favor of {@link #objectFilter(Class, ObjectFilter)}.
+     * @deprecated since 4.8 in favor of {@link #filter(Class, ObjectFilter)}.
      */
     @Deprecated
     SelectBuilder<T> entityEncoderFilter(EntityEncoderFilter filter);
@@ -111,10 +111,13 @@ public interface SelectBuilder<T> {
     }
 
     /**
+     * Installs an in-memory filter for a given entity type that will exclude objects from response that do not match
+     * the filter. This filter is combined with any runtime-level filters for the same entity.
+     *
      * @return this builder instance
      * @since 4.8
      */
-    default <A> SelectBuilder<T> objectFilter(Class<A> entityType, ObjectFilter<A> filter) {
+    default <A> SelectBuilder<T> filter(Class<A> entityType, ObjectFilter<A> filter) {
         return entityOverlay(AgEntity.overlay(entityType).selectFilter(filter));
     }
 
