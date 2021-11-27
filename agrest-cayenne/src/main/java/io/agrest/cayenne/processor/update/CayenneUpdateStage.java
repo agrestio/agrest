@@ -67,14 +67,17 @@ public class CayenneUpdateStage extends CayenneMergeChangesStage {
             updateSingle(relator, o, updates);
         }
 
-        // check leftovers - those correspond to objects missing in the DB or
-        // objects with no keys
-        afterUpdatesMerge(context, updatesByKey);
+        // check leftovers - those correspond to objects missing in the DB or objects with no keys
+        afterUpdatesMerge(context, relator, updatesByKey);
     }
 
-    protected <T extends DataObject> void afterUpdatesMerge(UpdateContext<T> context, Map<Object, Collection<EntityUpdate<T>>> keyMap) {
-        if (!keyMap.isEmpty()) {
-            Object firstKey = keyMap.keySet().iterator().next();
+    protected <T extends DataObject> void afterUpdatesMerge(
+            UpdateContext<T> context,
+            ObjectRelator relator,
+            Map<Object, Collection<EntityUpdate<T>>> updatesByKey) {
+
+        if (!updatesByKey.isEmpty()) {
+            Object firstKey = updatesByKey.keySet().iterator().next();
 
             if (firstKey == null) {
                 throw AgException.badRequest("Can't update. No id for object");

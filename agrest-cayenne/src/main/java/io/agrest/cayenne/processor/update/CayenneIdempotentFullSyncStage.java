@@ -59,7 +59,7 @@ public class CayenneIdempotentFullSyncStage extends CayenneIdempotentCreateOrUpd
         }
 
         // check leftovers - those correspond to objects missing in the DB or objects with no keys
-        afterUpdatesMerge(context, keyMap);
+        afterUpdatesMerge(context, relator, keyMap);
     }
 
     <T extends DataObject> List<T> allItems(UpdateContext<T> context) {

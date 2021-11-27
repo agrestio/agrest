@@ -24,13 +24,13 @@ public class CayenneCreateOrUpdateStage extends CayenneUpdateStage {
     @Override
     protected <T extends DataObject> void afterUpdatesMerge(
             UpdateContext<T> context,
+            ObjectRelator relator,
             Map<Object, Collection<EntityUpdate<T>>> keyMap) {
 
         if (keyMap.isEmpty()) {
             return;
         }
 
-        ObjectRelator relator = createRelator(context);
         keyMap.entrySet().forEach(e -> createOrUpdate(context, relator, e));
     }
 
