@@ -11,16 +11,29 @@ import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgRelationship;
 import io.agrest.processor.Processor;
 import io.agrest.processor.ProcessorOutcome;
+import io.agrest.runtime.processor.update.ChangeOperation;
+import io.agrest.runtime.processor.update.ChangeOperationType;
 import io.agrest.runtime.processor.update.UpdateContext;
-import io.agrest.runtime.processor.update.UpdateOperation;
-import org.apache.cayenne.*;
+import org.apache.cayenne.Cayenne;
+import org.apache.cayenne.DataObject;
+import org.apache.cayenne.DataRow;
+import org.apache.cayenne.ObjectContext;
 import org.apache.cayenne.di.Inject;
 import org.apache.cayenne.exp.ExpressionFactory;
-import org.apache.cayenne.map.*;
+import org.apache.cayenne.map.DbAttribute;
+import org.apache.cayenne.map.DbEntity;
+import org.apache.cayenne.map.EntityResolver;
+import org.apache.cayenne.map.ObjAttribute;
+import org.apache.cayenne.map.ObjEntity;
+import org.apache.cayenne.map.ObjRelationship;
 import org.apache.cayenne.query.ObjectSelect;
 import org.apache.cayenne.reflect.ClassDescriptor;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * A processor invoked for {@link io.agrest.UpdateStage#MERGE_CHANGES} stage.
@@ -46,25 +59,26 @@ public class CayenneMergeChangesStage implements Processor<UpdateContext<?>> {
     }
 
     protected <T extends DataObject> void merge(UpdateContext<T> context) {
-        Collection<UpdateOperation<T>> ops = context.getUpdateOperations();
+        Map<ChangeOperationType, List<ChangeOperation<T>>> ops = context.getUpdateOperations();
         if (ops.isEmpty()) {
             return;
         }
 
         ObjectRelator relator = createRelator(context);
 
-        for (UpdateOperation<T> op : context.getUpdateOperations()) {
-            switch (op.getType()) {
-                case CREATE:
-                    create(context, relator, op.getUpdates());
-                    break;
-                case UPDATE:
-                    update(relator, op.getObject(), op.getUpdates());
-                    break;
-                case DELETE:
-                    delete(op.getObject());
-                    break;
-            }
+        List<ChangeOperation<T>> createOps = ops.get(ChangeOperationType.CREATE);
+        for (ChangeOperation<T> op : createOps) {
+            create(context, relator, op.getUpdates());
+        }
+
+        List<ChangeOperation<T>> updateOps = ops.get(ChangeOperationType.UPDATE);
+        for (ChangeOperation<T> op : updateOps) {
+            update(relator, op.getObject(), op.getUpdates());
+        }
+
+        List<ChangeOperation<T>> deleteOps = ops.get(ChangeOperationType.DELETE);
+        for (ChangeOperation<T> op : deleteOps) {
+            delete(op.getObject());
         }
     }
 

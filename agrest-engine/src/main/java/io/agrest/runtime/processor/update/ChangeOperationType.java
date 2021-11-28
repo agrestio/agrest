@@ -3,6 +3,6 @@ package io.agrest.runtime.processor.update;
 /**
  * @since 4.8
  */
-public enum UpdateOperationType {
+public enum ChangeOperationType {
     CREATE, UPDATE, DELETE
 }

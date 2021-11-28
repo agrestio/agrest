@@ -3,7 +3,7 @@ package io.agrest.cayenne.processor.update;
 import io.agrest.AgException;
 import io.agrest.EntityUpdate;
 import io.agrest.runtime.processor.update.UpdateContext;
-import io.agrest.runtime.processor.update.UpdateOperation;
+import io.agrest.runtime.processor.update.ChangeOperation;
 import org.apache.cayenne.DataObject;
 
 import java.util.Collection;
@@ -19,7 +19,7 @@ public class CayenneMapIdempotentCreateOrUpdateStage extends CayenneMapCreateOrU
     protected <T extends DataObject> void processUnmapped(
             UpdateContext<T> context,
             Map<Object, Collection<EntityUpdate<T>>> updatesByKey,
-            List<UpdateOperation<T>> ops) {
+            List<ChangeOperation<T>> ops) {
 
         if (updatesByKey.containsKey(null)) {
             throw AgException.badRequest("Request is not idempotent.");

@@ -2,11 +2,13 @@ package io.agrest.cayenne.processor.update;
 
 import io.agrest.processor.Processor;
 import io.agrest.processor.ProcessorOutcome;
+import io.agrest.runtime.processor.update.ChangeOperation;
+import io.agrest.runtime.processor.update.ChangeOperationType;
 import io.agrest.runtime.processor.update.UpdateContext;
-import io.agrest.runtime.processor.update.UpdateOperation;
 import org.apache.cayenne.DataObject;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * A superclass of processors for the {@link io.agrest.UpdateStage#MAP_CHANGES} stage that associates persistent
@@ -23,5 +25,6 @@ public abstract class CayenneMapChangesStage implements Processor<UpdateContext<
         return ProcessorOutcome.CONTINUE;
     }
 
-    protected abstract <T extends DataObject> List<UpdateOperation<T>> map(UpdateContext<T> context);
+    protected abstract <T extends DataObject> Map<ChangeOperationType, List<ChangeOperation<T>>> map(
+            UpdateContext<T> context);
 }

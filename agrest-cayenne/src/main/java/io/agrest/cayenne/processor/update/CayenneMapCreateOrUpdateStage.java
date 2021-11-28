@@ -2,8 +2,8 @@ package io.agrest.cayenne.processor.update;
 
 import io.agrest.EntityUpdate;
 import io.agrest.runtime.processor.update.UpdateContext;
-import io.agrest.runtime.processor.update.UpdateOperation;
-import io.agrest.runtime.processor.update.UpdateOperationType;
+import io.agrest.runtime.processor.update.ChangeOperation;
+import io.agrest.runtime.processor.update.ChangeOperationType;
 import org.apache.cayenne.DataObject;
 
 import java.util.Collection;
@@ -20,7 +20,7 @@ public class CayenneMapCreateOrUpdateStage extends CayenneMapUpdateStage {
     protected <T extends DataObject> void processUnmapped(
             UpdateContext<T> context,
             Map<Object, Collection<EntityUpdate<T>>> updatesByKey,
-            List<UpdateOperation<T>> ops) {
+            List<ChangeOperation<T>> ops) {
 
         for (Map.Entry<Object, Collection<EntityUpdate<T>>> e : updatesByKey.entrySet()) {
 
@@ -29,10 +29,10 @@ public class CayenneMapCreateOrUpdateStage extends CayenneMapUpdateStage {
 
             if (e.getKey() == null) {
                 for (EntityUpdate<T> u : e.getValue()) {
-                    ops.add(new UpdateOperation<>(UpdateOperationType.CREATE, null, Collections.singletonList(u)));
+                    ops.add(new ChangeOperation<>(ChangeOperationType.CREATE, null, Collections.singletonList(u)));
                 }
             } else {
-                ops.add(new UpdateOperation<>(UpdateOperationType.CREATE, null, e.getValue()));
+                ops.add(new ChangeOperation<>(ChangeOperationType.CREATE, null, e.getValue()));
             }
         }
     }

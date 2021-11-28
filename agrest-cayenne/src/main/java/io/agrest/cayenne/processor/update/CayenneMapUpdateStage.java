@@ -13,8 +13,8 @@ import io.agrest.meta.AgAttribute;
 import io.agrest.meta.AgIdPart;
 import io.agrest.runtime.processor.update.ByIdObjectMapperFactory;
 import io.agrest.runtime.processor.update.UpdateContext;
-import io.agrest.runtime.processor.update.UpdateOperation;
-import io.agrest.runtime.processor.update.UpdateOperationType;
+import io.agrest.runtime.processor.update.ChangeOperation;
+import io.agrest.runtime.processor.update.ChangeOperationType;
 import org.apache.cayenne.DataObject;
 import org.apache.cayenne.exp.Expression;
 import org.apache.cayenne.exp.ExpressionFactory;
@@ -39,10 +39,10 @@ import java.util.Map;
 public class CayenneMapUpdateStage extends CayenneMapChangesStage {
 
     @Override
-    protected <T extends DataObject> List<UpdateOperation<T>> map(UpdateContext<T> context) {
+    protected <T extends DataObject> List<ChangeOperation<T>> map(UpdateContext<T> context) {
         ObjectMapper<T> mapper = createObjectMapper(context);
 
-        List<UpdateOperation<T>> ops = new ArrayList<>(context.getUpdates().size());
+        List<ChangeOperation<T>> ops = new ArrayList<>(context.getUpdates().size());
 
         Map<Object, Collection<EntityUpdate<T>>> updatesByKey = mutableUpdatesByKey(context, mapper);
 
@@ -59,7 +59,7 @@ public class CayenneMapUpdateStage extends CayenneMapChangesStage {
                 throw AgException.internalServerError("Invalid key item: %s", key);
             }
 
-            ops.add(new UpdateOperation<>(UpdateOperationType.UPDATE, o, updates));
+            ops.add(new ChangeOperation<>(ChangeOperationType.UPDATE, o, updates));
         }
 
         // check leftovers - those correspond to objects missing in the DB or objects with no keys
@@ -71,7 +71,7 @@ public class CayenneMapUpdateStage extends CayenneMapChangesStage {
     protected <T extends DataObject> void processUnmapped(
             UpdateContext<T> context,
             Map<Object, Collection<EntityUpdate<T>>> updatesByKey,
-            List<UpdateOperation<T>> ops) {
+            List<ChangeOperation<T>> ops) {
 
         if (!updatesByKey.isEmpty()) {
 

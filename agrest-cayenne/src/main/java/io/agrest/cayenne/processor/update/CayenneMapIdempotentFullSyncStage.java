@@ -7,8 +7,8 @@ import io.agrest.ResourceEntity;
 import io.agrest.cayenne.processor.CayenneProcessor;
 import io.agrest.cayenne.processor.CayenneUtil;
 import io.agrest.runtime.processor.update.UpdateContext;
-import io.agrest.runtime.processor.update.UpdateOperation;
-import io.agrest.runtime.processor.update.UpdateOperationType;
+import io.agrest.runtime.processor.update.ChangeOperation;
+import io.agrest.runtime.processor.update.ChangeOperationType;
 import org.apache.cayenne.DataObject;
 import org.apache.cayenne.exp.Expression;
 import org.apache.cayenne.map.EntityResolver;
@@ -26,11 +26,11 @@ import java.util.Map;
 public class CayenneMapIdempotentFullSyncStage extends CayenneMapIdempotentCreateOrUpdateStage {
 
     @Override
-    protected <T extends DataObject> List<UpdateOperation<T>> map(UpdateContext<T> context) {
+    protected <T extends DataObject> List<ChangeOperation<T>> map(UpdateContext<T> context) {
 
         ObjectMapper<T> mapper = createObjectMapper(context);
 
-        List<UpdateOperation<T>> ops = new ArrayList<>(context.getUpdates().size());
+        List<ChangeOperation<T>> ops = new ArrayList<>(context.getUpdates().size());
 
         Map<Object, Collection<EntityUpdate<T>>> updatesByKey = mutableUpdatesByKey(context, mapper);
 
@@ -42,9 +42,9 @@ public class CayenneMapIdempotentFullSyncStage extends CayenneMapIdempotentCreat
             Collection<EntityUpdate<T>> updates = updatesByKey.remove(key);
 
             if (updates == null) {
-                ops.add(new UpdateOperation<>(UpdateOperationType.DELETE, o, Collections.emptyList()));
+                ops.add(new ChangeOperation<>(ChangeOperationType.DELETE, o, Collections.emptyList()));
             } else {
-                ops.add(new UpdateOperation<>(UpdateOperationType.UPDATE, o, updates));
+                ops.add(new ChangeOperation<>(ChangeOperationType.UPDATE, o, updates));
             }
         }
 

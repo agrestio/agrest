@@ -46,7 +46,7 @@ public class UpdateContext<T> extends BaseProcessingContext<T> {
     private AgRequest mergedRequest;
     private AgRequest request;
     private Map<Class<?>, AgEntityOverlay<?>> entityOverlays;
-    private Collection<UpdateOperation<T>> updateOperations;
+    private Map<ChangeOperationType, List<ChangeOperation<T>>> updateOperations;
 
     public UpdateContext(Class<T> type) {
         super(type);
@@ -305,14 +305,14 @@ public class UpdateContext<T> extends BaseProcessingContext<T> {
     /**
      * @since 4.8
      */
-    public Collection<UpdateOperation<T>> getUpdateOperations() {
+    public Map<ChangeOperationType, List<ChangeOperation<T>>> getUpdateOperations() {
         return updateOperations;
     }
 
     /**
      * @since 4.8
      */
-    public void setUpdateOperations(Collection<UpdateOperation<T>> updateOperations) {
+    public void setUpdateOperations(Map<ChangeOperationType, List<ChangeOperation<T>>> updateOperations) {
         this.updateOperations = updateOperations;
     }
 }
