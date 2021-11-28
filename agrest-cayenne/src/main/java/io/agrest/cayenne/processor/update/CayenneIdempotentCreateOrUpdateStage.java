@@ -23,18 +23,15 @@ public class CayenneIdempotentCreateOrUpdateStage extends CayenneCreateOrUpdateS
     }
 
     @Override
-    protected <T extends DataObject> void createOrUpdate(
+    protected <T extends DataObject> void afterUpdatesMerge(
             UpdateContext<T> context,
             ObjectRelator relator,
-            Map.Entry<Object, Collection<EntityUpdate<T>>> updates) {
+            Map<Object, Collection<EntityUpdate<T>>> keyMap) {
 
-        // null key - each update is individual object to create;
-        // explicit key - each update applies to the same object;
-
-        if (updates.getKey() == null) {
+        if (keyMap.containsKey(null)) {
             throw AgException.badRequest("Request is not idempotent.");
         }
 
-        super.createOrUpdate(context, relator, updates);
+        super.afterUpdatesMerge(context, relator, keyMap);
     }
 }

@@ -36,21 +36,11 @@ public abstract class CayenneMergeChangesStage implements Processor<UpdateContex
 
     @Override
     public ProcessorOutcome execute(UpdateContext<?> context) {
-        sync((UpdateContext<DataObject>) context);
+        merge((UpdateContext<DataObject>) context);
         return ProcessorOutcome.CONTINUE;
     }
 
-
-    protected abstract <T extends DataObject> void sync(UpdateContext<T> context);
-
-    protected <T extends DataObject> void create(UpdateContext<T> context) {
-
-        ObjectRelator relator = createRelator(context);
-
-        for (EntityUpdate<T> u : context.getUpdates()) {
-            createSingle(context, relator, u);
-        }
-    }
+    protected abstract <T extends DataObject> void merge(UpdateContext<T> context);
 
     protected <T extends DataObject> void updateSingle(ObjectRelator relator, T o, Collection<EntityUpdate<T>> updates) {
 

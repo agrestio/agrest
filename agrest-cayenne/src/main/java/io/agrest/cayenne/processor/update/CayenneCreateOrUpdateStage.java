@@ -27,20 +27,10 @@ public class CayenneCreateOrUpdateStage extends CayenneUpdateStage {
             ObjectRelator relator,
             Map<Object, Collection<EntityUpdate<T>>> keyMap) {
 
-        if (keyMap.isEmpty()) {
-            return;
-        }
-
-        keyMap.entrySet().forEach(e -> createOrUpdate(context, relator, e));
-    }
-
-    protected <T extends DataObject> void createOrUpdate(
-            UpdateContext<T> context,
-            ObjectRelator relator,
-            Map.Entry<Object, Collection<EntityUpdate<T>>> updates) {
-
-        for (EntityUpdate<T> u : updates.getValue()) {
-            createSingle(context, relator, u);
+        for (Collection<EntityUpdate<T>> updates : keyMap.values()) {
+            for (EntityUpdate<T> u : updates) {
+                createSingle(context, relator, u);
+            }
         }
     }
 }

@@ -32,7 +32,7 @@ public class CayenneIdempotentFullSyncStage extends CayenneIdempotentCreateOrUpd
     }
 
     @Override
-    protected <T extends DataObject> void sync(UpdateContext<T> context) {
+    protected <T extends DataObject> void merge(UpdateContext<T> context) {
 
         ObjectRelator relator = createRelator(context);
         ObjectMapper<T> mapper = createObjectMapper(context);

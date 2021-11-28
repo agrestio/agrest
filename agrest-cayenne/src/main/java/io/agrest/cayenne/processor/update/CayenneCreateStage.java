@@ -1,5 +1,6 @@
 package io.agrest.cayenne.processor.update;
 
+import io.agrest.EntityUpdate;
 import io.agrest.cayenne.persister.ICayennePersister;
 import io.agrest.meta.AgDataMap;
 import io.agrest.runtime.processor.update.UpdateContext;
@@ -18,7 +19,11 @@ public class CayenneCreateStage extends CayenneMergeChangesStage {
     }
 
     @Override
-    protected <T extends DataObject> void sync(UpdateContext<T> context) {
-        create(context);
+    protected <T extends DataObject> void merge(UpdateContext<T> context) {
+        ObjectRelator relator = createRelator(context);
+
+        for (EntityUpdate<T> u : context.getUpdates()) {
+            createSingle(context, relator, u);
+        }
     }
 }
