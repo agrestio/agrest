@@ -18,6 +18,11 @@ public enum UpdateStage {
 
     APPLY_SERVER_PARAMS,
 
+    /**
+     * @since 4.8
+     */
+    MAP_CHANGES,
+
     MERGE_CHANGES,
 
     COMMIT,

@@ -67,11 +67,12 @@ public class AgCayenneModule implements Module {
         binder.bind(UpdateProcessorFactoryFactory.class).toProvider(CayenneUpdateProcessorFactoryFactoryProvider.class);
         binder.bind(CayenneUpdateStartStage.class).to(CayenneUpdateStartStage.class);
         binder.bind(CayenneApplyServerParamsStage.class).to(CayenneApplyServerParamsStage.class);
-        binder.bind(CayenneCreateStage.class).to(CayenneCreateStage.class);
-        binder.bind(CayenneUpdateStage.class).to(CayenneUpdateStage.class);
-        binder.bind(CayenneCreateOrUpdateStage.class).to(CayenneCreateOrUpdateStage.class);
-        binder.bind(CayenneIdempotentCreateOrUpdateStage.class).to(CayenneIdempotentCreateOrUpdateStage.class);
-        binder.bind(CayenneIdempotentFullSyncStage.class).to(CayenneIdempotentFullSyncStage.class);
+        binder.bind(CayenneMapCreateStage.class).to(CayenneMapCreateStage.class);
+        binder.bind(CayenneMapUpdateStage.class).to(CayenneMapUpdateStage.class);
+        binder.bind(CayenneMapCreateOrUpdateStage.class).to(CayenneMapCreateOrUpdateStage.class);
+        binder.bind(CayenneMapIdempotentCreateOrUpdateStage.class).to(CayenneMapIdempotentCreateOrUpdateStage.class);
+        binder.bind(CayenneMapIdempotentFullSyncStage.class).to(CayenneMapIdempotentFullSyncStage.class);
+        binder.bind(CayenneMergeChangesStage.class).to(CayenneMergeChangesStage.class);
         binder.bind(CayenneCommitStage.class).to(CayenneCommitStage.class);
         binder.bind(CayenneOkResponseStage.class).to(CayenneOkResponseStage.class);
         binder.bind(CayenneCreatedResponseStage.class).to(CayenneCreatedResponseStage.class);

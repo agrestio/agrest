@@ -33,6 +33,7 @@ public class PUT_StagesIT extends DbTest {
         Resource.PARSE_REQUEST_CALLED = false;
         Resource.CREATE_ENTITY_CALLED = false;
         Resource.APPLY_SERVER_PARAMS_CALLED = false;
+        Resource.MAP_CHANGES_CALLED = false;
         Resource.MERGE_CHANGES_CALLED = false;
         Resource.COMMIT_CALLED = false;
         Resource.FILL_RESPONSE_CALLED = false;
@@ -69,6 +70,7 @@ public class PUT_StagesIT extends DbTest {
         public static boolean PARSE_REQUEST_CALLED;
         public static boolean CREATE_ENTITY_CALLED;
         public static boolean APPLY_SERVER_PARAMS_CALLED;
+        public static boolean MAP_CHANGES_CALLED;
         public static boolean MERGE_CHANGES_CALLED;
         public static boolean COMMIT_CALLED;
         public static boolean FILL_RESPONSE_CALLED;
@@ -84,6 +86,7 @@ public class PUT_StagesIT extends DbTest {
                     .stage(UpdateStage.PARSE_REQUEST, this::onParseRequest)
                     .stage(UpdateStage.CREATE_ENTITY, this::onCreateEntity)
                     .stage(UpdateStage.APPLY_SERVER_PARAMS, this::onApplyServerParams)
+                    .stage(UpdateStage.MAP_CHANGES, this::onMapChanges)
                     .stage(UpdateStage.MERGE_CHANGES, this::onMergeChanges)
                     .stage(UpdateStage.COMMIT, this::onCommit)
                     .stage(UpdateStage.FILL_RESPONSE, this::onFillResponse)
@@ -96,6 +99,7 @@ public class PUT_StagesIT extends DbTest {
             assertFalse(Resource.PARSE_REQUEST_CALLED);
             assertFalse(Resource.CREATE_ENTITY_CALLED);
             assertFalse(Resource.APPLY_SERVER_PARAMS_CALLED);
+            assertFalse(Resource.MAP_CHANGES_CALLED);
             assertFalse(Resource.MERGE_CHANGES_CALLED);
             assertFalse(Resource.COMMIT_CALLED);
             assertFalse(Resource.FILL_RESPONSE_CALLED);
@@ -108,6 +112,7 @@ public class PUT_StagesIT extends DbTest {
             assertFalse(Resource.PARSE_REQUEST_CALLED);
             assertFalse(Resource.CREATE_ENTITY_CALLED);
             assertFalse(Resource.APPLY_SERVER_PARAMS_CALLED);
+            assertFalse(Resource.MAP_CHANGES_CALLED);
             assertFalse(Resource.MERGE_CHANGES_CALLED);
             assertFalse(Resource.COMMIT_CALLED);
             assertFalse(Resource.FILL_RESPONSE_CALLED);
@@ -120,6 +125,7 @@ public class PUT_StagesIT extends DbTest {
             assertTrue(Resource.PARSE_REQUEST_CALLED);
             assertFalse(Resource.CREATE_ENTITY_CALLED);
             assertFalse(Resource.APPLY_SERVER_PARAMS_CALLED);
+            assertFalse(Resource.MAP_CHANGES_CALLED);
             assertFalse(Resource.MERGE_CHANGES_CALLED);
             assertFalse(Resource.COMMIT_CALLED);
             assertFalse(Resource.FILL_RESPONSE_CALLED);
@@ -132,6 +138,7 @@ public class PUT_StagesIT extends DbTest {
             assertTrue(Resource.PARSE_REQUEST_CALLED);
             assertTrue(Resource.CREATE_ENTITY_CALLED);
             assertFalse(Resource.APPLY_SERVER_PARAMS_CALLED);
+            assertFalse(Resource.MAP_CHANGES_CALLED);
             assertFalse(Resource.MERGE_CHANGES_CALLED);
             assertFalse(Resource.COMMIT_CALLED);
             assertFalse(Resource.FILL_RESPONSE_CALLED);
@@ -139,11 +146,25 @@ public class PUT_StagesIT extends DbTest {
             APPLY_SERVER_PARAMS_CALLED = true;
         }
 
+        private void onMapChanges(UpdateContext<E3> context) {
+            assertTrue(Resource.START_CALLED);
+            assertTrue(Resource.PARSE_REQUEST_CALLED);
+            assertTrue(Resource.CREATE_ENTITY_CALLED);
+            assertTrue(Resource.APPLY_SERVER_PARAMS_CALLED);
+            assertFalse(Resource.MAP_CHANGES_CALLED);
+            assertFalse(Resource.MERGE_CHANGES_CALLED);
+            assertFalse(Resource.COMMIT_CALLED);
+            assertFalse(Resource.FILL_RESPONSE_CALLED);
+
+            MAP_CHANGES_CALLED = true;
+        }
+
         private void onMergeChanges(UpdateContext<E3> context) {
             assertTrue(Resource.START_CALLED);
             assertTrue(Resource.PARSE_REQUEST_CALLED);
             assertTrue(Resource.CREATE_ENTITY_CALLED);
             assertTrue(Resource.APPLY_SERVER_PARAMS_CALLED);
+            assertTrue(Resource.MAP_CHANGES_CALLED);
             assertFalse(Resource.MERGE_CHANGES_CALLED);
             assertFalse(Resource.COMMIT_CALLED);
             assertFalse(Resource.FILL_RESPONSE_CALLED);
@@ -156,6 +177,7 @@ public class PUT_StagesIT extends DbTest {
             assertTrue(Resource.PARSE_REQUEST_CALLED);
             assertTrue(Resource.CREATE_ENTITY_CALLED);
             assertTrue(Resource.APPLY_SERVER_PARAMS_CALLED);
+            assertTrue(Resource.MAP_CHANGES_CALLED);
             assertTrue(Resource.MERGE_CHANGES_CALLED);
             assertFalse(Resource.COMMIT_CALLED);
             assertFalse(Resource.FILL_RESPONSE_CALLED);
@@ -169,6 +191,7 @@ public class PUT_StagesIT extends DbTest {
             assertTrue(Resource.PARSE_REQUEST_CALLED);
             assertTrue(Resource.CREATE_ENTITY_CALLED);
             assertTrue(Resource.APPLY_SERVER_PARAMS_CALLED);
+            assertTrue(Resource.MAP_CHANGES_CALLED);
             assertTrue(Resource.MERGE_CHANGES_CALLED);
             assertTrue(Resource.COMMIT_CALLED);
             assertFalse(Resource.FILL_RESPONSE_CALLED);

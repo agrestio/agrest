@@ -4,6 +4,7 @@ import io.agrest.AgException;
 import io.agrest.CompoundObjectId;
 import io.agrest.EntityParent;
 import io.agrest.EntityUpdate;
+import io.agrest.cayenne.persister.ICayennePersister;
 import io.agrest.cayenne.processor.CayenneUtil;
 import io.agrest.meta.AgDataMap;
 import io.agrest.meta.AgEntity;
@@ -11,7 +12,9 @@ import io.agrest.meta.AgRelationship;
 import io.agrest.processor.Processor;
 import io.agrest.processor.ProcessorOutcome;
 import io.agrest.runtime.processor.update.UpdateContext;
+import io.agrest.runtime.processor.update.UpdateOperation;
 import org.apache.cayenne.*;
+import org.apache.cayenne.di.Inject;
 import org.apache.cayenne.exp.ExpressionFactory;
 import org.apache.cayenne.map.*;
 import org.apache.cayenne.query.ObjectSelect;
@@ -20,18 +23,20 @@ import org.apache.cayenne.reflect.ClassDescriptor;
 import java.util.*;
 
 /**
- * A superclass of the processors invoked for {@link io.agrest.UpdateStage#MERGE_CHANGES} stage.
+ * A processor invoked for {@link io.agrest.UpdateStage#MERGE_CHANGES} stage.
  *
  * @since 2.7
  */
-public abstract class CayenneMergeChangesStage implements Processor<UpdateContext<?>> {
+public class CayenneMergeChangesStage implements Processor<UpdateContext<?>> {
 
     private final AgDataMap dataMap;
-    protected EntityResolver entityResolver;
+    private EntityResolver entityResolver;
 
-    public CayenneMergeChangesStage(AgDataMap dataMap, EntityResolver entityResolver) {
+    public CayenneMergeChangesStage(
+            @Inject AgDataMap dataMap,
+            @Inject ICayennePersister persister) {
         this.dataMap = dataMap;
-        this.entityResolver = entityResolver;
+        this.entityResolver = persister.entityResolver();
     }
 
     @Override
@@ -40,46 +45,74 @@ public abstract class CayenneMergeChangesStage implements Processor<UpdateContex
         return ProcessorOutcome.CONTINUE;
     }
 
-    protected abstract <T extends DataObject> void merge(UpdateContext<T> context);
+    protected <T extends DataObject> void merge(UpdateContext<T> context) {
+        Collection<UpdateOperation<T>> ops = context.getUpdateOperations();
+        if (ops.isEmpty()) {
+            return;
+        }
 
-    protected <T extends DataObject> void updateSingle(ObjectRelator relator, T o, Collection<EntityUpdate<T>> updates) {
+        ObjectRelator relator = createRelator(context);
+
+        for (UpdateOperation<T> op : context.getUpdateOperations()) {
+            switch (op.getType()) {
+                case CREATE:
+                    create(context, relator, op.getUpdates());
+                    break;
+                case UPDATE:
+                    update(relator, op.getObject(), op.getUpdates());
+                    break;
+                case DELETE:
+                    delete(op.getObject());
+                    break;
+            }
+        }
+    }
+
+    protected <T extends DataObject> void delete(T o) {
+        o.getObjectContext().deleteObject(o);
+    }
+
+    protected <T extends DataObject> void create(UpdateContext<T> context, ObjectRelator relator, Collection<EntityUpdate<T>> updates) {
+
+        ObjectContext objectContext = CayenneUpdateStartStage.cayenneContext(context);
+        DataObject o = objectContext.newObject(context.getType());
 
         for (EntityUpdate<T> u : updates) {
+            Map<String, Object> idByAgAttribute = u.getId();
+
+            // set explicit ID
+            if (idByAgAttribute != null) {
+
+                if (context.isIdUpdatesDisallowed() && u.isExplicitId()) {
+                    throw AgException.badRequest("Setting ID explicitly is not allowed: %s", idByAgAttribute);
+                }
+
+                ObjEntity objEntity = objectContext.getEntityResolver().getObjEntity(context.getType());
+                DbEntity dbEntity = objEntity.getDbEntity();
+                AgEntity agEntity = context.getEntity().getAgEntity();
+
+                Map<DbAttribute, Object> idByDbAttribute = mapToDbAttributes(agEntity, idByAgAttribute);
+
+                if (isPrimaryKey(dbEntity, idByDbAttribute.keySet())) {
+                    createSingleFromPk(objEntity, idByDbAttribute, o);
+                } else {
+                    // need to make an additional check that the AgId is unique
+                    checkExisting(objectContext, agEntity, idByDbAttribute, idByAgAttribute);
+                    createSingleFromIdValues(objEntity, idByDbAttribute, idByAgAttribute, o);
+                }
+            }
+
             mergeChanges(u, o, relator);
         }
 
         relator.relateToParent(o);
     }
 
-    protected <T extends DataObject> void createSingle(UpdateContext<T> context, ObjectRelator relator, EntityUpdate<T> u) {
-
-        ObjectContext objectContext = CayenneUpdateStartStage.cayenneContext(context);
-        DataObject o = objectContext.newObject(context.getType());
-        Map<String, Object> idByAgAttribute = u.getId();
-
-        // set explicit ID
-        if (idByAgAttribute != null) {
-
-            if (context.isIdUpdatesDisallowed() && u.isExplicitId()) {
-                throw AgException.badRequest("Setting ID explicitly is not allowed: %s", idByAgAttribute);
-            }
-
-            ObjEntity objEntity = objectContext.getEntityResolver().getObjEntity(context.getType());
-            DbEntity dbEntity = objEntity.getDbEntity();
-            AgEntity agEntity = context.getEntity().getAgEntity();
-
-            Map<DbAttribute, Object> idByDbAttribute = mapToDbAttributes(agEntity, idByAgAttribute);
-
-            if (isPrimaryKey(dbEntity, idByDbAttribute.keySet())) {
-                createSingleFromPk(objEntity, idByDbAttribute, o);
-            } else {
-                // need to make an additional check that the AgId is unique
-                checkExisting(objectContext, agEntity, idByDbAttribute, idByAgAttribute);
-                createSingleFromIdValues(objEntity, idByDbAttribute, idByAgAttribute, o);
-            }
+    protected <T extends DataObject> void update(ObjectRelator relator, T o, Collection<EntityUpdate<T>> updates) {
+        for (EntityUpdate<T> u : updates) {
+            mergeChanges(u, o, relator);
         }
 
-        mergeChanges(u, o, relator);
         relator.relateToParent(o);
     }
 
@@ -319,7 +352,6 @@ public abstract class CayenneMergeChangesStage implements Processor<UpdateContex
         }
     }
 
-    // TODO: copied verbatim from CayenneQueryAssembler... Unify this code?
     protected DbAttribute dbAttributeForAgAttribute(AgEntity<?> agEntity, String attributeName) {
 
         ObjEntity entity = entityResolver.getObjEntity(agEntity.getName());

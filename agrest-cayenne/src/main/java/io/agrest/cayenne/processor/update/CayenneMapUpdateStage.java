@@ -8,19 +8,19 @@ import io.agrest.ObjectMapper;
 import io.agrest.ObjectMapperFactory;
 import io.agrest.ResourceEntity;
 import io.agrest.SimpleObjectId;
-import io.agrest.cayenne.persister.ICayennePersister;
 import io.agrest.cayenne.processor.CayenneProcessor;
 import io.agrest.meta.AgAttribute;
-import io.agrest.meta.AgDataMap;
 import io.agrest.meta.AgIdPart;
 import io.agrest.runtime.processor.update.ByIdObjectMapperFactory;
 import io.agrest.runtime.processor.update.UpdateContext;
+import io.agrest.runtime.processor.update.UpdateOperation;
+import io.agrest.runtime.processor.update.UpdateOperationType;
 import org.apache.cayenne.DataObject;
-import org.apache.cayenne.di.Inject;
 import org.apache.cayenne.exp.Expression;
 import org.apache.cayenne.exp.ExpressionFactory;
 import org.apache.cayenne.exp.property.Property;
 import org.apache.cayenne.exp.property.PropertyFactory;
+import org.apache.cayenne.map.EntityResolver;
 import org.apache.cayenne.map.ObjEntity;
 import org.apache.cayenne.map.ObjRelationship;
 import org.apache.cayenne.query.SelectQuery;
@@ -34,27 +34,22 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * @since 2.7
+ * @since 4.8
  */
-public class CayenneUpdateStage extends CayenneMergeChangesStage {
-
-    public CayenneUpdateStage(
-            @Inject AgDataMap dataMap,
-            @Inject ICayennePersister persister) {
-
-        super(dataMap, persister.entityResolver());
-    }
+public class CayenneMapUpdateStage extends CayenneMapChangesStage {
 
     @Override
-    protected <T extends DataObject> void merge(UpdateContext<T> context) {
-
-        ObjectRelator relator = createRelator(context);
+    protected <T extends DataObject> List<UpdateOperation<T>> map(UpdateContext<T> context) {
         ObjectMapper<T> mapper = createObjectMapper(context);
+
+        List<UpdateOperation<T>> ops = new ArrayList<>(context.getUpdates().size());
 
         Map<Object, Collection<EntityUpdate<T>>> updatesByKey = mutableUpdatesByKey(context, mapper);
 
-        // find existing objects and merge values into them
-        for (T o : existingObjects(context, updatesByKey.keySet(), mapper)) {
+        // map updates to the existing objects
+        List<T> existing = existingObjects(context, updatesByKey.keySet(), mapper);
+
+        for (T o : existing) {
             Object key = mapper.keyForObject(o);
 
             Collection<EntityUpdate<T>> updates = updatesByKey.remove(key);
@@ -64,17 +59,19 @@ public class CayenneUpdateStage extends CayenneMergeChangesStage {
                 throw AgException.internalServerError("Invalid key item: %s", key);
             }
 
-            updateSingle(relator, o, updates);
+            ops.add(new UpdateOperation<>(UpdateOperationType.UPDATE, o, updates));
         }
 
         // check leftovers - those correspond to objects missing in the DB or objects with no keys
-        afterUpdatesMerge(context, relator, updatesByKey);
+        processUnmapped(context, updatesByKey, ops);
+
+        return ops;
     }
 
-    protected <T extends DataObject> void afterUpdatesMerge(
+    protected <T extends DataObject> void processUnmapped(
             UpdateContext<T> context,
-            ObjectRelator relator,
-            Map<Object, Collection<EntityUpdate<T>>> updatesByKey) {
+            Map<Object, Collection<EntityUpdate<T>>> updatesByKey,
+            List<UpdateOperation<T>> ops) {
 
         if (!updatesByKey.isEmpty()) {
 
@@ -88,6 +85,13 @@ public class CayenneUpdateStage extends CayenneMergeChangesStage {
                     updatesByKey.keySet().iterator().next(),
                     context.getEntity().getName());
         }
+    }
+
+    protected <T extends DataObject> ObjectMapper<T> createObjectMapper(UpdateContext<T> context) {
+        ObjectMapperFactory mapper = context.getMapper() != null
+                ? context.getMapper()
+                : ByIdObjectMapperFactory.mapper();
+        return mapper.createMapper(context);
     }
 
     protected <T extends DataObject> Map<Object, Collection<EntityUpdate<T>>> mutableUpdatesByKey(
@@ -109,13 +113,6 @@ public class CayenneUpdateStage extends CayenneMergeChangesStage {
         }
 
         return map;
-    }
-
-    protected <T extends DataObject> ObjectMapper<T> createObjectMapper(UpdateContext<T> context) {
-        ObjectMapperFactory mapper = context.getMapper() != null
-                ? context.getMapper()
-                : ByIdObjectMapperFactory.mapper();
-        return mapper.createMapper(context);
     }
 
     <T extends DataObject> List<T> existingObjects(UpdateContext<T> context, Collection<Object> keys, ObjectMapper<T> mapper) {
@@ -158,7 +155,6 @@ public class CayenneUpdateStage extends CayenneMergeChangesStage {
         return objects;
     }
 
-
     <T> SelectQuery<T> buildQuery(UpdateContext<T> context, ResourceEntity<T> entity, Expression qualifier) {
 
         SelectQuery<T> query = SelectQuery.query(entity.getType());
@@ -180,6 +176,8 @@ public class CayenneUpdateStage extends CayenneMergeChangesStage {
         if (children.isEmpty()) {
             return;
         }
+
+        EntityResolver entityResolver = CayenneUpdateStartStage.cayenneContext(context).getEntityResolver();
 
         // both entities and properties may be non-persistent and unknown to Cayenne
         ObjEntity cayenneEntity = entityResolver.getObjEntity(entity.getName());
@@ -265,4 +263,5 @@ public class CayenneUpdateStage extends CayenneMergeChangesStage {
                 ? relationship.getSourceEntity().translateToRelatedEntity(expression, relationship.getName())
                 : null;
     }
+
 }

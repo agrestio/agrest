@@ -4,65 +4,56 @@ import io.agrest.AgException;
 import io.agrest.EntityUpdate;
 import io.agrest.ObjectMapper;
 import io.agrest.ResourceEntity;
-import io.agrest.cayenne.persister.ICayennePersister;
 import io.agrest.cayenne.processor.CayenneProcessor;
 import io.agrest.cayenne.processor.CayenneUtil;
-import io.agrest.meta.AgDataMap;
 import io.agrest.runtime.processor.update.UpdateContext;
+import io.agrest.runtime.processor.update.UpdateOperation;
+import io.agrest.runtime.processor.update.UpdateOperationType;
 import org.apache.cayenne.DataObject;
-import org.apache.cayenne.di.Inject;
 import org.apache.cayenne.exp.Expression;
 import org.apache.cayenne.map.EntityResolver;
 import org.apache.cayenne.query.SelectQuery;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
 /**
- * @since 2.7
+ * @since 4.8
  */
-public class CayenneIdempotentFullSyncStage extends CayenneIdempotentCreateOrUpdateStage {
-
-    public CayenneIdempotentFullSyncStage(
-            @Inject AgDataMap dataMap,
-            @Inject ICayennePersister persister) {
-        super(dataMap, persister);
-    }
+public class CayenneMapIdempotentFullSyncStage extends CayenneMapIdempotentCreateOrUpdateStage {
 
     @Override
-    protected <T extends DataObject> void merge(UpdateContext<T> context) {
+    protected <T extends DataObject> List<UpdateOperation<T>> map(UpdateContext<T> context) {
 
-        ObjectRelator relator = createRelator(context);
         ObjectMapper<T> mapper = createObjectMapper(context);
-        Map<Object, Collection<EntityUpdate<T>>> keyMap = mutableUpdatesByKey(context, mapper);
 
-        List<T> allObjects = allItems(context);
+        List<UpdateOperation<T>> ops = new ArrayList<>(context.getUpdates().size());
 
-        List<DataObject> deletedObjects = new ArrayList<>();
+        Map<Object, Collection<EntityUpdate<T>>> updatesByKey = mutableUpdatesByKey(context, mapper);
+
+        List<T> allObjects = allObjects(context);
 
         for (T o : allObjects) {
             Object key = mapper.keyForObject(o);
 
-            Collection<EntityUpdate<T>> updates = keyMap.remove(key);
+            Collection<EntityUpdate<T>> updates = updatesByKey.remove(key);
 
             if (updates == null) {
-                deletedObjects.add(o);
+                ops.add(new UpdateOperation<>(UpdateOperationType.DELETE, o, Collections.emptyList()));
             } else {
-                updateSingle(relator, o, updates);
+                ops.add(new UpdateOperation<>(UpdateOperationType.UPDATE, o, updates));
             }
         }
 
-        if (!deletedObjects.isEmpty()) {
-            CayenneUpdateStartStage.cayenneContext(context).deleteObjects(deletedObjects);
-        }
+        processUnmapped(context, updatesByKey, ops);
 
-        // check leftovers - those correspond to objects missing in the DB or objects with no keys
-        afterUpdatesMerge(context, relator, keyMap);
+        return ops;
     }
 
-    <T extends DataObject> List<T> allItems(UpdateContext<T> context) {
+    <T extends DataObject> List<T> allObjects(UpdateContext<T> context) {
 
         buildQuery(context, context.getEntity(), null);
 
@@ -100,5 +91,4 @@ public class CayenneIdempotentFullSyncStage extends CayenneIdempotentCreateOrUpd
 
         return query;
     }
-
 }

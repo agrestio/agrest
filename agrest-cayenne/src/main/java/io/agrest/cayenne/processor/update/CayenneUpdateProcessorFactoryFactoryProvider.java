@@ -15,22 +15,26 @@ import java.util.EnumMap;
  */
 public class CayenneUpdateProcessorFactoryFactoryProvider implements Provider<UpdateProcessorFactoryFactory> {
 
-    private EnumMap<UpdateStage, Processor<UpdateContext<?>>> createStages;
-    private EnumMap<UpdateStage, Processor<UpdateContext<?>>> updateStages;
-    private EnumMap<UpdateStage, Processor<UpdateContext<?>>> createOrUpdateStages;
-    private EnumMap<UpdateStage, Processor<UpdateContext<?>>> idempotentCreateOrUpdateStages;
-    private EnumMap<UpdateStage, Processor<UpdateContext<?>>> idempotentFullSyncStages;
+    private final EnumMap<UpdateStage, Processor<UpdateContext<?>>> createStages;
+    private final EnumMap<UpdateStage, Processor<UpdateContext<?>>> updateStages;
+    private final EnumMap<UpdateStage, Processor<UpdateContext<?>>> createOrUpdateStages;
+    private final EnumMap<UpdateStage, Processor<UpdateContext<?>>> idempotentCreateOrUpdateStages;
+    private final EnumMap<UpdateStage, Processor<UpdateContext<?>>> idempotentFullSyncStages;
 
     public CayenneUpdateProcessorFactoryFactoryProvider(
             @Inject CayenneUpdateStartStage startStage,
             @Inject ParseRequestStage parseRequestStage,
             @Inject CreateResourceEntityStage createResourceEntityStage,
             @Inject CayenneApplyServerParamsStage applyServerParamsStage,
-            @Inject CayenneCreateStage createStage,
-            @Inject CayenneUpdateStage updateStage,
-            @Inject CayenneCreateOrUpdateStage createOrUpdateStage,
-            @Inject CayenneIdempotentCreateOrUpdateStage idempotentCreateOrUpdateStage,
-            @Inject CayenneIdempotentFullSyncStage idempotentFullSyncStage,
+
+            @Inject CayenneMapCreateStage mapCreateStage,
+            @Inject CayenneMapUpdateStage mapUpdateStage,
+            @Inject CayenneMapCreateOrUpdateStage mapCreateOrUpdateStage,
+            @Inject CayenneMapIdempotentCreateOrUpdateStage mapIdempotentCreateOrUpdateStage,
+            @Inject CayenneMapIdempotentFullSyncStage mapIdempotentFullSyncStage,
+
+            @Inject CayenneMergeChangesStage mergeStage,
+
             @Inject CayenneCommitStage commitStage,
             @Inject CayenneOkResponseStage okResponseStage,
             @Inject CayenneCreatedResponseStage createdResponseStage,
@@ -42,7 +46,8 @@ public class CayenneUpdateProcessorFactoryFactoryProvider implements Provider<Up
         this.createStages.put(UpdateStage.PARSE_REQUEST, parseRequestStage);
         this.createStages.put(UpdateStage.CREATE_ENTITY, createResourceEntityStage);
         this.createStages.put(UpdateStage.APPLY_SERVER_PARAMS, applyServerParamsStage);
-        this.createStages.put(UpdateStage.MERGE_CHANGES, createStage);
+        this.createStages.put(UpdateStage.MAP_CHANGES, mapCreateStage);
+        this.createStages.put(UpdateStage.MERGE_CHANGES, mergeStage);
         this.createStages.put(UpdateStage.COMMIT, commitStage);
         this.createStages.put(UpdateStage.FILL_RESPONSE, createdResponseStage);
 
@@ -51,7 +56,8 @@ public class CayenneUpdateProcessorFactoryFactoryProvider implements Provider<Up
         this.updateStages.put(UpdateStage.PARSE_REQUEST, parseRequestStage);
         this.updateStages.put(UpdateStage.CREATE_ENTITY, createResourceEntityStage);
         this.updateStages.put(UpdateStage.APPLY_SERVER_PARAMS, applyServerParamsStage);
-        this.updateStages.put(UpdateStage.MERGE_CHANGES, updateStage);
+        this.updateStages.put(UpdateStage.MAP_CHANGES, mapUpdateStage);
+        this.updateStages.put(UpdateStage.MERGE_CHANGES, mergeStage);
         this.updateStages.put(UpdateStage.COMMIT, commitStage);
         this.updateStages.put(UpdateStage.FILL_RESPONSE, okResponseStage);
 
@@ -60,7 +66,8 @@ public class CayenneUpdateProcessorFactoryFactoryProvider implements Provider<Up
         this.createOrUpdateStages.put(UpdateStage.PARSE_REQUEST, parseRequestStage);
         this.createOrUpdateStages.put(UpdateStage.CREATE_ENTITY, createResourceEntityStage);
         this.createOrUpdateStages.put(UpdateStage.APPLY_SERVER_PARAMS, applyServerParamsStage);
-        this.createOrUpdateStages.put(UpdateStage.MERGE_CHANGES, createOrUpdateStage);
+        this.createOrUpdateStages.put(UpdateStage.MAP_CHANGES, mapCreateOrUpdateStage);
+        this.createOrUpdateStages.put(UpdateStage.MERGE_CHANGES, mergeStage);
         this.createOrUpdateStages.put(UpdateStage.COMMIT, commitStage);
         this.createOrUpdateStages.put(UpdateStage.FILL_RESPONSE, createdOrOkResponseStage);
 
@@ -69,7 +76,8 @@ public class CayenneUpdateProcessorFactoryFactoryProvider implements Provider<Up
         this.idempotentCreateOrUpdateStages.put(UpdateStage.PARSE_REQUEST, parseRequestStage);
         this.idempotentCreateOrUpdateStages.put(UpdateStage.CREATE_ENTITY, createResourceEntityStage);
         this.idempotentCreateOrUpdateStages.put(UpdateStage.APPLY_SERVER_PARAMS, applyServerParamsStage);
-        this.idempotentCreateOrUpdateStages.put(UpdateStage.MERGE_CHANGES, idempotentCreateOrUpdateStage);
+        this.idempotentCreateOrUpdateStages.put(UpdateStage.MAP_CHANGES, mapIdempotentCreateOrUpdateStage);
+        this.idempotentCreateOrUpdateStages.put(UpdateStage.MERGE_CHANGES, mergeStage);
         this.idempotentCreateOrUpdateStages.put(UpdateStage.COMMIT, commitStage);
         this.idempotentCreateOrUpdateStages.put(UpdateStage.FILL_RESPONSE, createdOrOkResponseStage);
 
@@ -78,7 +86,8 @@ public class CayenneUpdateProcessorFactoryFactoryProvider implements Provider<Up
         this.idempotentFullSyncStages.put(UpdateStage.PARSE_REQUEST, parseRequestStage);
         this.idempotentFullSyncStages.put(UpdateStage.CREATE_ENTITY, createResourceEntityStage);
         this.idempotentFullSyncStages.put(UpdateStage.APPLY_SERVER_PARAMS, applyServerParamsStage);
-        this.idempotentFullSyncStages.put(UpdateStage.MERGE_CHANGES, idempotentFullSyncStage);
+        this.idempotentFullSyncStages.put(UpdateStage.MAP_CHANGES, mapIdempotentFullSyncStage);
+        this.idempotentFullSyncStages.put(UpdateStage.MERGE_CHANGES, mergeStage);
         this.idempotentFullSyncStages.put(UpdateStage.COMMIT, commitStage);
         this.idempotentFullSyncStages.put(UpdateStage.FILL_RESPONSE, createdOrOkResponseStage);
     }
