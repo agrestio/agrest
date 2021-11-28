@@ -7,7 +7,6 @@ import io.agrest.runtime.processor.update.UpdateContext;
 import org.apache.cayenne.DataObject;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -24,7 +23,7 @@ public class CayenneMapCreateStage extends CayenneMapChangesStage {
             // TODO: when EntityUpdate contains id, there may be multiple updates for the same key
             //    that need to be merged in a single operation to avoid commit errors... I suppose for
             //    now the users must use "createOrUpdate" if that's  anticipated instead of "create"
-            ops.add(new ChangeOperation<>(ChangeOperationType.CREATE, null, Collections.singletonList(u)));
+            ops.add(new ChangeOperation<>(ChangeOperationType.CREATE, null, u));
         }
 
         context.setChangeOperations(ChangeOperationType.CREATE, ops);

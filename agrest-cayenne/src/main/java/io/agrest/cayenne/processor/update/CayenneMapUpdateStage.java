@@ -42,18 +42,18 @@ public class CayenneMapUpdateStage extends CayenneMapChangesStage {
 
         ObjectMapper<T> mapper = createObjectMapper(context);
 
-        Map<Object, Collection<EntityUpdate<T>>> updatesByKey = mutableUpdatesByKey(context, mapper);
+        UpdateMap<T> updateMap = mutableUpdatesByKey(context, mapper);
 
-        collectUpdateDeleteOps(context, mapper, updatesByKey);
-        collectCreateOps(context, updatesByKey);
+        collectUpdateDeleteOps(context, mapper, updateMap);
+        collectCreateOps(context, updateMap);
     }
 
     protected <T extends DataObject> void collectUpdateDeleteOps(
             UpdateContext<T> context,
             ObjectMapper<T> mapper,
-            Map<Object, Collection<EntityUpdate<T>>> updatesByKey) {
+            UpdateMap<T> updateMap) {
 
-        List<T> existing = existingObjects(context, updatesByKey.keySet(), mapper);
+        List<T> existing = existingObjects(context, updateMap.getIds(), mapper);
         if (existing.isEmpty()) {
             return;
         }
@@ -61,15 +61,14 @@ public class CayenneMapUpdateStage extends CayenneMapChangesStage {
         List<ChangeOperation<T>> updateOps = new ArrayList<>(existing.size());
         for (T o : existing) {
             Object key = mapper.keyForObject(o);
-
-            Collection<EntityUpdate<T>> updates = updatesByKey.remove(key);
+            EntityUpdate<T> update = updateMap.remove(key);
 
             // a null can only mean some algorithm malfunction
-            if (updates == null) {
+            if (update == null) {
                 throw AgException.internalServerError("Invalid key item: %s", key);
             }
 
-            updateOps.add(new ChangeOperation<>(ChangeOperationType.UPDATE, o, updates));
+            updateOps.add(new ChangeOperation<>(ChangeOperationType.UPDATE, o, update));
         }
 
         context.setChangeOperations(ChangeOperationType.UPDATE, updateOps);
@@ -77,18 +76,17 @@ public class CayenneMapUpdateStage extends CayenneMapChangesStage {
 
     protected <T extends DataObject> void collectCreateOps(
             UpdateContext<T> context,
-            Map<Object, Collection<EntityUpdate<T>>> updatesByKey) {
+            UpdateMap<T> updateMap) {
 
-        if (!updatesByKey.isEmpty()) {
+        if(!updateMap.getNoId().isEmpty()) {
+            throw AgException.badRequest("Request is not idempotent.");
+        }
 
-            // "update" request is (or must be) idempotent by its nature
-            if (updatesByKey.containsKey(null)) {
-                throw AgException.badRequest("Request is not idempotent.");
-            }
+        if (!updateMap.getIds().isEmpty()) {
 
             throw AgException.notFound(
                     "No object for ID '%s' and entity '%s'",
-                    updatesByKey.keySet().iterator().next(),
+                    updateMap.getIds().iterator().next(),
                     context.getEntity().getName());
         }
     }
@@ -100,14 +98,15 @@ public class CayenneMapUpdateStage extends CayenneMapChangesStage {
         return mapper.createMapper(context);
     }
 
-    protected <T extends DataObject> Map<Object, Collection<EntityUpdate<T>>> mutableUpdatesByKey(
+    protected <T extends DataObject> UpdateMap<T> mutableUpdatesByKey(
             UpdateContext<T> context,
             ObjectMapper<T> mapper) {
 
         Collection<EntityUpdate<T>> updates = context.getUpdates();
 
         // sizing the map with one-update per key assumption
-        Map<Object, Collection<EntityUpdate<T>>> map = new HashMap<>((int) (updates.size() / 0.75));
+        Map<Object, EntityUpdate<T>> withId = new HashMap<>((int) (updates.size() / 0.75));
+        List<EntityUpdate<T>> noId = new ArrayList<>();
 
         for (EntityUpdate<T> u : updates) {
             Object key = mapper.keyForUpdate(u);
@@ -115,10 +114,14 @@ public class CayenneMapUpdateStage extends CayenneMapChangesStage {
             // The key can be "null", and the update may still be valid. It means it won't match anything in the
             // DB though, and the request can not be idempotent...
 
-            map.computeIfAbsent(key, k -> new ArrayList<>(2)).add(u);
+            if (key == null) {
+                noId.add(u);
+            } else {
+                withId.merge(key, u, (oldVal, newVal) -> oldVal.merge(newVal));
+            }
         }
 
-        return map;
+        return new UpdateMap<>(withId, noId);
     }
 
     <T extends DataObject> List<T> existingObjects(UpdateContext<T> context, Collection<Object> keys, ObjectMapper<T> mapper) {

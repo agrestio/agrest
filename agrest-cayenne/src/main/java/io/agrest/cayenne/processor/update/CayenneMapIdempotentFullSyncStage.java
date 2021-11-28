@@ -16,9 +16,7 @@ import org.apache.cayenne.query.SelectQuery;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 /**
  * @since 4.8
@@ -28,24 +26,23 @@ public class CayenneMapIdempotentFullSyncStage extends CayenneMapIdempotentCreat
     @Override
     protected <T extends DataObject> void collectUpdateDeleteOps(
             UpdateContext<T> context, ObjectMapper<T> mapper,
-            Map<Object, Collection<EntityUpdate<T>>> updatesByKey) {
+            UpdateMap<T> updateMap) {
 
-        List<T> existing = existingObjects(context, updatesByKey.keySet(), mapper);
+        List<T> existing = existingObjects(context, updateMap.getIds(), mapper);
         if (existing.isEmpty()) {
             return;
         }
 
-        List<ChangeOperation<T>> updateOps = new ArrayList<>(existing.size());
-        List<ChangeOperation<T>> deleteOps = new ArrayList<>(existing.size());
+        List<ChangeOperation<T>> updateOps = new ArrayList<>(updateMap.getIds().size());
+        List<ChangeOperation<T>> deleteOps = new ArrayList<>();
 
         for (T o : existing) {
             Object key = mapper.keyForObject(o);
 
-            Collection<EntityUpdate<T>> updates = updatesByKey.remove(key);
+            EntityUpdate<T> updates = updateMap.remove(key);
 
-            // a null can only mean some algorithm malfunction
             if (updates == null) {
-                deleteOps.add(new ChangeOperation<>(ChangeOperationType.DELETE, o, Collections.emptyList()));
+                deleteOps.add(new ChangeOperation<>(ChangeOperationType.DELETE, o, null));
             } else {
                 updateOps.add(new ChangeOperation<>(ChangeOperationType.UPDATE, o, updates));
             }
@@ -60,10 +57,8 @@ public class CayenneMapIdempotentFullSyncStage extends CayenneMapIdempotentCreat
 
         buildQuery(context, context.getEntity(), null);
 
-        // TODO: use SelectBuilder to get Cayenne representation of the
-        // resource, instead of duplicating this here...
+        // TODO: use SelectBuilder to get Cayenne representation of the resource, instead of duplicating this here...
 
-        // List<T> objects = CayenneUpdateStartStage.cayenneContext(context).select(query);
         List<T> objects = fetchEntity(context, context.getEntity());
 
         if (context.isById() && objects.size() > 1) {

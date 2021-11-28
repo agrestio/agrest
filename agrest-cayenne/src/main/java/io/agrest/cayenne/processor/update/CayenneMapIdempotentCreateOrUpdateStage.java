@@ -1,12 +1,8 @@
 package io.agrest.cayenne.processor.update;
 
 import io.agrest.AgException;
-import io.agrest.EntityUpdate;
 import io.agrest.runtime.processor.update.UpdateContext;
 import org.apache.cayenne.DataObject;
-
-import java.util.Collection;
-import java.util.Map;
 
 /**
  * @since 4.8
@@ -16,12 +12,12 @@ public class CayenneMapIdempotentCreateOrUpdateStage extends CayenneMapCreateOrU
     @Override
     protected <T extends DataObject> void collectCreateOps(
             UpdateContext<T> context,
-            Map<Object, Collection<EntityUpdate<T>>> updatesByKey) {
+            UpdateMap<T> updateMap) {
 
-        if (updatesByKey.containsKey(null)) {
+        if (!updateMap.getNoId().isEmpty()) {
             throw AgException.badRequest("Request is not idempotent.");
         }
 
-        super.collectCreateOps(context, updatesByKey);
+        super.collectCreateOps(context, updateMap);
     }
 }

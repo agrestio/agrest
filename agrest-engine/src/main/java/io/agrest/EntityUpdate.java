@@ -26,6 +26,27 @@ public class EntityUpdate<T> {
     }
 
     /**
+     * Combines this update with another update. This update is modified with data of the other update.
+     *
+     * @return this update
+     * @since 4.8
+     */
+    public EntityUpdate<T> merge(EntityUpdate<T> anotherUpdate) {
+
+        this.values.putAll(anotherUpdate.values);
+        this.relatedIds.putAll(anotherUpdate.relatedIds);
+
+        if (anotherUpdate.id != null && !anotherUpdate.id.isEmpty()) {
+            getOrCreateId().putAll(anotherUpdate.id);
+        }
+
+        // If we are merging a compatible update, "explicitId", "entity", "mergedTo" should all be identical already.
+        // Do not override them.
+
+        return this;
+    }
+
+    /**
      * @since 1.19
      */
     public AgEntity<T> getEntity() {

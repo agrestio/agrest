@@ -2,7 +2,6 @@ package io.agrest.runtime.processor.update;
 
 import io.agrest.EntityUpdate;
 
-import java.util.Collection;
 import java.util.Objects;
 
 /**
@@ -15,12 +14,12 @@ public class ChangeOperation<T> {
 
     private final ChangeOperationType type;
     private final T object;
-    private final Collection<EntityUpdate<T>> updates;
+    private final EntityUpdate<T> update;
 
-    public ChangeOperation(ChangeOperationType type, T object, Collection<EntityUpdate<T>> updates) {
+    public ChangeOperation(ChangeOperationType type, T object, EntityUpdate<T> update) {
         this.type = Objects.requireNonNull(type);
         this.object = object;
-        this.updates = updates;
+        this.update = update;
     }
 
     public ChangeOperationType getType() {
@@ -31,7 +30,7 @@ public class ChangeOperation<T> {
         return object;
     }
 
-    public Collection<EntityUpdate<T>> getUpdates() {
-        return updates;
+    public EntityUpdate<T> getUpdate() {
+        return update;
     }
 }

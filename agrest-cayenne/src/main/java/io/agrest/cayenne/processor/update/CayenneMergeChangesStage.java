@@ -66,11 +66,11 @@ public class CayenneMergeChangesStage implements Processor<UpdateContext<?>> {
 
         ObjectRelator relator = createRelator(context);
         for (ChangeOperation<T> op : ops.get(ChangeOperationType.CREATE)) {
-            create(context, relator, op.getUpdates());
+            create(context, relator, op.getUpdate());
         }
 
         for (ChangeOperation<T> op : ops.get(ChangeOperationType.UPDATE)) {
-            update(relator, op.getObject(), op.getUpdates());
+            update(relator, op.getObject(), op.getUpdate());
         }
 
         for (ChangeOperation<T> op : ops.get(ChangeOperationType.DELETE)) {
@@ -82,47 +82,43 @@ public class CayenneMergeChangesStage implements Processor<UpdateContext<?>> {
         o.getObjectContext().deleteObject(o);
     }
 
-    protected <T extends DataObject> void create(UpdateContext<T> context, ObjectRelator relator, Collection<EntityUpdate<T>> updates) {
+    protected <T extends DataObject> void create(UpdateContext<T> context, ObjectRelator relator, EntityUpdate<T> update) {
 
         ObjectContext objectContext = CayenneUpdateStartStage.cayenneContext(context);
         DataObject o = objectContext.newObject(context.getType());
 
-        for (EntityUpdate<T> u : updates) {
-            Map<String, Object> idByAgAttribute = u.getId();
 
-            // set explicit ID
-            if (idByAgAttribute != null) {
+        Map<String, Object> idByAgAttribute = update.getId();
 
-                if (context.isIdUpdatesDisallowed() && u.isExplicitId()) {
-                    throw AgException.badRequest("Setting ID explicitly is not allowed: %s", idByAgAttribute);
-                }
+        // set explicit ID
+        if (idByAgAttribute != null) {
 
-                ObjEntity objEntity = objectContext.getEntityResolver().getObjEntity(context.getType());
-                DbEntity dbEntity = objEntity.getDbEntity();
-                AgEntity agEntity = context.getEntity().getAgEntity();
-
-                Map<DbAttribute, Object> idByDbAttribute = mapToDbAttributes(agEntity, idByAgAttribute);
-
-                if (isPrimaryKey(dbEntity, idByDbAttribute.keySet())) {
-                    createSingleFromPk(objEntity, idByDbAttribute, o);
-                } else {
-                    // need to make an additional check that the AgId is unique
-                    checkExisting(objectContext, agEntity, idByDbAttribute, idByAgAttribute);
-                    createSingleFromIdValues(objEntity, idByDbAttribute, idByAgAttribute, o);
-                }
+            if (context.isIdUpdatesDisallowed() && update.isExplicitId()) {
+                throw AgException.badRequest("Setting ID explicitly is not allowed: %s", idByAgAttribute);
             }
 
-            mergeChanges(u, o, relator);
+            ObjEntity objEntity = objectContext.getEntityResolver().getObjEntity(context.getType());
+            DbEntity dbEntity = objEntity.getDbEntity();
+            AgEntity agEntity = context.getEntity().getAgEntity();
+
+            Map<DbAttribute, Object> idByDbAttribute = mapToDbAttributes(agEntity, idByAgAttribute);
+
+            if (isPrimaryKey(dbEntity, idByDbAttribute.keySet())) {
+                createSingleFromPk(objEntity, idByDbAttribute, o);
+            } else {
+                // need to make an additional check that the AgId is unique
+                checkExisting(objectContext, agEntity, idByDbAttribute, idByAgAttribute);
+                createSingleFromIdValues(objEntity, idByDbAttribute, idByAgAttribute, o);
+            }
         }
+
+        mergeChanges(update, o, relator);
 
         relator.relateToParent(o);
     }
 
-    protected <T extends DataObject> void update(ObjectRelator relator, T o, Collection<EntityUpdate<T>> updates) {
-        for (EntityUpdate<T> u : updates) {
-            mergeChanges(u, o, relator);
-        }
-
+    protected <T extends DataObject> void update(ObjectRelator relator, T o, EntityUpdate<T> update) {
+        mergeChanges(update, o, relator);
         relator.relateToParent(o);
     }
 

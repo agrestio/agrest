@@ -8,9 +8,7 @@ import org.apache.cayenne.DataObject;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 /**
  * @since 4.8
@@ -20,24 +18,19 @@ public class CayenneMapCreateOrUpdateStage extends CayenneMapUpdateStage {
     @Override
     protected <T extends DataObject> void collectCreateOps(
             UpdateContext<T> context,
-            Map<Object, Collection<EntityUpdate<T>>> updatesByKey) {
+            UpdateMap<T> updateMap) {
 
-        Collection<EntityUpdate<T>> noKeyCreate = updatesByKey.remove(null);
+        List<EntityUpdate<T>> noKeyCreate = updateMap.getNoId();
+        Collection<EntityUpdate<T>> withKeyCreate = updateMap.getWithId();
 
-        // if "null" key - multiple create ops for key - one for each EntityUpdate
-        // if explicit key - a single create per key with multiple EntityUpdates
-        int size = noKeyCreate != null ? noKeyCreate.size() + updatesByKey.size() : updatesByKey.size();
+        List<ChangeOperation<T>> createOps = new ArrayList<>(noKeyCreate.size() + withKeyCreate.size());
 
-        List<ChangeOperation<T>> createOps = new ArrayList<>(size);
-
-        if (noKeyCreate != null) {
-            for (EntityUpdate<T> u : noKeyCreate) {
-                createOps.add(new ChangeOperation<>(ChangeOperationType.CREATE, null, Collections.singletonList(u)));
-            }
+        for (EntityUpdate<T> u : noKeyCreate) {
+            createOps.add(new ChangeOperation<>(ChangeOperationType.CREATE, null, u));
         }
 
-        for (Map.Entry<Object, Collection<EntityUpdate<T>>> e : updatesByKey.entrySet()) {
-            createOps.add(new ChangeOperation<>(ChangeOperationType.CREATE, null, e.getValue()));
+        for (EntityUpdate<T> u : withKeyCreate) {
+            createOps.add(new ChangeOperation<>(ChangeOperationType.CREATE, null, u));
         }
 
         context.setChangeOperations(ChangeOperationType.CREATE, createOps);
