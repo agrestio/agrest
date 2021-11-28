@@ -25,9 +25,9 @@ public class CayenneCreateOrUpdateStage extends CayenneUpdateStage {
     protected <T extends DataObject> void afterUpdatesMerge(
             UpdateContext<T> context,
             ObjectRelator relator,
-            Map<Object, Collection<EntityUpdate<T>>> keyMap) {
+            Map<Object, Collection<EntityUpdate<T>>> updatesByKey) {
 
-        for (Collection<EntityUpdate<T>> updates : keyMap.values()) {
+        for (Collection<EntityUpdate<T>> updates : updatesByKey.values()) {
             for (EntityUpdate<T> u : updates) {
                 createSingle(context, relator, u);
             }

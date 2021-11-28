@@ -76,14 +76,16 @@ public class CayenneUpdateStage extends CayenneMergeChangesStage {
             ObjectRelator relator,
             Map<Object, Collection<EntityUpdate<T>>> updatesByKey) {
 
+        // "update" request must be idempotent
+        if (updatesByKey.containsKey(null)) {
+            throw AgException.badRequest("Request is not idempotent.");
+        }
+
         if (!updatesByKey.isEmpty()) {
-            Object firstKey = updatesByKey.keySet().iterator().next();
-
-            if (firstKey == null) {
-                throw AgException.badRequest("Can't update. No id for object");
-            }
-
-            throw AgException.notFound("No object for ID '%s' and entity '%s'", firstKey, context.getEntity().getName());
+            throw AgException.notFound(
+                    "No object for ID '%s' and entity '%s'",
+                    updatesByKey.keySet().iterator().next(),
+                    context.getEntity().getName());
         }
     }
 
