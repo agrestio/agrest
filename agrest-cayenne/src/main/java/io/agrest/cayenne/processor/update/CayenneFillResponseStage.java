@@ -37,14 +37,10 @@ public abstract class CayenneFillResponseStage implements Processor<UpdateContex
 
         context.setStatus(getHttpStatus(context));
 
-        // response objects are attached to EntityUpdate instances ... if
-        // 'includeData' is true create a list of unique updated objects in the
-        // order corresponding to their initial appearance in the update.
-        // We do not have to guarantee the order of objects in response (and
-        // only Sencha seems to care - see #46), but there's not much overhead
-        // involved, so we are doing it for all clients, not just Sencha
-
         if (context.isIncludingDataInResponse()) {
+
+            // Updated objects are attached to EntityUpdate instances ... Create a list of unique updated
+            // objects in the order corresponding to their initial appearance in the updates collection.
 
             // if there are dupes, the list size will be smaller... sizing it pessimistically
             List<T> objects = new ArrayList<>(context.getUpdates().size());

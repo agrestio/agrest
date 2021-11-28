@@ -6,6 +6,9 @@ import java.util.Collection;
 import java.util.Objects;
 
 /**
+ * Per object create, update or delete operation. A list of operations by Agrest during the
+ * {@link io.agrest.UpdateStage#MAP_CHANGES} stage and is available from {@link UpdateContext}.
+ *
  * @since 4.8
  */
 public class UpdateOperation<T> {
