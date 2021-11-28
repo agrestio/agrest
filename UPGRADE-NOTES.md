@@ -1,8 +1,16 @@
+## Upgrading to 4.8
+
+### Bulk updates may return "201" status where previously they returned "200" [#503](https://github.com/agrestio/agrest/issues/503)
+
+Now that we have more precise data about operation types on update, Agrest would return status 201 instead of 200 for 
+bulk create operations (previously it would only return 201 for single-object create ops). Client code must be aware of 
+this and act accordingly. A mix of create and update operations would still return 200, as before.
+
 ## Upgrading to 4.7
 
 ### `@ClientReadable` and `@ClientWritable` annotations are removed in favor of per-attribute access controls [#491](https://github.com/agrestio/agrest/issues/491)
 
-As a part of an effort to unify constrain handling, `@ClientReadable` and `@ClientWritable` annotations have been 
+As a part of an effort to unify constraint handling, `@ClientReadable` and `@ClientWritable` annotations have been 
 removed, as a rather inelegant mechanism to reference class properties. Instead `@Ag*` annotations on getters 
 (`@AgId`, `@AgAttribute` and `@AgRelationship`) now provide "readable" and "writable" properties. By default all
 properties are both readable and writable. So you must review your code and replace `@ClientReadable` and 

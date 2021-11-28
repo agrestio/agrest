@@ -6,9 +6,9 @@ import io.agrest.ObjectMapper;
 import io.agrest.ResourceEntity;
 import io.agrest.cayenne.processor.CayenneProcessor;
 import io.agrest.cayenne.processor.CayenneUtil;
-import io.agrest.runtime.processor.update.UpdateContext;
 import io.agrest.runtime.processor.update.ChangeOperation;
 import io.agrest.runtime.processor.update.ChangeOperationType;
+import io.agrest.runtime.processor.update.UpdateContext;
 import org.apache.cayenne.DataObject;
 import org.apache.cayenne.exp.Expression;
 import org.apache.cayenne.map.EntityResolver;
@@ -26,34 +26,37 @@ import java.util.Map;
 public class CayenneMapIdempotentFullSyncStage extends CayenneMapIdempotentCreateOrUpdateStage {
 
     @Override
-    protected <T extends DataObject> List<ChangeOperation<T>> map(UpdateContext<T> context) {
+    protected <T extends DataObject> void collectUpdateDeleteOps(
+            UpdateContext<T> context, ObjectMapper<T> mapper,
+            Map<Object, Collection<EntityUpdate<T>>> updatesByKey) {
 
-        ObjectMapper<T> mapper = createObjectMapper(context);
+        List<T> existing = existingObjects(context, updatesByKey.keySet(), mapper);
+        if (existing.isEmpty()) {
+            return;
+        }
 
-        List<ChangeOperation<T>> ops = new ArrayList<>(context.getUpdates().size());
+        List<ChangeOperation<T>> updateOps = new ArrayList<>(existing.size());
+        List<ChangeOperation<T>> deleteOps = new ArrayList<>(existing.size());
 
-        Map<Object, Collection<EntityUpdate<T>>> updatesByKey = mutableUpdatesByKey(context, mapper);
-
-        List<T> allObjects = allObjects(context);
-
-        for (T o : allObjects) {
+        for (T o : existing) {
             Object key = mapper.keyForObject(o);
 
             Collection<EntityUpdate<T>> updates = updatesByKey.remove(key);
 
+            // a null can only mean some algorithm malfunction
             if (updates == null) {
-                ops.add(new ChangeOperation<>(ChangeOperationType.DELETE, o, Collections.emptyList()));
+                deleteOps.add(new ChangeOperation<>(ChangeOperationType.DELETE, o, Collections.emptyList()));
             } else {
-                ops.add(new ChangeOperation<>(ChangeOperationType.UPDATE, o, updates));
+                updateOps.add(new ChangeOperation<>(ChangeOperationType.UPDATE, o, updates));
             }
         }
 
-        processUnmapped(context, updatesByKey, ops);
-
-        return ops;
+        context.setChangeOperations(ChangeOperationType.UPDATE, updateOps);
+        context.setChangeOperations(ChangeOperationType.DELETE, deleteOps);
     }
 
-    <T extends DataObject> List<T> allObjects(UpdateContext<T> context) {
+    @Override
+    <T extends DataObject> List<T> existingObjects(UpdateContext<T> context, Collection<Object> keys, ObjectMapper<T> mapper) {
 
         buildQuery(context, context.getEntity(), null);
 

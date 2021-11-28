@@ -1,9 +1,9 @@
 package io.agrest.cayenne.processor.update;
 
 import io.agrest.EntityUpdate;
-import io.agrest.runtime.processor.update.UpdateContext;
 import io.agrest.runtime.processor.update.ChangeOperation;
 import io.agrest.runtime.processor.update.ChangeOperationType;
+import io.agrest.runtime.processor.update.UpdateContext;
 import org.apache.cayenne.DataObject;
 
 import java.util.ArrayList;
@@ -16,7 +16,7 @@ import java.util.List;
 public class CayenneMapCreateStage extends CayenneMapChangesStage {
 
     @Override
-    protected <T extends DataObject> List<ChangeOperation<T>> map(UpdateContext<T> context) {
+    protected <T extends DataObject> void map(UpdateContext<T> context) {
 
         List<ChangeOperation<T>> ops = new ArrayList<>();
         for (EntityUpdate<T> u : context.getUpdates()) {
@@ -27,6 +27,6 @@ public class CayenneMapCreateStage extends CayenneMapChangesStage {
             ops.add(new ChangeOperation<>(ChangeOperationType.CREATE, null, Collections.singletonList(u)));
         }
 
-        return ops;
+        context.setChangeOperations(ChangeOperationType.CREATE, ops);
     }
 }

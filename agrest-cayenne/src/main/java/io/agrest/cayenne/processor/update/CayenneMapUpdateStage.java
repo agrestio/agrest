@@ -12,9 +12,9 @@ import io.agrest.cayenne.processor.CayenneProcessor;
 import io.agrest.meta.AgAttribute;
 import io.agrest.meta.AgIdPart;
 import io.agrest.runtime.processor.update.ByIdObjectMapperFactory;
-import io.agrest.runtime.processor.update.UpdateContext;
 import io.agrest.runtime.processor.update.ChangeOperation;
 import io.agrest.runtime.processor.update.ChangeOperationType;
+import io.agrest.runtime.processor.update.UpdateContext;
 import org.apache.cayenne.DataObject;
 import org.apache.cayenne.exp.Expression;
 import org.apache.cayenne.exp.ExpressionFactory;
@@ -38,17 +38,27 @@ import java.util.Map;
  */
 public class CayenneMapUpdateStage extends CayenneMapChangesStage {
 
-    @Override
-    protected <T extends DataObject> List<ChangeOperation<T>> map(UpdateContext<T> context) {
-        ObjectMapper<T> mapper = createObjectMapper(context);
+    protected <T extends DataObject> void map(UpdateContext<T> context) {
 
-        List<ChangeOperation<T>> ops = new ArrayList<>(context.getUpdates().size());
+        ObjectMapper<T> mapper = createObjectMapper(context);
 
         Map<Object, Collection<EntityUpdate<T>>> updatesByKey = mutableUpdatesByKey(context, mapper);
 
-        // map updates to the existing objects
-        List<T> existing = existingObjects(context, updatesByKey.keySet(), mapper);
+        collectUpdateDeleteOps(context, mapper, updatesByKey);
+        collectCreateOps(context, updatesByKey);
+    }
 
+    protected <T extends DataObject> void collectUpdateDeleteOps(
+            UpdateContext<T> context,
+            ObjectMapper<T> mapper,
+            Map<Object, Collection<EntityUpdate<T>>> updatesByKey) {
+
+        List<T> existing = existingObjects(context, updatesByKey.keySet(), mapper);
+        if (existing.isEmpty()) {
+            return;
+        }
+
+        List<ChangeOperation<T>> updateOps = new ArrayList<>(existing.size());
         for (T o : existing) {
             Object key = mapper.keyForObject(o);
 
@@ -59,19 +69,15 @@ public class CayenneMapUpdateStage extends CayenneMapChangesStage {
                 throw AgException.internalServerError("Invalid key item: %s", key);
             }
 
-            ops.add(new ChangeOperation<>(ChangeOperationType.UPDATE, o, updates));
+            updateOps.add(new ChangeOperation<>(ChangeOperationType.UPDATE, o, updates));
         }
 
-        // check leftovers - those correspond to objects missing in the DB or objects with no keys
-        processUnmapped(context, updatesByKey, ops);
-
-        return ops;
+        context.setChangeOperations(ChangeOperationType.UPDATE, updateOps);
     }
 
-    protected <T extends DataObject> void processUnmapped(
+    protected <T extends DataObject> void collectCreateOps(
             UpdateContext<T> context,
-            Map<Object, Collection<EntityUpdate<T>>> updatesByKey,
-            List<ChangeOperation<T>> ops) {
+            Map<Object, Collection<EntityUpdate<T>>> updatesByKey) {
 
         if (!updatesByKey.isEmpty()) {
 
@@ -263,5 +269,4 @@ public class CayenneMapUpdateStage extends CayenneMapChangesStage {
                 ? relationship.getSourceEntity().translateToRelatedEntity(expression, relationship.getName())
                 : null;
     }
-
 }

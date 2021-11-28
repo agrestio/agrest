@@ -19,7 +19,6 @@ public class POST_AgRequestIT extends DbTest {
 
     @BQTestTool
     static final AgCayenneTester tester = tester(Resource.class)
-
             .entities(E3.class)
             .build();
 

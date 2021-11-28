@@ -273,7 +273,7 @@ public class PUT_IT extends DbTest {
                 .queryParam("exclude", "id")
                 .queryParam("include", E7.NAME.getName())
                 .put("[{\"id\":6,\"name\":\"yyy\"},{\"id\":4,\"name\":\"zzz\"}]")
-                .wasOk()
+                .wasCreated()
                 .bodyEquals(2,
                         "{\"name\":\"yyy\"}",
                         "{\"name\":\"zzz\"}");
@@ -296,7 +296,7 @@ public class PUT_IT extends DbTest {
                 .queryParam("include", "id", E7.E8.getName())
                 .queryParam("exclude", E7.NAME.getName())
                 .put("[{\"id\":6,\"name\":\"yyy\"},{\"id\":4,\"name\":\"zzz\"}]")
-                .wasOk()
+                .wasCreated()
                 .bodyEquals(2,
                         "{\"id\":6,\"e8\":null}",
                         "{\"id\":4,\"e8\":null}");
@@ -430,7 +430,7 @@ public class PUT_IT extends DbTest {
     public void testJson() {
 
         String e1 = "[{\"id\":5,\"json\":[1,2]},{\"id\":6,\"json\":{\"a\":1}},{\"id\":7,\"json\":5}]";
-        tester.target("/e28/").put(e1).wasOk();
+        tester.target("/e28/").put(e1).wasCreated();
         tester.e28().matcher().assertMatches(3);
         tester.e28().matcher().eq("id", 5).eq("json", "[1,2]").assertOneMatch();
         tester.e28().matcher().eq("id", 6).eq("json", "{\"a\":1}").assertOneMatch();

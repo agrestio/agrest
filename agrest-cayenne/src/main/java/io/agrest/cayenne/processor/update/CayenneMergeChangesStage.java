@@ -59,25 +59,21 @@ public class CayenneMergeChangesStage implements Processor<UpdateContext<?>> {
     }
 
     protected <T extends DataObject> void merge(UpdateContext<T> context) {
-        Map<ChangeOperationType, List<ChangeOperation<T>>> ops = context.getUpdateOperations();
+        Map<ChangeOperationType, List<ChangeOperation<T>>> ops = context.getChangeOperations();
         if (ops.isEmpty()) {
             return;
         }
 
         ObjectRelator relator = createRelator(context);
-
-        List<ChangeOperation<T>> createOps = ops.get(ChangeOperationType.CREATE);
-        for (ChangeOperation<T> op : createOps) {
+        for (ChangeOperation<T> op : ops.get(ChangeOperationType.CREATE)) {
             create(context, relator, op.getUpdates());
         }
 
-        List<ChangeOperation<T>> updateOps = ops.get(ChangeOperationType.UPDATE);
-        for (ChangeOperation<T> op : updateOps) {
+        for (ChangeOperation<T> op : ops.get(ChangeOperationType.UPDATE)) {
             update(relator, op.getObject(), op.getUpdates());
         }
 
-        List<ChangeOperation<T>> deleteOps = ops.get(ChangeOperationType.DELETE);
-        for (ChangeOperation<T> op : deleteOps) {
+        for (ChangeOperation<T> op : ops.get(ChangeOperationType.DELETE)) {
             delete(op.getObject());
         }
     }

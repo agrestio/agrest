@@ -19,6 +19,7 @@ import io.agrest.processor.BaseProcessingContext;
 import javax.ws.rs.core.UriInfo;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -46,10 +47,14 @@ public class UpdateContext<T> extends BaseProcessingContext<T> {
     private AgRequest mergedRequest;
     private AgRequest request;
     private Map<Class<?>, AgEntityOverlay<?>> entityOverlays;
-    private Map<ChangeOperationType, List<ChangeOperation<T>>> updateOperations;
+    private final Map<ChangeOperationType, List<ChangeOperation<T>>> changeOperations;
 
     public UpdateContext(Class<T> type) {
         super(type);
+        this.changeOperations = new EnumMap<>(ChangeOperationType.class);
+        changeOperations.put(ChangeOperationType.CREATE, Collections.emptyList());
+        changeOperations.put(ChangeOperationType.UPDATE, Collections.emptyList());
+        changeOperations.put(ChangeOperationType.DELETE, Collections.emptyList());
     }
 
     /**
@@ -305,14 +310,14 @@ public class UpdateContext<T> extends BaseProcessingContext<T> {
     /**
      * @since 4.8
      */
-    public Map<ChangeOperationType, List<ChangeOperation<T>>> getUpdateOperations() {
-        return updateOperations;
+    public Map<ChangeOperationType, List<ChangeOperation<T>>> getChangeOperations() {
+        return changeOperations;
     }
 
     /**
      * @since 4.8
      */
-    public void setUpdateOperations(Map<ChangeOperationType, List<ChangeOperation<T>>> updateOperations) {
-        this.updateOperations = updateOperations;
+    public void setChangeOperations(ChangeOperationType type, List<ChangeOperation<T>> ops) {
+        this.changeOperations.put(type, ops);
     }
 }

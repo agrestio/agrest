@@ -234,7 +234,8 @@ public class PUT_Related_IT extends DbTest {
         tester.target("/e12/12/e1213")
                 .queryParam("exclude", "id")
                 .put("[{\"e13\":15},{\"e13\":14}]")
-                .wasOk().bodyEquals(2, "{},{}");
+                .wasCreated()
+                .bodyEquals(2, "{},{}");
 
 
         tester.e12_13().matcher().assertMatches(2);
