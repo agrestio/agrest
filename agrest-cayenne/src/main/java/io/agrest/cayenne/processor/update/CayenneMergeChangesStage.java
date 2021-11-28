@@ -301,7 +301,6 @@ public class CayenneMergeChangesStage implements Processor<UpdateContext<?>> {
         }
 
         entityUpdate.setMergedTo(o);
-        entityUpdate.setCreatedNew(o.getPersistenceState() == PersistenceState.NEW);
     }
 
     private boolean allElementsNull(Collection<?> elements) {

@@ -30,6 +30,7 @@ public class CayenneCommitStage implements Processor<UpdateContext<?>> {
 
         // Store parent-child result list in ResourceEntity
         // TODO: Replace this with a dedicated child mapping stage..
+
         RootResourceEntity entity = context.getEntity();
         Map<String, NestedResourceEntity<?>> children = entity.getChildren();
         List rootResult = new ArrayList();
