@@ -44,7 +44,7 @@ public class PUT_ReadFilterIT extends DbTest {
     }
 
     @Test
-    public void testFilter_InStack() {
+    public void testInStack() {
 
         tester.e2().insertColumns("id_", "name")
                 .values(1, "a")
@@ -66,7 +66,7 @@ public class PUT_ReadFilterIT extends DbTest {
     }
 
     @Test
-    public void testFilter_InStack_Nested() {
+    public void testInStack_Nested() {
 
         tester.e2().insertColumns("id_", "name")
                 .values(1, "a")
@@ -88,8 +88,7 @@ public class PUT_ReadFilterIT extends DbTest {
     }
 
     @Test
-    public void testFilter_InStackAndRequest() {
-
+    public void testInStackAndRequest() {
 
         tester.e2().insertColumns("id_", "name")
                 .values(1, "a")

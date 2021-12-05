@@ -17,13 +17,13 @@ public class CayenneMapCreateStage extends CayenneMapChangesStage {
     @Override
     protected <T extends DataObject> void map(UpdateContext<T> context) {
 
-        List<ChangeOperation<T>> ops = new ArrayList<>();
+        List<ChangeOperation<T>> ops = new ArrayList<>(context.getUpdates().size());
         for (EntityUpdate<T> u : context.getUpdates()) {
 
             // TODO: when EntityUpdate contains id, there may be multiple updates for the same key
             //    that need to be merged in a single operation to avoid commit errors... I suppose for
             //    now the users must use "createOrUpdate" if that's  anticipated instead of "create"
-            ops.add(new ChangeOperation<>(ChangeOperationType.CREATE, null, u));
+            ops.add(new ChangeOperation<>(ChangeOperationType.CREATE, u.getEntity(), null, u));
         }
 
         context.setChangeOperations(ChangeOperationType.CREATE, ops);

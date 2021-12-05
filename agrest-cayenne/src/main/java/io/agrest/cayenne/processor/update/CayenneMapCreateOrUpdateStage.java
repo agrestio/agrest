@@ -26,11 +26,11 @@ public class CayenneMapCreateOrUpdateStage extends CayenneMapUpdateStage {
         List<ChangeOperation<T>> createOps = new ArrayList<>(noKeyCreate.size() + withKeyCreate.size());
 
         for (EntityUpdate<T> u : noKeyCreate) {
-            createOps.add(new ChangeOperation<>(ChangeOperationType.CREATE, null, u));
+            createOps.add(new ChangeOperation<>(ChangeOperationType.CREATE, u.getEntity(), null, u));
         }
 
         for (EntityUpdate<T> u : withKeyCreate) {
-            createOps.add(new ChangeOperation<>(ChangeOperationType.CREATE, null, u));
+            createOps.add(new ChangeOperation<>(ChangeOperationType.CREATE, u.getEntity(), null, u));
         }
 
         context.setChangeOperations(ChangeOperationType.CREATE, createOps);

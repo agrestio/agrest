@@ -68,7 +68,7 @@ public class CayenneMapUpdateStage extends CayenneMapChangesStage {
                 throw AgException.internalServerError("Invalid key item: %s", key);
             }
 
-            updateOps.add(new ChangeOperation<>(ChangeOperationType.UPDATE, o, update));
+            updateOps.add(new ChangeOperation<>(ChangeOperationType.UPDATE, update.getEntity(), o, update));
         }
 
         context.setChangeOperations(ChangeOperationType.UPDATE, updateOps);

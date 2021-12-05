@@ -58,12 +58,33 @@ public class AuthorizeChangesStage implements Processor<UpdateContext<?>> {
 
         for (ChangeOperation<T> op : ops) {
             if (!filter.test(op)) {
-                Map<String, Object> id = op.getUpdate().getId();
-                throw AgException.forbidden("%s operation on '%s' with id '%s' is forbidden",
+
+                Object id = idForErrorReport(op);
+
+                throw AgException.forbidden("%s of %s%s was blocked by authorization rules",
                         op.getType(),
-                        op.getUpdate().getEntity().getName(),
-                        id == null ? "<unknown>" : id.size() == 1 ? id.values().iterator().next() : id);
+                        op.getEntity().getName(),
+                        id == null ? "" : " with id of " + id);
             }
         }
+    }
+
+    static <T> Object idForErrorReport(ChangeOperation<T> op) {
+
+        // different operations provide different source
+
+        if (op.getUpdate() != null) {
+            Map<String, Object> updateId = op.getUpdate().getId();
+            if (updateId != null) {
+                return updateId.size() == 1 ? updateId.values().iterator().next() : updateId;
+            }
+        }
+
+        if (op.getObject() != null) {
+            Object id = op.getEntity().getIdReader().value(op.getObject());
+            return id instanceof Map && ((Map) id).size() == 1 ? ((Map) id).values().iterator().next() : id;
+        }
+
+        return null;
     }
 }

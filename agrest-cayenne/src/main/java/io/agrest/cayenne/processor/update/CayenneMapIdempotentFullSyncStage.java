@@ -25,7 +25,8 @@ public class CayenneMapIdempotentFullSyncStage extends CayenneMapIdempotentCreat
 
     @Override
     protected <T extends DataObject> void collectUpdateDeleteOps(
-            UpdateContext<T> context, ObjectMapper<T> mapper,
+            UpdateContext<T> context,
+            ObjectMapper<T> mapper,
             UpdateMap<T> updateMap) {
 
         List<T> existing = existingObjects(context, updateMap.getIds(), mapper);
@@ -39,12 +40,12 @@ public class CayenneMapIdempotentFullSyncStage extends CayenneMapIdempotentCreat
         for (T o : existing) {
             Object key = mapper.keyForObject(o);
 
-            EntityUpdate<T> updates = updateMap.remove(key);
+            EntityUpdate<T> update = updateMap.remove(key);
 
-            if (updates == null) {
-                deleteOps.add(new ChangeOperation<>(ChangeOperationType.DELETE, o, null));
+            if (update == null) {
+                deleteOps.add(new ChangeOperation<>(ChangeOperationType.DELETE, context.getEntity().getAgEntity(), o, null));
             } else {
-                updateOps.add(new ChangeOperation<>(ChangeOperationType.UPDATE, o, updates));
+                updateOps.add(new ChangeOperation<>(ChangeOperationType.UPDATE, update.getEntity(), o, update));
             }
         }
 

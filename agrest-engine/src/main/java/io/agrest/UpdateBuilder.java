@@ -1,7 +1,10 @@
 package io.agrest;
 
+import io.agrest.access.CreateAuthorizer;
+import io.agrest.access.DeleteAuthorizer;
 import io.agrest.access.PropertyFilter;
 import io.agrest.access.ReadFilter;
+import io.agrest.access.UpdateAuthorizer;
 import io.agrest.constraints.Constraint;
 import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgEntityOverlay;
@@ -117,6 +120,30 @@ public interface UpdateBuilder<T> {
      */
     default <A> UpdateBuilder<T> readableFilter(Class<A> entityType, ReadFilter<A> filter) {
         return entityOverlay(AgEntity.overlay(entityType).readFilter(filter));
+    }
+
+    /**
+     * @return this builder instance
+     * @since 4.8
+     */
+    default <A> UpdateBuilder<T> createAuthorizer(Class<A> entityType, CreateAuthorizer<A> authorizer) {
+        return entityOverlay(AgEntity.overlay(entityType).createAuthorizer(authorizer));
+    }
+
+    /**
+     * @return this builder instance
+     * @since 4.8
+     */
+    default <A> UpdateBuilder<T> updateAuthorizer(Class<A> entityType, UpdateAuthorizer<A> authorizer) {
+        return entityOverlay(AgEntity.overlay(entityType).updateAuthorizer(authorizer));
+    }
+
+    /**
+     * @return this builder instance
+     * @since 4.8
+     */
+    default <A> UpdateBuilder<T> deleteAuthorizer(Class<A> entityType, DeleteAuthorizer<A> authorizer) {
+        return entityOverlay(AgEntity.overlay(entityType).deleteAuthorizer(authorizer));
     }
 
     /**
