@@ -19,14 +19,19 @@ public enum UpdateStage {
     APPLY_SERVER_PARAMS,
 
     /**
+     * A stage when client changes are converted to {@link io.agrest.runtime.processor.update.ChangeOperation} objects.
+     *
      * @since 4.8
      */
     MAP_CHANGES,
 
     /**
+     * A stage when authorization rules are applied to the {@link io.agrest.runtime.processor.update.ChangeOperation}
+     * objects. If at least one rule is not satisfied, the update chain is failed with "403 Forbidden" status.
+     *
      * @since 4.8
      */
-    FILTER_CHANGES,
+    AUTHORIZE_CHANGES,
 
     MERGE_CHANGES,
 

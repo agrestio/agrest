@@ -64,6 +64,7 @@ import io.agrest.runtime.processor.select.ParseRequestStage;
 import io.agrest.runtime.processor.select.SelectProcessorFactory;
 import io.agrest.runtime.processor.select.SelectProcessorFactoryProvider;
 import io.agrest.runtime.processor.select.StartStage;
+import io.agrest.runtime.processor.update.AuthorizeChangesStage;
 import io.agrest.runtime.protocol.EntityUpdateParser;
 import io.agrest.runtime.protocol.ExcludeParser;
 import io.agrest.runtime.protocol.ExpParser;
@@ -427,8 +428,8 @@ public class AgBuilder {
                     .to(io.agrest.runtime.processor.update.ParseRequestStage.class);
             binder.bind(io.agrest.runtime.processor.update.CreateResourceEntityStage.class)
                     .to(io.agrest.runtime.processor.update.CreateResourceEntityStage.class);
-            binder.bind(io.agrest.runtime.processor.update.FilterChangesStage.class)
-                    .to(io.agrest.runtime.processor.update.FilterChangesStage.class);
+            binder.bind(AuthorizeChangesStage.class)
+                    .to(AuthorizeChangesStage.class);
 
             // metadata stages
             binder.bind(MetadataProcessorFactory.class).toProvider(MetadataProcessorFactoryProvider.class);
