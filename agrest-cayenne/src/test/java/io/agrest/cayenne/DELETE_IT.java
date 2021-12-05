@@ -158,19 +158,19 @@ public class DELETE_IT extends DbTest {
         @DELETE
         @Path("e2/{e2_id}/e3s")
         public SimpleResponse deleteByParent(@PathParam("e2_id") int e2Id) {
-            return Ag.delete(E3.class, config).parent(E2.class, e2Id, E2.E3S.getName()).delete();
+            return Ag.delete(E3.class, config).parent(E2.class, e2Id, E2.E3S.getName()).sync();
         }
 
         @DELETE
         @Path("e4")
         public SimpleResponse deleteAll() {
-            return Ag.delete(E4.class, config).delete();
+            return Ag.delete(E4.class, config).sync();
         }
 
         @DELETE
         @Path("e4/{id}")
         public SimpleResponse deleteById(@PathParam("id") int id) {
-            return Ag.service(config).delete(E4.class).id(id).delete();
+            return Ag.service(config).delete(E4.class).id(id).sync();
         }
 
         @DELETE
@@ -184,13 +184,13 @@ public class DELETE_IT extends DbTest {
             ids.put(E17.ID1_PK_COLUMN, id1);
             ids.put(E17.ID2_PK_COLUMN, id2);
 
-            return Ag.service(config).delete(E17.class).id(ids).delete();
+            return Ag.service(config).delete(E17.class).id(ids).sync();
         }
 
         @DELETE
         @Path("e24/{id}")
         public SimpleResponse deleteE24ById(@PathParam("id") int id) {
-            return Ag.delete(E24.class, config).id(id).delete();
+            return Ag.delete(E24.class, config).id(id).sync();
         }
     }
 }

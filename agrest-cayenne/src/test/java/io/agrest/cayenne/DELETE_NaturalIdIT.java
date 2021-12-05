@@ -71,13 +71,13 @@ public class DELETE_NaturalIdIT extends DbTest {
             Map<String, Object> id = new HashMap<>(3);
             id.put("age", age);
             id.put("name", name);
-            return Ag.delete(E21.class, config).id(id).delete();
+            return Ag.delete(E21.class, config).id(id).sync();
         }
 
         @DELETE
         @Path("single-id/{id}")
         public SimpleResponse deleteE20ById(@PathParam("id") String name, @Context UriInfo uriInfo) {
-            return Ag.delete(E20.class, config).id(name).delete();
+            return Ag.delete(E20.class, config).id(name).sync();
         }
     }
 }

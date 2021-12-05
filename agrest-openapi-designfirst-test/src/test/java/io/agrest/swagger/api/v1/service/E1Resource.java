@@ -5,7 +5,6 @@ import io.agrest.cayenne.cayenne.main.E1;
 import io.agrest.AgRequest;
 import io.agrest.DataResponse;
 
-import java.util.*;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
 
@@ -24,7 +23,7 @@ public class E1Resource {
 
         return Ag.delete(E1.class, config)
                  .id(id)
-                 .delete();
+                 .sync();
     }
 
     @GET

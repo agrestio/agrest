@@ -38,7 +38,7 @@ public class E20Resource {
 
         return Ag.delete(E20.class, config)
                  .id(name)
-                 .delete();
+                 .sync();
     }
 
     @GET

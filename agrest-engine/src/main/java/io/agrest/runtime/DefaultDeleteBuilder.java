@@ -90,7 +90,7 @@ public class DefaultDeleteBuilder<T> implements DeleteBuilder<T> {
     }
 
     @Override
-    public SimpleResponse delete() {
+    public SimpleResponse sync() {
         processorFactory.createProcessor(processors).execute(context);
         return context.createSimpleResponse();
     }

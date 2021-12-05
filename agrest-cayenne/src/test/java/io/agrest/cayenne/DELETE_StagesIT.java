@@ -82,7 +82,7 @@ public class DELETE_StagesIT extends DbTest {
                     .stage(DeleteStage.MAP_CHANGES, this::onMapChanges)
                     .stage(DeleteStage.AUTHORIZE_CHANGES, this::onAuthorizeChanges)
                     .stage(DeleteStage.DELETE_IN_DATA_STORE, this::onDeleteInDataStore)
-                    .delete();
+                    .sync();
         }
 
         private void onStart(DeleteContext<E3> context) {

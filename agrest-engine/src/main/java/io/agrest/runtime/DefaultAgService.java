@@ -13,7 +13,6 @@ import io.agrest.runtime.processor.update.UpdateContext;
 import io.agrest.runtime.processor.update.UpdateProcessorFactoryFactory;
 import org.apache.cayenne.di.Inject;
 
-import javax.ws.rs.core.UriInfo;
 import java.util.Collection;
 
 /**
@@ -86,7 +85,7 @@ public class DefaultAgService implements IAgService {
     public <T> SimpleResponse delete(Class<T> root, Collection<EntityDelete<T>> deleted) {
         DeleteBuilder<T> builder = delete(root);
         deleted.forEach(entityDelete -> builder.id(entityDelete.getId()));
-        return builder.delete();
+        return builder.sync();
     }
 
     /**

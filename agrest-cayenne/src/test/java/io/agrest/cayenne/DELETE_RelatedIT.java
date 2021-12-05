@@ -130,7 +130,7 @@ public class DELETE_RelatedIT extends DbTest {
         @DELETE
         @Path("{id}")
         public SimpleResponse deleteE2ById(@PathParam("id") int id, @Context UriInfo uriInfo) {
-            return Ag.delete(E2.class, config).id(id).delete();
+            return Ag.delete(E2.class, config).id(id).sync();
         }
 
         @DELETE
@@ -175,7 +175,7 @@ public class DELETE_RelatedIT extends DbTest {
         @DELETE
         @Path("{id}/e7s")
         public SimpleResponse deleteE7s(@PathParam("id") int id, String entityData) {
-            return Ag.delete(E7.class, config).parent(E8.class, id, E8.E7S.getName()).delete();
+            return Ag.delete(E7.class, config).parent(E8.class, id, E8.E7S.getName()).sync();
         }
     }
 

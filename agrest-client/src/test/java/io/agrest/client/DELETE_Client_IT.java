@@ -82,7 +82,7 @@ public class DELETE_Client_IT extends ClientDbTest {
         @DELETE
         @Path("{id}")
         public SimpleResponse deleteE2ById(@PathParam("id") int id, @Context UriInfo uriInfo) {
-            return Ag.delete(E2.class, config).id(id).delete();
+            return Ag.delete(E2.class, config).id(id).sync();
         }
     }
 }

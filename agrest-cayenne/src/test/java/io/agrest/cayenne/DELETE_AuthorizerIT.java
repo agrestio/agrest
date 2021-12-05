@@ -100,7 +100,7 @@ public class DELETE_AuthorizerIT extends DbTest {
             return Ag.service(config)
                     .delete(E2.class)
                     .id(id)
-                    .delete();
+                    .sync();
         }
 
         @DELETE
@@ -113,7 +113,7 @@ public class DELETE_AuthorizerIT extends DbTest {
                     .delete(E2.class)
                     .id(id)
                     .authorizer(o -> !name.equals(o.getName()))
-                    .delete();
+                    .sync();
         }
     }
 }

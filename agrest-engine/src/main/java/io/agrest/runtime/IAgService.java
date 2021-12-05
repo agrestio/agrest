@@ -45,7 +45,7 @@ public interface IAgService {
      * @deprecated since 4.1 use "delete(type).id(id).delete()"
      */
     default SimpleResponse delete(Class<?> type, Object id) {
-        return delete(type).id(id).delete();
+        return delete(type).id(id).sync();
     }
 
     /**
@@ -53,7 +53,7 @@ public interface IAgService {
      */
     @Deprecated
     default SimpleResponse delete(Class<?> type, Map<String, Object> ids) {
-        return delete(type).id(ids).delete();
+        return delete(type).id(ids).sync();
     }
 
     /**
