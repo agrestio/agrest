@@ -5,6 +5,7 @@
 * #497 Agrest fails to build on Java 11
 * #498 Made JAX-RS dependency "provided"
 * #501 Replace EntityEncoderFilter with per-entity object filter
+* #502 Per-entity CRUD filters and authorizers for UpdateBuilder
 * #503 New update stage - MAP_CHANGES
 * #504 Update processes result twice
 
