@@ -32,7 +32,7 @@ public class DeleteContext<T> extends BaseProcessingContext<T> {
     }
 
     public boolean isById() {
-        return ids != null;
+        return ids != null && !ids.isEmpty();
     }
 
     public Collection<AgObjectId> getIds() {

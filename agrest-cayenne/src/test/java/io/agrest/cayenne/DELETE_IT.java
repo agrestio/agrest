@@ -3,7 +3,9 @@ package io.agrest.cayenne;
 import io.agrest.Ag;
 import io.agrest.SimpleResponse;
 import io.agrest.cayenne.cayenne.main.E17;
+import io.agrest.cayenne.cayenne.main.E2;
 import io.agrest.cayenne.cayenne.main.E24;
+import io.agrest.cayenne.cayenne.main.E3;
 import io.agrest.cayenne.cayenne.main.E4;
 import io.agrest.cayenne.unit.AgCayenneTester;
 import io.agrest.cayenne.unit.DbTest;
@@ -24,11 +26,36 @@ public class DELETE_IT extends DbTest {
 
     @BQTestTool
     static final AgCayenneTester tester = tester(Resource.class)
-            .entities(E4.class, E17.class, E24.class)
+            .entities(E2.class, E3.class, E4.class, E17.class, E24.class)
             .build();
 
     @Test
-    public void test() {
+    public void testDeleteAll() {
+
+        tester.e4().insertColumns("id", "c_varchar")
+                .values(1, "xxx")
+                .values(35, "zzz")
+                .values(8, "yyy").exec();
+
+        tester.target("/e4")
+                .delete()
+                .wasOk()
+                .bodyEquals("{\"success\":true}");
+
+        tester.e4().matcher().assertNoMatches();
+    }
+
+    @Test
+    public void testDeleteAll_Empty() {
+
+        tester.target("/e4")
+                .delete()
+                .wasOk()
+                .bodyEquals("{\"success\":true}");
+    }
+
+    @Test
+    public void testDeleteById() {
 
         tester.e4().insertColumns("id", "c_varchar")
                 .values(1, "xxx")
@@ -43,7 +70,7 @@ public class DELETE_IT extends DbTest {
     }
 
     @Test
-    public void testCompoundId() {
+    public void testDeleteById_CompoundId() {
 
         tester.e17().insertColumns("id1", "id2", "name").values(1, 1, "aaa").values(2, 2, "bbb").exec();
 
@@ -57,7 +84,7 @@ public class DELETE_IT extends DbTest {
     }
 
     @Test
-    public void testBadId() {
+    public void testDeleteById_BadId() {
 
         tester.e4().insertColumns("id", "c_varchar").values(1, "xxx").exec();
 
@@ -70,7 +97,7 @@ public class DELETE_IT extends DbTest {
     }
 
     @Test
-    public void testTwice() {
+    public void testDeleteTwice() {
 
         tester.e4().insertColumns("id", "c_varchar")
                 .values(1, "xxx")
@@ -88,7 +115,7 @@ public class DELETE_IT extends DbTest {
     }
 
     @Test
-    public void testUpperCasePK() {
+    public void testDelete_UpperCasePK() {
 
         tester.e24().insertColumns("TYPE", "name").values(1, "xyz").exec();
 
@@ -98,11 +125,47 @@ public class DELETE_IT extends DbTest {
                 .bodyEquals("{\"success\":true}");
     }
 
+    @Test
+    public void testDelete_ByParentId() {
+
+        tester.e2().insertColumns("id_")
+                .values(1)
+                .values(2)
+                .values(3).exec();
+
+        tester.e3().insertColumns("id_", "e2_id")
+                .values(1, 1)
+                .values(2, 2)
+                .values(3, 2)
+                .values(4, 3).exec();
+
+        tester.target("/e2/2/e3s")
+                .delete()
+                .wasOk()
+                .bodyEquals("{\"success\":true}");
+
+        tester.e3().matcher().assertMatches(2);
+        tester.e3().matcher().eq("id_", 1).assertOneMatch();
+        tester.e3().matcher().eq("id_", 4).assertOneMatch();
+    }
+
     @Path("")
     public static class Resource {
 
         @Context
         private Configuration config;
+
+        @DELETE
+        @Path("e2/{e2_id}/e3s")
+        public SimpleResponse deleteByParent(@PathParam("e2_id") int e2Id) {
+            return Ag.delete(E3.class, config).parent(E2.class, e2Id, E2.E3S.getName()).delete();
+        }
+
+        @DELETE
+        @Path("e4")
+        public SimpleResponse deleteAll() {
+            return Ag.delete(E4.class, config).delete();
+        }
 
         @DELETE
         @Path("e4/{id}")
