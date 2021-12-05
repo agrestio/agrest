@@ -1,7 +1,7 @@
 package io.agrest;
 
 import io.agrest.constraints.Constraint;
-import io.agrest.filter.PropertyFilter;
+import io.agrest.access.PropertyFilter;
 import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgEntityOverlay;
 import io.agrest.processor.Processor;

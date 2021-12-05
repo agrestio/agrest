@@ -1,7 +1,7 @@
 package io.agrest.encoder;
 
 import com.fasterxml.jackson.core.JsonGenerator;
-import io.agrest.filter.ReadFilter;
+import io.agrest.access.ReadFilter;
 
 import java.io.IOException;
 import java.util.List;

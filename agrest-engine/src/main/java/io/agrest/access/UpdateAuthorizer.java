@@ -1,16 +1,16 @@
-package io.agrest.filter;
+package io.agrest.access;
 
 import io.agrest.EntityUpdate;
 
 /**
- * Per-entity filter used to implement object UPDATE access policies.
+ * Per-entity predicate-like object used to implement object UPDATE access policies.
  *
  * @since 4.8
  */
-public interface UpdateFilter<T> {
+public interface UpdateAuthorizer<T> {
 
-    static <T> UpdateFilter<T> allowsAllFilter() {
-        return AllowAllUpdateFilter.instance;
+    static <T> UpdateAuthorizer<T> allowsAllFilter() {
+        return AllowAllUpdateAuthorizer.instance;
     }
 
     boolean isAllowed(T object, EntityUpdate<T> update);
@@ -22,7 +22,7 @@ public interface UpdateFilter<T> {
         return false;
     }
 
-    default UpdateFilter<T> andThen(UpdateFilter<T> another) {
+    default UpdateAuthorizer<T> andThen(UpdateAuthorizer<T> another) {
         if (another.allowsAll()) {
             return this;
         }

@@ -1,4 +1,4 @@
-package io.agrest.filter;
+package io.agrest.access;
 
 import java.util.Objects;
 

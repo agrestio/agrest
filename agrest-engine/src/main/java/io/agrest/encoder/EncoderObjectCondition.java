@@ -1,6 +1,6 @@
 package io.agrest.encoder;
 
-import io.agrest.filter.ReadFilter;
+import io.agrest.access.ReadFilter;
 
 /**
  * @param <T>

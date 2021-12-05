@@ -1,4 +1,4 @@
-package io.agrest.filter;
+package io.agrest.access;
 
 /**
  * @since 4.8

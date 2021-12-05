@@ -2,7 +2,7 @@ package io.agrest.cayenne;
 
 import io.agrest.Ag;
 import io.agrest.DataResponse;
-import io.agrest.filter.PropertyFilteringRulesBuilder;
+import io.agrest.access.PropertyFilteringRulesBuilder;
 import io.agrest.cayenne.cayenne.main.E2;
 import io.agrest.cayenne.cayenne.main.E3;
 import io.agrest.cayenne.cayenne.main.E4;

@@ -1,5 +1,6 @@
-package io.agrest.filter;
+package io.agrest.access;
 
+import io.agrest.access.PropertyFilteringRulesBuilder;
 import io.agrest.meta.AgEntity;
 import io.agrest.pojo.model.P11;
 import io.agrest.unit.AgPojoTester;

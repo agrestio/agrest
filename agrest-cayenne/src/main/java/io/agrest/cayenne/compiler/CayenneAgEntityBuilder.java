@@ -1,10 +1,10 @@
 package io.agrest.cayenne.compiler;
 
 import io.agrest.compiler.AnnotationsAgEntityBuilder;
-import io.agrest.filter.CreateFilter;
-import io.agrest.filter.DeleteFilter;
-import io.agrest.filter.ReadFilter;
-import io.agrest.filter.UpdateFilter;
+import io.agrest.access.CreateAuthorizer;
+import io.agrest.access.DeleteAuthorizer;
+import io.agrest.access.ReadFilter;
+import io.agrest.access.UpdateAuthorizer;
 import io.agrest.meta.AgAttribute;
 import io.agrest.meta.AgDataMap;
 import io.agrest.meta.AgEntity;
@@ -207,9 +207,9 @@ public class CayenneAgEntityBuilder<T> {
                 relationships,
                 rootDataResolver != null ? rootDataResolver : ThrowingRootDataResolver.getInstance(),
                 ReadFilter.allowsAllFilter(),
-                CreateFilter.allowsAllFilter(),
-                UpdateFilter.allowsAllFilter(),
-                DeleteFilter.allowsAllFilter());
+                CreateAuthorizer.allowsAllFilter(),
+                UpdateAuthorizer.allowsAllFilter(),
+                DeleteAuthorizer.allowsAllFilter());
     }
 
     /**

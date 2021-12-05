@@ -3,7 +3,7 @@ package io.agrest;
 import io.agrest.base.protocol.Exp;
 import io.agrest.base.protocol.Sort;
 import io.agrest.encoder.EntityEncoderFilter;
-import io.agrest.filter.ReadFilter;
+import io.agrest.access.ReadFilter;
 import io.agrest.meta.AgAttribute;
 import io.agrest.meta.AgEntity;
 

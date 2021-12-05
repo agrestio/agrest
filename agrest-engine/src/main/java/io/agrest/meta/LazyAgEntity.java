@@ -1,10 +1,10 @@
 
 package io.agrest.meta;
 
-import io.agrest.filter.CreateFilter;
-import io.agrest.filter.DeleteFilter;
-import io.agrest.filter.ReadFilter;
-import io.agrest.filter.UpdateFilter;
+import io.agrest.access.CreateAuthorizer;
+import io.agrest.access.DeleteAuthorizer;
+import io.agrest.access.ReadFilter;
+import io.agrest.access.UpdateAuthorizer;
 import io.agrest.resolver.RootDataResolver;
 
 import java.util.Collection;
@@ -73,17 +73,17 @@ public class LazyAgEntity<T> extends BaseLazyAgEntity<T, AgEntity<T>> implements
     }
 
     @Override
-    public CreateFilter<T> getCreateFilter() {
-        return getDelegate().getCreateFilter();
+    public CreateAuthorizer<T> getCreateAuthorizer() {
+        return getDelegate().getCreateAuthorizer();
     }
 
     @Override
-    public UpdateFilter<T> getUpdateFilter() {
-        return getDelegate().getUpdateFilter();
+    public UpdateAuthorizer<T> getUpdateAuthorizer() {
+        return getDelegate().getUpdateAuthorizer();
     }
 
     @Override
-    public DeleteFilter<T> getDeleteFilter() {
-        return getDelegate().getDeleteFilter();
+    public DeleteAuthorizer<T> getDeleteAuthorizer() {
+        return getDelegate().getDeleteAuthorizer();
     }
 }

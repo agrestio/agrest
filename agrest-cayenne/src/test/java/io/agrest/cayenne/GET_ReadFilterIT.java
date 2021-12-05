@@ -7,7 +7,7 @@ import io.agrest.cayenne.cayenne.main.E3;
 import io.agrest.cayenne.cayenne.main.E4;
 import io.agrest.cayenne.unit.AgCayenneTester;
 import io.agrest.cayenne.unit.DbTest;
-import io.agrest.filter.ReadFilter;
+import io.agrest.access.ReadFilter;
 import io.agrest.meta.AgEntity;
 import io.bootique.junit5.BQTestTool;
 import org.apache.cayenne.Cayenne;

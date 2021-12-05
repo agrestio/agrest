@@ -1,7 +1,7 @@
 package io.agrest.constraints;
 
 import io.agrest.base.protocol.Exp;
-import io.agrest.filter.PropertyFilter;
+import io.agrest.access.PropertyFilter;
 import io.agrest.meta.AgAttribute;
 import io.agrest.meta.AgEntity;
 

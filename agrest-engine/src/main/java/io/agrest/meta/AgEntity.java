@@ -1,9 +1,9 @@
 package io.agrest.meta;
 
-import io.agrest.filter.CreateFilter;
-import io.agrest.filter.DeleteFilter;
-import io.agrest.filter.ReadFilter;
-import io.agrest.filter.UpdateFilter;
+import io.agrest.access.CreateAuthorizer;
+import io.agrest.access.DeleteAuthorizer;
+import io.agrest.access.ReadFilter;
+import io.agrest.access.UpdateAuthorizer;
 import io.agrest.property.PropertyReader;
 import io.agrest.resolver.RootDataResolver;
 
@@ -86,23 +86,23 @@ public interface AgEntity<T> {
     ReadFilter<T> getReadFilter();
 
     /**
-     * Returns an in-memory filter that will be applied to each individual object CREATE operation.
+     * Returns a predicate-like object applied to individual object CREATE operations.
      *
      * @since 4.8
      */
-    CreateFilter<T> getCreateFilter();
+    CreateAuthorizer<T> getCreateAuthorizer();
 
     /**
-     * Returns an in-memory filter that will be applied to each individual object UPDATE operation.
+     * Returns a predicate-like object applied to individual object UPDATE operations.
      *
      * @since 4.8
      */
-    UpdateFilter<T> getUpdateFilter();
+    UpdateAuthorizer<T> getUpdateAuthorizer();
 
     /**
-     * Returns an in-memory filter that will be applied to each individual object DELETE operation.
+     * Returns a predicate-like object applied to individual object DELETE operations.
      *
      * @since 4.8
      */
-    DeleteFilter<T> getDeleteFilter();
+    DeleteAuthorizer<T> getDeleteAuthorizer();
 }

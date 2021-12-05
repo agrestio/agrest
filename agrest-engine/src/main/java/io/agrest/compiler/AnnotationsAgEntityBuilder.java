@@ -5,10 +5,10 @@ import io.agrest.annotation.AgId;
 import io.agrest.annotation.AgRelationship;
 import io.agrest.base.reflect.BeanAnalyzer;
 import io.agrest.base.reflect.PropertyGetter;
-import io.agrest.filter.CreateFilter;
-import io.agrest.filter.DeleteFilter;
-import io.agrest.filter.ReadFilter;
-import io.agrest.filter.UpdateFilter;
+import io.agrest.access.CreateAuthorizer;
+import io.agrest.access.DeleteAuthorizer;
+import io.agrest.access.ReadFilter;
+import io.agrest.access.UpdateAuthorizer;
 import io.agrest.meta.AgDataMap;
 import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgEntityOverlay;
@@ -222,9 +222,9 @@ public class AnnotationsAgEntityBuilder<T> {
                 relationships,
                 rootDataResolver != null ? rootDataResolver : ThrowingRootDataResolver.getInstance(),
                 ReadFilter.allowsAllFilter(),
-                CreateFilter.allowsAllFilter(),
-                UpdateFilter.allowsAllFilter(),
-                DeleteFilter.allowsAllFilter());
+                CreateAuthorizer.allowsAllFilter(),
+                UpdateAuthorizer.allowsAllFilter(),
+                DeleteAuthorizer.allowsAllFilter());
     }
 
     /**

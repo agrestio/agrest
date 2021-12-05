@@ -1,16 +1,16 @@
-package io.agrest.filter;
+package io.agrest.access;
 
 import io.agrest.EntityUpdate;
 
 /**
- * Per-entity filter used to implement object CREATE access policies.
+ * Per-entity predicate-like object used to implement object CREATE access policies.
  *
  * @since 4.8
  */
-public interface CreateFilter<T> {
+public interface CreateAuthorizer<T> {
 
-    static <T> CreateFilter<T> allowsAllFilter() {
-        return AllowAllCreateFilter.instance;
+    static <T> CreateAuthorizer<T> allowsAllFilter() {
+        return AllowAllCreateAuthorizer.instance;
     }
 
     boolean isAllowed(EntityUpdate<T> update);
@@ -22,7 +22,7 @@ public interface CreateFilter<T> {
         return false;
     }
 
-    default CreateFilter<T> andThen(CreateFilter<T> another) {
+    default CreateAuthorizer<T> andThen(CreateAuthorizer<T> another) {
         if (another.allowsAll()) {
             return this;
         }

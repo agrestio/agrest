@@ -1,4 +1,4 @@
-package io.agrest.filter;
+package io.agrest.access;
 
 /**
  * Per-entity filter used to implement object READ access policies.

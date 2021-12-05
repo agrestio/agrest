@@ -1,9 +1,9 @@
 package io.agrest.meta;
 
-import io.agrest.filter.CreateFilter;
-import io.agrest.filter.DeleteFilter;
-import io.agrest.filter.ReadFilter;
-import io.agrest.filter.UpdateFilter;
+import io.agrest.access.CreateAuthorizer;
+import io.agrest.access.DeleteAuthorizer;
+import io.agrest.access.ReadFilter;
+import io.agrest.access.UpdateAuthorizer;
 import io.agrest.resolver.RootDataResolver;
 
 import java.util.Collection;
@@ -18,9 +18,9 @@ public class DefaultAgEntity<T> implements AgEntity<T> {
     private final Class<T> type;
     private final RootDataResolver<T> dataResolver;
     private final ReadFilter<T> readFilter;
-    private final CreateFilter<T> createFilter;
-    private final UpdateFilter<T> updateFilter;
-    private final DeleteFilter<T> deleteFilter;
+    private final CreateAuthorizer<T> createAuthorizer;
+    private final UpdateAuthorizer<T> updateAuthorizer;
+    private final DeleteAuthorizer<T> deleteAuthorizer;
 
     // TODO: ensure name uniqueness between all types of properties
     private final Map<String, AgIdPart> ids;
@@ -35,9 +35,9 @@ public class DefaultAgEntity<T> implements AgEntity<T> {
             Map<String, AgRelationship> relationships,
             RootDataResolver<T> dataResolver,
             ReadFilter<T> readFilter,
-            CreateFilter<T> createFilter,
-            UpdateFilter<T> updateFilter,
-            DeleteFilter<T> deleteFilter) {
+            CreateAuthorizer<T> createAuthorizer,
+            UpdateAuthorizer<T> updateAuthorizer,
+            DeleteAuthorizer<T> deleteAuthorizer) {
 
         this.name = name;
         this.type = type;
@@ -46,9 +46,9 @@ public class DefaultAgEntity<T> implements AgEntity<T> {
         this.relationships = relationships;
         this.dataResolver = dataResolver;
         this.readFilter = readFilter;
-        this.createFilter = createFilter;
-        this.updateFilter = updateFilter;
-        this.deleteFilter = deleteFilter;
+        this.createAuthorizer = createAuthorizer;
+        this.updateAuthorizer = updateAuthorizer;
+        this.deleteAuthorizer = deleteAuthorizer;
 
     }
 
@@ -103,18 +103,18 @@ public class DefaultAgEntity<T> implements AgEntity<T> {
     }
 
     @Override
-    public CreateFilter<T> getCreateFilter() {
-        return createFilter;
+    public CreateAuthorizer<T> getCreateAuthorizer() {
+        return createAuthorizer;
     }
 
     @Override
-    public UpdateFilter<T> getUpdateFilter() {
-        return updateFilter;
+    public UpdateAuthorizer<T> getUpdateAuthorizer() {
+        return updateAuthorizer;
     }
 
     @Override
-    public DeleteFilter<T> getDeleteFilter() {
-        return deleteFilter;
+    public DeleteAuthorizer<T> getDeleteAuthorizer() {
+        return deleteAuthorizer;
     }
 
     @Override

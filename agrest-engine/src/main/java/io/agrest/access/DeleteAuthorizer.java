@@ -1,14 +1,14 @@
-package io.agrest.filter;
+package io.agrest.access;
 
 /**
- * Per-entity filter used to implement object DELETE access policies.
+ * Per-entity predicate-like object used to implement object DELETE access policies.
  *
  * @since 4.8
  */
-public interface DeleteFilter<T> {
+public interface DeleteAuthorizer<T> {
 
-    static <T> DeleteFilter<T> allowsAllFilter() {
-        return AllowAllDeleteFilter.instance;
+    static <T> DeleteAuthorizer<T> allowsAllFilter() {
+        return AllowAllDeleteAuthorizer.instance;
     }
 
     boolean isAllowed(T object);
@@ -20,7 +20,7 @@ public interface DeleteFilter<T> {
         return false;
     }
 
-    default DeleteFilter<T> andThen(DeleteFilter<T> another) {
+    default DeleteAuthorizer<T> andThen(DeleteAuthorizer<T> another) {
         if (another.allowsAll()) {
             return this;
         }

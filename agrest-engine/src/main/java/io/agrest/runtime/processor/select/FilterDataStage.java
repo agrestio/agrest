@@ -6,7 +6,7 @@ import io.agrest.ResourceEntity;
 import io.agrest.RootResourceEntity;
 import io.agrest.ToManyResourceEntity;
 import io.agrest.ToOneResourceEntity;
-import io.agrest.filter.ReadFilter;
+import io.agrest.access.ReadFilter;
 import io.agrest.processor.Processor;
 import io.agrest.processor.ProcessorOutcome;
 

@@ -1,9 +1,9 @@
 package io.agrest.runtime.processor.update;
 
 import io.agrest.AgException;
-import io.agrest.filter.CreateFilter;
-import io.agrest.filter.DeleteFilter;
-import io.agrest.filter.UpdateFilter;
+import io.agrest.access.CreateAuthorizer;
+import io.agrest.access.DeleteAuthorizer;
+import io.agrest.access.UpdateAuthorizer;
 import io.agrest.meta.AgEntity;
 import io.agrest.processor.Processor;
 import io.agrest.processor.ProcessorOutcome;
@@ -30,21 +30,21 @@ public class AuthorizeChangesStage implements Processor<UpdateContext<?>> {
 
         AgEntity<T> entity = context.getEntity().getAgEntity();
 
-        CreateFilter<T> createAuthorizer = entity.getCreateFilter();
+        CreateAuthorizer<T> createAuthorizer = entity.getCreateAuthorizer();
         if (!createAuthorizer.allowsAll()) {
             checkRules(
                     context.getChangeOperations().get(ChangeOperationType.CREATE),
                     op -> createAuthorizer.isAllowed(op.getUpdate()));
         }
 
-        UpdateFilter<T> updateAuthorizer = entity.getUpdateFilter();
+        UpdateAuthorizer<T> updateAuthorizer = entity.getUpdateAuthorizer();
         if (!updateAuthorizer.allowsAll()) {
             checkRules(
                     context.getChangeOperations().get(ChangeOperationType.UPDATE),
                     op -> updateAuthorizer.isAllowed(op.getObject(), op.getUpdate()));
         }
 
-        DeleteFilter<T> deleteAuthorizer = entity.getDeleteFilter();
+        DeleteAuthorizer<T> deleteAuthorizer = entity.getDeleteAuthorizer();
         if (!deleteAuthorizer.allowsAll()) {
             checkRules(
                     context.getChangeOperations().get(ChangeOperationType.DELETE),

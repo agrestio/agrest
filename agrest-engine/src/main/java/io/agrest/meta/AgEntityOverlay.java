@@ -1,11 +1,11 @@
 package io.agrest.meta;
 
-import io.agrest.filter.CreateFilter;
-import io.agrest.filter.DeleteFilter;
-import io.agrest.filter.ReadFilter;
-import io.agrest.filter.UpdateFilter;
-import io.agrest.filter.PropertyFilteringRulesBuilder;
-import io.agrest.filter.PropertyFilter;
+import io.agrest.access.CreateAuthorizer;
+import io.agrest.access.DeleteAuthorizer;
+import io.agrest.access.ReadFilter;
+import io.agrest.access.UpdateAuthorizer;
+import io.agrest.access.PropertyFilteringRulesBuilder;
+import io.agrest.access.PropertyFilter;
 import io.agrest.property.PropertyReader;
 import io.agrest.resolver.NestedDataResolver;
 import io.agrest.resolver.NestedDataResolverFactory;
@@ -38,18 +38,18 @@ public class AgEntityOverlay<T> {
     private PropertyFilter writablePropFilter;
 
     private ReadFilter<T> readFilter;
-    private CreateFilter<T> createFilter;
-    private UpdateFilter<T> updateFilter;
-    private DeleteFilter<T> deleteFilter;
+    private CreateAuthorizer<T> createAuthorizer;
+    private UpdateAuthorizer<T> updateAuthorizer;
+    private DeleteAuthorizer<T> deleteAuthorizer;
 
     public AgEntityOverlay(Class<T> type) {
         this.type = type;
         this.attributes = new HashMap<>();
         this.relationships = new HashMap<>();
         this.readFilter = ReadFilter.allowsAllFilter();
-        this.createFilter = CreateFilter.allowsAllFilter();
-        this.updateFilter = UpdateFilter.allowsAllFilter();
-        this.deleteFilter = DeleteFilter.allowsAllFilter();
+        this.createAuthorizer = CreateAuthorizer.allowsAllFilter();
+        this.updateAuthorizer = UpdateAuthorizer.allowsAllFilter();
+        this.deleteAuthorizer = DeleteAuthorizer.allowsAllFilter();
     }
 
     private static PropertyReader fromFunction(Function<?, ?> f) {
@@ -105,9 +105,9 @@ public class AgEntityOverlay<T> {
                 resolver.relationships,
                 rootDataResolver != null ? rootDataResolver : maybeOverlaid.getDataResolver(),
                 maybeOverlaid.getReadFilter().andThen(readFilter),
-                maybeOverlaid.getCreateFilter().andThen(createFilter),
-                maybeOverlaid.getUpdateFilter().andThen(updateFilter),
-                maybeOverlaid.getDeleteFilter().andThen(deleteFilter)
+                maybeOverlaid.getCreateAuthorizer().andThen(createAuthorizer),
+                maybeOverlaid.getUpdateAuthorizer().andThen(updateAuthorizer),
+                maybeOverlaid.getDeleteAuthorizer().andThen(deleteAuthorizer)
         );
     }
 
@@ -117,9 +117,9 @@ public class AgEntityOverlay<T> {
                 && readablePropFilter == null
                 && writablePropFilter == null
                 && readFilter.allowsAll()
-                && createFilter.allowsAll()
-                && updateFilter.allowsAll()
-                && deleteFilter.allowsAll();
+                && createAuthorizer.allowsAll()
+                && updateAuthorizer.allowsAll()
+                && deleteAuthorizer.allowsAll();
     }
 
     /**
@@ -146,9 +146,9 @@ public class AgEntityOverlay<T> {
         }
 
         this.readFilter = this.readFilter.andThen(anotherOverlay.readFilter);
-        this.createFilter = this.createFilter.andThen(anotherOverlay.createFilter);
-        this.updateFilter = this.updateFilter.andThen(anotherOverlay.updateFilter);
-        this.deleteFilter = this.deleteFilter.andThen(anotherOverlay.deleteFilter);
+        this.createAuthorizer = this.createAuthorizer.andThen(anotherOverlay.createAuthorizer);
+        this.updateAuthorizer = this.updateAuthorizer.andThen(anotherOverlay.updateAuthorizer);
+        this.deleteAuthorizer = this.deleteAuthorizer.andThen(anotherOverlay.deleteAuthorizer);
 
         return this;
     }
@@ -225,24 +225,24 @@ public class AgEntityOverlay<T> {
     /**
      * @since 4.8
      */
-    public AgEntityOverlay<T> createFilter(CreateFilter<T> filter) {
-        this.createFilter = this.createFilter.andThen(filter);
+    public AgEntityOverlay<T> createAuthorizer(CreateAuthorizer<T> authorizer) {
+        this.createAuthorizer = this.createAuthorizer.andThen(authorizer);
         return this;
     }
 
     /**
      * @since 4.8
      */
-    public AgEntityOverlay<T> updateFilter(UpdateFilter<T> filter) {
-        this.updateFilter = this.updateFilter.andThen(filter);
+    public AgEntityOverlay<T> updateAuthorizer(UpdateAuthorizer<T> authorizer) {
+        this.updateAuthorizer = this.updateAuthorizer.andThen(authorizer);
         return this;
     }
 
     /**
      * @since 4.8
      */
-    public AgEntityOverlay<T> deleteFilter(DeleteFilter<T> filter) {
-        this.deleteFilter = this.deleteFilter.andThen(filter);
+    public AgEntityOverlay<T> deleteAuthorizer(DeleteAuthorizer<T> authorizer) {
+        this.deleteAuthorizer = this.deleteAuthorizer.andThen(authorizer);
         return this;
     }
 

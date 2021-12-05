@@ -1,6 +1,6 @@
 package io.agrest.constraints;
 
-import io.agrest.filter.PropertyFilter;
+import io.agrest.access.PropertyFilter;
 import io.agrest.meta.AgEntity;
 
 import java.util.function.Function;

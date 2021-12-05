@@ -1,7 +1,7 @@
 package io.agrest.encoder;
 
 import io.agrest.ResourceEntity;
-import io.agrest.filter.ReadFilter;
+import io.agrest.access.ReadFilter;
 
 /**
  * @since 3.4
