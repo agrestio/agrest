@@ -10,7 +10,7 @@ public SimpleResponse {{nickname}}({{#allParams}}{{>pathParams}}{{>queryParams}}
 
         return Ag.delete({{{returnType}}}.class, config)
                  .id(id)
-                 .delete();
+                 .sync();
     }
     {{/hasCompoundId}}
     {{^hasCompoundId}}
@@ -18,7 +18,7 @@ public SimpleResponse {{nickname}}({{#allParams}}{{>pathParams}}{{>queryParams}}
 
         return Ag.delete({{{returnType}}}.class, config)
                  .id({{#pathParams}}{{paramName}}{{/pathParams}})
-                 .delete();
+                 .sync();
     }
     {{/hasCompoundId}}
 {{/isRestfulDestroy}}
