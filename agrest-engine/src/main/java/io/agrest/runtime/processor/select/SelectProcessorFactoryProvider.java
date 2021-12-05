@@ -22,7 +22,7 @@ public class SelectProcessorFactoryProvider implements Provider<SelectProcessorF
             @Inject ApplyServerParamsStage applyServerParamsStage,
             @Inject AssembleQueryStage assembleQueryStage,
             @Inject FetchDataStage fetchDataStage,
-            @Inject FilterDataStage filterDataStage) {
+            @Inject FilterResultStage filterResultStage) {
 
         stages = new EnumMap<>(SelectStage.class);
         stages.put(SelectStage.START, startStage);
@@ -31,7 +31,7 @@ public class SelectProcessorFactoryProvider implements Provider<SelectProcessorF
         stages.put(SelectStage.APPLY_SERVER_PARAMS, applyServerParamsStage);
         stages.put(SelectStage.ASSEMBLE_QUERY, assembleQueryStage);
         stages.put(SelectStage.FETCH_DATA, fetchDataStage);
-        stages.put(SelectStage.FILTER, filterDataStage);
+        stages.put(SelectStage.FILTER_RESULT, filterResultStage);
     }
 
     @Override

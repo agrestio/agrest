@@ -23,7 +23,9 @@ public enum SelectStage {
     FETCH_DATA,
 
     /**
+     * A stage when the read filters are applied to the result object tree
+     *
      * @since 4.8
      */
-    FILTER
+    FILTER_RESULT
 }

@@ -8,11 +8,11 @@ import org.apache.cayenne.di.Inject;
 /**
  * @since 4.8
  */
-public class FilterDataStage implements Processor<SelectContext<?>> {
+public class FilterResultStage implements Processor<SelectContext<?>> {
 
     private final IResultFilter resultFilter;
 
-    public FilterDataStage(@Inject IResultFilter resultFilter) {
+    public FilterResultStage(@Inject IResultFilter resultFilter) {
         this.resultFilter = resultFilter;
     }
 
