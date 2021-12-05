@@ -6,6 +6,16 @@ Now that we have more precise data about operation types on update, Agrest would
 bulk create operations (previously it would only return 201 for single-object create ops). Client code must be aware of 
 this and act accordingly. A mix of create and update operations would still return 200, as before.
 
+### Bulk deletes may require custom code [#505](https://github.com/agrestio/agrest/issues/505)
+
+Previously Agrest allowed for a special case of a "full table delete" to be processed in the database without bringing 
+the objects to the app memory (via `delete from xyz_table`). From now on "full table delete" is processed the same way 
+as other delete cases - by selecting and analyzing the objects first. If your code uses "full table delete" on very 
+large tables, this operation may become noticeably slower and may even fail due to insufficient memory. If you need 
+such deletes (and are willing to ignore the authorizers), you may bypass Agrest, and delete via Cayenne directly. 
+Alternatively you can use the new stage API per [#506](https://github.com/agrestio/agrest/issues/506) to implement 
+custom processing within the Agrest pipeline.
+
 ## Upgrading to 4.7
 
 ### `@ClientReadable` and `@ClientWritable` annotations are removed in favor of per-attribute access controls [#491](https://github.com/agrestio/agrest/issues/491)
