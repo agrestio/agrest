@@ -27,10 +27,9 @@ import java.util.Map;
  */
 public class DefaultUpdateBuilder<T> implements UpdateBuilder<T> {
 
-    private UpdateContext<T> context;
-    protected UpdateProcessorFactory processorFactory;
-    protected EnumMap<UpdateStage, Processor<UpdateContext<?>>> processors;
-
+    private final UpdateContext<T> context;
+    protected final UpdateProcessorFactory processorFactory;
+    protected final EnumMap<UpdateStage, Processor<UpdateContext<?>>> processors;
 
     public DefaultUpdateBuilder(
             UpdateContext<T> context,
@@ -127,17 +126,17 @@ public class DefaultUpdateBuilder<T> implements UpdateBuilder<T> {
         return routingStage_NoGenerics(afterStage, customStage);
     }
 
+    private UpdateBuilder<T> routingStage_NoGenerics(UpdateStage afterStage, Processor customStage) {
+        processors.compute(afterStage, (s, existing) -> existing != null ? existing.andThen(customStage) : customStage);
+        return this;
+    }
+
     /**
      * @since 2.13
      */
     @Override
     public UpdateBuilder<T> request(AgRequest agRequest) {
         this.context.setRequest(agRequest);
-        return this;
-    }
-
-    private <U> UpdateBuilder<T> routingStage_NoGenerics(UpdateStage afterStage, Processor customStage) {
-        processors.compute(afterStage, (s, existing) -> existing != null ? existing.andThen(customStage) : customStage);
         return this;
     }
 

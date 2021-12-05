@@ -9,6 +9,7 @@
 * #503 New update stage - MAP_CHANGES
 * #504 Update processes result twice
 * #505 Authorizer for DeleteBuilder
+* #506 DeleteBuilder stage
 
 ## Release 4.7
 
