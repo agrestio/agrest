@@ -1,34 +1,19 @@
 package io.agrest.cayenne.processor.delete;
 
-import io.agrest.AgException;
-import io.agrest.AgObjectId;
-import io.agrest.EntityParent;
-import io.agrest.cayenne.processor.CayenneUtil;
-import io.agrest.meta.AgDataMap;
-import io.agrest.meta.AgEntity;
 import io.agrest.processor.Processor;
 import io.agrest.processor.ProcessorOutcome;
 import io.agrest.runtime.processor.delete.DeleteContext;
+import io.agrest.runtime.processor.update.ChangeOperation;
 import org.apache.cayenne.DataObject;
 import org.apache.cayenne.ObjectContext;
-import org.apache.cayenne.di.Inject;
-import org.apache.cayenne.exp.Expression;
-import org.apache.cayenne.map.ObjEntity;
-import org.apache.cayenne.query.EJBQLQuery;
-import org.apache.cayenne.query.SelectQuery;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
  * @since 2.7
  */
 public class CayenneDeleteStage implements Processor<DeleteContext<?>> {
-
-    private AgDataMap dataMap;
-
-    public CayenneDeleteStage(@Inject AgDataMap dataMap) {
-        this.dataMap = dataMap;
-    }
 
     @Override
     public ProcessorOutcome execute(DeleteContext<?> context) {
@@ -38,69 +23,14 @@ public class CayenneDeleteStage implements Processor<DeleteContext<?>> {
 
     protected <T extends DataObject> void doExecute(DeleteContext<T> context) {
 
+        List<T> objects = new ArrayList<>(context.getDeleteOperations().size());
+        for (ChangeOperation<T> op : context.getDeleteOperations()) {
+            objects.add(op.getObject());
+        }
+
         ObjectContext cayenneContext = CayenneDeleteStartStage.cayenneContext(context);
-
-        // dirty ... we have no concept of DeleteResponse, and we need to
-        // pass context to the ObjectMapper, so creating a throwaway response
-        // and EntityUpdate .. TODO: somehow need to adapt ObjectMapper to
-        // delete responses
-
-        // delete by id
-        if (context.isById()) {
-            AgEntity<T> agEntity = dataMap.getEntity(context.getType());
-            deleteById(context, cayenneContext, agEntity);
-        }
-        // delete by parent
-        else if (context.getParent() != null) {
-            AgEntity<?> parentAgEntity = dataMap.getEntity(context.getParent().getType());
-            deleteByParent(context, cayenneContext, parentAgEntity);
-        }
-        // delete all !!
-        else {
-            deleteAll(context, cayenneContext);
-        }
-    }
-
-    private <T extends DataObject> void deleteById(DeleteContext<T> context, ObjectContext cayenneContext, AgEntity<T> agEntity) {
-
-        for (AgObjectId id : context.getIds()) {
-            Object o = CayenneUtil.findById(cayenneContext, context.getType(), agEntity, id.get());
-
-            if (o == null) {
-                ObjEntity entity = cayenneContext.getEntityResolver().getObjEntity(context.getType());
-                throw AgException.notFound("No object for ID '%s' and entity '%s'", id, entity.getName());
-            }
-
-            cayenneContext.deleteObject(o);
-        }
-        cayenneContext.commitChanges();
-    }
-
-    private <T extends DataObject> void deleteByParent(DeleteContext<T> context, ObjectContext cayenneContext, AgEntity<?> agParentEntity) {
-
-        EntityParent<?> parent = context.getParent();
-        Object parentObject = CayenneUtil.findById(cayenneContext, parent.getType(), agParentEntity, parent.getId().get());
-
-        if (parentObject == null) {
-            ObjEntity entity = cayenneContext.getEntityResolver().getObjEntity(parent.getType());
-            throw AgException.notFound("No parent object for ID '%s' and entity '%s'", parent.getId(), entity.getName());
-        }
-
-        Expression qualifier = CayenneUtil.parentQualifier(parent, cayenneContext.getEntityResolver());
-        SelectQuery<?> select = SelectQuery.query(context.getType());
-        select.andQualifier(qualifier);
-
-        List<?> objects = cayenneContext.select(select);
 
         cayenneContext.deleteObjects(objects);
         cayenneContext.commitChanges();
-    }
-
-    private <T extends DataObject> void deleteAll(DeleteContext<?> context, ObjectContext cayenneContext) {
-        ObjEntity e = cayenneContext.getEntityResolver().getObjEntity(context.getType());
-
-        // TODO: is this kosher? All other deletes are done via Cayenne and
-        // hence process all delete rules. This one does not
-        cayenneContext.performQuery(new EJBQLQuery("delete from " + e.getName()));
     }
 }

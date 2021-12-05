@@ -8,6 +8,7 @@
 * #502 Per-entity CRUD filters and authorizers for UpdateBuilder
 * #503 New update stage - MAP_CHANGES
 * #504 Update processes result twice
+* #505 Authorizer for DeleteBuilder
 
 ## Release 4.7
 

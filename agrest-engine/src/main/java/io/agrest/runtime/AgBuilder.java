@@ -31,8 +31,10 @@ import io.agrest.runtime.encoder.IStringConverterFactory;
 import io.agrest.runtime.encoder.StringConverterFactoryProvider;
 import io.agrest.runtime.encoder.ValueEncoders;
 import io.agrest.runtime.encoder.ValueEncodersProvider;
+import io.agrest.runtime.entity.ChangeAuthorizer;
 import io.agrest.runtime.entity.ExcludeMerger;
 import io.agrest.runtime.entity.ExpMerger;
+import io.agrest.runtime.entity.IChangeAuthorizer;
 import io.agrest.runtime.entity.IExcludeMerger;
 import io.agrest.runtime.entity.IExpMerger;
 import io.agrest.runtime.entity.IIncludeMerger;
@@ -66,7 +68,6 @@ import io.agrest.runtime.processor.select.ParseRequestStage;
 import io.agrest.runtime.processor.select.SelectProcessorFactory;
 import io.agrest.runtime.processor.select.SelectProcessorFactoryProvider;
 import io.agrest.runtime.processor.select.StartStage;
-import io.agrest.runtime.processor.update.AuthorizeChangesStage;
 import io.agrest.runtime.protocol.EntityUpdateParser;
 import io.agrest.runtime.protocol.ExcludeParser;
 import io.agrest.runtime.protocol.ExpParser;
@@ -430,8 +431,14 @@ public class AgBuilder {
                     .to(io.agrest.runtime.processor.update.ParseRequestStage.class);
             binder.bind(io.agrest.runtime.processor.update.CreateResourceEntityStage.class)
                     .to(io.agrest.runtime.processor.update.CreateResourceEntityStage.class);
-            binder.bind(AuthorizeChangesStage.class).to(AuthorizeChangesStage.class);
-            binder.bind(io.agrest.runtime.processor.update.FilterResultStage.class).to(io.agrest.runtime.processor.update.FilterResultStage.class);
+            binder.bind(io.agrest.runtime.processor.update.AuthorizeChangesStage.class)
+                    .to(io.agrest.runtime.processor.update.AuthorizeChangesStage.class);
+            binder.bind(io.agrest.runtime.processor.update.FilterResultStage.class)
+                    .to(io.agrest.runtime.processor.update.FilterResultStage.class);
+
+            // delete stages
+            binder.bind(io.agrest.runtime.processor.delete.AuthorizeChangesStage.class)
+                    .to(io.agrest.runtime.processor.delete.AuthorizeChangesStage.class);
 
             // metadata stages
             binder.bind(MetadataProcessorFactory.class).toProvider(MetadataProcessorFactoryProvider.class);
@@ -472,6 +479,7 @@ public class AgBuilder {
             binder.bind(IIncludeMerger.class).to(IncludeMerger.class);
             binder.bind(IExcludeMerger.class).to(ExcludeMerger.class);
             binder.bind(IResultFilter.class).to(ResultFilter.class);
+            binder.bind(IChangeAuthorizer.class).to(ChangeAuthorizer.class);
 
             binder.bind(IResourceParser.class).to(ResourceParser.class);
             binder.bind(IEntityUpdateParser.class).to(EntityUpdateParser.class);

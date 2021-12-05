@@ -1,6 +1,13 @@
 package io.agrest.runtime;
 
-import io.agrest.*;
+import io.agrest.AgException;
+import io.agrest.AgObjectId;
+import io.agrest.DeleteBuilder;
+import io.agrest.EntityParent;
+import io.agrest.SimpleResponse;
+import io.agrest.access.DeleteAuthorizer;
+import io.agrest.meta.AgEntity;
+import io.agrest.meta.AgEntityOverlay;
 import io.agrest.runtime.processor.delete.DeleteContext;
 import io.agrest.runtime.processor.delete.DeleteProcessorFactory;
 
@@ -54,6 +61,17 @@ public class DefaultDeleteBuilder<T> implements DeleteBuilder<T> {
     public DeleteBuilder<T> parent(Class<?> parentType, Map<String, Object> parentIds, String relationshipFromParent) {
         context.setParent(new EntityParent<>(parentType, parentIds, relationshipFromParent));
         return this;
+    }
+
+    @Override
+    public DeleteBuilder<T> entityOverlay(AgEntityOverlay<T> overlay) {
+        context.addEntityOverlay(overlay);
+        return this;
+    }
+
+    @Override
+    public DeleteBuilder<T> authorizer(DeleteAuthorizer<T> authorizer) {
+        return entityOverlay(AgEntity.overlay(context.getType()).deleteAuthorizer(authorizer));
     }
 
     @Override

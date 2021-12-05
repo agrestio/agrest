@@ -61,6 +61,7 @@ public class AgCayenneModule implements Module {
         // delete stages
         binder.bind(DeleteProcessorFactory.class).toProvider(CayenneDeleteProcessorFactoryProvider.class);
         binder.bind(CayenneDeleteStartStage.class).to(CayenneDeleteStartStage.class);
+        binder.bind(io.agrest.cayenne.processor.delete.CayenneMapChangesStage.class).to(io.agrest.cayenne.processor.delete.CayenneMapChangesStage.class);
         binder.bind(CayenneDeleteStage.class).to(CayenneDeleteStage.class);
 
         // update stages

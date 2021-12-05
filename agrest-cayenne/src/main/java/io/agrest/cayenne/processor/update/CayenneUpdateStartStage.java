@@ -13,14 +13,14 @@ import org.apache.cayenne.di.Inject;
  */
 public class CayenneUpdateStartStage implements Processor<UpdateContext<?>> {
 
-    private static final String UPDATE_OBJECT_CONTEXT_ATTRUBITE = "updateContext";
+    private static final String UPDATE_OBJECT_CONTEXT_ATTRIBUTE = "updateContext";
 
     /**
      * Returns Cayenne ObjectContext previously stored in the ProcessingContext
      * by this stage.
      */
     public static ObjectContext cayenneContext(ProcessingContext<?> context) {
-        return (ObjectContext) context.getAttribute(CayenneUpdateStartStage.UPDATE_OBJECT_CONTEXT_ATTRUBITE);
+        return (ObjectContext) context.getAttribute(CayenneUpdateStartStage.UPDATE_OBJECT_CONTEXT_ATTRIBUTE);
     }
 
     private ICayennePersister persister;
@@ -31,7 +31,7 @@ public class CayenneUpdateStartStage implements Processor<UpdateContext<?>> {
 
     @Override
     public ProcessorOutcome execute(UpdateContext<?> context) {
-        context.setAttribute(UPDATE_OBJECT_CONTEXT_ATTRUBITE, persister.newContext());
+        context.setAttribute(UPDATE_OBJECT_CONTEXT_ATTRIBUTE, persister.newContext());
         return ProcessorOutcome.CONTINUE;
     }
 }
