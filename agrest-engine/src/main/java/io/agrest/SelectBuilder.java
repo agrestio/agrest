@@ -111,8 +111,9 @@ public interface SelectBuilder<T> {
     }
 
     /**
-     * Installs an in-memory filter for a given entity type that will exclude objects from response that do not match
-     * the filter. This filter is combined with any runtime-level filters for the same entity.
+     * Installs an in-memory filter for the specified entity type (not necessarily the root entity of the request).
+     * Response will exclude objects that do not match the filter. This filter is combined with any existing
+     * runtime-level filters for the same entity.
      *
      * @return this builder instance
      * @since 4.8
