@@ -40,7 +40,9 @@ public class CayenneUpdateProcessorFactoryFactoryProvider implements Provider<Up
             @Inject CayenneCommitStage commitStage,
             @Inject CayenneOkResponseStage okResponseStage,
             @Inject CayenneCreatedResponseStage createdResponseStage,
-            @Inject CayenneCreatedOrOkResponseStage createdOrOkResponseStage
+            @Inject CayenneCreatedOrOkResponseStage createdOrOkResponseStage,
+
+            @Inject FilterResultStage filterResultStage
     ) {
 
         this.createStages = new EnumMap<>(UpdateStage.class);
@@ -53,6 +55,7 @@ public class CayenneUpdateProcessorFactoryFactoryProvider implements Provider<Up
         this.createStages.put(UpdateStage.MERGE_CHANGES, mergeStage);
         this.createStages.put(UpdateStage.COMMIT, commitStage);
         this.createStages.put(UpdateStage.FILL_RESPONSE, createdResponseStage);
+        this.createStages.put(UpdateStage.FILTER_RESULT, filterResultStage);
 
         this.updateStages = new EnumMap<>(UpdateStage.class);
         this.updateStages.put(UpdateStage.START, startStage);
@@ -64,6 +67,7 @@ public class CayenneUpdateProcessorFactoryFactoryProvider implements Provider<Up
         this.updateStages.put(UpdateStage.MERGE_CHANGES, mergeStage);
         this.updateStages.put(UpdateStage.COMMIT, commitStage);
         this.updateStages.put(UpdateStage.FILL_RESPONSE, okResponseStage);
+        this.updateStages.put(UpdateStage.FILTER_RESULT, filterResultStage);
 
         this.createOrUpdateStages = new EnumMap<>(UpdateStage.class);
         this.createOrUpdateStages.put(UpdateStage.START, startStage);
@@ -75,6 +79,7 @@ public class CayenneUpdateProcessorFactoryFactoryProvider implements Provider<Up
         this.createOrUpdateStages.put(UpdateStage.MERGE_CHANGES, mergeStage);
         this.createOrUpdateStages.put(UpdateStage.COMMIT, commitStage);
         this.createOrUpdateStages.put(UpdateStage.FILL_RESPONSE, createdOrOkResponseStage);
+        this.createOrUpdateStages.put(UpdateStage.FILTER_RESULT, filterResultStage);
 
         this.idempotentCreateOrUpdateStages = new EnumMap<>(UpdateStage.class);
         this.idempotentCreateOrUpdateStages.put(UpdateStage.START, startStage);
@@ -86,6 +91,7 @@ public class CayenneUpdateProcessorFactoryFactoryProvider implements Provider<Up
         this.idempotentCreateOrUpdateStages.put(UpdateStage.MERGE_CHANGES, mergeStage);
         this.idempotentCreateOrUpdateStages.put(UpdateStage.COMMIT, commitStage);
         this.idempotentCreateOrUpdateStages.put(UpdateStage.FILL_RESPONSE, createdOrOkResponseStage);
+        this.idempotentCreateOrUpdateStages.put(UpdateStage.FILTER_RESULT, filterResultStage);
 
         this.idempotentFullSyncStages = new EnumMap<>(UpdateStage.class);
         this.idempotentFullSyncStages.put(UpdateStage.START, startStage);
@@ -97,6 +103,7 @@ public class CayenneUpdateProcessorFactoryFactoryProvider implements Provider<Up
         this.idempotentFullSyncStages.put(UpdateStage.MERGE_CHANGES, mergeStage);
         this.idempotentFullSyncStages.put(UpdateStage.COMMIT, commitStage);
         this.idempotentFullSyncStages.put(UpdateStage.FILL_RESPONSE, createdOrOkResponseStage);
+        this.idempotentFullSyncStages.put(UpdateStage.FILTER_RESULT, filterResultStage);
     }
 
     @Override

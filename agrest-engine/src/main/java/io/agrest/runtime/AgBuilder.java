@@ -37,10 +37,12 @@ import io.agrest.runtime.entity.IExcludeMerger;
 import io.agrest.runtime.entity.IExpMerger;
 import io.agrest.runtime.entity.IIncludeMerger;
 import io.agrest.runtime.entity.IMapByMerger;
+import io.agrest.runtime.entity.IResultFilter;
 import io.agrest.runtime.entity.ISizeMerger;
 import io.agrest.runtime.entity.ISortMerger;
 import io.agrest.runtime.entity.IncludeMerger;
 import io.agrest.runtime.entity.MapByMerger;
+import io.agrest.runtime.entity.ResultFilter;
 import io.agrest.runtime.entity.SizeMerger;
 import io.agrest.runtime.entity.SortMerger;
 import io.agrest.runtime.executor.UnboundedExecutorServiceProvider;
@@ -65,6 +67,7 @@ import io.agrest.runtime.processor.select.SelectProcessorFactory;
 import io.agrest.runtime.processor.select.SelectProcessorFactoryProvider;
 import io.agrest.runtime.processor.select.StartStage;
 import io.agrest.runtime.processor.update.AuthorizeChangesStage;
+import io.agrest.runtime.processor.update.FilterResultStage;
 import io.agrest.runtime.protocol.EntityUpdateParser;
 import io.agrest.runtime.protocol.ExcludeParser;
 import io.agrest.runtime.protocol.ExpParser;
@@ -428,8 +431,8 @@ public class AgBuilder {
                     .to(io.agrest.runtime.processor.update.ParseRequestStage.class);
             binder.bind(io.agrest.runtime.processor.update.CreateResourceEntityStage.class)
                     .to(io.agrest.runtime.processor.update.CreateResourceEntityStage.class);
-            binder.bind(AuthorizeChangesStage.class)
-                    .to(AuthorizeChangesStage.class);
+            binder.bind(AuthorizeChangesStage.class).to(AuthorizeChangesStage.class);
+            binder.bind(FilterResultStage.class).to(FilterResultStage.class);
 
             // metadata stages
             binder.bind(MetadataProcessorFactory.class).toProvider(MetadataProcessorFactoryProvider.class);
@@ -469,6 +472,7 @@ public class AgBuilder {
             binder.bind(ISizeMerger.class).to(SizeMerger.class);
             binder.bind(IIncludeMerger.class).to(IncludeMerger.class);
             binder.bind(IExcludeMerger.class).to(ExcludeMerger.class);
+            binder.bind(IResultFilter.class).to(ResultFilter.class);
 
             binder.bind(IResourceParser.class).to(ResourceParser.class);
             binder.bind(IEntityUpdateParser.class).to(EntityUpdateParser.class);

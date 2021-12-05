@@ -1,7 +1,8 @@
 package io.agrest;
 
-import io.agrest.constraints.Constraint;
 import io.agrest.access.PropertyFilter;
+import io.agrest.access.ReadFilter;
+import io.agrest.constraints.Constraint;
 import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgEntityOverlay;
 import io.agrest.processor.Processor;
@@ -104,6 +105,18 @@ public interface UpdateBuilder<T> {
      */
     default <A> UpdateBuilder<T> writeablePropFilter(Class<A> entityType, PropertyFilter rules) {
         return entityOverlay(AgEntity.overlay(entityType).writablePropFilter(rules));
+    }
+
+    /**
+     * Installs an in-memory filter for the specified entity type (not necessarily the root entity of the request).
+     * The filter is applied to the response objects of the given type and will result in exclusion of objects that do
+     * not match the filter. The filter is combined with any existing runtime-level filters for the same entity.
+     *
+     * @return this builder instance
+     * @since 4.8
+     */
+    default <A> UpdateBuilder<T> readableFilter(Class<A> entityType, ReadFilter<A> filter) {
+        return entityOverlay(AgEntity.overlay(entityType).readFilter(filter));
     }
 
     /**

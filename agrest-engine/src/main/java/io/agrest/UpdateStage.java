@@ -37,5 +37,12 @@ public enum UpdateStage {
 
     COMMIT,
 
-    FILL_RESPONSE
+    FILL_RESPONSE,
+
+    /**
+     * A stage when the read filters are applied to the result object tree
+     *
+     * @since 4.8
+     */
+    FILTER_RESULT
 }
