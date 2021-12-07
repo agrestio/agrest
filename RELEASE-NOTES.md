@@ -10,6 +10,7 @@
 * #504 Update processes result twice
 * #505 Authorizer for DeleteBuilder
 * #506 DeleteBuilder stage
+* #507 Upgrade to Cayenne 4.2.B1
 
 ## Release 4.7
 
