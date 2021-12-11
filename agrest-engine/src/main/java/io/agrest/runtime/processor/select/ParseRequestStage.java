@@ -73,7 +73,7 @@ public class ParseRequestStage implements Processor<SelectContext<?>> {
     protected AgRequestBuilder requestFromParams(Map<String, List<String>> parameters) {
 
         return requestBuilderFactory.builder()
-                .exp(exp(parameters))
+                .andExp(exp(parameters))
                 .addOrdering(ParameterExtractor.string(parameters, AgProtocol.sort), ParameterExtractor.string(parameters, AgProtocol.dir))
                 .mapBy(ParameterExtractor.string(parameters, AgProtocol.mapBy))
                 .addIncludes(ParameterExtractor.strings(parameters, AgProtocol.include))
