@@ -99,6 +99,9 @@ public class ResourceEntityTreeBuilder {
     }
 
     protected NestedResourceEntity<?> createChildEntity(ResourceEntity<?> parent, AgRelationship incoming) {
+
+        // TODO: If the target is overlaid, we need to overlay the "incoming" relationship as well for model consistency...
+        //  Currently we optimistically assume that no request processing code would rely on "incoming.target"
         AgEntity<?> target = incoming.getTargetEntity();
         AgEntityOverlay targetOverlay = entityOverlays.get(target.getType());
         AgEntity<?> overlaidTarget = targetOverlay != null ? targetOverlay.resolve(agDataMap, target) : target;

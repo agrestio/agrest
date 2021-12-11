@@ -136,7 +136,7 @@ public class CayenneQueryAssembler implements ICayenneQueryAssembler {
         ObjRelationship incoming = parentObjEntity.getRelationship(entity.getIncoming().getName());
         String fullDbPath = concatWithParentDbPath(incoming, outgoingDbPath);
 
-        // shouldn't really happen with any of the current built-in root strategies, but who knows what customaizations
+        // shouldn't really happen with any of the current built-in root strategies, but who knows what customizations
         // can be applied
         if (parent instanceof RootResourceEntity) {
             throw new IllegalStateException(
