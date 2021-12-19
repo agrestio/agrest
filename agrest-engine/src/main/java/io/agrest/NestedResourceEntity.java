@@ -45,10 +45,18 @@ public abstract class NestedResourceEntity<T> extends ResourceEntity<T> {
         this.resolver = resolver;
     }
 
+    /**
+     * @deprecated since 4.8 use "getResolver().onParentQueryAssembled()"
+     */
+    @Deprecated
     public void onParentQueryAssembled(SelectContext<?> context) {
         resolver.onParentQueryAssembled(this, context);
     }
 
+    /**
+     * @deprecated since 4.8 use "getResolver().onParentDataResolved()"
+     */
+    @Deprecated
     public void onParentDataResolved(Iterable<?> parentData, SelectContext<?> context) {
         resolver.onParentDataResolved(this, parentData, context);
     }
