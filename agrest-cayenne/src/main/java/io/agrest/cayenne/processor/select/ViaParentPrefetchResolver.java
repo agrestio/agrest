@@ -19,7 +19,7 @@ import org.apache.cayenne.query.SelectQuery;
  */
 public class ViaParentPrefetchResolver extends BaseNestedDataResolver<DataObject> {
 
-    private int prefetchSemantics;
+    private final int prefetchSemantics;
 
     public ViaParentPrefetchResolver(int prefetchSemantics) {
         this.prefetchSemantics = prefetchSemantics;
