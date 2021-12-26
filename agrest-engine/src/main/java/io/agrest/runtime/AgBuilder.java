@@ -186,7 +186,9 @@ public class AgBuilder {
      * @return this builder instance
      * @see io.agrest.SelectBuilder#entityEncoderFilter(EntityEncoderFilter)
      * @since 3.4
+     * @deprecated since 4.8 as {@link EntityEncoderFilter} is deprecated
      */
+    @Deprecated
     public AgBuilder entityEncoderFilter(EntityEncoderFilter filter) {
         this.entityEncoderFilters.add(filter);
         return this;
@@ -194,7 +196,9 @@ public class AgBuilder {
 
     /**
      * @since 3.4
+     * @deprecated since 4.8 as {@link EntityEncoderFilter} is deprecated
      */
+    @Deprecated
     public AgBuilder entityEncoderFilters(Collection<EntityEncoderFilter> filters) {
         this.entityEncoderFilters.addAll(filters);
         return this;
