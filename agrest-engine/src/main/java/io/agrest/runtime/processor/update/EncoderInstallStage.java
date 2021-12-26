@@ -20,9 +20,7 @@ public class EncoderInstallStage implements Processor<UpdateContext<?>> {
     public ProcessorOutcome execute(UpdateContext<?> context) {
 
         // make sure we create the encoder, even when the result is empty, as we need to encode the totals
-        if (context.getEncoder() == null) {
-
-            // TODO: we don't need encoder if includeData=false... should we conditionally skip this step?
+        if (context.isIncludingDataInResponse() && context.getEncoder() == null) {
             context.setEncoder(encoderService.dataEncoder(context.getEntity()));
         }
 
