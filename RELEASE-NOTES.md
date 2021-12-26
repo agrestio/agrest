@@ -1,5 +1,6 @@
 ## Release 3.12
 
+* #497 Agrest fails to build on Java 11
 * #511 "by id" Cayenne resolver fetches entire table in the absence of pagination
 
 ## Release 3.11
