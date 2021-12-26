@@ -60,4 +60,9 @@ public abstract class NestedResourceEntity<T> extends ResourceEntity<T> {
     public void onParentDataResolved(Iterable<?> parentData, SelectContext<?> context) {
         resolver.onParentDataResolved(this, parentData, context);
     }
+
+    @Override
+    public String toString() {
+        return getClass().getSimpleName() + '[' + getIncoming().getName() + '>' + getName() + ']';
+    }
 }
