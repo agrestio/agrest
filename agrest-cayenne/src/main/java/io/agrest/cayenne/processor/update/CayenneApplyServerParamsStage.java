@@ -74,12 +74,6 @@ public class CayenneApplyServerParamsStage implements Processor<UpdateContext<?>
         constraintsHandler.constrainResponse(entity, null, context.getReadConstraints());
 
         tagCayenneEntities(context.getEntity());
-
-        if (context.getEncoder() == null) {
-            // TODO: we don't need encoder if includeData=false... should we conditionally skip this step?
-            // TODO: should we allow custom EntityFilters in update?
-            context.setEncoder(encoderService.dataEncoder(entity));
-        }
     }
 
     private void tagCayenneEntities(ResourceEntity<?> entity) {

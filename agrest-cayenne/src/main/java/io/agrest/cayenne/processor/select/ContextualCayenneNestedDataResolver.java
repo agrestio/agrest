@@ -36,10 +36,7 @@ public class ContextualCayenneNestedDataResolver<T> implements NestedDataResolve
 
     @Override
     public PropertyReader reader(NestedResourceEntity<T> entity) {
-        // TODO: the reader has to be lazy because it is used in the encoder created during APPLY_SERVER_PARAMS
-        //  stage, when Cayenne extensions are still not initialized. We need to move encoder creation to the end
-        //  of the pipeline
-        return new LazyPropertyReader(entity);
+        return pickResolver(entity).reader(entity);
     }
 
     protected NestedDataResolver<T> pickResolver(NestedResourceEntity<T> entity) {
@@ -54,29 +51,6 @@ public class ContextualCayenneNestedDataResolver<T> implements NestedDataResolve
         }
 
         return parentExt.hasSelect() ? parentQueryResolver : parentIdsResolver;
-    }
-
-    class LazyPropertyReader implements PropertyReader {
-
-        private final NestedResourceEntity<T> entity;
-        private PropertyReader delegate;
-
-        LazyPropertyReader(NestedResourceEntity<T> entity) {
-            this.entity = entity;
-        }
-
-        @Override
-        public Object value(Object object) {
-            return delegate().value(object);
-        }
-
-        private PropertyReader delegate() {
-            if (delegate == null) {
-                delegate = pickResolver(entity).reader(entity);
-            }
-
-            return delegate;
-        }
     }
 }
 

@@ -1,6 +1,12 @@
 package io.agrest.runtime;
 
-import io.agrest.*;
+import io.agrest.AgException;
+import io.agrest.AgRequest;
+import io.agrest.DataResponse;
+import io.agrest.EntityParent;
+import io.agrest.SelectBuilder;
+import io.agrest.SelectStage;
+import io.agrest.SizeConstraints;
 import io.agrest.constraints.Constraint;
 import io.agrest.encoder.Encoder;
 import io.agrest.encoder.EntityEncoderFilter;
@@ -193,6 +199,11 @@ public class DefaultSelectBuilder<T> implements SelectBuilder<T> {
 
     @Override
     public DataResponse<T> getEmpty() {
-        return terminalStage(SelectStage.APPLY_SERVER_PARAMS, c -> c.getEntity().setResult(Collections.emptyList())).get();
+        return terminalStage(SelectStage.APPLY_SERVER_PARAMS, this::processEmpty).get();
+    }
+
+    private void processEmpty(SelectContext<T> context) {
+        context.getEntity().setResult(Collections.emptyList());
+        processorFactory.getStageProcessor(SelectStage.ENCODE).execute(context);
     }
 }

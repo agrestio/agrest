@@ -27,5 +27,12 @@ public enum SelectStage {
      *
      * @since 4.8
      */
-    FILTER_RESULT
+    FILTER_RESULT,
+
+    /**
+     * A stage when the result is encoded, or encoders are installed, depending on pipeline implementation
+     *
+     * @since 4.8
+     */
+    ENCODE
 }

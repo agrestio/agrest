@@ -45,6 +45,7 @@ public class DefaultSelectBuilder_CustomPipelineIT extends DbTest {
                 .stage(SelectStage.START, c -> stageRecorder.accept(SelectStage.START))
                 .stage(SelectStage.FETCH_DATA, c -> stageRecorder.accept(SelectStage.FETCH_DATA))
                 .stage(SelectStage.FILTER_RESULT, c -> stageRecorder.accept(SelectStage.FILTER_RESULT))
+                .stage(SelectStage.ENCODE, c -> stageRecorder.accept(SelectStage.ENCODE))
                 .stage(SelectStage.ASSEMBLE_QUERY, c -> stageRecorder.accept(SelectStage.ASSEMBLE_QUERY))
                 .stage(SelectStage.APPLY_SERVER_PARAMS, c -> stageRecorder.accept(SelectStage.APPLY_SERVER_PARAMS))
                 .get();
@@ -69,10 +70,12 @@ public class DefaultSelectBuilder_CustomPipelineIT extends DbTest {
                 .stage(SelectStage.PARSE_REQUEST, c -> stageRecorder.accept(SelectStage.PARSE_REQUEST, "c"))
                 .stage(SelectStage.PARSE_REQUEST, c -> stageRecorder.accept(SelectStage.PARSE_REQUEST, "d"))
                 .stage(SelectStage.FETCH_DATA, c -> stageRecorder.accept(SelectStage.FETCH_DATA, "e"))
+                .stage(SelectStage.ENCODE, c -> stageRecorder.accept(SelectStage.ENCODE, "f"))
                 .get();
 
-        assertEquals(2, stages.size());
+        assertEquals(3, stages.size());
         assertEquals("_a_c_d", stages.get(SelectStage.PARSE_REQUEST));
         assertEquals("_b_e", stages.get(SelectStage.FETCH_DATA));
+        assertEquals("_f", stages.get(SelectStage.ENCODE));
     }
 }

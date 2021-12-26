@@ -6,7 +6,6 @@ import io.agrest.cayenne.persister.ICayennePersister;
 import io.agrest.cayenne.processor.CayenneProcessor;
 import io.agrest.encoder.EntityEncoderFilter;
 import io.agrest.runtime.constraints.IConstraintsHandler;
-import io.agrest.runtime.encoder.IEncoderService;
 import io.agrest.runtime.processor.select.ApplyServerParamsStage;
 import io.agrest.runtime.processor.select.SelectContext;
 import org.apache.cayenne.di.Inject;
@@ -23,10 +22,9 @@ public class CayenneApplyServerParamsStage extends ApplyServerParamsStage {
 
     public CayenneApplyServerParamsStage(
             @Inject IConstraintsHandler constraintsHandler,
-            @Inject IEncoderService encoderService,
             @Inject ICayennePersister persister,
             @Inject List<EntityEncoderFilter> filters) {
-        super(constraintsHandler, encoderService, filters);
+        super(constraintsHandler, filters);
         this.entityResolver = persister.entityResolver();
     }
 

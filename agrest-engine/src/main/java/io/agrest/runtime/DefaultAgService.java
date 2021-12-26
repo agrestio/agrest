@@ -21,11 +21,11 @@ import java.util.Collection;
  */
 public class DefaultAgService implements IAgService {
 
-    private SelectProcessorFactory selectProcessorFactory;
-    private DeleteProcessorFactory deleteProcessorFactory;
-    private UpdateProcessorFactoryFactory updateProcessorFactoryFactory;
-    private MetadataProcessorFactory metadataProcessorFactory;
-    private UnrelateProcessorFactory unrelateProcessorFactory;
+    private final SelectProcessorFactory selectProcessorFactory;
+    private final DeleteProcessorFactory deleteProcessorFactory;
+    private final UpdateProcessorFactoryFactory updateProcessorFactoryFactory;
+    private final MetadataProcessorFactory metadataProcessorFactory;
+    private final UnrelateProcessorFactory unrelateProcessorFactory;
 
     public DefaultAgService(
             @Inject SelectProcessorFactory selectProcessorFactory,

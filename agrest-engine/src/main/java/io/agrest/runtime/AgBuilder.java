@@ -63,6 +63,7 @@ import io.agrest.runtime.processor.select.AssembleQueryStage;
 import io.agrest.runtime.processor.select.CreateResourceEntityStage;
 import io.agrest.runtime.processor.select.FetchDataStage;
 import io.agrest.runtime.processor.select.FilterResultStage;
+import io.agrest.runtime.processor.select.EncoderInstallStage;
 import io.agrest.runtime.processor.select.ParseRequestStage;
 import io.agrest.runtime.processor.select.SelectProcessorFactory;
 import io.agrest.runtime.processor.select.SelectProcessorFactoryProvider;
@@ -409,6 +410,7 @@ public class AgBuilder {
             binder.bind(ParseRequestStage.class).to(ParseRequestStage.class);
             binder.bind(CreateResourceEntityStage.class).to(CreateResourceEntityStage.class);
             binder.bind(ApplyServerParamsStage.class).to(ApplyServerParamsStage.class);
+            binder.bind(EncoderInstallStage.class).to(EncoderInstallStage.class);
             binder.bind(AssembleQueryStage.class).to(AssembleQueryStage.class);
             binder.bind(FetchDataStage.class).to(FetchDataStage.class);
             binder.bind(FilterResultStage.class).to(FilterResultStage.class);
@@ -422,6 +424,8 @@ public class AgBuilder {
                     .to(io.agrest.runtime.processor.update.AuthorizeChangesStage.class);
             binder.bind(io.agrest.runtime.processor.update.FilterResultStage.class)
                     .to(io.agrest.runtime.processor.update.FilterResultStage.class);
+            binder.bind(io.agrest.runtime.processor.update.EncoderInstallStage.class)
+                    .to(io.agrest.runtime.processor.update.EncoderInstallStage.class);
 
             // delete stages
             binder.bind(io.agrest.runtime.processor.delete.AuthorizeChangesStage.class)

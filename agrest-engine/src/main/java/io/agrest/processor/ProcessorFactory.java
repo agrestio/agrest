@@ -59,7 +59,6 @@ public class ProcessorFactory<E extends Enum<E>, C extends ProcessingContext<?>>
 
             p = p == null ? e.getValue() : p.andThen(e.getValue());
 
-
             Processor<C> customProcessor = processors.get(e.getKey());
             if (customProcessor != null) {
                 p = p.andThen(customProcessor);
@@ -67,5 +66,14 @@ public class ProcessorFactory<E extends Enum<E>, C extends ProcessingContext<?>>
         }
 
         return p;
+    }
+
+    /**
+     * Provides direct access to a processor of a given individual stage of the default pipeline.
+     *
+     * @since 4.8
+     */
+    public Processor<C> getStageProcessor(E stage) {
+        return defaultStages.get(stage);
     }
 }
