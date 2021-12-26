@@ -195,10 +195,10 @@ public class CayenneQueryAssembler implements ICayenneQueryAssembler {
         return query;
     }
 
-    private <P> void consumeRange(Iterator<P> parentData, int offset, int len, Consumer<P> consumer) {
+    static <P> void consumeRange(Iterator<P> parentData, int offset, int len, Consumer<P> consumer) {
 
         int from = Math.max(0, offset);
-        int to = Math.min(from + len, Integer.MAX_VALUE);
+        int to = len > 0 ? Math.min(from + len, Integer.MAX_VALUE) : Integer.MAX_VALUE;
 
         for (int i = 0; i < from && parentData.hasNext(); i++) {
             parentData.next();
