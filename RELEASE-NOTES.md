@@ -14,6 +14,7 @@
 * #509 Removing ExecutorService and ShutdownManager
 * #510 "by id" Cayenne resolver fetches entire table in the absence of pagination
 
+
 ## Release 4.7
 
 * #488 Bump to the latest version of openapi-generator (v5.2.0)
