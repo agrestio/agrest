@@ -16,6 +16,20 @@ such deletes (and are willing to ignore the authorizers), you may bypass Agrest,
 Alternatively you can use the new stage API per [#506](https://github.com/agrestio/agrest/issues/506) to implement 
 custom processing within the Agrest pipeline.
 
+### Extra new pipeline stages [#503](https://github.com/agrestio/agrest/issues/503)  [#512](https://github.com/agrestio/agrest/issues/512)
+
+A number of new stages were added to "select" and "update" pipelines. If you have custom stages in your code, you may 
+need to understand the implications:
+
+* Select pipeline now has `SelectStage.FILTER_RESULT` and `SelectStage.ENCODE` added after `SelectStage.FETCH_DATA`, 
+  that was previously the last stage of the pipeline. Response Encoder is not available until the "ENCODE" stage.
+* Update pipeline has `UpdateStage.FILTER_RESULT` and `UpdateStage.ENCODE` added after `UpdateStage.FILL_RESPONSE`,
+  that was previously the last stage of the pipeline. Response Encoder is not available until the "ENCODE" stage.
+* Update pipeline has `UpdateStage.MAP_CHANGES` and `UpdateStage.AUTHORIZE_CHANGES` added between
+  `UpdateStage.APPLY_SERVER_PARAMS` and `UpdateStage.MERGE_CHANGES`. "MAP_CHANGES" specifically was split from 
+  "MERGE_CHANGES", as it is a separate step, that gives the new "AUTHORIZE_CHANGES" stage to check which objects
+  are allowed to be updated.
+
 ## Upgrading to 4.7
 
 ### `@ClientReadable` and `@ClientWritable` annotations are removed in favor of per-attribute access controls [#491](https://github.com/agrestio/agrest/issues/491)

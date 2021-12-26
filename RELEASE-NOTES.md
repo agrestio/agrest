@@ -14,7 +14,7 @@
 * #507 Upgrade to Cayenne 4.2.B1
 * #509 Removing ExecutorService and ShutdownManager
 * #510 "by id" Cayenne resolver fetches entire table in the absence of pagination
-* #512 New selecy/update stage: ENCODE
+* #512 New select/update stage: ENCODE
 
 
 ## Release 4.7
