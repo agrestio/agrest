@@ -26,9 +26,9 @@ need to understand the implications:
 * Update pipeline has `UpdateStage.FILTER_RESULT` and `UpdateStage.ENCODE` added after `UpdateStage.FILL_RESPONSE`,
   that was previously the last stage of the pipeline. Response Encoder is not available until the "ENCODE" stage.
 * Update pipeline has `UpdateStage.MAP_CHANGES` and `UpdateStage.AUTHORIZE_CHANGES` added between
-  `UpdateStage.APPLY_SERVER_PARAMS` and `UpdateStage.MERGE_CHANGES`. "MAP_CHANGES" specifically was split from 
-  "MERGE_CHANGES", as it is a separate step, that gives the new "AUTHORIZE_CHANGES" stage to check which objects
-  are allowed to be updated.
+  `UpdateStage.APPLY_SERVER_PARAMS` and `UpdateStage.MERGE_CHANGES`. "MAP_CHANGES" was split from 
+  "MERGE_CHANGES", as it is a separate logical step. It gives the new "AUTHORIZE_CHANGES" stage an opportunity to 
+  check which objects are allowed to be updated.
 
 ## Upgrading to 4.7
 
