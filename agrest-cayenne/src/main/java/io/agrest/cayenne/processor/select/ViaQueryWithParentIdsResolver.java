@@ -47,7 +47,7 @@ public class ViaQueryWithParentIdsResolver<T extends DataObject> extends ViaQuer
             return Collections.emptyList();
         }
 
-        CayenneProcessor.setQuery(entity, select);
+        CayenneProcessor.getCayenneEntity(entity).setSelect(select);
         afterQueryAssembled(entity, context);
         return super.doOnParentDataResolved(entity, parentData, context);
     }

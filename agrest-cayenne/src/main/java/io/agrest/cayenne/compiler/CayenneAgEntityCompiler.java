@@ -2,13 +2,15 @@ package io.agrest.cayenne.compiler;
 
 import io.agrest.cayenne.persister.ICayennePersister;
 import io.agrest.cayenne.processor.ICayenneQueryAssembler;
+import io.agrest.cayenne.processor.select.ContextualCayenneNestedDataResolver;
 import io.agrest.cayenne.processor.select.ViaQueryResolver;
 import io.agrest.cayenne.processor.select.ViaQueryWithParentExpResolver;
+import io.agrest.cayenne.processor.select.ViaQueryWithParentIdsResolver;
+import io.agrest.compiler.AgEntityCompiler;
 import io.agrest.meta.AgDataMap;
 import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgEntityOverlay;
 import io.agrest.meta.LazyAgEntity;
-import io.agrest.compiler.AgEntityCompiler;
 import io.agrest.resolver.NestedDataResolver;
 import io.agrest.resolver.RootDataResolver;
 import org.apache.cayenne.di.Inject;
@@ -63,7 +65,10 @@ public class CayenneAgEntityCompiler implements AgEntityCompiler {
             ICayenneQueryAssembler queryAssembler,
             ICayennePersister cayennePersister) {
 
-        return new ViaQueryWithParentExpResolver(queryAssembler, cayennePersister);
+        return new ContextualCayenneNestedDataResolver<>(
+                new ViaQueryWithParentExpResolver(queryAssembler, cayennePersister),
+                new ViaQueryWithParentIdsResolver<>(queryAssembler, cayennePersister)
+        );
     }
 
     private <T> AgEntity<T> doCompile(Class<T> type, AgDataMap dataMap) {

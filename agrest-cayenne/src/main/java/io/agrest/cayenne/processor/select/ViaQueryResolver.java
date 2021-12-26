@@ -29,12 +29,12 @@ public class ViaQueryResolver<T extends DataObject> extends BaseRootDataResolver
 
     @Override
     protected void doAssembleQuery(SelectContext<T> context) {
-        CayenneProcessor.setQuery(context.getEntity(), queryAssembler.createRootQuery(context));
+        CayenneProcessor.getCayenneEntity(context.getEntity()).setSelect(queryAssembler.createRootQuery(context));
     }
 
     @Override
     protected List<T> doFetchData(SelectContext<T> context) {
-        SelectQuery<T> select = CayenneProcessor.getQuery(context.getEntity());
+        SelectQuery<T> select = CayenneProcessor.getCayenneEntity(context.getEntity()).getSelect();
         List<T> result = persister.sharedContext().select(select);
         checkObjectNotFound(context, result);
         return result;

@@ -1,16 +1,26 @@
 package io.agrest.cayenne.encoder;
 
 import com.fasterxml.jackson.core.JsonGenerator;
-import io.agrest.*;
-import io.agrest.cayenne.unit.CayenneNoDbTest;
-import io.agrest.encoder.Encoder;
-import io.agrest.encoder.Encoders;
-import io.agrest.encoder.EntityEncoderFilter;
+import io.agrest.DataResponse;
+import io.agrest.ResourceEntity;
+import io.agrest.RootResourceEntity;
+import io.agrest.SimpleObjectId;
+import io.agrest.ToManyResourceEntity;
+import io.agrest.ToOneResourceEntity;
 import io.agrest.cayenne.cayenne.main.E1;
 import io.agrest.cayenne.cayenne.main.E19;
 import io.agrest.cayenne.cayenne.main.E2;
 import io.agrest.cayenne.cayenne.main.E3;
-import io.agrest.runtime.encoder.*;
+import io.agrest.cayenne.processor.CayenneProcessor;
+import io.agrest.cayenne.unit.CayenneNoDbTest;
+import io.agrest.encoder.Encoder;
+import io.agrest.encoder.Encoders;
+import io.agrest.encoder.EntityEncoderFilter;
+import io.agrest.runtime.encoder.EncodablePropertyFactory;
+import io.agrest.runtime.encoder.EncoderService;
+import io.agrest.runtime.encoder.IEncodablePropertyFactory;
+import io.agrest.runtime.encoder.IStringConverterFactory;
+import io.agrest.runtime.encoder.ValueEncodersProvider;
 import io.agrest.runtime.semantics.RelationshipMapper;
 import io.agrest.unit.ResourceEntityUtils;
 import org.apache.cayenne.Cayenne;
@@ -63,9 +73,11 @@ public class EncoderServiceTest extends CayenneNoDbTest {
 
         RootResourceEntity<E2> descriptor = getResourceEntity(E2.class);
         descriptor.includeId();
+        CayenneProcessor.getOrCreateCayenneEntity(descriptor);
 
         ToManyResourceEntity<E3> e3Descriptor = getToManyChildEntity(E3.class, descriptor, E2.E3S.getName());
         e3Descriptor.includeId();
+        CayenneProcessor.getOrCreateCayenneEntity(e3Descriptor);
         ResourceEntityUtils.appendAttribute(e3Descriptor, "name", String.class, E3::getName);
 
         descriptor.getChildren().put(E2.E3S.getName(), e3Descriptor);
@@ -201,10 +213,12 @@ public class EncoderServiceTest extends CayenneNoDbTest {
 
         RootResourceEntity<E3> e3Descriptor = getResourceEntity(E3.class);
         e3Descriptor.includeId();
+        CayenneProcessor.getOrCreateCayenneEntity(e3Descriptor);
 
         ToOneResourceEntity<E2> e2Descriptor = getToOneChildEntity(E2.class, e3Descriptor, E3.E2.getName());
         e2Descriptor.getEntityEncoderFilters().add(filter);
         e2Descriptor.includeId();
+        CayenneProcessor.getOrCreateCayenneEntity(e2Descriptor);
         e3Descriptor.getChildren().put(E3.E2.getName(), e2Descriptor);
 
         ObjectContext context = mockCayennePersister.newContext();

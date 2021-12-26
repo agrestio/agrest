@@ -2,7 +2,11 @@ package io.agrest.cayenne;
 
 import io.agrest.Ag;
 import io.agrest.DataResponse;
-import io.agrest.cayenne.cayenne.main.*;
+import io.agrest.cayenne.cayenne.main.E10;
+import io.agrest.cayenne.cayenne.main.E2;
+import io.agrest.cayenne.cayenne.main.E22;
+import io.agrest.cayenne.cayenne.main.E3;
+import io.agrest.cayenne.cayenne.main.E4;
 import io.agrest.cayenne.unit.AgCayenneTester;
 import io.agrest.cayenne.unit.DbTest;
 import io.agrest.meta.AgEntity;
@@ -11,7 +15,6 @@ import io.bootique.junit5.BQTestTool;
 import org.apache.cayenne.Cayenne;
 import org.apache.cayenne.Persistent;
 import org.apache.cayenne.query.SelectById;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import javax.ws.rs.GET;
@@ -135,10 +138,8 @@ public class GET_EntityOverlay_PerRequestIT extends DbTest {
                 .bodyEquals(1, "{\"id\":2,\"dynamicRelationship\":{\"id\":2,\"name\":\"b\",\"prop1\":null,\"prop2\":null}}");
     }
 
-    // TODO: https://github.com/agrestio/agrest/issues/500
     @Test
-    @Disabled("See #500")
-    public void test_OverlaidRelationship_ExpOnParent_Nested() {
+    public void test_OverlaidRelationship_ExpOnParent_NestedToOne() {
 
         tester.e4().insertColumns("id", "c_varchar").values(2, "a").values(4, "b").exec();
 
@@ -156,7 +157,7 @@ public class GET_EntityOverlay_PerRequestIT extends DbTest {
                 .queryParam("exp", "id = 2")
                 .queryParam("include", "[\"id\",\"dynamicRelationship.e2\"]")
                 .get().wasOk()
-                .bodyEquals(1, "{\"id\":2,\"dynamicRelationship\":{\"e2\":{\"id\":2,\"name\":\"b2\"}}");
+                .bodyEquals(1, "{\"id\":2,\"dynamicRelationship\":{\"e2\":{\"id\":1,\"address\":null,\"name\":\"a2\"}}}");
     }
 
     @Test

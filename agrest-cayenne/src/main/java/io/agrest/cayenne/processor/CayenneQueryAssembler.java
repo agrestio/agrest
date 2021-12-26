@@ -107,12 +107,18 @@ public class CayenneQueryAssembler implements ICayenneQueryAssembler {
     protected Expression resolveParentQualifier(NestedResourceEntity<?> entity, String outgoingDbPath) {
 
         ResourceEntity<?> parent = entity.getParent();
-        SelectQuery<?> select = CayenneProcessor.getQuery(parent);
+        CayenneResourceEntityExt<?> parentExt = CayenneProcessor.getCayenneEntity(parent);
+        if(parentExt == null) {
+            throw AgException.internalServerError("Parent '%s' of entity '%s' is not managed by Cayenne",
+                    parent.getName(),
+                    entity.getName());
+        }
+
+        SelectQuery<?> select = parentExt.getSelect();
 
         if (select != null) {
 
             Expression parentQualifier = select.getQualifier();
-
             if (parentQualifier == null) {
                 return null;
             }
@@ -120,9 +126,6 @@ public class CayenneQueryAssembler implements ICayenneQueryAssembler {
             ObjEntity parentObjEntity = entityResolver.getObjEntity(parent.getType());
             ObjRelationship incoming = parentObjEntity.getRelationship(entity.getIncoming().getName());
 
-            // TODO: handle dynamic relationships.
-            //  See https://github.com/agrestio/agrest/issues/500 and
-            //  GET_EntityOverlay_PerRequestIT.test_OverlaidRelationship_ExpOnParent_Nested()
             if (incoming == null) {
                 throw new IllegalStateException("No such relationship: " + parentObjEntity.getName() + "." + entity.getIncoming().getName());
             }

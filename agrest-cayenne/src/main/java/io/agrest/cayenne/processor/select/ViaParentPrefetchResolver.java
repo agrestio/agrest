@@ -1,10 +1,12 @@
 package io.agrest.cayenne.processor.select;
 
+import io.agrest.AgException;
 import io.agrest.NestedResourceEntity;
 import io.agrest.ResourceEntity;
 import io.agrest.RootResourceEntity;
 import io.agrest.cayenne.compiler.DataObjectPropertyReader;
 import io.agrest.cayenne.processor.CayenneProcessor;
+import io.agrest.cayenne.processor.CayenneResourceEntityExt;
 import io.agrest.property.PropertyReader;
 import io.agrest.resolver.BaseNestedDataResolver;
 import io.agrest.resolver.ToManyFlattenedIterator;
@@ -29,6 +31,7 @@ public class ViaParentPrefetchResolver extends BaseNestedDataResolver<DataObject
 
     @Override
     protected void doOnParentQueryAssembled(NestedResourceEntity<DataObject> entity, SelectContext<?> context) {
+        // add prefetch to the parent query
         addPrefetch(entity, prefetchSemantics);
     }
 
@@ -52,15 +55,24 @@ public class ViaParentPrefetchResolver extends BaseNestedDataResolver<DataObject
         String path = outgoingPath != null ? incomingPath + "." + outgoingPath : incomingPath;
 
         ResourceEntity<?> parent = entity.getParent();
-        SelectQuery<?> parentSelect = CayenneProcessor.getQuery(parent);
+        CayenneResourceEntityExt<?> parentExt = CayenneProcessor.getCayenneEntity(parent);
+        if (parentExt == null) {
+            throw AgException.internalServerError(
+                    "Parent entity '%s' is not handled by Cayenne. Can not use prefetch resolver",
+                    parent.getAgEntity().getName());
+        }
+
+        SelectQuery<?> parentSelect = parentExt.getSelect();
         if (parentSelect != null) {
             parentSelect.addPrefetch(path).setSemantics(prefetchSemantics);
             return;
         }
 
         if (parent instanceof RootResourceEntity) {
-            throw new IllegalStateException(
-                    "Can't add prefetch to root entity that has no SelectQuery of its own. Path: " + path);
+            throw AgException.internalServerError(
+                    "Can't add prefetch to root entity '%s' that has no SelectQuery of its own. Path: %s",
+                    parent.getAgEntity().getName(),
+                    path);
         }
 
         addPrefetch(((NestedResourceEntity) parent), path, prefetchSemantics);

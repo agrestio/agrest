@@ -85,7 +85,7 @@ public class CayenneMapIdempotentFullSyncStage extends CayenneMapIdempotentCreat
             query.andQualifier(CayenneUtil.parentQualifier(context.getParent(), resolver));
         }
 
-        CayenneProcessor.setQuery(entity, query);
+        CayenneProcessor.getCayenneEntity(entity).setSelect(query);
         buildChildrenQuery(context, entity);
 
         return query;

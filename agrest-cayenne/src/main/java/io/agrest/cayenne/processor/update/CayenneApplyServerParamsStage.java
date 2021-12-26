@@ -3,8 +3,10 @@ package io.agrest.cayenne.processor.update;
 import io.agrest.AgObjectId;
 import io.agrest.EntityParent;
 import io.agrest.EntityUpdate;
+import io.agrest.NestedResourceEntity;
 import io.agrest.ResourceEntity;
 import io.agrest.cayenne.persister.ICayennePersister;
+import io.agrest.cayenne.processor.CayenneProcessor;
 import io.agrest.meta.AgAttribute;
 import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgRelationship;
@@ -14,7 +16,12 @@ import io.agrest.runtime.constraints.IConstraintsHandler;
 import io.agrest.runtime.encoder.IEncoderService;
 import io.agrest.runtime.processor.update.UpdateContext;
 import org.apache.cayenne.di.Inject;
-import org.apache.cayenne.map.*;
+import org.apache.cayenne.map.DbJoin;
+import org.apache.cayenne.map.DbRelationship;
+import org.apache.cayenne.map.EntityResolver;
+import org.apache.cayenne.map.ObjAttribute;
+import org.apache.cayenne.map.ObjEntity;
+import org.apache.cayenne.map.ObjRelationship;
 
 import java.util.Collections;
 import java.util.List;
@@ -59,17 +66,35 @@ public class CayenneApplyServerParamsStage implements Processor<UpdateContext<?>
             fillIdsFromMeaningfulPk(context);
             fillIdsFromParentId(context);
         }
-        
+
         constraintsHandler.constrainUpdate(context, context.getWriteConstraints());
 
         // apply read constraints
         // TODO: should we only care about response constraints after the commit?
         constraintsHandler.constrainResponse(entity, null, context.getReadConstraints());
 
+        tagCayenneEntities(context.getEntity());
+
         if (context.getEncoder() == null) {
             // TODO: we don't need encoder if includeData=false... should we conditionally skip this step?
             // TODO: should we allow custom EntityFilters in update?
             context.setEncoder(encoderService.dataEncoder(entity));
+        }
+    }
+
+    private void tagCayenneEntities(ResourceEntity<?> entity) {
+        if (entityResolver.getObjEntity(entity.getName()) != null) {
+            CayenneProcessor.getOrCreateCayenneEntity(entity);
+        }
+
+        if (entity.getMapBy() != null) {
+            for (NestedResourceEntity<?> child : entity.getMapBy().getChildren().values()) {
+                tagCayenneEntities(child);
+            }
+        }
+
+        for (NestedResourceEntity<?> child : entity.getChildren().values()) {
+            tagCayenneEntities(child);
         }
     }
 

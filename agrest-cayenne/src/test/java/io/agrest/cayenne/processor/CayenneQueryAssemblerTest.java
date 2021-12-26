@@ -51,7 +51,7 @@ public class CayenneQueryAssemblerTest extends CayenneNoDbTest {
 
         resourceEntity.setFetchLimit(0);
         resourceEntity.setFetchOffset(0);
-        CayenneProcessor.setQuery(resourceEntity, null);
+        CayenneProcessor.getOrCreateCayenneEntity(resourceEntity).setSelect(null);
 
         SelectQuery<E1> q2 = queryAssembler.createRootQuery(c);
         assertEquals(0, q2.getPageSize());
@@ -103,7 +103,7 @@ public class CayenneQueryAssemblerTest extends CayenneNoDbTest {
         c.setId(1);
         c.setEntity(getResourceEntity(E1.class));
 
-        CayenneProcessor.setQuery(c.getEntity(), select);
+        CayenneProcessor.getOrCreateCayenneEntity(c.getEntity()).setSelect(select);
 
         SelectQuery<E1> s2 = queryAssembler.createRootQuery(c);
         assertNotNull(s2);

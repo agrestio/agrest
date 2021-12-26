@@ -7,6 +7,7 @@ import io.agrest.ToManyResourceEntity;
 import io.agrest.ToOneResourceEntity;
 import io.agrest.cayenne.persister.ICayennePersister;
 import io.agrest.cayenne.processor.CayenneProcessor;
+import io.agrest.cayenne.processor.CayenneResourceEntityExt;
 import io.agrest.cayenne.processor.ICayenneQueryAssembler;
 import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgIdPart;
@@ -43,7 +44,8 @@ public class ViaQueryWithParentExpResolver<T extends DataObject> extends BaseNes
 
     @Override
     protected void doOnParentQueryAssembled(NestedResourceEntity<T> entity, SelectContext<?> context) {
-        CayenneProcessor.setQuery(entity, queryAssembler.createQueryWithParentQualifier(entity));
+        CayenneProcessor.getCayenneEntity(entity)
+                .setSelect(queryAssembler.createQueryWithParentQualifier(entity));
     }
 
     @Override
@@ -58,7 +60,11 @@ public class ViaQueryWithParentExpResolver<T extends DataObject> extends BaseNes
             return Collections.emptyList();
         }
 
-        SelectQuery<Object[]> select = CayenneProcessor.getQuery(entity);
+        // TODO: the actual query is a column query instead of T, hence ugly generics stripping
+        CayenneResourceEntityExt ext = CayenneProcessor.getCayenneEntity(entity);
+
+
+        SelectQuery<Object[]> select = ext.getSelect();
         List<Object[]> result = persister.sharedContext().select(select);
         indexResultByParentId(entity, result);
 

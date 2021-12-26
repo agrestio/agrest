@@ -172,7 +172,7 @@ public class CayenneMapUpdateStage extends CayenneMapChangesStage {
             query.setQualifier(qualifier);
         }
 
-        CayenneProcessor.setQuery(entity, query);
+        CayenneProcessor.getCayenneEntity(entity).setSelect(query);
         buildChildrenQuery(context, entity);
 
         return query;
@@ -194,7 +194,7 @@ public class CayenneMapUpdateStage extends CayenneMapChangesStage {
             return;
         }
 
-        SelectQuery<?> parentSelect = CayenneProcessor.getQuery(entity);
+        SelectQuery<?> parentSelect = CayenneProcessor.getCayenneEntity(entity).getSelect();
 
         for (Map.Entry<String, NestedResourceEntity<?>> e : children.entrySet()) {
             NestedResourceEntity child = e.getValue();
@@ -224,11 +224,11 @@ public class CayenneMapUpdateStage extends CayenneMapChangesStage {
     }
 
 
-    protected <T> List<T> fetchEntity(UpdateContext<T> context, ResourceEntity<T> resourceEntity) {
+    protected <T> List<T> fetchEntity(UpdateContext<T> context, ResourceEntity<T> entity) {
 
-        SelectQuery<T> select = CayenneProcessor.getQuery(resourceEntity);
+        SelectQuery<T> select = CayenneProcessor.getCayenneEntity(entity).getSelect();
         List<T> objects = CayenneUpdateStartStage.cayenneContext(context).select(select);
-        fetchChildren(context, resourceEntity, resourceEntity.getChildren());
+        fetchChildren(context, entity, entity.getChildren());
 
         return objects;
     }

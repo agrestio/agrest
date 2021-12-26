@@ -13,17 +13,30 @@ import io.agrest.cayenne.processor.delete.CayenneDeleteStartStage;
 import io.agrest.cayenne.processor.unrelate.CayenneUnrelateDataStoreStage;
 import io.agrest.cayenne.processor.unrelate.CayenneUnrelateProcessorFactoryProvider;
 import io.agrest.cayenne.processor.unrelate.CayenneUnrelateStartStage;
-import io.agrest.cayenne.processor.update.*;
+import io.agrest.cayenne.processor.update.CayenneApplyServerParamsStage;
+import io.agrest.cayenne.processor.update.CayenneCommitStage;
+import io.agrest.cayenne.processor.update.CayenneCreatedOrOkResponseStage;
+import io.agrest.cayenne.processor.update.CayenneCreatedResponseStage;
+import io.agrest.cayenne.processor.update.CayenneMapCreateOrUpdateStage;
+import io.agrest.cayenne.processor.update.CayenneMapCreateStage;
+import io.agrest.cayenne.processor.update.CayenneMapIdempotentCreateOrUpdateStage;
+import io.agrest.cayenne.processor.update.CayenneMapIdempotentFullSyncStage;
+import io.agrest.cayenne.processor.update.CayenneMapUpdateStage;
+import io.agrest.cayenne.processor.update.CayenneMergeChangesStage;
+import io.agrest.cayenne.processor.update.CayenneOkResponseStage;
+import io.agrest.cayenne.processor.update.CayenneUpdateProcessorFactoryFactoryProvider;
+import io.agrest.cayenne.processor.update.CayenneUpdateStartStage;
 import io.agrest.cayenne.provider.CayenneRuntimeExceptionMapper;
 import io.agrest.cayenne.provider.ValidationExceptionMapper;
 import io.agrest.cayenne.qualifier.IQualifierParser;
 import io.agrest.cayenne.qualifier.IQualifierPostProcessor;
 import io.agrest.cayenne.qualifier.QualifierParser;
 import io.agrest.cayenne.qualifier.QualifierPostProcessor;
-import io.agrest.encoder.Encoder;
 import io.agrest.compiler.AgEntityCompiler;
 import io.agrest.compiler.AnnotationsAgEntityCompiler;
+import io.agrest.encoder.Encoder;
 import io.agrest.runtime.processor.delete.DeleteProcessorFactory;
+import io.agrest.runtime.processor.select.ApplyServerParamsStage;
 import io.agrest.runtime.processor.unrelate.UnrelateProcessorFactory;
 import io.agrest.runtime.processor.update.UpdateProcessorFactoryFactory;
 import org.apache.cayenne.CayenneRuntimeException;
@@ -57,6 +70,9 @@ public class AgCayenneModule implements Module {
         binder.bind(IQualifierParser.class).to(QualifierParser.class);
         binder.bind(IQualifierPostProcessor.class).to(QualifierPostProcessor.class);
         binder.bind(ICayenneQueryAssembler.class).to(CayenneQueryAssembler.class);
+
+        // select stages
+        binder.bind(ApplyServerParamsStage.class).to(io.agrest.cayenne.processor.select.CayenneApplyServerParamsStage.class);
 
         // delete stages
         binder.bind(DeleteProcessorFactory.class).toProvider(CayenneDeleteProcessorFactoryProvider.class);

@@ -9,6 +9,7 @@ import io.agrest.ToOneResourceEntity;
 import io.agrest.cayenne.cayenne.main.E2;
 import io.agrest.cayenne.cayenne.main.E3;
 import io.agrest.cayenne.persister.ICayennePersister;
+import io.agrest.cayenne.processor.CayenneProcessor;
 import io.agrest.cayenne.unit.CayenneNoDbTest;
 import io.agrest.encoder.Encoder;
 import io.agrest.encoder.EntityEncoderFilter;
@@ -68,10 +69,12 @@ public class SenchaEncoderServiceTest extends CayenneNoDbTest {
 
 
         RootResourceEntity<E3> e3Descriptor = getResourceEntity(E3.class);
+        CayenneProcessor.getOrCreateCayenneEntity(e3Descriptor);
         e3Descriptor.getEntityEncoderFilters().add(filter);
         e3Descriptor.includeId();
 
         ToOneResourceEntity<E2> e2Descriptor = getToOneChildEntity(E2.class, e3Descriptor, E3.E2.getName());
+        CayenneProcessor.getOrCreateCayenneEntity(e2Descriptor);
         e2Descriptor.getEntityEncoderFilters().add(filter);
         e2Descriptor.includeId();
         e3Descriptor.getChildren().put(E3.E2.getName(), e2Descriptor);
