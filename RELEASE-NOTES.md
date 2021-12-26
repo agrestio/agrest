@@ -12,6 +12,7 @@
 * #506 DeleteBuilder stage
 * #507 Upgrade to Cayenne 4.2.B1
 * #509 Removing ExecutorService and ShutdownManager
+* #510 "by id" Cayenne resolver fetches entire table in the absence of pagination
 
 ## Release 4.7
 
