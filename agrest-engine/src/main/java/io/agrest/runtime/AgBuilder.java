@@ -47,7 +47,6 @@ import io.agrest.runtime.entity.MapByMerger;
 import io.agrest.runtime.entity.ResultFilter;
 import io.agrest.runtime.entity.SizeMerger;
 import io.agrest.runtime.entity.SortMerger;
-import io.agrest.runtime.executor.UnboundedExecutorServiceProvider;
 import io.agrest.runtime.jackson.IJacksonService;
 import io.agrest.runtime.jackson.JacksonService;
 import io.agrest.runtime.meta.BaseUrlProvider;
@@ -84,7 +83,6 @@ import io.agrest.runtime.request.DefaultRequestBuilderFactory;
 import io.agrest.runtime.request.IAgRequestBuilderFactory;
 import io.agrest.runtime.semantics.IRelationshipMapper;
 import io.agrest.runtime.semantics.RelationshipMapper;
-import io.agrest.runtime.shutdown.ShutdownManager;
 import org.apache.cayenne.di.DIBootstrap;
 import org.apache.cayenne.di.Injector;
 import org.apache.cayenne.di.Key;
@@ -94,7 +92,6 @@ import org.apache.cayenne.di.spi.ModuleLoader;
 
 import javax.ws.rs.core.Feature;
 import javax.ws.rs.ext.ExceptionMapper;
-import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -102,7 +99,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.ServiceLoader;
-import java.util.concurrent.ExecutorService;
 
 /**
  * A builder of Agrest runtime that can be loaded into JAX-RS 2 container as a {@link Feature}.
@@ -121,7 +117,6 @@ public class AgBuilder {
 
     @Deprecated
     private final Map<String, PropertyMetadataEncoder> metadataEncoders;
-    private ExecutorService executor;
     private String baseUrl;
     private boolean autoLoadModules;
     private boolean autoLoadFeatures;
@@ -221,18 +216,6 @@ public class AgBuilder {
     @Deprecated
     public AgBuilder baseUrl(String url) {
         this.baseUrl = url;
-        return this;
-    }
-
-    /**
-     * Sets an optional thread pool that should be used by non-blocking request runners.
-     *
-     * @param executor a thread pool used for non-blocking request runners.
-     * @return this builder instance.
-     * @since 2.0
-     */
-    public AgBuilder executor(ExecutorService executor) {
-        this.executor = executor;
         return this;
     }
 
@@ -490,14 +473,6 @@ public class AgBuilder {
 
             Optional<String> maybeBaseUrl = Optional.ofNullable(baseUrl);
             binder.bind(BaseUrlProvider.class).toInstance(BaseUrlProvider.forUrl(maybeBaseUrl));
-
-            binder.bind(ShutdownManager.class).toInstance(new ShutdownManager(Duration.ofSeconds(10)));
-
-            if (executor != null) {
-                binder.bind(ExecutorService.class).toInstance(executor);
-            } else {
-                binder.bind(ExecutorService.class).toProvider(UnboundedExecutorServiceProvider.class);
-            }
         };
     }
 }

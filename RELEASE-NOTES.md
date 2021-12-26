@@ -11,6 +11,7 @@
 * #505 Authorizer for DeleteBuilder
 * #506 DeleteBuilder stage
 * #507 Upgrade to Cayenne 4.2.B1
+* #509 Removing ExecutorService and ShutdownManager
 
 ## Release 4.7
 
