@@ -186,13 +186,6 @@ public abstract class ResourceEntity<T> {
         return mapByPath;
     }
 
-    @Override
-    public String toString() {
-        return "ResourceEntity{" +
-                "name=" + agEntity.getName() +
-                '}';
-    }
-
     public Class<T> getType() {
         return agEntity.getType();
     }
@@ -259,5 +252,10 @@ public abstract class ResourceEntity<T> {
      */
     public void setRequestProperty(String name, Object value) {
         requestProperties.put(name, value);
+    }
+
+    @Override
+    public String toString() {
+        return getClass().getSimpleName() + '[' + getName() + ']';
     }
 }
