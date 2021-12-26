@@ -4,7 +4,6 @@ import io.agrest.NestedResourceEntity;
 import io.agrest.property.PropertyReader;
 import io.agrest.runtime.processor.select.SelectContext;
 
-import java.util.Collections;
 import java.util.function.Function;
 
 /**
@@ -13,7 +12,7 @@ import java.util.function.Function;
  */
 public class ReaderFactoryBasedResolver<T> extends BaseNestedDataResolver<T> {
 
-    private Function<NestedResourceEntity<T>, PropertyReader> readerFactory;
+    private final Function<NestedResourceEntity<T>, PropertyReader> readerFactory;
 
     public ReaderFactoryBasedResolver(Function<NestedResourceEntity<T>, PropertyReader> readerFactory) {
         this.readerFactory = readerFactory;
@@ -28,13 +27,18 @@ public class ReaderFactoryBasedResolver<T> extends BaseNestedDataResolver<T> {
     @Override
     protected Iterable<T> doOnParentDataResolved(NestedResourceEntity<T> entity, Iterable<?> parentData, SelectContext<?> context) {
         // do nothing .. parent entity will carry our data for us
-
-        // TODO: create an iterable<T> for the sake of children
-        return Collections.emptyList();
+        return iterableData(entity, parentData);
     }
 
     @Override
     public PropertyReader reader(NestedResourceEntity<T> entity) {
         return readerFactory.apply(entity);
+    }
+
+    protected Iterable<T> iterableData(NestedResourceEntity<T> entity, Iterable<?> parentData) {
+        PropertyReader reader = reader(entity);
+        return entity.getIncoming().isToMany()
+                ? () -> new ToManyFlattenedIterator<>(parentData.iterator(), reader)
+                : () -> new ToOneFlattenedIterator<>(parentData.iterator(), reader);
     }
 }

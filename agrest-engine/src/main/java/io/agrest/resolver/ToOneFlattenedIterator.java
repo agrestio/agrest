@@ -1,22 +1,22 @@
-package io.agrest.cayenne.processor.select;
+package io.agrest.resolver;
 
-import org.apache.cayenne.DataObject;
+import io.agrest.property.PropertyReader;
 
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 /**
- * @since 3.4
+ * @since 4.8
  */
 public class ToOneFlattenedIterator<T> implements Iterator<T> {
 
-    protected Iterator<? extends DataObject> parentIt;
-    protected String property;
+    protected final Iterator<?> parentIt;
+    protected final PropertyReader parentProperty;
     protected T next;
 
-    public ToOneFlattenedIterator(Iterator<? extends DataObject> parentIt, String property) {
+    public ToOneFlattenedIterator(Iterator<?> parentIt, PropertyReader parentProperty) {
         this.parentIt = parentIt;
-        this.property = property;
+        this.parentProperty = parentProperty;
         rewind();
     }
 
@@ -44,9 +44,9 @@ public class ToOneFlattenedIterator<T> implements Iterator<T> {
             T next = null;
 
             while (next == null && parentIt.hasNext()) {
-                DataObject parent = parentIt.next();
+                Object parent = parentIt.next();
                 if (parent != null) {
-                    next = (T) parent.readProperty(property);
+                    next = (T) parentProperty.value(parent);
                 }
             }
 

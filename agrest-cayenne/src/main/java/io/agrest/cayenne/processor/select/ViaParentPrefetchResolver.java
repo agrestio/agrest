@@ -7,6 +7,8 @@ import io.agrest.cayenne.compiler.DataObjectPropertyReader;
 import io.agrest.cayenne.processor.CayenneProcessor;
 import io.agrest.property.PropertyReader;
 import io.agrest.resolver.BaseNestedDataResolver;
+import io.agrest.resolver.ToManyFlattenedIterator;
+import io.agrest.resolver.ToOneFlattenedIterator;
 import io.agrest.runtime.processor.select.SelectContext;
 import org.apache.cayenne.DataObject;
 import org.apache.cayenne.query.SelectQuery;
@@ -35,7 +37,7 @@ public class ViaParentPrefetchResolver extends BaseNestedDataResolver<DataObject
             NestedResourceEntity<DataObject> entity,
             Iterable<?> parentData,
             SelectContext<?> context) {
-        return dataIterable(entity, (Iterable<DataObject>) parentData);
+        return iterableData(entity, (Iterable<DataObject>) parentData);
     }
 
     protected void addPrefetch(NestedResourceEntity<?> entity, int prefetchSemantics) {
@@ -73,10 +75,10 @@ public class ViaParentPrefetchResolver extends BaseNestedDataResolver<DataObject
         return DataObjectPropertyReader.reader(entity.getIncoming().getName());
     }
 
-    protected Iterable<DataObject> dataIterable(NestedResourceEntity<DataObject> entity, Iterable<? extends DataObject> parentData) {
-        String property = entity.getIncoming().getName();
+    protected Iterable<DataObject> iterableData(NestedResourceEntity<DataObject> entity, Iterable<? extends DataObject> parentData) {
+        PropertyReader reader = reader(entity);
         return entity.getIncoming().isToMany()
-                ? () -> new ToManyFlattenedIterator<>(parentData.iterator(), property)
-                : () -> new ToOneFlattenedIterator<>(parentData.iterator(), property);
+                ? () -> new ToManyFlattenedIterator<>(parentData.iterator(), reader)
+                : () -> new ToOneFlattenedIterator<>(parentData.iterator(), reader);
     }
 }

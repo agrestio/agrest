@@ -1,20 +1,20 @@
-package io.agrest.cayenne.processor.select;
+package io.agrest.resolver;
 
-import org.apache.cayenne.DataObject;
+import io.agrest.property.PropertyReader;
 
 import java.util.Iterator;
 import java.util.List;
 
 /**
  * @param <T>
- * @since 3.4
+ * @since 4.8
  */
 public class ToManyFlattenedIterator<T> extends ToOneFlattenedIterator<T> {
 
     private List<T> nextList;
     private int nextPos;
 
-    public ToManyFlattenedIterator(Iterator<? extends DataObject> parentIt, String property) {
+    public ToManyFlattenedIterator(Iterator<?> parentIt, PropertyReader property) {
         super(parentIt, property);
     }
 
@@ -39,10 +39,10 @@ public class ToManyFlattenedIterator<T> extends ToOneFlattenedIterator<T> {
             List<T> nextList = null;
 
             while (nextList == null && parentIt.hasNext()) {
-                DataObject parent = parentIt.next();
+                Object parent = parentIt.next();
                 if (parent != null) {
                     // TODO: handle Set or Map relationships
-                    List<T> maybeNextList = (List<T>) parent.readProperty(property);
+                    List<T> maybeNextList = (List<T>) parentProperty.value(parent);
                     if (maybeNextList != null && !maybeNextList.isEmpty()) {
                         nextList = maybeNextList;
                     }

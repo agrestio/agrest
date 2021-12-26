@@ -4,15 +4,13 @@ import io.agrest.NestedResourceEntity;
 import io.agrest.property.PropertyReader;
 import io.agrest.runtime.processor.select.SelectContext;
 
-import java.util.Collections;
-
 /**
  * @param <T>
  * @since 3.4
  */
 public class ReaderBasedResolver<T> extends BaseNestedDataResolver<T> {
 
-    private PropertyReader reader;
+    private final PropertyReader reader;
 
     public ReaderBasedResolver(PropertyReader reader) {
         this.reader = reader;
@@ -26,12 +24,17 @@ public class ReaderBasedResolver<T> extends BaseNestedDataResolver<T> {
     @Override
     protected Iterable<T> doOnParentDataResolved(NestedResourceEntity<T> entity, Iterable<?> parentData, SelectContext<?> context) {
         // do nothing .. parent entity will carry our data for us
-        // TODO: create an iterable<T> for the sake of children
-        return Collections.emptyList();
+        return iterableData(entity, parentData);
     }
 
     @Override
     public PropertyReader reader(NestedResourceEntity<T> entity) {
         return reader;
+    }
+
+    protected Iterable<T> iterableData(NestedResourceEntity<T> entity, Iterable<?> parentData) {
+        return entity.getIncoming().isToMany()
+                ? () -> new ToManyFlattenedIterator<>(parentData.iterator(), reader)
+                : () -> new ToOneFlattenedIterator<>(parentData.iterator(), reader);
     }
 }
