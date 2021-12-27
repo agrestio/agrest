@@ -23,8 +23,26 @@ need to understand the implications:
 
 * Select pipeline now has `SelectStage.FILTER_RESULT` and `SelectStage.ENCODE` added after `SelectStage.FETCH_DATA`, 
   that was previously the last stage of the pipeline. Response Encoder is not available until the "ENCODE" stage.
+
 * Update pipeline has `UpdateStage.FILTER_RESULT` and `UpdateStage.ENCODE` added after `UpdateStage.FILL_RESPONSE`,
-  that was previously the last stage of the pipeline. Response Encoder is not available until the "ENCODE" stage.
+  that was previously the last stage of the pipeline. Response Encoder is not available until the "ENCODE" stage. This
+  may actually break a common extension pattern used previously - the use of `terminalStage` to provide the response
+  data via a custom method, and skip the actual processing:
+```java
+Ag
+     .select(E1.class, config)
+     .terminalStage(SelectStage.APPLY_SERVER_PARAMS, this::provideData)
+     .get();
+```
+  This will no longer work, resulting in an NPE for the encoder during encoding. The new way of handling this case
+  is to provide a custom "root data resolver" via entity overlay:
+```java
+Ag
+    .select(E1.class, config)
+    .entityOverlay(AgEntity.overlay(E1.class).redefineDataResolver(this::provideData))
+    .get();
+```
+
 * Update pipeline has `UpdateStage.MAP_CHANGES` and `UpdateStage.AUTHORIZE_CHANGES` added between
   `UpdateStage.APPLY_SERVER_PARAMS` and `UpdateStage.MERGE_CHANGES`. "MAP_CHANGES" was split from 
   "MERGE_CHANGES", as it is a separate logical step. It gives the new "AUTHORIZE_CHANGES" stage an opportunity to 

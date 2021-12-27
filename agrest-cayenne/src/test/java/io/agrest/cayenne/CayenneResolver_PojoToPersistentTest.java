@@ -16,7 +16,7 @@ public class CayenneResolver_PojoToPersistentTest extends CayenneNoDbTest {
         try {
             AgEntity
                     .overlay(PX1.class)
-                    .redefineRootDataResolver(new PX1RootResolver())
+                    .redefineDataResolver(new PX1RootResolver())
                     // Cayenne resolver will fail as the parent is not a Cayenne object
                     .redefineToOne("overlayToOne", E25.class, CayenneResolvers.nested(mockCayennePersister, queryAssembler).viaQueryWithParentIds());
 
@@ -33,7 +33,7 @@ public class CayenneResolver_PojoToPersistentTest extends CayenneNoDbTest {
         try {
             AgEntity
                     .overlay(PX1.class)
-                    .redefineRootDataResolver(new PX1RootResolver())
+                    .redefineDataResolver(new PX1RootResolver())
                     // Cayenne resolver will fail as the parent is not a Cayenne object
                     .redefineToOne("overlayToOne", E25.class, CayenneResolvers.nested(mockCayennePersister, queryAssembler).viaQueryWithParentExp());
 
@@ -50,7 +50,7 @@ public class CayenneResolver_PojoToPersistentTest extends CayenneNoDbTest {
         try {
             AgEntity
                     .overlay(PX1.class)
-                    .redefineRootDataResolver(new PX1RootResolver())
+                    .redefineDataResolver(new PX1RootResolver())
                     // Cayenne resolver will fail as the parent is not a Cayenne object
                     .redefineToOne("overlayToOne", E25.class, CayenneResolvers.nested(mockCayennePersister, queryAssembler).viaParentPrefetch());
 

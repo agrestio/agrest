@@ -1,16 +1,21 @@
 package io.agrest.meta;
 
+import io.agrest.RootResourceEntity;
 import io.agrest.access.CreateAuthorizer;
 import io.agrest.access.DeleteAuthorizer;
 import io.agrest.access.ReadFilter;
 import io.agrest.access.UpdateAuthorizer;
 import io.agrest.pojo.model.P1;
 import io.agrest.resolver.RootDataResolver;
+import io.agrest.runtime.processor.select.SelectContext;
 import org.junit.jupiter.api.Test;
 
 import java.util.Collections;
+import java.util.List;
 
+import static java.util.Arrays.asList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.mockito.Mockito.mock;
 
 public class AgEntityOverlayTest {
@@ -55,11 +60,36 @@ public class AgEntityOverlayTest {
         );
 
         AgEntityOverlay<P1> resolverOnly = AgEntity.overlay(P1.class)
-                .redefineRootDataResolver(r2);
+                .redefineDataResolver(r2);
 
         AgEntity<P1> eo = resolverOnly.resolve(mock(AgDataMap.class), e);
         assertEquals("p1", eo.getName());
         assertEquals(P1.class, eo.getType());
         assertEquals(r2, eo.getDataResolver());
+    }
+
+    @Test
+    public void testResolve_RootResolverFunction() {
+
+        AgEntity<P1> e = new DefaultAgEntity(
+                "p1", P1.class,
+                Collections.emptyMap(), Collections.emptyMap(), Collections.emptyMap(),
+                mock(RootDataResolver.class),
+                ReadFilter.allowsAllFilter(),
+                CreateAuthorizer.allowsAllFilter(),
+                UpdateAuthorizer.allowsAllFilter(),
+                DeleteAuthorizer.allowsAllFilter()
+        );
+
+        List<P1> p1s = asList(new P1(), new P1());
+
+        AgEntityOverlay<P1> resolverOnly = AgEntity.overlay(P1.class).redefineDataResolver(c -> p1s);
+        AgEntity<P1> eo = resolverOnly.resolve(mock(AgDataMap.class), e);
+
+        SelectContext<P1> context = new SelectContext<>(P1.class);
+        context.setEntity(new RootResourceEntity<>(mock(AgEntity.class)));
+        eo.getDataResolver().fetchData(context);
+
+        assertSame(p1s, context.getEntity().getResult());
     }
 }

@@ -96,7 +96,7 @@ public class GET_Resolvers_RootIT extends DbTest {
             AgEntityOverlay<E2> e2Overlay = AgEntity
                     .overlay(E2.class)
                     // this is what Ag uses by default, but let's see if it still works as an override
-                    .redefineRootDataResolver(CayenneResolvers.root(config).viaQuery())
+                    .redefineDataResolverFactory(CayenneResolvers.root(config).viaQuery())
                     // check how a combination of custom root and nested resolvers works
                     .redefineRelationshipResolver("e3s", CayenneResolvers.nested(config).viaParentPrefetch());
 
@@ -113,7 +113,7 @@ public class GET_Resolvers_RootIT extends DbTest {
             // non-standard nested resolver
             AgEntityOverlay<E2> e2Overlay = AgEntity
                     .overlay(E2.class)
-                    .redefineRootDataResolver(new CustomE2Resolver())
+                    .redefineDataResolver(new CustomE2Resolver())
                     // check how a combination of custom root and Cayenne nested resolvers works
                     .redefineRelationshipResolver("e3s", CayenneResolvers.nested(config).viaQueryWithParentIds());
 

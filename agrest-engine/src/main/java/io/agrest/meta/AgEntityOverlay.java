@@ -7,11 +7,13 @@ import io.agrest.access.UpdateAuthorizer;
 import io.agrest.access.PropertyFilteringRulesBuilder;
 import io.agrest.access.PropertyFilter;
 import io.agrest.property.PropertyReader;
+import io.agrest.resolver.BaseRootDataResolver;
 import io.agrest.resolver.NestedDataResolver;
 import io.agrest.resolver.NestedDataResolverFactory;
 import io.agrest.resolver.ReaderBasedResolver;
 import io.agrest.resolver.RootDataResolver;
 import io.agrest.resolver.RootDataResolverFactory;
+import io.agrest.runtime.processor.select.SelectContext;
 
 import java.util.HashMap;
 import java.util.List;
@@ -405,17 +407,54 @@ public class AgEntityOverlay<T> {
 
     /**
      * @since 3.4
+     * @deprecated renamed to {@link #redefineDataResolverFactory(RootDataResolverFactory)}
      */
+    @Deprecated
     public AgEntityOverlay<T> redefineRootDataResolver(RootDataResolverFactory rootDataResolverFactory) {
         this.rootDataResolver = rootDataResolverFactory.resolver(type);
         return this;
     }
 
     /**
-     * @since 3.4
+     * @since 4.9
      */
+    public AgEntityOverlay<T> redefineDataResolverFactory(RootDataResolverFactory rootDataResolverFactory) {
+        this.rootDataResolver = rootDataResolverFactory.resolver(type);
+        return this;
+    }
+
+    /**
+     * @since 3.4
+     * @deprecated renamed to {@link #redefineDataResolver(RootDataResolver)}
+     */
+    @Deprecated
     public AgEntityOverlay<T> redefineRootDataResolver(RootDataResolver<T> rootDataResolver) {
         this.rootDataResolver = rootDataResolver;
+        return this;
+    }
+
+    /**
+     * @since 4.9
+     */
+    public AgEntityOverlay<T> redefineDataResolver(RootDataResolver<T> rootDataResolver) {
+        this.rootDataResolver = rootDataResolver;
+        return this;
+    }
+
+    /**
+     * Redefines entity {@link RootDataResolver} by using the provided function.
+     *
+     * @since 4.9
+     */
+    public AgEntityOverlay<T> redefineDataResolver(Function<SelectContext<T>, List<T>> reader) {
+        this.rootDataResolver = new BaseRootDataResolver<T>() {
+
+            @Override
+            protected List<T> doFetchData(SelectContext<T> context) {
+                return reader.apply(context);
+            }
+        };
+
         return this;
     }
 }

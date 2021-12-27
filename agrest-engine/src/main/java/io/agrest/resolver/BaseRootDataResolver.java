@@ -27,7 +27,9 @@ public abstract class BaseRootDataResolver<T> extends BaseDataResolver implement
         afterDataFetched(entity, result, context);
     }
 
-    protected abstract void doAssembleQuery(SelectContext<T> context);
+    protected void doAssembleQuery(SelectContext<T> context) {
+        // do nothing by default
+    }
 
     protected abstract List<T> doFetchData(SelectContext<T> context);
 }
