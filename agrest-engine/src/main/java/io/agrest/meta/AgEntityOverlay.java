@@ -112,7 +112,8 @@ public class AgEntityOverlay<T> {
     }
 
     private boolean isEmpty() {
-        return attributes.isEmpty()
+        return rootDataResolver == null
+                && attributes.isEmpty()
                 && relationships.isEmpty()
                 && readablePropFilter == null
                 && writablePropFilter == null

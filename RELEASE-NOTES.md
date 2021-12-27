@@ -1,3 +1,7 @@
+## Release 4.9
+
+* #513 AgEntityOverly with a single root resolver doesn't update the entity
+
 ## Release 4.8
 
 * #427 AgEntityOverlay support for POST/PUT requests
