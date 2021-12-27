@@ -4,7 +4,7 @@
     <parent>
         <artifactId>agrest-parent</artifactId>
         <groupId>io.agrest</groupId>
-        <version>4.8</version>
+        <version>4.9-SNAPSHOT</version>
     </parent>
 
     <artifactId>agrest-base</artifactId>
