@@ -89,11 +89,6 @@
                 <artifactId>agrest-client</artifactId>
                 <version>${project.version}</version>
             </dependency>
-            <dependency>
-                <groupId>io.agrest</groupId>
-                <artifactId>agrest-sencha</artifactId>
-                <version>${project.version}</version>
-            </dependency>
         </dependencies>
     </dependencyManagement>
 
